@@ -127,6 +127,7 @@ python -m unittest discover
 ```
 
 常用参数：`--only <vendor_id>`（只巡检指定厂商，调试用，不覆盖全局 README）、`--no-news`（跳过博客 / RSS 归档）、`--no-browser`（禁用 playwright）、`--delay <秒>`（请求间隔，默认 0.3）、`--timeout <秒>`（超时，默认 20）、`--ai-review`（变化时调用 Google AI Studio 的 Gemini 做事实核查，详见「更新机制」）。
+
 完整巡检约需 5–15 分钟（62 家厂商，实际深度抓取约 140 个情报 / 动态页面；JS 空壳与 403 页面自动走浏览器兜底），结束后自动刷新 Part 1–3 表格、博客主文档与 `llm-news/` 归档。
 
 > 想启用 `--ai-review`：到 [Google AI Studio](https://aistudio.google.com/apikey) 免费申请一个 API Key，设置环境变量 `GEMINI_API_KEY`（也兼容 `GOOGLE_API_KEY`）即可，默认模型 `gemini-3.8-flash`，可用 `AI_REVIEW_MODEL` 覆盖；无需安装任何额外软件。
