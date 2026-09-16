@@ -191,7 +191,7 @@ python -m unittest discover
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-09-14 14:59:05**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-09-16 23:49:57**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
 > 💡 **核心特性**：覆盖 **62 家厂商**；已借助 Google 公开翻译引擎将海外一手情报全面汉化；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 15 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
@@ -469,7 +469,6 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册并完成实名认证（无需企业审核） |
 | **免费层限制 / 注意事项** | • 额度**按模型/服务分散发放**，不是统一 token 池：U2 / U2-Med / U1-OCR 各 500 万、ASR 5 小时、TTS 5 万字，互不通兑<br>• 有效期官方文档未标注，以账户内资源包为准 |
 | **邀请 / 特惠活动** | 平台聚焦语音与医疗场景，提供语音识别/合成与 OCR 全栈接口。 |
-| **实时巡检证据** | • 模型Token Plan低至5.9折体验文档 |
 | **官方直达** | [快速入门（新人礼包说明）](https://maas.unisound.com/docs/guide/quickstart) ｜ [平台文档总览](https://maas.unisound.com/docs/guide/overview) ｜ [Token Hub 主页](https://maas.unisound.com/) |
 | **特别说明** | 开放平台已统一为 maas.unisound.com（Token Hub）。 |
 
@@ -540,7 +539,6 @@ python -m unittest discover
 | **额度有效期** | 不适用 |
 | **前置条件 / 限制** | 未提供可用的公开开发者注册入口 |
 | **邀请 / 特惠活动** | 第三方情报库亦标注「当前可能已无标准化公开免费额度」「API 开放平台个人免费额度待确认」，与本轮复核一致。 |
-| **实时巡检证据** | • canghe-geo-diag-report 是一个品牌 GEO 可见度诊断 Skill，用来分析品牌在 DeepSeek、豆包、Kimi 等 AI 搜索平台中的提及率、推荐表现和舆情状况。它通过“基础调研 → AI 可见性 → 舆情… |
 | **官方直达** | [天工主站（开放平台入口跳转目标）](https://www.tiangong.cn/) ｜ [原开放平台入口](https://model-platform.tiangong.cn/) ｜ [开发者 API（当前 503）](https://api.tiangong.cn/) |
 | **特别说明** | 产品重心已转向天工 App 消费端；条目保留跟踪 API 是否恢复，暂不应进免费额度主力名单。 |
 
@@ -562,7 +560,7 @@ python -m unittest discover
 | **额度有效期** | 免费测试请求为注册后一次性体验；额度政策以官方定价页为准 |
 | **前置条件 / 限制** | 注册 OpenAI 账号并绑定海外付款方式；按组织层级划分 RPM / TPM 配额 |
 | **邀请 / 特惠活动** | Batch 批量推理约 5 折；提示缓存输入约 1–2.5 折；网页端 ChatGPT 提供免费版（可用模型以官方说明为准）。 |
-| **实时巡检证据** | • 用于内置工具的令牌按所选模型的每个令牌费率计费。 GB 是指二进制千兆字节（也称为 gibibytes），其中 1 GB 为 2^30 字节。网络搜索公司...<br>• 用于强化微调中模型分级的代币按该模型的每个代币费率计费。如果您在创建时启用数据共享，则可以享受推理折扣…… |
+| **实时巡检证据** | • 用于内置工具的令牌按所选模型的每个令牌费率计费。 GB 是指二进制千兆字节（也称为 gibibytes），其中 1 GB 为 2^30 字节。网络搜索公司…<br>• 用于强化微调中模型分级的代币按该模型的每个代币费率计费。如果您在创建时启用数据共享，则可以享受推理折扣…… |
 | **官方直达** | [官方主页](https://openai.com/) ｜ [API 定价](https://developers.openai.com/api/docs/pricing) ｜ [模型列表](https://developers.openai.com/api/docs/models) ｜ [快速开始](https://developers.openai.com/api/docs/quickstart) |
 | **特别说明** | 旧“$5 测试积分”说法在现行官方文档中已不再出现；“数据共享折扣”亦未见公开表述。 |
 
@@ -576,7 +574,7 @@ python -m unittest discover
 | **额度有效期** | 网页免费版额度每 5 小时滚动重置；API 测试额度以账户到账为准 |
 | **前置条件 / 限制** | 网页端注册账号即可；API 需绑定付款方式；**免费版不含 Claude Code**（官方原文 “Claude Code is included in all paid plans”） |
 | **邀请 / 特惠活动** | Pro 订阅 $20/月（年付 $17/月）含 Claude Code；Max 从 $100/月起；Batch 5 折、提示缓存读低至 0.1x。 |
-| **实时巡检证据** | • 专业版计划为您提供免费计划中的所有内容，并具有更多用途和全套 Claude 功能。其中包括 Claude Code、Claude Cowork、Claude Design 以及专业……<br>• 供学生学习的专用 API 学分和教育功能<br>• 每个计划都有使用限制，在滚动的五小时会话窗口中重置，付费计划则在顶部增加了每周限制。您在 Claude 上的网络、桌面、移动和 C 活动…… |
+| **实时巡检证据** | • 专业版计划为您提供免费计划中的所有内容，并且具有更多用途和 Claude 的更多功能。其中包括克劳德代码、克劳德设计、幻灯片和文档，以及项目……<br>• 供学生学习的专用 API 学分和教育功能<br>• 每个计划都有使用限制，这些限制会在滚动的五小时会话窗口中重置，而付费计划则增加了每周限制。您在 Claude 上的网络、桌面、移动和 C 活动…… |
 | **官方直达** | [官方主页](https://claude.com/) ｜ [定价中心](https://claude.com/pricing) ｜ [模型文档](https://platform.claude.com/docs/en/models/overview) ｜ [API 定价 FAQ](https://platform.claude.com/docs/en/about-claude/pricing) |
 | **特别说明** | 官方建议多数工作负载从 Opus 5 起步，Fable 5.1 面向复杂推理与长程智能体任务。 |
 
@@ -634,7 +632,7 @@ python -m unittest discover
 | **额度有效期** | 以官方定价页为准 |
 | **前置条件 / 限制** | 邮箱注册并验证手机号 |
 | **邀请 / 特惠活动** | 开放权重模型可下载；提供企业私有化部署；2026-09 宣布完成 €3B 融资。 |
-| **实时巡检证据** | • Mistral 筹集了 30 亿欧元，使主权、开放权重人工智能成为技术前沿<br>• 经过验证的学生可以每月 5.99 美元（通常为 14.99 美元）购买 Mistral Pro。<br>• 是的，Mistral Enterprise 计划包括自定义 SLA、专门支持和私有部署。联系我们了解更多详情。 |
+| **实时巡检证据** | • 是的，您可以在任何地方自行托管我们的模型。开放权重模型（例如 Mistral 7B）是 Apache 2.0 许可用于研究/个人使用；<br>• 经过验证的学生可以每月 5.99 美元（通常为 14.99 美元）购买 Mistral Pro。<br>• 是的，Mistral Enterprise 计划包括自定义 SLA、专门支持和私有部署。联系我们了解更多详情。 |
 | **官方直达** | [API Key 控制台直达](https://console.mistral.ai/api-keys/) ｜ [官方主页](https://mistral.ai/) ｜ [API 定价](https://mistral.ai/pricing/api/) ｜ [模型文档](https://docs.mistral.ai/getting-started/models/) ｜ [新闻动态](https://mistral.ai/news/) |
 | **特别说明** | 旧“€5 赠金 / 1 RPS 免费层 / open-mistral-7b / Mixtral / Pixtral-12B”在现行官方页面无据或已列入 deprecated/retired 表。 |
 
@@ -854,7 +852,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 邮箱注册获取 API Key |
 | **免费层限制 / 注意事项** | • 免费层 **每月仅 200 次请求**（按月重置），批量 / 高频使用不够；另有随 WarpGrep / Glance 等工具附带的 $10/月算力额度，不开工具拿不到 |
 | **邀请 / 特惠活动** | 面向 AI 编程与智能体场景优化推理延迟；兼容 OpenAI SDK。 |
-| **实时巡检证据** | • 每天有超过 1000 亿个代币通过定制投机器和缓存的专用容量提供服务，价格比上述公开定价有很大折扣。包括 SSO、自定义速率限制…… |
+| **实时巡检证据** | • Kimi K3、GLM-5.3、Reflex 以及介于两者之间的工具包。一个 API。开始免费。<br>• 降低 LLM API 成本的实用指南。五个杠杆：模型路由（节省 40-70%）、上下文压缩（减少 50-70% 令牌）、提示优化、缓存（缓存 90%...<br>• 人工智能编码的实际成本是：令牌浪费、代理循环、上下文膨胀、订阅堆叠。 Claude、GPT-5、Gemini 的真实定价数据，以及如何削减 40-70% 的支出。 |
 | **官方直达** | [定价页（免费层说明）](https://morphllm.com/pricing) ｜ [官方主页](https://morphllm.com/) |
 | **特别说明** | 免费额度适合个人开发与轻量调用。 |
 
@@ -869,7 +867,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 官网注册（免费套餐入口）；企业部署可预约 guided onboarding |
 | **免费层限制 / 注意事项** | • **免费套餐配额不公开数字**，官方定价页只写可从 free tier 开始测试，具体限额要注册后在控制台查看<br>• 免费模型是编程 Agent 专用模型（compact/apply/rank/search），不是通用对话模型 |
 | **邀请 / 特惠活动** | 为编码 Agent 提供低延迟代码变换与检索基础设施，OpenAI 兼容接口。 |
-| **实时巡检证据** | • 尝试我们的 Playground，并从我们的免费套餐开始在您的应用程序中测试 Relace 模型。<br>• 有关我们的政策的信息，包括退款、订阅取消、费率限制和 SLA，请访问我们的政策页面。 |
+| **实时巡检证据** | • 尝试我们的 Playground，并从我们的免费套餐开始在您的应用程序中测试 Relace 模型。<br>• 有关我们政策的信息，包括退款、订阅取消、费率限制和 SLA，请访问我们的政策页面。 |
 | **官方直达** | [定价页（含 free tier 说明）](https://relace.ai/pricing) ｜ [官方主页](https://relace.ai/) |
 | **特别说明** | 免费套餐具体配额需注册后查看；定价页主打 token 计费的基础设施套餐。 |
 
@@ -913,7 +911,6 @@ python -m unittest discover
 | **额度有效期** | 官方 pricing 页**未载明** $100 额度的有效期 |
 | **前置条件 / 限制** | 注册 Anyscale 账号，**需工作邮箱（work email）**；pricing 页未公示绑卡要求 |
 | **邀请 / 特惠活动** | 另有初创企业扶持计划；Committed contracts 提供批量折扣（需商务接触）。 |
-| **实时巡检证据** | • __stripe_mid [x2]此 cookie 对于在网站上进行信用卡交易是必需的。该服务由 Stripe.com 提供，允许在线交易，无需存储… |
 | **官方直达** | [Pricing（$100 额度说明）](https://www.anyscale.com/pricing) ｜ [官方主页](https://www.anyscale.com/) |
 | **特别说明** | 本质是托管 Ray 算力平台而非 LLM 免费层，$100 属于算力试用金；无永久免费层。**注意稳定性风险**：官方 2026-07-30 公告已签署被 **Nscale** 收购的最终协议，额度与产品后续政策可能变动。 |
 
