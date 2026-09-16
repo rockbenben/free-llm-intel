@@ -1,0 +1,181 @@
+name: refresh-intel
+
+# 每天 UTC 03:19（北京时间 11:19）自动巡检官方页面；也可在 Actions 页面手动触发。
+#
+# 流程：脚本抓取全部官方页并与 llm-intel-state.json 中的文本快照比对——
+#   1. 页面无变化：不重写产物、不产生提交；
+#   2. 仅新闻 / 博客变化：直接原子性提交到 main；
+#   3. 免费额度等事实字段可能变化（快照 hash 改变）：调用 Google AI Studio 的
+#      Gemini API（默认模型 gemini-3.8-flash，免费层 Key）阅读变化页面，
+#      证据逐字命中页面原文才允许更新 profile_overrides.json。
+#
+# 第 3 类变化的提交策略（防止重复消耗免费层额度与补丁覆盖）：
+#   - 若远端已有未合并的 ai/intel-update 分支，自动拉取其 overrides 累加（输出
+#     synced=true），防止多日连续变动时新补丁覆盖未审核的前日补丁；
+#   - 先开 PR（profile_overrides.json + 重渲染的 README），PR 创建成功后
+#     才将快照与新闻直推 main，防止因 PR 失败导致快照提前落盘而永久丢失变更；
+#   - 待审 PR 存在但本次走直提路径（无新变化 / changed=false / 无 key）时，
+#     同步进工作区的 overrides 与按其渲染的 README 必须先还原为 main HEAD，
+#     绝不让未审核补丁绕过 PR 闸门直推 main；
+#   - 关闭 PR = 本次不采纳，该页文本同样不再重复触发，等页面下一次真正变化才会重新核查。
+#
+# 所需配置：
+#   - Settings -> Secrets and variables -> Actions 添加 GEMINI_API_KEY
+#     （免费申请：https://aistudio.google.com/apikey；无该 secret 时第 3 类变化
+#       会保留旧哈希、次日自动重试，新闻更新不受影响）；
+#   - Settings -> Actions -> General -> Workflow permissions：
+#     1) 选择 "Read and write permissions"；
+#     2) 勾选 "Allow GitHub Actions to create and approve pull requests"（极其关键，默认关闭）；
+#   - 若 main 分支开启了 Branch Protection（分支保护），请在规则中允许 github-actions[bot] bypass；
+#   - schedule 仅在默认分支存在该 workflow 时才会被 GitHub 调度。
+"on":
+  schedule:
+    - cron: "19 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: refresh-intel
+  cancel-in-progress: false
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    # 首次运行是冷启动：翻译缓存未命中需冷译三千余条标题 + 全量抓取（约 140 个
+    # 深度页面，其中约三分之一走浏览器兜底）+ 浏览器内核安装，40 分钟无余量；
+    # 缓存命中后的常规巡检约 5–10 分钟。
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Chromium 仅对 requests 抓到 JS 空壳 / 403 的页面兜底（约三分之一入口），
+      # 用于保证 README「实时巡检证据」列的质量与本地带浏览器巡检一致。
+      # 注意：快照哈希刻意只取 requests 阶段文本（浏览器渲染不写 snapshot_text），
+      # 因此浏览器开关不影响变化检测，不会引发 AI 核查误触发。
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('requirements.txt') }}
+      - name: Install Playwright Chromium
+        run: playwright install --with-deps chromium
+
+      # 若已有未合并的 ai/intel-update 分支，拉取其 overrides 累加，防止补丁互相覆盖。
+      # 输出 synced=true：这批 overrides 仍在人工审核中，后续直提 main 时必须排除
+      # （否则未审核补丁会随 README/overrides 直提绕过 PR 闸门）。
+      - name: Sync existing AI PR overrides
+        id: prsync
+        run: |
+          if git ls-remote --exit-code --heads origin ai/intel-update; then
+            echo "检测到远端存在未合并的 ai/intel-update 分支，拉取其 overrides 累加补丁..."
+            # 必须 fetch + checkout 都成功才标记 synced：否则工作区仍是 main 基线，
+            # 误标会让新补丁覆盖未合并 PR 的历史累加内容。
+            if git fetch origin ai/intel-update:origin-ai-intel-update \
+                && git checkout origin-ai-intel-update -- profile_overrides.json; then
+              echo "synced=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "::warning::同步待审 PR overrides 失败：本次按 main 基线处理，未做分支累加"
+            fi
+          fi
+
+      # 复用标题翻译缓存，避免每天重新翻译 llm-news/ 的两千余篇文章。
+      - name: Restore translate cache
+        uses: actions/cache@v4
+        with:
+          path: .translate_cache.json
+          key: translate-cache-${{ github.run_id }}
+          restore-keys: translate-cache-
+
+      - name: Run intel crawler
+        env:
+          PYTHONIOENCODING: utf-8
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # 可用 repository variable 覆盖模型，默认 gemini-3.8-flash
+          AI_REVIEW_MODEL: ${{ vars.AI_REVIEW_MODEL }}
+        run: python crawler_llm_intel.py --ai-review
+
+      - name: Decide commit path
+        id: route
+        run: |
+          if [ -f .ai-changed ]; then
+            echo "kind=pr" >> "$GITHUB_OUTPUT"
+            echo "AI 核查产生档案更新：将先开 PR 审核档案补丁，成功后直推快照。"
+            cat .ai-changed
+          else
+            echo "kind=direct" >> "$GITHUB_OUTPUT"
+          fi
+
+      # AI 档案补丁路径 1：先开 PR 人工审核（证据见 profile_overrides.json 的 _evidence/_summary）
+      - name: Open PR for AI-reviewed profile updates
+        if: steps.route.outputs.kind == 'pr'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: ai/intel-update
+          delete-branch: true
+          commit-message: "chore(ai): 依据官方页面变化更新免费额度档案"
+          title: "AI 巡检：官方免费额度信息发生变化，请审核"
+          body: |
+            每日巡检检测到官方页面文本变化，Gemini 已阅读页面并按原文更新档案。
+
+            - 变更字段与攻略归类：见本 PR diff
+            - 证据：`profile_overrides.json` 中对应厂商的 `_evidence`（页面原文逐字摘录）与 `_summary`
+            - 合并前请核对：证据链接可打开、数字/模型名与官方页一致
+            - 页面快照已随巡检同步更新至 main 分支：**关闭本 PR 即表示本次不采纳**，同一批页面文本不会重复触发 AI；页面下次真正变化时才会再次核查
+
+            若更新有误，直接关闭 PR 即可。
+          add-paths: |
+            README.md
+            profile_overrides.json
+
+      # AI 档案补丁路径 2：PR 创建成功后，再将快照与新闻直推 main。
+      # 保证 PR 若因权限/网络异常创建失败时，快照不会提前落盘导致变更永久丢失。
+      - name: Commit snapshots and news after PR
+        if: steps.route.outputs.kind == 'pr'
+        run: |
+          git pull --rebase origin main
+          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news
+          if git diff --cached --quiet; then
+            echo "本次无快照 / 新闻变更。"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: 定时巡检刷新博客动态与页面快照"
+          git push origin HEAD:main
+
+      # 无 AI 补丁路径：快照、新闻、README、覆盖层单次原子提交并推送到 main
+      - name: Commit all updates (direct mode)
+        if: steps.route.outputs.kind == 'direct'
+        run: |
+          git pull --rebase origin main
+          if [ "${{ steps.prsync.outputs.synced }}" = "true" ]; then
+            # 工作区里有从待审 PR 同步来的 overrides，且 README 是按它渲染的——
+            # 二者都不能绕过人工审核直提 main；还原为 main HEAD（快照/新闻照常提交，
+            # README 的实时证据行等 PR 合并后的下一次巡检再刷新）。
+            echo "存在待审的 ai/intel-update PR：直提时排除 README.md 与 profile_overrides.json"
+            git checkout HEAD -- README.md profile_overrides.json
+          fi
+          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news README.md profile_overrides.json
+          if git diff --cached --quiet; then
+            echo "本次无任何内容变更。"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore: 定时巡检刷新官方情报与博客动态"
+          git push origin HEAD:main

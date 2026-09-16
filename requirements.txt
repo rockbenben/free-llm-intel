@@ -1,0 +1,9 @@
+# 巡检引擎必需依赖（Python 3.10+）
+requests>=2.31
+PyYAML>=6.0
+
+# JS 动态渲染 / 403 反爬页面的浏览器兜底：CI 会安装 pip 包并下载 Chromium。
+# 本地只装 pip 包、不执行 `playwright install chromium` 时脚本自动降级
+#（受影响页面会在报告中标注「内容过少」）；想本地启用浏览器兜底：
+#   playwright install chromium
+playwright>=1.40
