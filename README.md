@@ -12,6 +12,8 @@
 - 📡 厂商博客 / 更新动态：[llm-news-feeds.md](llm-news-feeds.md)（主文档每家最新 5 篇），每厂商全量归档在 [`llm-news/`](llm-news/)；RSS 订阅清单：[llm-news-feeds.opml](llm-news-feeds.opml)
 - 🤖 自己跑巡检 / 二次开发：`pip install -r requirements.txt && python crawler_llm_intel.py`（详见[快速开始](#快速开始)）
 
+![免费额度速览：懒人首选的 5 家厂商](docs/images/intel-top5.png)
+
 <!-- LLM-GUIDE:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 ---
 
