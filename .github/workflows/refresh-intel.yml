@@ -19,6 +19,11 @@ name: refresh-intel
 #     绝不让未审核补丁绕过 PR 闸门直推 main；
 #   - 关闭 PR = 本次不采纳，该页文本同样不再重复触发，等页面下一次真正变化才会重新核查。
 #
+# 两处提交流程的 git 顺序固定为 add -> commit -> pull --rebase -> push，不可调换：
+# crawler 跑完后工作区必然是脏的（快照 / 新闻 / README 都已重写），此时先执行
+# pull --rebase 会被 git 直接拒绝——"cannot pull with rebase: You have unstaged
+# changes"，以 exit 128 中断，push 根本没机会运行。
+#
 # 所需配置：
 #   - Settings -> Secrets and variables -> Actions 添加 GEMINI_API_KEY
 #     （免费申请：https://aistudio.google.com/apikey；无该 secret 时第 3 类变化
@@ -28,6 +33,10 @@ name: refresh-intel
 #     2) 勾选 "Allow GitHub Actions to create and approve pull requests"（极其关键，默认关闭）；
 #   - 若 main 分支开启了 Branch Protection（分支保护），请在规则中允许 github-actions[bot] bypass；
 #   - schedule 仅在默认分支存在该 workflow 时才会被 GitHub 调度。
+#
+# 依赖版本：所有 action 均使用运行在 Node.js 24 上的大版本（checkout v7 /
+# setup-python v7 / cache v6 / create-pull-request v8），以避开 Node 20 弃用告警。
+# 这些版本要求 runner >= v2.327.1，GitHub 托管 runner 已满足；自建 runner 需先升级。
 "on":
   schedule:
     - cron: "19 3 * * *"
@@ -50,14 +59,14 @@ jobs:
     timeout-minutes: 60
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
-          python-version: "3.12"
+          python-version: "3.13"
           cache: pip
 
       - name: Install dependencies
@@ -68,7 +77,7 @@ jobs:
       # 注意：快照哈希刻意只取 requests 阶段文本（浏览器渲染不写 snapshot_text），
       # 因此浏览器开关不影响变化检测，不会引发 AI 核查误触发。
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('requirements.txt') }}
@@ -95,7 +104,7 @@ jobs:
 
       # 复用标题翻译缓存，避免每天重新翻译 llm-news/ 的两千余篇文章。
       - name: Restore translate cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: .translate_cache.json
           key: translate-cache-${{ github.run_id }}
@@ -123,7 +132,7 @@ jobs:
       # AI 档案补丁路径 1：先开 PR 人工审核（证据见 profile_overrides.json 的 _evidence/_summary）
       - name: Open PR for AI-reviewed profile updates
         if: steps.route.outputs.kind == 'pr'
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           branch: ai/intel-update
           delete-branch: true
@@ -147,7 +156,6 @@ jobs:
       - name: Commit snapshots and news after PR
         if: steps.route.outputs.kind == 'pr'
         run: |
-          git pull --rebase origin main
           git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news
           if git diff --cached --quiet; then
             echo "本次无快照 / 新闻变更。"
@@ -156,13 +164,24 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: 定时巡检刷新博客动态与页面快照"
-          git push origin HEAD:main
+          # 必须先 commit 再 rebase。crawler 刚写完产物，此刻工作区是脏的，
+          # 而 git pull --rebase 拒绝在有未暂存改动时执行，会以
+          # "cannot pull with rebase: You have unstaged changes" + exit 128 中断，
+          # 后面的 push 根本没机会运行（首次运行就是这么失败的）。
+          if ! git pull --rebase origin main; then
+            echo "::error::rebase 到最新 main 失败：远端在巡检期间有新提交，且与本次产物冲突。请手动 rebase 后重跑。"
+            exit 1
+          fi
+          # push 失败时 GitHub 只回一个 exit 128，看不出原因，这里显式翻译成排查指引。
+          if ! git push origin HEAD:main; then
+            echo "::error::推送被拒绝。请检查：① Settings -> Actions -> General -> Workflow permissions 是否已选 Read and write permissions；② 若 main 开启了 Branch Protection，规则中是否允许 github-actions[bot] bypass。"
+            exit 1
+          fi
 
       # 无 AI 补丁路径：快照、新闻、README、覆盖层单次原子提交并推送到 main
       - name: Commit all updates (direct mode)
         if: steps.route.outputs.kind == 'direct'
         run: |
-          git pull --rebase origin main
           if [ "${{ steps.prsync.outputs.synced }}" = "true" ]; then
             # 工作区里有从待审 PR 同步来的 overrides，且 README 是按它渲染的——
             # 二者都不能绕过人工审核直提 main；还原为 main HEAD（快照/新闻照常提交，
@@ -178,4 +197,15 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: 定时巡检刷新官方情报与博客动态"
-          git push origin HEAD:main
+          # 同上一处：必须先 commit 再 rebase。crawler 刚写完产物，工作区是脏的，
+          # 此时 git pull --rebase 会以 "cannot pull with rebase: You have unstaged
+          # changes" + exit 128 中断，push 根本没机会执行。
+          if ! git pull --rebase origin main; then
+            echo "::error::rebase 到最新 main 失败：远端在巡检期间有新提交，且与本次产物冲突。请手动 rebase 后重跑。"
+            exit 1
+          fi
+          # push 失败时 GitHub 只回一个 exit 128，看不出原因，这里显式翻译成排查指引。
+          if ! git push origin HEAD:main; then
+            echo "::error::推送被拒绝。请检查：① Settings -> Actions -> General -> Workflow permissions 是否已选 Read and write permissions；② 若 main 开启了 Branch Protection，规则中是否允许 github-actions[bot] bypass。"
+            exit 1
+          fi
