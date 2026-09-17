@@ -38,7 +38,7 @@
   3. [预览模型硬件标准](https://www.anthropic.com/news/model-hardware-standard-research-preview)（2026-08-27）
   4. [公告扩大我们对科学家的支持](https://www.anthropic.com/news/expanding-support-for-scientists)（2026-08-27）
   5. [资助更好地评估人工智能对福祉的影响](https://www.anthropic.com/news/wellbeing-research-grants)（2026-08-25）
-  - 📄 完整文章归档（共 53 篇）：[anthropic.md](llm-news/anthropic.md)
+  - 📄 完整文章归档（共 63 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### Google Gemini (google_gemini)
 - 页面：[官方博客](https://cloud.google.com/blog/products/ai-machine-learning/)
@@ -49,7 +49,7 @@
   3. [谷歌云本月在人工智能领域宣布了什么](https://cloud.google.com/blog/products/ai-machine-learning/what-google-cloud-announced-in-ai-this-month)
   4. [云 CISO 观点：Google 如何监控 AI 威胁并推进 AI 防御](https://cloud.google.com/blog/products/identity-security/cloud-ciso-perspectives-how-google-monitors-ai-threats-advances-ai-defenses)
   5. [Google 是 2026 年 Gartner® 企业人工智能助理魔力象限™ 的领导者](https://cloud.google.com/blog/products/ai-machine-learning/google-is-a-leader-in-2026-gartner-magic-quadrant-for-enterprise-ai-assistants)
-  - 📄 完整文章归档（共 8 篇）：[google_gemini.md](llm-news/google_gemini.md)
+  - 📄 完整文章归档（共 11 篇）：[google_gemini.md](llm-news/google_gemini.md)
 
 ### xAI Grok (xai_grok)
 - 页面：[新闻 / 更新](https://x.ai/news)
@@ -126,11 +126,11 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📰 **最新文章**（官方源抓取于 2026-09-16，标题自动汉化）：
   1. [2026年9月](https://platform.kimi.com/docs/changelog#2026%E5%B9%B49%E6%9C%88)（2026-09-01）
-  2. [2026年8月](https://platform.kimi.com/docs/changelog#2026%E5%B9%B48%E6%9C%88)（2026-08-01）
-  3. [2026年7月](https://platform.kimi.com/docs/changelog#2026%E5%B9%B47%E6%9C%88)（2026-07-01）
-  4. [2026年6月](https://platform.kimi.com/docs/changelog#2026%E5%B9%B46%E6%9C%88)（2026-06-01）
-  5. [2026年5月](https://platform.kimi.com/docs/changelog#2026%E5%B9%B45%E6%9C%88)（2026-05-01）
-  - 📄 完整文章归档（共 24 篇）：[moonshot_kimi.md](llm-news/moonshot_kimi.md)
+  2. [kimi-k2.5 与 moonshot-v1 全系列模型（含 -vision-preview、moonshot-v1-auto）已于今日 16:00 在国内外全平台下线，调用将返回 404 错误（模型不存在），请迁移至 Kimi K3](https://platform.kimi.com/docs/changelog/changelog/changelog#2026%E5%B9%B48%E6%9C%8831%E6%97%A5)（2026-08-31）
+  3. [2026年8月](https://platform.kimi.com/docs/changelog#2026%E5%B9%B48%E6%9C%88)（2026-08-01）
+  4. [2026年7月](https://platform.kimi.com/docs/changelog#2026%E5%B9%B47%E6%9C%88)（2026-07-01）
+  5. [2026年6月](https://platform.kimi.com/docs/changelog#2026%E5%B9%B46%E6%9C%88)（2026-06-01）
+  - 📄 完整文章归档（共 26 篇）：[moonshot_kimi.md](llm-news/moonshot_kimi.md)
 
 ### Mistral AI (mistral)
 - 页面：[新闻 / 更新](https://mistral.ai/news/)
@@ -149,11 +149,11 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📰 **最新文章**（官方源抓取于 2026-09-16，标题自动汉化）：
   1. [Cohere 和 OpenText 合作，为政府和受监管行业带来值得信赖的代理人工智能汇集企业数据、上下文和安全人工智能，以大规模支持代理人工智能](https://cohere.com/blog/cohere-and-open-text-partner-to-bring-trusted-ai)（2026-09-16）
-  2. [North Small Translate 简介：领先的主权开放权重机器翻译模型 卓越的性能、合适的占地面积 — 为速度和成本效率而构建的翻译。](https://cohere.com/blog/north-small-translate)（2026-09-10）
-  3. [North Mini Code 的巨型内核服务引擎内部](https://cohere.com/blog/megakernels)（2026-09-08）
-  4. [自动化的早期足迹](https://cohere.com/blog/automations-early-footprint)（2026-09-03）
-  5. [小型人工智能模型如何对企业产生巨大影响](https://cohere.com/blog/how-small-models-can-make-a-big-impact-for-enterprises)（2026-09-02）
-  - 📄 完整文章归档（共 28 篇）：[cohere.md](llm-news/cohere.md)
+  2. [谁来定义人工智能的规则？](https://cohere.com/blog/who-gets-to-define-the-rules-for-ai)（2026-09-13）
+  3. [North Small Translate 简介：领先的主权开放权重机器翻译模型 卓越的性能、合适的占地面积 — 为速度和成本效率而构建的翻译。](https://cohere.com/blog/north-small-translate)（2026-09-10）
+  4. [North Mini Code 的巨型内核服务引擎内部](https://cohere.com/blog/megakernels)（2026-09-08）
+  5. [自动化的早期足迹](https://cohere.com/blog/automations-early-footprint)（2026-09-03）
+  - 📄 完整文章归档（共 31 篇）：[cohere.md](llm-news/cohere.md)
 
 ### Meta Llama (meta_llama)
 - 页面：[官方博客](https://ai.meta.com/blog/)
@@ -173,9 +173,9 @@
   1. [您的代理人完成了任务。它会再次这样做吗？](https://huggingface.co/blog/ibm-research/altk-evolve-consistency)（2026-09-15）
   2. [跨 HF 作业使用 LoRA 的异步 GRPO：存储桶、代理，无 NCCL](https://huggingface.co/blog/asyncgrpo-lora-hfjobs)（2026-09-10）
   3. [使用 Gradio 工作流程重建 AUTOMATIC1111](https://huggingface.co/blog/gradio-workflow-1111)（2026-09-10）
-  4. [为了谁的安全？拒绝主题的正确子集，而不是整个主题](https://huggingface.co/blog/MultiverseComputingCAI/safety-for-whom)（2026-09-08）
-  5. [NeoMME：高效的多模态本地多语言编码器](https://huggingface.co/blog/Hcompany/neomme)（2026-09-03）
-  - 📄 完整文章归档（共 862 篇）：[huggingface.md](llm-news/huggingface.md)
+  4. [IBM 发布具有商业友好许可证的 SOTA Granite Time Series PatchTST-FM-r2 模型](https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series)（2026-09-09）
+  5. [为了谁的安全？拒绝主题的正确子集，而不是整个主题](https://huggingface.co/blog/MultiverseComputingCAI/safety-for-whom)（2026-09-08）
+  - 📄 完整文章归档（共 863 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### PPIO 派欧云 (ppio)
 - 页面：[更新日志](https://ppio.com/docs/announcement/announcement)
@@ -186,7 +186,7 @@
   3. [deepseek/deepseek-r1-distill-qwen-32b：—](https://ppio.com/docs/announcement/announcement#deepseek/deepseek-r1-distill-qwen-32b)（2026-07-01）
   4. [qwen/qwen3-14b：—](https://ppio.com/docs/announcement/announcement#qwen/qwen3-14b)（2026-07-01）
   5. [qwen/qwen3-30b-a3b：—](https://ppio.com/docs/announcement/announcement#qwen/qwen3-30b-a3b)（2026-07-01）
-  - 📄 完整文章归档（共 51 篇）：[ppio.md](llm-news/ppio.md)
+  - 📄 完整文章归档（共 55 篇）：[ppio.md](llm-news/ppio.md)
 
 ---
 共整理 15 个厂商的动态入口（其中 15 个成功提取最新文章），RSS/Atom 源 7 个。
