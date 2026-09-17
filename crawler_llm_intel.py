@@ -2976,6 +2976,17 @@ class SnapshotState:
 # main
 # ---------------------------------------------------------------------------
 
+def _repo_root() -> Path:
+    """仓库根目录（所有产物的落点）。
+
+    独立成函数是为了**可注入**：`.ai-changed` 与 README 等都写在仓库根，而
+    `TestCrawlerCleanup` 要验证「启动时清理历史残留的 `.ai-changed`」——若它只能对着真实
+    仓库根跑，就会删掉 workflow「Decide commit path」的判据，CI 里不能跑（此前只能把它
+    排除在 CI 之外）。测试改为把本函数 patch 到临时目录，就能在 CI 里跑同一个代码路径。
+    """
+    return Path(__file__).resolve().parent
+
+
 def main(argv: list[str] | None = None) -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8")  # Windows 控制台中文输出
@@ -3007,7 +3018,7 @@ def main(argv: list[str] | None = None) -> int:
                              "可用 AI_REVIEW_MODEL 覆盖模型）")
     args = parser.parse_args(argv)
 
-    root = Path(__file__).resolve().parent
+    root = _repo_root()
     (root / ".ai-changed").unlink(missing_ok=True)
     yaml_path = (root / args.yaml).resolve() if not Path(args.yaml).is_absolute() else Path(args.yaml)
     if not yaml_path.exists():

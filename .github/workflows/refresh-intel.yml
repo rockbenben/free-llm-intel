@@ -139,12 +139,12 @@ jobs:
           AI_REVIEW_MODEL: ${{ vars.AI_REVIEW_MODEL }}
         run: python crawler_llm_intel.py --ai-review
 
-      # 产物与不变量校验：跑除 TestCrawlerCleanup 之外的全部用例（71 个）。
-      # 该类会删除仓库根目录的 .ai-changed，而它正是下一步 Decide commit path 的判据 ——
-      # 在 CI 里跑会把 PR 路由踩坏，所以只能本地跑。其余用例都不碰仓库文件
-      # （实测跑完标记存活、工作区干净），因此测试集由
-      # test_workflow_and_review.ci_suite() 按「全部 − 白名单」推导：
+      # 产物与不变量校验：跑**全部**用例（79 个）。
+      # 测试集由 test_workflow_and_review.ci_suite() 按「全部 − 白名单」推导：
       # 以后新增用例自动进 CI，不需要谁记得回来改这里（手写类清单必然漂移）。
+      # 白名单现为空 —— 曾经排除 TestCrawlerCleanup（它会删掉仓库根的 .ai-changed，
+      # 而那是下一步 Decide commit path 的判据），后来把仓库根改成可注入的
+      # `crawler_llm_intel._repo_root()`，该测试改在临时目录里跑，就不再需要排除。
       # 放在抓取之后：校验的是本次即将提交的新产物，失败即拦住提交。
       - name: Verify generated artifacts and invariants
         run: python -c "import sys, unittest, test_workflow_and_review as t; sys.exit(0 if unittest.TextTestRunner(verbosity=2).run(t.ci_suite()).wasSuccessful() else 1)"

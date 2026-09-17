@@ -58,11 +58,14 @@ git diff README.md
 ```
 
 - **测试集有两个，别搞混**：本地用 `unittest discover`（全部）；CI 用
-  `test_workflow_and_review.ci_suite()`（全部 − `CI_EXCLUDED_CLASSES`，目前只排除
-  `TestCrawlerCleanup`）。排除的原因是该用例会删除仓库根目录的 `.ai-changed`，而它是
-  workflow「Decide commit path」判定走 PR 还是直提的判据 —— 在 CI 里跑会把 PR 路由踩坏。
-  取集是**从全量推导**的，新增测试类会自动进 CI；若某个新用例确实要动仓库文件，
-  把它加进 `CI_EXCLUDED_CLASSES` 并在注释里写明理由。
+  `test_workflow_and_review.ci_suite()`（全部 − `CI_EXCLUDED_CLASSES`，**当前白名单为空**，
+  即 CI 跑全部用例）。白名单机制保留着，是为了以后真有「会破坏 CI 自身状态」的用例时有地方写，
+  而不是临时去改 workflow。历史上唯一进过白名单的是 `TestCrawlerCleanup`：它会删除仓库根目录的
+  `.ai-changed`（workflow「Decide commit path」的判据），后来把仓库根改成可注入的
+  `crawler_llm_intel._repo_root()`、该测试改在临时目录里跑，就不再需要排除。
+  取集是**从全量推导**的，新增测试类会自动进 CI。
+- **新用例不要依赖真实仓库根**：要读写仓库文件时，把落点做成可注入（照 `_repo_root()` 的样子），
+  测试里 patch 到临时目录 —— 否则这个用例只能被排除在 CI 之外，等于 CI 里零覆盖。
 - **新增产物或新增守卫时，顺手确认它在 CI 里真的会跑**（`ci_suite()` 取到即可）——
   「测试写了但 CI 不跑」和「没写测试」在故障面前是一回事。
 

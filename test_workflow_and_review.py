@@ -400,23 +400,49 @@ class TestSnapshotState(unittest.TestCase):
 
 
 class TestCrawlerCleanup(unittest.TestCase):
-    """测试爬虫启动时对旧残留标记的清理"""
+    """爬虫启动时清理历史残留的 `.ai-changed` 标记。
+
+    在**临时目录**里跑（把 `_repo_root` patch 过去），因此不会碰真实仓库根的标记 ——
+    那是 workflow「Decide commit path」判定走 PR 还是直提的判据，CI 里删掉它会把 PR 路由
+    踩坏（本类此前因此只能被排除在 CI 之外）。改注入后，同一个代码路径可以在 CI 里跑。
+    """
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.fake_root = Path(self.temp_dir.name)
+        self._orig_root = crawler_llm_intel._repo_root
+        crawler_llm_intel._repo_root = lambda: self.fake_root
+
+    def tearDown(self):
+        crawler_llm_intel._repo_root = self._orig_root
+        self.temp_dir.cleanup()
+
+    @staticmethod
+    def _run_main():
+        with contextlib.redirect_stderr(io.StringIO()):
+            return crawler_llm_intel.main(["--yaml", "non_existent_yaml.yaml"])
 
     def test_stale_ai_changed_cleaned_up(self):
-        root = Path(crawler_llm_intel.__file__).resolve().parent
-        stale_marker = root / ".ai-changed"
+        stale_marker = self.fake_root / ".ai-changed"
         stale_marker.write_text("stale: update", encoding="utf-8")
         self.assertTrue(stale_marker.exists())
 
-        # 调用 main 传入不存在的 yaml 触发早期退出，同时验证清理执行
-        import io
-        from contextlib import redirect_stderr
-        try:
-            with redirect_stderr(io.StringIO()):
-                crawler_llm_intel.main(["--yaml", "non_existent_yaml.yaml"])
-        except SystemExit:
-            pass
+        # 传入不存在的 yaml 触发早期退出，同时验证清理已执行
+        self.assertEqual(self._run_main(), 1, "yaml 不存在时应以 1 退出")
         self.assertFalse(stale_marker.exists(), "爬虫启动时必须清理历史残留的 .ai-changed 标记")
+
+    def test_repo_root_is_redirected_to_temp(self):
+        """守卫：本类的 setUp 必须把 `_repo_root` 指到临时目录。
+
+        否则 `main()` 会去删**真实仓库根**的 `.ai-changed` —— 那是 workflow「Decide commit
+        path」判定走 PR 还是直提的判据，CI 里删掉它会把 PR 路由踩坏（本类此前正因此被排除
+        在 CI 之外）。这里**只读不写**，绝不去碰真实文件。
+        """
+        resolved = crawler_llm_intel._repo_root()
+        self.assertEqual(resolved, self.fake_root,
+                         "setUp 必须替换 _repo_root，否则会动到真实仓库根")
+        real_root = Path(crawler_llm_intel.__file__).resolve().parent
+        self.assertNotEqual(resolved, real_root, "_repo_root 不得指向真实仓库根")
 
 
 class TestOnlyFlagSafeguard(unittest.TestCase):
@@ -1461,16 +1487,16 @@ class TestEvidenceQualityGuards(unittest.TestCase):
             self.assertTrue(crawler_llm_intel._is_fact_line(line), line[:30])
 
 
-# CI 里必须排除的测试类。只有「会破坏 CI 自身状态」的类才配进这个白名单：
-# `TestCrawlerCleanup` 会删除仓库根目录的 `.ai-changed`，而它正是 workflow
-# 「Decide commit path」判定走 PR 还是直提的判据 —— 在 CI 里跑会把 PR 路由踩坏。
-# 其余用例都不碰仓库文件（实测：跑完标记存活、`git status` 干净），因此 CI 用
-# 「全部用例 − 本白名单」的方式取测试集，而不是手写一份要维护的类清单。
-CI_EXCLUDED_CLASSES = ("TestCrawlerCleanup",)
+# CI 里必须排除的测试类。**只有「会破坏 CI 自身状态」的类才配进这个白名单**，目前为空：
+# `TestCrawlerCleanup` 曾经在此（它会删掉仓库根的 `.ai-changed`，而那是 workflow
+# 「Decide commit path」判定走 PR 还是直提的判据）—— 后来把仓库根改成可注入的
+# `crawler_llm_intel._repo_root()`，该测试改在临时目录里跑，就不再需要排除了。
+# 保留这个机制是为了以后真有必须排除的用例时有地方写，而不是临时改 workflow。
+CI_EXCLUDED_CLASSES: tuple[str, ...] = ()
 
 
 def ci_suite() -> unittest.TestSuite:
-    """CI 用测试集 = 全部用例 − `CI_EXCLUDED_CLASSES`。
+    """CI 用测试集 = 全部用例 − `CI_EXCLUDED_CLASSES`（现为全部）。
 
     刻意**从全量推导**而不是写死类名：以后新增测试类会自动进 CI，不需要谁记得回来
     改 workflow —— 手写清单的下一步就是漂移（新加的守卫静默地不在 CI 里跑，
@@ -1505,11 +1531,13 @@ class TestCiSuite(unittest.TestCase):
                 out.append(item.id())
         return out
 
-    def test_excludes_only_repo_mutating_cleanup_class(self):
+    def test_covers_every_test_class(self):
+        """`ci_suite()` 必须覆盖除白名单外的每个测试类（白名单现为空 = 全覆盖）。
+
+        取集失配是**静默**的：少跑一批守卫不会有任何提示，直到某天回归溜到提交之后才发现。
+        """
         ids = self._ids(ci_suite())
         self.assertTrue(ids, "ci_suite 不能为空 —— 取集失配会让 CI 静默跳过全部测试")
-        self.assertEqual([i for i in ids if "TestCrawlerCleanup" in i], [],
-                         "TestCrawlerCleanup 会删掉 .ai-changed，绝不能进 CI")
         # 覆盖面：除白名单外的每个测试类都必须被取到。
         # 用 globals() 而非 `import 本模块` —— 本模块没有（也不该有）自引用。
         defined = {
@@ -1522,6 +1550,20 @@ class TestCiSuite(unittest.TestCase):
         covered = {i.split(".")[1] for i in ids}
         self.assertEqual(defined - covered, set(CI_EXCLUDED_CLASSES),
                          "CI 测试集必须覆盖除白名单外的全部测试类")
+
+    def test_cleanup_test_is_ci_safe(self):
+        """`TestCrawlerCleanup` 不该再被排除 —— 它已改为在临时目录里跑。
+
+        Regression: 该测试曾在**真实仓库根**建 / 删 `.ai-changed`（workflow「Decide commit
+        path」判定走 PR 还是直提的判据），于是只能被排除在 CI 之外，那段清理逻辑在 CI 里
+        零覆盖。改成注入 `_repo_root()` 后不再需要排除；行为层面的守卫见
+        `TestCrawlerCleanup.test_real_repo_marker_is_not_touched`。
+        """
+        self.assertNotIn("TestCrawlerCleanup", CI_EXCLUDED_CLASSES,
+                         "该测试已改为在临时目录里跑，不该再被排除")
+        ids = self._ids(ci_suite())
+        self.assertTrue(any("TestCrawlerCleanup" in i for i in ids),
+                        "TestCrawlerCleanup 必须真的在 CI 测试集里，否则这段清理逻辑零覆盖")
 
 
 if __name__ == "__main__":
