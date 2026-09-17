@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from concurrent.futures import ThreadPoolExecutor
 import html as html_mod
 import re
@@ -40,8 +41,8 @@ import time
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
 from dataclasses import dataclass, field
-from datetime import date, datetime, timedelta
-from email.utils import parsedate_to_datetime
+from datetime import date, datetime, timedelta, timezone
+from email.utils import format_datetime, parsedate_to_datetime
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Iterable
@@ -232,6 +233,16 @@ GUIDE_BEGIN = "<!-- LLM-GUIDE:BEGIN  本章节由 crawler_llm_intel.py 自动生
 GUIDE_END = "<!-- LLM-GUIDE:END -->"
 NEWS_BEGIN = "<!-- LLM-NEWS:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->"
 NEWS_END = "<!-- LLM-NEWS:END -->"
+
+# 仓库主页：RSS 频道 <link> 指向它（订阅源本身没有对应的 HTML 页面）
+REPO_URL = "https://github.com/rockbenben/free-llm-intel"
+
+# 自建 RSS 订阅源（GitHub Pages 托管）
+# 存在意义：llm-news-feeds.md 里相当一部分厂商官方**没有** RSS/Atom（只能靠页面
+# 提取兜底）。本仓库既然已把这些页面归档成结构化文章，就顺手把它们变成真正可订阅
+# 的源——否则「无官方源的厂商」永远只能靠人肉刷页面。
+RSS_TITLE_MAX = 60      # 标题超过该长度则截断，完整文本移入 description
+RSS_MERGED_LIMIT = 200  # 合并流最多收录条数（单厂商源不设上限，等于该厂商全量归档）
 
 BLOCK_TAGS = {
     "p", "div", "li", "tr", "td", "th", "h1", "h2", "h3", "h4", "h5", "h6",
@@ -951,6 +962,26 @@ _MONTHS = {m: i for i, m in enumerate(
      "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
 
 
+def _drop_future_date(day: str) -> str:
+    """丢弃晚于今天的日期（返回空串）。
+
+    页面卡片上的日期可能是错的：实测 cohere 一篇 **7 月 10 日**的文章，卡片上印的是
+    "Dec 10, 2026"，于是它被当作未来日期排到归档 md 与 README 的最前面（一挂就是几个月，
+    归档里已就地修正）。归档按 URL 增量合并、**不会自我纠正**，所以错误日期一旦写进去
+    就永久留存 —— 必须在入口拦住。
+
+    只丢日期、保留条目：没有日期只是排到末尾，条目本身不该因为卡片印错日期而消失
+    （RSS 侧还有一层同样的兜底，两处都不能少：这里是防污染归档，那里是防污染订阅流）。
+    """
+    if not day:
+        return ""
+    if day > datetime.now().strftime("%Y-%m-%d"):
+        print(f"      [warn] 丢弃未来日期 {day}（源页面日期有误，条目保留为无日期）",
+              file=sys.stderr)
+        return ""
+    return day
+
+
 def normalize_feed_date(raw: str) -> str:
     """把 RSS/Atom 或正文中的日期字符串归一化为 YYYY-MM-DD；失败返回空串。"""
     if not raw:
@@ -1187,7 +1218,8 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
         )
         for hid, content in matches:
             dm = re.search(r"(\d{4})[-/年.]\s?(\d{1,2})(?:[-/月.]\s?(\d{1,2}))?", hid)
-            norm_date = f"{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3) or 1):02d}" if dm else ""
+            norm_date = _drop_future_date(
+                f"{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3) or 1):02d}" if dm else "")
             lines = _clean_html_text(content)
             title = lines[0] if lines else hid
             if re.fullmatch(r"\d{4}[-/年.]\d{1,2}(?:[-/月.]\d{1,2})?", title):
@@ -1213,7 +1245,8 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
         hid = m.group(2)
         body = m.group(3)
         dm = re.search(r"(20[2-3]\d)\D{1,3}(\d{1,2})(?:\D{0,3}(\d{1,2}))?", hid)
-        norm_date = f"{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3) or 1):02d}" if dm else ""
+        norm_date = _drop_future_date(
+            f"{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3) or 1):02d}" if dm else "")
 
         # 检查卡片标题（MiniMax 等卡片式组件）
         card_m = re.search(r"data-component-part=[\"']card-title[\"'][^>]*>(.*?)</h[23]>", body, re.S)
@@ -1261,8 +1294,9 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
             desc = re.sub(r"[，,]\s*了解详情$", "", desc)
             if not model_id or not desc:
                 continue
-            norm_date = (f"{int(date_m.group(2)):04d}-"
-                         f"{int(date_m.group(3)):02d}-{int(date_m.group(4)):02d}")
+            norm_date = _drop_future_date(
+                f"{int(date_m.group(2)):04d}-"
+                f"{int(date_m.group(3)):02d}-{int(date_m.group(4)):02d}")
             title = f"{model_id}：{desc}"
             url = f"{base_no_frag}#{quote(model_id)}"
             if url in row_seen:  # 同一模型在多地域表格中重复出现
@@ -1295,6 +1329,7 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
     base = page.final_url or page.url
     articles: list[Article] = []
     seen: set[str] = set()
+    by_norm: dict[str, Article] = {}
     seen_titles: set[str] = set()
     for url, anchor in page.links:
         if not url or not url.startswith("http") or not _same_site(url, base):
@@ -1319,6 +1354,7 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
         if dm:
             date = date or normalize_feed_date(dm.group(1))
             title = (title[:dm.start()] + " " + title[dm.end():]).strip(" -–|·•\t")
+        date = _drop_future_date(date)
         # 剥掉粘连的栏目名 / 作者名（"PartnershipGroq Among..." -> "Groq Among..."）
         title = _strip_glued_label(title)
         title = re.sub(r"\s+", " ", title).strip(" -–|·•")
@@ -1340,6 +1376,13 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
         if frag:
             norm = norm + "#" + frag
         if norm in seen:
+            # 同一个 URL 常在一页里出现两次：首屏 hero 卡片（标题短、无日期）与下方
+            # 列表卡片（标题带摘要、有日期）。保留先出现的（标题更干净），但把后来
+            # 出现的日期补上 —— 日期决定归档与 RSS 的排序，丢了就再也拿不回来。
+            # 实测 cohere 博客页因此有 9 条本可带日期的条目退化成无日期。
+            kept = by_norm.get(norm)
+            if kept is not None and not kept.date and date:
+                kept.date = date
             continue
         # 同页锚点常带 -2/-3 后缀重复同一标题（PPIO 每条公告出现 5 次），按标题去重
         title_key = re.sub(r"\s+", "", title).lower()
@@ -1347,9 +1390,11 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
             continue
         seen.add(norm)
         seen_titles.add(title_key)
-        articles.append(Article(
+        art = Article(
             title=title, url=url, date=date,
-            source="官方页面文章列表", stype=page.stype))
+            source="官方页面文章列表", stype=page.stype)
+        articles.append(art)
+        by_norm[norm] = art
         if len(articles) >= max_items:
             break
     return articles
@@ -1542,15 +1587,6 @@ def _same_site(u1: str, u2: str) -> bool:
         if h2.startswith("www."):
             h2 = h2[4:]
         return h1 == h2 or h1.endswith("." + h2) or h2.endswith("." + h1)
-    except Exception:
-        return False
-
-
-def _is_root_url(url: str) -> bool:
-    """URL 是否为站点根 / 首页（如 https://x.ai/ ）。"""
-    try:
-        p = urlparse(url)
-        return p.path.strip("/") == "" and not p.query
     except Exception:
         return False
 
@@ -1788,15 +1824,8 @@ def type_label(stype: str) -> str:
     return stype.replace("_", " ")
 
 
-def render_vendor_section(intel: VendorIntel, idx: int = 1) -> list[str]:
-    """渲染单个厂商的 FreeLLM-API-KeyHub 格式 Markdown 规格表。"""
-    prof = get_provider_profile(intel.vendor_id, intel.brand, intel.homepage)
-    return render_freellm_table(intel, prof, idx)
-
-
 #: 时间戳屏蔽正则：无内容变化的巡检不应因「最近更新」时间而产生 diff
 _TS_RE = re.compile(r"\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}")
-_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 
 def _mask_ts(text: str) -> str:
@@ -2063,9 +2092,14 @@ def render_guide_block(records: list[tuple[int, VendorIntel, dict]]) -> str:
 
 
 def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
-                         records: list[tuple[int, VendorIntel, dict]]) -> str:
+                         records: list[tuple[int, VendorIntel, dict]],
+                         feeds_base: str = "") -> str:
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     news_vendors = sum(1 for v in intel_list if v.news_pages)
+    # 页面数写进生成块而不是手写文档里：手写的那份（曾写「约 140 个」）已经漂到 175，
+    # 且没人会记得回来改。这里由 intel_list 现算，永远与本次巡检一致。
+    intel_pages = sum(len(v.intel_pages) for v in intel_list)
+    news_pages = sum(len(v.news_pages) for v in intel_list)
 
     lines: list[str] = []
     lines.append(README_BEGIN)
@@ -2074,8 +2108,19 @@ def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
     lines.append(f"> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），"
                  f"最近一次巡检：**{now}**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。")
     lines.append(">")
-    lines.append(f"> 💡 **核心特性**：覆盖 **{len(intel_list)} 家厂商**；已借助 Google 公开翻译引擎将海外一手情报全面汉化；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。")
+    lines.append(f"> 💡 **核心特性**：覆盖 **{len(intel_list)} 家厂商**"
+                 f"（深度抓取 **{intel_pages} 个情报页 + {news_pages} 个动态页**）；"
+                 f"已借助 Google 公开翻译引擎将海外一手情报全面汉化；"
+                 f"自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、"
+                 f"可用模型、有效期与限制条件。")
     lines.append(f"> 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 {news_vendors} 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。")
+    if feeds_base:
+        site = _feeds_site_base(feeds_base)
+        page_part = f"[网页浏览 / 一键订阅]({site}) ｜ " if site else ""
+        lines.append(f"> 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）："
+                     f"{page_part}"
+                     f"[合并流]({feeds_base}/llm-news-all.xml) ｜ "
+                     f"单厂商源 `{feeds_base}/llm-news-{{vendor_id}}.xml`。")
     lines.append("")
 
     # 白嫖攻略是独立生成块（GUIDE_BEGIN/END），已由 render_guide_block
@@ -2149,7 +2194,35 @@ def update_readme(path: Path, section: str, guide_section: str = "") -> bool:
 # 博客 / 动态（RSS）单独输出
 # ---------------------------------------------------------------------------
 
-def render_news_section(intel_list: list[VendorIntel]) -> str:
+def _native_feed_vendors(intel_list: list[VendorIntel]) -> set[str]:
+    """返回**官网自带** RSS/Atom 的厂商 id 集合。
+
+    OPML 与 `llm-news-feeds.md` 都要用它来区分「官方原生源」与「本仓库自建源」，
+    两处各写一遍判断迟早会漂移，所以共用这一个。
+    """
+    out: set[str] = set()
+    for intel in intel_list:
+        for page in intel.news_pages:
+            if not page.ok:
+                continue
+            if page.stype == "feed" or page.feeds:
+                out.add(intel.vendor_id)
+                break
+    return out
+
+
+def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
+    """该厂商**会进订阅源**的文章：排除晚于今天的日期（源页面把日期写成未来的情形）。
+
+    `write_rss_feeds` 只对有此类文章的厂商出源，所以 OPML 与 `llm-news-feeds.md` 里
+    「本仓库自建源」的标注必须用**同一个判据** —— 否则当某厂商的文章日期全被误写成
+    未来时，文档会给出一个并不存在的订阅地址（死链），而两边各自看都「对」。
+    """
+    return [a for a in intel.all_news_articles if a.date <= today]
+
+
+def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
+                        merged_limit: int = RSS_MERGED_LIMIT) -> str:
     now = datetime.now()
     now_str = now.strftime("%Y-%m-%d %H:%M:%S")
     today = now.strftime("%Y-%m-%d")
@@ -2165,10 +2238,29 @@ def render_news_section(intel_list: list[VendorIntel]) -> str:
     lines.append("> 主文档每家仅展示**最新 5 篇**；**完整文章归档**按厂商拆分到 [`llm-news/`](llm-news/) 子目录"
                  "（每厂商一个 `.md`，全量罗列该来源所有文章）。")
     lines.append("> 可将同目录下的 `llm-news-feeds.opml` 导入任意 RSS 阅读器（如 Feedly / Inoreader / "
-                 "NetNewsWire / 本地阅读器）统一订阅。")
+                 "NetNewsWire / 本地阅读器）"
+                 + ("统一订阅（原生源 + 本仓库自建源，OPML 里分两组）。"
+                    if feeds_base else "订阅**官方原生源**。"))
+    if feeds_base:
+        site = _feeds_site_base(feeds_base)
+        lines.append(">")
+        lines.append("> 📡 **本仓库自建 RSS**：把下方归档直接转成订阅源，"
+                     "**官方没有原生 RSS 的厂商也能订阅**（标题同样已汉化，每日随巡检刷新）：")
+        if site:
+            lines.append(f"> - 网页浏览 / 一键订阅：[{site}]({site})"
+                         "（可按厂商筛选、搜索，页脚列出**全部有动态源的厂商**单源）")
+        lines.append(f"> - 合并流（聚合全部有动态源的厂商）：[`llm-news-all.xml`]({feeds_base}/llm-news-all.xml)"
+                     f"（最近 {merged_limit} 条，带厂商前缀，可按 `category` 过滤）")
+        lines.append(f"> - 单厂商源：`{feeds_base}/llm-news-{{vendor_id}}.xml`"
+                     "（把 `{vendor_id}` 换成下方括号里的厂商 id，如 `llm-news-openai.xml`）")
+        lines.append("> - ⚠️ 合并流与各厂商单源**内容重叠**，二选一订阅即可（都订会出现重复条目）；"
+                     "合并流只收有日期的条目且有上限，**要订阅全部有动态源的厂商请用单源或浏览页页脚**。")
     lines.append("")
 
     vendors_with_news = [v for v in intel_list if v.news_pages]
+    # 官网自带 RSS/Atom 的厂商：其余厂商才是自建源的真正用户，逐条标出来，
+    # 否则读者看到「未发现 RSS/Atom 链接」会以为这家订不了 —— 而我们其实自建了一个。
+    native_ids = _native_feed_vendors(vendors_with_news)
     feed_count = 0
     vendors_with_articles = 0
     for intel in vendors_with_news:
@@ -2191,6 +2283,10 @@ def render_news_section(intel_list: list[VendorIntel]) -> str:
             else:
                 hint = "页面可见文本过少，可能为动态渲染" if page.sparse else "页面 HTML 中未发现 RSS/Atom 链接"
                 lines.append(f"  - ⚠️ {hint}，已尝试直接从页面提取文章条目")
+        if feeds_base and intel.vendor_id not in native_ids and _rss_articles(intel, today):
+            lines.append(f"- 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）："
+                         f"[`llm-news-{intel.vendor_id}.xml`]"
+                         f"({feeds_base}/llm-news-{intel.vendor_id}.xml)")
         if intel.news_articles:
             vendors_with_articles += 1
             lines.append(f"- 📰 **最新文章**（官方源抓取于 {today}，标题自动汉化）：")
@@ -2240,8 +2336,23 @@ def update_news_md(path: Path, section: str) -> bool:
     return True
 
 
-def write_opml(path: Path, intel_list: list[VendorIntel]) -> int:
-    """将发现的 RSS/Atom 源写成 OPML（可导入 RSS 阅读器）。返回源数量。"""
+def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
+               merged_limit: int = RSS_MERGED_LIMIT) -> int:
+    """将发现的 RSS/Atom 源写成 OPML（可导入 RSS 阅读器）。返回订阅源总数。
+
+    OPML 是读者真正会**导入**的那份清单，所以它必须覆盖"我能订到的全部"，而不只是
+    "厂商官网自带的那些"：实测官网有原生 RSS 的只有 3/15，另外 12 家官方页面根本没有
+    feed —— 而本仓库恰恰为它们自建了订阅源。只列原生源的清单会让人以为其余 12 家订不了。
+
+    因此 feeds_base 非空（即线上 / CI）时再追加两组：
+    - 「自建源」：**只收没有原生源的那几家**。有原生源的厂商不重复收录 —— 自建源内容
+      与其原生源重叠，两组都订会在阅读器里出现重复条目。
+    - 「聚合流」：合并流，单条订阅即可覆盖全部有动态源的厂商；与上面各组同样重叠，
+      单独成组便于读者按需只勾一个。
+
+    merged_limit 只用于条目文案里的「最近 N 条」——必须跟 `write_rss_feeds` 实际用的
+    上限一致，否则 `--rss-limit` 一改，清单上的数字就是错的。
+    """
     outlines: list[tuple[str, str, str, str]] = []  # (brand, title, xmlUrl, htmlUrl)
     seen_feeds: set[str] = set()
     for intel in intel_list:
@@ -2263,6 +2374,34 @@ def write_opml(path: Path, intel_list: list[VendorIntel]) -> int:
         return (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
                 .replace('"', "&quot;"))
 
+    def group(title: str, rows: list[tuple[str, str, str]]) -> list[str]:
+        """一组 outline；rows 为 (显示名, xmlUrl, htmlUrl)。"""
+        out = [f'    <outline text="{esc(title)}" title="{esc(title)}">']
+        for name, xml_url, html_url in rows:
+            out.append(
+                f'      <outline type="rss" text="{esc(name)}" title="{esc(name)}" '
+                f'xmlUrl="{esc(xml_url)}" htmlUrl="{esc(html_url)}"/>'
+            )
+        out.append("    </outline>")
+        return out
+
+    # 自建源：只收官网没有原生 RSS 的厂商（有原生源的不重复收录，避免阅读器里出现重复条目）
+    native_ids = _native_feed_vendors(intel_list)
+    site = _feeds_site_base(feeds_base)
+    today = datetime.now().strftime("%Y-%m-%d")
+    self_hosted: list[tuple[str, str, str]] = []
+    if feeds_base:
+        for intel in intel_list:
+            # 判据与 write_rss_feeds 出源的判据同源（_rss_articles）：否则文章日期全被
+            # 误写成未来的厂商会在这里列出、却没有对应的源文件（死链）。
+            if intel.vendor_id in native_ids or not _rss_articles(intel, today):
+                continue
+            self_hosted.append((
+                f"{intel.brand} - 自建源（官方没有原生 RSS）",
+                f"{feeds_base}/llm-news-{intel.vendor_id}.xml",
+                site or feeds_base,
+            ))
+
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
@@ -2272,29 +2411,36 @@ def write_opml(path: Path, intel_list: list[VendorIntel]) -> int:
         f"    <dateCreated>{esc(now)}</dateCreated>",
         "  </head>",
         "  <body>",
-        '    <outline text="LLM Vendors" title="LLM Vendors">',
     ]
-    for _brand, title, xml_url, html_url in outlines:
-        lines.append(
-            f'      <outline type="rss" text="{esc(title)}" title="{esc(title)}" '
-            f'xmlUrl="{esc(xml_url)}" htmlUrl="{esc(html_url)}"/>'
-        )
-    lines.append("    </outline>")
+    lines += group("LLM Vendors · 官方原生源", [(t, x, h) for _b, t, x, h in outlines])
+    if self_hosted:
+        lines += group("LLM Vendors · 自建源（官方没有原生 RSS）", self_hosted)
+        lines += group("LLM Vendors · 聚合流（订阅这一个 = 全部有动态源的厂商）", [(
+            "全部厂商 - 合并流（最近 %d 条，带厂商前缀）" % merged_limit,
+            f"{feeds_base}/llm-news-all.xml",
+            site or feeds_base,
+        )])
     lines.append("  </body>")
     lines.append("</opml>")
     content = "\n".join(lines) + "\n"
+    total = len(outlines) + len(self_hosted) + (1 if self_hosted else 0)
     if path.exists():
         old = path.read_text(encoding="utf-8")
         masked = re.sub(r"<dateCreated>[^<]*</dateCreated>",
                         "<dateCreated>__TS__</dateCreated>", old)
         if masked == re.sub(r"<dateCreated>[^<]*</dateCreated>",
                             "<dateCreated>__TS__</dateCreated>", content):
-            return len(outlines)
+            return total
     path.write_text(content, encoding="utf-8", newline="\n")
-    return len(outlines)
+    return total
 
 
-_ARCHIVE_ARTICLE_RE = re.compile(r"^\d+\.\s+\[([^\]]+)\]\(([^)]+)\)(?:（([^）]+)）)?$")
+# 标题用贪婪 `(.+)` 而不是 `[^\]]+`：标题里可能出现方括号（实测 huggingface 有 3 篇
+# "Director of Machine Learning Insights [Part 4]"），`[^\]]+` 会停在第一个 `]` 上导致
+# **整行失配** —— 这些条目既进不了 RSS，又因为增量合并靠这个正则读回旧归档而可能被静默
+# 丢掉（归档"只增不减"的保证会被破坏）。贪婪匹配会一直回溯到最后一个 `](http…`，
+# 尾部锚定保证不会多吞。
+_ARCHIVE_ARTICLE_RE = re.compile(r"^\d+\.\s+\[(.+)\]\((https?://[^)]+)\)(?:（([^）]+)）)?$")
 
 
 def parse_archived_articles(arch_path: Path) -> list[Article]:
@@ -2307,7 +2453,8 @@ def parse_archived_articles(arch_path: Path) -> list[Article]:
             m = _ARCHIVE_ARTICLE_RE.match(line.strip())
             if m:
                 title, url, date_val = m.group(1), m.group(2), m.group(3) or ""
-                articles.append(Article(title=title, url=url, date=date_val))
+                articles.append(Article(title=title, url=url,
+                                        date=_drop_future_date(date_val)))
     except Exception:
         pass
     return articles
@@ -2337,12 +2484,18 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
         # 1) 增量合并既有归档：新抓取排前，历史已有且本次未抓到的条目追加在后，永不丢失
         existing = parse_archived_articles(arch_path)
         merged_arts: list[Article] = list(intel.all_news_articles)
-        seen_urls = {_norm_url(a.url) for a in merged_arts}
+        by_url = {_norm_url(a.url): a for a in merged_arts}
         for old_art in existing:
             u_norm = _norm_url(old_art.url)
-            if u_norm not in seen_urls:
-                seen_urls.add(u_norm)
+            fresh = by_url.get(u_norm)
+            if fresh is None:
+                by_url[u_norm] = old_art
                 merged_arts.append(old_art)
+            elif not fresh.date and old_art.date:
+                # 本次抓取没拿到日期（页面卡片改版、标题被截断等），沿用归档里已有的：
+                # 日期一旦丢失就永久丢失（归档排序、RSS pubDate、README 展示都依赖它），
+                # 而且重抓也补不回来 —— 实测 cohere 博客页改版后 9 条会退化成无日期。
+                fresh.date = old_art.date
         dated = sorted((a for a in merged_arts if a.date),
                        key=lambda a: a.date, reverse=True)
         undated = [a for a in merged_arts if not a.date]
@@ -2389,6 +2542,281 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
         files += 1
         total_articles += len(arts)
     return files, total_articles, files_changed
+
+
+# ---------------------------------------------------------------------------
+# 自建 RSS 订阅源（llm-news/ 归档 → RSS 2.0，托管在 GitHub Pages）
+# ---------------------------------------------------------------------------
+
+def default_feeds_base() -> str:
+    """推导订阅源的对外前缀（GitHub Pages 地址）。
+
+    Actions 会注入 GITHUB_REPOSITORY=owner/repo：项目页的 Pages 根是
+    https://owner.github.io/repo/，而项目主页仓（owner.github.io）本身就是根。
+    本地运行拿不到该变量时返回空串——此时省略 <atom:link rel="self">，
+    对任何阅读器都没有影响。
+    """
+    slug = os.environ.get("GITHUB_REPOSITORY", "").strip()
+    if "/" not in slug:
+        return ""
+    owner, repo = slug.split("/", 1)
+    if not owner or not repo:
+        return ""
+    if repo.lower() == f"{owner.lower()}.github.io":
+        return f"https://{owner}.github.io/feeds"
+    return f"https://{owner}.github.io/{repo}/feeds"
+
+
+def _feeds_site_base(feeds_base: str) -> str:
+    """由订阅源前缀反推**浏览页**地址（docs/index.html 的对外 URL）。
+
+    feeds_base 形如 `https://owner.github.io/repo/feeds`，而浏览页在站点根：
+    `https://owner.github.io/repo/`。空串（本地运行）时返回空串，调用方据此省略链接
+    —— 与 feeds_base 一样，不猜域名。
+    """
+    if not feeds_base:
+        return ""
+    if feeds_base.endswith("/feeds"):
+        return feeds_base[: -len("/feeds")] + "/"
+    return feeds_base.rstrip("/") + "/"
+
+
+def _rss_esc(text: str) -> str:
+    """XML 文本 / 属性转义（与 write_opml 内的 esc 同源，独立出来供 item 复用）。"""
+    return (text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            .replace('"', "&quot;").replace("'", "&apos;"))
+
+
+def _rss_pubdate(day: str) -> str:
+    """YYYY-MM-DD → RFC 822（RSS pubDate 要求的格式），按当天 UTC 00:00 解释。"""
+    try:
+        dt = datetime.strptime(day, "%Y-%m-%d")
+    except (TypeError, ValueError):
+        return ""
+    return format_datetime(dt.replace(tzinfo=timezone.utc))
+
+
+def _rss_title(title: str) -> tuple[str, str]:
+    """返回 (订阅源里的标题, 需要移入 description 的完整原文)。
+
+    归档里有一批「标题其实是整段正文」的脏数据（页面锚文本提取所致，约占 5.8%），
+    另有以 … 结尾的截断标题。原样塞进阅读器会撑爆列表，因此超长标题截断、
+    完整文本改放 description——信息不丢，列表可读。
+    """
+    text = title.strip()
+    if len(text) <= RSS_TITLE_MAX and not text.endswith("…"):
+        return text, ""
+    return text[:RSS_TITLE_MAX].rstrip() + "…", text
+
+
+def _rss_item(art: Article, title_zh: str, brand: str = "",
+              source_url: str = "") -> str:
+    """单条 <item>；合并流传 brand 以加厂商前缀与 <category>，便于阅读器过滤。
+
+    source_url 非空时额外写 <source url>：RSS 2.0 用它标注"这条来自哪个源"。
+    这里指向该厂商的单厂商订阅源，于是合并流**自描述**了厂商→源的映射 ——
+    docs/index.html 的浏览页据此生成「按厂商订阅」链接，无需硬编码厂商清单
+    （硬编码会随厂商增删而漂移）。
+    """
+    short, truncated_from = _rss_title(title_zh)
+    if brand:
+        short = f"[{brand}] {short}"
+    notes: list[str] = []
+    if truncated_from:
+        notes.append(f"完整标题：{truncated_from}")
+    if art.title.strip() and art.title.strip() != title_zh.strip():
+        notes.append(f"原文标题：{art.title.strip()}")
+    lines = [
+        "    <item>",
+        f"      <title>{_rss_esc(short)}</title>",
+        f"      <link>{_rss_esc(art.url)}</link>",
+        f'      <guid isPermaLink="true">{_rss_esc(art.url)}</guid>',
+    ]
+    pub = _rss_pubdate(art.date)
+    if pub:
+        lines.append(f"      <pubDate>{pub}</pubDate>")
+    if brand:
+        lines.append(f"      <category>{_rss_esc(brand)}</category>")
+    if brand and source_url:
+        lines.append(f'      <source url="{_rss_esc(source_url)}">{_rss_esc(brand)}</source>')
+    if notes:
+        lines.append(f"      <description>{_rss_esc(' | '.join(notes))}</description>")
+    lines.append("    </item>")
+    return "\n".join(lines)
+
+
+def _rss_channel(title: str, description: str, items: list[str], self_url: str,
+                 build_date: str, site_url: str = REPO_URL) -> str:
+    head = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
+        "  <channel>",
+        f"    <title>{_rss_esc(title)}</title>",
+        f"    <link>{_rss_esc(site_url)}</link>",
+        f"    <description>{_rss_esc(description)}</description>",
+        "    <language>zh-cn</language>",
+        "    <generator>crawler_llm_intel.py (free-llm-intel)</generator>",
+    ]
+    if self_url:
+        head.append(f'    <atom:link href="{_rss_esc(self_url)}" rel="self"'
+                    ' type="application/rss+xml"/>')
+    # lastBuildDate 取最新文章日期而不是当前时间：产物因此是确定性的，
+    # 内容没变时不会因为「又跑了一次」而改写文件（同 write_opml 的 dateCreated 屏蔽）。
+    pub = _rss_pubdate(build_date)
+    if pub:
+        head.append(f"    <lastBuildDate>{pub}</lastBuildDate>")
+    return "\n".join(head + items + ["  </channel>", "</rss>", ""])
+
+
+def _rss_mask_builddate(text: str) -> str:
+    return re.sub(r"<lastBuildDate>[^<]*</lastBuildDate>",
+                  "<lastBuildDate>__T__</lastBuildDate>", text)
+
+
+def _write_json(path: Path, payload: dict) -> bool:
+    """确定性 JSON 落盘：键序固定、不含时间戳，内容无变化则不重写。
+
+    与 `_rss_write` 同一套约定 —— 否则每天巡检都会因为「又跑了一次」刷出无意义 diff。
+    换行显式写 `\n`：Windows 上 `write_text` 默认转 CRLF，会让整个文件看起来全改了。
+    """
+    text = json.dumps(payload, ensure_ascii=False, indent=2) + "\n"
+    if path.exists():
+        try:
+            if path.read_text(encoding="utf-8") == text:
+                return False
+        except Exception:
+            pass
+    path.write_text(text, encoding="utf-8", newline="\n")
+    return True
+
+
+def _rss_write(path: Path, content: str) -> bool:
+    """内容无变化则不重写（屏蔽 lastBuildDate 后比对）。返回是否实际改写。"""
+    if path.exists():
+        try:
+            old = _rss_mask_builddate(path.read_text(encoding="utf-8"))
+            if old == _rss_mask_builddate(content):
+                return False
+        except Exception:
+            pass
+    path.write_text(content, encoding="utf-8", newline="\n")
+    return True
+
+
+def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str = "",
+                    merged_limit: int = RSS_MERGED_LIMIT,
+                    clean_removed: bool = True) -> tuple[int, int, int, int]:
+    """把各厂商归档文章写成 RSS 2.0 订阅源（GitHub Pages 托管）。
+
+    产出 `<out_dir>/llm-news-all.xml`（合并流，最近 merged_limit 条）与每厂商一个
+    `<out_dir>/llm-news-<vendor_id>.xml`（等于该厂商全量归档，新订阅者可一次补齐历史）。
+
+    日期规则：
+      * **晚于今天**的日期必然是源页面写错了（真实案例：cohere 一篇 2026-07-10 的文章，
+        博客卡片上印着 "Dec 10, 2026"，归档里已就地修正为 2026-07-10），一律排除——
+        RSS 是按时间排序的流，一条未来日期会永远钉在列表顶端；
+      * **无日期**的条目只进单厂商源（不写 pubDate、排在末尾），不进合并流：合并流是
+        「最近更新」，没有日期的条目无法参与排序。归档 .md 里它们同样列在最后。
+    若把无日期条目一并丢弃，Google Gemini / Meta Llama 这类整源都抓不到日期的厂商会直接
+    没有订阅源——那还不如不做。被排除的条数会打印出来，让上游日期提取问题暴露在巡检日志里。
+
+    返回 (源文件数, 收录条目数, 实际改写文件数, 因未来日期被排除的条目数)。
+    """
+    out_dir.mkdir(parents=True, exist_ok=True)
+    base = base_url.rstrip("/")
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    # 标题汉化走 translate_to_zh 的磁盘缓存（.translate_cache.json）：归档过的标题
+    # 全部命中缓存，不产生额外翻译请求。
+    per_vendor: list[tuple[str, str, list[Article], list[str]]] = []
+    skipped = 0
+    for intel in intel_list:
+        # 判据与 OPML / llm-news-feeds.md 的自建源标注共用 `_rss_articles`：
+        # 三处必须一致，否则文档会标注出并不存在的源（或漏标真实存在的源）。
+        arts = _rss_articles(intel, today)
+        skipped += len(intel.all_news_articles) - len(arts)
+        if not arts:
+            continue
+        with ThreadPoolExecutor(max_workers=6) as pool:
+            titles_zh = list(pool.map(translate_to_zh, (a.title for a in arts)))
+        per_vendor.append((intel.brand, intel.vendor_id, arts, titles_zh))
+
+    if clean_removed:
+        current_ids = {row[1] for row in per_vendor}
+        for old in out_dir.glob("llm-news-*.xml"):
+            if old.name == "llm-news-all.xml":
+                continue
+            if old.stem.removeprefix("llm-news-") not in current_ids:
+                old.unlink()
+
+    files = items = changed = 0
+
+    # 1) 合并流：只取有日期的条目，跨厂商按日期倒序，同一 URL 只留一条
+    #    （不同厂商可能转发同一份公告）
+    merged: list[tuple[str, str, Article, str]] = []
+    for brand, vid, arts, titles_zh in per_vendor:
+        merged.extend((brand, vid, art, t) for art, t in zip(arts, titles_zh) if art.date)
+    merged.sort(key=lambda row: row[2].date, reverse=True)
+    seen: set[str] = set()
+    picked: list[tuple[str, str, Article, str]] = []
+    for row in merged:
+        key = _norm_url(row[2].url)
+        if key in seen:
+            continue
+        seen.add(key)
+        picked.append(row)
+        if len(picked) >= merged_limit:
+            break
+    if picked:
+        # 每条带上「本厂商单源」地址，让合并流自描述厂商→源映射（见 _rss_item 注释）
+        items_xml = [_rss_item(art, title_zh, brand,
+                              f"{base}/llm-news-{vid}.xml" if base else "")
+                     for brand, vid, art, title_zh in picked]
+        files += 1
+        items += len(items_xml)
+        changed += _rss_write(
+            out_dir / "llm-news-all.xml",
+            _rss_channel(
+                "LLM 厂商动态（合并流）",
+                f"汇总 {len(per_vendor)} 家 LLM 厂商官方博客 / 更新日志的新文章，标题已汉化；"
+                "官方没有 RSS 的厂商也在这里（由 free-llm-intel 定时巡检官方页面归档生成）。",
+                items_xml, f"{base}/llm-news-all.xml" if base else "", picked[0][2].date))
+
+    # 2) 每厂商单源：等于该厂商全量归档
+    for brand, vendor_id, arts, titles_zh in per_vendor:
+        items_xml = [_rss_item(art, t) for art, t in zip(arts, titles_zh)]
+        files += 1
+        items += len(items_xml)
+        changed += _rss_write(
+            out_dir / f"llm-news-{vendor_id}.xml",
+            _rss_channel(
+                f"{brand} 官方动态",
+                f"{brand} 官方博客 / 更新日志归档（标题汉化，共 {len(items_xml)} 篇），"
+                "由 free-llm-intel 定时巡检官方页面生成。",
+                items_xml, f"{base}/llm-news-{vendor_id}.xml" if base else "",
+                arts[0].date))
+
+    # 3) 厂商索引：供浏览页 docs/index.html 列出**全部**厂商的订阅入口。
+    #    光靠合并流是不够的 —— 合并流有 200 条上限、且只收有日期的条目，于是
+    #    「文章全无日期」（google_gemini / meta_llama）或「文章都偏旧、排不进前 200」
+    #    （groq）的厂商**根本不会出现**（实测漏 3/15，而这正是"官方没有原生 RSS"
+    #    最需要被订到的那几家）。索引由这里顺手产出，与 feed 同源，不存在漂移。
+    #    无时间戳：内容不变就不重写。
+    changed += _write_json(out_dir / "vendors.json", {
+        "vendors": [
+            {
+                "id": vendor_id,
+                "brand": brand,
+                "feed": f"{base}/llm-news-{vendor_id}.xml" if base
+                        else f"llm-news-{vendor_id}.xml",
+                "articles": len(arts),
+                # arts 已按日期倒序、无日期的排在最后，所以第一条有日期的就是最新日期
+                "latest": next((a.date for a in arts if a.date), ""),
+            }
+            for brand, vendor_id, arts, _t in per_vendor
+        ]
+    })
+    return files, items, changed, skipped
 
 
 # ---------------------------------------------------------------------------
@@ -2559,6 +2987,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--readme", default="README.md", help="输出 README 路径（默认 ./README.md）")
     parser.add_argument("--news-md", default="llm-news-feeds.md", help="博客/动态清单输出路径")
     parser.add_argument("--news-opml", default="llm-news-feeds.opml", help="RSS OPML 输出路径")
+    parser.add_argument("--feeds-dir", default="docs/feeds",
+                        help="自建 RSS 输出目录（默认 ./docs/feeds，即 GitHub Pages 的发布目录）")
+    parser.add_argument("--feeds-base", default="",
+                        help="自建 RSS 的对外前缀；默认按 GITHUB_REPOSITORY 推导 GitHub Pages 地址")
+    parser.add_argument("--rss-limit", type=int, default=RSS_MERGED_LIMIT,
+                        help=f"合并流最多收录条数（默认 {RSS_MERGED_LIMIT}；单厂商源不设上限）")
     parser.add_argument("--delay", type=float, default=0.3, help="每次请求间隔秒数（默认 0.3）")
     parser.add_argument("--timeout", type=float, default=20.0, help="读取超时秒数（默认 20）")
     parser.add_argument("--only", action="append", default=[],
@@ -2743,9 +3177,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"      快照状态已更新：{SNAPSHOT_STATE}")
 
     print("      开始渲染 README ...")
+    # 自建 RSS 的对外前缀与输出目录：README 与博客总表都要引用订阅地址，
+    # 因此必须在渲染之前解析（CI 里由 GITHUB_REPOSITORY 推导 Pages 地址）。
+    feeds_base = args.feeds_base.strip() or default_feeds_base()
+    feeds_dir = (root / args.feeds_dir) if not Path(args.feeds_dir).is_absolute() else Path(args.feeds_dir)
     records = order_vendor_records(intel_list)
     guide_section = render_guide_block(records)
-    section = render_intel_section(intel_list, elapsed, records)
+    section = render_intel_section(intel_list, elapsed, records, feeds_base)
     readme_path = (root / args.readme) if not Path(args.readme).is_absolute() else Path(args.readme)
     if args.only and readme_path.resolve() == (root / "README.md").resolve():
         print("      [info] 当前为 --only 局部调试运行：跳过全局 README.md 覆盖重写（防止清除其他厂商档案）。"
@@ -2763,18 +3201,35 @@ def main(argv: list[str] | None = None) -> int:
         news_dir = news_md_path.parent / "llm-news"
         n_arch, n_arch_arts, n_arch_changed = write_news_archives(
             news_dir, intel_list, clean_removed=False)
-        print("      [info] 当前为 --only 局部调试运行：跳过全局 llm-news-feeds.md 与 opml 覆盖重写；"
+        print("      [info] 当前为 --only 局部调试运行：跳过全局 llm-news-feeds.md、opml 与自建 RSS "
+              "覆盖重写；"
               f"llm-news/ 已更新 {n_arch} 个对应厂商归档文件（共 {n_arch_arts} 篇文章，改写 {n_arch_changed} 个）。")
     else:
-        news_changed = update_news_md(news_md_path, render_news_section(intel_list))
-        n_feeds = write_opml(opml_path, intel_list)
+        # write_news_archives 会把「新抓取 + 历史归档」的合并结果写回 intel.all_news_articles
+        # 与 intel.news_articles，而总表的「共 N 篇」和「最新 5 篇」都取自这两个字段 ——
+        # 因此它必须排在 update_news_md 之前：否则总表用的是合并前计数，会比归档文件少
+        # （归档保留了页面已不再链接的历史文章，实测差 1~4 篇）。
         news_dir = news_md_path.parent / "llm-news"
         n_arch, n_arch_arts, n_arch_changed = write_news_archives(
             news_dir, intel_list, clean_removed=True)
+        news_changed = update_news_md(
+            news_md_path,
+            render_news_section(intel_list, feeds_base, merged_limit=args.rss_limit))
+        n_feeds = write_opml(opml_path, intel_list, feeds_base,
+                             merged_limit=args.rss_limit)
         print(f"      {news_md_path.name} {'已刷新' if news_changed else '无内容变化，未改写'}；"
-              f"{opml_path.name}（{n_feeds} 个 RSS/Atom 源）")
+              f"{opml_path.name}（{n_feeds} 个订阅源"
+              f"{'：官方原生 + 自建源 + 聚合流' if feeds_base else '（仅官方原生源，未推导出 Pages 前缀）'}）")
         print(f"      llm-news/ 归档 {n_arch} 个厂商文件、共 {n_arch_arts} 篇文章"
               f"（本次实际改写 {n_arch_changed} 个文件）")
+        # 同样必须在 write_news_archives 之后：RSS 要用的正是这份全量、已排序的列表。
+        n_rss, n_rss_items, n_rss_changed, n_rss_skipped = write_rss_feeds(
+            feeds_dir, intel_list, feeds_base, merged_limit=args.rss_limit)
+        print(f"      {args.feeds_dir} 自建 RSS {n_rss} 个源、{n_rss_items} 条"
+              f"（本次实际改写 {n_rss_changed} 个文件）")
+        if n_rss_skipped:
+            print(f"      [warn] {n_rss_skipped} 条因发布日期缺失或晚于今天未进订阅流"
+                  "（归档 .md 中仍保留）——多为源页面日期提取有误，建议核查。")
 
     # 控制台汇总
     total = sum(len(v.intel_pages) for v in intel_list)

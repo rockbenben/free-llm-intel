@@ -2,6 +2,18 @@ name: refresh-intel
 
 # 每天 UTC 03:19（北京时间 11:19）自动巡检官方页面；也可在 Actions 页面手动触发。
 #
+# ⚠ 改 cron 前必读：时段有**硬约束**，不是随便挑的。
+#   调度必须落在「北京日期 == UTC 日期」的时段，即**北京 08:00–24:00**（UTC 00:00–16:00）。
+#   落在北京 00:00–08:00 会让 runner 的 UTC 日期比北京早一天，而 crawler 的
+#   `_drop_future_date()` 正是拿 runner 本地日期当"今天"——国内厂商当天发的文章
+#   （日期=北京今天）会被判为未来日期而丢日期、进不了合并流（次日抓取才自愈）。
+#   现有 11:19 同时满足另外三点：① 已过美国工作日结束点（太平洋 17:00 = 北京 08:00
+#   夏令时 / 09:00 冬令时），前一天美国厂商的发布全部收齐；② 非整点分钟，避开
+#   Actions 的整点排队高峰；③ Gemini 免费层 RPD 在太平洋午夜（北京 16:00）重置，
+#   此刻额度桶已重置 19 小时且未被使用，距下次重置还有 4.7 小时可重试。
+#   若更看重国内厂商当日覆盖，可改北京 19:19（国内工作日 09:00–19:00 全收齐），
+#   代价是海外厂商的滞后从 3–11 小时拉到 11–19 小时。
+#
 # 流程：脚本抓取全部官方页并与 llm-intel-state.json 中的文本快照比对——
 #   1. 页面无变化：不重写产物、不产生提交；
 #   2. 仅新闻 / 博客变化：直接原子性提交到 main；
@@ -24,6 +36,13 @@ name: refresh-intel
 # pull --rebase 会被 git 直接拒绝——"cannot pull with rebase: You have unstaged
 # changes"，以 exit 128 中断，push 根本没机会运行。
 #
+# 自建 RSS：脚本把 llm-news/ 归档同时写成 docs/feeds/*.xml（RSS 2.0，含全厂商
+# 合并流与每厂商单源），与新闻产物在同一次提交里落盘。docs/ 就是 GitHub Pages 的
+# 发布目录，订阅地址形如 https://<owner>.github.io/<repo>/feeds/llm-news-all.xml；
+# 该地址由脚本按 Actions 注入的 GITHUB_REPOSITORY 自动推导，fork 后无需改代码。
+# docs/.nojekyll 关闭 Jekyll 处理，保证 XML 原样输出。官方没有 RSS/Atom 的厂商
+# （见 llm-news-feeds.md 里的「未发现 RSS/Atom 链接」）正是靠这个源自建订阅。
+#
 # 所需配置：
 #   - Settings -> Secrets and variables -> Actions 添加 GEMINI_API_KEY
 #     （免费申请：https://aistudio.google.com/apikey；无该 secret 时第 3 类变化
@@ -31,6 +50,8 @@ name: refresh-intel
 #   - Settings -> Actions -> General -> Workflow permissions：
 #     1) 选择 "Read and write permissions"；
 #     2) 勾选 "Allow GitHub Actions to create and approve pull requests"（极其关键，默认关闭）；
+#   - Settings -> Pages -> Source 选 "Deploy from a branch"，Branch=main、目录=/docs
+#     （自建 RSS 的托管；不配置则订阅地址 404，其余产物不受影响）；
 #   - 若 main 分支开启了 Branch Protection（分支保护），请在规则中允许 github-actions[bot] bypass；
 #   - schedule 仅在默认分支存在该 workflow 时才会被 GitHub 调度。
 #
@@ -118,6 +139,16 @@ jobs:
           AI_REVIEW_MODEL: ${{ vars.AI_REVIEW_MODEL }}
         run: python crawler_llm_intel.py --ai-review
 
+      # 产物与不变量校验：跑除 TestCrawlerCleanup 之外的全部用例（71 个）。
+      # 该类会删除仓库根目录的 .ai-changed，而它正是下一步 Decide commit path 的判据 ——
+      # 在 CI 里跑会把 PR 路由踩坏，所以只能本地跑。其余用例都不碰仓库文件
+      # （实测跑完标记存活、工作区干净），因此测试集由
+      # test_workflow_and_review.ci_suite() 按「全部 − 白名单」推导：
+      # 以后新增用例自动进 CI，不需要谁记得回来改这里（手写类清单必然漂移）。
+      # 放在抓取之后：校验的是本次即将提交的新产物，失败即拦住提交。
+      - name: Verify generated artifacts and invariants
+        run: python -c "import sys, unittest, test_workflow_and_review as t; sys.exit(0 if unittest.TextTestRunner(verbosity=2).run(t.ci_suite()).wasSuccessful() else 1)"
+
       - name: Decide commit path
         id: route
         run: |
@@ -156,7 +187,7 @@ jobs:
       - name: Commit snapshots and news after PR
         if: steps.route.outputs.kind == 'pr'
         run: |
-          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news
+          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds
           if git diff --cached --quiet; then
             echo "本次无快照 / 新闻变更。"
             exit 0
@@ -189,7 +220,7 @@ jobs:
             echo "存在待审的 ai/intel-update PR：直提时排除 README.md 与 profile_overrides.json"
             git checkout HEAD -- README.md profile_overrides.json
           fi
-          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news README.md profile_overrides.json
+          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds README.md profile_overrides.json
           if git diff --cached --quiet; then
             echo "本次无任何内容变更。"
             exit 0

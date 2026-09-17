@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM 厂商动态聚合 · free-llm-intel</title>
+<meta name="description" content="汇总各 LLM 厂商官方博客 / 更新日志的新文章，标题已汉化。官方没有 RSS 的厂商也在这里。">
+<link rel="alternate" type="application/rss+xml" title="LLM 厂商动态（合并流）" href="feeds/llm-news-all.xml">
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1f2328;
+    --muted: #656d76;
+    --line: #d8dee4;
+    --card: #ffffff;
+    --card-hover: #f6f8fa;
+    --accent: #0969da;
+    --chip-bg: #f6f8fa;
+    --chip-fg: #424a53;
+    --chip-active-bg: #0969da;
+    --chip-active-fg: #ffffff;
+    --warn-bg: #fff8c5;
+    --warn-line: #d4a72c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0d1117;
+      --fg: #e6edf3;
+      --muted: #8b949e;
+      --line: #30363d;
+      --card: #161b22;
+      --card-hover: #1c2128;
+      --accent: #58a6ff;
+      --chip-bg: #21262d;
+      --chip-fg: #c9d1d9;
+      --chip-active-bg: #1f6feb;
+      --chip-active-fg: #ffffff;
+      --warn-bg: #2d2410;
+      --warn-line: #9e6a03;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+
+  header { padding: 32px 0 18px; border-bottom: 1px solid var(--line); }
+  h1 { font-size: 24px; margin: 0 0 8px; letter-spacing: -0.2px; }
+  .lede { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+
+  .subscribe {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    background: var(--chip-bg); border: 1px solid var(--line);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  .subscribe code {
+    font: 12px/1.5 ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    word-break: break-all; flex: 1 1 260px; min-width: 0;
+  }
+  .btn {
+    appearance: none; border: 1px solid var(--line); background: var(--card);
+    color: var(--fg); border-radius: 6px; padding: 5px 12px; font-size: 13px;
+    cursor: pointer; white-space: nowrap;
+  }
+  .btn:hover { background: var(--card-hover); }
+  .btn.primary { background: var(--chip-active-bg); color: var(--chip-active-fg); border-color: transparent; }
+  .btn.primary:hover { filter: brightness(1.08); }
+
+  .controls { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 14px 0 10px; border-bottom: 1px solid var(--line); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  input[type=search] {
+    flex: 1 1 240px; min-width: 0; padding: 7px 11px; font-size: 14px;
+    color: var(--fg); background: var(--card);
+    border: 1px solid var(--line); border-radius: 6px;
+  }
+  input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .count { color: var(--muted); font-size: 13px; white-space: nowrap; }
+
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .chip {
+    appearance: none; cursor: pointer; font-size: 12.5px; line-height: 1;
+    padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--chip-bg); color: var(--chip-fg); white-space: nowrap;
+  }
+  .chip:hover { border-color: var(--accent); }
+  .chip[aria-pressed=true] { background: var(--chip-active-bg); color: var(--chip-active-fg); border-color: transparent; }
+  .chip .n { opacity: .62; margin-left: 5px; font-variant-numeric: tabular-nums; }
+  .hint { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+
+  ul.items { list-style: none; margin: 0; padding: 8px 0 40px; }
+  ul.items li { border-bottom: 1px solid var(--line); }
+  ul.items li:last-child { border-bottom: 0; }
+  .item { display: flex; gap: 14px; padding: 12px 4px; border-radius: 6px; }
+  .item:hover { background: var(--card-hover); }
+  .date {
+    flex: 0 0 84px; color: var(--muted); font-size: 12.5px; padding-top: 2px;
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  .date.none { font-style: italic; opacity: .7; }
+  .body { flex: 1 1 auto; min-width: 0; }
+  .title { font-size: 15px; line-height: 1.45; }
+  .title a { color: var(--fg); }
+  .title a:hover { color: var(--accent); }
+  .meta { margin-top: 5px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; font-size: 12.5px; color: var(--muted); }
+  .vendor {
+    display: inline-block; padding: 2px 8px; border-radius: 999px;
+    background: var(--chip-bg); border: 1px solid var(--line);
+    color: var(--chip-fg); font-size: 12px;
+  }
+  a.vendor:hover { border-color: var(--accent); text-decoration: none; }
+  .note { color: var(--muted); font-size: 12.5px; }
+
+  .msg { padding: 28px 0 60px; color: var(--muted); }
+  .msg.warn { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 8px; padding: 14px 16px; color: var(--fg); }
+  .msg.warn pre { margin: 8px 0 0; font-size: 12.5px; overflow-x: auto; }
+
+  footer { border-top: 1px solid var(--line); padding: 20px 0 48px; color: var(--muted); font-size: 13px; }
+  footer h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+  footer ul { list-style: none; margin: 0 0 18px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+  footer ul li { display: inline-flex; align-items: baseline; gap: 5px; }
+  footer ul li .n { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+  @media (max-width: 560px) {
+    .item { flex-direction: column; gap: 4px; }
+    .date { flex-basis: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>LLM 厂商动态聚合</h1>
+    <p class="lede">
+      汇总各厂商官方博客 / 更新日志的新文章，标题已汉化。
+      <strong>官方没有提供 RSS 的厂商也在这里</strong> —— 由
+      <a href="https://github.com/rockbenben/free-llm-intel">free-llm-intel</a>
+      定时巡检官方页面归档生成。
+    </p>
+    <div class="subscribe">
+      <code id="feed-url">feeds/llm-news-all.xml</code>
+      <a class="btn primary" id="subscribe-link" href="feeds/llm-news-all.xml">订阅聚合源</a>
+      <button class="btn" id="copy-btn" type="button">复制地址</button>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="row">
+      <input type="search" id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
+      <span class="count" id="count">加载中…</span>
+    </div>
+    <div class="chips" id="chips"></div>
+    <p class="hint">
+      筛选项只包含聚合流里出现过的厂商。文章全无日期或都偏旧的厂商（其文章不进聚合流）
+      请看页脚的「按厂商订阅」——那里列出全部<strong>有动态源</strong>的厂商。
+    </p>
+  </div>
+
+  <div id="msg" class="msg">正在加载聚合源…</div>
+  <ul class="items" id="items"></ul>
+
+  <footer>
+    <h2>按厂商订阅</h2>
+    <ul id="vendor-feeds"></ul>
+    <p id="vendor-index-note" style="display:none">
+      ⚠️ 厂商索引 <code>feeds/vendors.json</code> 未加载，下方只列出聚合流里出现过的厂商。
+      文章全无日期或都偏旧的厂商会缺失（它们不进聚合流），
+      完整清单见 llm-news-feeds.md。
+    </p>
+    <p>
+      厂商详情与最新 5 篇：
+      <a href="https://github.com/rockbenben/free-llm-intel/blob/main/llm-news-feeds.md">llm-news-feeds.md</a>
+      ｜ 仓库：
+      <a href="https://github.com/rockbenben/free-llm-intel">rockbenben/free-llm-intel</a>
+    </p>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var FEED = 'feeds/llm-news-all.xml';
+  var INDEX = 'feeds/vendors.json';
+  var state = { all: [], vendor: null, q: '' };
+
+  var el = {
+    items: document.getElementById('items'),
+    chips: document.getElementById('chips'),
+    count: document.getElementById('count'),
+    msg: document.getElementById('msg'),
+    q: document.getElementById('q'),
+    feedUrl: document.getElementById('feed-url'),
+    sub: document.getElementById('subscribe-link'),
+    copy: document.getElementById('copy-btn'),
+    vendorFeeds: document.getElementById('vendor-feeds'),
+    vendorIndexNote: document.getElementById('vendor-index-note')
+  };
+
+  function text(node, tag) {
+    var n = node.getElementsByTagName(tag)[0];
+    return n ? (n.textContent || '').trim() : '';
+  }
+
+  function fmtDate(rfc822) {
+    if (!rfc822) return '';
+    var d = new Date(rfc822);
+    if (isNaN(d.getTime())) return '';
+    var p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+
+  function parse(xmlText) {
+    var doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+    if (doc.getElementsByTagName('parsererror').length) throw new Error('XML 解析失败');
+    var nodes = doc.getElementsByTagName('item');
+    var out = [];
+    for (var i = 0; i < nodes.length; i++) {
+      var n = nodes[i];
+      var src = n.getElementsByTagName('source')[0];
+      var brand = src ? (src.textContent || '').trim() : text(n, 'category');
+      var feed = src ? (src.getAttribute('url') || '') : '';
+      var title = text(n, 'title');
+      // 合并流的 <title> 带 "[厂商] " 前缀，那是给不显示 <source> / <category> 的阅读器看的；
+      // 本页每行下面已经有厂商徽章，前缀就成了重复信息，显示时剥掉。
+      if (brand) {
+        var prefix = '[' + brand + '] ';
+        if (title.indexOf(prefix) === 0) title = title.slice(prefix.length);
+      }
+      out.push({
+        title: title,
+        link: text(n, 'link'),
+        date: fmtDate(text(n, 'pubDate')),
+        vendor: brand,
+        feed: feed,
+        note: text(n, 'description')
+      });
+    }
+    return out;
+  }
+
+  function vendorList() {
+    var seen = {}, list = [];
+    state.all.forEach(function (it) {
+      var key = it.vendor || '(未知来源)';
+      if (!seen[key]) {
+        seen[key] = { name: key, feed: it.feed, n: 0 };
+        list.push(seen[key]);
+      }
+      seen[key].n++;
+      if (!seen[key].feed && it.feed) seen[key].feed = it.feed;
+    });
+    list.sort(function (a, b) { return b.n - a.n || a.name.localeCompare(b.name, 'zh'); });
+    return list;
+  }
+
+  function renderChips() {
+    var list = vendorList();
+    el.chips.innerHTML = '';
+    var total = document.createElement('button');
+    total.type = 'button';
+    total.className = 'chip';
+    total.setAttribute('aria-pressed', state.vendor === null);
+    total.innerHTML = '全部<span class="n">' + state.all.length + '</span>';
+    total.onclick = function () { state.vendor = null; render(); };
+    el.chips.appendChild(total);
+
+    list.forEach(function (v) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip';
+      b.setAttribute('aria-pressed', state.vendor === v.name);
+      b.innerHTML = '';
+      b.appendChild(document.createTextNode(v.name));
+      var n = document.createElement('span');
+      n.className = 'n';
+      n.textContent = v.n;
+      b.appendChild(n);
+      b.onclick = function () {
+        state.vendor = (state.vendor === v.name) ? null : v.name;
+        render();
+      };
+      el.chips.appendChild(b);
+    });
+  }
+
+  function visible() {
+    var q = state.q.toLowerCase();
+    return state.all.filter(function (it) {
+      if (state.vendor !== null && (it.vendor || '(未知来源)') !== state.vendor) return false;
+      if (q && it.title.toLowerCase().indexOf(q) < 0) return false;
+      return true;
+    });
+  }
+
+  function renderItems() {
+    var rows = visible();
+    el.items.innerHTML = '';
+    var frag = document.createDocumentFragment();
+    rows.forEach(function (it) {
+      var li = document.createElement('li');
+      var box = document.createElement('div');
+      box.className = 'item';
+
+      var d = document.createElement('div');
+      d.className = 'date' + (it.date ? '' : ' none');
+      d.textContent = it.date || '无日期';
+      box.appendChild(d);
+
+      var body = document.createElement('div');
+      body.className = 'body';
+
+      var t = document.createElement('div');
+      t.className = 'title';
+      var a = document.createElement('a');
+      a.href = it.link;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = it.title;
+      t.appendChild(a);
+      body.appendChild(t);
+
+      var meta = document.createElement('div');
+      meta.className = 'meta';
+      var badge;
+      if (it.feed) {
+        badge = document.createElement('a');
+        badge.href = it.feed;
+        badge.title = '订阅该厂商的单厂商源';
+      } else {
+        badge = document.createElement('span');
+      }
+      badge.className = 'vendor';
+      badge.textContent = it.vendor || '未知来源';
+      meta.appendChild(badge);
+      if (it.note) {
+        var note = document.createElement('span');
+        note.className = 'note';
+        note.textContent = it.note;
+        meta.appendChild(note);
+      }
+      body.appendChild(meta);
+      box.appendChild(body);
+      li.appendChild(box);
+      frag.appendChild(li);
+    });
+    el.items.appendChild(frag);
+    el.count.textContent = rows.length + ' / ' + state.all.length + ' 条';
+    el.msg.style.display = rows.length ? 'none' : 'block';
+    if (!rows.length) el.msg.textContent = '没有匹配的条目。';
+  }
+
+  function render() {
+    renderChips();
+    renderItems();
+  }
+
+  function renderVendorFeeds(index) {
+    var list = [];
+    if (index && index.vendors && index.vendors.length) {
+      list = index.vendors.map(function (v) {
+        return { name: v.brand || v.id, feed: v.feed, n: v.articles, latest: v.latest };
+      });
+    } else {
+      // 索引缺失时退回「从聚合流里能看到的厂商」，并说明不完整
+      list = vendorList().filter(function (v) { return v.feed; });
+    }
+    list.sort(function (a, b) {
+      return String(b.latest || '').localeCompare(String(a.latest || '')) ||
+             String(a.name).localeCompare(String(b.name), 'zh');
+    });
+    el.vendorFeeds.innerHTML = '';
+    list.forEach(function (v) {
+      var li = document.createElement('li');
+      var a = document.createElement('a');
+      a.href = v.feed;
+      a.textContent = v.name;
+      li.appendChild(a);
+      if (v.n) {
+        var n = document.createElement('span');
+        n.className = 'n';
+        n.textContent = v.n + ' 篇';
+        li.appendChild(n);
+      }
+      el.vendorFeeds.appendChild(li);
+    });
+    if (!list.length) {
+      el.vendorFeeds.innerHTML = '<li>（索引缺失）</li>';
+    }
+  }
+
+  el.q.addEventListener('input', function () {
+    state.q = el.q.value.trim();
+    renderItems();
+  });
+
+  el.copy.addEventListener('click', function () {
+    var url = new URL(el.sub.getAttribute('href'), location.href).href;
+    var done = function () {
+      el.copy.textContent = '已复制';
+      setTimeout(function () { el.copy.textContent = '复制地址'; }, 1500);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done, function () { prompt('复制订阅地址：', url); });
+    } else {
+      prompt('复制订阅地址：', url);
+    }
+  });
+
+  // 用绝对地址显示/订阅，方便直接粘进阅读器
+  el.feedUrl.textContent = new URL(FEED, location.href).href;
+
+  // 厂商索引是可选的：缺失时页面照常工作，只是「按厂商订阅」退化成
+  // 「聚合流里能看到的那几家」，并在页脚注明不完整。
+  var loadIndex = fetch(INDEX, { cache: 'no-cache' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .catch(function () { return null; });
+
+  fetch(FEED, { cache: 'no-cache' })
+    .then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    })
+    .then(function (txt) {
+      state.all = parse(txt);
+      if (!state.all.length) throw new Error('聚合源里没有条目');
+      render();
+      return loadIndex.then(function (index) {
+        renderVendorFeeds(index);
+        if (!index) el.vendorIndexNote.style.display = '';
+      });
+    })
+    .catch(function (e) {
+      el.count.textContent = '加载失败';
+      el.msg.className = 'msg warn';
+      el.msg.style.display = 'block';
+      el.msg.innerHTML =
+        '<strong>无法读取 ' + FEED + '</strong>（' + e.message + '）' +
+        '<br>本页需要在 http(s) 下访问 —— 浏览器禁止 <code>file://</code> 页面读取本地 XML。' +
+        '<br>本地预览：在 <code>docs/</code> 目录执行 <code>python -m http.server</code> 后访问 ' +
+        '<code>http://localhost:8000/</code>；线上请确认 GitHub Pages 已开启（Settings → Pages，' +
+        'Source 选 Deploy from a branch、Branch=main、目录=/docs）。';
+    });
+})();
+</script>
+</body>
+</html>

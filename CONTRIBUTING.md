@@ -50,14 +50,26 @@ python crawler_llm_intel.py --only <vendor_id> --no-browser
 # 2. 确认抓取无误后，执行全量巡检生成完整 README 与博客总表（建议加 --no-news 快速生成）
 python crawler_llm_intel.py --no-browser --no-news
 
-# 3. 运行本地自动化测试套件
+# 3. 运行本地自动化测试套件（全部用例，含会删 .ai-changed 的 TestCrawlerCleanup）
 python -m unittest discover
 
 # 4. 确认 README 表格与相应归档文件正常后再提交
 git diff README.md
 ```
 
-- **不要手工编辑 README 的两个自动生成区块**：`LLM-GUIDE:BEGIN/END`（项目介绍后的白嫖攻略）与 `LLM-INTEL:BEGIN/END`（文末厂商总表），也不要手工编辑 `llm-news-feeds.md` / `llm-news/` 的生成内容——它们在完整运行时会被自动重新渲染。人工说明可放在区块之外。
+- **测试集有两个，别搞混**：本地用 `unittest discover`（全部）；CI 用
+  `test_workflow_and_review.ci_suite()`（全部 − `CI_EXCLUDED_CLASSES`，目前只排除
+  `TestCrawlerCleanup`）。排除的原因是该用例会删除仓库根目录的 `.ai-changed`，而它是
+  workflow「Decide commit path」判定走 PR 还是直提的判据 —— 在 CI 里跑会把 PR 路由踩坏。
+  取集是**从全量推导**的，新增测试类会自动进 CI；若某个新用例确实要动仓库文件，
+  把它加进 `CI_EXCLUDED_CLASSES` 并在注释里写明理由。
+- **新增产物或新增守卫时，顺手确认它在 CI 里真的会跑**（`ci_suite()` 取到即可）——
+  「测试写了但 CI 不跑」和「没写测试」在故障面前是一回事。
+
+- **不要手工编辑 README 的两个自动生成区块**：`LLM-GUIDE:BEGIN/END`（项目介绍后的白嫖攻略）与 `LLM-INTEL:BEGIN/END`（文末厂商总表），也不要手工编辑 `llm-news-feeds.md` / `llm-news-feeds.opml` / `llm-news/` / `docs/feeds/` 的生成内容——它们在完整运行时会被自动重新渲染。人工说明可放在区块之外。
+- `llm-news-feeds.opml` 的**自建源**分组只在能推导出 Pages 前缀时（CI 注入 `GITHUB_REPOSITORY`）才会写；本地跑推不出前缀，只写「官方原生源」一组——别把本地生成的 OPML 当成线上形态。厂商**官网自带** RSS 的判断（`_native_feed_vendors`）被 OPML 与 `llm-news-feeds.md` 共用，改一处即可，不要在两处各写一遍判断。
+- `docs/feeds/*.xml` 与 `docs/feeds/vendors.json` 是自建 RSS 订阅源与厂商索引（GitHub Pages 从这里发布），**只由脚本生成**。注意 `--no-news` 会跳过整条新闻链路，因此也不会刷新它们；改动了归档相关的抓取 / 排序 / 清洗逻辑时，请跑一次**不带 `--no-news`** 的巡检确认产物。新增厂商后订阅源会自动多一个 `llm-news-<vendor_id>.xml`、索引自动多一条，已下线厂商的旧源会被清理。
+- `docs/index.html` 是自建 RSS 的**浏览页**（读 `docs/feeds/` 下的订阅源渲染成可筛选、可搜索的列表），**人工维护、不参与巡检**，改它不会与脚本产物冲突。注意页面里的厂商清单来自 `feeds/vendors.json`，**不要在页面里硬编码厂商列表**（会随厂商增删而漂移）；`docs/.nojekyll` 关闭 Jekyll，不要删除。
 - `.translate_cache.json` 是本地缓存，不要提交。
 - commit message 只描述变更内容本身。
 
