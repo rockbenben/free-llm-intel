@@ -199,6 +199,10 @@ GUIDE_META: dict[str, dict] = {
                       "short": "$0 档 100 万请求是**观测额度**非推理额度；推理需付费部署"},
     "digitalocean_genai": {"tiers": ["onetime"], "signup": "card", "scenarios": ["credit"],
                            "short": "$5 / 90 天通用试用金（非 LLM 免费层，需绑卡）"},
+    "streamlake": {"tiers": ["onetime"], "signup": "email", "scenarios": ["code"],
+                   "short": "注册开通后分批送免费调用次数（仅基础模型推理）",
+                   "tip": "免费额度**分批发放**（初识/探索/首金礼包）、**仅限基础模型推理**、**不可抵扣 Batch 批量推理**，"
+                          "具体额度以活动说明为准 ——「Air 永久免费」与「Pro 送 2000 万 tokens/30 天」均无官方依据，不予采信。"},
     # ---- 国际 ----
     "google_gemini": {"tiers": ["permanent"], "signup": "email", "scenarios": ["flagship"],
                       "short": "AI Studio：Gemini 3.x Flash 全系免费层",
@@ -243,6 +247,10 @@ GUIDE_META: dict[str, dict] = {
                  "short": "代码模型限时免费（官方未公布截止日）"},
     "huggingface": {"tiers": ["recurring"], "signup": "email",
                     "short": "Inference Providers 每月 $0.10"},
+    "mistral": {"tiers": ["permanent"], "signup": "email",
+                "short": "免费**端点**：Mistral Moderation 2（Free）+ Labs 实验模型（无新用户赠金）",
+                "tip": "免费的是**端点**而非额度：无新用户赠金 / 免费实验层；`Leanstral` 属 Labs 限时收集反馈期，随时可能下线；"
+                       "商业模型（Medium 3.5 / Large 3 / Small 4 等）均按量付费；旧「€5 赠金 / 1 RPS 免费层」在现行定价页无据。"},
     # ---- 云 / 算力 ----
     "modal": {"tiers": ["recurring"], "signup": "email", "scenarios": ["deploy"],
               "short": "$30 / 月免费算力，按月重置"},
@@ -260,6 +268,14 @@ GUIDE_META: dict[str, dict] = {
                       "short": "$300 / 30 天 + Always Free（需信用卡验证）"},
     "ibm_watsonx": {"tiers": ["permanent"], "signup": "email",
                     "short": "Free Toolbox/Lite 免卡：30 万 tokens + 20 CUH/月"},
+    "infini_ai": {"tiers": ["permanent"], "signup": "email", "scenarios": ["embed"],
+                  "short": "嵌入 / 重排接口长期免费 + 网页 Playground 全模型免费体验",
+                  "tip": "免费的是**嵌入 / 重排接口**与**网页体验**；GenStudio **API 推理不设试用额度**、按量付费（官方计费文档已明确），"
+                         "「注册送 200 万 token」是旧说法，不予采信。"},
+    "baseten": {"tiers": ["onetime"], "signup": "email", "scenarios": ["deploy"],
+                "short": "新账户试用额度（官方未公开金额，以控制台为准）",
+                "tip": "试用额度**金额未公开**，以注册后控制台显示为准；Startup Program（最高 $25,000 算力 + $2,500 Model APIs）"
+                       "需申请审核，非注册即得。"},
 }
 
 PROVIDER_PROFILES: dict[str, dict] = {
@@ -589,6 +605,11 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "free_models": [
             "**基础模型推理** —— 注册开通后分批获得免费调用次数（不可抵扣 Batch 批量推理；具体次数以活动说明为准）",
             "在架模型：自研 `KAT-Coder-Pro-V2.5`/`KAT-Coder-Air-V2.5`（均为 256K 上下文/80K 输出）及托管 DeepSeek-V4-Flash/Pro、GLM-5.x、MiniMax-M2.x、Kimi-K2.x、MiMo-V2-Pro、Qwen3、Keye-VL 等；KAT-Coder V1 已下线，“快意 KwaiYii”已不在模型列表",
+        ],
+        "tier_caveats": [
+            "免费额度**分批发放**（初识礼包 / 探索礼包 / 首金礼包），各资源包有效期以活动说明为准 —— 官方文档**无「永久免费」表述**",
+            "免费额度**仅限基础模型推理**，且**不可抵扣 Batch 批量推理**调用",
+            "具体发放额度官方文档未写明（原文「以活动说明为准」）；「Air 永久免费」「Pro 送 2000 万 tokens / 30 天」无官方依据，不予采信",
         ],
         "preconditions": "注册 StreamLake 账号并开通服务",
         "promotions": "免费额度不可抵扣批量推理（Batch）调用；快手旗下代码与推理模型平台。",
@@ -923,6 +944,12 @@ PROVIDER_PROFILES: dict[str, dict] = {
             "**`Leanstral`**（Labs，`labs-leanstral-2603`，限时开放收集反馈）—— 免费端点",
             "**Mistral Moderation 2（Free）** —— 免费端点",
             "商业模型均付费：Mistral Medium 3.5、`Large 3`（$0.50/$1.50 每百万）、`Small 4`（$0.15/$0.60）、Ministral 3（3B/8B/14B）、Codestral v25.08、Voxtral 语音、OCR 4.1、Mistral Embed、Shieldstral 1.0、第三方 GLM 5.2；旧 open-mistral-7b / Mixtral / Pixtral-12B 已列入 deprecated/retired",
+        ],
+        "tier_caveats": [
+            "免费的是**端点**而非额度：官方定价页未提供新用户赠金或免费实验层（旧“€5 赠金 / 1 RPS 免费层”无据）",
+            "`Leanstral` 属 Labs「限时开放收集反馈」，**随时可能下线**；`Mistral Moderation 2（Free）` 是常设免费端点",
+            "商业模型（Mistral Medium 3.5、Large 3、Small 4、Ministral 3、Codestral、Voxtral、OCR、Mistral Embed、Shieldstral）均按量付费",
+            "免费端点限速数值官方未公开，以控制台为准",
         ],
         "preconditions": "邮箱注册并验证手机号",
         "promotions": "开放权重模型可下载；提供企业私有化部署；2026-09 宣布完成 €3B 融资。",
@@ -1306,6 +1333,11 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "free_models": [
             "模型部署平台（Truss 框架）：模型库开源模型一键部署与付费专有模型端点 —— 新账户试用额度可抵扣，**金额未公开**",
         ],
+        "tier_caveats": [
+            "新账户试用额度**金额未公开**（官方定价页无数字），以注册后控制台为准，可能随时调整",
+            "额度用于抵扣 GPU 部署与 Model APIs 调用，属**算力型额度**而非 LLM token 免费层",
+            "Startup Program（最高 $25,000 专用算力 + $2,500 Model APIs）**需申请审核**，非注册即得",
+        ],
         "preconditions": "注册账号；Startup Program 需申请审核",
         "promotions": "面向生产级 GPU 推理部署，支持自动扩缩容。",
         "notes": "普通试用额度以注册后控制台显示为准，无公开数字。",
@@ -1345,6 +1377,11 @@ PROVIDER_PROFILES: dict[str, dict] = {
             "**嵌入/重排（embedding/rerank）模型接口 —— 免费**",
             "**网页 Playground —— 全模型免费体验**（DeepSeek V4、Qwen 3.6、GLM、Kimi、MiniMax、MiMo 等；当前模型列表无 Llama）",
             "GenStudio API 推理（上述模型）—— **不设试用额度**，调用按量付费",
+        ],
+        "tier_caveats": [
+            "免费项仅限**嵌入 / 重排接口**与**网页 Playground**；GenStudio API 推理**不设试用额度**、按量付费，免费额度不可抵扣",
+            "网页 Playground 免费体验的当前模型列表不含 Llama（DeepSeek V4、Qwen 3.6、GLM、Kimi、MiniMax、MiMo 等），清单随在架模型变动",
+            "API 推理需充值后才能调用，官方计费文档已明确无注册赠送 token",
         ],
         "preconditions": "手机号注册；API 推理需充值",
         "promotions": "跨国产 GPU（昇腾、沐曦、天数智芯、摩尔线程等）统一调度的推理云。",
