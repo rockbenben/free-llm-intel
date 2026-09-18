@@ -250,6 +250,10 @@ BLOCK_TAGS = {
     "blockquote", "pre", "figure", "figcaption", "dt", "dd", "hr",
 }
 SKIP_TAGS = {"script", "style", "noscript", "svg", "iframe", "template"}
+# 标题元素。卡片式列表页（通义更新日志、MiniMax 发布说明、x.ai/news 等）常把
+# 整个卡片包进一个 <a>，锚文本因此是「标题 + 整段描述」拍平后的长串。
+# 这些元素是拿回真正标题的结构线索 —— 比事后按标点猜可靠。
+HEADING_TAGS = {"h1", "h2", "h3", "h4", "h5", "h6"}
 
 
 # ---------------------------------------------------------------------------
@@ -269,6 +273,10 @@ class PageResult:
     raw: str = ""  # 原始响应体（RSS/Atom 等 XML 源保留原文，供 feed 解析）
     feeds: list[str] = field(default_factory=list)
     links: list[tuple[str, str]] = field(default_factory=list)
+    #: 与 `links` 逐项对齐：锚内标题元素（HEADING_TAGS）的文本，无则空串。
+    #: 卡片式列表页里 `<a>` 会把标题和整段描述一起包住，拍平后粘成长串；
+    #: 有了它才能取回真正的标题（见 extract_articles_from_page）。
+    link_headings: list[str] = field(default_factory=list)
     error: str = ""
     sparse: bool = False  # 文本过少（可能是 JS 动态渲染 / 需登录）
     is_login: bool = False  # 页面重定向至登录认证页
@@ -337,6 +345,10 @@ class PageParser(HTMLParser):
         self._title_parts: list[str] = []
         self.feeds: list[str] = []
         self.links: list[tuple[str, str]] = []  # (绝对URL, 锚文本)
+        # 与 links **逐项对齐**：锚内标题元素（HEADING_TAGS）的文本，无则空串。
+        self.link_headings: list[str] = []
+        self._a_heading: list[str] = []
+        self._a_heading_depth: int = 0
         self.title = ""
         self._a_href: str | None = None
         self._a_text: list[str] = []
@@ -355,6 +367,8 @@ class PageParser(HTMLParser):
             href = attr.get("href", "")
             self._a_href = urljoin(self.base_url, href) if href else None
             self._a_text = []
+            self._a_heading = []
+            self._a_heading_depth = 0
         if tag == "link":
             rel = attr.get("rel", "").lower()
             ltype = attr.get("type", "").lower()
@@ -374,6 +388,9 @@ class PageParser(HTMLParser):
                         (".png", ".jpg", ".jpeg", ".gif", ".css", ".js", ".html"))):
                 if self._a_href not in self.feeds:
                     self.feeds.append(self._a_href)
+        # 锚内的标题元素：记住进入深度，退出时取文本（见 link_headings）
+        if tag in HEADING_TAGS and self._a_href is not None:
+            self._a_heading_depth += 1
 
     def handle_endtag(self, tag: str):
         tag = tag.lower()
@@ -382,11 +399,17 @@ class PageParser(HTMLParser):
             return
         if tag == "title":
             self._in_title = False
+        if tag in HEADING_TAGS and self._a_heading_depth > 0:
+            self._a_heading_depth -= 1
         if tag == "a" and self._a_href is not None:
             text = re.sub(r"\s+", " ", "".join(self._a_text)).strip()
+            heading = re.sub(r"\s+", " ", "".join(self._a_heading)).strip()
             self.links.append((self._a_href, text))
+            self.link_headings.append(heading)
             self._a_href = None
             self._a_text = []
+            self._a_heading = []
+            self._a_heading_depth = 0
         if tag in BLOCK_TAGS:
             self._chunks.append("\n")
 
@@ -397,6 +420,8 @@ class PageParser(HTMLParser):
             self._title_parts.append(data)
         if self._a_href is not None:
             self._a_text.append(data)
+            if self._a_heading_depth > 0:
+                self._a_heading.append(data)
         self._chunks.append(data)
 
     def get_text(self) -> str:
@@ -414,8 +439,12 @@ class PageParser(HTMLParser):
 
 
 def parse_html(raw_html: str, base_url: str
-               ) -> tuple[str, str, list[str], list[tuple[str, str]]]:
-    """返回 (纯文本, 页面标题, RSS/Atom 链接列表, [(链接URL, 锚文本)])。"""
+               ) -> tuple[str, str, list[str], list[tuple[str, str]], list[str]]:
+    """返回 (纯文本, 页面标题, RSS/Atom 链接列表, [(链接URL, 锚文本)], 锚内标题列表)。
+
+    最后一个列表与链接列表**逐项对齐**（无标题元素处为空串），供
+    `extract_articles_from_page` 取回卡片式列表页里被 `<a>` 包住的真标题。
+    """
     parser = PageParser(base_url)
     try:
         parser.feed(raw_html)
@@ -423,7 +452,8 @@ def parse_html(raw_html: str, base_url: str
     except Exception as exc:  # 解析器容错：残缺 HTML 不应导致整体失败
         print(f"  [warn] HTML 解析异常 {base_url}: {type(exc).__name__}: {exc}",
               file=sys.stderr)
-    return parser.get_text(), parser.get_title(), parser.feeds, parser.links
+    return (parser.get_text(), parser.get_title(), parser.feeds,
+            parser.links, parser.link_headings)
 
 
 # ---------------------------------------------------------------------------
@@ -643,12 +673,13 @@ def _fetch_with_requests(session: requests.Session, url: str, stype: str,
                 result.snapshot_ok = not result.sparse
                 return result
             result.raw = resp.text[:2_000_000]
-            text, title, feeds, links = parse_html(resp.text, resp.url)
+            text, title, feeds, links, link_headings = parse_html(resp.text, resp.url)
             result.text = text
             result.snapshot_text = text  # 浏览器兜底不得覆盖此字段（见 PageResult）
             result.title = title
             result.feeds = feeds
             result.links = links
+            result.link_headings = link_headings
             result.ok = True
             # 可见文本过少：通常是 SPA 动态渲染或需要登录（阈值放宽到 800，
             # 500~800 字多为导航外壳，正文仍靠浏览器兜底渲染）
@@ -708,7 +739,7 @@ def fetch_url(session: requests.Session, url: str, stype: str,
             result.error = "疑似被反爬拦截（HTTP 200 但正文为拦截/验证页）"
         return result  # 浏览器也失败：保留 requests 的结果与标注
     html, final_url, code = rendered
-    text, title, feeds, links = parse_html(html, final_url or url)
+    text, title, feeds, links, link_headings = parse_html(html, final_url or url)
     plain_len = len(re.sub(r"\s", "", text))
     is_block_page = bool(BLOCK_MARKERS.search(text[:3000]))
 
@@ -731,6 +762,7 @@ def fetch_url(session: requests.Session, url: str, stype: str,
     result.title = title or result.title
     result.feeds = sorted(set(result.feeds) | set(feeds))
     result.links = links or result.links
+    result.link_headings = link_headings or result.link_headings
     result.final_url = final_url or result.final_url
     result.raw = html[:2_000_000]
     result.status_code = code or result.status_code or 200
@@ -1331,7 +1363,10 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
     seen: set[str] = set()
     by_norm: dict[str, Article] = {}
     seen_titles: set[str] = set()
-    for url, anchor in page.links:
+    # 长度不一致说明两个列表失配（未来若有人只改一处赋值就会这样）。此时**整体不用**
+    # 标题列表、退回原来的锚文本逻辑 —— 宁可少修几条，也不要错位取到别人的标题。
+    headings_aligned = page.link_headings if len(page.link_headings) == len(page.links) else []
+    for link_idx, (url, anchor) in enumerate(page.links):
         if not url or not url.startswith("http") or not _same_site(url, base):
             continue
         try:
@@ -1344,7 +1379,15 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
             continue
         if not _ARTICLE_PATH_HINTS.search(path):
             continue
-        title = html_mod.unescape(re.sub(r"\s+", " ", anchor or "")).strip()
+        # 卡片式列表页（通义更新日志、MiniMax 发布说明、x.ai/news）把整张卡片包进一个
+        # <a>，拍平后的锚文本 = 「标题 + 整段描述」粘成一串（实测通义 100%、xAI 37%、
+        # MiniMax 30% 的条目如此）。解析时另存了锚内标题元素（h1-h6）的文本，有就优先用
+        # —— 这是结构信息，比事后按标点猜标题可靠。
+        # 但标题元素可能过短（如 "Grok 4.6"，会被下面的长度下限滤掉），此时仍退回锚文本，
+        # 免得反而把条目丢掉。
+        heading = headings_aligned[link_idx] if link_idx < len(headings_aligned) else ""
+        source_text = heading if len(heading) >= 10 else (anchor or "")
+        title = html_mod.unescape(re.sub(r"\s+", " ", source_text)).strip()
         date = ""
         # DeepSeek 更新日志：URL slug 即日期（/news/news260813 -> 2026-08-13）
         slug_m = re.search(r"/news/news(\d{2})(\d{2})(\d{2})", path, re.I)

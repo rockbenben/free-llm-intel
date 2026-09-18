@@ -931,6 +931,76 @@ class TestOpmlAndNewsDocCoverage(unittest.TestCase):
         self.assertIn("最近 7 条", md)
 
 
+class TestCardAnchorTitleExtraction(unittest.TestCase):
+    """卡片式列表页：`<a>` 把标题与整段描述一起包住时，标题要取**锚内标题元素**。
+
+    Regression: 锚文本被拍平后是「标题 + 整段描述」粘成的长串（解析器在 `<a>` 内不插
+    块级分隔）。实测通义更新日志 **100%**、x.ai/news 37%、MiniMax 30% 的条目如此 ——
+    那些条目的「标题」是一整段正文，订阅后根本没法扫读。
+    """
+
+    CARD_HTML = """
+    <html><body>
+      <div class="card"><a href="/news/grok-4-6-microsoft-foundry">
+        <h3>Microsoft Foundry 上的 Grok 4.6</h3>
+        <p>Grok 4.6 现已通过 Microsoft Foundry 提供。</p>
+      </a></div>
+      <div class="card"><a href="/news/plain-item-without-heading">
+        Plain item without any heading element, long enough to pass the length gate
+      </a></div>
+      <div class="card"><a href="/news/short-heading-item">
+        <h3>Grok 4.6</h3>
+        <p>这是一段很长的描述文本，用来确认标题元素过短时会退回锚文本而不是把条目丢掉。</p>
+      </a></div>
+    </body></html>
+    """
+
+    def _parse(self):
+        return crawler_llm_intel.parse_html(self.CARD_HTML, "https://x.ai/news")
+
+    def _page(self):
+        text, title, feeds, links, headings = self._parse()
+        return crawler_llm_intel.PageResult(
+            url="https://x.ai/news", stype="news", ok=True,
+            final_url="https://x.ai/news", links=links, link_headings=headings)
+
+    def test_link_headings_align_with_links(self):
+        _t, _ti, _f, links, headings = self._parse()
+        self.assertEqual(len(headings), len(links),
+                         "link_headings 必须与 links 逐项对齐（按下标取用）")
+        by_url = {u: h for (u, _a), h in zip(links, headings)}
+        self.assertEqual(by_url["https://x.ai/news/grok-4-6-microsoft-foundry"],
+                         "Microsoft Foundry 上的 Grok 4.6")
+        self.assertEqual(by_url["https://x.ai/news/plain-item-without-heading"], "",
+                         "锚内没有标题元素时该位置必须是空串，而不是 None")
+
+    def test_extraction_prefers_inner_heading(self):
+        arts = crawler_llm_intel.extract_articles_from_page(self._page())
+        got = {a.url.rsplit("/", 1)[-1]: a.title for a in arts}
+        self.assertEqual(
+            got.get("grok-4-6-microsoft-foundry"), "Microsoft Foundry 上的 Grok 4.6",
+            "卡片条目必须取锚内标题，而不是拍平后的「标题+正文」长串")
+        self.assertIn("plain-item-without-heading", got,
+                      "锚内没有标题元素的条目仍要能提取出来（退回锚文本）")
+        self.assertIn("short-heading-item", got,
+                      "标题元素过短时不得把条目丢掉 —— 应退回锚文本，而不是被长度下限滤掉")
+
+
+    def test_misaligned_headings_are_ignored(self):
+        """两个列表长度不一致时**整体忽略**标题列表、退回锚文本。
+
+        宁可少修几条，也不要错位取到别人的标题 —— 错位是静默的，没人会发现。
+        """
+        page = self._page()
+        page.link_headings = []          # 模拟未来有人只改了 links 的赋值处
+        arts = crawler_llm_intel.extract_articles_from_page(page)
+        got = {a.url.rsplit("/", 1)[-1]: a.title for a in arts}
+        self.assertIn("grok-4-6-microsoft-foundry", got, "失配时仍要能提取条目")
+        self.assertTrue(
+            got["grok-4-6-microsoft-foundry"].startswith("Microsoft Foundry 上的 Grok 4.6"),
+            "失配时应退回锚文本（标题+正文粘成一串），而不是崩溃或错位")
+
+
 class TestDateIntegrity(unittest.TestCase):
     """日期正确性：归档按 URL 增量合并、不会自我纠正，错误日期一旦写入就永久留存。
 
