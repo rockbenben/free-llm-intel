@@ -110,6 +110,23 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertLess(pr_idx, commit_idx, "Open PR 必须在 Commit snapshots 之前执行，保证 PR 失败时不污染 main 快照")
 
 
+    def test_crawler_step_passes_feeds_base_from_repo_variable(self):
+        """订阅源前缀必须能通过 repository variable 覆盖（配了自定义域名的仓库需要）。
+
+        Regression: 前缀只按 `GITHUB_REPOSITORY` 推导时，配了自定义域名的仓库里 feed 自己
+        声明的 `rel=self` / `<source url>` 会指向 github.io，而浏览页顶部显示的是自定义域名
+        —— 两者不一致，且每个订阅多一跳 301。
+        """
+        with open(self.workflow_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        by_name = {s.get("name", ""): s for s in data["jobs"]["crawl"]["steps"]}
+        step = by_name["Run intel crawler"]
+        self.assertIn("--feeds-base", step.get("run", ""),
+                      "爬虫步骤必须传 --feeds-base，否则自定义域名不生效")
+        self.assertIn("vars.FEEDS_BASE", step.get("env", {}).get("FEEDS_BASE", ""),
+                      "FEEDS_BASE 必须取自 repository variable —— 留空即退回自动推导，"
+                      "fork 后无需配置")
+
     def test_pending_pr_overrides_cannot_reach_main_via_direct_mode(self):
         """Pending-PR overrides only land via the PR branch: direct mode must
         restore them to main HEAD first.

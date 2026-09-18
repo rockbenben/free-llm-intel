@@ -137,7 +137,12 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # 可用 repository variable 覆盖模型，默认 gemini-3.8-flash
           AI_REVIEW_MODEL: ${{ vars.AI_REVIEW_MODEL }}
-        run: python crawler_llm_intel.py --ai-review
+          # 订阅源的对外前缀。留空则按 GITHUB_REPOSITORY 推导为
+          # https://<owner>.github.io/<repo>/feeds（fork 后无需配置）；
+          # 配了自定义域名就填 https://<域名>/feeds，让 feed 的 rel=self 与 <source url>
+          # 直接指向规范地址，省掉从 github.io 的一次 301 跳转。
+          FEEDS_BASE: ${{ vars.FEEDS_BASE }}
+        run: python crawler_llm_intel.py --ai-review --feeds-base "$FEEDS_BASE"
 
       # 产物与不变量校验：跑**全部**用例（79 个）。
       # 测试集由 test_workflow_and_review.ci_suite() 按「全部 − 白名单」推导：

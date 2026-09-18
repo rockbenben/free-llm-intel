@@ -93,6 +93,15 @@ git diff README.md
   3. 若 `main` 分支开启了 Branch Protection，需将 `github-actions[bot]` 加为允许直推或 bypass 的用户；
   4. 未配置 Key 时新闻更新仍直接原子性提交 main，事实变化保留旧快照等待重试。
 
+- **订阅源地址（`FEEDS_BASE`）**：自建 RSS 的对外前缀由 `default_feeds_base()` 按
+  `GITHUB_REPOSITORY` 推导为 `https://<owner>.github.io/<repo>/feeds`，**fork 后无需任何配置**。
+  但若仓库配了**自定义域名**，GitHub Pages 会把 github.io 上的请求 301 到自定义域名 ——
+  于是 feed 自己声明的 `<atom:link rel="self">` 与 `<source url>`（都取这个前缀）会与
+  浏览页顶部显示的地址不一致，且每个订阅多一跳。此时在
+  **Settings → Secrets and variables → Actions → Variables** 加一个 `FEEDS_BASE`
+  （值形如 `https://<你的域名>/feeds`）即可，workflow 会把它传给 `--feeds-base`；
+  留空则退回自动推导。改完等下一次巡检生效（产物是生成的，不要手工改 XML）。
+
 人工基线在 `provider_profiles.py`，AI 补丁在 `profile_overrides.json`（同名字段整体覆盖，`_evidence` 累积保留最近 20 条证据）。
 
 ### 免费层限流 / 模型下线的自动回退（主要使用方式）
