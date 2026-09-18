@@ -1052,6 +1052,23 @@ class TestReadmeIntegrity(unittest.TestCase):
                 f"README.md 中的本地文件链接失效: [{text}]({target}) -> {target_path}"
             )
 
+    def test_readme_links_into_docs_use_absolute_urls(self):
+        """README 里指向 `docs/` 的**链接**必须是绝对地址，不能用相对路径。
+
+        Regression: 相对路径在 github.com 上打开的是**源码视图** —— `docs/index.html`
+        显示 HTML 源码、`docs/feeds/*.xml` 显示 XML 源码（而 `raw.githubusercontent.com`
+        返回 `text/plain`，根本不能当订阅源）。读者点「网页浏览 / 一键订阅」看到的是一堆
+        源码，而不是能用的页面。
+        **图片不受影响**（GitHub 会正常渲染相对路径的图片），所以只校验链接、不校验 `![]()`。
+        """
+        content = self.readme_path.read_text(encoding="utf-8")
+        without_images = re.sub(r"!\[[^\]]*\]\([^)]*\)", "", content)
+        bad = [target for _text, target in re.findall(r"\[([^\]]+)\]\(([^)]+)\)", without_images)
+               if target.split("#")[0].strip().startswith("docs/")]
+        self.assertEqual(
+            bad, [],
+            f"这些 README 链接用了相对路径，在 GitHub 上只会打开源码视图: {bad}")
+
     def test_readme_internal_anchors_valid(self):
         import re
         import urllib.parse

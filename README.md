@@ -10,7 +10,7 @@
 - ⚡ 客户端一键接入？直达「[OpenAI 兼容端点速查表](#一键接入)」
 - 📊 免费额度总表见文末自动生成的 **Part 1–3**
 - 📡 厂商博客 / 更新动态：[llm-news-feeds.md](llm-news-feeds.md)（主文档每家最新 5 篇），每厂商全量归档在 [`llm-news/`](llm-news/)；RSS 订阅清单：[llm-news-feeds.opml](llm-news-feeds.opml)（含**官方原生源 + 自建源**两组，一次导入全部订上）
-- 📻 自建 RSS（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](docs/index.html)（页面顶部显示**当前订阅地址**，可直接复制）｜ [合并流（聚合全部有动态源的厂商）](docs/feeds/llm-news-all.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-<厂商 id>.xml`
+- 📻 自建 RSS（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/)（页面顶部显示**当前订阅地址**，可直接复制）｜ [合并流（聚合全部有动态源的厂商）](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-<厂商 id>.xml`
 - 🤖 自己跑巡检 / 二次开发：`pip install -r requirements.txt && python crawler_llm_intel.py`（详见[快速开始](#快速开始)）
 
 ![免费额度速览：懒人首选的 5 家厂商](docs/images/intel-top5.png)
@@ -185,7 +185,7 @@ python -m unittest discover
   2. **Settings → Actions → General → Workflow permissions**：选择 **Read and write permissions**，并务必勾选 **Allow GitHub Actions to create and approve pull requests**（GitHub 默认关闭，必须开启方可自动开 PR）；
   3. 若 `main` 分支开启了 Branch Protection，需将 `github-actions[bot]` 设为允许直推或 bypass；
   4. 定时任务需 workflow 位于默认分支才会被 GitHub 调度；
-  5. **Settings → Pages**：Source 选 **Deploy from a branch**，Branch 选 `main`、目录选 **`/docs`** —— 这是[自建 RSS 浏览页](docs/index.html)与订阅源的托管方式（`docs/.nojekyll` 已关闭 Jekyll，保证 XML 原样输出）。订阅地址按仓库自动推导，fork 后无需改代码；不配置则订阅地址 404，其余产物不受影响。
+  5. **Settings → Pages**：Source 选 **Deploy from a branch**，Branch 选 `main`、目录选 **`/docs`** —— 这是[自建 RSS 浏览页](https://free-llm-intel.aishort.top/)与订阅源的托管方式（`docs/.nojekyll` 已关闭 Jekyll，保证 XML 原样输出）。订阅地址按仓库自动推导，fork 后无需改代码；不配置则订阅地址 404，其余产物不受影响。
   6. （可选，**配了自定义域名才需要**）**Settings → Secrets and variables → Actions → Variables** 加一个 `FEEDS_BASE`，值填 `https://<你的域名>/feeds`。留空时订阅源地址按 `GITHUB_REPOSITORY` 推导为 `https://<owner>.github.io/<repo>/feeds`；配了自定义域名后，GitHub Pages 会把 github.io 上的请求 301 到自定义域名，于是 feed 自己声明的 `rel=self` 与 `<source url>` 会与浏览页顶部显示的地址不一致，且每个订阅多一跳。填上它即可让两者都指向规范地址。
 - **可信度原则**：只采信官方页面且保留原文证据；查不到的旧额度 / 旧模型名显式标注「无法复核，不予采信」，不转述第三方说法。
 
