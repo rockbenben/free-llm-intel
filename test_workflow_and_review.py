@@ -1001,6 +1001,64 @@ class TestCardAnchorTitleExtraction(unittest.TestCase):
             "失配时应退回锚文本（标题+正文粘成一串），而不是崩溃或错位")
 
 
+class TestChineseDateFormat(unittest.TestCase):
+    """「2026 年 7 月 31 日」这种**单位两侧都有空格**的写法，所有日期解析处都要认。
+
+    Regression: 6 处日期正则里只有 `_PROMO_DATE_PAT` 写成 `\\s*[-/年.]\\s*`，其余写成
+    `[-/年.]\\s?`（只容忍单位**后**的空格），于是带前导空格的写法在别处全部漏判 ——
+    MiniMax 发布说明的目录锚点（`<a href="#2026-年-7-月-31-日">2026 年 7 月 31 日</a>`）
+    因此没被「标题就是日期」的守卫拦住，**每次巡检都往归档里加 8 条日期标题的垃圾**。
+    """
+
+    SAMPLES = ("2026 年 7 月 31 日", "2026年7月31日", "2026-07-31", "2026/7/31", "2026.7.31")
+
+    def test_inline_date_re_accepts_spaced_chinese(self):
+        for s in self.SAMPLES:
+            self.assertTrue(crawler_llm_intel._INLINE_DATE_RE.search(s), f"未识别: {s}")
+
+    def test_normalize_feed_date_accepts_spaced_chinese(self):
+        for s in self.SAMPLES:
+            self.assertEqual(crawler_llm_intel.normalize_feed_date(s), "2026-07-31",
+                             f"未归一化: {s}")
+
+    def test_promo_date_pattern_accepts_spaced_chinese(self):
+        """促销到期判定用的是同一套写法，不能只有它一个认。"""
+        for s in self.SAMPLES:
+            self.assertTrue(crawler_llm_intel._PROMO_DATE_PAT.search(s), f"未识别: {s}")
+
+    def _extract(self, anchors):
+        rows = "".join(
+            f'<a href="https://x.example/docs/release-notes/models#{u}">{t}</a>'
+            for t, u in anchors)
+        html = f"<html><body>{rows}</body></html>"
+        _t, _ti, _f, links, headings = crawler_llm_intel.parse_html(
+            html, "https://x.example/docs/release-notes/models")
+        page = crawler_llm_intel.PageResult(
+            url="https://x.example/docs/release-notes/models", stype="changelog",
+            ok=True, final_url="https://x.example/docs/release-notes/models",
+            links=links, link_headings=headings)
+        return crawler_llm_intel.extract_articles_from_page(page)
+
+    def test_date_only_titles_are_dropped(self):
+        """整条标题就是日期的（含只写年月的）不得成为条目。"""
+        arts = self._extract([
+            ("2026 年 7 月 31 日", "d1"),
+            ("2026 年 4 月", "d2"),
+            ("2026-07-31", "d3"),
+            ("MiniMax H3 正式发布，支持多模态视频生成", "real"),
+        ])
+        titles = [a.title for a in arts]
+        self.assertEqual(len(arts), 1, f"只应留下真实标题，实际: {titles}")
+        self.assertIn("MiniMax H3", titles[0])
+
+    def test_date_prefix_is_stripped_and_kept_as_article_date(self):
+        """日期粘在标题前面时：日期归到条目上，标题剥干净。"""
+        arts = self._extract([("2026 年 7 月 31 日 MiniMax H3 正式发布", "d")])
+        self.assertEqual(len(arts), 1)
+        self.assertEqual(arts[0].date, "2026-07-31")
+        self.assertNotIn("2026", arts[0].title)
+
+
 class TestDateIntegrity(unittest.TestCase):
     """日期正确性：归档按 URL 增量合并、不会自我纠正，错误日期一旦写入就永久留存。
 

@@ -984,8 +984,17 @@ def extract_evidence(pages: Iterable[PageResult]) -> dict[str, list[Snippet]]:
 # ---------------------------------------------------------------------------
 
 # 正文 / 锚文本中可能出现的日期写法（ISO、中文、英文月份）
+# 日期分隔符片段：单位符号（年 / 月 / 日、-、/、.）**两侧都允许空白** ——
+# 「2026 年 7 月 31 日」「2026年7月31日」「2026-07-31」都要认。
+# 抽成共享片段是因为此前各处正则写法不一：只有 _PROMO_DATE_PAT 写成 `\s*[-/年.]\s*`，
+# 其余写成 `[-/年.]\s?`（只容忍单位**后**的空格），于是带前导空格的写法在别处全部漏判 ——
+# MiniMax 发布说明的目录锚点（`<a href="#2026-年-7-月-31-日">2026 年 7 月 31 日</a>`）
+# 因此没被「标题就是日期」的守卫拦住，被当成文章收进归档。
+_DATE_SEP_YM = r"\s*[-/年.]\s*"   # 年 与 月 之间
+_DATE_SEP_MD = r"\s*[-/月.]\s*"   # 月 与 日 之间
+
 _INLINE_DATE_RE = re.compile(
-    r"(20\d{2}[-/年.]\s?\d{1,2}[-/月.]\s?\d{1,2}日?|"
+    r"(20\d{2}" + _DATE_SEP_YM + r"\d{1,2}" + _DATE_SEP_MD + r"\d{1,2}\s*日?|"
     r"(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2},?\s+20\d{2}|"
     r"\d{1,2}\s+(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?,?\s+20\d{2})",
     re.I)
@@ -1033,7 +1042,7 @@ def normalize_feed_date(raw: str) -> str:
             return dt.strftime("%Y-%m-%d")
     except ValueError:
         pass
-    m = re.search(r"(20\d{2})[-/年.](\d{1,2})[-/月.](\d{1,2})", raw)
+    m = re.search(r"(20\d{2})" + _DATE_SEP_YM + r"(\d{1,2})" + _DATE_SEP_MD + r"(\d{1,2})", raw)
     if m:
         try:
             return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
@@ -1249,12 +1258,12 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
             raw, re.S
         )
         for hid, content in matches:
-            dm = re.search(r"(\d{4})[-/年.]\s?(\d{1,2})(?:[-/月.]\s?(\d{1,2}))?", hid)
+            dm = re.search(r"(\d{4})" + _DATE_SEP_YM + r"(\d{1,2})(?:" + _DATE_SEP_MD + r"(\d{1,2}))?", hid)
             norm_date = _drop_future_date(
                 f"{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3) or 1):02d}" if dm else "")
             lines = _clean_html_text(content)
             title = lines[0] if lines else hid
-            if re.fullmatch(r"\d{4}[-/年.]\d{1,2}(?:[-/月.]\d{1,2})?", title):
+            if re.fullmatch(r"\d{4}" + _DATE_SEP_YM + r"\d{1,2}(?:" + _DATE_SEP_MD + r"\d{1,2})?", title):
                 title = lines[1] if len(lines) > 1 else title
             url = f"{base_url.split('#')[0]}#{quote(hid)}"
             if url not in seen and len(title) >= 3:
@@ -1402,6 +1411,11 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
         title = _strip_glued_label(title)
         title = re.sub(r"\s+", " ", title).strip(" -–|·•")
         if len(title) < 10 or len(title) > 200:
+            continue
+        # 整条标题就是日期 / 数字的，不是标题 —— MiniMax 发布说明的目录锚点长这样
+        # （`<a href="#2026-年-7-月-31-日">2026 年 7 月 31 日</a>`）。只写年月的
+        # （`2026 年 4 月`）没有「日」，靠上面的 _INLINE_DATE_RE 剥不干净，这里兜住。
+        if re.fullmatch(r"[\d\s\-/.年月日]+", title):
             continue
         if CTA_NAV.match(title) or NAV_CONCAT.match(title):
             continue
@@ -1898,7 +1912,7 @@ def _gh_slug(heading: str) -> str:
 
 
 _PROMO_END_PAT = re.compile(r"截止|到期|结束|止至|until|end(?:s|ed)?\b", re.I)
-_PROMO_DATE_PAT = re.compile(r"(20\d{2})\s*[-/年.]\s*(\d{1,2})\s*[-/月.]\s*(\d{1,2})")
+_PROMO_DATE_PAT = re.compile(r"(20\d{2})" + _DATE_SEP_YM + r"(\d{1,2})" + _DATE_SEP_MD + r"(\d{1,2})")
 
 
 def _promo_fragment_expired(frag: str, today: date) -> bool:
