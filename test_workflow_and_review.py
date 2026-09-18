@@ -1059,6 +1059,109 @@ class TestChineseDateFormat(unittest.TestCase):
         self.assertNotIn("2026", arts[0].title)
 
 
+class TestSinglePageAnchorIdentity(unittest.TestCase):
+    """单页文档站的条目是「同页不同 `#锚点`」，**fragment 才是它们的身份**。
+
+    Regression: 归档增量合并与合并流去重都用了 `_norm_url`（去掉 fragment）做键，于是同一页的
+    N 条折叠成一个键 —— 归档会把历史条目误判成「本次已抓到」而**丢弃**（实测 3 条只重抓到 1 条时
+    归档从 3 条掉到 1 条，违反「归档只增不减」），合并流也会把同页条目吃掉（通义 100 条只剩 1 条）。
+    `extract_articles_from_page` 与 `collect_news_articles` 早就按 fragment 处理，唯独这两处漏了。
+    """
+
+    def test_article_key_keeps_fragment(self):
+        self.assertEqual(crawler_llm_intel._article_key("https://x.example/docs#a"),
+                         "https://x.example/docs#a")
+        self.assertNotEqual(crawler_llm_intel._article_key("https://x.example/docs#a"),
+                            crawler_llm_intel._article_key("https://x.example/docs#b"),
+                            "同页不同锚点必须是不同的身份键")
+        # 仍然做常规规范化：host 小写、去末尾斜线
+        self.assertEqual(crawler_llm_intel._article_key("https://X.example/docs/#a"),
+                         "https://x.example/docs#a")
+
+    def test_archive_merge_keeps_same_page_anchors(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            news_dir = Path(tmp) / "llm-news"
+            news_dir.mkdir(parents=True)
+            (news_dir / "vendor_a.md").write_text(
+                "# t\n\n## 全部文章（共 3 篇，按日期倒序；无日期条目列于最后）\n\n"
+                "1. [第一篇](https://x.example/docs#a)（2026-01-03）\n"
+                "2. [第二篇](https://x.example/docs#b)（2026-01-02）\n"
+                "3. [第三篇](https://x.example/docs#c)（2026-01-01）\n", encoding="utf-8")
+            v = crawler_llm_intel.VendorIntel(
+                vendor_id="vendor_a", brand="A", homepage="", products=[])
+            # 本次只重抓到 1 条（页面改版只剩一条）
+            v.all_news_articles = [crawler_llm_intel.Article(
+                title="第一篇", url="https://x.example/docs#a", date="2026-01-03")]
+            v.news_articles = v.all_news_articles
+            _n, total, _c = crawler_llm_intel.write_news_archives(
+                news_dir, [v], clean_removed=False)
+            self.assertEqual(total, 3,
+                             "同页锚点的历史条目被当成「已抓到」丢掉了 —— 归档必须只增不减")
+
+    def test_merged_feed_keeps_same_page_anchors(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "feeds"
+            v = crawler_llm_intel.VendorIntel(
+                vendor_id="vendor_b", brand="B", homepage="", products=[])
+            v.all_news_articles = [
+                crawler_llm_intel.Article(title="第一篇", url="https://y.example/docs#a",
+                                          date="2026-01-03"),
+                crawler_llm_intel.Article(title="第二篇", url="https://y.example/docs#b",
+                                          date="2026-01-02"),
+                crawler_llm_intel.Article(title="第三篇", url="https://y.example/docs#c",
+                                          date="2026-01-01"),
+            ]
+            crawler_llm_intel.write_rss_feeds(out, [v])
+            merged = (out / "llm-news-all.xml").read_text(encoding="utf-8")
+            self.assertEqual(merged.count("<item>"), 3,
+                             "合并流把同页不同锚点的条目去重成一条了")
+
+
+class TestChangelogTitleIsNameOnly(unittest.TestCase):
+    """更新日志条目的标题**只取名称**，不把卡片正文拼进来。
+
+    两种结构都构造过 `名称：描述` 的长标题（阿里云百炼 100/100、MiniMax 9/30 的条目如此），
+    中位 145 字 —— 订阅列表里根本没法扫读。正文点进链接就能看到，不必塞进标题。
+    """
+
+    def test_structure2_card_title_only(self):
+        """结构 2：日期 id 的 h2 + Mintlify 卡片（card-title / card-content）。"""
+        html = """
+        <html><body>
+        <h2 id="2026-07-31">2026 年 7 月 31 日</h2>
+        <div data-component-part="card">
+          <h3 data-component-part="card-title">MiniMax H3</h3>
+          <div data-component-part="card-content">新一代开放通用多模态视频模型，面向由文本、图像、
+          视频与声音共同构成的多模态上下文，统一理解创作意图。</div>
+        </div>
+        </body></html>"""
+        page = crawler_llm_intel.PageResult(
+            url="https://p.example/docs/release-notes/models", stype="changelog", ok=True,
+            final_url="https://p.example/docs/release-notes/models", raw=html)
+        arts = crawler_llm_intel.extract_changelog_sections(page)
+        self.assertEqual(len(arts), 1)
+        self.assertEqual(arts[0].title, "MiniMax H3", "标题不得拼上卡片正文")
+        self.assertEqual(arts[0].date, "2026-07-31")
+
+    def test_structure3_table_id_only(self):
+        """结构 3：帮助中心表格行（类型 | 时间 | <code>模型ID</code> | 功能说明）。"""
+        rows = "".join(
+            f'<tr><td><p>文本生成</p></td><td><p>2026-09-1{i}</p></td>'
+            f'<td><p><code>model-{i}</code></p></td>'
+            f'<td><p>这是第 {i} 个模型的详细功能说明，长度足够通过校验。</p></td></tr>'
+            for i in range(1, 5))
+        html = f'<html><body><table><tbody>{rows}</tbody></table></body></html>'
+        page = crawler_llm_intel.PageResult(
+            url="https://q.example/zh/docs/newly-released-models", stype="updates", ok=True,
+            final_url="https://q.example/zh/docs/newly-released-models", raw=html)
+        arts = crawler_llm_intel.extract_changelog_sections(page)
+        self.assertEqual(len(arts), 4)
+        for i, a in enumerate(arts, 1):
+            self.assertEqual(a.title, f"model-{i}", "标题不得拼上功能说明")
+            self.assertEqual(a.date, f"2026-09-1{i}")
+            self.assertTrue(a.url.endswith(f"#model-{i}"), "URL 仍用模型 ID 做锚点")
+
+
 class TestDateIntegrity(unittest.TestCase):
     """日期正确性：归档按 URL 增量合并、不会自我纠正，错误日期一旦写入就永久留存。
 

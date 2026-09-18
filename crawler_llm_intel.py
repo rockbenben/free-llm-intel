@@ -1293,9 +1293,9 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
         card_m = re.search(r"data-component-part=[\"']card-title[\"'][^>]*>(.*?)</h[23]>", body, re.S)
         if card_m:
             model_name = re.sub(r"<[^>]+>", "", card_m.group(1)).strip(" \u200b\t\n")
-            p_m = re.search(r"data-component-part=[\"']card-content[\"'][^>]*>(.*?)</div", body, re.S)
-            desc = re.sub(r"<[^>]+>", "", p_m.group(1)).strip(" \u200b\t\n") if p_m else ""
-            title = f"{model_name}：{desc}" if desc else model_name
+            # 标题**只取名称**，卡片正文（data-component-part="card-content"）不再并进来：
+            # 拼成的中位标题有 145 字，订阅列表里根本没法扫读；正文点进链接就能看到。
+            title = model_name
         else:
             lines = _clean_html_text(body)
             title = lines[0] if lines else hid
@@ -1330,15 +1330,16 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
                 continue
             model_id = re.sub(r"<[^>]+>", "", code_m.group(1))
             model_id = re.sub(r"[​\s]+", "", model_id).strip("`")
-            desc_raw = re.sub(r"<[^>]+>", "", cells[-1])
-            desc = re.sub(r"[​\s]+", " ", desc_raw).strip()
-            desc = re.sub(r"[，,]\s*了解详情$", "", desc)
+            # 功能说明列只用于**校验这是一行真条目**（空说明的行多半是表头残留），
+            # 不并进标题 —— 拼起来的中位标题 145 字，订阅列表里没法扫读。
+            desc = re.sub(r"<[^>]+>", "", cells[-1])
+            desc = re.sub(r"[​\s]+", " ", desc).strip()
             if not model_id or not desc:
                 continue
             norm_date = _drop_future_date(
                 f"{int(date_m.group(2)):04d}-"
                 f"{int(date_m.group(3)):02d}-{int(date_m.group(4)):02d}")
-            title = f"{model_id}：{desc}"
+            title = model_id
             url = f"{base_no_frag}#{quote(model_id)}"
             if url in row_seen:  # 同一模型在多地域表格中重复出现
                 continue
@@ -1632,6 +1633,23 @@ def _norm_url(url: str) -> str:
                 + p.path.rstrip("/")).lower()
     except Exception:
         return (url or "").rstrip("/").lower()
+
+
+def _article_key(url: str) -> str:
+    """文章的**身份**键：在 `_norm_url` 基础上**保留 fragment**。
+
+    单页文档站的每条条目是「同页不同 `#锚点`」（阿里云百炼更新日志、MiniMax 发布说明、
+    PPIO 公告页…），**fragment 才是它们的身份**。`_norm_url` 会去掉 fragment，于是同一页的
+    N 条折叠成一个键：归档增量合并会把历史条目误判成「本次已抓到」而**丢弃**
+    （实测：归档 3 条、本次只重抓到 1 条时，合并后只剩 1 条 —— 违反「归档只增不减」）；
+    合并流去重也会把同页条目吃掉（通义 100 条在合并流里只剩 1 条）。
+
+    `extract_articles_from_page` 与 `collect_news_articles` 早已按这个规则处理，这里统一 ——
+    同一个判断不要在两处各写一遍。
+    """
+    key = _norm_url(url)
+    frag = urlparse(url).fragment.strip().lower()
+    return key + "#" + frag if frag else key
 
 
 def _same_site(u1: str, u2: str) -> bool:
@@ -2541,9 +2559,9 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
         # 1) 增量合并既有归档：新抓取排前，历史已有且本次未抓到的条目追加在后，永不丢失
         existing = parse_archived_articles(arch_path)
         merged_arts: list[Article] = list(intel.all_news_articles)
-        by_url = {_norm_url(a.url): a for a in merged_arts}
+        by_url = {_article_key(a.url): a for a in merged_arts}
         for old_art in existing:
-            u_norm = _norm_url(old_art.url)
+            u_norm = _article_key(old_art.url)
             fresh = by_url.get(u_norm)
             if fresh is None:
                 by_url[u_norm] = old_art
@@ -2817,7 +2835,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     seen: set[str] = set()
     picked: list[tuple[str, str, Article, str]] = []
     for row in merged:
-        key = _norm_url(row[2].url)
+        key = _article_key(row[2].url)
         if key in seen:
             continue
         seen.add(key)
