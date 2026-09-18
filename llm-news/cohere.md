@@ -1,6 +1,6 @@
 # Cohere 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-16**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-18**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Cohere（`cohere`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -18,22 +18,22 @@
 7. [商业生成人工智能：用例、优势和采用](https://cohere.com/blog/generative-ai-for-business)（2026-08-28）
 8. [为什么前沿部署的工程师应该培养能力，而不是依赖](https://cohere.com/blog/forward-deployed-engineers-capability-building)（2026-08-27）
 9. [Parse 简介：大规模企业文档智能](https://cohere.com/blog/parse)（2026-08-27）
-10. [文化漏斗：你无法对齐数据中没有的内容](https://cohere.com/blog/the-culture-funnel-you-cant-align-what-isnt-in-the-data)（2026-08-19）
-11. [Cohere 与滑铁卢大学建立合作伙伴关系，以加强加拿大的人工智能人才储备](https://cohere.com/blog/cohere-university-of-waterloo-announcement)（2026-08-06）
-12. [Cohere 签署欧盟人工智能生成内容透明度行为准则](https://cohere.com/blog/cohere-signs-eu-code-of-practice)（2026-07-31）
-13. [财富管理机构的一天，无论有没有人工智能](https://cohere.com/blog/a-day-in-the-life-of-a-wealth-manager-with-and-without-ai)（2026-07-27）
-14. [North Automations 简介：智能工作流程编排](https://cohere.com/blog/introducing-north-automations-ai-workflows)（2026-07-27）
-15. [Cohere 和多伦多大学合作推动负责任的人工智能大规模采用](https://cohere.com/blog/cohere-university-of-toronto-announcement)（2026-07-16）
-16. [人工智能拥有的总成本](https://cohere.com/blog/the-total-cost-of-ai-ownership)（2026-07-15）
-17. [野外的小阿雅：人们正在用开放的多语言人工智能构建什么](https://cohere.com/blog/tiny-aya-in-the-wild)（2026-07-14）
-18. [硬件感知的动态推测解码](https://cohere.com/blog/hardware-aware-dynamic-speculative-decoding)（2026-07-10）
-19. [认识 Cohere 转录阿拉伯语](https://cohere.com/blog/transcribe-arabic)（2026-07-07）
-20. [使用 AI 代理实现叉子维护自动化](https://cohere.com/blog/automating-fork-maintenance-with-ai-agents)（2026-06-25）
-21. [North Mini Code 简介：Cohere 为开发人员提供的第一个模型](https://cohere.com/blog/north-mini-code)（2026-06-09）
-22. [Command A+ 简介：让所有人都能使用主权代理能力](https://cohere.com/blog/command-a-plus)（2026-05-20）
-23. [Cohere Transcribe 简介：开源语音识别领域的最新技术](https://cohere.com/blog/transcribe)（2026-03-26）
-24. [Cohere 与 Aleph Alpha 签署协议，成为首个跨大西洋主权人工智能解决方案](https://cohere.com/blog/cohere-and-aleph-alpha-sign-agreement)
-25. [2026 年主权人工智能采用状况](https://cohere.com/blog/state-of-sovereign-ai-adoption-2026)
+10. [2026 年主权人工智能采用状况](https://cohere.com/blog/state-of-sovereign-ai-adoption-2026)（2026-08-25）
+11. [文化漏斗：你无法对齐数据中没有的内容](https://cohere.com/blog/the-culture-funnel-you-cant-align-what-isnt-in-the-data)（2026-08-19）
+12. [Cohere 与滑铁卢大学建立合作伙伴关系，以加强加拿大的人工智能人才储备](https://cohere.com/blog/cohere-university-of-waterloo-announcement)（2026-08-06）
+13. [Cohere 签署欧盟人工智能生成内容透明度行为准则](https://cohere.com/blog/cohere-signs-eu-code-of-practice)（2026-07-31）
+14. [财富管理机构的一天，无论有没有人工智能](https://cohere.com/blog/a-day-in-the-life-of-a-wealth-manager-with-and-without-ai)（2026-07-27）
+15. [North Automations 简介：智能工作流程编排](https://cohere.com/blog/introducing-north-automations-ai-workflows)（2026-07-27）
+16. [Cohere 和多伦多大学合作推动负责任的人工智能大规模采用](https://cohere.com/blog/cohere-university-of-toronto-announcement)（2026-07-16）
+17. [人工智能拥有的总成本](https://cohere.com/blog/the-total-cost-of-ai-ownership)（2026-07-15）
+18. [野外的小阿雅：人们正在用开放的多语言人工智能构建什么](https://cohere.com/blog/tiny-aya-in-the-wild)（2026-07-14）
+19. [硬件感知的动态推测解码](https://cohere.com/blog/hardware-aware-dynamic-speculative-decoding)（2026-07-10）
+20. [认识 Cohere 转录阿拉伯语](https://cohere.com/blog/transcribe-arabic)（2026-07-07）
+21. [使用 AI 代理实现叉子维护自动化](https://cohere.com/blog/automating-fork-maintenance-with-ai-agents)（2026-06-25）
+22. [North Mini Code 简介：Cohere 为开发人员提供的第一个模型](https://cohere.com/blog/north-mini-code)（2026-06-09）
+23. [Command A+ 简介：让所有人都能使用主权代理能力](https://cohere.com/blog/command-a-plus)（2026-05-20）
+24. [Cohere Transcribe 简介：开源语音识别领域的最新技术](https://cohere.com/blog/transcribe)（2026-03-26）
+25. [Cohere 与 Aleph Alpha 签署协议，成为首个跨大西洋主权人工智能解决方案](https://cohere.com/blog/cohere-and-aleph-alpha-sign-agreement)
 26. [工作的未来人工智能将如何改变我们的工作方式？](https://cohere.com/research/futures-of-work)
 27. [Aya Models 大规模多语言人工智能](https://cohere.com/research/aya)
 28. [研究学者寻找新一代机器学习人才](https://cohere.com/research/scholars-program)
