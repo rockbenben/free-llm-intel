@@ -83,6 +83,15 @@
   }
   input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
   .count { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  /* 视图切换（最新 / 均衡）：分段控件，配色与 chip 同源 */
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .segbtn {
+    appearance: none; cursor: pointer; font-size: 12.5px; line-height: 1;
+    padding: 6px 10px; border: 0; background: var(--chip-bg); color: var(--chip-fg);
+    white-space: nowrap;
+  }
+  .segbtn + .segbtn { border-left: 1px solid var(--line); }
+  .segbtn[aria-pressed=true] { background: var(--chip-active-bg); color: var(--chip-active-fg); }
 
   .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
   .chip {
@@ -155,12 +164,21 @@
   <div class="controls">
     <div class="row">
       <input type="search" id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
+      <div class="seg" role="group" aria-label="视图">
+        <button type="button" class="segbtn" id="view-latest" aria-pressed="true"
+                title="按时间倒序显示全部条目">最新</button>
+        <button type="button" class="segbtn" id="view-balanced" aria-pressed="false"
+                title="每家最多 20 条，避免被高产厂商刷屏">均衡</button>
+      </div>
       <span class="count" id="count">加载中…</span>
     </div>
     <div class="chips" id="chips"></div>
     <p class="hint">
       筛选项只包含聚合流里出现过的厂商。文章全无日期或都偏旧的厂商（其文章不进聚合流）
       请看页脚的「按厂商订阅」——那里列出全部<strong>有动态源</strong>的厂商。
+      「均衡」视图每家最多 20 条，避免高产厂商（如 OpenAI 占了合并流一半）刷屏；
+      <strong>筛选厂商或搜索时不再截断</strong>，直接显示全部匹配项。
+      它只改这一屏的呈现，<strong>订阅源本身不受影响</strong>。
     </p>
   </div>
 
@@ -191,7 +209,10 @@
 
   var FEED = 'feeds/llm-news-all.xml';
   var INDEX = 'feeds/vendors.json';
-  var state = { all: [], vendor: null, q: '' };
+  // 均衡视图下每家的条数上限。合并流里 OpenAI 常年占一半（它确实发得最多），
+  // 不设上限时这一屏基本被它刷满。
+  var PER_VENDOR_CAP = 20;
+  var state = { all: [], vendor: null, q: '', balanced: false };
 
   var el = {
     items: document.getElementById('items'),
@@ -203,7 +224,9 @@
     sub: document.getElementById('subscribe-link'),
     copy: document.getElementById('copy-btn'),
     vendorFeeds: document.getElementById('vendor-feeds'),
-    vendorIndexNote: document.getElementById('vendor-index-note')
+    vendorIndexNote: document.getElementById('vendor-index-note'),
+    viewLatest: document.getElementById('view-latest'),
+    viewBalanced: document.getElementById('view-balanced')
   };
 
   function text(node, tag) {
@@ -295,11 +318,27 @@
 
   function visible() {
     var q = state.q.toLowerCase();
-    return state.all.filter(function (it) {
+    var rows = state.all.filter(function (it) {
       if (state.vendor !== null && (it.vendor || '(未知来源)') !== state.vendor) return false;
       if (q && it.title.toLowerCase().indexOf(q) < 0) return false;
       return true;
     });
+    if (!state.balanced) return rows;
+    // 均衡上限**只在浏览全部时**生效（未筛选厂商、未搜索）：
+    // 一旦用户点名了某家或搜了关键词，他要的就是「全部匹配项」——
+    // 这时再截断等于把结果静默藏起来（例如筛选 OpenAI 却只给 20 条）。
+    if (state.vendor !== null || state.q) return rows;
+    // state.all 已按日期倒序，所以「每家取前 N 条」就是「每家最新 N 条」。
+    // 只影响这一屏的呈现，不改 feed —— 订阅者拿到的仍是完整的时间流。
+    var seen = {}, out = [];
+    for (var i = 0; i < rows.length; i++) {
+      var key = rows[i].vendor || '(未知来源)';
+      var n = seen[key] || 0;
+      if (n >= PER_VENDOR_CAP) continue;
+      seen[key] = n + 1;
+      out.push(rows[i]);
+    }
+    return out;
   }
 
   function renderItems() {
@@ -354,7 +393,13 @@
       frag.appendChild(li);
     });
     el.items.appendChild(frag);
-    el.count.textContent = rows.length + ' / ' + state.all.length + ' 条';
+    // 均衡模式下，若因「已筛选厂商 / 已搜索」而没截断，标签要说清楚 ——
+    // 否则计数写着「均衡」却列出全部，看着像开关坏了。
+    var suffix = '';
+    if (state.balanced) {
+      suffix = (state.vendor !== null || state.q) ? '（均衡 · 未截断）' : '（均衡）';
+    }
+    el.count.textContent = rows.length + ' / ' + state.all.length + ' 条' + suffix;
     el.msg.style.display = rows.length ? 'none' : 'block';
     if (!rows.length) el.msg.textContent = '没有匹配的条目。';
   }
@@ -402,6 +447,16 @@
     state.q = el.q.value.trim();
     renderItems();
   });
+
+  function setBalanced(on) {
+    state.balanced = on;
+    el.viewLatest.setAttribute('aria-pressed', String(!on));
+    el.viewBalanced.setAttribute('aria-pressed', String(on));
+    renderItems();
+  }
+
+  el.viewLatest.addEventListener('click', function () { setBalanced(false); });
+  el.viewBalanced.addEventListener('click', function () { setBalanced(true); });
 
   el.copy.addEventListener('click', function () {
     var url = new URL(el.sub.getAttribute('href'), location.href).href;
