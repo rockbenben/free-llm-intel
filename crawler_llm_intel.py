@@ -242,7 +242,17 @@ REPO_URL = "https://github.com/rockbenben/free-llm-intel"
 # 提取兜底）。本仓库既然已把这些页面归档成结构化文章，就顺手把它们变成真正可订阅
 # 的源——否则「无官方源的厂商」永远只能靠人肉刷页面。
 RSS_TITLE_MAX = 60      # 标题超过该长度则截断，完整文本移入 description
-RSS_MERGED_LIMIT = 200  # 合并流最多收录条数（单厂商源不设上限，等于该厂商全量归档）
+#: 合并流最多收录条数；**0 = 不限制**（收录全部有日期的条目）。
+#: 曾经是 200，理由是「全量约 1.2 MB 的 feed 会让阅读器吃力」——**这个理由站不住**：
+#: GitHub Pages 用 gzip 传输（线上实测 `Content-Encoding: gzip`），全量 2575 条
+#: （XML 1124 KB）压缩后只有 **131 KB**，阅读器毫无压力。当时的判断看的是未压缩体积。
+#: 单厂商源本来就不设上限（等于该厂商全量归档）。
+RSS_MERGED_LIMIT = 0
+
+
+def merged_scope_text(merged_limit: int) -> str:
+    """合并流收录范围的文案。0 = 不限制。文案要跟着实际上限走，别写死。"""
+    return "收录全部有日期的条目" if not merged_limit else f"最近 {merged_limit} 条"
 
 BLOCK_TAGS = {
     "p", "div", "li", "tr", "td", "th", "h1", "h2", "h3", "h4", "h5", "h6",
@@ -1232,6 +1242,17 @@ def _cap_changelog_title(title: str) -> str:
     return title
 
 
+def _is_date_only_title(title: str) -> bool:
+    """整条标题就是日期 / 数字的（`2026 年 7 月 31 日`、`2026年9月`、`2026-07-31`）→ 不是标题。
+
+    这类「标题」来自日期分节标题或目录锚点（MiniMax 发布说明的目录、Kimi 的月份分节），
+    看着像动态、实际一条内容都没有。链接分支与 changelog 分支都要用，所以抽成一处 ——
+    同一个判断分两处写迟早漂移（链接分支先加了这条守卫，changelog 分支漏了，
+    于是 Kimi 的月份标题照旧进归档）。
+    """
+    return bool(re.fullmatch(r"[\d\s\-/.年月日]+", title or ""))
+
+
 def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[Article]:
     """从单页文档/变更日志（如 Mintlify、Docusaurus、GitBook 等）的日期标题或更新容器中提取文章列表。"""
     raw = page.raw or page.text
@@ -1263,7 +1284,10 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
                 f"{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3) or 1):02d}" if dm else "")
             lines = _clean_html_text(content)
             title = lines[0] if lines else hid
-            if re.fullmatch(r"\d{4}" + _DATE_SEP_YM + r"\d{1,2}(?:" + _DATE_SEP_MD + r"\d{1,2})?", title):
+            # 第一行是日期分节标题（`2026年9月` 这类**只写年月**的也算 —— 原先的判据
+            # `\d{4}年\d{1,2}(月\d{1,2})?` 匹配不上它，于是 Kimi 的标题就停在月份上，
+            # 归档 26 条里 24 条是「2026年9月」这种没有内容的月份名）。真标题在下一行。
+            if _is_date_only_title(title):
                 title = lines[1] if len(lines) > 1 else title
             url = f"{base_url.split('#')[0]}#{quote(hid)}"
             if url not in seen and len(title) >= 3:
@@ -1271,6 +1295,81 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
                 articles.append(Article(title=_cap_changelog_title(title), url=url, date=norm_date, source="官方更新日志", stype=page.stype))
         if articles:
             return articles[:max_items]
+
+    # 结构 4：**日期分节 + 子标题条目**（Kimi 平台发布记录：`<h2 id="2026年9月">2026年9月</h2>`
+    # 之下是一串 `<h3>`，每个 h3 才是一条真条目 —— 如「🤖 Kimi 托管智能体（Hosted Agents）Beta 上线」）。
+    # 不认这层结构时抓到的是**月份标题**：实测归档 26 条里 24 条是「2026年9月」这种，
+    # 看着像动态、实际一条内容都没有。
+    # 放在结构 2 之前：它更具体（要求「日期分节 + 更深的子标题」同时成立），
+    # 而 Gemini / MiniMax / PPIO 那些日期标题下面是正文而不是子标题，不会命中。
+    if not articles:
+        heads = list(re.finditer(
+            r"<(h[2-4])[^>]*id=[\"']([^\"']+)[\"'][^>]*>(.*?)</\1>", raw, re.S | re.I))
+        sec_date, sec_level = "", 9
+        rows4: list[Article] = []
+        seen4: set[str] = set()
+        for hm in heads:
+            level = int(hm.group(1)[1])
+            lines4 = _clean_html_text(hm.group(3))
+            text = lines4[0] if lines4 else ""
+            if not text:
+                continue
+            # 日期分节标题：`2026年9月` / `2026 年 9 月 17 日` / `2026-09-17` 都算
+            dm4 = re.search(
+                r"(20[2-3]\d)\s*[-/年.]\s*(\d{1,2})(?:\s*[-/月.]\s*(\d{1,2}))?", text)
+            if dm4 and _is_date_only_title(text):
+                sec_date = _drop_future_date(
+                    f"{dm4.group(1)}-{int(dm4.group(2)):02d}-{int(dm4.group(3) or 1):02d}")
+                sec_level = level
+                continue
+            if not sec_date or level <= sec_level:
+                continue  # 与分节同级或更浅的标题不是它的条目
+            url4 = f"{base_url.split('#')[0]}#{quote(hm.group(2))}"
+            if url4 in seen4:
+                continue
+            seen4.add(url4)
+            rows4.append(Article(title=_cap_changelog_title(text), url=url4, date=sec_date,
+                                 source="官方更新日志", stype=page.stype))
+        if len(rows4) >= 3:
+            return rows4[:max_items]
+
+    # 结构 5：**日期分节 + 列表项条目**（PPIO 发版记录：日期区间标题之下是一组 `<li>`，
+    # 每个 li 的**第一个 `<strong>`** 才是条目名 —— 如「部分多模态模型计划下线」。
+    # 只取到分节标题旁的栏目名（「模型调整 🔧」）没有信息量，等于把内容丢了。
+    # 同样放在结构 2 之前：结构 2 会把这种页面按「一节一条」处理，只留下栏目名。
+    if not articles:
+        heads5 = list(re.finditer(
+            r"<(h[2-4])[^>]*id=[\"']([^\"']+)[\"'][^>]*>(.*?)</\1>", raw, re.S | re.I))
+        sec_date5 = ""
+        rows5: list[Article] = []
+        seen5: set[str] = set()
+        for idx5, hm5 in enumerate(heads5):
+            lines5 = _clean_html_text(hm5.group(3))
+            text5 = lines5[0] if lines5 else ""
+            dm5 = re.search(
+                r"(20[2-3]\d)\s*[-/年.]\s*(\d{1,2})(?:\s*[-/月.]\s*(\d{1,2}))?", text5)
+            if not (dm5 and _is_date_only_title(text5)):
+                continue
+            sec_date5 = _drop_future_date(
+                f"{dm5.group(1)}-{int(dm5.group(2)):02d}-{int(dm5.group(3) or 1):02d}")
+            nxt = heads5[idx5 + 1].start() if idx5 + 1 < len(heads5) else len(raw)
+            section = raw[hm5.end():nxt]
+            for li_idx, li in enumerate(re.findall(r"<li[^>]*>(.*?)</li>", section, re.S | re.I)):
+                strong5 = re.search(r"<strong[^>]*>(.*?)</strong>", li, re.S | re.I)
+                title5 = re.sub(r"<[^>]+>", "", strong5.group(1)).strip() if strong5 else ""
+                title5 = re.sub(r"[\u200b\s]+", " ", title5).strip(" \t\n-–|·•")
+                if not title5 or _is_date_only_title(title5) or len(title5) < 4:
+                    continue
+                # li 没有自己的锚点，用「分节 id + 序号」合成一个稳定的 fragment，
+                # 保证归档增量合并能认回同一条（改了就变成新增）。
+                url5 = f"{base_url.split('#')[0]}#{quote(hm5.group(2))}-{li_idx + 1}"
+                if url5 in seen5:
+                    continue
+                seen5.add(url5)
+                rows5.append(Article(title=_cap_changelog_title(title5), url=url5,
+                                     date=sec_date5, source="官方更新日志", stype=page.stype))
+        if len(rows5) >= 3:
+            return rows5[:max_items]
 
     # 结构 2：标题日期锚点式变更日志（<h2/h3 id="2026...">）。
     # id 允许日期前有短前缀（如 DeepSeek 中文页 h2 id="时间-2026-09-10"），
@@ -1285,9 +1384,22 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
     for m in matches_h:
         hid = m.group(2)
         body = m.group(3)
+        # id 里的日期有两种写法，都要认：
+        #   YYYY-MM-DD / `2026 年 7 月 31 日`（DeepSeek、MiniMax…）
+        #   **MM-DD-YYYY**（Mintlify 系文档站：Gemini API changelog 的 `id="09-17-2026"`）
+        # 后者原先解析不出日期 → 下面 `if not norm_date: continue` 把条目**全部丢弃**
+        # （实测那一页 113 个日期标题一条都没进来）。月份/日做范围校验，避免把
+        # `model-2025-rc1` 这类版本号当日期。
         dm = re.search(r"(20[2-3]\d)\D{1,3}(\d{1,2})(?:\D{0,3}(\d{1,2}))?", hid)
-        norm_date = _drop_future_date(
-            f"{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3) or 1):02d}" if dm else "")
+        norm_date = ""
+        if dm:
+            norm_date = _drop_future_date(
+                f"{dm.group(1)}-{int(dm.group(2)):02d}-{int(dm.group(3) or 1):02d}")
+        else:
+            dm2 = re.search(r"(?<!\d)(\d{1,2})\D{1,3}(\d{1,2})\D{1,3}(20[2-3]\d)(?!\d)", hid)
+            if dm2 and 1 <= int(dm2.group(1)) <= 12 and 1 <= int(dm2.group(2)) <= 31:
+                norm_date = _drop_future_date(
+                    f"{dm2.group(3)}-{int(dm2.group(1)):02d}-{int(dm2.group(2)):02d}")
 
         # 检查卡片标题（MiniMax 等卡片式组件）
         card_m = re.search(r"data-component-part=[\"']card-title[\"'][^>]*>(.*?)</h[23]>", body, re.S)
@@ -1299,7 +1411,8 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
         else:
             lines = _clean_html_text(body)
             title = lines[0] if lines else hid
-            if re.search(r"^\d{4}\s*[-年]", title):
+            # 同上：首行是日期分节标题时，真标题在下一行
+            if _is_date_only_title(title):
                 title = lines[1] if len(lines) > 1 else title
 
         title = re.sub(r"[\u200b\s]+", " ", title).strip(" \t\n-–|·•")
@@ -1416,7 +1529,7 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
         # 整条标题就是日期 / 数字的，不是标题 —— MiniMax 发布说明的目录锚点长这样
         # （`<a href="#2026-年-7-月-31-日">2026 年 7 月 31 日</a>`）。只写年月的
         # （`2026 年 4 月`）没有「日」，靠上面的 _INLINE_DATE_RE 剥不干净，这里兜住。
-        if re.fullmatch(r"[\d\s\-/.年月日]+", title):
+        if _is_date_only_title(title):
             continue
         if CTA_NAV.match(title) or NAV_CONCAT.match(title):
             continue
@@ -2325,11 +2438,11 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
             lines.append(f"> - 网页浏览 / 一键订阅：[{site}]({site})"
                          "（可按厂商筛选、搜索，页脚列出**全部有动态源的厂商**单源）")
         lines.append(f"> - 合并流（聚合全部有动态源的厂商）：[`llm-news-all.xml`]({feeds_base}/llm-news-all.xml)"
-                     f"（最近 {merged_limit} 条，带厂商前缀，可按 `category` 过滤）")
+                     f"（{merged_scope_text(merged_limit)}，带厂商前缀，可按 `category` 过滤）")
         lines.append(f"> - 单厂商源：`{feeds_base}/llm-news-{{vendor_id}}.xml`"
                      "（把 `{vendor_id}` 换成下方括号里的厂商 id，如 `llm-news-openai.xml`）")
         lines.append("> - ⚠️ 合并流与各厂商单源**内容重叠**，二选一订阅即可（都订会出现重复条目）；"
-                     "合并流只收有日期的条目且有上限，**要订阅全部有动态源的厂商请用单源或浏览页页脚**。")
+                     "合并流只收有日期的条目，**要看全量请用浏览页或单厂商源**。")
     lines.append("")
 
     vendors_with_news = [v for v in intel_list if v.news_pages]
@@ -2491,7 +2604,7 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
     if self_hosted:
         lines += group("LLM Vendors · 自建源（官方没有原生 RSS）", self_hosted)
         lines += group("LLM Vendors · 聚合流（订阅这一个 = 全部有动态源的厂商）", [(
-            "全部厂商 - 合并流（最近 %d 条，带厂商前缀）" % merged_limit,
+            "全部厂商 - 合并流（%s，带厂商前缀）" % merged_scope_text(merged_limit),
             f"{feeds_base}/llm-news-all.xml",
             site or feeds_base,
         )])
@@ -2840,7 +2953,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
             continue
         seen.add(key)
         picked.append(row)
-        if len(picked) >= merged_limit:
+        if merged_limit and len(picked) >= merged_limit:  # 0 = 不限制
             break
     if picked:
         # 每条带上「本厂商单源」地址，让合并流自描述厂商→源映射（见 _rss_item 注释）
@@ -2890,6 +3003,32 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
             }
             for brand, vendor_id, arts, _t in per_vendor
         ]
+    })
+
+    # 4) 全量文章索引：供浏览页列出**全部**条目，不受合并流 200 条上限约束。
+    #    合并流是给**订阅者**的：放开到全量约 1.2 MB（2561 条 × 504 字节），服务端无所谓，
+    #    但阅读器每次轮询都要重下重解析，不少阅读器有体积上限 —— 所以「feed 限量、页面全量」。
+    #    只放浏览必需的字段，不带描述，体积约为同条数 XML 的 1/3。
+    #    第 5 列是**原文标题**（与汉化标题不同时才有值），页面用它做副标题 —— feed 里那
+    #    一栏来自 `<description>`，索引不带 description，所以单独带上，免得页面功能倒退。
+    #    标题用汉化后的 `titles_zh` 且**不截断**（feed 里截到 60 字是为了列表可读，
+    #    页面上可以完整显示）。
+    index_rows: list[list[str]] = []
+    for _brand, vendor_id, arts, titles_zh in per_vendor:
+        for art, t in zip(arts, titles_zh):
+            orig = art.title.strip()
+            index_rows.append([t, art.url, vendor_id, art.date,
+                               orig if orig != t.strip() else ""])
+    # 有日期的按日期倒序在前，无日期的排后（与页面/feed 的排序约定一致）。
+    # sort 稳定 + 输入顺序确定 → 同样内容每次产出的字节一致，`_write_json` 才不会误判「变了」。
+    dated_rows = sorted((r for r in index_rows if r[3]), key=lambda r: r[3], reverse=True)
+    undated_rows = [r for r in index_rows if not r[3]]
+    index_rows = dated_rows + undated_rows
+    files += 1
+    changed += _write_json(out_dir / "articles.json", {
+        "fields": ["title", "url", "vendor", "date", "original_title"],
+        "count": len(index_rows),
+        "articles": index_rows,
     })
     return files, items, changed, skipped
 
@@ -3078,7 +3217,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--feeds-base", default="",
                         help="自建 RSS 的对外前缀；默认按 GITHUB_REPOSITORY 推导 GitHub Pages 地址")
     parser.add_argument("--rss-limit", type=int, default=RSS_MERGED_LIMIT,
-                        help=f"合并流最多收录条数（默认 {RSS_MERGED_LIMIT}；单厂商源不设上限）")
+                        help=f"合并流最多收录条数（默认 {RSS_MERGED_LIMIT} = **不限制**；"
+                             "单厂商源本来就不设上限）")
     parser.add_argument("--delay", type=float, default=0.3, help="每次请求间隔秒数（默认 0.3）")
     parser.add_argument("--timeout", type=float, default=20.0, help="读取超时秒数（默认 20）")
     parser.add_argument("--only", action="append", default=[],

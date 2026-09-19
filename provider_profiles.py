@@ -92,6 +92,21 @@ def translate_to_zh(text: str, timeout: float = 4.0) -> str:
     if not text or not text.strip():
         return text
     clean_text = text.strip()
+    # 标识符形态（模型 id 等）**在查缓存之前**就返回：整串没有空格、且含 - / . _ 之一。
+    # 实测 Google 会把 "qwen/qwen3-coder-30b-a3b-instruct：—" 译成
+    # "qwen/qwen3-coder-30b-a3b-指令：—" —— 模型名被改掉，比不翻更糟。
+    # 正常标题都带空格，所以这条不会误伤。
+    # 必须放在缓存查询前：错误的译文可能**已经落进 .translate_cache.json**（本地就撞到了），
+    # 放后面等于对历史缓存不生效。
+    if " " not in clean_text and re.search(r"[-/._]", clean_text):
+        return clean_text
+    # 含**型号**的标题也不翻：字母紧邻数字（`H3` / `4.6` / `v2`）就是型号信号。
+    # 实测 Google 把 `MiniMax H3` 译成 `迷你最大H3`（品牌名被改写），
+    # `qwen3.8-omni-flash` 译成 `qwen3.8-全向闪存`。带空格的品牌名上面那条拦不住。
+    # 宁可留英文，也不翻坏品牌名；纯散文标题（无型号）照常翻译。
+    # 同样放在缓存查询前 —— 已翻坏的译文可能已在缓存里，放后面就治不了历史数据。
+    if re.search(r"[A-Za-z]\d|\d[A-Za-z]", clean_text):
+        return clean_text
     with _TRANS_LOCK:
         if clean_text in _TRANS_CACHE:
             return _TRANS_CACHE[clean_text]

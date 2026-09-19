@@ -658,9 +658,10 @@ class TestSelfHostedRss(unittest.TestCase):
             crawler_llm_intel.Article(title="B 新文章", url="https://b.com/1", date="2026-03-01")])
         files, items, changed, skipped = crawler_llm_intel.write_rss_feeds(
             self.out_dir, [a, b], base_url="https://example.github.io/repo/feeds")
-        # 3 个 feed：合并流 + 2 个单厂商源；4 条条目：合并流 2 条 + 单源各 1 条；
-        # changed 多 1 是 vendors.json 厂商索引
-        self.assertEqual((files, items, changed, skipped), (3, 4, 4, 0))
+        # 4 个产物：合并流 + 2 个单厂商源 + 全量文章索引（articles.json）；
+        # 4 条 feed 条目：合并流 2 条 + 单源各 1 条；
+        # changed 多 2 是 vendors.json 厂商索引与 articles.json 全量索引
+        self.assertEqual((files, items, changed, skipped), (4, 4, 5, 0))
         merged = self._read("llm-news-all.xml")
         self.assertIn('<rss version="2.0"', merged)
         self.assertIn('rel="self" type="application/rss+xml"', merged)
@@ -1162,6 +1163,231 @@ class TestChangelogTitleIsNameOnly(unittest.TestCase):
             self.assertTrue(a.url.endswith(f"#model-{i}"), "URL 仍用模型 ID 做锚点")
 
 
+class TestFeedLimitedPageFull(unittest.TestCase):
+    """合并流**默认不限制**；页面仍读更省的全量索引。
+
+    合并流曾经限 200 条，理由是「全量约 1.2 MB 会让阅读器吃力」—— **那个理由站不住**：
+    GitHub Pages 用 gzip 传输（线上实测 `Content-Encoding: gzip`），全量 2575 条
+    （XML 1124 KB）压缩后只有 131 KB。当时的判断看的是未压缩体积。
+    现在 `RSS_MERGED_LIMIT = 0` = 不限制，订阅者一次就能拿到全部历史。
+
+    页面仍读 `articles.json` 而不是合并流，但理由换了：**体积只有一半**（520 KB vs 1124 KB）、
+    免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里为了列表可读截到 60 字）。
+    """
+
+    def _intel(self, n):
+        v = crawler_llm_intel.VendorIntel(vendor_id="v", brand="V", homepage="", products=[])
+        v.all_news_articles = [
+            crawler_llm_intel.Article(title=f"标题{i}", url=f"https://v.example/news/{i}",
+                                      date=f"2026-01-{i:02d}")
+            for i in range(1, n + 1)
+        ]
+        return v
+
+    def test_merged_feed_is_unlimited_by_default(self):
+        """默认（RSS_MERGED_LIMIT = 0）应收录全部有日期的条目。"""
+        self.assertEqual(crawler_llm_intel.RSS_MERGED_LIMIT, 0,
+                         "合并流默认不限制；要限流请显式传 merged_limit")
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "feeds"
+            crawler_llm_intel.write_rss_feeds(out, [self._intel(5)])
+            merged = (out / "llm-news-all.xml").read_text(encoding="utf-8")
+            self.assertEqual(merged.count("<item>"), 5, "默认不得截断")
+            # 文案也要跟着上限走，别写死「最近 N 条」
+            self.assertIn("收录全部有日期的条目",
+                          crawler_llm_intel.merged_scope_text(
+                              crawler_llm_intel.RSS_MERGED_LIMIT))
+
+    def test_explicit_limit_still_works(self):
+        """显式给上限时仍生效（`--rss-limit` 与全量索引不受影响）。"""
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "feeds"
+            crawler_llm_intel.write_rss_feeds(out, [self._intel(5)], merged_limit=2)
+            merged = (out / "llm-news-all.xml").read_text(encoding="utf-8")
+            self.assertEqual(merged.count("<item>"), 2, "显式上限应生效")
+            data = json.loads((out / "articles.json").read_text(encoding="utf-8"))
+            self.assertEqual(data["count"], 5, "全量索引不受合并流上限约束")
+            self.assertEqual(len(data["articles"]), 5)
+            self.assertEqual(data["fields"][:4], ["title", "url", "vendor", "date"])
+            dates = [r[3] for r in data["articles"]]
+            self.assertEqual(dates, sorted(dates, reverse=True), "有日期的应按日期倒序排在前")
+
+    def test_page_reads_the_full_index(self):
+        """页面读 articles.json（体积只有合并流一半、标题不截断、带原文标题）。"""
+        page = (Path(__file__).resolve().parent / "docs" / "index.html").read_text(
+            encoding="utf-8")
+        self.assertIn("feeds/articles.json", page,
+                      "浏览页要读全量索引（更小、标题完整、带原文标题）")
+        self.assertIn("feeds/llm-news-all.xml", page,
+                      "合并流仍是订阅地址与索引缺失时的兜底，不能删")
+
+
+class TestTranslationSkipsIdentifiers(unittest.TestCase):
+    """模型 id 这类标识符不该送去翻译。
+
+    Regression: Google 把 `qwen/qwen3-coder-30b-a3b-instruct：—` 译成
+    `qwen/qwen3-coder-30b-a3b-指令：—` —— **模型名被改掉**，比不翻更糟。
+    已发布产物里没坏，只是因为那次翻译恰好失败（回退原文），属于侥幸。
+    """
+
+    SAMPLES = (
+        "qwen/qwen3-coder-30b-a3b-instruct：—",
+        "qwen/qwen3-next-80b-a3b-instruct：—",
+        "gpt-4.1-mini",
+        "claude-sonnet-5",
+    )
+
+    # 含**型号**（字母紧邻数字）的标题：宁可留英文，也不翻坏品牌名。
+    # 实测 `MiniMax H3` → `迷你最大H3`、`qwen3.8-omni-flash` → `qwen3.8-全向闪存`。
+    SAMPLES_WITH_MODEL_NUMBER = (
+        "MiniMax H3",
+        "qwen3.8-omni-flash",
+        "Announcing v2 of our platform",
+    )
+
+    def test_identifier_like_text_is_returned_unchanged(self):
+        for s in self.SAMPLES:
+            self.assertEqual(provider_profiles.translate_to_zh(s), s,
+                             f"标识符被改写了: {s}")
+
+    def test_titles_with_model_number_are_returned_unchanged(self):
+        for s in self.SAMPLES_WITH_MODEL_NUMBER:
+            self.assertEqual(provider_profiles.translate_to_zh(s), s,
+                             f"含型号的标题被翻译了（品牌名有被改写风险）: {s}")
+
+
+class TestDateOnlyTitleIsNotATitle(unittest.TestCase):
+    """整条标题就是日期 / 数字的（含**只写年月**的 `2026年9月`）不是标题。
+
+    Regression: 这类标题来自日期分节与目录锚点。判据原先在两处各写一遍且**都漏了
+    「只写年月」的形态**，于是 Kimi 平台发布记录抓到的 24 条全是「2026年9月」这种月份名
+    —— 看着像动态、实际一条内容都没有。抽成 `_is_date_only_title` 后三处共用。
+    """
+
+    def test_recognises_date_only_forms(self):
+        for s in ("2026 年 7 月 31 日", "2026年9月", "2026-07-31", "2026 年 4 月", "2026"):
+            self.assertTrue(crawler_llm_intel._is_date_only_title(s), s)
+
+    def test_real_titles_are_not_dates(self):
+        for s in ("GLM-5.3 新一代旗舰模型上线", "MiniMax H3", "2026 年发布计划：模型上下线", ""):
+            self.assertFalse(crawler_llm_intel._is_date_only_title(s), s)
+
+    def test_update_container_uses_next_line_when_first_line_is_a_month(self):
+        """Kimi 式 update-container：第一行是月份，真标题在下一行。"""
+        html = """
+        <html><body>
+          <div class="x update-container" id="2026年9月">
+            <p>2026年9月</p>
+            <p>🤖 Kimi 托管智能体（Hosted Agents）Beta 上线</p>
+            <p>在模型推理 API 之上，我们封装了 Kimi Durable Harness。</p>
+          </div>
+          <div class="x update-container" id="2026年8月">
+            <p>2026年8月</p>
+            <p>kimi-k2.5 与 moonshot-v1 全系列模型上线</p>
+          </div>
+          <div class="x update-container" id="2026年7月">
+            <p>2026年7月</p>
+            <p>Kimi K3 上线开放平台 API</p>
+          </div>
+        </body></html>"""
+        page = crawler_llm_intel.PageResult(
+            url="https://k.example/docs/changelog", stype="changelog", ok=True,
+            final_url="https://k.example/docs/changelog", raw=html)
+        arts = crawler_llm_intel.extract_changelog_sections(page)
+        self.assertEqual(len(arts), 3)
+        titles = [a.title for a in arts]
+        self.assertNotIn("2026年9月", titles, "月份名不得当标题")
+        self.assertTrue(any("Kimi 托管智能体" in t for t in titles), titles)
+        self.assertEqual([a.date for a in arts], ["2026-09-01", "2026-08-01", "2026-07-01"])
+
+
+    def test_date_section_with_child_headings(self):
+        """结构 4：日期分节 + 更深的子标题条目（分节标题本身不是条目）。"""
+        html = """
+        <html><body>
+          <h2 id="2026年9月">2026年9月</h2>
+          <h3 id="a">条目 A：新模型上线</h3><p>说明一</p>
+          <h3 id="b">条目 B：计费调整</h3><p>说明二</p>
+          <h3 id="c">条目 C：SDK 更新</h3><p>说明三</p>
+          <h2 id="2026年8月">2026年8月</h2>
+          <h3 id="d">条目 D：更早的一条</h3><p>说明四</p>
+        </body></html>"""
+        page = crawler_llm_intel.PageResult(
+            url="https://s.example/docs/changelog", stype="changelog", ok=True,
+            final_url="https://s.example/docs/changelog", raw=html)
+        arts = crawler_llm_intel.extract_changelog_sections(page)
+        self.assertEqual([a.title for a in arts],
+                         ["条目 A：新模型上线", "条目 B：计费调整", "条目 C：SDK 更新",
+                          "条目 D：更早的一条"])
+        self.assertEqual([a.date for a in arts],
+                         ["2026-09-01", "2026-09-01", "2026-09-01", "2026-08-01"])
+
+
+    def test_date_section_with_list_items(self):
+        """结构 5：日期分节 + 列表项条目（PPIO 发版记录：`li` 的首个 `<strong>` 才是标题）。
+
+        只取分节标题旁的栏目名（「模型调整 🔧」）等于把内容丢了。
+        """
+        html = """
+        <html><body>
+          <h2 id="2026年9月1日-9月4日">2026年9月1日-9月4日</h2>
+          <span><strong>模型调整</strong> 🔧</span>
+          <ul>
+            <li><span><strong>部分多模态模型计划下线</strong></span>
+                <span>Qwen-Image、Wan 2.5 等将于 2026 年 9 月 30 日下线。</span></li>
+            <li><span><strong>新模型上架</strong></span><span>新增若干模型。</span></li>
+          </ul>
+          <h2 id="2026年8月25日-8月29日">2026年8月25日-8月29日</h2>
+          <span><strong>功能优化</strong> 🔧</span>
+          <ul>
+            <li><span><strong>控制台改版</strong></span><span>说明。</span></li>
+          </ul>
+        </body></html>"""
+        page = crawler_llm_intel.PageResult(
+            url="https://p.example/docs/announcement/changelog", stype="updates", ok=True,
+            final_url="https://p.example/docs/announcement/changelog", raw=html)
+        arts = crawler_llm_intel.extract_changelog_sections(page)
+        self.assertEqual([a.title for a in arts],
+                         ["部分多模态模型计划下线", "新模型上架", "控制台改版"])
+        self.assertEqual([a.date for a in arts], ["2026-09-01", "2026-09-01", "2026-08-25"])
+        self.assertNotIn("模型调整", [a.title for a in arts], "栏目名不得当标题")
+        self.assertEqual(len({a.url for a in arts}), 3, "每个 li 要有各自稳定的 URL")
+
+
+class TestChangelogDateIdFormats(unittest.TestCase):
+    """日期标题的 id 有 `YYYY-MM-DD` 与 `MM-DD-YYYY` 两种写法，都要认。
+
+    Regression: 只认前者时，Mintlify 系文档站（如 Gemini API changelog 的
+    `id="09-17-2026"`）解析不出日期 → 结构 2 的 `if not norm_date: continue` 把
+    **整页 113 条全部丢弃**，看起来像「这页没有内容 / 是 JS 渲染」，其实是日期格式没认。
+    """
+
+    def _extract(self, heading_id, title):
+        html = (f'<html><body><h2 id="{heading_id}">{title}</h2>'
+                f'<ul><li><p>这是这一条变更的说明，长度足够通过校验。</p></li></ul>'
+                f'</body></html>')
+        page = crawler_llm_intel.PageResult(
+            url="https://x.example/docs/changelog", stype="changelog", ok=True,
+            final_url="https://x.example/docs/changelog", raw=html)
+        return crawler_llm_intel.extract_changelog_sections(page)
+
+    def test_year_first_id(self):
+        arts = self._extract("2026-09-17", "2026-09-17")
+        self.assertEqual(len(arts), 1)
+        self.assertEqual(arts[0].date, "2026-09-17")
+
+    def test_month_first_id(self):
+        """Gemini API changelog 的形态：id="09-17-2026"。"""
+        arts = self._extract("09-17-2026", "September 17, 2026")
+        self.assertEqual(len(arts), 1, "MM-DD-YYYY 的 id 不得被整条丢弃")
+        self.assertEqual(arts[0].date, "2026-09-17")
+
+    def test_month_first_id_rejects_impossible_dates(self):
+        """月份/日做范围校验：`model-25-99-2026` 这种不该被当日期。"""
+        arts = self._extract("25-99-2026", "not a date")
+        self.assertEqual(arts, [])
+
+
 class TestDateIntegrity(unittest.TestCase):
     """日期正确性：归档按 URL 增量合并、不会自我纠正，错误日期一旦写入就永久留存。
 
@@ -1349,6 +1575,41 @@ class TestReadmeIntegrity(unittest.TestCase):
 
 class TestGuideRendering(unittest.TestCase):
     """白嫖攻略：过期促销自动过滤、懒人首选块渲染。"""
+
+    def test_vendors_without_guide_meta_are_known_deliberate_omissions(self):
+        """没有 GUIDE_META 的厂商会被攻略**静默跳过** —— 名单冻结，新增厂商必须显式决定。
+
+        攻略按 `GUIDE_META` 过滤：没条目的厂商直接 `continue`，**不会报错**。于是
+        「新增一家有免费额度的厂商、忘了写 GUIDE_META」＝ 它从攻略里消失，而攻略自称
+        「与下方厂商总表同源」。这类静默漏项只能靠守卫拦（2026-09-18 就是靠人工比对
+        才发现 4 家有免费能力却不在攻略里）。
+
+        名单里每家都是**有意不进攻略**的，理由见注释。要新增厂商时：该进攻略就补
+        `GUIDE_META`（+ 档案的 `tier_caveats`），不该进就把 id 加进来并写明原因。
+        """
+        KNOWN_OMITTED = {
+            # 官方明确「无免费额度 / 无赠送」（档案里有一手原文）
+            "openai", "xai_grok", "deepseek", "minimax", "together_ai", "deepinfra",
+            # 存疑或已停服：条目保留用于跟踪，但不应作为可用免费额度来源（README 已如实标注）
+            "lingyiwanwu_01ai", "kunlun_tiangong", "ncompass", "mara",
+            # 免费权益无法从官方公开页核实（宁缺毋假）
+            "china_mobile_moma", "zhinao_360", "dmxapi",
+            # 官方称「新用户有少量免费测试额度」但**金额不公开**，暂不列（待定，见项目记忆）
+            "anthropic",
+        }
+        root = Path(__file__).resolve().parent
+        vendors, _sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        self.assertTrue(vendors, "没解析到厂商 —— 解析失配，先修测试本身")
+        missing = {v["id"] for v in vendors} - set(provider_profiles.GUIDE_META)
+        new = sorted(missing - KNOWN_OMITTED)
+        self.assertEqual(
+            new, [],
+            f"这些厂商没有 GUIDE_META，会被攻略静默跳过。该进攻略就补 GUIDE_META，"
+            f"不该进就加进 KNOWN_OMITTED 并写明原因: {new}")
+        stale = sorted(KNOWN_OMITTED & set(provider_profiles.GUIDE_META))
+        self.assertEqual(
+            stale, [],
+            f"这些厂商已经有 GUIDE_META 了，该从 KNOWN_OMITTED 移除（名单过时了）: {stale}")
 
     def test_guide_meta_keys_are_real_vendors(self):
         """GUIDE_META 的 key 必须是真实厂商 id。
