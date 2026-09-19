@@ -165,20 +165,20 @@
     <div class="row">
       <input type="search" id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
       <div class="seg" role="group" aria-label="视图">
-        <button type="button" class="segbtn" id="view-latest" aria-pressed="true"
-                title="按时间倒序显示全部条目">最新</button>
-        <button type="button" class="segbtn" id="view-balanced" aria-pressed="false"
-                title="每家最多 20 条，避免被高产厂商刷屏">均衡</button>
+        <button type="button" class="segbtn" id="view-all" aria-pressed="true"
+                title="按时间倒序显示全部条目">全部</button>
+        <button type="button" class="segbtn" id="view-digest" aria-pressed="false"
+                title="每家只保留最新 20 条，用来快速扫一遍各家动态">每家最新 20</button>
       </div>
       <span class="count" id="count">加载中…</span>
     </div>
     <div class="chips" id="chips"></div>
     <p class="hint">
-      筛选项只包含聚合流里出现过的厂商。文章全无日期或都偏旧的厂商（其文章不进聚合流）
-      请看页脚的「按厂商订阅」——那里列出全部<strong>有动态源</strong>的厂商。
-      「均衡」视图每家最多 20 条，避免高产厂商（如 OpenAI 占了合并流一半）刷屏；
-      <strong>筛选厂商或搜索时不再截断</strong>，直接显示全部匹配项。
-      它只改这一屏的呈现，<strong>订阅源本身不受影响</strong>。
+      本页列出<strong>全部</strong>归档条目（当前 2600+ 条），读的是比合并流更省的全量索引 ——
+      体积只有一半，且<strong>标题不截断、还带原文标题</strong>。
+      点厂商徽章或上方筛选可只看某家，<strong>订阅地址会跟着切成该家的单源</strong>。
+      「每家最新 20」是摘要视图（每家只留最新 20 条），用来快速扫一遍各家动态。
+      文章全无日期的厂商请看页脚的「按厂商订阅」——那里列出全部<strong>有动态源</strong>的厂商。
     </p>
   </div>
 
@@ -207,12 +207,16 @@
 (function () {
   'use strict';
 
-  var FEED = 'feeds/llm-news-all.xml';
-  var INDEX = 'feeds/vendors.json';
-  // 均衡视图下每家的条数上限。合并流里 OpenAI 常年占一半（它确实发得最多），
-  // 不设上限时这一屏基本被它刷满。
-  var PER_VENDOR_CAP = 20;
-  var state = { all: [], vendor: null, q: '', balanced: false };
+  var FEED = 'feeds/llm-news-all.xml';    // 合并流：**订阅**用（默认不限条数，全量 gzip 后仅 ~131 KB）
+  var VENDORS = 'feeds/vendors.json';     // 厂商索引：id → 品牌名 + 单厂商源地址
+  var ARTICLES = 'feeds/articles.json';   // 全量文章索引：**本页**用（体积只有合并流一半，标题不截断）
+  // 「每家最新 N 条」摘要视图的每家上限。默认视图是**全部**，不做任何截断 ——
+  // 之前那个叫「均衡」的视图只是把 OpenAI 砍掉、总数从 200 掉到 101，
+  // 并没有多显示任何其他厂商的内容，是偷换概念，已改名并明确成「摘要」。
+  var DIGEST_CAP = 20;
+  var state = {
+    all: [], brands: {}, feeds: {}, vendor: null, q: '', digest: false
+  };
 
   var el = {
     items: document.getElementById('items'),
@@ -225,10 +229,26 @@
     copy: document.getElementById('copy-btn'),
     vendorFeeds: document.getElementById('vendor-feeds'),
     vendorIndexNote: document.getElementById('vendor-index-note'),
-    viewLatest: document.getElementById('view-latest'),
-    viewBalanced: document.getElementById('view-balanced')
+    viewAll: document.getElementById('view-all'),
+    viewDigest: document.getElementById('view-digest')
   };
 
+  // 全量索引的行格式见 crawler_llm_intel.write_rss_feeds()：
+  // ["标题", "url", "vendor_id", "日期", "原文标题"]，日期已是有日期在前、按日期倒序。
+  function mapRow(r) {
+    var vid = r[2] || '';
+    return {
+      title: r[0] || '',
+      link: r[1] || '',
+      vendorId: vid,
+      vendor: state.brands[vid] || vid || '(未知来源)',
+      date: r[3] || '',
+      orig: r[4] || '',
+      feed: state.feeds[vid] || ''
+    };
+  }
+
+  // ---- 以下三个函数只服务「索引缺失时的兜底」：退回解析合并流 ----
   function text(node, tag) {
     var n = node.getElementsByTagName(tag)[0];
     return n ? (n.textContent || '').trim() : '';
@@ -242,7 +262,7 @@
     return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
   }
 
-  function parse(xmlText) {
+  function parseFeed(xmlText) {
     var doc = new DOMParser().parseFromString(xmlText, 'application/xml');
     if (doc.getElementsByTagName('parsererror').length) throw new Error('XML 解析失败');
     var nodes = doc.getElementsByTagName('item');
@@ -262,10 +282,11 @@
       out.push({
         title: title,
         link: text(n, 'link'),
+        vendorId: '',
         date: fmtDate(text(n, 'pubDate')),
-        vendor: brand,
-        feed: feed,
-        note: text(n, 'description')
+        orig: text(n, 'description'),
+        vendor: brand || '(未知来源)',
+        feed: feed
       });
     }
     return out;
@@ -276,7 +297,7 @@
     state.all.forEach(function (it) {
       var key = it.vendor || '(未知来源)';
       if (!seen[key]) {
-        seen[key] = { name: key, feed: it.feed, n: 0 };
+        seen[key] = { name: key, id: it.vendorId, feed: it.feed, n: 0 };
         list.push(seen[key]);
       }
       seen[key].n++;
@@ -323,22 +344,38 @@
       if (q && it.title.toLowerCase().indexOf(q) < 0) return false;
       return true;
     });
-    if (!state.balanced) return rows;
-    // 均衡上限**只在浏览全部时**生效（未筛选厂商、未搜索）：
-    // 一旦用户点名了某家或搜了关键词，他要的就是「全部匹配项」——
-    // 这时再截断等于把结果静默藏起来（例如筛选 OpenAI 却只给 20 条）。
+    if (!state.digest) return rows;
+    // 摘要上限**只在浏览全部时**生效（未筛选厂商、未搜索）：一旦用户点名了某家或搜了
+    // 关键词，他要的就是「全部匹配项」——这时再截断等于把结果静默藏起来。
     if (state.vendor !== null || state.q) return rows;
-    // state.all 已按日期倒序，所以「每家取前 N 条」就是「每家最新 N 条」。
-    // 只影响这一屏的呈现，不改 feed —— 订阅者拿到的仍是完整的时间流。
+    // 摘要视图：每家只留最新 N 条（state.all 已按日期倒序，所以「前 N 条」就是「最新 N 条」）。
+    // 只影响这一屏的呈现，不改 feed。
     var seen = {}, out = [];
     for (var i = 0; i < rows.length; i++) {
       var key = rows[i].vendor || '(未知来源)';
       var n = seen[key] || 0;
-      if (n >= PER_VENDOR_CAP) continue;
+      if (n >= DIGEST_CAP) continue;
       seen[key] = n + 1;
       out.push(rows[i]);
     }
     return out;
+  }
+
+  // 订阅地址跟着筛选走：选中某家就给该家的单厂商源，否则给合并流。
+  // 选完厂商最想做的大概就是「订这一家」，不该逼用户再去页脚找。
+  function updateSubscribe() {
+    var url = new URL(FEED, location.href).href;
+    var label = '订阅聚合源';
+    if (state.vendor !== null) {
+      var v = vendorList().filter(function (x) { return x.name === state.vendor; })[0];
+      if (v && v.feed) {
+        url = v.feed;
+        label = '订阅「' + v.name + '」单源';
+      }
+    }
+    el.feedUrl.textContent = url;
+    el.sub.setAttribute('href', url);
+    el.sub.textContent = label;
   }
 
   function renderItems() {
@@ -381,10 +418,10 @@
       badge.className = 'vendor';
       badge.textContent = it.vendor || '未知来源';
       meta.appendChild(badge);
-      if (it.note) {
+      if (it.orig) {
         var note = document.createElement('span');
         note.className = 'note';
-        note.textContent = it.note;
+        note.textContent = '原文：' + it.orig;
         meta.appendChild(note);
       }
       body.appendChild(meta);
@@ -393,11 +430,13 @@
       frag.appendChild(li);
     });
     el.items.appendChild(frag);
-    // 均衡模式下，若因「已筛选厂商 / 已搜索」而没截断，标签要说清楚 ——
-    // 否则计数写着「均衡」却列出全部，看着像开关坏了。
+    // 摘要模式下若因「已筛选厂商 / 已搜索」而没截断，标签要说清楚 ——
+    // 否则计数写着「每家最新 20」却列出全部，看着像开关坏了。
     var suffix = '';
-    if (state.balanced) {
-      suffix = (state.vendor !== null || state.q) ? '（均衡 · 未截断）' : '（均衡）';
+    if (state.digest) {
+      suffix = (state.vendor !== null || state.q)
+        ? '（摘要未生效：显示全部匹配）'
+        : '（每家最新 ' + DIGEST_CAP + '）';
     }
     el.count.textContent = rows.length + ' / ' + state.all.length + ' 条' + suffix;
     el.msg.style.display = rows.length ? 'none' : 'block';
@@ -406,6 +445,7 @@
 
   function render() {
     renderChips();
+    updateSubscribe();
     renderItems();
   }
 
@@ -448,15 +488,15 @@
     renderItems();
   });
 
-  function setBalanced(on) {
-    state.balanced = on;
-    el.viewLatest.setAttribute('aria-pressed', String(!on));
-    el.viewBalanced.setAttribute('aria-pressed', String(on));
+  function setDigest(on) {
+    state.digest = on;
+    el.viewAll.setAttribute('aria-pressed', String(!on));
+    el.viewDigest.setAttribute('aria-pressed', String(on));
     renderItems();
   }
 
-  el.viewLatest.addEventListener('click', function () { setBalanced(false); });
-  el.viewBalanced.addEventListener('click', function () { setBalanced(true); });
+  el.viewAll.addEventListener('click', function () { setDigest(false); });
+  el.viewDigest.addEventListener('click', function () { setDigest(true); });
 
   el.copy.addEventListener('click', function () {
     var url = new URL(el.sub.getAttribute('href'), location.href).href;
@@ -471,40 +511,70 @@
     }
   });
 
-  // 用绝对地址显示/订阅，方便直接粘进阅读器
-  el.feedUrl.textContent = new URL(FEED, location.href).href;
-
-  // 厂商索引是可选的：缺失时页面照常工作，只是「按厂商订阅」退化成
-  // 「聚合流里能看到的那几家」，并在页脚注明不完整。
-  var loadIndex = fetch(INDEX, { cache: 'no-cache' })
+  // 厂商索引先加载：文章索引里只有 vendor_id，品牌名与单源地址都靠它映射。
+  // 它缺失时页面照常工作，只是厂商显示成 id、「按厂商订阅」退化成不完整列表。
+  var loadVendors = fetch(VENDORS, { cache: 'no-cache' })
     .then(function (r) { return r.ok ? r.json() : null; })
     .catch(function () { return null; });
 
-  fetch(FEED, { cache: 'no-cache' })
-    .then(function (r) {
+  // 文章列表读**全量索引**（不是合并流）：索引体积只有合并流一半、免去 XML 解析，
+  // 而且标题不截断、还带原文标题（feed 里截到 60 字是为了列表可读）。
+  // 做成函数而非常量 promise：常量会在链式 catch 挂上之前就 reject，浏览器报
+  // 「Uncaught (in promise)」，兜底虽仍生效但控制台是脏的。
+  function loadArticles() {
+    return fetch(ARTICLES, { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.text();
-    })
-    .then(function (txt) {
-      state.all = parse(txt);
-      if (!state.all.length) throw new Error('聚合源里没有条目');
-      render();
-      return loadIndex.then(function (index) {
-        renderVendorFeeds(index);
-        if (!index) el.vendorIndexNote.style.display = '';
+      return r.json();
+    });
+  }
+
+  function fail(e) {
+    el.count.textContent = '加载失败';
+    el.msg.className = 'msg warn';
+    el.msg.style.display = 'block';
+    el.msg.innerHTML =
+      '<strong>无法读取 ' + ARTICLES + '</strong>（' + e.message + '）' +
+      '<br>本页需要在 http(s) 下访问 —— 浏览器禁止 <code>file://</code> 页面读取本地数据。' +
+      '<br>本地预览：在 <code>docs/</code> 目录执行 <code>python -m http.server</code> 后访问 ' +
+      '<code>http://localhost:8000/</code>；线上请确认 GitHub Pages 已开启（Settings → Pages，' +
+      'Source 选 Deploy from a branch、Branch=main、目录=/docs）。';
+  }
+
+  loadVendors.then(function (index) {
+    ((index && index.vendors) || []).forEach(function (v) {
+      state.brands[v.id] = v.brand || v.id;
+      state.feeds[v.id] = v.feed || '';
+    });
+    renderVendorFeeds(index);
+    if (!index) el.vendorIndexNote.style.display = '';
+
+    // 优先用**全量索引**（更小、标题完整）。索引是巡检产物、与页面同批提交，
+    // 在「页面已上线、索引还没生成」的窗口里退回合并流（它现在也是全量，
+    // 只是标题截到 60 字），页面不至于整页打不开。
+    return loadArticles().then(function (data) {
+      state.all = (data.articles || []).map(mapRow);
+      state.limited = false;
+    }).catch(function () {
+      return fetch(FEED, { cache: 'no-cache' }).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      }).then(function (txt) {
+        state.all = parseFeed(txt);
+        state.limited = true;
       });
-    })
-    .catch(function (e) {
-      el.count.textContent = '加载失败';
+    });
+  }).then(function () {
+    if (!state.all.length) throw new Error('没有可显示的条目');
+    render();
+    if (state.limited) {
       el.msg.className = 'msg warn';
       el.msg.style.display = 'block';
-      el.msg.innerHTML =
-        '<strong>无法读取 ' + FEED + '</strong>（' + e.message + '）' +
-        '<br>本页需要在 http(s) 下访问 —— 浏览器禁止 <code>file://</code> 页面读取本地 XML。' +
-        '<br>本地预览：在 <code>docs/</code> 目录执行 <code>python -m http.server</code> 后访问 ' +
-        '<code>http://localhost:8000/</code>；线上请确认 GitHub Pages 已开启（Settings → Pages，' +
-        'Source 选 Deploy from a branch、Branch=main、目录=/docs）。';
-    });
+      el.msg.textContent =
+        '全量索引（' + ARTICLES + '）尚未生成，当前显示的是合并流里的 ' +
+        state.all.length + ' 条（合并流也是全量，只是标题截到 60 字）。' +
+        '下一次定时巡检生成索引后，本页会自动显示完整标题与原文标题。';
+    }
+  }).catch(fail);
 })();
 </script>
 </body>
