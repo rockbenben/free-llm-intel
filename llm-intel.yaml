@@ -430,7 +430,9 @@ sources:
   # Anthropic Claude
   - vendor_id: anthropic
     type: api_docs
-    url: https://docs.anthropic.com/
+    # 原 https://docs.anthropic.com/ —— 官方已迁到 platform.claude.com，这里直接用规范地址
+    # （原地址会 301 过去，仍可用，但攻略里显示的地址不该是旧的）
+    url: https://platform.claude.com/docs/en/home
   - vendor_id: anthropic
     type: pricing
     url: https://claude.com/pricing
@@ -440,9 +442,9 @@ sources:
   - vendor_id: anthropic
     type: news
     url: https://www.anthropic.com/news
-  - vendor_id: anthropic
-    type: engineering
-    url: https://www.anthropic.com/engineering
+  # 原有一个 https://www.anthropic.com/engineering 源已移除：该页**不含日期**
+  # （实测整页 0 个日期串，抓到的 26 条全部无日期），于是它产出的条目永远进不了合并流，
+  # 只把归档撑到 67 条、其中 31 条无日期。要看工程文章可从 /news 里点进去。
 
   # Google Gemini
   - vendor_id: google_gemini
@@ -458,8 +460,16 @@ sources:
     type: rate_limits
     url: https://ai.google.dev/gemini-api/docs/rate-limits
   - vendor_id: google_gemini
-    type: blog
-    url: https://cloud.google.com/blog/products/ai-machine-learning/
+    # **官方 API 变更日志** —— 本仓库关心的是模型上下线 / 定价 / 限额，这才是对的源
+    # （113 条全部带日期，条目如「Gemini 3.8 Flash generally available (GA)」）。
+    # 此前抓 cloud.google.com/blog/products/ai-machine-learning/ —— 那是整个 Google Cloud
+    # 的 AI 博客，混进非 Gemini 内容、且页面拿不到日期（11 条全无日期、进不了合并流）。
+    # 中间一度换成 blog.google/products/gemini/rss/（有日期但是**消费级** Gemini 博客），
+    # 与「API 免费额度」无关，已弃用。
+    # 该页的标题 id 是 MM-DD-YYYY（`id="09-17-2026"`），曾因日期解析只认 YYYY-MM-DD
+    # 而整页 0 条 —— 已修（见 extract_changelog_sections 的日期 id 解析）。
+    type: changelog
+    url: https://ai.google.dev/gemini-api/docs/changelog
 
   # xAI Grok
   - vendor_id: xai_grok
@@ -491,6 +501,13 @@ sources:
   - vendor_id: groq
     type: blog
     url: https://groq.com/blog/
+  - vendor_id: groq
+    # 官方 API 变更日志：32 条全是 API 变更（模型上下线、SDK 版本、TTS 迁移…），
+    # 比营销博客对口得多。代价是**该页不含日期**（日期只在 JS 渲染后出现，id 里也没有年份），
+    # 所以这些条目只进 Groq 的单厂商源、不进合并流 —— 合并流是时间流，无日期无法参与排序。
+    # 与上面的博客源并存：博客给「有日期的动态」，changelog 给「对口的 API 变更」。
+    type: changelog
+    url: https://console.groq.com/docs/changelog
 
   # DeepSeek
   - vendor_id: deepseek
@@ -687,8 +704,13 @@ sources:
     type: hf_org
     url: https://huggingface.co/meta-llama
   - vendor_id: meta_llama
-    type: blog
-    url: https://ai.meta.com/blog/
+    # 原生 RSS（10 条全带日期）。⚠️ **这是广度兜底，不是 Llama 专属源**：
+    # Meta 的 Llama 官网（llama.com / ai.meta.com / developer.meta.com）**全部返回 HTTP 400**
+    # （WAF / 区域限制），拿不到 Llama 自己的博客；这里的条目是 Meta 公司层面的 AI 新闻
+    # （可能含政策、合作伙伴），所以会混进与 Llama 模型无关的内容。
+    # 宁可如此也不留空 —— 没有日期的话整家进不了合并流，那还不如不做。
+    type: feed
+    url: https://about.fb.com/news/tag/ai/feed/
 
   # Hugging Face
   - vendor_id: huggingface
@@ -711,6 +733,11 @@ sources:
   - vendor_id: cloudflare_workers_ai
     type: pricing
     url: https://developers.cloudflare.com/workers-ai/platform/pricing/
+  - vendor_id: cloudflare_workers_ai
+    # 官方 Workers AI 变更日志的原生 RSS（35 条全带日期，条目如
+    # 「Workers AI - GLM-5.2 now available on Workers AI」）—— 正是本仓库关心的模型上下线。
+    type: feed
+    url: https://developers.cloudflare.com/workers-ai/changelog/index.xml
   - vendor_id: cloudflare_workers_ai
     type: workers_pricing
     url: https://developers.cloudflare.com/workers/platform/pricing/
@@ -768,8 +795,13 @@ sources:
     type: token_plan
     url: https://ppio.com/token-plan
   - vendor_id: ppio
+    # 原抓 https://ppio.com/docs/announcement/announcement —— 那页是**模型清单**
+    # （`deepseek/deepseek-r1`、`qwen/qwen3-14b`、`kat-coder`…），不是公告：
+    # 51 条全是模型名，没有一条是动态。
+    # 换成官方发版记录：按「日期区间 + 栏目 + 条目」组织，条目形如
+    # 「部分多模态模型计划下线：Qwen-Image、Wan 2.5… 将于 2026 年 9 月 30 日下线」。
     type: updates
-    url: https://ppio.com/docs/announcement/announcement
+    url: https://ppio.com/docs/announcement/changelog-llm
 
   # Infini AI
   - vendor_id: infini_ai
@@ -849,7 +881,8 @@ sources:
     url: https://deepinfra.com/pricing
   - vendor_id: deepinfra
     type: api_docs
-    url: https://deepinfra.com/docs
+    # 原 https://deepinfra.com/docs —— 已迁到独立文档子域，用规范地址
+    url: https://docs.deepinfra.com
 
   # IBM watsonx.ai
   - vendor_id: ibm_watsonx
@@ -1007,6 +1040,10 @@ sources:
   - vendor_id: modal
     type: product
     url: https://modal.com/
+  - vendor_id: modal
+    # 官方博客 Atom（133 条全带日期，条目如「Product updates: Sandbox Sidecars, new models」）。
+    type: feed
+    url: https://modal.com/blog/atom.xml
 
   # BaseTen
   - vendor_id: baseten
@@ -1015,6 +1052,10 @@ sources:
   - vendor_id: baseten
     type: free_quota
     url: https://www.baseten.co/startup-program/
+  - vendor_id: baseten
+    # 官方变更日志 RSS（232 条全带日期，条目如「Web search with Baseten Hosted Tools」）。
+    type: feed
+    url: https://baseten.co/feeds/changelog.xml
   - vendor_id: baseten
     type: product
     url: https://baseten.co/
@@ -1025,7 +1066,13 @@ sources:
     url: https://www.modular.com/pricing
   - vendor_id: modular_cloud
     type: product
-    url: https://www.bentoml.com/
+    # 原为 https://www.bentoml.com/ —— **BentoML 是另一家公司**，配错了。
+    # （这类错误链接健康检查查不出来：bentoml.com 返回 200，只是站点不对。）
+    url: https://www.modular.com/
+  - vendor_id: modular_cloud
+    # 官方博客 RSS（100 条全带日期，条目如「Modular 26.6: Open compiler contributions…」）。
+    type: feed
+    url: https://www.modular.com/blog/rss.xml
 
   # Morph Labs
   - vendor_id: morph_labs
@@ -1097,6 +1144,11 @@ sources:
   - vendor_id: digitalocean_genai
     type: free_quota
     url: https://docs.digitalocean.com/platform/billing/signup-credit/
+  - vendor_id: digitalocean_genai
+    # 官方发布记录 RSS（100 条全带日期，条目如「The following DeepSeek model is now available
+    # on DigitalOcean Inference」）—— 产品/模型变更，对口。
+    type: feed
+    url: https://docs.digitalocean.com/release-notes/index.xml
 
   # NCompass
   - vendor_id: ncompass
