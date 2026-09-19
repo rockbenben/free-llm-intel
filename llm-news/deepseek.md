@@ -1,6 +1,6 @@
 # DeepSeek 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-12**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-19**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：DeepSeek（`deepseek`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -23,24 +23,24 @@
 11. [DeepSeek-V3.2-Exp 发布](https://api-docs.deepseek.com/zh-cn/news/news250929)（2025-09-29）
 12. [DeepSeek V3.1 更新](https://api-docs.deepseek.com/zh-cn/news/news250922)（2025-09-22）
 13. [DeepSeek V3.1 发布](https://api-docs.deepseek.com/zh-cn/news/news250821)（2025-08-21）
-14. [深度搜索推理机](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2025-05-28)（2025-05-28）
+14. [deepseek-reasoner](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2025-05-28)（2025-05-28）
 15. [DeepSeek-R1-0528 发布](https://api-docs.deepseek.com/zh-cn/news/news250528)（2025-05-28）
 16. [DeepSeek-V3-0324 发布](https://api-docs.deepseek.com/zh-cn/news/news250325)（2025-03-25）
-17. [深度搜索聊天](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2025-03-24)（2025-03-24）
-18. [深度搜索推理机](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2025-01-20)（2025-01-20）
+17. [deepseek-chat](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2025-03-24)（2025-03-24）
+18. [deepseek-reasoner](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2025-01-20)（2025-01-20）
 19. [DeepSeek-R1 发布](https://api-docs.deepseek.com/zh-cn/news/news250120)（2025-01-20）
 20. [DeepSeek APP 发布](https://api-docs.deepseek.com/zh-cn/news/news250115)（2025-01-15）
-21. [深度搜索聊天](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2024-12-26)（2024-12-26）
+21. [deepseek-chat](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2024-12-26)（2024-12-26）
 22. [DeepSeek-V3 发布](https://api-docs.deepseek.com/zh-cn/news/news1226)（2024-12-26）
-23. [深度搜索聊天](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-12-10)（2024-12-10）
+23. [deepseek-chat](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-12-10)（2024-12-10）
 24. [DeepSeek-V2.5-1210 发布](https://api-docs.deepseek.com/zh-cn/news/news1210)（2024-12-10）
 25. [DeepSeek-R1-Lite 发布](https://api-docs.deepseek.com/zh-cn/news/news1120)（2024-11-20）
-26. [deepseek-coder & deepseek-chat 升级为 DeepSeek V2.5 模型](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-09-05)（2024-09-05）
+26. [deepseek-coder &amp; deepseek-chat 升级为 DeepSeek V2.5 模型](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-09-05)（2024-09-05）
 27. [DeepSeek-V2.5 发布](https://api-docs.deepseek.com/zh-cn/news/news0905)（2024-09-05）
 28. [API 上线硬盘缓存技术](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-08-02)（2024-08-02）
 29. [API 上线硬盘缓存](https://api-docs.deepseek.com/zh-cn/news/news0802)（2024-08-02）
 30. [API 接口更新](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-07-25)（2024-07-25）
-31. [深度搜索编码器](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-07-24)（2024-07-24）
-32. [深度搜索聊天](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-06-28)（2024-06-28）
-33. [深度搜索编码器](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-06-14)（2024-06-14）
-34. [深度搜索聊天](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-05-17)（2024-05-17）
+31. [deepseek-coder](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-07-24)（2024-07-24）
+32. [deepseek-chat](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-06-28)（2024-06-28）
+33. [deepseek-coder](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-06-14)（2024-06-14）
+34. [deepseek-chat](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-05-17)（2024-05-17）

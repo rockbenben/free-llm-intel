@@ -1,6 +1,6 @@
 # Mistral AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-16**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-19**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Mistral AI（`mistral`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -13,7 +13,7 @@
 1. [Mistral 和 Mozilla 正在为您的网络浏览器带来开放、私密和多语言的人工智能](https://mistral.ai/news/mistral-x-mozilla/)（2026-09-16）
 2. [Cloudera 和 Mistral 合作为企业数据带来专业的主权智能](https://mistral.ai/news/mistral-x-cloudera/)（2026-09-10）
 3. [使用人工智能代理对复杂的遗留代码进行现代化改造。](https://mistral.ai/news/legacy-code-modernization/)（2026-09-09）
-4. [Mistral 筹集了 30 亿欧元，使主权、开放权重人工智能成为技术前沿](https://mistral.ai/news/mistral-makes-sovereign-open-weight-ai-to-frontier/)（2026-09-08）
+4. [Mistral raises €3B to make sovereign, open-weight AI the technology frontier](https://mistral.ai/news/mistral-makes-sovereign-open-weight-ai-to-frontier/)（2026-09-08）
 5. [米斯特拉尔 x 人类](https://mistral.ai/news/mistral-x-humain/)（2026-08-24）
 6. [代理搜索。人工智能系统提供更准确、更高效的结果。](https://mistral.ai/news/agentic-search/)（2026-08-20）
 7. [区域内推理、开放模型和新的欧洲主权人工智能基础设施。](https://mistral.ai/news/regional-inference-open-models-new-compute/)（2026-08-11）
@@ -47,7 +47,7 @@
 35. [米斯特拉尔 3 简介](https://mistral.ai/news/mistral-3/)（2025-12-02）
 36. [Mistral AI - 德国的人工智能](https://mistral.ai/news/ki-fur-deutschland/)（2025-11-19）
 37. [介绍 Mistral AI Studio。](https://mistral.ai/news/ai-studio/)（2025-10-24）
-38. [Mistral AI 筹集 1.7B€ 以加速人工智能技术进步](https://mistral.ai/news/mistral-ai-raises-1-7-b-to-accelerate-technological-progress-with-ai/)（2025-09-09）
+38. [Mistral AI raises 1.7B€ to accelerate technological progress with AI](https://mistral.ai/news/mistral-ai-raises-1-7-b-to-accelerate-technological-progress-with-ai/)（2025-09-09）
 39. [让记忆为你工作。](https://mistral.ai/news/memory/)（2025-09-02）
 40. [乐聊天。定制 MCP 连接器。回忆。](https://mistral.ai/news/le-chat-mcp-connectors-memories/)（2025-09-02）
 41. [通过微调释放卫星图像视觉语言模型的潜力](https://mistral.ai/news/unlocking-potential-vision-language-models-satellite-imagery-fine-tuning/)（2025-08-01）
@@ -80,7 +80,7 @@
 68. [米斯特拉尔审核 API](https://mistral.ai/news/mistral-moderation/)（2024-11-07）
 69. [部长级会议、部长级会议](https://mistral.ai/news/ministraux/)（2024-10-16）
 70. [丰富的人工智能](https://mistral.ai/news/september-24-release/)（2024-09-17）
-71. [宣布推出 Pixtral 12B](https://mistral.ai/news/pixtral-12b/)（2024-09-17）
+71. [Announcing Pixtral 12B](https://mistral.ai/news/pixtral-12b/)（2024-09-17）
 72. [构建、调整、重复](https://mistral.ai/news/build-tweak-repeat/)（2024-08-07）
 73. [足够大](https://mistral.ai/news/mistral-large-2407/)（2024-07-24）
 74. [米斯特拉尔尼莫](https://mistral.ai/news/mistral-nemo/)（2024-07-18）
@@ -95,5 +95,5 @@
 83. [猫](https://mistral.ai/news/le-chat-mistral/)（2024-02-26）
 84. [专家荟萃](https://mistral.ai/news/mixtral-of-experts/)（2023-12-11）
 85. [平台](https://mistral.ai/news/la-plateforme/)（2023-12-11）
-86. [米斯特拉尔7B](https://mistral.ai/news/announcing-mistral-7b/)（2023-09-27）
+86. [Mistral 7B](https://mistral.ai/news/announcing-mistral-7b/)（2023-09-27）
 87. [将开放式人工智能模型推向前沿](https://mistral.ai/news/about-mistral-ai/)（2023-09-27）
