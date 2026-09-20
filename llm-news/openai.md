@@ -1,6 +1,6 @@
 # OpenAI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-19**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-20**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：OpenAI（`openai`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -11,12 +11,12 @@
 
 ## 全部文章（共 1211 篇，按日期倒序；无日期条目列于最后）
 
-1. [Introducing the Australian Youth Safety Blueprint](https://openai.com/index/australian-youth-safety-blueprint)（2026-09-18）
+1. [澳大利亚青少年安全蓝图简介](https://openai.com/index/australian-youth-safety-blueprint)（2026-09-18）
 2. [Cooley 如何利用 ChatGPT 加速 IPO 工作](https://openai.com/index/cooley-gopublic)（2026-09-17）
 3. [Astra 法律介绍](https://openai.com/index/astra-for-law)（2026-09-17）
 4. [帮助老年人在日常生活中使用人工智能](https://openai.com/index/helping-older-adults-use-ai-in-everyday-life)（2026-09-16）
 5. [利用人工智能重新构想广告](https://openai.com/index/reimagining-advertising-with-ai)（2026-09-16）
-6. [Hex turns complex analysis into visual reports with GPT‑6 Astra](https://openai.com/index/hex-gpt-6-astra)（2026-09-16）
+6. [Hex 使用 GPT-6 Astra 将复杂的分析转化为可视化报告](https://openai.com/index/hex-gpt-6-astra)（2026-09-16）
 7. [如何将人工智能的使用与商业价值联系起来](https://openai.com/index/how-to-connect-ai-usage-to-business-value)（2026-09-16）
 8. [我们报告模型失调的框架](https://openai.com/index/model-misalignment-reporting-framework)（2026-09-16）
 9. [工人如何开启新的工作方式](https://openai.com/index/unlocking-new-ways-of-working)（2026-09-16）
@@ -394,13 +394,13 @@
 381. [Snowflake 与 OpenAI 合作，为企业数据带来前沿智能](https://openai.com/index/snowflake-partnership)（2026-02-02）
 382. [Codex 应用程序简介](https://openai.com/index/introducing-the-codex-app)（2026-02-02）
 383. [“鱼食”行动：源自俄罗斯的内容农场活动](https://openai.com/index/disrupting-malicious-uses-of-ai-fish-food)（2026-02-01）
-384. [Operation “No Bell”: Coordinated criticism of the US and allies](https://openai.com/index/disrupting-malicious-uses-of-ai-no-bell)（2026-02-01）
+384. [“不响铃”行动：对美国及其盟友的协调批评](https://openai.com/index/disrupting-malicious-uses-of-ai-no-bell)（2026-02-01）
 385. [“拖钓石”行动：与俄罗斯有关的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-trolling-stone)（2026-02-01）
-386. [Silver lining playbook: Likely China-origin activity targeting US persons](https://openai.com/index/disrupting-malicious-uses-of-ai-silver-lining-playbook)（2026-02-01）
+386. [一线希望：可能源自中国的针对美国人的活动](https://openai.com/index/disrupting-malicious-uses-of-ai-silver-lining-playbook)（2026-02-01）
 387. [“网络特别行动”：与中国相关的影响力规划](https://openai.com/index/disrupting-malicious-uses-of-ai-cyber-special-operations)（2026-02-01）
 388. [浪漫骗局：人工智能支持的浪漫骗局工作流程](https://openai.com/index/disrupting-malicious-uses-of-ai-romance-scam)（2026-02-01）
 389. [“约会诱饵”行动：针对恋爱对象的人工智能诈骗](https://openai.com/index/disrupting-malicious-uses-of-ai-date-bait)（2026-02-01）
-390. [Operation “False Witness”: Fake recovery service impersonating authorities](https://openai.com/index/disrupting-malicious-uses-of-ai-false-witness)（2026-02-01）
+390. [“假证人”行动：冒充当局的假恢复服务](https://openai.com/index/disrupting-malicious-uses-of-ai-false-witness)（2026-02-01）
 391. [OpenAI 的内部数据代理内部](https://openai.com/index/inside-our-in-house-data-agent)（2026-01-29）
 392. [Retiring GPT-4o, GPT-4.1, GPT-4.1 mini, and OpenAI o4-mini in ChatGPT](https://openai.com/index/retiring-gpt-4o-and-older-models)（2026-01-29）
 393. [大成公司利用人工智能塑造下一代人才](https://openai.com/index/taisei)（2026-01-29）

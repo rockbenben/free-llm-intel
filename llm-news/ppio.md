@@ -1,6 +1,6 @@
 # PPIO 派欧云 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-19**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-20**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：PPIO 派欧云（`ppio`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -92,7 +92,7 @@
 81. [大语言模型API上线企业私有化部署服务](https://ppio.com/docs/announcement/changelog-llm#2025%E5%B9%B45%E6%9C%8812%E6%97%A5-5%E6%9C%8816%E6%97%A5-1)（2025-05-12）
 82. [模型广场增加分类筛选器功能](https://ppio.com/docs/announcement/changelog-llm#2025%E5%B9%B45%E6%9C%886%E6%97%A5-5%E6%9C%889%E6%97%A5-1)（2025-05-06）
 83. [图像/视频 API 新增速率限制机制](https://ppio.com/docs/announcement/changelog-llm#2025%E5%B9%B44%E6%9C%8828%E6%97%A5-4%E6%9C%8830%E6%97%A5-1)（2025-04-28）
-84. [RPM（Requests Per Minute）](https://ppio.com/docs/announcement/changelog-llm#2025%E5%B9%B44%E6%9C%8828%E6%97%A5-4%E6%9C%8830%E6%97%A5-2)（2025-04-28）
+84. [RPM（每分钟请求数）](https://ppio.com/docs/announcement/changelog-llm#2025%E5%B9%B44%E6%9C%8828%E6%97%A5-4%E6%9C%8830%E6%97%A5-2)（2025-04-28）
 85. [上线 Qwen3 系列模型](https://ppio.com/docs/announcement/changelog-llm#2025%E5%B9%B44%E6%9C%8828%E6%97%A5-4%E6%9C%8830%E6%97%A5-3)（2025-04-28）
 86. [大语言模型 API 速率限制（Rate Limits）规则更新](https://ppio.com/docs/announcement/changelog-llm#2025%E5%B9%B44%E6%9C%8828%E6%97%A5-4%E6%9C%8830%E6%97%A5-4)（2025-04-28）
 87. [上线 Deepseek 新模型](https://ppio.com/docs/announcement/changelog-llm#2025%E5%B9%B44%E6%9C%8828%E6%97%A5-4%E6%9C%8830%E6%97%A5-5)（2025-04-28）

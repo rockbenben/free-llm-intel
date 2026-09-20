@@ -1,6 +1,6 @@
 # Anthropic Claude 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-19**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-20**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anthropic Claude（`anthropic`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -10,7 +10,7 @@
 
 ## 全部文章（共 68 篇，按日期倒序；无日期条目列于最后）
 
-1. [Announcements Partnering with Accenture on embedded evaluation](https://www.anthropic.com/news/accenture-embedded-evaluation)（2026-09-18）
+1. [与埃森哲合作开展嵌入式评估的公告](https://www.anthropic.com/news/accenture-embedded-evaluation)（2026-09-18）
 2. [生命科学验证计划简介](https://www.anthropic.com/news/life-sciences-verification-program)（2026-09-17）
 3. [与客户一起制定企业前沿保障措施](https://www.anthropic.com/news/enterprise-frontier-safeguards)（2026-09-01）
 4. [改进我们的协调和安全工作](https://www.anthropic.com/news/improving-alignment-security-efforts)（2026-08-31）
