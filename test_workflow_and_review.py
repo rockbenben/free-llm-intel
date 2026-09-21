@@ -1167,6 +1167,86 @@ class TestChangelogTitleIsNameOnly(unittest.TestCase):
             self.assertTrue(a.url.endswith(f"#model-{i}"), "URL 仍用模型 ID 做锚点")
 
 
+class TestNewsIntelFilter(unittest.TestCase):
+    """动态条目的「情报过滤」—— 2026-09-22 数据审计后**按厂商规则化**。
+
+    背景：线上 3376 条里 77% 来自公司博客 / 社区技术博客（`openai.com/index/*` 的
+    客户案例、融资、政策、教程；`huggingface.co/blog` 的社区技术文章），
+    其中 228 条根本不是一篇文章。
+
+    判据按**信号组**组织，因为同一个词在不同厂商的源里含义不同：
+    `fine-tuning` / `embedding` 在 openai 的 news 里是 API 变更信号，
+    在 huggingface 的 blog 里却是技术教程的标题词。
+    """
+
+    def test_unlisted_vendor_is_never_filtered(self):
+        """未列入规则的厂商（变更日志型源）不过滤。"""
+        for t in ("Cooley 如何利用 ChatGPT 加速 IPO 工作",
+                  "How X uses ChatGPT to cut costs"):
+            self.assertTrue(crawler_llm_intel.is_intel_news("baseten", t), t)
+
+    def test_model_release_and_api_change_kept(self):
+        for t in ("Introducing GPT-5.5",
+                  "GPT-6 Astra: A new generation of intelligence",
+                  "GLM-5.2: Built for Long-Horizon Tasks",
+                  "Retiring GPT-4o, GPT-4.1, GPT-4.1 mini, and OpenAI o4-mini in ChatGPT",
+                  "New usage analytics and updated spend controls for enterprises",
+                  "Advancing voice intelligence with new models in the API"):
+            self.assertTrue(crawler_llm_intel.is_intel_news("openai", t), t)
+
+    def test_customer_story_dropped_even_with_release_word(self):
+        """客户案例优先于发布信号 —— `cuts launch hours` 里的 launch 是名词。"""
+        self.assertFalse(crawler_llm_intel.is_intel_news(
+            "openai", "Stampli cuts launch hours by 68% using ChatGPT Work"))
+        self.assertFalse(crawler_llm_intel.is_intel_news(
+            "openai", "How Cooley is accelerating IPO work with ChatGPT"))
+
+    def test_company_news_and_marketing_dropped(self):
+        for t in ("OpenAI appoints Dali Rajic as Chief Revenue Officer",
+                  "Introducing the Intelligence Age",
+                  "Reimagining advertising with AI",
+                  "Expanding AI access and cyber defense for federal, state, and local governments"):
+            self.assertFalse(crawler_llm_intel.is_intel_news("openai", t), t)
+
+    def test_huggingface_uses_release_wide_not_strong(self):
+        """HF 的 blog 里 `fine-tuning` 是技术教程的标题词，不该当情报。"""
+        self.assertFalse(crawler_llm_intel.is_intel_news(
+            "huggingface",
+            "Fine-tuning a 350M Model for Better Structured Outputs in 100 GRPO Steps"))
+        self.assertTrue(crawler_llm_intel.is_intel_news(
+            "huggingface", "Welcome Llama 4 Maverick & Scout on Hugging Face"))
+        self.assertTrue(crawler_llm_intel.is_intel_news(
+            "huggingface", "Introducing Storage Buckets on the Hugging Face Hub"))
+
+    def test_model_listing_on_platform_kept(self):
+        """「某模型 now available on 平台」是上架情报，不要求命中产品名词表。"""
+        self.assertTrue(crawler_llm_intel.is_intel_news(
+            "modal", "Qwen3.8-2.4T-A95B now available on Modal"))
+        self.assertTrue(crawler_llm_intel.is_intel_news(
+            "modal", "Product updates: VM sandboxes, low-latency routing, RBAC, and more"))
+
+    def test_collect_news_articles_applies_filter(self):
+        """过滤在 collect_news_articles 里生效，且判据用的是**原文标题**。"""
+        xml = ('<?xml version="1.0"?><rss version="2.0"><channel>'
+               '<item><title>Introducing GPT-5.5</title>'
+               '<link>https://x.example/a</link>'
+               '<pubDate>Mon, 01 Sep 2026 00:00:00 +0000</pubDate></item>'
+               '<item><title>How Cooley is accelerating IPO work with ChatGPT</title>'
+               '<link>https://x.example/b</link>'
+               '<pubDate>Tue, 02 Sep 2026 00:00:00 +0000</pubDate></item>'
+               '</channel></rss>')
+        page = crawler_llm_intel.PageResult(
+            url="https://x.example/feed.xml", stype="feed", ok=True,
+            final_url="https://x.example/feed.xml", raw=xml)
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="openai", brand="OpenAI", homepage="", products=[])
+        intel.news_pages = [page]
+        crawler_llm_intel.collect_news_articles(intel, session=None)
+        self.assertEqual([a.title for a in intel.all_news_articles],
+                         ["Introducing GPT-5.5"])
+        self.assertEqual(intel.news_filtered, 1)
+
+
 class TestNewsTitleQuality(unittest.TestCase):
     """抓取条目的标题质量 —— 2026-09-22 数据审计发现的问题逐类冻结。
 

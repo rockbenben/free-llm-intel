@@ -337,6 +337,7 @@ class VendorIntel:
     evidence: dict[str, list[Snippet]] = field(default_factory=dict)
     news_articles: list[Article] = field(default_factory=list)    # 主文档：最新 5 篇
     all_news_articles: list[Article] = field(default_factory=list)  # 子文档：全量文章归档
+    news_filtered: int = 0    # 被「情报过滤」剔除的条目数（见 NEWS_INTEL_SIGNALS）
 
 
 # ---------------------------------------------------------------------------
@@ -1668,6 +1669,157 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
     return articles
 
 
+# ---------------------------------------------------------------------------
+# 动态条目的「情报过滤」
+#
+# 本仓库主题是**免费额度 / 模型 / 定价**，但不少厂商的 news 源其实是**公司博客**：
+# `openai.com/index/*` 里客户案例、融资、政策、教程占绝大多数，`huggingface.co/blog`
+# 是社区技术博客。2026-09-22 数据审计：线上 3376 条里 77% 来自这类源，
+# 其中 228 条根本不是一篇文章。
+#
+# 判据按**信号组**组织 —— 同一个词在不同厂商的源里含义不同：
+# `fine-tuning` / `embedding` 在 openai 的 news 里是 API 变更信号，
+# 在 huggingface 的 blog 里却是技术教程的标题词，所以只有 openai 用 strong 组。
+# **未列入 `NEWS_INTEL_SIGNALS` 的厂商不过滤**（变更日志型源结构上就对口）。
+#
+# 过滤在**翻译之前**执行，标题可能是原文（英文站）也可能是中文（页面本身是中文，
+# 如 Anthropic 的若干条目标题）—— 两套词表都要有，否则中文标题会被整类剔除。
+NEWS_SIGNAL_STRONG = re.compile(
+    r"\b(api|apis|sdk|endpoint\w*|pricing|prices?|rate limits?|rate-limit|usage limits?|"
+    r"spend controls?|free tiers?|free plans?|quota|billing|token plan|credits?|"
+    r"deprecat\w*|retir\w*|sunset|discontinu\w*|no longer available|end of life|"
+    r"system card|model card|changelog|release notes|"
+    r"context window|context length|prompt caching|context caching|"
+    r"function calling|tool calling|structured output|json mode|webhooks?|"
+    r"batch api|parameters?)\b|"
+    r"(免费额度|免费套餐|免费层|免费试用|限时免费|永久免费|降价|定价|计费|限速|限流|"
+    r"配额|额度|弃用|下线|停止服务|涨价)", re.I)
+NEWS_SIGNAL_RELEASE = re.compile(
+    r"\b(introducing|announcing|announces|unveil\w*|launch\w*|releas\w*|ships?|"
+    r"now available|available (in|on|now|for)|generally available|GA|"
+    r"public preview|preview|beta|new models?|next[- ]generation|"
+    r"welcome|is here|adds? support|now supports|product updates?)\b|"
+    r"(上线|发布|推出|新增|产品介绍|正式发布|现已|产品更新|简介)", re.I)
+# 窄口径：出现即说明「有东西上架 / 可用」，不必再要求产品名
+# （`Qwen3.8-2.4T-A95B now available on Modal`、`Product updates: VM sandboxes…`）
+NEWS_SIGNAL_RELEASE_ANY = re.compile(
+    r"\b(now available|available (in|on|now|for)|generally available|GA|is here|"
+    r"welcome|adds? support|now supports|public preview|product updates?)\b|"
+    r"(现已|正式发布|上线|发布|推出|产品更新)", re.I)
+# 标题以「模型名 + 版本号 + 冒号/破折号」开头：
+# `GPT-6 Astra: A new generation of intelligence` / `GLM-5.2: Built for Long-Horizon Tasks`
+NEWS_SIGNAL_HEADLINE = re.compile(
+    r"^\s*(gpt|chatgpt|claude|gemini|gemma|qwen|llama|grok|mistral|codestral|magistral|"
+    r"pixtral|deepseek|glm|kimi|minimax|command|nova|granite|phi|falcon|olmo|jamba|"
+    r"code llama|stable diffusion|whisper|sora|dall)[- ]?[\d.]*[a-z]*\s*[:\-–—]",
+    re.I)
+NEWS_PRODUCT = re.compile(
+    r"(?<![a-z])(gpt|chatgpt|codex|astra|o1|o3|o4|sora|dall|whisper|claude|gemini|gemma|"
+    r"qwen|llama|grok|mistral|codestral|magistral|pixtral|deepseek|glm|kimi|minimax|"
+    r"command|nova|granite|phi|falcon|olmo|jamba|realtime|responses api|agents sdk|"
+    r"assistants?|agents?|models?|image|images|voice|audio|tts|asr|ocr|vision|embedding|"
+    r"kernels?|translate|parse|studio|buckets?|storage|search|retrieval|rerank\w*|"
+    r"transcrib\w*|speech|music|video|coder|code|chat|cli|platform|api)(?![a-z])", re.I)
+NEWS_NOISE_CUSTOMER = re.compile(
+    r"^how\s+\S+\s+(is|are|was|were)\s+\w+ing\b|"
+    r"\b(trusts?|relies on|customer stor(y|ies)|case stud(y|ies)|success stor(y|ies))\b|"
+    r"^(how\s+)?[\w'’.\- ]{2,40}\s(uses?|used|is using|are using|built|builds|cut|cuts|"
+    r"scales?|scaled|accelerat\w+|improv\w+|transform\w+|deliver\w+|reduc\w+|turn\w+|sav\w+)\b|"
+    r"^how\s+\S+\s+(uses?|builds?|scales?|cuts?|turns?|powers?|delivers?)\b|"
+    r"^(inside|meet)\s+[\w'’.\- ]{2,30}('s)?\b|"
+    r"\bwith (chatgpt|gpt-?\d|codex|claude|gemini|grok|copilot)\b", re.I)
+NEWS_NOISE_COMPANY = re.compile(
+    r"\b(joins?|joined|appoint\w*|hires?|hired|"
+    r"acqui\w*|acquisition|merger|ipo|s-1|funding|fundrais\w*|series [a-e]|raises?|"
+    r"invest\w*|grants?|donat\w*|stake|valuation|"
+    r"partner\w*|collaborat\w*|teams? up|joins? forces|alliance|"
+    r"expand\w*|presence in|headquarter\w*|campus|"
+    r"polic(y|ies)|govern\w*|regulat\w*|legislat\w*|bill|senate|congress|lawmakers|"
+    r"government|federal|white house|european union|blueprint|"
+    r"awards?|recogni\w*|gartner|magic quadrant|forbes|"
+    r"ukraine|russia|china|brazil|japan|india|thailand|africa|europe|singapore|malta|"
+    r"greece|ireland|australia|korea|uae|saudi|emirates)\b", re.I)
+NEWS_NOISE_MARKETING = re.compile(
+    r"\b(reimagin\w*|future of|the future|why|what|how to|guide|best practices|"
+    r"tips|trends?|outlook|opinion|perspective|essay|manifesto|vision|"
+    r"state of|era of|age of|day in the life|lessons?|scorecard|"
+    r"powering|unlocking|empowering|accelerating|transforming|demystif\w*|"
+    r"fundamentals|getting started|101|explained|beginner)\b", re.I)
+NEWS_NOISE_EDU_HEALTH = re.compile(
+    r"\b(youth|teens?|students?|teachers?|classroom|k-?12|schools?|education|literacy|"
+    r"academy|universit(y|ies)|college|"
+    r"health|healthcare|clinicians?|patients?|medical|hospital|diagnos\w*|cancer|"
+    r"nonprofits?|charit\w*|philanthrop\w*|social impact|workforce)\b", re.I)
+NEWS_NOISE_SAFETY = re.compile(
+    r"\b(disrupting|influence (operation|activity|campaign)|misuse|malicious|abuse|"
+    r"threat actor\w*|scams?|phishing|malware|spam|covert|election|misinformation|"
+    r"red team\w*|jailbreak|prompt injection|safeguards?|alignment|misalignment|"
+    r"age prediction|parental control)\b", re.I)
+NEWS_NOISE_RESEARCH = re.compile(
+    r"\b(papers?|research|stud(y|ies)|benchmark\w*|evaluat\w*|"
+    r"techniques?|methods?|algorithms?|architecture|datasets?|corpus|survey|"
+    r"tutorial|deep dive|internals|attention|transformers?|quantiz\w*|distill\w*|"
+    r"lora|grpo|rlhf|dpo|serving|kernels?|cuda|gpu|memory|"
+    r"optimiz\w*|scaling|vector|profiling|part \d)\b", re.I)
+NEWS_NOISE_TUTORIAL = re.compile(
+    r"^(using|working with|building with|create|creating|build|learn|training)\b|"
+    r"\b(workflows? (with|for)|for (marketing|sales|finance|research|operations|support|"
+    r"customer success|managers|teams)|cheat sheet|playbook)\b", re.I)
+NEWS_NOISE_PATTERNS: list[tuple[str, re.Pattern]] = [
+    ("customer_story", NEWS_NOISE_CUSTOMER), ("company_news", NEWS_NOISE_COMPANY),
+    ("edu_health", NEWS_NOISE_EDU_HEALTH), ("safety", NEWS_NOISE_SAFETY),
+    ("tutorial", NEWS_NOISE_TUTORIAL), ("marketing", NEWS_NOISE_MARKETING),
+    ("research", NEWS_NOISE_RESEARCH),
+]
+
+# 按厂商选择信号组（未列出 = 不过滤）
+#   strong          技术变更事实（API / 定价 / 限流 / 弃用）
+#   release_product 发布用语 + 必须配产品名（滤掉 `Introducing the Intelligence Age`）
+#   release_any     「已上架 / 可用」类用语，无需产品名
+#   release_wide    全部发布用语，不要求产品名（huggingface 用：它的 `Introducing X`
+#                   基本都是模型 / 平台发布）
+#   headline        标题以「模型名 + 版本号 + 冒号」开头
+NEWS_INTEL_SIGNALS: dict[str, tuple[str, ...]] = {
+    "openai":        ("strong", "release_product", "release_any", "headline"),
+    "huggingface":   ("release_wide", "headline"),
+    "modal":         ("strong", "release_product", "release_any", "headline"),
+    "modular_cloud": ("strong", "release_product", "release_any", "headline"),
+    "mistral":       ("strong", "release_product", "release_any", "headline"),
+    "anthropic":     ("strong", "release_product", "release_any", "headline"),
+    "cohere":        ("strong", "release_product", "release_any", "headline"),
+    "meta_llama":    ("strong", "release_product", "release_any", "headline"),
+    "google_gemini": ("strong", "release_product", "release_any", "headline"),
+}
+
+
+def is_intel_news(vendor_id: str, title: str) -> bool:
+    """判断一条动态的标题是否为「情报」（免费额度 / 模型 / 定价 / API 变更）。
+
+    未列入 `NEWS_INTEL_SIGNALS` 的厂商一律返回 True（不过滤）。
+    传进来的应当是**原文标题**（过滤发生在翻译之前）。
+    """
+    sig = NEWS_INTEL_SIGNALS.get(vendor_id)
+    if not sig:
+        return True
+    text = title or ""
+    if "strong" in sig and NEWS_SIGNAL_STRONG.search(text):
+        return True
+    if "headline" in sig and NEWS_SIGNAL_HEADLINE.search(text):
+        return True
+    # 客户案例优先于发布信号：`Stampli cuts launch hours by 68% using ChatGPT Work`
+    # 里的 `launch` 是名词，会被发布词误命中，但它其实是客户案例。
+    if NEWS_NOISE_CUSTOMER.search(text):
+        return False
+    if "release_wide" in sig and NEWS_SIGNAL_RELEASE.search(text):
+        return True
+    if "release_any" in sig and NEWS_SIGNAL_RELEASE_ANY.search(text):
+        return True
+    if "release_product" in sig and NEWS_SIGNAL_RELEASE.search(text) \
+            and NEWS_PRODUCT.search(text):
+        return True
+    return False
+
+
 def collect_news_articles(intel: VendorIntel, session: requests.Session) -> None:
     """
     汇总一个厂商的最新文章：
@@ -1794,8 +1946,14 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session) -> None
                    key=lambda a: a.date, reverse=True)
     undated = [a for a in articles if not a.date]
     ordered = dated + undated
-    intel.all_news_articles = ordered       # 全量归档（llm-news/ 子文档）
-    intel.news_articles = ordered[:5]       # 主文档仅展示最新 5 篇
+
+    # 情报过滤：剔除客户案例 / 公司新闻 / 营销 / 教程 / 研究论文（见 NEWS_INTEL_SIGNALS）。
+    # 放在这里是因为此时 art.title 仍是**原文标题** —— 翻译之后再判会失真
+    # （`Magistral` 译成「公路」、`Introducing X` 译成「X 简介」都会让判据失准）。
+    kept = [a for a in ordered if is_intel_news(intel.vendor_id, a.title)]
+    intel.news_filtered = len(ordered) - len(kept)
+    intel.all_news_articles = kept          # 全量归档（llm-news/ 子文档）
+    intel.news_articles = kept[:5]          # 主文档仅展示最新 5 篇
 
 
 # ---------------------------------------------------------------------------
