@@ -82,6 +82,29 @@ def normalize_zh_punct(text: str) -> str:
     return out
 
 
+# 纯专名短标题：1–2 个词、每词首字母大写（`Magistral` / `Pixtral Large` / `Le Chat`）。
+# 这类标题**不翻译** —— 见 translate_to_zh 里的第三条守卫。
+_PROPER_NOUN_TITLE = re.compile(r"^[A-Z][\w'’\-]*(?:\s+[A-Z][\w'’\-]*)?$")
+# 首词是这些常见英文词时说明是句子而不是专名（`Introducing Mistral`、
+# `Large Enough`），照常翻译。
+_EN_STOPWORDS = {
+    "a", "all", "an", "and", "announcing", "better", "beyond", "bringing",
+    "building", "cheaper", "enough", "faster", "from", "getting", "how",
+    "improved", "improving", "inside", "introducing", "launching", "large",
+    "making", "more", "new", "now", "our", "releasing", "small", "stronger",
+    "the", "update", "updates", "upgrading", "using", "we", "what", "when",
+    "where", "why",
+}
+
+
+def _is_proper_noun_title(text: str) -> bool:
+    """是否为「纯专名」短标题（品牌 / 产品名）—— 这类标题不该送去翻译。"""
+    t = (text or "").strip()
+    if not _PROPER_NOUN_TITLE.match(t):
+        return False
+    return t.split()[0].lower() not in _EN_STOPWORDS
+
+
 def translate_to_zh(text: str, timeout: float = 4.0) -> str:
     """非中文内容借助 Google 公开 translate 接口自动翻译为中文。
 
@@ -106,6 +129,13 @@ def translate_to_zh(text: str, timeout: float = 4.0) -> str:
     # 宁可留英文，也不翻坏品牌名；纯散文标题（无型号）照常翻译。
     # 同样放在缓存查询前 —— 已翻坏的译文可能已在缓存里，放后面就治不了历史数据。
     if re.search(r"[A-Za-z]\d|\d[A-Za-z]", clean_text):
+        return clean_text
+    # 纯专名短标题同样不翻：实测 Google 把 `Magistral` 译成「公路」、`Pixtral Large`
+    # → 「像素大号」、`Le Chat` → 「猫」、`Codestral` → 「共纹」—— 品牌名一旦被汉化，
+    # 标题彻底失去可检索性，读者也不知道那是什么。上面两条都拦不住它
+    # （`Le Chat` 有空格，`Magistral` 既无符号也无数字）。
+    # 同样放在缓存查询前：坏译文可能已落进 .translate_cache.json，放后面治不了历史数据。
+    if _is_proper_noun_title(clean_text):
         return clean_text
     with _TRANS_LOCK:
         if clean_text in _TRANS_CACHE:

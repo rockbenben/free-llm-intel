@@ -1076,6 +1076,8 @@ def parse_feed_xml(raw: str, base_url: str, stype: str = "feed") -> list[Article
     articles: list[Article] = []
     if not raw or "<" not in raw[:500]:
         return articles
+    # GitHub 提交式 feed：标题是 commit message，需要另行整理（见 _clean_commit_title）
+    commit_feed = "github.com" in (base_url or "") and "/commits/" in (base_url or "")
     try:
         root = ET.fromstring(raw)
     except ET.ParseError:
@@ -1097,10 +1099,14 @@ def parse_feed_xml(raw: str, base_url: str, stype: str = "feed") -> list[Article
         title = ""
         link = ""
         date_raw = ""
+        desc_raw = ""
         for child in item:
             tag = child.tag.rsplit("}", 1)[-1].lower()
             if tag == "title" and not title and (child.text or "").strip():
                 title = re.sub(r"\s+", " ", html_mod.unescape(child.text)).strip()
+            elif tag in ("description", "summary", "content", "encoded") \
+                    and not desc_raw:
+                desc_raw = child.text or ""
             elif tag == "link":
                 href = (child.get("href") or "").strip()
                 rel = (child.get("rel") or "alternate").strip()
@@ -1117,7 +1123,14 @@ def parse_feed_xml(raw: str, base_url: str, stype: str = "feed") -> list[Article
                     link = child.text.strip()
                     break
         link = urljoin(base_url, link) if link else ""
+        # 标题写成「日期 + 栏目」时（DigitalOcean 发布记录），真标题在 description 里
+        title = _feed_title_from_description(title, desc_raw)
+        if commit_feed:
+            title = _clean_commit_title(title)
         if not title or not link.startswith("http") or link in seen:
+            continue
+        # 拿不到真标题、只剩一个日期的条目直接丢弃 —— 产出纯日期条目等于什么都没说
+        if _is_date_only_title(title):
             continue
         seen.add(link)
         articles.append(Article(
@@ -1253,6 +1266,75 @@ def _is_date_only_title(title: str) -> bool:
     return bool(re.fullmatch(r"[\d\s\-/.年月日]+", title or ""))
 
 
+# RSS 标题实为「日期 + 栏目」的形式（DigitalOcean 发布记录：
+# `17 September 2026 (postgresql, mysql)` / `2026 年 9 月 17 日（postgresql、mysql）`）。
+_FEED_DATE_META_TITLE = re.compile(
+    r"^\s*(?:"
+    r"\d{1,2}\s+[A-Za-z]{3,9}\s+\d{4}"
+    r"|\d{4}\s*[-/年.]\s*\d{1,2}\s*[-/月.]\s*\d{1,2}\s*日?"
+    r"|\d{4}\s*[-/年.]\s*\d{1,2}\s*月?"
+    r")\s*(?:[（(][^）)]*[）)])?\s*$",
+    re.I)
+# 纯 `vendor/model` 形态的模型 ID（PPIO 模型清单页的锚点：`qwen/qwen3-14b`）：
+# 那是目录条目而不是动态，且标题本身没有任何可读信息。
+_MODEL_ID_TITLE = re.compile(r"^[A-Za-z0-9][\w.\-]*(?:/[A-Za-z0-9][\w.\-]*)+$")
+
+
+def _feed_title_from_description(title: str, desc: str,
+                                 limit: int = 120) -> str:
+    """RSS 标题是「日期 + 栏目」时，改用 <description> 的首句当标题。
+
+    DigitalOcean 的发布记录 RSS 把标题写成 `17 September 2026 (postgresql, mysql)`，
+    真正的变更说明在 description 里（「PostgreSQL Advanced Edition … are now
+    generally available.」）。只取 <title> 会得到 100 条纯日期条目 ——
+    看着像动态、实际一条内容都没有。取不到描述时原样返回，交给
+    `_is_date_only_title()` 丢弃。
+    """
+    if not _FEED_DATE_META_TITLE.match(title or ""):
+        return title
+    text = html_mod.unescape(re.sub(r"<[^>]+>", " ", desc or ""))
+    text = re.sub(r"[\u200b\s]+", " ", text).strip()
+    if not text:
+        return title
+    m = re.search(r"^(.{12,}?[。.!?])(?:\s|$)", text)
+    picked = (m.group(1) if m else text).strip(" -–|·•。.")
+    if len(picked) > limit:
+        picked = picked[:limit].rstrip() + "…"
+    return picked if len(picked) >= 12 else title
+
+
+# GitHub 提交式 feed 的标题就是 commit message（Groq 把 changelog 放在
+# github.com/groq/groq-changelog，页面上的「RSS」指向 commits/main.atom）：
+# `Add Kimi K2 0905 + Compound (#15)` / `chore: GitHub Terraform: …`。
+_COMMIT_TITLE_SUFFIX = re.compile(r"\s*\(#\d+\)\s*$")
+_COMMIT_PREFIX = re.compile(
+    r"^(?:chore|fix|feat|docs|ci|refactor|test|style|build|perf|revert)"
+    r"\s*[:：(]\s*", re.I)
+# 剥掉前缀后仍然没有实质内容的维护性提交
+_COMMIT_NOISE = re.compile(
+    r"^(?:add|update|updates?)\s*(?:updates?|changelog)?$|^yay\b|^initial commit$|"
+    r"^merge\b|^bump\b|^wip\b|^minor\b|^misc\b|^tweak", re.I)
+# 仓库自身的维护提交（改 CI / 依赖 / 发布流程）：不是产品变更，不该进 changelog
+_COMMIT_MAINT = re.compile(
+    r"github terraform|\.github/|workflows?/|dependabot|renovate|stale\.ya?ml", re.I)
+
+
+def _clean_commit_title(title: str) -> str:
+    """整理 commit message 式标题；纯维护性提交返回空串（由调用方丢弃）。
+
+    Groq 的变更日志托管在 GitHub 仓库，页面上那个「RSS」链接指向
+    `github.com/groq/groq-changelog/commits/main.atom`，解析出来的「标题」是
+    commit message（`add updates (#17)`、`yay first ever groq changelog entry (#1)`）。
+    去掉 PR 编号与 conventional-commit 前缀后仍有内容的才留（如
+    `Add prompt caching (#14)` → `Add prompt caching`）。
+    """
+    t = _COMMIT_TITLE_SUFFIX.sub("", title or "").strip()
+    t = _COMMIT_PREFIX.sub("", t).strip()
+    if not t or _COMMIT_NOISE.match(t) or _COMMIT_MAINT.search(t):
+        return ""
+    return t
+
+
 def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[Article]:
     """从单页文档/变更日志（如 Mintlify、Docusaurus、GitBook 等）的日期标题或更新容器中提取文章列表。"""
     raw = page.raw or page.text
@@ -1360,6 +1442,15 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
                 title5 = re.sub(r"[\u200b\s]+", " ", title5).strip(" \t\n-–|·•")
                 if not title5 or _is_date_only_title(title5) or len(title5) < 4:
                     continue
+                # 同一条公告的子要点也是 li：PPIO「Playground 支持 Function Call」
+                # 之下还有「智能交互 ：在对话页面…」「三大优势 ： ⚡ 更强时效性」，
+                # 特征是**纯中文短词 + <strong> 后紧跟分隔符**（真条目不会这样，
+                # 它是「条目名 说明正文」）。不区分的话这些营销短语会各自变成一条。
+                after5 = re.sub(r"<[^>]+>", "", li[strong5.end():]) if strong5 else ""
+                after5 = re.sub(r"[\u200b\s]+", " ", after5).strip()
+                if (len(title5) < 8 and not re.search(r"[A-Za-z0-9]", title5)
+                        and re.match(r"^[：:—–\-|·]", after5)):
+                    continue
                 # li 没有自己的锚点，用「分节 id + 序号」合成一个稳定的 fragment，
                 # 保证归档增量合并能认回同一条（改了就变成新增）。
                 url5 = f"{base_url.split('#')[0]}#{quote(hm5.group(2))}-{li_idx + 1}"
@@ -1443,8 +1534,8 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
                 continue
             model_id = re.sub(r"<[^>]+>", "", code_m.group(1))
             model_id = re.sub(r"[​\s]+", "", model_id).strip("`")
-            # 功能说明列只用于**校验这是一行真条目**（空说明的行多半是表头残留），
-            # 不并进标题 —— 拼起来的中位标题 145 字，订阅列表里没法扫读。
+            # 功能说明列既用于**校验这是一行真条目**（空说明的行多半是表头残留），
+            # 也用来补全标题：整段拼进来太长（中位 145 字），只取**首句**。
             desc = re.sub(r"<[^>]+>", "", cells[-1])
             desc = re.sub(r"[​\s]+", " ", desc).strip()
             if not model_id or not desc:
@@ -1452,7 +1543,10 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
             norm_date = _drop_future_date(
                 f"{int(date_m.group(2)):04d}-"
                 f"{int(date_m.group(3)):02d}-{int(date_m.group(4)):02d}")
-            title = model_id
+            # 标题只写模型 ID（`qwen3.8-max-0902`）没有任何信息量：补上说明的首句，
+            # 既保留可检索的 ID，又让订阅列表能看出这是什么模型。
+            first = re.split(r"[。！？!?]", desc, maxsplit=1)[0].strip()
+            title = f"{model_id}：{first}" if first else model_id
             url = f"{base_no_frag}#{quote(model_id)}"
             if url in row_seen:  # 同一模型在多地域表格中重复出现
                 continue
@@ -1530,6 +1624,9 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
         # （`<a href="#2026-年-7-月-31-日">2026 年 7 月 31 日</a>`）。只写年月的
         # （`2026 年 4 月`）没有「日」，靠上面的 _INLINE_DATE_RE 剥不干净，这里兜住。
         if _is_date_only_title(title):
+            continue
+        # 纯模型 ID 形态的锚点（PPIO 模型清单页的 `qwen/qwen3-14b`）是目录条目，丢弃
+        if _MODEL_ID_TITLE.match(title):
             continue
         if CTA_NAV.match(title) or NAV_CONCAT.match(title):
             continue

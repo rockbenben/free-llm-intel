@@ -1158,9 +1158,117 @@ class TestChangelogTitleIsNameOnly(unittest.TestCase):
         arts = crawler_llm_intel.extract_changelog_sections(page)
         self.assertEqual(len(arts), 4)
         for i, a in enumerate(arts, 1):
-            self.assertEqual(a.title, f"model-{i}", "标题不得拼上功能说明")
+            # 只写模型 ID（`qwen3.8-max-0902`）在订阅列表里零信息量 —— 2026-09-22
+            # 数据审计实测线上 43 条这样。改为「模型 ID + 说明首句」：既保留可检索的
+            # ID，又能看出这是什么模型；但不能把整段说明拼进来（中位 145 字），故取首句。
+            self.assertEqual(
+                a.title, f"model-{i}：这是第 {i} 个模型的详细功能说明，长度足够通过校验")
             self.assertEqual(a.date, f"2026-09-1{i}")
             self.assertTrue(a.url.endswith(f"#model-{i}"), "URL 仍用模型 ID 做锚点")
+
+
+class TestNewsTitleQuality(unittest.TestCase):
+    """抓取条目的标题质量 —— 2026-09-22 数据审计发现的问题逐类冻结。
+
+    审计线上 3376 条，其中 228 条「根本不是一篇文章」：digitalocean 100 条标题=日期、
+    ppio/aliyun 88 条标题=模型 ID、groq 4 条标题=GitHub PR 号、其余为导航文案。
+    这里为每一类修好后的行为加守卫，避免以后静默退化。
+    """
+
+    def test_feed_date_meta_title_uses_description(self):
+        """RSS 标题是「日期 + 栏目」时（DigitalOcean 发布记录），改用 description 首句。"""
+        xml = (
+            '<?xml version="1.0"?><rss version="2.0"><channel><item>'
+            '<title>17 September 2026 (postgresql, mysql)</title>'
+            '<link>https://docs.example/notes/2026/dbaas-advanced-edition-ga/</link>'
+            '<pubDate>Thu, 17 Sep 2026 00:00:00 +0000</pubDate>'
+            '<description>PostgreSQL Advanced Edition and MySQL Advanced Edition '
+            'managed database clusters are now generally available. To create a '
+            'cluster, see the docs.</description>'
+            '</item></channel></rss>')
+        arts = crawler_llm_intel.parse_feed_xml(
+            xml, "https://docs.example/release-notes/index.xml")
+        self.assertEqual(len(arts), 1)
+        self.assertEqual(
+            arts[0].title,
+            "PostgreSQL Advanced Edition and MySQL Advanced Edition managed "
+            "database clusters are now generally available")
+        self.assertEqual(arts[0].date, "2026-09-17")
+
+    def test_feed_date_title_without_description_is_dropped(self):
+        """拿不到真标题、只剩日期时丢弃 —— 产出纯日期条目等于什么都没说。"""
+        xml = ('<?xml version="1.0"?><rss version="2.0"><channel><item>'
+               '<title>2026 年 9 月 17 日</title>'
+               '<link>https://docs.example/notes/2026/x/</link>'
+               '</item></channel></rss>')
+        self.assertEqual(
+            crawler_llm_intel.parse_feed_xml(xml, "https://docs.example/f.xml"), [])
+
+    def test_commit_feed_title_cleaned(self):
+        """GitHub 提交式 feed（Groq 的 changelog 仓库）标题是 commit message。"""
+        xml = (
+            '<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom">'
+            '<entry><title>Add prompt caching (#14)</title>'
+            '<link rel="alternate" href="https://github.com/groq/groq-changelog/commit/aaa"/>'
+            '<updated>2025-08-20T00:00:00Z</updated></entry>'
+            '<entry><title>chore: GitHub Terraform: Create/Update workflows (#20)</title>'
+            '<link rel="alternate" href="https://github.com/groq/groq-changelog/commit/bbb"/>'
+            '<updated>2025-08-21T00:00:00Z</updated></entry>'
+            '<entry><title>yay first ever groq changelog entry (#1)</title>'
+            '<link rel="alternate" href="https://github.com/groq/groq-changelog/commit/ccc"/>'
+            '<updated>2025-08-22T00:00:00Z</updated></entry>'
+            '</feed>')
+        arts = crawler_llm_intel.parse_feed_xml(
+            xml, "https://github.com/groq/groq-changelog/commits/main.atom")
+        # 去 PR 号、去 conventional 前缀；纯维护性提交丢弃
+        self.assertEqual([a.title for a in arts], ["Add prompt caching"])
+
+    def test_model_id_anchor_dropped(self):
+        """纯 `vendor/model` 形态的锚点（PPIO 模型清单页）是目录条目，丢弃。"""
+        base = "https://p.example/docs/announcement/changelog-llm"
+        links = [
+            (base + "#qwen/qwen3-14b", "qwen/qwen3-14b"),
+            (base + "#kat-coder", "kat-coder"),
+            (base + "#a1", "部分多模态模型计划下线：Qwen-Image 等模型将下线"),
+        ]
+        page = crawler_llm_intel.PageResult(
+            url=base, stype="updates", ok=True, final_url=base,
+            raw="<html><body>x</body></html>", text="", links=links,
+            link_headings=["", "", ""])
+        arts = crawler_llm_intel.extract_articles_from_page(page, max_items=10)
+        titles = [a.title for a in arts]
+        self.assertNotIn("qwen/qwen3-14b", titles, "纯模型 ID 锚点应被丢弃")
+        self.assertTrue(any("部分多模态模型计划下线" in t for t in titles), "真公告保留")
+
+    def test_list_item_sub_bullets_dropped(self):
+        """结构 5 里，公告的子要点（纯中文短词 + strong 后紧跟分隔符）不是条目。
+
+        PPIO 线上实测：「Playground 支持 Function Call」那条公告之下还有
+        「智能交互 ：在对话页面…」「三大优势 ： ⚡ 更强时效性」等 li，
+        被当成独立条目后会产出 4 条营销短语。
+        """
+        html = """
+        <html><body>
+          <h2 id="2025年7月14日-7月18日">2025年7月14日-7月18日</h2>
+          <ul>
+            <li><strong>Playground 支持 Function Call</strong> 为了更好地满足用户需求，
+                我们在 Playground 中正式推出 Function Call 功能。</li>
+            <li><strong>Kimi K2 模型上线</strong> 新增模型。</li>
+            <li><strong>计费规则调整</strong> 按量计费说明更新。</li>
+            <li><strong>智能交互</strong> ：在对话页面输入与主题相关的问题。</li>
+            <li><strong>三大优势</strong> ： ⚡ 更强时效性 - 实时获取最新信息。</li>
+            <li><strong>更低幻觉率</strong> - 基于真实数据源，减少错误信息。</li>
+          </ul>
+        </body></html>"""
+        page = crawler_llm_intel.PageResult(
+            url="https://p.example/docs/announcement/changelog-llm", stype="updates",
+            ok=True, final_url="https://p.example/docs/announcement/changelog-llm",
+            raw=html)
+        titles = [a.title for a in crawler_llm_intel.extract_changelog_sections(page)]
+        for keep in ("Playground 支持 Function Call", "Kimi K2 模型上线", "计费规则调整"):
+            self.assertIn(keep, titles, f"{keep} 是真条目，必须保留")
+        for noise in ("智能交互", "三大优势", "更低幻觉率"):
+            self.assertNotIn(noise, titles, f"{noise} 是子要点，不是条目")
 
 
 class TestFeedLimitedPageFull(unittest.TestCase):
@@ -1254,6 +1362,27 @@ class TestTranslationSkipsIdentifiers(unittest.TestCase):
         for s in self.SAMPLES_WITH_MODEL_NUMBER:
             self.assertEqual(provider_profiles.translate_to_zh(s), s,
                              f"含型号的标题被翻译了（品牌名有被改写风险）: {s}")
+
+    # 纯专名短标题：Mistral 线上实测 `Magistral` → 「公路」、`Pixtral Large`
+    # → 「像素大号」、`Le Chat` → 「猫」、`Codestral` → 「共纹」。
+    SAMPLES_PROPER_NOUN = (
+        "Magistral",
+        "Pixtral Large",
+        "Le Chat",
+        "Codestral",
+        "Mistral NeMo",
+        "Au Large",
+    )
+
+    def test_proper_noun_titles_are_returned_unchanged(self):
+        for s in self.SAMPLES_PROPER_NOUN:
+            self.assertEqual(provider_profiles.translate_to_zh(s), s,
+                             f"品牌 / 产品名被汉化了: {s}")
+
+    def test_sentence_like_short_titles_are_not_treated_as_proper_nouns(self):
+        """首词是常见英文词说明是句子（`Introducing Mistral`），不能当专名放过。"""
+        for s in ("Introducing Mistral", "Large Enough", "New models", "Cheaper, Better"):
+            self.assertFalse(provider_profiles._is_proper_noun_title(s), s)
 
 
 class TestDateOnlyTitleIsNotATitle(unittest.TestCase):
