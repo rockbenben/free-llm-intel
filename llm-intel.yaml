@@ -499,13 +499,13 @@ sources:
     type: models_docs
     url: https://console.groq.com/docs/models
   - vendor_id: groq
-    type: blog
-    url: https://groq.com/blog/
-  - vendor_id: groq
+    # ⚠️ 2026-09-22 起**不再配博客源**（原 https://groq.com/blog/）：该源一半是营销科普
+    # （「什么是语言处理单元？」），一半是 GitHub commit 标题（`add updates (#17)`、
+    # `yay first ever groq changelog entry (#1)`），情报价值低。
+    # **Groq 的免费额度情报不受影响**（仍在 README 攻略与厂商总表里），这里只是不再汇聚博客动态。
     # 官方 API 变更日志：32 条全是 API 变更（模型上下线、SDK 版本、TTS 迁移…），
-    # 比营销博客对口得多。代价是**该页不含日期**（日期只在 JS 渲染后出现，id 里也没有年份），
+    # 代价是**该页不含日期**（日期只在 JS 渲染后出现，id 里也没有年份），
     # 所以这些条目只进 Groq 的单厂商源、不进合并流 —— 合并流是时间流，无日期无法参与排序。
-    # 与上面的博客源并存：博客给「有日期的动态」，changelog 给「对口的 API 变更」。
     type: changelog
     url: https://console.groq.com/docs/changelog
 
@@ -801,14 +801,10 @@ sources:
   - vendor_id: ppio
     type: token_plan
     url: https://ppio.com/token-plan
-  - vendor_id: ppio
-    # 原抓 https://ppio.com/docs/announcement/announcement —— 那页是**模型清单**
-    # （`deepseek/deepseek-r1`、`qwen/qwen3-14b`、`kat-coder`…），不是公告：
-    # 51 条全是模型名，没有一条是动态。
-    # 换成官方发版记录：按「日期区间 + 栏目 + 条目」组织，条目形如
-    # 「部分多模态模型计划下线：Qwen-Image、Wan 2.5… 将于 2026 年 9 月 30 日下线」。
-    type: updates
-    url: https://ppio.com/docs/announcement/changelog-llm
+  # ⚠️ 2026-09-22 起**不再为 ppio 配 News 源**：它是典型的「聚合第三方模型」平台 ——
+  # 106 条里 87 条是「某模型上架 / 下线」（GLM、Qwen、Kimi、DeepSeek 挨个上），
+  # 而且**没有免费额度**（无注册赠金、无免费模型层，纯按量计费），对「白嫖」这个主题零贡献。
+  # ppio 本身仍在厂商总表与攻略里。
 
   # Infini AI
   - vendor_id: infini_ai
@@ -1047,10 +1043,9 @@ sources:
   - vendor_id: modal
     type: product
     url: https://modal.com/
-  - vendor_id: modal
-    # 官方博客 Atom（133 条全带日期，条目如「Product updates: Sandbox Sidecars, new models」）。
-    type: feed
-    url: https://modal.com/blog/atom.xml
+  # ⚠️ 2026-09-22 起**不再为 modal 配 News 源**：133 条里只有 16% 与模型相关，
+  # 主体是平台功能（dashboard、sandbox、sidecars）与客户案例。
+  # modal 本身仍在厂商总表与攻略里（它有每月周期性免费额度）。
 
   # BaseTen
   - vendor_id: baseten
@@ -1059,10 +1054,9 @@ sources:
   - vendor_id: baseten
     type: free_quota
     url: https://www.baseten.co/startup-program/
-  - vendor_id: baseten
-    # 官方变更日志 RSS（232 条全带日期，条目如「Web search with Baseten Hosted Tools」）。
-    type: feed
-    url: https://baseten.co/feeds/changelog.xml
+  # ⚠️ 2026-09-22 起**不再为 baseten 配 News 源**：232 条里 62 条是纯平台功能
+  # （CLI、RBAC、日志下载、autoscaling），与模型相关的只占 35%。
+  # baseten 本身仍在厂商总表与攻略里（它有免卡的一次性额度）。
   - vendor_id: baseten
     type: product
     url: https://baseten.co/
@@ -1151,11 +1145,9 @@ sources:
   - vendor_id: digitalocean_genai
     type: free_quota
     url: https://docs.digitalocean.com/platform/billing/signup-credit/
-  - vendor_id: digitalocean_genai
-    # 官方发布记录 RSS（100 条全带日期，条目如「The following DeepSeek model is now available
-    # on DigitalOcean Inference」）—— 产品/模型变更，对口。
-    type: feed
-    url: https://docs.digitalocean.com/release-notes/index.xml
+  # ⚠️ 2026-09-22 起**不再为 digitalocean_genai 配 News 源**：实测 100 条里**含模型名 0 条**
+  # —— 全是 droplets / kafka / valkey / kubernetes 的云产品发布记录，与 LLM 无关
+  # （该源是**全云发布记录**，不是 GenAI 专属）。digitalocean 本身仍在厂商总表里。
 
   # NCompass
   - vendor_id: ncompass
