@@ -1820,6 +1820,22 @@ def is_intel_news(vendor_id: str, title: str) -> bool:
     return False
 
 
+# 已废弃的新闻源：这些 URL 前缀下的条目**不再保留**（含历史归档）。
+# 归档是「增量合并、只增不减」的 —— 从 yaml 删掉一个源之后，它的历史条目会一直留在
+# `llm-news/*.md` 与单厂商 feed 里，所以这里做一次收口。**新抓取的条目也一并挡掉。**
+RETIRED_NEWS_URL_PREFIXES: tuple[str, ...] = (
+    # Google Cloud 的通用 AI 博客（Gartner 魔力象限、印度板球转播、I/O 大会速览…）：
+    # 不是 Gemini 的内容，且条目全无日期。该源已于 2026-09-18 从 yaml 移除，
+    # 这里清理它的历史残留（实测 11 条）。
+    "https://cloud.google.com/blog/products/",
+)
+
+
+def _is_retired_news_url(url: str) -> bool:
+    """URL 是否属于已废弃的新闻源（新抓取与历史归档都要挡）。"""
+    return any((url or "").startswith(p) for p in RETIRED_NEWS_URL_PREFIXES)
+
+
 def collect_news_articles(intel: VendorIntel, session: requests.Session) -> None:
     """
     汇总一个厂商的最新文章：
@@ -1834,7 +1850,7 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session) -> None
 
     def _add(arts: list[Article]) -> None:
         for art in arts:
-            if not art.url:
+            if not art.url or _is_retired_news_url(art.url):
                 continue
             key = _norm_url(art.url)
             # 同页 #锚点 文章（单页文档站）须保留 fragment，否则被折叠成一条
@@ -2929,6 +2945,9 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
         merged_arts: list[Article] = list(intel.all_news_articles)
         by_url = {_article_key(a.url): a for a in merged_arts}
         for old_art in existing:
+            # 已废弃源的历史条目不再保留（见 RETIRED_NEWS_URL_PREFIXES）
+            if _is_retired_news_url(old_art.url):
+                continue
             u_norm = _article_key(old_art.url)
             fresh = by_url.get(u_norm)
             if fresh is None:

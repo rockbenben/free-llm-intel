@@ -704,11 +704,18 @@ sources:
     type: hf_org
     url: https://huggingface.co/meta-llama
   - vendor_id: meta_llama
-    # 原生 RSS（10 条全带日期）。⚠️ **这是广度兜底，不是 Llama 专属源**：
-    # Meta 的 Llama 官网（llama.com / ai.meta.com / developer.meta.com）**全部返回 HTTP 400**
-    # （WAF / 区域限制），拿不到 Llama 自己的博客；这里的条目是 Meta 公司层面的 AI 新闻
-    # （可能含政策、合作伙伴），所以会混进与 Llama 模型无关的内容。
-    # 宁可如此也不留空 —— 没有日期的话整家进不了合并流，那还不如不做。
+    # Llama 官方博客 —— 这才是与本厂商对口的内容。
+    # ⚠️ 本机（境内 IP）访问 `ai.meta.com` 一律 **HTTP 400**（WAF / 区域限制），
+    # 但归档里出现过 5 条 `ai.meta.com/blog/*` 条目（`introducing-muse-spark-meta-model-api`
+    # 等），说明该域名在 **CI runner（境外）侧可达**。
+    type: blog
+    url: https://ai.meta.com/blog/
+  - vendor_id: meta_llama
+    # 广度兜底：Meta 公司层面的 AI 新闻（原生 RSS，10 条全带日期）。
+    # ⚠️ **不是 Llama 专属源** —— 条目多为政策、合作伙伴、消费级产品
+    # （`Meta One 订阅`、`Facebook 验证`、`数据中心合资`）。
+    # 2026-09-22 加了情报过滤后，这一源的条目基本会被全部剔除；
+    # 留着是为了「ai.meta.com 拿不到」时不至于整家空白。
     type: feed
     url: https://about.fb.com/news/tag/ai/feed/
 

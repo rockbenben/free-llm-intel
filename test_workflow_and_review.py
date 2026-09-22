@@ -1247,6 +1247,41 @@ class TestNewsIntelFilter(unittest.TestCase):
         self.assertEqual(intel.news_filtered, 1)
 
 
+class TestRetiredNewsSource(unittest.TestCase):
+    """已废弃新闻源的历史条目要收口。
+
+    归档是「增量合并、只增不减」的 —— 从 yaml 删掉一个源之后，它的历史条目会一直留在
+    `llm-news/*.md` 与单厂商 feed 里。实例：`cloud.google.com/blog/products/`
+    （Google Cloud 通用 AI 博客：Gartner 魔力象限、印度板球转播、I/O 大会速览）
+    于 2026-09-18 从 yaml 移除，但归档里仍有 11 条残留。
+    """
+
+    def test_retired_url_recognised(self):
+        self.assertTrue(crawler_llm_intel._is_retired_news_url(
+            "https://cloud.google.com/blog/products/ai-machine-learning/the-new-gemini"))
+        self.assertFalse(crawler_llm_intel._is_retired_news_url(
+            "https://ai.google.dev/gemini-api/docs/changelog#09-17-2026"))
+
+    def test_archived_articles_from_retired_source_are_dropped(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            (out / "v.md").write_text(
+                "# V 文章归档\n\n> 由脚本整理\n\n"
+                "## 全部文章（共 2 篇，按日期倒序；无日期条目列于最后）\n\n"
+                "1. [真条目](https://ai.google.dev/gemini-api/docs/changelog#a)（2026-09-17）\n"
+                "2. [云博客残留](https://cloud.google.com/blog/products/ai-machine-learning/x)\n",
+                encoding="utf-8")
+            intel = crawler_llm_intel.VendorIntel(
+                vendor_id="v", brand="V", homepage="", products=[])
+            with mock.patch.object(crawler_llm_intel, "translate_to_zh", lambda t: t):
+                # clean_removed=False：本用例的 intel 没有新抓条目，
+                # 传 True 会把整个归档当「已下线厂商」删掉（那是另一条逻辑）
+                crawler_llm_intel.write_news_archives(out, [intel], clean_removed=False)
+            text = (out / "v.md").read_text(encoding="utf-8")
+            self.assertIn("真条目", text, "对口的条目必须保留")
+            self.assertNotIn("云博客残留", text, "已废弃源的历史条目应被清理")
+
+
 class TestNewsTitleQuality(unittest.TestCase):
     """抓取条目的标题质量 —— 2026-09-22 数据审计发现的问题逐类冻结。
 
