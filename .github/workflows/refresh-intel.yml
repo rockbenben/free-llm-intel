@@ -21,15 +21,15 @@ name: refresh-intel
 #      Gemini API（默认模型 gemini-3.8-flash，免费层 Key）阅读变化页面，
 #      证据逐字命中页面原文才允许更新 profile_overrides.json。
 #
-# 第 3 类变化的提交策略（防止重复消耗免费层额度与补丁覆盖）：
-#   - 若远端已有未合并的 ai/intel-update 分支，自动拉取其 overrides 累加（输出
-#     synced=true），防止多日连续变动时新补丁覆盖未审核的前日补丁；
-#   - 先开 PR（profile_overrides.json + 重渲染的 README），PR 创建成功后
-#     才将快照与新闻直推 main，防止因 PR 失败导致快照提前落盘而永久丢失变更；
-#   - 待审 PR 存在但本次走直提路径（无新变化 / changed=false / 无 key）时，
-#     同步进工作区的 overrides 与按其渲染的 README 必须先还原为 main HEAD，
-#     绝不让未审核补丁绕过 PR 闸门直推 main；
-#   - 关闭 PR = 本次不采纳，该页文本同样不再重复触发，等页面下一次真正变化才会重新核查。
+# 第 3 类变化的提交策略：**自动采纳，不开 PR 等人工审核**
+#   （2026-09-22 改：原先开 PR 等审核，但每日巡检都开 PR、没人天天去合，PR 会一直积压；
+#    而档案更新本身已有「证据逐字命中页面原文」这道硬校验，不需要再人工过一遍。）
+#   - 若远端存在遗留的 ai/intel-update 分支（旧流程留下的未合并 PR），自动拉取其
+#     overrides 累加（输出 synced=true），防止历史补丁被覆盖丢失；
+#   - 档案更新（profile_overrides.json + 重渲染的 README）与快照 / 新闻
+#     **一起原子提交**并直推 main —— 避免"先开 PR 再推快照"两段式在中间失败；
+#   - 改动全部带 `_evidence`（页面原文逐字摘录）与 `_summary`，可事后追溯；
+#     若发现更新有误，直接 revert 那次巡检提交即可。
 #
 # 两处提交流程的 git 顺序固定为 add -> commit -> pull --rebase -> push，不可调换：
 # crawler 跑完后工作区必然是脏的（快照 / 新闻 / README 都已重写），此时先执行
@@ -49,14 +49,15 @@ name: refresh-intel
 #       会保留旧哈希、次日自动重试，新闻更新不受影响）；
 #   - Settings -> Actions -> General -> Workflow permissions：
 #     1) 选择 "Read and write permissions"；
-#     2) 勾选 "Allow GitHub Actions to create and approve pull requests"（极其关键，默认关闭）；
+#     （**不再需要**勾选 "Allow GitHub Actions to create and approve pull requests" ——
+#      2026-09-22 起巡检不再开 PR，档案更新与快照 / 新闻一起直接提交到 main）
 #   - Settings -> Pages -> Source 选 "Deploy from a branch"，Branch=main、目录=/docs
 #     （自建 RSS 的托管；不配置则订阅地址 404，其余产物不受影响）；
 #   - 若 main 分支开启了 Branch Protection（分支保护），请在规则中允许 github-actions[bot] bypass；
 #   - schedule 仅在默认分支存在该 workflow 时才会被 GitHub 调度。
 #
 # 依赖版本：所有 action 均使用运行在 Node.js 24 上的大版本（checkout v7 /
-# setup-python v7 / cache v6 / create-pull-request v8），以避开 Node 20 弃用告警。
+# setup-python v7 / cache v6），以避开 Node 20 弃用告警。
 # 这些版本要求 runner >= v2.327.1，GitHub 托管 runner 已满足；自建 runner 需先升级。
 "on":
   schedule:
@@ -65,7 +66,6 @@ name: refresh-intel
 
 permissions:
   contents: write
-  pull-requests: write
 
 concurrency:
   group: refresh-intel
@@ -105,9 +105,9 @@ jobs:
       - name: Install Playwright Chromium
         run: playwright install --with-deps chromium
 
-      # 若已有未合并的 ai/intel-update 分支，拉取其 overrides 累加，防止补丁互相覆盖。
-      # 输出 synced=true：这批 overrides 仍在人工审核中，后续直提 main 时必须排除
-      # （否则未审核补丁会随 README/overrides 直提绕过 PR 闸门）。
+      # 若远端残留 ai/intel-update 分支（旧流程开过 PR 但一直没合并），拉取其 overrides
+      # 累加，防止补丁互相覆盖。2026-09-22 起不再有「待审」概念 —— 这批 overrides
+      # 会随下方 "Commit all updates" 一起提交到 main（等于自动采纳旧 PR 的更新）。
       - name: Sync existing AI PR overrides
         id: prsync
         run: |
@@ -165,66 +165,17 @@ jobs:
             echo "kind=direct" >> "$GITHUB_OUTPUT"
           fi
 
-      # AI 档案补丁路径 1：先开 PR 人工审核（证据见 profile_overrides.json 的 _evidence/_summary）
-      - name: Open PR for AI-reviewed profile updates
-        if: steps.route.outputs.kind == 'pr'
-        uses: peter-evans/create-pull-request@v8
-        with:
-          branch: ai/intel-update
-          delete-branch: true
-          commit-message: "chore(ai): 依据官方页面变化更新免费额度档案"
-          title: "AI 巡检：官方免费额度信息发生变化，请审核"
-          body: |
-            每日巡检检测到官方页面文本变化，Gemini 已阅读页面并按原文更新档案。
+      # 2026-09-22：原先这里用 create-pull-request 开 PR 等人工审核，
+      # 现改为与快照 / 新闻一起原子提交（见下方 "Commit all updates" 步骤）。
 
-            - 变更字段与攻略归类：见本 PR diff
-            - 证据：`profile_overrides.json` 中对应厂商的 `_evidence`（页面原文逐字摘录）与 `_summary`
-            - 合并前请核对：证据链接可打开、数字/模型名与官方页一致
-            - 页面快照已随巡检同步更新至 main 分支：**关闭本 PR 即表示本次不采纳**，同一批页面文本不会重复触发 AI；页面下次真正变化时才会再次核查
+      # 2026-09-22：原先这里是"PR 创建成功后再直推快照"的第二段，
+      # 现已合并进下方 "Commit all updates"，不再分两段（分两段时中间失败会丢变更）。
 
-            若更新有误，直接关闭 PR 即可。
-          add-paths: |
-            README.md
-            profile_overrides.json
-
-      # AI 档案补丁路径 2：PR 创建成功后，再将快照与新闻直推 main。
-      # 保证 PR 若因权限/网络异常创建失败时，快照不会提前落盘导致变更永久丢失。
-      - name: Commit snapshots and news after PR
-        if: steps.route.outputs.kind == 'pr'
+      # 快照、新闻、README、档案覆盖层**单次原子提交**并推送到 main。
+      # 2026-09-22 起不再区分「有 AI 档案更新」与「无」—— 原先前者要开 PR 等审核，
+      # 现在统一走这一条路径（档案更新带 `_evidence` 页面原文摘录，可事后追溯）。
+      - name: Commit all updates
         run: |
-          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds
-          if git diff --cached --quiet; then
-            echo "本次无快照 / 新闻变更。"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: 定时巡检刷新博客动态与页面快照"
-          # 必须先 commit 再 rebase。crawler 刚写完产物，此刻工作区是脏的，
-          # 而 git pull --rebase 拒绝在有未暂存改动时执行，会以
-          # "cannot pull with rebase: You have unstaged changes" + exit 128 中断，
-          # 后面的 push 根本没机会运行（首次运行就是这么失败的）。
-          if ! git pull --rebase origin main; then
-            echo "::error::rebase 到最新 main 失败：远端在巡检期间有新提交，且与本次产物冲突。请手动 rebase 后重跑。"
-            exit 1
-          fi
-          # push 失败时 GitHub 只回一个 exit 128，看不出原因，这里显式翻译成排查指引。
-          if ! git push origin HEAD:main; then
-            echo "::error::推送被拒绝。请检查：① Settings -> Actions -> General -> Workflow permissions 是否已选 Read and write permissions；② 若 main 开启了 Branch Protection，规则中是否允许 github-actions[bot] bypass。"
-            exit 1
-          fi
-
-      # 无 AI 补丁路径：快照、新闻、README、覆盖层单次原子提交并推送到 main
-      - name: Commit all updates (direct mode)
-        if: steps.route.outputs.kind == 'direct'
-        run: |
-          if [ "${{ steps.prsync.outputs.synced }}" = "true" ]; then
-            # 工作区里有从待审 PR 同步来的 overrides，且 README 是按它渲染的——
-            # 二者都不能绕过人工审核直提 main；还原为 main HEAD（快照/新闻照常提交，
-            # README 的实时证据行等 PR 合并后的下一次巡检再刷新）。
-            echo "存在待审的 ai/intel-update PR：直提时排除 README.md 与 profile_overrides.json"
-            git checkout HEAD -- README.md profile_overrides.json
-          fi
           git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds README.md profile_overrides.json
           if git diff --cached --quiet; then
             echo "本次无任何内容变更。"
@@ -232,7 +183,11 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "chore: 定时巡检刷新官方情报与博客动态"
+          if [ "${{ steps.route.outputs.kind }}" = "pr" ]; then
+            git commit -m "chore(ai): 依据官方页面变化更新免费额度档案并刷新巡检产物"
+          else
+            git commit -m "chore: 定时巡检刷新官方情报与博客动态"
+          fi
           # 同上一处：必须先 commit 再 rebase。crawler 刚写完产物，工作区是脏的，
           # 此时 git pull --rebase 会以 "cannot pull with rebase: You have unstaged
           # changes" + exit 128 中断，push 根本没机会执行。
