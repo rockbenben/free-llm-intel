@@ -145,9 +145,9 @@ python -m unittest discover
 | `provider_profiles.py` | **输入**：62 家厂商的人工档案（免费模型与额度、前置条件、特惠活动，均附官方链接） |
 | `crawler_llm_intel.py` | 巡检引擎：抓取官方页 → 快照比对 → 变化时调用 AI 核查 → 套用档案 → 生成全部 Markdown 产物 |
 | `ai_review.py` | 变化触发的 LLM 核查（默认直连 **Google AI Studio 的 Gemini API**，可选 Anthropic）：阅读变化页面正文 + 当前档案，只输出带「页面原文逐字证据」的严格 JSON 补丁；证据无法在原文定位则整条拒绝（防幻觉） |
-| `profile_overrides.json` | AI 核查产物：对人工档案的字段级补丁（含 `_evidence` 证据、`_summary` 变更说明），经 PR 审核后入库 |
+| `profile_overrides.json` | AI 核查产物：对人工档案的字段级补丁（含 `_evidence` 证据、`_summary` 变更说明），经证据闸门校验后自动入库 |
 | `llm-intel-state.json` | 各官方页的文本快照哈希，用于检测「页面是否真的变了」（随仓库提交） |
-| `.github/workflows/` | GitHub Actions 自动化工作流：每日错峰巡检、事实变动开 PR 审核、新闻与快照原子更新 |
+| `.github/workflows/` | GitHub Actions 自动化工作流：每日错峰巡检、事实变动自动核查采纳、新闻与快照原子更新 |
 | `test_workflow_and_review.py` | 自动化回归测试套件：覆盖工作流合规性、补丁叠加、快照退避冷却与防抖机制 |
 | `README.md` | **产物**：本文件。`LLM-GUIDE:BEGIN/END`（项目介绍后的白嫖攻略）与 `LLM-INTEL:BEGIN/END`（文末厂商总表）两个标记块全部由脚本生成；其余说明可人工编辑 |
 | `llm-news-feeds.md` / `.opml` | **产物**：博客动态主文档（每家最新 5 篇 + 全量归档链接）与 RSS 订阅清单。OPML 分三组：**官方原生源**（官网自带 RSS 的厂商）／**自建源**（官网没有原生 RSS 的厂商，只收这些，不与原生源重复）／**聚合流**（订阅这一个即可覆盖全部有动态源的厂商）；`feeds_base` 推不出来（本地运行）时只写原生源那一组 |
@@ -164,26 +164,25 @@ python -m unittest discover
 ## 更新机制
 
 - **手动巡检 + AI 核查**：本地执行 `python crawler_llm_intel.py --ai-review`，检查 diff 后提交；事实核查默认直连 **Google AI Studio 的 Gemini API**（免费层 Key，在 [aistudio.google.com/apikey](https://aistudio.google.com/apikey) 申请，设到环境变量 `GEMINI_API_KEY`，兼容 `GOOGLE_API_KEY`）——
-  - 检测到事实页文本变化时，Gemini 阅读该厂商变化页面正文 + 当前生效档案，输出带**页面原文逐字证据**的严格 JSON 补丁；证据通过闸门后写入 `profile_overrides.json` 并生成 `.ai-changed` 标记，随后开 PR 审核（命令见 [CONTRIBUTING.md](CONTRIBUTING.md)）；
+  - 检测到事实页文本变化时，Gemini 阅读该厂商变化页面正文 + 当前生效档案，输出带**页面原文逐字证据**的严格 JSON 补丁；证据通过闸门后写入 `profile_overrides.json` 并生成 `.ai-changed` 标记，随后**与快照 / 新闻一起原子提交到 main**（命令见 [CONTRIBUTING.md](CONTRIBUTING.md)）；
   - 默认模型 `gemini-3.8-flash`，可用 `AI_REVIEW_MODEL` 钉死其他模型；后端由 `AI_REVIEW_BACKEND=auto|gemini|anthropic` 控制（默认 auto：有 `GEMINI_API_KEY` 走 Gemini，否则尝试 `ANTHROPIC_API_KEY` 直连 Anthropic）；
   - **免费层回退**（[pricing 页](https://ai.google.dev/pricing) 核实 8 个模型免费层均可用）：首选模型 404 / 免费层未开放时自动按 `gemini-3.8-flash → gemini-3.7-flash → gemini-3.6-flash → gemini-3.5-flash → gemini-2.5-flash → gemini-3.5-flash-lite → gemini-3.1-flash-lite → gemini-2.5-flash-lite` 回退（完整 Flash 系按新到旧、Lite 系垫底，不纳入 preview 模型）；遭遇 429 短期限流（RPM/TPM，按模型独立计量）按 `Retry-After` 以 5/10/20/40 秒指数退避，退避不缓解则换下一个备选模型；判定为当日额度 RPD 耗尽（太平洋时间午夜重置，按项目共享）、备选链全部限流或多个模型连续 5xx 时**立即停止本次所有 AI 调用**；Key 无效等 400/401/403 立即报错不消耗调用；连续 3 厂商失败触发熔断；单厂商核查另受 900s 墙钟预算约束；
   - **同一变化不会反复烧额度**：① AI 判 `changed=false` 后新哈希立即落库，同一份页面文本不再二次触发；② 单厂商核查持续失败时按 1/2/4/7 天指数冷却（日志 `[ai-cooldown]`，原因记录在 `llm-intel-state.json` 的 `ai_attempts/ai_retry_after/ai_last_error`），不再每天重试；③ 所有失败路径一律**保留旧快照**，事实字段不会被改写；
   - 未配置 Key 或网络不可用时：跳过 AI 核查并**保留旧快照**，该变化在下次巡检自动重试，事实字段不会被改写。
-- **人工回退手段**：① 不认可 AI 更新就**关闭/不合并 PR**——AI 只能改 `profile_overrides.json`，从未触碰人工基线 `provider_profiles.py`；② 已合并的更新有问题，删除（或编辑）`profile_overrides.json` 中对应厂商的键即恢复人工基线，证据留痕在 `_evidence`；③ 想临时停用 AI：本地不带 `--ai-review` 运行，CI 删除 `GEMINI_API_KEY` Secret 后新闻更新照常、事实变化只标记不核查。
+- **人工回退手段**：① 不认可某次 AI 更新就 **`git revert` 那次巡检提交**（提交信息以 `chore(ai):` 开头，一眼可辨）——AI 只能改 `profile_overrides.json`，从未触碰人工基线 `provider_profiles.py`；② 也可直接删除（或编辑）`profile_overrides.json` 中对应厂商的键即恢复人工基线，证据留痕在 `_evidence`；③ 想临时停用 AI：本地不带 `--ai-review` 运行，CI 删除 `GEMINI_API_KEY` Secret 后新闻更新照常、事实变化只标记不核查。
 - **定时自动更新**：GitHub Actions（`.github/workflows/refresh-intel.yml`）默认**每天北京时间 11:19** 全量抓取（时段不是随便挑的：必须落在**北京 08:00–24:00**，否则 runner 的 UTC 日期会比北京早一天，国内厂商当天发的文章会被判为「未来日期」而丢日期；11:19 同时已过美国工作日结束点、避开整点排队、且 Gemini 额度桶是满的。改 cron 前请读 workflow 头部注释）：
   0. 抓取完成后先跑**产物与不变量校验**（除会删 `.ai-changed` 的 `TestCrawlerCleanup` 外的全部用例，测试集由 `ci_suite()` 按「全部 − 白名单」推导，新增用例自动纳入）——失败即拦住提交，不让坏产物进 main；
   1. 页面快照无变化 → 不写产物、零提交；
   2. 仅新闻 / 证据引文变化 → 机器人直接提交 main；
-  3. 额度等事实页文本变化（快照 hash 改变）→ 用仓库 Secret **`GEMINI_API_KEY`** 调用 Gemini 核查。通过证据闸门后**提交拆两路与 PR 安全累加**：
-     - 若远端已有未合并的 `ai/intel-update` 分支，会自动同步其补丁并在其上累加，防止多日连续变动相互覆盖；
-     - **待审 PR 的补丁只能经该 PR 落地**：同步进工作区的未审核 overrides（及按其渲染的 README）若当天走直提路径（无新变化 / AI 判未变化 / 未配 Key），会先还原为 main HEAD，快照与新闻照常提交——未审核内容绝无后门绕过 PR；
-     - 采用**先开 PR、成功后再直推快照与新闻至 main** 的安全顺序，避免因 PR 失败导致快照提前落盘而静默丢失事实变更；
-     - 页面快照已随巡检同步更新至 main（关闭 PR 即不采纳，该页文本不再重复触发 AI；页面下次真正变动时重新核查）。
+  3. 额度等事实页文本变化（快照 hash 改变）→ 用仓库 Secret **`GEMINI_API_KEY`** 调用 Gemini 核查。通过证据闸门后**与快照 / 新闻一起原子提交到 main**（2026-09-22 起不再开 PR 等人工审核）：
+     - 若远端残留旧的 `ai/intel-update` 分支，会自动同步其补丁并在其上累加，防止多日连续变动相互覆盖（**旧 PR 的更新就此被自动采纳**）；
+     - 档案更新、快照、新闻、README **一次提交**——避免"先开 PR、成功后再推快照"两段式在中间失败时静默丢失事实变更；
+     - 每条改动都带 `_evidence`（页面原文逐字摘录）与 `_summary`，可事后追溯；发现改错直接 `git revert` 那次提交（提交信息以 `chore(ai):` 开头，一眼可辨）。
      - 未配置该 Secret 时脚本**保留旧快照不前进**，变化持续标记到下次巡检，新闻更新仍照常原子性提交 main。
 
   配置方法：
   1. **Settings → Secrets and variables → Actions** 添加 `GEMINI_API_KEY`（免费申请：https://aistudio.google.com/apikey ）；
-  2. **Settings → Actions → General → Workflow permissions**：选择 **Read and write permissions**，并务必勾选 **Allow GitHub Actions to create and approve pull requests**（GitHub 默认关闭，必须开启方可自动开 PR）；
+  2. **Settings → Actions → General → Workflow permissions**：选择 **Read and write permissions**（**不再需要**勾选 Allow GitHub Actions to create and approve pull requests —— 2026-09-22 起巡检不再开 PR）；
   3. 若 `main` 分支开启了 Branch Protection，需将 `github-actions[bot]` 设为允许直推或 bypass；
   4. 定时任务需 workflow 位于默认分支才会被 GitHub 调度；
   5. **Settings → Pages**：Source 选 **Deploy from a branch**，Branch 选 `main`、目录选 **`/docs`** —— 这是[自建 RSS 浏览页](https://free-llm-intel.aishort.top/)与订阅源的托管方式（`docs/.nojekyll` 已关闭 Jekyll，保证 XML 原样输出）。订阅地址按仓库自动推导，fork 后无需改代码；不配置则订阅地址 404，其余产物不受影响。

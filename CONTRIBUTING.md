@@ -83,7 +83,7 @@ git diff README.md
 1. 每次巡检把各官方页正文做哈希快照（`llm-intel-state.json`），与上次比对；
 2. 仅快照变化的厂商才调用 LLM（`ai_review.py`），输入 = 该厂商全部情报页正文 + 当前生效档案；
 3. LLM 只输出严格 JSON：变化字段、攻略元数据、以及**页面原文逐字证据**。证据不能在页面正文中逐字定位的补丁会被整条拒绝（防幻觉）；
-4. 通过校验的补丁写入 `profile_overrides.json`（AI 永远不直接改 `provider_profiles.py`），在 CI 中以**带证据的 PR**（分支 `ai/intel-update`）提交，人工审核合并；LLM 调用失败或未配置 API Key 时保留旧快照，下次巡检自动重试。
+4. 通过校验的补丁写入 `profile_overrides.json`（AI 永远不直接改 `provider_profiles.py`），在 CI 中**与快照 / 新闻一起原子提交到 main**（2026-09-22 起不再开 PR 等人工审核，理由见下）；LLM 调用失败或未配置 API Key 时保留旧快照，下次巡检自动重试。
 
 默认后端是 **Google AI Studio 的 Gemini API**（`generativelanguage.googleapis.com`，免费层 Key 在 [aistudio.google.com/apikey](https://aistudio.google.com/apikey) 申请）：
 
@@ -91,7 +91,7 @@ git diff README.md
 - `AI_REVIEW_BACKEND=auto|gemini|anthropic` 控制后端，`auto`（默认）为有 Gemini Key 走 Gemini、否则尝试 `ANTHROPIC_API_KEY` 直连 Anthropic；
 - CI 配置指南：
   1. 在 **Settings → Secrets and variables → Actions** 配置 `GEMINI_API_KEY` Secret；
-  2. 在 **Settings → Actions → General → Workflow permissions** 选择 **Read and write permissions**，并**勾选 Allow GitHub Actions to create and approve pull requests**（GitHub 默认关闭，必须开启方可自动开 PR）；
+  2. 在 **Settings → Actions → General → Workflow permissions** 选择 **Read and write permissions**（**不再需要**勾选 Allow GitHub Actions to create and approve pull requests —— 2026-09-22 起巡检不再开 PR）；
   3. 若 `main` 分支开启了 Branch Protection，需将 `github-actions[bot]` 加为允许直推或 bypass 的用户；
   4. 未配置 Key 时新闻更新仍直接原子性提交 main，事实变化保留旧快照等待重试。
 
@@ -131,17 +131,17 @@ git diff README.md
 
 日志标记：`[warn]` 回退 / 退避提示、`[ai-quota]` 日额度终止、`[ai-outage]` 服务故障终止、`[ai-abort]` 连续失败终止、`[ai-cooldown]` 冷却跳过、`[ai-error]` 单厂商失败（保留旧快照并计入冷却）。
 
-**CI 的提交拆两路与 PR 安全累加**（`.github/workflows/refresh-intel.yml`）：
-- 巡检前若远端存在未合并的 `ai/intel-update` 分支，会自动同步其 `profile_overrides.json`（fetch + checkout 均成功才置 `synced=true`，失败发 warning 并按 main 基线处理），确保新变动在未审核补丁上累加，不会互相覆盖；
-- **未审核补丁没有后门**：待审 PR 存在但本次走直提路径（当天无新变化 / AI 判 `changed=false` / 未配 Key）时，同步进工作区的 overrides 与按其渲染的 README 在提交前被 `git checkout HEAD --` 还原，只有快照与新闻直提 main；
-- 采用**先开 PR、成功后再直推快照与新闻至 main** 的安全顺序，避免因 PR 权限或网络故障导致快照提前落盘而静默丢失事实变更；
-- 页面快照已随巡检同步直推 main：**关闭本 PR 即表示本次不采纳**，同一批页面文本不会在第二天再次触发 AI；页面发生新的真实变化才会重新核查。
+**CI 的档案更新为自动采纳**（`.github/workflows/refresh-intel.yml`，2026-09-22 改）：
+- 巡检前若远端**残留**旧的 `ai/intel-update` 分支（旧流程开过 PR 但一直没合并），会自动同步其 `profile_overrides.json`（fetch + checkout 均成功才置 `synced=true`，失败发 warning 并按 main 基线处理）—— 这批补丁会**随本次提交一起进 main**，等于自动采纳历史 PR；
+- 档案更新（`profile_overrides.json` + 重渲染的 README）、快照、新闻**一次原子提交**，不再分「先开 PR、再推快照」两段（两段之间失败会静默丢失事实变更）；
+- **为什么不需要人工审核**：补丁必须带**页面原文逐字证据**，无法在页面正文中逐字定位的会被整条拒绝（防幻觉）；每条改动还留 `_evidence` + `_summary`，事后可追溯，改错 `revert` 即可；
+- 页面快照随巡检同步更新到 main：同一批页面文本不会在第二天再次触发 AI，页面发生新的真实变化才会重新核查。
 
 ### 人工回退手段（怎么撤销 AI 的动作）
 
 | 情况 | 操作 |
 |---|---|
-| 不认可某次 AI 更新 | 直接**关闭 / 不合并 `ai/intel-update` PR**；AI 从未触碰 `provider_profiles.py` |
+| 不认可某次 AI 更新 | **`git revert` 那次巡检提交**（提交信息以 `chore(ai):` 开头，一眼可辨）；AI 从未触碰 `provider_profiles.py` |
 | 已合并但发现有误 | 编辑或删除 `profile_overrides.json` 中对应厂商的键，重跑 `python crawler_llm_intel.py --no-browser --no-news` 重新渲染，即恢复人工基线 |
 | 想把某厂商打回重查 | 删除 `llm-intel-state.json` 中该厂商的快照条目，下次 `--ai-review` 强制重新核查 |
 | 想临时彻底关掉 AI | 本地运行不带 `--ai-review`（仅更新快照）；CI 删除 `GEMINI_API_KEY` Secret（事实变化只标记、新闻照更） |

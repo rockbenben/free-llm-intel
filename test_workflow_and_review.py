@@ -60,7 +60,10 @@ class TestWorkflowYaml(unittest.TestCase):
             data = yaml.safe_load(f)
         perms = data.get("permissions", {})
         self.assertEqual(perms.get("contents"), "write")
-        self.assertEqual(perms.get("pull-requests"), "write")
+        # 2026-09-22 起巡检不再开 PR（档案更新改为与快照/新闻一起直接提交），
+        # 所以不再需要 pull-requests 写权限 —— 最小权限原则。
+        self.assertNotIn("pull-requests", perms,
+                         "不再开 PR 就不该申请 pull-requests 写权限")
 
         concurrency = data.get("concurrency", {})
         self.assertEqual(concurrency.get("group"), "refresh-intel")
@@ -87,27 +90,24 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertIn("Restore translate cache", step_names)
         self.assertIn("Run intel crawler", step_names)
         self.assertIn("Decide commit path", step_names)
-        self.assertIn("Open PR for AI-reviewed profile updates", step_names)
-        self.assertIn("Commit snapshots and news after PR", step_names)
-        self.assertIn("Commit all updates (direct mode)", step_names)
+        # 2026-09-22：不再开 PR 等人工审核 —— 档案更新与快照 / 新闻走同一条提交路径
+        self.assertIn("Commit all updates", step_names)
+        self.assertNotIn("Open PR for AI-reviewed profile updates", step_names,
+                         "档案更新已改为自动采纳，不应再有开 PR 的步骤")
 
         # 检查 checkout 是否配置了 fetch-depth: 0
         checkout_step = next(s for s in steps if s.get("name") == "Checkout")
         self.assertEqual(checkout_step.get("with", {}).get("fetch-depth"), 0)
 
-        # 检查 create-pull-request 是否配置了 delete-branch: true
         crawl_step = next(s for s in steps if s.get("name") == "Run intel crawler")
         self.assertNotIn("--no-browser", crawl_step.get("run", ""),
                          "CI crawler run must keep the browser fallback enabled")
         self.assertIn("--ai-review", crawl_step.get("run", ""))
 
-        pr_step = next(s for s in steps if s.get("name") == "Open PR for AI-reviewed profile updates")
-        self.assertTrue(pr_step.get("with", {}).get("delete-branch"), "PR 步骤必须启用 delete-branch: true")
-
-        # 检查步骤顺序：Open PR 步骤必须在 Commit snapshots and news after PR 步骤之前
-        pr_idx = step_names.index("Open PR for AI-reviewed profile updates")
-        commit_idx = step_names.index("Commit snapshots and news after PR")
-        self.assertLess(pr_idx, commit_idx, "Open PR 必须在 Commit snapshots 之前执行，保证 PR 失败时不污染 main 快照")
+        # 2026-09-22：不再有 create-pull-request 步骤（档案更新改为与快照/新闻一起直提），
+        # 原「Open PR 必须早于 Commit snapshots」的顺序约束随之取消。
+        self.assertNotIn("peter-evans/create-pull-request", yaml.dump(data),
+                         "不再开 PR 就不该再引用 create-pull-request action")
 
 
     def test_crawler_step_passes_feeds_base_from_repo_variable(self):
@@ -127,15 +127,13 @@ class TestWorkflowYaml(unittest.TestCase):
                       "FEEDS_BASE 必须取自 repository variable —— 留空即退回自动推导，"
                       "fork 后无需配置")
 
-    def test_pending_pr_overrides_cannot_reach_main_via_direct_mode(self):
-        """Pending-PR overrides only land via the PR branch: direct mode must
-        restore them to main HEAD first.
+    def test_pending_pr_overrides_are_auto_adopted(self):
+        """遗留 PR 分支的 overrides 会被**自动采纳**。
 
-        Regression: the sync step pulls the unmerged ai/intel-update
-        profile_overrides.json into the worktree and the crawler renders README
-        with those overrides; if that run takes direct mode (no new change /
-        changed=false / no key), the old workflow committed both straight to
-        main and bypassed human PR review.
+        2026-09-22 起不再有「待审」概念：原先 direct 模式必须把同步来的 overrides
+        `git checkout HEAD --` 还原回 main HEAD，防止未审核补丁绕过 PR 闸门；
+        现在闸门取消（改为依赖「证据逐字命中页面原文」的硬校验 + `_evidence` 可追溯），
+        同步来的 overrides 应当随本次提交一起进 main —— 旧 PR 的更新就此被采纳。
         """
         with open(self.workflow_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
@@ -146,18 +144,15 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertEqual(sync.get("id"), "prsync")
         self.assertIn('echo "synced=true"', sync.get("run", ""))
 
-        direct = by_name["Commit all updates (direct mode)"]["run"]
-        self.assertIn("steps.prsync.outputs.synced", direct)
-        add_pos = direct.index("git add")
-        guard = direct[:add_pos]
-        self.assertIn("git checkout HEAD -- README.md profile_overrides.json", guard)
-
-        pr_commit = by_name["Commit snapshots and news after PR"]["run"]
-        self.assertNotIn("profile_overrides.json", pr_commit)
-        self.assertNotIn("README.md", pr_commit)
+        commit = by_name["Commit all updates"]["run"]
+        self.assertIn("profile_overrides.json", commit,
+                      "同步来的档案补丁要随本次提交进 main")
+        self.assertIn("README.md", commit, "README 按新档案重渲染，也要一起提交")
+        self.assertNotIn("git checkout HEAD --", commit,
+                         "不再需要把同步来的 overrides 还原回 main HEAD")
 
     def test_workflow_commits_self_hosted_feeds(self):
-        """docs/feeds 是 GitHub Pages 的发布目录：两条提交路径都必须带上它。
+        """docs/feeds 是 GitHub Pages 的发布目录：提交路径必须带上它。
 
         Regression: 只改脚本不改 git add，Pages 上的订阅源就永远是初始那一版，
         而本地产物看起来完全正常（新增文章全在仓库里，只是没人订阅得到）。
@@ -165,9 +160,9 @@ class TestWorkflowYaml(unittest.TestCase):
         with open(self.workflow_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
         by_name = {s.get("name", ""): s for s in data["jobs"]["crawl"]["steps"]}
-        for step in ("Commit snapshots and news after PR", "Commit all updates (direct mode)"):
-            self.assertIn("docs/feeds", by_name[step]["run"],
-                          f"{step} 必须提交自建 RSS 产物，否则 Pages 上的订阅源不会更新")
+        # 2026-09-22 起只有一条提交路径（档案更新与快照 / 新闻一起原子提交）
+        self.assertIn("docs/feeds", by_name["Commit all updates"]["run"],
+                      "Commit all updates 必须提交自建 RSS 产物，否则 Pages 上的订阅源不会更新")
 
     def test_ci_verifies_with_ci_safe_suite(self):
         """CI 的校验步骤必须跑「全部 − 白名单」，且不得把 TestCrawlerCleanup 带进去。
