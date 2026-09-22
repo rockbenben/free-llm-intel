@@ -1,6 +1,6 @@
 # Cohere 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-18**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-22**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Cohere（`cohere`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -16,8 +16,8 @@
 5. [自动化的早期足迹](https://cohere.com/blog/automations-early-footprint)（2026-09-03）
 6. [小型人工智能模型如何对企业产生巨大影响](https://cohere.com/blog/how-small-models-can-make-a-big-impact-for-enterprises)（2026-09-02）
 7. [商业生成人工智能：用例、优势和采用](https://cohere.com/blog/generative-ai-for-business)（2026-08-28）
-8. [为什么前沿部署的工程师应该培养能力，而不是依赖](https://cohere.com/blog/forward-deployed-engineers-capability-building)（2026-08-27）
-9. [Parse 简介：大规模企业文档智能](https://cohere.com/blog/parse)（2026-08-27）
+8. [Parse 简介：大规模企业文档智能](https://cohere.com/blog/parse)（2026-08-27）
+9. [为什么前沿部署的工程师应该培养能力，而不是依赖](https://cohere.com/blog/forward-deployed-engineers-capability-building)（2026-08-27）
 10. [2026 年主权人工智能采用状况](https://cohere.com/blog/state-of-sovereign-ai-adoption-2026)（2026-08-25）
 11. [文化漏斗：你无法对齐数据中没有的内容](https://cohere.com/blog/the-culture-funnel-you-cant-align-what-isnt-in-the-data)（2026-08-19）
 12. [Cohere 与滑铁卢大学建立合作伙伴关系，以加强加拿大的人工智能人才储备](https://cohere.com/blog/cohere-university-of-waterloo-announcement)（2026-08-06）

@@ -1,6 +1,6 @@
 # Mistral AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-19**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-22**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Mistral AI（`mistral`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -23,9 +23,9 @@
 11. [Leanstral 1.5：所有人的丰富性证明](https://mistral.ai/news/leanstral-1-5/)（2026-07-02）
 12. [更好地控制您的连接器](https://mistral.ai/news/more-control-over-connectors/)（2026-06-24）
 13. [米斯特拉尔 OCR 4 简介](https://mistral.ai/news/ocr-4/)（2026-06-23）
-14. [2026 年人工智能峰会](https://mistral.ai/news/ai-now-summit-2026/)（2026-05-28）
-15. [盛传开始工作。](https://mistral.ai/news/vibe-agent/)（2026-05-28）
-16. [搜索工具包简介](https://mistral.ai/news/search-toolkit/)（2026-05-28）
+14. [搜索工具包简介](https://mistral.ai/news/search-toolkit/)（2026-05-28）
+15. [2026 年人工智能峰会](https://mistral.ai/news/ai-now-summit-2026/)（2026-05-28）
+16. [盛传开始工作。](https://mistral.ai/news/vibe-agent/)（2026-05-28）
 17. [米斯特拉尔物理人工智能简介：工程加速的基础。](https://mistral.ai/news/introducing-physics-ai-at-mistral/)（2026-05-27）
 18. [正在塑造行业的物理人工智能研究。](https://mistral.ai/news/physics-ai-research/)（2026-05-27）
 19. [Emmi 加入 Mistral 加速人工智能原生产业](https://mistral.ai/news/accelerate-ai-native-industry/)（2026-05-23）
@@ -79,8 +79,8 @@
 67. [米斯特拉尔批量 API](https://mistral.ai/news/batch-api/)（2024-11-07）
 68. [米斯特拉尔审核 API](https://mistral.ai/news/mistral-moderation/)（2024-11-07）
 69. [部长级会议、部长级会议](https://mistral.ai/news/ministraux/)（2024-10-16）
-70. [丰富的人工智能](https://mistral.ai/news/september-24-release/)（2024-09-17）
-71. [Announcing Pixtral 12B](https://mistral.ai/news/pixtral-12b/)（2024-09-17）
+70. [Announcing Pixtral 12B](https://mistral.ai/news/pixtral-12b/)（2024-09-17）
+71. [丰富的人工智能](https://mistral.ai/news/september-24-release/)（2024-09-17）
 72. [构建、调整、重复](https://mistral.ai/news/build-tweak-repeat/)（2024-08-07）
 73. [足够大](https://mistral.ai/news/mistral-large-2407/)（2024-07-24）
 74. [米斯特拉尔尼莫](https://mistral.ai/news/mistral-nemo/)（2024-07-18）

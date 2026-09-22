@@ -1,6 +1,6 @@
 # Modular (原 BentoCloud/BentoML) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-20**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-22**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Modular (原 BentoCloud/BentoML)（`modular_cloud`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -96,8 +96,8 @@
 85. [模块化：使用 MAX 和 Open WebUI 进行 RAG 和 Web 搜索](https://www.modular.com/blog/use-max-with-open-webui-for-rag-and-web-search)（2025-01-23）
 86. [模块化：Mojo 24.6 实践](https://www.modular.com/blog/hands-on-with-mojo-24-6)（2025-01-21）
 87. [模块化：使用 MAX 24.6 和 Hugging Face 评估 Llama Guard](https://www.modular.com/blog/llama-guard-with-max-24-6-and-hugging-face-2)（2024-12-19）
-88. [模块化：使用 Llama 3 和 MAX Serve 构建连续聊天界面](https://www.modular.com/blog/build-a-continuous-chat-interface-with-llama-3-and-max-serve)（2024-12-17）
-89. [模块化：MAX 24.6 简介：GPU 原生生成式 AI 平台](https://www.modular.com/blog/introducing-max-24-6-a-gpu-native-generative-ai-platform)（2024-12-17）
+88. [模块化：MAX 24.6 简介：GPU 原生生成式 AI 平台](https://www.modular.com/blog/introducing-max-24-6-a-gpu-native-generative-ai-platform)（2024-12-17）
+89. [模块化：使用 Llama 3 和 MAX Serve 构建连续聊天界面](https://www.modular.com/blog/build-a-continuous-chat-interface-with-llama-3-and-max-serve)（2024-12-17）
 90. [模块化：MAX GPU：新 GenAI 平台上最先进的吞吐量](https://www.modular.com/blog/max-gpu-state-of-the-art-throughput-on-a-new-genai-platform)（2024-12-17）
 91. [模块化：理解 SIMD：琐碎问题的无限复杂性](https://www.modular.com/blog/understanding-simd-infinite-complexity-of-trivial-problems)（2024-10-25）
 92. [模块化：社区聚焦：用光标编写 Mojo](https://www.modular.com/blog/community-spotlight-writing-mojo-with-cursor)（2024-10-10）

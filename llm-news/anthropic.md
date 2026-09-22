@@ -1,6 +1,6 @@
 # Anthropic Claude 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-20**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-22**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anthropic Claude（`anthropic`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -47,18 +47,18 @@
 35. [提高 SWE 工作台的标准 通过 Claude 3.5 Sonnet 进行验证](https://www.anthropic.com/engineering/swe-bench-sonnet)（2025-01-06）
 36. [建立有效的代理](https://www.anthropic.com/engineering/building-effective-agents)（2024-12-19）
 37. [上下文检索简介](https://www.anthropic.com/engineering/contextual-retrieval)（2024-09-19）
-38. [产品公告](https://claude.com/blog-category/announcements)
-39. [在前沿工作：巴利亚斯尼资产管理公司如何评估和管理克劳德寓言 5](https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5)
-40. [重新设计的项目：从文件夹到对话](https://claude.com/blog/projects-redesigned)
-41. [克劳德 协作和聊天现已合而为一 克劳德](https://claude.com/blog/cowork-is-now-claude)
-42. [将 Salesforce 引入 Claude](https://claude.com/blog/salesforce-in-claude)
-43. [建立人工智能原生收入组织](https://claude.com/blog/building-an-ai-native-revenue-organization)
-44. [Claude for Small Business 推出新的工作流程、集成和培训计划](https://claude.com/blog/claude-for-small-business-launches-new-workflows-integrations-and-training-programs)
-45. [代理编码正在给 CI 带来压力。以下是我们在 Anthropic 扩展测试影响分析的方法](https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic)
-46. [克劳德财务顾问](https://claude.com/blog/claude-for-financial-advisors)
-47. [医疗保健组织如何使用 Claude Tag](https://claude.com/blog/how-healthcare-organizations-use-claude-tag)
-48. [将人工智能从试点部署到生产](https://claude.com/blog/deploying-ai-from-pilot-to-production)
-49. [T. Rowe Price 将更多 Claude 引入其投资流程](https://claude.com/blog/t-rowe-price-brings-more-of-claude-to-its-investment-process)
+38. [Claude for Small Business 推出新的工作流程、集成和培训计划](https://claude.com/blog/claude-for-small-business-launches-new-workflows-integrations-and-training-programs)
+39. [T. Rowe Price 将更多 Claude 引入其投资流程](https://claude.com/blog/t-rowe-price-brings-more-of-claude-to-its-investment-process)
+40. [产品公告](https://claude.com/blog-category/announcements)
+41. [在前沿工作：巴利亚斯尼资产管理公司如何评估和管理克劳德寓言 5](https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5)
+42. [重新设计的项目：从文件夹到对话](https://claude.com/blog/projects-redesigned)
+43. [克劳德 协作和聊天现已合而为一 克劳德](https://claude.com/blog/cowork-is-now-claude)
+44. [将 Salesforce 引入 Claude](https://claude.com/blog/salesforce-in-claude)
+45. [建立人工智能原生收入组织](https://claude.com/blog/building-an-ai-native-revenue-organization)
+46. [代理编码正在给 CI 带来压力。以下是我们在 Anthropic 扩展测试影响分析的方法](https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic)
+47. [克劳德财务顾问](https://claude.com/blog/claude-for-financial-advisors)
+48. [医疗保健组织如何使用 Claude Tag](https://claude.com/blog/how-healthcare-organizations-use-claude-tag)
+49. [将人工智能从试点部署到生产](https://claude.com/blog/deploying-ai-from-pilot-to-production)
 50. [1,000 名小企业主教给我们的有关人工智能的知识](https://claude.com/blog/what-1-000-small-business-owners-taught-us-about-ai)
 51. [使用 Claude 平台降低成本并提高性能](https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform)
 52. [有效商务代理剖析指南](https://claude.com/blog/the-anatomy-of-effective-commerce-agents)

@@ -1,13 +1,13 @@
 # xAI Grok 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-20**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-22**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：xAI Grok（`xai_grok`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
 - 页面：[新闻 / 更新](https://x.ai/news)
 
-## 全部文章（共 80 篇，按日期倒序；无日期条目列于最后）
+## 全部文章（共 81 篇，按日期倒序；无日期条目列于最后）
 
 1. [Grok 构建中的内存](https://x.ai/news/grok-build-memory)（2026-09-16）
 2. [让 Grok Bot 放松采购](https://x.ai/news/grok-bot-procurement)（2026-09-04）
@@ -84,8 +84,9 @@
 73. [Grok-1 的公开发布](https://x.ai/news/grok-os)（2024-03-17）
 74. [宣布 PromptIDE](https://x.ai/news/prompt-ide)（2023-11-06）
 75. [宣布 Grok](https://x.ai/news/grok)（2023-11-03）
-76. [Grok 语音转录 2.0 简介](https://x.ai/news/grok-voice-transcribe-2)
-77. [企业版 Grok 机器人](https://x.ai/news/grok-bot-for-enterprise)
-78. [Grok Build 中的工作流程](https://x.ai/news/workflows)
-79. [xAI raises $6B Series C](https://x.ai/news/series-c)
-80. [API 公开测试版](https://x.ai/news/api)
+76. [IntroducingGrok 4.7](https://x.ai/news/grok-4-7)
+77. [Grok 语音转录 2.0 简介](https://x.ai/news/grok-voice-transcribe-2)
+78. [企业版 Grok 机器人](https://x.ai/news/grok-bot-for-enterprise)
+79. [Grok Build 中的工作流程](https://x.ai/news/workflows)
+80. [xAI raises $6B Series C](https://x.ai/news/series-c)
+81. [API 公开测试版](https://x.ai/news/api)

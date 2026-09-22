@@ -1,6 +1,6 @@
 # Hugging Face 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-19**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-22**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Hugging Face（`huggingface`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -19,8 +19,8 @@
 7. [Fine-tuning a 350M Model for Better Structured Outputs in 100 GRPO Steps](https://huggingface.co/blog/grpo-with-trl-ifstruct)（2026-09-03）
 8. [为您的编码代理提供您拥有的内存](https://huggingface.co/blog/funes)（2026-09-03）
 9. [使用 TRL 和 OpenEnv 训练编码模型来画水彩](https://huggingface.co/blog/train-to-paint-with-code)（2026-09-03）
-10. [BenchMIRT：LLM 基准实际上衡量的是什么？](https://huggingface.co/blog/allenai/benchmirt)（2026-09-01）
-11. [隆重推出 @huggingface/kernels：200 多个用于本地 AI 的 WebGPU 内核](https://huggingface.co/blog/webgpu-kernels)（2026-09-01）
+10. [隆重推出 @huggingface/kernels：200 多个用于本地 AI 的 WebGPU 内核](https://huggingface.co/blog/webgpu-kernels)（2026-09-01）
+11. [BenchMIRT：LLM 基准实际上衡量的是什么？](https://huggingface.co/blog/allenai/benchmirt)（2026-09-01）
 12. [开放 ASR 排行榜新增首个全球南方语言](https://huggingface.co/blog/open-asr-leaderboard-global-south)（2026-08-28）
 13. [使用句子变压器训练和微调多向量嵌入模型](https://huggingface.co/blog/train-multi-vector-encoder)（2026-08-26）
 14. [Granite 4.2 法学硕士：它们是如何构建的](https://huggingface.co/blog/ibm-granite/granite-4-2)（2026-08-25）
@@ -48,9 +48,9 @@
 36. [Grabette：记录机器人操作数据的开放系统](https://huggingface.co/blog/grabette)（2026-07-21）
 37. [更新型号，同样的优势](https://huggingface.co/blog/Dharma-AI/newer-models-same-advantages)（2026-07-16）
 38. [安全事件披露 — 2026 年 7 月](https://huggingface.co/blog/security-incident-july-2026)（2026-07-16）
-39. [模型路由很简单。直到它不是。](https://huggingface.co/blog/ibm-research/model-routing-is-simple-until-it-isnt)（2026-07-15）
-40. [欢迎来自 Thinking Machine 的 Inkling](https://huggingface.co/blog/thinkingmachines-inkling)（2026-07-15）
-41. [真实世界 VoiceEQ 简介：测量语音 AI 的人类质量](https://huggingface.co/blog/real-world-voiceeq)（2026-07-15）
+39. [欢迎来自 Thinking Machine 的 Inkling](https://huggingface.co/blog/thinkingmachines-inkling)（2026-07-15）
+40. [真实世界 VoiceEQ 简介：测量语音 AI 的人类质量](https://huggingface.co/blog/real-world-voiceeq)（2026-07-15）
+41. [模型路由很简单。直到它不是。](https://huggingface.co/blog/ibm-research/model-routing-is-simple-until-it-isnt)（2026-07-15）
 42. [PyTorch 中的分析（第 3 部分）：注意力就是您的分析](https://huggingface.co/blog/torch-attention-profile)（2026-07-10）
 43. [本机速度 vLLM 变压器建模后端](https://huggingface.co/blog/native-speed-vllm-transformers-backend)（2026-07-08）
 44. [一键从 Hugging Face 到 Amazon SageMaker Studio](https://huggingface.co/blog/amazon/one-click-to-sagemaker-studio)（2026-07-07）
@@ -65,8 +65,8 @@
 53. [在拥抱脸部模型页面上展示所有评估结果](https://huggingface.co/blog/eee-community-evals)（2026-06-30）
 54. [DiScoFormer：一种跨分布的密度和分数转换器](https://huggingface.co/blog/allenai/discoformer)（2026-06-29）
 55. [通过一个命令在 HF 作业上运行 vLLM 服务器](https://huggingface.co/blog/vllm-jobs)（2026-06-26）
-56. [使用 NVIDIA NeMo AutoModel 加速 Transformer 微调](https://huggingface.co/blog/nvidia/accelerating-fine-tuning-nvidia-nemo-automodel)（2026-06-24）
-57. [FFASR 排行榜简介：现实世界中的 ASR 基准测试](https://huggingface.co/blog/ffasr-leaderboard)（2026-06-24）
+56. [FFASR 排行榜简介：现实世界中的 ASR 基准测试](https://huggingface.co/blog/ffasr-leaderboard)（2026-06-24）
+57. [使用 NVIDIA NeMo AutoModel 加速 Transformer 微调](https://huggingface.co/blog/nvidia/accelerating-fine-tuning-nvidia-nemo-automodel)（2026-06-24）
 58. [每周通过人工智能、开放工具和人员参与交付 Huggingface_hub](https://huggingface.co/blog/huggingface-hub-release-ci)（2026-06-23）
 59. [在 Transformers.js 中试验建议的跨源存储 API](https://huggingface.co/blog/cross-origin-storage)（2026-06-23）
 60. [PP-OCRv6 on Hugging Face: 50-Language OCR from 1.5M to 34.5M Parameters](https://huggingface.co/blog/PaddlePaddle/pp-ocrv6)（2026-06-22）
@@ -74,8 +74,8 @@
 62. [MosaicLeaks：你的研究代理人能保守秘密吗？](https://huggingface.co/blog/ServiceNow/mosaicleaks)（2026-06-18）
 63. [超越LoRA：你能打败最流行的微调技术吗？](https://huggingface.co/blog/peft-beyond-lora)（2026-06-18）
 64. [是否足够代理？在您自己的工具上对开放模型进行基准测试](https://huggingface.co/blog/is-it-agentic-enough)（2026-06-18）
-65. [从 Hugging Face Hub 到 Strands Agents 和 LeRobot 的机器人硬件](https://huggingface.co/blog/amazon/strands-lerobot-hub-to-hardware)（2026-06-17）
-66. [GLM-5.2：专为长期任务而设计](https://huggingface.co/blog/zai-org/glm-52-blog)（2026-06-17）
+65. [GLM-5.2：专为长期任务而设计](https://huggingface.co/blog/zai-org/glm-52-blog)（2026-06-17）
+66. [从 Hugging Face Hub 到 Strands Agents 和 LeRobot 的机器人硬件](https://huggingface.co/blog/amazon/strands-lerobot-hub-to-hardware)（2026-06-17）
 67. [代理资源发现：让代理进行搜索](https://huggingface.co/blog/agentic-resource-discovery-launch)（2026-06-17）
 68. [PyTorch 中的分析（第 2 部分）：从 nn.Linear 到融合 MLP](https://huggingface.co/blog/torch-mlp-fusion)（2026-06-11）
 69. [How an Agent Built a 3D Paris Gallery by Chaining Two Hugging Face Spaces](https://huggingface.co/blog/mishig/spaces-agents-md)（2026-06-09）
@@ -92,8 +92,8 @@
 80. [Reachy Mini 完全本地化](https://huggingface.co/blog/local-reachy-mini-conversation)（2026-05-27）
 81. [使用 Hub Bucket 运输数万亿个参数：TRL 中的 Delta Weight Sync](https://huggingface.co/blog/delta-weight-sync)（2026-05-27）
 82. [值得正确使用的工具、脚手架和人工智能代理术语](https://huggingface.co/blog/agent-glossary)（2026-05-25）
-83. [OlmoEarth v1.1: A more efficient family of Earth observation models](https://huggingface.co/blog/allenai/olmoearth-v1-1)（2026-05-19）
-84. [Ettin Reranker 系列简介](https://huggingface.co/blog/ettin-reranker)（2026-05-19）
+83. [Ettin Reranker 系列简介](https://huggingface.co/blog/ettin-reranker)（2026-05-19）
+84. [OlmoEarth v1.1: A more efficient family of Earth observation models](https://huggingface.co/blog/allenai/olmoearth-v1-1)（2026-05-19）
 85. [PaddleOCR 3.5：使用 Transformers 后端运行 OCR 和文档解析任务](https://huggingface.co/blog/PaddlePaddle/paddleocr-transformers)（2026-05-18）
 86. [Granite Embedding Multilingual R2: Open Apache 2.0 Multilingual Embeddings with 32K Context — Best Sub-100M Retrieval Quality](https://huggingface.co/blog/ibm-granite/granite-embedding-multilingual-r2)（2026-05-14）
 87. [解锁连续批处理中的异步性](https://huggingface.co/blog/continuous_async)（2026-05-14）
@@ -131,8 +131,8 @@
 119. [保持代币流动：来自 16 个开源 RL 库的经验教训](https://huggingface.co/blog/async-rl-training-landscape)（2026-03-10）
 120. [Ulysses 序列并行性：使用百万令牌上下文进行训练](https://huggingface.co/blog/ulysses-sp)（2026-03-09）
 121. [LeRobot v0.5.0: Scaling Every Dimension](https://huggingface.co/blog/lerobot-release-v050)（2026-03-09）
-122. [将机器人人工智能引入嵌入式平台：数据集记录、VLA 微调和设备上优化](https://huggingface.co/blog/nxp/bringing-robotics-ai-to-embedded-platforms)（2026-03-05）
-123. [引入模块化扩散器 - 用于扩散管道的可组合构建块](https://huggingface.co/blog/modular-diffusers)（2026-03-05）
+122. [引入模块化扩散器 - 用于扩散管道的可组合构建块](https://huggingface.co/blog/modular-diffusers)（2026-03-05）
+123. [将机器人人工智能引入嵌入式平台：数据集记录、VLA 微调和设备上优化](https://huggingface.co/blog/nxp/bringing-robotics-ai-to-embedded-platforms)（2026-03-05）
 124. [PRX Part 3 — Training a Text-to-Image Model in 24h!](https://huggingface.co/blog/Photoroom/prx-part3)（2026-03-03）
 125. [变形金刚专家 (MoE) 的混合体](https://huggingface.co/blog/moe-transformers)（2026-02-26）
 126. [GGML和llama.cpp加入HF，保证Local AI的长期进步](https://huggingface.co/blog/ggml-joins-hf)（2026-02-20）
@@ -153,12 +153,12 @@
 141. [Alyah ⭐️：对阿拉伯语法学硕士中的阿联酋方言能力进行稳健评估](https://huggingface.co/blog/tiiuae/emirati-benchmarks)（2026-01-27）
 142. [解锁 GPT-OSS 的代理强化学习训练：实用回顾](https://huggingface.co/blog/LinkedIn/gpt-oss-agentic-rl)（2026-01-27）
 143. [AssetOpsBench：缩小 AI 代理基准与工业现实之间的差距](https://huggingface.co/blog/ibm-research/assetopsbench-playground-on-hugging-face)（2026-01-21）
-144. [“DeepSeek 时刻”一周年](https://huggingface.co/blog/huggingface/one-year-since-the-deepseek-moment)（2026-01-20）
-145. [Differential Transformer V2](https://huggingface.co/blog/microsoft/diff-attn-v2)（2026-01-20）
-146. [介绍 Waypoint-1：来自主世界的实时交互式视频传播](https://huggingface.co/blog/waypoint-1)（2026-01-20）
+144. [介绍 Waypoint-1：来自主世界的实时交互式视频传播](https://huggingface.co/blog/waypoint-1)（2026-01-20）
+145. [“DeepSeek 时刻”一周年](https://huggingface.co/blog/huggingface/one-year-since-the-deepseek-moment)（2026-01-20）
+146. [Differential Transformer V2](https://huggingface.co/blog/microsoft/diff-attn-v2)（2026-01-20）
 147. [开放式回应：您需要了解什么](https://huggingface.co/blog/open-responses)（2026-01-15）
-148. [NVIDIA Cosmos Reason 2 为物理 AI 带来高级推理](https://huggingface.co/blog/nvidia/nvidia-cosmos-reason-2-brings-advanced-reasoning)（2026-01-05）
-149. [Introducing Falcon-H1-Arabic: Pushing the Boundaries of Arabic Language AI with Hybrid Architecture](https://huggingface.co/blog/tiiuae/falcon-h1-arabic)（2026-01-05）
+148. [Introducing Falcon-H1-Arabic: Pushing the Boundaries of Arabic Language AI with Hybrid Architecture](https://huggingface.co/blog/tiiuae/falcon-h1-arabic)（2026-01-05）
+149. [NVIDIA Cosmos Reason 2 为物理 AI 带来高级推理](https://huggingface.co/blog/nvidia/nvidia-cosmos-reason-2-brings-advanced-reasoning)（2026-01-05）
 150. [NVIDIA 通过 DGX Spark 和 Reachy Mini 让智能体栩栩如生](https://huggingface.co/blog/nvidia-reachy-mini)（2026-01-05）
 151. [AprielGuard：现代 LLM 系统中安全性和对抗鲁棒性的护栏](https://huggingface.co/blog/ServiceNow-AI/aprielguard)（2025-12-23）
 152. [Tokenization in Transformers v5: Simpler, Clearer, and More Modular](https://huggingface.co/blog/tokenizers)（2025-12-18）
@@ -271,8 +271,8 @@
 259. [提示多长时间会阻止其他请求 - 优化 LLM 性能](https://huggingface.co/blog/tngtech/llm-performance-blocked-by-long-prompts)（2025-06-12）
 260. [5 分钟内了解 Hugging Face 内核 Hub](https://huggingface.co/blog/hello-hf-kernels)（2025-06-12）
 261. [Featherless AI 拥抱人脸推理提供商 🔥](https://huggingface.co/blog/inference-providers-featherless)（2025-06-12）
-262. [Post-Training Isaac GR00T N1.5 for LeRobot SO-101 Arm](https://huggingface.co/blog/nvidia/gr00t-n1-5-so101-tuning)（2025-06-11）
-263. [推出训练集群即服务 - 与 NVIDIA 的新合作](https://huggingface.co/blog/nvidia-training-cluster)（2025-06-11）
+262. [推出训练集群即服务 - 与 NVIDIA 的新合作](https://huggingface.co/blog/nvidia-training-cluster)（2025-06-11）
+263. [Post-Training Isaac GR00T N1.5 for LeRobot SO-101 Arm](https://huggingface.co/blog/nvidia/gr00t-n1-5-so101-tuning)（2025-06-11）
 264. [ScreenSuite - 最全面的 GUI 代理评估套件！](https://huggingface.co/blog/screensuite)（2025-06-06）
 265. [nanoVLM 中从头开始的 KV 缓存](https://huggingface.co/blog/kv-cache)（2025-06-04）
 266. [Arm 上的实时 AI 声音生成：实现创作自由的个人工具](https://huggingface.co/blog/Arm/ai-sound-gen-on-arm)（2025-06-03）
@@ -296,15 +296,15 @@
 284. [乐机器人社区数据集：机器人技术的“ImageNet”——何时以及如何？](https://huggingface.co/blog/lerobot-datasets)（2025-05-11）
 285. [如何使用 Gradio 构建 MCP 服务器](https://huggingface.co/blog/gradio-mcp)（2025-04-30）
 286. [Qwen-3 的聊天模板教给我们的 4 件事](https://huggingface.co/blog/qwen-3-chat-template-deep-dive)（2025-04-30）
-287. [Hugging Face Hub 上欢迎 Llama Guard 4](https://huggingface.co/blog/llama-guard-4)（2025-04-29）
-288. [AutoRound 简介：英特尔针对 LLM 和 VLM 的高级量化](https://huggingface.co/blog/autoround)（2025-04-29）
+287. [AutoRound 简介：英特尔针对 LLM 和 VLM 的高级量化](https://huggingface.co/blog/autoround)（2025-04-29）
+288. [Hugging Face Hub 上欢迎 Llama Guard 4](https://huggingface.co/blog/llama-guard-4)（2025-04-29）
 289. [管道RL](https://huggingface.co/blog/ServiceNow/pipelinerl)（2025-04-25）
 290. [Tiny Agents：50 行代码的 MCP 驱动的代理](https://huggingface.co/blog/tiny-agents)（2025-04-25）
 291. [微调 olmOCR 成为忠实的 OCR 引擎](https://huggingface.co/blog/tngtech/finetuning-olmocr-to-be-a-faithful-ocr-engine)（2025-04-22）
-292. [并发请求的预填充和解码 - 优化 LLM 性能](https://huggingface.co/blog/tngtech/llm-performance-prefill-decode-concurrent-requests)（2025-04-16）
-293. [Gradio 不仅仅是另一个 UI 库的 17 个原因](https://huggingface.co/blog/why-gradio-stands-out)（2025-04-16）
-294. [Cohere 拥抱人脸推理提供商 🔥](https://huggingface.co/blog/inference-providers-cohere)（2025-04-16）
-295. [HELMET 简介：全面评估长上下文语言模型](https://huggingface.co/blog/helmet)（2025-04-16）
+292. [HELMET 简介：全面评估长上下文语言模型](https://huggingface.co/blog/helmet)（2025-04-16）
+293. [并发请求的预填充和解码 - 优化 LLM 性能](https://huggingface.co/blog/tngtech/llm-performance-prefill-decode-concurrent-requests)（2025-04-16）
+294. [Gradio 不仅仅是另一个 UI 库的 17 个原因](https://huggingface.co/blog/why-gradio-stands-out)（2025-04-16）
+295. [Cohere 拥抱人脸推理提供商 🔥](https://huggingface.co/blog/inference-providers-cohere)（2025-04-16）
 296. [Hugging Face 因收购 Pollen Robotics 而出售开源机器人 🤖](https://huggingface.co/blog/hugging-face-pollen-robotics-acquisition)（2025-04-14）
 297. [4M Models Scanned: Protect AI + Hugging Face 6 Months In](https://huggingface.co/blog/pai-6-month)（2025-04-14）
 298. [视觉蝾螈：突破多模态理解的界限](https://huggingface.co/blog/BSC-LT/visualsalamandra7b)（2025-04-11）
@@ -356,12 +356,12 @@
 344. [Open-R1: a fully open reproduction of DeepSeek-R1](https://huggingface.co/blog/open-r1)（2025-01-28）
 345. [Diffusers 中开放视频生成模型的状态](https://huggingface.co/blog/video_gen)（2025-01-27）
 346. [我们现在支持 smolagents 中的 VLM！](https://huggingface.co/blog/smolagents-can-see)（2025-01-24）
-347. [使用 KVPress 掌握法学硕士的长上下文](https://huggingface.co/blog/nvidia/kvpress)（2025-01-23）
-348. [SmolVLM Grows Smaller – Introducing the 256M & 500M Models!](https://huggingface.co/blog/smolervlm)（2025-01-23）
+347. [SmolVLM Grows Smaller – Introducing the 256M & 500M Models!](https://huggingface.co/blog/smolervlm)（2025-01-23）
+348. [使用 KVPress 掌握法学硕士的长上下文](https://huggingface.co/blog/nvidia/kvpress)（2025-01-23）
 349. [Hugging Face 和 FriendliAI 合作增强 Hub 上的模型部署](https://huggingface.co/blog/friendliai-partnership)（2025-01-22）
 350. [耶！组织现在可以发布博客文章](https://huggingface.co/blog/huggingface/blog-articles-for-orgs)（2025-01-20）
-351. [Timm ❤️ 变形金刚：使用带有变形金刚的任何 timm 模型](https://huggingface.co/blog/timm-transformers)（2025-01-16）
-352. [引入对文本生成推理的多后端（TRT-LLM、vLLM）支持](https://huggingface.co/blog/tgi-multi-backend)（2025-01-16）
+351. [引入对文本生成推理的多后端（TRT-LLM、vLLM）支持](https://huggingface.co/blog/tgi-multi-backend)（2025-01-16）
+352. [Timm ❤️ 变形金刚：使用带有变形金刚的任何 timm 模型](https://huggingface.co/blog/timm-transformers)（2025-01-16）
 353. [Train 400x faster Static Embedding Models with Sentence Transformers](https://huggingface.co/blog/static-embeddings)（2025-01-15）
 354. [人工智能代理来了。现在怎么办？](https://huggingface.co/blog/ethics-soc-7)（2025-01-13）
 355. [视觉文档检索走向多语言](https://huggingface.co/blog/vdr-2b-multilingual)（2025-01-10）
@@ -386,10 +386,10 @@
 374. [重新架构拥抱脸部上传和下载](https://huggingface.co/blog/rearchitecting-uploads-and-downloads)（2024-11-26）
 375. [SmolVLM - 小而强大的视觉语言模型](https://huggingface.co/blog/smolvlm)（2024-11-26）
 376. [您可以设计最先进的位置编码](https://huggingface.co/blog/designing-positional-encoding)（2024-11-25）
-377. [让大模特辩论：首届多语种LLM辩论赛](https://huggingface.co/blog/debate)（2024-11-20）
-378. [从文件到块：提高 HF 存储效率](https://huggingface.co/blog/from-files-to-chunks)（2024-11-20）
-379. [通过自推测解码更快地生成文本](https://huggingface.co/blog/layerskip)（2024-11-20）
-380. [日本法学硕士开放排行榜隆重推出！](https://huggingface.co/blog/leaderboard-japanese)（2024-11-20）
+377. [日本法学硕士开放排行榜隆重推出！](https://huggingface.co/blog/leaderboard-japanese)（2024-11-20）
+378. [让大模特辩论：首届多语种LLM辩论赛](https://huggingface.co/blog/debate)（2024-11-20）
+379. [从文件到块：提高 HF 存储效率](https://huggingface.co/blog/from-files-to-chunks)（2024-11-20）
+380. [通过自推测解码更快地生成文本](https://huggingface.co/blog/layerskip)（2024-11-20）
 381. [Judge Arena：法学硕士作为评估者的基准测试](https://huggingface.co/blog/arena-atla)（2024-11-19）
 382. [在 Hugging Face Hub 上分享您的开放 ML 数据集！](https://huggingface.co/blog/researcher-dataset-sharing)（2024-11-12）
 383. [拥抱脸 + PyCharm](https://huggingface.co/blog/pycharm-integration)（2024-11-05）
@@ -400,10 +400,10 @@
 388. [SynthID 文本简介](https://huggingface.co/blog/synthid-text)（2024-10-23）
 389. [HUGS 简介 - 使用开放模型扩展您的 AI](https://huggingface.co/blog/hugs)（2024-10-23）
 390. [CinePile 2.0 - 通过对抗性细化制作更强大的数据集](https://huggingface.co/blog/cinepile2)（2024-10-23）
-391. [Hugging Face 与 Protect AI 合作：增强 ML 社区的模型安全性](https://huggingface.co/blog/protectai)（2024-10-22）
-392. [Transformers.js v3: WebGPU Support, New Models & Tasks, and More…](https://huggingface.co/blog/transformersjs-v3)（2024-10-22）
-393. [扩散器迎来稳定扩散 3.5 大号](https://huggingface.co/blog/sd3-5)（2024-10-22）
-394. [发布 Outlines-core 0.1.0：Rust 和 Python 中的结构化生成](https://huggingface.co/blog/outlines-core)（2024-10-22）
+391. [Transformers.js v3: WebGPU Support, New Models & Tasks, and More…](https://huggingface.co/blog/transformersjs-v3)（2024-10-22）
+392. [发布 Outlines-core 0.1.0：Rust 和 Python 中的结构化生成](https://huggingface.co/blog/outlines-core)（2024-10-22）
+393. [Hugging Face 与 Protect AI 合作：增强 ML 社区的模型安全性](https://huggingface.co/blog/protectai)（2024-10-22）
+394. [扩散器迎来稳定扩散 3.5 大号](https://huggingface.co/blog/sd3-5)（2024-10-22）
 395. [在拥抱脸部部署语音转语音](https://huggingface.co/blog/s2s_endpoint)（2024-10-22）
 396. [“Keras 中的火焰 3.2”](https://huggingface.co/blog/keras-llama-32)（2024-10-21）
 397. [固定梯度累积](https://huggingface.co/blog/gradient_accumulation)（2024-10-16）
@@ -435,8 +435,8 @@
 423. [Welcome Falcon Mamba: The first strong attention-free 7B model](https://huggingface.co/blog/falconmamba)（2024-08-12）
 424. [工具使用，统一](https://huggingface.co/blog/unified-tool-use)（2024-08-12）
 425. [XetHub 加入 Hugging Face！](https://huggingface.co/blog/xethub-joins-hf)（2024-08-08）
-426. [2024 年安全功能亮点](https://huggingface.co/blog/2024-security-features)（2024-08-06）
-427. [介绍文档图像的 TextImage 增强](https://huggingface.co/blog/doc_aug_hf_alb)（2024-08-06）
+426. [介绍文档图像的 TextImage 增强](https://huggingface.co/blog/doc_aug_hf_alb)（2024-08-06）
+427. [2024 年安全功能亮点](https://huggingface.co/blog/2024-security-features)（2024-08-06）
 428. [Google releases Gemma 2 2B, ShieldGemma and Gemma Scope](https://huggingface.co/blog/gemma-july-update)（2024-07-31）
 429. [具有 Quanto 和扩散器的内存高效扩散变压器](https://huggingface.co/blog/quanto-diffusers)（2024-07-30）
 430. [使用 Hugging Face 和 NVIDIA NIM 进行无服务器推理](https://huggingface.co/blog/inference-dgx-cloud)（2024-07-29）
@@ -466,8 +466,8 @@
 454. [从 DeepSpeed 到 FSDP，然后通过拥抱面部加速再次回归](https://huggingface.co/blog/deepspeed-to-fsdp-and-back)（2024-06-13）
 455. [Diffusers 欢迎 Stable Diffusion 3](https://huggingface.co/blog/sd3)（2024-06-12）
 456. [将 RL 放回 RLHF](https://huggingface.co/blog/putting_rl_back_in_rlhf_with_rloo)（2024-06-12）
-457. [弄清楚这个混乱的情况](https://huggingface.co/blog/transformers-docs-redesign)（2024-06-07）
-458. [推出适用于 Amazon SageMaker 的拥抱人脸嵌入容器](https://huggingface.co/blog/sagemaker-huggingface-embedding)（2024-06-07）
+457. [推出适用于 Amazon SageMaker 的拥抱人脸嵌入容器](https://huggingface.co/blog/sagemaker-huggingface-embedding)（2024-06-07）
+458. [弄清楚这个混乱的情况](https://huggingface.co/blog/transformers-docs-redesign)（2024-06-07）
 459. [启动人工分析文本到图像排行榜和竞技场](https://huggingface.co/blog/leaderboard-artificial-analysis2)（2024-06-06）
 460. [Introducing NPC-Playground, a 3D playground to interact with LLM-powered NPCs](https://huggingface.co/blog/npc-gigax-cubzh)（2024-06-05）
 461. [对 Intel Gaudi 更快的辅助生成支持](https://huggingface.co/blog/assisted-generation-support-gaudi)（2024-06-04）
@@ -482,9 +482,9 @@
 470. [Hugging Face on AMD Instinct MI300 GPU](https://huggingface.co/blog/huggingface-amd-mi300)（2024-05-21）
 471. [从云到开发者：Hugging Face 与微软深化合作](https://huggingface.co/blog/microsoft-collaboration)（2024-05-21）
 472. [通过键值缓存量化解锁更长的生成](https://huggingface.co/blog/kv-cache-quantization)（2024-05-16）
-473. [PaliGemma – Google 的尖端开放视觉语言模型](https://huggingface.co/blog/paligemma)（2024-05-14）
-474. [Hugging Face x LangChain：全新合作伙伴包](https://huggingface.co/blog/langchain)（2024-05-14）
-475. [开放阿拉伯语 LLM 排行榜简介](https://huggingface.co/blog/leaderboard-arabic)（2024-05-14）
+473. [开放阿拉伯语 LLM 排行榜简介](https://huggingface.co/blog/leaderboard-arabic)（2024-05-14）
+474. [PaliGemma – Google 的尖端开放视觉语言模型](https://huggingface.co/blog/paligemma)（2024-05-14）
+475. [Hugging Face x LangChain：全新合作伙伴包](https://huggingface.co/blog/langchain)（2024-05-14）
 476. [通话许可：Transformers Agents 2.0 简介](https://huggingface.co/blog/agents)（2024-05-13）
 477. [使用您的 AWS 账户订阅 Enterprise Hub](https://huggingface.co/blog/enterprise-hub-aws-marketplace)（2024-05-09）
 478. [使用英特尔 Gaudi 2 和英特尔至强构建经济高效的企业 RAG 应用](https://huggingface.co/blog/cost-efficient-rag-applications-with-intel)（2024-05-09）
@@ -497,8 +497,8 @@
 485. [万事通，多才多艺，多用途变压器代理](https://huggingface.co/blog/jat)（2024-04-22）
 486. [开放医学法学硕士排行榜：医疗保健领域大型语言模型的基准测试](https://huggingface.co/blog/leaderboard-medicalllm)（2024-04-19）
 487. [欢迎 Llama 3 - Meta 新开的法学硕士](https://huggingface.co/blog/llama3)（2024-04-18）
-488. [利用 Gradio 的重新加载模式快速实现 AI 应用程序](https://huggingface.co/blog/gradio-reload)（2024-04-16）
-489. [LiveCodeBench 排行榜简介 - 对代码法学硕士进行全面、无污染的评估](https://huggingface.co/blog/leaderboard-livecodebench)（2024-04-16）
+488. [LiveCodeBench 排行榜简介 - 对代码法学硕士进行全面、无污染的评估](https://huggingface.co/blog/leaderboard-livecodebench)（2024-04-16）
+489. [利用 Gradio 的重新加载模式快速实现 AI 应用程序](https://huggingface.co/blog/gradio-reload)（2024-04-16）
 490. [在拥抱脸部端点上运行隐私保护推理](https://huggingface.co/blog/fhe-endpoints)（2024-04-16）
 491. [Ryght 在 Hugging Face 的专家支持下开启医疗保健和生命科学之路](https://huggingface.co/blog/ryght-case-study)（2024-04-16）
 492. [Introducing Idefics2: A Powerful 8B Vision-Language Model for the community](https://huggingface.co/blog/idefics2)（2024-04-15）
@@ -527,8 +527,8 @@
 515. [StarCoder2 and The Stack v2](https://huggingface.co/blog/starcoder2)（2024-02-28）
 516. [TTS Arena：在野外对文本转语音模型进行基准测试](https://huggingface.co/blog/arena-tts)（2024-02-27）
 517. [AI 水印 101：工具和技术](https://huggingface.co/blog/watermarking)（2024-02-26）
-518. [微调 Gemma 模型的拥抱脸部](https://huggingface.co/blog/gemma-peft)（2024-02-23）
-519. [红队抵抗排行榜简介](https://huggingface.co/blog/leaderboard-haizelab)（2024-02-23）
+518. [红队抵抗排行榜简介](https://huggingface.co/blog/leaderboard-haizelab)（2024-02-23）
+519. [微调 Gemma 模型的拥抱脸部](https://huggingface.co/blog/gemma-peft)（2024-02-23）
 520. [🪆 俄罗斯套娃嵌入模型简介](https://huggingface.co/blog/matryoshka)（2024-02-23）
 521. [欢迎 Gemma - Google 新开的法学硕士](https://huggingface.co/blog/gemma)（2024-02-21）
 522. [介绍开放式 Ko-LLM 排行榜：引领韩国 LLM 评估生态系统](https://huggingface.co/blog/leaderboard-upstage)（2024-02-20）
@@ -538,8 +538,8 @@
 526. [从 OpenAI 到使用 Hugging Face 上的消息 API 的开放法学硕士](https://huggingface.co/blog/tgi-messages-api)（2024-02-08）
 527. [SegMoE：扩散专家的 Segmind 混合物](https://huggingface.co/blog/segmoe)（2024-02-03）
 528. [NPHardEval 排行榜：通过复杂性类和动态更新揭示大型语言模型的推理能力](https://huggingface.co/blog/leaderboard-nphardeval)（2024-02-02）
-529. [具有开放法学硕士的宪法人工智能](https://huggingface.co/blog/constitutional_ai)（2024-02-01）
-530. [Hugging Face Text Generation Inference available for AWS Inferentia2](https://huggingface.co/blog/text-generation-inference-on-inferentia2)（2024-02-01）
+529. [Hugging Face Text Generation Inference available for AWS Inferentia2](https://huggingface.co/blog/text-generation-inference-on-inferentia2)（2024-02-01）
+530. [具有开放法学硕士的宪法人工智能](https://huggingface.co/blog/constitutional_ai)（2024-02-01）
 531. [贴片时间序列变压器拥抱面](https://huggingface.co/blog/patchtst)（2024-02-01）
 532. [企业场景排行榜简介：真实世界用例排行榜](https://huggingface.co/blog/leaderboard-patronus)（2024-01-31）
 533. [Accelerate StarCoder with 🤗 Optimum Intel on Xeon: Q8/Q4 and Speculative Decoding](https://huggingface.co/blog/intel-starcoder-quantization)（2024-01-30）
@@ -566,8 +566,8 @@
 554. [再见冷启动 - 我们如何使 LoRA 推理速度提高 300%](https://huggingface.co/blog/lora-adapters-dynamic-loading)（2023-12-05）
 555. [打开 LLM 排行榜：DROP 深入研究](https://huggingface.co/blog/open-llm-leaderboard-drop)（2023-12-01）
 556. [SDXL 与潜在一致性 LoRA 的 4 个步骤](https://huggingface.co/blog/lcm_lora)（2023-11-09）
-557. [Make your llama generation time fly with AWS Inferentia2](https://huggingface.co/blog/inferentia-llama2)（2023-11-07）
-558. [Prodigy-HF 简介：与 Hugging Face 直接集成](https://huggingface.co/blog/prodigy-hf)（2023-11-07）
+557. [Prodigy-HF 简介：与 Hugging Face 直接集成](https://huggingface.co/blog/prodigy-hf)（2023-11-07）
+558. [Make your llama generation time fly with AWS Inferentia2](https://huggingface.co/blog/inferentia-llama2)（2023-11-07）
 559. [比较法学硕士的表现：深入研究 Roberta、Llama 2 和 Mistral，利用 Lora 进行灾难推文分析](https://huggingface.co/blog/Lora-for-sequence-classification-with-Roberta-Llama-Mistral)（2023-11-07）
 560. [引入 HF Hub 上的存储区域](https://huggingface.co/blog/regions)（2023-11-03）
 561. [私人副驾驶：训练你自己的编码助手](https://huggingface.co/blog/personal-copilot)（2023-10-27）
@@ -613,8 +613,8 @@
 601. [Practical 3D Asset Generation: A Step-by-Step Guide](https://huggingface.co/blog/3d-assets)（2023-08-01）
 602. [开源知识蒸馏代码以及SD-Small和SD-Tiny的权重](https://huggingface.co/blog/sd_distillation)（2023-08-01）
 603. [Mac 上稳定的 Diffusion XL 具有高级 Core ML 量化功能](https://huggingface.co/blog/stable-diffusion-xl-coreml)（2023-07-27）
-604. [人工智能政策@🤗：欧盟人工智能法案中开放机器学习的考虑因素](https://huggingface.co/blog/eu-ai-act-oss)（2023-07-24）
-605. [Agents.js 简介：为您的法学硕士提供使用 JavaScript 的工具](https://huggingface.co/blog/agents-js)（2023-07-24）
+604. [Agents.js 简介：为您的法学硕士提供使用 JavaScript 的工具](https://huggingface.co/blog/agents-js)（2023-07-24）
+605. [人工智能政策@🤗：欧盟人工智能法案中开放机器学习的考虑因素](https://huggingface.co/blog/eu-ai-act-oss)（2023-07-24）
 606. [开源 AI Game Jam 的结果](https://huggingface.co/blog/game-jam-first-edition-results)（2023-07-21）
 607. [Happy 1st anniversary 🤗 Diffusers!](https://huggingface.co/blog/diffusers-turns-1)（2023-07-20）
 608. [Llama 2 就在这里 - 在 Hugging Face 上获取](https://huggingface.co/blog/llama2)（2023-07-18）
@@ -632,9 +632,9 @@
 620. [人工智能政策@🤗：回应美国NTIA关于人工智能问责制的评论请求](https://huggingface.co/blog/policy-ntia-rfc)（2023-06-20）
 621. [针对低资源 ASR 微调 MMS 适配器模型](https://huggingface.co/blog/mms_adapters)（2023-06-19）
 622. [是的，Transformers 对于时间序列预测非常有效（+ Autoformer）](https://huggingface.co/blog/autoformer)（2023-06-16）
-623. [在 iPhone、iPad 和 Mac 上使用 Core ML 实现更快稳定的扩散](https://huggingface.co/blog/fast-diffusers-coreml)（2023-06-15）
-624. [将 Livebook 笔记本部署为 Hugging Face Spaces 的应用程序](https://huggingface.co/blog/livebook-app-deployment)（2023-06-15）
-625. [宣布我们的新内容指南和政策](https://huggingface.co/blog/content-guidelines-update)（2023-06-15）
+623. [宣布我们的新内容指南和政策](https://huggingface.co/blog/content-guidelines-update)（2023-06-15）
+624. [在 iPhone、iPad 和 Mac 上使用 Core ML 实现更快稳定的扩散](https://huggingface.co/blog/fast-diffusers-coreml)（2023-06-15）
+625. [将 Livebook 笔记本部署为 Hugging Face Spaces 的应用程序](https://huggingface.co/blog/livebook-app-deployment)（2023-06-15）
 626. [Hugging Face 与 AMD 合作加速 CPU 和 GPU 平台的最先进模型](https://huggingface.co/blog/huggingface-and-amd)（2023-06-13）
 627. [基础模型可以像人类一样标记数据吗？](https://huggingface.co/blog/open-llm-leaderboard-rlhf)（2023-06-12）
 628. [画廊、图书馆、档案馆和博物馆的拥抱中心](https://huggingface.co/blog/hf-hub-glam-guide)（2023-06-12）
@@ -646,16 +646,16 @@
 634. [推出适用于 Amazon SageMaker 的 Hugging Face LLM 推理容器](https://huggingface.co/blog/sagemaker-huggingface-llm)（2023-05-31）
 635. [引入 BERTopic 与 Hugging Face Hub 集成](https://huggingface.co/blog/bertopic)（2023-05-31）
 636. [使用 NNCF 和 🤗 Optimum 优化 Intel CPU 的稳定扩散](https://huggingface.co/blog/train-optimize-sd-intel)（2023-05-25）
-637. [通过位和字节、4 位量化和 QLoRA 使 LLM 更容易访问](https://huggingface.co/blog/4bit-transformers-bitsandbytes)（2023-05-24）
-638. [Hugging Face 与 Microsoft 合作在 Azure 上推出 Hugging Face 模型目录](https://huggingface.co/blog/hugging-face-endpoints-on-azure)（2023-05-24）
+637. [Hugging Face 与 Microsoft 合作在 Azure 上推出 Hugging Face 模型目录](https://huggingface.co/blog/hugging-face-endpoints-on-azure)（2023-05-24）
+638. [通过位和字节、4 位量化和 QLoRA 使 LLM 更容易访问](https://huggingface.co/blog/4bit-transformers-bitsandbytes)（2023-05-24）
 639. [Hugging Face 与 IBM 合作开发 watsonx.ai，这是面向 AI 构建者的下一代企业工作室](https://huggingface.co/blog/huggingface-and-ibm)（2023-05-23）
 640. [🐶Safetensors 被审核为真正安全并成为默认值](https://huggingface.co/blog/safetensors-security-audit)（2023-05-23）
 641. [Instruction-tuning Stable Diffusion with InstructPix2Pix](https://huggingface.co/blog/instruction-tuning-sd)（2023-05-23）
 642. [BigCode背后的大规模准重复数据删除](https://huggingface.co/blog/dedup)（2023-05-16）
 643. [Smaller is better: Q8-Chat, an efficient generative AI experience on Xeon](https://huggingface.co/blog/generative-ai-models-on-intel-cpu)（2023-05-16）
-644. [拥抱脸部被选为法国数据保护局增强支持计划](https://huggingface.co/blog/cnil)（2023-05-15）
-645. [使用 ROCm 在单个 GPU 上运行类似 Chatgpt 的聊天机器人](https://huggingface.co/blog/chatbot-amd-gpu)（2023-05-15）
-646. [介绍 RWKV - 具有 Transformer 优点的 RNN](https://huggingface.co/blog/rwkv)（2023-05-15）
+644. [介绍 RWKV - 具有 Transformer 优点的 RNN](https://huggingface.co/blog/rwkv)（2023-05-15）
+645. [拥抱脸部被选为法国数据保护局增强支持计划](https://huggingface.co/blog/cnil)（2023-05-15）
+646. [使用 ROCm 在单个 GPU 上运行类似 Chatgpt 的聊天机器人](https://huggingface.co/blog/chatbot-amd-gpu)（2023-05-15）
 647. [辅助生成：低延迟文本生成的新方向](https://huggingface.co/blog/assisted-generation)（2023-05-11）
 648. [使用 StarCoder 创建编码助手](https://huggingface.co/blog/starchat-alpha)（2023-05-09）
 649. [深入研究文本到视频模型](https://huggingface.co/blog/text-to-video)（2023-05-08）
@@ -692,8 +692,8 @@
 680. [为什么我们要切换到拥抱面部推理端点，也许您也应该这样做](https://huggingface.co/blog/mantis-case-study)（2023-02-15）
 681. [使用 🤗 PEFT 进行参数高效微调](https://huggingface.co/blog/peft)（2023-02-10）
 682. [Speech Synthesis, Recognition, and More With SpeechT5](https://huggingface.co/blog/speecht5)（2023-02-08）
-683. [生成故事：人工智能游戏开发 #5](https://huggingface.co/blog/ml-for-games-5)（2023-02-07）
-684. [介绍⚔️ AI vs. AI ⚔️ 深度强化学习多智能体竞赛系统](https://huggingface.co/blog/aivsai)（2023-02-07）
+683. [介绍⚔️ AI vs. AI ⚔️ 深度强化学习多智能体竞赛系统](https://huggingface.co/blog/aivsai)（2023-02-07）
+684. [生成故事：人工智能游戏开发 #5](https://huggingface.co/blog/ml-for-games-5)（2023-02-07）
 685. [使用 Intel Sapphire Rapids 加速 PyTorch Transformers - 第 2 部分](https://huggingface.co/blog/intel-sapphire-rapids-inference)（2023-02-06）
 686. [深入研究视觉语言模型](https://huggingface.co/blog/vision_language_pretraining)（2023-02-03）
 687. [Hugging Face 的计算机视觉现状 🤗](https://huggingface.co/blog/cv_state)（2023-01-30）
@@ -727,8 +727,8 @@
 715. [Hugging Face 推理解决方案概述](https://huggingface.co/blog/inference-update)（2022-11-21）
 716. [arXiv 上的拥抱人脸机器学习演示](https://huggingface.co/blog/arxiv)（2022-11-17）
 717. [同态加密加密数据的情感分析](https://huggingface.co/blog/sentiment-analysis-fhe)（2022-11-17）
-718. [在 Transformers 中通过对比搜索生成人类级别的文本 🤗](https://huggingface.co/blog/introducing-csearch)（2022-11-08）
-719. [介绍我们的新定价](https://huggingface.co/blog/pricing-update)（2022-11-08）
+718. [介绍我们的新定价](https://huggingface.co/blog/pricing-update)（2022-11-08）
+719. [在 Transformers 中通过对比搜索生成人类级别的文本 🤗](https://huggingface.co/blog/introducing-csearch)（2022-11-08）
 720. [使用扩散器通过 Dreambooth 训练稳定扩散](https://huggingface.co/blog/dreambooth)（2022-11-07）
 721. [使用 🤗 Transformers 微调 Whisper 以实现多语言 ASR](https://huggingface.co/blog/fine-tune-whisper)（2022-11-03）
 722. [使用 🤗 Optimum Intel 和 OpenVINO 加速您的模型](https://huggingface.co/blog/openvino)（2022-11-02）
@@ -775,8 +775,8 @@
 763. [Twitter 情绪分析入门](https://huggingface.co/blog/sentiment-analysis-twitter)（2022-07-07）
 764. [使用 PyTorch 的策略梯度](https://huggingface.co/blog/deep-rl-pg)（2022-06-30）
 765. [升空！如何开始您的第一个 ML 项目 🚀](https://huggingface.co/blog/your-first-ml-project)（2022-06-29）
-766. [使用 DeepSpeed 加速大型模型训练](https://huggingface.co/blog/accelerate-deepspeed)（2022-06-28）
-767. [宣布对 Hub 进行评估](https://huggingface.co/blog/eval-on-the-hub)（2022-06-28）
+766. [宣布对 Hub 进行评估](https://huggingface.co/blog/eval-on-the-hub)（2022-06-28）
+767. [使用 DeepSpeed 加速大型模型训练](https://huggingface.co/blog/accelerate-deepspeed)（2022-06-28）
 768. [嵌入入门](https://huggingface.co/blog/getting-started-with-embeddings)（2022-06-23）
 769. [将 Transformer 转换为具有拥抱面优化的 ONNX](https://huggingface.co/blog/convert-transformers-to-onnx)（2022-06-22）
 770. [英特尔与 Hugging Face 合作，推动机器学习硬件加速大众化](https://huggingface.co/blog/intel)（2022-06-15）
@@ -790,8 +790,8 @@
 778. [Semper Health 如何利用专家加速计划来加速他们的 ML 路线图](https://huggingface.co/blog/sempre-health-eap-case-study)（2022-05-19）
 779. [将伦理原则置于研究生命周期的核心](https://huggingface.co/blog/ethical-charter-multimodal)（2022-05-19）
 780. [Q-Learning 简介第 1 部分](https://huggingface.co/blog/deep-rl-q-part1)（2022-05-18）
-781. [机器学习专家 - Sasha Luccioni](https://huggingface.co/blog/sasha-luccioni-interview)（2022-05-17）
-782. [宣布拥抱面孔奖学金计划](https://huggingface.co/blog/fellowship)（2022-05-17）
+781. [宣布拥抱面孔奖学金计划](https://huggingface.co/blog/fellowship)（2022-05-17）
+782. [机器学习专家 - Sasha Luccioni](https://huggingface.co/blog/sasha-luccioni-interview)（2022-05-17）
 783. [Gradio 3.0 已推出！](https://huggingface.co/blog/gradio-blocks)（2022-05-16）
 784. [机器学习洞察总监【第2部分：SaaS版】](https://huggingface.co/blog/ml-director-insights-2)（2022-05-13）
 785. [学生大使计划现已开放申请！](https://huggingface.co/blog/ambassadors)（2022-05-13）
@@ -843,8 +843,8 @@
 831. [使用 Streamlit 在 Hugging Face Spaces 上托管模型和数据集](https://huggingface.co/blog/streamlit-spaces)（2021-10-05）
 832. [使用 Gradio 在空间中展示您的项目](https://huggingface.co/blog/gradio-spaces)（2021-10-05）
 833. [拥抱夏天](https://huggingface.co/blog/summer-at-huggingface)（2021-09-24）
-834. [Hugging Face 和 Graphcore 合作开发 IPU 优化的 Transformers](https://huggingface.co/blog/graphcore)（2021-09-14）
-835. [Optimum 简介：大规模 Transformer 优化工具包](https://huggingface.co/blog/hardware-partners-program)（2021-09-14）
+834. [Optimum 简介：大规模 Transformer 优化工具包](https://huggingface.co/blog/hardware-partners-program)（2021-09-14）
+835. [Hugging Face 和 Graphcore 合作开发 IPU 优化的 Transformers](https://huggingface.co/blog/graphcore)（2021-09-14）
 836. [互联网深度学习：协作训练语言模型](https://huggingface.co/blog/collaborative-training)（2021-07-15）
 837. [欢迎 spaCy 来到 Hugging Face Hub](https://huggingface.co/blog/spacy)（2021-07-13）
 838. [使用 Amazon SageMaker 轻松部署拥抱脸部模型](https://huggingface.co/blog/deploy-hugging-face-models-easily-with-amazon-sagemaker)（2021-07-08）

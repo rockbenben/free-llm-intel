@@ -202,10 +202,10 @@ python -m unittest discover
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-09-20 08:53:03**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-09-22 08:56:17**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
-> 💡 **核心特性**：覆盖 **62 家厂商**（深度抓取 **118 个情报页 + 28 个动态页**）；已借助 Google 公开翻译引擎将海外一手情报全面汉化；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
-> 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 20 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
+> 💡 **核心特性**：覆盖 **62 家厂商**（深度抓取 **118 个情报页 + 24 个动态页**）；已借助 Google 公开翻译引擎将海外一手情报全面汉化；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
+> 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 16 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
 > 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/) ｜ [合并流](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`。
 
 ---
@@ -221,11 +221,11 @@ python -m unittest discover
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [DeepSeek (深度求索)](https://www.deepseek.com/) |
-| **免费模型与额度** | • **无免费模型层**，当前在架仅 V4 系列且按量计费：`deepseek-v4-flash`（DeepSeek-V4-Flash-0731）、`deepseek-v4-pro`（DeepSeek-V4-Pro-0813，2026-08-13 GA）、`deepseek-v4-flash-vision-exp`；上下文 1M（最大输出 384K）<br>• 峰谷定价（元/百万 tokens，高峰=北京时间工作日 9:00–12:00、14:00–18:00）：v4-flash 输出 9.0 高峰/4.5 空闲、缓存命中输入低至 0.05；v4-pro 输出 27.0/13.5<br>• 旧 `deepseek-chat`/`deepseek-reasoner` 已于 **2026-07-24 停用**（过渡期分别指向 v4-flash 的非思考/思考模式） |
+| **免费模型与额度** | • **无免费模型层**，全量模型按量计费：`deepseek-flash`（DeepSeek-V4.1-Flash，支持图像理解与思考模式）、`deepseek-v4-pro`（DeepSeek-V4-Pro-0813）；上下文 1M（最大输出 384K）<br>• 峰谷定价（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲半价）：deepseek-flash 输出 8 高峰/4 空闲、缓存命中输入 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5、缓存命中输入 0.30/0.15<br>• 旧模型名 `deepseek-v4-flash`、`deepseek-v4-flash-vision-exp` 对应模型已下线，调用自动由 DeepSeek-V4.1-Flash 提供服务并按 Flash 计费 |
 | **注册福利 / 账户赠送** | **无公开赠送政策**：现行官方定价页与更新日志均无新用户赠送 token 政策（历史“500 万 tokens/30 天”无法复核，不予采信）；账户扣费顺序中存在“赠送余额”项，实际以注册后账户到账为准 |
 | **额度有效期** | 以账户内余额标注为准 |
 | **前置条件 / 限制** | 注册平台账号；按量计费，并发限制随账户充值等级（Tier）提升 |
-| **邀请 / 特惠活动** | 实行**峰谷定价**（元/百万 tokens，高峰为北京时间工作日 9:00–12:00、14:00–18:00）：v4-flash 输出 9.0（高峰）/4.5（空闲），缓存命中输入低至 0.05；v4-pro 输出 27.0/13.5。 |
+| **邀请 / 特惠活动** | 实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲时段半价）：deepseek-flash 输出 8.0（高峰）/4.0（空闲），缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5，缓存命中 0.30/0.15。 |
 | **实时巡检证据** | • 当充值余额与赠送余额同时存在时，优先扣减赠送余额。<br>• (3) 更多并发限制细节，请参考限速与隔离。 |
 | **官方直达** | [定价文档（人民币峰谷价）](https://api-docs.deepseek.com/zh-cn/quick_start/pricing) ｜ [API Key 管理](https://platform.deepseek.com/api_keys) ｜ [更新日志](https://api-docs.deepseek.com/zh-cn/updates/) ｜ [API 平台](https://platform.deepseek.com/) |
 | **特别说明** | V3/R1 时代价格（缓存 0.5 元、输出 8 元）已作废；官方无 RSS，更新见 updates 页。 |
@@ -349,7 +349,7 @@ python -m unittest discover
 | **注册福利 / 账户赠送** | **无公开注册赠金**：现行官方文档目录中无注册赠送代金券页面（历史“注册送券/90 天”说法无法复核，不予采信），以控制台实际到账为准 |
 | **额度有效期** | 以账户内券面标注为准 |
 | **前置条件 / 限制** | 账号注册并完成实名认证 |
-| **邀请 / 特惠活动** | **Token Plan 订阅**（官方定价文档）：Plus ¥49/月、Max ¥119/月、Ultra ¥469/月，覆盖 M3/M2.7/图像/语音（H3 视频、音色克隆等特殊模型除外）；预付积分包 1,000 积分 = ¥7，有效期 365 天。 |
+| **邀请 / 特惠活动** | **Token Plan 订阅**（官方定价文档）：Plus ¥49/月、Max ¥119/月、Ultra ¥469/月，覆盖 M3/M2.7/图像/语音（Max/Ultra 支持 Hailuo2.3 视频生成，H3 视频、音色设计等特殊模型除外）；预付积分包固定为入门版 ¥30（4,489 积分）、进阶版 ¥150（22,460 积分）、高级版 ¥500（74,900 积分），有效期 365 天。 |
 | **实时巡检证据** | • 套餐额度：套餐内 Token Plan 额度受 5 小时固定窗口和周窗口控制，未使用完的套餐内额度不会结转到下一个计费周期。<br>• 速率限制（RPM / TPM）：超出后会限流，通常约 1 分钟恢复，高峰期可能动态收紧。 |
 | **官方直达** | [API Key 申请直达](https://platform.minimax.cn/console/access?tab=api-keys) ｜ [模型介绍文档](https://platform.minimax.cn/docs/guides/models-intro) ｜ [Token Plan 定价](https://platform.minimax.cn/docs/guides/pricing-token-plan) ｜ [官方网站](https://www.minimax.cn/) |
 | **特别说明** | “Builder 共建者邀请返券”在现行官方文档中无入口记载；开放平台文档站已统一至 platform.minimax.cn/docs（旧域名 platform.minimaxi.com 全站 301 跳转至此）。 |
@@ -553,7 +553,6 @@ python -m unittest discover
 | **额度有效期** | 不适用 |
 | **前置条件 / 限制** | 未提供可用的公开开发者注册入口 |
 | **邀请 / 特惠活动** | 第三方情报库亦标注「当前可能已无标准化公开免费额度」「API 开放平台个人免费额度待确认」，与本轮复核一致。 |
-| **实时巡检证据** | • canghe-geo-diag-report 是一个品牌 GEO 可见度诊断 Skill，用来分析品牌在 DeepSeek、豆包、Kimi 等 AI 搜索平台中的提及率、推荐表现和舆情状况。它通过“基础调研 → AI 可见性 → 舆情… |
 | **官方直达** | [天工主站（开放平台入口跳转目标）](https://www.tiangong.cn/) ｜ [原开放平台入口](https://model-platform.tiangong.cn/) ｜ [开发者 API（当前 503）](https://api.tiangong.cn/) |
 | **特别说明** | 产品重心已转向天工 App 消费端；条目保留跟踪 API 是否恢复，暂不应进免费额度主力名单。 |
 
@@ -618,7 +617,7 @@ python -m unittest discover
 | **额度有效期** | 以官方控制台活动为准 |
 | **前置条件 / 限制** | 注册 xAI 控制台并充值；X Premium+ 订阅含网页端 Grok 对话 |
 | **邀请 / 特惠活动** | 部分模型 Batch 8 折；Priority Processing 2x；Grok Build 提供 API 与 CLI 智能体编码。 |
-| **实时巡检证据** | • 在 console.x.ai 注册一个帐户，然后加载积分以开始使用 API。<br>• The 2x multiplier applies to all token types — input, output, cached, and reasoning. Prompt caching discounts are app…<br>• 请求不计入速率限制 |
+| **实时巡检证据** | • it is not available on the public xAI API, and Grok Build's free tier does not include it.<br>• 在 console.x.ai 注册一个帐户，然后加载积分以开始使用 API。<br>• The 2x multiplier applies to all token types — input, output, cached, and reasoning. Prompt caching discounts are app… |
 | **官方直达** | [官方主页](https://x.ai/) ｜ [API 定价](https://docs.x.ai/developers/pricing) ｜ [快速开始](https://docs.x.ai/developers/quickstart) ｜ [开发者控制台](https://console.x.ai/) |
 | **特别说明** | 旧“$25 免费额度/30 天”说法在现行官方页面无据。 |
 
@@ -677,7 +676,7 @@ python -m unittest discover
 | **额度有效期** | 永久有效（遵守许可条款） |
 | **前置条件 / 限制** | 遵守 Llama 4 社区许可；上自然月活跃用户超过 **7 亿（700 million MAU）** 的实体需另行向 Meta 申请授权 |
 | **邀请 / 特惠活动** | 主流推理平台（Groq、Cerebras、Cloudflare、Together、DeepInfra 等）均托管 Llama 4。 |
-| **实时巡检证据** | • Muse Glimmer：为本地代理构建的开放权重模型<br>• Llama 4 社区许可协议 |
+| **实时巡检证据** | • Llama 4 社区许可协议 |
 | **官方直达** | [Meta AI 开发者站](https://developer.meta.com/ai/) ｜ [Llama 4 许可协议](https://developer.meta.com/ai/llama4/license/) ｜ [Hugging Face 组织](https://huggingface.co/meta-llama) |
 | **特别说明** | 官方主站已迁至 developer.meta.com/ai；llama.com 301 跳转至此；Llama 4 许可页为 /ai/llama4/license/。 |
 
