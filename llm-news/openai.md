@@ -1,6 +1,6 @@
 # OpenAI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-23**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-24**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：OpenAI（`openai`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -144,8 +144,8 @@
 131. [德国电信如何利用人工智能重新布线电信](https://openai.com/index/deutsche-telekom)（2026-07-10）
 132. [ChatGPT 入门](https://openai.com/academy/getting-started)（2026-07-10）
 133. [GPT-5.6 现在是 Microsoft 365 Copilot 中的首选模型](https://openai.com/index/gpt-5-6-preferred-model-microsoft-365-copilot)（2026-07-09）
-134. [GPT-5.5 生物错误赏金](https://openai.com/index/bio-bug-bounty)（2026-07-09）
-135. [GPT-5.6：前沿智能，随您的雄心壮志而扩展](https://openai.com/index/gpt-5-6)（2026-07-09）
+134. [GPT-5.6：前沿智能，随您的雄心壮志而扩展](https://openai.com/index/gpt-5-6)（2026-07-09）
+135. [GPT-5.5 生物错误赏金](https://openai.com/index/bio-bug-bounty)（2026-07-09）
 136. [ChatGPT 现在是您最雄心勃勃的工作的合作伙伴](https://openai.com/index/chatgpt-for-your-most-ambitious-work)（2026-07-09）
 137. [GPT-Live 简介](https://openai.com/index/introducing-gpt-live)（2026-07-08）
 138. [我们与政府和国家安全伙伴关系的方法](https://openai.com/index/government-national-security-partnerships)（2026-07-08）
@@ -257,8 +257,8 @@
 244. [前沿企业如何领先](https://openai.com/index/introducing-b2b-signals)（2026-05-06）
 245. [Singular Bank 通过 ChatGPT 和 Codex 帮助银行家快速行动](https://openai.com/index/singular-bank)（2026-05-06）
 246. [Uber 使用 OpenAI 帮助人们更智能地赚钱并更快地预订](https://openai.com/index/uber)（2026-05-06）
-247. [GPT-5.5即时系统卡](https://openai.com/index/gpt-5-5-instant-system-card)（2026-05-05）
-248. [GPT-5.5 Instant：更智能、更清晰、更个性化](https://openai.com/index/gpt-5-5-instant)（2026-05-05）
+247. [GPT-5.5 Instant：更智能、更清晰、更个性化](https://openai.com/index/gpt-5-5-instant)（2026-05-05）
+248. [GPT-5.5即时系统卡](https://openai.com/index/gpt-5-5-instant-system-card)（2026-05-05）
 249. [使用 MRC（多路径可靠连接）解锁大规模 AI 训练网络](https://openai.com/index/mrc-supercomputer-networking)（2026-05-05）
 250. [促进欧洲、中东和非洲地区青少年的安全和福祉](https://openai.com/index/advancing-youth-safety-in-emea)（2026-05-05）
 251. [购买 ChatGPT 广告的新方式](https://openai.com/index/new-ways-to-buy-chatgpt-ads)（2026-05-05）
@@ -349,8 +349,8 @@
 336. [Codex 安全性：现在处于研究预览阶段](https://openai.com/index/codex-security-now-in-research-preview)（2026-03-06）
 337. [Balyasny Asset Management 如何构建人工智能研究引擎](https://openai.com/index/balyasny-asset-management)（2026-03-06）
 338. [Descript 如何大规模设计多语言视频配音](https://openai.com/index/descript)（2026-03-06）
-339. [GPT-5.4思维系统卡](https://openai.com/index/gpt-5-4-thinking-system-card)（2026-03-05）
-340. [GPT-5.4 简介](https://openai.com/index/introducing-gpt-5-4)（2026-03-05）
+339. [GPT-5.4 简介](https://openai.com/index/introducing-gpt-5-4)（2026-03-05）
+340. [GPT-5.4思维系统卡](https://openai.com/index/gpt-5-4-thinking-system-card)（2026-03-05）
 341. [推出 ChatGPT for Excel 和新的财务数据集成](https://openai.com/index/chatgpt-for-excel)（2026-03-05）
 342. [推理模型很难控制自己的思维链，这很好](https://openai.com/index/reasoning-models-chain-of-thought-controllability)（2026-03-05）
 343. [确保人工智能在教育中的应用带来机遇](https://openai.com/index/ai-education-opportunity)（2026-03-05）
@@ -387,8 +387,8 @@
 374. [将 ChatGPT 引入 GenAI.mil](https://openai.com/index/bringing-chatgpt-to-genaimil)（2026-02-09）
 375. [让人工智能为每个地方的每个人服务：我们的本地化方法](https://openai.com/index/our-approach-to-localization)（2026-02-06）
 376. [GPT-5降低无细胞蛋白质合成成本](https://openai.com/index/gpt-5-lowers-protein-synthesis-cost)（2026-02-05）
-377. [GPT-5.3-Codex 系统卡](https://openai.com/index/gpt-5-3-codex-system-card)（2026-02-05）
-378. [GPT-5.3-Codex 简介](https://openai.com/index/introducing-gpt-5-3-codex)（2026-02-05）
+377. [GPT-5.3-Codex 简介](https://openai.com/index/introducing-gpt-5-3-codex)（2026-02-05）
+378. [GPT-5.3-Codex 系统卡](https://openai.com/index/gpt-5-3-codex-system-card)（2026-02-05）
 379. [引入网络可信访问](https://openai.com/index/trusted-access-for-cyber)（2026-02-05）
 380. [OpenAI Frontier 简介](https://openai.com/index/introducing-openai-frontier)（2026-02-05）
 381. [解锁 Codex 工具：我们如何构建应用程序服务器](https://openai.com/index/unlocking-the-codex-harness)（2026-02-04）
@@ -440,8 +440,8 @@
 427. [宣布 OpenAI Grove Cohort 2](https://openai.com/index/openai-grove)（2026-01-02）
 428. [持续强化 ChatGPT Atlas 防止即时注入](https://openai.com/index/hardening-atlas-against-prompt-injection)（2025-12-22）
 429. [百万分之一：庆祝客户塑造人工智能的未来](https://openai.com/index/one-in-a-million-customers)（2025-12-22）
-430. [GPT-5.2 系统卡附录：GPT-5.2-Codex](https://openai.com/index/gpt-5-2-codex-system-card)（2025-12-18）
-431. [GPT-5.2-Codex 简介](https://openai.com/index/introducing-gpt-5-2-codex)（2025-12-18）
+430. [GPT-5.2-Codex 简介](https://openai.com/index/introducing-gpt-5-2-codex)（2025-12-18）
+431. [GPT-5.2 系统卡附录：GPT-5.2-Codex](https://openai.com/index/gpt-5-2-codex-system-card)（2025-12-18）
 432. [评估思想链的可监控性](https://openai.com/index/evaluating-chain-of-thought-monitorability)（2025-12-18）
 433. [深化与美国能源部的合作](https://openai.com/index/us-department-of-energy-collaboration)（2025-12-18）
 434. [更新我们的型号规格以保护青少年](https://openai.com/index/updating-model-spec-with-teen-protections)（2025-12-18）
@@ -503,8 +503,8 @@
 490. [ChatGPT 中引入群组聊天](https://openai.com/index/group-chats-in-chatgpt)（2025-11-13）
 491. [通过稀疏电路理解神经网络](https://openai.com/index/understanding-neural-networks-through-sparse-circuits)（2025-11-13）
 492. [飞利浦如何提高 70,000 名员工的人工智能素养](https://openai.com/index/philips)（2025-11-13）
-493. [GPT-5.1：更智能、更具对话性的 ChatGPT](https://openai.com/index/gpt-5-1)（2025-11-12）
-494. [GPT-5.1即时和GPT-5.1思维系统卡附录](https://openai.com/index/gpt-5-system-card-addendum-gpt-5-1)（2025-11-12）
+493. [GPT-5.1即时和GPT-5.1思维系统卡附录](https://openai.com/index/gpt-5-system-card-addendum-gpt-5-1)（2025-11-12）
+494. [GPT-5.1：更智能、更具对话性的 ChatGPT](https://openai.com/index/gpt-5-1)（2025-11-12）
 495. [Neuro 通过 ChatGPT Business 推动全国零售业的胜利](https://openai.com/index/neurogum)（2025-11-12）
 496. [打击《纽约时报》侵犯用户隐私的行为](https://openai.com/index/fighting-nyt-user-privacy-invasion)（2025-11-12）
 497. [为美国现役军人和退伍军人提供免费 ChatGPT](https://openai.com/index/chatgpt-for-veterans)（2025-11-10）
@@ -519,8 +519,8 @@
 506. [将星际之门扩展到密歇根州](https://openai.com/index/expanding-stargate-to-michigan)（2025-10-30）
 507. [Aardvark 简介：OpenAI 的代理安全研究员](https://openai.com/index/introducing-aardvark)（2025-10-30）
 508. [我们如何构建 OWL，即基于 ChatGPT 的浏览器 Atlas 背后的新架构](https://openai.com/index/building-chatgpt-atlas)（2025-10-30）
-509. [gpt-oss-safeguard技术报告](https://openai.com/index/gpt-oss-safeguard-technical-report)（2025-10-29）
-510. [介绍 gpt-oss-safeguard](https://openai.com/index/introducing-gpt-oss-safeguard)（2025-10-29）
+509. [介绍 gpt-oss-safeguard](https://openai.com/index/introducing-gpt-oss-safeguard)（2025-10-29）
+510. [gpt-oss-safeguard技术报告](https://openai.com/index/gpt-oss-safeguard-technical-report)（2025-10-29）
 511. [推进组织变革，促进业务创新](https://openai.com/index/dai-nippon-printing)（2025-10-28）
 512. [Doppel 的 AI 防御系统可在攻击蔓延之前阻止攻击](https://openai.com/index/doppel)（2025-10-28）
 513. [Microsoft-OpenAI 合作伙伴关系的新篇章](https://openai.com/index/next-chapter-of-microsoft-openai-partnership)（2025-10-28）
@@ -611,10 +611,10 @@
 598. [DoorDash 首席产品官 Mariana Garavaglia 的问答](https://openai.com/index/doordash-mariana-garavaglia)（2025-08-18）
 599. [OpenAI 致纽瑟姆州长关于协调监管的信函](https://openai.com/global-affairs/letter-to-governor-newsom-on-harmonized-regulation)（2025-08-12）
 600. [使用 OpenAI 扩展会计能力](https://openai.com/index/basis)（2025-08-12）
-601. [GPT-5 和新工作时代](https://openai.com/index/gpt-5-new-era-of-work)（2025-08-07）
-602. [为开发者介绍 GPT-5](https://openai.com/index/introducing-gpt-5-for-developers)（2025-08-07）
-603. [GPT-5系统卡](https://openai.com/index/gpt-5-system-card)（2025-08-07）
-604. [GPT-5 简介](https://openai.com/index/introducing-gpt-5)（2025-08-07）
+601. [为开发者介绍 GPT-5](https://openai.com/index/introducing-gpt-5-for-developers)（2025-08-07）
+602. [GPT-5 和新工作时代](https://openai.com/index/gpt-5-new-era-of-work)（2025-08-07）
+603. [GPT-5 简介](https://openai.com/index/introducing-gpt-5)（2025-08-07）
+604. [GPT-5系统卡](https://openai.com/index/gpt-5-system-card)（2025-08-07）
 605. [使用 GPT-5 进行编码和设计](https://openai.com/index/gpt-5-coding-design)（2025-08-07）
 606. [使用 GPT-5 进行创意写作](https://openai.com/index/gpt-5-creative-writing)（2025-08-07）
 607. [使用 GPT-5 进行医学研究](https://openai.com/index/gpt-5-medical-research)（2025-08-07）
@@ -623,8 +623,8 @@
 610. [Cursor 如何使用 GPT-5](https://openai.com/index/gpt-5-cursor)（2025-08-07）
 611. [安进如何使用 GPT-5](https://openai.com/index/gpt-5-amgen)（2025-08-07）
 612. [向整个美国联邦劳动力提供 ChatGPT](https://openai.com/index/providing-chatgpt-to-the-entire-us-federal-workforce)（2025-08-06）
-613. [介绍gpt-oss](https://openai.com/index/introducing-gpt-oss)（2025-08-05）
-614. [gpt-oss-120b & gpt-oss-20b Model Card](https://openai.com/index/gpt-oss-model-card)（2025-08-05）
+613. [gpt-oss-120b & gpt-oss-20b Model Card](https://openai.com/index/gpt-oss-model-card)（2025-08-05）
+614. [介绍gpt-oss](https://openai.com/index/introducing-gpt-oss)（2025-08-05）
 615. [估计开放权重法学硕士最坏情况的前沿风险](https://openai.com/index/estimating-worst-case-frontier-risks-of-open-weight-llms)（2025-08-05）
 616. [面向所有人的开放式重量和人工智能](https://openai.com/global-affairs/open-weights-and-ai-for-all)（2025-08-05）
 617. [我们优化 ChatGPT 的目的](https://openai.com/index/optimizing-chatgpt)（2025-08-04）
@@ -931,8 +931,8 @@
 918. [民主对人工智能资助计划的投入：经验教训和实施计划](https://openai.com/index/democratic-inputs-to-ai-grant-program-update)（2024-01-16）
 919. [OpenAI 如何应对 2024 年全球大选](https://openai.com/index/how-openai-is-approaching-2024-worldwide-elections)（2024-01-15）
 920. [为农民建立农业数据库](https://openai.com/index/digital-green)（2024-01-12）
-921. [GPT 商店简介](https://openai.com/index/introducing-the-gpt-store)（2024-01-10）
-922. [ChatGPT 团队简介](https://openai.com/index/introducing-chatgpt-team)（2024-01-10）
+921. [ChatGPT 团队简介](https://openai.com/index/introducing-chatgpt-team)（2024-01-10）
+922. [GPT 商店简介](https://openai.com/index/introducing-the-gpt-store)（2024-01-10）
 923. [OpenAI 和新闻业](https://openai.com/index/openai-and-journalism)（2024-01-08）
 924. [提供法学硕士支持的健康解决方案](https://openai.com/index/whoop)（2024-01-04）
 925. [提高儿科就诊记录的准确性](https://openai.com/index/summer-health)（2023-12-14）
