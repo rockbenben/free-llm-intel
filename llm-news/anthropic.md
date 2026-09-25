@@ -1,6 +1,6 @@
 # Anthropic Claude 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-24**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-25**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anthropic Claude（`anthropic`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -8,7 +8,7 @@
 - 页面：[官方博客](https://claude.com/blog)
 - 页面：[新闻 / 更新](https://www.anthropic.com/news)
 
-## 全部文章（共 69 篇，按日期倒序；无日期条目列于最后）
+## 全部文章（共 70 篇，按日期倒序；无日期条目列于最后）
 
 1. [与埃森哲合作开展嵌入式评估的公告](https://www.anthropic.com/news/accenture-embedded-evaluation)（2026-09-18）
 2. [生命科学验证计划简介](https://www.anthropic.com/news/life-sciences-verification-program)（2026-09-17）
@@ -47,35 +47,36 @@
 35. [用 Claude 3.5 Sonnet 提升 SWE-bench Verified 的标准](https://www.anthropic.com/engineering/swe-bench-sonnet)（2025-01-06）
 36. [构建高效的智能体](https://www.anthropic.com/engineering/building-effective-agents)（2024-12-19）
 37. [介绍上下文检索](https://www.anthropic.com/engineering/contextual-retrieval)（2024-09-19）
-38. [Claude Marketplace：一站式发现合作伙伴的插件、代理和服务](https://claude.com/blog/claude-marketplace)
-39. [Claude for Small Business 发布新工作流、集成功能与培训计划](https://claude.com/blog/claude-for-small-business-launches-new-workflows-integrations-and-training-programs)
-40. [T. Rowe Price 在投资流程中引入更多 Claude](https://claude.com/blog/t-rowe-price-brings-more-of-claude-to-its-investment-process)
-41. [产品发布公告](https://claude.com/blog-category/announcements)
-42. [在前沿工作：巴利亚斯尼资产管理公司如何评估与治理 Claude Fable 5](https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5)
-43. [重新设计的项目：从文件夹到对话](https://claude.com/blog/projects-redesigned)
-44. [Claude：协作与聊天现已合而为一](https://claude.com/blog/cowork-is-now-claude)
-45. [将 Salesforce 引入 Claude](https://claude.com/blog/salesforce-in-claude)
-46. [建立人工智能原生收入组织](https://claude.com/blog/building-an-ai-native-revenue-organization)
-47. [代理编码正在给 CI 带来压力。以下是我们在 Anthropic 扩展测试影响分析的方法](https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic)
-48. [Claude 财务顾问](https://claude.com/blog/claude-for-financial-advisors)
-49. [医疗保健组织如何使用 Claude Tag](https://claude.com/blog/how-healthcare-organizations-use-claude-tag)
-50. [将人工智能从试点部署到生产](https://claude.com/blog/deploying-ai-from-pilot-to-production)
-51. [1,000 位小企业主教给我们的 AI 经验](https://claude.com/blog/what-1-000-small-business-owners-taught-us-about-ai)
-52. [借助 Claude Platform 降低成本、提升性能](https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform)
-53. [高效商务代理的结构解析指南](https://claude.com/blog/the-anatomy-of-effective-commerce-agents)
-54. [用 Claude 构建商务代理](https://claude.com/blog/claude-for-commerce-agents)
-55. [西班牙语（西班牙）](https://claude.com/es/blog)
-56. [《负责任的扩展政策》](https://www.anthropic.com/news/announcing-our-updated-responsible-scaling-policy)
-57. [我们如何在产品中管控 Claude](https://www.anthropic.com/engineering/how-we-contain-claude)
-58. [Anthropic 团队如何使用 Claude Tag](https://claude.com/blog/how-anthropic-employees-use-claude-tag)
-59. [Claude for Teachers 现已面向美国 K-12 学校和学区开放](https://claude.com/blog/claude-for-teachers-now-available-for-schools-and-districts)
-60. [Warp 如何在 Claude 上打造能自我改进的代理](https://claude.com/blog/how-warp-builds-self-improving-agents-on-claude)
-61. [Claude in Chrome 正式全面可用](https://claude.com/blog/claude-in-chrome-generally-available)
-62. [Claude 在 Cowork 中获得专属浏览器](https://claude.com/blog/cowork-built-in-browser)
-63. [Bain & Company 以 Global Premier 合作伙伴身份加入 Claude Partner Network](https://claude.com/blog/bain-company-joins-the-claude-partner-network-as-a-global-premier-partner)
-64. [Claude 的记忆功能全场景可用，存什么由你决定](https://claude.com/blog/claudes-memory-works-everywhere-and-you-decide-whats-in-it)
-65. [Anthropic 一线营销人员如何用 Claude Code 向每位销售代表发送每周个性化更新](https://claude.com/blog/how-an-anthropic-field-marketer-uses-claude-code-to-send-weekly-personalized-updates-to-every-sales-rep)
-66. [将 Claude Mythos 5 的网络安全能力带给更多防御者](https://claude.com/blog/bringing-claude-mythos-5-to-more-defenders)
-67. [AI-Native SDLC 实践手册](https://claude.com/blog/the-ai-native-sdlc-playbook)
-68. [Anthropic 关于 AI 教与学的方法](https://claude.com/blog/anthropics-approach-to-teaching-and-learning-ai)
-69. [monday.com 如何把平台转型为人类与代理协作的代理优先产品](https://claude.com/blog/how-monday-com-transformed-its-platform-into-an-agent-first-product-where-humans-and-agents-collaborate)
+38. [Claude Tag 现已支持频道中的个人连接器](https://claude.com/blog/claude-tag-now-supports-personal-connectors-in-channels)
+39. [Claude Marketplace：一站式发现合作伙伴的插件、代理和服务](https://claude.com/blog/claude-marketplace)
+40. [Claude for Small Business 发布新工作流、集成功能与培训计划](https://claude.com/blog/claude-for-small-business-launches-new-workflows-integrations-and-training-programs)
+41. [T. Rowe Price 在投资流程中引入更多 Claude](https://claude.com/blog/t-rowe-price-brings-more-of-claude-to-its-investment-process)
+42. [产品发布公告](https://claude.com/blog-category/announcements)
+43. [在前沿工作：巴利亚斯尼资产管理公司如何评估与治理 Claude Fable 5](https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5)
+44. [重新设计的项目：从文件夹到对话](https://claude.com/blog/projects-redesigned)
+45. [Claude：协作与聊天现已合而为一](https://claude.com/blog/cowork-is-now-claude)
+46. [将 Salesforce 引入 Claude](https://claude.com/blog/salesforce-in-claude)
+47. [建立人工智能原生收入组织](https://claude.com/blog/building-an-ai-native-revenue-organization)
+48. [代理编码正在给 CI 带来压力。以下是我们在 Anthropic 扩展测试影响分析的方法](https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic)
+49. [Claude 财务顾问](https://claude.com/blog/claude-for-financial-advisors)
+50. [医疗保健组织如何使用 Claude Tag](https://claude.com/blog/how-healthcare-organizations-use-claude-tag)
+51. [将人工智能从试点部署到生产](https://claude.com/blog/deploying-ai-from-pilot-to-production)
+52. [1,000 位小企业主教给我们的 AI 经验](https://claude.com/blog/what-1-000-small-business-owners-taught-us-about-ai)
+53. [借助 Claude Platform 降低成本、提升性能](https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform)
+54. [高效商务代理的结构解析指南](https://claude.com/blog/the-anatomy-of-effective-commerce-agents)
+55. [用 Claude 构建商务代理](https://claude.com/blog/claude-for-commerce-agents)
+56. [西班牙语（西班牙）](https://claude.com/es/blog)
+57. [《负责任的扩展政策》](https://www.anthropic.com/news/announcing-our-updated-responsible-scaling-policy)
+58. [我们如何在产品中管控 Claude](https://www.anthropic.com/engineering/how-we-contain-claude)
+59. [Anthropic 团队如何使用 Claude Tag](https://claude.com/blog/how-anthropic-employees-use-claude-tag)
+60. [Claude for Teachers 现已面向美国 K-12 学校和学区开放](https://claude.com/blog/claude-for-teachers-now-available-for-schools-and-districts)
+61. [Warp 如何在 Claude 上打造能自我改进的代理](https://claude.com/blog/how-warp-builds-self-improving-agents-on-claude)
+62. [Claude in Chrome 正式全面可用](https://claude.com/blog/claude-in-chrome-generally-available)
+63. [Claude 在 Cowork 中获得专属浏览器](https://claude.com/blog/cowork-built-in-browser)
+64. [Bain & Company 以 Global Premier 合作伙伴身份加入 Claude Partner Network](https://claude.com/blog/bain-company-joins-the-claude-partner-network-as-a-global-premier-partner)
+65. [Claude 的记忆功能全场景可用，存什么由你决定](https://claude.com/blog/claudes-memory-works-everywhere-and-you-decide-whats-in-it)
+66. [Anthropic 一线营销人员如何用 Claude Code 向每位销售代表发送每周个性化更新](https://claude.com/blog/how-an-anthropic-field-marketer-uses-claude-code-to-send-weekly-personalized-updates-to-every-sales-rep)
+67. [将 Claude Mythos 5 的网络安全能力带给更多防御者](https://claude.com/blog/bringing-claude-mythos-5-to-more-defenders)
+68. [AI-Native SDLC 实践手册](https://claude.com/blog/the-ai-native-sdlc-playbook)
+69. [Anthropic 关于 AI 教与学的方法](https://claude.com/blog/anthropics-approach-to-teaching-and-learning-ai)
+70. [monday.com 如何把平台转型为人类与代理协作的代理优先产品](https://claude.com/blog/how-monday-com-transformed-its-platform-into-an-agent-first-product-where-humans-and-agents-collaborate)
