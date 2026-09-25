@@ -1,6 +1,6 @@
 # Meta Llama 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-24**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-25**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Meta Llama（`meta_llama`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -10,7 +10,7 @@
 
 ## 全部文章（共 16 篇，按日期倒序；无日期条目列于最后）
 
-1. [Introducing Ray-Ban Meta Audio and More AI Glasses Styles](https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/)（2026-09-23）
+1. [隆重推出 Ray-Ban Meta Audio 和更多 AI 眼镜款式](https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/)（2026-09-23）
 2. [加拿大初创公司 smartARM 利用人工智能打造直观的仿生假肢](https://about.fb.com/news/2026/09/canadian-start-up-smartarm-uses-ai-to-create-intuitive-bionic-prosthetics/)（2026-09-16）
 3. [隆重推出 Meta One：一种具有更多功能和 AI 的订阅服务，可用于创建、连接和脱颖而出](https://about.fb.com/news/2026/09/introducing-meta-one-subscription-service-more-features-ai/)（2026-09-15）
 4. [Muse 简介：世界上第一个为每个人打造的个人人工智能代理](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)（2026-09-08）

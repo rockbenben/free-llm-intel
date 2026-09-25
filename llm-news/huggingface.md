@@ -1,6 +1,6 @@
 # Hugging Face 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-22**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-25**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Hugging Face（`huggingface`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -464,7 +464,7 @@
 452. [走向多模式：Prezi 如何利用 Hub 和专家支持计划来加速他们的 ML 路线图](https://huggingface.co/blog/prezi-case-study)（2024-06-19）
 453. [BigCodeBench：下一代 HumanEval](https://huggingface.co/blog/leaderboard-bigcodebench)（2024-06-18）
 454. [从 DeepSpeed 到 FSDP，然后通过拥抱面部加速再次回归](https://huggingface.co/blog/deepspeed-to-fsdp-and-back)（2024-06-13）
-455. [Diffusers 欢迎 Stable Diffusion 3](https://huggingface.co/blog/sd3)（2024-06-12）
+455. [扩散器欢迎稳定扩散 3](https://huggingface.co/blog/sd3)（2024-06-12）
 456. [将 RL 放回 RLHF](https://huggingface.co/blog/putting_rl_back_in_rlhf_with_rloo)（2024-06-12）
 457. [推出适用于 Amazon SageMaker 的拥抱人脸嵌入容器](https://huggingface.co/blog/sagemaker-huggingface-embedding)（2024-06-07）
 458. [弄清楚这个混乱的情况](https://huggingface.co/blog/transformers-docs-redesign)（2024-06-07）

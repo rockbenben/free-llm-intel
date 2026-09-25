@@ -1,6 +1,6 @@
 # xAI Grok 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-23**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-25**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：xAI Grok（`xai_grok`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -84,8 +84,8 @@
 73. [Grok-1 的公开发布](https://x.ai/news/grok-os)（2024-03-17）
 74. [宣布 PromptIDE](https://x.ai/news/prompt-ide)（2023-11-06）
 75. [宣布 Grok](https://x.ai/news/grok)（2023-11-03）
-76. [IntroducingGrok 4.7](https://x.ai/news/grok-4-7)
-77. [How SpaceXAI is using Grok Bot to scale customer support](https://x.ai/news/grok-bot-customer-support)
+76. [介绍 Grok 4.7](https://x.ai/news/grok-4-7)
+77. [SpaceXAI 如何使用 Grok Bot 扩大客户支持](https://x.ai/news/grok-bot-customer-support)
 78. [Grok 语音转录 2.0 简介](https://x.ai/news/grok-voice-transcribe-2)
 79. [企业版 Grok 机器人](https://x.ai/news/grok-bot-for-enterprise)
 80. [Grok Build 中的工作流程](https://x.ai/news/workflows)

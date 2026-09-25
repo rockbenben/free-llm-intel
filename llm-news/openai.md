@@ -1,6 +1,6 @@
 # OpenAI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-24**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-25**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：OpenAI（`openai`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -11,8 +11,8 @@
 
 ## 全部文章（共 1213 篇，按日期倒序；无日期条目列于最后）
 
-1. [Better prompt caching for GPT-6](https://openai.com/index/better-prompt-caching-for-gpt-6)（2026-09-22）
-2. [Introducing GPT-6 Sol and Luna](https://openai.com/index/introducing-gpt-6-sol-and-luna)（2026-09-22）
+1. [更好的 GPT-6 提示缓存](https://openai.com/index/better-prompt-caching-for-gpt-6)（2026-09-22）
+2. [GPT-6 Sol 和 Luna 简介](https://openai.com/index/introducing-gpt-6-sol-and-luna)（2026-09-22）
 3. [澳大利亚青少年安全蓝图简介](https://openai.com/index/australian-youth-safety-blueprint)（2026-09-18）
 4. [Astra 法律介绍](https://openai.com/index/astra-for-law)（2026-09-17）
 5. [Cooley 如何利用 ChatGPT 加速 IPO 工作](https://openai.com/index/cooley-gopublic)（2026-09-17）
@@ -155,7 +155,7 @@
 142. [MUFG 旨在通过 OpenAI 成为人工智能原生](https://openai.com/index/mufg)（2026-07-07）
 143. [ChatGPT 的采用范围如何扩大](https://openai.com/index/how-chatgpt-adoption-has-expanded)（2026-06-30）
 144. [核心转储流行病学：修复 18 年前的错误](https://openai.com/index/core-dump-epidemiology-data-infrastructure-bug)（2026-06-30）
-145. [Genebench-Pro 内部](https://openai.com/index/genebench-pro/case-studies)（2026-06-30）
+145. [Genebench-Pro 内部结构](https://openai.com/index/genebench-pro/case-studies)（2026-06-30）
 146. [GeneBench-Pro 简介](https://openai.com/index/introducing-genebench-pro)（2026-06-30）
 147. [绘制欧洲人工智能劳动力机会图](https://openai.com/index/mapping-ai-jobs-transition-eu)（2026-06-29）
 148. [惠普公司与 OpenAI 建立 Frontier 战略合作伙伴关系](https://openai.com/index/hp-frontier-partnership)（2026-06-28）

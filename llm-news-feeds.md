@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-09-24 08:47:30**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-09-25 09:08:38**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -23,9 +23,9 @@
 - 页面：[新闻 / 更新](https://openai.com/news/)
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [RSS/Atom 订阅源](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
-  1. [Better prompt caching for GPT-6](https://openai.com/index/better-prompt-caching-for-gpt-6)（2026-09-22）
-  2. [Introducing GPT-6 Sol and Luna](https://openai.com/index/introducing-gpt-6-sol-and-luna)（2026-09-22）
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
+  1. [更好的 GPT-6 提示缓存](https://openai.com/index/better-prompt-caching-for-gpt-6)（2026-09-22）
+  2. [GPT-6 Sol 和 Luna 简介](https://openai.com/index/introducing-gpt-6-sol-and-luna)（2026-09-22）
   3. [澳大利亚青少年安全蓝图简介](https://openai.com/index/australian-youth-safety-blueprint)（2026-09-18）
   4. [Astra 法律介绍](https://openai.com/index/astra-for-law)（2026-09-17）
   5. [Cooley 如何利用 ChatGPT 加速 IPO 工作](https://openai.com/index/cooley-gopublic)（2026-09-17）
@@ -37,19 +37,19 @@
 - 页面：[新闻 / 更新](https://www.anthropic.com/news)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [与埃森哲合作开展嵌入式评估的公告](https://www.anthropic.com/news/accenture-embedded-evaluation)（2026-09-18）
   2. [生命科学验证计划简介](https://www.anthropic.com/news/life-sciences-verification-program)（2026-09-17）
   3. [与客户一起制定企业前沿保障措施](https://www.anthropic.com/news/enterprise-frontier-safeguards)（2026-09-01）
   4. [改进我们的协调和安全工作](https://www.anthropic.com/news/improving-alignment-security-efforts)（2026-08-31）
   5. [预览模型硬件标准](https://www.anthropic.com/news/model-hardware-standard-research-preview)（2026-08-27）
-  - 📄 完整文章归档（共 69 篇）：[anthropic.md](llm-news/anthropic.md)
+  - 📄 完整文章归档（共 70 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### Google Gemini (google_gemini)
 - 页面：[变更日志](https://ai.google.dev/gemini-api/docs/changelog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-google_gemini.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-google_gemini.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [Gemini 3.8 Flash TTS 和 Gemini 3.8 Flash-Lite TTS 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-22-2026-1)（2026-09-22）
   2. [反重力剂09-2026](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-17-2026-1)（2026-09-17）
   3. [Gemini 3.8 Live 和 Gemini 3.8 Live Extended Thinking 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-1)（2026-09-15）
@@ -61,7 +61,7 @@
 - 页面：[新闻 / 更新](https://x.ai/news)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xai_grok.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [Grok 构建中的内存](https://x.ai/news/grok-build-memory)（2026-09-16）
   2. [让 Grok Bot 放松采购](https://x.ai/news/grok-bot-procurement)（2026-09-04）
   3. [为持久代理的世界设计 Grok Bot](https://x.ai/news/designing-grok-bot)（2026-09-03）
@@ -72,11 +72,11 @@
 ### Groq Cloud (groq)
 - 页面：[变更日志](https://console.groq.com/docs/changelog)
   - 📡 RSS/Atom：https://github.com/groq/groq-changelog/commits/main.atom
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [Q1 2026 changelog entries](https://github.com/groq/groq-changelog/commit/abaa8395286b622a837adb5d6b44709845d1edba)（2026-05-06）
   2. [Groq 是首批将 NVIDIA Groq 3 LPX 和 Vera Rubin NVL72 推向市场的公司之一](https://groq.com/blog/groq-among-the-first-to-bring-nvidia-groq-3-lpx-and-vera-rubin-nvl72-to-market)（2026-03-24）
   3. [GroqCloud：扩展以满足需求](https://groq.com/blog/groqcloud-expanding-to-meet-demand)（2026-02-16）
-  4. [12-01-25 changelog](https://github.com/groq/groq-changelog/commit/1820d161308546dffffa80bf32485202ffb64459)（2025-12-02）
+  4. [12-01-25 变更日志](https://github.com/groq/groq-changelog/commit/1820d161308546dffffa80bf32485202ffb64459)（2025-12-02）
   5. [添加更新 (#17)](https://github.com/groq/groq-changelog/commit/844c61a2116a97e37e61736caacf9690182f6466)（2025-10-31）
   - 📄 完整文章归档（共 34 篇）：[groq.md](llm-news/groq.md)
 
@@ -86,7 +86,7 @@
 - 页面：[版本动态](https://api-docs.deepseek.com/zh-cn/news/news260424/)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepseek.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepseek.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [DeepSeek-V4.1-Flash 发布](https://api-docs.deepseek.com/zh-cn/news/news260910)（2026-09-10）
   2. [DeepSeek-V4-Flash-Vision-Exp 上线](https://api-docs.deepseek.com/zh-cn/news/news260821)（2026-08-21）
   3. [DeepSeek-V4-Pro 正式版上线](https://api-docs.deepseek.com/zh-cn/news/news260813)（2026-08-13）
@@ -98,7 +98,7 @@
 - 页面：[更新日志](https://docs.bigmodel.cn/cn/update/new-releases)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-zhipu_glm.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-zhipu_glm.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [GLM-5.3-Flash 原生多模态模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2026-08-26)（2026-08-26）
   2. [GLM-5.3 新一代旗舰模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2026-8-19)（2026-08-19）
   3. [GLM-5.2 新一代旗舰模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2026-06-16)（2026-06-16）
@@ -110,13 +110,13 @@
 - 页面：[更新日志](https://help.aliyun.com/zh/model-studio/newly-released-models)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-aliyun_qwen.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-aliyun_qwen.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
-  1. [stepfun/step-5-preview：Step 5 Preview 是面向真实世界 Agentic 任务的旗舰基座模型，在 AI 编程、软件工程、专业知识工作等任务上达到前沿水平，金融领域表现尤为突出](https://help.aliyun.com/zh/model-studio/newly-released-models#stepfun/step-5-preview)（2026-09-21）
-  2. [qwen3.8-omni-flash-realtime：支持实时音视频交互及文本、音频输出，新增多通道音频、视频聚合和远程 MCP 工具调用，支持 WebSocket、WebRTC 和 AOQ 接入](https://help.aliyun.com/zh/model-studio/newly-released-models#qwen3.8-omni-flash-realtime)（2026-09-21）
-  3. [ZHIPU/GLM-5.3-FlashX：GLM-5.3-FlashX 是 GLM-5 系列的高速模型，推理速度达 200 tokens/s，提供更快、更流畅的模型体验](https://help.aliyun.com/zh/model-studio/newly-released-models#ZHIPU/GLM-5.3-FlashX)（2026-09-21）
-  4. [vanchin/deepseek-v4.1-flash：DeepSeek-V4.1-Flash 是 DeepSeek 全新模型结构系列中尺寸最小的模型，具备原生多模态视觉理解能力，支持 1M 上下文与 384K 输出](https://help.aliyun.com/zh/model-studio/newly-released-models#vanchin/deepseek-v4.1-flash)（2026-09-21）
-  5. [qwen-audio-3.1-realtime-plus：支持实时双工语音对话，沿用 3.0 Plus 的接入协议，保留原有音色并新增 8 个系统音色](https://help.aliyun.com/zh/model-studio/newly-released-models#qwen-audio-3.1-realtime-plus)（2026-09-20）
-  - 📄 完整文章归档（共 108 篇）：[aliyun_qwen.md](llm-news/aliyun_qwen.md)
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
+  1. [decision-model-preview：面向高频业务判断的结构化决策模型，可根据文本或业务状态并行完成分类、是非判断与评分，并返回概率分布和置信度，适用于工单分流、内容审核、智能体路由与结果校验等场景](https://help.aliyun.com/zh/model-studio/newly-released-models#decision-model-preview)（2026-09-24）
+  2. [stepfun/step-5-preview：Step 5 Preview 是面向真实世界 Agentic 任务的旗舰基座模型，在 AI 编程、软件工程、专业知识工作等任务上达到前沿水平，金融领域表现尤为突出](https://help.aliyun.com/zh/model-studio/newly-released-models#stepfun/step-5-preview)（2026-09-21）
+  3. [qwen3.8-omni-flash-realtime：支持实时音视频交互及文本、音频输出，新增多通道音频、视频聚合和远程 MCP 工具调用，支持 WebSocket、WebRTC 和 AOQ 接入](https://help.aliyun.com/zh/model-studio/newly-released-models#qwen3.8-omni-flash-realtime)（2026-09-21）
+  4. [ZHIPU/GLM-5.3-FlashX：GLM-5.3-FlashX 是 GLM-5 系列的高速模型，推理速度达 200 tokens/s，提供更快、更流畅的模型体验](https://help.aliyun.com/zh/model-studio/newly-released-models#ZHIPU/GLM-5.3-FlashX)（2026-09-21）
+  5. [vanchin/deepseek-v4.1-flash：DeepSeek-V4.1-Flash 是 DeepSeek 全新模型结构系列中尺寸最小的模型，具备原生多模态视觉理解能力，支持 1M 上下文与 384K 输出](https://help.aliyun.com/zh/model-studio/newly-released-models#vanchin/deepseek-v4.1-flash)（2026-09-21）
+  - 📄 完整文章归档（共 109 篇）：[aliyun_qwen.md](llm-news/aliyun_qwen.md)
 
 ### MiniMax (minimax)
 - 页面：[更新日志](https://platform.minimax.cn/docs/release-notes/models)
@@ -124,7 +124,7 @@
 - 页面：[更新日志](https://platform.minimax.cn/docs/release-notes/apis)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-minimax.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-minimax.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [MiniMax H3](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-31-%E6%97%A5)（2026-07-31）
   2. [Music-3.0](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-16-%E6%97%A5)（2026-07-16）
   3. [MiniMax M3](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-6-%E6%9C%88-1-%E6%97%A5)（2026-06-01）
@@ -136,7 +136,7 @@
 - 页面：[变更日志](https://platform.kimi.com/docs/changelog/changelog/changelog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-moonshot_kimi.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-moonshot_kimi.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [🤖 Kimi 托管智能体（Hosted Agents）Beta 上线在模型推理 API 之上，我们封装了 Kimi Durable Harness，为企业提供 7x24 小时全托管的智能体运行环境——无需自建沙箱与会话基础设施，就能让 Agent 高质量、可持续地执行长程任务。](https://platform.kimi.com/docs/changelog#2026%E5%B9%B49%E6%9C%88)（2026-09-01）
   2. [kimi-k2.5 与 moonshot-v1 全系列模型（含 -vision-preview、moonshot-v1-auto）已于今日 16:00 在国内外全平台下线，调用将返回 404 错误（模型不存在），请迁移至 Kimi K3](https://platform.kimi.com/docs/changelog/changelog/changelog#2026%E5%B9%B48%E6%9C%8831%E6%97%A5)（2026-08-31）
   3. [kimi-k2.5 与 moonshot-v1 全系列模型（含 -vision-preview、moonshot-v1-auto）在国内外全平台下线，调用将返回 404 错误，请迁移至 Kimi K3](https://platform.kimi.com/docs/changelog#2026%E5%B9%B48%E6%9C%88)（2026-08-01）
@@ -148,7 +148,7 @@
 - 页面：[新闻 / 更新](https://mistral.ai/news/)
   - 📡 RSS/Atom：https://mistral.ai/news/rss
 - 📡 [RSS/Atom 订阅源](https://mistral.ai/news/rss)：`https://mistral.ai/news/rss`
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [Mistral 和 Mozilla 正在为您的网络浏览器带来开放、私密和多语言的人工智能](https://mistral.ai/news/mistral-x-mozilla/)（2026-09-16）
   2. [Cloudera 和 Mistral 合作为企业数据带来专业的主权智能](https://mistral.ai/news/mistral-x-cloudera/)（2026-09-10）
   3. [使用人工智能代理对复杂的遗留代码进行现代化改造。](https://mistral.ai/news/legacy-code-modernization/)（2026-09-09）
@@ -160,7 +160,7 @@
 - 页面：[官方博客](https://cohere.com/blog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-cohere.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [Cohere 和 OpenText 合作，为政府和受监管行业带来值得信赖的代理人工智能汇集企业数据、上下文和安全人工智能，以大规模支持代理人工智能](https://cohere.com/blog/cohere-and-open-text-partner-to-bring-trusted-ai)（2026-09-16）
   2. [谁来定义人工智能的规则？](https://cohere.com/blog/who-gets-to-define-the-rules-for-ai)（2026-09-13）
   3. [North Small Translate 简介：领先的主权开放权重机器翻译模型 卓越的性能、合适的占地面积 — 为速度和成本效率而构建的翻译。](https://cohere.com/blog/north-small-translate)（2026-09-10）
@@ -172,8 +172,8 @@
 - 页面：[官方博客](https://ai.meta.com/blog/)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 [RSS/Atom 订阅源](https://about.fb.com/news/tag/ai/feed/)：`https://about.fb.com/news/tag/ai/feed/`
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
-  1. [Introducing Ray-Ban Meta Audio and More AI Glasses Styles](https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/)（2026-09-23）
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
+  1. [隆重推出 Ray-Ban Meta Audio 和更多 AI 眼镜款式](https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/)（2026-09-23）
   2. [加拿大初创公司 smartARM 利用人工智能打造直观的仿生假肢](https://about.fb.com/news/2026/09/canadian-start-up-smartarm-uses-ai-to-create-intuitive-bionic-prosthetics/)（2026-09-16）
   3. [隆重推出 Meta One：一种具有更多功能和 AI 的订阅服务，可用于创建、连接和脱颖而出](https://about.fb.com/news/2026/09/introducing-meta-one-subscription-service-more-features-ai/)（2026-09-15）
   4. [Muse 简介：世界上第一个为每个人打造的个人人工智能代理](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)（2026-09-08）
@@ -184,7 +184,7 @@
 - 页面：[官方博客](https://huggingface.co/blog)
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [您的代理人完成了任务。它会再次这样做吗？](https://huggingface.co/blog/ibm-research/altk-evolve-consistency)（2026-09-15）
   2. [跨 HF 作业使用 LoRA 的异步 GRPO：存储桶、代理，无 NCCL](https://huggingface.co/blog/asyncgrpo-lora-hfjobs)（2026-09-10）
   3. [Rebuilding AUTOMATIC1111 with Gradio Workflow](https://huggingface.co/blog/gradio-workflow-1111)（2026-09-10）
@@ -194,7 +194,7 @@
 
 ### Cloudflare Workers AI (cloudflare_workers_ai)
 - 📡 [RSS/Atom 订阅源](https://developers.cloudflare.com/workers-ai/changelog/index.xml)：`https://developers.cloudflare.com/workers-ai/changelog/index.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [Workers AI - GLM-5.2 现已在 Workers AI 上提供](https://developers.cloudflare.com/workers-ai/changelog/#glm-52-now-available-on-workers-ai)（2026-06-16）
   2. [Workers AI - Moonshot AI Kimi K2.7 Code now available on Workers AI](https://developers.cloudflare.com/workers-ai/changelog/#moonshot-ai-kimi-k27-code-now-available-on-workers-ai)（2026-06-12）
   3. [Workers AI - 计划弃用模型](https://developers.cloudflare.com/workers-ai/changelog/#planned-model-deprecations)（2026-05-08）
@@ -204,7 +204,7 @@
 
 ### Modular (原 BentoCloud/BentoML) (modular_cloud)
 - 📡 [RSS/Atom 订阅源](https://www.modular.com/blog/rss.xml)：`https://www.modular.com/blog/rss.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-24，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
   1. [模块化：模块化 26.6：开放编译器贡献、音频生成和扩展模型支持](https://www.modular.com/blog/modular-26-6-open-compiler-contributions-audio-generation-and-expanded-model-support)（2026-09-17）
   2. [模块化：Mojo🔥 现已开源！](https://www.modular.com/blog/mojo-open-source)（2026-08-18）
   3. [模块化：模块化和高通：相同的代码，新的芯片](https://www.modular.com/blog/modcon-qualcomm)（2026-08-18）
