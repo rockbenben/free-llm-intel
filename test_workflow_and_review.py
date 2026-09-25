@@ -3092,3 +3092,29 @@ class TestCiSuite(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestSpaShellDetection(unittest.TestCase):
+    """SPA 外壳判定不得误伤「挂载点里有服务端渲染内容」的页面。
+
+    Regression: trae.cn 定价页是完整 SSR、中文密集（可见正文 ~1.5k 字），
+    旧规则只要 HTML 里出现 id="root" 字样就判外壳 sparse，导致它进不了快照、
+    本地 --no-browser 巡检报「内容过少」。
+    """
+
+    def test_nonempty_mount_is_not_shell(self):
+        html = ('<html><body><div id="root"><!--$-->'
+                '<div class="container">免费 Free ¥0 每月 500 积分</div>'
+                '</body></html>')
+        self.assertIsNone(crawler_llm_intel.SPA_EMPTY_MOUNT.search(html))
+        self.assertIsNone(crawler_llm_intel.SPA_HTML_MOUNT.search(html))
+
+    def test_empty_mount_with_noscript_is_shell(self):
+        html = ('<html><body><div id="root">  <noscript>You need JS</noscript>'
+                '<script src="/a.js"></script></div></body></html>')
+        self.assertIsNotNone(crawler_llm_intel.SPA_EMPTY_MOUNT.search(html))
+
+    def test_html_level_mount_id_is_shell(self):
+        """build.nvidia.com 形态：挂载 id 直接挂在 <html> 上。"""
+        html = '<html class="nv-dark" id="app" lang="en"><head></head></html>'
+        self.assertIsNotNone(crawler_llm_intel.SPA_HTML_MOUNT.search(html))

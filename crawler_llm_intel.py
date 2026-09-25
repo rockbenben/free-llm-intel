@@ -86,11 +86,18 @@ BLOCK_MARKERS = re.compile(
     re.I,
 )
 
-# SPA 单页外壳标记：静态 HTML 只有 JS 挂载点、正文靠客户端渲染
-SPA_ROOT_MARKER = re.compile(
-    r"""id\s*=\s*["'](?:root|__next|__nuxt|app|app-root|appRoot|react-root)["']""",
+# SPA 单页外壳标记：正文靠客户端渲染。两种形态——
+#   ① 挂载点 div 为空（`<div id="root"></div>`，允许夹杂 noscript/script）；
+#   ② 挂载 id 挂在 <html> 上（build.nvidia.com 的 `<html id="app">`）。
+# 曾经只匹配 `id="root"` 字样就算外壳，把完全服务端渲染的 CJK 页面误伤
+#（trae.cn 定价页正文齐全但中文密集，可见文本仅约 1.5k 字）。挂载点里有
+# 服务端渲染内容的，不是外壳。
+_SPA_ID = r"""id\s*=\s*["'](?:root|__next|__nuxt|app|app-root|appRoot|react-root)["']"""
+SPA_EMPTY_MOUNT = re.compile(
+    r"""<div[^>]*""" + _SPA_ID + r"""[^>]*>(?:\s|<noscript>[\s\S]*?</noscript>|<script[\s\S]*?</script>)*</div\s*>""",
     re.I,
 )
+SPA_HTML_MOUNT = re.compile(r"""<html[^>]*""" + _SPA_ID, re.I)
 
 # 明确的登录认证跳转页（未登录时直接重定向至登录认证页）
 LOGIN_PATTERNS = re.compile(
@@ -782,10 +789,11 @@ def _fetch_with_requests(session: requests.Session, url: str, stype: str,
             # 可见文本过少：通常是 SPA 动态渲染或需要登录（阈值放宽到 800，
             # 500~800 字多为导航外壳，正文仍靠浏览器兜底渲染）
             text_len = len(re.sub(r"\s", "", text))
-            spa_shell = (text_len < 3000
-                         and SPA_ROOT_MARKER.search(resp.text or ""))
-            # 文本不算极少但页面是 React/Vue 单页外壳（如 build.nvidia.com
-            # 静态 HTML 只有 id="app" 挂载点）：正文全靠 JS 渲染，同样走浏览器
+            # 文本不算极少但页面确是 JS 渲染外壳（空挂载点 / <html id> 挂载）：
+            # 正文全靠客户端渲染，同样走浏览器兜底
+            spa_shell = text_len < 3000 and bool(
+                SPA_EMPTY_MOUNT.search(resp.text or "")
+                or SPA_HTML_MOUNT.search(resp.text or ""))
             result.sparse = text_len < 800 or spa_shell
             if LOGIN_PATTERNS.search(result.final_url):
                 result.is_login = True
