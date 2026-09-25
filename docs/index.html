@@ -215,7 +215,7 @@
   // 并没有多显示任何其他厂商的内容，是偷换概念，已改名并明确成「摘要」。
   var DIGEST_CAP = 20;
   var state = {
-    all: [], brands: {}, feeds: {}, vendor: null, q: '', digest: false
+    all: [], brands: {}, feeds: {}, rank: {}, vendor: null, q: '', digest: false
   };
 
   var el = {
@@ -292,6 +292,14 @@
     return out;
   }
 
+  // 厂商排序依据是「模型知名度」，来自 feeds/vendors.json 的 rank 字段
+  // （源头是 provider_profiles.VENDOR_RANK）。**不能**按文章数排：归档文章最多的
+  // 那几家会永远钉在最前，而「平台功能记录」型的厂商反而排在旗舰模型厂商之前。
+  // 索引缺失或厂商未登记时，rank 取 Infinity，退回「文章数 → 名称」。
+  function rankOf(id) {
+    return typeof state.rank[id] === 'number' ? state.rank[id] : Infinity;
+  }
+
   function vendorList() {
     var seen = {}, list = [];
     state.all.forEach(function (it) {
@@ -303,7 +311,11 @@
       seen[key].n++;
       if (!seen[key].feed && it.feed) seen[key].feed = it.feed;
     });
-    list.sort(function (a, b) { return b.n - a.n || a.name.localeCompare(b.name, 'zh'); });
+    list.sort(function (a, b) {
+      var ra = rankOf(a.id), rb = rankOf(b.id);
+      if (ra !== rb) return ra - rb;
+      return b.n - a.n || a.name.localeCompare(b.name, 'zh');
+    });
     return list;
   }
 
@@ -453,15 +465,17 @@
     var list = [];
     if (index && index.vendors && index.vendors.length) {
       list = index.vendors.map(function (v) {
-        return { name: v.brand || v.id, feed: v.feed, n: v.articles, latest: v.latest };
+        return { name: v.brand || v.id, id: v.id, feed: v.feed, n: v.articles, latest: v.latest };
       });
     } else {
       // 索引缺失时退回「从聚合流里能看到的厂商」，并说明不完整
       list = vendorList().filter(function (v) { return v.feed; });
     }
+    // 与上方厂商标签共用同一套顺序（模型知名度）：两处顺序不一致，读者会以为是两个维度
     list.sort(function (a, b) {
-      return String(b.latest || '').localeCompare(String(a.latest || '')) ||
-             String(a.name).localeCompare(String(b.name), 'zh');
+      var ra = rankOf(a.id), rb = rankOf(b.id);
+      if (ra !== rb) return ra - rb;
+      return String(a.name).localeCompare(String(b.name), 'zh');
     });
     el.vendorFeeds.innerHTML = '';
     list.forEach(function (v) {
@@ -544,6 +558,7 @@
     ((index && index.vendors) || []).forEach(function (v) {
       state.brands[v.id] = v.brand || v.id;
       state.feeds[v.id] = v.feed || '';
+      if (typeof v.rank === 'number') state.rank[v.id] = v.rank;
     });
     renderVendorFeeds(index);
     if (!index) el.vendorIndexNote.style.display = '';

@@ -1967,6 +1967,32 @@ class TestGuideRendering(unittest.TestCase):
         self.assertEqual(sorted(set(provider_profiles.GUIDE_META) - set(provider_profiles.PROVIDER_PROFILES)), [],
                          "GUIDE_META 的 key 必须在 PROVIDER_PROFILES 里有对应档案")
 
+    def test_vendor_rank_covers_all_vendors(self):
+        """热度排序表 `VENDOR_RANK` 必须**双向**对齐真实厂商 id。
+
+        浏览页的厂商标签与订阅列表都按这张表排序。表里打错一个 id 不会报任何错 ——
+        那家厂商的 rank 静默变成「未登记」，被排到列表最末，而页面看起来完全正常；
+        漏项同理。所以拼写与漏项两个方向都要卡住，新增厂商时必须显式登记。
+        """
+        root = Path(__file__).resolve().parent
+        vendors, _sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        ids = {v["id"] for v in vendors}
+        self.assertTrue(ids, "没解析到厂商 id —— 解析失配，先修测试本身")
+        rank = list(provider_profiles.VENDOR_RANK)
+        unknown = sorted(set(rank) - ids)
+        self.assertEqual(unknown, [],
+                         f"VENDOR_RANK 里有不属于任何厂商的 id（拼写错了？）: {unknown}")
+        missing = sorted(ids - set(rank))
+        self.assertEqual(missing, [],
+                         f"这些厂商没登记进 VENDOR_RANK，会被静默排到列表最后: {missing}")
+        self.assertEqual(len(rank), len(set(rank)), "VENDOR_RANK 里有重复的 id")
+
+    def test_vendor_rank_index_falls_back_to_tail(self):
+        """未登记厂商的 rank 必须是「排在所有已登记厂商之后」，而不是 0。"""
+        tail = provider_profiles.vendor_rank_index("__not_a_real_vendor__")
+        self.assertEqual(tail, len(provider_profiles.VENDOR_RANK))
+        self.assertGreater(tail, provider_profiles.vendor_rank_index("anthropic"))
+
     def test_promo_fragment_expired(self):
         f = crawler_llm_intel._promo_fragment_expired
         today = date(2026, 9, 12)

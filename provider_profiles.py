@@ -192,6 +192,49 @@ CATEGORY_DESCRIPTIONS = {
 }
 
 # ---------------------------------------------------------------------------
+# 厂商展示顺序（按模型知名度从高到低）
+#
+# 浏览页（`docs/index.html`）的厂商标签原先按**文章数**排序，于是
+# openai / huggingface（归档文章最多）永远钉在最前，而 baseten / ppio /
+# digitalocean 这类「平台功能记录」反而排在 claude / gemini 前面 ——
+# 与读者对「谁更重要」的直觉正好相反。
+#
+# 改成按这张表排序：表内的厂商按此顺序，**表外的排在最后**（按 YAML 录入顺序），
+# 所以新增厂商不会因为忘记登记而消失。调整顺序只需改这个元组。
+#
+# ⚠️ 顺序是主观判断，不是任何官方排名 —— 想调整直接改这个元组即可。
+# 守卫 `test_vendor_rank_covers_all_vendors` 会检查 id 拼写与漏项。
+# ---------------------------------------------------------------------------
+VENDOR_RANK: tuple[str, ...] = (
+    # 第一梯队：自有旗舰模型、全球知名度最高
+    "anthropic", "openai", "deepseek", "google_gemini", "xai_grok", "zhipu_glm",
+    "aliyun_qwen", "moonshot_kimi", "mistral", "meta_llama",
+    # 第二梯队：常用推理平台与国内主力
+    "groq", "volcengine_doubao", "minimax", "tencent_hunyuan", "baidu_qianfan",
+    "huggingface", "openrouter", "cloudflare_workers_ai", "cohere", "siliconflow",
+    "nvidia_nim", "xiaomi_mimo", "sensetime_sensenova", "iflytek_spark",
+    # 第三梯队：国内其他厂商
+    "longcat_meituan", "streamlake", "unisound_shanhai", "mthreads_coding",
+    "infini_ai", "ppio", "china_telecom_tianyi", "china_mobile_moma",
+    "zhinao_360", "dataeye", "dmxapi", "lingyiwanwu_01ai", "kunlun_tiangong",
+    # 第四梯队：海外云厂商的托管服务
+    "aws_bedrock", "azure_openai", "gcp_vertex_ai", "oracle_oci_ai", "ibm_watsonx",
+    # 第五梯队：海外推理 / 部署平台与长尾
+    "cerebras", "together_ai", "fireworks_ai", "deepinfra", "nebius", "baseten",
+    "modal", "modular_cloud", "stability_ai", "ai21_labs", "jina_ai",
+    "morph_labs", "relace", "poolside", "mancer", "anyscale",
+    "digitalocean_genai", "inception_labs", "inference_net", "ncompass", "mara",
+)
+
+
+def vendor_rank_index(vendor_id: str) -> int:
+    """返回厂商在 `VENDOR_RANK` 中的位次；未登记的厂商排在所有已登记厂商之后。"""
+    try:
+        return VENDOR_RANK.index(vendor_id)
+    except ValueError:
+        return len(VENDOR_RANK)
+
+# ---------------------------------------------------------------------------
 # 白嫖攻略元数据（README 项目介绍后的「白嫖攻略」独立生成块由 crawler 依据本表渲染）
 #
 # tiers:      permanent=永久免费层滚动重置 / onetime=注册一次性赠送 /

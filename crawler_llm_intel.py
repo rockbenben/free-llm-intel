@@ -2490,6 +2490,7 @@ from provider_profiles import (
     CATEGORY_DESCRIPTIONS,
     get_guide_meta,
     reload_overrides,
+    vendor_rank_index,
 )
 
 
@@ -3481,8 +3482,17 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     #    （groq）的厂商**根本不会出现**（实测漏 3/15，而这正是"官方没有原生 RSS"
     #    最需要被订到的那几家）。索引由这里顺手产出，与 feed 同源，不存在漂移。
     #    无时间戳：内容不变就不重写。
-    changed += _write_json(out_dir / "vendors.json", {
-        "vendors": [
+    #    数组顺序按「模型知名度」（provider_profiles.VENDOR_RANK）排：浏览页的厂商标签
+    #    原先自己按**文章数**排，于是 openai / huggingface 永远在最前、baseten / ppio
+    #    排在 claude / gemini 之前。排序依据放在这里（而不是页面里），是因为厂商清单
+    #    不得硬编码进 docs/index.html —— 页面只读这个字段。
+    #    ⚠️ `rank` 是**本索引内的连续序号**（0,1,2…），**不是**它在 VENDOR_RANK 里的
+    #    全局位次。用全局位次会得到 0,1,2,…,10,12,15,17,18,49 这种跳号
+    #    （VENDOR_RANK 覆盖全部 63 家，而本索引只列「有文章的厂商」），
+    #    看上去像数据损坏。页面只需要相对顺序，连续编号即可。
+    #    未登记的厂商排在最后，再按 id 保证顺序确定。
+    _ordered = sorted(
+        (
             {
                 "id": vendor_id,
                 "brand": brand,
@@ -3493,7 +3503,11 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
                 "latest": next((a.date for a in arts if a.date), ""),
             }
             for brand, vendor_id, arts, _t in per_vendor
-        ]
+        ),
+        key=lambda v: (vendor_rank_index(v["id"]), v["id"]),
+    )
+    changed += _write_json(out_dir / "vendors.json", {
+        "vendors": [{**item, "rank": i} for i, item in enumerate(_ordered)]
     })
 
     # 4) 全量文章索引：供浏览页列出**全部**条目，不受合并流 200 条上限约束。
