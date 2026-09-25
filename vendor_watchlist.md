@@ -21,6 +21,8 @@
 
 | 厂商 | 线索 | 复核结论 |
 |---|---|---|
+| **Qoder（国际版）** | 用户点名收录 | ✅ **已收录（Part 4 工具类）** — `docs.qoder.com/account/pricing` 原文：Free 方案基础模型（消息数受限）、新用户 2 周 Pro 试用 300 Credits、用尽自动降级不断供；`events/100credits` 原文：2026-09-18 起个人用户（免费+付费）桌面端每日**手动领** 100 Credits、不结转。证据走 Mintlify `.md` 端点，静态可抓 |
+| **腾讯云 CodeBuddy / WorkBuddy** | 用户点名收录 | ✅ **已收录（Part 4 工具类）** — `codebuddy.cn/pricing`（浏览器渲染）：体验版 ¥0，每月 500 积分 + Auto 全模型限免 + 补全限免无限次；`tencentcloud.com/techpedia/144275`：国际版新用户赠试用积分（两周）、免费用户每日基础积分重置。⚠️ 定价页 SPA，静态抓取只拿到壳页，靠巡检浏览器兜底 |
 | **InceptionLabs** | 「1000 万 tokens 免费计划」 | ✅ **已收录** — 官方文档 `docs.inceptionlabs.ai/get-started` 原文：新账号 **1 亿 free tokens**、**no payment details required**。第三方少记一个数量级。**免费额度藏在文档站**，根站 `/pricing` 是 404 |
 | **Inference.net** | 「$1/月重置额度」 | ✅ **已收录** — 官方 `inference.net/pricing/` 有 **$0 免费档**：100 万 Gateway 请求、30 req/min、1 seat；ToS 明确免费档不需信用卡。传闻的「$1/月」无依据，$50 开户赠金属 $250/月的 Growth 档。**额度列表在 `/pricing/`（带尾斜杠），根路径不列** |
 | **Anyscale** | $100 注册额度 | ✅ **已收录** — `pricing` 页原文 "Get started with $100 credit" 复核通过；需工作邮箱；**2026-07-30 公告已签被 Nscale 收购的最终协议**，稳定性待观察 |

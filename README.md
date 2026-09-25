@@ -8,7 +8,7 @@
 
 - 🎯 不知道先注册谁？直接看下文「[白嫖攻略](#白嫖攻略)」
 - ⚡ 客户端一键接入？直达「[OpenAI 兼容端点速查表](#一键接入)」
-- 📊 免费额度总表见文末自动生成的 **Part 1–3**
+- 📊 免费额度总表见文末自动生成的 **Part 1–4**
 - 📡 厂商博客 / 更新动态：[llm-news-feeds.md](llm-news-feeds.md)（主文档每家最新 5 篇），每厂商全量归档在 [`llm-news/`](llm-news/)；RSS 订阅清单：[llm-news-feeds.opml](llm-news-feeds.opml)（含**官方原生源 + 自建源**两组，一次导入全部订上）
 - 📻 自建 RSS（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/)（页面顶部显示**当前订阅地址**，可直接复制）｜ [合并流（聚合全部有动态源的厂商）](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-<厂商 id>.xml`
 - 🤖 自己跑巡检 / 二次开发：`pip install -r requirements.txt && python crawler_llm_intel.py`（详见[快速开始](#快速开始)）
@@ -133,7 +133,7 @@ python -m unittest discover
 
 常用参数：`--only <vendor_id>`（只巡检指定厂商，调试用，不覆盖全局 README）、`--no-news`（跳过博客 / RSS 归档）、`--no-browser`（禁用 playwright）、`--delay <秒>`（请求间隔，默认 0.3）、`--timeout <秒>`（超时，默认 20）、`--ai-review`（变化时调用 Google AI Studio 的 Gemini 做事实核查，详见「更新机制」）、`--ai-titles`（新收录文章的机翻标题交 LLM 润色一次）、`--rebuild-only`（不抓取，从磁盘归档重建全部动态产物）、`--backfill-dates`（维护模式：从文章页元数据回填归档缺失的发布日期）。
 
-完整巡检约需 5–15 分钟（厂商数、深度抓取的页面数与各源抓取结果见文末自动生成区块的「核心特性」行；JS 空壳与 403 页面自动走浏览器兜底），结束后自动刷新 Part 1–3 表格、博客主文档、`llm-news/` 归档与 `docs/feeds/` 自建 RSS / JSON 索引。
+完整巡检约需 5–15 分钟（厂商数、深度抓取的页面数与各源抓取结果见文末自动生成区块的「核心特性」行；JS 空壳与 403 页面自动走浏览器兜底），结束后自动刷新 Part 1–4 表格、博客主文档、`llm-news/` 归档与 `docs/feeds/` 自建 RSS / JSON 索引。
 
 > 想启用 `--ai-review`：到 [Google AI Studio](https://aistudio.google.com/apikey) 免费申请一个 API Key，设置环境变量 `GEMINI_API_KEY`（也兼容 `GOOGLE_API_KEY`）即可，默认模型 `gemini-3.8-flash`，可用 `AI_REVIEW_MODEL` 覆盖；无需安装任何额外软件。
 

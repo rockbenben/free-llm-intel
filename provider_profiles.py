@@ -183,12 +183,14 @@ CATEGORY_TITLES = {
     "domestic": "## Part 1：国内主流大语言模型（免费额度与接入指南）",
     "international": "## Part 2：国际主流大模型与极速推理服务（免费层与调用配额）",
     "cloud": "## Part 3：云原生算力与 Serverless 部署平台（免费体验与算力额度）",
+    "tools": "## Part 4：AI 编程与 Agent 工具（内置模型免费额度）",
 }
 
 CATEGORY_DESCRIPTIONS = {
     "domestic": "> 以下平台面向开发者与个人用户，注册/认证后可获得**实实在在的免费额度**或**永久免费调用模型**。",
     "international": "> 以下平台包含官方提供的**永久免费层（Free Tier）**、**试用密钥（Trial Key）**或**注册赠送体验金**，部分海外模型支持免绑卡直接调用。",
     "cloud": "> 以下平台提供**每月循环赠送的 GPU 免费算力**、**大额公有云试用抵扣金**或**大模型 Serverless 托管额度**。",
+    "tools": "> 以下是**内置大模型免费额度**的 AI IDE / 应用构建 Agent 产品：不发 API Key，在工具内白嫖强模型——每天/每月定时领额度，适合「就想在编辑器里用」的场景。",
 }
 
 # ---------------------------------------------------------------------------
@@ -226,6 +228,9 @@ VENDOR_RANK: tuple[str, ...] = (
     "modal", "modular_cloud", "stability_ai", "ai21_labs", "jina_ai",
     "morph_labs", "relace", "poolside", "mancer", "anyscale",
     "digitalocean_genai", "inception_labs", "inference_net", "ncompass", "mara",
+    # 第六梯队：AI 编程 / Agent 工具（Part 4，内置模型免费额度；须连排放，
+    # 生成器按相邻同类分组渲染 Part 标题）
+    "qoder", "codebuddy_workbuddy",
 )
 
 
@@ -247,6 +252,13 @@ def vendor_rank_index(vendor_id: str) -> int:
 # tip:        防扣费 / 防坑提示（没有则省略）
 # ---------------------------------------------------------------------------
 GUIDE_META: dict[str, dict] = {
+    # AI 编程 / Agent 工具类（Part 4）
+    "qoder": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
+              "short": "每日可领 100 Credits + 2 周 Pro 试用送 300 Credits，Free 层不限时用基础模型",
+              "tip": "每日 Credits 需**手动领取**、过期不结转；高级额度用尽自动降级基础模型而非断供"},
+    "codebuddy_workbuddy": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
+              "short": "体验版 0 元：每月 500 积分 + 限免全模型调度；国际版新用户送试用积分、每日基础积分重置",
+              "tip": "「限免」条目（全模型 / 无限补全 / 99 任务）随时可能回收，以页面「限免生效中」标注为准"},
     # ---- 国内 ----
     "zhipu_glm": {"tiers": ["permanent"], "scenarios": ["code", "image", "referral", "student"],
                   "short": "4.x 代 Flash 0 元（新旗舰 5.3 付费）+ 2000 万 tokens 新用户包",
@@ -374,6 +386,57 @@ GUIDE_META: dict[str, dict] = {
 }
 
 PROVIDER_PROFILES: dict[str, dict] = {
+    # ------------------------------------------------------------------
+    # Part 4：AI 编程 / Agent 工具（内置模型免费额度）
+    # 证据均为官方页原文（docs.qoder.com 走 Mintlify .md 端点；
+    # codebuddy.cn/pricing 为前端渲染，需浏览器兜底抓取）。
+    # ------------------------------------------------------------------
+    "qoder": {
+        "category": "tools",
+        "display_name": "Qoder (Agentic Coding Platform · 国际版)",
+        "free_quota": "**免费层 + 每日赠送**：Free 方案可用**基础模型**（用户消息条数受限）；新用户 **2 周 Pro 试用赠 300 Credits**；**自 2026-09-18 起**个人用户（免费与付费皆可）在 Qoder 桌面端**每日领取 100 Credits**，每窗口一次、**需手动领取、不结转**；Credits 用尽自动切换基础模型，不断供",
+        "validity": "每日 100 Credits 按窗口发放、未领作废；Pro 试用 2 周；订阅方案的 Credits 仅当前订阅周期有效（周期结束归零）",
+        "free_models": [
+            "基础模型 —— Free 方案长期可用，消息条数受限",
+            "高级（premium）模型 —— 每日领 100 Credits（2026-09-18 起）+ Pro 试用 300 Credits 抵扣",
+            "限时免费活动 —— `Qwen3.8-Flash` 限时免费、SOTA 模型限时免费体验、「经济(Efficient)」档位限时免费、补全与 NES 无限次（官方 Events 页，随活动上下线）",
+        ],
+        "tier_caveats": [
+            "每日奖励必须手动领取，错过不补",
+            "Pro/Pro+/Ultra 的月度 Credits（2,000/6,000/20,000）仅订阅周期内有效",
+        ],
+        "preconditions": "注册 Qoder 账号（GitHub / Google 等 OAuth）；每日领取需在桌面端 App 操作",
+        "promotions": "9 月开通 Pro / Pro+ 首月优惠（官方 Events）；`docs.qoder.com` Events 页汇总全部限免活动，以页面为准",
+        "notes": "证据取自**国际版**文档 `docs.qoder.com`（正文明言「Qoder International」）；国内版（原通义灵码系）额度政策可能不同，未复核不予推断",
+        "links": [
+            ("定价与额度文档（含免费层表）", "https://docs.qoder.com/account/pricing"),
+            ("每日 100 Credits 活动页", "https://docs.qoder.com/events/100credits"),
+            ("官网", "https://qoder.com/"),
+        ],
+    },
+    "codebuddy_workbuddy": {
+        "category": "tools",
+        "display_name": "腾讯云 CodeBuddy / WorkBuddy (AI 编程 · 应用构建 Agent)",
+        "free_quota": "**体验版限时免费（¥0/月）**：每月 **500 积分**、Auto 模型调度**限免覆盖全模型**、代码实时补全 5000 次**限免无限次**、自动任务 3 个**限免 99 个**、创建 5 个项目；WorkBuddy 国际版：**新用户免费赠送试用积分（两周有效）**，**免费用户每日有基础积分重置**（腾讯云官网说明）",
+        "validity": "国内站体验版积分按月发放；国际版新用户试用积分两周有效、每日基础积分按日重置",
+        "free_models": [
+            "`Hy4 preview` —— 2026-08-28 至 09-10 两周限免体验（Agent 与复杂任务执行能力）",
+            "Auto 模型调度 —— 体验版限免期间覆盖全部模型",
+            "代码实时补全 —— 体验版 5000 次/月，限免期间无限次",
+        ],
+        "tier_caveats": [
+            "「限免」条目（全模型 / 无限补全 / 99 任务）随时可能恢复原限制，以页面「限免生效中」标注为准",
+            "定价页为前端渲染，静态抓取只能拿到壳页，需浏览器复核",
+        ],
+        "preconditions": "国内站 codebuddy.cn 腾讯系账号登录；WorkBuddy 国际版 GitHub OAuth 注册，登录后自动建号并发试用积分",
+        "promotions": "付费档连续包年 5.6 折；标准版 ¥70/月（原 ¥99）、高级版 ¥140（原 ¥199）限免期价格以页面为准",
+        "notes": "WorkBuddy 与 CodeBuddy 同属腾讯 CodeBuddy 家族、共用积分体系；两产品档位一致时不分开记额度",
+        "links": [
+            ("国内站定价页（体验版 0 元）", "https://www.codebuddy.cn/pricing/"),
+            ("WorkBuddy 国际版注册下载指引（含积分说明）", "https://www.tencentcloud.com/techpedia/144275"),
+            ("WorkBuddy 官网", "https://workbuddy.com/"),
+        ],
+    },
     # ------------------ Part 1: 国内主流大模型平台 (23) ------------------
     "siliconflow": {
         "category": "domestic",

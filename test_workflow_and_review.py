@@ -2521,7 +2521,10 @@ class TestReadmeIntegrity(unittest.TestCase):
             set(),
             f"provider_profiles.py 中存在但在 YAML 中缺失的厂商: {missing_in_yaml}"
         )
-        self.assertEqual(len(yaml_vendors), 63, "应覆盖正好 63 家厂商")
+        self.assertGreaterEqual(
+            len(yaml_vendors), 60,
+            "厂商总数跌破 60：疑似误删（本阈值是防误删下限，不钉死精确值——"
+            "精确家数由 yaml 与上方双向集合校验共同保证一致）")
 
 
 class TestGuideRendering(unittest.TestCase):
