@@ -996,6 +996,106 @@ class TestCardAnchorTitleExtraction(unittest.TestCase):
             got["grok-4-6-microsoft-foundry"].startswith("Microsoft Foundry 上的 Grok 4.6"),
             "失配时应退回锚文本（标题+正文粘成一串），而不是崩溃或错位")
 
+    CONTEXT_DATE_HTML = """
+    <html><body>
+      <div class="card"><time datetime="2026-09-22">Sep 22, 2026</time>
+        <h3><a href="/news/dated-item">A dated item with a long enough title</a></h3></div>
+      <div class="card"><span class="date">2026.08.01</span>
+        <h3><a href="/news/another-dated-item">Another dated item, also long enough</a></h3></div>
+      <div class="card"><h3><a href="/news/undated-item">An item with no date anywhere near it</a></h3></div>
+    </body></html>
+    """
+
+    def test_link_context_dates_from_html_structure(self):
+        """日期只存在于 HTML 结构里（`<time datetime>` / 独立日期元素）时也要取到。
+
+        Regression: `x.ai/news` 用 `<time dateTime="2026-09-22">`、poolside 用
+        `<time datetime="2026-05-11">`、cohere 用 `<p>Sep 10, 2026</p>` —— 锚文本与
+        锚内标题元素里**都没有**日期，只从标题找日期的旧逻辑在这些页面 8 条里
+        0 条带日期，条目因此进不了合并流（无日期只进单厂商源，见 write_rss_feeds）。
+        """
+        _t, _ti, _f, links, headings = crawler_llm_intel.parse_html(
+            self.CONTEXT_DATE_HTML, "https://example.com/news")
+        page = crawler_llm_intel.PageResult(
+            url="https://example.com/news", stype="news", ok=True,
+            final_url="https://example.com/news", raw=self.CONTEXT_DATE_HTML,
+            links=links, link_headings=headings)
+        arts = crawler_llm_intel.extract_articles_from_page(page)
+        got = {a.url.rsplit("/", 1)[-1]: a.date for a in arts}
+        self.assertEqual(got.get("dated-item"), "2026-09-22", "`<time datetime>` 里的日期要认")
+        self.assertEqual(got.get("another-dated-item"), "2026-08-01", "独立日期元素里的日期也要认")
+        self.assertEqual(got.get("undated-item"), "", "附近确实没有日期时保持空，不得张冠李戴")
+
+    def test_context_dates_abandoned_when_anchor_count_mismatches(self):
+        """`<a>` 数量与 links 对不上时**整体放弃**，不得错位。
+
+        错位会把上一条的日期安到这一条上，而且完全静默 —— 宁可少修几条。
+        """
+        html = '<a href="/x">one long enough</a><a href="/y">two long enough</a>'
+        self.assertEqual(crawler_llm_intel._link_context_dates(html, 3), ["", "", ""])
+        self.assertEqual(crawler_llm_intel._link_context_dates("", 2), ["", ""])
+
+
+class TestTableAndAdjacentHeadingExtraction(unittest.TestCase):
+    """表格行式 / 「日期 + 相邻标题」式发布记录（腾讯混元、快手、商汤）。
+
+    Regression: 这三家的更新日志此前要么提取 **0 条**、要么只产出「更新时间」
+    这种零信息标题 —— 结构 3 要求表格行内有 `<code>` 模型 ID（阿里云百炼那种），
+    结构 2 会把表格表头当正文首行，结构 4 要求子标题层级**更深**，三家都不满足。
+    """
+
+    TABLE_HTML = """
+    <html><body>
+      <h3 id="1_发布时间：2026年8月">发布时间：2026年8月</h3>
+      <table><tr><th>更新时间</th><th>功能模块</th><th>功能说明</th></tr>
+        <tr><td>8月14日</td><td>数据分析</td>
+            <td>【新增】数据分析任务完成后可将结果下载至本地，便于进一步处理。</td></tr>
+        <tr><td>8月2日</td><td>模型部署</td>
+            <td>【新增】新增 GLM-5.2-FP8 模型部署能力，支持预付费与后付费模式。</td></tr>
+        <tr><td>8月1日</td><td>开发机</td>
+            <td>【新增】开发机支持通过 IP 和 Port 进行 SSH 登录及 SCP 文件传输。</td></tr>
+      </table>
+    </body></html>
+    """
+
+    ADJACENT_HTML = """
+    <html><body>
+      <h3 id="release-202507">release-202507</h3>
+      <p><code>2025.07.23</code></p>
+      <h2 id="m1"><strong>【模型更新】发布最新版本日日新-融合模态模型 V6.5</strong></h2>
+      <h3 id="release-202506">release-202506</h3>
+      <p><code>2025.06.03</code></p>
+      <h2 id="m2"><strong>【模型更新】发布最新版本日日新-语音大模型合成</strong></h2>
+      <h3 id="release-202504">release-202504</h3>
+      <p><code>2025.04.09</code></p>
+      <h2 id="m3"><strong>【功能更新】OpenAPI 全面支持通过 API Key 调用</strong></h2>
+    </body></html>
+    """
+
+    def _extract(self, html, url):
+        text, _t, _f, links, lh = crawler_llm_intel.parse_html(html, url)
+        page = crawler_llm_intel.PageResult(
+            url=url, stype="updates", ok=True, final_url=url, raw=html,
+            text=text, links=links, link_headings=lh)
+        return crawler_llm_intel.extract_articles_from_page(page)
+
+    def test_table_rows_take_year_from_month_section(self):
+        """表格行式：日期只写「8月14日」，年份从月份分节标题取（快手式）。"""
+        arts = self._extract(self.TABLE_HTML, "https://www.streamlake.com/document/x")
+        self.assertGreaterEqual(len(arts), 3, "表格行要能提取出来")
+        self.assertIn("2026-08-14", {a.date for a in arts}, "年份必须从月份分节标题取到")
+        self.assertNotIn("更新时间", {a.title for a in arts}, "表格表头不得变成条目")
+        self.assertTrue(all(a.date for a in arts), "每一行都要有日期")
+
+    def test_adjacent_heading_after_date(self):
+        """「日期 + 其后相邻标题」（商汤式：h2 出现在 h3 分节之后，层级是倒的）。"""
+        arts = self._extract(self.ADJACENT_HTML, "https://www.sensecore.cn/help/x")
+        self.assertGreaterEqual(len(arts), 3)
+        got = {a.date: a.title for a in arts}
+        self.assertEqual(got.get("2025-07-23"), "【模型更新】发布最新版本日日新-融合模态模型 V6.5")
+        self.assertNotIn("release-202507", {a.title for a in arts},
+                         "分节标题（release-YYYYMM）不得变成条目名")
+
 
 class TestChineseDateFormat(unittest.TestCase):
     """「2026 年 7 月 31 日」这种**单位两侧都有空格**的写法，所有日期解析处都要认。
@@ -1809,7 +1909,7 @@ class TestReadmeIntegrity(unittest.TestCase):
             set(),
             f"provider_profiles.py 中存在但在 YAML 中缺失的厂商: {missing_in_yaml}"
         )
-        self.assertEqual(len(yaml_vendors), 62, "应覆盖正好 62 家厂商")
+        self.assertEqual(len(yaml_vendors), 63, "应覆盖正好 63 家厂商")
 
 
 class TestGuideRendering(unittest.TestCase):

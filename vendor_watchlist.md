@@ -31,6 +31,7 @@
 | Mara | $5 / 30 天 | ❌ **疑似虚构条目** — `www.mara.com` 是比特币矿企 MARA Holdings；`mara.ai` 是 GoDaddy 停放域名（标价 $142 万）；`getmara.ai` 是 HR 招聘 ATS；Wayback 从未归档 LLM 内容。保留作反例留痕 |
 | SambaNova Cloud | 「$5 免费额度 + 永久免费层」 | ❌ **已排除** — `cloud.sambanova.ai/pricing` 只列付费单价，无免费层与 $5 赠金记载 |
 | 阶步星辰 StepFun | 「繁星计划」 | ⚠️ **待复核** — `platform.stepfun.com` 仅见 Startup / Builder Program；定价文档为前端渲染取不到正文（页面自述「Step Plan 上线 · Credit 月池」，疑似有额度但无法静态确认） |
+| **小米 MiMo** | 线索入口 `platform.xiaomimimo.com` | ✅ **已收录** — 官方定价页（更新 2026-09-22）原文：**TTS 系列 `mimo-v2.5-tts` / `-voiceclone` / `-voicedesign` 限时免费**、缓存写入限时免费；语言模型（`mimo-v2.6-pro` ¥0.025/¥3/¥6 每百万 tokens 等）与 ASR **按量计费、无免费层**。新用户注册赠金 **40 天有效**（官方促销 FAQ 原文：bonus credit 可经注册或 Refer & Earn 获得），仅抵按量计费 API、不可抵 Token Plan。⚠️ 控制台前端 bundle 仍留「限时免费中，充值功能暂未开放」旧文案，与官方功能日志「2026-01-26 计费功能已上线」冲突 —— 按定价页与 Token Plan 售卖页判定为**已计费** |
 
 ---
 
@@ -43,7 +44,6 @@
 | 阶步星辰 StepFun | `platform.stepfun.com` |
 | 面壁智能 MiniCPM | `modelbest.cn` |
 | 出门问问 | `openapi.mobvoi.com` |
-| 小米 MiMo | `platform.xiaomimimo.com` |
 | 京东 言犀 | `console.jdcloud.com` |
 | vivo 蓝心 BlueLM | `dev.vivo.com.cn` |
 | OPPO 安第斯 AndesGPT | `open.oppomobile.com` |

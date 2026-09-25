@@ -1267,6 +1267,35 @@ def _is_date_only_title(title: str) -> bool:
     return bool(re.fullmatch(r"[\d\s\-/.年月日]+", title or ""))
 
 
+# 分节标题「**以日期开头、且日期之后还有条目名**」（小米 MiMo 更新日志：
+# `<h2 id="2026-09-22-…">2026-09-22 MiMo-V2.6 系列发布</h2>`）。
+# 与 `_is_date_only_title` 互补：那条判「整串只有日期」，这条判「日期 + 标题」。
+# ⚠️ 必须要求**以日期开头**：否则 `时间-2026-09-10`（DeepSeek 中文页的锚点文本）
+# 这类「前缀 + 日期」会被误当成条目名，把原本可用的正文首行标题顶掉。
+_DATE_LEADING_HEADING = re.compile(
+    r"^\s*20[2-3]\d\s*[-/年.]\s*\d{1,2}(?:\s*[-/月.]\s*\d{1,2})?\s*日?\s*\S")
+
+# 表格表头 / 栏目名：本身是「标题」但零信息量。出现在把**表格表头当成正文首行**的
+# 页面上（快手 StreamLake「产品更新公告」的正文就是一张表）。
+# ⚠️ 表头是**一整行**，拍平后是「更新时间功能模块功能说明」这种拼接串，所以不能只做
+# 整串精确匹配（那样一条都拦不住，实测就是这么漏的）—— 按词表逐词剥离，剥空即命中。
+_TABLE_HEADER_WORDS = (
+    "更新时间", "更新内容", "更新说明", "更新记录", "发布时间", "发布日期", "上线时间",
+    "功能模块", "功能说明", "功能描述", "帮助文档", "文档链接",
+    "模块", "说明", "备注", "序号", "类型", "名称", "详情", "链接",
+)
+
+
+def _is_table_header_title(title: str) -> bool:
+    """标题是否只是**表格表头 / 栏目名**的拼接（`更新时间功能模块功能说明`）。"""
+    t = re.sub(r"[\s\u200b]+", "", title or "")
+    if not t:
+        return False
+    for word in _TABLE_HEADER_WORDS:
+        t = t.replace(word, "")
+    return not t
+
+
 # RSS 标题实为「日期 + 栏目」的形式（DigitalOcean 发布记录：
 # `17 September 2026 (postgresql, mysql)` / `2026 年 9 月 17 日（postgresql、mysql）`）。
 _FEED_DATE_META_TITLE = re.compile(
@@ -1469,13 +1498,14 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
     # 避免把 model-2025-rc1 之类的版本号误解析成日期。
     date_id_pat = r"[^\"']*20[2-3]\d[^\"']*"
     matches_h = list(re.finditer(
-        r"<(h[23])[^>]*id=[\"'](" + date_id_pat + r")[\"'][^>]*>.*?</\1>"
+        r"<(h[23])[^>]*id=[\"'](" + date_id_pat + r")[\"'][^>]*>(.*?)</\1>"
         r"(.*?)(?=<(?:h[23])[^>]*id=[\"']" + date_id_pat + r"|$)",
         raw, re.S
     ))
     for m in matches_h:
         hid = m.group(2)
-        body = m.group(3)
+        head_html = m.group(3)
+        body = m.group(4)
         # id 里的日期有两种写法，都要认：
         #   YYYY-MM-DD / `2026 年 7 月 31 日`（DeepSeek、MiniMax…）
         #   **MM-DD-YYYY**（Mintlify 系文档站：Gemini API changelog 的 `id="09-17-2026"`）
@@ -1493,6 +1523,9 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
                 norm_date = _drop_future_date(
                     f"{dm2.group(3)}-{int(dm2.group(1)):02d}-{int(dm2.group(2)):02d}")
 
+        # 标题三选一：分节标题自带条目名 > 卡片标题 > 正文首行
+        head_lines = _clean_html_text(head_html)
+        head_text = head_lines[0] if head_lines else ""
         # 检查卡片标题（MiniMax 等卡片式组件）
         card_m = re.search(r"data-component-part=[\"']card-title[\"'][^>]*>(.*?)</h[23]>", body, re.S)
         if card_m:
@@ -1500,12 +1533,24 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
             # 标题**只取名称**，卡片正文（data-component-part="card-content"）不再并进来：
             # 拼成的中位标题有 145 字，订阅列表里根本没法扫读；正文点进链接就能看到。
             title = model_name
+        elif _DATE_LEADING_HEADING.match(head_text):
+            # 分节标题本身就写着条目名时**直接用它** —— 比正文首行准得多。
+            # 不认这一层时，标题会变成正文整段（实测小米 MiMo 抓成
+            # 「mimo-v2.6-pro： 最强大的旗舰推理模型，全模态、超高性能、万亿参数的旗舰推理模型…」，
+            # 其余几条则是没有信息量的「模型简介：」）。
+            title = head_text
         else:
             lines = _clean_html_text(body)
             title = lines[0] if lines else hid
             # 同上：首行是日期分节标题时，真标题在下一行
             if _is_date_only_title(title):
                 title = lines[1] if len(lines) > 1 else title
+
+        # 正文首行只是**表格表头 / 栏目名**时，它不是标题 —— 跳过这一条，
+        # 交给后面的表格结构处理。快手 StreamLake 的「产品更新公告」正文是表格，
+        # 不拦的话归档里全是「更新时间功能模块功能说明」这种零信息条目。
+        if _is_table_header_title(title):
+            continue
 
         title = re.sub(r"[\u200b\s]+", " ", title).strip(" \t\n-–|·•")
         url = f"{base_url.split('#')[0]}#{quote(hid)}"
@@ -1558,7 +1603,165 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
         if len(table_rows) >= 3:
             articles = table_rows
 
+    # 结构 7：**表格行式发布记录**（日期列 + 说明列）。
+    # 腾讯混元「产品动态」、快手 StreamLake「产品更新公告」都是这种：一行一条更新，
+    # 日期与说明各占一列。结构 3 同样处理表格，但它硬性要求行内有 `<code>` 模型 ID
+    # （阿里云百炼那种「模型 ID + 功能说明」），这两家没有，于是认不出来。
+    # 日期可能只写「8月14日」（无年份）—— 年份从最近的**月份分节标题**
+    # （`<h3>发布时间：2026年8月</h3>`）取；取不到年份就丢弃该行，**不猜**。
+    if not articles:
+        month_marks: list[tuple[int, int]] = []
+        for hm in re.finditer(r"<(h[1-4])[^>]*>(.*?)</\1>", raw, re.S | re.I):
+            ht = re.sub(r"<[^>]+>", "", hm.group(2))
+            ym = re.search(r"(20[2-3]\d)\s*[-/年.]\s*(\d{1,2})", ht)
+            # 只认「年 + 月」的分节标题；含完整日期的是条目本身，不是分节
+            if ym and not re.search(r"\d{1,2}\s*[-/月.]\s*\d{1,2}", ht):
+                month_marks.append((hm.start(), int(ym.group(1))))
+        rows7: list[Article] = []
+        seen7: set[str] = set()
+        for trm in re.finditer(r"<tr[^>]*>(.*?)</tr>", raw, re.S | re.I):
+            cells = re.findall(r"<t[dh][^>]*>(.*?)</t[dh]>", trm.group(1), re.S | re.I)
+            if len(cells) < 2:
+                continue
+            plain = [re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", c)).strip(" \u200b")
+                     for c in cells]
+            norm7 = ""
+            for c in plain:
+                full = re.search(
+                    r"(20[2-3]\d)\s*[-/年.]\s*(\d{1,2})\s*[-/月.]\s*(\d{1,2})", c)
+                if full:
+                    norm7 = (f"{int(full.group(1)):04d}-{int(full.group(2)):02d}"
+                             f"-{int(full.group(3)):02d}")
+                    break
+                md = re.fullmatch(r"(\d{1,2})\s*[-/月.]\s*(\d{1,2})\s*日?", c)
+                if md and 1 <= int(md.group(1)) <= 12 and 1 <= int(md.group(2)) <= 31:
+                    year7 = next((y for pos, y in reversed(month_marks)
+                                  if pos < trm.start()), 0)
+                    if year7:
+                        norm7 = (f"{year7:04d}-{int(md.group(1)):02d}"
+                                 f"-{int(md.group(2)):02d}")
+                        break
+            if not norm7:
+                continue
+            norm7 = _drop_future_date(norm7)
+            if not norm7:
+                continue
+            # 说明列 = 最长的一列（日期列与「功能模块」这类短栏目名都被排除）
+            body7 = [c for c in plain
+                     if len(c) >= 10 and not re.fullmatch(r"[\d\s\-/月.日]+", c)]
+            if not body7:
+                continue
+            first7 = re.split(r"[。！？!?]", max(body7, key=len), maxsplit=1)[0].strip()
+            if len(first7) < 8:
+                continue
+            url7 = f"{base_url.split('#')[0]}#{quote('t' + norm7 + '-' + str(len(rows7)))}"
+            if url7 in seen7:
+                continue
+            seen7.add(url7)
+            rows7.append(Article(title=_cap_changelog_title(first7), url=url7,
+                                 date=norm7, source="官方更新日志", stype=page.stype))
+        # 同结构 6：规则较宽，至少 3 条才认，免得在普通表格页上误报
+        if len(rows7) >= 3:
+            articles = rows7
+
+    # 结构 6：**日期 + 其后相邻的标题元素**构成的发布记录。
+    # 商汤「发布动态」：`<p><code>2025.07.23</code></p>` 之后紧跟
+    # `<h2 id="模型更新…">【模型更新】发布最新版本日日新-融合模态模型…</h2>`
+    # （注意 h2 出现在 `<h3>release-202507</h3>` 分节**之后**，层级是倒的，所以
+    # 「日期分节 + 更深子标题」的结构 4 认不出来）；
+    # 这类页面前几个结构全部落空（结构 3 还要求表格里有 `<code>` 模型 ID）。
+    if not articles:
+        rows6: list[Article] = []
+        seen6: set[str] = set()
+        last_date_pos = -10_000
+        for dm in _INLINE_DATE_RE.finditer(raw):
+            # 同一处日期常被匹配**两次**（`<time datetime="2026-09-22">Sep 22, 2026</time>`
+            # 里 ISO 与英文写法各命中一次），不去重就会产出两条一模一样的条目，
+            # 而条数一旦够 3 条就会顶掉后面链接分支的正确结果。
+            if dm.start() - last_date_pos < 60:
+                continue
+            last_date_pos = dm.start()
+            norm6 = _drop_future_date(normalize_feed_date(dm.group(0)))
+            if not norm6:
+                continue
+            # 日期之后 2000 字符内最近的标题元素 —— 再远就不是同一条了
+            hm = re.search(r"<(h[1-4])([^>]*)>(.*?)</\1>", raw[dm.end():dm.end() + 2000],
+                           re.S | re.I)
+            if not hm:
+                continue
+            attrs6, inner6 = hm.group(2), hm.group(3)
+            title6 = html_mod.unescape(re.sub(r"<[^>]+>", "", inner6))
+            title6 = re.sub(r"[\u200b\s]+", " ", title6).strip(" \t\n-–|·•")
+            # 标题必须像条目名：够长、且不是又一个日期（`2026年8月` 这类分节标题）
+            if len(title6) < 8 or _is_date_only_title(title6):
+                continue
+            idm6 = re.search(r"id=[\"']([^\"']+)[\"']", attrs6)
+            frag6 = idm6.group(1) if idm6 else f"d-{norm6}-{len(rows6)}"
+            url6 = f"{base_url.split('#')[0]}#{quote(frag6)}"
+            if url6 in seen6:
+                continue
+            seen6.add(url6)
+            rows6.append(Article(title=_cap_changelog_title(title6), url=url6,
+                                 date=norm6, source="官方更新日志", stype=page.stype))
+        # 至少 3 条才认 —— 这条规则很宽（任何「日期 + 标题」都算），
+        # 没有这个下限就会在普通文档页上误报出一两条假条目。
+        if len(rows6) >= 3:
+            articles = rows6
+
     return articles[:max_items]
+
+
+_ANCHOR_OPEN_RE = re.compile(r"<a\s", re.I)
+
+
+def _link_context_dates(raw_html: str, links_count: int, window: int = 700) -> list[str]:
+    """取每个链接「上下文里的日期」—— 该链接**之前**最近的日期（YYYY-MM-DD）。
+
+    卡片式列表页常把日期放在独立元素里：`x.ai/news` 是
+    `<time dateTime="2026-09-22">Sep 22, 2026</time>`、poolside 是
+    `<time datetime="2026-05-11">`、cohere 是 `<p>Sep 10, 2026</p>` ——
+    锚文本与锚内标题元素里**都没有**日期。只从标题找日期的旧逻辑在这些页面
+    8 条里 0 条带日期，于是条目进不了合并流（无日期只进单厂商源，见 write_rss_feeds）。
+
+    对齐方式：按 HTML 里 `<a>` 的出现顺序与 `page.links` 一一对应
+    （HTMLParser 是流式的，两者顺序一致）。**数量对不上就整体返回空** ——
+    宁可少修几条，也不要错位把上一条的日期安到这一条上。
+
+    ⚠️ 每个日期**只能被一个链接消费**：卡片列表里「有日期的卡」与「没日期的卡」
+    交替出现时，不做消费标记会让后者继承前者的日期（实测：一条没有日期的条目
+    被安上了上一条的 2026-08-01）。宁可留空，也不要张冠李戴 —— 空日期只是不进
+    合并流，错日期则是**静默的错误情报**。
+    """
+    if not raw_html or links_count <= 0:
+        return [""] * max(links_count, 0)
+    anchors = [m.start() for m in _ANCHOR_OPEN_RE.finditer(raw_html)]
+    if len(anchors) != links_count:
+        return [""] * links_count
+    spans = [(m.start(), m.group(0)) for m in _INLINE_DATE_RE.finditer(raw_html)]
+    used: set[int] = set()
+    out: list[str] = []
+    for pos in anchors:
+        best_idx = -1
+        best_text = ""
+        for i, (dpos, dtext) in enumerate(spans):
+            if dpos > pos:
+                break
+            if i in used or pos - dpos > window:
+                continue
+            best_idx, best_text = i, dtext
+        if best_idx >= 0:
+            # 同一处日期常被匹配**两次**：`<time datetime="2026-09-22">Sep 22, 2026</time>`
+            # 里 ISO 与英文两种写法各命中一次。只标记命中的那一个，邻近的那份会被
+            # 下一条没有日期的链接捡走（实测就是它让空日期条目拿到上一条的日期），
+            # 所以把同一区域（60 字符内）的日期一并标记为已用。
+            anchor_pos = spans[best_idx][0]
+            for j, (dpos, _dt) in enumerate(spans):
+                if abs(dpos - anchor_pos) <= 60:
+                    used.add(j)
+            out.append(normalize_feed_date(best_text))
+        else:
+            out.append("")
+    return out
 
 
 def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Article]:
@@ -1584,6 +1787,8 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
     # 长度不一致说明两个列表失配（未来若有人只改一处赋值就会这样）。此时**整体不用**
     # 标题列表、退回原来的锚文本逻辑 —— 宁可少修几条，也不要错位取到别人的标题。
     headings_aligned = page.link_headings if len(page.link_headings) == len(page.links) else []
+    # 锚文本与标题元素里都没有日期时，退回「链接上下文里的日期」（<time datetime> 等）
+    context_dates = _link_context_dates(page.raw or "", len(page.links))
     for link_idx, (url, anchor) in enumerate(page.links):
         if not url or not url.startswith("http") or not _same_site(url, base):
             continue
@@ -1615,6 +1820,8 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
         if dm:
             date = date or normalize_feed_date(dm.group(1))
             title = (title[:dm.start()] + " " + title[dm.end():]).strip(" -–|·•\t")
+        if not date:
+            date = context_dates[link_idx]
         date = _drop_future_date(date)
         # 剥掉粘连的栏目名 / 作者名（"PartnershipGroq Among..." -> "Groq Among..."）
         title = _strip_glued_label(title)
@@ -1828,6 +2035,16 @@ RETIRED_NEWS_URL_PREFIXES: tuple[str, ...] = (
     # 不是 Gemini 的内容，且条目全无日期。该源已于 2026-09-18 从 yaml 移除，
     # 这里清理它的历史残留（实测 11 条）。
     "https://cloud.google.com/blog/products/",
+    # 下面四家按「聚合第三方模型的平台不汇聚」的判据，已于 2026-09-22 从 yaml 删掉
+    # News 源（baseten 35% 模型相关、modal 16%、ppio 纯聚合、digitalocean 100 条
+    # 含模型名 0 条）。它们的归档已被 `write_news_archives` 的 `clean_removed` 清掉
+    # （2026-09-23 巡检后 `articles.json` 里这四家均为 0 条）。这里再挡一道是**双保险**：
+    # 厂商本体仍留在总表里，万一将来某个源被重新发现、或归档被手工恢复，
+    # 条目也不会重新混进 News 端。
+    "https://www.baseten.co/",
+    "https://modal.com/",
+    "https://ppio.com/",
+    "https://docs.digitalocean.com/",
 )
 
 

@@ -1,6 +1,6 @@
 # Free LLM Intel · LLM 免费额度与活动情报
 
-> 国内外 **62 家** LLM 厂商免费 API 额度、永久免费模型与限时活动的**可复现巡检库**：
+> 国内外 **63 家** LLM 厂商免费 API 额度、永久免费模型与限时活动的**可复现巡检库**：
 > 不提供、不分发任何 API Key；所有数字均来自巡检脚本对**官方页面**的实时抓取，每条情报附官方链接，
 > 无法在官方页复核的旧说法一律标注「不予采信」。
 
@@ -142,7 +142,7 @@ python -m unittest discover
 | 文件 / 目录 | 角色 |
 |---|---|
 | `llm-intel.yaml` | **输入**：厂商清单与待巡检页面（爬虫只读不写） |
-| `provider_profiles.py` | **输入**：62 家厂商的人工档案（免费模型与额度、前置条件、特惠活动，均附官方链接） |
+| `provider_profiles.py` | **输入**：63 家厂商的人工档案（免费模型与额度、前置条件、特惠活动，均附官方链接） |
 | `crawler_llm_intel.py` | 巡检引擎：抓取官方页 → 快照比对 → 变化时调用 AI 核查 → 套用档案 → 生成全部 Markdown 产物 |
 | `ai_review.py` | 变化触发的 LLM 核查（默认直连 **Google AI Studio 的 Gemini API**，可选 Anthropic）：阅读变化页面正文 + 当前档案，只输出带「页面原文逐字证据」的严格 JSON 补丁；证据无法在原文定位则整条拒绝（防幻觉） |
 | `profile_overrides.json` | AI 核查产物：对人工档案的字段级补丁（含 `_evidence` 证据、`_summary` 变更说明），经证据闸门校验后自动入库 |
@@ -204,7 +204,7 @@ python -m unittest discover
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
 > 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-09-24 08:47:04**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
-> 💡 **核心特性**：覆盖 **62 家厂商**（深度抓取 **118 个情报页 + 24 个动态页**）；已借助 Google 公开翻译引擎将海外一手情报全面汉化；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
+> 💡 **核心特性**：覆盖 **63 家厂商**（深度抓取 **118 个情报页 + 24 个动态页**）；已借助 Google 公开翻译引擎将海外一手情报全面汉化；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 16 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
 > 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/) ｜ [合并流](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`。
 

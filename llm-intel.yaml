@@ -352,6 +352,14 @@ vendors:
       - mthreads-coding-plan
     homepage: https://code.mthreads.com/
 
+  - id: xiaomi_mimo
+    brand: 小米 MiMo
+    products:
+      - mimo-v2.6
+      - mimo-tts
+      - mimo-asr
+    homepage: https://mimo.xiaomi.com/
+
   # ---- 由第三方情报库（FreeLLM-API-KeyHub）线索补齐，官方页已逐个复核 ----
   - id: lingyiwanwu_01ai
     brand: 零一万物 01.AI
@@ -566,6 +574,40 @@ sources:
     type: updates
     url: https://help.aliyun.com/zh/model-studio/newly-released-models
 
+  # 小米 MiMo
+  # 首页为 SSG 预渲染（静态即可拿到完整正文）；文档站为前端渲染 SPA
+  # （任意路由静态都返回 ~13KB 空壳），需浏览器兜底。定价页含「TTS 系列限时免费」原文。
+  - vendor_id: xiaomi_mimo
+    type: pricing
+    url: https://mimo.mi.com/
+  - vendor_id: xiaomi_mimo
+    type: pricing
+    url: https://mimo.mi.com/docs/zh-CN/price/pay-as-you-go
+  - vendor_id: xiaomi_mimo
+    type: token_plan
+    url: https://mimo.mi.com/docs/zh-CN/price/token-plan
+  - vendor_id: xiaomi_mimo
+    type: referral
+    url: https://mimo.mi.com/docs/zh-CN/quick-start/promotions/refer
+  # 博客 / 更新动态（News 端）。小米是**自有模型厂商**（MiMo 系列），按「聚合第三方
+  # 模型的平台不汇聚、自有模型厂商保留」的判据应当收录。三个页面均为前端渲染 SPA
+  # （静态抓取常只拿到 ~13KB 空壳，需浏览器兜底）；更新日志正文是「日期分节标题 + 条目」。
+  # 实测：模型发布 / 功能更新能解析出带日期的条目；新闻页标题最干净但列表不带日期
+  # （无日期条目只进单厂商源、不进合并流，见 write_rss_feeds 的日期规则）。
+  - vendor_id: xiaomi_mimo
+    type: updates
+    url: https://mimo.mi.com/docs/zh-CN/updates/model
+  - vendor_id: xiaomi_mimo
+    type: updates
+    url: https://mimo.mi.com/docs/zh-CN/updates/feature/platform
+  # 官方新闻页 `docs/zh-CN/news`（2026-09-25 重新收录）：此前列表项不满足文章路径
+  # 启发式、实测提取 0 条而移除；现列表项改链 `/news/latest/<slug>`，浏览器渲染后
+  # 可提取 15 条详情页（标题比更新日志的「日期 + 发布」锚点干净，与同日锚点重复时
+  # 保留新闻详情页、丢弃锚点，见 collect_news_articles 的同日去重规则）。
+  - vendor_id: xiaomi_mimo
+    type: updates
+    url: https://mimo.mi.com/docs/zh-CN/news
+
   # 豆包 / 火山方舟
   - vendor_id: volcengine_doubao
     type: pricing
@@ -605,11 +647,22 @@ sources:
   - vendor_id: tencent_hunyuan
     type: tokenhub
     url: https://cloud.tencent.com/document/product/1729/111007
+  # 产品动态（实测 8 条，带日期）。正文是**表格**：日期列 + 说明列，
+  # 靠 crawler 的「结构 7」提取；页头「最近更新时间」等表头已被拦掉。
+  - vendor_id: tencent_hunyuan
+    type: updates
+    url: https://cloud.tencent.com/document/product/1729/97765
 
   # 商汤 SenseNova Token Plan
   - vendor_id: sensetime_sensenova
     type: token_plan
     url: https://www.sensenova.cn/token-plan
+  # 发布动态（实测 8 条，带日期）。结构特殊：`<p><code>2025.07.23</code></p>` 之后
+  # 紧跟 `<h2>【模型更新】…</h2>`，且 h2 出现在 `<h3>release-202507</h3>` 分节之后
+  # （层级是倒的）—— 靠 crawler 的「结构 6」提取。
+  - vendor_id: sensetime_sensenova
+    type: updates
+    url: https://www.sensecore.cn/help/docs/model-as-a-service/nova/release
 
   # SiliconFlow
   - vendor_id: siliconflow
@@ -621,6 +674,11 @@ sources:
   - vendor_id: siliconflow
     type: rate_limits
     url: https://docs.siliconflow.com/cn/userguide/rate-limits/rate-limit-and-upgradation
+  # 更新公告（实测 8 条）：内容是「模型上下线 / 价格调整 / 接口服务调整」——
+  # 与「免费额度·模型·定价」的主题高度对口，是本仓库最想要的那种源。
+  - vendor_id: siliconflow
+    type: updates
+    url: https://docs.siliconflow.cn/cn/release-notes/overview
 
   # MiniMax
   - vendor_id: minimax
@@ -762,6 +820,10 @@ sources:
   - vendor_id: openrouter
     type: pricing
     url: https://openrouter.ai/pricing
+  # 官网自带原生 RSS（实测 139 条，含日期）
+  - vendor_id: openrouter
+    type: feed
+    url: https://openrouter.ai/blog/feed.xml
 
   # Cerebras
   - vendor_id: cerebras
@@ -827,6 +889,11 @@ sources:
   - vendor_id: aws_bedrock
     type: docs
     url: https://docs.aws.amazon.com/bedrock/
+  # 官方 ML 博客原生 RSS（实测 20 条）。⚠️ 内容混有客户案例，需要靠
+  # `NEWS_INTEL_SIGNALS` 的厂商规则过滤（见 §8b）；未配规则时默认不过滤。
+  - vendor_id: aws_bedrock
+    type: feed
+    url: https://aws.amazon.com/blogs/machine-learning/feed/
 
   # Azure OpenAI / Azure AI Foundry
   - vendor_id: azure_openai
@@ -877,6 +944,10 @@ sources:
   - vendor_id: together_ai
     type: platform_docs
     url: https://docs.together.ai/
+  # 官网自带原生 RSS（实测 81 条，含日期）
+  - vendor_id: together_ai
+    type: feed
+    url: https://www.together.ai/blog/rss.xml
 
   # DeepInfra
   - vendor_id: deepinfra
@@ -934,6 +1005,11 @@ sources:
   - vendor_id: longcat_meituan
     type: referral
     url: https://longcat.chat/about
+  # 更新日志（实测 8 条，带日期）：静态 HTML，无需浏览器兜底；
+  # 内容是「模型发布 / 模型服务下线 / 计费服务推出」—— 与主题高度对口。
+  - vendor_id: longcat_meituan
+    type: updates
+    url: https://longcat.chat/platform/docs/zh/ChangeLog.html
 
   # StreamLake
   - vendor_id: streamlake
@@ -945,6 +1021,12 @@ sources:
   - vendor_id: streamlake
     type: product
     url: https://www.streamlake.com/
+  # 产品更新公告（实测 8 条，带日期）。正文同样是**表格**（更新时间列 + 功能说明列），
+  # 且日期只写「8月14日」、年份在月份分节标题 `<h3>发布时间：2026年8月</h3>` 里 ——
+  # 靠 crawler 的「结构 7」提取（取不到年份的行会被丢弃，不猜）。
+  - vendor_id: streamlake
+    type: updates
+    url: https://www.streamlake.com/document/WANQING/mdptalisb06i7ai3zdd
 
   # 中国电信 天翼云/息壤智算
   - vendor_id: china_telecom_tianyi
@@ -1137,6 +1219,10 @@ sources:
   - vendor_id: anyscale
     type: pricing
     url: https://www.anyscale.com/pricing
+  # 官网自带原生 RSS（实测 1 条，量少但可用）
+  - vendor_id: anyscale
+    type: feed
+    url: https://www.anyscale.com/rss.xml
 
   # DigitalOcean Inference Engine（原 GenAI Inference，旧产品路径已 404）
   - vendor_id: digitalocean_genai
@@ -1174,3 +1260,39 @@ sources:
   - vendor_id: mara
     type: pricing
     url: https://www.mara.com/
+
+  # ---- 2026-09-24 补充：给「自有模型厂商」补 News 源 ----
+  # 背景：浏览页的厂商标签只列**有动态文章**的厂商，没有 News 源的厂商在页面上
+  # 根本不出现（国内大厂尤其明显）。以下逐个验证过能稳定提取出条目。
+  # 探测顺序按 §7 的判据：先找**原生 RSS**（本次命中 openrouter / together_ai /
+  # anyscale 三家，已在各自位置登记为 `type: feed`），再退到 HTML 动态页。
+  # ⚠️ 这些页大多**不带日期**：无日期条目只进单厂商源、不进合并流
+  # （见 write_rss_feeds 的日期规则），浏览页日期列也为空。
+  # ⚠️ 它们尚未配 `NEWS_INTEL_SIGNALS` 过滤规则 —— 未列入的厂商默认不过滤。
+  - vendor_id: cerebras
+    type: blog
+    url: https://www.cerebras.ai/blog
+  - vendor_id: fireworks_ai
+    type: blog
+    url: https://fireworks.ai/blog
+  - vendor_id: deepinfra
+    type: blog
+    url: https://deepinfra.com/blog
+  - vendor_id: dataeye
+    type: blog
+    url: https://www.shuyanai.com/blogs
+  - vendor_id: ai21_labs
+    type: blog
+    url: https://www.ai21.com/blog
+  - vendor_id: jina_ai
+    type: blog
+    url: https://jina.ai/news/
+  - vendor_id: poolside
+    type: blog
+    url: https://poolside.ai/blog
+  - vendor_id: inception_labs
+    type: blog
+    url: https://www.inceptionlabs.ai/blog
+  - vendor_id: inference_net
+    type: blog
+    url: https://inference.net/blog/
