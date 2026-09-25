@@ -25,7 +25,7 @@
 14. [Gemini Robotics ER 2 公开预览版](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-30-2026-1)（2026-07-30）
 15. [弃用公告](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-30-2026-3)（2026-07-30）
 16. [Gemini 3.6 Flash 和 Gemini 3.5 Flash-Lite 正式发布 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026-1)（2026-07-21）
-17. [Gemini 3.5 Flash-Lite](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026-2)（2026-07-21）
+17. [Gemini 3.5 Flash-Lite 登场](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026-2)（2026-07-21）
 18. [已弃用的参数](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026-3)（2026-07-21）
 19. [Gemini Omni Flash 公开预览版](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-30-2026-1)（2026-06-30）
 20. [电脑使用](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-24-2026-1)（2026-06-24）
