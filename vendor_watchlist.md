@@ -12,12 +12,12 @@
 |---|---|
 | ❌ 已排除 | 官方页复核过，无免费层 / 站点已失效 / 路径 404 |
 | ⚠️ 待复核 | 页面存在但为前端渲染，静态巡检取不到正文，需浏览器抓取 |
-| ❓ 未考察 | 只从第三方清单见过，本轮未访问官方页 |
+| ❓ 未考察 | 只从第三方清单见过，尚未访问官方页 |
 | ✅ 已收录 | 已进 `llm-intel.yaml` 与 `provider_profiles.py` |
 
 ---
 
-## 一、本轮已复核（结论如实记录）
+## 一、已复核（结论如实记录）
 
 | 厂商 | 线索 | 复核结论 |
 |---|---|---|
@@ -30,7 +30,9 @@
 | NCompass | $100 免费额度 | ❌ **已排除** — 业务已转型为 "GPU performance engineering for opencode"，不再是 LLM 推理平台 |
 | Mara | $5 / 30 天 | ❌ **疑似虚构条目** — `www.mara.com` 是比特币矿企 MARA Holdings；`mara.ai` 是 GoDaddy 停放域名（标价 $142 万）；`getmara.ai` 是 HR 招聘 ATS；Wayback 从未归档 LLM 内容。保留作反例留痕 |
 | SambaNova Cloud | 「$5 免费额度 + 永久免费层」 | ❌ **已排除** — `cloud.sambanova.ai/pricing` 只列付费单价，无免费层与 $5 赠金记载 |
-| 阶步星辰 StepFun | 「繁星计划」 | ⚠️ **待复核** — `platform.stepfun.com` 仅见 Startup / Builder Program；定价文档为前端渲染取不到正文（页面自述「Step Plan 上线 · Credit 月池」，疑似有额度但无法静态确认） |
+| 阶步星辰 StepFun | 「繁星计划」 | ⚠️ **待复核** — `platform.stepfun.com` 仅见 Startup / Builder Program；2026-09-26 用真实浏览器（Playwright）渲染 `docs/pricing/details` 与 `docs/quickstart/*` 仍返回 **404**（文档路径已变更），首页正文无任何免费/赠金额度字样。「Step Plan · Credit 月池」疑有额度但**官方页取不到实证**，按「宁缺毋滥」不予收录，留待路径明确后复查 |
+| Black Forest Labs (FLUX) | FLUX.2 图像模型热度 | ❌ **已排除（无免费层）** — `bfl.ai/pricing` 与 `docs.bfl.ai/` 复核：纯按量计费，FLUX 每 megapixel 收 $0.015–0.07，"1 credit = $0.01 USD"，无新用户赠金 / free tier 记载。模型虽热，但不符合本站「白嫖」判据 |
+| Perplexity (Sonar) | 「$0 起」线索 | ❌ **已排除（无免费层）** — `docs.perplexity.ai/getting-started/pricing` 复核：按次/按 token 计费（web_search $5/1k、Search API 按档位），页内 "$0.0025" 等为**单次调用单价**非免费层，未见注册赠金或永久免费档 |
 | **小米 MiMo** | 线索入口 `platform.xiaomimimo.com` | ✅ **已收录** — 官方定价页（更新 2026-09-22）原文：**TTS 系列 `mimo-v2.5-tts` / `-voiceclone` / `-voicedesign` 限时免费**、缓存写入限时免费；语言模型（`mimo-v2.6-pro` ¥0.025/¥3/¥6 每百万 tokens 等）与 ASR **按量计费、无免费层**。新用户注册赠金 **40 天有效**（官方促销 FAQ 原文：bonus credit 可经注册或 Refer & Earn 获得），仅抵按量计费 API、不可抵 Token Plan。⚠️ 控制台前端 bundle 仍留「限时免费中，充值功能暂未开放」旧文案，与官方功能日志「2026-01-26 计费功能已上线」冲突 —— 按定价页与 Token Plan 售卖页判定为**已计费** |
 
 ---
@@ -41,7 +43,6 @@
 |---|---|
 | 华为云 盘古 | `huaweicloud.com/product/pangu.html` |
 | 百川智能 | `platform.baichuan-ai.com` |
-| 阶步星辰 StepFun | `platform.stepfun.com` |
 | 面壁智能 MiniCPM | `modelbest.cn` |
 | 出门问问 | `openapi.mobvoi.com` |
 | 京东 言犀 | `console.jdcloud.com` |
@@ -72,13 +73,11 @@
 |---|---|
 | Upstage Solar | `console.upstage.ai` |
 | Reka AI | `api.reka.ai` |
-| Perplexity Sonar | `docs.perplexity.ai` |
 | Writer AI Palmyra | `dev.writer.com` |
 | Aleph Alpha | `aleph-alpha.com` |
 | Inflection AI | `inflection.ai` |
 | Databricks Mosaic AI | `databricks.com` |
 | Clarifai | `clarifai.com` |
-| Black Forest Labs (FLUX) | `bfl.ai` |
 | Liquid AI | `liquid.ai` |
 | Salesforce Einstein | `developer.salesforce.com` |
 | Snowflake Cortex | `snowflake.com` |
@@ -130,7 +129,7 @@
 3. **写成带出处的字段**（`free_quota` / `validity` / `preconditions`），而不是笼统的"有免费额度"；
 4. 查不到就如实写"未见公示 / 不予采信"——**本仓库宁可少一条情报，也不要一条假的**。
 
-参考：本轮复核里，第三方清单的 8 家「免费额度平台」有 **3 家**（InceptionLabs、Inference.net、Anyscale）经官方页确认真有免费额度，但**8 个数字里 6 个是错的**（InceptionLabs 少记一个数量级、DigitalOcean 从 $5 记成 $200、其余 4 个数字无官方页支撑）。第三方汇总仓库适合作**线索池**，不适合作**数据源**。
+参考：2026-09 首批复核里，第三方清单的 8 家「免费额度平台」有 **3 家**（InceptionLabs、Inference.net、Anyscale）经官方页确认真有免费额度，但**8 个数字里 6 个是错的**（InceptionLabs 少记一个数量级、DigitalOcean 从 $5 记成 $200、其余 4 个数字无官方页支撑）。第三方汇总仓库适合作**线索池**，不适合作**数据源**。
 
 **一个踩过的坑**：只查厂商官网首页会漏判。InceptionLabs 的免费额度写在 `docs.` 子域，`inference.net` 的额度列表在带尾斜杠的 `/pricing/`，DigitalOcean 的 signup credit 在 `docs.digitalocean.com`。判定「无免费层」之前，至少要试过 `docs.` 子域、带/不带尾斜杠的 pricing 路径、以及文档站的 `llms.txt` 索引。
 

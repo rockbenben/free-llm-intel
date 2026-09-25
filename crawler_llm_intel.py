@@ -11,10 +11,14 @@ crawler_llm_intel.py — LLM 厂商免费额度 / 活动情报巡检脚本
        限制条件」等证据片段（只摘录页面原文，不做主观推断、不编造使用建议）。
      - rate_limits / billing 等「条件页」：用于补充限制条件证据。
      - blog / engineering / news / updates / v4_news / research 等「动态页」：
-       不写入 README，改为单独输出到 llm-news-feeds.md，并尝试发现页面中的
-       RSS / Atom 订阅源，汇总生成 llm-news-feeds.opml（可导入 RSS 阅读器）。
+       不写入 README，改为单独输出到 llm-news-feeds.md（每家最新若干篇），并把全量
+       文章归档到 llm-news/<vendor>.md；同时尝试发现页面中的 RSS / Atom 订阅源，
+       汇总生成 llm-news-feeds.opml（可导入 RSS 阅读器）。
      - product 等产品页：仅用于确认产品线，默认不深度抓取。
   3. 巡检结果写入 README.md 的固定章节（标记注释之间，重跑自动重写，不累计）。
+     动态类产物由归档再生：docs/feeds/ 下的 RSS XML 与三个 JSON 索引
+     （vendors / articles / model-releases，即模型发布雷达）；
+     AI 核查采纳的事实变化追加进 llm-intel-changelog.md。
 
 运行：
     python crawler_llm_intel.py                 # 完整巡检并刷新 README + 动态订阅文件
@@ -22,6 +26,9 @@ crawler_llm_intel.py — LLM 厂商免费额度 / 活动情报巡检脚本
     python crawler_llm_intel.py --no-news       # 跳过博客/RSS 发现，只刷新 README
     python crawler_llm_intel.py --no-browser    # 禁用浏览器兜底，纯 requests 抓取
     python crawler_llm_intel.py --ai-review     # 变化时调用 AI 自动核查并更新 profile_overrides.json
+    python crawler_llm_intel.py --ai-titles     # 新收录文章的机翻标题交 LLM 润色一次（结果进归档即冻结）
+    python crawler_llm_intel.py --rebuild-only  # 不触网，从 llm-news/ 归档等磁盘产物重建动态类产物
+    python crawler_llm_intel.py --backfill-dates # 维护模式：逐篇文章页取元数据，回填归档缺失的发布日期
 
 依赖：requests、PyYAML（HTML 解析使用标准库 html.parser，无需 bs4）。
 可选：playwright（pip install playwright）。安装后对 403 反爬 / JS 动态渲染页面
@@ -314,6 +321,7 @@ class Article:
     date: str = ""        # 归一化为 YYYY-MM-DD；无法解析则为空
     source: str = ""      # 来源标签：RSS / 页面提取
     stype: str = ""
+    zh_title: str = ""    # 归档沿用的中文标题；空则现场走 translate_to_zh
 
     def __post_init__(self) -> None:
         # 统一在这里洗控制字符：RSS 原始 XML 与页面提取都可能带 \x00，
@@ -323,6 +331,85 @@ class Article:
         self.date = sanitize_text(self.date)
         self.source = sanitize_text(self.source)
         self.stype = sanitize_text(self.stype)
+        self.zh_title = sanitize_text(self.zh_title)
+
+
+#: 归档标题「已是中文」的判据：含任一 CJK 字符即算（与 translate_to_zh 的整句跳过阈值无关，
+#: 这里只需区分「人工/AI 汉化过」与「还是英文原标题」）。
+_CJK_CHAR_RE = re.compile(r"[\u4e00-\u9fff]")
+
+
+def article_title_zh(art: "Article") -> str:
+    """输出用标题：优先归档沿用的中文译文，否则现场翻译（走磁盘缓存）。"""
+    return art.zh_title or translate_to_zh(art.title)
+
+
+#: 标题润色批量与单次巡检预算（新条目每天个位数；预算只防新收录厂商一次性几百条）
+TITLE_POLISH_BATCH = 40
+TITLE_POLISH_RUN_BUDGET = 300
+
+_POLISH_LINE_RE = re.compile(r"^\s*(\d+)\s*(?:[.、）)]|[：:])?\s*[ \t]*\s*(.+?)\s*$")
+
+
+def parse_polish_response(text: str, expected: list[str]) -> dict[str, str]:
+    """解析「编号<TAB>中文标题」输出为 {英文原标题: 中文标题}。
+
+    宽容排版（编号后可用制表/点/冒号），但内容从严：同一编号取第一个匹配、越界丢弃、
+    既无中文又不同于原文的丢弃（= 没翻出来，回落机翻），过长疑似续写解释的丢弃。
+    """
+    mapping: dict[str, str] = {}
+    for line in text.splitlines():
+        m = _POLISH_LINE_RE.match(line)
+        if not m or len(m.group(1)) > 6:
+            continue
+        idx = int(m.group(1))
+        if not 1 <= idx <= len(expected):
+            continue
+        orig = expected[idx - 1]
+        if orig in mapping:
+            continue
+        zh = m.group(2).strip().strip("\"'“”「」")
+        if not zh or len(zh) > max(120, len(orig) * 2):
+            continue
+        if zh != orig.strip() and not _CJK_CHAR_RE.search(zh):
+            continue
+        mapping[orig] = zh
+    return mapping
+
+
+def make_llm_title_polisher(budget: int = TITLE_POLISH_RUN_BUDGET,
+                            batch: int = TITLE_POLISH_BATCH):
+    """返回 brand/titles -> {英文: 中文} 的润色回调（LLM 通道与 --ai-review 同源）。
+
+    只应当次运行的**新增**机翻标题；结果写进 Article.zh_title 后随归档冻结，
+    一篇只花一次调用。失败不抛异常（调用方回落 Google 机翻）。
+    """
+    import ai_review
+    remaining = [budget]
+
+    def polish(brand: str, titles: list[str]) -> dict[str, str]:
+        out: dict[str, str] = {}
+        for i in range(0, len(titles), batch):
+            chunk = titles[i:i + batch]
+            chunk = chunk[:max(remaining[0], 0)]
+            remaining[0] -= len(chunk)
+            if not chunk:
+                break
+            lines = "\n".join(f"{n}\t{t}" for n, t in enumerate(chunk, 1))
+            prompt = (
+                "你是科技资讯标题译者。下面每行是「编号<TAB>英文原标题」，请逐行译成中文标题。\n"
+                "要求：品牌 / 模型 / 术语保留原文（如 Claude、GPT-6、LoRA、MCP）；忠实原意，"
+                "不加原文没有的营销词与感叹号；原标题本身就是型号标识时原样返回该行。\n"
+                "输出格式：一行一条「编号<TAB>中文标题」，不要解释、不要引号、不要 Markdown。\n\n"
+                + lines)
+            try:
+                out.update(parse_polish_response(ai_review.call_llm(prompt), chunk))
+            except Exception as exc:
+                print(f"      [ai-titles] {brand}：润色失败，回落机翻"
+                      f"（{type(exc).__name__}: {exc}）", file=sys.stderr)
+        return out
+
+    return polish
 
 
 @dataclass
@@ -1711,7 +1798,10 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
     return articles[:max_items]
 
 
-_ANCHOR_OPEN_RE = re.compile(r"<a\s", re.I)
+#: 对齐 `PageParser.links` 的收录口径：**带 href 的** `<a>` 才会被 parser 记录。
+#: 旧写法 `<a\s` 会把脚本字符串里的 `<a ` 字面量也数进去（实测 claude.com/blog
+#: 多 1 个 → 严格计数守卫整体放弃上下文日期，357 条链接的日期全丢）。
+_ANCHOR_OPEN_RE = re.compile(r"<a(?=[\s/>])[^>]*\bhref\s*=", re.I)
 
 
 def _link_context_dates(raw_html: str, links_count: int, window: int = 700) -> list[str]:
@@ -1764,6 +1854,76 @@ def _link_context_dates(raw_html: str, links_count: int, window: int = 700) -> l
     return out
 
 
+_MD_HEAD_RE = re.compile(r"^(#{2,6})\s+(.*?)\s*#*\s*$")
+_MD_ENTRY_RE = re.compile(r"^[A-Za-z]*\[([^\]]{3,})\]\(#([^)]*)\)")
+_MD_MONTH = r"(?:jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?"
+_MD_DATE_DATED = re.compile(
+    rf"^(?:20\d{{2}}[-/.年]\s*\d{{1,2}}[-/.月]\s*\d{{1,2}}日?"
+    rf"|{_MD_MONTH}\s+\d{{1,2}},?\s+20\d{{2}}"
+    rf"|\d{{1,2}}\s+(?:st|nd|rd|thin|th)?\s*{_MD_MONTH}\.?,?\s+20\d{{2}})\s*$", re.I)
+_MD_DATE_YEARLESS = re.compile(rf"^({_MD_MONTH})\s+(\d{{1,2}})(?:st|nd|rd|th)?$|^\d{{1,2}}\s+{_MD_MONTH}$",
+                               re.I)
+
+
+def extract_md_changelog(raw: str, base_url: str, stype: str = "changelog",
+                         max_items: int = 100, today: str | None = None) -> list[Article]:
+    """纯 Markdown 变更日志（Mintlify 文档站 `.md` 端点，实测 groq console changelog.md）。
+
+    页面形态：`---` 分隔 + 日期行 + 多条 `### 分类[标题](#锚点)`。最新分节的日期行
+    **省略年份**（`Apr 18`）——变更日志按新→旧排列，未标年份的必是最近一段：按今年解、
+    落在未来则回退一年。条目不足 3 条不认（规则宽，防普通 md 文档误报）。
+    """
+    today = today or datetime.now().strftime("%Y-%m-%d")
+    rows: list[Article] = []
+    seen: set[str] = set()
+    cur = ""
+
+    def _yearless_date(month_txt: str, day: int) -> str:
+        mon = _MONTHS.get(month_txt[:3].lower())
+        if not mon:
+            return ""
+        for year in (int(today[:4]), int(today[:4]) - 1):
+            cand = f"{year:04d}-{mon:02d}-{day:02d}"
+            if cand <= today:
+                return cand
+        return ""
+
+    for line in raw.splitlines():
+        s = line.strip()
+        if not s:
+            continue
+        if _MD_DATE_DATED.match(s):
+            cur = _drop_future_date(normalize_feed_date(s))
+            continue
+        if s.startswith("#"):
+            hm = _MD_HEAD_RE.match(s)
+            if not hm:
+                continue
+            text = hm.group(2).strip()
+            if _is_date_only_title(text) or _MD_DATE_DATED.match(text):
+                continue
+            em = _MD_ENTRY_RE.match(text)
+            if not em:
+                continue
+            title, anchor = em.group(1).strip(), em.group(2)
+            if not cur or len(title) < 3:
+                continue
+            url = f"{base_url.split('#')[0]}#{quote(anchor or title)}"
+            if url in seen:
+                continue
+            seen.add(url)
+            rows.append(Article(title=_cap_changelog_title(title), url=url,
+                                date=cur, source="官方更新日志", stype=stype))
+            if len(rows) >= max_items:
+                break
+        else:
+            ym = _MD_DATE_YEARLESS.match(s)
+            if ym:
+                month_txt, day = (ym.group(1), int(ym.group(2))) if ym.group(1) else (s.split()[1], int(s.split()[0]))
+                cur = _yearless_date(month_txt, day)
+    return rows if len(rows) >= 3 else []
+
+
 def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Article]:
     """
     从已抓取的博客 / 更新页 HTML 链接中启发式提取文章条目（无 RSS 时的兜底）：
@@ -1772,6 +1932,15 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
     """
     if not page.ok:
         return []
+    raw = page.raw or page.text or ""
+    # 纯 Markdown（docs 站 .md 端点，可能以 front-matter `---` 开头）：
+    # HTML 结构全部依赖标签，这里走独立分支
+    head = raw.lstrip()[:800].lower()
+    if head.startswith(("#", "---")) and "<html" not in head \
+            and re.search(r"(?m)^#{2,3} ", raw[:4000]):
+        return extract_md_changelog(raw, page.final_url or page.url,
+                                    stype=page.stype, max_items=100)[:max_items] \
+            if (page.stype or "") in NEWS_TYPES else []
     # 1) 单页结构式变更日志解析（Kimi / MiniMax / BigModel 等）
     sections = extract_changelog_sections(page, max_items=max_items)
     if len(sections) >= 2:
@@ -2360,7 +2529,7 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
         elif stype in INTEL_TYPES or stype in CONDITION_TYPES:
             target = intel.intel_pages
         else:
-            # api_docs / docs / console / hf_org 等入口：本轮不深度抓取
+            # api_docs / docs / console / hf_org 等入口：不深度抓取
             intel.skipped_sources.append(src)
             continue
         page = fetch_url(session, url, stype, browser=browser)
@@ -2731,7 +2900,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
     L.append("### 6. 免费额度用完之后")
     L.append("")
     L.append("国内厂商的包月「编程套餐」（火山方舟 Coding Plan、智谱 GLM 套餐等）价格与档位调整频繁，"
-             "本仓库不转抄未经本轮官方页核实的价格数字——请从上方对应厂商表格的「官方直达」进入定价页查看现行档位。"
+             "本仓库不转抄未经官方页面核实的价格数字——请从上方对应厂商表格的「官方直达」进入定价页查看现行档位。"
              "挑选时重点对比三点：")
     L.append("")
     L.append("1. **计费方式**：按请求次数（低频友好）还是按 token（长上下文 / 重度使用友好）；")
@@ -2787,7 +2956,7 @@ def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
     lines.append(">")
     lines.append(f"> 💡 **核心特性**：覆盖 **{len(intel_list)} 家厂商**"
                  f"（深度抓取 **{intel_pages} 个情报页 + {news_pages} 个动态页**）；"
-                 f"已借助 Google 公开翻译引擎将海外一手情报全面汉化；"
+                 f"海外一手情报自动汉化（品牌与型号名保留原文）；"
                  f"自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、"
                  f"可用模型、有效期与限制条件。")
     lines.append(f"> 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 {news_vendors} 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。")
@@ -2968,7 +3137,7 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
             vendors_with_articles += 1
             lines.append(f"- 📰 **最新文章**（官方源抓取于 {today}，标题自动汉化）：")
             for idx, art in enumerate(intel.news_articles, 1):
-                title_zh = translate_to_zh(art.title)
+                title_zh = article_title_zh(art)
                 date_part = f"（{art.date}）" if art.date else ""
                 lines.append(f"  {idx}. [{title_zh}]({art.url}){date_part}")
             n_all = len(intel.all_news_articles)
@@ -3137,12 +3306,220 @@ def parse_archived_articles(arch_path: Path) -> list[Article]:
     return articles
 
 
+# ---------------------------------------------------------------------------
+# 归档日期回填（维护模式 --backfill-dates，不参与日常巡检）
+# ---------------------------------------------------------------------------
+
+#: 单次回填最多访问的文章页数（礼貌抓取：0.5s 间隔；只补缺日期的历史条目）
+DATE_BACKFETCH_LIMIT = 150
+
+
+def resolve_article_date(html: str) -> str:
+    """从文章页 HTML 里解发布日期：JSON-LD datePublished / OG 时间戳 / <time>。
+
+    各家格式不同但都遵循其中一两个公开约定；解不出返回空串（维持无日期，
+    绝不猜）。年份 <2000 视为噪声（部分页 datePublished 写成占位 0001-01-01）。
+    """
+    if not html:
+        return ""
+    cands: list[str] = []
+    m = re.search(r'"datePublished"\s*:\s*"([^"]+)"', html)
+    if m:
+        cands.append(m.group(1))
+    m = re.search(r'property="article:published_time"\s+content="([^"]+)"', html)
+    if m:
+        cands.append(m.group(1))
+    m = re.search(r"<time[^>]*datetime=\"([^\"]+)\"", html)
+    if m:
+        cands.append(m.group(1))
+    for raw in cands:
+        day = normalize_feed_date(raw)
+        if day and day >= "2000-01-01":
+            return day
+    return ""
+
+
+def backfill_archive_dates(news_dir: Path, fetch,
+                           limit: int = DATE_BACKFETCH_LIMIT,
+                           delay: float = 0.5) -> tuple[int, int]:
+    """给归档里无日期的条目回填发布日期（visit 文章页取 meta）。
+
+    fetch: url -> HTML 文本（注入以便测试；网络错误抛异常按「解不出」处理）。
+    返回 (访问数, 回填数)。条目按原顺序处理，回填后重写日期括号。
+    """
+    import time as _time
+    visited = fixed = 0
+    for arch in sorted(news_dir.glob("*.md")):
+        try:
+            text = arch.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        lines = text.splitlines(keepends=True)
+        dirty = False
+        for i, line in enumerate(lines):
+            m = re.match(r"^(\d+\.\s+\[.+\]\(https?://[^)]+\))(（[^）]*）)?\s*$", line)
+            if not m or m.group(2):
+                continue  # 非条目行 / 已有日期后缀
+            if visited >= limit:
+                break
+            url = re.search(r"\]\((https?://[^)]+)\)", m.group(1)).group(1)
+            try:
+                html = fetch(url)
+            except Exception:
+                html = ""
+            visited += 1
+            day = resolve_article_date(html or "")
+            if not day:
+                continue
+            lines[i] = m.group(1) + f"（{day}）\n"
+            fixed += 1
+            dirty = True
+            _time.sleep(delay)
+        if dirty:
+            # 只写日期括号，不在此处重排 —— 顺序规范由 --rebuild-only / 下次巡检的
+            # write_news_archives 统一完成（日期倒序 + 重编号），避免两处排序逻辑漂移。
+            arch.write_text("".join(lines), encoding="utf-8", newline="\n")
+    return visited, fixed
+
+
+def _parse_news_md_page_states(news_md_text: str) -> dict[str, list[dict]]:
+    """从上次渲染的 llm-news-feeds.md 里恢复每个厂商的动态页状态。
+
+    原生 RSS 检测结果（page.feeds）、稀疏 / 失败标记只存在于抓取现场，产物是它们
+    唯一的落盘记录；--rebuild-only 靠这份解析把 `intel.news_pages` 重建回渲染时的
+    形状，使自建源标注与 OPML 分组不漂移。
+    返回 {vendor_id: [{url, final_url, label, feeds, ok, sparse}, ...]}（保持文档顺序）。
+    """
+    blocks: dict[str, list[dict]] = {}
+    rows: list[dict] | None = None
+    pending: dict | None = None
+    for line in news_md_text.splitlines():
+        m = re.match(r"^### .+ \((\w+)\)\s*$", line)
+        if m:
+            rows = blocks.setdefault(m.group(1), [])
+            pending = None
+            continue
+        if rows is None:
+            continue
+        m = re.match(r"^- 📡 \[([^\]]*)\]\((\S+)\)：`(\S+)`", line)
+        if m:
+            rows.append({"url": m.group(2), "final_url": m.group(3),
+                         "label": m.group(1), "feeds": [], "ok": True,
+                         "sparse": False})
+            pending = None
+            continue
+        m = re.match(r"^- 页面：\[([^\]]*)\]\((\S+)\)", line)
+        if m:
+            pending = {"url": m.group(2), "final_url": "",
+                       "label": m.group(1), "feeds": [], "ok": True,
+                       "sparse": False}
+            rows.append(pending)
+            continue
+        m = re.match(r"^\s+- 📡 RSS/Atom：(\S+)\s*$", line)
+        if m and pending is not None:
+            pending["feeds"].append(m.group(1))
+            continue
+        if re.match(r"^\s+- ⚠️ 页面可见文本过少", line) and pending is not None:
+            pending["sparse"] = True
+            continue
+        if re.match(r"^\s+- ❌ 抓取失败", line) and pending is not None:
+            pending["ok"] = False
+    return blocks
+
+
+def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
+                            page_states: dict[str, list[dict]],
+                            news_dir: Path,
+                            orig_by_key: dict[tuple[str, str], str] | None = None,
+                            ) -> list["VendorIntel"]:
+    """不触网，从磁盘产物重建 `intel_list`（--rebuild-only 的入口）。
+
+    三个数据源各司其职：yaml 供厂商元数据与 stype（决定 type_label 渲染）；
+    llm-news-feeds.md 供各动态页的原生 feed / 失败状态；llm-news/*.md 供全量文章
+    与中文标题（articles.json 供英文原文，见 orig_by_key）。
+    不在任何产物里出现的厂商直接跳过：本模式只重建动态类产物，不生成情报页内容。
+    """
+    orig_by_key = orig_by_key or {}
+    intel_list: list[VendorIntel] = []
+    for vendor in vendors:
+        vid = vendor.get("id", "unknown")
+        news_urls = grouped.get(vid, [])
+        states = page_states.get(vid, [])
+        arch_path = news_dir / f"{vid}.md"
+        arts = parse_archived_articles(arch_path)
+        if not states and not arts:
+            continue
+        intel = VendorIntel(vendor_id=vid, brand=vendor.get("brand", vid),
+                            homepage=vendor.get("homepage", ""),
+                            products=vendor.get("products") or [])
+        # 页清单以 yaml 为权威、产物状态只做富化：
+        # ① 换源（如 groq `changelog` → `changelog.md`）时产物还记着旧 URL，按去 `.md`
+        #    后缀归一匹配上，检测到的原生 feed 不丢；
+        # ② yaml 新增的源（产物里从没有过）直接按声明建页，新厂商首轮即出总览条目，
+        #    不必等下一次实抓把 feeds.md 补上（feed 发现留待实抓富化）。
+        def _n(u: str) -> str:
+            return u[:-3] if u.endswith(".md") else u
+        state_by_url = {_n(st["url"]): st for st in states}
+        for s in news_urls:
+            u = s.get("url") or ""
+            if (s.get("type") or "") not in NEWS_TYPES or not u:
+                continue
+            st = state_by_url.get(_n(u))
+            page = PageResult(
+                url=u, stype=s.get("type") or "",
+                ok=bool(st["ok"]) if st else True,
+                final_url=st["final_url"] if st else "",
+                feeds=list(st["feeds"]) if st else [],
+                sparse=bool(st["sparse"]) if st else False)
+            intel.news_pages.append(page)
+        intel.all_news_articles = arts
+        for a in arts:
+            # 归档 .md 里存的是**中文显示标题**（= 上次的 title_zh）；英文原文只在
+            # articles.json 的 original_title 列里。重建时把中文落成 zh_title、原文回填
+            # 到 art.title，与正常抓取路径的不变量一致（title=原文、zh_title=译文），
+            # 于是 _rss_item 的「原文标题」与索引第 5 列都能逐字节复现。
+            if _CJK_CHAR_RE.search(a.title):
+                a.zh_title = a.title
+                orig = orig_by_key.get((vid, a.url))
+                if orig and orig != a.title:
+                    a.title = orig
+        intel.news_articles = arts[:5]
+        intel_list.append(intel)
+    return intel_list
+
+
+def load_original_titles(articles_json_path: Path) -> dict[tuple[str, str], str]:
+    """从既有 docs/feeds/articles.json 读回 {(vendor_id, url): 英文原文标题}。
+
+    归档 .md 只保存中文显示标题，英文原文唯一的落盘处就是这份索引；--rebuild-only
+    靠它把原文回填进 Article，否则重建的 RSS / 索引会丢失「原文标题」。
+    """
+    out: dict[tuple[str, str], str] = {}
+    try:
+        data = json.loads(articles_json_path.read_text(encoding="utf-8"))
+    except Exception:
+        return out
+    fields = data.get("fields") or []
+    if "original_title" not in fields or "url" not in fields or "vendor" not in fields:
+        return out
+    ti, ui, vi, oi = (fields.index(k) for k in ("title", "url", "vendor", "original_title"))
+    for row in data.get("articles") or []:
+        if len(row) <= oi:
+            continue
+        orig = (row[oi] or "").strip() or (row[ti] or "").strip()
+        if orig:
+            out[(row[vi], row[ui])] = orig
+    return out
+
+
 def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
-                       clean_removed: bool = True) -> tuple[int, int, int]:
+                       clean_removed: bool = True, title_polish=None) -> tuple[int, int, int]:
     """把每个厂商的全量文章写到 llm-news/<vendor_id>.md 子文档。
 
     返回 (归档文件数, 文章总数, 实际改写文件数)。自动将新抓取的文章与既有归档增量
     合并，保障旧文章永不丢失；标题汉化走 translate_to_zh（磁盘缓存 + 并发）。
+    title_polish 非空时，对**新收录**（归档里没这个 URL）且仍是英文的标题调用一次润色（brand, titles)
+    -> {英文: 中文}，结果写进 zh_title 随归档冻结（见 --ai-titles）。
     屏蔽「抓取于」日期后与旧文件比对，无内容变化则不重写（避免无变化日产生 diff）。
     """
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -3162,6 +3539,7 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
         existing = parse_archived_articles(arch_path)
         merged_arts: list[Article] = list(intel.all_news_articles)
         by_url = {_article_key(a.url): a for a in merged_arts}
+        old_urls = {_article_key(o.url) for o in existing}
         for old_art in existing:
             # 已废弃源的历史条目不再保留（见 RETIRED_NEWS_URL_PREFIXES）
             if _is_retired_news_url(old_art.url):
@@ -3171,11 +3549,36 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
             if fresh is None:
                 by_url[u_norm] = old_art
                 merged_arts.append(old_art)
-            elif not fresh.date and old_art.date:
+                continue
+            if not fresh.date and old_art.date:
                 # 本次抓取没拿到日期（页面卡片改版、标题被截断等），沿用归档里已有的：
                 # 日期一旦丢失就永久丢失（归档排序、RSS pubDate、README 展示都依赖它），
                 # 而且重抓也补不回来 —— 实测 cohere 博客页改版后 9 条会退化成无日期。
                 fresh.date = old_art.date
+            if (not fresh.zh_title and _CJK_CHAR_RE.search(old_art.title)
+                    and old_art.title != fresh.title):
+                # 归档里已有人工/AI 汉化过的中文标题 → 沿用，别让每日重抓把它退回
+                # Google 机翻（CI 端 .translate_cache.json 不随仓库走，实测
+                # 「GPT-6 的提示缓存全面升级」隔天变「更好的 GPT-6 提示缓存」）。
+                # 代价：官方日后改标题会停在旧文案，但这种情况极少且可人工修。
+                fresh.zh_title = old_art.title
+        # 2) 新收录且尚无中文的标题 → 交给 LLM 润色一次（结果进归档即冻结，
+        #    次日走上面的沿用分支不再重翻）。polisher 内部分批与预算，异常在此兜底。
+        if title_polish is not None:
+            new_en = [a.title for a in merged_arts
+                      if not a.zh_title and _article_key(a.url) not in old_urls
+                      and not _CJK_CHAR_RE.search(a.title)]
+            if new_en:
+                try:
+                    polished = title_polish(intel.brand, new_en) or {}
+                except Exception as exc:
+                    print(f"      [ai-titles] {intel.brand}：润色整体失败，回落机翻"
+                          f"（{type(exc).__name__}: {exc}）", file=sys.stderr)
+                    polished = {}
+                for a in merged_arts:
+                    zh = polished.get(a.title)
+                    if zh and not a.zh_title:
+                        a.zh_title = zh
         dated = sorted((a for a in merged_arts if a.date),
                        key=lambda a: a.date, reverse=True)
         undated = [a for a in merged_arts if not a.date]
@@ -3185,7 +3588,7 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
         if not arts:
             continue
         with ThreadPoolExecutor(max_workers=6) as pool:
-            titles_zh = list(pool.map(translate_to_zh, (a.title for a in arts)))
+            titles_zh = list(pool.map(article_title_zh, arts))
         lines: list[str] = []
         lines.append(f"# {intel.brand} 文章归档")
         lines.append("")
@@ -3418,7 +3821,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
         if not arts:
             continue
         with ThreadPoolExecutor(max_workers=6) as pool:
-            titles_zh = list(pool.map(translate_to_zh, (a.title for a in arts)))
+            titles_zh = list(pool.map(article_title_zh, arts))
         per_vendor.append((intel.brand, intel.vendor_id, arts, titles_zh))
 
     if clean_removed:
@@ -3539,10 +3942,181 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
 
 
 # ---------------------------------------------------------------------------
+# 情报变更日志：AI 核查采纳的「前值 → 后值」历史（最新在前，产物只追加）
+# ---------------------------------------------------------------------------
+
+CHANGELOG_MD = "llm-intel-changelog.md"
+CHANGELOG_MAX_VENDORS = 150   # 厂商-天 记录条数上限，超出裁剪最旧日块
+CHANGELOG_VALUE_LIMIT = 160   # 单值展示上限，防 free_models 长列表刷爆日志
+
+
+def _changelog_fmt(value) -> str:
+    """档案字段值 → 日志一行的紧凑字符串（列表顿号连接、超长截断）。"""
+    if value is None:
+        return "（原无此项）"
+    if isinstance(value, (list, tuple)):
+        text = "、".join(str(v) for v in value)
+    elif isinstance(value, dict):
+        text = json.dumps(value, ensure_ascii=False)
+    else:
+        text = str(value)
+    text = " ".join(text.split())
+    if len(text) > CHANGELOG_VALUE_LIMIT:
+        text = text[:CHANGELOG_VALUE_LIMIT - 1] + "…"
+    return text
+
+
+def append_intel_changelog(path: Path, run_date: str, entries: list[dict]) -> int:
+    """把本批采纳的变化写进变更日志：同日并入同一日块，新日块置顶。
+
+    entries: [{vendor_id, brand, summary, diffs: [(field, 前值串, 后值串), ...]}]
+    （前值由调用方在**应用补丁前**取生效档案格式化，后值取 patch.fields。）
+    """
+    header = ("# 情报变更日志\n\n"
+              "> **产物**（只追加）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。\n"
+              f"> 保留最近约 {CHANGELOG_MAX_VENDORS} 条厂商-天记录；人工修订请直接改本文件。\n")
+    existing = path.read_text(encoding="utf-8") if path.exists() else ""
+    tail = existing[existing.find("\n## "):] if "\n## " in existing else ""
+    day_blocks: list[list[str]] = []   # 每块 = [日期, *行]
+    for b in re.split(r"(?m)^## ", tail)[1:]:
+        lines = b.rstrip("\n").splitlines()
+        day_blocks.append([lines[0].strip(), *lines[1:]])
+    chunks: list[str] = []
+    for e in entries:
+        chunks.append(f"### {e['brand']}（`{e['vendor_id']}`）")
+        chunks.append(f"- 摘要：{e['summary']}")
+        for field, old, new in e["diffs"]:
+            chunks.append(f"- `{field}`：{old} → {new}")
+    idx = next((i for i, blk in enumerate(day_blocks)
+                if blk[0] == run_date), None)
+    if idx is None:
+        day_blocks.insert(0, [run_date, *chunks])
+    else:
+        day_blocks[idx].extend(chunks)
+    # 裁剪：从最新日块起累计厂商块数，超限后的旧日块整块丢弃
+    kept: list[list[str]] = []
+    count = 0
+    for blk in day_blocks:
+        n = sum(1 for l in blk[1:] if l.startswith("### "))
+        if kept and count + n > CHANGELOG_MAX_VENDORS:
+            break
+        kept.append(blk)
+        count += n
+    body = "".join(f"\n## {blk[0]}\n" + "".join(l + "\n" for l in blk[1:])
+                   for blk in kept)
+    path.write_text(header + body, encoding="utf-8", newline="\n")
+    return len(entries)
+
+
+# ---------------------------------------------------------------------------
+# 模型发布雷达：从动态归档标题抽 (厂商, 模型, 日期) 事件（宁可漏不可错）
+# ---------------------------------------------------------------------------
+
+#: A 类：`model-id：描述` 结构（更新日志页逐行「新模型上架」的形态）
+_RADAR_STRUCT_RE = re.compile(r"^([A-Za-z][A-Za-z0-9+._/-]{1,48})[：:]")
+#: B 类：含发布动词的标题里的「品牌词串 + 版本号」token
+_RADAR_VERB_RE = re.compile(
+    r"发布|上线|推出|新增|添加|登陆|正式版|预览版"
+    r"|introducing|now available|released|launches|general availability|\(GA\)",
+    re.I)
+_RADAR_TOKEN_RE = re.compile(
+    r"(?<![A-Za-z0-9])([A-Z][A-Za-z0-9]*(?:[ \-][A-Z][A-Za-z0-9]*){0,2}"
+    r"[ \-]?[Vv]?\d+(?:\.\d+){0,3}[A-Za-z]{0,3}(?:[-][A-Za-z0-9.]+)*)")
+#: 公司 / 活动名前缀：型号常挂在它们后面（「Google Gemma 4」的型号是 Gemma 4）
+_RADAR_STRIP_PREFIXES = ("Google ", "NVIDIA ", "Meta ", "Microsoft ", "Amazon ",
+                         "OpenAI ", "IBM ", "Apple ")
+#: 英文标题里的发布引导词，绝不能落在型号开头（「Introducing GPT-5.5」→ GPT-5.5）
+_RADAR_INTRO_HEADS = {"Introducing", "Announcing", "Meet", "Launching",
+                      "Releasing", "Adding", "Now", "Say"}
+
+
+def _radar_clean(token: str) -> str:
+    for p in _RADAR_STRIP_PREFIXES:
+        if token.startswith(p):
+            token = token[len(p):]
+    words = token.split()
+    while words and words[0] in _RADAR_INTRO_HEADS:
+        words = words[1:]
+    return " ".join(words).strip(" -_.+")
+
+
+def _radar_bad_model(token: str) -> bool:
+    """排除「品牌 + 裸年份」的会议/活动名（ModCon 2026），而非真版本号。
+
+    判据：出现一个以空格或连字符引出、恰为 19xx/20xx 的四位数，且整个 token
+    没有点分版本（如 5.3 / 25.08）→ 视为年份而非型号版本。GLM-ASR-2512、
+    Hailuo-02 这类非 19/20 开头的数字仍当版本保留。
+    """
+    if not re.search(r"(?:^|[ \-])(?:19|20)\d\d(?:$|[ \-]|\b)", token):
+        return False
+    return "." not in token
+
+
+def _radar_models_from_title(title: str) -> list[str]:
+    """从单条标题抽候选型号；A 类命中即止（A 优先，避免同行 B 类重复）。"""
+    m = _RADAR_STRUCT_RE.match(title)
+    if m and any(c.isdigit() for c in m.group(1)):
+        model = m.group(1).rstrip("-_.:")
+        if not _radar_bad_model(model):
+            return [model]
+    if not _RADAR_VERB_RE.search(title):
+        return []
+    out: list[str] = []
+    for tm in _RADAR_TOKEN_RE.finditer(title):
+        tok = _radar_clean(tm.group(1))
+        if len(tok) < 3 or not any(c.isdigit() for c in tok):
+            continue
+        if _radar_bad_model(tok):
+            continue
+        out.append(tok)
+    return out
+
+
+def extract_model_releases(intel_list: list["VendorIntel"]) -> list[dict]:
+    """全量归档标题 → 按日期倒序的模型发布/上架事件（无日期条目跳过）。"""
+    events: list[dict] = []
+    seen: set[tuple[str, str]] = set()
+    for intel in intel_list:
+        for art in intel.all_news_articles:
+            if not art.date:
+                continue
+            for model in _radar_models_from_title(art.title):
+                key = (intel.vendor_id, re.sub(r"[ \-]+", " ", model.lower()))
+                if key in seen:
+                    continue
+                seen.add(key)
+                events.append({"date": art.date, "vendor_id": intel.vendor_id,
+                               "brand": intel.brand, "model": model,
+                               "url": art.url, "title": article_title_zh(art)})
+    events.sort(key=lambda e: (e["date"], e["vendor_id"]), reverse=True)
+    return events
+
+
+def write_model_releases(path: Path, events: list[dict]) -> bool:
+    """模型发布雷达索引（无时间戳：输入不变产物字节不变）。"""
+    payload = json.dumps({
+        "fields": ["date", "vendor", "brand", "model", "title", "url"],
+        "count": len(events),
+        "releases": [[e["date"], e["vendor_id"], e["brand"], e["model"],
+                      e["title"], e["url"]] for e in events],
+    }, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
+    old = path.read_text(encoding="utf-8") if path.exists() else ""
+    if payload == old:
+        return False
+    path.write_text(payload, encoding="utf-8", newline="\n")
+    return True
+
+
+# ---------------------------------------------------------------------------
 # 页面快照变化检测（仅快照、不理解语义；语义判断由 ai_review 的 LLM 完成）
 # ---------------------------------------------------------------------------
 
 SNAPSHOT_STATE = "llm-intel-state.json"
+
+#: 例行复查：每次巡检最多顺带核查几家长期未变的厂商（分批轮完存量，控免费层 RPD）
+STALE_REVIEW_PER_RUN = 4
+#: 默认例行复查周期（天）：一个厂商最久每这么久会被 AI 重新核查一次
+STALE_REVIEW_DAYS = 45
 SNAPSHOT_TEXT_LIMIT = 60_000
 
 # 只对「含事实信号的行」做快照：整页文本会混入 A/B 版位、CSRF token、时间等噪音，
@@ -3594,11 +4168,13 @@ class SnapshotState:
         self.path = root / SNAPSHOT_STATE
         self.baseline = not self.path.exists()
         try:
-            self.entries: dict[str, dict] = (
-                json.loads(self.path.read_text(encoding="utf-8"))
-                .get("sources", {})) if self.path.exists() else {}
+            data = (json.loads(self.path.read_text(encoding="utf-8"))
+                    if self.path.exists() else {})
+            self.entries: dict[str, dict] = data.get("sources", {}) or {}
+            self.reviews: dict[str, str] = data.get("reviews", {}) or {}
         except (ValueError, OSError):
             self.entries = {}
+            self.reviews = {}
         self._staged: dict[str, dict[str, dict]] = {}
         self.changed_pages: dict[str, list[PageResult]] = {}
         # 冷却中的厂商：vid -> (可重试日期, 已失败次数, 最近错误)
@@ -3673,6 +4249,17 @@ class SnapshotState:
                 if error:
                     old["ai_last_error"] = error[:160]
 
+    def mark_reviewed(self, vendor_id: str, when: str | None = None) -> None:
+        """记一次 AI 实际核查（页面变了也好、没变也好）——例行复查的时钟从这里走。"""
+        self.reviews[vendor_id] = when or date.today().isoformat()
+
+    def stale_vendors(self, vendor_ids: list[str], days: int, today: str) -> list[str]:
+        """距上次核查超过 days 天的厂商，最久未查的在前（从未核查视为最久）。"""
+        cutoff = (date.fromisoformat(today) - timedelta(days=days)).isoformat()
+        stale = [v for v in vendor_ids if self.reviews.get(v, "") <= cutoff]
+        stale.sort(key=lambda v: self.reviews.get(v, ""))
+        return stale
+
     def save(self, crawled_ids: set[str], full_run: bool) -> bool:
         # AI 未处理 / 失败的厂商保持旧哈希（未 stage 即自然保留）
         for staged in self._staged.values():
@@ -3682,7 +4269,7 @@ class SnapshotState:
             prefixes = tuple(f"{vid}|" for vid in crawled_ids)
             self.entries = {k: v for k, v in self.entries.items()
                             if k.startswith(prefixes)}
-        payload = json.dumps({"sources": self.entries},
+        payload = json.dumps({"sources": self.entries, "reviews": self.reviews},
                              ensure_ascii=False, indent=2, sort_keys=True) + "\n"
         old = self.path.read_text(encoding="utf-8") if self.path.exists() else ""
         if payload == old:
@@ -3729,6 +4316,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--only", action="append", default=[],
                         help="只巡检指定 vendor_id（可多次使用，调试用；不覆盖全局 README 与新闻总表）")
     parser.add_argument("--no-news", action="store_true", help="跳过博客 / RSS 发现")
+    parser.add_argument("--rebuild-only", action="store_true",
+                        help="不抓取网络，从磁盘产物（llm-news/*.md 归档 + llm-news-feeds.md）"
+                             "重建动态类产物：归档、llm-news-feeds.md、OPML、docs/feeds/*.xml 与索引 JSON。"
+                             "改了归档标题后本地刷新产物用这个；README 情报区需要实抓，不会被触碰。"
+                             "与 --only / --no-news 互斥")
     parser.add_argument("--no-browser", action="store_true",
                         help="禁用 Playwright 浏览器兜底（默认启用，需 pip install playwright）")
     parser.add_argument("--ai-review", action="store_true",
@@ -3736,10 +4328,36 @@ def main(argv: list[str] | None = None) -> int:
                              "（后端 AI_REVIEW_BACKEND=auto|gemini|anthropic，默认 auto："
                              "有 GEMINI_API_KEY 走 Google AI Studio，否则 ANTHROPIC_API_KEY；"
                              "可用 AI_REVIEW_MODEL 覆盖模型）")
+    parser.add_argument("--ai-titles", action="store_true",
+                        help="新收录文章的机翻标题交给 LLM 润色一次（与 --ai-review 同后端同免费层；"
+                             "润色结果写进 llm-news/ 归档后随 zh_title 机制冻结，不逐日重翻）。"
+                             "缺 key 时自动跳过并回落 Google 机翻")
+    parser.add_argument("--stale-review-days", type=int, default=STALE_REVIEW_DAYS,
+                        help=f"页面长期不变时的例行复查周期：距上次 AI 核查超过 N 天的厂商"
+                             f"即使哈希未变也进核查队列（每次最多 {STALE_REVIEW_PER_RUN} 家，"
+                             f"配合免费层 RPD）。0 = 关闭，只按页面变化核查。默认 {STALE_REVIEW_DAYS}")
+    parser.add_argument("--backfill-dates", action="store_true",
+                        help="维护模式（不巡检）：逐篇访问归档中**缺发布日期**的文章页，"
+                             "从 JSON-LD datePublished / OG / <time> 元数据回填日期；"
+                             f"单次上限 {DATE_BACKFETCH_LIMIT} 页礼貌抓取。回填后跑 --rebuild-only 刷新产物")
     args = parser.parse_args(argv)
 
     root = _repo_root()
-    (root / ".ai-changed").unlink(missing_ok=True)
+    if not args.rebuild_only:
+        (root / ".ai-changed").unlink(missing_ok=True)
+    if args.backfill_dates:
+        session = build_session()
+
+        def _fetch_article(u: str) -> str:
+            rr = session.get(u, timeout=(8.0, args.timeout))
+            rr.raise_for_status()
+            return rr.text
+        news_md = (root / args.news_md) if not Path(args.news_md).is_absolute() else Path(args.news_md)
+        print(f"[维护] 归档日期回填（只访问缺日期条目的文章页，≤{DATE_BACKFETCH_LIMIT} 页）...")
+        visited, filled = backfill_archive_dates(news_md.parent / "llm-news", _fetch_article)
+        print(f"      访问 {visited} 页，回填 {filled} 条；"
+              "请随后运行 --rebuild-only 重排归档并刷新产物。")
+        return 0
     yaml_path = (root / args.yaml).resolve() if not Path(args.yaml).is_absolute() else Path(args.yaml)
     if not yaml_path.exists():
         print(f"[fatal] 找不到 {yaml_path}", file=sys.stderr)
@@ -3758,42 +4376,59 @@ def main(argv: list[str] | None = None) -> int:
         if missing:
             print(f"[warn] --only 指定的 vendor_id 不存在: {sorted(missing)}", file=sys.stderr)
 
+    if args.rebuild_only and (args.only or args.no_news):
+        print("[fatal] --rebuild-only 与 --only / --no-news 互斥（重建本身就是全局动态产物）",
+              file=sys.stderr)
+        return 2
+
     session = build_session()
     timeout = (8.0, args.timeout)
     use_browser = not args.no_browser
-    if use_browser and not HAS_PLAYWRIGHT:
+    if use_browser and not HAS_PLAYWRIGHT and not args.rebuild_only:
         print("[info] 未安装 playwright，禁用浏览器兜底（JS/403 页面将仅标注）。"
               "安装后可自动用真实浏览器渲染：pip install playwright")
     intel_list: list[VendorIntel] = []
     snapshots = SnapshotState(root)
-    if snapshots.baseline:
+    if snapshots.baseline and not args.rebuild_only:
         print("[info] 快照状态文件不存在：本次为基线建档，只记录页面哈希，不触发 AI 核查。")
     started = time.time()
 
-    print(f"[2/4] 开始巡检（{'含博客/RSS 发现' if not args.no_news else '跳过博客/RSS'}；"
-          f"浏览器兜底 {'开' if use_browser and HAS_PLAYWRIGHT else '关'}）...")
-    with BrowserSession(enabled=use_browser) as browser:
-        for idx, vendor in enumerate(vendors, 1):
-            vid = vendor.get("id", "unknown")
-            brand = vendor.get("brand", vid)
-            v_sources = grouped.get(vid, [])
-            if args.no_news:
-                v_sources = [s for s in v_sources if s.get("type") not in NEWS_TYPES]
-            print(f"  [{idx}/{len(vendors)}] {brand} ({vid}) — {len(v_sources)} 个入口")
-            try:
-                intel = crawl_vendor(vendor, v_sources, session, args.delay,
-                                     browser=browser)
-            except Exception as exc:  # 单厂商失败不终止整体
-                print(f"    [error] 厂商巡检异常，已跳过: {type(exc).__name__}: {exc}",
-                      file=sys.stderr)
-                intel = VendorIntel(vendor_id=vid, brand=brand,
-                                    homepage=vendor.get("homepage", ""),
-                                    products=vendor.get("products") or [])
-            intel_list.append(intel)
-            changed_pages = snapshots.stage_vendor(vid, intel, ai_enabled=args.ai_review)
-            if changed_pages:
-                labels = ", ".join(sorted({p.stype for p in changed_pages}))
-                print(f"    [change] {len(changed_pages)} 个官方页面文本变化（{labels}）")
+    news_md_path = (root / args.news_md) if not Path(args.news_md).is_absolute() else Path(args.news_md)
+    feeds_dir = (root / args.feeds_dir) if not Path(args.feeds_dir).is_absolute() else Path(args.feeds_dir)
+    if args.rebuild_only:
+        print("[2/4] --rebuild-only：跳过抓取，从磁盘产物重建 ...")
+        news_text = news_md_path.read_text(encoding="utf-8") if news_md_path.exists() else ""
+        intel_list = rebuild_intel_from_disk(
+            vendors, grouped, _parse_news_md_page_states(news_text),
+            news_md_path.parent / "llm-news",
+            load_original_titles(feeds_dir / "articles.json"))
+        n_arts = sum(len(v.all_news_articles) for v in intel_list)
+        print(f"      重建 {len(intel_list)} 个厂商、{n_arts} 篇归档文章（未发起网络请求）。")
+    else:
+        print(f"[2/4] 开始巡检（{'含博客/RSS 发现' if not args.no_news else '跳过博客/RSS'}；"
+              f"浏览器兜底 {'开' if use_browser and HAS_PLAYWRIGHT else '关'}）...")
+        with BrowserSession(enabled=use_browser) as browser:
+            for idx, vendor in enumerate(vendors, 1):
+                vid = vendor.get("id", "unknown")
+                brand = vendor.get("brand", vid)
+                v_sources = grouped.get(vid, [])
+                if args.no_news:
+                    v_sources = [s for s in v_sources if s.get("type") not in NEWS_TYPES]
+                print(f"  [{idx}/{len(vendors)}] {brand} ({vid}) — {len(v_sources)} 个入口")
+                try:
+                    intel = crawl_vendor(vendor, v_sources, session, args.delay,
+                                         browser=browser)
+                except Exception as exc:  # 单厂商失败不终止整体
+                    print(f"    [error] 厂商巡检异常，已跳过: {type(exc).__name__}: {exc}",
+                          file=sys.stderr)
+                    intel = VendorIntel(vendor_id=vid, brand=brand,
+                                        homepage=vendor.get("homepage", ""),
+                                        products=vendor.get("products") or [])
+                intel_list.append(intel)
+                changed_pages = snapshots.stage_vendor(vid, intel, ai_enabled=args.ai_review)
+                if changed_pages:
+                    labels = ", ".join(sorted({p.stype for p in changed_pages}))
+                    print(f"    [change] {len(changed_pages)} 个官方页面文本变化（{labels}）")
 
     if snapshots.cooldown:
         for cid, (retry_after, n, last_err) in sorted(snapshots.cooldown.items()):
@@ -3805,9 +4440,29 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- 变化触发式 AI 核查 ----
     changed_map = snapshots.changed_pages
+    # 例行复查：页面文本长期不变 ≠ 事实不变（限时活动到期、赠金过期都不改版面）。
+    # 超过 N 天没被 AI 真正核查过的厂商也进队列；每次巡检限量，让存量厂商分批轮完。
+    forced_review: set[str] = set()
+    if (args.ai_review and not args.rebuild_only and not snapshots.baseline
+            and args.stale_review_days > 0):
+        candidates = [v.vendor_id for v in intel_list
+                      if v.vendor_id not in changed_map
+                      and any(p.ok and p.text.strip() and p.stype not in NEWS_TYPES
+                              for p in v.intel_pages)]
+        batch = snapshots.stale_vendors(candidates, args.stale_review_days,
+                                        date.today().isoformat())
+        for vid in batch[:STALE_REVIEW_PER_RUN]:
+            changed_map[vid] = []
+            forced_review.add(vid)
     ai_patches: dict[str, dict] = {}
     if changed_map:
-        print(f"      {len(changed_map)} 个厂商的官方页面发生变化。")
+        n_change = len(changed_map) - len(forced_review)
+        bits = []
+        if n_change:
+            bits.append(f"{n_change} 家页面变化")
+        if forced_review:
+            bits.append(f"{len(forced_review)} 家例行复查（超 {args.stale_review_days} 天）")
+        print(f"      待 AI 核查：{'；'.join(bits)}。")
         if not args.ai_review:
             print("      未启用 --ai-review：仅更新快照（AI 核查需在 CI 或本地带该参数运行）。")
             for intel in intel_list:
@@ -3883,6 +4538,7 @@ def main(argv: list[str] | None = None) -> int:
                         continue
                     consecutive_errors = 0
                     snapshots.commit_vendor(vid)
+                    snapshots.mark_reviewed(vid)
                     if patch.get("changed"):
                         ai_patches[vid] = patch
                         print(f"      [ai-update] {intel.brand}：{patch['summary']}")
@@ -3892,46 +4548,76 @@ def main(argv: list[str] | None = None) -> int:
                     print("      本次 AI 核查提前终止：README / 博客照常生成，事实档案未被改写。")
                 if ai_patches:
                     overlay_path = root / "profile_overrides.json"
+                    # 变更日志的「前值」必须在**应用前**取生效档案（含既有覆写）
+                    changelog_entries = []
+                    for vid, p in ai_patches.items():
+                        intel = intel_by_id[vid]
+                        base = get_provider_profile(vid, intel.brand, intel.homepage)
+                        changelog_entries.append({
+                            "vendor_id": vid, "brand": intel.brand,
+                            "summary": p.get("summary") or "官方页面事实变化",
+                            "diffs": [(f, _changelog_fmt(base.get(f)),
+                                       _changelog_fmt(v))
+                                      for f, v in (p.get("fields") or {}).items()],
+                        })
                     ai_review.apply_patches(overlay_path, ai_patches)
                     reload_overrides()
                     report = [f"{vid}: {p['summary']}" for vid, p in ai_patches.items()]
                     (root / ".ai-changed").write_text("\n".join(report) + "\n",
                                                       encoding="utf-8", newline="\n")
+                    n_cl = append_intel_changelog(
+                        root / CHANGELOG_MD, datetime.now().strftime("%Y-%m-%d"),
+                        changelog_entries)
                     print(f"      已写入 profile_overrides.json（{len(ai_patches)} 个厂商），"
-                          "README 将按新档案重渲染。")
+                          f"变更日志追加 {n_cl} 条（{CHANGELOG_MD}），README 将按新档案重渲染。")
         # 无变化厂商的 stage 也一并落盘（哈希相同，不产生内容差异）
         for intel in intel_list:
             snapshots.commit_vendor(intel.vendor_id)
-    state_changed = snapshots.save({v.vendor_id for v in intel_list},
-                                   full_run=not args.only)
-    if state_changed:
-        print(f"      快照状态已更新：{SNAPSHOT_STATE}")
+    if not args.rebuild_only:
+        state_changed = snapshots.save({v.vendor_id for v in intel_list},
+                                       full_run=not args.only)
+        if state_changed:
+            print(f"      快照状态已更新：{SNAPSHOT_STATE}")
 
-    print("      开始渲染 README ...")
-    # 自建 RSS 的对外前缀与输出目录：README 与博客总表都要引用订阅地址，
-    # 因此必须在渲染之前解析（CI 里由 GITHUB_REPOSITORY 推导 Pages 地址）。
+    # 自建 RSS 的对外前缀：README 与博客总表都要引用订阅地址，必须在渲染之前解析
+    # （CI 里由 GITHUB_REPOSITORY 推导 Pages 地址）。feeds_dir 已在 [2/4] 前算好。
     feeds_base = args.feeds_base.strip() or default_feeds_base()
-    feeds_dir = (root / args.feeds_dir) if not Path(args.feeds_dir).is_absolute() else Path(args.feeds_dir)
-    records = order_vendor_records(intel_list)
-    guide_section = render_guide_block(records)
-    section = render_intel_section(intel_list, elapsed, records, feeds_base)
-    readme_path = (root / args.readme) if not Path(args.readme).is_absolute() else Path(args.readme)
-    if args.only and readme_path.resolve() == (root / "README.md").resolve():
-        print("      [info] 当前为 --only 局部调试运行：跳过全局 README.md 覆盖重写（防止清除其他厂商档案）。"
-              "提交前请运行完整巡检以全量生成文档。")
+    if args.rebuild_only:
+        print("      [info] --rebuild-only：跳过 README 渲染与快照落盘（情报区需要实抓页面）。")
     else:
-        readme_changed = update_readme(readme_path, section, guide_section)
-        print(f"      {'已刷新' if readme_changed else '无内容变化，未改写'} {readme_path.name}")
+        print("      开始渲染 README ...")
+        records = order_vendor_records(intel_list)
+        guide_section = render_guide_block(records)
+        section = render_intel_section(intel_list, elapsed, records, feeds_base)
+        readme_path = (root / args.readme) if not Path(args.readme).is_absolute() else Path(args.readme)
+        if args.only and readme_path.resolve() == (root / "README.md").resolve():
+            print("      [info] 当前为 --only 局部调试运行：跳过全局 README.md 覆盖重写（防止清除其他厂商档案）。"
+                  "提交前请运行完整巡检以全量生成文档。")
+        else:
+            readme_changed = update_readme(readme_path, section, guide_section)
+            print(f"      {'已刷新' if readme_changed else '无内容变化，未改写'} {readme_path.name}")
 
     print(f"[4/4] 整理博客 / 动态订阅源 ...")
-    news_md_path = (root / args.news_md) if not Path(args.news_md).is_absolute() else Path(args.news_md)
     opml_path = (root / args.news_opml) if not Path(args.news_opml).is_absolute() else Path(args.news_opml)
+    title_polish = None
+    if args.ai_titles:
+        import ai_review
+        try:
+            polish_backend = ai_review.resolve_backend()
+            polish_err = ai_review.backend_config_error(polish_backend)
+        except ai_review.AiReviewError as exc:
+            polish_backend, polish_err = "", str(exc)
+        if polish_err:
+            print(f"      [ai-titles] 已禁用：{polish_err}", file=sys.stderr)
+        else:
+            title_polish = make_llm_title_polisher()
+            print(f"      [ai-titles] 新收录标题将经 {polish_backend} 润色一次（结果进归档即冻结）")
     if args.no_news:
         print("      已跳过（--no-news）")
     elif args.only and news_md_path.resolve() == (root / "llm-news-feeds.md").resolve():
         news_dir = news_md_path.parent / "llm-news"
         n_arch, n_arch_arts, n_arch_changed = write_news_archives(
-            news_dir, intel_list, clean_removed=False)
+            news_dir, intel_list, clean_removed=False, title_polish=title_polish)
         print("      [info] 当前为 --only 局部调试运行：跳过全局 llm-news-feeds.md、opml 与自建 RSS "
               "覆盖重写；"
               f"llm-news/ 已更新 {n_arch} 个对应厂商归档文件（共 {n_arch_arts} 篇文章，改写 {n_arch_changed} 个）。")
@@ -3942,7 +4628,7 @@ def main(argv: list[str] | None = None) -> int:
         # （归档保留了页面已不再链接的历史文章，实测差 1~4 篇）。
         news_dir = news_md_path.parent / "llm-news"
         n_arch, n_arch_arts, n_arch_changed = write_news_archives(
-            news_dir, intel_list, clean_removed=True)
+            news_dir, intel_list, clean_removed=True, title_polish=title_polish)
         news_changed = update_news_md(
             news_md_path,
             render_news_section(intel_list, feeds_base, merged_limit=args.rss_limit))
@@ -3961,6 +4647,11 @@ def main(argv: list[str] | None = None) -> int:
         if n_rss_skipped:
             print(f"      [warn] {n_rss_skipped} 条因发布日期缺失或晚于今天未进订阅流"
                   "（归档 .md 中仍保留）——多为源页面日期提取有误，建议核查。")
+        # 模型发布雷达：同一份「归档合并后」全量列表的免费衍生（确定性、无时间戳）
+        releases = extract_model_releases(intel_list)
+        wrote_rel = write_model_releases(feeds_dir / "model-releases.json", releases)
+        print(f"      模型发布雷达 {len(releases)} 个事件"
+              f"（{('已刷新 ' + 'model-releases.json') if wrote_rel else '无内容变化，未改写'}）")
 
     # 控制台汇总
     total = sum(len(v.intel_pages) for v in intel_list)

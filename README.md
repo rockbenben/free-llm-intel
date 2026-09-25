@@ -1,6 +1,6 @@
 # Free LLM Intel · LLM 免费额度与活动情报
 
-> 国内外 **63 家** LLM 厂商免费 API 额度、永久免费模型与限时活动的**可复现巡检库**：
+> 国内外 LLM 厂商免费 API 额度、永久免费模型与限时活动的**可复现巡检库**：
 > 不提供、不分发任何 API Key；所有数字均来自巡检脚本对**官方页面**的实时抓取，每条情报附官方链接，
 > 无法在官方页复核的旧说法一律标注「不予采信」。
 
@@ -131,9 +131,9 @@ python crawler_llm_intel.py
 python -m unittest discover
 ```
 
-常用参数：`--only <vendor_id>`（只巡检指定厂商，调试用，不覆盖全局 README）、`--no-news`（跳过博客 / RSS 归档）、`--no-browser`（禁用 playwright）、`--delay <秒>`（请求间隔，默认 0.3）、`--timeout <秒>`（超时，默认 20）、`--ai-review`（变化时调用 Google AI Studio 的 Gemini 做事实核查，详见「更新机制」）。
+常用参数：`--only <vendor_id>`（只巡检指定厂商，调试用，不覆盖全局 README）、`--no-news`（跳过博客 / RSS 归档）、`--no-browser`（禁用 playwright）、`--delay <秒>`（请求间隔，默认 0.3）、`--timeout <秒>`（超时，默认 20）、`--ai-review`（变化时调用 Google AI Studio 的 Gemini 做事实核查，详见「更新机制」）、`--ai-titles`（新收录文章的机翻标题交 LLM 润色一次）、`--rebuild-only`（不抓取，从磁盘归档重建全部动态产物）、`--backfill-dates`（维护模式：从文章页元数据回填归档缺失的发布日期）。
 
-完整巡检约需 5–15 分钟（厂商数、深度抓取的页面数与各源抓取结果见文末自动生成区块的「核心特性」行；JS 空壳与 403 页面自动走浏览器兜底），结束后自动刷新 Part 1–3 表格、博客主文档与 `llm-news/` 归档。
+完整巡检约需 5–15 分钟（厂商数、深度抓取的页面数与各源抓取结果见文末自动生成区块的「核心特性」行；JS 空壳与 403 页面自动走浏览器兜底），结束后自动刷新 Part 1–3 表格、博客主文档、`llm-news/` 归档与 `docs/feeds/` 自建 RSS / JSON 索引。
 
 > 想启用 `--ai-review`：到 [Google AI Studio](https://aistudio.google.com/apikey) 免费申请一个 API Key，设置环境变量 `GEMINI_API_KEY`（也兼容 `GOOGLE_API_KEY`）即可，默认模型 `gemini-3.8-flash`，可用 `AI_REVIEW_MODEL` 覆盖；无需安装任何额外软件。
 
@@ -142,19 +142,21 @@ python -m unittest discover
 | 文件 / 目录 | 角色 |
 |---|---|
 | `llm-intel.yaml` | **输入**：厂商清单与待巡检页面（爬虫只读不写） |
-| `provider_profiles.py` | **输入**：63 家厂商的人工档案（免费模型与额度、前置条件、特惠活动，均附官方链接） |
+| `provider_profiles.py` | **输入**：全部厂商的人工档案（免费模型与额度、前置条件、特惠活动，均附官方链接） |
 | `crawler_llm_intel.py` | 巡检引擎：抓取官方页 → 快照比对 → 变化时调用 AI 核查 → 套用档案 → 生成全部 Markdown 产物 |
 | `ai_review.py` | 变化触发的 LLM 核查（默认直连 **Google AI Studio 的 Gemini API**，可选 Anthropic）：阅读变化页面正文 + 当前档案，只输出带「页面原文逐字证据」的严格 JSON 补丁；证据无法在原文定位则整条拒绝（防幻觉） |
 | `profile_overrides.json` | AI 核查产物：对人工档案的字段级补丁（含 `_evidence` 证据、`_summary` 变更说明），经证据闸门校验后自动入库 |
-| `llm-intel-state.json` | 各官方页的文本快照哈希，用于检测「页面是否真的变了」（随仓库提交） |
+| `llm-intel-state.json` | 各官方页的文本快照哈希，用于检测「页面是否真的变了」；另存 `reviews`（每厂商最后核查日，驱动例行复查）（随仓库提交） |
+| `llm-intel-changelog.md` | **产物**（只追加）：AI 核查每日采纳的免费额度事实变化，按厂商列出前值 → 后值与摘要，最新在前——把「情报站的历史」沉淀成可回溯的日志 |
+| `docs/feeds/model-releases.json` | **产物**（确定性、无时间戳）：模型发布雷达——从动态归档标题抽取 (日期, 厂商, 模型) 事件（A 类「型号：描述」结构 + B 类发布动词 + 版本 token，宁可漏不可错）。纯数据产物，供「新模型时间线」类页面或工具接入 |
 | `.github/workflows/` | GitHub Actions 自动化工作流：每日错峰巡检、事实变动自动核查采纳、新闻与快照原子更新 |
-| `test_workflow_and_review.py` | 自动化回归测试套件：覆盖工作流合规性、补丁叠加、快照退避冷却与防抖机制 |
+| `test_workflow_and_review.py` | 自动化回归测试套件：覆盖工作流合规性、补丁叠加、快照退避冷却与防抖机制，以及标题沿用 / rebuild 产物等价 / 变更日志裁剪 / 例行复查超期判定 / 雷达抽取等守卫 |
 | `README.md` | **产物**：本文件。`LLM-GUIDE:BEGIN/END`（项目介绍后的白嫖攻略）与 `LLM-INTEL:BEGIN/END`（文末厂商总表）两个标记块全部由脚本生成；其余说明可人工编辑 |
 | `llm-news-feeds.md` / `.opml` | **产物**：博客动态主文档（每家最新 5 篇 + 全量归档链接）与 RSS 订阅清单。OPML 分三组：**官方原生源**（官网自带 RSS 的厂商）／**自建源**（官网没有原生 RSS 的厂商，只收这些，不与原生源重复）／**聚合流**（订阅这一个即可覆盖全部有动态源的厂商）；`feeds_base` 推不出来（本地运行）时只写原生源那一组 |
-| `llm-news/<vendor>.md` | **产物**：每个厂商一个文件，全量罗列该来源所有文章 |
+| `llm-news/<vendor>.md` | **产物**：每个厂商一个文件，全量罗列该来源所有文章。特殊之处：其中的中文标题会被后续巡检**识别并沿用**（不会被每日重抓的机翻冲掉），所以「人工 / AI 优化标题」只需改这里，其余产物由巡检重建（本地可用 `--rebuild-only` 立刻刷新，不等 CI）——详见 CONTRIBUTING「标题汉化与 AI 优化」 |
 | `docs/feeds/*.xml` | **产物**：自建 RSS 2.0 订阅源（`llm-news-all.xml` 合并流 + 每厂商单源），由 `docs/` 作为 GitHub Pages 发布目录对外提供，供 RSS 阅读器订阅**官方没有原生源的厂商** |
 | `docs/feeds/vendors.json` | **产物**：厂商索引（id / 名称 / 单源地址 / 篇数 / 最新日期），供浏览页列出**全部**厂商的订阅入口——合并流只收**有日期**的条目，会漏掉「文章全无日期」的厂商（如整源都拿不到日期的官网），索引把这些补齐 |
-| `docs/feeds/articles.json` | **产物**：**全量**文章索引（标题 / 链接 / 厂商 / 日期 / 原文标题），给浏览页用。当前 2600+ 条、约 520 KB —— 只有同条数合并流 XML 的**一半**（不带描述），免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里为了列表可读截到 60 字） |
+| `docs/feeds/articles.json` | **产物**：**全量**文章索引（标题 / 链接 / 厂商 / 日期 / 原文标题），给浏览页用。体积明显小于同条数的合并流 XML（不带描述），免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里为了列表可读截到 60 字）。条数随巡检变化，不在这里写死 |
 | `docs/index.html` | **页面**（人工维护，非巡检产物）：自建 RSS 的浏览页——读 `feeds/articles.json` 渲染成**全部**条目（可按厂商筛选、可搜索），顶部一键订阅、**选中某厂商时订阅地址自动切成该家的单源**；厂商清单取自 `feeds/vendors.json`（不硬编码，厂商增删不漂移）。索引缺失时退回解析 `feeds/llm-news-all.xml` 并注明，不会整页打不开。**页面不含任何数据，全靠打开时 fetch 产物**，所以 CI 跑完即自动是最新，无需重新生成 |
 | `.translate_cache.json` | 运行缓存（已 gitignore）：标题翻译结果持久化，重跑只翻译新增条目 |
 | `requirements.txt` | **配置**：Python 依赖项声明（`requests`、`PyYAML` 为必需；`playwright` pip 包随依赖安装，Chromium 内核本地可选装、CI 已装） |
@@ -168,6 +170,7 @@ python -m unittest discover
   - 默认模型 `gemini-3.8-flash`，可用 `AI_REVIEW_MODEL` 钉死其他模型；后端由 `AI_REVIEW_BACKEND=auto|gemini|anthropic` 控制（默认 auto：有 `GEMINI_API_KEY` 走 Gemini，否则尝试 `ANTHROPIC_API_KEY` 直连 Anthropic）；
   - **免费层回退**（[pricing 页](https://ai.google.dev/pricing) 核实 8 个模型免费层均可用）：首选模型 404 / 免费层未开放时自动按 `gemini-3.8-flash → gemini-3.7-flash → gemini-3.6-flash → gemini-3.5-flash → gemini-2.5-flash → gemini-3.5-flash-lite → gemini-3.1-flash-lite → gemini-2.5-flash-lite` 回退（完整 Flash 系按新到旧、Lite 系垫底，不纳入 preview 模型）；遭遇 429 短期限流（RPM/TPM，按模型独立计量）按 `Retry-After` 以 5/10/20/40 秒指数退避，退避不缓解则换下一个备选模型；判定为当日额度 RPD 耗尽（太平洋时间午夜重置，按项目共享）、备选链全部限流或多个模型连续 5xx 时**立即停止本次所有 AI 调用**；Key 无效等 400/401/403 立即报错不消耗调用；连续 3 厂商失败触发熔断；单厂商核查另受 900s 墙钟预算约束；
   - **同一变化不会反复烧额度**：① AI 判 `changed=false` 后新哈希立即落库，同一份页面文本不再二次触发；② 单厂商核查持续失败时按 1/2/4/7 天指数冷却（日志 `[ai-cooldown]`，原因记录在 `llm-intel-state.json` 的 `ai_attempts/ai_retry_after/ai_last_error`），不再每天重试；③ 所有失败路径一律**保留旧快照**，事实字段不会被改写；
+  - **例行复查**：页面文本长期不变 ≠ 事实不变（限时活动到期、赠金过期都不改版面）。距上次 AI 核查超过 `--stale-review-days`（默认 45 天）的厂商，即使哈希未变也进核查队列——每次巡检最多顺带 4 家、最久未查的优先，核查日记在 `llm-intel-state.json` 的 `reviews`；采纳的每条变化都带前值 → 后值追加进 `llm-intel-changelog.md`；
   - 未配置 Key 或网络不可用时：跳过 AI 核查并**保留旧快照**，该变化在下次巡检自动重试，事实字段不会被改写。
 - **人工回退手段**：① 不认可某次 AI 更新就 **`git revert` 那次巡检提交**（提交信息以 `chore(ai):` 开头，一眼可辨）——AI 只能改 `profile_overrides.json`，从未触碰人工基线 `provider_profiles.py`；② 也可直接删除（或编辑）`profile_overrides.json` 中对应厂商的键即恢复人工基线，证据留痕在 `_evidence`；③ 想临时停用 AI：本地不带 `--ai-review` 运行，CI 删除 `GEMINI_API_KEY` Secret 后新闻更新照常、事实变化只标记不核查。
 - **定时自动更新**：GitHub Actions（`.github/workflows/refresh-intel.yml`）默认**每天北京时间 11:19** 全量抓取（时段不是随便挑的：必须落在**北京 08:00–24:00**，否则 runner 的 UTC 日期会比北京早一天，国内厂商当天发的文章会被判为「未来日期」而丢日期；11:19 同时已过美国工作日结束点、避开整点排队、且 Gemini 额度桶是满的。改 cron 前请读 workflow 头部注释）：

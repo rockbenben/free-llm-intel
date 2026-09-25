@@ -36,8 +36,9 @@ name: refresh-intel
 # pull --rebase 会被 git 直接拒绝——"cannot pull with rebase: You have unstaged
 # changes"，以 exit 128 中断，push 根本没机会运行。
 #
-# 自建 RSS：脚本把 llm-news/ 归档同时写成 docs/feeds/*.xml（RSS 2.0，含全厂商
-# 合并流与每厂商单源），与新闻产物在同一次提交里落盘。docs/ 就是 GitHub Pages 的
+# 自建 RSS：脚本把 llm-news/ 归档同时写成 docs/feeds/ 下的产物——RSS 2.0 XML
+# （含全厂商合并流与每厂商单源）、三个 JSON 索引（vendors / articles / model-releases
+# 模型发布雷达），与新闻产物在同一次提交里落盘。docs/ 就是 GitHub Pages 的
 # 发布目录，订阅地址形如 https://<owner>.github.io/<repo>/feeds/llm-news-all.xml；
 # 该地址由脚本按 Actions 注入的 GITHUB_REPOSITORY 自动推导，fork 后无需改代码。
 # docs/.nojekyll 关闭 Jekyll 处理，保证 XML 原样输出。官方没有 RSS/Atom 的厂商
@@ -142,12 +143,12 @@ jobs:
           # 配了自定义域名就填 https://<域名>/feeds，让 feed 的 rel=self 与 <source url>
           # 直接指向规范地址，省掉从 github.io 的一次 301 跳转。
           FEEDS_BASE: ${{ vars.FEEDS_BASE }}
-        run: python crawler_llm_intel.py --ai-review --feeds-base "$FEEDS_BASE"
+        run: python crawler_llm_intel.py --ai-review --ai-titles --feeds-base "$FEEDS_BASE"
 
-      # 产物与不变量校验：跑**全部**用例（79 个）。
+      # 产物与不变量校验：跑**全部**用例。
       # 测试集由 test_workflow_and_review.ci_suite() 按「全部 − 白名单」推导：
       # 以后新增用例自动进 CI，不需要谁记得回来改这里（手写类清单必然漂移）。
-      # 白名单现为空 —— 曾经排除 TestCrawlerCleanup（它会删掉仓库根的 .ai-changed，
+      # 排除集现空（以 CI_EXCLUDED_CLASSES 为准）—— 曾经排除 TestCrawlerCleanup（它会删掉仓库根的 .ai-changed，
       # 而那是下一步 Decide commit path 的判据），后来把仓库根改成可注入的
       # `crawler_llm_intel._repo_root()`，该测试改在临时目录里跑，就不再需要排除。
       # 放在抓取之后：校验的是本次即将提交的新产物，失败即拦住提交。
@@ -159,7 +160,7 @@ jobs:
         run: |
           if [ -f .ai-changed ]; then
             echo "kind=pr" >> "$GITHUB_OUTPUT"
-            echo "AI 核查产生档案更新：将先开 PR 审核档案补丁，成功后直推快照。"
+            echo "检测到档案更新：将以 chore(ai) 提交，与快照 / 新闻一次原子推送到 main。"
             cat .ai-changed
           else
             echo "kind=direct" >> "$GITHUB_OUTPUT"
@@ -171,12 +172,12 @@ jobs:
       # 2026-09-22：原先这里是"PR 创建成功后再直推快照"的第二段，
       # 现已合并进下方 "Commit all updates"，不再分两段（分两段时中间失败会丢变更）。
 
-      # 快照、新闻、README、档案覆盖层**单次原子提交**并推送到 main。
+      # 快照、新闻、README、档案覆盖层、情报变更日志**单次原子提交**并推送到 main。
       # 2026-09-22 起不再区分「有 AI 档案更新」与「无」—— 原先前者要开 PR 等审核，
       # 现在统一走这一条路径（档案更新带 `_evidence` 页面原文摘录，可事后追溯）。
       - name: Commit all updates
         run: |
-          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds README.md profile_overrides.json
+          git add llm-intel-state.json llm-intel-changelog.md llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds README.md profile_overrides.json
           if git diff --cached --quiet; then
             echo "本次无任何内容变更。"
             exit 0

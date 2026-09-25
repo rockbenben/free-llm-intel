@@ -50,7 +50,8 @@ python crawler_llm_intel.py --only <vendor_id> --no-browser
 # 2. 确认抓取无误后，执行全量巡检生成完整 README 与博客总表（建议加 --no-news 快速生成）
 python crawler_llm_intel.py --no-browser --no-news
 
-# 3. 运行本地自动化测试套件（全部用例，含会删 .ai-changed 的 TestCrawlerCleanup）
+# 3. 运行本地自动化测试套件（全部用例；TestCrawlerCleanup 已改在临时目录里跑，
+#    不会碰仓库根的 .ai-changed）
 python -m unittest discover
 
 # 4. 确认 README 表格与相应归档文件正常后再提交
@@ -58,8 +59,8 @@ git diff README.md
 ```
 
 - **测试集有两个，别搞混**：本地用 `unittest discover`（全部）；CI 用
-  `test_workflow_and_review.ci_suite()`（全部 − `CI_EXCLUDED_CLASSES`，**当前白名单为空**，
-  即 CI 跑全部用例）。白名单机制保留着，是为了以后真有「会破坏 CI 自身状态」的用例时有地方写，
+  `test_workflow_and_review.ci_suite()`（全部 − `CI_EXCLUDED_CLASSES`，排除集是否为空以该常量为准，
+  空集即 CI 跑全部用例）。白名单机制保留着，是为了以后真有「会破坏 CI 自身状态」的用例时有地方写，
   而不是临时去改 workflow。历史上唯一进过白名单的是 `TestCrawlerCleanup`：它会删除仓库根目录的
   `.ai-changed`（workflow「Decide commit path」的判据），后来把仓库根改成可注入的
   `crawler_llm_intel._repo_root()`、该测试改在临时目录里跑，就不再需要排除。
@@ -73,8 +74,8 @@ git diff README.md
 - `llm-news-feeds.opml` 的**自建源**分组只在能推导出 Pages 前缀时（CI 注入 `GITHUB_REPOSITORY`）才会写；本地跑推不出前缀，只写「官方原生源」一组——别把本地生成的 OPML 当成线上形态。厂商**官网自带** RSS 的判断（`_native_feed_vendors`）被 OPML 与 `llm-news-feeds.md` 共用，改一处即可，不要在两处各写一遍判断。
 - `docs/feeds/*.xml` 与 `docs/feeds/vendors.json`、`docs/feeds/articles.json` 是自建 RSS 订阅源、厂商索引与**全量文章索引**（GitHub Pages 从这里发布），**只由脚本生成**。注意 `--no-news` 会跳过整条新闻链路，因此也不会刷新它们；改动了归档相关的抓取 / 排序 / 清洗逻辑时，请跑一次**不带 `--no-news`** 的巡检确认产物。新增厂商后订阅源会自动多一个 `llm-news-<vendor_id>.xml`、两个索引自动多一条，已下线厂商的旧源会被清理。
 - `docs/index.html` 是自建 RSS 的**浏览页**（读 `docs/feeds/articles.json` 列出**全部**条目，可筛选、可搜索；选中某厂商时订阅地址自动切成该家单源），**人工维护、不参与巡检**，改它不会与脚本产物冲突。页面里的厂商清单来自 `feeds/vendors.json`，**不要在页面里硬编码厂商列表**（会随厂商增删而漂移）；`docs/.nojekyll` 关闭 Jekyll，不要删除。
-- **合并流默认不限制**（`RSS_MERGED_LIMIT = 0`，收录全部有日期的条目）。曾经限 200 条，理由是「全量约 1.2 MB 会让阅读器吃力」—— **那个理由站不住**：GitHub Pages 用 gzip 传输（线上实测 `Content-Encoding: gzip`），全量 2575 条（XML 1124 KB）压缩后只有 **131 KB**。当时的判断看的是未压缩体积，别再照它把上限加回来。要限流可用 `--rss-limit N`。
-- **页面为什么还读 `articles.json` 而不是合并流**：体积只有一半（520 KB vs 1124 KB）、免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里截到 60 字是为了列表可读）。别顺手把页面「简化」成读合并流。
+- **合并流默认不限制**（`RSS_MERGED_LIMIT = 0`，收录全部有日期的条目）。曾经限 200 条，理由是「全量约 1.2 MB 会让阅读器吃力」—— **那个理由站不住**：GitHub Pages 用 gzip 传输（线上实测 `Content-Encoding: gzip`），当年那份 1124 KB 的全量 XML 压缩后只剩 131 KB。当时的判断看的是未压缩体积，别再照它把上限加回来。要限流可用 `--rss-limit N`。
+- **页面为什么还读 `articles.json` 而不是合并流**：体积明显更小（不带描述）、免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里截到 60 字是为了列表可读）。别顺手把页面「简化」成读合并流。
 - `.translate_cache.json` 是本地缓存，不要提交。
 - commit message 只描述变更内容本身。
 
@@ -166,3 +167,26 @@ README 项目介绍之后的「白嫖攻略」**不是手写 Markdown**，由爬
 
 「限时 / 易变信息」一节无需手工维护——爬虫自动扫描各档案的 `promotions`、`free_models` 等字段中的「截止 / 限量 / 限时 / limited time」关键词；片段中写明的截止/结束日期（`YYYY-MM-DD`、`YYYY年M月D日` 等）若已过当天，该片段自动剔除，因此到期活动应直接从档案字段中删除或改写为无日期表述。
 修改元数据后可用 `python crawler_llm_intel.py --only <vendor_id> --no-browser` 验证单厂商逻辑；提交前运行全量巡检生成完整攻略区块。攻略区块不含时间戳，无内容变化时产物不会被改写。
+
+## 标题汉化与 AI 优化
+
+巡检产出的中文标题按「来源」分两层，规则不同：
+
+- **每次巡检新抓到、尚未进归档的文章**：标题走 `translate_to_zh`（Google 公开接口 + `.translate_cache.json` 磁盘缓存；纯模型 id / 含型号 / 纯专名标题不翻，保留英文）。CI 端缓存不随仓库走，靠 GitHub Actions cache 续命，缓存被逐出后译文可能变化。
+- **已进归档 `llm-news/<vendor>.md` 的文章**：只要归档里该 URL 的标题已是中文，后续巡检**原样沿用**（`Article.zh_title`），不再重新翻译——每日重抓不会把译文冲掉。
+
+因此想优化某篇文章的标题（人工润色，或让 AI 对照英文原文批量重译），**唯一编辑点是 `llm-news/<vendor>.md` 里那一行**；`docs/feeds/*.xml`、`docs/feeds/articles.json`、`llm-news-feeds.md`、README 总表都是每日巡检从归档重建的产物，直接改它们等于白改。`articles.json` 的第 5 列 `original_title` 保留英文原文，是重译时的对照素材。
+
+改完归档想**本地立即刷新产物**（不等 CI、不跑全量抓取）：
+
+```bash
+python crawler_llm_intel.py --rebuild-only --feeds-base "https://free-llm-intel.aishort.top/feeds"
+```
+
+`--rebuild-only` 从 归档 `.md`（中文标题 + 文章）+ `llm-news-feeds.md`（原生 feed 状态）+ `articles.json`（英文原文）重建全部动态类产物，零网络请求；README 情报区与快照需要实抓，不触碰。个别历史上「只改了 XML 没同步归档」的条目会被拉齐成归档现状——这正是下次 CI 的产出，属修正而非漂移。
+
+归档条目若缺发布日期（源页面把日期放在 JS 里、或文章已滚出列表页），跑维护命令 `python crawler_llm_intel.py --backfill-dates`：它只访问**缺日期**条目对应的文章页，从 JSON-LD `datePublished` / `article:published_time` / `<time datetime>` 元数据回填（分批礼貌抓取，单次运行的访问数有上限，见 `DATE_BACKFETCH_LIMIT`；解不出就保留空白，绝不猜日期）。日期决定归档排序与是否进合并流，回填后同样用 `--rebuild-only` 刷新产物。
+
+**新增条目的机翻标题**：巡检带 `--ai-titles`（CI 已默认开启）时，首次收录的文章标题会交给 LLM 按「信达雅」润色一次，结果写进归档后随沿用机制冻结；LLM 失败 / 缺 key 时自动回落 Google 机翻，预算内分批调用。
+
+两个已知取舍：官方日后改文章标题，我们停在旧译文（改归档那一行即可跟进）；Google 刚机翻出来的新标题同样会被冻结——不过 CI 的 `--ai-titles` 已在冻结前先润色一轮，只有 LLM 不可用的日子才需要人工补。

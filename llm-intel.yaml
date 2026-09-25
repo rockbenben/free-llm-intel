@@ -511,11 +511,12 @@ sources:
     # （「什么是语言处理单元？」），一半是 GitHub commit 标题（`add updates (#17)`、
     # `yay first ever groq changelog entry (#1)`），情报价值低。
     # **Groq 的免费额度情报不受影响**（仍在 README 攻略与厂商总表里），这里只是不再汇聚博客动态。
-    # 官方 API 变更日志：32 条全是 API 变更（模型上下线、SDK 版本、TTS 迁移…），
-    # 代价是**该页不含日期**（日期只在 JS 渲染后出现，id 里也没有年份），
-    # 所以这些条目只进 Groq 的单厂商源、不进合并流 —— 合并流是时间流，无日期无法参与排序。
+    # 2026-09-26 从 HTML 页切到 Mintlify `.md` 端点：HTML 版的日期只存在于 JS 渲染后
+    # （条目全部无日期、进不了合并流），`.md` 是服务端渲染的纯 Markdown——
+    # 日期行 + `### 分类[标题](#锚点)`（见 extract_md_changelog），实测 34 条全带日期。
+    # 最新分节省略年份（`Apr 18`）按「新→旧排列 + 不晚于今天」回推，与页面元数据独立印证一致。
     type: changelog
-    url: https://console.groq.com/docs/changelog
+    url: https://console.groq.com/docs/changelog.md
 
   # DeepSeek
   - vendor_id: deepseek

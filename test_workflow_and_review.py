@@ -103,6 +103,8 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertNotIn("--no-browser", crawl_step.get("run", ""),
                          "CI crawler run must keep the browser fallback enabled")
         self.assertIn("--ai-review", crawl_step.get("run", ""))
+        self.assertIn("--ai-titles", crawl_step.get("run", ""),
+                      "新增标题的 AI 润色必须随巡检开启，否则机翻味标题要等人工发起")
 
         # 2026-09-22：不再有 create-pull-request 步骤（档案更新改为与快照/新闻一起直提），
         # 原「Open PR 必须早于 Commit snapshots」的顺序约束随之取消。
@@ -527,6 +529,619 @@ class TestOnlyFlagSafeguard(unittest.TestCase):
         crawler_llm_intel.write_news_archives(self.news_dir, [vendor_a], clean_removed=False)
         self.assertIn("https://a.com/insights-4", arch_path.read_text(encoding="utf-8"),
                       "读不回旧归档会让历史文章在本次没抓到时被静默丢弃")
+
+
+class TestArchiveTitleRetention(unittest.TestCase):
+    """重抓回来的英文标题必须沿用归档里已有的中文标题。
+
+    归档合并取的是**本次抓到的** Article（英文原标题），翻译走 translate_to_zh；
+    CI 端 .translate_cache.json 不随仓库走，AI 手工重译过的标题第二天就会被
+    Google 机翻冲掉（实测：「GPT-6 的提示缓存全面升级」→「更好的 GPT-6 提示缓存」）。
+    """
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.news_dir = Path(self.temp_dir.name) / "llm-news"
+        self.news_dir.mkdir(parents=True)
+        self.feeds_dir = Path(self.temp_dir.name) / "feeds"
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def _intel(self, articles):
+        return crawler_llm_intel.VendorIntel(
+            vendor_id="vendor_a", brand="Vendor A", homepage="https://a.com",
+            products=[], all_news_articles=articles)
+
+    def test_refetched_english_title_keeps_archived_chinese(self):
+        arch_path = self.news_dir / "vendor_a.md"
+        arch_path.write_text(
+            "## 全部文章（共 1 篇）\n\n"
+            "1. [GPT-6 的提示缓存全面升级](https://a.com/x)（2026-09-22）\n",
+            encoding="utf-8")
+        fresh = crawler_llm_intel.Article(
+            title="Better prompt caching for GPT-6",
+            url="https://a.com/x", date="2026-09-22")
+        intel = self._intel([fresh])
+        with mock.patch.object(
+                crawler_llm_intel, "translate_to_zh",
+                side_effect=AssertionError("沿用归档中文标题时不应再发起翻译")):
+            crawler_llm_intel.write_news_archives(self.news_dir, [intel],
+                                                  clean_removed=False)
+        content = arch_path.read_text(encoding="utf-8")
+        self.assertIn("GPT-6 的提示缓存全面升级", content,
+                      "归档已有的中文标题不得被重抓的英文原标题冲掉")
+        self.assertNotIn("Better prompt caching", content)
+
+    def test_rss_feed_uses_retained_title(self):
+        fresh = crawler_llm_intel.Article(
+            title="Better prompt caching for GPT-6",
+            url="https://a.com/x", date="2026-09-22")
+        fresh.zh_title = "GPT-6 的提示缓存全面升级"  # 模拟 write_news_archives 合并结果
+        intel = self._intel([fresh])
+        with mock.patch.object(
+                crawler_llm_intel, "translate_to_zh",
+                side_effect=AssertionError("zh_title 已给出时不应再翻译")):
+            crawler_llm_intel.write_rss_feeds(self.feeds_dir, [intel],
+                                              clean_removed=False)
+        xml = (self.feeds_dir / "llm-news-vendor_a.xml").read_text(encoding="utf-8")
+        self.assertIn("<title>GPT-6 的提示缓存全面升级</title>", xml)
+        # <description> 里的「原文标题」是刻意保留的英文副标题，不该被算作回退
+        self.assertIn("原文标题：Better prompt caching", xml)
+
+    def test_english_only_archive_title_still_translated(self):
+        """归档标题本身是英文（未汉化）时，照常走翻译，不阻断汉化。"""
+        arch_path = self.news_dir / "vendor_a.md"
+        arch_path.write_text(
+            "## 全部文章（共 1 篇）\n\n"
+            "1. [Old English Title](https://a.com/x)（2026-09-22）\n",
+            encoding="utf-8")
+        fresh = crawler_llm_intel.Article(
+            title="Old English Title", url="https://a.com/x", date="2026-09-22")
+        intel = self._intel([fresh])
+        with mock.patch.object(
+                crawler_llm_intel, "translate_to_zh",
+                return_value="旧英文标题"):
+            crawler_llm_intel.write_news_archives(self.news_dir, [intel],
+                                                  clean_removed=False)
+        self.assertIn("旧英文标题", arch_path.read_text(encoding="utf-8"))
+
+
+class TestAiTitlePolish(unittest.TestCase):
+    """--ai-titles：本轮新增标题交给 LLM 润色一次，失败回落 Google 机翻。"""
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.news_dir = Path(self.temp_dir.name) / "llm-news"
+        self.news_dir.mkdir()
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def test_parse_polish_response(self):
+        expected = ["Alpha release", "Beta release"]
+        out = crawler_llm_intel.parse_polish_response(
+            "1\t甲发布\n"      # 制表分隔
+            "2.乙发布\n"        # 点号分隔也要认
+            "3\t越界编号\n"      # 越界 → 丢
+            "废话行\n"           # 无编号 → 丢
+            "1\t重复取首个",
+            expected)
+        self.assertEqual(out["Alpha release"], "甲发布")
+        self.assertEqual(out["Beta release"], "乙发布")
+        self.assertNotIn("重复", "".join(out.values()))
+
+    def test_parse_polish_rejects_untranslated_and_runon(self):
+        expected = ["Some headline"]
+        out = crawler_llm_intel.parse_polish_response(
+            "1\tSome headline still English without any Chinese", expected)
+        self.assertEqual(out, {})
+        long_zh = "好" * 300
+        self.assertEqual(crawler_llm_intel.parse_polish_response(
+            f"1\t{long_zh}", expected), {}, "超长疑似续写解释应丢弃")
+
+    def test_polish_applied_to_new_english_items_only(self):
+        # 归档已有中文标题的旧文章 + 本轮新增一篇英文文章
+        arch_path = self.news_dir / "vendor_a.md"
+        arch_path.write_text(
+            "## 全部文章（共 1 篇）\n\n"
+            "1. [既有中文标题](https://a.com/old)（2026-09-01）\n", encoding="utf-8")
+        old_fresh = crawler_llm_intel.Article(
+            title="Existing headline", url="https://a.com/old", date="2026-09-01")
+        new_fresh = crawler_llm_intel.Article(
+            title="Brand new headline", url="https://a.com/new", date="2026-09-25")
+        vendor = crawler_llm_intel.VendorIntel(
+            vendor_id="vendor_a", brand="Vendor A", homepage="https://a.com",
+            products=[], all_news_articles=[old_fresh, new_fresh])
+        seen: list[list[str]] = []
+
+        def polish(brand, titles):
+            seen.append(list(titles))
+            return {t: f"译文{t}" for t in titles}
+
+        crawler_llm_intel.write_news_archives(self.news_dir, [vendor],
+                                              clean_removed=False, title_polish=polish)
+        self.assertEqual(seen, [["Brand new headline"]],
+                         "只应把**新增**且仍是英文的标题送润色")
+        content = arch_path.read_text(encoding="utf-8")
+        self.assertIn("译文Brand new headline", content)
+        self.assertIn("既有中文标题", content, "旧条目的归档译文不受影响")
+
+    def test_polish_failure_falls_back_to_translate(self):
+        vendor = crawler_llm_intel.VendorIntel(
+            vendor_id="vendor_a", brand="Vendor A", homepage="https://a.com",
+            products=[], all_news_articles=[crawler_llm_intel.Article(
+                title="Failing headline", url="https://a.com/x", date="2026-09-25")])
+
+        def boom(brand, titles):
+            raise RuntimeError("quota 炸了")
+
+        with mock.patch.object(crawler_llm_intel, "translate_to_zh",
+                               return_value="机翻兜底"):
+            crawler_llm_intel.write_news_archives(self.news_dir, [vendor],
+                                                  clean_removed=False,
+                                                  title_polish=boom)
+        self.assertIn("机翻兜底",
+                      (self.news_dir / "vendor_a.md").read_text(encoding="utf-8"))
+
+    def test_polisher_batches_and_respects_budget(self):
+        titles = [f"Headline number {i}" for i in range(95)]
+        calls: list[int] = []
+
+        def fake_call_llm(prompt, **kw):
+            n = prompt.count("\t")
+            calls.append(n)
+            idxs = re.findall(r"(?m)^(\d+)\t", prompt)
+            return "\n".join(f"{i}\t标题{i}" for i in idxs)
+
+        with mock.patch.object(ai_review, "call_llm", side_effect=fake_call_llm):
+            polish = crawler_llm_intel.make_llm_title_polisher(budget=50, batch=40)
+            out = polish("Brand", titles)
+        self.assertEqual(calls, [40, 10], "应按 batch 切分且总预算封顶 50")
+        self.assertEqual(len(out), 50)
+
+
+class TestModelReleaseRadar(unittest.TestCase):
+    """模型发布雷达：从归档标题抽 (厂商,模型,日期)，宁可漏不可错。"""
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp_dir.name)
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def _intel(self, articles, vid="vendor_a", brand="Vendor A"):
+        return crawler_llm_intel.VendorIntel(
+            vendor_id=vid, brand=brand, homepage=f"https://{vid}.com",
+            products=[], all_news_articles=articles)
+
+    def test_structured_model_id_from_changelog(self):
+        arts = [crawler_llm_intel.Article(
+            title="qwen3.8-omni-flash：支持实时音视频交互",
+            url="https://a.com/x", date="2026-09-17")]
+        ev = crawler_llm_intel.extract_model_releases([self._intel(arts, "aliyun_qwen")])
+        self.assertEqual([e["model"] for e in ev], ["qwen3.8-omni-flash"])
+
+    def test_english_intro_word_stripped(self):
+        ev = crawler_llm_intel.extract_model_releases([self._intel(
+            [crawler_llm_intel.Article(title="Introducing GPT-5.5",
+                                       url="https://a.com/y", date="2026-04-23")])])
+        self.assertEqual([e["model"] for e in ev], ["GPT-5.5"],
+                         "发布引导词不能落在型号开头")
+
+    def test_year_and_head_noise_rejected(self):
+        # 「ModCon 2026」只有裸年份 → 丢弃；GLM-ASR-2512 的 2512 是版本 → 保留
+        arts = [crawler_llm_intel.Article(title="ModCon 2026 大会上线", url="u1", date="2026-01-01"),
+                crawler_llm_intel.Article(title="GLM-ASR-2512 语音识别模型上线", url="u2", date="2025-12-10")]
+        models = [e["model"] for e in crawler_llm_intel.extract_model_releases([self._intel(arts)])]
+        self.assertNotIn("ModCon 2026", models)
+        self.assertIn("GLM-ASR-2512", models)
+
+    def test_dedup_by_vendor_and_model(self):
+        arts = [crawler_llm_intel.Article(title="GLM-5.2：专为长周期任务打造", url="a", date="2026-06-17"),
+                crawler_llm_intel.Article(title="GLM-5.2 新版上线", url="b", date="2026-06-18")]
+        ev = crawler_llm_intel.extract_model_releases([self._intel(arts)])
+        self.assertEqual(len(ev), 1, "同厂商同型号只保留一条（首次出现）")
+
+    def test_undated_and_no_verb_ignored(self):
+        arts = [crawler_llm_intel.Article(title="我们为什么重构了推理栈", url="a", date="2026-05-01"),
+                crawler_llm_intel.Article(title="GPT-9 发布", url="b", date="")]
+        self.assertEqual(crawler_llm_intel.extract_model_releases([self._intel(arts)]), [])
+
+    def test_write_model_releases_idempotent(self):
+        arts = [crawler_llm_intel.Article(title="Kimi K3 发布", url="https://k/3", date="2026-07-01")]
+        ev = crawler_llm_intel.extract_model_releases([self._intel(arts, "moonshot_kimi", "Kimi")])
+        p = self.root / "model-releases.json"
+        self.assertTrue(crawler_llm_intel.write_model_releases(p, ev))
+        self.assertFalse(crawler_llm_intel.write_model_releases(p, ev),
+                         "内容不变不得重写（无时间戳）")
+        data = json.loads(p.read_text(encoding="utf-8"))
+        self.assertEqual(data["fields"][0], "date")
+        self.assertEqual(data["releases"][0][1], "moonshot_kimi")
+
+
+class TestDateBackfill(unittest.TestCase):
+    """--backfill-dates 的解析器与回填写行逻辑（网络以注入的 fetch 替身）。"""
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.news = Path(self.temp_dir.name) / "llm-news"
+        self.news.mkdir()
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def test_resolver_priority_and_noise(self):
+        self.assertEqual(
+            crawler_llm_intel.resolve_article_date(
+                '<script>{"datePublished":"2026-09-24T00:00:00Z"}</script>'), "2026-09-24")
+        self.assertEqual(
+            crawler_llm_intel.resolve_article_date(
+                '<meta property="article:published_time" content="Sep 15, 2026">'), "2026-09-15")
+        self.assertEqual(
+            crawler_llm_intel.resolve_article_date('<time datetime="2026-08-01">x</time>'), "2026-08-01")
+        self.assertEqual(crawler_llm_intel.resolve_article_date(
+            '{"datePublished":"0001-01-01"}'), "", "占位年份视为噪声")
+        self.assertEqual(crawler_llm_intel.resolve_article_date("<p>无日期</p>"), "")
+
+    def test_backfill_fills_only_missing_and_rewrites_suffix(self):
+        (self.news / "v.md").write_text(
+            "## 全部文章（共 2 篇）\n\n"
+            "1. [有日期文章](https://x.com/a)（2026-09-01）\n"
+            "2. [缺日期文章](https://x.com/b)\n", encoding="utf-8")
+        calls = []
+
+        def fetch(url):
+            calls.append(url)
+            return '{"datePublished":"2026-07-19T08:00:00Z"}'
+
+        visited, filled = crawler_llm_intel.backfill_archive_dates(
+            self.news, fetch, delay=0)
+        self.assertEqual(calls, ["https://x.com/b"], "只访问缺日期的条目")
+        self.assertEqual((visited, filled), (1, 1))
+        content = (self.news / "v.md").read_text(encoding="utf-8")
+        self.assertIn("2. [缺日期文章](https://x.com/b)（2026-07-19）", content)
+        self.assertIn("1. [有日期文章](https://x.com/a)（2026-09-01）", content,
+                      "已有日期行不得被改写")
+
+    def test_backfill_respects_limit_and_swallows_errors(self):
+        lines = [f"{i+1}. [t{i}](https://x.com/{i})" for i in range(5)]
+        (self.news / "v.md").write_text(
+            "## 全部文章\n\n" + "\n".join(lines) + "\n", encoding="utf-8")
+
+        def fetch(url):
+            if url.endswith("1"):
+                raise RuntimeError("网络炸了")
+            return '<time datetime="2026-05-05">'
+
+        visited, filled = crawler_llm_intel.backfill_archive_dates(
+            self.news, fetch, limit=3, delay=0)
+        self.assertEqual(visited, 3, "不得超过单次访问上限")
+        self.assertEqual(filled, 2, "抓取失败按解不出处理，不写日期")
+
+
+class TestIntelChangelogAndStaleReview(unittest.TestCase):
+    """情报变更日志的追加/置顶/裁剪，与例行复查的超期判定。"""
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp_dir.name)
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    def _entry(self, vid="vendor_a", brand="Vendor A", summary="额度翻倍",
+               diffs=(("free_quota", "旧额度", "新额度"),)):
+        return {"vendor_id": vid, "brand": brand, "summary": summary,
+                "diffs": list(diffs)}
+
+    def test_fmt_compacts_and_truncates(self):
+        self.assertEqual(crawler_llm_intel._changelog_fmt(None), "（原无此项）")
+        self.assertEqual(crawler_llm_intel._changelog_fmt(["a", "b"]), "a、b")
+        long = crawler_llm_intel._changelog_fmt("字" * 400)
+        self.assertTrue(long.endswith("…") and len(long) <= 160)
+
+    def test_append_creates_then_merges_same_day_and_prepends_new_day(self):
+        p = self.root / crawler_llm_intel.CHANGELOG_MD
+        crawler_llm_intel.append_intel_changelog(p, "2026-09-25", [self._entry()])
+        crawler_llm_intel.append_intel_changelog(p, "2026-09-25", [
+            self._entry(vid="vendor_b", brand="Vendor B", summary="下线旧模型",
+                        diffs=[("free_models", "a、b", "a")])])
+        content = p.read_text(encoding="utf-8")
+        self.assertEqual(content.count("## 2026-09-25"), 1, "同日必须并入一个日块")
+        self.assertIn("`free_models`：a、b → a", content)
+        crawler_llm_intel.append_intel_changelog(p, "2026-09-26", [
+            self._entry(vid="vendor_c", brand="Vendor C", summary="新活动")])
+        content = p.read_text(encoding="utf-8")
+        self.assertLess(content.find("## 2026-09-26"), content.find("## 2026-09-25"),
+                        "新日块置顶（最新在前）")
+
+    def test_append_trims_oldest_days_over_budget(self):
+        p = self.root / crawler_llm_intel.CHANGELOG_MD
+        for d in range(1, 13):
+            crawler_llm_intel.append_intel_changelog(
+                p, f"2026-08-{d:02d}",
+                [self._entry(vid=f"v{i}", brand=f"V{i}") for i in range(20)])
+        content = p.read_text(encoding="utf-8")
+        n_vendors = content.count("### ")
+        self.assertLessEqual(n_vendors, crawler_llm_intel.CHANGELOG_MAX_VENDORS)
+        self.assertNotIn("## 2026-08-01", content, "超预算的最旧日块应整块裁掉")
+        self.assertIn("## 2026-08-12", content)
+
+    def test_stale_vendors_orders_oldest_first_and_covers_never_reviewed(self):
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        snaps.reviews = {"a": "2026-08-01", "b": "2026-09-20", "c": "2026-09-01"}
+        stale = snaps.stale_vendors(["a", "b", "c", "d"], days=45, today="2026-09-25")
+        # cutoff = 2026-08-11：b/c 未超期；a 超期；d 从未核查（视为最久）
+        self.assertEqual(stale, ["d", "a"])
+
+    def test_mark_reviewed_persists_in_save(self):
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        snaps.mark_reviewed("a", when="2026-09-25")
+        snaps.save({"a"}, full_run=True)
+        reloaded = crawler_llm_intel.SnapshotState(self.root)
+        self.assertEqual(reloaded.reviews.get("a"), "2026-09-25")
+
+    def test_legacy_state_without_reviews_loads(self):
+        (self.root / crawler_llm_intel.SNAPSHOT_STATE).write_text(
+            json.dumps({"sources": {"a|x|u": {"sha256": "h"}}}), encoding="utf-8")
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        self.assertEqual(snaps.reviews, {})
+        self.assertIn("a|x|u", snaps.entries)
+
+
+class TestMdChangelogExtraction(unittest.TestCase):
+    """Mintlify `.md` 变更日志抽取（groq console changelog.md 实测格式）。"""
+
+    MD = """---
+description: Track the latest updates.
+title: Changelog - GroqDocs
+---
+
+# Changelog
+
+[RSS](https://github.com/groq/groq-changelog/commits/main.atom)[Get Email Updates](https://groq.com/x)
+
+---
+
+Apr 18
+
+### Added[MiniMax M2.5 and Qwen3-VL 32B Instruct (Enterprise)](#minimax-m25)
+
+`minimaxai/minimax-m2.5` and `qwen/qwen3-vl-32b-instruct` are now available.
+
+### Changed[Python SDK v1.2.0](#python-sdk-v120)
+
+Details here.
+
+---
+
+Dec 1, 2025
+
+### Added[MCP Connectors (Beta)](#mcp-connectors-beta)
+
+Some text.
+
+#### NotADate[Kept only if heading level varies](#x)
+"""
+
+    def _page(self, raw):
+        return crawler_llm_intel.PageResult(
+            url="https://console.groq.com/docs/changelog.md",
+            stype="changelog", ok=True, raw=raw)
+
+    def test_entries_titles_anchors_dates(self):
+        arts = crawler_llm_intel.extract_md_changelog(
+            self.MD, "https://console.groq.com/docs/changelog.md", today="2026-09-26")
+        titles = [a.title for a in arts]
+        self.assertIn("MiniMax M2.5 and Qwen3-VL 32B Instruct (Enterprise)", titles)
+        self.assertIn("MCP Connectors (Beta)", titles)
+        got = {a.title: a for a in arts}
+        # 无年份的 `Apr 18` → 今年（不晚于今天）
+        self.assertEqual(got["MiniMax M2.5 and Qwen3-VL 32B Instruct (Enterprise)"].date,
+                         "2026-04-18")
+        self.assertEqual(got["MCP Connectors (Beta)"].date, "2025-12-01")
+        self.assertTrue(got["MCP Connectors (Beta)"].url.endswith("#mcp-connectors-beta"))
+        # 分类前缀（Added/Changed）不得留在标题里
+        self.assertTrue(all(not t.startswith(("Added", "Changed")) for t in titles))
+
+    def test_too_few_entries_not_trusted(self):
+        md = "# Changelog\n\n---\n\nApr 18\n\n### Added[Solo Item](#solo)\n"
+        self.assertEqual(crawler_llm_intel.extract_articles_from_page(self._page(md), max_items=100), [])
+
+    def test_html_page_skips_md_branch(self):
+        html = "<html><body><h2>2026-01-01</h2></body></html>"
+        page = crawler_llm_intel.PageResult(url="https://x.com/blog", stype="blog", ok=True, raw=html)
+        arts = crawler_llm_intel.extract_articles_from_page(page)
+        self.assertTrue(all(a.url.startswith("http") for a in arts))
+
+
+class TestRebuildOnly(unittest.TestCase):
+    """--rebuild-only：不触网，从磁盘产物重建动态类产物。
+
+    场景固化：开发者改了 llm-news/*.md 里的归档标题，本地一条命令刷新
+    RSS/索引/总表，不必等 CI、也不用手工对齐产物 diff。
+    """
+
+    YAML = """
+vendors:
+  - id: vendor_a
+    brand: Vendor A
+    homepage: https://a.com
+    products: []
+  - id: vendor_b
+    brand: Vendor B
+    homepage: https://b.com
+    products: []
+sources:
+  - vendor_id: vendor_a
+    type: blog
+    url: https://a.com/blog
+  - vendor_id: vendor_a
+    type: pricing
+    url: https://a.com/pricing
+  - vendor_id: vendor_b
+    type: feed
+    url: https://b.com/rss.xml
+"""
+
+    NEWS_MD = """# 动态总览
+
+### Vendor A (vendor_a)
+- 页面：[官方博客](https://a.com/blog)
+  - 📡 RSS/Atom：https://a.com/blog/rss.xml
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
+  1. [甲文章标题](https://a.com/1)（2026-09-01）
+  - 📄 完整文章归档（共 1 篇）：[vendor_a.md](llm-news/vendor_a.md)
+
+### Vendor B (vendor_b)
+- 📡 [RSS/Atom 订阅源](https://b.com/rss.xml)：`https://b.com/feed`
+- 📰 **最新文章**（官方源抓取于 2026-09-25，标题自动汉化）：
+  1. [乙条目标题](https://b.com/1)（2026-09-02）
+
+---
+共整理 2 个厂商的动态入口
+"""
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp_dir.name)
+        self._orig_root = crawler_llm_intel._repo_root
+        crawler_llm_intel._repo_root = lambda: self.root
+        (self.root / "llm-news").mkdir()
+        (self.root / "intel.yaml").write_text(self.YAML, encoding="utf-8")
+        (self.root / "news.md").write_text(self.NEWS_MD, encoding="utf-8")
+        (self.root / "llm-news" / "vendor_a.md").write_text(
+            "# Vendor A 文章归档\n\n## 全部文章（共 1 篇）\n\n"
+            "1. [甲文章标题](https://a.com/1)（2026-09-01）\n", encoding="utf-8")
+        (self.root / "llm-news" / "vendor_b.md").write_text(
+            "# Vendor B 文章归档\n\n## 全部文章（共 1 篇）\n\n"
+            "1. [乙条目标题](https://b.com/1)（2026-09-02）\n", encoding="utf-8")
+
+    def tearDown(self):
+        crawler_llm_intel._repo_root = self._orig_root
+        self.temp_dir.cleanup()
+
+    def test_parse_page_states_recovers_feeds_and_flags(self):
+        states = crawler_llm_intel._parse_news_md_page_states(self.NEWS_MD)
+        a = states["vendor_a"]
+        self.assertEqual(a[0]["url"], "https://a.com/blog")
+        self.assertEqual(a[0]["feeds"], ["https://a.com/blog/rss.xml"])
+        self.assertTrue(a[0]["ok"])
+        b = states["vendor_b"]
+        self.assertEqual(b[0]["url"], "https://b.com/rss.xml")
+        self.assertEqual(b[0]["final_url"], "https://b.com/feed")
+
+    def test_rebuild_intel_uses_yaml_stype_and_archives(self):
+        vendors, sources = crawler_llm_intel.parse_yaml(self.root / "intel.yaml")
+        grouped = crawler_llm_intel.group_sources_by_vendor(sources)
+        states = crawler_llm_intel._parse_news_md_page_states(self.NEWS_MD)
+        intel_list = crawler_llm_intel.rebuild_intel_from_disk(
+            vendors, grouped, states, self.root / "llm-news")
+        self.assertEqual([v.vendor_id for v in intel_list], ["vendor_a", "vendor_b"])
+        va = intel_list[0]
+        # stype 来自 yaml（非反查 label），feed 检测状态来自产物
+        self.assertEqual(va.news_pages[0].stype, "blog")
+        self.assertEqual(va.news_pages[0].feeds, ["https://a.com/blog/rss.xml"])
+        self.assertEqual([a.url for a in va.all_news_articles], ["https://a.com/1"])
+        self.assertEqual(va.news_articles[0].title, "甲文章标题")
+        # feed 型源重建后仍被判为原生源厂商
+        self.assertIn("vendor_b", crawler_llm_intel._native_feed_vendors(intel_list))
+
+    def test_rebuild_skips_yaml_removed_pages(self):
+        """产物里残留、yaml 已删除的入口不得被重建复活。"""
+        vendors, sources = crawler_llm_intel.parse_yaml(self.root / "intel.yaml")
+        sources = [s for s in sources if s["url"] != "https://a.com/blog"]
+        grouped = crawler_llm_intel.group_sources_by_vendor(sources)
+        states = crawler_llm_intel._parse_news_md_page_states(self.NEWS_MD)
+        intel_list = crawler_llm_intel.rebuild_intel_from_disk(
+            vendors, grouped, states, self.root / "llm-news")
+        va = next(v for v in intel_list if v.vendor_id == "vendor_a")
+        self.assertEqual(va.news_pages, [])
+
+    def test_rebuild_attaches_original_titles(self):
+        """英文原文从 articles.json 回填到 art.title，中文归档标题落成 zh_title。
+
+        归档 .md 只有中文显示标题；没有回填的话，RSS 的「原文标题」与索引
+        第 5 列会在 rebuild 后静默丢失。
+        """
+        feeds = self.root / "docs" / "feeds"
+        feeds.mkdir(parents=True)
+        (feeds / "articles.json").write_text(json.dumps({
+            "fields": ["title", "url", "vendor", "date", "original_title"],
+            "count": 1,
+            "articles": [["甲文章标题", "https://a.com/1", "vendor_a",
+                          "2026-09-01", "Original English Headline"]],
+        }, ensure_ascii=False), encoding="utf-8")
+        vendors, sources = crawler_llm_intel.parse_yaml(self.root / "intel.yaml")
+        grouped = crawler_llm_intel.group_sources_by_vendor(sources)
+        states = crawler_llm_intel._parse_news_md_page_states(self.NEWS_MD)
+        orig = crawler_llm_intel.load_original_titles(feeds / "articles.json")
+        intel_list = crawler_llm_intel.rebuild_intel_from_disk(
+            vendors, grouped, states, self.root / "llm-news", orig)
+        art = intel_list[0].all_news_articles[0]
+        self.assertEqual(art.zh_title, "甲文章标题")
+        self.assertEqual(art.title, "Original English Headline")
+
+    def test_rebuild_matches_md_endpoint_switch(self):
+        """换源到 `.md` 端点（groq 实测）：产物记旧 URL，归一后缀仍能富化检测到的 feed。"""
+        vendors, sources = crawler_llm_intel.parse_yaml(self.root / "intel.yaml")
+        sources = [s for s in sources if s["url"] != "https://a.com/blog"]
+        sources.append({"vendor_id": "vendor_a", "type": "blog", "url": "https://a.com/blog.md"})
+        (self.root / "intel.yaml").write_text(
+            self.YAML.replace(
+                "  - vendor_id: vendor_a\n    type: blog\n    url: https://a.com/blog\n",
+                "  - vendor_id: vendor_a\n    type: blog\n    url: https://a.com/blog.md\n"),
+            encoding="utf-8")
+        grouped = crawler_llm_intel.group_sources_by_vendor(sources)
+        states = crawler_llm_intel._parse_news_md_page_states(self.NEWS_MD)
+        intel_list = crawler_llm_intel.rebuild_intel_from_disk(
+            vendors, grouped, states, self.root / "llm-news")
+        va = next(v for v in intel_list if v.vendor_id == "vendor_a")
+        self.assertEqual(va.news_pages[0].url, "https://a.com/blog.md")
+        self.assertEqual(va.news_pages[0].feeds, ["https://a.com/blog/rss.xml"],
+                         "切换 .md 端点后不得丢失已发现的原生 feed")
+
+    def test_rebuild_includes_yaml_only_new_sources(self):
+        """yaml 新增、产物里从没有过的源：首轮即按声明建页，不必等实抓补 feeds.md。"""
+        vendors, sources = crawler_llm_intel.parse_yaml(self.root / "intel.yaml")
+        sources.append({"vendor_id": "vendor_a", "type": "news", "url": "https://a.com/press"})
+        grouped = crawler_llm_intel.group_sources_by_vendor(sources)
+        intel_list = crawler_llm_intel.rebuild_intel_from_disk(
+            vendors, grouped, {}, self.root / "llm-news")
+        va = next(v for v in intel_list if v.vendor_id == "vendor_a")
+        urls = [p.url for p in va.news_pages]
+        self.assertEqual(urls, ["https://a.com/blog", "https://a.com/press"])
+
+    def test_main_rebuild_only_touches_no_network(self):
+        """端到端守卫：rebuild 全流程不得调用抓取 / 浏览器 / 翻译接口。"""
+        with (
+            mock.patch.object(crawler_llm_intel, "crawl_vendor",
+                              side_effect=AssertionError("rebuild 不得抓取")),
+            mock.patch.object(crawler_llm_intel, "BrowserSession",
+                              side_effect=AssertionError("rebuild 不得开浏览器")),
+            mock.patch.object(crawler_llm_intel, "translate_to_zh",
+                              side_effect=AssertionError("归档中文标题不该触发翻译")),
+        ):
+            rc = crawler_llm_intel.main([
+                "--rebuild-only", "--yaml", "intel.yaml", "--news-md", "news.md",
+                "--news-opml", "news.opml"])
+        self.assertEqual(rc, 0)
+        xml = (self.root / "docs" / "feeds" / "llm-news-vendor_a.xml").read_text(
+            encoding="utf-8")
+        self.assertIn("甲文章标题", xml)
+        index = json.loads((self.root / "docs" / "feeds" / "articles.json").read_text(
+            encoding="utf-8"))
+        self.assertEqual({r[2] for r in index["articles"]}, {"vendor_a", "vendor_b"})
+        # 快照状态与 README 都不许被 rebuild 触碰
+        self.assertFalse((self.root / "llm-intel-state.json").exists())
+        self.assertFalse((self.root / "README.md").exists())
+
+    def test_rebuild_only_rejects_only_and_no_news(self):
+        rc = crawler_llm_intel.main(["--rebuild-only", "--no-news",
+                                     "--yaml", "intel.yaml"])
+        self.assertEqual(rc, 2)
 
 
 class TestNewsSectionCountConsistency(unittest.TestCase):
@@ -2387,7 +3002,7 @@ CI_EXCLUDED_CLASSES: tuple[str, ...] = ()
 
 
 def ci_suite() -> unittest.TestSuite:
-    """CI 用测试集 = 全部用例 − `CI_EXCLUDED_CLASSES`（现为全部）。
+    """CI 用测试集 = 全部用例 − `CI_EXCLUDED_CLASSES`（现为空集，即全部用例都进 CI）。
 
     刻意**从全量推导**而不是写死类名：以后新增测试类会自动进 CI，不需要谁记得回来
     改 workflow —— 手写清单的下一步就是漂移（新加的守卫静默地不在 CI 里跑，

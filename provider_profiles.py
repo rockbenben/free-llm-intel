@@ -207,12 +207,14 @@ CATEGORY_DESCRIPTIONS = {
 # ---------------------------------------------------------------------------
 VENDOR_RANK: tuple[str, ...] = (
     # 第一梯队：自有旗舰模型、全球知名度最高
-    "anthropic", "openai", "deepseek", "google_gemini", "xai_grok", "zhipu_glm",
-    "aliyun_qwen", "moonshot_kimi", "mistral", "meta_llama",
-    # 第二梯队：常用推理平台与国内主力
-    "groq", "volcengine_doubao", "minimax", "tencent_hunyuan", "baidu_qianfan",
+    # （2026-09 依据巡检证据重排：Kimi K3「迄今最强」、GLM-5.3 开源 SOTA、
+    # MiniMax-H3 全模态升入；meta_llama 因各家在架清单已无 Llama 降档）
+    "anthropic", "openai", "google_gemini", "deepseek", "aliyun_qwen",
+    "zhipu_glm", "moonshot_kimi", "xai_grok", "minimax", "mistral",
+    # 第二梯队：常用推理平台与国内主力、上新热门
+    "groq", "volcengine_doubao", "xiaomi_mimo", "tencent_hunyuan", "baidu_qianfan",
     "huggingface", "openrouter", "cloudflare_workers_ai", "cohere", "siliconflow",
-    "nvidia_nim", "xiaomi_mimo", "sensetime_sensenova", "iflytek_spark",
+    "nvidia_nim", "sensetime_sensenova", "iflytek_spark", "meta_llama",
     # 第三梯队：国内其他厂商
     "longcat_meituan", "streamlake", "unisound_shanhai", "mthreads_coding",
     "infini_ai", "ppio", "china_telecom_tianyi", "china_mobile_moma",
@@ -510,7 +512,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         ],
         "preconditions": "注册阿里云账号；免费额度按官方文档规则在百炼平台开通模型后即可使用",
         "promotions": "“云大使”返利、知识库 720 小时试用等说法无法在当前官方免费额度页复核，不予采信。",
-        "invite_reward": "**阿里云“云大使”官方页不可达**：第三方情报库所指 `k.aliyun.com/smarter/ai-distributor` 本轮无法访问；所称「推广返利 30%–45%」不予采信。",
+        "invite_reward": "**阿里云“云大使”官方页不可达**：第三方情报库所指 `k.aliyun.com/smarter/ai-distributor` 复核时无法访问；所称「推广返利 30%–45%」不予采信。",
         "notes": "建议在控制台开启“免费额度用完即停”避免超额扣费；跨区域调用不扣免费额度。",
         "links": [
             ("百炼免费额度官方文档", "https://help.aliyun.com/zh/model-studio/new-free-quota"),
@@ -1620,7 +1622,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "lingyiwanwu_01ai": {
         "category": "domestic",
         "display_name": "零一万物 01.AI (开放平台)",
-        "free_quota": "**平台疑似已关停**：据 CDP 读取官方开放平台首页公告，2026-08-03 发布下线公告、API 服务 **2026-09-03 停止**；本轮静态复核未能确认（站点为前端渲染 SPA，仅取到页面标题；Web 搜索亦无结果），故**标注为待核实而非确认事实**",
+        "free_quota": "**平台疑似已关停**：据 CDP 读取官方开放平台首页公告，2026-08-03 发布下线公告、API 服务 **2026-09-03 停止**；静态复核未能确认（站点为前端渲染 SPA，仅取到页面标题；Web 搜索亦无结果），故**标注为待核实而非确认事实**",
         "validity": "不适用（若公告属实则服务已停）",
         "free_models": [
             "Yi 系列模型与「万策」「万智」多智能体平台的模型清单需登录平台查看，公开页面无免费模型标注",
@@ -1641,7 +1643,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
             "天工系列模型目前仅见消费端（App / 网页）入口，开发者开放平台与免费 API 额度公开页均未找到",
         ],
         "preconditions": "未提供可用的公开开发者注册入口",
-        "promotions": "第三方情报库亦标注「当前可能已无标准化公开免费额度」「API 开放平台个人免费额度待确认」，与本轮复核一致。",
+        "promotions": "第三方情报库亦标注「当前可能已无标准化公开免费额度」「API 开放平台个人免费额度待确认」，与我们对官方页的复核结果一致。",
         "notes": "产品重心已转向天工 App 消费端；条目保留跟踪 API 是否恢复，暂不应进免费额度主力名单。",
         "links": [
             ("天工主站（开放平台入口跳转目标）", "https://www.tiangong.cn/"),
@@ -1675,7 +1677,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
             "产品名已由 **GenAI Inference 改为 Inference Engine**（旧路径 `/products/genai-inference` 全线 404）",
         ],
         "preconditions": "注册账号并**必须添加有效付款方式**后才能创建 Droplets 等资源（官方文档原文：\"must add a valid payment method\"）",
-        "promotions": "面向初创企业另有扶持计划（额度区间未在本轮官方页复核）。",
+        "promotions": "面向初创企业另有扶持计划（额度区间未在官方页复核）。",
         "notes": "第三方情报库所称「$200 / 60 天」**已过期，不予采信**；现行官方口径为 **$5 / 90 天且需绑卡**。**不属于 LLM 免费层**，收录意义在于给需要 GPU 的实验留一个低门槛入口。",
         "links": [
             ("Signup Credit 文档（$5 / 90 天）", "https://docs.digitalocean.com/platform/billing/signup-credit/"),
@@ -1693,7 +1695,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         ],
         "preconditions": "不适用",
         "promotions": "无。",
-        "notes": "本轮复核判定为已转型（非停服），与免费额度无关；条目保留以便下次巡检复核。",
+        "notes": "复核判定为已转型（非停服），与免费额度无关；条目保留以便下次巡检复核。",
         "links": [
             ("官方站", "https://ncompass.tech/"),
         ],
