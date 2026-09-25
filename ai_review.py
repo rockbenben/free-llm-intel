@@ -574,7 +574,7 @@ def apply_patches(overlay_path: Path, patches: dict[str, dict]) -> None:
             entry["guide_meta"] = patch["guide_meta"]
         entry["_updated"] = now
         entry["_summary"] = patch["summary"]
-        # 证据累积保留最近 20 条，便于 PR 审阅与事后追溯
+        # 证据累积保留最近 20 条，便于事后追溯
         old_ev = entry.get("_evidence", [])
         if not isinstance(old_ev, list):
             old_ev = []

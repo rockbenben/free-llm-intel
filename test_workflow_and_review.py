@@ -86,7 +86,9 @@ class TestWorkflowYaml(unittest.TestCase):
                       "CI must install Chromium: without it ~1/3 of pages are JS "
                       "shells and the README live-evidence rows lose quality "
                       "(snapshot hashes are requests-stage-only by design)")
-        self.assertIn("Sync existing AI PR overrides", step_names, "必须包含拉取并累加未合并 PR overrides 的步骤")
+        self.assertNotIn("Sync existing AI PR overrides", step_names,
+                         "旧 PR 流程的遗留分支同步步骤已退役：新流程不再产生 ai/intel-update 分支，"
+                         "留着它反而会把过期补丁灌回 main（2026-09-26 手动清理遗留分支后移除）")
         self.assertIn("Restore translate cache", step_names)
         self.assertIn("Run intel crawler", step_names)
         self.assertIn("Decide commit path", step_names)
@@ -129,29 +131,24 @@ class TestWorkflowYaml(unittest.TestCase):
                       "FEEDS_BASE 必须取自 repository variable —— 留空即退回自动推导，"
                       "fork 后无需配置")
 
-    def test_pending_pr_overrides_are_auto_adopted(self):
-        """遗留 PR 分支的 overrides 会被**自动采纳**。
+    def test_ai_profile_updates_commit_directly(self):
+        """AI 采纳的档案更新走直提：提交清单必须带上 overrides 与 README。
 
-        2026-09-22 起不再有「待审」概念：原先 direct 模式必须把同步来的 overrides
-        `git checkout HEAD --` 还原回 main HEAD，防止未审核补丁绕过 PR 闸门；
-        现在闸门取消（改为依赖「证据逐字命中页面原文」的硬校验 + `_evidence` 可追溯），
-        同步来的 overrides 应当随本次提交一起进 main —— 旧 PR 的更新就此被采纳。
+        2026-09-22 起不再有「待审 PR」；2026-09-26 起连遗留分支同步步骤也退役
+        （见 test 里对它的 NotIn 守卫），事实字段的唯一入库路径就是证据闸门 + 直提。
         """
         with open(self.workflow_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
-        steps = data["jobs"]["crawl"]["steps"]
-        by_name = {s.get("name", ""): s for s in steps}
-
-        sync = by_name["Sync existing AI PR overrides"]
-        self.assertEqual(sync.get("id"), "prsync")
-        self.assertIn('echo "synced=true"', sync.get("run", ""))
+        by_name = {s.get("name", ""): s for s in data["jobs"]["crawl"]["steps"]}
 
         commit = by_name["Commit all updates"]["run"]
         self.assertIn("profile_overrides.json", commit,
-                      "同步来的档案补丁要随本次提交进 main")
+                      "AI 采纳的档案补丁必须随巡检提交进 main")
         self.assertIn("README.md", commit, "README 按新档案重渲染，也要一起提交")
         self.assertNotIn("git checkout HEAD --", commit,
-                         "不再需要把同步来的 overrides 还原回 main HEAD")
+                         "不应再有把档案补丁还原回 main 的旧流程残留")
+        self.assertNotIn("ai/intel-update", commit,
+                         "提交流程不应再引用旧 PR 分支")
 
     def test_workflow_commits_self_hosted_feeds(self):
         """docs/feeds 是 GitHub Pages 的发布目录：提交路径必须带上它。

@@ -24,14 +24,14 @@ name: refresh-intel
 # 第 3 类变化的提交策略：**自动采纳，不开 PR 等人工审核**
 #   （2026-09-22 改：原先开 PR 等审核，但每日巡检都开 PR、没人天天去合，PR 会一直积压；
 #    而档案更新本身已有「证据逐字命中页面原文」这道硬校验，不需要再人工过一遍。）
-#   - 若远端存在遗留的 ai/intel-update 分支（旧流程留下的未合并 PR），自动拉取其
-#     overrides 累加（输出 synced=true），防止历史补丁被覆盖丢失；
 #   - 档案更新（profile_overrides.json + 重渲染的 README）与快照 / 新闻
 #     **一起原子提交**并直推 main —— 避免"先开 PR 再推快照"两段式在中间失败；
 #   - 改动全部带 `_evidence`（页面原文逐字摘录）与 `_summary`，可事后追溯；
 #     若发现更新有误，直接 revert 那次巡检提交即可。
+#   （曾有过的「同步遗留 ai/intel-update 分支」步骤已随最后一条遗留分支的清理退役，
+#    测试里有守卫防止复活——旧分支会把过期补丁灌回 main。）
 #
-# 两处提交流程的 git 顺序固定为 add -> commit -> pull --rebase -> push，不可调换：
+# 提交流程的 git 顺序固定为 add -> commit -> pull --rebase -> push，不可调换：
 # crawler 跑完后工作区必然是脏的（快照 / 新闻 / README 都已重写），此时先执行
 # pull --rebase 会被 git 直接拒绝——"cannot pull with rebase: You have unstaged
 # changes"，以 exit 128 中断，push 根本没机会运行。
@@ -106,25 +106,7 @@ jobs:
       - name: Install Playwright Chromium
         run: playwright install --with-deps chromium
 
-      # 若远端残留 ai/intel-update 分支（旧流程开过 PR 但一直没合并），拉取其 overrides
-      # 累加，防止补丁互相覆盖。2026-09-22 起不再有「待审」概念 —— 这批 overrides
-      # 会随下方 "Commit all updates" 一起提交到 main（等于自动采纳旧 PR 的更新）。
-      - name: Sync existing AI PR overrides
-        id: prsync
-        run: |
-          if git ls-remote --exit-code --heads origin ai/intel-update; then
-            echo "检测到远端存在未合并的 ai/intel-update 分支，拉取其 overrides 累加补丁..."
-            # 必须 fetch + checkout 都成功才标记 synced：否则工作区仍是 main 基线，
-            # 误标会让新补丁覆盖未合并 PR 的历史累加内容。
-            if git fetch origin ai/intel-update:origin-ai-intel-update \
-                && git checkout origin-ai-intel-update -- profile_overrides.json; then
-              echo "synced=true" >> "$GITHUB_OUTPUT"
-            else
-              echo "::warning::同步待审 PR overrides 失败：本次按 main 基线处理，未做分支累加"
-            fi
-          fi
-
-      # 复用标题翻译缓存，避免每天重新翻译 llm-news/ 的两千余篇文章。
+      # 复用标题翻译缓存，避免每天把归档里的全部标题重新机翻一遍。
       - name: Restore translate cache
         uses: actions/cache@v6
         with:

@@ -133,7 +133,7 @@ git diff README.md
 日志标记：`[warn]` 回退 / 退避提示、`[ai-quota]` 日额度终止、`[ai-outage]` 服务故障终止、`[ai-abort]` 连续失败终止、`[ai-cooldown]` 冷却跳过、`[ai-error]` 单厂商失败（保留旧快照并计入冷却）。
 
 **CI 的档案更新为自动采纳**（`.github/workflows/refresh-intel.yml`，2026-09-22 改）：
-- 巡检前若远端**残留**旧的 `ai/intel-update` 分支（旧流程开过 PR 但一直没合并），会自动同步其 `profile_overrides.json`（fetch + checkout 均成功才置 `synced=true`，失败发 warning 并按 main 基线处理）—— 这批补丁会**随本次提交一起进 main**，等于自动采纳历史 PR；
+- 旧的「同步遗留 `ai/intel-update` 分支」机制已于 2026-09-26 退役（最后一条遗留分支清理完毕）：**不要再建这个分支**——巡检不再读它，测试里有守卫防止该步骤复活；
 - 档案更新（`profile_overrides.json` + 重渲染的 README）、快照、新闻**一次原子提交**，不再分「先开 PR、再推快照」两段（两段之间失败会静默丢失事实变更）；
 - **为什么不需要人工审核**：补丁必须带**页面原文逐字证据**，无法在页面正文中逐字定位的会被整条拒绝（防幻觉）；每条改动还留 `_evidence` + `_summary`，事后可追溯，改错 `revert` 即可；
 - 页面快照随巡检同步更新到 main：同一批页面文本不会在第二天再次触发 AI，页面发生新的真实变化才会重新核查。
