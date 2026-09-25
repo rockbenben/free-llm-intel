@@ -163,6 +163,24 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertIn("docs/feeds", by_name["Commit all updates"]["run"],
                       "Commit all updates 必须提交自建 RSS 产物，否则 Pages 上的订阅源不会更新")
 
+    def test_workflow_changelog_add_is_conditional(self):
+        """llm-intel-changelog.md 要等第一次 AI 采纳档案更新才落盘，git add 必须判存在。
+
+        Regression: 2026-09-25 巡检把尚不存在的它写进无条件 add 清单，
+        `fatal: pathspec ... did not match any files` 直接 exit 128，整次巡检产物没推上去。
+        """
+        with open(self.workflow_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        by_name = {s.get("name", ""): s for s in data["jobs"]["crawl"]["steps"]}
+        commit = by_name["Commit all updates"]["run"]
+        add_lines = [line.strip() for line in commit.splitlines()
+                     if "git add" in line and "llm-intel-changelog.md" in line]
+        self.assertEqual(len(add_lines), 1,
+                         "变更日志应恰好被 add 一次")
+        self.assertRegex(add_lines[0], r"^if \[ -f ",
+                         "变更日志的 git add 必须是 `[ -f ... ]` 条件式，"
+                         "仓库初始化（首次 AI 档案更新前）时该文件不存在")
+
     def test_ci_verifies_with_ci_safe_suite(self):
         """CI 的校验步骤必须跑「全部 − 白名单」，且不得把 TestCrawlerCleanup 带进去。
 

@@ -159,7 +159,10 @@ jobs:
       # 现在统一走这一条路径（档案更新带 `_evidence` 页面原文摘录，可事后追溯）。
       - name: Commit all updates
         run: |
-          git add llm-intel-state.json llm-intel-changelog.md llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds README.md profile_overrides.json
+          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds README.md profile_overrides.json
+          # 变更日志要到第一次 AI 采纳档案更新才落盘；对不存在的路径 git add 会
+          # 以 exit 128 中断整个提交步骤（2026-09-25 巡检就是这么挂的），故先判存在。
+          if [ -f llm-intel-changelog.md ]; then git add llm-intel-changelog.md; fi
           if git diff --cached --quiet; then
             echo "本次无任何内容变更。"
             exit 0
