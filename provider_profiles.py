@@ -230,7 +230,8 @@ VENDOR_RANK: tuple[str, ...] = (
     "digitalocean_genai", "inception_labs", "inference_net", "ncompass", "mara",
     # 第六梯队：AI 编程 / Agent 工具（Part 4，内置模型免费额度；须连排放，
     # 生成器按相邻同类分组渲染 Part 标题）
-    "qoder", "codebuddy_workbuddy",
+    "qoder", "codebuddy_workbuddy", "trae", "tongyi_lingma", "comate",
+    "github_copilot", "cursor_ide", "kiro", "zed",
 )
 
 
@@ -259,6 +260,26 @@ GUIDE_META: dict[str, dict] = {
     "codebuddy_workbuddy": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
               "short": "体验版 0 元：每月 500 积分 + 限免全模型调度；国际版新用户送试用积分、每日基础积分重置",
               "tip": "「限免」条目（全模型 / 无限补全 / 99 任务）随时可能回收，以页面「限免生效中」标注为准"},
+    "trae": {"tiers": ["recurring"], "signup": "email", "scenarios": ["code"],
+             "short": "免费版每月 500 积分、所有功能均可免费使用（云端任务并发限 2）"},
+    "tongyi_lingma": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
+                      "short": "个人体验版免费：有限体验额度（含 2 周 Pro 试用 + 300 Credits）",
+                      "tip": "已并入 Qoder CN 品牌（原通义灵码）；VSC 插件停止演进，团队版覆盖范围与个人版不同"},
+    "comate": {"tiers": ["permanent", "onetime"], "signup": "email", "scenarios": ["code"],
+               "short": "个人标准版长期免费：智能补全免费 + 首次赠 ¥10 智能体请求券",
+               "tip": "智能体请求券仅首次赠送；官方另有个订阅权益调整公告，额度政策有变动风险"},
+    "github_copilot": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
+                       "short": "Free 层每月 2,000 次代码补全 + 50 次聊天请求（含 Copilot Edits）",
+                       "tip": "免费层可选模型受限（白名单制），旗舰模型需付费订阅"},
+    "cursor_ide": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
+               "short": "Hobby 免费层：Limited Agent requests + Composer 可用，免信用卡",
+               "tip": "定价页只写「Limited」不公布具体条数，实际限额以注册后控制台为准"},
+    "kiro": {"tiers": ["recurring"], "signup": "email", "scenarios": ["code"],
+             "short": "官方明写长期 Free 层：每月 50 Credits，可用开源模型 + Claude Sonnet 4.5",
+             "tip": "访问受速率限制；部分模型并非所有地区可用"},
+    "zed": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
+            "short": "Personal 档 $0 forever：2,000 次 accepted edit predictions；自带 Key 不限次",
+            "tip": "内置模型免费只覆盖编辑预测额度；跑对话/Agent 需 Pro 试用（$5 / 14 天）或 BYOK"},
     # ---- 国内 ----
     "zhipu_glm": {"tiers": ["permanent"], "scenarios": ["code", "image", "referral", "student"],
                   "short": "4.x 代 Flash 0 元（新旗舰 5.3 付费）+ 2000 万 tokens 新用户包",
@@ -435,6 +456,152 @@ PROVIDER_PROFILES: dict[str, dict] = {
             ("国内站定价页（体验版 0 元）", "https://www.codebuddy.cn/pricing/"),
             ("WorkBuddy 国际版注册下载指引（含积分说明）", "https://www.tencentcloud.com/techpedia/144275"),
             ("WorkBuddy 官网", "https://workbuddy.com/"),
+        ],
+    },
+    "trae": {
+        "category": "tools",
+        "display_name": "Trae 中国版 (字节跳动 AI IDE)",
+        "free_quota": "**免费版 ¥0/月：每月 500 积分、所有功能均可免费使用**（官方定价页原文），云端任务**支持 2 个同时执行**；付费档为 Lite ¥39~49/月（2,000 积分/月）、Pro ¥69~99/月（4,000 积分/月）起",
+        "validity": "免费积分按月发放；会员档另有「会员签到多得 1550 积分」与模型折扣（Seed-2.1 2.5 折、GLM / Deepseek-V4 5 折）",
+        "free_models": [
+            "内置模型调度 —— 免费版「所有功能均可免费使用」，以 500 积分/月计量",
+            "TraeCode / TraeWork —— 页面顶部导航列出的两条产品线均在免费功能范围内",
+        ],
+        "tier_caveats": [
+            "免费版并发云端任务限 2 个；高峰期优先响应是付费档权益",
+            "积分制的具体换算（每次请求扣多少分）定价页未披露，以控制台为准",
+        ],
+        "preconditions": "手机号 / 抖音等国内账号注册；企业版选型走火山引擎",
+        "promotions": "会员档「首月优惠」常驻（Lite 低至 ¥39、Pro 低至 ¥69）",
+        "notes": "国际版 trae.com 未在本次复核范围内，额度以中国版官方定价页为准",
+        "links": [
+            ("定价页（免费版 500 积分/月）", "https://www.trae.cn/pricing"),
+            ("官网", "https://www.trae.cn/"),
+        ],
+    },
+    "tongyi_lingma": {
+        "category": "tools",
+        "display_name": "通义灵码 / Qoder CN (阿里云)",
+        "free_quota": "**个人体验版（Free）免费**：官方计费文档原文「有限的体验额度，含为期 2 周的试用及 300 Credits」；存量「个人社区版」为免费、每月有限的补全次数及体验资源额度（仅限阿里云主账号）",
+        "validity": "Pro 试用 2 周 / 300 Credits 为一次性；社区版补全次数按月计",
+        "free_models": [
+            "代码补全 —— 个人社区版每月有限次数免费",
+            "Agent / 对话 —— 个人体验版走「有限体验额度 + 2 周 Pro 试用 + 300 Credits」",
+        ],
+        "tier_caveats": [
+            "灵码已并入 Qoder CN 品牌（全家桶 credits 体系）：个人专业版 Pro ¥59/月 2,000 Credits",
+            "VSC 插件停止演进；团队版 / Enterprise 覆盖端与个人版不同，以计费文档为准",
+        ],
+        "preconditions": "阿里云主账号登录",
+        "promotions": "公告《Qoder CN（原灵码）计费模式和价格调整》见 developer.aliyun.com/article/1757168",
+        "notes": "与已收录的 qoder（国际版 docs.qoder.com）同族但**额度政策各自独立**，本条目只覆盖国内版；国际版情报见 Qoder 条目",
+        "links": [
+            ("计费说明（个人体验版 Free）", "https://help.aliyun.com/zh/lingma/product-overview/billing-description"),
+            ("计费模式调整公告", "https://developer.aliyun.com/article/1757168"),
+        ],
+    },
+    "comate": {
+        "category": "tools",
+        "display_name": "文心快码 Comate (百度智能云)",
+        "free_quota": "**个人标准版单价免费**：官方定价文档原文「智能补全 免费」+ 模型额度「赠智能体请求券¥10（首次）」；付费档额度耗尽后可自动切换「免费Auto-Free模式」（专业版 150k tokens/h、旗舰版 500k tokens/h）",
+        "validity": "智能补全长期免费；¥10 智能体请求券为首次赠送，按订阅周期刷新、不可提前预支",
+        "free_models": [
+            "智能补全 —— 个人标准版免费不限次",
+            "智能体请求 —— 首次赠 ¥10 请求券；Auto-Free 模式在额度用尽后兜底（限付费档）",
+        ],
+        "tier_caveats": [
+            "站内有《关于个人版订阅权益调整的公告》，免费权益口径可能变动，注册前以定价文档为准",
+            "comate.baidu.com 定价页为前端渲染，正文取证以 cloud.baidu.com 文档页为准",
+        ],
+        "preconditions": "百度智能云账号（个人实名认证）",
+        "promotions": "官网不定期开展折扣活动，实际价格以官网实时显示为准（定价文档原话）",
+        "notes": "企业版另有「智能补全 永久有效」档（企业专属版），与个人版条目分开计",
+        "links": [
+            ("产品定价文档（个人版免费层）", "https://cloud.baidu.com/doc/COMATE/s/rlnvnio4a"),
+            ("官网", "https://comate.baidu.com/"),
+        ],
+    },
+    "github_copilot": {
+        "category": "tools",
+        "display_name": "GitHub Copilot Free",
+        "free_quota": "**长期免费层**：官方定价页 FAQ 原文 “GitHub Copilot Free users are limited to 2000 completions and 50 chat requests (including Copilot Edits)”（每月 2,000 次补全 + 50 次聊天请求）",
+        "validity": "按月重置",
+        "free_models": [
+            "代码补全 —— 2,000 次/月（免费）",
+            "Copilot Chat / Edits —— 50 次/月（免费）",
+        ],
+        "tier_caveats": [
+            "免费层可选模型为受限白名单，非全部模型；Autofix 等新能力按套餐区分",
+            "限额数字嵌在定价页 CMS JSON 里，正文匹配需按字符串检索",
+        ],
+        "preconditions": "GitHub 账号，无需付款方式",
+        "promotions": "Pro / Pro+ / Business / Enterprise 付费档解锁更多请求与旗舰模型",
+        "notes": "docs.github.com/copilot/get-started/plans 有同源数字表述（“2000 completions per month on Copilot Free”），可互为备份",
+        "links": [
+            ("定价页（含 Free 层 FAQ）", "https://github.com/features/copilot/plans"),
+            ("套餐文档", "https://docs.github.com/en/copilot/get-started/plans"),
+        ],
+    },
+    "cursor_ide": {
+        "category": "tools",
+        "display_name": "Cursor (AI 代码编辑器 · Hobby 免费层)",
+        "free_quota": "**Hobby 档长期免费**：官方定价页原文 “Free … ✓ No credit card required ✓ Limited Agent requests ✓ Access to Composer”——免信用卡、Agent 请求受限、可用 Composer；**具体条数定价页未公布**",
+        "validity": "免费档不限时；Pro $20/月 起为「Extended limits on Agent」的付费升级",
+        "free_models": [
+            "Agent —— Hobby 档限量请求（Limited Agent requests）",
+            "Composer —— 免费档即可访问",
+        ],
+        "tier_caveats": [
+            "「Limited」无官方数字，历史赠用额度政策变动频繁，勿按第三方转述的条数接入",
+        ],
+        "preconditions": "邮箱 / GitHub / Google 登录，无需付款方式",
+        "promotions": "Pro / Pro+ / Ultra 分档；Grok 等模型按档解锁",
+        "notes": "cursor.com 为 Next.js 渲染，关键短语出现在服务端 HTML 中，requests 可稳定命中",
+        "links": [
+            ("定价页（Hobby Free 卡）", "https://cursor.com/pricing"),
+            ("官网", "https://cursor.com/"),
+        ],
+    },
+    "kiro": {
+        "category": "tools",
+        "display_name": "Kiro (AWS 背景 Agentic IDE)",
+        "free_quota": "**官方明写长期免费层**：定价页原文 “New users can start with the perpetual Kiro Free tier, which includes 50 credits. The Free Tier includes access to open weight models and Claude Sonnet 4.5, with limits.”（每月 50 Credits，可用开源权重模型 + Claude Sonnet 4.5）",
+        "validity": "Free 档 $0/月、credits 按月计；页面 JSON-LD 标注 “Kiro Free” price 0",
+        "free_models": [
+            "开源权重模型 —— Qwen3 Coder Next、DeepSeek 3.2、MiniMax M2.1 等（Free 档可用）",
+            "Claude Sonnet 4.5 —— Free 档限量可用",
+        ],
+        "tier_caveats": [
+            "原文注明 “Access is subject to rate limits”；部分模型并非所有国家/地区可用",
+            "Pro $20/月 1,000 credits、Pro+ $40/月；加购 credits $0.04/credit",
+        ],
+        "preconditions": "社交账号或 AWS Builder ID 登录（升级付费档时首次登录发放试用）",
+        "promotions": "付费档附赠试用额度，以定价页为准",
+        "notes": "kiro.dev/pricing 为静态 HTML + JSON-LD，requests 抓取最稳定",
+        "links": [
+            ("定价页（Kiro Free）", "https://kiro.dev/pricing"),
+            ("官网", "https://kiro.dev/"),
+        ],
+    },
+    "zed": {
+        "category": "tools",
+        "display_name": "Zed (编辑器 · AI 托管额度)",
+        "free_quota": "**Personal 档 $0 forever**：定价页原文 “The next-generation code editor. Free forever. 2,000 accepted edit predictions Unlimited use with your API keys or external agents…”——内置模型免费额度为 **2,000 次被采纳的编辑预测**；自带 Key / 外接 Agent（Claude Agent、Codex CLI 等）不限次",
+        "validity": "免费档不限时；Pro 试用为 14 天或 $5 GPT-5.6 Luna 用量耗尽即止（“The trial ends when you use the $5 balance or 14 days pass”）",
+        "free_models": [
+            "编辑预测（accepted edit predictions）—— 免费 2,000 次",
+            "BYOK / 外部 Agent —— 免费编辑器内不限次使用",
+        ],
+        "tier_caveats": [
+            "内置对话/Agent 用量不在免费层内，只有编辑预测额度免费",
+            "Pro $10/月 档含更多托管用量，数字以定价页为准",
+        ],
+        "preconditions": "Zed 账号，无需付款方式",
+        "promotions": "Pro 14 天免费试用（送 $5 用量，无需信用卡）",
+        "notes": "「Free forever」指标题档定价长期 $0，非全部 AI 功能免费；试用条款里的 GPT-5.6 Luna 为当前托管模型名",
+        "links": [
+            ("定价页（Personal 免费档）", "https://zed.dev/pricing"),
+            ("官网", "https://zed.dev/"),
         ],
     },
     # ------------------ Part 1: 国内主流大模型平台 (23) ------------------

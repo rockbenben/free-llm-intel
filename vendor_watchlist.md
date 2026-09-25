@@ -35,6 +35,12 @@
 | 阶步星辰 StepFun | 「繁星计划」 | ⚠️ **待复核** — `platform.stepfun.com` 仅见 Startup / Builder Program；2026-09-26 用真实浏览器（Playwright）渲染 `docs/pricing/details` 与 `docs/quickstart/*` 仍返回 **404**（文档路径已变更），首页正文无任何免费/赠金额度字样。「Step Plan · Credit 月池」疑有额度但**官方页取不到实证**，按「宁缺毋滥」不予收录，留待路径明确后复查 |
 | Black Forest Labs (FLUX) | FLUX.2 图像模型热度 | ❌ **已排除（无免费层）** — `bfl.ai/pricing` 与 `docs.bfl.ai/` 复核：纯按量计费，FLUX 每 megapixel 收 $0.015–0.07，"1 credit = $0.01 USD"，无新用户赠金 / free tier 记载。模型虽热，但不符合本站「白嫖」判据 |
 | Perplexity (Sonar) | 「$0 起」线索 | ❌ **已排除（无免费层）** — `docs.perplexity.ai/getting-started/pricing` 复核：按次/按 token 计费（web_search $5/1k、Search API 按档位），页内 "$0.0025" 等为**单次调用单价**非免费层，未见注册赠金或永久免费档 |
+| **AI 编程工具扩充（7 家）** | 用户追问「其他的呢」 | ✅ **已收录（Part 4 工具类，2026-09-26）** — 均经 requests 直读官方定价页逐字取证：Trae 中国版（`trae.cn/pricing` 免费版每月 500 积分、所有功能均可免费使用）、通义灵码/Qoder CN（`help.aliyun.com` 计费说明：个人体验版免费含 2 周试用 + 300 Credits）、文心快码（`cloud.baidu.com` 定价文档：个人标准版补全免费 + 首次赠 ¥10 请求券）、GitHub Copilot（pricing FAQ 原文 2000 completions + 50 chat/月）、Cursor（Hobby "Limited Agent requests"，官方不公布数字、照原文收录）、Kiro（"perpetual Kiro Free tier … 50 credits"）、Zed（"$0 forever … 2,000 accepted edit predictions"）。⚠️ vendor id 用 `cursor_ide`：`cursor` 与浏览页 CSS 属性撞词，会被「浏览页不硬编码厂商 id」守卫拦下 |
+| Windsurf / Codeium | AI IDE 免费层线索 | ❌ **已排除（品牌归属不明）** — `windsurf.com/pricing` 308 永久重定向至 `devin.ai/pricing`，页面标题 "Plans and Pricing \| Devin"、全页 0 次出现 "Windsurf"；Free 卡（unlimited tab completions 等）无法在官方页确证归属，待品牌澄清后复查 |
+| Augment Code | AI IDE 免费层线索 | ❌ **已排除（无免费层）** — `augmentcode.com/pricing` 全页无 "free" 字样，仅 Standard/Business/Enterprise；"Standard includes $20 of usage every month" 是**付费随附额度**非免费层 |
+| 讯飞 iFlyCode / 星火飞码 | 编程助手免费线索 | ❌ **已排除（站点失联）** — `iflycode.xfyun.cn` DNS 无法解析，`code.iflytek.com` 与搜索仅命中第三方导航站，无任何可复核官方页；疑似产品下线或并入讯飞星火主站 |
+| iFlow CLI | 曾经的「免费用 Kimi/Qwen/DeepSeek」 | ❌ **已停服** — `cli.iflow.cn` 首页横幅原文：「iFlow CLI 将于 2026 年 4 月 17 日（北京时间）正式停止服务，请大家迁移至 Qoder」。仅作历史注记；其用户被导流至已收录的 Qoder |
+| 华为云码道（CodeArts 代码智能体） | 个人体验版免费线索 | ⚠️ **待复核** — `support.huaweicloud.com` 计费公告确认存在「个人体验版（套餐积分 + 每日签到积分）」，但**免费积分数值未在该页公示**（需登录控制台），按「额度数字必须官方页可引」暂不收录；2026-09-04 起刚切积分制，政策未稳 |
 | **小米 MiMo** | 线索入口 `platform.xiaomimimo.com` | ✅ **已收录** — 官方定价页（更新 2026-09-22）原文：**TTS 系列 `mimo-v2.5-tts` / `-voiceclone` / `-voicedesign` 限时免费**、缓存写入限时免费；语言模型（`mimo-v2.6-pro` ¥0.025/¥3/¥6 每百万 tokens 等）与 ASR **按量计费、无免费层**。新用户注册赠金 **40 天有效**（官方促销 FAQ 原文：bonus credit 可经注册或 Refer & Earn 获得），仅抵按量计费 API、不可抵 Token Plan。⚠️ 控制台前端 bundle 仍留「限时免费中，充值功能暂未开放」旧文案，与官方功能日志「2026-01-26 计费功能已上线」冲突 —— 按定价页与 Token Plan 售卖页判定为**已计费** |
 
 ---
