@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LLM 厂商动态聚合 · free-llm-intel</title>
-<meta name="description" content="汇总各 LLM 厂商官方博客 / 更新日志的新文章，标题已汉化。官方没有 RSS 的厂商也在这里。">
+<title>LLM 厂商动态 · 额度变化 · 免费额度总表 · free-llm-intel</title>
+<meta name="description" content="汇总各 LLM 厂商官方博客 / 更新日志的新文章（标题已汉化），并展示巡检采纳的额度 / 活动变化与各厂商免费额度总表。官方没有 RSS 的厂商也在这里。">
 <link rel="alternate" type="application/rss+xml" title="LLM 厂商动态（合并流）" href="feeds/llm-news-all.xml">
 <link rel="alternate" type="application/rss+xml" title="LLM 免费额度 · 新活动与新额度变化" href="feeds/llm-intel-changes.xml">
 <style>
@@ -200,7 +200,7 @@
     </div>
     <div class="chips" id="chips"></div>
     <p class="hint">
-      本页列出<strong>全部</strong>归档条目（当前 2600+ 条），读的是比合并流更省的全量索引 ——
+      本页列出<strong>全部</strong>归档条目，读的是比合并流更省的全量索引 ——
       体积只有一半，且<strong>标题不截断、还带原文标题</strong>。
       点厂商徽章或上方筛选可只看某家，<strong>订阅地址会跟着切成该家的单源</strong>。
       「每家最新 20」是摘要视图（每家只留最新 20 条），用来快速扫一遍各家动态。
@@ -574,7 +574,7 @@
   function renderChanges() {
     var rows = (changesState.rows || []).filter(function (r) {
       if (!changesState.q) return true;
-      var hay = (r[4] + ' ' + r[5] + ' ' + r[3]).toLowerCase();
+      var hay = plain(r[4] + ' ' + r[5] + ' ' + r[3]).toLowerCase();
       return hay.indexOf(changesState.q) >= 0;
     });
     var list = document.getElementById('changes-list');
@@ -599,7 +599,7 @@
       badge.textContent = r[3]; meta.appendChild(badge);
       if (r[5]) {
         var note = document.createElement('span'); note.className = 'note';
-        note.textContent = r[5].split('\n')[0];
+        note.textContent = plain(r[5].split('\n')[0]);
         meta.appendChild(note);
       }
       body.appendChild(meta); box.appendChild(d); box.appendChild(body);
