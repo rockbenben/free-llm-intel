@@ -1381,10 +1381,9 @@ sources:
   - vendor_id: codebuddy_workbuddy
     type: free_quota
     url: https://www.tencentcloud.com/techpedia/144275
-  # 国际版（codebuddy.ai）与国内站是两套独立额度；pricing 同为前端渲染，走浏览器兜底
-  - vendor_id: codebuddy_workbuddy
-    type: pricing
-    url: https://www.codebuddy.ai/pricing
+  # 国际版 codebuddy.ai 与 trae.cn 同款处置：CI 机房访问超时（2026-09-26 实测
+  # 浏览器 45s 超时 + requests ConnectTimeout），退出巡检源；双版额度差异的
+  # 逐字证据保留在档案 links，页面级复核需国内网络。
   # Part 4 扩充（2026-09-26 取证）：以下定价页均实测 requests 可直读正文，
   # 无需浏览器兜底；copilot 的数字在页面 CMS JSON 里、lingma 页注意用
   # billing-description（billing-overview 是空壳页）。

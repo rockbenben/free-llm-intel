@@ -454,7 +454,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         ],
         "preconditions": "国内站 codebuddy.cn 腾讯系账号登录；WorkBuddy 国际版 GitHub OAuth 注册，登录后自动建号并发试用积分",
         "promotions": "付费档连续包年 5.6 折；标准版 ¥70/月（原 ¥99）、高级版 ¥140（原 ¥199）限免期价格以页面为准",
-        "notes": "WorkBuddy 与 CodeBuddy 同属腾讯 CodeBuddy 家族、共用积分体系；**国内站（codebuddy.cn）与国际版（codebuddy.ai）是两套独立额度**（体验版 500 积分 vs Free 100 积分 + 每日 30）；两产品档位一致时不分开记额度",
+        "notes": "WorkBuddy 与 CodeBuddy 同属腾讯 CodeBuddy 家族、共用积分体系；**国内站（codebuddy.cn）与国际版（codebuddy.ai）是两套独立额度**（体验版 500 积分 vs Free 100 积分 + 每日 30）；codebuddy.ai 对 CI 机房 IP 超时（2026-09-26 实测），国际版证据以本页 links + 国内网络复核为准",
         "links": [
             ("国内站定价页（体验版 0 元）", "https://www.codebuddy.cn/pricing/"),
             ("国际版定价页（Free $0 + 250 欢迎积分）", "https://www.codebuddy.ai/pricing"),
