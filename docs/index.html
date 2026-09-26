@@ -6,6 +6,7 @@
 <title>LLM 厂商动态聚合 · free-llm-intel</title>
 <meta name="description" content="汇总各 LLM 厂商官方博客 / 更新日志的新文章，标题已汉化。官方没有 RSS 的厂商也在这里。">
 <link rel="alternate" type="application/rss+xml" title="LLM 厂商动态（合并流）" href="feeds/llm-news-all.xml">
+<link rel="alternate" type="application/rss+xml" title="LLM 免费额度 · 新活动与新额度变化" href="feeds/llm-intel-changes.xml">
 <style>
   :root {
     --bg: #ffffff;
@@ -94,6 +95,24 @@
   .segbtn[aria-pressed=true] { background: var(--chip-active-bg); color: var(--chip-active-fg); }
 
   .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  /* 顶层三视图：厂商动态 / 额度·活动变化 / 额度总表 */
+  .tabs { display: flex; gap: 6px; margin: 16px 0 0; }
+  .tab {
+    appearance: none; cursor: pointer; font-size: 14px; line-height: 1;
+    padding: 8px 14px; border: 1px solid var(--line); border-bottom: 0;
+    border-radius: 8px 8px 0 0; background: var(--chip-bg); color: var(--chip-fg);
+  }
+  .tab[aria-selected=true] { background: var(--bg); color: var(--fg); font-weight: 600; }
+  .pane[hidden] { display: none; }
+  .qrow { border-bottom: 1px solid var(--line); padding: 12px 4px; }
+  .qrow:last-child { border-bottom: 0; }
+  .qname { font-size: 15px; font-weight: 600; }
+  .qpart { display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 999px; background: var(--chip-bg); border: 1px solid var(--line); color: var(--chip-fg); font-size: 11.5px; font-weight: 400; }
+  .qtext { margin-top: 4px; font-size: 13.5px; }
+  .qmeta { margin-top: 5px; display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+  .kind { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11.5px; border: 1px solid var(--line); }
+  .kind.quota { background: var(--warn-bg); border-color: var(--warn-line); }
+  .kind.release { background: var(--chip-bg); color: var(--chip-fg); }
   .chip {
     appearance: none; cursor: pointer; font-size: 12.5px; line-height: 1;
     padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line);
@@ -161,6 +180,13 @@
     </div>
   </header>
 
+  <nav class="tabs" role="tablist" aria-label="视图">
+    <button type="button" class="tab" id="tab-news" role="tab" aria-selected="true">厂商动态</button>
+    <button type="button" class="tab" id="tab-changes" role="tab" aria-selected="false">额度 / 活动变化</button>
+    <button type="button" class="tab" id="tab-quotas" role="tab" aria-selected="false">额度总表</button>
+  </nav>
+
+  <div class="pane" id="pane-news">
   <div class="controls">
     <div class="row">
       <input type="search" id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
@@ -184,6 +210,25 @@
 
   <div id="msg" class="msg">正在加载聚合源…</div>
   <ul class="items" id="items"></ul>
+  </div><!-- /pane-news -->
+
+  <div class="pane" id="pane-changes" hidden>
+    <div class="controls"><div class="row">
+      <input type="search" id="cq" placeholder="搜索变化条目…" autocomplete="off" aria-label="搜索变化条目">
+      <span class="count" id="changes-count"></span>
+    </div></div>
+    <ul class="items" id="changes-list"></ul>
+    <div class="msg" id="changes-msg">加载中…</div>
+  </div>
+
+  <div class="pane" id="pane-quotas" hidden>
+    <div class="controls"><div class="row">
+      <input type="search" id="qq" placeholder="搜索厂商 / 额度关键词…" autocomplete="off" aria-label="搜索厂商">
+      <span class="count" id="quotas-count"></span>
+    </div></div>
+    <div id="quotas-list"></div>
+    <div class="msg" id="quotas-msg">加载中…</div>
+  </div>
 
   <footer>
     <h2>按厂商订阅</h2>
@@ -496,6 +541,155 @@
       el.vendorFeeds.innerHTML = '<li>（索引缺失）</li>';
     }
   }
+
+  // ---- 顶层三视图：动态（默认）/ 变化流 / 额度总表 ------------------------
+  // 后两个视图的数据同样是巡检产物（feeds/intel-changes.json、feeds/quotas.json），
+  // 点开才拉取；页面依旧零硬编码——厂商与条目全部来自 JSON。
+  var REPO = 'https://github.com/rockbenben/free-llm-intel';
+  var CHANGES = 'feeds/intel-changes.json';
+  var QUOTAS = 'feeds/quotas.json';
+  var panes = {
+    news: document.getElementById('pane-news'),
+    changes: document.getElementById('pane-changes'),
+    quotas: document.getElementById('pane-quotas')
+  };
+  var tabs = {
+    news: document.getElementById('tab-news'),
+    changes: document.getElementById('tab-changes'),
+    quotas: document.getElementById('tab-quotas')
+  };
+  function showTab(name) {
+    Object.keys(panes).forEach(function (k) {
+      panes[k].hidden = (k !== name);
+      tabs[k].setAttribute('aria-selected', String(k === name));
+    });
+    if (name === 'changes') loadChanges();
+    if (name === 'quotas') loadQuotas();
+  }
+  tabs.news.addEventListener('click', function () { showTab('news'); });
+  tabs.changes.addEventListener('click', function () { showTab('changes'); });
+  tabs.quotas.addEventListener('click', function () { showTab('quotas'); });
+
+  var changesState = { rows: null, q: '' };
+  function renderChanges() {
+    var rows = (changesState.rows || []).filter(function (r) {
+      if (!changesState.q) return true;
+      var hay = (r[4] + ' ' + r[5] + ' ' + r[3]).toLowerCase();
+      return hay.indexOf(changesState.q) >= 0;
+    });
+    var list = document.getElementById('changes-list');
+    list.innerHTML = '';
+    rows.forEach(function (r) {
+      // [date, kind, vendor, brand, title, text, url]
+      var li = document.createElement('li');
+      var box = document.createElement('div'); box.className = 'item';
+      var d = document.createElement('div'); d.className = 'date'; d.textContent = r[0];
+      var body = document.createElement('div'); body.className = 'body';
+      var t = document.createElement('div'); t.className = 'title';
+      var a = document.createElement('a');
+      a.href = r[6]; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.textContent = r[4];
+      t.appendChild(a); body.appendChild(t);
+      var meta = document.createElement('div'); meta.className = 'meta';
+      var kind = document.createElement('span');
+      kind.className = 'kind ' + r[1];
+      kind.textContent = r[1] === 'quota' ? '额度变化' : '新模型';
+      meta.appendChild(kind);
+      var badge = document.createElement('span'); badge.className = 'vendor';
+      badge.textContent = r[3]; meta.appendChild(badge);
+      if (r[5]) {
+        var note = document.createElement('span'); note.className = 'note';
+        note.textContent = r[5].split('\n')[0];
+        meta.appendChild(note);
+      }
+      body.appendChild(meta); box.appendChild(d); box.appendChild(body);
+      li.appendChild(box); list.appendChild(li);
+    });
+    document.getElementById('changes-count').textContent =
+      rows.length + ' / ' + changesState.rows.length + ' 条';
+    var msg = document.getElementById('changes-msg');
+    msg.style.display = rows.length ? 'none' : 'block';
+  }
+  function loadChanges() {
+    if (changesState.rows) { renderChanges(); return; }
+    fetch(CHANGES, { cache: 'no-cache' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (data) {
+      changesState.rows = data.items || [];
+      renderChanges();
+    }).catch(function (e) {
+      document.getElementById('changes-msg').style.display = 'block';
+      document.getElementById('changes-msg').textContent =
+        '无法读取 ' + CHANGES + '（' + e.message + '）——它随巡检生成，首次上线前可能尚不存在。';
+    });
+  }
+  document.getElementById('cq').addEventListener('input', function (ev) {
+    changesState.q = ev.target.value.trim().toLowerCase();
+    if (changesState.rows) renderChanges();
+  });
+
+  var quotasState = { rows: null, q: '' };
+  var PART_NAMES = { 1: 'Part 1 国内平台', 2: 'Part 2 国际平台', 3: 'Part 3 云平台', 4: 'Part 4 编程工具' };
+  // 档案字段含 Markdown 强调符，页面上按纯文本展示
+  function plain(s) { return String(s || '').replace(/[*`]/g, ''); }
+  function renderQuotas() {
+    var rows = (quotasState.rows || []).filter(function (v) {
+      if (!quotasState.q) return true;
+      var hay = plain(v.name + ' ' + (v.free_quota || '') + ' ' + (v.validity || '') +
+                 ' ' + (v.free_models || []).join(' ') + ' ' + (v.id || '')).toLowerCase();
+      return hay.indexOf(quotasState.q) >= 0;
+    });
+    var host = document.getElementById('quotas-list');
+    host.innerHTML = '';
+    rows.forEach(function (v) {
+      var div = document.createElement('div'); div.className = 'qrow';
+      var head = document.createElement('div'); head.className = 'qname';
+      var a = document.createElement('a');
+      a.href = REPO + '#' + v.anchor; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.textContent = v.name;
+      head.appendChild(a);
+      var part = document.createElement('span'); part.className = 'qpart';
+      part.textContent = PART_NAMES[v.part] || '';
+      head.appendChild(part);
+      div.appendChild(head);
+      if (v.free_quota) {
+        var q = document.createElement('div'); q.className = 'qtext';
+        q.textContent = plain(v.free_quota); div.appendChild(q);
+      }
+      var meta = document.createElement('div'); meta.className = 'qmeta';
+      if (v.validity) meta.appendChild(document.createTextNode('有效期：' + plain(v.validity)));
+      if (v.signup === 'card') {
+        var warn = document.createElement('span');
+        warn.className = 'kind quota'; warn.textContent = '需绑卡';
+        meta.appendChild(warn);
+      }
+      if (v.reviewed) meta.appendChild(document.createTextNode('最近核查 ' + v.reviewed));
+      div.appendChild(meta);
+      host.appendChild(div);
+    });
+    document.getElementById('quotas-count').textContent = rows.length + ' 家';
+    var msg = document.getElementById('quotas-msg');
+    msg.style.display = rows.length ? 'none' : 'block';
+  }
+  function loadQuotas() {
+    if (quotasState.rows) { renderQuotas(); return; }
+    fetch(QUOTAS, { cache: 'no-cache' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function (data) {
+      quotasState.rows = data.vendors || [];
+      renderQuotas();
+    }).catch(function (e) {
+      document.getElementById('quotas-msg').style.display = 'block';
+      document.getElementById('quotas-msg').textContent =
+        '无法读取 ' + QUOTAS + '（' + e.message + '）——它随巡检生成，首次上线前可能尚不存在。';
+    });
+  }
+  document.getElementById('qq').addEventListener('input', function (ev) {
+    quotasState.q = ev.target.value.trim().toLowerCase();
+    if (quotasState.rows) renderQuotas();
+  });
 
   el.q.addEventListener('input', function () {
     state.q = el.q.value.trim();

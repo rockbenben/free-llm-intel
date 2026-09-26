@@ -249,6 +249,7 @@ def vendor_rank_index(vendor_id: str) -> int:
 #             recurring=每日/每月重置额度 / selfhost=开源权重/自托管
 # signup:     email=邮箱或 OAuth 免信用卡 / card=需验证付款方式/绑卡
 # scenarios:  code/flagship/longctx/image/embed/deploy/credit
+# region:     cn=国内工具（Part 4 攻略表格里归入「国内」行；缺省=海外）
 # short:      一句话额度摘要，用于攻略表格（带括号补充）
 # tip:        防扣费 / 防坑提示（没有则省略）
 # ---------------------------------------------------------------------------
@@ -256,21 +257,21 @@ GUIDE_META: dict[str, dict] = {
     # AI 编程 / Agent 工具类（Part 4）
     "qoder": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
               "short": "每日可领 100 Credits + 2 周 Pro 试用送 300 Credits，Free 层不限时用基础模型",
-              "tip": "每日 Credits 需**手动领取**、过期不结转；高级额度用尽自动降级基础模型而非断供"},
-    "codebuddy_workbuddy": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
-              "short": "体验版 0 元：每月 500 积分 + 限免全模型调度；国际版新用户送试用积分、每日基础积分重置",
+              "tip": "每日 Credits 需**手动领取**（漏领当天作废）；领到手后 30 天内有效、未过期会结转；高级额度用尽自动降级基础模型而非断供"},
+    "codebuddy_workbuddy": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"], "region": "cn",
+              "short": "国内体验版 0 元：500 积分/月 + 限免全模型；国际版 Free $0：100 积分/月 + 每日 30 积分 + 注册送 250",
               "tip": "「限免」条目（全模型 / 无限补全 / 99 任务）随时可能回收，以页面「限免生效中」标注为准"},
-    "trae": {"tiers": ["recurring"], "signup": "email", "scenarios": ["code"],
+    "trae": {"tiers": ["recurring"], "signup": "email", "scenarios": ["code"], "region": "cn",
              "short": "免费版每月 500 积分、所有功能均可免费使用（云端任务并发限 2）"},
-    "tongyi_lingma": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"],
+    "tongyi_lingma": {"tiers": ["recurring", "onetime"], "signup": "email", "scenarios": ["code"], "region": "cn",
                       "short": "个人体验版免费：有限体验额度（含 2 周 Pro 试用 + 300 Credits）",
                       "tip": "已并入 Qoder CN 品牌（原通义灵码）；VSC 插件停止演进，团队版覆盖范围与个人版不同"},
-    "comate": {"tiers": ["permanent", "onetime"], "signup": "email", "scenarios": ["code"],
+    "comate": {"tiers": ["permanent", "onetime"], "signup": "email", "scenarios": ["code"], "region": "cn",
                "short": "个人标准版长期免费：智能补全免费 + 首次赠 ¥10 智能体请求券",
                "tip": "智能体请求券仅首次赠送；官方另有个订阅权益调整公告，额度政策有变动风险"},
     "github_copilot": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
                        "short": "Free 层每月 2,000 次代码补全 + 50 次聊天请求（含 Copilot Edits）",
-                       "tip": "免费层可选模型受限（白名单制），旗舰模型需付费订阅"},
+                       "tip": "免费层可选模型受限（白名单制），旗舰模型需付费订阅；在读学生 / 教师 / 热门 OSS 维护者可免费申 Copilot Pro"},
     "cursor_ide": {"tiers": ["permanent"], "signup": "email", "scenarios": ["code"],
                "short": "Hobby 免费层：Limited Agent requests + Composer 可用，免信用卡",
                "tip": "定价页只写「Limited」不公布具体条数，实际限额以注册后控制台为准"},
@@ -415,19 +416,20 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "qoder": {
         "category": "tools",
         "display_name": "Qoder (Agentic Coding Platform · 国际版)",
-        "free_quota": "**免费层 + 每日赠送**：Free 方案可用**基础模型**（用户消息条数受限）；新用户 **2 周 Pro 试用赠 300 Credits**；**自 2026-09-18 起**个人用户（免费与付费皆可）在 Qoder 桌面端**每日领取 100 Credits**，每窗口一次、**需手动领取、不结转**；Credits 用尽自动切换基础模型，不断供",
-        "validity": "每日 100 Credits 按窗口发放、未领作废；Pro 试用 2 周；订阅方案的 Credits 仅当前订阅周期有效（周期结束归零）",
+        "free_quota": "**免费层 + 每日赠送**：Free 方案可用**基础模型**（用户消息条数受限）；新用户 **2 周 Pro 试用赠 300 Credits**；**自 2026-09-18 起**个人用户（免费与付费皆可）在 Qoder 桌面端**每日领取 100 Credits**（每天 10:00 开一个领取窗口，需手动领取，漏领当天作废不补发）；**每份奖励自领取起 30 天内有效，未过期的 Credits 结转到后续天**；Credits 用尽自动切换基础模型，不断供",
+        "validity": "每日 100 Credits 自领取日 30 天内有效（未过期结转后续天，非每日清零）；Pro 试用 2 周；订阅方案的 Credits 仅当前订阅周期有效（周期结束归零）",
         "free_models": [
-            "基础模型 —— Free 方案长期可用，消息条数受限",
-            "高级（premium）模型 —— 每日领 100 Credits（2026-09-18 起）+ Pro 试用 300 Credits 抵扣",
-            "限时免费活动 —— `Qwen3.8-Flash` 限时免费、SOTA 模型限时免费体验、「经济(Efficient)」档位限时免费、补全与 NES 无限次（官方 Events 页，随活动上下线）",
+            "基础模型 —— Free 方案长期可用，消息条数受限（Free 列还含有限补全/NES 与 BYOK）",
+            "高级（premium）模型 —— 每日领 100 Credits（2026-09-18 起，官方未公布截止）+ Pro 试用 300 Credits 抵扣",
+            "限时免费活动 —— `Qwen3.8-Flash` 限免**至 2026-09-30 23:59:59**、SOTA 模型限时免费体验（按轮领取、未用过轮作废）、「经济(Efficient)」档位对付费用户限免（截止待定）（官方 Events 页）",
         ],
         "tier_caveats": [
-            "每日奖励必须手动领取，错过不补",
+            "每日奖励必须手动领取，错过不补；已领的 30 天内有效、跨日结转",
             "Pro/Pro+/Ultra 的月度 Credits（2,000/6,000/20,000）仅订阅周期内有效",
+            "一周年 Qwen3.8-Max 免费调用活动已于 2026-09-03 截止，勿按旧 repost 清单领取",
         ],
         "preconditions": "注册 Qoder 账号（GitHub / Google 等 OAuth）；每日领取需在桌面端 App 操作",
-        "promotions": "9 月开通 Pro / Pro+ 首月优惠（官方 Events）；`docs.qoder.com` Events 页汇总全部限免活动，以页面为准",
+        "promotions": "九月 Offer（events/bogo）：首次购买个人版**首月 Credits 翻倍**，续费再送 1,000 bonus Credits；premium 模型低峰折扣价（events/offpeakrate）；活动汇总见 docs.qoder.com Events 页，随上下线变动",
         "notes": "证据取自**国际版**文档 `docs.qoder.com`（正文明言「Qoder International」）；国内版（原通义灵码系）额度政策可能不同，未复核不予推断",
         "links": [
             ("定价与额度文档（含免费层表）", "https://docs.qoder.com/account/pricing"),
@@ -438,12 +440,13 @@ PROVIDER_PROFILES: dict[str, dict] = {
     "codebuddy_workbuddy": {
         "category": "tools",
         "display_name": "腾讯云 CodeBuddy / WorkBuddy (AI 编程 · 应用构建 Agent)",
-        "free_quota": "**体验版限时免费（¥0/月）**：每月 **500 积分**、Auto 模型调度**限免覆盖全模型**、代码实时补全 5000 次**限免无限次**、自动任务 3 个**限免 99 个**、创建 5 个项目；WorkBuddy 国际版：**新用户免费赠送试用积分（两周有效）**，**免费用户每日有基础积分重置**（腾讯云官网说明）",
-        "validity": "国内站体验版积分按月发放；国际版新用户试用积分两周有效、每日基础积分按日重置",
+        "free_quota": "**国内站体验版限时免费（¥0/月）**：每月 **500 积分**、Auto 模型调度**限免覆盖全模型**、代码实时补全 5000 次**限免无限次**、自动任务 3 个**限免 99 个**；**国际版（codebuddy.ai）Free $0/月**：每月 **100 积分** + **每日活跃奖励 30 积分/天（限时免费）**、5,000 次补全（限免无限次）、3 个自动任务（限免 99 个），**新用户注册即领 250 欢迎积分**；WorkBuddy 国际版：**新用户免费赠送试用积分（两周有效）**，**免费用户每日有基础积分重置**（腾讯云官网说明）",
+        "validity": "国内站体验版积分按月发放；国际版 Free 积分按月 + 每日活跃奖励按日领；WorkBuddy 新用户试用积分两周有效、每日基础积分按日重置",
         "free_models": [
-            "`Hy4 preview` —— 2026-08-28 至 09-10 两周限免体验（Agent 与复杂任务执行能力）",
+            "`Hy4 preview` —— 官方限免窗口 2026-08-28 至 09-10（**已过期**，2026-09-26 复核定价页横幅仍挂着，勿当作可用权益）",
             "Auto 模型调度 —— 体验版限免期间覆盖全部模型",
-            "代码实时补全 —— 体验版 5000 次/月，限免期间无限次",
+            "代码实时补全 —— 国内体验版 5000 次/月、国际版 Free 5,000 次，限免期间无限次",
+            "国际版 Pro $10/月（页面挂 $20 原价，约半价促销）：1,000+1,000 积分、每日活跃奖励 50 积分/天、全部模型、无限补全；另 7 天免费试用含 500 基础积分",
         ],
         "tier_caveats": [
             "「限免」条目（全模型 / 无限补全 / 99 任务）随时可能恢复原限制，以页面「限免生效中」标注为准",
@@ -451,32 +454,37 @@ PROVIDER_PROFILES: dict[str, dict] = {
         ],
         "preconditions": "国内站 codebuddy.cn 腾讯系账号登录；WorkBuddy 国际版 GitHub OAuth 注册，登录后自动建号并发试用积分",
         "promotions": "付费档连续包年 5.6 折；标准版 ¥70/月（原 ¥99）、高级版 ¥140（原 ¥199）限免期价格以页面为准",
-        "notes": "WorkBuddy 与 CodeBuddy 同属腾讯 CodeBuddy 家族、共用积分体系；两产品档位一致时不分开记额度",
+        "notes": "WorkBuddy 与 CodeBuddy 同属腾讯 CodeBuddy 家族、共用积分体系；**国内站（codebuddy.cn）与国际版（codebuddy.ai）是两套独立额度**（体验版 500 积分 vs Free 100 积分 + 每日 30）；两产品档位一致时不分开记额度",
         "links": [
             ("国内站定价页（体验版 0 元）", "https://www.codebuddy.cn/pricing/"),
+            ("国际版定价页（Free $0 + 250 欢迎积分）", "https://www.codebuddy.ai/pricing"),
             ("WorkBuddy 国际版注册下载指引（含积分说明）", "https://www.tencentcloud.com/techpedia/144275"),
             ("WorkBuddy 官网", "https://workbuddy.com/"),
         ],
     },
     "trae": {
         "category": "tools",
-        "display_name": "Trae 中国版 (字节跳动 AI IDE)",
-        "free_quota": "**免费版 ¥0/月：每月 500 积分、所有功能均可免费使用**（官方定价页原文），云端任务**支持 2 个同时执行**；付费档为 Lite ¥39~49/月（2,000 积分/月）、Pro ¥69~99/月（4,000 积分/月）起",
-        "validity": "免费积分按月发放；会员档另有「会员签到多得 1550 积分」与模型折扣（Seed-2.1 2.5 折、GLM / Deepseek-V4 5 折）",
+        "display_name": "Trae (字节跳动 AI IDE · 中国版为主)",
+        "free_quota": "**中国版免费版 ¥0/月：每月 500 积分、所有功能均可免费使用**（官方定价页原文），云端任务**支持 2 个同时执行**；付费档为 Lite ¥39~49/月（2,000 积分/月）、Pro ¥69~99/月（4,000 积分/月）起。国际版（trae.ai）2026-09-26 实测**可见定价卡从 Lite $3/月起、无 Free 卡**，免费情况待核实（见 notes）",
+        "validity": "中国版免费积分按月发放；会员档另有「会员签到多得 1550 积分」与模型折扣（Seed-2.1 2.5 折、GLM / Deepseek-V4 5 折）",
         "free_models": [
-            "内置模型调度 —— 免费版「所有功能均可免费使用」，以 500 积分/月计量",
+            "内置模型调度 —— 中国版免费版「所有功能均可免费使用」，以 500 积分/月计量",
             "TraeCode / TraeWork —— 页面顶部导航列出的两条产品线均在免费功能范围内",
         ],
         "tier_caveats": [
-            "免费版并发云端任务限 2 个；高峰期优先响应是付费档权益",
+            "中国版免费版并发云端任务限 2 个；高峰期优先响应是付费档权益",
             "积分制的具体换算（每次请求扣多少分）定价页未披露，以控制台为准",
+            "国际版可见定价（Lite $3 起、Pro 首月 $0 促销）与中国版额度体系完全不同，别按中国版口径接入",
         ],
-        "preconditions": "手机号 / 抖音等国内账号注册；企业版选型走火山引擎",
-        "promotions": "会员档「首月优惠」常驻（Lite 低至 ¥39、Pro 低至 ¥69）",
-        "notes": "国际版 trae.com 未在本次复核范围内，额度以中国版官方定价页为准",
+        "preconditions": "中国版手机号 / 抖音等国内账号注册；企业版选型走火山引擎",
+        "promotions": "中国版会员档「首月优惠」常驻（Lite 低至 ¥39、Pro 低至 ¥69）；国际版 2026-09-26 观察：Lite 挂 $3/月、Pro 首月 $0（原价 $10），属限时促销、以页面为准",
+        "notes": "巡检源用国际版 `trae.ai/pricing`（CI 可巡，SPA 走浏览器兜底）；**trae.cn 对机房 IP 一律 403**，"
+                 "中国版证据由国内网络复核、以本页 links 为出处。国际版页面自相矛盾待核实："
+                 "可见卡区无 Free 档，但页面内嵌数据仍带 Free 方案（advanced 模型 1,000 次/月、补全 5,000、premium 快 10 + 慢 50）与「Get started for Free」描述——按「以页面可见为准」不采信为免费层",
         "links": [
-            ("定价页（免费版 500 积分/月）", "https://www.trae.cn/pricing"),
-            ("官网", "https://www.trae.cn/"),
+            ("中国版定价页（免费版 500 积分/月）", "https://www.trae.cn/pricing"),
+            ("国际版定价页（巡检源）", "https://www.trae.ai/pricing"),
+            ("中国版官网", "https://www.trae.cn/"),
         ],
     },
     "tongyi_lingma": {
@@ -491,6 +499,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         "tier_caveats": [
             "灵码已并入 Qoder CN 品牌（全家桶 credits 体系）：个人专业版 Pro ¥59/月 2,000 Credits",
             "VSC 插件停止演进；团队版 / Enterprise 覆盖端与个人版不同，以计费文档为准",
+            "旧「个人专业版限时免费」活动已于 2026-05-20 结束（存量转个人社区版）——第三方仍流传的「Pro 免费版」说法自该日起不予采信",
         ],
         "preconditions": "阿里云主账号登录",
         "promotions": "公告《Qoder CN（原灵码）计费模式和价格调整》见 developer.aliyun.com/article/1757168",
@@ -514,7 +523,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
             "comate.baidu.com 定价页为前端渲染，正文取证以 cloud.baidu.com 文档页为准",
         ],
         "preconditions": "百度智能云账号（个人实名认证）",
-        "promotions": "官网不定期开展折扣活动，实际价格以官网实时显示为准（定价文档原话）",
+        "promotions": "站内另有《「首约会员」新用户专享活动》公告（细节见百度智能云公告页）；官网不定期开展折扣活动，实际价格以官网实时显示为准（定价文档原话）",
         "notes": "企业版另有「智能补全 永久有效」档（企业专属版），与个人版条目分开计",
         "links": [
             ("产品定价文档（个人版免费层）", "https://cloud.baidu.com/doc/COMATE/s/rlnvnio4a"),
@@ -535,11 +544,11 @@ PROVIDER_PROFILES: dict[str, dict] = {
             "限额数字嵌在定价页 CMS JSON 里，正文匹配需按字符串检索",
         ],
         "preconditions": "GitHub 账号，无需付款方式",
-        "promotions": "Pro / Pro+ / Business / Enterprise 付费档解锁更多请求与旗舰模型",
+        "promotions": "**已验证的学生、教师与热门开源项目维护者可有资格免费获得 Copilot Pro**（套餐文档原文：Verified teachers, and maintainers of popular open source projects may be eligible for free access to Copilot Pro）；付费 Pro / Pro+ / Business / Enterprise 档解锁更多请求与旗舰模型",
         "notes": "docs.github.com/copilot/get-started/plans 有同源数字表述（“2000 completions per month on Copilot Free”），可互为备份",
         "links": [
             ("定价页（含 Free 层 FAQ）", "https://github.com/features/copilot/plans"),
-            ("套餐文档", "https://docs.github.com/en/copilot/get-started/plans"),
+            ("套餐文档（含学生/教师/OSS 维护者免费资格）", "https://docs.github.com/en/copilot/get-started/plans"),
         ],
     },
     "cursor_ide": {
@@ -556,7 +565,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         ],
         "preconditions": "邮箱 / GitHub / Google 登录，无需付款方式",
         "promotions": "Pro / Pro+ / Ultra 分档；Grok 等模型按档解锁",
-        "notes": "cursor.com 为 Next.js 渲染，关键短语出现在服务端 HTML 中，requests 可稳定命中",
+        "notes": "cursor.com 为 Next.js 渲染，关键短语出现在服务端 HTML 中，requests 可稳定命中；`cursor.com/cn` 只是中文本地化入口，账号与档位同国际版完全一致，**不存在独立中国版额度**",
         "links": [
             ("定价页（Hobby Free 卡）", "https://cursor.com/pricing"),
             ("官网", "https://cursor.com/"),
@@ -577,7 +586,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         ],
         "preconditions": "社交账号或 AWS Builder ID 登录（升级付费档时首次登录发放试用）",
         "promotions": "付费档附赠试用额度，以定价页为准",
-        "notes": "kiro.dev/pricing 为静态 HTML + JSON-LD，requests 抓取最稳定",
+        "notes": "kiro.dev/pricing 为静态 HTML + JSON-LD，requests 抓取最稳定；除 Free 档外**无叠加注册赠金**（页内 free trial credit 仅为付费档按日折算扣费说明）",
         "links": [
             ("定价页（Kiro Free）", "https://kiro.dev/pricing"),
             ("官网", "https://kiro.dev/"),

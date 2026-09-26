@@ -232,16 +232,6 @@ KEYWORD_GROUPS: list[tuple[str, str, list[str]]] = [
 
 README_BEGIN = "<!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->"
 README_END = "<!-- LLM-INTEL:END -->"
-
-# 365 开源计划页脚：随生成区块一起输出（位于 END 标记之前），
-# 若放在 END 之后会在下次 update_readme 时被当作历史人工附录丢弃。
-PLAN_FOOTER = """---
-
-## 关于 365 开源计划
-
-[365 开源计划](https://github.com/rockbenben/365opensource) 的第 **#038** 个项目——一个人 + AI，一年 300+ 个开源项目。
-
-[提交你的需求 →](https://365.aishort.top/) · [Discord](https://discord.gg/PZTQfJ4GjX) · [Telegram](https://t.me/aishort_top)"""
 # 白嫖攻略独立生成块，位于项目介绍之后、快速开始之前（读者最关心，需置顶）
 GUIDE_BEGIN = "<!-- LLM-GUIDE:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->"
 GUIDE_END = "<!-- LLM-GUIDE:END -->"
@@ -2687,8 +2677,13 @@ def _mask_ts(text: str) -> str:
 
 
 def order_vendor_records(intel_list: list[VendorIntel]) -> list[tuple[int, VendorIntel, dict]]:
-    """按 README 展示顺序（国内 / 国际 / 云）返回 (序号, intel, profile)。"""
-    categories = OrderedDict([("domestic", []), ("international", []), ("cloud", [])])
+    """按 README 展示顺序（国内 / 国际 / 云 / 工具）返回 (序号, intel, profile)。
+
+    tools 必须有自己的桶并排最后——否则回落到 domestic 桶，README 里会变成
+    「Part 1 → Part 4 → Part 2 → Part 3」的错位章节序。
+    """
+    categories = OrderedDict([("domestic", []), ("international", []), ("cloud", []),
+                              ("tools", [])])
     for intel in intel_list:
         prof = get_provider_profile(intel.vendor_id, intel.brand, intel.homepage)
         cat = prof.get("category", "domestic")
@@ -2755,7 +2750,8 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
 
         判定用到的三个信号：meta["signup"]（email=免卡 / card=需绑卡）、
         meta["tiers"]（permanent|recurring=不过期 / onetime=一次性 / selfhost=自托管）、
-        prof["category"]（domestic=国内，一律需手机号+实名）。
+        prof["category"]（domestic=国内，一律需手机号+实名）；Part 4 工具类不属
+        于任何 category 分组，其国内/海外归属看 meta["region"]（"cn"=国内产品）。
         """
         dom, ovs = [], []
         for idx, intel, prof in records:
@@ -2763,7 +2759,9 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
             if not meta or not pred(meta, prof):
                 continue
             cell = with_short(idx, intel, prof)
-            (dom if prof.get("category") == "domestic" else ovs).append(cell)
+            is_cn = (prof.get("category") == "domestic"
+                     or (prof.get("category") == "tools" and meta.get("region") == "cn"))
+            (dom if is_cn else ovs).append(cell)
         return dom, ovs
 
     # 0. 懒人首选：GUIDE_META 中带 pick 推荐语的厂商（按总表序号）。
@@ -2788,8 +2786,12 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
     L.append("")
     L.append("> 排序逻辑是**新用户视角**：先看要不要绑卡（实名 / 邮箱都只是常规注册，不算门槛），"
              "再看额度会不会过期。A 类注册即用且不会过期，C 类额度最大但要先冒绑卡的风险。")
+    L.append(">")
+    L.append("> ⚠️ 表里混着两类完全不同的额度：**大模型开放平台**发 API Key、可在自己程序里调用；"
+             "**AI 编程工具**（Trae、Copilot 等，见文末 Part 4）只给编辑器内使用的积分 / Credits，"
+             "**不发可外带的 API Key**——想接自己的应用别选它们。")
     L.append("")
-    L.append("| 类型 | 特点与正确用法 | 代表平台（点击跳上方档案） |")
+    L.append("| 类型 | 特点与正确用法 | 代表平台（点击跳下方档案） |")
     L.append("|---|---|---|")
     tier_defs = [
         ("A. 无条件 · 长期可用",
@@ -2897,7 +2899,18 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
                     alive.append(frag)
         if alive:
             frag = alive[0]
-            limited.append(f"- {link(idx, prof)}：{frag[:90] + ('…' if len(frag) > 90 else '')}")
+            if len(frag) > 120:
+                # 在最近的子句边界收尾——旧版 90 字硬截会把半句放出去
+                # （「……官方 Events 页，随…」），读起来像坏了。
+                cut = frag[:120]
+                for boundary in ("，", "、", "（", "(", " "):
+                    i = cut.rfind(boundary)
+                    if i >= 60:
+                        cut = cut[:i]
+                        break
+                limited.append(f"- {link(idx, prof)}：{cut.rstrip('，、（( ')}…")
+            else:
+                limited.append(f"- {link(idx, prof)}：{frag}")
     if limited:
         L.append("### 5. 限时 / 易变信息（最容易过期，看到请先核对官方页）")
         L.append("")
@@ -2908,7 +2921,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
     L.append("### 6. 免费额度用完之后")
     L.append("")
     L.append("国内厂商的包月「编程套餐」（火山方舟 Coding Plan、智谱 GLM 套餐等）价格与档位调整频繁，"
-             "本仓库不转抄未经官方页面核实的价格数字——请从上方对应厂商表格的「官方直达」进入定价页查看现行档位。"
+             "本仓库不转抄未经官方页面核实的价格数字——请从下方对应厂商表格的「官方直达」进入定价页查看现行档位。"
              "挑选时重点对比三点：")
     L.append("")
     L.append("1. **计费方式**：按请求次数（低频友好）还是按 token（长上下文 / 重度使用友好）；")
@@ -2975,6 +2988,8 @@ def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
                      f"{page_part}"
                      f"[合并流]({feeds_base}/llm-news-all.xml) ｜ "
                      f"单厂商源 `{feeds_base}/llm-news-{{vendor_id}}.xml`。")
+        lines.append(f"> 🛰 **额度变化订阅**（新活动 / 额度调整 / 新模型上架）："
+                     f"[{INTEL_CHANGES_FEED}]({feeds_base}/{INTEL_CHANGES_FEED})")
     lines.append("")
 
     # 白嫖攻略是独立生成块（GUIDE_BEGIN/END），已由 render_guide_block
@@ -2997,9 +3012,6 @@ def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
             last_cat = cat
         lines.extend(render_freellm_table(intel, prof, idx))
 
-    # 365 系列归属页脚必须留在生成标记内：标记之外的内容会被 update_readme 丢弃
-    lines.extend(PLAN_FOOTER.split("\n"))
-    lines.append("")
     lines.append(README_END)
     lines.append("")
     return "\n".join(lines)
@@ -3016,8 +3028,11 @@ def _replace_marker_block(text: str, begin: str, end: str, block: str) -> str:
 def update_readme(path: Path, section: str, guide_section: str = "") -> bool:
     """刷新 README 的两个自动生成区块：白嫖攻略（GUIDE）+ 情报总表（INTEL）。
 
-    屏蔽时间戳后比对，内容无变化则不写文件。INTEL END 之后的历史人工附录
-    在首次运行时会被自动移除。README 不存在则新建。返回是否发生写入。
+    屏蔽时间戳后比对，内容无变化则不写文件。README 布局为
+    「人工头部 → 攻略块 → 快速开始 → 情报总表块 → 人工尾部（仓库结构 /
+    更新机制 / 许可证 / 365 页脚）」：INTEL END **之后**的人工尾部原样保留
+    （早先版本会丢弃 END 之后的内容，那是为清理 bootstrap 期遗留附录的一次性
+    行为，布局调整后已不需要）。README 不存在则新建。返回是否发生写入。
     """
     if path.exists():
         old = path.read_text(encoding="utf-8")
@@ -3036,8 +3051,9 @@ def update_readme(path: Path, section: str, guide_section: str = "") -> bool:
             head = _replace_marker_block(head, GUIDE_BEGIN, GUIDE_END, guide_section)
         elif guide_section:
             head = head.rstrip("\n") + "\n\n" + guide_section + "\n\n"
-        # 2) 情报总表整块替换；END 之后内容丢弃
-        new = head + section
+        # 2) 情报总表整块替换；END 之后的人工尾部保留
+        tail = old[old.find(README_END) + len(README_END):]
+        new = head + section + tail
     if _mask_ts(new) == _mask_ts(old):
         return False
     path.write_text(new, encoding="utf-8", newline="\n")
@@ -3272,6 +3288,14 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
         lines += group("LLM Vendors · 聚合流（订阅这一个 = 全部有动态源的厂商）", [(
             "全部厂商 - 合并流（%s，带厂商前缀）" % merged_scope_text(merged_limit),
             f"{feeds_base}/llm-news-all.xml",
+            site or feeds_base,
+        )])
+    if feeds_base:
+        # 第四组：不是「厂商动态」而是「本仓库情报本身的变化」——新活动、
+        # 额度调整（前值→后值）、新模型上架，订阅这一个即可跟踪白嫖政策变动。
+        lines += group("情报变化 · 额度 / 活动 / 新模型（本仓库自建）", [(
+            "LLM 免费额度 - 新活动与新额度变化流",
+            f"{feeds_base}/llm-intel-changes.xml",
             site or feeds_base,
         )])
     lines.append("  </body>")
@@ -4115,6 +4139,158 @@ def write_model_releases(path: Path, events: list[dict]) -> bool:
     return True
 
 
+#: 「新活动 / 新额度」变化流的订阅源文件名（docs/feeds/ 下随 Pages 发布）
+INTEL_CHANGES_FEED = "llm-intel-changes.xml"
+INTEL_CHANGES_LIMIT = 250
+
+
+def parse_intel_changelog(text: str) -> list[dict]:
+    """变更日志 Markdown → 结构化条目（喂给额度变化流）。
+
+    与 append_intel_changelog 的写法严格对齐：日块 `## 日期`、厂商块
+    ``### 品牌（`vid`）``、`- 摘要：`、``- `字段`：前值 → 后值``。
+    容忍手工编辑产生的缺块（缺摘要 / 缺字段行），不丢条目。
+    """
+    entries: list[dict] = []
+    day = ""
+    cur: dict | None = None
+    for line in text.splitlines():
+        m = re.match(r"^## (\d{4}-\d{2}-\d{2})", line)
+        if m:
+            day = m.group(1)
+            continue
+        m = re.match(r"^### (.+?)（`([^`]+)`）", line)
+        if m and day:
+            if cur:
+                entries.append(cur)
+            cur = {"date": day, "brand": m.group(1), "vendor_id": m.group(2),
+                   "summary": "", "diffs": []}
+            continue
+        if cur is None:
+            continue
+        if line.startswith("- 摘要："):
+            cur["summary"] = line.removeprefix("- 摘要：").strip()
+        else:
+            m = re.match(r"^- `([^`]+)`：(.*)$", line)
+            if m:
+                cur["diffs"].append((m.group(1), m.group(2)))
+    if cur:
+        entries.append(cur)
+    return entries
+
+
+def vendor_anchor(idx: int, prof: dict) -> str:
+    """README 厂商档案的 GitHub 锚点（与攻略跳转链接同一套 slug 规则）。"""
+    return _gh_slug(f"{idx}. {prof.get('display_name', '')}")
+
+
+#: Part 编号口径与 README 章节标题一致（国内 1 / 国际 2 / 云 3 / 工具 4）
+_PART_BY_CATEGORY = {"domestic": 1, "international": 2, "cloud": 3, "tools": 4}
+
+
+def build_quotas_payload(records: list[tuple[int, VendorIntel, dict]],
+                         reviews: dict[str, str]) -> dict:
+    """额度总表的机读版（quotas.json）：README Part 1–4 的结构化镜像。
+
+    存在理由：情报本体此前只有 Markdown 出口，脚本 / 浏览页无法消费。
+    字段全部取**生效档案**（含 AI overlay），`reviewed` 取例行复查日期，
+    让机器读者也能判断「这条情报多久没核过了」。确定性：无时间戳、键序固定。
+    """
+    rows = []
+    for idx, intel, prof in records:
+        homepage = intel.homepage or (prof.get("links", [["", ""]])[0][1]
+                                      if prof.get("links") else "")
+        meta = get_guide_meta(intel.vendor_id)
+        rows.append({
+            "rank": idx,
+            "id": intel.vendor_id,
+            "name": prof.get("display_name", intel.brand),
+            "part": _PART_BY_CATEGORY.get(prof.get("category", "domestic"), 0),
+            "homepage": homepage,
+            "anchor": vendor_anchor(idx, prof),
+            "signup": meta.get("signup", ""),
+            "tiers": meta.get("tiers", []),
+            "in_guide": bool(meta),
+            "free_quota": prof.get("free_quota", ""),
+            "validity": prof.get("validity", ""),
+            "free_models": prof.get("free_models", []),
+            "tier_caveats": prof.get("tier_caveats", []),
+            "preconditions": prof.get("preconditions", ""),
+            "promotions": prof.get("promotions", ""),
+            "openai_compat": prof.get("openai_compat"),
+            "links": prof.get("links", []),
+            "reviewed": reviews.get(intel.vendor_id, ""),
+        })
+    return {"count": len(rows), "vendors": rows}
+
+
+def write_quotas_index(path: Path, records: list[tuple[int, VendorIntel, dict]],
+                       reviews: dict[str, str]) -> bool:
+    return _write_json(path, build_quotas_payload(records, reviews))
+
+
+def write_intel_changes_feed(out_dir: Path, changelog_text: str,
+                             releases: list[dict], base_url: str = "",
+                             anchors: dict[str, str] | None = None) -> int:
+    """额度 / 活动变化流（RSS）：读者订阅它来知道「哪家的免费政策刚变了」。
+
+    两类事件合流，都是带日期的「情报时刻」而非博客文章：
+      * **额度变化** —— `llm-intel-changelog.md` 里 AI 采纳的前值 → 后值；
+      * **新模型** —— 模型发布雷达事件（新模型上架常常就是新的免费入口）。
+    变化日志在 CI 首次采纳前不存在是常态，此时流里只有雷达事件，不会空。
+    确定性产物：lastBuildDate 取最新事件日期（同其余自建源）。
+    返回收录条数。
+    """
+    items: list[dict] = []  # {date,kind,vendor,brand,title,text,url,guid}
+    for e in parse_intel_changelog(changelog_text):
+        anchor = (anchors or {}).get(e["vendor_id"], "")
+        items.append({
+            "date": e["date"], "kind": "quota", "vendor": e["vendor_id"],
+            "brand": e["brand"],
+            "title": f"额度变化 · {e['brand']}：{e['summary'] or '（无摘要）'}",
+            "text": "\n".join(f"{f}：{change}" for f, change in e["diffs"]) or e["brand"],
+            "url": f"{REPO_URL}#{anchor}" if anchor else REPO_URL,
+            "guid": f"changelog-{e['date']}-{e['vendor_id']}",
+        })
+    for ev in releases:
+        items.append({
+            "date": ev["date"], "kind": "release", "vendor": ev["vendor"],
+            "brand": ev["brand"],
+            "title": f"新模型 · {ev['brand']}：{ev['model']}",
+            "text": ev["title"], "url": ev["url"],
+            "guid": f"release-{ev['vendor']}-{ev['model'].lower()}",
+        })
+    items.sort(key=lambda t: t["date"], reverse=True)
+    items = items[:INTEL_CHANGES_LIMIT]
+    if not items:
+        return 0
+    xml_items = []
+    for it in items:
+        pub = _rss_pubdate(it["date"])
+        chunk = ["    <item>",
+                 f"      <title>{_rss_esc(it['title'])}</title>",
+                 f"      <link>{_rss_esc(it['url'])}</link>",
+                 f"      <description>{_rss_esc(it['text'])}</description>",
+                 f'      <guid isPermaLink="false">{_rss_esc(it["guid"])}</guid>']
+        if pub:
+            chunk.append(f"      <pubDate>{pub}</pubDate>")
+        chunk.append("    </item>")
+        xml_items.append("\n".join(chunk))
+    base = base_url.rstrip("/")
+    _rss_write(out_dir / INTEL_CHANGES_FEED, _rss_channel(
+        "LLM 免费额度 · 新活动与新额度变化",
+        "free-llm-intel 巡检采纳的免费额度变化（前值 → 后值）与模型发布雷达事件——"
+        "订阅这一个，哪家的白嫖政策刚变了即刻可见。",
+        xml_items, f"{base}/{INTEL_CHANGES_FEED}" if base else "", items[0]["date"]))
+    # 网页端伴生 JSON（浏览页「变化」页签消费，免去 XML 解析）：同一批条目，无时间戳。
+    _write_json(out_dir / "intel-changes.json",
+                {"count": len(items),
+                 "fields": ["date", "kind", "vendor", "brand", "title", "text", "url"],
+                 "items": [[it["date"], it["kind"], it["vendor"], it["brand"],
+                            it["title"], it["text"], it["url"]] for it in items]})
+    return len(items)
+
+
 # ---------------------------------------------------------------------------
 # 页面快照变化检测（仅快照、不理解语义；语义判断由 ai_review 的 LLM 完成）
 # ---------------------------------------------------------------------------
@@ -4660,6 +4836,24 @@ def main(argv: list[str] | None = None) -> int:
         wrote_rel = write_model_releases(feeds_dir / "model-releases.json", releases)
         print(f"      模型发布雷达 {len(releases)} 个事件"
               f"（{('已刷新 ' + 'model-releases.json') if wrote_rel else '无内容变化，未改写'}）")
+        # 额度/活动变化流：雷达事件 + 变更日志（AI 采纳记录）合流；日志文件在
+        # 首次采纳前不存在是常态（含 --rebuild-only，本仓库根可能还没有它）。
+        # 额度变化条目直接链到 README 里该厂商的档案锚点，阅读器一点即达。
+        changelog_text = ""
+        cl_path = root / CHANGELOG_MD
+        if cl_path.exists():
+            changelog_text = cl_path.read_text(encoding="utf-8")
+        table_records = order_vendor_records(intel_list)
+        anchors = {intel.vendor_id: vendor_anchor(idx, prof)
+                   for idx, intel, prof in table_records}
+        n_changes = write_intel_changes_feed(
+            feeds_dir, changelog_text, releases, args.feeds_base, anchors)
+        if n_changes:
+            print(f"      额度/活动变化流 {n_changes} 条（{INTEL_CHANGES_FEED} + intel-changes.json）")
+        wrote_q = write_quotas_index(feeds_dir / "quotas.json",
+                                     table_records, snapshots.reviews)
+        print(f"      额度快照 quotas.json {len(table_records)} 家"
+            f"（{'已刷新' if wrote_q else '无内容变化，未改写'}）")
 
     # 控制台汇总
     total = sum(len(v.intel_pages) for v in intel_list)

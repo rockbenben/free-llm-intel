@@ -430,7 +430,7 @@ vendors:
     homepage: https://www.codebuddy.cn/
 
   - id: trae
-    brand: Trae 中国版
+    brand: Trae (字节跳动 AI IDE)
     products:
       - Trae IDE
       - TraeCode
@@ -1381,12 +1381,18 @@ sources:
   - vendor_id: codebuddy_workbuddy
     type: free_quota
     url: https://www.tencentcloud.com/techpedia/144275
+  # 国际版（codebuddy.ai）与国内站是两套独立额度；pricing 同为前端渲染，走浏览器兜底
+  - vendor_id: codebuddy_workbuddy
+    type: pricing
+    url: https://www.codebuddy.ai/pricing
   # Part 4 扩充（2026-09-26 取证）：以下定价页均实测 requests 可直读正文，
   # 无需浏览器兜底；copilot 的数字在页面 CMS JSON 里、lingma 页注意用
   # billing-description（billing-overview 是空壳页）。
   - vendor_id: trae
     type: pricing
-    url: https://www.trae.cn/pricing
+    # 国际版页对 CI 可巡（SPA，浏览器兜底渲染正常）；trae.cn 对机房 IP 一律 403，
+    # 中国版证据改走档案 links + 国内手动复核，2026-09-26 实测记录见 watchlist。
+    url: https://www.trae.ai/pricing
   - vendor_id: tongyi_lingma
     type: pricing
     url: https://help.aliyun.com/zh/lingma/product-overview/billing-description

@@ -2583,6 +2583,33 @@ class TestGuideRendering(unittest.TestCase):
             stale, [],
             f"这些厂商已经有 GUIDE_META 了，该从 KNOWN_OMITTED 移除（名单过时了）: {stale}")
 
+    def test_cn_tool_vendors_bucket_as_domestic_in_guide(self):
+        """Part 4 工具类的国内产品在攻略表格里必须进「国内：」行。
+
+        Regression: 工具类不属于 domestic/international 任何 category，早期
+        全部落到「海外：」，Trae 中国版 / 通义灵码 / 文心快码 被标成海外产品。
+        现在看 GUIDE_META["region"]=="cn"。
+        """
+        meta = provider_profiles.GUIDE_META
+        for vid in ("trae", "tongyi_lingma", "comate", "codebuddy_workbuddy"):
+            self.assertEqual(meta[vid].get("region"), "cn",
+                             f"{vid} 是国内工具，攻略归类需要 region=cn")
+        for vid in ("cursor_ide", "kiro", "zed", "github_copilot", "qoder"):
+            self.assertIsNone(meta[vid].get("region"),
+                              f"{vid} 是海外产品，不应标 region")
+        intel_list = [crawler_llm_intel.VendorIntel(
+            vendor_id=v, brand=v, homepage="", products=[])
+            for v in provider_profiles.PROVIDER_PROFILES]
+        block = crawler_llm_intel.render_guide_block(
+            crawler_llm_intel.order_vendor_records(intel_list))
+        row_a = next(l for l in block.splitlines() if l.startswith("| **A."))
+        dom, ovs = row_a.split("国内：")[1].split("<br>海外：")
+        for name in ("Trae", "通义灵码", "文心快码", "CodeBuddy"):
+            self.assertIn(name, dom)
+            self.assertNotIn(name, ovs)
+        for name in ("Cursor", "Kiro", "Zed", "Copilot"):
+            self.assertIn(name, ovs)
+
     def test_guide_meta_keys_are_real_vendors(self):
         """GUIDE_META 的 key 必须是真实厂商 id。
 
@@ -3118,3 +3145,128 @@ class TestSpaShellDetection(unittest.TestCase):
         """build.nvidia.com 形态：挂载 id 直接挂在 <html> 上。"""
         html = '<html class="nv-dark" id="app" lang="en"><head></head></html>'
         self.assertIsNotNone(crawler_llm_intel.SPA_HTML_MOUNT.search(html))
+
+
+class TestQuotasIndex(unittest.TestCase):
+    """额度总表的机读镜像 quotas.json。"""
+
+    def test_payload_fields_and_part_mapping(self):
+        prof = {"category": "tools", "display_name": "Demo (X)",
+                "free_quota": "q", "validity": "v", "free_models": ["m"],
+                "tier_caveats": [], "preconditions": "p", "promotions": "",
+                "links": [["官网", "https://d.example"]]}
+        intel = crawler_llm_intel.VendorIntel(vendor_id="demo", brand="Demo",
+                                              homepage="https://d.example", products=[])
+        payload = crawler_llm_intel.build_quotas_payload(
+            [(9, intel, prof)], {"demo": "2026-09-20"})
+        row = payload["vendors"][0]
+        self.assertEqual(payload["count"], 1)
+        self.assertEqual(row["part"], 4, "tools 必须是 Part 4")
+        self.assertEqual(row["anchor"], "9-demo-x")
+        self.assertEqual(row["reviewed"], "2026-09-20")
+        self.assertIsNone(row["openai_compat"])
+
+    def test_every_vendor_part_matches_readme_ordering(self):
+        """part 编号必须与 README 章节一致：桶序 domestic→international→cloud→tools。"""
+        recs = crawler_llm_intel.order_vendor_records(
+            [crawler_llm_intel.VendorIntel(vendor_id=v, brand=v, homepage="", products=[])
+             for v in provider_profiles.PROVIDER_PROFILES])
+        payload = crawler_llm_intel.build_quotas_payload(recs, {})
+        parts = [r["part"] for r in payload["vendors"]]
+        self.assertEqual(parts, sorted(parts),
+                         "quotas.json 的 part 必须单调不减（README 章节同序）")
+        self.assertEqual(max(parts), 4)
+
+
+class TestIntelChangesFeed(unittest.TestCase):
+    """额度/活动变化流：变更日志解析、与雷达合流、README 人工尾部保留。"""
+
+    CHANGELOG = (
+        "# 情报变更日志\n\n> 头\n\n"
+        "## 2026-09-26\n\n"
+        "### Groq Cloud（`groq`）\n"
+        "- 摘要：免费层模型换代\n"
+        "- `free_models`：A → B\n"
+        "- `validity`：C → D\n\n"
+        "## 2026-09-20\n\n"
+        "### Cohere（`cohere`）\n"
+        "- 摘要：试用限速调整\n"
+        "- `free_quota`：E → F\n")
+
+    RELEASES = [{"date": "2026-09-25", "vendor_id": "z", "vendor": "z", "brand": "Z",
+                 "model": "M1", "title": "Z 发布 M1", "url": "https://z.example/m1"}]
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def test_parse_changelog_blocks(self):
+        entries = crawler_llm_intel.parse_intel_changelog(self.CHANGELOG)
+        self.assertEqual([e["date"] for e in entries], ["2026-09-26", "2026-09-20"])
+        self.assertEqual(entries[0]["vendor_id"], "groq")
+        self.assertEqual(entries[0]["summary"], "免费层模型换代")
+        self.assertEqual(entries[0]["diffs"], [("free_models", "A → B"),
+                                               ("validity", "C → D")])
+
+    def test_feed_merges_changes_and_releases(self):
+        n = crawler_llm_intel.write_intel_changes_feed(
+            self.root, self.CHANGELOG, self.RELEASES, "https://x/feeds")
+        self.assertEqual(n, 3)
+        xml = (self.root / crawler_llm_intel.INTEL_CHANGES_FEED).read_text(encoding="utf-8")
+        import xml.etree.ElementTree as ET
+        items = ET.fromstring(xml).findall("./channel/item")
+        # 日期倒序：09-26 变化、09-25 新模型、09-20 变化
+        self.assertIn("额度变化 · Groq", items[0].findtext("title"))
+        self.assertIn("新模型 · Z", items[1].findtext("title"))
+        self.assertIn("A → B", items[0].findtext("description"))
+        guids = [it.findtext("guid") for it in items]
+        self.assertEqual(len(set(guids)), 3, "guid 必须稳定且唯一")
+
+    def test_quota_items_link_to_readme_anchor(self):
+        n = crawler_llm_intel.write_intel_changes_feed(
+            self.root, self.CHANGELOG, [], "",
+            anchors={"groq": "38-groq-cloud-lpu", "cohere": "40-cohere"})
+        self.assertEqual(n, 2)
+        xml = (self.root / crawler_llm_intel.INTEL_CHANGES_FEED).read_text(encoding="utf-8")
+        self.assertIn("#38-groq-cloud-lpu", xml, "额度变化条目应直达 README 厂商档案")
+        js = json.loads((self.root / "intel-changes.json").read_text(encoding="utf-8"))
+        self.assertEqual(js["items"][0][1], "quota", "伴生 JSON 供浏览页消费，kind 标记类别")
+
+    def test_feed_without_changelog_still_lists_releases(self):
+        # 首次 AI 采纳前 changelog 不存在是常态：流不能为空
+        n = crawler_llm_intel.write_intel_changes_feed(self.root, "", self.RELEASES, "")
+        self.assertEqual(n, 1)
+
+    def test_opml_lists_changes_feed(self):
+        out = self.root / "x.opml"
+        crawler_llm_intel.write_opml(out, [], feeds_base="https://x/feeds")
+        text = out.read_text(encoding="utf-8")
+        self.assertIn("llm-intel-changes.xml", text,
+                      "OPML 必须带上「情报变化」组，导入即订到额度变化流")
+        # 本地（无 feeds_base）不列 Pages 绝对地址
+        out2 = self.root / "y.opml"
+        crawler_llm_intel.write_opml(out2, [], feeds_base="")
+        self.assertNotIn("llm-intel-changes.xml", out2.read_text(encoding="utf-8"))
+
+    def test_update_readme_preserves_manual_tail(self):
+        """END 之后的人工尾部（开发者章节 + 365 页脚）必须在刷新时原样保留。
+
+        旧行为是「END 之后全丢」——布局调整后总表不再是文末，丢尾部会把
+        仓库结构 / 更新机制 / 页脚整段吃掉。
+        """
+        path = self.root / "README.md"
+        tail = "\n\n## 仓库结构\n\n表\n\n## 关于 365 开源计划\n\n页脚文本\n"
+        path.write_text(
+            "头部\n\n" + crawler_llm_intel.README_BEGIN + "\n旧表\n"
+            + crawler_llm_intel.README_END + tail, encoding="utf-8")
+        wrote = crawler_llm_intel.update_readme(
+            path, crawler_llm_intel.README_BEGIN + "\n新表\n"
+            + crawler_llm_intel.README_END + "\n", guide_section="")
+        self.assertTrue(wrote)
+        new = path.read_text(encoding="utf-8")
+        self.assertIn("新表", new)
+        self.assertNotIn("旧表", new)
+        self.assertTrue(new.endswith(tail.lstrip("\n")), "人工尾部必须原样保留")
