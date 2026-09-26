@@ -1,6 +1,6 @@
 # MiniMax 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-20**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-26**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：MiniMax（`minimax`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -37,7 +37,7 @@
 25. [视频生成接口，MiniMax-Hailuo-02 图生视频功能，支持 512 分辨率](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-08-%E6%9C%88-02-%E6%97%A5)（2025-08-02）
 26. [声音效果器功能上线，通过 voice_modify 参数，实现音高、音强、音效等调节](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-07-%E6%9C%88-19-%E6%97%A5)（2025-07-19）
 27. [视频 Agent API 上线，支持生成模板同款视频](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-07-%E6%9C%88-15-%E6%97%A5)（2025-07-15）
-28. [Music-1.5（Beta）](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-6-%E6%9C%88-20-%E6%97%A5)（2025-06-20）
+28. [Music-1.5（Beta)](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-6-%E6%9C%88-20-%E6%97%A5)（2025-06-20）
 29. [MiniMax-Hailuo 02](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-6-%E6%9C%88-18-%E6%97%A5)（2025-06-18）
 30. [MiniMax-M1](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-6-%E6%9C%88-16-%E6%97%A5)（2025-06-16）
 31. [音色设计（Voice Design）上线，支持文本描述生成音色](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-06-%E6%9C%88-12-%E6%97%A5)（2025-06-12）

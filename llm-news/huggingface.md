@@ -1,6 +1,6 @@
 # Hugging Face 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-25**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-26**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Hugging Face（`huggingface`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -392,7 +392,7 @@
 380. [用自推测解码实现更快的文本生成](https://huggingface.co/blog/layerskip)（2024-11-20）
 381. [Judge Arena：将 LLM 作为评判者进行评测](https://huggingface.co/blog/arena-atla)（2024-11-19）
 382. [在 Hugging Face Hub 上分享你的开放 ML 数据集！](https://huggingface.co/blog/researcher-dataset-sharing)（2024-11-12）
-383. [Hugging Face + PyCharm](https://huggingface.co/blog/pycharm-integration)（2024-11-05）
+383. [拥抱脸 + PyCharm](https://huggingface.co/blog/pycharm-integration)（2024-11-05）
 384. [Argilla 2.4：在 Hub 上轻松构建微调与评估数据集——无需写代码](https://huggingface.co/blog/argilla-ui-hub)（2024-11-04）
 385. [通用辅助生成：用任意辅助模型实现更快解码](https://huggingface.co/blog/universal_assisted_generation)（2024-10-29）
 386. [Expert Support 案例研究：用 LLM-as-a-Judge 增强 RAG 应用](https://huggingface.co/blog/digital-green-llm-judge)（2024-10-28）
@@ -676,7 +676,7 @@
 664. [加速 Intel CPU 上的 Stable Diffusion 推理](https://huggingface.co/blog/stable-diffusion-inference-intel)（2023-03-28）
 665. [用 Hugging Face 与 Flower 实现联邦学习](https://huggingface.co/blog/fl-with-flower)（2023-03-27）
 666. [用 diffusers 训练你的 ControlNet](https://huggingface.co/blog/train-your-controlnet)（2023-03-24）
-667. [Jupyter X Hugging Face](https://huggingface.co/blog/notebooks-hub)（2023-03-23）
+667. [Jupyter X 拥抱脸](https://huggingface.co/blog/notebooks-hub)（2023-03-23）
 668. [用 Informer 做多变量概率时间序列预测](https://huggingface.co/blog/informer)（2023-03-10）
 669. [在 24GB 消费级 GPU 上用 RLHF 微调 20B LLM](https://huggingface.co/blog/trl-peft)（2023-03-09）
 670. [来自 Kakao Brain 的全新 ViT 和 ALIGN 模型](https://huggingface.co/blog/vit-align)（2023-03-06）
