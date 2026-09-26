@@ -4253,12 +4253,15 @@ def write_intel_changes_feed(out_dir: Path, changelog_text: str,
             "guid": f"changelog-{e['date']}-{e['vendor_id']}",
         })
     for ev in releases:
+        # 入参是 extract_model_releases 的原生事件（键为 vendor_id）；
+        # json 行格式的 "vendor" 只是列名，别在这里混用。
+        vid = ev.get("vendor_id") or ev.get("vendor", "")
         items.append({
-            "date": ev["date"], "kind": "release", "vendor": ev["vendor"],
+            "date": ev["date"], "kind": "release", "vendor": vid,
             "brand": ev["brand"],
             "title": f"新模型 · {ev['brand']}：{ev['model']}",
             "text": ev["title"], "url": ev["url"],
-            "guid": f"release-{ev['vendor']}-{ev['model'].lower()}",
+            "guid": f"release-{vid}-{ev['model'].lower()}",
         })
     items.sort(key=lambda t: t["date"], reverse=True)
     items = items[:INTEL_CHANGES_LIMIT]

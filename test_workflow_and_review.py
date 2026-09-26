@@ -3193,7 +3193,8 @@ class TestIntelChangesFeed(unittest.TestCase):
         "- 摘要：试用限速调整\n"
         "- `free_quota`：E → F\n")
 
-    RELEASES = [{"date": "2026-09-25", "vendor_id": "z", "vendor": "z", "brand": "Z",
+    # extract_model_releases 的原生事件键是 vendor_id（json 里的 "vendor" 只是列名）
+    RELEASES = [{"date": "2026-09-25", "vendor_id": "z", "brand": "Z",
                  "model": "M1", "title": "Z 发布 M1", "url": "https://z.example/m1"}]
 
     def setUp(self):
