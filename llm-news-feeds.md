@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-09-26 00:53:20**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-09-26 13:46:54**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -405,7 +405,12 @@
 ### Anyscale (anyscale)
 - 📡 [RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-09-26，标题自动汉化）：
-  1. [How Anastasia accelerated their ML processes 9x with Ray and Anyscale](https://anyscale.com/blog/how-anastasia-implements-ray-and-anyscale-to-speed-up-ml-processes-9x)（2021-08-31）
+  1. [Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
+  2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
+  3. [Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
+  4. [Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes](https://anyscale.com/blog/ray-history-server)（2026-08-25）
+  5. [Learning Loops: The Path to Owning Your Intelligence](https://anyscale.com/blog/learning-loops)（2026-08-25）
+  - 📄 完整文章归档（共 19 篇）：[anyscale.md](llm-news/anyscale.md)
 
 ### InceptionLabs (inception_labs)
 - 页面：[官方博客](https://www.inceptionlabs.ai/blog)
