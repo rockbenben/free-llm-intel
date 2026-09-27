@@ -3529,22 +3529,14 @@ class TestPacketFastReplay(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.root = Path(self.tmp.name)
-        d = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
-        d.mkdir(parents=True)
-        packet = ("[本地 AI 核查包] vendor=demo_vid\n"
-                  "【官方页面原文】\n" + TestLocalReviewChannel.PAGE)
-        (d / "demo_vid.prompt.md").write_text(packet, encoding="utf-8")
-        (d / "demo_vid.json").write_text(json.dumps({
-            "changed": True, "summary": "补充限速说明",
-            "fields": {"free_quota": "每月 100 万 tokens，仅限非商用"},
-            "evidence": [{"url": "https://p.example/pricing",
-                          "quote": "长期有效，仅限非商用"}],
-        }, ensure_ascii=False), encoding="utf-8", newline="\n")
         (self.root / "profile_overrides.json").write_text("{}", encoding="utf-8")
         page = crawler_llm_intel.PageResult(
             url="https://p.example/pricing", stype="pricing", ok=True,
             final_url="https://p.example/pricing",
-            text=TestLocalReviewChannel.PAGE, title="Pricing")
+            text=TestLocalReviewChannel.PAGE, title="Pricing",
+            # 快照资格只认 requests 阶段的这两个字段：不填的话厂商压根没有
+            # 快照条目，指纹退化成恒定的空摘要，「一致」证明不了任何事。
+            snapshot_text=TestLocalReviewChannel.PAGE, snapshot_ok=True)
         self.snaps = crawler_llm_intel.SnapshotState(self.root)
         intel = crawler_llm_intel.VendorIntel(
             vendor_id="demo_vid", brand="Demo", homepage="https://p.example",
@@ -3558,6 +3550,21 @@ class TestPacketFastReplay(unittest.TestCase):
         self.grouped = {"demo_vid": [
             {"vendor": "demo_vid", "type": "pricing",
              "url": "https://p.example/pricing"}]}
+        # 包与 manifest 一律由 export 产出 —— 页头必须由代码写。
+        # 早先的 fixture 自己补了页头，把「真实包没有页头 → 快进永不生效」
+        # 这个断裂盖掉了，测试全绿而通道在真实数据上 100% 被拒。
+        d = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
+        d.mkdir(parents=True)
+        crawler_llm_intel.export_review_packets(
+            self.root,
+            {"demo_vid": "【当前生效档案】\n{}\n【官方页面原文】\n"
+                         + TestLocalReviewChannel.PAGE}, self.snaps)
+        (d / "demo_vid.json").write_text(json.dumps({
+            "changed": True, "summary": "补充限速说明",
+            "fields": {"free_quota": "每月 100 万 tokens，仅限非商用"},
+            "evidence": [{"url": "https://p.example/pricing",
+                          "quote": "长期有效，仅限非商用"}],
+        }, ensure_ascii=False), encoding="utf-8", newline="\n")
 
     def tearDown(self):
         self.tmp.cleanup()
@@ -3573,6 +3580,9 @@ class TestPacketFastReplay(unittest.TestCase):
             self.root / "llm-news-feeds.md", self.root / "docs" / "feeds")
 
     def test_matching_digest_applies_without_crawl(self):
+        self.assertNotEqual(
+            self.digest, crawler_llm_intel.vendor_snapshot_digest({}, ""),
+            "fixture 里厂商必须有真实情报页快照，否则指纹恒空、快进断言变成空转")
         intel_list, applied, vids = self._replay(self.digest)
         self.assertEqual(vids, {"demo_vid"})
         self.assertTrue(applied, "指纹一致必须走快进")
@@ -3615,13 +3625,47 @@ class TestPacketFastReplay(unittest.TestCase):
         self.assertTrue((d / "demo_vid.json").exists(),
                         "回退路径不得消费补丁——留给完整巡检")
 
+    def test_empty_snapshot_digest_falls_back(self):
+        """厂商没有任何情报页快照时指纹恒定为空摘要：一致也证明不了页面没变。"""
+        empty = crawler_llm_intel.SnapshotState(self.root)
+        digest = crawler_llm_intel.vendor_snapshot_digest(empty.entries, "demo_vid")
+        self.assertEqual(digest, crawler_llm_intel.vendor_snapshot_digest({}, ""))
+        (self.root / crawler_llm_intel.REVIEW_PACKET_DIR
+         / crawler_llm_intel.REVIEW_MANIFEST).write_text(
+            json.dumps({"demo_vid": {"digest": digest,
+                                     "exported": "2026-09-27"}}),
+            encoding="utf-8", newline="\n")
+        _il, applied, vids = crawler_llm_intel.try_packet_fast_replay(
+            self.root, empty, self.vendors, self.grouped,
+            self.root / "llm-news-feeds.md", self.root / "docs" / "feeds")
+        self.assertFalse(applied, "空快照厂商必须回退实抓")
+        self.assertEqual(vids, set())
+
     def test_export_registers_manifest(self):
-        n = crawler_llm_intel.export_review_packets(
-            self.root, {"demo_vid": "x"}, self.snaps)
-        self.assertEqual(n, 1)
         m = crawler_llm_intel.read_packet_manifest(self.root)
         self.assertEqual(m["demo_vid"]["digest"], self.digest,
                          "登记指纹必须与当前情报页快照一致（新闻页不进指纹）")
+
+    def test_export_writes_packet_header(self):
+        """页头由 export 写：真实包若缺页头，快进通道会 100% 拒收（曾踩过）。"""
+        pkt = (self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
+               / "demo_vid.prompt.md").read_text(encoding="utf-8")
+        self.assertTrue(pkt.startswith(crawler_llm_intel.PACKET_HEADER),
+                        "导出的包必须以核查包页头开头")
+        self.assertIn("【官方页面原文】", pkt)
+
+    def test_headerless_packet_is_rejected(self):
+        """手工/截断的无页头包不能当语料用，且必须回退而非原地空转。"""
+        d = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
+        (d / "demo_vid.prompt.md").write_text(
+            "【官方页面原文】\n" + TestLocalReviewChannel.PAGE, encoding="utf-8")
+        _il, applied, vids = self._replay(self.digest)
+        self.assertFalse(applied, "有包没过闸就要回退完整巡检，否则下轮重演同一次拒绝")
+        self.assertEqual(vids, set())
+        self.assertTrue((d / "demo_vid.json").exists(),
+                        "被拒的补丁必须原样留着，等完整巡检重验")
+        self.assertEqual((self.root / "profile_overrides.json")
+                         .read_text(encoding="utf-8"), "{}")
 
 
 class TestArchiveDedup(unittest.TestCase):

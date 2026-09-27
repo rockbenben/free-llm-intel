@@ -4652,6 +4652,14 @@ class SnapshotState:
 REVIEW_PACKET_DIR = ".ai-review"
 #: 包清单：记录每个核查包导出时对应的页面快照指纹（快进复用的判据）
 REVIEW_MANIFEST = "manifest.json"
+#: 包内页头：export 写入，apply 复用包内语料时据此确认「这是一份完整核查包」
+#: 而不是被截断/手改过的半成品（真实 prompt 永远以它开头，测试不得自己补）
+PACKET_HEADER = "[本地 AI 核查包]"
+
+
+def packet_header(vid: str) -> str:
+    return (f"{PACKET_HEADER} vendor={vid} ｜ 证据引文必须逐字出自本文件"
+            "「【官方页面原文】」区，无事实变化输出 {{\"changed\": false}}")
 
 
 def build_review_prompt(intel: VendorIntel, focus: list | None = None) -> str:
@@ -4687,8 +4695,9 @@ def export_review_packets(root: Path, prompts: dict[str, str],
     out.mkdir(parents=True, exist_ok=True)
     manifest = read_packet_manifest(root)
     for vid, prompt in prompts.items():
-        (out / f"{vid}.prompt.md").write_text(prompt + "\n",
-                                              encoding="utf-8", newline="\n")
+        (out / f"{vid}.prompt.md").write_text(
+            packet_header(vid) + "\n\n" + prompt + "\n",
+            encoding="utf-8", newline="\n")
         if snapshots is not None:
             manifest[vid] = {
                 "digest": vendor_snapshot_digest(snapshots.entries, vid),
@@ -4731,10 +4740,12 @@ def try_packet_fast_replay(root: Path, snapshots: "SnapshotState",
     if not pending:
         return [], False, set()
     # 只卡「补丁还没过闸、而页面又变了」的厂商：已应用/无补丁的陈旧登记
-    # 不该把快进永久堵死。
+    # 不该把快进永久堵死。指纹为空（该厂商没有任何情报/条件页快照）时
+    # 一致也证明不了页面没变，同样回退实抓。
+    empty_digest = vendor_snapshot_digest({}, "")
     stale = [vid for vid in sorted(pending)
-             if manifest[vid].get("digest")
-             != vendor_snapshot_digest(snapshots.entries, vid)]
+             if (lambda cur: manifest[vid].get("digest") != cur
+                 or cur == empty_digest)(vendor_snapshot_digest(snapshots.entries, vid))]
     if stale:
         print(f"      [local-fast] {len(stale)} 家页面自导包后已变化"
               f"（{', '.join(stale[:5])}），回退完整巡检重验。")
@@ -4767,9 +4778,16 @@ def try_packet_fast_replay(root: Path, snapshots: "SnapshotState",
     if patches:
         adopt_patches(root, patches, intel_by_id)
         reload_overrides()
+    # 还有包留在原地 = 没过闸（补丁非法 / 包不完整）。快进的判据是「指纹一致」，
+    # 而被拒的厂商指纹照样一致 —— 不回退就会每轮重演同一次拒绝，补丁永生。
+    # 已过闸的上面已经采纳完毕，回退只负责这些剩下的。
+    leftover = sorted(vid for vid in pending if (pdir / f"{vid}.json").exists())
+    if leftover:
+        print(f"      [local-fast] {len(leftover)} 个补丁未过闸"
+              f"（{', '.join(leftover[:5])}），其余已入库，本轮回退完整巡检重验。")
+        return [], False, set()
     for vid in list(pending):
-        if not (pdir / f"{vid}.json").exists():
-            manifest.pop(vid, None)
+        manifest.pop(vid, None)
     (root / REVIEW_PACKET_DIR / REVIEW_MANIFEST).write_text(
         json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8", newline="\n")
@@ -4799,8 +4817,10 @@ def run_local_review(root: Path, changed_map: dict, intel_by_id: dict,
         try:
             prompt = corpus_provider(vid) if corpus_provider else ""
             if prompt:
-                if "[本地 AI 核查包]" not in prompt:
-                    raise ai_review.AiReviewError("包内语料缺少页头标记（文件被截断/改写？）")
+                # 快进复用包内语料：页头与原文区都在，才认为文件完整未被截改
+                if not prompt.startswith(PACKET_HEADER) \
+                        or "【官方页面原文】" not in prompt:
+                    raise ai_review.AiReviewError("包内语料缺少页头或原文区（文件被截断/改写？）")
             else:
                 if intel is None:
                     raise ai_review.AiReviewError(f"{vid} 不在本次巡检清单（厂商已移除？）")
@@ -4977,10 +4997,13 @@ def main(argv: list[str] | None = None) -> int:
         print("[fatal] --review-export 与 --review-apply 互斥（先导出后应用）",
               file=sys.stderr)
         return 2
-    if args.rebuild_only and (args.review_export or args.review_apply):
-        print("[fatal] --review-export 需要实抓组卷；--review-apply 在导包页面未变时"
-              "可快进复用包内语料，与 --rebuild-only 互斥",
-              file=sys.stderr)
+    if args.rebuild_only and args.review_export:
+        print("[fatal] --review-export 需要实抓组卷（导出的是当次页面构成的核查语料），"
+              "与 --rebuild-only 互斥", file=sys.stderr)
+        return 2
+    if args.rebuild_only and args.review_apply:
+        print("[fatal] --review-apply 需要与导包时的页面快照比对（指纹一致走快进，"
+              "否则实抓重验），与 --rebuild-only 互斥", file=sys.stderr)
         return 2
 
     session = build_session()
@@ -5334,7 +5357,7 @@ def main(argv: list[str] | None = None) -> int:
         anchors = {intel.vendor_id: vendor_anchor(idx, prof)
                    for idx, intel, prof in table_records}
         n_changes = write_intel_changes_feed(
-            feeds_dir, changelog_text, releases, args.feeds_base, anchors)
+            feeds_dir, changelog_text, releases, feeds_base, anchors)
         if n_changes:
             print(f"      额度/活动变化流 {n_changes} 条（{INTEL_CHANGES_FEED} + intel-changes.json）")
         wrote_q = write_quotas_index(feeds_dir / "quotas.json",
