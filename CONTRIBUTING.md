@@ -32,12 +32,12 @@
 | `free_models` | **列表**，每个元素是一条 bullet：模型名 + **内联的免费额度 / 限速**（模型与额度不要分开写）；无免费层时写"**无免费模型层**"并说明在架付费模型 |
 | `free_quota` | 仅写**账户级注册赠送**（代金券、token 资源包）；模型层免费额度写进 `free_models`，不要重复 |
 | `validity` | 额度有效期；滚动重置 / N 天 / 永久免费等 |
-| `tier_caveats` | **列表**，免费层的真实边界：①只免旧版/特定模型时写清版本代差（哪一代收费）；②限速数值（RPM/RPD/TPM，文档无公开数字就明说"以控制台为准"）；③商用限制、数据隐私；④公测/限时等失效风险。**禁止"全家桶永久免费"式笼统表述**；只要归在永久/周期层（tiers 含 permanent/recurring 且免卡），该字段必填（有测试强制） |
+| `tier_caveats` | **列表**，免费层的真实边界：①只免旧版/特定模型时写清版本代差（哪一代收费）；②限速数值（RPM/RPD/TPM，文档无公开数字就明说"以控制台为准"）；③商用限制、数据隐私；④公测/限时等失效风险。**禁止"全家桶永久免费"式笼统表述**；只要归在无条件免费层（tiers 含 permanent/recurring/onetime 且免卡，即 `signup` 非 card），该字段必填（`TestTierCaveats` 强制） |
 | `preconditions` | 手机号、实名、信用卡、企业认证等门槛。注意：实名/邮箱不算门槛，只有「需要付款方式」才单列 |
 | `promotions` | 限时折扣、订阅档位等活动，标注截止日与来源 |
 | `invite_reward` | （可选）邀请返利 / 拉新奖励。只填官方页可核实的规则；无官方页就写明死链并写"不予采信"。**不填则不出这一行** |
 | `student_benefit` | （可选）学生 / 高校师生扶持。同上，无官方页即写明"不予采信"。**不填则不出这一行** |
-| `openai_compat` | （可选）字典，有则自动进「一键接入」速查表。键：`summary`（额度简述）、`api_key_label`、`api_key_url`、`base_url`、`models`（推荐填的 model id）。缺 `base_url` 不出表 |
+| `openai_compat` | （可选）字典，有则自动进「一键接入」速查表。键：`summary`（额度简述）、`api_key_label`、`api_key_url`、`base_url`、`models`（推荐填的 model id）。缺 `base_url` 不出表；填了字典就必须写全 `base_url`/`api_key_url`/`models`，缺任一会被测试拦下（`TestEndpointTable`） |
 | `notes` | 已作废的旧说法、品牌变迁等；查不到的旧额度写"无法复核，不予采信" |
 | `links` | 元组列表 `(标签, URL)`，至少一条官方定价 / 免费额度页 |
 
@@ -69,20 +69,21 @@ git diff README.md
   测试里 patch 到临时目录 —— 否则这个用例只能被排除在 CI 之外，等于 CI 里零覆盖。
 - **新增产物或新增守卫时，顺手确认它在 CI 里真的会跑**（`ci_suite()` 取到即可）——
   「测试写了但 CI 不跑」和「没写测试」在故障面前是一回事。
+- **失败源冷却**：单个情报源连续抓取失败达 `SOURCE_SKIP_FAILS` 次后进入 `SOURCE_RETRY_DAYS` 天的跳过窗口（日志 `[source-skip]`，计数存在 `llm-intel-state.json` 的 `failures`），到期自动放行重试一次、成功即清零；确要强制抓取用 `--force-sources`。别把它和上面 AI 核查的 `[ai-cooldown]` 混淆：前者管抓取失败，后者管核查失败。
 
-- **不要手工编辑 README 的两个自动生成区块**：`LLM-GUIDE:BEGIN/END`（项目介绍后的白嫖攻略）与 `LLM-INTEL:BEGIN/END`（「快速开始」之后的厂商总表），也不要手工编辑 `llm-news-feeds.md` / `llm-news-feeds.opml` / `llm-news/` / `docs/feeds/` 的生成内容——它们在完整运行时会被自动重新渲染。标记块之外（含文末的开发者章节与 365 页脚）人工维护，巡检会**原样保留**（旧版「END 之后一律丢弃」的行为已移除）。
+- **不要手工编辑 README 的两个自动生成区块**：`LLM-GUIDE:BEGIN/END`（项目介绍后的白嫖攻略）与 `LLM-INTEL:BEGIN/END`（「快速开始」之后的厂商总表），也不要手工编辑 `llm-news-feeds.md` / `llm-news-feeds.opml` / `llm-news/` / `docs/feeds/` 的生成内容——它们在完整运行时会被自动重新渲染。`llm-intel-changelog.md`（AI 采纳变更日志）同样只由脚本追加、CI 随巡检提交，不要手改；首次 AI 采纳之前它不存在是常态。标记块之外（含文末的开发者章节与 365 页脚）人工维护，巡检会**原样保留**（旧版「END 之后一律丢弃」的行为已移除）。
 - `llm-news-feeds.opml` 的**自建源**分组只在能推导出 Pages 前缀时（CI 注入 `GITHUB_REPOSITORY`）才会写；本地跑推不出前缀，只写「官方原生源」一组——别把本地生成的 OPML 当成线上形态。厂商**官网自带** RSS 的判断（`_native_feed_vendors`）被 OPML 与 `llm-news-feeds.md` 共用，改一处即可，不要在两处各写一遍判断。
-- `docs/feeds/*.xml` 与 `docs/feeds/vendors.json`、`docs/feeds/articles.json`、`docs/feeds/quotas.json`、`docs/feeds/intel-changes.json` 是自建 RSS 订阅源、厂商索引、**全量文章索引**、额度总表机读镜像与变化流伴生 JSON（GitHub Pages 从这里发布），**只由脚本生成**。注意 `--no-news` 会跳过整条新闻链路，因此也不会刷新它们；改动了归档相关的抓取 / 排序 / 清洗逻辑时，请跑一次**不带 `--no-news`** 的巡检确认产物。新增厂商后订阅源会自动多一个 `llm-news-<vendor_id>.xml`、两个索引自动多一条，已下线厂商的旧源会被清理。
+- `docs/feeds/*.xml` 与 `docs/feeds/vendors.json`、`docs/feeds/articles.json`、`docs/feeds/model-releases.json`、`docs/feeds/quotas.json`、`docs/feeds/intel-changes.json` 是自建 RSS 订阅源、厂商索引、**全量文章索引**、模型发布雷达（从归档标题抽取「日期+厂商+模型」事件）、额度总表机读镜像与变化流伴生 JSON（GitHub Pages 从这里发布），**只由脚本生成**。注意 `--no-news` 会跳过整条新闻链路（发布雷达也在内），因此也不会刷新它们；改动了归档相关的抓取 / 排序 / 清洗逻辑时，请跑一次**不带 `--no-news`** 的巡检确认产物。新增厂商后订阅源会自动多一个 `llm-news-<vendor_id>.xml`、各机读索引随之同步增减，已下线厂商的旧源会被清理。
 - `docs/index.html` 是自建 RSS 的**浏览页**（读 `docs/feeds/articles.json` 列出**全部**条目，可筛选、可搜索；选中某厂商时订阅地址自动切成该家单源），**人工维护、不参与巡检**，改它不会与脚本产物冲突。页面里的厂商清单来自 `feeds/vendors.json`，**不要在页面里硬编码厂商列表**（会随厂商增删而漂移）；`docs/.nojekyll` 关闭 Jekyll，不要删除。
-- **合并流默认不限制**（`RSS_MERGED_LIMIT = 0`，收录全部有日期的条目）。曾经限 200 条，理由是「全量约 1.2 MB 会让阅读器吃力」—— **那个理由站不住**：GitHub Pages 用 gzip 传输（线上实测 `Content-Encoding: gzip`），当年那份 1124 KB 的全量 XML 压缩后只剩 131 KB。当时的判断看的是未压缩体积，别再照它把上限加回来。要限流可用 `--rss-limit N`。
+- **合并流默认不限制**（`RSS_MERGED_LIMIT = 0`，收录全部有日期的条目）。曾经限 200 条，理由是「全量约 1.2 MB 会让阅读器吃力」—— **那个理由站不住**：GitHub Pages 用 gzip 传输，当初决策时线上实测过 `Content-Encoding: gzip`，那份全量 XML 压缩后只剩约八分之一（历史观测值，不代表现状体积）。当时的判断看的是未压缩体积，别再照它把上限加回来。要限流可用 `--rss-limit N`。
 - **页面为什么还读 `articles.json` 而不是合并流**：体积明显更小（不带描述）、免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里截到 60 字是为了列表可读）。别顺手把页面「简化」成读合并流。
 - `.translate_cache.json` 是本地缓存，不要提交。
 - commit message 只描述变更内容本身。
 
 ## AI 自动核查是怎么工作的
 
-1. 每次巡检把各官方页正文做哈希快照（`llm-intel-state.json`），与上次比对；
-2. 仅快照变化的厂商才调用 LLM（`ai_review.py`），输入 = 该厂商全部情报页正文 + 当前生效档案；
+1. 每次巡检把各官方页正文做哈希快照（`llm-intel-state.json`），与上次比对；快照条目除 `sha256` 外还存一份 `fact`（经 `FACT_TEXT_LIMIT` 截断的事实行），页面变化时新旧 fact 相减得到「变化行」，供 diff 导向核查把注意力聚焦到实际改动上；
+2. 快照变化的厂商进入 LLM 核查队列（`ai_review.py`），输入 = 该厂商全部情报页正文 + 当前生效档案；此外默认还有 `--stale-review-days` 例行复查：超期未被核查的厂商即使页面未变也入队（每轮至多 `STALE_REVIEW_PER_RUN` 家，分批轮完存量），设 `0` 关闭；
 3. LLM 只输出严格 JSON：变化字段、攻略元数据、以及**页面原文逐字证据**。证据不能在页面正文中逐字定位的补丁会被整条拒绝（防幻觉）；
 4. 通过校验的补丁写入 `profile_overrides.json`（AI 永远不直接改 `provider_profiles.py`），在 CI 中**与快照 / 新闻一起原子提交到 main**（2026-09-22 起不再开 PR 等人工审核，理由见下）；LLM 调用失败或未配置 API Key 时保留旧快照，下次巡检自动重试。
 
@@ -165,7 +166,7 @@ README 项目介绍之后的「白嫖攻略」**不是手写 Markdown**，由爬
 - `scenarios`：`code` / `flagship` / `longctx` / `image` / `embed` / `deploy` / `credit`；
 - `short`：一句话额度摘要；`tip`：防扣费提示；`pick`：懒人首选推荐语（仅给首推厂商配置，渲染为攻略第 0 节，按厂商编号排序）。
 
-「限时 / 易变信息」一节无需手工维护——爬虫自动扫描各档案的 `promotions`、`free_models` 等字段中的「截止 / 限量 / 限时 / limited time」关键词；片段中写明的截止/结束日期（`YYYY-MM-DD`、`YYYY年M月D日` 等）若已过当天，该片段自动剔除，因此到期活动应直接从档案字段中删除或改写为无日期表述。
+「限时 / 易变信息」一节无需手工维护——爬虫自动扫描各档案的 `promotions`、`free_models` 等字段中的「截止 / 限量 / 限时 / 爆满 / limited time」关键词；片段中写明的截止/结束日期（`YYYY-MM-DD`、`YYYY年M月D日` 等）若已过当天，该片段自动剔除，因此到期活动应直接从档案字段中删除或改写为无日期表述。
 修改元数据后可用 `python crawler_llm_intel.py --only <vendor_id> --no-browser` 验证单厂商逻辑；提交前运行全量巡检生成完整攻略区块。攻略区块不含时间戳，无内容变化时产物不会被改写。
 
 ## 标题汉化与 AI 优化
@@ -173,7 +174,8 @@ README 项目介绍之后的「白嫖攻略」**不是手写 Markdown**，由爬
 巡检产出的中文标题按「来源」分两层，规则不同：
 
 - **每次巡检新抓到、尚未进归档的文章**：标题走 `translate_to_zh`（Google 公开接口 + `.translate_cache.json` 磁盘缓存；纯模型 id / 含型号 / 纯专名标题不翻，保留英文）。CI 端缓存不随仓库走，靠 GitHub Actions cache 续命，缓存被逐出后译文可能变化。
-- **已进归档 `llm-news/<vendor>.md` 的文章**：只要归档里该 URL 的标题已是中文，后续巡检**原样沿用**（`Article.zh_title`），不再重新翻译——每日重抓不会把译文冲掉。
+- **已进归档 `llm-news/<vendor>.md` 的文章**：只要归档里该 URL 的标题已是中文，后续巡检**原样沿用**（`Article.zh_title`），不再重新翻译——每日重抓不会把译文冲掉。沿用前先过品牌复原（`_restore_brand_names`：原文确实写着该英文品牌时才把音译换回英文拼写，历史冻结的坏译文在此自愈），另有守卫测试扫描全部产物、禁止品牌音译残留。
+- **归档合并时的「同篇双入口」折叠**（`_dedup_same_title`）：标题+日期完全相同、或一条是锚点卡（`/blog#…`）一条是直链的同名条目，视为同一篇文章收过两次，锚点卡折叠进直链（保留优先级：直链 > 锚点，其次 URL 更短）；两条都是直链且日期不同则不动——那是真同名文章。
 
 因此想优化某篇文章的标题（人工润色，或让 AI 对照英文原文批量重译），**唯一编辑点是 `llm-news/<vendor>.md` 里那一行**；`docs/feeds/*.xml`、`docs/feeds/articles.json`、`llm-news-feeds.md`、README 总表都是每日巡检从归档重建的产物，直接改它们等于白改。`articles.json` 的第 5 列 `original_title` 保留英文原文，是重译时的对照素材。
 
@@ -202,6 +204,6 @@ python crawler_llm_intel.py --review-export          # 组卷：待核查厂商 
 python crawler_llm_intel.py --review-apply           # 过同一道逐字证据闸门后入库并前进快照
 ```
 
-`--review-apply` 默认重新实抓、用**当次页面**重建校验语料；但当 manifest 指纹证明页面自导包以来一字未动时，会**快进复用包内语料**（免网络、秒级完成，闸门语义不变）——导包与回填通常只隔几十分钟，日常都走这条。任一厂商页面在期间变了，命令自动回退完整巡检重验，不存在「拿过期语料放行」的中间态。给本地 agent 的标准指令一句话即可：「处理 .ai-review/packets/ 下所有 prompt.md，按包尾输出格式填同名 json」。
+`--review-apply` 默认重新实抓、用**当次页面**重建校验语料；但当 manifest 指纹证明页面自导包以来一字未动时，会**快进复用包内语料**（免网络，闸门语义不变）——指纹一致即走快进，否则自动回退完整巡检重验（快照为空的厂商即使指纹一致也证明不了未变，同样回退实抓），不存在「拿过期语料放行」的中间态。给本地 agent 的标准指令一句话即可：「处理 .ai-review/packets/ 下所有 prompt.md，按包尾输出格式填同名 json」。
 
 要点：闸门校验的语料是 **apply 当次实抓的页面**——导出后页面又变了、证据已不在原文上的补丁会被 `[local-reject]` 拒掉并继续排队；已应用的补丁改名 `.json.applied` 防重复入库；导出本身不前进任何哈希（未被核查的厂商明早 CI 仍会重新入队）。`.ai-review/` 已 gitignore；核查产物（overlay / changelog / 快照）与远端通道完全同轨，CI 的校验步骤照跑。

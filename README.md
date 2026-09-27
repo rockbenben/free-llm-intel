@@ -150,9 +150,9 @@ python crawler_llm_intel.py
 python -m unittest discover
 ```
 
-常用参数：`--only <vendor_id>`（只巡检指定厂商，调试用，不覆盖全局 README）、`--no-news`（跳过博客 / RSS 归档）、`--no-browser`（禁用 playwright）、`--delay <秒>`（请求间隔，默认 0.3）、`--timeout <秒>`（超时，默认 20）、`--ai-review`（变化时调用 Google AI Studio 的 Gemini 做事实核查，详见「更新机制」）、`--ai-titles`（新收录文章的机翻标题交 LLM 润色一次）、`--rebuild-only`（不抓取，从磁盘归档重建全部动态产物）、`--backfill-dates`（维护模式：从文章页元数据回填归档缺失的发布日期）、`--review-export` / `--review-apply`（本地 AI 核查通道，见「更新机制」）、`--force-sources`（强制抓取已进入连续失败冷却的情报源）。
+常用参数：`--only <vendor_id>`（只巡检指定厂商，调试用，不覆盖全局 README）、`--no-news`（跳过博客 / RSS 归档）、`--no-browser`（禁用 playwright）、`--delay <秒>`（请求间隔，默认 0.3）、`--timeout <秒>`（超时，默认 20）、`--feeds-base <对外前缀>`（自建 RSS 的对外地址前缀；本地重建不带它会丢自定义域名与 `rel=self`，默认按仓库推导 GitHub Pages 地址）、`--stale-review-days <天>`（页面长期不变时的例行复查周期，见「更新机制」）、`--ai-review`（变化时调用 Google AI Studio 的 Gemini 做事实核查，详见「更新机制」）、`--ai-titles`（新收录文章的机翻标题交 LLM 润色一次）、`--rebuild-only`（不抓取，从磁盘归档重建全部动态产物）、`--backfill-dates`（维护模式：从文章页元数据回填归档缺失的发布日期）、`--review-export` / `--review-apply`（本地 AI 核查通道，见「更新机制」）、`--force-sources`（强制抓取已进入连续失败冷却的情报源）。
 
-完整巡检约需 5–15 分钟（厂商数、深度抓取的页面数与各源抓取结果见「快速开始」之后自动生成区块的「核心特性」行；JS 空壳与 403 页面自动走浏览器兜底），结束后自动刷新 Part 1–4 表格、博客主文档、`llm-news/` 归档与 `docs/feeds/` 自建 RSS / JSON 索引。
+完整巡检耗时随厂商数与源数量变化（厂商数、深度抓取的页面数与各源抓取结果见「快速开始」之后自动生成区块的「核心特性」行；JS 空壳与 403 页面自动走浏览器兜底），结束后自动刷新 Part 1–4 表格、博客主文档、`llm-news/` 归档与 `docs/feeds/` 自建 RSS / JSON 索引。
 
 > 想启用 `--ai-review`：到 [Google AI Studio](https://aistudio.google.com/apikey) 免费申请一个 API Key，设置环境变量 `GEMINI_API_KEY`（也兼容 `GOOGLE_API_KEY`）即可，默认模型 `gemini-3.8-flash`，可用 `AI_REVIEW_MODEL` 覆盖；无需安装任何额外软件。
 
@@ -1269,14 +1269,14 @@ python -m unittest discover
 |---|---|
 | `llm-intel.yaml` | **输入**：厂商清单与待巡检页面（爬虫只读不写） |
 | `provider_profiles.py` | **输入**：全部厂商的人工档案（免费模型与额度、前置条件、特惠活动，均附官方链接） |
-| `crawler_llm_intel.py` | 巡检引擎：抓取官方页 → 快照比对 → 变化时调用 AI 核查 → 套用档案 → 生成全部 Markdown 产物 |
+| `crawler_llm_intel.py` | 巡检引擎：抓取官方页 → 快照比对 → 变化时调用 AI 核查 → 套用档案 → 生成全部 Markdown 与订阅/机读产物 |
 | `ai_review.py` | 变化触发的 LLM 核查（默认直连 **Google AI Studio 的 Gemini API**，可选 Anthropic）：阅读变化页面正文 + 当前档案，只输出带「页面原文逐字证据」的严格 JSON 补丁；证据无法在原文定位则整条拒绝（防幻觉） |
 | `profile_overrides.json` | AI 核查产物：对人工档案的字段级补丁（含 `_evidence` 证据、`_summary` 变更说明），经证据闸门校验后自动入库 |
 | `llm-intel-state.json` | 各官方页的文本快照哈希，用于检测「页面是否真的变了」；另存 `reviews`（每厂商最后核查日，驱动例行复查）（随仓库提交） |
-| `llm-intel-changelog.md` | **产物**（只追加）：AI 核查每日采纳的免费额度事实变化，按厂商列出前值 → 后值与摘要，最新在前——把「情报站的历史」沉淀成可回溯的日志 |
+| `llm-intel-changelog.md` | **产物**（每日追加、超条数上限裁最旧）：AI 核查每日采纳的免费额度事实变化，按厂商列出前值 → 后值与摘要，最新在前——把「情报站的历史」沉淀成可回溯的日志 |
 | `docs/feeds/model-releases.json` | **产物**（确定性、无时间戳）：模型发布雷达——从动态归档标题抽取 (日期, 厂商, 模型) 事件（A 类「型号：描述」结构 + B 类发布动词 + 版本 token，宁可漏不可错）。纯数据产物，供「新模型时间线」类页面或工具接入 |
 | `docs/feeds/llm-intel-changes.xml` | **产物**：额度 / 活动变化流（RSS）——变更日志里 AI 采纳的额度调整（前值 → 后值）与模型发布雷达事件合流，「哪家的白嫖政策刚变了」订这一个；条目直链 README 对应厂商档案 |
-| `docs/feeds/quotas.json` | **产物**（确定性、无时间戳）：「免费额度一览」的机读镜像（72 家全字段 + Part 归类 + 档案锚点 + 最近核查日期），浏览页「额度总表」页签与二次开发者直接消费 |
+| `docs/feeds/quotas.json` | **产物**（确定性、无时间戳）：「免费额度一览」的机读镜像（全字段 + Part 归类 + 档案锚点 + 最近核查日期，条目数随一览变化），浏览页「额度总表」页签与二次开发者直接消费 |
 | `.github/workflows/` | GitHub Actions 自动化工作流：每日错峰巡检、事实变动自动核查采纳、新闻与快照原子更新 |
 | `test_workflow_and_review.py` | 自动化回归测试套件：覆盖工作流合规性、补丁叠加、快照退避冷却与防抖机制，以及标题沿用 / rebuild 产物等价 / 变更日志裁剪 / 例行复查超期判定 / 雷达抽取等守卫 |
 | `README.md` | **产物**：本文件。`LLM-GUIDE:BEGIN/END`（项目介绍后的白嫖攻略）与 `LLM-INTEL:BEGIN/END`（厂商总表）两个标记块全部由脚本生成；标记之外（含文末开发者章节与 365 页脚）人工维护，巡检会原样保留 |
@@ -1285,8 +1285,9 @@ python -m unittest discover
 | `docs/feeds/*.xml` | **产物**：自建 RSS 2.0 订阅源（`llm-news-all.xml` 合并流 + 每厂商单源），由 `docs/` 作为 GitHub Pages 发布目录对外提供，供 RSS 阅读器订阅**官方没有原生源的厂商** |
 | `docs/feeds/vendors.json` | **产物**：厂商索引（id / 名称 / 单源地址 / 篇数 / 最新日期），供浏览页列出**全部**厂商的订阅入口——合并流只收**有日期**的条目，会漏掉「文章全无日期」的厂商（如整源都拿不到日期的官网），索引把这些补齐 |
 | `docs/feeds/articles.json` | **产物**：**全量**文章索引（标题 / 链接 / 厂商 / 日期 / 原文标题），给浏览页用。体积明显小于同条数的合并流 XML（不带描述），免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里为了列表可读截到 60 字）。条数随巡检变化，不在这里写死 |
-| `docs/index.html` | **页面**（人工维护，非巡检产物）：自建 RSS 的浏览页——三个页签：「厂商动态」读 `feeds/articles.json` 渲染成**全部**条目（可按厂商筛选、可搜索；首屏只渲染一批，点「显示更早的 N 条」按需追加，计数与搜索始终基于全量）、「最新变化」读 `feeds/intel-changes.json`（额度/活动变化与新模型发布的时间线，可单独订阅）、「免费额度一览」读 `feeds/quotas.json`（可搜索，点厂商名直达 README 档案）；顶部一键订阅**跟着当前视图走**——选中某厂商时自动切成该家的单源，停在「最新变化」时切成变化流；厂商清单取自 `feeds/vendors.json`（不硬编码，厂商增删不漂移）。索引缺失时退回解析 `feeds/llm-news-all.xml` 并注明，不会整页打不开。**页面不含任何数据，全靠打开时 fetch 产物**，所以 CI 跑完即自动是最新，无需重新生成；三份 JSON 并行拉取并缓存在 localStorage（12 小时内先渲染缓存、后台刷新替换，最长 14 天），复访秒开 |
+| `docs/index.html` | **页面**（人工维护，非巡检产物）：自建 RSS 的浏览页——三个页签：「厂商动态」读 `feeds/articles.json` 渲染成**全部**条目（可按厂商筛选、可搜索；首屏只渲染一批，点「显示更早的 N 条」按需追加，计数与搜索始终基于全量）、「最新变化」读 `feeds/intel-changes.json`（额度/活动变化与新模型发布的时间线，可单独订阅）、「免费额度一览」读 `feeds/quotas.json`（可搜索，点厂商名直达 README 档案）；顶部一键订阅**跟着当前视图走**——选中某厂商时自动切成该家的单源，停在「最新变化」时切成变化流；厂商清单取自 `feeds/vendors.json`（不硬编码，厂商增删不漂移）。索引缺失时退回解析 `feeds/llm-news-all.xml` 并注明，不会整页打不开。**页面不含任何数据，全靠打开时 fetch 产物**，所以 CI 跑完即自动是最新，无需重新生成；四份机读 JSON 并行拉取并缓存在 localStorage（12 小时内先渲染缓存、后台刷新替换，最长 14 天），复访秒开 |
 | `.translate_cache.json` | 运行缓存（已 gitignore）：标题翻译结果持久化，重跑只翻译新增条目 |
+| `.ai-review/` | 运行缓存（已 gitignore）：本地 AI 核查通道的工作目录——`--review-export` 把待核查厂商组卷导出到 `packets/<vid>.prompt.md`，本地 agent 填好 `<vid>.json` 后由 `--review-apply` 采纳，`manifest.json` 登记页面快照指纹（见「更新机制」） |
 | `requirements.txt` | **配置**：Python 依赖项声明（`requests`、`PyYAML` 为必需；`playwright` pip 包随依赖安装，Chromium 内核本地可选装、CI 已装） |
 | `CONTRIBUTING.md` | **文档**：贡献指南（新增厂商规范、单厂商调试与 AI 审核/回退操作指引） |
 | `vendor_watchlist.md` | **线索池**（人工维护）：听说过但尚未在官方页复核的厂商清单，标注 ❌ 已排除 / ⚠️ 待复核 / ❓ 未考察，并写明晋升为正式条目需要满足的条件 |
@@ -1296,7 +1297,7 @@ python -m unittest discover
 - **手动巡检 + AI 核查**：本地执行 `python crawler_llm_intel.py --ai-review`，检查 diff 后提交；事实核查默认直连 **Google AI Studio 的 Gemini API**（免费层 Key，在 [aistudio.google.com/apikey](https://aistudio.google.com/apikey) 申请，设到环境变量 `GEMINI_API_KEY`，兼容 `GOOGLE_API_KEY`）——
   - 检测到事实页文本变化时，Gemini 阅读该厂商变化页面正文 + 当前生效档案，输出带**页面原文逐字证据**的严格 JSON 补丁；证据通过闸门后写入 `profile_overrides.json` 并生成 `.ai-changed` 标记，随后**与快照 / 新闻一起原子提交到 main**（命令见 [CONTRIBUTING.md](CONTRIBUTING.md)）；
   - 默认模型 `gemini-3.8-flash`，可用 `AI_REVIEW_MODEL` 钉死其他模型；后端由 `AI_REVIEW_BACKEND=auto|gemini|anthropic` 控制（默认 auto：有 `GEMINI_API_KEY` 走 Gemini，否则尝试 `ANTHROPIC_API_KEY` 直连 Anthropic）；
-  - **免费层回退**（[pricing 页](https://ai.google.dev/pricing) 核实 8 个模型免费层均可用）：首选模型 404 / 免费层未开放时自动按 `gemini-3.8-flash → gemini-3.7-flash → gemini-3.6-flash → gemini-3.5-flash → gemini-2.5-flash → gemini-3.5-flash-lite → gemini-3.1-flash-lite → gemini-2.5-flash-lite` 回退（完整 Flash 系按新到旧、Lite 系垫底，不纳入 preview 模型）；遭遇 429 短期限流（RPM/TPM，按模型独立计量）按 `Retry-After` 以 5/10/20/40 秒指数退避，退避不缓解则换下一个备选模型；判定为当日额度 RPD 耗尽（太平洋时间午夜重置，按项目共享）、备选链全部限流或多个模型连续 5xx 时**立即停止本次所有 AI 调用**；Key 无效等 400/401/403 立即报错不消耗调用；连续 3 厂商失败触发熔断；单厂商核查另受 900s 墙钟预算约束；
+  - **免费层回退**（[pricing 页](https://ai.google.dev/pricing) 核实 8 个模型免费层均可用）：首选模型 404 / 免费层未开放时自动按 `gemini-3.8-flash → gemini-3.7-flash → gemini-3.6-flash → gemini-3.5-flash → gemini-2.5-flash → gemini-3.5-flash-lite → gemini-3.1-flash-lite → gemini-2.5-flash-lite` 回退（完整 Flash 系按新到旧、Lite 系垫底，不纳入 preview 模型；链定义以 `ai_review.py` 的 `GEMINI_FALLBACK_MODELS` 为准，README 需与之保持一致）；遭遇 429 短期限流（RPM/TPM，按模型独立计量）按 `Retry-After` 以 5/10/20/40 秒指数退避，退避不缓解则换下一个备选模型；判定为当日额度 RPD 耗尽（太平洋时间午夜重置，按项目共享）、备选链全部限流或多个模型连续 5xx 时**立即停止本次所有 AI 调用**；Key 无效等 400/401/403 立即报错不消耗调用；连续 3 厂商失败触发熔断；单厂商核查另受 900s 墙钟预算约束；
   - **同一变化不会反复烧额度**：① AI 判 `changed=false` 后新哈希立即落库，同一份页面文本不再二次触发；② 单厂商核查持续失败时按 1/2/4/7 天指数冷却（日志 `[ai-cooldown]`，原因记录在 `llm-intel-state.json` 的 `ai_attempts/ai_retry_after/ai_last_error`），不再每天重试；③ 所有失败路径一律**保留旧快照**，事实字段不会被改写；
   - **diff 导向核查**：快照除哈希外另存每页的「事实文本」，检测到变化时自动得出**增删行**并随 prompt 给出「本次页面变化行」区块——模型先看变化、再看原文，整页原文预算减半（token 更省、注意力更准）；证据闸门不变，引文仍须在 prompt 内的页面原文中逐字命中。本地核查通道（`--review-export`）导出的是同一份 prompt，同样带变化行区块；
   - **连续失败源自动降级**：某个情报页连续 7 次抓取失败后进入 7 天跳过窗口（日志 `[source-skip]`，计数在 `llm-intel-state.json` 的 `failures`），不再每天拖慢巡检；窗口到期自动重试一次，成功即清零。临时强制抓取用 `--force-sources`；
@@ -1305,11 +1306,10 @@ python -m unittest discover
   - **本地 AI 核查通道（不依赖任何 API Key）**：`python crawler_llm_intel.py --review-export` 会把排队厂商组卷导出到 `.ai-review/packets/<vid>.prompt.md`（与远端模型完全相同的核查 prompt，页面快照指纹登记在 `.ai-review/manifest.json`）；本地 AI agent（Claude Code / Qoder 等）按包尾输出格式填 `<vid>.json`，再 `--review-apply` —— 补丁过的就是远端那套**逐字证据闸门**（页面自导包后未变时快进复用包内语料、免重抓；变了则重新实抓校验），通过后写 overlay、追加变更日志、快照前进。导出 ≠ 核查：未被 apply 的厂商保留旧哈希、继续排队。
 - **人工回退手段**：① 不认可某次 AI 更新就 **`git revert` 那次巡检提交**（提交信息以 `chore(ai):` 开头，一眼可辨）——AI 只能改 `profile_overrides.json`，从未触碰人工基线 `provider_profiles.py`；② 也可直接删除（或编辑）`profile_overrides.json` 中对应厂商的键即恢复人工基线，证据留痕在 `_evidence`；③ 想临时停用 AI：本地不带 `--ai-review` 运行，CI 删除 `GEMINI_API_KEY` Secret 后新闻更新照常、事实变化只标记不核查。
 - **定时自动更新**：GitHub Actions（`.github/workflows/refresh-intel.yml`）默认**每天北京时间 11:19** 全量抓取（时段不是随便挑的：必须落在**北京 08:00–24:00**，否则 runner 的 UTC 日期会比北京早一天，国内厂商当天发的文章会被判为「未来日期」而丢日期；11:19 同时已过美国工作日结束点、避开整点排队、且 Gemini 额度桶是满的。改 cron 前请读 workflow 头部注释）：
-  0. 抓取完成后先跑**产物与不变量校验**（除会删 `.ai-changed` 的 `TestCrawlerCleanup` 外的全部用例，测试集由 `ci_suite()` 按「全部 − 白名单」推导，新增用例自动纳入）——失败即拦住提交，不让坏产物进 main；
+  0. 抓取完成后先跑**产物与不变量校验**（全部用例由 `ci_suite()` 自动纳入，新增用例即进 CI）——失败即拦住提交，不让坏产物进 main；
   1. 页面快照无变化 → 不写产物、零提交；
   2. 仅新闻 / 证据引文变化 → 机器人直接提交 main；
   3. 额度等事实页文本变化（快照 hash 改变）→ 用仓库 Secret **`GEMINI_API_KEY`** 调用 Gemini 核查。通过证据闸门后**与快照 / 新闻一起原子提交到 main**（2026-09-22 起不再开 PR 等人工审核）：
-     - 若远端残留旧的 `ai/intel-update` 分支，会自动同步其补丁并在其上累加，防止多日连续变动相互覆盖（**旧 PR 的更新就此被自动采纳**）；
      - 档案更新、快照、新闻、README **一次提交**——避免"先开 PR、成功后再推快照"两段式在中间失败时静默丢失事实变更；
      - 每条改动都带 `_evidence`（页面原文逐字摘录）与 `_summary`，可事后追溯；发现改错直接 `git revert` 那次提交（提交信息以 `chore(ai):` 开头，一眼可辨）。
      - 未配置该 Secret 时脚本**保留旧快照不前进**，变化持续标记到下次巡检，新闻更新仍照常原子性提交 main。
