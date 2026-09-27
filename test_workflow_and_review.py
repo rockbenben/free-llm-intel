@@ -83,9 +83,9 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertIn("Install dependencies", step_names)
         self.assertIn("Cache Playwright browsers", step_names)
         self.assertIn("Install Playwright Chromium", step_names,
-                      "CI must install Chromium: without it ~1/3 of pages are JS "
-                      "shells and the README live-evidence rows lose quality "
-                      "(snapshot hashes are requests-stage-only by design)")
+                      "CI must install Chromium: without it ~1/3 of pages were JS "
+                      "shells at the time we measured, and the README live-evidence "
+                      "rows lose quality (snapshot hashes are requests-stage-only by design)")
         self.assertNotIn("Sync existing AI PR overrides", step_names,
                          "旧 PR 流程的遗留分支同步步骤已退役：新流程不再产生 ai/intel-update 分支，"
                          "留着它反而会把过期补丁灌回 main（2026-09-26 手动清理遗留分支后移除）")
@@ -243,7 +243,6 @@ class TestAiReviewApplyPatches(unittest.TestCase):
         self.assertEqual(saved_2["vendor_b"]["free_quota"], "注册赠送 $5")
 
     def test_apply_patches_evidence_cap(self):
-        # 测试证据条目最多保留 20 条
         evidences = [f"证据第 {i} 条" for i in range(25)]
         patch = {
             "changed": True,
@@ -337,7 +336,6 @@ class TestSnapshotState(unittest.TestCase):
         state = crawler_llm_intel.SnapshotState(self.root)
         self.assertTrue(state.baseline)
 
-        # 模拟厂商与页面
         vendor = crawler_llm_intel.VendorIntel(
             vendor_id="v1", brand="Brand1", homepage="https://example.com", products=[]
         )
@@ -588,7 +586,6 @@ class TestOnlyFlagSafeguard(unittest.TestCase):
         self.assertFalse((self.news_dir / "vendor_b.md").exists(), "clean_removed=True 时应清理已下线厂商归档")
 
     def test_archive_incremental_merge_preserves_old_articles(self):
-        # 验证历史文章增量合并，旧文章不被冲掉
         arch_path = self.news_dir / "vendor_a.md"
         arch_path.write_text("1. [旧文章标题](https://a.com/old)（2025-01-01）\n", encoding="utf-8")
         vendor_a = crawler_llm_intel.VendorIntel(
@@ -1268,7 +1265,7 @@ class TestNewsSectionCountConsistency(unittest.TestCase):
 
     归档刻意保留页面已不再链接的历史文章（永不丢失），所以合并后的数量常大于本次
     抓取数。main() 里若把 render_news_section 排在 write_news_archives 之前，总表
-    就会用合并前的计数，比归档文件少 —— 线上实测 anthropic 52/54、ppio 51/55、
+    就会用合并前的计数，比归档文件少 —— 排查当时线上实测 anthropic 52/54、ppio 51/55、
     cohere 28/29、moonshot_kimi 14/15。
     """
 
@@ -1411,8 +1408,8 @@ class TestSelfHostedRss(unittest.TestCase):
     def test_vendors_index_lists_every_vendor_even_without_dates(self):
         """厂商索引必须列出**全部**厂商，包括文章全无日期、因而进不了聚合流的那几家。
 
-        回归：只从聚合流推导厂商清单会漏掉 3/15（google_gemini / meta_llama 全无日期，
-        groq 文章都偏旧排不进前 200 条），而它们恰恰是"官方没有原生 RSS"最需要被订到的。
+        回归：当时只从聚合流推导厂商清单会漏掉 3/15 家（google_gemini / meta_llama 全无日期，
+        groq 文章都偏旧，排不进当时聚合流的旧 200 条上限），而它们恰恰是"官方没有原生 RSS"最需要被订到的。
         """
         dated = self._vendor("vendor_a", "Vendor A", [
             crawler_llm_intel.Article(title="有日期", url="https://a.com/1", date="2026-01-01")])
@@ -1521,9 +1518,9 @@ class TestSelfHostedRss(unittest.TestCase):
 class TestOpmlAndNewsDocCoverage(unittest.TestCase):
     """OPML 与新闻总文档必须覆盖**自建源**，而不只是厂商官网自带的原生源。
 
-    实测官网有原生 RSS 的只有 3/15，另外 12 家官方页面根本没有 feed —— 而这正是本仓库
-    自建订阅源存在的理由。旧版两处产物只提原生源：OPML 只列 3 条，文档对另外 12 家写
-    「未发现 RSS/Atom 链接」且只字不提自建源，读者据此会以为这些厂商订不了。
+    当时实测：官网有原生 RSS 的只有 3 家（分母是当时全部厂商），其余各家官方页面根本没有
+    feed —— 而这正是本仓库自建订阅源存在的理由。旧版两处产物只提原生源：OPML 只列 3 条，
+    文档对其余厂商写「未发现 RSS/Atom 链接」且只字不提自建源，读者据此会以为这些厂商订不了。
     """
 
     BASE = "https://example.github.io/repo/feeds"
@@ -2082,7 +2079,7 @@ class TestRetiredNewsSource(unittest.TestCase):
     归档是「增量合并、只增不减」的 —— 从 yaml 删掉一个源之后，它的历史条目会一直留在
     `llm-news/*.md` 与单厂商 feed 里。实例：`cloud.google.com/blog/products/`
     （Google Cloud 通用 AI 博客：Gartner 魔力象限、印度板球转播、I/O 大会速览）
-    于 2026-09-18 从 yaml 移除，但归档里仍有 11 条残留。
+    于 2026-09-18 从 yaml 移除，当时归档里仍有 11 条残留（收口过滤器装上后已清零），故需本过滤器。
     """
 
     def test_retired_url_recognised(self):
@@ -2219,11 +2216,11 @@ class TestFeedLimitedPageFull(unittest.TestCase):
     """合并流**默认不限制**；页面仍读更省的全量索引。
 
     合并流曾经限 200 条，理由是「全量约 1.2 MB 会让阅读器吃力」—— **那个理由站不住**：
-    GitHub Pages 用 gzip 传输（线上实测 `Content-Encoding: gzip`），全量 2575 条
-    （XML 1124 KB）压缩后只有 131 KB。当时的判断看的是未压缩体积。
+    GitHub Pages 用 gzip 传输（线上实测 `Content-Encoding: gzip`），当初决策时的全量为
+    2575 条（XML 1124 KB）压缩后只有 131 KB。当时的判断看的是未压缩体积。
     现在 `RSS_MERGED_LIMIT = 0` = 不限制，订阅者一次就能拿到全部历史。
 
-    页面仍读 `articles.json` 而不是合并流，但理由换了：**体积只有一半**（520 KB vs 1124 KB）、
+    页面仍读 `articles.json` 而不是合并流，但理由换了：**不带描述、明显更小**、
     免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里为了列表可读截到 60 字）。
     """
 
@@ -2659,11 +2656,9 @@ class TestReadmeIntegrity(unittest.TestCase):
         import urllib.parse
         content = self.readme_path.read_text(encoding="utf-8")
 
-        # 收集 HTML 显式 id/name 锚点
         explicit_ids = set(re.findall(r'id=["\']([^"\']+)["\']', content))
         explicit_ids |= set(re.findall(r'name=["\']([^"\']+)["\']', content))
 
-        # 收集 Markdown 标题对应的 GitHub 风格 slug
         headings = re.findall(r"^(#{1,6})\s+(.+)$", content, re.MULTILINE)
         heading_slugs = {crawler_llm_intel._gh_slug(h[1]) for h in headings}
         valid_targets = explicit_ids | heading_slugs
@@ -3267,17 +3262,13 @@ class TestCiSuite(unittest.TestCase):
         Regression: 该测试曾在**真实仓库根**建 / 删 `.ai-changed`（workflow「Decide commit
         path」判定走 PR 还是直提的判据），于是只能被排除在 CI 之外，那段清理逻辑在 CI 里
         零覆盖。改成注入 `_repo_root()` 后不再需要排除；行为层面的守卫见
-        `TestCrawlerCleanup.test_real_repo_marker_is_not_touched`。
+        `TestCrawlerCleanup.test_repo_root_is_redirected_to_temp`。
         """
         self.assertNotIn("TestCrawlerCleanup", CI_EXCLUDED_CLASSES,
                          "该测试已改为在临时目录里跑，不该再被排除")
         ids = self._ids(ci_suite())
         self.assertTrue(any("TestCrawlerCleanup" in i for i in ids),
                         "TestCrawlerCleanup 必须真的在 CI 测试集里，否则这段清理逻辑零覆盖")
-
-
-if __name__ == "__main__":
-    unittest.main()
 
 
 class TestSpaShellDetection(unittest.TestCase):
@@ -3712,3 +3703,7 @@ class TestArchiveDedup(unittest.TestCase):
         out = crawler_llm_intel._dedup_same_title(arts)
         self.assertEqual([a.url for a in out], ["https://x/b", "https://x/a/page"],
                          "折叠不能打乱日期倒序")
+
+
+if __name__ == "__main__":
+    unittest.main()
