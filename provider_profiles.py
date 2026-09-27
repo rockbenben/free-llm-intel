@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-provider_profiles.py — 54 家 LLM 厂商深度情报知识库与 Google 翻译服务
+provider_profiles.py — LLM 厂商深度情报知识库与 Google 翻译服务
 参考 FreeLLM-API-KeyHub 格式：免费模型与额度逐模型内联标注（免费 tokens /
 限速 RPM / 免费层规则），账户级注册福利单独说明，附有效期、限制条件与官方直达入口。
 """
@@ -54,8 +54,9 @@ _BRAND_TRANSLITERATIONS: list[tuple[str, re.Pattern]] = [
     # 产品名整串直译（实测 `Patch Time Series Transformer` → 「贴片时间序列
     # Transformer」）：键按整串复原，模式允许中途中英混排。
     ("Patch Time Series Transformer", re.compile(r"贴片\s*时间\s*序列\s*Transformer")),
-    # `Modular` 作普通形容词时译文同样出「模块化」，复原的充要条件是原文
-    # 写着英文 Modular（_restore_brand_names 已按 source 把关），不会误伤。
+    # `Modular` 作普通形容词时译文同样出「模块化」，复原靠原文含该英文词
+    # （_restore_brand_names 按 source 子串匹配）把关；子串匹配下 `Modularity`
+    # 也会命中，故并非绝对安全，只是这类证据里极少出现。
     ("Modular", re.compile(r"模块化")),
     ("Gemini", re.compile(r"双子座")),
     ("Sora", re.compile(r"索拉")),
@@ -86,7 +87,7 @@ try:
     if _CACHE_PATH.exists():
         _TRANS_CACHE = json.loads(_CACHE_PATH.read_text(encoding="utf-8"))
         # 历史缓存自愈：装防护之前落盘的音译译文在这里一次性复原，
-        # 否则闸门式守卫（放在查缓存之后）治不了已经坏掉的缓存。
+        # 否则缓存命中直接返回、不经过复原守卫，治不了已经坏掉的缓存。
         _healed = {k: rv for k, v in _TRANS_CACHE.items()
                    if (rv := _restore_brand_names(v, k)) != v}
         _TRANS_CACHE.update(_healed)
@@ -147,7 +148,7 @@ def normalize_zh_punct(text: str) -> str:
 
 
 # 纯专名短标题：1–2 个词、每词首字母大写（`Magistral` / `Pixtral Large` / `Le Chat`）。
-# 这类标题**不翻译** —— 见 translate_to_zh 里的第三条守卫。
+# 这类标题**不翻译** —— 见 translate_to_zh 里的纯专名守卫。
 _PROPER_NOUN_TITLE = re.compile(r"^[A-Z][\w'’\-]*(?:\s+[A-Z][\w'’\-]*)?$")
 # 首词是这些常见英文词时说明是句子而不是专名（`Introducing Mistral`、
 # `Large Enough`），照常翻译。
@@ -205,7 +206,7 @@ def translate_to_zh(text: str, timeout: float = 4.0) -> str:
     # 放后面等于对历史缓存不生效。
     if " " not in clean_text and re.search(r"[-/._]", clean_text):
         return clean_text
-    # 含**型号**的标题也不翻：字母紧邻数字（`H3` / `4.6` / `v2`）就是型号信号。
+    # 含**型号**的标题也不翻：字母紧邻数字（`H3` / `v2` / `Grok4`）就是型号信号。
     # 实测 Google 把 `MiniMax H3` 译成 `迷你最大H3`（品牌名被改写），
     # `qwen3.8-omni-flash` 译成 `qwen3.8-全向闪存`。带空格的品牌名上面那条拦不住。
     # 宁可留英文，也不翻坏品牌名；纯散文标题（无型号）照常翻译。
@@ -213,12 +214,12 @@ def translate_to_zh(text: str, timeout: float = 4.0) -> str:
     if re.search(r"[A-Za-z]\d|\d[A-Za-z]", clean_text):
         return clean_text
     # 「品牌 + 版本号」标题（`Grok 4.1` / `Codestral 25.01`）同样直接原样返回：
-    # 实测 Google 把 `Grok 4.1` 音译成「格罗克4.1」，上一条守卫被空格隔开拦不住。
+    # 型号守卫被空格隔开拦不住，实测坑见上方 _is_brand_version_title 定义处。
     if _is_brand_version_title(clean_text):
         return clean_text
     # 纯专名短标题同样不翻：实测 Google 把 `Magistral` 译成「公路」、`Pixtral Large`
     # → 「像素大号」、`Le Chat` → 「猫」、`Codestral` → 「共纹」—— 品牌名一旦被汉化，
-    # 标题彻底失去可检索性，读者也不知道那是什么。上面两条都拦不住它
+    # 标题彻底失去可检索性，读者也不知道那是什么。上面几条守卫都拦不住它
     # （`Le Chat` 有空格，`Magistral` 既无符号也无数字）。
     # 同样放在缓存查询前：坏译文可能已落进 .translate_cache.json，放后面治不了历史数据。
     if _is_proper_noun_title(clean_text):
@@ -286,11 +287,10 @@ CATEGORY_DESCRIPTIONS = {
 # 厂商展示顺序（按模型知名度从高到低）
 #
 # 浏览页（`docs/index.html`）的厂商标签原先按**文章数**排序，于是
-# openai / huggingface（归档文章最多）永远钉在最前，而 baseten / ppio /
-# digitalocean 这类「平台功能记录」反而排在 claude / gemini 前面 ——
-# 与读者对「谁更重要」的直觉正好相反。
+# openai / huggingface（归档文章最多）永远钉在最前，而「平台功能记录」密集
+# 的推理/部署平台反而排在旗舰模型厂商前面 —— 与读者对「谁更重要」的直觉正好相反。
 #
-# 改成按这张表排序：表内的厂商按此顺序，**表外的排在最后**（按 YAML 录入顺序），
+# 改成按这张表排序：表内的厂商按此顺序，**表外的排在最后**（按 id 字典序），
 # 所以新增厂商不会因为忘记登记而消失。调整顺序只需改这个元组。
 #
 # ⚠️ 顺序是主观判断，不是任何官方排名 —— 想调整直接改这个元组即可。
@@ -337,7 +337,7 @@ def vendor_rank_index(vendor_id: str) -> int:
 # tiers:      permanent=永久免费层滚动重置 / onetime=注册一次性赠送 /
 #             recurring=每日/每月重置额度 / selfhost=开源权重/自托管
 # signup:     email=邮箱或 OAuth 免信用卡 / card=需验证付款方式/绑卡
-# scenarios:  code/flagship/longctx/image/embed/deploy/credit
+# scenarios:  code/flagship/longctx/image/embed/deploy/credit/referral/student
 # region:     cn=国内工具（Part 4 攻略表格里归入「国内」行；缺省=海外）
 # short:      一句话额度摘要，用于攻略表格（带括号补充）
 # tip:        防扣费 / 防坑提示（没有则省略）
@@ -702,7 +702,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
             ("官网", "https://zed.dev/"),
         ],
     },
-    # ------------------ Part 1: 国内主流大模型平台 (23) ------------------
+    # ------------------ Part 1: 国内主流大模型平台 ------------------
     "siliconflow": {
         "category": "domestic",
         "display_name": "硅基流动 (SiliconFlow)",
@@ -1236,7 +1236,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         ],
     },
 
-    # ------------------ Part 2: 国际主流大模型与高速推理平台 (25) ------------------
+    # ------------------ Part 2: 国际主流大模型与高速推理平台 ------------------
     "google_gemini": {
         "category": "international",
         "display_name": "Google Gemini (Google AI Studio)",
@@ -1766,7 +1766,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         ],
     },
 
-    # ------------------ Part 3: 云厂商与 Serverless 算力平台 (9) ------------------
+    # ------------------ Part 3: 云厂商与 Serverless 算力平台 ------------------
     "modal": {
         "category": "cloud",
         "display_name": "Modal (Serverless AI 云平台)",
@@ -1944,7 +1944,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
         ],
     },
 
-    # ------------------ 第三方情报库线索复核后收录（8） ------------------
+    # ------------------ 第三方情报库线索复核后收录 ------------------
     # 这批厂商来自 FreeLLM-API-KeyHub 的免费额度清单；收录前逐个访问官方页复核，
     # 复核结论（含"查不到"）如实写入下方字段，不搬运无法复核的数字。
     "lingyiwanwu_01ai": {
@@ -2214,10 +2214,10 @@ def render_freellm_table(intel, profile: dict, index: int) -> list[str]:
     if intel.evidence:
         for key in EVIDENCE_DISPLAY_ORDER:
             snips = intel.evidence.get(key) or []
-            for sn in snips[:1]:  # 每类精选 1 条高价值动态
+            for sn in snips[:1]:  # 每类取 1 条动态
                 # 自动翻译非中文
                 trans = normalize_zh_punct(translate_to_zh(sn.text))
-                # 截断过长文本
+                # 截断：防单条证据撑爆表格
                 if len(trans) > 120:
                     trans = trans[:117] + "…"
                 live_items.append(f"• {trans}")

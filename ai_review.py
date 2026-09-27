@@ -5,31 +5,23 @@ ai_review.py —— 变化触发式 AI 档案核查。
 每日巡检发现某厂商的官方页面文本相对上次快照发生变化时，由 crawler 调用本模块：
 把该厂商全部情报页正文 + 当前生效档案发给 LLM，要求只依据页面原文输出严格 JSON：
 哪些事实字段变化、攻略元数据是否要调整、以及逐条「页面原文证据」。证据必须能在
-页面正文中逐字定位（防幻觉闸门），校验通过后才允许写入 profile_overrides.json。
+送模的 prompt 内逐字定位（防幻觉闸门），校验通过后才允许写入 profile_overrides.json。
 
 调用后端（AI_REVIEW_BACKEND=auto|gemini|anthropic，默认 auto）：
 - gemini（默认）：Google AI Studio 的 Gemini API（generativelanguage.googleapis.com），
   用免费层 API Key（环境变量 GEMINI_API_KEY，兼容 GOOGLE_API_KEY），默认模型
-  gemini-3.8-flash，可用 AI_REVIEW_MODEL 覆盖；
+  gemini-3.8-flash；本模块不读 AI_REVIEW_MODEL，首选模型由 crawler 读取后经 model 参数传入；
 - anthropic（可选）：直连 Anthropic Messages API（ANTHROPIC_API_KEY）。
 
 auto 规则：哪个 key 存在用哪个；都没有时按 gemini 报缺 key。
 
 免费层回退（主要使用场景即 AI Studio 免费层，具体限额只在 AI Studio 控制台公布、
-RPD 太平洋时间午夜重置）：
-- 429 判定为当日额度（RPD，按项目共享）耗尽 → AiQuotaExhausted：不再调用任何厂商，
-  全部保留旧快照等下次巡检；429 短期限流（RPM/TPM，按模型独立计量）→ 先尊重
-  Retry-After 指数退避，退避仍不缓解则换下一个备选模型（其额度桶可能仍有余量），
-  直到全部备选都限流才按额度耗尽整批终止；
-- 首选模型 404 / 不可用 → 自动回退免费层备选链（均为
-  https://ai.google.dev/pricing 标注免费 "Free of charge" 的模型，2026-09 核实）：
-  gemini-3.8-flash → 3.7 → 3.6 → 3.5 → 2.5 → 3.5-flash-lite → 3.1-flash-lite
-  → 2.5-flash-lite。完整 Flash 系按新到旧排列（能力优先），Lite 系垫底
-  （更弱但免费层限额更宽松，最可能还余有额度）；不纳入 preview 模型
-  （官方仅保证约两周弃用通知，不适合长期兜底）；AI_REVIEW_MODEL 可钉死首选；
-- 单厂商核查受 MAX_REVIEW_WALL_SECONDS 墙钟预算约束：多备选 + 超时重试叠加时
-  不会拖垮整轮巡检（CI 60 分钟作业），超预算即放弃该厂商、保留旧快照；
-- Key 无效等 400/401/403 立即失败不浪费配额；crawler 对连续失败还有熔断（3 次）。
+RPD 太平洋时间午夜重置）：429 当日额度（RPD，按项目共享）耗尽即整批终止、保留旧快照；
+短期限流（RPM/TPM，按模型独立计量，各模型额度桶可能独立）先退避再换备选；首选模型
+404/不可用按 GEMINI_FALLBACK_MODELS 顺序回退。完整策略见 call_llm_gemini 的 docstring，
+备选链排列与不纳 preview 的理由见常量注释。Key 无效等 400/401/403 立即失败不浪费配额；
+单厂商核查还受 MAX_REVIEW_WALL_SECONDS 墙钟预算约束（理由见常量注释）；crawler
+对连续失败另有熔断。
 
 后端不可用 / 无网络时调用方应跳过核查并保留旧快照，下次巡检自动重试。
 """
@@ -45,11 +37,12 @@ from pathlib import Path
 import requests
 
 GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta"
-GEMINI_DEFAULT_MODEL = "gemini-3.8-flash"   # AI Studio 免费层可用，可用 AI_REVIEW_MODEL 覆盖
+GEMINI_DEFAULT_MODEL = "gemini-3.8-flash"   # AI Studio 免费层可用；本模块不读 AI_REVIEW_MODEL，首选由 crawler 传入
 # 首选模型不可用 / 限流时的免费层备选链。每个模型都在
 # https://ai.google.dev/pricing 免费层标注 "Free of charge"（2026-09-15 核实）。
 # 排列原则：完整 Flash 系按新到旧（能力优先，兜底时才让位），Lite 系垫底
-# （能力更弱但免费层限额更宽松，最可能还余有额度）；不纳入 preview 模型。
+# （能力更弱但免费层限额更宽松，最可能还余有额度）；不纳入 preview 模型
+# （官方仅保证约两周弃用通知，不适合长期兜底）。
 GEMINI_FALLBACK_MODELS = [
     "gemini-3.7-flash",
     "gemini-3.6-flash",
@@ -59,7 +52,7 @@ GEMINI_FALLBACK_MODELS = [
     "gemini-3.1-flash-lite",
     "gemini-2.5-flash-lite",
 ]
-MAX_RATE_RETRIES = 4            # 429 短期限流（RPM/TPM）：5/10/20/40s 指数退避
+MAX_RATE_RETRIES = 4            # 429 短期限流（RPM/TPM）：按 RATE_RETRY_BASE_SECONDS 指数翻倍，封顶见 RETRY_WAIT_CAP_SECONDS
 RATE_RETRY_BASE_SECONDS = 5
 MAX_TRANSIENT_RETRIES = 2       # 500/503/504 同模型重试次数
 RETRY_WAIT_CAP_SECONDS = 90
@@ -226,8 +219,7 @@ def build_user_prompt(
 
     focus（diff 导向核查）：[{"url","stype","removed":[...],"added":[...]}]。
     提供时先给「本次页面变化行」区块，让模型把注意力放在真正变化的事实上，
-    并把每页原文预算减半（token 省一半以上；证据引文仍须在 prompt 内逐字命中，
-    闸门语义不变）。
+    并把每页原文预算减半（证据引文仍须在 prompt 内逐字命中，闸门语义不变）。
     """
     profile_view = {k: profile.get(k) for k in FIELD_TYPES if k in profile}
     parts = [
@@ -241,8 +233,8 @@ def build_user_prompt(
         "",
     ]
     # focus 时最贵的整页原文预算减半（diff 已把注意力指到变化行）；
-    # 变化行区块本身很小，不抵总长。证据引文仍须在截断后的原文内
-    # 逐字命中——落在截断区之外的旧说法引不到证据，天然被闸门拒绝。
+    # 变化行区块本身很小，不抵总长。证据引文只须能在模型实际看到的 prompt 内
+    # 逐字命中——校验语料是整个 prompt（含变化行与档案 JSON），并非只认截断后的正文。
     page_budget_cap = PAGE_CHAR_BUDGET
     if focus:
         page_budget_cap //= 2
@@ -480,9 +472,10 @@ def parse_json_loose(text: str) -> dict:
 
 
 def validate_patch(data: dict, corpus_norm: str) -> dict:
-    """校验并归一化 AI 补丁；证据必须逐字命中页面正文，否则拒绝整个补丁。
+    """校验并归一化 AI 补丁；证据必须逐字命中 corpus_norm，否则拒绝整个补丁。
 
-    corpus_norm 可传原始页面拼接文本（内部会再做一次空白归一化）。
+    corpus_norm 是模型实际看到的送模文本（review_vendor 传入的是整个 prompt，含
+    截断后的页面原文、变化行与档案 JSON）；内部会再做一次空白归一化。
     """
     corpus_norm = _norm(corpus_norm)
     if not data.get("changed"):
@@ -597,7 +590,7 @@ def apply_patches(overlay_path: Path, patches: dict[str, dict]) -> None:
             entry["guide_meta"] = patch["guide_meta"]
         entry["_updated"] = now
         entry["_summary"] = patch["summary"]
-        # 证据累积保留最近 20 条，便于事后追溯
+        # 累积证据只保留最近若干条，防止无限增长，便于事后追溯
         old_ev = entry.get("_evidence", [])
         if not isinstance(old_ev, list):
             old_ev = []

@@ -9,8 +9,8 @@ name: refresh-intel
 #   （日期=北京今天）会被判为未来日期而丢日期、进不了合并流（次日抓取才自愈）。
 #   现有 11:19 同时满足另外三点：① 已过美国工作日结束点（太平洋 17:00 = 北京 08:00
 #   夏令时 / 09:00 冬令时），前一天美国厂商的发布全部收齐；② 非整点分钟，避开
-#   Actions 的整点排队高峰；③ Gemini 免费层 RPD 在太平洋午夜（北京 16:00）重置，
-#   此刻额度桶已重置 19 小时且未被使用，距下次重置还有 4.7 小时可重试。
+#   Actions 的整点排队高峰；③ Gemini 免费层 RPD 在太平洋午夜重置（夏令时北京
+#   15:00 / 冬令时 16:00），此刻新桶已重置大半天、没被例行运行用过，距下次重置还有数小时可重试。
 #   若更看重国内厂商当日覆盖，可改北京 19:19（国内工作日 09:00–19:00 全收齐），
 #   代价是海外厂商的滞后从 3–11 小时拉到 11–19 小时。
 #
@@ -18,7 +18,7 @@ name: refresh-intel
 #   1. 页面无变化：不重写产物、不产生提交；
 #   2. 仅新闻 / 博客变化：直接原子性提交到 main；
 #   3. 免费额度等事实字段可能变化（快照 hash 改变）：调用 Google AI Studio 的
-#      Gemini API（默认模型 gemini-3.8-flash，免费层 Key）阅读变化页面，
+#      Gemini API（默认模型见 ai_review.GEMINI_DEFAULT_MODEL，免费层 Key）阅读变化页面，
 #      证据逐字命中页面原文才允许更新 profile_overrides.json。
 #
 # 第 3 类变化的提交策略：**自动采纳，不开 PR 等人工审核**
@@ -37,8 +37,9 @@ name: refresh-intel
 # changes"，以 exit 128 中断，push 根本没机会运行。
 #
 # 自建 RSS：脚本把 llm-news/ 归档同时写成 docs/feeds/ 下的产物——RSS 2.0 XML
-# （含全厂商合并流与每厂商单源）、三个 JSON 索引（vendors / articles / model-releases
-# 模型发布雷达），与新闻产物在同一次提交里落盘。docs/ 就是 GitHub Pages 的
+# （含全厂商合并流与每厂商单源）、多个 JSON 索引（核心为 vendors / articles /
+# model-releases 模型发布雷达，另有变更日志与额度索引），与新闻产物在同一次提交里落盘。
+# docs/ 就是 GitHub Pages 的
 # 发布目录，订阅地址形如 https://<owner>.github.io/<repo>/feeds/llm-news-all.xml；
 # 该地址由脚本按 Actions 注入的 GITHUB_REPOSITORY 自动推导，fork 后无需改代码。
 # docs/.nojekyll 关闭 Jekyll 处理，保证 XML 原样输出。官方没有 RSS/Atom 的厂商
@@ -57,9 +58,9 @@ name: refresh-intel
 #   - 若 main 分支开启了 Branch Protection（分支保护），请在规则中允许 github-actions[bot] bypass；
 #   - schedule 仅在默认分支存在该 workflow 时才会被 GitHub 调度。
 #
-# 依赖版本：所有 action 均使用运行在 Node.js 24 上的大版本（checkout v7 /
-# setup-python v7 / cache v6），以避开 Node 20 弃用告警。
-# 这些版本要求 runner >= v2.327.1，GitHub 托管 runner 已满足；自建 runner 需先升级。
+# 依赖版本：所有 action 都选运行在 Node.js 24 上的大版本，以避开 Node 20 弃用告警。
+# 由此产生的 runner 最低版本要求，GitHub 托管 runner 天然满足；
+# 自建 runner 换大版本前先核对该 action 的 runner 版本要求，必要时先升级。
 "on":
   schedule:
     - cron: "19 3 * * *"
@@ -75,9 +76,8 @@ concurrency:
 jobs:
   crawl:
     runs-on: ubuntu-latest
-    # 首次运行是冷启动：翻译缓存未命中需冷译三千余条标题 + 全量抓取（约 140 个
-    # 深度页面，其中约三分之一走浏览器兜底）+ 浏览器内核安装，40 分钟无余量；
-    # 缓存命中后的常规巡检约 5–10 分钟。
+    # 首次运行是冷启动：翻译缓存未命中需冷译归档全量标题 + 全量深度抓取 + 浏览器内核安装，
+    # 比缓存命中的常规巡检慢一个量级；timeout 按冷启动上限留余量，别按常规耗时判断。
     timeout-minutes: 60
     steps:
       - name: Checkout
@@ -94,7 +94,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # Chromium 仅对 requests 抓到 JS 空壳 / 403 的页面兜底（约三分之一入口），
+      # Chromium 仅对 requests 抓到 JS 空壳 / 403 的部分入口页面兜底，
       # 用于保证 README「实时巡检证据」列的质量与本地带浏览器巡检一致。
       # 注意：快照哈希刻意只取 requests 阶段文本（浏览器渲染不写 snapshot_text），
       # 因此浏览器开关不影响变化检测，不会引发 AI 核查误触发。
@@ -118,7 +118,7 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # 可用 repository variable 覆盖模型，默认 gemini-3.8-flash
+          # 可用 repository variable 覆盖模型；未设置时走代码默认（见 ai_review）
           AI_REVIEW_MODEL: ${{ vars.AI_REVIEW_MODEL }}
           # 订阅源的对外前缀。留空则按 GITHUB_REPOSITORY 推导为
           # https://<owner>.github.io/<repo>/feeds（fork 后无需配置）；
@@ -130,7 +130,7 @@ jobs:
       # 产物与不变量校验：跑**全部**用例。
       # 测试集由 test_workflow_and_review.ci_suite() 按「全部 − 白名单」推导：
       # 以后新增用例自动进 CI，不需要谁记得回来改这里（手写类清单必然漂移）。
-      # 排除集现空（以 CI_EXCLUDED_CLASSES 为准）—— 曾经排除 TestCrawlerCleanup（它会删掉仓库根的 .ai-changed，
+      # 排除集以 CI_EXCLUDED_CLASSES 为准 —— 曾经排除 TestCrawlerCleanup（它会删掉仓库根的 .ai-changed，
       # 而那是下一步 Decide commit path 的判据），后来把仓库根改成可注入的
       # `crawler_llm_intel._repo_root()`，该测试改在临时目录里跑，就不再需要排除。
       # 放在抓取之后：校验的是本次即将提交的新产物，失败即拦住提交。
@@ -174,9 +174,7 @@ jobs:
           else
             git commit -m "chore: 定时巡检刷新官方情报与博客动态"
           fi
-          # 同上一处：必须先 commit 再 rebase。crawler 刚写完产物，工作区是脏的，
-          # 此时 git pull --rebase 会以 "cannot pull with rebase: You have unstaged
-          # changes" + exit 128 中断，push 根本没机会执行。
+          # 必须先 commit 再 rebase，原因见文件头「提交流程的 git 顺序」说明。
           if ! git pull --rebase origin main; then
             echo "::error::rebase 到最新 main 失败：远端在巡检期间有新提交，且与本次产物冲突。请手动 rebase 后重跑。"
             exit 1

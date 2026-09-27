@@ -16,8 +16,8 @@ crawler_llm_intel.py — LLM 厂商免费额度 / 活动情报巡检脚本
        汇总生成 llm-news-feeds.opml（可导入 RSS 阅读器）。
      - product 等产品页：仅用于确认产品线，默认不深度抓取。
   3. 巡检结果写入 README.md 的固定章节（标记注释之间，重跑自动重写，不累计）。
-     动态类产物由归档再生：docs/feeds/ 下的 RSS XML 与三个 JSON 索引
-     （vendors / articles / model-releases，即模型发布雷达）；
+     动态类产物由归档再生：docs/feeds/ 下的 RSS XML 与 JSON 索引（vendors /
+     articles / model-releases / quotas / intel-changes）；
      AI 核查采纳的事实变化追加进 llm-intel-changelog.md。
 
 运行：
@@ -58,10 +58,10 @@ from urllib.parse import quote, unquote, urljoin, urlparse
 import requests
 import yaml
 
-# Playwright 为可选依赖：安装后可对 403 / JS 动态渲染页面用真实浏览器兜底
+# Playwright 可选依赖安装细节（用途见模块 docstring）：
 #   pip install playwright
-# Windows/macOS 可直接复用系统 Edge/Chrome（channel=msedge/chrome），无需下载 Chromium；
-# 其他环境执行 `playwright install chromium` 即可。
+# Windows/macOS 直接复用系统 Edge/Chrome（channel=msedge/chrome），无需下载 Chromium；
+# 其他环境执行 `playwright install chromium`。
 try:
     from playwright.sync_api import sync_playwright  # type: ignore
     HAS_PLAYWRIGHT = True
@@ -162,8 +162,7 @@ TYPE_LABELS = {
     "homepage": "官网首页",
 }
 
-# 证据关键词组：(组键, 中文标题, 关键词列表)
-# 注意：纯英文词按词边界匹配，避免 off 匹配到 office 之类误报
+# 证据关键词组：(组键, 中文标题, 关键词列表)；关键词匹配规则见 _kw_hit
 KEYWORD_GROUPS: list[tuple[str, str, list[str]]] = [
     ("free_tier", "长期免费 / 免费层", [
         "永久免费", "长期免费", "完全免费", "免费层", "免费额度", "免费调用", "免费使用",
@@ -247,10 +246,9 @@ REPO_URL = "https://github.com/rockbenben/free-llm-intel"
 # 的源——否则「无官方源的厂商」永远只能靠人肉刷页面。
 RSS_TITLE_MAX = 60      # 标题超过该长度则截断，完整文本移入 description
 #: 合并流最多收录条数；**0 = 不限制**（收录全部有日期的条目）。
-#: 曾经是 200，理由是「全量约 1.2 MB 的 feed 会让阅读器吃力」——**这个理由站不住**：
-#: GitHub Pages 用 gzip 传输（线上实测 `Content-Encoding: gzip`），全量 2575 条
-#: （XML 1124 KB）压缩后只有 **131 KB**，阅读器毫无压力。当时的判断看的是未压缩体积。
-#: 单厂商源本来就不设上限（等于该厂商全量归档）。
+#: 曾经是 200，理由是「全量 feed 体积太大会让阅读器吃力」——**这个理由站不住**：
+#: GitHub Pages 走 gzip 传输，全量压缩后阅读器毫无压力，当初的判断看的是未压缩体积。
+#: 单厂商源本来就不设上限（收录范围 = 排除未来日期后的该厂商全量归档）。
 RSS_MERGED_LIMIT = 0
 
 
@@ -322,7 +320,7 @@ class Article:
 
     def __post_init__(self) -> None:
         # 统一在这里洗控制字符：RSS 原始 XML 与页面提取都可能带 \x00，
-        # 有 6 处 Article(...) 构造点，收口在数据类比逐处修补更可靠
+        # Article(...) 构造点多处，收口在数据类比逐处修补更可靠
         self.title = sanitize_text(self.title)
         self.url = sanitize_text(self.url)
         self.date = sanitize_text(self.date)
@@ -341,7 +339,7 @@ def article_title_zh(art: "Article") -> str:
     return art.zh_title or translate_to_zh(art.title)
 
 
-#: 标题润色批量与单次巡检预算（新条目每天个位数；预算只防新收录厂商一次性几百条）
+#: 标题润色批量与单次巡检预算（预算只防一次性大批新收录，不针对日常增量）
 TITLE_POLISH_BATCH = 40
 TITLE_POLISH_RUN_BUDGET = 300
 
@@ -890,7 +888,6 @@ def _kw_hit(keyword: str, line_lower: str) -> bool:
     return kw in line_lower
 
 
-# 图标字体 / 导航噪声行过滤
 #: 控制字符清洗：除制表符(\x09) / 换行(\x0a) / 回车(\x0d) 外，C0 控制码与 \x7f 一律剔除。
 #: 抓到的 HTML 与翻译接口偶发 \x00，若混进 README 会被 git / grep 判为二进制文件。
 #: 注意分段写法——\x0d 夹在 \x0b-\x0c 与 \x0e 之间，写成 \x0b-\x1f 会把 \r 一起删掉。
@@ -902,7 +899,10 @@ def sanitize_text(text: str) -> str:
     return _CTRL_RE.sub("", text or "")
 
 
+# 图标字体 / 导航噪声行过滤
 NOISE_LINE = re.compile(r"(check_circle|chevron_|arrow_forward|cancel_circle|^menu$)", re.I)
+
+
 
 # 页面样板文字：Cookie / 隐私横幅，以及在线体验 / Playground 里的「示例提示词」
 # （如“-上下文：我想推广公司的新产品。我的公司名为：智谱…”——曾因含“推广”被
@@ -1102,10 +1102,9 @@ _MONTHS = {m: i for i, m in enumerate(
 def _drop_future_date(day: str) -> str:
     """丢弃晚于今天的日期（返回空串）。
 
-    页面卡片上的日期可能是错的：实测 cohere 一篇 **7 月 10 日**的文章，卡片上印的是
-    "Dec 10, 2026"，于是它被当作未来日期排到归档 md 与 README 的最前面（一挂就是几个月，
-    归档里已就地修正）。归档按 URL 增量合并、**不会自我纠正**，所以错误日期一旦写进去
-    就永久留存 —— 必须在入口拦住。
+    页面卡片上的日期可能是错的（实测见过把已发布的文章印成未来某日的情形），条目因此被
+    当作未来日期排到归档 md 与 README 的最前面。归档按 URL 增量合并、**不会自我纠正**，
+    所以错误日期一旦写进去就永久留存 —— 必须在入口拦住。
 
     只丢日期、保留条目：没有日期只是排到末尾，条目本身不该因为卡片印错日期而消失
     （RSS 侧还有一层同样的兜底，两处都不能少：这里是防污染归档，那里是防污染订阅流）。
@@ -1229,7 +1228,7 @@ def fetch_feed_articles(session: requests.Session, url: str,
                         stype: str = "feed",
                         timeout: tuple[float, float] = (8.0, 20.0)
                         ) -> list[Article]:
-    """抓取一个 RSS/Atom 订阅 URL 并解析文章；任何异常返回空列表。"""
+    """抓取一个 RSS/Atom 订阅 URL 并解析文章；HTTP >=400 或网络失败返回空列表（不吞其他异常）。"""
     try:
         resp = session.get(url, timeout=timeout, allow_redirects=True)
         if resp.status_code >= 400:
@@ -1329,7 +1328,7 @@ _DOCISH_TITLE = re.compile(
 
 
 # 单条变更日志标题上限：官方公告常用一整句话作标题（如 Kimi 模型下线公告达 118
-# 字），故放宽到 200；超出时截尾补省略号，避免硬切在句中产生残句。
+# 字），故放宽到 200；超出时按定长硬切并加省略号（省略号仅标示被截断，不试图避开句中）。
 CHANGELOG_TITLE_MAX = 200
 
 
@@ -1451,7 +1450,10 @@ def _clean_commit_title(title: str) -> str:
 
 
 def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[Article]:
-    """从单页文档/变更日志（如 Mintlify、Docusaurus、GitBook 等）的日期标题或更新容器中提取文章列表。"""
+    """从单页文档/变更日志中提取文章列表；按识别到的结构分派：
+    Mintlify update-container、日期分节 + 子标题、日期分节 + 列表项、
+    日期锚点标题、帮助中心表格行（带 <code> 模型 ID）、日期 + 相邻标题元素、
+    表格行式发布记录。未命中任一结构时返回空列表。"""
     raw = page.raw or page.text
     if not raw:
         return []
@@ -1495,8 +1497,7 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
 
     # 结构 4：**日期分节 + 子标题条目**（Kimi 平台发布记录：`<h2 id="2026年9月">2026年9月</h2>`
     # 之下是一串 `<h3>`，每个 h3 才是一条真条目 —— 如「🤖 Kimi 托管智能体（Hosted Agents）Beta 上线」）。
-    # 不认这层结构时抓到的是**月份标题**：实测归档 26 条里 24 条是「2026年9月」这种，
-    # 看着像动态、实际一条内容都没有。
+    # 不认这层结构时抓到的是**月份标题**（同结构 1 里踩过的坑），看着像动态、实际一条内容都没有。
     # 放在结构 2 之前：它更具体（要求「日期分节 + 更深的子标题」同时成立），
     # 而 Gemini / MiniMax / PPIO 那些日期标题下面是正文而不是子标题，不会命中。
     if not articles:
@@ -1666,7 +1667,7 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
             model_id = re.sub(r"<[^>]+>", "", code_m.group(1))
             model_id = re.sub(r"[​\s]+", "", model_id).strip("`")
             # 功能说明列既用于**校验这是一行真条目**（空说明的行多半是表头残留），
-            # 也用来补全标题：整段拼进来太长（中位 145 字），只取**首句**。
+            # 也用来补全标题：整段拼进来太长，只取**首句**。
             desc = re.sub(r"<[^>]+>", "", cells[-1])
             desc = re.sub(r"[​\s]+", " ", desc).strip()
             if not model_id or not desc:
@@ -1838,8 +1839,8 @@ def _link_context_dates(raw_html: str, links_count: int, window: int = 700) -> l
                 continue
             best_idx, best_text = i, dtext
         if best_idx >= 0:
-            # 同一处日期常被匹配**两次**：`<time datetime="2026-09-22">Sep 22, 2026</time>`
-            # 里 ISO 与英文两种写法各命中一次。只标记命中的那一个，邻近的那份会被
+            # 同一处日期常被匹配**两次**（`<time datetime>` + 内层文本各命中一次，
+            # 完整例子见结构 6 的注释）。这里只标记命中的那一个，邻近的那份会被
             # 下一条没有日期的链接捡走（实测就是它让空日期条目拿到上一条的日期），
             # 所以把同一区域（60 字符内）的日期一并标记为已用。
             anchor_pos = spans[best_idx][0]
@@ -1925,7 +1926,7 @@ def extract_md_changelog(raw: str, base_url: str, stype: str = "changelog",
 def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Article]:
     """
     从已抓取的博客 / 更新页 HTML 链接中启发式提取文章条目（无 RSS 时的兜底）：
-    1) 先尝试从单页文档站的更新日志结构（Mintlify / Docusaurus 容器与日期标题块）中提取；
+    1) 先尝试从单页文档站的更新日志结构中提取（见 extract_changelog_sections）；
     2) 提取不到时，从 HTML 链接中启发式提取独立文章页面。
     """
     if not page.ok:
@@ -1995,9 +1996,8 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
         title = re.sub(r"\s+", " ", title).strip(" -–|·•")
         if len(title) < 10 or len(title) > 200:
             continue
-        # 整条标题就是日期 / 数字的，不是标题 —— MiniMax 发布说明的目录锚点长这样
-        # （`<a href="#2026-年-7-月-31-日">2026 年 7 月 31 日</a>`）。只写年月的
-        # （`2026 年 4 月`）没有「日」，靠上面的 _INLINE_DATE_RE 剥不干净，这里兜住。
+        # 整条标题就是日期 / 数字的，不是标题 —— 日期分节 / 目录锚点长啥样见 _DATE_SEP 注释。
+        # 只写年月的（`2026 年 4 月`）没有「日」，靠上面的 _INLINE_DATE_RE 剥不干净，这里兜住。
         if _is_date_only_title(title):
             continue
         # 纯模型 ID 形态的锚点（PPIO 模型清单页的 `qwen/qwen3-14b`）是目录条目，丢弃
@@ -2051,9 +2051,11 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
 # 是社区技术博客。2026-09-22 数据审计：线上 3376 条里 77% 来自这类源，
 # 其中 228 条根本不是一篇文章。
 #
-# 判据按**信号组**组织 —— 同一个词在不同厂商的源里含义不同：
-# `fine-tuning` / `embedding` 在 openai 的 news 里是 API 变更信号，
-# 在 huggingface 的 blog 里却是技术教程的标题词，所以只有 openai 用 strong 组。
+# 判据按**信号组**组织 —— 不同厂商 news 源的性质不同，词表按厂商挑组：
+# 公司 news 源走 strong 组抓 API/定价/弃用类变更信号（openai / anthropic /
+# meta_llama / google_gemini / mistral / cohere / modal / modular_cloud）；
+# huggingface 是社区技术博客，标题里多是教程词，改走宽口径 release_wide
+# （见下方 NEWS_INTEL_SIGNALS）。
 # **未列入 `NEWS_INTEL_SIGNALS` 的厂商不过滤**（变更日志型源结构上就对口）。
 #
 # 过滤在**翻译之前**执行，标题可能是原文（英文站）也可能是中文（页面本身是中文，
@@ -2225,8 +2227,11 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session) -> None
     汇总一个厂商的最新文章：
       1) YAML 中 type=feed 的源直接解析原始 XML；
       2) 博客 / 新闻 HTML 页自动发现的 RSS/Atom 链接，抓取并解析；
-      3) 仍无文章时，从 HTML 链接中启发式提取文章卡片。
-    去重后按日期倒序（无日期排后），每厂商保留最新 5 篇。
+      3) 仍无文章时，从 HTML 链接中启发式提取文章卡片；
+      4) 同日锚点与详情页去重（保留详情页）；
+      5) 按日期倒序（无日期排后）后走 is_intel_news 过滤。
+    过滤后的全量列表写进 intel.all_news_articles（供归档与 RSS），
+    前 5 篇是 intel.news_articles（供总表展示）。
     """
     articles: list[Article] = []
     seen_urls: set[str] = set()
@@ -2412,8 +2417,8 @@ def _article_key(url: str) -> str:
     （实测：归档 3 条、本次只重抓到 1 条时，合并后只剩 1 条 —— 违反「归档只增不减」）；
     合并流去重也会把同页条目吃掉（通义 100 条在合并流里只剩 1 条）。
 
-    `extract_articles_from_page` 与 `collect_news_articles` 早已按这个规则处理，这里统一 ——
-    同一个判断不要在两处各写一遍。
+    `extract_articles_from_page` 与 `collect_news_articles` 内部各自手写过这条规则，
+    本函数把它独立出来供其他调用方使用 —— 同一个判断不要在多处各写一遍。
     """
     key = _norm_url(url)
     frag = urlparse(url).fragment.strip().lower()
@@ -2663,7 +2668,7 @@ from provider_profiles import (
 
 
 def type_label(stype: str) -> str:
-    """类型中文名；未知类型退化为可读形式（api_docs -> API docs）。"""
+    """类型中文名；未在 TYPE_LABELS 登记的类型按 `_` -> 空格兜底（如 `marketing_page` -> `marketing page`）。"""
     if stype in TYPE_LABELS:
         return TYPE_LABELS[stype]
     return stype.replace("_", " ")
@@ -2766,7 +2771,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
         return dom, ovs
 
     # 0. 懒人首选：GUIDE_META 中带 pick 推荐语的厂商（按总表序号）。
-    #    五家都免绑卡；实名/邮箱只是常规注册，不构成门槛。
+    #    推荐厂商均免绑卡；实名/邮箱只是常规注册，不构成门槛。
     picks = [(idx, intel, prof, get_guide_meta(intel.vendor_id).get("pick", ""))
              for idx, intel, prof in records
              if get_guide_meta(intel.vendor_id).get("pick")]
@@ -2840,7 +2845,6 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
     L.append("- 国内平台未完成实名时可能被限速（如 PPIO），但这是注册流程的一部分，不是额外门槛。")
     L.append("")
 
-    # 3. 场景推荐
     L.append("### 3. 按场景选")
     L.append("")
     scenario_defs = [
@@ -2861,7 +2865,6 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
             L.append(f"- **{label}**：" + "、".join(hits) + "。")
     L.append("")
 
-    # 4. 防扣费 / 防坑
     L.append("### 4. 防扣费清单（白嫖最容易翻车的地方）")
     L.append("")
     tip_no = 1
@@ -2939,7 +2942,7 @@ def render_guide_section(records: list[tuple[int, VendorIntel, dict]]) -> list[s
     L.append("")
     L.append("| 平台名称 | 免费额度简述 | API Key 申请直达 | OpenAI 兼容 Base URL | 推荐填写的免费模型名称 |")
     L.append("|---|---|---|---|---|")
-    # 表体来自 provider_profiles 的 openai_compat 字段（国内 -> 国际 -> 云，与总表同序）
+    # 表体来自 provider_profiles 的 openai_compat 字段（与总表同序，含工具桶）
     for idx, intel, prof in records:
         oc = prof.get("openai_compat")
         if not isinstance(oc, dict) or not oc.get("base_url"):
@@ -2964,8 +2967,8 @@ def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
                          feeds_base: str = "") -> str:
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     news_vendors = sum(1 for v in intel_list if v.news_pages)
-    # 页面数写进生成块而不是手写文档里：手写的那份（曾写「约 140 个」）已经漂到 175，
-    # 且没人会记得回来改。这里由 intel_list 现算，永远与本次巡检一致。
+    # 页面数写进生成块而不是手写文档里：手写的那份迟早漂（当初写「约 140 个」时实际
+    # 已远超），且没人会记得回来改。这里由 intel_list 现算，永远与本次巡检一致。
     intel_pages = sum(len(v.intel_pages) for v in intel_list)
     news_pages = sum(len(v.news_pages) for v in intel_list)
 
@@ -3209,20 +3212,24 @@ def update_news_md(path: Path, section: str) -> bool:
 
 def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
                merged_limit: int = RSS_MERGED_LIMIT) -> int:
-    """将发现的 RSS/Atom 源写成 OPML（可导入 RSS 阅读器）。返回订阅源总数。
+    """将发现的 RSS/Atom 源写成 OPML（可导入 RSS 阅读器）。
+    返回官方原生源 + 自建源 + 聚合流的行数（情报变化流不计入；自建源为空时聚合流
+    成组也未写入，同样不计）。
 
     OPML 是读者真正会**导入**的那份清单，所以它必须覆盖"我能订到的全部"，而不只是
-    "厂商官网自带的那些"：实测官网有原生 RSS 的只有 3/15，另外 12 家官方页面根本没有
-    feed —— 而本仓库恰恰为它们自建了订阅源。只列原生源的清单会让人以为其余 12 家订不了。
+    "厂商官网自带的那些"：仅少数厂商有原生源，多数官方页面根本没有 feed ——
+    而本仓库恰恰为它们自建了订阅源。只列原生源的清单会让人以为其余厂商订不了。
 
-    因此 feeds_base 非空（即线上 / CI）时再追加两组：
+    因此 feeds_base 非空（即线上 / CI）时最多再追加三组：
     - 「自建源」：**只收没有原生源的那几家**。有原生源的厂商不重复收录 —— 自建源内容
       与其原生源重叠，两组都订会在阅读器里出现重复条目。
     - 「聚合流」：合并流，单条订阅即可覆盖全部有动态源的厂商；与上面各组同样重叠，
       单独成组便于读者按需只勾一个。
+    - 「情报变化」：本仓库自建的新活动 / 新额度变化流（跟踪白嫖政策变动，与厂商动态无关）。
 
-    merged_limit 只用于条目文案里的「最近 N 条」——必须跟 `write_rss_feeds` 实际用的
-    上限一致，否则 `--rss-limit` 一改，清单上的数字就是错的。
+    merged_limit 只影响条目文案里的收录范围（走 `merged_scope_text`：默认 0 = 全量，
+    非 0 时显示「最近 N 条」）—— 必须跟 `write_rss_feeds` 实际用的上限一致，
+    否则 `--rss-limit` 一改，清单上的文案就是错的。
     """
     outlines: list[tuple[str, str, str, str]] = []  # (brand, title, xmlUrl, htmlUrl)
     seen_feeds: set[str] = set()
@@ -3403,7 +3410,7 @@ def _dedup_same_title(arts: list[Article]) -> list[Article]:
 
 
 def parse_archived_articles(arch_path: Path) -> list[Article]:
-    """从既有归档 .md 中恢复历史文章条目（供增量合并，保障历史旧文章只增不减、永久留存）。"""
+    """从既有归档 .md 中恢复历史文章条目（供增量合并：除已废弃源/下线厂商外，历史条目只增不减）。"""
     if not arch_path.exists():
         return []
     articles: list[Article] = []
@@ -3568,8 +3575,9 @@ def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
         # 页清单以 yaml 为权威、产物状态只做富化：
         # ① 换源（如 groq `changelog` → `changelog.md`）时产物还记着旧 URL，按去 `.md`
         #    后缀归一匹配上，检测到的原生 feed 不丢；
-        # ② yaml 新增的源（产物里从没有过）直接按声明建页，新厂商首轮即出总览条目，
+        # ② 已登记厂商 yaml 新增的源（产物里从没有过）按声明建页，
         #    不必等下一次实抓把 feeds.md 补上（feed 发现留待实抓富化）。
+        #    全新的厂商（既无 states 又无归档）上面已 continue 跳过，走不到这里。
         def _n(u: str) -> str:
             return u[:-3] if u.endswith(".md") else u
         state_by_url = {_n(st["url"]): st for st in states}
@@ -3590,7 +3598,7 @@ def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
             # 归档 .md 里存的是**中文显示标题**（= 上次的 title_zh）；英文原文只在
             # articles.json 的 original_title 列里。重建时把中文落成 zh_title、原文回填
             # 到 art.title，与正常抓取路径的不变量一致（title=原文、zh_title=译文），
-            # 于是 _rss_item 的「原文标题」与索引第 5 列都能逐字节复现。
+            # 于是 _rss_item 的「原文标题」与索引的 original_title 列都能逐字节复现。
             if _CJK_CHAR_RE.search(a.title):
                 orig = orig_by_key.get((vid, a.url))
                 # 同沿用分支：冻结的坏译文借英文原文自愈（没有原文可对时不动）
@@ -3605,8 +3613,9 @@ def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
 def load_original_titles(articles_json_path: Path) -> dict[tuple[str, str], str]:
     """从既有 docs/feeds/articles.json 读回 {(vendor_id, url): 英文原文标题}。
 
-    归档 .md 只保存中文显示标题，英文原文唯一的落盘处就是这份索引；--rebuild-only
-    靠它把原文回填进 Article，否则重建的 RSS / 索引会丢失「原文标题」。
+    归档 .md 只保存中文显示标题；RSS `<description>` 里的「原文标题：xxx」是给人读的
+    自由文本、不参与重建回填。**重建路径**（--rebuild-only）能拿回英文原文的
+    唯一结构化来源就是这份索引，缺它重建的 RSS / 索引会丢失「原文标题」。
     """
     out: dict[tuple[str, str], str] = {}
     try:
@@ -3642,7 +3651,8 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
     """把每个厂商的全量文章写到 llm-news/<vendor_id>.md 子文档。
 
     返回 (归档文件数, 文章总数, 实际改写文件数)。自动将新抓取的文章与既有归档增量
-    合并，保障旧文章永不丢失；标题汉化走 translate_to_zh（磁盘缓存 + 并发）。
+    合并（只增不减：`clean_removed` 下已下线厂商会整文件删除、RETIRED 前缀命中的历史条目
+    会被剔除，这两类例外）；标题汉化走 translate_to_zh（磁盘缓存 + 并发）。
     title_polish 非空时，对**新收录**（归档里没这个 URL）且仍是英文的标题调用一次润色（brand, titles)
     -> {英文: 中文}，结果写进 zh_title 随归档冻结（见 --ai-titles）。
     屏蔽「抓取于」日期后与旧文件比对，无内容变化则不重写（避免无变化日产生 diff）。
@@ -3660,7 +3670,8 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
     total_articles = 0
     for intel in intel_list:
         arch_path = out_dir / f"{intel.vendor_id}.md"
-        # 1) 增量合并既有归档：新抓取排前，历史已有且本次未抓到的条目追加在后，永不丢失
+        # 1) 增量合并既有归档：新抓取排前，历史已有且本次未抓到的条目追加在后
+        #    （只增不减：RETIRED 前缀命中的历史条目除外，见 RETIRED_NEWS_URL_PREFIXES）
         existing = parse_archived_articles(arch_path)
         merged_arts: list[Article] = list(intel.all_news_articles)
         by_url = {_article_key(a.url): a for a in merged_arts}
@@ -3813,7 +3824,7 @@ def _rss_pubdate(day: str) -> str:
 def _rss_title(title: str) -> tuple[str, str]:
     """返回 (订阅源里的标题, 需要移入 description 的完整原文)。
 
-    归档里有一批「标题其实是整段正文」的脏数据（页面锚文本提取所致，约占 5.8%），
+    归档里有一批「标题其实是整段正文」的脏数据（页面锚文本提取所致），
     另有以 … 结尾的截断标题。原样塞进阅读器会撑爆列表，因此超长标题截断、
     完整文本改放 description——信息不丢，列表可读。
     """
@@ -3923,16 +3934,16 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     """把各厂商归档文章写成 RSS 2.0 订阅源（GitHub Pages 托管）。
 
     产出 `<out_dir>/llm-news-all.xml`（合并流，最近 merged_limit 条）与每厂商一个
-    `<out_dir>/llm-news-<vendor_id>.xml`（等于该厂商全量归档，新订阅者可一次补齐历史）。
+    `<out_dir>/llm-news-<vendor_id>.xml`（排除未来日期后的该厂商全量归档，
+    新订阅者可一次补齐历史）。
 
     日期规则：
-      * **晚于今天**的日期必然是源页面写错了（真实案例：cohere 一篇 2026-07-10 的文章，
-        博客卡片上印着 "Dec 10, 2026"，归档里已就地修正为 2026-07-10），一律排除——
-        RSS 是按时间排序的流，一条未来日期会永远钉在列表顶端；
+      * **晚于今天**的日期必然是源页面写错了（曾见过博客卡片把已发布的文章印成
+        未来某日），一律排除——RSS 是按时间排序的流，一条未来日期会永远钉在列表顶端；
       * **无日期**的条目只进单厂商源（不写 pubDate、排在末尾），不进合并流：合并流是
         「最近更新」，没有日期的条目无法参与排序。归档 .md 里它们同样列在最后。
-    若把无日期条目一并丢弃，Google Gemini / Meta Llama 这类整源都抓不到日期的厂商会直接
-    没有订阅源——那还不如不做。被排除的条数会打印出来，让上游日期提取问题暴露在巡检日志里。
+    若把无日期条目一并丢弃，整源都抓不到日期的厂商会直接没有订阅源——那还不如不做。
+    被排除的条数会打印出来，让上游日期提取问题暴露在巡检日志里。
 
     返回 (源文件数, 收录条目数, 实际改写文件数, 因未来日期被排除的条目数)。
     """
@@ -3940,8 +3951,8 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     base = base_url.rstrip("/")
     today = datetime.now().strftime("%Y-%m-%d")
 
-    # 标题汉化走 translate_to_zh 的磁盘缓存（.translate_cache.json）：归档过的标题
-    # 全部命中缓存，不产生额外翻译请求。
+    # 标题汉化：归档已冻结的 zh_title 直接复用，只有新条目走 translate_to_zh
+    # 的磁盘缓存（.translate_cache.json），不产生额外翻译请求。
     per_vendor: list[tuple[str, str, list[Article], list[str]]] = []
     skipped = 0
     for intel in intel_list:
@@ -3996,7 +4007,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
                 "官方没有 RSS 的厂商也在这里（由 free-llm-intel 定时巡检官方页面归档生成）。",
                 items_xml, f"{base}/llm-news-all.xml" if base else "", picked[0][2].date))
 
-    # 2) 每厂商单源：等于该厂商全量归档
+    # 2) 每厂商单源：收录范围 = 排除未来日期后的该厂商全量归档
     for brand, vendor_id, arts, titles_zh in per_vendor:
         items_xml = [_rss_item(art, t) for art, t in zip(arts, titles_zh)]
         files += 1
@@ -4011,18 +4022,18 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
                 arts[0].date))
 
     # 3) 厂商索引：供浏览页 docs/index.html 列出**全部**厂商的订阅入口。
-    #    光靠合并流是不够的 —— 合并流有 200 条上限、且只收有日期的条目，于是
-    #    「文章全无日期」（google_gemini / meta_llama）或「文章都偏旧、排不进前 200」
-    #    （groq）的厂商**根本不会出现**（实测漏 3/15，而这正是"官方没有原生 RSS"
-    #    最需要被订到的那几家）。索引由这里顺手产出，与 feed 同源，不存在漂移。
+    #    光靠合并流是不够的 —— 合并流只收**有日期**的条目，且受 `--rss-limit` 约束，
+    #    于是「文章全无日期」或「文章都偏旧、落在限量之后」的厂商**根本不会出现**，
+    #    而那正是「官方没有原生 RSS」最需要被订到的几家。索引由这里顺手产出，
+    #    与 feed 同源，不存在漂移。
     #    无时间戳：内容不变就不重写。
     #    数组顺序按「模型知名度」（provider_profiles.VENDOR_RANK）排：浏览页的厂商标签
-    #    原先自己按**文章数**排，于是 openai / huggingface 永远在最前、baseten / ppio
-    #    排在 claude / gemini 之前。排序依据放在这里（而不是页面里），是因为厂商清单
-    #    不得硬编码进 docs/index.html —— 页面只读这个字段。
+    #    原先自己按**文章数**排，于是头部厂商永远在最前、小众厂商排在知名厂商之前。
+    #    排序依据放在这里（而不是页面里），是因为厂商清单不得硬编码进
+    #    docs/index.html —— 页面只读这个字段。
     #    ⚠️ `rank` 是**本索引内的连续序号**（0,1,2…），**不是**它在 VENDOR_RANK 里的
-    #    全局位次。用全局位次会得到 0,1,2,…,10,12,15,17,18,49 这种跳号
-    #    （VENDOR_RANK 覆盖全部 63 家，而本索引只列「有文章的厂商」），
+    #    全局位次。用全局位次会得到 0,1,2,…,10,12,15,49 这种跳号
+    #    （VENDOR_RANK 还包含没有文章的厂商，而本索引只列「有文章的厂商」），
     #    看上去像数据损坏。页面只需要相对顺序，连续编号即可。
     #    未登记的厂商排在最后，再按 id 保证顺序确定。
     _ordered = sorted(
@@ -4044,14 +4055,15 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
         "vendors": [{**item, "rank": i} for i, item in enumerate(_ordered)]
     })
 
-    # 4) 全量文章索引：供浏览页列出**全部**条目，不受合并流 200 条上限约束。
-    #    合并流是给**订阅者**的：放开到全量约 1.2 MB（2561 条 × 504 字节），服务端无所谓，
-    #    但阅读器每次轮询都要重下重解析，不少阅读器有体积上限 —— 所以「feed 限量、页面全量」。
-    #    只放浏览必需的字段，不带描述，体积约为同条数 XML 的 1/3。
-    #    第 5 列是**原文标题**（与汉化标题不同时才有值），页面用它做副标题 —— feed 里那
-    #    一栏来自 `<description>`，索引不带 description，所以单独带上，免得页面功能倒退。
-    #    标题用汉化后的 `titles_zh` 且**不截断**（feed 里截到 60 字是为了列表可读，
-    #    页面上可以完整显示）。
+    # 4) 全量文章索引：供浏览页列出**全部**条目，不受合并流收录上限约束。
+    #    合并流是给**订阅者**的：全量条目喂给阅读器，每次轮询都要重下重解析，
+    #    而不少阅读器有体积上限 —— 所以「feed 限量、页面全量」。
+    #    只放浏览必需的字段，不带描述，明显小于同条数的 XML。
+    #    原文列（`original_title`）是**原文标题**（与汉化标题不同时才有值），页面用它做
+    #    副标题 —— feed 里那一栏来自 `<description>`，索引不带 description，所以单独带上，
+    #    免得页面功能倒退。
+    #    标题用汉化后的 `titles_zh` 且**不截断**（feed 里按 RSS_TITLE_MAX 截断是为了
+    #    列表可读，页面上可以完整显示）。
     index_rows: list[list[str]] = []
     if not _LAST_ORIG_INDEX:
         load_original_titles(out_dir / "articles.json")
@@ -4081,7 +4093,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
 
 
 # ---------------------------------------------------------------------------
-# 情报变更日志：AI 核查采纳的「前值 → 后值」历史（最新在前，产物只追加）
+# 情报变更日志：AI 核查采纳的「前值 → 后值」历史（最新在前，逐日追加，超上限裁最旧日块）
 # ---------------------------------------------------------------------------
 
 CHANGELOG_MD = "llm-intel-changelog.md"
@@ -4112,8 +4124,10 @@ def append_intel_changelog(path: Path, run_date: str, entries: list[dict]) -> in
     （前值由调用方在**应用补丁前**取生效档案格式化，后值取 patch.fields。）
     """
     header = ("# 情报变更日志\n\n"
-              "> **产物**（只追加）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。\n"
-              f"> 保留最近约 {CHANGELOG_MAX_VENDORS} 条厂商-天记录；人工修订请直接改本文件。\n")
+              "> **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，"
+              "带前值 → 后值，最新在前。\n"
+              f"> 保留最近约 {CHANGELOG_MAX_VENDORS} 条厂商-天记录；人工修订请直接改本文件"
+              "（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。\n")
     existing = path.read_text(encoding="utf-8") if path.exists() else ""
     tail = existing[existing.find("\n## "):] if "\n## " in existing else ""
     day_blocks: list[list[str]] = []   # 每块 = [日期, *行]
@@ -4164,7 +4178,7 @@ _RADAR_TOKEN_RE = re.compile(
 #: 公司 / 活动名前缀：型号常挂在它们后面（「Google Gemma 4」的型号是 Gemma 4）
 _RADAR_STRIP_PREFIXES = ("Google ", "NVIDIA ", "Meta ", "Microsoft ", "Amazon ",
                          "OpenAI ", "IBM ", "Apple ")
-#: 英文标题里的发布引导词，绝不能落在型号开头（「Introducing GPT-5.5」→ GPT-5.5）
+#: 英文标题里的发布引导词，绝不能落在型号开头（「Introducing GPT-X」→ GPT-X）
 _RADAR_INTRO_HEADS = {"Introducing", "Announcing", "Meet", "Launching",
                       "Releasing", "Adding", "Now", "Say"}
 
@@ -4256,7 +4270,8 @@ def parse_intel_changelog(text: str) -> list[dict]:
 
     与 append_intel_changelog 的写法严格对齐：日块 `## 日期`、厂商块
     ``### 品牌（`vid`）``、`- 摘要：`、``- `字段`：前值 → 后值``。
-    容忍手工编辑产生的缺块（缺摘要 / 缺字段行），不丢条目。
+    容忍手工编辑产生的缺块（缺摘要 / 缺字段行）；厂商块必须落在某个日块之下，
+    出现在首个 `## 日期` 之前的块会被整块跳过。
     """
     entries: list[dict] = []
     day = ""
@@ -4344,7 +4359,7 @@ def write_intel_changes_feed(out_dir: Path, changelog_text: str,
     两类事件合流，都是带日期的「情报时刻」而非博客文章：
       * **额度变化** —— `llm-intel-changelog.md` 里 AI 采纳的前值 → 后值；
       * **新模型** —— 模型发布雷达事件（新模型上架常常就是新的免费入口）。
-    变化日志在 CI 首次采纳前不存在是常态，此时流里只有雷达事件，不会空。
+    变化日志在 CI 首次采纳前不存在是常态，此时流里只剩雷达事件；两类都没有就不产出。
     确定性产物：lastBuildDate 取最新事件日期（同其余自建源）。
     返回收录条数。
     """
@@ -4409,7 +4424,8 @@ SNAPSHOT_STATE = "llm-intel-state.json"
 
 #: 例行复查：每次巡检最多顺带核查几家长期未变的厂商（分批轮完存量，控免费层 RPD）
 STALE_REVIEW_PER_RUN = 4
-#: 默认例行复查周期（天）：一个厂商最久每这么久会被 AI 重新核查一次
+#: 默认例行复查周期（天）：超过这个周期没核查过的厂商进核查队列。
+#: 每轮只顺带核查 STALE_REVIEW_PER_RUN 家，存量积压时实际间隔会长于此。
 STALE_REVIEW_DAYS = 45
 SNAPSHOT_TEXT_LIMIT = 60_000
 #: 快照里随哈希保存的事实行文本上限（diff 导向核查的语料；控制 state 体积）
@@ -4420,7 +4436,7 @@ SOURCE_SKIP_FAILS = 7
 SOURCE_RETRY_DAYS = 7
 
 # 只对「含事实信号的行」做快照：整页文本会混入 A/B 版位、CSRF token、时间等噪音，
-# 导致 10% 左右的页面每天假性变化。额度政策变动一定落在含下列关键词的行上。
+# 让一批页面天天「假性变化」，核查队列被噪声填满。额度政策变动一定落在含下列关键词的行上。
 _SNAPSHOT_LINE_RE = re.compile(
     r"免费|额度|限速|速率|频率|配额|计费|收费|价格|定价|赠送|试用|体验金|代金券|实名|信用卡|"
     r"有效期|每月|每日|每周|每 ?\d+ ?小时|滚动重置|永久|限时|积分|"
@@ -4446,11 +4462,13 @@ def _snapshot_key(vendor_id: str, page: PageResult) -> str:
 
 
 def vendor_snapshot_digest(entries: dict, vid: str) -> str:
-    """厂商情报/条件页快照条目的指纹（核查包语料只由这些页构成）。
+    """厂商情报/条件页快照条目的指纹。
 
-    本地核查的「导出 ↔ 快进应用」用它证明：包内语料对应的页面状态
-    至今一字未动 —— 一致就可以跳过全量重抓直接过闸。新闻页不进指纹：
-    它们不入语料、且几乎每天变化，纳入会让快进常态失效。
+    本地核查的「导出 ↔ 快进应用」用它证明：这些页的状态自导包以来一字未动 ——
+    一致就可以跳过全量重抓直接过闸。新闻页不进指纹：它们不入语料、且几乎每天
+    变化，纳入会让快进常态失效。
+    口径要说清：指纹只覆盖**进了快照的页**。核查语料（`build_review_prompt`）
+    还收进登录页 / 发现页这类不入快照的页，那部分不在指纹的保证范围内。
     """
     import hashlib
     prefix = f"{vid}|"
@@ -4728,8 +4746,9 @@ def try_packet_fast_replay(root: Path, snapshots: "SnapshotState",
 
     返回 (磁盘重建的 intel_list, 是否完成快进, 本轮实际处理厂商集)；
     条件不满足返回 ([], False, set())，调用方回退完整巡检。
-    「导出时构建语料、应用时按指纹复用」与原语义等价：指纹逐字节一致
-    意味着证据语料与实抓重建的完全相同，闸门不放水。
+    指纹证明的是「自导包以来该厂商的情报/条件页快照没有前进」，因此包内语料
+    与当下实抓重建的取自同一页面状态；闸门本身不因快进而放宽，该逐字核对的
+    证据照样核对。快照为空的厂商指纹恒定，证明不了任何事，按陈旧回退实抓。
     重建的 intel 只覆盖有动态归档的厂商（同 --rebuild-only），调用方据此
     决定 README 是否立即重渲染；处理厂商集供快照限定清理范围——快进没有
     全量实抓，绝不能按「本轮未出现即删除」的整跑语义清理其余厂商条目。
@@ -4911,7 +4930,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--feeds-dir", default="docs/feeds",
                         help="自建 RSS 输出目录（默认 ./docs/feeds，即 GitHub Pages 的发布目录）")
     parser.add_argument("--feeds-base", default="",
-                        help="自建 RSS 的对外前缀；默认按 GITHUB_REPOSITORY 推导 GitHub Pages 地址")
+                        help="自建 RSS 的对外前缀；默认按 GITHUB_REPOSITORY 推导 GitHub Pages 地址。"
+                             "推导值可能与站点实际域名（docs/CNAME）不符，"
+                             "本地刷新产物请显式传入")
     parser.add_argument("--rss-limit", type=int, default=RSS_MERGED_LIMIT,
                         help=f"合并流最多收录条数（默认 {RSS_MERGED_LIMIT} = **不限制**；"
                              "单厂商源本来就不设上限）")
@@ -4921,14 +4942,16 @@ def main(argv: list[str] | None = None) -> int:
                         help="只巡检指定 vendor_id（可多次使用，调试用；不覆盖全局 README 与新闻总表）")
     parser.add_argument("--no-news", action="store_true", help="跳过博客 / RSS 发现")
     parser.add_argument("--rebuild-only", action="store_true",
-                        help="不抓取网络，从磁盘产物（llm-news/*.md 归档 + llm-news-feeds.md）"
+                        help="不做页面抓取，从磁盘产物（llm-news/*.md 归档 + llm-news-feeds.md）"
                              "重建动态类产物：归档、llm-news-feeds.md、OPML、docs/feeds/*.xml 与索引 JSON。"
                              "改了归档标题后本地刷新产物用这个；README 情报区需要实抓，不会被触碰。"
-                             "与 --only / --no-news 互斥")
+                             "（标题翻译缓存未命中时仍可能请求翻译接口。）"
+                             "与 --only / --no-news / --review-export / --review-apply 互斥")
     parser.add_argument("--no-browser", action="store_true",
                         help="禁用 Playwright 浏览器兜底（默认启用，需 pip install playwright）")
     parser.add_argument("--force-sources", action="store_true",
-                        help=f"强制抓取已达跳过阈值的连续失败源（关闭冷却机制，"
+                        help=f"强制抓取已达跳过阈值的连续失败源（只关闭**情报源抓取冷却**，"
+                             f"AI 核查失败的退避不受影响；"
                              f"默认连续 {SOURCE_SKIP_FAILS} 次失败后冷却 {SOURCE_RETRY_DAYS} 天）")
     parser.add_argument("--ai-review", action="store_true",
                         help="检测到官方页面变化时调用 LLM 核查并更新 profile_overrides.json"
@@ -4944,11 +4967,12 @@ def main(argv: list[str] | None = None) -> int:
                              f"即使哈希未变也进核查队列（每次最多 {STALE_REVIEW_PER_RUN} 家，"
                              f"配合免费层 RPD）。0 = 关闭，只按页面变化核查。默认 {STALE_REVIEW_DAYS}")
     parser.add_argument("--review-export", action="store_true",
-                        help="把待核查厂商导出为 .ai-review/packets/*.prompt.md"
-                             "（无 API Key 时交给本地 AI  agent 填写补丁）")
+                        help="实抓组卷并把待核查厂商导出为 .ai-review/packets/*.prompt.md"
+                             "（供本地 AI agent 填包；本通道不需要 API Key）")
     parser.add_argument("--review-apply", action="store_true",
                         help="校验并采纳 .ai-review/packets/<vid>.json"
-                             "（与远端 AI 同一道逐字证据闸门）")
+                             "（与远端 AI 同一道逐字证据闸门）；默认实抓重建语料，"
+                             "页面快照指纹与导包时刻一致时快进复用包内原文")
     parser.add_argument("--backfill-dates", action="store_true",
                         help="维护模式（不巡检）：逐篇访问归档中**缺发布日期**的文章页，"
                              "从 JSON-LD datePublished / OG / <time> 元数据回填日期；"
@@ -5021,8 +5045,7 @@ def main(argv: list[str] | None = None) -> int:
     news_md_path = (root / args.news_md) if not Path(args.news_md).is_absolute() else Path(args.news_md)
     feeds_dir = (root / args.feeds_dir) if not Path(args.feeds_dir).is_absolute() else Path(args.feeds_dir)
 
-    # ---- 本地核查快进：补丁厂商的页面快照与导包时刻逐字节一致时，证据语料
-    # 直接取包内原文，跳过全量重抓（闸门语义不变）；任一不一致回退完整巡检。----
+    # ---- 本地核查快进：任一指纹不符即回退完整巡检（详见 try_packet_fast_replay docstring）。----
     fast_applied = False
     fast_vids: set[str] = set()
     if (args.review_apply and not args.rebuild_only and not args.only
@@ -5112,6 +5135,8 @@ def main(argv: list[str] | None = None) -> int:
     changed_map = snapshots.changed_pages
     # 例行复查：页面文本长期不变 ≠ 事实不变（限时活动到期、赠金过期都不改版面）。
     # 超过 N 天没被 AI 真正核查过的厂商也进队列；每次巡检限量，让存量厂商分批轮完。
+    # 候选要求 intel_pages 里有可用正文，所以快进轮（intel_list 只有动态页与空壳）
+    # 天然选不出候选，无需额外开关。
     forced_review: set[str] = set()
     if ((args.ai_review or args.review_export or args.review_apply)
             and not args.rebuild_only and not snapshots.baseline
@@ -5164,7 +5189,7 @@ def main(argv: list[str] | None = None) -> int:
                 if ai_patches:
                     adopt_patches(root, ai_patches, intel_by_id)
                     reload_overrides()
-                # 过闸厂商的 manifest 登记随之注销
+                # 排队厂商里补丁文件已不存在的（含从未填包的）注销 manifest 登记
                 mpath = root / REVIEW_PACKET_DIR / REVIEW_MANIFEST
                 manifest = read_packet_manifest(root)
                 pdir = root / REVIEW_PACKET_DIR / "packets"
@@ -5263,7 +5288,7 @@ def main(argv: list[str] | None = None) -> int:
                 if ai_patches:
                     adopt_patches(root, ai_patches, intel_by_id)
                     reload_overrides()
-        # 无变化厂商的 stage 也一并落盘（哈希相同，不产生内容差异）
+        # 兜底提交本轮已 stage 的厂商；重复调用幂等（无变化厂商 commit 不产生内容差异）
         for intel in intel_list:
             snapshots.commit_vendor(intel.vendor_id)
     if not args.rebuild_only:
@@ -5319,7 +5344,7 @@ def main(argv: list[str] | None = None) -> int:
         # write_news_archives 会把「新抓取 + 历史归档」的合并结果写回 intel.all_news_articles
         # 与 intel.news_articles，而总表的「共 N 篇」和「最新 5 篇」都取自这两个字段 ——
         # 因此它必须排在 update_news_md 之前：否则总表用的是合并前计数，会比归档文件少
-        # （归档保留了页面已不再链接的历史文章，实测差 1~4 篇）。
+        # （归档保留了页面已不再链接的历史文章，总表计数取自合并后字段，故必须后置）。
         news_dir = news_md_path.parent / "llm-news"
         n_arch, n_arch_arts, n_arch_changed = write_news_archives(
             news_dir, intel_list, clean_removed=True, title_polish=title_polish)
@@ -5339,7 +5364,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"      {args.feeds_dir} 自建 RSS {n_rss} 个源、{n_rss_items} 条"
               f"（本次实际改写 {n_rss_changed} 个文件）")
         if n_rss_skipped:
-            print(f"      [warn] {n_rss_skipped} 条因发布日期缺失或晚于今天未进订阅流"
+            print(f"      [warn] {n_rss_skipped} 条因发布日期晚于今天被排除在订阅流之外"
                   "（归档 .md 中仍保留）——多为源页面日期提取有误，建议核查。")
         # 模型发布雷达：同一份「归档合并后」全量列表的免费衍生（确定性、无时间戳）
         releases = extract_model_releases(intel_list)
@@ -5365,7 +5390,6 @@ def main(argv: list[str] | None = None) -> int:
         print(f"      额度快照 quotas.json {len(table_records)} 家"
             f"（{'已刷新' if wrote_q else '无内容变化，未改写'}）")
 
-    # 控制台汇总
     total = sum(len(v.intel_pages) for v in intel_list)
     ok = sum(1 for v in intel_list for p in v.intel_pages if p.ok)
     fail = total - ok
