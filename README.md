@@ -1285,7 +1285,7 @@ python -m unittest discover
 | `docs/feeds/*.xml` | **产物**：自建 RSS 2.0 订阅源（`llm-news-all.xml` 合并流 + 每厂商单源），由 `docs/` 作为 GitHub Pages 发布目录对外提供，供 RSS 阅读器订阅**官方没有原生源的厂商** |
 | `docs/feeds/vendors.json` | **产物**：厂商索引（id / 名称 / 单源地址 / 篇数 / 最新日期），供浏览页列出**全部**厂商的订阅入口——合并流只收**有日期**的条目，会漏掉「文章全无日期」的厂商（如整源都拿不到日期的官网），索引把这些补齐 |
 | `docs/feeds/articles.json` | **产物**：**全量**文章索引（标题 / 链接 / 厂商 / 日期 / 原文标题），给浏览页用。体积明显小于同条数的合并流 XML（不带描述），免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里为了列表可读截到 60 字）。条数随巡检变化，不在这里写死 |
-| `docs/index.html` | **页面**（人工维护，非巡检产物）：自建 RSS 的浏览页——三个页签：「厂商动态」读 `feeds/articles.json` 渲染成**全部**条目（可按厂商筛选、可搜索）、「最新变化」读 `feeds/intel-changes.json`（额度/活动变化与新模型发布的时间线，可单独订阅）、「免费额度一览」读 `feeds/quotas.json`（可搜索，点厂商名直达 README 档案）；顶部一键订阅**跟着当前视图走**——选中某厂商时自动切成该家的单源，停在「最新变化」时切成变化流；厂商清单取自 `feeds/vendors.json`（不硬编码，厂商增删不漂移）。索引缺失时退回解析 `feeds/llm-news-all.xml` 并注明，不会整页打不开。**页面不含任何数据，全靠打开时 fetch 产物**，所以 CI 跑完即自动是最新，无需重新生成；三份 JSON 并行拉取并缓存在 localStorage（12 小时内先渲染缓存、后台刷新替换，最长 14 天），复访秒开 |
+| `docs/index.html` | **页面**（人工维护，非巡检产物）：自建 RSS 的浏览页——三个页签：「厂商动态」读 `feeds/articles.json` 渲染成**全部**条目（可按厂商筛选、可搜索；首屏只渲染一批，点「显示更早的 N 条」按需追加，计数与搜索始终基于全量）、「最新变化」读 `feeds/intel-changes.json`（额度/活动变化与新模型发布的时间线，可单独订阅）、「免费额度一览」读 `feeds/quotas.json`（可搜索，点厂商名直达 README 档案）；顶部一键订阅**跟着当前视图走**——选中某厂商时自动切成该家的单源，停在「最新变化」时切成变化流；厂商清单取自 `feeds/vendors.json`（不硬编码，厂商增删不漂移）。索引缺失时退回解析 `feeds/llm-news-all.xml` 并注明，不会整页打不开。**页面不含任何数据，全靠打开时 fetch 产物**，所以 CI 跑完即自动是最新，无需重新生成；三份 JSON 并行拉取并缓存在 localStorage（12 小时内先渲染缓存、后台刷新替换，最长 14 天），复访秒开 |
 | `.translate_cache.json` | 运行缓存（已 gitignore）：标题翻译结果持久化，重跑只翻译新增条目 |
 | `requirements.txt` | **配置**：Python 依赖项声明（`requests`、`PyYAML` 为必需；`playwright` pip 包随依赖安装，Chromium 内核本地可选装、CI 已装） |
 | `CONTRIBUTING.md` | **文档**：贡献指南（新增厂商规范、单厂商调试与 AI 审核/回退操作指引） |
