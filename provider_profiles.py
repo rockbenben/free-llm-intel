@@ -2120,7 +2120,22 @@ EVIDENCE_DISPLAY_ORDER = (
 def _load_overrides() -> dict:
     try:
         data = json.loads(_OVERLAY_PATH.read_text(encoding="utf-8"))
-    except (FileNotFoundError, json.JSONDecodeError):
+    except FileNotFoundError:
+        return {}
+    except json.JSONDecodeError as exc:
+        # 静默返回 {} 会让全部覆写无痕消失（渲染回退到基线档案）；
+        # 存档留证并大声告警，文件本身不动，修复前每次加载都会提醒。
+        import sys
+        from datetime import date
+        print(f"[warn] {_OVERLAY_PATH.name} 解析失败（{exc}），"
+              "覆写档案本轮全部失效；请修复该文件（未改动原文件）", file=sys.stderr)
+        try:
+            backup = _OVERLAY_PATH.with_name(
+                f"{_OVERLAY_PATH.name}.corrupt-{date.today().isoformat()}")
+            if not backup.exists():
+                backup.write_bytes(_OVERLAY_PATH.read_bytes())
+        except OSError:
+            pass
         return {}
     return data if isinstance(data, dict) else {}
 
@@ -2135,6 +2150,10 @@ def reload_overrides() -> dict:
     return _PROFILE_OVERRIDES
 
 
+_OVERLAY_META_KEYS = {"_updated", "_summary", "_evidence", "guide_meta"}
+_OVERLAY_WARNED: set[tuple[str, str]] = set()
+
+
 def _apply_overlay(profile: dict, vendor_id: str) -> dict:
     patch = _PROFILE_OVERRIDES.get(vendor_id)
     if not isinstance(patch, dict):
@@ -2143,6 +2162,12 @@ def _apply_overlay(profile: dict, vendor_id: str) -> dict:
     for key, val in patch.items():
         if key in _OVERLAY_FIELDS:
             merged[key] = val
+        elif key not in _OVERLAY_META_KEYS and (vendor_id, key) not in _OVERLAY_WARNED:
+            # 手写 typo 此前被静默丢弃：告警一次（每厂商每键），不中断渲染
+            import sys
+            _OVERLAY_WARNED.add((vendor_id, key))
+            print(f"[warn] profile_overrides.json：{vendor_id} 含未知键 {key!r}，"
+                  "已忽略（不在 _OVERLAY_FIELDS）", file=sys.stderr)
     return merged
 
 

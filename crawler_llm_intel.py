@@ -3493,16 +3493,21 @@ def parse_archived_articles(arch_path: Path) -> list[Article]:
         return []
     articles: list[Article] = []
     try:
-        for line in arch_path.read_text(encoding="utf-8").splitlines():
-            m = _ARCHIVE_ARTICLE_RE.match(line.strip())
-            if m:
-                title, url, date_val = m.group(1), m.group(2), m.group(3) or ""
-                frozen = title if _CJK_CHAR_RE.search(title) else ""
-                articles.append(Article(title=title, url=url,
-                                        zh_title=frozen,
-                                        date=_drop_future_date(date_val)))
-    except Exception:
-        pass
+        text = arch_path.read_text(encoding="utf-8")
+    except OSError as exc:
+        # 读不到归档时增量合并拿到的历史条目是**空**的：合并结果可能比磁盘上的
+        # 归档少（违反「只增不减」）。不能静默——至少要让人在日志里看见。
+        print(f"      [warn] 归档 {arch_path.name} 读取失败（{exc}），"
+              "本轮增量合并不含其历史条目", file=sys.stderr)
+        return []
+    for line in text.splitlines():
+        m = _ARCHIVE_ARTICLE_RE.match(line.strip())
+        if m:
+            title, url, date_val = m.group(1), m.group(2), m.group(3) or ""
+            frozen = title if _CJK_CHAR_RE.search(title) else ""
+            articles.append(Article(title=title, url=url,
+                                    zh_title=frozen,
+                                    date=_drop_future_date(date_val)))
     return articles
 
 
@@ -3740,10 +3745,14 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
     out_dir.mkdir(parents=True, exist_ok=True)
     today = datetime.now().strftime("%Y-%m-%d")
     if clean_removed:
-        current_ids = {v.vendor_id for v in intel_list if v.all_news_articles}
-        # 清理已下线厂商的旧归档
+        # 只清理「确认下线」的厂商归档 = 已从本轮清单整体消失（yaml 里被移除）。
+        # 在清单里但本轮 all_news_articles 为空的厂商，多半是动态页临时抓不到
+        # （网络 / 反爬 / 页面改版）：归档是只增不减的历史记录，删一次就永久丢失，
+        # 绝不能因一轮抓取失败而清理。原判据 `if v.all_news_articles` 把「本轮没抓到」
+        # 误当成「厂商下线」，一次源站抖动就能抹掉整份历史归档。
+        present = {v.vendor_id for v in intel_list}
         for old in out_dir.glob("*.md"):
-            if old.stem not in current_ids:
+            if old.stem not in present:
                 old.unlink()
     files = 0
     files_changed = 0
@@ -3978,6 +3987,17 @@ def _rss_mask_builddate(text: str) -> str:
                   "<lastBuildDate>__T__</lastBuildDate>", text)
 
 
+def _atomic_write_text(path: Path, text: str) -> None:
+    """tmp + os.replace 落盘：写一半崩溃不会留下半成品文件。
+
+    state / manifest / overlay 这类状态文件损坏后会被解析层清空或忽略，
+    后果是整轮误判（全厂商「变化」、快进失效），必须原子写。
+    """
+    tmp = path.with_name(path.name + ".tmp")
+    tmp.write_text(text, encoding="utf-8", newline="\n")
+    os.replace(tmp, path)
+
+
 def _write_json(path: Path, payload: dict) -> bool:
     """确定性 JSON 落盘：键序固定、不含时间戳，内容无变化则不重写。
 
@@ -3991,7 +4011,7 @@ def _write_json(path: Path, payload: dict) -> bool:
                 return False
         except Exception:
             pass
-    path.write_text(text, encoding="utf-8", newline="\n")
+    _atomic_write_text(path, text)
     return True
 
 
@@ -4004,7 +4024,7 @@ def _rss_write(path: Path, content: str) -> bool:
                 return False
         except Exception:
             pass
-    path.write_text(content, encoding="utf-8", newline="\n")
+    _atomic_write_text(path, content)
     return True
 
 
@@ -4047,11 +4067,14 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
         per_vendor.append((intel.brand, intel.vendor_id, arts, titles_zh))
 
     if clean_removed:
-        current_ids = {row[1] for row in per_vendor}
+        # 同 write_news_archives：只删「已从本轮清单消失」的厂商订阅源（确认下线）。
+        # 本轮没有可收录条目的厂商（动态页临时抓不到）保留旧 feed 文件，
+        # 否则一次源站抖动就让订阅者读到 404。
+        present = {v.vendor_id for v in intel_list}
         for old in out_dir.glob("llm-news-*.xml"):
             if old.name == "llm-news-all.xml":
                 continue
-            if old.stem.removeprefix("llm-news-") not in current_ids:
+            if old.stem.removeprefix("llm-news-") not in present:
                 old.unlink()
 
     files = items = changed = 0
@@ -4592,7 +4615,18 @@ class SnapshotState:
             self.entries: dict[str, dict] = data.get("sources", {}) or {}
             self.reviews: dict[str, str] = data.get("reviews", {}) or {}
             self.failures: dict[str, dict] = data.get("failures", {}) or {}
-        except (ValueError, OSError):
+        except (ValueError, OSError) as exc:
+            # 损坏的 state 绝不能静默清空：空表 + 非基线会让全部厂商误判「变化」，
+            # 一夜灌爆核查队列 / AI 免费额度。备份留证后按基线重建（只建档不报变化）。
+            if self.path.exists():
+                print(f"    [warn] {SNAPSHOT_STATE} 解析失败（{exc}），"
+                      "已存档 .corrupt 备份并按基线重建", file=sys.stderr)
+                try:
+                    self.path.replace(self.path.with_name(
+                        f"{SNAPSHOT_STATE}.corrupt-{date.today().isoformat()}"))
+                except OSError:
+                    pass
+                self.baseline = True
             self.entries = {}
             self.reviews = {}
             self.failures = {}
@@ -4743,7 +4777,7 @@ class SnapshotState:
         old = self.path.read_text(encoding="utf-8") if self.path.exists() else ""
         if payload == old:
             return False
-        self.path.write_text(payload, encoding="utf-8", newline="\n")
+        _atomic_write_text(self.path, payload)
         return True
 
 
@@ -5282,9 +5316,9 @@ def main(argv: list[str] | None = None) -> int:
                         if not (pdir / f"{vid}.json").exists():
                             manifest.pop(vid, None)
                     mpath.parent.mkdir(parents=True, exist_ok=True)
-                    mpath.write_text(json.dumps(manifest, ensure_ascii=False,
-                                               indent=2) + "\n",
-                                     encoding="utf-8", newline="\n")
+                    _atomic_write_text(
+                        mpath, json.dumps(manifest, ensure_ascii=False,
+                                          indent=2) + "\n")
         elif not args.ai_review:
             print("      未启用 --ai-review：仅更新快照（AI 核查需在 CI 或本地带该参数运行）。")
             for intel in intel_list:
