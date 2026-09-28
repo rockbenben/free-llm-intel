@@ -3557,6 +3557,19 @@ class TestBrowsePageDesignContract(unittest.TestCase):
         self.assertEqual(offenders, [],
                          "又写回裸 px 了，新增间距请从 --sp-* / --rd-* 取")
 
+    def test_capsule_base_is_not_reimplemented(self):
+        """胶囊基元只允许 .pill 一处；新胶囊挂 .pill + 角色类，别再抄第五遍。
+
+        去重前 .chip/.vendor/.kind/.qpart/.qp-tag 各写了一遍同一套
+        display/圆角/描边/底色/文字色，共 38 条声明。
+        """
+        owners = []
+        for sel, body in re.findall(r"([^{}]+)\{([^{}]*)\}", self.style):
+            if "var(--rd-pill)" in body:
+                owners.append(sel.strip().splitlines()[-1].strip())
+        self.assertEqual(owners, [".pill"],
+                         f"圆角胶囊被重复定义了：{owners}")
+
     def test_text_is_never_dimmed_with_opacity(self):
         """opacity 压暗文字会在深色底上直接跌破对比度线（.chip .n 就是这么翻车的）。"""
         self.assertNotIn("opacity", self.style,
