@@ -4193,8 +4193,10 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
         for art, t in zip(arts, titles_zh):
             orig = art.title.strip()
             key = (vendor_id, art.url)
-            if orig != t.strip() and not re.search(r"[A-Za-z]{4}", orig):
-                # 内存里没有英文原文（纯归档来源的文章）：回退上一版索引的原文
+            if not re.search(r"[A-Za-z]{4}", orig):
+                # 内存里没有英文原文（纯归档来源的文章，标题已是汉化归档标题，
+                # orig == t）：回退上一版索引的原文，避免旧索引里的英文原文被
+                # 覆盖丢失后永远找不回来。
                 prev = _LAST_ORIG_INDEX.get(key, "")
                 if prev and re.search(r"[A-Za-z]{4}", prev):
                     orig = prev
