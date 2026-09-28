@@ -3865,11 +3865,23 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
 def default_feeds_base() -> str:
     """推导订阅源的对外前缀（GitHub Pages 地址）。
 
-    Actions 会注入 GITHUB_REPOSITORY=owner/repo：项目页的 Pages 根是
-    https://owner.github.io/repo/，而项目主页仓（owner.github.io）本身就是根。
-    本地运行拿不到该变量时返回空串——此时省略 <atom:link rel="self">，
+    优先读 docs/CNAME：Pages 配了自定义域名后，github.io 地址会 301 跳到自定义域名，
+    feed 里的 rel=self 与 <source url> 应直接指向规范地址（省一跳、且阅读器里显示正确）。
+    CNAME 文件是 Pages 自定义域名的唯一权威源，比在 Actions vars 里再配一遍 FEEDS_BASE
+    更不容易漂——域名换了只会改 CNAME，不会有人记得同步 variable。
+
+    没有 CNAME 时退回 GITHUB_REPOSITORY 推导：Actions 注入 owner/repo，项目页的
+    Pages 根是 https://owner.github.io/repo/，而项目主页仓（owner.github.io）本身就是根。
+    本地运行两者都拿不到时返回空串——此时省略 <atom:link rel="self">，
     对任何阅读器都没有影响。
     """
+    cname_path = _repo_root() / "docs" / "CNAME"
+    cname = cname_path.read_text(encoding="utf-8").strip() if cname_path.exists() else ""
+    if cname:
+        domain = cname.splitlines()[0].strip().rstrip("/")
+        domain = re.sub(r"^https?://", "", domain).split("/")[0]
+        if domain:
+            return f"https://{domain}/feeds"
     slug = os.environ.get("GITHUB_REPOSITORY", "").strip()
     if "/" not in slug:
         return ""
@@ -5093,8 +5105,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--feeds-dir", default="docs/feeds",
                         help="自建 RSS 输出目录（默认 ./docs/feeds，即 GitHub Pages 的发布目录）")
     parser.add_argument("--feeds-base", default="",
-                        help="自建 RSS 的对外前缀；默认按 GITHUB_REPOSITORY 推导 GitHub Pages 地址。"
-                             "推导值可能与站点实际域名（docs/CNAME）不符，"
+                        help="自建 RSS 的对外前缀；默认优先读 docs/CNAME（自定义域名），"
+                             "其次按 GITHUB_REPOSITORY 推导 GitHub Pages 地址。"
                              "本地刷新产物请显式传入")
     parser.add_argument("--rss-limit", type=int, default=RSS_MERGED_LIMIT,
                         help=f"合并流最多收录条数（默认 {RSS_MERGED_LIMIT} = **不限制**；"
