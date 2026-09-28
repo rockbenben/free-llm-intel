@@ -4582,7 +4582,11 @@ def vendor_snapshot_digest(entries: dict, vid: str) -> str:
             continue
         stype = k[len(prefix):].split("|", 1)[0]
         if stype in INTEL_TYPES or stype in CONDITION_TYPES:
-            kept[k] = v
+            # 只取内容字段：ai_attempts / ai_retry_after 等退避簿记会随失败
+            # 计数变化，混进指纹会让「导包后 bump 过一次」被误判为页面又变了。
+            kept[k] = ({kk: vv for kk, vv in v.items()
+                        if kk in ("sha256", "fact")}
+                       if isinstance(v, dict) else v)
     payload = json.dumps(kept, sort_keys=True, ensure_ascii=False)
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
@@ -4716,6 +4720,21 @@ class SnapshotState:
         # 新条目覆盖旧条目（含 sha256/fact），同时清除 ai_attempts / ai_retry_after
         self.entries.update(self._staged.pop(vendor_id, {}))
 
+    def staged_snapshot(self, vendor_id: str) -> dict:
+        """本轮 stage 的新哈希条目（导包时随 manifest 存档，供快进采纳推进快照）。"""
+        return self._staged.get(vendor_id, {})
+
+    def restore_staged(self, vendor_id: str, staged: dict) -> None:
+        """快进重放：把导包时存档的新哈希放回 stage 区。
+
+        快进轮没有实抓、stage 区为空，commit_vendor 是 no-op —— 不回填的话
+        entries 永远停在变化前哈希，同一变化每轮重新检出、重新导包（死循环）。
+        回填是安全的：快进的前提正是「state 指纹与导包时一致」，即 entries
+        自导包后未前进，存档的新哈希仍对应同一页面状态。
+        """
+        if staged:
+            self._staged[vendor_id] = staged
+
     def rollback_vendor(self, vendor_id: str, bump: bool = False,
                         error: str = "") -> None:
         """AI 核查未通过：保留旧哈希，使下次巡检继续把该厂商标记为变化。
@@ -4785,6 +4804,9 @@ class SnapshotState:
 REVIEW_PACKET_DIR = ".ai-review"
 #: 包清单：记录每个核查包导出时对应的页面快照指纹（快进复用的判据）
 REVIEW_MANIFEST = "manifest.json"
+#: 快进的时效上限（天）：指纹只证明「state 未前进」，不证明页面此刻仍与包内语料一致。
+#: 导包太久远时，期间页面变了又恰好回滚到同一哈希的概率不可忽略，超龄一律回退实抓。
+PACKET_MAX_AGE_DAYS = 7
 #: 包内页头：export 写入，apply 复用包内语料时据此确认「这是一份完整核查包」
 #: 而不是被截断/手改过的半成品（真实 prompt 永远以它开头，测试不得自己补）
 PACKET_HEADER = "[本地 AI 核查包]"
@@ -4835,21 +4857,27 @@ def export_review_packets(root: Path, prompts: dict[str, str],
             manifest[vid] = {
                 "digest": vendor_snapshot_digest(snapshots.entries, vid),
                 "exported": date.today().isoformat(),
+                # 本轮 stage 的新哈希：--review-apply 快进过闸后据此推进快照，
+                # 否则 entries 停在旧哈希，同一变化每轮重新检出（见 restore_staged）。
+                "staged": snapshots.staged_snapshot(vid),
             }
     if snapshots is not None:
         mpath = root / REVIEW_PACKET_DIR / REVIEW_MANIFEST
         mpath.parent.mkdir(parents=True, exist_ok=True)
-        mpath.write_text(json.dumps(manifest, ensure_ascii=False, indent=2)
-                         + "\n", encoding="utf-8", newline="\n")
+        _atomic_write_text(mpath, json.dumps(manifest, ensure_ascii=False,
+                                             indent=2) + "\n")
     return len(prompts)
 
 
 def read_packet_manifest(root: Path) -> dict:
+    mpath = root / REVIEW_PACKET_DIR / REVIEW_MANIFEST
     try:
-        data = json.loads(
-            (root / REVIEW_PACKET_DIR / REVIEW_MANIFEST).read_text(encoding="utf-8"))
+        data = json.loads(mpath.read_text(encoding="utf-8"))
         return data if isinstance(data, dict) else {}
-    except (OSError, ValueError):
+    except (OSError, ValueError) as exc:
+        if mpath.exists():
+            print(f"    [warn] {REVIEW_MANIFEST} 解析失败（{exc}），按空清单处理："
+                  "快进失效，回退实抓重验", file=sys.stderr)
         return {}
 
 
@@ -4875,17 +4903,33 @@ def try_packet_fast_replay(root: Path, snapshots: "SnapshotState",
         return [], False, set()
     # 只卡「补丁还没过闸、而页面又变了」的厂商：已应用/无补丁的陈旧登记
     # 不该把快进永久堵死。指纹为空（该厂商没有任何情报/条件页快照）时
-    # 一致也证明不了页面没变，同样回退实抓。
+    # 一致也证明不了页面没变，同样回退实抓。导包超龄同理（见 PACKET_MAX_AGE_DAYS）。
     empty_digest = vendor_snapshot_digest({}, "")
-    stale = [vid for vid in sorted(pending)
-             if (lambda cur: manifest[vid].get("digest") != cur
-                 or cur == empty_digest)(vendor_snapshot_digest(snapshots.entries, vid))]
+    today = date.today()
+
+    def _aged_out(exported) -> bool:
+        try:
+            return (today - date.fromisoformat(str(exported))).days > PACKET_MAX_AGE_DAYS
+        except ValueError:
+            return True
+
+    stale = []
+    for vid in sorted(pending):
+        entry = manifest.get(vid) or {}
+        cur = vendor_snapshot_digest(snapshots.entries, vid)
+        if entry.get("digest") != cur or cur == empty_digest \
+                or _aged_out(entry.get("exported")):
+            stale.append(vid)
     if stale:
-        print(f"      [local-fast] {len(stale)} 家页面自导包后已变化"
+        print(f"      [local-fast] {len(stale)} 家页面自导包后已变化或包已超龄"
               f"（{', '.join(stale[:5])}），回退完整巡检重验。")
         return [], False, set()
     print("[2/4] --review-apply 快进：页面快照与导包时一致，"
           "复用包内语料过闸（不发起网络抓取）...")
+    # 快进轮没有实抓、stage 区为空：回填导包时存档的新哈希，
+    # 过闸的厂商 commit 后快照才会前进（否则同一变化每轮重新排队）。
+    for vid in pending:
+        snapshots.restore_staged(vid, (manifest.get(vid) or {}).get("staged") or {})
     news_text = (news_md_path.read_text(encoding="utf-8")
                  if news_md_path.exists() else "")
     intel_list = rebuild_intel_from_disk(
@@ -4922,9 +4966,8 @@ def try_packet_fast_replay(root: Path, snapshots: "SnapshotState",
         return [], False, set()
     for vid in list(pending):
         manifest.pop(vid, None)
-    (root / REVIEW_PACKET_DIR / REVIEW_MANIFEST).write_text(
-        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8", newline="\n")
+    _atomic_write_text(root / REVIEW_PACKET_DIR / REVIEW_MANIFEST,
+                       json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
     return intel_list, True, set(pending)
 
 
@@ -4963,7 +5006,10 @@ def run_local_review(root: Path, changed_map: dict, intel_by_id: dict,
                     raise ai_review.AiReviewError("无可用官方页正文")
             data = ai_review.parse_json_loose(
                 patch_file.read_text(encoding="utf-8"))
-            patch = ai_review.validate_patch(data, prompt)
+            # 证据闸门语料只认「官方页面原文区 + 变化行新增侧」：整份 prompt
+            # 还含旧档案值与删除行，拿它当语料会放过引用旧值的幻觉补丁。
+            patch = ai_review.validate_patch(
+                data, ai_review.evidence_corpus(prompt))
         except (ai_review.AiReviewError, OSError, ValueError) as exc:
             print(f"      [local-reject] {vid}: {exc}", file=sys.stderr)
             snapshots.rollback_vendor(vid)
@@ -4971,7 +5017,9 @@ def run_local_review(root: Path, changed_map: dict, intel_by_id: dict,
         snapshots.commit_vendor(vid)
         snapshots.mark_reviewed(vid)
         done.add(vid)
-        patch_file.rename(patch_file.with_suffix(".json.applied"))
+        # replace 而非 rename：Windows 上 rename 撞到已存在的 .applied（同一
+        # 厂商第二次过闸）会抛 FileExistsError，且此处已在 try 块之外。
+        patch_file.replace(patch_file.with_suffix(".json.applied"))
         if patch.get("changed"):
             patches[vid] = patch
             print(f"      [local-update] {intel.brand if intel else vid}：{patch['summary']}")
@@ -5421,6 +5469,12 @@ def main(argv: list[str] | None = None) -> int:
     feeds_base = args.feeds_base.strip() or default_feeds_base()
     if args.rebuild_only:
         print("      [info] --rebuild-only：跳过 README 渲染与快照落盘（情报区需要实抓页面）。")
+    elif fast_applied:
+        # 快进重放与 --rebuild-only 同源：intel_list 由磁盘重建、只有动态页与空壳，
+        # 没有实抓的情报页正文。此时渲染 README 会把厂商档案区写成空白，冲掉上一轮
+        # 实抓的成果。补丁已 adopt 进 profile_overrides.json，留待下一次完整巡检渲染。
+        print("      [info] 本地核查快进：跳过 README 渲染（情报区需要实抓页面；"
+              "已采纳的档案改动留待下一次完整巡检落进 README）。")
     else:
         print("      开始渲染 README ...")
         records = order_vendor_records(intel_list)

@@ -116,6 +116,8 @@ def default_model(backend: str) -> str:
     return GEMINI_DEFAULT_MODEL if backend == BACKEND_GEMINI else ANTHROPIC_DEFAULT_MODEL
 
 
+#: 允许 AI 补丁覆写的字段集与类型。必须与 provider_profiles._OVERLAY_FIELDS
+#: 保持一致（那边多出的字段若这里没有，AI 产出它时整个补丁会被 validate_patch 拒掉）。
 FIELD_TYPES = {
     "category": str,
     "display_name": str,
@@ -126,6 +128,9 @@ FIELD_TYPES = {
     "preconditions": str,
     "promotions": str,
     "notes": str,
+    "invite_reward": str,
+    "student_benefit": str,
+    "openai_compat": dict,
 }
 ALLOWED_TIERS = {"permanent", "onetime", "recurring", "selfhost"}
 ALLOWED_SIGNUP = {"email", "card"}
@@ -233,8 +238,8 @@ def build_user_prompt(
         "",
     ]
     # focus 时最贵的整页原文预算减半（diff 已把注意力指到变化行）；
-    # 变化行区块本身很小，不抵总长。证据引文只须能在模型实际看到的 prompt 内
-    # 逐字命中——校验语料是整个 prompt（含变化行与档案 JSON），并非只认截断后的正文。
+    # 变化行区块本身很小，不抵总长。证据闸门的语料由 evidence_corpus 从本
+    # prompt 裁出：原文区（含截断）+ 变化行新增侧，不含档案 JSON 与删除行。
     page_budget_cap = PAGE_CHAR_BUDGET
     if focus:
         page_budget_cap //= 2
@@ -471,11 +476,38 @@ def parse_json_loose(text: str) -> dict:
     return data
 
 
+_ORIG_SECTION = "【官方页面原文】"
+_FOCUS_SECTION = "【本次页面变化行】"
+_OUTPUT_SECTION = "【输出格式】"
+
+
+def evidence_corpus(prompt: str) -> str:
+    """从送模 prompt 中裁出证据闸门语料：官方页面原文区 + 变化行的新增侧。
+
+    整份 prompt 还含【当前生效档案】的旧值与变化行的删除侧（旧文本）——拿它
+    当语料，引用旧档案值或已删除文本的幻觉补丁也能逐字命中而过闸。新增侧要
+    保留：focus 模式下每页原文预算减半，引文可能落在截断点之后，变化行是它
+    在 prompt 里的唯一出处（而这正是模型被要求主要依据的文本）。
+    prompt 不含分区标记时（测试直接构造的语料等）原样返回。
+    """
+    start = prompt.find(_ORIG_SECTION)
+    if start < 0:
+        return prompt
+    end = prompt.find(_OUTPUT_SECTION, start)
+    parts = [prompt[start:end] if end > start else prompt[start:]]
+    fstart = prompt.find(_FOCUS_SECTION)
+    if 0 <= fstart < start:
+        for line in prompt[fstart:start].splitlines():
+            if line.startswith("+ "):
+                parts.append(line[2:])
+    return "\n".join(parts)
+
+
 def validate_patch(data: dict, corpus_norm: str) -> dict:
     """校验并归一化 AI 补丁；证据必须逐字命中 corpus_norm，否则拒绝整个补丁。
 
-    corpus_norm 是模型实际看到的送模文本（review_vendor 传入的是整个 prompt，含
-    截断后的页面原文、变化行与档案 JSON）；内部会再做一次空白归一化。
+    corpus_norm 由调用方用 evidence_corpus(prompt) 裁出（官方页面原文 +
+    变化行新增侧），内部会再做一次空白归一化。
     """
     corpus_norm = _norm(corpus_norm)
     if not data.get("changed"):
@@ -495,6 +527,13 @@ def validate_patch(data: dict, corpus_norm: str) -> dict:
                 raise AiReviewError(f"字段 {key} 必须是非空字符串列表")
             if len(val) > 12:
                 raise AiReviewError(f"字段 {key} 条目过多（>12），疑似异常输出")
+        elif isinstance(val, dict):
+            # openai_compat 等结构体：整体覆盖生效，键值都必须是非空字符串
+            if not val or len(val) > 12 \
+                    or not all(isinstance(k, str) and k.strip()
+                               and isinstance(v, str) and v.strip()
+                               for k, v in val.items()):
+                raise AiReviewError(f"字段 {key} 必须是非空的「字符串: 字符串」映射（≤12 键）")
         elif not val.strip():
             raise AiReviewError(f"字段 {key} 为空字符串")
         clean_fields[key] = val
@@ -565,8 +604,8 @@ def review_vendor(vendor_id: str, brand: str, profile: dict, guide_meta: dict,
                                char_budget=TOTAL_CHAR_BUDGET, focus=focus)
     raw = call_llm(prompt, api_key=api_key, model=model, backend=backend)
     data = parse_json_loose(raw)
-    # 证据只要求命中模型实际看到的文本（prompt 内含预算截断后的页面原文）
-    corpus_norm = _norm(prompt)
+    # 证据只要求命中模型实际看到的页面文本（原文区 + 变化行新增侧，含预算截断）
+    corpus_norm = _norm(evidence_corpus(prompt))
     return validate_patch(data, corpus_norm)
 
 
@@ -576,8 +615,19 @@ def apply_patches(overlay_path: Path, patches: dict[str, dict]) -> None:
         overlay = json.loads(overlay_path.read_text(encoding="utf-8"))
         if not isinstance(overlay, dict):
             overlay = {}
-    except (FileNotFoundError, json.JSONDecodeError):
+    except FileNotFoundError:
         overlay = {}
+    except json.JSONDecodeError as exc:
+        # 损坏的覆写文件不能静默当空表覆盖：先存档留证，避免既有补丁无痕丢失
+        overlay = {}
+        print(f"    [warn] {overlay_path.name} 解析失败（{exc}），"
+              "已存档 .corrupt 备份后重建", file=sys.stderr)
+        try:
+            from datetime import date as _date
+            overlay_path.replace(overlay_path.with_name(
+                f"{overlay_path.name}.corrupt-{_date.today().isoformat()}"))
+        except OSError:
+            pass
 
     from datetime import datetime
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -595,8 +645,11 @@ def apply_patches(overlay_path: Path, patches: dict[str, dict]) -> None:
         if not isinstance(old_ev, list):
             old_ev = []
         entry["_evidence"] = (old_ev + patch["evidence"])[-20:]
-    overlay_path.write_text(
+    # tmp + os.replace 原子写：写一半崩溃不会把覆写文件整个打坏
+    tmp = overlay_path.with_name(overlay_path.name + ".tmp")
+    tmp.write_text(
         json.dumps(overlay, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         encoding="utf-8",
         newline="\n",
     )
+    os.replace(tmp, overlay_path)
