@@ -1,7 +1,12 @@
 # 情报变更日志
 
-> **产物**（只追加）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
-> 保留最近约 150 条厂商-天记录；人工修订请直接改本文件。
+> **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
+> 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
+
+## 2026-09-28
+### Anthropic Claude（`anthropic`）
+- 摘要：最新模型更新为 Sonnet 5.5，Sonnet 5 已移入 Legacy models；网页端免费版明确支持 Sonnet 与 Haiku（不支持 Opus 与 Fable）。
+- `free_models`：**API 无免费模型层**：当前代际 `Claude Fable 5.1`、`Claude Opus 5.5`、`Claude Sonnet 5`、`Claude Haiku 4.5`（上下文最高 1M，随模型而异）均按量付费，`Opus 5`/`Fable 5` 已移入 legacy models；新用户少量测试… → **API 无免费模型层**：当前代际 `Claude Fable 5.1`、`Claude Opus 5.5`、`Claude Sonnet 5.5`、`Claude Haiku 4.5`（上下文最高 1M，随模型而异）均按量付费，`Sonnet 5`/`Opus 5`/`Fable 5` 等已移入 legacy …
 
 ## 2026-09-27
 ### Anthropic Claude（`anthropic`）

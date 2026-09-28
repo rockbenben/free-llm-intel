@@ -10,11 +10,11 @@
 
 ## 全部文章（共 17 篇，按日期倒序；无日期条目列于最后）
 
-1. [推出元企业平台](https://about.fb.com/news/2026/09/launching-meta-enterprise-platform/)（2026-09-28）
-2. [介绍 Ray-Ban Meta Audio 及更多 AI 眼镜款式](https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/)（2026-09-23）
+1. [推出元企业平台](https://about.fb.com/news/2026/09/launching-meta-enterprise-platform/)（2026-09-28） <!--orig:Launching Meta Enterprise Platform-->
+2. [介绍 Ray-Ban Meta Audio 及更多 AI 眼镜款式](https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/)（2026-09-23） <!--orig:Introducing Ray-Ban Meta Audio and More AI Glasses Styles-->
 3. [加拿大初创公司 smartARM 利用人工智能打造直观的仿生假肢](https://about.fb.com/news/2026/09/canadian-start-up-smartarm-uses-ai-to-create-intuitive-bionic-prosthetics/)（2026-09-16）
 4. [隆重推出 Meta One：一种具有更多功能和 AI 的订阅服务，可用于创建、连接和脱颖而出](https://about.fb.com/news/2026/09/introducing-meta-one-subscription-service-more-features-ai/)（2026-09-15）
-5. [推出 Muse：全球首个为每个人打造的个人 AI 代理](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)（2026-09-08）
+5. [推出 Muse：全球首个为每个人打造的个人 AI 代理](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)（2026-09-08） <!--orig:Introducing Muse: The World’s First Personal AI Agent Built for Everyone-->
 6. [闭环冷却解释：Meta 人工智能背后的管道](https://about.fb.com/news/2026/08/closed-loop-cooling-explained-the-plumbing-behind-metas-ai/)（2026-08-27）
 7. [美国劳动力学院：免费。无需任何经验。另一边的职业生涯。](https://about.fb.com/news/2026/08/americas-workforce-academy-meta-skilled-trade-training-program/)（2026-08-18）
 8. [未来属于每个人](https://about.fb.com/news/2026/08/the-future-is-for-everyone/)（2026-08-10）

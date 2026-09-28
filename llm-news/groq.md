@@ -1,6 +1,6 @@
 # Groq Cloud 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-26**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-28**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Groq Cloud（`groq`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -10,26 +10,26 @@
 ## 全部文章（共 49 篇，按日期倒序；无日期条目列于最后）
 
 1. [Q1 2026 更新日志条目](https://github.com/groq/groq-changelog/commit/abaa8395286b622a837adb5d6b44709845d1edba)（2026-05-06）
-2. [MiniMax M2.5 与 Qwen3-VL 32B Instruct 上线（企业版）](https://console.groq.com/docs/changelog.md#minimax-m25-and-qwen3vl-32b-instruct-enterprise)（2026-04-18）
-3. [Orpheus Arabic Saudi 新增语音](https://console.groq.com/docs/changelog.md#new-voices-for-orpheus-arabic-saudi)（2026-04-18）
+2. [MiniMax M2.5 与 Qwen3-VL 32B Instruct 上线（企业版）](https://console.groq.com/docs/changelog.md#minimax-m25-and-qwen3vl-32b-instruct-enterprise)（2026-04-18） <!--orig:MiniMax M2.5 and Qwen3-VL 32B Instruct (Enterprise)-->
+3. [Orpheus Arabic Saudi 新增语音](https://console.groq.com/docs/changelog.md#new-voices-for-orpheus-arabic-saudi)（2026-04-18） <!--orig:New Voices for Orpheus Arabic Saudi-->
 4. [Python SDK v1.2.0 and TypeScript SDK v1.1.2](https://console.groq.com/docs/changelog.md#python-sdk-v120-and-typescript-sdk-v112)（2026-04-18）
 5. [Groq 是首批将 NVIDIA Groq 3 LPX 和 Vera Rubin NVL72 推向市场的公司之一](https://groq.com/blog/groq-among-the-first-to-bring-nvidia-groq-3-lpx-and-vera-rubin-nvl72-to-market)（2026-03-24）
 6. [GroqCloud：扩展规模以满足需求](https://groq.com/blog/groqcloud-expanding-to-meet-demand)（2026-02-16）
-7. [从 PlayAI 到 Orpheus TTS 的平台范围迁移](https://console.groq.com/docs/changelog.md#platformwide-migration-from-playai-to-orpheus-tts)（2026-01-30）
+7. [从 PlayAI 到 Orpheus TTS 的平台范围迁移](https://console.groq.com/docs/changelog.md#platformwide-migration-from-playai-to-orpheus-tts)（2026-01-30） <!--orig:Platform-wide Migration from PlayAI to Orpheus TTS-->
 8. [12-01-25 更新日志](https://github.com/groq/groq-changelog/commit/1820d161308546dffffa80bf32485202ffb64459)（2025-12-02）
-9. [MCP 连接器（测试版）](https://console.groq.com/docs/changelog.md#mcp-connectors-beta)（2025-12-01）
+9. [MCP 连接器（测试版）](https://console.groq.com/docs/changelog.md#mcp-connectors-beta)（2025-12-01） <!--orig:MCP Connectors (Beta)-->
 10. [添加更新 (#17)](https://github.com/groq/groq-changelog/commit/844c61a2116a97e37e61736caacf9690182f6466)（2025-10-31）
 11. [OpenAI GPT-OSS-Safeguard 20B](https://console.groq.com/docs/changelog.md#openai-gptosssafeguard-20b)（2025-10-29）
-12. [GPT-OSS 120B 启用 Prompt Caching](https://console.groq.com/docs/changelog.md#prompt-caching-enabled-for-gptoss-120b)（2025-10-21）
+12. [GPT-OSS 120B 启用 Prompt Caching](https://console.groq.com/docs/changelog.md#prompt-caching-enabled-for-gptoss-120b)（2025-10-21） <!--orig:Prompt Caching Enabled for GPT-OSS 120B-->
 13. [Python SDK v0.33.0, TypeScript SDK v0.34.0](https://console.groq.com/docs/changelog.md#python-sdk-v0330-typescript-sdk-v0340)（2025-10-21）
-14. [GPT-OSS 20B 启用 Prompt Caching](https://console.groq.com/docs/changelog.md#prompt-caching-enabled-for-gptoss-20b)（2025-09-25）
+14. [GPT-OSS 20B 启用 Prompt Caching](https://console.groq.com/docs/changelog.md#prompt-caching-enabled-for-gptoss-20b)（2025-09-25） <!--orig:Prompt Caching Enabled for GPT-OSS 20B-->
 15. [添加 MCP](https://github.com/groq/groq-changelog/commit/d0575943bd8c5177145f6f1bf8bae1ed2893a74b)（2025-09-25）
-16. [Remote Model Context Protocol（远程 MCP）上线](https://console.groq.com/docs/changelog.md#remote-model-context-protocol-mcp)（2025-09-23）
+16. [Remote Model Context Protocol（远程 MCP）上线](https://console.groq.com/docs/changelog.md#remote-model-context-protocol-mcp)（2025-09-23） <!--orig:Remote Model Context Protocol (MCP)-->
 17. [添加 Kimi K2 0905 + Compound](https://github.com/groq/groq-changelog/commit/eac55295ee1e0b9fa628568c42f4249e9ddfc1a8)（2025-09-18）
 18. [Moonshot AI Kimi K2 Instruct 0905](https://console.groq.com/docs/changelog.md#moonshot-ai-kimi-k2-instruct-0905)（2025-09-05）
-19. [Groq Compound 与 Compound Mini 发布](https://console.groq.com/docs/changelog.md#groq-compound-and-compound-mini)（2025-09-04）
+19. [Groq Compound 与 Compound Mini 发布](https://console.groq.com/docs/changelog.md#groq-compound-and-compound-mini)（2025-09-04） <!--orig:Groq Compound and Compound Mini-->
 20. [Python SDK v0.31.1, TypeScript SDK v0.32.0](https://console.groq.com/docs/changelog.md#python-sdk-v0311-typescript-sdk-v0320)（2025-09-04）
-21. [Prompt Caching 上线](https://console.groq.com/docs/changelog.md#prompt-caching)（2025-08-20）
+21. [Prompt Caching 上线](https://console.groq.com/docs/changelog.md#prompt-caching)（2025-08-20） <!--orig:Prompt Caching-->
 22. [添加提示缓存](https://github.com/groq/groq-changelog/commit/fc1e7dc66859b831b42594389098d756e06fcd0c)（2025-08-20）
 23. [更新 include_reasoning：现已支持所有模型](https://github.com/groq/groq-changelog/commit/c9389fd6fd7512a4e4210c796eb021dc9de5b804)（2025-08-19）
 24. [添加 GPT-OSS 模型及更多](https://github.com/groq/groq-changelog/commit/b2371a65b5ae3fc1af603f17fc33c65181d3f042)（2025-08-08）

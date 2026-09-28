@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-09-28 15:58:00**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-09-28 22:52:47**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -38,12 +38,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
-  1. [Claude Tag 现在支持通道中的个人连接器](https://claude.com/blog#d-2026-09-25-19)（2026-09-25）
-  2. [Claude Tag 现已支持频道中的个人连接器](https://claude.com/blog/claude-tag-now-supports-personal-connectors-in-channels)（2026-09-24）
-  3. [Claude Marketplace：从我们的合作伙伴那里发现插件、代理和服务的地方](https://claude.com/blog#d-2026-09-23-21)（2026-09-23）
-  4. [Claude Marketplace：一站式发现合作伙伴的插件、代理和服务](https://claude.com/blog/claude-marketplace)（2026-09-23）
-  5. [与埃森哲合作开展嵌入式评估的公告](https://www.anthropic.com/news/accenture-embedded-evaluation)（2026-09-18）
-  - 📄 完整文章归档（共 77 篇）：[anthropic.md](llm-news/anthropic.md)
+  1. [Introducing Claude Opus 5.5](https://www.anthropic.com/news#d-2026-09-28-0)（2026-09-28）
+  2. [Claude Tag 现在支持通道中的个人连接器](https://claude.com/blog#d-2026-09-25-20)（2026-09-25）
+  3. [Claude Tag 现在支持通道中的个人连接器](https://claude.com/blog#d-2026-09-25-19)（2026-09-25）
+  4. [Claude Tag 现已支持频道中的个人连接器](https://claude.com/blog/claude-tag-now-supports-personal-connectors-in-channels)（2026-09-24）
+  5. [Claude Marketplace：从我们的合作伙伴那里发现插件、代理和服务的地方](https://claude.com/blog#d-2026-09-23-22)（2026-09-23）
+  - 📄 完整文章归档（共 82 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### Google Gemini (google_gemini)
 - 页面：[变更日志](https://ai.google.dev/gemini-api/docs/changelog)
@@ -62,12 +62,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xai_grok.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml)
 - 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
-  1. [SpaceXAI 如何使用 Grok Bot 扩大客户支持](https://x.ai/news#d-2026-09-22-1)（2026-09-22）
-  2. [SpaceXAI 如何使用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22）
-  3. [IntroducingGrok 4.7](https://x.ai/news#d-2026-09-21-0)（2026-09-21）
-  4. [介绍 Grok 4.7](https://x.ai/news/grok-4-7)（2026-09-21）
-  5. [Grok 语音转录 2.0 简介](https://x.ai/news#d-2026-09-18-2)（2026-09-18）
-  - 📄 完整文章归档（共 164 篇）：[xai_grok.md](llm-news/xai_grok.md)
+  1. [Team Bots: AI coworkers that learn from your team](https://x.ai/news#d-2026-09-28-1)（2026-09-28）
+  2. [SpaceXAI 如何使用 Grok Bot 扩大客户支持](https://x.ai/news#d-2026-09-22-2)（2026-09-22）
+  3. [SpaceXAI 如何使用 Grok Bot 扩大客户支持](https://x.ai/news#d-2026-09-22-1)（2026-09-22）
+  4. [SpaceXAI 如何使用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22）
+  5. [IntroducingGrok 4.7](https://x.ai/news#d-2026-09-21-0)（2026-09-21）
+  - 📄 完整文章归档（共 209 篇）：[xai_grok.md](llm-news/xai_grok.md)
 
 ### Groq Cloud (groq)
 - 页面：[变更日志](https://console.groq.com/docs/changelog.md)
@@ -153,7 +153,7 @@
   3. [【模型价格调整】DeepSeek-V4-Flash 模型分时段定价调整](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E4%BB%B7%E6%A0%BC%E8%B0%83%E6%95%B4deepseek-v4-flash-%E6%A8%A1%E5%9E%8B%E5%88%86%E6%97%B6%E6%AE%B5%E5%AE%9A%E4%BB%B7%E8%B0%83%E6%95%B4)（2026-09-11）
   4. [【接口服务调整】对话模型将忽略 repetition_penalty 参数](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4%E5%AF%B9%E8%AF%9D%E6%A8%A1%E5%9E%8B%E5%B0%86%E5%BF%BD%E7%95%A5-repetition_penalty-%E5%8F%82%E6%95%B0)（2026-09-09）
   5. [【模型服务调整】Nex-N2-Pro、Qwen3.5-397B-A17B、MiniMax-M2.5 等模型将下线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4nex-n2-proqwen35-397b-a17bminimax-m25-%E7%AD%89%E6%A8%A1%E5%9E%8B%E5%B0%86%E4%B8%8B%E7%BA%BF)（2026-09-03）
-  - 📄 完整文章归档（共 50 篇）：[siliconflow.md](llm-news/siliconflow.md)
+  - 📄 完整文章归档（共 48 篇）：[siliconflow.md](llm-news/siliconflow.md)
 
 ### MiniMax (minimax)
 - 页面：[更新日志](https://platform.minimax.cn/docs/release-notes/models)
@@ -264,12 +264,12 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
-  1. [跨账户自动化 Amazon Textract 适配器生命周期管理](https://aws.amazon.com/blogs/machine-learning/automating-amazon-textract-adapter-lifecycle-management-across-accounts/)（2026-09-28）
-  2. [使用 EFA 和 DeepEP 在 Amazon EKS 上扩展 MoE 强化学习，吞吐量提高 40%](https://aws.amazon.com/blogs/machine-learning/scaling-moe-reinforcement-learning-on-amazon-eks-with-efa-and-deepep-with-40-more-throughput/)（2026-09-25）
-  3. [在 Amazon SageMaker HyperPod 上使用 SkyRL 加速多模式 RL 训练](https://aws.amazon.com/blogs/machine-learning/accelerate-multimodal-rl-training-with-skyrl-on-amazon-sagemaker-hyperpod/)（2026-09-25）
-  4. [NarrateAI：Amazon Bedrock 上的生产就绪 LLM 质量保证](https://aws.amazon.com/blogs/machine-learning/narrateai-production-ready-llm-quality-assurance-on-amazon-bedrock/)（2026-09-25）
-  5. [Deploying real-time personalized speech with Qwen3-TTS on Amazon SageMaker AI](https://aws.amazon.com/blogs/machine-learning/deploying-real-time-personalized-speech-with-qwen3-tts-on-amazon-sagemaker-ai/)（2026-09-25）
-  - 📄 完整文章归档（共 21 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [Grok 4.7 is now available on Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/grok-4-7-is-now-available-on-amazon-bedrock/)（2026-09-28）
+  2. [Introducing Claude Sonnet 5.5 on AWS](https://aws.amazon.com/blogs/machine-learning/introducing-claude-sonnet-5-5-on-aws/)（2026-09-28）
+  3. [Build real-time voice applications with vLLM-Omni on SageMaker AI – Part 1](https://aws.amazon.com/blogs/machine-learning/build-real-time-voice-applications-with-vllm-omni-on-sagemaker-ai-part-1/)（2026-09-28）
+  4. [Generate images and video with vLLM-Omni on SageMaker AI – Part 2](https://aws.amazon.com/blogs/machine-learning/generate-images-and-video-with-vllm-omni-on-sagemaker-ai-part-2/)（2026-09-28）
+  5. [Implementing synthetic monitoring using Amazon Nova Act](https://aws.amazon.com/blogs/machine-learning/implementing-synthetic-monitoring-using-amazon-nova-act/)（2026-09-28）
+  - 📄 完整文章归档（共 26 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Fireworks AI (fireworks_ai)
 - 页面：[官方博客](https://fireworks.ai/blog)
@@ -277,11 +277,11 @@
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-fireworks_ai.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-fireworks_ai.xml)
 - 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Every byte counts: ARCv3 and the case for cross-region RL](https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl)
-  2. [专业智力指数简介](https://fireworks.ai/blog/introducing-the-specialized-intelligence-index)
-  3. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/the-frontier-isnt-a-model-its-a-router)
-  4. [Phylo 通过 Fireworks 上的开放模型为更多科学家带来前沿人工智能](https://fireworks.ai/blog/phylo-brings-frontier-ai-to-more-scientists-with-open-models-on-fireworks)
-  5. [DeepSeek-V4.1-Flash on Fireworks: Astra-level DeepSWE at 1/15th the cost](https://fireworks.ai/blog/DeepSeek-V4.1-Flash-Astra)
-  - 📄 完整文章归档（共 21 篇）：[fireworks_ai.md](llm-news/fireworks_ai.md)
+  2. [Introducing Ember-1](https://fireworks.ai/blog/ember-1)
+  3. [专业智力指数简介](https://fireworks.ai/blog/introducing-the-specialized-intelligence-index)
+  4. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/the-frontier-isnt-a-model-its-a-router)
+  5. [Phylo 通过 Fireworks 上的开放模型为更多科学家带来前沿人工智能](https://fireworks.ai/blog/phylo-brings-frontier-ai-to-more-scientists-with-open-models-on-fireworks)
+  - 📄 完整文章归档（共 22 篇）：[fireworks_ai.md](llm-news/fireworks_ai.md)
 
 ### Together AI (together_ai)
 - 📡 [RSS/Atom 订阅源](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
@@ -298,12 +298,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
-  1. [代理需要运行时边界，而不仅仅是护栏](https://deepinfra.com/blog/agent-runtime-boundaries)（2026-09-28）
-  2. [AI 模型校准：无人优化的基准](https://deepinfra.com/blog/ai-model-calibration-benchmark)（2026-09-25）
-  3. [代币冗长是新的定价战](https://deepinfra.com/blog/token-verbosity)（2026-09-25）
-  4. [模型弃用：构建持久的 LLM 应用程序](https://deepinfra.com/blog/model-deprecation-llm-apps)（2026-09-24）
-  5. [用人工智能设计你的下一个网站：Ming-Image 提示指南](https://deepinfra.com/blog/ming-design-with-ai)（2026-09-23）
-  - 📄 完整文章归档（共 8 篇）：[deepinfra.md](llm-news/deepinfra.md)
+  1. [DeepSeek-V4.1-Flash Is Now on DeepInfra](https://deepinfra.com/blog/deepseek-v4-1-flash-deepinfra)（2026-09-28）
+  2. [GLM-5.3-Flash API Is Now on DeepInfra](https://deepinfra.com/blog/glm-5-3-flash-deepinfra)（2026-09-28）
+  3. [Small Open-Weight Models: The Hidden Cost Advantage](https://deepinfra.com/blog/small-open-weight-models-cost)（2026-09-28）
+  4. [代理需要运行时边界，而不仅仅是护栏](https://deepinfra.com/blog/agent-runtime-boundaries)（2026-09-28）
+  5. [AI 模型校准：无人优化的基准](https://deepinfra.com/blog/ai-model-calibration-benchmark)（2026-09-25）
+  - 📄 完整文章归档（共 12 篇）：[deepinfra.md](llm-news/deepinfra.md)
 
 ### 美团 LongCat (longcat_meituan)
 - 页面：[更新日志](https://longcat.chat/platform/docs/zh/ChangeLog.html)

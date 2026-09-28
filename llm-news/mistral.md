@@ -1,6 +1,6 @@
 # Mistral AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-27**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-28**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Mistral AI（`mistral`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -22,11 +22,11 @@
 10. [推出 Robostral Navigate](https://mistral.ai/news/robostral-navigate/)（2026-07-08）
 11. [Leanstral 1.5：让证明能力惠及所有人](https://mistral.ai/news/leanstral-1-5/)（2026-07-02）
 12. [为您带来更强的连接器控制能力](https://mistral.ai/news/more-control-over-connectors/)（2026-06-24）
-13. [推出 Mistral OCR 4](https://mistral.ai/news/ocr-4/)（2026-06-23）
-14. [介绍 Search Toolkit](https://mistral.ai/news/search-toolkit/)（2026-05-28）
+13. [推出 Mistral OCR 4](https://mistral.ai/news/ocr-4/)（2026-06-23） <!--orig:Introducing Mistral OCR 4-->
+14. [介绍 Search Toolkit](https://mistral.ai/news/search-toolkit/)（2026-05-28） <!--orig:Introducing Search Toolkit-->
 15. [2026 AI Now 峰会](https://mistral.ai/news/ai-now-summit-2026/)（2026-05-28）
 16. [Vibe 开始工作。](https://mistral.ai/news/vibe-agent/)（2026-05-28）
-17. [介绍 Mistral 的物理 AI：工程加速的基石。](https://mistral.ai/news/introducing-physics-ai-at-mistral/)（2026-05-27）
+17. [介绍 Mistral 的物理 AI：工程加速的基石。](https://mistral.ai/news/introducing-physics-ai-at-mistral/)（2026-05-27） <!--orig:Introducing physics AI at Mistral: the foundation for engineering acceleration.-->
 18. [正在塑造行业的物理 AI 研究。](https://mistral.ai/news/physics-ai-research/)（2026-05-27）
 19. [Emmi 加入 Mistral 加速 AI 原生产业](https://mistral.ai/news/accelerate-ai-native-industry/)（2026-05-23）
 20. [Vibe 中的远程智能体，由 Mistral Medium 3.5 提供支持。](https://mistral.ai/news/vibe-remote-agents-mistral-medium-3-5/)（2026-05-22）
@@ -35,23 +35,23 @@
 23. [Spaces：为人与 Agent 打造的 CLI](https://mistral.ai/news/spaces/)（2026-03-31）
 24. [说到 Voxtral](https://mistral.ai/news/voxtral-tts/)（2026-03-23）
 25. [推出 Forge](https://mistral.ai/news/forge/)（2026-03-17）
-26. [推出 Mistral Small 4](https://mistral.ai/news/mistral-small-4/)（2026-03-16）
+26. [推出 Mistral Small 4](https://mistral.ai/news/mistral-small-4/)（2026-03-16） <!--orig:Introducing Mistral Small 4-->
 27. [Mistral AI 与 NVIDIA 合作加速开放前沿模型](https://mistral.ai/news/mistral-ai-and-nvidia-partner-to-accelerate-open-frontier-models/)（2026-03-16）
 28. [Leanstral：值得信赖的氛围编程开源基础模型](https://mistral.ai/news/leanstral/)（2026-03-16）
 29. [Rails 测试自动驾驶：构建专写开发者不愿写代码的 Agent](https://mistral.ai/news/rails-testing-on-autopilot-building-an-agent-that-writes-what-developers-wont/)（2026-03-11）
 30. [Voxtral 的转录速度堪比声速。](https://mistral.ai/news/voxtral-transcribe-2/)（2026-02-04）
 31. [Mistral Vibe：纯粹的终端在线。](https://mistral.ai/news/mistral-vibe-2-0/)（2026-01-27）
 32. [堆也会骗人：调试 vLLM 中的内存泄漏。](https://mistral.ai/news/debugging-memory-leak-in-vllm/)（2026-01-21）
-33. [推出 Mistral OCR 3](https://mistral.ai/news/mistral-ocr-3/)（2025-12-17）
-34. [隆重推出：Devstral 2 和 Mistral Vibe CLI。](https://mistral.ai/news/devstral-2-vibe-cli/)（2025-12-09）
-35. [推出 Mistral 3](https://mistral.ai/news/mistral-3/)（2025-12-02）
-36. [Mistral AI - 服务德国的人工智能](https://mistral.ai/news/ki-fur-deutschland/)（2025-11-19）
-37. [介绍 Mistral AI Studio。](https://mistral.ai/news/ai-studio/)（2025-10-24）
+33. [推出 Mistral OCR 3](https://mistral.ai/news/mistral-ocr-3/)（2025-12-17） <!--orig:Introducing Mistral OCR 3-->
+34. [隆重推出：Devstral 2 和 Mistral Vibe CLI。](https://mistral.ai/news/devstral-2-vibe-cli/)（2025-12-09） <!--orig:Introducing: Devstral 2 and Mistral Vibe CLI.-->
+35. [推出 Mistral 3](https://mistral.ai/news/mistral-3/)（2025-12-02） <!--orig:Introducing Mistral 3-->
+36. [Mistral AI - 服务德国的人工智能](https://mistral.ai/news/ki-fur-deutschland/)（2025-11-19） <!--orig:Mistral AI - KI für Deutschland-->
+37. [介绍 Mistral AI Studio。](https://mistral.ai/news/ai-studio/)（2025-10-24） <!--orig:Introducing Mistral AI Studio.-->
 38. [Mistral AI 融资 1.7B€ 以用 AI 加速技术进步](https://mistral.ai/news/mistral-ai-raises-1-7-b-to-accelerate-technological-progress-with-ai/)（2025-09-09）
 39. [让记忆为你所用。](https://mistral.ai/news/memory/)（2025-09-02）
 40. [Le Chat：自定义 MCP 连接器与记忆功能。](https://mistral.ai/news/le-chat-mcp-connectors-memories/)（2025-09-02）
 41. [通过微调释放卫星影像视觉语言模型的潜力](https://mistral.ai/news/unlocking-potential-vision-language-models-satellite-imagery-fine-tuning/)（2025-08-01）
-42. [发布 Codestral 25.08 与完整的企业级 Mistral 编码栈](https://mistral.ai/news/codestral-25-08/)（2025-07-30）
+42. [发布 Codestral 25.08 与完整的企业级 Mistral 编码栈](https://mistral.ai/news/codestral-25-08/)（2025-07-30） <!--orig:Announcing Codestral 25.08 and the Complete Mistral Coding Stack for Enterprise-->
 43. [我们对人工智能全球环境标准的贡献](https://mistral.ai/news/our-contribution-to-a-global-environmental-standard-for-ai/)（2025-07-22）
 44. [Le Chat 深度探索。](https://mistral.ai/news/le-chat-dives-deep/)（2025-07-17）
 45. [Voxtral](https://mistral.ai/news/voxtral/)（2025-07-15）
@@ -59,11 +59,11 @@
 47. [宣布推出面向公民的人工智能](https://mistral.ai/news/ai-for-citizens/)（2025-07-03）
 48. [Mistral Compute](https://mistral.ai/news/mistral-compute/)（2025-06-11）
 49. [Magistral](https://mistral.ai/news/magistral/)（2025-06-10）
-50. [推出 Mistral Code](https://mistral.ai/news/mistral-code/)（2025-06-04）
+50. [推出 Mistral Code](https://mistral.ai/news/mistral-code/)（2025-06-04） <!--orig:Introducing Mistral Code-->
 51. [Codestral Embed](https://mistral.ai/news/codestral-embed/)（2025-05-28）
-52. [使用 Mistral Agents API 构建人工智能代理](https://mistral.ai/news/agents-api/)（2025-05-27）
+52. [使用 Mistral Agents API 构建人工智能代理](https://mistral.ai/news/agents-api/)（2025-05-27） <!--orig:Build AI agents with the Mistral Agents API-->
 53. [Devstral](https://mistral.ai/news/devstral/)（2025-05-21）
-54. [推出 Le Chat Enterprise](https://mistral.ai/news/le-chat-enterprise/)（2025-05-07）
+54. [推出 Le Chat Enterprise](https://mistral.ai/news/le-chat-enterprise/)（2025-05-07） <!--orig:Introducing Le Chat Enterprise-->
 55. [中型已成为新的大型。](https://mistral.ai/news/mistral-medium-3/)（2025-05-07）
 56. [以 LLM 作为评委评估 RAG](https://mistral.ai/news/llm-as-rag-judge/)（2025-04-09）
 57. [Mistral Small 3.1](https://mistral.ai/news/mistral-small-3-1/)（2025-03-17）
@@ -76,10 +76,10 @@
 64. [Codestral 25.01](https://mistral.ai/news/codestral-2501/)（2025-01-13）
 65. [Mistral 已加入聊天](https://mistral.ai/news/mistral-chat/)（2024-11-18）
 66. [Pixtral Large](https://mistral.ai/news/pixtral-large/)（2024-11-18）
-67. [Mistral 批量 API](https://mistral.ai/news/batch-api/)（2024-11-07）
-68. [Mistral 审核 API](https://mistral.ai/news/mistral-moderation/)（2024-11-07）
+67. [Mistral 批量 API](https://mistral.ai/news/batch-api/)（2024-11-07） <!--orig:Mistral Batch API-->
+68. [Mistral 审核 API](https://mistral.ai/news/mistral-moderation/)（2024-11-07） <!--orig:Mistral Moderation API-->
 69. [一个 Ministral，一群 Ministraux](https://mistral.ai/news/ministraux/)（2024-10-16）
-70. [发布 Pixtral 12B](https://mistral.ai/news/pixtral-12b/)（2024-09-17）
+70. [发布 Pixtral 12B](https://mistral.ai/news/pixtral-12b/)（2024-09-17） <!--orig:Announcing Pixtral 12B-->
 71. [无处不在的人工智能](https://mistral.ai/news/september-24-release/)（2024-09-17）
 72. [构建、调整、重复](https://mistral.ai/news/build-tweak-repeat/)（2024-08-07）
 73. [大，才够用](https://mistral.ai/news/mistral-large-2407/)（2024-07-24）

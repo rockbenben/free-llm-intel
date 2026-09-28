@@ -1,6 +1,6 @@
 # Anyscale 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-27**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-28**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anyscale（`anyscale`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,24 +9,24 @@
 
 ## 全部文章（共 36 篇，按日期倒序；无日期条目列于最后）
 
-1. [Ray Summit 2026：物理 AI、RL 以及运行它们的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
+1. [Ray Summit 2026：物理 AI、RL 以及运行它们的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08） <!--orig:Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all-->
 2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
-3. [优化 LLM 服务效率：利用 Ray Serve LLM 超越 KV 缓存重用，实现令牌加载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
-4. [Ray 历史记录服务器简介：Kubernetes 上 Ray 的事后可观察性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
-5. [学习循环：拥有智慧的途径](https://anyscale.com/blog/learning-loops)（2026-08-25）
+3. [优化 LLM 服务效率：利用 Ray Serve LLM 超越 KV 缓存重用，实现令牌加载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
+4. [Ray 历史记录服务器简介：Kubernetes 上 Ray 的事后可观察性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
+5. [学习循环：拥有智慧的途径](https://anyscale.com/blog/learning-loops)（2026-08-25） <!--orig:Learning Loops: The Path to Owning Your Intelligence-->
 6. [FP8 Reinforcement Learning in SkyRL: Preserving Policy Consistency Across Training and Rollout](https://anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl)（2026-08-25）
-7. [Ray Data 中的 GPU 原生算子](https://anyscale.com/blog/gpu-native-operators-in-ray-data)（2026-08-25）
-8. [Anyscale GPU 运行状况可观察性简介：从应用程序到硬件](https://anyscale.com/blog/anyscale-gpu-health-observability)（2026-08-25）
-9. [宣布 Ray 中的原生沙箱](https://anyscale.com/blog/announcing-native-sandboxing-in-ray)（2026-08-25）
+7. [Ray Data 中的 GPU 原生算子](https://anyscale.com/blog/gpu-native-operators-in-ray-data)（2026-08-25） <!--orig:GPU-Native Operators in Ray Data-->
+8. [Anyscale GPU 运行状况可观察性简介：从应用程序到硬件](https://anyscale.com/blog/anyscale-gpu-health-observability)（2026-08-25） <!--orig:Introducing Anyscale GPU Health Observability: From app to hardware-->
+9. [宣布 Ray 中的原生沙箱](https://anyscale.com/blog/announcing-native-sandboxing-in-ray)（2026-08-25） <!--orig:Announcing Native Sandboxing in Ray-->
 10. [Introducing KubeRay v1.6 and v1.7](https://anyscale.com/blog/kuberay-v1-7)（2026-08-25）
-11. [Anyscale KubeRay Connect 简介：加倍关注 Kubernetes](https://anyscale.com/blog/announcing-anyscale-connect-for-kuberay)（2026-08-25）
+11. [Anyscale KubeRay Connect 简介：加倍关注 Kubernetes](https://anyscale.com/blog/announcing-anyscale-connect-for-kuberay)（2026-08-25） <!--orig:Introducing Anyscale KubeRay Connect: Doubling down on Kubernetes-->
 12. [Shuffle V2 in Ray Data: Faster, Fault-Tolerant Joins and Aggregations](https://anyscale.com/blog/ray-data-shuffle-v2)（2026-08-25）
-13. [CVE-2025-62593 和 CISA KEV 列表：Ray 用户需要了解的内容](https://anyscale.com/blog/ray-cve-2025-62593-kev-what-you-need-to-know)（2026-08-19）
-14. [异步推理实践：Ray Serve 上的视频索引服务](https://anyscale.com/blog/ray-serve-async-inf-in-practice)（2026-08-18）
-15. [使用 Ray Direct Transport 在强化学习中快速轻松地进行权重同步（第 2 部分）](https://anyscale.com/blog/rdt-ray-direct-transport-fast-easy-weight-syncing-for-rl-reinforcement-learning)（2026-08-18）
+13. [CVE-2025-62593 和 CISA KEV 列表：Ray 用户需要了解的内容](https://anyscale.com/blog/ray-cve-2025-62593-kev-what-you-need-to-know)（2026-08-19） <!--orig:CVE-2025-62593 and the CISA KEV listing: what Ray users need to know-->
+14. [异步推理实践：Ray Serve 上的视频索引服务](https://anyscale.com/blog/ray-serve-async-inf-in-practice)（2026-08-18） <!--orig:Async inference in practice: a video-indexing service on Ray Serve-->
+15. [使用 Ray Direct Transport 在强化学习中快速轻松地进行权重同步（第 2 部分）](https://anyscale.com/blog/rdt-ray-direct-transport-fast-easy-weight-syncing-for-rl-reinforcement-learning)（2026-08-18） <!--orig:Using Ray Direct Transport for Fast and Easy Weight Syncing in Reinforcement Learning (Part 2)-->
 16. [Maximizing the Power of NVIDIA GB300 NVL72: NVLink Domain-Aware Placement Groups in Ray](https://anyscale.com/blog/nvidia-gb300-nvlink-domain-aware-placement-groups-ray)（2026-08-13）
-17. [Anyscale 签署加入 Nscale 的最终协议](https://anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale)（2026-07-30）
-18. [介绍 Anyscale 物理 AI 技能](https://anyscale.com/blog/introducing-the-anyscale-physical-ai-skill)（2026-07-23）
+17. [Anyscale 签署加入 Nscale 的最终协议](https://anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale)（2026-07-30） <!--orig:Anyscale signs definitive agreement to join Nscale-->
+18. [介绍 Anyscale 物理 AI 技能](https://anyscale.com/blog/introducing-the-anyscale-physical-ai-skill)（2026-07-23） <!--orig:Introducing the Anyscale Physical AI Skill-->
 19. [Batch LLM Inference on Anyscale slashes AWS Bedrock costs by up to 6x](https://anyscale.com/blog/batch-llm-inference-announcement)（2024-10-01）
 20. [RAG at Scale: 10x Cheaper Embedding Computations with Anyscale and Pinecone](https://anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone)（2024-01-16）
 21. [开源 LLM：适合生产还是低质量的玩具？](https://anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy)（2023-11-20）

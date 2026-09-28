@@ -1,6 +1,6 @@
 # Modular (原 BentoCloud/BentoML) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-22**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-28**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Modular (原 BentoCloud/BentoML)（`modular_cloud`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -13,10 +13,10 @@
 2. [Modular：Mojo🔥 现已开源！](https://www.modular.com/blog/mojo-open-source)（2026-08-18）
 3. [Modular：Modular 和高通：相同的代码，新的芯片](https://www.modular.com/blog/modcon-qualcomm)（2026-08-18）
 4. [Modular：ModCon 2026：开源、开放云、开放芯片](https://www.modular.com/blog/modcon-announcements)（2026-08-18）
-5. [Modular：Modular 26.5：Mojo 1.0 来了！](https://www.modular.com/blog/modular-26-5-mojo-1-0-is-here)（2026-08-11）
+5. [Modular：Modular 26.5：Mojo 1.0 来了！](https://www.modular.com/blog/modular-26-5-mojo-1-0-is-here)（2026-08-11） <!--orig:Modular: Modular 26.5: Mojo 1.0 is here!-->
 6. [Modular：高通完成对 Modular 的收购](https://www.modular.com/blog/qualcomm-completes-acquisition-of-modular)（2026-07-29）
 7. [Modular：高通收购 Modular](https://www.modular.com/blog/qualcomm-to-acquire-modular)（2026-06-24）
-8. [Modular：Modular 26.4：SOTA MoE 服务、通过 Agent Skills 启动模型、Mojo 1.0 Beta 2 等](https://www.modular.com/blog/modular-26-4-sota-moe-serving-model-bringup-via-agent-skills-mojo-beta-2-and-more)（2026-06-18）
+8. [Modular：Modular 26.4：SOTA MoE 服务、通过 Agent Skills 启动模型、Mojo 1.0 Beta 2 等](https://www.modular.com/blog/modular-26-4-sota-moe-serving-model-bringup-via-agent-skills-mojo-beta-2-and-more)（2026-06-18） <!--orig:Modular: Modular 26.4: SOTA MoE Serving, Model Bringup via Agent Skills, Mojo 1.0 Beta 2 and More-->
 9. [Modular：ModCon 2026：Modular 开发者大会](https://www.modular.com/blog/modcon-2026-modular-s-developer-conference)（2026-06-17）
 10. [Modular：Day Zero：MiniMax M3 开放权重登陆 Modular Cloud](https://www.modular.com/blog/day-zero-minimax-m3-open-weights-on-modular-cloud)（2026-06-11）
 11. [Modular：Modverse #55：Mojo 1.0 Beta、社区 Mojo 库和由 MAX 提供支持的实时患者对话](https://www.modular.com/blog/modverse-55-mojo-1-0-beta-community-mojo-libraries-and-real-time-patient-conversations-powered-by-max)（2026-06-10）
@@ -28,13 +28,13 @@
 17. [Modular：通过 AI 代理转换为 Mojo](https://www.modular.com/blog/translating-to-mojo-via-ai-agents)（2026-05-13）
 18. [Modular：Inkwell：为什么您的推理平台与您的模型一样重要](https://www.modular.com/blog/inkwell-why-your-inference-platform-matters-as-much-as-your-model)（2026-05-12）
 19. [Modular：为什么 LLM 推理需要一种新型路由器 - 第 1 部分](https://www.modular.com/blog/why-llm-inference-needs-a-new-kind-of-router-part-1)（2026-05-08）
-20. [Modular：Modular 26.3：Mojo 1.0 Beta、MAX Video Gen 等](https://www.modular.com/blog/modular-26-3-mojo-1-0-beta-max-video-gen-and-more)（2026-05-07）
+20. [Modular：Modular 26.3：Mojo 1.0 Beta、MAX Video Gen 等](https://www.modular.com/blog/modular-26-3-mojo-1-0-beta-max-video-gen-and-more)（2026-05-07） <!--orig:Modular: Modular 26.3: Mojo 1.0 Beta, MAX Video Gen, and more-->
 21. [Modular：Modverse #54：AMD AI DevDay、新的 Modular 办公室和持续交付的社区](https://www.modular.com/blog/modverse-54-amd-ai-devday-new-modular-offices-and-a-community-that-keeps-shipping)（2026-05-04）
 22. [Modular：Frontier Coding Agent 如何在 MAX 上构建视频传播管道](https://www.modular.com/blog/how-frontier-coding-agents-built-a-video-diffusion-pipeline-on-max)（2026-04-16）
 23. [Modular：TileTensor 第 1 部分 - 更安全、更高效的 GPU 内核](https://www.modular.com/blog/tiletensor-part-1-safer-more-efficient-gpu-kernels)（2026-04-13）
 24. [Modular：Modular 在爱丁堡和旧金山开设办事处](https://www.modular.com/blog/modular-opens-edinburgh-san-francisco-offices)（2026-04-10）
 25. [Modular：结构化 Mojo 内核第 4 部分 - 可移植性和未来之路](https://www.modular.com/blog/structured-mojo-kernels-part-4-portability-and-the-road-ahead)（2026-04-03）
-26. [Modular：零日发布：Gemma 4 在 NVIDIA 和 AMD 上的最强性能](https://www.modular.com/blog/day-zero-launch-fastest-performance-for-gemma-4-on-nvidia-and-amd)（2026-04-02）
+26. [Modular：零日发布：Gemma 4 在 NVIDIA 和 AMD 上的最强性能](https://www.modular.com/blog/day-zero-launch-fastest-performance-for-gemma-4-on-nvidia-and-amd)（2026-04-02） <!--orig:Modular: Day Zero Launch: Fastest Performance for Gemma 4 on NVIDIA and AMD-->
 27. [Modular：Modverse #54：从 GTC 到爱丁堡，社区建设动力](https://www.modular.com/blog/modverse-54-from-gtc-to-edinburgh-a-community-building-momentum)（2026-03-31）
 28. [Modular：GPU 内核的软件流水线：第 1 部分 - 流水线问题](https://www.modular.com/blog/software-pipelining-for-gpu-kernels-part-1-the-pipeline-problem)（2026-03-30）
 29. [Modular：结构化 Mojo 内核第 3 部分 - 组合实践](https://www.modular.com/blog/structured-mojo-kernels-part-3-composition-in-practice)（2026-03-26）
@@ -63,7 +63,7 @@
 52. [Modular：Blackwell 上的矩阵乘法：第 2 部分 - 使用硬件功能优化 Matmul](https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-2-using-hardware-features-to-optimize-matmul)（2025-09-05）
 53. [Modular：Blackwell 上的矩阵乘法：第 1 部分 - 简介](https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-1-introduction)（2025-08-28）
 54. [Modular：Modverse #50：Modular Platform 25.5、社区聚会以及 Mojo 在 Stack Overflow 开发者调查中的首次亮相](https://www.modular.com/blog/modverse-50)（2025-08-21）
-55. [Modular：Modular Platform 25.5 推出大规模批处理推理](https://www.modular.com/blog/modular-platform-25-5)（2025-08-05）
+55. [Modular：Modular Platform 25.5 推出大规模批处理推理](https://www.modular.com/blog/modular-platform-25-5)（2025-08-05） <!--orig:Modular: Modular Platform 25.5: Introducing Large Scale Batch Inference-->
 56. [Modular：SF Compute 和 Modular 合作伙伴将彻底改变人工智能推理经济学](https://www.modular.com/blog/sf-compute)（2025-07-31）
 57. [Modular：AWS Marketplace 的 AI 代理](https://www.modular.com/blog/ai-agents-for-aws-marketplace)（2025-07-16）
 58. [Modular：Modverse #49：Modular Platform 25.4、Modular 🤝 AMD 和 Modular 黑客周末](https://www.modular.com/blog/modverse-49)（2025-07-09）
@@ -89,14 +89,14 @@
 78. [Modular：CUDA 是主流，但它有什么好处吗？ （人工智能计算民主化，第 4 部分）](https://www.modular.com/blog/democratizing-ai-compute-part-4-cuda-is-the-incumbent-but-is-it-any-good)（2025-02-20）
 79. [Modular：MAX 25.1 - 介绍 MAX 构建](https://www.modular.com/blog/max-25-1-introducing-max-builds)（2025-02-18）
 80. [Modular：CUDA 是如何成功的？ （人工智能计算民主化，第 3 部分）](https://www.modular.com/blog/democratizing-ai-compute-part-3-how-did-cuda-succeed)（2025-02-12）
-81. [Modular：分页注意力与前缀缓存现已在 MAX Serve 中提供](https://www.modular.com/blog/paged-attention-prefix-caching-now-available-in-max-serve)（2025-02-06）
+81. [Modular：分页注意力与前缀缓存现已在 MAX Serve 中提供](https://www.modular.com/blog/paged-attention-prefix-caching-now-available-in-max-serve)（2025-02-06） <!--orig:Modular: Paged Attention & Prefix Caching Now Available in MAX Serve-->
 82. [Modular：“CUDA”到底是什么？ （人工智能计算民主化，第 2 部分）](https://www.modular.com/blog/democratizing-compute-part-2-what-exactly-is-cuda)（2025-02-05）
-83. [Modular：智能体构建块——用 MAX Serve 和 OpenAI Function Calling 创建 AI 智能体](https://www.modular.com/blog/agentic-building-blocks-creating-ai-agents-with-max-serve-and-openai-function-calling)（2025-01-30）
+83. [Modular：智能体构建块——用 MAX Serve 和 OpenAI Function Calling 创建 AI 智能体](https://www.modular.com/blog/agentic-building-blocks-creating-ai-agents-with-max-serve-and-openai-function-calling)（2025-01-30） <!--orig:Modular: Agentic Building Blocks: Creating AI Agents with MAX Serve and OpenAI Function Calling-->
 84. [Modular：DeepSeek 对 AI 的影响（人工智能计算民主化，第 1 部分）](https://www.modular.com/blog/democratizing-compute-part-1-deepseeks-impact-on-ai)（2025-01-30）
 85. [Modular：使用 MAX 和 Open WebUI 进行 RAG 和 Web 搜索](https://www.modular.com/blog/use-max-with-open-webui-for-rag-and-web-search)（2025-01-23）
 86. [Modular：Mojo 24.6 实践](https://www.modular.com/blog/hands-on-with-mojo-24-6)（2025-01-21）
 87. [Modular：使用 MAX 24.6 和 Hugging Face 评估 Llama Guard](https://www.modular.com/blog/llama-guard-with-max-24-6-and-hugging-face-2)（2024-12-19）
-88. [Modular：推出 MAX 24.6：GPU 原生生成式 AI 平台](https://www.modular.com/blog/introducing-max-24-6-a-gpu-native-generative-ai-platform)（2024-12-17）
+88. [Modular：推出 MAX 24.6：GPU 原生生成式 AI 平台](https://www.modular.com/blog/introducing-max-24-6-a-gpu-native-generative-ai-platform)（2024-12-17） <!--orig:Modular: Introducing MAX 24.6: A GPU Native Generative AI Platform-->
 89. [Modular：使用 Llama 3 和 MAX Serve 构建连续聊天界面](https://www.modular.com/blog/build-a-continuous-chat-interface-with-llama-3-and-max-serve)（2024-12-17）
 90. [Modular：MAX GPU：新 GenAI 平台上最先进的吞吐量](https://www.modular.com/blog/max-gpu-state-of-the-art-throughput-on-a-new-genai-platform)（2024-12-17）
 91. [Modular：理解 SIMD：琐碎问题的无限复杂性](https://www.modular.com/blog/understanding-simd-infinite-complexity-of-trivial-problems)（2024-10-25）
