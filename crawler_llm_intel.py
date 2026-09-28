@@ -3268,7 +3268,10 @@ def update_news_md(path: Path, section: str) -> bool:
         re.DOTALL,
     )
     if pattern.search(old):
-        new = pattern.sub(section, old)
+        # 替换串走 lambda：section 是厂商文章标题拼出来的正文，一旦含反斜杠
+        # （Windows 路径、LaTeX、正则示例的文章标题都可能出现），re.sub 会把它
+        # 当转义序列解释（\g、\1 直接报错，\n 变成换行）——文档被静默改写。
+        new = pattern.sub(lambda _m: section, old)
     else:
         new = old.rstrip("\n") + "\n\n" + section
 
@@ -3283,7 +3286,8 @@ def update_news_md(path: Path, section: str) -> bool:
 
 
 def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
-               merged_limit: int = RSS_MERGED_LIMIT) -> int:
+               merged_limit: int = RSS_MERGED_LIMIT,
+               changes_feed: bool = True) -> int:
     """将发现的 RSS/Atom 源写成 OPML（可导入 RSS 阅读器）。
     返回官方原生源 + 自建源 + 聚合流的行数（情报变化流不计入；自建源为空时聚合流
     成组也未写入，同样不计）。
@@ -3298,6 +3302,9 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
     - 「聚合流」：合并流，单条订阅即可覆盖全部有动态源的厂商；与上面各组同样重叠，
       单独成组便于读者按需只勾一个。
     - 「情报变化」：本仓库自建的新活动 / 新额度变化流（跟踪白嫖政策变动，与厂商动态无关）。
+      changes_feed=False 时不写这一组：该流「两类事件都没有就不产出文件」，
+      新 fork 首轮（无变更日志、雷达也可能为空）列出它就是给读者一个 404。
+      调用方传入本轮 write_intel_changes_feed 的实际产出（见 main 里的调用顺序）。
 
     merged_limit 只影响条目文案里的收录范围（走 `merged_scope_text`：默认 0 = 全量，
     非 0 时显示「最近 N 条」）—— 必须跟 `write_rss_feeds` 实际用的上限一致，
@@ -3370,7 +3377,7 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
             f"{feeds_base}/llm-news-all.xml",
             site or feeds_base,
         )])
-    if feeds_base:
+    if feeds_base and changes_feed:
         # 第四组：不是「厂商动态」而是「本仓库情报本身的变化」——新活动、
         # 额度调整（前值→后值）、新模型上架，订阅这一个即可跟踪白嫖政策变动。
         lines += group("情报变化 · 额度 / 活动 / 新模型（本仓库自建）", [(
@@ -4260,7 +4267,26 @@ def append_intel_changelog(path: Path, run_date: str, entries: list[dict]) -> in
     if idx is None:
         day_blocks.insert(0, [run_date, *chunks])
     else:
-        day_blocks[idx].extend(chunks)
+        # 同日重跑（CI 手动重跑 / 本地 --review-apply 两次）会把同一批变化再追加一遍，
+        # 变更日志出现重复厂商块、变化流出现重复 guid（阅读器会当两条新消息推给用户）。
+        # 只去「逐字相同」的块：同日对同一厂商的**再次**真实变更（后值不同）照常追加。
+        def _vendor_blocks(lines: list[str]) -> set[str]:
+            blocks: list[list[str]] = []
+            for line in lines:
+                if line.startswith("### "):
+                    blocks.append([line])
+                elif blocks:
+                    blocks[-1].append(line)
+            return {"\n".join(b) for b in blocks}
+
+        existing_blocks = _vendor_blocks(day_blocks[idx][1:])
+        deduped: list[str] = []
+        for chunk in re.split(r"(?m)^(?=### )", "\n".join(chunks)):
+            if chunk.strip() and chunk.strip("\n") in existing_blocks:
+                continue
+            deduped.append(chunk)
+        day_blocks[idx].extend(
+            "".join(deduped).splitlines() if any(c.strip() for c in deduped) else [])
     # 裁剪：从最新日块起累计厂商块数，超限后的旧日块整块丢弃
     kept: list[list[str]] = []
     count = 0
@@ -5535,11 +5561,7 @@ def main(argv: list[str] | None = None) -> int:
         news_changed = update_news_md(
             news_md_path,
             render_news_section(intel_list, feeds_base, merged_limit=args.rss_limit))
-        n_feeds = write_opml(opml_path, intel_list, feeds_base,
-                             merged_limit=args.rss_limit)
-        print(f"      {news_md_path.name} {'已刷新' if news_changed else '无内容变化，未改写'}；"
-              f"{opml_path.name}（{n_feeds} 个订阅源"
-              f"{'：官方原生 + 自建源 + 聚合流' if feeds_base else '（仅官方原生源，未推导出 Pages 前缀）'}）")
+        print(f"      {news_md_path.name} {'已刷新' if news_changed else '无内容变化，未改写'}")
         print(f"      llm-news/ 归档 {n_arch} 个厂商文件、共 {n_arch_arts} 篇文章"
               f"（本次实际改写 {n_arch_changed} 个文件）")
         # 同样必须在 write_news_archives 之后：RSS 要用的正是这份全量、已排序的列表。
@@ -5569,6 +5591,16 @@ def main(argv: list[str] | None = None) -> int:
             feeds_dir, changelog_text, releases, feeds_base, anchors)
         if n_changes:
             print(f"      额度/活动变化流 {n_changes} 条（{INTEL_CHANGES_FEED} + intel-changes.json）")
+        # OPML 放在变化流之后：清单里的「情报变化」组必须指向**真实存在**的文件
+        # （两类事件都没有时该流不产出，新 fork 首轮列出就是 404）。
+        # 「本轮产出 or 磁盘已有」：旧文件已随 Pages 发布时，本轮零事件不该把
+        # 一个还能订的源从清单里摘掉。
+        n_feeds = write_opml(opml_path, intel_list, feeds_base,
+                             merged_limit=args.rss_limit,
+                             changes_feed=bool(n_changes)
+                             or (feeds_dir / INTEL_CHANGES_FEED).exists())
+        print(f"      {opml_path.name}（{n_feeds} 个订阅源"
+              f"{'：官方原生 + 自建源 + 聚合流' if feeds_base else '（仅官方原生源，未推导出 Pages 前缀）'}）")
         wrote_q = _write_json(feeds_dir / "quotas.json", quotas)
         print(f"      额度快照 quotas.json {quotas['count']} 家"
             f"（{'已刷新' if wrote_q else '无内容变化，未改写'}）")

@@ -10,6 +10,7 @@ from __future__ import annotations
 import atexit
 import json
 import re
+import sys
 from pathlib import Path
 from threading import Lock
 
@@ -17,6 +18,7 @@ import requests
 
 _TRANS_CACHE: dict[str, str] = {}
 _TRANS_FAILED: set[str] = set()   # 本次运行内翻译失败的原文（不写磁盘，下次运行重试）
+_TRANS_WARNED: set[str] = set()   # 本次运行内已报告过的翻译异常类型（每类只报一次）
 _TRANS_LOCK = Lock()
 _TRANS_DIRTY = 0
 _CACHE_PATH = Path(__file__).resolve().parent / ".translate_cache.json"
@@ -262,8 +264,19 @@ def translate_to_zh(text: str, timeout: float = 4.0) -> str:
                             _TRANS_DIRTY = 0
                             _save_trans_cache()
                 return translated
-    except Exception:
-        pass
+    except Exception as exc:
+        # 失败本身按设计回退原文（不落盘、下次重试），但**静默**会把系统性故障藏起来：
+        # 翻译端点整轮不可用时，全部标题都安静地回退英文，CI 日志里毫无痕迹，
+        # 直到有人发现归档里混进一批英文标题才知道。每轮首见一类异常报一次 warn，
+        # 既能暴露故障又不在批量翻译时刷屏。
+        key = type(exc).__name__
+        with _TRANS_LOCK:
+            first = key not in _TRANS_WARNED
+            _TRANS_WARNED.add(key)
+        if first:
+            print(f"      [warn] 标题翻译失败（{key}: {str(exc)[:120]}）；"
+                  "同类异常本轮不再重复报告，受影响标题回退原文、下次运行重试",
+                  file=sys.stderr)
     with _TRANS_LOCK:
         _TRANS_FAILED.add(clean_text)
     return clean_text

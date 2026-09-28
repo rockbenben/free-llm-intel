@@ -823,9 +823,14 @@
   function renderQuotas() {
     var rows = (quotasState.rows || []).filter(function (v) {
       if (!quotasState.q) return true;
+      // free_models 正常是数组，但 quotas.json 的上游（profile_overrides / provider
+      // 档案）允许手写字符串：字符串没有 .join，抛出来会打断整个 filter 回调，
+      // 表现为「一搜索整个一览变空」。这里归一成数组再拼。
+      var fm = v.free_models;
       var hay = plain(v.name + ' ' + (v.free_quota || '') + ' ' + (v.validity || '') +
                  ' ' + (v.promotions || '') +
-                 ' ' + (v.free_models || []).join(' ') + ' ' + (v.id || '')).toLowerCase();
+                 ' ' + (Array.isArray(fm) ? fm.join(' ') : (fm || '')) +
+                 ' ' + (v.id || '')).toLowerCase();
       return hay.indexOf(quotasState.q) >= 0;
     });
     var host = document.getElementById('quotas-list');
