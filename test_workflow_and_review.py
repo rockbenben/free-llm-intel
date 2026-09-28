@@ -1571,17 +1571,15 @@ class TestSelfHostedRss(unittest.TestCase):
         self.assertEqual(len(v.all_news_articles), 3)
 
     def test_same_title_anchor_only_keeps_most_recent(self):
-        """只有锚点（无规范直链可退）时，按日期最新折叠，仍是一条。"""
+        """白名单外的单页站：同标题、只有锚点（无规范直链）时，按日期最新折叠成一条。"""
         arts = [
             crawler_llm_intel.Article(
-                title="DeepSeek-V4 预览版",
-                url="https://api-docs.deepseek.com/zh-cn/news/news260424#a", date="2024-09-05"),
+                title="某功能预览版", url="https://docs.demo.cn/changelog#a", date="2024-09-05"),
             crawler_llm_intel.Article(
-                title="DeepSeek-V4 预览版",
-                url="https://api-docs.deepseek.com/zh-cn/news/news260424#b", date="2026-04-24"),
+                title="某功能预览版", url="https://docs.demo.cn/changelog#b", date="2026-04-24"),
         ]
         kept = crawler_llm_intel._rss_articles(
-            self._vendor("deepseek", "DeepSeek", arts), "2099-12-31")
+            self._vendor("demo_spa", "Demo", arts), "2099-12-31")
         self.assertEqual(len(kept), 1)
         self.assertEqual(kept[0].date, "2026-04-24", "同锚点形态下保留日期更新的一条")
 
@@ -1593,6 +1591,37 @@ class TestSelfHostedRss(unittest.TestCase):
         kept = crawler_llm_intel._rss_articles(
             self._vendor("v", "V", arts), "2099-12-31")
         self.assertEqual(len(kept), 1, "大小写/空白差异的同一标题也应折叠")
+
+    def test_canonical_only_vendors_drop_synthetic_anchors(self):
+        """deepseek/x.ai/claude 的合成 `#锚点` 条目必须被丢掉，只留规范直链。
+
+        这三家每条新闻都有独立文章页，动态页又是单页列表，变更日志提取器会另造
+        `#d-<日期>-<n>` 锚点条目（同一篇的第二份拷贝、标题常重复），读者看到就是重复。
+        """
+        arts = [
+            crawler_llm_intel.Article(
+                title="Grok 4.6", url="https://x.ai/news/grok-4-6", date="2026-08-14"),
+            crawler_llm_intel.Article(
+                title="Grok 4.6 分节", url="https://x.ai/news#d-2026-08-19-13", date="2026-08-19"),
+        ]
+        v = self._vendor("xai_grok", "xAI", arts)
+        crawler_llm_intel.write_rss_feeds(self.out_dir, [v], base_url="")
+        urls = [r[1] for r in json.loads(
+            (self.out_dir / "articles.json").read_text(encoding="utf-8"))["articles"]]
+        self.assertEqual(urls, ["https://x.ai/news/grok-4-6"],
+                         "锚点条目应被丢弃，只保留规范直链")
+
+    def test_fragment_identity_vendors_keep_anchors(self):
+        """白名单外的单页站（锚点即条目身份、无独立直链页）不受影响。"""
+        arts = [
+            crawler_llm_intel.Article(title="更新 A", url="https://x.cn/docs#a", date="2026-01-01"),
+            crawler_llm_intel.Article(title="更新 B", url="https://x.cn/docs#b", date="2026-01-02"),
+        ]
+        kept = crawler_llm_intel._rss_articles(
+            self._vendor("aliyun_qwen", "Q", arts), "2099-12-31")
+        self.assertEqual({a.url for a in kept},
+                         {"https://x.cn/docs#a", "https://x.cn/docs#b"},
+                         "非白名单厂商的同页锚点必须各自保留")
 
     def test_vendors_index_lists_every_vendor_even_without_dates(self):
         """厂商索引必须列出**全部**厂商，包括文章全无日期、因而进不了聚合流的那几家。

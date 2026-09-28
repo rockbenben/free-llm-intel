@@ -3176,22 +3176,35 @@ def _native_feed_vendors(intel_list: list[VendorIntel]) -> set[str]:
     return out
 
 
+#: 这三家每条新闻都有规范直链（deepseek `/news/newsXXXXXX`、x.ai `/news/<slug>`、
+#: claude.com `/blog/<slug>`），但动态页是单页列表，变更日志式提取器会给每个分节
+#: **合成**一个 `#d-<日期>-<n>` 锚点条目（见 extract 的 `f"d-{norm}-{n}"` 兜底）。
+#: 于是同一篇文章既有直链版又有锚点版，锚点版标题常是页面主标题或分节名，读者看到就是
+#: 重复/错配条目（实测 x.ai 半数条目、deepseek 大部分条目是这种合成锚点）。只保留无
+#: fragment 的规范直链。其他单页站（阿里云百炼 / MiniMax / PPIO…）锚点**才是**条目身份，
+#: 没有独立直链页，不在此列 —— 故按厂商白名单，而非全局去 fragment。
+NEWS_CANONICAL_ONLY_VENDORS = {"deepseek", "xai_grok", "anthropic"}
+
+
 def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
-    """该厂商**会进订阅源**的文章：排除晚于今天的日期，并把同一厂商内的重复标题折叠成一条。
+    """该厂商**会进订阅源**的文章：排除晚于今天的日期；`NEWS_CANONICAL_ONLY_VENDORS`
+    只保留规范直链（丢掉合成 `#锚点` 条目）；再把同一厂商内的重复标题折叠成一条。
 
     `write_rss_feeds` 只对有此类文章的厂商出源，所以 OPML 与 `llm-news-feeds.md` 里
     「本仓库自建源」的标注必须用**同一个判据** —— 否则当某厂商的文章日期全被误写成
     未来时，文档会给出一个并不存在的订阅地址（死链），而两边各自看都「对」。
 
-    标题折叠是**浏览页去重**：单页文档/变更日志站（deepseek 公告页、x.ai 新闻列表、
-    siliconflow 发布说明…）把每条 `#锚点` 都冠以整页主标题或某个分节名，于是同一句话
-    会以 5 个不同锚点在浏览页与订阅流里重复出现，读者看到的就是「很多条目重复」。
-    折叠只在**产出层**（feed / articles.json 索引）生效，归档 `.md` 仍逐条全量留档，
-    不违反「归档只增不减」。折叠时保留规范直链、其次最新日期那条（见 _prefer_article）。
+    标题折叠是**浏览页去重**：即便去掉了合成锚点，同厂商仍可能有两份真实来源（RSS 与
+    页面直链）给出同一句话。折叠只在**产出层**（feed / articles.json 索引）生效，归档
+    `.md` 仍逐条全量留档，不违反「归档只增不减」。折叠时保留规范直链、其次最新日期那条
+    （见 _prefer_article）。
     """
+    drop_frag = intel.vendor_id in NEWS_CANONICAL_ONLY_VENDORS
     kept: dict[str, Article] = {}
     for a in intel.all_news_articles:
         if a.date > today:
+            continue
+        if drop_frag and urlparse(a.url).fragment:
             continue
         key = _title_key(a.title)
         prev = kept.get(key)
