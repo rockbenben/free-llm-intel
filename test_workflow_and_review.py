@@ -29,10 +29,11 @@ def build_records():
     vendors, _sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
     records = []
     for i, v in enumerate(vendors, 1):
+        # yaml 厂商键是 brand（曾误用 name → 全部空品牌，品牌回退路径从未被测到）
         prof = provider_profiles.get_provider_profile(
-            v["id"], v.get("name", ""), v.get("homepage", ""))
+            v["id"], v.get("brand", ""), v.get("homepage", ""))
         intel = crawler_llm_intel.VendorIntel(
-            vendor_id=v["id"], brand=v.get("name", ""),
+            vendor_id=v["id"], brand=v.get("brand", ""),
             homepage=v.get("homepage", ""), products=[])
         records.append((i, intel, prof))
     return records
@@ -1310,6 +1311,37 @@ sources:
         # 快照状态与 README 都不许被 rebuild 触碰
         self.assertFalse((self.root / "llm-intel-state.json").exists())
         self.assertFalse((self.root / "README.md").exists())
+
+    def test_main_fast_replay_skips_readme(self):
+        """本地核查快进轮：intel_list 由磁盘重建、没有实抓情报页，不得渲染 README。
+
+        Regression: 快进与 --rebuild-only 同源（rebuild_intel_from_disk 只填动态页），
+        渲染 README 会把厂商档案区写成空白、冲掉上一轮实抓成果。补丁已 adopt 进
+        profile_overrides.json，留待下一次完整巡检渲染。
+        """
+        # 状态文件存在 → 非基线，快进守卫（line 5189）才会生效
+        (self.root / "llm-intel-state.json").write_text(
+            json.dumps({"sources": {}, "reviews": {}, "failures": {}}),
+            encoding="utf-8")
+        vendors, sources = crawler_llm_intel.parse_yaml(self.root / "intel.yaml")
+        grouped = crawler_llm_intel.group_sources_by_vendor(sources)
+        states = crawler_llm_intel._parse_news_md_page_states(self.NEWS_MD)
+        rebuilt = crawler_llm_intel.rebuild_intel_from_disk(
+            vendors, grouped, states, self.root / "llm-news")
+        with (
+            mock.patch.object(crawler_llm_intel, "try_packet_fast_replay",
+                              return_value=(rebuilt, True, {"vendor_a"})),
+            mock.patch.object(crawler_llm_intel, "crawl_vendor",
+                              side_effect=AssertionError("快进不得实抓")),
+            mock.patch.object(crawler_llm_intel, "update_readme",
+                              side_effect=AssertionError("快进轮不得渲染 README")),
+        ):
+            rc = crawler_llm_intel.main([
+                "--review-apply", "--yaml", "intel.yaml", "--news-md", "news.md",
+                "--news-opml", "news.opml"])
+        self.assertEqual(rc, 0)
+        self.assertFalse((self.root / "README.md").exists(),
+                         "快进轮不得写 README（情报区需要实抓页面）")
 
     def test_rebuild_only_keeps_every_vendor_in_quotas(self):
         """rebuild 的重建集只有「有动态归档的厂商」，一览必须仍是全集。
@@ -2686,17 +2718,236 @@ class TestDateIntegrity(unittest.TestCase):
                           "本次无日期时不得抹掉归档里已有的日期")
 
 
+class TestArchivePollutionGuards(unittest.TestCase):
+    """归档污染三源的守卫：非法日期、结构 4 日期渗漏、索引原文列丢失。
+
+    归档按 URL 增量合并、不会自我纠正 —— 这三类污染一旦写入就永久留存。
+    """
+
+    def setUp(self):
+        self._quiet = contextlib.redirect_stderr(io.StringIO())
+        self._quiet.__enter__()
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.feeds_dir = Path(self.temp_dir.name) / "feeds"
+        self._saved_orig = dict(crawler_llm_intel._LAST_ORIG_INDEX)
+
+    def tearDown(self):
+        crawler_llm_intel._LAST_ORIG_INDEX.clear()
+        crawler_llm_intel._LAST_ORIG_INDEX.update(self._saved_orig)
+        self.temp_dir.cleanup()
+        self._quiet.__exit__(None, None, None)
+
+    def test_illegal_dates_dropped(self):
+        """`2025-13-01` 这类日历上不存在的日期：字符串比较防不住（它 < 今天），
+        必须按日历校验后丢弃，否则永不自纠。"""
+        self.assertEqual(crawler_llm_intel._drop_future_date("2025-13-01"), "")
+        self.assertEqual(crawler_llm_intel._drop_future_date("2026-02-30"), "")
+        self.assertEqual(crawler_llm_intel._drop_future_date("2026-00-10"), "")
+        self.assertEqual(crawler_llm_intel._drop_future_date("2026-09-17"), "2026-09-17")
+
+    def test_normalize_feed_date_rejects_illegal(self):
+        self.assertEqual(crawler_llm_intel.normalize_feed_date("2026年13月1日"), "")
+        self.assertEqual(crawler_llm_intel.normalize_feed_date("Feb 30, 2026"), "")
+        self.assertEqual(crawler_llm_intel.normalize_feed_date("2026-02-28"), "2026-02-28")
+
+    def test_tz_tomorrow_allowed_far_future_dropped(self):
+        """东九区源站凌晨发布而管线跑在 UTC 时，源日期是「本地明天」：放行一天。"""
+        tomorrow = (date.today() + timedelta(days=1)).strftime("%Y-%m-%d")
+        day_after = (date.today() + timedelta(days=2)).strftime("%Y-%m-%d")
+        self.assertEqual(crawler_llm_intel._drop_future_date(tomorrow), tomorrow,
+                         "时区偏差最多 26h，明天必须放行")
+        self.assertEqual(crawler_llm_intel._drop_future_date(day_after), "")
+
+    def test_structure4_date_does_not_seep_into_undated_section(self):
+        """结构 4：日期分节结束后，后面**无日期分节**的子标题不得继承上一个日期。
+
+        Regression: 原判据把「与分节同级的非日期标题」只是跳过、不清 sec_date，
+        于是日期渗进后续无日期分节，抓出「2026-09-01｜产品概览子条目」这类
+        日期与内容错配的归档条目。
+        """
+        html = """
+        <html><body>
+          <h2 id="2026年9月">2026年9月</h2>
+          <h3 id="a">条目 A：新模型上线</h3><p>说明一</p>
+          <h3 id="b">条目 B：计费调整</h3><p>说明二</p>
+          <h3 id="c">条目 C：SDK 更新</h3><p>说明三</p>
+          <h2 id="overview">产品概览</h2>
+          <h3 id="d">概览子页 D</h3><p>不是动态</p>
+          <h3 id="e">概览子页 E</h3><p>不是动态</p>
+        </body></html>"""
+        page = crawler_llm_intel.PageResult(
+            url="https://s.example/docs/changelog", stype="changelog", ok=True,
+            final_url="https://s.example/docs/changelog", raw=html)
+        arts = crawler_llm_intel.extract_changelog_sections(page)
+        self.assertEqual([a.title for a in arts],
+                         ["条目 A：新模型上线", "条目 B：计费调整", "条目 C：SDK 更新"],
+                         "无日期分节下的子标题不得带着上一分节的日期混进归档")
+        self.assertTrue(all(a.date == "2026-09-01" for a in arts))
+
+    def test_index_orig_recovers_from_previous_for_archive_titles(self):
+        """纯归档来源的文章（内存里标题已是汉化归档标题，orig == t）：
+        写全量索引时必须回退上一版索引的英文原文。
+
+        Regression: 原回退条件是 `orig != t and 无英文` —— 纯归档文章恰恰
+        orig == t，永远进不了回退分支；一旦某轮实抓丢了原文列（实测 2769 条
+        为空），后续所有轮次都拿不回来。
+        """
+        self.feeds_dir.mkdir(parents=True)
+        (self.feeds_dir / "articles.json").write_text(json.dumps({
+            "fields": ["title", "url", "vendor", "date", "original_title"],
+            "count": 1,
+            "articles": [["甲文章标题", "https://a.com/1", "vendor_a",
+                          "2026-09-01", "Original English Headline"]],
+        }, ensure_ascii=False), encoding="utf-8")
+        crawler_llm_intel._LAST_ORIG_INDEX.clear()
+        crawler_llm_intel.load_original_titles(self.feeds_dir / "articles.json")
+        art = crawler_llm_intel.Article(
+            title="甲文章标题", url="https://a.com/1", date="2026-09-01")
+        art.zh_title = "甲文章标题"  # 归档合并后 title 已被冻结成中文
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="vendor_a", brand="Vendor A", homepage="https://a.com",
+            products=[], all_news_articles=[art])
+        with mock.patch.object(
+                crawler_llm_intel, "translate_to_zh",
+                side_effect=AssertionError("zh_title 已给出时不应再翻译")):
+            crawler_llm_intel.write_rss_feeds(self.feeds_dir, [intel],
+                                              clean_removed=False)
+        data = json.loads((self.feeds_dir / "articles.json").read_text(encoding="utf-8"))
+        self.assertEqual(data["articles"][0][4], "Original English Headline",
+                         "上一版索引里的英文原文必须回填，不得静默置空")
+
+    def test_index_orig_not_invented_when_previous_empty(self):
+        """上一版索引也没有原文时保持为空，不得把中文标题自己填进原文列。"""
+        self.feeds_dir.mkdir(parents=True)
+        crawler_llm_intel._LAST_ORIG_INDEX.clear()
+        art = crawler_llm_intel.Article(
+            title="甲文章标题", url="https://a.com/1", date="2026-09-01")
+        art.zh_title = "甲文章标题"
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="vendor_a", brand="Vendor A", homepage="https://a.com",
+            products=[], all_news_articles=[art])
+        crawler_llm_intel.write_rss_feeds(self.feeds_dir, [intel],
+                                          clean_removed=False)
+        data = json.loads((self.feeds_dir / "articles.json").read_text(encoding="utf-8"))
+        self.assertEqual(data["articles"][0][4], "")
+
+
+class TestPartialRoundGuardrails(unittest.TestCase):
+    """部分数据轮护栏：临时抓不到 ≠ 厂商下线，绝不能因此抹掉历史产物。
+
+    一次源站抖动 / runner 出口被墙，会让在册厂商本轮 all_news_articles 为空。
+    原判据把「本轮没抓到」当成「厂商下线」，clean_removed 直接删归档与订阅源 ——
+    归档是只增不减的历史记录，删一次永久丢失；订阅者还会读到 404。
+    """
+
+    def setUp(self):
+        self._quiet = contextlib.redirect_stderr(io.StringIO())
+        self._quiet.__enter__()
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.news_dir = Path(self.temp_dir.name) / "llm-news"
+        self.news_dir.mkdir(parents=True)
+        self.feeds_dir = Path(self.temp_dir.name) / "feeds"
+        self._saved_orig = dict(crawler_llm_intel._LAST_ORIG_INDEX)
+
+    def tearDown(self):
+        crawler_llm_intel._LAST_ORIG_INDEX.clear()
+        crawler_llm_intel._LAST_ORIG_INDEX.update(self._saved_orig)
+        self.temp_dir.cleanup()
+        self._quiet.__exit__(None, None, None)
+
+    def _intel(self, vid, articles):
+        return crawler_llm_intel.VendorIntel(
+            vendor_id=vid, brand=vid.upper(), homepage=f"https://{vid}.com",
+            products=[], all_news_articles=articles)
+
+    def test_intel_failure_abort_threshold(self):
+        """纯函数：多数失败才中止；健康巡检（近零失败）与小样本都不触发。"""
+        abort = crawler_llm_intel.intel_failure_abort
+        self.assertFalse(abort(100, 100), "全成功")
+        self.assertFalse(abort(100, 95), "偶发单源失败（5%）远够不着阈值")
+        self.assertFalse(abort(100, 51), "49% 失败仍低于多数线")
+        self.assertTrue(abort(100, 50), "恰好 50% 失败达阈值")
+        self.assertTrue(abort(100, 10), "90% 失败：系统性故障")
+        self.assertFalse(abort(4, 0), "小样本（< MIN_TOTAL）不套用比例阈值")
+
+    def test_clean_removed_keeps_transient_failure_archive(self):
+        """在册厂商本轮文章为空（临时抓不到）：历史归档必须原样保留。"""
+        arch = self.news_dir / "vendor_a.md"
+        arch.write_text("## 全部文章（共 1 篇）\n\n"
+                        "1. [历史文章](https://a.com/old)（2025-01-01）\n",
+                        encoding="utf-8")
+        vendor_a = self._intel("vendor_a", [])  # 本轮动态页全失败，文章为空
+        crawler_llm_intel.write_news_archives(self.news_dir, [vendor_a],
+                                              clean_removed=True)
+        self.assertTrue(arch.exists(), "在册厂商的归档不得因一轮抓取失败被删")
+        self.assertIn("https://a.com/old", arch.read_text(encoding="utf-8"),
+                      "历史文章必须保留（只增不减）")
+
+    def test_clean_removed_removes_vendor_absent_from_list(self):
+        """确认下线（从 yaml 移除 → 不在本轮清单）：归档照删不误。"""
+        (self.news_dir / "vendor_gone.md").write_text("old", encoding="utf-8")
+        vendor_a = self._intel(
+            "vendor_a",
+            [crawler_llm_intel.Article(title="New A", url="https://a.com/new")])
+        crawler_llm_intel.write_news_archives(self.news_dir, [vendor_a],
+                                              clean_removed=True)
+        self.assertFalse((self.news_dir / "vendor_gone.md").exists(),
+                         "已从清单消失的厂商归档应被清理")
+
+    def test_rss_clean_removed_keeps_transient_failure_feed(self):
+        """在册厂商本轮无可收录条目：旧订阅源文件保留，避免订阅者读到 404。"""
+        self.feeds_dir.mkdir(parents=True)
+        (self.feeds_dir / "llm-news-vendor_a.xml").write_text("<rss/>", encoding="utf-8")
+        (self.feeds_dir / "llm-news-vendor_gone.xml").write_text("<rss/>", encoding="utf-8")
+        vendor_a = self._intel("vendor_a", [])  # 本轮抓不到，arts 为空
+        crawler_llm_intel.write_rss_feeds(self.feeds_dir, [vendor_a],
+                                          clean_removed=True)
+        self.assertTrue((self.feeds_dir / "llm-news-vendor_a.xml").exists(),
+                        "在册厂商的订阅源不得因一轮抓取失败被删")
+        self.assertFalse((self.feeds_dir / "llm-news-vendor_gone.xml").exists(),
+                         "已下线厂商的订阅源应被清理")
+
+
 class TestFeedsBaseDerivation(unittest.TestCase):
-    """订阅源对外前缀按 Actions 注入的 GITHUB_REPOSITORY 推导，fork 后无需改代码。"""
+    """订阅源对外前缀：优先 docs/CNAME（自定义域名），其次按 Actions 注入的
+    GITHUB_REPOSITORY 推导（fork 后无需改代码）。
+
+    `_repo_root` 注入到临时目录：真实仓库带有 docs/CNAME，不注入的话
+    GITHUB_REPOSITORY 分支永远测不到（CNAME 会先命中）。
+    """
 
     def setUp(self):
         self._orig = os.environ.get("GITHUB_REPOSITORY")
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.fake_root = Path(self.temp_dir.name)
+        self._orig_root = crawler_llm_intel._repo_root
+        crawler_llm_intel._repo_root = lambda: self.fake_root
 
     def tearDown(self):
+        crawler_llm_intel._repo_root = self._orig_root
+        self.temp_dir.cleanup()
         if self._orig is None:
             os.environ.pop("GITHUB_REPOSITORY", None)
         else:
             os.environ["GITHUB_REPOSITORY"] = self._orig
+
+    def _write_cname(self, text: str):
+        docs = self.fake_root / "docs"
+        docs.mkdir(exist_ok=True)
+        (docs / "CNAME").write_text(text, encoding="utf-8")
+
+    def test_cname_wins_over_github_repository(self):
+        """配了自定义域名后 github.io 会 301 跳转，rel=self 必须直接给规范地址。"""
+        self._write_cname("free-llm-intel.aishort.top\n")
+        os.environ["GITHUB_REPOSITORY"] = "someone/free-llm-intel"
+        self.assertEqual(crawler_llm_intel.default_feeds_base(),
+                         "https://free-llm-intel.aishort.top/feeds")
+
+    def test_cname_tolerates_url_form_and_extra_lines(self):
+        # Pages 只写裸域名，但有人手工填成 URL / 带注释行——取首行、剥协议、去尾斜线
+        self._write_cname("https://example.com/\n# old domain\n")
+        self.assertEqual(crawler_llm_intel.default_feeds_base(),
+                         "https://example.com/feeds")
 
     def test_project_page_and_user_page(self):
         os.environ["GITHUB_REPOSITORY"] = "someone/free-llm-intel"
@@ -2710,6 +2961,327 @@ class TestFeedsBaseDerivation(unittest.TestCase):
         os.environ.pop("GITHUB_REPOSITORY", None)
         self.assertEqual(crawler_llm_intel.default_feeds_base(), "",
                          "本地运行时省略 rel=self 即可，不得猜一个域名出来")
+
+
+class TestNetworkLayerPassthrough(unittest.TestCase):
+    """网络层参数透传与 URL 规范化语义。
+
+    三组回归：
+    1) `_norm_url` 曾把整条 URL 小写并丢掉 query —— path/query 大小写敏感
+       （`/Docs/Page` 与 `/docs/page` 可以是两个资源；`?Id=x` 与 `?id=x` 同理），
+       只有 scheme/host 可以小写；丢 query 会把带参数的文章链接折叠错。
+    2) `fetch_url` 曾让 feed 走浏览器兜底 —— 浏览器渲染 XML 得到 HTML 树，
+       parse_html 会覆盖 result.raw，而 parse_feed_xml 消费的正是 raw（item 整批丢）；
+       短 XML 被判 sparse 误入兜底同样把好源弄坏；失败时兜底把「失败」翻成「ok 但空」。
+    3) `collect_news_articles` 的步骤 2（发现的 feed）与步骤 3（详情页补标题）
+       曾硬编码默认值，--delay / --timeout 传不进去：对同一站点连续请求不设间隔
+       容易触发限流。
+    """
+
+    # ---- 1) _norm_url ----
+
+    def test_norm_url_keeps_path_and_query_case(self):
+        self.assertEqual(
+            crawler_llm_intel._norm_url("HTTPS://X.example/Docs/Page?Id=AbC"),
+            "https://x.example/Docs/Page?Id=AbC")
+
+    def test_norm_url_keeps_query_and_drops_fragment(self):
+        self.assertEqual(
+            crawler_llm_intel._norm_url("https://x.example/p?a=1#sec"),
+            "https://x.example/p?a=1")
+        # 无 query 时不追加 "?"
+        self.assertEqual(
+            crawler_llm_intel._norm_url("https://x.example/p/"),
+            "https://x.example/p")
+
+    def test_article_key_still_keeps_fragment_after_norm_fix(self):
+        self.assertEqual(
+            crawler_llm_intel._article_key("https://x.example/Docs#aB"),
+            "https://x.example/Docs#ab")
+
+    # ---- 2) feed 不进浏览器兜底 ----
+
+    def _fake_browser(self):
+        browser = mock.Mock()
+        browser.enabled = True
+        # render 成功时返回 (html, final_url, status_code) 三元组；必须让它「成功」，
+        # 否则守卫被拆掉时兜底也只是空转，断不出回归
+        browser.render.return_value = (
+            "<html><body>%s</body></html>" % ("x" * 300),
+            "https://x.example/f.xml", 200)
+        return browser
+
+    def test_fetch_url_feed_skips_browser_fallback(self):
+        browser = self._fake_browser()
+        cases = {
+            "ok+raw（正常源）": crawler_llm_intel.PageResult(
+                url="https://x.example/f.xml", stype="feed", ok=True,
+                final_url="https://x.example/f.xml", raw="<rss/>", status_code=200),
+            "sparse（短 XML 误判）": crawler_llm_intel.PageResult(
+                url="https://x.example/f.xml", stype="feed", ok=True,
+                final_url="https://x.example/f.xml", raw="<rss/>",
+                sparse=True, status_code=200),
+            "403（失败不得被兜底翻成 ok 但空）": crawler_llm_intel.PageResult(
+                url="https://x.example/f.xml", stype="feed", ok=False,
+                final_url="https://x.example/f.xml", status_code=403),
+        }
+        for label, pr in cases.items():
+            browser.render.reset_mock()
+            with mock.patch.object(crawler_llm_intel, "_fetch_with_requests",
+                                   return_value=pr):
+                out = crawler_llm_intel.fetch_url(
+                    None, "https://x.example/f.xml", "feed", browser=browser)
+            self.assertIs(out, pr, label)
+            browser.render.assert_not_called()
+        # 守卫的另一半意义：raw 不被浏览器渲染的 HTML 覆盖（parse_feed_xml 消费 raw）
+        self.assertEqual(cases["ok+raw（正常源）"].raw, "<rss/>")
+        self.assertFalse(cases["403（失败不得被兜底翻成 ok 但空）"].ok)
+
+    def test_fetch_url_html_still_uses_browser_fallback(self):
+        """对照组：同判据下 HTML 页必须仍走浏览器兜底（守卫只豁免 feed）。"""
+        browser = self._fake_browser()
+        # render 成功时返回 (html, final_url, status_code) 三元组
+        browser.render.return_value = (
+            "<html><body>%s</body></html>" % ("x" * 300),
+            "https://x.example/p", 200)
+        pr = crawler_llm_intel.PageResult(
+            url="https://x.example/p", stype="news", ok=False,
+            final_url="https://x.example/p", status_code=403)
+        with mock.patch.object(crawler_llm_intel, "_fetch_with_requests",
+                               return_value=pr):
+            crawler_llm_intel.fetch_url(None, "https://x.example/p", "news",
+                                        browser=browser)
+        browser.render.assert_called_once()
+
+    # ---- 3) delay / timeout 透传 ----
+
+    def test_collect_news_passes_timeout_to_discovered_feeds(self):
+        page = crawler_llm_intel.PageResult(
+            url="https://x.example/blog", stype="news", ok=True,
+            final_url="https://x.example/blog",
+            feeds=["https://x.example/feed.xml"], text="y" * 300)
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="openai", brand="OpenAI", homepage="", products=[])
+        intel.news_pages = [page]
+        timeout = (3.0, 9.0)
+        with mock.patch.object(crawler_llm_intel, "fetch_feed_articles",
+                               return_value=[]) as m_feed, \
+                mock.patch.object(crawler_llm_intel.time, "sleep") as m_sleep:
+            crawler_llm_intel.collect_news_articles(
+                intel, session=None, delay=0.7, timeout=timeout)
+        m_feed.assert_called_once_with(None, "https://x.example/feed.xml",
+                                       stype="news", timeout=timeout)
+        m_sleep.assert_any_call(0.7)
+
+    def test_collect_news_passes_timeout_to_detail_pages(self):
+        page = crawler_llm_intel.PageResult(
+            url="https://x.example/blog", stype="news", ok=True,
+            final_url="https://x.example/blog", text="y" * 300)
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="openai", brand="OpenAI", homepage="", products=[])
+        intel.news_pages = [page]
+        art = crawler_llm_intel.Article(title="查看详情",
+                                        url="https://x.example/a")
+        resp = mock.Mock(status_code=200, text="<html><title>Introducing GPT-5.5 deep dive</title></html>",
+                         url="https://x.example/a", encoding="utf-8")
+        session = mock.Mock()
+        session.get.return_value = resp
+        timeout = (4.0, 11.0)
+        with mock.patch.object(crawler_llm_intel, "extract_articles_from_page",
+                               return_value=[art]), \
+                mock.patch.object(crawler_llm_intel.time, "sleep") as m_sleep:
+            crawler_llm_intel.collect_news_articles(
+                intel, session=session, delay=0.5, timeout=timeout)
+        session.get.assert_called_once_with("https://x.example/a",
+                                            timeout=timeout,
+                                            allow_redirects=True)
+        m_sleep.assert_any_call(0.5)
+
+
+class TestLowSeverityFixes(unittest.TestCase):
+    """低危批量修复的回归守卫。
+
+    1) update_news_md 曾把 section 直接当 re.sub 替换串：标题里一旦含反斜杠
+       （Windows 路径 / LaTeX / 正则示例的文章标题），`\\1`、`\\g` 会被当转义序列
+       解释——文档被静默改写甚至直接报错。
+    2) append_intel_changelog 同日重跑会把同一批变化再追加一遍（重复厂商块 →
+       变化流重复 guid → 阅读器把同一件事推两次）。
+    3) OPML 的「情报变化」组曾无条件列出：该流「两类事件都没有就不产出文件」，
+       新 fork 首轮导入 OPML 会订到一个 404。
+    4) _fetch_with_requests 曾对一切 >=400 重试：404/405 是源站的明确答复，
+       重试只是白等 1 秒、多打一次人家的服务器。
+    5) parse_archived_articles 曾把读文件失败吞成空列表：增量合并会**静默丢掉**
+       该归档的全部历史条目（违反「只增不减」），日志里毫无痕迹。
+    6) translate_to_zh 曾静默吞掉一切异常：翻译端点整轮不可用时全部标题安静地
+       回退英文，CI 日志里没有任何线索。
+    """
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp_dir.name)
+
+    def tearDown(self):
+        self.temp_dir.cleanup()
+
+    # ---- 1) re.sub 替换串 ----
+
+    def test_update_news_md_section_with_backslashes_is_literal(self):
+        path = self.root / "news.md"
+        # 必须先落一份带标记的旧文档：文件不存在时走的是**字符串拼接**分支，
+        # 只有旧文档里已有 NEWS_BEGIN/END 才会走 pattern.sub —— 那才是替换串
+        # 被 re.sub 解释转义的地方（首版测试没铺旧文档，sabotage 拆掉 lambda
+        # 也照样绿，等于什么都没测到）。
+        path.write_text(crawler_llm_intel.NEWS_BEGIN + "\n旧内容\n"
+                        + crawler_llm_intel.NEWS_END + "\n", encoding="utf-8")
+        section = (crawler_llm_intel.NEWS_BEGIN + "\n"
+                   r"- [C:\Users\docs 与 \1 与 \g<x> 的标题](https://x.example/a)"
+                   "\n" + crawler_llm_intel.NEWS_END + "\n")
+        crawler_llm_intel.update_news_md(path, section)
+        self.assertIn(r"C:\Users\docs 与 \1 与 \g<x>",
+                      path.read_text(encoding="utf-8"),
+                      "替换串里的反斜杠必须原样落盘，不得被 re.sub 解释")
+
+    # ---- 2) 变更日志同日去重 ----
+
+    @staticmethod
+    def _entry(vid="vendor_a", brand="Vendor A", summary="额度翻倍",
+               diffs=(("free_quota", "旧额度", "新额度"),)):
+        return {"vendor_id": vid, "brand": brand, "summary": summary,
+                "diffs": list(diffs)}
+
+    def test_changelog_same_day_rerun_does_not_duplicate(self):
+        p = self.root / crawler_llm_intel.CHANGELOG_MD
+        crawler_llm_intel.append_intel_changelog(p, "2026-09-27", [self._entry()])
+        crawler_llm_intel.append_intel_changelog(p, "2026-09-27", [self._entry()])
+        content = p.read_text(encoding="utf-8")
+        self.assertEqual(content.count("### Vendor A"), 1,
+                         "同日重跑重放同一批变化不得产生重复厂商块")
+
+    def test_changelog_same_day_new_value_still_appends(self):
+        p = self.root / crawler_llm_intel.CHANGELOG_MD
+        crawler_llm_intel.append_intel_changelog(p, "2026-09-27", [self._entry()])
+        crawler_llm_intel.append_intel_changelog(p, "2026-09-27", [
+            self._entry(diffs=[("free_quota", "新额度", "再翻倍")])])
+        content = p.read_text(encoding="utf-8")
+        self.assertEqual(content.count("### Vendor A"), 2,
+                         "同日对同一厂商的再次真实变更（后值不同）照常追加")
+
+    def test_changelog_rerun_mixed_batch_only_appends_new(self):
+        p = self.root / crawler_llm_intel.CHANGELOG_MD
+        crawler_llm_intel.append_intel_changelog(p, "2026-09-27", [self._entry()])
+        crawler_llm_intel.append_intel_changelog(p, "2026-09-27", [
+            self._entry(),
+            self._entry(vid="vendor_b", brand="Vendor B", summary="新活动")])
+        content = p.read_text(encoding="utf-8")
+        self.assertEqual(content.count("### Vendor A"), 1)
+        self.assertEqual(content.count("### Vendor B"), 1)
+
+    # ---- 3) OPML 情报变化组 ----
+
+    def test_opml_changes_group_follows_feed_existence(self):
+        out = self.root / "feeds.opml"
+        crawler_llm_intel.write_opml(out, [], feeds_base="https://x/feeds",
+                                     changes_feed=False)
+        self.assertNotIn("llm-intel-changes.xml", out.read_text(encoding="utf-8"),
+                         "变化流未产出时 OPML 不得列出它（导入即 404）")
+        crawler_llm_intel.write_opml(out, [], feeds_base="https://x/feeds",
+                                     changes_feed=True)
+        self.assertIn("llm-intel-changes.xml", out.read_text(encoding="utf-8"))
+
+    # ---- 4) 4xx 不重试 ----
+
+    @staticmethod
+    def _resp(code):
+        resp = mock.Mock(status_code=code, url="https://x.example/p")
+        resp.headers = {}
+        resp.encoding = "utf-8"
+        resp.text = ""
+        return resp
+
+    def _fetch_once(self, session):
+        with mock.patch.object(crawler_llm_intel.time, "sleep"):
+            return crawler_llm_intel._fetch_with_requests(
+                session, "https://x.example/p", "news", (1.0, 2.0), retries=1)
+
+    def test_404_is_not_retried(self):
+        session = mock.Mock()
+        session.get.return_value = self._resp(404)
+        result = self._fetch_once(session)
+        self.assertEqual(session.get.call_count, 1,
+                         "404 是源站的明确答复，重试只是白等和多打人家服务器")
+        self.assertFalse(result.ok)
+        self.assertEqual(result.error, "HTTP 404")
+
+    def test_500_is_retried(self):
+        session = mock.Mock()
+        session.get.return_value = self._resp(500)
+        result = self._fetch_once(session)
+        self.assertEqual(session.get.call_count, 2, "5xx 是临时故障，照旧重试")
+        self.assertFalse(result.ok)
+
+    def test_429_is_retried(self):
+        session = mock.Mock()
+        session.get.return_value = self._resp(429)
+        self._fetch_once(session)
+        self.assertEqual(session.get.call_count, 2)
+
+    def test_429_retry_preserves_is_login(self):
+        """首抓已判定登录跳转、重试拿到失败壳时，is_login 不得静默丢失。"""
+        first = crawler_llm_intel.PageResult(
+            url="https://x.example/p", stype="news", ok=False, status_code=429,
+            final_url="https://passport.x.example/login?redirect=1", is_login=True)
+        second = crawler_llm_intel.PageResult(
+            url="https://x.example/p", stype="news", ok=False, status_code=429,
+            final_url="https://x.example/p", error="HTTP 429")
+        with mock.patch.object(crawler_llm_intel, "_fetch_with_requests",
+                               side_effect=[first, second]), \
+                mock.patch.object(crawler_llm_intel.time, "sleep"):
+            out = crawler_llm_intel.fetch_url(None, "https://x.example/p", "news")
+        self.assertIs(out, second)
+        self.assertTrue(out.is_login,
+                        "重试结果是失败壳时首抓的登录判定必须保留")
+
+    # ---- 5) 归档读取失败必须出声 ----
+
+    def test_parse_archived_articles_warns_on_read_failure(self):
+        arch = self.root / "vendor_a.md"
+        arch.write_text("- [标题](https://x.example/a)\n", encoding="utf-8")
+        err = io.StringIO()
+        with mock.patch.object(Path, "read_text",
+                               side_effect=OSError("disk on fire")):
+            with contextlib.redirect_stderr(err):
+                out = crawler_llm_intel.parse_archived_articles(arch)
+        self.assertEqual(out, [])
+        self.assertIn("warn", err.getvalue(),
+                      "读不到归档必须报警：静默空列表会让增量合并丢掉全部历史条目")
+
+    # ---- 6) 翻译失败必须出声（每类异常只报一次） ----
+
+    def test_translate_failure_warns_once_per_exception_type(self):
+        saved_failed = set(provider_profiles._TRANS_FAILED)
+        saved_warned = set(provider_profiles._TRANS_WARNED)
+        provider_profiles._TRANS_FAILED.discard("Some english sentence title")
+        provider_profiles._TRANS_WARNED.clear()
+        try:
+            err = io.StringIO()
+            with mock.patch.object(provider_profiles.requests, "get",
+                                   side_effect=ConnectionError("boom")):
+                with contextlib.redirect_stderr(err):
+                    out1 = provider_profiles.translate_to_zh(
+                        "Some english sentence title")
+                    out2 = provider_profiles.translate_to_zh(
+                        "Another english sentence title")
+            self.assertEqual(out1, "Some english sentence title")
+            self.assertEqual(out2, "Another english sentence title")
+            warned = err.getvalue()
+            self.assertIn("warn", warned, "翻译系统性故障不得静默")
+            self.assertEqual(warned.count("ConnectionError"), 1,
+                             "同类异常每轮只报一次，批量翻译不得刷屏")
+        finally:
+            provider_profiles._TRANS_FAILED.clear()
+            provider_profiles._TRANS_FAILED.update(saved_failed)
+            provider_profiles._TRANS_WARNED.clear()
+            provider_profiles._TRANS_WARNED.update(saved_warned)
 
 
 class TestReadmeIntegrity(unittest.TestCase):
@@ -3485,6 +4057,15 @@ class TestBrowsePageDesignContract(unittest.TestCase):
         self.assertIsNotNone(m, f"CSS 里找不到 {selector} 规则")
         return m.group(1)
 
+    def test_free_models_string_does_not_break_search(self):
+        """`free_models` 的上游（provider 档案 / overrides 手写）允许是字符串。
+
+        字符串没有 `.join`，异常会打断整个 filter 回调 —— 表现是「一搜索整个
+        一览变空」，且页面没有构建、坏了不报错。守卫：拼接前必须归一成数组。
+        """
+        self.assertIn("Array.isArray(fm)", self.page,
+                      "free_models 拼接必须先归一成数组（手写档案可能是字符串）")
+
     def test_tab_panel_aria_wiring(self):
         """每个页签都要指向一个真实存在、且反向标注自己的 tabpanel。"""
         tabs = re.findall(r"<button[^>]*role=\"tab\"[^>]*>", self.page)
@@ -3818,12 +4399,16 @@ class TestPacketFastReplay(unittest.TestCase):
     def tearDown(self):
         self.tmp.cleanup()
 
-    def _replay(self, digest):
-        (self.root / crawler_llm_intel.REVIEW_PACKET_DIR
-         / crawler_llm_intel.REVIEW_MANIFEST).write_text(
-            json.dumps({"demo_vid": {"digest": digest,
-                                     "exported": "2026-09-27"}}),
-            encoding="utf-8", newline="\n")
+    def _replay(self, digest, exported=None):
+        mpath = (self.root / crawler_llm_intel.REVIEW_PACKET_DIR
+                 / crawler_llm_intel.REVIEW_MANIFEST)
+        # 在 export 写出的真实 manifest 上改指纹/日期：保留 staged 等其余字段，
+        # exported 默认昨天（固定日期会随时间推移撞上超龄回退，测试变定时炸弹）。
+        manifest = json.loads(mpath.read_text(encoding="utf-8"))
+        manifest["demo_vid"]["digest"] = digest
+        manifest["demo_vid"]["exported"] = exported or (
+            date.today() - timedelta(days=1)).isoformat()
+        mpath.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
         return crawler_llm_intel.try_packet_fast_replay(
             self.root, self.snaps, self.vendors, self.grouped,
             self.root / "llm-news-feeds.md", self.root / "docs" / "feeds")
@@ -3882,7 +4467,8 @@ class TestPacketFastReplay(unittest.TestCase):
         (self.root / crawler_llm_intel.REVIEW_PACKET_DIR
          / crawler_llm_intel.REVIEW_MANIFEST).write_text(
             json.dumps({"demo_vid": {"digest": digest,
-                                     "exported": "2026-09-27"}}),
+                                     "exported": (date.today()
+                                                  - timedelta(days=1)).isoformat()}}),
             encoding="utf-8", newline="\n")
         _il, applied, vids = crawler_llm_intel.try_packet_fast_replay(
             self.root, empty, self.vendors, self.grouped,
@@ -3915,6 +4501,242 @@ class TestPacketFastReplay(unittest.TestCase):
                         "被拒的补丁必须原样留着，等完整巡检重验")
         self.assertEqual((self.root / "profile_overrides.json")
                          .read_text(encoding="utf-8"), "{}")
+
+
+class TestReviewChannelHardening(unittest.TestCase):
+    """本地核查通道加固的回归护栏：哈希前进 / 状态原子性与损坏处理 / 闸门语料 / 字段集对齐。"""
+
+    OLD_TEXT = "免费额度政策：注册即送 每月 100 万 tokens，长期有效，仅限非商用。"
+    NEW_TEXT = "免费额度政策：注册即送 每月 200 万 tokens，长期有效，仅限非商用。"
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        (self.root / "profile_overrides.json").write_text("{}", encoding="utf-8")
+        self.vendors = [{"id": "demo_vid", "brand": "Demo",
+                         "homepage": "https://p.example"}]
+        self.grouped = {"demo_vid": [
+            {"vendor": "demo_vid", "type": "pricing",
+             "url": "https://p.example/pricing"}]}
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def _intel(self, text):
+        page = crawler_llm_intel.PageResult(
+            url="https://p.example/pricing", stype="pricing", ok=True,
+            final_url="https://p.example/pricing", text=text, title="Pricing",
+            snapshot_text=text, snapshot_ok=True)
+        return crawler_llm_intel.VendorIntel(
+            vendor_id="demo_vid", brand="Demo", homepage="https://p.example",
+            products=[], intel_pages=[page])
+
+    def test_fast_replay_advances_snapshot_hash(self):
+        """完整本地周期：export→填包→apply 快进后哈希必须前进，不再每轮重复排队。"""
+        vid = "demo_vid"
+        # 第一轮：基线建档（旧页面）
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        snaps.stage_vendor(vid, self._intel(self.OLD_TEXT))
+        snaps.save({vid}, full_run=True)
+        # 第二轮：页面变化 → 导包 → rollback（与 main 的 export 分支一致）
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        changed = snaps.stage_vendor(vid, self._intel(self.NEW_TEXT))
+        self.assertTrue(changed, "页面文本变化必须被检出")
+        prompt = ("【当前生效档案】\n{}\n【官方页面原文】\n" + self.NEW_TEXT)
+        crawler_llm_intel.export_review_packets(self.root, {vid: prompt}, snaps)
+        snaps.rollback_vendor(vid)
+        snaps.save({vid}, full_run=True)
+        self.assertEqual(snaps.changed_pages, {}, "rollback 后变化队列应清空")
+        # 填包：证据逐字出自新页面原文
+        d = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
+        (d / f"{vid}.json").write_text(json.dumps({
+            "changed": True, "summary": "额度翻倍",
+            "fields": {"free_quota": "每月 200 万 tokens"},
+            "evidence": [{"url": "https://p.example/pricing",
+                          "quote": "每月 200 万 tokens，长期有效"}],
+        }, ensure_ascii=False), encoding="utf-8", newline="\n")
+        # apply：快进过闸
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        _il, applied, vids = crawler_llm_intel.try_packet_fast_replay(
+            self.root, snaps, self.vendors, self.grouped,
+            self.root / "llm-news-feeds.md", self.root / "docs" / "feeds")
+        self.assertTrue(applied)
+        snaps.save(vids, full_run=False, crawl_scope=vids)
+        # 关键断言：快照已前进到新页面哈希 —— 再抓同一页面不再报变化
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        self.assertEqual(snaps.stage_vendor(vid, self._intel(self.NEW_TEXT)), [],
+                         "采纳后哈希不前进 → 同一变化每轮重新检出（死循环回归）")
+        overlay = json.loads((self.root / "profile_overrides.json")
+                             .read_text(encoding="utf-8"))
+        self.assertEqual(overlay[vid]["free_quota"], "每月 200 万 tokens")
+
+    def test_second_apply_over_existing_applied_file(self):
+        """Windows 上 rename 撞已存在的 .applied 会崩；replace 必须静默覆盖。"""
+        vid = "demo_vid"
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        snaps.stage_vendor(vid, self._intel(self.OLD_TEXT))
+        snaps.save({vid}, full_run=True)
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        snaps.stage_vendor(vid, self._intel(self.NEW_TEXT))
+        prompt = ("【当前生效档案】\n{}\n【官方页面原文】\n" + self.NEW_TEXT)
+        crawler_llm_intel.export_review_packets(self.root, {vid: prompt}, snaps)
+        d = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
+        # 上一轮采纳的残留：第二次过闸时目标文件已存在
+        (d / f"{vid}.json.applied").write_text('{"changed": false}',
+                                               encoding="utf-8")
+        (d / f"{vid}.json").write_text(json.dumps({
+            "changed": True, "summary": "额度翻倍",
+            "fields": {"free_quota": "每月 200 万 tokens"},
+            "evidence": [{"url": "https://p.example/pricing",
+                          "quote": "每月 200 万 tokens，长期有效"}],
+        }, ensure_ascii=False), encoding="utf-8", newline="\n")
+        intel_by_id = {vid: self._intel(self.NEW_TEXT)}
+        out = crawler_llm_intel.run_local_review(
+            self.root, {vid: []}, intel_by_id, snaps)
+        self.assertIn(vid, out, "已有 .applied 残留时二次采纳必须成功")
+
+    def test_corrupt_state_backs_up_and_rebaselines(self):
+        """损坏的 state 不得静默清空成「全厂商变化」：备份 + 按基线重建。"""
+        path = self.root / crawler_llm_intel.SNAPSHOT_STATE
+        path.write_text('{"sources": {{{ 半截 JSON', encoding="utf-8")
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            snaps = crawler_llm_intel.SnapshotState(self.root)
+        self.assertTrue(snaps.baseline, "损坏后必须按基线建档，不报变化")
+        self.assertEqual(snaps.entries, {})
+        backups = list(self.root.glob("*.corrupt-*"))
+        self.assertEqual(len(backups), 1, "损坏文件必须存档留证")
+        self.assertIn("基线", err.getvalue())
+
+    def test_digest_ignores_backoff_bookkeeping(self):
+        """ai_attempts 等退避字段不进指纹：bump 一次不得被误判「页面又变」。"""
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        snaps.stage_vendor("demo_vid", self._intel(self.OLD_TEXT))
+        snaps.commit_vendor("demo_vid")
+        before = crawler_llm_intel.vendor_snapshot_digest(
+            snaps.entries, "demo_vid")
+        for entry in snaps.entries.values():
+            entry["ai_attempts"] = 3
+            entry["ai_retry_after"] = "2026-10-01"
+            entry["ai_last_error"] = "quota"
+        after = crawler_llm_intel.vendor_snapshot_digest(
+            snaps.entries, "demo_vid")
+        self.assertEqual(before, after)
+
+    def test_aged_packet_falls_back_to_crawl(self):
+        """导包超过 PACKET_MAX_AGE_DAYS：指纹一致也不再快进，回退实抓。"""
+        vid = "demo_vid"
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        snaps.stage_vendor(vid, self._intel(self.OLD_TEXT))
+        snaps.commit_vendor(vid)
+        crawler_llm_intel.export_review_packets(
+            self.root, {vid: "【官方页面原文】\n" + self.OLD_TEXT}, snaps)
+        d = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "packets"
+        (d / f"{vid}.json").write_text('{"changed": false}', encoding="utf-8")
+        mpath = self.root / crawler_llm_intel.REVIEW_PACKET_DIR / "manifest.json"
+        manifest = json.loads(mpath.read_text(encoding="utf-8"))
+        manifest[vid]["exported"] = (
+            date.today()
+            - timedelta(days=crawler_llm_intel.PACKET_MAX_AGE_DAYS + 1)
+        ).isoformat()
+        mpath.write_text(json.dumps(manifest), encoding="utf-8", newline="\n")
+        _il, applied, vids = crawler_llm_intel.try_packet_fast_replay(
+            self.root, snaps, self.vendors, self.grouped,
+            self.root / "llm-news-feeds.md", self.root / "docs" / "feeds")
+        self.assertFalse(applied, "超龄包必须回退实抓重验")
+        self.assertEqual(vids, set())
+
+    def test_evidence_corpus_excludes_profile_and_removed_lines(self):
+        """闸门语料 = 原文区 + 变化行新增侧：旧档案值与删除行不得给幻觉补丁放行。"""
+        profile = {"free_quota": "旧额度 OLDQUOTA 每月 1 分"}
+        pages = [{"url": "u", "stype": "pricing", "title": "t",
+                  "text": "页面原文包含 全新事实 NEWFACT，足够长的正文内容。"}]
+        focus = [{"url": "u", "stype": "pricing",
+                  "removed": ["旧文本 OLDQUOTA 已删除"],
+                  "added": ["全新事实 NEWFACT 已上线"]}]
+        prompt = ai_review.build_user_prompt(
+            "v", "B", profile, {}, pages, focus=focus)
+        corpus = ai_review.evidence_corpus(prompt)
+        self.assertIn("NEWFACT", corpus)
+        self.assertNotIn("OLDQUOTA", corpus,
+                         "旧档案值/删除行混进语料会放过引用旧值的幻觉补丁")
+        base = {"changed": True, "summary": "s",
+                "fields": {"free_quota": "每月 2 分"}}
+        with self.assertRaises(ai_review.AiReviewError):
+            ai_review.validate_patch(
+                {**base, "evidence": [{"url": "u", "quote": "旧额度 OLDQUOTA"}]},
+                ai_review.evidence_corpus(prompt))
+        ok = ai_review.validate_patch(
+            {**base, "evidence": [{"url": "u", "quote": "全新事实 NEWFACT 已上线"}]},
+            ai_review.evidence_corpus(prompt))
+        self.assertTrue(ok["changed"])
+        # 无分区标记的语料原样返回（兼容直接构造 corpus 的调用方）
+        self.assertEqual(ai_review.evidence_corpus("裸语料"), "裸语料")
+
+    def test_field_types_align_with_overlay_fields(self):
+        """FIELD_TYPES 与 _OVERLAY_FIELDS 必须同集：漂移会让合法补丁整个被拒。"""
+        self.assertEqual(set(ai_review.FIELD_TYPES),
+                         provider_profiles._OVERLAY_FIELDS)
+
+    def test_openai_compat_dict_patch_validation(self):
+        base = {"changed": True, "summary": "s",
+                "evidence": [{"url": "u", "quote": "base_url 见页面原文"}]}
+        ok = ai_review.validate_patch(
+            {**base, "fields": {"openai_compat": {
+                "base_url": "https://api.example/v1",
+                "api_key_url": "https://example/key",
+                "models": "m1"}}},
+            "base_url 见页面原文")
+        self.assertEqual(ok["fields"]["openai_compat"]["base_url"],
+                         "https://api.example/v1")
+        with self.assertRaises(ai_review.AiReviewError):
+            ai_review.validate_patch(
+                {**base, "fields": {"openai_compat": {"base_url": 42}}},
+                "base_url 见页面原文")
+        with self.assertRaises(ai_review.AiReviewError):
+            ai_review.validate_patch(
+                {**base, "fields": {"openai_compat": {}}},
+                "base_url 见页面原文")
+
+    def test_apply_patches_backs_up_corrupt_overlay(self):
+        p = self.root / "profile_overrides.json"
+        p.write_text("{ 损坏的 JSON", encoding="utf-8")
+        patch = ai_review.validate_patch(
+            {"changed": True, "summary": "s",
+             "fields": {"free_quota": "每月 100 万 tokens"},
+             "evidence": [{"url": "u", "quote": "长期有效，仅限非商用"}]},
+            TestLocalReviewChannel.PAGE)
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            ai_review.apply_patches(p, {"demo_vid": patch})
+        overlay = json.loads(p.read_text(encoding="utf-8"))
+        self.assertEqual(overlay["demo_vid"]["free_quota"], "每月 100 万 tokens")
+        backups = [q for q in self.root.glob("profile_overrides.json.corrupt-*")]
+        self.assertEqual(len(backups), 1, "损坏覆写必须存档留证，不得无痕覆盖")
+        self.assertNotIn("损坏", p.read_text(encoding="utf-8"))
+
+    def test_load_overrides_corrupt_keeps_file_and_warns(self):
+        p = self.root / "profile_overrides.json"
+        p.write_text("{ 损坏的 JSON", encoding="utf-8")
+        err = io.StringIO()
+        with mock.patch.object(provider_profiles, "_OVERLAY_PATH", p), \
+                contextlib.redirect_stderr(err):
+            out = provider_profiles._load_overrides()
+        self.assertEqual(out, {})
+        self.assertIn("解析失败", err.getvalue())
+        self.assertEqual(p.read_text(encoding="utf-8"), "{ 损坏的 JSON",
+                         "加载器不得改动原文件（备份是副本）")
+        self.assertTrue(list(self.root.glob("profile_overrides.json.corrupt-*")))
+
+    def test_state_save_is_atomic_no_tmp_leftover(self):
+        snaps = crawler_llm_intel.SnapshotState(self.root)
+        snaps.stage_vendor("demo_vid", self._intel(self.OLD_TEXT))
+        snaps.save({"demo_vid"}, full_run=True)
+        self.assertEqual(list(self.root.glob("*.tmp")), [],
+                         "原子写不得残留 .tmp 半成品")
+        data = json.loads((self.root / crawler_llm_intel.SNAPSHOT_STATE)
+                          .read_text(encoding="utf-8"))
+        self.assertIn("sources", data)
 
 
 class TestArchiveDedup(unittest.TestCase):
