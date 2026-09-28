@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LLM 厂商动态 · 最新变化 · 免费额度一览 · free-llm-intel</title>
-<meta name="description" content="汇总各 LLM 厂商官方博客 / 更新日志的新文章（标题已汉化），并展示巡检采纳的额度 / 活动变化与各厂商免费额度总表。官方没有 RSS 的厂商也在这里。">
+<title>LLM 厂商动态 · 最新变化 · 免费额度与活动一览 · free-llm-intel</title>
+<meta name="description" content="汇总各 LLM 厂商官方博客 / 更新日志的新文章（标题已汉化），并展示巡检采纳的额度 / 活动变化与各厂商免费额度与活动一览。官方没有 RSS 的厂商也在这里。">
 <link rel="alternate" type="application/rss+xml" title="LLM 厂商动态（合并流）" href="feeds/llm-news-all.xml">
 <link rel="alternate" type="application/rss+xml" title="LLM 免费额度 · 新活动与新额度变化" href="feeds/llm-intel-changes.xml">
 <style>
@@ -95,8 +95,8 @@
   .segbtn[aria-pressed=true] { background: var(--chip-active-bg); color: var(--chip-active-fg); }
 
   .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
-  /* 顶层三视图：厂商动态 / 最新变化 / 免费额度一览 */
-  .tabs { display: flex; gap: 6px; margin: 16px 0 0; }
+  /* 顶层三视图：厂商动态 / 最新变化 / 免费额度与活动一览 */
+  .tabs { display: flex; gap: 6px; margin: 16px 0 0; flex-wrap: wrap; }
   .tab {
     appearance: none; cursor: pointer; font-size: 14px; line-height: 1;
     padding: 8px 14px; border: 1px solid var(--line); border-bottom: 0;
@@ -110,6 +110,7 @@
   .qpart { display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 999px; background: var(--chip-bg); border: 1px solid var(--line); color: var(--chip-fg); font-size: 11.5px; font-weight: 400; }
   .qtext { margin-top: 4px; font-size: 13.5px; }
   .qmeta { margin-top: 5px; display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
+  .qp-tag { display: inline-block; margin-right: 4px; padding: 0 6px; border-radius: 999px; background: var(--warn-bg); border: 1px solid var(--warn-line); font-size: 11.5px; }
   .kind { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11.5px; border: 1px solid var(--line); }
   .kind.quota { background: var(--warn-bg); border-color: var(--warn-line); }
   .kind.release { background: var(--chip-bg); color: var(--chip-fg); }
@@ -186,7 +187,7 @@
   <nav class="tabs" role="tablist" aria-label="视图">
     <button type="button" class="tab" id="tab-news" role="tab" aria-selected="true">厂商动态</button>
     <button type="button" class="tab" id="tab-changes" role="tab" aria-selected="false">最新变化</button>
-    <button type="button" class="tab" id="tab-quotas" role="tab" aria-selected="false">免费额度一览</button>
+    <button type="button" class="tab" id="tab-quotas" role="tab" aria-selected="false">免费额度与活动一览</button>
   </nav>
 
   <div class="pane" id="pane-news">
@@ -203,7 +204,7 @@
     </div>
     <div class="chips" id="chips"></div>
     <p class="hint">
-      点厂商只看它家，订阅地址自动切成该家的单源；想找「哪家能白嫖」看<strong>免费额度一览</strong>。
+      点厂商只看它家，订阅地址自动切成该家的单源；想找「哪家能白嫖」看<strong>免费额度与活动一览</strong>。
     </p>
   </div>
 
@@ -231,11 +232,11 @@
 
   <div class="pane" id="pane-quotas" hidden>
     <div class="controls"><div class="row">
-      <input type="search" id="qq" placeholder="搜索厂商 / 额度关键词…" autocomplete="off" aria-label="搜索厂商">
+      <input type="search" id="qq" placeholder="搜索厂商 / 额度 / 活动关键词…" autocomplete="off" aria-label="搜索厂商">
       <span class="count" id="quotas-count"></span>
     </div>
     <p class="hint">
-      全部厂商的<strong>免费额度一览</strong>（当前快照，随每日巡检刷新）。
+      全部厂商的<strong>免费额度与活动一览</strong>（含限时活动；当前快照，随每日巡检刷新）。
       想看“哪家变了”请切到「最新变化」——一览本身不做订阅，避免每天重复推送整份清单。
     </p>
     </div>
@@ -624,7 +625,7 @@
     }
   }
 
-  // ---- 顶层三视图：动态（默认）/ 最新变化 / 免费额度一览 --------------------
+  // ---- 顶层三视图：动态（默认）/ 最新变化 / 免费额度与活动一览 --------------------
   // 后两个视图的数据同样是巡检产物（feeds/intel-changes.json、feeds/quotas.json），
   // 点开才拉取；页面依旧零硬编码——厂商与条目全部来自 JSON。
   var REPO = 'https://github.com/rockbenben/free-llm-intel';
@@ -740,6 +741,7 @@
     var rows = (quotasState.rows || []).filter(function (v) {
       if (!quotasState.q) return true;
       var hay = plain(v.name + ' ' + (v.free_quota || '') + ' ' + (v.validity || '') +
+                 ' ' + (v.promotions || '') +
                  ' ' + (v.free_models || []).join(' ') + ' ' + (v.id || '')).toLowerCase();
       return hay.indexOf(quotasState.q) >= 0;
     });
@@ -760,14 +762,27 @@
         var q = document.createElement('div'); q.className = 'qtext';
         q.textContent = plain(v.free_quota); div.appendChild(q);
       }
+      if (v.promotions) {
+        var promo = document.createElement('div'); promo.className = 'qtext';
+        var tag = document.createElement('span'); tag.className = 'qp-tag';
+        tag.textContent = '活动';
+        promo.appendChild(tag);
+        promo.appendChild(document.createTextNode(plain(v.promotions)));
+        div.appendChild(promo);
+      }
       var meta = document.createElement('div'); meta.className = 'qmeta';
-      if (v.validity) meta.appendChild(document.createTextNode('有效期：' + plain(v.validity)));
+      // 裸文本节点会并成同一个匿名 flex item，gap 不生效——每项都得包一层
+      function bit(text) {
+        var s = document.createElement('span');
+        s.textContent = text; meta.appendChild(s);
+      }
+      if (v.validity) bit('有效期：' + plain(v.validity));
       if (v.signup === 'card') {
         var warn = document.createElement('span');
         warn.className = 'kind quota'; warn.textContent = '需绑卡';
         meta.appendChild(warn);
       }
-      if (v.reviewed) meta.appendChild(document.createTextNode('最近核查 ' + v.reviewed));
+      if (v.reviewed) bit('最近核查 ' + v.reviewed);
       div.appendChild(meta);
       host.appendChild(div);
     });
