@@ -2489,6 +2489,25 @@ def _article_key(url: str) -> str:
     return key + "#" + frag if frag else key
 
 
+def _title_key(title: str) -> str:
+    """标题折叠键：折叠空白 + casefold，用于识别同一厂商内的重复标题条目。"""
+    return re.sub(r"\s+", " ", title or "").strip().casefold()
+
+
+def _prefer_article(a: Article, prev: Article) -> bool:
+    """同标题折叠时，`a` 是否应取代已留存的 `prev`。
+
+    规范 URL（不带 `#锚点`）优先：单页新闻列表里每条锚点常常是某篇真实文章的**第二份
+    拷贝**（实测 x.ai/news#d-2026-07-16 与 x.ai/news/grok-build-open-source 同一篇），
+    保留直链那条读者点进去才是文章本身。同为锚点或同为直链时，保留日期更新的一条。
+    """
+    a_frag = bool(urlparse(a.url).fragment)
+    p_frag = bool(urlparse(prev.url).fragment)
+    if a_frag != p_frag:
+        return not a_frag          # 无 fragment 的胜出
+    return (a.date or "") > (prev.date or "")   # 更新的胜出（同日期保留先到）
+
+
 def _same_site(u1: str, u2: str) -> bool:
     """同站判断：同域或互为子域（www. 视为同域）。"""
     try:
@@ -3158,13 +3177,27 @@ def _native_feed_vendors(intel_list: list[VendorIntel]) -> set[str]:
 
 
 def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
-    """该厂商**会进订阅源**的文章：排除晚于今天的日期（源页面把日期写成未来的情形）。
+    """该厂商**会进订阅源**的文章：排除晚于今天的日期，并把同一厂商内的重复标题折叠成一条。
 
     `write_rss_feeds` 只对有此类文章的厂商出源，所以 OPML 与 `llm-news-feeds.md` 里
     「本仓库自建源」的标注必须用**同一个判据** —— 否则当某厂商的文章日期全被误写成
     未来时，文档会给出一个并不存在的订阅地址（死链），而两边各自看都「对」。
+
+    标题折叠是**浏览页去重**：单页文档/变更日志站（deepseek 公告页、x.ai 新闻列表、
+    siliconflow 发布说明…）把每条 `#锚点` 都冠以整页主标题或某个分节名，于是同一句话
+    会以 5 个不同锚点在浏览页与订阅流里重复出现，读者看到的就是「很多条目重复」。
+    折叠只在**产出层**（feed / articles.json 索引）生效，归档 `.md` 仍逐条全量留档，
+    不违反「归档只增不减」。折叠时保留规范直链、其次最新日期那条（见 _prefer_article）。
     """
-    return [a for a in intel.all_news_articles if a.date <= today]
+    kept: dict[str, Article] = {}
+    for a in intel.all_news_articles:
+        if a.date > today:
+            continue
+        key = _title_key(a.title)
+        prev = kept.get(key)
+        if prev is None or _prefer_article(a, prev):
+            kept[key] = a
+    return list(kept.values())
 
 
 def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",

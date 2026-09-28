@@ -1544,6 +1544,56 @@ class TestSelfHostedRss(unittest.TestCase):
         self.assertIn("<title>A 新文章</title>", single)
         self.assertNotIn("<source ", single)
 
+    def test_same_title_entries_collapse_preferring_canonical_url(self):
+        """单页新闻列表的同标题重复条目必须在产出层折叠成一条，且保留规范直链。
+
+        实测 x.ai：列表页锚点 `news#d-2026-07-16-28` 与真实文章 `news/grok-x` 是同一篇，
+        锚点那条日期还更新（列表页按分节取日期）。不折叠的话浏览页会出现两行同标题；
+        折叠时若按「日期最新」会错留锚点，故规范直链优先。
+        """
+        arts = [
+            crawler_llm_intel.Article(
+                title="Grok X", url="https://x.ai/news#d-2026-07-16-28", date="2026-07-16"),
+            crawler_llm_intel.Article(
+                title="Grok X", url="https://x.ai/news/grok-x", date="2026-07-15"),
+            crawler_llm_intel.Article(
+                title="另一篇公告", url="https://x.ai/news/other", date="2026-07-10"),
+        ]
+        v = self._vendor("xai_grok", "xAI", arts)
+        crawler_llm_intel.write_rss_feeds(self.out_dir, [v], base_url="")
+        index = json.loads((self.out_dir / "articles.json").read_text(encoding="utf-8"))
+        rows = {r[0]: r[1] for r in index["articles"]}
+        self.assertEqual(set(rows), {"Grok X", "另一篇公告"},
+                         "同标题应折叠成一条，不同标题必须各自保留")
+        self.assertEqual(rows["Grok X"], "https://x.ai/news/grok-x",
+                         "应保留规范直链，而不是列表页锚点")
+        # 输入不被改写：归档仍应持有全部原始条目
+        self.assertEqual(len(v.all_news_articles), 3)
+
+    def test_same_title_anchor_only_keeps_most_recent(self):
+        """只有锚点（无规范直链可退）时，按日期最新折叠，仍是一条。"""
+        arts = [
+            crawler_llm_intel.Article(
+                title="DeepSeek-V4 预览版",
+                url="https://api-docs.deepseek.com/zh-cn/news/news260424#a", date="2024-09-05"),
+            crawler_llm_intel.Article(
+                title="DeepSeek-V4 预览版",
+                url="https://api-docs.deepseek.com/zh-cn/news/news260424#b", date="2026-04-24"),
+        ]
+        kept = crawler_llm_intel._rss_articles(
+            self._vendor("deepseek", "DeepSeek", arts), "2099-12-31")
+        self.assertEqual(len(kept), 1)
+        self.assertEqual(kept[0].date, "2026-04-24", "同锚点形态下保留日期更新的一条")
+
+    def test_title_collapse_is_case_and_space_insensitive(self):
+        arts = [
+            crawler_llm_intel.Article(title="New  Model", url="https://a.com/1", date="2026-01-01"),
+            crawler_llm_intel.Article(title="new model", url="https://a.com/2", date="2026-01-02"),
+        ]
+        kept = crawler_llm_intel._rss_articles(
+            self._vendor("v", "V", arts), "2099-12-31")
+        self.assertEqual(len(kept), 1, "大小写/空白差异的同一标题也应折叠")
+
     def test_vendors_index_lists_every_vendor_even_without_dates(self):
         """厂商索引必须列出**全部**厂商，包括文章全无日期、因而进不了聚合流的那几家。
 
