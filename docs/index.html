@@ -22,6 +22,12 @@
     --chip-active-fg: #ffffff;
     --warn-bg: #fff8c5;
     --warn-line: #d4a72c;
+    /* 字号标度：五档整数，中文最小可读档从 12 起（原先 11.5/12.5/13.5 半像素值散落各处） */
+    --fs-xs: 12px;    /* 胶囊 / 徽章 / 等宽 URL */
+    --fs-sm: 13px;    /* 次要文字：日期、计数、提示行、按钮 */
+    --fs-md: 14px;    /* 次级正文：导语、输入框、页签、额度正文 */
+    --fs-base: 15px;  /* 主正文与标题行 */
+    --fs-xl: 24px;    /* 页面主标题 */
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -45,17 +51,20 @@
     margin: 0;
     background: var(--bg);
     color: var(--fg);
-    font: 15px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    font: var(--fs-base)/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
           "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
   a { color: var(--accent); text-decoration: none; }
   a:hover { text-decoration: underline; }
+  /* 正文句子里的链接不能只靠颜色区分（色觉障碍与低对比下会彻底看不见）；
+     一览的厂商名是整行唯一的可点元素，同样要带下划线 */
+  .lede a, .hint a, footer p a, .qname a { text-decoration: underline; }
   .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
 
   header { padding: 32px 0 18px; border-bottom: 1px solid var(--line); }
-  h1 { font-size: 24px; margin: 0 0 8px; letter-spacing: -0.2px; }
-  .lede { color: var(--muted); font-size: 14px; margin: 0 0 16px; }
+  h1 { font-size: var(--fs-xl); margin: 0 0 8px; letter-spacing: -0.2px; }
+  .lede { color: var(--muted); font-size: var(--fs-md); margin: 0 0 16px; }
 
   .subscribe {
     display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
@@ -63,31 +72,31 @@
     border-radius: 8px; padding: 10px 12px;
   }
   .subscribe code {
-    font: 12px/1.5 ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font: var(--fs-xs)/1.5 ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
     word-break: break-all; flex: 1 1 260px; min-width: 0;
   }
   .btn {
     appearance: none; border: 1px solid var(--line); background: var(--card);
-    color: var(--fg); border-radius: 6px; padding: 5px 12px; font-size: 13px;
+    color: var(--fg); border-radius: 6px; padding: 5px 12px; font-size: var(--fs-sm);
     cursor: pointer; white-space: nowrap;
   }
   .btn:hover { background: var(--card-hover); }
   .btn.primary { background: var(--chip-active-bg); color: var(--chip-active-fg); border-color: transparent; }
   .btn.primary:hover { filter: brightness(1.08); }
 
-  .controls { position: sticky; top: 0; z-index: 5; background: var(--bg); padding: 14px 0 10px; border-bottom: 1px solid var(--line); }
+  .controls { background: var(--bg); padding: 14px 0 10px; border-bottom: 1px solid var(--line); }
   .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   input[type=search] {
-    flex: 1 1 240px; min-width: 0; padding: 7px 11px; font-size: 14px;
+    flex: 1 1 240px; min-width: 0; padding: 7px 11px; font-size: var(--fs-md);
     color: var(--fg); background: var(--card);
     border: 1px solid var(--line); border-radius: 6px;
   }
   input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
-  .count { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .count { color: var(--muted); font-size: var(--fs-sm); white-space: nowrap; }
   /* 视图切换（最新 / 均衡）：分段控件，配色与 chip 同源 */
   .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
   .segbtn {
-    appearance: none; cursor: pointer; font-size: 12.5px; line-height: 1;
+    appearance: none; cursor: pointer; font-size: var(--fs-sm); line-height: 1;
     padding: 6px 10px; border: 0; background: var(--chip-bg); color: var(--chip-fg);
     white-space: nowrap;
   }
@@ -96,9 +105,15 @@
 
   .chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
   /* 顶层三视图：厂商动态 / 最新变化 / 免费额度与活动一览 */
-  .tabs { display: flex; gap: 6px; margin: 16px 0 0; flex-wrap: wrap; }
+  /* 视图切换常驻：滚动时「换视图」这个动作不能滚丢了，
+     而筛选块（搜索 + 厂商 chips + 提示）改随内容滚动——它曾占满 39% 移动视口 */
+  .tabs {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    position: sticky; top: 0; z-index: 6;
+    background: var(--bg); padding-top: 16px; border-bottom: 1px solid var(--line);
+  }
   .tab {
-    appearance: none; cursor: pointer; font-size: 14px; line-height: 1;
+    appearance: none; cursor: pointer; font-size: var(--fs-md); line-height: 1;
     padding: 8px 14px; border: 1px solid var(--line); border-bottom: 0;
     border-radius: 8px 8px 0 0; background: var(--chip-bg); color: var(--chip-fg);
   }
@@ -106,16 +121,16 @@
   .pane[hidden] { display: none; }
   .qrow { border-bottom: 1px solid var(--line); padding: 12px 4px; }
   .qrow:last-child { border-bottom: 0; }
-  .qname { font-size: 15px; font-weight: 600; }
-  .qpart { display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 999px; background: var(--chip-bg); border: 1px solid var(--line); color: var(--chip-fg); font-size: 11.5px; font-weight: 400; }
-  .qtext { margin-top: 4px; font-size: 13.5px; }
-  .qmeta { margin-top: 5px; display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
-  .qp-tag { display: inline-block; margin-right: 4px; padding: 0 6px; border-radius: 999px; background: var(--warn-bg); border: 1px solid var(--warn-line); font-size: 11.5px; }
-  .kind { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11.5px; border: 1px solid var(--line); }
+  .qname { font-size: var(--fs-base); font-weight: 600; }
+  .qpart { display: inline-block; margin-left: 8px; padding: 1px 7px; border-radius: 999px; background: var(--chip-bg); border: 1px solid var(--line); color: var(--chip-fg); font-size: var(--fs-xs); font-weight: 400; }
+  .qtext { margin-top: 4px; font-size: var(--fs-md); }
+  .qmeta { margin-top: 5px; display: flex; gap: 8px; flex-wrap: wrap; font-size: var(--fs-sm); color: var(--muted); }
+  .qp-tag { display: inline-block; margin-right: 4px; padding: 0 6px; border-radius: 999px; background: var(--warn-bg); border: 1px solid var(--warn-line); font-size: var(--fs-xs); }
+  .kind { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: var(--fs-xs); border: 1px solid var(--line); }
   .kind.quota { background: var(--warn-bg); border-color: var(--warn-line); }
   .kind.release { background: var(--chip-bg); color: var(--chip-fg); }
   .chip {
-    appearance: none; cursor: pointer; font-size: 12.5px; line-height: 1;
+    appearance: none; cursor: pointer; font-size: var(--fs-sm); line-height: 1;
     padding: 5px 10px; border-radius: 999px; border: 1px solid var(--line);
     background: var(--chip-bg); color: var(--chip-fg); white-space: nowrap;
   }
@@ -123,8 +138,9 @@
   .chip[aria-pressed=true] { background: var(--chip-active-bg); color: var(--chip-active-fg); border-color: transparent; }
   /* 「显示其余 N 家」：虚线描边，和可筛选的实底 chip 区分开 */
   .chip.more { background: transparent; border-style: dashed; color: var(--accent); }
-  .chip .n { opacity: .62; margin-left: 5px; font-variant-numeric: tabular-nums; }
-  .hint { margin: 8px 0 0; color: var(--muted); font-size: 12px; }
+  .chip .n { margin-left: 5px; font-variant-numeric: tabular-nums; }
+  /* 提示行是辅助说明，留在最小档：升到 13px 后它在手机上要吃掉 5 行，把首条内容顶出屏幕 */
+  .hint { margin: 8px 0 0; color: var(--muted); font-size: var(--fs-xs); }
 
   ul.items { list-style: none; margin: 0; padding: 8px 0 40px; }
   ul.items li { border-bottom: 1px solid var(--line); }
@@ -132,34 +148,34 @@
   .item { display: flex; gap: 14px; padding: 12px 4px; border-radius: 6px; }
   .item:hover { background: var(--card-hover); }
   .date {
-    flex: 0 0 84px; color: var(--muted); font-size: 12.5px; padding-top: 2px;
+    flex: 0 0 84px; color: var(--muted); font-size: var(--fs-sm); padding-top: 2px;
     font-variant-numeric: tabular-nums;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   }
-  .date.none { font-style: italic; opacity: .7; }
+  .date.none { font-style: italic; }
   .body { flex: 1 1 auto; min-width: 0; }
-  .title { font-size: 15px; line-height: 1.45; }
+  .title { font-size: var(--fs-base); line-height: 1.45; }
   .title a { color: var(--fg); }
   .title a:hover { color: var(--accent); }
-  .meta { margin-top: 5px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; font-size: 12.5px; color: var(--muted); }
+  .meta { margin-top: 5px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; font-size: var(--fs-sm); color: var(--muted); }
   .vendor {
     display: inline-block; padding: 2px 8px; border-radius: 999px;
     background: var(--chip-bg); border: 1px solid var(--line);
-    color: var(--chip-fg); font-size: 12px;
+    color: var(--chip-fg); font-size: var(--fs-xs);
   }
   a.vendor:hover { border-color: var(--accent); text-decoration: none; }
-  .note { color: var(--muted); font-size: 12.5px; }
+  .note { color: var(--muted); font-size: var(--fs-sm); }
 
   .msg { padding: 28px 0 60px; color: var(--muted); }
   .more-wrap { text-align: center; padding: 4px 0 40px; }
   .msg.warn { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 8px; padding: 14px 16px; color: var(--fg); }
-  .msg.warn pre { margin: 8px 0 0; font-size: 12.5px; overflow-x: auto; }
+  .msg.warn pre { margin: 8px 0 0; font-size: var(--fs-sm); overflow-x: auto; }
 
-  footer { border-top: 1px solid var(--line); padding: 20px 0 48px; color: var(--muted); font-size: 13px; }
-  footer h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
+  footer { border-top: 1px solid var(--line); padding: 20px 0 48px; color: var(--muted); font-size: var(--fs-sm); }
+  footer h2 { font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 10px; }
   footer ul { list-style: none; margin: 0 0 18px; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; }
   footer ul li { display: inline-flex; align-items: baseline; gap: 5px; }
-  footer ul li .n { color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+  footer ul li .n { color: var(--muted); font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
   @media (max-width: 560px) {
     .item { flex-direction: column; gap: 4px; }
     .date { flex-basis: auto; }
@@ -185,12 +201,16 @@
   </header>
 
   <nav class="tabs" role="tablist" aria-label="视图">
-    <button type="button" class="tab" id="tab-news" role="tab" aria-selected="true">厂商动态</button>
-    <button type="button" class="tab" id="tab-changes" role="tab" aria-selected="false">最新变化</button>
-    <button type="button" class="tab" id="tab-quotas" role="tab" aria-selected="false">免费额度与活动一览</button>
+    <button type="button" class="tab" id="tab-news" role="tab" aria-selected="true"
+            aria-controls="pane-news" tabindex="0">厂商动态</button>
+    <button type="button" class="tab" id="tab-changes" role="tab" aria-selected="false"
+            aria-controls="pane-changes" tabindex="-1">最新变化</button>
+    <button type="button" class="tab" id="tab-quotas" role="tab" aria-selected="false"
+            aria-controls="pane-quotas" tabindex="-1">免费额度与活动一览</button>
   </nav>
 
-  <div class="pane" id="pane-news">
+  <main>
+  <div class="pane" id="pane-news" role="tabpanel" aria-labelledby="tab-news" tabindex="0">
   <div class="controls">
     <div class="row">
       <input type="search" id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
@@ -200,7 +220,7 @@
         <button type="button" class="segbtn" id="view-digest" aria-pressed="false"
                 title="每家只保留最新 20 条，用来快速扫一遍各家动态">每家最新 20</button>
       </div>
-      <span class="count" id="count">加载中…</span>
+      <span class="count" id="count" role="status" aria-live="polite">加载中…</span>
     </div>
     <div class="chips" id="chips"></div>
     <p class="hint">
@@ -208,17 +228,19 @@
     </p>
   </div>
 
-  <div id="msg" class="msg">正在加载聚合源…</div>
+  <div id="msg" class="msg" role="status" aria-live="polite"
+       data-loading="正在加载聚合源…">正在加载聚合源…</div>
   <ul class="items" id="items"></ul>
   <p class="more-wrap" id="more-wrap" hidden>
     <button class="btn" id="more-btn" type="button">显示更早的条目</button>
   </p>
   </div><!-- /pane-news -->
 
-  <div class="pane" id="pane-changes" hidden>
+  <div class="pane" id="pane-changes" role="tabpanel" aria-labelledby="tab-changes"
+       tabindex="0" hidden>
     <div class="controls"><div class="row">
       <input type="search" id="cq" placeholder="搜索变化条目…" autocomplete="off" aria-label="搜索变化条目">
-      <span class="count" id="changes-count"></span>
+      <span class="count" id="changes-count" role="status" aria-live="polite"></span>
     </div>
     <p class="hint">
       哪家的<strong>免费额度或活动变了</strong>、又<strong>发布了哪些新模型</strong>，都按时间排在这里，
@@ -227,13 +249,16 @@
     </p>
     </div>
     <ul class="items" id="changes-list"></ul>
-    <div class="msg" id="changes-msg">加载中…</div>
+    <div class="msg" id="changes-msg" role="status" aria-live="polite"
+         data-loading="加载中…">加载中…</div>
   </div>
 
-  <div class="pane" id="pane-quotas" hidden>
+  <div class="pane" id="pane-quotas" role="tabpanel" aria-labelledby="tab-quotas"
+       tabindex="0" hidden>
     <div class="controls"><div class="row">
-      <input type="search" id="qq" placeholder="搜索厂商 / 额度 / 活动关键词…" autocomplete="off" aria-label="搜索厂商">
-      <span class="count" id="quotas-count"></span>
+      <input type="search" id="qq" placeholder="搜索厂商 / 额度 / 活动关键词…" autocomplete="off"
+             aria-label="搜索厂商、额度或活动关键词">
+      <span class="count" id="quotas-count" role="status" aria-live="polite"></span>
     </div>
     <p class="hint">
       全部厂商的<strong>免费额度与活动一览</strong>（含限时活动；当前快照，随每日巡检刷新）。
@@ -241,13 +266,15 @@
     </p>
     </div>
     <div id="quotas-list"></div>
-    <div class="msg" id="quotas-msg">加载中…</div>
+    <div class="msg" id="quotas-msg" role="status" aria-live="polite"
+         data-loading="加载中…">加载中…</div>
   </div>
+  </main>
 
   <footer>
     <h2>按厂商订阅</h2>
     <ul id="vendor-feeds"></ul>
-    <p id="vendor-index-note" style="display:none">
+    <p id="vendor-index-note" hidden>
       ⚠️ 厂商索引 <code>feeds/vendors.json</code> 未加载，下方只列出聚合流里出现过的厂商。
       文章全无日期或都偏旧的厂商会缺失（它们不进聚合流），
       完整清单见 llm-news-feeds.md。
@@ -561,8 +588,7 @@
     } else {
       el.moreWrap.hidden = true;
     }
-    el.msg.style.display = rows.length ? 'none' : 'block';
-    if (!rows.length) el.msg.textContent = '没有匹配的条目。';
+    paintMsg(el.msg, rows.length, '没有匹配的条目。');
   }
 
   function renderItems(resetShown) {
@@ -641,10 +667,13 @@
     changes: document.getElementById('tab-changes'),
     quotas: document.getElementById('tab-quotas')
   };
+  var TAB_ORDER = ['news', 'changes', 'quotas'];
   function showTab(name, keepUrl) {
     Object.keys(panes).forEach(function (k) {
       panes[k].hidden = (k !== name);
       tabs[k].setAttribute('aria-selected', String(k === name));
+      // 一组页签在 Tab 键序里只占一站（ARIA 分页签约定）
+      tabs[k].tabIndex = (k === name) ? 0 : -1;
     });
     currentTab = name;
     updateSubscribe();
@@ -666,9 +695,20 @@
   if (changesSubEl) {
     changesSubEl.href = new URL(CHANGES_FEED, location.href).href;
   }
-  tabs.news.addEventListener('click', function () { showTab('news'); });
-  tabs.changes.addEventListener('click', function () { showTab('changes'); });
-  tabs.quotas.addEventListener('click', function () { showTab('quotas'); });
+  TAB_ORDER.forEach(function (k) {
+    tabs[k].addEventListener('click', function () { showTab(k); });
+  });
+  // 页签内用左右键互切、Home/End 跳首尾；Tab 键留给页签之后的内容
+  document.querySelector('.tabs').addEventListener('keydown', function (ev) {
+    var i = TAB_ORDER.indexOf(document.activeElement.id.replace('tab-', ''));
+    if (i < 0) return;
+    var next = { ArrowRight: 1, ArrowLeft: -1, Home: -i, End: TAB_ORDER.length - 1 - i }[ev.key];
+    if (next === undefined) return;
+    ev.preventDefault();
+    var k = TAB_ORDER[(i + next + TAB_ORDER.length) % TAB_ORDER.length];
+    tabs[k].focus();
+    showTab(k);
+  });
 
   var changesState = { rows: null, q: '' };
   function renderChanges() {
@@ -708,7 +748,7 @@
     document.getElementById('changes-count').textContent =
       rows.length + ' / ' + changesState.rows.length + ' 条';
     var msg = document.getElementById('changes-msg');
-    msg.style.display = rows.length ? 'none' : 'block';
+    paintMsg(msg, rows.length, '没有匹配的变化条目，换个关键词试试。');
   }
   function loadChanges() {
     if (changesState.rows) { renderChanges(); return; }
@@ -737,6 +777,13 @@
   var PART_NAMES = { 1: 'Part 1 国内平台', 2: 'Part 2 国际平台', 3: 'Part 3 云平台', 4: 'Part 4 编程工具' };
   // 档案字段含 Markdown 强调符，页面上按纯文本展示
   function plain(s) { return String(s || '').replace(/[*`]/g, ''); }
+  // 提示行是「加载中 / 空结果 / 取数失败」三态共用的一个元素。谁最后画它谁定状态：
+  // 空结果必须自己说清楚，不能把「加载中…」留在页面上——读者只会以为卡住了。
+  function paintMsg(el, count, emptyText) {
+    el.classList.remove('warn');
+    el.style.display = count ? 'none' : 'block';
+    el.textContent = count ? (el.getAttribute('data-loading') || '') : emptyText;
+  }
   function renderQuotas() {
     var rows = (quotasState.rows || []).filter(function (v) {
       if (!quotasState.q) return true;
@@ -788,7 +835,7 @@
     });
     document.getElementById('quotas-count').textContent = rows.length + ' 家';
     var msg = document.getElementById('quotas-msg');
-    msg.style.display = rows.length ? 'none' : 'block';
+    paintMsg(msg, rows.length, '没有匹配的厂商，换个关键词试试。');
   }
   function loadQuotas() {
     if (quotasState.rows) { renderQuotas(); return; }
@@ -888,7 +935,7 @@
     });
     renderVendorFeeds(index);
     // 缓存里有索引时不算「索引缺失」——退化的只是这次网络没帮上忙
-    el.vendorIndexNote.style.display = (!index && !fromCache) ? '' : 'none';
+    el.vendorIndexNote.hidden = !!index || !!fromCache;
   }
 
   function applyArticles(data) {
@@ -927,7 +974,7 @@
       applyVendors(index, false);
       if (state.all.length) render();
     } else if (!bootCache) {
-      el.vendorIndexNote.style.display = '';
+      el.vendorIndexNote.hidden = false;
     }
   });
   articlesNet.then(function (data) {

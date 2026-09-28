@@ -3466,6 +3466,83 @@ class TestQuotasIndex(unittest.TestCase):
                           f"{row['id']} 的锚点 {row['anchor']} 在 README 里不存在")
 
 
+class TestBrowsePageDesignContract(unittest.TestCase):
+    """docs/index.html 的设计契约守卫；DESIGN.md 是同一份契约的文字版。
+
+    2026-09-28 Design QA 查出的四类问题都会静默复发（页面没有构建、没有组件库，
+    坏了不报错）：页签与面板的 ARIA 关联、字号标度、常驻 chrome、空结果文案。
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        page = (Path(__file__).resolve().parent / "docs" / "index.html").read_text(
+            encoding="utf-8")
+        cls.page = page
+        cls.style = re.search(r"<style>(.*?)</style>", page, re.S).group(1)
+
+    def _rule(self, selector):
+        m = re.search(r"\n\s*" + re.escape(selector) + r"[^{]*\{([^}]*)\}", self.style)
+        self.assertIsNotNone(m, f"CSS 里找不到 {selector} 规则")
+        return m.group(1)
+
+    def test_tab_panel_aria_wiring(self):
+        """每个页签都要指向一个真实存在、且反向标注自己的 tabpanel。"""
+        tabs = re.findall(r"<button[^>]*role=\"tab\"[^>]*>", self.page)
+        self.assertEqual(len(tabs), 3, "页签数量变了？同步改这条守卫")
+        for tag in tabs:
+            tid = re.search(r'id="([^"]+)"', tag).group(1)
+            ctl = re.search(r'aria-controls="([^"]+)"', tag)
+            self.assertIsNotNone(ctl, f"{tid} 缺 aria-controls，读屏无法跳到面板")
+            panel = re.search(r'<div class="pane" id="%s"[^>]*>' % ctl.group(1), self.page)
+            self.assertIsNotNone(panel,
+                                 f"{tid} 的 aria-controls 指向不存在的 {ctl.group(1)}")
+            self.assertIn('role="tabpanel"', panel.group(0))
+            self.assertIn('aria-labelledby="%s"' % tid, panel.group(0),
+                          "面板要能报出自己属于哪个页签")
+
+    def test_single_main_landmark_wrapping_the_panes(self):
+        self.assertEqual(len(re.findall(r"<main\b", self.page)), 1,
+                         "读屏的「跳到主内容」依赖唯一 main")
+        body = self.page[self.page.index("<main"):self.page.index("</main>")]
+        for pid in ("pane-news", "pane-changes", "pane-quotas"):
+            self.assertIn('id="%s"' % pid, body, f"{pid} 落在了 main 之外")
+
+    def test_font_sizes_stay_on_the_scale(self):
+        """字号一律走 --fs-*；半像素值（11.5/12.5/13.5）已清过一轮，不许回来。"""
+        off_scale = [ln.strip() for ln in self.style.splitlines()
+                     if "font-size:" in ln and "var(--fs-" not in ln]
+        self.assertEqual(off_scale, [], "这些字号没落在标度 token 上")
+        self.assertFalse(re.search(r"font-size:\s*\d+\.\d+px", self.style),
+                         "又引入半像素字号了")
+        self.assertGreaterEqual(len(re.findall(r"--fs-\w+:", self.style)), 5,
+                                "标度档位定义被删了？")
+
+    def test_only_the_tab_bar_is_sticky(self):
+        """筛选块（搜索 + 厂商胶囊 + 提示）一旦 sticky，手机上就没有正文可看了。
+
+        实测：360x740 下它高 289px = 39% 视口，而页签栏反而滚走。
+        """
+        self.assertNotIn("sticky", self._rule(".controls"),
+                         "筛选块不许常驻置顶")
+        self.assertIn("position: sticky", self._rule(".tabs"),
+                      "页签栏必须常驻，换视图不能靠滚回顶部")
+
+    def test_text_is_never_dimmed_with_opacity(self):
+        """opacity 压暗文字会在深色底上直接跌破对比度线（.chip .n 就是这么翻车的）。"""
+        self.assertNotIn("opacity", self.style,
+                         "层级请用 --muted / --chip-fg 表达，不要用透明度")
+
+    def test_every_pane_has_its_own_empty_state_copy(self):
+        """空结果不能沿用「加载中…」——读者只会以为页面卡住了。"""
+        empties = re.findall(r"paintMsg\([^,]+,\s*rows\.length,\s*'([^']+)'", self.page)
+        self.assertEqual(len(empties), 3, "三个页签各需一句自己的空结果文案")
+        loading = re.findall(r'data-loading="([^"]+)"', self.page)
+        self.assertEqual(len(loading), 3, "每个提示行都要带 loading 文案")
+        for text in empties:
+            self.assertNotIn(text, loading)
+            self.assertNotIn("加载", text, "空结果文案里不许出现「加载」字样")
+
+
 class TestIntelChangesFeed(unittest.TestCase):
     """额度/活动变化流：变更日志解析、与雷达合流、README 人工尾部保留。"""
 
