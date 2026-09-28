@@ -1119,8 +1119,22 @@ _MONTHS = {m: i for i, m in enumerate(
      "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
 
 
+def _ymd_or_empty(y: int, m: int, d: int) -> str:
+    """月/日范围校验后拼 YYYY-MM-DD；非法返回空串。
+
+    f-string 格式化整数永远不抛错（各处 try/except ValueError 实际是死代码）：
+    没有这道闸，`2025.13.1` 这类文本会拼出 2025-13-01 混进归档，
+    而字符串比较拦不住它（2025-13-01 < 今天），永不自纠。
+    """
+    try:
+        datetime(y, m, d)
+    except ValueError:
+        return ""
+    return f"{y:04d}-{m:02d}-{d:02d}"
+
+
 def _drop_future_date(day: str) -> str:
-    """丢弃晚于今天的日期（返回空串）。
+    """丢弃非法与远未来的日期（返回空串）。
 
     页面卡片上的日期可能是错的（实测见过把已发布的文章印成未来某日的情形），条目因此被
     当作未来日期排到归档 md 与 README 的最前面。归档按 URL 增量合并、**不会自我纠正**，
@@ -1131,7 +1145,18 @@ def _drop_future_date(day: str) -> str:
     """
     if not day:
         return ""
-    if day > datetime.now().strftime("%Y-%m-%d"):
+    try:
+        datetime.strptime(day, "%Y-%m-%d")
+    except ValueError:
+        # 非法日期（如 2025-13-01）：纯字符串比较防不住，必须按日历校验
+        print(f"      [warn] 丢弃非法日期 {day}（源页面日期有误，条目保留为无日期）",
+              file=sys.stderr)
+        return ""
+    # 时区容差放行「本地明天」：全球时区最大跨度 26h（UTC+14 vs UTC-12），
+    # 东九区源站凌晨发布而管线跑在 UTC/西半球时，源日期就是本地的明天。
+    # 剥掉这类日期对归档的伤害（永久无日期）大于放行一天的排序影响。
+    limit = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
+    if day > limit:
         print(f"      [warn] 丢弃未来日期 {day}（源页面日期有误，条目保留为无日期）",
               file=sys.stderr)
         return ""
@@ -1159,20 +1184,18 @@ def normalize_feed_date(raw: str) -> str:
         pass
     m = re.search(r"(20\d{2})" + _DATE_SEP_YM + r"(\d{1,2})" + _DATE_SEP_MD + r"(\d{1,2})", raw)
     if m:
-        try:
-            return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
-        except ValueError:
-            pass
+        out = _ymd_or_empty(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        if out:
+            return out
     m = re.search(
         r"(?i)(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+"
         r"(\d{1,2}),?\s+(20\d{2})", raw)
     if m:
         mon = _MONTHS.get(m.group(1)[:3].lower())
         if mon:
-            try:
-                return f"{int(m.group(3)):04d}-{mon:02d}-{int(m.group(2)):02d}"
-            except ValueError:
-                pass
+            out = _ymd_or_empty(int(m.group(3)), mon, int(m.group(2)))
+            if out:
+                return out
     return ""
 
 
@@ -1540,8 +1563,14 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
                     f"{dm4.group(1)}-{int(dm4.group(2)):02d}-{int(dm4.group(3) or 1):02d}")
                 sec_level = level
                 continue
-            if not sec_date or level <= sec_level:
-                continue  # 与分节同级或更浅的标题不是它的条目
+            if level <= sec_level:
+                # 与分节同级或更浅的非日期标题：该分节到此结束。不清掉 sec_date 的话，
+                # 日期会渗进后面**无日期分节**下的子标题（抓出「2026-09-17｜功能总览」
+                # 这类日期与内容错配的条目）。
+                sec_date, sec_level = "", 9
+                continue
+            if not sec_date:
+                continue
             url4 = f"{base_url.split('#')[0]}#{quote(hm.group(2))}"
             if url4 in seen4:
                 continue
@@ -1902,8 +1931,8 @@ def extract_md_changelog(raw: str, base_url: str, stype: str = "changelog",
         if not mon:
             return ""
         for year in (int(today[:4]), int(today[:4]) - 1):
-            cand = f"{year:04d}-{mon:02d}-{day:02d}"
-            if cand <= today:
+            cand = _ymd_or_empty(year, mon, day)
+            if cand and cand <= today:
                 return cand
         return ""
 
