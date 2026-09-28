@@ -1254,6 +1254,56 @@ sources:
         self.assertFalse((self.root / "llm-intel-state.json").exists())
         self.assertFalse((self.root / "README.md").exists())
 
+    def test_rebuild_only_keeps_every_vendor_in_quotas(self):
+        """rebuild 的重建集只有「有动态归档的厂商」，一览必须仍是全集。
+
+        2026-09 回归：quotas.json 跟着 intel_list 出，本地一次 rebuild 就把线上
+        一览砍掉一半，Part 1 的几家国内平台和整条 Part 4 工具线静默消失。
+        """
+        # vendor_c 只有情报源：既没登记动态页，也没归档 → rebuild 不会重建它
+        (self.root / "intel.yaml").write_text("""
+vendors:
+  - id: vendor_a
+    brand: Vendor A
+    homepage: https://a.com
+    products: []
+  - id: vendor_b
+    brand: Vendor B
+    homepage: https://b.com
+    products: []
+  - id: vendor_c
+    brand: Vendor C
+    homepage: https://c.com
+    products: []
+sources:
+  - vendor_id: vendor_a
+    type: blog
+    url: https://a.com/blog
+  - vendor_id: vendor_a
+    type: pricing
+    url: https://a.com/pricing
+  - vendor_id: vendor_b
+    type: feed
+    url: https://b.com/rss.xml
+  - vendor_id: vendor_c
+    type: pricing
+    url: https://c.com/pricing
+""", encoding="utf-8")
+        with mock.patch.object(crawler_llm_intel, "crawl_vendor",
+                               side_effect=AssertionError("rebuild 不得抓取")):
+            crawler_llm_intel.main(["--rebuild-only", "--yaml", "intel.yaml",
+                                    "--news-md", "news.md", "--news-opml", "news.opml"])
+        feeds = self.root / "docs" / "feeds"
+        payload = json.loads((feeds / "quotas.json").read_text(encoding="utf-8"))
+        indexed = json.loads((feeds / "articles.json").read_text(encoding="utf-8"))
+        self.assertEqual({r[2] for r in indexed["articles"]}, {"vendor_a", "vendor_b"},
+                         "夹具前提：动态类产物确实只重建出两家")
+        self.assertEqual([r["id"] for r in payload["vendors"]],
+                         ["vendor_a", "vendor_b", "vendor_c"],
+                         "一览不得因为少重建一家而缩水")
+        self.assertEqual([r["rank"] for r in payload["vendors"]], [1, 2, 3],
+                         "rank 连续，档案锚点才不会串号")
+
     def test_rebuild_only_rejects_only_and_no_news(self):
         rc = crawler_llm_intel.main(["--rebuild-only", "--no-news",
                                      "--yaml", "intel.yaml"])
@@ -3298,34 +3348,65 @@ class TestSpaShellDetection(unittest.TestCase):
 
 
 class TestQuotasIndex(unittest.TestCase):
-    """额度总表的机读镜像 quotas.json。"""
+    """「免费额度与活动一览」的机读镜像 quotas.json。"""
+
+    def _yaml_vendors(self):
+        root = Path(__file__).resolve().parent
+        vendors, _sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        return vendors
 
     def test_payload_fields_and_part_mapping(self):
-        prof = {"category": "tools", "display_name": "Demo (X)",
-                "free_quota": "q", "validity": "v", "free_models": ["m"],
-                "tier_caveats": [], "preconditions": "p", "promotions": "",
-                "links": [["官网", "https://d.example"]]}
-        intel = crawler_llm_intel.VendorIntel(vendor_id="demo", brand="Demo",
-                                              homepage="https://d.example", products=[])
-        payload = crawler_llm_intel.build_quotas_payload(
-            [(9, intel, prof)], {"demo": "2026-09-20"})
+        vendors = [{"id": "trae", "brand": "Trae", "homepage": "https://www.trae.cn/"}]
+        payload = crawler_llm_intel.build_quotas_payload(vendors, {})
         row = payload["vendors"][0]
         self.assertEqual(payload["count"], 1)
         self.assertEqual(row["part"], 4, "tools 必须是 Part 4")
-        self.assertEqual(row["anchor"], "9-demo-x")
-        self.assertEqual(row["reviewed"], "2026-09-20")
+        self.assertEqual(row["anchor"], crawler_llm_intel.vendor_anchor(
+            1, provider_profiles.get_provider_profile("trae")))
+        self.assertEqual(row["homepage"], "https://www.trae.cn/")
+        self.assertIn("promotions", row)
         self.assertIsNone(row["openai_compat"])
+
+    def test_reviewed_date_carried(self):
+        payload = crawler_llm_intel.build_quotas_payload(
+            [{"id": "trae", "brand": "Trae", "homepage": "https://www.trae.cn/"}],
+            {"trae": "2026-09-20"})
+        self.assertEqual(payload["vendors"][0]["reviewed"], "2026-09-20")
 
     def test_every_vendor_part_matches_readme_ordering(self):
         """part 编号必须与 README 章节一致：桶序 domestic→international→cloud→tools。"""
-        recs = crawler_llm_intel.order_vendor_records(
-            [crawler_llm_intel.VendorIntel(vendor_id=v, brand=v, homepage="", products=[])
-             for v in provider_profiles.PROVIDER_PROFILES])
-        payload = crawler_llm_intel.build_quotas_payload(recs, {})
+        payload = crawler_llm_intel.build_quotas_payload(self._yaml_vendors(), {})
         parts = [r["part"] for r in payload["vendors"]]
         self.assertEqual(parts, sorted(parts),
                          "quotas.json 的 part 必须单调不减（README 章节同序）")
         self.assertEqual(max(parts), 4)
+
+    def test_covers_every_yaml_vendor(self):
+        """一览必须是全集：漏一家 = 页面上查无此厂商，且没有任何报错。
+
+        2026-09 的回归：quotas.json 曾跟着 intel_list 出，而 intel_list 在
+        --rebuild-only / 核查包快进下只含有博客归档的那部分厂商，线上一度少掉一半，
+        国内平台若干家与整条 Part 4 工具线静默消失。
+        """
+        vendors = self._yaml_vendors()
+        payload = crawler_llm_intel.build_quotas_payload(vendors, {})
+        self.assertEqual(payload["count"], len(vendors))
+        self.assertEqual({r["id"] for r in payload["vendors"]},
+                         {v["id"] for v in vendors})
+        self.assertEqual([r["rank"] for r in payload["vendors"]],
+                         list(range(1, len(vendors) + 1)), "rank 必须连续，锚点才不串号")
+
+    def test_anchors_match_readme_headings(self):
+        """rank/anchor 要能真的跳到 README 里那一家的章节。"""
+        root = Path(__file__).resolve().parent
+        readme = (root / "README.md").read_text(encoding="utf-8")
+        payload = crawler_llm_intel.build_quotas_payload(self._yaml_vendors(), {})
+        headings = {crawler_llm_intel._gh_slug(m.group(0))
+                    for m in re.finditer(r"^### \d+\. .+$", readme, re.M)}
+        self.assertTrue(headings, "README 里没解析到厂商章节，先修测试本身")
+        for row in payload["vendors"]:
+            self.assertIn(row["anchor"], headings,
+                          f"{row['id']} 的锚点 {row['anchor']} 在 README 里不存在")
 
 
 class TestIntelChangesFeed(unittest.TestCase):

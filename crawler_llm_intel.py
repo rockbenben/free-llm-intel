@@ -52,7 +52,7 @@ from datetime import date, datetime, timedelta, timezone
 from email.utils import format_datetime, parsedate_to_datetime
 from html.parser import HTMLParser
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 from urllib.parse import quote, unquote, urljoin, urlparse
 
 import requests
@@ -2682,25 +2682,28 @@ def _mask_ts(text: str) -> str:
     return _TS_RE.sub("__TS__", text)
 
 
-def order_vendor_records(intel_list: list[VendorIntel]) -> list[tuple[int, VendorIntel, dict]]:
-    """按 README 展示顺序（国内 / 国际 / 云 / 工具）返回 (序号, intel, profile)。
+_README_CATEGORIES = ("domestic", "international", "cloud", "tools")
+
+
+def bucket_by_readme_order(pairs: list[tuple[Any, dict]]) -> list[tuple[Any, dict]]:
+    """按 README 展示顺序（国内 / 国际 / 云 / 工具）重排 `(条目, profile)` 对。
 
     tools 必须有自己的桶并排最后——否则回落到 domestic 桶，README 里会变成
     「Part 1 → Part 4 → Part 2 → Part 3」的错位章节序。
     """
-    categories = OrderedDict([("domestic", []), ("international", []), ("cloud", []),
-                              ("tools", [])])
-    for intel in intel_list:
-        prof = get_provider_profile(intel.vendor_id, intel.brand, intel.homepage)
+    categories = OrderedDict((c, []) for c in _README_CATEGORIES)
+    for item, prof in pairs:
         cat = prof.get("category", "domestic")
-        categories[cat if cat in categories else "domestic"].append((intel, prof))
-    records: list[tuple[int, VendorIntel, dict]] = []
-    idx = 1
-    for items in categories.values():
-        for intel, prof in items:
-            records.append((idx, intel, prof))
-            idx += 1
-    return records
+        categories[cat if cat in categories else "domestic"].append((item, prof))
+    return [pair for items in categories.values() for pair in items]
+
+
+def order_vendor_records(intel_list: list[VendorIntel]) -> list[tuple[int, VendorIntel, dict]]:
+    """返回 README 里的 `(序号, intel, profile)`，序号即章节编号（锚点靠它拼）。"""
+    pairs = [(intel, get_provider_profile(intel.vendor_id, intel.brand, intel.homepage))
+             for intel in intel_list]
+    return [(idx, intel, prof)
+            for idx, (intel, prof) in enumerate(bucket_by_readme_order(pairs), 1)]
 
 
 def _gh_slug(heading: str) -> str:
@@ -4310,25 +4313,31 @@ def vendor_anchor(idx: int, prof: dict) -> str:
 _PART_BY_CATEGORY = {"domestic": 1, "international": 2, "cloud": 3, "tools": 4}
 
 
-def build_quotas_payload(records: list[tuple[int, VendorIntel, dict]],
-                         reviews: dict[str, str]) -> dict:
-    """额度总表的机读版（quotas.json）：README Part 1–4 的结构化镜像。
+def build_quotas_payload(vendors: list[dict], reviews: dict[str, str]) -> dict:
+    """「免费额度与活动一览」的机读版（quotas.json）：README Part 1–4 的结构化镜像。
 
     存在理由：情报本体此前只有 Markdown 出口，脚本 / 浏览页无法消费。
-    字段全部取**生效档案**（含 AI overlay），`reviewed` 取例行复查日期，
-    让机器读者也能判断「这条情报多久没核过了」。确定性：无时间戳、键序固定。
+    数据源是 **yaml 厂商全集 + 生效档案**（含 AI overlay），而不是当轮抓取结果：
+    `--rebuild-only`、`--only` 与核查包快进重建出的 intel_list 只含有博客归档的厂商，
+    跟着它走会让一览凭空少掉一批厂商、序号与锚点一起错位（2026-09 实测产物在
+    全集数与那个子集之间来回抖）。序号取全集桶序，与全量巡检写出的 README 章节编号一致。
+    `reviewed` 取例行复查日期，让机器读者也能判断「这条情报多久没核过了」。
+    确定性：无时间戳、键序固定。
     """
+    pairs = [(vendor, get_provider_profile(vendor.get("id", "unknown"),
+                                          vendor.get("brand", ""),
+                                          vendor.get("homepage", "")))
+             for vendor in vendors]
     rows = []
-    for idx, intel, prof in records:
-        homepage = intel.homepage or (prof.get("links", [["", ""]])[0][1]
-                                      if prof.get("links") else "")
-        meta = get_guide_meta(intel.vendor_id)
+    for idx, (vendor, prof) in enumerate(bucket_by_readme_order(pairs), 1):
+        vid = vendor.get("id", "unknown")
+        meta = get_guide_meta(vid)
         rows.append({
             "rank": idx,
-            "id": intel.vendor_id,
-            "name": prof.get("display_name", intel.brand),
+            "id": vid,
+            "name": prof.get("display_name", vendor.get("brand", vid)),
             "part": _PART_BY_CATEGORY.get(prof.get("category", "domestic"), 0),
-            "homepage": homepage,
+            "homepage": vendor.get("homepage", ""),
             "anchor": vendor_anchor(idx, prof),
             "signup": meta.get("signup", ""),
             "tiers": meta.get("tiers", []),
@@ -4341,14 +4350,9 @@ def build_quotas_payload(records: list[tuple[int, VendorIntel, dict]],
             "promotions": prof.get("promotions", ""),
             "openai_compat": prof.get("openai_compat"),
             "links": prof.get("links", []),
-            "reviewed": reviews.get(intel.vendor_id, ""),
+            "reviewed": reviews.get(vid, ""),
         })
     return {"count": len(rows), "vendors": rows}
-
-
-def write_quotas_index(path: Path, records: list[tuple[int, VendorIntel, dict]],
-                       reviews: dict[str, str]) -> bool:
-    return _write_json(path, build_quotas_payload(records, reviews))
 
 
 def write_intel_changes_feed(out_dir: Path, changelog_text: str,
@@ -5003,6 +5007,9 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[1/4] 解析 {yaml_path.name} ...")
     vendors, sources = parse_yaml(yaml_path)
     grouped = group_sources_by_vendor(sources)
+    # 一览（quotas.json）永远按全集出：--only 只是本轮少抓几家，
+    # 不该让机读快照跟着缩水（详见 build_quotas_payload docstring）。
+    all_vendors = list(vendors)
     print(f"      vendors={len(vendors)}  sources={len(sources)}  "
           f"覆盖厂商={len(grouped)}")
 
@@ -5378,16 +5385,15 @@ def main(argv: list[str] | None = None) -> int:
         cl_path = root / CHANGELOG_MD
         if cl_path.exists():
             changelog_text = cl_path.read_text(encoding="utf-8")
-        table_records = order_vendor_records(intel_list)
-        anchors = {intel.vendor_id: vendor_anchor(idx, prof)
-                   for idx, intel, prof in table_records}
+        # 一览与档案锚点都按 yaml 全集出（序号 = 全量巡检写出的 README 章节号）
+        quotas = build_quotas_payload(all_vendors, snapshots.reviews)
+        anchors = {row["id"]: row["anchor"] for row in quotas["vendors"]}
         n_changes = write_intel_changes_feed(
             feeds_dir, changelog_text, releases, feeds_base, anchors)
         if n_changes:
             print(f"      额度/活动变化流 {n_changes} 条（{INTEL_CHANGES_FEED} + intel-changes.json）")
-        wrote_q = write_quotas_index(feeds_dir / "quotas.json",
-                                     table_records, snapshots.reviews)
-        print(f"      额度快照 quotas.json {len(table_records)} 家"
+        wrote_q = _write_json(feeds_dir / "quotas.json", quotas)
+        print(f"      额度快照 quotas.json {quotas['count']} 家"
             f"（{'已刷新' if wrote_q else '无内容变化，未改写'}）")
 
     total = sum(len(v.intel_pages) for v in intel_list)
