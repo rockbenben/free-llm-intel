@@ -29,6 +29,7 @@ crawler_llm_intel.py — LLM 厂商免费额度 / 活动情报巡检脚本
     python crawler_llm_intel.py --ai-titles     # 新收录文章的机翻标题交 LLM 润色一次（结果进归档即冻结）
     python crawler_llm_intel.py --rebuild-only  # 不触网，从 llm-news/ 归档等磁盘产物重建动态类产物
     python crawler_llm_intel.py --backfill-dates # 维护模式：逐篇文章页取元数据，回填归档缺失的发布日期
+    python crawler_llm_intel.py --backfill-orig  # 维护模式：逐篇文章页取英文原标题，回填归档缺失的 original 注释
 
 依赖：requests、PyYAML（HTML 解析使用标准库 html.parser，无需 bs4）。
 可选：playwright（pip install playwright）。安装后对 403 反爬 / JS 动态渲染页面
@@ -3451,7 +3452,9 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
 # **整行失配** —— 这些条目既进不了 RSS，又因为增量合并靠这个正则读回旧归档而可能被静默
 # 丢掉（归档"只增不减"的保证会被破坏）。贪婪匹配会一直回溯到最后一个 `](http…`，
 # 尾部锚定保证不会多吞。
-_ARCHIVE_ARTICLE_RE = re.compile(r"^\d+\.\s+\[(.+)\]\((https?://[^)]+)\)(?:（([^）]+)）)?$")
+_ARCHIVE_ARTICLE_RE = re.compile(
+    r"^\d+\.\s+\[(.+)\]\((https?://[^)]+)\)"
+    r"(?:（([^）]+)）)?(?:\s*<!--\s*orig:(.*?)\s*-->)?\s*$")
 
 
 def _dedup_same_title(arts: list[Article]) -> list[Article]:
@@ -3556,11 +3559,22 @@ def parse_archived_articles(arch_path: Path) -> list[Article]:
     for line in text.splitlines():
         m = _ARCHIVE_ARTICLE_RE.match(line.strip())
         if m:
-            title, url, date_val = m.group(1), m.group(2), m.group(3) or ""
-            frozen = title if _CJK_CHAR_RE.search(title) else ""
-            articles.append(Article(title=title, url=url,
-                                    zh_title=frozen,
-                                    date=_drop_future_date(date_val)))
+            disp, url, date_val, orig = (m.group(i) or "" for i in (1, 2, 3, 4))
+            orig = orig.strip()
+            if orig and orig != disp and re.search(r"[A-Za-z]{3}", orig):
+                # 带 `<!--orig:…-->` 的新归档行：可见标题是冻结的中文显示，注释里是英文原文。
+                # 还原成「title=英文原文 / zh_title=中文显示」这对形态（与实抓 RSS 条目一致），
+                # 这样产出层能把 original_title 稳定写进 articles.json，不再只靠上一版快照。
+                articles.append(Article(title=orig, url=url,
+                                        zh_title=disp,
+                                        date=_drop_future_date(date_val)))
+            else:
+                # 旧行（无注释）：可见标题即显示标题；含汉字时它是冻结译文，必须填进
+                # zh_title，否则输出标题会把它再送回机翻（Google 会直译其中原样保留的产品名）。
+                frozen = disp if _CJK_CHAR_RE.search(disp) else ""
+                articles.append(Article(title=disp, url=url,
+                                        zh_title=frozen,
+                                        date=_drop_future_date(date_val)))
     return articles
 
 
@@ -3636,6 +3650,81 @@ def backfill_archive_dates(news_dir: Path, fetch,
         if dirty:
             # 只写日期括号，不在此处重排 —— 顺序规范由 --rebuild-only / 下次巡检的
             # write_news_archives 统一完成（日期倒序 + 重编号），避免两处排序逻辑漂移。
+            arch.write_text("".join(lines), encoding="utf-8", newline="\n")
+    return visited, fixed
+
+
+#: 原文回填单次最多访问的文章页数（礼貌抓取；只为「可见标题已汉化且归档尚无 orig 注释」的条目访问）
+ORIG_BACKFETCH_LIMIT = 400
+
+
+def resolve_article_original(html: str, url: str) -> str:
+    """从文章页取**英文**原标题（`<title>`/og，去掉站点名后缀）。
+
+    仅当解出的是拉丁文字才返回：中文原生页（deepseek /zh-cn、硅基流动…）返回空串 ——
+    它本就没有英文原文，硬塞反而把中文当原文。
+    """
+    if not html:
+        return ""
+    try:
+        title = parse_html(html, url)[1] or ""
+    except Exception:
+        return ""
+    title = re.split(r"\s[|\-–—_]\s", title)[0].strip()
+    if len(title) >= 6 and re.search(r"[A-Za-z]{3}", title) and not _CJK_CHAR_RE.search(title):
+        return title
+    return ""
+
+
+def backfill_archive_originals(news_dir: Path, fetch,
+                               limit: int = ORIG_BACKFETCH_LIMIT,
+                               delay: float = 0.0) -> tuple[int, int]:
+    """给归档里**可见标题已冻结成中文、但还没存英文原文**的条目回填 `<!--orig:…-->` 注释。
+
+    动因：产出层的 `original_title` 长期只靠「上一版 articles.json」这种会丢的快照，
+    历史上被抹掉的英文原文无从恢复。本命令逐篇访问文章页取英文标题，解得出拉丁文字
+    才写进注释（中文原生页返回空、跳过），之后 `--rebuild-only` 就能从归档稳定恢复。
+    只补注释，不改可见标题 / 顺序 / 日期。
+
+    fetch: url -> HTML 文本（注入以便测试；网络异常按「解不出」处理）。
+    返回 (访问数, 回填数)。
+    """
+    import time as _time
+    visited = fixed = 0
+    for arch in sorted(news_dir.glob("*.md")):
+        try:
+            text = arch.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        lines = text.splitlines(keepends=True)
+        dirty = False
+        for i, line in enumerate(lines):
+            m = re.match(
+                r"^(\d+\.\s+\[(.+?)\]\((https?://[^)]+)\)(?:（[^）]*）)?)(\s*<!--.*)?\s*$",
+                line)
+            if not m or m.group(4):
+                continue  # 非条目行 / 已带注释
+            disp, url = m.group(2), m.group(3)
+            if not _CJK_CHAR_RE.search(disp):
+                continue  # 可见标题本就是英文（原文==标题），无需回填
+            if visited >= limit:
+                break
+            try:
+                html = fetch(url)
+            except Exception:
+                html = ""
+            visited += 1
+            orig = resolve_article_original(html or "", url)
+            if (orig and "-->" not in orig
+                    and re.sub(r"\s+", " ", orig).casefold()
+                    != re.sub(r"\s+", " ", disp).casefold()):
+                nl = "\n" if line.endswith("\n") else ""
+                lines[i] = m.group(1).rstrip() + f" <!--orig:{orig}-->" + nl
+                fixed += 1
+                dirty = True
+            if delay:
+                _time.sleep(delay)
+        if dirty:
             arch.write_text("".join(lines), encoding="utf-8", newline="\n")
     return visited, fixed
 
@@ -3833,15 +3922,16 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
                 # 日期一旦丢失就永久丢失（归档排序、RSS pubDate、README 展示都依赖它），
                 # 而且重抓也补不回来 —— 实测 cohere 博客页改版后 9 条会退化成无日期。
                 fresh.date = old_art.date
-            if (not fresh.zh_title and _CJK_CHAR_RE.search(old_art.title)
-                    and old_art.title != fresh.title):
+            frozen_zh = (old_art.zh_title
+                         or (old_art.title if _CJK_CHAR_RE.search(old_art.title) else ""))
+            if not fresh.zh_title and frozen_zh and frozen_zh != fresh.title:
                 # 归档里已有人工/AI 汉化过的中文标题 → 沿用，别让每日重抓把它退回
                 # Google 机翻（CI 端 .translate_cache.json 不随仓库走，实测
                 # 「GPT-6 的提示缓存全面升级」隔天变「更好的 GPT-6 提示缓存」）。
                 # 代价：官方日后改标题会停在旧文案，但这种情况极少且可人工修。
                 # 沿用前过一次品牌复原：冻结在归档里的历史坏译文（守卫装好前
                 # 音译/直译的）借当次英文原文自愈，不然坏标题靠沿用永生。
-                fresh.zh_title = _restore_brand_names(old_art.title, fresh.title)
+                fresh.zh_title = _restore_brand_names(frozen_zh, fresh.title)
         # 2) 折叠「同一篇的两个入口」（锚点卡 + 详情页直链）——必须在按日期排序
         #    **之前**做：直链的真实日期常早于卡片列表日期，先排序再折叠会让赢家
         #    占住卡片的靠后槽位，把日期倒序打乱（实测 anthropic / xai_grok 乱序）。
@@ -3894,7 +3984,15 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
         lines.append("")
         for art_idx, (art, title_zh) in enumerate(zip(arts, titles_zh), 1):
             date_part = f"（{art.date}）" if art.date else ""
-            lines.append(f"{art_idx}. [{title_zh}]({art.url}){date_part}")
+            # 英文原文随归档一并冻结：可见标题是中文译文，原文放进渲染不可见的
+            # HTML 注释里，产出层（articles.json 的 original_title）就有了稳定来源，
+            # 不再依赖「上一版 articles.json」这种会丢的快照。标题里含 `-->` 会破坏
+            # 注释结构，这种极少数直接跳过（宁可少一条原文，不可写出坏行）。
+            orig_part = ""
+            if (title_zh != art.title and re.search(r"[A-Za-z]{3}", art.title)
+                    and "-->" not in art.title):
+                orig_part = f" <!--orig:{art.title}-->"
+            lines.append(f"{art_idx}. [{title_zh}]({art.url}){date_part}{orig_part}")
         lines.append("")
         content = "\n".join(lines)
         arch_path = out_dir / f"{intel.vendor_id}.md"
@@ -5241,12 +5339,17 @@ def main(argv: list[str] | None = None) -> int:
                         help="维护模式（不巡检）：逐篇访问归档中**缺发布日期**的文章页，"
                              "从 JSON-LD datePublished / OG / <time> 元数据回填日期；"
                              f"单次上限 {DATE_BACKFETCH_LIMIT} 页礼貌抓取。回填后跑 --rebuild-only 刷新产物")
+    parser.add_argument("--backfill-orig", action="store_true",
+                        help="维护模式（不巡检）：逐篇访问**可见标题已汉化、但归档未存英文原文**的"
+                             "文章页，取英文 <title> 回填进 `<!--orig:…-->` 注释（中文原生页跳过）；"
+                             f"只补原文不改可见标题/顺序。单次上限 {ORIG_BACKFETCH_LIMIT} 页，"
+                             "回填后跑 --rebuild-only 让 articles.json 稳定带上 original_title")
     args = parser.parse_args(argv)
 
     root = _repo_root()
     if not args.rebuild_only:
         (root / ".ai-changed").unlink(missing_ok=True)
-    if args.backfill_dates:
+    if args.backfill_dates or args.backfill_orig:
         session = build_session()
 
         def _fetch_article(u: str) -> str:
@@ -5254,8 +5357,13 @@ def main(argv: list[str] | None = None) -> int:
             rr.raise_for_status()
             return rr.text
         news_md = (root / args.news_md) if not Path(args.news_md).is_absolute() else Path(args.news_md)
-        print(f"[维护] 归档日期回填（只访问缺日期条目的文章页，≤{DATE_BACKFETCH_LIMIT} 页）...")
-        visited, filled = backfill_archive_dates(news_md.parent / "llm-news", _fetch_article)
+        llm_news = news_md.parent / "llm-news"
+        if args.backfill_dates:
+            print(f"[维护] 归档日期回填（只访问缺日期条目的文章页，≤{DATE_BACKFETCH_LIMIT} 页）...")
+            visited, filled = backfill_archive_dates(llm_news, _fetch_article)
+        else:
+            print(f"[维护] 归档英文原文回填（只访问已汉化且缺原文的条目，≤{ORIG_BACKFETCH_LIMIT} 页）...")
+            visited, filled = backfill_archive_originals(llm_news, _fetch_article)
         print(f"      访问 {visited} 页，回填 {filled} 条；"
               "请随后运行 --rebuild-only 重排归档并刷新产物。")
         return 0

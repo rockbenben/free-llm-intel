@@ -666,7 +666,29 @@ class TestArchiveTitleRetention(unittest.TestCase):
         content = arch_path.read_text(encoding="utf-8")
         self.assertIn("GPT-6 的提示缓存全面升级", content,
                       "归档已有的中文标题不得被重抓的英文原标题冲掉")
-        self.assertNotIn("Better prompt caching", content)
+        # 英文原文现在是**刻意**保留的（冻结进 `<!--orig:…-->` 注释，供 articles.json
+        # 原文列），但它只能待在注释里：可见的列表标题必须仍是中文。
+        self.assertIn("<!--orig:Better prompt caching for GPT-6-->", content,
+                      "英文原文应被冻结进注释，供产出层稳定恢复 original_title")
+        self.assertNotIn("[Better prompt caching", content,
+                         "英文原文不得成为可见的列表标题")
+
+    def test_orig_comment_recovers_english_original(self):
+        """归档行里的 `<!--orig:…-->` 注释要还原成 title=英文 / zh_title=中文这对形态。"""
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "v.md"
+            p.write_text(
+                "## 全部文章（共 1 篇）\n\n"
+                "1. [中文译文标题](https://a.com/x)（2026-01-01） "
+                "<!--orig:English Original Title-->\n", encoding="utf-8")
+            arts = crawler_llm_intel.parse_archived_articles(p)
+            self.assertEqual(len(arts), 1)
+            self.assertEqual(arts[0].title, "English Original Title",
+                             "注释里的英文原文要还原为 title，供原文列使用")
+            self.assertEqual(arts[0].zh_title, "中文译文标题",
+                             "可见中文标题要还原为 zh_title")
+            self.assertEqual(crawler_llm_intel.article_title_zh(arts[0]), "中文译文标题",
+                             "显示标题仍取冻结的中文，不回退机翻")
 
     def test_frozen_calque_self_heals_on_carry_over(self):
         """守卫装好前冻结进归档的音译/直译标题，沿用时要借英文原文自愈。
@@ -993,6 +1015,39 @@ class TestDateBackfill(unittest.TestCase):
             self.news, fetch, limit=3, delay=0)
         self.assertEqual(visited, 3, "不得超过单次访问上限")
         self.assertEqual(filled, 2, "抓取失败按解不出处理，不写日期")
+
+    def test_resolve_article_original_english_vs_native(self):
+        self.assertEqual(
+            crawler_llm_intel.resolve_article_original(
+                "<title>Grok 4.6 is here | xAI</title>", "https://x.ai/news/grok-4-6"),
+            "Grok 4.6 is here", "取 <title> 并去站点名后缀")
+        self.assertEqual(
+            crawler_llm_intel.resolve_article_original(
+                "<title>硅基流动发布说明</title>", "https://x.cn/y"), "",
+            "中文原生页没有英文原文，不得把中文当原文")
+
+    def test_backfill_orig_writes_comment_and_skips(self):
+        """只给「可见标题已汉化、且尚无 orig 注释」的条目访问并回填；已注释/英文可见标题跳过。"""
+        (self.news / "v.md").write_text(
+            "## 全部文章（共 3 篇）\n\n"
+            "1. [已存原文的文章](https://x.com/a)（2026-01-01） <!--orig:Already here-->\n"
+            "2. [Grok 4.6 已发布](https://x.ai/news/grok-4-6)（2026-01-02）\n"
+            "3. [English visible title](https://x.com/c)（2026-01-03）\n",
+            encoding="utf-8")
+
+        def fetch(url):
+            return "<title>Grok 4.6 is here | xAI</title>"
+
+        visited, filled = crawler_llm_intel.backfill_archive_originals(
+            self.news, fetch, delay=0)
+        self.assertEqual((visited, filled), (1, 1),
+                         "只访问第 2 条（已汉化且无注释）；已注释的、英文可见标题的都不访问")
+        content = (self.news / "v.md").read_text(encoding="utf-8")
+        self.assertIn("2. [Grok 4.6 已发布](https://x.ai/news/grok-4-6)（2026-01-02） "
+                      "<!--orig:Grok 4.6 is here-->", content)
+        self.assertIn("1. [已存原文的文章](https://x.com/a)（2026-01-01） "
+                      "<!--orig:Already here-->", content, "已有注释的行原样保留")
+        self.assertIn("3. [English visible title](https://x.com/c)（2026-01-03）", content)
 
 
 class TestIntelChangelogAndStaleReview(unittest.TestCase):
@@ -1622,6 +1677,18 @@ class TestSelfHostedRss(unittest.TestCase):
         self.assertEqual({a.url for a in kept},
                          {"https://x.cn/docs#a", "https://x.cn/docs#b"},
                          "非白名单厂商的同页锚点必须各自保留")
+
+    def test_original_title_surfaces_in_index(self):
+        """带英文原文（title=英文 / zh_title=中文）的条目：索引显示中文、原文列填英文。"""
+        arts = [crawler_llm_intel.Article(
+            title="Grok 4.6 is here", url="https://x.ai/news/grok-4-6",
+            date="2026-08-14", zh_title="Grok 4.6 已发布")]
+        v = self._vendor("xai_grok", "xAI", arts)
+        crawler_llm_intel.write_rss_feeds(self.out_dir, [v], base_url="")
+        row = json.loads((self.out_dir / "articles.json").read_text(
+            encoding="utf-8"))["articles"][0]
+        self.assertEqual(row[0], "Grok 4.6 已发布", "显示标题用冻结的中文")
+        self.assertEqual(row[4], "Grok 4.6 is here", "original_title 用英文原文")
 
     def test_vendors_index_lists_every_vendor_even_without_dates(self):
         """厂商索引必须列出**全部**厂商，包括文章全无日期、因而进不了聚合流的那几家。
