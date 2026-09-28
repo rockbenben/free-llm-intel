@@ -3527,6 +3527,36 @@ class TestBrowsePageDesignContract(unittest.TestCase):
         self.assertIn("position: sticky", self._rule(".tabs"),
                       "页签栏必须常驻，换视图不能靠滚回顶部")
 
+    def test_every_css_var_is_defined(self):
+        """引用一个不存在的 --token 不会报错，只会让那条声明静默失效。
+
+        写这条的理由是现成的：间距收进 var(--sp-*) 时我引用了未定义的 --sp-1，
+        margin-top 直接变成 0，页面看起来"正常"，只有对比像素才会发现。
+        """
+        defined = set(re.findall(r"(--[\w-]+)\s*:", self.style))
+        used = set(re.findall(r"var\((--[\w-]+)\)", self.style))
+        self.assertEqual(sorted(used - defined), [],
+                         "这些 var() 引用没有对应的 token 定义")
+
+    def test_spacing_and_radius_stay_on_tokens(self):
+        """margin/padding/gap/圆角一律走 token；裸 px 只允许出现在 :root 定义里。
+
+        逐条声明检查，不是逐行——一行里常混着 `border: 1px` 与 `letter-spacing`，
+        那些本来就不属于间距标度。0 与 1px 放行：前者是清零，后者是发丝内边距。
+        """
+        body = re.sub(r":root\s*\{.*?\}", "", self.style, flags=re.S)
+        offenders = []
+        for decl in re.findall(r"([-a-z]+)\s*:\s*([^;{}]+)", body):
+            prop, value = decl
+            if not re.match(r"^(margin|padding|gap|row-gap|column-gap|border-radius)", prop):
+                continue
+            for num in re.findall(r"(\d+(?:\.\d+)?)px", value):
+                if num not in ("0", "1"):
+                    offenders.append("%s: %s" % (prop, value.strip()))
+                    break
+        self.assertEqual(offenders, [],
+                         "又写回裸 px 了，新增间距请从 --sp-* / --rd-* 取")
+
     def test_text_is_never_dimmed_with_opacity(self):
         """opacity 压暗文字会在深色底上直接跌破对比度线（.chip .n 就是这么翻车的）。"""
         self.assertNotIn("opacity", self.style,

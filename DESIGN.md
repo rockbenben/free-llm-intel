@@ -55,25 +55,29 @@ typography:
     fontSize: 12px
     fontWeight: 400
     lineHeight: 1.5
+spacing:
+  sp-2: 2px
+  sp-4: 4px
+  sp-5: 5px
+  sp-6: 6px
+  sp-7: 7px
+  sp-8: 8px
+  sp-10: 10px
+  sp-11: 11px
+  sp-12: 12px
+  sp-14: 14px
+  sp-16: 16px
+  sp-18: 18px
+  sp-20: 20px
+  sp-28: 28px
+  sp-32: 32px
+  sp-40: 40px
+  sp-48: 48px
+  sp-60: 60px
 rounded:
-  none: 0
   control: 6px
   surface: 8px
   pill: 999px
-spacing:
-  xxs: 2px
-  xs: 4px
-  sm: 5px
-  md: 6px
-  lg: 8px
-  xl: 10px
-  2xl: 12px
-  3xl: 14px
-  4xl: 16px
-  5xl: 20px
-  6xl: 28px
-  7xl: 40px
-  8xl: 48px
 components:
   tab:
     backgroundColor: chip-bg
@@ -170,8 +174,8 @@ components:
 | token | 值 | 用在哪 |
 | --- | --- | --- |
 | `--fs-xl` | 24px | `h1` |
-| `--fs-base` | 15px | body 基准、条目主标题、一览厂商名 |
-| `--fs-md` | 14px | 导语、搜索框、页签、一览的额度与活动正文 |
+| `--fs-base` | 15px | body 基准、条目主标题、一览厂商名与**额度正文** |
+| `--fs-md` | 14px | 导语、搜索框、页签、一览的**活动行** |
 | `--fs-sm` | 13px | 行内次要信息（日期、有效期、最近核查、计数）与控件文字 |
 | `--fs-xs` | 12px | 胶囊徽章、等宽 URL/订阅地址、提示段 |
 
@@ -191,6 +195,14 @@ components:
 sticky 只留给页签栏：它曾经是整个筛选块（搜索 + 厂商胶囊 + 提示）常驻置顶，
 实测占掉 360×740 视口的 39%，把"换视图"这个动作挤到滚动之外。
 
+间距一律取 `--sp-<值>`（2/4/5/6/7/8/10/11/12/14/16/18/20/28/32/40/48/60），
+守卫会拒绝 margin/padding/gap 里新出现的裸 px。
+**这套值仍是历史形状，不是标度**：5/7/11/14/18/28 都是当年一处一调留下的。
+目标形状是 4 的倍数（4/8/12/16/24/32/48），收敛它需要逐处改渲染像素、
+再逐屏比对，属于另一次带视觉验收的改动；在此之前，新值只能从既有 token 里挑，
+不许再开一个 13px。布局宽度（`.wrap` 880px、日期列 84px、输入框 240px）
+与 1px 发丝描边不进这套 token——它们是结构，不是节奏。
+
 ## Elevation & Depth
 
 没有阴影、没有 z 轴层次。层级全部由**表面色差 + 1px 描边**表达：
@@ -200,8 +212,9 @@ sticky 只留给页签栏：它曾经是整个筛选块（搜索 + 厂商胶囊 
 
 ## Shapes
 
-三种圆角，别的不许加：`6px`（按钮、输入框等控件）、`8px`（卡片与页签顶角）、
-`999px`（胶囊与徽章）。描边统一 1px `--line`；选中态把描边设为 `transparent`
+三种圆角，别的不许加：`--rd-control` 6px（按钮、输入框、分段控件）、
+`--rd-surface` 8px（卡片、告警条、页签顶角）、`--rd-pill` 999px（胶囊与徽章）。
+描边统一 1px `--line`；选中态把描边设为 `transparent`
 而不是加粗，避免尺寸跳动。
 
 ## Components
