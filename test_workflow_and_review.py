@@ -689,6 +689,63 @@ class TestArchiveTitleRetention(unittest.TestCase):
                       "英文产品名应复原、中文连接词保持原样")
         self.assertNotIn("贴片时间序列", content)
 
+    def test_archive_only_row_is_not_retranslated(self):
+        """只在归档里、本次没抓到的条目，同样不许回炉重翻。
+
+        CI 每日红：2024 年的 patchtst 早掉出博客页首屏，合并时按「历史条目只增
+        不减」被追加回来，但 parse_archived_articles 把冻结的中文标题放进 title、
+        zh_title 留空 → article_title_zh 又把它送回机翻。Google 对已经是中文的串
+        再翻一次，就把里面原样保留的英文产品名直译了
+        （「Patch Time Series」→「贴片时间序列」），守卫报的正是这条。
+        """
+        arch_path = self.news_dir / "vendor_a.md"
+        arch_path.write_text(
+            "## 全部文章（共 1 篇）\n\n"
+            "1. [Hugging Face 中的 Patch Time Series Transformer]"
+            "(https://a.com/patchtst)（2024-02-01）\n",
+            encoding="utf-8")
+        fresh = crawler_llm_intel.Article(
+            title="A newer post", url="https://a.com/new", date="2026-09-27")
+        intel = self._intel([fresh])
+
+        def mangle(text):
+            # 模拟 Google 拿到中文标题时的真实行为：英文词被直译、空格被吃掉
+            return ("Hugging Face中的贴片时间序列Transformer"
+                    if "Patch" in text else text)
+
+        with mock.patch.object(crawler_llm_intel, "translate_to_zh",
+                               side_effect=mangle):
+            crawler_llm_intel.write_news_archives(self.news_dir, [intel],
+                                                  clean_removed=False)
+        content = arch_path.read_text(encoding="utf-8")
+        self.assertIn("Hugging Face 中的 Patch Time Series Transformer", content,
+                      "归档冻结的中文标题必须原样写回")
+        self.assertNotIn("贴片", content)
+
+    def test_no_cjk_title_ever_reaches_the_translator(self):
+        """不变量：翻译器只该收到非中文标题——含汉字的输入一律是回炉。"""
+        arch_path = self.news_dir / "vendor_a.md"
+        arch_path.write_text(
+            "## 全部文章（共 2 篇）\n\n"
+            "1. [用开源 LLM 实现 Constitutional AI](https://a.com/cai)（2024-02-02）\n"
+            "2. [Old English Title](https://a.com/en)（2024-02-01）\n",
+            encoding="utf-8")
+        fresh = crawler_llm_intel.Article(
+            title="A newer post", url="https://a.com/new", date="2026-09-27")
+        intel = self._intel([fresh])
+        seen: list[str] = []
+
+        def spy(text):
+            seen.append(text)
+            return text
+
+        with mock.patch.object(crawler_llm_intel, "translate_to_zh", side_effect=spy):
+            crawler_llm_intel.write_news_archives(self.news_dir, [intel],
+                                                  clean_removed=False)
+        self.assertEqual([t for t in seen if crawler_llm_intel._CJK_CHAR_RE.search(t)],
+                         [], "含汉字的标题被送回机翻，等于让 Google 改自己的归档")
+        self.assertIn("Old English Title", seen, "未汉化的英文标题仍应送去翻译")
+
     def test_rss_feed_uses_retained_title(self):
         fresh = crawler_llm_intel.Article(
             title="Better prompt caching for GPT-6",

@@ -3413,7 +3413,13 @@ def _dedup_same_title(arts: list[Article]) -> list[Article]:
 
 
 def parse_archived_articles(arch_path: Path) -> list[Article]:
-    """从既有归档 .md 中恢复历史文章条目（供增量合并：除已废弃源/下线厂商外，历史条目只增不减）。"""
+    """从既有归档 .md 中恢复历史文章条目（供增量合并：除已废弃源/下线厂商外，历史条目只增不减）。
+
+    归档里存的就是**汉化后的显示标题**，所以含汉字时必须同时填 `zh_title`：
+    输出标题取的是 `zh_title or translate_to_zh(title)`，留空等于把冻结的中文
+    再送回机翻一遍——Google 对中文串会把里面原样保留的英文产品名直译掉
+    （「Patch Time Series」→「贴片时间序列」），次日就写进归档。
+    """
     if not arch_path.exists():
         return []
     articles: list[Article] = []
@@ -3422,7 +3428,9 @@ def parse_archived_articles(arch_path: Path) -> list[Article]:
             m = _ARCHIVE_ARTICLE_RE.match(line.strip())
             if m:
                 title, url, date_val = m.group(1), m.group(2), m.group(3) or ""
+                frozen = title if _CJK_CHAR_RE.search(title) else ""
                 articles.append(Article(title=title, url=url,
+                                        zh_title=frozen,
                                         date=_drop_future_date(date_val)))
     except Exception:
         pass
