@@ -741,7 +741,12 @@ def _fetch_with_requests(session: requests.Session, url: str, stype: str,
             result.final_url = resp.url
             if resp.status_code >= 400:
                 last_err = f"HTTP {resp.status_code}"
-                if attempt < retries:
+                # 4xx 客户端错误里只有「可能重试就成功」的少数几个值得再试：
+                # 404/405/403 这类是源站的明确答复，重试只是白等 1 秒、多打一次
+                # 人家的服务器（72 家 × 多源，浪费会放大）。5xx 是服务端临时故障，照旧重试。
+                retryable = (resp.status_code >= 500
+                             or resp.status_code in (408, 425, 429))
+                if retryable and attempt < retries:
                     time.sleep(1.0)
                     continue
                 result.error = last_err
@@ -816,7 +821,22 @@ def fetch_url(session: requests.Session, url: str, stype: str,
     # 429 速率限制短暂退避重试一次
     if result.status_code == 429:
         time.sleep(2.0)
+        was_login = result.is_login
         result = _fetch_with_requests(session, url, stype, timeout, retries=0)
+        # 首抓已判定的登录跳转不得因重试丢失：重试结果若是失败壳（final_url 回落
+        # 到原 url），LOGIN_PATTERNS 判不出来，is_login 会静默变回 False
+        if was_login or LOGIN_PATTERNS.search(result.final_url):
+            result.is_login = True
+
+    # feed 源不走浏览器兜底，直接返回 requests 结果：
+    # - requests 已拿到原始 XML（ok + raw）时，浏览器渲染 XML 订阅 URL 得到的是
+    #   HTML 树，parse_html 会把 result.raw 覆盖掉，而 parse_feed_xml 消费的正是
+    #   raw —— item 会整批丢失；短 XML 被判 sparse（raw<200）误入兜底同样把好源弄坏；
+    # - requests 失败时，浏览器渲染仍只给 HTML，feed 解析器无法消费，反而把
+    #   「抓取失败」翻成「ok 但空」，掩盖真实失败。
+    # 订阅源本就是纯 HTTP 资源，浏览器兜底对它只有坏处。
+    if stype == "feed":
+        return result
 
     blocked_status = result.status_code in (400, 401, 403, 407, 429, 451)
     # requests 返回 200 但正文是反爬拦截 / 验证页（如 Cloudflare "Sorry, blocked"）
@@ -2222,7 +2242,9 @@ def _is_retired_news_url(url: str) -> bool:
     return any((url or "").startswith(p) for p in RETIRED_NEWS_URL_PREFIXES)
 
 
-def collect_news_articles(intel: VendorIntel, session: requests.Session) -> None:
+def collect_news_articles(intel: VendorIntel, session: requests.Session,
+                          delay: float = 0.0,
+                          timeout: tuple[float, float] = (8.0, 20.0)) -> None:
     """
     汇总一个厂商的最新文章：
       1) YAML 中 type=feed 的源直接解析原始 XML；
@@ -2232,6 +2254,8 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session) -> None
       5) 按日期倒序（无日期排后）后走 is_intel_news 过滤。
     过滤后的全量列表写进 intel.all_news_articles（供归档与 RSS），
     前 5 篇是 intel.news_articles（供总表展示）。
+    delay / timeout 透传自 crawl_vendor（--delay / --timeout）：步骤 2、3 会对
+    同一站点连续发多次请求（发现的多个 feed、补全标题的详情页），不设间隔容易触发限流。
     """
     articles: list[Article] = []
     seen_urls: set[str] = set()
@@ -2270,7 +2294,10 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session) -> None
             if _norm_url(feed_url) in feed_done:
                 continue
             feed_done.add(_norm_url(feed_url))
-            _add(fetch_feed_articles(session, feed_url, stype=page.stype))
+            _add(fetch_feed_articles(session, feed_url, stype=page.stype,
+                                     timeout=timeout))
+            if delay:
+                time.sleep(delay)
 
     # 3) HTML 文章链接兜底（RSS 无产出时）
     if not articles:
@@ -2286,8 +2313,10 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session) -> None
             if not _GENERIC_ARTICLE_TITLE.match(art.title.strip()):
                 continue
             try:
-                resp = session.get(art.url, timeout=(8.0, 20.0),
+                resp = session.get(art.url, timeout=timeout,
                                    allow_redirects=True)
+                if delay:
+                    time.sleep(delay)
                 if resp.status_code < 400:
                     if not resp.encoding or resp.encoding.lower() in (
                             "iso-8859-1", "ascii"):
@@ -2399,13 +2428,19 @@ HARD_BAD_PATH = re.compile(
 
 
 def _norm_url(url: str) -> str:
-    """URL 规范化用于去重：小写 host、去末尾斜线、去掉 fragment。"""
+    """URL 规范化用于去重：小写 scheme/host（二者大小写不敏感）、保留 path 与 query
+    的原始大小写（二者大小写敏感）、去末尾斜线、去掉 fragment。
+
+    此前把整条 URL `.lower()` 且丢弃 query：`/blog/Foo` 与 `/blog/foo` 这种大小写
+    敏感的路径会被折叠成同一个键、仅靠 `?id=` 区分的文章也会被并掉，去重 / 增量合并
+    因此丢掉真实条目。只有 scheme 和 host 大小写不敏感，path/query 必须原样保留。
+    """
     try:
         p = urlparse(url)
-        return (p.scheme.lower() + "://" + p.netloc.lower()
-                + p.path.rstrip("/")).lower()
+        norm = p.scheme.lower() + "://" + p.netloc.lower() + p.path.rstrip("/")
+        return norm + "?" + p.query if p.query else norm
     except Exception:
-        return (url or "").rstrip("/").lower()
+        return (url or "").rstrip("/")
 
 
 def _article_key(url: str) -> str:
@@ -2509,8 +2544,13 @@ def discover_intel_links(seed_pages: list[PageResult], fetched: set[str],
 # ---------------------------------------------------------------------------
 
 def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
-                 delay: float, browser: "BrowserSession | None" = None) -> VendorIntel:
-    """抓取单个厂商的全部相关入口并提取证据。"""
+                 delay: float, browser: "BrowserSession | None" = None,
+                 timeout: tuple[float, float] = (8.0, 20.0)) -> VendorIntel:
+    """抓取单个厂商的全部相关入口并提取证据。
+
+    timeout 透传自 main（--timeout）：此前 --timeout 只作用于 --backfill-dates，
+    主巡检路径全程用 fetch_url 的默认值，调大 --timeout 对慢源毫无效果。
+    """
     vid = vendor.get("id", "unknown")
     intel = VendorIntel(
         vendor_id=vid,
@@ -2535,7 +2575,7 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
             # api_docs / docs / console / hf_org 等入口：不深度抓取
             intel.skipped_sources.append(src)
             continue
-        page = fetch_url(session, url, stype, browser=browser)
+        page = fetch_url(session, url, stype, browser=browser, timeout=timeout)
         target.append(page)
         if page.ok:
             via = "🌐browser" if page.rendered_by == "browser" else "ok"
@@ -2551,7 +2591,7 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
 
     # 博客 / 更新动态：解析 RSS/Atom 与页面文章链接，汇总最新文章
     try:
-        collect_news_articles(intel, session)
+        collect_news_articles(intel, session, delay=delay, timeout=timeout)
     except Exception as exc:  # 文章提取失败不影响情报主流程
         print(f"    [warn] 动态文章提取异常: {type(exc).__name__}: {exc}",
               file=sys.stderr)
@@ -2585,7 +2625,7 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
             # 定价页误当作该厂商的页面
             if intel.homepage and not _same_site(url, intel.homepage):
                 return None
-            page = fetch_url(session, url, stype, browser=browser)
+            page = fetch_url(session, url, stype, browser=browser, timeout=timeout)
             fetched.add(_norm_url(url))
             if page.final_url:
                 fetched.add(_norm_url(page.final_url))
@@ -2619,7 +2659,7 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
         if candidates:
             print(f"    [discovery] 自动发现 {len(candidates)} 个候选定价/免费页")
         for cu in candidates:
-            page = fetch_url(session, cu, "discovered", browser=browser)
+            page = fetch_url(session, cu, "discovered", browser=browser, timeout=timeout)
             _log_page(page)
             if delay:
                 time.sleep(delay)
@@ -5113,7 +5153,7 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"  [{idx}/{len(vendors)}] {brand} ({vid}) — {len(v_sources)} 个入口")
                 try:
                     intel = crawl_vendor(vendor, v_sources, session, args.delay,
-                                         browser=browser)
+                                         browser=browser, timeout=timeout)
                 except Exception as exc:  # 单厂商失败不终止整体
                     print(f"    [error] 厂商巡检异常，已跳过: {type(exc).__name__}: {exc}",
                           file=sys.stderr)
