@@ -206,6 +206,16 @@
     .item { flex-direction: column; gap: var(--sp-4); }
     .date { flex-basis: auto; }
   }
+  /* 触屏上的命中区按手指算，不按像素算：桌面一根不动。
+     页签/按钮/分段控件拉到 ~44px；厂商胶囊只到 ~35px——它是一整条会折行的筛选带，
+     再高就把首屏正文全顶走了（同一处张力见 DESIGN.md 的窄屏一节）。 */
+  @media (pointer: coarse) {
+    .tab { padding: var(--sp-14) var(--sp-16); }
+    .btn { padding: var(--sp-14) var(--sp-16); }
+    .segbtn { padding: var(--sp-12) var(--sp-12); }
+    .chip { padding: var(--sp-10) var(--sp-12); }
+    .vendor { padding: var(--sp-8) var(--sp-12); }
+  }
 </style>
 </head>
 <body>
