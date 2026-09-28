@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-09-27 19:43:15**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-09-28 15:58:00**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -23,7 +23,7 @@
 - 页面：[新闻 / 更新](https://openai.com/news/)
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [RSS/Atom 订阅源](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [GPT-6 的提示缓存全面升级](https://openai.com/index/better-prompt-caching-for-gpt-6)（2026-09-22）
   2. [介绍 GPT-6 Sol 与 Luna](https://openai.com/index/introducing-gpt-6-sol-and-luna)（2026-09-22）
   3. [澳大利亚青少年安全蓝图简介](https://openai.com/index/australian-youth-safety-blueprint)（2026-09-18）
@@ -37,19 +37,19 @@
 - 页面：[新闻 / 更新](https://www.anthropic.com/news)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Claude Tag 现在支持通道中的个人连接器](https://claude.com/blog#d-2026-09-25-19)（2026-09-25）
   2. [Claude Tag 现已支持频道中的个人连接器](https://claude.com/blog/claude-tag-now-supports-personal-connectors-in-channels)（2026-09-24）
-  3. [Claude Marketplace：一站式发现合作伙伴的插件、代理和服务](https://claude.com/blog/claude-marketplace)（2026-09-23）
-  4. [与埃森哲合作开展嵌入式评估的公告](https://www.anthropic.com/news/accenture-embedded-evaluation)（2026-09-18）
-  5. [生命科学验证计划简介](https://www.anthropic.com/news/life-sciences-verification-program)（2026-09-17）
-  - 📄 完整文章归档（共 73 篇）：[anthropic.md](llm-news/anthropic.md)
+  3. [Claude Marketplace：从我们的合作伙伴那里发现插件、代理和服务的地方](https://claude.com/blog#d-2026-09-23-21)（2026-09-23）
+  4. [Claude Marketplace：一站式发现合作伙伴的插件、代理和服务](https://claude.com/blog/claude-marketplace)（2026-09-23）
+  5. [与埃森哲合作开展嵌入式评估的公告](https://www.anthropic.com/news/accenture-embedded-evaluation)（2026-09-18）
+  - 📄 完整文章归档（共 77 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### Google Gemini (google_gemini)
 - 页面：[变更日志](https://ai.google.dev/gemini-api/docs/changelog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-google_gemini.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-google_gemini.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Gemini 3.8 Flash TTS 和 Gemini 3.8 Flash-Lite TTS 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-22-2026-1)（2026-09-22）
   2. [Antigravity 09-2026](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-17-2026-1)（2026-09-17）
   3. [Gemini 3.8 Live 和 Gemini 3.8 Live Extended Thinking 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-1)（2026-09-15）
@@ -61,19 +61,19 @@
 - 页面：[新闻 / 更新](https://x.ai/news)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xai_grok.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [SpaceXAI 如何使用 Grok Bot 扩大客户支持](https://x.ai/news#d-2026-09-22-1)（2026-09-22）
   2. [SpaceXAI 如何使用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22）
-  3. [介绍 Grok 4.7](https://x.ai/news/grok-4-7)（2026-09-21）
-  4. [Grok 语音转录 2.0 简介](https://x.ai/news#d-2026-09-18-2)（2026-09-18）
-  5. [介绍 Grok Voice Transcribe 2.0](https://x.ai/news/grok-voice-transcribe-2)（2026-09-18）
-  - 📄 完整文章归档（共 144 篇）：[xai_grok.md](llm-news/xai_grok.md)
+  3. [IntroducingGrok 4.7](https://x.ai/news#d-2026-09-21-0)（2026-09-21）
+  4. [介绍 Grok 4.7](https://x.ai/news/grok-4-7)（2026-09-21）
+  5. [Grok 语音转录 2.0 简介](https://x.ai/news#d-2026-09-18-2)（2026-09-18）
+  - 📄 完整文章归档（共 164 篇）：[xai_grok.md](llm-news/xai_grok.md)
 
 ### Groq Cloud (groq)
 - 页面：[变更日志](https://console.groq.com/docs/changelog.md)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-groq.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-groq.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Q1 2026 更新日志条目](https://github.com/groq/groq-changelog/commit/abaa8395286b622a837adb5d6b44709845d1edba)（2026-05-06）
   2. [MiniMax M2.5 与 Qwen3-VL 32B Instruct 上线（企业版）](https://console.groq.com/docs/changelog.md#minimax-m25-and-qwen3vl-32b-instruct-enterprise)（2026-04-18）
   3. [Orpheus Arabic Saudi 新增语音](https://console.groq.com/docs/changelog.md#new-voices-for-orpheus-arabic-saudi)（2026-04-18）
@@ -87,7 +87,7 @@
 - 页面：[版本动态](https://api-docs.deepseek.com/zh-cn/news/news260424/)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepseek.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepseek.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [DeepSeek-V4.1-Flash 发布](https://api-docs.deepseek.com/zh-cn/news/news260910)（2026-09-10）
   2. [DeepSeek-V4-Flash-Vision-Exp 发布](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-21)（2026-08-21）
   3. [DeepSeek-V4-Flash-Vision-Exp 上线](https://api-docs.deepseek.com/zh-cn/news/news260821)（2026-08-21）
@@ -99,7 +99,7 @@
 - 页面：[更新日志](https://docs.bigmodel.cn/cn/update/new-releases)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-zhipu_glm.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-zhipu_glm.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [GLM-5.3-Flash 原生多模态模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2026-08-26)（2026-08-26）
   2. [GLM-5.3 新一代旗舰模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2026-8-19)（2026-08-19）
   3. [GLM-5.2 新一代旗舰模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2026-06-16)（2026-06-16）
@@ -111,7 +111,7 @@
 - 页面：[更新日志](https://help.aliyun.com/zh/model-studio/newly-released-models)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-aliyun_qwen.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-aliyun_qwen.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [decision-model-preview：面向高频业务判断的结构化决策模型，可根据文本或业务状态并行完成分类、是非判断与评分，并返回概率分布和置信度，适用于工单分流、内容审核、智能体路由与结果校验等场景](https://help.aliyun.com/zh/model-studio/newly-released-models#decision-model-preview)（2026-09-24）
   2. [stepfun/step-5-preview：Step 5 Preview 是面向真实世界 Agentic 任务的旗舰基座模型，在 AI 编程、软件工程、专业知识工作等任务上达到前沿水平，金融领域表现尤为突出](https://help.aliyun.com/zh/model-studio/newly-released-models#stepfun/step-5-preview)（2026-09-21）
   3. [qwen3.8-omni-flash-realtime：支持实时音视频交互及文本、音频输出，新增多通道音频、视频聚合和远程 MCP 工具调用，支持 WebSocket、WebRTC 和 AOQ 接入](https://help.aliyun.com/zh/model-studio/newly-released-models#qwen3.8-omni-flash-realtime)（2026-09-21）
@@ -123,7 +123,7 @@
 - 页面：[更新日志](https://cloud.tencent.com/document/product/1729/97765)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-tencent_hunyuan.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-tencent_hunyuan.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [混元旧版本模型正式下线，下线模型不再提供服务，建议迁移至 TokenHub 使用最新版本模型](https://cloud.tencent.com/document/product/1729/97765#t2026-06-22-0)（2026-06-22）
   2. [基于文本 TurboS 基座生成图生文快思考模型，相比上一版本在图像基础识别、图像分析推理等维度都有明显的效果提升](https://cloud.tencent.com/document/product/1729/97765#t2025-12-17-1)（2025-12-17）
   3. [发布特性：1. 模型底座从 TurboS 升级为混元2.0，模型能力全面提升](https://cloud.tencent.com/document/product/1729/97765#t2025-11-11-3)（2025-11-11）
@@ -135,7 +135,7 @@
 - 页面：[更新日志](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-sensetime_sensenova.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-sensetime_sensenova.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [【模型更新】发布最新版本日日新-融合模态模型SenseNova-V6.5-Pro、SenseNova-V6.5-Turbo](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#%E6%A8%A1%E5%9E%8B%E6%9B%B4%E6%96%B0%E5%8F%91%E5%B8%83%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E6%97%A5%E6%97%A5%E6%96%B0-%E8%9E%8D%E5%90%88%E6%A8%A1%E6%80%81%E6%A8%A1%E5%9E%8Bsensenova-v65-prosensenova-v65-turbo)（2025-07-23）
   2. [【模型更新】发布最新版本日日新-语音大模型-语音合成（音色融合）](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#%E6%A8%A1%E5%9E%8B%E6%9B%B4%E6%96%B0%E5%8F%91%E5%B8%83%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E6%97%A5%E6%97%A5%E6%96%B0-%E8%AF%AD%E9%9F%B3%E5%A4%A7%E6%A8%A1%E5%9E%8B-%E8%AF%AD%E9%9F%B3%E5%90%88%E6%88%90%E9%9F%B3%E8%89%B2%E8%9E%8D%E5%90%88)（2025-06-03）
   3. [【模型更新】发布最新版本日日新-融合模态模型SenseNova-V6-Pro、SenseNova-V6-Reasoner、SenseNova-V6-Turbo](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release#%E6%A8%A1%E5%9E%8B%E6%9B%B4%E6%96%B0%E5%8F%91%E5%B8%83%E6%9C%80%E6%96%B0%E7%89%88%E6%9C%AC%E6%97%A5%E6%97%A5%E6%96%B0-%E8%9E%8D%E5%90%88%E6%A8%A1%E6%80%81%E6%A8%A1%E5%9E%8Bsensenova-v6-prosensenova-v6-reasonersensenova-v6-turbo)（2025-04-09）
@@ -147,13 +147,13 @@
 - 页面：[更新日志](https://docs.siliconflow.cn/cn/release-notes/overview)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-siliconflow.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-siliconflow.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
-  1. [【接口服务调整】生图 API 下线 batch_size 字段、水印默认添加](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4%E7%94%9F%E5%9B%BE-api-%E4%B8%8B%E7%BA%BF-batch_size-%E5%AD%97%E6%AE%B5%E6%B0%B4%E5%8D%B0%E9%BB%98%E8%AE%A4%E6%B7%BB%E5%8A%A0)（2026-09-15）
-  2. [【模型价格调整】DeepSeek-V4-Flash 模型分时段定价调整](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E4%BB%B7%E6%A0%BC%E8%B0%83%E6%95%B4deepseek-v4-flash-%E6%A8%A1%E5%9E%8B%E5%88%86%E6%97%B6%E6%AE%B5%E5%AE%9A%E4%BB%B7%E8%B0%83%E6%95%B4)（2026-09-11）
-  3. [【接口服务调整】对话模型将忽略 repetition_penalty 参数](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4%E5%AF%B9%E8%AF%9D%E6%A8%A1%E5%9E%8B%E5%B0%86%E5%BF%BD%E7%95%A5-repetition_penalty-%E5%8F%82%E6%95%B0)（2026-09-09）
-  4. [【模型服务调整】Nex-N2-Pro、Qwen3.5-397B-A17B、MiniMax-M2.5 等模型将下线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4nex-n2-proqwen35-397b-a17bminimax-m25-%E7%AD%89%E6%A8%A1%E5%9E%8B%E5%B0%86%E4%B8%8B%E7%BA%BF)（2026-09-03）
-  5. [【接口服务调整】/user/info 接口将停止服务](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4userinfo-%E6%8E%A5%E5%8F%A3%E5%B0%86%E5%81%9C%E6%AD%A2%E6%9C%8D%E5%8A%A1)（2026-09-01）
-  - 📄 完整文章归档（共 47 篇）：[siliconflow.md](llm-news/siliconflow.md)
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
+  1. [【模型服务调整】ERNIE-Image-Turbo 模型将下线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4ernie-image-turbo-%E6%A8%A1%E5%9E%8B%E5%B0%86%E4%B8%8B%E7%BA%BF)（2026-09-28）
+  2. [【接口服务调整】生图 API 下线 batch_size 字段、水印默认添加](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4%E7%94%9F%E5%9B%BE-api-%E4%B8%8B%E7%BA%BF-batch_size-%E5%AD%97%E6%AE%B5%E6%B0%B4%E5%8D%B0%E9%BB%98%E8%AE%A4%E6%B7%BB%E5%8A%A0)（2026-09-15）
+  3. [【模型价格调整】DeepSeek-V4-Flash 模型分时段定价调整](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E4%BB%B7%E6%A0%BC%E8%B0%83%E6%95%B4deepseek-v4-flash-%E6%A8%A1%E5%9E%8B%E5%88%86%E6%97%B6%E6%AE%B5%E5%AE%9A%E4%BB%B7%E8%B0%83%E6%95%B4)（2026-09-11）
+  4. [【接口服务调整】对话模型将忽略 repetition_penalty 参数](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4%E5%AF%B9%E8%AF%9D%E6%A8%A1%E5%9E%8B%E5%B0%86%E5%BF%BD%E7%95%A5-repetition_penalty-%E5%8F%82%E6%95%B0)（2026-09-09）
+  5. [【模型服务调整】Nex-N2-Pro、Qwen3.5-397B-A17B、MiniMax-M2.5 等模型将下线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4nex-n2-proqwen35-397b-a17bminimax-m25-%E7%AD%89%E6%A8%A1%E5%9E%8B%E5%B0%86%E4%B8%8B%E7%BA%BF)（2026-09-03）
+  - 📄 完整文章归档（共 50 篇）：[siliconflow.md](llm-news/siliconflow.md)
 
 ### MiniMax (minimax)
 - 页面：[更新日志](https://platform.minimax.cn/docs/release-notes/models)
@@ -161,7 +161,7 @@
 - 页面：[更新日志](https://platform.minimax.cn/docs/release-notes/apis)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-minimax.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-minimax.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [MiniMax H3 发布](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-31-%E6%97%A5)（2026-07-31）
   2. [全新 Music-3.0](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-16-%E6%97%A5)（2026-07-16）
   3. [MiniMax M3 模型](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-6-%E6%9C%88-1-%E6%97%A5)（2026-06-01）
@@ -173,7 +173,7 @@
 - 页面：[变更日志](https://platform.kimi.com/docs/changelog/changelog/changelog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-moonshot_kimi.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-moonshot_kimi.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [🤖 Kimi 托管智能体（Hosted Agents）Beta 上线在模型推理 API 之上，我们封装了 Kimi Durable Harness，为企业提供 7x24 小时全托管的智能体运行环境——无需自建沙箱与会话基础设施，就能让 Agent 高质量、可持续地执行长程任务。](https://platform.kimi.com/docs/changelog#2026%E5%B9%B49%E6%9C%88)（2026-09-01）
   2. [kimi-k2.5 与 moonshot-v1 全系列模型（含 -vision-preview、moonshot-v1-auto）已于今日 16:00 在国内外全平台下线，调用将返回 404 错误（模型不存在），请迁移至 Kimi K3](https://platform.kimi.com/docs/changelog/changelog/changelog#2026%E5%B9%B48%E6%9C%8831%E6%97%A5)（2026-08-31）
   3. [kimi-k2.5 与 moonshot-v1 全系列模型（含 -vision-preview、moonshot-v1-auto）在国内外全平台下线，调用将返回 404 错误，请迁移至 Kimi K3](https://platform.kimi.com/docs/changelog#2026%E5%B9%B48%E6%9C%88)（2026-08-01）
@@ -185,7 +185,7 @@
 - 页面：[新闻 / 更新](https://mistral.ai/news/)
   - 📡 RSS/Atom：https://mistral.ai/news/rss
 - 📡 [RSS/Atom 订阅源](https://mistral.ai/news/rss)：`https://mistral.ai/news/rss`
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Mistral 和 Mozilla 正在为您的网络浏览器带来开放、私密和多语言的人工智能](https://mistral.ai/news/mistral-x-mozilla/)（2026-09-16）
   2. [Cloudera 与 Mistral 合作，为企业数据带来专业、主权化的智能](https://mistral.ai/news/mistral-x-cloudera/)（2026-09-10）
   3. [用 AI 代理现代化改造复杂的遗留代码。](https://mistral.ai/news/legacy-code-modernization/)（2026-09-09）
@@ -197,7 +197,7 @@
 - 页面：[官方博客](https://cohere.com/blog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-cohere.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Cohere 和 OpenText 合作，为政府和受监管行业带来值得信赖的代理人工智能汇集企业数据、上下文和安全人工智能，以大规模支持代理人工智能](https://cohere.com/blog/cohere-and-open-text-partner-to-bring-trusted-ai)（2026-09-16）
   2. [Cohere 与 Aleph Alpha 签署协议，成为首个跨大西洋主权人工智能解决方案](https://cohere.com/blog/cohere-and-aleph-alpha-sign-agreement)（2026-09-16）
   3. [谁来定义人工智能的规则？](https://cohere.com/blog/who-gets-to-define-the-rules-for-ai)（2026-09-13）
@@ -209,19 +209,19 @@
 - 页面：[官方博客](https://ai.meta.com/blog/)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 [RSS/Atom 订阅源](https://about.fb.com/news/tag/ai/feed/)：`https://about.fb.com/news/tag/ai/feed/`
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
-  1. [介绍 Ray-Ban Meta Audio 及更多 AI 眼镜款式](https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/)（2026-09-23）
-  2. [加拿大初创公司 smartARM 利用人工智能打造直观的仿生假肢](https://about.fb.com/news/2026/09/canadian-start-up-smartarm-uses-ai-to-create-intuitive-bionic-prosthetics/)（2026-09-16）
-  3. [隆重推出 Meta One：一种具有更多功能和 AI 的订阅服务，可用于创建、连接和脱颖而出](https://about.fb.com/news/2026/09/introducing-meta-one-subscription-service-more-features-ai/)（2026-09-15）
-  4. [推出 Muse：全球首个为每个人打造的个人 AI 代理](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)（2026-09-08）
-  5. [闭环冷却解释：Meta 人工智能背后的管道](https://about.fb.com/news/2026/08/closed-loop-cooling-explained-the-plumbing-behind-metas-ai/)（2026-08-27）
-  - 📄 完整文章归档（共 16 篇）：[meta_llama.md](llm-news/meta_llama.md)
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
+  1. [推出元企业平台](https://about.fb.com/news/2026/09/launching-meta-enterprise-platform/)（2026-09-28）
+  2. [介绍 Ray-Ban Meta Audio 及更多 AI 眼镜款式](https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/)（2026-09-23）
+  3. [加拿大初创公司 smartARM 利用人工智能打造直观的仿生假肢](https://about.fb.com/news/2026/09/canadian-start-up-smartarm-uses-ai-to-create-intuitive-bionic-prosthetics/)（2026-09-16）
+  4. [隆重推出 Meta One：一种具有更多功能和 AI 的订阅服务，可用于创建、连接和脱颖而出](https://about.fb.com/news/2026/09/introducing-meta-one-subscription-service-more-features-ai/)（2026-09-15）
+  5. [推出 Muse：全球首个为每个人打造的个人 AI 代理](https://about.fb.com/news/2026/09/introducing-muse-personal-ai-agent/)（2026-09-08）
+  - 📄 完整文章归档（共 17 篇）：[meta_llama.md](llm-news/meta_llama.md)
 
 ### Hugging Face (huggingface)
 - 页面：[官方博客](https://huggingface.co/blog)
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [您的代理人完成了任务。它会再次这样做吗？](https://huggingface.co/blog/ibm-research/altk-evolve-consistency)（2026-09-15）
   2. [跨 HF 作业使用 LoRA 的异步 GRPO：存储桶、代理，无 NCCL](https://huggingface.co/blog/asyncgrpo-lora-hfjobs)（2026-09-10）
   3. [用 Gradio 工作流重建 AUTOMATIC1111](https://huggingface.co/blog/gradio-workflow-1111)（2026-09-10）
@@ -231,7 +231,7 @@
 
 ### Cloudflare Workers AI (cloudflare_workers_ai)
 - 📡 [RSS/Atom 订阅源](https://developers.cloudflare.com/workers-ai/changelog/index.xml)：`https://developers.cloudflare.com/workers-ai/changelog/index.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Workers AI - GLM-5.2 现已登陆 Workers AI](https://developers.cloudflare.com/workers-ai/changelog/#glm-52-now-available-on-workers-ai)（2026-06-16）
   2. [Workers AI - Moonshot AI Kimi K2.7 Code 现已登陆 Workers AI](https://developers.cloudflare.com/workers-ai/changelog/#moonshot-ai-kimi-k27-code-now-available-on-workers-ai)（2026-06-12）
   3. [Workers AI - 计划中的模型弃用](https://developers.cloudflare.com/workers-ai/changelog/#planned-model-deprecations)（2026-05-08）
@@ -241,19 +241,19 @@
 
 ### OpenRouter (openrouter)
 - 📡 [RSS/Atom 订阅源](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
-  1. [Seedance 是开源的吗？](https://openrouter.ai/blog/insights/seedance-2-5-open-source/)（2026-09-25）
-  2. [Is Kimi K3 Open Source? Weights, License, and How to Call It](https://openrouter.ai/blog/insights/kimi-k3-open-source/)（2026-09-24）
-  3. [2026 年最佳嵌入模型](https://openrouter.ai/blog/insights/best-embedding-models-2026/)（2026-09-23）
-  4. [如何使用 Jev：在 TypeScript 中使用 Jev API 进行审核](https://openrouter.ai/blog/tutorials/how-to-use-jev/)（2026-09-23）
-  5. [Batch API：通过捆绑请求进行半价推理](https://openrouter.ai/blog/announcements/batch-api/)（2026-09-22）
-  - 📄 完整文章归档（共 140 篇）：[openrouter.md](llm-news/openrouter.md)
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
+  1. [What Is Qwen 3.8](https://openrouter.ai/blog/insights/qwen-3-8/)（2026-09-28）
+  2. [Seedance 是开源的吗？](https://openrouter.ai/blog/insights/seedance-2-5-open-source/)（2026-09-25）
+  3. [Is Kimi K3 Open Source? Weights, License, and How to Call It](https://openrouter.ai/blog/insights/kimi-k3-open-source/)（2026-09-24）
+  4. [2026 年最佳嵌入模型](https://openrouter.ai/blog/insights/best-embedding-models-2026/)（2026-09-23）
+  5. [如何使用 Jev：在 TypeScript 中使用 Jev API 进行审核](https://openrouter.ai/blog/tutorials/how-to-use-jev/)（2026-09-23）
+  - 📄 完整文章归档（共 141 篇）：[openrouter.md](llm-news/openrouter.md)
 
 ### Cerebras (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-cerebras.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-cerebras.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [隆重推出 CS-4：业界最快的 AI 加速器 了解更多 >>](https://www.cerebras.ai/blog/introducing-cerebras-cs-4)
   2. [为什么网络防御需要更快的推理](https://www.cerebras.ai/blog/why-cyber-defense-needs-faster-inference)
   3. [缓慢的私人助理的兴起](https://www.cerebras.ai/blog/the-rise-of-slow-personal-assistants)
@@ -263,19 +263,19 @@
 
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
-  1. [使用 EFA 和 DeepEP 在 Amazon EKS 上扩展 MoE 强化学习，吞吐量提高 40%](https://aws.amazon.com/blogs/machine-learning/scaling-moe-reinforcement-learning-on-amazon-eks-with-efa-and-deepep-with-40-more-throughput/)（2026-09-25）
-  2. [在 Amazon SageMaker HyperPod 上使用 SkyRL 加速多模式 RL 训练](https://aws.amazon.com/blogs/machine-learning/accelerate-multimodal-rl-training-with-skyrl-on-amazon-sagemaker-hyperpod/)（2026-09-25）
-  3. [NarrateAI：Amazon Bedrock 上的生产就绪 LLM 质量保证](https://aws.amazon.com/blogs/machine-learning/narrateai-production-ready-llm-quality-assurance-on-amazon-bedrock/)（2026-09-25）
-  4. [Deploying real-time personalized speech with Qwen3-TTS on Amazon SageMaker AI](https://aws.amazon.com/blogs/machine-learning/deploying-real-time-personalized-speech-with-qwen3-tts-on-amazon-sagemaker-ai/)（2026-09-25）
-  5. [Datacor 如何使用 Amazon Quick Sight 构建自助租赁分析](https://aws.amazon.com/blogs/machine-learning/how-datacor-built-self-service-rental-analytics-with-amazon-quick-sight/)（2026-09-25）
-  - 📄 完整文章归档（共 20 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
+  1. [跨账户自动化 Amazon Textract 适配器生命周期管理](https://aws.amazon.com/blogs/machine-learning/automating-amazon-textract-adapter-lifecycle-management-across-accounts/)（2026-09-28）
+  2. [使用 EFA 和 DeepEP 在 Amazon EKS 上扩展 MoE 强化学习，吞吐量提高 40%](https://aws.amazon.com/blogs/machine-learning/scaling-moe-reinforcement-learning-on-amazon-eks-with-efa-and-deepep-with-40-more-throughput/)（2026-09-25）
+  3. [在 Amazon SageMaker HyperPod 上使用 SkyRL 加速多模式 RL 训练](https://aws.amazon.com/blogs/machine-learning/accelerate-multimodal-rl-training-with-skyrl-on-amazon-sagemaker-hyperpod/)（2026-09-25）
+  4. [NarrateAI：Amazon Bedrock 上的生产就绪 LLM 质量保证](https://aws.amazon.com/blogs/machine-learning/narrateai-production-ready-llm-quality-assurance-on-amazon-bedrock/)（2026-09-25）
+  5. [Deploying real-time personalized speech with Qwen3-TTS on Amazon SageMaker AI](https://aws.amazon.com/blogs/machine-learning/deploying-real-time-personalized-speech-with-qwen3-tts-on-amazon-sagemaker-ai/)（2026-09-25）
+  - 📄 完整文章归档（共 21 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Fireworks AI (fireworks_ai)
 - 页面：[官方博客](https://fireworks.ai/blog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-fireworks_ai.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-fireworks_ai.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Every byte counts: ARCv3 and the case for cross-region RL](https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl)
   2. [专业智力指数简介](https://fireworks.ai/blog/introducing-the-specialized-intelligence-index)
   3. [边界不是模型。这是一个路由器。](https://fireworks.ai/blog/the-frontier-isnt-a-model-its-a-router)
@@ -285,7 +285,7 @@
 
 ### Together AI (together_ai)
 - 📡 [RSS/Atom 订阅源](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [如何用 17 美元训练你自己的 JEV](https://www.together.ai/blog/how-to-train-your-own-jev)（2026-09-23）
   2. [金丝雀部署：无需停机即可升级生产中的模型](https://www.together.ai/blog/canary-rollouts-upgrade-models-in-production-without-downtime)（2026-09-22）
   3. [全球金融科技如何通过专用模型推理扩展编码代理流量](https://www.together.ai/blog/global-fintech-scales-coding-agent-traffic-with-dedicated-model-inference)（2026-09-18）
@@ -297,19 +297,19 @@
 - 页面：[官方博客](https://deepinfra.com/blog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
-  1. [AI 模型校准：无人优化的基准](https://deepinfra.com/blog/ai-model-calibration-benchmark)（2026-09-25）
-  2. [代币冗长是新的定价战](https://deepinfra.com/blog/token-verbosity)（2026-09-25）
-  3. [模型弃用：构建持久的 LLM 应用程序](https://deepinfra.com/blog/model-deprecation-llm-apps)（2026-09-24）
-  4. [用人工智能设计你的下一个网站：Ming-Image 提示指南](https://deepinfra.com/blog/ming-design-with-ai)（2026-09-23）
-  5. [两层人工智能代理：为什么需要两种模型](https://deepinfra.com/blog/two-tier-agent-two-models)（2026-09-22）
-  - 📄 完整文章归档（共 7 篇）：[deepinfra.md](llm-news/deepinfra.md)
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
+  1. [代理需要运行时边界，而不仅仅是护栏](https://deepinfra.com/blog/agent-runtime-boundaries)（2026-09-28）
+  2. [AI 模型校准：无人优化的基准](https://deepinfra.com/blog/ai-model-calibration-benchmark)（2026-09-25）
+  3. [代币冗长是新的定价战](https://deepinfra.com/blog/token-verbosity)（2026-09-25）
+  4. [模型弃用：构建持久的 LLM 应用程序](https://deepinfra.com/blog/model-deprecation-llm-apps)（2026-09-24）
+  5. [用人工智能设计你的下一个网站：Ming-Image 提示指南](https://deepinfra.com/blog/ming-design-with-ai)（2026-09-23）
+  - 📄 完整文章归档（共 8 篇）：[deepinfra.md](llm-news/deepinfra.md)
 
 ### 美团 LongCat (longcat_meituan)
 - 页面：[更新日志](https://longcat.chat/platform/docs/zh/ChangeLog.html)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-longcat_meituan.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-longcat_meituan.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [LongCat-2.5-Preview 上线](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-25)（2026-09-25）
   2. [全新推出企业服务](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-10)（2026-09-10）
   3. [全新推出企业服务](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-02)（2026-09-02）
@@ -321,7 +321,7 @@
 - 页面：[更新日志](https://www.streamlake.com/document/WANQING/mdptalisb06i7ai3zdd)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-streamlake.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-streamlake.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [【新增】数据分析任务完成后可将结果下载至本地，便于进一步处理与留存数据](https://www.streamlake.com/document/WANQING/mdptalisb06i7ai3zdd#t2026-08-14-0)（2026-08-14）
   2. [【新增】新增 Python 代码节点，支持灵活编写自定义处理逻辑，满足个性化数据加工需求](https://www.streamlake.com/document/WANQING/mdptalisb06i7ai3zdd#t2026-07-22-1)（2026-07-22）
   3. [【新增】新增 GLM-5.2-FP8 模型部署能力，支持预付费、后付费模式，丰富模型部署选择](https://www.streamlake.com/document/WANQING/mdptalisb06i7ai3zdd#t2026-07-03-2)（2026-07-03）
@@ -333,7 +333,7 @@
 - 页面：[官方博客](https://www.shuyanai.com/blogs)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-dataeye.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-dataeye.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [数眼智能完成数千万元天使轮融资，加速企业级大模型部署能力建设](https://www.shuyanai.com/blogs#d-2026-09-21-4)（2026-09-21）
   2. [数眼智能AI漫剧教程：从脚本、AI生图到Seedance 2.5生视频](https://www.shuyanai.com/blogs#d-2026-09-17-5)（2026-09-17）
   3. [数眼智能 AI 视频生成教程：如何用智能体生成第一条视频？](https://www.shuyanai.com/blogs#d-2026-09-16-6)（2026-09-16）
@@ -345,7 +345,7 @@
 - 页面：[官方博客](https://www.ai21.com/blog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-ai21_labs.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [你不需要前沿模型。你需要一个验证者。](https://www.ai21.com/blog/#d-2026-08-19-0)（2026-08-19）
   2. [更好、更便宜：开放模型探索、前沿模型补丁](https://www.ai21.com/blog/#d-2026-07-15-1)（2026-07-15）
   3. [通过 SWE 代理的预算感知执行来改进 Best-of-N](https://www.ai21.com/blog/#d-2026-07-07-2)（2026-07-07）
@@ -356,7 +356,7 @@
 ### Jina AI (jina_ai)
 - 页面：[官方博客](https://jina.ai/news/)
   - 📡 RSS/Atom：https://jina.ai/feed.rss
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [jina-embeddings-v5-omni: Embeddings for Text, Image, Audio and VideoOne model, four modalities: text, image, audio, video. Best-in-class omni embeddings in 1.6B and 0.9B.](https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video)（2026-05-12）
   2. [7 minutes readBootstrapping Audio Embeddings from Multimodal LLMsTurn any multimodal LLM into a small audio embedding model that beats CLAP with 25x less data.](https://jina.ai/news/bootstrapping-audio-embeddings-from-multimodal-llms)（2026-03-11）
   3. [6 分钟阅读从原始数值识别嵌入模型一个微型转换器，可通过读取原始数值来识别嵌入模型的指纹。没有特征工程。](https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values)（2026-03-06）
@@ -368,7 +368,7 @@
 - 页面：[官方博客](https://poolside.ai/blog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-poolside.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-poolside.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Poolside on Dell：在您的边界内实现前沿人工智能的有效途径](https://poolside.ai/blog#d-2026-07-28-35)（2026-07-28）
   2. [Laguna XS 2.1 简介](https://poolside.ai/blog#d-2026-07-21-19)（2026-07-21）
   3. [长上下文更新：Laguna XS.2 和 M.1](https://poolside.ai/blog#d-2026-07-02-21)（2026-07-02）
@@ -378,7 +378,7 @@
 
 ### Modular (原 BentoCloud/BentoML) (modular_cloud)
 - 📡 [RSS/Atom 订阅源](https://www.modular.com/blog/rss.xml)：`https://www.modular.com/blog/rss.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Modular：Modular 26.6：开放编译器贡献、音频生成和扩展模型支持](https://www.modular.com/blog/modular-26-6-open-compiler-contributions-audio-generation-and-expanded-model-support)（2026-09-17）
   2. [Modular：Mojo🔥 现已开源！](https://www.modular.com/blog/mojo-open-source)（2026-08-18）
   3. [Modular：Modular 和高通：相同的代码，新的芯片](https://www.modular.com/blog/modcon-qualcomm)（2026-08-18）
@@ -394,7 +394,7 @@
 - 页面：[更新日志](https://mimo.mi.com/docs/zh-CN/news)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xiaomi_mimo.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xiaomi_mimo.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [2026-09-22 MiMo-V2.6 系列发布](https://mimo.mi.com/docs/zh-CN/updates/model#2026-09-22-mimo-v26-%E7%B3%BB%E5%88%97%E5%8F%91%E5%B8%83)（2026-09-22）
   2. [2026-9-22 批量推理（Batch API）功能上线](https://mimo.mi.com/docs/zh-CN/updates/feature/platform#2026-9-22--%E6%89%B9%E9%87%8F%E6%8E%A8%E7%90%86batch-api%E5%8A%9F%E8%83%BD%E4%B8%8A%E7%BA%BF)（2026-09-22）
   3. [2026-9-15 新增站内信功能](https://mimo.mi.com/docs/zh-CN/updates/feature/platform#2026-9-15--%E6%96%B0%E5%A2%9E%E7%AB%99%E5%86%85%E4%BF%A1%E5%8A%9F%E8%83%BD)（2026-09-15）
@@ -404,7 +404,7 @@
 
 ### Anyscale (anyscale)
 - 📡 [RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Ray Summit 2026：物理 AI、RL 以及运行它们的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
   2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
   3. [优化 LLM 服务效率：利用 Ray Serve LLM 超越 KV 缓存重用，实现令牌加载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
@@ -416,7 +416,7 @@
 - 页面：[官方博客](https://www.inceptionlabs.ai/blog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-inception_labs.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-inception_labs.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Mercury 2.5 简介|阅读博客](https://www.inceptionlabs.ai/blog/introducing-mercury-2-5)（2026-09-24）
   2. [Mercury 2 for Search：足够快，每个查询运行一百次阅读故事](https://www.inceptionlabs.ai/blog/mercury-2-for-search)
   3. [更多建设者。更多吞吐量。更好的 Mercury 2.阅读故事](https://www.inceptionlabs.ai/blog/mercury-2-10x-free-tokens)
@@ -428,7 +428,7 @@
 - 页面：[官方博客](https://inference.net/blog/)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-inference_net.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-inference_net.xml)
-- 📰 **最新文章**（官方源抓取于 2026-09-27，标题自动汉化）：
+- 📰 **最新文章**（官方源抓取于 2026-09-28，标题自动汉化）：
   1. [Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost](https://inference.net/blog/#d-2026-08-05-0)（2026-08-05）
   2. [推理平台简介：监控、训练和部署自我改进的 AI 模型](https://inference.net/blog/#d-2026-04-16-1)（2026-04-16）
   3. [How Inference.net trains Specialized Language Models that cut AI costs by up to 50x](https://inference.net/blog/#d-2026-04-14-2)（2026-04-14）
