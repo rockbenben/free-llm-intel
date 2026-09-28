@@ -114,16 +114,19 @@ jobs:
           key: translate-cache-${{ github.run_id }}
           restore-keys: translate-cache-
 
+      # 灾难性失败护栏：情报页失败占比 ≥ INTEL_FAIL_ABORT_RATIO（多数失败）时，
+      # crawler 以非零码退出，本步骤随即失败，后面的 Verify / Commit 都不执行 ——
+      # 宁可不提交当天产物，也不拿大面积「解析失败」的 README 覆盖上一轮健康产物。
+      # 健康巡检失败率近零，偶发单源反爬够不着这条线（阈值与理由见 crawler 常量注释）。
       - name: Run intel crawler
         env:
           PYTHONIOENCODING: utf-8
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # 可用 repository variable 覆盖模型；未设置时走代码默认（见 ai_review）
           AI_REVIEW_MODEL: ${{ vars.AI_REVIEW_MODEL }}
-          # 订阅源的对外前缀。留空则按 GITHUB_REPOSITORY 推导为
-          # https://<owner>.github.io/<repo>/feeds（fork 后无需配置）；
-          # 配了自定义域名就填 https://<域名>/feeds，让 feed 的 rel=self 与 <source url>
-          # 直接指向规范地址，省掉从 github.io 的一次 301 跳转。
+          # 订阅源的对外前缀。留空则优先读 docs/CNAME（自定义域名），其次按
+          # GITHUB_REPOSITORY 推导为 https://<owner>.github.io/<repo>/feeds
+          # （fork 后无需配置）；显式传入可覆盖推导值。
           FEEDS_BASE: ${{ vars.FEEDS_BASE }}
         run: python crawler_llm_intel.py --ai-review --ai-titles --feeds-base "$FEEDS_BASE"
 

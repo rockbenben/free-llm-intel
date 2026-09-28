@@ -5108,6 +5108,21 @@ def adopt_patches(root: Path, ai_patches: dict, intel_by_id: dict) -> int:
 # main
 # ---------------------------------------------------------------------------
 
+#: 完整巡检的「灾难性失败」护栏：情报页失败占比达此阈值即判定为系统性故障，
+#: main() 以非零码退出，让 CI 在提交前停下（见 refresh-intel.yml 抓取步骤）。
+#: 阈值取高（多数失败）：健康巡检失败率近零（当前产物实测情报 / 动态失败均为 0），
+#: 偶发单源反爬远够不着这条线；只有 runner 出口被墙 / 源站整体改版才会触发。
+INTEL_FAIL_ABORT_RATIO = 0.5
+#: 小样本轮（--only 单厂商调试、多数源进冷却）不套用比例阈值，避免一两个页面失败就误判。
+INTEL_FAIL_ABORT_MIN_TOTAL = 10
+
+
+def intel_failure_abort(total: int, ok: int) -> bool:
+    """完整巡检的情报页失败是否已达「该中止提交」的程度（纯函数，供 main 与单测共用）。"""
+    return (total >= INTEL_FAIL_ABORT_MIN_TOTAL
+            and (total - ok) / total >= INTEL_FAIL_ABORT_RATIO)
+
+
 def _repo_root() -> Path:
     """仓库根目录（所有产物的落点）。
 
@@ -5616,6 +5631,16 @@ def main(argv: list[str] | None = None) -> int:
           f"动态页 {news_total}。")
     if fail:
         print("失败页面已在 README 中标注「解析失败」，可重跑或人工核查。")
+    # 灾难性失败护栏：只对「完整巡检的实抓」生效。rebuild / 快进没有实抓情报页
+    # （total 为 0 或磁盘重建），--only 是小样本调试轮，三者都不该被比例阈值拦截。
+    # 触发时以非零码退出：CI 抓取步骤随即失败，后面的 Verify / Commit 都不执行，
+    # 宁可不提交当天产物，也不拿大面积「解析失败」的 README 覆盖上一轮健康产物。
+    if (not args.rebuild_only and not fast_applied and not args.only
+            and intel_failure_abort(total, ok)):
+        print(f"::error::情报页 {fail}/{total} 抓取失败（≥{INTEL_FAIL_ABORT_RATIO:.0%}），"
+              "疑似系统性故障（runner 出口被墙 / 源站整体改版），本次以失败退出、"
+              "不提交产物，请人工核查后重跑。", file=sys.stderr)
+        return 1
     return 0
 
 
