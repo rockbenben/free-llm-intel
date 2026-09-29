@@ -12,7 +12,7 @@ import re
 import tempfile
 import types
 import unittest
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from unittest import mock
 
@@ -5284,12 +5284,226 @@ sources:
         """yaml 侧的契约：接口源必须带 `page`，否则产物会把接口长串印给读者。"""
         root = Path(__file__).resolve().parent
         _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
-        api_sources = [s for s in sources if "/api/" in (s.get("url") or "")
+        api_sources = [s for s in sources
+                       if any(k in (s.get("url") or "") for k in ("/api/", "wp-json"))
                        and (s.get("type") or "") in crawler_llm_intel.NEWS_TYPES]
-        self.assertTrue(api_sources, "夹具前提：千问接口源要在 yaml 里")
+        self.assertEqual(len(api_sources), 2,
+                         "夹具前提：目前应有千问接口与 AI21 wp-json 两个动态接口源")
         for s in api_sources:
             self.assertTrue(s.get("page"), f"数据接口源缺 page：{s}")
             self.assertNotIn("/api/", s["page"], "page 必须是给人看的地址")
+            self.assertNotIn("wp-json", s["page"])
+
+
+class TestWordpressNewsSource(unittest.TestCase):
+    """WordPress `wp-json` 作为动态源（AI21）—— 第二个 JSON 消费者，形状完全不同。
+
+    换源动因是实测出来的缺陷：AI21 归档 13 条**全是** `blog/#d-<日期>-<n>` 合成锚点，
+    一条都打不开（与 deepseek / x.ai / claude 那个缺陷同源，见
+    NEWS_CANONICAL_ONLY_VENDORS）。站上没有 RSS：/feed、/blog/feed、/rss.xml 实测全部
+    落到首页 HTML 或 404，只有 wp-json 给规范直链与精确发布时间。
+    """
+
+    ENDPOINT = ("https://www.ai21.com/wp-json/wp/v2/posts?per_page=100"
+                "&orderby=date&order=desc&_fields=date,link,title")
+    HUMAN = "https://www.ai21.com/blog"
+
+    @staticmethod
+    def _day(offset_days: int) -> str:
+        """相对抓取日的日期，测试不随时间腐烂。"""
+        return (date.today() - timedelta(days=offset_days)).isoformat()
+
+    def _body(self, items=None):
+        return json.dumps(items if items is not None else [
+            # title 是 `{"rendered": ...}` 且带 HTML 实体，link 带尾斜杠
+            {"date": f"{self._day(10)}T14:25:38",
+             "link": "https://www.ai21.com/blog/you-need-a-verifier/",
+             "title": {"rendered": "You don&#8217;t need a frontier model. "
+                                   "You need a verifier."}},
+            {"date": f"{self._day(400)}T09:00:00",
+             "link": "https://www.ai21.com/blog/older-post/",
+             "title": {"rendered": "Better and cheaper together"}},
+            {"date": f"{self._day(900)}T09:00:00",          # 超出两年窗口
+             "link": "https://www.ai21.com/blog/ancient-post/",
+             "title": {"rendered": "2023 年的旧帖不该灌进浏览页"}},
+            {"date": "", "link": "https://www.ai21.com/blog/no-date/",
+             "title": {"rendered": "没有日期的条目照收，只是排到最后"}},
+            {"date": (date.today() + timedelta(days=30)).isoformat() + "T00:00:00",
+             "link": "https://www.ai21.com/blog/from-the-future/",
+             "title": {"rendered": "日期写在未来的条目"}},
+            {"date": self._day(20), "link": "",             # 丢：没有 link 打不开
+             "title": {"rendered": "缺 link 的条目"}},
+            {"date": self._day(20), "link": "https://www.ai21.com/blog/x/",
+             "title": {"rendered": "太短"}},                # 丢：标题 < 4 字符
+            "不是字典的一行",
+        ], ensure_ascii=False)
+
+    def _page(self, body=None, stype="blog"):
+        return crawler_llm_intel.PageResult(
+            url=self.ENDPOINT, stype=stype, ok=True, final_url=self.ENDPOINT,
+            raw=body if body is not None else self._body(), display_url=self.HUMAN)
+
+    def _intel(self, pages, vendor_id="ai21_labs", brand="AI21 Labs"):
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id=vendor_id, brand=brand, homepage="", products=[])
+        intel.news_pages = pages
+        return intel
+
+    # ---- 解析 ----
+
+    def test_wordpress_adapter_decodes_title_and_trims_date(self):
+        arts = {a.url: a for a in crawler_llm_intel.extract_articles_from_wordpress(
+            self._page())}
+        url = "https://www.ai21.com/blog/you-need-a-verifier/"
+        self.assertIn(url, arts, "link 就是站方给的规范地址，原样保留")
+        self.assertEqual(arts[url].title,
+                         "You don\u2019t need a frontier model. You need a verifier.",
+                         "`&#8217;` 这类实体要解码，否则进归档就是 `&#8217;` 字面量")
+        self.assertEqual(arts[url].date, self._day(10), "date 带时间后缀，只取前 10 位")
+        self.assertEqual(arts[url].source, "官方内容接口")
+        self.assertEqual(arts[url].stype, "blog")
+
+    def test_wordpress_window_drops_aged_posts(self):
+        urls = {a.url for a in crawler_llm_intel.extract_articles_from_wordpress(
+            self._page())}
+        self.assertIn("https://www.ai21.com/blog/older-post/", urls, "窗口内的要留")
+        self.assertNotIn("https://www.ai21.com/blog/ancient-post/", urls,
+                         "超过两年的旧帖不收：浏览页不是历史存档")
+
+    def test_wordpress_window_is_rolling_not_fixed(self):
+        """窗口按「抓取日减天数」算，不是写死日期 —— 写死会随时间越放越宽。"""
+        items = [{"date": f"{self._day(cut)}T00:00:00",
+                  "link": f"https://www.ai21.com/blog/p{cut}/",
+                  "title": {"rendered": f"第 {cut} 天前的一篇帖子"}}
+                 for cut in (729, 731)]
+        urls = {a.url.rsplit("/p", 1)[-1].strip("/") for a in
+                crawler_llm_intel.extract_articles_from_wordpress(self._page(self._body(items)))}
+        self.assertEqual(urls, {"729"}, "窗口边界外一天的必须被挡掉")
+        # 同一个夹具把窗口放宽就都在 —— 证明挡住它的是窗口，不是别的判据
+        wide = crawler_llm_intel.extract_articles_from_wordpress(
+            self._page(self._body(items)), window_days=5 * 365)
+        self.assertEqual(len(wide), 2)
+
+    def test_wordpress_window_rolls_with_the_clock(self):
+        """把抓取日推到三年后，同一批帖子的去留必须跟着变。
+
+        写死一个 cutoff 基准日（哪怕算法同样是「减 730 天」）在这里就会露馅：
+        老帖会被永久放行，窗口随着时间越放越宽。
+        """
+        future = datetime(2029, 1, 1)
+        ref = (future - timedelta(days=crawler_llm_intel.JSON_NEWS_WINDOW_DAYS)).date()
+        items = [{"date": f"{(ref + timedelta(days=1)).isoformat()}T00:00:00",
+                  "link": "https://www.ai21.com/blog/inside/",
+                  "title": {"rendered": "窗口内的一条帖子"}},
+                 {"date": f"{(ref - timedelta(days=1)).isoformat()}T00:00:00",
+                  "link": "https://www.ai21.com/blog/outside/",
+                  "title": {"rendered": "窗口外的一条帖子"}}]
+        clock = mock.Mock()
+        clock.now.return_value = future
+        page = self._page(self._body(items))
+        with mock.patch.object(crawler_llm_intel, "datetime", clock):
+            urls = {a.url.rsplit("/", 2)[-2] for a in
+                    crawler_llm_intel.extract_articles_from_wordpress(page)}
+        self.assertEqual(urls, {"inside"},
+                         "以 2029-01-01 为抓取日时，边界应按 window 天数整体前移")
+
+    def test_wordpress_keeps_undated_and_defuses_future_dates(self):
+        arts = {a.url: a for a in crawler_llm_intel.extract_articles_from_wordpress(
+            self._page())}
+        self.assertIn("https://www.ai21.com/blog/no-date/", arts,
+                      "没有日期只是排到末尾，条目本身不该消失")
+        future = arts.get("https://www.ai21.com/blog/from-the-future/")
+        self.assertIsNotNone(future)
+        self.assertEqual(future.date, "", "远未来日期要在入口丢掉（归档只增不减）")
+
+    def test_wordpress_drops_unusable_rows(self):
+        urls = [a.url for a in crawler_llm_intel.extract_articles_from_wordpress(
+            self._page())]
+        self.assertNotIn("", urls, "没有 link 的条目打不开")
+        self.assertNotIn("https://www.ai21.com/blog/x/", urls, "标题过短不是文章")
+        self.assertNotIn("不是字典的一行", urls)
+
+    def test_wordpress_respects_max_items(self):
+        items = [{"date": self._day(1), "link": f"https://www.ai21.com/blog/p{i}/",
+                  "title": {"rendered": f"第 {i} 篇帖子"}} for i in range(300)]
+        arts = crawler_llm_intel.extract_articles_from_wordpress(
+            self._page(self._body(items)), max_items=5)
+        self.assertEqual(len(arts), 5)
+
+    def test_shapes_do_not_cross(self):
+        """两种接口形状互不认领：认错了会把 0 条当成「源停更」。"""
+        wp_page = self._page()
+        qwen_shape = json.dumps({"data": {"articles": [
+            {"title": "Qwen3-Max 正式发布", "path": "qwen3-max",
+             "extra": {"date": self._day(5)}}]}}, ensure_ascii=False)
+        self.assertEqual(crawler_llm_intel.extract_articles_from_json(wp_page), [],
+                         "千问适配器不该认 WP 的裸数组")
+        self.assertEqual(
+            crawler_llm_intel.extract_articles_from_wordpress(
+                crawler_llm_intel.PageResult(url="https://qwen.ai/api/x", stype="research",
+                                             ok=True, raw=qwen_shape)),
+            [], "WP 适配器不该认千问的 data.articles")
+
+    # ---- 步骤 3.5 分派 ----
+
+    def test_collect_news_dispatches_to_wordpress_adapter(self):
+        intel = self._intel([self._page()])
+        with mock.patch.object(crawler_llm_intel, "extract_articles_from_page",
+                              wraps=crawler_llm_intel.extract_articles_from_page) as spy:
+            crawler_llm_intel.collect_news_articles(intel, session=None)
+        spy.assert_not_called()
+        urls = [a.url for a in intel.all_news_articles]
+        self.assertTrue(urls and all("#d-" not in u for u in urls),
+                        f"接口源不得产出合成锚点：{urls}")
+        self.assertIn("https://www.ai21.com/blog/you-need-a-verifier/", urls)
+
+    # ---- 老锚点收口（换源的直接动因） ----
+
+    def _anchored_intel(self):
+        intel = self._intel([self._page()])
+        intel.all_news_articles = [
+            crawler_llm_intel.Article(title="合成锚点老条目",
+                                      url="https://www.ai21.com/blog/#d-2026-08-19-0",
+                                      date="2026-08-19"),
+            crawler_llm_intel.Article(title="有直链的新条目",
+                                      url="https://www.ai21.com/blog/new-post",
+                                      date="2026-09-20"),
+        ]
+        intel.news_articles = intel.all_news_articles
+        return intel
+
+    def test_ai21_is_canonical_only_so_anchors_stop_shipping(self):
+        self.assertIn("ai21_labs", crawler_llm_intel.NEWS_CANONICAL_ONLY_VENDORS,
+                      "换源前那批 blog/#d-… 锚点全是死链，产出层必须挡掉")
+        urls = [a.url for a in crawler_llm_intel._rss_articles(
+            self._anchored_intel(), date.today().isoformat())]
+        self.assertEqual(urls, ["https://www.ai21.com/blog/new-post"],
+                         "只留规范直链；归档 .md 仍全量留档")
+
+    def test_anchor_filter_does_not_spill_to_other_vendors(self):
+        """对照组：没进白名单的厂商，锚点就是它的条目身份，不能跟着挡。"""
+        intel = self._anchored_intel()
+        intel.vendor_id = "minimax"
+        urls = [a.url for a in crawler_llm_intel._rss_articles(
+            intel, date.today().isoformat())]
+        self.assertIn("https://www.ai21.com/blog/#d-2026-08-19-0", urls,
+                      "白名单外的厂商维持原状")
+
+    # ---- yaml 契约 ----
+
+    def test_yaml_ai21_source_shape(self):
+        root = Path(__file__).resolve().parent
+        _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        src = next(s for s in sources if s.get("vendor_id") == "ai21_labs"
+                   and "wp-json" in (s.get("url") or ""))
+        self.assertEqual(src.get("page"), "https://www.ai21.com/blog")
+        self.assertEqual(src.get("type"), "blog")
+        # 窗口必须在爬虫侧，URL 里不许出现固定日期
+        self.assertNotIn("after=", src["url"],
+                         "写死 after= 日期会随时间越放越宽，等于没有窗口")
+        self.assertIn("_fields=", src["url"], "不裁字段会把整篇正文拉回来")
+        listing = [s for s in sources if (s.get("url") or "") == "https://www.ai21.com/blog"]
+        self.assertEqual(listing, [], "列表页源已换掉")
 
 
 if __name__ == "__main__":

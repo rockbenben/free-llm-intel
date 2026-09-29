@@ -1366,6 +1366,59 @@ def extract_articles_from_json(page: PageResult,
     return articles
 
 
+#: JSON 内容接口只收最近这么久的条目。AI21 全站 138 篇里 70 篇是 2023 年及更早的旧帖，
+#: 一次性灌进归档会把浏览页变成历史存档；本站的主题是「现在能白嫖到什么」，旧帖没有
+#: 订阅价值。窗口按抓取日推算 —— 接口侧的 `after=` 写死日期会随时间越放越宽，
+#: 等于没有窗口（见 llm-intel.yaml 的 ai21 源注释）。
+JSON_NEWS_WINDOW_DAYS = 730
+
+
+def _wp_field(item: dict, key: str) -> str:
+    """WordPress 的 title/excerpt 之类字段是 `{"rendered": "..."}`，且带 HTML 实体。"""
+    value = item.get(key)
+    if isinstance(value, dict):
+        value = value.get("rendered")
+    return html_mod.unescape(str(value or ""))
+
+
+def extract_articles_from_wordpress(page: PageResult,
+                                    max_items: int = JSON_NEWS_MAX_ITEMS,
+                                    window_days: int = JSON_NEWS_WINDOW_DAYS) -> list[Article]:
+    """WordPress `wp-json/wp/v2/posts` 的文章列表（接口返回**裸数组**，不是包在 data 里）。
+
+    与千问那个接口是两种形状，所以是第二个具体消费者而不是「通用映射框架」：
+    字段名、`rendered` 包装、正链来源都由这一层自己认，形状不符直接返回空，
+    调用方（步骤 3.5）按返回值挑一种。
+    """
+    body = json_api_body(page)
+    if not body:
+        return []
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return []
+    if not isinstance(data, list):
+        return []
+    cutoff = (datetime.now() - timedelta(days=window_days)).strftime("%Y-%m-%d")
+    articles: list[Article] = []
+    for item in data[:max_items]:
+        if not isinstance(item, dict):
+            continue
+        title = re.sub(r"\s+", " ", _wp_field(item, "title")).strip()
+        url = str(item.get("link") or "").strip()
+        if len(title) < 4 or not url:
+            continue
+        raw_date = str(item.get("date") or "")[:10]
+        if raw_date and raw_date < cutoff:
+            continue
+        articles.append(Article(
+            title=title, url=url,
+            # 没有日期不影响窗口判断（照收，只是排到末尾），与入口其它通路一致
+            date=_drop_future_date(raw_date),
+            source="官方内容接口", stype=page.stype))
+    return articles
+
+
 # HTML 博客页文章链接的路径特征：/blog/<slug>、/news/<slug>、/updates/... 等
 _ARTICLE_PATH_HINTS = re.compile(
     r"/(blog|blogs|news|updates|changelog|announcements?|posts?|articles?|"
@@ -2458,13 +2511,16 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
         if drop_urls:
             articles = [a for a in articles if _norm_url(a.url) not in drop_urls]
 
-    # 3.5) JSON 数据接口（页面纯前端渲染、官方又无 RSS 的站点，如千问 qwen.ai/research）。
+    # 3.5) JSON 数据接口（页面纯前端渲染、官方又无 RSS 的站点，如千问 qwen.ai/research、
+    #      AI21 的 WordPress wp-json）。
     #      刻意排在 HTML 兜底**之后**：步骤 3 带 `if not articles` 前置，接口条目若先进
     #      articles，同一厂商的 HTML 动态页从此再也不会被提取 —— 而归档只增不减，
     #      这种「静默停更」在产物上完全看不出来。
     for page in intel.news_pages:
         if page.ok and json_api_body(page):
-            _add(extract_articles_from_json(page))
+            # 两种已知形状各试一次，谁认得出来用谁（形状不符的返回空列表）
+            _add(extract_articles_from_json(page)
+                 or extract_articles_from_wordpress(page))
 
     # 4) 同日去重：更新日志列表页里的日期锚点（如 DeepSeek /updates/#时间-2026-09-10）
     #    与对应新闻详情页（/news/<slug>）指向同一次发布时，保留详情页、丢弃锚点；
@@ -3282,14 +3338,18 @@ def _native_feed_vendors(intel_list: list[VendorIntel]) -> set[str]:
     return out
 
 
-#: 这三家每条新闻都有规范直链（deepseek `/news/newsXXXXXX`、x.ai `/news/<slug>`、
-#: claude.com `/blog/<slug>`），但动态页是单页列表，变更日志式提取器会给每个分节
-#: **合成**一个 `#d-<日期>-<n>` 锚点条目（见 extract 的 `f"d-{norm}-{n}"` 兜底）。
+#: 这几家每条新闻都有规范直链（deepseek `/news/newsXXXXXX`、x.ai `/news/<slug>`、
+#: claude.com `/blog/<slug>`、ai21 `/blog/<slug>/`），但动态页是单页列表，变更日志式
+#: 提取器会给每个分节**合成**一个 `#d-<日期>-<n>` 锚点条目（见 extract 的 `f"d-{norm}-{n}"`
+#: 兜底）。
 #: 于是同一篇文章既有直链版又有锚点版，锚点版标题常是页面主标题或分节名，读者看到就是
 #: 重复/错配条目（实测 x.ai 半数条目、deepseek 大部分条目是这种合成锚点）。只保留无
-#: fragment 的规范直链。其他单页站（阿里云百炼 / MiniMax / PPIO…）锚点**才是**条目身份，
+#: fragment 的规范直链。其他单页站（MiniMax / PPIO…）锚点**才是**条目身份，
 #: 没有独立直链页，不在此列 —— 故按厂商白名单，而非全局去 fragment。
-NEWS_CANONICAL_ONLY_VENDORS = {"deepseek", "xai_grok", "anthropic"}
+#: ai21_labs 是 2026-09-30 换源时加进来的：它的归档当时**只有**锚点（13 条全是
+#: `blog/#d-…`，没有一条能点开的直链），换源后新条目走 wp-json 带规范地址，
+#: 这批老锚点就纯剩死链了。
+NEWS_CANONICAL_ONLY_VENDORS = {"deepseek", "xai_grok", "anthropic", "ai21_labs"}
 
 
 def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
