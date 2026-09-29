@@ -641,9 +641,30 @@ sources:
   - vendor_id: aliyun_qwen
     type: first_call_docs
     url: https://help.aliyun.com/zh/model-studio/first-api-call-to-qwen
+  # 千问官方动态（2026-09-30 换源）：原 `type: updates` 指向百炼「新发布模型」变更日志，
+  # 那是**市场上架流水**而非千问动态 —— 实测 109 条里 68 条是第三方模型上架
+  # （GLM-5.3 / Kimi-K3 / DeepSeek-V4.1 / 可灵 / Vidu / PixVerse…），含「免费/限免」
+  # 「下线」「价格/计费」的各 **0** 条，对本站主题零贡献；且模型发布雷达里
+  # aliyun_qwen 的 94 条有 55 条是第三方模型挂在「通义千问 Qwen」名下。已按
+  # RETIRED_NEWS_URL_PREFIXES 清理历史条目（判据同 ppio / modal 四家）。
+  #
+  # 新源是 qwen.ai/research 背后的官方 JSON 接口（zh-CN；en-US 是同一批 slug，零增量）。
+  # 只能走接口，三条路都实测堵死：
+  #   1) 页面纯前端渲染 —— 静态 HTML 92KB 里文章数据 0 条；浏览器渲染后整页
+  #      **0 个 `<a>`**（卡片是 div + 点击），链接提取无从下手；
+  #   2) 详情正链是 `https://qwen.ai/blog?id=<slug>`，path 就是 `/blog`，会被
+  #      _SECTION_ROOT 判成栏目根丢弃；
+  #   3) 全站无 RSS（/rss.xml、/feed、连 /robots.txt 都 catch-all 返回同一份 HTML 壳）；
+  #      qwenlm.github.io/blog 同为空壳且内容停在 2025-09。
+  # ⚠️ 别换成 `api/page_config?code=research.research-list`：看着像同一个列表，
+  #    实测已陈旧（最大日期停在 2025-12-23）。接口响应 4.9MB 且无法瘦身
+  #    （content=false / fields= / page&size 六种参数实测全无效）。
+  # `page` 是给人看的地址：归档与 llm-news-feeds.md 的「订阅入口」印它，
+  # 不印接口长串（见 PageResult.display_url）。
   - vendor_id: aliyun_qwen
-    type: updates
-    url: https://help.aliyun.com/zh/model-studio/newly-released-models
+    type: research
+    url: "https://qwen.ai/api/v2/article/retrieval?type=qwen_ai&language=zh-CN"
+    page: https://qwen.ai/research
 
   # 小米 MiMo
   # 首页为 SSG 预渲染（静态即可拿到完整正文）；文档站为前端渲染 SPA

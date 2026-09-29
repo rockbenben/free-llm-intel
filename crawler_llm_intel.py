@@ -278,12 +278,16 @@ class PageResult:
     """单个 URL 的抓取结果。"""
     url: str
     stype: str
+    #: 给人看的地址：源是数据接口（如千问官方 JSON 接口）时，两处「订阅入口」
+    #: （`llm-news-feeds.md` 与 `llm-news/<vendor>.md`）印这个，而不是印接口长串。
+    #: 空则用 `url`。
+    display_url: str = ""
     ok: bool = False
     status_code: int | None = None
     final_url: str = ""
     title: str = ""
     text: str = ""
-    raw: str = ""  # 原始响应体（RSS/Atom 等 XML 源保留原文，供 feed 解析）
+    raw: str = ""  # 原始响应体（RSS/Atom 的 XML、JSON 数据接口保留原文供各自解析）
     feeds: list[str] = field(default_factory=list)
     links: list[tuple[str, str]] = field(default_factory=list)
     #: 与 `links` 逐项对齐：锚内标题元素（HEADING_TAGS）的文本，无则空串。
@@ -730,6 +734,12 @@ class BrowserSession:
         self._page = None
 
 
+#: JSON 数据接口作为动态源时保留的响应体上限（千问官方接口实测 4.9MB，且无法瘦身：
+#: content=false / fields= / page&size 六种参数全部无效）。只在 stype 属 NEWS_TYPES 时
+#: 保留全文，情报页仍按 20000 字符截断，免得把兆级正文常驻内存。
+JSON_NEWS_BODY_LIMIT = 8_000_000
+
+
 def _fetch_with_requests(session: requests.Session, url: str, stype: str,
                          timeout: tuple[float, float], retries: int) -> PageResult:
     """用 requests 抓取，任何异常都封装进 PageResult，不向上抛出。"""
@@ -770,6 +780,14 @@ def _fetch_with_requests(session: requests.Session, url: str, stype: str,
                 result.ok = True
                 result.sparse = len(result.text) < 200
                 result.snapshot_ok = not result.sparse
+                # 动态源额外保留**全文**：JSON 接口的条目信息（标题/日期/链接）散在
+                # 整个响应里，20000 字符截断后一条也提不出来 —— 千问官方接口实测
+                # 响应 4.9MB，前 20000 字符里 `"date"` 出现 0 次、只够半篇文章正文，
+                # 配好源跑下来是 0 条。快照仍只吃 snapshot_text，且动态页本来就不进
+                # 快照（stage_vendor 排除 NEWS_TYPES），所以接口里每次请求都变的
+                # `request_id` 不会引发哈希抖动。
+                if stype in NEWS_TYPES:
+                    result.raw = resp.text[:JSON_NEWS_BODY_LIMIT]
                 return result
             result.raw = resp.text[:2_000_000]
             text, title, feeds, links, link_headings = parse_html(resp.text, resp.url)
@@ -1282,6 +1300,70 @@ def fetch_feed_articles(session: requests.Session, url: str,
         return parse_feed_xml(resp.text, resp.url, stype=stype)
     except requests.RequestException:
         return []
+
+
+#: JSON 数据接口作动态源时的条目上限（千问官方接口一次给 40 篇，留足余量）
+JSON_NEWS_MAX_ITEMS = 200
+
+_JSON_DATE_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})")
+
+
+def json_api_body(page: PageResult) -> str:
+    """动态源页面是否为 JSON 数据接口：是则返回待解析正文，否则空串。
+
+    判据只看正文首字符（`{` / `[`）—— Content-Type 在抓取阶段就用掉了
+    （非 HTML/XML 才走这条分支），到这里已无从区分「接口」与「长得像 JSON 的文本」。
+    """
+    body = (page.raw or page.text or "").lstrip()
+    return body if body[:1] in ("{", "[") else ""
+
+
+def extract_articles_from_json(page: PageResult,
+                               max_items: int = JSON_NEWS_MAX_ITEMS) -> list[Article]:
+    """从 JSON 数据接口提取文章条目：页面纯前端渲染、官方又没有 RSS 时的通路。
+
+    目前唯一消费者是千问官方接口（为什么只能走接口，见 llm-intel.yaml 的 research 源
+    注释），形状为 `{"data": {"articles": [{"title", "path", "extra": {"date"}}]}}`。
+    刻意不做成「通用 JSON 映射框架」：字段名、层级、正链拼法都是站点私有约定，
+    抽一层配置只会把约定藏起来，将来接口改版时更难查。
+
+    正链拼 `<origin>/blog?id=<path>`（origin 取自接口 URL，不硬编码域名）——
+    这是站点自己的规范地址：在 /research 页点卡片实测跳到这里。
+    **不能**用 `page.text` 解析：非 HTML 分支把 text 截到 20000 字符，
+    而接口响应 4.9MB、日期全在 extra 里（实测前 20000 字符内 `"date"` 出现 0 次）。
+    """
+    body = json_api_body(page)
+    if not body:
+        return []
+    try:
+        data = json.loads(body)
+    except ValueError:
+        return []
+    payload = data.get("data") if isinstance(data, dict) else None
+    items = payload.get("articles") if isinstance(payload, dict) else None
+    if not isinstance(items, list):
+        return []
+    parts = urlparse(page.final_url or page.url)
+    if not parts.scheme or not parts.netloc:
+        return []
+    origin = f"{parts.scheme}://{parts.netloc}"
+    articles: list[Article] = []
+    for item in items[:max_items]:
+        if not isinstance(item, dict):
+            continue
+        title = re.sub(r"\s+", " ", str(item.get("title") or "")).strip()
+        slug = str(item.get("path") or "").strip()
+        if len(title) < 4 or not slug:
+            continue
+        extra = item.get("extra")
+        raw_date = str((extra or {}).get("date") or "") if isinstance(extra, dict) else ""
+        m = _JSON_DATE_RE.match(raw_date.strip())
+        articles.append(Article(
+            title=title,
+            url=f"{origin}/blog?id={slug}",
+            date=_drop_future_date(m.group(1)) if m else "",
+            source="官方 JSON 接口", stype=page.stype))
+    return articles
 
 
 # HTML 博客页文章链接的路径特征：/blog/<slug>、/news/<slug>、/updates/... 等
@@ -2264,6 +2346,13 @@ RETIRED_NEWS_URL_PREFIXES: tuple[str, ...] = (
     "https://modal.com/",
     "https://ppio.com/",
     "https://docs.digitalocean.com/",
+    # 阿里云百炼「新发布模型」变更日志：同一条判据（聚合第三方模型的平台不汇聚），
+    # 2026-09-30 从 yaml 移除，改用千问官方动态接口（见 llm-intel.yaml 的 research 源）。
+    # 实测 109 条里 68 条是第三方模型上架（GLM-5.3 / Kimi-K3 / DeepSeek-V4.1 / 可灵 /
+    # Vidu / PixVerse…），含「免费/限免」「下线」「价格/计费」的各 0 条；模型发布雷达里
+    # aliyun_qwen 的 94 条有 55 条是第三方模型挂在「通义千问 Qwen」名下（错归属）。
+    # 同厂商的 `first-api-call-to-qwen`（first_call_docs，情报页）路径不同，不受影响。
+    "https://help.aliyun.com/zh/model-studio/newly-released-models",
 )
 
 
@@ -2280,6 +2369,7 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
       1) YAML 中 type=feed 的源直接解析原始 XML；
       2) 博客 / 新闻 HTML 页自动发现的 RSS/Atom 链接，抓取并解析；
       3) 仍无文章时，从 HTML 链接中启发式提取文章卡片；
+      3.5) JSON 数据接口的源（页面纯前端渲染、官方又无 RSS）解析接口正文；
       4) 同日锚点与详情页去重（保留详情页）；
       5) 按日期倒序（无日期排后）后走 is_intel_news 过滤。
     过滤后的全量列表写进 intel.all_news_articles（供归档与 RSS），
@@ -2332,7 +2422,11 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
     # 3) HTML 文章链接兜底（RSS 无产出时）
     if not articles:
         for page in intel.news_pages:
-            if page.stype != "feed":
+            # JSON 数据接口另走步骤 3.5：它的正文是兆级响应体，扔进 HTML 提取器会让
+            # extract_changelog_sections 把接口里的日期字段当分节 —— 实测千问接口凭空
+            # 造出 53 条，URL 全是「接口地址 + 合成 `#d-<日期>-<n>` 锚点」（点进去是
+            # 4.9MB 的 JSON），标题里还混着文章正文内的小标题（如「分层分解的应用#」）。
+            if page.stype != "feed" and not json_api_body(page):
                 # 子文档需要全量归档，HTML 兜底提取上限放宽到 100 条
                 _add(extract_articles_from_page(page, max_items=100))
         # 锚文本是「this documentation / 查看详情」之类通用词时，
@@ -2363,6 +2457,14 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
                 continue
         if drop_urls:
             articles = [a for a in articles if _norm_url(a.url) not in drop_urls]
+
+    # 3.5) JSON 数据接口（页面纯前端渲染、官方又无 RSS 的站点，如千问 qwen.ai/research）。
+    #      刻意排在 HTML 兜底**之后**：步骤 3 带 `if not articles` 前置，接口条目若先进
+    #      articles，同一厂商的 HTML 动态页从此再也不会被提取 —— 而归档只增不减，
+    #      这种「静默停更」在产物上完全看不出来。
+    for page in intel.news_pages:
+        if page.ok and json_api_body(page):
+            _add(extract_articles_from_json(page))
 
     # 4) 同日去重：更新日志列表页里的日期锚点（如 DeepSeek /updates/#时间-2026-09-10）
     #    与对应新闻详情页（/news/<slug>）指向同一次发布时，保留详情页、丢弃锚点；
@@ -2625,6 +2727,9 @@ def crawl_vendor(vendor: dict, sources: list[dict], session: requests.Session,
             intel.skipped_sources.append(src)
             continue
         page = fetch_url(session, url, stype, browser=browser, timeout=timeout)
+        # 源是数据接口时，yaml 的 `page` 给出人类可读地址：产出物（归档 /
+        # llm-news-feeds.md 的「订阅入口」）印它，不印接口长串。
+        page.display_url = src.get("page") or ""
         target.append(page)
         if page.ok:
             via = "🌐browser" if page.rendered_by == "browser" else "ok"
@@ -3265,7 +3370,7 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
                 lines.append(f"- 📡 [{label}]({page.url})：`{page.final_url or page.url}`")
                 feed_count += 1
                 continue
-            lines.append(f"- 页面：[{label}]({page.url})")
+            lines.append(f"- 页面：[{label}]({page.display_url or page.url})")
             if not page.ok:
                 lines.append(f"  - ❌ 抓取失败：{page.error}（可直接访问页面查看）")
                 continue
@@ -3273,6 +3378,13 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
                 for feed in page.feeds:
                     feed_count += 1
                     lines.append(f"  - 📡 RSS/Atom：{feed}")
+            elif json_api_body(page) or page.display_url:
+                # 数据接口源：印「未发现 RSS」是错话（它本来就没有 HTML 页面可发现），
+                # 印「已尝试直接从页面提取文章条目」更是把读者指向前端渲染的空壳。
+                # 带上 display_url 是为了 --rebuild-only：重建出的页没有响应体，
+                # json_api_body 判不出来，而 yaml 里声明了 `page` 就等价于「这是个数据
+                # 接口源」—— 否则同一份产物在实抓与重建之间来回翻这一行。
+                lines.append("  - 🔌 官方无 RSS、页面为前端渲染，条目取自官方数据接口")
             else:
                 hint = "页面可见文本过少，可能为动态渲染" if page.sparse else "页面 HTML 中未发现 RSS/Atom 链接"
                 lines.append(f"  - ⚠️ {hint}，已尝试直接从页面提取文章条目")
@@ -3812,9 +3924,14 @@ def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
             u = s.get("url") or ""
             if (s.get("type") or "") not in NEWS_TYPES or not u:
                 continue
-            st = state_by_url.get(_n(u))
+            # 数据接口源在产物里印的是 yaml `page` 那个人类可读地址（见
+            # PageResult.display_url），所以状态要按两个 URL 都找一次：
+            # 只按 `url` 找会匹配不上，把「上一轮接口抓取失败」的 ❌ 标记丢掉，
+            # 重建出来的产物于是宣称这个源是健康的。
+            st = state_by_url.get(_n(u)) or state_by_url.get(_n(s.get("page") or ""))
             page = PageResult(
                 url=u, stype=s.get("type") or "",
+                display_url=s.get("page") or "",
                 ok=bool(st["ok"]) if st else True,
                 final_url=st["final_url"] if st else "",
                 feeds=list(st["feeds"]) if st else [],
@@ -3978,7 +4095,7 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
             if page.stype == "feed":
                 lines.append(f"- 📡 RSS/Atom：[{label}]({page.final_url or page.url})")
             else:
-                lines.append(f"- 页面：[{label}]({page.url})")
+                lines.append(f"- 页面：[{label}]({page.display_url or page.url})")
         lines.append("")
         lines.append(f"## 全部文章（共 {len(arts)} 篇，按日期倒序；无日期条目列于最后）")
         lines.append("")

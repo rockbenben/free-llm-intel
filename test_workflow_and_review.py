@@ -2373,6 +2373,32 @@ class TestRetiredNewsSource(unittest.TestCase):
         self.assertFalse(crawler_llm_intel._is_retired_news_url(
             "https://ai.google.dev/gemini-api/docs/changelog#09-17-2026"))
 
+    def test_bailian_changelog_retired_without_hitting_sibling_docs(self):
+        """阿里云百炼「新发布模型」变更日志（2026-09-30 换成千问官方动态接口）。
+
+        同一条判据：聚合第三方模型的平台不汇聚 —— 实测 109 条里 68 条是第三方模型上架，
+        含「免费/限免」「下线」「价格/计费」的各 0 条。同厂商的 first_call_docs 源
+        （`first-api-call-to-qwen`，情报页）路径不同，不得被误伤。
+        """
+        self.assertTrue(crawler_llm_intel._is_retired_news_url(
+            "https://help.aliyun.com/zh/model-studio/newly-released-models"))
+        # 归档里的历史条目带日期锚点，前缀匹配要连锚点一起挡住
+        self.assertTrue(crawler_llm_intel._is_retired_news_url(
+            "https://help.aliyun.com/zh/model-studio/newly-released-models#2026-09-01"))
+        self.assertFalse(crawler_llm_intel._is_retired_news_url(
+            "https://help.aliyun.com/zh/model-studio/first-api-call-to-qwen"),
+            "同厂商的情报页源不受影响")
+        self.assertFalse(crawler_llm_intel._is_retired_news_url(
+            "https://qwen.ai/blog?id=qwen3-max"), "新源的条目当然不能挡")
+        # yaml 侧：百炼源已删、千问接口源已登记（换源两半都要在）
+        root = Path(__file__).resolve().parent
+        _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        urls = [s.get("url") or "" for s in sources]
+        self.assertFalse(any("newly-released-models" in u for u in urls),
+                         "百炼变更日志源应从 yaml 移除")
+        self.assertTrue(any("qwen.ai/api/v2/article/retrieval" in u for u in urls),
+                        "千问官方动态接口应已登记")
+
     def test_archived_articles_from_retired_source_are_dropped(self):
         with tempfile.TemporaryDirectory() as td:
             out = Path(td)
@@ -4929,6 +4955,341 @@ class TestArchiveDedup(unittest.TestCase):
         out = crawler_llm_intel._dedup_same_title(arts)
         self.assertEqual([a.url for a in out], ["https://x/b", "https://x/a/page"],
                          "折叠不能打乱日期倒序")
+
+
+class TestJsonApiNewsSource(unittest.TestCase):
+    """数据接口型动态源：页面纯前端渲染、官方又没有 RSS 时的唯一通路。
+
+    实例是千问 qwen.ai/research（2026-09-30 换源，替代阿里云百炼「新发布模型」变更日志）。
+    为什么只能走接口——CSR 页面渲染后整页 0 个 `<a>`、详情正链 path 是 `/blog` 会被
+    `_SECTION_ROOT` 判成栏目根、全站无 RSS——见 llm-intel.yaml 的 research 源注释。
+    """
+
+    API = "https://qwen.ai/api/v2/article/retrieval?type=qwen_ai&language=zh-CN"
+    HUMAN = "https://qwen.ai/research"
+
+    # ---- 夹具 ----
+
+    @staticmethod
+    def _articles_payload():
+        return [
+            # content 是站点返回的 HTML 富文本 —— 里面的日期与 <h3> 正是 HTML 提取器
+            # 会误当成「变更日志条目」的东西（见 test_html_fallback_skips_api_body）
+            {"title": "Qwen3-Max 正式发布", "path": "qwen3-max",
+             "extra": {"date": "2026-09-20", "tags": ["release"]},
+             "content": "<h3>Qwen3-Max 的核心能力</h3><p>2026-09-20 上线，支持 256K 上下文，"
+                        "覆盖文本、图像与代码三类任务的统一推理。</p>"},
+            # 日期带时间与时区后缀：只取前 10 位
+            {"title": "Qwen-Image 编辑能力升级", "path": "qwen-image-edit",
+             "extra": {"date": "2026-09-10T08:00:00.000Z"},
+             "content": "<h3>局部重绘的使用方式</h3><p>2026-09-10 起支持蒙版重绘，"
+                        "并保留原图的构图与光照。</p>"},
+            {"title": "Qwen3-Coder 上下文扩容", "path": "qwen3-coder",
+             "extra": {"date": "2026-08-28"},
+             "content": "<h3>仓库级理解能力的改动</h3><p>2026-08-28 起上下文窗口扩到 1M，"
+                        "并调整了工具调用的返回结构。</p>"},
+            {"title": "太短", "path": "x"},              # 丢：标题 < 4 字符
+            {"title": "缺少 slug 的条目", "path": ""},     # 丢：拼不出正链
+            {"title": "没有日期的条目", "path": "no-date", "extra": {}},
+            {"title": "日期在未来的条目", "path": "future",
+             "extra": {"date": "2099-01-01"}},           # 保条目、丢日期
+            "不是字典的条目",
+        ]
+
+    def _body(self, articles=None):
+        return json.dumps(
+            {"code": 200, "data": {"articles": articles if articles is not None
+                                   else self._articles_payload()}},
+            ensure_ascii=False)
+
+    def _page(self, *, raw=None, text="", stype="research", ok=True, url=API,
+              display_url=HUMAN):
+        return crawler_llm_intel.PageResult(
+            url=url, stype=stype, ok=ok, final_url=url, raw=raw if raw is not None
+            else self._body(), text=text, display_url=display_url)
+
+    def _intel(self, pages):
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="aliyun_qwen", brand="通义千问 Qwen", homepage="", products=[])
+        intel.news_pages = pages
+        return intel
+
+    # ---- 1) 适配器解析 ----
+
+    def test_adapter_parses_official_shape(self):
+        arts = crawler_llm_intel.extract_articles_from_json(self._page())
+        by_url = {a.url: a for a in arts}
+        self.assertIn("https://qwen.ai/blog?id=qwen3-max", by_url,
+                      "正链必须是站点自己的规范地址 <origin>/blog?id=<slug>")
+        a = by_url["https://qwen.ai/blog?id=qwen3-max"]
+        self.assertEqual(a.title, "Qwen3-Max 正式发布")
+        self.assertEqual(a.date, "2026-09-20")
+        self.assertEqual(a.source, "官方 JSON 接口")
+        self.assertEqual(a.stype, "research")
+        # extra.date 带时间/时区后缀时只取日期部分
+        self.assertEqual(by_url["https://qwen.ai/blog?id=qwen-image-edit"].date,
+                         "2026-09-10")
+
+    def test_adapter_drops_junk_and_future_dates_but_keeps_entries(self):
+        arts = crawler_llm_intel.extract_articles_from_json(self._page())
+        slugs = [u.split("id=")[-1] for u in (a.url for a in arts)]
+        self.assertNotIn("x", slugs, "标题 < 4 字符的不是文章")
+        self.assertNotIn("", slugs, "没有 slug 拼不出正链")
+        by_slug = dict(zip(slugs, arts))
+        self.assertEqual(by_slug["no-date"].date, "", "没有日期只是排到末尾，条目要留")
+        self.assertEqual(by_slug["future"].date, "",
+                         "远未来日期必须在入口丢掉：归档只增不减，错日期会永久留存")
+        self.assertNotIn("不是字典的条目", [a.title for a in arts])
+
+    def test_adapter_respects_max_items(self):
+        many = [{"title": f"第 {i} 篇发布说明", "path": f"p{i}",
+                 "extra": {"date": "2026-09-01"}} for i in range(300)]
+        arts = crawler_llm_intel.extract_articles_from_json(
+            self._page(raw=self._body(many)), max_items=5)
+        self.assertEqual(len(arts), 5, "接口一次可能给几百条，必须有上限")
+
+    def test_adapter_returns_empty_for_unusable_bodies(self):
+        cases = {
+            "HTML 页": "<html><body>前端渲染的空壳</body></html>",
+            "坏 JSON": '{"data": {"articles": [',
+            "缺 articles": '{"data": {"total": 40}}',
+            "articles 不是列表": '{"data": {"articles": {"a": 1}}}',
+            "空正文": "",
+        }
+        for label, body in cases.items():
+            self.assertEqual(
+                crawler_llm_intel.extract_articles_from_json(self._page(raw=body)),
+                [], label)
+
+    def test_adapter_origin_comes_from_url_not_hardcoded(self):
+        page = self._page(url="https://mirror.example/api/list", raw=self._body())
+        arts = crawler_llm_intel.extract_articles_from_json(page)
+        self.assertTrue(all(a.url.startswith("https://mirror.example/blog?id=")
+                            for a in arts), "域名要从接口 URL 推，不能写死")
+
+    # ---- 2) 截断守卫：接口响应体是兆级 ----
+
+    def test_json_body_prefers_raw_over_truncated_text(self):
+        """`text` 在非 HTML 分支被截到 20000 字符，日期全在 extra 里 → 只能读 `raw`。
+
+        Regression: 只改 yaml 换源、不动抓取层时，实测 4.9MB 响应截断后前 20000 字符里
+        `"date"` 出现 **0** 次，整源 0 条目，而产物上看不出任何异常。
+        """
+        padded = self._body([
+            {"title": "开头的一篇", "path": "first", "content": "填充正文" * 8000},
+            {"title": "Qwen3-Max 正式发布", "path": "qwen3-max",
+             "extra": {"date": "2026-09-20"}},
+        ])
+        truncated = padded[:20000]
+        self.assertNotIn('"date"', truncated, "夹具前提：截断后确实拿不到日期")
+        page = self._page(raw=padded, text=truncated)
+        arts = {a.url: a for a in crawler_llm_intel.extract_articles_from_json(page)}
+        self.assertIn("https://qwen.ai/blog?id=qwen3-max", arts,
+                      "必须从 raw 拿到完整响应体：截断后连条目本身都不在里面")
+        self.assertEqual(arts["https://qwen.ai/blog?id=qwen3-max"].date, "2026-09-20")
+        self.assertTrue(crawler_llm_intel.json_api_body(page))
+
+    def test_json_api_body_detection(self):
+        self.assertEqual(crawler_llm_intel.json_api_body(
+            self._page(raw="<html></html>")), "", "HTML 页不是数据接口")
+        for body in ('{"a": 1}', '[{"a": 1}]', '  {"a": 1}'):
+            self.assertEqual(crawler_llm_intel.json_api_body(self._page(raw=body)),
+                             body.lstrip())
+        # 只有 text 时也要认得出来（--rebuild-only 之外的兜底路径）
+        self.assertTrue(crawler_llm_intel.json_api_body(
+            self._page(raw="", text='{"a": 1}')))
+
+    def test_fetch_keeps_full_body_for_news_types(self):
+        """抓取层：非 HTML 响应体对动态类源必须留全文（`text` 的 20000 字符上限不够）。
+
+        Regression: 只改 yaml 换源、不动抓取层时，千问接口实测响应 4.9MB，
+        前 20000 字符里 `"date"` 出现 **0** 次，配好源跑下来是 0 条目。
+        """
+        body = self._body([
+            {"title": "开头的一篇", "path": "first",
+             "content": "填充正文" * 8000},          # 把日期挤到 20000 字符之后
+            {"title": "后面的一篇", "path": "second",
+             "extra": {"date": "2026-09-20"}},
+        ])
+        self.assertGreater(len(body), 20000, "夹具前提：响应体要超过旧的截断上限")
+        resp = mock.Mock(status_code=200, url=self.API, text=body,
+                         headers={"Content-Type": "application/json"},
+                         encoding="utf-8")
+        session = mock.Mock()
+        session.get.return_value = resp
+        page = crawler_llm_intel._fetch_with_requests(
+            session, self.API, "research", (1.0, 2.0), retries=0)
+        self.assertTrue(page.ok)
+        self.assertNotIn('"date"', page.text[:20000])
+        urls = [a.url for a in crawler_llm_intel.extract_articles_from_json(page)]
+        self.assertIn("https://qwen.ai/blog?id=second", urls,
+                      "全文留在 raw 里才提得出 20000 字符之后的条目")
+
+    def test_fetch_still_truncates_non_news_body(self):
+        """对照组：情报页（非 NEWS_TYPES）仍按 20000 字符截断，不把兆级正文常驻内存。"""
+        body = '{"quota": "' + "x" * 60000 + '"}'
+        resp = mock.Mock(status_code=200, url="https://q.example/api/quota",
+                         text=body, headers={"Content-Type": "application/json"},
+                         encoding="utf-8")
+        session = mock.Mock()
+        session.get.return_value = resp
+        page = crawler_llm_intel._fetch_with_requests(
+            session, "https://q.example/api/quota", "free_quota", (1.0, 2.0),
+            retries=0)
+        self.assertEqual(len(page.text), 20000)
+        self.assertEqual(page.raw, "", "情报页不需要全文")
+
+    # ---- 3) collect_news_articles 的步骤编排 ----
+
+    def test_html_fallback_skips_api_body(self):
+        """步骤 3 不得把接口响应体喂给 HTML 提取器。
+
+        Regression: 实测千问接口经 `extract_changelog_sections` 凭空造出 **53** 条，
+        URL 全是「接口地址 + 合成 `#d-<日期>-<n>` 锚点」（点进去是 4.9MB 的 JSON），
+        标题里还混着文章正文的小标题。
+        """
+        page = self._page()
+        junk = crawler_llm_intel.extract_articles_from_page(page, max_items=100)
+        self.assertTrue(any("#d-" in a.url or a.url == self.API for a in junk),
+                        "夹具前提：HTML 提取器对这个响应体确实会产出伪条目")
+
+        intel = self._intel([page])
+        with mock.patch.object(crawler_llm_intel, "extract_articles_from_page",
+                              wraps=crawler_llm_intel.extract_articles_from_page) as spy:
+            crawler_llm_intel.collect_news_articles(intel, session=None)
+        spy.assert_not_called()
+        urls = [a.url for a in intel.all_news_articles]
+        self.assertTrue(urls, "接口条目本身要进归档")
+        self.assertTrue(all(u.startswith("https://qwen.ai/blog?id=") for u in urls),
+                        f"不得出现伪锚点条目：{urls}")
+
+    def test_api_step_runs_after_html_fallback(self):
+        """接口条目若先进 `articles`，步骤 3 的 `if not articles` 会把同厂商的 HTML
+        动态页永久挡掉 —— 而归档只增不减，这种「静默停更」在产物上完全看不出来。"""
+        html_page = crawler_llm_intel.PageResult(
+            url="https://qwen.ai/updates", stype="updates", ok=True,
+            final_url="https://qwen.ai/updates", text="y" * 300)
+        html_art = crawler_llm_intel.Article(
+            title="来自 HTML 动态页的条目", url="https://qwen.ai/updates/one",
+            date="2026-09-18")
+        intel = self._intel([self._page(), html_page])
+        with mock.patch.object(crawler_llm_intel, "extract_articles_from_page",
+                              return_value=[html_art]):
+            crawler_llm_intel.collect_news_articles(intel, session=None)
+        urls = [a.url for a in intel.all_news_articles]
+        self.assertIn("https://qwen.ai/updates/one", urls, "HTML 动态页不得被接口条目挡掉")
+        self.assertIn("https://qwen.ai/blog?id=qwen3-max", urls)
+
+    def test_failed_api_page_yields_nothing(self):
+        """抓取失败的接口页不得产出条目 —— 响应体可能仍在（503 也常带 JSON 错误体）。"""
+        page = self._page(ok=False)
+        self.assertTrue(crawler_llm_intel.json_api_body(page),
+                        "夹具前提：失败页仍带着可解析的响应体")
+        intel = self._intel([page])
+        crawler_llm_intel.collect_news_articles(intel, session=None)
+        self.assertEqual(intel.all_news_articles, [])
+
+    # ---- 4) 产物渲染：印给人看的地址 ----
+
+    def test_feeds_md_prints_human_url_and_api_hint(self):
+        intel = self._intel([self._page()])
+        intel.news_articles = intel.all_news_articles = [
+            crawler_llm_intel.Article(title="Qwen3-Max 正式发布",
+                                      url="https://qwen.ai/blog?id=qwen3-max",
+                                      date="2026-09-20")]
+        md = crawler_llm_intel.render_news_section([intel], "https://x.example/feeds")
+        self.assertIn(f"- 页面：[研究页]({self.HUMAN})", md)
+        self.assertNotIn("article/retrieval", md,
+                         "订阅入口不得印接口长串（读者点进去是 4.9MB 的 JSON）")
+        self.assertIn("🔌 官方无 RSS、页面为前端渲染，条目取自官方数据接口", md)
+        self.assertNotIn("未发现 RSS/Atom 链接", md,
+                         "接口源本来就没有 HTML 页面可发现，这句是错话")
+
+    def test_feeds_md_api_hint_survives_rebuild(self):
+        """重建出的页没有响应体，`json_api_body` 判不出来 —— 靠 display_url 兜住。
+
+        否则同一份产物在实抓与 --rebuild-only 之间来回翻这一行。
+        """
+        page = crawler_llm_intel.PageResult(
+            url=self.API, stype="research", ok=True, final_url=self.API,
+            display_url=self.HUMAN)
+        intel = self._intel([page])
+        intel.news_articles = intel.all_news_articles = [
+            crawler_llm_intel.Article(title="Qwen3-Max 正式发布",
+                                      url="https://qwen.ai/blog?id=qwen3-max",
+                                      date="2026-09-20")]
+        md = crawler_llm_intel.render_news_section([intel], "https://x.example/feeds")
+        self.assertIn("🔌 官方无 RSS", md)
+        self.assertNotIn("未发现 RSS/Atom 链接", md)
+
+    def test_archive_subscription_entry_prints_human_url(self):
+        intel = self._intel([self._page()])
+        intel.news_articles = intel.all_news_articles = [
+            crawler_llm_intel.Article(title="Qwen3-Max 正式发布",
+                                      url="https://qwen.ai/blog?id=qwen3-max",
+                                      date="2026-09-20")]
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td)
+            with mock.patch.object(crawler_llm_intel, "translate_to_zh", lambda t: t):
+                crawler_llm_intel.write_news_archives(out, [intel], clean_removed=False)
+            text = (out / "aliyun_qwen.md").read_text(encoding="utf-8")
+        self.assertIn(f"- 页面：[研究页]({self.HUMAN})", text)
+        self.assertNotIn("article/retrieval", text)
+
+    # ---- 5) --rebuild-only 的状态回填 ----
+
+    YAML = f"""
+vendors:
+  - id: aliyun_qwen
+    brand: 通义千问 Qwen
+    homepage: https://qwen.ai
+    products: []
+sources:
+  - vendor_id: aliyun_qwen
+    type: research
+    url: "{API}"
+    page: {HUMAN}
+"""
+
+    def test_rebuild_restores_display_url_and_page_state(self):
+        """产物里印的是 display_url，状态也只能按它找回来。
+
+        Regression: 只按 yaml `url` 匹配时状态匹配不上，「上一轮接口抓取失败」的 ❌
+        标记被丢掉，重建出来的产物于是宣称这个源是健康的。
+        """
+        news_md = (
+            "# 动态总览\n\n"
+            "### 通义千问 Qwen (aliyun_qwen)\n"
+            f"- 页面：[研究页]({self.HUMAN})\n"
+            "  - ❌ 抓取失败：HTTP 503（可直接访问页面查看）\n"
+        )
+        states = crawler_llm_intel._parse_news_md_page_states(news_md)
+        self.assertFalse(states["aliyun_qwen"][0]["ok"], "夹具前提：❌ 行要被解析出来")
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "llm-news").mkdir()
+            (root / "intel.yaml").write_text(self.YAML, encoding="utf-8")
+            vendors, sources = crawler_llm_intel.parse_yaml(root / "intel.yaml")
+            grouped = crawler_llm_intel.group_sources_by_vendor(sources)
+            intel_list = crawler_llm_intel.rebuild_intel_from_disk(
+                vendors, grouped, states, root / "llm-news")
+        self.assertEqual(len(intel_list), 1)
+        page = intel_list[0].news_pages[0]
+        self.assertEqual(page.display_url, self.HUMAN)
+        self.assertEqual(page.url, self.API)
+        self.assertFalse(page.ok, "接口抓取失败的 ❌ 标记不得在重建中丢失")
+        self.assertEqual(page.stype, "research")
+
+    def test_yaml_declares_page_for_api_source(self):
+        """yaml 侧的契约：接口源必须带 `page`，否则产物会把接口长串印给读者。"""
+        root = Path(__file__).resolve().parent
+        _vendors, sources = crawler_llm_intel.parse_yaml(root / "llm-intel.yaml")
+        api_sources = [s for s in sources if "/api/" in (s.get("url") or "")
+                       and (s.get("type") or "") in crawler_llm_intel.NEWS_TYPES]
+        self.assertTrue(api_sources, "夹具前提：千问接口源要在 yaml 里")
+        for s in api_sources:
+            self.assertTrue(s.get("page"), f"数据接口源缺 page：{s}")
+            self.assertNotIn("/api/", s["page"], "page 必须是给人看的地址")
 
 
 if __name__ == "__main__":
