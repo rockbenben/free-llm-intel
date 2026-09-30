@@ -9,8 +9,8 @@
 
 ## 全部文章（共 33 篇，按日期倒序；无日期条目列于最后）
 
-1. [Amazon Bedrock expands Claude model availability to in-country inferencing in India](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-expands-claude-model-availability-to-india-cross-region-inference/)（2026-09-30）
-2. [Introducing Anthropic models on Amazon Bedrock for in-region inference in Seoul and Singapore](https://aws.amazon.com/blogs/machine-learning/introducing-anthropic-models-on-amazon-bedrock-for-in-region-inference-in-seoul-and-singapore/)（2026-09-30）
+1. [Amazon Bedrock 的 Claude 模型现支持印度境内推理](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-expands-claude-model-availability-to-india-cross-region-inference/)（2026-09-30） <!--orig:Amazon Bedrock expands Claude model availability to in-country inferencing in India-->
+2. [Anthropic 模型上线 Amazon Bedrock，支持首尔与新加坡区域内推理](https://aws.amazon.com/blogs/machine-learning/introducing-anthropic-models-on-amazon-bedrock-for-in-region-inference-in-seoul-and-singapore/)（2026-09-30） <!--orig:Introducing Anthropic models on Amazon Bedrock for in-region inference in Seoul and Singapore-->
 3. [在 Amazon Bedrock 上用 GPT-6.1 Sol，把接近 Astra 的智能带进日常工作](https://aws.amazon.com/blogs/machine-learning/bring-near-astra-intelligence-to-everyday-work-with-gpt-6-1-sol-on-amazon-bedrock/)（2026-09-29） <!--orig:Bring near-Astra intelligence to everyday work with GPT-6.1 Sol on Amazon Bedrock-->
 4. [Amazon Quick 的提示词工程基础](https://aws.amazon.com/blogs/machine-learning/prompt-engineering-fundamentals-for-amazon-quick/)（2026-09-29） <!--orig:Prompt engineering fundamentals for Amazon Quick-->
 5. [按 Quick 组件做提示词工程：常见模式与坑](https://aws.amazon.com/blogs/machine-learning/prompt-engineering-by-quick-component-patterns-and-pitfalls/)（2026-09-29） <!--orig:Prompt engineering by Quick component: Patterns and pitfalls-->

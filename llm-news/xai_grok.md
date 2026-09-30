@@ -9,7 +9,7 @@
 
 ## 全部文章（共 113 篇，按日期倒序；无日期条目列于最后）
 
-1. [Team Bots: AI coworkers that learn from your team](https://x.ai/news#d-2026-09-28-1)（2026-09-28）
+1. [Team Bots：向你的团队学习的 AI 同事](https://x.ai/news#d-2026-09-28-1)（2026-09-28） <!--orig:Team Bots: AI coworkers that learn from your team-->
 2. [SpaceXAI 如何使用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22） <!--orig:How SpaceXAI is using Grok Bot to scale customer support-->
 3. [IntroducingGrok 4.7](https://x.ai/news#d-2026-09-21-0)（2026-09-21）
 4. [推出 Grok 4.7](https://x.ai/news/grok-4-7)（2026-09-21） <!--orig:Introducing Grok 4.7-->
@@ -85,13 +85,13 @@
 74. [推出 Grok Voice Think Fast 1.0](https://x.ai/news/grok-voice-think-fast-1)（2026-04-23） <!--orig:Grok Voice Think Fast 1.0-->
 75. [Grok 语音转文本与文本转语音 API](https://x.ai/news/grok-stt-and-tts-apis)（2026-04-17） <!--orig:Grok Speech to Text and Text to Speech APIs-->
 76. [xAI 加入 SpaceX](https://x.ai/news/xai-joins-spacex)（2026-02-02） <!--orig:xAI joins SpaceX-->
-77. [Grok 想象 API](https://x.ai/news/grok-imagine-api)（2026-01-28） <!--orig:Grok Imagine API-->
+77. [Grok Imagine API](https://x.ai/news/grok-imagine-api)（2026-01-28） <!--orig:Grok Imagine API-->
 78. [xAI 募集 $20B 完成 E 轮融资](https://x.ai/news/series-e)（2026-01-06） <!--orig:xAI Raises $20B Series E-->
 79. [推出 Grok Business 和 Grok Enterprise](https://x.ai/news/grok-business)（2025-12-30） <!--orig:Introducing Grok Business and Grok Enterprise-->
-80. [Grok 集合 API](https://x.ai/news/grok-collections-api)（2025-12-22） <!--orig:Grok Collections API-->
+80. [Grok Collections API](https://x.ai/news/grok-collections-api)（2025-12-22） <!--orig:Grok Collections API-->
 81. [以 AI 支持 DOW 的使命](https://x.ai/news/us-gov-dept-of-war)（2025-12-22） <!--orig:Supporting the DOW's mission with AI-->
 82. [通过人工智能支持 DOW 的使命](https://x.ai/news#d-2025-12-22-60)（2025-12-22）
-83. [Grok 语音代理 API](https://x.ai/news/grok-voice-agent-api)（2025-12-17） <!--orig:Grok Voice Agent API-->
+83. [Grok Voice Agent API](https://x.ai/news/grok-voice-agent-api)（2025-12-17） <!--orig:Grok Voice Agent API-->
 84. [xAI 和萨尔瓦多开创了世界上第一个全国性人工智能教育计划](https://x.ai/news#d-2025-12-17-62)（2025-12-17）
 85. [xAI 与萨尔瓦多开创全球首个全国性 AI 教育计划](https://x.ai/news/el-salvador-partnership)（2025-12-11） <!--orig:xAI and El Salvador Pioneer the World's First Nationwide AI Education Program-->
 86. [Grok 4.1 Fast 与智能体工具 API](https://x.ai/news/grok-4-1-fast)（2025-11-19） <!--orig:Grok 4.1 Fast and Agent Tools API-->

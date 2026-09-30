@@ -9,10 +9,10 @@
 
 ## 全部文章（共 145 篇，按日期倒序；无日期条目列于最后）
 
-1. [AI Agent Regression Testing After a Prompt or Model Change](https://openrouter.ai/blog/tutorials/ai-agent-regression-testing-after-a-prompt-or-model-change/)（2026-09-30）
-2. [Building a Golden Eval Dataset from Production Traffic](https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/)（2026-09-30）
-3. [How to Test Tool-Calling Accuracy in AI Agents](https://openrouter.ai/blog/tutorials/how-to-test-tool-calling-accuracy-in-ai-agents/)（2026-09-30）
-4. [Image-to-Video AI Models Compared: Cost, Resolution, and Control](https://openrouter.ai/blog/insights/image-to-video-models-compared/)（2026-09-29）
+1. [提示词或模型变更后如何做 AI 智能体回归测试](https://openrouter.ai/blog/tutorials/ai-agent-regression-testing-after-a-prompt-or-model-change/)（2026-09-30） <!--orig:AI Agent Regression Testing After a Prompt or Model Change-->
+2. [用生产流量构建金标准评测数据集](https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/)（2026-09-30） <!--orig:Building a Golden Eval Dataset from Production Traffic-->
+3. [如何测试 AI 智能体的工具调用准确率](https://openrouter.ai/blog/tutorials/how-to-test-tool-calling-accuracy-in-ai-agents/)（2026-09-30） <!--orig:How to Test Tool-Calling Accuracy in AI Agents-->
+4. [图生视频 AI 模型对比：成本、分辨率与可控性](https://openrouter.ai/blog/insights/image-to-video-models-compared/)（2026-09-29） <!--orig:Image-to-Video AI Models Compared: Cost, Resolution, and Control-->
 5. [What Is Qwen 3.8](https://openrouter.ai/blog/insights/qwen-3-8/)（2026-09-28）
 6. [Seedance 是开源的吗？权重、许可证与调用方式](https://openrouter.ai/blog/insights/seedance-2-5-open-source/)（2026-09-25） <!--orig:Is Seedance Open Source? Weights, License, and How to Call It-->
 7. [Is Kimi K3 Open Source? Weights, License, and How to Call It](https://openrouter.ai/blog/insights/kimi-k3-open-source/)（2026-09-24）

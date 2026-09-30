@@ -34,7 +34,7 @@
 22. [借助 Claude Platform 降低成本、提升性能](https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform)（2026-09-08） <!--orig:Reducing cost and improving performance with Claude Platform-->
 23. [高效商务智能体的结构解析指南](https://claude.com/blog/the-anatomy-of-effective-commerce-agents)（2026-09-02） <!--orig:A guide to the anatomy of effective commerce agents-->
 24. [用 Claude 构建商务智能体](https://claude.com/blog/claude-for-commerce-agents)（2026-09-02） <!--orig:Building Commerce Agents with Claude-->
-25. [Introducing Claude Fable 5.1 and Claude Mythos 5.1](https://www.anthropic.com/news#d-2026-09-01-3)（2026-09-01）
+25. [推出 Claude Fable 5.1 与 Claude Mythos 5.1](https://www.anthropic.com/news#d-2026-09-01-3)（2026-09-01） <!--orig:Introducing Claude Fable 5.1 and Claude Mythos 5.1-->
 26. [Anthropic 新闻室](https://www.anthropic.com/news#d-2026-09-01-2)（2026-09-01） <!--orig:Newsroom \ Anthropic-->
 27. [与客户共同打造企业级前沿保障](https://www.anthropic.com/news/enterprise-frontier-safeguards)（2026-09-01） <!--orig:Developing Enterprise Frontier Safeguards with our customers \ Anthropic-->
 28. [改进我们的对齐与安全工作](https://www.anthropic.com/news/improving-alignment-security-efforts)（2026-08-31） <!--orig:Improving our alignment and security practices \ Anthropic-->

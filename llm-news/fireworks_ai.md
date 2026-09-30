@@ -9,9 +9,9 @@
 
 ## 全部文章（共 23 篇，按日期倒序；无日期条目列于最后）
 
-1. [Inside Fireworks Multi-region Deployments: One Deployment, Global Scale](https://fireworks.ai/blog/multi-region-deployment)
+1. [走进 Fireworks 多区域部署：一套部署，全球扩展](https://fireworks.ai/blog/multi-region-deployment) <!--orig:Inside Fireworks Multi-region Deployments: One Deployment, Global Scale-->
 2. [Every byte counts: ARCv3 and the case for cross-region RL](https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl)
-3. [Introducing Ember-1](https://fireworks.ai/blog/ember-1)
+3. [Ember-1 简介](https://fireworks.ai/blog/ember-1) <!--orig:Introducing Ember-1-->
 4. [推出专业智能指数](https://fireworks.ai/blog/introducing-the-specialized-intelligence-index) <!--orig:Introducing The Specialized Intelligence Index-->
 5. [前沿不是模型，而是路由器](https://fireworks.ai/blog/the-frontier-isnt-a-model-its-a-router) <!--orig:The frontier isn’t a model. It’s a router.-->
 6. [Phylo 通过 Fireworks 上的开放模型为更多科学家带来前沿人工智能](https://fireworks.ai/blog/phylo-brings-frontier-ai-to-more-scientists-with-open-models-on-fireworks) <!--orig:Phylo brings frontier AI to more scientists with open models on Fireworks-->
