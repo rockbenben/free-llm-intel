@@ -187,7 +187,18 @@ python crawler_llm_intel.py --rebuild-only --feeds-base "https://free-llm-intel.
 
 `--rebuild-only` 从 归档 `.md`（中文标题 + 文章）+ `llm-news-feeds.md`（原生 feed 状态）+ `articles.json`（英文原文）重建全部动态类产物，零网络请求；README 情报区与快照需要实抓，不触碰。个别历史上「只改了 XML 没同步归档」的条目会被拉齐成归档现状——这正是下次 CI 的产出，属修正而非漂移。
 
-归档条目若缺发布日期（源页面把日期放在 JS 里、或文章已滚出列表页），跑维护命令 `python crawler_llm_intel.py --backfill-dates`：它只访问**缺日期**条目对应的文章页，从 JSON-LD `datePublished` / `article:published_time` / `<time datetime>` 元数据回填（分批礼貌抓取，单次运行的访问数有上限，见 `DATE_BACKFETCH_LIMIT`；解不出就保留空白，绝不猜日期）。日期决定归档排序与是否进合并流，回填后同样用 `--rebuild-only` 刷新产物。
+归档条目若缺发布日期（源页面把日期放在 JS 里、或文章已滚出列表页），跑维护命令 `python crawler_llm_intel.py --backfill-dates`：它只访问**缺日期**条目对应的文章页，从 JSON-LD `datePublished` / `article:published_time` / `<time datetime>` 元数据回填（分批礼貌抓取，单次访问数有上限，见 `DATE_BACKFETCH_LIMIT`；解不出就保留空白，绝不猜日期）。日期决定归档排序与是否进合并流，回填后同样用 `--rebuild-only` 刷新产物。
+
+### 英文原文回填（`--backfill-orig`）
+
+`<!--orig:…-->` 注释是 AI 重译标题时的对照素材，也是 `articles.json` 第 5 列 `original_title` 的来源。`--backfill-orig` 逐篇访问「可见标题已汉化、但归档没存原文」的条目，只补注释、不动可见标题/顺序/日期。三条规则值得知道：
+
+- **锚点行不发请求**：URL 带 `#` 的行是单页列表的合成锚点，没有独立文章页，访问它取回的是列表页自己的标题，写进去就是假原文。
+- **台账 `.backfill_orig_ledger.json`**（与 `.translate_cache.json` 同类，不进 git、CI 侧走 actions/cache）：记「这一页给不出英文原文」（`none`）和站方的**稳定**拒绝（`http-403/404/410` 这类 4xx），下轮不再重打。限流与临时故障——`408/425/429`、5xx、超时、连接失败——**不记账**，下轮再试（判据与 `_fetch_with_requests` 的可重试集合一致；实测把 429 当永久失败烧进台账，一次误操作就判死了一家厂商）。台账每 25 条增量落盘，中断的一轮也留得住已判过的账。台账是缓存不是判决——删掉文件（或缓存被逐出）就重新开始尝试。
+- **别同时跑两轮**：回填没有跨进程互斥，两个进程并发打同一家会互相触发限流（实测 335 条 429），还会在同一份归档上竞争写。
+- **`--only` 可分批**：`python crawler_llm_intel.py --backfill-orig --only huggingface` 只处理那一家，用来绕开「整批 403 的厂商卡在字母序中途烧光配额」。
+
+CI 在爬虫**之前**跑这一步（当天回填的原文当轮就进产物），失败不阻断巡检（`continue-on-error`）。
 
 **新增条目的机翻标题**：巡检带 `--ai-titles`（CI 已默认开启）时，首次收录的文章标题会交给 LLM 按「信达雅」润色一次，结果写进归档后随沿用机制冻结；LLM 失败 / 缺 key 时自动回落 Google 机翻，预算内分批调用。
 

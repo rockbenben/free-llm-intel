@@ -114,6 +114,29 @@ jobs:
           key: translate-cache-${{ github.run_id }}
           restore-keys: translate-cache-
 
+      # 英文原文回填台账：与翻译缓存同类（不进 git，靠 Actions cache 续命）。
+      # 记过「这一页给不出英文原文」的 URL 不再重打——没有这层记忆，回填每轮都会
+      # 把同一批失败项重试一遍，单次上限的配额被吃光，字母序排在后面的厂商永远轮不到
+      # （见 crawler.backfill_archive_originals 的注释）。缓存被逐出即重新开始。
+      - name: Restore backfill ledger
+        uses: actions/cache@v6
+        with:
+          path: .backfill_orig_ledger.json
+          key: backfill-ledger-${{ github.run_id }}
+          restore-keys: backfill-ledger-
+
+      # 逐篇访问「标题已汉化但归档里没存英文原文」的文章页，把原文补进 `<!--orig:-->`。
+      # 这些原文是产出层 original_title 的对照素材，也是让 AI 重译标题的前提
+      # （CONTRIBUTING「标题汉化与 AI 优化」）。
+      # 必须排在 crawler **之前**：爬虫是把归档当作合并基底读的，注释在这一轮就写进去，
+      # 当天的 RSS / articles.json 才能带上原文；排在后面则产物晚一天。
+      # continue-on-error：回填是增强项，它挂了不该挡掉当天的巡检产物提交。
+      - name: Backfill article originals
+        continue-on-error: true
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python crawler_llm_intel.py --backfill-orig
+
       # 灾难性失败护栏：情报页失败占比 ≥ INTEL_FAIL_ABORT_RATIO（多数失败）时，
       # crawler 以非零码退出，本步骤随即失败，后面的 Verify / Commit 都不执行 ——
       # 宁可不提交当天产物，也不拿大面积「解析失败」的 README 覆盖上一轮健康产物。

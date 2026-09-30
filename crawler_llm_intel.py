@@ -47,7 +47,7 @@ import re
 import sys
 import time
 import xml.etree.ElementTree as ET
-from collections import OrderedDict
+from collections import Counter, OrderedDict
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta, timezone
 from email.utils import format_datetime, parsedate_to_datetime
@@ -3440,11 +3440,14 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
                     lines.append(f"  - 📡 RSS/Atom：{feed}")
             elif json_api_body(page) or page.display_url:
                 # 数据接口源：印「未发现 RSS」是错话（它本来就没有 HTML 页面可发现），
-                # 印「已尝试直接从页面提取文章条目」更是把读者指向前端渲染的空壳。
+                # 印「已尝试直接从页面提取文章条目」更是把读者指向抓不出条目的页面。
                 # 带上 display_url 是为了 --rebuild-only：重建出的页没有响应体，
                 # json_api_body 判不出来，而 yaml 里声明了 `page` 就等价于「这是个数据
                 # 接口源」—— 否则同一份产物在实抓与重建之间来回翻这一行。
-                lines.append("  - 🔌 官方无 RSS、页面为前端渲染，条目取自官方数据接口")
+                # 措辞刻意**不提页面是怎么渲染的**：千问那个站是前端渲染，AI21 是
+                # WordPress 服务端渲染（弃用 HTML 是因为列表页只给合成锚点），两家共用的
+                # 事实只有「官方没给 RSS，条目来自接口」。
+                lines.append("  - 🔌 官方未提供 RSS/Atom 订阅源，条目取自官方数据接口")
             else:
                 hint = "页面可见文本过少，可能为动态渲染" if page.sparse else "页面 HTML 中未发现 RSS/Atom 链接"
                 lines.append(f"  - ⚠️ {hint}，已尝试直接从页面提取文章条目")
@@ -3830,11 +3833,32 @@ def backfill_archive_dates(news_dir: Path, fetch,
 ORIG_BACKFETCH_LIMIT = 400
 
 
+#: UTF-8 正文被按 latin-1 解出来的典型痕迹（回填通道实测踩过）：
+#: 「」→ `ã`、：→ `ï¼`、非 ASCII 文本里出现 Ã/å/æ/è/Â + 控制区字符。
+_MOJIBAKE_RE = re.compile(r"[ÂÃ][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|ã[\x80-\xbf]|ï¼")
+
+
+def response_text(resp) -> str:
+    """取响应正文，并补上 charset 兜底。
+
+    有些站（实测 DeepSeek 文章页）发 `Content-Type: text/html` **不带 charset**，
+    requests 按 RFC 回落到 ISO-8859-1，UTF-8 正文于是被解成一串拉丁扩展乱码。
+    抓取主路径 `_fetch_with_requests` 有这个兜底，独立入口（`--backfill-orig`
+    逐篇访问文章页）以前没有，于是把乱码当英文标题写进了归档的 `<!--orig:-->`。
+    """
+    if not resp.encoding or resp.encoding.lower() in ("iso-8859-1", "ascii"):
+        resp.encoding = resp.apparent_encoding or resp.encoding
+    return resp.text
+
+
 def resolve_article_original(html: str, url: str) -> str:
     """从文章页取**英文**原标题（`<title>`/og，去掉站点名后缀）。
 
     仅当解出的是拉丁文字才返回：中文原生页（deepseek /zh-cn、硅基流动…）返回空串 ——
     它本就没有英文原文，硬塞反而把中文当原文。
+
+    乱码单独挡一道（`_MOJIBAKE_RE`）：编码兜底失效时，中文标题会变成「带重音的拉丁串」，
+    既能过 `[A-Za-z]{3}`（模型名部分是真拉丁），也不含 CJK，于是一路畅通地污染归档。
     """
     if not html:
         return ""
@@ -3843,14 +3867,61 @@ def resolve_article_original(html: str, url: str) -> str:
     except Exception:
         return ""
     title = re.split(r"\s[|\-–—_]\s", title)[0].strip()
+    if _MOJIBAKE_RE.search(title):
+        return ""
     if len(title) >= 6 and re.search(r"[A-Za-z]{3}", title) and not _CJK_CHAR_RE.search(title):
         return title
     return ""
 
 
+#: 原文回填台账：`{url: 判定}`，与 `.translate_cache.json` 同类——不进 git，
+#: 由 Actions cache 续命。没有它，`--backfill-orig` 每轮都会把「这一轮取不到英文原文」
+#: 的行重打一遍：实测第二轮访问 400 页只回填 100 条，配额全被失败项吃掉，
+#: `sorted(glob)` 里排在后面的厂商永远轮不到。接进每日巡检前必须先有这层记忆。
+BACKFILL_LEDGER_NAME = ".backfill_orig_ledger.json"
+
+#: 每记这么多条就落一次盘（中断的一轮也能留住已判过的账）
+LEDGER_FLUSH_EVERY = 25
+
+
+#: 这些状态是「慢一点再来」而不是「这页不给东西」：与 `_fetch_with_requests` 的
+#: 可重试集合保持一致，否则回填会把限流当成永久失败烧进台账。
+#: 实测踩过：两轮并发打 huggingface 触发 429，335 条链接被记成 `http-429` 永久跳过。
+_RETRYABLE_STATUSES = (408, 425, 429)
+
+
+def _failure_tag(exc: Exception) -> str:
+    """异常 → 台账判定。只有稳定答复才记账，网络抖动 / 限流留着下轮再试。"""
+    if isinstance(exc, requests.HTTPError) and exc.response is not None:
+        code = exc.response.status_code
+        if code in _RETRYABLE_STATUSES or code >= 500:
+            return ""
+        # 其余 4xx 是站方的明确答复（拒绝 / 不存在 / 已删除），重试没有意义
+        return f"http-{code}" if 400 <= code < 500 else ""
+    return ""
+
+
+def _load_backfill_ledger(path: Path) -> dict[str, str]:
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}
+
+
+def _save_backfill_ledger(path: Path, data: dict[str, str]) -> None:
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(json.dumps(data, ensure_ascii=False, sort_keys=True, indent=1),
+                   encoding="utf-8")
+    tmp.replace(path)
+
+
 def backfill_archive_originals(news_dir: Path, fetch,
                                limit: int = ORIG_BACKFETCH_LIMIT,
-                               delay: float = 0.0) -> tuple[int, int]:
+                               delay: float = 0.0,
+                               ledger_path: Path | None = None,
+                               vendors: set[str] | None = None,
+                               ) -> tuple[int, int, int]:
     """给归档里**可见标题已冻结成中文、但还没存英文原文**的条目回填 `<!--orig:…-->` 注释。
 
     动因：产出层的 `original_title` 长期只靠「上一版 articles.json」这种会丢的快照，
@@ -3858,18 +3929,37 @@ def backfill_archive_originals(news_dir: Path, fetch,
     才写进注释（中文原生页返回空、跳过），之后 `--rebuild-only` 就能从归档稳定恢复。
     只补注释，不改可见标题 / 顺序 / 日期。
 
-    fetch: url -> HTML 文本（注入以便测试；网络异常按「解不出」处理）。
-    返回 (访问数, 回填数)。
+    两类行**不发请求**：
+      * URL 带 fragment 的锚点行（`/blog#d-…`）—— 它没有独立文章页，访问它等于访问列表页，
+        取回的是列表页标题，写进去就是假原文；
+      * 台账里已记过的 URL —— 取不到就是取不到，重打一遍只烧配额（见上）。
+
+    fetch: url -> HTML 文本（注入以便测试）。抛异常时：稳定答复的 4xx 记入台账不再重试，
+    限流（408/425/429）、5xx、超时与连接失败视为临时故障、不记账，下一轮再试。
+    vendors: 只处理这些归档文件（`--only` 传进来的批次范围），None = 全部。
+    台账是**缓存不是判决**：站点日后改版给出英文标题了，删掉这个文件即可重新尝试
+    （CI 侧就是 actions/cache，缓存被逐出自然重来）。
+    返回 (访问数, 回填数, 新记台账数)。
     """
     import time as _time
-    visited = fixed = 0
+    ledger = _load_backfill_ledger(ledger_path) if ledger_path else {}
+    visited = fixed = recorded = flushed = 0
     for arch in sorted(news_dir.glob("*.md")):
+        # --only 分批用：字母序卡在前面的厂商（openai 整批 403）会吃光单次配额，
+        # 让排它后面的厂商永远轮不到，所以维护通道也要能按厂商圈定范围。
+        if vendors is not None and arch.stem not in vendors:
+            continue
         try:
             text = arch.read_text(encoding="utf-8")
         except OSError:
             continue
         lines = text.splitlines(keepends=True)
         dirty = False
+        # 先收集候选（哪些行值得访问），再解析，最后「同一次里同一份原文落在两条不同
+        # URL 上」的一律不写。锚点行从不会被访问，所以共用只可能发生在**不同文章**之间
+        # ——SPA 外壳页交回的就是站点名（实测小米 MiMo 15 条同一个 `Xiaomi MiMo Home`）。
+        # 必须两遍式：一遍式里第一条仍会把外壳标题写进去，只有攒齐全轮才看得出它在复用。
+        cands: list[tuple[int, str, str]] = []
         for i, line in enumerate(lines):
             m = re.match(
                 r"^(\d+\.\s+\[(.+?)\]\((https?://[^)]+)\)(?:（[^）]*）)?)(\s*<!--.*)?\s*$",
@@ -3879,26 +3969,59 @@ def backfill_archive_originals(news_dir: Path, fetch,
             disp, url = m.group(2), m.group(3)
             if not _CJK_CHAR_RE.search(disp):
                 continue  # 可见标题本就是英文（原文==标题），无需回填
-            if visited >= limit:
+            if "#" in url:
+                continue  # 锚点行没有独立文章页
+            if url in ledger:
+                continue  # 台账判过：这一页给不出英文原文
+            if visited + len(cands) >= limit:
                 break
+            cands.append((i, url, disp))
+        resolved: list[tuple[int, str, str, str]] = []   # (行号, url, 可见标题, 原文)
+        for i, url, disp in cands:
+            orig = ""
             try:
                 html = fetch(url)
-            except Exception:
-                html = ""
+            except Exception as exc:  # noqa: BLE001
+                tag = _failure_tag(exc)
+                if tag and ledger_path is not None:
+                    ledger[url] = tag
+                    recorded += 1
+            else:
+                orig = resolve_article_original(html or "", url)
+                if not orig and ledger_path is not None:
+                    ledger[url] = "none"
+                    recorded += 1
             visited += 1
-            orig = resolve_article_original(html or "", url)
-            if (orig and "-->" not in orig
-                    and re.sub(r"\s+", " ", orig).casefold()
-                    != re.sub(r"\s+", " ", disp).casefold()):
-                nl = "\n" if line.endswith("\n") else ""
-                lines[i] = m.group(1).rstrip() + f" <!--orig:{orig}-->" + nl
-                fixed += 1
-                dirty = True
+            if orig:
+                resolved.append((i, url, disp, orig))
+            if ledger_path is not None and recorded - flushed >= LEDGER_FLUSH_EVERY:
+                # 增量落盘：一次回填要跑几百个请求，中途被 Ctrl-C / CI 取消时，
+                # 已经判过的账必须留住（实测整轮白打一次）。
+                _save_backfill_ledger(ledger_path, ledger)
+                flushed = recorded
             if delay:
                 _time.sleep(delay)
+        used = Counter(o for _i, _u, _d, o in resolved)
+        for i, url, disp, orig in resolved:
+            if used[orig] > 1:
+                # 同一份原文对上了两条不同文章 → 拿到的不是各自标题，是外壳/列表页标题
+                if ledger_path is not None:
+                    ledger[url] = "shell"
+                    recorded += 1
+                continue
+            if "-->" in orig or (re.sub(r"\s+", " ", orig).casefold()
+                                 == re.sub(r"\s+", " ", disp).casefold()):
+                continue
+            nl = "\n" if lines[i].endswith("\n") else ""
+            lines[i] = re.sub(r"\s+$", "", lines[i][:len(lines[i]) - len(nl)]) \
+                + f" <!--orig:{orig}-->" + nl
+            fixed += 1
+            dirty = True
         if dirty:
             arch.write_text("".join(lines), encoding="utf-8", newline="\n")
-    return visited, fixed
+    if ledger_path and recorded:
+        _save_backfill_ledger(ledger_path, ledger)
+    return visited, fixed, recorded
 
 
 def _parse_news_md_page_states(news_md_text: str) -> dict[str, list[dict]]:
@@ -5520,7 +5643,9 @@ def main(argv: list[str] | None = None) -> int:
                         help="维护模式（不巡检）：逐篇访问**可见标题已汉化、但归档未存英文原文**的"
                              "文章页，取英文 <title> 回填进 `<!--orig:…-->` 注释（中文原生页跳过）；"
                              f"只补原文不改可见标题/顺序。单次上限 {ORIG_BACKFETCH_LIMIT} 页，"
-                             "回填后跑 --rebuild-only 让 articles.json 稳定带上 original_title")
+                             "取不到原文的 URL 记入台账（.backfill_orig_ledger.json，与翻译缓存同类）"
+                             "以免每轮重打；锚点行（URL 带 #）不发请求。"
+                             "可用 --only 分批指定厂商。回填后跑 --rebuild-only 刷新产物")
     args = parser.parse_args(argv)
 
     root = _repo_root()
@@ -5532,17 +5657,24 @@ def main(argv: list[str] | None = None) -> int:
         def _fetch_article(u: str) -> str:
             rr = session.get(u, timeout=(8.0, args.timeout))
             rr.raise_for_status()
-            return rr.text
+            return response_text(rr)
         news_md = (root / args.news_md) if not Path(args.news_md).is_absolute() else Path(args.news_md)
         llm_news = news_md.parent / "llm-news"
         if args.backfill_dates:
             print(f"[维护] 归档日期回填（只访问缺日期条目的文章页，≤{DATE_BACKFETCH_LIMIT} 页）...")
             visited, filled = backfill_archive_dates(llm_news, _fetch_article)
         else:
-            print(f"[维护] 归档英文原文回填（只访问已汉化且缺原文的条目，≤{ORIG_BACKFETCH_LIMIT} 页）...")
-            visited, filled = backfill_archive_originals(llm_news, _fetch_article)
-        print(f"      访问 {visited} 页，回填 {filled} 条；"
-              "请随后运行 --rebuild-only 重排归档并刷新产物。")
+            ledger = root / BACKFILL_LEDGER_NAME
+            only = set(args.only) or None
+            scope = f"（仅 {','.join(sorted(only))}）" if only else ""
+            print(f"[维护] 归档英文原文回填{scope}（只访问已汉化且缺原文的条目，"
+                  f"≤{ORIG_BACKFETCH_LIMIT} 页；台账 {ledger.name} 已记 "
+                  f"{len(_load_backfill_ledger(ledger))} 条）...")
+            visited, filled, recorded = backfill_archive_originals(
+                llm_news, _fetch_article, ledger_path=ledger, vendors=only)
+            print(f"      访问 {visited} 页，回填 {filled} 条，台账新增 {recorded} 条；"
+                  "锚点行与台账已记过的 URL 不发请求。")
+        print("      请随后运行 --rebuild-only 重排归档并刷新产物。")
         return 0
     yaml_path = (root / args.yaml).resolve() if not Path(args.yaml).is_absolute() else Path(args.yaml)
     if not yaml_path.exists():

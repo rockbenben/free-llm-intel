@@ -16,6 +16,7 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from unittest import mock
 
+import requests
 import yaml
 
 import ai_review
@@ -108,6 +109,34 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertIn("--ai-review", crawl_step.get("run", ""))
         self.assertIn("--ai-titles", crawl_step.get("run", ""),
                       "新增标题的 AI 润色必须随巡检开启，否则机翻味标题要等人工发起")
+
+    def test_workflow_backfills_originals_before_crawling(self):
+        """英文原文回填是 AI 重译标题的前提，必须接进入口，且排在爬虫之前。
+
+        爬虫把归档当合并基底读：注释在这一轮写进去，当天的 RSS / articles.json
+        才带得上 original_title；排在爬虫之后产物要晚一天。
+        """
+        with open(self.workflow_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        names = [s.get("name", "") for s in data["jobs"]["crawl"]["steps"]]
+        self.assertIn("Backfill article originals", names)
+        self.assertIn("Restore backfill ledger", names,
+                      "台账必须被缓存，否则每天重打同一批取不到原文的 URL")
+        self.assertLess(names.index("Backfill article originals"),
+                        names.index("Run intel crawler"),
+                        "回填要排在爬虫之前，当天产物才能带上原文")
+        step = next(s for s in data["jobs"]["crawl"]["steps"]
+                    if s.get("name") == "Backfill article originals")
+        self.assertIn("--backfill-orig", step.get("run", ""))
+        self.assertTrue(step.get("continue-on-error"),
+                        "回填是增强项：失败不该挡掉当天的巡检产物提交")
+        # 台账与翻译缓存同类：不进 git，靠 Actions cache 续命
+        self.assertIn("backfill-ledger-",
+                      next(s for s in data["jobs"]["crawl"]["steps"]
+                           if s.get("name") == "Restore backfill ledger")["with"]["restore-keys"])
+        gitignore = (self.root / ".gitignore").read_text(encoding="utf-8")
+        self.assertIn(crawler_llm_intel.BACKFILL_LEDGER_NAME, gitignore,
+                      "台账文件必须被忽略，否则每天产生一份 churn 提交")
 
         # 2026-09-22：不再有 create-pull-request 步骤（档案更新改为与快照/新闻一起直提），
         # 原「Open PR 必须早于 Commit snapshots」的顺序约束随之取消。
@@ -1038,9 +1067,9 @@ class TestDateBackfill(unittest.TestCase):
         def fetch(url):
             return "<title>Grok 4.6 is here | xAI</title>"
 
-        visited, filled = crawler_llm_intel.backfill_archive_originals(
+        visited, filled, recorded = crawler_llm_intel.backfill_archive_originals(
             self.news, fetch, delay=0)
-        self.assertEqual((visited, filled), (1, 1),
+        self.assertEqual((visited, filled, recorded), (1, 1, 0),
                          "只访问第 2 条（已汉化且无注释）；已注释的、英文可见标题的都不访问")
         content = (self.news / "v.md").read_text(encoding="utf-8")
         self.assertIn("2. [Grok 4.6 已发布](https://x.ai/news/grok-4-6)（2026-01-02） "
@@ -1048,6 +1077,218 @@ class TestDateBackfill(unittest.TestCase):
         self.assertIn("1. [已存原文的文章](https://x.com/a)（2026-01-01） "
                       "<!--orig:Already here-->", content, "已有注释的行原样保留")
         self.assertIn("3. [English visible title](https://x.com/c)（2026-01-03）", content)
+
+    # ---- 回填台账：失败/取不到的行不能每轮重打 ----
+
+    LEDGER_ARCHIVE = (
+        "## 全部文章（共 4 篇）\n\n"
+        "1. [锚点行标题](https://x.ai/news#d-2026-01-01-0)（2026-01-01）\n"
+        "2. [吃 403 的文章](https://x.ai/news/blocked)（2026-01-02）\n"
+        "3. [中文原生页](https://x.ai/news/chinese)（2026-01-03）\n"
+        "4. [能取到原文的文章](https://x.ai/news/good)（2026-01-04）\n")
+
+    def _ledger_case(self, fetch, tmp: Path):
+        (tmp / "v.md").write_text(self.LEDGER_ARCHIVE, encoding="utf-8")
+        ledger = tmp / crawler_llm_intel.BACKFILL_LEDGER_NAME
+        calls: list[str] = []
+
+        def spy(url):
+            calls.append(url)
+            return fetch(url)
+        return spy, calls, ledger
+
+    @staticmethod
+    def _http_error(code: int) -> requests.HTTPError:
+        err = requests.HTTPError(f"{code} Error")
+        err.response = mock.Mock(status_code=code)
+        return err
+
+    def test_anchor_rows_are_never_fetched(self):
+        """列表页锚点没有独立文章页，访问它取回的是**列表页**标题，写进去就是假原文。"""
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            spy, calls, ledger = self._ledger_case(
+                lambda u: "<title>News | xAI</title>", tmp)
+            visited, filled, recorded = crawler_llm_intel.backfill_archive_originals(
+                tmp, spy, delay=0, ledger_path=ledger)
+        self.assertNotIn("https://x.ai/news#d-2026-01-01-0", calls,
+                         "锚点行一次都不该被访问")
+        self.assertNotIn("https://x.ai/news", [u.split("#")[0] for u in calls])
+
+    def test_permanent_and_unusable_outcomes_are_ledgered(self):
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+
+            def fetch(url):
+                if "blocked" in url:
+                    raise self._http_error(403)
+                if "chinese" in url:
+                    return "<title>发布说明 | xAI</title>"      # 取到了页，但没有英文原文
+                return "<title>Grok lands everywhere | xAI</title>"
+
+            spy, calls, ledger = self._ledger_case(fetch, tmp)
+            v1, f1, r1 = crawler_llm_intel.backfill_archive_originals(
+                tmp, spy, delay=0, ledger_path=ledger)
+            self.assertEqual(sorted(calls), [
+                "https://x.ai/news/blocked", "https://x.ai/news/chinese",
+                "https://x.ai/news/good"], "首轮把三条直链都试一遍，锚点跳过")
+            self.assertEqual(f1, 1)
+            data = json.loads(ledger.read_text(encoding="utf-8"))
+            self.assertEqual(data["https://x.ai/news/blocked"], "http-403")
+            self.assertEqual(data["https://x.ai/news/chinese"], "none")
+            self.assertNotIn("https://x.ai/news/good", data, "成功回填的不记账")
+
+            # 第二轮：已记账的两条不再打，只剩成功那条（已带注释）→ 0 访问
+            calls2: list[str] = []
+            v2, f2, r2 = crawler_llm_intel.backfill_archive_originals(
+                tmp, lambda u: calls2.append(u) or "", delay=0, ledger_path=ledger)
+            self.assertEqual((v2, f2, r2, calls2), (0, 0, 0, []),
+                             "台账生效后不再重打同一批失败项")
+
+    def test_transient_failures_are_retried_next_run(self):
+        """超时 / 5xx 不记账：那是服务端临时故障，下一轮还得再试。"""
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+
+            def fetch(url):
+                if "good" in url:
+                    raise requests.Timeout("slow")
+                if "blocked" in url:
+                    raise self._http_error(503)
+                return "<title>发布说明 | xAI</title>"     # 取到页面，但没有英文原文
+
+            spy, calls, ledger = self._ledger_case(fetch, tmp)
+            crawler_llm_intel.backfill_archive_originals(tmp, spy, delay=0, ledger_path=ledger)
+            data = json.loads(ledger.read_text(encoding="utf-8"))
+            self.assertNotIn("https://x.ai/news/good", data, "超时不该被当成永久取不到")
+            self.assertNotIn("https://x.ai/news/blocked", data, "5xx 是临时的")
+            self.assertEqual(data["https://x.ai/news/chinese"], "none")
+
+    def test_vendors_filter_bounds_the_batch(self):
+        """`--only` 必须能圈定回填范围：字母序靠前的厂商吃光配额，后面的就永远轮不到。"""
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            for name, marker in (("aardvark.md", "aa"), ("zebra.md", "zz")):
+                (tmp / name).write_text(
+                    "## 全部文章（共 1 篇）\n\n"
+                    f"1. [文章 {marker}](https://x.ai/news/{marker})（2026-01-01）\n",
+                    encoding="utf-8")
+            seen: list[str] = []
+
+            def fetch(url):
+                seen.append(url)
+                return f"<title>Post {url.rsplit('/', 1)[-1]} | xAI</title>"
+
+            crawler_llm_intel.backfill_archive_originals(
+                tmp, fetch, limit=10, delay=0, vendors={"zebra"})
+            self.assertEqual(seen, ["https://x.ai/news/zz"], "只碰被圈定的那一家")
+            text = (tmp / "zebra.md").read_text(encoding="utf-8")
+            self.assertIn("<!--orig:Post zz-->", text)
+            self.assertNotIn("<!--orig:", (tmp / "aardvark.md").read_text(encoding="utf-8"),
+                             "没被圈定的厂商不得改动")
+
+            seen.clear()
+            crawler_llm_intel.backfill_archive_originals(tmp, fetch, limit=10, delay=0)
+            self.assertEqual(seen, ["https://x.ai/news/aa"], "不传 vendors = 全部处理")
+
+    def test_rate_limit_is_not_a_verdict(self):
+        """429 / 408 / 425 是「慢点再来」，不能当成「这页没有原文」永久烧进台账。
+
+        实测踩过：两轮并发打 huggingface 触发限流，335 条链接被记成 `http-429`，
+        此后永远不再尝试——一次我自己的操作失误就把整家厂商的原文恢复判了死刑。
+        """
+        for code in (429, 408, 425, 500, 503):
+            exc = self._http_error(code)
+            self.assertEqual(crawler_llm_intel._failure_tag(exc), "",
+                             f"{code} 属于可重试，不该记账")
+        for code in (403, 404, 410):
+            self.assertEqual(crawler_llm_intel._failure_tag(self._http_error(code)),
+                             f"http-{code}", f"{code} 是站方的稳定答复，应当记账")
+
+    def test_shared_shell_title_is_not_written(self):
+        """SPA 外壳页把站点名当 <title> 交回来（实测小米 MiMo 15 条同一个
+        `Xiaomi MiMo Home`）：同一份原文挂到第二条**不同的非锚点 URL** 上就是假原文。
+
+        锚点行不参与这条判据——「锚点 + 直链」共用同一原文是同一篇文章的两个入口
+        （xai_grok / anthropic 各有一批那样的真重复），一刀切会误删合法原文。
+        """
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            (tmp / "v.md").write_text(
+                "## 全部文章（共 4 篇）\n\n"
+                "1. [第一篇的中文标题](https://mimo.mi.com/news/a)（2026-01-01）\n"
+                "2. [第二篇的中文标题](https://mimo.mi.com/news/b)（2026-01-02）\n"
+                "3. [真正有标题的一篇](https://mimo.mi.com/news/c)（2026-01-03）\n"
+                "4. [同一篇的锚点入口](https://mimo.mi.com/news#d-2026-01-03-9)"
+                "（2026-01-03）\n",
+                encoding="utf-8")
+            ledger = tmp / crawler_llm_intel.BACKFILL_LEDGER_NAME
+
+            def fetch(url):
+                if "/news/c" in url:
+                    return "<title>MiMo-V2 launches | Xiaomi</title>"
+                return "<title>Xiaomi MiMo Home</title>"
+
+            visited, filled, recorded = crawler_llm_intel.backfill_archive_originals(
+                tmp, fetch, delay=0, ledger_path=ledger)
+            text = (tmp / "v.md").read_text(encoding="utf-8")
+            self.assertEqual(filled, 1, "只有第一条能写；第二条共用同一站点名，被判假原文")
+            self.assertIn("<!--orig:MiMo-V2 launches-->", text)
+            self.assertNotIn("Xiaomi MiMo Home", text)
+            data = json.loads(ledger.read_text(encoding="utf-8"))
+            self.assertEqual(data["https://mimo.mi.com/news/a"], "shell",
+                             "共用外壳标题的两条都不写、都记账（第一条也不能幸免）")
+            self.assertEqual(data["https://mimo.mi.com/news/b"], "shell")
+            self.assertNotIn("https://mimo.mi.com/news/c", data, "真拿到原文的那条不记账")
+
+    def test_ledger_flushes_during_the_run_not_only_at_the_end(self):
+        """中断的一轮也必须留住已判过的账，否则几百个请求全白打。"""
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            rows = "\n".join(
+                f"{i}. [文章 {i}](https://x.ai/news/p{i})（2026-01-01）" for i in range(1, 91))
+            (tmp / "v.md").write_text(f"## 全部文章（共 90 篇）\n\n{rows}\n", encoding="utf-8")
+            ledger = tmp / crawler_llm_intel.BACKFILL_LEDGER_NAME
+            seen: list[str] = []
+            interrupt_at = 2 * crawler_llm_intel.LEDGER_FLUSH_EVERY + 10
+
+            def fetch(url):
+                if len(seen) >= interrupt_at:
+                    raise KeyboardInterrupt("巡检被取消")
+                seen.append(url)
+                return "<title>发布说明 | xAI</title>"      # 每条都判为 none
+
+            with self.assertRaises(KeyboardInterrupt):
+                crawler_llm_intel.backfill_archive_originals(
+                    tmp, fetch, limit=200, delay=0, ledger_path=ledger)
+            self.assertEqual(len(seen), interrupt_at, "夹具前提：确实在跑完前被打断")
+            self.assertTrue(ledger.exists(), "中途被中断也要有落盘，不能只在结尾写一次")
+            data = json.loads(ledger.read_text(encoding="utf-8"))
+            self.assertGreaterEqual(len(data), crawler_llm_intel.LEDGER_FLUSH_EVERY,
+                                    "已判过的账必须已写入")
+            self.assertLess(len(data), len(seen), "只该留住已 flush 的批次，没 flush 的随中断丢掉")
+
+    def test_clearing_the_ledger_resumes_the_retry(self):
+        """台账是缓存不是判决：删掉文件就重新尝试（站点日后改版能取到原文）。"""
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            spy, _calls, ledger = self._ledger_case(
+                lambda u: "<title>发布说明 | xAI</title>", tmp)
+            crawler_llm_intel.backfill_archive_originals(tmp, spy, delay=0, ledger_path=ledger)
+            self.assertEqual(json.loads(ledger.read_text(encoding="utf-8"))[
+                "https://x.ai/news/good"], "none")
+
+            def fetch_ok(url):
+                if url.endswith("/good"):
+                    return "<title>Grok 4.7 is here | xAI</title>"
+                return "<title>发布说明 | xAI</title>"
+            fixed_calls: list[str] = []
+            v, f, r = crawler_llm_intel.backfill_archive_originals(
+                tmp, lambda u: (fixed_calls.append(u), fetch_ok(u))[1],
+                delay=0, ledger_path=None)     # 无台账 = 每次都试
+            self.assertEqual(f, 1, "站点改版给出英文标题后应能补上")
+            self.assertIn("<!--orig:Grok 4.7 is here-->",
+                          (tmp / "v.md").read_text(encoding="utf-8"))
 
 
 class TestIntelChangelogAndStaleReview(unittest.TestCase):
@@ -5201,7 +5442,7 @@ class TestJsonApiNewsSource(unittest.TestCase):
         self.assertIn(f"- 页面：[研究页]({self.HUMAN})", md)
         self.assertNotIn("article/retrieval", md,
                          "订阅入口不得印接口长串（读者点进去是 4.9MB 的 JSON）")
-        self.assertIn("🔌 官方无 RSS、页面为前端渲染，条目取自官方数据接口", md)
+        self.assertIn("🔌 官方未提供 RSS/Atom 订阅源，条目取自官方数据接口", md)
         self.assertNotIn("未发现 RSS/Atom 链接", md,
                          "接口源本来就没有 HTML 页面可发现，这句是错话")
 
@@ -5219,7 +5460,7 @@ class TestJsonApiNewsSource(unittest.TestCase):
                                       url="https://qwen.ai/blog?id=qwen3-max",
                                       date="2026-09-20")]
         md = crawler_llm_intel.render_news_section([intel], "https://x.example/feeds")
-        self.assertIn("🔌 官方无 RSS", md)
+        self.assertIn("🔌 官方未提供 RSS/Atom", md)
         self.assertNotIn("未发现 RSS/Atom 链接", md)
 
     def test_archive_subscription_entry_prints_human_url(self):
@@ -5457,6 +5698,19 @@ class TestWordpressNewsSource(unittest.TestCase):
                         f"接口源不得产出合成锚点：{urls}")
         self.assertIn("https://www.ai21.com/blog/you-need-a-verifier/", urls)
 
+    def test_feeds_md_hint_does_not_claim_client_rendering(self):
+        """两家的接口源共用一行提示，措辞只能陈述共同事实。
+
+        AI21 是 WordPress **服务端**渲染，弃用 HTML 是因为列表页只给合成锚点且官方
+        没留 RSS；提示里写「页面为前端渲染」对它就是一句假话（千问那句才是）。
+        """
+        intel = self._intel([self._page()])
+        intel.news_articles = intel.all_news_articles = []
+        md = crawler_llm_intel.render_news_section([intel], "https://x.example/feeds")
+        self.assertIn("🔌 官方未提供 RSS/Atom 订阅源，条目取自官方数据接口", md)
+        self.assertNotIn("前端渲染", md)
+        self.assertNotIn("wp-json", md, "订阅入口印 yaml `page` 的人类地址，不印接口长串")
+
     # ---- 老锚点收口（换源的直接动因） ----
 
     def _anchored_intel(self):
@@ -5504,6 +5758,71 @@ class TestWordpressNewsSource(unittest.TestCase):
         self.assertIn("_fields=", src["url"], "不裁字段会把整篇正文拉回来")
         listing = [s for s in sources if (s.get("url") or "") == "https://www.ai21.com/blog"]
         self.assertEqual(listing, [], "列表页源已换掉")
+
+
+class TestBackfillOriginalEncoding(unittest.TestCase):
+    """`--backfill-orig` 的字符编码：乱码绝不能被当成「英文原文」写进归档。
+
+    实测事故（2026-09-30）：DeepSeek 文章页发 `Content-Type: text/html` 不带 charset，
+    requests 按 RFC 回落 ISO-8859-1，UTF-8 中文标题被解成
+    `DeepSeek-V4-Pro æ\xad£å¼\x8fç\x99\x88...` 这类拉丁扩展乱码；它既含真拉丁（模型名）
+    又不含 CJK，于是过了 resolve_article_original 的判据，26 条乱码进了归档注释。
+    """
+
+    # 事故里的真实乱码原文（UTF-8 字节被按 latin-1 解出来的形态）
+    MOJI = "DeepSeek-V4-Pro æ\xad£å¼\x8fç\x99\x88ä¸\x8açº¿ | DeepSeek"
+
+    def _html(self, title: str) -> str:
+        return f"<html><head><title>{title}</title></head><body>正文</body></html>"
+
+    def test_mojibake_title_is_rejected(self):
+        self.assertEqual(
+            crawler_llm_intel.resolve_article_original(
+                self._html(self.MOJI), "https://api.deepseek.com/news/"),
+            "", "乱码不是英文原文：写进归档就是永久污染，产出层 original_title 会跟着坏")
+
+    def test_chinese_native_page_is_rejected(self):
+        self.assertEqual(
+            crawler_llm_intel.resolve_article_original(
+                self._html("DeepSeek-V4-Pro 正式版上线 | DeepSeek"),
+                "https://api.deepseek.com/news/"),
+            "", "中文原生页本就没有英文原文")
+
+    def test_english_title_still_recovers(self):
+        """守卫不能误伤正常回填（那才是这条命令的用途）。"""
+        self.assertEqual(
+            crawler_llm_intel.resolve_article_original(
+                self._html("Introducing Grok 4.7 - xAI"), "https://x.ai/news/grok-4-7"),
+            "Introducing Grok 4.7")
+
+    def test_accented_legitimate_title_survives(self):
+        """真带重音的英文标题（人名、西语品牌）不能被当成乱码打掉。"""
+        self.assertEqual(
+            crawler_llm_intel.resolve_article_original(
+                self._html("Tino Cuéllar joins as Chief Global Affairs Officer | Anthropic"),
+                "https://www.anthropic.com/news/tino-cuellar"),
+            "Tino Cuéllar joins as Chief Global Affairs Officer")
+
+    def test_response_text_applies_charset_fallback(self):
+        """根因修复：无 charset 的响应要按 apparent_encoding 重解。
+
+        抓取主路径 `_fetch_with_requests` 一直有这个兜底，独立入口（回填）以前没有。
+        """
+        raw = self._html("DeepSeek-V4-Pro 正式版上线 | DeepSeek").encode("utf-8")
+
+        class Resp:
+            encoding = "ISO-8859-1"      # requests 对无 charset 的默认回落
+            apparent_encoding = "utf-8"
+
+            @property
+            def text(self):
+                return raw.decode(self.encoding or "latin-1")
+
+        resp = Resp()
+        out = crawler_llm_intel.response_text(resp)
+        self.assertEqual(resp.encoding, "utf-8")
+        self.assertIn("正式版上线", out, "兜底后应拿到正常中文，而不是拉丁扩展乱码")
+        self.assertNotIn("æ", out)
 
 
 if __name__ == "__main__":
