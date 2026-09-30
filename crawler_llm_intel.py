@@ -4167,7 +4167,10 @@ def load_original_titles(articles_json_path: Path) -> dict[tuple[str, str], str]
         # 只认**真正的原文列**。旧版在这里拿标题兜底，把冻结的中文显示标题也
         # 当成原文回填进 Article.title，全量索引再把它们写成伪 original_title
         # ——中文「原文」既不是原文，还每轮重建自我复制。缺原文就是空串。
-        orig = (row[oi] or "").strip()
+        # 快照可能是**解码之前**写下的（`&amp;` / `&nbsp;` 原样进过 JSON），
+        # 所以先还原再比对：还原后与显示标题相等，就说明它只是同一条标题的实体形态，
+        # 不该再当原文回填一次（否则注释与 JSON 里的实体每轮自我复制）。
+        orig = html_mod.unescape((row[oi] or "")).strip()
         if orig and orig != (row[ti] or "").strip():
             out[(row[vi], row[ui])] = orig
     global _LAST_ORIG_INDEX

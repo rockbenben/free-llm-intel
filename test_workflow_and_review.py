@@ -1629,6 +1629,33 @@ sources:
         self.assertEqual(art.zh_title, "甲文章标题")
         self.assertEqual(art.title, "Original English Headline")
 
+    def test_snapshot_original_titles_are_decoded_before_reuse(self):
+        """上一版 articles.json 里的 HTML 实体要先还原，否则每轮自我复制。
+
+        `&amp;` 曾在解码之前被写进索引；不做这步，长列表回填会把它当「另一个标题」
+        重新冻进归档注释与 JSON（实测 longcat 的 `&amp;`、腾讯混元的 `&nbsp;`
+        就这样在产物里活了每一轮），而还原后与显示标题相等说明它根本不是原文。
+        """
+        rows = {
+            "fields": ["title", "url", "vendor", "date", "original_title"],
+            "count": 2,
+            "articles": [
+                ["发布 & 计费服务", "https://a.com/ent", "vendor_a", "2026-06-30",
+                 "发布 &amp; 计费服务"],
+                ["Cost & speed", "https://a.com/real", "vendor_a", "2026-06-01",
+                 "Cost &amp; speed report"],
+            ],
+        }
+        feeds = self.root / "docs" / "feeds"
+        feeds.mkdir(parents=True)
+        (feeds / "articles.json").write_text(json.dumps(rows, ensure_ascii=False),
+                                             encoding="utf-8")
+        orig = crawler_llm_intel.load_original_titles(feeds / "articles.json")
+        self.assertNotIn(("vendor_a", "https://a.com/ent"), orig,
+                         "实体形态与显示标题同串，不该再当原文回填")
+        self.assertEqual(orig[("vendor_a", "https://a.com/real")], "Cost & speed report",
+                         "真原文里的实体要还原成 &")
+
     def test_rebuild_matches_md_endpoint_switch(self):
         """换源到 `.md` 端点（groq 实测）：产物记旧 URL，归一后缀仍能富化检测到的 feed。"""
         vendors, sources = crawler_llm_intel.parse_yaml(self.root / "intel.yaml")
