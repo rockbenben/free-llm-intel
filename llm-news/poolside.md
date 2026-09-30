@@ -9,16 +9,16 @@
 
 ## 全部文章（共 19 篇，按日期倒序；无日期条目列于最后）
 
-1. [Poolside on Dell：在您的边界内实现前沿人工智能的有效途径](https://poolside.ai/blog#d-2026-07-28-35)（2026-07-28） <!--orig:Poolside on Dell: an efficient path for frontier AI inside your boundary-->
+1. [Poolside on Dell：在自身边界内落地前沿 AI 的高效路径](https://poolside.ai/blog#d-2026-07-28-35)（2026-07-28） <!--orig:Poolside on Dell: an efficient path for frontier AI inside your boundary-->
 2. [Laguna XS 2.1 简介](https://poolside.ai/blog#d-2026-07-21-19)（2026-07-21） <!--orig:Introducing Laguna XS 2.1-->
 3. [长上下文更新：Laguna XS.2 和 M.1](https://poolside.ai/blog#d-2026-07-02-21)（2026-07-02） <!--orig:Long context update: Laguna XS.2 and M.1-->
-4. [AI，你的方式：引入 Poolside 平台](https://poolside.ai/blog#d-2026-05-26-23)（2026-05-26） <!--orig:AI, your way: introducing the Poolside Platform-->
+4. [按你的方式使用 AI：Poolside 平台介绍](https://poolside.ai/blog#d-2026-05-26-23)（2026-05-26） <!--orig:AI, your way: introducing the Poolside Platform-->
 5. [Laguna XS.2 和 M.1：深入探讨](https://poolside.ai/blog#d-2026-05-11-1)（2026-05-11） <!--orig:Laguna XS.2 and M.1: A Deeper Dive-->
 6. [Laguna XS.2 和 Laguna M.1 简介](https://poolside.ai/blog#d-2026-05-05-25)（2026-05-05） <!--orig:Introducing Laguna XS.2 and Laguna M.1-->
 7. [Tools of the Trade: C2C Activation Offloading on Grace Blackwell](https://poolside.ai/blog#d-2026-04-28-3)（2026-04-28）
 8. [宣布收购 Fern Labs](https://poolside.ai/blog#d-2026-04-28-27)（2026-04-28） <!--orig:Announcing the acquisition of Fern Labs-->
 9. [最后的润色](https://poolside.ai/blog#d-2026-03-18-5)（2026-03-18） <!--orig:The finishing touches-->
-10. [利用 Redpanda 实现代理企业](https://poolside.ai/blog#d-2025-11-18-29)（2025-11-18） <!--orig:Enabling the Agentic Enterprise with Redpanda-->
+10. [用 Redpanda 打造智能体企业](https://poolside.ai/blog#d-2025-11-18-29)（2025-11-18） <!--orig:Enabling the Agentic Enterprise with Redpanda-->
 11. [揭晓 Poolside 与 AWS 的第一方合作伙伴关系](https://poolside.ai/blog#d-2025-10-28-31)（2025-10-28） <!--orig:Unveiling Poolside's first-party partnership with AWS-->
 12. [载体和信标](https://poolside.ai/blog#d-2025-08-25-7)（2025-08-25） <!--orig:The carrier and the beacon-->
 13. [设计世界一流的代码执行环境](https://poolside.ai/blog#d-2025-08-14-9)（2025-08-14） <!--orig:Designing a world-class code execution environment-->

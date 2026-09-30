@@ -11,7 +11,7 @@
 ## 全部文章（共 35 篇，按日期倒序；无日期条目列于最后）
 
 1. [MiniMax H3 发布](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-31-%E6%97%A5)（2026-07-31） <!--orig:MiniMax H3-->
-2. [全新 Music-3.0](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-16-%E6%97%A5)（2026-07-16） <!--orig:Music-3.0-->
+2. [介绍 Music-3.0](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-16-%E6%97%A5)（2026-07-16） <!--orig:Music-3.0-->
 3. [MiniMax M3 模型](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-6-%E6%9C%88-1-%E6%97%A5)（2026-06-01） <!--orig:MiniMax M3-->
 4. [Music-2.6](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-4-%E6%9C%88)（2026-04-01）
 5. [MiniMax M2.7](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-3-%E6%9C%88-18-%E6%97%A5)（2026-03-18）
