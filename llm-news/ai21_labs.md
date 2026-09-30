@@ -23,7 +23,7 @@
 12. [步长与偏见：一个 32 位溢出如何写坏 CUDA 内核，还藏了好几周](https://www.ai21.com/blog/vllm-cuda-integer-overflow/)（2026-03-25） <!--orig:Stride and prejudice: How a 32-bit overflow corrupted a CUDA kernel (and stayed hidden for weeks)-->
 13. [小心那道缝隙：演示智能体与生产系统差在哪](https://www.ai21.com/blog/mind-the-gap/)（2026-03-17） <!--orig:Mind the gap: What separates demo agents from production systems-->
 14. [企业 AI 落地真正卡住的地方](https://www.ai21.com/blog/enterprise-ai-deployments/)（2026-03-10） <!--orig:Where enterprise AI deployments actually get stuck-->
-15. [模块化智能：一种类人的智能体编排模型](https://www.ai21.com/blog/modular-intelligence-agent-orchestration/)（2026-02-26） <!--orig:Modular intelligence: a human-like model for agent orchestration-->
+15. [Modular智能：一种类人的智能体编排模型](https://www.ai21.com/blog/modular-intelligence-agent-orchestration/)（2026-02-26） <!--orig:Modular intelligence: a human-like model for agent orchestration-->
 16. [用与模型无关的 padding 最小化，减少 LLM 训练浪费](https://www.ai21.com/blog/padding-minimization-efficiency/)（2026-02-11） <!--orig:Reducing LLM training waste with model-agnostic padding minimization-->
 17. [要么扩，要么 OOM：vLLM 扩容的艺术](https://www.ai21.com/blog/scaling-vllm-without-oom/)（2026-02-05） <!--orig:Go big or go OOM: the art of scaling vLLM-->
 18. [一个 token 坏所有：一次 vLLM 排障记](https://www.ai21.com/blog/vllm-debugging-mamba-bug/)（2026-01-29） <!--orig:One token to corrupt them all: a vLLM debugging tale-->

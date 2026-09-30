@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-09-30 01:37:14**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-09-30 05:02:30**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -43,7 +43,7 @@
   3. [Claude Marketplace：发现合作伙伴插件、智能体与服务的一站式入口](https://claude.com/blog#d-2026-09-23-23)（2026-09-23）
   4. [Claude Marketplace：从我们的合作伙伴那里发现插件、智能体和服务的地方](https://claude.com/blog#d-2026-09-23-21)（2026-09-23）
   5. [Claude Marketplace：插件与连接器、产品与智能体、服务伙伴](https://claude.com/blog/claude-marketplace)（2026-09-23）
-  - 📄 完整文章归档（共 78 篇）：[anthropic.md](llm-news/anthropic.md)
+  - 📄 完整文章归档（共 79 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### Google Gemini (google_gemini)
 - 页面：[变更日志](https://ai.google.dev/gemini-api/docs/changelog)
@@ -62,7 +62,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xai_grok.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml)
 - 📰 **最新文章**（官方源抓取于 2026-09-30，标题自动汉化）：
-  1. [Team Bots: AI coworkers that learn from your team](https://x.ai/news#d-2026-09-28-1)（2026-09-28）
+  1. [Team Bots：向你的团队学习的 AI 同事](https://x.ai/news#d-2026-09-28-1)（2026-09-28）
   2. [SpaceXAI 如何使用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22）
   3. [IntroducingGrok 4.7](https://x.ai/news#d-2026-09-21-0)（2026-09-21）
   4. [推出 Grok 4.7](https://x.ai/news/grok-4-7)（2026-09-21）
@@ -153,7 +153,7 @@
   3. [【模型服务调整】ERNIE-Image-Turbo 模型将下线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4ernie-image-turbo-%E6%A8%A1%E5%9E%8B%E5%B0%86%E4%B8%8B%E7%BA%BF)（2026-09-28）
   4. [【接口服务调整】生图 API 下线 batch_size 字段、水印默认添加](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4%E7%94%9F%E5%9B%BE-api-%E4%B8%8B%E7%BA%BF-batch_size-%E5%AD%97%E6%AE%B5%E6%B0%B4%E5%8D%B0%E9%BB%98%E8%AE%A4%E6%B7%BB%E5%8A%A0)（2026-09-15）
   5. [【模型价格调整】DeepSeek-V4-Flash 模型分时段定价调整](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E4%BB%B7%E6%A0%BC%E8%B0%83%E6%95%B4deepseek-v4-flash-%E6%A8%A1%E5%9E%8B%E5%88%86%E6%97%B6%E6%AE%B5%E5%AE%9A%E4%BB%B7%E8%B0%83%E6%95%B4)（2026-09-11）
-  - 📄 完整文章归档（共 50 篇）：[siliconflow.md](llm-news/siliconflow.md)
+  - 📄 完整文章归档（共 48 篇）：[siliconflow.md](llm-news/siliconflow.md)
 
 ### MiniMax (minimax)
 - 页面：[更新日志](https://platform.minimax.cn/docs/release-notes/models)
@@ -242,10 +242,10 @@
 ### OpenRouter (openrouter)
 - 📡 [RSS/Atom 订阅源](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-09-30，标题自动汉化）：
-  1. [AI Agent Regression Testing After a Prompt or Model Change](https://openrouter.ai/blog/tutorials/ai-agent-regression-testing-after-a-prompt-or-model-change/)（2026-09-30）
-  2. [Building a Golden Eval Dataset from Production Traffic](https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/)（2026-09-30）
-  3. [How to Test Tool-Calling Accuracy in AI Agents](https://openrouter.ai/blog/tutorials/how-to-test-tool-calling-accuracy-in-ai-agents/)（2026-09-30）
-  4. [Image-to-Video AI Models Compared: Cost, Resolution, and Control](https://openrouter.ai/blog/insights/image-to-video-models-compared/)（2026-09-29）
+  1. [提示词或模型变更后如何做 AI 智能体回归测试](https://openrouter.ai/blog/tutorials/ai-agent-regression-testing-after-a-prompt-or-model-change/)（2026-09-30）
+  2. [用生产流量构建金标准评测数据集](https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/)（2026-09-30）
+  3. [如何测试 AI 智能体的工具调用准确率](https://openrouter.ai/blog/tutorials/how-to-test-tool-calling-accuracy-in-ai-agents/)（2026-09-30）
+  4. [图生视频 AI 模型对比：成本、分辨率与可控性](https://openrouter.ai/blog/insights/image-to-video-models-compared/)（2026-09-29）
   5. [What Is Qwen 3.8](https://openrouter.ai/blog/insights/qwen-3-8/)（2026-09-28）
   - 📄 完整文章归档（共 145 篇）：[openrouter.md](llm-news/openrouter.md)
 
@@ -264,8 +264,8 @@
 ### Amazon Bedrock (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-09-30，标题自动汉化）：
-  1. [Amazon Bedrock expands Claude model availability to in-country inferencing in India](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-expands-claude-model-availability-to-india-cross-region-inference/)（2026-09-30）
-  2. [Introducing Anthropic models on Amazon Bedrock for in-region inference in Seoul and Singapore](https://aws.amazon.com/blogs/machine-learning/introducing-anthropic-models-on-amazon-bedrock-for-in-region-inference-in-seoul-and-singapore/)（2026-09-30）
+  1. [Amazon Bedrock 的 Claude 模型现支持印度境内推理](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-expands-claude-model-availability-to-india-cross-region-inference/)（2026-09-30）
+  2. [Anthropic 模型上线 Amazon Bedrock，支持首尔与新加坡区域内推理](https://aws.amazon.com/blogs/machine-learning/introducing-anthropic-models-on-amazon-bedrock-for-in-region-inference-in-seoul-and-singapore/)（2026-09-30）
   3. [在 Amazon Bedrock 上用 GPT-6.1 Sol，把接近 Astra 的智能带进日常工作](https://aws.amazon.com/blogs/machine-learning/bring-near-astra-intelligence-to-everyday-work-with-gpt-6-1-sol-on-amazon-bedrock/)（2026-09-29）
   4. [Amazon Quick 的提示词工程基础](https://aws.amazon.com/blogs/machine-learning/prompt-engineering-fundamentals-for-amazon-quick/)（2026-09-29）
   5. [按 Quick 组件做提示词工程：常见模式与坑](https://aws.amazon.com/blogs/machine-learning/prompt-engineering-by-quick-component-patterns-and-pitfalls/)（2026-09-29）
@@ -276,9 +276,9 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-fireworks_ai.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-fireworks_ai.xml)
 - 📰 **最新文章**（官方源抓取于 2026-09-30，标题自动汉化）：
-  1. [Inside Fireworks Multi-region Deployments: One Deployment, Global Scale](https://fireworks.ai/blog/multi-region-deployment)
+  1. [走进 Fireworks 多区域部署：一套部署，全球扩展](https://fireworks.ai/blog/multi-region-deployment)
   2. [Every byte counts: ARCv3 and the case for cross-region RL](https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl)
-  3. [Introducing Ember-1](https://fireworks.ai/blog/ember-1)
+  3. [Ember-1 简介](https://fireworks.ai/blog/ember-1)
   4. [推出专业智能指数](https://fireworks.ai/blog/introducing-the-specialized-intelligence-index)
   5. [前沿不是模型，而是路由器](https://fireworks.ai/blog/the-frontier-isnt-a-model-its-a-router)
   - 📄 完整文章归档（共 23 篇）：[fireworks_ai.md](llm-news/fireworks_ai.md)
@@ -406,9 +406,9 @@
 - 📡 [RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-09-30，标题自动汉化）：
   1. [Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
-  2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
-  3. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
-  4. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
+  2. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
+  3. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
+  4. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
   5. [学习循环：把智能掌握在自己手中](https://anyscale.com/blog/learning-loops)（2026-08-25）
   - 📄 完整文章归档（共 36 篇）：[anyscale.md](llm-news/anyscale.md)
 

@@ -44,7 +44,7 @@
 32. [DeepSeek V2 系列收官，联网搜索上线官网](https://api-docs.deepseek.com/zh-cn/news/news1210)（2024-12-10）
 33. [DeepSeek-V4 预览版：迈入百万上下文普惠时代](https://api-docs.deepseek.com/zh-cn/news/news260424/#d-2024-11-20-0)（2024-11-20）
 34. [DeepSeek 推理模型预览版上线，解密 o1 推理过程](https://api-docs.deepseek.com/zh-cn/news/news1120)（2024-11-20）
-35. [deepseek-coder &amp; deepseek-chat 升级为 DeepSeek V2.5 模型](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-09-05)（2024-09-05）
+35. [deepseek-coder & deepseek-chat 升级为 DeepSeek V2.5 模型](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-09-05)（2024-09-05） <!--orig:deepseek-coder &amp; deepseek-chat 升级为 DeepSeek V2.5 模型-->
 36. [DeepSeek-V4 预览版：迈入百万上下文普惠时代](https://api-docs.deepseek.com/zh-cn/news/news260424/#d-2024-09-05-1)（2024-09-05）
 37. [DeepSeek-V2.5：融合通用与代码能力的全新开源模型](https://api-docs.deepseek.com/zh-cn/news/news0905)（2024-09-05）
 38. [API 上线硬盘缓存技术](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-08-02)（2024-08-02）

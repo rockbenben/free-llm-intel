@@ -862,14 +862,14 @@
 850. [给搭建花哨神经网络的简单人的简单思考](https://huggingface.co/blog/simple-considerations)（2021-02-25） <!--orig:Simple considerations for simple people building fancy neural networks-->
 851. [使用 Huggingface Transformers 和 Ray 实现检索增强生成](https://huggingface.co/blog/ray-rag)（2021-02-10） <!--orig:Retrieval Augmented Generation with Huggingface Transformers and Ray-->
 852. [Hugging Face 在 PyTorch / XLA TPU 上](https://huggingface.co/blog/pytorch-xla)（2021-02-09） <!--orig:Hugging Face on PyTorch / XLA TPUs-->
-853. [Hugging Face Transformers 中更快的 TensorFlow 模型](https://huggingface.co/blog/tf-serving)（2021-01-26）
-854. [通过 DeepSpeed 和 FairScale 用 ZeRO 装载更多、训练更快](https://huggingface.co/blog/zero-deepspeed-fairscale)（2021-01-19）
-855. [我们如何为 🤗 API 用户将 transformer 推理提速 100x](https://huggingface.co/blog/accelerated-inference)（2021-01-18）
-856. [利用预训练语言模型检查点赋能编码器-解码器模型](https://huggingface.co/blog/warm-starting-encoder-decoder)（2020-11-09）
-857. [将 fairseq wmt19 翻译系统移植到 transformers](https://huggingface.co/blog/porting-fsmt)（2020-11-03）
-858. [使用 Transformers 和 Ray Tune 进行超参数搜索](https://huggingface.co/blog/ray-tune)（2020-11-02）
-859. [基于 Transformer 的编码器-解码器模型](https://huggingface.co/blog/encoder-decoder)（2020-10-10）
-860. [用块稀疏矩阵打造更小更快的语言模型](https://huggingface.co/blog/pytorch_block_sparse)（2020-09-10）
-861. [The Reformer - 突破语言建模的极限](https://huggingface.co/blog/reformer)（2020-07-03）
-862. [如何生成文本：用 Transformers 采用不同解码方法进行语言生成](https://huggingface.co/blog/how-to-generate)（2020-03-01）
-863. [如何用 Transformers 和 Tokenizers 从零训练新的语言模型](https://huggingface.co/blog/how-to-train)（2020-02-14）
+853. [Hugging Face Transformers 中更快的 TensorFlow 模型](https://huggingface.co/blog/tf-serving)（2021-01-26） <!--orig:Faster TensorFlow models in Hugging Face Transformers-->
+854. [通过 DeepSpeed 和 FairScale 用 ZeRO 装载更多、训练更快](https://huggingface.co/blog/zero-deepspeed-fairscale)（2021-01-19） <!--orig:Fit More and Train Faster With ZeRO via DeepSpeed and FairScale-->
+855. [我们如何为 🤗 API 用户将 transformer 推理提速 100x](https://huggingface.co/blog/accelerated-inference)（2021-01-18） <!--orig:How we sped up transformer inference 100x for 🤗 API customers-->
+856. [利用预训练语言模型检查点赋能编码器-解码器模型](https://huggingface.co/blog/warm-starting-encoder-decoder)（2020-11-09） <!--orig:Leveraging Pre-trained Language Model Checkpoints for Encoder-Decoder Models-->
+857. [将 fairseq wmt19 翻译系统移植到 transformers](https://huggingface.co/blog/porting-fsmt)（2020-11-03） <!--orig:Porting fairseq wmt19 translation system to transformers-->
+858. [使用 Transformers 和 Ray Tune 进行超参数搜索](https://huggingface.co/blog/ray-tune)（2020-11-02） <!--orig:Hyperparameter Search with Transformers and Ray Tune-->
+859. [基于 Transformer 的编码器-解码器模型](https://huggingface.co/blog/encoder-decoder)（2020-10-10） <!--orig:Transformer-based Encoder-Decoder Models-->
+860. [用块稀疏矩阵打造更小更快的语言模型](https://huggingface.co/blog/pytorch_block_sparse)（2020-09-10） <!--orig:Block Sparse Matrices for Smaller and Faster Language Models-->
+861. [The Reformer - 突破语言建模的极限](https://huggingface.co/blog/reformer)（2020-07-03） <!--orig:The Reformer-->
+862. [如何生成文本：用 Transformers 采用不同解码方法进行语言生成](https://huggingface.co/blog/how-to-generate)（2020-03-01） <!--orig:How to generate text: using different decoding methods for language generation with Transformers-->
+863. [如何用 Transformers 和 Tokenizers 从零训练新的语言模型](https://huggingface.co/blog/how-to-train)（2020-02-14） <!--orig:How to train a new language model from scratch using Transformers and Tokenizers-->
