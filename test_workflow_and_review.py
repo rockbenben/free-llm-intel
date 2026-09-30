@@ -677,6 +677,81 @@ class TestArchiveTitleRetention(unittest.TestCase):
             vendor_id="vendor_a", brand="Vendor A", homepage="https://a.com",
             products=[], all_news_articles=articles)
 
+    def test_kept_english_title_is_not_retranslated(self):
+        """`<!--orig:X-->` 与可见标题相同 = 有意保留英文，必须原样留在归档里。
+
+        机翻失败留下的英文行**不写注释**，所以「相同」是唯一的有意保留信号；
+        少了这层冻结，产品名标题每轮都会被改写成译名（实测 `Grok Imagine API`
+        → 「Grok 想象 API」、`Grok Voice Agent API` → 「Grok 语音代理 API」）。
+        """
+        arch_path = self.news_dir / "vendor_a.md"
+        arch_path.write_text(
+            "## 全部文章（共 3 篇）\n\n"
+            "1. [Grok Imagine API](https://a.com/keep)（2026-09-22） "
+            "<!--orig:Grok Imagine API-->\n"
+            "2. [Introducing Grok Voice](https://a.com/todo)（2026-09-21）\n"
+            "3. [Grok Bot 现已包含在更多计划中](https://a.com/old)（2026-08-26）\n",
+            encoding="utf-8")
+        arts = crawler_llm_intel.parse_archived_articles(arch_path)
+        keep = next(a for a in arts if a.url.endswith("/keep"))
+        todo = next(a for a in arts if a.url.endswith("/todo"))
+        self.assertEqual(keep.zh_title, "Grok Imagine API",
+                         "与原文同名的可见标题要冻结成 zh_title，否则等于没做过决定")
+        self.assertEqual(todo.zh_title, "",
+                         "机翻失败留下的英文行必须仍未冻结，下一轮继续试")
+
+        intel = self._intel(list(arts))
+        with mock.patch.object(
+                crawler_llm_intel, "translate_to_zh",
+                side_effect=lambda t: ("Grok 想象 API" if "Imagine" in t
+                                       else f"中文 · {t}")):
+            crawler_llm_intel.write_news_archives(self.news_dir, [intel],
+                                                  clean_removed=False)
+        content = arch_path.read_text(encoding="utf-8")
+        self.assertIn("[Grok Imagine API](https://a.com/keep)", content,
+                      "判定保留英文的那条不得被改写成译名")
+        self.assertIn("<!--orig:Grok Imagine API-->", content,
+                      "注释必须写回归档，丢了它下一轮就退化成「未汉化」")
+        self.assertIn("中文 · Introducing Grok Voice", content,
+                      "没有标记的英文行照常送去翻译")
+        # 老行（无注释、可见标题即中文译文）是第三种情况：既没保留英文，也没判定过原文。
+        # 它 title == zh_title == 中文，若emit 条件只看「相同就写注释」，就会被钉上
+        # `<!--orig:中文…-->`，产出层的原文列随即掺进译文（实测 xai_grok 26 行中招）。
+        self.assertIn("[Grok Bot 现已包含在更多计划中](https://a.com/old)", content,
+                      "老中文行的可见标题必须原样保留")
+        for payload in re.findall(r"<!--orig:(.*?)-->", content):
+            self.assertFalse(crawler_llm_intel._CJK_CHAR_RE.search(payload),
+                             f"注释只能装英文原文，不能装中文译文：{payload}")
+
+    def test_html_entities_in_archived_titles_get_decoded(self):
+        """归档里的 `&amp;` 必须在读取时解码，否则实体被写进产物。
+
+        实抓路径经 HTMLParser 已解码，`--rebuild-only` 是直接读 .md 的，少这一步
+        产出层就会显示「发布 &amp; 全新推出」（实测 longcat 条目在
+        model-releases.json / intel-changes.json 里这样回归过一次）。
+        """
+        arch_path = self.news_dir / "vendor_a.md"
+        arch_path.write_text(
+            "## 全部文章（共 2 篇）\n\n"
+            "1. [LongCat-2.0 发布 &amp; 全新推出计费服务](https://a.com/lc)（2026-06-30）\n"
+            "2. [成本与速度对比](https://a.com/cs)（2026-06-20） <!--orig:Cost &amp; speed--> \n",
+            encoding="utf-8")
+        arts = crawler_llm_intel.parse_archived_articles(arch_path)
+        lc = next(a for a in arts if a.url.endswith("/lc"))
+        cs = next(a for a in arts if a.url.endswith("/cs"))
+        self.assertEqual(lc.title, "LongCat-2.0 发布 & 全新推出计费服务")
+        self.assertEqual(lc.zh_title, "LongCat-2.0 发布 & 全新推出计费服务")
+        self.assertEqual(cs.title, "Cost & speed",
+                         "注释里的原文同样要解码，它是 articles.json 原文列的来源")
+        self.assertEqual(cs.zh_title, "成本与速度对比")
+
+        intel = self._intel(list(arts))
+        crawler_llm_intel.write_news_archives(self.news_dir, [intel],
+                                              clean_removed=False)
+        content = arch_path.read_text(encoding="utf-8")
+        self.assertNotIn("&amp;", content, "写回的归档不该把实体再抬一遍")
+        self.assertIn("<!--orig:Cost & speed-->", content)
+
     def test_refetched_english_title_keeps_archived_chinese(self):
         arch_path = self.news_dir / "vendor_a.md"
         arch_path.write_text(

@@ -3735,7 +3735,11 @@ def parse_archived_articles(arch_path: Path) -> list[Article]:
         m = _ARCHIVE_ARTICLE_RE.match(line.strip())
         if m:
             disp, url, date_val, orig = (m.group(i) or "" for i in (1, 2, 3, 4))
-            orig = orig.strip()
+            # 归档存的是 HTML 语境的标题，源站常写成实体（`&amp;`）。实抓路径经
+            # HTMLParser 已经解码，`--rebuild-only` 直接读 .md，不补解码就会把实体
+            # 原样漏进产物（实测 longcat 条目在 model-releases.json 里显示成 `&amp;`）。
+            disp = html_mod.unescape(disp)
+            orig = html_mod.unescape(orig.strip())
             if orig and orig != disp and re.search(r"[A-Za-z]{3}", orig):
                 # 带 `<!--orig:…-->` 的新归档行：可见标题是冻结的中文显示，注释里是英文原文。
                 # 还原成「title=英文原文 / zh_title=中文显示」这对形态（与实抓 RSS 条目一致），
@@ -3746,7 +3750,11 @@ def parse_archived_articles(arch_path: Path) -> list[Article]:
             else:
                 # 旧行（无注释）：可见标题即显示标题；含汉字时它是冻结译文，必须填进
                 # zh_title，否则输出标题会把它再送回机翻（Google 会直译其中原样保留的产品名）。
-                frozen = disp if _CJK_CHAR_RE.search(disp) else ""
+                # 「注释与可见标题相同」是另一种冻结：= 看过原文、判定这条就该留英文
+                # （产品名，如 `Grok Imagine API`）。不填 zh_title 的话它每轮都被当成
+                # 「还没汉化」重送机翻，实测被翻成「Grok 想象 API」写回归档。
+                # 判据无歧义：机翻失败留下的英文行**不写注释**（写入条件是译文≠原文）。
+                frozen = disp if (_CJK_CHAR_RE.search(disp) or (orig and orig == disp)) else ""
                 articles.append(Article(title=disp, url=url,
                                         zh_title=frozen,
                                         date=_drop_future_date(date_val)))
@@ -4288,9 +4296,16 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
             # HTML 注释里，产出层（articles.json 的 original_title）就有了稳定来源，
             # 不再依赖「上一版 articles.json」这种会丢的快照。标题里含 `-->` 会破坏
             # 注释结构，这种极少数直接跳过（宁可少一条原文，不可写出坏行）。
+            # 第二个条件写的是「判定保留英文」那类行（可见标题无汉字、且与原文同名）：
+            # 注释一旦丢掉，那行就退化成「未汉化」，下一轮又被机翻改写（实测
+            # `Grok Imagine API` → 「Grok 想象 API」）。**必须带「无汉字」这一半**：
+            # 老归档行 parse 出来 title 与 zh_title 同为冻结中文，只判相等会把中文
+            # 当原文写进注释（模拟巡检时实测到 26 行 `<!--orig:中文…-->`）。
             orig_part = ""
-            if (title_zh != art.title and re.search(r"[A-Za-z]{3}", art.title)
-                    and "-->" not in art.title):
+            if (re.search(r"[A-Za-z]{3}", art.title) and "-->" not in art.title
+                    and (title_zh != art.title
+                         or (art.zh_title == art.title
+                             and not _CJK_CHAR_RE.search(art.title)))):
                 orig_part = f" <!--orig:{art.title}-->"
             lines.append(f"{art_idx}. [{title_zh}]({art.url}){date_part}{orig_part}")
         lines.append("")
