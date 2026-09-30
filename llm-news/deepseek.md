@@ -1,6 +1,6 @@
 # DeepSeek 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-27**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-30**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：DeepSeek（`deepseek`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -10,14 +10,14 @@
 
 ## 全部文章（共 46 篇，按日期倒序；无日期条目列于最后）
 
-1. [DeepSeek V4.1 Flash：更强、更快、更普惠](https://api-docs.deepseek.com/zh-cn/news/news260910)（2026-09-10）
-2. [DeepSeek-V4-Flash-Vision-Exp 发布](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-21)（2026-08-21）
-3. [V4-Flash-Vision-Exp 上线，开启多模态 API 服务](https://api-docs.deepseek.com/zh-cn/news/news260821)（2026-08-21）
-4. [DeepSeek-V4-Pro 更新](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-13)（2026-08-13）
-5. [DeepSeek-V4-Pro 正式版上线](https://api-docs.deepseek.com/zh-cn/news/news260813)（2026-08-13）
-6. [DeepSeek-V4-Flash 更新](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-07-31)（2026-07-31）
-7. [开源权重和本地部署](https://api-docs.deepseek.com/zh-cn/news/news260424/#%E5%BC%80%E6%BA%90%E6%9D%83%E9%87%8D%E5%92%8C%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2)（2026-07-24）
-8. [DeepSeek-V4 预览版：迈入百万上下文普惠时代](https://api-docs.deepseek.com/zh-cn/news/news260424/#d-2026-04-24-4)（2026-04-24）
+1. [DeepSeek-V4.1-Flash 发布](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-09-10)（2026-09-10）
+2. [DeepSeek V4.1 Flash：更强、更快、更普惠](https://api-docs.deepseek.com/zh-cn/news/news260910)（2026-09-10）
+3. [DeepSeek-V4-Flash-Vision-Exp 发布](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-21)（2026-08-21）
+4. [V4-Flash-Vision-Exp 上线，开启多模态 API 服务](https://api-docs.deepseek.com/zh-cn/news/news260821)（2026-08-21）
+5. [DeepSeek-V4-Pro 更新](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-13)（2026-08-13）
+6. [DeepSeek-V4-Pro 正式版上线](https://api-docs.deepseek.com/zh-cn/news/news260813)（2026-08-13）
+7. [DeepSeek-V4-Flash 更新](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-07-31)（2026-07-31）
+8. [开源权重和本地部署](https://api-docs.deepseek.com/zh-cn/news/news260424/#%E5%BC%80%E6%BA%90%E6%9D%83%E9%87%8D%E5%92%8C%E6%9C%AC%E5%9C%B0%E9%83%A8%E7%BD%B2)（2026-07-24）
 9. [DeepSeek-V4 预览版：迈入百万上下文普惠时代](https://api-docs.deepseek.com/zh-cn/news/news260424)（2026-04-24）
 10. [DeepSeek-V4-Pro：性能比肩顶级闭源模型](https://api-docs.deepseek.com/zh-cn/news/news260424/#deepseek-v4-pro性能比肩顶级闭源模型)（2026-04-24）
 11. [DeepSeek-V4-Flash：更快捷高效的经济之选](https://api-docs.deepseek.com/zh-cn/news/news260424/#deepseek-v4-flash更快捷高效的经济之选)（2026-04-24）

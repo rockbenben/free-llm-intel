@@ -12,8 +12,8 @@
 1. [你要的不是前沿模型，而是一个验证器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19） <!--orig:You don’t need a frontier model. You need a verifier.-->
 2. [又好又省：开放模型探路，前沿模型收尾](https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/)（2026-07-15） <!--orig:Better and cheaper together: Open models explore, frontier models patch-->
 3. [面向 SWE 智能体的预算感知执行，把 Best-of-N 做得更好](https://www.ai21.com/blog/improving-best-of-n-with-budget-aware-execution-for-swe-agents/)（2026-07-07） <!--orig:Improving Best-of-N with Budget-Aware Execution for SWE Agents-->
-4. [token 开销降不下来？光靠简单路由管不住它](https://www.ai21.com/lp/blog/token-spend-isnt-going-down-you-need-more-than-naive-routing-to-manage-it-gated/)（2026-06-30）
-5. [token 开销降不下来？光靠简单路由管不住它](https://www.ai21.com/blog/spend-isnt-going-down-what-now/)（2026-06-25）
+4. [token 开销降不下来？光靠简单路由管不住它](https://www.ai21.com/lp/blog/token-spend-isnt-going-down-you-need-more-than-naive-routing-to-manage-it-gated/)（2026-06-30） <!--orig:Token spend isn’t going down. You need more than naive routing to manage it-->
+5. [token 开销降不下来？光靠简单路由管不住它](https://www.ai21.com/blog/spend-isnt-going-down-what-now/)（2026-06-25） <!--orig:Token spend isn’t going down. You need more than naive routing to manage it-->
 6. [扭转天平：把弱智能体合并成一个最先进的深度研究智能体](https://www.ai21.com/blog/merging-weak-agents-into-a-state-of-the-art-deep-researcher/)（2026-06-24） <!--orig:Tipping the scales: Merging weak agents into a state-of-the-art deep researcher-->
 7. [先扩规模，再做增强：正确的执行策略如何让我们拿下 SWE-rebench 的最先进水平](https://www.ai21.com/blog/first-scale-then-enrich-how-the-right-execution-strategy-helped-us-reach-state-of-the-art-on-swe-rebench/)（2026-06-04） <!--orig:First scale, then enrich: How the right execution strategy helped us reach state-of-the-art on SWE-rebench-->
 8. [复现方差：智能体 LLM 流水线里的缓存](https://www.ai21.com/blog/caching-in-agentic-llm-pipelines/)（2026-05-13） <!--orig:Reproducing Variance: Caching in Agentic LLM Pipelines-->
@@ -23,7 +23,7 @@
 12. [步长与偏见：一个 32 位溢出如何写坏 CUDA 内核，还藏了好几周](https://www.ai21.com/blog/vllm-cuda-integer-overflow/)（2026-03-25） <!--orig:Stride and prejudice: How a 32-bit overflow corrupted a CUDA kernel (and stayed hidden for weeks)-->
 13. [小心那道缝隙：演示智能体与生产系统差在哪](https://www.ai21.com/blog/mind-the-gap/)（2026-03-17） <!--orig:Mind the gap: What separates demo agents from production systems-->
 14. [企业 AI 落地真正卡住的地方](https://www.ai21.com/blog/enterprise-ai-deployments/)（2026-03-10） <!--orig:Where enterprise AI deployments actually get stuck-->
-15. [模块化智能：一种类人的智能体编排模型](https://www.ai21.com/blog/modular-intelligence-agent-orchestration/)（2026-02-26） <!--orig:Modular intelligence: a human-like model for agent orchestration-->
+15. [Modular智能：一种类人的智能体编排模型](https://www.ai21.com/blog/modular-intelligence-agent-orchestration/)（2026-02-26） <!--orig:Modular intelligence: a human-like model for agent orchestration-->
 16. [用与模型无关的 padding 最小化，减少 LLM 训练浪费](https://www.ai21.com/blog/padding-minimization-efficiency/)（2026-02-11） <!--orig:Reducing LLM training waste with model-agnostic padding minimization-->
 17. [要么扩，要么 OOM：vLLM 扩容的艺术](https://www.ai21.com/blog/scaling-vllm-without-oom/)（2026-02-05） <!--orig:Go big or go OOM: the art of scaling vLLM-->
 18. [一个 token 坏所有：一次 vLLM 排障记](https://www.ai21.com/blog/vllm-debugging-mamba-bug/)（2026-01-29） <!--orig:One token to corrupt them all: a vLLM debugging tale-->
