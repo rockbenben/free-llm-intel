@@ -1,6 +1,6 @@
 # OpenAI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-30**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-01**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：OpenAI（`openai`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -277,8 +277,8 @@
 264. [Choco 用 AI 智能体实现食品配送自动化](https://openai.com/index/choco)（2026-04-27） <!--orig:Choco automates food distribution with AI agents-->
 265. [我们的原则](https://openai.com/index/our-principles)（2026-04-26）
 266. [为 AI 就业转型建模](https://openai.com/index/modeling-ai-jobs-transition)（2026-04-25） <!--orig:Modeling an AI jobs transition-->
-267. [GPT-5.5 系统卡](https://openai.com/index/gpt-5-5-system-card)（2026-04-23） <!--orig:GPT-5.5 System Card-->
-268. [介绍 GPT-5.5](https://openai.com/index/introducing-gpt-5-5)（2026-04-23） <!--orig:Introducing GPT-5.5-->
+267. [介绍 GPT-5.5](https://openai.com/index/introducing-gpt-5-5)（2026-04-23） <!--orig:Introducing GPT-5.5-->
+268. [GPT-5.5 系统卡](https://openai.com/index/gpt-5-5-system-card)（2026-04-23） <!--orig:GPT-5.5 System Card-->
 269. [用 ChatGPT Work 处理日常工作](https://openai.com/academy/how-to-use-chatgpt-work-for-everyday-tasks)（2026-04-23） <!--orig:Everyday work with ChatGPT Work-->
 270. [通过 Responses API 中的 WebSocket 加速智能体工作流](https://openai.com/index/speeding-up-agentic-workflows-with-websockets)（2026-04-22） <!--orig:Speeding up agentic workflows with WebSockets in the Responses API-->
 271. [在 ChatGPT 中推出工作区智能体](https://openai.com/index/introducing-workspace-agents-in-chatgpt)（2026-04-22） <!--orig:Introducing workspace agents in ChatGPT-->
@@ -361,8 +361,8 @@
 348. [将单负振幅推广到引力子](https://openai.com/index/extending-single-minus-amplitudes-to-gravitons)（2026-03-04）
 349. [Axios 如何用 AI 交付高影响力的地方新闻报道](https://openai.com/index/axios-allison-murphy)（2026-03-04）
 350. [理解 AI 与学习成果](https://openai.com/index/understanding-ai-and-learning-outcomes)（2026-03-04）
-351. [GPT-5.3 Instant 系统卡](https://openai.com/index/gpt-5-3-instant-system-card)（2026-03-03） <!--orig:GPT-5.3 Instant System Card-->
-352. [GPT-5.3 Instant：更流畅、更有用的日常对话](https://openai.com/index/gpt-5-3-instant)（2026-03-03） <!--orig:GPT-5.3 Instant: Smoother, more useful everyday conversations-->
+351. [GPT-5.3 Instant：更流畅、更有用的日常对话](https://openai.com/index/gpt-5-3-instant)（2026-03-03） <!--orig:GPT-5.3 Instant: Smoother, more useful everyday conversations-->
+352. [GPT-5.3 Instant 系统卡](https://openai.com/index/gpt-5-3-instant-system-card)（2026-03-03） <!--orig:GPT-5.3 Instant System Card-->
 353. [我们与战争部达成的协议](https://openai.com/index/our-agreement-with-the-department-of-war)（2026-02-28）
 354. [为 Amazon Bedrock 中的智能体推出有状态运行时环境](https://openai.com/index/introducing-the-stateful-runtime-environment-for-agents-in-amazon-bedrock)（2026-02-27） <!--orig:Introducing the Stateful Runtime Environment for Agents in Amazon Bedrock-->
 355. [让 AI 规模化惠及所有人](https://openai.com/index/scaling-ai-for-everyone)（2026-02-27）
@@ -485,8 +485,8 @@
 472. [Mixpanel 安全事件：OpenAI 用户须知](https://openai.com/index/mixpanel-incident)（2025-11-26）
 473. [向全球企业客户扩大数据驻留访问](https://openai.com/index/expanding-data-residency-access-to-business-customers-worldwide)（2025-11-25）
 474. [走进 JetBrains：这家重塑全球写码方式的公司](https://openai.com/index/jetbrains-2025)（2025-11-25）
-475. [在 ChatGPT 中推出购物研究功能](https://openai.com/index/chatgpt-shopping-research)（2025-11-24） <!--orig:Introducing shopping research in ChatGPT-->
-476. [GPT-5 与数学发现的未来](https://openai.com/index/gpt-5-mathematical-discovery)（2025-11-24） <!--orig:GPT-5 and the future of mathematical discovery-->
+475. [GPT-5 与数学发现的未来](https://openai.com/index/gpt-5-mathematical-discovery)（2025-11-24） <!--orig:GPT-5 and the future of mathematical discovery-->
+476. [在 ChatGPT 中推出购物研究功能](https://openai.com/index/chatgpt-shopping-research)（2025-11-24） <!--orig:Introducing shopping research in ChatGPT-->
 477. [OpenAI 与富士康合作加强美国 AI 供应链制造](https://openai.com/index/openai-and-foxconn-collaborate)（2025-11-20）
 478. [帮助 1,000 家小企业用 AI 创造](https://openai.com/index/small-business-ai-jam)（2025-11-20） <!--orig:Helping 1,000 small businesses build with AI-->
 479. [用 GPT-5 加速科学发展的早期实验](https://openai.com/index/accelerating-science-gpt-5)（2025-11-20）
@@ -520,8 +520,8 @@
 507. [将 Stargate 扩展至密歇根州](https://openai.com/index/expanding-stargate-to-michigan)（2025-10-30） <!--orig:Expanding Stargate to Michigan-->
 508. [介绍 Aardvark：OpenAI 的自主智能体安全研究员](https://openai.com/index/introducing-aardvark)（2025-10-30）
 509. [我们如何构建 OWL：ChatGPT 浏览器 Atlas 背后的新架构](https://openai.com/index/building-chatgpt-atlas)（2025-10-30）
-510. [介绍 gpt-oss-safeguard](https://openai.com/index/introducing-gpt-oss-safeguard)（2025-10-29） <!--orig:Introducing gpt-oss-safeguard-->
-511. [gpt-oss-safeguard 技术报告](https://openai.com/index/gpt-oss-safeguard-technical-report)（2025-10-29） <!--orig:gpt-oss-safeguard technical report-->
+510. [gpt-oss-safeguard 技术报告](https://openai.com/index/gpt-oss-safeguard-technical-report)（2025-10-29） <!--orig:gpt-oss-safeguard technical report-->
+511. [介绍 gpt-oss-safeguard](https://openai.com/index/introducing-gpt-oss-safeguard)（2025-10-29） <!--orig:Introducing gpt-oss-safeguard-->
 512. [推进组织变革以实现业务创新](https://openai.com/index/dai-nippon-printing)（2025-10-28）
 513. [Doppel 的 AI 防御系统在攻击扩散前将其阻断](https://openai.com/index/doppel)（2025-10-28）
 514. [Microsoft–OpenAI 合作伙伴关系的新篇章](https://openai.com/index/next-chapter-of-microsoft-openai-partnership)（2025-10-28）
@@ -612,10 +612,10 @@
 599. [对话 DoorDash 首席产品官 Mariana Garavaglia](https://openai.com/index/doordash-mariana-garavaglia)（2025-08-18） <!--orig:How DoorDash is scaling AI to empower employees to build, learn, and innovate faster-->
 600. [OpenAI 致纽瑟姆州长关于协调监管的信](https://openai.com/global-affairs/letter-to-governor-newsom-on-harmonized-regulation)（2025-08-12） <!--orig:OpenAI’s letter to Governor Newsom on harmonized regulation-->
 601. [用 OpenAI 扩展会计能力](https://openai.com/index/basis)（2025-08-12） <!--orig:Basis scales accounting by turning OpenAI model progress into trusted agents-->
-602. [面向开发者推出 GPT-5](https://openai.com/index/introducing-gpt-5-for-developers)（2025-08-07） <!--orig:Introducing GPT-5 for developers-->
-603. [GPT-5 与工作的新时代](https://openai.com/index/gpt-5-new-era-of-work)（2025-08-07） <!--orig:GPT-5 and the new era of work-->
-604. [介绍 GPT-5](https://openai.com/index/introducing-gpt-5)（2025-08-07） <!--orig:Introducing GPT-5-->
-605. [GPT-5 系统卡](https://openai.com/index/gpt-5-system-card)（2025-08-07） <!--orig:GPT-5 System Card-->
+602. [GPT-5 与工作的新时代](https://openai.com/index/gpt-5-new-era-of-work)（2025-08-07） <!--orig:GPT-5 and the new era of work-->
+603. [面向开发者推出 GPT-5](https://openai.com/index/introducing-gpt-5-for-developers)（2025-08-07） <!--orig:Introducing GPT-5 for developers-->
+604. [GPT-5 系统卡](https://openai.com/index/gpt-5-system-card)（2025-08-07） <!--orig:GPT-5 System Card-->
+605. [介绍 GPT-5](https://openai.com/index/introducing-gpt-5)（2025-08-07） <!--orig:Introducing GPT-5-->
 606. [使用 GPT-5 进行编码与设计](https://openai.com/index/gpt-5-coding-design)（2025-08-07）
 607. [使用 GPT-5 进行创意写作](https://openai.com/index/gpt-5-creative-writing)（2025-08-07）
 608. [使用 GPT-5 进行医学研究](https://openai.com/index/gpt-5-medical-research)（2025-08-07）
@@ -677,8 +677,8 @@
 664. [用 o3、o4-mini 和 GPT-4.1 更快交付代码](https://openai.com/index/coderabbit)（2025-05-22） <!--orig:Shipping code faster with o3, o4-mini, and GPT-4.1-->
 665. [推出 Stargate 阿联酋站](https://openai.com/index/introducing-stargate-uae)（2025-05-22） <!--orig:Introducing Stargate UAE-->
 666. [Responses API 中的全新工具与功能](https://openai.com/index/new-tools-and-features-in-the-responses-api)（2025-05-21） <!--orig:New tools and features in the Responses API-->
-667. [o3 和 o4-mini 系统卡补遗：Codex](https://openai.com/index/o3-o4-mini-codex-system-card-addendum)（2025-05-16） <!--orig:Addendum to o3 and o4-mini system card: Codex-->
-668. [介绍 Codex](https://openai.com/index/introducing-codex)（2025-05-16） <!--orig:Introducing Codex-->
+667. [介绍 Codex](https://openai.com/index/introducing-codex)（2025-05-16） <!--orig:Introducing Codex-->
+668. [o3 和 o4-mini 系统卡补遗：Codex](https://openai.com/index/o3-o4-mini-codex-system-card-addendum)（2025-05-16） <!--orig:Addendum to o3 and o4-mini system card: Codex-->
 669. [人工智能驱动 Expedia 营销演进](https://openai.com/index/expedia-jochen-koedijk)（2025-05-14）
 670. [介绍 HealthBench](https://openai.com/index/healthbench)（2025-05-12）
 671. [OpenAI 任命 Fidji Simo，壮大领导团队](https://openai.com/index/leadership-expansion-with-fidji-simo)（2025-05-07）
@@ -697,8 +697,8 @@
 684. [在 API 中介绍我们最新的图像生成模型](https://openai.com/index/image-generation-api)（2025-04-23） <!--orig:Introducing our latest image generation model in the API-->
 685. [Speak 用人工智能实现个性化语言学习](https://openai.com/index/speak-connor-zwick)（2025-04-22） <!--orig:Speak is personalizing language learning with AI-->
 686. [《华盛顿邮报》与 OpenAI 合作开发搜索内容](https://openai.com/global-affairs/the-washington-post-partners-with-openai)（2025-04-22） <!--orig:The Washington Post partners with OpenAI on search content-->
-687. [OpenAI o3 和 o4-mini 系统卡](https://openai.com/index/o3-o4-mini-system-card)（2025-04-16） <!--orig:OpenAI o3 and o4-mini System Card-->
-688. [介绍 OpenAI o3 和 o4-mini](https://openai.com/index/introducing-o3-and-o4-mini)（2025-04-16） <!--orig:Introducing OpenAI o3 and o4-mini-->
+687. [介绍 OpenAI o3 和 o4-mini](https://openai.com/index/introducing-o3-and-o4-mini)（2025-04-16） <!--orig:Introducing OpenAI o3 and o4-mini-->
+688. [OpenAI o3 和 o4-mini 系统卡](https://openai.com/index/o3-o4-mini-system-card)（2025-04-16） <!--orig:OpenAI o3 and o4-mini System Card-->
 689. [用图像思考](https://openai.com/index/thinking-with-images)（2025-04-16）
 690. [OpenAI 宣布非营利委员会顾问人选](https://openai.com/index/nonprofit-commission-advisors)（2025-04-15） <!--orig:OpenAI board of directors announces advisors to nonprofit commission-->
 691. [我们更新后的准备框架](https://openai.com/index/updating-our-preparedness-framework)（2025-04-15） <!--orig:Our updated Preparedness Framework-->
@@ -932,8 +932,8 @@
 919. [AI 资助计划的民主化投入：经验教训与实施计划](https://openai.com/index/democratic-inputs-to-ai-grant-program-update)（2024-01-16） <!--orig:Democratic inputs to AI grant program: lessons learned and implementation plans-->
 920. [OpenAI 如何应对 2024 年全球选举](https://openai.com/index/how-openai-is-approaching-2024-worldwide-elections)（2024-01-15） <!--orig:How OpenAI is approaching 2024 worldwide elections-->
 921. [为农民建立农业数据库](https://openai.com/index/digital-green)（2024-01-12） <!--orig:Building agricultural database for farmers-->
-922. [推出 GPT 商店](https://openai.com/index/introducing-the-gpt-store)（2024-01-10） <!--orig:Introducing the GPT Store-->
-923. [推出 ChatGPT Team](https://openai.com/index/introducing-chatgpt-team)（2024-01-10） <!--orig:Introducing ChatGPT Team-->
+922. [推出 ChatGPT Team](https://openai.com/index/introducing-chatgpt-team)（2024-01-10） <!--orig:Introducing ChatGPT Team-->
+923. [推出 GPT 商店](https://openai.com/index/introducing-the-gpt-store)（2024-01-10） <!--orig:Introducing the GPT Store-->
 924. [OpenAI 和新闻业](https://openai.com/index/openai-and-journalism)（2024-01-08） <!--orig:OpenAI and journalism-->
 925. [交付 LLM 驱动的健康解决方案](https://openai.com/index/whoop)（2024-01-04） <!--orig:Delivering LLM-powered health solutions-->
 926. [提高儿科就诊记录的准确性](https://openai.com/index/summer-health)（2023-12-14） <!--orig:Increasing accuracy of pediatric visit notes-->
@@ -1194,33 +1194,33 @@
 1181. [多智能体群体中扎根组合语言的涌现](https://openai.com/index/emergence-of-grounded-compositional-language-in-multi-agent-populations)（2017-03-15） <!--orig:Emergence of grounded compositional language in multi-agent populations-->
 1182. [使用时间片段模型进行预测与控制](https://openai.com/index/prediction-and-control-with-temporal-segment-models)（2017-03-12） <!--orig:Prediction and control with temporal segment models-->
 1183. [基于第三人称视角的模仿学习](https://openai.com/index/third-person-imitation-learning)（2017-03-06） <!--orig:Third-person imitation learning-->
-1184. [用对抗样本攻击机器学习系统](https://openai.com/index/attacking-machine-learning-with-adversarial-examples)（2017-02-24）
-1185. [针对神经网络策略的对抗攻击](https://openai.com/index/adversarial-attacks-on-neural-network-policies)（2017-02-08）
+1184. [用对抗样本攻击机器学习系统](https://openai.com/index/attacking-machine-learning-with-adversarial-examples)（2017-02-24） <!--orig:Attacking machine learning with adversarial examples-->
+1185. [针对神经网络策略的对抗攻击](https://openai.com/index/adversarial-attacks-on-neural-network-policies)（2017-02-08） <!--orig:Adversarial attacks on neural network policies-->
 1186. [团队近况](https://openai.com/index/team-update-january)（2017-01-30）
-1187. [PixelCNN++：用离散逻辑混合似然及其他改动改进 PixelCNN](https://openai.com/index/pixelcnn-plus-plus)（2017-01-19）
-1188. [现实场景中失灵的奖励函数](https://openai.com/index/faulty-reward-functions)（2016-12-21）
-1189. [Universe 平台](https://openai.com/index/universe)（2016-12-05）
-1190. [OpenAI 与微软](https://openai.com/index/openai-and-microsoft)（2016-11-15）
-1191. [#Exploration：深度强化学习中基于计数的探索研究](https://openai.com/index/exploration)（2016-11-15）
-1192. [关于基于解码器生成模型的定量分析](https://openai.com/index/on-the-quantitative-analysis-of-decoder-based-generative-models)（2016-11-14）
-1193. [生成对抗网络、逆强化学习和基于能量模型之间的联系](https://openai.com/index/a-connection-between-generative-adversarial-networks-inverse-reinforcement-learning-and-energy-based-models)（2016-11-11）
-1194. [RL²：借助慢速强化学习实现快速强化学习](https://openai.com/index/rl2)（2016-11-09）
-1195. [变分有损自编码器](https://openai.com/index/variational-lossy-autoencoder)（2016-11-08）
-1196. [神经 GPU 的扩展与局限性](https://openai.com/index/extensions-and-limitations-of-the-neural-gpu)（2016-11-02）
-1197. [针对私有训练数据的深度学习半监督知识迁移](https://openai.com/index/semi-supervised-knowledge-transfer-for-deep-learning-from-private-training-data)（2016-10-18）
-1198. [来自自组织会议的报告](https://openai.com/index/report-from-the-self-organizing-conference)（2016-10-13）
-1199. [通过学习深度逆动力学模型实现从模拟到现实的迁移](https://openai.com/index/transfer-from-simulation-to-real-world-through-learning-deep-inverse-dynamics-model)（2016-10-11）
-1200. [面向深度学习的基础设施](https://openai.com/index/infrastructure-for-deep-learning)（2016-08-29）
-1201. [机器学习自由会议（Unconference）](https://openai.com/index/machine-learning-unconference)（2016-08-18）
+1187. [PixelCNN++：用离散逻辑混合似然及其他改动改进 PixelCNN](https://openai.com/index/pixelcnn-plus-plus)（2017-01-19） <!--orig:PixelCNN++: Improving the PixelCNN with discretized logistic mixture likelihood and other modifications-->
+1188. [现实场景中失灵的奖励函数](https://openai.com/index/faulty-reward-functions)（2016-12-21） <!--orig:Faulty reward functions in the wild-->
+1189. [Universe 平台](https://openai.com/index/universe)（2016-12-05） <!--orig:Universe-->
+1190. [OpenAI 与微软](https://openai.com/index/openai-and-microsoft)（2016-11-15） <!--orig:OpenAI and Microsoft-->
+1191. [#Exploration：深度强化学习中基于计数的探索研究](https://openai.com/index/exploration)（2016-11-15） <!--orig:#Exploration: A study of count-based exploration for deep reinforcement learning-->
+1192. [关于基于解码器生成模型的定量分析](https://openai.com/index/on-the-quantitative-analysis-of-decoder-based-generative-models)（2016-11-14） <!--orig:On the quantitative analysis of decoder-based generative models-->
+1193. [生成对抗网络、逆强化学习和基于能量模型之间的联系](https://openai.com/index/a-connection-between-generative-adversarial-networks-inverse-reinforcement-learning-and-energy-based-models)（2016-11-11） <!--orig:A connection between generative adversarial networks, inverse reinforcement learning, and energy-based models-->
+1194. [RL²：借助慢速强化学习实现快速强化学习](https://openai.com/index/rl2)（2016-11-09） <!--orig:RL²: Fast reinforcement learning via slow reinforcement learning-->
+1195. [变分有损自编码器](https://openai.com/index/variational-lossy-autoencoder)（2016-11-08） <!--orig:Variational lossy autoencoder-->
+1196. [神经 GPU 的扩展与局限性](https://openai.com/index/extensions-and-limitations-of-the-neural-gpu)（2016-11-02） <!--orig:Extensions and limitations of the neural GPU-->
+1197. [针对私有训练数据的深度学习半监督知识迁移](https://openai.com/index/semi-supervised-knowledge-transfer-for-deep-learning-from-private-training-data)（2016-10-18） <!--orig:Semi-supervised knowledge transfer for deep learning from private training data-->
+1198. [来自自组织会议的报告](https://openai.com/index/report-from-the-self-organizing-conference)（2016-10-13） <!--orig:Report from the self-organizing conference-->
+1199. [通过学习深度逆动力学模型实现从模拟到现实的迁移](https://openai.com/index/transfer-from-simulation-to-real-world-through-learning-deep-inverse-dynamics-model)（2016-10-11） <!--orig:Transfer from simulation to real world through learning deep inverse dynamics model-->
+1200. [面向深度学习的基础设施](https://openai.com/index/infrastructure-for-deep-learning)（2016-08-29） <!--orig:Infrastructure for deep learning-->
+1201. [机器学习自由会议（Unconference）](https://openai.com/index/machine-learning-unconference)（2016-08-18） <!--orig:Machine Learning Unconference-->
 1202. [团队近况](https://openai.com/index/team-update-august)（2016-08-16）
-1203. [特殊项目](https://openai.com/index/special-projects)（2016-07-28）
-1204. [具体的人工智能安全难题](https://openai.com/index/concrete-ai-safety-problems)（2016-06-21）
-1205. [OpenAI 的技术目标](https://openai.com/index/openai-technical-goals)（2016-06-20）
-1206. [生成式模型](https://openai.com/index/generative-models)（2016-06-16）
+1203. [特殊项目](https://openai.com/index/special-projects)（2016-07-28） <!--orig:Special projects-->
+1204. [具体的人工智能安全难题](https://openai.com/index/concrete-ai-safety-problems)（2016-06-21） <!--orig:Concrete AI safety problems-->
+1205. [OpenAI 的技术目标](https://openai.com/index/openai-technical-goals)（2016-06-20） <!--orig:OpenAI technical goals-->
+1206. [生成式模型](https://openai.com/index/generative-models)（2016-06-16） <!--orig:Generative models-->
 1207. [团队近况](https://openai.com/index/team-update)（2016-05-25）
-1208. [面向半监督文本分类的对抗训练方法](https://openai.com/index/adversarial-training-methods-for-semi-supervised-text-classification)（2016-05-25）
-1209. [OpenAI Gym 公测版](https://openai.com/index/openai-gym-beta)（2016-04-27）
+1208. [面向半监督文本分类的对抗训练方法](https://openai.com/index/adversarial-training-methods-for-semi-supervised-text-classification)（2016-05-25） <!--orig:Adversarial training methods for semi-supervised text classification-->
+1209. [OpenAI Gym 公测版](https://openai.com/index/openai-gym-beta)（2016-04-27） <!--orig:OpenAI Gym Beta-->
 1210. [欢迎 Pieter 和 Shivon！](https://openai.com/index/welcome-pieter-and-shivon)（2016-04-26） <!--orig:Welcome, Pieter and Shivon!-->
-1211. [团队++](https://openai.com/index/team-plus-plus)（2016-03-31）
-1212. [权重归一化：加速深度神经网络训练的简单重参数化](https://openai.com/index/weight-normalization)（2016-02-25）
-1213. [隆重介绍 OpenAI](https://openai.com/index/introducing-openai)（2015-12-11）
+1211. [团队++](https://openai.com/index/team-plus-plus)（2016-03-31） <!--orig:Team++-->
+1212. [权重归一化：加速深度神经网络训练的简单重参数化](https://openai.com/index/weight-normalization)（2016-02-25） <!--orig:Weight normalization: A simple reparameterization to accelerate training of deep neural networks-->
+1213. [隆重介绍 OpenAI](https://openai.com/index/introducing-openai)（2015-12-11） <!--orig:Introducing OpenAI-->
