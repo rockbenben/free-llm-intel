@@ -1,6 +1,6 @@
 # Cohere 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-01**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-02**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Cohere（`cohere`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,7 +9,7 @@
 
 ## 全部文章（共 32 篇，按日期倒序；无日期条目列于最后）
 
-1. [Embed 5 简介——前沿嵌入模型的新系列](https://cohere.com/blog/embed-5)（2026-09-30） <!--orig:Introducing Embed 5—A New Family of Frontier Embedding Models-->
+1. [Embed 5 简介——前沿嵌入模型的新系列](https://cohere.com/blog/embed-5)（2026-09-30） <!--orig:Introducing Embed 5—A new family of frontier embedding models-->
 2. [Cohere 与 OpenText 合作，为政府和受监管行业带来可信赖的智能体 AI](https://cohere.com/blog/cohere-and-open-text-partner-to-bring-trusted-ai)（2026-09-16） <!--orig:Cohere and OpenText partner to bring trusted agentic AI to governments and regulated industries-->
 3. [Cohere 与 Aleph Alpha：跨大西洋主权 AI](https://cohere.com/blog/cohere-and-aleph-alpha-sign-agreement)（2026-09-16） <!--orig:Cohere & Aleph Alpha: Transatlantic Sovereign AI-->
 4. [谁来定义人工智能的规则？](https://cohere.com/blog/who-gets-to-define-the-rules-for-ai)（2026-09-13） <!--orig:Who Gets to Define the Rules for AI?-->
