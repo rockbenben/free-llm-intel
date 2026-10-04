@@ -3,6 +3,11 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-10-04
+### Together AI（`together_ai`）
+- 摘要：官方价目表新增 Tev1 4B Experimental 模型，其输出 token 标为 Free（输入仍收取 $0.04/1M tokens），平台仍需最低充值 $5 方可调用。
+- `free_models`：**无免费试用，但存在 $0 定价模型**：官方价目表中 Ternary Bonsai 27B 输入/输出均为 $0.00/1M tokens（Batch API 表同列 $0.00），调用前平台访问仍需最低 $5 充值；其余代表模型 Kimi K3、DeepSeek V4 Pro 0813 / V4 Flash 0… → **无免费试用，但存在 $0 / 输出免费定价模型**：官方价目表中 Ternary Bonsai 27B 输入/输出均为 $0.00/1M tokens；Tev1 4B Experimental 输出免费（Free），输入收取 $0.04/1M tokens。调用前平台访问仍需最低 $5 充值；其余模型均需充值后按…
+
 ## 2026-09-28
 ### Anthropic Claude（`anthropic`）
 - 摘要：最新模型更新为 Sonnet 5.5，Sonnet 5 已移入 Legacy models；网页端免费版明确支持 Sonnet 与 Haiku（不支持 Opus 与 Fable）。

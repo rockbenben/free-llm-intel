@@ -9,8 +9,8 @@
 
 ## 全部文章（共 22 篇，按日期倒序；无日期条目列于最后）
 
-1. [GLM-5.3 Provider Pricing Guide: Costs Compared](https://deepinfra.com/blog/glm-5-3-provider-pricing-guide)（2026-10-03）
-2. [GLM-5.3 Is Now Available on DeepInfra](https://deepinfra.com/blog/glm-5-3-deepinfra)（2026-10-03）
+1. [GLM-5.3 提供商定价指南：成本比较](https://deepinfra.com/blog/glm-5-3-provider-pricing-guide)（2026-10-03） <!--orig:GLM-5.3 Provider Pricing Guide: Costs Compared-->
+2. [GLM-5.3 现已在 DeepInfra 上提供](https://deepinfra.com/blog/glm-5-3-deepinfra)（2026-10-03） <!--orig:GLM-5.3 Is Now Available on DeepInfra-->
 3. [GLM-5.3 API 提供商：速度、延迟和成本](https://deepinfra.com/blog/glm-5-3-api-provider-benchmarks)（2026-10-02） <!--orig:GLM-5.3 API Providers: Speed, Latency & Cost-->
 4. [Best DeepSeek-V4.1-Flash API Providers in 2026](https://deepinfra.com/blog/best-deepseek-v4-1-flash-api-providers)（2026-10-02）
 5. [DeepSeek-V4.1-Flash: Model Overview & Integration](https://deepinfra.com/blog/deepseek-v4-1-flash-model-overview-integration)（2026-10-01）

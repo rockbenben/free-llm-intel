@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-04 10:10:35**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-04 23:14:02**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -153,7 +153,7 @@
   3. [【模型服务调整】ERNIE-Image-Turbo 模型将下线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4ernie-image-turbo-%E6%A8%A1%E5%9E%8B%E5%B0%86%E4%B8%8B%E7%BA%BF)（2026-09-28）
   4. [【接口服务调整】生图 API 下线 batch_size 字段、水印默认添加](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4%E7%94%9F%E5%9B%BE-api-%E4%B8%8B%E7%BA%BF-batch_size-%E5%AD%97%E6%AE%B5%E6%B0%B4%E5%8D%B0%E9%BB%98%E8%AE%A4%E6%B7%BB%E5%8A%A0)（2026-09-15）
   5. [【模型价格调整】DeepSeek-V4-Flash 模型分时段定价调整](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E4%BB%B7%E6%A0%BC%E8%B0%83%E6%95%B4deepseek-v4-flash-%E6%A8%A1%E5%9E%8B%E5%88%86%E6%97%B6%E6%AE%B5%E5%AE%9A%E4%BB%B7%E8%B0%83%E6%95%B4)（2026-09-11）
-  - 📄 完整文章归档（共 50 篇）：[siliconflow.md](llm-news/siliconflow.md)
+  - 📄 完整文章归档（共 48 篇）：[siliconflow.md](llm-news/siliconflow.md)
 
 ### MiniMax (minimax)
 - 页面：[更新日志](https://platform.minimax.cn/docs/release-notes/models)
@@ -298,8 +298,8 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-04，标题自动汉化）：
-  1. [GLM-5.3 Provider Pricing Guide: Costs Compared](https://deepinfra.com/blog/glm-5-3-provider-pricing-guide)（2026-10-03）
-  2. [GLM-5.3 Is Now Available on DeepInfra](https://deepinfra.com/blog/glm-5-3-deepinfra)（2026-10-03）
+  1. [GLM-5.3 提供商定价指南：成本比较](https://deepinfra.com/blog/glm-5-3-provider-pricing-guide)（2026-10-03）
+  2. [GLM-5.3 现已在 DeepInfra 上提供](https://deepinfra.com/blog/glm-5-3-deepinfra)（2026-10-03）
   3. [GLM-5.3 API 提供商：速度、延迟和成本](https://deepinfra.com/blog/glm-5-3-api-provider-benchmarks)（2026-10-02）
   4. [Best DeepSeek-V4.1-Flash API Providers in 2026](https://deepinfra.com/blog/best-deepseek-v4-1-flash-api-providers)（2026-10-02）
   5. [DeepSeek-V4.1-Flash: Model Overview & Integration](https://deepinfra.com/blog/deepseek-v4-1-flash-model-overview-integration)（2026-10-01）
@@ -346,12 +346,12 @@
   - 🔌 官方未提供 RSS/Atom 订阅源，条目取自官方数据接口
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-ai21_labs.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-04，标题自动汉化）：
-  1. [你要的不是前沿模型，而是一个验证器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19）
-  2. [又好又省：开放模型探路，前沿模型收尾](https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/)（2026-07-15）
-  3. [面向 SWE 智能体的预算感知执行，把 Best-of-N 做得更好](https://www.ai21.com/blog/improving-best-of-n-with-budget-aware-execution-for-swe-agents/)（2026-07-07）
-  4. [token 开销降不下来？光靠简单路由管不住它](https://www.ai21.com/lp/blog/token-spend-isnt-going-down-you-need-more-than-naive-routing-to-manage-it-gated/)（2026-06-30）
-  5. [token 开销降不下来？光靠简单路由管不住它](https://www.ai21.com/blog/spend-isnt-going-down-what-now/)（2026-06-25）
-  - 📄 完整文章归档（共 66 篇）：[ai21_labs.md](llm-news/ai21_labs.md)
+  1. [From manual negotiation to automated scheduling: How AI21 manages its GPU fleet with Kueue](https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/)（2026-10-04）
+  2. [你要的不是前沿模型，而是一个验证器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19）
+  3. [又好又省：开放模型探路，前沿模型收尾](https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/)（2026-07-15）
+  4. [面向 SWE 智能体的预算感知执行，把 Best-of-N 做得更好](https://www.ai21.com/blog/improving-best-of-n-with-budget-aware-execution-for-swe-agents/)（2026-07-07）
+  5. [token 开销降不下来？光靠简单路由管不住它](https://www.ai21.com/lp/blog/token-spend-isnt-going-down-you-need-more-than-naive-routing-to-manage-it-gated/)（2026-06-30）
+  - 📄 完整文章归档（共 67 篇）：[ai21_labs.md](llm-news/ai21_labs.md)
 
 ### Jina AI (jina_ai)
 - 页面：[官方博客](https://jina.ai/news/)
@@ -406,9 +406,9 @@
 - 📡 [RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-04，标题自动汉化）：
   1. [Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
-  2. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
-  3. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
-  4. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
+  2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
+  3. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
+  4. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
   5. [学习循环：把智能掌握在自己手中](https://anyscale.com/blog/learning-loops)（2026-08-25）
   - 📄 完整文章归档（共 58 篇）：[anyscale.md](llm-news/anyscale.md)
 

@@ -10,9 +10,9 @@
 ## 全部文章（共 58 篇，按日期倒序；无日期条目列于最后）
 
 1. [Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08） <!--orig:Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all-->
-2. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
-3. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
-4. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
+2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
+3. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
+4. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
 5. [学习循环：把智能掌握在自己手中](https://anyscale.com/blog/learning-loops)（2026-08-25） <!--orig:Learning Loops: The Path to Owning Your Intelligence-->
 6. [FP8 Reinforcement Learning in SkyRL: Preserving Policy Consistency Across Training and Rollout](https://anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl)（2026-08-25）
 7. [Ray Data 中的 GPU 原生算子](https://anyscale.com/blog/gpu-native-operators-in-ray-data)（2026-08-25） <!--orig:GPU-Native Operators in Ray Data-->
@@ -28,7 +28,7 @@
 17. [Anyscale 签署加入 Nscale 的最终协议](https://anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale)（2026-07-30） <!--orig:Anyscale signs definitive agreement to join Nscale-->
 18. [介绍 Anyscale 物理 AI 技能](https://anyscale.com/blog/introducing-the-anyscale-physical-ai-skill)（2026-07-23） <!--orig:Introducing the Anyscale Physical AI Skill-->
 19. [Ray Data 2.56：提高人工智能数据管道的可靠性](https://anyscale.com/blog/ray-data-256-updates)（2026-06-30） <!--orig:Ray Data 2.56: Improving Reliability for AI Data Pipelines-->
-20. [Introducing Anyscale Agent Skills: Build faster, debug smarter, and optimize AI workloads running on Ray](https://anyscale.com/blog/announcing-anyscale-agent-skills-ray)（2026-04-22）
+20. [介绍 Anyscale 代理技能：更快地构建、更智能地调试并优化 Ray 上运行的 AI 工作负载](https://anyscale.com/blog/announcing-anyscale-agent-skills-ray)（2026-04-22） <!--orig:Introducing Anyscale Agent Skills: Build faster, debug smarter, and optimize AI workloads running on Ray-->
 21. [Major upgrades to Ray Serve: Online Inference with 88% lower latency and 11.1x higher throughput](https://anyscale.com/blog/ray-serve-inference-lower-latency-higher-throughput-haproxy)（2026-03-24）
 22. [Ray Serve 的新 Grafana 仪表板：以前不可能进行的调试](https://anyscale.com/blog/ray-serve-observability-grafana-dashboard-anyscale)（2026-02-16） <!--orig:Ray Serve’s New Grafana Dashboard: Debugging That Wasn’t Possible Before-->
 23. [AI 工作负载中的 GPU 效率（低）](https://anyscale.com/blog/gpu-in-efficiency-in-ai-workloads)（2026-01-21） <!--orig:GPU (In)efficiency in AI Workloads-->
