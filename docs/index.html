@@ -84,6 +84,9 @@
      一览的厂商名是整行唯一的可点元素，同样要带下划线 */
   .lede a, .hint a, footer p a, .qname a { text-decoration: underline; }
   .wrap { max-width: 880px; margin: 0 auto; padding: 0 var(--sp-16); }
+  /* 视觉隐藏但读屏可读：给「已复制」这类瞬时确认用（不用透明度压暗，见 DESIGN.md） */
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+             overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
   header { padding: var(--sp-32) 0 var(--sp-18); border-bottom: 1px solid var(--line); }
   h1 { font-size: var(--fs-xl); margin: 0 0 var(--sp-8); letter-spacing: -0.2px; }
@@ -115,6 +118,12 @@
     border: 1px solid var(--line); border-radius: var(--rd-control);
   }
   input[type=search]:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  /* placeholder 不吃浏览器默认灰（#757575 实测 3.75:1，低于 AA），走 muted 档 */
+  input::placeholder { color: var(--muted); }
+  /* 契约规定的 focus-visible 统一环（DESIGN.md 状态口径表）；
+     浏览器默认环并非不可见（实拍双色调），但和搜索框的蓝环是两套并存。 */
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: var(--sp-2); }
+  input[type=search]:focus-visible { outline-offset: -1px; }
   .count { color: var(--muted); font-size: var(--fs-sm); white-space: nowrap; }
   /* 视图切换（最新 / 均衡）：分段控件，配色与 chip 同源 */
   .seg { display: inline-flex; border: 1px solid var(--line); border-radius: var(--rd-control); overflow: hidden; }
@@ -141,6 +150,9 @@
     border-radius: var(--rd-surface) var(--rd-surface) 0 0; background: var(--chip-bg); color: var(--chip-fg);
   }
   .tab[aria-selected=true] { background: var(--bg); color: var(--fg); font-weight: 600; }
+  /* hover 成套性：未选中页签悬停时描边转 accent，与 .chip:hover 同一层级语言
+     （底色走 --card-hover 是 no-op——浅色下它和 --chip-bg 同为 #f6f8fa） */
+  .tab:hover:not([aria-selected=true]) { border-color: var(--accent); }
   .pane[hidden] { display: none; }
   .qrow { border-bottom: 1px solid var(--line); padding: var(--sp-12) var(--sp-4); }
   .qrow:last-child { border-bottom: 0; }
@@ -196,6 +208,7 @@
   .more-wrap { text-align: center; padding: var(--sp-4) 0 var(--sp-40); }
   .msg.warn { background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: var(--rd-surface); padding: var(--sp-14) var(--sp-16); color: var(--fg); }
   .msg.warn pre { margin: var(--sp-8) 0 0; font-size: var(--fs-sm); overflow-x: auto; }
+  .msg.warn summary { cursor: pointer; color: var(--accent); margin-top: var(--sp-8); }
 
   footer { border-top: 1px solid var(--line); padding: var(--sp-20) 0 var(--sp-48); color: var(--muted); font-size: var(--fs-sm); }
   footer h2 { font-size: var(--fs-sm); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 var(--sp-10); }
@@ -205,6 +218,14 @@
   @media (max-width: 560px) {
     .item { flex-direction: column; gap: var(--sp-4); }
     .date { flex-basis: auto; }
+    /* 首屏量尺（360×740，触摸档）：header 278 + 页签 108 + 筛选块 395，
+       首条正文落在折叠线外。窄屏把 chrome 的呼吸收一档，内容先落地。 */
+    header { padding: var(--sp-20) 0 var(--sp-12); }
+    h1 { margin-bottom: var(--sp-4); }
+    .lede { margin-bottom: var(--sp-12); }
+    .subscribe { padding: var(--sp-8) var(--sp-10); }
+    .tabs { padding-top: var(--sp-12); }
+    .controls { padding: var(--sp-10) 0 var(--sp-8); }
   }
   /* 触屏上的命中区按手指算，不按像素算：桌面一根不动。
      页签/按钮/分段控件拉到 ~44px；厂商胶囊只到 ~35px——它是一整条会折行的筛选带，
@@ -233,16 +254,17 @@
       <code id="feed-url">feeds/llm-news-all.xml</code>
       <a class="btn primary" id="subscribe-link" href="feeds/llm-news-all.xml">订阅聚合源</a>
       <button class="btn" id="copy-btn" type="button">复制地址</button>
+      <span class="sr-only" id="copy-status" role="status" aria-live="polite"></span>
     </div>
   </header>
 
-  <nav class="tabs" role="tablist" aria-label="视图">
+  <nav class="tabs" role="tablist" aria-label="内容分类">
     <button type="button" class="tab" id="tab-news" role="tab" aria-selected="true"
             aria-controls="pane-news" tabindex="0">厂商动态</button>
     <button type="button" class="tab" id="tab-changes" role="tab" aria-selected="false"
             aria-controls="pane-changes" tabindex="-1">最新变化</button>
     <button type="button" class="tab" id="tab-quotas" role="tab" aria-selected="false"
-            aria-controls="pane-quotas" tabindex="-1">免费额度与活动一览</button>
+            aria-controls="pane-quotas" tabindex="-1">免费额度与活动</button>
   </nav>
 
   <main>
@@ -250,7 +272,7 @@
   <div class="controls">
     <div class="row">
       <input type="search" id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
-      <div class="seg" role="group" aria-label="视图">
+      <div class="seg" role="group" aria-label="显示范围">
         <button type="button" class="segbtn" id="view-all" aria-pressed="true"
                 title="按时间倒序显示全部条目">全部</button>
         <button type="button" class="segbtn" id="view-digest" aria-pressed="false"
@@ -260,12 +282,12 @@
     </div>
     <div class="chips" id="chips"></div>
     <p class="hint">
-      点厂商只看它家，订阅地址自动切成该家的单源；想找「哪家能白嫖」看<strong>免费额度与活动一览</strong>。
+      点厂商只看它家，订阅地址自动切成该家的单源；想找「哪家能白嫖」看<strong>免费额度与活动</strong>。
     </p>
   </div>
 
   <div id="msg" class="msg" role="status" aria-live="polite"
-       data-loading="正在加载聚合源…">正在加载聚合源…</div>
+       data-loading="加载中…">加载中…</div>
   <ul class="items" id="items"></ul>
   <p class="more-wrap" id="more-wrap" hidden>
     <button class="btn" id="more-btn" type="button">显示更早的条目</button>
@@ -298,7 +320,7 @@
     </div>
     <p class="hint">
       全部厂商的<strong>免费额度与活动一览</strong>（含限时活动；当前快照，随每日巡检刷新）。
-      想看“哪家变了”请切到「最新变化」——一览本身不做订阅，避免每天重复推送整份清单。
+      想看「哪家变了」请切到「最新变化」——一览本身不做订阅，避免每天重复推送整份清单。
     </p>
     </div>
     <div id="quotas-list"></div>
@@ -311,8 +333,8 @@
     <h2>按厂商订阅</h2>
     <ul id="vendor-feeds"></ul>
     <p id="vendor-index-note" hidden>
-      ⚠️ 厂商索引 <code>feeds/vendors.json</code> 未加载，下方只列出聚合流里出现过的厂商。
-      文章全无日期或都偏旧的厂商会缺失（它们不进聚合流），
+      ⚠️ 厂商索引 <code>feeds/vendors.json</code> 没加载出来，下面只列出了聚合流里出现过的厂商。
+      文章全无日期、或整家都太旧的厂商不会出现在聚合流里，这里也就看不到；
       完整清单见 llm-news-feeds.md。
     </p>
     <p>
@@ -325,6 +347,112 @@
 
 </div>
 
+<!-- 纯数据逻辑：刻意无 DOM/window 依赖，既被下面的主脚本当全局 FLI 用，也能被
+     docs/app.test.mjs 从本文件里抽出来 eval 做行为测试。同一文档内前一个 <script>
+     必先于后一个执行 → FLI 永远已定义，不存在跨文件加载失败。零构建、单文件。 -->
+<script id="fli-core">
+var FLI = (function () {
+  'use strict';
+
+  var UNKNOWN = '(未知来源)';
+
+  // 全量索引的行格式见 crawler_llm_intel.write_rss_feeds()：
+  // ["标题", "url", "vendor_id", "日期", "原文标题"]，日期已是有日期在前、按日期倒序。
+  // 品牌名/单源地址来自 vendors.json 的映射；缺映射时退回厂商 id，再退回「未知来源」。
+  function mapRow(r, brands, feeds) {
+    var vid = r[2] || '';
+    return {
+      title: r[0] || '',
+      link: r[1] || '',
+      vendorId: vid,
+      vendor: (brands && brands[vid]) || vid || UNKNOWN,
+      date: r[3] || '',
+      orig: r[4] || '',
+      feed: (feeds && feeds[vid]) || ''
+    };
+  }
+
+  // 厂商排序依据是「模型知名度」，来自 feeds/vendors.json 的 rank 字段
+  // （源头是 provider_profiles.VENDOR_RANK）。**不能**按文章数排：归档文章最多的
+  // 那几家会永远钉在最前，而「平台功能记录」型的厂商反而排在旗舰模型厂商之前。
+  // 索引缺失或厂商未登记时，rank 取 Infinity，退回「文章数 → 名称」。
+  function rankOf(id, rankMap) {
+    return (rankMap && typeof rankMap[id] === 'number') ? rankMap[id] : Infinity;
+  }
+
+  // 从条目数组聚合出「厂商 → 篇数 + 单源地址」，按 rank 优先、篇数次之、名称（zh）末位排序。
+  function vendorList(all, rankMap) {
+    var seen = {}, list = [];
+    all.forEach(function (it) {
+      var key = it.vendor || UNKNOWN;
+      if (!seen[key]) {
+        seen[key] = { name: key, id: it.vendorId, feed: it.feed, n: 0 };
+        list.push(seen[key]);
+      }
+      seen[key].n++;
+      if (!seen[key].feed && it.feed) seen[key].feed = it.feed;
+    });
+    list.sort(function (a, b) {
+      var ra = rankOf(a.id, rankMap), rb = rankOf(b.id, rankMap);
+      if (ra !== rb) return ra - rb;
+      return b.n - a.n || a.name.localeCompare(b.name, 'zh');
+    });
+    return list;
+  }
+
+  // 当前筛选下要展示的条目。摘要上限（cap）**只在浏览全部时**生效（未选厂商、未搜索）：
+  // 一旦用户点名某家或搜了关键词，他要的是「全部匹配项」——这时再截断等于静默藏结果。
+  // all 已按日期倒序，所以「每家前 cap 条」就是「每家最新 cap 条」。
+  function visible(all, vendor, q, digest, cap) {
+    var ql = (q || '').toLowerCase();
+    var rows = all.filter(function (it) {
+      if (vendor !== null && (it.vendor || UNKNOWN) !== vendor) return false;
+      if (ql && (it.title || '').toLowerCase().indexOf(ql) < 0) return false;
+      return true;
+    });
+    if (!digest) return rows;
+    if (vendor !== null || q) return rows;
+    var seen = {}, out = [];
+    for (var i = 0; i < rows.length; i++) {
+      var key = rows[i].vendor || UNKNOWN;
+      var n = seen[key] || 0;
+      if (n >= cap) continue;
+      seen[key] = n + 1;
+      out.push(rows[i]);
+    }
+    return out;
+  }
+
+  // RFC822 → "YYYY-MM-DD"；空/非法日期回退空串（页面按「无日期」渲染）。
+  function fmtDate(rfc822) {
+    if (!rfc822) return '';
+    var d = new Date(rfc822);
+    if (isNaN(d.getTime())) return '';
+    var p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+  }
+
+  // 档案字段含 Markdown 强调符，页面上按纯文本展示。
+  function plain(s) { return String(s || '').replace(/[*`]/g, ''); }
+
+  // 缓存数据年龄标签：<60 分钟报分钟，否则报小时（一位小数）。now 显式传入以便测试。
+  function cacheAgeLabel(taken, now) {
+    var m = Math.round((now - taken) / 60000);
+    return m < 60 ? m + ' 分钟' : (Math.round(m / 60 * 10) / 10) + ' 小时';
+  }
+
+  return {
+    UNKNOWN: UNKNOWN,
+    mapRow: mapRow,
+    rankOf: rankOf,
+    vendorList: vendorList,
+    visible: visible,
+    fmtDate: fmtDate,
+    plain: plain,
+    cacheAgeLabel: cacheAgeLabel
+  };
+})();
+</script>
 <script>
 (function () {
   'use strict';
@@ -342,7 +470,7 @@
   var RENDER_CHUNK = 200;
   var state = {
     all: [], brands: {}, feeds: {}, rank: {}, vendor: null, q: '', digest: false,
-    chipsExpanded: false, shown: RENDER_CHUNK, rows: []
+    chipsExpanded: false, shown: RENDER_CHUNK, rows: [], vendorIndexApplied: false
   };
 
   var el = {
@@ -362,20 +490,9 @@
     viewDigest: document.getElementById('view-digest')
   };
 
-  // 全量索引的行格式见 crawler_llm_intel.write_rss_feeds()：
-  // ["标题", "url", "vendor_id", "日期", "原文标题"]，日期已是有日期在前、按日期倒序。
-  function mapRow(r) {
-    var vid = r[2] || '';
-    return {
-      title: r[0] || '',
-      link: r[1] || '',
-      vendorId: vid,
-      vendor: state.brands[vid] || vid || '(未知来源)',
-      date: r[3] || '',
-      orig: r[4] || '',
-      feed: state.feeds[vid] || ''
-    };
-  }
+  // 纯逻辑在同文档前面的 <script id="fli-core"> 里定义（全局 FLI），这里只注入当前
+  // state 作参数。内联脚本按文档顺序执行，FLI 必先于此脚本就绪，无需跨文件加载守卫。
+  function mapRow(r) { return FLI.mapRow(r, state.brands, state.feeds); }
 
   // ---- 以下三个函数只服务「索引缺失时的兜底」：退回解析合并流 ----
   function text(node, tag) {
@@ -383,13 +500,7 @@
     return n ? (n.textContent || '').trim() : '';
   }
 
-  function fmtDate(rfc822) {
-    if (!rfc822) return '';
-    var d = new Date(rfc822);
-    if (isNaN(d.getTime())) return '';
-    var p = function (n) { return (n < 10 ? '0' : '') + n; };
-    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
-  }
+  function fmtDate(rfc822) { return FLI.fmtDate(rfc822); }
 
   function parseFeed(xmlText) {
     var doc = new DOMParser().parseFromString(xmlText, 'application/xml');
@@ -421,36 +532,18 @@
     return out;
   }
 
-  // 厂商排序依据是「模型知名度」，来自 feeds/vendors.json 的 rank 字段
-  // （源头是 provider_profiles.VENDOR_RANK）。**不能**按文章数排：归档文章最多的
-  // 那几家会永远钉在最前，而「平台功能记录」型的厂商反而排在旗舰模型厂商之前。
-  // 索引缺失或厂商未登记时，rank 取 Infinity，退回「文章数 → 名称」。
-  function rankOf(id) {
-    return typeof state.rank[id] === 'number' ? state.rank[id] : Infinity;
-  }
-
-  function vendorList() {
-    var seen = {}, list = [];
-    state.all.forEach(function (it) {
-      var key = it.vendor || '(未知来源)';
-      if (!seen[key]) {
-        seen[key] = { name: key, id: it.vendorId, feed: it.feed, n: 0 };
-        list.push(seen[key]);
-      }
-      seen[key].n++;
-      if (!seen[key].feed && it.feed) seen[key].feed = it.feed;
-    });
-    list.sort(function (a, b) {
-      var ra = rankOf(a.id), rb = rankOf(b.id);
-      if (ra !== rb) return ra - rb;
-      return b.n - a.n || a.name.localeCompare(b.name, 'zh');
-    });
-    return list;
-  }
+  function rankOf(id) { return FLI.rankOf(id, state.rank); }
+  function vendorList() { return FLI.vendorList(state.all, state.rank); }
 
   // chip 云折叠：35 个厂商标签能占满六行，把正文推到折叠线以外。
-  // 默认只露「全部 + 前 8 家」，其余收进展开钮；已选中的厂商永远可见。
+  // 默认只露「全部 + 前 10 家」（窄屏 8 家），其余收进展开钮；已选中的厂商永远可见。
+  // 窄屏一行只放得下两家，10 家就是六行 240px 的带——首屏量尺实测
+  // 正文被顶出视口，所以手机上默认再少露两家（DESIGN.md「窄屏」一节）。
   var CHIP_VISIBLE = 10;
+  var CHIP_VISIBLE_NARROW = 8;
+  function chipVisibleLimit() {
+    return window.matchMedia('(max-width: 560px)').matches ? CHIP_VISIBLE_NARROW : CHIP_VISIBLE;
+  }
   function renderChips() {
     var list = vendorList();
     el.chips.innerHTML = '';
@@ -463,14 +556,15 @@
     el.chips.appendChild(total);
 
     var shown = list, hidden = 0;
-    if (!state.chipsExpanded && list.length > CHIP_VISIBLE) {
-      var head = list.slice(0, CHIP_VISIBLE);
+    var limit = chipVisibleLimit();
+    if (!state.chipsExpanded && list.length > limit) {
+      var head = list.slice(0, limit);
       var picked = list.filter(function (v) { return v.name === state.vendor; })[0];
       shown = head.slice();
       if (picked && head.indexOf(picked) < 0) shown.push(picked);
       hidden = list.length - shown.length;
     }
-    var collapsible = list.length > CHIP_VISIBLE;
+    var collapsible = list.length > limit;
     shown.forEach(function (v) {
       var b = document.createElement('button');
       b.type = 'button';
@@ -501,27 +595,7 @@
   }
 
   function visible() {
-    var q = state.q.toLowerCase();
-    var rows = state.all.filter(function (it) {
-      if (state.vendor !== null && (it.vendor || '(未知来源)') !== state.vendor) return false;
-      if (q && it.title.toLowerCase().indexOf(q) < 0) return false;
-      return true;
-    });
-    if (!state.digest) return rows;
-    // 摘要上限**只在浏览全部时**生效（未筛选厂商、未搜索）：一旦用户点名了某家或搜了
-    // 关键词，他要的就是「全部匹配项」——这时再截断等于把结果静默藏起来。
-    if (state.vendor !== null || state.q) return rows;
-    // 摘要视图：每家只留最新 N 条（state.all 已按日期倒序，所以「前 N 条」就是「最新 N 条」）。
-    // 只影响这一屏的呈现，不改 feed。
-    var seen = {}, out = [];
-    for (var i = 0; i < rows.length; i++) {
-      var key = rows[i].vendor || '(未知来源)';
-      var n = seen[key] || 0;
-      if (n >= DIGEST_CAP) continue;
-      seen[key] = n + 1;
-      out.push(rows[i]);
-    }
-    return out;
+    return FLI.visible(state.all, state.vendor, state.q, state.digest, DIGEST_CAP);
   }
 
   // 订阅地址跟着筛选走：选中某家就给该家的单厂商源，否则给合并流。
@@ -609,14 +683,19 @@
   function updateListMeta(rows) {
     var n = Math.min(state.shown, rows.length);
     // 摘要模式下若因「已筛选厂商 / 已搜索」而没截断，标签要说清楚 ——
-    // 否则计数写着「每家最新 20」却列出全部，看着像开关坏了。
+    // 但「摘要」是屏上从没露过的内部词，读者只认得开关「每家最新 20」。
     var suffix = '';
     if (state.digest) {
       suffix = (state.vendor !== null || state.q)
-        ? '（摘要未生效：显示全部匹配）'
+        ? '（已筛选：显示全部匹配）'
         : '（每家最新 ' + DIGEST_CAP + '）';
     }
-    el.count.textContent = rows.length + ' / ' + state.all.length + ' 条' + suffix;
+    // 没任何筛选时「3535 / 3535 条」的分数是噪声，说「共」就行；
+    // 一旦分子会动（筛选/摘要），分数式才有意义。
+    var unfiltered = state.vendor === null && !state.q && !state.digest;
+    el.count.textContent = (unfiltered
+      ? '共 ' + state.all.length + ' 条'
+      : rows.length + ' / ' + state.all.length + ' 条') + suffix;
     if (n < rows.length) {
       el.moreWrap.hidden = false;
       // 列表按日期倒序，「更多」永远是更早的内容 —— 说清楚，读者才知道在往回翻
@@ -624,7 +703,9 @@
     } else {
       el.moreWrap.hidden = true;
     }
-    paintMsg(el.msg, rows.length, '没有匹配的条目。');
+    // 用户没输过关键词时，空集是「还没到货」，不是「没搜到」——别把锅甩给关键词
+    paintMsg(el.msg, rows.length,
+      (state.q || state.vendor !== null) ? '没有匹配的条目，换个关键词试试。' : '还没有条目——首次巡检后会自动出现。');
   }
 
   function renderItems(resetShown) {
@@ -649,6 +730,9 @@
     renderChips();
     updateSubscribe();
     renderItems();
+    // 索引缺席时页脚也要有兜底：renderVendorFeeds 只在 applyVendors 里被调过，
+    // vendors.json 404 走 else 分支就没人建列表 → 「按厂商订阅」成了空块。
+    if (!state.vendorIndexApplied) renderVendorFeeds(null);
   }
 
   function renderVendorFeeds(index) {
@@ -704,7 +788,19 @@
     quotas: document.getElementById('tab-quotas')
   };
   var TAB_ORDER = ['news', 'changes', 'quotas'];
+  // 切视图 = 换一份完整列表。若用户已滚进上一个列表，把 sticky 页签栏滚回视口顶，
+  // 让新面板从开头进入视野——否则深滚后切换会停在另一份列表的半路（实测首条落在
+  // 头顶 1.9 万像素外，只剩页脚/空白，看着像「点了没反应」）。
+  // 页签栏的文档流位置**不能**读它自己的 offsetTop / getBoundingClientRect().top：
+  // 它是 sticky，滚过后这两个值都变成「贴顶后的当前位置」（实测 = scrollY），
+  // 于是阈值退化成 scrollY 本身、守卫永假。改从**非 sticky 的 header 底边**反推——
+  // header 在正常流里，rect.bottom + scrollY 恒等于页签栏的文档流偏移。
+  function tabsDocTop() {
+    var h = document.querySelector('header');
+    return h.getBoundingClientRect().bottom + window.scrollY;
+  }
   function showTab(name, keepUrl) {
+    var wasDeep = window.scrollY > tabsDocTop();
     Object.keys(panes).forEach(function (k) {
       panes[k].hidden = (k !== name);
       tabs[k].setAttribute('aria-selected', String(k === name));
@@ -722,6 +818,7 @@
     }
     if (name === 'changes') loadChanges();
     if (name === 'quotas') loadQuotas();
+    if (wasDeep) requestAnimationFrame(function () { window.scrollTo(0, tabsDocTop()); });
   }
   function initialTab() {
     var t = new URLSearchParams(location.search).get('tab');
@@ -781,10 +878,13 @@
       body.appendChild(meta); box.appendChild(d); box.appendChild(body);
       li.appendChild(box); list.appendChild(li);
     });
+    var cTotal = changesState.rows.length;
     document.getElementById('changes-count').textContent =
-      rows.length + ' / ' + changesState.rows.length + ' 条';
+      (changesState.q ? rows.length + ' / ' + cTotal + ' 条' : '共 ' + cTotal + ' 条');
     var msg = document.getElementById('changes-msg');
-    paintMsg(msg, rows.length, '没有匹配的变化条目，换个关键词试试。');
+    // 无查询的空态不甩锅关键词（同 news；batch1 只改到了 news，这里补齐）
+    paintMsg(msg, rows.length,
+      changesState.q ? '没有匹配的变化条目，换个关键词试试。' : '还没有变化条目——首次巡检采纳后会自动出现。');
   }
   function loadChanges() {
     if (changesState.rows) { renderChanges(); return; }
@@ -810,9 +910,10 @@
   });
 
   var quotasState = { rows: null, q: '' };
-  var PART_NAMES = { 1: 'Part 1 国内平台', 2: 'Part 2 国际平台', 3: 'Part 3 云平台', 4: 'Part 4 编程工具' };
+  // 分区胶囊只报分区名：README 的 Part 编号是仓库目录结构，读者不需要替它背
+  var PART_NAMES = { 1: '国内平台', 2: '国际平台', 3: '云平台', 4: '编程工具' };
   // 档案字段含 Markdown 强调符，页面上按纯文本展示
-  function plain(s) { return String(s || '').replace(/[*`]/g, ''); }
+  function plain(s) { return FLI.plain(s); }
   // 提示行是「加载中 / 空结果 / 取数失败」三态共用的一个元素。谁最后画它谁定状态：
   // 空结果必须自己说清楚，不能把「加载中…」留在页面上——读者只会以为卡住了。
   function paintMsg(el, count, emptyText) {
@@ -876,7 +977,9 @@
     });
     document.getElementById('quotas-count').textContent = rows.length + ' 家';
     var msg = document.getElementById('quotas-msg');
-    paintMsg(msg, rows.length, '没有匹配的厂商，换个关键词试试。');
+    // 无查询时空一览=还没数据，不教用户换关键词（同 news）
+    paintMsg(msg, rows.length,
+      quotasState.q ? '没有匹配的厂商，换个关键词试试。' : '还没有厂商额度数据——首次巡检生成后会自动出现。');
   }
   function loadQuotas() {
     if (quotasState.rows) { renderQuotas(); return; }
@@ -901,9 +1004,15 @@
     if (quotasState.rows) renderQuotas();
   });
 
+  // 搜索防抖：全量索引 3535 条 + 每次重建 200 行 DOM，实测宽查询（如「模型」）
+  // 单次 input→渲染 50ms，4x 降速的移动档 140ms——逐键阻塞主线程、连打掉帧。
+  // state.q 立即更新（页签切换/胶囊筛选等路径读到的是最新值），只把昂贵的
+  // renderItems 延后到停手 150ms 后跑一次。
+  var qTimer = null;
   el.q.addEventListener('input', function () {
     state.q = el.q.value.trim();
-    renderItems();
+    if (qTimer) clearTimeout(qTimer);
+    qTimer = setTimeout(function () { qTimer = null; renderItems(); }, 150);
   });
 
   function setDigest(on) {
@@ -918,9 +1027,16 @@
 
   el.copy.addEventListener('click', function () {
     var url = new URL(el.sub.getAttribute('href'), location.href).href;
+    var status = document.getElementById('copy-status');
     var done = function () {
       el.copy.textContent = '已复制';
-      setTimeout(function () { el.copy.textContent = '复制地址'; }, 1500);
+      // 读屏用户点完得不到任何反馈——按钮文案切换不会被播报，得走 live region。
+      // 回弹时清空，好让「连续两次复制」都能重新播报（同值不触发 aria-live）。
+      status.textContent = '订阅地址已复制到剪贴板';
+      setTimeout(function () {
+        el.copy.textContent = '复制地址';
+        status.textContent = '';
+      }, 1500);
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(url).then(done, function () { prompt('复制订阅地址：', url); });
@@ -950,21 +1066,22 @@
                            JSON.stringify({ taken: Date.now(), data: data }));
     } catch (e) { /* 容量满 / 隐私模式：缓存只是加速器，失败不影响功能 */ }
   }
-  function cacheAgeLabel(o) {
-    var m = Math.round((Date.now() - o.taken) / 60000);
-    return m < 60 ? m + ' 分钟' : (Math.round(m / 60 * 10) / 10) + ' 小时';
-  }
+  function cacheAgeLabel(o) { return FLI.cacheAgeLabel(o.taken, Date.now()); }
 
   function fail(e) {
     el.count.textContent = '加载失败';
     el.msg.className = 'msg warn';
     el.msg.style.display = 'block';
+    // 首行给读者人话结论；部署排查手册收进 details——来查情报的不该先 debug Pages
     el.msg.innerHTML =
-      '<strong>无法读取 ' + ARTICLES + '</strong>（' + e.message + '）' +
-      '<br>本页需要在 http(s) 下访问 —— 浏览器禁止 <code>file://</code> 页面读取本地数据。' +
-      '<br>本地预览：在 <code>docs/</code> 目录执行 <code>python -m http.server</code> 后访问 ' +
-      '<code>http://localhost:8000/</code>；线上请确认 GitHub Pages 已开启（Settings → Pages，' +
-      'Source 选 Deploy from a branch、Branch=main、目录=/docs）。';
+      '<strong>数据没加载出来</strong>（' + ARTICLES + '：' + e.message + '）。' +
+      '刷新页面重试；若是本地直接打开的文件，这个页面需要通过 http 访问 —— ' +
+      '浏览器禁止 <code>file://</code> 页面读取本地数据。' +
+      '<details><summary>本地预览 / 线上部署怎么排查</summary>' +
+      '本地预览：在 <code>docs/</code> 目录执行 <code>python -m http.server</code> 后访问 ' +
+      '<code>http://localhost:8000/</code>。<br>线上：确认 GitHub Pages 已开启（Settings → Pages，' +
+      'Source 选 Deploy from a branch、Branch=main、目录=/docs）。' +
+      '</details>';
   }
 
   function applyVendors(index, fromCache) {
@@ -975,6 +1092,7 @@
       if (typeof v.rank === 'number') state.rank[v.id] = v.rank;
     });
     renderVendorFeeds(index);
+    state.vendorIndexApplied = true;
     // 缓存里有索引时不算「索引缺失」——退化的只是这次网络没帮上忙
     el.vendorIndexNote.hidden = !!index || !!fromCache;
   }

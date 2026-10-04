@@ -9,6 +9,8 @@ import io
 import json
 import os
 import re
+import shutil
+import subprocess
 import tempfile
 import types
 import unittest
@@ -4623,6 +4625,18 @@ class TestBrowsePageDesignContract(unittest.TestCase):
         self.assertIn("position: sticky", self._rule(".tabs"),
                       "页签栏必须常驻，换视图不能靠滚回顶部")
 
+    def test_focus_ring_follows_the_contract(self):
+        """DESIGN.md 状态口径表：focus-visible = 2px --accent 外描边。
+
+        曾经只有搜索框实现了这条，其余控件全用浏览器默认环——两套并存。
+        钉形状不钉措辞：全局 :focus-visible 必须给 accent 描边，
+        且不许出现把 outline 抹掉的声明。
+        """
+        self.assertRegex(self.style,
+                         r":focus-visible\s*\{[^}]*outline:\s*2px solid var\(--accent\)")
+        self.assertNotIn("outline: none", self.style)
+        self.assertNotIn("outline:none", self.style)
+
     def test_every_css_var_is_defined(self):
         """引用一个不存在的 --token 不会报错，只会让那条声明静默失效。
 
@@ -4673,13 +4687,93 @@ class TestBrowsePageDesignContract(unittest.TestCase):
 
     def test_every_pane_has_its_own_empty_state_copy(self):
         """空结果不能沿用「加载中…」——读者只会以为页面卡住了。"""
-        empties = re.findall(r"paintMsg\([^,]+,\s*rows\.length,\s*'([^']+)'", self.page)
+        empties = re.findall(
+            r"paintMsg\([^,]+,\s*rows\.length,\s*(?:[^']*?\?\s*)?'([^']+)'", self.page)
         self.assertEqual(len(empties), 3, "三个页签各需一句自己的空结果文案")
         loading = re.findall(r'data-loading="([^"]+)"', self.page)
         self.assertEqual(len(loading), 3, "每个提示行都要带 loading 文案")
         for text in empties:
             self.assertNotIn(text, loading)
             self.assertNotIn("加载", text, "空结果文案里不许出现「加载」字样")
+        # 三个面板都要分「没搜到」与「还没到货」两态：用户没输过关键词时不许怪关键词
+        noquery = re.findall(r"'(还没有[^']+)'", self.page)
+        self.assertEqual(len(noquery), 3,
+                         f"每个面板都要有自己的无查询空态文案，实得 {noquery}")
+
+    def test_footer_falls_back_when_index_missing(self):
+        """vendors.json 404 时页脚不能是空块（回归：renderVendorFeeds 只在
+        applyVendors 里调用，索引缺席走 else 分支就没人建列表）。"""
+        body = re.search(r"function render\(\)\s*\{(.*?)\n  \}", self.page, re.S)
+        self.assertTrue(body and "renderVendorFeeds" in body.group(1),
+                        "render() 必须在 vendor 索引缺席时兜底调用 renderVendorFeeds")
+        self.assertIn("state.vendorIndexApplied", self.page,
+                      "需要一个索引到位标志来驱动页脚兜底")
+
+    def test_news_search_is_debounced(self):
+        """搜索全量过滤 3535 条 + 重建 200 行，宽查询单次 50ms（移动 4x 档 140ms），
+        逐键渲染会卡。input 处理器要同步更新 state.q、把 renderItems 交给 setTimeout 防抖。"""
+        handler = self.page[self.page.index("el.q.addEventListener"):]
+        handler = handler[:handler.index("});") + 3]
+        self.assertIn("state.q = el.q.value.trim();", handler,
+                      "state.q 要同步更新，别的渲染路径才读得到最新查询")
+        self.assertRegex(handler, r"setTimeout\([\s\S]*?renderItems\(\)",
+                         "renderItems 要在 setTimeout 里防抖，不能每键同步跑")
+
+    def test_copy_success_is_announced_to_screen_readers(self):
+        """「已复制」只改按钮文案，读屏用户点完得不到任何反馈——必须有 live region。"""
+        self.assertRegex(self.page,
+                         r'id="copy-status"[^>]*role="status"[^>]*aria-live="polite"',
+                         "复制确认要挂在一个 polite status 区上")
+        handler = self.page[self.page.index("el.copy.addEventListener"):]
+        self.assertIn("copy-status", handler, "复制处理器要写入 live region")
+        self.assertRegex(handler, r"status\.textContent\s*=\s*''",
+                         "回弹时要清空 status，否则连续两次复制不会重新播报")
+
+    def test_tab_switch_resets_scroll_into_new_view(self):
+        """深滚后切页签要把新视图滚回开头（回归：切换不动滚动位，
+        从 3535 条的长列表切走会停在另一份列表的半路，只剩页脚/空白）。"""
+        show = re.search(r"function showTab\([^)]*\)\s*\{(.*?)\n  \}", self.page, re.S)
+        body = show.group(1) if show else ""
+        # 「是否深滚」必须在隐藏旧 pane 之前判断（一隐藏长列表，scrollY 立刻被夹到新文档高度）
+        self.assertIn("var wasDeep = window.scrollY > tabsDocTop()", body,
+                      "showTab 要在切 pane 前捕获是否已深滚")
+        self.assertLess(body.index("wasDeep ="), body.index("hidden ="),
+                        "wasDeep 判断要早于 pane 的 hidden 赋值")
+        self.assertRegex(body, r"if \(wasDeep\)[\s\S]*?scrollTo\(0, tabsDocTop\(\)\)",
+                         "深滚时要在 rAF 里把页签栏滚回视口顶")
+        # 阈值不能读 sticky 的 .tabs（滚过后 offsetTop/rect.top 都变成贴顶位置），
+        # 必须从非 sticky 的 header 底边反推
+        self.assertNotIn("offsetTop", self.page[self.page.index("function tabsDocTop"):self.page.index("function showTab")],
+                         "tabsDocTop 不能走 offsetTop——sticky 元素滚过后它等于 scrollY")
+        self.assertRegex(self.page,
+                         r"function tabsDocTop\(\)\s*\{[\s\S]*?header[\s\S]*?getBoundingClientRect\(\)\.bottom \+ window\.scrollY",
+                         "tabsDocTop 要用非 sticky 的 header 底边 + scrollY 反推页签栏文档流位置")
+
+
+class TestBrowsePagePureLogic(unittest.TestCase):
+    """浏览页纯逻辑（index.html 内联 <script id="fli-core"> 块）的行为测试经 node 跑。
+
+    页面保持单文件（DESIGN.md 契约），纯逻辑内联、无 DOM 依赖；docs/app.test.mjs 从
+    index.html 抽出该块 eval 后真调函数断言返回值，替掉「正则扫源码字符串形状」。
+    node 缺失时 skip（本地与 ubuntu CI runner 都自带 node）。经 ci_suite() 的
+    「全部−白名单」自动进 CI，无需改 workflow。
+    """
+
+    ROOT = Path(__file__).resolve().parent
+
+    @unittest.skipUnless(shutil.which("node"), "需要 node 才能跑核心块行为测试")
+    def test_browse_page_core_behavior_passes(self):
+        proc = subprocess.run(
+            ["node", "--test", "docs/app.test.mjs"],
+            cwd=str(self.ROOT), capture_output=True, text=True, encoding="utf-8",
+        )
+        out = (proc.stdout or "") + (proc.stderr or "")
+        # 只看 returncode 会把「一条用例都没匹配到」当通过——必须确认真跑了足够用例。
+        m = re.search(r"\bpass (\d+)", out)
+        self.assertIsNotNone(m, "node --test 没输出 pass 计数（测试文件没被跑到？）")
+        self.assertGreaterEqual(int(m.group(1)), 10,
+                                f"核心块行为用例应至少 10 条，实得 {m.group(1)}")
+        self.assertEqual(proc.returncode, 0, f"核心块行为测试未通过：\n{out}")
 
 
 class TestIntelChangesFeed(unittest.TestCase):
