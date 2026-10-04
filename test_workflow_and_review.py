@@ -4003,6 +4003,17 @@ class TestGuideRendering(unittest.TestCase):
         self.assertEqual(tail, len(provider_profiles.VENDOR_RANK))
         self.assertGreater(tail, provider_profiles.vendor_rank_index("anthropic"))
 
+    def test_display_names_do_not_say_bailian(self):
+        """厂商展示名不提「百炼」：阿里云该平台实为通义千问（2026-10-05 定）。
+
+        display_name 会进 README 章节标题与 quotas.json 名/锚点，是读者看到的名字。
+        URL 里保留 bailian/model-studio（真实控制台地址）不受此约束，只约束展示文字。
+        """
+        for vid, prof in provider_profiles.PROVIDER_PROFILES.items():
+            dn = prof.get("display_name", "")
+            self.assertNotIn("百炼", dn, f"{vid} 的 display_name 不应含「百炼」: {dn}")
+        self.assertIn("通义", provider_profiles.PROVIDER_PROFILES["aliyun_qwen"]["display_name"])
+
     def test_readme_buckets_sort_within_part_by_vendor_rank(self):
         """README 指南 / quotas.json 的每个 Part 桶内必须按 VENDOR_RANK（模型知名度）排。
 

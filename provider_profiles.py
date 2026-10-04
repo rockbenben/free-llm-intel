@@ -832,7 +832,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "aliyun_qwen": {
         "category": "domestic",
-        "display_name": "阿里云百炼 (Model Studio / 通义千问)",
+        "display_name": "通义千问 (阿里云)",
         "openai_compat": {
             "summary": "每模型 100 万 / 90 天（北京区）",
             "api_key_label": "控制台申请",
@@ -851,14 +851,14 @@ PROVIDER_PROFILES: dict[str, dict] = {
             "**仅限北京区域**：跨区域调用不扣免费额度、会直接按后付费计费",
             "开通模型时务必勾选「免费额度用完即停」，否则超额自动转付费；无独立注册代金券",
         ],
-        "preconditions": "注册阿里云账号；免费额度按官方文档规则在百炼平台开通模型后即可使用",
+        "preconditions": "注册阿里云账号；免费额度按官方文档规则开通模型服务后即可使用",
         "promotions": "“云大使”返利、知识库 720 小时试用等说法无法在当前官方免费额度页复核，不予采信。",
         "invite_reward": "**阿里云“云大使”官方页不可达**：第三方情报库所指 `k.aliyun.com/smarter/ai-distributor` 复核时无法访问；所称「推广返利 30%–45%」不予采信。",
         "notes": "建议在控制台开启“免费额度用完即停”避免超额扣费；跨区域调用不扣免费额度。",
         "links": [
-            ("百炼免费额度官方文档", "https://help.aliyun.com/zh/model-studio/new-free-quota"),
+            ("免费额度官方文档", "https://help.aliyun.com/zh/model-studio/new-free-quota"),
             ("API Key 申请直达", "https://bailian.console.aliyun.com/?apiKey=1"),
-            ("百炼控制台", "https://bailian.console.aliyun.com/"),
+            ("模型服务控制台", "https://bailian.console.aliyun.com/"),
             ("通义千问官网", "https://tongyi.aliyun.com/"),
         ],
     },
