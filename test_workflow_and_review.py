@@ -4003,6 +4003,31 @@ class TestGuideRendering(unittest.TestCase):
         self.assertEqual(tail, len(provider_profiles.VENDOR_RANK))
         self.assertGreater(tail, provider_profiles.vendor_rank_index("anthropic"))
 
+    def test_readme_buckets_sort_within_part_by_vendor_rank(self):
+        """README 指南 / quotas.json 的每个 Part 桶内必须按 VENDOR_RANK（模型知名度）排。
+
+        回归：`bucket_by_readme_order` 曾只按 category 分桶、桶内沿用 yaml 定义序，
+        于是自研旗舰厂商小米 MiMo（VENDOR_RANK 第 15）在一览页掉到 Part 1 的第 22 位，
+        与厂商胶囊 / 页脚 / vendors.json 的知名度排序打架——同一份情报在浏览页不同
+        视图给出两种顺序。修法：桶内按 vendor_rank_index 排。
+        """
+        ids = list(provider_profiles.PROVIDER_PROFILES)
+        intel_list = [crawler_llm_intel.VendorIntel(
+            vendor_id=v, brand=v, homepage="", products=[]) for v in ids]
+        ordered = [intel.vendor_id for _i, intel, _p
+                   in crawler_llm_intel.order_vendor_records(intel_list)]
+        # 每个 Part（category）内部，vendor_rank_index 必须单调不减
+        by_cat = {}
+        for vid in ordered:
+            cat = crawler_llm_intel.get_provider_profile(vid, "", "").get("category", "domestic")
+            by_cat.setdefault(cat, []).append(provider_profiles.vendor_rank_index(vid))
+        for cat, ranks in by_cat.items():
+            self.assertEqual(ranks, sorted(ranks),
+                             f"Part[{cat}] 桶内没按 VENDOR_RANK 排：{ranks}")
+        # 具体证人：小米（自研 MiMo，rank 靠前）必须排在国内的百度千帆之前
+        self.assertLess(ordered.index("xiaomi_mimo"), ordered.index("baidu_qianfan"),
+                        "小米 MiMo 应凭模型知名度排在百度千帆前，不该掉到 Part 1 末尾")
+
     def test_promo_fragment_expired(self):
         f = crawler_llm_intel._promo_fragment_expired
         today = date(2026, 9, 12)

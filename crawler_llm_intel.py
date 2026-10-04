@@ -2940,12 +2940,22 @@ def bucket_by_readme_order(pairs: list[tuple[Any, dict]]) -> list[tuple[Any, dic
 
     tools 必须有自己的桶并排最后——否则回落到 domestic 桶，README 里会变成
     「Part 1 → Part 4 → Part 2 → Part 3」的错位章节序。
+    每个 Part 桶内再按 `VENDOR_RANK`（模型知名度）排：否则桶内沿用 yaml 定义序，
+    自研旗舰厂商（如小米 MiMo）会掉到本 Part 末尾，与胶囊 / 页脚 / vendors.json 的
+    知名度排序打架——同一份情报在浏览页不同视图里给出两种顺序，读者会以为是两个维度。
     """
     categories = OrderedDict((c, []) for c in _README_CATEGORIES)
     for item, prof in pairs:
         cat = prof.get("category", "domestic")
         categories[cat if cat in categories else "domestic"].append((item, prof))
-    return [pair for items in categories.values() for pair in items]
+
+    def _rank_key(pair):
+        item = pair[0]
+        vid = item.get("id", "") if isinstance(item, dict) else getattr(item, "vendor_id", "")
+        return (vendor_rank_index(vid), vid)
+
+    return [pair for items in categories.values()
+            for pair in sorted(items, key=_rank_key)]
 
 
 def order_vendor_records(intel_list: list[VendorIntel]) -> list[tuple[int, VendorIntel, dict]]:
