@@ -155,7 +155,92 @@ body_sha: <正文（去 frontmatter）的 sha256[:12]，用于脏检测/幂等>
 
 - 不在 CI 做**回充**（3548 篇一次性本地做；CI 只增量）。
 - 不下载图片。
-- 不扩 articles.json 结构。
+- ~~不扩 articles.json 结构~~ **2026-10-05 修正**：§12 reader 需要前端知道 md 文件路径，
+  articles.json 每行末位加 `slug`（`url_hash` 前 12 字符）是最短路径；原意"避免原文列
+  回归老坑"（见 project-articles-index-originals）只针对 `original_title` 的填取逻辑，
+  与 slug 计算无关。加 slug 需扩测：`test_index_orig_recovers_*` 系列仍守原文列，
+  新增 `test_index_has_slug` 钉每行 6 字段与 `url_hash(url) == row[5]`。
 - 不做全文检索/相关性排序。
-- 不改现有 quotas/README/RSS/OPML 的产出语义。
+- 不改现有 quotas/README/RSS/OPML 的产出语义（RSS 侧 content:encoded / 双语 feed
+  属 §12 之外的独立改造，见 rss-redesign spec）。
 - 不引入 bs4 等新依赖（抽取器走标准库）。
+
+## 12. 浏览页 reader（点开条目就地读全文）
+
+**当前状态**：设计，未开工。落地在 `docs/index.html` 与 `app.js`。
+
+### 12.1 数据链路
+
+- **articles.json 每行 6 字段**：`[title, url, vendor, date, original_title, slug]`；
+  `slug = url_hash(url) = sha256(normalize_url(url))[:12]`，与 `fulltext.url_hash`
+  一字一样（新增 helper 让 crawler 与 fulltext 共享一份实现，避免两份 normalize 漂移）。
+- 前端拉 `articles/<vendor>/<slug>.md`（当前语言）或 `<slug>.en.md`（英文原文），
+  浏览器直接 fetch，Pages 已 serve 静态文件。缺文件 = 该篇正文没落到语料里
+  （fetch_failed / index_page / 尚未回充），reader **不显示"打开正文"按钮**（守卫
+  数据缺失的诚实方式：不编造、不 404 弹窗）。
+
+### 12.2 UI 形态
+
+- **右侧抽屉**（desktop ≥ 720px，占屏宽 60%）／**全宽 sheet**（mobile）：从条目
+  标题上「读」按钮或整行点击滑入。ESC / 点遮罩 / 关闭按钮收起。列表在抽屉打开时
+  保持不动（焦点圈进抽屉里，收起时回到原按钮位置）。
+- 抽屉头：中文/英文切换按钮（另一语言 md 存在才亮），"打开原文"外链，
+  发布日期、厂商；`aria-modal="true"` + focus-trap + `<h1>` = 标题。
+- 抽屉体：md → HTML 渲染；表格、代码块、图片、链接按 §12.4 走。
+
+### 12.3 深链
+
+- URL query：`?read=<vendor>/<slug>`。首屏读 query → 自动展开抽屉。
+- 打开/关闭抽屉 pushState / popState（返回键回列表）。
+- 分享：直接把当前 URL 发给别人即可，无 hash 路由依赖。
+
+### 12.4 md → HTML 前端实现
+
+- **JS 手写 helper，与 `crawler_llm_intel._md_to_html` 对偶**（同一份构造集：ATX 标题 /
+  段落 / 有序 / 无序 / fenced code / pipe 表格 / 链接 / 图片 / 粗体 / 斜体 / inline code）。
+- **两份源漂移风险**：加 `tests/fixtures/articles/longform.expected.md` 双跑——
+  Python `_md_to_html` 与 JS `mdToHtml` 各喂同一份 md，产出的 HTML 走**结构等价**断言
+  （标签序列 + 文本 trim；不断言字节序，允许空白差异）。fixture 挂了就报警。
+- XSS：JS 端同样先 HTML escape 再套标签，`_md_strip_unsafe` 的对应物在 JS 里叫
+  `stripUnsafe`（同标签集：script/iframe/style/link/object/embed/form）。
+- 语料正文里的 `<` `>` 已由 Python 侧转义过（`&lt;` `&lt;`）；JS 端**不再二次转义已
+  转义的 `&lt;` 序列**（会看到 `&amp;lt;`），用同一份 `_html_escape` 语义即可。
+
+### 12.5 语言切换
+
+- 抽屉头有「中 / EN」两枚小按钮。**当前语言 md 文件不存在时按钮 disabled**（前端
+  fetch 时 HEAD 或 catch 404）；两枚都在时按当前页全局语言设置默认。
+- 中英切换走**重新 fetch + 重渲**（不做双份常驻，节省内存）。
+
+### 12.6 性能与体积
+
+- articles.json 现在 3600+ 行 × 6 字段：每行多 12 字 slug，全量约 +50 KB。gzip
+  后 +15 KB，可忽略。
+- 抽屉打开才 fetch md（懒加载）；同一 slug 二次打开走浏览器 HTTP 缓存（Pages 有
+  etag，`Cache-Control: public, max-age=600` 已生效——见现有 fetch 的 `feeds/*.json`）。
+- 大文章（>100 KB md）在移动网络首屏可能 300 ms 空窗：抽屉打开时列表侧展示骨架屏
+  3 行占位，不遮罩整个视口。
+
+### 12.7 明确不做
+
+- 不做 TOC / 阅读进度条 / 字号调整（浏览器 Ctrl+加 够用）。
+- 不做收藏 / 阅读历史（本仓库无账户体系）。
+- 不做全文搜索（在 §11 已列）。
+- 不做打印样式专项（现有 `@media print` 覆盖列表；reader 打印 = 直接
+  `window.print()` 抽屉内容，浏览器能处理）。
+
+### 12.8 里程碑（reader）
+
+- **T1**：crawler 侧加 slug 到 articles.json + 共享 `url_hash` helper（crawler 从
+  fulltext import，避免两份实现）；`test_index_has_slug` 与 index 原文列守卫并跑；
+  `--rebuild-only` 重跑一次 articles.json。
+- **T2**：`app.js` 加 `mdToHtml` + `stripUnsafe`；`test_app.mjs` 加"Python/JS 双跑
+  同一份 fixture"结构等价断言。
+- **T3**：`docs/index.html` 抽屉 UI（CSS + `openReader(vendor,slug,lang)` + 深链路由）；
+  batch7 design preview 打磨稿取证一次（键盘可达、focus trap、暗色、forced-colors、
+  mobile sheet、无 body 时的按钮 disabled）。
+- **T4**：README 与 `llm-news-feeds.md` 顶部加一句「浏览页现在就地读全文」；
+  corpus spec §9 里程碑改「reader 已上线」。
+
+T1 是 breaking change（articles.json 形状变了），必须先落。T2/T3 是纯前端，独立测。
+T4 是文档。
