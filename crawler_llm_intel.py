@@ -3271,8 +3271,13 @@ def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
         page_part = f"[网页浏览 / 一键订阅]({site}) ｜ " if site else ""
         lines.append(f"> 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）："
                      f"{page_part}"
-                     f"[合并流]({feeds_base}/llm-news-all.xml) ｜ "
-                     f"单厂商源 `{feeds_base}/llm-news-{{vendor_id}}.xml`。")
+                     f"[中文合并流]({feeds_base}/llm-news-all.xml) ｜ "
+                     f"[英文合并流]({feeds_base}/llm-news-all.en.xml) ｜ "
+                     f"单厂商源 `{feeds_base}/llm-news-{{vendor_id}}.xml`（英文加 `.en.xml`）。"
+                     "合并流与单厂商都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），"
+                     "阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文"
+                     "（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅"
+                     "（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。")
         lines.append(f"> 🛰 **额度变化订阅**（新活动 / 额度调整 / 新模型上架）："
                      f"[{INTEL_CHANGES_FEED}]({feeds_base}/{INTEL_CHANGES_FEED})")
     lines.append("")

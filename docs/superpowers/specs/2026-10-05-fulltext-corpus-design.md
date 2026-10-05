@@ -134,7 +134,7 @@ body_sha: <正文（去 frontmatter）的 sha256[:12]，用于脏检测/幂等>
 
 ## 9. 分阶段与里程碑
 
-> **当前进度**：M0（脚手架）+ M1（本地端到端切片）+ 全量回充（原 M3）已随代码、测试与快照落地；M2（CI 增量接管 + 守卫）待接入 workflow。
+> **当前进度**：M0（脚手架）+ M1（本地端到端切片，含 §12 浏览页 reader 已上线）+ 全量回充（原 M3）已随代码、测试与快照落地；M2（CI 增量接管 + 守卫）待接入 workflow。
 
 - **M0（脚手架）**：`normalize_url`+`urlhash`、C1 抽取器（golden 测）、`bodies.json` schema+构建+§3.4 守卫、`--fetch-bodies` 幂等/只补缺失骨架。
 - **M1（端到端打通，小切片，本地）**：1 个厂商（建议 `anthropic`）跑 `--fetch-bodies --allow-browser` + 我人译前 N 篇 + 页面 reader 上线 → 证「抓→存双语→译→页面就地读」整链。
@@ -231,16 +231,19 @@ body_sha: <正文（去 frontmatter）的 sha256[:12]，用于脏检测/幂等>
 
 ### 12.8 里程碑（reader）
 
-- **T1**：crawler 侧加 slug 到 articles.json + 共享 `url_hash` helper（crawler 从
+**状态：reader 已上线**（T1–T4 全落，本地端到端验证通过）。
+
+- **T1 ✅**：crawler 侧加 slug 到 articles.json + 共享 `url_hash` helper（crawler 从
   fulltext import，避免两份实现）；`test_index_has_slug` 与 index 原文列守卫并跑；
   `--rebuild-only` 重跑一次 articles.json。
-- **T2**：`app.js` 加 `mdToHtml` + `stripUnsafe`；`test_app.mjs` 加"Python/JS 双跑
-  同一份 fixture"结构等价断言。
-- **T3**：`docs/index.html` 抽屉 UI（CSS + `openReader(vendor,slug,lang)` + 深链路由）；
-  batch7 design preview 打磨稿取证一次（键盘可达、focus trap、暗色、forced-colors、
-  mobile sheet、无 body 时的按钮 disabled）。
-- **T4**：README 与 `llm-news-feeds.md` 顶部加一句「浏览页现在就地读全文」；
-  corpus spec §9 里程碑改「reader 已上线」。
+- **T2 ✅**：`mdToHtml` + `stripUnsafe` 落在 `docs/index.html` 的 `<script id="fli-core">`
+  内联核心块（非独立 `app.js`——源码正则守卫是坏味道，改用内联块 + `node --test` 双跑）；
+  `app.test.mjs` 与 `TestMdHtmlDualRun` 加"Python/JS 同一份 fixture 结构等价"断言。
+- **T3 ✅**：`docs/index.html` 抽屉 UI（CSS 全走设计令牌 + `openReader(vendor,slug,lang)`
+  + 深链 `?read=` 路由 + 中/EN 切换 + 缺 .en.md 自动 disable + 无正文时「访问原文」出口）；
+  取证走活浏览器：列表点开、深链首屏、EN 切换、ESC/遮罩关闭回退 URL、缺语料错误态、
+  真机移动仿真（drawer 满宽无横向溢出、控件在界内）、forced-colors 变体。
+- **T4 ✅**：README 与 corpus spec §9 里程碑改「reader 已上线」。
 
 T1 是 breaking change（articles.json 形状变了），必须先落。T2/T3 是纯前端，独立测。
 T4 是文档。
