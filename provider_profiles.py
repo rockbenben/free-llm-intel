@@ -317,12 +317,12 @@ VENDOR_RANK: tuple[str, ...] = (
     "zhipu_glm", "moonshot_kimi", "xai_grok", "minimax", "mistral",
     # 第二梯队：常用推理平台与国内主力、上新热门
     "groq", "volcengine_doubao", "xiaomi_mimo", "tencent_hunyuan", "baidu_qianfan",
-    "huggingface", "openrouter", "cloudflare_workers_ai", "cohere", "siliconflow",
+    "huggingface", "openrouter", "cloudflare_workers_ai", "cohere",
     "nvidia_nim", "sensetime_sensenova", "iflytek_spark", "meta_llama",
     # 第三梯队：国内其他厂商
-    "longcat_meituan", "streamlake", "unisound_shanhai", "mthreads_coding",
+    "longcat_meituan", "siliconflow", "streamlake", "unisound_shanhai", "mthreads_coding",
     "infini_ai", "ppio", "china_telecom_tianyi", "china_mobile_moma",
-    "zhinao_360", "dataeye", "dmxapi", "lingyiwanwu_01ai", "kunlun_tiangong",
+    "zhinao_360", "dataeye", "dmxapi",
     # 第四梯队：海外云厂商的托管服务
     "aws_bedrock", "azure_openai", "gcp_vertex_ai", "oracle_oci_ai", "ibm_watsonx",
     # 第五梯队：海外推理 / 部署平台与长尾
@@ -1957,41 +1957,6 @@ PROVIDER_PROFILES: dict[str, dict] = {
         ],
     },
 
-    # ------------------ 第三方情报库线索复核后收录 ------------------
-    # 这批厂商来自 FreeLLM-API-KeyHub 的免费额度清单；收录前逐个访问官方页复核，
-    # 复核结论（含"查不到"）如实写入下方字段，不搬运无法复核的数字。
-    "lingyiwanwu_01ai": {
-        "category": "domestic",
-        "display_name": "零一万物 01.AI",
-        "free_quota": "**平台疑似已关停**：据 CDP 读取官方开放平台首页公告，2026-08-03 发布下线公告、API 服务 **2026-09-03 停止**；静态复核未能确认（站点为前端渲染 SPA，仅取到页面标题；Web 搜索亦无结果），故**标注为待核实而非确认事实**",
-        "validity": "不适用（若公告属实则服务已停）",
-        "free_models": [
-            "Yi 系列模型与「万策」「万智」多智能体平台的模型清单需登录平台查看，公开页面无免费模型标注",
-        ],
-        "preconditions": "不适用",
-        "promotions": "官方开放平台公开页面无邀请 / 拉新活动记载。",
-        "notes": "第三方情报库所称「注册送体验金 / 1 个月」**不予采信**。条目保留作为历史记录与跟踪；若确已关停，应从免费额度名单移除。",
-        "links": [
-            ("开放平台", "https://platform.lingyiwanwu.com/"),
-        ],
-    },
-    "kunlun_tiangong": {
-        "category": "domestic",
-        "display_name": "昆仑万维 天工",
-        "free_quota": "**开发者 API 已无响应**：`model-platform.tiangong.cn` 302 跳转至天工主站（消费端产品页），`api.tiangong.cn` 返回 **503 Service Unavailable**；无免费额度可查",
-        "validity": "不适用",
-        "free_models": [
-            "天工系列模型目前仅见消费端（App / 网页）入口，开发者开放平台与免费 API 额度公开页均未找到",
-        ],
-        "preconditions": "未提供可用的公开开发者注册入口",
-        "promotions": "第三方情报库亦标注「当前可能已无标准化公开免费额度」「API 开放平台个人免费额度待确认」，与我们对官方页的复核结果一致。",
-        "notes": "产品重心已转向天工 App 消费端；条目保留跟踪 API 是否恢复，暂不应进免费额度主力名单。",
-        "links": [
-            ("天工主站（开放平台入口跳转目标）", "https://www.tiangong.cn/"),
-            ("原开放平台入口", "https://model-platform.tiangong.cn/"),
-            ("开发者 API（当前 503）", "https://api.tiangong.cn/"),
-        ],
-    },
     "anyscale": {
         "category": "international",
         "display_name": "Anyscale",

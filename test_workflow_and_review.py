@@ -3912,8 +3912,8 @@ class TestGuideRendering(unittest.TestCase):
         KNOWN_OMITTED = {
             # 官方明确「无免费额度 / 无赠送」（档案里有一手原文）
             "openai", "xai_grok", "deepseek", "minimax", "together_ai", "deepinfra",
-            # 存疑或已停服：条目保留用于跟踪，但不应作为可用免费额度来源（README 已如实标注）
-            "lingyiwanwu_01ai", "kunlun_tiangong", "ncompass", "mara",
+            # 存疑：不应作为可用免费额度来源（README 已如实标注）
+            "ncompass", "mara",
             # 免费权益无法从官方公开页核实（宁缺毋假）
             "china_mobile_moma", "zhinao_360", "dmxapi",
             # 官方称「新用户有少量免费测试额度」但**金额不公开**，暂不列（待定，见项目记忆）
