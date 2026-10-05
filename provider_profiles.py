@@ -772,7 +772,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "zhipu_glm": {
         "category": "domestic",
-        "display_name": "智谱AI GLM (大模型开放平台)",
+        "display_name": "智谱 GLM",
         "openai_compat": {
             "summary": "4.x 代 Flash 0 元（新旗舰 5.3-Flash 付费）+ 2000万券",
             "api_key_label": "控制台申请",
@@ -810,7 +810,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "longcat_meituan": {
         "category": "domestic",
-        "display_name": "美团 LongCat (长猫开放平台)",
+        "display_name": "美团 LongCat",
         "free_quota": "新用户注册赠送 token 资源包，具体数额**公开页未公示**，以注册后账户实际发放为准（“1000 万/5000 万”等历史说法无法复核，不予采信）",
         "validity": "官方定价页标注 token 资源包有效期 **30 天**",
         "free_models": [
@@ -864,7 +864,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "baidu_qianfan": {
         "category": "domestic",
-        "display_name": "百度智能云千帆大模型平台",
+        "display_name": "文心 ERNIE (百度千帆)",
         "openai_compat": {
             "summary": "17 个模型各 100 万 / 3 个月",
             "api_key_label": "控制台申请",
@@ -943,7 +943,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "moonshot_kimi": {
         "category": "domestic",
-        "display_name": "Kimi 开放平台 (月之暗面)",
+        "display_name": "Kimi (月之暗面)",
         "openai_compat": {
             "summary": "实名送 15 元券（1M 长上下文）",
             "api_key_label": "控制台申请",
@@ -1081,7 +1081,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "sensetime_sensenova": {
         "category": "domestic",
-        "display_name": "商汤日日新 (SenseNova / 大装置)",
+        "display_name": "商汤 日日新 (SenseNova)",
         "free_quota": "**Token Plan 公测版免费**即左栏额度（无独立注册赠金）；正式商用定价以官方后续公告为准",
         "validity": "公测期间滚动有效（每 5 小时自动刷新）",
         "free_models": [
@@ -1119,7 +1119,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "zhinao_360": {
         "category": "domestic",
-        "display_name": "360 智脑开放平台",
+        "display_name": "360 智脑",
         "free_quota": "新用户注册赠送测试资源，**具体数额/有效期未在公开页公示**，以账户实际发放为准（“1000 万 tokens/30 天”说法无法复核，不予采信）",
         "validity": "以资源包标注为准",
         "free_models": [
@@ -1135,7 +1135,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "china_mobile_moma": {
         "category": "domestic",
-        "display_name": "中国移动九天人工智能平台",
+        "display_name": "中国移动 九天 (MoMA)",
         "free_quota": "免费体验包政策**无法从官方公开页面核实**（九天门户为纯动态渲染页面），需登录九天平台控制台查看实际权益——宁缺毋假",
         "validity": "需登录控制台核实",
         "free_models": [
@@ -1152,7 +1152,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "unisound_shanhai": {
         "category": "domestic",
-        "display_name": "云知声 Token Hub (MaaS)",
+        "display_name": "云知声 Token Hub",
         "free_quota": "新人礼包即左栏按模型/服务发放的额度（官方快速入门文档），实名认证后自动到账、**无需审核**；有效期官方未标注，以账户内资源包为准",
         "validity": "以账户内资源包标注为准（官方文档未标注有效期）",
         "free_models": [
@@ -1210,7 +1210,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "xiaomi_mimo": {
         "category": "domestic",
-        "display_name": "小米 MiMo (Xiaomi MiMo 开放平台)",
+        "display_name": "小米 MiMo",
         "openai_compat": {
             "summary": "TTS 系列限时免费；语言模型按量计费",
             "api_key_label": "控制台申请",
@@ -1962,7 +1962,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     # 复核结论（含"查不到"）如实写入下方字段，不搬运无法复核的数字。
     "lingyiwanwu_01ai": {
         "category": "domestic",
-        "display_name": "零一万物 01.AI (开放平台)",
+        "display_name": "零一万物 01.AI",
         "free_quota": "**平台疑似已关停**：据 CDP 读取官方开放平台首页公告，2026-08-03 发布下线公告、API 服务 **2026-09-03 停止**；静态复核未能确认（站点为前端渲染 SPA，仅取到页面标题；Web 搜索亦无结果），故**标注为待核实而非确认事实**",
         "validity": "不适用（若公告属实则服务已停）",
         "free_models": [
@@ -1977,7 +1977,7 @@ PROVIDER_PROFILES: dict[str, dict] = {
     },
     "kunlun_tiangong": {
         "category": "domestic",
-        "display_name": "昆仑万维 天工 (开放平台)",
+        "display_name": "昆仑万维 天工",
         "free_quota": "**开发者 API 已无响应**：`model-platform.tiangong.cn` 302 跳转至天工主站（消费端产品页），`api.tiangong.cn` 返回 **503 Service Unavailable**；无免费额度可查",
         "validity": "不适用",
         "free_models": [
