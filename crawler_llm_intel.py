@@ -430,6 +430,38 @@ def make_llm_title_polisher(budget: int = TITLE_POLISH_RUN_BUDGET,
     return polish
 
 
+#: 正文翻译的 system 提示：口径与标题润色一致（术语/型号保留原文、忠实不加词），
+#: 但输出是整篇 markdown，须保住结构与代码块，且绝不补原文没有的内容。
+BODY_TRANSLATE_SYSTEM = (
+    "你是科技资讯正文译者，把英文技术文章译成简体中文，输出只放译文本身。\n"
+    "规则：\n"
+    "1. 严格保持 Markdown 结构不变——标题层级、列表、表格、引用、链接 [文字](url)、"
+    "行内代码与 ``` 代码块都原样保留；代码块内的代码、URL、参数一律不译不改。\n"
+    "2. 品牌 / 模型 / 产品 / 术语保留原文（如 Claude、GPT-6、LoRA、MCP、token、"
+    "API、endpoint），不强行音译；首次出现的专有名词可在括号内附中文说明。\n"
+    "3. 忠实原意，逐段对应：不增译原文没有的营销词、感叹号、总结或免责声明，"
+    "也不漏译段落。语气与原文一致。\n"
+    "4. 数字、单位、日期、价格原样保留。\n"
+    "输出：仅中文 Markdown 正文，不要任何前后缀说明、不要「译文：」标签、不要外层代码栅栏。")
+
+
+def make_llm_body_translator(backend: str, model: str):
+    """返回 (title, en_body)->中文markdown 的正文翻译回调（与 --ai-titles 同源通道）。
+
+    走 ai_review.call_llm_text（纯文本、不套 JSON 模式）。调用失败会抛异常，
+    由 fulltext.translate_bodies_llm 捕获后留 pending——不在这层吞错编造。
+    """
+    import ai_review
+
+    def translate(title: str, en_body: str) -> str:
+        user = (f"原文标题：{title}\n\n请将下面这篇英文 Markdown 文章译成中文：\n\n"
+                + en_body)
+        return ai_review.call_llm_text(user, system=BODY_TRANSLATE_SYSTEM,
+                                       model=model, backend=backend)
+
+    return translate
+
+
 @dataclass
 class VendorIntel:
     vendor_id: str
@@ -6108,6 +6140,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--mark-translated", metavar="KEY", default="",
                         help="把 --zh-file 指定的中文正文登记为 key 的译文（agent 回充译道，只改 ledger）")
     parser.add_argument("--zh-file", default="", help="配合 --mark-translated：中文正文 Markdown 文件路径")
+    parser.add_argument("--ai-bodies", action="store_true",
+                        help="维护模式（不巡检）：把 bodies.json 里「英文已抓到、中文待译」的条目"
+                             "走 --ai-titles 同源 LLM 通道译成中文，写 docs/articles/<vendor>/<urlhash>.md"
+                             "（translator=llm）。只译待译项、幂等；超长/失败/校验不过留 pending，不产半成品。")
+    parser.add_argument("--ai-bodies-limit", type=int, default=0,
+                        help="本次最多译多少篇正文（0=不限；CI 用它控单日成本）")
     args = parser.parse_args(argv)
 
     root = _repo_root()
@@ -6172,6 +6210,38 @@ def main(argv: list[str] | None = None) -> int:
         ok = sum(1 for e in bodies.values() if e.get("en_status") == "ok")
         failed = sum(1 for e in bodies.values() if e.get("en_status") in ("fetch_failed", "paywall"))
         print(f"  本轮写 {written} 篇；ledger 共 {len(bodies)} 条（ok {ok} / 抓不到 {failed}）。")
+        return 1 if errs else 0
+
+    if args.ai_bodies:
+        import os
+        import fulltext
+        import ai_review
+        # 与 --ai-titles 同源：解析后端 + 模型；缺 key 时禁用、返回 0（不崩巡检产物提交）。
+        try:
+            backend = ai_review.resolve_backend()
+            backend_err = ai_review.backend_config_error(backend)
+        except ai_review.AiReviewError as exc:
+            backend, backend_err = "", str(exc)
+        if backend_err:
+            print(f"  [ai-bodies] 已禁用：{backend_err}", file=sys.stderr)
+            return 0
+        model = os.environ.get("AI_REVIEW_MODEL") or ai_review.default_model(backend)
+        bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
+        pending = len(fulltext.pending_translation_keys(bodies))
+        today = datetime.now().strftime("%Y-%m-%d")
+        translate = make_llm_body_translator(backend, model)
+        print(f"  [ai-bodies] 待译 {pending} 篇，经 {backend}/{model} 逐篇译"
+              f"（本次上限 {args.ai_bodies_limit or '不限'}，超长/失败留 pending）...")
+        done = fulltext.translate_bodies_llm(
+            root, bodies, translate, today=today, limit=args.ai_bodies_limit,
+            save=lambda b: fulltext.save_bodies(root / "docs/feeds/bodies.json", b))
+        fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
+        errs = fulltext.validate_bodies(root, bodies)
+        for e in errs:
+            print(f"  [fulltext-guard] {e}", file=sys.stderr)
+        left = len(fulltext.pending_translation_keys(bodies))
+        print(f"  本轮译 {done} 篇；待译从 {pending} 降到 {left}"
+              f"（{pending - left} 已译，{left} 仍 pending）。")
         return 1 if errs else 0
 
     if args.backfill_dates or args.backfill_orig:

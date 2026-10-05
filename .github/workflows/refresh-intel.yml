@@ -153,6 +153,33 @@ jobs:
           FEEDS_BASE: ${{ vars.FEEDS_BASE }}
         run: python crawler_llm_intel.py --ai-review --ai-titles --feeds-base "$FEEDS_BASE"
 
+      # 正文语料增量（corpus spec §5/§9 M2）：抓今天新文章的英文正文 → 译中文。
+      # 必须排在 crawler **之后**：crawler 刚重写 docs/feeds/articles.json，今天新收录的
+      # 文章只有进了这份索引，--fetch-bodies 才知道要抓哪些 URL。
+      # 刻意不传 --allow-browser：CI 纯 requests，SPA/反爬页记 fetch_failed、正文留空
+      # （§6 requests-only 守卫）；这类页由本地周期性 `--fetch-bodies --allow-browser` 回捞。
+      # continue-on-error：语料是核心巡检产物之上的增强层，抓取步骤崩溃不该挡掉当天的
+      # README/新闻提交；写坏的产物由紧随其后的 Verify「实产物 schema 守卫」兜底拦提交。
+      - name: Fetch article bodies (incremental)
+        continue-on-error: true
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python crawler_llm_intel.py --fetch-bodies
+
+      # 中文正文增量翻译：pending（英文已抓到、中文待译）→ 与 --ai-titles 同源通道译 → .md。
+      # 复用 GEMINI_API_KEY / AI_REVIEW_MODEL；缺 key 时脚本自行禁用并返回 0，不影响提交。
+      # --ai-bodies-limit 封顶单日译量控成本（未设 var 时默认 40，日常新增远小于此）；
+      # 超长 / 调用失败 / 输出校验不过一律留 pending，绝不产半成品（translator=llm 只标真译成的）。
+      # 滞后边界：今天新文章的正文今天进 reader（.md 已落盘），但 RSS 的 content:encoded
+      # 由 crawler 早于本步生成，要到**次日**那次巡检重排 feed 时才带上全文。
+      - name: Translate new bodies (LLM)
+        continue-on-error: true
+        env:
+          PYTHONIOENCODING: utf-8
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AI_REVIEW_MODEL: ${{ vars.AI_REVIEW_MODEL }}
+        run: python crawler_llm_intel.py --ai-bodies --ai-bodies-limit "${{ vars.AI_BODIES_LIMIT || 40 }}"
+
       # 产物与不变量校验：跑**全部**用例。
       # 测试集由 test_workflow_and_review.ci_suite() 按「全部 − 白名单」推导：
       # 以后新增用例自动进 CI，不需要谁记得回来改这里（手写类清单必然漂移）。
@@ -185,7 +212,7 @@ jobs:
       # 现在统一走这一条路径（档案更新带 `_evidence` 页面原文摘录，可事后追溯）。
       - name: Commit all updates
         run: |
-          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds README.md profile_overrides.json
+          git add llm-intel-state.json llm-news-feeds.md llm-news-feeds.opml llm-news docs/feeds docs/articles README.md profile_overrides.json
           # 变更日志要到第一次 AI 采纳档案更新才落盘；对不存在的路径 git add 会
           # 以 exit 128 中断整个提交步骤（2026-09-25 巡检就是这么挂的），故先判存在。
           if [ -f llm-intel-changelog.md ]; then git add llm-intel-changelog.md; fi

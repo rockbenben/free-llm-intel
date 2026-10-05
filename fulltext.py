@@ -668,3 +668,89 @@ def mark_translated(root: Path, bodies: dict, *, key: str, zh_body_md: str,
     e["zh_path"] = rel
     e["zh_status"] = "translated"
     e["translator"] = translator
+
+
+# ---------------------------------------------------------------------------
+# CI 增量翻译（--ai-bodies）：pending 英文正文 → LLM 中文 → .md（translator=llm）
+# ---------------------------------------------------------------------------
+
+#: 单篇英文正文送进翻译的最大字符数。超了直接留 pending、不译半篇（spec §10：
+#: 「设单篇字数上限+截断留 pending，不产半成品」）。取值让中文输出稳落在
+#: ai_review.BODY_MAX_TOKENS 之内——宁可漏译长文（本地 agent 补），不可产残篇。
+BODY_TRANSLATE_CHAR_CAP = 12_000
+
+_FENCE_RE = re.compile(r"^\s*```(?:markdown|md|text)?\s*\n([\s\S]*?)\n```\s*$")
+_LABEL_RE = re.compile(r"^\s*(译文|翻译|中文翻译|正文)\s*[:：]\s*")
+
+
+def _clean_llm_translation(text: str) -> str:
+    """剥掉模型偶发的整体 ``` 包裹与「译文：」前缀标签，拿到纯 markdown 正文。"""
+    t = (text or "").strip()
+    m = _FENCE_RE.match(t)
+    if m:
+        t = m.group(1).strip()
+    t = _LABEL_RE.sub("", t, count=1).strip()
+    return t
+
+
+def _translation_acceptable(en_body: str, zh: str) -> bool:
+    """内容从严：非空、确为中文、不是原样照抄、长度不像拒答/截断。
+
+    长度下限取「绝对 8 字」与「输入 15%」的较大者：8 字挡掉「无法翻译」这类
+    一词拒答；15% 比例挡掉被 max_tokens 截断的残篇（中文比英文紧凑，正常译文
+    远在 15% 之上）。宁可留 pending 让本地 agent 补，也不写进半篇。
+    """
+    if not zh:
+        return False
+    if zh.strip() == en_body.strip():
+        return False                      # 没翻，原样吐回来
+    if not _CJK.search(zh):
+        return False
+    if detect_source_lang(zh) != "zh":    # CJK 占比不足 = 多半是失败/夹生输出
+        return False
+    if len(zh) < max(8, int(len(en_body) * 0.15)):
+        return False
+    return True
+
+
+def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
+                         today: str, limit: int = 0, save: Callable = None,
+                         flush_every: int = 10,
+                         char_cap: int = BODY_TRANSLATE_CHAR_CAP) -> int:
+    """把待译英文正文逐篇交 `translate(title, en_body)->中文markdown`，落 `.md`。
+
+    幂等：只动 `pending_translation_keys`（英文 ok 且未 translated）；已译的绝不重译。
+    有界：`limit`（>0）封顶本次最多译几篇，控 CI 成本；`char_cap` 挡超长篇（留 pending）。
+    不产半成品：正文取不到 / 超长 / 调用抛错 / 输出校验不过，一律留 pending，绝不写残篇。
+    给定 `save` 时每 `flush_every` 篇落一次 ledger（中断也保住已完成项）。返回本轮新译篇数。
+    """
+    keys = pending_translation_keys(bodies)
+    if limit and limit > 0:
+        keys = keys[:limit]
+    done = 0
+    for key in keys:
+        e = bodies[key]
+        en_path = root / e.get("en_path", "")
+        if not e.get("en_path") or not en_path.exists():
+            continue
+        try:
+            en_fm, en_body = read_body_doc(en_path)
+        except (ValueError, OSError):
+            continue
+        if not en_body.strip():
+            continue
+        if len(en_body) > char_cap:       # 超长：留 pending，交本地 agent，不译半篇
+            continue
+        title = en_fm.get("title") or e.get("title", "")
+        try:
+            zh = _clean_llm_translation(translate(title, en_body))
+        except Exception:
+            continue                       # 网络/额度/异常：留 pending，下次再试
+        if not _translation_acceptable(en_body, zh):
+            continue                       # 校验不过：宁缺毋残
+        mark_translated(root, bodies, key=key, zh_body_md=zh, translator="llm",
+                        today=today)
+        done += 1
+        if save is not None and done % flush_every == 0:
+            save(bodies)
+    return done

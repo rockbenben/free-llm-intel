@@ -4466,6 +4466,123 @@ class TestGeminiFallbackChain(unittest.TestCase):
         self.assertEqual(self.requests, [], "超预算不应发出任何请求")
 
 
+class TestCallLlmTextChannel(unittest.TestCase):
+    """正文翻译的纯文本通路：与 call_llm 共用后端，但不套 JSON 模式、换 system、放宽 max_tokens。"""
+
+    def _capture_post(self, text_out="正文译文"):
+        """打桩 requests.post，记录请求体并返回带纯文本的 Gemini 响应。"""
+        import json as _json
+        captured = {}
+
+        def fake_post(url, headers=None, json=None, timeout=None):
+            captured["url"] = url
+            captured["body"] = json
+            payload = {"candidates": [{"content": {"parts": [{"text": text_out}]},
+                                       "finishReason": "STOP"}]}
+            return types.SimpleNamespace(status_code=200, text=_json.dumps(payload),
+                                         json=lambda: payload, headers={})
+        patcher = mock.patch.object(ai_review.requests, "post", fake_post)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return captured
+
+    def test_text_mode_uses_plain_mime_custom_system_and_bigger_tokens(self):
+        captured = self._capture_post()
+        out = ai_review.call_llm_text("原文", system="你是译者", api_key="k",
+                                      backend="gemini")
+        self.assertEqual(out, "正文译文")
+        gen = captured["body"]["generationConfig"]
+        self.assertEqual(gen["responseMimeType"], "text/plain",
+                         "正文要原样 markdown，不能被强制成 JSON")
+        self.assertEqual(gen["maxOutputTokens"], ai_review.BODY_MAX_TOKENS)
+        self.assertEqual(captured["body"]["systemInstruction"]["parts"][0]["text"],
+                         "你是译者", "system 必须是调用方给的译者提示，而非情报核查员")
+
+    def test_json_channel_still_forces_json_and_reviewer_system(self):
+        """反向维持：call_llm（标题/档案）仍是 JSON + 核查 system，别被文本通路带偏。"""
+        captured = self._capture_post(text_out='{"ok": true}')
+        ai_review.call_llm("prompt", api_key="k", backend="gemini")
+        gen = captured["body"]["generationConfig"]
+        self.assertEqual(gen["responseMimeType"], "application/json")
+        self.assertEqual(gen["maxOutputTokens"], ai_review.MAX_TOKENS)
+        self.assertEqual(captured["body"]["systemInstruction"]["parts"][0]["text"],
+                         ai_review.SYSTEM_PROMPT)
+
+
+class TestAiBodiesCli(unittest.TestCase):
+    """crawler main(["--ai-bodies"]) 维护子命令：LLM 通道接线、缺 key 不崩、译量有界。"""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name)
+        self._orig_root = crawler_llm_intel._repo_root
+        crawler_llm_intel._repo_root = lambda: self.root
+        self._orig_key = os.environ.get("GEMINI_API_KEY")
+        self.slug = "ab12cd34ef56"
+        (self.root / "docs/feeds").mkdir(parents=True)
+        (self.root / "docs/articles/openai").mkdir(parents=True)
+        en_rel = f"docs/articles/openai/{self.slug}.en.md"
+        ft.write_body_doc(self.root / en_rel,
+                          {"status": "ok", "url": "https://a/p", "title": "Eng"},
+                          "This is an English article body with enough words.")
+        bodies = {f"openai\thttps://a/p": {"slug": self.slug, "en_path": en_rel,
+                  "en_status": "ok", "zh_path": "", "zh_status": "", "translator": "",
+                  "title": "中文标题", "date": "", "captured": ""}}
+        ft.save_bodies(self.root / "docs/feeds/bodies.json", bodies)
+
+    def tearDown(self):
+        crawler_llm_intel._repo_root = self._orig_root
+        if self._orig_key is None:
+            os.environ.pop("GEMINI_API_KEY", None)
+        else:
+            os.environ["GEMINI_API_KEY"] = self._orig_key
+        self.temp.cleanup()
+
+    def _run(self):
+        return crawler_llm_intel.main(["--ai-bodies"])
+
+    def test_translates_pending_and_marks_llm(self):
+        os.environ["GEMINI_API_KEY"] = "test-key"
+        with mock.patch.object(ai_review, "call_llm_text",
+                               return_value="这是一篇中文正文的完整翻译内容。"):
+            rc = self._run()
+        self.assertEqual(rc, 0)
+        saved = ft.load_bodies(self.root / "docs/feeds/bodies.json")
+        e = saved[f"openai\thttps://a/p"]
+        self.assertEqual(e["zh_status"], "translated")
+        self.assertEqual(e["translator"], "llm")
+        self.assertTrue((self.root / e["zh_path"]).exists())
+
+    def test_no_key_disables_without_crash(self):
+        os.environ.pop("GEMINI_API_KEY", None)
+        os.environ.pop("ANTHROPIC_API_KEY", None)
+        rc = self._run()   # 缺 key：打印禁用、返回 0，不抛异常、不动 ledger
+        self.assertEqual(rc, 0)
+        saved = ft.load_bodies(self.root / "docs/feeds/bodies.json")
+        self.assertEqual(saved[f"openai\thttps://a/p"]["zh_status"], "")
+
+    def test_limit_bounds_translation(self):
+        # 再塞 4 篇 pending，limit=1 只译一篇
+        bodies = ft.load_bodies(self.root / "docs/feeds/bodies.json")
+        for i in range(4):
+            slug = f"l{i:011d}"
+            rel = f"docs/articles/openai/{slug}.en.md"
+            ft.write_body_doc(self.root / rel, {"status": "ok", "url": f"https://a/{i}"},
+                              "English body words here plenty.")
+            bodies[f"openai\thttps://a/{i}"] = {"slug": slug, "en_path": rel,
+                "en_status": "ok", "zh_path": "", "zh_status": "", "translator": "",
+                "title": "T", "date": "", "captured": ""}
+        ft.save_bodies(self.root / "docs/feeds/bodies.json", bodies)
+        os.environ["GEMINI_API_KEY"] = "test-key"
+        with mock.patch.object(ai_review, "call_llm_text",
+                               return_value="这是一段足够长的中文翻译正文内容。"):
+            rc = crawler_llm_intel.main(["--ai-bodies", "--ai-bodies-limit", "1"])
+        self.assertEqual(rc, 0)
+        saved = ft.load_bodies(self.root / "docs/feeds/bodies.json")
+        translated = [k for k, e in saved.items() if e["zh_status"] == "translated"]
+        self.assertEqual(len(translated), 1, "--ai-bodies-limit 必须封顶单日译量")
+
+
 class TestEvidenceQualityGuards(unittest.TestCase):
     """证据提取的反污染：链接发现排除营销页，事实行过滤样板 / 示例提示词文本"""
 
@@ -6932,6 +7049,236 @@ class TestFulltextLedgerFetch(unittest.TestCase):
             rows = ft.iter_article_rows(p)
             self.assertEqual(rows, [{"vendor": "openai", "url": "https://a/p", "title": "T",
                                      "date": "2026-01-01", "original_title": "T"}])
+
+
+class TestTranslateBodiesLlm(unittest.TestCase):
+    """--ai-bodies 核心：pending 英文正文 → LLM 中文 → .md（translator=llm），不产半成品。"""
+
+    def _seed(self, d, slug, en_body, *, zh_status="", translator="", vendor="openai"):
+        (Path(d) / f"docs/articles/{vendor}").mkdir(parents=True, exist_ok=True)
+        en_rel = f"docs/articles/{vendor}/{slug}.en.md"
+        ft.write_body_doc(Path(d) / en_rel, {"status": "ok", "url": "https://a/p",
+                                             "title": "Eng Title"}, en_body)
+        key = f"{vendor}\thttps://a/p"
+        bodies = {key: {"slug": slug, "en_path": en_rel, "en_status": "ok",
+                        "zh_path": "", "zh_status": zh_status, "translator": translator,
+                        "title": "中文标题", "date": "", "captured": ""}}
+        return key, bodies
+
+    def test_happy_path_writes_llm_translation(self):
+        with tempfile.TemporaryDirectory() as d:
+            key, bodies = self._seed(d, "aaaa00001111", "English article body here.")
+            n = ft.translate_bodies_llm(Path(d), bodies,
+                                        lambda t, b: "这是一篇中文正文的翻译内容。",
+                                        today="2026-10-06")
+            self.assertEqual(n, 1)
+            e = bodies[key]
+            self.assertEqual(e["zh_status"], "translated")
+            self.assertEqual(e["translator"], "llm")
+            fm, zh = ft.read_body_doc(Path(d) / e["zh_path"])
+            self.assertEqual(fm["translator"], "llm")
+            self.assertEqual(fm["lang"], "zh")
+            self.assertEqual(zh, "这是一篇中文正文的翻译内容。")
+            self.assertEqual(ft.pending_translation_keys(bodies), [])
+
+    def test_idempotent_skips_already_translated(self):
+        with tempfile.TemporaryDirectory() as d:
+            _key, bodies = self._seed(d, "bbbb00002222", "English body.",
+                                      zh_status="translated", translator="agent")
+            calls = []
+            n = ft.translate_bodies_llm(Path(d), bodies,
+                                        lambda t, b: calls.append(1) or "中文",
+                                        today="2026-10-06")
+            self.assertEqual(n, 0)
+            self.assertEqual(calls, [], "已 translated 的绝不重译（幂等）")
+
+    def test_over_char_cap_left_pending(self):
+        with tempfile.TemporaryDirectory() as d:
+            key, bodies = self._seed(d, "cccc00003333", "x" * 500)
+            calls = []
+            n = ft.translate_bodies_llm(Path(d), bodies,
+                                        lambda t, b: calls.append(1) or "中文翻译内容",
+                                        today="2026-10-06", char_cap=200)
+            self.assertEqual(n, 0)
+            self.assertEqual(calls, [], "超长篇不送翻译，避免截断产半成品")
+            self.assertEqual(bodies[key]["zh_status"], "")
+            self.assertEqual(ft.pending_translation_keys(bodies), [key])
+
+    def test_refusal_output_not_written(self):
+        with tempfile.TemporaryDirectory() as d:
+            key, bodies = self._seed(d, "dddd00004444", "English body.")
+            # 模型吐回英文（没翻）→ 校验不过 → 留 pending、不写 .md
+            n = ft.translate_bodies_llm(Path(d), bodies,
+                                        lambda t, b: "English body.", today="2026-10-06")
+            self.assertEqual(n, 0)
+            self.assertEqual(bodies[key]["zh_status"], "")
+            self.assertFalse((Path(d) / f"docs/articles/openai/{'dddd00004444'}.md").exists())
+
+    def test_exception_leaves_pending(self):
+        with tempfile.TemporaryDirectory() as d:
+            key, bodies = self._seed(d, "eeee00005555", "English body.")
+
+            def boom(t, b):
+                raise RuntimeError("quota exhausted")
+            n = ft.translate_bodies_llm(Path(d), bodies, boom, today="2026-10-06")
+            self.assertEqual(n, 0)
+            self.assertEqual(ft.pending_translation_keys(bodies), [key],
+                             "调用异常留 pending，下次再试，不崩整批")
+
+    def test_strips_fence_and_label(self):
+        with tempfile.TemporaryDirectory() as d:
+            key, bodies = self._seed(d, "ffff00006666", "English body.")
+            ft.translate_bodies_llm(Path(d), bodies,
+                                    lambda t, b: "```markdown\n译文：这是一段中文正文。\n```",
+                                    today="2026-10-06")
+            _fm, zh = ft.read_body_doc(Path(d) / bodies[key]["zh_path"])
+            self.assertEqual(zh, "这是一段中文正文。")
+
+    def test_limit_caps_batch(self):
+        with tempfile.TemporaryDirectory() as d:
+            bodies = {}
+            for i in range(5):
+                slug = f"l{i:011d}"
+                (Path(d) / "docs/articles/openai").mkdir(parents=True, exist_ok=True)
+                rel = f"docs/articles/openai/{slug}.en.md"
+                ft.write_body_doc(Path(d) / rel, {"status": "ok", "url": f"https://a/{i}"}, "body")
+                bodies[f"openai\thttps://a/{i}"] = {"slug": slug, "en_path": rel,
+                    "en_status": "ok", "zh_status": "", "translator": "", "title": "T",
+                    "date": "", "captured": ""}
+            n = ft.translate_bodies_llm(Path(d), bodies,
+                                        lambda t, b: "这是一段中文正文内容。",
+                                        today="2026-10-06", limit=2)
+            self.assertEqual(n, 2, "limit 封顶本次译量，控 CI 成本")
+
+    def test_incremental_flush(self):
+        with tempfile.TemporaryDirectory() as d:
+            bodies = {}
+            (Path(d) / "docs/articles/openai").mkdir(parents=True)
+            for i in range(3):
+                slug = f"f{i:011d}"
+                rel = f"docs/articles/openai/{slug}.en.md"
+                ft.write_body_doc(Path(d) / rel, {"status": "ok", "url": f"https://a/{i}"}, "body")
+                bodies[f"openai\thttps://a/{i}"] = {"slug": slug, "en_path": rel,
+                    "en_status": "ok", "zh_status": "", "translator": "", "title": "T",
+                    "date": "", "captured": ""}
+            saves = []
+            ft.translate_bodies_llm(Path(d), bodies, lambda t, b: "中文翻译的正文内容。",
+                                    today="2026-10-06", save=lambda b: saves.append(len(b)),
+                                    flush_every=1)
+            self.assertEqual(len(saves), 3, "每译一篇即落一次 ledger，中断也保住已完成项")
+
+
+class TestFulltextCiInvariants(unittest.TestCase):
+    """corpus spec §6 四条 CI 活守卫：增量有界 / requests-only / 非覆盖 / 防编造。
+
+    每条都在临时根里跑真实函数（注入 fetch，无网络），并配一次「故意破坏证明会咬」
+    （见提交说明）——这是每日 CI 抓正文/译正文不失控、不吞语料、不编正文的底线。
+    """
+
+    def _long_body(self):
+        return "<article><h1>T</h1><p>" + "Substantial English body prose. " * 40 + "</p></article>"
+
+    # -- 守卫 1：增量有界 --------------------------------------------------
+    def test_only_missing_makes_no_fetch_for_done_entries(self):
+        """已 ok 的条目在 only_missing 下必须一次网络都不发（否则 CI 时长/成本失控）。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            slug = "bound0000001"
+            (root / "docs/articles/openai").mkdir(parents=True)
+            en_rel = f"docs/articles/openai/{slug}.en.md"
+            ft.write_body_doc(root / en_rel, {"status": "ok", "url": "https://a/1"}, "已有英文正文")
+            bodies = {ft.bodies_key("openai", "https://a/1"): {
+                "slug": slug, "en_path": en_rel, "en_status": "ok", "zh_status": "translated"}}
+            rows = [{"vendor": "openai", "url": "https://a/1", "title": "T", "date": "", "original_title": "T"}]
+            calls = []
+            def fetch(url):
+                calls.append(url)
+                return (self._long_body(), True, 200, url)
+            n = ft.fetch_bodies(root, rows, bodies, fetch=fetch, today="2026-10-06",
+                                only_missing=True)
+            self.assertEqual(n, 0)
+            self.assertEqual(calls, [], "增量有界：已 ok 且未变条目不得重抓")
+
+    # -- 守卫 2：requests-only，SPA 不崩不编 ------------------------------
+    def test_spa_page_without_browser_yields_empty_failed(self):
+        """无浏览器环境抓到反爬/SPA 空壳 → fetch_failed、正文留空、绝不抛异常。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            rows = [{"vendor": "x", "url": "https://spa/app", "title": "T", "date": "", "original_title": "T"}]
+            bodies = {}
+            blocked = ("<html><title>Just a moment</title><body>Checking your browser"
+                       " before you access</body></html>")
+            n = ft.fetch_bodies(root, rows, bodies,
+                                fetch=lambda u: (blocked, False, 403, u), today="2026-10-06")
+            e = bodies[ft.bodies_key("x", "https://spa/app")]
+            self.assertEqual(e["en_status"], "fetch_failed")
+            _fm, body = ft.read_body_doc(root / e["en_path"])
+            self.assertEqual(body.strip(), "", "抓不到就留空，绝不把空壳/JS 壳当正文")
+            self.assertEqual(ft.validate_bodies(root, bodies), [])
+
+    # -- 守卫 3：非覆盖，清理不碰语料 --------------------------------------
+    def test_archive_cleanup_does_not_touch_corpus(self):
+        """write_news_archives 的 clean_removed 只清 llm-news/*.md，不得碰 docs/articles/**。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            news_dir = root / "llm-news"
+            news_dir.mkdir()
+            (news_dir / "gone_vendor.md").write_text("# 旧归档\n", encoding="utf-8")
+            # 语料层：与 llm-news 完全不同的目录，清理逻辑不该越界删它
+            art = root / "docs/articles/openai"
+            art.mkdir(parents=True)
+            (art / "keep.md").write_text("正文语料", encoding="utf-8")
+            (art / "keep.en.md").write_text("corpus", encoding="utf-8")
+            ledger = root / "docs/feeds"
+            ledger.mkdir(parents=True)
+            ft.save_bodies(ledger / "bodies.json", {"openai\thttps://a/1": {"slug": "keep"}})
+            crawler_llm_intel.write_news_archives(news_dir, [], clean_removed=True)
+            self.assertFalse((news_dir / "gone_vendor.md").exists(), "下线厂商归档应被清掉")
+            self.assertTrue((art / "keep.md").exists(), "非覆盖：清理不得删 docs/articles/**")
+            self.assertTrue((art / "keep.en.md").exists())
+            self.assertEqual(list(ft.load_bodies(ledger / "bodies.json").keys()),
+                             ["openai\thttps://a/1"], "非覆盖：清理不得清空 bodies.json")
+
+    # -- 守卫 4：防编造，失败项正文必空 ------------------------------------
+    def test_failed_rows_never_carry_body(self):
+        """抓到内容但 fetch 判为失败（ok=False）时，正文文件必须留空——不得把
+        半页 / 未确认来源的抽取结果当正文冻进语料（这才是「不编」真正要挡的）。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            rows = [
+                {"vendor": "v", "url": "https://v/ok", "title": "T", "date": "", "original_title": "T"},
+                {"vendor": "v", "url": "https://v/softfail", "title": "T", "date": "", "original_title": "T"},
+            ]
+            bodies = {}
+            def fetch(u):
+                # 两页都能抽出正文，但 softfail 那页 HTTP 层判失败（5xx / 软封锁）
+                if u.endswith("/ok"):
+                    return (self._long_body(), True, 200, u)
+                return (self._long_body(), False, 500, u)
+            ft.fetch_bodies(root, rows, bodies, fetch=fetch, today="2026-10-06")
+            bad = [k for k, e in bodies.items()
+                   if e.get("en_status") in ("fetch_failed", "paywall", "index_page")]
+            self.assertTrue(bad, "夹具应含失败项")
+            for k in bad:
+                _fm, body = ft.read_body_doc(root / bodies[k]["en_path"])
+                self.assertEqual(body.strip(), "", f"防编造：{k} 状态 {bodies[k]['en_status']} 却带正文")
+
+
+    # -- 守卫 5（CI 实产物兜底）：已提交语料整体过 schema ------------------
+    def test_committed_corpus_passes_schema(self):
+        """真实 docs/feeds/bodies.json + docs/articles/** 必须过 validate_bodies。
+
+        这是 §6 四条在 CI 里的落点：fetch-bodies / ai-bodies 步骤排在 Verify 之前，
+        它们写坏任何一个 .md 或 ledger（缺文件、失败项带正文、translated 无译文）
+        都会在这里被拦下、挡住当天提交——把「fixture 级守卫」升级成「对真实产物生效」。
+        """
+        repo = Path(crawler_llm_intel.__file__).resolve().parent
+        ledger = repo / "docs/feeds/bodies.json"
+        if not ledger.exists():          # 精简检出 / fork 无语料时不硬失败
+            self.skipTest("仓库无 bodies.json，跳过实产物校验")
+        bodies = ft.load_bodies(ledger)
+        errs = ft.validate_bodies(repo, bodies)
+        self.assertEqual(errs, [], f"已提交语料违反 §3.4/§6 schema：{errs[:5]}")
 
 
 if __name__ == "__main__":

@@ -63,6 +63,9 @@ MAX_REVIEW_WALL_SECONDS = 900
 ANTHROPIC_API_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_DEFAULT_MODEL = "claude-sonnet-5"
 MAX_TOKENS = 4096
+# 正文翻译（--ai-bodies）走纯文本通路，输出是整篇中文 markdown，比 JSON 结构化
+# 结果长得多，单独放宽输出上限；仍受免费层单次响应体量约束。
+BODY_MAX_TOKENS = 8192
 PAGE_CHAR_BUDGET = 18_000      # 单个来源页送给模型的最大字符数
 TOTAL_CHAR_BUDGET = 60_000     # 单厂商总预算
 
@@ -281,7 +284,11 @@ def build_user_prompt(
 
 def call_llm(prompt: str, api_key: str = "", model: str = "",
              timeout: float = 180.0, backend: str | None = None) -> str:
-    """按后端分发。prompt 为用户消息（系统提示由各 API 的 system 字段承载）。"""
+    """按后端分发。prompt 为用户消息（系统提示由各 API 的 system 字段承载）。
+
+    强制 JSON 输出 + 情报核查 system 提示，供 --ai-review / --ai-titles 用。
+    要拿纯文本（如整篇正文翻译）走 call_llm_text。
+    """
     backend = resolve_backend(backend)
     if not model:
         model = default_model(backend)
@@ -290,6 +297,27 @@ def call_llm(prompt: str, api_key: str = "", model: str = "",
     if backend == BACKEND_GEMINI:
         return call_llm_gemini(prompt, api_key=api_key, model=model, timeout=timeout)
     return call_llm_anthropic(prompt, api_key=api_key, model=model, timeout=timeout)
+
+
+def call_llm_text(prompt: str, *, system: str, api_key: str = "", model: str = "",
+                  max_tokens: int = BODY_MAX_TOKENS, timeout: float = 180.0,
+                  backend: str | None = None) -> str:
+    """纯文本通路：自定义 system、text/plain 输出、更大 max_tokens。
+
+    与 call_llm 共用同一后端解析 / key / 模型回退链，只是不套 JSON 模式、
+    不带情报核查 system —— 正文翻译要的是原样 markdown，不是结构化 JSON。
+    """
+    backend = resolve_backend(backend)
+    if not model:
+        model = default_model(backend)
+    if not api_key:
+        api_key = backend_api_key(backend)
+    if backend == BACKEND_GEMINI:
+        return call_llm_gemini(prompt, api_key=api_key, model=model, timeout=timeout,
+                               system=system, max_tokens=max_tokens,
+                               response_mime_type="text/plain")
+    return call_llm_anthropic(prompt, api_key=api_key, model=model, timeout=timeout,
+                              system=system, max_tokens=max_tokens)
 
 
 def _parse_gemini_response(resp) -> str:
@@ -311,7 +339,9 @@ def _parse_gemini_response(resp) -> str:
 
 
 def call_llm_gemini(prompt: str, api_key: str, model: str = GEMINI_DEFAULT_MODEL,
-                    timeout: float = 180.0) -> str:
+                    timeout: float = 180.0, *, system: str = SYSTEM_PROMPT,
+                    max_tokens: int = MAX_TOKENS,
+                    response_mime_type: str = "application/json") -> str:
     """Gemini API（AI Studio 免费层 Key）：generateContent，强制 JSON 输出。
 
     免费层回退策略：
@@ -327,12 +357,12 @@ def call_llm_gemini(prompt: str, api_key: str, model: str = GEMINI_DEFAULT_MODEL
     if not api_key:
         raise AiReviewError("gemini 后端需要 GEMINI_API_KEY（https://aistudio.google.com/apikey）")
     body = {
-        "systemInstruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+        "systemInstruction": {"parts": [{"text": system}]},
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0,
-            "maxOutputTokens": MAX_TOKENS,
-            "responseMimeType": "application/json",
+            "maxOutputTokens": max_tokens,
+            "responseMimeType": response_mime_type,
         },
     }
     candidates = gemini_candidate_models(model)
@@ -426,7 +456,8 @@ def call_llm_gemini(prompt: str, api_key: str, model: str = GEMINI_DEFAULT_MODEL
 
 
 def call_llm_anthropic(prompt: str, api_key: str, model: str = ANTHROPIC_DEFAULT_MODEL,
-                       timeout: float = 180.0) -> str:
+                       timeout: float = 180.0, *, system: str = SYSTEM_PROMPT,
+                       max_tokens: int = MAX_TOKENS) -> str:
     """Anthropic Messages API（可选后端）。"""
     if not api_key:
         raise AiReviewError("anthropic 后端需要 ANTHROPIC_API_KEY")
@@ -440,8 +471,8 @@ def call_llm_anthropic(prompt: str, api_key: str, model: str = ANTHROPIC_DEFAULT
             },
             json={
                 "model": model,
-                "max_tokens": MAX_TOKENS,
-                "system": SYSTEM_PROMPT,
+                "max_tokens": max_tokens,
+                "system": system,
                 "messages": [{"role": "user", "content": prompt}],
             },
             timeout=timeout,

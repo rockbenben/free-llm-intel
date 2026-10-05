@@ -134,11 +134,11 @@ body_sha: <正文（去 frontmatter）的 sha256[:12]，用于脏检测/幂等>
 
 ## 9. 分阶段与里程碑
 
-> **当前进度**：M0（脚手架）+ M1（本地端到端切片，含 §12 浏览页 reader 已上线）+ 全量回充（原 M3）已随代码、测试与快照落地；M2（CI 增量接管 + 守卫）待接入 workflow。
+> **当前进度**：M0（脚手架）+ M1（本地端到端切片，含 §12 浏览页 reader 已上线）+ M2（CI 增量接管 + 守卫，已接入 workflow）+ 全量回充（原 M3）均已随代码、测试与快照落地。
 
 - **M0（脚手架）**：`normalize_url`+`urlhash`、C1 抽取器（golden 测）、`bodies.json` schema+构建+§3.4 守卫、`--fetch-bodies` 幂等/只补缺失骨架。
 - **M1（端到端打通，小切片，本地）**：1 个厂商（建议 `anthropic`）跑 `--fetch-bodies --allow-browser` + 我人译前 N 篇 + 页面 reader 上线 → 证「抓→存双语→译→页面就地读」整链。
-- **M2（CI 增量接管 + 守卫，待接入）**：workflow 加 `--fetch-bodies` + `--ai-bodies` 两步；`--ai-bodies` 复用 `--ai-titles` 同源的 LLM 通道；§6 四条守卫齐 + 变异验证；跑一次 CI 实测只增不改、SPA 项 `fetch_failed` 不崩。
+- **M2（CI 增量接管 + 守卫，已接入）**：workflow 在 crawler 之后加 `--fetch-bodies`（纯 requests、`continue-on-error`，语料层崩溃不挡当天核心提交）+ `--ai-bodies`（复用 `--ai-titles` 同源 Gemini 通道，走 `call_llm_text` 纯文本、`--ai-bodies-limit` 封顶单日译量、超长/失败留 pending）两步；Commit 步骤 `git add` 补 `docs/articles`。§6 四条活守卫 + 实产物 schema 兜底守卫齐（`TestFulltextCiInvariants`，每条已变异验证会咬）。**已知边界**：今天新文章的正文当天进 reader（`.md` 已落盘），但 RSS `content:encoded` 由 crawler 早于本步生成，需次日巡检重排 feed 才带上全文。
 - **M3（回充全量，本地运维）**：按 `articles.json` 计数降序分批 `--fetch-bodies` + agent 人译，每批提交；`openai`/`huggingface` 体量大、跨会话续跑（ledger 记进度）。
 
 ## 10. 风险与对策
