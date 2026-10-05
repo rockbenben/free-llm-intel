@@ -1,0 +1,176 @@
+---
+vendor: huggingface
+title: Sentence Transformers is joining Hugging Face!
+original_title: Sentence Transformers is joining Hugging Face!
+url: https://huggingface.co/blog/sentence-transformers-joins-hf
+date: 2025-10-22
+lang: en
+captured: 2026-10-05
+extractor: readability-v1
+status: ok
+body_sha: 6c18840efa30
+---
+
+Back to Articles
+
+# Sentence Transformers is joining Hugging Face!
+
+Published
+					October 22, 2025
+
+Update on GitHub
+
+Upvote
+
+90
+
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6397f4c8fec7b4ee64c47b0b/nQHZhb4nqkvnH-noBQ4AZ.jpeg)](https://huggingface.co/yasserrmd)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/U9J8jW-hR-XMOdas-MPpT.jpeg)](https://huggingface.co/pkedzia)
+- [![](https://huggingface.co/avatars/0102bcf0db4e822b8bf61ae92305680f.svg)](https://huggingface.co/bitmman-nch)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
+- [![](https://huggingface.co/avatars/909635453bf62a2a7118a01dd51b811c.svg)](https://huggingface.co/evalstate)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64371b564aacf7bf786fb530/HZl_fPo7YclFEuuLSme3K.png)](https://huggingface.co/Nymbo)
+
+Tom Aarsen
+
+tomaarsen
+
+Today, we are announcing that Sentence Transformers is transitioning from Iryna Gurevych’s [Ubiquitous Knowledge Processing (UKP) Lab](https://www.informatik.tu-darmstadt.de/ukp/ukp_home/index.en.jsp) at the TU Darmstadt to Hugging Face. Hugging Face's [Tom Aarsen](https://huggingface.co/tomaarsen) has already been maintaining the library since late 2023 and will continue to lead the project. At its new home, Sentence Transformers will benefit from Hugging Face's robust infrastructure, including continuous integration and testing, ensuring that it stays up-to-date with the latest advancements in Information Retrieval and Natural Language Processing.
+
+[Sentence Transformers](https://sbert.net/) (a.k.a. SentenceBERT or SBERT) is a popular open-source library for generating high-quality embeddings that capture semantic meaning. Since its inception by Nils Reimers in 2019, Sentence Transformers has been widely adopted by researchers and practitioners for various natural language processing (NLP) tasks, including semantic search, semantic textual similarity, clustering, and paraphrase mining. After years of development and training by and for the community, [over 16,000 Sentence Transformers models are publicly available on the Hugging Face Hub](https://huggingface.co/models?library=sentence-transformers), serving more than a million monthly unique users.
+
+*"Sentence Transformers has been a huge success story and a culmination of our long-standing research on computing semantic similarities for the whole lab. Nils Reimers has made a very timely discovery and has produced not only outstanding research outcomes, but also a highly usable tool. This continues to impact generations of students and practitioners in natural language processing and AI. I would also like to thank all the users and especially the contributors, without whom this project would not be what it is today. And finally, I would like to thank Tom and Hugging Face for taking the project into the future."*
+
+- **Prof. Dr. Iryna Gurevych**, Director of the Ubiquitous Knowledge Processing Lab, TU Darmstadt
+
+*"We're thrilled to officially welcome Sentence Transformers into the Hugging Face family! Over the past two years, it’s been amazing to see this project grow to massive global adoption, thanks to the incredible foundation from the UKP Lab and the amazing community around it. This is just the beginning: we’ll keep doubling down on supporting its growth and innovation, while staying true to the open, collaborative spirit that made it thrive in the first place."*
+
+- **Clem Delangue**, co-founder & CEO, Hugging Face
+
+Sentence Transformers will remain a **community-driven**, **open-source** project, with the same **open-source license (Apache 2.0)** as before. Contributions from researchers, developers, and enthusiasts are welcome and encouraged. The project will continue to prioritize transparency, collaboration, and broad accessibility.
+
+## Project History
+
+The [Sentence Transformers library](https://github.com/UKPLab/sentence-transformers) was introduced in 2019 by Dr. Nils Reimers at the Ubiquitous Knowledge Processing (UKP) Lab at Technische Universität Darmstadt, under the supervision of Prof. Dr. Iryna Gurevych. Motivated by the limitations of standard BERT embeddings for sentence-level semantic tasks, [Sentence-BERT](https://arxiv.org/abs/1908.10084) used a Siamese network architecture to produce semantically meaningful sentence embeddings that could be efficiently compared using cosine similarity. Thanks to its modular, open-source design and strong empirical performance on tasks such as semantic textual similarity, clustering, and information retrieval, the library quickly became a staple in the NLP research toolkit, spawning a range of follow-up work and real-world applications that rely on high-quality sentence representations.
+
+In 2020, multilingual support was added to the library, extending sentence embeddings to more than **400 languages**. In 2021, with contributions from Nandan Thakur and Dr. Johannes Daxenberger, the library expanded to support pair-wise sentence scoring using Cross Encoder and Sentence Transformer models. Sentence Transformers was also integrated with the Hugging Face Hub (v2.0). For over four years, the UKP Lab team maintained the library as a community-driven open-source project and provided continued research-driven innovation. During this period, the project's development was supported by grants to Prof. Gurevych by the German Research Foundation (DFG), German Federal Ministry of Education and Research (BMBF), and Hessen State Ministry for Higher Education, Research and the Arts (HMWK).
+
+In late 2023, Tom Aarsen from Hugging Face took over maintainership of the library, introducing modernized training for Sentence Transformer models ([v3.0](https://huggingface.co/blog/train-sentence-transformers)), as well as improvements of Cross Encoder ([v4.0](https://huggingface.co/blog/train-reranker)) and Sparse Encoder ([v5.0](https://huggingface.co/blog/train-sparse-encoder)) models.
+
+## Acknowledgements
+
+The Ubiquitous Knowledge Processing (UKP) Lab at Technische Universität Darmstadt, led by Prof. Dr. Iryna Gurevych, is internationally recognized for its research in natural language processing (NLP) and machine learning. The lab has a long track record of pioneering work in representation learning, large language models, and information retrieval, with numerous publications at leading conferences and journals. Beyond Sentence Transformers, the UKP Lab has developed a number of widely used datasets, benchmarks, and open-source tools that support both academic research and real-world applications.
+
+Hugging Face would like to thank the UKP Lab and all past and present contributors, especially Dr. Nils Reimers and Prof. Dr. Iryna Gurevych, for their dedication to the project and for entrusting us with its maintenance and now stewardship. We also extend our gratitude to the community of researchers, developers, and practitioners who have contributed to the library's success through model contributions, bug reports, feature requests, documentation improvements, and real-world applications. We are excited to continue building on the strong foundation laid by the UKP Lab and to work with the community to further advance the capabilities of Sentence Transformers.
+
+## Getting Started
+
+For those new to Sentence Transformers or looking to explore its capabilities:
+
+- **Documentation**: [https://sbert.net](https://sbert.net)
+- **GitHub Repository**: [https://github.com/huggingface/sentence-transformers](https://github.com/huggingface/sentence-transformers)
+- **Models on Hugging Face Hub**: [https://huggingface.co/models?library=sentence-transformers](https://huggingface.co/models?library=sentence-transformers)
+- **Quick Start Tutorial**: [https://sbert.net/docs/quickstart.html](https://sbert.net/docs/quickstart.html)
+
+## Recent Sentence Transformers blogposts
+
+The most significant updates since Sentence Transformers started being maintained by Hugging Face, in chronological order:
+
+- [Training and Finetuning Embedding Models with Sentence Transformers](https://huggingface.co/blog/train-sentence-transformers): the modern training API for dense embedding models.
+- [Training and Finetuning Reranker Models with Sentence Transformers](https://huggingface.co/blog/train-reranker): equivalent training API for Cross Encoder (reranker) models.
+- [Training and Finetuning Sparse Embedding Models with Sentence Transformers](https://huggingface.co/blog/train-sparse-encoder): equivalent training API for sparse encoder (SPLADE) models.
+- [Multimodal Embedding & Reranker Models with Sentence Transformers](https://huggingface.co/blog/multimodal-sentence-transformers): adds support for text, image, audio, and video models through the same API.
+- [Training and Finetuning Multimodal Embedding & Reranker Models with Sentence Transformers](https://huggingface.co/blog/train-multimodal-sentence-transformers): training companion to the multimodal inference post.
+
+Related technique-focused posts:
+
+- [🪆 Introduction to Matryoshka Embedding Models](https://huggingface.co/blog/matryoshka): truncatable embeddings.
+- [Train 400x faster Static Embedding Models with Sentence Transformers](https://huggingface.co/blog/static-embeddings): attention-free CPU-friendly models.
+- [Binary and Scalar Embedding Quantization for Significantly Faster & Cheaper Retrieval](https://huggingface.co/blog/embedding-quantization): post-training compression of embedding vectors.
+
+More Articles from our Blog
+
+nlp
+
+guide
+
+community
+
+## Training and Finetuning Multi-Vector Embedding Models with Sentence Transformers
+
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)
+
+144
+
+August 26, 2026
+
+nlp
+
+guide
+
+community
+
+## Multi-Vector (Late Interaction) Embedding Models with Sentence Transformers
+
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/1620819560688-609bbe2f4932693ca2009d6a.jpeg)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/1641910720684-61dd91afdb45389905634d35.jpeg)
+
+118
+
+August 18, 2026
+
+### Community
+
+davidberenstein1957
+
+Oct 22, 2025
+
+Congrats [@tomaarsen](https://huggingface.co/tomaarsen)  !
+
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
+
+·
+
+tomaarsen
+
+Article author
+
+Oct 22, 2025
+
+Thanks David! I appreciate it 🤗
+
+deleted
+
+Nov 4, 2025
+
+•
+
+This comment has been hidden
+
+Upload images, audio, and videos by dragging in the text input, pasting, or
+
+clicking here
+
+.
+
+Tap or paste here to upload images
+
+· [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsentence-transformers-joins-hf) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsentence-transformers-joins-hf) to comment
+
+Upvote
+
+90
+
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6397f4c8fec7b4ee64c47b0b/nQHZhb4nqkvnH-noBQ4AZ.jpeg)](https://huggingface.co/yasserrmd)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/U9J8jW-hR-XMOdas-MPpT.jpeg)](https://huggingface.co/pkedzia)
+- [![](https://huggingface.co/avatars/0102bcf0db4e822b8bf61ae92305680f.svg)](https://huggingface.co/bitmman-nch)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
+- [![](https://huggingface.co/avatars/909635453bf62a2a7118a01dd51b811c.svg)](https://huggingface.co/evalstate)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64371b564aacf7bf786fb530/HZl_fPo7YclFEuuLSme3K.png)](https://huggingface.co/Nymbo)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/677163e2e1fda44f3e180d25/3BfQO6Kkx6S4UDmZ9mPyD.png)](https://huggingface.co/MoSBAIHI)
+- [![](https://huggingface.co/avatars/08fcfc18646e9ec10ddc8d39b5d70e2d.svg)](https://huggingface.co/Michael-17272)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/62f64acd8465979f6279803e/8nOYruu-Q1Q-UCh5mj1Eq.png)](https://huggingface.co/MarcGrumpyOlejak)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63107b18e87051f3e3e0f598/R9onir4Y0MZuq1jEWCZ2-.jpeg)](https://huggingface.co/ucyang)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1596282490682-noauth.jpeg)](https://huggingface.co/umangkeshri)
+- [![](https://huggingface.co/avatars/8f2b1cffd58abcfe673de07ad7ecb9e4.svg)](https://huggingface.co/keaganchs)

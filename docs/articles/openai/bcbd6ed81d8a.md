@@ -1,0 +1,70 @@
+---
+vendor: openai
+title: 欺骗性就业计划：IT 工作者活动
+original_title: 
+url: https://openai.com/index/disrupting-malicious-uses-of-ai-it-workers
+date: 2025-06-01
+lang: zh
+captured: 2026-10-05
+extractor: readability-v1
+translator: native
+status: translated
+body_sha: 0d76968de99b
+---
+
+OpenAI
+
+2025年6月1日
+
+安全
+
+# 欺骗性就业计划：IT 工作者活动
+
+OpenAI 封禁了与疑似欺骗性就业活动有关的账号，这些活动利用 AI 制作用于潜在欺诈性远程职位申请的材料。
+
+正在加载…
+
+*本案例研究最初发布于 OpenAI 的*[*2025 年 6 月*⁠（在新窗口中打开）](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)*报告。*
+
+## 行为主体
+
+我们发现并封禁了与多起疑似欺骗性就业活动有关的 ChatGPT 账号。这些威胁行为主体使用 OpenAI 的模型制作相关材料，为可能存在欺诈的全球 IT、软件工程及其他远程职位申请提供支持。
+
+虽然我们无法确定这些威胁行为主体所在的地点或国籍，但其行为与公开归因于[朝鲜（DPRK）相关 IT 工作者计划⁠（在新窗口中打开）](https://www.justice.gov/archives/opa/pr/fourteen-north-korean-nationals-indicted-carrying-out-multi-year-fraudulent-information)的活动相符。与近期这些活动有关的部分行为主体可能受雇于疑似与 DPRK 有关的核心威胁行为主体，以承包商身份执行申请任务并操作硬件，其中一些活动发生在美国境内。
+
+## 行为
+
+与我们在[2 月⁠（在新窗口中打开）](https://cdn.openai.com/threat-intelligence-reports/disrupting-malicious-uses-of-our-models-february-2025-update.pdf)披露并阻止的威胁行为主体类似，近期这些活动试图在招聘流程的每个环节使用 AI。此前，我们观察到这些行为主体使用 AI 手动生成看似可信的人物身份，其中许多身份位于美国，并虚构了在知名公司的任职经历。这一次，他们尝试以一定程度的自动化方式生成简历；此外，一些迹象表明，非洲的操作代理冒充求职者，同时他们还在北美招募人员代为运行笔记本电脑。
+
+我们发现了两类截然不同的活动，可能分别代表两种操作代理：核心操作代理和承包商。
+
+核心操作代理试图根据具体的职位描述、技能模板和人物身份资料自动创建简历，并寻求有关构建求职申请管理和跟踪工具的信息。他们还使用我们的模型生成类似招聘启事的内容，意在招募世界各地的承包商。
+
+核心操作代理将 ChatGPT 用作研究工具，协助规划远程办公配置。他们还利用我们的模型生成相关文本，以招募美国境内的真人代收公司配发的笔记本电脑，随后由核心威胁行为主体或其承包商远程访问这些设备。
+
+这些威胁行为主体研究了如何在行动中使用 Tailscale 点对点 VPN、OBS Studio、vdo.ninja 实时画面注入和 HDMI 采集回环等工具。这些工具可能被用于规避企业安全措施；一旦成功，相关人员便可在不被察觉的情况下长期保持远程接入，还可尝试绕过部分依赖实时视频会议的身份验证流程。
+
+与此同时，疑似承包商操作代理使用 ChatGPT 协助完成职位申请任务。他们还使用 ChatGPT 生成类似发给核心操作代理的消息，询问付款事宜以及申请远程职位时使用的人物身份。
+
+## 模型输出
+
+我们认定，这些威胁行为主体试图使用我们的模型实施欺骗性行动。具体而言，他们使用详细的提示、指令和自动化循环，大规模生成量身定制且看似可信的简历。
+
+- 根据不同技术职位的描述、人物身份和行业规范，自动生成内容详尽的匹配简历：LLM 支持的社会工程。
+- 根据上传的简历回答求职申请问题、完成编程任务并回答实时面试问题：LLM 支持的社会工程。
+- 寻求远程配置公司配发笔记本电脑的指导，使设备看似位于本国境内，包括地理位置掩盖和端点安全规避方法：LLM 增强的异常检测规避。
+- 协助编写自动移动鼠标或远程保持计算机唤醒的工具，可能用于搭建远程办公基础设施：LLM 辅助开发。
+
+## 影响
+
+我们无法独立评估这些行动是否成功，因为评估其影响需要多个利益相关方提供信息。
+
+虽然这些威胁行为主体很可能将 AI 融入流程的每个环节以提高效率，但这也增加了其暴露的可能性。他们的操作让我们得以了解其完整工作流程，从而能够针对活动的各个阶段，与相关业界同行和主管部门分享这些行动的有关情况。这提升了我们共同检测、预防和应对此类威胁的能力，也促进了各方共同安全。
+
+- [全球](https://openai.com/news/?tags=target-geography-global-internet-users)
+- [美国](https://openai.com/news/?tags=target-geography-united-states)
+- [欺诈与诈骗](https://openai.com/news/?tags=activity-type-fraud-scams)
+
+## 作者
+
+OpenAI
