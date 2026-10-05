@@ -24,6 +24,7 @@ import yaml
 import ai_review
 import crawler_llm_intel
 import provider_profiles
+import fulltext as ft
 
 
 def build_records():
@@ -6114,6 +6115,346 @@ class TestBackfillOriginalEncoding(unittest.TestCase):
         self.assertEqual(resp.encoding, "utf-8")
         self.assertIn("正式版上线", out, "兜底后应拿到正常中文，而不是拉丁扩展乱码")
         self.assertNotIn("æ", out)
+
+
+class TestFulltextUrlIdentity(unittest.TestCase):
+    """全文语料层：URL 规范化 + 稳定 slug（`fulltext` 模块）。"""
+
+    def test_normalize_strips_fragment_and_tracking_lowercases_host(self):
+        self.assertEqual(
+            ft.normalize_url("https://OpenAI.com/Blog/Post/?utm_source=x&ref=1#sec"),
+            "https://openai.com/Blog/Post?ref=1",
+        )
+
+    def test_normalize_removes_trailing_slash_but_keeps_root(self):
+        self.assertEqual(ft.normalize_url("https://a.com/x/"), "https://a.com/x")
+        self.assertEqual(ft.normalize_url("https://a.com/"), "https://a.com/")
+        self.assertEqual(ft.normalize_url("https://a.com"), "https://a.com/")
+
+    def test_url_hash_deterministic_and_fragment_invariant(self):
+        h = ft.url_hash("https://a.com/post")
+        self.assertEqual(h, ft.url_hash("https://a.com/post#frag"))
+        self.assertEqual(len(h), 12)
+        self.assertTrue(all(c in "0123456789abcdef" for c in h))
+
+    def test_bodies_key_uses_normalized_url(self):
+        self.assertEqual(
+            ft.bodies_key("openai", "https://a.com/p?utm_source=n#x"),
+            ft.bodies_key("openai", "https://a.com/p"))
+        self.assertEqual(ft.bodies_key("openai", "https://a.com/p"),
+                         "openai\thttps://a.com/p")
+
+
+class TestFulltextBodyDoc(unittest.TestCase):
+    """frontmatter 扁平读写 + 原子落盘。"""
+
+    def test_body_doc_roundtrip(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "x.md"
+            fm = {"vendor": "openai", "title": "GPT: 发布: 新版", "url": "https://a.com/p"}
+            ft.write_body_doc(p, fm, "正文\n第二行")
+            got_fm, got_body = ft.read_body_doc(p)
+            self.assertEqual(got_fm, fm)
+            self.assertEqual(got_body, "正文\n第二行")
+
+    def test_body_doc_atomic_write_leaves_no_tmp(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "y.md"
+            ft.write_body_doc(p, {"a": "1"}, "body")
+            self.assertEqual(list(Path(d).glob("*.tmp")), [])
+
+    def test_read_body_doc_without_frontmatter_raises(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "z.md"
+            p.write_text("no frontmatter here", encoding="utf-8")
+            self.assertRaises(ValueError, ft.read_body_doc, p)
+
+
+class TestFulltextExtractor(unittest.TestCase):
+    """正文抽取（密度选主块 + markdown 化 + 硬失败判定），golden fixtures 冻结输入。"""
+
+    FIX = Path("tests/fixtures/articles")
+
+    def _read(self, name):
+        return (self.FIX / name).read_text(encoding="utf-8")
+
+    def test_longform_golden(self):
+        r = ft.extract_article_markdown(self._read("longform.html"), "https://vendor.example/p")
+        self.assertEqual(r["reason"], "")
+        self.assertEqual(r["title"], "发布 GPT-6")
+        expected = (self.FIX / "longform.expected.md").read_text(encoding="utf-8").strip()
+        self.assertEqual(r["markdown"].strip(), expected)
+
+    def test_keeps_headings_links_and_drops_nav_footer(self):
+        r = ft.extract_article_markdown(self._read("blog.html"), "https://vendor.example/b")
+        md = r["markdown"]
+        self.assertEqual(r["reason"], "")
+        self.assertIn("## 本周更新", md)
+        self.assertIn("[技术报告](https://vendor.example/target)", md)   # 相对链接绝对化
+        self.assertNotIn("版权", md)
+        self.assertNotIn("Docs", md)
+
+    def test_list_items_grouped_and_code_and_image(self):
+        r = ft.extract_article_markdown(self._read("longform.html"), "https://vendor.example/p")
+        md = r["markdown"]
+        self.assertIn("- 通过 API 立即开放\n- 面向企业版提供更高吞吐", md)   # 同组单块
+        self.assertIn("```\nresp =", md)
+        self.assertIn("![示意图](https://vendor.example/img/a.png)", md)
+
+    def test_selfhosted_section_main(self):
+        r = ft.extract_article_markdown(self._read("selfhosted.html"), "https://vendor.example/r")
+        self.assertEqual(r["reason"], "")
+        self.assertEqual(r["title"], "稀疏注意力实测")
+        self.assertGreater(len(r["markdown"]), 200)
+
+    def test_spa_shell_reports_scaffold_no_body(self):
+        r = ft.extract_article_markdown(self._read("spa_shell.html"), "https://vendor.example/app")
+        self.assertEqual(r["reason"], "scaffold")
+        self.assertEqual(r["markdown"], "")
+
+    def test_blocked_html_reports_blocked(self):
+        html = "<html><body>We noticed something unusual. You have been blocked.</body></html>"
+        self.assertEqual(ft.extract_article_markdown(html, "https://x/y")["reason"], "blocked")
+
+    def test_status_for_reason_mapping(self):
+        self.assertEqual(ft.status_for_reason(""), "ok")
+        self.assertEqual(ft.status_for_reason("paywall"), "paywall")
+        self.assertEqual(ft.status_for_reason("scaffold"), "fetch_failed")
+        self.assertEqual(ft.status_for_reason("blocked"), "fetch_failed")
+        self.assertEqual(ft.status_for_reason("empty"), "fetch_failed")
+
+    def test_table_rendered_as_markdown_pipe(self):
+        body = ("<article><p>" + "正文内容很丰富。" * 40 + "</p>"
+                "<table><tr><th>模型</th><th>VQA</th></tr>"
+                "<tr><td>jina-vlm</td><td>72.3</td></tr></table></article>")
+        md = ft.extract_article_markdown("<html><body>" + body + "</body></html>",
+                                         "https://x/y")["markdown"]
+        self.assertIn("| 模型 | VQA |", md)
+        self.assertIn("| --- | --- |", md)
+        self.assertIn("| jina-vlm | 72.3 |", md)
+
+
+class TestFulltextLang(unittest.TestCase):
+    """源语言判定与「中文原生页不进 .en.md」的重分类。"""
+
+    ZH_HTML = ("<article><h1>通义千问发布新版</h1><p>" + "这是一段中文正文内容。" * 40
+               + "</p></article>")
+    EN_HTML = ("<article><h1>New Release</h1><p>" + "This is English body text. " * 40
+               + "</p></article>")
+
+    def test_detect_source_lang(self):
+        self.assertEqual(ft.detect_source_lang(
+            ft.extract_article_markdown(self.ZH_HTML, "https://x/p")["markdown"]), "zh")
+        self.assertEqual(ft.detect_source_lang(
+            ft.extract_article_markdown(self.EN_HTML, "https://x/p")["markdown"]), "en")
+
+    def test_fetch_chinese_native_goes_to_zh_not_en(self):
+        with tempfile.TemporaryDirectory() as d:
+            rows = [{"vendor": "aliyun_qwen", "url": "https://x/p", "title": "T", "date": "",
+                     "original_title": "T"}]
+            bodies = {}
+
+            def fetch(u):
+                return (self.ZH_HTML, True, 200, "https://x/p")
+            ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-05")
+            e = bodies[ft.bodies_key("aliyun_qwen", "https://x/p")]
+            self.assertEqual(e["src_lang"], "zh")
+            self.assertEqual(e["zh_status"], "translated")
+            self.assertEqual(e["translator"], "native")
+            self.assertEqual(e["en_status"], "")
+            self.assertTrue((Path(d) / e["zh_path"]).exists())
+            self.assertFalse((Path(d) / "docs/articles/aliyun_qwen" / (e["slug"] + ".en.md")).exists())
+            self.assertEqual(ft.pending_translation_keys(bodies), [])
+
+    def test_reclassify_moves_cached_chinese_out_of_en(self):
+        with tempfile.TemporaryDirectory() as d:
+            slug = "aaaa0000bbbb"
+            (Path(d) / "docs/articles/aliyun_qwen").mkdir(parents=True)
+            zh_md = "这是一段中文正文内容。" * 40
+            ft.write_body_doc(Path(d) / f"docs/articles/aliyun_qwen/{slug}.en.md",
+                              {"vendor": "aliyun_qwen", "url": "https://x/p", "title": "T",
+                               "status": "ok"}, zh_md)
+            bodies = {f"aliyun_qwen\thttps://x/p": {"slug": slug,
+                "en_path": f"docs/articles/aliyun_qwen/{slug}.en.md", "en_status": "ok",
+                "zh_path": "", "zh_status": "", "translator": "", "title": "T", "date": "",
+                "captured": "", "src_lang": ""}}
+            self.assertEqual(ft.reclassify_bodies(Path(d), bodies), 1)
+            e = bodies["aliyun_qwen\thttps://x/p"]
+            self.assertEqual(e["src_lang"], "zh")
+            self.assertEqual(e["zh_status"], "translated")
+            self.assertFalse((Path(d) / "docs/articles/aliyun_qwen" / (slug + ".en.md")).exists())
+            self.assertTrue((Path(d) / e["zh_path"]).exists())
+            self.assertEqual(ft.reclassify_bodies(Path(d), bodies), 0)   # 幂等
+            self.assertEqual(ft.validate_bodies(Path(d), bodies), [])
+
+    def test_reclassify_leaves_english(self):
+        with tempfile.TemporaryDirectory() as d:
+            slug = "cccc1111dddd"
+            (Path(d) / "docs/articles/openai").mkdir(parents=True)
+            ft.write_body_doc(Path(d) / f"docs/articles/openai/{slug}.en.md",
+                              {"vendor": "openai", "url": "https://x/p", "status": "ok"},
+                              "English body " * 40)
+            bodies = {f"openai\thttps://x/p": {"slug": slug,
+                "en_path": f"docs/articles/openai/{slug}.en.md", "en_status": "ok", "src_lang": "",
+                "zh_path": "", "zh_status": "", "translator": "", "title": "T", "date": "",
+                "captured": ""}}
+            self.assertEqual(ft.reclassify_bodies(Path(d), bodies), 1)   # 补 src_lang=en
+            self.assertEqual(bodies["openai\thttps://x/p"]["src_lang"], "en")
+            self.assertTrue((Path(d) / f"docs/articles/openai/{slug}.en.md").exists())
+
+
+class TestFulltextIndexPage(unittest.TestCase):
+    """链接目录页（blog index）判定 + 抓取时排除，不占待译队列。"""
+
+    INDEX_MD = "\n".join(
+        f"- [→ Post title number {i} with a fairly long descriptive sentence about the topic]({{url}}{i})"
+        for i in range(30)).replace("{url}", "https://poolside.ai/blog/")
+    ARTICLE_MD = ("Some intro paragraph of real prose that carries the argument. " * 6 +
+                  " See [a link](https://x/y) inline, then " + "many more words of body text. " * 20)
+
+    def test_detect_index_page(self):
+        self.assertTrue(ft.detect_index_page(self.INDEX_MD))
+
+    def test_real_article_not_flagged(self):
+        self.assertFalse(ft.detect_index_page(self.ARTICLE_MD))
+
+    def test_short_body_not_flagged(self):
+        self.assertFalse(ft.detect_index_page("[a](u) [b](u) [c](u)"))  # < 200 字符
+
+    def test_fetch_marks_index_page_empty_and_unqueued(self):
+        with tempfile.TemporaryDirectory() as d:
+            rows = [{"vendor": "poolside", "url": "https://x/blog", "title": "T", "date": "",
+                     "original_title": "T"}]
+            bodies = {}
+            html = "<html><body><ul>" + "".join(
+                f"<li><a href='https://x/blog/{i}'>Post {i} with a long descriptive sentence here</a></li>"
+                for i in range(40)) + "</ul></body></html>"
+
+            def fetch(u):
+                return (html, True, 200, "https://x/blog")
+            ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-05")
+            e = bodies[ft.bodies_key("poolside", "https://x/blog")]
+            self.assertEqual(e["en_status"], "index_page")
+            _fm, body = ft.read_body_doc(Path(d) / e["en_path"])
+            self.assertEqual(body.strip(), "")
+            self.assertEqual(ft.pending_translation_keys(bodies), [])
+            self.assertEqual(ft.validate_bodies(Path(d), bodies), [])
+
+
+class TestFulltextLedgerFetch(unittest.TestCase):
+    """bodies.json ledger + fetch_bodies（注入 fetch，无网络）+ 翻译队列/mark。"""
+
+    def _stub_fetch(self, mapping, default=("<body>checking your browser</body>", False, 403, "")):
+        def fetch(url):
+            return mapping.get(ft.normalize_url(url), default)
+        return fetch
+
+    def _long_body(self):
+        return "<article><h1>T</h1><p>" + "This is substantial English body text. " * 40 + "</p></article>"
+
+    def test_save_bodies_is_deterministic(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "bodies.json"
+            b = {"b\thttps://x": {"slug": "2"}, "a\thttps://y": {"slug": "1"}}
+            ft.save_bodies(p, b)
+            first = p.read_bytes()
+            ft.save_bodies(p, dict(reversed(list(b.items()))))
+            self.assertEqual(p.read_bytes(), first)
+
+    def test_validate_flags_en_ok_without_file(self):
+        with tempfile.TemporaryDirectory() as d:
+            b = {"openai\thttps://a/p": {"slug": "deadbeef1234",
+                "en_path": "docs/articles/openai/deadbeef1234.en.md", "en_status": "ok"}}
+            errs = ft.validate_bodies(Path(d), b)
+            self.assertTrue(any("deadbeef1234.en.md" in e for e in errs))
+
+    def test_validate_flags_fetch_failed_with_body(self):
+        with tempfile.TemporaryDirectory() as d:
+            slug = "aaaa1111bbbb"
+            f = Path(d) / "docs/articles/openai"
+            f.mkdir(parents=True)
+            ft.write_body_doc(f / f"{slug}.en.md",
+                              {"vendor": "openai", "status": "fetch_failed", "url": "https://a/p"}, "编造的正文")
+            b = {f"openai\thttps://a/p": {"slug": slug, "en_path": f"docs/articles/openai/{slug}.en.md",
+                "en_status": "fetch_failed"}}
+            self.assertTrue(any("编造" in e or "非空" in e for e in ft.validate_bodies(Path(d), b)))
+
+    def test_fetch_bodies_writes_ok_and_updates_ledger(self):
+        with tempfile.TemporaryDirectory() as d:
+            rows = [{"vendor": "openai", "url": "https://a.com/p", "title": "T",
+                     "date": "2026-01-01", "original_title": "T"}]
+            bodies = {}
+            n = ft.fetch_bodies(Path(d), rows, bodies,
+                                fetch=self._stub_fetch({"https://a.com/p": (self._long_body(), True, 200, "https://a.com/p")}),
+                                today="2026-10-05")
+            self.assertEqual(n, 1)
+            e = bodies[ft.bodies_key("openai", "https://a.com/p")]
+            self.assertEqual(e["en_status"], "ok")
+            self.assertTrue((Path(d) / e["en_path"]).exists())
+
+    def test_fetch_bodies_records_fetch_failed_no_body(self):
+        with tempfile.TemporaryDirectory() as d:
+            rows = [{"vendor": "x", "url": "https://spa/app", "title": "T", "date": "", "original_title": "T"}]
+            bodies = {}
+            ft.fetch_bodies(Path(d), rows, bodies, fetch=self._stub_fetch({}), today="2026-10-05")
+            e = bodies[ft.bodies_key("x", "https://spa/app")]
+            self.assertEqual(e["en_status"], "fetch_failed")
+            _fm, body = ft.read_body_doc(Path(d) / e["en_path"])
+            self.assertEqual(body.strip(), "")
+
+    def test_fetch_bodies_only_missing_skips_existing(self):
+        with tempfile.TemporaryDirectory() as d:
+            rows = [{"vendor": "openai", "url": "https://a.com/p", "title": "T", "date": "", "original_title": "T"}]
+            fetch = self._stub_fetch({"https://a.com/p": (self._long_body(), True, 200, "https://a.com/p")})
+            bodies = {}
+            ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-05")
+            self.assertEqual(ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-06"), 0)
+
+    def test_pending_and_mark_translated(self):
+        with tempfile.TemporaryDirectory() as d:
+            slug = "abcd1234ef56"
+            (Path(d) / "docs/articles/openai").mkdir(parents=True)
+            ft.write_body_doc(Path(d) / f"docs/articles/openai/{slug}.en.md",
+                              {"status": "ok", "url": "https://a/p"}, "English body")
+            bodies = {f"openai\thttps://a/p": {"slug": slug, "en_path": f"docs/articles/openai/{slug}.en.md",
+                "en_status": "ok", "zh_status": "", "translator": "", "title": "T", "date": "", "captured": ""}}
+            self.assertEqual(ft.pending_translation_keys(bodies), ["openai\thttps://a/p"])
+            ft.mark_translated(Path(d), bodies, key="openai\thttps://a/p",
+                               zh_body_md="中文正文。", translator="agent", today="2026-10-05")
+            e = bodies["openai\thttps://a/p"]
+            self.assertEqual(e["zh_status"], "translated")
+            self.assertEqual(e["translator"], "agent")
+            fm, body = ft.read_body_doc(Path(d) / e["zh_path"])
+            self.assertEqual(fm["translator"], "agent")
+            self.assertEqual(body, "中文正文。")
+            self.assertEqual(ft.pending_translation_keys(bodies), [])
+
+    def test_reconcile_absorbs_on_disk_translations(self):
+        # 子代理只写 .md、控制者单点 reconcile：磁盘有非空译文即标 translated
+        with tempfile.TemporaryDirectory() as d:
+            slug = "eeee2222ffff"
+            (Path(d) / "docs/articles/groq").mkdir(parents=True)
+            ft.write_body_doc(Path(d) / f"docs/articles/groq/{slug}.en.md",
+                              {"status": "ok", "url": "https://g/x"}, "English")
+            ft.write_body_doc(Path(d) / f"docs/articles/groq/{slug}.md",
+                              {"lang": "zh", "translator": "agent", "status": "translated"}, "中文译文。")
+            bodies = {f"groq\thttps://g/x": {"slug": slug,
+                "en_path": f"docs/articles/groq/{slug}.en.md", "en_status": "ok",
+                "zh_path": "", "zh_status": "", "translator": "", "title": "T", "date": "", "captured": ""}}
+            self.assertEqual(ft.reconcile_translations(Path(d), bodies), 1)
+            e = bodies["groq\thttps://g/x"]
+            self.assertEqual(e["zh_status"], "translated")
+            self.assertEqual(e["translator"], "agent")
+            self.assertEqual(ft.reconcile_translations(Path(d), bodies), 0)  # 幂等
+
+    def test_iter_article_rows(self):
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "articles.json"
+            p.write_text(json.dumps({"fields": ["title", "url", "vendor", "date", "original_title"],
+                "articles": [["T", "https://a/p", "openai", "2026-01-01", "T"]]}), encoding="utf-8")
+            rows = ft.iter_article_rows(p)
+            self.assertEqual(rows, [{"vendor": "openai", "url": "https://a/p", "title": "T",
+                                     "date": "2026-01-01", "original_title": "T"}])
 
 
 if __name__ == "__main__":

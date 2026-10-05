@@ -5694,11 +5694,85 @@ def main(argv: list[str] | None = None) -> int:
                              "取不到原文的 URL 记入台账（.backfill_orig_ledger.json，与翻译缓存同类）"
                              "以免每轮重打；锚点行（URL 带 #）不发请求。"
                              "可用 --only 分批指定厂商。回填后跑 --rebuild-only 刷新产物")
+    parser.add_argument("--fetch-bodies", action="store_true",
+                        help="维护模式（不巡检）：逐篇访问 docs/feeds/articles.json 里的文章 URL，"
+                             "readability 抽正文写 docs/articles/<vendor>/<urlhash>.en.md，"
+                             "并 upsert docs/feeds/bodies.json。默认只补缺失；--refresh 全量重抓。"
+                             "SPA/反爬取不到记 fetch_failed、正文留空。用 --fetch-vendor/--fetch-limit 分批。")
+    parser.add_argument("--fetch-vendor", default="", help="只抓该 vendor_id 的正文（配合 --fetch-bodies）")
+    parser.add_argument("--fetch-limit", type=int, default=0, help="本次最多抓多少篇正文（0=不限）")
+    parser.add_argument("--refresh", action="store_true", help="正文抓取：忽略已有、全量重抓")
+    parser.add_argument("--allow-browser", action="store_true",
+                        help="正文抓取：requests 取不到时启用无头浏览器兜底（仅本地；CI 勿加）")
+    parser.add_argument("--mark-translated", metavar="KEY", default="",
+                        help="把 --zh-file 指定的中文正文登记为 key 的译文（agent 回充译道，只改 ledger）")
+    parser.add_argument("--zh-file", default="", help="配合 --mark-translated：中文正文 Markdown 文件路径")
     args = parser.parse_args(argv)
 
     root = _repo_root()
     if not args.rebuild_only:
         (root / ".ai-changed").unlink(missing_ok=True)
+
+    # 维护模式（正文语料层，不巡检）：先于爬虫分派，读现有 articles.json 逐篇抓正文。
+    if args.mark_translated:
+        import fulltext
+        bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
+        key = args.mark_translated
+        if key not in bodies:
+            print(f"  [mark-translated] 未知 ledger key：{key}", file=sys.stderr)
+            return 2
+        zh = (Path(args.zh_file).read_text(encoding="utf-8")
+              if args.zh_file else sys.stdin.read())
+        fulltext.mark_translated(root, bodies, key=key, zh_body_md=zh.strip(),
+                                 translator="agent", today=datetime.now().strftime("%Y-%m-%d"))
+        fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
+        errs = fulltext.validate_bodies(root, bodies)
+        for e in errs:
+            print(f"  [fulltext-guard] {e}", file=sys.stderr)
+        print(f"  [mark-translated] 已记译文：{key}")
+        return 1 if errs else 0
+
+    if args.fetch_bodies:
+        import fulltext
+        articles = fulltext.iter_article_rows(root / "docs/feeds/articles.json")
+        if args.fetch_vendor:
+            articles = [a for a in articles if a["vendor"] == args.fetch_vendor]
+        if args.fetch_limit:
+            articles = articles[:args.fetch_limit]
+        bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
+        # 自愈：把任何旧逻辑误存成 .en.md 的中文原生正文重分类到 .md（幂等、复用缓存、不重抓）
+        moved = fulltext.reclassify_bodies(root, bodies)
+        if moved:
+            fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
+            print(f"  [reclassify] {moved} 条按源语言重分类（中文原生 → .md native）。")
+        session = build_session()
+        timeout = (10.0, args.timeout)
+        today = datetime.now().strftime("%Y-%m-%d")
+
+        def _fetch_body(u: str):
+            page = fetch_url(session, u, "news", browser=browser, timeout=timeout)
+            return (page.raw or "", page.ok, page.status_code or 0, page.final_url or u)
+
+        print(f"[维护] 正文抓取：{len(articles)} 篇（{'全量重抓' if args.refresh else '只补缺失'}，"
+              f"浏览器兜底{'开' if (args.allow_browser and not args.no_browser) else '关'}）...")
+        with BrowserSession(enabled=args.allow_browser and not args.no_browser) as browser:
+            written = fulltext.fetch_bodies(root, articles, bodies, fetch=_fetch_body,
+                                            today=today, only_missing=not args.refresh,
+                                            save=lambda b: fulltext.save_bodies(
+                                                root / "docs/feeds/bodies.json", b))
+        # 吸收子代理/人工写到磁盘的中文译文（单点写 ledger）
+        rec = fulltext.reconcile_translations(root, bodies)
+        if rec:
+            print(f"  [reconcile] {rec} 篇磁盘上已有中文译文，标记 translated。")
+        fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
+        errs = fulltext.validate_bodies(root, bodies)
+        for e in errs:
+            print(f"  [fulltext-guard] {e}", file=sys.stderr)
+        ok = sum(1 for e in bodies.values() if e.get("en_status") == "ok")
+        failed = sum(1 for e in bodies.values() if e.get("en_status") in ("fetch_failed", "paywall"))
+        print(f"  本轮写 {written} 篇；ledger 共 {len(bodies)} 条（ok {ok} / 抓不到 {failed}）。")
+        return 1 if errs else 0
+
     if args.backfill_dates or args.backfill_orig:
         session = build_session()
 
