@@ -3686,7 +3686,8 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
     lines.append("  </body>")
     lines.append("</opml>")
     content = "\n".join(lines) + "\n"
-    total = len(outlines) + len(self_hosted) + (1 if self_hosted else 0)
+    total = (len(outlines) + len(self_hosted) + (1 if self_hosted else 0)
+             + len(english_self) + (1 if english_self else 0))
     if path.exists():
         old = path.read_text(encoding="utf-8")
         masked = re.sub(r"<dateCreated>[^<]*</dateCreated>",
@@ -5065,9 +5066,13 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     #    免得页面功能倒退。
     #    标题用汉化后的 `titles_zh` 且**不截断**（feed 里按 RSS_TITLE_MAX 截断是为了
     #    列表可读，页面上可以完整显示）。
+    #    `slug` = `fulltext.url_hash(url)`（12 字符），前端 reader 用它拼
+    #    `articles/<vendor>/<slug>.md` 就地读全文（见 corpus spec §12）；
+    #    与 bodies.json 里的 slug 同一份实现，避免 normalize/hash 两处漂移。
     index_rows: list[list[str]] = []
     if not _LAST_ORIG_INDEX:
         load_original_titles(out_dir / "articles.json")
+    import fulltext as _ft
     for _brand, vendor_id, arts, titles_zh in per_vendor:
         for art, t in zip(arts, titles_zh):
             orig = art.title.strip()
@@ -5080,7 +5085,8 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
                 if prev and re.search(r"[A-Za-z]{4}", prev):
                     orig = prev
             index_rows.append([t, art.url, vendor_id, art.date,
-                               orig if orig != t.strip() else ""])
+                               orig if orig != t.strip() else "",
+                               _ft.url_hash(art.url)])
     # 有日期的按日期倒序在前，无日期的排后（与页面/feed 的排序约定一致）。
     # sort 稳定 + 输入顺序确定 → 同样内容每次产出的字节一致，`_write_json` 才不会误判「变了」。
     dated_rows = sorted((r for r in index_rows if r[3]), key=lambda r: r[3], reverse=True)
@@ -5088,7 +5094,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     index_rows = dated_rows + undated_rows
     files += 1
     changed += _write_json(out_dir / "articles.json", {
-        "fields": ["title", "url", "vendor", "date", "original_title"],
+        "fields": ["title", "url", "vendor", "date", "original_title", "slug"],
         "count": len(index_rows),
         "articles": index_rows,
     })
@@ -6595,7 +6601,7 @@ def main(argv: list[str] | None = None) -> int:
                              or (feeds_dir / INTEL_CHANGES_FEED).exists(),
                              feeds_dir=feeds_dir)
         print(f"      {opml_path.name}（{n_feeds} 个订阅源"
-              f"{'：官方原生 + 自建源 + 聚合流' if feeds_base else '（仅官方原生源，未推导出 Pages 前缀）'}）")
+              f"{'：官方原生 + 自建源 + 聚合流 + 英文镜像 + 英文聚合流' if feeds_base else '（仅官方原生源，未推导出 Pages 前缀）'}）")
         wrote_q = _write_json(feeds_dir / "quotas.json", quotas)
         print(f"      额度快照 quotas.json {quotas['count']} 家"
             f"（{'已刷新' if wrote_q else '无内容变化，未改写'}）")

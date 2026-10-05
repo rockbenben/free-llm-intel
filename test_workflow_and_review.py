@@ -6479,6 +6479,54 @@ class TestRssDualFeeds(unittest.TestCase):
             self.assertIn("blog/2", zh)
 
 
+class TestIndexHasSlug(unittest.TestCase):
+    """articles.json 每行末尾加 slug（reader 抽屉拼 md 路径的数据前置，见 corpus spec §12）。
+
+    守卫两件事：字段名列表加 slug、每行 row[5] == fulltext.url_hash(row[1])。
+    变异：把 crawler 里 url_hash 换成硬编码 "deadbeef0000" 或直接删掉这一列，
+    本类断言变红。
+    """
+
+    def _intel(self, n=3):
+        v = crawler_llm_intel.VendorIntel(vendor_id="v", brand="V", homepage="", products=[])
+        v.all_news_articles = [
+            crawler_llm_intel.Article(
+                title=f"post {i}", url=f"https://v.test/blog/{i}", date=f"2026-01-{i:02d}")
+            for i in range(1, n + 1)
+        ]
+        return v
+
+    def test_articles_json_has_slug_column(self):
+        with tempfile.TemporaryDirectory() as d:
+            feeds = Path(d) / "feeds"
+            crawler_llm_intel.write_rss_feeds(feeds, [self._intel(3)], "")
+            data = json.loads((feeds / "articles.json").read_text(encoding="utf-8"))
+            self.assertEqual(
+                data["fields"],
+                ["title", "url", "vendor", "date", "original_title", "slug"])
+            for row in data["articles"]:
+                self.assertEqual(len(row), 6)
+                # row[1]=url, row[5]=slug；slug 由 fulltext.url_hash 决定
+                self.assertEqual(row[5], ft.url_hash(row[1]),
+                                 "slug 必须等于 fulltext.url_hash(url)，与 bodies.json 里的 slug 一致")
+                self.assertRegex(row[5], r"^[0-9a-f]{12}$")
+
+    def test_slug_survives_prev_index_without_slug(self):
+        """上一版 articles.json 是 5 字段（无 slug），load_original_titles 只按
+        字段名读 original_title，不受列数变化的影响。"""
+        with tempfile.TemporaryDirectory() as d:
+            feeds = Path(d) / "feeds"
+            feeds.mkdir(parents=True)
+            (feeds / "articles.json").write_text(json.dumps({
+                "fields": ["title", "url", "vendor", "date", "original_title"],
+                "count": 1,
+                "articles": [["中文标题", "https://a.test/x", "v", "2026-01-01",
+                              "English Headline"]],
+            }, ensure_ascii=False), encoding="utf-8")
+            out = crawler_llm_intel.load_original_titles(feeds / "articles.json")
+            self.assertEqual(out[("v", "https://a.test/x")], "English Headline")
+
+
 class TestRssSizeCapDegrade(unittest.TestCase):
     """R3：合并流产物超 RSS_SOFT_CAP 自动降级为首段摘要 + 回源链接。"""
 

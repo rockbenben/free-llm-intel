@@ -360,6 +360,8 @@ var FLI = (function () {
   // 全量索引的行格式见 crawler_llm_intel.write_rss_feeds()：
   // ["标题", "url", "vendor_id", "日期", "原文标题"]，日期已是有日期在前、按日期倒序。
   // 品牌名/单源地址来自 vendors.json 的映射；缺映射时退回厂商 id，再退回「未知来源」。
+  // r[5] = slug（url_hash 前 12 字符，见 corpus spec §12）：reader 抽屉打开时用来
+  // 拼 `articles/<vendor>/<slug>.md`；缺字段的旧索引 fallback 空串（reader 按钮不亮）。
   function mapRow(r, brands, feeds) {
     var vid = r[2] || '';
     return {
@@ -369,6 +371,7 @@ var FLI = (function () {
       vendor: (brands && brands[vid]) || vid || UNKNOWN,
       date: r[3] || '',
       orig: r[4] || '',
+      slug: r[5] || '',
       feed: (feeds && feeds[vid]) || ''
     };
   }
