@@ -2920,15 +2920,13 @@ class TestNewsTitleQuality(unittest.TestCase):
 
 
 class TestFeedLimitedPageFull(unittest.TestCase):
-    """合并流**默认不限制**；页面仍读更省的全量索引。
+    """合并流默认 **200 条**（2026-10-05 定）；页面仍读全量 articles.json 索引。
 
-    合并流曾经限 200 条，理由是「全量约 1.2 MB 会让阅读器吃力」—— **那个理由站不住**：
-    GitHub Pages 用 gzip 传输（线上实测 `Content-Encoding: gzip`），当初决策时的全量为
-    2575 条（XML 1124 KB）压缩后只有 131 KB。当时的判断看的是未压缩体积。
-    现在 `RSS_MERGED_LIMIT = 0` = 不限制，订阅者一次就能拿到全部历史。
-
-    页面仍读 `articles.json` 而不是合并流，但理由换了：**不带描述、明显更小**、
-    免去 XML 解析，而且**标题不截断、还带原文标题**（feed 里为了列表可读截到 60 字）。
+    历史：曾限 200 → 改到 0（"阅读器 + gzip 全量没压力"）→ 回到 200。回摆的
+    理由：`<content:encoded>` 塞正文后单条体积胀 100×，全量 feed 从"其实能塞"
+    变成"确实太大"；200 条覆盖两周巡检新增，其余靠单厂商源或完整归档。
+    页面继续读索引而非 feed，索引不受限。
+    见 docs/superpowers/specs/2026-10-05-rss-redesign.md §3.1。
     """
 
     def _intel(self, n):
@@ -2940,19 +2938,29 @@ class TestFeedLimitedPageFull(unittest.TestCase):
         ]
         return v
 
-    def test_merged_feed_is_unlimited_by_default(self):
-        """默认（RSS_MERGED_LIMIT = 0）应收录全部有日期的条目。"""
-        self.assertEqual(crawler_llm_intel.RSS_MERGED_LIMIT, 0,
-                         "合并流默认不限制；要限流请显式传 merged_limit")
+    def test_merged_feed_default_limit_is_200(self):
+        """默认（RSS_MERGED_LIMIT = 200）截到最近 200 条。"""
+        self.assertEqual(crawler_llm_intel.RSS_MERGED_LIMIT, 200,
+                         "合并流默认 200 条；要放开请显式传 merged_limit=0")
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "feeds"
-            crawler_llm_intel.write_rss_feeds(out, [self._intel(5)])
+            crawler_llm_intel.write_rss_feeds(out, [self._intel(230)])
             merged = (out / "llm-news-all.xml").read_text(encoding="utf-8")
-            self.assertEqual(merged.count("<item>"), 5, "默认不得截断")
-            # 文案也要跟着上限走，别写死「最近 N 条」
-            self.assertIn("收录全部有日期的条目",
+            self.assertEqual(merged.count("<item>"), 200, "默认 200 条上限应生效")
+            self.assertIn("最近 200 条",
                           crawler_llm_intel.merged_scope_text(
                               crawler_llm_intel.RSS_MERGED_LIMIT))
+
+    def test_merged_limit_zero_still_unlimited(self):
+        """显式 merged_limit=0 走"不限制"分支（`--rss-limit 0` 逃生阀仍有效）。"""
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "feeds"
+            crawler_llm_intel.write_rss_feeds(out, [self._intel(60)], merged_limit=0)
+            merged = (out / "llm-news-all.xml").read_text(encoding="utf-8")
+            self.assertEqual(merged.count("<item>"), 60,
+                             "merged_limit=0 时不截；文案改口'收录全部有日期的条目'")
+            self.assertIn("收录全部有日期的条目",
+                          crawler_llm_intel.merged_scope_text(0))
 
     def test_explicit_limit_still_works(self):
         """显式给上限时仍生效（`--rss-limit` 与全量索引不受影响）。"""
@@ -6339,6 +6347,329 @@ class TestFulltextIndexPage(unittest.TestCase):
             self.assertEqual(body.strip(), "")
             self.assertEqual(ft.pending_translation_keys(bodies), [])
             self.assertEqual(ft.validate_bodies(Path(d), bodies), [])
+
+
+class TestRssDualFeeds(unittest.TestCase):
+    """双语 feed 发射（R1b）：中/英各一，guid 用 ?li=1 后缀区分，native 中文源
+    在英文 feed 里整体跳过；单厂商源受 RSS_VENDOR_LIMIT 约束。"""
+
+    BASE = "https://example.test/feeds"
+
+    def _intel(self, vid: str, brand: str, n: int, title_prefix: str = "Post") -> crawler_llm_intel.VendorIntel:
+        v = crawler_llm_intel.VendorIntel(vendor_id=vid, brand=brand, homepage="", products=[])
+        v.all_news_articles = [
+            crawler_llm_intel.Article(
+                title=f"{title_prefix} {i}",
+                url=f"https://{vid}.test/blog/{i}",
+                date=f"2026-01-{i:02d}",
+            )
+            for i in range(1, n + 1)
+        ]
+        return v
+
+    def _write_bodies(self, feeds_dir: Path, entries: dict) -> None:
+        """entries: {(vendor, url, en_status)}；构造 bodies.json + 空 .en.md 文件。"""
+        bodies = {}
+        for vendor, url, en_status in entries:
+            key = ft.bodies_key(vendor, url)
+            slug = ft.url_hash(url)
+            en_rel = f"docs/articles/{vendor}/{slug}.en.md"
+            en_path = feeds_dir.parent / en_rel
+            en_path.parent.mkdir(parents=True, exist_ok=True)
+            fm = {"vendor": vendor, "title": "x", "url": ft.normalize_url(url),
+                  "status": en_status, "lang": "en"}
+            ft.write_body_doc(en_path, fm, "body" if en_status == "ok" else "")
+            bodies[key] = {"slug": slug, "en_path": en_rel, "en_status": en_status,
+                           "zh_path": "", "zh_status": "", "translator": "",
+                           "title": "", "date": "", "captured": "",
+                           "body_sha": "", "src_lang": "en" if en_status == "ok" else ""}
+        ft.save_bodies(feeds_dir / "bodies.json", bodies)
+
+    def test_dual_feed_files_emitted(self):
+        with tempfile.TemporaryDirectory() as d:
+            feeds = Path(d) / "feeds"
+            feeds.mkdir()
+            self._write_bodies(feeds, [("openai", "https://openai.test/blog/1", "ok")])
+            crawler_llm_intel.write_rss_feeds(feeds, [self._intel("openai", "OpenAI", 3)], self.BASE)
+            self.assertTrue((feeds / "llm-news-all.xml").exists())
+            self.assertTrue((feeds / "llm-news-all.en.xml").exists())
+            self.assertTrue((feeds / "llm-news-openai.xml").exists())
+            self.assertTrue((feeds / "llm-news-openai.en.xml").exists())
+
+    def test_english_feed_guid_has_li_suffix(self):
+        with tempfile.TemporaryDirectory() as d:
+            feeds = Path(d) / "feeds"
+            feeds.mkdir()
+            url = "https://openai.test/blog/1"
+            self._write_bodies(feeds, [("openai", url, "ok")])
+            crawler_llm_intel.write_rss_feeds(feeds, [self._intel("openai", "OpenAI", 1)], self.BASE)
+            zh = (feeds / "llm-news-openai.xml").read_text(encoding="utf-8")
+            en = (feeds / "llm-news-openai.en.xml").read_text(encoding="utf-8")
+            # 硬编码 ?li=1 而非引用常量，否则改坏常量测试一起漂——真正的不变量是
+            # "中英 guid 必须不同、英文带 query 后缀"
+            self.assertIn(f'<guid isPermaLink="true">{url}</guid>', zh)
+            self.assertIn(f'<guid isPermaLink="true">{url}?li=1</guid>', en)
+            # <link> 两边都保持原 URL，不带后缀
+            self.assertIn(f"<link>{url}</link>", en)
+            self.assertIn(f"<link>{url}</link>", zh)
+
+    def test_native_chinese_source_skipped_in_en_feed(self):
+        """bodies.json 里 en_status='' 表示 native 中文——英文 feed 里整体不出现。"""
+        with tempfile.TemporaryDirectory() as d:
+            feeds = Path(d) / "feeds"
+            feeds.mkdir()
+            v = self._intel("aliyun_qwen", "通义千问", 2, title_prefix="通义千问更新")
+            # 中文原生标题（无拉丁字母）→ _english_eligible 回退判据也排除
+            self._write_bodies(feeds, [
+                ("aliyun_qwen", "https://aliyun_qwen.test/blog/1", ""),
+                ("aliyun_qwen", "https://aliyun_qwen.test/blog/2", ""),
+            ])
+            crawler_llm_intel.write_rss_feeds(feeds, [v], self.BASE)
+            self.assertTrue((feeds / "llm-news-aliyun_qwen.xml").exists(),
+                            "中文 feed 仍要出")
+            self.assertFalse((feeds / "llm-news-aliyun_qwen.en.xml").exists(),
+                             "该厂商全无英文正文，不出 .en.xml")
+
+    def test_vendor_limit_applied(self):
+        """单厂商流截到 RSS_VENDOR_LIMIT 条；合并流截 merged_limit。"""
+        with tempfile.TemporaryDirectory() as d:
+            feeds = Path(d) / "feeds"
+            feeds.mkdir()
+            entries = [("v", f"https://v.test/blog/{i}", "ok") for i in range(1, 25)]
+            self._write_bodies(feeds, entries)
+            crawler_llm_intel.write_rss_feeds(
+                feeds, [self._intel("v", "V", 24)], self.BASE,
+                merged_limit=100, vendor_limit=10)
+            zh = (feeds / "llm-news-v.xml").read_text(encoding="utf-8")
+            en = (feeds / "llm-news-v.en.xml").read_text(encoding="utf-8")
+            self.assertEqual(zh.count("<item>"), 10)
+            self.assertEqual(en.count("<item>"), 10)
+
+    def test_english_feed_body_absent_when_fetch_failed(self):
+        """bodies.json 里 en_status='fetch_failed' → 该条不进英文 feed，
+        但仍进中文 feed（feed 描述来自归档，正文可选）。"""
+        with tempfile.TemporaryDirectory() as d:
+            feeds = Path(d) / "feeds"
+            feeds.mkdir()
+            url_ok = "https://v.test/blog/1"
+            url_bad = "https://v.test/blog/2"
+            self._write_bodies(feeds, [
+                ("v", url_ok, "ok"),
+                ("v", url_bad, "fetch_failed"),
+            ])
+            v = self._intel("v", "V", 2)
+            crawler_llm_intel.write_rss_feeds(feeds, [v], self.BASE)
+            en = (feeds / "llm-news-v.en.xml").read_text(encoding="utf-8")
+            zh = (feeds / "llm-news-v.xml").read_text(encoding="utf-8")
+            self.assertIn("blog/1", en)
+            self.assertNotIn("blog/2", en)
+            self.assertIn("blog/1", zh)
+            self.assertIn("blog/2", zh)
+
+
+class TestRssSizeCapDegrade(unittest.TestCase):
+    """R3：合并流产物超 RSS_SOFT_CAP 自动降级为首段摘要 + 回源链接。"""
+
+    def test_summarize_short_passthrough(self):
+        html = "<p>short</p>"
+        self.assertEqual(crawler_llm_intel._summarize_html(html, "https://x.test/a"), html)
+
+    def test_summarize_truncates_and_adds_link(self):
+        html = "<p>" + ("x" * 800) + "</p>"
+        out = crawler_llm_intel._summarize_html(html, "https://x.test/a", limit=200)
+        self.assertLess(len(out), 400)
+        self.assertIn("<a href=\"https://x.test/a\">", out)
+        self.assertIn("阅读完整文章", out)
+
+    def test_summarize_does_not_split_open_tag(self):
+        # 截半路 <a href="... 未闭合 → 尾段丢弃
+        html = "<p>hi</p><a href=\"https://x.test/a\">link</a>"
+        out = crawler_llm_intel._summarize_html(html, "https://x.test/a", limit=15)
+        # 15 字大概到 `<p>hi</p><a href=` 附近，末尾的半个 `<a href=` 要剥掉
+        self.assertFalse(out.rstrip().endswith("<a"))
+        self.assertNotIn("<a href=", out.split("<a href=\"https://x.test/a\">阅读完整文章")[0])
+
+    def test_merged_feed_degrades_over_cap(self):
+        """注入超大正文，write_rss_feeds 走降级路径：产物含"降级"字样 + 摘要 + 回源链接。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            feeds = root / "docs" / "feeds"
+            feeds.mkdir(parents=True)
+            old_cap = crawler_llm_intel.RSS_SOFT_CAP
+            try:
+                crawler_llm_intel.RSS_SOFT_CAP = 2000  # 极小阈值触发降级
+                bodies = {}
+                v = crawler_llm_intel.VendorIntel(vendor_id="v", brand="V",
+                                                  homepage="", products=[])
+                arts = []
+                for i in range(1, 5):
+                    url = f"https://v.test/blog/{i}"
+                    slug = ft.url_hash(url)
+                    rel = f"docs/articles/v/{slug}.md"
+                    (root / "docs/articles/v").mkdir(parents=True, exist_ok=True)
+                    ft.write_body_doc(root / rel,
+                                      {"vendor": "v", "title": f"post {i}",
+                                       "url": url, "lang": "zh", "status": "translated"},
+                                      "x" * 3000)
+                    bodies[ft.bodies_key("v", url)] = {
+                        "slug": slug, "en_path": "", "zh_path": rel,
+                        "en_status": "", "zh_status": "translated",
+                        "translator": "native", "title": "", "date": "",
+                        "captured": "", "body_sha": "", "src_lang": "zh"}
+                    arts.append(crawler_llm_intel.Article(
+                        title=f"post {i}", url=url, date=f"2026-01-0{i}",
+                        zh_title=f"文章 {i}"))
+                v.all_news_articles = arts
+                ft.save_bodies(feeds / "bodies.json", bodies)
+                crawler_llm_intel.write_rss_feeds(feeds, [v], "https://x.test/feeds",
+                                                  merged_limit=100)
+                text = (feeds / "llm-news-all.xml").read_text(encoding="utf-8")
+                self.assertIn("正文降级为首段摘要", text)
+                self.assertIn("阅读完整文章", text)
+                # 4 条 * 3000 字 ≈ 12 KB >> 2 KB 阈值 → 应真的降级
+                self.assertLess(len(text.encode("utf-8")), 6000)
+            finally:
+                crawler_llm_intel.RSS_SOFT_CAP = old_cap
+
+
+class TestRssContentEncoded(unittest.TestCase):
+    """R2：md→html helper + content:encoded 注入。
+
+    - _md_to_html 覆盖 ATX 标题 / 段落 / 有序 / 无序 / 代码栅栏 / 表格 /
+      链接 / 图片 / 粗体 / 斜体 / inline code
+    - 危险标签 <script>/<iframe>/<style> 一律剥除
+    - _rss_cdata 处理内部 `]]>` 拆分
+    - write_rss_feeds 从 bodies.json 定位 .md/.en.md → 塞 content:encoded；
+      文件缺失或正文为空则不塞该字段
+    """
+
+    def test_md_heading_para_list_code(self):
+        md = "# Title\n\nHello **world**, meet `code`.\n\n- a\n- b\n\n1. one\n2. two\n\n```\nprint(1)\n```\n"
+        html = crawler_llm_intel._md_to_html(md)
+        self.assertIn("<h1>Title</h1>", html)
+        self.assertIn("<strong>world</strong>", html)
+        self.assertIn("<code>code</code>", html)
+        self.assertIn("<ul><li>a</li><li>b</li></ul>", html)
+        self.assertIn("<ol><li>one</li><li>two</li></ol>", html)
+        self.assertIn("<pre><code>print(1)</code></pre>", html)
+
+    def test_md_table(self):
+        md = "| Model | Score |\n|---|---|\n| A | 1 |\n| B | 2 |\n"
+        html = crawler_llm_intel._md_to_html(md)
+        self.assertIn("<thead>", html)
+        self.assertIn("<th>Model</th>", html)
+        self.assertIn("<td>A</td>", html)
+        self.assertEqual(html.count("<tr>"), 3)
+
+    def test_md_link_image(self):
+        md = "See [docs](https://x.test/a) and ![alt](https://x.test/p.png).\n"
+        html = crawler_llm_intel._md_to_html(md)
+        self.assertIn('<a href="https://x.test/a">docs</a>', html)
+        self.assertIn('<img src="https://x.test/p.png" alt="alt">', html)
+
+    def test_md_strips_unsafe_tags(self):
+        """语料正文里的 <script> 原文要**变成转义文本**（读者看见字面量、浏览器不当标签执行）。"""
+        html = crawler_llm_intel._md_to_html("Type `<script>alert(1)</script>` in your config.\n")
+        # 关键：不能出现**未转义**的 <script> 标签
+        self.assertNotIn("<script>", html)
+        # 转义后是字面量，浏览器不会当标签解析——alert(1) 作为文本无害
+        self.assertIn("&lt;script&gt;", html)
+        # 段落形态直接扔 raw HTML 也一样被 escape
+        raw = "before\n\n<script>alert(1)</script>\n\nafter\n"
+        out = crawler_llm_intel._md_to_html(raw)
+        self.assertNotIn("<script>", out)
+
+    def test_md_escapes_angle_brackets(self):
+        # 正文里 "<div>" 不该被当标签解读
+        html = crawler_llm_intel._md_to_html("Type `<div>` to open a container.\n")
+        self.assertIn("&lt;div&gt;", html)
+        self.assertNotIn("<div>", html)
+
+    def test_rss_cdata_splits_embedded_close(self):
+        wrapped = crawler_llm_intel._rss_cdata("abc]]>def")
+        self.assertTrue(wrapped.startswith("<![CDATA["))
+        self.assertTrue(wrapped.endswith("]]>"))
+        # 内部 `]]>` 被拆成 `]]` + `]>` 转义
+        self.assertIn("]]]]><![CDATA[>", wrapped)
+        # 反过来拼接应还原字面量
+        self.assertEqual(wrapped.replace("<![CDATA[", "").replace("]]>", "").replace("]]]]>", "]]"), "abc]]>def")
+
+    def test_write_rss_feeds_injects_body(self):
+        """给定 corpus 里真实一份 .en.md，write_rss_feeds 把它塞进 content:encoded。
+
+        语料布局：feeds_dir = <root>/docs/feeds，正文 = <root>/docs/articles/<vendor>/<slug>.md。
+        _body_html_for 从 entries 的相对路径 + feeds_dir.parent.parent 拼出绝对路径。
+        """
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            feeds = root / "docs" / "feeds"
+            feeds.mkdir(parents=True)
+            url = "https://openai.test/blog/1"
+            slug = ft.url_hash(url)
+            zh_rel = f"docs/articles/openai/{slug}.md"
+            en_rel = f"docs/articles/openai/{slug}.en.md"
+            (root / "docs/articles/openai").mkdir(parents=True)
+            ft.write_body_doc(root / en_rel,
+                              {"vendor": "openai", "title": "Hello", "url": url,
+                               "lang": "en", "status": "ok"},
+                              "# Hello\n\nBody **world**.\n")
+            ft.write_body_doc(root / zh_rel,
+                              {"vendor": "openai", "title": "你好", "url": url,
+                               "lang": "zh", "status": "translated"},
+                              "# 你好\n\n正文 **世界**.\n")
+            bodies = {ft.bodies_key("openai", url): {
+                "slug": slug, "en_path": en_rel, "zh_path": zh_rel,
+                "en_status": "ok", "zh_status": "translated",
+                "translator": "agent", "title": "", "date": "", "captured": "",
+                "body_sha": "", "src_lang": "en"}}
+            ft.save_bodies(feeds / "bodies.json", bodies)
+            v = crawler_llm_intel.VendorIntel(vendor_id="openai", brand="OpenAI",
+                                              homepage="", products=[])
+            v.all_news_articles = [crawler_llm_intel.Article(
+                title="Hello", url=url, date="2026-01-01", zh_title="你好")]
+            crawler_llm_intel.write_rss_feeds(feeds, [v], "https://x.test/feeds")
+            zh_xml = (feeds / "llm-news-openai.xml").read_text(encoding="utf-8")
+            en_xml = (feeds / "llm-news-openai.en.xml").read_text(encoding="utf-8")
+            self.assertIn("<content:encoded>", zh_xml)
+            self.assertIn("正文", zh_xml)
+            self.assertIn("<strong>世界</strong>", zh_xml)
+            self.assertIn("<content:encoded>", en_xml)
+            self.assertIn("<strong>world</strong>", en_xml)
+
+    def test_write_rss_feeds_no_content_when_missing_file(self):
+        """缺正文文件 → 该 item 不写 content:encoded（不编造、不塞空字段）。"""
+        with tempfile.TemporaryDirectory() as d:
+            feeds = Path(d) / "feeds"
+            feeds.mkdir()
+            url = "https://openai.test/blog/gone"
+            slug = ft.url_hash(url)
+            en_rel = f"docs/articles/openai/{slug}.en.md"
+            # ledger 说 en_status=ok 但磁盘没文件
+            bodies = {ft.bodies_key("openai", url): {
+                "slug": slug, "en_path": en_rel, "zh_path": "",
+                "en_status": "ok", "zh_status": "", "translator": "",
+                "title": "", "date": "", "captured": "",
+                "body_sha": "", "src_lang": "en"}}
+            ft.save_bodies(feeds / "bodies.json", bodies)
+            v = crawler_llm_intel.VendorIntel(vendor_id="openai", brand="OpenAI",
+                                              homepage="", products=[])
+            v.all_news_articles = [crawler_llm_intel.Article(
+                title="Gone", url=url, date="2026-01-01")]
+            crawler_llm_intel.write_rss_feeds(feeds, [v], "https://x.test/feeds")
+            zh_xml = (feeds / "llm-news-openai.xml").read_text(encoding="utf-8")
+            self.assertNotIn("<content:encoded>", zh_xml)
+
+    def test_rss_root_declares_content_ns(self):
+        """xmlns:content 必须在 <rss> 根声明，否则 <content:encoded> 是非法 XML。"""
+        with tempfile.TemporaryDirectory() as d:
+            feeds = Path(d) / "feeds"
+            feeds.mkdir()
+            v = crawler_llm_intel.VendorIntel(vendor_id="v", brand="V", homepage="", products=[])
+            v.all_news_articles = [crawler_llm_intel.Article(
+                title="Hi", url="https://v.test/1", date="2026-01-01")]
+            crawler_llm_intel.write_rss_feeds(feeds, [v], "https://x.test/feeds")
+            zh = (feeds / "llm-news-v.xml").read_text(encoding="utf-8")
+            self.assertIn('xmlns:content="http://purl.org/rss/1.0/modules/content/"', zh)
 
 
 class TestFulltextLedgerFetch(unittest.TestCase):

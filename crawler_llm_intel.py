@@ -246,16 +246,34 @@ REPO_URL = "https://github.com/rockbenben/free-llm-intel"
 # 提取兜底）。本仓库既然已把这些页面归档成结构化文章，就顺手把它们变成真正可订阅
 # 的源——否则「无官方源的厂商」永远只能靠人肉刷页面。
 RSS_TITLE_MAX = 60      # 标题超过该长度则截断，完整文本移入 description
-#: 合并流最多收录条数；**0 = 不限制**（收录全部有日期的条目）。
-#: 曾经是 200，理由是「全量 feed 体积太大会让阅读器吃力」——**这个理由站不住**：
-#: GitHub Pages 走 gzip 传输，全量压缩后阅读器毫无压力，当初的判断看的是未压缩体积。
-#: 单厂商源本来就不设上限（收录范围 = 排除未来日期后的该厂商全量归档）。
-RSS_MERGED_LIMIT = 0
+#: 合并流最多收录条数；0 = 不限制。历史上从 200 → 0（"gzip 后其实能塞"）
+#: → 200（2026-10-05，`<content:encoded>` 塞正文后单条体积胀 100×，
+#: 全量流不再"其实没问题"）。200 条 × 平均 8 KB ≈ 1.6 MB（gzip 后 ~300 KB）
+#: 在阅读器常见上限内、够覆盖两周巡检新增。想拉全部历史请订对应单厂商源，
+#: 完整归档仍在 `docs/articles/**`。见 docs/superpowers/specs/2026-10-05-rss-redesign.md §3.1。
+RSS_MERGED_LIMIT = 200
+#: 单厂商流最多收录条数；0 = 全量归档。50 条够回看一个季度、体积可控。
+#: CLI 覆盖：`--rss-limit N` / `--rss-vendor-limit N`。
+RSS_VENDOR_LIMIT = 50
+#: 英文 feed 的 guid 后缀查询串，让中/英条目 guid 不同、阅读器不 dedup；
+#: `<link>` 保持原 URL 干净。中文 feed guid 无后缀（向后兼容旧订阅者）。
+RSS_EN_GUID_SUFFIX = "?li=1"
+#: 合并流**产出内容**的软体积上限（字节）。超过即自动降级：`<content:encoded>`
+#: 只留前 RSS_SUMMARY_CHARS 字 + `[阅读完整文章 →](link)`；单厂商源不降级
+#: （读者按需订一个厂商，可控）。GitHub Pages 单文件软上限 25 MB，5 MB 有 5× 余量。
+RSS_SOFT_CAP = 5_000_000
+#: 降级后正文摘要长度（HTML 字符串截断，非严格段落边界）。
+RSS_SUMMARY_CHARS = 500
 
 
 def merged_scope_text(merged_limit: int) -> str:
     """合并流收录范围的文案。0 = 不限制。文案要跟着实际上限走，别写死。"""
     return "收录全部有日期的条目" if not merged_limit else f"最近 {merged_limit} 条"
+
+
+def vendor_scope_text(vendor_limit: int) -> str:
+    """单厂商流收录范围的文案。0 = 全量归档。"""
+    return "全量归档" if not vendor_limit else f"最近 {vendor_limit} 条"
 
 BLOCK_TAGS = {
     "p", "div", "li", "tr", "td", "th", "h1", "h2", "h3", "h4", "h5", "h6",
@@ -3409,7 +3427,8 @@ def _news_display_name(intel: VendorIntel) -> str:
 
 
 def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
-                        merged_limit: int = RSS_MERGED_LIMIT) -> str:
+                        merged_limit: int = RSS_MERGED_LIMIT,
+                        vendor_limit: int = RSS_VENDOR_LIMIT) -> str:
     now = datetime.now()
     now_str = now.strftime("%Y-%m-%d %H:%M:%S")
     today = now.strftime("%Y-%m-%d")
@@ -3426,7 +3445,7 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
                  "（每厂商一个 `.md`，全量罗列该来源所有文章）。")
     lines.append("> 可将同目录下的 `llm-news-feeds.opml` 导入任意 RSS 阅读器（如 Feedly / Inoreader / "
                  "NetNewsWire / 本地阅读器）"
-                 + ("统一订阅（原生源 + 本仓库自建源，OPML 里分两组）。"
+                 + ("统一订阅（原生源 + 本仓库自建源 + 英文镜像，OPML 里分组）。"
                     if feeds_base else "订阅**官方原生源**。"))
     if feeds_base:
         site = _feeds_site_base(feeds_base)
@@ -3438,10 +3457,15 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
                          "（可按厂商筛选、搜索，页脚列出**全部有动态源的厂商**单源）")
         lines.append(f"> - 合并流（聚合全部有动态源的厂商）：[`llm-news-all.xml`]({feeds_base}/llm-news-all.xml)"
                      f"（{merged_scope_text(merged_limit)}，带厂商前缀，可按 `category` 过滤）")
+        lines.append(f"> - 英文镜像合并流：[`llm-news-all.en.xml`]({feeds_base}/llm-news-all.en.xml)"
+                     "（源语言标题，中文原生源的厂商不出现在这里）")
         lines.append(f"> - 单厂商源：`{feeds_base}/llm-news-{{vendor_id}}.xml`"
-                     "（把 `{vendor_id}` 换成下方括号里的厂商 id，如 `llm-news-openai.xml`）")
+                     f"（{vendor_scope_text(vendor_limit)}；把 `{{vendor_id}}` 换成下方括号里的厂商 id，"
+                     "如 `llm-news-openai.xml`；英文镜像同名加 `.en.xml`）")
         lines.append("> - ⚠️ 合并流与各厂商单源**内容重叠**，二选一订阅即可（都订会出现重复条目）；"
-                     "合并流只收有日期的条目，**要看全量请用浏览页或单厂商源**。")
+                     "中英两版**同时订**会看到同一份新闻各一条（guid 加了 `?li=1` 后缀区分，"
+                     "阅读器不会自动去重）。**建议按语言偏好二选一**。")
+        lines.append("> - 合并流只收有日期的条目；要看全量请用浏览页或单厂商源。")
     lines.append("")
 
     vendors_with_news = _order_by_vendor_rank([v for v in intel_list if v.news_pages])
@@ -3599,6 +3623,9 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
     site = _feeds_site_base(feeds_base)
     today = datetime.now().strftime("%Y-%m-%d")
     self_hosted: list[tuple[str, str, str]] = []
+    # 英文镜像自建源：本轮 write_rss_feeds 落盘的 .en.xml 才算（native-only 厂商没有）
+    english_self: list[tuple[str, str, str]] = []
+    feeds_dir = path.parent if path else None
     if feeds_base:
         for intel in intel_list:
             # 判据与 write_rss_feeds 出源的判据同源（_rss_articles）：否则文章日期全被
@@ -3610,6 +3637,13 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
                 f"{feeds_base}/llm-news-{intel.vendor_id}.xml",
                 site or feeds_base,
             ))
+            en_file = feeds_dir / f"llm-news-{intel.vendor_id}.en.xml" if feeds_dir else None
+            if en_file and en_file.exists():
+                english_self.append((
+                    f"{_news_display_name(intel)} (EN)",
+                    f"{feeds_base}/llm-news-{intel.vendor_id}.en.xml",
+                    site or feeds_base,
+                ))
 
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     lines = [
@@ -3627,6 +3661,15 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
         lines += group("LLM Vendors · 聚合流（订阅这一个 = 全部有动态源的厂商）", [(
             "全部厂商 - 合并流（%s，带厂商前缀）" % merged_scope_text(merged_limit),
             f"{feeds_base}/llm-news-all.xml",
+            site or feeds_base,
+        )])
+    if english_self:
+        # 英文镜像组：给英语读者；同订中英两条源会看到重复条目（guid 不同，阅读器不去重），
+        # 建议读者按语言偏好二选一
+        lines += group("LLM Vendors · 英文镜像（源语言，与中文源二选一）", english_self)
+        lines += group("LLM Vendors · 英文聚合流", [(
+            "All vendors — merged English feed (%s)" % merged_scope_text(merged_limit),
+            f"{feeds_base}/llm-news-all.en.xml",
             site or feeds_base,
         )])
     if feeds_base and changes_feed:
@@ -4412,6 +4455,188 @@ def _rss_esc(text: str) -> str:
             .replace('"', "&quot;").replace("'", "&apos;"))
 
 
+def _html_escape(text: str) -> str:
+    """HTML 文本节点转义（比 XML 少一个 &apos;，浏览器习惯）。"""
+    return (text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            .replace('"', "&quot;"))
+
+
+# md→html 里需要过滤的危险标签（语料正文可能因源页面残留 <iframe> 之类）
+_MD_STRIP_TAG_RE = re.compile(
+    r"<\s*(script|iframe|style|link|object|embed|form)\b[^>]*>.*?<\s*/\s*\1\s*>",
+    re.IGNORECASE | re.DOTALL,
+)
+_MD_STRIP_SELF_CLOSE_RE = re.compile(
+    r"<\s*(script|iframe|style|link|object|embed|form|input|meta)\b[^>]*/?\s*>",
+    re.IGNORECASE,
+)
+
+
+def _md_strip_unsafe(html: str) -> str:
+    html = _MD_STRIP_TAG_RE.sub("", html)
+    html = _MD_STRIP_SELF_CLOSE_RE.sub("", html)
+    return html
+
+
+def _md_inline(text: str) -> str:
+    """一段不含块级标记的 markdown 行 → HTML（先转义，再套 inline 标记）。"""
+    # 先转义 —— 之后插入的 HTML 标签由我们自己控制、不会被 escape 掉
+    out = _html_escape(text)
+    # images ![alt](src) —— 先处理，避免被 link 规则吞掉
+    out = re.sub(r"!\[([^\]]*)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)",
+                 lambda m: f'<img src="{m.group(2)}" alt="{m.group(1)}">', out)
+    # links [text](href)
+    out = re.sub(r"\[([^\]]+)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)",
+                 lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>', out)
+    # inline code `x`（非贪婪，不做嵌套）
+    out = re.sub(r"`([^`\n]+)`", lambda m: f"<code>{m.group(1)}</code>", out)
+    # bold **x**（先于 italic）
+    out = re.sub(r"\*\*([^*\n]+)\*\*", lambda m: f"<strong>{m.group(1)}</strong>", out)
+    # italic *x*
+    out = re.sub(r"(?<![\*])\*([^*\n]+)\*(?!\*)", lambda m: f"<em>{m.group(1)}</em>", out)
+    return out
+
+
+def _md_to_html(md: str) -> str:
+    """语料 markdown → HTML（stdlib 手写、够用即可，不追求 CommonMark 完备）。
+
+    覆盖 `extract_article_markdown` 实际产出的构造：
+      * ATX 标题 #/##/###/…
+      * fenced code block ```lang\\n...```
+      * pipe 表格 | a | b |\\n|---|---|\\n…
+      * 引用块 >
+      * 无序列表 - / * / +（一层，无嵌套）
+      * 有序列表 1. / 2.
+      * 段落（空行分隔）
+      * inline：链接、图片、粗体、斜体、`code`
+
+    其它 markdown 变体（嵌套列表、行内 HTML、水平线）不额外处理——
+    语料正文里没实际用到。危险标签 <script>/<iframe>/<style>/<link>/… 一律剥除。
+    """
+    if not md:
+        return ""
+    lines = md.splitlines()
+    out: list[str] = []
+    i = 0
+    n = len(lines)
+    while i < n:
+        raw = lines[i]
+        line = raw.rstrip()
+        stripped = line.strip()
+        if not stripped:
+            i += 1
+            continue
+        # fenced code block
+        if stripped.startswith("```"):
+            lang = stripped[3:].strip()
+            body_lines: list[str] = []
+            i += 1
+            while i < n and not lines[i].strip().startswith("```"):
+                body_lines.append(lines[i])
+                i += 1
+            i += 1  # 跳过闭合 ```
+            code_body = _html_escape("\n".join(body_lines))
+            cls = f' class="language-{lang}"' if lang else ""
+            out.append(f"<pre><code{cls}>{code_body}</code></pre>")
+            continue
+        # ATX heading
+        hm = re.match(r"^(#{1,6})\s+(.+?)\s*#*\s*$", stripped)
+        if hm:
+            level = len(hm.group(1))
+            out.append(f"<h{level}>{_md_inline(hm.group(2))}</h{level}>")
+            i += 1
+            continue
+        # pipe table：当前行含 | 且下一行是 |---| 分隔
+        if stripped.startswith("|") and i + 1 < n and re.match(r"^\s*\|?[\s\-:|]+\|?\s*$", lines[i + 1]):
+            header_cells = [c.strip() for c in stripped.strip("|").split("|")]
+            i += 2  # 跳过表头 + 分隔
+            body_rows: list[list[str]] = []
+            while i < n and lines[i].strip().startswith("|"):
+                row = [c.strip() for c in lines[i].strip().strip("|").split("|")]
+                body_rows.append(row)
+                i += 1
+            ths = "".join(f"<th>{_md_inline(c)}</th>" for c in header_cells)
+            trs = "".join(
+                "<tr>" + "".join(f"<td>{_md_inline(c)}</td>" for c in row) + "</tr>"
+                for row in body_rows
+            )
+            out.append(f"<table><thead><tr>{ths}</tr></thead><tbody>{trs}</tbody></table>")
+            continue
+        # blockquote（连续 > 行合并成一个 <blockquote>）
+        if stripped.startswith(">"):
+            quote_lines: list[str] = []
+            while i < n and lines[i].strip().startswith(">"):
+                quote_lines.append(re.sub(r"^>\s?", "", lines[i].strip()))
+                i += 1
+            inner = "<br>".join(_md_inline(q) for q in quote_lines if q)
+            out.append(f"<blockquote>{inner}</blockquote>")
+            continue
+        # 无序列表（连续同类行合并成一个 <ul>）
+        if re.match(r"^[-*+]\s+", stripped):
+            items: list[str] = []
+            while i < n and re.match(r"^[-*+]\s+", lines[i].strip()):
+                items.append(re.sub(r"^[-*+]\s+", "", lines[i].strip()))
+                i += 1
+            lis = "".join(f"<li>{_md_inline(x)}</li>" for x in items)
+            out.append(f"<ul>{lis}</ul>")
+            continue
+        # 有序列表
+        if re.match(r"^\d+\.\s+", stripped):
+            oitems: list[str] = []
+            while i < n and re.match(r"^\d+\.\s+", lines[i].strip()):
+                oitems.append(re.sub(r"^\d+\.\s+", "", lines[i].strip()))
+                i += 1
+            ols = "".join(f"<li>{_md_inline(x)}</li>" for x in oitems)
+            out.append(f"<ol>{ols}</ol>")
+            continue
+        # 段落：连续非空、非其他块级标记的行合并
+        para: list[str] = []
+        while i < n:
+            cur = lines[i].strip()
+            if not cur:
+                break
+            if (cur.startswith("#") or cur.startswith(">") or cur.startswith("```")
+                    or re.match(r"^[-*+]\s+", cur) or re.match(r"^\d+\.\s+", cur)
+                    or cur.startswith("|")):
+                break
+            para.append(cur)
+            i += 1
+        if para:
+            out.append(f"<p>{_md_inline(' '.join(para))}</p>")
+            continue
+        # 兜底：单行也当段落（防死循环）
+        out.append(f"<p>{_md_inline(stripped)}</p>")
+        i += 1
+    return _md_strip_unsafe("\n".join(out))
+
+
+def _rss_cdata(text: str) -> str:
+    """包 CDATA；内部 `]]>` 拆分成 `]]]]><![CDATA[>` 保持字面。"""
+    if not text:
+        return ""
+    safe = text.replace("]]>", "]]]]><![CDATA[>")
+    return f"<![CDATA[{safe}]]>"
+
+
+def _summarize_html(html: str, url: str, limit: int = RSS_SUMMARY_CHARS) -> str:
+    """合并流超阈值降级：正文截到 limit 字 + 一段"阅读完整文章"回源链接。
+
+    截断按 HTML 字符串长度做（不追求段落边界），够"预览一眼 + 跳回原文"
+    这个语义即可。
+    """
+    if not html:
+        return ""
+    if len(html) <= limit:
+        return html
+    head = html[:limit].rstrip()
+    # 截半开的标签：last `<` 若无配对 `>`，去掉这段
+    lt = head.rfind("<")
+    if lt != -1 and ">" not in head[lt:]:
+        head = head[:lt]
+    tail_label = "阅读完整文章 →" if "阅读" not in head else "Read full article →"
+    return f"{head}\n<p><a href=\"{url}\">{tail_label}</a></p>"
+
+
 def _rss_pubdate(day: str) -> str:
     """YYYY-MM-DD → RFC 822（RSS pubDate 要求的格式），按当天 UTC 00:00 解释。"""
     try:
@@ -4435,27 +4660,46 @@ def _rss_title(title: str) -> tuple[str, str]:
 
 
 def _rss_item(art: Article, title_zh: str, brand: str = "",
-              source_url: str = "") -> str:
+              source_url: str = "", lang: str = "zh",
+              content_html: str = "") -> str:
     """单条 <item>；合并流传 brand 以加厂商前缀与 <category>，便于阅读器过滤。
 
     source_url 非空时额外写 <source url>：RSS 2.0 用它标注"这条来自哪个源"。
     这里指向该厂商的单厂商订阅源，于是合并流**自描述**了厂商→源的映射 ——
     docs/index.html 的浏览页据此生成「按厂商订阅」链接，无需硬编码厂商清单
     （硬编码会随厂商增删而漂移）。
+
+    lang='en'：标题走 art.title（原文），description 只保留"完整标题"截断说明
+    （不再列"原文标题"，title 本身就是原文）；guid 加 `?li=1` 后缀避免中英两条
+    被阅读器 dedup；`<link>` 保持原 URL。
+
+    content_html 非空 → 写 `<content:encoded>` 用 CDATA 包裹；正文里已剥危险标签，
+    markdown 已转 HTML。抓不到正文的条目传空串（不编造、也不塞空字段）。
     """
-    short, truncated_from = _rss_title(title_zh)
-    if brand:
-        short = f"[{brand}] {short}"
-    notes: list[str] = []
-    if truncated_from:
-        notes.append(f"完整标题：{truncated_from}")
-    if art.title.strip() and art.title.strip() != title_zh.strip():
-        notes.append(f"原文标题：{art.title.strip()}")
+    if lang == "en":
+        display_title = art.title.strip() or title_zh
+        short, truncated_from = _rss_title(display_title)
+        if brand:
+            short = f"[{brand}] {short}"
+        notes: list[str] = []
+        if truncated_from:
+            notes.append(f"Full title: {truncated_from}")
+        guid_url = art.url + RSS_EN_GUID_SUFFIX
+    else:
+        short, truncated_from = _rss_title(title_zh)
+        if brand:
+            short = f"[{brand}] {short}"
+        notes = []
+        if truncated_from:
+            notes.append(f"完整标题：{truncated_from}")
+        if art.title.strip() and art.title.strip() != title_zh.strip():
+            notes.append(f"原文标题：{art.title.strip()}")
+        guid_url = art.url
     lines = [
         "    <item>",
         f"      <title>{_rss_esc(short)}</title>",
         f"      <link>{_rss_esc(art.url)}</link>",
-        f'      <guid isPermaLink="true">{_rss_esc(art.url)}</guid>',
+        f'      <guid isPermaLink="true">{_rss_esc(guid_url)}</guid>',
     ]
     pub = _rss_pubdate(art.date)
     if pub:
@@ -4466,20 +4710,24 @@ def _rss_item(art: Article, title_zh: str, brand: str = "",
         lines.append(f'      <source url="{_rss_esc(source_url)}">{_rss_esc(brand)}</source>')
     if notes:
         lines.append(f"      <description>{_rss_esc(' | '.join(notes))}</description>")
+    if content_html:
+        lines.append(f"      <content:encoded>{_rss_cdata(content_html)}</content:encoded>")
     lines.append("    </item>")
     return "\n".join(lines)
 
 
 def _rss_channel(title: str, description: str, items: list[str], self_url: str,
-                 build_date: str, site_url: str = REPO_URL) -> str:
+                 build_date: str, site_url: str = REPO_URL,
+                 lang: str = "zh-cn") -> str:
     head = [
         '<?xml version="1.0" encoding="UTF-8"?>',
-        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">',
+        '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"'
+        ' xmlns:content="http://purl.org/rss/1.0/modules/content/">',
         "  <channel>",
         f"    <title>{_rss_esc(title)}</title>",
         f"    <link>{_rss_esc(site_url)}</link>",
         f"    <description>{_rss_esc(description)}</description>",
-        "    <language>zh-cn</language>",
+        f"    <language>{_rss_esc(lang)}</language>",
         "    <generator>crawler_llm_intel.py (free-llm-intel)</generator>",
     ]
     if self_url:
@@ -4539,36 +4787,96 @@ def _rss_write(path: Path, content: str) -> bool:
     return True
 
 
+def _load_bodies_for_feed(feeds_dir: Path) -> dict:
+    """读 docs/feeds/bodies.json → {key: entry}；缺文件/解析失败一律返回 {}（不阻断 feed）。"""
+    p = feeds_dir / "bodies.json"
+    if not p.exists():
+        return {}
+    try:
+        import fulltext as _ft
+        return _ft.load_bodies(p)
+    except Exception:
+        return {}
+
+
+def _english_eligible(art: Article, bodies: dict, vendor: str) -> bool:
+    """这条文章能不能进英文 feed？
+
+    - bodies.json 有该 (vendor, url) 条目：`en_status == "ok"` 才算合格
+      （native 中文源 en_status 为空、fetch_failed / index_page 都排除）
+    - bodies.json 缺该 URL（尚未跑过语料回充 / CI 抖动 / 老归档）：按标题启发式
+      回退——含连续 ≥ 4 拉丁字母即视作"原文是英文"
+    """
+    if bodies:
+        try:
+            import fulltext as _ft
+            key = _ft.bodies_key(vendor, art.url)
+            entry = bodies.get(key)
+            if entry is not None:
+                return entry.get("en_status") == "ok"
+        except Exception:
+            pass
+    return bool(re.search(r"[A-Za-z]{4}", art.title))
+
+
+def _body_html_for(art: Article, vendor: str, bodies: dict, feeds_dir: Path,
+                   lang: str) -> str:
+    """按 (vendor,url) 从 bodies.json 定位正文文件 → markdown → HTML；缺文件返空串。
+
+    lang='zh' 读 zh_path（.md）；lang='en' 读 en_path（.en.md）。entries 里的路径
+    相对仓库根（`docs/articles/...`），所以 root 是 feeds_dir 的上两级。文件不存在 /
+    正文为空 / 解析异常都返 ""，让 `_rss_item` 不写 `<content:encoded>`
+    （不编造、不塞空字段）。
+    """
+    try:
+        import fulltext as _ft
+        key = _ft.bodies_key(vendor, art.url)
+        entry = bodies.get(key)
+        if not entry:
+            return ""
+        rel = entry.get("zh_path" if lang == "zh" else "en_path", "")
+        if not rel:
+            return ""
+        root = feeds_dir.parent.parent
+        p = root / rel
+        if not p.exists():
+            return ""
+        _fm, body = _ft.read_body_doc(p)
+        body = (body or "").strip()
+        if not body:
+            return ""
+        return _md_to_html(body)
+    except Exception:
+        return ""
+
+
 def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str = "",
                     merged_limit: int = RSS_MERGED_LIMIT,
+                    vendor_limit: int = RSS_VENDOR_LIMIT,
                     clean_removed: bool = True) -> tuple[int, int, int, int]:
-    """把各厂商归档文章写成 RSS 2.0 订阅源（GitHub Pages 托管）。
+    """把各厂商归档文章写成 RSS 2.0 订阅源（GitHub Pages 托管），**每源出中/英双版**。
 
-    产出 `<out_dir>/llm-news-all.xml`（合并流，最近 merged_limit 条）与每厂商一个
-    `<out_dir>/llm-news-<vendor_id>.xml`（排除未来日期后的该厂商全量归档，
-    新订阅者可一次补齐历史）。
+    产出：
+      * `llm-news-all.xml` / `llm-news-all.en.xml` — 合并流（中英各 merged_limit 条）
+      * `llm-news-<vid>.xml` / `llm-news-<vid>.en.xml` — 单厂商（各 vendor_limit 条）
+      * 该厂商全无英文正文时不出 `.en.xml`（英文 feed 空文件是负担）
+      * `vendors.json` — 加 `feed_en` 字段（无英文 feed 时空串）
+      * `articles.json` — 浏览页索引，中英共用（不含 description、体量最小）
 
-    日期规则：
-      * **晚于今天**的日期必然是源页面写错了（曾见过博客卡片把已发布的文章印成
-        未来某日），一律排除——RSS 是按时间排序的流，一条未来日期会永远钉在列表顶端；
-      * **无日期**的条目只进单厂商源（不写 pubDate、排在末尾），不进合并流：合并流是
-        「最近更新」，没有日期的条目无法参与排序。归档 .md 里它们同样列在最后。
-    若把无日期条目一并丢弃，整源都抓不到日期的厂商会直接没有订阅源——那还不如不做。
-    被排除的条数会打印出来，让上游日期提取问题暴露在巡检日志里。
+    日期规则（中英一致）：晚于今天排除；无日期只进单厂商、排末尾。
 
-    返回 (源文件数, 收录条目数, 实际改写文件数, 因未来日期被排除的条目数)。
+    英文 feed 判定见 `_english_eligible`。
+
+    返回 (源文件数, 中文条目数, 实际改写文件数, 因未来日期被排除的条目数)。
     """
     out_dir.mkdir(parents=True, exist_ok=True)
     base = base_url.rstrip("/")
     today = datetime.now().strftime("%Y-%m-%d")
+    bodies = _load_bodies_for_feed(out_dir)
 
-    # 标题汉化：归档已冻结的 zh_title 直接复用，只有新条目走 translate_to_zh
-    # 的磁盘缓存（.translate_cache.json），不产生额外翻译请求。
     per_vendor: list[tuple[str, str, list[Article], list[str]]] = []
     skipped = 0
     for intel in intel_list:
-        # 判据与 OPML / llm-news-feeds.md 的自建源标注共用 `_rss_articles`：
-        # 三处必须一致，否则文档会标注出并不存在的源（或漏标真实存在的源）。
         arts = _rss_articles(intel, today)
         skipped += len(intel.all_news_articles) - len(arts)
         if not arts:
@@ -4578,20 +4886,19 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
         per_vendor.append((intel.brand, intel.vendor_id, arts, titles_zh))
 
     if clean_removed:
-        # 同 write_news_archives：只删「已从本轮清单消失」的厂商订阅源（确认下线）。
-        # 本轮没有可收录条目的厂商（动态页临时抓不到）保留旧 feed 文件，
-        # 否则一次源站抖动就让订阅者读到 404。
         present = {v.vendor_id for v in intel_list}
         for old in out_dir.glob("llm-news-*.xml"):
-            if old.name == "llm-news-all.xml":
+            name = old.name
+            if name in ("llm-news-all.xml", "llm-news-all.en.xml"):
                 continue
-            if old.stem.removeprefix("llm-news-") not in present:
+            body = name[len("llm-news-"):-len(".xml")]
+            vid = body[:-3] if body.endswith(".en") else body
+            if vid not in present:
                 old.unlink()
 
     files = items = changed = 0
 
-    # 1) 合并流：只取有日期的条目，跨厂商按日期倒序，同一 URL 只留一条
-    #    （不同厂商可能转发同一份公告）
+    # ---------- 中文侧 ----------
     merged: list[tuple[str, str, Article, str]] = []
     for brand, vid, arts, titles_zh in per_vendor:
         merged.extend((brand, vid, art, t) for art, t in zip(arts, titles_zh) if art.date)
@@ -4604,52 +4911,127 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
             continue
         seen.add(key)
         picked.append(row)
-        if merged_limit and len(picked) >= merged_limit:  # 0 = 不限制
+        if merged_limit and len(picked) >= merged_limit:
             break
-    if picked:
-        # 每条带上「本厂商单源」地址，让合并流自描述厂商→源映射（见 _rss_item 注释）
-        items_xml = [_rss_item(art, title_zh, brand,
-                              f"{base}/llm-news-{vid}.xml" if base else "")
-                     for brand, vid, art, title_zh in picked]
-        files += 1
-        items += len(items_xml)
-        changed += _rss_write(
-            out_dir / "llm-news-all.xml",
-            _rss_channel(
-                "LLM 厂商动态（合并流）",
-                f"汇总 {len(per_vendor)} 家 LLM 厂商官方博客 / 更新日志的新文章，标题已汉化；"
-                "官方没有 RSS 的厂商也在这里（由 free-llm-intel 定时巡检官方页面归档生成）。",
-                items_xml, f"{base}/llm-news-all.xml" if base else "", picked[0][2].date))
 
-    # 2) 每厂商单源：收录范围 = 排除未来日期后的该厂商全量归档
+    picked_en: list[tuple[str, str, Article, str]] = []
+
+    def _emit_merged(zh: bool) -> None:
+        """合并流（中/英）生成，超 RSS_SOFT_CAP 自动降级为首段摘要 + 回源链接。"""
+        nonlocal files, items, changed
+        rows = picked if zh else picked_en
+        if not rows:
+            return
+
+        def _build(degrade: bool) -> list[str]:
+            out: list[str] = []
+            for brand, vid, art, title_zh in rows:
+                body = _body_html_for(art, vid, bodies, out_dir, "zh" if zh else "en")
+                if degrade and body:
+                    body = _summarize_html(body, art.url)
+                if zh:
+                    out.append(_rss_item(art, title_zh, brand,
+                                        f"{base}/llm-news-{vid}.xml" if base else "",
+                                        content_html=body))
+                else:
+                    out.append(_rss_item(art, title_zh, brand,
+                                        f"{base}/llm-news-{vid}.en.xml" if base else "",
+                                        lang="en", content_html=body))
+            return out
+
+        if zh:
+            title = "LLM 厂商动态（合并流）"
+            desc = (f"汇总 {len(per_vendor)} 家 LLM 厂商官方博客 / 更新日志的新文章，标题已汉化；"
+                    "官方没有 RSS 的厂商也在这里（由 free-llm-intel 定时巡检官方页面归档生成）。")
+            fname = "llm-news-all.xml"
+            chan_lang = "zh-cn"
+        else:
+            title = "LLM Vendor News (merged, English)"
+            desc = ("Aggregated official blogs / changelogs from "
+                    f"{len(per_vendor)} LLM vendors, kept in the source language. "
+                    "Vendors whose articles are Chinese-native are excluded here. "
+                    "Generated by free-llm-intel.")
+            fname = "llm-news-all.en.xml"
+            chan_lang = "en"
+        self_url = f"{base}/{fname}" if base else ""
+        items_xml = _build(degrade=False)
+        channel_text = _rss_channel(title, desc, items_xml, self_url,
+                                    rows[0][2].date, lang=chan_lang)
+        if len(channel_text.encode("utf-8")) > RSS_SOFT_CAP:
+            items_xml = _build(degrade=True)
+            suffix = "（正文降级为首段摘要 + 回源链接）" if zh else " (articles truncated to preview + link)"
+            channel_text = _rss_channel(title, desc + suffix, items_xml, self_url,
+                                        rows[0][2].date, lang=chan_lang)
+        files += 1
+        if zh:
+            items += len(items_xml)
+        changed += _rss_write(out_dir / fname, channel_text)
+
+    _emit_merged(zh=True)
+
     for brand, vendor_id, arts, titles_zh in per_vendor:
-        items_xml = [_rss_item(art, t) for art, t in zip(arts, titles_zh)]
+        cut = arts[:vendor_limit] if vendor_limit else arts
+        cut_zh = titles_zh[:vendor_limit] if vendor_limit else titles_zh
+        items_xml = [_rss_item(art, t,
+                              content_html=_body_html_for(art, vendor_id, bodies, out_dir, "zh"))
+                     for art, t in zip(cut, cut_zh)]
         files += 1
         items += len(items_xml)
         changed += _rss_write(
             out_dir / f"llm-news-{vendor_id}.xml",
             _rss_channel(
                 f"{brand} 官方动态",
-                f"{brand} 官方博客 / 更新日志归档（标题汉化，共 {len(items_xml)} 篇），"
-                "由 free-llm-intel 定时巡检官方页面生成。",
+                f"{brand} 官方博客 / 更新日志归档（{vendor_scope_text(vendor_limit)}，"
+                f"共 {len(items_xml)} 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。",
                 items_xml, f"{base}/llm-news-{vendor_id}.xml" if base else "",
                 arts[0].date))
 
-    # 3) 厂商索引：供浏览页 docs/index.html 列出**全部**厂商的订阅入口。
-    #    光靠合并流是不够的 —— 合并流只收**有日期**的条目，且受 `--rss-limit` 约束，
-    #    于是「文章全无日期」或「文章都偏旧、落在限量之后」的厂商**根本不会出现**，
-    #    而那正是「官方没有原生 RSS」最需要被订到的几家。索引由这里顺手产出，
-    #    与 feed 同源，不存在漂移。
-    #    无时间戳：内容不变就不重写。
-    #    数组顺序按「模型知名度」（provider_profiles.VENDOR_RANK）排：浏览页的厂商标签
-    #    原先自己按**文章数**排，于是头部厂商永远在最前、小众厂商排在知名厂商之前。
-    #    排序依据放在这里（而不是页面里），是因为厂商清单不得硬编码进
-    #    docs/index.html —— 页面只读这个字段。
-    #    ⚠️ `rank` 是**本索引内的连续序号**（0,1,2…），**不是**它在 VENDOR_RANK 里的
-    #    全局位次。用全局位次会得到 0,1,2,…,10,12,15,49 这种跳号
-    #    （VENDOR_RANK 还包含没有文章的厂商，而本索引只列「有文章的厂商」），
-    #    看上去像数据损坏。页面只需要相对顺序，连续编号即可。
-    #    未登记的厂商排在最后，再按 id 保证顺序确定。
+    # ---------- 英文侧 ----------
+    merged_en: list[tuple[str, str, Article, str]] = []
+    for brand, vid, arts, titles_zh in per_vendor:
+        for art, t in zip(arts, titles_zh):
+            if not art.date or not _english_eligible(art, bodies, vid):
+                continue
+            merged_en.append((brand, vid, art, t))
+    merged_en.sort(key=lambda row: row[2].date, reverse=True)
+    seen_en: set[str] = set()
+    picked_en: list[tuple[str, str, Article, str]] = []
+    for row in merged_en:
+        key = _article_key(row[2].url)
+        if key in seen_en:
+            continue
+        seen_en.add(key)
+        picked_en.append(row)
+        if merged_limit and len(picked_en) >= merged_limit:
+            break
+    if picked_en:
+        _emit_merged(zh=False)
+
+    # 每厂商英文 feed；全无英文正文则跳过
+    vendor_en_emitted: set[str] = set()
+    for brand, vendor_id, arts, titles_zh in per_vendor:
+        pairs = [(a, t) for a, t in zip(arts, titles_zh)
+                 if _english_eligible(a, bodies, vendor_id)]
+        if not pairs:
+            continue
+        cut = pairs[:vendor_limit] if vendor_limit else pairs
+        items_xml = [_rss_item(a, t, lang="en",
+                              content_html=_body_html_for(a, vendor_id, bodies, out_dir, "en"))
+                     for a, t in cut]
+        files += 1
+        vendor_en_emitted.add(vendor_id)
+        changed += _rss_write(
+            out_dir / f"llm-news-{vendor_id}.en.xml",
+            _rss_channel(
+                f"{brand} News (English)",
+                f"{brand} official blog / changelog in English "
+                f"({vendor_scope_text(vendor_limit)}, {len(items_xml)} items). "
+                "Generated by free-llm-intel.",
+                items_xml,
+                f"{base}/llm-news-{vendor_id}.en.xml" if base else "",
+                pairs[0][0].date, lang="en"))
+
+    # ---------- vendors.json 索引 ----------
     _ordered = sorted(
         (
             {
@@ -4657,8 +5039,10 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
                 "brand": brand,
                 "feed": f"{base}/llm-news-{vendor_id}.xml" if base
                         else f"llm-news-{vendor_id}.xml",
+                "feed_en": (f"{base}/llm-news-{vendor_id}.en.xml" if base
+                            else f"llm-news-{vendor_id}.en.xml")
+                         if vendor_id in vendor_en_emitted else "",
                 "articles": len(arts),
-                # arts 已按日期倒序、无日期的排在最后，所以第一条有日期的就是最新日期
                 "latest": next((a.date for a in arts if a.date), ""),
             }
             for brand, vendor_id, arts, _t in per_vendor
@@ -5644,8 +6028,11 @@ def main(argv: list[str] | None = None) -> int:
                              "其次按 GITHUB_REPOSITORY 推导 GitHub Pages 地址。"
                              "本地刷新产物请显式传入")
     parser.add_argument("--rss-limit", type=int, default=RSS_MERGED_LIMIT,
-                        help=f"合并流最多收录条数（默认 {RSS_MERGED_LIMIT} = **不限制**；"
-                             "单厂商源本来就不设上限）")
+                        help=f"合并流最多收录条数（默认 {RSS_MERGED_LIMIT}；"
+                             "传 0 = 不限制）")
+    parser.add_argument("--rss-vendor-limit", type=int, default=RSS_VENDOR_LIMIT,
+                        help=f"单厂商流最多收录条数（默认 {RSS_VENDOR_LIMIT}；"
+                             "传 0 = 全量归档）")
     parser.add_argument("--delay", type=float, default=0.3, help="每次请求间隔秒数（默认 0.3）")
     parser.add_argument("--timeout", type=float, default=20.0, help="读取超时秒数（默认 20）")
     parser.add_argument("--only", action="append", default=[],
@@ -6162,13 +6549,15 @@ def main(argv: list[str] | None = None) -> int:
             news_dir, intel_list, clean_removed=True, title_polish=title_polish)
         news_changed = update_news_md(
             news_md_path,
-            render_news_section(intel_list, feeds_base, merged_limit=args.rss_limit))
+            render_news_section(intel_list, feeds_base, merged_limit=args.rss_limit,
+                                vendor_limit=args.rss_vendor_limit))
         print(f"      {news_md_path.name} {'已刷新' if news_changed else '无内容变化，未改写'}")
         print(f"      llm-news/ 归档 {n_arch} 个厂商文件、共 {n_arch_arts} 篇文章"
               f"（本次实际改写 {n_arch_changed} 个文件）")
         # 同样必须在 write_news_archives 之后：RSS 要用的正是这份全量、已排序的列表。
         n_rss, n_rss_items, n_rss_changed, n_rss_skipped = write_rss_feeds(
-            feeds_dir, intel_list, feeds_base, merged_limit=args.rss_limit)
+            feeds_dir, intel_list, feeds_base, merged_limit=args.rss_limit,
+            vendor_limit=args.rss_vendor_limit)
         print(f"      {args.feeds_dir} 自建 RSS {n_rss} 个源、{n_rss_items} 条"
               f"（本次实际改写 {n_rss_changed} 个文件）")
         if n_rss_skipped:
