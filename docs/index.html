@@ -238,6 +238,96 @@
     .chip { padding: var(--sp-10) var(--sp-12); }
     .vendor { padding: var(--sp-8) var(--sp-12); }
   }
+
+  /* ---- reader drawer（corpus spec §12：点开条目就地读全文）---- */
+  .read-btn {
+    display: inline-block; margin-left: var(--sp-8);
+    padding: var(--sp-2) var(--sp-8);
+    font-size: var(--fs-sm); line-height: 1.6; cursor: pointer;
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--line); border-radius: var(--rd-control);
+  }
+  .read-btn:hover { color: var(--fg); border-color: var(--fg); }
+  .read-btn[disabled] { cursor: not-allowed; color: var(--line); border-color: var(--line); }
+  .reader-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 90;
+  }
+  .reader-overlay[hidden] { display: none; }
+  .reader-drawer {
+    position: fixed; top: 0; right: 0; bottom: 0; width: min(720px, 100vw);
+    background: var(--bg); color: var(--fg); z-index: 100;
+    box-shadow: -6px 0 24px rgba(0,0,0,.2);
+    display: flex; flex-direction: column;
+  }
+  .reader-drawer[hidden] { display: none; }
+  .reader-head {
+    display: flex; align-items: center; gap: var(--sp-8);
+    padding: var(--sp-12) var(--sp-16); border-bottom: 1px solid var(--line);
+  }
+  .reader-title {
+    flex: 1 1 auto; min-width: 0; font-weight: 600; font-size: var(--fs-base);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .reader-lang { display: inline-flex; gap: var(--sp-4); }
+  .reader-lang button {
+    appearance: none; cursor: pointer;
+    padding: var(--sp-2) var(--sp-8);
+    font-size: var(--fs-sm); line-height: 1.6;
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--line); border-radius: var(--rd-control);
+  }
+  .reader-lang button[aria-pressed="true"] {
+    background: var(--chip-active-bg); color: var(--chip-active-fg);
+    border-color: transparent;
+  }
+  .reader-lang button[disabled] { cursor: not-allowed; color: var(--line); border-color: var(--line); }
+  .reader-close {
+    appearance: none; cursor: pointer;
+    padding: var(--sp-2) var(--sp-12);
+    font-size: var(--fs-base); line-height: 1.6;
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--line); border-radius: var(--rd-control);
+  }
+  .reader-close:hover { color: var(--fg); border-color: var(--fg); }
+  .reader-body { flex: 1 1 auto; overflow-y: auto; padding: var(--sp-16) var(--sp-20); }
+  .reader-body h1 { font-size: var(--fs-xl); margin: var(--sp-16) 0 var(--sp-8); line-height: 1.3; }
+  .reader-body h2, .reader-body h3 {
+    font-size: var(--fs-base); font-weight: 700;
+    margin: var(--sp-16) 0 var(--sp-8); line-height: 1.4;
+  }
+  .reader-body p { margin: var(--sp-8) 0; line-height: 1.6; }
+  .reader-body ul, .reader-body ol { padding-left: var(--sp-20); margin: var(--sp-8) 0; }
+  .reader-body li { margin: var(--sp-2) 0; }
+  .reader-body blockquote {
+    border-left: 3px solid var(--line); margin: var(--sp-8) 0;
+    padding: var(--sp-4) var(--sp-16); color: var(--muted);
+  }
+  .reader-body pre {
+    background: var(--card-hover); padding: var(--sp-12);
+    overflow-x: auto; border-radius: var(--rd-control);
+    font-size: var(--fs-sm); margin: var(--sp-8) 0;
+  }
+  .reader-body code { font-family: ui-monospace, SFMono-Regular, monospace; }
+  .reader-body table {
+    border-collapse: collapse; margin: var(--sp-8) 0; width: 100%;
+    font-size: var(--fs-sm);
+  }
+  .reader-body th, .reader-body td {
+    border: 1px solid var(--line); padding: var(--sp-4) var(--sp-8);
+    text-align: left; vertical-align: top;
+  }
+  .reader-body th { background: var(--card-hover); }
+  .reader-body img { max-width: 100%; height: auto; }
+  .reader-body a { color: var(--accent); text-decoration: underline; }
+  .reader-loading, .reader-error { padding: var(--sp-20); color: var(--muted); }
+  .reader-error a { color: var(--accent); }
+  @media (max-width: 720px) {
+    .reader-drawer { width: 100vw; }
+  }
+  @media (forced-colors: active) {
+    .reader-drawer { border-left: 2px solid CanvasText; box-shadow: none; }
+    .reader-close, .reader-lang button, .read-btn { border-color: ButtonText; }
+  }
 </style>
 </head>
 <body>
@@ -329,6 +419,22 @@
          data-loading="加载中…">加载中…</div>
   </div>
   </main>
+
+  <!-- 浏览页 reader 抽屉（corpus spec §12.2）：点条目里「读全文」滑入，从 articles/<v>/<slug>.md
+       就地渲染。overlay + drawer 一起 hidden；JS openReader/closeReader 控。-->
+  <div class="reader-overlay" id="reader-overlay" hidden></div>
+  <aside class="reader-drawer" id="reader-drawer" role="dialog" aria-modal="true"
+         aria-labelledby="reader-title-text" hidden>
+    <div class="reader-head">
+      <div class="reader-title" id="reader-title-text"></div>
+      <div class="reader-lang" role="group" aria-label="正文语言">
+        <button type="button" id="reader-lang-zh" aria-pressed="true">中</button>
+        <button type="button" id="reader-lang-en" aria-pressed="false">EN</button>
+      </div>
+      <button type="button" class="reader-close" id="reader-close" aria-label="关闭全文">✕</button>
+    </div>
+    <div class="reader-body" id="reader-body" tabindex="0"></div>
+  </aside>
 
   <footer>
     <h2>按厂商订阅</h2>
@@ -764,6 +870,19 @@ var FLI = (function () {
     a.rel = 'noopener noreferrer';
     a.textContent = it.title;
     t.appendChild(a);
+    // slug 存在（articles.json 已带）时才亮「读全文」；md 缺文件时 drawer 会自报"未落到语料"
+    if (it.slug) {
+      var rb = document.createElement('button');
+      rb.type = 'button';
+      rb.className = 'read-btn';
+      rb.textContent = '读全文';
+      rb.setAttribute('aria-label', '读全文：' + it.title);
+      rb.onclick = function (ev) {
+        ev.preventDefault();
+        openReader(it.vendorId, it.slug, 'zh', it.title, {push: true, link: it.link});
+      };
+      t.appendChild(rb);
+    }
     body.appendChild(t);
 
     var meta = document.createElement('div');
@@ -1258,6 +1377,8 @@ var FLI = (function () {
     cacheWrite('articles', data);
     applyArticles(data);
     render();
+    // 深链可能在索引到位前就打开了 reader（手里只有 slug）；索引到齐后补原文 URL。
+    if (reader.open && !reader.link) readerFillLinkFromState();
   }).catch(function () {
     if (bootCache) return; // 缓存画面还在，静默用旧数据
     // 索引缺失时的兜底：退回解析合并流（以下行为与旧版一致）
@@ -1279,6 +1400,209 @@ var FLI = (function () {
     if (bootCache) return; // 缓存画面还在，不算失败
     fail(new Error('网络不可达'));
   });
+
+  // ---- reader 抽屉（corpus spec §12.2-12.5）----
+  var reader = { vendor: '', slug: '', lang: 'zh', title: '', link: '', open: false, lastFocus: null };
+  var rdOverlay = document.getElementById('reader-overlay');
+  var rdDrawer = document.getElementById('reader-drawer');
+  var rdTitle = document.getElementById('reader-title-text');
+  var rdBody = document.getElementById('reader-body');
+  var rdClose = document.getElementById('reader-close');
+  var rdZh = document.getElementById('reader-lang-zh');
+  var rdEn = document.getElementById('reader-lang-en');
+
+  function readerMdPath(vendor, slug, lang) {
+    // Pages 根 = /docs，语料在 docs/articles/**；页面本身在 docs/index.html，
+    // 所以相对路径就是 articles/<vendor>/<slug>[.en].md
+    return 'articles/' + vendor + '/' + slug + (lang === 'en' ? '.en.md' : '.md');
+  }
+
+  function readerShowLoading() {
+    rdBody.innerHTML = '';
+    var p = document.createElement('div');
+    p.className = 'reader-loading';
+    p.textContent = '加载正文…';
+    rdBody.appendChild(p);
+  }
+
+  function readerShowError(title, link) {
+    rdBody.innerHTML = '';
+    var box = document.createElement('div');
+    box.className = 'reader-error';
+    var strong = document.createElement('strong');
+    strong.textContent = '这篇正文还没落到语料里。';
+    box.appendChild(strong);
+    box.appendChild(document.createTextNode(' 可以直接 '));
+    var a = document.createElement('a');
+    a.id = 'reader-error-link';
+    a.href = link || '#';
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = '访问原文';
+    box.appendChild(a);
+    box.appendChild(document.createTextNode('。'));
+    rdBody.appendChild(box);
+  }
+
+  function readerFillLinkFromState() {
+    // 深链/popstate 打开时手里只有 vendor+slug，没有原文 URL；等 articles.json
+    // 到位后按 slug 反查补上（错误态的「访问原文」链接、以及标题都靠它）。
+    if (reader.link) return;
+    for (var i = 0; i < state.all.length; i++) {
+      var it = state.all[i];
+      if (it.slug && it.slug === reader.slug && it.vendorId === reader.vendor) {
+        reader.link = it.link;
+        if (!reader.title) { reader.title = it.title; rdTitle.textContent = it.title; }
+        var a = document.getElementById('reader-error-link');
+        if (a) a.href = reader.link;
+        return;
+      }
+    }
+  }
+
+  function readerRenderMd(md) {
+    rdBody.innerHTML = '';
+    var wrap = document.createElement('div');
+    wrap.innerHTML = FLI.mdToHtml(md);   // fli-core 已做 HTML escape + 剥危险标签
+    rdBody.appendChild(wrap);
+    rdBody.scrollTop = 0;
+    // 深链/popstate 打开时没有行标题（列表可能还没加载），回落到正文首个标题，
+    // 抽屉头部就不会空着。列表点开的场景已有标题，不覆盖。
+    if (!reader.title) {
+      var h = wrap.querySelector('h1,h2,h3');
+      if (h) { reader.title = h.textContent.trim(); rdTitle.textContent = reader.title; }
+    }
+  }
+
+  function readerSetLangButtons(zhOk, enOk) {
+    rdZh.disabled = !zhOk;
+    rdEn.disabled = !enOk;
+    rdZh.setAttribute('aria-pressed', reader.lang === 'zh' ? 'true' : 'false');
+    rdEn.setAttribute('aria-pressed', reader.lang === 'en' ? 'true' : 'false');
+  }
+
+  function readerLoad(opts) {
+    readerShowLoading();
+    var url = readerMdPath(reader.vendor, reader.slug, reader.lang);
+    fetch(url, { cache: 'no-cache' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    }).then(function (raw) {
+      // 剥掉 frontmatter（首行 --- 到下一 --- 之间），只留正文
+      var m = raw.match(/^---\n[\s\S]*?\n---\n?/);
+      var body = m ? raw.slice(m[0].length) : raw;
+      readerRenderMd(body);
+      // 探另一语言是否存在，用于 lang 按钮 disabled
+      var other = reader.lang === 'zh' ? 'en' : 'zh';
+      var otherUrl = readerMdPath(reader.vendor, reader.slug, other);
+      fetch(otherUrl, { method: 'HEAD', cache: 'no-cache' }).then(function (rr) {
+        var ok = {}; ok[reader.lang] = true; ok[other] = rr.ok;
+        readerSetLangButtons(ok.zh, ok.en);
+      }).catch(function () {
+        readerSetLangButtons(true, false);
+      });
+    }).catch(function () {
+      readerShowError(reader.title, reader.link);
+      readerSetLangButtons(false, false);
+    });
+  }
+
+  function openReader(vendor, slug, lang, title, opts) {
+    if (!vendor || !slug) return;
+    opts = opts || {};
+    var was = reader.open;
+    reader.vendor = vendor; reader.slug = slug; reader.lang = lang || 'zh';
+    reader.title = title || '';
+    reader.link = (opts && opts.link) || '';
+    reader.open = true;
+    readerFillLinkFromState();   // 深链时 state 可能已到位，先补原文 URL
+    if (!was) {
+      reader.lastFocus = document.activeElement;
+      rdOverlay.hidden = false;
+      rdDrawer.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+    rdTitle.textContent = reader.title;
+    readerLoad({ link: opts.link });
+    readerSetLangButtons(true, true);  // 先假定两个都可用，异步再 disable
+    if (opts.push !== false) {
+      var u = new URL(location.href);
+      u.searchParams.set('read', vendor + '/' + slug);
+      u.searchParams.set('lang', reader.lang);
+      history.pushState({ read: vendor + '/' + slug, lang: reader.lang }, '', u.toString());
+    }
+    rdClose.focus();
+  }
+
+  function closeReader(push) {
+    if (!reader.open) return;
+    reader.open = false;
+    rdOverlay.hidden = true;
+    rdDrawer.hidden = true;
+    document.body.style.overflow = '';
+    if (push !== false) {
+      var u = new URL(location.href);
+      u.searchParams.delete('read'); u.searchParams.delete('lang');
+      history.pushState(null, '', u.toString());
+    }
+    if (reader.lastFocus && reader.lastFocus.focus) {
+      try { reader.lastFocus.focus(); } catch (e) { /* detached */ }
+    }
+    reader.lastFocus = null;
+  }
+
+  rdClose.addEventListener('click', function () { closeReader(true); });
+  rdOverlay.addEventListener('click', function () { closeReader(true); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && reader.open) { e.preventDefault(); closeReader(true); }
+  });
+  rdZh.addEventListener('click', function () {
+    if (reader.lang === 'zh') return;
+    reader.lang = 'zh';
+    readerLoad({});
+    readerSetLangButtons(true, true);
+    var u = new URL(location.href);
+    u.searchParams.set('lang', 'zh');
+    history.replaceState({ read: reader.vendor + '/' + reader.slug, lang: 'zh' }, '', u.toString());
+  });
+  rdEn.addEventListener('click', function () {
+    if (reader.lang === 'en') return;
+    reader.lang = 'en';
+    readerLoad({});
+    readerSetLangButtons(true, true);
+    var u = new URL(location.href);
+    u.searchParams.set('lang', 'en');
+    history.replaceState({ read: reader.vendor + '/' + reader.slug, lang: 'en' }, '', u.toString());
+  });
+
+  // 浏览器前进/后退：drawer 状态跟着 popstate 同步
+  window.addEventListener('popstate', function () {
+    var params = new URLSearchParams(location.search);
+    var r = params.get('read');
+    if (r) {
+      var slash = r.indexOf('/');
+      if (slash > 0) {
+        var vendor = r.slice(0, slash), slug = r.slice(slash + 1);
+        if (vendor && slug) {
+          openReader(vendor, slug, params.get('lang') || 'zh', reader.title || '', {push: false});
+          return;
+        }
+      }
+    }
+    closeReader(false);
+  });
+
+  // 首屏 ?read=<vendor>/<slug>&lang=zh|en 深链直落
+  (function maybeOpenFromUrl() {
+    var params = new URLSearchParams(location.search);
+    var r = params.get('read');
+    if (!r) return;
+    var slash = r.indexOf('/');
+    if (slash <= 0) return;
+    var vendor = r.slice(0, slash), slug = r.slice(slash + 1);
+    if (!vendor || !slug) return;
+    openReader(vendor, slug, params.get('lang') || 'zh', '', {push: false});
+  })();
 
   // 深链入口必须放在最后：showTab 会立刻调用对应视图的加载器，
   // 而 changesState / quotasState 是在下面才初始化的（var 提升只给 undefined）。

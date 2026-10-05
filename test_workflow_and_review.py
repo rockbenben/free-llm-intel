@@ -2136,12 +2136,18 @@ class TestSelfHostedRss(unittest.TestCase):
 
         硬编码的厂商列表会随厂商增删而漂移（列出已下线的厂商、漏掉新增的），
         而这种漂移不会报任何错。用 llm-intel.yaml 的真实 id 反查页面正文。
+
+        匹配要求 id 是独立词元：前后都不能是单词字符或连字符。裸子串匹配会被
+        `aria-modal="true"` 撞车（modal 是真实厂商 id，drawer 的无障碍属性名里
+        恰好含这个词），但那是 ARIA 属性名，不是硬编码厂商列表；JS 里
+        `["openai","anthropic"]` 这类字面量前后是引号/方括号，仍会被抓。
         """
         page = (self.repo_root / "docs" / "index.html").read_text(encoding="utf-8")
         yaml_text = (self.repo_root / "llm-intel.yaml").read_text(encoding="utf-8")
         ids = re.findall(r"^\s*-\s*id:\s*([A-Za-z0-9_]+)", yaml_text, re.M)
         self.assertTrue(ids, "没解析到厂商 id —— 解析正则失配，先修测试本身")
-        hits = sorted(i for i in ids if i in page)
+        hits = sorted(i for i in ids
+                      if re.search(rf"(?<![-\w]){re.escape(i)}(?![\w-])", page))
         self.assertEqual(
             hits, [], f"浏览页硬编码了厂商 id {hits}；厂商清单应取自 feeds/vendors.json")
 
