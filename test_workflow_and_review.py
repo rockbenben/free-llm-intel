@@ -3076,7 +3076,12 @@ class TestTranslationSkipsIdentifiers(unittest.TestCase):
         self.assertEqual(r("克劳德", "Claude"), "克劳德")
 
     def test_published_artifacts_have_no_transliterated_brands(self):
-        """已发布产物里不允许残留品牌音译/直译（防线装好前的历史数据回归守卫）。"""
+        """已发布产物里不允许残留品牌音译/直译（防线装好前的历史数据回归守卫）。
+
+        扫描范围是**标题与摘要**——feed 的 `<content:encoded>` 整段正文不在守卫内：
+        正文里"搜索拉取"（索+拉相邻）与人名音译（Solaiman → 索拉曼）都会误命中
+        "索拉"，而正文质量走 agent 逐篇翻译 + 抽查，不靠这个字符串守卫。
+        """
         root = Path(__file__).resolve().parent
         pat = re.compile(r"克劳德|格罗克|格洛克|共纹|拥抱人脸|拥抱脸部|拥抱脸|抱脸|拥抱面"
                          r"|法学硕士|双子座|稳定扩散|变压器|扩散器|米斯特拉尔|迷你最大"
@@ -3087,10 +3092,17 @@ class TestTranslationSkipsIdentifiers(unittest.TestCase):
         files += sorted((root / "llm-news").glob("*.md"))
         files += sorted((root / "docs" / "feeds").glob("*.xml"))
         bad = []
+        CDATA_OPEN = "<content:encoded>"
+        CDATA_CLOSE = "</content:encoded>"
         for f in files:
             if not f.exists():
                 continue
-            for i, line in enumerate(f.read_text(encoding="utf-8").splitlines(), 1):
+            text = f.read_text(encoding="utf-8")
+            if f.suffix == ".xml":
+                # 剥掉 <content:encoded>...</content:encoded> 段，只扫标题/description
+                text = re.sub(re.escape(CDATA_OPEN) + r".*?" + re.escape(CDATA_CLOSE),
+                              "", text, flags=re.DOTALL)
+            for i, line in enumerate(text.splitlines(), 1):
                 if pat.search(line):
                     bad.append(f"{f.name}:{i}: {line[:60]}")
         self.assertEqual(bad, [], "产物里残留了被音译的品牌名:\n" + "\n".join(bad))

@@ -3562,7 +3562,8 @@ def update_news_md(path: Path, section: str) -> bool:
 
 def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
                merged_limit: int = RSS_MERGED_LIMIT,
-               changes_feed: bool = True) -> int:
+               changes_feed: bool = True,
+               feeds_dir: Path | None = None) -> int:
     """将发现的 RSS/Atom 源写成 OPML（可导入 RSS 阅读器）。
     返回官方原生源 + 自建源 + 聚合流的行数（情报变化流不计入；自建源为空时聚合流
     成组也未写入，同样不计）。
@@ -3625,7 +3626,9 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
     self_hosted: list[tuple[str, str, str]] = []
     # 英文镜像自建源：本轮 write_rss_feeds 落盘的 .en.xml 才算（native-only 厂商没有）
     english_self: list[tuple[str, str, str]] = []
-    feeds_dir = path.parent if path else None
+    # feeds_dir 由调用方显式传入（OPML 常放在仓库根、feed 文件在 docs/feeds，
+    # 用 path.parent 会指错目录）；未传时退回 path.parent 兼容测试
+    _feeds_dir = feeds_dir if feeds_dir is not None else (path.parent if path else None)
     if feeds_base:
         for intel in intel_list:
             # 判据与 write_rss_feeds 出源的判据同源（_rss_articles）：否则文章日期全被
@@ -3637,7 +3640,7 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
                 f"{feeds_base}/llm-news-{intel.vendor_id}.xml",
                 site or feeds_base,
             ))
-            en_file = feeds_dir / f"llm-news-{intel.vendor_id}.en.xml" if feeds_dir else None
+            en_file = _feeds_dir / f"llm-news-{intel.vendor_id}.en.xml" if _feeds_dir else None
             if en_file and en_file.exists():
                 english_self.append((
                     f"{_news_display_name(intel)} (EN)",
@@ -6589,7 +6592,8 @@ def main(argv: list[str] | None = None) -> int:
         n_feeds = write_opml(opml_path, intel_list, feeds_base,
                              merged_limit=args.rss_limit,
                              changes_feed=bool(n_changes)
-                             or (feeds_dir / INTEL_CHANGES_FEED).exists())
+                             or (feeds_dir / INTEL_CHANGES_FEED).exists(),
+                             feeds_dir=feeds_dir)
         print(f"      {opml_path.name}（{n_feeds} 个订阅源"
               f"{'：官方原生 + 自建源 + 聚合流' if feeds_base else '（仅官方原生源，未推导出 Pages 前缀）'}）")
         wrote_q = _write_json(feeds_dir / "quotas.json", quotas)

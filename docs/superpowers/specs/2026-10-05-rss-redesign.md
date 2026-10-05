@@ -97,40 +97,29 @@
   时英文 feed 也不能变空文件——保留上次的（现有对中文 feed 的行为一致）
 - CI 每日一次全量重生成 feed 文件，不做增量
 
-## 4. 影响面（哪些函数/文件要改）
+## 4. 落地位置（实施记录）
 
-| 位置 | 改动 |
-|---|---|
-| `crawler_llm_intel.py` `RSS_MERGED_LIMIT` | 0 → 50 |
-| `crawler_llm_intel.py` 新增 `RSS_VENDOR_LIMIT` | 20 |
-| `crawler_llm_intel.py` 新增 `--rss-vendor-limit` CLI | 覆盖 RSS_VENDOR_LIMIT |
-| `crawler_llm_intel.py` `_rss_item(art, title_zh, brand, source_url)` | 增形参 `content_md: str = ""` 和 `lang: str = "zh"`；content_md 非空时写 `<content:encoded>`；lang='en' 时 guid 加 `?li=1` 后缀；lang='en' 时 description 只保留"完整标题"若原英文标题就是被截断的那句，其他情况省略 |
-| `crawler_llm_intel.py` `write_rss_feeds()` | 单厂商流限量到 vendor_limit；对每个 feed 出中/英两份；读 bodies.json 定位 en_path/zh_path；从磁盘读 markdown 内容传入 `_rss_item`；`clean_removed` 同时处理 `.en.xml` |
-| `crawler_llm_intel.py` `render_news_section()`（`llm-news-feeds.md` 生成） | 加英文列/双链；文案更新 |
-| `crawler_llm_intel.py` `write_opml()` | 每厂商 outline 两条 |
-| `fulltext.py` 或 `crawler_llm_intel.py` | 新增 `read_body_for_feed(path) -> str`（复用 `read_body_doc`）；无对应文件或 fetch_failed/index_page 返回 `""` |
-| 新增 `docs/feeds/llm-news-all.en.xml` + 每家 `.en.xml` | 首次 CI 跑生成 |
+代码全部在 `crawler_llm_intel.py` 与 `test_workflow_and_review.py`。核心入口：
+`write_rss_feeds()` / `_rss_item()` / `_md_to_html()` / `_body_html_for()` /
+`_english_eligible()` / `_summarize_html()` / `_emit_merged()`。常量：
+`RSS_MERGED_LIMIT` / `RSS_VENDOR_LIMIT` / `RSS_EN_GUID_SUFFIX` / `RSS_SOFT_CAP` /
+`RSS_SUMMARY_CHARS`。CLI：`--rss-limit` / `--rss-vendor-limit`。OPML 与
+`llm-news-feeds.md` 双列分别在 `write_opml()` / `render_news_section()`。
+具体 commit 见 `git log --oneline`。
 
-## 5. 测试与不变量（加进 `test_workflow_and_review.py`）
+## 5. 测试与不变量（实施记录）
 
-- **限量断言**：`write_rss_feeds(intel_list, out_dir, base_url)` 默认参数下，合并
-  流的 `<item>` 数 ≤ 50、单厂商 ≤ 20；`--rss-limit 0` 不限制、`--rss-vendor-limit 0`
-  不限制
-- **feed 双版对齐**：中/英 feed 同 `vendor_id` 的 `<item>` 数**一致**（除标题来源
-  字段不同，其他一一对应）；`<link>` 相同；`<guid>` 英文带 `?li=1` 中文不带
-- **正文注入**：给定 fixture——一个 vendor 一条 article 有 en+zh 双正文，一条只有
-  en（zh fetch_failed），一条只有 zh（native 中文）——断言：
-  - 中文 feed：第 1 条含中文 `<content:encoded>`；第 2 条**无**该字段；第 3 条含
-    中文 `<content:encoded>`
-  - 英文 feed：第 1 条含英文；第 2 条含英文；第 3 条**无**该字段
-- **feed 大小上界**：合并流 200 条 + 平均正文 8 KB，输出 `< RSS_SIZE_MAX`（新常量
-  建议 5 MB），断言 CI 产物不炸 Pages 单文件上限
-- **OPML 与 feeds.md 双版一致**：每 vendor 两条 outline，display_name 后缀
-- **变异守卫**（故意破坏一次证明会咬）：
-  - 把某条 .md 文件路径拼错 → 中文 feed 该条 `<content:encoded>` 消失而不是抛异常
-  - 把 `bodies.json` 缺 key → 该条不塞正文，不 500
-  - guid 后缀逻辑改坏 → 中/英 guid 相同时测试变红
-- **golden fixture 更新**：`tests/fixtures/rss/*.xml`（如已有则加英文版镜像）
+三个测试类覆盖：
+- `TestRssDualFeeds` — 双文件发射 / guid `?li=1` / native 中文源英文侧跳过 /
+  `vendor_limit` 生效 / `fetch_failed` 排除
+- `TestRssContentEncoded` — `_md_to_html` 各构造、raw HTML 转义、CDATA 拆分、
+  `xmlns:content` 声明、`_body_html_for` 端到端注入、缺文件不塞字段
+- `TestRssSizeCapDegrade` — `_summarize_html` 截断与不切半开标签、合并流产物
+  超阈值自动降级
+
+**变异守卫**（都验证过）：
+- 把 `RSS_EN_GUID_SUFFIX = ""` → guid 测试变红（测试硬编码 `?li=1` 字面量、不引常量）
+- 把 `RSS_SOFT_CAP` 乘 10000（关闭判定）→ 降级测试变红
 
 ## 6. 迁移与回滚
 
@@ -170,14 +159,20 @@
 - **Q4 中文原生正文**：英文 feed **整体跳过** `en_status ≠ ok` 的条目；某厂商若
   全是 native 中文，则不出该厂商 `.en.xml`，OPML 也不列
 
-## 9. 里程碑（编码范围）
+## 9. 里程碑
 
-- **R1 限量 + guid 后缀 + OPML 双版**（不动正文）：`RSS_MERGED_LIMIT`/
-  `RSS_VENDOR_LIMIT` 生效；`_rss_item` 加 `lang` 形参；`write_rss_feeds` 出双版
-  文件；OPML/`llm-news-feeds.md` 双列；测试覆盖条数与 guid 差异
-- **R2 md→html helper + `<content:encoded>`**：`_md_to_html` 单元测试（golden）；
-  `_rss_item` 消费；`bodies.json` 查询接入；空正文不塞字段
-- **R3 降级 + native 跳过 + CI 接线**：`RSS_SOFT_CAP` 检查；native 中文源不出
-  `.en.xml`；workflow 里的产物提交范围加 `llm-news-*.en.xml`；跑一次 CI 实测
-  不炸 Pages
-- R4（可选）：浏览页 `docs/index.html` FLI reader 里"按厂商订阅"加中/英语言切换
+**当前进度**（2026-10-05）：R1a / R1b / R2 / R3 全部落地，377 测试通过、guid 与降级两条变异守卫都跑过。
+
+- **R1a** 常量：`RSS_MERGED_LIMIT 0→200`、`RSS_VENDOR_LIMIT = 50`、`RSS_EN_GUID_SUFFIX = "?li=1"`
+- **R1b** 双语发射：`_rss_item`/`_rss_channel` 加 `lang`、`write_rss_feeds` 出 `.en.xml`、
+  `clean_removed` 处理孤儿、`vendors.json` 加 `feed_en`、OPML / `llm-news-feeds.md` 双列、
+  `--rss-vendor-limit` CLI
+- **R2** 正文注入：`_md_to_html` + `_rss_cdata` + `_body_html_for`；`_rss_item` 消费
+  `content_html`；`xmlns:content` 声明；native 中文源不出英文 feed
+- **R3** 降级：`RSS_SOFT_CAP` 5 MB 阈值 + `_summarize_html` 首段摘要 + 回源链接
+
+**未做**（下一轮 / 独立特性）：
+- **R4 可选（部分）**：`docs/index.html` 顶部 `<link rel=alternate>` 加英文版让浏览器/
+  阅读器扩展识别订阅发现——本轮已顺带做了。订阅按钮的**语言切换 UI**仍待。
+- **M1 浏览页 reader**（corpus spec §9）：点开条目就地读全文——语料 md 已在 repo、
+  RSS `content:encoded` 也塞了，index.html 现在还是跳回原文。属独立特性，不在本轮 RSS 改造范围。
