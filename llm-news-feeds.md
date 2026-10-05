@@ -4,18 +4,20 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-05 10:51:51**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-05 23:34:14**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
 > 主文档每家仅展示**最新 5 篇**；**完整文章归档**按厂商拆分到 [`llm-news/`](llm-news/) 子目录（每厂商一个 `.md`，全量罗列该来源所有文章）。
-> 可将同目录下的 `llm-news-feeds.opml` 导入任意 RSS 阅读器（如 Feedly / Inoreader / NetNewsWire / 本地阅读器）统一订阅（原生源 + 本仓库自建源，OPML 里分两组）。
+> 可将同目录下的 `llm-news-feeds.opml` 导入任意 RSS 阅读器（如 Feedly / Inoreader / NetNewsWire / 本地阅读器）统一订阅（原生源 + 本仓库自建源 + 英文镜像，OPML 里分组）。
 >
 > 📡 **本仓库自建 RSS**：把下方归档直接转成订阅源，**官方没有原生 RSS 的厂商也能订阅**（标题同样已汉化，每日随巡检刷新）：
 > - 网页浏览 / 一键订阅：[https://free-llm-intel.aishort.top/](https://free-llm-intel.aishort.top/)（可按厂商筛选、搜索，页脚列出**全部有动态源的厂商**单源）
-> - 合并流（聚合全部有动态源的厂商）：[`llm-news-all.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml)（收录全部有日期的条目，带厂商前缀，可按 `category` 过滤）
-> - 单厂商源：`https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（把 `{vendor_id}` 换成下方括号里的厂商 id，如 `llm-news-openai.xml`）
-> - ⚠️ 合并流与各厂商单源**内容重叠**，二选一订阅即可（都订会出现重复条目）；合并流只收有日期的条目，**要看全量请用浏览页或单厂商源**。
+> - 合并流（聚合全部有动态源的厂商）：[`llm-news-all.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml)（最近 200 条，带厂商前缀，可按 `category` 过滤）
+> - 英文镜像合并流：[`llm-news-all.en.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml)（源语言标题，中文原生源的厂商不出现在这里）
+> - 单厂商源：`https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（最近 50 条；把 `{vendor_id}` 换成下方括号里的厂商 id，如 `llm-news-openai.xml`；英文镜像同名加 `.en.xml`）
+> - ⚠️ 合并流与各厂商单源**内容重叠**，二选一订阅即可（都订会出现重复条目）；中英两版**同时订**会看到同一份新闻各一条（guid 加了 `?li=1` 后缀区分，阅读器不会自动去重）。**建议按语言偏好二选一**。
+> - 合并流只收有日期的条目；要看全量请用浏览页或单厂商源。
 
 ### Anthropic Claude (anthropic)
 - 页面：[官方博客](https://claude.com/blog)
@@ -52,7 +54,7 @@
 - 📰 **最新文章**（官方源抓取于 2026-10-05，标题自动汉化）：
   1. [Gemini 3.8 Flash TTS 和 Gemini 3.8 Flash-Lite TTS 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-22-2026-1)（2026-09-22）
   2. [Antigravity 09-2026](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-17-2026-1)（2026-09-17）
-  3. [Gemini 3.8 Live 和 Gemini 3.8 Live Extended Thinking 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-1)（2026-09-15）
+  3. [Gemini 3.8 Live 和 Gemini 3.8 Live 扩展思考正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-1)（2026-09-15）
   4. [Gemini 3.8 Live 扩展思考](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-2)（2026-09-15）
   5. [Lyria 3.5 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-03-2026-1)（2026-09-03）
   - 📄 完整文章归档（共 41 篇）：[google_gemini.md](llm-news/google_gemini.md)
@@ -69,7 +71,7 @@
   3. [DeepSeek-V4-Flash-Vision-Exp 发布](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-21)（2026-08-21）
   4. [V4-Flash-Vision-Exp 上线，开启多模态 API 服务](https://api-docs.deepseek.com/zh-cn/news/news260821)（2026-08-21）
   5. [DeepSeek-V4-Pro 更新](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-13)（2026-08-13）
-  - 📄 完整文章归档（共 46 篇）：[deepseek.md](llm-news/deepseek.md)
+  - 📄 完整文章归档（共 42 篇）：[deepseek.md](llm-news/deepseek.md)
 
 ### 通义千问 (阿里云) (aliyun_qwen)
 - 页面：[研究页](https://qwen.ai/research)
@@ -275,7 +277,7 @@
   3. [【模型服务调整】ERNIE-Image-Turbo 模型将下线](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4ernie-image-turbo-%E6%A8%A1%E5%9E%8B%E5%B0%86%E4%B8%8B%E7%BA%BF)（2026-09-28）
   4. [【接口服务调整】生图 API 下线 batch_size 字段、水印默认添加](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%8E%A5%E5%8F%A3%E6%9C%8D%E5%8A%A1%E8%B0%83%E6%95%B4%E7%94%9F%E5%9B%BE-api-%E4%B8%8B%E7%BA%BF-batch_size-%E5%AD%97%E6%AE%B5%E6%B0%B4%E5%8D%B0%E9%BB%98%E8%AE%A4%E6%B7%BB%E5%8A%A0)（2026-09-15）
   5. [【模型价格调整】DeepSeek-V4-Flash 模型分时段定价调整](https://docs.siliconflow.cn/docs/release-notes/overview#%E6%A8%A1%E5%9E%8B%E4%BB%B7%E6%A0%BC%E8%B0%83%E6%95%B4deepseek-v4-flash-%E6%A8%A1%E5%9E%8B%E5%88%86%E6%97%B6%E6%AE%B5%E5%AE%9A%E4%BB%B7%E8%B0%83%E6%95%B4)（2026-09-11）
-  - 📄 完整文章归档（共 50 篇）：[siliconflow.md](llm-news/siliconflow.md)
+  - 📄 完整文章归档（共 48 篇）：[siliconflow.md](llm-news/siliconflow.md)
 
 ### StreamLake (快手万擎) (streamlake)
 - 页面：[更新日志](https://www.streamlake.com/document/WANQING/mdptalisb06i7ai3zdd)

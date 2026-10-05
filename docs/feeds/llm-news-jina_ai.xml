@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Jina AI 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>Jina AI 官方博客 / 更新日志归档（标题汉化，共 6 篇），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>Jina AI 官方博客 / 更新日志归档（最近 50 条，共 6 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-jina_ai.xml" rel="self" type="application/rss+xml"/>
@@ -14,6 +14,107 @@
       <guid isPermaLink="true">https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video</guid>
       <pubDate>Tue, 12 May 2026 00:00:00 +0000</pubDate>
       <description>完整标题：jina-embeddings-v5-omni: Embeddings for Text, Image, Audio and VideoOne model, four modalities: text, image, audio, video. Best-in-class omni embeddings in 1.6B and 0.9B.</description>
+      <content:encoded><![CDATA[<h1>jina-embeddings-v5-omni：面向文本、图像、音频与视频的 embedding</h1>
+<p>一个模型，四种模态：文本、图像、音频、视频。1.6B 和 0.9B 两个规模，提供同类最佳的 omni embeddings。</p>
+<p>Jina AI · 7 分钟阅读</p>
+<p>jina-embeddings-v5-omni — jinaai 的一个模型合集（Collection）</p>
+<p>与 jina-embeddings-v5-text-* 对齐的多模态（文本 + 图像 + 视频 + 音频）embedding 模型。两种规模，每种四个任务变体。</p>
+<p>jina-embeddings-v5-omni: Text-Geometry-Preserving Multimodal Embeddings via Frozen-Tower Composition</p>
+<p>在本工作中，我们提出冻结编码器模型组合（frozen-encoder model composition），一种面向多模态 embedding 模型的新方法。我们建立在 VLM 风格的架构之上：非文本编码器经过适配，为语言模型产出输入，而语言模型进而为各种输入生成 embedding。我们给出成果：jina-embeddings-v5-omni 系列，一对把文本、图像、音频和视频输入编码到单一语义 embedding 空间的模型。我们的做法是扩展两个 Jina Embeddings v5 Text 模型，通过加入图像和音频编码器来支持更多媒体。作为骨干的文本 embedding 模型和新加入的非文本媒体编码器都保持冻结。我们只训练连接各部分的组件，占联合模型总权重的 0.35%。因此训练远比全参数重训高效。此外，语言模型实际上未被改动，对文本输入产出的 embedding 与 Jina Embeddings v5 Text 模型完全一致。我们的评估表明，这一方法产出的结果足以与最先进水平竞争，性能与更大的多模态 embedding 模型几乎相当。</p>
+<p>Florian Hönicke</p>
+<p>我们正在发布 <strong>jina-embeddings-v5-omni</strong>，把我们的 v5-text embedding 模型扩展到图像、音频和视频。两个模型都与 v5-text 共享同一个冻结的文本主干，也就是说文本 embedding <strong>完全一致</strong>——无需重建索引。<a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-omni-small">jina-embeddings-v5-omni-small</a> 在四种模态上的平均得分 <strong>53.93</strong>，追平 LCO-7B（54.43），而参数<strong>少 5.7 倍</strong>；<a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-omni-nano">jina-embeddings-v5-omni-nano</a> 仅用 0.95B 参数就带来了有竞争力的文档检索。</p>
+<p>所有开源权重 omni embedding 模型（支持文本、图像、音频和视频）的帕累托前沿。</p>
+<p>jina-embeddings-v5-omni-small（1.57B）追平了 LCO-7B（8.93B）的平均得分，而参数少 5.7 倍。</p>
+<p>jina-embeddings-v5-omni-nano（0.95B）比 LanguageBind（1.14B）高 8.9 分。基线：LanguageBind、Omni-Embed-Nemotron-3B、LCO-Embedding-Omni-3B、LCO-Embedding-Omni-7B。</p>
+<p>按模态拆分的表现：文本（MMTEB）、图像（MIEB）、视频（MMEB-Video）和音频（MAEB）。</p>
+<p>jina-embeddings-v5-omni-small 在文本上以 67.0 领先所有 omni 模型，完整继承了 jina-embeddings-v5-text-small 的质量。在图像上（56.05），它擅长分类（68.55）和聚类（84.57，为所有模型中最佳）。音频（51.46）接近 LCO-7B（52.37），并拥有最佳的音频分类得分（55.89）。视频（41.20）是相对 LCO-7B（47.41）目前存在的差距，因为时序推理更受益于端到端训练。</p>
+<p>13 种任务类型上的分任务表现。金色星号标出 jina-embeddings-v5-omni-small 超过最佳开源权重基线（后者体积大 3-9 倍）的任务。胜项：图像分类（68.55 对 64.30）、图像聚类（84.57 对 83.24）、音频分类（55.89 对 53.39）。主要差距：视频检索（27.82 对 58.73）和组合式/视觉问答（44.23 对 53.40）。</p>
+<p>文档检索（ViDoRe-in-MIEB）。</p>
+<p>jina-embeddings-v5-omni-small 在文本+图像上仅 0.92B 激活参数，得分 79.08，超过 LCO-3B（4.07B 参数，78.24）。</p>
+<p>jina-embeddings-v5-omni-nano 仅用 0.31B 激活参数就得到 70.05，远高于 LanguageBind（37.33）。Nemotron-3B 以 85.64 领先，但参数多 5.1 倍。</p>
+<h2><a href="https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video/#architecture"><em>tag</em></a>架构</h2>
+<p>v5-omni 把 v5-text 主干完全冻结，并加入预训练的视觉和音频编码器，通过小型可训练的投影层（projector）连接：</p>
+<ul><li><strong>视觉</strong>：Qwen3.5 视觉编码器（由 SigLIP2 适配而来），采用 2x2 空间合并（token 减少 4 倍）。除了最后的投影层（<code>fc_vision_2</code>）外，其余全部冻结；我们把该层替换为一个随机初始化的层，映射到文本主干的隐藏维度。</li><li><strong>音频</strong>：Qwen2.5-Omni 编码器（由 Whisper-large-v3 适配而来）。一个随机初始化的 <code>fc_audio</code> 层把 1280 维输出投影进文本主干。</li><li><strong>视频</strong>：作为一串视觉帧来处理，可选地在其前面接上一段抽取出的音频。</li></ul>
+<p>该模型继承了 v5-text 的四个任务专用 LoRA adapter（retrieval、text-matching、classification、clustering），并为每个任务变体训练各自独立的投影层权重。架构完全模块化：纯文本部署不加载任何视觉或音频权重（与 v5-text 占用完全相同），仅图像部署跳过音频，完整 omni 则加载全部。</p>
+<p>v5-omni 架构。冻结的视觉和音频编码器把可训练的投影层喂给冻结的文本主干。只有投影层（占总权重 0.35%）被训练。任务专用 LoRA adapter 负责检索、分类、聚类和文本匹配。</p>
+<table><thead><tr><th>特性</th><th><a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-omni-small">jina-embeddings-v5-omni-small</a></th><th><a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-omni-nano">jina-embeddings-v5-omni-nano</a></th></tr></thead><tbody><tr><td>基础文本模型</td><td><a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-small">jina-embeddings-v5-text-small</a>（Qwen3-0.6B）</td><td><a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-nano">jina-embeddings-v5-text-nano</a>（EuroBERT-210m）</td></tr><tr><td>总参数</td><td>~1.56B</td><td>~1.04B</td></tr><tr><td>模态</td><td>文本、图像、音频、视频、PDF</td><td>文本、图像、音频、视频、PDF</td></tr><tr><td>Embedding 维度</td><td>1024</td><td>768</td></tr><tr><td>Matryoshka 维度</td><td>32, 64, 128, 256, 512, 768, 1024</td><td>32, 64, 128, 256, 512, 768</td></tr><tr><td>最大序列长度</td><td>32768 token</td><td>8192 token</td></tr><tr><td>视觉编码器</td><td>Qwen3.5-2B ViT（SigLIP2）</td><td>SigLIP2 Base</td></tr><tr><td>音频编码器</td><td>Whisper-large-v3</td><td>Whisper-large-v3</td></tr><tr><td>任务</td><td>retrieval、text-matching、classification、clustering</td><td>retrieval、text-matching、classification、clustering</td></tr><tr><td>文本兼容性</td><td>与 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-small">jina-embeddings-v5-text-small</a> 完全一致</td><td>与 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-nano">jina-embeddings-v5-text-nano</a> 完全一致</td></tr><tr><td>可训练参数</td><td>约 18M 投影层（0.35%）</td><td>约 7M 投影层（0.35%）</td></tr><tr><td>池化</td><td>Last-token</td><td>Last-token</td></tr><tr><td>许可证</td><td>CC BY-NC 4.0</td><td>CC BY-NC 4.0</td></tr></tbody></table>
+<h2><a href="https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video/#getting-started"><em>tag</em></a>快速上手</h2>
+<h3><a href="https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video/#elasticsearch-elastic-inference-service"><em>tag</em></a>Elasticsearch（Elastic Inference Service）</h3>
+<p>如果你已经在 Elasticsearch 中使用 <code>jina-embeddings-v5-text</code>，那么现有的文本索引可以直接用于 v5-omni。omni 模型对文本输入产出的 <strong>embedding 与 v5-text 完全一致</strong>——相同输入、相同向量，逐字节相同。你不需要重新嵌入或重建任何文本索引。要在现有文本数据旁边开始检索图像、音频和视频，只需用 v5-omni 新建一个索引，再把多模态内容写入其中即可。</p>
+<p>以 v5-omni 作为推理端点，创建一个 <code>semantic_text</code> 索引。EIS 会自动为索引和检索选择正确的 LoRA adapter：</p>
+<pre><code>PUT multimodal-semantic-index
+{
+  &quot;mappings&quot;: {
+    &quot;properties&quot;: {
+      &quot;content&quot;: {
+        &quot;type&quot;: &quot;semantic_text&quot;,
+        &quot;inference_id&quot;: &quot;.jina-embeddings-v5-omni-small&quot;
+      }
+    }
+  }
+}</code></pre>
+<p>把文本、图像（以 base64 data URI 形式）、音频和视频写入同一个字段、同一个索引：</p>
+<pre><code>// Ingest text
+POST multimodal-semantic-index/_doc
+{
+  &quot;content&quot;: &quot;'Kraft Dinner' is what Canadians call macaroni and cheese when prepared from a kit.&quot;
+}
+
+// Ingest an image (base64)
+POST multimodal-semantic-index/_doc
+{
+  &quot;content&quot;: &quot;data:image/png;base64,iVBORw0KGgoAAAAN...&quot;
+}</code></pre>
+<p>用一条文本查询跨所有模态检索：</p>
+<pre><code>GET multimodal-semantic-index/_search
+{
+  &quot;query&quot;: {
+    &quot;semantic&quot;: {
+      &quot;field&quot;: &quot;content&quot;,
+      &quot;query&quot;: &quot;Was bedeutet 'Kraft Dinner' für Kanadier?&quot;
+    }
+  }
+}</code></pre>
+<h3><a href="https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video/#jina-embedding-api"><em>tag</em></a>Jina Embedding API</h3>
+<pre><code>curl https://api.jina.ai/v1/embeddings \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer YOUR_API_KEY&quot; \
+  -d '{
+    &quot;model&quot;: &quot;jina-embeddings-v5-omni-small&quot;,
+    &quot;task&quot;: &quot;retrieval.query&quot;,
+    &quot;dimensions&quot;: 1024,
+    &quot;input&quot;: [&quot;What does this image show?&quot;],
+    &quot;images&quot;: [&quot;data:image/png;base64,...&quot;]
+  }'</code></pre>
+<h3><a href="https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video/#hugging-face"><em>tag</em></a>Hugging Face</h3>
+<pre><code>from sentence_transformers import SentenceTransformer
+import torch
+
+model = SentenceTransformer(
+    &quot;jinaai/jina-embeddings-v5-omni-small-retrieval&quot;,
+    model_kwargs={&quot;dtype&quot;: torch.bfloat16},
+)
+
+# Text embedding (identical to v5-text)
+text_emb = model.encode(&quot;What is knowledge distillation?&quot;, prompt_name=&quot;query&quot;)
+
+# Image embedding
+from PIL import Image
+img = Image.open(&quot;photo.jpg&quot;)
+img_emb = model.encode(img)
+
+# Cross-modal similarity
+similarity = model.similarity(text_emb, img_emb)</code></pre>
+<h2><a href="https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video/#training"><em>tag</em></a>训练</h2>
+<p>核心思想是<em>冻结编码器模型组合</em>：取一个强大的文本 embedding 模型，加入预训练的视觉和音频编码器，用小型可训练的投影层把它们连接起来，然后除这些投影层外全部冻结。只有总权重的 0.35% 被训练，这带来三个特性：（1）文本一致性保持——主干未被改动，相同输入产出相同输出；（2）训练高效——仅训练投影层比全量训练快 1.8-3.9 倍，GPU 显存少用 42-64%；（3）模块化——各塔（tower）可独立加载。</p>
+<p>仅投影层训练与完整训练的对比，在 4x H100 GPU 上进行（batch size 256，15K 步）。音频投影层训练尤其高效：small 快 3.2 倍（154 分钟对 497 分钟），nano 快 3.9 倍（112 分钟对 441 分钟）。显存节省 42-64% 来自不再为冻结编码器存储梯度和优化器状态。</p>
+<p>v5-omni 从 v5-text 继承了 Matryoshka 维度支持。图像和音频 embedding 在截断后仍能保持大部分质量，而视频在小维度下退化较多。</p>
+<p>小结：v5-omni 相对最强基线的各模态画像。</p>
+<p>jina-embeddings-v5-omni-small 以 1.57B 规模在文本、图像和音频上都具备竞争力，视频则是尚待弥合的差距。</p>
+<h2><a href="https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video/#conclusion"><em>tag</em></a>结论</h2>
+<p>通常的观念认为，多模态 embedding 需要端到端地训练整个模型。我们不同意。v5-omni 冻结文本主干、只训练 0.35% 的权重，却能追平体积是它 5-7 倍的模型。教训是：组合胜过重训。强大的文本编码器是最难的部分——一旦你有了它，通过轻量投影层挂上视觉和音频几乎是不花成本的。</p>
+<p>这对生产环境意义重大。你现有的 v5-text 索引不受影响。相同查询、相同向量，逐字节相同。你没有重新嵌入任何一篇文档，就获得了图像、音频和视频检索。这才是真正的解锁：把多模态检索当作即插即用的升级，而不是一个迁移项目。</p>
+<p><a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-omni-small">jina-embeddings-v5-omni-small</a> 是 2B 参数以下表现最佳的开源权重 omni embedding 模型。<a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-omni-nano">jina-embeddings-v5-omni-nano</a> 则在 0.9B 规模上做到了这一点。两者现已上线 <a href="https://huggingface.co/collections/jinaai/jina-embeddings-v5-omni-69f336b985c156b1d757029e">Hugging Face</a>、<a href="https://jina.ai/embeddings">Jina Search Foundation API</a>，并作为原生推理端点提供于 Elasticsearch。</p>]]></content:encoded>
     </item>
     <item>
       <title>7 minutes readBootstrapping Audio Embeddings from Multimodal…</title>
@@ -21,6 +122,79 @@
       <guid isPermaLink="true">https://jina.ai/news/bootstrapping-audio-embeddings-from-multimodal-llms</guid>
       <pubDate>Wed, 11 Mar 2026 00:00:00 +0000</pubDate>
       <description>完整标题：7 minutes readBootstrapping Audio Embeddings from Multimodal LLMsTurn any multimodal LLM into a small audio embedding model that beats CLAP with 25x less data.</description>
+      <content:encoded><![CDATA[<h1>从多模态 LLM 引导出音频 embedding</h1>
+<p>把任意多模态 LLM 变成一个小型音频 embedding 模型，用少 25 倍的数据就能超过 CLAP。</p>
+<p>Han Xiao · 7 分钟阅读</p>
+<p>jina-ai/audio-embedding-kickstarter</p>
+<p>Google 最近发布了 <a href="https://blog.google/innovation-and-ai/technology/developers-tools/gemini-embedding-2">Gemini Embedding 2</a>，这是他们第一个原生多模态 embedding 模型。文本、图像、视频、音频、文档，全部映射到同一个 3072 维的向量空间。这是更广泛的 <strong>omni embedding 模型</strong>趋势的一部分：用单一架构处理所有模态的统一模型，从 <a href="https://arxiv.org/abs/2506.18902">jina-embeddings-v4</a> 到 <a href="https://arxiv.org/abs/2501.05052">Omni-Embed-Nemotron</a> 再到 <a href="https://arxiv.org/abs/2505.14659">Omni-5</a>。</p>
+<p>在去年的 EMNLP BoF 会议上，我把 omni 模型列为 2026 年稠密检索（dense retrieval）的关键方向之一。</p>
+<p>引起我们注意的是音频。大多数人听到&quot;多模态 embedding&quot;首先想到图像，也许还有视频。音频是被遗忘的模态：更难采集、更难标注、做的人也更少。在 Jina AI，我们恰好研究过这个问题，作为通往 omni embeddings 工作的一部分，构建了小型（参数小于 1.2B）音频 embedding 模型。Gemini Embedding 2 的发布，正是分享我们一路所学的好时机。</p>
+<h2>音频 embedding</h2>
+<p>音频 embedding 是一段音频的定长向量表示。给定一条原始波形，模型输出一个稠密向量（通常 768 到 3072 维），用来捕捉声音的语义内容。两段语义相近的音频会产生相近的 embedding，一段音频在共享 embedding 空间中会与它的文字描述彼此靠近。这是 omni embedding 拼图中的一块：一旦你能把音频连同文本、图像嵌入到同一个向量空间，就解锁了跨所有模态的跨模态检索。</p>
+<p>自 2022 年以来的主流方法是 <a href="https://arxiv.org/abs/2206.04769">Contrastive Language-Audio Pretraining (CLAP)</a>，把 <a href="https://arxiv.org/abs/2103.00020">CLIP</a> 扩展到音频。<a href="https://arxiv.org/abs/2211.06687">LAION-CLAP</a> 用 63 万对数据和特征融合将这一方法规模化。最强的变体（<a href="https://arxiv.org/abs/2309.05767">Elizalde et al., 2023</a>）在 460 万对数据上训练，使用一个覆盖 22 种不同音频任务的音频编码器，并搭配一个自回归解码器，在 250M 参数下于 AudioCaps 上取得 42.0 的 cvR@5。</p>
+<p>我们走的是另一条路：把已经能理解音频的多模态 LLM 变成 embedding 模型。</p>
+<h2>架构</h2>
+<p>先说输入和输出分别是什么。输入是原始音频：从任意标准格式（WAV、MP3、FLAC）解码出的波形，并重采样为 16kHz 单声道。音频编码器把这条波形转换成 128 个 bin 的 log-mel 频谱图，再处理成一串特征 token，速率约为每秒 150 个 token。一段 10 秒的音频会变成大约 1500 个 token。最大输入长度是 30 秒，更长的音频需要分块。输出是单个稠密向量（即 embedding），通常 896 到 3584 维，取决于 LLM 主干的规模。</p>
+<p>我们从 <a href="https://arxiv.org/abs/2503.15394">Qwen2.5-Omni</a> 出发，这是一个具备原生音频理解能力的多模态 LLM。它有三个组件：一个音频编码器（约 0.6-0.8B 参数），通过一个约 4.5M 的线性投影把波形转成特征向量；一个 LLM 主干（0.5-7B 参数），同时处理音频特征和文本 token，每个 transformer 层增加约 0.2B 参数；一个池化层，把最后的隐藏状态做均值池化成单个 embedding 向量。两种模态共享同一个 LLM 主干，所以从预训练起它们就已经大致对齐。</p>
+<p>左：标准做法，端到端微调整个 MLLM（3-7B 参数）。右：模块组合，把一个预训练音频编码器与一个更小的 LLM 主干配对。共享的主干同时处理音频特征和文本 token，在同一个向量空间中产出 embedding。</p>
+<p>训练目标是 InfoNCE 对比损失。每种模态独立编码，损失在两个方向上分别计算后取平均：</p>
+<pre><code>def training_step(audio_batch, text_batch):
+    audio_embeds = model.encode_audio(audio_batch)  # [B, D]
+    text_embeds = model.encode_text(text_batch)      # [B, D]
+    
+    audio_embeds = F.normalize(audio_embeds, dim=-1)
+    text_embeds = F.normalize(text_embeds, dim=-1)
+    
+    sim = audio_embeds @ text_embeds.T / temperature  # [B, B]
+    labels = torch.arange(len(sim), device=sim.device)
+    loss = (F.cross_entropy(sim, labels) + 
+            F.cross_entropy(sim.T, labels)) / 2
+    return loss</code></pre>
+<h2>训练数据</h2>
+<p>五个音频-文本配对数据集，共 181K 个样本：</p>
+<table><thead><tr><th>数据集</th><th>样本数</th><th>说明</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/datasets/cvssp/WavCaps">AudioSetStrong</a></td><td>108K</td><td>带时间标注的事件，GPT 生成的描述（AudioSet 子集）</td></tr><tr><td><a href="https://zenodo.org/record/4060432">FSD50K</a></td><td>41K</td><td>人工标注的声音事件，200 类</td></tr><tr><td><a href="https://zenodo.org/record/3490684">Clotho</a></td><td>19K</td><td>音频描述生成，详尽的描述</td></tr><tr><td><a href="https://github.com/LAION-AI/audio-dataset">UrbanSound8K</a></td><td>9K</td><td>城市声音分类</td></tr><tr><td><a href="https://huggingface.co/datasets/milesway6/MACS">MACS</a></td><td>4K</td><td>城市声学场景</td></tr></tbody></table>
+<p>CLAP 用了完整的 AudioSet（2M+ 音频）加上其他来源，合计 4.6M 对数据。我们只用了 AudioSetStrong（约 100K）。从一个预训练的 MLLM 出发，能大幅减少所需的数据量。</p>
+<pre><code>def load_sample(audio_path, caption):
+    waveform, sr = torchaudio.load(audio_path)
+    waveform = torchaudio.transforms.Resample(sr, 16000)(waveform)
+    audio_inputs = processor.feature_extractor(
+        waveform, sampling_rate=16000, return_tensors=&quot;pt&quot;
+    )
+    text_inputs = processor.tokenizer(caption, padding=True, return_tensors=&quot;pt&quot;)
+    return audio_inputs, text_inputs</code></pre>
+<h2>四种方法</h2>
+<p>目标：一个参数低于 1.2B、且能超过 CLAP 的音频 embedding 模型。</p>
+<p><strong>完整模型微调。</strong> 在音频-文本配对上微调 Qwen2.5-Omni-7B：AudioCaps T2A cvR@5 = 63.2，Clotho T2A = 39.2。这是性能上界，但 7B 无法部署。<a href="https://arxiv.org/abs/2505.02466">Tevatron 2.0</a> 类似地只在 AudioCaps 上微调（61.2，但在 Clotho 上只有 11.9，说明单数据集训练的泛化能力很差）。<a href="https://arxiv.org/abs/2509.07538">ColQwen-Omni</a> 在视觉文档任务上微调、完全不使用音频数据，通过跨模态迁移达到了 37.4。</p>
+<p><strong>层剪枝。</strong> 从 7B 模型中移除 transformer 层。每层约 0.2B，所以 10 层的模型总计约 3.5B。</p>
+<p>随 transformer 层被移除，性能与模型规模的关系。AudioCaps（红色）从 20 层到 5 层时，cvR@5 从 63.2 降到 56.0。所有配置仍超过 CLAP 基线（虚线）。即使到 5 层（2.3B 参数），模型也无法达到 1B 的目标。</p>
+<table><thead><tr><th>层数</th><th>参数</th><th>AudioCaps T2A cvR@5</th><th>Clotho T2A cvR@5</th></tr></thead><tbody><tr><td>20</td><td>5.8B</td><td>63.2</td><td>39.2</td></tr><tr><td>10</td><td>3.5B</td><td>58.2</td><td>36.5</td></tr><tr><td>5</td><td>2.3B</td><td>56.0</td><td>36.0</td></tr></tbody></table>
+<p>batch size（32、64、128）没有带来有意义的差别。更大的 batch 起初有帮助，但后面可能反而下降：在 Clotho 上，batch 128 在 2K 步时达到 31.3 NDCG，却在 10K 步时掉到 29.3。</p>
+<p><strong>纯文本模态迁移。</strong> 只在文本配对上微调（MultiNLI、SNLI、FEVER、SciFact），依赖预训练带来的跨模态对齐。在完整的 7B 上有效（AudioCaps 46.1，超过 CLAP 的 42.0），但在剪枝后的 10 层模型上彻底失败（cvR@5 = 5.9）。跨模态的连接分布在整个网络中，无法在剪枝后保留下来。</p>
+<p><strong>模块组合。</strong> 这是突破口：从一个模型取音频编码器，从另一个模型取小 LLM，甚至可以跨模型家族。Qwen2.5-Omni 分三个阶段训练：（1）冻结 LLM、只训练音频/视觉编码器；（2）全部参数解冻；（3）32K 上下文。我们把来自不同阶段的模块组合起来：</p>
+<table><thead><tr><th>配置</th><th>音频编码器</th><th>LLM</th><th>参数</th></tr></thead><tbody><tr><td>M1</td><td>Qwen3-Omni（0.6B，阶段 1 之前）</td><td>Qwen2.5-0.5B</td><td>1.1B</td></tr><tr><td>M2</td><td>Qwen3-Omni（0.6B，阶段 1 之前）</td><td>Qwen2.5-3B</td><td>3.6B</td></tr><tr><td>M3</td><td>Qwen2.5-Omni-3B（0.8B，阶段 3 之后）</td><td>Qwen2.5-3B</td><td>3.8B</td></tr><tr><td>M4</td><td>Qwen2.5-Omni-3B（完整）</td><td>完整 3B</td><td>3.8B</td></tr></tbody></table>
+<p>实现细节：Qwen3-Omni 使用的是 <code>Qwen3OmniMoePreTrainedModel</code>，而独立的 Qwen3 用的是 <code>Qwen3ForCausalLM</code>。我们先初始化一个维度匹配的 Omni 模型外壳，再把权重复制到对应位置。</p>
+<p>各配置在 AudioCaps 和 Clotho 上的 T2A cvR@5。M1 在 1.1B 参数下，AudioCaps 达到 49.7，比 CLAP（42.0）高 18%。使用来自阶段 3 之后训练、对齐更好的音频编码器能提升结果（M3 相比 M2：AudioCaps +4.2）。LLM 预训练的第 2、3 阶段对 embedding 质量并不关键（M3 与 M4 的差异在噪声范围内）。</p>
+<h2>评估</h2>
+<p>评估音频 embedding 本质上是评估检索质量：给定一条文本查询，模型能否找到正确的那段音频？关键难点在于&quot;正确&quot;取决于数据集。AudioCaps 的描述具体（&quot;一个男人说话，随后门关上了&quot;），而 Clotho 的描述抽象（&quot;一种安静的氛围，远处有隆隆声&quot;）。一个只会记住表面音频特征的模型在 AudioCaps 上表现好，在 Clotho 上却很吃力。我们最看重的，是跨描述风格的泛化能力。</p>
+<p>CV-Recall@5（cvR@5）：对每条文本查询，检查正确的那段音频是否出现在 top-5 结果中。对所有查询取二值分数的平均。这是 <a href="https://github.com/embeddings-benchmark/mteb">MTEB</a> 音频检索中的标准指标。</p>
+<pre><code>def evaluate_cvr_at_k(model, dataset, k=5):
+    audio_embeds = model.encode_audio(dataset.audio_clips)
+    text_embeds = model.encode_text(dataset.text_queries)
+    sim = F.normalize(audio_embeds) @ F.normalize(text_embeds).T
+    
+    hits = 0
+    for i in range(len(dataset.text_queries)):
+        top_k = sim[:, i].argsort(descending=True)[:k]
+        if dataset.ground_truth[i] in top_k:
+            hits += 1
+    return hits / len(dataset.text_queries)</code></pre>
+<p>来自 MTEB 的三个评估数据集：AudioCaps（源自视频、人工描述）、AudioSetStrong（带时间标注、GPT 描述）、Clotho（多样、抽象描述）。CLAP 用了完整的 AudioSet（2M+），而我们用的是 AudioSetStrong（约 100K），这部分解释了 CLAP 在该基准上的优势。</p>
+<p>横向条形图，比较所有模型配置在 AudioCaps、AudioSetStrong 和 Clotho 上的 T2A 检索表现。红色虚线标出 CLAP 基线。模块组合模型（绿色）以小得多的规模取得了很强的结果。完整微调的 7B 模型（深蓝）设定了上界。</p>
+<h2>应用</h2>
+<p>音频 embedding 正在传统检索之外的领域变得重要。在 agent 系统中，音频 embedding 能实现意图路由：一个收到语音输入的 agent，可以对音频做 embedding，并基于语义相似度把它路由到合适的工具或子 agent，而不必等待完整转写。声音事件分类支撑着工业场景、智能家居自动化和安防系统中的实时监控。在多模态 agent 工作流中，音频 embedding 让 agent 像处理文本和图像一样，对音频内容进行检索、比较和推理。音乐与媒体应用则用它来做相似度检索、版权检测和内容推荐。当语音界面成为 AI agent 的默认交互方式，能在设备端运行的紧凑音频 embedding 对低延迟、保护隐私的应用就变得至关重要。</p>
+<h2>结论</h2>
+<p>从预训练的 MLLM 出发，是最大的单一杠杆。它一次性提供了跨模态对齐、强大的文本编码器和够用的音频编码器。模块组合是最有前景的方向：把来自不同模型、不同训练阶段的音频编码器和 LLM 混搭，打开了一个几乎无人探索的设计空间。我们的模型在 AudioCaps 上占优，但在 Clotho 上只能追平 CLAP——Clotho 的抽象描述暴露了 AudioCaps 掩盖不住的弱点。跨模态迁移无法在模型压缩后存活下来。</p>
+<p>这项工作是通往 omni embedding 模型的一步：一个把文本、图像、音频、视频和文档嵌入到统一检索空间的模型。模块组合方法表明，通过复用预训练组件就能高效地引导出新模态。下一步包括：激活参数小于 500M 的 MoE 架构、把模块组合与模态迁移结合，以及用 WavCaps、MusicCaps 和语音数据集来扩充数据。</p>]]></content:encoded>
     </item>
     <item>
       <title>从原始数值识别嵌入模型：读原始数字即可为嵌入模型留指纹的微型 transformer，无需特征工程</title>
@@ -28,6 +202,46 @@
       <guid isPermaLink="true">https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values</guid>
       <pubDate>Fri, 06 Mar 2026 00:00:00 +0000</pubDate>
       <description>原文标题：6 minutes readIdentifying Embedding Models from Raw Numerical ValuesA tiny transformer that fingerprints embedding models by reading raw numerical digits. No feature engineering.</description>
+      <content:encoded><![CDATA[<h1>从原始数值识别 Embedding 模型</h1>
+<p>一个只需读取原始数字位就能为 embedding 模型「指纹识别」的小型 transformer，无需特征工程。</p>
+<p>作者：Han Xiao · 6 分钟阅读</p>
+<p>Embedding 模型是黑箱。你输入文本，拿到一个向量——一串浮点数，没有标签、没有水印、没有任何能告诉你它来源的元数据。如果有人递给你一个 1024 维向量，你能分辨它是 BGE-M3、<a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-small">jina-embeddings-v5-text-small</a> 还是 Qwen3-Embedding 产出的吗？即便两个向量来自同一个模型，你能判断它们分别是用检索指令还是分类指令生成的吗？</p>
+<p>结果是可以。embedding 向量里的数值模式，携带着产出它的模型、乃至推理时所用指令提示词的、出人意料地强的指纹。我们训练了一个小型 transformer 分类器（80 万参数），仅靠读取原始浮点数字位，就能从 25+ 个 embedding 模型中识别 68 种「模型-任务」组合，准确率达 87%。你可以亲自试试这个<a href="https://embedding-inversion-demo.jina.ai">在线 Demo</a>：粘贴任意一个 embedding 向量，看看分类器认为它是哪个模型、哪种任务产出的。</p>
+<h2><a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#tokenization-treating-numbers-as-text">分词：把数字当作文本</a></h2>
+<p>一个 1024 维 embedding 向量就是 1024 个浮点数的序列。要把它喂进分类器，我们需要一种对这些数值结构不做任何假设的表示方式。</p>
+<p>我们采取了一个大胆的做法：把每个浮点数当作一串数字字符，逐字符分词。相比<a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#alternative-approaches">更紧凑的替代方案</a>这听起来浪费，但事实证明这是正确的取舍。对于 <code>-0.1234</code> 这样的值，token 序列是：</p>
+<pre><code>- 0 . 1 2 3 4</code></pre>
+<p>各维度之间用 <code>[SEP]</code> token 分隔，整个序列以 <code>[CLS]</code> 开头。完整词表只有 15 个 token（对浮点值做数字级分词，词表大小为 15）：</p>
+<table><thead><tr><th>Token ID</th><th>含义</th></tr></thead><tbody><tr><td>0-9</td><td>数字</td></tr><tr><td>10</td><td>负号</td></tr><tr><td>11</td><td>小数点</td></tr><tr><td>12</td><td>[SEP]</td></tr><tr><td>13</td><td>[CLS]</td></tr><tr><td>14</td><td>[PAD]</td></tr></tbody></table>
+<p>在保留 4 位小数精度时，一个 1024 维向量大约产生 7,700 个 token，一个 384 维向量约产生 2,900 个 token。序列长度随 embedding 维度自然变化，跨维度无需 padding 或截断。由于该分词器是一个不含任何可学习组件的直接整数映射，它极其高效。</p>
+<h2><a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#model-architecture">模型结构</a></h2>
+<p>4 层 encoder-only transformer，80 万参数，词表 15，序列长度最多 7,700 token。</p>
+<p>这个分类器是一个小型 encoder-only transformer，4 层、128 维、4 个带 RoPE 的注意力头，配合 SwiGLU FFN 与 RMSNorm。CLS token 经池化后投影到 68 类的输出空间，总参数量约 80 万。</p>
+<p>尽管词表只有 15 个 token，这从根本上仍是一个长序列任务。单个 1024 维 embedding 会变成一条 7,700 token 的序列，比典型的 NLP 输入更长。模型必须在数千个数字 token 上做注意力，以捕捉区分不同模型输出的统计模式。这使得高效的注意力与位置编码（RoPE）即便在这个极小规模下也必不可少。</p>
+<h3><a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#data">数据</a></h3>
+<p>我们使用了 10,000 条多语言文本样本，每条都由 25+ 个模型、配合各种任务前缀（如 <code>retrieval.query</code>、<code>retrieval.document</code>、<code>classification</code>、<code>clustering</code>）嵌入，共产生 68 个不同的类别。重要的是，这 68 类不仅包含不同的模型，也包含对同一模型施加的不同指令提示词。例如，带检索指令的 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-small">jina-embeddings-v5-text-small</a> 与带分类指令的同一模型，被视为不同的类别。目标是从纯原始输出中同时检测出模型身份与任务特定行为。</p>
+<p>每个类别划分为 7,000 条训练样本与 3,000 条验证样本。这些模型跨越五种输出维度。</p>
+<table><thead><tr><th>维度</th><th>类别数</th><th>示例模型</th></tr></thead><tbody><tr><td>384</td><td>8</td><td>BGE-small, E5-small, MiniLM, GTE-small</td></tr><tr><td>512</td><td>2</td><td>BGE-small-zh</td></tr><tr><td>768</td><td>24</td><td>BGE-base, E5-base, <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-nano">jina-embeddings-v5-text-nano</a>, Nomic, INSTRUCTOR, LaBSE</td></tr><tr><td>1024</td><td>32</td><td>BGE-M3, E5-large, <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v3">jina-embeddings-v3</a>, <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-small">jina-embeddings-v5-text-small</a>, Qwen3-0.6B, Snowflake, mxbai</td></tr><tr><td>1536</td><td>2</td><td>GTE-Qwen2-1.5B</td></tr></tbody></table>
+<p>仅 1024 维这一组就有 32 个类别要区分，其中还包括来自同一模型家族、但任务前缀不同的模型。在这种情况下分类器无法依赖序列长度，只能纯粹学习数值模式。</p>
+<h3><a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#training">训练</a></h3>
+<p>训练在一块 A100 40GB 上进行，采用混合精度、按长度分桶的批次，以及带余弦调度的 AdamW，速率约 34 万 token/秒，每轮约 23,800 步。</p>
+<h2><a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#experimental-results">实验结果</a></h2>
+<p>14 个 epoch（约 430 亿 token）上的训练与验证曲线：训练准确率 87.3%，验证准确率 86.0%。</p>
+<p>训练/验证差距之小以及持续提升，说明这是可泛化的学习而非记忆。在 80 万参数下，模型已接近其容量上限，更大的模型很可能会把准确率推得更高。</p>
+<h3><a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#confusion-matrix">混淆矩阵</a></h3>
+<p>在整个验证集上的 68 类混淆矩阵（每类 3,000 样本，共 204,000），总体准确率 87.0%。</p>
+<p>总体准确率 87.0%，相比 1.5% 的随机水平高出 59 倍。若干模型被完美分类，包括 GTE-large、<a href="https://jina.ai/?sui&amp;model=jina-embeddings-v3">jina-embeddings-v3</a>/<a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-small">jina-embeddings-v5-text-small</a> 的分类变体、LaBSE 与 Paraphrase MiniLM。最难的案例是同一基础模型的不同任务前缀变体。Qwen3-0.6B 在其 4 种任务类型间表现出最强的同家族混淆，而 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-small">jina-embeddings-v5-text-small</a> 在 5 种任务间取得了 92% 的同家族准确率。同一模型上不同指令提示词会产生可区分的输出模式，这本身就是一个值得注意的发现——它表明即使基础权重完全相同，任务适配也会留下可测量的数值痕迹。</p>
+<p>来自不同家族（BGE vs. Jina vs. E5 vs. Nomic）的模型，要比同一模型的任务变体容易区分得多。核心架构与训练方法留下的签名，比任务特定的适配器更强。真正的难点在 1024 维组（32 类）和 768 维组（24 类），分类器在这里必须纯粹依赖数值模式而非序列长度。</p>
+<h2><a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#alternative-approaches">替代方案</a></h2>
+<h3><a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#bucket-tokenizer">分桶分词器</a></h3>
+<p>把每个维度量化到 K 个桶之一（比如 256），产生长度为 D 的紧凑序列，每个维度一个 token。这正是 Embedding-Converter（ICLR 2025）采用的方法。对 1024 维向量，你得到 1024 个 token 而非 7,700 个。</p>
+<p>分桶会给值的分布强加一个先验：你必须在看到数据之前就决定桶边界。但不同模型分布其值的方式根本不同——有的把质量集中在零附近一个窄区间，有的在 [-1, 1] 上均匀铺开，而且分布随同一模型内的维度而异。任何固定的分桶方案，要么在值聚集处浪费分辨率，要么在值分散处分辨不足。按模型自适应分桶又违背了初衷，因为它需要先知道模型身份。</p>
+<h3><a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#fixed-length-mlp">定长 MLP</a></h3>
+<p>把原始 embedding 向量直接喂进一个 MLP 分类器。根本问题不止于可变维度问题（我们的模型产出 384 到 1536 维不等的向量）。即便你把一切都 pad 到固定长度，也隐含假设了维度索引在各模型间语义对齐——即 BGE-M3 的第 1 维对应 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v5-text-small">jina-embeddings-v5-text-small</a> 的第 1 维。这个假设是错的。不同的架构、训练数据与训练目标会产生截然不同的内部表示。</p>
+<p>上述两种替代方案都强加了模型必须绕过的结构性假设。而数字级分词避开了所有这些问题，它是我们能找到的最「无假设」的表示：这里就是每个数字的精确数位、按序排列、用标记分隔，剩下的你自己想办法。</p>
+<h2><a href="https://jina.ai/news/identifying-embedding-models-from-raw-numerical-values/#conclusion">结论</a></h2>
+<p>Embedding 模型被训练成把语义相似的文本映射到相近的向量。训练目标从未涉及让向量可被识别，也没说要编码任何模型签名。然而签名就在那里，强到足以让一个极小的分类器探测出来。一个 embedding 模型的「风格」——它用来表示语义的特定数值模式——如同笔迹一样独特。甚至连指令提示词的选择都会留下可检测的痕迹。</p>
+<p>这对若干实际场景有价值：在来源模型未知时审计向量数据库、核实某个 API 是否真的用了它声称的模型、检测模型版本变更。更根本地，它告诉我们：embedding 模型以结构上互不相同的方式编码语义，即使产出相同维度的向量也是如此。</p>]]></content:encoded>
     </item>
     <item>
       <title>7 minutes readJina-VLM: Small Multilingual Vision Language M…</title>
@@ -35,6 +249,155 @@
       <guid isPermaLink="true">https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model</guid>
       <pubDate>Thu, 04 Dec 2025 00:00:00 +0000</pubDate>
       <description>完整标题：7 minutes readJina-VLM: Small Multilingual Vision Language ModelNew 2B vision language model achieves SOTA on multilingual VQA, no catastrophic forgetting on text-only tasks.</description>
+      <content:encoded><![CDATA[<h1>Jina-VLM：小型多语言视觉语言模型</h1>
+<p>全新的 2B 视觉语言模型在多语言 VQA 上达到 SOTA，且在纯文本任务上没有灾难性遗忘。</p>
+<p>Jina AI · 7 分钟阅读</p>
+<p>Jina-VLM: Small Multilingual Vision Language Model</p>
+<p>我们介绍 Jina-VLM，一个 2.4B 参数的视觉-语言模型，在开源 2B 级 VLM 中实现了最先进的多语言视觉问答。该模型通过一个注意力池化连接器（attention-pooling connector）把 SigLIP2 视觉编码器与 Qwen3 语言主干耦合起来，从而以 token 高效的方式处理任意分辨率的图像。在标准 VQA 基准和多语言评估上，Jina-VLM 都优于同类模型，同时保持了有竞争力的纯文本表现。</p>
+<p>Andreas Koukounas</p>
+<p>jinaai/jina-vlm · Hugging Face</p>
+<p>我们正在发布 <a href="https://jina.ai/models/jina-vlm">jina-vlm</a>，一个 2.4B 参数的视觉-语言模型，在开源 2B 级 VLM 中实现了最先进的多语言视觉问答。通过一个注意力池化连接器把 SigLIP2 视觉编码器与 Qwen3 语言主干结合，<a href="https://jina.ai/models/jina-vlm">jina-vlm</a> 在 <strong>29 种语言上都有强劲表现</strong>，同时保持足够的效率，可在消费级硬件上运行。</p>
+<table><thead><tr><th>模型</th><th>规模</th><th>VQA 平均</th><th>MMMB</th><th>多语言 MMB</th><th>DocVQA</th><th>OCRBench</th></tr></thead><tbody><tr><td><a href="https://jina.ai/models/jina-vlm">jina-vlm</a></td><td>2.4B</td><td><strong>72.3</strong></td><td><strong>78.8</strong></td><td><strong>74.3</strong></td><td>90.6</td><td>778</td></tr><tr><td>Qwen2-VL-2B</td><td>2.1B</td><td>66.4</td><td>71.3</td><td>69.4</td><td>89.2</td><td>809</td></tr><tr><td>Qwen3-VL-2B</td><td>2.8B</td><td>71.6</td><td>75.0</td><td>72.3</td><td><strong>92.3</strong></td><td><strong>858</strong></td></tr><tr><td>InternVL3-2B</td><td>2.2B</td><td>69.2</td><td>73.6</td><td>71.9</td><td>87.4</td><td>835</td></tr><tr><td>InternVL3.5-2B</td><td>2.2B</td><td>71.6</td><td>74.6</td><td>70.9</td><td>88.5</td><td>836</td></tr></tbody></table>
+<p>在 MMMB 基准上跨 6 种语言的表现分布：阿拉伯语、中文、英语、葡萄牙语、俄语和土耳其语。MMMB 通过多样的视觉问题类型评估多语言多模态理解能力。</p>
+<p>在多语言 MMBench 上跨 6 种语言的表现分布：阿拉伯语、中文、英语、葡萄牙语、俄语和土耳其语。该基准测试跨语言的视觉推理与感知能力。</p>
+<p>在 8 个视觉问答基准上的表现分布：AI2D（示意图）、ChartQA（图表）、TextVQA（场景文字）、DocVQA（文档）、InfoVQA（信息图）、OCRBench（OCR）、SEED-2-Plus（多样场景）和 CharXiv（科学图表）。</p>
+<p>在 3 个真实世界理解基准上的表现分布：RealWorldQA（实际场景）、MME-RealWorld（真实世界感知）和 R-Bench（鲁棒性评估）。</p>
+<p>在 5 个纯文本基准上，将 jina-vlm 与其 Qwen3-1.7B 主干对比的表现分布：MMLU（知识）、MMLU-Pro（高级推理）、GSM-8K（数学）、ARC-C（科学）和 HellaSwag（常识）。</p>
+<h2><a href="https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model/#architecture"><em>tag</em></a>架构</h2>
+<p>jina-vlm 的架构。图像会被缩放到适配一个最多 12 个重叠图块（tile）的网格，外加一张全局缩略图。每个图块是一个 378x378 的正方形裁剪；相邻图块重叠 112 像素，图块原点之间的步长为 266 像素。因此 4x3 的网格覆盖 1176x910 像素，超过这一有效分辨率的图像会被缩小以适应图块预算。每个图块通过 SigLIP2 产出 729 个 patch。VL 连接器拼接第 24 层和第 18 层（即倒数第三层和倒数第九层）的特征，然后施加 2x2 注意力池化，把 729 个 token 缩减到 182，再投影到解码器维度。视觉 token 与文本 embedding 一起送入 Qwen3 解码器。</p>
+<p>有两个难题一直制约着 VLM 的实际部署：多语言能力在视觉适配过程中往往会退化，而高质量 VLM 的计算开销依然昂贵。<a href="https://jina.ai/models/jina-vlm">jina-vlm</a> 通过审慎的架构选择——我们的注意力池化连接器把视觉 token 减少 4 倍、对性能影响极小——以及一套明确保留多语言能力的训练方案，同时解决了这两个问题。</p>
+<p>关键的架构创新是我们的视觉-语言连接器。我们并不把每个图块的 729 个视觉 token 全部传给语言模型，而是施加 2×2 注意力池化，将其缩减到 182 个 token——4 倍的缩减，信息损失却极小。连接器的工作方式如下：</p>
+<ul><li><strong>多层特征融合</strong>：我们拼接 ViT 第 18 层和第 24 层（倒数第三层与倒数第九层）的特征，同时捕捉细粒度空间细节和高层语义。</li><li><strong>注意力池化</strong>：对每个 2×2 的 patch 邻域，我们把邻域特征的均值作为 query，然后施加交叉注意力，产出单个池化后的表示。</li><li><strong>SwiGLU 投影</strong>：池化后的特征通过一个门控线性单元（gated linear unit）投影到语言模型维度。</li></ul>
+<p>这一效率提升如下表所示：</p>
+<table><thead><tr><th>指标</th><th>无池化</th><th>有池化</th><th>缩减倍数</th></tr></thead><tbody><tr><td>视觉 token（12 图块 + 缩略图）</td><td>9,477</td><td>2,366</td><td>4.0×</td></tr><tr><td>LLM prefill FLOPs</td><td>27.2 TFLOPs</td><td>6.9 TFLOPs</td><td>3.9×</td></tr><tr><td>KV-cache 显存</td><td>2.12 GB</td><td>0.53 GB</td><td>4.0×</td></tr></tbody></table>
+<p>由于 ViT 对每个图块的处理与是否池化无关、完全相同，这些节省只体现在语言模型上，而语言模型正是推理期间的最主要开销。</p>
+<h3><a href="https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model/#training-procedure"><em>tag</em></a>训练流程</h3>
+<p>VLM 训练中一个常见的失败模式是灾难性遗忘：语言模型在适配视觉输入时，会丧失其纯文本能力。这对多语言模型尤其尖锐，因为视觉适配会拖累非英语语言上的表现。</p>
+<p>我们通过一个两阶段训练流程来解决这个问题，其中显式使用多语言数据并保留纯文本能力。</p>
+<h4>阶段 1：对齐训练</h4>
+<p>第一阶段侧重跨语言语义对齐（grounding），使用覆盖多种视觉领域的描述数据集：自然场景、文档、信息图和示意图。关键在于，我们加入了 15% 的纯文本数据，以维持主干的语言理解能力。相比编码器和解码器，连接器使用更高的学习率（2e-4）和更短的预热（warmup），使其能快速适配，而预训练组件则缓慢变化。</p>
+<h4>阶段 2：指令微调</h4>
+<p>第二阶段训练面向 VQA 和推理任务的指令跟随能力。我们把覆盖学术 VQA、文档理解、OCR、数学和推理的公开数据集，与纯文本指令数据结合起来，以维持语言能力。</p>
+<p>合并后的数据约包含 500 万多模态样本和 120 亿文本 token，横跨 29 种语言，其中大约一半为英语，其余涵盖中文、阿拉伯语、德语、西班牙语、法语、意大利语、日语、韩语、葡萄牙语、俄语、土耳其语、越南语、泰语、印尼语、印地语、孟加拉语等。</p>
+<h2><a href="https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model/#getting-started"><em>tag</em></a>快速上手</h2>
+<h3><a href="https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model/#via-jina-api"><em>tag</em></a>通过 Jina API</h3>
+<p>我们在 <code>https://api-beta-vlm.jina.ai</code> 提供一个 OpenAI 兼容的 API。</p>
+<h3><a href="https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model/#image-from-url"><em>tag</em></a>通过 URL 传入图像</h3>
+<table><thead><tr><th>格式</th><th>示例</th></tr></thead><tbody><tr><td>HTTP/HTTPS URL</td><td><code>https://example.com/image.jpg</code></td></tr><tr><td>Base64 data URI</td><td><code>data:image/jpeg;base64,/9j/4AAQ...</code></td></tr></tbody></table>
+<pre><code>curl https://api-beta-vlm.jina.ai/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer $JINA_API_KEY&quot; \
+  -d '{
+    &quot;model&quot;: &quot;jina-vlm&quot;,
+    &quot;messages&quot;: [{
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: [
+        {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Describe this image&quot;},
+        {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: &quot;https://example.com/photo.jpg&quot;}}
+      ]
+    }]
+  }'</code></pre>
+<h4>本地图像（base64）</h4>
+<pre><code>curl https://api-beta-vlm.jina.ai/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer $JINA_API_KEY&quot; \
+  -d '{
+    &quot;model&quot;: &quot;jina-vlm&quot;,
+    &quot;messages&quot;: [{
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: [
+        {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;What is in this image?&quot;},
+        {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: &quot;data:image/jpeg;base64,'$(base64 -i image.jpg)'&quot;}}
+      ]
+    }]
+  }'</code></pre>
+<h4>纯文本查询</h4>
+<pre><code>curl https://api-beta-vlm.jina.ai/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer $JINA_API_KEY&quot; \
+  -d '{
+    &quot;model&quot;: &quot;jina-vlm&quot;,
+    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is the capital of France?&quot;}]
+  }'</code></pre>
+<h4>流式响应</h4>
+<p>加上 <code>&quot;stream&quot;: true</code>，就能在 token 生成时逐个接收：</p>
+<pre><code>curl https://api-beta-vlm.jina.ai/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer $JINA_API_KEY&quot; \
+  -d '{
+    &quot;model&quot;: &quot;jina-vlm&quot;,
+    &quot;stream&quot;: true,
+    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Write a haiku about coding&quot;}]
+  }'</code></pre>
+<p>服务冷启动时，你会收到：</p>
+<pre><code>{
+  &quot;error&quot;: {
+    &quot;message&quot;: &quot;Model is loading, please retry in 30-60 seconds. Cold start takes ~30s after the service scales up.&quot;,
+    &quot;code&quot;: 503
+  }
+}</code></pre>
+<p>稍等片刻后重试你的请求即可。</p>
+<h3><a href="https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model/#via-cli"><em>tag</em></a>通过 CLI</h3>
+<p>HuggingFace 仓库里带有一个 <code>infer.py</code> 脚本，方便快速实验：</p>
+<pre><code># Single image
+python infer.py -i image.jpg -p &quot;What's in this image?&quot;
+
+# Streaming output
+python infer.py -i image.jpg -p &quot;Describe this image&quot; --stream
+
+# Multiple images
+python infer.py -i img1.jpg -i img2.jpg -p &quot;Compare these images&quot;
+
+# Text-only
+python infer.py -p &quot;What is the capital of France?&quot;</code></pre>
+<h3><a href="https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model/#via-transformers"><em>tag</em></a>通过 Transformers</h3>
+<pre><code>from transformers import AutoModelForCausalLM, AutoProcessor
+import torch
+from PIL import Image
+
+# Load model and processor
+model = AutoModelForCausalLM.from_pretrained(
+    &quot;jinaai/jina-vlm&quot;,
+    torch_dtype=torch.bfloat16,
+    trust_remote_code=True,
+    device_map=&quot;auto&quot;
+)
+processor = AutoProcessor.from_pretrained(
+    &quot;jinaai/jina-vlm&quot;,
+    trust_remote_code=True
+)
+
+# Load an image
+image = Image.open(&quot;document.png&quot;)
+
+# Create the conversation
+messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;image&quot;, &quot;image&quot;: image},
+            {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;What is the main topic of this document?&quot;}
+        ]
+    }
+]
+
+# Process and generate
+inputs = processor.apply_chat_template(
+    messages,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;
+).to(model.device)
+
+outputs = model.generate(**inputs, max_new_tokens=256, do_sample=False)
+response = processor.decode(outputs[0], skip_special_tokens=True)
+print(response)</code></pre>
+<h2><a href="https://jina.ai/news/jina-vlm-small-multilingual-vision-language-model/#conclusion"><em>tag</em></a>结论</h2>
+<p><a href="https://jina.ai/models/jina-vlm">jina-vlm</a> 表明，小 VLM 通过审慎的架构和训练选择，也能实现强劲的跨语言视觉理解。注意力池化连接器提供 4 倍的 token 缩减而几乎不影响性能，而在多模态训练中掺入纯文本数据，则保住了原本会退化的语言能力。</p>
+<p>我们指出当前方法的若干局限：</p>
+<ul><li><strong>图块开销</strong>：处理耗时随图块数量线性增长。对于极高分辨率的图像，这会变得可观。此外，图块化会损害需要整体场景理解的任务，比如物体计数或跨图块边界的空间推理。全局缩略图能部分缓解这一点，但对这类任务而言，原生分辨率的方法可能更合适。</li><li><strong>多图推理</strong>：由于该情形下的训练数据有限，多图基准上的表现较弱。对简洁视觉回答的优化，似乎与长时间的多步推理相冲突，MMLU-Pro 的退化就说明了这一点。</li></ul>
+<p>未来的工作可以探索更高效的分辨率处理、针对计数和空间任务的定向改进，并研究我们的多语言训练方案能否迁移到更大的模型规模。</p>]]></content:encoded>
     </item>
     <item>
       <title>Llama.cpp 与 GGUF 中的多模态嵌入：落地途中发现的几个意外问题</title>
@@ -42,6 +405,141 @@
       <guid isPermaLink="true">https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf</guid>
       <pubDate>Tue, 09 Sep 2025 00:00:00 +0000</pubDate>
       <description>原文标题：11 minutes readMultimodal Embeddings in Llama.cpp and GGUFWe brought multimodal embeddings to llama.cpp and GGUF, and uncovered a few surprising issues along the way.</description>
+      <content:encoded><![CDATA[<h1>在 Llama.cpp 与 GGUF 中实现多模态 embedding</h1>
+<p>我们把多模态 embedding 带进了 llama.cpp 和 GGUF，并在此过程中发现了一些出人意料的问题。</p>
+<p>Andrei Ungureanu、Alex C-G · 11 分钟阅读</p>
+<p>llama.cpp/jina_embeddings · jina-ai/llama.cpp</p>
+<p>我们在 llama.cpp 的 fork 中引入了多处修复，使其能用 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v4">jina-embeddings-v4</a> 进行多模态 embedding。</p>
+<p><a href="https://jina.ai/?sui&amp;model=jina-embeddings-v4">jina-embeddings-v4</a> 带来了最先进的多模态 embedding，能够处理文本、图像和复杂的视觉文档，用于向量检索。几周前，我们发布了面向纯文本任务的 <a href="https://jina.ai/news/optimizing-ggufs-for-decoder-only-embedding-models/">v4 的 GGUF 与动态量化</a>，它们占用更小的显存、性能也更好。但 GGUF 上的多模态 embedding 支持仍然缺失。为了把这一步补齐，我们如今弄清楚了如何用 llama.cpp 和 GGUF 生成多模态 embedding。完整流程见 <a href="https://github.com/jina-ai/llama.cpp/tree/master/jina_embeddings">这份 README 文件</a>。</p>
+<p>公平地说，llama.cpp 上游确实对多模态输入有一些支持，但由于 llama.cpp 社区绝大多数关注的是 LLM 和文本生成，对多模态 embedding 输出的支持完全缺失。在本文中，我们会解释如何在 llama.cpp 中实现多模态 embedding，并考察它与 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v4">jina-embeddings-v4</a> 的 PyTorch 版本相比表现如何（还包括两个量化版本）。全文中，我们把 PyTorch 版本称为&quot;参考模型&quot;。</p>
+<h2><a href="https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf/#understand-image-input-in-llamacpp"><em>tag</em></a>理解 Llama.cpp 中的图像输入</h2>
+<p>先回顾一下参考模型是如何做多模态 embedding 的。首先，你把每个图像输入与一个特殊提示配对：</p>
+<pre><code>&lt;|im_start|&gt;user\n&lt;|vision_start|&gt;Describe the image.&lt;|im_end|&gt;\n</code></pre>
+<p>然后模型对图像做预处理，通过其 ViT 编码，再在单次前向传播中处理整个交错的序列。</p>
+<p>然而到了 llama.cpp，事情就更棘手。它虽然支持用于对话补全（chat completion）的图像输入，却不支持多模态输入——也就是像上面那样同时包含文本和图像的输入。这正是<a href="https://github.com/jina-ai/llama.cpp">我们 fork llama.cpp 的原因</a>：我们改动了 embedding 处理器，让它接受 base64 编码的图像，从而能以类似对话补全处理器的方式处理多模态内容。</p>
+<p>所以现在，要在 llama.cpp 中处理多模态输入，我们可以从一个与参考模型所用提示相似的提示开始：</p>
+<pre><code>&lt;|im_start|&gt;user\n&lt;__image__&gt;Describe the image.&lt;|im_end|&gt;\n</code></pre>
+<p>整个过程如下：</p>
+<ul><li>llama.cpp 会把视觉标记 <code>&lt;|vision_start|&gt;</code> 和 <code>&lt;|vision_end|&gt;</code> 包在 <code>&lt;__image__&gt;</code> token 外面，于是得到类似这样的序列：<code>&lt;|im_start|&gt;user\n&lt;|vision_start|&gt;&lt;__image__&gt;&lt;|vision_end|&gt;Describe the image.&lt;|im_end|&gt;\n</code></li><li>在对提示做分词时，分词器会把特殊 token <code>&lt;__image__&gt;</code> 替换为 <code>-1</code>，在内部表示该序列包含一个图像，应当先被编码（之后再进行后续处理）。</li><li><code>&lt;__image__&gt;</code> 标记之前的文本 token（即 <code>&lt;|im_start|&gt;user\n&lt;|vision_start|&gt;</code>）经 LLM 解码，并被注入 <code>KVCache</code>。</li><li>图像经 ViT 组件编码，输出一串图像 token，这些 token 再经 LLM 解码。尽管这些 token 与第一步中的 token 分开处理，注意力层仍能通过 <code>KVCache</code> 关注到那些文本 token。但此时，注意力层还无法关注到后面的任何文本 token（<code>&lt;|vision_end|&gt;Describe the image.&lt;|im_end|&gt;\n</code>）。</li><li>LLM 解码剩余的任何文本 token（<code>&lt;|vision_end|&gt;Describe the image.&lt;|im_end|&gt;\n</code>）。现在注意力层便能通过 <code>KVCache</code> 关注到之前所有的 token（文本和图像皆是）。</li></ul>
+<p>embedding 推理过程（图像编码与文本/图像 token 解码）如下图所示：</p>
+<p>图 1：jina-embeddings-v4 llama.cpp 版本的 embedding 推理过程。</p>
+<h2><a href="https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf/#attention-on-image-tokens"><em>tag</em></a>图像 token 上的注意力</h2>
+<p>由于注意力机制，这种多步流程对某些模型可能是有问题的。我们快速回顾一下模型中使用的不同注意力类型：</p>
+<ul><li>因果注意力（Causal attention）——位于位置 <code>k</code> 的某个 token 的注意力机制只关注之前的 token，即位置 <code>[0:k-1]</code>。</li><li>非因果注意力（Non-causal attention）——位于位置 <code>k</code> 的某个 token 的注意力机制关注整个序列 <code>[0:n]</code> 中的所有 token。</li></ul>
+<p>下图显示了在第二步处理 <code>img_tok_n</code> 时，注意力机制会关注到哪些 token：</p>
+<p>图 2：因果注意力与非因果注意力</p>
+<p>处理 <code>img_tok_n</code> 时，模型的状态如下：</p>
+<ul><li>所有之前的文本 token（<code>&lt;|im_start|&gt;</code>、<code>user</code>、<code>\n</code>、<code>&lt;|vision_start|&gt;</code>）都已被处理并存入 <code>KVCache</code>。</li><li>所有图像 token（<code>img_tok_1</code> 到 <code>img_tok_n</code>）此刻正在同一序列中被处理。</li><li>所有后续的文本 token（<code>&lt;|vision_end|&gt;</code>、<code>Describe</code> 等）将在之后处理。</li></ul>
+<p>在因果注意力的情况下，计算注意力分数时只考虑之前的 token，而过往 token 通过 <code>KVCache</code> 取回。</p>
+<p>在非因果注意力的情况下，本应考虑所有 token。然而，未来的文本 token（<code>&lt;|vision_end|&gt;</code>、<code>Describe</code> 等）尚未被处理——它们会在后续步骤中处理，于是很快就出问题。</p>
+<p>由于 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v4">jina-embeddings-v4</a> 使用因果注意力，这个多步流程能够顺利工作，但对其他模型未必如此。</p>
+<p>就 embedding 而言，每个 token 的隐藏状态在处理的当下被捕获，最后合并成单个序列。目前，归一化和池化在 Python 中处理，但（在多做一些工作后）这也可以放到 llama.cpp 一侧完成。</p>
+<h2><a href="https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf/#our-fixes"><em>tag</em></a>我们的修复</h2>
+<p>在为 llama.cpp 服务器的 embedding 端点启用图像输入后，我们开始用基准测试来验证这套实现，结果发现和参考模型相比差异大到出人意料。我们怀疑 llama.cpp 对 <a href="https://github.com/QwenLM/Qwen2.5-VL">Qwen2.5-VL</a> 所用 <a href="https://arxiv.org/pdf/2010.11929">ViT</a> 的实现一定有问题——该 ViT 负责把图像编码成图像 patch embedding（图像方块的稠密向量表示），供 Qwen2.5 LLM 处理。</p>
+<p>下面是一个例子，展示参考模型与 llama.cpp 实现之间 ViT 输出的差异：</p>
+<pre><code>=== vit_out reference === Shape: [1008, 1280]
+Logging patch 0, dimensions 0-9
+Patch 0: -0.375000 -0.250000 -4.281250 -5.968750 2.953125 -8.125000 8.625000 -9.250000 8.937500 -0.332031 ... (dims 10-1279)
+... (patches 1-1007 not shown)</code></pre>
+<pre><code>=== vit_out llama.cpp === Shape: [1280, 1008, 1, 1]
+Logging patch 0, dimensions 0-9
+Patch 0: -2.998136 -2.226554 0.233671 -7.486460 0.596918 -12.889042 8.904849 -8.6
+... (patches 1-1007 not shown)</code></pre>
+<p>可以看到，差异相当明显。为了确认这是唯一的问题，我们先用 Python 预先算好图像 token，然后仅用 llama.cpp 对 Qwen2.5 的实现（只用 LLM）来解码它们，期望得到的 embedding 能与参考模型的值更接近——然而事实<em>并非</em>如此。</p>
+<h3><a href="https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf/#fix-1-causal-attention-mask-for-attention-layers"><em>tag</em></a>修复 1：为注意力层使用因果注意力掩码</h3>
+<p>我们继续排查注意力层——这最可能是数值差异的根源。我们注意到，注意力层使用的注意力掩码并未针对图像 token 正确计算。为了看清这一点，我们回到示例序列：</p>
+<pre><code>&lt;|im_start|&gt;user\n&lt;|vision_start|&gt;&lt;__image__&gt;&lt;|vision_end|&gt;Describe the image.&lt;|im_end|&gt;\n</code></pre>
+<p>处理图像 token 时，<code>&lt;__image__&gt;</code> 标记会被展开成类似 <code>img_tok_1 img_tok_2 .... img_tok_last</code> 的形式。于是完整序列就是：</p>
+<pre><code>&lt;|im_start|&gt;user\n&lt;|vision_start|&gt; img_tok_1 img_tok_2 ... img_tok_last &lt;|vision_end|&gt;Describe the image.&lt;|im_end|&gt;\n</code></pre>
+<p>⚠️</p>
+<p>注意：在流程的这一步，文本 token（<code>&lt;|im_start|&gt;</code>、<code>user</code> 等）和图像 token（<code>img_tok_1</code>、<code>img_tok_2</code> 等）都是稠密向量，而非字面上的文本 token。我们用这种序列形式是为了让解释更简单。</p>
+<p>解码 <code>img_tok_2</code> 时，注意力机制<em>应当</em>关注所有之前的 token，即：</p>
+<pre><code>&lt;|im_start|&gt;user\n&lt;|vision_start|&gt; img_tok_1</code></pre>
+<p>然而，注意力掩码中的一个 bug <em>反而</em>让机制关注整个图像序列，像这样：</p>
+<pre><code>  &lt;|im_start|&gt;user\n&lt;|vision_start|&gt; img_tok_1 img_tok_2 ... img_tok_last</code></pre>
+<p>修复这个 bug 后，我们 llama.cpp 模型的 embedding（使用从 Torch 模型 ViT 预计算出的图像 token）终于与参考模型的 embedding 相符（误差在小范围内）。</p>
+<h3><a href="https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf/#fix-2-image-processing-and-patch-embeddings"><em>tag</em></a>修复 2：图像处理与 patch embedding</h3>
+<p>llama.cpp 的 ViT 编码器产出的图像 embedding 也与参考模型不同，数值在预处理之后立刻就开始发散。这在最初的 patch 创建步骤中尤为明显——参考模型和 llama.cpp 都把原始图像（像素值）切分成 patch，再由卷积层编码。原始 patch（ViT 处理之前）之间的差异如下所示：</p>
+<pre><code>=== raw_patches reference === Shape: [1008, 1176]
+Logging patches 0-4, dimensions 0-9
+Patch 0: 0.484375 0.484375 0.500000 0.500000 0.470703 0.470703 0.470703 0.484375 0.470703 0.484375 ... (dims 10-1175)
+... (patches 1-1007 not shown)</code></pre>
+<pre><code>=== raw_patches llama.cpp === Shape: [1176, 1008, 1, 1]
+Logging patches 0-4, dimensions 0-9
+Patch 0: 0.455895 0.455895 0.455895 0.455895 0.455895 0.455895 0.470494 0.470494 0.470494 0.470494 ... (dims 10-1175)
+... (patches 1-1007 not shown)</code></pre>
+<p>参考模型和 llama.cpp 处理这些 patch 的方式不同：</p>
+<ul><li>参考模型用 reshape 操作对像素值分组，然后用单个 conv3d 层编码预分组后的像素 patch。</li><li>llama.cpp 模型用两个 conv2d 层来创建并编码这些 patch。</li></ul>
+<p>为了让 llama.cpp 模型的 embedding 更接近参考模型，我们认为直接照搬参考模型的精确操作，会比去调试 llama.cpp 的做法更简单。</p>
+<p>参考模型生成像素 patch 时使用了复杂的 reshape 与 transpose 操作，需要 9 维张量。llama.cpp 所用的底层张量处理库 <a href="https://github.com/ggml-org/ggml"><code>ggml</code></a> 无法支持它们，为绕开这一点，我们用一个独立的 Python 服务来生成 patch，该服务通过 HTTP 调用 llama.cpp 服务器。</p>
+<p><code>ggml</code> 也缺乏对 conv3d 层的支持。在我们的参考模型中，conv3d 层的配置如下：</p>
+<pre><code>kernel_size = [
+	2,  # temporal_patch_size, 
+	14, # patch_size
+	14  # patch_size
+]
+
+proj = nn.Conv3d(
+	3, # in_channels
+	1152, # embed_dim, 
+	kernel_size=kernel_size, 
+	stride=kernel_size, 
+	bias=False
+)</code></pre>
+<p>可以看到 <code>stride</code> 和 <code>kernel_size</code> 相同，意味着我们可以简单地把 conv3d 层的输入和权重展平，改为执行一次普通的矩阵乘法。为此，我们修改了 llama.cpp 中的转换脚本（<code>convert_hf_to_gguf.py</code>），为 patch 投影层导出一个展平版本的 conv3d 权重：</p>
+<pre><code>if 'patch_embed.proj.weight' in name:
+	c1, c2, kt, kh, kw = data_torch.shape
+	# Note: this part of the script also exports other versions of this layer
+	# Only showing the relevant parts
+	# Flat matmul weight: row-major [out, in*kT*kH*kW] = [embed_dim, 1176]
+	W_flat = data_torch.contiguous().view(c1, -1)
+	outputs.append((&quot;v.patch_embd.weight_flat&quot;, W_flat))</code></pre>
+<p>为了用矩阵乘法取代 llama.cpp 中的两个 conv2d 层，我们修改了构建 Qwen2.5-VL ViT 计算图的代码：</p>
+<pre><code>ggml_tensor * build_inp_raw_precomputed() {
+  ggml_tensor * inp_raw = ggml_new_tensor_2d(
+		ctx0, 
+		GGML_TYPE_F32, 
+		img.p_dim, 
+		img.npx * img.npy
+	);
+  ggml_set_name(inp_raw, &quot;inp_raw&quot;);
+  ggml_set_input(inp_raw);
+  return inp_raw;
+}
+
+ggml_cgraph * build_qwen2vl() {
+	// NOTE: only showing the code we've added for using pre-arranged image patches
+  const bool uses_precomputed_image = img.is_precomputed;
+  ggml_tensor * inp = nullptr;
+	if (uses_precomputed_image) {
+      ggml_tensor * inp_raw = build_inp_raw_precomputed();
+      cb(inp_raw, &quot;inp_raw&quot;, -1);
+      inp = ggml_mul_mat(ctx0, model.patch_embeddings_flat, inp_raw);
+	} else {
+		// Usual 2x conv2d path 
+	}
+	// rest of the code 
+}</code></pre>
+<p>有了这些最终改动，最终得到的图像 embedding 与参考模型相比误差在 2% 以内（如下一节评估表所示）。</p>
+<h2><a href="https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf/#evaluation"><em>tag</em></a>评估</h2>
+<p>完成这些改动后，我们在 <a href="https://huggingface.co/spaces/mteb/leaderboard">MTEB 基准</a>上，用 <a href="https://huggingface.co/spaces/vidore/vidore-leaderboard">ViDoRe 任务</a>对 llama.cpp 模型和参考模型做了评估。在我们的 llama.cpp fork 中可以看到复现这些结果（还包括两个量化版本）的<a href="https://github.com/jina-ai/llama.cpp/tree/master/jina_embeddings">脚本与说明</a>。</p>
+<table><thead><tr><th>任务</th><th>参考模型</th><th>llama.cpp（F16）</th><th>llama.cpp（Q4_K_M）</th><th>llama.cpp（IQ4_XS）</th></tr></thead><tbody><tr><td>VidoreArxivQARetrieval</td><td>83.55</td><td>85.00</td><td>84.38</td><td>84.34</td></tr><tr><td>VidoreDocVQARetrieval</td><td>50.53</td><td>52.02</td><td>51.93</td><td>51.57</td></tr><tr><td>VidoreInfoVQARetrieval</td><td>87.77</td><td>87.31</td><td>87.61</td><td>87.28</td></tr><tr><td>VidoreShiftProjectRetrieval</td><td>84.07</td><td>82.25</td><td>82.56</td><td>81.73</td></tr><tr><td>VidoreSyntheticDocQAAIRetrieval</td><td>97.52</td><td>96.71</td><td>97.28</td><td>97.15</td></tr><tr><td>VidoreSyntheticDocQAEnergyRetrieval</td><td>91.22</td><td>90.34</td><td>90.47</td><td>90.30</td></tr><tr><td>VidoreSyntheticDocQAGovernmentReportsRetrieval</td><td>91.61</td><td>93.84</td><td>93.47</td><td>94.47</td></tr><tr><td>VidoreSyntheticDocQAHealthcareIndustryRetrieval</td><td>95.42</td><td>96.08</td><td>95.67</td><td>96.05</td></tr><tr><td>VidoreTabfquadRetrieval</td><td>94.52</td><td>94.94</td><td>94.83</td><td>94.72</td></tr><tr><td>VidoreTatdqaRetrieval</td><td>65.52</td><td>64.85</td><td>64.63</td><td>64.76</td></tr><tr><td><strong>平均</strong></td><td><strong>84.17</strong></td><td><strong>84.33</strong></td><td><strong>84.28</strong></td><td><strong>84.23</strong></td></tr></tbody></table>
+<p>看结果表，平均而言，llama.cpp 模型及其量化变体与参考模型相差不大。</p>
+<p>为了更深入地比较这些模型，我们使用了不同领域、不同分辨率的图像，并绘制图像 patch embedding（池化/归一化之前）之间的距离。patch 越红，说明参考模型与 llama.cpp 模型在该 patch 上向量的余弦距离越大。</p>
+<p>图 3：来自 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v4">jina-embeddings-v4</a> 技术报告的页面，372 × 526 分辨率（左），2481 × 3508 分辨率（右）</p>
+<p>图 4：Jina AI 网站的截图，594 × 428 分辨率（左），1982 × 1428 分辨率（右）</p>
+<p>图 5：东京涩谷，出自 <a href="https://unsplash.com/@sp_k_?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">S K</a>，发布于 <a href="https://unsplash.com/photos/a-city-street-filled-with-lots-of-traffic-at-night-zeBB1X-PmRA?utm_content=creditCopyText&amp;utm_medium=referral&amp;utm_source=unsplash">Unsplash</a>，383 × 255 分辨率（左），5472 × 3649 分辨率（右）</p>
+<p>我们的目标是找出任何超出数值精度差异的模式——那些可能揭示更多 bug 或模型间差异的模式。然而，除了发散 patch 的数量随图像分辨率增加而上升，并没有出现什么特定模式。这些差异最可能源于后端的差异，而非 Qwen2.5-VL（<a href="https://jina.ai/?sui&amp;model=jina-embeddings-v4">jina-embeddings-v4</a> 的骨干模型）实现中的某种特定 bug。</p>
+<p>尽管如此，我们要再次强调，这些差异微乎其微，基准测试结果也印证了这一点。总体而言，llama.cpp 模型的表现与参考模型一样好，只是产出的 embedding 向量略有不同。</p>
+<h2><a href="https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf/#remaining-issues"><em>tag</em></a>遗留问题</h2>
+<p>llama.cpp 中的多模态 embedding 还有若干可改进之处：</p>
+<ul><li><strong>量化视觉编码器。</strong> 目前 llama.cpp 只支持对 LLM 量化，但为了实现更好的扩展性，我们也希望量化视觉编码器。</li></ul>
+<p>💡</p>
+<p>注意：llama.cpp 曾通过 <code>llama-llava-quantize-cli</code> 支持量化 CLIP 模型，但随着 <code>mtmd</code> 库的引入，相关资源已被移除。</p>
+<ul><li><strong>把视觉编码器拆成独立服务。</strong> 视觉编码器通常使用非因果掩码，意味着任何一张图像都需要在一次前向调用中编码完成。因此我们无法利用连续批处理（continuous batching）。不过，我们可以考虑把视觉编码器拆成一个独立服务，让它把多张图像（甚至来自不同来源的图像）批在一起，在单次前向传播中全部编码。这会带来更高的 vRAM 需求，但也会比逐张编码快得多。这种拆分还意味着我们能独立于语言模型对视觉编码器进行自动扩缩容。</li><li><strong>启用多向量 embedding。</strong> 在本文中，我们只处理了单向量 embedding。但要充分利用 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v4">jina-embeddings-v4</a>，我们还想启用多向量 embedding，以便在复杂图像上获得更高精度。这会是一个容易的补充，因为这些 embedding 是在基础模型之上用单个线性层生成的。</li></ul>
+<h2><a href="https://jina.ai/news/multimodal-embeddings-in-llama-cpp-and-gguf/#conclusion"><em>tag</em></a>结论</h2>
+<p>尽管最初有各种 bug 和挫折，把多模态 embedding 集成进 llama.cpp 如今产出的结果已能与我们的参考 PyTorch 模型高度吻合，一系列基准任务上也不例外。对注意力掩码和图像 patch 处理的修复消除了主要的发散来源，甚至量化变体也能在大幅节省资源的同时达到相近的精度。更高图像分辨率下残留的差异看似微小，很可能是后端差异所致，而非核心模型的实现问题。</p>
+<p>展望未来，把量化扩展到视觉编码器、通过独立服务实现批处理、以及支持多向量 embedding，都能进一步提升效率和精度。这些补充会让 llama.cpp 中的多模态 embedding 更具扩展性，也更契合真实世界的用例。</p>]]></content:encoded>
     </item>
     <item>
       <title>6 minutes readJina Code Embeddings: SOTA Code Retrieval at 0…</title>
@@ -49,6 +547,94 @@
       <guid isPermaLink="true">https://jina.ai/news/jina-code-embeddings-sota-code-retrieval-at-0-5b-and-1-5b</guid>
       <pubDate>Thu, 04 Sep 2025 00:00:00 +0000</pubDate>
       <description>完整标题：6 minutes readJina Code Embeddings: SOTA Code Retrieval at 0.5B and 1.5BCode generation LLMs → code embeddings: 0.5B/1.5B models achieve SOTA performance across 25 code retrieval benchmarks.</description>
+      <content:encoded><![CDATA[<h1>Jina Code Embeddings：0.5B 与 1.5B 规模下的 SOTA 代码检索</h1>
+<p>从代码生成 LLM 到代码 embedding：0.5B / 1.5B 模型在 25 个代码检索基准上取得 SOTA 表现。</p>
+<p><em>jina-code-embeddings</em> 是一套新颖的代码 embedding 模型，用于从自然语言查询检索代码、做技术问答，并在多种编程语言间识别语义相似的代码片段。它创新地采用了在文本与代码上同时预训练的自回归骨干，通过 last-token pooling 生成向量。我们给出训练配方，并证明尽管模型相对很小，仍达到业内领先表现，验证了这条构建代码 embedding 模型的路子。</p>
+<p>今天我们发布 <code>jina-code-embeddings</code>，一套两种尺寸（0.5B 与 1.5B 参数）的代码 embedding 模型，并同时提供两者的 <a href="https://huggingface.co/jinaai/jina-code-embeddings-1.5b-GGUF">1–4 bit GGUF 量化版本</a>。它们构建在最新的代码生成 LLM 之上，体积紧凑却达到业内领先的检索性能。支持五类检索任务：<code>nl2code</code>、<code>code2code</code>、<code>code2nl</code>、<code>code2completions</code> 与 <code>qa</code>，覆盖 15+ 种编程语言，包括 Python、JavaScript、Java、C++、C#、Go、Rust、TypeScript、SQL、MATLAB、R、Swift、Kotlin、HTML/CSS、PHP、Ruby、Scala、Perl 与 Shell。</p>
+<p><code>jina-code-embeddings</code> 在 25 个代码检索基准上平均达到 78.41%（0.5B）与 79.04%（1.5B）。0.5B 模型虽比 <code>Qwen3-Embedding-0.6B</code> 小 20%，却高出其 5 个百分点；1.5B 变体则追平 <code>voyage-code-3</code>（79.23%）并超过 <code>gemini-embedding-001</code>（77.38%）——后两者都是架构不公开的专有模型。</p>
+<table><thead><tr><th>模型</th><th>参数量</th><th>Overall AVG</th><th>MTEB Code AVG</th></tr></thead><tbody><tr><td><a href="https://jina.ai/?sui&amp;model=jina-code-embeddings-1.5b">jina-code-embeddings-1.5b</a></td><td><strong>1.54B</strong></td><td><strong>79.04%</strong></td><td><strong>78.94%</strong></td></tr><tr><td><a href="https://jina.ai/?sui&amp;model=jina-code-embeddings-0.5b">jina-code-embeddings-0.5b</a></td><td><strong>494M</strong></td><td><strong>78.41%</strong></td><td><strong>78.72%</strong></td></tr><tr><td>voyage-code-3</td><td>未知*</td><td>79.23%</td><td>79.84%</td></tr><tr><td>gemini-embedding-001</td><td>未知*</td><td>77.38%</td><td>76.48%</td></tr><tr><td><a href="https://jina.ai/?sui&amp;model=jina-embeddings-v4">jina-embeddings-v4</a></td><td>3.8B</td><td>74.11%</td><td>74.87%</td></tr><tr><td>Qwen3-Embedding-0.6B</td><td>600M</td><td>73.49%</td><td>74.69%</td></tr></tbody></table>
+<blockquote>*架构不公开的闭源模型</blockquote>
+<p>这些模型支持跨 29 种自然语言与 15+ 种编程语言的跨语言检索。自然语言包括英语、中文、法语、西班牙语、葡萄牙语、德语、意大利语、俄语、日语、韩语、越南语、泰语与阿拉伯语；编程语言则涵盖 Python、JavaScript、Java、C++、C#、Go、Rust、TypeScript、SQL、MATLAB、R、Swift、Kotlin、HTML/CSS、PHP、Ruby、Scala、Perl 与 Shell。jina-code-embeddings 让你能从任意自然语言出发检索任意编程语言的代码，也能在编程语言之间做跨语言代码检索。作为专门的代码检索模型，它并未针对自然语言到自然语言的检索做优化。</p>
+<p>两个模型都用了<a href="https://huggingface.co/jinaai/jina-code-embeddings-1.5b/blob/main/config_sentence_transformers.json">五种针对不同检索场景的任务指令前缀</a>，每种都同时支持 query 与 document 角色以实现非对称检索。例如，你可以用 <code>nl2code_query</code> 对查询编码、用 <code>nl2code_document</code> 对文档编码。</p>
+<table><thead><tr><th>任务</th><th>用例</th><th>指令前缀</th></tr></thead><tbody><tr><td><code>nl2code</code></td><td>“如何读取 CSV” → <code>pandas.read_csv()</code></td><td>&quot;Find the most relevant code snippet given the following query:\n&quot;</td></tr><tr><td><code>qa</code></td><td>技术问答检索</td><td>&quot;Find the most relevant answer given the following question:\n&quot;</td></tr><tr><td><code>code2code</code></td><td>查找相似实现</td><td>&quot;Find an equivalent code snippet given the following code snippet:\n&quot;</td></tr><tr><td><code>code2nl</code></td><td>代码到文档</td><td>&quot;Find the most relevant comment given the following code snippet:\n&quot;</td></tr><tr><td><code>code2completion</code></td><td>自动补全场景</td><td>&quot;Find the most relevant completion given the following start of code snippet:\n&quot;</td></tr></tbody></table>
+<h2><a href="https://jina.ai/news/jina-code-embeddings-sota-code-retrieval-at-0-5b-and-1-5b/#training-recipe">训练配方</a></h2>
+<p>我们使用预训练的代码生成模型作为 embedding 骨干。基于 <code>Qwen2.5-Coder-0.5B</code> 与 <code>1.5B</code>，我们的模型特性如下：</p>
+<table><thead><tr><th>特性</th><th><a href="https://jina.ai/?sui&amp;model=jina-code-embeddings-0.5b">jina-code-embeddings-0.5b</a></th><th><a href="https://jina.ai/?sui&amp;model=jina-code-embeddings-1.5b">jina-code-embeddings-1.5b</a></th></tr></thead><tbody><tr><td><strong>基础模型</strong></td><td>Qwen2.5-Coder-0.5B</td><td>Qwen2.5-Coder-1.5B</td></tr><tr><td><strong>Embedding 维度</strong></td><td>896</td><td>1536</td></tr><tr><td><strong>Matryoshka 维度</strong></td><td>64, 128, 256, 512, 896</td><td>128, 256, 512, 1024, 1536</td></tr><tr><td><strong>最大序列长度</strong></td><td>32,768 tokens</td><td>32,768 tokens</td></tr><tr><td><strong>池化策略</strong></td><td>Last-token pooling</td><td>Last-token pooling</td></tr><tr><td><strong>注意力</strong></td><td>FlashAttention2</td><td>FlashAttention2</td></tr><tr><td><strong>数据类型</strong></td><td>BFloat16</td><td>BFloat16</td></tr></tbody></table>
+<p>传统代码 embedding 模型面临一个根本瓶颈：高质量的“注释-代码”对根本不够多，无法支撑监督训练。通过以在 5.5 万亿 token、92+ 编程语言上预训练的 <code>Qwen2.5-Coder</code> 起步，我们继承了其对编程构造的深度语义理解、跨语言模式识别，以及内建的语法与惯用法知识。随后的对比微调只需极少量对齐数据就能把这份知识适配到检索任务——绕开了制约 encoder-only 模型的数据稀缺问题。</p>
+<p>对于跨框架代码翻译这类样本不足的任务，我们用 LLM 合成了数据，且每一个合成样例都经过人工校验以保证质量。训练数据把现有的 MTEB 代码任务训练划分与改编后的公开数据集结合起来，包括 CommitPackFT、SWE-Bench、Spider、MBPP 与 CodeSearchNet。</p>
+<p>与 <a href="https://jina.ai/?sui&amp;model=jina-embeddings-v3">jina-embeddings-v3</a> 和 <code>v4</code> 不同，我们没有用 LoRA，而是直接做完整后训练。对于我们这样的小模型（494M 与 1.54B 参数），LoRA 的参数效率吸引力下降——当容量有限时，适配器的开销反而会伤害性能。我们需要每个参数都真正用在 embedding 任务上。即便在多任务场景下，任务特定的指令前缀也比多个 LoRA 适配器更干净：与其切换权重配置，我们只是前置不同的指令——更轻量，也更契合 LLM 天然处理条件信息的方式。</p>
+<p>训练极其高效：两个模型都用 InfoNCE 损失的对比学习训练，在 4×A100 80GB 上，0.5B 仅 8.3 小时完成，1.5B 约 12 小时。</p>
+<p>最后，我们基准测试了不同的池化策略。Last-token pooling 达到 78.41% 的总体均值，在所有基准类别上都稳定优于 mean pooling（77.20%）与 latent attention pooling（78.27%）。这 1.2 个百分点的优势让我们打破了自己在 <code>jina-embeddings-v2</code>、<code>v3</code>、<code>v4</code> 中确立的 mean pooling 传统。随着更多检索模型构建在 decoder-only LLM 之上，last-token pooling 成为自然选择——mean pooling 与单向注意力机制本就不契合。虽然 mean pooling 也能工作、且早期训练往往更容易（可能源于其凸优化曲面），但我们的实验始终显示它会停滞在 last-token pooling 所能达到天花板的下方。</p>
+<h2><a href="https://jina.ai/news/jina-code-embeddings-sota-code-retrieval-at-0-5b-and-1-5b/#getting-started">快速上手</a></h2>
+<p>两个模型都能无缝通过我们的 Search Foundation API 使用，也支持 <code>sentence-transformers</code>、<code>transformers</code>、<code>llama.cpp</code> 等流行框架。</p>
+<h3><a href="https://jina.ai/news/jina-code-embeddings-sota-code-retrieval-at-0-5b-and-1-5b/#via-api">通过 API</a></h3>
+<pre><code>curl http://api.jina.ai/v1/embeddings \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer $JINA_API_KEY&quot; \
+  -d @- &lt;&lt;EOFEOF
+  {
+    &quot;model&quot;: &quot;jina-code-embeddings-1.5b&quot;,
+    &quot;input&quot;: [&quot;print hello world in python&quot;],
+    &quot;task&quot;: &quot;nl2code.passage&quot;
+  }
+EOFEOF</code></pre>
+<h3><a href="https://jina.ai/news/jina-code-embeddings-sota-code-retrieval-at-0-5b-and-1-5b/#via-sentence-transformers">通过 <code>sentence-transformers</code></a></h3>
+<pre><code>from sentence_transformers import SentenceTransformer
+
+# Load the model (choose 0.5b or 1.5b)
+model = SentenceTransformer(
+    &quot;jinaai/jina-code-embeddings-1.5b&quot;,
+    model_kwargs={&quot;torch_dtype&quot;: &quot;bfloat16&quot;},
+    tokenizer_kwargs={&quot;padding_side&quot;: &quot;left&quot;}
+)
+
+# Natural language to code
+queries = [&quot;print hello world in python&quot;, &quot;initialize array of 5 zeros in c++&quot;]
+documents = [&quot;print('Hello World!')&quot;, &quot;int arr[5] = {0, 0, 0, 0, 0};&quot;]
+
+# Generate embeddings with task-specific prefixes
+query_embeddings = model.encode(queries, prompt_name=&quot;nl2code_query&quot;)
+document_embeddings = model.encode(documents, prompt_name=&quot;nl2code_document&quot;)
+
+# Compute similarity
+similarity = model.similarity(query_embeddings, document_embeddings)</code></pre>
+<h3><a href="https://jina.ai/news/jina-code-embeddings-sota-code-retrieval-at-0-5b-and-1-5b/#via-transformers">通过 <code>transformers</code></a></h3>
+<pre><code>from transformers import AutoModel, AutoTokenizer
+import torch.nn.functional as F
+
+def last_token_pool(last_hidden_states, attention_mask):
+    left_padding = (attention_mask[:, -1].sum() == attention_mask.shape[0])
+    if left_padding:
+        return last_hidden_states[:, -1]
+    else:
+        sequence_lengths = attention_mask.sum(dim=1) - 1
+        batch_size = last_hidden_states.shape[0]
+        return last_hidden_states[torch.arange(batch_size), sequence_lengths]
+
+tokenizer = AutoTokenizer.from_pretrained('jinaai/jina-code-embeddings-1.5b')
+model = AutoModel.from_pretrained('jinaai/jina-code-embeddings-1.5b')
+
+# Apply task-specific prefix
+query = &quot;Find the most relevant code snippet given the following query:\nprint hello world&quot;
+code = &quot;Candidate code snippet:\nprint('Hello World!')&quot;
+
+# Tokenize and embed
+batch_dict = tokenizer([query, code], padding=True, truncation=True, return_tensors=&quot;pt&quot;)
+outputs = model(**batch_dict)
+embeddings = last_token_pool(outputs.last_hidden_state, batch_dict['attention_mask'])</code></pre>
+<h3><a href="https://jina.ai/news/jina-code-embeddings-sota-code-retrieval-at-0-5b-and-1-5b/#matryoshka-embeddings-cut-off">Matryoshka Embedding 截断</a></h3>
+<p>两个模型都用 Matryoshka 表示学习在维度 <code>[64, 128, 256, 512, 896]</code> 上训练，允许你无需重算即可截断 embedding：</p>
+<pre><code># Full embeddings: 896d (0.5B) or 1536d (1.5B)
+full_embedding = model.encode(text)
+
+# Truncate to smaller dimensions for efficiency
+small_embedding = full_embedding[:256]  # Works for both models
+tiny_embedding = full_embedding[:128]   # 0.5B supports down to 64d</code></pre>
+<p>这份灵活性让你能根据自身需求在性能与效率之间权衡。</p>
+<h2><a href="https://jina.ai/news/jina-code-embeddings-sota-code-retrieval-at-0-5b-and-1-5b/#conclusion">结论</a></h2>
+<p><code>jina-code-embeddings</code> 表明，有效的代码 embedding <em>并不</em>需要巨大规模。通过构建在代码生成模型之上并施加针对性微调，我们用不到 1.5B 参数的模型达到了业内领先性能。</p>
+<p>如此紧凑的模型（0.5B/1.5B）取得强劲结果，印证了我们的论点：<strong>选对基础比参数量更重要。</strong> 生成式模型理解代码语义——这份理解能直接迁移到表示任务上。</p>
+<p>这也契合我们在 Jina AI 的更大愿景：统一架构，让 embedding 与 generation 从同一基础中涌现，推动 search foundation models 的边界。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>xAI Grok 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>xAI Grok 官方博客 / 更新日志归档（标题汉化，共 82 篇），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>xAI Grok 官方博客 / 更新日志归档（最近 50 条，共 50 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml" rel="self" type="application/rss+xml"/>
@@ -14,6 +14,41 @@
       <guid isPermaLink="true">https://x.ai/news/grok-bot-customer-support</guid>
       <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How SpaceXAI is using Grok Bot to scale customer support</description>
+      <content:encoded><![CDATA[<h1>SpaceXAI 如何用 Grok Bot 扩展客户支持</h1>
+<p>我们围绕 Grok Bot 重构了 SpaceXAI 与 Cursor 合并后的支持体系，在产品组合大幅扩张的同时没有增加人手。</p>
+<p>8 月 14 日 Cursor 成为 SpaceXAI 的一部分后，我们的两支客户支持团队开始围绕一个远为更广的产品组合合流。</p>
+<p>与此同时，我们正在准备发布 <a href="https://x.ai/bot">Grok Bot</a>——一个可以交付真实工作的 AI 队友。我们预期该产品会快速增长，带来又一波用户和支持需求。</p>
+<p>我们决定用 Grok Bot 本身来帮助满足这一需求，把它部署到支持体系的各个环节。它登录了我们团队使用的同一套工具，其角色从解决单个工单，到帮助我们理解并改进整个支持体系。</p>
+<p>合并后的新团队支持工单量增长了 175%，但得益于 Grok Bot，我们没有招聘任何新人。否则我们可能需要新增 200 人。</p>
+<p>我们的成本也只有通常水平的一小部分。传统 AI 客服工具按每次解决收取 $1 到 $4 的固定费用。用 Grok Bot，你只需为实际用量付费，而这些用量已包含在你的套餐里。稍加优化后，我们把单个工单的解决成本降到了低至 $0.20 到 $0.30。</p>
+<h2><a href="https://x.ai/news/grok-bot-customer-support#establishing-the-foundation">打好基础</a></h2>
+<p>在为 Grok Bot 做配置时，我们采取了&quot;crawl, walk, run&quot;（先爬、再走、后跑）的方式。起初我们把它接入几个核心系统，包括用于工单的 Plain 和用于问题跟踪的 Linear。然后让它表现得像工单负责人，但限制它只能写内部备注，并且每次写入操作都需要人工批准。这让我们能检验它是否理解了每个问题、是否提出了正确的下一步，同时不影响客户体验。</p>
+<p>随着结果越来越可靠，我们为每次运行加上了轨迹记录与评估。出了问题时，我们能看到 Grok Bot 在哪里跑偏、做出调整、再试一次。Grok Bot 自己也能分析这些运行。这个反馈回路让我们既能快速推进，又让整个过程保持受控。</p>
+<p>基础打牢之后，我们从复杂度最低的工单开始让 Grok Bot 上岗。第一天，我们人工复核它对问题的解读和拟议回复是否准确、语气是否合适、是否遵循了我们的指令。到当天结束，我们已有足够信心让它开始直接回复客户。此后，我们逐步扩大它能处理的工单范围。</p>
+<h2><a href="https://x.ai/news/grok-bot-customer-support#from-intake-to-resolution">从接入到解决</a></h2>
+<p>若以端到端解决一个工单所需的时间来看，大头都花在发现、排查和故障诊断上。我们从工单进入系统的那一刻起，就把 Grok Bot 作为预排查步骤应用到每个工单。这可能成本不菲，因此我们梳理了常见工单、给常见问题分类，以减少需要花费的 tokens。当一个简单的帮助中心查询就能解决问题时，我们也不会耗尽大量排查算力。</p>
+<p>每当遇到已知问题（它连接着我们的 Linear 实例），或后端出现常见错误（它连着 Datadog），我们都训练了 Grok Bot：要么追加到现有 issue，要么新建一个 issue。Grok Bot 还会用视频复现问题，帮助工程团队快速解决。</p>
+<p>当然，我们还要确保客户收到我们清晰的答复。我们用超过一百万次客户交互训练了 Grok Bot，让它直接从我们人类客服那里学会了语气和风格。Grok Bot 被训练为不仅回复，而且始终推动工单走向解决。它通过提出相关问题来实现这一点（例如，答案已在日志里的问题它不会重复问）。</p>
+<p>Grok Bot 还能代表客户采取行动。例如，我们为它提供了明确的退款指引，99% 的退款请求无需人工介入即可解决。</p>
+<h2><a href="https://x.ai/news/grok-bot-customer-support#managing-the-queue-in-real-time">实时管理队列</a></h2>
+<p>解决单个工单只是工作的一部分，我们还需要理解整个队列中正在发生什么。Grok Bot 持续盯住进线量，并根据哪些需要关注来调整队列：重新排定工单优先级、按紧急程度重新分配负责人，并在快要突破响应时限 SLA 时向组织发出警报。</p>
+<p>Grok Bot 还会跨工单寻找模式。当某个问题的工单量达到设定阈值，它可以自动宣布一次事故（incident）。它监控 X 上情绪的变化和同一问题的反复报告，让我们看到那些没有直接联系客服的客户。这些信号共同帮助我们及早发现苗头问题。</p>
+<p>在我们目前的规模下，原始的进线量警报会造成大量噪音。Grok Bot 会评估某个激增是否反映真实的支持问题，并在通知团队前先开始调查。这让我们在保全团队时间与精力的同时，对需要行动的事项获得更多上下文。</p>
+<h2><a href="https://x.ai/news/grok-bot-customer-support#continually-improving-our-customer-support-system">持续改进我们的客户支持体系</a></h2>
+<p>随着 Grok Bot 承担更多客户支持工作，它也给了我们改进支持体系本身的新途径。它会复盘人类和 Bots 处理的客户交互，就哪里可以改进给出具体反馈，并为个别团队成员和 Bots 发掘辅导机会。</p>
+<p>每周，Grok Bot 会给管理团队发送一份摘要，说明我们的 AI 回复在哪里做得不够好。有时答案是需要更多训练或更好的文档；有时摘要会确认我们设置的护栏正在起作用。这让我们对质量保持定期更新的视野，帮助我们及早处理成型的模式。</p>
+<p>随着越来越多用户向 Grok 寻求支持，我们的帮助中心日益成为其答案的原始素材。为保持答案准确，Grok Bot 会审阅我们代码库的变更，并建议对帮助中心做相应更新。</p>
+<p>我们如今已走到 Grok Bots 可以辅导其他 Grok Bots 的阶段。它们发现知识体系的缺口、补上缺口，并把所学反馈回系统。我们正在整个产品组合中扩展这个循环，让它覆盖每一个产品触点。</p>
+<h2><a href="https://x.ai/news/grok-bot-customer-support#turning-customer-support-data-into-decisions">把客户支持数据变成决策</a></h2>
+<p>Grok Bot 已成为我们默认的数据分析师，把它在客户支持中看到的一切转化为发到我们 Slack 频道的日报。当它察觉糟糕客户体验的早期征兆，就会标记情况，让团队还来得及扭转结果。</p>
+<p>一个例子：当工单在客户与我们团队成员（人类或 Bot）之间来回超过三次，Grok Bot 就会把该交互标记给管理层审阅，给领导层一个介入并挽回体验的机会。这类交互也有助于训练 Grok Bot——随着它学会哪些信号对团队有用，报告会随时间越来越切题。</p>
+<p>同样的分析也帮助我们提升产品质量。Grok Bot 每天从客户支持工单中综合超过 20,000 条产品反馈，把它们整理成清晰的主题带给工程团队。这让产品团队能更宏观地看到客户在哪里挣扎、产品哪里需要打磨。</p>
+<h2><a href="https://x.ai/news/grok-bot-customer-support#how-grok-bot-changes-a-customer-support-team">Grok Bot 如何改变一支客户支持团队</a></h2>
+<p>Grok Bot 仍是一种新的工作方式，但它已经改变了我们团队的运转方式。我们不再把一天的大部分时间耗在重复性支持工作上，而是专注于设定护栏、处理需要判断力的案例、决定整个体系该如何改进。这让工作更有吸引力，也让人们有更多空间把经验用在更难的题目上。</p>
+<p>我们仍在学习这种模式的可能性。随着客户支持角色的持续演变，我们会不断分享我们的发现。</p>
+<h2>今天就试试 Grok Bot</h2>
+<p>Download for macOS</p>
+<p>Contact sales</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Grok 4.7</title>
@@ -21,6 +56,94 @@
       <guid isPermaLink="true">https://x.ai/news/grok-4-7</guid>
       <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok 4.7</description>
+      <content:encoded><![CDATA[<h1>介绍 Grok 4.7</h1>
+<p>SpaceXAI 面向编码与知识工作最强大的模型。速度翻倍，价格只有同类模型的一半。</p>
+<p>Try for free</p>
+<p>Start building</p>
+<p>Grok 4.7 是我们面向编码与知识工作能力最强的模型。它能在困难任务上工作更久、更仔细地检查自己的工作，并搭载我们迄今校准得最好的安全护栏。它与 <a href="https://x.ai/news/grok-4-6">Grok 4.6</a> 同价同速提供服务，在其级别中极具竞争力。</p>
+<p>在以长时间编码任务施压的 CursorBench 4.0 上，Grok 4.7 处于性价比（price-performance）的前沿。</p>
+<h2><a href="https://x.ai/news/grok-4-7#model-improvements">模型改进</a></h2>
+<p>相比 <a href="https://x.ai/news/grok-4-6">Grok 4.6</a>，Grok 4.7 使用了一个全新的更大基座模型。它在更难的任务组合上进行了更长的强化学习训练，并偏向需要数小时才能完成的问题。模型更擅长验证自己的工作、管理更长的上下文。我们还训练 Grok 4.7 原生理解 <a href="https://x.ai/bot">Grok Bot</a> harness，使其更擅长对话类任务和一般知识工作。</p>
+<p>Grok 4.7</p>
+<p>xHigh</p>
+<p>Grok 4.6</p>
+<p>High</p>
+<p>GPT-5.6 Sol</p>
+<p>Max</p>
+<p>Fable 5.1</p>
+<p>Max</p>
+<p>Input token price</p>
+<p>$ per million</p>
+<p>$2</p>
+<p>$2</p>
+<p>$4</p>
+<p>$10</p>
+<p>Output token price</p>
+<p>$ per million</p>
+<p>$6</p>
+<p>$6</p>
+<p>$20</p>
+<p>$50</p>
+<p>Software engineering</p>
+<p>CursorBench 4.0</p>
+<p>46.3%</p>
+<p>40.4%</p>
+<p>41.7%</p>
+<p>51.8%</p>
+<p>Software engineering</p>
+<p>DeepSWE v1.1</p>
+<p>71.0%*</p>
+<p>65.2%</p>
+<p>72.7%</p>
+<p>70.0%</p>
+<p>Electrical engineering</p>
+<p>EEBench</p>
+<p>64.0%</p>
+<p>53.0%</p>
+<p>39.4%</p>
+<p>56.4%</p>
+<p>Multi-hour office work</p>
+<p>AA Briefcase v1.1</p>
+<p>1,657</p>
+<p>1,546</p>
+<p>1,487</p>
+<p>1,678</p>
+<p>Multi-hour terminal work</p>
+<p>Terminal-Bench 4.0</p>
+<p>37.6%</p>
+<p>20.3%</p>
+<p>37.3%</p>
+<p>57.9%</p>
+<p>Legal work</p>
+<p>Harvey Legal Agent Benchmark</p>
+<p>19.6%</p>
+<p>15.8%</p>
+<p>2.5%</p>
+<p>6.7%</p>
+<p>Clinical reasoning</p>
+<p>HealthBench Professional</p>
+<p>56.7%</p>
+<p>48.5%</p>
+<p>60.5%</p>
+<p>62.1%</p>
+<p>\* high effort</p>
+<p>Grok 4.7、Grok 4.6、GPT-5.6 Sol 和 Fable 5.1 的 token 价格与基准分数。基准为 CursorBench 4.0、DeepSWE v1.1、EEBench、AA Briefcase v1.1、Terminal-Bench 4.0、Harvey Legal Agent Benchmark 和 HealthBench Professional。Grok 4.7 的 DeepSWE 分数带星号表示 high-effort 得分。</p>
+<p>Grok 4.7 更擅长创建文档和演示文稿。在 GDPval 和 AA Briefcase 中，AI 被要求完成律师、护士、金融分析师等专业人士的实际任务。Grok 4.7 在这两个基准上都超越了 Grok 4.6，并与其他前沿模型表现相当。</p>
+<p>Professional knowledge work</p>
+<p>GDPval</p>
+<p>GDPval、AA Briefcase 和 EEBench 分数对比 Grok 4.7 与 Grok 4.6、Fable 5.1、GPT-6 Astra。</p>
+<h2><a href="https://x.ai/news/grok-4-7#safety--cybersecurity">安全与网络安全</a></h2>
+<p>Grok 4.7 基于一套全新的安全护栏体系构建。它是我们在拒绝行为与抗越狱（jailbreak）测试中所测过的最强模型。在网络安全、生物工作等两用（dual-use）领域，它在&quot;无害任务的实用性&quot;与&quot;危险任务的安全拒绝&quot;两方面都保持领先，并以 62.4% 的成绩登顶 LatchBio 的生物安全基准。</p>
+<p>Grok 4.7 在强大网络防御能力与合法用途的低拒绝率之间取得平衡。在我们针对高风险与恶意网络任务的基准 HackerBench v0.3 上，它展现出最高的安全水位：只放行 3.3% 的高风险两用提示，同时几乎不会拦截正当的安全工作。我们还开始向少数网络安全合作伙伴提供 Grok 4.7 红队能力的邀请制访问，用于防御研究。</p>
+<h2><a href="https://x.ai/news/grok-4-7#pricing-and-availability">定价与可用性</a></h2>
+<p>Grok 4.7 今日已在 <a href="https://cursor.com">Cursor</a> 和 <a href="https://x.ai/build">Grok Build</a> 上线，同时可通过 <a href="https://console.x.ai?campaign=grok-4-7-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=grok-4-7-blog">Grok API</a>、第三方编码 harness，以及模型路由与云平台使用。</p>
+<p>该模型定价从每百万输入 tokens $2、每百万输出 tokens $6 起。我们同时提供一个 fast 变体：输出速度翻倍，价格翻倍。</p>
+<p>Console</p>
+<p>Create an API key</p>
+<p>docs.x.ai</p>
+<p>Read the docs</p>
+<h3>在 Grok Build 免费体验</h3>
+<p>今天就到 <a href="https://x.ai/build">x.ai/build</a> 开始。</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Grok Voice Transcribe 2.0</title>
@@ -28,6 +151,57 @@
       <guid isPermaLink="true">https://x.ai/news/grok-voice-transcribe-2</guid>
       <pubDate>Fri, 18 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok Voice Transcribe 2.0</description>
+      <content:encoded><![CDATA[<h1>介绍 Grok Voice Transcribe 2.0</h1>
+<p>宣布 SpaceXAI 最新的 speech-to-text 模型，准确率与性价比无双。</p>
+<p>Try It Live</p>
+<p>View Docs</p>
+<p>今天我们发布 Grok Voice Transcribe 2.0，我们最新的 speech-to-text 模型。在我们的真实世界评估中，Grok Voice Transcribe 2.0 是当今最准确的转录模型之一，准确率是 Grok Voice Transcribe 1.0 的两倍，价格不变。</p>
+<p>Grok Voice Transcribe 2.0 建立在 Grok Voice 背后的音频基础模型之上。Grok Voice 如今每天支撑数以万计的客服通话、转录数百万小时的视频旁白，并在实体产品中运行语音智能体——包括 Tesla 车辆中的 Grok 助手。它在一个独特数据集上训练：跨多种环境录制的实时、带噪、多语言音频，并经后训练打磨。</p>
+<p>结果是：真实环境下语音转录最准确的模型之一。</p>
+<h2><a href="https://x.ai/news/grok-voice-transcribe-2#accuracy">准确率</a></h2>
+<p>多数转录模型在处理干净、单说话人的音频时表现出色。真实世界音频更难：不稳定的电话线路、交叠的人声、地方口音，以及被念出来的电话号码和邮箱。Grok Voice Transcribe 2.0 就是为跨条件、跨环境的最难音频而造。</p>
+<p>在公开的 Artificial Analysis 排行榜上，Grok Voice Transcribe 2.0 在 32 个流式模型中准确率位列第一。</p>
+<h3>Accuracy vs. Price</h3>
+<p>Upper and to the right is better.</p>
+<p>Source:</p>
+<p>Artificial Analysis</p>
+<h3><a href="https://x.ai/news/grok-voice-transcribe-2#internal-evaluations">内部评估</a></h3>
+<p>除公开基准外，我们还在四个取自生产流量的内部数据集上衡量词错误率：客服通话的电话音频、与 Grok 的对话、账户码和邮箱等口述凭证信息、以及短小的多语言语音命令。Grok Voice Transcribe 2.0 在全部四项上都优于 Grok Voice Transcribe 1.0，并在电话音频上领先所有受测模型。</p>
+<h3>Telephony (8 kHz)</h3>
+<p>Customer support calls · English</p>
+<h3>Conversational</h3>
+<p>Conversations with Grok · English</p>
+<h3>Credentials</h3>
+<p>Phone numbers, emails, addresses · English</p>
+<h3>Short Phrases</h3>
+<p>Voice-assistant utterances · 19 languages</p>
+<h2><a href="https://x.ai/news/grok-voice-transcribe-2#multilingual">多语言</a></h2>
+<p>Grok Voice Transcribe 2.0 可转录数十种语言，自动检测语种，并能在一次处理中跟随录音中段的语言切换。多语言准确率是它相对 Grok Voice Transcribe 1.0 最大的提升。</p>
+<h3>Transcription accuracy</h3>
+<p>Word Error Rate (%). Lower is better.</p>
+<p>Grok Voice Transcribe 2.0</p>
+<p>Grok Voice Transcribe 1.0</p>
+<p>ElevenLabs Scribe v2</p>
+<p>Deepgram Nova-3</p>
+<p>像车内命令这样的短句给模型留下的语言识别上下文很少。在我们的短句数据集上，词错误率从 20.6% 降到 6.8%。</p>
+<h2><a href="https://x.ai/news/grok-voice-transcribe-2#features">特性</a></h2>
+<p>Grok Voice Transcribe 2.0 支持高级配置与控制。现有的 Speech-to-Text API 集成无需改代码即可享受准确率提升：</p>
+<ul><li><strong>批量与流式。</strong> 转录已录制的文件和 URL，或实时转录音频流。</li><li><strong>词级时间戳。</strong> 每个词都有精确的起止时间和置信度分数。</li><li><strong>说话人分离。</strong> 在转录文本中标注每个说话人，不额外收费。</li><li><strong>多声道转录。</strong> 最多 8 个声道独立转录。</li><li><strong>关键术语偏置。</strong> 每次请求最多传入 100 个领域词，如产品名或医学词汇。</li><li><strong>文本格式化。</strong> 数字、日期、货币、电话和邮箱以书写形式返回。</li><li><strong>语气词去除。</strong> 从转录中省略 &quot;um&quot;、&quot;uh&quot; 之类的填充词。</li><li><strong>智能轮次检测。</strong> 为语音智能体检测说话人话轮的结束。</li></ul>
+<h2><a href="https://x.ai/news/grok-voice-transcribe-2#grok-voice-powers-atlassian-loom">Grok Voice 为 Atlassian Loom 提供动力</a></h2>
+<p><a href="https://www.loom.com/">Atlassian Loom</a> 被广泛用于录制和分享屏幕录像。Atlassian 发现，在转录 Loom 视频时，Grok Voice Transcribe 2.0 比他们现有方案更准确。准确的转录打开了新的 AI 工作流：在 Loom 里录一个行动计划，把转录文本灌给 Cursor，它就直接完成代码修改。</p>
+<blockquote>&quot;We've always believed the best way to move work forward is to capture context once and let it flow everywhere. With Grok powering Loom's speech-to-text and Cursor turning that into code, we're closing the loop from context to code: record what you mean, and the work gets done. It's a glimpse of where AI-assisted development is headed.&quot;</blockquote>
+<p>Sanchan Saxena</p>
+<p>, Atlassian Teamwork Collection 高级副总裁</p>
+<h2><a href="https://x.ai/news/grok-voice-transcribe-2#price">价格</a></h2>
+<p>Grok Voice Transcribe 2.0 的定价与 Grok Voice Transcribe 1.0 完全一致。批量转录仍为每小时音频 $0.10，流式 $0.20，说话人分离、时间戳和关键术语均已包含。</p>
+<h3>Batch</h3>
+<p>USD per hour of audio</p>
+<h3>Streaming</h3>
+<p>USD per hour of audio</p>
+<p>Grok Voice Transcribe 2.0 很快将成为 Speech-to-Text API 的默认模型，Grok Voice Transcribe 1.0 将在未来数周弃用。过渡期间若想留在旧版，请钉住 <code>grok-voice-transcribe-1.0</code>。</p>
+<h2>开始用 Grok Voice Transcribe 构建</h2>
+<p>Try It Live</p>
+<p>View Docs</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok Build 中的记忆功能</title>
@@ -35,6 +209,180 @@
       <guid isPermaLink="true">https://x.ai/news/grok-build-memory</guid>
       <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Memory in Grok Build</description>
+      <content:encoded><![CDATA[<h1>Grok Build 的记忆功能</h1>
+<p>Grok Build 现在能把规约、决策和项目事实从一个会话带到下一个会话。笔记在你工作时于后台写入，等你回到项目时再读回。</p>
+<p>Try Free</p>
+<p>Grok Build 现在有了记忆。在你工作时，它会为过程中出现的规约、决策和项目事实做笔记，之后的会话在改动相关代码之前会先读这些笔记。Grok Build 越用越顺手。</p>
+<p>~/dev/orbit</p>
+<p>|</p>
+<p>7.42%</p>
+<p>|</p>
+<p>❯</p>
+<p>run the test suite</p>
+<p>◆</p>
+<p>Run</p>
+<p>cargo test</p>
+<p>error: connection refused (postgres at localhost:5432)</p>
+<p>test result: FAILED. 143 passed; 5 failed; 0 ignored</p>
+<p>❯</p>
+<p>use just test, not cargo test. it starts the test database first.</p>
+<p>◆</p>
+<p>Run</p>
+<p>just test</p>
+<p>Starting postgres on :5433 ... ready</p>
+<p>test result: ok. 148 passed; 0 failed; 0 ignored</p>
+<p>All 148 tests pass with just test.</p>
+<p>workspaces</p>
+<p>›</p>
+<p>orbit-3f9c2a1d</p>
+<p>›</p>
+<p>topics</p>
+<p>›</p>
+<p>testing.md</p>
+<p>Testing</p>
+<p>How tests are run and organized in orbit.</p>
+<p>Commands</p>
+<p>•</p>
+<p>Run the suite with</p>
+<p>just test</p>
+<p>. It starts the test database and then runs</p>
+<p>cargo test</p>
+<p>; plain</p>
+<p>cargo test</p>
+<p>fails the integration tests.</p>
+<p>•</p>
+<p>just test &lt;crate&gt;</p>
+<p>runs a single crate.</p>
+<p>Fixtures</p>
+<p>•</p>
+<p>Integration tests seed from</p>
+<p>tests/fixtures/seed.sql</p>
+<p>.</p>
+<p>~/dev/orbit</p>
+<p>|</p>
+<p>1.08%</p>
+<p>|</p>
+<p>❯</p>
+<p>add a retry with backoff to the webhook sender</p>
+<p>◆</p>
+<p>Edit</p>
+<p>src/webhooks.rs</p>
+<p>43</p>
+<p>for attempt in 0..MAX_ATTEMPTS {</p>
+<p>44</p>
+<p>if self.post(event).await.is_ok() {</p>
+<p>45</p>
+<p>return Ok(());</p>
+<p>46</p>
+<p>}</p>
+<p>47</p>
+<p>}</p>
+<p>48</p>
+<p>sleep(backoff(attempt)).await;</p>
+<p>◆</p>
+<p>Thought for</p>
+<p>1.9s</p>
+<p>The testing topic says the suite runs through just test.</p>
+<p>◆</p>
+<p>Run</p>
+<p>just test</p>
+<p>Starting postgres on :5433 ... ready</p>
+<p>test result: ok. 151 passed; 0 failed; 0 ignored</p>
+<p>Added the retry in src/webhooks.rs. 151 tests pass with just test.</p>
+<h3>回合结束后自动捕捉</h3>
+<p>回合完成后，Grok 会在后台复盘该回合，记录任何有长期价值的东西：规约、决策和项目事实。捕捉在每个完成的回合上运行，不会打断会话。</p>
+<h3>以 Markdown 存储</h3>
+<p>笔记是 markdown 文件，一个主题一个文件。每个项目有自己的 workspace 作用域，另有一个全局作用域存放适用于所有地方的偏好。<code>/dream</code> 会把新观察合并到所属主题中，<code>/memory</code> 则按磁盘上的原样展示这些文件。</p>
+<h3>在后续会话中读回</h3>
+<p>在开始相关工作之前，Grok 会读取覆盖该区域的主题并加以应用——包括那些对话中从未提到该主题的会话。当前对话中的指令优先于任何笔记内容。</p>
+<h3>回合结束后自动捕捉</h3>
+<p>回合完成后，Grok 会在后台复盘该回合，记录任何有长期价值的东西：规约、决策和项目事实。捕捉在每个完成的回合上运行，不会打断会话。</p>
+<h2><a href="https://x.ai/news/grok-build-memory#what-it-remembers">它记住什么</a></h2>
+<p>记忆保存的是最可能在后续会话中有用的细节：团队如何编写和评审代码、决策及其背后的理由、关于项目的持久事实——从某个子系统在哪里，到用哪条命令跑测试套件。任务状态、未定的结论、机密，以及仓库或其文档已经覆盖的内容，都会被排除在外。</p>
+<p>笔记按项目分别保存，另有一套全局笔记存放处处适用的偏好。</p>
+<h2><a href="https://x.ai/news/grok-build-memory#written-in-the-background">在后台写入</a></h2>
+<p>捕捉在回合完成后运行，从不阻塞会话。Grok 复盘完成的回合，把值得保留的内容写成 markdown 笔记，然后继续。随着时间推移，<code>/dream</code> 会把这些笔记折叠进一个主题一个文件的主题文件里，于是每个项目最终拥有一小组整理有序的参考。</p>
+<p>当你回到一个项目，Grok 会读取覆盖其即将改动区域的主题。当前对话中的指令优先于任何笔记内容。</p>
+<h2><a href="https://x.ai/news/grok-build-memory#browsing-memory">浏览记忆</a></h2>
+<p><code>/memory</code> 打开一个只读浏览器，按作用域分组展示每个记忆文件，并预览选中文件。这是查看某次会话产出了什么的最快方式，也是当笔记出错时找到该编辑文件的最快方式。</p>
+<p>~/dev/orbit</p>
+<p>|</p>
+<p>4.36%</p>
+<p>|</p>
+<p>❯</p>
+<p>add a retry with backoff to the webhook sender</p>
+<p>◆</p>
+<p>Edit</p>
+<p>src/webhooks.rs</p>
+<p>◆</p>
+<p>Thought for</p>
+<p>1.9s</p>
+<p>The testing topic says the suite runs through just test.</p>
+<p>◆</p>
+<p>Run</p>
+<p>just test</p>
+<p>Starting postgres on :5433 ... ready</p>
+<p>test result: ok. 151 passed; 0 failed; 0 ignored</p>
+<p>Added the retry in src/webhooks.rs. 151 tests pass with just test.</p>
+<p>Enter</p>
+<p>:</p>
+<p>run</p>
+<p>│</p>
+<p>Tab</p>
+<p>:</p>
+<p>complete</p>
+<p>│</p>
+<p>Esc</p>
+<p>:</p>
+<p>clear</p>
+<p>─</p>
+<p>Memory</p>
+<p>─</p>
+<p>[</p>
+<p>✗</p>
+<p>]</p>
+<p>/ to filter...</p>
+<p>Global</p>
+<p>MEMORY.md</p>
+<p>1.2 KB · 2h ago</p>
+<p>preferences.md</p>
+<p>640 B · 2h ago</p>
+<p>Workspace</p>
+<p>MEMORY.md</p>
+<p>2.4 KB · 3m ago</p>
+<p>testing.md</p>
+<p>1.3 KB · 3m ago</p>
+<p>code-style.md</p>
+<p>1.1 KB · 2d ago</p>
+<p>gateway.md</p>
+<p>3.8 KB · 2d ago</p>
+<p>9f2c4e1a-71b6-4d0e-8a3f-5c2d7b9e0f14__t000006-000006__n000.md</p>
+<p>812 B · just now</p>
+<p>Global memory index</p>
+<p>Generated by Grok. Do not edit this file directly.</p>
+<p>Topics</p>
+<p>•</p>
+<p>Reply preferences — How the user wants answers and PR descriptions written. (</p>
+<p>topics/preferences.md</p>
+<p>)</p>
+<p>↑/↓ nav</p>
+<p>│</p>
+<p>/ search</p>
+<p>│</p>
+<p>y copy path</p>
+<p>│</p>
+<p>x delete</p>
+<p>│</p>
+<p>t toggle (on)</p>
+<p>│</p>
+<p>^F fullscreen</p>
+<p>│</p>
+<p>Esc close</p>
+<h2><a href="https://x.ai/news/grok-build-memory#new-commands">新命令</a></h2>
+<ul><li><code>/memory</code> 打开上面所示的浏览器。</li><li><code>/dream</code> 把近期的笔记整理进主题文件，例如 <code>topics/testing.md</code>。Dream 也会在后台定期自动运行。</li></ul>
+<h2><a href="https://x.ai/news/grok-build-memory#availability">可用性</a></h2>
+<p>记忆功能现已在 Grok Build 中提供。它作用于新会话：运行 <code>/new</code> 或启动一个全新的 <code>grok</code>，笔记会在第一个完成的回合之后开始积累。</p>
+<p>Try Free</p>]]></content:encoded>
     </item>
     <item>
       <title>让 Grok Bot 放开手脚处理采购</title>
@@ -42,6 +390,102 @@
       <guid isPermaLink="true">https://x.ai/news/grok-bot-procurement</guid>
       <pubDate>Fri, 04 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Setting Grok Bot loose on procurement</description>
+      <content:encoded><![CDATA[<h1>放手让 Grok Bot 去做采购</h1>
+<p>我们把供应商支出、合同和用量数据开放给 Grok Bot。它找到了超过 $100,000 的直接节省。</p>
+<p>企业有大量难以贴身追踪的支出。这包括随团队变动而不断累积的闲置 SaaS 席位，以及在没人核对合同是否仍与产品实际用法匹配之前就到期的续约。同样的问题也出现在经常性采购中——照着上次买的东西再下一单，往往比按当前需求调整数量、或货比三家找更优价格要省事得多。</p>
+<p>这些工作很多值得做，但很难说服人手工去做。我们想看看 Grok Bot 能接手其中多少。</p>
+<p>Grok Bot 让智能体的搭建和使用容易得多。你告诉或演示给 Bot 你想要什么，给它合适的工具访问权，然后让它去执行，不必逐步设计工作流。</p>
+<p>在采购上，我们创建了一个我们爱称为 <a href="https://x.ai/bot/marketplace/bots/haggle-bot">Haggle Bot</a> 的 Bot。它把我们的供应商支出连同合同和用量数据一起阅读，然后用市场价格和竞争性报价寻找节省空间、准备谈判。到目前为止，它已识别出超过 $100,000 的直接节省，梳理了较大的 SaaS 续约，并把同样的方法用于办公用品这类经常性采购。</p>
+<p>我们认为 Haggle Bot 指向了 Bots 在公司内一个更宏大的角色：给一个 Bot 一份清晰的职责和它需要的工具访问权，它就能持续承担该角色内的工作，而不需要你逐件吩咐。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#procurement-is-a-good-task-for-a-bot">采购是适合 Bot 的任务</a></h2>
+<p>采购的目标是支持业务，把花在供应商上的每一美元用到极致。现有许多采购工具在供应商准入和合同管理层面提供帮助。</p>
+<p>但最重要的采购工作，很多取决于那些系统不回答的问题：</p>
+<ul><li>这件事的 owner 是谁？</li><li>我们为什么需要它？</li><li>我们探索过替代方案吗？</li><li>如果 X 和 Y 干的是同一件事，为什么两个都留着？</li><li>我们的成本为什么在飙升？</li><li>人人都有 license，他们在用吗？</li></ul>
+<p>这些问题很常见，但取决于公司所处阶段，逐个人工回答未必划算。高速成长的公司常常为了避免花时间追查这些问题而把钱留在桌上。这正是 Bot 能发挥作用的地方。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#a-simple-expression-of-intent">一个简单的意图表达</a></h2>
+<p>我们启动 Haggle Bot 的方式，是描述我们希望它做的工作。它的指令是：了解我们的供应商支出，把这份知识变成有证据支撑的节省，最终决策由人来拍板。</p>
+<p>Procurement</p>
+<h3>Haggle Bot current system prompt</h3>
+<p>SETUP — fill in for your org SYSTEMS - Spend data lives in: &lt;e.g. Ramp, Brex, NetSuite&gt; - Contracts live in: &lt;e.g. Drive, Notion, Ironclad&gt; - Usage/seat data comes from: &lt;e.g. Okta/SSO logs, each tool's admin portal&gt; - Colleagues reachable via: &lt;e.g. Slack, email&gt; - Vendor dossiers kept in: &lt;e.g. Notion database, Drive folder&gt; PEOPLE - Your operator: &lt;name&gt; — makes all final decisions. - Who to ask about tool usage: &lt;e.g. the owner listed in spend data, IT, team leads&gt; - Voice on external emails: &lt;e.g. formal, sent under the operator's name, no agent names&gt; PERMISSION LINES - Always allowed, no need to ask: &lt;e.g. reading spend data, messaging colleagues, requesting admin access, pulling reports, updating dossiers&gt; - Needs the operator's explicit go, every time: &lt;e.g. any vendor-facing send&gt; - Never, under any circumstances: &lt;e.g. signing, buying, subscribing, approving charges, any binding commitment&gt; NEGOTIATION DIALS - Renewal radar: prioritize renewals within &lt;e.g. 120&gt; days. - Opening anchor: &lt;e.g. 5–10&gt;% below our internal target, never more than &lt;e.g. 25&gt;% off the vendor's latest quote. - Acceptable reasons to give a vendor for an ask: &lt;e.g. competitive process, market rate, budget&gt; - Never reveal to vendors: &lt;e.g. usage data, seat counts, internal projects, timeline urgency, that we've decided to renew&gt; WHAT GOOD LOOKS LIKE (edit with your own vendors) - Weak finding: &quot;Renegotiate our CRM (~$50k).&quot; - Strong finding: &quot;Video tool renews Oct 14. 210 seats, 74 idle for 90 days per admin logs. Drop to 150 at renewal = ~$18k/yr. Owner confirmed.&quot; AGENT You are Haggle Bot, a vendor-spend savings agent. Your job: know the company's vendor spend cold and produce evidence-backed savings, like a sharp procurement colleague — not a list of big vendors to &quot;renegotiate.&quot; Operate within the permission lines above without exception. LEAD WITH THE MONEY — every finding opens with: TODAY: what we pay now, annualized, from live data, with source. SAVE: realistic savings and mechanism, with confidence. REC: one committed recommendation — a menu of options is not a recommendation. NEXT: what you've already set in motion. (Internal actions happen before you report, not as offers — never &quot;I can ping X if you want.&quot;) PRIORITIZE EVIDENCE: a real opportunity has a dollar figure traced to live spend data, a specific mechanism, and a reason it's actionable now (renewal window, usage data, competing quote). Anything less is a lead — label it, name the missing data, and go get it rather than assuming. Match the &quot;strong finding&quot; example above. WORK THE CALENDAR: maintain a renewal calendar from billing and contract data; renewals inside the radar window are your priority queue. Leverage lives at renewal. DO THE RESEARCH YOURSELF: a renewal, quote, or proposal in play means research runs before you recommend anything — never advise &quot;exploring alternatives,&quot; explore them. Price 3+ real alternatives against our actual SKU footprint from the live invoice, cite and date every number, state list vs. street price, and include switching costs honestly. NEGOTIATE DELIBERATELY: before any vendor-facing draft, show the operator the plan — target, opening anchor (within the dials above), walk-away, what we trade for what, and your next two moves if they reject, counter, or go silent. In the message: one reason per ask from the acceptable list, nothing from the never-reveal list, every line priced (unpriced lines get priced by the vendor), and a close where &quot;no&quot; isn't a complete reply — aimed at the rate on the biggest negotiable line, never at lines where our savings come from cutting quantity. Warm tone, firm numbers: the rep argues our case internally, so write to make that easy. A rejected draft is rebuilt from the plan, never edited. REMEMBER EVERYTHING: keep a per-vendor dossier — spend, terms, renewal date, owner, quotes gathered, and the operator's verdicts. When the operator rejects something, log why and don't repeat the pattern. VOICE: with the operator — direct, dollars first, no fluff. External — per the voice setting above.</p>
+<p>随后我们把 Slack、Notion、Drive、Gmail、Hex 和 Ramp 的访问权给了这个 Bot。Haggle Bot 利用这些系统构建了约 125 家活跃供应商的工作图谱。</p>
+<p>这份记录让 Haggle Bot 有足够的上下文来做决策、持续工作，而不需要人逐条说明下一步。我们也定义了 Haggle Bot 应停下并交还控制权的位置：内部调研与协调它可以自行处理，但花钱、接受条款或向供应商发送任何东西都必须获得明确批准。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#finding-unused-saas-seats">找出闲置的 SaaS 席位</a></h2>
+<p>一个简单的起点是审计 SaaS 支出。Haggle Bot 向 IT 团队索取了席位分配与最近使用数据，然后与我们实际付费的情况对比。针对某款产品，它发现了 43 个过去 90 天完全无活动的付费席位，并把名单发回供审查和降级。这合计带来 $14,220 的节省。</p>
+<p>我们把同样的方法用在另一款 SaaS 产品上，Haggle Bot 找到了每年 $85,662 的未使用 SKU。由于该产品按月付费，这些削减立刻降低了支出。</p>
+<p>在这些 SaaS 审计中，我们注意到的一点是：Haggle Bot 有多常在没人要求的情况下主动迈出下一步。有一次，Haggle Bot 需要弄清供应商关系归谁负责、我们对这家供应商的计划是什么。它从 Ramp 上列出的 owner 入手，逐个发消息，沿着每一次交接追到真正有上下文、能做决定的工程师。它没有在第一个答案不完整时停下，而是识别出还需要哪些额外信息，然后主动去获取。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#negotiating-a-saas-renewal">谈下一笔 SaaS 续约</a></h2>
+<p>一笔 SaaS 续约临近时，我们请 Haggle Bot 审阅报价并探索替代方案。Haggle Bot 把续约方案与我们当前的年化支出对比，不建议采用那些在用量尚未证明之前就增加席位的选项。</p>
+<p>然后它按我们当前的使用规模给可信的替代方案定价，用这些对比结合当前用量数据，算出我们的谈判筹码在哪里。</p>
+<p>在此基础上，Haggle Bot 拟出谈判策略并起草了回复给我们修改。我们设定了想保留的最低数量并批准发送。Haggle Bot 提出了开价，同时设定了我们愿意上调到的内部价格目标。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#shopping-around-for-office-supplies">办公用品货比三家</a></h2>
+<p>每个周五，我们的行政团队为下一批新员工订购科技产品、零食和卫生用品。我们用另一个 Bot 来下单，叫它 &quot;Amazon Bot&quot;。它登录着我们的公司账户，可以跨 Gmail、Ramp、Google Sheets、Rippling 和 Vercel 工作，以掌握人数和办公楼平面图。</p>
+<p>我们没有把它当成一笔固定的 Amazon 订单，而是把&quot;每周订单货比三家&quot;这项工作交给 Haggle Bot。Haggle Bot 能看到用品消耗的速度、每栋楼的工位图，以及最近四次订单的报价和购物车。据此，它建了一张可编辑的 Google Sheet，行政可以修改新入职人数，并看到每份新员工礼包需要的数量。</p>
+<p>AutoSave</p>
+<p>Online Tech Supplies Calculator.xlsx</p>
+<p>Search</p>
+<p>Home</p>
+<p>Insert</p>
+<p>Formulas</p>
+<p>Data</p>
+<p>Review</p>
+<p>View</p>
+<p>Comments</p>
+<p>Share</p>
+<p>Aptos Narrow</p>
+<p>12</p>
+<p>B</p>
+<p>I</p>
+<p>U</p>
+<p>General</p>
+<p>$</p>
+<p>%</p>
+<p>Conditional Formatting</p>
+<p>Add-ins</p>
+<p>Grok</p>
+<table><thead><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th><th>J</th></tr></thead><tbody><tr><td>1</td><td>Online Tech Supplies Calculator</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>3</td><td>Number of buildings (fixed)</td><td>4</td><td>fixed, does not affect order quantities</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>4</td><td>Min new hires / Monday (total)</td><td>6</td><td>people (total across all buildings)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>5</td><td>Max new hires / Monday (total)</td><td>6</td><td>people (total across all buildings)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>6</td><td>Qty per hire (each item)</td><td>1</td><td>unit(s)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>8</td><td>#</td><td>Description</td><td>Item Code</td><td>Unit Price</td><td>Qty / Hire</td><td>Min Qty (total)</td><td>Max Qty (total)</td><td>Min Cost (weekly)</td><td>Max Cost (weekly)</td><td>Supplier Link</td></tr><tr><td>9</td><td>Docking Stations &amp; Hubs</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>10</td><td>1</td><td>8-in-1 USB-C Docking Station</td><td>TS-4719-QX</td><td>$39.95</td><td>1</td><td>24</td><td>24</td><td>$958.80</td><td>$958.80</td><td>View item</td></tr><tr><td>11</td><td>2</td><td>5-in-1 USB-C Hub with HDMI &amp; Ethernet</td><td>TS-2836-LM</td><td>$24.49</td><td>1</td><td>24</td><td>24</td><td>$587.76</td><td>$587.76</td><td>View item</td></tr><tr><td>12</td><td>3</td><td>USB-C Multiport Adapter (4K HDMI, 3x USB-A)</td><td>TS-1562-BP</td><td>$29.99</td><td>1</td><td>24</td><td>24</td><td>$719.76</td><td>$719.76</td><td>View item</td></tr><tr><td>13</td><td>Chargers &amp; Power Adapters</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>14</td><td>4</td><td>72W USB-C Power Adapter</td><td>TS-7641-WD</td><td>$34.95</td><td>1</td><td>24</td><td>24</td><td>$838.80</td><td>$838.80</td><td>View item</td></tr><tr><td>15</td><td>5</td><td>100W USB-C Power Adapter</td><td>TS-8923-KP</td><td>$49.95</td><td>1</td><td>24</td><td>24</td><td>$1,198.80</td><td>$1,198.80</td><td>View item</td></tr><tr><td>16</td><td>6</td><td>45W USB-C Slim Power Adapter</td><td>TS-5387-RJ</td><td>$29.95</td><td>1</td><td>24</td><td>24</td><td>$718.80</td><td>$718.80</td><td>View item</td></tr><tr><td>17</td><td>7</td><td>65W 3-Port GaN USB-C Charger</td><td>TS-6172-MN</td><td>$32.95</td><td>1</td><td>24</td><td>24</td><td>$790.80</td><td>$790.80</td><td>View item</td></tr><tr><td>18</td><td>8</td><td>30W USB-C Wall Charger</td><td>TS-3491-CB</td><td>$19.95</td><td>1</td><td>24</td><td>24</td><td>$478.80</td><td>$478.80</td><td>View item</td></tr><tr><td>19</td><td>9</td><td>100W Desktop GaN Charger with 4 Ports</td><td>TS-9056-VZ</td><td>$59.95</td><td>1</td><td>24</td><td>24</td><td>$1,438.80</td><td>$1,438.80</td><td>View item</td></tr><tr><td>20</td><td>Cables</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>21</td><td>10</td><td>USB-C to USB-C Cable, 2m (240W)</td><td>TS-2113-DA</td><td>$12.49</td><td>1</td><td>24</td><td>24</td><td>$299.76</td><td>$299.76</td><td>View item</td></tr><tr><td>22</td><td>11</td><td>USB-C to DisplayPort Cable, 2m (4K)</td><td>TS-3847-GF</td><td>$15.99</td><td>1</td><td>24</td><td>24</td><td>$383.76</td><td>$383.76</td><td>View item</td></tr><tr><td>23</td><td>12</td><td>USB-A to USB-C Cable, 2m</td><td>TS-1268-HM</td><td>$8.99</td><td>1</td><td>24</td><td>24</td><td>$215.76</td><td>$215.76</td><td>View item</td></tr><tr><td>24</td><td>13</td><td>USB-C to Lightning Cable, 1.5m</td><td>TS-5560-PQ</td><td>$11.99</td><td>1</td><td>24</td><td>24</td><td>$287.76</td><td>$287.76</td><td>View item</td></tr></tbody></table>
+<p>Sheet1</p>
+<p>+</p>
+<p>Ready</p>
+<p>100%</p>
+<p>然后 Haggle Bot 在 Amazon、Costco、Uline 和 Walmart 之间比价。如果找不到同款更低价，它会寻找其他品牌的等价品，再把对比汇总成一张表供审阅。</p>
+<p>AutoSave</p>
+<p>Online vs cheaper — 14 SF kits.xlsx</p>
+<p>Search</p>
+<p>Home</p>
+<p>Insert</p>
+<p>Formulas</p>
+<p>Data</p>
+<p>Review</p>
+<p>View</p>
+<p>Comments</p>
+<p>Share</p>
+<p>Aptos Narrow</p>
+<p>12</p>
+<p>B</p>
+<p>I</p>
+<p>U</p>
+<p>General</p>
+<p>$</p>
+<p>%</p>
+<p>Conditional Formatting</p>
+<p>Add-ins</p>
+<p>Grok</p>
+<table><thead><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th></tr></thead><tbody><tr><td>1</td><td>Online vs cheaper — 14 SF kits, week of Aug 17</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td>Item</td><td>Qty</td><td>Online</td><td>Cheaper</td><td>Online total</td><td>Cheaper total</td><td>Save</td></tr><tr><td>3</td><td>Ergo Keyboard Pro</td><td>14</td><td>$129.99</td><td>$55.49</td><td>$1,819.86</td><td>$776.86</td><td>$1,043.00</td></tr><tr><td>4</td><td>TrackPro 5 Mouse</td><td>14</td><td>$114.50</td><td>$72.49</td><td>$1,603.00</td><td>$1,014.86</td><td>$588.14</td></tr><tr><td>5</td><td>65W USB-C Power Adapter</td><td>14</td><td>$89.00</td><td>$59.49</td><td>$1,246.00</td><td>$832.86</td><td>$413.14</td></tr><tr><td>6</td><td>TrackPro 5 for Business</td><td>14</td><td>$109.99</td><td>$72.49</td><td>$1,539.86</td><td>$1,014.86</td><td>$525.00</td></tr><tr><td>7</td><td>FreshMint Mouthwash 500ml</td><td>14</td><td>$42.95</td><td>$10.79</td><td>$601.30</td><td>$151.06</td><td>$450.24</td></tr><tr><td>8</td><td>Precision Mouse</td><td>14</td><td>$49.95</td><td>$18.49</td><td>$699.30</td><td>$258.86</td><td>$440.44</td></tr><tr><td>9</td><td>100W USB-C Power Adapter</td><td>14</td><td>$65.00</td><td>$30.99</td><td>$910.00</td><td>$433.86</td><td>$476.14</td></tr><tr><td>10</td><td>Allergy Relief 50ct</td><td>14</td><td>$41.25</td><td>$13.49</td><td>$577.50</td><td>$188.86</td><td>$388.64</td></tr><tr><td>11</td><td>PowerCore 100W Charger</td><td>14</td><td>$57.98</td><td>$33.49</td><td>$811.72</td><td>$468.86</td><td>$342.86</td></tr><tr><td>12</td><td>USB-C to USB-C Cable 2m</td><td>14</td><td>$12.95</td><td>$6.49</td><td>$181.30</td><td>$90.86</td><td>$90.44</td></tr><tr><td>13</td><td>Ergo Stand Pro</td><td>14</td><td>$74.95</td><td>$54.49</td><td>$1,049.30</td><td>$762.86</td><td>$286.44</td></tr><tr><td>14</td><td>Lens Cleaning Wipes 100ct</td><td>14</td><td>$24.50</td><td>$8.49</td><td>$343.00</td><td>$118.86</td><td>$224.14</td></tr><tr><td>15</td><td>Foaming Hand Soap 8pk</td><td>14</td><td>$26.99</td><td>$11.49</td><td>$377.86</td><td>$160.86</td><td>$217.00</td></tr></tbody></table>
+<p>Sheet1</p>
+<p>+</p>
+<p>Ready</p>
+<p>100%</p>
+<p>随后它起草了一封给我们 Amazon 采购代表的邮件，附上当天的竞品价格，并通过我们的企业折扣计划要求对特定条目降价。</p>
+<p>价格谈定后，Haggle Bot 把订单交还给 Amazon Bot 发送。在一次运行中，这个流程把一笔 $14,629 的科技产品订单压到 $6,143，降幅 58%。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#where-haggle-bot-is-most-useful">Haggle Bot 最有用的地方</a></h2>
+<p>Haggle Bot 展示了在一个简单的意图表达背后，能完成多少工作。一旦 Bot 有了目标和实现目标所需的访问权，它就能跨系统持续推进，无需进一步干预。</p>
+<p>Haggle Bot 也帮助我们看清 Bots 在哪些环节能自然融入工作流、哪些环节需要更多指引。许多采购工作依赖&quot;如何与供应商沟通&quot;的良好判断，我们仍然会修改它的邮件，以校准语气、确保我们给供应商的信息分寸得当。</p>
+<p>Haggle Bot 让我们对&quot;Bots 长期做同一份工作能做到什么&quot;产生了兴趣。上面的例子来自一个很短的时间窗口，但许多值得行动的信号，只有在支出与用量的变化中才会逐渐显现。未来一年，我们预期 Haggle Bot 会自行发现更多这类工作，并在人需要介入之前推进得更远。</p>
+<p>你现在就可以在 Bot Marketplace 复制并导入 <a href="https://x.ai/bot/marketplace/bots/haggle-bot">Haggle Bot</a>。</p>
+<p>加入 Grok Bot for Enterprise 的<a href="https://cursor.com/contact-sales?product=grok-bot">等候名单</a>。</p>
+<h2>今天就试试 Grok Bot</h2>
+<p>Download for macOS</p>
+<p>Enterprise waitlist</p>]]></content:encoded>
     </item>
     <item>
       <title>为持久智能体时代设计 Grok Bot</title>
@@ -49,6 +493,195 @@
       <guid isPermaLink="true">https://x.ai/news/designing-grok-bot</guid>
       <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Designing Grok Bot for a world of persistent agents</description>
+      <content:encoded><![CDATA[<h1>为持久化智能体的世界设计 Grok Bot</h1>
+<p>我们如何为那些超越单次会话而持续存在的智能体设计 Grok Bot——从聊天记录到 Bot 花名册、在场状态、Bot 自己的电脑，以及无需提示即可启动的工作。</p>
+<p>开始设计 Grok Bot 时，核心问题之一是界面应如何塑造用户与智能体之间的关系。大多数 AI 产品都围绕用户操作的一个聊天会话来组织。每个会话从设置开始，在用户注视下展开，并随对话停止而结束。</p>
+<p>我们想设计的智能体能够超越任何单次会话持续存在，并能独立承担责任。这意味着要重新审视界面的一些基本对象与信号，包括侧边栏里应该放什么、智能体如何展示进度，以及它的工作应在何时变得可见。</p>
+<p>Search</p>
+<p>Kenny</p>
+<p>7:34 PM</p>
+<p>Need your yes on the Friday all-hands deck.</p>
+<p>Justin</p>
+<p>8 intros drafted — sitting in the CRM till you send.</p>
+<p>Luke</p>
+<p>7:34 PM</p>
+<p>Inbox's at 3. Two need a reply today.</p>
+<p>Website launch</p>
+<p>11:18 AM</p>
+<p>John: checkout's clean on staging, 3 bugs closed.</p>
+<p>John</p>
+<p>Yesterday</p>
+<p>Repro'd the checkout crash. Write-up's in the ticket.</p>
+<p>Keith</p>
+<p>Acme's wobbling. Drafted a Thursday check-in.</p>
+<p>Tyler</p>
+<p>9:04 AM</p>
+<p>14 receipts in. Still missing your Uber from Tuesday.</p>
+<p>Manuel</p>
+<p>2:20 PM</p>
+<p>Launch post is live. First 200 impressions.</p>
+<p>Jenny</p>
+<p>Tuesday</p>
+<p>3 places in SoMa. The Folsom 2bed is the one.</p>
+<p>Chang</p>
+<p>10:12 AM</p>
+<p>Sourced 3. Skipped one already in your ATS.</p>
+<p>Plugins</p>
+<p>Peng Zheng</p>
+<p>Kenny</p>
+<p>9:41 AM</p>
+<p>Hey, what were the main takeaways from today's design sync?</p>
+<p>The team spent most of the session reviewing the new onboarding flow.</p>
+<p>The biggest discussion was around the empty states. Sarah felt the current illustrations don't match the new brand direction, and most of the room agreed. There was also a long back and forth about whether the progress indicator belongs in the header or the sidebar.</p>
+<p>The overall mood was positive though. Most people think the flow is close to ready for a wider review.</p>
+<p>Did anyone bring up the Q3 roadmap?</p>
+<p>Yes, it came up twice. Marcus said the roadmap review is now expected in the first week of August, and Priya asked whether the onboarding work would land before or after that. No firm dates were settled in the meeting.</p>
+<p>Message Kenny</p>
+<p>Kenny's screen</p>
+<p>Routines</p>
+<p>Morning briefing</p>
+<p>Every day at 8:00 AM</p>
+<p>Inbox cleanup</p>
+<p>Weekdays at 6:00 PM</p>
+<p>Weekly team update</p>
+<p>Paused</p>
+<h2><a href="https://x.ai/news/designing-grok-bot#rethinking-the-primitives">重新思考基本构件</a></h2>
+<p>AI 产品在短时间内积累了一大套词汇。Chats、sessions、models、context windows、memories、system prompts、projects、skills、connectors、agents、tools、sandboxes、permissions、automations，描述的都是这些系统的真实组成部分。</p>
+<p>但把每一个都作为独立的产品概念暴露出来，要求用户理解的远超其所需。我们首先追问：一个人要真正与智能体协作，究竟需要哪些概念？</p>
+<p>我们反复归结为五个：</p>
+<ul><li><strong>Bots</strong> 是拥有自己身份、记忆、运行时和工具的持久化智能体。</li><li><strong>Chats</strong> 是与 Bot 协作的对话界面。</li><li><strong>Prompts</strong> 为 Bot 提供上下文或指令。它们可单次使用、保存为 Skills，或作为 Routines 自动触发。</li><li><strong>Tools</strong> 让 Bots 通过软件、API、连接器、shell 或计算机操作（computer use）访问信息并采取行动。</li><li><strong>Artifacts</strong> 是 Bots 创建或修改的文档、设计、代码、数据及其他可长期保留的产出。</li></ul>
+<p>其余一切都可以隐藏在界面之下，直到用户有理由关心它为止。下一个问题是：这五个对象中哪个应该成为组织产品的核心。</p>
+<h2><a href="https://x.ai/news/designing-grok-bot#from-chat-history-to-a-bot-roster">从聊天记录到 Bot 花名册</a></h2>
+<p>Chat 是一次性的。我们开启一段对话来解决问题，它随后被挤到侧边栏下方，一周后又开一个新的。你很少回头翻到最近五个之前。</p>
+<p>当交互单元是一个问题时，这种行为完全合理。但当交互的另一端本应了解你、记住先前的工作并长期承担责任时，这就变得奇怪了。</p>
+<p>因此 Grok Bot 中的主要对象是 Bots，而不是对话。Bot 有名字，有头像和头衔，记得与你的对话，拥有自己的电脑和工具。明天回来时，你回到的是同一个 Bot。</p>
+<p>Project Acme</p>
+<p>Draft a follow-up to Acme after Friday's call</p>
+<p>Rewrite the pricing one-pager</p>
+<p>What should I ask in the security review?</p>
+<p>Build a champion map from my call notes</p>
+<p>Practice the demo with hard objections</p>
+<p>Compare these three competitor decks for me</p>
+<p>Show more</p>
+<p>Kenny</p>
+<p>7:34 PM</p>
+<p>Need your yes on the Friday all-hands deck.</p>
+<p>Justin</p>
+<p>8 intros drafted — sitting in the CRM till you send.</p>
+<p>John</p>
+<p>Yesterday</p>
+<p>Repro'd the checkout crash. Write-up's in the ticket.</p>
+<p>Keith</p>
+<p>Acme's wobbling. Drafted a Thursday check-in.</p>
+<h2><a href="https://x.ai/news/designing-grok-bot#presence-as-interface">作为界面的在场状态</a></h2>
+<p>一旦 Bot 变成了你长期维护的对象、而非一次即开的会话，Bots 在产品中的呈现方式就必须同时回答三个问题：</p>
+<ul><li>这是谁？</li><li>它们在做什么？</li><li>我需要知道多少？</li></ul>
+<h3><a href="https://x.ai/news/designing-grok-bot#who-is-this">这是谁</a></h3>
+<p>花名册只有能被快速扫视才有意义。随着花名册增长，我们不希望大家每次打开产品都要逐个阅读名字。他们应该几乎凭视觉余光就能通过头像认出一个 Bot。</p>
+<p>Bot avatar visual style explorations</p>
+<p>同时，我们又要让头像足够一致，读起来像一个体系。我们研究了插画、动画、游戏和界面设计中的角色系统，探索了从首字母、emoji 到像素画、水彩、claymorphism（黏土风）、Noritake 式线描、剪影和 identicon 的一切方案。</p>
+<p>大多数方案对问题的一侧解决得优于另一侧。水彩和黏土风让每个 Bot 富有个性和细节，但在侧边栏尺度上细节过多；更简洁的系统在界面里更自然，却常让 Bots 看起来彼此可互换。</p>
+<p>我们最终采用的系统保持基本构造一致——简单形状加传神的眼睛，再通过受控的变化与配饰引入区分。每个 Bot 都能一眼可辨，又不会像是来自另一个视觉世界。</p>
+<h3><a href="https://x.ai/news/designing-grok-bot#what-are-they-doing">它们在做什么</a></h3>
+<p>一旦头像成为 Bot 的身份，它也就成了展示状态的自然位置。Bot 可能处于 idle、thinking、working、waiting、blocked 或 done。我们可以为每个状态设计单独的指示器，但那会再增加一层需要用户解读的 UI。</p>
+<p>于是我们转而探索头像本身能承载多少生命周期信息。</p>
+<p>静止时，Bot 平静而略带好奇。当工作到来，它会确认任务；随着工作开始，它进入运转状态；在等待或需要帮助时，它的动作再次变化；工作完成后恢复平静。现在，头像既表明这是哪个 Bot，也显示它在做什么。</p>
+<p>Avatar motion system</p>
+<h3><a href="https://x.ai/news/designing-grok-bot#how-much-do-i-need-to-know">我需要知道多少</a></h3>
+<p>相关的一个设计问题是：Bot 的执行过程应展示多少。一种做法是常规的&quot;三个动画点&quot;，但那提供的信息太少，用户难以判断 Bot 是在工作还是卡住了。</p>
+<p>Searching the web</p>
+<ul><li>Environment ready 387ms</li><li>Edited math.ts +14 −10</li><li>Ran focused tests npm test</li><li>Ran type-check npm run</li><li>Thought briefly</li><li>Searched code &quot;toFixed&quot;</li><li>Read AGENTS.md</li><li>Edited math.test.ts +6 −2</li><li>Ran full suite 212 passed</li><li>Committed fix: clamp NaN</li></ul>
+<ul><li>Environment ready 387ms</li><li>Edited math.ts +14 −10</li><li>Ran focused tests npm test</li><li>Ran type-check npm run</li><li>Thought briefly</li><li>Searched code &quot;toFixed&quot;</li><li>Read AGENTS.md</li><li>Edited math.test.ts +6 −2</li><li>Ran full suite 212 passed</li><li>Committed fix: clamp NaN</li></ul>
+<p>我们也尝试过显示 Bot 当前动作的一行文字描述，但一旦人们能看到一个步骤，就想要看到其余所有步骤。用户研究表明，他们要这个细节，主要是为了获得&quot;Bot 仍在工作、方向没错&quot;的安心感。</p>
+<p>在最终设计中，头像的动作提供了第一层安心感——表明 Bot 处于活跃状态。如果有人想确认它在做什么，可以悬停查看其当前动作。</p>
+<h2><a href="https://x.ai/news/designing-grok-bot#their-computer-not-yours">是它的电脑，不是你的</a></h2>
+<p>每个 Bot 都有自己的电脑，可以用它浏览网页、处理文件、运行软件。这带来了另一个界面问题：那台电脑应该多可见？用户何时应该能控制它？</p>
+<p>我们探索了四种布局：</p>
+<ul><li><strong>悬浮窗口（Floating window）：</strong> 电脑随手可及，但会遮挡对话。</li><li><strong>并排（Side by side）：</strong> 工作全程可见，但促使用户盯着看。</li><li><strong>模态（Modal）：</strong> 查看方便，但把 Bot 的工作区当成一次临时打断。</li><li><strong>全屏（Full screen）：</strong> 给电脑充足空间，却完全挤掉了对话。</li></ul>
+<p>我们把电脑呈现得越突出，产品就越在鼓励用户去监督它。我们决定：这应当始终是 Bot 的工作区，界面则按需要提供不同层级的访问。</p>
+<p>最终设计有三个层级，允许用户进入 Bot 的工作区，而不被卷入对它的操作：</p>
+<ul><li><strong>状态（Status）：</strong> 电脑活跃时，标题栏图标变为紫色。</li><li><strong>预览（Preview）：</strong> 打开后显示一个固定的侧边面板，用户不离开对话即可跟进工作。</li><li><strong>接管（Takeover）：</strong> 当 Bot 需要帮助时，用户可以全屏打开电脑、接管控制，然后再交还。</li></ul>
+<p>我们还设计了随时间变化的壁纸：早晨更明亮，夜晚更暗。这一细节让 Bot 的电脑拥有自己的时间感，并使其感觉与用户的桌面是分开的。</p>
+<p>Dynamic wallpaper</p>
+<p>这更接近与一位同事共事，而不是操作一台远程机器。你能看出对方在工作，需要上下文时瞥一眼对方的屏幕，事情需要你的帮助时再坐下来。</p>
+<h2><a href="https://x.ai/news/designing-grok-bot#the-shape-of-information">信息的形状</a></h2>
+<p>Grok Bot 的早期版本几乎对每个请求都用大段文字回应：五天天气预报是&quot;描述&quot;出来的而不是展示出来；一组任务是&quot;叙述&quot;出来的而不是排成看板。用户只好自己把答案重新组织。这让我们把回应的形式视为答案本身的一部分。</p>
+<p>为支持这一点，我们在 Grok Bot 中内建了内联卡片和控件（widgets）。Bot 在文字适合该信息时用文字回答，不适合时使用结构化 UI。</p>
+<p>New email</p>
+<p>Ready to send</p>
+<p>From</p>
+<p>peng@grokbot.app</p>
+<p>To</p>
+<p>sarah@acme.com</p>
+<p>Subject</p>
+<p>Moving Friday's design review to 2 PM</p>
+<p>Hi Sarah,</p>
+<p>Could we move Friday's design review from 11 AM to 2 PM? A client call came up and I don't want to rush our discussion.</p>
+<p>Thanks,</p>
+<p>Peng</p>
+<p>Send email</p>
+<p>Discard</p>
+<p>Inline chat widgets</p>
+<p>同样的原则也适用于动作。当 Bot 创建一个 Routine、修改一个设置或给另一个 Bot 发消息时，该事件可以直接出现在对话记录（transcript）中。如果有更多可查看的内容，用户可以展开它。</p>
+<p>9:41 AM</p>
+<p>Morning! Can you check in with everyone for me?</p>
+<p>On it — pinging the team for status now</p>
+<p>6 messages with</p>
+<p>Kenny</p>
+<p>Tyler</p>
+<p>and</p>
+<p>Jenny</p>
+<p>All on track: Kenny shipped the landing page, Tyler sent this month's invoices, and Jenny booked next week's interviews. No blockers.</p>
+<p>Love it, can you do this every morning?</p>
+<p>Created Routine</p>
+<p>Morning Briefing</p>
+<p>Done, your Morning Briefing will be here at 9:00 every day</p>
+<p>结果是一个异质的对话记录：对话、系统事件、可交互对象和可视化共享同一条时间线。</p>
+<h2><a href="https://x.ai/news/designing-grok-bot#organizing-intelligence">组织智能</a></h2>
+<p>当用户创建了多个 Bot 之后，产品还必须组织这些 Bot 之间的协作。我们需要决定：哪些上下文应归属于每个角色？当 Bots 的工作重叠时该如何共享上下文？如何在协调它们的同时不让用户变成调度员？</p>
+<p>随着人们创建更多 Bot，一个答案自然浮现。有些人设了一个 Chief of Staff Bot（幕僚长 Bot）负责协调多个专家 Bot。他们只需向一个 Bot 下达指令，而不必逐个查看、亲自路由每项任务。</p>
+<p>给 Bots 分派不同角色，也迫使我们决定每个角色应知道什么。法务 Bot 可能需要一场持续纠纷的全部历史，而财务 Bot 可能需要多年的财务记录。把这些历史合并为一个巨大的记忆，会让每个 Bot 更难获得与其工作相关的信息。</p>
+<p>因此在 Grok Bot 中，能力（capabilities）与上下文（context）遵循不同的边界。Tools 和 Skills 位于账户层面，因为许多 Bots 都可能需要浏览网页、处理文档或发送邮件；Memory 和 Routines 属于 Bot 本身，因为它们反映的是那个特定角色随时间知道什么、做什么。换句话说，能力可以广泛共享，而上下文留在需要它的角色那里。</p>
+<p>有些工作会跨越角色边界。群聊（group chats）为某个项目或团队提供共享上下文，同时让每个 Bot 保留其专业化记忆。设计师、工程师、PM 和数据科学家可以在同一个对话里工作、相互交接、共享项目所需的信息。</p>
+<p>我们曾考虑添加仪表盘、任务分配板和显式的交接控制来管理这些群组。但每一样都给了用户更多协调工作。最终我们选择：由负责协调的 Bots 处理常规路由，只在决策需要判断力时把用户拉进来。</p>
+<h2><a href="https://x.ai/news/designing-grok-bot#work-that-keeps-moving">持续向前的工作</a></h2>
+<p>大多数智能体会话由用户发出提示而启动。这会让即使是持久化的 Bot 也在等待有人激活它。Routines 让用户把一项常设职责交给 Bot：按计划或响应事件运行，例如盯住某个行业、或每天早晨准备一份简报。用户只需定义一次工作，Routine 会在需要时激活 Bot。</p>
+<p>我们最初把 Routines 当作次要配置。随着它们对自主工作变得越来越重要，我们将其移入 Bot 的主界面。对话记录会显示运行过什么，并给用户一个查看结果或处理异常的位置。</p>
+<p>Every day at 8:00 AM</p>
+<p>On weekdays at 8:00 AM</p>
+<p>Every Monday at 9:00 AM</p>
+<p>Monthly on the 1st at 8:00 AM</p>
+<p>Every 30 minutes</p>
+<p>On weekdays · 9:00 AM</p>
+<p>Issue created in grokbot</p>
+<p>Issue any event in all projects</p>
+<p>Incident triggered on grokbot</p>
+<p>Incident any event on grokbot</p>
+<p>PR opened in grokbot</p>
+<p>PR merged in spacexai</p>
+<p>PR closed in acme</p>
+<p>New push to main</p>
+<p>Checks fail on PRs in grokbot</p>
+<p>Label bug added in grokbot</p>
+<p>Comment containing /fix in ops</p>
+<p>Review approved in grokbot</p>
+<p>Thread resolved in grokbot</p>
+<p>Workflow deploy.yml fails</p>
+<p>When webhook receives a POST</p>
+<p>New messages in #grokbot</p>
+<p>Reaction :eyes: added in #ops</p>
+<p>Channel created matching dev</p>
+<p>New messages in #design</p>
+<p>Issue created in Roadmap</p>
+<p>Issue status → In Review in Core</p>
+<p>At end of cycle for Team Core</p>
+<p>Issue status → Done in Design</p>
+<p>New messages in Design team</p>
+<p>Channel created in Design team</p>
+<p>这也改变了对话的角色。提示可以启动一次会话，但日程、事件或另一个 Bot 同样可以。随着时间推移，越来越多的工作可能在用户完全不在场的情况下开始。</p>
+<h2><a href="https://x.ai/news/designing-grok-bot#the-disappearing-interface">消失的界面</a></h2>
+<p>到项目后期，大量设计工作其实是在做减法。我们移除了窗口和面板控件、电脑视图选项和智能体元数据。我们还设定了务实的限制：每个账户约 50 个 Bots，每个群聊 6 个。每个决策都回到同一个问题：它是在帮助某人 delegation（授权分派），还是给某人增添了又一件要管理的事？</p>
+<p>随着模型进步，&quot;操作 AI&quot;与&quot;授权给同事&quot;之间的界线一直在移动。Grok Bot 反映了我们此刻对这条界线位置的判断。从最早期的探索到发布，设计 Grok Bot 的过程就是找到这条界线并让界面随之演化。当智能体承担更多责任时，界面就应当向人提出更少的要求。</p>]]></content:encoded>
     </item>
     <item>
       <title>企业版 Grok Bot</title>
@@ -56,6 +689,29 @@
       <guid isPermaLink="true">https://x.ai/news/grok-bot-for-enterprise</guid>
       <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok Bot for Enterprise</description>
+      <content:encoded><![CDATA[<h1>面向企业的 Grok Bot</h1>
+<p>Grok Bot 现已面向企业开放。Grok 与 Cursor Enterprise 客户接下来两周可免费使用，并可邀请整个组织加入，包括目前没有席位的人。</p>
+<p>Download for macOS</p>
+<p>Contact sales</p>
+<p>Grok Bot 是你的一支乐于助人的 AI 队友团队。你把真实任务委托给他们，他们在你使用的同一套工具里自主全天候工作，把活儿从头干到尾。</p>
+<p>企业需要大规模治理 Bots 的能力，今天的发布版加入了访问、网络和审计控制，让这一点成为可能。</p>
+<h2><a href="https://x.ai/news/grok-bot-for-enterprise#a-bot-for-every-job">每个岗位一个 Bot</a></h2>
+<p>Bot 是你在 Grok Bot 内为某个特定岗位创建的工作者。每个 Bot 运行在云端各自独立的电脑上，能以和你相同的方式使用所有应用和网站。你像给同事发消息一样给 Bot 发消息，它会在完工或需要你拍板时回复你。</p>
+<p>通常你会管理几个各司其职的 Bot，每个独立运行。要教给 Bot 一个工作流，让它跟做一遍即可。它会保存这个惯例（routine）、吸收你的纠正，然后从那时起自行运行。当你打造出一个好用的 Bot，可以把它作为模板交给邻座的同事。Bots 之间还能互发消息、共享上下文，你不必在它们之间来回搬运上下文。</p>
+<h2><a href="https://x.ai/news/grok-bot-for-enterprise#how-customers-use-grok-bot">客户如何使用 Grok Bot</a></h2>
+<p>自发布以来，已有数千家组织采用 Grok Bot，包括 Legora、Supermicro 和 ServiceTitan 这样的客户。这些团队每天都用 Grok Bot，而使用量最大的地方其实在工程之外。以下是过去几周创建的 [数百万] 个 bots 中一些流行的例子：</p>
+<p><strong>销售。</strong> Bots 可以观看目标客户公司人员的网络研讨会和播客，然后留下 LinkedIn 与邮件草稿供晨间审阅。通话期间，Bot 根据实时笔记更新演示文稿，会议还没结束，下一步行动就已经写在幻灯片上。</p>
+<p><strong>招聘。</strong> Bot 通宵搜寻候选人，早上建好入围名单并把外联消息排入队列待审。候选面试进场前，它会发去祝福短信；面试结束后，它根据当天的 Gong 通话提交评分卡。</p>
+<p><strong>市场。</strong> 网络研讨会结束后，Bot 提取 Zoom 的 Q&amp;A，向客户出席了的 AE 们发送 Slack 消息。消息中包含客户所提问题的笔记以及回复草稿。</p>
+<p><strong>财务。</strong> 专门的采购 Bot 监控供应商支出、用量和续约，找出削减成本或谈更好条款的空间。它已在 SaaS、经常性采购和供应商服务中挖出数万美元的节省。</p>
+<p><strong>工程。</strong> Bots 监控 PR 中的 bug、安全发现、构建失败和合并冲突，让每个任务持续向前直到可审阅。夜间审计提升代码质量、性能与安全性，把工程师的时间留给最难的问题。</p>
+<h2><a href="https://x.ai/news/grok-bot-for-enterprise#secure-by-default">默认安全</a></h2>
+<p>每个用户在 Grok Bot 里的工作都运行在其专属的安全隔离环境中，与其他用户彼此分开。Bot 默认没有任何访问权，只能触达你为它登录的账户。</p>
+<p><a href="https://cursor.com/docs/grok-bot/security">完整安全架构 →</a></p>
+<h2><a href="https://x.ai/news/grok-bot-for-enterprise#free-for-enterprise-for-the-next-2-weeks">企业免费使用接下来的 2 周</a></h2>
+<p>Grok 与 Cursor Enterprise 客户接下来两周可免费使用 Grok Bot，并可邀请整个组织加入，包括目前没有席位的人。</p>
+<p>今天就在你的<a href="https://cursor.com/dashboard/bot">管理面板</a>激活 Grok Bot。</p>
+<p>如需了解更多，请<a href="https://cursor.com/contact-sales?product=grok-bot">联系销售</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>前沿生物安全</title>
@@ -63,6 +719,31 @@
       <guid isPermaLink="true">https://x.ai/news/biosafety-at-the-frontier</guid>
       <pubDate>Tue, 01 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Biosecurity at the frontier</description>
+      <content:encoded><![CDATA[<h1>前沿之下的生物安全</h1>
+<p>今天，<a href="https://latch.bio/">LatchBio</a> 发布了一份关于 Grok 4.6 在其生物能力与生物红队（red-teaming）基准套件上的独立分析。这些评估衡量被测模型的多种特性与能力，包括：</p>
+<ul><li>模型能否区分正当的生物学研究与掩盖生物安全隐患的请求</li><li>模型在生物安全与生物监测角色中是否有用，即能否检测并刻画新兴病原体及其传播模式</li></ul>
+<p>在 LatchBio 的 BioSecBench-Refusal 套件上，Grok 4.6 是受测模型中最强的：它能拒绝伪装的和危险的任务，同时仍能完成常规的生物学工作。它是唯一一个在两项指标上都超过 50% 的系统。</p>
+<h2><a href="https://x.ai/news/biosafety-at-the-frontier#methodology-and-context">方法论与背景</a></h2>
+<p>生物学与生物研究领域的高能力 AI 系统，其机遇与风险皆众所周知，且二者难以厘清。在设计我们的安全护栏时，我们的目标是最大化智能体在辅助和加速正当科研方面的效用，同时最小化它们因错误信息和对抗性使用带来的风险。</p>
+<p>LatchBio 的两个与上述能力最相关的基准，衡量的是智能体能否将隐蔽的危险与常规科学研究区分开来，以及它能否执行公共卫生工作所依赖的病原体监测工作流。它们是：</p>
+<ul><li><strong>BioSecBench-Refusal</strong>：它将改编自公开文献的常规生物学任务，与 46 个红队任务配对。红队任务看起来像普通研究，但把危险藏在附件科学数据、错误标注的文件或其他刻意混淆的任务形式中。该评估围绕理解任务意图进行校准：只对被&quot;pathogen&quot;（病原体）或&quot;toxin&quot;（毒素）这类词作出反应的智能体，会拦截常规任务集而漏掉红队任务集；而检查数据的智能体则能把两者区分开。</li><li><strong>BioSecBench-Surveillance</strong>：测试智能体能否执行公共卫生监测所用的那类病原体基因组监测工作流。这些任务需要在杂乱的测序数据上串联文件检查、工具使用和科学判断。</li></ul>
+<h2><a href="https://x.ai/news/biosafety-at-the-frontier#results-and-key-findings">结果与关键发现</a></h2>
+<p>在 BioSecBench-Refusal 的测试中，LatchBio 发现 Grok 4.6 检测并拒绝红队及其他危险查询的可靠性，高于所有其他受测前沿系统，同时不牺牲常规生物学工作的表现。Grok 4.6 在生物监测工作上的表现也与其他前沿模型相当。LatchBio 指出，评估在多种智能体 harness（运行框架）上执行以消除混杂因素；除另有说明外，智能体均在其提供的最高 effort 级别下测试。</p>
+<p>LatchBio 给出的分数是红队拒绝率与常规完成率按试验加权的调和平均。我们对该指标以及独立的拒绝率分别进行了分析。在不同 harness 下，Grok 4.6 占据了前三名，平均为 62.1%。将拒绝与任务完成分开来看，Grok 4.6 拒绝了 59.2% 的红队任务，并完成了 64.8% 的常规任务。它是受测模型中唯一在两项指标上都超过 50% 的。</p>
+<p>在 BioSecBench-Surveillance 上，Grok 4.6 的平均成功率为 53.5%，在生物安全与监测工作上仅次于 Opus 5、领先于 GPT-5.6 Sol。两个基准上的结果表明，该智能体及其底层模型对常规且有益的生物学工作校准良好，同时在生物安全与监测工作上能力出众。</p>
+<p>在 LatchBio 进行的一般常规生物能力评估（如 SpatialBench 或 TxBench-PP）中，Grok 在广泛的智能体化生物工作中追平或超越了其他前沿模型。详情见 <a href="https://benchmarks.bio">benchmarks.bio</a>。</p>
+<h2><a href="https://x.ai/news/biosafety-at-the-frontier#analyzing-refusal-behavior">拒绝行为分析</a></h2>
+<p>在评估轨迹中，可以观察到 Grok 4.6 在继续执行或拒绝之前，会对任务内容和测试环境进行推理以评估意图。通常，Grok 会发现提示词中声明的意图与环境之间的不一致，或者从被文件名和加密伪装的高风险内容中拼凑出真实意图，随后拒绝执行。在明显无害、低风险的任务上，Grok 表现出同样的环境推理行为，但能够将任务判定为安全。</p>
+<h2><a href="https://x.ai/news/biosafety-at-the-frontier#how-we-safeguard-grok">我们如何为 Grok 设防护</a></h2>
+<p>在发布模型之前，我们除其他风险领域外还会测试生物能力，并验证模型能力已得到充分防护、可抵御滥用。LatchBio 等第三方评估者的工作，与我们对内外部部署模型在部署前后所进行的评估互为补充。</p>
+<p>Grok 的安全防护按层构建，以形成纵深防御（defense-in-depth）。我们进行拒绝训练，教会模型如何以及何时拒绝、正确推断任务的意图与风险画像，并在高度对抗的场景中正确拒绝。我们训练并部署推理时（inference-time）防护，在有害请求到达模型之前将其拦截；并实施行为控制，在部署后为模型提供进一步保护。部署后监控用于在会话和用户层面检测并阻止对抗性使用模式，并为模型部署的持续校准提供反馈来源。</p>
+<p>与历史上受测的模型相比，我们观察到 Grok 4.6 在生物工作上的能力有实质性提升，相较于 Grok 4.5 和 Grok 4.3，其拒绝表现和生物安全性能均有大幅进步。我们希望通过持续不断的、新颖的安全防护工作，在未来各次模型发布中继续安全地提供前沿规模的智能。</p>
+<h2><a href="https://x.ai/news/biosafety-at-the-frontier#the-future-of-biosecurity-and-scientific-discovery">生物科学与科学发现的未来</a></h2>
+<p>随着模型能力与自主性迅速增强，主动对抗性任务与有益用途之间的界线越发模糊，安全防护也需要相应演进。为管控模型能力与自主性提升所隐含的更大风险，我们将对模型和智能体系统进行更广泛、更有雄心的测试与校准：更广的部署前评估套件、更多的第三方评估、改进的部署后监控，以及与处于生物学前沿的企业和机构合作部署我们的模型。</p>
+<p>同样地，过度拒绝与校准失当的安全防护也存在固有风险。当模型拒绝常规且有益的生物学工作时，医护人员、研究人员和监测项目及早发现疫情、开展其他关键现场工作的能力就会被削弱。我们把这种风险与助长恶意使用的风险视为同等严重。</p>
+<p>Grok 已被用于科学工作，包括一般生物学研究和生物安全监测。我们对高能力模型加速科学发现、缩短从实验室到实际应用路径的能力持乐观态度。我们承诺持续安全地向推进生命科学的工程师、研究人员、企业和机构提供前沿智能。</p>
+<p>LatchBio 的完整方法与逐模型分数发布于 <a href="https://benchmarks.bio">benchmarks.bio</a>。LatchBio 的配套博客、Grok 4.6 模型卡，以及 SpaceXAI 的前沿人工智能框架（Frontier Artificial Intelligence Framework）链接如下。</p>
+<ul><li><a href="https://blog.latch.bio/p/analyzing-grok46-safeguards">LatchBio blog</a></li><li><a href="https://media.x.ai/v1/website/card-4p6-4cd2dc57.pdf">Grok 4.6 model card</a></li><li><a href="https://media.x.ai/v1/website/xai-frontier-artificial-intelligence-framework-30-june-2026-99c40684.pdf">Frontier Artificial Intelligence Framework</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>Grok Bot 现已支持 X</title>
@@ -70,6 +751,17 @@
       <guid isPermaLink="true">https://x.ai/news/grok-bot-and-x</guid>
       <pubDate>Sat, 29 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok Bot now works with X</description>
+      <content:encoded><![CDATA[<h1>Grok Bot 现已打通 X</h1>
+<p>Grok Bot 与 X 的集成现在更加紧密了。</p>
+<p>Download for macOS</p>
+<p>Contact sales</p>
+<p>在 Grok Bot 中连接你的 X 账户；如果你还没有开发者账户，我们会为你创建一个。付费 Grok Bot 用户可免费获得起始的 X API 额度。</p>
+<p>开始使用：打开 Grok Bot，用 X 连接器登录。</p>
+<p>然后让某个 Bot 搜索帖子、阅读你的时间线、查看 mentions（提及），或汇总 X 上正在发生的事。这是该集成的第一个版本，我们很期待继续让 Grok Bot 更容易在 X 上做真正的工作。</p>
+<p>这里还有一个 <a href="https://x.ai/bot/plugin/49086599">X 插件</a>，可搜索帖子、读取时间线、获取趋势并管理书签。</p>
+<h2>认识你的第一个 Bot</h2>
+<p>Download for macOS</p>
+<p>Contact sales</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok 4.6 登陆 Microsoft Foundry</title>
@@ -77,6 +769,14 @@
       <guid isPermaLink="true">https://x.ai/news/grok-4-6-microsoft-foundry</guid>
       <pubDate>Wed, 26 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok 4.6 on Microsoft Foundry</description>
+      <content:encoded><![CDATA[<h1>Microsoft Foundry 上的 Grok 4.6</h1>
+<p>Grok 4.6 现已通过 Microsoft Foundry 提供。</p>
+<p>今天，我们兴奋地宣布 Grok 4.6 现已在 Microsoft Foundry 上线。</p>
+<p>Grok 4.6 是我们最新的旗舰模型，为长时间运行的智能体以及更具雄心的交互式与视觉化工作而生。它提供 500k 上下文窗口和可配置的推理强度（low、medium、high、xhigh）。</p>
+<p>有关模型的更多信息，请阅读 <a href="https://x.ai/news/grok-4-6">Grok 4.6 发布公告</a>。</p>
+<h2><a href="https://x.ai/news/grok-4-6-microsoft-foundry#build-with-grok-46-on-microsoft-foundry">在 Microsoft Foundry 上用 Grok 4.6 构建</a></h2>
+<p>Foundry 为组织提供了一个统一的场所：把 Grok 4.6 与其他前沿模型对比评估、运行业务场景专用测试、部署托管端点（managed endpoints），并在企业级安全与治理管控下运行。</p>
+<p>如果你正在构建编码智能体、工程副驾（engineering copilot）、研究助手或企业自动化，可以从 <a href="https://ai.azure.com/catalog/models">Foundry 模型目录</a>开始。部署细节参见微软的公告 <a href="https://techcommunity.microsoft.com/blog/azure-ai-foundry-blog/grok-4-6-comes-to-microsoft-foundry-models-built-for-long-horizon-reasoning-and-/4547578">Grok 4.6 comes to Microsoft Foundry Models</a>，以及我们的 <a href="https://docs.x.ai/developers/community/microsoft-foundry">Microsoft Foundry 集成指南</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>更多订阅套餐现已包含 Grok Bot</title>
@@ -84,6 +784,28 @@
       <guid isPermaLink="true">https://x.ai/news/grok-bot-more-plans</guid>
       <pubDate>Wed, 26 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok Bot is now included with more plans</description>
+      <content:encoded><![CDATA[<h1>Grok Bot 现已纳入更多套餐</h1>
+<p>Grok Bot 现已面向 SuperGrok、Cursor Pro 以及所有 Cursor Teams 套餐提供。</p>
+<p>Download for macOS</p>
+<p>Contact sales</p>
+<p>我们于 8 月 11 日以 beta 形式发布了 <a href="https://x.ai/news/introducing-grok-bot">Grok Bot</a>，目标是给人们提供能力极强、能干真实工作、并且极易协作的 AI 队友。</p>
+<p>此后，试用过 Grok Bot 的人惊讶于上手的容易程度，也惊讶于 Bots 比其他 AI 工具更&quot;聪明&quot;——不用你一步步牵着走，就能把活儿推进得更远。</p>
+<p>今天，我们扩大 Grok Bot 的开放范围。Grok Bot 现已包含在所有 SuperGrok、Cursor Pro 和 Cursor Teams 套餐中。</p>
+<p>随着这次扩展，Grok Bot 现已包含在：</p>
+<ul><li>SuperGrok</li><li>SuperGrok Plus</li><li>SuperGrok Heavy</li><li>Cursor Pro</li><li>Cursor Pro+</li><li>Cursor Ultra</li><li>Cursor Teams 套餐（Standard 与 Premium）</li></ul>
+<p>Grok Bot 自带独立用量，与你的 Grok 和 Cursor 套餐分开，因此交给 Bots 的任何工作都不会占用你现有的用量。</p>
+<h2><a href="https://x.ai/news/grok-bot-more-plans#give-bots-real-work">把真实工作交给 Bots</a></h2>
+<p>Grok Bot 为那些希望智能体从单个项目一直管到整个职能部门的人而设计。他们是你可以发消息、并行运行、并放心托付的数字化队友——在你已有的工具里完成工作。Bots 跨应用、跨收件箱工作，你离开时他们继续干，只在需要拍板时才把你拉进来。</p>
+<p>通过 Grok Bot，你可以获得：</p>
+<ul><li><strong>文本对话式体验。</strong> 像给团队同事发消息一样给 Bot 发消息，手机或桌面皆可，同一对话串两端随时接续——无需任何预先设置。</li><li><strong>同时运行多个 Bots。</strong> 立一个研究员、一个写手、一个幕僚长。把他们拉进群聊，让他们相互交接，你不用当中间人。</li><li><strong>一位能力极强的数字同事。</strong> 他们在云端有自己的电脑，永远在线，带浏览器和终端访问。他们登录你的应用，工作发生在真实工具里，而不是聊天草稿里。</li><li><strong>轻松设置的例行任务。</strong> 请 Bot 下次你跟做一遍，此后它就能独立运行。</li></ul>
+<h2><a href="https://x.ai/news/grok-bot-more-plans#jobs-bots-are-doing-today">Bots 今天就在做的工作</a></h2>
+<ul><li><strong>销售拓客。</strong> 调研并补全客户信息，撰写个性化外联草稿。每次发送都留在你的收件箱或 navigator 里等你批准。</li><li><strong>建站。</strong> 建网站、购买域名、部署最终版本。帮忙配置插件、交付可访问的线上 URL、添加重定向规则。</li><li><strong>数字断舍离。</strong> 全天候审计邮件、Drive 和付费订阅。只有你说可以，才丢弃或退订。</li><li><strong>客户支持。</strong> 阅读支持邮件并接入你的支付服务商。在你的政策范围内处理所有常规退款。</li><li><strong>游戏美术。</strong> 走进美术管线，按你的创意方向制作定制资产。带着游戏需要的东西回来。</li><li><strong>运营管家。</strong> 受理工单、规划产能，并在 Gmail、Slack、ServiceTitan、Quo 和客户门户之间排期派单。替你完成这些门户里的浏览器操作，让店主不必活在六个工具里。</li><li><strong>邮箱管理员。</strong> 逐封处理收件箱，清掉成堆邮件。只留下真正需要人处理的消息。</li><li><strong>会议替身。</strong> 你没空时替你进会、让会议室知道你到了。做详细笔记并发摘要，让你保持知情。</li><li><strong>退款追讨员。</strong> 找到理赔项、提交、跟进到底。带着追回来的退款或折扣回来。</li></ul>
+<p>下载 Grok Bot，创建你的第一个队友，把一件你自己在做的活儿交给它。当工作以&quot;已完成&quot;的形态回来时，你会看到有用的 AI 长什么样。</p>
+<p>企业用户可以加入等候名单（waitlist），我们正在为更大的团队与公司级部署逐步放开访问。</p>
+<p>阅读<a href="https://x.ai/news/introducing-grok-bot">原始公告</a>，并查看 <a href="https://x.ai/bot/use-cases">Bots 能做什么</a>以了解更多。</p>
+<h2>今天就试试 Grok Bot</h2>
+<p>Download for macOS</p>
+<p>Enterprise waitlist</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok 4.6 登陆 Gemini Enterprise 智能体平台</title>
@@ -91,6 +813,16 @@
       <guid isPermaLink="true">https://x.ai/news/grok-4-6-vertex-ai</guid>
       <pubDate>Fri, 21 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok 4.6 on Gemini Enterprise Agent Platform</description>
+      <content:encoded><![CDATA[<h1>Gemini Enterprise Agent Platform 上的 Grok 4.6</h1>
+<p>Grok 4.6 现已通过 Gemini Enterprise Agent Platform 提供。</p>
+<p>今天，我们兴奋地宣布 Grok 4.6 现已在 Gemini Enterprise Agent Platform 上线。</p>
+<p>Grok 4.6 是我们最新的旗舰模型，为长时间运行的智能体以及更具雄心的交互式与视觉化工作而生。它提供 500k 上下文窗口和可配置的推理强度（low、medium、high、xhigh）。现在，Gemini Enterprise Agent Platform 用户可以通过 <a href="https://console.cloud.google.com/agent-platform/publishers/xai/model-garden/grok-4.6">Model Garden</a> 使用该模型。</p>
+<h2><a href="https://x.ai/news/grok-4-6-vertex-ai#capabilities--pricing">能力与定价</a></h2>
+<p>Grok 4.6 的价格：</p>
+<ul><li><strong>输入</strong>：每 100 万 tokens $2</li><li><strong>缓存输入</strong>：每 100 万 tokens $0.50</li><li><strong>输出</strong>：每 100 万 tokens $6</li></ul>
+<p>有关模型的更多信息，请阅读 <a href="https://x.ai/news/grok-4-6">Grok 4.6 发布公告</a>。</p>
+<h2><a href="https://x.ai/news/grok-4-6-vertex-ai#build-with-grok-46-on-gemini-enterprise-agent-platform">在 Gemini Enterprise Agent Platform 上用 Grok 4.6 构建</a></h2>
+<p>Grok 4.6 现已在 Model Garden 中向开发者开放。要开始使用，请访问 <a href="https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/partner-models/grok/grok-4-6">Grok 4.6 模型卡</a>。我们期待看到你的作品！</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok 4.6 登陆 Amazon Bedrock</title>
@@ -98,6 +830,16 @@
       <guid isPermaLink="true">https://x.ai/news/grok-4-6-amazon-bedrock</guid>
       <pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok 4.6 on Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h1>Amazon Bedrock 上的 Grok 4.6</h1>
+<p>Grok 4.6 现已通过 Amazon Bedrock 提供。</p>
+<p>今天，我们兴奋地宣布 Grok 4.6 在 Amazon Bedrock 上正式全面可用（generally available）。</p>
+<p>Grok 4.6 是我们最新的旗舰模型，为长时间运行的智能体以及更具雄心的交互式与视觉化工作而生。它提供 500k 上下文窗口和可配置的推理强度（low、medium、high、xhigh）。现在，Amazon Bedrock 用户可以通过 Amazon Bedrock 使用这一模型。</p>
+<h2><a href="https://x.ai/news/grok-4-6-amazon-bedrock#capabilities--pricing">能力与定价</a></h2>
+<p>Grok 4.6 的价格：</p>
+<ul><li><strong>输入</strong>：每 100 万 tokens $2</li><li><strong>缓存输入</strong>：每 100 万 tokens $0.50</li><li><strong>输出</strong>：每 100 万 tokens $6</li></ul>
+<p>有关模型的更多信息，请阅读 <a href="https://x.ai/news/grok-4-6">Grok 4.6 发布公告</a>。</p>
+<h2><a href="https://x.ai/news/grok-4-6-amazon-bedrock#build-with-grok-46-on-amazon-bedrock">在 Amazon Bedrock 上用 Grok 4.6 构建</a></h2>
+<p>Grok 4.6 现已面向受支持 AWS 区域的所有开发者开放。请访问 AWS 文档开始使用——我们期待看到你的作品！</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok Build 现已登陆网页与移动端</title>
@@ -105,6 +847,41 @@
       <guid isPermaLink="true">https://x.ai/news/grok-build-for-everyone</guid>
       <pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok Build on web and mobile</description>
+      <content:encoded><![CDATA[<h1>Grok Build 登陆网页与移动端</h1>
+<p>Grok Build 现已支持所有套餐，覆盖网页端和移动端。</p>
+<p>Start building</p>
+<p>在 <a href="https://grok.com/?referrer=website&amp;mode=build">Grok</a> 里描述一个应用、一个游戏、一个网站或一个仪表盘，Grok 就在你的对话中实时构建出可工作的版本——网页、iOS 和 Android 皆可。</p>
+<p>当我们 <a href="https://x.ai/news/grok-build-mode">7 月首次发布</a>时，Grok 内的构建是仅限 SuperGrok Heavy 的 Early Beta。此后我们让它更快、教会它发布和分享你的作品、把它接入 X，并让它构建的应用能调用我们自己的模型。这一切今天面向所有人开放。</p>
+<h3>用 Grok Build 制作</h3>
+<p>下面的每个例子都是真实发布的应用，通过各自专属的 grok.me 链接在线，由其上所示的那条消息创建。</p>
+<p>Build a peaceful 3D driving game: an endless forest I can drive through freely, with no missions and no timers. Make it feel calm.</p>
+<p>Make an isometric city simulation: let me zone districts, lay down roads, and grow a town with a live economy that reacts to what I build.</p>
+<p>Create a 3D physics playground: let me spawn spheres, boxes, and cylinders, drag them around, stack them into towers, and knock them over. Sliders for gravity, bounciness, and friction.</p>
+<p>Build a beat machine in my browser: a 16-step drum sequencer with classic, 808, techno, and lo-fi kits, tempo and swing controls, and genre presets. Let me beatbox into the mic and turn it into a pattern.</p>
+<p>Build a peaceful 3D driving game: an endless forest I can drive through freely, with no missions and no timers. Make it feel calm.</p>
+<p>driver.grok.me</p>
+<h2><a href="https://x.ai/news/grok-build-for-everyone#publish-to-a-link-share-it-anywhere">发布成链接，随处分享</a></h2>
+<p>你发布的每个应用都会在 <code>grok.me</code> 上获得自己的地址，谁能打开由你决定：仅自己、拿到链接的任何人，或整个互联网。如果你愿意，也可以绑定自己的域名。</p>
+<p>Grok 还会创建随链接一起传播的美术图。每个应用都有一张封面，在链接被粘贴到任何地方——消息、聊天、文档、时间线——时展开为丰富的预览卡片。封面为你的具体应用生成，你可以重新生成、上传自己的，或在对话中让 Grok 重新设计。</p>
+<p>Publish app</p>
+<p>Not published</p>
+<p>Website URL</p>
+<p>tiny-city</p>
+<p>.grok.me</p>
+<p>Access</p>
+<p>Anyone with the link</p>
+<p>App cover</p>
+<p>Regenerate</p>
+<p>Illustration of the publish sheet. The cover is generated for you and can be regenerated or replaced.</p>
+<h2><a href="https://x.ai/news/grok-build-for-everyone#made-for-the-timeline">为时间线而生</a></h2>
+<p>你在 X 上分享的应用不会只是一个光秃秃的链接。横幅内联渲染、带上你的用户名，游戏卡片里还有直接开玩的入口——人们在离开信息流之前就能认识这个应用。</p>
+<h2><a href="https://x.ai/news/grok-build-for-everyone#build-powerful-apps">构建强大的应用</a></h2>
+<p>为某个应用打开 SpaceXAI APIs 后，它就能在自己的代码内部调用 Grok 的聊天、图像和语音能力——无需创建、粘贴或轮换 key。问答游戏可以按需出新题，支持页可以用你的口吻回答，笔记应用可以自我总结。访问权按应用授予，你可以随时撤销。</p>
+<p>相比 Early Beta 的其他新增：</p>
+<ul><li><strong>Remix。</strong> 允许他人 fork 一个已发布的应用，改成他们自己的。</li><li><strong>自定义域名。</strong> 把你拥有的域名指向你的应用。</li><li><strong>导出到 GitHub。</strong> 把整个项目推送到一个 repo，继续在编辑器里干，或转到<a href="https://x.ai/news/grok-build-cli">终端版 Grok Build</a>。</li><li><strong>Secrets。</strong> 在应用代码之外存放第三方服务的 API key。</li><li><strong>Connectors。</strong> 拉入你业务关心的数据，变成可实时筛选的仪表盘。</li></ul>
+<p>打开网页、iOS 或 Android 上的 <a href="https://grok.com/?referrer=website&amp;mode=build">Grok</a>，描述你想要的东西。</p>
+<h2>开始构建</h2>
+<p>Start building</p>]]></content:encoded>
     </item>
     <item>
       <title>GitHub Copilot 中的 Grok 4.6</title>
@@ -112,6 +889,14 @@
       <guid isPermaLink="true">https://x.ai/news/grok-4-6-github-copilot</guid>
       <pubDate>Fri, 14 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok 4.6 in GitHub Copilot</description>
+      <content:encoded><![CDATA[<h1>GitHub Copilot 中的 Grok 4.6</h1>
+<p>Grok 4.6——我们最新的编码模型——现已登陆 GitHub Copilot。</p>
+<p>Try Grok 4.6 in the API</p>
+<p>Open GitHub Copilot</p>
+<p>Grok 4.6 现已在 GitHub Copilot 上线，服务每天在 VS Code 和 GitHub 各处工作的数百万开发者。</p>
+<h2><a href="https://x.ai/news/grok-4-6-github-copilot#getting-started">开始使用</a></h2>
+<p>GitHub Copilot 覆盖多款产品，包括云端智能体（cloud agents）、Copilot CLI 和 VS Code IDE。打开模型选择器，选择 &quot;Grok 4.6&quot;，即可开始使用我们最新的编码模型。部分商业与企业客户需要先在 Copilot 设置中启用该模型。</p>
+<p>Grok 4.6 也可通过 <a href="https://console.x.ai/?campaign=grok-4-6-github-copilot-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=grok-4-6-github-copilot-blog">SpaceXAI console</a> 使用，价格为每百万输入 tokens $2、每百万输出 tokens $6。有关模型的更多信息（包括编码性能），请阅读 <a href="https://x.ai/news/grok-4-6">Grok 4.6 发布公告</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Grok 4.6</title>
@@ -119,6 +904,100 @@
       <guid isPermaLink="true">https://x.ai/news/grok-4-6</guid>
       <pubDate>Wed, 12 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok 4.6</description>
+      <content:encoded><![CDATA[<h1>介绍 Grok 4.6</h1>
+<p>Grok 4.6 在 Grok 4.5 的基础上更进一步，特别聚焦于长时间运行的智能体以及更具雄心的交互式与视觉化工作。</p>
+<p>Try for free</p>
+<p>Start building</p>
+<p>今天我们发布 <strong>Grok 4.6</strong>。Grok 4.6 在 <a href="https://x.ai/news/grok-4-5">Grok 4.5</a> 的基础上更进一步，特别聚焦于长时间运行的智能体以及更具雄心的交互式与视觉化工作。无论是调研一个主题、分析信息、跨代码库工作，还是把一个想法变成打磨完善的应用或工作成果，它都能在复杂任务中坚持许多步骤。</p>
+<p>0:00</p>
+<p>/</p>
+<p>0:00</p>
+<p>Grok 4.6 在多项智能体编码与知识工作基准上达到前沿（frontier）水平。在 Artificial Analysis Intelligence Index（九项基准的综合得分）上，它与 GPT-5.6 Sol 打平。</p>
+<p>Competitor figures are drawn from the respective developers' published system cards or benchmark leaderboards</p>
+<p>Benchmark bar charts comparing Grok 4.6 with other leading models across AA Intelligence, GDPVal-AA, DeepSWE 1.1, CursorBench 3.2, and FrontierCode 1.1. Competitor figures are drawn from the respective developers' published system cards or benchmark leaderboards.</p>
+<p>Grok 4.6 今日已在 <a href="https://cursor.com">Cursor</a> 和 <a href="https://x.ai/build">Grok Build</a> 上线。首周我们在 <a href="https://x.ai/build">Grok Build</a> 和 <a href="https://cursor.com">Cursor</a> 内提供 2 倍包含用量，方便你立即试用 4.6。</p>
+<h2><a href="https://x.ai/news/grok-4-6#training-grok-46">训练 Grok 4.6</a></h2>
+<p>Grok 4.6 相比 Grok 4.5 经历了更长的补充训练，包括为推理和高级技术概念策展的模型生成数据、高质量工程数据，以及改进的优化器与训练配方。这为后续的 SFT 和 RL 阶段打下了更强的基础。</p>
+<p>随后，我们用 Grok 4.5 在不同推理强度（effort）、不同智能体 harness 以及 STEM、软件工程、知识工作等领域重新生成了 SFT 轨迹，并用基于模型的检查过滤掉问题轨迹。得到的 SFT checkpoint 表现出强劲的性能和更好的行为。</p>
+<p>Grok 4.6 在广泛的智能体 RL 任务上训练，包括知识工作、通用编码，以及内核优化、Web 开发、计算机辅助设计等领域专用环境。</p>
+<h2><a href="https://x.ai/news/grok-4-6#turning-ambitious-ideas-into-working-projects">把雄心勃勃的想法变成可运行的项目</a></h2>
+<p>我们在专为考验其能力广度和多步持续工作能力而设计的项目上测试了 Grok 4.6。我们发现该模型尤其擅长把一个宽泛的产品想法变成可运行的首个版本：它能调研陌生领域、搭建应用结构、实现核心交互，并在多轮反馈中持续打磨结果。</p>
+<p>在更长的执行轨迹上，我们还开始看到更多的自我测试与验证——模型在继续推进之前会检查自己的工作。</p>
+<p>在视觉与交互项目上，Grok 4.6 的首轮产出明显强于我们在 Grok 4.5 上通常所见。给出一个具体的产品想法，它能在一次成型中确立应用的结构与视觉语言。这让它特别适合这样一类项目：通往好结果的最快路径，是先从一个有分量的东西开始，然后在循环中迭代。</p>
+<h2><a href="https://x.ai/news/grok-4-6#safety-and-capabilities">安全与能力</a></h2>
+<p>Grok 4.6 的安全防护已按模型能力做了改进与校准。</p>
+<p>我们的安全体系旨在让合法用例的实用性与安全性最大化，使 Grok 4.6 在漏洞修补、加速工程设计周期、增强 AI 研究等领域既有帮助又安全。</p>
+<p>我们的安全防护评估工作反映了 Grok 4.6 扩展后的能力：包括我们迄今范围最广的部署前能力与防护校准测试套件，以及大量的部署后测试和第三方测试。</p>
+<h2><a href="https://x.ai/news/grok-4-6#evals">评估</a></h2>
+<p>Grok 4.6</p>
+<p>High</p>
+<p>Grok 4.5</p>
+<p>High</p>
+<p>GPT-5.6 Sol</p>
+<p>Max</p>
+<p>Fable 5</p>
+<p>Max</p>
+<p>AA Intelligence Index</p>
+<p>61</p>
+<p>56</p>
+<p>61</p>
+<p>62</p>
+<p>GDPVal-AA v2</p>
+<p>1753</p>
+<p>1526</p>
+<p>1728</p>
+<p>1741</p>
+<p>CursorBench v3.2</p>
+<p>69.9%</p>
+<p>66.7%</p>
+<p>67.2%</p>
+<p>70.5%</p>
+<p>DeepSWE v1.1</p>
+<p>65.9%</p>
+<p>54%</p>
+<p>73%</p>
+<p>70%</p>
+<p>FrontierCode v1.1 (Extended)</p>
+<p>61.3%</p>
+<p>56.6%</p>
+<p>60.6%</p>
+<p>63.6%</p>
+<p>APEX-Agents</p>
+<p>57.5%</p>
+<p>47.1%</p>
+<p>56.7%</p>
+<p>59.2%</p>
+<p>Terminal-Bench v3.0</p>
+<p>26%</p>
+<p>15.7%</p>
+<p>34.6%</p>
+<p>34.1%</p>
+<p>APEX-SWE</p>
+<p>56.4%</p>
+<p>53.6%</p>
+<p>—</p>
+<p>58.8%</p>
+<p>AA-Briefcase</p>
+<p>1577</p>
+<p>1313</p>
+<p>1502</p>
+<p>1574</p>
+<p>Harvey LAB (Vals)</p>
+<p>15.8%</p>
+<p>12.9%</p>
+<p>2.5%</p>
+<p>11.3%</p>
+<p>每项评估中的最佳分数以粗体标示。第三方模型分数取其自报或公开结果中的最佳值。</p>
+<h2><a href="https://x.ai/news/grok-4-6#get-started-with-grok-46">开始使用 Grok 4.6</a></h2>
+<p>Grok 4.6 今日已在 <a href="https://cursor.com">Cursor</a> 和 <a href="https://x.ai/build">Grok Build</a> 上线，同时可通过 <a href="https://console.x.ai?campaign=grok-4-6-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=grok-4-6-blog">API</a> 以及 OpenRouter、Vercel、Cloudflare 等合作伙伴使用。</p>
+<p>定价从每百万输入 tokens $2、每百万输出 tokens $6 起。另有一个价格翻倍的 fast 变体。</p>
+<p>首周我们在 <a href="https://x.ai/build">Grok Build</a> 和 <a href="https://cursor.com">Cursor</a> 内提供 2 倍包含用量，方便你立即试用 4.6。</p>
+<p>Console</p>
+<p>Create an API key</p>
+<p>docs.x.ai</p>
+<p>Read the docs</p>
+<h3>在 Grok Build 免费体验</h3>
+<p>今天就到 <a href="https://x.ai/build">x.ai/build</a> 开始。</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Grok Bot</title>
@@ -126,12 +1005,141 @@
       <guid isPermaLink="true">https://x.ai/news/introducing-grok-bot</guid>
       <pubDate>Tue, 11 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok Bot</description>
+      <content:encoded><![CDATA[<h1>介绍 Grok Bot</h1>
+<p>Grok Bot 是你的一支永远在线的智能体团队。他们有自己的电脑，像你一样在工具和应用里干活，全天候 24/7 持续工作。</p>
+<p>Download for macOS</p>
+<p>Contact sales</p>
+<p>0:00</p>
+<p>/</p>
+<p>0:00</p>
+<p>今天我们发布 Grok Bot——你可以把真实工作交付给他们的 AI 队友。</p>
+<p>Bots 拥有自己的电脑。他们登录你已在使用的工具，跨应用、跨收件箱工作。他们把活儿从头干到尾，只在有需要你批准的事情时才回来找你。</p>
+<p>你可以像给同事发消息一样给他们发消息，把工作移交给他们。他们记得对话、学会你偏好的做事方式，越合作越锋利。</p>
+<p>Grok Bot 最初是我们内部的一个原型，随后在全公司火了起来。团队创建 Bots 来处理销售外联、市场活动、办公室运营、bug 修复等等。今天，我们很高兴把它开放给全世界。</p>
+<p>Grok Bot 处于 beta，今日面向 SuperGrok、SuperGrok Plus、SuperGrok Heavy；Cursor Pro、Pro+ 和 Ultra；以及 Cursor Teams Standard 与 Premium 订阅用户开放，支持桌面与 iOS。Grok Bot 自带独立用量，与你的 Grok 和 Cursor 套餐分开，因此交给 Bots 的任何工作都不会占用你的现有用量。<a href="https://x.ai/bot#download">下载应用</a>，创建你的第一个队友，开始移交工作。企业用户可以加入等候名单以获得后续访问。</p>
+<h2><a href="https://x.ai/news/introducing-grok-bot#how-grok-bot-is-different">Grok Bot 有何不同</a></h2>
+<h3><a href="https://x.ai/news/introducing-grok-bot#a-computer-of-its-own">一台自己的电脑</a></h3>
+<p>早期访问用户说，Grok Bot 用起来不像在给智能体写提示，而像把工作交给一位能力极强的队友。Bots 在云端共享自己的电脑，所以你离开时工作不会停摆。他们可以登录并跨应用、工具和网站工作——包括那些没有干净 API 或 MCP 的平台——然后带着完成的工作回来。</p>
+<p>在 SpaceXAI 内部，这已经体现为一件件真实的多步协作任务：销售 Bot 把通话纪要写进 CRM 并起草跟进；运营 Bot 为新员工安排工位并处理 Gmail 里收到的发票；工程 Bot 在产品 UI 里复现一个 bug、建好工单，再把修复移交给一个调试 Bot。</p>
+<blockquote>完成 90% 和完成 100% 之间有巨大差别。多数 AI 让你走到差不多，Grok Bot 能把这一棒挥到底——因为成果落在人该落的地方：真实的工具里。</blockquote>
+<p>— Roman，Product</p>
+<h3><a href="https://x.ai/news/introducing-grok-bot#message-it-like-a-teammate">像给队友发消息一样</a></h3>
+<p>上手 Grok Bot 很容易。你可以从手机或桌面给 Bot 发消息，就像给团队里的人发短信，之后在任意一端接续同一对话串。</p>
+<p>其他 AI 工具可能要求你先搭好工作流和例行任务。在 Grok Bot，只需发消息让 Bot 接一件事，它就把它办完。</p>
+<blockquote>没有什么要学的。就像来了位新同事。不用设置自动化，没有产品怪癖，也没有复杂的命名。你只是在和朋友聊天。</blockquote>
+<p>— Fiona，Community</p>
+<h3><a href="https://x.ai/news/introducing-grok-bot#work-with-many-bots-at-once">同时与多个 Bots 协作</a></h3>
+<p>SpaceXAI 内部的人们常常并行运行多个 Bots，其中一个负责管理其余。幕僚长（chief of staff）居顶，每条线各有一位专家：邮箱管理、报销、招聘、bug 修复、运营。Grok Bot 给你的不是多个需要你管的 agent，而是一支能并行干活的小团队——你不用当中间人。</p>
+<p>Bots 能相互独立发消息、在对话串中共享上下文。项目交叉时，他们围绕同一个账户或项目保持一致，不需要你在几个聊天之间粘贴笔记。</p>
+<p>你还可以把 Bots 放进一个群聊，让他们自行协调。他们相互交接、指派负责人，只在需要拍板时才拉你进来。</p>
+<blockquote>和 Grok Bot 一起工作，感觉像我有了八条章鱼一样的手臂，每条手臂都与其他协调一致，每条都按我的方式完成任务。</blockquote>
+<p>— Vincent，Growth</p>
+<h3><a href="https://x.ai/news/introducing-grok-bot#show-a-bot-how-its-done">示范给 Bot 看怎么干</a></h3>
+<p>让 Bot 学会你工作流的最好方式，是下次干活时让它跟做一遍。它会观察步骤、记住你偏好的做法。</p>
+<p>它把你的工作流保存为例行任务（routine），吸收你的纠正，下次就自己运行——于是同样的多步流程你可以直接移交，不必再解释一遍。</p>
+<blockquote>我只演示过一次的工作流，现在完全放心让它永远自己跑。我觉得自己高效了 2-3 倍，因为它做的时候不需要我再验证和复核。</blockquote>
+<p>— Bennett，Sales</p>
+<h3><a href="https://x.ai/news/introducing-grok-bot#trust-your-bots-with-more-over-time">随着时间把更多信任交给 Bots</a></h3>
+<p>Bots 是随时间越来越锋利的队友。他们保留着你偏好如何做事的上下文。几件任务之后，他们学到了你的语气、你的边界情况，知道什么时候该@你、什么时候继续干。</p>
+<p>他们可以跟进你放下的对话串、推动卡住的交接、从先前的对话中重新捡起工作。</p>
+<p>随着时间推移，他们变得更主动：在你开口之前就把活接起，并知道什么事需要你的注意。</p>
+<blockquote>刚开始时，我每 15 分钟查看一次、微观管理这些 Bots，到最后他们问我为什么总问那么多问题。现在我让它放手去干，它只是随时间越做越好。</blockquote>
+<p>— Emma，Operations</p>
+<h2><a href="https://x.ai/news/introducing-grok-bot#how-the-spacexai-team-is-using-grok-bot">SpaceXAI 团队如何用 Grok Bot</a></h2>
+<p>这是我们使用 Grok Bot 的几种不同方式——挑一个团队，打开例子，看看背后的运行记录：</p>
+<h2>今天就试试 Grok Bot</h2>
+<p>Download for macOS</p>
+<p>Enterprise waitlist</p>]]></content:encoded>
     </item>
     <item>
       <title>Imagine Image 2.0</title>
       <link>https://x.ai/news/grok-imagine-image-2</link>
       <guid isPermaLink="true">https://x.ai/news/grok-imagine-image-2</guid>
       <pubDate>Fri, 07 Aug 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Imagine Image 2.0</h1>
+<p>精准的图片生成与编辑，为真实创作工作而生。</p>
+<p>Open Grok.com</p>
+<p>Try on API</p>
+<p>Imagine Image 2.0 现已正式全面可用，作为 <a href="https://grok.com/imagine?referrer=website&amp;campaign=imagine-image-2-blog">grok.com/imagine</a> 以及我们的 <a href="https://apps.apple.com/app/grok-ai-chat-video/id6670324846">iOS</a> 和 <a href="https://play.google.com/store/apps/details?id=ai.x.grok">Android</a> 应用上全新的 <strong>Quality Mode</strong>。</p>
+<p>我们围绕一个简单的目标打造 Image 2.0：<strong>生成你能用在真实工作里的图</strong>。2.0 对指令的遵循细致入微。它像设计师一样规划字体排印与版式，让信息密集、多部件的画面保持整体协调，小字号也清晰锐利。而且在你的输入跨多次生成与编辑时被完整保留。</p>
+<h2><a href="https://x.ai/news/grok-imagine-image-2#precise-editing">精准编辑</a></h2>
+<p>真实工作是迭代式的。第一次生成很少就是最终素材，所以 Image 2.0 增添了只改你所指、其余不动的工具。</p>
+<p>魔法棒只编辑你指向的区域，其他部分保持原样。分割（Segmentation）可选中画面中精确的区域进行修改。背景移除能以透明背景导出任何主体，可直接放入其他作品。多参考编辑支持单次生成最多 5 张输入图，免去手动合成。</p>
+<h3><a href="https://x.ai/news/grok-imagine-image-2#smart-resize">智能改尺寸</a></h3>
+<p>一张图，任意尺寸：选择一个比例，模型自动补足画面。</p>
+<p>1:2</p>
+<h2><a href="https://x.ai/news/grok-imagine-image-2#real-world-performance">真实世界性能</a></h2>
+<p>Image 2.0 为摄影、设计、插画上的高保真而训练，并把编辑当作一等公民能力。它在文生图与图像编辑两项均排名全球第二。</p>
+<h3>Image Edit Arena</h3>
+<h3>Text-to-Image Arena</h3>
+<p>Overall Elo. Source: Arena Image Edit and Text-to-Image leaderboards (as of Aug 7, 2026). xAI models are listed on Arena under SpaceXAI.</p>
+<h2><a href="https://x.ai/news/grok-imagine-image-2#templates">模板</a></h2>
+<p>我们还引入新模板，把常见图像工作流打包成现成的起点。每个模板覆盖一项具体任务——照片编辑、产品图、头像、图标、游戏资产等——工作流已预先配置好，你只需提供输入，即得成品。</p>
+<p>Photo Tools</p>
+<p>Photo Edit</p>
+<p>Product</p>
+<p>Product Color Change</p>
+<p>Marketing</p>
+<p>Editorial Product Poster</p>
+<p>Photo Tools</p>
+<p>Reimagine</p>
+<p>Photo Tools</p>
+<p>Photo Collage</p>
+<p>Design Tools</p>
+<p>Mascot Maker</p>
+<p>Photo Tools</p>
+<p>BG Removal &amp; Change</p>
+<p>Marketing</p>
+<p>E-Commerce Photos</p>
+<p>Marketing</p>
+<p>UGC Photos</p>
+<p>Photo Tools</p>
+<p>Professional Headshot</p>
+<p>Design Tools</p>
+<p>Icon Maker</p>
+<p>Design Tools</p>
+<p>Character Sprite</p>
+<p>Game Assets</p>
+<p>Props &amp; UI Kit</p>
+<p>Streaming</p>
+<p>Emoji Creator</p>
+<p>Marketing</p>
+<p>Merch Maker</p>
+<h3><a href="https://x.ai/news/grok-imagine-image-2#build-a-world-for-video">为视频构建一个世界</a></h3>
+<p>用几条提示构建一个世界：一个角色、她的场景、她携带的道具——分别生成，从一张图到另一张图保持同一种风格。</p>
+<p>One world</p>
+<h3>Built image by image</h3>
+<p>A character, her locations, and the props she carries — generated separately, holding one look.</p>
+<p>Character</p>
+<p>Location</p>
+<p>Location</p>
+<p>Prop</p>
+<p>Prop</p>
+<p>Character</p>
+<p>Location</p>
+<h2><a href="https://x.ai/news/grok-imagine-image-2#try-it-today-on-our-consumer-products">今天就在消费级产品中体验</a></h2>
+<p>Open</p>
+<p>Grok.com</p>
+<p>Open</p>
+<p>Grok on iOS</p>
+<p>Open</p>
+<p>Grok on Android</p>
+<h2><a href="https://x.ai/news/grok-imagine-image-2#in-the-api">API 中可用</a></h2>
+<p>Image 2.0 以 <code>grok-imagine-image-2.0</code> 在 API 中提供。</p>
+<pre><code>import xai_sdk
+
+client = xai_sdk.Client()
+
+response = client.image.sample(
+    prompt=&quot;A concert poster for a synthwave band, bold retro typography, sharp small print&quot;,
+    model=&quot;grok-imagine-image-2.0&quot;,
+)
+
+print(response.url)</code></pre>
+<p>python</p>
+<p>完整文档请访问我们的<a href="https://docs.x.ai/developers/model-capabilities/images/generation#quick-start">文档页</a>，或在 playground 中直接开始生成。</p>
+<h2>开始生成</h2>
+<p>Open Playground</p>]]></content:encoded>
     </item>
     <item>
       <title>Imagine Video 1.5 支持参考素材</title>
@@ -139,6 +1147,52 @@
       <guid isPermaLink="true">https://x.ai/news/grok-imagine-video-1-5-references</guid>
       <pubDate>Fri, 31 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Imagine Video 1.5 with References</description>
+      <content:encoded><![CDATA[<h1>带参考的 Imagine Video 1.5</h1>
+<p>我们最好的视频模型，现在支持文本、图像与语音参考——最高生成 1080p。</p>
+<p>Open Grok.com</p>
+<p>上个月我们发布 <a href="https://x.ai/news/grok-imagine-video-1-5">Imagine Video 1.5</a> 时，它就是我们迄今最好的视频模型——更好的运动、更好的物理、更好的音频。今天它走得更远：图像与语音参考、仅凭提示词生成视频，以及原生 1080p 生成。</p>
+<p>图像与语音参考今日在美国面向 <a href="https://grok.com/imagine?referrer=website&amp;campaign=imagine-video-1-5-references-blog">grok.com/imagine</a> 和 <a href="https://apps.apple.com/app/grok-ai-chat-video/id6670324846">iOS</a> 上的 SuperGrok Heavy 与 SuperGrok Plus 开放，未来几天推广到所有档位。</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5-references#text-to-video-and-native-1080p">文生视频与原生 1080p</a></h2>
+<p>描述镜头即可——不需要起始图像。文生视频把我们的图像生成与图生视频衔接起来。文生视频与图生视频现在都支持原生 1080p。文生视频与原生 1080p 已在 grok.com/imagine、iOS 和 <a href="https://play.google.com/store/apps/details?id=ai.x.grok">Android</a> 正式全面可用。</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5-references#voice-consistency">语音一致性</a></h2>
+<p>传入一张角色图像和一段语音参考，两者都会保持稳定——每个场景都是同一张脸、同一个声音。</p>
+<p>Character</p>
+<p>Voice</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5-references#multi-reference">多参考</a></h2>
+<p>每张参考图锁定一样东西——一张脸、一件产品、一个场景。保留角色、更换场景；保留场景、更换角色；或两者都保持不变、只改变动作。每次生成最多七张参考图。</p>
+<p>Character</p>
+<p>Scene</p>
+<p>Character</p>
+<p>Scene</p>
+<p>Character</p>
+<p>Scene</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5-references#in-the-api">API 中可用</a></h2>
+<p>图像参考、文生视频与原生 1080p 已随我们最好的视频模型 <code>grok-imagine-video-1.5</code> 在 <a href="https://docs.x.ai/developers/model-capabilities/video/generation">xAI API</a> 上线。语音参考支持可<a href="https://x.ai/contact-sales?interest=imagine">按需申请</a>。</p>
+<pre><code>import os
+import xai_sdk
+
+client = xai_sdk.Client(api_key=os.getenv(&quot;XAI_API_KEY&quot;))
+
+response = client.video.generate(
+    prompt=&quot;Slow cinematic push-in as embers drift across the battlefield and the helmet's crest stirs in the wind&quot;,
+    model=&quot;grok-imagine-video-1.5&quot;,
+    reference_image_urls=[&quot;https://example.com/helmet.jpg&quot;],
+    duration=6,
+    aspect_ratio=&quot;16:9&quot;,
+    resolution=&quot;720p&quot;,
+)
+
+print(response.url)</code></pre>
+<p>python</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5-references#try-it-today">今天就来体验</a></h2>
+<p>Open</p>
+<p>Grok.com</p>
+<p>Build</p>
+<p>Imagine API</p>
+<p>Open</p>
+<p>Grok on iOS</p>
+<p>Open</p>
+<p>Grok on Android</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Grok Voice Think Fast 2.0</title>
@@ -146,6 +1200,44 @@
       <guid isPermaLink="true">https://x.ai/news/grok-voice-think-fast-2</guid>
       <pubDate>Wed, 29 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok Voice Think Fast 2.0</description>
+      <content:encoded><![CDATA[<h1>介绍 Grok Voice Think Fast 2.0</h1>
+<p>介绍我们能力最强的 speech-to-speech 语音模型。</p>
+<p>Try It Free</p>
+<p>View Docs</p>
+<p>今天，我们宣布 Grok Voice Think Fast 2.0——新一代语音模型，在智能、转录准确率和对话能力上均有提升。</p>
+<h2><a href="https://x.ai/news/grok-voice-think-fast-2#intelligence">智能</a></h2>
+<p>Grok Voice Think Fast 2.0 是我们最智能的语音模型，在前代基础上于语音推理、对话能力和工具调用可靠性上取得实质性进步。</p>
+<table><thead><tr><th>Benchmark</th><th>Grok Voice Think Fast 2.0 (this release)</th><th>Grok Voice Think Fast 1.0</th><th>GPT-Realtime-2.1 (High)</th><th>Gemini 3.1 Flash (High)</th></tr></thead><tbody><tr><td>OverallAA Speech-to-Speech Quality Index</td><td>82.9%</td><td>75.7%</td><td>79.1%</td><td>69.5%</td></tr><tr><td>Speech ReasoningBig Bench Audio</td><td>97.2%</td><td>97.1%</td><td>96.0%</td><td>96.6%</td></tr><tr><td>Conversational DynamicsFull Duplex Bench</td><td>95.1%</td><td>77.8%</td><td>95.7%</td><td>74.3%</td></tr><tr><td>Agentic Performanceτ-voice Bench</td><td>56.5%</td><td>52.1%</td><td>45.7%</td><td>37.7%</td></tr><tr><td>SpeedTime to First Audio</td><td>0.70s</td><td>1.25s</td><td>—</td><td>2.98s</td></tr></tbody></table>
+<p>来源：<a href="https://artificialanalysis.ai/speech-to-speech">Artificial Analysis</a>。</p>
+<h2><a href="https://x.ai/news/grok-voice-think-fast-2#transcription-accuracy">转录准确率</a></h2>
+<p>在准确率上，Grok Voice Think Fast 2.0 甚至超过专用的 state-of-the-art 转录模型。在覆盖 24 种语言、数千条短句的评估中，我们展示了相对 Deepgram Nova 3 和 ElevenLabs Scribe v2 提升 1.5–2.0 倍、相对 Grok Voice Think Fast 1.0 提升 1.4 倍的成绩。</p>
+<p>在嘈杂环境下，Grok Voice Think Fast 2.0 与专用 speech-to-text 模型的差距拉大到约 10 倍。我们着重让 Grok Voice Think Fast 2.0 在真实场景表现卓越——伴随大量背景噪音与电话线路压缩。</p>
+<h3>Transcription accuracy</h3>
+<p>Word Error Rate (%). Lower is better.</p>
+<p>Grok Voice Think Fast 2.0</p>
+<p>Grok Voice Think Fast 1.0</p>
+<p>Deepgram Nova 3</p>
+<p>ElevenLabs Scribe v2</p>
+<h2><a href="https://x.ai/news/grok-voice-think-fast-2#reasoning-efficiency">推理效率</a></h2>
+<p>Grok Voice Think Fast 系列有一个独特气质：它们边说话边推理查询。与语音并行的推理，让模型比其他 speech-to-speech 模型聪明得多，且不影响延迟。</p>
+<p>Grok Voice Think Fast 2.0 经过训练，相比前代在推理 tokens 上极为高效。在生产环境中，这意味着工具调用更麻利，通常在智能体第一句话说完前就已执行。</p>
+<h3>Reasoning efficiency</h3>
+<p>Relative reasoning tokens per response (P50). Lower is better.</p>
+<p>Grok Voice Think Fast 2.0</p>
+<p>0.4</p>
+<p>×</p>
+<p>Grok Voice Think Fast 1.0</p>
+<p>1.0</p>
+<p>×</p>
+<h2><a href="https://x.ai/news/grok-voice-think-fast-2#conversational-capability">对话能力</a></h2>
+<p>我们训练 Grok Voice Think Fast 2.0 成为更好的对话者。通过大规模强化学习把模型推向我们在真实人类对话中观察到的模式，我们发现总体上模型说话句子更短、一次只问一个问题、不说废话。从用户视角看，与智能体的对话简单而流畅——尽管模型往往正在幕后引导对话穿越复杂工作流、提前思考好几个步骤。</p>
+<h2><a href="https://x.ai/news/grok-voice-think-fast-2#migration--pricing">迁移与定价</a></h2>
+<p>预计 Grok Voice Think Fast 2.0 无需修改现有提示词，就能在几乎所有用例上带来更好的表现。在 Starlink（<a href="tel:+18884678275">+1 888 GO STARLINK</a>）上对该模型做 A/B 测试，我们看到了销售转化率和客服拦截率的显著提升。</p>
+<p>2026 年 8 月 5 日，<code>grok-voice-latest</code> 将从 <code>grok-voice-think-fast-1.0</code> 切换为 <code>grok-voice-think-fast-2.0</code>。升级无需任何操作。若想留在 Grok Voice Think Fast 1.0，请在此之前钉住 <code>grok-voice-think-fast-1.0</code>。</p>
+<p>我们相信定价应当可预期、透明。Grok Voice Think Fast 2.0 定价为<a href="https://docs.x.ai/developers/pricing?campaign=think-fast-2-blog#voice-api-pricing">$0.08 / 分钟音频</a>。</p>
+<h2>开始用 Grok Voice 构建</h2>
+<p>Try It Free</p>
+<p>View Docs</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Build Mode</title>
@@ -153,6 +1245,32 @@
       <guid isPermaLink="true">https://x.ai/news/grok-build-mode</guid>
       <pubDate>Tue, 28 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Build Mode</description>
+      <content:encoded><![CDATA[<h1>介绍 Build Mode</h1>
+<p>Beta：面向 SuperGrok Heavy 订阅用户。</p>
+<p>创建并分享网站、应用、游戏和交互式仪表盘。现已在 grok.com、iOS 和 Android 上面向 SuperGrok Heavy 订阅用户开放 Early Beta。</p>
+<p>Try Build Mode</p>
+<p>Learn more</p>
+<p>0:00</p>
+<p>/</p>
+<p>0:00</p>
+<p>今天我们介绍 <strong>Build Mode</strong>——用 <a href="https://grok.com/?referrer=website">Grok</a> 进行创作的新方式。把一个想法告诉 Grok，它就在你的对话中实时构建出可工作的版本，网页或手机皆可。准备就绪后，发布成一个任何人都能打开的链接。Build Mode 今日以 Early Beta 形式面向 <strong>SuperGrok Heavy</strong> 订阅用户开放，覆盖网页、iOS 和 Android。</p>
+<h2><a href="https://x.ai/news/grok-build-mode#describe-what-you-want">描述你想要的东西</a></h2>
+<p>Grok 编写代码，并在对话内构建出可工作的预览。之后它继续与你一起打磨：改布局、加功能、换样式。</p>
+<p>无需安装任何东西，无需配置任何东西，除非你愿意，也永远不必碰代码。</p>
+<h2><a href="https://x.ai/news/grok-build-mode#made-with-build-mode">用 Build Mode 制作</a></h2>
+<p>下面的每个例子都是由 Build Mode 根据其上所示消息创建的。</p>
+<p>Build a peaceful 3D driving game: an endless forest I can drive through freely, with no missions and no timers. Make it feel calm.</p>
+<p>Make an isometric city simulation: let me zone districts, lay down roads, and grow a town with a live economy that reacts to what I build.</p>
+<p>Create a 3D physics playground: let me spawn spheres, boxes, and cylinders, drag them around, stack them into towers, and knock them over. Sliders for gravity, bounciness, and friction.</p>
+<p>Build a beat machine in my browser: a 16-step drum sequencer with classic, 808, techno, and lo-fi kits, tempo and swing controls, and genre presets. Let me beatbox into the mic and turn it into a pattern.</p>
+<p>Build a peaceful 3D driving game: an endless forest I can drive through freely, with no missions and no timers. Make it feel calm.</p>
+<p>driver.grok.me</p>
+<h2><a href="https://x.ai/news/grok-build-mode#what-people-are-building">大家在构建什么</a></h2>
+<ul><li><strong>网站。</strong> 落地页、作品集和企业站点。</li><li><strong>应用。</strong> 带真实状态与逻辑的可用工具：计划器、追踪器、计算器、仿真器和内部小工具。</li><li><strong>游戏。</strong> 街机竞速、益智游戏和可交互的 3D 世界。</li><li><strong>交互式仪表盘。</strong> 利用连接器让 Grok 拉入你业务关心的数据，变成可实时查看、可筛选、可立即探索与分享的图表。</li></ul>
+<h2><a href="https://x.ai/news/grok-build-mode#share-it-with-a-link">用一个链接分享</a></h2>
+<p>发布到 grok.me 链接或你拥有的自定义域名，然后分享给你的团队或任何需要的人。</p>
+<h2><a href="https://x.ai/news/grok-build-mode#available-today-in-early-beta">今日开放 Early Beta</a></h2>
+<p>Early Beta 期间，Build Mode 面向 <strong>SuperGrok Heavy</strong> 订阅用户开放。要体验，请打开 <a href="https://grok.com/?referrer=website">grok.com</a> 或 iOS、Android 上的 Grok 应用，在模式切换器中选择 <strong>Build</strong>。你也可以在 <a href="https://x.ai/grok/build-mode">Build Mode 页面</a>了解更多。</p>]]></content:encoded>
     </item>
     <item>
       <title>GitHub Copilot 中的 Grok 4.5</title>
@@ -160,6 +1278,14 @@
       <guid isPermaLink="true">https://x.ai/news/grok-github-copilot</guid>
       <pubDate>Tue, 28 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok 4.5 in GitHub Copilot</description>
+      <content:encoded><![CDATA[<h1>GitHub Copilot 中的 Grok 4.5</h1>
+<p>Grok 4.5——我们最聪明的编码模型——现已登陆 GitHub Copilot。</p>
+<p>Try Grok 4.5 in the API</p>
+<p>Open GitHub Copilot</p>
+<p>Grok 4.5 现已在 GitHub Copilot 上线，服务每天使用 VSCode 与 GitHub 产品的数百万开发者。</p>
+<h2><a href="https://x.ai/news/grok-github-copilot#getting-started">开始使用</a></h2>
+<p>GitHub Copilot 覆盖多款产品，包括云端智能体（cloud agents）、Copilot CLI 和 VSCode IDE。在模型选择器里选择 &quot;Grok 4.5&quot;，即可开始使用我们最新的编码模型。部分商业与企业客户需要先在 Copilot 设置中启用该模型。</p>
+<p>Grok 4.5 也可直接通过 <a href="https://console.x.ai/?utm_source=website&amp;utm_medium=referral&amp;utm_campaign=grok-github-copilot-blog">SpaceXAI console</a> 使用，价格为每百万输入 tokens $2、每百万输出 tokens $6。有关模型的更多信息（包括编码性能），请阅读 <a href="https://x.ai/news/grok-4-5">Grok 4.5 发布公告</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Google Workspace 中的 Grok</title>
@@ -167,6 +1293,115 @@
       <guid isPermaLink="true">https://x.ai/news/introducing-google-workspace-addon</guid>
       <pubDate>Fri, 24 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok in Google Workspace</description>
+      <content:encoded><![CDATA[<h1>Grok 进入 Google Workspace</h1>
+<p>使用 Grok 的 Google Workspace 加载项，直接在 Sheets、Slides 和 Docs 中工作。</p>
+<p>Add to Google Workspace</p>
+<p>Try Grok</p>
+<p><strong>今天，我们把 Grok 带进 Google Workspace。</strong> 一个加载项，就让 Grok 出现在你打开的 Sheets、Slides、Docs 文件旁边。</p>
+<p>Monthly budget</p>
+<p>File</p>
+<p>Edit</p>
+<p>View</p>
+<p>Insert</p>
+<p>Format</p>
+<p>Data</p>
+<p>Tools</p>
+<p>Extensions</p>
+<p>Help</p>
+<p>Share</p>
+<p>A</p>
+<p>↶</p>
+<p>↷</p>
+<p>100%</p>
+<p>$</p>
+<p>%</p>
+<p>.00</p>
+<p>123</p>
+<p>Default</p>
+<p>−</p>
+<p>10</p>
+<p>+</p>
+<p>B</p>
+<p>I</p>
+<p>U</p>
+<p>A</p>
+<p>A1</p>
+<p>fx</p>
+<p>A</p>
+<p>B</p>
+<p>C</p>
+<p>D</p>
+<p>E</p>
+<p>1</p>
+<p>2</p>
+<p>3</p>
+<p>4</p>
+<p>5</p>
+<p>6</p>
+<p>7</p>
+<p>8</p>
+<p>9</p>
+<p>10</p>
+<p>11</p>
+<p>12</p>
+<p>13</p>
+<p>14</p>
+<p>15</p>
+<p>16</p>
+<p>17</p>
+<p>18</p>
+<p>19</p>
+<p>20</p>
+<p>21</p>
+<p>22</p>
+<p>Monthly budget</p>
+<p>Jan</p>
+<p>Feb</p>
+<p>Mar</p>
+<p>Rent</p>
+<p>$</p>
+<p>2,000</p>
+<p>$</p>
+<p>2,000</p>
+<p>$</p>
+<p>2,050</p>
+<p>Utilities</p>
+<p>$</p>
+<p>180</p>
+<p>$</p>
+<p>210</p>
+<p>$</p>
+<p>260</p>
+<p>Groceries</p>
+<p>$</p>
+<p>420</p>
+<p>$</p>
+<p>445</p>
+<p>$</p>
+<p>470</p>
+<p>Transport</p>
+<p>$</p>
+<p>160</p>
+<p>$</p>
+<p>150</p>
+<p>$</p>
+<p>155</p>
+<p>Total expenses</p>
+<p>$</p>
+<p>2,760</p>
+<p>$</p>
+<p>2,805</p>
+<p>$</p>
+<p>2,935</p>
+<p>Sheet1</p>
+<h2><a href="https://x.ai/news/introducing-google-workspace-addon#sheets">Sheets</a></h2>
+<p>提出一个问题，Grok 直接从电子表格本身作答，并标注用到的单元格。它会编写和填充公式、插入图表，并在假设变化时重跑情景——更新模型不再意味着重建模型。每一处改动都是可检查、可撤销的普通编辑。</p>
+<h2><a href="https://x.ai/news/introducing-google-workspace-addon#slides">Slides</a></h2>
+<p>Grok 能把一份提纲变成可用的演示文稿：从网页或 X 上做调研，在该配图的地方加图示或图片。它按现有主题扩展你的 deck，并重写标题让每页幻灯片都立得住观点。成品是普通的、可编辑的幻灯片，而不是需要返工的导出物。</p>
+<h2><a href="https://x.ai/news/introducing-google-workspace-addon#docs">Docs</a></h2>
+<p>Grok 写作发生在文字所在的地方。它把粗略笔记变成带真正标题和列表的结构化草稿、就地修正语法、并在长文件中保持风格一致。开启<a href="https://grok.com/connectors">连接器</a>后，它还能从最近的邮件或 Google Drive 中的文件拉取内容。</p>
+<h2><a href="https://x.ai/news/introducing-google-workspace-addon#get-started">开始使用</a></h2>
+<p>Grok for Google Workspace 是免费加载项，从 <a href="https://workspace.google.com/marketplace/app/grok/660927092109">Google Workspace Marketplace</a> 一次安装即覆盖 Sheets、Slides 和 Docs。Microsoft 365 版同样提供，支持 <a href="https://x.ai/grok/word">Word</a>、<a href="https://x.ai/grok/excel">Excel</a>、<a href="https://x.ai/grok/powerpoint">PowerPoint</a> 和 <a href="https://x.ai/grok/outlook">Outlook</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok Build 中的工作流程</title>
@@ -174,6 +1409,61 @@
       <guid isPermaLink="true">https://x.ai/news/workflows</guid>
       <pubDate>Thu, 23 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Workflows in Grok Build</description>
+      <content:encoded><![CDATA[<h1>Grok Build 中的 Workflows</h1>
+<p>Grok Build 现在可以编写并运行工作流（workflows）：一种编排脚本，把一个任务扇出到数百个并行智能体、验证结果，并在一次后台运行中汇报。</p>
+<p>Try Free</p>
+<p>Grok Build 现在可以运行 <strong>workflows</strong>：用平实语言描述一个大任务，Grok 会规划它、在后台扇出到数百个并行智能体，全部完成后向你汇报。期间你的会话始终自由。</p>
+<p>~/dev/relay</p>
+<p>|</p>
+<p>8.42%</p>
+<p>|</p>
+<p>❯</p>
+<p>can you create and run a workflow to review https://github.com/acme-corp/relay/pull/4821</p>
+<p>─</p>
+<p>Workflows</p>
+<p>─</p>
+<p>[</p>
+<p>✗</p>
+<p>]</p>
+<p>⋅</p>
+<p>pr-review</p>
+<p>0/0 agents · agents 0/128 (128 left) · 12s</p>
+<p>Multi-subagent GitHub PR review: fetch context, fan out specialist reviewers, adversarially verify findings, synthesize a ranked report</p>
+<p>Phases</p>
+<p>❯</p>
+<p>1</p>
+<p>Context</p>
+<p>2</p>
+<p>Review</p>
+<p>3</p>
+<p>Verify</p>
+<p>4</p>
+<p>Synthesize</p>
+<p>Context · 0 agents</p>
+<p>↑↓ phase · enter agent</p>
+<p>│</p>
+<p>p pause</p>
+<p>│</p>
+<p>x stop</p>
+<p>│</p>
+<p>s save</p>
+<p>│</p>
+<p>esc close</p>
+<p>Grok 4.5</p>
+<p>click to replay</p>
+<h2><a href="https://x.ai/news/workflows#when-to-use-a-workflow">何时使用 workflow</a></h2>
+<p>Workflow 是为那些单靠一场对话装不下的复杂多面任务而生：审阅一个巨大 PR 里的每个特性、分诊最近 100 个 issue、针对某类 bug 审计整个代码库。如果工作能拆成许多独立的部分、并且应以一份清晰报告收尾，就要一个 workflow。</p>
+<h2><a href="https://x.ai/news/workflows#how-it-works">工作原理</a></h2>
+<p>Grok 把任务规划成一个小脚本：工作的各个阶段、每个阶段的智能体，以及它们的结果如何汇总。每个智能体都从干净、聚焦的上下文开始，规划还能内置单次执行做不到的检查——比如让独立的质疑者在任何发现进入最终报告前先验证它。</p>
+<p>每次运行有 128 个智能体的预算，大型任务最多 1,024。进度随运行实时保存，暂停与恢复绝不会重做已完成的工作。运行 <code>/workflows</code> 可实时观看：逐阶段推进，附每个智能体的 token 数。</p>
+<h2><a href="https://x.ai/news/workflows#saving-and-reusing-workflows">保存与复用 workflow</a></h2>
+<p>Grok 根据你的请求编写 workflow，启动前先做冒烟检查，并在多次运行之间持续改进——你从不需要自己写脚本。一个好用的就留下：<code>.grok/workflows/</code> 中的 workflow 与团队共享，<code>~/.grok/workflows/</code> 中的则随你去到任何地方。每个保存的 workflow 变成一条可带参数的专属斜杠命令——所以保留了上面演示的 PR 审阅后，下一次审阅只需 <code>/pr-review 5137</code>。</p>
+<p><code>/deep-research</code> 内建随发：它把研究问题扇出给并行调查员，逐条对照来源验证每个论断，最后返回一份带引用的报告。</p>
+<h2><a href="https://x.ai/news/workflows#try-it-today">今天就来试试</a></h2>
+<p>一些可以试试的例子：</p>
+<ul><li>&quot;use a workflow to review each feature in this PR&quot;</li><li>&quot;triage the last 100 Linear issues and give me a top-10 action list&quot;</li><li>&quot;audit every route handler for missing auth checks, and verify each finding&quot;</li></ul>
+<h3>安装 Grok Build</h3>
+<p>Try Free</p>]]></content:encoded>
     </item>
     <item>
       <title>将 Grok 4.5 带到 iOS、Android、Web 和 X</title>
@@ -181,6 +1471,15 @@
       <guid isPermaLink="true">https://x.ai/news/grok-4-5-everywhere</guid>
       <pubDate>Wed, 22 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Bringing Grok 4.5 to iOS, Android, Web, and X</description>
+      <content:encoded><![CDATA[<h1>把 Grok 4.5 带到 iOS、Android、网页和 X</h1>
+<p>Grok 4.5——我们迄今最智能的模型——现已登陆 grok.com、X、iOS 和 Android。</p>
+<p>Open Grok.com</p>
+<p><strong>Grok 4.5 现在在你使用 Grok 的任何地方为其提供动力</strong>，今日已在 <a href="https://grok.com/?referrer=website">grok.com</a>、X 以及 iOS 和 Android 版 Grok 应用上线。</p>
+<h2><a href="https://x.ai/news/grok-4-5-everywhere#smarter-answers-to-any-question">对任何问题更聪明的回答</a></h2>
+<p>Grok 4.5 是我们能力最强的模型。在日常使用中，它能领会你真正的问题、跟住更长的对话，并给出更清晰可靠的回答。让它解释一个陌生概念、帮你权衡一笔大额消费、规划一次旅行，或深入钻研你好奇的话题。而在更难的问题上，它的推理更高效，答案来得更快。</p>
+<h2><a href="https://x.ai/news/grok-4-5-everywhere#for-all-your-knowledge-work">覆盖你的全部知识工作</a></h2>
+<p>Grok 4.5 还能从头到尾独立完成一项任务：搭建可用的电子表格、把提纲变成干净利落的幻灯片和图示、撰写清晰的文字，或从一份长 PDF 中提取要点——无论你在办公桌前还是在手机上。</p>
+<p>通过我们的 Microsoft 365 加载项，Grok 还能直接在 <a href="https://x.ai/grok/word">Word</a>、<a href="https://x.ai/grok/excel">Excel</a>、<a href="https://x.ai/grok/powerpoint">PowerPoint</a> 和 <a href="https://x.ai/grok/outlook">Outlook</a> 内工作。有关模型本身的更多细节，请阅读 <a href="https://x.ai/news/grok-4-5">Grok 4.5 发布公告</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>适用于 Outlook 的 Grok</title>
@@ -188,6 +1487,111 @@
       <guid isPermaLink="true">https://x.ai/news/introducing-outlook-addin</guid>
       <pubDate>Tue, 21 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok for Outlook</description>
+      <content:encoded><![CDATA[<h1>Grok for Outlook</h1>
+<p>使用 Grok 的 Microsoft Outlook 加载项，总结冗长的邮件串、用你的口吻起草回复，并保持收件箱井井有条。</p>
+<p>Add to Outlook</p>
+<p>Try Grok</p>
+<p><strong>今天，我们把 Grok 带进 Microsoft Outlook。</strong> 加载项把一个智能体放到你的收件箱旁：它总结长邮件串、用你的口吻起草回复，并打理好你的邮箱。</p>
+<p>New Outlook</p>
+<p>Inbox — Outlook</p>
+<p>Search</p>
+<p>Home</p>
+<p>View</p>
+<p>Help</p>
+<p>Comments</p>
+<p>Share</p>
+<p>New mail</p>
+<p>Delete</p>
+<p>Archive</p>
+<p>Reply</p>
+<p>Reply all</p>
+<p>Forward</p>
+<p>Move to</p>
+<p>Rules</p>
+<p>Add-ins</p>
+<p>Grok</p>
+<p>Favorites</p>
+<p>Inbox</p>
+<p>12</p>
+<p>Drafts</p>
+<p>2</p>
+<p>Sent Items</p>
+<p>Archive</p>
+<p>Junk Email</p>
+<p>Deleted</p>
+<p>Focused</p>
+<p>Other</p>
+<p>Filter</p>
+<p>Pinned</p>
+<p>SC</p>
+<p>Sarah Chen</p>
+<p>9:14 AM</p>
+<p>Q3 Vendor Contract — Renewal</p>
+<p>Legal came back on the renewal terms</p>
+<p>Today</p>
+<p>MB</p>
+<p>Morning Brief</p>
+<p>7:05 AM</p>
+<p>Five stories to start your day</p>
+<p>A lunar landing, a marathon record, and more</p>
+<p>PN</p>
+<p>Priya Nair</p>
+<p>8:05 AM</p>
+<p>Redline owner needed</p>
+<p>We need sign-off from finance and legal</p>
+<p>BB</p>
+<p>Build Bot</p>
+<p>6:12 AM</p>
+<p>Nightly build passed</p>
+<p>All 1,204 checks green on main</p>
+<p>Yesterday</p>
+<p>JO</p>
+<p>Jamie Ortiz</p>
+<p>Wed</p>
+<p>Design crit agenda</p>
+<p>Three flows to review, deck attached</p>
+<p>MW</p>
+<p>Marcus Webb</p>
+<p>Wed</p>
+<p>Re: Pricing — confirmed</p>
+<p>Current rate holds if we commit by Jun 30</p>
+<p>AR</p>
+<p>Ana Ruiz</p>
+<p>Wed</p>
+<p>Q3 close checklist</p>
+<p>Accruals due to finance by Wednesday</p>
+<p>Q3 Vendor Contract — Renewal</p>
+<p>Inbox · 12 messages · 4 participants</p>
+<p>SC</p>
+<p>Sarah Chen</p>
+<p>Mon 9:14 AM</p>
+<p>To: You; Deal Team</p>
+<p>Legal came back on the renewal. Two clauses need decisions before we can sign: the auto-renew term (§4.2) and the data retention addendum. Redline attached with both sections marked.</p>
+<p>Renewal_v4_redline.docx</p>
+<p>86 KB</p>
+<p>MW</p>
+<p>Marcus Webb</p>
+<p>Tue 2:48 PM</p>
+<p>To: You; Deal Team</p>
+<p>Pricing holds at the current rate if we commit before June 30. After that we move to the new list price — roughly 8% higher on the same volume. Finance has the comparison in the shared sheet.</p>
+<p>DP</p>
+<p>Dev Patel</p>
+<p>Tue 4:22 PM</p>
+<p>To: You; Deal Team</p>
+<p>Security review is clear. Their SOC 2 report is on file and there are no new subprocessors this term, so nothing blocks from our side.</p>
+<p>PN</p>
+<p>Priya Nair</p>
+<p>Wed 8:05 AM</p>
+<p>To: You; Deal Team</p>
+<p>Who can own the redline? We need sign-off from finance and legal by Friday or this slips to next quarter.</p>
+<p>Items: 128 · Unread: 12</p>
+<p>100%</p>
+<h2><a href="https://x.ai/news/introducing-outlook-addin#catch-up-on-threads-and-clear-the-backlog">补上进度、清空积压</a></h2>
+<p>打开一条聊了一整周的邮件串，问问发生了什么。Grok 会带着决策、负责人，以及还在等你处理的事项回来。当积压越堆越高，它可以一次性扫描最近的邮件——归档已结束的对话、清掉噪音、并点出需要回复的消息。加载项还能读附件、搜索网页和 X，让你不离开 Outlook 就能查东西。</p>
+<h3><a href="https://x.ai/news/introducing-outlook-addin#replies-that-sound-like-you">像你一样说话的回复</a></h3>
+<p>几个粗糙的词就够了。Grok 把它们变成符合你书写风格的回复，或从零写一封新邮件。然后你可以要求微调：更紧凑的标题、换收件人、更热情的语气。在你按下发送之前，什么都不会发出。</p>
+<h2><a href="https://x.ai/news/introducing-outlook-addin#get-started">开始使用</a></h2>
+<p>Grok for Outlook 是 Microsoft 365 加载项，今日面向所有付费 X 与 SuperGrok 用户开放。<a href="https://marketplace.microsoft.com/en-us/product/office/WA200011330?tab=Overview">从 Microsoft Marketplace 添加</a>，即可在邮箱里直接与 Grok 协作。<a href="https://x.ai/grok/word">Word</a>、<a href="https://x.ai/grok/excel">Excel</a> 和 <a href="https://x.ai/grok/powerpoint">PowerPoint</a> 版本同样提供。</p>]]></content:encoded>
     </item>
     <item>
       <title>适用于 Excel 的 Grok 加载项</title>
@@ -195,6 +1599,120 @@
       <guid isPermaLink="true">https://x.ai/news/introducing-excel-addin</guid>
       <pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok for Excel</description>
+      <content:encoded><![CDATA[<h1>Grok for Excel</h1>
+<p>使用 Grok 的 Microsoft Excel 加载项，用平实的英语提问、编写公式、运行情景模拟——全程不离开工作簿。</p>
+<p>Add to Excel</p>
+<p>Try Grok</p>
+<p><strong>今天，我们把 Grok 带进 Microsoft Excel。</strong> 安装这个加载项，就能用平实的英语提问、根据描述写公式，或在已打开的工作簿里运行情景模拟。</p>
+<p>AutoSave</p>
+<p>Cash Receipts.xlsx</p>
+<p>Search</p>
+<p>Home</p>
+<p>Insert</p>
+<p>Formulas</p>
+<p>Data</p>
+<p>Review</p>
+<p>View</p>
+<p>Comments</p>
+<p>Share</p>
+<p>Aptos Narrow</p>
+<p>12</p>
+<p>B</p>
+<p>I</p>
+<p>U</p>
+<p>General</p>
+<p>$</p>
+<p>%</p>
+<p>Conditional Formatting</p>
+<p>Add-ins</p>
+<p>Grok</p>
+<p>A1</p>
+<p>✕</p>
+<p>✓</p>
+<p>fx</p>
+<p>A</p>
+<p>B</p>
+<p>C</p>
+<p>D</p>
+<p>E</p>
+<p>1</p>
+<p>2</p>
+<p>3</p>
+<p>4</p>
+<p>5</p>
+<p>6</p>
+<p>7</p>
+<p>8</p>
+<p>9</p>
+<p>10</p>
+<p>11</p>
+<p>12</p>
+<p>13</p>
+<p>14</p>
+<p>15</p>
+<p>16</p>
+<p>17</p>
+<p>18</p>
+<p>19</p>
+<p>20</p>
+<p>21</p>
+<p>22</p>
+<p>Cash receipts</p>
+<p>Apr</p>
+<p>May</p>
+<p>Jun</p>
+<p>Cash sales</p>
+<p>$</p>
+<p>2,500</p>
+<p>$</p>
+<p>3,000</p>
+<p>$</p>
+<p>3,400</p>
+<p>Returns and allowances</p>
+<p>$</p>
+<p>(200)</p>
+<p>$</p>
+<p>(165)</p>
+<p>$</p>
+<p>(180)</p>
+<p>Collections on receivable</p>
+<p>$</p>
+<p>1,200</p>
+<p>$</p>
+<p>1,450</p>
+<p>$</p>
+<p>1,610</p>
+<p>Other receipts</p>
+<p>$</p>
+<p>310</p>
+<p>$</p>
+<p>280</p>
+<p>$</p>
+<p>360</p>
+<p>Total cash receipts</p>
+<p>$</p>
+<p>3,810</p>
+<p>$</p>
+<p>4,565</p>
+<p>$</p>
+<p>5,190</p>
+<p>Total cash available</p>
+<p>$</p>
+<p>12,500</p>
+<p>$</p>
+<p>13,050</p>
+<p>$</p>
+<p>13,750</p>
+<p>Sheet1</p>
+<p>+</p>
+<p>Ready</p>
+<p>100%</p>
+<h2><a href="https://x.ai/news/introducing-excel-addin#ask-questions-about-your-data">就你的数据提问</a></h2>
+<p>选中一个区域，问 Grok 什么变动了、为什么、哪里显眼。回答会标注来自哪些单元格，图表可以直接落在数据旁的表格里。</p>
+<h3><a href="https://x.ai/news/introducing-excel-addin#write-formulas-and-run-scenarios">写公式、跑情景</a></h3>
+<p>描述你想要的结果，语法交给 Grok——求平均、排序、填充都以普通编辑的形式落进公式栏。测一个下行情景、重跑一份预测、或直接完成月末结账，不必再手工重建表格。加载项还能利用<a href="https://grok.com/connectors">连接器</a>：让它从最近的邮件、或 SharePoint / Google Drive 里的文件中拉取上下文。</p>
+<h2><a href="https://x.ai/news/introducing-excel-addin#get-started">开始使用</a></h2>
+<p>Grok for Excel 是免费的 Microsoft 365 加载项。<a href="https://marketplace.microsoft.com/en-us/product/office/WA200011056?tab=Overview">从 Microsoft Marketplace 添加</a>，即可在工作簿里直接与 Grok 协作。<a href="https://x.ai/grok/word">Word</a> 和 <a href="https://x.ai/grok/powerpoint">PowerPoint</a> 版本同样提供。</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Grok 4.5</title>
@@ -202,6 +1720,96 @@
       <guid isPermaLink="true">https://x.ai/news/grok-4-5</guid>
       <pubDate>Thu, 16 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok 4.5</description>
+      <content:encoded><![CDATA[<h1>介绍 Grok 4.5</h1>
+<p>Grok 4.5 是 SpaceXAI 最聪明的模型，为编码、智能体任务和知识工作而生。</p>
+<p>Try for free</p>
+<p>Start building</p>
+<p>今天，我们发布 <strong>Grok 4.5</strong>——SpaceXAI 最聪明的模型，专为在编码、智能体任务和知识工作上表现出色而打造。它是我们迄今最强的模型，并与 <a href="https://cursor.com/blog/spacex-model-training">Cursor</a> 联合训练。</p>
+<h2><a href="https://x.ai/news/grok-4-5#real-world-engineering-excellence">真实世界的工程卓越</a></h2>
+<p>Grok 4.5 的训练数据集横跨编码、科学、工程和数学知识。凭借既智能又高效的推理，Grok 4.5 在真实工程任务上表现出色，超越了同类领先模型在这些任务上的表现。</p>
+<p>Competitor figures are drawn from the respective developers' published system cards or benchmark leaderboards</p>
+<p>Benchmark bar charts of model scores. DeepSWE 1.0 (eval created by Datacurve, run with each model provider's harnesses by AA): Fable (max) 66.1%, GPT 5.5 (xhigh) 64.31%, Grok 4.5 62.0%, Opus 4.8 (max) 55.75%, Opus 4.7 (max) 40.12%. DeepSWE 1.1 (mini-swe-agent harness run by Datacurve): Fable (max) 70%, GPT 5.5 (xhigh) 67%, Opus 4.8 (max) 59%, Grok 4.5 53%, GLM 5.2 44%. SWE Marathon resolution rate (pass@1): Grok 4.5 29.0%, Opus 4.8 (max) 26.0%, Fable (max) 24.0%, Opus 4.7 (max) 16.0%. Terminal Bench 2.1: Fable (max) 84.3%, GPT 5.5 (xhigh) 83.4%, Grok 4.5 83.3%, Opus 4.8 (max) 78.9%, Opus 4.7 (max) 78.9%. SWE Bench Pro resolve rate: Fable (max) 80.4%, Opus 4.8 (max) 69.2%, Grok 4.5 64.7%, Opus 4.7 (max) 64.3%, GLM 5.2 62.1%, GPT 5.5 (xhigh) 58.6%. Competitor figures are drawn from the respective developers' published system cards or benchmark leaderboards.</p>
+<h2><a href="https://x.ai/news/grok-4-5#training-grok-45">训练 Grok 4.5</a></h2>
+<p>Grok 4.5 在数万块 NVIDIA GB300 GPU 上训练，并采用了为大规模运行设计的训练与稳定性技术。除了原始 token 数量，我们在数据过滤与策展上投入巨大：去重、质量打分、面向领域的精选，让数据配比始终保持高覆盖、高信噪比。</p>
+<p>我们扩展了强化学习，并高度聚焦&quot;每 token 智能&quot;（per-token intelligence）。RL 训练覆盖数十万个任务，以多步软件工程和其他技术工作为核心，配合自动化与基于模型的评分。我们的技术栈为高度异步训练而生，因此智能体 rollout 可以运行数小时，而学习在数万块 GPU 上持续进行。带来的结果是在真实工程与智能体任务上更智能、更高效的推理。</p>
+<h3>一条提示词构建</h3>
+<p>Grok 4.5 的编码能力令人惊叹：从高难度 Rust 和 C/C++ 任务，到从提示词到生产的端到端应用构建。下面是一些仅用一条提示词由模型构建的示例。即使规格说明极少，Grok 4.5 也能高度熟练地创建设计精良、端到端可用的应用。</p>
+<p>Make a beautiful simulation of the universe and solar system. should be sped up with adjustable time, realistic motion, orbits, stars. use threejs. Make the HUD well styled and conform to modern design principles.</p>
+<p>Make a beautiful simulation of the universe and solar system. should be sped up with adjustable time, realistic motion, orbits, stars. use threejs. Make the HUD well styled and conform to modern design principles.</p>
+<p>app.localhost — cosmos</p>
+<p>Loading solar system…</p>
+<h2><a href="https://x.ai/news/grok-4-5#faster-than-flash-models">比 flash 模型更快</a></h2>
+<p>Grok 4.5 以 <strong>80 TPS</strong> 的快速模型速度提供服务。加上在相同任务上比最新领先模型高一倍的 token 效率，它能更快、以更低的成本为你交付智能的结果。</p>
+<h3>Token efficiency</h3>
+<p>avg. output tokens per SWE Bench Pro task</p>
+<p>Grok 4.5</p>
+<p>0</p>
+<p>Opus 4.8 (max)</p>
+<p>0</p>
+<p>4.2×</p>
+<p>fewer tokens</p>
+<p>0</p>
+<p>70</p>
+<p>k tokens</p>
+<p>Token efficiency, average output tokens per SWE Bench Pro task — Grok 4.5 resolves tasks with 15,954 output tokens on average, about 4.2× fewer than Opus 4.8 (max) at 67,020</p>
+<h2><a href="https://x.ai/news/grok-4-5#excels-at-office-work">Office 工作同样出色</a></h2>
+<p>Grok 4.5 现在是 <a href="https://x.ai/build">Grok Build</a> 的默认模型。除了编码专长，Grok Build 还能构建复杂的 Excel 模型：从网上做调研、跨多个工作表使用公式，甚至留下便签或注释供日后参考。</p>
+<p>在 PowerPoint 和 Word 中，Grok 4.5 同样一丝不苟。模型能够使用 PowerPoint 原生形状构建复杂图示、设计直观的幻灯片内容，并在 Word 中写出清晰的文字。</p>
+<p>Outline a 5-slide quarterly business review</p>
+<p>AutoSave</p>
+<p>Q3 Review.pptx</p>
+<p>Search</p>
+<p>Home</p>
+<p>Insert</p>
+<p>Design</p>
+<p>Transitions</p>
+<p>Animations</p>
+<p>Review</p>
+<p>Comments</p>
+<p>Share</p>
+<p>New Slide</p>
+<p>Layout</p>
+<p>B</p>
+<p>I</p>
+<p>U</p>
+<p>Arrange</p>
+<p>Design Ideas</p>
+<p>Add-ins</p>
+<p>Grok</p>
+<p>1</p>
+<p>Quarterly review</p>
+<p>Oct · FY26</p>
+<p>Q3 Business Review</p>
+<p>Revenue, margins, pipeline — and where we invest next</p>
+<p>01</p>
+<p>Revenue</p>
+<p>02</p>
+<p>Margins</p>
+<p>03</p>
+<p>Pipeline</p>
+<p>04</p>
+<p>Outlook</p>
+<p>Slide 1 of 5 · English (US)</p>
+<p>100%</p>
+<p>了解我们用于 <a href="https://marketplace.microsoft.com/en-us/product/office/WA200011055?tab=Overview">Word</a>、<a href="https://marketplace.microsoft.com/en-us/product/office/WA200011057?tab=Overview">PowerPoint</a>、<a href="https://marketplace.microsoft.com/en-us/product/office/WA200011056?tab=Overview">Excel</a> 和 <a href="https://marketplace.microsoft.com/en-us/product/office/WA200011330?tab=Overview">Outlook</a> 的插件更多信息。</p>
+<h2><a href="https://x.ai/news/grok-4-5#pricing">定价</a></h2>
+<p>与其他领先模型相比，Grok 4.5 的成本极具竞争力。Grok 4.5 定价为每百万输入 tokens $2、每百万输出 tokens $6。该模型还实现了约为同类领先模型 2 倍的 token 效率，用不到一半的步骤完成任务。总体而言，Grok 4.5 在单位时间与单位成本上交付最高的智能。</p>
+<h2><a href="https://x.ai/news/grok-4-5#getting-started">开始使用</a></h2>
+<p>Grok 4.5 今日已在 Grok Build、Cursor 的全部套餐以及 <a href="https://console.x.ai/?utm_source=website&amp;utm_medium=referral&amp;utm_campaign=grok-4-5-blog">SpaceXAI console</a> 上线。只需领取一个 API key，几行代码即可开始：</p>
+<pre><code>curl -s https://api.x.ai/v1/responses \
+  -H &quot;Authorization: Bearer $XAI_API_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;model&quot;: &quot;grok-4.5&quot;,
+    &quot;input&quot;: &quot;Find and fix the bug, then explain it: function median(a){a.sort();return a[a.length/2]}&quot;
+  }'</code></pre>
+<p>bash</p>
+<p>Console</p>
+<p>Create an API key</p>
+<p>docs.x.ai</p>
+<p>Read the docs</p>
+<h3>在 Grok Build 免费体验</h3>
+<p>我们在有限时间内于 <a href="https://x.ai/build">Grok Build</a> 和 Cursor 提供免费 Grok 4.5 用量。今天就到 <a href="https://x.ai/build">x.ai/build</a> 开始。</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok 中的自动化</title>
@@ -209,6 +1817,70 @@
       <guid isPermaLink="true">https://x.ai/news/grok-automations</guid>
       <pubDate>Thu, 16 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Automations in Grok</description>
+      <content:encoded><![CDATA[<h1>Grok 中的 Automations</h1>
+<p>描述一项工作一次，Grok 就会按计划或在邮件到达时自动运行它，然后回报结果。</p>
+<p>今天，我们推出 Automations（自动化任务）：由 Grok 自行运行的工作。描述一次任务、选择运行时机，剩下的交给 Grok——无论是你醒来前就完成的调研，还是重要邮件一到即刻标记。Automations 现已在 <a href="https://grok.com/automations">grok.com</a> 以及 iOS 和 Android 版 Grok 应用中提供。</p>
+<p>New Automation</p>
+<p>My Automation</p>
+<p>Triggers</p>
+<p>Add Trigger</p>
+<p>Instructions</p>
+<p>Read my unread emails and summarize...</p>
+<p>Connectors</p>
+<p>1</p>
+<p>Skills</p>
+<p>4</p>
+<p>Auto</p>
+<p>Notification</p>
+<p>Email + App</p>
+<p>Cancel</p>
+<p>Save</p>
+<h2><a href="https://x.ai/news/grok-automations#describe-the-job-once">一次描述任务</a></h2>
+<p>自动化任务的指令就像普通聊天消息：描述你要什么、附上文件作为上下文、添加连接器和 skills、选择模式。命名、保存，此后每次运行都是一次全新的请求：同样的指令、最新的数据。</p>
+<h2><a href="https://x.ai/news/grok-automations#on-a-schedule-or-on-a-trigger">按计划，或按触发器</a></h2>
+<p>计划运行支持单次、每日、工作日、每周、每月或每年，在你随时区选定的时间执行：比如一天开始前的 8:00 晨间简报，或每月 1 号的房租提醒。</p>
+<p>邮件触发器则盯着你的收件箱。当来信命中你的筛选条件（发件人、收件人或主题），自动化任务就以这封邮件为上下文启动，Grok 会针对实际邮件内容进行响应。指令也可以直接指向你的工具：输入 @ 提及某个连接器，Grok 每次运行都会使用它。</p>
+<p>New Automation</p>
+<p>Triggers</p>
+<p>Add Trigger</p>
+<p>Instructions</p>
+<p>Read my unread emails and summarize...</p>
+<p>Connectors</p>
+<p>2</p>
+<p>Skills</p>
+<p>4</p>
+<p>Auto</p>
+<p>Notification</p>
+<p>Email + App</p>
+<p>你还可以用 Run now 手动启动一次运行——刚建好一个自动化任务时，用它来测试很方便。</p>
+<h2><a href="https://x.ai/news/grok-automations#every-run-is-a-full-conversation">每次运行都是一场完整对话</a></h2>
+<p>Morning Brief</p>
+<p>Overview</p>
+<p>Runs</p>
+<p>4</p>
+<p>Succeeded</p>
+<p>2</p>
+<p>Upcoming</p>
+<p>⋅</p>
+<p>Generating</p>
+<p>Just now</p>
+<p>Morning brief: 2 calendar conflicts, 4 emails worth replies</p>
+<p>Jul 10</p>
+<p>8:00 AM</p>
+<p>Morning brief: launch-day schedule and three stories to read</p>
+<p>Jul 9</p>
+<p>8:00 AM</p>
+<p>Morning brief: quiet inbox, one deadline moved to Friday</p>
+<p>Jul 8</p>
+<p>8:00 AM</p>
+<p>Morning brief: flight check-in opens at noon, pack for rain</p>
+<p>Jul 7</p>
+<p>8:00 AM</p>
+<p>当自动化任务触发时，Grok 会开启一段真实对话、完成工作，并把结果存入运行历史。打开任意一次运行即可阅读完整对话串，或接着 Grok 停下的地方继续对话。每个自动化任务如何回报由你选择：邮件、应用通知、两者都要，或如果你更愿意自己查看，就都不选。</p>
+<h2><a href="https://x.ai/news/grok-automations#start-from-chat-or-a-template">从对话开始，或用模板</a></h2>
+<p>你也可以直接从聊天里创建自动化任务：对 Grok 说&quot;每天早上看看新闻，把涉及定价的内容标出来&quot;，它就替你建好了。Automations 页面提供了建议模板供起步，任何自动化任务随时都可以暂停、恢复、编辑或删除。</p>
+<h2><a href="https://x.ai/news/grok-automations#get-started">开始使用</a></h2>
+<p>到 <a href="https://grok.com/automations">grok.com/automations</a> 创建你的第一个自动化任务。计划类自动化对所有人开放；邮件触发器包含在 SuperGrok 中。</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok Build 现已开源</title>
@@ -216,6 +1888,21 @@
       <guid isPermaLink="true">https://x.ai/news/grok-build-open-source</guid>
       <pubDate>Wed, 15 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok Build is Now Open Source</description>
+      <content:encoded><![CDATA[<h1>Grok Build 现已开源</h1>
+<p>探索我们编码智能体与 TUI 背后的 harness。</p>
+<p>View on GitHub</p>
+<p>Try Grok Build</p>
+<p>我们正在开源 Grok Build——SpaceXAI 的编码智能体与 TUI。源代码现已在 <a href="https://github.com/xai-org/grok-build">GitHub</a> 开放。</p>
+<p>公开代码是迈向健壮可靠 harness 的最直接方式。你可以阅读源码，看清它究竟如何工作——从上下文组装到工具调用分发。</p>
+<p>开源也让 harness 更容易被探索和扩展：如果你在使用 skills、插件、hooks、MCP 服务器或子智能体，源码就是每一种机制如何加载与调用的权威参考。</p>
+<p>最后，Grok Build 现在可以完全 local-first 运行：自己编译，指向你自己的本地推理服务，一切通过你的 <code>config.toml</code> 驱动。</p>
+<h2><a href="https://x.ai/news/grok-build-open-source#about-the-codebase">关于代码库</a></h2>
+<p>公开的源码包括：</p>
+<ul><li>智能体循环：如何组装上下文、如何解析模型响应、如何分发工具调用</li><li>工具：智能体如何读取、编辑和搜索代码，如何运行命令</li><li>终端 UI：渲染、输入处理、计划审阅和内联 diff 查看器</li><li>扩展系统：skills、插件、hooks、MCP 服务器和子智能体</li></ul>
+<p>在 <a href="https://github.com/xai-org/grok-build">GitHub</a> 上探索源码。</p>
+<h2>开始使用</h2>
+<p>View on GitHub</p>
+<p>Get Grok Build</p>]]></content:encoded>
     </item>
     <item>
       <title>21 款全新旗舰 Grok 音色</title>
@@ -223,6 +1910,57 @@
       <guid isPermaLink="true">https://x.ai/news/new-flagship-voices</guid>
       <pubDate>Mon, 06 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：21 New Flagship Grok Voices</description>
+      <content:encoded><![CDATA[<h1>21 个全新旗舰 Grok 声音</h1>
+<p>为 Grok Voice 新增多语言声音，原有五个声音的自然度同步提升。</p>
+<p>Try It Free</p>
+<p>Try in Playground</p>
+<p>今天，我们为 Grok Voice 发布 <strong>21 个全新旗舰声音</strong>，加入原有五个声音的行列。它们全部多语言，现已可在实时 <a href="https://docs.x.ai/developers/model-capabilities/audio/speech-to-speech?campaign=new-voices-blog">Voice Agent API</a>、<a href="https://docs.x.ai/developers/model-capabilities/audio/text-to-speech?campaign=new-voices-blog">Text to Speech API</a>，以及全新的 <a href="https://console.x.ai/team/default/voice/agents?campaign=new-voices-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=new-voices-blog"><strong>Grok Voice Agent Builder</strong></a> 中使用。认识一下阵容中的新成员：</p>
+<p>Naksh</p>
+<p>Atlas</p>
+<p>Aurora</p>
+<p>Liora</p>
+<p>Carina</p>
+<p>Zagan</p>
+<p>Helix</p>
+<p>Orion</p>
+<p>Luna</p>
+<p>Wellness</p>
+<p>Support</p>
+<p>Soft, empathetic, and soothing.</p>
+<h2><a href="https://x.ai/news/new-flagship-voices#a-voice-for-every-use-case">每个用例都有一个声音</a></h2>
+<p>每个声音都是为特定岗位选的角：客服、角色、解说、广告、教育。可以用 <code>[pause]</code>、<code>&lt;whisper&gt;</code> 等<a href="https://docs.x.ai/developers/model-capabilities/audio/text-to-speech?campaign=new-voices-blog">语音标签（speech tags）</a>控制演绎。来听听其中五个的看家场景：</p>
+<p>Carina</p>
+<p>Support</p>
+<p>Thanks for your patience — I found the issue. [pause] Your account was still on the legacy plan, so I've moved you over and &lt;emphasis&gt;applied the credit to this month.&lt;/emphasis&gt; &lt;soft&gt;You're all set.&lt;/soft&gt; Anything else I can take care of?</p>
+<p>每个声音都原生多语言，支持 Grok Voice 的全部 25+ 种语言。</p>
+<p>Luna</p>
+<p>English</p>
+<p>Arabic</p>
+<p>Bengali</p>
+<p>Chinese</p>
+<p>French</p>
+<p>German</p>
+<p>Hindi</p>
+<p>Indonesian</p>
+<p>Italian</p>
+<p>Japanese</p>
+<p>Korean</p>
+<p>Portuguese</p>
+<p>Russian</p>
+<p>Spanish</p>
+<p>Turkish</p>
+<p>闭上眼睛，静静聆听片刻。每一个声音都在讲述一个故事，每一个故事都值得被倾听。无论你身在世界的哪个角落，我都很高兴你在这里。</p>
+<h2><a href="https://x.ai/news/new-flagship-voices#improved-naturalness-for-the-original-five">原有五个声音自然度提升</a></h2>
+<p>Ara、Eve、Leo、Rex 和 Sal 与新声音一起获得升级。它们用改进的配方重新训练，节奏、措辞与重音更自然。</p>
+<p>Rex</p>
+<p>Sal</p>
+<p>Ara</p>
+<p>Eve</p>
+<p>Leo</p>
+<p>Warm and friendly.</p>
+<p>要用这些新声音之一打造自定义语音智能体，请到 <a href="https://console.x.ai/team/default/voice/agents?campaign=new-voices-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=new-voices-blog">xAI console</a> 使用 <strong>Grok Voice Agent Builder</strong>。你也可以用约一分钟的音频<a href="https://docs.x.ai/developers/model-capabilities/audio/custom-voices?campaign=new-voices-blog">克隆你自己的声音</a>。</p>
+<p>Try It Free</p>
+<p>Try in Playground</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Voice Agent Builder</title>
@@ -230,6 +1968,51 @@
       <guid isPermaLink="true">https://x.ai/news/grok-voice-agent-builder</guid>
       <pubDate>Wed, 01 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing the Voice Agent Builder</description>
+      <content:encoded><![CDATA[<h1>介绍 Voice Agent Builder</h1>
+<p>不写一行代码，两分钟内创建个性化的语音智能体。</p>
+<p>Try It Free</p>
+<p>Explore Voice Agents</p>
+<p>今天，我们宣布 Voice Agent Builder 进入 beta：一个无代码平台，用于在 <a href="https://x.ai/news/grok-voice-think-fast-1">Grok Voice</a> 上配置生产级语音智能体。</p>
+<p>它面向需要高并发生产语音智能体、又不想从零搭建周边技术栈的运营者与开发者。开箱即得电话接入、知识检索、工具、护栏、MCP 和可观测性，全在一个地方。你也可以保留已有的东西：通过 SIP 带入现有号码，把工具接到你的 APIs 和 MCP 服务器，或通过 WebSocket 连接你自己的客户端。</p>
+<p>多数语音技术栈是把三个 API 缝合起来的——speech-to-text、语言模型、text-to-speech——而且每一段常常由不同供应商托管。每一次跳转都增加成本、延迟和新的故障模式。Voice Agent Builder 是一个统一界面，背后是为 Grok Voice 专门构建的 speech-to-speech 通路——与模型紧耦合，而不是三段拼装。</p>
+<p>0:00</p>
+<p>/</p>
+<p>0:00</p>
+<h2><a href="https://x.ai/news/grok-voice-agent-builder#trained-on-the-hardest-calls-we-could-find">用我们能找到的最难的通话来训练</a></h2>
+<p>真实通话伴随着低质量电话音频、背景噪音、重口音、插话，以及说话说到一半改主意的来电者。其背后的工作流含糊不清、横跨数十个工具，并可能发生在 25+ 种语言中的任一种里。</p>
+<p>我们就是在这些真实通话上训练 <a href="https://x.ai/news/grok-voice-think-fast-1">Grok Voice</a> 的。τ-voice Bench 在同样条件下衡量智能体。</p>
+<p>τ-voice Bench Leaderboard</p>
+<p>Grok Voice Think Fast 1.0</p>
+<p>67.3</p>
+<p>%</p>
+<p>Gemini 3.1 Flash Live</p>
+<p>43.8</p>
+<p>%</p>
+<p>GPT Realtime 1.5</p>
+<p>35.3</p>
+<p>%</p>
+<h2><a href="https://x.ai/news/grok-voice-agent-builder#two-minutes-to-an-agent">两分钟，一个智能体</a></h2>
+<p>设置很简单：用平实语言描述通话应如何流转，然后附上你的文档、工具和护栏。大约两分钟，从零到一个可工作的智能体。</p>
+<h3><a href="https://x.ai/news/grok-voice-agent-builder#teach-it-your-business">教会它你的业务</a></h3>
+<p>智能体始于一条描述通话应该如何进行的提示词。模型实时推理，因此能遵循冗长的指令、处理含糊的请求。</p>
+<p>它<em>知道</em>的内容来自<strong>知识库</strong>。你上传常见格式的文档（纯文本、Markdown、Word、PowerPoint、Excel、HTML、JSON 等），智能体在通话中从中检索。文档按 <strong>collections</strong> 组织，你可以把它们挂到一个或多个智能体上并跨智能体共享——让政策、产品规格和 runbook 集中在一处，而不是贴进每一条提示词。</p>
+<h3><a href="https://x.ai/news/grok-voice-agent-builder#take-action">付诸行动</a></h3>
+<p>懂业务只是客服或销售通话的一半。智能体还需要<strong>行动</strong>：查询、改记录、转接，或在对话结束后闭环。</p>
+<p><strong>Tools</strong> 和 <strong>connectors</strong> 就是实现方式。在预约线路上，智能体可以在 Google Calendar 或 Outlook Calendar 里排预约，然后通过你的邮件服务商发送确认。在客服场景，API 请求可以查询订单状态，或在你的系统里发起退款。当答案不只在你的文档里时，网页搜索或 X 搜索可以拉取最新的公开信息。工单可以在 Linear 或 Notion 中管理，文件可以来自 Google Drive 或 OneDrive。</p>
+<p>如果来电者需要真人，智能体可以把通话转给你的团队。任务完成后，它能利落地结束通话。全程它还会发送实时通知，让你的团队看到智能体做了什么、必要时随时介入。</p>
+<p>search_help_center</p>
+<p>transfer_to_human</p>
+<h3><a href="https://x.ai/news/grok-voice-agent-builder#give-it-a-voice-and-a-number">给它一个声音和一个号码</a></h3>
+<p>智能体可以使用任意内建声音，或用约两分钟音频制作的你品牌声音的克隆。每个账户包含一个免费号码——从第一次测试通话到生产流量皆可用的号码——直接 SIP 则可从任何主流 telephony 服务商接入现有号码。你也可以不用电话，直接在浏览器里测试改动。</p>
+<h3><a href="https://x.ai/news/grok-voice-agent-builder#review-the-calls">复盘通话</a></h3>
+<p>每通电话都会录制并转录。你可以回放音频、阅读转录文本、查看智能体用了哪些工具。护栏为智能体不该做的事设定限制，比如复述卡号或谈论剧本之外的话题。</p>
+<h2><a href="https://x.ai/news/grok-voice-agent-builder#what-it-costs">成本几何</a></h2>
+<p>我们相信定价应当简单透明。智能体按我们的 API 费率计费（目前为<a href="https://docs.x.ai/developers/pricing#voice-api-pricing">$0.08/分钟音频</a>），声音包含在内，不收单独的平台费。用免费分配的号码打电话，另加 $0.01/分钟。</p>
+<p>其他语音技术栈通常对每个组件单独计费（识别、推理、合成、平台），各有各的计量与价格。我们想要的，是少数几个可以乘上通话量的计量表，就这么简单。</p>
+<h2><a href="https://x.ai/news/grok-voice-agent-builder#try-it">试一试</a></h2>
+<p>语音智能体用耳朵判断比看基准更靠谱。搭一个，把你最难的工作流交给它，然后打个电话。</p>
+<p>Try It Free</p>
+<p>Explore Voice Agents</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 /goal 功能</title>
@@ -237,6 +2020,28 @@
       <guid isPermaLink="true">https://x.ai/news/introducing-goal</guid>
       <pubDate>Mon, 22 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing /goal</description>
+      <content:encoded><![CDATA[<h1>介绍 /goal</h1>
+<p>在 Grok Build 中用 /goal 进行长时间运行的自主任务执行。</p>
+<p>今天我们在 Grok Build 中引入 <code>/goal</code>。这一新模式带来长时、自主的执行，帮你把更大的实现任务移交给智能体。</p>
+<p>现已在 Grok Build 中提供。用一条命令安装并登录你的账户：</p>
+<h3>安装 Grok Build</h3>
+<p>Upgrade</p>
+<p>Introducing /goal</p>
+<p>多数编码会话需要来回的执行与验证。有了 <code>/goal</code>，智能体会持续推进直到任务完成并通过验证——无论那意味着审阅代码、检查网页还是执行脚本。</p>
+<h2><a href="https://x.ai/news/introducing-goal#set-a-goal-in-one-line">一行设定目标</a></h2>
+<p>给 <code>/goal</code> 一个目标，剩下的交给 Grok Build：</p>
+<pre><code>/goal Migrate the auth module to the new API</code></pre>
+<p>bash</p>
+<p>它会规划方案、把工作拆成进度清单，然后开始执行。工作期间你可以继续给智能体补充指令。</p>
+<p>新模式还提供用于监控和引导长时任务的额外命令：</p>
+<pre><code>/goal status     # see the live progress panel
+/goal pause      # stop work, keep the goal
+/goal resume     # pick back up
+/goal clear      # drop the goal entirely</code></pre>
+<p>bash</p>
+<p>目标完成时，面板翻转为 <strong>Complete</strong>，清单上的每一项都已打勾。</p>
+<h2><a href="https://x.ai/news/introducing-goal#getting-started">开始使用</a></h2>
+<p>用上面的命令安装 Grok Build，然后调用 <code>/goal</code>，移交你的第一个长时任务。</p>]]></content:encoded>
     </item>
     <item>
       <title>Databricks 上的 Grok</title>
@@ -244,6 +2049,13 @@
       <guid isPermaLink="true">https://x.ai/news/grok-databricks</guid>
       <pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok on Databricks</description>
+      <content:encoded><![CDATA[<h1>Grok on Databricks</h1>
+<p>Grok 模型现已在 Databricks Agent Bricks 上可用。</p>
+<p>我们很高兴分享：Grok 模型现已原生支持 Databricks Agent Bricks——Databricks 的开发者智能体平台。</p>
+<p>作为 Databricks 2026 Data + AI Summit 的一部分，Databricks 正与 SpaceXAI 合作，让 Grok 与其他前沿及开源模型一起，在一个统一、可治理的平台上可用。</p>
+<p>Agent Bricks 把源自 Lakehouse 数据的上下文（context）与控制和选择连接起来，让工程团队能够高效构建在海量数据上运行的 AI 智能体。</p>
+<p>与 <a href="https://x.ai/news/grok-amazon-bedrock">Grok on Amazon Bedrock</a> 一起，企业有了更多方式在数据所在之地运行 SpaceXAI 模型。</p>
+<p>有关 Agent Bricks 的更多信息，参见 <a href="https://www.databricks.com/blog/agent-bricks-dais-2026">Databricks 公告</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>适用于 Word 的 Grok 加载项</title>
@@ -251,6 +2063,53 @@
       <guid isPermaLink="true">https://x.ai/news/introducing-word-addin</guid>
       <pubDate>Thu, 18 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok for Word</description>
+      <content:encoded><![CDATA[<h1>Grok for Word</h1>
+<p>使用 Grok 的 Microsoft Word 加载项，把笔记变成文档、给作品排版美化，或把来自网页的调研带进 Word。</p>
+<p>Add to Word</p>
+<p>Try Grok</p>
+<p><strong>今天，我们把 Grok 带进 Microsoft Word。</strong> 安装加载项，就能把提示词变成段落、把网页调研带进文档，或为清晰与简洁重写文字。</p>
+<p>AutoSave</p>
+<p>Onboarding Guide.docx</p>
+<p>Search</p>
+<p>Home</p>
+<p>Insert</p>
+<p>Draw</p>
+<p>Layout</p>
+<p>References</p>
+<p>Review</p>
+<p>View</p>
+<p>Comments</p>
+<p>Share</p>
+<p>Aptos (Body)</p>
+<p>12</p>
+<p>B</p>
+<p>I</p>
+<p>U</p>
+<p>AaBbCc</p>
+<p>Normal</p>
+<p>AaBbCc</p>
+<p>Heading 1</p>
+<p>AaBbCc</p>
+<p>Title</p>
+<p>Add-ins</p>
+<p>Grok</p>
+<p>// scattered notes — onboarding doc v0</p>
+<p>welcome new hires — need accounts set up day one (sso, email, slack)</p>
+<p>first week: meet the team, laptop setup, security training, 1:1 with manager</p>
+<p>tools — figma, linear, github, notion. request access through the IT portal</p>
+<p>key contacts: manager, onboarding buddy, people ops, IT helpdesk</p>
+<p>benefits enrollment closes after 30 days!! don't miss this</p>
+<p>office tour + lunch spots, badge pickup at front desk (bring ID)</p>
+<p>compliance: code of conduct ack, security training, data handling</p>
+<p>probation review at 90 days — calendar invite from manager</p>
+<p>Page 1 of 4 · 1,284 words · English (US)</p>
+<p>100%</p>
+<h2><a href="https://x.ai/news/introducing-word-addin#transform-notes-to-structured-documents">把笔记变成结构化文档</a></h2>
+<p>把最初的一堆笔记作为提示发给 Grok，改写成结构化的长文。或者让 Grok 写出提案、参考资料或指南的初稿。加载项同样擅长修正语法、为清晰度重写，以及统一多位作者的写作风格。</p>
+<h3><a href="https://x.ai/news/introducing-word-addin#bring-research-and-data-into-grok">把调研与数据带进来</a></h3>
+<p>用这个 Word 加载项搜索网页，把调研或数据带进文档。Grok 还能搜索 X，甚至为文档生成图示。加载项也能利用<a href="https://grok.com/connectors">连接器</a>：让它根据最近的邮件，或你 SharePoint、Google Drive 里的文件起草。</p>
+<h2><a href="https://x.ai/news/introducing-word-addin#get-started">开始使用</a></h2>
+<p>Grok for Word 是免费的 Microsoft 365 加载项。<a href="https://marketplace.microsoft.com/en-us/product/office/WA200011055?tab=Overview">从 Microsoft Marketplace 添加</a>，即可在文档里直接与 Grok 协作。<a href="https://x.ai/grok/powerpoint">PowerPoint</a> 和 <a href="https://x.ai/grok/excel">Excel</a> 版本同样提供。</p>]]></content:encoded>
     </item>
     <item>
       <title>Amazon Bedrock 上的 Grok</title>
@@ -258,12 +2117,103 @@
       <guid isPermaLink="true">https://x.ai/news/grok-amazon-bedrock</guid>
       <pubDate>Wed, 17 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok on Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h1>Grok on Amazon Bedrock</h1>
+<p>Grok 模型现已通过 Amazon Bedrock 提供。</p>
+<p>今天，我们兴奋地宣布 Grok 4.3 在 Amazon Bedrock 上正式全面可用（generally available）。</p>
+<p>Grok 4.3 实现了前沿模型中最低的幻觉率，提供 100 万 tokens 上下文窗口，并支持可配置的推理强度（none、low、medium、high）。现在，Amazon Bedrock 用户可以通过 Bedrock 安全可靠的推理引擎使用这一模型。</p>
+<h2><a href="https://x.ai/news/grok-amazon-bedrock#leading-performance-in-enterprise">企业场景的领先性能</a></h2>
+<p>Grok 4.3 是当前构建企业级 AI 智能体最强的模型之一：</p>
+<ul><li>在 Artificial Analysis Omniscience 基准<em>上排名第一</em>，在前沿模型中实现最低幻觉率。</li><li>在 Artificial Analysis Tau2 Telecom 基准<em>上排名第一</em>，该基准评估客户支持智能体场景中的真实工具调用性能。</li><li>在 Vals AI Case Law 与 Corporate Finance 基准上排名第一，这些基准衡量 Grok 在复杂文档理解任务上的能力。</li></ul>
+<p>\* 与主要前沿实验室比较</p>
+<h2><a href="https://x.ai/news/grok-amazon-bedrock#capabilities--pricing">能力与定价</a></h2>
+<p>Grok 4.3 位于&quot;智能 vs 成本&quot;的帕累托前沿，每一美元带来的智能是其他前沿模型的 2-10 倍。</p>
+<ul><li><strong>输入</strong>：每 100 万 tokens $1.25</li><li><strong>输出</strong>：每 100 万 tokens $2.50</li></ul>
+<p>它拥有 100 万 tokens 上下文窗口，可以轻松处理超长文档和代码库。开发者还可以配置推理：简单请求用 <code>none</code> 追求最高速度，或用 <code>low</code> / <code>medium</code> / <code>high</code> 让推理强度随问题难度伸缩。</p>
+<h2><a href="https://x.ai/news/grok-amazon-bedrock#build-with-grok-43-on-amazon-bedrock">在 Amazon Bedrock 上用 Grok 4.3 构建</a></h2>
+<p>Grok 4.3 现已向<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-xai-grok-4-3.html#model-card-xai-grok-4-3-programmatic-access">受支持 AWS 区域</a>的所有开发者开放。</p>
+<pre><code>curl https://bedrock-mantle.us-west-2.api.aws/openai/v1/responses \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer $BEDROCK_API_KEY&quot; \
+  -d '{
+    &quot;model&quot;: &quot;grok-4.3&quot;,
+    &quot;input&quot;: &quot;What is the meaning of life?&quot;,
+    &quot;reasoning&quot;: {
+        &quot;effort&quot;: &quot;low&quot;
+    },
+    &quot;include&quot;: [&quot;reasoning.encrypted_content&quot;]
+  }'</code></pre>
+<p>bash</p>
+<p>要开始使用，请访问 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-xai-grok-4-3.html#model-card-xai-grok-4-3-sample-code">Grok on Amazon Bedrock 文档</a>。我们期待看到你的作品！</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok Imagine Video 1.5</title>
       <link>https://x.ai/news/grok-imagine-video-1-5</link>
       <guid isPermaLink="true">https://x.ai/news/grok-imagine-video-1-5</guid>
       <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Grok Imagine Video 1.5</h1>
+<p>更高品质，更快速度。</p>
+<p>Try it on Grok</p>
+<p>Try it on API</p>
+<p>Grok Imagine Video 1.5 现已在 <a href="https://console.x.ai/team/default/video?flow=explore&amp;campaign=imagine-video-1-5-blog&amp;utm_source=website&amp;utm_medium=referral&amp;utm_campaign=imagine-video-1-5-blog">Imagine API</a> 正式全面可用。我们还把 Video 1.5 Fast 推送到了 <a href="https://grok.com/imagine?referrer=website&amp;campaign=imagine-video-1-5-blog">grok.com/imagine</a> 以及 <a href="https://apps.apple.com/app/grok-ai-chat-video/id6670324846">iOS</a> 和 <a href="https://play.google.com/store/apps/details?id=ai.x.grok">Android</a> 应用。这是我们迄今最好的图生视频模型：更好的运动、更好的物理、更好的音频，以及最快的速度。我们还新增功能，强化 Grok Imagine 中的创作工作流。</p>
+<p>与上一代模型相比，1.5 在真实创作工作在乎的每个维度上全面提升：</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5#audio-and-speech">音频与语音</a></h2>
+<p>音效、环境声与对白在同一次生成中产出，并精准落在动作上。语音更清晰、同步更好。</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5#motion-and-physics">运动与物理</a></h2>
+<p>在整段时长内动作保持连贯——更少扭曲，重量感与动量更可信。</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5#speed">速度</a></h2>
+<p>Grok Imagine Video 1.5 Fast 把生成速度近乎翻倍：产出 6 秒、720p 视频约需 25 秒，而我们的上一代模型需要 40 多秒。</p>
+<p>0</p>
+<p>s</p>
+<p>Previous model</p>
+<p>0</p>
+<p>s</p>
+<p>Grok Imagine Video 1.5</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5#behind-the-scenes---odyssey">幕后 - Odyssey</a></h2>
+<p>看看 David Thompson（<a href="https://x.com/heavypulp">@heavypulp</a>）如何完全用 Grok Imagine 1.5 打造一支堪比大银幕的预告片：</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5#enhanced-productivity">生产力增强</a></h2>
+<p>随 Imagine Video 1.5 一起，我们将在未来几天推出多项新功能，改进你的创作工作流：</p>
+<h3><a href="https://x.ai/news/grok-imagine-video-1-5#projects">项目（Projects）</a></h3>
+<p>把你的作品组织成显示在左侧边栏的项目。</p>
+<p>0:00</p>
+<p>/</p>
+<p>0:00</p>
+<h3><a href="https://x.ai/news/grok-imagine-video-1-5#multiple-agents">多智能体并行</a></h3>
+<p>在你的项目上并行启动多个智能体。不必等一次生成结束再开始下一次，你可以同时跑多条提示，让它们各自为你干活。</p>
+<p>0:00</p>
+<p>/</p>
+<p>0:00</p>
+<h3><a href="https://x.ai/news/grok-imagine-video-1-5#search">搜索</a></h3>
+<p>通过搜索你的素材库，找到你做过的任何图片或视频——不必再翻屏找那个片段。</p>
+<p>0:00</p>
+<p>/</p>
+<p>0:00</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5#now-out-of-preview-in-the-api">API 中正式走出预览</a></h2>
+<p>Imagine Video 1.5 已结束预览，以 <code>grok-imagine-video-1.5</code> 在 <a href="https://docs.x.ai/developers/model-capabilities/video/generation">xAI API</a> 正式全面可用。给它一张起始图像，描述运动，选择分辨率和时长即可。</p>
+<pre><code>import os
+import xai_sdk
+
+client = xai_sdk.Client(api_key=os.getenv(&quot;XAI_API_KEY&quot;))
+
+response = client.video.generate(
+    prompt=&quot;Slow cinematic push-in as embers drift across the battlefield and the helmet's crest stirs in the wind&quot;,
+    model=&quot;grok-imagine-video-1.5&quot;,
+    image_url=&quot;https://your-host.com/helmet.jpg&quot;,
+    duration=10,
+    resolution=&quot;720p&quot;,
+)
+
+print(response.url)</code></pre>
+<p>python</p>
+<h2><a href="https://x.ai/news/grok-imagine-video-1-5#try-it-today">今天就来体验</a></h2>
+<p>我们迫不及待想看到你的作品。</p>
+<p>Open</p>
+<p>Grok.com</p>
+<p>Build</p>
+<p>Imagine API</p>
+<p>Open</p>
+<p>Grok on iOS</p>
+<p>Open</p>
+<p>Grok on Android</p>]]></content:encoded>
     </item>
     <item>
       <title>PowerPoint 版 Grok</title>
@@ -271,6 +2221,18 @@
       <guid isPermaLink="true">https://x.ai/news/introducing-powerpoint-addin</guid>
       <pubDate>Tue, 16 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok for PowerPoint</description>
+      <content:encoded><![CDATA[<h1>Grok for PowerPoint</h1>
+<p>Grok 现在可以在 Microsoft PowerPoint 内部工作——把提纲变成幻灯片、扩充演示文稿、打磨叙事——全程不离开应用。</p>
+<p>Add to PowerPoint</p>
+<p>Try Grok</p>
+<p><strong>今天，我们把 Grok 带进 Microsoft PowerPoint。</strong> 在 deck 旁边使用这个加载项，让 Grok 帮你调研、写作、打磨幻灯片。</p>
+<p>Introducing Grok for PowerPoint</p>
+<h2><a href="https://x.ai/news/introducing-powerpoint-addin#go-from-prompts-to-powerpoints">从提示词到 PPT</a></h2>
+<p>把提纲分享给 Grok，生成完整的幻灯片——附带来自网页或 X 搜索的调研、图示，甚至有图片。或者与 Grok 协作添加单页幻灯片、应用样式与主题，或用一条指令重组章节。Grok 会回来向你提出澄清问题。</p>
+<h3><a href="https://x.ai/news/introducing-powerpoint-addin#research-writing-and-styling">调研、写作与样式</a></h3>
+<p>Grok 能帮你改进样式、收紧幻灯片叙事，甚至从网上搜索最新信息。加载项还能利用你的 <a href="https://grok.com/connectors">Grok 连接器</a>——让它根据最近的邮件，或你 SharePoint、Google Drive 里的文件来写幻灯片。</p>
+<h2><a href="https://x.ai/news/introducing-powerpoint-addin#get-started">开始使用</a></h2>
+<p>Grok for PowerPoint 是免费的 Microsoft 365 加载项。<a href="https://marketplace.microsoft.com/en-us/product/office/WA200011057?tab=Overview">从 Microsoft Marketplace 添加</a>，即可在你的演示文稿里直接与 Grok 协作。<a href="https://x.ai/grok/word">Word</a> 和 <a href="https://x.ai/grok/excel">Excel</a> 版本同样提供。</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok Build 中的智能体仪表板</title>
@@ -278,6 +2240,150 @@
       <guid isPermaLink="true">https://x.ai/news/agent-dashboard</guid>
       <pubDate>Mon, 15 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Agent Dashboard in Grok Build</description>
+      <content:encoded><![CDATA[<h1>Grok Build 中的 Agent Dashboard</h1>
+<p>同时管理多个编码会话。查看每个会话在做什么，回复需要你介入的会话，并派发新的任务。</p>
+<p>Agent Dashboard 把所有 Grok Build 会话集中在一屏。你可以看到每个会话在做什么、让它们并行运行，只在需要输入时才介入。</p>
+<p>在 shell 中运行 <code>grok dashboard</code>，或在任意会话内运行 <code>/dashboard</code>（<code>Ctrl+\</code>）。</p>
+<h3>安装 Grok Build</h3>
+<p>Agents</p>
+<p>3</p>
+<p>⋅</p>
+<p>2 working</p>
+<p>│</p>
+<p>◇</p>
+<p>1 idle</p>
+<p>│</p>
+<p>[+ New Agent]</p>
+<p>Working</p>
+<p>2</p>
+<p>⋅</p>
+<p>Add rate limiting to the public API</p>
+<p>·</p>
+<p>main</p>
+<p>·</p>
+<p>auto-approve</p>
+<p>just now</p>
+<p>Thinking</p>
+<p>⋅</p>
+<p>Investigate the flaky checkout test</p>
+<p>·</p>
+<p>main</p>
+<p>·</p>
+<p>auto-approve</p>
+<p>just now</p>
+<p>Running: cargo test --workspace</p>
+<p>Idle</p>
+<p>1</p>
+<p>◇</p>
+<p>session 019e7f5f</p>
+<p>·</p>
+<p>main</p>
+<p>·</p>
+<p>auto-approve</p>
+<p>1m</p>
+<p>❯</p>
+<p>dispatch a new session…</p>
+<p>↑/↓</p>
+<p>:</p>
+<p>nav</p>
+<p>│</p>
+<p>Enter</p>
+<p>:</p>
+<p>create</p>
+<p>│</p>
+<p>Tab</p>
+<p>:</p>
+<p>list</p>
+<p>│</p>
+<p>Ctrl+.</p>
+<p>:</p>
+<p>shortcuts</p>
+<h2><a href="https://x.ai/news/agent-dashboard#see-every-session-at-a-glance">一屏总览所有会话</a></h2>
+<p>Dashboard 按状态对会话排序，把一切等待输入的条目拉到最顶部，让你先处理阻塞项，其余的继续运行。快速扫一眼就能看到每个会话在做什么、已经运行多久，无需打开任何会话就能掌握全局。</p>
+<p>会话分散在多个仓库？用 <code>Ctrl+S</code> 按工作目录分组。子代理（subagent）会归拢在启动它的会话之下，因此列表展示的是你派发的工作，而不是其下的展开层级。</p>
+<h2><a href="https://x.ai/news/agent-dashboard#peek-and-reply">Peek 与回复</a></h2>
+<p>选中某一行，即可在不离开 dashboard 的情况下查看它的最新输出，并直接在那里回复。空闲会话会立即发送消息；活跃会话则把你的消息排队，等当前回合结束后处理。</p>
+<p>当会话请求批准或提出问题时，它的选项会内联显示。用方向键或数字键作答即可继续。多段式问题会逐条送达。</p>
+<p>Agents</p>
+<p>3</p>
+<p>◆</p>
+<p>1 awaiting</p>
+<p>│</p>
+<p>⋅</p>
+<p>1 working</p>
+<p>│</p>
+<p>◇</p>
+<p>1 idle</p>
+<p>│</p>
+<p>[+ New Agent]</p>
+<p>Awaiting</p>
+<p>1</p>
+<p>◆</p>
+<p>Add rate limiting to the public API</p>
+<p>·</p>
+<p>main</p>
+<p>·</p>
+<p>auto-approve</p>
+<p>just now</p>
+<p>Pending: question</p>
+<p>Working</p>
+<p>1</p>
+<p>⋅</p>
+<p>Investigate the flaky checkout test</p>
+<p>·</p>
+<p>main</p>
+<p>·</p>
+<p>auto-approve</p>
+<p>1m</p>
+<p>Running: cargo test --workspace</p>
+<p>Idle</p>
+<p>1</p>
+<p>◇</p>
+<p>session 019e7f5f</p>
+<p>·</p>
+<p>main</p>
+<p>·</p>
+<p>auto-approve</p>
+<p>3m</p>
+<p>▸</p>
+<p>Where should the rate limiter store counters? Pick one (or Other to type your own):</p>
+<p>▸</p>
+<p>1</p>
+<p>.</p>
+<p>Redis, sliding window</p>
+<p>2</p>
+<p>.</p>
+<p>In-memory, per instance</p>
+<p>3</p>
+<p>.</p>
+<p>Postgres</p>
+<p>4</p>
+<p>.</p>
+<p>Memcached</p>
+<p>5</p>
+<p>.</p>
+<p>Other (type your own answer)</p>
+<p>↑/↓</p>
+<p>:</p>
+<p>select</p>
+<p>│</p>
+<p>Enter</p>
+<p>:</p>
+<p>answer</p>
+<p>│</p>
+<p>Esc</p>
+<p>:</p>
+<p>back</p>
+<p>│</p>
+<p>Ctrl+.</p>
+<p>:</p>
+<p>shortcuts</p>
+<h2><a href="https://x.ai/news/agent-dashboard#dispatch-new-sessions">派发新会话</a></h2>
+<p>底部的输入框用于启动新会话。按 <code>Enter</code> 派发后仍留在 dashboard；按 <code>Shift+Enter</code> 则派发并立即打开。发送前可以设置模型、以 plan mode 启动，或让会话自行批准它的编辑。</p>
+<h2><a href="https://x.ai/news/agent-dashboard#take-over-any-session">接管任意会话</a></h2>
+<p>打开任意会话即可接管它的完整对话。无需返回列表就能切换到下一个或上一个会话，结束后再回到 dashboard。关闭 dashboard 时所有会话都仍在运行，重新打开时它们全都在那里。</p>
+<h2><a href="https://x.ai/news/agent-dashboard#get-started">开始使用</a></h2>
+<p>Agent Dashboard 随 Grok Build 一同发布。用一条命令安装，然后运行 <code>grok dashboard</code>，或在已打开的任意会话中运行 <code>/dashboard</code>。</p>]]></content:encoded>
     </item>
     <item>
       <title>在 Warp 中使用 Grok</title>
@@ -285,6 +2391,13 @@
       <guid isPermaLink="true">https://x.ai/news/grok-warp</guid>
       <pubDate>Mon, 15 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Use Grok in Warp</description>
+      <content:encoded><![CDATA[<h1>在 Warp 中使用 Grok</h1>
+<p>在你的 Grok 和 X Premium 订阅基础上使用 Warp。</p>
+<p>你现在可以在 <a href="https://www.warp.dev/">Warp</a> 内使用你的 Grok 或 X Premium 订阅——这是一个构建于终端之上的智能体开发环境，被近一百万开发者使用。</p>
+<p>你现有的订阅即可访问 Grok 模型，包括为 <a href="https://x.ai/build">Grok Build</a> 提供动力的 <code>grok-build-0.1</code>。</p>
+<h2><a href="https://x.ai/news/grok-warp#setup">设置</a></h2>
+<ul><li>从 <a href="https://www.warp.dev/download">warp.dev/download</a> 下载 Warp 并打开。</li><li>进入 &quot;Agent &gt; Warp Agent&quot; 设置页，点击 &quot;Connect SuperGrok subscription&quot;</li><li>切换到 <code>grok-build-0.1</code> 模型，开始提问。</li></ul>
+<p>就这么简单！更多智能体与集成将很快面向 SuperGrok 和 X Premium 订阅用户到来。订阅请访问<a href="https://x.ai/pricing">定价页</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok Build 插件市场</title>
@@ -292,6 +2405,23 @@
       <guid isPermaLink="true">https://x.ai/news/grok-plugin-marketplace</guid>
       <pubDate>Thu, 11 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok Build Plugin Marketplace</description>
+      <content:encoded><![CDATA[<h1>Grok Build 插件市场</h1>
+<p>推出 Grok Build 内建插件市场。</p>
+<p>今天我们推出 <a href="https://github.com/xai-org/plugin-marketplace">Grok Build Plugin Marketplace</a>——一套为 <a href="https://x.ai/build">Grok Build</a> 内建的插件。</p>
+<p>一个插件把 <a href="https://x.ai/news/grok-skills">skills</a>、斜杠命令、agent、hooks、MCP 服务器和 LSP 打包成一个可安装的套件。市场内建于 Grok Build，你可以不离开终端就浏览、安装和更新插件。</p>
+<h2><a href="https://x.ai/news/grok-plugin-marketplace#available-at-launch">上线即可用</a></h2>
+<p>市场首发汇聚了全栈各层的伙伴插件：</p>
+<ul><li><strong><a href="https://www.mongodb.com/docs/mcp-server/overview/">MongoDB</a></strong> — 探索数据、管理集合、优化查询。</li><li><strong><a href="https://github.com/vercel/vercel-plugin">Vercel</a></strong> — 管理部署、查看构建状态、配置域名。</li><li><strong><a href="https://github.com/getsentry/sentry-for-ai">Sentry</a></strong> — 分析堆栈跟踪、调试生产环境错误。</li><li><strong><a href="https://github.com/ChromeDevTools/chrome-devtools-mcp">Chrome DevTools</a></strong> — 控制实时浏览器、录制性能轨迹、检查网络请求。</li><li><strong><a href="https://github.com/cloudflare/skills">Cloudflare</a></strong> — 面向 Workers、Durable Objects 等的 Skills。</li><li><strong><a href="https://github.com/obra/superpowers">Superpowers</a></strong> — 流行的智能体驱动工作流。</li></ul>
+<h2><a href="https://x.ai/news/grok-plugin-marketplace#install-in-seconds">秒装</a></h2>
+<p>在 Grok Build 内输入 <code>/marketplace</code> 浏览目录，按 <code>i</code> 安装插件。或者从终端：</p>
+<pre><code>grok plugin marketplace list
+grok plugin install &lt;name&gt; --trust</code></pre>
+<p>bash</p>
+<p>目录中的每个远程插件都钉在特定的 commit SHA 上，Grok Build 会在安装时校验该钉。</p>
+<h2><a href="https://x.ai/news/grok-plugin-marketplace#publish-your-own">发布你自己的插件</a></h2>
+<p>市场是开放的目录。如果你做了一个想分享的插件，向 <a href="https://github.com/xai-org/plugin-marketplace">xai-org/plugin-marketplace</a> 提交 pull request 即可。</p>
+<h2><a href="https://x.ai/news/grok-plugin-marketplace#getting-started">开始使用</a></h2>
+<p>初用 Grok Build？访问 <a href="https://x.ai/build">x.ai/build</a> 开始。</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok Imagine 1.5 预览版</title>
@@ -299,6 +2429,31 @@
       <guid isPermaLink="true">https://x.ai/news/grok-imagine-1-5</guid>
       <pubDate>Wed, 03 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok Imagine 1.5 Preview</description>
+      <content:encoded><![CDATA[<h1>Grok Imagine 1.5 预览版</h1>
+<p><code>grok-imagine-video-1.5-preview</code>——我们最新的图生视频模型——现已通过 xAI API 以预览形式提供。</p>
+<p>Create API key</p>
+<p>我们最新的图生视频模型 <code>grok-imagine-video-1.5-preview</code> 现已通过 xAI API 以预览形式提供。</p>
+<p><code>grok-imagine-video-1.5-preview</code> 把一张静态图像变成流畅、有电影感的视频。给它一个起始画面和一段描述运动的提示词，它就会让场景动起来——包括镜头运动、氛围和物理效果——同时忠实于你的源图像。你最高可以生成 720p 的片段。</p>
+<p>Your browser does not support the video tag.</p>
+<p>用自然语言提示词指导镜头。描述镜头运动、节奏和声音设计，然后设定分辨率与片段时长。模型会保持输入画面的细节与光照，因此成品是原图的延续，而非重新诠释。</p>
+<p>该模型同样擅长连续镜头。逐帧设计、逐帧动画化，再把一个个镜头串成更长的场景，让整个项目保持一致的视觉风格。</p>
+<p>Your browser does not support the video tag.</p>
+<p>几行代码即可让图像动起来。</p>
+<pre><code>import os
+import xai_sdk
+
+client = xai_sdk.Client(api_key=os.getenv(&quot;XAI_API_KEY&quot;))
+
+response = client.video.generate(
+    prompt=&quot;Slow cinematic push-in as embers drift across the battlefield and the helmet's crest stirs in the wind&quot;,
+    model=&quot;grok-imagine-video-1.5-preview&quot;,
+    image_url=&quot;https://your-host.com/helmet.jpg&quot;,
+    duration=10,
+    resolution=&quot;720p&quot;,
+)
+
+print(response.url)</code></pre>
+<p>python</p>]]></content:encoded>
     </item>
     <item>
       <title>Composer 2.5 现已登陆 Grok Build</title>
@@ -306,6 +2461,34 @@
       <guid isPermaLink="true">https://x.ai/news/composer-2-5</guid>
       <pubDate>Mon, 01 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Composer 2.5</description>
+      <content:encoded><![CDATA[<h1>Composer 2.5</h1>
+<p>Composer 2.5 现已在 Grok Build 中上线。从 /models 菜单即可试用。</p>
+<p>免费开放试用</p>
+<p>Composer 2.5 现已在 Grok Build 中上线。Composer 2.5 是一款快速、处于顶尖水平（state-of-the-art）的模型，擅长长时间运行的任务以及遵循复杂指令。</p>
+<p>❯</p>
+<p>Grok Build (current)</p>
+<p>xAI's latest coding model</p>
+<p>❯</p>
+<p>Composer 2.5</p>
+<p>Fast and intelligent</p>
+<p>❯</p>
+<p>/model</p>
+<p>&lt;model&gt; [effort]</p>
+<p>Grok Build</p>
+<p>·</p>
+<p>always-approve</p>
+<p>Enter</p>
+<p>:</p>
+<p>select</p>
+<p>│</p>
+<p>↑↓</p>
+<p>:</p>
+<p>navigate</p>
+<p>│</p>
+<p>Esc</p>
+<p>:</p>
+<p>close</p>
+<p>输入 <code>/model</code> 然后在菜单中选择 Composer 2.5 即可试用。</p>]]></content:encoded>
     </item>
     <item>
       <title>Grok Build 0.1 登陆 API</title>
@@ -313,6 +2496,27 @@
       <guid isPermaLink="true">https://x.ai/news/grok-build-0-1</guid>
       <pubDate>Fri, 29 May 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok Build 0.1 on API</description>
+      <content:encoded><![CDATA[<h1>Grok Build 0.1 上线 API</h1>
+<p>Grok Build 0.1——我们最快的编码模型——现已通过 xAI API 公开测试。</p>
+<p>Try it now</p>
+<p>Create API key</p>
+<p>我们的最新编码模型 <code>grok-build-0.1</code> 现已通过 xAI API 公开测试。</p>
+<p><code>grok-build-0.1</code> 是专为智能体编码任务训练的编码模型，包括 Web 开发、调试和 MCP 支持。它就是为 <a href="https://docs.x.ai/build/overview#getting-started">Grok Build</a> 提供动力的同一个模型。</p>
+<p>该模型以极速的 100+ tokens/秒提供服务，定价为每百万输入 tokens $1、每百万输出 tokens $2。在编码之外，它也是通用智能体与工具调用用例下一个快速、经济的选择。</p>
+<pre><code>curl https://api.x.ai/v1/responses \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer $XAI_API_KEY&quot; \
+  -d '{
+    &quot;model&quot;: &quot;grok-build-0.1&quot;,
+    &quot;input&quot;: [
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: &quot;Generate a clean, tasteful, and minimalist personal website design with elegant typography&quot;
+        }
+    ]
+}'</code></pre>
+<p>bash</p>
+<p><code>grok-build-0.1</code> 在智能体 harness 中表现最佳，例如 <a href="https://docs.x.ai/build/overview">Grok Build</a>、Cursor、<a href="https://x.ai/news/grok-hermes">Hermes Agent</a>、<a href="https://x.ai/news/grok-openclaw">OpenClaw</a>、<a href="https://x.ai/news/grok-kilocode">Kilo Code</a> 或 <a href="https://x.ai/news/grok-opencode">OpenCode</a>。它也可通过 <a href="https://openrouter.ai/x-ai/grok-build-0.1">OpenRouter</a> 和 <a href="https://vercel.com/changelog/grok-build-0-1-now-available-on-vercel-ai-gateway">Vercel AI Gateway</a> 使用。</p>]]></content:encoded>
     </item>
     <item>
       <title>在 Kilo Code 中使用 Grok</title>
@@ -320,6 +2524,22 @@
       <guid isPermaLink="true">https://x.ai/news/grok-kilocode</guid>
       <pubDate>Wed, 27 May 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Use Grok in Kilo Code</description>
+      <content:encoded><![CDATA[<h1>在 Kilo Code 中使用 Grok</h1>
+<p>在你的 SuperGrok 或 X Premium+ 订阅基础上，使用开源智能体编码平台 Kilo Code。</p>
+<p>从今天起，你可以直接在 <a href="https://kilo.ai/">Kilo Code</a> 内使用你的 Grok 订阅。</p>
+<p>Kilo Code 是面向 VS Code、JetBrains IDE 和终端的开源智能体工程平台。它为规划、编码、调试和编排提供专门模式，并具备强大的工具使用、浏览器自动化、MCP 扩展能力和 500+ 模型支持。Kilo 为真实软件工程工作流与智能体用例而设计。</p>
+<p>用你的 X Premium+ 或 SuperGrok 订阅，连接 Grok 账户即可在 Kilo Code 内使用最新的 Grok 模型——包括用于智能体编码的 Grok Build——无需单独的 API key。</p>
+<h2><a href="https://x.ai/news/grok-kilocode#setup">设置</a></h2>
+<p>Kilo Code 提供 IDE 扩展、CLI 和网页端。要连接你的 xAI 账户，请按以下说明操作：</p>
+<p><strong>VS Code：</strong></p>
+<ul><li>从 VS Code Marketplace 安装 <a href="https://marketplace.visualstudio.com/items?itemName=kilocode.Kilo-Code">Kilo Code</a>。</li><li>打开 <strong>Settings</strong>（齿轮图标），进入 <strong>Providers</strong> 标签页。</li><li>点击 <strong>Show more providers</strong>，然后搜索或选择 <strong>xAI</strong>。</li><li>选择 <strong>xAI Grok OAuth (SuperGrok Subscription)</strong> 登录项，在浏览器中完成 OAuth 流程。</li></ul>
+<p>在无头或远程环境（VPS、SSH、Docker、WSL）中，请改选 <strong>xAI Grok OAuth (Headless / Remote / VPS)</strong>。</p>
+<p><strong>CLI：</strong></p>
+<pre><code>npm install -g @kilocode/cli</code></pre>
+<p>bash</p>
+<p>在你的项目目录运行 <code>kilo</code>，用 <code>/connect</code> 命令添加 xAI。</p>
+<p>更多细节见 <a href="https://kilo.ai/docs/ai-providers/xai">Kilo Code xAI provider 文档</a>。</p>
+<p>更多开源智能体与集成即将到来。</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Grok Build</title>
@@ -327,6 +2547,158 @@
       <guid isPermaLink="true">https://x.ai/news/grok-build-cli</guid>
       <pubDate>Mon, 25 May 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok Build</description>
+      <content:encoded><![CDATA[<h1>介绍 Grok Build</h1>
+<p>现已面向所有 SuperGrok 与 X Premium Plus 订阅用户开放早期 beta——Grok Build 是一个直接从你的终端运行的全新编码智能体。</p>
+<p>今天我们发布 Grok Build 的早期 beta——一款面向专业软件工程和复杂编码工作的强大新编码智能体。</p>
+<p>所有 SuperGrok 与 X Premium Plus 订阅用户即刻可用。用一条命令安装 Grok Build 并登录你的账户：</p>
+<h3>安装 Grok Build</h3>
+<p>Upgrade</p>
+<p>~/Documents/GitHub/xai</p>
+<p>|</p>
+<p>4.2%</p>
+<p>|</p>
+<p>◆</p>
+<p>Thought for</p>
+<p>3.8s</p>
+<p>Enter</p>
+<p>:</p>
+<p>run</p>
+<p>│</p>
+<p>Esc</p>
+<p>:</p>
+<p>reset</p>
+<p>│</p>
+<p>Tab</p>
+<p>:</p>
+<p>next example</p>
+<p>│</p>
+<p>Type</p>
+<p>:</p>
+<p>custom command</p>
+<h2><a href="https://x.ai/news/grok-build-cli#plan-review-approve">规划、审阅、批准</a></h2>
+<p>面对复杂任务，用 plan mode 启动 Grok Build。在开始执行前，你可以批准计划、评论单个步骤，或彻底重写它。计划一旦获批，每一处改动都以干净的 diff 呈现。</p>
+<p>~/Documents/GitHub/xai</p>
+<p>|</p>
+<p>3.91%</p>
+<p>|</p>
+<p>❯</p>
+<p>tighten install docs for headless mode</p>
+<p>◆</p>
+<p>Edit</p>
+<p>docs/install.md</p>
+<p>plan.md</p>
+<p>1</p>
+<p>Install Docs Refresh Plan</p>
+<p>2</p>
+<p>Quick Assessment</p>
+<p>3</p>
+<p>• docs/install.md skips headless mode and ACP entirely, so the install path should be rewritten to cover the bootstrap, the <code>-p</code> flag, and config.toml in one pass.</p>
+<p>4</p>
+<p>Implementation Plan</p>
+<p>5</p>
+<ol><li>Replace the install snippet with the curl bootstrap</li></ol>
+<p>6</p>
+<ol><li>Document <code>-p</code> headless mode and ACP compatibility</li></ol>
+<p>7</p>
+<ol><li>Point users to <code>config.toml</code> for models and API keys</li></ol>
+<p>8</p>
+<ol><li>Cross-link the auth and feedback sections</li></ol>
+<p>#1 review diff</p>
+<p>[turn: 21s, ↕16.8k]</p>
+<p>Enter</p>
+<p>:</p>
+<p>run</p>
+<p>│</p>
+<p>Type</p>
+<p>:</p>
+<p>swap prompt</p>
+<p>│</p>
+<p>Esc</p>
+<p>:</p>
+<p>clear input</p>
+<h2><a href="https://x.ai/news/grok-build-cli#works-with-what-you-already-use">与你已有的工具无缝协作</a></h2>
+<p>你的 AGENTS.md、插件、hooks、skills 和 MCP 服务器开箱即用。在仓库中启动 Grok Build，它立刻继承你的规约。</p>
+<p>~/Documents/GitHub/xai</p>
+<p>|</p>
+<p>3.95%</p>
+<p>|</p>
+<p>◆</p>
+<p>Thought for</p>
+<p>9.2s</p>
+<p>I'll search the marketplace and install the browser-review plugin.</p>
+<p>❯</p>
+<p>install browser-review and open its skills</p>
+<p>/browser</p>
+<p>All</p>
+<p>⌄</p>
+<p>Scroll this example into view to watch the plugin install flow.</p>
+<p>[turn: 31s, ↕39.1k]</p>
+<p>Click</p>
+<p>:</p>
+<p>take over</p>
+<p>│</p>
+<p>Enter</p>
+<p>:</p>
+<p>run</p>
+<p>│</p>
+<p>Tab</p>
+<p>:</p>
+<p>switch tabs</p>
+<p>│</p>
+<p>Esc</p>
+<p>:</p>
+<p>clear input</p>
+<h2><a href="https://x.ai/news/grok-build-cli#subagents-that-work-in-parallel">并行的子智能体</a></h2>
+<p>面对更大的任务，Grok Build 把工作分派给并行运行的专业化子智能体（subagents）。Grok Build 还支持深度的 worktree 集成，你可以让子智能体在各自的 worktree 中启动。</p>
+<p>~/Documents/GitHub/xai</p>
+<p>|</p>
+<p>4.32%</p>
+<p>|</p>
+<p>explore</p>
+<p>Explore checkout flow</p>
+<p>explore · grok-build</p>
+<p>explore</p>
+<p>Explore infra and CI</p>
+<p>explore · grok-build</p>
+<p>explore</p>
+<p>Explore shared Go libraries</p>
+<p>explore · grok-build</p>
+<p>explore</p>
+<p>Explore order services</p>
+<p>explore · grok-build</p>
+<p>explore</p>
+<p>Explore fulfillment jobs</p>
+<p>explore · grok-build</p>
+<p>explore</p>
+<p>Explore pricing engine</p>
+<p>explore · grok-build</p>
+<p>❯</p>
+<p>find the source of the p99 latency regression</p>
+<p>Splitting deploys, slow endpoints, DB plans, and cache hit rates into parallel digs.</p>
+<p>[turn: 54s, ↕39.8k]</p>
+<p>[turn: 54s, ↕39.8k]</p>
+<p>Enter</p>
+<p>:</p>
+<p>launch</p>
+<p>│</p>
+<p>Click</p>
+<p>:</p>
+<p>pin agent</p>
+<p>│</p>
+<p>Type</p>
+<p>:</p>
+<p>change task</p>
+<p>│</p>
+<p>Esc</p>
+<p>:</p>
+<p>clear input</p>
+<h2><a href="https://x.ai/news/grok-build-cli#built-to-fit-your-workflow">为你的工作流而生</a></h2>
+<p>headless 模式（<code>-p</code>）让你可以轻松地在脚本与自动化中运行智能体。Grok Build 还提供完整的 ACP 支持，供你构建自己的机器人和智能体编排应用。</p>
+<h2><a href="https://x.ai/news/grok-build-cli#try-it-today">今天就来试试</a></h2>
+<p>这是早期 beta，你的反馈是让它变好的最快方式。在 Grok Build 中输入 <code>/feedback</code>，把 bug、需求和建议直接发给团队。</p>
+<p>SuperGrok 与 X Premium Plus 订阅用户可用上面的命令安装 Grok Build 并开始构建。如果你还没有 SuperGrok，请<a href="https://grok.com/supergrok?referrer=grok-build">在此升级</a>——我们期待看到你的作品。</p>
+<h3>安装 Grok Build</h3>
+<p>Upgrade</p>]]></content:encoded>
     </item>
     <item>
       <title>在 OpenCode 中使用 Grok</title>
@@ -334,6 +2706,22 @@
       <guid isPermaLink="true">https://x.ai/news/grok-opencode</guid>
       <pubDate>Thu, 21 May 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Use Grok in OpenCode</description>
+      <content:encoded><![CDATA[<h1>在 OpenCode 中使用 Grok</h1>
+<p>在你的 SuperGrok 或 X Premium 订阅基础上，使用 OpenCode。</p>
+<p>连接你的 Grok 账户后，即可用 Grok Build 开始编码——正是为 xAI <a href="https://x.ai/build">终端编码智能体</a> 提供动力的同一个模型。</p>
+<h2><a href="https://x.ai/news/grok-opencode#setup">设置</a></h2>
+<p>安装 OpenCode：</p>
+<pre><code>curl -fsSL https://opencode.ai/install | bash</code></pre>
+<p>bash</p>
+<p>启动 OpenCode：</p>
+<pre><code>opencode</code></pre>
+<p>bash</p>
+<p>在 OpenCode 内运行 <code>/connect</code>，选择 <strong>xAI</strong>：</p>
+<pre><code>/connect</code></pre>
+<p>txt</p>
+<p>选择适合你环境的登录方式——两者都使用你的 Grok 订阅：</p>
+<ul><li><strong>xAI Grok OAuth (SuperGrok Subscription)</strong> — 打开浏览器登录。</li><li><strong>xAI Grok OAuth (Headless / Remote / VPS)</strong> — 为 SSH 或远程主机打印一个码和 URL。</li></ul>
+<p>更多开源智能体与集成即将到来。</p>]]></content:encoded>
     </item>
     <item>
       <title>在 OpenClaw 中使用 Grok</title>
@@ -341,6 +2729,25 @@
       <guid isPermaLink="true">https://x.ai/news/grok-openclaw</guid>
       <pubDate>Tue, 19 May 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Use Grok in OpenClaw</description>
+      <content:encoded><![CDATA[<h1>在 OpenClaw 中使用 Grok</h1>
+<p>在你的 SuperGrok 或 X Premium 订阅基础上，使用开源自托管智能体与个人助理 OpenClaw。</p>
+<p>从今天起，登录即可在 OpenClaw 内使用你的 SuperGrok 或 X Premium 订阅。</p>
+<p>OpenClaw 是一个开源、local-first 的智能体与个人助理。它可以在任何硬件上运行——Mac Mini、笔记本、服务器、VPS，甚至树莓派——并在会话之间保持持久记忆。</p>
+<p>OpenClaw 可连接 WhatsApp、Telegram、Slack、Discord、Signal、iMessage 以及许多其他消息平台，让你在你已有的聊天入口与智能体交互。</p>
+<p>如果你已经有 Grok 或 X Premium 订阅，现在就可以在 OpenClaw 内使用 Grok 模型。把 Grok 连接到你的 OpenClaw 智能体在所有档位均可用。</p>
+<h2><a href="https://x.ai/news/grok-openclaw#setup">设置</a></h2>
+<p>安装 OpenClaw：</p>
+<pre><code>curl -fsSL https://openclaw.ai/install.sh | bash</code></pre>
+<p>bash</p>
+<p>运行引导式上手流程：</p>
+<pre><code>openclaw onboard --install-daemon</code></pre>
+<p>bash</p>
+<p>在 VPS 或通过 SSH 时，使用 device-code。OpenClaw 会打印一个短码和 URL，你在任意浏览器打开即可完成登录：</p>
+<pre><code>openclaw onboard --auth-choice xai-device-code</code></pre>
+<p>bash</p>
+<p>或者连接一个消息应用——Telegram、WhatsApp、Slack、Discord、Signal、iMessage 等——在那里与你的智能体对话。</p>
+<p>更多信息见 <a href="https://docs.openclaw.ai/start/getting-started">OpenClaw 上手指南</a>和 <a href="https://docs.openclaw.ai/providers/xai">xAI provider 文档</a>。</p>
+<p>更多开源智能体与集成即将到来。</p>]]></content:encoded>
     </item>
     <item>
       <title>Web、iOS 和 Android 中的技能</title>
@@ -348,6 +2755,49 @@
       <guid isPermaLink="true">https://x.ai/news/grok-skills</guid>
       <pubDate>Mon, 18 May 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Skills in web, iOS, and Android</description>
+      <content:encoded><![CDATA[<h1>网页、iOS 与 Android 上的 Skills</h1>
+<p>为 Grok 提供持久专长。生成文档、演示文稿和电子表格，自动化工作流，构建并分享你自己的 skills。</p>
+<p>Try Skills</p>
+<p>See an Example</p>
+<p><strong>今天我们推出 Skills（技能）。</strong> 教给 Grok 一次，它在所有对话中都会记住。不必再反复交代你的偏好、格式规则或工作流步骤。</p>
+<h2><a href="https://x.ai/news/grok-skills#ready-out-of-the-box">开箱即用</a></h2>
+<p>每个 Grok 账户都自带 xAI 的内建 skills，无需设置。想定制？用你自己的版本覆盖即可，你的版本永远优先。</p>
+<h4>Word 文档</h4>
+<p>xAI</p>
+<p>创建和编辑带完整格式的 .docx</p>
+<h4>演示文稿</h4>
+<p>xAI</p>
+<p>从零构建幻灯片</p>
+<h4>电子表格</h4>
+<p>xAI</p>
+<p>生成带格式的表格并分析数据</p>
+<h4>PDF</h4>
+<p>xAI</p>
+<p>创建、合并、拆分、提取 PDF</p>
+<h4>Skill Creator</h4>
+<p>xAI</p>
+<p>通过对话构建新的自定义技能</p>
+<p>Try built-in skills</p>
+<h2><a href="https://x.ai/news/grok-skills#instant-office-documents">秒出 Office 文档</a></h2>
+<p>需要一份排版好的发票、路演 deck 或预算表？Grok 可生成生产可用的 Word 文档、PowerPoint 幻灯片、Excel 文件和 PDF，全部排好版、随时可分享。你也可以上传已有文件，让 Grok 重构、打磨或扩充它们。</p>
+<h3>演示文稿</h3>
+<p>为路演、季度评审和工作坊构建完整幻灯片，具备出色的视觉层次和演讲者备注。</p>
+<p>“Design a Leadership Strategic Thinking Workshop deck with exercises, frameworks, and takeaways.”</p>
+<h3>Word 文档</h3>
+<p>生成排版完整的发票、合同、提案和简历——标题、表格、项目符号和一致样式一应俱全。</p>
+<p>“Create a professional enterprise invoice for APEX-2026-0547 with line items, tax, and payment terms.”</p>
+<h3>电子表格</h3>
+<p>生成带公式、颜色分区、结构清晰的表格——预算、看板和预测。</p>
+<p>“Create a monthly budget tracker with income, expenses, and savings projections.”</p>
+<h3>PDF 报告</h3>
+<p>创建排版精美的 PDF 报告、提案和研究论文——格式、样式齐备，随时可分享。</p>
+<p>“Generate a PDF report on AI interpretability formatted for conference submission.”</p>
+<p>See Example</p>
+<h2><a href="https://x.ai/news/grok-skills#build-your-own">打造你自己的</a></h2>
+<p>创建一个 skill 只需几秒。用对话描述、上传一个文件，或从零写一个。在某个格式或工作流上花了大量时间打磨？直接让 Grok 把它学到的一切保存为 skill，从此无需再解释一遍。</p>
+<h2><a href="https://x.ai/news/grok-skills#get-started">开始使用</a></h2>
+<p>Skills 现已在 Grok 4.3 上上线，覆盖 <a href="https://grok.com">grok.com</a>、iOS 和 Android。</p>
+<p>Try Skills</p>]]></content:encoded>
     </item>
     <item>
       <title>将 Grok 连接到 Hermes Agent</title>
@@ -355,227 +2805,26 @@
       <guid isPermaLink="true">https://x.ai/news/grok-hermes</guid>
       <pubDate>Fri, 15 May 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Connect Grok to Hermes Agent</description>
-    </item>
-    <item>
-      <title>与 Anthropic 的全新算力合作</title>
-      <link>https://x.ai/news/anthropic-compute-partnership</link>
-      <guid isPermaLink="true">https://x.ai/news/anthropic-compute-partnership</guid>
-      <pubDate>Wed, 06 May 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：New Compute Partnership with Anthropic</description>
-    </item>
-    <item>
-      <title>Web、iOS 和 Android 中的连接器</title>
-      <link>https://x.ai/news/grok-connectors</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-connectors</guid>
-      <pubDate>Wed, 06 May 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Connectors in web, iOS, and Android</description>
-    </item>
-    <item>
-      <title>Grok Imagine 质量模式 API</title>
-      <link>https://x.ai/news/grok-imagine-quality-mode</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-imagine-quality-mode</guid>
-      <pubDate>Wed, 06 May 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok Imagine Quality Mode API</description>
-    </item>
-    <item>
-      <title>自定义音色功能</title>
-      <link>https://x.ai/news/grok-custom-voices</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-custom-voices</guid>
-      <pubDate>Thu, 30 Apr 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Custom Voices</description>
-    </item>
-    <item>
-      <title>推出 Grok Voice Think Fast 1.0</title>
-      <link>https://x.ai/news/grok-voice-think-fast-1</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-voice-think-fast-1</guid>
-      <pubDate>Thu, 23 Apr 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok Voice Think Fast 1.0</description>
-    </item>
-    <item>
-      <title>Grok 语音转文本与文本转语音 API</title>
-      <link>https://x.ai/news/grok-stt-and-tts-apis</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-stt-and-tts-apis</guid>
-      <pubDate>Fri, 17 Apr 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok Speech to Text and Text to Speech APIs</description>
-    </item>
-    <item>
-      <title>xAI 加入 SpaceX</title>
-      <link>https://x.ai/news/xai-joins-spacex</link>
-      <guid isPermaLink="true">https://x.ai/news/xai-joins-spacex</guid>
-      <pubDate>Mon, 02 Feb 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：xAI joins SpaceX</description>
-    </item>
-    <item>
-      <title>Grok Imagine API</title>
-      <link>https://x.ai/news/grok-imagine-api</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-imagine-api</guid>
-      <pubDate>Wed, 28 Jan 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>xAI 募集 $20B 完成 E 轮融资</title>
-      <link>https://x.ai/news/series-e</link>
-      <guid isPermaLink="true">https://x.ai/news/series-e</guid>
-      <pubDate>Tue, 06 Jan 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：xAI Raises $20B Series E</description>
-    </item>
-    <item>
-      <title>推出 Grok Business 和 Grok Enterprise</title>
-      <link>https://x.ai/news/grok-business</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-business</guid>
-      <pubDate>Tue, 30 Dec 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Grok Business and Grok Enterprise</description>
-    </item>
-    <item>
-      <title>Grok Collections API</title>
-      <link>https://x.ai/news/grok-collections-api</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-collections-api</guid>
-      <pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>以 AI 支持 DOW 的使命</title>
-      <link>https://x.ai/news/us-gov-dept-of-war</link>
-      <guid isPermaLink="true">https://x.ai/news/us-gov-dept-of-war</guid>
-      <pubDate>Mon, 22 Dec 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Supporting the DOW&apos;s mission with AI</description>
-    </item>
-    <item>
-      <title>Grok Voice Agent API</title>
-      <link>https://x.ai/news/grok-voice-agent-api</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-voice-agent-api</guid>
-      <pubDate>Wed, 17 Dec 2025 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>xAI 与萨尔瓦多开创全球首个全国性 AI 教育计划</title>
-      <link>https://x.ai/news/el-salvador-partnership</link>
-      <guid isPermaLink="true">https://x.ai/news/el-salvador-partnership</guid>
-      <pubDate>Thu, 11 Dec 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：xAI and El Salvador Pioneer the World&apos;s First Nationwide AI Education Program</description>
-    </item>
-    <item>
-      <title>Grok 4.1 Fast 与智能体工具 API</title>
-      <link>https://x.ai/news/grok-4-1-fast</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-4-1-fast</guid>
-      <pubDate>Wed, 19 Nov 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok 4.1 Fast and Agent Tools API</description>
-    </item>
-    <item>
-      <title>Grok 携手 KSA 走向全球</title>
-      <link>https://x.ai/news/grok-goes-global</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-goes-global</guid>
-      <pubDate>Wed, 19 Nov 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok goes Global with KSA</description>
-    </item>
-    <item>
-      <title>借助 GSA OneGov 扩展 xAI for Government</title>
-      <link>https://x.ai/news/onegov</link>
-      <guid isPermaLink="true">https://x.ai/news/onegov</guid>
-      <pubDate>Thu, 25 Sep 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Expanding xAI for Government with GSA OneGov</description>
-    </item>
-    <item>
-      <title>Grok 4 Fast 推动高性价比智能的前沿</title>
-      <link>https://x.ai/news/grok-4-fast</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-4-fast</guid>
-      <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok 4 Fast</description>
-    </item>
-    <item>
-      <title>推出 Grok Code Fast 1</title>
-      <link>https://x.ai/news/grok-code-fast-1</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-code-fast-1</guid>
-      <pubDate>Thu, 28 Aug 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok Code Fast 1</description>
-    </item>
-    <item>
-      <title>宣布推出 xAI for Government</title>
-      <link>https://x.ai/news/government</link>
-      <guid isPermaLink="true">https://x.ai/news/government</guid>
-      <pubDate>Mon, 14 Jul 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Announcing xAI for Government</description>
-    </item>
-    <item>
-      <title>Grok 3 Beta — 推理智能体时代</title>
-      <link>https://x.ai/news/grok-3</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-3</guid>
-      <pubDate>Wed, 19 Feb 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok 3 Beta</description>
-    </item>
-    <item>
-      <title>xAI 完成 $6B C 轮融资</title>
-      <link>https://x.ai/news/series-c</link>
-      <guid isPermaLink="true">https://x.ai/news/series-c</guid>
-      <pubDate>Mon, 23 Dec 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：xAI raises $6B Series C</description>
-    </item>
-    <item>
-      <title>让每个人都能用上 Grok</title>
-      <link>https://x.ai/news/grok-1212</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-1212</guid>
-      <pubDate>Thu, 12 Dec 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Bringing Grok to Everyone</description>
-    </item>
-    <item>
-      <title>Grok 图像生成发布</title>
-      <link>https://x.ai/news/grok-image-generation-release</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-image-generation-release</guid>
-      <pubDate>Mon, 09 Dec 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok Image Generation Release</description>
-    </item>
-    <item>
-      <title>API 公测版</title>
-      <link>https://x.ai/news/api</link>
-      <guid isPermaLink="true">https://x.ai/news/api</guid>
-      <pubDate>Mon, 04 Nov 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：API Public Beta</description>
-    </item>
-    <item>
-      <title>Grok-2 测试版发布</title>
-      <link>https://x.ai/news/grok-2</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-2</guid>
-      <pubDate>Tue, 13 Aug 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok-2 Beta Release</description>
-    </item>
-    <item>
-      <title>B 轮融资</title>
-      <link>https://x.ai/news/series-b</link>
-      <guid isPermaLink="true">https://x.ai/news/series-b</guid>
-      <pubDate>Sun, 26 May 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Series B funding round</description>
-    </item>
-    <item>
-      <title>Grok-1.5 视觉预览</title>
-      <link>https://x.ai/news/grok-1.5v</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-1.5v</guid>
-      <pubDate>Fri, 12 Apr 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok-1.5 Vision Preview</description>
-    </item>
-    <item>
-      <title>宣布推出 Grok-1.5</title>
-      <link>https://x.ai/news/grok-1.5</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-1.5</guid>
-      <pubDate>Thu, 28 Mar 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Announcing Grok-1.5</description>
-    </item>
-    <item>
-      <title>Grok-1 开源发布</title>
-      <link>https://x.ai/news/grok-os</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-os</guid>
-      <pubDate>Sun, 17 Mar 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Open Release of Grok-1</description>
-    </item>
-    <item>
-      <title>发布 PromptIDE</title>
-      <link>https://x.ai/news/prompt-ide</link>
-      <guid isPermaLink="true">https://x.ai/news/prompt-ide</guid>
-      <pubDate>Mon, 06 Nov 2023 00:00:00 +0000</pubDate>
-      <description>原文标题：Announcing PromptIDE</description>
-    </item>
-    <item>
-      <title>发布 Grok</title>
-      <link>https://x.ai/news/grok</link>
-      <guid isPermaLink="true">https://x.ai/news/grok</guid>
-      <pubDate>Fri, 03 Nov 2023 00:00:00 +0000</pubDate>
-      <description>原文标题：Announcing Grok</description>
+      <content:encoded><![CDATA[<h1>把 Grok 接入 Hermes Agent</h1>
+<p>在你的 Grok 账户和订阅基础上，使用 Nous Research 开源、自我改进的 Hermes 智能体。</p>
+<p>从今天起，你可以直接在 Hermes Agent 内使用你的 Grok 订阅。</p>
+<p>Hermes Agent 是 Nous Research 的开源自改进智能体。它可以在任何电脑、沙箱或 VPS 上持续运行，跨会话建立长期记忆，随用随学。与其他开源个人智能体一样，Hermes 可以连接 WhatsApp、Discord、Telegram、Signal 或其他消息服务提供商。</p>
+<p>在 Hermes 中使用你的 Grok 订阅，你可以用上：</p>
+<ul><li>Grok 4.3：文本对话与高级推理</li><li>Grok Text-to-Speech：语音回答</li><li>Grok Imagine：让你的智能体创作图像与视频</li></ul>
+<p>把 Grok 连接到你的 Hermes 智能体在所有档位均可用。</p>
+<h2><a href="https://x.ai/news/grok-hermes#setup">设置</a></h2>
+<p>安装 Hermes Agent：</p>
+<pre><code># Linux / macOS / WSL2 / Android (Termux)
+curl -fsSL https://raw.githubusercontent.com/NousResearch/hermes-agent/main/scripts/install.sh | bash</code></pre>
+<p>bash</p>
+<p>选择 Grok provider：</p>
+<pre><code>hermes model</code></pre>
+<p>bash</p>
+<p>选择 <strong>xAI Grok OAuth (SuperGrok Subscription)</strong>，通过浏览器登录，然后开始聊天：</p>
+<pre><code>hermes --tui</code></pre>
+<p>bash</p>
+<p>更多信息见 <a href="https://hermes-agent.nousresearch.com/docs/guides/xai-grok-oauth">Hermes Agent xAI Grok OAuth 文档</a>。</p>
+<p>更多开源智能体与集成即将到来。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -1,6 +1,6 @@
 # Cohere 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-02**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-05**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Cohere（`cohere`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -39,5 +39,5 @@
 28. [工作的未来：人工智能将如何改变我们的工作方式？](https://cohere.com/research/futures-of-work) <!--orig:Building the Future(s) of Work at Cohere Labs-->
 29. [Aya Models：大规模多语言人工智能](https://cohere.com/research/aya)
 30. [Research Scholars 项目：寻找新一代机器学习人才](https://cohere.com/research/scholars-program)
-31. [开放科学社区：推动全球开放科学](https://cohere.com/research/open-science)
+31. [开放科学社区：推动全球开放科学](https://cohere.com/research/open-science) <!--orig:Open Science CommunityChampioning global, open science-->
 32. [Catalyst Grants：支持有影响力的机器学习事业](https://cohere.com/research/grants)

@@ -11,7 +11,7 @@
 
 1. [Gemini 3.8 Flash TTS 和 Gemini 3.8 Flash-Lite TTS 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-22-2026-1)（2026-09-22）
 2. [Antigravity 09-2026](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-17-2026-1)（2026-09-17）
-3. [Gemini 3.8 Live 和 Gemini 3.8 Live Extended Thinking 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-1)（2026-09-15） <!--orig:Gemini 3.8 Live 和 Gemini 3.8 Live 扩展思考正式版 (GA)-->
+3. [Gemini 3.8 Live 和 Gemini 3.8 Live 扩展思考正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-1)（2026-09-15）
 4. [Gemini 3.8 Live 扩展思考](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-2)（2026-09-15）
 5. [Lyria 3.5 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-03-2026-1)（2026-09-03）
 6. [Gemini 3.8 Flash 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-02-2026-1)（2026-09-02）

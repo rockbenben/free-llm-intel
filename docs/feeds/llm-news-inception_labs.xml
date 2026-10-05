@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>InceptionLabs 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>InceptionLabs 官方博客 / 更新日志归档（标题汉化，共 13 篇），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>InceptionLabs 官方博客 / 更新日志归档（最近 50 条，共 13 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-inception_labs.xml" rel="self" type="application/rss+xml"/>
@@ -27,66 +27,614 @@
       <link>https://www.inceptionlabs.ai/blog/mercury-2-for-search</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/mercury-2-for-search</guid>
       <description>原文标题：Mercury 2 for Search: Fast enough to run a hundred times per queryRead story</description>
+      <content:encoded><![CDATA[<p>过去两年，&quot;搜索&quot;的含义已从一列排好序的链接，变成一个 agentic 流水线：分类、改写、扇出、重排序、综合。每次搜索查询要调用 LLM 五十到一百次，且几乎全部是串行的。</p>
+<p>对自回归模型来说，这是个残酷的位置：一次 400ms 的改写会阻塞检索，检索又阻塞重排，重排再阻塞用户看到的第一个词。于是团队们不断削减流水线，直到它浅到足够快。</p>
+<p>业界已经分成两派：一边是运行单薄廉价模型、几乎不思考的同步搜索；一边是耗时三十分钟的深度研究 agent。没有人交付中间的那个东西：一条深到足够聪明、又快到真正好用的流水线。</p>
+<p>Mercury 2 在标准 NVIDIA GPU 上每秒解码超过 1000 个 token——快到足以在你已有的延迟预算内把每一步都跑起来。</p>
+<h2>延迟就是质量预算</h2>
+<p>在大多数产品里，延迟和质量是两个独立的旋钮：你可以让用户多等一会儿来换取更好的答案。但在搜索里，它们是同一个旋钮，因为每一个能让答案变好的改进本身就是一个增加延迟的 LLM 调用：</p>
+<ul><li><strong>查询改写</strong>能找到字面匹配所遗漏的文档。</li><li><strong>重排序</strong>把合并后的结果集收窄到值得用于综合生成的段落。</li><li><strong>片段摘要</strong>让综合生成的上下文干净到可以引用。</li></ul>
+<p>每一步都是一次 LLM 调用。它们要么在阻塞用户，要么在生成用户正在阅读的输出。</p>
+<p>一个跑六次改写而不是一次、重排一百条结果而不是十条、并对每个检索到的页面都做摘要的 agent，不只是检索得更快，而是检索得更好。</p>
+<h2>Diffusion 为什么不必一次只走一个 token</h2>
+<p>自回归模型从左到右生成，每次前向传播只产出一个 token。每个 token 都要等它之前的所有 token。这种串行化是结构性瓶颈，也正是为什么业界应对搜索延迟的办法一直是&quot;换个小点的模型&quot;——当解码顺序被固定死时，这是唯一可用的杠杆。</p>
+<p>Diffusion 语言模型没有固定的解码顺序。Mercury 2 并行生成，用小的、有界的步骤数对整段输出进行精化，而不是每次前向传播只吐一个 token。每一步都是对整段输出的全上下文前向传播。模型从整体上审视正在成形的答案，在多轮前向传播中收敛到最终输出。一段 300 token 的重排理由和一段 500 token 的片段摘要，只需一小部分时间就能返回。而一条搜索流水线要生成成百上千个这样的输出。</p>
+<h2>逐步实测：流水线每一步最快的模型</h2>
+<p>搜索流水线里的&quot;快&quot;不是一个数字。重要的是每一步花多长时间，因为每一步都会阻塞下一步。所以我们直接在 <strong>WideSearch</strong> 上测量逐步延迟——这是一个穷尽式信息收集任务基准，每个任务都需要几十次实时查询。相同的 agentic 测试框架、相同的 100 个任务、相同的实时检索、四个模型，每一次 LLM 调用都被计时。</p>
+<blockquote>可复现性：WideSearch 基准，100 个英文任务，实时 Exa 检索。延迟中位数基于每个模型 336–493 次调用测得，各模型均使用其 provider 的公共 API。测试框架与逐次调用计时代码已公开：github.com/apoorvumang/retrieval-vs-recall</blockquote>
+<p>Mercury 2 是流水线每一步上最快的模型：查询规划上比 Gemini 3.1 Flash Lite 快近 2 倍，比 Claude Haiku 4.5 快 4.7 倍，比 GPT-5 Mini 快 10 倍。每一步上的这种差距，正是下一节端到端数字的来源：一条流水线的速度，只等于它各跳耗时之和。</p>
+<h2>拿真实流水线算一笔账</h2>
+<p>取一个中等复杂度的 answer-engine 查询，首 token 预算 2 秒。</p>
+<p>传统流水线会把预算花在一次改写、单趟检索、不做 LLM 重排、以及一个很晚才开始流式输出的综合步骤上。2 秒里大部分时间耗在解码上，而质量上限取决于检索器恰好返回了什么。</p>
+<p>同样的预算在 Mercury 2 上可以换来：四次并行改写、覆盖全部改写的检索扇出、对合并候选集做 LLM 重排、逐文档的片段摘要，以及一个还能留出余量、从容开始流式输出的综合步骤。同样的延迟包络。一个结构上更好的答案，因为流水线真的做了这些工作。</p>
+<p>在 $0.25/M 输入、$0.75/M 输出的价格下，这条更深的流水线比前沿 speed-optimized 模型上的同款流水线便宜大约 2 倍。</p>
+<h2>全速之下的质量</h2>
+<p>只有答案站得住脚，速度才有意义。所以我们在两个 grounded-search 基准上跑了 cost-efficiency 生成档位：<strong>FRAMES</strong>（多跳检索与综合，每道题涉及 2–15 篇维基百科文章）和 <strong>DeepSearchQA</strong>（开放式 agentic search，按答案集合是否完整评分）。</p>
+<blockquote>每个基准 n=100，所有模型使用相同的题目集，全部采用 medium 推理强度。基于 Exa 的 agentic 工具调用循环；FRAMES 的调用预算为 25 次，DSQA 为 30 次。评分使用各论文的官方提示词与指定评审模型——FRAMES 用 GPT-5.4，DSQA 用 Gemini-2.5-flash。成本按公开牌价计入 Exa 检索费用，输入按全价计费，不享受 prompt-cache 折扣。*Claude Haiku 4.5 经由 OpenRouter 路由（直连 key 已用尽）；其延迟包含一跳代理，可能高出约几秒。</blockquote>
+<p>在 FRAMES 上，四个模型的差距在三分之内——0.78、0.78、0.78、0.81。在 n=100 下标准误为四到五分，所以这个差距就是噪声。在多跳 grounded QA 上，这一档位不分高下，GPT-5 Mini 的名义最高分并非真正的领先。</p>
+<p>DeepSearchQA 拉开了差距，而且对 Mercury 2 不利。GPT-5 Mini 得 0.44，Mercury 2 得 0.34——十分之差，大于其余三个模型之间的差距，但在这个样本量下仍在两个标准误之内。DSQA 奖励广度：找出满足某个约束的每一项，而不是推理一条链条。善于果断规划、广泛阅读的模型在这里表现更好，GPT-5 Mini 就是这样的模型。</p>
+<p>在两个基准上都不变的，是一个正确答案的成本和你等待它的时间。Mercury 2 完成一条 FRAMES 查询用时 10.8 秒，Gemini 3.5 Flash Lite 是 19.8 秒，Claude Haiku 4.5 是 21.0 秒，GPT-5 Mini 是 38.8 秒。而按每个<em>正确</em>答案计（真正计入账单的那个数字），Mercury 2 在两个基准上都是四个模型中最低的：<strong>FRAMES 上 $0.047，其余为 $0.072、$0.097 和 $0.133；DeepSearchQA 上 $0.432，其余为 $0.457、$0.676 和 $0.938。</strong></p>
+<p>所以 GPT-5 Mini 用 3.6 倍的延迟换来 DeepSearchQA 上 10 个百分点的准确率，每个正确答案的成本仍然略高于 Mercury 2。在一条每次查询都要调用模型上百次的流水线里，这笔交易划不来。</p>
+<p>关于 DeepSearchQA 的一点坦诚说明：对所有模型，它的成本都是 FRAMES 的三到七倍，因为广度意味着更多轮次，而每一轮都会重发一段越来越长的对话记录。agentic 流水线里的成本由轮次数和输入量驱动，而不是输出长度或单价。换句话说，你能负担得起多少步骤，决定了你的流水线跑起来要花多少钱。</p>
+<h2>Mercury 2 是怎么在 WideSearch 上输掉的</h2>
+<p>上面每个数字（包括我们自己的）底下都藏着一个问题。我们发现它，是因为 Mercury 2 输了。</p>
+<p>在 agentic-search 基准 WideSearch 上，Mercury 2 得分低于 Gemini 3.1 Flash Lite。一位客户问了为什么。我们深挖下去，最后干脆把检索关掉跑了一遍这个基准。如果一个基准测的是搜索，那拔掉搜索应当是毁灭性的。</p>
+<p>除 Gemini 外，每个模型都从检索中获益；Gemini 开着搜索的得分（−0.02）反而略低于关掉时。它不是在搜索，而是在背诵。WideSearch 的题目由早于所有模型 cutoff 的事实构成（如大学排名、产品规格、2022 年房价），所以模型可以无视它检索到的每个页面，直接从权重里作答。谁都没有作弊——是评分器奖励了这种做法。分数看起来像搜索，其实是记忆。</p>
+<p>对搜索产品来说，这个区别就是胜负手。一个凭记忆作答的模型会自信地与你的索引、你的目录、你刚抓取的页面相矛盾，而且同时还能在基准上拿到漂亮的分数。</p>
+<p>有一个任务能把这件事说透。<code>ws_en_034</code> 要求给出英国月度房价，并指示模型为每项统计数据引用政府网站——按构造就必须要检索。开着搜索时，agent 无法在它的来源里核实数字，交回一张空表：<strong>0.03</strong>。闭卷时，它从记忆里背出一串看起来合理的数字：<strong>0.86</strong>。忠实于来源的输给了流利的，差了三十倍。</p>
+<p>所以我们用所有模型训练 cutoff 之后的事件重建了题目（如 2026 世界杯小组赛、法国网球公开赛、戛纳电影节、欧洲歌唱大赛）。同样的格式、同样的官方评分器，没有任何可背的东西。闭卷时所有模型的分数塌缩到<strong>零</strong>，证实题目无法凭记忆答出。开着检索时，Gemini 得 <strong>0.929</strong>，Mercury 2 得 <strong>0.923</strong>。</p>
+<p>这是一场平局，我们照实汇报。在分数完全来自检索与综合的数据上，一个每步快若干倍的 diffusion 模型，做出的工作与前沿自回归模型同样好。</p>
+<p><strong>SealQA</strong> 是一个每月更新的抗污染基准，它从另一侧展示了同样的特征：Gemini 的闭卷领先完全存在于 2024 年之前的题目里，随着事实变新而消退，并在 cutoff 后的 2026 年<strong>反转为 Mercury 领先</strong>。整个设置不变——唯一的变量是答案能否被记住。</p>
+<p>在给搜索挑模型跑基准之前，先做三项检查：</p>
+<ul><li>关掉检索（如果分数不掉，你测的就是记忆）</li><li>纳入没有任何模型可能记住的 cutoff 之后的问题</li><li>确认 gold 答案不只是正确，而是可检索到的。</li></ul>
+<p>以上内容全部可复现。带上你自己的 key，就可以在任何模型上运行，包括我们的：<a href="https://github.com/apoorvumang/retrieval-vs-recall">github.com/apoorvumang/retrieval-vs-recall</a></p>
+<h2>下一步</h2>
+<p>搜索是并行生成最清晰的用例，因为它是在单位用户耐心内调用 LLM 次数最多的负载。同样的形态出现在任何需要反复调用模型的流水线里。Agentic 研究是明显的下一步。把逐步延迟降低 5 到 10 倍，就能把一个跑一整夜的研究任务，变成你在可接受的等待时间内就能完成的东西。</p>
+<p><strong>试用 Mercury 2</strong>。API 已在 <a href="https://platform.inceptionlabs.ai/">platform.inceptionlabs.ai</a> 上线。</p>
+<p><strong>在为生产搜索流水线做基准测试？</strong>我们会配置更高吞吐的容量，让你在真实的查询组合上测量真实世界的延迟，并帮你在自己的评测集上跑&quot;关掉检索&quot;的消融实验。<a href="https://www.inceptionlabs.ai/enterprise#contact-sales">联系我们的工程师。</a></p>]]></content:encoded>
     </item>
     <item>
       <title>更多构建者。更高吞吐量。更好的 Mercury 2</title>
       <link>https://www.inceptionlabs.ai/blog/mercury-2-10x-free-tokens</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/mercury-2-10x-free-tokens</guid>
       <description>原文标题：More builders. More throughput. Better Mercury 2.Read story</description>
+      <content:encoded><![CDATA[<p>过去几个月里，数千名开发者开始用 Mercury 构建实时语音应用、搜索与检索流水线以及 AI 编程 subagent。在我们扩充容量的同时，也持续在改进模型本身。</p>
+<p>今天，我们让基于 Mercury 的开发更容易上手。</p>
+<h5><strong>1 亿免费 token，从 1000 万提升而来</strong></h5>
+<p>每个新的 Inception API key 现在都包含 1 亿免费 token。充裕的额度，足以让你在真实生产负载上把 Mercury 与当前技术栈进行基准对比。</p>
+<h5><a href="https://docs.inceptionlabs.ai/get-started/get-started"><strong>开始构建</strong></a></h5>
+<h5><strong>速率限制提升 10 倍</strong></h5>
+<p>我们将免费档位的速率限制提升了 10 倍，这样你就能在不撞上限的情况下运行接近生产规模的流量。</p>
+<h5><strong>更快、更强的 Mercury 2</strong></h5>
+<p>自发布以来，我们围绕生产负载持续改进 Mercury 2：</p>
+<ul><li>更低的 time-to-first-token</li><li>更低的端到端延迟</li><li>更可靠的工具调用</li></ul>
+<p>这些改进对<a href="https://www.inceptionlabs.ai/blog/mercury-2-the-first-reasoning-model-fast-enough-to-pick-up-the-phone">实时语音</a>、搜索、编程 agent 和多 agent 工作流尤其明显——在这些场景中，延迟会在每次模型调用之间不断叠加。</p>
+<p>如今，已有数十家 AI 原生公司和企业在生产环境中运行 Mercury 2。</p>
+<h5><strong>现已登陆 Baseten</strong></h5>
+<p>Mercury 2 今天在 Baseten 上线，这是 <a href="https://www.baseten.co/blog/announcing-baseten-for-model-labs">Baseten for Model Labs 发布</a>的一部分。如果你的团队已经在 Baseten 上构建，可以直接把 Mercury 2 加入你的技术栈，无需再接入一个新的 provider。</p>
+<h5><a href="https://docs.inceptionlabs.ai/get-started/get-started"><strong>开始构建</strong></a></h5>
+<p><em>如需企业级速率限制、更严格的延迟预算、SLA，或针对特定负载的调优支持，请联系 </em><a href="mailto:hello@inceptionlabs.ai">hello@inceptionlabs.ai</a><em>。一小时内回复。</em></p>]]></content:encoded>
     </item>
     <item>
       <title>Mercury 2：首个快到能接起电话的推理模型</title>
       <link>https://www.inceptionlabs.ai/blog/mercury-2-the-first-reasoning-model-fast-enough-to-pick-up-the-phone</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/mercury-2-the-first-reasoning-model-fast-enough-to-pick-up-the-phone</guid>
       <description>原文标题：Mercury 2: the first reasoning model fast enough to pick up the phone</description>
+      <content:encoded><![CDATA[<p>过去两年，每个前沿实验室都在用同一种方式向智能爬坡：<strong>让模型思考更长时间</strong>。推理模型如今在开口之前要烧掉数以千计的&quot;思考&quot;token（吹嘘、苦思、磨洋工）。在占主导地位的自回归解码范式下，这些 token 中的每一个都是串行生成的，每一个都需要一次完整的前向传播。在和语音 agent 通话时，这些生成（解码）时间累积到让人宁愿直接挂电话。</p>
+<p>结果就是行业里一个奇怪的分化。推理智能的前沿一骑绝尘，而<strong>实时智能却原地踏步</strong>。语音是为数不多的 GPT 5.x、Claude Sonnet 和 Gemini Pro 直接不及格的垂直领域，因为没人愿意每次回答一个关于牙医预约的问题都等上 3 秒。</p>
+<p><strong>Mercury 2 是全球第一款推理 diffusion 语言模型</strong>，在标准 NVIDIA GPU 上每秒解码 1000+ 个 token。快到足以在自然对话的延迟预算内<em>既</em>跑完一整轮推理，<em>又</em>开始开口说话。我们把推理的代价从 3 秒的静默降到只有 300 毫秒。</p>
+<h2>语音 Agent 还停留在 2025 年 4 月</h2>
+<p>语音客户告诉我们，端到端 LLM 延迟必须落在约 500ms 以内，否则对话就不再像人和人说话。</p>
+<p>一个以典型自回归 60–100 tokens/秒的速度输出 500 个思维链 token 的推理模型，会把这笔预算一口气超掉<em>五到八秒</em>。于是语音开发者只能在&quot;听起来像坏掉的聪明模型&quot;和&quot;快但跟不上指令的模型&quot;之间二选一。</p>
+<p>他们中的大多数人用同一种方式解决了这个问题：<strong>GPT 4.1——OpenAI 最强的非推理模型，来自 2025 年 4 月（！）——仍是大多数生产语音 agent 的默认「大脑」</strong>。它是极少数兼具强指令遵循和工具调用、具备实时延迟，同时价格又能撑得起每天数千次调用的模型。但 GPT 4.1 今年晚些时候将在多家 provider 那里下线，这意味着语音 agent 行业即将失去它的默认模型，而没有任何前沿推理模型能坐上这个位置。</p>
+<p>一条逃生通道是特殊硬件：在 Cerebras 或 Groq 上服务，可以得到速度惊人的自回归解码。但定制芯片的容量稀缺、经常被订满，等待期长达 12 个月以上；Cerebras 与 OpenAI 的多年巨额协议锁定了其大部分资源，挤压了较小的合同。所以真正的问题是：如果能在人人都有的 NVIDIA GPU 上获得<strong>定制芯片级的解码速度</strong>呢？</p>
+<h2>Diffusion 为什么不必一次只走一个 token</h2>
+<p>每个自回归 LLM 的瓶颈都是结构性的。串行解码意味着每个输出 token 都需要一次完整的前向传播，而每次前向传播都意味着把整个模型的权重从 GPU HBM 流入片上 SRAM。在延迟敏感服务所要求的低 batch size 下，GPU 的算术带宽大部分处于闲置。</p>
+<p>Mercury 系列模型是 diffusion 大语言模型（dLLM），采用<strong>并行生成 token 的架构</strong>。</p>
+<p>如我们的<a href="https://arxiv.org/abs/2506.17298">技术报告</a>所述，生成由一对过程完成。<em>前向</em>过程把干净文本在一系列步骤中逐步破坏成噪声。模型——一个标准 Transformer——被训练来反向运行这个过程：给定一段含噪的隐变量序列，它预测干净文本，并以去噪目标训练，<strong>同时对序列中的所有位置</strong>进行预测。</p>
+<p>每次去噪会处理许多 token，因此生成的算术强度远高于一次一个 token 的解码——也就是说，同样从显存加载一次权重，可以完成许多 token 的有用计算。结果是：<strong>在 NVIDIA H100 上超过 1,000 tokens/秒——此前只有定制芯片才能达到的吞吐</strong>——同时质量与 GPT Mini、Claude Haiku 之类较小的前沿模型相当。</p>
+<h2>给实时推理算一笔账</h2>
+<p>在 1000+ tokens/秒下，一段 300 token 的推理轨迹在 300ms 内就能完成。这意味着让推理模型在工具选择、策略遵从和多步工作流上表现出色的那种斟酌，如今<strong>能塞进单个轮次之内</strong>，对通话者完全不可闻。</p>
+<p>Mercury 2 提供一个 <code>reasoning_effort</code> 旋钮，有四档——instant、low、medium、high——让开发者可以根据应用所需的智能水平进行调节。</p>
+<p>我们在 <strong>IFBench</strong>（指令遵循）和 <strong>Tau3Bench Telecom</strong>（面向客服 agent 的拟真多轮工具调用）上基准测试了 <code>instant</code>、<code>low</code> 和 <code>medium</code>，延迟以 OpenCall 的真实生产提示词测量。</p>
+<p>“在 OpenCall，我们一直用 Mercury 2 为我们的生产语音 agent 提供支持，处理复杂的患者来电。在我们的测试中，Mercury 2 在指令遵循、工具使用和多步工作流的推理上，超过了在 Cerebras 上运行的 GPT OSS 120B。它给了我们需要的高质量推理，同时不牺牲自然电话体验所要求的低延迟。”</p>
+<p>Oliver Silverstein，OpenCall CEO</p>
+<p><strong>Instant</strong> 用智能换取反射般的速度，适合确认、附和语以及不需要工具调用的轮次。<strong>Low</strong> 在指令遵循上已经击败 GPT 4.1，而延迟只是它的一小部分。<strong>Medium</strong> 才是头条：在 IFBench 上高出 GPT 4.1 27 分、在 Tau3Bench Telecom 上高出 24 分，同时<em>仍然</em>比 GPT 4.1 的非推理解码更快：</p>
+<h2>为什么级联流水线仍然胜过 Speech-to-Speech</h2>
+<p>你可能会想：既然有 speech-to-speech 模型，为什么还要去优化级联流水线里的 LLM？尽管全双工语音模型十分自然，2026 年几乎所有生产语音 agent 仍然运行 <strong>ASR → LLM → TTS</strong>，至少出于四个原因：</p>
+<p><strong>灵活性。</strong>跨多地区、多口音运营语音 agent 时，你可以按市场切换转写模型和音色。</p>
+<p><strong>可观测性。</strong>级联流水线产出的是文本转写，而不是成千上万小时不透明的音频，可实现规模化的质检与审计。</p>
+<p><strong>智能。</strong>当今的 speech-to-speech 模型在长上下文表现、多轮连贯性和工具调用准确率上仍然落后。</p>
+<p><strong>成本。</strong>按每百万 token $32/$64 的定价，GPT Realtime 2 的价格扛不住呼叫中心的话务量。Mercury 2 定价为<strong>输入 $0.25/M、输出 $0.75/M</strong>，折合约<strong>每分钟对话半美分</strong>。</p>
+<blockquote>假设一个生产语音 agent 画像：每分钟约 4 个对话轮次；每轮重发约 2,000 token 的系统提示加不断增长的对话历史（每分钟对话约 20,000 输入 token）；每分钟约 600 输出 token，含推理 token（每轮约 50 个口语音答 token 加约 100 个推理 token）。Mercury 2 牌价为输入 $0.25/M、输出 $0.75/M。仅计模型层成本；不含 STT、TTS 和电话线路。</blockquote>
+<p>级联流水线仍然是主流，但此前缺的是一个能实时推理的大脑。作为兼容 OpenAI API 的端点，Mercury 可以直接插进你现有编排栈的 LLM 槽位——LiveKit、Pipecat、Vapi、Retell，或你自己的。</p>
+<h2>下一步</h2>
+<p>实时推理改变语音 agent 能力的边界。我们正与语音平台和企业客户一起攻关更长的上下文、前沿水平的工具调用性能，以及一种感知延迟的推理模式。</p>
+<p><strong>想看看 Mercury 2 如何处理你的提示词？</strong> API 已在 <a href="https://platform.inceptionlabs.ai/">platform.inceptionlabs.ai</a> 上线。<strong>在为生产语音延迟做基准测试？</strong>我们会配置更高吞吐的容量，让你能在自己的负载上测量真实性能。<a href="https://www.inceptionlabs.ai/enterprise#contact-sales">联系我们的团队</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Azure Foundry 上的 Mercury 2</title>
       <link>https://www.inceptionlabs.ai/blog/mercury-2-on-azure-foundry</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/mercury-2-on-azure-foundry</guid>
       <description>原文标题：Mercury 2 on Azure Foundry</description>
+      <content:encoded><![CDATA[<p>今天，我们很高兴地宣布 <a href="https://ai.azure.com/explore/models/Mercury-2/version/1/registry/azureml-inceptionlabs">Mercury 2 已在 Azure AI Foundry 上线</a>——这款全球最快的推理语言模型，旨在让生产环境中的 AI 响应快到近乎即时。此次发布将 Inception 突破性的 diffusion 架构与 Azure 的企业级就绪基础设施结合起来，让开发者能够使用一个兼具卓越速度与质量的模型。</p>
+<p>Mercury 由 Flash Attention、Direct Preference Optimization 以及最早面向图像的 diffusion 模型等基础 AI 技术背后的团队打造，代表着语言模型生成文本方式的一次根本转变。Azure AI Foundry 上的开发者现在可以获得一个在延迟敏感应用中表现出色的模型——在这些应用里，用户体验不容妥协。</p>
+<h2>新的基础：面向实时推理的 Diffusion</h2>
+<p>Mercury 2 不进行串行解码。它通过并行精化生成响应，同时产出多个 token，并在少量步骤内收敛。不像打字机逐字输出，更像编辑一次性修改整篇草稿。结果是：生成速度快 5 倍以上，并带来一条根本不同的速度曲线。</p>
+<p>速度优势也改变了推理的权衡。如今，更高的智能意味着更多的测试时计算——更长的思维链、更多采样、更多重试——直接以延迟和成本为代价。基于 diffusion 的推理让你在实时延迟预算内获得推理级的质量。</p>
+<h2>性能：速度与质量</h2>
+<p>Mercury 2 为生产部署改变了质量-速度曲线：</p>
+<ul><li><strong>速度</strong>：在 NVIDIA Blackwell GPU 上达到 1,009 tokens/秒</li><li><strong>价格</strong>：输入 $0.25/1M tokens · 输出 $0.75/1M tokens</li><li><strong>质量</strong>：与领先的 speed-optimized 模型不相上下</li><li><strong>特性</strong>：可调推理强度 · 128K 上下文 · 原生工具调用 · 符合 schema 的 JSON 输出</li></ul>
+<p>我们优化的速度是用户真正感受到的速度：用户所经历时刻的响应性——高并发下的 p95 延迟、轮次间的一致表现，以及系统繁忙时稳定的吞吐量。</p>
+<h2>企业级就绪的 Azure 环境</h2>
+<p>Azure AI Foundry 上的 Mercury 2 开箱即用、可直接投入生产。它拥有 128K token 上下文窗口，可处理大型文档、维持长对话；支持原生工具调用与使用 JSON schema 的结构化输出，用于构建 agentic 工作流。API 兼容 OpenAI，与现有代码库的集成无缝。</p>
+<p>Azure AI Foundry 提供企业级基础设施，包括网络隔离、确保数据留在你自己的 Azure 环境中且绝不用于训练的数据隐私保障、SOC2 与 HIPAA 等 Azure 合规标准，以及通过 Azure Monitor 和 Application Insights 实现的全面可观测性。</p>
+<h2>真实世界用例</h2>
+<p>Mercury 2 在延迟敏感、用户体验不容妥协的应用中表现出色：</p>
+<ul><li><strong>编程与编辑</strong>：自动补全、下一个编辑建议、重构、交互式代码 agents——开发者在环中、任何停顿都会打断心流的场景。</li><li><strong>Agent 循环</strong>：agentic 工作流每个任务串联数十次推理调用。降低单次调用延迟不只是省时间，它改变了你能负担的步数，以及最终输出能有多好。</li><li><strong>实时语音与交互</strong>：语音接口拥有 AI 中最严苛的延迟预算。Mercury 2 让推理级质量在自然语音节奏内成为可能。</li><li><strong>搜索与 RAG 流水线</strong>：多跳检索、重排与摘要的延迟叠加很快。Mercury 2 让你把推理加入搜索循环而不突破延迟预算。</li></ul>
+<h3>在 Azure AI Foundry 上部署</h3>
+<p>Mercury 2 已通过 Azure AI Foundry 在美国和加拿大区域提供。部署很直接——在 Azure AI Foundry 的统一目录中开通你的模型端点并配置基础设施。Mercury 2 的软件许可按固定小时费率计费，算力费用根据你开通的资源通过你的 Azure 账户单独结算。</p>
+<h3>Azure AI Foundry 集成</h3>
+<p>Mercury 2 与更广泛的 Azure 生态无缝集成。使用 Azure AI Foundry 的模型目录部署，用 Azure AI Content Safety 做内容过滤，实时监控性能与成本，用 Azure RBAC 和托管身份管理访问，以及使用 Azure 的 agent 框架构建多模型应用。</p>
+<h2>三步开始使用</h2>
+<ul><li>进入 Azure AI Foundry 的 <a href="https://ai.azure.com/explore/models">Model Catalog</a>，搜索 <strong>Mercury 2</strong>，点击模型卡片。也可以直接访问我们<a href="https://ai.azure.com/explore/models/Mercury-2/version/1/registry/azureml-inceptionlabs">这里的模型卡片</a></li><li>点击 <strong>Use this model</strong>，选择一个项目，按 UI 提示开通你需要的容量。</li><li>默认配置适用于大多数开发者，但我们推荐选择 <strong>ND-H100-v5</strong> 实例以获得最佳速度。部署会在几分钟内完成。</li></ul>
+<p>就是这样！你现在应该可以基于刚开通的 API 端点开始构建了：</p>
+<pre><code>curl --location 'https://mercury-5892-edfar.eastus.inference.ml.azure.com/v1/chat/completions' \
+--header 'azureml-model-deployment: mercury-2' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer &amp;lt;your-api-key&amp;gt;' \
+--data '{
+  &quot;model&quot;: &quot;mercury-2&quot;,
+  &quot;messages&quot;: [
+    { &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot; }
+  ],
+  &quot;stream&quot;: true,
+  &quot;temperature&quot;: 0.0,
+  &quot;max_tokens&quot;: 512
+}'</code></pre>
+<pre><code>curl --location 'https://mercury-5892-edfar.eastus.inference.ml.azure.com/v1/chat/completions' \
+--header 'azureml-model-deployment: mercury-2' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer &amp;lt;your-api-key&amp;gt;' \
+--data '{
+  &quot;model&quot;: &quot;mercury-2&quot;,
+  &quot;messages&quot;: [
+    { &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot; }
+  ],
+  &quot;stream&quot;: true,
+  &quot;temperature&quot;: 0.0,
+  &quot;max_tokens&quot;: 512
+}'</code></pre>
+<pre><code>curl --location 'https://mercury-5892-edfar.eastus.inference.ml.azure.com/v1/chat/completions' \
+--header 'azureml-model-deployment: mercury-2' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Bearer &amp;lt;your-api-key&amp;gt;' \
+--data '{
+  &quot;model&quot;: &quot;mercury-2&quot;,
+  &quot;messages&quot;: [
+    { &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot; }
+  ],
+  &quot;stream&quot;: true,
+  &quot;temperature&quot;: 0.0,
+  &quot;max_tokens&quot;: 512
+}'</code></pre>
+<h3>Python 版</h3>
+<pre><code>import requests
+import json
+
+url = &quot;https://mercury-5892-edfar.eastus.inference.ml.azure.com/v1/chat/completions&quot;
+
+payload = json.dumps({
+  &quot;model&quot;: &quot;mercury-2&quot;,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;Hello!&quot;
+    }
+  ],
+  &quot;stream&quot;: False,
+  &quot;temperature&quot;: 0,
+  &quot;max_tokens&quot;: 512
+})
+
+headers = {
+  'azureml-model-deployment': 'mercury-2',
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer &amp;lt;your-api-key&amp;gt;'
+}
+
+response = requests.request(&quot;POST&quot;, url, headers=headers, data=payload)
+
+print(json.loads(response.text))</code></pre>
+<pre><code>import requests
+import json
+
+url = &quot;https://mercury-5892-edfar.eastus.inference.ml.azure.com/v1/chat/completions&quot;
+
+payload = json.dumps({
+  &quot;model&quot;: &quot;mercury-2&quot;,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;Hello!&quot;
+    }
+  ],
+  &quot;stream&quot;: False,
+  &quot;temperature&quot;: 0,
+  &quot;max_tokens&quot;: 512
+})
+
+headers = {
+  'azureml-model-deployment': 'mercury-2',
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer &amp;lt;your-api-key&amp;gt;'
+}
+
+response = requests.request(&quot;POST&quot;, url, headers=headers, data=payload)
+
+print(json.loads(response.text))</code></pre>
+<pre><code>import requests
+import json
+
+url = &quot;https://mercury-5892-edfar.eastus.inference.ml.azure.com/v1/chat/completions&quot;
+
+payload = json.dumps({
+  &quot;model&quot;: &quot;mercury-2&quot;,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;Hello!&quot;
+    }
+  ],
+  &quot;stream&quot;: False,
+  &quot;temperature&quot;: 0,
+  &quot;max_tokens&quot;: 512
+})
+
+headers = {
+  'azureml-model-deployment': 'mercury-2',
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer &amp;lt;your-api-key&amp;gt;'
+}
+
+response = requests.request(&quot;POST&quot;, url, headers=headers, data=payload)
+
+print(json.loads(response.text))</code></pre>
+<h2>实时 AI 的未来</h2>
+<p>Mercury 登陆 Azure AI Foundry，标志着生产 AI 应用的一个转折点。开发者不再需要在速度与质量之间、在实时响应与前沿模型能力之间做选择。</p>
+<p><a href="https://ai.azure.com/explore/models/Mercury-2/version/1/registry/azureml-inceptionlabs"><strong>在 Azure AI Foundry 部署 Mercury 2 →</strong></a></p>
+<p>详细文档、基准测试与集成指南，请访问 Azure AI Foundry 中的 <a href="https://ai.azure.com/explore/models/Mercury-2/version/1/registry/azureml-inceptionlabs">Mercury 模型卡片</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Mercury 2 与实时子智能体的兴起</title>
       <link>https://www.inceptionlabs.ai/blog/rise-of-realtime-subagents</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/rise-of-realtime-subagents</guid>
       <description>原文标题：Mercury 2 and the Rise of Real-time Subagents</description>
+      <content:encoded><![CDATA[<p>AI 系统的未来不是一个包办一切的单一 agent，而是多个 agent 协同工作。</p>
+<p>这在编程领域已经发生。从外观看是一个编程 agent，实际是由专门组件构成的系统。一部分负责规划，一部分探索代码库，一部分编写实现，还有一部分压缩上下文，让会话能继续下去。</p>
+<p>这不只是实现细节，它正在成为 agentic 系统的核心架构。据 Baseten 等推理平台统计，客户在生产环境中为定向任务运行 7-10 个模型，各自负责流水线中的不同环节。</p>
+<h2><strong>多 Agent 系统为什么赢</strong></h2>
+<p>对 LLM 而言，速度、质量、成本之间存在结构性、无法回避的权衡。</p>
+<p>你为最难的推理步骤想要的那个模型，往往不是你为所有辅助操作想要的模型。如果哪里都用最贵的模型，延迟和成本就会成为问题；如果哪里都用最便宜的模型，质量会在关键时刻崩塌。</p>
+<p>最优的系统是给每个问题选对工具。</p>
+<p>这正是多 agent 系统强大的原因。它们让开发者能根据每一步的实际需要，把不同任务路由到不同模型。深度推理可以交给某个模型，高频的辅助任务可以交给另一个。结果是一个整体更好的系统。</p>
+<h2><strong>压缩（Compaction）是最清晰的证明点</strong></h2>
+<p>在长的编程会话中，上下文会被塞满很多次。Agent 已经探索了文件、做了决策、调试了问题，积累了大量状态。到某个点，上下文大到无法继续携带。系统有三个选择：失败、盲目截断，或智能压缩。</p>
+<p>Compaction 就是第三个选择。一个 subagent 阅读冗长的交互历史，把它转化为紧凑的结构化摘要，保留决策、相关文件、未解决的问题和下一步。这份摘要成为主 agent 新的工作状态。这件事比听起来难。压缩同时需要长上下文理解、忠实度和结构化输出生成，还需要低延迟。</p>
+<p>为评估不同模型的上下文压缩质量，我们遵循<a href="https://factory.ai/news/evaluating-compression">这里</a>提出的方法学。我们从 <a href="https://huggingface.co/datasets/SALT-NLP/SWE-chat">SWE-chat</a> 和 <a href="https://huggingface.co/datasets/SWE-bench/SWE-smith">SWE-smith</a> 各随机抽样 250 条多轮 agentic 轨迹，用一个 LLM 针对这些轨迹生成 4 个探测问题，覆盖具体事实回忆、已做的决策、产物文件追踪和逻辑上的续写，并附上对应的 ground truth 答案。然后让候选压缩模型总结这些轨迹，并在提示中明确要求保留上述要素。再让一个 LLM 根据摘要回答这 4 个探测问题，对照 ground truth 以 0–5 分评分。</p>
+<p>我们在多个模型上运行这套评测，并把压缩延迟测量为每请求的平均端到端延迟。Mercury 2 是唯一落在「Fast &amp; Good」象限的模型——速度大约比 Sonnet 4.6 快 5 倍，质量与它持平。在<em>速度-质量-成本的权衡</em>上，Mercury 2 不做妥协。</p>
+<h3><strong>Augment Code 的企业级编程 Agent，已在生产环境</strong></h3>
+<p>Augment Code 是 Auggie 和 <a href="https://www.augmentcode.com/product/cosmos">Cosmos</a> 的创造者，是一个覆盖整个软件开发生命周期的 AI 操作系统。企业工程团队用它来无缝协同自己的工具、agents 和共享记忆，确保每一个新的 AI 工作流都让整个组织更聪明。</p>
+<p><em>“要打造市场上最好的 AI 编程 agent，你必须重新思考标准架构。行业对上下文压缩的共识是使用用户的主模型（比如 Opus 4.7）来做摘要，以保留 KV cache。我们下了一个反直觉的赌注：把摘要彻底解耦，作为专用 subagent 卸载给 Mercury 2。</em></p>
+<p><em>由于 Mercury 2 以闪电般的速度提供了恰到好处的智能水平，这笔账极大地偏向我们这边。我们把摘要延迟削减了 82%（从约 150 秒降下来），成本降低了 90%。无论是处理复杂的上下文压缩、驱动我们的 Prism 模型路由器，还是在一秒内返回工具搜索摘要，Mercury 2 都是为我们最关键工作流提供动力的高效引擎。”</em></p>
+<p><strong>Ankur Rustagi &amp; John Mu</strong>，Augment Code 技术成员</p>
+<p>以下是 Augment Code 在生产中使用 Mercury 2 的方式：</p>
+<ul><li><strong>上下文压缩：</strong> Mercury 2 以惊人的效率驱动 Augment 的上下文压缩。与之前的模型（如 Opus 4.7）相比，切换到 Mercury 2 带来 <strong>82% 的延迟下降</strong>和 <strong>90% 的成本削减</strong>，同时压缩质量完全一致。</li><li><strong>智能模型路由：</strong> 作为他们 <a href="https://www.augmentcode.com/blog/augment-prism-model-routing-to-reduce-cost-and-maintain-quality"><em>Prism</em></a> 路由器的高速规划器，Mercury 2 帮助把任务导向最经济的模型。Prism 的动态路由<strong>将 LLM 总支出降低 30%</strong>，且不牺牲代码质量。</li><li><strong>迅捷的工具搜索：</strong> Augment 用 Mercury 2 为 Model Context Protocol（MCP）服务器的工具生成摘要。它是「find-tool」背后的引擎，即时把正确的工具匹配到当前任务。Mercury 2 在<strong>一秒之内</strong>返回这些摘要——这种速度对于保持无缝的用户体验、同时避免把所有工具都留在活动上下文窗口里造成臃肿，极其关键。</li></ul>
+<h2><strong>超越编程：Agentic 系统的去向</strong></h2>
+<p>同样的模式远远超出编程。客服系统会在分诊、检索、解决、升级和质量控制等专门 agent 之间路由。工作流自动化系统会用不同的 agent 分别负责接收、路由、执行、异常处理与可审计性。</p>
+<p>在所有这些场景中，系统里最重要的许多调用并不要求最高水平的智能。它们要求的是别的东西：足够强的质量、极高的速度、规模化的低成本。这正是 subagent 这一层。它们是维持整个系统运转的那些重复性辅助调用：总结状态、路由任务、检索上下文、准备交接、检查输出、为下一步整理信息。</p>
+<p>这正是 Mercury 2 的价值所在。Mercury 2 是基于 diffusion 的 LLM，把速度、质量、成本的 Pareto 前沿向外推。这意味着开发者不必为了压低延迟和成本而牺牲质量，也不必为了可靠性而忍受又慢又贵的辅助调用。对于不要求顶级智能的 subagent，Mercury 2 是最好的解法，因为它把那条前沿向外推移。</p>
+<h3><strong>开始使用</strong></h3>
+<p>Mercury 2 兼容 OpenAI API。直接放进你现有的技术栈，无需重写。</p>
+<p>如果你正在进行企业级评估，我们会在负载适配、评估设计以及你所预期的服务约束下的性能验证方面与你合作。联系 <a href="mailto:sales@inceptionlabs.ai">sales@inceptionlabs.ai</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Mercury Edit 2 简介</title>
       <link>https://www.inceptionlabs.ai/blog/introducing-mercury-edit-2</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/introducing-mercury-edit-2</guid>
       <description>原文标题：Introducing Mercury Edit 2</description>
+      <content:encoded><![CDATA[<p>今天，我们推出 Mercury Edit 2：一款专为现代开发工作流中最延迟敏感的环节——下一个编辑预测（next-edit prediction）——而构建的 diffusion LLM（dLLM）。该模型升级了我们此前的下一个编辑模型，并与现有的自动补全端点形成互补。</p>
+<p>Mercury Edit 2 根据你的近期编辑和代码库上下文，预测你接下来要改什么。由于它使用 diffusion 并行生成 token，建议到达的速度快到让人感觉它是你自己思考的一部分。按下 Tab 即可采纳。</p>
+<h2>我们如何训练模型</h2>
+<p>为了训练这个模型，我们精心整理了一份覆盖多种语言和场景的高质量编辑数据集。这些样本教会模型如何把编辑历史和代码库上下文解读为一条有针对性的下一个编辑建议。模型虽然强大，但我们也发现它在编辑的频繁程度和长度上会过于积极，对用户造成干扰。</p>
+<p>为了解决这个问题，我们通过记录模型收到的显式反馈（接受还是拒绝某个编辑），收集了一份高质量的人类偏好数据集。基于这份数据集，我们利用一种名为 KTO 的非配对强化学习方法，使模型与人类偏好对齐。我们发现这一步对提升模型的实用性很重要。</p>
+<p>结果很明确。新模型的编辑被采纳的次数高出 48%，凸显了这一改进的价值；它展示编辑的选择性也提高了 27%，带来更有针对性、更少干扰的编辑。</p>
+<h2>与其他模型的对比</h2>
+<p>下一个编辑建议必须既高质量又快速。为了衡量质量，我们在三个开源基准（<a href="https://huggingface.co/datasets/continuedev/instinct-data">Instinct</a>、<a href="https://github.com/openai/human-eval-infilling">Fill-in-the-middle (FIM)</a> 和 <a href="https://github.com/lurf21/NextEditPrediction">Next-edit Prediction (NEP)</a>）以及一个内部下一个编辑基准上测试模型。FIM 通过针对修改后的代码运行测试用例来验证编辑。其余三个基准使用 LLM-as-a-judge，基于所提编辑与人工撰写的 gold-standard 答案之间的相似度判断正确性。这套基准覆盖多种编辑场景，如行补全、变量重命名、重构、功能实现等等。最终的质量指标取四者的平均。速度方面，我们测量在一组具有代表性的请求上的端到端延迟。为便于比较，我们还基准测试了若干定制的 next-edit 模型以及 speed-optimized 的前沿模型。我们发现，<em>Mercury Edit 2 在质量和速度两方面都优于其他方案</em>。</p>
+<h2>开始使用</h2>
+<p>“我们把 Zed 的编辑预测系统做成厂商无关的，因为开发者应该自己选择适合他们的方案。Mercury Edit 2 带来了一种基于 diffusion 的方法——这是生成编辑建议的一种真正不同的思路，我们很高兴能把它与其他 provider 并列提供。”</p>
+<p>Max Brunsfeld，Zed 联合创始人</p>
+<p>Mercury Edit 2 现已在 Inception Platform 上可用。</p>
+<ul><li><a href="https://docs.inceptionlabs.ai/capabilities/next-edit">通过 API 试用 Mercury Edit 2</a></li><li><a href="https://zed.dev/docs/ai/edit-prediction#other-providers">Zed</a></li><li><a href="https://www.google.com/url?q=https://docs.tryproxy.io/providers/models&amp;sa=D&amp;source=docs&amp;ust=1775059853207157&amp;usg=AOvVaw0Wbb8_W4tS52hkhEOoUcZ7">ProxyAI</a></li></ul>
+<p>Mercury Edit 2 的价格为输入 $0.25/1M tokens、输出 $0.75/1M tokens，缓存输入为 $0.025/1M tokens。在 Inception API Platform 上创建的每个新账户都会自动获得 1000 万免费 token。</p>
+<p>此外，Zed 用户可用此 API key 解锁 1 个月免费的 Mercury Edit 2 编辑建议：<code>sk_ae471146ea60fc117c131b574b00ba96</code>。</p>
+<p><a href="https://zed.dev/docs/ai/edit-prediction#mercury-coder">在 Zed 中配置 Mercury Edit 2 →</a></p>
+<p>正在开发开发者工具并想集成 Mercury Edit 2？请联系 hello@inceptionlabs.ai。<a href="https://discord.com/invite/5VySp6ctXB">加入我们的 Discord</a> 获取支持、反馈意见并抢先体验后续内容。</p>]]></content:encoded>
     </item>
     <item>
       <title>PinchBench 上的 Mercury 2：快速扩散模型与个人智能体时代</title>
       <link>https://www.inceptionlabs.ai/blog/mercury-2-on-pinchbench</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/mercury-2-on-pinchbench</guid>
       <description>原文标题：Mercury 2 on PinchBench: Fast Diffusion Models and the Personal Agent Era</description>
+      <content:encoded><![CDATA[<p>下一波个人计算的关键不是更好的应用，而是代表你打理日常的 agents：管理你的日历、分类处理你的收件箱、跟踪你的财务、把你的笔记整理得井井有条。</p>
+<p>要让 agent 在生产环境中工作，三件事必须同时成立：模型要准确，要快，还要便宜到可以持续运行。大多数模型只优化其中一两项。Mercury 2 三者兼顾。</p>
+<p>我们在 <a href="https://pinchbench.com/">PinchBench</a> 上评估了 Mercury 2——这个开源基准构建在 OpenClaw 之上，OpenClaw 是 GitHub 历史上增长最快的开源项目，60 天内获得超过 25 万 star。以下是我们的发现。</p>
+<h2>结果</h2>
+<p>Mercury 2 位于图表的左上角：高任务成功率，且同性能档内执行时间最短。</p>
+<p><strong>78% 成功率</strong>——达到或超过 GPT-5 Mini（75%）、Gemini 2.5 Flash（71%）、DeepSeek Chat（72%）和 GPT-4o（71%）。</p>
+<p><strong>最快的执行时间</strong>——完成 agentic 任务比精度相当的所有模型都快，也比绝大多数模型（不论其精度水平）快。</p>
+<p><strong>每百万 token 低于 1 美元</strong>——输入 $0.25/1M，输出 $0.75/1M。输入价格约为 Claude 4.5 Haiku 的四分之一，输出价格也便宜约 4 倍。</p>
+<p>Mercury 2 定义了 Pareto 前沿：有竞争力的任务表现、业界领先的速度，以及一个让 agent 持续运行在经济上可行的价位。</p>
+<h2>PinchBench 是什么？</h2>
+<p>PinchBench 衡量的是 LLM 作为 <a href="https://github.com/openclaw">OpenClaw</a> agent「大脑」的表现。它不测孤立能力，而是评估真实的 agent 工作流：安排会议、处理邮件、调研主题、管理文件、编写代码。</p>
+<p>它测的正是生产 agent 真正重要的东西：</p>
+<ul><li><strong>工具使用</strong>——模型能否用正确的参数调用正确的工具？</li><li><strong>多步推理</strong>——它能否串联多个动作完成复杂任务？</li><li><strong>真实世界的混乱</strong>——它能否处理含糊的指令和不完整的信息？</li><li><strong>实际结果</strong>——文件到底创建没有、邮件发送没有、会议排上没有？</li></ul>
+<p>关键在于，PinchBench 评估的是质量、成本与延迟的联合权衡——明确揭示一个模型能否用于持续的、真实世界的 agent 部署。</p>
+<h2>为什么这对 Agent 重要</h2>
+<p>Agent 每个任务要跑几十次推理调用。延迟在每一步上叠加，成本在每一小时上叠加。一个准确但慢的模型只能做演示；一个快但贵的模型无法扩展到持续运行。</p>
+<p>Mercury 2 的速度来自一种根本不同的技术路径——并行精化，而非逐 token 生成。速度优势是模型与生俱来的，不依赖专用硬件或压缩。推理级的质量、实时的延迟、标准的 GPU。</p>
+<h2>试用 Mercury 2</h2>
+<ul><li><a href="https://platform.inceptionlabs.ai/"><strong>试用 Mercury 2 API</strong></a></li><li><a href="https://chat.inceptionlabs.ai/"><strong>在 Chat 中试用 Mercury 2</strong></a></li></ul>
+<p>如果你正在进行企业级评估，我们会在负载适配、评估设计以及你所预期的服务约束下的性能验证方面与你合作。</p>
+<p><a href="https://www.inceptionlabs.ai/enterprise#contact-sales">联系我们</a>→</p>]]></content:encoded>
     </item>
     <item>
       <title>Mercury 2 简介</title>
       <link>https://www.inceptionlabs.ai/blog/introducing-mercury-2</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/introducing-mercury-2</guid>
       <description>原文标题：Introducing Mercury 2</description>
+      <content:encoded><![CDATA[<h2>最快的推理 LLM，由 diffusion 驱动</h2>
+<p>今天，我们推出 Mercury 2——全球最快的推理语言模型，旨在让生产环境中的 AI 响应快到近乎即时。</p>
+<h3>为什么速度如今更加重要</h3>
+<p>生产环境中的 AI 早已不是一问一答。它是循环：agents、检索流水线和抽取任务在后台大规模运行。在循环中，延迟不会只出现一次，而是在每一步、每个用户、每次重试中不断累积。</p>
+<p>然而当前的 LLM 仍共享同一个瓶颈：自回归（autoregressive）的串行解码。一次一个 token，从左到右。</p>
+<h3>新的基础：面向实时推理的 Diffusion</h3>
+<p>Mercury 2 不进行串行解码。它通过并行精化生成响应，同时产出多个 token，并在少量步骤内收敛。不像打字机逐字输出，更像编辑一次性修改整篇草稿。结果是：生成速度快 5 倍以上，并带来一条根本不同的速度曲线。</p>
+<p>速度优势还会改变推理的权衡关系。如今，更高的智能意味着更多的测试时计算——更长的思维链、更多采样、更多重试——直接以延迟和成本为代价。基于 diffusion 的推理则能让你在实时延迟预算内获得推理级的质量。</p>
+<h2>Mercury 2 一览</h2>
+<p>Mercury 2 为生产部署改变了质量-速度曲线：</p>
+<ul><li><strong>速度：</strong> 在 NVIDIA Blackwell GPU 上达到 1,009 tokens/秒</li><li><strong>价格：</strong> 输入 $0.25/1M tokens · 输出 $0.75/1M tokens</li><li><strong>质量</strong>：与领先的 speed-optimized 模型不相上下</li><li><strong>特性</strong>：可调推理强度 · 128K 上下文 · 原生工具调用 · 符合 schema 的 JSON 输出</li></ul>
+<p>我们优化的速度，是用户真正能感受到的速度：在用户能察觉的关键时刻的响应性——高并发下的 p95 延迟、轮次之间的一致表现，以及系统繁忙时稳定的吞吐量。</p>
+<p>“Inception 的 Mercury 2 展示了当新的模型架构遇上 NVIDIA AI 基础设施时所能达到的成就。在 NVIDIA GPU 上突破每秒 1,000 token，印证了我们平台在支撑全谱系 AI 负载方面的性能、可扩展性与多功能性。”</p>
+<p>Shruti Koparkar，NVIDIA 加速计算组产品高级经理</p>
+<h2>Mercury 2 在生产环境中解锁了什么</h2>
+<p>Mercury 2 在延迟敏感、用户体验不容妥协的应用中表现出色。</p>
+<h4>1. 编程与编辑</h4>
+<p>自动补全、下一个编辑建议、重构、交互式代码 agents——这些场景中开发者都在环中，任何停顿都会打断心流。</p>
+<p>“建议出现得足够快，让人感觉像是你自己思考的一部分，而不是需要等待的东西。”</p>
+<p>Max Brunsfeld，Zed 联合创始人</p>
+<h4>2. Agent 循环</h4>
+<p>Agentic 工作流每个任务会串联数十次推理调用。降低单次调用的延迟不只是节省时间，它改变了你能负担得起运行多少步骤，以及最终输出能有多好。</p>
+<p>“我们现在正利用最新的 Mercury 模型智能地优化大规模的营销活动执行。通过实时呈现洞察并动态增强投放，我们正在推动更强的表现、更高的效率，以及一个更具韧性、由 AI 驱动的广告生态系统。这一进展强化了我们对自主广告的承诺——让智能系统持续优化执行，为客户交付可衡量的成果。”</p>
+<p>Adrian Witas，Viant 高级副总裁兼首席架构师</p>
+<p>“我们一直在评估 Mercury 2，因为它的延迟和品质表现无可比拟，对实时转录文本清理和交互式 HCI 应用尤其有价值。没有其他模型能接近 Mercury 提供的速度！”</p>
+<p>Sahaj Garg，Wispr Flow CTO 兼联合创始人</p>
+<p>&quot;Mercury 2 至少比 GPT-5.2 快一倍，这对我们来说是颠覆性的。&quot;</p>
+<p>Suchintan Singh，Skyvern CTO 兼联合创始人</p>
+<h4>3. 实时语音与交互</h4>
+<p>语音接口拥有 AI 中最严苛的延迟预算。Mercury 2 让推理级质量在自然语音节奏内变得可行。</p>
+<p>“我们打造栩栩如生的 AI 视频化身，与真人进行实时对话，所以低延迟不是锦上添花，而是一切。Mercury 2 是我们语音技术栈的一大突破：快速、一致的文本生成让整个体验保持自然、有人味。”</p>
+<p>Max Sapo，Happyverse AI CEO 兼联合创始人</p>
+<p>“Mercury 2 的质量非常出色，模型的低延迟让语音 agent 的响应更加及时。”</p>
+<p>Oliver Silverstein，OpenCall CEO 兼联合创始人</p>
+<h4>4. 搜索与 RAG 流水线</h4>
+<p>多跳检索、重排序与摘要的延迟会迅速叠加。Mercury 2 让你在搜索循环中加入推理，而不突破延迟预算。</p>
+<p>“与 Inception 的合作让我们搜索产品的实时 AI 变得可行。每一位 SearchBlox 客户——无论是客户支持、合规、风控、分析还是电商——都能从覆盖其全部数据的亚秒级智能中受益。”</p>
+<p>Timo Selvaraj，SearchBlox 首席产品官</p>
+<h2>开始使用</h2>
+<p>Mercury 2 现已可用。</p>
+<ul><li><a href="https://platform.inceptionlabs.ai/"><strong>试用 Mercury 2 API</strong></a></li><li><a href="https://chat.inceptionlabs.ai"><strong>在 Chat 中试用 Mercury 2</strong></a></li></ul>
+<p>Mercury 2 兼容 OpenAI API。直接接入你现有的技术栈——无需重写。</p>
+<p>如果你正在进行企业级评估，我们会在负载适配、评估设计以及你所预期的服务约束下的性能验证方面与你合作。</p>
+<h3>Mercury 2 已上线。欢迎来到 diffusion。</h3>]]></content:encoded>
     </item>
     <item>
       <title>SearchBlox + Inception：企业级实时 GenAI 搜索</title>
       <link>https://www.inceptionlabs.ai/blog/searchblox-and-inception</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/searchblox-and-inception</guid>
       <description>原文标题：SearchBlox + Inception: Real-Time GenAI Search at Enterprise Scale</description>
+      <content:encoded><![CDATA[<p><a href="about:blank">SearchBlox</a> 正在为电商、客户服务、知识管理、法务和数字平台等各行业的企业提供快速、懂上下文的搜索与 RAG。为在企业规模下支撑 AI，企业需要同时具备速度、准确率和可预期成本的方案。</p>
+<p>SearchBlox SearchAI 现已集成 <strong>Inception 的 Mercury dLLM</strong>，解锁超低延迟、低成本的规模化 GenAI。这一合作让 SearchBlox 客户即便在企业级负载上也能获得亚秒级的 GenAI 响应。</p>
+<h2>挑战：生产规模下的速度与成本</h2>
+<p>部署 GenAI 搜索的企业面对一个根本性的张力：传统自回归 LLM 有质量，但其延迟和成本让实时应用既慢又贵。对电商产品问答、客户支持、员工知识助手之类的用例，响应时间直接影响满意度。</p>
+<p>SearchBlox 需要一个既能处理实时查询、又不牺牲准确率、也不让基础设施成本失控的方案。</p>
+<blockquote>“速度如今是企业 AI 的决定性差异点。我们与 Inception 的合作让实时 GenAI 成为可行的现实。无论是客户支持、合规、风控、分析还是电商，每一位 SearchAI 客户都能从覆盖其全部数据的亚秒级智能中受益。”——Timo Selvaraj，SearchBlox 首席产品官</blockquote>
+<h2>方案：Mercury 进入 SearchAI 的 RAG 流水线</h2>
+<p>在非结构化文本上实现快速、准确的大规模推理，正是 SearchAI 流水线采用 Mercury 的原因。Diffusion 生成给了 Mercury 一条并行精化的路径，使企业搜索能以一致的亚秒延迟运行。</p>
+<p>SearchBlox 也评估过其他轻量模型，但它们要么延迟更高，要么无法在 SearchAI 处理的任务范围内保持质量。Mercury 的架构即使在突发式的企业负载下也能提供可预期的性能——这对响应时间不稳定就会损害用户体验的面向客户的应用至关重要。</p>
+<p>SearchBlox 把 Mercury 集成进 SearchAI 架构，作为其 LLM 抽象层内的一个模型端点。集成过程无需重构，也无需重写流水线。</p>
+<p>Mercury 与以下组件并排接入现有的 RAG 流水线：</p>
+<ul><li>混合搜索</li><li>上下文构建器与元数据增强</li><li>查询改写</li><li>SearchAI PreText NLP</li><li>向量与关键词融合</li><li>SmartFAQs</li><li>电商搜索体验</li></ul>
+<p>这次集成保留了 SearchAI 客户已经依赖的一切，同时大幅改善了速度和成本。</p>
+<h2>企业搜索的成果</h2>
+<p><strong>能规模化的速度。</strong>即使在高负载的企业工作负载下，Mercury 也能提供亚秒级推理。对 SearchBlox 客户来说，这意味着产品问答、智能 FAQ 和知识检索都近乎即时——无论处理十个查询还是上万个。</p>
+<p><strong>推理成本降低 60% 到 90%。</strong>与使用自回归 LLM 相比，Mercury 大幅降低了 SearchBlox 的计算成本。结合 SearchBlox 的固定成本授权模式，企业获得可持续的 GenAI 搜索经济性。</p>
+<p><strong>安全的部署。</strong>SearchAI 客户可以在 AWS Bedrock 或 Azure Foundry 上部署 Mercury，确保数据从不离开他们的私有云实例，并继承 AWS 或 Azure 完整的安全、合规与治理框架。</p>
+<p><strong>靠上下文换来的更好质量。</strong>借助 SearchAI 的 RAG 与元数据自动化，Mercury 获得更高的 grounding 准确率、更好的领域感知摘要、针对每个用户和工作流的个性化输出、多语言支持，以及对嘈杂企业数据更高的容错。结果是每次交互都高度相关。</p>
+<h2>现已可投入生产的用例</h2>
+<p>由 Mercury 驱动的 SearchAI，让企业可以放心地在以下场景部署 SearchBlox 的 GenAI 方案：</p>
+<p><strong>电商：</strong>更快的产品问答、即时的对比摘要、实时个性化、智能搜索建议。</p>
+<p><strong>客户支持：</strong>即时的智能回答、坐席辅助与摘要、无延迟的知识检索、全天候多语言支持。</p>
+<p><strong>企业知识与 RAG：</strong>合同与政策摘要、合规检查、法务问答、员工知识助手。</p>
+<p><strong>数字体验搜索：</strong>极快的站内搜索、情境化推荐、AI 驱动的内容发现。</p>
+<h2>结论</h2>
+<p>无论处理电商查询、客户支持、法律研究还是知识管理，SearchAI 的 RAG 流水线加上 Mercury 的 diffusion 生成过程，都把 GenAI 搜索从成本中心转变为竞争优势。</p>
+<p>企业搜索的未来是实时、懂上下文、成本可控的。SearchBlox 和 Inception 今天就在交付它。</p>
+<p>访问下方链接了解 SearchAI + Mercury Diffusion LLM 的详情，并预约一场量身定制的演示。</p>
+<p><a href="https://www.searchblox.com/partners/searchai-and-inception-mercury-diffusion-models">https://www.searchblox.com/partners/searchai-and-inception-mercury-diffusion-models</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Mercury Diffusion LLM 现已在 Azure AI Foundry 上提供</title>
       <link>https://www.inceptionlabs.ai/blog/mercury-azure-foundry</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/mercury-azure-foundry</guid>
       <description>原文标题：Mercury Diffusion LLM Now Available on Azure AI Foundry</description>
+      <content:encoded><![CDATA[<p>今天，我们很高兴地宣布 <a href="https://ai.azure.com/explore/models/Mercury/version/1/registry/azureml-inceptionlabs">Mercury 已在 Azure AI Foundry 上线</a>，把第一个商业规模的 diffusion 大语言模型（dLLM）带给企业开发者。此次发布将 Inception 突破性的 diffusion 架构与 Azure 的企业级就绪基础设施结合，让开发者能够获得一个兼具卓越速度与质量的模型。</p>
+<p>Mercury 由 Flash Attention、Direct Preference Optimization 以及最早的图像 diffusion 模型等基础 AI 技术背后的团队打造，代表着语言模型生成文本方式的根本转变。Azure AI Foundry 上的开发者现在拥有的模型，重新定义了实时 AI 应用的可能性。</p>
+<h2>面向语言生成的新架构</h2>
+<p>传统语言模型一次一个 token 地串行生成文本。这造成了一个内在瓶颈：每个 token 都必须等前面所有 token 生成完。Mercury 使用基于 diffusion 的架构并行生成多个 token，从而实现大幅更快的推理。结果：Mercury 的运行速度比同档自回归模型快至多 10 倍。</p>
+<h2>性能：速度与质量</h2>
+<p>Mercury 以前沿质量提供无与伦比的速度。在知识、编程、指令遵循和数学基准上，Mercury 的表现与 Gemini 2.5 Flash、Claude 4.5 Haiku 这类模型相当，而速度快至多 10 倍。</p>
+<h2>企业级就绪的 Azure 环境</h2>
+<p>Azure AI Foundry 上的 Mercury 开箱即用、可投入生产。它拥有 128K token 上下文窗口，可处理大型文档、维持长对话；支持原生工具调用与使用 JSON schema 的结构化输出，用于构建 agentic 工作流。API 兼容 OpenAI，与现有代码库的集成无缝。</p>
+<p>Azure AI Foundry 提供企业级基础设施，包括网络隔离、确保数据留在你自己的 Azure 环境中且绝不用于训练的数据隐私保障、SOC2 与 HIPAA 等 Azure 合规标准，以及通过 Azure Monitor 和 Application Insights 实现的全面可观测性。</p>
+<p><strong>真实世界用例</strong></p>
+<p>Mercury 的速度-质量组合让应用更快、响应更及时：</p>
+<ul><li><strong>编程助手：</strong>响应敏捷的自动补全、智能 Tab 建议、快速的聊天回复，帮开发者保持心流。</li><li><strong>实时语音 agent：</strong>在客服、翻译等场景中与 AI 自然交流。</li><li><strong>无缝的企业工作流：</strong>用极速响应的 AI 自动化复杂的路由、分析和决策流程。</li><li><strong>快速企业搜索：</strong>从整个组织的知识库中即刻找到所需数据。</li></ul>
+<h2>在 Azure AI Foundry 上部署</h2>
+<p>Mercury 已通过 Azure AI Foundry 在美国和加拿大区域提供。部署很直接——在 Azure AI Foundry 的统一目录中开通你的模型端点并配置基础设施。Mercury 的软件许可价格为 $0.78/小时，算力费用根据你开通的资源通过你的 Azure 账户单独计费。</p>
+<p><strong>Azure AI Foundry 集成：</strong></p>
+<p>Mercury 与更广泛的 Azure 生态无缝集成。使用 Azure AI Foundry 的模型目录部署，用 Azure AI Content Safety 做内容过滤，实时监控性能与成本，用 Azure RBAC 和托管身份管理访问，并用 Azure 的 agent 框架构建多模型应用。</p>
+<p>三步开始使用</p>
+<ul><li>进入 Azure AI Foundry 的 <a href="https://ai.azure.com/explore/models">Model Catalog</a>，搜索 <strong>Mercury</strong>，点击模型卡片。也可以直接访问我们<a href="https://ai.azure.com/explore/models/Mercury/version/1/registry/azureml-inceptionlabs">这里的模型卡片</a></li><li>点击 <strong>Use this model</strong>，选择一个项目，按 UI 提示开通你需要的容量。</li><li>默认配置适用于大多数开发者，但我们推荐选择 <strong>ND-H100-v5</strong> 实例以获得最佳速度。部署会在几分钟内完成。</li></ul>
+<p>就是这样！你现在应该可以基于刚开通的 API 端点开始构建了：</p>
+<pre><code>curl --location 'https://mercury-endpoint-ftecx.eastus.inference.ml.azure.com/v1/chat/completions' \\
+--header 'azureml-model-deployment: mercury-1' \\
+--header 'Content-Type: application/json' \\
+--header 'Authorization: Bearer &lt;your-api-key&gt;' \\
+--data '{
+  &quot;model&quot;: &quot;mercury&quot;,
+  &quot;messages&quot;:  [
+    { &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot; }
+  ],
+  &quot;stream&quot;: true,
+  &quot;temperature&quot;: 0.0,
+  &quot;max_tokens&quot;: 512
+}'</code></pre>
+<pre><code>curl --location 'https://mercury-endpoint-ftecx.eastus.inference.ml.azure.com/v1/chat/completions' \\
+--header 'azureml-model-deployment: mercury-1' \\
+--header 'Content-Type: application/json' \\
+--header 'Authorization: Bearer &lt;your-api-key&gt;' \\
+--data '{
+  &quot;model&quot;: &quot;mercury&quot;,
+  &quot;messages&quot;:  [
+    { &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot; }
+  ],
+  &quot;stream&quot;: true,
+  &quot;temperature&quot;: 0.0,
+  &quot;max_tokens&quot;: 512
+}'</code></pre>
+<pre><code>curl --location 'https://mercury-endpoint-ftecx.eastus.inference.ml.azure.com/v1/chat/completions' \\
+--header 'azureml-model-deployment: mercury-1' \\
+--header 'Content-Type: application/json' \\
+--header 'Authorization: Bearer &lt;your-api-key&gt;' \\
+--data '{
+  &quot;model&quot;: &quot;mercury&quot;,
+  &quot;messages&quot;:  [
+    { &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot; }
+  ],
+  &quot;stream&quot;: true,
+  &quot;temperature&quot;: 0.0,
+  &quot;max_tokens&quot;: 512
+}'</code></pre>
+<p>Python 版：</p>
+<pre><code>import requests
+import json
+
+url = &quot;https://mercury-endpoint-ftecx.eastus.inference.ml.azure.com/v1/chat/completions&quot;
+
+payload = json.dumps({
+  &quot;model&quot;: &quot;mercury&quot;,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;Hello!&quot;
+    }
+  ],
+  &quot;stream&quot;: False,
+  &quot;temperature&quot;: 0,
+  &quot;max_tokens&quot;: 512
+})
+headers = {
+  'azureml-model-deployment': 'mercury-1',
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer &lt;your-api-key&gt;'
+}
+
+response = requests.request(&quot;POST&quot;, url, headers=headers, data=payload)
+
+print(json.loads(response.text))</code></pre>
+<pre><code>import requests
+import json
+
+url = &quot;https://mercury-endpoint-ftecx.eastus.inference.ml.azure.com/v1/chat/completions&quot;
+
+payload = json.dumps({
+  &quot;model&quot;: &quot;mercury&quot;,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;Hello!&quot;
+    }
+  ],
+  &quot;stream&quot;: False,
+  &quot;temperature&quot;: 0,
+  &quot;max_tokens&quot;: 512
+})
+headers = {
+  'azureml-model-deployment': 'mercury-1',
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer &lt;your-api-key&gt;'
+}
+
+response = requests.request(&quot;POST&quot;, url, headers=headers, data=payload)
+
+print(json.loads(response.text))</code></pre>
+<pre><code>import requests
+import json
+
+url = &quot;https://mercury-endpoint-ftecx.eastus.inference.ml.azure.com/v1/chat/completions&quot;
+
+payload = json.dumps({
+  &quot;model&quot;: &quot;mercury&quot;,
+  &quot;messages&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;Hello!&quot;
+    }
+  ],
+  &quot;stream&quot;: False,
+  &quot;temperature&quot;: 0,
+  &quot;max_tokens&quot;: 512
+})
+headers = {
+  'azureml-model-deployment': 'mercury-1',
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer &lt;your-api-key&gt;'
+}
+
+response = requests.request(&quot;POST&quot;, url, headers=headers, data=payload)
+
+print(json.loads(response.text))</code></pre>
+<h2>实时 AI 的未来</h2>
+<p>Mercury 登陆 Azure AI Foundry，标志着生产 AI 应用的一个转折点。开发者不再需要在速度与质量之间、实时响应与前沿模型能力之间做选择。</p>
+<p><a href="https://ai.azure.com/explore/models/Mercury/version/1/registry/azureml-inceptionlabs"><strong>在 Azure AI Foundry 部署 Mercury →</strong></a></p>
+<p>详细文档、基准测试与集成指南，请访问 Azure AI Foundry 中的 <a href="https://ai.azure.com/explore/models/Mercury/version/1/registry/azureml-inceptionlabs">Mercury 模型卡片</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>dLLM 的下一步：扩大 Mercury 规模</title>
       <link>https://www.inceptionlabs.ai/blog/mercury-refreshed</link>
       <guid isPermaLink="true">https://www.inceptionlabs.ai/blog/mercury-refreshed</guid>
       <description>原文标题：The Next Step for dLLMs: Scaling up Mercury</description>
+      <content:encoded><![CDATA[<p>我们创办 Inception，是为了打造全球最快、最高效的 AI 模型。2025 年 2 月，我们发布了第一个模型 Mercury——首款商用的基于 diffusion 的 LLM（dLLM）。Mercury 比当今的 LLM 快至多 10 倍、效率高至多 10 倍，同时提供一流的质量。</p>
+<p>今天，我们很高兴宣布两个重要里程碑。首先，我们最近完成了由 Menlo Ventures 领投的 <a href="https://techcrunch.com/2025-11-06/inception-raises-50-million-to-build-diffusion-models-for-code-and-text/">5000 万美元融资</a>，多家顶级风险基金和天使投资人参与，包括 Andrew Ng 和 Andrej Karpathy。这些投资人与我们持有相同的信念：dLLM 是语言模型的未来。他们押注的，是我们把这项技术规模化并带给每一位开发者和企业的能力。</p>
+<p>其次，我们正在发布旗舰 dLLM Mercury 的更强版本。此次更新在编程、指令遵循、数学问题求解和知识回忆方面均有提升。</p>
+<p><em>方法学细节见文末注释。</em></p>
+<p><strong>Diffusion 的不同之处</strong></p>
+<p>今天的 LLM 慢得令人痛苦、贵得令人痛苦。它们用一种叫自回归（autoregression）的技术生成 token、字母、代码和单词，顺序是：一。个。一。个。来。这是一个结构性、无法回避的瓶颈。</p>
+<p>Inception 的 Mercury dLLM 使用另一种方法——diffusion——并行生成答案。</p>
+<p>dLLM 不是一次预测一个 token，而是并行生成整块整块的语言。输出先从一张宽泛、含噪的草图开始，随后通过迭代的「去噪」过程快速收敛到最佳答案。token（以及字母、单词和代码）一次性全部浮现，而不是一个一个蹦出来。</p>
+<p>这是一种从根本上更好的语言生成方式：快 10 倍、高效 10 倍，同时保持一流质量。</p>
+<p><strong>开发者与企业动能</strong></p>
+<p>开发者和企业很快搭上了 Mercury 的车，利用 dLLM 的性能改变「可能」的边界。</p>
+<p>他们在打造与软件工程师并肩编辑代码的 AI 助手：敏捷的自动补全、智能的 Tab 建议、迅捷的编辑应用。他们在打造帮客户快速直达所需的语音 agent。还有与设计师、创作者、分析师并肩工作的 AI 副驾驶：提出建议和修改、管理工作流、做深度研究。</p>
+<p>这些方案都即刻响应、在流中运行。不必输入一个查询，然后去倒杯咖啡等结果。</p>
+<p><strong>Mercury 的新内容</strong></p>
+<p>新版 Mercury 带来：</p>
+<ul><li><em>更大的模型与更多的数据。</em> 增加参数量，在更广、更高质量的数据集上训练，解锁更强的推理、编程与指令遵循能力</li><li><em>关键的架构升级。</em> 推进去噪器（denoiser）架构，提升效率、表达力与整体模型能力</li><li><em>训练与推理的大幅改进。</em> 设计新的训练目标，引入更快更准的推理算法，构建优化的 kernel，并上线一套全新的服务引擎</li></ul>
+<p>这些改进在知识、编程、指令遵循和数学基准上带来质量的大幅提升。</p>
+<p>上文各图所用的基准结果如下。</p>
+<p><strong>使用 Mercury</strong></p>
+<p>升级版 Mercury 模型已在我们的 <a href="http://platform.inceptionlabs.ai/">API Platform</a> 以及包括 <a href="https://openrouter.ai/inception">OpenRouter</a> 和 <a href="https://models.dev/?search=inception">Models.dev</a> 在内的合作伙伴处提供。</p>
+<p>想试试吗？新用户可获得 1000 万免费 token。我们的 API 兼容 OpenAI API，几秒钟就能接入。</p>
+<p>Mercury 的价格不变：输入 $0.25/1M token，输出 $1.00/1M token。这划算吗？我们觉得是的！例如，Mercury 的质量高于 Claude 4.5 Haiku，延迟只有它的五分之一，价格不到它的四分之一。</p>
+<p><strong>下一步？</strong></p>
+<p>这次升级是一大步，但只是开始。我们正在全力推进新能力、融合新模态，交付速度、速度、速度。如果你觉得这有意思——如果你想参与构建 diffusion LLM 的未来——我们聊聊：<a href="mailto:sales@inceptionlabs.ai">sales@inceptionlabs.ai</a>。</p>
+<p>查看我们的职位：<a href="https://www.inceptionlabs.ai/careers">https://www.inceptionlabs.ai/careers</a></p>
+<p>访问我们的 API Platform：<a href="http://platform.inceptionlabs.ai/">platform.inceptionlabs.ai</a></p>
+<p>试用 Mercury：<a href="http://chat.inceptionlabs.ai/">chat.inceptionlabs.ai</a></p>
+<p><strong>关于 Inception</strong></p>
+<p>Inception 打造全球最快、最高效的 AI 模型。当今的自回归 LLM 串行生成 token，这使它们慢得痛苦、贵得痛苦。Inception 基于 diffusion 的 LLM（dLLM）并行生成答案，速度快 10 倍、效率高 10 倍，使任何企业都能打造即刻、在流中运行的 AI 方案。Inception 的创始人参与发明了 diffusion 技术——如今图像和视频 AI 的行业标准——公司也是第一家把它应用于语言的公司。Inception 总部位于加州 Palo Alto，获得一线风险投资机构的支持，包括 Menlo Ventures、Mayfield、M12（Microsoft 的风投基金）、Snowflake Ventures、Databricks Investment 和 Innovation Endeavors。</p>
+<ul><li>注：质量取 GPQA Diamond、LCB、IFBench、AIME 2025 与 SciCode 的平均值。端到端延迟采用 Artificial Analysis 的方法学测量，见<a href="https://artificialanalysis.ai/methodology/performance-benchmarking">这里</a>。</li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

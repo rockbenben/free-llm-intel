@@ -1,6 +1,6 @@
 # Anthropic Claude 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-02**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-05**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anthropic Claude（`anthropic`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -85,6 +85,6 @@
 73. [构建高效的智能体](https://www.anthropic.com/engineering/building-effective-agents)（2024-12-19） <!--orig:Building Effective AI Agents \ Anthropic-->
 74. [AI 系统中的上下文检索](https://www.anthropic.com/engineering/contextual-retrieval)（2024-09-19） <!--orig:Contextual Retrieval in AI Systems \ Anthropic-->
 75. [产品发布公告](https://claude.com/blog-category/announcements) <!--orig:Product announcements Category-->
-76. [西班牙语（西班牙）](https://claude.com/es/blog)
+76. [西班牙语（西班牙）](https://claude.com/es/blog) <!--orig:Español (España)-->
 77. [发布更新后的《负责任的扩展政策》](https://www.anthropic.com/news/announcing-our-updated-responsible-scaling-policy) <!--orig:Announcing our updated Responsible Scaling Policy \ Anthropic-->
 78. [我们如何在产品中管控 Claude](https://www.anthropic.com/engineering/how-we-contain-claude) <!--orig:How we contain Claude across products \ Anthropic-->
