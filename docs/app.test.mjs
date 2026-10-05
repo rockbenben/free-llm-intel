@@ -109,3 +109,47 @@ test('cacheAgeLabel: <60 分钟报分钟，否则报小时（一位小数）', (
   assert.equal(FLI.cacheAgeLabel(now - 59 * 60000, now), '59 分钟');
   assert.equal(FLI.cacheAgeLabel(now - 90 * 60000, now), '1.5 小时');
 });
+
+// ---- mdToHtml：与 crawler_llm_intel._md_to_html 对偶 ----
+test('mdToHtml: heading + paragraph + list + fenced code', () => {
+  const md = '# Title\n\nHello **world**, `code`.\n\n- a\n- b\n\n1. one\n2. two\n\n```\nprint(1)\n```\n';
+  const h = FLI.mdToHtml(md);
+  assert.match(h, /<h1>Title<\/h1>/);
+  assert.match(h, /<strong>world<\/strong>/);
+  assert.match(h, /<code>code<\/code>/);
+  assert.match(h, /<ul><li>a<\/li><li>b<\/li><\/ul>/);
+  assert.match(h, /<ol><li>one<\/li><li>two<\/li><\/ol>/);
+  assert.match(h, /<pre><code>print\(1\)<\/code><\/pre>/);
+});
+
+test('mdToHtml: pipe 表格', () => {
+  const md = '| Model | Score |\n|---|---|\n| A | 1 |\n| B | 2 |\n';
+  const h = FLI.mdToHtml(md);
+  assert.match(h, /<thead>/);
+  assert.match(h, /<th>Model<\/th>/);
+  assert.match(h, /<td>A<\/td>/);
+  assert.equal((h.match(/<tr>/g) || []).length, 3);
+});
+
+test('mdToHtml: 链接与图片', () => {
+  const md = 'See [docs](https://x.test/a) and ![alt](https://x.test/p.png).\n';
+  const h = FLI.mdToHtml(md);
+  assert.match(h, /<a href="https:\/\/x\.test\/a">docs<\/a>/);
+  assert.match(h, /<img src="https:\/\/x\.test\/p\.png" alt="alt">/);
+});
+
+test('mdToHtml: HTML escape，不成立即标签；剥危险标签', () => {
+  const h = FLI.mdToHtml('Type `<div>` here.\n');
+  assert.match(h, /&lt;div&gt;/);
+  assert.ok(!h.includes('<div>'));
+  // 段落里 raw <script>…</script> 被 escape，只剩字面量；strip 步骤再兜底剥
+  const h2 = FLI.mdToHtml('before\n\n<script>alert(1)</script>\n\nafter\n');
+  assert.ok(!h2.includes('<script>'));
+});
+
+test('mdToHtml: 引用块 + 空输入 + 无 block 元素兜底成段落', () => {
+  const bq = FLI.mdToHtml('> hi\n');
+  assert.match(bq, /<blockquote>hi<\/blockquote>/);
+  assert.equal(FLI.mdToHtml(''), '');
+  assert.equal(FLI.mdToHtml(null), '');
+});

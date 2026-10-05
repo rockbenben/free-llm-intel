@@ -445,6 +445,116 @@ var FLI = (function () {
     return m < 60 ? m + ' 分钟' : (Math.round(m / 60 * 10) / 10) + ' 小时';
   }
 
+  // ---- md → HTML（reader 抽屉用；与 crawler_llm_intel._md_to_html 对偶，
+  //      docs/app.test.mjs 双跑同一份 fixture 结构等价断言防漂移）----
+  function htmlEsc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  var STRIP_PAIR = /<\s*(script|iframe|style|link|object|embed|form)\b[\s\S]*?<\s*\/\s*\1\s*>/gi;
+  var STRIP_SELF = /<\s*(script|iframe|style|link|object|embed|form|input|meta)\b[^>]*\/?\s*>/gi;
+  function stripUnsafe(h) { return h.replace(STRIP_PAIR, '').replace(STRIP_SELF, ''); }
+  function mdInline(t) {
+    var s = htmlEsc(t);
+    s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
+                  function (_m, alt, src) { return '<img src="' + src + '" alt="' + alt + '">'; });
+    s = s.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
+                  function (_m, txt, href) { return '<a href="' + href + '">' + txt + '</a>'; });
+    s = s.replace(/`([^`\n]+)`/g, function (_m, c) { return '<code>' + c + '</code>'; });
+    s = s.replace(/\*\*([^*\n]+)\*\*/g, function (_m, c) { return '<strong>' + c + '</strong>'; });
+    s = s.replace(/(?<![\*])\*([^*\n]+)\*(?!\*)/g, function (_m, c) { return '<em>' + c + '</em>'; });
+    return s;
+  }
+  function mdToHtml(md) {
+    if (!md) return '';
+    var lines = md.split(/\r?\n/);
+    var out = [], i = 0, n = lines.length;
+    while (i < n) {
+      var line = (lines[i] || '').replace(/\s+$/, '');
+      var stripped = line.trim();
+      if (!stripped) { i++; continue; }
+      if (stripped.indexOf('```') === 0) {
+        var lang = stripped.slice(3).trim();
+        var body = [];
+        i++;
+        while (i < n && (lines[i] || '').trim().indexOf('```') !== 0) {
+          body.push(lines[i]); i++;
+        }
+        i++;
+        var codeBody = htmlEsc(body.join('\n'));
+        var cls = lang ? ' class="language-' + lang + '"' : '';
+        out.push('<pre><code' + cls + '>' + codeBody + '</code></pre>');
+        continue;
+      }
+      var hm = stripped.match(/^(#{1,6})\s+(.+?)\s*#*\s*$/);
+      if (hm) {
+        var lv = hm[1].length;
+        out.push('<h' + lv + '>' + mdInline(hm[2]) + '</h' + lv + '>');
+        i++; continue;
+      }
+      if (stripped.charAt(0) === '|' && i + 1 < n &&
+          /^\s*\|?[\s\-:|]+\|?\s*$/.test(lines[i + 1])) {
+        var headers = stripped.replace(/^\||\|$/g, '').split('|').map(function (x) { return x.trim(); });
+        i += 2;
+        var rows = [];
+        while (i < n && (lines[i] || '').trim().charAt(0) === '|') {
+          rows.push(lines[i].trim().replace(/^\||\|$/g, '').split('|').map(function (x) { return x.trim(); }));
+          i++;
+        }
+        var ths = headers.map(function (c) { return '<th>' + mdInline(c) + '</th>'; }).join('');
+        var trs = rows.map(function (r) {
+          return '<tr>' + r.map(function (c) { return '<td>' + mdInline(c) + '</td>'; }).join('') + '</tr>';
+        }).join('');
+        out.push('<table><thead><tr>' + ths + '</tr></thead><tbody>' + trs + '</tbody></table>');
+        continue;
+      }
+      if (stripped.charAt(0) === '>') {
+        var quotes = [];
+        while (i < n && (lines[i] || '').trim().charAt(0) === '>') {
+          quotes.push((lines[i] || '').trim().replace(/^>\s?/, ''));
+          i++;
+        }
+        var inner = quotes.filter(function (q) { return q; })
+                          .map(function (q) { return mdInline(q); }).join('<br>');
+        out.push('<blockquote>' + inner + '</blockquote>');
+        continue;
+      }
+      if (/^[-*+]\s+/.test(stripped)) {
+        var items = [];
+        while (i < n && /^[-*+]\s+/.test((lines[i] || '').trim())) {
+          items.push((lines[i] || '').trim().replace(/^[-*+]\s+/, ''));
+          i++;
+        }
+        out.push('<ul>' + items.map(function (x) { return '<li>' + mdInline(x) + '</li>'; }).join('') + '</ul>');
+        continue;
+      }
+      if (/^\d+\.\s+/.test(stripped)) {
+        var oitems = [];
+        while (i < n && /^\d+\.\s+/.test((lines[i] || '').trim())) {
+          oitems.push((lines[i] || '').trim().replace(/^\d+\.\s+/, ''));
+          i++;
+        }
+        out.push('<ol>' + oitems.map(function (x) { return '<li>' + mdInline(x) + '</li>'; }).join('') + '</ol>');
+        continue;
+      }
+      var para = [];
+      while (i < n) {
+        var cur = (lines[i] || '').trim();
+        if (!cur) break;
+        if (cur.charAt(0) === '#' || cur.charAt(0) === '>' || cur.indexOf('```') === 0
+            || /^[-*+]\s+/.test(cur) || /^\d+\.\s+/.test(cur) || cur.charAt(0) === '|') break;
+        para.push(cur); i++;
+      }
+      if (para.length) {
+        out.push('<p>' + mdInline(para.join(' ')) + '</p>');
+        continue;
+      }
+      out.push('<p>' + mdInline(stripped) + '</p>');
+      i++;
+    }
+    return stripUnsafe(out.join('\n'));
+  }
+
   return {
     UNKNOWN: UNKNOWN,
     mapRow: mapRow,
@@ -453,7 +563,11 @@ var FLI = (function () {
     visible: visible,
     fmtDate: fmtDate,
     plain: plain,
-    cacheAgeLabel: cacheAgeLabel
+    cacheAgeLabel: cacheAgeLabel,
+    mdToHtml: mdToHtml,
+    _mdInline: mdInline,
+    _stripUnsafe: stripUnsafe,
+    _htmlEsc: htmlEsc
   };
 })();
 </script>

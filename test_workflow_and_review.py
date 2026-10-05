@@ -6479,6 +6479,86 @@ class TestRssDualFeeds(unittest.TestCase):
             self.assertIn("blog/2", zh)
 
 
+class TestMdHtmlDualRun(unittest.TestCase):
+    """md→html 的 Python 与 JS 实现必须产出**同一 tag 序列**（reader 抽屉与 RSS
+    `content:encoded` 共用一份内容语义，两份源不能漂移，见 corpus spec §12.4）。
+
+    结构等价而非字节等价：只比 `(tag, text)` 序列；忽略空白与属性顺序差异。
+    """
+
+    FIXTURES = [
+        ("heading_para", "# Title\n\nHello world.\n"),
+        ("bold_code_link", "See [docs](https://x.test/a) with **bold** and `code`.\n"),
+        ("image", "![alt](https://x.test/p.png)\n"),
+        ("list", "- a\n- b\n"),
+        ("olist", "1. one\n2. two\n"),
+        ("code", "```python\nprint(1)\n```\n"),
+        ("table", "| Model | Score |\n|---|---|\n| A | 1 |\n"),
+        ("blockquote", "> quoted\n"),
+        ("raw_html_escaped", "Type `<div>` here.\n"),
+    ]
+
+    def _js_html(self, md: str) -> str:
+        # 从 index.html 抠 <script id="fli-core">，eval 后调 mdToHtml；
+        # 用 stdin 传 md 避免 shell 转义。node 不在时退回 skip。
+        import subprocess, shutil
+        if not shutil.which("node"):
+            self.skipTest("node 不在 PATH")
+        script = (
+            "const fs=require('fs');"
+            "const html=fs.readFileSync('docs/index.html','utf8');"
+            "const m=html.match(/<script id=\"fli-core\">([\\s\\S]*?)<\\/script>/);"
+            "if(!m){console.error('no fli-core');process.exit(2);}"
+            "const FLI=new Function(m[1]+'\\n;return FLI;')();"
+            "let s='';process.stdin.on('data',d=>s+=d);"
+            "process.stdin.on('end',()=>{process.stdout.write(FLI.mdToHtml(s));});"
+        )
+        r = subprocess.run(["node", "-e", script], input=md.encode("utf-8"),
+                           capture_output=True, cwd=str(Path(__file__).resolve().parent))
+        if r.returncode != 0:
+            self.fail(f"node 报错：{r.stderr.decode('utf-8', errors='replace')}")
+        return r.stdout.decode("utf-8")
+
+    @staticmethod
+    def _tokens(html: str) -> list:
+        """(tag, inner_text) 序列。attr 与空白差异忽略。"""
+        import html as h_mod
+        out = []
+        i = 0
+        while i < len(html):
+            lt = html.find("<", i)
+            if lt < 0:
+                break
+            gt = html.find(">", lt)
+            if gt < 0:
+                break
+            tag_full = html[lt:gt + 1]
+            m = re.match(r"</?\s*([a-zA-Z][a-zA-Z0-9]*)", tag_full)
+            if m:
+                tag = m.group(1).lower()
+                closing = tag_full.startswith("</")
+                selfclose = tag_full.endswith("/>") or tag in ("img", "br", "input", "hr")
+                if not closing and not selfclose:
+                    # 抓 inner text 直到匹配的下一个开/闭标签
+                    close = html.find("<", gt + 1)
+                    inner = html[gt + 1:close if close >= 0 else len(html)]
+                    inner = re.sub(r"<[^>]+>", "", inner).strip()
+                    out.append((tag, h_mod.unescape(inner)))
+                else:
+                    out.append((tag + ("/" if selfclose and not closing else ""), ""))
+            i = gt + 1
+        return out
+
+    def test_python_and_js_agree(self):
+        import crawler_llm_intel as c
+        for name, md in self.FIXTURES:
+            with self.subTest(name):
+                py = c._md_to_html(md)
+                js = self._js_html(md)
+                self.assertEqual(self._tokens(py), self._tokens(js),
+                                 f"Python/JS tag sequence 不一致\npy={py!r}\njs={js!r}")
+
+
 class TestIndexHasSlug(unittest.TestCase):
     """articles.json 每行末尾加 slug（reader 抽屉拼 md 路径的数据前置，见 corpus spec §12）。
 
