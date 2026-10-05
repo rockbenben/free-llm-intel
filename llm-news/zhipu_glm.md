@@ -1,7 +1,7 @@
-# 智谱 AI GLM 文章归档
+# 智谱 GLM 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-12**（标题自动汉化、附发布日期与原文链接）。
-> 厂商：智谱 AI GLM（`zhipu_glm`） ｜ [返回订阅源总览](../llm-news-feeds.md)
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-05**（标题自动汉化、附发布日期与原文链接）。
+> 厂商：智谱 GLM（`zhipu_glm`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 

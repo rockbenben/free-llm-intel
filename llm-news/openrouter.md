@@ -1,7 +1,7 @@
-# OpenRouter 文章归档
+# OpenRouter (模型统一网关) 文章归档
 
 > 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-05**（标题自动汉化、附发布日期与原文链接）。
-> 厂商：OpenRouter（`openrouter`） ｜ [返回订阅源总览](../llm-news-feeds.md)
+> 厂商：OpenRouter (模型统一网关)（`openrouter`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
@@ -9,7 +9,7 @@
 
 ## 全部文章（共 154 篇，按日期倒序；无日期条目列于最后）
 
-1. [Server-Side Code Execution Tools for AI Agents, Compared](https://openrouter.ai/blog/insights/server-side-code-execution-tools-for-ai-agents-compared/)（2026-10-05）
+1. [AI 代理的服务器端代码执行工具比较](https://openrouter.ai/blog/insights/server-side-code-execution-tools-for-ai-agents-compared/)（2026-10-05） <!--orig:Server-Side Code Execution Tools for AI Agents, Compared-->
 2. [代理框架比较：工具调用架构处理](https://openrouter.ai/blog/insights/agent-frameworks-compared-tool-calling-schema-handling/)（2026-10-02） <!--orig:Agent Frameworks Compared: Tool-Calling Schema Handling-->
 3. [LangChain vs CrewAI：编排与 OpenRouter-原生路由的比较](https://openrouter.ai/blog/insights/langchain-vs-crewai-orchestration-compared-to-openrouter-native-routing/)（2026-10-02） <!--orig:LangChain vs CrewAI: Orchestration Compared to OpenRouter-Native Routing-->
 4. [模型路由器基准](https://openrouter.ai/blog/announcements/model-router-benchmarks/)（2026-10-02） <!--orig:Model Router Benchmarks-->

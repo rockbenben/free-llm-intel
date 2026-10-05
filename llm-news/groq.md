@@ -1,7 +1,7 @@
-# Groq Cloud 文章归档
+# Groq Cloud (LPU 推理) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-30**（标题自动汉化、附发布日期与原文链接）。
-> 厂商：Groq Cloud（`groq`） ｜ [返回订阅源总览](../llm-news-feeds.md)
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-05**（标题自动汉化、附发布日期与原文链接）。
+> 厂商：Groq Cloud (LPU 推理)（`groq`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 

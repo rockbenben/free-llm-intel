@@ -1,7 +1,7 @@
-# 数眼智能 文章归档
+# 数眼智能 (数言 AI / ShuyanAI) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-09-27**（标题自动汉化、附发布日期与原文链接）。
-> 厂商：数眼智能（`dataeye`） ｜ [返回订阅源总览](../llm-news-feeds.md)
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-05**（标题自动汉化、附发布日期与原文链接）。
+> 厂商：数眼智能 (数言 AI / ShuyanAI)（`dataeye`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
