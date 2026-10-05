@@ -3389,6 +3389,25 @@ def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
     return list(kept.values())
 
 
+def _order_by_vendor_rank(intel_list: list[VendorIntel]) -> list[VendorIntel]:
+    """按 `VENDOR_RANK`（模型知名度）给厂商排序，与 README 章节序 / quotas 一览 /
+    浏览页厂商胶囊同一口径。
+
+    回归：`llm-news-feeds.md` 与 `llm-news-feeds.opml` 曾直接沿用 `intel_list` 的
+    抓取序（= yaml 定义序），于是 Anthropic 掉到 OpenAI 之后、被下调排名的硅基流动
+    仍压在自研厂商前面——同一份名单在四个出口（README/quotas/浏览页/订阅文档）里
+    顺序各不相同。统一走这张表，改排名只需动 `VENDOR_RANK` 一处。
+    """
+    return sorted(intel_list, key=lambda v: (vendor_rank_index(v.vendor_id), v.vendor_id))
+
+
+def _news_display_name(intel: VendorIntel) -> str:
+    """订阅文档里给读者看的厂商名：用 profile 的 `display_name`（与一览/README 同一
+    展示名），未登记档案时回落 yaml 的 `brand`。"""
+    prof = get_provider_profile(intel.vendor_id, intel.brand, intel.homepage)
+    return prof.get("display_name") or intel.brand
+
+
 def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
                         merged_limit: int = RSS_MERGED_LIMIT) -> str:
     now = datetime.now()
@@ -3425,14 +3444,14 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
                      "合并流只收有日期的条目，**要看全量请用浏览页或单厂商源**。")
     lines.append("")
 
-    vendors_with_news = [v for v in intel_list if v.news_pages]
+    vendors_with_news = _order_by_vendor_rank([v for v in intel_list if v.news_pages])
     # 官网自带 RSS/Atom 的厂商：其余厂商才是自建源的真正用户，逐条标出来，
     # 否则读者看到「未发现 RSS/Atom 链接」会以为这家订不了 —— 而我们其实自建了一个。
     native_ids = _native_feed_vendors(vendors_with_news)
     feed_count = 0
     vendors_with_articles = 0
     for intel in vendors_with_news:
-        lines.append(f"### {intel.brand} ({intel.vendor_id})")
+        lines.append(f"### {_news_display_name(intel)} ({intel.vendor_id})")
         for page in intel.news_pages:
             label = type_label(page.stype)
             if page.stype == "feed":
@@ -3544,6 +3563,7 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
     """
     outlines: list[tuple[str, str, str, str]] = []  # (brand, title, xmlUrl, htmlUrl)
     seen_feeds: set[str] = set()
+    intel_list = _order_by_vendor_rank(intel_list)
     for intel in intel_list:
         for page in intel.news_pages:
             if not page.ok:
@@ -3556,8 +3576,8 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
                     continue
                 seen_feeds.add(feed)
                 label = TYPE_LABELS.get(page.stype, page.stype)
-                title = f"{intel.brand} - {label}"
-                outlines.append((intel.brand, title, feed, html_url))
+                title = f"{_news_display_name(intel)} - {label}"
+                outlines.append((_news_display_name(intel), title, feed, html_url))
 
     def esc(s: str) -> str:
         return (s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -3586,7 +3606,7 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
             if intel.vendor_id in native_ids or not _rss_articles(intel, today):
                 continue
             self_hosted.append((
-                f"{intel.brand} - 自建源（官方没有原生 RSS）",
+                f"{_news_display_name(intel)} - 自建源（官方没有原生 RSS）",
                 f"{feeds_base}/llm-news-{intel.vendor_id}.xml",
                 site or feeds_base,
             ))
@@ -4285,11 +4305,11 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
         with ThreadPoolExecutor(max_workers=6) as pool:
             titles_zh = list(pool.map(article_title_zh, arts))
         lines: list[str] = []
-        lines.append(f"# {intel.brand} 文章归档")
+        lines.append(f"# {_news_display_name(intel)} 文章归档")
         lines.append("")
         lines.append(f"> 由 `crawler_llm_intel.py` 自动整理，抓取于 **{today}**"
                      "（标题自动汉化、附发布日期与原文链接）。")
-        lines.append(f"> 厂商：{intel.brand}（`{intel.vendor_id}`） ｜ "
+        lines.append(f"> 厂商：{_news_display_name(intel)}（`{intel.vendor_id}`） ｜ "
                      "[返回订阅源总览](../llm-news-feeds.md)")
         lines.append("")
         lines.append("## 订阅入口")

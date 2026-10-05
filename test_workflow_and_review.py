@@ -2189,6 +2189,56 @@ class TestOpmlAndNewsDocCoverage(unittest.TestCase):
             self._vendor("selfhost_b", "SelfHost B"),
         ]
 
+    # 真实厂商 id：用于钉「订阅文档也按 VENDOR_RANK 排、用 display_name」
+    _RANK_SCRAMBLE_IDS = ["moonshot_kimi", "openai", "siliconflow",
+                          "anthropic", "sensetime_sensenova", "aliyun_qwen"]
+
+    def _scramble_intel(self):
+        """故意打乱顺序 + 用旧 brand（不是 display_name）构造，看渲染会不会纠正。"""
+        return [self._vendor(vid, f"brand-{vid}",
+                              native_feed=f"https://{vid}.example/rss.xml")
+                for vid in self._RANK_SCRAMBLE_IDS]
+
+    def test_news_doc_orders_by_vendor_rank(self):
+        """回归：`llm-news-feeds.md` 曾沿用 yaml 抓取序，与 README/quotas/浏览页的
+        VENDOR_RANK 序不一致（Anthropic 排在 OpenAI 之后、被下调的硅基流动仍压在
+        自研厂商之前）。订阅文档必须与其余出口同一顺序。"""
+        import re as _re
+        md = crawler_llm_intel.render_news_section(self._scramble_intel(), self.BASE)
+        ids = _re.findall(r"^### .* \((\w+)\)$", md, _re.M)
+        self.assertEqual(ids, sorted(self._RANK_SCRAMBLE_IDS,
+                                     key=provider_profiles.vendor_rank_index),
+                         "厂商章节顺序必须按 VENDOR_RANK 单调不减")
+        # 具体锚点：知名度最高的两家相对顺序、以及「自研>聚合」在订阅文档里同样成立
+        self.assertLess(ids.index("anthropic"), ids.index("openai"))
+        self.assertLess(ids.index("sensetime_sensenova"), ids.index("siliconflow"))
+
+    def test_news_doc_uses_display_name_not_yaml_brand(self):
+        """订阅文档的读者可见名 = display_name（与一览/README 同一展示名），不是 yaml brand。"""
+        md = crawler_llm_intel.render_news_section(self._scramble_intel(), self.BASE)
+        self.assertIn("### 通义千问 (阿里云) (aliyun_qwen)", md,
+                      "aliyun_qwen 章节头应显示 display_name")
+        self.assertNotIn("### brand-aliyun_qwen", md, "不得退回 yaml brand")
+
+    def test_opml_orders_by_vendor_rank(self):
+        """OPML 是读者真正导入的清单，组内顺序同样要按 VENDOR_RANK。"""
+        path = self.out_dir / "llm-news-feeds.opml"
+        crawler_llm_intel.write_opml(path, self._scramble_intel(), self.BASE)
+        opml = path.read_text(encoding="utf-8")
+        pos = {vid: opml.index(f"https://{vid}.example/rss.xml")
+               for vid in self._RANK_SCRAMBLE_IDS}
+        order = sorted(self._RANK_SCRAMBLE_IDS, key=lambda v: pos[v])
+        self.assertEqual(order, sorted(self._RANK_SCRAMBLE_IDS,
+                                       key=provider_profiles.vendor_rank_index),
+                         "OPML 原生源分组必须按 VENDOR_RANK 排")
+
+    def test_opml_uses_display_name(self):
+        path = self.out_dir / "llm-news-feeds.opml"
+        crawler_llm_intel.write_opml(path, self._scramble_intel(), self.BASE)
+        opml = path.read_text(encoding="utf-8")
+        self.assertIn("通义千问 (阿里云)", opml, "OPML 标题须用 display_name")
+        self.assertNotIn("brand-aliyun_qwen", opml)
+
     def test_opml_adds_self_hosted_group_for_vendors_without_native_rss(self):
         path = self.out_dir / "llm-news-feeds.opml"
         crawler_llm_intel.write_opml(path, self._intel_list(), self.BASE)
