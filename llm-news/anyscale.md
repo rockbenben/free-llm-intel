@@ -7,7 +7,7 @@
 
 - 📡 RSS/Atom：[RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)
 
-## 全部文章（共 67 篇，按日期倒序；无日期条目列于最后）
+## 全部文章（共 69 篇，按日期倒序；无日期条目列于最后）
 
 1. [Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08） <!--orig:Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all-->
 2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
@@ -69,10 +69,12 @@
 58. [Ray 1.13：改进对 TB 级和更大数据集的混洗支持](https://anyscale.com/blog/ray-1-13-large-scale-dataset-shuffle-ray-serve-deployment-graph-api-kuberay)（2022-06-09） <!--orig:Ray 1.13: Improving support for shuffling terabyte-scale and larger datasets-->
 59. [用于大规模机器学习摄取和评分的射线数据集](https://anyscale.com/blog/ray-datasets-for-machine-learning-training-and-scoring)（2022-02-14） <!--orig:Ray Datasets for large-scale machine learning ingest and scoring-->
 60. [深入探讨：第三代机器学习架构中的数据摄取](https://anyscale.com/blog/deep-dive-data-ingest-in-a-third-generation-ml-architecture)（2021-11-30） <!--orig:Deep Dive: Data Ingest in a Third Generation ML Architecture-->
-61. [How Anastasia accelerated their ML processes 9x with Ray and Anyscale](https://anyscale.com/blog/how-anastasia-implements-ray-and-anyscale-to-speed-up-ml-processes-9x)（2021-08-31）
-62. [分析 Dask-on-Ray 中的内存管理和性能](https://anyscale.com/blog/analyzing-memory-management-and-performance-in-dask-on-ray)（2021-06-29） <!--orig:Analyzing memory management and performance in Dask-on-Ray-->
-63. [Ray 分布式库模式](https://anyscale.com/blog/ray-distributed-library-patterns)（2021-06-14） <!--orig:Ray Distributed Library Patterns-->
-64. [在没有 MapReduce 系统的情况下执行分布式 shuffle](https://anyscale.com/blog/executing-a-distributed-shuffle-without-a-mapreduce-system)（2021-03-22） <!--orig:Executing a distributed shuffle without a MapReduce system-->
-65. [Ray 中的数据处理支持](https://anyscale.com/blog/data-processing-support-in-ray)（2021-02-16） <!--orig:Data Processing Support in Ray-->
-66. [通用无服务器平台的理想基础](https://anyscale.com/blog/the-ideal-foundation-for-a-general-purpose-serverless-platform)（2020-11-05） <!--orig:The Ideal Foundation for a General Purpose Serverless Platform-->
-67. [Announcing Ray 1.0](https://anyscale.com/blog/announcing-ray-1-0)（2020-09-30）
+61. [蚂蚁集团在 Ray 上构建高可用性和可扩展的在线应用程序](https://anyscale.com/blog/building-highly-available-and-scalable-online-applications-on-ray-at-ant)（2021-09-08） <!--orig:Building Highly Available and Scalable Online Applications on Ray at Ant Group-->
+62. [How Anastasia accelerated their ML processes 9x with Ray and Anyscale](https://anyscale.com/blog/how-anastasia-implements-ray-and-anyscale-to-speed-up-ml-processes-9x)（2021-08-31）
+63. [分析 Dask-on-Ray 中的内存管理和性能](https://anyscale.com/blog/analyzing-memory-management-and-performance-in-dask-on-ray)（2021-06-29） <!--orig:Analyzing memory management and performance in Dask-on-Ray-->
+64. [Ray 分布式库模式](https://anyscale.com/blog/ray-distributed-library-patterns)（2021-06-14） <!--orig:Ray Distributed Library Patterns-->
+65. [蚂蚁集团 Ray 在线资源分配](https://anyscale.com/blog/online-resource-allocation-with-ray-at-ant-group)（2021-03-30） <!--orig:Online Resource Allocation with Ray at Ant Group-->
+66. [在没有 MapReduce 系统的情况下执行分布式 shuffle](https://anyscale.com/blog/executing-a-distributed-shuffle-without-a-mapreduce-system)（2021-03-22） <!--orig:Executing a distributed shuffle without a MapReduce system-->
+67. [Ray 中的数据处理支持](https://anyscale.com/blog/data-processing-support-in-ray)（2021-02-16） <!--orig:Data Processing Support in Ray-->
+68. [通用无服务器平台的理想基础](https://anyscale.com/blog/the-ideal-foundation-for-a-general-purpose-serverless-platform)（2020-11-05） <!--orig:The Ideal Foundation for a General Purpose Serverless Platform-->
+69. [Announcing Ray 1.0](https://anyscale.com/blog/announcing-ray-1-0)（2020-09-30）
