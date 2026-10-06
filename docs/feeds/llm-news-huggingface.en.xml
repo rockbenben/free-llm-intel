@@ -83,6 +83,142 @@
       <link>https://huggingface.co/blog/rl-environments</link>
       <guid isPermaLink="true">https://huggingface.co/blog/rl-environments?li=1</guid>
       <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Back to Articles</p>
+<h1>Welcome RL Environments to the hub</h1>
+<p>Published September 28, 2026</p>
+<p>Update on GitHub</p>
+<p>Upvote</p>
+<p>17</p>
+<ul><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/lhoestq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594214747713-5e9ecfc04957053f60648a3e.png" alt=""></a></li><li><a href="https://huggingface.co/rajivmehtapy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1673701526502-60098a0f460b9e8842d93363.jpeg" alt=""></a></li><li><a href="https://huggingface.co/MadMike477"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b232dcf6027d00161fb46c/FwXMNqgpoXBb2NWJ3X_Pq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li></ul>
+<p>ben burtenshaw</p>
+<p>burtenshaw</p>
+<p>Adithya S K</p>
+<p>AdithyaSK</p>
+<p>Florian</p>
+<p>xeophon</p>
+<p>guest</p>
+<p>Ryan Marten</p>
+<p>ryanmarten</p>
+<p>guest</p>
+<p>merve</p>
+<p>merve</p>
+<p>Quentin Lhoest</p>
+<p>lhoestq</p>
+<p>Julien Chaumond</p>
+<p>julien-c</p>
+<p>Reinforcement Learning environments give new capabilities to agentic AI systems, and they’re a great way to measure and improve performance in your agents. Therefore, Hugging Face Hub now has a special place for RL Environments.</p>
+<p>An environment gives an agent a task, responds to its actions with observations, and scores the outcome. The resulting rewards can measure an agent's performance during evaluation or provide a learning signal during training. For an introduction to this interaction loop, see <a href="https://huggingface.co/spaces/AdithyaSK/rl-environments-guide">our blogpost on environments</a>. Within the environment, the agent will perform a set of tasks that are represented as datasets. Therefore, environments can be split into broadly two parts: tasksets and runtimes. In this release, we are focusing on the tasksets.</p>
+<p>An RL environment on the Hub is a dataset repo that shows up in the new <a href="https://huggingface.co/datasets?other=rl-environment">RL Environments filter</a>. The <strong>Use this dataset</strong> button gives you the command to run it in that framework. There is no new repo type, no registry, and no sign-up. There are already environments in Harbor, Verifiers, and NVIDIA NeMo Gym.</p>
+<h2>Stop building environment registries</h2>
+<p>Every RL paper or framework uses its own way to find environments. Custom hubs, runtime registries, independent task datasets, or a GitHub list of tasks with a custom loader. This means that many of the published environments are siloed: if you publish an environment for one framework, users of the other three can’t load it. If you want to train on an environment from another framework or a new paper, you’ll need to port it by hand.</p>
+<p>We think this is the wrong shape. An environment is tasks, tests, containers, and a reward rule, which are data with a runtime on top. The Hub already stores data, versions it, gates it, previews it, and serves it to millions of people. It does not need a second system to hold environments. It needs a way to say &quot;this data is an environment, and here is how you run it.&quot;</p>
+<p>Task data lives on the Hub. Runtime configuration and verifier code can live in the repo or the framework.</p>
+<p>The frameworks keep doing what they are good at. The Hub does what it is good at, which is hosting, discovery, and versioning. Nobody has to own the catalogue. In fact, catalogues can run on other platforms too, powered by the hub.</p>
+<p>The dataset repository hosts your environment files. The framework runs them locally or on a supported cloud backend. <a href="https://huggingface.co/docs/hub/en/jobs">Hugging Face Jobs</a> can run cloud workloads, and <a href="https://huggingface.co/docs/huggingface_hub/main/guides/sandbox">Hugging Face Sandboxes</a>, built on Jobs, provide interactive command execution. The tags describe compatibility and generate loading commands; adding a tag does not start a job or sandbox.</p>
+<h2>What shipped</h2>
+<p><strong>The RL Environments filter.</strong> Go to <a href="https://huggingface.co/datasets?other=rl-environment">huggingface.co/datasets?other=rl-environment</a>. Every dataset with the <code>rl-environment</code> tag appears there, whatever framework it works with.</p>
+<p><strong>Framework tags.</strong> Four environment frameworks are registered as dataset libraries:</p>
+<table><thead><tr><th>Tag</th><th>Framework</th></tr></thead><tbody><tr><td><code>harbor</code></td><td><a href="https://github.com/harbor-framework/harbor">Harbor</a></td></tr><tr><td><code>verifiers</code></td><td><a href="https://github.com/PrimeIntellect-ai/verifiers">Verifiers</a></td></tr><tr><td><code>openenv</code></td><td><a href="https://github.com/huggingface/OpenEnv">OpenEnv</a></td></tr><tr><td><code>nemo-gym</code></td><td><a href="https://github.com/NVIDIA-NeMo/Gym">NeMo Gym</a></td></tr></tbody></table>
+<p>Each framework tag puts the framework's icon on the dataset page and adds a generated snippet to <strong>Use this dataset</strong>.</p>
+<p>A dataset can carry more than one framework tag. That is the point. Tags describe compatibility, and compatibility is not exclusive. Each listed framework must support the files in the repository; adding a tag does not convert them.</p>
+<h2>Run an environment and inspect its reward</h2>
+<p>Choose the example for your framework and run it in a separate Python environment with the prerequisites listed below.</p>
+<h3>Harbor: run a reference solution</h3>
+<p><a href="https://www.harborframework.com/docs/datasets">Harbor</a> can load task directories from a Hub repository. The oracle agent runs the task's reference solution, then the verifier scores the result. It does not call a model.</p>
+<pre><code>uv tool install --python 3.13 'harbor==0.21.0'
+harbor run \
+    --repo https://huggingface.co/datasets/harborframework/terminal-bench-2.1 \
+    --dataset terminal-bench-2.1@2.1.0 \
+    --include-task-name '*regex-log' \
+    --agent oracle --env docker --jobs-dir results/harbor
+harbor view results/harbor</code></pre>
+<p>The viewer shows the task's reward, verifier output, and logs. This checks the task and its reference solution before you try a model agent.</p>
+<h3>Verifiers: run a model on the same task</h3>
+<p>The Harbor integration of <a href="https://www.primeintellect.ai/blog/verifiers-v1">verifiers v1</a> can run the same task directories in different runtimes, such as Docker. It also supports different harnesses, including a minimal bash harness.</p>
+<pre><code>uvx --python 3.13 --from 'verifiers[harbor]' eval harbor \
+    --env.taskset.repo https://huggingface.co/datasets/harborframework/terminal-bench-2.1 \
+    --env.taskset.dataset terminal-bench-2.1@2.1.0 \
+    --env.taskset.tasks '[&quot;regex-log&quot;]' \
+    --env.agent.runtime.type docker \
+    --env.agent.harness.id bash \
+    --model &quot;$MODEL&quot; \
+    --client.base-url &quot;$LLM_URL&quot;</code></pre>
+<p>Here repo is the full Hugging Face Git URL, while dataset is the name and version in that repo's registry.json. This loader uses Harbor's registry conventions, so a bare Hub repo ID cannot replace both values.</p>
+<h3>OpenEnv: run an agent and inspect its reward</h3>
+<p><a href="https://huggingface.co/docs/openenv/main/environments/harbor">OpenEnv's Harbor integration</a> can run the same task directories with an agent such as OpenCode and return the verifier's reward alongside the agent's trace.</p>
+<pre><code>pip install &quot;openenv[harbor]==0.7.0&quot;
+
+openenv harbor rollout \
+    --llm-url &quot;$LLM_URL&quot; \
+    --model &quot;$MODEL&quot; \
+    --dataset harborframework/terminal-bench-2.1 \
+    --task-index 0 \
+    --harness opencode \
+    --sandbox docker \
+    --out rollout.json</code></pre>
+<p>The command downloads the dataset's <code>tasks/</code> directories, runs one task in Docker, and writes the result. The default connection uses a temporary Gradio tunnel so the sandboxed agent can reach OpenEnv's model proxy. Read the verifier result and the number of model calls:</p>
+<pre><code>import json
+from pathlib import Path
+
+result = json.loads(Path(&quot;rollout.json&quot;).read_text())[0]
+print(&quot;Reward:&quot;, result[&quot;reward&quot;])
+print(&quot;Model calls:&quot;, result[&quot;n_turns&quot;])
+print(&quot;Error:&quot;, result[&quot;error&quot;])</code></pre>
+<p>A reward of <code>None</code> means no verifier reward was produced; inspect <code>error</code> before interpreting the run as a model failure. This path expects Harbor task directories.</p>
+<h3>NeMo Gym: generate responses and inspect rewards</h3>
+<p><a href="https://github.com/NVIDIA-NeMo/Gym">NeMo Gym</a> supports evaluation and RL training: its environments collect trajectories and compute rewards, while a training framework updates model weights. For example, the <a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-instruction_following-structured_outputs">Structured Outputs dataset</a> pairs prompts with JSON schemas. Its verifier rewards schema adherence; it does not check whether the generated content is factually correct.</p>
+<p>The best part is that this gives one repo and one discussion tab where people report broken tasks from all major frameworks. So when an author fixes a bad test, every framework gets the fix on the next pull.</p>
+<h2>Tag your environment</h2>
+<p>Open your dataset card and add this to the YAML header:</p>
+<pre><code>---
+pretty_name: Terminal-Bench 2.0
+tags:
+- rl-environment
+- harbor
+- verifiers
+---</code></pre>
+<p>That is the whole integration. Keep <code>rl-environment</code>, then list every framework that can load your files. If your environment works with a framework we have not registered yet, open a PR to the <a href="https://github.com/huggingface/huggingface.js/blob/main/packages/tasks/src/dataset-libraries.ts">list of supported libraries</a>.</p>
+<p>The <a href="https://huggingface.co/docs/hub/datasets-cards#declare-an-rl-environment-dataset">docs</a> have the full reference.</p>
+<h2>Already on the Hub</h2>
+<p>We opened PRs to tag some of the environments people already train on. If you maintain one of these, merge the PR and your environment shows up in the filter.</p>
+<p><strong>Harbor</strong></p>
+<ul><li><a href="https://huggingface.co/datasets/AweAI-Team/BeyondSWE-harbor/discussions/1">BeyondSWE</a>: the BeyondSWE benchmark as Harbor task directories, one folder per instance.</li><li><a href="https://huggingface.co/datasets/Lego-X/Terminal-Lego-15k/discussions/1">Terminal-Lego</a>: Terminal-Bench-style tasks built from real StackOverflow issues, kept only after Docker round-trip verification.</li><li><a href="https://huggingface.co/datasets/harborframework/harbor-mix/discussions/2">Harbor-Mix</a>: 100 hard agentic tasks picked from the Harbor adapters pool, cheaper to run than a full multi-benchmark sweep.</li><li><a href="https://huggingface.co/datasets/FrontisAI/NatureBench-Harbor/discussions/2">NatureBench</a>: the 90 NatureBench tasks prebuilt for Harbor.</li></ul>
+<p><strong>Verifiers</strong></p>
+<ul><li><a href="https://huggingface.co/datasets/PrimeIntellect/Reverse-Text-RL/discussions/2">Reverse-Text-RL</a>: the small reversal task prime-rl uses in CI to debug RL training.</li><li><a href="https://huggingface.co/datasets/PrimeIntellect/Multi-SWE-RL-Verified/discussions/2">Multi-SWE-RL-Verified</a>: 2,232 of 4,703 Multi-SWE-RL rows that pass gold-patch validation across C, Go, Java, JavaScript, Rust, and TypeScript.</li><li><a href="https://huggingface.co/datasets/PrimeIntellect/R2E-Gym-Subset-Verified/discussions/1">R2E-Gym-Subset-Verified</a>: a verified R2E-Gym subset.</li><li><a href="https://huggingface.co/datasets/PrimeIntellect/Scale-SWE-Verified/discussions/2">Scale-SWE-Verified</a>: 17,202 of 20,181 Python issue-resolving tasks that give a clean reward signal end to end.</li></ul>
+<p><strong>NeMo Gym</strong></p>
+<ul><li><a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-agent-workplace_assistant/discussions/3">Workplace Assistant</a>: a multi-step tool-use sandbox with five databases, 26 tools, and 690 business tasks.</li><li><a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-instruction_following-structured_outputs/discussions/2">Structured Outputs</a>: instruction following with structured outputs.</li><li><a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-CFBench-v1/discussions/2">CFBench</a>: multilingual constraint following.</li><li><a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-SysBench-v1/discussions/1">SysBench</a>: multi-turn system message following.</li></ul>
+<h2>What comes next</h2>
+<p>The first version generates one <code>default</code> snippet per framework. Per-config snippets are next, so a repo with several task sets can show the right command for each. After that we will look at structural detection for frameworks with strict layouts. It would also be really cool build custom task UIs, we’ve been experimenting with this here:</p>
+<p>The bigger goal is for framework tagging to be automatic everywhere. OpenEnv already does it on upload. If you maintain Harbor, Verifiers, Nemo Gym, or any other environment framework, add the tags in your push path. It is a few lines, and every environment your users publish becomes visible to everyone else.</p>
+<p>If you train agents, go browse the <a href="https://huggingface.co/datasets?other=rl-environment">filter</a>. If you build environments, publish and tag them, whether they cover coding, tool use, games, robotics, or another task. Include the files, a working run command, and the rule that produces the reward so others can use them. If your framework is missing, contribute it to the <a href="https://github.com/huggingface/huggingface.js/blob/main/packages/tasks/src/dataset-libraries.ts">list of supported libraries</a>.</p>
+<h2>Datasets mentioned in this article 10</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<p>More Articles from our Blog</p>
+<p>llm</p>
+<p>rl</p>
+<p>trl</p>
+<h2>Async GRPO with LoRA across HF Jobs: a bucket, a proxy, and no NCCL</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
+<p>53</p>
+<p>September 10, 2026</p>
+<p>llm</p>
+<p>rl</p>
+<p>trl</p>
+<h2>Shipping a Trillion Parameters With a Hub Bucket: Delta Weight Sync in TRL</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594651707950-noauth.jpeg" alt=""></li><li>+4</li></ul>
+<p>50</p>
+<p>May 27, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
+<p>clicking here</p>
+<p>.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Frl-environments">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Frl-environments">log in</a> to comment</p>
+<p>Upvote</p>
+<p>17</p>
+<ul><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/lhoestq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594214747713-5e9ecfc04957053f60648a3e.png" alt=""></a></li><li><a href="https://huggingface.co/rajivmehtapy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1673701526502-60098a0f460b9e8842d93363.jpeg" alt=""></a></li><li><a href="https://huggingface.co/MadMike477"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b232dcf6027d00161fb46c/FwXMNqgpoXBb2NWJ3X_Pq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Tonic"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a3bb1cd0d8c2c2169f0b88/eT2TS0IlQbZtz-F_zHLz9.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lewtun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594651707950-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/semioz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64bbd2b612afb2f119147528/jzr5_RAIkuhFzNmb9HMTc.jpeg" alt=""></a></li><li><a href="https://huggingface.co/xhluca"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1633380224986-5fa9ff3ea13e063b8b2b60cb.jpeg" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 10</h2>
+<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>Your Agent Aced the Task. Will It Do It Again?</title>

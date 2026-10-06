@@ -13,6 +13,84 @@
       <link>https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock/?li=1</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Introducing GLM 5.3 on Amazon Bedrock</h1>
+<p>Coding and agentic workloads are asking more of AI models than ever: refactor a repository spanning hundreds of files, sustain a multi-hour agentic workflow without losing context, and reason through complex systems problems with tool use at every step. Meeting those demands with open-weight models has historically meant provisioning and operating your own inference infrastructure.</p>
+<p><a href="https://z.ai/blog/glm-5.3">GLM 5.3 from Z.ai</a> (Zhipu AI) is now available on <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a>. GLM 5.3, as published <a href="https://huggingface.co/zai-org/GLM-5.3">on Hugging Face Hub</a>, is a 753B-parameter mixture-of-experts model optimized for coding and long-horizon agentic tasks. In particular, Z.ai has reported the model shows notable cyber security capabilities. On Amazon Bedrock, you can now use it through fully managed APIs with cross-Region inference, prompt caching, and service tiers. You don’t manage any infrastructure. Access to GLM 5.3 on Bedrock is available to eligible enterprise customers.</p>
+<p>In this post, we show you how to invoke GLM 5.3 on Amazon Bedrock using the OpenAI-compatible APIs and reduce cost and latency with prompt caching. We then put the model to work in a realistic agentic workflow: running an authorized security test of your own application with Strix, an open-source AI penetration testing agent.</p>
+<h2>What’s new compared to GLM 5</h2>
+<p>GLM 5 arrived on Amazon Bedrock earlier this year. GLM 5.3 builds on the same lineage, with a range of important gains:</p>
+<ul><li><strong>Stronger coding:</strong> <a href="https://z.ai/blog/glm-5.3">Z.ai claims</a> competitive performance on a range of coding benchmarks including DeepSWE, Terminal Bench 3.0, and FrontierSWE. They also report a 50% improvement over GLM 5.2 on their own internal coding benchmark. Direct comparisons to GLM 5 were not reported, because the magnitude of improvements led to updating the benchmark tests themselves since the <a href="https://z.ai/blog/glm-5.1">GLM 5.1 announcement</a>.</li><li><strong>Emergent cyber security capabilities:</strong> Reported benchmark performance on security tasks stands out, which makes the model a natural fit for defensive security workflows. For example, Z.ai <a href="https://z.ai/blog/glm-5.3">measured</a> a leading score of 84.5 on the CyberGym benchmark at release.</li><li><strong>Broader Amazon Bedrock integration:</strong> Cross-Region inference profiles, implicit and explicit prompt caching, and improved feature parity of the OpenAI-compatible Responses and Chat Completions APIs alongside Invoke and Converse.</li></ul>
+<h2>Key capabilities</h2>
+<ul><li><strong>Frontier coding and agentic performance.</strong> GLM 5.3 is designed for complex systems engineering and long-horizon agentic tasks. These include multi-step reasoning, tool-augmented workflows, and sustained context across large code bases.</li><li><strong>Flexible API access.</strong> You can invoke GLM 5.3 through the OpenAI-compatible Responses and Chat Completions APIs, or the Amazon Bedrock Invoke and Converse APIs.</li><li><strong>Prompt caching.</strong> GLM 5.3 supports implicit (automatic) prompt caching by default, and explicit cache controls (recommended) on the Responses and Chat Completions APIs. For agentic workloads that resend large system prompts or repository context every turn, caching reduces both latency and input cost.</li><li><strong>Cross-Region inference.</strong> GLM 5.3 is available through US cross-Region inference (<code>us.zai.glm-5.3</code>) and Global cross-Region inference (<code>global.zai.glm-5.3</code>) profiles. You send requests to the “source” AWS Region of your choice, and Amazon Bedrock securely routes each request for processing. Refer to the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">Amazon Bedrock User Guide</a> for more details.</li><li><strong>Service tiers.</strong> Choose Flex to optimize cost for less-time-sensitive workloads, Priority to prioritize latency-critical requests in return for a higher price, or Standard for the default balance between price and speed.</li></ul>
+<h2>Prerequisites</h2>
+<p>For the following usage examples, you need:</p>
+<ul><li>An AWS account with access to Amazon Bedrock.</li><li>AWS Identity and Access Management (IAM) <a href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_bedrock.html">permissions</a> to call the base model and the target inference profile: <code>bedrock:InvokeModel</code>, <code>bedrock:InvokeModelWithResponseStream</code>, and <code>bedrock:CallWithBearerToken</code>.</li><li>(For the code-based demos) Python 3.10 or later.</li><li>(For the optional security-testing demo only) install Docker and <a href="https://docs.strix.ai/llm-providers/bedrock">Strix with the bedrock extra</a>.</li></ul>
+<h2>Try GLM 5.3 on the Amazon Bedrock console</h2>
+<p>You can start sending prompts to GLM 5.3 on the AWS Management Console, with no need to write code or install developer tools. To get started, navigate to <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock</a> and then choose <strong>Test &gt; Playground</strong> from the left sidebar menu.</p>
+<p>From this playground interface you can select GLM 5.3 from the model list and send your first prompts through the chat UI, as shown in the following screenshot:</p>
+<p>Figure 1: Chatting with GLM 5.3 on the Amazon Bedrock console</p>
+<h2>Get started with the Responses API</h2>
+<p>Programmatically, you can call the model through the <code>bedrock-runtime</code> endpoint. This supports both the OpenAI-compatible <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-responses-api.html">Responses</a> and <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-chat-completions.html">Chat Completions</a> APIs, and the Amazon Bedrock <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-api.html">Invoke</a> and <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html">Converse</a> APIs for GLM 5.3. For new applications the OpenAI-compatible APIs are recommended as they support a more complete set of features.</p>
+<p>Amazon Bedrock does support <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys-generate.html">generating API keys</a> for OpenAI-compatible integrations that require them. However, we strongly recommend preferring short-lived credentials over long-lived API keys where possible.</p>
+<p>In the following example, we will call the Responses API from Python using the OpenAI Python SDK, and the <a href="https://pypi.org/project/aws-bedrock-token-generator/">aws-bedrock-token-generator</a> library to generate short-term tokens from your standard <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-authentication.html">AWS Command Line Interface (AWS CLI) credentials</a>.</p>
+<ul><li>Install the required packages.  <code>pip install -U openai aws-bedrock-token-generator</code></li><li>Save the following code as <code>bedrock-request.py</code>.  <code>from aws_bedrock_token_generator import provide_token from openai import OpenAI region = &quot;us-west-2&quot; # Your source AWS Region client = OpenAI( api_key=provide_token(region=region), base_url=f&quot;https://bedrock-runtime.{region}.amazonaws.com/openai/v1&quot;, ) resp = client.responses.create( input=&quot;Refactor this Python function to be iterative instead of recursive: ...&quot;, model=&quot;global.zai.glm-5.3&quot;, ) print(resp.output_text)</code></li><li>Run the script, which will display the model’s output.  <code>python bedrock-request.py</code></li></ul>
+<h3>Optimize inference with explicit prompt caching</h3>
+<p>Long-running coding and knowledge workflows often resend stable context across multiple conversation turns, such as system prompts, tool definitions, or repository files.</p>
+<p>GLM 5.3 on Amazon Bedrock supports implicit prompt caching by default, which helps reduce response latency and input token costs for repeated calls sharing the same initial prompt prefix.</p>
+<p>With <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">explicit prompt caching</a> mode you specifically identify the reusable prompt prefixes, which can further improve cache hit rate (and therefore latency and cost savings) over implicit caching.</p>
+<p>To use explicit prompt caching with GLM 5.3, as shown in the following example:</p>
+<ul><li>Select the explicit caching mode through <code>prompt_cache_options</code> on your request.</li><li>Add one or more <code>prompt_cache_breakpoint</code> markers on input content blocks to indicate the end (inclusive) of reusable prompt prefixes. Each breakpoint must contain at least 1,024 tokens to be eligible for caching.</li></ul>
+<pre><code>resp = client.responses.create(
+    model=&quot;global.zai.glm-5.3&quot;,
+    # Enable explicit caching mode:
+    extra_body={&quot;prompt_cache_options&quot;: {&quot;mode&quot;: &quot;explicit&quot;}},
+    input=[
+        {
+            &quot;type&quot;: &quot;message&quot;,
+            &quot;role&quot;: &quot;system&quot;,
+            &quot;content&quot;: [
+                {
+                    &quot;type&quot;: &quot;input_text&quot;,
+                    &quot;text&quot;: SYSTEM_PROMPT,
+                    # A long, static system prompt is a great target for caching:
+                    &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
+                },
+            ]
+        },
+        {
+            &quot;type&quot;: &quot;message&quot;,
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {
+                    &quot;type&quot;: &quot;input_text&quot;,
+                    &quot;text&quot;: USER_INPUT,
+                    # Multiple breakpoints can also be defined, for layered cache:
+                    &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
+                },
+            ],
+        },
+    ],
+)
+
+if resp.usage.input_tokens_details.cached_tokens:
+    print(&quot;Hit cache!&quot;)</code></pre>
+<p>For more information, refer to the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-openai">prompt caching section</a> of the Amazon Bedrock User Guide.</p>
+<h2>Example agentic workload: Authorized security testing with Strix</h2>
+<p>One workload that benefits directly from GLM 5.3’s strengths is automated security testing of your own applications. <a href="https://github.com/usestrix/strix">Strix</a> is an open-source AI penetration testing agent that runs your code dynamically, finds vulnerabilities, and validates them with proof-of-concept tests. As of this writing, the Strix documentation <a href="https://docs.strix.ai/quickstart#configuration">uses GLM 5.3</a> as its default model. You can configure Strix to use GLM 5.3 on Amazon Bedrock instead of a third-party inference provider, so model inference runs under your AWS account’s controls.</p>
+<p><strong>Only test applications you own or have explicit written permission to test.</strong> Unauthorized security testing of systems you don’t own is illegal in most jurisdictions and violates the AWS Acceptable Use Policy. In this walkthrough, the target is <a href="https://owasp.org/www-project-juice-shop/">OWASP Juice Shop</a>, a deliberately vulnerable sample application running locally on your machine.</p>
+<p>If you want fully managed, continuous security testing beyond running open-source agents yourself, <a href="https://aws.amazon.com/security-agent/">AWS Continuum</a> provides on-demand penetration testing and other security analyses as a managed service. The two approaches are complementary: open-source agents like Strix give you developer-driven, in-the-loop, and deeply customizable testing against local builds, while AWS Continuum runs managed assessments at scale.</p>
+<h3>To run an authorized security test</h3>
+<ul><li>Start the example Juice Shop target application locally.  <code>docker run --rm -p 3000:3000 bkimminich/juice-shop</code></li><li>Configure Strix to use GLM 5.3 on Amazon Bedrock. Strix uses <a href="https://docs.litellm.ai/docs/providers/bedrock">LiteLLM</a> under the hood so (as described in <a href="https://docs.strix.ai/llm-providers/bedrock">their documentation for Amazon Bedrock</a>) your AWS CLI credentials will be picked up automatically. This means no API key is required, but you might want to set environment variables like <code>AWS_PROFILE</code> and <code>AWS_REGION</code> to configure your connection. At the time of writing, LiteLLM does not yet resolve <code>bedrock/global.zai.glm-5.3</code>. Until this is fixed, you can explicitly specify the Converse API route and the inference profile Amazon Resource Name (ARN) as shown in the following snippet:  <code># Fill in the REGION and ACCOUNT_ID placeholders below before running! export STRIX_LLM=&quot;bedrock/converse/arn:aws:bedrock:{AWS_REGION}:{AWS_ACCOUNT_ID}:inference-profile/global.zai.glm-5.3&quot;</code></li><li>Run Strix against the local target.  <code>strix --target http://localhost:3000</code></li><li>Wait for the root Strix agent to complete, then review the findings.</li></ul>
+<p>Strix spins up a team of sub-agents to map the threat surface, explore a range of potential vulnerability categories, and attempt to validate each finding with a working proof of concept. This helps minimize time spent triaging false positives. A successful run will generate a report including severity, evidence, and remediation guidance for each finding.</p>
+<p>The following video shows the end-to-end journey of setting up and running Strix against the example application, and exploring the results:</p>
+<p>Figure 2: Running an example security test with GLM 5.3 and Strix</p>
+<h2>Clean up</h2>
+<p>Stop the Juice Shop container with <strong>Ctrl+C</strong> in the terminal where it’s running, or run <code>docker ps</code> to find the container ID and stop it with <code>docker stop &lt;container-id&gt;</code>. Amazon Bedrock inference is pay-per-token with no persistent resources, so there are no further charges after your requests complete. If you generated an Amazon Bedrock API key for this walkthrough and no longer need it, delete it on the Amazon Bedrock console.</p>
+<h2>Availability</h2>
+<p>Give GLM 5.3 a try on the <a href="https://console.aws.amazon.com/bedrock">Amazon Bedrock console</a>, use it through coding assistants like OpenCode as shown in our <a href="https://aws.amazon.com/blogs/machine-learning/use-open-weight-models-as-your-ai-coding-agent-with-amazon-bedrock/">recent post with Kimi K3</a>, or connect your custom applications through the supported APIs.</p>
+<p><em>Interested in how Amazon Bedrock can support your team?</em> <a href="https://pages.awscloud.com/Amazon-Bedrock-Contact-Us.html"><em>Connect with us</em></a> <em>to start the conversation.</em></p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>Supercharge regulated workloads with Claude Code and Amazon…</title>
@@ -20,6 +98,84 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/supercharge-regulated-workloads-with-claude-code-and-amazon-bedrock/?li=1</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Supercharge regulated workloads with Claude Code and Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Supercharge regulated workloads with Claude Code and Amazon Bedrock</h1>
+<p><em>Please note that the following post is intended for informational purposes only. The approach detailed below may not be suitable for all organizations or compliance programs. It is important to evaluate this potential solution against the compliance requirements of your organization and any applicable regulatory obligations you may have.</em></p>
+<p>The availability of Anthropic Claude Opus 5.5 and Claude Sonnet 5.5 in the AWS GovCloud (US) Regions introduces an on-ramp for AI-assisted development for workloads with regulatory or compliance requirements, including International Traffic in Arms Regulations (ITAR). Claude Sonnet 5 holds FedRAMP Class D (formerly High) certification and DoD Impact Level 4 and 5 (IL4/IL5) authorization, and Claude Opus 5.5 and Claude Sonnet 5.5 hold FedRAMP Class D certification on Amazon Bedrock (<a href="https://aws.amazon.com/compliance/services-in-scope/FedRAMP/amazon-bedrock-models/">verify current model certification status</a>).</p>
+<p>In this post, we explore how to use these models on <a href="https://aws.amazon.com/bedrock">Amazon Bedrock</a> in AWS GovCloud (US) with <a href="https://code.claude.com">Claude Code</a>, Anthropic’s agentic coding tool. With this solution, you can run AI-assisted workflows that speed up everyday development tasks while maintaining compliance alignment.</p>
+<h2>Amazon Bedrock in AWS GovCloud (US)</h2>
+<p><a href="https://aws.amazon.com/govcloud-us/">AWS GovCloud (US) Regions</a> are designed specifically for US customers with elevated <a href="https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-compliance.html">compliance needs</a>. You can deploy generative AI workloads to sensitive environments while maintaining compliance controls. <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> is built with security-focused features, including:</p>
+<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/data-protection.html">Built-in data protection</a> where customer content isn’t stored, logged, or used to train AWS models or shared with third parties.</p>
+<p>FedRAMP Class D (formerly High) certification and DoD Cloud Service Provider (CSP) SRG IL4/IL5 authorization pathways, supporting government agencies’ compliance requirements. See the <a href="https://aws.amazon.com/compliance/services-in-scope/FedRAMP/amazon-bedrock-models/">Amazon Bedrock models compliance page</a> for current model-level certification status.</p>
+<p>Integration with existing security controls and compliance frameworks available in AWS GovCloud (US), maintaining the same high security standards as other AWS Regions while providing additional authorization pathways.</p>
+<p>Amazon Bedrock in AWS GovCloud (US) supports two endpoint surfaces, bedrock-runtime and bedrock-mantle, both powered by the same underlying Mantle inference engine with Zero Operator Access (ZOA) architecture. The <strong>bedrock-runtime</strong> endpoint uses the AWS SDK (InvokeModel and Converse APIs) and supports Amazon Bedrock Guardrails, Amazon Bedrock Knowledge Bases, Agents, and invocation logging. This makes it the recommended choice for most new applications, particularly those requiring audit trails. The <strong>bedrock-mantle</strong> endpoint supports the Anthropic Messages API natively and provides access to capabilities currently available only on that surface, such as <a href="https://aws.amazon.com/blogs/machine-learning/exploring-the-zero-operator-access-design-of-mantle/">server-side tools, background inference, and Projects</a>. Both endpoints are available for Claude Opus 5.5, Claude Sonnet 5.5, and Claude Sonnet 5, with bedrock-runtime available in both AWS GovCloud (US) Regions (US-West and US-East) and bedrock-mantle available in AWS GovCloud (US-West).</p>
+<h2>Claude Code</h2>
+<p><a href="https://code.claude.com">Claude Code</a> is Anthropic’s agentic coding tool that reads your codebase, edits files, runs commands, and integrates with your development tools. Powered by models such as Claude Opus 5.5 and Claude Sonnet 5.5 on Amazon Bedrock in AWS GovCloud (US), it operates directly in your terminal, your preferred integrated development environments (<a href="https://docs.anthropic.com/en/docs/claude-code/ide-integrations">IDEs</a>) such as VS Code and JetBrains, and in the background with the <a href="https://docs.anthropic.com/en/docs/claude-code/agent-sdk/overview">Claude Agent SDK</a>. Claude Code understands your entire codebase and can work across multiple files and tools to get things done. Claude Code can:</p>
+<ul><li>Write code and fix bugs spanning multiple files across your codebase.</li><li>Answer questions about your code’s architecture and logic.</li><li>Execute and fix tests, linting, and other commands.</li><li>Search through Git history, resolve merge conflicts, and create commits and pull requests.</li><li>Connect to external tools and data sources with the <a href="https://docs.anthropic.com/en/docs/claude-code/mcp">Model Context Protocol (MCP)</a>, including the <a href="https://aws.amazon.com/cli">AWS Command Line Interface (AWS CLI)</a>, Terraform, and Kubernetes.</li><li>Spawn <a href="https://docs.anthropic.com/en/docs/claude-code/sub-agents">sub-agents</a> that work on different parts of a task simultaneously.</li><li>Customize behavior with <a href="https://docs.anthropic.com/en/docs/claude-code/memory">CLAUDE.md</a> memory files, <a href="https://docs.anthropic.com/en/docs/claude-code/skills">skills</a> for repeatable workflows, and <a href="https://docs.anthropic.com/en/docs/claude-code/hooks">hooks</a> for pre/post-action automation.</li><li>Automate recurring tasks and integrate with continuous integration and continuous delivery (CI/CD) through <a href="https://docs.anthropic.com/en/docs/claude-code/github-actions">GitHub Actions</a> or <a href="https://docs.anthropic.com/en/docs/claude-code/gitlab-ci-cd">GitLab CI/CD</a>.</li></ul>
+<p>To learn more, see Anthropic’s articles: <a href="https://docs.anthropic.com/en/docs/claude-code/tutorials">Claude Code tutorials</a> and <a href="https://www.anthropic.com/engineering/claude-code-best-practices">Claude Code: Best practices for agentic coding</a>.</p>
+<h2>Solution overview: Try Claude Code with Amazon Bedrock in AWS GovCloud (US)</h2>
+<p>This section provides step-by-step instructions for setting up and configuring Claude Code to work with Amazon Bedrock in AWS GovCloud (US), including prerequisites, installation commands, environment configuration, and verification steps.</p>
+<h3>Prerequisites</h3>
+<p>Before you get started, make sure that you have the following in place:</p>
+<ul><li>An <a href="https://signin.amazonaws-us-gov.com/">AWS GovCloud (US) account</a> with access to Amazon Bedrock.</li><li>Appropriate <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> roles and permissions for Amazon Bedrock. At minimum, your IAM policy should include:  For bedrock-runtime: <code>bedrock:InvokeModel</code>, <code>bedrock:InvokeModelWithResponseStream</code>, <code>bedrock:ListInferenceProfiles</code>, and <code>bedrock:GetInferenceProfile</code>. For bedrock-mantle (if using the Mantle endpoint): <code>bedrock-mantle:CreateInference</code>, <code>bedrock-mantle:GetProject</code>, <code>bedrock-mantle:ListProjects</code>, and <code>bedrock-mantle:ListModels</code>. Alternatively, attach the <code>AmazonBedrockMantleInferenceAccess</code> managed policy.</li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-access-modify.html">Amazon Bedrock model access</a> to Claude Opus 5.5, Claude Sonnet 5.5, and Claude Sonnet 5 enabled in your AWS GovCloud (US) account.</li><li><a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">AWS CLI</a> configured with valid AWS session credentials using short-term API keys or AWS SSO login.</li></ul>
+<h3>Set up Claude Code with Amazon Bedrock in AWS GovCloud (US)</h3>
+<p>After configuring AWS CLI with your credentials, install Claude Code using one of the following methods:</p>
+<p><strong>macOS, Linux, WSL:</strong></p>
+<pre><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre>
+<p><strong>Windows PowerShell:</strong></p>
+<pre><code>irm https://claude.ai/install.ps1 | iex</code></pre>
+<p><strong>Windows CMD:</strong></p>
+<pre><code>curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd</code></pre>
+<p><strong>Homebrew (macOS/Linux):</strong></p>
+<pre><code>brew install --cask claude-code</code></pre>
+<p>For additional installation methods, see <a href="https://code.claude.com/docs/en/quickstart">Claude Code installation docs</a>.</p>
+<h4>Option A: Interactive setup wizard (recommended)</h4>
+<ul><li>Navigate to your project:  <code>cd your-code-project</code></li><li>Launch Claude Code:  <code>claude</code></li><li>Run through the login wizard:  <code>/login</code></li></ul>
+<p>At the login prompt, select <strong>3rd-party platform</strong>, then <strong>Amazon Bedrock</strong>. Follow the wizard prompts to choose your authentication method, region (us-gov-west-1), and pin your models. The wizard saves configuration to your settings file automatically.</p>
+<p>If you have previously configured Claude Code, run <code>/setup-bedrock</code> to reopen the wizard and update your credentials, region, or model pins.</p>
+<h4>Option B: Manual environment variable configuration</h4>
+<p>For scripted or enterprise deployments, set the following environment variables:</p>
+<pre><code>export CLAUDE_CODE_USE_BEDROCK=1
+export AWS_REGION='us-gov-west-1'
+export ANTHROPIC_MODEL='us-gov.anthropic.claude-sonnet-5-5'</code></pre>
+<p>To use Claude Opus 5.5 as the primary model instead:</p>
+<pre><code>export ANTHROPIC_MODEL='us-gov.anthropic.claude-opus-5-5'</code></pre>
+<p>To pin specific model versions for consistent team deployments:</p>
+<pre><code>export ANTHROPIC_DEFAULT_OPUS_MODEL='us-gov.anthropic.claude-opus-5-5'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='us-gov.anthropic.claude-sonnet-5-5'</code></pre>
+<p>Then navigate to your project and launch Claude Code:</p>
+<pre><code>cd your-code-project
+claude</code></pre>
+<h4>Option C: Using the Bedrock Mantle endpoint</h4>
+<p>Bedrock Mantle supports the Anthropic Messages API natively and is available in AWS GovCloud (US-West). To route Claude Code through Mantle:</p>
+<pre><code>export CLAUDE_CODE_USE_MANTLE=1
+export AWS_REGION='us-gov-west-1'</code></pre>
+<p>When both bedrock-runtime and bedrock-mantle are needed in the same session:</p>
+<pre><code>export CLAUDE_CODE_USE_BEDROCK=1
+export CLAUDE_CODE_USE_MANTLE=1</code></pre>
+<p>Note: Guardrails and invocation logging are available exclusively through the bedrock-runtime endpoint. For deployments requiring these compliance features, use the bedrock-runtime endpoint (Option A or B).</p>
+<h4>Verify your configuration</h4>
+<p>Verify that Claude Code is running by checking for the <strong>Welcome to Claude Code!</strong> message in your terminal. Run the <code>/status</code> command to confirm your model and provider. The provider line should show Amazon Bedrock or Amazon Bedrock (Mantle) depending on your configuration.</p>
+<p>To learn more about configuring Claude Code for Amazon Bedrock, see <a href="https://code.claude.com/docs/en/amazon-bedrock">Claude Code on Amazon Bedrock</a>.</p>
+<h2>Considerations when deploying Claude Code to your organization</h2>
+<p>With Claude Code now generally available, the next step is deciding how to deploy it across your organization. Consider your foundational architecture for security, governance, and compliance:</p>
+<p><strong>Use</strong> <a href="https://aws.amazon.com/iam/identity-center/">AWS IAM Identity Center</a> to centrally govern identity and access to Claude Code. This verifies that only authorized developers have access. Additionally, using IAM Identity Center, developers can access resources with <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/howtogetcredentials.html">temporary, role-based credentials</a>, alleviating the need for static access keys and helping enhance security. Prior to opening Claude Code, make sure that you configure AWS CLI to use an IAM Identity Center profile by using <code>aws configure sso --profile &lt;PROFILE_NAME&gt;</code>. Then log in using the profile you created: <code>aws sso login --profile &lt;PROFILE_NAME&gt;</code>.</p>
+<p><strong>Consider automated configuration of default environment variables.</strong> This includes the environment variables outlined in this post, such as <code>AWS_REGION</code>, <code>CLAUDE_CODE_USE_BEDROCK</code>, <code>ANTHROPIC_MODEL</code>, <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code>, and <code>ANTHROPIC_DEFAULT_SONNET_MODEL</code>. This will configure Claude Code to automatically connect to Amazon Bedrock, providing a consistent baseline for development across teams. Organizations can start by providing developers with self-service instructions, or use <a href="https://docs.anthropic.com/en/docs/claude-code/settings">settings files</a> to manage configuration centrally.</p>
+<p><strong>Consider implementing</strong> <a href="https://aws.amazon.com/solutions/guidance/claude-code-with-amazon-bedrock/">Guidance for Claude Code with Amazon Bedrock</a> <strong>for large enterprise deployments.</strong> The guidance helps organizations deploy Claude Code while maintaining strict control over AI resource access, connecting to existing identity infrastructure and providing observability for developer productivity and usage patterns.</p>
+<p><strong>Review</strong> <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/quotas.html">service quotas</a> <strong>and set appropriate tokens per minute (TPM) and requests per minute (RPM) based on the number of active developers.</strong> Make sure that you have enough TPM and RPM quotas to support your team’s usage. For guidance, follow the <a href="https://docs.anthropic.com/en/docs/claude-code/costs">rate limit recommendations</a>.</p>
+<p><strong>Pin model versions for consistent team deployments.</strong> Without pinning, model aliases such as <code>sonnet</code> and <code>opus</code> resolve to Claude Code’s built-in defaults, which may change between releases. Claude Code defaults to Claude Opus 5.5 as its primary model, so an unpinned deployment is billed at the Opus per-token rate. To keep teams on Claude Sonnet 5.5, set <code>ANTHROPIC_MODEL</code> to its full model ID. Use <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> and <code>ANTHROPIC_DEFAULT_SONNET_MODEL</code> to control when your team moves to a new model. In AWS GovCloud (US), use the <code>us-gov.</code> prefix for cross-region inference profile IDs.</p>
+<p><strong>Implement cost monitoring and per-user token guardrails.</strong> Claude Code sessions can be token-intensive, particularly with Claude Opus 5.5, which carries a higher per-token cost than Claude Sonnet 5.5. According to Anthropic, Claude Opus 5.5 completes tasks using fewer tokens than Claude Opus 5, at a lower price per token. Consider the following:</p>
+<ul><li>Implement <a href="https://aws.amazon.com/blogs/publicsector/implementing-per-user-token-guardrails-for-amazon-bedrock-in-government-agencies/">per-user token guardrails</a> to enforce daily token limits per developer, with alerting at 80% and 100% thresholds. This pattern uses Amazon CloudWatch invocation logging, AWS Lambda, and Amazon DynamoDB to track and enforce limits in near real time.</li><li>Use prompt caching to reduce costs and improve response times. Both 5-minute and <a href="https://aws.amazon.com/about-aws/whats-new/2026/01/amazon-bedrock-one-hour-duration-prompt-caching/">1-hour TTL</a> options are available for supported models.</li><li>Consider defaulting teams to Claude Sonnet 5.5 (lower cost than Claude Opus 5.5) and reserving Claude Opus 5.5 for tasks requiring deeper reasoning or longer autonomous runs. For workloads that require IL4/IL5 authorization, default to Claude Sonnet 5.</li></ul>
+<p>See the <a href="https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock/blob/main/assets/docs/MONITORING.md">Claude Code Monitoring Implementation guide</a> for additional observability patterns.</p>
+<p><strong>Consider permissions, memory, and MCP servers for your organization.</strong> Security teams can configure managed <a href="https://docs.anthropic.com/en/docs/claude-code/security">permissions</a> for what Claude Code is and is not allowed to do, which cannot be overwritten by local configuration. In addition, you can configure <a href="https://docs.anthropic.com/en/docs/claude-code/memory">CLAUDE.md memory files</a> across projects to auto-add common workflows, style conventions, and coding standards to align with your organization’s preferences. Deploy your CLAUDE.md file into an enterprise directory so all developers inherit the same baseline. Use <a href="https://docs.anthropic.com/en/docs/claude-code/hooks">hooks</a> to enforce pre/post-action automation such as auto-formatting or lint checks.</p>
+<p><strong>Choose the appropriate endpoint for your compliance requirements.</strong> The bedrock-runtime endpoint supports Guardrails, invocation logging, and cross-region inference within both AWS GovCloud (US) Regions (US-West and US-East). The bedrock-mantle endpoint supports the Anthropic Messages API natively and is available in AWS GovCloud (US-West). Guardrails and invocation logging are exclusive to bedrock-runtime today, so for deployments requiring comprehensive audit trails and content filtering, bedrock-runtime is recommended.</p>
+<p><strong>Conduct a thorough security assessment before deployment.</strong> Evaluate Claude Code’s capabilities against your organization’s security policies. Amazon Bedrock secures the inference layer, but Claude Code runs on local developer machines and requires separate evaluation and risk management. Apply controls such as managed permissions, invocation logging, and per-user token limits, as you would for other third-party software running in your environment.</p>
+<h2>Conclusion</h2>
+<p>The availability of Claude Opus 5.5 and Claude Sonnet 5.5 on Amazon Bedrock in AWS GovCloud (US) provides organizations with a compliance-aligned path to AI-assisted development for regulated workloads. Claude Sonnet 5, with FedRAMP Class D (formerly High) certification and DoD IL4/IL5 authorization, offers the strongest compliance coverage for sensitive environments. Claude Sonnet 5.5, with FedRAMP Class D certification, is a step up from Claude Sonnet 5 on coding and knowledge work at a lower cost per task. Claude Opus 5.5, with FedRAMP Class D certification, brings deeper reasoning and longer autonomous task capabilities for workloads where that certification level is sufficient.</p>
+<p>Combined with Claude Code, teams can adopt agentic coding workflows directly in their terminal, IDE, or CI/CD pipelines while data remains within AWS GovCloud (US) infrastructure. Whether you choose the bedrock-runtime endpoint for full Guardrails and logging support, or the bedrock-mantle endpoint for native Anthropic Messages API access, you can tailor the deployment to your organization’s compliance and operational requirements.</p>
+<h3>For more information</h3>
+<ul><li><a href="https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-bedrock.html">Amazon Bedrock in AWS GovCloud (US)</a></li><li><a href="https://code.claude.com/docs/en/amazon-bedrock">Claude Code on Amazon Bedrock</a></li><li><a href="https://aws.amazon.com/solutions/guidance/claude-code-with-amazon-bedrock/">Guidance for Claude Code with Amazon Bedrock</a></li><li><a href="https://aws.amazon.com/compliance/services-in-scope/FedRAMP/amazon-bedrock-models/">Amazon Bedrock model FedRAMP certification and DoD authorization status</a></li><li><a href="https://aws.amazon.com/blogs/publicsector/implementing-per-user-token-guardrails-for-amazon-bedrock-in-government-agencies/">Per-user token guardrails for Amazon Bedrock in government agencies</a></li><li><a href="https://aws.amazon.com/about-aws/whats-new/2026/09/claude-sonnet-5-5-aws-govcloud-us/">Claude Sonnet 5.5 in AWS GovCloud (US)</a></li><li><a href="https://aws.amazon.com/about-aws/whats-new/2026/09/claude-opus-5-5-aws-govcloud/">Claude Opus 5.5 in AWS GovCloud (US)</a></li></ul>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>New agent skill: Amazon SageMaker optimized generative AI in…</title>
@@ -27,6 +183,74 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/new-agent-skill-amazon-sagemaker-optimized-generative-ai-inference-for-your-coding-agent/?li=1</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: New agent skill: Amazon SageMaker optimized generative AI inference for your coding agent</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>New agent skill: Amazon SageMaker optimized generative AI inference for your coding agent</h1>
+<p>Engineers increasingly use coding assistance tools to accelerate their development workflows. Today, <a href="https://aws.amazon.com/blogs/machine-learning/amazon-sagemaker-ai-now-supports-optimized-generative-ai-inference-recommendations/">Amazon SageMaker AI optimized generative AI inference</a> introduces the <code>aws-ai-ml</code> skill, available through the <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS</a>. This skill gives coding agents like <a href="https://kiro.dev/">Kiro</a>, Claude Code, and Codex deep expertise in inference optimization and benchmarking. Install the skill, and your existing agent can benchmark endpoints, recommend deployment configurations, compare performance runs, and generate executable SageMaker Python SDK v3 code on your behalf. The <code>aws-ai-ml</code> skill is a toolkit that plugs into any coding agent that supports the Model Context Protocol (MCP), turning it into a SageMaker AI inference optimization expert.</p>
+<p>In this post, we walk through what the skill enables, how to set it up, and how it helps you move faster from model to production.</p>
+<h2>The challenge: Bridging intent and infrastructure</h2>
+<p>Amazon SageMaker AI supports serverful hosting across real-time, batch, and asynchronous modes. It offers on-demand and reserved capacity, heterogeneous instances, virtual private cloud (VPC) isolation, automatic scaling, and integration with every SageMaker AI training path. The surface area is broad and deep, but most engineers do not arrive knowing which instance family or serving container will best serve their needs. They arrive with a use case: a performance target they want to hit, a cost envelope they need to stay within, or a model they need to evaluate before committing to production.</p>
+<p>The agentic experience for SageMaker AI optimized generative AI inference closes this gap. You tell the agent what you want to accomplish, and it produces executable SageMaker Python SDK v3 code that you can review, modify, and run in your own environment. The agent asks targeted clarifying questions, generates code grounded in real benchmarks and measured performance data, and adapts to your business constraints the way a solutions architect would.</p>
+<p>Throughout, you stay in control. Every step is visible in real time and expressed as code you can read and question. Nothing happens behind an opaque UI.</p>
+<h2>Getting started</h2>
+<p>You can install the <code>aws-ai-ml</code> skill through the <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS</a> on your local machine, or use it within an Amazon SageMaker Studio JupyterLab space. Either way, you can go from zero to a working conversation in 10 minutes.</p>
+<h3>Option A: Use with any coding agent (Kiro, Claude Code, Codex, or any MCP-compatible agent)</h3>
+<p><strong>Step 1: Install the Agent Toolkit for AWS.</strong> If you haven’t already, set up the Agent Toolkit. This requires AWS Command Line Interface (AWS CLI) 2.35+ and <a href="https://docs.astral.sh/uv/">uv</a> installed.</p>
+<pre><code>aws configure agent-toolkit</code></pre>
+<p>This auto-detects your agents, installs skills, and configures the AWS MCP Server. For agent-specific setup (plugin install commands, MCP config), see the <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS getting started guide</a>.</p>
+<p><strong>Step 2: Install the <code>aws-ai-ml</code> skill.</strong> Add the SageMaker AI optimized generative AI inference skill to your agent:</p>
+<pre><code>npx skills add aws/agent-toolkit-for-aws/skills/aws-ai-ml</code></pre>
+<p><strong>Step 3: Confirm and begin.</strong> Open your coding agent’s chat panel and ask: “What skills are available?” You should see <code>aws-ai-ml</code> listed. After you confirm, describe your intent in natural language. Your coding agent now has SageMaker AI inference optimization expertise built in.</p>
+<p><strong>Prerequisites:</strong> Your AWS credentials must have permissions to call SageMaker AI APIs (creating endpoints, running benchmark and recommendation jobs). The skill generates code that runs under your credentials. No additional AWS Identity and Access Management (IAM) configuration is needed for the skill itself.</p>
+<p><strong>Note:</strong> For Kiro and Claude Code, agents can discover skills at runtime. They can search for and load skills on demand through the <a href="https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/">AWS MCP Server</a>, without any local installation. Ask your agent: “Search for AWS skills related to databases.” Refer to the <a href="https://github.com/aws/agent-toolkit-for-aws/tree/main/skills">readme</a> for discovering skills at runtime.</p>
+<h3>Option B: Use within Amazon SageMaker Studio</h3>
+<p>If you prefer to work inside a managed JupyterLab environment, you can use the skill in Amazon SageMaker Studio with a pre-configured image.</p>
+<p><strong>Step 1: Open Amazon SageMaker Studio.</strong> Navigate to Amazon SageMaker Studio in your target AWS account and AWS Region. Select your Studio domain and launch the Studio IDE from your user profile.</p>
+<p><strong>Step 2: Create a JupyterLab space.</strong> From the Studio landing page, choose <strong>JupyterLab</strong>, then choose <strong>Create JupyterLab space</strong>. Name the space (for example, <code>my-inference-opt</code>) and keep the sharing setting <strong>Private</strong> (skills only sync on private spaces). Under the <strong>Image</strong> menu, select the image that includes the SageMaker AI optimized generative AI inference skill. This image ships pre-configured with the <code>aws-ai-ml</code> agent skill and all necessary dependencies. Choose <strong>Run space</strong> and wait for it to boot (5–10 minutes the first time).</p>
+<p><strong>Note:</strong> Use a fresh space. A reused space with a locally modified skill version may not pick up the pre-configured image.</p>
+<p><strong>Step 3: Open JupyterLab and launch a terminal.</strong> After the space boots, open JupyterLab and choose <strong>Terminal</strong>.</p>
+<p><strong>Step 4: Authorize your coding agent.</strong> In the terminal, authenticate with your coding agent using your identity provider. For example, with Kiro:</p>
+<pre><code>kiro-cli login --license pro --identity-provider &lt;your-IdP-start-URL&gt; --region us-east-1 --use-device-flow</code></pre>
+<p><strong>Step 5: Confirm and begin.</strong> Open your coding agent’s chat panel and ask: “What skills are available?” You should see <code>aws-ai-ml</code> listed. Once confirmed, describe your intent in natural language.</p>
+<blockquote>Troubleshooting:<br>        If the agent reports no skills are available, verify that your space is set to Private. You can also check from the terminal:</blockquote>
+<pre><code>ls ~/.kiro/skills/</code></pre>
+<blockquote>If that directory is empty but /etc/sagemaker/skills/ contains the skill files, run restart-jupyter-server, refresh the page, and retry.</blockquote>
+<h2>What you can do</h2>
+<p>The agentic experience covers the following capabilities across the inference optimization lifecycle. You don’t need to know which capability to invoke. Describe what you want, and your agent figures out the next step or asks clarifying questions if anything is unclear.</p>
+<h3>Benchmark an existing endpoint</h3>
+<p>If you already have a model deployed on a SageMaker AI endpoint, you can ask the agent to benchmark it. Tell the agent which endpoint you want to test, and it generates a Python notebook that runs a load test using the <code>Workload.synthetic()</code> and <code>start_benchmark()</code> APIs from the SageMaker Python SDK.</p>
+<p>Before running any benchmark, the agent confirms that your endpoint is safe to load-test, because benchmarking drives real traffic to a live endpoint.</p>
+<p>When the benchmark completes, you get a quantitative performance report with:</p>
+<ul><li><strong>Throughput</strong>: requests per second, output tokens per second.</li><li><strong>Latency</strong>: p50, p99, time-to-first-token, inter-token latency.</li><li><strong>Concurrency</strong>: number of simultaneous requests supported.</li></ul>
+<p>These are measured values from real load on real infrastructure, not estimates. The agent also recommends improvement mechanisms (such as prefill decoding) to boost performance.</p>
+<p><strong>Example prompt:</strong> <em>“Benchmark my Llama endpoint on SageMaker AI.”</em></p>
+<h3>Find the right instance type for your model</h3>
+<p>If you have a model and need to find the right instance type to deploy it on SageMaker AI, tell your agent. It doesn’t matter where your model lives or how you obtained it:</p>
+<ul><li><strong>Fine-tuned or custom model in Amazon Simple Storage Service (Amazon S3)</strong>: You trained or downloaded a model and stored it in S3. Provide the S3 URI and your optimization goal. Example prompt: <em>“I want to find the cheapest instance type to deploy my fine-tuned model on SageMaker.”</em></li><li><strong>Publicly available foundation model from <a href="https://aws.amazon.com/sagemaker/jumpstart/">Amazon SageMaker JumpStart</a></strong>: You want to deploy a foundation model (FM) from the JumpStart catalog then provide the model ID. Example prompt: <em>“Find the best instance for model huggingface-reasoning-qwen3-8b on SageMaker AI.”</em></li><li><strong>Model on the <a href="https://huggingface.co/models">Hugging Face Hub</a></strong>: You want to use a model hosted on Hugging Face. Provide the model name. For gated models (such as Llama variants), your agent surfaces the license terms and asks you to accept them and provide your Hugging Face token. Example prompt: <em>“I want to deploy a Llama model from Hugging Face Hub. What’s the cheapest option?”</em></li></ul>
+<p>In every case, your agent generates code that evaluates your model against candidate instances and configurations, then presents ranked deployment options with concrete performance metrics: throughput, latency percentiles, time-to-first-token, and concurrency. You choose based on your cost and performance requirements.</p>
+<h3>Compare benchmark runs</h3>
+<p>If you ran multiple benchmarks (for example, before and after a configuration change, or across two instance types), you can ask the agent to compare them. Provide the two benchmark job names, and the agent generates a comparison that computes deltas across key metrics: throughput, latency percentiles, and time-to-first-token.</p>
+<p>The results show percentage changes where positive means better, giving you a single, interpretable summary of whether your change improved performance, degraded it, or had no meaningful effect.</p>
+<p>If one of the benchmark runs doesn’t exist, the agent offers to run it first before proceeding with the comparison.</p>
+<p><strong>Example prompt:</strong> <em>“I have two benchmark runs and I want to compare them. Which one is faster?”</em></p>
+<h2>Benchmark results</h2>
+<p>This table compares two deployed models on the same benchmark workload (512/256 tokens, concurrency 4). The Δ% column shows how much faster Model B (Qwen3-8B) is than Model A (Qwen3-1.7B) on each metric. A positive value means Model B is better.</p>
+<table><thead><tr><th><strong>Metric</strong></th><th><strong>Qwen3-1.7B (Model A)</strong></th><th><strong>Qwen3-8B (Model B)</strong></th><th><strong>Δ%</strong></th></tr></thead><tbody><tr><td>Output token throughput</td><td>188.2 tokens/s</td><td>271.2 tokens/s</td><td>+44.1% ✅</td></tr><tr><td>Per-user throughput</td><td>47.5 tokens/s</td><td>69.4 tokens/s</td><td>+45.9% ✅</td></tr><tr><td>Request throughput</td><td>0.736 req/s</td><td>1.08 req/s</td><td>+46.7% ✅</td></tr><tr><td>Inter-token latency</td><td>20.9 ms</td><td>14 ms</td><td>+33.0% ✅</td></tr><tr><td>Request latency</td><td>5,382 ms</td><td>3,658 ms</td><td>+32.0% ✅</td></tr><tr><td>Time to first token</td><td>67.5 ms</td><td>166.3 ms</td><td>−146.5% ❌</td></tr></tbody></table>
+<p>The two models run on different hardware. Qwen3-8B uses a 4-GPU <code>ml.g5.12xlarge</code> (4x A10G), while Qwen3-1.7B uses a single L4 GPU (<code>ml.g6.4xlarge</code>). The deltas reflect approximately 4x the compute, not just the models themselves.</p>
+<p>The takeaway: Qwen3-8B delivers approximately 44–47 percent higher throughput and lower end-to-end latency, largely thanks to the additional GPU compute. Qwen3-1.7B wins only on time-to-first-token, the expected advantage of a smaller model on a single GPU.</p>
+<h2>Putting it all together</h2>
+<p>You don’t need to memorize capability names or know which workflow to request. The following table shows how common requests map to outcomes.</p>
+<table><thead><tr><th><strong>You say</strong></th><th><strong>What you get</strong></th></tr></thead><tbody><tr><td>“I already deployed a model and want to know how fast it is.”</td><td>Quantitative performance report: throughput, latency percentiles, concurrency metrics from real load.</td></tr><tr><td>“I have a model in S3 and I don’t know what instance to deploy on.”</td><td>Ranked deployment options with cost, throughput, and latency for each candidate configuration.</td></tr><tr><td>“I want to deploy a JumpStart model and find the cheapest instance. I only have the model ID.”</td><td>Ranked deployment options, no S3 staging required. Gated-model alternative surfaced if needed.</td></tr><tr><td>“I ran a benchmark before and after a change. Which one is faster?”</td><td>Percentage change across all metrics indicating improvement or regression.</td></tr><tr><td>“I want to optimize a Llama model from Hugging Face Hub.”</td><td>License surfaced, model staged to S3, then standard recommendation output.</td></tr></tbody></table>
+<p>If your request spans multiple capabilities (for example, staging a Hugging Face model and then getting deployment recommendations), the agent chains them naturally within the same conversation.</p>
+<h2>What to expect from the agent</h2>
+<p>Your agent, equipped with the <code>aws-ai-ml</code> skill, follows a few behaviors that make the experience predictable and safe:</p>
+<ul><li><strong>It asks for what it needs.</strong> If information is missing (such as an endpoint name or S3 URI), the agent asks you to provide it rather than guessing.</li><li><strong>It confirms before impactful actions.</strong> Before running a benchmark that drives real traffic to a live endpoint, the agent warns you about the impact and asks for explicit confirmation.</li><li><strong>It tells you when something is out of scope.</strong> If you ask for something the agent can’t do (such as deploying a model), it explains what it can offer instead, such as generating the deployment configuration that you need.</li><li><strong>It generates SageMaker Python SDK v3 code.</strong> Every output is executable code you can inspect, modify, and run in your own environment.</li></ul>
+<h2>Clean up</h2>
+<p>To avoid ongoing charges, delete the resources you created:</p>
+<ul><li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints-delete.html">Delete SageMaker AI endpoints</a> created during benchmarking or recommendations.</li><li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/studio-updated-jl-user-guide-shutdown.html">Stop or delete your JupyterLab space</a> if you used SageMaker Studio.</li><li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/DeletingObjects.html">Remove S3 objects</a> stored by benchmark and recommendation jobs in your SageMaker AI default bucket.</li></ul>
+<h2>Conclusion</h2>
+<p>The <code>aws-ai-ml</code> skill for Amazon SageMaker AI optimized generative AI inference turns your existing coding agent into a SageMaker AI inference optimization expert. Whether you need to benchmark a live endpoint, find the cheapest instance for your model, compare configurations, or stage a Hugging Face model for evaluation, you describe what you want and your agent delivers measurable results.</p>
+<p>To get started, install the skill through the <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS</a> and add it to the coding agent you already use, or launch a pre-configured JupyterLab space in Amazon SageMaker Studio. For more information, see the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/whatis.html">Amazon SageMaker AI documentation</a>.</p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>Making Amazon Quick enterprise-ready: Automated, auditable c…</title>
@@ -34,6 +258,61 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/making-amazon-quick-enterprise-ready-automated-auditable-cross-account-resource-promotion/?li=1</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Making Amazon Quick enterprise-ready: Automated, auditable cross-account resource promotion</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Making Amazon Quick enterprise-ready: Automated, auditable cross-account resource promotion</h1>
+<p>Amazon Quick is Amazon’s agentic AI companion built for work. You build agents that reason over your data, call action connectors, and carry multi-step tasks to completion. Promoting those resources (chat agents, action connectors, knowledge bases, flows, and spaces) from a development to a production AWS account, the way you would any other application, has been a manual and error-prone chore. This post shows how to automate it with an idempotent, auditable Model Context Protocol (MCP) server on Amazon Bedrock AgentCore.</p>
+<p>The building blocks of an agentic solution are its <strong>agents, action connectors, knowledge bases, and spaces</strong>: chat agents configured with custom instructions, connectors for Slack, Jira, and other integrations, knowledge bases grounded in your own documents, and the Space that binds them together. Teams assemble and iterate on them quickly in a development account.</p>
+<p>Most enterprises run separate AWS accounts for development and production, sometimes with quality assurance (QA) in between. When agents, action connectors, and knowledge bases are validated in a development account, there is no native, one-click way to promote them into the next account. Teams rebuild each resource by hand: recreate each agent with the same instructions and starter prompts, re-attach each agent’s action connectors, re-grant resource permissions, and reprovision the Amazon Simple Storage Service (Amazon S3) bucket, bucket policy, and data source behind each knowledge base. The work is slow, difficult to audit, and easy to get subtly wrong, which undermines the governance story enterprises need.</p>
+<h2>Manage Amazon Quick resources through an API</h2>
+<p>Amazon Quick resources are programmable. Spaces, agents, action connectors, knowledge bases, and flows are managed through the Amazon Quick API (part of the <a href="https://docs.aws.amazon.com/cli/latest/reference/quicksight/">Amazon Quick Sight API surface</a>), which provides the full resource lifecycle, create, read, update, delete, and list. Anything a business user configures in Amazon Quick, an agent with its instructions and starter prompts, a connector, a knowledge base, or a flow, we can inspect, recreate, update, and govern programmatically, permissions included.</p>
+<p>This programmable surface is what makes governed promotion possible. Instead of recreating each resource by hand, we read a resource and its permissions through the API and reapply them in another account exactly as they were. The migrator in this post composes the create, read, update, and list operations into one repeatable workflow, and it never issues a delete against the target, so a run only adds or updates.</p>
+<p>In this post, we walk through the Quick Resource Migrator, a sample MCP server hosted on Amazon Bedrock AgentCore runtime, a capability of Amazon Bedrock AgentCore, that automates cross-account promotion of Amazon Quick resources in a single tool call. It’s resource-driven: you pick a resource type (agent, connector, knowledge base, flow, or space) and select by id, by name, or all. It’s idempotent (safe to re-run), and it copies permissions faithfully by describing the source and replaying the same actions in the target. The full source code is available in the <a href="https://github.com/aws-samples/sample-amazon-quick-suite-knowledge-hub/tree/main/infrastructure/multi-tenant-assets-deployment">aws-samples repository</a>.</p>
+<h2>Solution overview</h2>
+<p>The migrator promotes a chosen set of resources in a single call. It is an upsert: a resource that does not yet exist in the target is created, and one that already exists is updated in place. Every update is protected by a versioned backup written to Amazon S3 before the change, so each resource keeps a full history you can review and roll back to. A read-only preview reports exactly what a run would create or update before you commit, and the migration itself runs on Amazon Bedrock AgentCore, so it can be driven from Amazon Quick or any MCP-compatible client.</p>
+<h3>What gets migrated</h3>
+<ul><li><strong>Selection model:</strong> Pick a resource type (agent, connector, knowledge base, flow, or space) and choose resources by id, by name, or all. Selection is resource-driven. Migrate a resource type directly, or migrate a space to bring its linked resources across with it.</li><li><strong>Chat agents:</strong> Recreated with their custom instructions, identity, tone, starter prompts, and welcome message, with their action connectors re-attached (remapped to the target account). When a space is migrated, its agents are re-linked to it automatically.</li><li><strong>Action connectors:</strong> Recreated with their configuration. Secret values are never read from the source. Connectors are created with placeholder credentials and re-authenticated in the target.</li><li><strong>Knowledge bases:</strong> The knowledge base is registered in the target account, its data source is recreated, and its permissions are copied. For S3-backed knowledge bases the migrator also provisions the target bucket and its bucket policy (a distinct output of the migration). The documents (S3 objects) themselves are not copied.</li><li><strong>Flows:</strong> Recreated in the target account from their definition. Because flow IDs differ across accounts, flows are matched by name: a same-named target flow is updated, otherwise a new one is created. Flow permissions are copied.</li><li><strong>Spaces:</strong> Recreated in the target account and re-linked to their agents, connectors, and knowledge bases (with resource Amazon Resource Names (ARNs) remapped to the target). Migrate the linked resources first so the target ARNs resolve. Space permissions are copied.</li></ul>
+<h3>Key design principles</h3>
+<ul><li><strong>Resource-driven selection.</strong> You migrate one resource type at a time (agent, connector, knowledge base, flow, or space), selecting by id, by name, or all. Agents are recreated with their action connectors re-attached. Spaces are recreated and re-linked to their agents, connectors, and knowledge bases, with ARNs remapped to the target account.</li><li><strong>Permission fidelity.</strong> Permissions aren’t hard-coded. The server calls the relevant <code>Describe*Permissions</code> API on each source resource and replays the identical action list in the target, remapping principals to registered users in the target account.</li><li><strong>Idempotency.</strong> Every resource is created-or-updated. The server describes the target first and decides whether to create or update, so re-running a migration converges on the same state instead of producing duplicates or failing.</li><li><strong>Least privilege and isolation.</strong> The source role is read-only. The target role holds only the actions the migration needs. The runtime authenticates callers with a Cognito JSON Web Token (JWT) and can run in virtual private cloud (VPC) network mode.</li><li><strong>Safe, reversible updates.</strong> Before the migrator updates any existing target resource, it writes a versioned snapshot of that resource, and its dependencies, to a dedicated backup bucket. If that backup can’t be written, the update is aborted. Every created or updated resource is also snapshotted, and a restore tool can roll any resource back to an earlier version.</li></ul>
+<h2>Architecture</h2>
+<p>The solution uses a three-account model. A central runner account hosts the MCP server on Amazon Bedrock AgentCore runtime. The server assumes a read-only role in the source account and a read-write role in the target account using AWS Security Token Service (AWS STS), so no long-lived credentials are stored anywhere.</p>
+<p>Figure 1: Architecture of the Amazon Quick Resource Migrator MCP server</p>
+<h3>Component responsibilities</h3>
+<table><thead><tr><th><strong>Component</strong></th><th><strong>Responsibility</strong></th></tr></thead><tbody><tr><td><strong>AgentCore runtime (runner account)</strong></td><td>Hosts the MCP server (<code>server.py</code>). Assumes roles into the source and target accounts and orchestrates the migration. Runs in VPC network mode with a Cognito JWT authorizer.</td></tr><tr><td><strong>Amazon Cognito (runner account)</strong></td><td>User pool, resource server, and a machine-to-machine app client. Issues the JWT (client-credentials grant, scope <code>invoke</code>) that callers present to AgentCore.</td></tr><tr><td><strong>Runner execution role</strong></td><td>The AgentCore execution role: Amazon CloudWatch Logs, telemetry, and <code>sts:AssumeRole</code> into the source and target roles.</td></tr><tr><td><strong>Migrator role (source account)</strong></td><td>Read-only Quick Sight describe/list permissions plus knowledge base read.</td></tr><tr><td><strong>Migrator role (target account)</strong></td><td>Read-write Quick Sight create/update permissions, knowledge base and S3 write, and <code>ListUsers</code> for principal resolution.</td></tr><tr><td><strong>Backup bucket (runner account)</strong></td><td>Encrypted S3 bucket that stores versioned pre-update and post-migration snapshots of target resources. The runtime writes to it directly. Restore reads from it. Optional (disabled when unset).</td></tr></tbody></table>
+<p><em>Table 1: Architectural components</em></p>
+<h3>Migration flow</h3>
+<ul><li>Resolve resources: from the resource type and selector (id, name, or all), resolve the concrete resource IDs in the source account.</li><li>Describe the source: describe each selected resource to capture its configuration and permissions.</li><li>Connectors: recreate each connector. The authentication config is sanitized to the create (write) model with placeholder secrets, then re-authenticated in the target. Copy permissions.</li><li>Knowledge bases: create the target bucket (<code>knowledge-base-&lt;env&gt;-&lt;account&gt;</code>), bucket policy, data source, and knowledge base, then copy knowledge base permissions. S3 objects are not copied.</li><li>Agents: recreate each agent with its action connectors attached (remapped to the target account), then copy agent permissions. Agent-to-space linkage is restored when the space itself is migrated (see the space step).</li><li>Flows: recreate each flow from its definition, matched by name (flow IDs differ across accounts): update a same-named target flow or create a new one, then copy flow permissions.</li><li>Spaces: recreate each space and re-link its agents, connectors, and knowledge bases with ARNs remapped to the target account (migrate those resources first), then copy space permissions.</li><li>Report: return a JSON report of the created or updated resources, buckets, backups, skipped permissions, and any errors.</li></ul>
+<h2>Tools exposed by the MCP server</h2>
+<p>The server exposes five tools, all defined in <code>server.py</code>.</p>
+<h3>preview_migration (read-only)</h3>
+<p><code>preview_migration</code> takes a source account ID, a resource type (agent, connector, knowledge base, flow, space, or all), a selector (id, name, or all), and an AWS Region. It returns an inventory of the agents, action connectors, knowledge bases, and flows that would be migrated, with names and types, without making any change. Use it as a dry run to confirm scope and to support a change-management approval step before promotion. When you also pass a target account ID, the response adds a source-to-target mapping that marks each resource CREATE or UPDATE, so you can see exactly what a migration would change before running it.</p>
+<h3>migrate_resources (full migration)</h3>
+<p><code>migrate_resources</code> takes source and target account IDs, a resource type (agent, connector, knowledge base, flow, or space), a selector (id, name, or all), a region, source and target environment names (used in the knowledge base bucket name), and the Quick Sight service role name. It performs the full create-or-update migration described above and returns a structured report of everything it created, updated, and granted, along with any errors. Because it’s idempotent, you can run it repeatedly, for example on every release, and it converges on the same target state.</p>
+<h3>list_backups (read-only)</h3>
+<p><code>list_backups</code> searches the backup catalog and lists the available versions for each asset. Backups are the pre-update snapshots the migrator writes to the backup bucket, one versioned object per update, so you can see the full history for any migrated resource.</p>
+<h3>get_backup (read-only)</h3>
+<p><code>get_backup</code> returns the full stored backup for a given asset and version (the latest by default), including the captured resource configuration and its dependencies.</p>
+<h3>restore_backup</h3>
+<p><code>restore_backup</code> re-applies a stored backup version onto the target resource, updating it in place, or recreating it if it no longer exists. It first takes a fresh pre-restore backup, so the revert is itself reversible.</p>
+<h2>Deploy the solution</h2>
+<p>The full source and step-by-step deployment instructions live in the <a href="https://github.com/aws-samples/sample-amazon-quick-suite-knowledge-hub/tree/main/infrastructure/multi-tenant-assets-deployment">aws-samples repository</a> README. At a high level you deploy three AWS CloudFormation stacks, the cross-account AWS Identity and Access Management (IAM) roles, the VPC network, and the Cognito-authenticated AgentCore runtime that hosts the MCP server, then register that runtime as an action connector in Amazon Quick.</p>
+<h2>Use the migrator through a Quick App</h2>
+<p>By registering the runtime as an action connector, you can drive the migrator from Amazon Quick in natural language, and you can also build a Quick App: a point-and-click web experience layered on the same MCP tools. You don’t build that UI by hand. The repository includes a ready-to-use <a href="https://github.com/aws-samples/sample-amazon-quick-suite-knowledge-hub/blob/main/infrastructure/multi-tenant-assets-deployment/docs/quick-app-integration.md">app-builder prompt</a> that you paste into the Amazon Quick app builder, replacing the placeholder connector and action IDs with your own to generate the app. The app turns the workflow into a guided flow: choose a source and target account and the resources to promote, preview what will be created or updated, run the migration, and review a history of every past migration, each backed by the versioned S3 snapshots the server writes. The following screens show that experience.</p>
+<h3>An example Quick App</h3>
+<ul><li>Because the app is generated from a prompt, each build differs. The following screens show one such example. In it, the landing page prompts for the Source Account ID, Target Account ID, resource type (agent, connector, knowledge base, flow, or space), and selector (id, name, or all), with additional options available as needed.</li></ul>
+<p><a href="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/01/Figure-2-8.png"><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/01/Figure-2-8.png" alt="Quick App landing page with fields for source and target account IDs, resource type, and selector"></a></p>
+<p>Figure 3: Additional migration options available on the landing page</p>
+<ul><li>After you choose <strong>Confirm &amp; migrate</strong>, you see a response like the following:</li></ul>
+<p>Figure 4: The confirmation response after you choose Confirm and migrate</p>
+<ul><li>After you confirm and migrate, you should see the response from the MCP server returning the resources that were created/updated.</li></ul>
+<p>Figure 5: The MCP server response listing the resources that were created or updated</p>
+<ul><li>Open the History tab to see every past migration. Each entry is backed by the versioned snapshot the migrator wrote to Amazon S3, so you get a full, auditable record of what was promoted and when, with the option to inspect any earlier version.</li></ul>
+<p>Figure 6: The History tab showing an auditable record of past migrations</p>
+<ul><li>To roll back, select a resource’s backup version and choose <strong>Restore</strong>. The app re-applies that saved version to the target. Because it first captures a fresh backup before restoring, the revert is itself reversible.</li></ul>
+<p>Figure 7: Rolling back a resource to an earlier backup version</p>
+<h2>Conclusion</h2>
+<p>Cross-account promotion is a baseline expectation for enterprise software, and until now it has been the missing piece for Amazon Quick. The Quick Resource Migrator turns a slow, manual, hard-to-audit task into a fast, repeatable, and governed one: a single tool call recreates agents, connectors, and knowledge bases in a target account and copies permissions faithfully, all idempotently, so you can run it on every release.</p>
+<p>Clone the <a href="https://github.com/aws-samples/sample-amazon-quick-suite-knowledge-hub/tree/main/infrastructure/multi-tenant-assets-deployment">sample repository</a>, deploy it into a runner account, and try promoting an agent or knowledge base from development to production. Then adapt the pattern to your own governance and hardening requirements.</p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>Agentic retrieval with LangChain and Amazon Bedrock Knowledg…</title>
@@ -41,12 +320,408 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/agentic-retrieval-with-langchain-and-amazon-bedrock-knowledge-bases/?li=1</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Agentic retrieval with LangChain and Amazon Bedrock Knowledge Bases</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Agentic retrieval with LangChain and Amazon Bedrock Knowledge Bases</h1>
+<p>When a user asks the support assistant, a Retrieval Augmented Generation (RAG) application built with LangChain to compare two products across three dimensions, they’re effectively posing six questions simultaneously. Similarity search uses a single query vector to encapsulate all the intents. The retriever then generates the best approximation of the average of those intents. The resulting answer comes back concise. The search executes without errors. The relevance scores look reasonable. Yet the retrieved chunks, while topically relevant, only cover a fraction of what the question actually asked.</p>
+<p>In this post, we showcase a RAG application on Amazon Bedrock Managed Knowledge Base with <a href="https://github.com/langchain-ai/langchain-aws">LangChain</a>. We run the same multi-part question through standard and agentic retrieval, and read the trace events to see the plan the model produced. We also cover what the two retrieval paths cost and when the cheaper one is the right choice.</p>
+<p>Agentic retrieval is available on Amazon Bedrock Managed Knowledge Base. Instead of one search, Amazon Bedrock Managed Knowledge Base plans the retrieval. It breaks the question into sub-queries, runs them, judges whether it has enough evidence, and searches again if it doesn’t. The <code>langchain-aws</code> package exposes both agentic and standard retrieval, so you can use either from a LangChain application.</p>
+<h2>Solution overview</h2>
+<p><a href="https://aws.amazon.com/blogs/aws/introducing-amazon-bedrock-managed-knowledge-base-for-faster-more-accurate-enterprise-ai-applications/">Amazon Bedrock Managed Knowledge Base</a>, the fully managed RAG capability in Amazon Bedrock, removes the self-managed vector store, embeddings, and re-ranking models from the RAG architecture. You configure a data source, and Amazon Bedrock Managed Knowledge Bases handles chunking, embedding, storage, and retrieval. This walkthrough uses <a href="https://aws.amazon.com/pm/serv-s3/?trk=50b671a1-06f5-4224-9505-fa45ee881c08&amp;sc_channel=ps&amp;ef_id=EAIaIQobChMI1uiUo4eXlgMVy1J_AB2pfydUEAAYASAAEgJ6PPD_BwE&amp;gads_camp=23522747487&amp;gads_ag=196433733807&amp;gads_ad=795876995201&amp;gads_kw=amazon%20s3&amp;gads_matchtype=e&amp;gads_network=g&amp;gads_device=c&amp;gads_geo=9022830&amp;gad_campaignid=23522747487&amp;gbraid=0AAAAADjHtp-DJgH1kF6NUslUNqoqqj14q&amp;gclid=EAIaIQobChMI1uiUo4eXlgMVy1J_AB2pfydUEAAYASAAEgJ6PPD_BwE">Amazon Simple Storage Service (Amazon S3)</a>.</p>
+<p>Amazon Bedrock Managed Knowledge Bases provides two APIs. We briefly discuss those differences in this post. The <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_Retrieve.html">Retrieve</a> API runs one hybrid search and returns scored chunks. The <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_AgenticRetrieveStream.html">AgenticRetrieveStream</a> API runs a planning loop and streams the steps back to you as trace events. In the <code>langchain-aws</code> package, the first is a standard LangChain retriever you can drop into a chain. The second is a function retrieval directly from a knowledge base.</p>
+<p>The following diagram shows the solution architecture. The application queries Amazon Bedrock Knowledge Bases using either the Retrieve API (standard, single-shot) or the AgenticRetrieveStream API (multi-step planning loop). Both paths return document chunks from the knowledge base, which the application then uses to generate a grounded response.</p>
+<p>Figure 1: Solution architecture for querying Amazon Bedrock Knowledge Bases with the Retrieve and AgenticRetrieveStream APIs</p>
+<h2>Implementation walkthrough</h2>
+<p>The following sections walk you through creating a knowledge base, querying it with both retrieval methods, and reading the trace events the agentic planner produces.</p>
+<h2>Prerequisites</h2>
+<p>To follow along you need:</p>
+<ul><li>An AWS account with access to Amazon Bedrock in a Region where Amazon Bedrock Managed Knowledge Bases and agentic retrieval are available. This walkthrough uses the US East (N. Virginia) Region (<code>us-east-1</code>), and the code assumes it throughout. Check the AWS <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">documentation</a> for other Regional availability and support.</li><li>Two AWS Identity and Access Management (IAM) identities, described in the next section: a service role the knowledge base assumes, and permissions on the identity you call the APIs from.</li><li><a href="https://www.python.org/downloads/">Python 3.12</a> or later.</li><li>An S3 bucket holding the sample documents. The corpus needs several documents that cover overlapping topics so that a comparative question has somewhere to go. A single flat document cannot demonstrate query planning.</li></ul>
+<p>Install the packages. The <a href="https://boto3.amazonaws.com/v1/documentation/api/latest/index.html">Boto3</a> version matters: <code>agentic_retrieve_stream</code> did not exist before 1.43.32.</p>
+<pre><code>langchain-aws&gt;=1.6.3
+langchain&gt;=1.0
+boto3&gt;=1.43.32</code></pre>
+<h2>Permissions</h2>
+<p>Two identities are involved and separating them is worth doing deliberately. The knowledge base assumes a service role to read your documents and call the embedding model. Your application uses an AWS Security Token Service (AWS STS) caller identity to query. Neither needs the other’s permissions.</p>
+<p>Amazon Bedrock creates the service role for you if you let it. To supply your own, give it a trust policy that lets Amazon Bedrock assume it. Scope it with <code>aws:SourceAccount</code> and <code>aws:SourceArn</code> so that another account can’t use it as a confused deputy:</p>
+<pre><code>{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [{
+        &quot;Effect&quot;: &quot;Allow&quot;,
+        &quot;Principal&quot;: {&quot;Service&quot;: &quot;bedrock.amazonaws.com&quot;},
+        &quot;Action&quot;: &quot;sts:AssumeRole&quot;,
+        &quot;Condition&quot;: {
+            &quot;StringEquals&quot;: {&quot;aws:SourceAccount&quot;: &quot;111122223333&quot;},
+            &quot;ArnLike&quot;: {
+                &quot;aws:SourceArn&quot;: &quot;arn:aws:bedrock:us-east-1:111122223333:knowledge-base/*&quot;
+            }
+        }
+    }]
+}</code></pre>
+<p>The service role also needs <code>s3:ListBucket</code> on your bucket and <code>s3:GetObject</code> on its contents, both conditioned on <code>aws:ResourceAccount</code>. Scope the <code>knowledge-base/*</code> wildcard character down to specific knowledge base IDs after you have created them.</p>
+<p>The AWS STS caller identity needs a different set. <code>bedrock:AgenticRetrieveStream</code> and <code>bedrock:InvokeModelWithResponseStream</code> can’t be scoped to a knowledge base Amazon Resource Name (ARN). <code>bedrock:Retrieve</code> and <code>bedrock:GetDocumentContent</code> can:</p>
+<pre><code>{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Sid&quot;: &quot;AgenticRetrievalAndPlannerModel&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;bedrock:AgenticRetrieveStream&quot;,
+                &quot;bedrock:InvokeModelWithResponseStream&quot;
+            ],
+            &quot;Resource&quot;: &quot;*&quot;
+        },
+        {
+            &quot;Sid&quot;: &quot;RetrieveAndFullDocumentExpansion&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [&quot;bedrock:Retrieve&quot;, &quot;bedrock:GetDocumentContent&quot;],
+            &quot;Resource&quot;: &quot;arn:aws:bedrock:&lt;region&gt;:111122223333:knowledge-base/&lt;knowledge-base-id&gt;&quot;
+        },
+        {
+            &quot;Sid&quot;: &quot;GenerateAnswersInTheChains&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [&quot;bedrock:InvokeModel&quot;, &quot;bedrock:Converse&quot;, &quot;bedrock:ConverseStream&quot;],
+            &quot;Resource&quot;: &quot;*&quot;
+        }
+    ]
+}</code></pre>
+<p><code>bedrock:GetDocumentContent</code> is often overlooked. Agentic retrieval calls it when a <code>FullDocumentExpansion</code> step decides a passage lacks the context to answer. A policy with only <code>bedrock:Retrieve</code> works until the planner reaches for a whole document and then fails partway through a query.</p>
+<p>To create and manage the knowledge base itself, the calling role additionally needs <code>bedrock:CreateKnowledgeBase</code> on <code><em></code>, and the <code>GetKnowledgeBase</code>, <code>UpdateKnowledgeBase</code>, <code>DeleteKnowledgeBase</code>, <code>StartIngestionJob</code>, <code>GetIngestionJob</code>, and <code>ListIngestionJobs</code> actions on <code>knowledge-base/</em></code>. If you’re using guardrails, add <code>bedrock:GetGuardrail</code> and <code>bedrock:ApplyGuardrail</code>.</p>
+<p>Running this walkthrough might incur costs for document storage and ingestion in the knowledge base, retrieval calls, and foundation model (FM) inference.</p>
+<p>For more information about pricing, see the Knowledge Bases section of <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock pricing</a>.</p>
+<p>Delete the resources when you complete this experiment.</p>
+<h2>Creating and populating the knowledge base</h2>
+<p>Create the knowledge base with a <code>managedKnowledgeBaseConfiguration</code>. Setting <code>embeddingModelType</code> to <code>MANAGED</code> uses the service-managed embedding model.</p>
+<pre><code>import boto3
+import os
+
+REGION = os.environ[&quot;AWS_REGION&quot;]
+bedrock_agent = boto3.client(&quot;bedrock-agent&quot;, region_name=REGION)
+
+response = bedrock_agent.create_knowledge_base(
+    name=KB_NAME,
+    roleArn=KB_ROLE_ARN,
+    knowledgeBaseConfiguration={
+        &quot;type&quot;: &quot;MANAGED&quot;,
+        &quot;managedKnowledgeBaseConfiguration&quot;: {
+            &quot;embeddingModelType&quot;: &quot;MANAGED&quot;,
+        },
+    },
+)
+KB_ID = response[&quot;knowledgeBase&quot;][&quot;knowledgeBaseId&quot;]</code></pre>
+<p>There’s no <code>storageConfiguration</code> in that request. For a self-managed knowledge base you would pass one describing your vector store. Amazon Bedrock Managed Knowledge Base does not take one, which is the clearest signal in the API that Amazon Bedrock owns the storage layer.</p>
+<p>Attach the S3 bucket as a data source, then start an ingestion job. Ingestion is asynchronous, so poll until the job reaches a terminal state rather than sleeping for a fixed interval and hoping.</p>
+<pre><code>import time
+
+SUCCESS_STATES = frozenset({&quot;COMPLETE&quot;})
+FAILURE_STATES = frozenset({&quot;FAILED&quot;, &quot;STOPPED&quot;})
+
+def wait_for_ingestion(kb_id, ds_id, job_id, timeout_s=1800):
+    &quot;&quot;&quot;Poll an ingestion job until it reaches a terminal state.&quot;&quot;&quot;
+    deadline = time.time() + timeout_s
+    while time.time() &lt; deadline:
+        job = bedrock_agent.get_ingestion_job(
+            knowledgeBaseId=kb_id,
+            dataSourceId=ds_id,
+            ingestionJobId=job_id,
+        )[&quot;ingestionJob&quot;]
+        status = job[&quot;status&quot;]
+        if status in SUCCESS_STATES:
+            return job
+        if status in FAILURE_STATES:
+            reasons = job.get(&quot;failureReasons&quot;) or [&quot;no reason reported&quot;]
+            raise RuntimeError(f&quot;Ingestion job {job_id} finished as {status}: &quot; + &quot;; &quot;.join(reasons))
+        time.sleep(15)
+    raise TimeoutError(f&quot;Ingestion job {job_id} did not finish in {timeout_s}s&quot;)</code></pre>
+<p>The full data source configuration and error handling are in the <a href="https://github.com/aws-samples/sample-rag-bedrock-langchain-blog">sample repository</a>.</p>
+<h2>Querying with the LangChain retriever</h2>
+<p><a href="https://reference.langchain.com/python/langchain-aws/retrievers/bedrock/AmazonKnowledgeBasesRetriever">AmazonKnowledgeBasesRetriever</a> wraps the Retrieve API and behaves like any other LangChain retriever. For Amazon Bedrock Managed Knowledge Bases, pass <code>managedSearchConfiguration</code>. This is the part that trips people up: <code>vectorSearchConfiguration</code> is the previous path for knowledge bases where you run your own vector store. It is what most existing examples show.</p>
+<pre><code>from langchain_aws.retrievers import AmazonKnowledgeBasesRetriever
+
+SIMPLE_QUERY = &quot;What is the restore time objective for the checkout service?&quot;
+
+retriever = AmazonKnowledgeBasesRetriever(
+    knowledge_base_id=KB_ID,
+    region_name=REGION,
+    retrieval_config={
+        &quot;managedSearchConfiguration&quot;: {
+            &quot;numberOfResults&quot;: 5,
+        }
+    },
+)
+docs = retriever.invoke(SIMPLE_QUERY)</code></pre>
+<p>Each result comes back as a LangChain <code>Document</code>. The relevance score is in <code>metadata[&quot;score&quot;]</code>, and the source document’s own metadata is under <code>metadata[&quot;source_metadata&quot;]</code>, renamed so it does not collide. If you want to drop low-confidence results, set <code>min_score_confidence</code> on the retriever instead of filtering afterward.</p>
+<p>For a question with one clear intent, this is the right tool. It is one call. The latency is the lowest of the two options, and you keep full control of how the answer gets generated. Most of the queries a production assistant sees are this shape, and reaching for a planning loop to answer them wastes money and time.</p>
+<h2>Where single-shot retrieval runs out</h2>
+<p>Now give the same retriever a question with several parts:</p>
+<pre><code>COMPLEX_QUERY = (
+    &quot;Compare the checkout and inventory services across on-call escalation, backup and &quot;
+    &quot;restore targets, and deployment rollback procedure. Where do they differ?&quot;
+)
+
+docs = retriever.invoke(COMPLEX_QUERY)</code></pre>
+<p>Five chunks come back, ranked by hybrid score against one embedding of that whole question.</p>
+<p>That question contains six intents: two services across three dimensions. Scoring the retrieved text for evidence of each one gives a concrete measure of what a single embedding recovers.</p>
+<table><thead><tr><th><strong>numberOfResults</strong></th><th><strong>Chunks</strong></th><th><strong>Share of corpus</strong></th><th><strong>Sub-intents covered</strong></th><th><strong>Missing</strong></th></tr></thead><tbody><tr><td>5</td><td>5</td><td>10%</td><td>4 of 6</td><td>checkout on-call, inventory restore</td></tr><tr><td>10</td><td>10</td><td>19%</td><td>6 of 6</td><td>none</td></tr></tbody></table>
+<p>At five results, one embedding standing for six intents misses two of them. At ten it covers all six, with visible waste: two sub-intents are covered twice and one chunk carries none.</p>
+<p>The retriever did its job. The limitation is structural: one vector cannot represent six intents, and there is no step in the process that asks whether the returned evidence is enough to answer the question.</p>
+<h2>Running agentic retrieval</h2>
+<p>Agentic retrieval is not a LangChain retriever, but a feature of Amazon Bedrock Managed Knowledge Bases. The <code>langchain-aws</code> package exposes it as a standalone function, <a href="https://python.langchain.com/api_reference/aws/retrievers/langchain_aws.retrievers.bedrock.html">agentic_retrieve</a>, because the underlying API streams its results and doesn’t fit the synchronous <code>BaseRetriever</code> interface. There’s no flag on <code>AmazonKnowledgeBasesRetriever</code> that switches it on.</p>
+<pre><code>from langchain_aws.retrievers.bedrock import agentic_retrieve
+
+result = agentic_retrieve(
+    knowledge_base_id=KB_ID,
+    query=COMPLEX_QUERY,
+    region_name=REGION,
+    generate_response=True,
+    number_of_results=10,
+)
+print(result[&quot;generatedResponse&quot;][&quot;answer&quot;])</code></pre>
+<p>With <code>generate_response=True</code>, the service returns a grounded answer and citations alongside the retrieved chunks, so you get an answer without wiring up a separate model call. The function works only against Amazon Bedrock Managed Knowledge Base.</p>
+<p>Internally, the service plans, retrieves, evaluates whether the evidence is sufficient, and iterates if it isn’t. The helper hides all of that and hands back the final chunks, which is convenient and means you can’t see the plan.</p>
+<h2>Reading the trace events</h2>
+<p>To watch the model decompose the question, call <a href="https://docs.aws.amazon.com/boto3/latest/reference/services/bedrock-agent-runtime/client/agentic_retrieve_stream.html">agentic_retrieve_stream</a> on the <a href="https://docs.aws.amazon.com/boto3/latest/reference/services/bedrock-agent-runtime.html">bedrock-agent-runtime</a> client directly. This is the one place in this walkthrough where we step around <code>langchain-aws</code>, because the helper discards trace events and doesn’t expose <code>maxAgentIteration</code> or a custom planner model.</p>
+<pre><code>runtime = boto3.client(&quot;bedrock-agent-runtime&quot;, region_name=REGION)
+
+response = runtime.agentic_retrieve_stream(
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: {&quot;text&quot;: COMPLEX_QUERY}}],
+    retrievers=[{
+        &quot;configuration&quot;: {
+            &quot;knowledgeBase&quot;: {
+                &quot;knowledgeBaseId&quot;: KB_ID,
+                &quot;retrievalOverrides&quot;: {&quot;maxNumberOfResults&quot;: 10},
+            }
+        }
+    }],
+    agenticRetrieveConfiguration={
+        &quot;foundationModelType&quot;: &quot;MANAGED&quot;,
+        &quot;rerankingModelType&quot;: &quot;MANAGED&quot;,
+        # 5 is the API default. Below 4 the planner stops decomposing entirely.
+        &quot;maxAgentIteration&quot;: 5,
+    },
+    generateResponse=False,
+)
+
+for event in response[&quot;stream&quot;]:
+    if &quot;traceEvent&quot; in event:
+        attrs = event[&quot;traceEvent&quot;][&quot;attributes&quot;]
+        print(f&quot;{attrs.get('step')}: {attrs.get('status')}&quot;)
+        for action in attrs.get(&quot;actions&quot;, []) or []:
+            if &quot;retrieve&quot; in action:
+                query = action[&quot;retrieve&quot;].get(&quot;inputQuery&quot;, {}).get(&quot;text&quot;, &quot;&quot;)
+                print(f&quot; sub-query: {query}&quot;)
+    elif &quot;result&quot; in event:
+        for chunk in event[&quot;result&quot;].get(&quot;results&quot;, []):
+            print(chunk.get(&quot;content&quot;, {}).get(&quot;text&quot;, &quot;&quot;)[:120])</code></pre>
+<p>Set <code>generateResponse</code> to <code>False</code> when you only want the retrieval behavior. The API generates a grounded answer by default, which costs an extra model call you may not need while you are inspecting the plan.</p>
+<p>A trace event’s <code>step</code> tells you where the planner is. <code>SpeculativeRetrieval</code> runs before the first plan to cut latency and doesn’t count against your iteration budget. <code>Planning</code> is where the model reads the question and prior results and emits sub-queries. <code>Retrieval</code> fires once per sub-query. <code>FullDocumentExpansion</code> appears when the model decides a passage lacks the context to answer and pulls the whole document instead. Each carries a status of <code>IN_PROGRESS</code>, <code>SUCCEEDED</code>, or <code>FAILED</code>, plus a human-readable message.</p>
+<p>The final chunks arrive separately. The <code>result</code> is its own event type rather than a fifth step, and it holds the deduplicated chunks from every iteration along with the grounded answer when response generation is on. Branch on the event key, as the preceding loop demonstrates, rather than expect a terminal step value.</p>
+<p>The sub-query text is the part worth logging. It sits in <code>attributes.actions[].retrieve.inputQuery.text</code>, not in the top-level trace fields, so a handler that reads only <code>step</code> and <code>status</code> shows you that planning happened without showing you what it decided.</p>
+<p>The following diagram shows the agentic retrieval planning loop, including the speculative retrieval, planning, sub-query retrieval, evaluation, and optional re-planning steps.</p>
+<p>Figure 2: Steps in the agentic retrieval planning loop</p>
+<p>Two details are worth knowing before you build on this. Deduplication applies only to the <code>result</code> event, so a chunk retrieved by three sub-queries appears once at the end but three times across the traces.</p>
+<p>The second is about scores. A Retrieve response gives each chunk a typed <code>score</code> field holding its relevance to the query. Agentic retrieval results carry <code>content</code>, <code>metadata</code>, and <code>sourceRetriever</code>, with no equivalent typed field. Code that reads <code>result[&quot;score&quot;]</code> after switching APIs gets nothing. If you rank or filter relevance, plan for that difference.</p>
+<p>In production, use Amazon Bedrock Guardrails to enforce content policies and grounding checks on generated responses. Both retrieval paths support guardrails. Agentic retrieval supports guardrails through <code>policyConfiguration.bedrockGuardrailConfiguration</code> rather than the <code>guardrail_config</code> argument the LangChain retriever takes, and supports <code>BLOCK</code> mode only. If you rely on <code>MASK</code> mode, that is a reason to stay on the Retrieve API.</p>
+<p><code>maxAgentIteration</code> accepts two through ten and defaults to five. Leave it at the default. At two or three the planner runs one cycle, emits no sub-queries, and returns what the speculative retrieval step already found. This is single-shot behavior at the agentic price. Decomposition begins at four. The planner often stops early when it judges the evidence sufficient, so the ceiling is a bound rather than a target.</p>
+<h2>Comparing the two retrieval paths</h2>
+<p>For context on how this behaves at scale, AWS evaluated agentic retrieval on MuSiQue, a public multi-hop benchmark. The evaluation showed improved recall over single-shot retrieval, with the largest gains on the hardest questions. Single-hop questions saw gains under five points. That last figure matches the shape of the trade-off: decomposition helps when there is something to decompose.</p>
+<h2>Building the RAG chain</h2>
+<p>For the standard retriever, the usual <a href="https://python.langchain.com/docs/concepts/lcel/">LangChain Expression Language (LCEL)</a> composition works directly:</p>
+<pre><code>from langchain_aws import ChatBedrockConverse
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+
+def format_docs(docs):
+    return &quot;\n\n&quot;.join(doc.page_content for doc in docs)
+
+llm = ChatBedrockConverse(model=MODEL_ID, region_name=REGION)
+prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+
+chain = (
+    {&quot;context&quot;: retriever | format_docs, &quot;question&quot;: RunnablePassthrough()}
+    | prompt
+    | llm
+    | StrOutputParser()
+)</code></pre>
+<p><code>format_docs</code> matters more than it looks. Passing <code>Document</code> objects straight into a prompt renders their <code>repr</code>, and the model gets metadata noise mixed into the context.</p>
+<p>To put agentic retrieval in the same position, wrap it in a <code>RunnableLambda</code>, since it is a function rather than a retriever:</p>
+<pre><code>from langchain_core.runnables import RunnableLambda
+
+def agentic_context(question: str) -&gt; str:
+    result = agentic_retrieve(
+        knowledge_base_id=KB_ID,
+        query=question,
+        region_name=REGION,
+        number_of_results=10,
+    )
+    return &quot;\n\n&quot;.join(
+        item.get(&quot;content&quot;, {}).get(&quot;text&quot;, &quot;&quot;)
+        for item in result.get(&quot;results&quot;, [])
+    )
+
+agentic_chain = (
+    {&quot;context&quot;: RunnableLambda(agentic_context), &quot;question&quot;: RunnablePassthrough()}
+    | prompt
+    | llm
+    | StrOutputParser()
+)</code></pre>
+<p>Note that <code>generate_response</code> is off here. The service can generate the answer itself, but inside a chain you usually want your own prompt and model, so you take the chunks and generate downstream. Use the service generation when you want one call and less code, and the wrapped version when the prompt is yours to control.</p>
+<h2>Choosing between standard and agentic retrieval</h2>
+<p>Use Retrieve for short, well-scoped questions. It is cheaper, faster, works against self-managed knowledge bases, and returns scores in the results. Most production traffic looks like this.</p>
+<p>Use AgenticRetrieveStream when questions are multi-part, comparative, or exploratory, or when the evidence spans more than one knowledge base. It registers up to five knowledge bases in one request and routes sub-queries using a natural-language description you attach to each. The other API cannot do this at all. It costs more per call, makes several model invocations, and has the higher latency of the two.</p>
+<p>Routing on query shape rather than picking one for everything is the pattern we recommend. A classifier or a heuristic on the question can send most traffic down the cheap path and reserve the planner for questions that need it.</p>
+<h2>Clean up resources</h2>
+<p>Delete the knowledge base, its data source, the S3 objects and bucket, and the IAM role that you created. A knowledge base with documents in it continues to incur storage charges.</p>
+<pre><code>bedrock_agent.delete_data_source(knowledgeBaseId=KB_ID, dataSourceId=DS_ID)
+bedrock_agent.delete_knowledge_base(knowledgeBaseId=KB_ID)</code></pre>
+<p>The <a href="https://github.com/aws-samples/sample-rag-bedrock-langchain-blog">repository</a> includes a cleanup script that also empties the bucket and removes the role.</p>
+<h2>Conclusion</h2>
+<p>We showed how to build a RAG application on Amazon Bedrock Knowledge Bases with LangChain, and how agentic retrieval handles multi-part questions that single-shot retrieval answers poorly. We also showed the friction in the current integration. Agentic retrieval is a function rather than a LangChain retriever, so it needs a <code>RunnableLambda</code> to sit in a chain. The trace events that show the query plan require a direct <code>boto3</code> call.</p>
+<p>Agentic retrieval trades higher per-call cost for improved recall on multi-hop questions, using a built-in model for query planning. The next useful step is measuring your own query mix before you route everything through a planner.</p>
+<p>To get started, see the Amazon Bedrock Knowledge Bases <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-build-managed.html">documentation</a> and the accompanying sample code. For help applying this to your own workload, contact your AWS account team.</p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>Downgrading user roles in Amazon Quick</title>
       <link>https://aws.amazon.com/blogs/machine-learning/downgrading-user-roles-in-amazon-quick/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/downgrading-user-roles-in-amazon-quick/?li=1</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Downgrading user roles in Amazon Quick</h1>
+<p>Managing access permissions effectively is an important aspect of maintaining a secure and collaborative environment in Amazon Quick. Quick supports versatile user management options designed to accommodate various identity types and organizational needs. You can provision users natively through Quick Identity or manage them through enterprise identity providers such as AWS IAM Identity Center or Active Directory. These systems allow user roles including Admin, Author, and Reader to be assigned and grouped according to job functions and security requirements. As team members join, change roles, or leave the organization, administrators must make sure transitions happen smoothly without disrupting business workflows or creating security gaps.</p>
+<p>Regular access reviews are important for maintaining security in your Quick environment. Plan monthly or quarterly audits of user roles to confirm everyone has appropriate permissions. When team members’ responsibilities change, proactively transfer ownership of their dashboards and analyses to prevent orphaned resources. This practice, recommended in the <a href="https://aws.amazon.com/architecture/well-architected/">AWS Well-Architected Framework</a>, helps maintain continuity for business-critical visualizations.</p>
+<p>In this post, we focus on one specific but important user lifecycle task: downgrading user roles.</p>
+<h2>Why downgrade?</h2>
+<p>The principle of least privilege applies strongly to Quick administration. Users should have access only to what they need for their specific job functions. Downgrading user roles is a key part of enforcing least privilege. When a user’s responsibilities no longer require authoring or administrative capabilities, reduce their role accordingly to minimize the security surface area.</p>
+<p>Quick pricing is also role-based: Authors and Admins pay a fixed monthly per-user fee, while Readers use session-based pricing. Organizations with users provisioned as Authors who only consume dashboards can reduce costs substantially by right-sizing them to Reader roles. For current pricing details, see the <a href="https://aws.amazon.com/quicksight/pricing/">Amazon Quick pricing page</a>.</p>
+<p>For more granular control beyond the built-in roles in Amazon Quick, consider complementing role assignments with <a href="https://docs.aws.amazon.com/quicksight/latest/user/custom-permissions-profiles.html">Custom Permissions</a>, which restrict specific capabilities within a role tier. The integration of Amazon Quick with <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> provides additional permission boundaries that complement the basic role system.</p>
+<h2>Scope of this post</h2>
+<p>Although the exact steps depend on the user identity type, this post primarily addresses Amazon Quick Identity users (also called Quick-managed users). Users authenticated through IAM Identity Center or Active Directory typically have role changes managed through their external identity provider group mappings. If your environment uses IAM Identity Center, role downgrade is handled by moving the user from one IdC group to another (for example, from a Quick-Admins group to a Quick-Readers group). No step-down sequence is required.</p>
+<p>Although the Amazon Quick console doesn’t provide a direct downgrade path for all role transitions (specifically, you cannot downgrade from Admin to Reader or from Author to Reader directly through the console interface), two reliable solutions exist: a manual deletion-and-recreation method, and an approach that uses the AWS Command Line Interface (AWS CLI). We walk you through both techniques to help you maintain proper access management as your team evolves.</p>
+<h2>Prerequisites</h2>
+<p>Before we begin, make sure you have an active AWS account with administrator access to Amazon Quick. If you plan to use the CLI method, you need the <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">AWS CLI installed and configured</a> on your machine. It’s also helpful to prepare a list of users whose roles need changing.</p>
+<h2>Understanding Amazon Quick roles</h2>
+<p>Amazon Quick offers two subscription tiers with distinct role sets:</p>
+<table><thead><tr><th><strong>Subscription</strong></th><th><strong>Roles</strong></th><th><strong>Capabilities</strong></th></tr></thead><tbody><tr><td><strong>Amazon Quick Enterprise</strong></td><td>Admin Pro, Author Pro, Reader Pro</td><td>Full BI + AI features (agents, topics, Q&amp;A, stories, generative summaries)</td></tr><tr><td><strong>Amazon Quick Sight</strong> (BI-only)</td><td>Admin, Author, Reader</td><td>Traditional BI authoring and consumption</td></tr></tbody></table>
+<p>The console does not provide a direct way to downgrade from any Author tier to any Reader tier. The <code>update-user</code> API enforces this same constraint, rejecting direct downgrades with a “You cannot downgrade a user role” error.</p>
+<p>The following screenshot shows the Amazon Quick Suite user management page, where the console offers no direct control to move a user from an Author tier down to a Reader tier. This illustrates why the methods in this post are necessary.</p>
+<p>Figure 1: Amazon Quick Suite user management page</p>
+<p>The CLI step-down method works reliably for the <strong>legacy BI-only roles</strong> (Admin, Author, Reader), following this sequence:</p>
+<p>Admin &gt; Author &gt; Restricted Reader &gt; Reader</p>
+<p>This same sequence also works for Pro users, as long as the intermediate steps use the legacy roles. For example, Author Pro &gt; Author &gt; Restricted Reader &gt; Reader Pro completes successfully.</p>
+<h2>Important considerations before making changes</h2>
+<p>When implementing role changes through either method, there are several important factors to keep in mind. First, verify that all users in your list are currently Admin or Author users before making changes. Attempting to downgrade users who already have lower permissions might cause errors. Resource ownership questions still apply even when using the CLI method. Users being downgraded will no longer be able to edit resources they previously owned. For larger organizations using the CLI method, consider loading user email addresses from a CSV file rather than hardcoding them. If you use <a href="https://aws.amazon.com/cloudshell/">AWS CloudShell</a> instead of a local CLI installation, you can omit the AWS Region specification because AWS CloudShell automatically uses your current console Region context.</p>
+<h2>Transferring asset ownership (do this first)</h2>
+<p>Before deleting a user, it’s essential to make sure that any assets they own, such as dashboards, datasets, and analyses, are properly reassigned. This prevents disruptions and avoids leaving resources orphaned. If the user is an Author, verify whether they own any datasets or dashboards, and follow the same asset reassignment steps described here. There are three main ways to handle asset ownership transfers in Amazon Quick.</p>
+<h3>Option 1: Proactively transfer ownership to another admin</h3>
+<p>The most controlled approach is to manually reassign ownership before deleting the user. To do this, go into each asset in Quick, choose <strong>Share</strong>, and assign another admin as a co-owner. With this method, you can determine exactly who takes over each resource, which is especially useful for high-impact dashboards or datasets. Although this can be time-consuming in large environments, it gives you the flexibility to distribute assets according to your team’s structure and responsibilities.</p>
+<p>The following screenshot shows the <strong>Share</strong> dialog for an asset, where you add another admin as a co-owner so that ownership is transferred before the original user is removed.</p>
+<p>Figure 2: Transferring asset ownership to another user</p>
+<h3>Option 2: Use the Amazon Quick bulk asset transfer on the Admin page</h3>
+<p>If the user owns many assets, the manual method can become inefficient. In this case, you can use the <strong>Manage assets</strong> feature available in the Admin section of Quick. With this tool, administrators can perform bulk ownership transfers or update sharing permissions for multiple assets at once. It streamlines the reassignment process significantly, particularly when offboarding users or managing organizational changes. For more details on how to use this feature, see the official <a href="https://docs.aws.amazon.com/quicksight/latest/user/manage-qs-assets.html">Managing assets in Amazon Quick</a> documentation.</p>
+<h3>Option 3: Share assets with a Quick user group</h3>
+<p>Another effective strategy is to share assets with a user group. For Quick Identity users, you can create a Quick group, add relevant team members, and share dashboards or datasets with the group rather than individual users. If your account is integrated with IAM Identity Center or Active Directory, equivalent groups are created and managed in those systems, and Quick uses those external groups for access control instead of Quick-managed groups. This way, access to shared resources remains intact even if a specific user is deleted. It’s a resilient approach that reduces the need for reassigning ownership in the future and helps maintain consistent access across dynamic teams.</p>
+<h2>Manual method: Deleting and recreating the user</h2>
+<p>Although not the most efficient approach, the manual deletion and recreation method is one option for environments where CLI usage isn’t feasible. This method involves removing the admin user entirely and then recreating them with reader permissions. This same manual method also applies when downgrading an Author to a Reader, though typically with fewer complications around asset ownership.</p>
+<p>Because this method requires deleting the user account before recreating it with a lower role, careful preparation is essential to avoid losing valuable resources and disrupting workflows. Make sure you have completed the asset ownership transfer described in the previous section before proceeding.</p>
+<h3>Step 1: Delete the admin user</h3>
+<p>After you transfer ownership of all resources, sign in to the AWS Management Console and navigate to the Amazon Quick service. From there, choose your profile icon, and then choose <strong>Manage Quick</strong>, followed by <strong>Manage users</strong>. When you locate the admin user you want to downgrade, choose the delete icon next to their name and confirm the deletion when prompted. This completely removes their current access to the system.</p>
+<p>If you haven’t transferred all resources beforehand, Quick presents an ownership transfer dialog. This dialog prompts you to select another admin who will receive ownership of all the user’s resources. Select an appropriate admin from the list, then confirm the transfer by choosing <strong>Delete and transfer</strong>. This built-in transfer mechanism helps prevent orphaned resources but transfers everything to a single admin. For more granular control, use the proactive approach mentioned earlier to distribute resources strategically among different team members.</p>
+<p>If you skipped the proactive transfer, the deletion dialog shown in the following figure lets you reassign all of the user’s resources to a single admin before the account is removed.</p>
+<p>Figure 3: Built-in resource transfer during user deletion</p>
+<h3>Step 2: Recreate the user with the Reader role</h3>
+<p>After successfully deleting the user, remain on the Users page and choose <strong>Invite users</strong>. Enter the user’s email address and select the <strong>Reader</strong> role from the available options. Send the invitation to allow the user to rejoin Quick with their new, more restricted permissions.</p>
+<h3>Step 3: Verify the role change</h3>
+<p>After the user accepts the invitation:</p>
+<ul><li>Confirm that their permissions have been updated to <strong>Reader</strong>.</li><li>Verify that they can only view dashboards and reports.</li><li>Confirm that they can’t modify or create content.</li></ul>
+<h2>CLI method: Step-down role transition (recommended)</h2>
+<p>If you prefer to use the AWS CLI or AWS CloudShell, you can programmatically change the user’s role. Because Quick requires role changes to be made in a specific sequence, you can’t transition directly from any Admin to any Reader. Instead, you must step through intermediate roles.</p>
+<h3>Important notes</h3>
+<ul><li>Replace <code>&lt;your-account-id&gt;</code> with your AWS account ID.</li><li>Replace <code>&lt;user-name&gt;</code> with the username of the user.</li><li>Replace <code>&lt;user-email&gt;</code> with the user’s email address.</li><li>If you’re using the AWS CLI outside CloudShell, specify the <code>--region</code> parameter.</li><li>The <code>--role</code> value must match the API role name exactly (see the preceding table).</li></ul>
+<h3>Example: Legacy track (Admin to Reader)</h3>
+<p><strong>Step 1:</strong> Change role from Admin to Author:</p>
+<pre><code>aws quicksight update-user \
+  --aws-account-id &lt;your-account-id&gt; \
+  --user-name &lt;user-name&gt; \
+  --namespace default \
+  --email &lt;user-email&gt; \
+  --role AUTHOR</code></pre>
+<p><strong>Step 2:</strong> Update role from Author to Restricted Reader:</p>
+<pre><code>aws quicksight update-user \
+  --aws-account-id &lt;your-account-id&gt; \
+  --user-name &lt;user-name&gt; \
+  --namespace default \
+  --email &lt;user-email&gt; \
+  --role RESTRICTED_READER</code></pre>
+<p><strong>Step 3:</strong> Change role from Restricted Reader to Reader:</p>
+<pre><code>aws quicksight update-user \
+  --aws-account-id &lt;your-account-id&gt; \
+  --user-name &lt;user-name&gt; \
+  --namespace default \
+  --email &lt;user-email&gt; \
+  --role READER</code></pre>
+<h2>After the downgrade: Review Limit Profiles and Custom Permissions</h2>
+<p>Role changes don’t automatically adjust Limit Profiles or Custom Permissions profiles. Both persist independently of the user’s role, and you should review them after any downgrade.</p>
+<ul><li><strong>Limit Profiles</strong> control per-user caps on resources such as index storage and agent hours. If the downgraded user was assigned a profile appropriate for their previous Admin or Author role, reassign a Reader-appropriate limit profile to avoid over-allocating resources. See the <a href="https://docs.aws.amazon.com/quicksight/latest/user/limit-profiles.html">Limit Profiles documentation</a> for details.</li><li><strong>Custom Permissions</strong> restrict specific capabilities within a role tier. A profile assigned to an Author might not behave as expected on a Reader. Either unapply it during the final CLI step (using <code>--unapply-custom-permissions</code>) or assign a profile designed for the Reader tier.</li></ul>
+<h2>Script for updating multiple users</h2>
+<p>Use the following script to update multiple users.</p>
+<pre><code>#!/bin/bash
+
+# Define AWS account details
+AWS_ACCOUNT_ID=&quot;&lt;your-account-id&gt;&quot;
+REGION=&quot;&lt;your-region&gt;&quot;
+
+# Load users from file (format: username,email per line)
+# Lines starting with # are treated as comments
+INPUT_FILE=&quot;users_to_downgrade.txt&quot;
+
+while IFS=',' read -r username email; do
+  # Skip comments and empty lines
+  [[ &quot;$username&quot; =~ ^#.*$ || -z &quot;$username&quot; ]] &amp;&amp; continue
+
+  echo &quot;Processing user: $username&quot;
+
+  # Role transition stages
+  for ROLE in AUTHOR RESTRICTED_READER READER; do
+    RESULT=$(aws quicksight update-user \
+      --aws-account-id &quot;$AWS_ACCOUNT_ID&quot; \
+      --user-name &quot;$username&quot; \
+      --namespace default \
+      --email &quot;$email&quot; \
+      --role &quot;$ROLE&quot; \
+      --region &quot;$REGION&quot; 2&gt;&amp;1)
+
+    if [ $? -ne 0 ]; then
+      echo &quot; ERROR at $ROLE: $RESULT&quot;
+      break
+    fi
+
+    echo &quot; Transitioned to $ROLE&quot;
+    sleep 3
+  done
+
+  echo &quot;Role update completed for $username.&quot;
+done &lt; &quot;$INPUT_FILE&quot;
+
+echo &quot;All user role updates processed!&quot;</code></pre>
+<h3>Script functionality</h3>
+<p>This script performs the following:</p>
+<ul><li>Reads usernames and email addresses from an external file (supports comments with #).</li><li>Updates role in three stages: Admin &gt; Author &gt; Restricted Reader &gt; Reader.</li><li>Error handling stops the transition for a user if any step fails.</li><li>Sleep commands allow time for changes to take effect.</li></ul>
+<p>A few things to keep in mind when running the script:</p>
+<ul><li>Confirm users are currently Admin or Author users before running.</li><li>Use the actual Quick username, which might differ from the email prefix in federated environments.</li><li>No Region specification needed in AWS CloudShell.</li><li>You can modify the script to load users from a CSV export of <code>list-users</code>.</li></ul>
+<h2>Best practices for user access management</h2>
+<p>To keep your Quick environment secure and well-organized, follow these best practices:</p>
+<ul><li>Review user roles regularly (monthly or quarterly audits).</li><li>Transfer resource ownership before changing roles.</li><li>Follow the principle of least privilege.</li><li>Use Custom Permissions profiles for fine-grained control within a role tier.</li><li>Share resources with groups rather than individuals for resilience.</li><li>Use AWS Identity and Access Management for additional permission boundaries.</li></ul>
+<h2>Cleaning up</h2>
+<p>After completing user role changes:</p>
+<ul><li>Remove any test users.</li><li>Verify that no unintended resources remain.</li><li>Delete temporary CLI scripts or user list files.</li><li>Double-check the final user permissions.</li></ul>
+<h2>Conclusion</h2>
+<p>In this post, we explored two methods to downgrade user roles in Amazon Quick: manual deletion and recreation, and a flexible AWS CLI approach. These strategies help you manage team access efficiently and securely.</p>
+<p>For environments using IAM Identity Center, role changes are managed through IdC group reassignment, which does not require the step-down sequence described here. For additional governance controls, explore <a href="https://docs.aws.amazon.com/quicksight/latest/user/custom-permissions-profiles.html">Custom Permissions</a> for feature-level restrictions and <a href="https://docs.aws.amazon.com/quicksight/latest/user/restricted-folders.html">Restricted Folders</a> for content-level isolation.</p>
+<h2>Resources</h2>
+<ul><li><a href="https://docs.aws.amazon.com/quicksight/latest/user/managing-user-access-qs-iam.html">Managing User Access in Amazon Quick</a></li><li><a href="https://docs.aws.amazon.com/quicksight/latest/user/manage-qs-assets.html">Managing Assets in Amazon Quick</a></li><li><a href="https://docs.aws.amazon.com/quicksight/latest/user/custom-permissions-profiles.html">Custom Permissions Profiles</a></li><li><a href="https://aws.amazon.com/iam/resources/best-practices/">AWS IAM Best Practices</a></li><li><a href="https://aws.amazon.com/blogs/business-intelligence/">AWS Business Intelligence Blog</a></li></ul>
+<p>We’d love to hear about your user management experiences. How does your organization handle role transitions in Quick Suite? Have you developed custom scripts or processes to streamline these changes? Share your thoughts and challenges in the comments.</p>
+<h2>About the author</h2>]]></content:encoded>
     </item>
     <item>
       <title>Evaluating multi-agent systems for explainability and helpfu…</title>
@@ -54,6 +729,128 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/evaluating-multi-agent-systems-for-explainability-and-helpfulness-with-amazon-bedrock-agentcore/?li=1</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Evaluating multi-agent systems for explainability and helpfulness with Amazon Bedrock AgentCore</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Evaluating multi-agent systems for explainability and helpfulness with Amazon Bedrock AgentCore</h1>
+<p>A critical challenge that emerges as multi-agent systems move from experimentation to production is making sure that these systems are consistently helpful, accurate, and explainable in real-world scenarios. Enterprises are increasingly adopting multi-agent systems to solve complex, real-world problems that require reasoning across data sources, tools, and business constraints. From supply chain planning to financial analysis and customer operations, these systems go beyond simple question answering. They coordinate multiple specialized agents to make decisions, execute workflows, and generate actionable recommendations.</p>
+<p>While large language models can generate fluent responses, enterprise applications require much deeper guarantees, where agents must follow instructions reliably, select the right tools, respect constraints, and provide clear reasoning behind their outputs.</p>
+<p><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html">Amazon Bedrock AgentCore</a> is a platform to build, connect, and optimize agents at scale, with any framework or model. <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">Amazon Bedrock AgentCore Evaluations</a>, a capability of Amazon Bedrock AgentCore, is designed to address this challenge as a fully managed capability for assessing agent performance across development and production, so teams can measure accuracy, task success, and behavior across multiple quality dimensions. Traditional evaluation approaches that focus only on model response quality are insufficient for agentic systems, where correctness depends on tool selection, workflow execution, and adherence to business constraints. In addition to evaluation, production deployment of agentic systems requires responsible AI controls. <a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> provides configurable safeguards such as content filtering, denied topic detection, and grounding validation that complement the evaluation framework. While evaluations assess agent quality after execution, Guardrails enforce safety constraints during execution. In this post, we focus on operationalizing this evaluation framework with Amazon Bedrock AgentCore Evaluations support for both built-in evaluators and custom evaluators. Built-in evaluators offer pre-defined assessments for common quality dimensions such as helpfulness, task success, and instruction following, so teams can quickly baseline agent performance without additional setup. However, enterprise use cases require deeper, domain-specific validation. Custom evaluators address this, so you can define business-aware checks.</p>
+<p>We also focus specifically on explainability as a first-class evaluation dimension. We demonstrate how built-in evaluators can assess general response clarity. We showcase how custom evaluators are used to verify that agents explicitly articulate decision rationale, reference supporting data or tool outputs, and explain tradeoffs such as cost versus service level. By combining these evaluators, we show how AgentCore Evaluations can move beyond surface-level response quality and provide structured, measurable insights into how and why agents arrive at their decisions.</p>
+<p>To make these concepts concrete, the following sections walk through a reference architecture and implementation that demonstrates how these components work together in practice.</p>
+<h2>Solution overview</h2>
+<p>For this post, we use a fictitious global retail company called AnyCompany Retail, a multinational retailer operating ecommerce channels, regional fulfillment centers, distribution centers, and thousands of physical stores. AnyCompany experiences frequent inventory imbalances: some regions face stockouts during promotions, while others carry excess inventory. Transportation teams must also balance delivery speed, carrier capacity, and cost. The company wants an agentic assistant that can help planners optimize inventory allocation, recommend distribution adjustments, analyze inventory health, and simulate routing or fulfillment scenarios.</p>
+<p>You will build and evaluate a multi-agent supply chain decisioning system using <a href="https://strandsagents.com/">Strands Agents SDK</a>, <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-mcp.html">Amazon Bedrock AgentCore MCP Server</a> and Amazon Bedrock AgentCore Evaluations. The solution uses Strands Agents with an orchestrator agent and four specialized sub-agents: an optimization agent, distribution agent, routing agent, and analytics agent. Each agent runs on <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore runtime</a> with <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory.html">Amazon Bedrock AgentCore memory</a> and <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html">Amazon Bedrock AgentCore Observability</a> enabled.</p>
+<p>The orchestrator agent receives the planner’s request and delegates work to specialized agents exposed as tools. The optimization agent calls MCP tools backed by mock <a href="https://aws.amazon.com/api-gateway/">Amazon API Gateway</a> REST interfaces that return optimization decisions. The distribution agent calls recommendation APIs to suggest inventory rebalancing across fulfillment centers, stores, and digital channels. The routing agent calls logistics APIs to recommend carrier and route options and the analytics agent answers supply chain diagnostics questions. This solution uses foundation models on Amazon Bedrock for the agent loop. For model availability by Region, refer to <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Supported models by AWS Region in Amazon Bedrock.</a></p>
+<p>The solution uses built-in evaluators that assess general quality dimensions such as helpfulness and task completion. It also provides custom evaluators that assess supply-chain-specific behavior such as constraint satisfaction, route feasibility, SQL correctness, inventory grounding, and explanation quality. AnyCompany can evaluate both the language quality of the response and the business validity of the agent’s decision.</p>
+<p>The solution supports both on-demand and online modes with Amazon Bedrock AgentCore Evaluations. The on-demand mode is meant for development benchmarking, regression testing, and continuous integration and continuous delivery (CI/CD) gates. The online mode is for continuous production monitoring and alerts. Both modes help you close the loop and act on feedback from your users. The same custom evaluators (such as the constraint satisfaction, route feasibility, SQL correctness, and explainability evaluators from your supply chain solution) used for on-demand evaluations are repurposed with an OnlineEvaluationConfig object that references the Amazon Resource Names (ARNs) of the evaluators and specifies a sampling rate (for example, 1–10% of production traces) along with optional session filters. The service then automatically reads traces from AgentCore Observability, scores them and streams results to <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> dashboards and alarms. In this post, you will use the on-demand mode to test the solution.</p>
+<p>The following architecture diagram illustrates the various components of our solution.</p>
+<p>Figure 1: Architecture of the multi-agent supply chain decisioning solution</p>
+<h2>Evaluation framework</h2>
+<p>In this post, you will use a three-layer evaluation approach for multi-agent systems that progressively builds enterprise trust. The approach follows a clear progression starting with built-in evaluators for general quality then adding custom evaluators for business accuracy and finally layering explainability evaluators for trust and auditability.</p>
+<p>The first layer uses built-in evaluators requiring no setup. We apply Helpfulness as a universal baseline plus a second agent-specific evaluator targeting each agent’s primary failure mode: Tool Selection Accuracy for the orchestrator, Response Relevance for optimization and distribution, Instruction Following for routing, and Faithfulness for analytics.</p>
+<p>The second layer adds custom evaluators encoding domain-specific business rules: constraint satisfaction for optimization, data grounding for distribution, route feasibility for routing, SQL correctness for analytics, and plan coherence for orchestration. These validate business validity: did the recommendation respect budget limits, use real inventory data, and produce operationally correct outputs?</p>
+<p>The following table maps the two built-in evaluators and custom evaluator selected for each agent that you will implement here. The second built-in evaluator targets each agent’s primary failure mode, while the custom evaluator encodes domain-specific business rules that validate operational correctness.</p>
+<table><thead><tr><th><strong>Agent</strong></th><th><strong>Built-in evaluators</strong></th><th><strong>Custom evaluators</strong></th></tr></thead><tbody><tr><td>Orchestrator agent</td><td>Helpfulness; Tool Selection Accuracy</td><td>Plan coherence evaluator: Did it combine sub-agent outputs into a valid, non-contradictory recommendation? Tool trajectory evaluator: Did it route to the correct sub-agent?</td></tr><tr><td>Optimization agent</td><td>Helpfulness; Response Relevance</td><td>Constraint satisfaction evaluator: budget, inventory coverage (demand ≤ qty ≤ 2× demand), and warehouse capacity constraints. Key performance indicator (KPI) attainment evaluator: fill-rate/revenue improvement target met.</td></tr><tr><td>Distribution agent</td><td>Helpfulness; Response Relevance</td><td>Recommendation groundedness evaluator: recommendation is grounded in current inventory/demand data. Risk impact evaluator: recommendation improves stockout/overstock risk.</td></tr><tr><td>Routing agent</td><td>Helpfulness; Instruction Following</td><td>Route feasibility evaluator: route respects delivery window, cost, carrier capacity, and region constraints. Service level agreement (SLA) evaluator: expected delivery meets target service level.</td></tr><tr><td>Analytics agent</td><td>Helpfulness; Faithfulness</td><td>SQL correctness evaluator: query matches user intent. Data-grounding evaluator: response is supported by Amazon Relational Database Service (Amazon RDS) query results. No unsupported claims evaluator.</td></tr></tbody></table>
+<h2>Explainability</h2>
+<p>The third layer of our evaluation approach applies explainability evaluators as distinct, cross-cutting checks across the agents. These independently assess whether agents articulate decision rationale, cite supporting evidence from tool outputs, explain which constraints shaped the response, articulate trade-offs between competing objectives, clarify why specific sub-agents were invoked, and disclose assumptions when data is incomplete. By separating explainability into its own evaluation layer, we can independently measure transparency. A recommendation can be accurate but unexplainable (passing custom evaluators but failing explainability), giving teams actionable signals about whether agents need better reasoning articulation rather than better decision logic.</p>
+<p>The following table defines the six independent explainability evaluators that you implement here and that are applied across agents as a cross-cutting layer. These assess whether agents articulate reasoning, cite evidence, explain constraints and trade-offs, and disclose assumptions. They are measured separately from accuracy so teams can distinguish unexplainable-but-correct responses from well-explained-but-wrong ones.</p>
+<table><thead><tr><th><strong>Evaluator</strong></th><th><strong>Agents</strong></th><th><strong>What it checks</strong></th></tr></thead><tbody><tr><td>Decision rationale quality</td><td>All</td><td>Did the agent explain why it made the recommendation?</td></tr><tr><td>Evidence attribution</td><td>Analytics, Distribution, Routing</td><td>Did it cite the data fields, API response, or SQL result used?</td></tr><tr><td>Constraint reasoning</td><td>Optimization, Routing</td><td>Did it explain which constraints shaped the final response?</td></tr><tr><td>Trade-off explanation</td><td>Optimization, Distribution, Routing</td><td>Did it explain the trade-offs among cost, service level, and inventory risk?</td></tr><tr><td>Tool-use explainability</td><td>Orchestrator</td><td>Did it explain why each sub-agent or MCP tool was invoked?</td></tr><tr><td>Assumption disclosure</td><td>All agents</td><td>Did it clearly state assumptions when data was incomplete?</td></tr></tbody></table>
+<h2>Prerequisites</h2>
+<p>Before you deploy this solution, set up your development environment with the following tools.</p>
+<ul><li>Install the <a href="https://aws.amazon.com/cli">AWS Command Line Interface (AWS CLI)</a></li><li>Install the <a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html">AWS Serverless Application Model (AWS SAM) CLI v1.100.0+</a></li><li>Install <a href="https://docs.docker.com/engine/install/">Docker v20.x+</a></li><li>Install <a href="https://nodejs.org/">Node.js v18.x+</a></li><li>Install <a href="https://www.python.org/downloads/">Python v3.11+</a></li></ul>
+<h2>Dependencies</h2>
+<p>The Strands Agents implementation also needs to have the following dependencies that are packaged in the DockerFile:</p>
+<ul><li>strands-agents # Strands Agents multi-agent framework</li><li>strands-agents-tools # Strands agent tools and utilities</li><li>requests # HTTP library for API calls</li><li>bedrock-agentcore # Amazon Bedrock agent core functionality</li><li>boto3 # AWS SDK for Python (Boto3)</li></ul>
+<h2>Deploy and run the solution</h2>
+<p>The solution is available for download from our <a href="https://github.com/aws-samples/sample-agentic-genai-agentcore/tree/main/aws-genai-evaluations-supply-chain">GitHub repo</a> and provides a single step deployment to deploy and access the solution in your AWS environment:</p>
+<pre><code># Edit terraform.tfvars: set vpc_id and runtime_subnet_azs
+cd terraform
+cp terraform.tfvars.example terraform.tfvars
+terraform init
+terraform apply</code></pre>
+<p>The outputs include runtime ARNs, AnyCompany Retail API URL, evaluator API URL, and memory ARN.</p>
+<h2>Run the solution</h2>
+<p>Follow these steps to run the solution:</p>
+<p>The test_client/ folder contains a Python script that invokes the deployed Supply Chain agent with 20 sample queries (5 per sub-agent) to validate end-to-end functionality. Each category runs as a multi-turn session, and session IDs are printed at the end for use with the evaluators API.</p>
+<pre><code>cd test_client
+pip install -r requirements.txt
+cd terraform
+terraform output supply_chain_arn</code></pre>
+<p><strong>Run all queries (20 total, 4 sessions)</strong></p>
+<pre><code>cd test_client
+python test_agent.py --runtime-arn &quot;&lt;supply_chain_arn&gt;&quot; --region &lt;your_region&gt;</code></pre>
+<h3>Run specific sub-agent categories</h3>
+<pre><code>#Only optimization queries (1 session, 5 turns)
+python test_agent.py --runtime-arn &quot;&lt;supply_chain_arn&gt;&quot; --category optimization
+#Only routing and analytics (2 sessions, 5 turns each)
+python test_agent.py --runtime-arn &quot;&lt;supply_chain_arn&gt;&quot; --category routing analytics</code></pre>
+<p>The test client prints each query and the full agent response. At the end it prints the session IDs for use with the evaluators.</p>
+<p><strong>Create and run evaluations</strong></p>
+<p>The test_evaluators/ folder contains scripts to run evaluations against agent sessions. These evaluations run asynchronously and the results are saved as markdown files in S3.</p>
+<p>You must invoke the supply chain decisioning multi-agent solution first as outlined earlier to generate agent sessions with traces and note down the session IDs printed at the end of the test client run. Finally wait 3-5 minutes after running the solution for traces to propagate to CloudWatch.</p>
+<pre><code>cd test_evaluators
+pip install -r requirements.txt
+cd terraform
+terraform output evaluators_api_url</code></pre>
+<p><strong>Create custom evaluators</strong></p>
+<pre><code>python test_evaluator.py --api-url &quot;https://&lt;evaluators-api-url&gt;&quot; create</code></pre>
+<p>This registers custom evaluators and prints their IDs. Save these for use with the run command.</p>
+<p><strong>Run evaluations</strong></p>
+<p>Pass a comma-separated list of evaluator IDs (custom or built-in). At least 1 is required:</p>
+<pre><code># Run custom + built-in evaluators
+python test_evaluator.py --api-url &quot;https://&lt;evaluators-api-url&gt;&quot; run \
+--agent-id &quot;supply_chain_orchestrator_agent-&lt;id&gt;&quot; \
+--session-id &quot;&lt;session-id-from-test-client&gt;&quot; \
+--evaluators &quot; sc_optimization_constraint-&lt;id&gt;,sc_distribution_groundedness-&lt;id&gt;,Builtin.Correctness,Builtin.GoalSuccessRate&quot;</code></pre>
+<p>The API returns 202 immediately. Results are saved asynchronously to S3 at:</p>
+<pre><code>s3://&lt;amzn-s3-demo-agent-source-bucket&gt;/evaluations/&lt;session-id&gt;/&lt;timestamp&gt;/EvaluationResults.md</code></pre>
+<p><strong>Delete evaluators</strong></p>
+<pre><code>python test_evaluator.py --api-url &quot;https://&lt;evaluators-api-url&gt;&quot; delete \
+--evaluator-ids &quot;sc_optimization_constraint-&lt;id&gt;,sc_distribution_groundedness-&lt;id&gt;&quot;</code></pre>
+<h2>Run an optimization evaluation</h2>
+<p>Now that you understand the evaluation framework and have deployed the solution, let’s walk through a focused end-to-end evaluation of the optimization agent. This walkthrough demonstrates how to combine a custom business-accuracy evaluator (Layer 2) with explainability evaluators (Layer 3) to assess both the correctness and transparency of optimization decisions.</p>
+<p><strong>Step 1: Run optimization queries</strong></p>
+<p>First, invoke the test client with only the optimization category to generate a focused session:</p>
+<pre><code>cd test_client
+python test_agent.py --runtime-arn &quot;&lt;supply_chain_arn&gt;&quot; \
+--category optimization \
+--region &lt;your_region&gt;</code></pre>
+<p>This runs 5 optimization queries as a multi-turn session. The agent processes requests such as “What is the optimal inventory level for prod-001 over the next 30 days?” Each query requires the optimization agent to call MCP tools, retrieve demand forecasts, and produce stocking recommendations that respect budget, inventory coverage, and warehouse capacity constraints. At the end of the run, the test client prints the optimization session ID.</p>
+<p><strong>Step 2: Run the Constraint Satisfaction evaluator (Layer 2: business accuracy)</strong></p>
+<p>With the optimization session generated, run the custom Constraint Satisfaction evaluator to validate whether the agent’s stocking recommendations respect business rules. This evaluator checks three constraints simultaneously:</p>
+<ul><li>Budget: Does the incremental holding cost fit within remaining budget (budget_limit − budget_used)?</li><li>Inventory coverage: Is the recommended level ≥ demand forecast (avoids stockout) and ≤ 2× demand (avoids excess)?</li><li>Warehouse capacity: Does the recommended level fit within available warehouse space?</li></ul>
+<p>Run the evaluator along with the built-in Helpfulness and Response Relevance evaluators:</p>
+<pre><code>cd test_evaluators
+python test_evaluator.py --api-url &quot;https://&lt;evaluators-api-url&gt;&quot; run \
+--agent-id &quot;supply_chain_orchestrator_agent-&lt;id&gt;&quot; \
+--session-id &quot;&lt;optimization-session-id&gt;&quot; \
+--evaluators &quot;sc_optimization_constraint-&lt;id&gt;,Builtin.Helpfulness,Builtin.ResponseRelevance&quot;</code></pre>
+<p>The API returns HTTP 202 immediately. Evaluations run asynchronously. Results are saved to S3:</p>
+<pre><code>s3://&lt;amzn-s3-demo-agent-source-bucket&gt;/evaluations/&lt;optimization-session-id&gt;/&lt;timestamp&gt;/EvaluationResults.md</code></pre>
+<p><strong>Step 3: Run explainability evaluators (Layer 3: trust and auditability)</strong></p>
+<p>After confirming that the optimization agent produces constraint-satisfying recommendations, the next question is: does it explain its reasoning? A recommendation can be accurate but opaque. Such a recommendation passes the constraint evaluator but fails to articulate why it chose a specific inventory level.</p>
+<p>Using the same optimization session ID from Step 1, now run the two explainability evaluators that apply to the optimization agent:</p>
+<ul><li>Decision Rationale Quality — Did the agent explain why it made the recommendation? (for example, “Recommending 1,500 units because demand forecast is 1,200 and we target a 1.25× safety factor”)</li><li>Constraint Reasoning — Did the agent explain which constraints shaped the final response? (for example, “Budget allows up to 1,800 units but warehouse capacity limits us to 1,600, so we recommend 1,500”)</li></ul>
+<pre><code>python test_evaluator.py --api-url &quot;https://&lt;evaluators-api-url&gt;&quot; run \
+--agent-id &quot;supply_chain_orchestrator_agent-&lt;id&gt;&quot; \
+--session-id &quot;&lt;optimization-session-id&gt;&quot; \
+--evaluators &quot;sc_decision_rationale-&lt;id&gt;,sc_constraint_reasoning-&lt;id&gt;&quot;</code></pre>
+<p>These evaluators independently assess transparency. They are measured separately from accuracy.</p>
+<p><strong>Interpreting the combined results</strong></p>
+<p>By running all three evaluators against the same optimization session, you get a complete picture of agent quality across two dimensions:</p>
+<table><thead><tr><th><strong>Dimension</strong></th><th><strong>Evaluator</strong></th><th><strong>Question answered</strong></th></tr></thead><tbody><tr><td>Business accuracy (Layer 2)</td><td>Constraint Satisfaction</td><td>Are the recommendations operationally correct?</td></tr><tr><td>Explainability (Layer 3)</td><td>Decision Rationale Quality</td><td><em>Why</em> does the agent make this recommendation?</td></tr><tr><td>Explainability (Layer 3)</td><td>Constraint Reasoning</td><td><em>Which constraints</em> shaped the response?</td></tr></tbody></table>
+<p>Table 3: Evaluation coverage across quality dimensions</p>
+<p>This layered approach enables targeted improvements. If constraint satisfaction scores are high but explainability scores are low, the agent’s decision logic is sound, but its communication needs work. Conversely, if explainability is high but constraints are violated, the agent articulates reasoning well but applies incorrect logic. Each failure mode has a different remediation path, and the evaluation framework makes this distinction measurable.</p>
+<h2>Clean up</h2>
+<p>To avoid recurring charges, clean up your AWS account in a single step after trying the solution.</p>
+<pre><code>terraform destroy</code></pre>
+<h2>Conclusion</h2>
+<p>In this post, we demonstrated how to build and evaluate a multi-agent supply chain decisioning system using Amazon Bedrock AgentCore Evaluations, with a focus on verifying that agent behavior is not only functional, but also helpful, accurate, and explainable. Using the AnyCompany Retail Group scenario, we showed how an orchestrator agent and specialized sub-agents collaborate to solve complex problems such as inventory allocation, distribution planning, routing optimization, and supply chain diagnostics, while integrating with enterprise data sources and APIs. As illustrated throughout the architecture, correctness in agentic systems goes beyond response quality. It depends on selecting the right tools, executing the correct workflow, adhering to business constraints, and grounding outputs in data.</p>
+<p>By combining built-in evaluators with custom evaluators, teams can systematically validate both general response quality and domain-specific decision accuracy. Incorporating explainability-focused evaluators further make sure that agents clearly articulate their reasoning, reference supporting data, and explain tradeoffs in a way that business users can trust and act upon. This evaluation-driven approach enables continuous improvement using real execution data, establishes quality gates before production rollout, and provides a scalable framework for delivering consistent, transparent, and business-aligned multi-agent systems.</p>
+<p>To get started, explore <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">Amazon Bedrock AgentCore Evaluations</a> and apply these patterns to your own multi-agent applications. Find the complete source code in the <a href="https://github.com/awslabs/agentcore-samples/tree/main/06-workshops/07-AgentCore-evaluations">Amazon Bedrock AgentCore samples repository on GitHub.</a> Begin by enabling observability, defining key evaluation dimensions for your use case, and incrementally introducing built-in and custom evaluators to measure what matters most.</p>
+<p>To learn more, visit the <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> service page or get started directly in the <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock console</a>.</p>
+<p><strong>Related posts:</strong></p>
+<ul><li><a href="https://aws.amazon.com/blogs/machine-learning/build-reliable-ai-agents-with-amazon-bedrock-agentcore-evaluations/">Build reliable AI agents with Amazon Bedrock AgentCore Evaluations</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/build-highly-scalable-serverless-langgraph-multi-agent-systems-in-aws-with-amazon-bedrock-agentcore/">Build highly scalable serverless LangGraph multi-agent systems in AWS with Amazon Bedrock AgentCore</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/evaluating-ai-agents-real-world-lessons-from-building-agentic-systems-at-amazon/">Evaluating AI agents: Real-world lessons from building agentic systems at Amazon</a></li></ul>
+<h2>About the author</h2>]]></content:encoded>
     </item>
     <item>
       <title>Sweep thousands of leases for compliance using Amazon Quick…</title>
