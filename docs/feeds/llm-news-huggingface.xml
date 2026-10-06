@@ -55,6 +55,92 @@
       <link>https://huggingface.co/blog/rl-environments</link>
       <guid isPermaLink="true">https://huggingface.co/blog/rl-environments</guid>
       <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>欢迎 RL 环境（RL Environments）入驻 Hub</h1>
+<p>强化学习（Reinforcement Learning）环境为 agentic AI 系统带来新的能力，也是衡量并改进你的 agent 性能的好办法。因此，Hugging Face Hub 现在为 RL Environments 专门留了一个位置。</p>
+<p>一个环境会给 agent 一个任务，用 observation 回应它的动作，并对结果打分。由此产生的 reward 既能在评估阶段衡量 agent 的表现，也能在训练阶段提供学习信号。关于这个交互循环的入门介绍，见我们<a href="https://huggingface.co/spaces/AdithyaSK/rl-environments-guide">关于环境的博客</a>。在环境内部，agent 要完成的那一组任务是以数据集的形式表示的，所以环境大致可以分成两部分：tasksets（任务集）和 runtimes（运行时）。这次发布我们聚焦在 tasksets 上。</p>
+<p>Hub 上的一个 RL 环境就是一个数据集仓库，它会出现在新的 <a href="https://huggingface.co/datasets?other=rl-environment">RL Environments 过滤器</a>里。<strong>Use this dataset</strong> 按钮会给你在该框架下运行它的命令。没有新增的仓库类型，没有注册中心，也不需要注册。Harbor、Verifiers 和 NVIDIA NeMo Gym 里已经有环境了。</p>
+<h2>别再自建环境注册中心</h2>
+<p>每篇 RL 论文、每个框架都用自己的方式去找环境：自建 hub、运行时注册中心、独立的任务数据集，或者一份 GitHub 上的任务清单配一个自定义 loader。结果是很多已发布的环境彼此隔离：如果你为某一个框架发布了环境，另外三个框架的用户加载不了。想用另一个框架或某篇新论文里的环境来训练，就得手工把它移植过来。</p>
+<p>我们认为这个形态是错的。一个环境就是任务、测试、容器加一条 reward 规则——本质是数据，上面再叠一个运行时。Hub 已经在存储数据、做版本管理、做访问门槛、做预览，并把它们分发给数百万人。它不需要第二套系统来存放环境，它需要的是某种表达&quot;这份数据是一个环境，这是它的运行方式&quot;的办法。</p>
+<p>任务数据放在 Hub 上。运行时配置和 verifier 代码可以放在仓库里，也可以放在框架里。</p>
+<p>框架继续做它们擅长的事。Hub 做它擅长的事，也就是托管、发现和版本管理。没人需要去拥有那份目录。事实上，目录也可以跑在其他平台上，由 hub 来提供底层支撑。</p>
+<p>数据集仓库托管你的环境文件，框架则在本地或某个受支持的云端后端运行它们。<a href="https://huggingface.co/docs/hub/en/jobs">Hugging Face Jobs</a> 可以运行云端工作负载，而基于 Jobs 构建的 <a href="https://huggingface.co/docs/huggingface_hub/main/guides/sandbox">Hugging Face Sandboxes</a> 提供交互式命令执行。标签描述兼容性并据此生成加载命令；添加一个标签并不会启动 job 或 sandbox。</p>
+<h2>已经上线了什么</h2>
+<p><strong>RL Environments 过滤器。</strong> 打开 <a href="https://huggingface.co/datasets?other=rl-environment">huggingface.co/datasets?other=rl-environment</a>，凡是带 <code>rl-environment</code> 标签的数据集都会出现在那里，无论它适配哪个框架。</p>
+<p><strong>框架标签。</strong> 有四个环境框架被注册为数据集库：</p>
+<table><thead><tr><th>标签</th><th>框架</th></tr></thead><tbody><tr><td><code>harbor</code></td><td><a href="https://github.com/harbor-framework/harbor">Harbor</a></td></tr><tr><td><code>verifiers</code></td><td><a href="https://github.com/PrimeIntellect-ai/verifiers">Verifiers</a></td></tr><tr><td><code>openenv</code></td><td><a href="https://github.com/huggingface/OpenEnv">OpenEnv</a></td></tr><tr><td><code>nemo-gym</code></td><td><a href="https://github.com/NVIDIA-NeMo/Gym">NeMo Gym</a></td></tr></tbody></table>
+<p>每个框架标签都会在数据集页面上展示该框架的图标，并在 <strong>Use this dataset</strong> 中加上一段自动生成的代码片段。</p>
+<p>一个数据集可以同时带多个框架标签，这正是设计的用意所在。标签描述的是兼容性，而兼容性并不互斥。被列出的每个框架都必须真的支持仓库里的文件；加一个标签并不会把它们转换过去。</p>
+<h2>运行一个环境并查看它的 reward</h2>
+<p>选对应你框架的那个示例，在独立的 Python 环境中按下文列出的前置条件运行。</p>
+<h3>Harbor：运行参考解法</h3>
+<p><a href="https://www.harborframework.com/docs/datasets">Harbor</a> 可以从 Hub 仓库加载任务目录。oracle agent 会执行该任务的参考解法，然后由 verifier 给结果打分，它不会调用任何模型。</p>
+<pre><code>uv tool install --python 3.13 'harbor==0.21.0'
+harbor run \
+    --repo https://huggingface.co/datasets/harborframework/terminal-bench-2.1 \
+    --dataset terminal-bench-2.1@2.1.0 \
+    --include-task-name '*regex-log' \
+    --agent oracle --env docker --jobs-dir results/harbor
+harbor view results/harbor</code></pre>
+<p>查看器会显示任务的 reward、verifier 输出和日志。这能让你在试模型 agent 之前，先把任务和它的参考解法检查一遍。</p>
+<h3>Verifiers：用模型跑同一个任务</h3>
+<p><a href="https://www.primeintellect.ai/blog/verifiers-v1">verifiers v1</a> 的 Harbor 集成可以在不同运行时（比如 Docker）中运行同一批任务目录，也支持不同的 harness，包括一个极简的 bash harness。</p>
+<pre><code>uvx --python 3.13 --from 'verifiers[harbor]' eval harbor \
+    --env.taskset.repo https://huggingface.co/datasets/harborframework/terminal-bench-2.1 \
+    --env.taskset.dataset terminal-bench-2.1@2.1.0 \
+    --env.taskset.tasks '[&quot;regex-log&quot;]' \
+    --env.agent.runtime.type docker \
+    --env.agent.harness.id bash \
+    --model &quot;$MODEL&quot; \
+    --client.base-url &quot;$LLM_URL&quot;</code></pre>
+<p>这里的 repo 是完整的 Hugging Face Git URL，而 dataset 是该仓库 registry.json 里的名称和版本。这个 loader 沿用 Harbor 的注册约定，所以单凭一个 Hub 仓库 ID 无法同时替代这两个值。</p>
+<h3>OpenEnv：运行 agent 并查看它的 reward</h3>
+<p><a href="https://huggingface.co/docs/openenv/main/environments/harbor">OpenEnv 的 Harbor 集成</a> 可以用 OpenCode 这样的 agent 运行同一批任务目录，并在返回 agent trace 的同时给出 verifier 的 reward。</p>
+<pre><code>pip install &quot;openenv[harbor]==0.7.0&quot;
+
+openenv harbor rollout \
+    --llm-url &quot;$LLM_URL&quot; \
+    --model &quot;$MODEL&quot; \
+    --dataset harborframework/terminal-bench-2.1 \
+    --task-index 0 \
+    --harness opencode \
+    --sandbox docker \
+    --out rollout.json</code></pre>
+<p>这条命令会下载数据集的 <code>tasks/</code> 目录，在 Docker 里运行其中一个任务，并写出结果。默认连接使用一个临时的 Gradio 隧道，好让沙箱里的 agent 能够访问 OpenEnv 的模型代理。读取 verifier 结果和模型调用次数：</p>
+<pre><code>import json
+from pathlib import Path
+
+result = json.loads(Path(&quot;rollout.json&quot;).read_text())[0]
+print(&quot;Reward:&quot;, result[&quot;reward&quot;])
+print(&quot;Model calls:&quot;, result[&quot;n_turns&quot;])
+print(&quot;Error:&quot;, result[&quot;error&quot;])</code></pre>
+<p>reward 为 <code>None</code> 表示 verifier 没有产出 reward；在把这次运行判读成模型失败之前，先看 <code>error</code>。这条路径要求使用 Harbor 的任务目录。</p>
+<h3>NeMo Gym：生成回答并查看 reward</h3>
+<p><a href="https://github.com/NVIDIA-NeMo/Gym">NeMo Gym</a> 同时支持评估和 RL 训练：它的环境负责采集轨迹并计算 reward，而训练框架负责更新模型权重。举个例子，<a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-instruction_following-structured_outputs">Structured Outputs 数据集</a> 把 prompt 与 JSON schema 配对，它的 verifier 只针对是否遵循 schema 给 reward，并不检查生成内容在事实上是否正确。</p>
+<p>最出色的一点是，这带来了一个仓库和一个讨论区，人们在其中报告来自所有主要框架的坏任务。于是当作者修好一个坏测试，每个框架在下一次 pull 时都能拿到这个修复。</p>
+<h2>给你的环境打标签</h2>
+<p>打开你的数据集卡片，在 YAML 头部加上这些：</p>
+<pre><code>---
+pretty_name: Terminal-Bench 2.0
+tags:
+- rl-environment
+- harbor
+- verifiers
+---</code></pre>
+<p>集成要做的就这些。保留 <code>rl-environment</code>，然后列出所有能加载你这些文件的框架。如果你的环境能跑在我们还没注册的框架上，请向<a href="https://github.com/huggingface/huggingface.js/blob/main/packages/tasks/src/dataset-libraries.ts">受支持库列表</a>提一个 PR。</p>
+<p>完整参考见<a href="https://huggingface.co/docs/hub/datasets-cards#declare-an-rl-environment-dataset">文档</a>。</p>
+<h2>已经在 Hub 上的环境</h2>
+<p>我们已经提了一批 PR，为人们本来就在训练的一些环境加上标签。如果你是其中某个环境的维护者，合并那个 PR，你的环境就会出现在过滤器里。</p>
+<p><strong>Harbor</strong></p>
+<ul><li><a href="https://huggingface.co/datasets/AweAI-Team/BeyondSWE-harbor/discussions/1">BeyondSWE</a>：把 BeyondSWE 基准整理成 Harbor 任务目录，每个实例一个文件夹。</li><li><a href="https://huggingface.co/datasets/Lego-X/Terminal-Lego-15k/discussions/1">Terminal-Lego</a>：基于真实 StackOverflow issue 构建的 Terminal-Bench 风格任务，只有通过 Docker 往返验证的才保留下来。</li><li><a href="https://huggingface.co/datasets/harborframework/harbor-mix/discussions/2">Harbor-Mix</a>：从 Harbor adapters 池中挑出的 100 个高难度 agentic 任务，比跑完整的多基准扫一遍更省钱。</li><li><a href="https://huggingface.co/datasets/FrontisAI/NatureBench-Harbor/discussions/2">NatureBench</a>：为 Harbor 预先构建好的 90 个 NatureBench 任务。</li></ul>
+<p><strong>Verifiers</strong></p>
+<ul><li><a href="https://huggingface.co/datasets/PrimeIntellect/Reverse-Text-RL/discussions/2">Reverse-Text-RL</a>：prime-rl 在 CI 里用来调试 RL 训练的那个小型反转任务。</li><li><a href="https://huggingface.co/datasets/PrimeIntellect/Multi-SWE-RL-Verified/discussions/2">Multi-SWE-RL-Verified</a>：Multi-SWE-RL 的 4,703 条数据中通过 gold-patch 校验的 2,232 条，覆盖 C、Go、Java、JavaScript、Rust 和 TypeScript。</li><li><a href="https://huggingface.co/datasets/PrimeIntellect/R2E-Gym-Subset-Verified/discussions/1">R2E-Gym-Subset-Verified</a>：经过验证的 R2E-Gym 子集。</li><li><a href="https://huggingface.co/datasets/PrimeIntellect/Scale-SWE-Verified/discussions/2">Scale-SWE-Verified</a>：20,181 个 Python 修 issue 任务中，端到端能给出干净 reward 信号的 17,202 个。</li></ul>
+<p><strong>NeMo Gym</strong></p>
+<ul><li><a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-agent-workplace_assistant/discussions/3">Workplace Assistant</a>：一个多步工具使用沙箱，含五个数据库、26 个工具和 690 个业务任务。</li><li><a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-instruction_following-structured_outputs/discussions/2">Structured Outputs</a>：带结构化输出的指令遵循。</li><li><a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-CFBench-v1/discussions/2">CFBench</a>：多语言约束遵循。</li><li><a href="https://huggingface.co/datasets/nvidia/Nemotron-RL-SysBench-v1/discussions/1">SysBench</a>：多轮 system message 遵循。</li></ul>
+<h2>接下来</h2>
+<p>第一版会为每个框架生成一个 <code>default</code> 代码片段。接下来是按配置生成片段，这样一个包含多个任务集的仓库就能为每个任务集展示对应的命令。之后我们会考虑为布局严格的框架做结构化检测。此外，构建自定义任务 UI 也会非常酷，我们已经在这里做了一些实验：</p>
+<p>更大的目标是让框架打标在各处都自动化。OpenEnv 已经在上传环节自动做了这件事。如果你维护 Harbor、Verifiers、Nemo Gym 或任何其他环境框架，把打标签加进你的 push 流程。只需几行代码，你的用户发布的每一个环境就能被其他所有人看到。</p>
+<p>如果你训练 agent，去<a href="https://huggingface.co/datasets?other=rl-environment">过滤器</a>里逛逛。如果你构建环境，就把它们发布出来并打上标签，无论它们覆盖的是编程、工具使用、游戏、机器人还是别的任务。请把文件、一条能跑通的运行命令、以及产出 reward 的规则一起提供，好让其他人也能用。如果你的框架还没被收录，欢迎把它贡献到<a href="https://github.com/huggingface/huggingface.js/blob/main/packages/tasks/src/dataset-libraries.ts">受支持库列表</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>你的智能体出色完成了任务，还能再现吗？</title>

@@ -13,6 +13,81 @@
       <link>https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock/</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>编码与智能体（agentic）工作负载对 AI 模型的要求前所未有：重构一个横跨数百个文件的代码仓库、在不丢失上下文的情况下维持一个持续数小时的智能体工作流，以及在每一步都借助工具调用来推理复杂的系统问题。而要用开放权重（open-weight）模型满足这些需求，历来意味着自行预置并运维你自己的推理基础设施。</p>
+<p>来自 Z.ai（智谱 AI）的 <a href="https://z.ai/blog/glm-5.3">GLM 5.3</a> 现已登陆 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a>。按 <a href="https://huggingface.co/zai-org/GLM-5.3">Hugging Face Hub</a> 上发布的版本，GLM 5.3 是一个 7530 亿（753B）参数的混合专家（mixture-of-experts）模型，专为编码和长时程（long-horizon）智能体任务优化。尤其值得一提的是，Z.ai 报告称该模型展现出值得关注的网络安全能力。在 Amazon Bedrock 上，你现在可以通过全托管 API 使用它，并享有跨区域（cross-Region）推理、prompt 缓存和服务层级（service tiers）。你无需管理任何基础设施。Bedrock 上的 GLM 5.3 面向符合条件的企业客户开放。</p>
+<p>在这篇文章中，我们将展示如何使用兼容 OpenAI 的 API 在 Amazon Bedrock 上调用 GLM 5.3，并借助 prompt 缓存降低成本和延迟。随后我们会把这个模型投入一个真实场景的智能体工作流：用 Strix（一个开源 AI 渗透测试智能体）对你自己的应用执行一次获得授权的安全测试。</p>
+<h2>与 GLM 5 相比有哪些新变化</h2>
+<p>GLM 5 于今年早些时候登陆 Amazon Bedrock。GLM 5.3 延续了同一谱系，并带来了一系列重要的提升：</p>
+<ul><li><strong>更强的编码能力：</strong> <a href="https://z.ai/blog/glm-5.3">Z.ai 声称</a>该模型在 DeepSWE、Terminal Bench 3.0 和 FrontierSWE 等一系列编码基准上表现具有竞争力。其内部编码基准相比 GLM 5.2 也有 50% 的提升。之所以没有报告与 GLM 5 的直接对比，是因为自 <a href="https://z.ai/blog/glm-5.1">GLM 5.1 发布</a>以来，提升幅度之大促使基准测试本身也做了更新。</li><li><strong>涌现出的网络安全能力：</strong> 其在安全任务基准上的报告性能尤为突出，这使该模型天然适合防御性安全工作流。例如，Z.ai 在发布时于 CyberGym 基准上<a href="https://z.ai/blog/glm-5.3">测得 84.5 的领先分数</a>。</li><li><strong>更广泛的 Amazon Bedrock 集成：</strong> 跨区域推理配置（profile）、隐式与显式 prompt 缓存，以及与 Invoke 和 Converse 并行、功能对齐度更高的兼容 OpenAI 的 Responses 与 Chat Completions API。</li></ul>
+<h2>关键能力</h2>
+<ul><li><strong>前沿的编码与智能体性能。</strong> GLM 5.3 专为复杂系统工程和长时程智能体任务而设计，涵盖多步推理、工具增强（tool-augmented）工作流，以及在大型代码库上持续维持上下文。</li><li><strong>灵活的 API 访问。</strong> 你可以通过兼容 OpenAI 的 Responses 与 Chat Completions API，或 Amazon Bedrock 的 Invoke 与 Converse API 来调用 GLM 5.3。</li><li><strong>Prompt 缓存。</strong> GLM 5.3 默认支持隐式（自动）prompt 缓存，并在 Responses 和 Chat Completions API 上支持显式缓存控制（推荐）。对于那些每一轮都重发大型 system prompt 或仓库上下文的智能体工作负载，缓存能同时降低延迟和输入成本。</li><li><strong>跨区域推理。</strong> GLM 5.3 可通过美国跨区域推理（<code>us.zai.glm-5.3</code>）和全球跨区域推理（<code>global.zai.glm-5.3</code>）配置使用。你把请求发送到你选定的&quot;源&quot;AWS 区域，Amazon Bedrock 会安全地路由每一个请求进行处理。更多细节参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">Amazon Bedrock 用户指南</a>。</li><li><strong>服务层级。</strong> 选择 Flex 以在对时效要求不那么高的工作负载上优化成本；选择 Priority 以更高的价格换取对延迟敏感的请求的优先处理；选择 Standard 以获得价格与速度之间的默认平衡。</li></ul>
+<h2>前置条件</h2>
+<p>要运行下面的使用示例，你需要：</p>
+<ul><li>一个可访问 Amazon Bedrock 的 AWS 账户。</li><li>调用基础模型及目标推理配置所需的 AWS Identity and Access Management (IAM) <a href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_bedrock.html">权限</a>：<code>bedrock:InvokeModel</code>、<code>bedrock:InvokeModelWithResponseStream</code> 和 <code>bedrock:CallWithBearerToken</code>。</li><li>（对于基于代码的演示）Python 3.10 或更高版本。</li><li>（仅对于可选的安全测试演示）安装 Docker，以及带 bedrock 附加依赖的 <a href="https://docs.strix.ai/llm-providers/bedrock">Strix</a>。</li></ul>
+<h2>在 Amazon Bedrock 控制台体验 GLM 5.3</h2>
+<p>你可以在 AWS Management Console 上直接向 GLM 5.3 发送 prompt，无需编写代码或安装开发工具。要开始，请前往 <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock</a>，然后从左侧边栏菜单选择 <strong>Test &gt; Playground</strong>。</p>
+<p>在这个 playground 界面中，你可以从模型列表中选择 GLM 5.3，并通过聊天 UI 发送你的第一批 prompt，如下图所示：</p>
+<p>图 1：在 Amazon Bedrock 控制台上与 GLM 5.3 对话</p>
+<h2>开始使用 Responses API</h2>
+<p>在编程调用层面，你可以通过 <code>bedrock-runtime</code> endpoint 调用该模型。对于 GLM 5.3，它同时支持兼容 OpenAI 的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-responses-api.html">Responses</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-chat-completions.html">Chat Completions</a> API，以及 Amazon Bedrock 的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-api.html">Invoke</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html">Converse</a> API。对于新应用，推荐使用兼容 OpenAI 的 API，因为它们支持更完整的功能集。</p>
+<p>Amazon Bedrock 确实支持为需要 API key 的兼容 OpenAI 集成<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys-generate.html">生成 API key</a>。不过，我们强烈建议：在可能的情况下，优先使用短期凭证而非长期 API key。</p>
+<p>在下面的示例中，我们将使用 OpenAI Python SDK 从 Python 调用 Responses API，并用 <a href="https://pypi.org/project/aws-bedrock-token-generator/">aws-bedrock-token-generator</a> 库从你标准的 <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-authentication.html">AWS Command Line Interface (AWS CLI) 凭证</a>生成短期 token。</p>
+<ul><li>安装所需的包。  <code>pip install -U openai aws-bedrock-token-generator</code></li><li>将以下代码保存为 <code>bedrock-request.py</code>。  <code>from aws_bedrock_token_generator import provide_token from openai import OpenAI region = &quot;us-west-2&quot; # Your source AWS Region client = OpenAI( api_key=provide_token(region=region), base_url=f&quot;https://bedrock-runtime.{region}.amazonaws.com/openai/v1&quot;, ) resp = client.responses.create( input=&quot;Refactor this Python function to be iterative instead of recursive: ...&quot;, model=&quot;global.zai.glm-5.3&quot;, ) print(resp.output_text)</code></li><li>运行脚本，它会显示模型的输出。  <code>python bedrock-request.py</code></li></ul>
+<h3>通过显式 prompt 缓存优化推理</h3>
+<p>长时间的编码与知识类工作流常常在多个对话轮次之间重复发送稳定的上下文，例如 system prompt、工具定义或仓库文件。</p>
+<p>Amazon Bedrock 上的 GLM 5.3 默认支持隐式 prompt 缓存，这有助于降低那些共享同一初始 prompt 前缀的重复调用的响应延迟和输入 token 成本。</p>
+<p>通过<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">显式 prompt 缓存</a>模式，你可以专门指明可复用的 prompt 前缀，相比隐式缓存能够进一步提升缓存命中率（从而进一步提升延迟和成本的节省）。</p>
+<p>要为 GLM 5.3 使用显式 prompt 缓存，如下例所示：</p>
+<ul><li>通过请求上的 <code>prompt_cache_options</code> 选择显式缓存模式。</li><li>在输入内容块上添加一个或多个 <code>prompt_cache_breakpoint</code> 标记，用以标明可复用 prompt 前缀的结束位置（含该位置）。每个断点必须至少包含 1,024 个 token 才符合缓存条件。</li></ul>
+<pre><code>resp = client.responses.create(
+    model=&quot;global.zai.glm-5.3&quot;,
+    # Enable explicit caching mode:
+    extra_body={&quot;prompt_cache_options&quot;: {&quot;mode&quot;: &quot;explicit&quot;}},
+    input=[
+        {
+            &quot;type&quot;: &quot;message&quot;,
+            &quot;role&quot;: &quot;system&quot;,
+            &quot;content&quot;: [
+                {
+                    &quot;type&quot;: &quot;input_text&quot;,
+                    &quot;text&quot;: SYSTEM_PROMPT,
+                    # A long, static system prompt is a great target for caching:
+                    &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
+                },
+            ]
+        },
+        {
+            &quot;type&quot;: &quot;message&quot;,
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {
+                    &quot;type&quot;: &quot;input_text&quot;,
+                    &quot;text&quot;: USER_INPUT,
+                    # Multiple breakpoints can also be defined, for layered cache:
+                    &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
+                },
+            ],
+        },
+    ],
+)
+
+if resp.usage.input_tokens_details.cached_tokens:
+    print(&quot;Hit cache!&quot;)</code></pre>
+<p>更多信息参见 Amazon Bedrock 用户指南的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-openai">prompt 缓存章节</a>。</p>
+<h2>示例智能体工作负载：用 Strix 执行授权安全测试</h2>
+<p>能直接从 GLM 5.3 的优势中受益的工作负载之一，就是对你自己应用的自动化安全测试。<a href="https://github.com/usestrix/strix">Strix</a> 是一个开源 AI 渗透测试智能体，它会动态运行你的代码、找出漏洞，并通过概念验证（proof-of-concept）测试加以验证。截至本文撰写之时，Strix 文档<a href="https://docs.strix.ai/quickstart#configuration">将 GLM 5.3</a> 作为其默认模型。你可以配置 Strix 使用 Amazon Bedrock 上的 GLM 5.3，而不是第三方推理服务方，从而让模型推理在你 AWS 账户的管控之下运行。</p>
+<p><strong>只测试你拥有或已获得明确书面许可可测试的应用。</strong> 对你不拥有的系统进行未经授权的安全测试，在大多数司法辖区均属违法，并违反 AWS 可接受使用政策（AWS Acceptable Use Policy）。在本演练中，目标是 <a href="https://owasp.org/www-project-juice-shop/">OWASP Juice Shop</a>——一个在你本机本地运行的、刻意留有漏洞的示例应用。</p>
+<p>如果你想在自行运行开源智能体之外，获得全托管的、持续的安全测试，<a href="https://aws.amazon.com/security-agent/">AWS Continuum</a> 会以托管服务的形式提供按需渗透测试及其他安全分析。这两种方式是互补的：像 Strix 这样的开源智能体为你提供由开发者主导、人在回路（in-the-loop）且深度可定制的、针对本地构建的测试；而 AWS Continuum 则大规模地运行托管评估。</p>
+<h3>执行一次获得授权的安全测试</h3>
+<ul><li>在本地启动示例 Juice Shop 目标应用。  <code>docker run --rm -p 3000:3000 bkimminich/juice-shop</code></li><li>配置 Strix 以使用 Amazon Bedrock 上的 GLM 5.3。Strix 底层使用 <a href="https://docs.litellm.ai/docs/providers/bedrock">LiteLLM</a>，因此（如<a href="https://docs.strix.ai/llm-providers/bedrock">其 Amazon Bedrock 文档</a>所述）你的 AWS CLI 凭证会被自动获取。这意味着无需 API key，但你可能需要设置诸如 <code>AWS_PROFILE</code> 和 <code>AWS_REGION</code> 的环境变量来配置你的连接。截至撰写之时，LiteLLM 尚不能解析 <code>bedrock/global.zai.glm-5.3</code>。在此问题解决之前，你可以显式指定 Converse API 路由和推理配置的 Amazon Resource Name (ARN)，如下面的片段所示：  <code># Fill in the REGION and ACCOUNT_ID placeholders below before running! export STRIX_LLM=&quot;bedrock/converse/arn:aws:bedrock:{AWS_REGION}:{AWS_ACCOUNT_ID}:inference-profile/global.zai.glm-5.3&quot;</code></li><li>针对本地目标运行 Strix。  <code>strix --target http://localhost:3000</code></li><li>等待根 Strix 智能体完成，然后审阅所发现的漏洞。</li></ul>
+<p>Strix 会启动一组子智能体（sub-agent）来绘制威胁面（threat surface）、探索一系列潜在的漏洞类别，并尝试用一个可运行的概念验证来验证每一项发现。这有助于把甄别误报（false positive）所花的时间降到最低。一次成功的运行会生成一份报告，其中包含每一项发现的严重程度、证据和修复建议。</p>
+<p>下面的视频展示了针对示例应用配置并运行 Strix、以及探索结果的端到端过程：</p>
+<p>图 2：用 GLM 5.3 和 Strix 运行一次示例安全测试</p>
+<h2>清理</h2>
+<p>在其运行的终端中用 <strong>Ctrl+C</strong> 停止 Juice Shop 容器，或运行 <code>docker ps</code> 找到容器 ID，然后用 <code>docker stop &lt;container-id&gt;</code> 停止它。Amazon Bedrock 推理按 token 付费、不占用持久资源，因此请求完成后不会再有额外费用。如果你为本次演练生成了 Amazon Bedrock API key 且已不再需要，请在 Amazon Bedrock 控制台上将其删除。</p>
+<h2>可用性</h2>
+<p>到 <a href="https://console.aws.amazon.com/bedrock">Amazon Bedrock 控制台</a> 上试试 GLM 5.3，按照我们<a href="https://aws.amazon.com/blogs/machine-learning/use-open-weight-models-as-your-ai-coding-agent-with-amazon-bedrock/">最近一篇介绍 Kimi K3 的文章</a>所示通过 OpenCode 之类的编码助手使用它，或通过受支持的 API 连接你自己的应用。</p>
+<p><em>想了解 Amazon Bedrock 如何支持你的团队？</em> <a href="https://pages.awscloud.com/Amazon-Bedrock-Contact-Us.html"><em>联系我们</em></a><em>，开启这段对话。</em></p>]]></content:encoded>
     </item>
     <item>
       <title>Supercharge regulated workloads with Claude Code and Amazon…</title>
@@ -20,6 +95,82 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/supercharge-regulated-workloads-with-claude-code-and-amazon-bedrock/</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>完整标题：Supercharge regulated workloads with Claude Code and Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h1>用 Claude Code 和 Amazon Bedrock 为受监管工作负载加速</h1>
+<p><em>请注意，以下文章仅供参考。下文详述的方案未必适合所有组织或合规计划。重要的是，要根据你所在组织的合规要求以及你可能承担的任何适用监管义务，来评估这一潜在方案。</em></p>
+<p>Anthropic Claude Opus 5.5 和 Claude Sonnet 5.5 在 AWS GovCloud (US) 区域上线，为带有监管或合规要求（包括《国际武器贸易条例》(ITAR)）的工作负载引入了一条通往 AI 辅助开发的通道。Claude Sonnet 5 已获得 FedRAMP Class D（原 High）认证以及美国国防部 (DoD) 影响等级 4 和 5（IL4/IL5）授权，而 Claude Opus 5.5 和 Claude Sonnet 5.5 在 Amazon Bedrock 上已获得 FedRAMP Class D 认证（<a href="https://aws.amazon.com/compliance/services-in-scope/FedRAMP/amazon-bedrock-models/">查看当前模型认证状态</a>）。</p>
+<p>在本文中，我们探讨如何在 AWS GovCloud (US) 的 <a href="https://aws.amazon.com/bedrock">Amazon Bedrock</a> 上使用这些模型，配合 <a href="https://code.claude.com">Claude Code</a>——Anthropic 的智能体式（agentic）编程工具。借助这套方案，你可以运行能加快日常开发任务的 AI 辅助工作流，同时保持合规一致性。</p>
+<h2>AWS GovCloud (US) 中的 Amazon Bedrock</h2>
+<p><a href="https://aws.amazon.com/govcloud-us/">AWS GovCloud (US) 区域</a>专门为具有更高<a href="https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-compliance.html">合规需求</a>的美国客户而设计。你可以在保持合规控制的同时，把生成式 AI 工作负载部署到敏感环境中。<a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 以安全为核心的特性构建，包括：</p>
+<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/data-protection.html">内置数据保护</a>，客户内容不会被存储、记录，也不会用于训练 AWS 模型或分享给第三方。</p>
+<p>FedRAMP Class D（原 High）认证以及 DoD 云服务提供商 (CSP) SRG IL4/IL5 授权路径，支持政府机构的合规要求。当前模型级认证状态请参见 <a href="https://aws.amazon.com/compliance/services-in-scope/FedRAMP/amazon-bedrock-models/">Amazon Bedrock 模型合规页面</a>。</p>
+<p>与 AWS GovCloud (US) 中现有的安全控制和合规框架集成，在提供额外授权路径的同时，保持与其他 AWS 区域相同的高安全标准。</p>
+<p>AWS GovCloud (US) 中的 Amazon Bedrock 支持两个端点（endpoint）接口：bedrock-runtime 和 bedrock-mantle，二者都由同一个底层 Mantle 推理引擎驱动，并采用零运维人员访问（Zero Operator Access, ZOA）架构。<strong>bedrock-runtime</strong> 端点使用 AWS SDK（InvokeModel 和 Converse API），并支持 Amazon Bedrock Guardrails、Amazon Bedrock 知识库 (Knowledge Bases)、Agents 以及调用日志。这使它成为大多数新应用的首选，尤其是那些需要审计轨迹的应用。<strong>bedrock-mantle</strong> 端点原生支持 Anthropic Messages API，并提供对目前仅在该接口上可用的能力的访问，例如<a href="https://aws.amazon.com/blogs/machine-learning/exploring-the-zero-operator-access-design-of-mantle/">服务端工具、后台推理和 Projects</a>。Claude Opus 5.5、Claude Sonnet 5.5 和 Claude Sonnet 5 均可通过这两个端点访问，其中 bedrock-runtime 在两个 AWS GovCloud (US) 区域（US-West 和 US-East）都可用，而 bedrock-mantle 仅在 AWS GovCloud (US-West) 可用。</p>
+<h2>Claude Code</h2>
+<p><a href="https://code.claude.com">Claude Code</a> 是 Anthropic 的智能体式编程工具，它能读取你的代码库、编辑文件、运行命令，并与你的开发工具集成。在 AWS GovCloud (US) 中由 Amazon Bedrock 上的 Claude Opus 5.5 和 Claude Sonnet 5.5 等模型驱动，它直接在你的终端、你首选的集成开发环境（<a href="https://docs.anthropic.com/en/docs/claude-code/ide-integrations">IDE</a>）（如 VS Code 和 JetBrains）中运行，也能借助 <a href="https://docs.anthropic.com/en/docs/claude-code/agent-sdk/overview">Claude Agent SDK</a> 在后台运行。Claude Code 理解你的整个代码库，能够跨多个文件和工具协同工作以完成任务。Claude Code 可以：</p>
+<ul><li>编写代码并修复横跨代码库多个文件的 bug。</li><li>回答关于你的代码架构与逻辑的问题。</li><li>执行并修复测试、lint 以及其他命令。</li><li>搜索 Git 历史、解决合并冲突，并创建 commit 和 pull request。</li><li>通过 <a href="https://docs.anthropic.com/en/docs/claude-code/mcp">Model Context Protocol (MCP)</a> 连接外部工具和数据源，包括 <a href="https://aws.amazon.com/cli">AWS 命令行界面 (AWS CLI)</a>、Terraform 和 Kubernetes。</li><li>派生<a href="https://docs.anthropic.com/en/docs/claude-code/sub-agents">子智能体（sub-agents）</a>，让它们同时处理一个任务的不同部分。</li><li>使用 <a href="https://docs.anthropic.com/en/docs/claude-code/memory">CLAUDE.md</a> 记忆文件、用于可重复工作流的 <a href="https://docs.anthropic.com/en/docs/claude-code/skills">skills</a>，以及用于前/后动作自动化的 <a href="https://docs.anthropic.com/en/docs/claude-code/hooks">hooks</a> 来定制行为。</li><li>自动化重复性任务，并通过 <a href="https://docs.anthropic.com/en/docs/claude-code/github-actions">GitHub Actions</a> 或 <a href="https://docs.anthropic.com/en/docs/claude-code/gitlab-ci-cd">GitLab CI/CD</a> 与持续集成和持续交付 (CI/CD) 集成。</li></ul>
+<p>要了解更多，请参阅 Anthropic 的文章：<a href="https://docs.anthropic.com/en/docs/claude-code/tutorials">Claude Code 教程</a>和 <a href="https://www.anthropic.com/engineering/claude-code-best-practices">Claude Code：智能体式编程的最佳实践</a>。</p>
+<h2>方案概览：在 AWS GovCloud (US) 中用 Amazon Bedrock 试用 Claude Code</h2>
+<p>本节提供分步说明，介绍如何设置和配置 Claude Code，使其在 AWS GovCloud (US) 中配合 Amazon Bedrock 工作，涵盖前置条件、安装命令、环境配置和验证步骤。</p>
+<h3>前置条件</h3>
+<p>开始之前，请确认你已具备以下条件：</p>
+<ul><li>一个可访问 Amazon Bedrock 的 <a href="https://signin.amazonaws-us-gov.com/">AWS GovCloud (US) 账户</a>。</li><li>适用于 Amazon Bedrock 的恰当 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 角色与权限。至少，你的 IAM 策略应包含： 对于 bedrock-runtime：<code>bedrock:InvokeModel</code>、<code>bedrock:InvokeModelWithResponseStream</code>、<code>bedrock:ListInferenceProfiles</code> 和 <code>bedrock:GetInferenceProfile</code>。对于 bedrock-mantle（如果使用 Mantle 端点）：<code>bedrock-mantle:CreateInference</code>、<code>bedrock-mantle:GetProject</code>、<code>bedrock-mantle:ListProjects</code> 和 <code>bedrock-mantle:ListModels</code>。或者，附加 <code>AmazonBedrockMantleInferenceAccess</code> 托管策略。</li><li>在你的 AWS GovCloud (US) 账户中为 Claude Opus 5.5、Claude Sonnet 5.5 和 Claude Sonnet 5 启用 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-access-modify.html">Amazon Bedrock 模型访问</a>。</li><li>已配置好有效 AWS 会话凭证的 <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">AWS CLI</a>，使用短期 API 密钥或 AWS SSO 登录。</li></ul>
+<h3>在 AWS GovCloud (US) 中用 Amazon Bedrock 设置 Claude Code</h3>
+<p>用你的凭证配置好 AWS CLI 后，用以下方法之一安装 Claude Code：</p>
+<p><strong>macOS、Linux、WSL：</strong></p>
+<pre><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre>
+<p><strong>Windows PowerShell：</strong></p>
+<pre><code>irm https://claude.ai/install.ps1 | iex</code></pre>
+<p><strong>Windows CMD：</strong></p>
+<pre><code>curl -fsSL https://claude.ai/install.cmd -o install.cmd &amp;&amp; install.cmd &amp;&amp; del install.cmd</code></pre>
+<p><strong>Homebrew（macOS/Linux）：</strong></p>
+<pre><code>brew install --cask claude-code</code></pre>
+<p>有关其他安装方法，请参阅 <a href="https://code.claude.com/docs/en/quickstart">Claude Code 安装文档</a>。</p>
+<h4>方案 A：交互式设置向导（推荐）</h4>
+<ul><li>进入你的项目：  <code>cd your-code-project</code></li><li>启动 Claude Code：  <code>claude</code></li><li>走完登录向导：  <code>/login</code></li></ul>
+<p>在登录提示处，选择 <strong>3rd-party platform（第三方平台）</strong>，然后选择 <strong>Amazon Bedrock</strong>。按照向导提示选择你的认证方式、区域（us-gov-west-1），并固定（pin）你的模型。向导会自动把配置保存到你的设置文件中。</p>
+<p>如果你此前已配置过 Claude Code，运行 <code>/setup-bedrock</code> 重新打开向导，更新你的凭证、区域或模型固定设置。</p>
+<h4>方案 B：手动配置环境变量</h4>
+<p>对于脚本化或企业级部署，设置以下环境变量：</p>
+<pre><code>export CLAUDE_CODE_USE_BEDROCK=1
+export AWS_REGION='us-gov-west-1'
+export ANTHROPIC_MODEL='us-gov.anthropic.claude-sonnet-5-5'</code></pre>
+<p>要改为使用 Claude Opus 5.5 作为主模型：</p>
+<pre><code>export ANTHROPIC_MODEL='us-gov.anthropic.claude-opus-5-5'</code></pre>
+<p>要固定特定的模型版本以保证团队部署的一致性：</p>
+<pre><code>export ANTHROPIC_DEFAULT_OPUS_MODEL='us-gov.anthropic.claude-opus-5-5'
+export ANTHROPIC_DEFAULT_SONNET_MODEL='us-gov.anthropic.claude-sonnet-5-5'</code></pre>
+<p>然后进入你的项目并启动 Claude Code：</p>
+<pre><code>cd your-code-project
+claude</code></pre>
+<h4>方案 C：使用 Bedrock Mantle 端点</h4>
+<p>Bedrock Mantle 原生支持 Anthropic Messages API，并在 AWS GovCloud (US-West) 可用。要让 Claude Code 通过 Mantle 路由：</p>
+<pre><code>export CLAUDE_CODE_USE_MANTLE=1
+export AWS_REGION='us-gov-west-1'</code></pre>
+<p>当同一会话中既需要 bedrock-runtime 又需要 bedrock-mantle 时：</p>
+<pre><code>export CLAUDE_CODE_USE_BEDROCK=1
+export CLAUDE_CODE_USE_MANTLE=1</code></pre>
+<p>注意：Guardrails 和调用日志仅可通过 bedrock-runtime 端点获得。对于需要这些合规特性的部署，请使用 bedrock-runtime 端点（方案 A 或 B）。</p>
+<h4>验证你的配置</h4>
+<p>通过在终端中查看 <strong>Welcome to Claude Code!</strong> 消息，确认 Claude Code 正在运行。运行 <code>/status</code> 命令以确认你的模型和提供商（provider）。根据你的配置，提供商这一行应显示 Amazon Bedrock 或 Amazon Bedrock (Mantle)。</p>
+<p>要了解更多关于为 Amazon Bedrock 配置 Claude Code 的信息，请参阅 <a href="https://code.claude.com/docs/en/amazon-bedrock">Amazon Bedrock 上的 Claude Code</a>。</p>
+<h2>在组织中部署 Claude Code 时的考量</h2>
+<p>既然 Claude Code 现已正式发布（generally available），下一步就是决定如何在整个组织中部署它。请考虑你在安全、治理和合规方面的基础架构：</p>
+<p><strong>使用</strong> <a href="https://aws.amazon.com/iam/identity-center/">AWS IAM Identity Center</a> <strong>集中治理对 Claude Code 的身份和访问。</strong> 这可验证只有获授权的开发者才能访问。此外，借助 IAM Identity Center，开发者可以用<a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/howtogetcredentials.html">临时的、基于角色的凭证</a>访问资源，从而免去对静态访问密钥的需求，有助于增强安全性。在打开 Claude Code 之前，请确保已使用 <code>aws configure sso --profile &lt;PROFILE_NAME&gt;</code> 把 AWS CLI 配置为使用一个 IAM Identity Center 配置文件（profile）。然后用你创建的配置文件登录：<code>aws sso login --profile &lt;PROFILE_NAME&gt;</code>。</p>
+<p><strong>考虑对默认环境变量进行自动化配置。</strong> 这包括本文中提到的环境变量，例如 <code>AWS_REGION</code>、<code>CLAUDE_CODE_USE_BEDROCK</code>、<code>ANTHROPIC_MODEL</code>、<code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> 和 <code>ANTHROPIC_DEFAULT_SONNET_MODEL</code>。这会把 Claude Code 配置为自动连接到 Amazon Bedrock，为各团队提供一致的开发基线。组织可以先向开发者提供自助式说明，或使用<a href="https://docs.anthropic.com/en/docs/claude-code/settings">设置文件</a>来集中管理配置。</p>
+<p><strong>对于大型企业部署，考虑实施</strong> <a href="https://aws.amazon.com/solutions/guidance/claude-code-with-amazon-bedrock/">Guidance for Claude Code with Amazon Bedrock</a>。**该指南帮助组织在部署 Claude Code 的同时，对 AI 资源访问保持严格管控，连接现有身份基础设施，并为开发者生产力和使用模式提供可观测性。</p>
+<p><strong>审阅</strong> <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/quotas.html">服务配额</a> <strong>，并根据活跃开发者数量设置合适的每分钟 token 数 (TPM) 和每分钟请求数 (RPM)。</strong> 确保你有足够的 TPM 和 RPM 配额来支撑团队的使用。相关指导请遵循<a href="https://docs.anthropic.com/en/docs/claude-code/costs">速率限制建议</a>。</p>
+<p><strong>固定模型版本以保证团队部署的一致性。</strong> 若不加固定，<code>sonnet</code> 和 <code>opus</code> 这类别名会解析为 Claude Code 的内置默认值，而这些默认值可能在不同版本之间发生变化。Claude Code 默认使用 Claude Opus 5.5 作为其主模型，因此未固定的部署将按 Opus 的每 token 费率计费。要让团队保持在 Claude Sonnet 5.5 上，请把 <code>ANTHROPIC_MODEL</code> 设为其完整模型 ID。使用 <code>ANTHROPIC_DEFAULT_OPUS_MODEL</code> 和 <code>ANTHROPIC_DEFAULT_SONNET_MODEL</code> 来控制团队何时迁移到新模型。在 AWS GovCloud (US) 中，跨区域推理配置（cross-region inference profile）ID 请使用 <code>us-gov.</code> 前缀。</p>
+<p><strong>实施成本监控和按用户的 token 护栏。</strong> Claude Code 会话可能非常耗费 token，尤其是 Claude Opus 5.5，其每 token 成本高于 Claude Sonnet 5.5。据 Anthropic 称，Claude Opus 5.5 完成任务所用的 token 比 Claude Opus 5 更少，且每 token 价格更低。请考虑以下几点：</p>
+<ul><li>实施<a href="https://aws.amazon.com/blogs/publicsector/implementing-per-user-token-guardrails-for-amazon-bedrock-in-government-agencies/">按用户的 token 护栏</a>，为每位开发者强制执行每日 token 上限，并在达到 80% 和 100% 阈值时告警。这一模式使用 Amazon CloudWatch 调用日志、AWS Lambda 和 Amazon DynamoDB，以近乎实时的方式跟踪并强制执行限额。</li><li>使用提示缓存（prompt caching）来降低成本并改善响应时间。受支持的模型同时提供 5 分钟和 <a href="https://aws.amazon.com/about-aws/whats-new/2026/01/amazon-bedrock-one-hour-duration-prompt-caching/">1 小时 TTL</a> 两种选项。</li><li>考虑让团队默认使用 Claude Sonnet 5.5（成本低于 Claude Opus 5.5），并把 Claude Opus 5.5 保留给需要更深推理或更长自主运行的任务。对于需要 IL4/IL5 授权的工作负载，默认使用 Claude Sonnet 5。</li></ul>
+<p>有关更多可观测性模式，请参阅 <a href="https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock/blob/main/assets/docs/MONITORING.md">Claude Code 监控实施指南</a>。</p>
+<p><strong>为你的组织考虑权限、记忆和 MCP 服务器。</strong> 安全团队可以为 Claude Code 允许和不允许做什么配置托管的<a href="https://docs.anthropic.com/en/docs/claude-code/security">权限</a>，这些设置无法被本地配置覆盖。此外，你可以跨项目配置 <a href="https://docs.anthropic.com/en/docs/claude-code/memory">CLAUDE.md 记忆文件</a>，自动加入常见工作流、风格约定和编码规范，以契合你所在组织的偏好。把你的 CLAUDE.md 文件部署到一个企业级目录中，让所有开发者都继承同一份基线。使用 <a href="https://docs.anthropic.com/en/docs/claude-code/hooks">hooks</a> 来强制执行前/后动作自动化，例如自动格式化或 lint 检查。</p>
+<p><strong>根据你的合规要求选择合适的端点。</strong> bedrock-runtime 端点在两个 AWS GovCloud (US) 区域（US-West 和 US-East）内支持 Guardrails、调用日志和跨区域推理。bedrock-mantle 端点原生支持 Anthropic Messages API，并在 AWS GovCloud (US-West) 可用。目前 Guardrails 和调用日志是 bedrock-runtime 独有的，因此对于需要完整审计轨迹和内容过滤的部署，推荐使用 bedrock-runtime。</p>
+<p><strong>在部署前进行一次彻底的安全评估。</strong> 根据你组织的安全策略来评估 Claude Code 的能力。Amazon Bedrock 保护的是推理层，但 Claude Code 运行在本地开发者机器上，需要单独的评估与风险管理。像对待环境中运行的其他第三方软件一样，施加托管权限、调用日志和按用户 token 上限等控制。</p>
+<h2>结论</h2>
+<p>Claude Opus 5.5 和 Claude Sonnet 5.5 在 AWS GovCloud (US) 的 Amazon Bedrock 上上线，为组织提供了一条面向受监管工作负载、与合规一致的 AI 辅助开发路径。Claude Sonnet 5 拥有 FedRAMP Class D（原 High）认证和 DoD IL4/IL5 授权，为敏感环境提供最全面的合规覆盖。Claude Sonnet 5.5 拥有 FedRAMP Class D 认证，在编程和知识工作上比 Claude Sonnet 5 更进一步，且每任务成本更低。Claude Opus 5.5 拥有 FedRAMP Class D 认证，为那些该认证级别已足够的工作负载带来更深的推理和更长的自主任务能力。</p>
+<p>结合 Claude Code，团队可以直接在终端、IDE 或 CI/CD 流水线中采用智能体式编程工作流，同时数据始终留在 AWS GovCloud (US) 基础设施之内。无论你选择支持完整 Guardrails 和日志的 bedrock-runtime 端点，还是选择原生 Anthropic Messages API 访问的 bedrock-mantle 端点，你都可以让部署契合你组织的合规与运营要求。</p>
+<h3>更多信息</h3>
+<ul><li><a href="https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-bedrock.html">AWS GovCloud (US) 中的 Amazon Bedrock</a></li><li><a href="https://code.claude.com/docs/en/amazon-bedrock">Amazon Bedrock 上的 Claude Code</a></li><li><a href="https://aws.amazon.com/solutions/guidance/claude-code-with-amazon-bedrock/">Guidance for Claude Code with Amazon Bedrock</a></li><li><a href="https://aws.amazon.com/compliance/services-in-scope/FedRAMP/amazon-bedrock-models/">Amazon Bedrock 模型的 FedRAMP 认证与 DoD 授权状态</a></li><li><a href="https://aws.amazon.com/blogs/publicsector/implementing-per-user-token-guardrails-for-amazon-bedrock-in-government-agencies/">政府机构中为 Amazon Bedrock 实施按用户的 token 护栏</a></li><li><a href="https://aws.amazon.com/about-aws/whats-new/2026/09/claude-sonnet-5-5-aws-govcloud-us/">AWS GovCloud (US) 中的 Claude Sonnet 5.5</a></li><li><a href="https://aws.amazon.com/about-aws/whats-new/2026/09/claude-opus-5-5-aws-govcloud/">AWS GovCloud (US) 中的 Claude Opus 5.5</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>New agent skill: Amazon SageMaker optimized generative AI in…</title>
@@ -27,6 +178,72 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/new-agent-skill-amazon-sagemaker-optimized-generative-ai-inference-for-your-coding-agent/</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>完整标题：New agent skill: Amazon SageMaker optimized generative AI inference for your coding agent</description>
+      <content:encoded><![CDATA[<h1>新 agent 技能：为你的 coding agent 提供 Amazon SageMaker 优化的生成式 AI 推理</h1>
+<p>工程师们越来越多地使用编码辅助工具来加速开发工作流。今天，<a href="https://aws.amazon.com/blogs/machine-learning/amazon-sagemaker-ai-now-supports-optimized-generative-ai-inference-recommendations/">Amazon SageMaker AI 优化的生成式 AI 推理</a>推出了 <code>aws-ai-ml</code> 技能，可通过 <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS</a> 获取。这项技能让 <a href="https://kiro.dev/">Kiro</a>、Claude Code、Codex 这类 coding agent 具备推理优化与基准测试方面的深度专业知识。安装技能后，你现有的 agent 就能代你对 endpoint 做基准测试、推荐部署配置、比较性能运行结果，并生成可执行的 SageMaker Python SDK v3 代码。<code>aws-ai-ml</code> 是一个工具包，可以插入任何支持 Model Context Protocol（MCP）的 coding agent，把它变成一名 SageMaker AI 推理优化专家。</p>
+<p>在本文中，我们将梳理这项技能能做什么、如何配置，以及它如何帮助你更快地从模型走向生产。</p>
+<h2>挑战：在意图与基础设施之间搭桥</h2>
+<p>Amazon SageMaker AI 支持 serverful 托管，覆盖实时、批量和异步三种模式。它提供按需容量和预留容量、异构实例、虚拟私有云（VPC）隔离、自动扩缩容，并与每一条 SageMaker AI 训练路径集成。这套能力面广且深，但大多数工程师并不是先知道哪个实例族或服务容器最适合自己才来的。他们带来的是一个用例：一个想要达到的性能目标、一个需要守住的成本区间，或者一个在投入生产前必须评估的模型。</p>
+<p>SageMaker AI 优化生成式 AI 推理的 agentic 体验正是为了弥合这一落差。你告诉 agent 你想完成什么，它就产出可执行的 SageMaker Python SDK v3 代码，你可以审阅、修改并在自己的环境中运行。agent 会提出有针对性的澄清问题，生成基于真实基准测试和实测性能数据的代码，并像解决方案架构师那样贴合你的业务约束。</p>
+<p>全程你都在掌控之中。每一步都实时可见，并且呈现为你可以阅读、可以质疑的代码。没有任何事情发生在不透明的 UI 背后。</p>
+<h2>开始使用</h2>
+<p>你可以通过 <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS</a> 在本地机器上安装 <code>aws-ai-ml</code> 技能，也可以在 Amazon SageMaker Studio 的 JupyterLab space 中使用它。无论哪种方式，都能从零基础在 10 分钟内进入可用的对话。</p>
+<h3>方式 A：与任意 coding agent 搭配使用（Kiro、Claude Code、Codex 或任何兼容 MCP 的 agent）</h3>
+<p><strong>第 1 步：安装 Agent Toolkit for AWS。</strong> 如果还没装，先完成 Agent Toolkit 的设置。这需要 AWS Command Line Interface（AWS CLI）2.35+ 以及安装好的 <a href="https://docs.astral.sh/uv/">uv</a>。</p>
+<pre><code>aws configure agent-toolkit</code></pre>
+<p>该命令会自动检测你的 agent、安装技能并配置 AWS MCP Server。关于针对具体 agent 的设置（插件安装命令、MCP 配置），参见 <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS 入门指南</a>。</p>
+<p><strong>第 2 步：安装 <code>aws-ai-ml</code> 技能。</strong> 把 SageMaker AI 优化生成式 AI 推理技能添加到你的 agent：</p>
+<pre><code>npx skills add aws/agent-toolkit-for-aws/skills/aws-ai-ml</code></pre>
+<p><strong>第 3 步：确认并开始。</strong> 打开你的 coding agent 的聊天面板并提问：&quot;有哪些可用的技能？&quot;你应该能看到 <code>aws-ai-ml</code> 列在其中。确认之后，用自然语言描述你的意图。你的 coding agent 现在已经内置了 SageMaker AI 推理优化方面的专业知识。</p>
+<p><strong>前置条件：</strong> 你的 AWS 凭证必须拥有调用 SageMaker AI API 的权限（创建 endpoint、运行基准测试和推荐作业）。该技能生成的代码在你的凭证下运行。技能本身不需要额外的 AWS Identity and Access Management（IAM）配置。</p>
+<p><strong>注意：</strong> 对于 Kiro 和 Claude Code，agent 可以在运行时发现技能。它们可以通过 <a href="https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/">AWS MCP Server</a> 按需搜索并加载技能，完全不需要本地安装。试着问你的 agent：&quot;搜索与数据库相关的 AWS 技能。&quot;关于运行时发现技能，参阅 <a href="https://github.com/aws/agent-toolkit-for-aws/tree/main/skills">readme</a>。</p>
+<h3>方式 B：在 Amazon SageMaker Studio 内使用</h3>
+<p>如果你更愿意在一个托管的 JupyterLab 环境中工作，可以在 Amazon SageMaker Studio 中配合预配置镜像使用这项技能。</p>
+<p><strong>第 1 步：打开 Amazon SageMaker Studio。</strong> 在目标 AWS 账户和 AWS 区域中进入 Amazon SageMaker Studio，选择你的 Studio domain，并从你的用户配置（user profile）启动 Studio IDE。</p>
+<p><strong>第 2 步：创建一个 JupyterLab space。</strong> 在 Studio 落地页选择 <strong>JupyterLab</strong>，再选择 <strong>Create JupyterLab space</strong>。给 space 起个名字（例如 <code>my-inference-opt</code>），并把共享设置保持为 <strong>Private</strong>（技能只在私有 space 中同步）。在 <strong>Image</strong> 菜单下，选择包含 SageMaker AI 优化生成式 AI 推理技能的那个镜像。该镜像出厂时已预配置好 <code>aws-ai-ml</code> agent 技能及全部必要依赖。选择 <strong>Run space</strong> 并等待其启动（第一次大约需要 5–10 分钟）。</p>
+<p><strong>注意：</strong> 请使用全新的 space。一个在本地改过技能版本的旧 space 可能不会采用预配置镜像。</p>
+<p><strong>第 3 步：打开 JupyterLab 并启动终端。</strong> space 启动完成后，打开 JupyterLab 并选择 <strong>Terminal</strong>。</p>
+<p><strong>第 4 步：授权你的 coding agent。</strong> 在终端中，使用你的身份提供商（identity provider）完成 coding agent 的认证。例如，使用 Kiro 时：</p>
+<pre><code>kiro-cli login --license pro --identity-provider &lt;your-IdP-start-URL&gt; --region us-east-1 --use-device-flow</code></pre>
+<p><strong>第 5 步：确认并开始。</strong> 打开你的 coding agent 的聊天面板并提问：&quot;有哪些可用的技能？&quot;你应该能看到 <code>aws-ai-ml</code> 列在其中。确认之后，用自然语言描述你的意图。</p>
+<blockquote>故障排查：<br>        如果 agent 报告没有可用技能，请确认你的 space 设置为 Private。你也可以在终端里检查：</blockquote>
+<pre><code>ls ~/.kiro/skills/</code></pre>
+<blockquote>如果该目录为空，但 /etc/sagemaker/skills/ 中存在技能文件，请运行 restart-jupyter-server，刷新页面后重试。</blockquote>
+<h2>你能做什么</h2>
+<p>这套 agentic 体验覆盖推理优化生命周期中的以下能力。你不需要知道该调用哪个能力。描述你的需求，agent 会判断下一步；有任何不清楚的地方，它会向你提问。</p>
+<h3>对现有 endpoint 做基准测试</h3>
+<p>如果你已经有一个模型部署在 SageMaker AI endpoint 上，可以让 agent 对它做基准测试。告诉 agent 你想测哪个 endpoint，它会生成一个 Python notebook，用 SageMaker Python SDK 的 <code>Workload.synthetic()</code> 和 <code>start_benchmark()</code> API 跑负载测试。</p>
+<p>在运行任何基准测试之前，agent 会先确认你的 endpoint 可以安全地接受压测，因为基准测试会向线上 endpoint 施加真实流量。</p>
+<p>基准测试完成后，你会得到一份量化性能报告，包含：</p>
+<ul><li><strong>吞吐（Throughput）</strong>：每秒请求数、每秒输出 token 数。</li><li><strong>延迟（Latency）</strong>：p50、p99、首 token 时间（time-to-first-token）、token 间延迟。</li><li><strong>并发（Concurrency）</strong>：支持的并发请求数。</li></ul>
+<p>这些是在真实基础设施上施加真实负载测得的数值，而不是估算。agent 还会推荐提升性能的机制（如 prefill decoding）。</p>
+<p><strong>示例提示：</strong> <em>&quot;Benchmark my Llama endpoint on SageMaker AI.&quot;（对 SageMaker AI 上的 Llama endpoint 做基准测试。）</em></p>
+<h3>为你的模型找到合适的实例类型</h3>
+<p>如果你有一个模型，需要为它在 SageMaker AI 上找到合适的实例类型，告诉你的 agent 即可。模型存放在哪里、如何获得的都不重要：</p>
+<ul><li><strong>存在 Amazon Simple Storage Service（Amazon S3）里的微调或自定义模型</strong>：你训练或下载了一个模型并存储在 S3 中。提供 S3 URI 和你的优化目标即可。示例提示：<em>&quot;I want to find the cheapest instance type to deploy my fine-tuned model on SageMaker.&quot;（我想为微调模型找到在 SageMaker 上部署成本最低的实例类型。）</em></li><li><strong>来自 <a href="https://aws.amazon.com/sagemaker/jumpstart/">Amazon SageMaker JumpStart</a> 的公开基础模型</strong>：你想部署 JumpStart 目录中的基础模型（FM），提供模型 ID 即可。示例提示：<em>&quot;Find the best instance for model huggingface-reasoning-qwen3-8b on SageMaker AI.&quot;（在 SageMaker AI 上为模型 huggingface-reasoning-qwen3-8b 找到最佳实例。）</em></li><li><strong>在 <a href="https://huggingface.co/models">Hugging Face Hub</a> 上的模型</strong>：你想使用托管在 Hugging Face 上的模型，提供模型名称即可。对于受访问限制的模型（gated models，如 Llama 系列），你的 agent 会展示许可条款，请你接受条款并提供你的 Hugging Face token。示例提示：<em>&quot;I want to deploy a Llama model from Hugging Face Hub. What's the cheapest option?&quot;（我想部署一个来自 Hugging Face Hub 的 Llama 模型。最便宜的方案是什么？）</em></li></ul>
+<p>在每种情况下，你的 agent 都会生成代码，把模型放到候选实例和配置上评估，然后给出按序排列的部署选项，并附带具体的性能指标：吞吐、延迟分位数、首 token 时间和并发。你根据自己的成本和性能要求做选择。</p>
+<h3>比较基准测试运行</h3>
+<p>如果你跑了多个基准测试（例如配置变更前后，或在两种实例类型之间），可以让 agent 对它们进行比较。提供两个基准测试作业名，agent 就会生成一份对比，计算关键指标的差值：吞吐、延迟分位数和首 token 时间。</p>
+<p>结果以百分比变化呈现，正值代表更好，让你得到一份单一、可读的总结：你的改动究竟提升了性能、恶化了性能，还是没有实质影响。</p>
+<p>如果其中一个基准测试运行不存在，agent 会提出先运行它，然后再继续对比。</p>
+<p><strong>示例提示：</strong> <em>&quot;I have two benchmark runs and I want to compare them. Which one is faster?&quot;（我有两次基准测试结果，想对比一下。哪次更快？）</em></p>
+<h2>基准测试结果</h2>
+<p>下表在同一基准负载（512/256 tokens，并发 4）下比较了两个已部署的模型。Δ% 列展示模型 B（Qwen3-8B）相对模型 A（Qwen3-1.7B）在每个指标上快多少，正值表示模型 B 更好。</p>
+<table><thead><tr><th><strong>指标</strong></th><th><strong>Qwen3-1.7B（模型 A）</strong></th><th><strong>Qwen3-8B（模型 B）</strong></th><th><strong>Δ%</strong></th></tr></thead><tbody><tr><td>输出 token 吞吐</td><td>188.2 tokens/s</td><td>271.2 tokens/s</td><td>+44.1% ✅</td></tr><tr><td>每用户吞吐</td><td>47.5 tokens/s</td><td>69.4 tokens/s</td><td>+45.9% ✅</td></tr><tr><td>请求吞吐</td><td>0.736 req/s</td><td>1.08 req/s</td><td>+46.7% ✅</td></tr><tr><td>Token 间延迟</td><td>20.9 ms</td><td>14 ms</td><td>+33.0% ✅</td></tr><tr><td>请求延迟</td><td>5,382 ms</td><td>3,658 ms</td><td>+32.0% ✅</td></tr><tr><td>首 token 时间</td><td>67.5 ms</td><td>166.3 ms</td><td>−146.5% ❌</td></tr></tbody></table>
+<p>两个模型运行在不同硬件上。Qwen3-8B 使用一块 4-GPU 的 <code>ml.g5.12xlarge</code>（4x A10G），而 Qwen3-1.7B 使用单块 L4 GPU（<code>ml.g6.4xlarge</code>）。这些差值反映的约有 4 倍的算力差异，而不仅仅是模型本身的差异。</p>
+<p>结论是：Qwen3-8B 带来约 44–47% 的更高吞吐和更低的端到端延迟，这主要归功于额外的 GPU 算力。Qwen3-1.7B 只在首 token 时间上占优——这正是更小模型配单 GPU 时预期中的优势。</p>
+<h2>综合来看</h2>
+<p>你不需要记住各个能力的名称，也不需要知道该请求哪个工作流。下表展示常见请求如何映射到结果。</p>
+<table><thead><tr><th><strong>你说</strong></th><th><strong>你得到</strong></th></tr></thead><tbody><tr><td>&quot;I already deployed a model and want to know how fast it is.&quot;（我已经部署了一个模型，想知道它有多快。）</td><td>量化性能报告：来自真实负载的吞吐、延迟分位数和并发指标。</td></tr><tr><td>&quot;I have a model in S3 and I don't know what instance to deploy on.&quot;（我有一个模型在 S3 里，不知道该部署到什么实例上。）</td><td>按序排列的部署选项，附每个候选配置的成本、吞吐和延迟。</td></tr><tr><td>&quot;I want to deploy a JumpStart model and find the cheapest instance. I only have the model ID.&quot;（我想部署一个 JumpStart 模型并找到最便宜的实例，我只有模型 ID。）</td><td>按序排列的部署选项，无需 S3 中转（staging）。如需要，会给出受限模型的替代方案。</td></tr><tr><td>&quot;I ran a benchmark before and after a change. Which one is faster?&quot;（我在改动前后各跑了一次基准测试，哪次更快？）</td><td>覆盖所有指标的百分比变化，标明提升还是回退。</td></tr><tr><td>&quot;I want to optimize a Llama model from Hugging Face Hub.&quot;（我想优化一个来自 Hugging Face Hub 的 Llama 模型。）</td><td>展示许可条款，把模型中转（staging）到 S3，然后给出标准推荐结果。</td></tr></tbody></table>
+<p>如果你的请求横跨多个能力（例如先把 Hugging Face 模型中转到位，再获取部署推荐），agent 会在同一个对话中自然地把它们串起来。</p>
+<h2>对 agent 行为的预期</h2>
+<p>配备了 <code>aws-ai-ml</code> 技能的 agent 遵循几条让体验可预测且安全的行为准则：</p>
+<ul><li><strong>它会索取所需的信息。</strong> 如果缺少信息（比如 endpoint 名称或 S3 URI），agent 会让你补充，而不是瞎猜。</li><li><strong>在有影响的行动之前先确认。</strong> 在运行会向线上 endpoint 施加真实流量的基准测试之前，agent 会警告影响并请求明确确认。</li><li><strong>超出范围时会直说。</strong> 如果你要求 agent 做它做不到的事（比如部署模型），它会解释自己能提供什么替代，例如生成你需要的部署配置。</li><li><strong>它生成的是 SageMaker Python SDK v3 代码。</strong> 每份输出都是可执行的代码，你可以在自己的环境中检查、修改并运行。</li></ul>
+<h2>清理资源</h2>
+<p>为避免持续产生费用，请删除你创建的资源：</p>
+<ul><li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints-delete.html">删除 SageMaker AI endpoint</a>：基准测试或推荐过程中创建的 endpoint。</li><li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/studio-updated-jl-user-guide-shutdown.html">停止或删除你的 JupyterLab space</a>：如果你使用了 SageMaker Studio。</li><li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/DeletingObjects.html">移除 S3 对象</a>：基准测试和推荐作业存放在你的 SageMaker AI 默认 bucket 中的对象。</li></ul>
+<h2>结语</h2>
+<p>面向 Amazon SageMaker AI 优化生成式 AI 推理的 <code>aws-ai-ml</code> 技能，把你现有的 coding agent 变成 SageMaker AI 推理优化专家。无论你是要对线上 endpoint 做基准测试、为模型寻找最便宜的实例、比较配置，还是把 Hugging Face 模型中转到位做评估，只需要描述你想要什么，agent 就能交付可度量的结果。</p>
+<p>要开始使用，请通过 <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS</a> 安装技能并添加到你已在用的 coding agent，或者在 Amazon SageMaker Studio 中启动一个预配置的 JupyterLab space。更多信息参见 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/whatis.html">Amazon SageMaker AI 文档</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Making Amazon Quick enterprise-ready: Automated, auditable c…</title>
@@ -34,6 +251,59 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/making-amazon-quick-enterprise-ready-automated-auditable-cross-account-resource-promotion/</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>完整标题：Making Amazon Quick enterprise-ready: Automated, auditable cross-account resource promotion</description>
+      <content:encoded><![CDATA[<h1>让 Amazon Quick 具备企业就绪能力：自动化、可审计的跨账户资源晋级</h1>
+<p>Amazon Quick 是亚马逊面向工作场景打造的 agentic AI 助手。你可以构建能够对自身数据进行推理、调用 action connector、并把多步骤任务执行到底的 agent。把这些资源（chat agent、action connector、知识库、flow 和 space）从开发 AWS 账户晋级到生产 AWS 账户——就像你对其他应用所做的那样——一直是一件手工、易错且繁琐的工作。本文展示如何用部署在 Amazon Bedrock AgentCore 上的一个幂等、可审计的 Model Context Protocol（MCP）服务器把它自动化。</p>
+<p>agentic 解决方案的构建块是它的 <strong>agent、action connector、知识库和 space</strong>：配置了自定义指令的 chat agent、用于 Slack、Jira 及其他集成的 connector、以你自己的文档为根基的知识库，以及把它们绑定在一起的 Space。团队会在一个开发账户中快速搭建并迭代这些资源。</p>
+<p>大多数企业会为开发和生产分别使用独立的 AWS 账户，有时中间还夹一个质量保证（QA）账户。当 agent、action connector 和知识库在开发账户中验证完毕后，并没有原生的、一键式的方法把它们晋级到下一个账户。团队只能逐个手工重建每一资源：用相同的指令和 starter prompt 重新创建每个 agent，为每个 agent 重新挂载其 action connector，重新授予资源权限，并为每个知识库重新配置 Amazon Simple Storage Service（Amazon S3）bucket、bucket policy 和数据源。这项工作缓慢、难以审计，且很容易在细微处出错，从而削弱了企业所需的治理叙事。</p>
+<h2>通过 API 管理 Amazon Quick 资源</h2>
+<p>Amazon Quick 资源是可编程的。Space、agent、action connector、知识库和 flow 都通过 Amazon Quick API（属于 <a href="https://docs.aws.amazon.com/cli/latest/reference/quicksight/">Amazon Quick Sight API 接口</a>）来管理，该 API 提供完整的资源生命周期——创建、读取、更新、删除和列表。业务用户在 Amazon Quick 中配置的任何东西——一个带指令和 starter prompt 的 agent、一个 connector、一个知识库，或一个 flow——我们都能以编程方式进行检查、重建、更新和治理，权限也不例外。</p>
+<p>正是这个可编程接口让受治理的晋级成为可能。我们不再手工重建每一资源，而是通过 API 读取一个资源及其权限，并在另一个账户中原样重新施加它们。本文中的迁移器（migrator）把创建、读取、更新和列表操作组合成一条可重复的工作流，并且从不针对目标发起删除操作，因此每一次运行只会新增或更新。</p>
+<p>在本文中，我们将介绍 Quick Resource Migrator——一个托管在 Amazon Bedrock AgentCore 运行时（Amazon Bedrock AgentCore 的一项能力）上的示例 MCP 服务器，它通过一次工具调用即可自动完成 Amazon Quick 资源的跨账户晋级。它是资源驱动的：你选择一种资源类型（agent、connector、知识库、flow 或 space），并按 id、按名称或全部进行选取。它是幂等的（可安全重跑），并通过描述源资源、在目标中重放相同操作来忠实地复制权限。完整源代码可在 <a href="https://github.com/aws-samples/sample-amazon-quick-suite-knowledge-hub/tree/main/infrastructure/multi-tenant-assets-deployment">aws-samples 仓库</a>中找到。</p>
+<h2>方案概览</h2>
+<p>迁移器在一次调用中晋级所选的一组资源。它是一个 upsert：目标中尚不存在的资源会被创建，已存在的资源会被就地更新。每一次更新都受到保护——在变更前会向 Amazon S3 写入一个带版本号的备份，因此每项资源都保留一份可查阅、可回滚的完整历史。一个只读的预览会在你提交之前准确报告某次运行将创建或更新什么，而迁移本身运行在 Amazon Bedrock AgentCore 之上，因此可以从 Amazon Quick 或任何兼容 MCP 的客户端来驱动。</p>
+<h3>迁移的内容</h3>
+<ul><li><strong>选取模型：</strong> 选择一种资源类型（agent、connector、知识库、flow 或 space），并按 id、按名称或全部进行选择。选取是资源驱动的。你可以直接迁移一种资源类型，或迁移一个 space 以把它所关联的资源一并带过去。</li><li><strong>Chat agent：</strong> 连同其自定义指令、身份、语气、starter prompt 和欢迎消息一并重建，并重新挂载其 action connector（重映射到目标账户）。当迁移一个 space 时，它的 agent 会被自动重新关联到该 space。</li><li><strong>Action connector：</strong> 连同其配置一并重建。Secret 值从不从源读取。Connector 以占位凭证创建，并在目标中重新完成认证。</li><li><strong>知识库：</strong> 在目标账户中注册该知识库，重建其数据源，并复制其权限。对于以 S3 为支撑的知识库，迁移器还会配置目标 bucket 及其 bucket policy（这是迁移的一项独立产出）。文档本身（S3 对象）不会被复制。</li><li><strong>Flow：</strong> 依据其定义在目标账户中重建。由于 flow ID 在不同账户间不同，flow 按名称匹配：同名目标 flow 会被更新，否则创建一个新 flow。Flow 权限会被复制。</li><li><strong>Space：</strong> 在目标账户中重建，并重新关联到其 agent、connector 和知识库（资源 Amazon Resource Name（ARN）重映射到目标）。请先迁移那些被关联的资源，以便目标 ARN 能够解析。Space 权限会被复制。</li></ul>
+<h3>关键设计原则</h3>
+<ul><li><strong>资源驱动选取。</strong> 你每次迁移一种资源类型（agent、connector、知识库、flow 或 space），按 id、按名称或全部选取。Agent 连同其 action connector 重新挂载而被重建。Space 连同其 agent、connector 和知识库被重建并重新关联，ARN 重映射到目标账户。</li><li><strong>权限保真。</strong> 权限并非硬编码。服务器在每个源资源上调用相应的 <code>Describe*Permissions</code> API，并在目标中重放完全相同的操作列表，把 principal 重映射到目标账户中的注册用户。</li><li><strong>幂等性。</strong> 每项资源都被&quot;创建或更新&quot;。服务器先描述目标，再决定是创建还是更新，因此重跑一次迁移会收敛到相同状态，而不会产生重复项或失败。</li><li><strong>最小权限与隔离。</strong> 源角色为只读。目标角色仅持有迁移所需的操作。运行时使用 Cognito JSON Web Token（JWT）对调用方进行认证，并可在虚拟私有云（VPC）网络模式下运行。</li><li><strong>安全、可回滚的更新。</strong> 在迁移器更新任何已存在的目标资源之前，它会把该资源及其依赖的一份带版本号的快照写入一个专用的备份 bucket。如果该备份无法写入，更新就会被中止。每个被创建或被更新的资源也都会被快照化，并且一个 restore 工具可以把任何资源回滚到更早的版本。</li></ul>
+<h2>架构</h2>
+<p>本方案采用三账户模型。一个中央 runner 账户在 Amazon Bedrock AgentCore 运行时上托管 MCP 服务器。该服务器使用 AWS Security Token Service（AWS STS）在源账户中承担一个只读角色、在目标账户中承担一个读写角色，因此任何地方都不存储长期凭证。</p>
+<p>图 1：Amazon Quick Resource Migrator MCP 服务器的架构</p>
+<h3>组件职责</h3>
+<table><thead><tr><th><strong>组件</strong></th><th><strong>职责</strong></th></tr></thead><tbody><tr><td><strong>AgentCore 运行时（runner 账户）</strong></td><td>托管 MCP 服务器（<code>server.py</code>）。向源账户和目标账户承担角色，并编排迁移。以 VPC 网络模式运行，配有一个 Cognito JWT 授权器。</td></tr><tr><td><strong>Amazon Cognito（runner 账户）</strong></td><td>用户池、资源服务器，以及一个机器对机器的 app client。签发调用方出示给 AgentCore 的 JWT（client-credentials 授权方式，scope 为 <code>invoke</code>）。</td></tr><tr><td><strong>Runner 执行角色</strong></td><td>AgentCore 执行角色：Amazon CloudWatch Logs、遥测，以及向源角色和目标角色的 <code>sts:AssumeRole</code>。</td></tr><tr><td><strong>Migrator 角色（源账户）</strong></td><td>只读的 Quick Sight describe/list 权限，外加知识库读取。</td></tr><tr><td><strong>Migrator 角色（目标账户）</strong></td><td>读写的 Quick Sight create/update 权限、知识库和 S3 写入，以及用于 principal 解析的 <code>ListUsers</code>。</td></tr><tr><td><strong>备份 bucket（runner 账户）</strong></td><td>一个加密的 S3 bucket，存放目标资源在更新前和迁移后的带版本快照。运行时直接写入其中，Restore 从中读取。可选（未设置时禁用）。</td></tr></tbody></table>
+<p><em>表 1：架构组件</em></p>
+<h3>迁移流程</h3>
+<ul><li>解析资源：根据资源类型和选取器（id、名称或全部），在源账户中解析出具体的资源 ID。</li><li>描述源：描述每个被选中的资源，以捕获其配置和权限。</li><li>Connector：重建每个 connector。认证配置被净化为创建（写）模型，并使用占位 secret，然后在目标中重新完成认证。复制权限。</li><li>知识库：创建目标 bucket（<code>knowledge-base-&lt;env&gt;-&lt;account&gt;</code>）、bucket policy、数据源和知识库，然后复制知识库权限。S3 对象不会被复制。</li><li>Agent：重建每个 agent 并挂载其 action connector（重映射到目标账户），然后复制 agent 权限。agent 与 space 的关联会在 space 本身被迁移时恢复（见 space 步骤）。</li><li>Flow：依据其定义重建每个 flow，按名称匹配（flow ID 在不同账户间不同）：更新同名目标 flow 或创建一个新 flow，然后复制 flow 权限。</li><li>Space：重建每个 space，并在 ARN 重映射到目标账户后重新关联其 agent、connector 和知识库（请先迁移那些资源），然后复制 space 权限。</li><li>报告：返回一份 JSON 报告，列出被创建或被更新的资源、bucket、备份、被跳过的权限，以及任何错误。</li></ul>
+<h2>MCP 服务器暴露的工具</h2>
+<p>服务器暴露五个工具，全部在 <code>server.py</code> 中定义。</p>
+<h3>preview_migration（只读）</h3>
+<p><code>preview_migration</code> 接收一个源账户 ID、一种资源类型（agent、connector、知识库、flow、space 或 all）、一个选取器（id、名称或全部），以及一个 AWS Region。它会返回一份将要被迁移的 agent、action connector、知识库和 flow 的清单，含名称和类型，而不做任何更改。可把它当作一次 dry run 来确认范围，并在晋级前支持一个变更管理审批环节。当你同时传入一个目标账户 ID 时，响应会额外给出一份源到目标的映射，为每项资源标注 CREATE 或 UPDATE，好让你在运行迁移之前准确看到它会改变什么。</p>
+<h3>migrate_resources（完整迁移）</h3>
+<p><code>migrate_resources</code> 接收源和目标账户 ID、一种资源类型（agent、connector、知识库、flow 或 space）、一个选取器（id、名称或全部）、一个 region、源和目标环境名称（用于知识库 bucket 命名），以及 Quick Sight 服务角色名称。它执行上文所述完整的&quot;创建或更新&quot;迁移，并返回一份结构化报告，列出它创建、更新和授予的一切，以及任何错误。由于它是幂等的，你可以反复运行它——例如在每次发布时运行——它会收敛到相同的目标状态。</p>
+<h3>list_backups（只读）</h3>
+<p><code>list_backups</code> 检索备份目录，并列出每个资产可用的版本。备份就是迁移器写入备份 bucket 的更新前快照——每次更新对应一个带版本的对象，因此你可以查看任何被迁移资源的完整历史。</p>
+<h3>get_backup（只读）</h3>
+<p><code>get_backup</code> 返回给定资产和版本（默认为最新）的完整已存备份，包括被捕获的资源配置及其依赖。</p>
+<h3>restore_backup</h3>
+<p><code>restore_backup</code> 把一份已存的备份版本重新施加到目标资源上，就地更新它；如果它已不存在，则重建它。它会先取一份全新的 restore 前备份，因此这次回滚本身也是可逆的。</p>
+<h2>部署本方案</h2>
+<p>完整源码和分步部署说明位于 <a href="https://github.com/aws-samples/sample-amazon-quick-suite-knowledge-hub/tree/main/infrastructure/multi-tenant-assets-deployment">aws-samples 仓库</a>的 README 中。从高层来看，你会部署三个 AWS CloudFormation 栈——跨账户的 AWS Identity and Access Management（IAM）角色、VPC 网络，以及托管 MCP 服务器、由 Cognito 认证的 AgentCore 运行时——然后把该运行时注册为 Amazon Quick 中的一个 action connector。</p>
+<h2>通过 Quick App 使用迁移器</h2>
+<p>通过把该运行时注册为一个 action connector，你可以用自然语言从 Amazon Quick 驱动迁移器；你也可以构建一个 Quick App——一个叠加在相同 MCP 工具之上的点选式 Web 体验。你无需手工编写这个 UI。仓库附带一份可直接使用的 <a href="https://github.com/aws-samples/sample-amazon-quick-suite-knowledge-hub/blob/main/infrastructure/multi-tenant-assets-deployment/docs/quick-app-integration.md">app-builder prompt</a>，你把它粘贴进 Amazon Quick 的 app builder，用你自己的占位 connector 和 action ID 替换掉，即可生成这个应用。该应用把工作流变成一条引导式流程：选择源和目标账户以及要晋级的资源，预览将被创建或更新的内容，运行迁移，并查看每一次历史迁移的记录，每条记录都由服务器写入的带版本 S3 快照支撑。下面的界面展示了这种体验。</p>
+<h3>一个示例 Quick App</h3>
+<ul><li>由于该应用由 prompt 生成，每次构建都会有所不同。下面的界面展示其中一个示例。在其中，落地页会请你填写 Source Account ID、Target Account ID、资源类型（agent、connector、知识库、flow 或 space）以及选取器（id、名称或全部），并按需提供额外选项。</li></ul>
+<p><a href="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026-10-01/Figure-2-8.png"><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026-10-01/Figure-2-8.png" alt="Quick App 落地页，含源与目标账户 ID、资源类型和选取器等字段"></a></p>
+<p>图 3：落地页上可用的额外迁移选项</p>
+<ul><li>当你选择 <strong>Confirm &amp; migrate</strong> 后，你会看到类似下面的响应：</li></ul>
+<p>图 4：选择 Confirm and migrate 后的确认响应</p>
+<ul><li>确认并迁移后，你应该会看到来自 MCP 服务器的响应，返回被创建/更新的资源。</li></ul>
+<p>图 5：MCP 服务器响应，列出被创建或被更新的资源</p>
+<ul><li>打开 History 标签即可查看每一次历史迁移。每条记录都由迁移器写入 Amazon S3 的带版本快照支撑，因此你会得到一份完整、可审计的记录，说明什么被晋级、在何时，并且可以查看任何更早的版本。</li></ul>
+<p>图 6：History 标签，展示可审计的历史迁移记录</p>
+<ul><li>若要回滚，选择一个资源的备份版本并点击 <strong>Restore</strong>。该应用会把那个已保存的版本重新施加到目标上。由于它在 restore 之前会先捕获一份全新的备份，因此这次回退本身也是可逆的。</li></ul>
+<p>图 7：把某个资源回滚到更早的备份版本</p>
+<h2>结论</h2>
+<p>跨账户晋级是企业软件的一项基本要求，而直到此前，它一直是 Amazon Quick 所缺失的一环。Quick Resource Migrator 把一项缓慢、手工、难审计的任务变成一项快速、可重复、受治理的任务：一次工具调用即可在目标账户中重建 agent、connector 和知识库，并忠实地复制权限，全程幂等，因此你可以在每次发布时运行它。</p>
+<p>克隆该<a href="https://github.com/aws-samples/sample-amazon-quick-suite-knowledge-hub/tree/main/infrastructure/multi-tenant-assets-deployment">示例仓库</a>，把它部署到一个 runner 账户，并试着把一个 agent 或知识库从开发晋级到生产。然后根据你的治理与加固要求调整这一模式。</p>]]></content:encoded>
     </item>
     <item>
       <title>Agentic retrieval with LangChain and Amazon Bedrock Knowledg…</title>
@@ -41,12 +311,404 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/agentic-retrieval-with-langchain-and-amazon-bedrock-knowledge-bases/</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>完整标题：Agentic retrieval with LangChain and Amazon Bedrock Knowledge Bases</description>
+      <content:encoded><![CDATA[<h1>使用 LangChain 与 Amazon Bedrock Knowledge Bases 实现智能体式检索</h1>
+<p>当用户让客服助手——一个用 LangChain 构建的检索增强生成（Retrieval Augmented Generation，RAG）应用——在三个维度上对比两款产品时，他们实际上同时提出了六个问题。相似度搜索用一个查询向量来承载全部意图，检索器随后给出的只是这些意图平均值的最佳近似。返回的答案很简洁，搜索执行没有报错，相关性分数看起来也合理。但检索到的文档块（chunk）虽然主题相关，却只覆盖了问题真正所问内容的一小部分。</p>
+<p>在这篇文章中，我们展示一个运行在 Amazon Bedrock Managed Knowledge Base 上、配合 <a href="https://github.com/langchain-ai/langchain-aws">LangChain</a> 的 RAG 应用。我们把同一个多部分问题分别交给标准检索和智能体式检索（agentic retrieval），并通过读取 trace 事件来查看模型生成的检索计划。我们还会介绍这两条检索路径各自的费用，以及在什么时候成本更低的那条才是正确的选择。</p>
+<p>智能体式检索在 Amazon Bedrock Managed Knowledge Base 上可用。Amazon Bedrock Managed Knowledge Base 不再只做一次搜索，而是对检索进行规划：把问题拆分成多个子查询并逐一执行，判断证据是否充分，不充分就再次搜索。<code>langchain-aws</code> 包同时暴露了智能体式检索和标准检索，因此你可以在 LangChain 应用中任选其一。</p>
+<h2>方案总览</h2>
+<p><a href="https://aws.amazon.com/blogs/aws/introducing-amazon-bedrock-managed-knowledge-base-for-faster-more-accurate-enterprise-ai-applications/">Amazon Bedrock Managed Knowledge Base</a> 是 Amazon Bedrock 中的全托管 RAG 能力，它把 RAG 架构里需要自建的向量存储、嵌入模型和重排序模型全部接管掉。你只需配置一个数据源，Amazon Bedrock Managed Knowledge Bases 就会负责分块（chunking）、嵌入（embedding）、存储和检索。本次演练使用 <a href="https://aws.amazon.com/pm/serv-s3/?trk=50b671a1-06f5-4224-9505-fa45ee881c08&amp;sc_channel=ps&amp;ef_id=EAIaIQobChMI1uiUo4eXlgMVy1J_AB2pfydUEAAYASAAEgJ6PPD_BwE&amp;gads_camp=23522747487&amp;gads_ag=196433733807&amp;gads_ad=795876995201&amp;gads_kw=amazon%20s3&amp;gads_matchtype=e&amp;gads_network=g&amp;gads_device=c&amp;gads_geo=9022830&amp;gad_campaignid=23522747487&amp;gbraid=0AAAAADjHtp-DJgH1kF6NUslUNqoqqj14q&amp;gclid=EAIaIQobChMI1uiUo4eXlgMVy1J_AB2pfydUEAAYASAAEgJ6PPD_BwE">Amazon Simple Storage Service (Amazon S3)</a>。</p>
+<p>Amazon Bedrock Managed Knowledge Bases 提供两个 API，本文简要讨论它们的差异。<a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_Retrieve.html">Retrieve</a> API 执行一次混合搜索并返回带分数的文档块；<a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_AgenticRetrieveStream.html">AgenticRetrieveStream</a> API 执行一个规划循环，并把各个步骤作为 trace 事件流式返回给你。在 <code>langchain-aws</code> 包中，前者是一个可以直接放进链（chain）里的标准 LangChain 检索器，后者是一个直接从知识库检索的函数。</p>
+<p>下图展示了方案架构。应用通过 Retrieve API（标准的一次性检索）或 AgenticRetrieveStream API（多步规划循环）向 Amazon Bedrock Knowledge Bases 发起查询。两条路径都会从知识库返回文档块，应用再用这些文档块生成有依据（grounded）的回答。</p>
+<p>图 1：使用 Retrieve 与 AgenticRetrieveStream API 查询 Amazon Bedrock Knowledge Bases 的方案架构</p>
+<h2>实现演练</h2>
+<p>下面几节将带你创建知识库、用两种检索方法查询它，并阅读智能体式规划器产生的 trace 事件。</p>
+<h2>前置条件</h2>
+<p>要跟完本文，你需要：</p>
+<ul><li>一个 AWS 账户，且在 Amazon Bedrock Managed Knowledge Bases 和智能体式检索可用的 Region 中有权访问 Amazon Bedrock。本次演练使用美国东部（弗吉尼亚北部）Region（<code>us-east-1</code>），代码也全程假定该 Region。其他 Region 的可用性与支持情况请查阅 AWS <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">文档</a>。</li><li>两个 AWS Identity and Access Management (IAM) 身份，下一节会详细说明：一个是知识库要扮演的服务角色（service role），另一个是你调用 API 所用身份的权限。</li><li><a href="https://www.python.org/downloads/">Python 3.12</a> 或更高版本。</li><li>一个存放示例文档的 S3 桶。语料库需要若干主题有重叠的文档，这样对比型问题才有可查之处。单个平铺文档无法演示查询规划。</li></ul>
+<p>安装包。<a href="https://boto3.amazonaws.com/v1/documentation/api/latest/index.html">Boto3</a> 的版本很关键：1.43.32 之前不存在 <code>agentic_retrieve_stream</code>。</p>
+<pre><code>langchain-aws&gt;=1.6.3
+langchain&gt;=1.0
+boto3&gt;=1.43.32</code></pre>
+<h2>权限</h2>
+<p>这里涉及两个身份，刻意把它们分开是值得的。知识库扮演一个服务角色来读取你的文档并调用嵌入模型；你的应用使用一个 AWS Security Token Service (AWS STS) 调用者身份来查询。两者都不需要对方的权限。</p>
+<p>如果你授权代劳，Amazon Bedrock 会自动为你创建服务角色。若要自带角色，需给它一条允许 Amazon Bedrock 扮演（assume）它的信任策略，并用 <code>aws:SourceAccount</code> 和 <code>aws:SourceArn</code> 限定作用域，以防其他账户把它变成混淆代理（confused deputy）：</p>
+<pre><code>{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [{
+        &quot;Effect&quot;: &quot;Allow&quot;,
+        &quot;Principal&quot;: {&quot;Service&quot;: &quot;bedrock.amazonaws.com&quot;},
+        &quot;Action&quot;: &quot;sts:AssumeRole&quot;,
+        &quot;Condition&quot;: {
+            &quot;StringEquals&quot;: {&quot;aws:SourceAccount&quot;: &quot;111122223333&quot;},
+            &quot;ArnLike&quot;: {
+                &quot;aws:SourceArn&quot;: &quot;arn:aws:bedrock:us-east-1:111122223333:knowledge-base/*&quot;
+            }
+        }
+    }]
+}</code></pre>
+<p>服务角色还需要在桶上的 <code>s3:ListBucket</code> 权限和对桶内容的 <code>s3:GetObject</code> 权限，两者都以 <code>aws:ResourceAccount</code> 为条件。创建好知识库之后，把 <code>knowledge-base/*</code> 通配符收窄到具体的知识库 ID。</p>
+<p>AWS STS 调用者身份需要另一套权限。<code>bedrock:AgenticRetrieveStream</code> 和 <code>bedrock:InvokeModelWithResponseStream</code> 无法限定到知识库的 Amazon Resource Name (ARN)；<code>bedrock:Retrieve</code> 和 <code>bedrock:GetDocumentContent</code> 则可以：</p>
+<pre><code>{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Sid&quot;: &quot;AgenticRetrievalAndPlannerModel&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [
+                &quot;bedrock:AgenticRetrieveStream&quot;,
+                &quot;bedrock:InvokeModelWithResponseStream&quot;
+            ],
+            &quot;Resource&quot;: &quot;*&quot;
+        },
+        {
+            &quot;Sid&quot;: &quot;RetrieveAndFullDocumentExpansion&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [&quot;bedrock:Retrieve&quot;, &quot;bedrock:GetDocumentContent&quot;],
+            &quot;Resource&quot;: &quot;arn:aws:bedrock:&lt;region&gt;:111122223333:knowledge-base/&lt;knowledge-base-id&gt;&quot;
+        },
+        {
+            &quot;Sid&quot;: &quot;GenerateAnswersInTheChains&quot;,
+            &quot;Effect&quot;: &quot;Allow&quot;,
+            &quot;Action&quot;: [&quot;bedrock:InvokeModel&quot;, &quot;bedrock:Converse&quot;, &quot;bedrock:ConverseStream&quot;],
+            &quot;Resource&quot;: &quot;*&quot;
+        }
+    ]
+}</code></pre>
+<p><code>bedrock:GetDocumentContent</code> 经常被漏掉。当 <code>FullDocumentExpansion</code> 步骤判定某个片段缺少回答所需的上下文时，智能体式检索会调用它。只授予 <code>bedrock:Retrieve</code> 的策略起初可以正常工作，直到规划器需要拉取整篇文档，然后在查询中途失败。</p>
+<p>要创建和管理知识库本身，调用方角色还需要对 <code><em></code> 的 <code>bedrock:CreateKnowledgeBase</code> 权限，以及对 <code>knowledge-base/</em></code> 的 <code>GetKnowledgeBase</code>、<code>UpdateKnowledgeBase</code>、<code>DeleteKnowledgeBase</code>、<code>StartIngestionJob</code>、<code>GetIngestionJob</code> 和 <code>ListIngestionJobs</code> 操作权限。如果你使用护栏（guardrails），再加上 <code>bedrock:GetGuardrail</code> 和 <code>bedrock:ApplyGuardrail</code>。</p>
+<p>运行本次演练可能产生知识库中的文档存储与摄取（ingestion）、检索调用以及基础模型（FM）推理的费用。</p>
+<p>定价详情参见 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a>中的 Knowledge Bases 部分。</p>
+<p>完成实验后请删除这些资源。</p>
+<h2>创建并填充知识库</h2>
+<p>通过 <code>managedKnowledgeBaseConfiguration</code> 创建知识库。把 <code>embeddingModelType</code> 设为 <code>MANAGED</code> 会使用服务托管的嵌入模型。</p>
+<pre><code>import boto3
+import os
+
+REGION = os.environ[&quot;AWS_REGION&quot;]
+bedrock_agent = boto3.client(&quot;bedrock-agent&quot;, region_name=REGION)
+
+response = bedrock_agent.create_knowledge_base(
+    name=KB_NAME,
+    roleArn=KB_ROLE_ARN,
+    knowledgeBaseConfiguration={
+        &quot;type&quot;: &quot;MANAGED&quot;,
+        &quot;managedKnowledgeBaseConfiguration&quot;: {
+            &quot;embeddingModelType&quot;: &quot;MANAGED&quot;,
+        },
+    },
+)
+KB_ID = response[&quot;knowledgeBase&quot;][&quot;knowledgeBaseId&quot;]</code></pre>
+<p>这个请求里没有 <code>storageConfiguration</code>。若是自管理（self-managed）知识库，你需要传入一个描述自己向量存储的配置。Amazon Bedrock Managed Knowledge Base 不接受该配置——这是 API 层面最清晰的信号：存储层由 Amazon Bedrock 托管。</p>
+<p>把 S3 桶挂为数据源，然后启动一个摄取作业。摄取是异步的，所以要轮询直到作业进入终态，而不是固定睡一段时间然后祈祷。</p>
+<pre><code>import time
+
+SUCCESS_STATES = frozenset({&quot;COMPLETE&quot;})
+FAILURE_STATES = frozenset({&quot;FAILED&quot;, &quot;STOPPED&quot;})
+
+def wait_for_ingestion(kb_id, ds_id, job_id, timeout_s=1800):
+    &quot;&quot;&quot;Poll an ingestion job until it reaches a terminal state.&quot;&quot;&quot;
+    deadline = time.time() + timeout_s
+    while time.time() &lt; deadline:
+        job = bedrock_agent.get_ingestion_job(
+            knowledgeBaseId=kb_id,
+            dataSourceId=ds_id,
+            ingestionJobId=job_id,
+        )[&quot;ingestionJob&quot;]
+        status = job[&quot;status&quot;]
+        if status in SUCCESS_STATES:
+            return job
+        if status in FAILURE_STATES:
+            reasons = job.get(&quot;failureReasons&quot;) or [&quot;no reason reported&quot;]
+            raise RuntimeError(f&quot;Ingestion job {job_id} finished as {status}: &quot; + &quot;; &quot;.join(reasons))
+        time.sleep(15)
+    raise TimeoutError(f&quot;Ingestion job {job_id} did not finish in {timeout_s}s&quot;)</code></pre>
+<p>完整的数据源配置与错误处理见<a href="https://github.com/aws-samples/sample-rag-bedrock-langchain-blog">示例仓库</a>。</p>
+<h2>用 LangChain 检索器查询</h2>
+<p><a href="https://reference.langchain.com/python/langchain-aws/retrievers/bedrock/AmazonKnowledgeBasesRetriever">AmazonKnowledgeBasesRetriever</a> 封装了 Retrieve API，行为和任何其他 LangChain 检索器一样。对 Amazon Bedrock Managed Knowledge Bases，要传入 <code>managedSearchConfiguration</code>。这一步最容易让人踩坑：<code>vectorSearchConfiguration</code> 是旧路径，用于你自己运行向量存储的知识基，也是现存大多数示例展示用的写法。</p>
+<pre><code>from langchain_aws.retrievers import AmazonKnowledgeBasesRetriever
+
+SIMPLE_QUERY = &quot;What is the restore time objective for the checkout service?&quot;
+
+retriever = AmazonKnowledgeBasesRetriever(
+    knowledge_base_id=KB_ID,
+    region_name=REGION,
+    retrieval_config={
+        &quot;managedSearchConfiguration&quot;: {
+            &quot;numberOfResults&quot;: 5,
+        }
+    },
+)
+docs = retriever.invoke(SIMPLE_QUERY)</code></pre>
+<p>每个结果以 LangChain <code>Document</code> 返回。相关性分数在 <code>metadata[&quot;score&quot;]</code> 里，源文档自身的元数据在 <code>metadata[&quot;source_metadata&quot;]</code> 下（已重命名以免冲突）。如果你想丢弃低置信度的结果，在检索器上设置 <code>min_score_confidence</code>，而不是事后再过滤。</p>
+<p>对于只有一个明确意图的问题，这就是合适的工具。它只有一次调用，延迟是两者中最低的，而且你完全掌控答案如何生成。生产环境助手收到的大多数查询都是这种形态，用规划循环去回答它们既浪费钱又浪费时间。</p>
+<h2>一次性检索的极限</h2>
+<p>现在给同一个检索器一个包含多个部分的问题：</p>
+<pre><code>COMPLEX_QUERY = (
+    &quot;Compare the checkout and inventory services across on-call escalation, backup and &quot;
+    &quot;restore targets, and deployment rollback procedure. Where do they differ?&quot;
+)
+
+docs = retriever.invoke(COMPLEX_QUERY)</code></pre>
+<p>返回五个文档块，按整个问题的单一嵌入向量的混合分数排序。</p>
+<p>这个问题包含六个意图：两个服务乘以三个维度。对检索到的文本按每个意图逐一核对证据，就能具体衡量单一嵌入到底找回了多少内容。</p>
+<table><thead><tr><th><strong>numberOfResults</strong></th><th><strong>文档块数</strong></th><th><strong>占语料库比例</strong></th><th><strong>覆盖的子意图</strong></th><th><strong>缺失</strong></th></tr></thead><tbody><tr><td>5</td><td>5</td><td>10%</td><td>6 个中覆盖 4 个</td><td>checkout 值班、inventory 恢复</td></tr><tr><td>10</td><td>10</td><td>19%</td><td>6 个全覆盖</td><td>无</td></tr></tbody></table>
+<p>在返回 5 条结果时，一个代表六个意图的嵌入向量漏掉了其中两个。返回 10 条时六个意图都覆盖到了，但浪费肉眼可见：两个子意图被重复覆盖，还有一个文档块完全不相关。</p>
+<p>检索器尽了本职。局限是结构性的：一个向量无法表示六个意图，而且整个流程中没有任何一步会追问返回的证据是否足以回答问题。</p>
+<h2>运行智能体式检索</h2>
+<p>智能体式检索不是 LangChain 检索器，而是 Amazon Bedrock Managed Knowledge Bases 的一项能力。<code>langchain-aws</code> 包把它作为独立函数 <a href="https://python.langchain.com/api_reference/aws/retrievers/langchain_aws.retrievers.bedrock.html">agentic_retrieve</a> 暴露出来，因为底层 API 以流式返回结果，不符合同步的 <code>BaseRetriever</code> 接口。<code>AmazonKnowledgeBasesRetriever</code> 上并没有一个开关能启用它。</p>
+<pre><code>from langchain_aws.retrievers.bedrock import agentic_retrieve
+
+result = agentic_retrieve(
+    knowledge_base_id=KB_ID,
+    query=COMPLEX_QUERY,
+    region_name=REGION,
+    generate_response=True,
+    number_of_results=10,
+)
+print(result[&quot;generatedResponse&quot;][&quot;answer&quot;])</code></pre>
+<p>设置 <code>generate_response=True</code> 时，服务会在检索到的文档块之外返回一个有依据的答案和引用来源，于是你不用再接一个单独的模型调用就能拿到答案。该函数只对 Amazon Bedrock Managed Knowledge Base 生效。</p>
+<p>在服务内部，它会规划、检索、评估证据是否充分，不充分则继续迭代。这个辅助函数把一切都藏了起来，只把最终的文档块交给你——方便是方便，代价是你看不到检索计划。</p>
+<h2>读取 trace 事件</h2>
+<p>想观看模型拆解问题的过程，直接在 <a href="https://docs.aws.amazon.com/boto3/latest/reference/services/bedrock-agent-runtime.html">bedrock-agent-runtime</a> 客户端上调用 <a href="https://docs.aws.amazon.com/boto3/latest/reference/services/bedrock-agent-runtime/client/agentic_retrieve_stream.html">agentic_retrieve_stream</a>。这是本次演练中唯一一处绕开 <code>langchain-aws</code> 的地方，因为那个辅助函数会丢弃 trace 事件，也不暴露 <code>maxAgentIteration</code> 或自定义规划模型。</p>
+<pre><code>runtime = boto3.client(&quot;bedrock-agent-runtime&quot;, region_name=REGION)
+
+response = runtime.agentic_retrieve_stream(
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: {&quot;text&quot;: COMPLEX_QUERY}}],
+    retrievers=[{
+        &quot;configuration&quot;: {
+            &quot;knowledgeBase&quot;: {
+                &quot;knowledgeBaseId&quot;: KB_ID,
+                &quot;retrievalOverrides&quot;: {&quot;maxNumberOfResults&quot;: 10},
+            }
+        }
+    }],
+    agenticRetrieveConfiguration={
+        &quot;foundationModelType&quot;: &quot;MANAGED&quot;,
+        &quot;rerankingModelType&quot;: &quot;MANAGED&quot;,
+        # 5 is the API default. Below 4 the planner stops decomposing entirely.
+        &quot;maxAgentIteration&quot;: 5,
+    },
+    generateResponse=False,
+)
+
+for event in response[&quot;stream&quot;]:
+    if &quot;traceEvent&quot; in event:
+        attrs = event[&quot;traceEvent&quot;][&quot;attributes&quot;]
+        print(f&quot;{attrs.get('step')}: {attrs.get('status')}&quot;)
+        for action in attrs.get(&quot;actions&quot;, []) or []:
+            if &quot;retrieve&quot; in action:
+                query = action[&quot;retrieve&quot;].get(&quot;inputQuery&quot;, {}).get(&quot;text&quot;, &quot;&quot;)
+                print(f&quot; sub-query: {query}&quot;)
+    elif &quot;result&quot; in event:
+        for chunk in event[&quot;result&quot;].get(&quot;results&quot;, []):
+            print(chunk.get(&quot;content&quot;, {}).get(&quot;text&quot;, &quot;&quot;)[:120])</code></pre>
+<p>只关心检索行为本身时，把 <code>generateResponse</code> 设为 <code>False</code>。API 默认会生成一个有依据的答案，而你在检查计划期间可能并不需要这次额外的模型调用，等于多花一笔钱。</p>
+<p>trace 事件的 <code>step</code> 告诉你规划器进行到哪一步。<code>SpeculativeRetrieval</code> 在首个计划之前运行，用于降低延迟，不计入你的迭代预算。<code>Planning</code> 是模型阅读问题和先前结果并发出子查询的环节。<code>Retrieval</code> 每个子查询触发一次。<code>FullDocumentExpansion</code> 出现在模型判定某个片段缺乏回答所需上下文、转而拉取整篇文档的时候。每个步骤都带有 <code>IN_PROGRESS</code>、<code>SUCCEEDED</code> 或 <code>FAILED</code> 状态，外加一段人类可读的消息。</p>
+<p>最终的文档块单独到达。<code>result</code> 是独立的事件类型，而不是第五个步骤，它承载所有迭代去重后的文档块，以及（在开启答案生成时）有依据的答案。要像上面的循环那样按事件 key 分支处理，而不是期待一个终态的 step 值。</p>
+<p>子查询文本是最值得记录的部分。它位于 <code>attributes.actions[].retrieve.inputQuery.text</code>，不在顶层 trace 字段里，所以只读 <code>step</code> 和 <code>status</code> 的处理逻辑只能告诉你发生过规划，却看不到规划决定了什么。</p>
+<p>下图展示了智能体式检索的规划循环，包括推测性检索、规划、子查询检索、评估以及可选的重新规划等步骤。</p>
+<p>图 2：智能体式检索规划循环中的步骤</p>
+<p>基于这套机制开发之前，有两个细节值得了解。去重只作用于 <code>result</code> 事件，因此一个被三个子查询检索到的文档块在最终结果里出现一次，但在 trace 中出现三次。</p>
+<p>第二个细节关于分数。Retrieve 响应会给每个文档块一个带类型的 <code>score</code> 字段，保存它与查询的相关性。智能体式检索的结果则携带 <code>content</code>、<code>metadata</code> 和 <code>sourceRetriever</code>，没有对应的带类型分数字段。切换 API 之后仍去读 <code>result[&quot;score&quot;]</code> 的代码将一无所获。如果你对相关性做排序或过滤，要为这一差异做好准备。</p>
+<p>在生产环境中，使用 Amazon Bedrock Guardrails 对生成的回答强制执行内容策略和事实性（grounding）检查。两条检索路径都支持护栏。智能体式检索通过 <code>policyConfiguration.bedrockGuardrailConfiguration</code> 支持护栏，而不是 LangChain 检索器所用的 <code>guardrail_config</code> 参数，并且只支持 <code>BLOCK</code> 模式。如果你依赖 <code>MASK</code> 模式，那就是留在 Retrieve API 的一个理由。</p>
+<p><code>maxAgentIteration</code> 接受 2 到 10，默认值为 5。保持默认即可。设为 2 或 3 时，规划器只运行一个循环、不发任何子查询，返回的内容就是推测性检索步骤已经找到的东西——相当于用智能体式的价钱获得一次性检索的行为。拆解从 4 开始生效。规划器常在判定证据充分时提前停止，所以上限是一个约束而不是目标。</p>
+<h2>对比两条检索路径</h2>
+<p>关于这一机制在规模化下的表现，AWS 在 MuSiQue（一个公开的多跳基准测试）上评估了智能体式检索。评估显示其召回率相对一次性检索有所提升，且在最难的问题上收益最大；单跳问题的提升不到 5 个百分点。最后这个数字正好勾勒出权衡的形状：有东西可拆的时候，拆解才有用。</p>
+<h2>构建 RAG 链</h2>
+<p>对标准检索器，惯常的 <a href="https://python.langchain.com/docs/concepts/lcel/">LangChain Expression Language (LCEL)</a> 组合方式可以直接使用：</p>
+<pre><code>from langchain_aws import ChatBedrockConverse
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+
+def format_docs(docs):
+    return &quot;\n\n&quot;.join(doc.page_content for doc in docs)
+
+llm = ChatBedrockConverse(model=MODEL_ID, region_name=REGION)
+prompt = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
+
+chain = (
+    {&quot;context&quot;: retriever | format_docs, &quot;question&quot;: RunnablePassthrough()}
+    | prompt
+    | llm
+    | StrOutputParser()
+)</code></pre>
+<p><code>format_docs</code> 比看上去更重要。把 <code>Document</code> 对象直接塞进提示词会渲染出它们的 <code>repr</code>，模型拿到的上下文里就混进了元数据噪声。</p>
+<p>要把智能体式检索放到同样的位置，把它包进 <code>RunnableLambda</code>，因为它是一个函数而不是检索器：</p>
+<pre><code>from langchain_core.runnables import RunnableLambda
+
+def agentic_context(question: str) -&gt; str:
+    result = agentic_retrieve(
+        knowledge_base_id=KB_ID,
+        query=question,
+        region_name=REGION,
+        number_of_results=10,
+    )
+    return &quot;\n\n&quot;.join(
+        item.get(&quot;content&quot;, {}).get(&quot;text&quot;, &quot;&quot;)
+        for item in result.get(&quot;results&quot;, [])
+    )
+
+agentic_chain = (
+    {&quot;context&quot;: RunnableLambda(agentic_context), &quot;question&quot;: RunnablePassthrough()}
+    | prompt
+    | llm
+    | StrOutputParser()
+)</code></pre>
+<p>注意这里 <code>generate_response</code> 是关闭的。服务可以自己生成答案，但在链里你通常想用自己的提示词和模型，所以取回文档块、在下游自己生成。想少写代码、一次调用搞定，就用服务端的生成能力；提示词需要自己掌控，就用包装后的写法。</p>
+<h2>在标准检索与智能体式检索之间选择</h2>
+<p>对简短、范围明确的问题使用 Retrieve。它更便宜、更快，可以在自管理知识库上工作，并且结果里带分数。大多数生产流量都是这种形态。</p>
+<p>当问题多部分、带对比或探索性质，或者证据横跨多个知识库时，使用 AgenticRetrieveStream。它能在单个请求中注册最多五个知识库，并用你为每个知识库附加的自然语言描述来路由子查询。另一个 API 完全做不到这一点。它的单次调用成本更高，会发起多次模型调用，延迟也是两者中较高的。</p>
+<p>我们推荐的模式是按查询形态做路由，而不是一刀切地只用一种。一个分类器或对问题的启发式规则，就能把大部分流量送到便宜的路径上，把规划循环留给真正需要它的问题。</p>
+<h2>清理资源</h2>
+<p>删除知识库、它的数据源、S3 对象和桶，以及你创建的 IAM 角色。存有文档的知识库会持续产生存储费用。</p>
+<pre><code>bedrock_agent.delete_data_source(knowledgeBaseId=KB_ID, dataSourceId=DS_ID)
+bedrock_agent.delete_knowledge_base(knowledgeBaseId=KB_ID)</code></pre>
+<p><a href="https://github.com/aws-samples/sample-rag-bedrock-langchain-blog">仓库</a>中包含一个清理脚本，还会清空桶并删除角色。</p>
+<h2>结论</h2>
+<p>我们展示了如何用 LangChain 在 Amazon Bedrock Knowledge Bases 上构建 RAG 应用，以及智能体式检索如何处理一次性检索回答得不好的多部分问题。我们也展示了当前集成中的摩擦点：智能体式检索是一个函数而不是 LangChain 检索器，所以要放进链里需要包一层 <code>RunnableLambda</code>；要查看展示查询计划的 trace 事件，需要直接调用 <code>boto3</code>。</p>
+<p>智能体式检索用更高的单次调用成本换取多跳问题上更好的召回，并内置模型完成查询规划。下一个有用的步骤，是在把所有流量都导向规划器之前，先测量你自己的查询组合。</p>
+<p>要开始上手，请参阅 Amazon Bedrock Knowledge Bases <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-build-managed.html">文档</a>及配套示例代码。如需针对你的工作负载落地这套方案，请联系你的 AWS 客户团队。</p>]]></content:encoded>
     </item>
     <item>
       <title>Downgrading user roles in Amazon Quick</title>
       <link>https://aws.amazon.com/blogs/machine-learning/downgrading-user-roles-in-amazon-quick/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/downgrading-user-roles-in-amazon-quick/</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>在 Amazon Quick 中下调用户角色</h1>
+<p>高效地管理访问权限，是在 Amazon Quick 中维持安全且协作顺畅的环境的重要一环。Quick 支持灵活多样的用户管理选项，以适应不同的身份类型和组织需求。你可以通过 Quick Identity 原生地开通用户，也可以通过 AWS IAM Identity Center 或 Active Directory 这类企业身份提供方来管理用户。这些系统允许按职能和安全要求分配并分组 Admin、Author、Reader 等用户角色。当团队成员加入、转岗或离开组织时，管理员必须确保过渡平滑，既不干扰业务工作流，也不留下安全缺口。</p>
+<p>定期的访问审查对维护 Quick 环境的安全很重要。计划每月或每季度审计一次用户角色，确认每个人都拥有恰当的权限。当团队成员的职责发生变化时，主动把他们 dashboard 和分析资源的所有权转移出去，避免出现无主资源。这一做法是 <a href="https://aws.amazon.com/architecture/well-architected/">AWS Well-Architected Framework</a> 推荐的做法，有助于为业务关键的可视化保持连续性。</p>
+<p>在这篇文章中，我们聚焦一项具体但重要的用户生命周期任务：下调用户角色。</p>
+<h2>为什么要下调？</h2>
+<p>最小权限原则在 Quick 管理中尤为适用。用户只应拥有其具体职能所需的访问权限。下调用户角色是落实最小权限的关键一环。当一个用户的职责不再需要创作或管理能力时，就应相应地降低其角色，以缩小安全暴露面。</p>
+<p>Quick 的定价也是按角色划分的：Author 和 Admin 按每用户固定月费计费，而 Reader 采用按会话计费。对于把只消费 dashboard 的用户开通成 Author 的组织，把这些用户调整为 Reader 角色可以显著降低成本。当前定价详情参见 <a href="https://aws.amazon.com/quicksight/pricing/">Amazon Quick 定价页</a>。</p>
+<p>如果需要在 Amazon Quick 内置角色之外做更细粒度的控制，可以考虑用 <a href="https://docs.aws.amazon.com/quicksight/latest/user/custom-permissions-profiles.html">Custom Permissions</a> 来补充角色分配，它在某个角色层级内限制特定能力。Amazon Quick 与 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 的集成提供了额外的权限边界，与基础角色体系互为补充。</p>
+<h2>本文的范围</h2>
+<p>虽然具体步骤取决于用户身份类型，但本文主要面向 Amazon Quick Identity 用户（也称为 Quick 托管用户）。通过 IAM Identity Center 或 Active Directory 认证的用户，其角色变更通常由外部身份提供方的组映射来管理。如果你的环境使用 IAM Identity Center，下调角色只要把用户从一个 IdC 组移到另一个组（例如从 Quick-Admins 组移到 Quick-Readers 组），不需要逐级下降的序列。</p>
+<p>尽管 Amazon Quick 控制台并没有为所有角色转换提供直接的下调路径（具体来说，你无法通过控制台界面直接从 Admin 降到 Reader，或从 Author 降到 Reader），但存在两种可靠的解决方案：一种是手工删除并重建的方法，另一种是使用 AWS Command Line Interface（AWS CLI）的方法。我们会逐一介绍这两种技术，帮助你在团队演变过程中维持恰当的访问管理。</p>
+<h2>前提条件</h2>
+<p>开始之前，请确认你有一个活跃的 AWS 账户，并且对 Amazon Quick 具有管理员访问权限。如果你打算使用 CLI 方法，需要在你的机器上<a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">安装并配置 AWS CLI</a>。另外，先准备一份需要变更角色的用户清单会更有帮助。</p>
+<h2>了解 Amazon Quick 的角色</h2>
+<p>Amazon Quick 提供两个订阅层级，各自有不同的一套角色：</p>
+<table><thead><tr><th><strong>订阅</strong></th><th><strong>角色</strong></th><th><strong>能力</strong></th></tr></thead><tbody><tr><td><strong>Amazon Quick Enterprise</strong></td><td>Admin Pro、Author Pro、Reader Pro</td><td>完整 BI + AI 功能（agents、topics、Q&amp;A、stories、生成式摘要）</td></tr><tr><td><strong>Amazon Quick Sight</strong>（仅 BI）</td><td>Admin、Author、Reader</td><td>传统 BI 创作与消费</td></tr></tbody></table>
+<p>控制台不提供从任何 Author 层级下调到任何 Reader 层级的直接方式。<code>update-user</code> API 也强制同样的约束，会拒绝直接下调并返回 “You cannot downgrade a user role” 错误。</p>
+<p>下面的截图展示了 Amazon Quick Suite 的用户管理页面，控制台中没有提供把用户从 Author 层级降到 Reader 层级的直接操作。这也说明了为什么需要本文介绍的几种方法。</p>
+<p>图 1：Amazon Quick Suite 用户管理页面</p>
+<p>CLI 逐级下降的方法对<strong>传统的仅 BI 角色</strong>（Admin、Author、Reader）稳定有效，遵循如下序列：</p>
+<p>Admin &gt; Author &gt; Restricted Reader &gt; Reader</p>
+<p>同样的序列对 Pro 用户也适用，只要中间步骤使用传统角色。例如，Author Pro &gt; Author &gt; Restricted Reader &gt; Reader Pro 可以成功完成。</p>
+<h2>变更前的重要注意事项</h2>
+<p>无论用哪种方式实施角色变更，都有几个重要因素需要记住。首先，在做出变更前，确认清单中的所有用户当前都是 Admin 或 Author 用户。尝试下调权限本就更低的用户可能导致错误。即使使用 CLI 方法，资源所有权的问题依然适用。被下调的用户将无法再编辑他们此前拥有的资源。对于使用 CLI 方法的较大组织，考虑从 CSV 文件读取用户邮箱地址，而不是硬编码。如果你使用 <a href="https://aws.amazon.com/cloudshell/">AWS CloudShell</a> 而不是本地 CLI 安装，可以省略 AWS Region 的指定，因为 AWS CloudShell 会自动使用你当前控制台的 Region 上下文。</p>
+<h2>转移资产所有权（先做这一步）</h2>
+<p>在删除用户之前，必须确保他们拥有的资产（例如 dashboard、数据集和分析）已被妥善重新指派。这能防止中断，避免留下无主资源。如果该用户是 Author，请核实其是否拥有数据集或 dashboard，并按照此处所述的资产重新指派步骤操作。在 Amazon Quick 中处理资产所有权转移主要有三种方式。</p>
+<h3>选项 1：主动把所有权转移给另一位管理员</h3>
+<p>控制力最强的做法是在删除用户之前手动重新指派所有权。为此，进入 Quick 中的每一项资产，选择 <strong>Share</strong>，并把另一位管理员指为共同所有者。用这种方式，你可以精确决定由谁接手每一项资源，对于影响面大的 dashboard 或数据集尤其有用。虽然在大型环境中这会比较耗时，但它让你能按照团队的结构与职责灵活地分配资产。</p>
+<p>下面的截图展示了某项资产的 <strong>Share</strong> 对话框，在其中你把另一位管理员添加为共同所有者，从而在原用户被移除之前完成所有权转移。</p>
+<p>图 2：把资产所有权转移给另一位用户</p>
+<h3>选项 2：使用 Admin 页面上的 Amazon Quick 批量资产转移</h3>
+<p>如果该用户拥有大量资产，手动方式就会效率低下。这时你可以使用 Quick 管理（Admin）区域中的 <strong>Manage assets</strong> 功能。通过该工具，管理员可以批量转移所有权，或一次更新多项资产的共享权限。它极大地简化了重新指派流程，尤其是在用户离职或组织调整时。关于如何使用该功能的更多细节，参见官方文档 <a href="https://docs.aws.amazon.com/quicksight/latest/user/manage-qs-assets.html">Managing assets in Amazon Quick</a>。</p>
+<h3>选项 3：把资产共享给一个 Quick 用户组</h3>
+<p>另一种有效策略是把资产共享给用户组。对于 Quick Identity 用户，你可以创建一个 Quick 组，把相关团队成员加入，然后把 dashboard 或数据集共享给该组而不是单个用户。如果你的账户与 IAM Identity Center 或 Active Directory 集成，等价的组会在这些系统中创建和管理，Quick 会使用那些外部组来做访问控制，而不是 Quick 托管的组。这样，即使某个具体用户被删除，对共享资源的访问依然保持不变。这是一种有韧性的做法，减少了将来重新指派所有权的需要，也有助于在动态变化的团队中保持一致的访问。</p>
+<h2>手动方法：删除并重建用户</h2>
+<p>虽然手动删除并重建不是最高效的做法，但它是在无法使用 CLI 的环境中的一个选择。这种方法要完全移除该 admin 用户，然后以 reader 权限重建。把 Author 下调为 Reader 时同样适用这种手动方法，只不过通常不像资产所有权那么麻烦。</p>
+<p>因为这种方法要求先删除用户账户再以较低角色重建，所以充分的准备至关重要，以避免丢失有价值的资源、打断工作流。在继续之前，请确认你已完成上一节所述的资产所有权转移。</p>
+<h3>步骤 1：删除 admin 用户</h3>
+<p>转移完所有资源的归属后，登录 AWS Management Console 并进入 Amazon Quick 服务。在那里选择你的头像图标，然后依次选择 <strong>Manage Quick</strong> 和 <strong>Manage users</strong>。找到你要下调的 admin 用户后，点击其名字旁的删除图标，并在提示时确认删除。这会彻底移除他们当前对系统的访问。</p>
+<p>如果你此前没有转移全部资源，Quick 会弹出一个所有权转移对话框，提示你选择另一位管理员来接收该用户所有资源的所有权。从列表中选择合适的管理员，然后选择 <strong>Delete and transfer</strong> 确认转移。这个内置的转移机制有助于避免产生无主资源，但它会把所有内容转移给单一管理员。若要更细粒度的控制，请使用前面提到的主动方式，把资源有策略地分配给不同团队成员。</p>
+<p>如果你跳过了主动转移，下图所示的删除对话框允许你在账户被移除之前，把该用户的全部资源重新指派给某一位管理员。</p>
+<p>图 3：删除用户时内置的资源转移</p>
+<h3>步骤 2：以 Reader 角色重建用户</h3>
+<p>成功删除用户后，留在 Users 页面并选择 <strong>Invite users</strong>。输入该用户的邮箱地址，并从可选角色中选择 <strong>Reader</strong>。发出邀请，让用户以新的、更受限的权限重新加入 Quick。</p>
+<h3>步骤 3：验证角色变更</h3>
+<p>用户接受邀请之后：</p>
+<ul><li>确认其权限已更新为 <strong>Reader</strong>。</li><li>验证他们只能查看 dashboard 和报表。</li><li>确认他们无法修改或创建内容。</li></ul>
+<h2>CLI 方法：逐级下降的角色转换（推荐）</h2>
+<p>如果你更倾向使用 AWS CLI 或 AWS CloudShell，可以用编程方式改变用户的角色。由于 Quick 要求角色变更必须按特定顺序进行，你无法从任何 Admin 直接转换到任何 Reader。你必须逐级经过中间角色。</p>
+<h3>重要说明</h3>
+<ul><li>把 <code>&lt;your-account-id&gt;</code> 替换为你的 AWS 账户 ID。</li><li>把 <code>&lt;user-name&gt;</code> 替换为该用户的用户名。</li><li>把 <code>&lt;user-email&gt;</code> 替换为该用户的邮箱地址。</li><li>如果你在 CloudShell 之外使用 AWS CLI，请指定 <code>--region</code> 参数。</li><li><code>--role</code> 的取值必须与 API 角色名完全一致（见前表）。</li></ul>
+<h3>示例：传统路径（Admin 到 Reader）</h3>
+<p><strong>步骤 1：</strong> 把角色从 Admin 改为 Author：</p>
+<pre><code>aws quicksight update-user \
+  --aws-account-id &lt;your-account-id&gt; \
+  --user-name &lt;user-name&gt; \
+  --namespace default \
+  --email &lt;user-email&gt; \
+  --role AUTHOR</code></pre>
+<p><strong>步骤 2：</strong> 把角色从 Author 更新为 Restricted Reader：</p>
+<pre><code>aws quicksight update-user \
+  --aws-account-id &lt;your-account-id&gt; \
+  --user-name &lt;user-name&gt; \
+  --namespace default \
+  --email &lt;user-email&gt; \
+  --role RESTRICTED_READER</code></pre>
+<p><strong>步骤 3：</strong> 把角色从 Restricted Reader 改为 Reader：</p>
+<pre><code>aws quicksight update-user \
+  --aws-account-id &lt;your-account-id&gt; \
+  --user-name &lt;user-name&gt; \
+  --namespace default \
+  --email &lt;user-email&gt; \
+  --role READER</code></pre>
+<h2>下调之后：复查 Limit Profiles 和 Custom Permissions</h2>
+<p>角色变更不会自动调整 Limit Profiles 或 Custom Permissions 配置。两者都独立于用户角色而存在，你在任何一次下调之后都应当复查。</p>
+<ul><li><strong>Limit Profiles</strong> 控制每个用户在索引存储、agent 小时数等资源上的上限。如果被下调的用户此前被分配了适配其 Admin 或 Author 角色的配置，请重新指派一个适合 Reader 的 limit profile，以免过度分配资源。细节参见 <a href="https://docs.aws.amazon.com/quicksight/latest/user/limit-profiles.html">Limit Profiles 文档</a>。</li><li><strong>Custom Permissions</strong> 在某个角色层级内限制特定能力。一个分配给 Author 的配置在 Reader 上可能不会按预期生效。要么在最后一步 CLI 操作中取消应用（使用 <code>--unapply-custom-permissions</code>），要么分配一个为 Reader 层级设计的配置。</li></ul>
+<h2>批量更新多个用户的脚本</h2>
+<p>使用下面的脚本来更新多个用户。</p>
+<pre><code>#!/bin/bash
+
+# Define AWS account details
+AWS_ACCOUNT_ID=&quot;&lt;your-account-id&gt;&quot;
+REGION=&quot;&lt;your-region&gt;&quot;
+
+# Load users from file (format: username,email per line)
+# Lines starting with # are treated as comments
+INPUT_FILE=&quot;users_to_downgrade.txt&quot;
+
+while IFS=',' read -r username email; do
+  # Skip comments and empty lines
+  [[ &quot;$username&quot; =~ ^#.*$ || -z &quot;$username&quot; ]] &amp;&amp; continue
+
+  echo &quot;Processing user: $username&quot;
+
+  # Role transition stages
+  for ROLE in AUTHOR RESTRICTED_READER READER; do
+    RESULT=$(aws quicksight update-user \
+      --aws-account-id &quot;$AWS_ACCOUNT_ID&quot; \
+      --user-name &quot;$username&quot; \
+      --namespace default \
+      --email &quot;$email&quot; \
+      --role &quot;$ROLE&quot; \
+      --region &quot;$REGION&quot; 2&gt;&amp;1)
+
+    if [ $? -ne 0 ]; then
+      echo &quot; ERROR at $ROLE: $RESULT&quot;
+      break
+    fi
+
+    echo &quot; Transitioned to $ROLE&quot;
+    sleep 3
+  done
+
+  echo &quot;Role update completed for $username.&quot;
+done &lt; &quot;$INPUT_FILE&quot;
+
+echo &quot;All user role updates processed!&quot;</code></pre>
+<h3>脚本功能</h3>
+<p>该脚本完成以下事情：</p>
+<ul><li>从外部文件读取用户名和邮箱地址（支持以 # 开头的注释）。</li><li>分三个阶段更新角色：Admin &gt; Author &gt; Restricted Reader &gt; Reader。</li><li>错误处理：某一步失败就停止该用户的后续转换。</li><li>sleep 命令为变更生效留出时间。</li></ul>
+<p>运行脚本时有几点需要注意：</p>
+<ul><li>运行前确认用户当前是 Admin 或 Author 用户。</li><li>使用真实的 Quick 用户名，在联合身份（federated）环境中它可能与邮箱前缀不同。</li><li>在 AWS CloudShell 中无需指定 Region。</li><li>你可以修改脚本，从 <code>list-users</code> 导出的 CSV 文件加载用户。</li></ul>
+<h2>用户访问管理的最佳实践</h2>
+<p>为了让你的 Quick 环境保持安全且井井有条，请遵循以下最佳实践：</p>
+<ul><li>定期审查用户角色（每月或每季度审计）。</li><li>在变更角色之前转移资源所有权。</li><li>遵循最小权限原则。</li><li>使用 Custom Permissions 配置在角色层级内做细粒度控制。</li><li>为增强韧性，把资源共享给组而不是个人。</li><li>使用 AWS Identity and Access Management 提供额外的权限边界。</li></ul>
+<h2>清理</h2>
+<p>完成用户角色变更后：</p>
+<ul><li>移除所有测试用户。</li><li>确认没有遗留意料之外的资源。</li><li>删除临时 CLI 脚本或用户清单文件。</li><li>再次核对最终的用户权限。</li></ul>
+<h2>结语</h2>
+<p>在这篇文章中，我们探讨了两种在 Amazon Quick 中下调用户角色的方法：手动删除并重建，以及灵活的 AWS CLI 方式。这些策略能帮助你高效且安全地管理团队访问权限。</p>
+<p>对于使用 IAM Identity Center 的环境，角色变更通过 IdC 组重新指派来管理，不需要本文所述的逐级下降序列。若要更多治理控制，可以了解用于功能级限制的 <a href="https://docs.aws.amazon.com/quicksight/latest/user/custom-permissions-profiles.html">Custom Permissions</a> 和用于内容级隔离的 <a href="https://docs.aws.amazon.com/quicksight/latest/user/restricted-folders.html">Restricted Folders</a>。</p>
+<h2>资源</h2>
+<ul><li><a href="https://docs.aws.amazon.com/quicksight/latest/user/managing-user-access-qs-iam.html">Managing User Access in Amazon Quick</a></li><li><a href="https://docs.aws.amazon.com/quicksight/latest/user/manage-qs-assets.html">Managing Assets in Amazon Quick</a></li><li><a href="https://docs.aws.amazon.com/quicksight/latest/user/custom-permissions-profiles.html">Custom Permissions Profiles</a></li><li><a href="https://aws.amazon.com/iam/resources/best-practices/">AWS IAM Best Practices</a></li><li><a href="https://aws.amazon.com/blogs/business-intelligence/">AWS Business Intelligence Blog</a></li></ul>
+<p>我们很想听听你在用户管理上的经验。你的组织在 Quick Suite 中如何处理角色转换？你是否编写了自定义脚本或流程来简化这些变更？欢迎在评论区分享你的想法与挑战。</p>]]></content:encoded>
     </item>
     <item>
       <title>Evaluating multi-agent systems for explainability and helpfu…</title>
@@ -54,6 +716,125 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/evaluating-multi-agent-systems-for-explainability-and-helpfulness-with-amazon-bedrock-agentcore/</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
       <description>完整标题：Evaluating multi-agent systems for explainability and helpfulness with Amazon Bedrock AgentCore</description>
+      <content:encoded><![CDATA[<p>随着多智能体系统从实验阶段走向生产环境，一个关键挑战随之浮现：如何确保这些系统在真实场景中始终有用、准确且可解释。企业正越来越多地采用多智能体系统来解决复杂的现实问题，这类问题需要跨数据源、工具和业务约束进行推理。从供应链规划到财务分析和客户运营，这些系统已超越了简单的问答。它们协调多个专职智能体（specialized agent）来做决策、执行工作流，并生成可落地的建议。</p>
+<p>虽然大语言模型能生成流畅的回答，但企业应用需要更深层的保障：智能体必须可靠地遵循指令、选对工具、尊重约束，并为其输出提供清晰的推理过程。</p>
+<p><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html">Amazon Bedrock AgentCore</a> 是一个平台，支持以任意框架或模型大规模地构建、连接和优化智能体。<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">Amazon Bedrock AgentCore Evaluations</a> 是 Amazon Bedrock AgentCore 的一项能力，正是为应对这一挑战而设计：它是一项完全托管的能力，用于在开发和生产环境中评估智能体表现，让团队能够跨多个质量维度衡量准确性、任务成功率和行为表现。仅关注模型回答质量的传统评估方法对智能体式（agentic）系统而言是不够的，因为这类系统的正确性取决于工具选择、工作流执行以及对业务约束的遵守。除了评估，智能体式系统的生产部署还需要负责任 AI 的控制措施。<a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 提供可配置的防护手段，例如内容过滤、禁用主题检测和基于事实的校验（grounding validation），与评估框架形成互补：评估在执行之后衡量智能体质量，而 Guardrails 在执行期间强制落实安全约束。在这篇文章中，我们聚焦于如何把这一评估框架落地运转起来——Amazon Bedrock AgentCore Evaluations 同时支持内置评估器（built-in evaluator）和自定义评估器（custom evaluator）。内置评估器为常见质量维度（如有用性、任务成功、指令遵循）提供预定义评估，让团队无需额外配置就能快速建立智能体性能基线。然而企业用例需要更深入的、领域特定的验证，自定义评估器正好补上这一点，让你可以定义业务感知的检查项。</p>
+<p>我们还特别把可解释性（explainability）作为一等公民的评估维度来讨论。我们演示内置评估器如何评估回答的一般清晰度；也展示如何借助自定义评估器来验证智能体是否明确阐述决策依据、引用支撑数据或工具输出，并解释成本与服务质量之间的取舍。通过组合这些评估器，我们说明 AgentCore Evaluations 如何超越表层的回答质量，针对智能体如何以及为何得出其决策，给出结构化、可度量的洞察。</p>
+<p>为了让这些概念更具体，下面的章节将通过一个参考架构和实现，演示这些组件在实践中如何协同工作。</p>
+<h2>方案概览</h2>
+<p>在这篇文章中，我们使用一家虚构的全球零售公司 AnyCompany Retail——一家跨国零售商，运营电商渠道、区域履约中心、配送中心以及数千家实体店。AnyCompany 频繁遭遇库存失衡：有些区域在大促期间缺货，另一些区域却积压过剩库存。运输团队还必须兼顾交付速度、运力与成本。公司希望有一个智能体式助手，帮助计划员优化库存分配、推荐调拨调整、分析库存健康度，并模拟干线运输或履约场景。</p>
+<p>你将使用 <a href="https://strandsagents.com/">Strands Agents SDK</a>、<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-mcp.html">Amazon Bedrock AgentCore MCP Server</a> 和 Amazon Bedrock AgentCore Evaluations，构建并评估一个多智能体供应链决策系统。该方案基于 Strands Agents，采用一个编排智能体（orchestrator agent）加四个专职子智能体：优化智能体、调拨智能体、路由智能体和分析智能体。每个智能体都运行在 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore runtime</a> 上，并启用了 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/memory.html">Amazon Bedrock AgentCore memory</a> 和 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html">Amazon Bedrock AgentCore Observability</a>。</p>
+<p>编排智能体接收计划员的请求，并把工作分派给以工具形式暴露的专职智能体。优化智能体调用由模拟 <a href="https://aws.amazon.com/api-gateway/">Amazon API Gateway</a> REST 接口支撑的 MCP 工具，返回优化决策。调拨智能体调用推荐 API，建议在履约中心、门店和数字渠道之间重新平衡库存。路由智能体调用物流 API，推荐承运商与线路方案；分析智能体回答供应链诊断类问题。该方案使用 Amazon Bedrock 上的基础模型驱动智能体循环。各区域可用的模型参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock 中按 AWS Region 支持的模型</a>。</p>
+<p>该方案使用内置评估器来评估有用性、任务完成度等一般质量维度，同时提供自定义评估器来评估供应链特有的行为，例如约束满足、路线可行性、SQL 正确性、库存数据落地（grounding）与解释质量。这样，AnyCompany 既能评估回答的语言质量，也能评估智能体决策的业务有效性。</p>
+<p>该方案通过 Amazon Bedrock AgentCore Evaluations 同时支持按需（on-demand）和在线（online）两种模式。按需模式适用于开发基准测试、回归测试以及持续集成与持续交付（CI/CD）门禁；在线模式用于持续的生产监控与告警。两种模式都能帮助你闭环，并根据用户反馈采取行动。用于按需评估的同一批自定义评估器（例如你供应链方案中的约束满足、路线可行性、SQL 正确性和可解释性评估器）可以通过一个 OnlineEvaluationConfig 对象改造复用：该对象引用这些评估器的 Amazon Resource Name（ARN），指定采样率（例如生产 trace 的 1–10%），并可加上可选的会话过滤器。随后服务会自动从 AgentCore Observability 读取 trace、进行评分，并把结果流送到 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 仪表盘和告警。在这篇文章中，你将使用按需模式来测试该方案。</p>
+<p>下面的架构图展示了我们方案的各个组件。</p>
+<p>图 1：多智能体供应链决策方案的架构</p>
+<h2>评估框架</h2>
+<p>在这篇文章中，你将采用一种面向多智能体系统的三层评估方法，循序渐进地建立企业级信任。该方法遵循清晰的递进路线：先以内置评估器覆盖一般质量，再加入自定义评估器保障业务准确性，最后叠加可解释性评估器实现信任与可审计性。</p>
+<p>第一层使用无需任何配置的内置评估器。我们以有用性（Helpfulness）作为普适基线，再针对每个智能体的主要失效模式选配第二个智能体专属评估器：编排智能体用工具选择准确性（Tool Selection Accuracy），优化与调拨智能体用回答相关性（Response Relevance），路由智能体用指令遵循（Instruction Following），分析智能体用忠实度（Faithfulness）。</p>
+<p>第二层加入编码了领域特定业务规则的自定义评估器：优化用约束满足、调拨用数据落地（grounding）、路由用路线可行性、分析用 SQL 正确性、编排用计划连贯性。这些评估器验证的是业务有效性：建议是否遵守了预算上限、是否使用了真实库存数据、产出是否在运营上正确。</p>
+<p>下表梳理了你要为每个智能体实现的两个内置评估器和一个自定义评估器的选择。第二个内置评估器针对各智能体的主要失效模式，而自定义评估器编码领域特定的业务规则，用于验证运营上的正确性。</p>
+<table><thead><tr><th><strong>智能体</strong></th><th><strong>内置评估器</strong></th><th><strong>自定义评估器</strong></th></tr></thead><tbody><tr><td>编排智能体</td><td>Helpfulness；Tool Selection Accuracy</td><td>计划连贯性评估器：它是否把子智能体的输出组合成了一份有效、不自相矛盾的建议？工具轨迹（tool trajectory）评估器：它是否路由到了正确的子智能体？</td></tr><tr><td>优化智能体</td><td>Helpfulness；Response Relevance</td><td>约束满足评估器：预算、库存覆盖（demand ≤ qty ≤ 2× demand）和仓库容量约束。关键绩效指标（KPI）达成评估器：是否达到满足率/收入提升目标。</td></tr><tr><td>调拨智能体</td><td>Helpfulness；Response Relevance</td><td>建议落地性（groundedness）评估器：建议是否基于当前库存/需求数据。风险影响评估器：建议是否改善了缺货/积压风险。</td></tr><tr><td>路由智能体</td><td>Helpfulness；Instruction Following</td><td>路线可行性评估器：路线是否满足交付窗口、成本、承运商运力和区域约束。服务等级协议（SLA）评估器：预计交付是否达到目标服务水平。</td></tr><tr><td>分析智能体</td><td>Helpfulness；Faithfulness</td><td>SQL 正确性评估器：查询是否匹配用户意图。数据落地评估器：回答是否有 Amazon Relational Database Service（Amazon RDS）查询结果支撑。无未经支撑论断的评估器。</td></tr></tbody></table>
+<h2>可解释性</h2>
+<p>我们评估方法的第三层把可解释性评估器作为独立的、横切各智能体的检查项。这些评估器独立判断：智能体是否阐述了决策依据、是否引用了来自工具输出的支撑证据、是否解释了哪些约束塑造了最终回答、是否说清了相互冲突目标之间的取舍、是否阐明了为何调用特定的子智能体，以及在数据不完整时是否披露了假设。把可解释性拆成独立的评估层，我们就能单独度量透明度。一条建议可能准确却无法解释（通过自定义评估器但在可解释性上失分），这给团队提供了可操作的信号：智能体需要改进的是推理表达，而非决策逻辑本身。</p>
+<p>下表定义了你要在此实现的六个独立可解释性评估器，它们作为横切层应用于各智能体。这些评估器判断智能体是否阐述推理、引用证据、解释约束与取舍、披露假设。它们与准确性分开度量，以便团队区分&quot;正确但无法解释&quot;与&quot;解释得好但答错了&quot;两类回答。</p>
+<table><thead><tr><th><strong>评估器</strong></th><th><strong>适用智能体</strong></th><th><strong>检查内容</strong></th></tr></thead><tbody><tr><td>决策依据质量</td><td>全部</td><td>智能体是否解释了它为什么给出这条建议？</td></tr><tr><td>证据归因</td><td>分析、调拨、路由</td><td>它是否引用了所用的数据字段、API 响应或 SQL 结果？</td></tr><tr><td>约束推理</td><td>优化、路由</td><td>它是否解释了哪些约束塑造了最终回答？</td></tr><tr><td>取舍解释</td><td>优化、调拨、路由</td><td>它是否解释了成本、服务水平与库存风险之间的取舍？</td></tr><tr><td>工具使用可解释性</td><td>编排</td><td>它是否解释了为何调用每个子智能体或 MCP 工具？</td></tr><tr><td>假设披露</td><td>全部智能体</td><td>它在数据不完整时是否明确陈述了假设？</td></tr></tbody></table>
+<h2>前置条件</h2>
+<p>在部署该方案之前，用以下工具搭好你的开发环境。</p>
+<ul><li>安装 <a href="https://aws.amazon.com/cli">AWS Command Line Interface (AWS CLI)</a></li><li>安装 <a href="https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html">AWS Serverless Application Model (AWS SAM) CLI v1.100.0+</a></li><li>安装 <a href="https://docs.docker.com/engine/install/">Docker v20.x+</a></li><li>安装 <a href="https://nodejs.org/">Node.js v18.x+</a></li><li>安装 <a href="https://www.python.org/downloads/">Python v3.11+</a></li></ul>
+<h2>依赖</h2>
+<p>Strands Agents 的实现还需要以下依赖，已打包在 DockerFile 中：</p>
+<ul><li>strands-agents # Strands Agents 多智能体框架</li><li>strands-agents-tools # Strands 智能体工具与实用函数</li><li>requests # 用于 API 调用的 HTTP 库</li><li>bedrock-agentcore # Amazon Bedrock 智能体核心功能</li><li>boto3 # AWS SDK for Python（Boto3）</li></ul>
+<h2>部署并运行方案</h2>
+<p>该方案可从我们的 <a href="https://github.com/aws-samples/sample-agentic-genai-agentcore/tree/main/aws-genai-evaluations-supply-chain">GitHub 仓库</a>下载，提供单步部署，在你的 AWS 环境中部署并访问该方案：</p>
+<pre><code># Edit terraform.tfvars: set vpc_id and runtime_subnet_azs
+cd terraform
+cp terraform.tfvars.example terraform.tfvars
+terraform init
+terraform apply</code></pre>
+<p>输出中包含运行时 ARN、AnyCompany Retail API URL、评估器 API URL 以及 memory ARN。</p>
+<h2>运行方案</h2>
+<p>按以下步骤运行该方案：</p>
+<p>test_client/ 目录中有一个 Python 脚本，用 20 个示例查询（每个子智能体 5 个）调用已部署的供应链智能体，以验证端到端功能。每个类别以多轮会话的形式运行，脚本结束时打印会话 ID，供评估器 API 使用。</p>
+<pre><code>cd test_client
+pip install -r requirements.txt
+cd terraform
+terraform output supply_chain_arn</code></pre>
+<p><strong>运行全部查询（共 20 个，4 个会话）</strong></p>
+<pre><code>cd test_client
+python test_agent.py --runtime-arn &quot;&lt;supply_chain_arn&gt;&quot; --region &lt;your_region&gt;</code></pre>
+<h3>运行特定子智能体类别</h3>
+<pre><code>#Only optimization queries (1 session, 5 turns)
+python test_agent.py --runtime-arn &quot;&lt;supply_chain_arn&gt;&quot; --category optimization
+#Only routing and analytics (2 sessions, 5 turns each)
+python test_agent.py --runtime-arn &quot;&lt;supply_chain_arn&gt;&quot; --category routing analytics</code></pre>
+<p>测试客户端会打印每条查询及智能体的完整响应，并在结束时打印供评估器使用的会话 ID。</p>
+<p><strong>创建并运行评估</strong></p>
+<p>test_evaluators/ 目录中的脚本用于针对智能体会话运行评估。这些评估异步执行，结果会以 markdown 文件形式保存到 S3。</p>
+<p>你必须先按前文所述调用供应链决策多智能体方案，生成带有 trace 的智能体会话，并记下测试客户端运行结束时打印的会话 ID。运行完方案后还要再等 3-5 分钟，让 trace 传播到 CloudWatch。</p>
+<pre><code>cd test_evaluators
+pip install -r requirements.txt
+cd terraform
+terraform output evaluators_api_url</code></pre>
+<p><strong>创建自定义评估器</strong></p>
+<pre><code>python test_evaluator.py --api-url &quot;https://&lt;evaluators-api-url&gt;&quot; create</code></pre>
+<p>这会注册自定义评估器并打印它们的 ID。保存好这些 ID，供 run 命令使用。</p>
+<p><strong>运行评估</strong></p>
+<p>传入以逗号分隔的评估器 ID 列表（自定义或内置），至少需要 1 个：</p>
+<pre><code># Run custom + built-in evaluators
+python test_evaluator.py --api-url &quot;https://&lt;evaluators-api-url&gt;&quot; run \
+--agent-id &quot;supply_chain_orchestrator_agent-&lt;id&gt;&quot; \
+--session-id &quot;&lt;session-id-from-test-client&gt;&quot; \
+--evaluators &quot; sc_optimization_constraint-&lt;id&gt;,sc_distribution_groundedness-&lt;id&gt;,Builtin.Correctness,Builtin.GoalSuccessRate&quot;</code></pre>
+<p>API 会立即返回 202。结果异步保存到 S3：</p>
+<pre><code>s3://&lt;amzn-s3-demo-agent-source-bucket&gt;/evaluations/&lt;session-id&gt;/&lt;timestamp&gt;/EvaluationResults.md</code></pre>
+<p><strong>删除评估器</strong></p>
+<pre><code>python test_evaluator.py --api-url &quot;https://&lt;evaluators-api-url&gt;&quot; delete \
+--evaluator-ids &quot;sc_optimization_constraint-&lt;id&gt;,sc_distribution_groundedness-&lt;id&gt;&quot;</code></pre>
+<h2>运行一次优化评估</h2>
+<p>现在你已经了解评估框架并部署了方案，我们来对优化智能体做一次端到端的聚焦评估。这一演示展示如何把一个自定义业务准确性评估器（第二层）与可解释性评估器（第三层）结合使用，同时评估优化决策的正确性与透明度。</p>
+<p><strong>第 1 步：运行优化查询</strong></p>
+<p>首先，仅以优化类别调用测试客户端，生成一个聚焦的会话：</p>
+<pre><code>cd test_client
+python test_agent.py --runtime-arn &quot;&lt;supply_chain_arn&gt;&quot; \
+--category optimization \
+--region &lt;your_region&gt;</code></pre>
+<p>这会以多轮会话形式运行 5 个优化查询。智能体处理的请求例如：&quot;prod-001 未来 30 天的最优库存水位是多少？&quot;每个查询都要求优化智能体调用 MCP 工具、获取需求预测，并给出遵守预算、库存覆盖和仓库容量约束的备货建议。运行结束时，测试客户端会打印优化会话 ID。</p>
+<p><strong>第 2 步：运行约束满足评估器（第二层：业务准确性）</strong></p>
+<p>有了优化会话后，运行自定义的约束满足（Constraint Satisfaction）评估器，验证智能体的备货建议是否遵守业务规则。该评估器同时检查三项约束：</p>
+<ul><li>预算：新增持有成本是否落在剩余预算内（budget_limit − budget_used）？</li><li>库存覆盖：建议水位是否 ≥ 需求预测（避免缺货）且 ≤ 2× 需求（避免积压）？</li><li>仓库容量：建议水位是否放得下可用的仓库空间？</li></ul>
+<p>把该评估器与内置的 Helpfulness、Response Relevance 评估器一起运行：</p>
+<pre><code>cd test_evaluators
+python test_evaluator.py --api-url &quot;https://&lt;evaluators-api-url&gt;&quot; run \
+--agent-id &quot;supply_chain_orchestrator_agent-&lt;id&gt;&quot; \
+--session-id &quot;&lt;optimization-session-id&gt;&quot; \
+--evaluators &quot;sc_optimization_constraint-&lt;id&gt;,Builtin.Helpfulness,Builtin.ResponseRelevance&quot;</code></pre>
+<p>API 立即返回 HTTP 202。评估异步运行，结果保存到 S3：</p>
+<pre><code>s3://&lt;amzn-s3-demo-agent-source-bucket&gt;/evaluations/&lt;optimization-session-id&gt;/&lt;timestamp&gt;/EvaluationResults.md</code></pre>
+<p><strong>第 3 步：运行可解释性评估器（第三层：信任与可审计性）</strong></p>
+<p>确认优化智能体能给出满足约束的建议之后，下一个问题是：它有没有解释自己的推理？一条建议可能准确但晦涩——这类建议能通过约束评估器，却无法说明它为什么选择某个库存水位。</p>
+<p>沿用第 1 步得到的同一个优化会话 ID，现在运行适用于优化智能体的两个可解释性评估器：</p>
+<ul><li>决策依据质量（Decision Rationale Quality）—— 智能体是否解释了它为什么给出该建议？（例如&quot;因为需求预测为 1,200、我们按 1.25× 安全系数备货，所以建议 1,500 件&quot;）</li><li>约束推理（Constraint Reasoning）—— 智能体是否解释了哪些约束塑造了最终回答？（例如&quot;预算允许最多 1,800 件，但仓库容量把我们限制在 1,600 件，因此建议 1,500 件&quot;）</li></ul>
+<pre><code>python test_evaluator.py --api-url &quot;https://&lt;evaluators-api-url&gt;&quot; run \
+--agent-id &quot;supply_chain_orchestrator_agent-&lt;id&gt;&quot; \
+--session-id &quot;&lt;optimization-session-id&gt;&quot; \
+--evaluators &quot;sc_decision_rationale-&lt;id&gt;,sc_constraint_reasoning-&lt;id&gt;&quot;</code></pre>
+<p>这些评估器独立度量透明度，与准确性分开评估。</p>
+<p><strong>解读组合结果</strong></p>
+<p>对同一个优化会话运行全部三个评估器后，你就能从两个维度完整把握智能体的质量：</p>
+<table><thead><tr><th><strong>维度</strong></th><th><strong>评估器</strong></th><th><strong>回答的问题</strong></th></tr></thead><tbody><tr><td>业务准确性（第二层）</td><td>约束满足</td><td>建议在运营上是否正确？</td></tr><tr><td>可解释性（第三层）</td><td>决策依据质量</td><td>智能体<em>为什么</em>给出这条建议？</td></tr><tr><td>可解释性（第三层）</td><td>约束推理</td><td><em>哪些约束</em>塑造了回答？</td></tr></tbody></table>
+<p>表 3：跨质量维度的评估覆盖</p>
+<p>这种分层方法支持有针对性的改进。如果约束满足得分高、可解释性得分低，说明智能体的决策逻辑是可靠的，但表达方式需要改进。反之，如果可解释性高但约束被违反，说明智能体推理讲得很清楚，但用的逻辑是错的。每种失效模式的修复路径不同，而评估框架让这种区分变得可度量。</p>
+<h2>清理</h2>
+<p>为避免持续产生费用，试用完方案后请用一个步骤清理你的 AWS 账户。</p>
+<pre><code>terraform destroy</code></pre>
+<h2>结论</h2>
+<p>在这篇文章中，我们演示了如何用 Amazon Bedrock AgentCore Evaluations 构建并评估一个多智能体供应链决策系统，重点验证智能体行为不仅功能可用，而且有用、准确、可解释。借助 AnyCompany Retail 的场景，我们展示了编排智能体如何与专职子智能体协作解决库存分配、调拨规划、路由优化和供应链诊断等复杂问题，同时与企业数据源和 API 集成。正如架构部分所阐明的，智能体式系统中的&quot;正确&quot;远不止回答质量，它取决于选对工具、执行正确的工作流、遵守业务约束，并让输出扎根于数据。</p>
+<p>把内置评估器与自定义评估器结合使用，团队就能系统性地验证一般回答质量和领域特定的决策准确性。再加上以可解释性为核心的评估器，可以进一步确保智能体清晰阐述推理、引用支撑数据、解释取舍，让业务用户能够信任并据以行动。这种评估驱动的做法支持用真实执行数据持续改进，在上线生产前建立质量门禁，并为交付一致、透明、贴合业务的多智能体系统提供了可扩展的框架。</p>
+<p>要开始上手，请了解 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">Amazon Bedrock AgentCore Evaluations</a>，把这些模式应用到你自己的多智能体应用中。完整源码见 <a href="https://github.com/awslabs/agentcore-samples/tree/main/06-workshops/07-AgentCore-evaluations">GitHub 上的 Amazon Bedrock AgentCore 示例仓库</a>。建议从启用可观测性开始，为你的用例定义关键评估维度，再逐步引入内置和自定义评估器，度量最重要的东西。</p>
+<p>欲了解更多，请访问 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 服务页面，或直接在 <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock 控制台</a>开始上手。</p>
+<p><strong>相关文章：</strong></p>
+<ul><li><a href="https://aws.amazon.com/blogs/machine-learning/build-reliable-ai-agents-with-amazon-bedrock-agentcore-evaluations/">Build reliable AI agents with Amazon Bedrock AgentCore Evaluations</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/build-highly-scalable-serverless-langgraph-multi-agent-systems-in-aws-with-amazon-bedrock-agentcore/">Build highly scalable serverless LangGraph multi-agent systems in AWS with Amazon Bedrock AgentCore</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/evaluating-ai-agents-real-world-lessons-from-building-agentic-systems-at-amazon/">Evaluating AI agents: Real-world lessons from building agentic systems at Amazon</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>使用 Amazon Quick 和裁决查询模式扫描数千个租赁的合规性</title>

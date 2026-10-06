@@ -2671,6 +2671,12 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
 <ul><li>加入 <a href="https://www.ray.io/join-slack">ray.slack.com</a> 的 #ray-accelerated-dag 频道</li><li>在 <a href="https://github.com/ray-project/ray/issues?q=is%3Aissue+is%3Aopen+label%3Aaccelerated-dag">Github</a> 上查看我们的进行中的工作。</li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>Autoscaling Large AI Models up to 5.1x Faster on Anyscale</title>
+      <link>https://anyscale.com/blog/autoscale-large-ai-models-faster</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/autoscale-large-ai-models-faster</guid>
+      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>宣布 RayTurbo</title>
       <link>https://anyscale.com/blog/announcing-anyscale-rayturbo</link>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-anyscale-rayturbo</guid>
@@ -4083,65 +4089,6 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
 <p>请关注后续文章，我们将深入 Ray Data 流式执行的设计，以及如何把它用于你自己的 ML 流水线。同时，你可以从<a href="https://docs.ray.io/en/master/data/batch_inference.html">这里</a>开始用 Ray Data 做批量推理。</p>
 <p>另外，<a href="https://raysummit.anyscale.com/">Ray Summit 2023</a> 早鸟注册已开放。锁定席位，省一笔。</p>
 <p><strong>5/10 更新：</strong> <em>感谢 Databricks 的 Apache Spark 开发者指出 Databricks Runtime 中存在预取标志 <strong><code>spark.databricks.execution.pandasUDF.prefetch.maxBatches</code></strong>，可与 Iterator API 搭配使用；在开源 Spark 中也可用后台线程手动实现。预取设为 4 个 batch 时，Spark 达到 <strong>159.86 图像/秒</strong>。代码见<a href="https://github.com/amogkam/batch-inference-benchmarks/blob/main/spark/code/torch-batch-inference-s3-10G-standard-iterator-databricks-prefetch.ipynb"></em>这里<em></a>。</em></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Ray 如何解决生成式 AI 基础设施的常见生产挑战</title>
-      <link>https://anyscale.com/blog/ray-common-production-challenges-for-generative-ai-infrastructure</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/ray-common-production-challenges-for-generative-ai-infrastructure</guid>
-      <pubDate>Mon, 20 Mar 2023 00:00:00 +0000</pubDate>
-      <description>原文标题：How Ray solves common production challenges for generative AI infrastructure</description>
-      <content:encoded><![CDATA[<h1>Ray 如何解决生成式 AI 基础设施的常见生产挑战</h1>
-<p>作者：Antoni Baum、Eric Liang、Jun Gong、Kai Fricke 和 Richard Liaw | 2023 年 3 月 20 日</p>
-<p>这是我们生成式 AI 博客系列的第一篇。本文谈如何用 Ray 把常见的生成式模型负载产品化。后续博客将深入剖析 <a href="https://github.com/alpa-projects/alpa">Alpa</a> 这类项目为何用 Ray 扩展大模型。</p>
-<p>生成式图像与语言模型有望改变企业在设计、客服、开发等方面的做法，<a href="https://www.gartner.com/en/articles/beyond-chatgpt-the-future-of-generative-ai-for-enterprises">等等</a>。本文聚焦围绕基础模型的生产部署所面临的基础设施挑战，以及 <a href="https://www.ray.io/">Ray</a>——<a href="https://docs.ray.io/en/latest/ray-overview/use-cases.html">扩展 ML 负载</a>的领先方案——如何应对这些挑战。最后给出让一切更轻松的改进路线图。</p>
-<p>今天，领先的 AI 组织正用 Ray <em>训练</em>大规模语言模型（LLM）：例如 <a href="https://thenewstack.io/how-ray-a-distributed-ai-framework-helps-power-chatgpt/">OpenAI 用它训练 ChatGPT</a>、<a href="https://www.anyscale.com/blog/ray-summit-2022-stories-large-language-models">Cohere 用它训练自家模型</a>、<a href="https://www.eleuther.ai/">EleutherAI</a> 用它训练 <a href="https://huggingface.co/EleutherAI/gpt-j-6b">GPT-J</a>、<a href="https://github.com/alpa-projects/alpa">Alpa</a> 用它做多节点训练与服务。但这些模型之所以激动人心，一个原因就在于：开源版本可以被微调和部署来解决特定问题，而无需从零训练。事实上，社区用户越来越多地询问如何用 Ray 编排自己的生成式 AI 负载——在大玩家训练好的基础模型之上继续构建。</p>
-<p>下表中，我们用绿色标出常见的&quot;生产规模&quot;需求（通常在 1-100 节点之间），包括这些问题：</p>
-<ul><li><strong>如何把批量推理扩展到 TB 级非结构化数据？</strong></li><li><strong>如何构建一个能按需拉起新作业的微调服务？</strong></li><li><strong>如何部署一个横跨多节点多 GPU 的模型？</strong></li></ul>
-<p><strong>本文主要聚焦这些绿色高亮的负载。</strong></p>
-<p><em>生成式 AI 的不同规模负载。</em></p>
-<p><em>想直接看用 Ray 做生成式 AI 负载的代码示例，请看<a href="https://docs.ray.io/en/master/ray-air/examples/index.html#text-nlp">示例页</a>。</em></p>
-<h2>生成式模型：ML 负载的最新演化</h2>
-<p><em>ray 集群</em></p>
-<p><em>图：基于最新深度学习模型，生成式 AI 的计算需求与传统 ML 平台一脉相承，只是更加夸张。</em></p>
-<p>我们把生成式模型负载看作 ML 负载固有计算挑战的放大镜，体现在两个轴向：</p>
-<ul><li><strong>成本</strong>：生成式模型更大，训练与服务在计算上更昂贵。例如 XGBoost / scikit-learn 模型每条约 1-10ms，而对生成式模型做一次最基本的推理也要 1000ms 以上——差距超过 100 倍。成本的变化让&quot;分布式&quot;成为想在生产使用生成式模型的公司的默认要求。</li><li><strong>复杂度</strong>：部分由于成本，文本生成、图像扩散等用例催生了新的计算需求，如模型并行服务、增量状态更新（即上报部分结果）。</li></ul>
-<p>再按负载细分这一趋势。下表总结了常见 AI 负载，以及这些用例的基础设施需求随时间的演化：</p>
-<p><em>（负载表格）</em></p>
-<p>如表所示，这些负载的成本与复杂度随时间水涨船高——尽管业内 GPU 硬件也在飞速进步。接下来深入从业者用生成式 AI 跑这些负载可能遇到的挑战。</p>
-<h2>生成式 AI 基础设施的挑战</h2>
-<p>生成式 AI 基础设施给分布式训练、在线服务与离线推理都带来了新挑战。</p>
-<h3>1. 分布式训练</h3>
-<p>如今最大规模的生成式模型训练中，不少正跑在 Ray 上：</p>
-<ul><li><a href="https://thenewstack.io/how-ray-a-distributed-ai-framework-helps-power-chatgpt/">OpenAI</a> 用 Ray 协调 ChatGPT 及其他模型的训练。</li><li><a href="https://github.com/alpa-projects/alpa">Alpa 项目</a>用 Ray 协调数据、模型与流水线并行计算（以 JAX 为底层框架）的训练与服务。</li><li><a href="https://www.anyscale.com/blog/ray-summit-2022-stories-large-language-models">Cohere</a> 与 <a href="https://www.eleuther.ai/">EleutherAI</a> 用 Ray 配合 PyTorch 和 JAX 大规模训练大语言模型。</li></ul>
-<p><em>alpa</em></p>
-<p><em>图：<a href="https://blog.research.google/2022/05/alpa-automated-model-parallel-deep.html"></em>Alpa<em></a></em>把 Ray 作为底层基座，为包括生成式 AI 在内的大模型分布式训练调度 GPU。*</p>
-<p>生成式模型分布式训练的常见挑战包括：</p>
-<ul><li>如何把模型有效地切分到多块加速器上？</li><li>如何把训练设置成能容忍可抢占实例上的故障？</li></ul>
-<p>在后续博客中，我们会介绍各项目如何借助 Ray 解决分布式训练的难题。</p>
-<h3>2. 在线服务与微调</h3>
-<p>我们还看到，中等规模（例如 1-100 节点）的生成式 AI 负载用 Ray 的兴趣日益增长。这一规模的用户通常想用 Ray 扩展他们已经能在单节点上跑的训练或推理负载（例如使用 <a href="https://www.deepspeed.ai/">DeepSpeed</a>、<a href="https://huggingface.co/docs/accelerate/index">Accelerate</a> 或其他常见单节点框架）。换言之，他们想运行负载的许多副本，以部署在线推理、微调或训练服务。</p>
-<p><em>gpu 成本</em></p>
-<p><em>图：A100 GPU 虽然单卡显存大得多，但每 GB 显存的成本远高于 A10 或 T4。当显存是瓶颈时，多节点 Ray 集群能以显著更低的成本服务生成式负载。</em></p>
-<p>这种横向扩展本身要做好就极其棘手、实现代价高。以扩展多节点语言模型的微调或在线推理服务为例：要搞对的细节很多——数据搬运优化、容错、模型副本自动扩缩。<a href="https://www.deepspeed.ai/">DeepSpeed</a>、<a href="https://huggingface.co/docs/accelerate/index">Accelerate</a> 这类框架处理模型算子的分片，但不负责调用这些模型的上层应用执行。</p>
-<p><em>分层技术栈</em></p>
-<p><em>图：生成式模型负载部署的分层技术栈。</em></p>
-<p>即便是单节点负载，用户也常能从分布式中获益：部署一小簇 GPU 往往比单台高端设备（如 A100）托管模型便宜得多——因为低端 GPU 每 GB 显存成本更低。然而，涉及许多机器的部署扩展很有挑战；没有 <a href="https://docs.ray.io/en/master/serve/index.html">Ray Serve</a> 与 <a href="https://docs.ray.io/en/master/data/data.html">Ray Data</a> 这样的库，也很难开箱拉到高利用率。</p>
-<h3>3. 离线批量推理</h3>
-<p>离线侧，这些模型的批量推理也有挑战：需要数据密集的预处理，随后是 GPU 密集的模型评估。Meta、Google 这类公司构建了定制服务（<a href="https://engineering.fb.com/2022-09-19/ml-applications/data-ingestion-machine-learning-training-meta/">DPP</a>、<a href="https://www.tensorflow.org/api_docs/python/tf/data/experimental/service">tf.data service</a>），在 CPU/GPU 异构集群上规模化完成这项工作。过去这类服务很罕见，如今我们越来越多地看到用户在生成式 AI 推理的语境下询问怎么做。这些用户现在还得直面调度、可观测性与容错这些分布式系统挑战。</p>
-<h2>Ray 如何应对这些挑战</h2>
-<h3>已有的 Ray 特性</h3>
-<p><strong>Ray Core 调度：</strong> 为编排从零训练生成式模型所需的大规模分布式计算，Ray Core 对 CPU、GPU 上的任务与 actor 提供灵活的<a href="https://docs.ray.io/en/master/ray-core/scheduling/index.html">调度</a>支持。对用 Ray 做大模型训练的用户，这一能力尤其有用。<a href="https://docs.ray.io/en/master/ray-core/scheduling/placement-group.html">Placement group</a> 让用户预留一组 GPU 或 CPU 资源，为多节点微调、推理或训练放置大模型的副本。</p>
-<p><strong>Ray Train</strong>：Ray 的 <a href="https://docs.ray.io/en/master/train/train.html">Train</a> 库开箱即用地提供 Trainer 类，可运行分布式 TensorFlow、Torch、XGBoost、Horovod 等流行框架。为更容易上手生成式模型，我们正在 Train 中加入与 HuggingFace Accelerate、DeepSpeed、Alpa 等流行框架的集成，以及 <a href="https://github.com/ray-project/ray/issues/33021">RLHF 支持</a>。</p>
-<p><strong>Ray Serve：</strong> Ray <a href="https://docs.ray.io/en/master/serve/index.html">Serve</a> 为扩展模型部署图提供一等 API。由于 Serve 运行在 Ray 内，执行临时或辅助计算时也非常灵活。例如，有用户从 Serve 启动 Ray 子任务来微调模型，并通过同样运行在 Ray 中的命名 actor 协调增量结果的回传。</p>
-<h3>即将推出的特性</h3>
-<p><strong>Ray Data 流式后端</strong>：为让 CPU/GPU 混部集群上的大规模批量推理更易规模化运行，我们正在为 Ray Data 加入一等的流式推理支持：&lt;https://github.com/ray-project/enhancements/pull/18&gt;</p>
-<p><strong>Ray Serve 异步请求</strong>：我们计划增强 Ray Serve，原生处理长时间运行的异步作业，例如微调请求。这类请求通常要几分钟，远长于 &lt;10 秒的普通 ML 推理作业，这意味着用户往往不得不求助外部作业队列：&lt;https://github.com/ray-project/ray/issues/32292&gt;</p>
-<h2>我们正在发布的示例</h2>
-<p>当然，&quot;理论上可行&quot;与&quot;实际能跑&quot;之间差距不小。为弥合这一差距，我们同时宣布首批生成式 AI 示例发布，并将随着新模型与新框架的出现持续扩充。</p>
-<p><em>链接的示例可能需要你<a href="https://docs.ray.io/en/latest/ray-overview/installation.html#daily-releases-nightlies">使用 Ray 的 nightly 版本</a>——链接与示例将在 Ray 2.4 稳定版上可用。</em></p>
-<ul><li>Stable Diffusion：<a href="https://docs.ray.io/en/master/ray-air/examples/dreambooth_finetuning.html">微调</a>、<a href="https://docs.ray.io/en/master/serve/tutorials/stable-diffusion.html">服务</a>、<a href="https://docs.ray.io/en/latest/data/examples/stablediffusion_batch_prediction.html?highlight=stable%20diffusion">批量预测</a>；流式批量预测：<em>Ray 2.5 推出</em></li><li>GPT-J：<a href="https://docs.ray.io/en/master/ray-air/examples/gptj_deepspeed_fine_tuning.html">微调</a>、<a href="https://docs.ray.io/en/master/ray-air/examples/gptj_serving.html">服务</a>、<a href="https://docs.ray.io/en/latest/data/examples/gptj_batch_prediction.html?highlight=gptj%20btach%20prediction">批量预测</a>；流式批量预测：<em>Ray 2.5 推出</em></li><li>OPT-66B：微调：<em>Ray 2.5 推出</em>；服务：<em>Ray 2.5 推出</em>；批量预测：<em>Ray 2.5 推出</em>；流式批量预测：<em>Ray 2.5 推出</em></li></ul>
-<h2>结语</h2>
-<p>总之，我们认为生成式模型正在加速行业对 Ray 这类灵活、统一 ML 计算框架的需求。Ray 团队计划为规模化使用这类昂贵模型增强 API，并提供与流行模型、社区框架的示例与集成，降低上手门槛。从<a href="https://docs.ray.io/en/master/ray-overview/use-cases.html">这里</a>开始 Ray ML 用例，或在<a href="https://docs.ray.io/en/master/ray-air/examples/index.html#text-nlp">示例页</a>查看我们用 Ray 跑生成式 AI 负载的代码示例。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
