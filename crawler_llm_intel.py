@@ -6145,7 +6145,14 @@ def main(argv: list[str] | None = None) -> int:
                              "走 --ai-titles 同源 LLM 通道译成中文，写 docs/articles/<vendor>/<urlhash>.md"
                              "（translator=llm）。只译待译项、幂等；超长/失败/校验不过留 pending，不产半成品。")
     parser.add_argument("--ai-bodies-limit", type=int, default=0,
-                        help="本次最多译多少篇正文（0=不限；CI 用它控单日成本）")
+                        help="本次最多译多少篇正文（0=不限；CI 用它控单日译量）")
+    parser.add_argument("--mt-bodies", action="store_true",
+                        help="维护模式（不巡检）：把 bodies.json 里待译英文正文走 Google 机器翻译"
+                             "（provider_profiles.translate_body_to_zh，按块处理、代码块原样保留）"
+                             "译成中文，写 docs/articles/<vendor>/<urlhash>.md（translator=mt）。"
+                             "不卡 LLM 额度；mt 是糙覆盖，重点篇之后本地 agent 重译升级。")
+    parser.add_argument("--mt-bodies-limit", type=int, default=0,
+                        help="本次最多机翻多少篇正文（0=不限；CI 用它控单日请求量）")
     args = parser.parse_args(argv)
 
     root = _repo_root()
@@ -6250,6 +6257,34 @@ def main(argv: list[str] | None = None) -> int:
               f"｜校验不过 {stats.get('rejected', 0)}｜调用报错 {stats.get('errored', 0)}")
         for msg in stats.get("errors", []):
             print(f"  [ai-bodies] 调用异常样本：{msg}", file=sys.stderr)
+        return 1 if errs else 0
+
+    if args.mt_bodies:
+        import fulltext
+        import provider_profiles
+        # MT 走 Google gtx（无 key、无 LLM 额度墙），按块译、代码块原样保留。
+        # char_cap 放宽：分块已消化长度问题，长文也能覆盖（不像 LLM 会截断产半成品）。
+        bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
+        pending = len(fulltext.pending_translation_keys(bodies))
+        today = datetime.now().strftime("%Y-%m-%d")
+        translate = lambda title, en_body: provider_profiles.translate_body_to_zh(en_body)
+        print(f"  [mt-bodies] 待译 {pending} 篇，走 Google 机翻（按块、代码块原样保留；"
+              f"本次上限 {args.mt_bodies_limit or '不限'}）...")
+        stats = {}
+        done = fulltext.translate_bodies_llm(
+            root, bodies, translate, today=today, limit=args.mt_bodies_limit,
+            char_cap=60_000, translator="mt", stats=stats,
+            save=lambda b: fulltext.save_bodies(root / "docs/feeds/bodies.json", b))
+        fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
+        errs = fulltext.validate_bodies(root, bodies)
+        for e in errs:
+            print(f"  [fulltext-guard] {e}", file=sys.stderr)
+        left = len(fulltext.pending_translation_keys(bodies))
+        print(f"  [mt-bodies] 归类：考虑 {stats.get('considered', 0)}｜译成 {stats.get('translated', 0)}"
+              f"｜无正文 {stats.get('no_en', 0)}｜校验不过 {stats.get('rejected', 0)}"
+              f"｜调用报错 {stats.get('errored', 0)}｜本轮未轮到 {stats.get('deferred', 0)}")
+        print(f"  本轮机翻 {done} 篇；待译从 {pending} 降到 {left}"
+              f"（mt 是糙覆盖，重点篇之后本地 agent 重译升级）。")
         return 1 if errs else 0
 
     if args.backfill_dates or args.backfill_orig:

@@ -166,19 +166,17 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python crawler_llm_intel.py --fetch-bodies
 
-      # 中文正文增量翻译：pending（英文已抓到、中文待译）→ 与 --ai-titles 同源通道译 → .md。
-      # 复用 GEMINI_API_KEY / AI_REVIEW_MODEL；缺 key 时脚本自行禁用并返回 0，不影响提交。
-      # --ai-bodies-limit 封顶单日译量控成本（未设 var 时默认 40，日常新增远小于此）；
-      # 超长 / 调用失败 / 输出校验不过一律留 pending，绝不产半成品（translator=llm 只标真译成的）。
+      # 中文正文增量翻译：pending（英文已抓到、中文待译）→ Google 机器翻译 → .md。
+      # 用 gtx（无 key、无 LLM 免费层 RPD 额度墙），按块译、代码块原样保留，长文也能覆盖。
+      # 产物标 translator=mt —— 是糙覆盖，术语/品牌可能翻坏，重点篇之后本地 agent 重译升级。
+      # --mt-bodies-limit 封顶单日请求量（未设 var 时默认 80，日常新增远小于此）。
       # 滞后边界：今天新文章的正文今天进 reader（.md 已落盘），但 RSS 的 content:encoded
       # 由 crawler 早于本步生成，要到**次日**那次巡检重排 feed 时才带上全文。
-      - name: Translate new bodies (LLM)
+      - name: Translate new bodies (machine)
         continue-on-error: true
         env:
           PYTHONIOENCODING: utf-8
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          AI_REVIEW_MODEL: ${{ vars.AI_REVIEW_MODEL }}
-        run: python crawler_llm_intel.py --ai-bodies --ai-bodies-limit "${{ vars.AI_BODIES_LIMIT || 40 }}"
+        run: python crawler_llm_intel.py --mt-bodies --mt-bodies-limit "${{ vars.MT_BODIES_LIMIT || 80 }}"
 
       # 产物与不变量校验：跑**全部**用例。
       # 测试集由 test_workflow_and_review.ci_suite() 按「全部 − 白名单」推导：

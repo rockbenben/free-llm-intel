@@ -717,6 +717,7 @@ def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
                          today: str, limit: int = 0, save: Callable = None,
                          flush_every: int = 10,
                          char_cap: int = BODY_TRANSLATE_CHAR_CAP,
+                         translator: str = "llm",
                          stats: dict = None) -> int:
     """把待译英文正文逐篇交 `translate(title, en_body)->中文markdown`，落 `.md`。
 
@@ -774,7 +775,7 @@ def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
             if st is not None:
                 st["rejected"] += 1
             continue                       # 校验不过：宁缺毋残
-        mark_translated(root, bodies, key=key, zh_body_md=zh, translator="llm",
+        mark_translated(root, bodies, key=key, zh_body_md=zh, translator=translator,
                         today=today)
         done += 1
         if st is not None:

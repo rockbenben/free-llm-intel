@@ -7340,5 +7340,91 @@ class TestFulltextCiInvariants(unittest.TestCase):
         self.assertEqual(errs, [], f"已提交语料违反 §3.4/§6 schema：{errs[:5]}")
 
 
+class TestTranslateBodyMt(unittest.TestCase):
+    """正文机器翻译：按块处理、代码块原样保留、失败块留原文、结构不塌。"""
+
+    def _patch_gtx(self, fn):
+        patcher = mock.patch.object(provider_profiles, "_gtx_translate", fn)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_code_block_preserved_verbatim(self):
+        self._patch_gtx(lambda t, timeout=8.0: "【" + t + "】")
+        md = "Intro para.\n\n```python\nprint('keep')  # 别译\n```\n\nTail para."
+        out = provider_profiles.translate_body_to_zh(md)
+        self.assertIn("print('keep')  # 别译", out)
+        self.assertNotIn("【print", out, "代码块内容不得被翻译")
+        self.assertIn("【Intro para.", out, "散文块应被送去翻译")
+
+    def test_failed_chunk_keeps_original(self):
+        # 两块散文被中间的代码块分开 → 各自独立成块；gtx 只对含 B 的块失败 → 该块留原文
+        def gtx(t, timeout=8.0):
+            return None if "Bad B" in t else "中" + t
+        self._patch_gtx(gtx)
+        out = provider_profiles.translate_body_to_zh("Good A here\n\n```\ncode\n```\n\nBad B here")
+        self.assertIn("中Good A here", out, "成功块被翻译")
+        self.assertIn("Bad B here", out, "失败块留原文，绝不吞")
+        self.assertNotIn("中Bad B", out)
+        self.assertIn("```\ncode\n```", out, "中间代码块原样")
+
+    def test_blank_lines_between_blocks_not_collapsed(self):
+        self._patch_gtx(lambda t, timeout=8.0: "T:" + t)
+        md = "para one\n\n```\ncode\n```\n\npara two"
+        out = provider_profiles.translate_body_to_zh(md)
+        self.assertIn("```\ncode\n```", out, "代码块前后空行/围栏不能被吞掉")
+
+    def test_empty_input_passthrough(self):
+        self.assertEqual(provider_profiles.translate_body_to_zh(""), "")
+        self.assertEqual(provider_profiles.translate_body_to_zh("   "), "   ")
+
+
+class TestMtBodiesCli(unittest.TestCase):
+    """crawler main(["--mt-bodies"])：走机翻回调、标 translator=mt、无 key 也能跑。"""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp.name)
+        self._orig_root = crawler_llm_intel._repo_root
+        crawler_llm_intel._repo_root = lambda: self.root
+        self.slug = "mt12ab34cd56"
+        (self.root / "docs/feeds").mkdir(parents=True)
+        (self.root / "docs/articles/openai").mkdir(parents=True)
+        en_rel = f"docs/articles/openai/{self.slug}.en.md"
+        ft.write_body_doc(self.root / en_rel, {"status": "ok", "url": "https://a/p", "title": "Eng"},
+                          "This is an English article body with plenty of words here.")
+        bodies = {f"openai\thttps://a/p": {"slug": self.slug, "en_path": en_rel,
+                  "en_status": "ok", "zh_path": "", "zh_status": "", "translator": "",
+                  "title": "中文标题", "date": "", "captured": ""}}
+        ft.save_bodies(self.root / "docs/feeds/bodies.json", bodies)
+
+    def tearDown(self):
+        crawler_llm_intel._repo_root = self._orig_root
+        self.temp.cleanup()
+
+    def test_writes_mt_translation_and_marks_mt(self):
+        # MT 用 gtx，无需任何 key；这里 mock translate_body_to_zh 返回中文
+        with mock.patch.object(provider_profiles, "translate_body_to_zh",
+                               return_value="这是一篇中文正文的完整机翻内容。"):
+            rc = crawler_llm_intel.main(["--mt-bodies"])
+        self.assertEqual(rc, 0)
+        saved = ft.load_bodies(self.root / "docs/feeds/bodies.json")
+        e = saved["openai\thttps://a/p"]
+        self.assertEqual(e["zh_status"], "translated")
+        self.assertEqual(e["translator"], "mt")
+        fm, zh = ft.read_body_doc(self.root / e["zh_path"])
+        self.assertEqual(fm["translator"], "mt")
+        self.assertEqual(zh, "这是一篇中文正文的完整机翻内容。")
+
+    def test_gtx_failure_leaves_pending_no_crash(self):
+        # translate_body_to_zh 原样退回（gtx 全失败）→ 校验不过 → 留 pending、不崩、不写坏
+        with mock.patch.object(provider_profiles, "translate_body_to_zh",
+                               side_effect=lambda b: b):   # 返回英文原文 = 没翻
+            rc = crawler_llm_intel.main(["--mt-bodies"])
+        self.assertEqual(rc, 0)
+        saved = ft.load_bodies(self.root / "docs/feeds/bodies.json")
+        self.assertEqual(saved["openai\thttps://a/p"]["zh_status"], "")
+        self.assertEqual(ft.pending_translation_keys(saved), ["openai\thttps://a/p"])
+
+
 if __name__ == "__main__":
     unittest.main()

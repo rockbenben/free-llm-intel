@@ -108,10 +108,10 @@ body_sha: <正文（去 frontmatter）的 sha256[:12]，用于脏检测/幂等>
 **此后每日 CI（增量自动）**
 1. 现有链接级爬照旧产出 `articles.json` / 归档 / OPML / README / quotas。
 2. `--fetch-bodies`（只补缺失/过期，纯 requests）→ 新文章英文正文（SPA/反爬类记 `fetch_failed`，页面回落外链）。
-3. `--ai-bodies`（LLM 通道）→ 新文章中文译文（`translator: llm`）。
+3. `--mt-bodies`（Google 机器翻译，按块处理、代码块原样保留）→ 新文章中文译文（`translator: mt`）。用 gtx 无 key、无 LLM 免费层 RPD 额度墙，长文也能覆盖。
 4. 原子提交增量 `docs/articles/**` + `bodies.json`（只 add/改新条目，绝不删已有正文）。
 
-**回捞机制**：CI 侧 `fetch_failed`（SPA/无浏览器）的条目，可由本地周期性 `--fetch-bodies --only-missing --allow-browser` 补齐；`translator: llm` 的译文可按需 agent 复核升级为 `agent`。二者都不阻塞每日 CI。
+**回捞机制**：CI 侧 `fetch_failed`（SPA/无浏览器）的条目，可由本地周期性 `--fetch-bodies --only-missing --allow-browser` 补齐；`translator: mt` 的机翻是糙覆盖（术语/品牌可能翻坏），重点篇之后本地 agent 重译升级为 `agent`（`--mark-translated` 走 `translator: agent` 覆盖同名 `.md`）。`--ai-bodies`（LLM 通道）保留为本地可选精译工具，不进 CI。二者都不阻塞每日 CI。
 
 ## 6. CI 侧不变量（活守卫）
 
@@ -138,7 +138,7 @@ body_sha: <正文（去 frontmatter）的 sha256[:12]，用于脏检测/幂等>
 
 - **M0（脚手架）**：`normalize_url`+`urlhash`、C1 抽取器（golden 测）、`bodies.json` schema+构建+§3.4 守卫、`--fetch-bodies` 幂等/只补缺失骨架。
 - **M1（端到端打通，小切片，本地）**：1 个厂商（建议 `anthropic`）跑 `--fetch-bodies --allow-browser` + 我人译前 N 篇 + 页面 reader 上线 → 证「抓→存双语→译→页面就地读」整链。
-- **M2（CI 增量接管 + 守卫，已接入）**：workflow 在 crawler 之后加 `--fetch-bodies`（纯 requests、`continue-on-error`，语料层崩溃不挡当天核心提交）+ `--ai-bodies`（复用 `--ai-titles` 同源 Gemini 通道，走 `call_llm_text` 纯文本、`--ai-bodies-limit` 封顶单日译量、超长/失败留 pending）两步；Commit 步骤 `git add` 补 `docs/articles`。§6 四条活守卫 + 实产物 schema 兜底守卫齐（`TestFulltextCiInvariants`，每条已变异验证会咬）。**已知边界**：今天新文章的正文当天进 reader（`.md` 已落盘），但 RSS `content:encoded` 由 crawler 早于本步生成，需次日巡检重排 feed 才带上全文。
+- **M2（CI 增量接管 + 守卫，已接入）**：workflow 在 crawler 之后加 `--fetch-bodies`（纯 requests、`continue-on-error`，语料层崩溃不挡当天核心提交）+ `--mt-bodies`（Google gtx 机器翻译，按块处理、代码块原样保留、`translator=mt`、`--mt-bodies-limit` 封顶单日请求量）两步；Commit 步骤 `git add` 补 `docs/articles`。正文翻译选 MT 不选 LLM：gtx 无 key、无 Gemini 免费层 RPD 额度墙（LLM 通道实测当天即被额度卡住），长文也能覆盖；mt 是糙覆盖，重点篇之后本地 agent 重译升级。`--ai-bodies`（LLM 通道，走 `call_llm_text`）保留为本地可选精译，不进 CI。§6 四条活守卫 + 实产物 schema 兜底守卫齐（`TestFulltextCiInvariants`，每条已变异验证会咬）。**已知边界**：今天新文章的正文当天进 reader（`.md` 已落盘），但 RSS `content:encoded` 由 crawler 早于本步生成，需次日巡检重排 feed 才带上全文。
 - **M3（回充全量，本地运维）**：按 `articles.json` 计数降序分批 `--fetch-bodies` + agent 人译，每批提交；`openai`/`huggingface` 体量大、跨会话续跑（ledger 记进度）。
 
 ## 10. 风险与对策

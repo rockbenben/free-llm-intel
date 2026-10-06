@@ -190,6 +190,35 @@ def _is_brand_version_title(text: str) -> bool:
     return any(_VERSION_TOKEN.match(w) for w in words)
 
 
+def _gtx_translate(text: str, timeout: float = 4.0) -> str | None:
+    """Google gtx 直译一段文本为中文。成功返回译文，失败返回 None（不落缓存、下次重试）。
+
+    无标题守卫——正文 MT（translate_body_to_zh）直接逐块调它；translate_to_zh 在
+    跑完专名/型号守卫之后也走这里，端点 URL/参数单点，不再两处各写一份。
+    """
+    try:
+        resp = requests.get(
+            "https://translate.googleapis.com/translate_a/single",
+            params={"client": "gtx", "sl": "auto", "tl": "zh-CN", "dt": "t", "q": text},
+            timeout=timeout)
+        if resp.status_code == 200:
+            data = resp.json()
+            translated = "".join(p[0] for p in data[0] if p and p[0])
+            return translated or None
+    except Exception as exc:
+        # 失败按设计回退原文（不落盘、下次重试），但静默会把系统性故障藏起来：
+        # 端点整轮不可用时全部文本安静回退英文，日志毫无痕迹。每类异常本轮首见报一次 warn。
+        key = type(exc).__name__
+        with _TRANS_LOCK:
+            first = key not in _TRANS_WARNED
+            _TRANS_WARNED.add(key)
+        if first:
+            print(f"      [warn] Google 翻译失败（{key}: {str(exc)[:120]}）；"
+                  "同类异常本轮不再重复报告，受影响文本回退原文、下次运行重试",
+                  file=sys.stderr)
+    return None
+
+
 def translate_to_zh(text: str, timeout: float = 4.0) -> str:
     """非中文内容借助 Google 公开 translate 接口自动翻译为中文。
 
@@ -239,47 +268,96 @@ def translate_to_zh(text: str, timeout: float = 4.0) -> str:
                 _TRANS_CACHE[clean_text] = clean_text
                 _TRANS_DIRTY += 1
         return clean_text
-    try:
-        url = "https://translate.googleapis.com/translate_a/single"
-        params = {
-            "client": "gtx",
-            "sl": "auto",
-            "tl": "zh-CN",
-            "dt": "t",
-            "q": clean_text,
-        }
-        resp = requests.get(url, params=params, timeout=timeout)
-        if resp.status_code == 200:
-            data = resp.json()
-            translated = "".join(part[0] for part in data[0] if part and part[0])
-            if translated:
-                # 兜底复原：整句标题没法靠「不翻」拦住（如 `Introducing Claude
-                # Fable 5.1 …`），Google 会把句中品牌音译，这里按原文复原。
-                translated = _restore_brand_names(translated, clean_text)
-                with _TRANS_LOCK:
-                    if clean_text not in _TRANS_CACHE:
-                        _TRANS_CACHE[clean_text] = translated
-                        _TRANS_DIRTY += 1
-                        if _TRANS_DIRTY >= 100:
-                            _TRANS_DIRTY = 0
-                            _save_trans_cache()
-                return translated
-    except Exception as exc:
-        # 失败本身按设计回退原文（不落盘、下次重试），但**静默**会把系统性故障藏起来：
-        # 翻译端点整轮不可用时，全部标题都安静地回退英文，CI 日志里毫无痕迹，
-        # 直到有人发现归档里混进一批英文标题才知道。每轮首见一类异常报一次 warn，
-        # 既能暴露故障又不在批量翻译时刷屏。
-        key = type(exc).__name__
+    translated = _gtx_translate(clean_text, timeout)
+    if translated:
+        # 兜底复原：整句标题没法靠「不翻」拦住（如 `Introducing Claude
+        # Fable 5.1 …`），Google 会把句中品牌音译，这里按原文复原。
+        translated = _restore_brand_names(translated, clean_text)
         with _TRANS_LOCK:
-            first = key not in _TRANS_WARNED
-            _TRANS_WARNED.add(key)
-        if first:
-            print(f"      [warn] 标题翻译失败（{key}: {str(exc)[:120]}）；"
-                  "同类异常本轮不再重复报告，受影响标题回退原文、下次运行重试",
-                  file=sys.stderr)
+            if clean_text not in _TRANS_CACHE:
+                _TRANS_CACHE[clean_text] = translated
+                _TRANS_DIRTY += 1
+                if _TRANS_DIRTY >= 100:
+                    _TRANS_DIRTY = 0
+                    _save_trans_cache()
+        return translated
     with _TRANS_LOCK:
         _TRANS_FAILED.add(clean_text)
     return clean_text
+
+
+# ---------------------------------------------------------------------------
+# 正文机器翻译（--mt-bodies）：按块处理，代码块原样保留，散文块逐段送 gtx。
+# 与标题 MT 不同：不套专名/型号守卫（正文里 `GPT-4`/`100ms` 遍地都是，守卫会把
+# 整篇退回不译），改为「结构保护」——只保证 ``` 代码块与行内代码不被翻译，
+# 其余散文按段落分块译。产物标 translator=mt，之后可对重点篇用 agent 重译升级。
+# ---------------------------------------------------------------------------
+
+_MT_CHUNK_CHARS = 1500   # 单次 gtx 请求的最大字符数（GET 端点有长度上限，按段落聚合到线下）
+_FENCE_PREFIX = "```"
+
+
+def _split_code_and_text(md: str) -> list[tuple[str, str]]:
+    """把 markdown 切成连续同类片段 [(kind, text)]，kind ∈ {'code','text'}。
+
+    ``` 围栏行本身连同其内容都归 'code'（原样保留）；其余归 'text'。按行奇偶
+    判定围栏内外，避免把代码块里的伪 ``` 误判。
+    """
+    lines = md.split("\n")
+    parts: list[tuple[str, list[str]]] = []
+    in_code = False
+    for ln in lines:
+        if ln.lstrip().startswith(_FENCE_PREFIX):
+            kind = "code"
+            in_code = not in_code
+        else:
+            kind = "code" if in_code else "text"
+        if parts and parts[-1][0] == kind:
+            parts[-1][1].append(ln)
+        else:
+            parts.append((kind, [ln]))
+    return [(k, "\n".join(ls)) for k, ls in parts]
+
+
+def _chunk_text(seg: str) -> list[str]:
+    """把一段散文按空行（段落）聚合成 ≤_MT_CHUNK_CHARS 的块；单段超限也自成一块。"""
+    paras = [p for p in re.split(r"\n\s*\n", seg)]
+    chunks: list[str] = []
+    cur = ""
+    for p in paras:
+        if not p.strip():
+            continue
+        cand = (cur + "\n\n" + p) if cur else p
+        if len(cand) > _MT_CHUNK_CHARS and cur:
+            chunks.append(cur)
+            cur = p
+        else:
+            cur = cand
+    if cur.strip():
+        chunks.append(cur)
+    return chunks
+
+
+def translate_body_to_zh(md: str, timeout: float = 8.0) -> str:
+    """整篇 markdown 正文机翻为中文：代码块原样、散文逐块 gtx。失败块留原文。
+
+    返回拼好的中文 markdown；某块 gtx 失败则该块保持英文原文（下次 --mt-bodies
+    重跑时它仍是 pending，会再试）。不缓存（正文长、命中率低，且失败要能重试）。
+    """
+    if not md or not md.strip():
+        return md
+    parts = _split_code_and_text(md)
+    out: list[str] = []
+    for kind, seg in parts:
+        if kind == "code" or not seg.strip():
+            out.append(seg)      # 代码块与纯空行原样保留（空行是块间分隔，不能吞）
+            continue
+        translated_chunks = []
+        for chunk in _chunk_text(seg):
+            tr = _gtx_translate(chunk, timeout)
+            translated_chunks.append(tr if tr else chunk)   # 失败留原文，绝不吞
+        out.append("\n\n".join(translated_chunks))
+    return "\n".join(out)
 
 
 CATEGORY_TITLES = {
