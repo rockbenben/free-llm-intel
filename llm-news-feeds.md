@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-06 10:47:52**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-06 14:07:33**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,12 +26,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [Claude政府现已普遍可用](https://claude.com/blog#d-2026-10-01-19)（2026-10-01）
-  2. [Introducing Claude Opus 5.5](https://www.anthropic.com/news#d-2026-09-28-0)（2026-09-28）
-  3. [Claude Tag 现已支持频道中的个人连接器](https://claude.com/blog/claude-tag-now-supports-personal-connectors-in-channels)（2026-09-24）
-  4. [Claude Marketplace：发现合作伙伴插件、智能体与服务的一站式入口](https://claude.com/blog#d-2026-09-23-23)（2026-09-23）
-  5. [Claude Marketplace：从我们的合作伙伴那里发现插件、智能体和服务的地方](https://claude.com/blog#d-2026-09-23-21)（2026-09-23）
-  - 📄 完整文章归档（共 78 篇）：[anthropic.md](llm-news/anthropic.md)
+  1. [Cresta 如何将 CX 专业知识转变为 Claude Agent SDK 上的代理构建器](https://claude.com/resources/articles#d-2026-10-05-1)（2026-10-05）
+  2. [Claude政府现已普遍可用](https://claude.com/blog#d-2026-10-01-19)（2026-10-01）
+  3. [Claude政府现已普遍可用](https://claude.com/resources/articles#d-2026-09-30-4)（2026-09-30）
+  4. [Introducing Claude Opus 5.5](https://www.anthropic.com/news#d-2026-09-28-0)（2026-09-28）
+  5. [Claude Tag 现已支持频道中的个人连接器](https://claude.com/blog/claude-tag-now-supports-personal-connectors-in-channels)（2026-09-24）
+  - 📄 完整文章归档（共 80 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### OpenAI (openai)
 - 页面：[官方博客](https://openai.com/blog)
@@ -140,12 +140,12 @@
   - 📡 RSS/Atom：https://mistral.ai/news/rss
 - 📡 [RSS/Atom 订阅源](https://mistral.ai/news/rss)：`https://mistral.ai/news/rss`
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [Mistral x Mozilla：私密、多语言的 AI 浏览](https://mistral.ai/news/mistral-x-mozilla/)（2026-09-16）
-  2. [Cloudera 与 Mistral 合作打造主权企业 AI](https://mistral.ai/news/mistral-x-cloudera/)（2026-09-10）
-  3. [用 AI 智能体现代化改造复杂的遗留代码。](https://mistral.ai/news/legacy-code-modernization/)（2026-09-09）
-  4. [让主权、开放权重的 AI 成为技术前沿](https://mistral.ai/news/mistral-makes-sovereign-open-weight-ai-to-frontier/)（2026-09-08）
-  5. [Mistral 携手 HUMAIN](https://mistral.ai/news/mistral-x-humain/)（2026-08-24）
-  - 📄 完整文章归档（共 87 篇）：[mistral.md](llm-news/mistral.md)
+  1. [Introducing Mistral Large 4](https://mistral.ai/news/mistral-large-4/)（2026-10-06）
+  2. [Mistral x Mozilla：私密、多语言的 AI 浏览](https://mistral.ai/news/mistral-x-mozilla/)（2026-09-16）
+  3. [Cloudera 与 Mistral 合作打造主权企业 AI](https://mistral.ai/news/mistral-x-cloudera/)（2026-09-10）
+  4. [用 AI 智能体现代化改造复杂的遗留代码。](https://mistral.ai/news/legacy-code-modernization/)（2026-09-09）
+  5. [让主权、开放权重的 AI 成为技术前沿](https://mistral.ai/news/mistral-makes-sovereign-open-weight-ai-to-frontier/)（2026-09-08）
+  - 📄 完整文章归档（共 88 篇）：[mistral.md](llm-news/mistral.md)
 
 ### Groq Cloud (LPU 推理) (groq)
 - 页面：[变更日志](https://console.groq.com/docs/changelog.md)
@@ -192,9 +192,9 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [Falcon-Emirati: When an LLM Learns the Dialect, the Culture, and the Nuance](https://huggingface.co/blog/tiiuae/falcon-emirati)（2026-10-06）
+  1. [猎鹰阿联酋：当LLM学习方言、文化和细微差别时](https://huggingface.co/blog/tiiuae/falcon-emirati)（2026-10-06）
   2. [Olmo-core 3 简介：面向大型 MoE 的开放、可扩展的培训基础设施](https://huggingface.co/blog/allenai/olmocore3)（2026-10-01）
-  3. [Welcome RL Environments to the hub](https://huggingface.co/blog/rl-environments)（2026-09-28）
+  3. [欢迎 RL 环境来到中心](https://huggingface.co/blog/rl-environments)（2026-09-28）
   4. [你的智能体出色完成了任务，还能再现吗？](https://huggingface.co/blog/ibm-research/altk-evolve-consistency)（2026-09-15）
   5. [跨 HF Jobs 用 LoRA 的异步 GRPO：一个存储桶、一个代理、没有 NCCL](https://huggingface.co/blog/asyncgrpo-lora-hfjobs)（2026-09-10）
   - 📄 完整文章归档（共 866 篇）：[huggingface.md](llm-news/huggingface.md)
@@ -306,11 +306,11 @@
 ### Amazon Bedrock (AWS Free Tier) (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [Introducing GLM 5.3 on Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock/)（2026-10-05）
-  2. [Supercharge regulated workloads with Claude Code and Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/supercharge-regulated-workloads-with-claude-code-and-amazon-bedrock/)（2026-10-05）
-  3. [New agent skill: Amazon SageMaker optimized generative AI inference for your coding agent](https://aws.amazon.com/blogs/machine-learning/new-agent-skill-amazon-sagemaker-optimized-generative-ai-inference-for-your-coding-agent/)（2026-10-05）
-  4. [Making Amazon Quick enterprise-ready: Automated, auditable cross-account resource promotion](https://aws.amazon.com/blogs/machine-learning/making-amazon-quick-enterprise-ready-automated-auditable-cross-account-resource-promotion/)（2026-10-05）
-  5. [Agentic retrieval with LangChain and Amazon Bedrock Knowledge Bases](https://aws.amazon.com/blogs/machine-learning/agentic-retrieval-with-langchain-and-amazon-bedrock-knowledge-bases/)（2026-10-05）
+  1. [在 Amazon Bedrock 上推出 GLM 5.3](https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock/)（2026-10-05）
+  2. [使用 Claude Code 和 Amazon Bedrock 增强受监管的工作负载](https://aws.amazon.com/blogs/machine-learning/supercharge-regulated-workloads-with-claude-code-and-amazon-bedrock/)（2026-10-05）
+  3. [新代理技能：Amazon SageMaker 为您的编码代理优化了生成式 AI 推理](https://aws.amazon.com/blogs/machine-learning/new-agent-skill-amazon-sagemaker-optimized-generative-ai-inference-for-your-coding-agent/)（2026-10-05）
+  4. [让 Amazon Quick 为企业做好准备：自动化、可审核的跨账户资源促销](https://aws.amazon.com/blogs/machine-learning/making-amazon-quick-enterprise-ready-automated-auditable-cross-account-resource-promotion/)（2026-10-05）
+  5. [使用 LangChain 和 Amazon Bedrock 知识库进行代理检索](https://aws.amazon.com/blogs/machine-learning/agentic-retrieval-with-langchain-and-amazon-bedrock-knowledge-bases/)（2026-10-05）
   - 📄 完整文章归档（共 53 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (晶圆级推理) (cerebras)
@@ -328,7 +328,7 @@
 ### Together AI (together_ai)
 - 📡 [RSS/Atom 订阅源](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [Together Link: open models in the harness you already use. Start with one command today.](https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use)（2026-10-05）
+  1. [Together Link：打开您已使用的线束中的模型。今天从一个命令开始。](https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use)（2026-10-05）
   2. [如何用 17 美元训练你自己的 Jev](https://www.together.ai/blog/how-to-train-your-own-jev)（2026-09-23）
   3. [金丝雀部署：无需停机即可升级生产中的模型](https://www.together.ai/blog/canary-rollouts-upgrade-models-in-production-without-downtime)（2026-09-22）
   4. [一家全球金融科技公司如何用专用模型推理扩展编码智能体流量](https://www.together.ai/blog/global-fintech-scales-coding-agent-traffic-with-dedicated-model-inference)（2026-09-18）
@@ -352,7 +352,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [GLM-5.3 Model Overview & Integration Guide](https://deepinfra.com/blog/glm-5-3-model-integration-guide)（2026-10-05）
+  1. [GLM-5.3 模型概述和集成指南](https://deepinfra.com/blog/glm-5-3-model-integration-guide)（2026-10-05）
   2. [Qwen3.8-27B Is Now Available on DeepInfra](https://deepinfra.com/blog/qwen3-8-27b-deepinfra)（2026-10-05）
   3. [GLM-5.3 提供商定价指南：成本比较](https://deepinfra.com/blog/glm-5-3-provider-pricing-guide)（2026-10-03）
   4. [GLM-5.3 现已在 DeepInfra 上提供](https://deepinfra.com/blog/glm-5-3-deepinfra)（2026-10-03）
@@ -374,7 +374,7 @@
   - 🔌 官方未提供 RSS/Atom 订阅源，条目取自官方数据接口
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-ai21_labs.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [The verifiability litmus test for agent design](https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/)（2026-10-06）
+  1. [代理设计的可验证性试金石](https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/)（2026-10-06）
   2. [From manual negotiation to automated scheduling: How AI21 manages its GPU fleet with Kueue](https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/)（2026-10-04）
   3. [你要的不是前沿模型，而是一个验证器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19）
   4. [又好又省：开放模型探路，前沿模型收尾](https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/)（2026-07-15）
@@ -408,10 +408,10 @@
 - 📡 [RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
   1. [Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
-  2. [推出 Anyscale GPU 健康可观测性：从应用到硬件](https://anyscale.com/blog/anyscale-gpu-health-observability)（2026-08-25）
-  3. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
-  4. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
-  5. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
+  2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
+  3. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
+  4. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
+  5. [学习循环：把智能掌握在自己手中](https://anyscale.com/blog/learning-loops)（2026-08-25）
   - 📄 完整文章归档（共 67 篇）：[anyscale.md](llm-news/anyscale.md)
 
 ### InceptionLabs (inception_labs)

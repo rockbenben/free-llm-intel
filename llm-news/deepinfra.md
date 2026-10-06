@@ -9,7 +9,7 @@
 
 ## 全部文章（共 24 篇，按日期倒序；无日期条目列于最后）
 
-1. [GLM-5.3 Model Overview & Integration Guide](https://deepinfra.com/blog/glm-5-3-model-integration-guide)（2026-10-05）
+1. [GLM-5.3 模型概述和集成指南](https://deepinfra.com/blog/glm-5-3-model-integration-guide)（2026-10-05） <!--orig:GLM-5.3 Model Overview & Integration Guide-->
 2. [Qwen3.8-27B Is Now Available on DeepInfra](https://deepinfra.com/blog/qwen3-8-27b-deepinfra)（2026-10-05）
 3. [GLM-5.3 提供商定价指南：成本比较](https://deepinfra.com/blog/glm-5-3-provider-pricing-guide)（2026-10-03） <!--orig:GLM-5.3 Provider Pricing Guide: Costs Compared-->
 4. [GLM-5.3 现已在 DeepInfra 上提供](https://deepinfra.com/blog/glm-5-3-deepinfra)（2026-10-03） <!--orig:GLM-5.3 Is Now Available on DeepInfra-->

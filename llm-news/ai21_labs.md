@@ -9,7 +9,7 @@
 
 ## 全部文章（共 68 篇，按日期倒序；无日期条目列于最后）
 
-1. [The verifiability litmus test for agent design](https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/)（2026-10-06）
+1. [代理设计的可验证性试金石](https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/)（2026-10-06） <!--orig:The verifiability litmus test for agent design-->
 2. [From manual negotiation to automated scheduling: How AI21 manages its GPU fleet with Kueue](https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/)（2026-10-04）
 3. [你要的不是前沿模型，而是一个验证器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19） <!--orig:You don’t need a frontier model. You need a verifier.-->
 4. [又好又省：开放模型探路，前沿模型收尾](https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/)（2026-07-15） <!--orig:Better and cheaper together: Open models explore, frontier models patch-->

@@ -9,13 +9,13 @@
 
 ## 全部文章（共 53 篇，按日期倒序；无日期条目列于最后）
 
-1. [Introducing GLM 5.3 on Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock/)（2026-10-05）
-2. [Supercharge regulated workloads with Claude Code and Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/supercharge-regulated-workloads-with-claude-code-and-amazon-bedrock/)（2026-10-05）
-3. [New agent skill: Amazon SageMaker optimized generative AI inference for your coding agent](https://aws.amazon.com/blogs/machine-learning/new-agent-skill-amazon-sagemaker-optimized-generative-ai-inference-for-your-coding-agent/)（2026-10-05）
-4. [Making Amazon Quick enterprise-ready: Automated, auditable cross-account resource promotion](https://aws.amazon.com/blogs/machine-learning/making-amazon-quick-enterprise-ready-automated-auditable-cross-account-resource-promotion/)（2026-10-05）
-5. [Agentic retrieval with LangChain and Amazon Bedrock Knowledge Bases](https://aws.amazon.com/blogs/machine-learning/agentic-retrieval-with-langchain-and-amazon-bedrock-knowledge-bases/)（2026-10-05）
-6. [Downgrading user roles in Amazon Quick](https://aws.amazon.com/blogs/machine-learning/downgrading-user-roles-in-amazon-quick/)（2026-10-05）
-7. [Evaluating multi-agent systems for explainability and helpfulness with Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/evaluating-multi-agent-systems-for-explainability-and-helpfulness-with-amazon-bedrock-agentcore/)（2026-10-05）
+1. [在 Amazon Bedrock 上推出 GLM 5.3](https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock/)（2026-10-05） <!--orig:Introducing GLM 5.3 on Amazon Bedrock-->
+2. [使用 Claude Code 和 Amazon Bedrock 增强受监管的工作负载](https://aws.amazon.com/blogs/machine-learning/supercharge-regulated-workloads-with-claude-code-and-amazon-bedrock/)（2026-10-05） <!--orig:Supercharge regulated workloads with Claude Code and Amazon Bedrock-->
+3. [新代理技能：Amazon SageMaker 为您的编码代理优化了生成式 AI 推理](https://aws.amazon.com/blogs/machine-learning/new-agent-skill-amazon-sagemaker-optimized-generative-ai-inference-for-your-coding-agent/)（2026-10-05） <!--orig:New agent skill: Amazon SageMaker optimized generative AI inference for your coding agent-->
+4. [让 Amazon Quick 为企业做好准备：自动化、可审核的跨账户资源促销](https://aws.amazon.com/blogs/machine-learning/making-amazon-quick-enterprise-ready-automated-auditable-cross-account-resource-promotion/)（2026-10-05） <!--orig:Making Amazon Quick enterprise-ready: Automated, auditable cross-account resource promotion-->
+5. [使用 LangChain 和 Amazon Bedrock 知识库进行代理检索](https://aws.amazon.com/blogs/machine-learning/agentic-retrieval-with-langchain-and-amazon-bedrock-knowledge-bases/)（2026-10-05） <!--orig:Agentic retrieval with LangChain and Amazon Bedrock Knowledge Bases-->
+6. [降级 Amazon Quick 中的用户角色](https://aws.amazon.com/blogs/machine-learning/downgrading-user-roles-in-amazon-quick/)（2026-10-05） <!--orig:Downgrading user roles in Amazon Quick-->
+7. [使用 Amazon Bedrock AgentCore 评估多代理系统的可解释性和有用性](https://aws.amazon.com/blogs/machine-learning/evaluating-multi-agent-systems-for-explainability-and-helpfulness-with-amazon-bedrock-agentcore/)（2026-10-05） <!--orig:Evaluating multi-agent systems for explainability and helpfulness with Amazon Bedrock AgentCore-->
 8. [使用 Amazon Quick 和裁决查询模式扫描数千个租赁的合规性](https://aws.amazon.com/blogs/machine-learning/sweep-thousands-of-leases-for-compliance-using-amazon-quick-and-the-adjudicated-query-pattern/)（2026-10-02） <!--orig:Sweep thousands of leases for compliance using Amazon Quick and the Adjudicated Query pattern-->
 9. [使用 Amazon Bedrock AgentCore 将安全 Web 搜索添加到 Claude Desktop](https://aws.amazon.com/blogs/machine-learning/add-secure-web-search-to-claude-desktop-with-amazon-bedrock-agentcore/)（2026-10-02） <!--orig:Add secure Web Search to Claude Desktop with Amazon Bedrock AgentCore-->
 10. [在 Amazon SageMaker AI 上使用多轮 RL 微调搜索代理](https://aws.amazon.com/blogs/machine-learning/fine-tune-a-search-agent-with-multi-turn-rl-on-amazon-sagemaker-ai/)（2026-10-02） <!--orig:Fine-tune a search agent with multi-turn RL on Amazon SageMaker AI-->
