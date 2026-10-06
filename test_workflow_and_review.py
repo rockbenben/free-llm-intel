@@ -7167,6 +7167,34 @@ class TestTranslateBodiesLlm(unittest.TestCase):
                                     flush_every=1)
             self.assertEqual(len(saves), 3, "每译一篇即落一次 ledger，中断也保住已完成项")
 
+    def test_limit_caps_calls_not_scan(self):
+        """limit 封的是「实际调用次数」：超长项不占预算，排在长文后面的短文照样轮到。
+
+        回归：旧实现先 keys[:limit] 再过滤，若前 limit 条恰好都超长，则本轮译 0，
+        短文永远排在长文后面饿死。这里把 3 篇超长排在 3 篇短文前面，limit=2 →
+        应译成 2（短文）、over_cap=3、deferred=1，而不是被超长项吃光预算译 0。
+        """
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "docs/articles/openai").mkdir(parents=True)
+            bodies = {}
+            ordered = [("cap_a", "y" * 300), ("cap_b", "y" * 300), ("cap_c", "y" * 300),
+                       ("short_a", "short english"), ("short_b", "short english"),
+                       ("short_c", "short english")]
+            for slug, eb in ordered:
+                rel = f"docs/articles/openai/{slug}.en.md"
+                ft.write_body_doc(Path(d) / rel, {"status": "ok", "url": f"https://a/{slug}"}, eb)
+                bodies[f"openai\thttps://a/{slug}"] = {"slug": slug, "en_path": rel,
+                    "en_status": "ok", "zh_status": "", "translator": "", "title": slug,
+                    "date": "", "captured": ""}
+            stats = {}
+            n = ft.translate_bodies_llm(Path(d), bodies,
+                                        lambda t, b: "这是一段合格的中文正文翻译。",
+                                        today="2026-10-06", limit=2, char_cap=100, stats=stats)
+            self.assertEqual(n, 2)
+            self.assertEqual(stats["over_cap"], 3)
+            self.assertEqual(stats["deferred"], 1)
+            self.assertEqual(stats["translated"], 2)
+
     def test_stats_categorizes_every_skip(self):
         """stats 把每篇归类摊开——专治「批量译了 0 篇却看不出为什么」。"""
         with tempfile.TemporaryDirectory() as d:

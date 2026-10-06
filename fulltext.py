@@ -729,13 +729,12 @@ def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
     translated / over_cap / no_en / errored 计数 + errors 前几条异常样本（含类型名）。
     """
     keys = pending_translation_keys(bodies)
-    if limit and limit > 0:
-        keys = keys[:limit]
     done = 0
-    st = stats if stats is not None else None
+    attempted = 0
+    st = stats
     if st is not None:
         st.update({"considered": len(keys), "translated": 0, "over_cap": 0,
-                   "no_en": 0, "rejected": 0, "errored": 0, "errors": []})
+                   "no_en": 0, "rejected": 0, "errored": 0, "deferred": 0, "errors": []})
     for key in keys:
         e = bodies[key]
         en_path = root / e.get("en_path", "")
@@ -756,7 +755,12 @@ def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
         if len(en_body) > char_cap:       # 超长：留 pending，交本地 agent，不译半篇
             if st is not None:
                 st["over_cap"] += 1
+            continue                      # 不占调用预算（没真发一次翻译）
+        if limit and limit > 0 and attempted >= limit:
+            if st is not None:
+                st["deferred"] += 1        # 够短但本轮预算已用尽，下次再译
             continue
+        attempted += 1                     # limit 封顶的是「实际调用次数」，不是扫描条数
         title = en_fm.get("title") or e.get("title", "")
         try:
             zh = _clean_llm_translation(translate(title, en_body))
