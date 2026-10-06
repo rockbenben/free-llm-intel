@@ -716,41 +716,65 @@ def _translation_acceptable(en_body: str, zh: str) -> bool:
 def translate_bodies_llm(root: Path, bodies: dict, translate: Callable, *,
                          today: str, limit: int = 0, save: Callable = None,
                          flush_every: int = 10,
-                         char_cap: int = BODY_TRANSLATE_CHAR_CAP) -> int:
+                         char_cap: int = BODY_TRANSLATE_CHAR_CAP,
+                         stats: dict = None) -> int:
     """把待译英文正文逐篇交 `translate(title, en_body)->中文markdown`，落 `.md`。
 
     幂等：只动 `pending_translation_keys`（英文 ok 且未 translated）；已译的绝不重译。
     有界：`limit`（>0）封顶本次最多译几篇，控 CI 成本；`char_cap` 挡超长篇（留 pending）。
     不产半成品：正文取不到 / 超长 / 调用抛错 / 输出校验不过，一律留 pending，绝不写残篇。
     给定 `save` 时每 `flush_every` 篇落一次 ledger（中断也保住已完成项）。返回本轮新译篇数。
+
+    `stats`（传入一个 dict 即被填充）记录每篇的归类，专治「批量译了 0 篇却看不出为什么」：
+    translated / over_cap / no_en / errored 计数 + errors 前几条异常样本（含类型名）。
     """
     keys = pending_translation_keys(bodies)
     if limit and limit > 0:
         keys = keys[:limit]
     done = 0
+    st = stats if stats is not None else None
+    if st is not None:
+        st.update({"considered": len(keys), "translated": 0, "over_cap": 0,
+                   "no_en": 0, "rejected": 0, "errored": 0, "errors": []})
     for key in keys:
         e = bodies[key]
         en_path = root / e.get("en_path", "")
         if not e.get("en_path") or not en_path.exists():
+            if st is not None:
+                st["no_en"] += 1
             continue
         try:
             en_fm, en_body = read_body_doc(en_path)
         except (ValueError, OSError):
+            if st is not None:
+                st["no_en"] += 1
             continue
         if not en_body.strip():
+            if st is not None:
+                st["no_en"] += 1
             continue
         if len(en_body) > char_cap:       # 超长：留 pending，交本地 agent，不译半篇
+            if st is not None:
+                st["over_cap"] += 1
             continue
         title = en_fm.get("title") or e.get("title", "")
         try:
             zh = _clean_llm_translation(translate(title, en_body))
-        except Exception:
-            continue                       # 网络/额度/异常：留 pending，下次再试
+        except Exception as exc:           # 网络/额度/异常：留 pending，下次再试
+            if st is not None:
+                st["errored"] += 1
+                if len(st["errors"]) < 3:
+                    st["errors"].append(f"{type(exc).__name__}: {str(exc)[:180]}")
+            continue
         if not _translation_acceptable(en_body, zh):
+            if st is not None:
+                st["rejected"] += 1
             continue                       # 校验不过：宁缺毋残
         mark_translated(root, bodies, key=key, zh_body_md=zh, translator="llm",
                         today=today)
         done += 1
+        if st is not None:
+            st["translated"] += 1
         if save is not None and done % flush_every == 0:
             save(bodies)
     return done

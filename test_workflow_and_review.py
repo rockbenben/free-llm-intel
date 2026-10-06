@@ -7167,6 +7167,37 @@ class TestTranslateBodiesLlm(unittest.TestCase):
                                     flush_every=1)
             self.assertEqual(len(saves), 3, "每译一篇即落一次 ledger，中断也保住已完成项")
 
+    def test_stats_categorizes_every_skip(self):
+        """stats 把每篇归类摊开——专治「批量译了 0 篇却看不出为什么」。"""
+        with tempfile.TemporaryDirectory() as d:
+            (Path(d) / "docs/articles/openai").mkdir(parents=True)
+            b2 = {}
+            # 四篇各走一条出口：正常译 / 超长 / 调用抛错 / 输出校验不过
+            for slug, eb in [("t_ok", "normal english prose"),
+                             ("t_cap", "x" * 300),
+                             ("t_err", "boom body"),
+                             ("t_rej", "english echo")]:
+                rel = f"docs/articles/openai/{slug}.en.md"
+                ft.write_body_doc(Path(d) / rel, {"status": "ok", "url": f"https://a/{slug}"}, eb)
+                b2[f"openai\thttps://a/{slug}"] = {"slug": slug, "en_path": rel,
+                    "en_status": "ok", "zh_status": "", "translator": "", "title": slug,
+                    "date": "", "captured": ""}
+            def translate2(title, en_body):
+                if en_body == "boom body":
+                    raise RuntimeError("HTTP 400 maxOutputTokens exceeded")
+                if en_body == "english echo":
+                    return "english echo"               # 原样吐回 = 没翻，校验不过
+                return "这是一段合格的中文正文翻译。"
+            stats = {}
+            ft.translate_bodies_llm(Path(d), b2, translate2, today="2026-10-06",
+                                    char_cap=100, stats=stats)
+            self.assertEqual(stats["translated"], 1)
+            self.assertEqual(stats["over_cap"], 1)
+            self.assertEqual(stats["errored"], 1)
+            self.assertEqual(stats["rejected"], 1)
+            self.assertTrue(stats["errors"] and "400" in stats["errors"][0],
+                            "异常样本要带出来，否则又是静默 0")
+
 
 class TestFulltextCiInvariants(unittest.TestCase):
     """corpus spec §6 四条 CI 活守卫：增量有界 / requests-only / 非覆盖 / 防编造。

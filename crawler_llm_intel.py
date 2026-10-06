@@ -6232,8 +6232,10 @@ def main(argv: list[str] | None = None) -> int:
         translate = make_llm_body_translator(backend, model)
         print(f"  [ai-bodies] 待译 {pending} 篇，经 {backend}/{model} 逐篇译"
               f"（本次上限 {args.ai_bodies_limit or '不限'}，超长/失败留 pending）...")
+        stats = {}
         done = fulltext.translate_bodies_llm(
             root, bodies, translate, today=today, limit=args.ai_bodies_limit,
+            stats=stats,
             save=lambda b: fulltext.save_bodies(root / "docs/feeds/bodies.json", b))
         fulltext.save_bodies(root / "docs/feeds/bodies.json", bodies)
         errs = fulltext.validate_bodies(root, bodies)
@@ -6242,6 +6244,12 @@ def main(argv: list[str] | None = None) -> int:
         left = len(fulltext.pending_translation_keys(bodies))
         print(f"  本轮译 {done} 篇；待译从 {pending} 降到 {left}"
               f"（{pending - left} 已译，{left} 仍 pending）。")
+        # 归类读数：专治「译了 0 篇却看不出为什么」——每篇去哪一类都摊开。
+        print(f"  [ai-bodies] 归类：考虑 {stats.get('considered', 0)}｜译成 {stats.get('translated', 0)}"
+              f"｜超长留档 {stats.get('over_cap', 0)}｜无正文 {stats.get('no_en', 0)}"
+              f"｜校验不过 {stats.get('rejected', 0)}｜调用报错 {stats.get('errored', 0)}")
+        for msg in stats.get("errors", []):
+            print(f"  [ai-bodies] 调用异常样本：{msg}", file=sys.stderr)
         return 1 if errs else 0
 
     if args.backfill_dates or args.backfill_orig:
