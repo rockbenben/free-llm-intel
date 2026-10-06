@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-06 14:51:12**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-06 16:02:44**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -13,7 +13,7 @@
 >
 > 📡 **本仓库自建 RSS**：把下方归档直接转成订阅源，**官方没有原生 RSS 的厂商也能订阅**（标题同样已汉化，每日随巡检刷新）：
 > - 网页浏览 / 一键订阅：[https://free-llm-intel.aishort.top/](https://free-llm-intel.aishort.top/)（可按厂商筛选、搜索，页脚列出**全部有动态源的厂商**单源）
-> - 合并流（聚合全部有动态源的厂商）：[`llm-news-all.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml)（最近 30 条，带厂商前缀，可按 `category` 过滤）
+> - 合并流（聚合全部有动态源的厂商）：[`llm-news-all.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml)（最近 50 条，带厂商前缀，可按 `category` 过滤）
 > - 英文镜像合并流：[`llm-news-all.en.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml)（源语言标题，中文原生源的厂商不出现在这里）
 > - 单厂商源：`https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（最近 30 条；把 `{vendor_id}` 换成下方括号里的厂商 id，如 `llm-news-openai.xml`；英文镜像同名加 `.en.xml`）
 > - ⚠️ 合并流与各厂商单源**内容重叠**，二选一订阅即可（都订会出现重复条目）；中英两版**同时订**会看到同一份新闻各一条（guid 加了 `?li=1` 后缀区分，阅读器不会自动去重）。**建议按语言偏好二选一**。
@@ -306,12 +306,12 @@
 ### Amazon Bedrock (AWS Free Tier) (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [在 Amazon Bedrock 上推出 GLM 5.3](https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock/)（2026-10-05）
-  2. [使用 Claude Code 和 Amazon Bedrock 增强受监管的工作负载](https://aws.amazon.com/blogs/machine-learning/supercharge-regulated-workloads-with-claude-code-and-amazon-bedrock/)（2026-10-05）
-  3. [新代理技能：Amazon SageMaker 为您的编码代理优化了生成式 AI 推理](https://aws.amazon.com/blogs/machine-learning/new-agent-skill-amazon-sagemaker-optimized-generative-ai-inference-for-your-coding-agent/)（2026-10-05）
-  4. [让 Amazon Quick 为企业做好准备：自动化、可审核的跨账户资源促销](https://aws.amazon.com/blogs/machine-learning/making-amazon-quick-enterprise-ready-automated-auditable-cross-account-resource-promotion/)（2026-10-05）
-  5. [使用 LangChain 和 Amazon Bedrock 知识库进行代理检索](https://aws.amazon.com/blogs/machine-learning/agentic-retrieval-with-langchain-and-amazon-bedrock-knowledge-bases/)（2026-10-05）
-  - 📄 完整文章归档（共 53 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [Responsible AI governance: How AWS positions customers to align with ISO/IEC 42005:2025](https://aws.amazon.com/blogs/machine-learning/responsible-ai-governance-how-aws-positions-customers-to-align-with-iso-iec-420052025/)（2026-10-06）
+  2. [Best practices for Amazon SageMaker HyperPod administration and governance](https://aws.amazon.com/blogs/machine-learning/best-practices-for-amazon-sagemaker-hyperpod-administration-and-governance/)（2026-10-06）
+  3. [Manage Amazon SageMaker HyperPod Spaces directly from SageMaker Studio](https://aws.amazon.com/blogs/machine-learning/manage-amazon-sagemaker-hyperpod-spaces-directly-from-sagemaker-studio/)（2026-10-06）
+  4. [Build a voice travel concierge with Amazon Bedrock AgentCore, Managed Knowledge Base and Nova Sonic](https://aws.amazon.com/blogs/machine-learning/build-a-voice-travel-concierge-with-amazon-bedrock-agentcore-managed-knowledge-base-and-nova-sonic/)（2026-10-06）
+  5. [在 Amazon Bedrock 上推出 GLM 5.3](https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock/)（2026-10-05）
+  - 📄 完整文章归档（共 57 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (晶圆级推理) (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)
@@ -352,12 +352,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [GLM-5.3 模型概述和集成指南](https://deepinfra.com/blog/glm-5-3-model-integration-guide)（2026-10-05）
-  2. [Qwen3.8-27B Is Now Available on DeepInfra](https://deepinfra.com/blog/qwen3-8-27b-deepinfra)（2026-10-05）
-  3. [GLM-5.3 提供商定价指南：成本比较](https://deepinfra.com/blog/glm-5-3-provider-pricing-guide)（2026-10-03）
-  4. [GLM-5.3 现已在 DeepInfra 上提供](https://deepinfra.com/blog/glm-5-3-deepinfra)（2026-10-03）
-  5. [GLM-5.3 API 提供商：速度、延迟和成本](https://deepinfra.com/blog/glm-5-3-api-provider-benchmarks)（2026-10-02）
-  - 📄 完整文章归档（共 24 篇）：[deepinfra.md](llm-news/deepinfra.md)
+  1. [Qwen3.8-27B Pricing: DeepInfra vs Alibaba API](https://deepinfra.com/blog/qwen3-8-27b-pricing-deepinfra-vs-alibaba)（2026-10-06）
+  2. [GLM-5.3 模型概述和集成指南](https://deepinfra.com/blog/glm-5-3-model-integration-guide)（2026-10-05）
+  3. [Qwen3.8-27B Is Now Available on DeepInfra](https://deepinfra.com/blog/qwen3-8-27b-deepinfra)（2026-10-05）
+  4. [GLM-5.3 提供商定价指南：成本比较](https://deepinfra.com/blog/glm-5-3-provider-pricing-guide)（2026-10-03）
+  5. [GLM-5.3 现已在 DeepInfra 上提供](https://deepinfra.com/blog/glm-5-3-deepinfra)（2026-10-03）
+  - 📄 完整文章归档（共 25 篇）：[deepinfra.md](llm-news/deepinfra.md)
 
 ### Modular (原 BentoCloud/BentoML) (modular_cloud)
 - 📡 [RSS/Atom 订阅源](https://www.modular.com/blog/rss.xml)：`https://www.modular.com/blog/rss.xml`
@@ -412,7 +412,7 @@
   3. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
   4. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
   5. [学习循环：把智能掌握在自己手中](https://anyscale.com/blog/learning-loops)（2026-08-25）
-  - 📄 完整文章归档（共 69 篇）：[anyscale.md](llm-news/anyscale.md)
+  - 📄 完整文章归档（共 70 篇）：[anyscale.md](llm-news/anyscale.md)
 
 ### InceptionLabs (inception_labs)
 - 页面：[官方博客](https://www.inceptionlabs.ai/blog)

@@ -7,7 +7,7 @@
 
 - 📡 RSS/Atom：[RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)
 
-## 全部文章（共 69 篇，按日期倒序；无日期条目列于最后）
+## 全部文章（共 70 篇，按日期倒序；无日期条目列于最后）
 
 1. [Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08） <!--orig:Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all-->
 2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
@@ -76,5 +76,6 @@
 65. [蚂蚁集团 Ray 在线资源分配](https://anyscale.com/blog/online-resource-allocation-with-ray-at-ant-group)（2021-03-30） <!--orig:Online Resource Allocation with Ray at Ant Group-->
 66. [在没有 MapReduce 系统的情况下执行分布式 shuffle](https://anyscale.com/blog/executing-a-distributed-shuffle-without-a-mapreduce-system)（2021-03-22） <!--orig:Executing a distributed shuffle without a MapReduce system-->
 67. [Ray 中的数据处理支持](https://anyscale.com/blog/data-processing-support-in-ray)（2021-02-16） <!--orig:Data Processing Support in Ray-->
-68. [通用无服务器平台的理想基础](https://anyscale.com/blog/the-ideal-foundation-for-a-general-purpose-serverless-platform)（2020-11-05） <!--orig:The Ideal Foundation for a General Purpose Serverless Platform-->
-69. [Announcing Ray 1.0](https://anyscale.com/blog/announcing-ray-1-0)（2020-09-30）
+68. [Configuring and Scaling ML with Hydra + Ray](https://anyscale.com/blog/configuring-and-scaling-ml-with-hydra-ray)（2021-01-26）
+69. [通用无服务器平台的理想基础](https://anyscale.com/blog/the-ideal-foundation-for-a-general-purpose-serverless-platform)（2020-11-05） <!--orig:The Ideal Foundation for a General Purpose Serverless Platform-->
+70. [Announcing Ray 1.0](https://anyscale.com/blog/announcing-ray-1-0)（2020-09-30）
