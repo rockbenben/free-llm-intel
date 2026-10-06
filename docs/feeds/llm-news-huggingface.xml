@@ -51,6 +51,12 @@
 <p>想更深入地了解系统设计、实验、ablation 以及我们一路测试过的方法，请阅读我们的技术报告，并在 <a href="https://github.com/allenai/olmo-core">GitHub 上探索 Olmo-core 3</a>。</p>]]></content:encoded>
     </item>
     <item>
+      <title>Welcome RL Environments to the hub</title>
+      <link>https://huggingface.co/blog/rl-environments</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/rl-environments</guid>
+      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>你的智能体出色完成了任务，还能再现吗？</title>
       <link>https://huggingface.co/blog/ibm-research/altk-evolve-consistency</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/altk-evolve-consistency</guid>
@@ -5859,131 +5865,6 @@ hf auth login  # or: export HF_TOKEN=&lt;your-token&gt;</code></pre>
 <ul><li><a href="https://arxiv.org/abs/1706.08500">FID (Heusel et al., 2017)</a></li><li><a href="https://arxiv.org/abs/2401.09603">CMMD, &quot;Rethinking FID&quot; (Jayasumana et al., 2024)</a></li><li><a href="https://arxiv.org/abs/2304.07193">DINOv2 (Oquab et al., 2023)，DINO-MMD 所用的特征</a></li></ul>
 <p>PRX</p>
 <ul><li><a href="https://github.com/Photoroom/PRX">PRX model code</a></li><li><a href="https://huggingface.co/Photoroom/prxpixel-t2i">PRX Pixel model</a></li><li><a href="https://huggingface.co/spaces/Photoroom/PRX-Pixel">PRX Pixel demo (Hugging Face Space)</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>🤗 Kernels：重大更新</title>
-      <link>https://huggingface.co/blog/revamped-kernels</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/revamped-kernels</guid>
-      <pubDate>Mon, 06 Jul 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：🤗 Kernels: Major Updates</description>
-      <content:encoded><![CDATA[<p>返回文章列表</p>
-<h1>🤗 Kernels：重大更新</h1>
-<p>发布于 2026 年 7 月 6 日</p>
-<p>在 GitHub 上更新</p>
-<p>点赞</p>
-<p>37</p>
-<ul><li><a href="https://huggingface.co/iAkashPaul"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/630439880907b9a115c7ade0/3KyGw9hRNqImALLyB2OdM.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tepirale"><img src="https://huggingface.co/avatars/200551407f4ccfe8e0e50fbcb5f0c0fb.svg" alt=""></a></li><li><a href="https://huggingface.co/Strangefrost"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/o2Q7iBaVtpuFUVBM2Afip.png" alt=""></a></li><li><a href="https://huggingface.co/injaeryou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6687a8741c9173b89f32f872/13pghJEKQsAM2AwwdqHzu.png" alt=""></a></li><li><a href="https://huggingface.co/SaptaDey"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64bb8780e90972519d4e1698/O1_P3_CilEZ_BbOPfDZTH.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ManikandanBalasubrmanian"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6827098797fde5ca7222b6aa/PXDiVePTmt63kUjsT4wO8.jpeg" alt=""></a></li></ul>
-<p>Sayak Paul</p>
-<p>sayakpaul</p>
-<p>Daniël de Kok</p>
-<p>danieldk</p>
-<p>David Holtz</p>
-<p>drbh</p>
-<p>在上一篇<a href="https://huggingface.co/blog/kernel-builder">《From Zero to GPU》</a>中，我们介绍了 🤗 Kernels 项目——目标是把自定义内核（kernel）的打包、分发和使用方式标准化。我们希望这个项目无摩擦且安全，同时尽可能对 Hub 友好。</p>
-<p>过去几个月里，我们一直在朝这个目标推进，过程中几乎把整个项目重新设计了一遍。这篇博客总结我们已经上线的重大更新，以及接下来的计划。</p>
-<p><strong>目录</strong></p>
-<ul><li><a href="https://huggingface.co/blog/revamped-kernels#kernels--a-new-repository-type">Kernels——一种新的仓库类型</a></li><li><a href="https://huggingface.co/blog/revamped-kernels#improved-security">安全性改进</a></li><li><a href="https://huggingface.co/blog/revamped-kernels#revamped-clis">全新 CLI</a></li><li><a href="https://huggingface.co/blog/revamped-kernels#more-coverage-of-frameworks-and-backends">更广的框架与后端覆盖</a></li><li><a href="https://huggingface.co/blog/revamped-kernels#foundation-for-agentic-kernel-development">智能体内核开发的基础</a></li><li><a href="https://huggingface.co/blog/revamped-kernels#misc">杂项</a></li><li><a href="https://huggingface.co/blog/revamped-kernels#conclusion">结论</a></li></ul>
-<h2>Kernels——一种新的仓库类型</h2>
-<p>我们在 Hub 上新增了一种名为 <a href="https://huggingface.co/kernels">&quot;kernel&quot;</a> 的仓库类型。这让我们能更好地服务有算力相关需求的用户。例如，用户可以直观了解某个内核支持哪些加速卡、操作系统和后端版本：</p>
-<p>Kernel 页面：</p>
-<p>kernels-community/flash-attn3</p>
-<p>所有可用的 kernels 可以在这里浏览：<a href="https://huggingface.co/kernels">https://huggingface.co/kernels</a>。</p>
-<p>让内核成为 Hub 的一等公民，也让 AI 生态受益。用户现在可以观察内核、模型以及使用它们的应用之间的趋势，内核也因此更容易被用户发现。</p>
-<h2>安全性改进</h2>
-<p>内核运行的是原生代码，权限与加载它的 Python 进程相同，所以一个恶意内核可以造成真实危害。因此，安全一直是 Kernels 项目的重中之重。</p>
-<p>这也是我们很早便聚焦可复现性的原因：你应该能自己重新编译一个内核，并验证它与公开源码一致。我们用 Nix 来实现这一点——它通过构建配方的密封（hermetic）求值与强隔离沙箱，保证构建的纯净。我们还把源码的 Git SHA1 嵌入内核本身，进一步强化溯源。</p>
-<p>近几个月，我们又加了几层防线：受信内核发布者（trusted publishers）和代码签名。</p>
-<h3>受信内核发布者</h3>
-<p>伴随新的仓库类型，我们引入了&quot;受信发布者&quot;。由于内核在与 Python 进程相同权限下执行代码，攻击者可能通过上传恶意内核并诱使你使用它来攻破机器。为帮你避开这类恶意内核，kernels 包现在默认只加载<em>受信发布者</em>的内核。所谓受信发布者，是被社区信任、会善意行事的组织。</p>
-<p>我们仍然支持加载来自非受信组织或用户的内核，但你必须在从 Hub 加载内核时显式通过 <code>trust_remote_code</code> 参数选择加入：</p>
-<pre><code>from kernels import get_kernel
-
-kernel_module = get_kernel(  
-   “Atlas-Inference/gdn”, version=1, trust_remote_code=True  
-)  </code></pre>
-<p>默认情况下，用户不能在 Hub 上发布内核仓库，需要先申请成为内核发布者。用户和组织可以在账号设置里提交申请，这会让我们有时间逐一审核这些请求。</p>
-<h3>内核签名</h3>
-<p>我们添加的另一层安全机制是代码签名。代码签名防范这样一种场景：攻击者窃取了某个受信发布者账号的 Hub 凭证，然后向其内核仓库上传恶意内核。代码签名中，内核由只有内核开发者掌握的私钥签名，再用公开可得的公钥验证。在 Hub 被入侵的场景下，攻击者没有签名所需的私钥，就无法给恶意内核签名。</p>
-<p>为进一步提升安全性，我们使用 Sigstore 的 cosign 以临时私钥签名。这些签名密钥只在有限时间内有效，即使泄露，攻击者通常也无法利用。我们还会验证内核确实由受信 GitHub 仓库中受信的 GitHub workflow 签名。</p>
-<p><code>kernel-builder</code> 已经支持内核签名，我们提供了 <code>kernels verify-signature</code> 来验证一个内核。Kernels 在加载内核时暂未自动校验签名——我们希望在全面推广前再多测试这一新功能。为自己的内核配置代码签名的初步说明见 kernels 0.16.0 的发布说明：<a href="https://github.com/huggingface/kernels/releases/tag/v0.16.0">https://github.com/huggingface/kernels/releases/tag/v0.16.0</a>。</p>
-<h2>全新 CLI</h2>
-<p>此前，大量工具能力交织在 <code>kernels</code> 和 <code>kernel-builder</code> 之间。我们为两者的 CLI 建立了更清晰的关注点分离。心智模型是：<code>kernels</code> 是用于加载内核并为其使用做准备的库，因此不应包含任何与&quot;构建&quot;内核相关的内容。</p>
-<p>结果是，<code>kernels</code> 和 <code>kernel-builder</code> 都变得更精简、更有针对性。详情参见文档：</p>
-<ul><li><a href="https://huggingface.co/docs/kernels/en/cli"><code>kernels</code> CLI</a></li><li><a href="https://huggingface.co/docs/kernels/en/builder-cli"><code>kernel-builder</code> CLI</a></li></ul>
-<p>改进后的 CLI 体验也让我们能更好地适应智能体（agentic）内核开发的兴起。这一点<a href="https://huggingface.co/blog/revamped-kernels#foundation-for-agentic-kernel-development">稍后</a>再谈。</p>
-<h2>更广的框架与后端覆盖</h2>
-<p>我们扩展了对框架的支持，最显见的变化有：</p>
-<ul><li>kernels 和 kernel-builder 新增了对 Torch Stable ABI 的支持。Torch Stable ABI 让内核开发者可以瞄准某个特定 Torch 版本，或其后大约两年内发布的任意版本。例如，针对 Torch 2.9 Stable ABI 的内核支持 Torch &gt;= 2.9。</li><li>Apache TVM FFI 是继 Torch 之后首个获得支持的框架。TVM FFI 是一种标准化的内核 ABI，可与 PyTorch、Jax、CuPy 等其他框架互操作，让开发者写出能跨框架运行的内核。</li></ul>
-<h2>智能体内核开发的基础</h2>
-<p><code>kernel-builder</code> 和 <code>kernels</code> 与智能体内核开发的兴起相辅相成——在这类开发中，智能体被用来从零产出（优化过的）内核。两者共同支撑了一条智能体可以搭脚手架、构建、跑基准并迭代优化内核的工作流。</p>
-<p>智能体内核开发仍处于早期，合适的开发循环还会持续演化。正因如此，简单清晰的基座尤为重要——工具应当容易被组合进人们选择的任意智能体工作流或框架中。</p>
-<p><code>kernel-builder</code> 帮助强制一种结构：内核源码应如何搭脚手架、如何用于可复现构建。这为智能体提供了可预期的项目布局和可重复的工作流。它的 CLI 也是按<a href="https://huggingface.co/blog/is-it-agentic-enough">智能体优先</a>设计的，例如非交互式命令、输出便于智能体以编程方式解读。为此我们还提供了<a href="https://huggingface.co/docs/kernels/en/cli-skills">后端专属 skills</a>，帮助智能体驾驭不同后端的各种特性。这些 skills 会记录后端专属的工具链、编译路径和性能考量。</p>
-<p>成功构建内核并不是唯一目标，我们还要确保它在目标硬件上相对基线真正提速。因此成功构建只是第一个验证步骤。目标硬件通常包含许多不同的加速卡，甚至同一加速卡的不同代际。</p>
-<p>这使得跨硬件厂商、必要时跨代际地评估结果非常重要。我们与 HF Jobs 的深度<a href="https://huggingface.co/docs/kernels/en/builder/github-actions">集成</a>能让这一基准测试过程变得简单。智能体可以利用该集成运行基准套件、收集性能结果，并与设定基线对比。</p>
-<p>这样，智能体就能在不同硬件配置上跑测试，对生成内核的性能获得可靠反馈，明确下一步该做什么。这些反馈随后会指导下一轮优化迭代。</p>
-<p>下面是一些智能体辅助开发的内核示例，展示了通过这条工作流可以开发和评估的内核类型：</p>
-<ul><li><a href="https://huggingface.co/kernels/drbh/yamoe">https://huggingface.co/kernels/drbh/yamoe</a></li><li><a href="https://huggingface.co/kernels/sayakpaul/qk-norm-rope">https://huggingface.co/kernels/sayakpaul/qk-norm-rope</a></li></ul>
-<h2>杂项</h2>
-<h3>环境搭建</h3>
-<p>用 <code>kernel-builder</code> 构建内核的环境搭建可能让人头大。为方便用户，我们现在提供了一个<a href="https://huggingface.co/docs/kernels/en/builder/writing-kernels#quick-install">安装脚本</a>，一键配好环境。如果你偏好使用临时实例，可以参考我们的 <a href="https://github.com/huggingface/kernels/tree/main/terraform">Terraform 配置指南</a>。</p>
-<h3>内核的 system card</h3>
-<p>内核构建完成后，我们会为每个内核生成一份 system card，暴露有用信息，包括使用方法和对外接口。当内核推送到 Hub 时，这份 system card 就成了该内核的 front matter：</p>
-<p>kernels-community/flash-attn3 的</p>
-<p>System card</p>
-<h3>我的系统上能用这个内核吗？</h3>
-<p>这是为做规划时人们会反复询问的问题。可以用 <a href="https://huggingface.co/docs/kernels/main/en/api/kernels#kernels.has_kernel"><code>has_kernel()</code></a> 方法：</p>
-<pre><code>from kernels import has_kernel
-
-print(has_kernel(&quot;kernels-community/activation&quot;, version=1))  </code></pre>
-<p>它返回一个 <code>bool</code>。如果你想知道某个内核不被支持的更多原因，请用 <a href="https://huggingface.co/docs/kernels/main/en/api/kernels#kernels.get_kernel_variants"><code>get_kernel_variants()</code></a>：</p>
-<pre><code> from kernels import get_kernel_variants, VariantAccepted
-
-for decision in get_kernel_variants(&quot;kernels-community/activation&quot;, version=1):  
-    name = decision.variant.variant_str  
-    if isinstance(decision, VariantAccepted):  
-        print(f&quot;{name}: compatible&quot;)  
-    else:  
-        print(f&quot;{name}: rejected ({decision.reason})&quot;)  </code></pre>
-<p>应输出如下内容（取决于你所在的机器）：</p>
-<pre><code>torch212-cxx11-cu130-aarch64-linux: compatible  
-torch210-cu128-x86_64-windows: rejected (CPU (x86_64) does not match system CPU (aarch64))  
-torch211-cu128-x86_64-windows: rejected (CPU (x86_64) does not match system CPU (aarch64))  
-torch212-metal-aarch64-darwin: rejected (OS (darwin) does not match system OS (linux))  
-torch211-metal-aarch64-darwin: rejected (OS (darwin) does not match system OS (linux))  
-torch210-metal-aarch64-darwin: rejected (OS (darwin) does not match system OS (linux))  
-torch29-metal-aarch64-darwin: rejected (OS (darwin) does not match system OS (linux))  
-…  </code></pre>
-<h3>改进的 manylinux_2_28 支持</h3>
-<p>kernel-builder 几乎从一开始就以 <code>manylinux_2_28</code> 为目标。此前我们用一个以 glibc 2.28 编译的现代 gcc 工具链来达成 manylinux 目标，并且为避免与老版本 <code>libstdc++</code> 的兼容问题，静态链接了 libstdc++。</p>
-<p>但这个做法最近引发了一些问题。某些 <code>libstdc++</code> 功能会使用全局初始化。当多个 <code>libstdc++</code> 版本同时存在时——例如 PyTorch 动态链接的那份和内核静态链接的那份——就可能导致数据损坏。最近的一些内核用到了会触发全局初始化的功能（如 C++ 正则），造成数据损坏，进而导致段错误等问题。</p>
-<p>为了解决这个问题，内核现在动态链接 <code>libstdc++</code>。为保证与老版本 <code>libstdc++</code> 的兼容性，我们改用官方 <code>manylinux_2_28</code> 工具链编译内核。</p>
-<h2>结论</h2>
-<p>Kernels 项目的目标是同时服务好内核开发者和自定义内核的使用者。我们始终乐于接收社区关于如何改进它的反馈。欢迎贡献！</p>
-<p><em>致谢：感谢 <a href="https://huggingface.co/ariG23498">Aritra</a> 审阅本文。</em></p>
-<p>我们博客的更多文章</p>
-<p>kernels</p>
-<p>kernels-community</p>
-<p>guide</p>
-<h2>From Zero to GPU: A Guide to Building and Scaling Production-Ready CUDA Kernels</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6452d5ba3f80ad88c77b2f05/yuvfzgqOeK8-bFxEZ2gg9.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6310e9a107a76827902421d7/1e0GItqv3A6sOWYz5SXoe.png" alt=""></li></ul>
-<p>112</p>
-<p>2025 年 8 月 18 日</p>
-<p>kernels</p>
-<p>cuda</p>
-<p>amd</p>
-<h2>Creating custom kernels for the AMD MI300</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/651e6aa7c14e363968e338ff/5l-LMIYAFjWzHQKACuOgN.jpeg" alt=""></li></ul>
-<p>54</p>
-<p>2025 年 7 月 9 日</p>
-<h3>社区</h3>
-<p>将文件拖入文本输入框、粘贴，或</p>
-<p>点击此处</p>
-<p>，即可上传图像、音频和视频。</p>
-<p>点击或粘贴此处上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Frevamped-kernels">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Frevamped-kernels">登录</a>发表评论</p>
-<p>点赞</p>
-<p>37</p>
-<ul><li><a href="https://huggingface.co/iAkashPaul"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/630439880907b9a115c7ade0/3KyGw9hRNqImALLyB2OdM.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tepirale"><img src="https://huggingface.co/avatars/200551407f4ccfe8e0e50fbcb5f0c0fb.svg" alt=""></a></li><li><a href="https://huggingface.co/Strangefrost"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/o2Q7iBaVtpuFUVBM2Afip.png" alt=""></a></li><li><a href="https://huggingface.co/injaeryou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6687a8741c9173b89f32f872/13pghJEKQsAM2AwwdqHzu.png" alt=""></a></li><li><a href="https://huggingface.co/SaptaDey"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64bb8780e90972519d4e1698/O1_P3_CilEZ_BbOPfDZTH.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ManikandanBalasubrmanian"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6827098797fde5ca7222b6aa/PXDiVePTmt63kUjsT4wO8.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kariukijoseck"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/7AXaC5PZzJejGbsHd442O.jpeg" alt=""></a></li><li><a href="https://huggingface.co/wmeints"><img src="https://huggingface.co/avatars/0e7dd556fe5080e41267b8a0f2a301d8.svg" alt=""></a></li><li><a href="https://huggingface.co/fffiloni"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61868ce808aae0b5499a2a95/F6BA0anbsoY_Z7M1JrwOe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nosuchstudios"><img src="https://huggingface.co/avatars/381de982e1575bfdab1c2c3a81d42b4f.svg" alt=""></a></li><li><a href="https://huggingface.co/sayakpaul"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tolgacangoz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/603bdba23249b99991dbcbc4/cxCnN1H-RXOhojHY3Wcxo.jpeg" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

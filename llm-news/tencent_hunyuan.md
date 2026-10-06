@@ -1,6 +1,6 @@
 # 腾讯云混元 (TokenHub) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-05**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-06**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：腾讯云混元 (TokenHub)（`tencent_hunyuan`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -103,4 +103,4 @@
 92. [混元大模型高级版、混元大模型标准版中，新增流式输出审核开关](https://cloud.tencent.com/document/product/1729/97765#t2024-04-11-91)（2024-04-11）
 93. [新增 Embedding 接口：可以将文本转化为高质量的向量数据](https://cloud.tencent.com/document/product/1729/97765#t2024-01-05-92)（2024-01-05）
 94. [新增模型：腾讯混元大模型标准版，由腾讯研发的大语言模型，具备强大的中文创作能力，复杂语境下的逻辑推理能力，以及可靠的任务执行能力](https://cloud.tencent.com/document/product/1729/97765#t2023-11-23-93)（2023-11-23）
-95. [腾讯混元大模型（Tencent Hunyuan）是由腾讯研发的大语言模型，具备强大的中文创作能力，复杂语境下的逻辑推理能力，以及可靠的任务执行能力](https://cloud.tencent.com/document/product/1729/97765#t2023-09-06-94)（2023-09-06）
+95. [腾讯混元大模型（Tencent Hunyuan）是由腾讯研发的大语言模型，具备强大的中文创作能力，复杂语境下的逻辑推理能力，以及可靠的任务执行能力](https://cloud.tencent.com/document/product/1729/97765#t2023-09-06-94)（2023-09-06） <!--orig:腾讯混元大模型（Tencent&nbsp;Hunyuan）是由腾讯研发的大语言模型，具备强大的中文创作能力，复杂语境下的逻辑推理能力，以及可靠的任务执行能力-->
