@@ -2926,12 +2926,12 @@ class TestNewsTitleQuality(unittest.TestCase):
 
 
 class TestFeedLimitedPageFull(unittest.TestCase):
-    """合并流默认 **200 条**（2026-10-05 定）；页面仍读全量 articles.json 索引。
+    """合并流默认 **30 条**（2026-10-06 定）；页面仍读全量 articles.json 索引。
 
-    历史：曾限 200 → 改到 0（"阅读器 + gzip 全量没压力"）→ 回到 200。回摆的
-    理由：`<content:encoded>` 塞正文后单条体积胀 100×，全量 feed 从"其实能塞"
-    变成"确实太大"；200 条覆盖两周巡检新增，其余靠单厂商源或完整归档。
-    页面继续读索引而非 feed，索引不受限。
+    历史：200（全文进 feed 后定）→ 30。回摆理由：全文单条 ~16 KB，200 条 ≈ 3.3 MB，
+    实测大陆阅读器 ~14 KB/s × 45s 超时订不动。策略是「保全文、砍数量」而非「摘要化」
+    （用户明确要全文）。30 条 ≈ 500 KB、够覆盖约一周新增。想拉更多：`--rss-limit N`
+    或订单厂商源；页面继续读不受限的索引，reader 读全文 .md。
     见 docs/superpowers/specs/2026-10-05-rss-redesign.md §3.1。
     """
 
@@ -2944,16 +2944,16 @@ class TestFeedLimitedPageFull(unittest.TestCase):
         ]
         return v
 
-    def test_merged_feed_default_limit_is_200(self):
-        """默认（RSS_MERGED_LIMIT = 200）截到最近 200 条。"""
-        self.assertEqual(crawler_llm_intel.RSS_MERGED_LIMIT, 200,
-                         "合并流默认 200 条；要放开请显式传 merged_limit=0")
+    def test_merged_feed_default_limit_is_30(self):
+        """默认（RSS_MERGED_LIMIT = 30）截到最近 30 条。"""
+        self.assertEqual(crawler_llm_intel.RSS_MERGED_LIMIT, 30,
+                         "合并流默认 30 条；要放开请显式传 merged_limit=0")
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "feeds"
-            crawler_llm_intel.write_rss_feeds(out, [self._intel(230)])
+            crawler_llm_intel.write_rss_feeds(out, [self._intel(60)])
             merged = (out / "llm-news-all.xml").read_text(encoding="utf-8")
-            self.assertEqual(merged.count("<item>"), 200, "默认 200 条上限应生效")
-            self.assertIn("最近 200 条",
+            self.assertEqual(merged.count("<item>"), 30, "默认 30 条上限应生效")
+            self.assertIn("最近 30 条",
                           crawler_llm_intel.merged_scope_text(
                               crawler_llm_intel.RSS_MERGED_LIMIT))
 
