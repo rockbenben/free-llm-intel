@@ -100,6 +100,81 @@
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
+      <title>Introducing Anyscale GPU Health Observability: From app to h…</title>
+      <link>https://anyscale.com/blog/anyscale-gpu-health-observability</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/anyscale-gpu-health-observability?li=1</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing Anyscale GPU Health Observability: From app to hardware</description>
+      <content:encoded><![CDATA[<p>Home</p>
+<p>Blog</p>
+<p>Blog Detail</p>
+<h1>Introducing Anyscale GPU Health Observability: From app to hardware</h1>
+<p>By</p>
+<p>Mike Tower</p>
+<p>,</p>
+<p>Philip Wang</p>
+<p>,</p>
+<p>Cong Qian</p>
+<p>and</p>
+<p>Pengfei Wang</p>
+<p>|</p>
+<p>August 25, 2026</p>
+<p>A GPU that is quietly failing looks, from the outside, exactly like a training script that is quietly broken. That single ambiguity is responsible for more wasted engineering hours on GPU clusters than almost any other failure class, and it is the gap we are closing today.</p>
+<p>Today we're announcing the private preview of <strong>Anyscale GPU Health Observability</strong>, the newest layer in Anyscale's full stack observability vision, compatible with KubeRay and VM’s with future support for K8s Anyscale Operator. It surfaces the GPU hardware signals engineers have always needed (XID errors, ECC memory error counts, SM Clock, and per GPU memory) and, critically, attaches them to the exact Ray job and workspace that are running on each GPU.</p>
+<h2>LinkWhy we need this level of observability</h2>
+<p>Ask any team running large scale jobs across clusters running on multi-GPU nodes how they found the root cause of their last hardware failure, and the answer is rarely as simple as a dashboard. It is usually a person, manually opening multiple different tools and stitching together a timeline by hand.</p>
+<p>When a fatal XID error degrades the performance of a workload, Ray has no way to know that hardware was involved, so it reports a generic worker failure and sends the engineer straight into the training code, which doesn’t contain the actual problem. GPUs accumulating correctable memory errors give no warning before they take a worker down mid run, even though the error count had been climbing for hours in a metric few are paying attention to during a large-scale training job. NVLink interconnect degradation looks identical to ordinary network slowness until a multi GPU collective operation fails outright, and by then the job has already been running degraded for a prolonged period of time. Scale any of this across a cluster with dozens or hundreds of nodes, and a single struggling node simply disappears into a cluster wide average, indistinguishable from healthy neighbors unless someone happens to go looking node by node.</p>
+<p>None of these signals are secret. DCGM has reported GPU health data for years, and Kubernetes has always emitted pod and scheduling events. The problem has never been a lack of data. It has been that the data lives in one place, the Ray job lives in another, and connecting the two has always required a person, or multiple people doing it manually, under pressure, after something has already gone wrong.</p>
+<h2>LinkCreating a single pane of glass at the source</h2>
+<p>The reason none of this has existed before is not a lack of effort. It is that correlating a hardware signal to the job it affected requires sitting at the intersection of the hardware layer and the distributed runtime running on top of it, and almost no platform owns both. Anyscale does, which means the correlation does not have to be reconstructed after the fact by a person copying node IDs between browser tabs. It can happen once, automatically, at the exact point where the signal originates. That single idea shows up in three concrete ways.</p>
+<p><strong>Industry standard signals, finally with context.</strong> DCGM is the industry standard for GPU health. We are enriching those metrics with the context that turns a raw counter into something an engineer can act on in the moment. GPU Health Observability takes DCGM metrics and enriches each metric with workload aware metadata. A metric like &quot;GPU memory used: 38GB&quot; is meaningless on its own. Attached to the right job, node, and GPU model, it becomes an actionable alert instead of a data point nobody has time to interpret.</p>
+<p><strong>One correlated view, not five disconnected surfaces.</strong> This is where the value compounds. Once a hardware signal knows which job it belongs to, the same correlation extends outward to everything else that used to require manual detective work. Per node failure attribution replaces cluster aggregate metrics with task failures, memory RSS, and OOM kill events broken out by node and instance type side by side with your hardware telemetry. None of this requires owning five different dashboards, because none of it requires reconciling anything after the fact. Anyscale owns both the hardware layer and the distributed runtime running on top of it, so the correlation happens automatically, at the source, as a single pane of glass rather than a set of tools someone has to stitch together by hand.</p>
+<p><strong>Works the way you are actually deployed. </strong>View active GPU health across your entire fleet of workloads, grouped by the node, workload, or K8s cluster for quick analysis. Easily dial in on the failing GPU that is causing the entire workload to crash, or catch a single bit issue before it actually happens all within the context of your underlying workloads.</p>
+<h2>LinkHow does it work?</h2>
+<p>GPU Health Observability is built on DCGM, the industry-standard GPU metric exporter. For most customers running on GPU’s, the dcgm-exporter comes natively with the GPU Operator. In a KubeRay environment simply adding the dcgmNamespace into the connector.yaml will allow the Anyscale Connector to start scraping the dcgm endpoint. For VM’s this happens natively today. Once forwarding, Anyscale’s collects this telemetry and enriches each one with the critical metadata before surfacing it in the console.</p>
+<p>The result shows up in two places, depending on who you are and what you're trying to do.</p>
+<h3>Link<strong>Fleet-level view: for platform operators</strong></h3>
+<p>Open the GPU Status tab in the Anyscale console and you get a fleet-wide picture of every GPU across your entire cloud, grouped by node type, K8s cluster, or workload. A team running hundreds of GPUs across multiple clusters can see at a glance which nodes are healthy, which are degraded, and which have active hardware faults</p>
+<p>Screenshot: Fleet-level view grouped by node type. Nodes display GPU mini-bars with color coding — green for healthy, red for hardware error. The affected node stands out immediately among healthy neighbors.</p>
+<p>Screenshot Fleet-level view grouped by node type</p>
+<p>Selecting a node opens a detail panel sidebar with two tabs: Overview and GPUs. The Overview shows CPU, memory, and GPU utilization alongside the workloads currently running on that node. The GPUs tab breaks out every GPU individually including, compute, memory, power, temperature, with error badges on any GPU that has an active fault so that you can easily identify which piece of hardware you need to take action on.</p>
+<p>Screenshot: Node detail panel with the GPUs tab selected, showing 8 GPU cards. GPU 3 displays a red &quot;XID Error: 74&quot; badge while the remaining GPUs show normal metrics.</p>
+<p>Screenshot Node detail panel with the GPUs tab selected, showing 8 GPU cards.</p>
+<p>From here, clicking into the affected GPU shows per-GPU detail: the specific XID code, NVLink replay count, ECC errors, SM Clock, power draw and which workloads were running on that GPU when the fault occurred. The same view that tells you something failed also tells you whether the rest of the node is healthy enough to keep using.</p>
+<p>Screenshot: Individual GPU Detail tab showing the GPU / Accelerator metric list. Easily identify GPU health status, utilization, and error codes from XID.</p>
+<p>Screenshot Individual GPU Detail tab showing the GPU : Accelerator metric list.</p>
+<h3>Link<strong>Job-level view: for ML engineers</strong></h3>
+<p>An ML engineer debugging a failed training job starts in a different place, the Jobs console, but arrives at the same answer. When DCGM detects a GPU fault on any node associated with a job, a hardware error banner appears at the top of the Job Overview page, naming the exact node, GPU, and XID error. One click navigates directly to the GPU detail.</p>
+<p>Screenshot: Job Overview page showing the red GPU hardware error banner: &quot;An Xid 74 (NVLINK_ERROR) error was reported on GPU 3 on node node-gpu-16. This hardware fault may cause this job to fail.&quot; with a &quot;View GPU details&quot; link.</p>
+<p>Screenshot Job Overview page showing the red GPU hardware error banner</p>
+<p>Inside Ray Workloads, the Train view shows which workers were affected including their world rank, node, GPU assignment, and status. The engineer can see that workers on the faulted node died while workers on healthy nodes completed normally. Combined with the hardware error banner, the root cause is clear: this was a GPU hardware fault, not a training script bug, not a NCCL misconfiguration, and not an OOM.</p>
+<p>The distinction matters because without this correlation, a failed job produces a generic &quot;worker died&quot; message and the engineer starts debugging in the wrong place entirely. GPU Health Observability closes that gap by connecting the hardware signal to the job at the source, automatically, before the engineer ever opens a terminal.</p>
+<h2>LinkBeyond jobs and workspaces: the same lens for inference</h2>
+<p>The principle behind GPU Health Observability, which is to correlate signals across layers in a single view applies equally to inference workloads. For Serve users, we recently shipped a cluster topology view that maps every deployment, actor, and node into one interactive surface. Engineers can move top-down through their cluster topology, click into any service to see its overview, metrics, logs, and status, and triage production issues without switching between tools. It's the same reduction in mean time to resolution, applied to the workload type where uptime matters most.</p>
+<p>testcloud workspaces</p>
+<h2>LinkWhat's Coming Next</h2>
+<p>GPU Health Observability is the first piece of a broader signal layer we are building out across the rest of this year. We are going to continue our push to become the best observability tool for GPU’s in context to your ML workloads offering deeper analysis, granular health signals, and fault tolerance to help users keep their jobs running even if the underlying hardware is at fault.</p>
+<p>Kubernetes coverage is expanding too, starting with K8s - Anyscale Operator managed environments in conjunction with our Foundations team.</p>
+<p>Anyscale Observability is actively evolving alongside the Ray ecosystem and the broader AI infrastructure landscape, and GPU Health Observability is the clearest sign yet of where that is headed.</p>
+<p><a href="https://www.anyscale.com/asset/gpu-health-observability-private-preview-form"><strong>Sign up for private preview →</strong></a></p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#why-we-need-this-level-of-observability">Why we need this level of observability</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#creating-a-single-pane-of-glass-at-the-source">Creating a single pane of glass at the source</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#how-does-it-work?">How does it work?</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#fleet-level-view:-for-platform-operators">Fleet-level view: for platform operators</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#job-level-view:-for-ml-engineers">Job-level view: for ML engineers</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#beyond-jobs-and-workspaces:-the-same-lens-for-inference">Beyond jobs and workspaces: the same lens for inference</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#what's-coming-next">What's Coming Next</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
+<p>Read more</p>
+<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
+<p>Read more</p>
+<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
+<p>Read more</p>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p>Start for Free</p>
+<p>Talk to an expert</p>]]></content:encoded>
+    </item>
+    <item>
       <title>Scaling Ray for AI workloads to 10k node clusters</title>
       <link>https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</link>
       <guid isPermaLink="true">https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters?li=1</guid>
@@ -785,81 +860,6 @@ ds.groupby(&quot;band_id&quot;).count()</code></pre>
 <p>We’re excited to continue investing in this area to bring the best data processing performance for your AI data workloads. Ray Data GPU shuffle is experimental today and available as part of Ray 2.58. If you try it, we'd like to hear your feedback!</p>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#background">Background</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#cudf-as-a-first-class-batch-format">cuDF as a first-class batch format</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#gpu-native-shuffle-via-rapidsmpf">GPU-native shuffle via RapidsMPF</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#benchmarks:-fuzzy-deduplication">Benchmarks: fuzzy deduplication</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#generating-minhash-signatures">Generating MinHash signatures</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#the-grouping-stages">The grouping stages</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#end-to-end-pipeline">End-to-end Pipeline</a></li><li><a href="https://www.anyscale.com/blog/gpu-native-operators-in-ray-data#what's-next">What's next</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<p>Read more</p>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<p>Read more</p>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<p>Read more</p>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Introducing Anyscale GPU Health Observability: From app to h…</title>
-      <link>https://anyscale.com/blog/anyscale-gpu-health-observability</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/anyscale-gpu-health-observability?li=1</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Introducing Anyscale GPU Health Observability: From app to hardware</description>
-      <content:encoded><![CDATA[<p>Home</p>
-<p>Blog</p>
-<p>Blog Detail</p>
-<h1>Introducing Anyscale GPU Health Observability: From app to hardware</h1>
-<p>By</p>
-<p>Mike Tower</p>
-<p>,</p>
-<p>Philip Wang</p>
-<p>,</p>
-<p>Cong Qian</p>
-<p>and</p>
-<p>Pengfei Wang</p>
-<p>|</p>
-<p>August 25, 2026</p>
-<p>A GPU that is quietly failing looks, from the outside, exactly like a training script that is quietly broken. That single ambiguity is responsible for more wasted engineering hours on GPU clusters than almost any other failure class, and it is the gap we are closing today.</p>
-<p>Today we're announcing the private preview of <strong>Anyscale GPU Health Observability</strong>, the newest layer in Anyscale's full stack observability vision, compatible with KubeRay and VM’s with future support for K8s Anyscale Operator. It surfaces the GPU hardware signals engineers have always needed (XID errors, ECC memory error counts, SM Clock, and per GPU memory) and, critically, attaches them to the exact Ray job and workspace that are running on each GPU.</p>
-<h2>LinkWhy we need this level of observability</h2>
-<p>Ask any team running large scale jobs across clusters running on multi-GPU nodes how they found the root cause of their last hardware failure, and the answer is rarely as simple as a dashboard. It is usually a person, manually opening multiple different tools and stitching together a timeline by hand.</p>
-<p>When a fatal XID error degrades the performance of a workload, Ray has no way to know that hardware was involved, so it reports a generic worker failure and sends the engineer straight into the training code, which doesn’t contain the actual problem. GPUs accumulating correctable memory errors give no warning before they take a worker down mid run, even though the error count had been climbing for hours in a metric few are paying attention to during a large-scale training job. NVLink interconnect degradation looks identical to ordinary network slowness until a multi GPU collective operation fails outright, and by then the job has already been running degraded for a prolonged period of time. Scale any of this across a cluster with dozens or hundreds of nodes, and a single struggling node simply disappears into a cluster wide average, indistinguishable from healthy neighbors unless someone happens to go looking node by node.</p>
-<p>None of these signals are secret. DCGM has reported GPU health data for years, and Kubernetes has always emitted pod and scheduling events. The problem has never been a lack of data. It has been that the data lives in one place, the Ray job lives in another, and connecting the two has always required a person, or multiple people doing it manually, under pressure, after something has already gone wrong.</p>
-<h2>LinkCreating a single pane of glass at the source</h2>
-<p>The reason none of this has existed before is not a lack of effort. It is that correlating a hardware signal to the job it affected requires sitting at the intersection of the hardware layer and the distributed runtime running on top of it, and almost no platform owns both. Anyscale does, which means the correlation does not have to be reconstructed after the fact by a person copying node IDs between browser tabs. It can happen once, automatically, at the exact point where the signal originates. That single idea shows up in three concrete ways.</p>
-<p><strong>Industry standard signals, finally with context.</strong> DCGM is the industry standard for GPU health. We are enriching those metrics with the context that turns a raw counter into something an engineer can act on in the moment. GPU Health Observability takes DCGM metrics and enriches each metric with workload aware metadata. A metric like &quot;GPU memory used: 38GB&quot; is meaningless on its own. Attached to the right job, node, and GPU model, it becomes an actionable alert instead of a data point nobody has time to interpret.</p>
-<p><strong>One correlated view, not five disconnected surfaces.</strong> This is where the value compounds. Once a hardware signal knows which job it belongs to, the same correlation extends outward to everything else that used to require manual detective work. Per node failure attribution replaces cluster aggregate metrics with task failures, memory RSS, and OOM kill events broken out by node and instance type side by side with your hardware telemetry. None of this requires owning five different dashboards, because none of it requires reconciling anything after the fact. Anyscale owns both the hardware layer and the distributed runtime running on top of it, so the correlation happens automatically, at the source, as a single pane of glass rather than a set of tools someone has to stitch together by hand.</p>
-<p><strong>Works the way you are actually deployed. </strong>View active GPU health across your entire fleet of workloads, grouped by the node, workload, or K8s cluster for quick analysis. Easily dial in on the failing GPU that is causing the entire workload to crash, or catch a single bit issue before it actually happens all within the context of your underlying workloads.</p>
-<h2>LinkHow does it work?</h2>
-<p>GPU Health Observability is built on DCGM, the industry-standard GPU metric exporter. For most customers running on GPU’s, the dcgm-exporter comes natively with the GPU Operator. In a KubeRay environment simply adding the dcgmNamespace into the connector.yaml will allow the Anyscale Connector to start scraping the dcgm endpoint. For VM’s this happens natively today. Once forwarding, Anyscale’s collects this telemetry and enriches each one with the critical metadata before surfacing it in the console.</p>
-<p>The result shows up in two places, depending on who you are and what you're trying to do.</p>
-<h3>Link<strong>Fleet-level view: for platform operators</strong></h3>
-<p>Open the GPU Status tab in the Anyscale console and you get a fleet-wide picture of every GPU across your entire cloud, grouped by node type, K8s cluster, or workload. A team running hundreds of GPUs across multiple clusters can see at a glance which nodes are healthy, which are degraded, and which have active hardware faults</p>
-<p>Screenshot: Fleet-level view grouped by node type. Nodes display GPU mini-bars with color coding — green for healthy, red for hardware error. The affected node stands out immediately among healthy neighbors.</p>
-<p>Screenshot Fleet-level view grouped by node type</p>
-<p>Selecting a node opens a detail panel sidebar with two tabs: Overview and GPUs. The Overview shows CPU, memory, and GPU utilization alongside the workloads currently running on that node. The GPUs tab breaks out every GPU individually including, compute, memory, power, temperature, with error badges on any GPU that has an active fault so that you can easily identify which piece of hardware you need to take action on.</p>
-<p>Screenshot: Node detail panel with the GPUs tab selected, showing 8 GPU cards. GPU 3 displays a red &quot;XID Error: 74&quot; badge while the remaining GPUs show normal metrics.</p>
-<p>Screenshot Node detail panel with the GPUs tab selected, showing 8 GPU cards.</p>
-<p>From here, clicking into the affected GPU shows per-GPU detail: the specific XID code, NVLink replay count, ECC errors, SM Clock, power draw and which workloads were running on that GPU when the fault occurred. The same view that tells you something failed also tells you whether the rest of the node is healthy enough to keep using.</p>
-<p>Screenshot: Individual GPU Detail tab showing the GPU / Accelerator metric list. Easily identify GPU health status, utilization, and error codes from XID.</p>
-<p>Screenshot Individual GPU Detail tab showing the GPU : Accelerator metric list.</p>
-<h3>Link<strong>Job-level view: for ML engineers</strong></h3>
-<p>An ML engineer debugging a failed training job starts in a different place, the Jobs console, but arrives at the same answer. When DCGM detects a GPU fault on any node associated with a job, a hardware error banner appears at the top of the Job Overview page, naming the exact node, GPU, and XID error. One click navigates directly to the GPU detail.</p>
-<p>Screenshot: Job Overview page showing the red GPU hardware error banner: &quot;An Xid 74 (NVLINK_ERROR) error was reported on GPU 3 on node node-gpu-16. This hardware fault may cause this job to fail.&quot; with a &quot;View GPU details&quot; link.</p>
-<p>Screenshot Job Overview page showing the red GPU hardware error banner</p>
-<p>Inside Ray Workloads, the Train view shows which workers were affected including their world rank, node, GPU assignment, and status. The engineer can see that workers on the faulted node died while workers on healthy nodes completed normally. Combined with the hardware error banner, the root cause is clear: this was a GPU hardware fault, not a training script bug, not a NCCL misconfiguration, and not an OOM.</p>
-<p>The distinction matters because without this correlation, a failed job produces a generic &quot;worker died&quot; message and the engineer starts debugging in the wrong place entirely. GPU Health Observability closes that gap by connecting the hardware signal to the job at the source, automatically, before the engineer ever opens a terminal.</p>
-<h2>LinkBeyond jobs and workspaces: the same lens for inference</h2>
-<p>The principle behind GPU Health Observability, which is to correlate signals across layers in a single view applies equally to inference workloads. For Serve users, we recently shipped a cluster topology view that maps every deployment, actor, and node into one interactive surface. Engineers can move top-down through their cluster topology, click into any service to see its overview, metrics, logs, and status, and triage production issues without switching between tools. It's the same reduction in mean time to resolution, applied to the workload type where uptime matters most.</p>
-<p>testcloud workspaces</p>
-<h2>LinkWhat's Coming Next</h2>
-<p>GPU Health Observability is the first piece of a broader signal layer we are building out across the rest of this year. We are going to continue our push to become the best observability tool for GPU’s in context to your ML workloads offering deeper analysis, granular health signals, and fault tolerance to help users keep their jobs running even if the underlying hardware is at fault.</p>
-<p>Kubernetes coverage is expanding too, starting with K8s - Anyscale Operator managed environments in conjunction with our Foundations team.</p>
-<p>Anyscale Observability is actively evolving alongside the Ray ecosystem and the broader AI infrastructure landscape, and GPU Health Observability is the clearest sign yet of where that is headed.</p>
-<p><a href="https://www.anyscale.com/asset/gpu-health-observability-private-preview-form"><strong>Sign up for private preview →</strong></a></p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#why-we-need-this-level-of-observability">Why we need this level of observability</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#creating-a-single-pane-of-glass-at-the-source">Creating a single pane of glass at the source</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#how-does-it-work?">How does it work?</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#fleet-level-view:-for-platform-operators">Fleet-level view: for platform operators</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#job-level-view:-for-ml-engineers">Job-level view: for ML engineers</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#beyond-jobs-and-workspaces:-the-same-lens-for-inference">Beyond jobs and workspaces: the same lens for inference</a></li><li><a href="https://www.anyscale.com/blog/anyscale-gpu-health-observability#what's-coming-next">What's Coming Next</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>
@@ -3497,6 +3497,76 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
       <link>https://anyscale.com/blog/autoscale-large-ai-models-faster</link>
       <guid isPermaLink="true">https://anyscale.com/blog/autoscale-large-ai-models-faster?li=1</guid>
       <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Home</p>
+<p>Blog</p>
+<p>Blog Detail</p>
+<h1>Autoscaling Large AI Models up to 5.1x Faster on Anyscale</h1>
+<p>By</p>
+<p>Christopher Chou</p>
+<p>,</p>
+<p>Austin Kuo</p>
+<p>,</p>
+<p>Richard Liaw</p>
+<p>,</p>
+<p>Edward Oakes</p>
+<p>and</p>
+<p>Chris Sivanich</p>
+<p>|</p>
+<p>October 1, 2024</p>
+<p>State of the art AI models are getting larger by the month, GPUs remain wildly expensive, and AI practitioners’ time is scarce. When you put these factors together, it becomes clear that efficiency is key for AI applications, both in development and production.</p>
+<p>Unfortunately, a common experience for AI practitioners is to spend a lot of time waiting around for instances to boot, containers to pull, and models to load. As we’ll discuss below, it can take up to 10-12 minutes to provision a replica of <a href="https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct">Meta-Llama-3-70B-Instruct</a> for inference using a typical setup of Ray Serve on Kubernetes.</p>
+<p>image3</p>
+<p>At Anyscale, we’ve optimized scale-up speed across the entire stack, leading to <strong>up to 5.1x faster autoscaling for Meta-Llama-3-70B-Instruct</strong> on the Anyscale platform when compared to running the same application using KubeRay on Amazon Elastic Kubernetes Service (EKS).</p>
+<p>image4</p>
+<p>Faster scale-up is a force multiplier for AI engineers and researchers using the Anyscale platform. They’re able to iterate quickly and avoid idle time in development and autoscale to meet workloads’ demands and avoid idle resources in production.</p>
+<h2>LinkThe Problem: Large Containers, Large Models, and Pricey GPUs</h2>
+<p>Take the example of trying to run a popular open source large language model (LLM), <a href="https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct">Meta-Llama-3-70B-Instruct</a>, on Kubernetes using <a href="https://github.com/vllm-project/vllm">vLLM</a>. The typical startup sequence looks something like:</p>
+<ul><li>Pod is created, Kubernetes cluster autoscaler adds a new node with a GPU: <strong>1-1.5min</strong></li><li>Container image (~12 GB including CUDA and vLLM dependencies) is pulled from container registry: <strong>4-5min</strong></li><li>Container starts, vLLM loads the model (~140 GB in FP16) from cloud storage: <strong>4-5min</strong></li></ul>
+<p>Summed up, this means waiting up to <strong>10-12 minutes</strong> for a copy of the model to come online. Of course, there are various levels of caching that might speed up subsequent runs on the same hardware, but with sky-high GPU prices, it’s critical to relinquish GPU machines when they’re not actively in use.</p>
+<p>In development, this drains the productivity of AI practitioners who find themselves waiting around for their instance to spin up, container to pull, and model to download.</p>
+<p>In production, slow upscaling speeds lead to overprovisioning. Often, autoscaling policies are configured to handle variable incoming traffic patterns; the number of serving replicas is scaled up when traffic increases and scaled down when it decreases. However, if it takes too long to scale up in response to increased traffic, existing replicas can be overloaded, resulting in high response latencies or even failures.</p>
+<p>A simple and common solution to this problem is to add more replicas in steady state to accommodate higher load while waiting for new replicas to come online and upscale more aggressively as traffic increases. However, when each replica of a model requires expensive GPUs to run, this can quickly become expensive.</p>
+<p>Ideally, an online serving system can upscale quickly and be more responsive to incoming traffic, avoiding idle GPU resources.</p>
+<h2>LinkAnyscale Autoscaling: Full-Stack Optimization</h2>
+<p>The <a href="https://www.anyscale.com/platform">Anyscale Platform</a> is a fully-managed Ray solution. Every part of the infrastructure is tailored to provide the best user experience, high performance, and cost effectiveness to run AI applications using Ray. For upscaling speed, this manifests as a few key benefits:</p>
+<ul><li>The Anyscale control plane is directly integrated with the Ray autoscaler, allowing it to react quickly to resource requests and make intelligent autoscaling decisions.</li><li>The machine image and startup sequence have been tuned to optimize instance boot times.</li><li>When pulling container images, Anyscale uses a custom container image format and client to reduce image pull times.</li><li>Anyscale provides a library for fast model loading, streaming tensors directly from cloud storage onto the GPU.</li></ul>
+<p>To demonstrate the effect of these optimizations, we ran an experiment to measure the time taken to scale up a single <a href="https://www.anyscale.com/library/ray-serve">Ray Serve</a> replica to host an LLM model for inference using <a href="https://github.com/vllm-project/vllm">vLLM</a> on AWS. We repeated this experiment for two representative models:</p>
+<ul><li>Mistral-7B-Instruct-v0.1 on a single NVIDIA A10G GPU (1x AWS g5.8xlarge instance). Model weights are about 14 GB in FP16.</li><li>Meta-Llama-70B-Instruct on four NVIDIA L40S GPUs using tensor parallelism (1x AWS g6e.12xlarge instance). Model weights are about 140 GB in FP16.</li></ul>
+<p>On Anyscale, the application is run as a <a href="https://docs.anyscale.com/platform/services/">Service</a> and on KubeRay, it’s run as a <a href="https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html">RayService</a>. In both cases, there is no local caching involved; a new instance needs to be booted, the container pulled from a registry, and the model weights loaded from remote cloud storage.</p>
+<p>image5</p>
+<p>Anyscale is able to scale up a new replica end-to-end in only <strong>75 seconds for Mistral-7B-Instruct-v0.1 </strong>and <strong>107 seconds for Meta-Llama-70B-Instruct</strong>. This represents a <strong>4.3x</strong> and <strong>5.1x</strong> improvement when compared to KubeRay running on Amazon EKS for this workload, respectively.</p>
+<h3>LinkCustom Container Format and Client</h3>
+<p>One of the key differences that enables this speedup is Anyscale’s custom container image format and runtime. The first time a new container image is used by a customer on the Anyscale platform, the image is converted and stored in an optimized format that is used to make subsequent runs with the same image in the same region lightning fast.</p>
+<p>To show the benefit of this optimized format in isolation, we ran an experiment to test the time that it takes to pull a container image and start a container on a freshly-booted g5.8xlarge instance on Amazon EKS and the Anyscale platform.</p>
+<ul><li>The two images used are a ray:2.34.0 default image (~6.2 GB) and a custom image that uses ray:2.34.0 as its base and installs vLLM and its required dependencies (~12.8 GB).</li><li>On Anyscale and EKS, the instances are running in the us-west-2 region and the source container images are hosted in an Amazon Elastic Container Registry in the same region and same AWS account.</li><li>The Amazon EKS node group is configured to use GP3 EBS volumes with 3,000 provisioned IOPs.</li></ul>
+<p>image7</p>
+<p>In this experiment, Anyscale is able to pull the container image up to <strong>30x</strong> faster than AWS EKS for a 6GB image and up to <strong>14x</strong> faster for a 13GB image.</p>
+<h3>LinkOptimized Direct-to-GPU Loading</h3>
+<p>Anyscale also provides an optimized client to load model weights in the <a href="https://github.com/huggingface/safetensors">safetensors</a> format from remote storage directly onto a GPU. This technique leverages pipeline parallelism, avoiding a synchronous copy of the full model weights to disk, followed by loading them to CPU memory, and finally loading to GPU memory. Instead, model weights are streamed chunk-by-chunk from remote storage to CPU memory to GPU memory. You can read more about the technical details in this <a href="https://www.anyscale.com/blog/loading-llama-2-70b-20x-faster-with-anyscale-endpoints">previous blog post</a> and read the latest documentation <a href="https://docs.anyscale.com/platform/services/fast-loading">here</a>.</p>
+<p>To show the benefit of this faster model loading technique in isolation, we measured the time that it takes vLLM to start up and load a model for inference. The models and hardware used are the same as the above end-to-end experiment:</p>
+<ul><li>Mistral-7B-Instruct-v0.1 on a single NVIDIA A10G GPU (1x AWS g5.8xlarge instance). Model weights are about 14 GB in FP16.</li><li>Meta-Llama-70B-Instruct on four NVIDIA L40S GPUs using tensor parallelism (1x AWS g6e.12xlarge instance). Model weights are about 140 GB in FP16.</li></ul>
+<p>image1</p>
+<p>When compared to a typical workflow of using the AWS S3 CLI to download to local disk (with configuration options configured to maximize throughput) and the <a href="https://github.com/huggingface/safetensors">safetensors</a> library to load from local disk to GPU, Anyscale improves the startup and model loading time of vLLM by up to <strong>2x for Mistral-7B-Instruct-v0.1 </strong>and up to <strong>4.8x for Meta-Llama-70B-Instruct</strong>.</p>
+<h2>LinkConclusion</h2>
+<p>The <a href="https://www.anyscale.com/platform">Anyscale Platform</a> implements full-stack optimizations to enable blazing fast autoscaling. For Meta-Llama-3-70B-Instruct, this leads to <strong>up to 5.1x faster autoscaling</strong> when compared to running the same application using KubeRay on Amazon EKS.</p>
+<p>These optimizations make AI practitioners more effective and inference services less expensive to operate.</p>
+<p>Get started on the Anyscale platform for free today at: <a href="https://www.anyscale.com/">https://www.anyscale.com/</a>.</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#the-problem:-large-containers,-large-models,-and-pricey-gpus">The Problem: Large Containers, Large Models, and Pricey GPUs</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#anyscale-autoscaling:-full-stack-optimization">Anyscale Autoscaling: Full-Stack Optimization</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#custom-container-format-and-client">Custom Container Format and Client</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#optimized-direct-to-gpu-loading">Optimized Direct-to-GPU Loading</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#conclusion">Conclusion</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
+<p>Read more</p>
+<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
+<p>Read more</p>
+<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
+<p>Read more</p>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p>Start for Free</p>
+<p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
       <title>Announcing RayTurbo</title>

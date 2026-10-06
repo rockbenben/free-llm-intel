@@ -66,6 +66,48 @@
 <ul><li>Fully Connected，旧金山（9 月 29 日 - 10 月 1 日）</li><li>Long Horizon，旧金山（10 月 20 - 21 日）</li><li>PyTorch Conference，圣何塞（10 月 20 - 21 日）</li><li>AI in Drug Discovery &amp; Development Summit（10 月 27 - 29 日）</li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>推出 Anyscale GPU 健康可观测性：从应用到硬件</title>
+      <link>https://anyscale.com/blog/anyscale-gpu-health-observability</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/anyscale-gpu-health-observability</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Anyscale GPU Health Observability: From app to hardware</description>
+      <content:encoded><![CDATA[<h1>推出 Anyscale GPU 健康可观测性：从应用一直看到硬件</h1>
+<p>作者：Mike Tower、Philip Wang、Cong Qian 和 Pengfei Wang | 2026 年 8 月 25 日</p>
+<p>一块在悄悄故障的 GPU，从外观看与一个悄悄写崩了的训练脚本一模一样。在 GPU 集群上，几乎没有任何其他故障类别造成的工程师时间浪费，比得上这一层歧义——而今天要弥合的正是这个缺口。</p>
+<p>今天我们宣布 <strong>Anyscale GPU Health Observability</strong> 进入私有预览。它是 Anyscale 全栈可观测性愿景的最新一层，兼容 KubeRay 与 VM，未来还将支持 K8s 上的 Anyscale Operator。它把工程师一直需要的 GPU 硬件信号（XID 错误、ECC 内存错误计数、SM Clock、每 GPU 显存）呈现出来，并且关键是：把这些信号精确挂接到每块 GPU 上正在运行的 Ray 作业与工作区。</p>
+<h2>为什么需要这一层次的可观测性</h2>
+<p>去问问任何在多 GPU 节点集群上跑大规模作业的团队，上次硬件故障的根因是怎么找到的——答案很少是&quot;看一个仪表盘就够了&quot;。通常是某个人，手动打开好几个不同的工具，手工拼出一条时间线。</p>
+<p>当一个致命 XID 错误让负载性能退化时，Ray 无从知道硬件牵涉其中，只会报告一个笼统的 worker 失败，把工程师直接引向训练代码——而问题根本不在那里。正在累积可纠正内存错误的 GPU，在把 worker 于运行中途拉下马之前不会有任何预警，尽管错误计数在几小时前就在攀升，只是大规模训练中很少有人盯着那个指标。NVLink 互联退化看起来与普通网络变慢别无二致，直到一次多 GPU 集合通信彻底失败——而那时作业已经带病运行了很久。把这一切放到几十上百节点的集群上，单个苦苦支撑的节点就淹没在全集群平均值里，除非有人逐节点排查，否则它与健康邻居难以区分。</p>
+<p>这些信号都不是秘密。DCGM 多年来一直在报告 GPU 健康数据，Kubernetes 也始终在发出 pod 与调度事件。问题从来不是数据不够，而是数据在一个地方、Ray 作业在另一个地方，把两者连起来总得靠一个人——或多个人——在已经出事之后、压力之下手工完成。</p>
+<h2>在源头打造单一玻璃窗（single pane of glass）</h2>
+<p>此前之所以没有这种东西，并非无人努力。而是把硬件信号与它影响的作业做关联，需要坐在硬件层与其上分布式运行时的交汇点上，而几乎没有任何平台同时拥有两者。Anyscale 拥有，这意味着关联不必事后由一个人在多个浏览器标签之间复制节点 ID 来重建，它可以在信号发出的确切位置一次性、自动地完成。这一个理念体现在三个具体方面。</p>
+<p><strong>行业标准信号，终于有了上下文。</strong> DCGM 是 GPU 健康的行业标准。我们为这些指标补充上下文，把裸计数器变成工程师当场可行动的信息。GPU Health Observability 拿取 DCGM 指标，并为每个指标附加工作负载感知的元数据。&quot;GPU 显存已用：38GB&quot;这类指标孤立看毫无意义；挂上正确的作业、节点和 GPU 型号后，它就成了可操作的告警，而不是没人有时间解读的数据点。</p>
+<p><strong>一个关联视图，而非五块互不相通的屏。</strong> 价值在这里复利式放大。一旦硬件信号知道自己属于哪个作业，同样的关联就向外扩展到过去需要人工侦探工作的所有事情。按节点归因故障：用按节点与实例类型细分的任务失败、内存 RSS 与 OOM kill 事件取代集群聚合指标，并与硬件遥测并排展示。这一切都不需要你持有五个不同的仪表盘，因为它不需要任何事后对账。Anyscale 同时拥有硬件层与其上的分布式运行时，所以关联在源头自动发生，是一个单一玻璃窗，而不是要某人手工缝合的一组工具。</p>
+<p><strong>按你实际的部署方式工作。</strong> 在全部工作负载机群中查看 GPU 健康状态，按节点、工作负载或 K8s 集群分组以便快速分析。轻松锁定那块导致整个工作负载崩溃的故障 GPU，或在单 bit 问题真正发生之前提前捕捉——全部在你底层工作负载的上下文之中完成。</p>
+<h2>它如何工作？</h2>
+<p>GPU Health Observability 构建在 DCGM（行业标准 GPU 指标导出器）之上。对多数 GPU 客户而言，dcgm-exporter 随 GPU Operator 原生提供。在 KubeRay 环境中，只需把 dcgmNamespace 加入 connector.yaml，Anyscale Connector 即开始抓取 dcgm endpoint。对 VM 而言，这一切今天已原生发生。转发之后，Anyscale 收集这些遥测，在为每条数据呈现到控制台前先用关键元数据做富化。</p>
+<p>结果出现在两个地方，取决于你是谁、想做什么。</p>
+<h3><strong>机群级视图：给平台运维者</strong></h3>
+<p>打开 Anyscale 控制台的 GPU Status 页签，你就得到横跨整个云的每块 GPU 的机群全景，按节点类型、K8s 集群或工作负载分组。在多个集群上运行数百块 GPU 的团队可以一眼看清哪些节点健康、哪些退化、哪些存在活动硬件故障。</p>
+<p><em>截图：按节点类型分组的机群级视图。节点显示带颜色编码的 GPU 迷你条——绿色健康、红色硬件错误。问题节点在健康邻居中立刻凸显。</em></p>
+<p>选中一个节点会打开带两个页签的详情侧栏：Overview 与 GPUs。Overview 展示 CPU、内存与 GPU 利用率，以及当前在该节点上运行的工作负载。GPUs 页签逐一拆分每块 GPU，包括计算、显存、功耗、温度，并对存在活动故障的 GPU 打上错误徽标，让你轻松确定需要对哪件硬件采取行动。</p>
+<p><em>截图：节点详情面板选中 GPUs 页签，显示 8 块 GPU 卡。GPU 3 显示红色&quot;XID Error: 74&quot;徽标，其余 GPU 指标正常。</em></p>
+<p>从这里点进受影响的 GPU，可见单 GPU 详情：具体 XID 代码、NVLink replay 计数、ECC 错误、SM Clock、功耗，以及故障发生时该 GPU 上运行着哪些工作负载。同一个视图既告诉你哪里坏了，也告诉你节点其余部分是否健康到可以继续用。</p>
+<p><em>截图：单 GPU 详情页签展示 GPU / Accelerator 指标列表。可轻松识别 GPU 健康状态、利用率与 XID 错误码。</em></p>
+<h3><strong>作业级视图：给 ML 工程师</strong></h3>
+<p>调试失败训练作业的 ML 工程师从另一个入口开始——Jobs 控制台——但抵达同一个答案。当 DCGM 检测到与某作业相关的任一节点上的 GPU 故障时，Job Overview 页面顶部会出现硬件错误横幅，点名确切的节点、GPU 和 XID 错误。一次点击直达 GPU 详情。</p>
+<p><em>截图：Job Overview 页面显示红色 GPU 硬件错误横幅：&quot;node-gpu-16 节点的 GPU 3 上报了 Xid 74（NVLINK_ERROR）错误。该硬件故障可能导致此作业失败。&quot;并附&quot;View GPU details&quot;链接。</em></p>
+<p>在 Ray Workloads 内部，Train 视图展示哪些 worker 受到影响，包括其 world rank、节点、GPU 分配与状态。工程师可以看到故障节点上的 worker 死亡，而健康节点上的 worker 正常完成。结合硬件错误横幅，根因一目了然：这是 GPU 硬件故障，不是训练脚本 bug，不是 NCCL 配置错误，也不是 OOM。</p>
+<p>这种区分之所以重要，是因为没有这一关联，失败作业只会产生笼统的&quot;worker died&quot;消息，工程师从一开始就在错误的地方调试。GPU Health Observability 通过在源头自动地把硬件信号连到作业来弥合这个缺口——在工程师打开终端之前。</p>
+<h2>不止作业与工作区：同样的镜头看向推理</h2>
+<p>GPU Health Observability 背后的原则——在单一视图中跨层关联信号——同样适用于推理负载。对 Serve 用户，我们最近上线了集群拓扑视图，把每个 deployment、actor 和节点映射到一个交互式界面。工程师可以自上而下穿越集群拓扑，点进任何服务查看其概览、指标、日志与状态，无需在工具间切换就能对生产问题分诊。同样的手段降低平均恢复时间（MTTR），应用到最在乎正常时间的负载类型上。</p>
+<h2>下一步</h2>
+<p>GPU Health Observability 是我们在今年余下时间构建的更广信号层的第一块拼图。我们将持续推进，目标成为 GPU 可观测性的最佳工具——在你的 ML 负载上下文中提供更深入分析、更细粒度健康信号与容错能力，帮助用户即使底层硬件出问题也能让作业继续运行。</p>
+<p>Kubernetes 覆盖面也在扩展，将由我们的 Foundations 团队协同，从 K8s 上 Anyscale Operator 管理的环境开始。</p>
+<p>Anyscale Observability 正随 Ray 生态与更广阔的 AI 基础设施格局一起演进，而 GPU Health Observability 是这一方向最清晰的信号。</p>
+<p><a href="https://www.anyscale.com/asset/gpu-health-observability-private-preview-form"><strong>注册私有预览 →</strong></a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>Scaling Ray for AI workloads to 10k node clusters</title>
       <link>https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</link>
       <guid isPermaLink="true">https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</guid>
@@ -548,48 +590,6 @@ ds.groupby(&quot;band_id&quot;).count()</code></pre>
 <p>尽管上述结果令人鼓舞，我们距离性能上限仍很远。特别是，对先后使用 cuDF 与 RapidsMPF 的算子做算子融合（operator fusion），将带来性能的阶跃式提升。这能让 Ray Data 避免各阶段之间不必要的 host-to-device 往返，让数据留在 GPU 显存内。</p>
 <p>在与终端用户的合作中，下一步还包括<strong>为数据预处理器启用 GPU shuffle</strong>，让基于 Ray Data preprocessor API 构建的特征工程流水线也能走 GPU 路径。</p>
 <p>我们很高兴继续投入这一方向，为你的 AI 数据负载带来最佳的数据处理性能。Ray Data GPU shuffle 目前处于实验阶段，随 Ray 2.58 提供。试用后欢迎给我们反馈！</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>推出 Anyscale GPU 健康可观测性：从应用到硬件</title>
-      <link>https://anyscale.com/blog/anyscale-gpu-health-observability</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/anyscale-gpu-health-observability</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Anyscale GPU Health Observability: From app to hardware</description>
-      <content:encoded><![CDATA[<h1>推出 Anyscale GPU 健康可观测性：从应用一直看到硬件</h1>
-<p>作者：Mike Tower、Philip Wang、Cong Qian 和 Pengfei Wang | 2026 年 8 月 25 日</p>
-<p>一块在悄悄故障的 GPU，从外观看与一个悄悄写崩了的训练脚本一模一样。在 GPU 集群上，几乎没有任何其他故障类别造成的工程师时间浪费，比得上这一层歧义——而今天要弥合的正是这个缺口。</p>
-<p>今天我们宣布 <strong>Anyscale GPU Health Observability</strong> 进入私有预览。它是 Anyscale 全栈可观测性愿景的最新一层，兼容 KubeRay 与 VM，未来还将支持 K8s 上的 Anyscale Operator。它把工程师一直需要的 GPU 硬件信号（XID 错误、ECC 内存错误计数、SM Clock、每 GPU 显存）呈现出来，并且关键是：把这些信号精确挂接到每块 GPU 上正在运行的 Ray 作业与工作区。</p>
-<h2>为什么需要这一层次的可观测性</h2>
-<p>去问问任何在多 GPU 节点集群上跑大规模作业的团队，上次硬件故障的根因是怎么找到的——答案很少是&quot;看一个仪表盘就够了&quot;。通常是某个人，手动打开好几个不同的工具，手工拼出一条时间线。</p>
-<p>当一个致命 XID 错误让负载性能退化时，Ray 无从知道硬件牵涉其中，只会报告一个笼统的 worker 失败，把工程师直接引向训练代码——而问题根本不在那里。正在累积可纠正内存错误的 GPU，在把 worker 于运行中途拉下马之前不会有任何预警，尽管错误计数在几小时前就在攀升，只是大规模训练中很少有人盯着那个指标。NVLink 互联退化看起来与普通网络变慢别无二致，直到一次多 GPU 集合通信彻底失败——而那时作业已经带病运行了很久。把这一切放到几十上百节点的集群上，单个苦苦支撑的节点就淹没在全集群平均值里，除非有人逐节点排查，否则它与健康邻居难以区分。</p>
-<p>这些信号都不是秘密。DCGM 多年来一直在报告 GPU 健康数据，Kubernetes 也始终在发出 pod 与调度事件。问题从来不是数据不够，而是数据在一个地方、Ray 作业在另一个地方，把两者连起来总得靠一个人——或多个人——在已经出事之后、压力之下手工完成。</p>
-<h2>在源头打造单一玻璃窗（single pane of glass）</h2>
-<p>此前之所以没有这种东西，并非无人努力。而是把硬件信号与它影响的作业做关联，需要坐在硬件层与其上分布式运行时的交汇点上，而几乎没有任何平台同时拥有两者。Anyscale 拥有，这意味着关联不必事后由一个人在多个浏览器标签之间复制节点 ID 来重建，它可以在信号发出的确切位置一次性、自动地完成。这一个理念体现在三个具体方面。</p>
-<p><strong>行业标准信号，终于有了上下文。</strong> DCGM 是 GPU 健康的行业标准。我们为这些指标补充上下文，把裸计数器变成工程师当场可行动的信息。GPU Health Observability 拿取 DCGM 指标，并为每个指标附加工作负载感知的元数据。&quot;GPU 显存已用：38GB&quot;这类指标孤立看毫无意义；挂上正确的作业、节点和 GPU 型号后，它就成了可操作的告警，而不是没人有时间解读的数据点。</p>
-<p><strong>一个关联视图，而非五块互不相通的屏。</strong> 价值在这里复利式放大。一旦硬件信号知道自己属于哪个作业，同样的关联就向外扩展到过去需要人工侦探工作的所有事情。按节点归因故障：用按节点与实例类型细分的任务失败、内存 RSS 与 OOM kill 事件取代集群聚合指标，并与硬件遥测并排展示。这一切都不需要你持有五个不同的仪表盘，因为它不需要任何事后对账。Anyscale 同时拥有硬件层与其上的分布式运行时，所以关联在源头自动发生，是一个单一玻璃窗，而不是要某人手工缝合的一组工具。</p>
-<p><strong>按你实际的部署方式工作。</strong> 在全部工作负载机群中查看 GPU 健康状态，按节点、工作负载或 K8s 集群分组以便快速分析。轻松锁定那块导致整个工作负载崩溃的故障 GPU，或在单 bit 问题真正发生之前提前捕捉——全部在你底层工作负载的上下文之中完成。</p>
-<h2>它如何工作？</h2>
-<p>GPU Health Observability 构建在 DCGM（行业标准 GPU 指标导出器）之上。对多数 GPU 客户而言，dcgm-exporter 随 GPU Operator 原生提供。在 KubeRay 环境中，只需把 dcgmNamespace 加入 connector.yaml，Anyscale Connector 即开始抓取 dcgm endpoint。对 VM 而言，这一切今天已原生发生。转发之后，Anyscale 收集这些遥测，在为每条数据呈现到控制台前先用关键元数据做富化。</p>
-<p>结果出现在两个地方，取决于你是谁、想做什么。</p>
-<h3><strong>机群级视图：给平台运维者</strong></h3>
-<p>打开 Anyscale 控制台的 GPU Status 页签，你就得到横跨整个云的每块 GPU 的机群全景，按节点类型、K8s 集群或工作负载分组。在多个集群上运行数百块 GPU 的团队可以一眼看清哪些节点健康、哪些退化、哪些存在活动硬件故障。</p>
-<p><em>截图：按节点类型分组的机群级视图。节点显示带颜色编码的 GPU 迷你条——绿色健康、红色硬件错误。问题节点在健康邻居中立刻凸显。</em></p>
-<p>选中一个节点会打开带两个页签的详情侧栏：Overview 与 GPUs。Overview 展示 CPU、内存与 GPU 利用率，以及当前在该节点上运行的工作负载。GPUs 页签逐一拆分每块 GPU，包括计算、显存、功耗、温度，并对存在活动故障的 GPU 打上错误徽标，让你轻松确定需要对哪件硬件采取行动。</p>
-<p><em>截图：节点详情面板选中 GPUs 页签，显示 8 块 GPU 卡。GPU 3 显示红色&quot;XID Error: 74&quot;徽标，其余 GPU 指标正常。</em></p>
-<p>从这里点进受影响的 GPU，可见单 GPU 详情：具体 XID 代码、NVLink replay 计数、ECC 错误、SM Clock、功耗，以及故障发生时该 GPU 上运行着哪些工作负载。同一个视图既告诉你哪里坏了，也告诉你节点其余部分是否健康到可以继续用。</p>
-<p><em>截图：单 GPU 详情页签展示 GPU / Accelerator 指标列表。可轻松识别 GPU 健康状态、利用率与 XID 错误码。</em></p>
-<h3><strong>作业级视图：给 ML 工程师</strong></h3>
-<p>调试失败训练作业的 ML 工程师从另一个入口开始——Jobs 控制台——但抵达同一个答案。当 DCGM 检测到与某作业相关的任一节点上的 GPU 故障时，Job Overview 页面顶部会出现硬件错误横幅，点名确切的节点、GPU 和 XID 错误。一次点击直达 GPU 详情。</p>
-<p><em>截图：Job Overview 页面显示红色 GPU 硬件错误横幅：&quot;node-gpu-16 节点的 GPU 3 上报了 Xid 74（NVLINK_ERROR）错误。该硬件故障可能导致此作业失败。&quot;并附&quot;View GPU details&quot;链接。</em></p>
-<p>在 Ray Workloads 内部，Train 视图展示哪些 worker 受到影响，包括其 world rank、节点、GPU 分配与状态。工程师可以看到故障节点上的 worker 死亡，而健康节点上的 worker 正常完成。结合硬件错误横幅，根因一目了然：这是 GPU 硬件故障，不是训练脚本 bug，不是 NCCL 配置错误，也不是 OOM。</p>
-<p>这种区分之所以重要，是因为没有这一关联，失败作业只会产生笼统的&quot;worker died&quot;消息，工程师从一开始就在错误的地方调试。GPU Health Observability 通过在源头自动地把硬件信号连到作业来弥合这个缺口——在工程师打开终端之前。</p>
-<h2>不止作业与工作区：同样的镜头看向推理</h2>
-<p>GPU Health Observability 背后的原则——在单一视图中跨层关联信号——同样适用于推理负载。对 Serve 用户，我们最近上线了集群拓扑视图，把每个 deployment、actor 和节点映射到一个交互式界面。工程师可以自上而下穿越集群拓扑，点进任何服务查看其概览、指标、日志与状态，无需在工具间切换就能对生产问题分诊。同样的手段降低平均恢复时间（MTTR），应用到最在乎正常时间的负载类型上。</p>
-<h2>下一步</h2>
-<p>GPU Health Observability 是我们在今年余下时间构建的更广信号层的第一块拼图。我们将持续推进，目标成为 GPU 可观测性的最佳工具——在你的 ML 负载上下文中提供更深入分析、更细粒度健康信号与容错能力，帮助用户即使底层硬件出问题也能让作业继续运行。</p>
-<p>Kubernetes 覆盖面也在扩展，将由我们的 Foundations 团队协同，从 K8s 上 Anyscale Operator 管理的环境开始。</p>
-<p>Anyscale Observability 正随 Ray 生态与更广阔的 AI 基础设施格局一起演进，而 GPU Health Observability 是这一方向最清晰的信号。</p>
-<p><a href="https://www.anyscale.com/asset/gpu-health-observability-private-preview-form"><strong>注册私有预览 →</strong></a></p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Ray 原生沙箱</title>

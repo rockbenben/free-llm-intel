@@ -10,13 +10,13 @@
 ## 全部文章（共 67 篇，按日期倒序；无日期条目列于最后）
 
 1. [Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08） <!--orig:Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all-->
-2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
-3. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
-4. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
-5. [学习循环：把智能掌握在自己手中](https://anyscale.com/blog/learning-loops)（2026-08-25） <!--orig:Learning Loops: The Path to Owning Your Intelligence-->
-6. [FP8 Reinforcement Learning in SkyRL: Preserving Policy Consistency Across Training and Rollout](https://anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl)（2026-08-25）
-7. [Ray Data 中的 GPU 原生算子](https://anyscale.com/blog/gpu-native-operators-in-ray-data)（2026-08-25） <!--orig:GPU-Native Operators in Ray Data-->
-8. [推出 Anyscale GPU 健康可观测性：从应用到硬件](https://anyscale.com/blog/anyscale-gpu-health-observability)（2026-08-25） <!--orig:Introducing Anyscale GPU Health Observability: From app to hardware-->
+2. [推出 Anyscale GPU 健康可观测性：从应用到硬件](https://anyscale.com/blog/anyscale-gpu-health-observability)（2026-08-25） <!--orig:Introducing Anyscale GPU Health Observability: From app to hardware-->
+3. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
+4. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
+5. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
+6. [学习循环：把智能掌握在自己手中](https://anyscale.com/blog/learning-loops)（2026-08-25） <!--orig:Learning Loops: The Path to Owning Your Intelligence-->
+7. [FP8 Reinforcement Learning in SkyRL: Preserving Policy Consistency Across Training and Rollout](https://anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl)（2026-08-25）
+8. [Ray Data 中的 GPU 原生算子](https://anyscale.com/blog/gpu-native-operators-in-ray-data)（2026-08-25） <!--orig:GPU-Native Operators in Ray Data-->
 9. [推出 Ray 原生沙箱](https://anyscale.com/blog/announcing-native-sandboxing-in-ray)（2026-08-25） <!--orig:Announcing Native Sandboxing in Ray-->
 10. [Introducing KubeRay v1.6 and v1.7](https://anyscale.com/blog/kuberay-v1-7)（2026-08-25）
 11. [推出 Anyscale KubeRay Connect：加码 Kubernetes](https://anyscale.com/blog/announcing-anyscale-connect-for-kuberay)（2026-08-25） <!--orig:Introducing Anyscale KubeRay Connect: Doubling down on Kubernetes-->

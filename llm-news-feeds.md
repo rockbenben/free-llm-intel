@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-06 04:10:36**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-06 10:47:52**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -192,12 +192,12 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [Olmo-core 3 简介：面向大型 MoE 的开放、可扩展的培训基础设施](https://huggingface.co/blog/allenai/olmocore3)（2026-10-01）
-  2. [Welcome RL Environments to the hub](https://huggingface.co/blog/rl-environments)（2026-09-28）
-  3. [你的智能体出色完成了任务，还能再现吗？](https://huggingface.co/blog/ibm-research/altk-evolve-consistency)（2026-09-15）
-  4. [跨 HF Jobs 用 LoRA 的异步 GRPO：一个存储桶、一个代理、没有 NCCL](https://huggingface.co/blog/asyncgrpo-lora-hfjobs)（2026-09-10）
-  5. [用 Gradio 工作流重建 AUTOMATIC1111](https://huggingface.co/blog/gradio-workflow-1111)（2026-09-10）
-  - 📄 完整文章归档（共 865 篇）：[huggingface.md](llm-news/huggingface.md)
+  1. [Falcon-Emirati: When an LLM Learns the Dialect, the Culture, and the Nuance](https://huggingface.co/blog/tiiuae/falcon-emirati)（2026-10-06）
+  2. [Olmo-core 3 简介：面向大型 MoE 的开放、可扩展的培训基础设施](https://huggingface.co/blog/allenai/olmocore3)（2026-10-01）
+  3. [Welcome RL Environments to the hub](https://huggingface.co/blog/rl-environments)（2026-09-28）
+  4. [你的智能体出色完成了任务，还能再现吗？](https://huggingface.co/blog/ibm-research/altk-evolve-consistency)（2026-09-15）
+  5. [跨 HF Jobs 用 LoRA 的异步 GRPO：一个存储桶、一个代理、没有 NCCL](https://huggingface.co/blog/asyncgrpo-lora-hfjobs)（2026-09-10）
+  - 📄 完整文章归档（共 866 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### OpenRouter (模型统一网关) (openrouter)
 - 📡 [RSS/Atom 订阅源](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
@@ -374,12 +374,12 @@
   - 🔌 官方未提供 RSS/Atom 订阅源，条目取自官方数据接口
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-ai21_labs.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
-  1. [From manual negotiation to automated scheduling: How AI21 manages its GPU fleet with Kueue](https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/)（2026-10-04）
-  2. [你要的不是前沿模型，而是一个验证器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19）
-  3. [又好又省：开放模型探路，前沿模型收尾](https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/)（2026-07-15）
-  4. [面向 SWE 智能体的预算感知执行，把 Best-of-N 做得更好](https://www.ai21.com/blog/improving-best-of-n-with-budget-aware-execution-for-swe-agents/)（2026-07-07）
-  5. [token 开销降不下来？光靠简单路由管不住它](https://www.ai21.com/lp/blog/token-spend-isnt-going-down-you-need-more-than-naive-routing-to-manage-it-gated/)（2026-06-30）
-  - 📄 完整文章归档（共 67 篇）：[ai21_labs.md](llm-news/ai21_labs.md)
+  1. [The verifiability litmus test for agent design](https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/)（2026-10-06）
+  2. [From manual negotiation to automated scheduling: How AI21 manages its GPU fleet with Kueue](https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/)（2026-10-04）
+  3. [你要的不是前沿模型，而是一个验证器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19）
+  4. [又好又省：开放模型探路，前沿模型收尾](https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/)（2026-07-15）
+  5. [面向 SWE 智能体的预算感知执行，把 Best-of-N 做得更好](https://www.ai21.com/blog/improving-best-of-n-with-budget-aware-execution-for-swe-agents/)（2026-07-07）
+  - 📄 完整文章归档（共 68 篇）：[ai21_labs.md](llm-news/ai21_labs.md)
 
 ### Jina AI (Reader / Embeddings / Reranker) (jina_ai)
 - 页面：[官方博客](https://jina.ai/news/)
@@ -408,10 +408,10 @@
 - 📡 [RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-06，标题自动汉化）：
   1. [Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
-  2. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
-  3. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
-  4. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
-  5. [学习循环：把智能掌握在自己手中](https://anyscale.com/blog/learning-loops)（2026-08-25）
+  2. [推出 Anyscale GPU 健康可观测性：从应用到硬件](https://anyscale.com/blog/anyscale-gpu-health-observability)（2026-08-25）
+  3. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
+  4. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
+  5. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
   - 📄 完整文章归档（共 67 篇）：[anyscale.md](llm-news/anyscale.md)
 
 ### InceptionLabs (inception_labs)
