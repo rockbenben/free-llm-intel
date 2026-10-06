@@ -258,10 +258,16 @@ RSS_VENDOR_LIMIT = 50
 #: 英文 feed 的 guid 后缀查询串，让中/英条目 guid 不同、阅读器不 dedup；
 #: `<link>` 保持原 URL 干净。中文 feed guid 无后缀（向后兼容旧订阅者）。
 RSS_EN_GUID_SUFFIX = "?li=1"
-#: 合并流**产出内容**的软体积上限（字节）。超过即自动降级：`<content:encoded>`
-#: 只留前 RSS_SUMMARY_CHARS 字 + `[阅读完整文章 →](link)`；单厂商源不降级
-#: （读者按需订一个厂商，可控）。GitHub Pages 单文件软上限 25 MB，5 MB 有 5× 余量。
-RSS_SOFT_CAP = 5_000_000
+#: **任意 feed**（合并流 + 单厂商流）产出内容的软体积上限（字节）。超过即整源降级：
+#: `<content:encoded>` 只留前 RSS_SUMMARY_CHARS 字 + `[阅读完整文章 →](link)`。
+#: 定这个线是量出来的，不是拍的：实测大陆订阅者到 GitHub Pages 只有 ~14 KB/s，
+#: 常见阅读器 45s 超时 → 预算 ≈ 630 KB（且不少阅读器不发 `Accept-Encoding: gzip`，
+#: 拿到的是未压缩体积）。500 KB 留足余量、约 35s 拉完。合并流 200 条全文 ≈ 3.3 MB
+#: 必然越线 → 降级为摘要（firehose 本就该摘要，全文在 reader 与未越线的单厂商流里）；
+#: 小厂商流（50 条 × 中等正文 < 500 KB）保持全文，大厂商流（如 google_gemini 2.9 MB）
+#: 也降级。**旧值 5 MB 太宽**（那是按「GitHub Pages 25 MB 上限」定的，没考虑阅读器
+#: 抓取超时），且旧逻辑「单厂商源不降级」让大厂商流长到 2–3 MB 同样订不动——一并修掉。
+RSS_SOFT_CAP = 500_000
 #: 降级后正文摘要长度（HTML 字符串截断，非严格段落边界）。
 RSS_SUMMARY_CHARS = 500
 
@@ -4957,9 +4963,30 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
 
     picked_en: list[tuple[str, str, Article, str]] = []
 
+    def _emit_channel(fname: str, title: str, desc: str, self_url: str,
+                      build_date: str, chan_lang: str, build_items, count_items: bool = True) -> None:
+        """写一个 feed：先出全文版，超 RSS_SOFT_CAP 则整源降级重建成摘要版。
+
+        `build_items(degrade: bool) -> list[str]` 由调用方给（决定条目怎么拼、
+        降级时正文怎么截断）。合并流与单厂商流都走这里——体积上限对**所有** feed
+        生效，不再是「单厂商不降级」（那条让大厂商流长到 2–3 MB 同样订不动）。
+        """
+        nonlocal files, items, changed
+        items_xml = build_items(False)
+        text = _rss_channel(title, desc, items_xml, self_url, build_date, lang=chan_lang)
+        if len(text.encode("utf-8")) > RSS_SOFT_CAP:
+            items_xml = build_items(True)
+            suffix = ("（正文降级为首段摘要 + 回源链接）" if chan_lang != "en"
+                      else " (articles truncated to preview + link)")
+            text = _rss_channel(title, desc + suffix, items_xml, self_url,
+                                build_date, lang=chan_lang)
+        files += 1
+        if count_items:
+            items += len(items_xml)
+        changed += _rss_write(out_dir / fname, text)
+
     def _emit_merged(zh: bool) -> None:
         """合并流（中/英）生成，超 RSS_SOFT_CAP 自动降级为首段摘要 + 回源链接。"""
-        nonlocal files, items, changed
         rows = picked if zh else picked_en
         if not rows:
             return
@@ -4995,37 +5022,31 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
             fname = "llm-news-all.en.xml"
             chan_lang = "en"
         self_url = f"{base}/{fname}" if base else ""
-        items_xml = _build(degrade=False)
-        channel_text = _rss_channel(title, desc, items_xml, self_url,
-                                    rows[0][2].date, lang=chan_lang)
-        if len(channel_text.encode("utf-8")) > RSS_SOFT_CAP:
-            items_xml = _build(degrade=True)
-            suffix = "（正文降级为首段摘要 + 回源链接）" if zh else " (articles truncated to preview + link)"
-            channel_text = _rss_channel(title, desc + suffix, items_xml, self_url,
-                                        rows[0][2].date, lang=chan_lang)
-        files += 1
-        if zh:
-            items += len(items_xml)
-        changed += _rss_write(out_dir / fname, channel_text)
+        _emit_channel(fname, title, desc, self_url, rows[0][2].date, chan_lang,
+                      _build, count_items=zh)
 
     _emit_merged(zh=True)
 
     for brand, vendor_id, arts, titles_zh in per_vendor:
         cut = arts[:vendor_limit] if vendor_limit else arts
         cut_zh = titles_zh[:vendor_limit] if vendor_limit else titles_zh
-        items_xml = [_rss_item(art, t,
-                              content_html=_body_html_for(art, vendor_id, bodies, out_dir, "zh"))
-                     for art, t in zip(cut, cut_zh)]
-        files += 1
-        items += len(items_xml)
-        changed += _rss_write(
-            out_dir / f"llm-news-{vendor_id}.xml",
-            _rss_channel(
-                f"{brand} 官方动态",
-                f"{brand} 官方博客 / 更新日志归档（{vendor_scope_text(vendor_limit)}，"
-                f"共 {len(items_xml)} 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。",
-                items_xml, f"{base}/llm-news-{vendor_id}.xml" if base else "",
-                arts[0].date))
+
+        def _build(degrade: bool, cut=cut, cut_zh=cut_zh, vendor_id=vendor_id) -> list[str]:
+            out: list[str] = []
+            for art, t in zip(cut, cut_zh):
+                body = _body_html_for(art, vendor_id, bodies, out_dir, "zh")
+                if degrade and body:
+                    body = _summarize_html(body, art.url)
+                out.append(_rss_item(art, t, content_html=body))
+            return out
+
+        _emit_channel(
+            f"llm-news-{vendor_id}.xml",
+            f"{brand} 官方动态",
+            f"{brand} 官方博客 / 更新日志归档（{vendor_scope_text(vendor_limit)}，"
+            f"共 {len(cut)} 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。",
+            f"{base}/llm-news-{vendor_id}.xml" if base else "",
+            arts[0].date, "zh-cn", _build)
 
     # ---------- 英文侧 ----------
     merged_en: list[tuple[str, str, Article, str]] = []
@@ -5056,21 +5077,25 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
         if not pairs:
             continue
         cut = pairs[:vendor_limit] if vendor_limit else pairs
-        items_xml = [_rss_item(a, t, lang="en",
-                              content_html=_body_html_for(a, vendor_id, bodies, out_dir, "en"))
-                     for a, t in cut]
-        files += 1
+
+        def _build(degrade: bool, cut=cut, vendor_id=vendor_id) -> list[str]:
+            out: list[str] = []
+            for a, t in cut:
+                body = _body_html_for(a, vendor_id, bodies, out_dir, "en")
+                if degrade and body:
+                    body = _summarize_html(body, a.url)
+                out.append(_rss_item(a, t, lang="en", content_html=body))
+            return out
+
         vendor_en_emitted.add(vendor_id)
-        changed += _rss_write(
-            out_dir / f"llm-news-{vendor_id}.en.xml",
-            _rss_channel(
-                f"{brand} News (English)",
-                f"{brand} official blog / changelog in English "
-                f"({vendor_scope_text(vendor_limit)}, {len(items_xml)} items). "
-                "Generated by free-llm-intel.",
-                items_xml,
-                f"{base}/llm-news-{vendor_id}.en.xml" if base else "",
-                pairs[0][0].date, lang="en"))
+        _emit_channel(
+            f"llm-news-{vendor_id}.en.xml",
+            f"{brand} News (English)",
+            f"{brand} official blog / changelog in English "
+            f"({vendor_scope_text(vendor_limit)}, {len(cut)} items). "
+            "Generated by free-llm-intel.",
+            f"{base}/llm-news-{vendor_id}.en.xml" if base else "",
+            pairs[0][0].date, "en", _build, count_items=False)
 
     # ---------- vendors.json 索引 ----------
     _ordered = sorted(

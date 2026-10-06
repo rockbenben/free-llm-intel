@@ -6794,6 +6794,54 @@ class TestRssSizeCapDegrade(unittest.TestCase):
             finally:
                 crawler_llm_intel.RSS_SOFT_CAP = old_cap
 
+    def _emit_vendor_feed(self, root, feeds, n_articles, body_size, cap):
+        """给单厂商 v 造 n_articles 篇、每篇 body_size 字的中文正文，跑 write_rss_feeds，
+        返回 (单厂商流文本, 合并流文本)。cap 用于触发/不触发降级。"""
+        old_cap = crawler_llm_intel.RSS_SOFT_CAP
+        try:
+            crawler_llm_intel.RSS_SOFT_CAP = cap
+            bodies = {}
+            v = crawler_llm_intel.VendorIntel(vendor_id="v", brand="V", homepage="", products=[])
+            arts = []
+            (root / "docs/articles/v").mkdir(parents=True, exist_ok=True)
+            for i in range(1, n_articles + 1):
+                url = f"https://v.test/blog/{i}"
+                slug = ft.url_hash(url)
+                rel = f"docs/articles/v/{slug}.md"
+                ft.write_body_doc(root / rel,
+                                  {"vendor": "v", "title": f"post {i}", "url": url,
+                                   "lang": "zh", "status": "translated"}, "正文" * body_size)
+                bodies[ft.bodies_key("v", url)] = {
+                    "slug": slug, "en_path": "", "zh_path": rel, "en_status": "",
+                    "zh_status": "translated", "translator": "native", "title": "",
+                    "date": "", "captured": "", "body_sha": "", "src_lang": "zh"}
+                arts.append(crawler_llm_intel.Article(
+                    title=f"post {i}", url=url, date=f"2026-01-{i:02d}", zh_title=f"文章 {i}"))
+            v.all_news_articles = arts
+            ft.save_bodies(feeds / "bodies.json", bodies)
+            crawler_llm_intel.write_rss_feeds(feeds, [v], "https://x.test/feeds",
+                                              merged_limit=100, vendor_limit=50)
+            return ((feeds / "llm-news-v.xml").read_text(encoding="utf-8"),
+                    (feeds / "llm-news-all.xml").read_text(encoding="utf-8"))
+        finally:
+            crawler_llm_intel.RSS_SOFT_CAP = old_cap
+
+    def test_vendor_feed_degrades_over_cap(self):
+        """新行为：单厂商流超 RSS_SOFT_CAP 也降级（旧版写死「单厂商不降级」→ 大厂商流长到 MB 订不动）。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d); feeds = root / "docs" / "feeds"; feeds.mkdir(parents=True)
+            vtext, _ = self._emit_vendor_feed(root, feeds, n_articles=20, body_size=800, cap=5000)
+            self.assertIn("正文降级为首段摘要", vtext, "超大单厂商流必须降级")
+            self.assertIn("阅读完整文章", vtext)
+
+    def test_small_vendor_feed_keeps_full_text(self):
+        """反向：小单厂商流不越线 → 保留全文，不降级（全文体验仍在，只是不塞爆合并流）。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d); feeds = root / "docs" / "feeds"; feeds.mkdir(parents=True)
+            vtext, _ = self._emit_vendor_feed(root, feeds, n_articles=2, body_size=10, cap=500000)
+            self.assertNotIn("正文降级为首段摘要", vtext)
+            self.assertIn("<content:encoded>", vtext, "小流仍带全文 content")
+
 
 class TestRssContentEncoded(unittest.TestCase):
     """R2：md→html helper + content:encoded 注入。
