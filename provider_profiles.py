@@ -69,6 +69,11 @@ _BRAND_TRANSLITERATIONS: list[tuple[str, re.Pattern]] = [
     ("Antigravity", re.compile(r"反重力剂?")),
     ("Public AI", re.compile(r"公共人工智能")),
     ("Meta AI", re.compile(r"元人工")),
+    # Falcon（TII 的开源模型家族）：Google 会把 "Falcon" 语义译成「猎鹰」、
+    # "Falcon-Emirati" 整个译成「猎鹰阿联酋」——模型名一旦被意译就彻底失去可检索性。
+    # 复合名排在通用 "Falcon" 之前，先整串复原 "Falcon-Emirati"，剩下的再兜 "Falcon"。
+    ("Falcon-Emirati", re.compile(r"猎鹰\s*阿联酋")),
+    ("Falcon", re.compile(r"猎鹰")),
 ]
 
 

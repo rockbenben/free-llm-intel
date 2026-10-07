@@ -3075,6 +3075,15 @@ class TestTranslationSkipsIdentifiers(unittest.TestCase):
         self.assertEqual(r("开始使用拉古纳。限时免费使用。",
                            "Start using Laguna. Free to use for a limited time."),
                          "开始使用Laguna。限时免费使用。")
+        # Falcon 家族：Google 把 "Falcon-Emirati" 意译成「猎鹰阿联酋」、把 "Falcon"
+        # 意译成「猎鹰」——模型名一旦意译就查不到。复合名先整串复原，再兜通用 Falcon。
+        self.assertEqual(
+            r("猎鹰阿联酋：当LLM学习方言、文化和细微差别时",
+              "Falcon-Emirati: When an LLM Learns the Dialect, the Culture, and the Nuance"),
+            "Falcon-Emirati：当LLM学习方言、文化和细微差别时")
+        self.assertEqual(r("欢迎使用猎鹰 3 系列开源模型",
+                           "Welcome to the Falcon 3 Family of Open Models"),
+                         "欢迎使用Falcon 3 系列开源模型")
         # 原文里没有该英文品牌时不能乱动（官方中文名/巧合词）
         self.assertEqual(r("克劳德是一名常见译名", "没有英文品牌的中文句子"),
                          "克劳德是一名常见译名")
@@ -3091,7 +3100,7 @@ class TestTranslationSkipsIdentifiers(unittest.TestCase):
         root = Path(__file__).resolve().parent
         pat = re.compile(r"克劳德|格罗克|格洛克|共纹|拥抱人脸|拥抱脸部|拥抱脸|抱脸|拥抱面"
                          r"|法学硕士|双子座|稳定扩散|变压器|扩散器|米斯特拉尔|迷你最大"
-                         r"|索拉|反重力|变形金刚|活生生|拉古纳|元人工|公共人工智能"
+                         r"|索拉|反重力|变形金刚|活生生|拉古纳|元人工|公共人工智能|猎鹰"
                          r"|贴片时间序列|双子座3")
         # provider_profiles.py 自身是音译对照表（守卫定义），排除
         files = [root / "README.md", root / "llm-news-feeds.md"]

@@ -10,7 +10,7 @@
 
 ## 全部文章（共 866 篇，按日期倒序；无日期条目列于最后）
 
-1. [猎鹰阿联酋：当LLM学习方言、文化和细微差别时](https://huggingface.co/blog/tiiuae/falcon-emirati)（2026-10-06） <!--orig:Falcon-Emirati: When an LLM Learns the Dialect, the Culture, and the Nuance-->
+1. [Falcon-Emirati：当 LLM 学会方言、文化与微妙之处](https://huggingface.co/blog/tiiuae/falcon-emirati)（2026-10-06） <!--orig:Falcon-Emirati: When an LLM Learns the Dialect, the Culture, and the Nuance-->
 2. [Olmo-core 3 简介：面向大型 MoE 的开放、可扩展的培训基础设施](https://huggingface.co/blog/allenai/olmocore3)（2026-10-01） <!--orig:Introducing Olmo-core 3: Open, scalable training infrastructure for large MoEs-->
 3. [欢迎 RL 环境来到中心](https://huggingface.co/blog/rl-environments)（2026-09-28） <!--orig:Welcome RL Environments to the hub-->
 4. [你的智能体出色完成了任务，还能再现吗？](https://huggingface.co/blog/ibm-research/altk-evolve-consistency)（2026-09-15） <!--orig:Your Agent Aced the Task. Will It Do It Again?-->
