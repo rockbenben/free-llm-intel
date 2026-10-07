@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LLM 厂商动态 · 最新变化 · 免费额度与活动一览 · free-llm-intel</title>
+<title>LLM 厂商动态 · 额度变化 · 免费额度与活动一览 · free-llm-intel</title>
 <meta name="description" content="汇总各 LLM 厂商官方博客 / 更新日志的新文章（标题已汉化），并展示巡检采纳的额度 / 活动变化与各厂商免费额度与活动一览。官方没有 RSS 的厂商也在这里。">
 <link rel="alternate" type="application/rss+xml" title="LLM 厂商动态（合并流）" href="feeds/llm-news-all.xml">
 <link rel="alternate" type="application/rss+xml" title="LLM Vendor News (merged, English)" href="feeds/llm-news-all.en.xml">
@@ -353,7 +353,7 @@
     <button type="button" class="tab" id="tab-news" role="tab" aria-selected="true"
             aria-controls="pane-news" tabindex="0">厂商动态</button>
     <button type="button" class="tab" id="tab-changes" role="tab" aria-selected="false"
-            aria-controls="pane-changes" tabindex="-1">最新变化</button>
+            aria-controls="pane-changes" tabindex="-1">额度变化</button>
     <button type="button" class="tab" id="tab-quotas" role="tab" aria-selected="false"
             aria-controls="pane-quotas" tabindex="-1">免费额度与活动</button>
   </nav>
@@ -392,8 +392,8 @@
       <span class="count" id="changes-count" role="status" aria-live="polite"></span>
     </div>
     <p class="hint">
-      哪家的<strong>免费额度或活动变了</strong>、又<strong>发布了哪些新模型</strong>，都按时间排在这里，
-      每条可点回官方页面核对。
+      哪家的<strong>免费额度或活动改了</strong>（台账前值 → 后值），按时间排在这里，
+      每条可点回官方页面核对。新模型上架属于厂商动态，去「厂商动态」看。
       <a id="changes-sub" href="#">单独订阅这条变化流</a>（RSS，与厂商动态互不干扰）。
     </p>
     </div>
@@ -411,7 +411,7 @@
     </div>
     <p class="hint">
       全部厂商的<strong>免费额度与活动一览</strong>（含限时活动；当前快照，随每日巡检刷新）。
-      想看「哪家变了」请切到「最新变化」——一览本身不做订阅，避免每天重复推送整份清单。
+      想看「哪家变了」请切到「额度变化」——一览本身不做订阅，避免每天重复推送整份清单。
     </p>
     </div>
     <div id="quotas-list"></div>
@@ -1081,6 +1081,11 @@ var FLI = (function () {
   });
 
   var changesState = { rows: null, q: '' };
+  // intel-changes 里 kind=release（新模型）本质是厂商博客动态、已在「厂商动态」里；
+  // 这一视图只留 kind=quota（台账真正变了的那些）。
+  function onlyQuota(items) {
+    return (items || []).filter(function (r) { return r[1] === 'quota'; });
+  }
   function renderChanges() {
     var rows = (changesState.rows || []).filter(function (r) {
       if (!changesState.q) return true;
@@ -1101,10 +1106,6 @@ var FLI = (function () {
       a.textContent = r[4];
       t.appendChild(a); body.appendChild(t);
       var meta = document.createElement('div'); meta.className = 'meta';
-      var kind = document.createElement('span');
-      kind.className = 'pill kind ' + r[1];
-      kind.textContent = r[1] === 'quota' ? '额度变化' : '新模型';
-      meta.appendChild(kind);
       var badge = document.createElement('span'); badge.className = 'pill vendor';
       badge.textContent = r[3]; meta.appendChild(badge);
       if (r[5]) {
@@ -1126,13 +1127,13 @@ var FLI = (function () {
   function loadChanges() {
     if (changesState.rows) { renderChanges(); return; }
     var hit = cacheRead('changes');
-    if (hit) { changesState.rows = hit.data.items || []; renderChanges(); }
+    if (hit) { changesState.rows = onlyQuota(hit.data.items); renderChanges(); }
     fetch(CHANGES, { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     }).then(function (data) {
       cacheWrite('changes', data);
-      changesState.rows = data.items || [];
+      changesState.rows = onlyQuota(data.items);
       renderChanges();
     }).catch(function (e) {
       if (hit) return;
