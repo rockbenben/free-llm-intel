@@ -45,7 +45,7 @@
   3. [介绍 GPT-6 Sol 与 Luna](https://openai.com/index/introducing-gpt-6-sol-and-luna)（2026-09-22）
   4. [澳大利亚青少年安全蓝图简介](https://openai.com/index/australian-youth-safety-blueprint)（2026-09-18）
   5. [推出面向法律行业的 Astra](https://openai.com/index/astra-for-law)（2026-09-17）
-  - 📄 完整文章归档（共 1213 篇）：[openai.md](llm-news/openai.md)
+  - 📄 完整文章归档（共 1212 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (Google AI Studio) (google_gemini)
 - 页面：[变更日志](https://ai.google.dev/gemini-api/docs/changelog)
@@ -402,7 +402,7 @@
   3. [长上下文更新：Laguna XS.2 和 M.1](https://poolside.ai/blog#d-2026-07-02-21)（2026-07-02）
   4. [按你的方式使用 AI：Poolside 平台介绍](https://poolside.ai/blog#d-2026-05-26-23)（2026-05-26）
   5. [Laguna XS.2 和 M.1：深入探讨](https://poolside.ai/blog#d-2026-05-11-1)（2026-05-11）
-  - 📄 完整文章归档（共 19 篇）：[poolside.md](llm-news/poolside.md)
+  - 📄 完整文章归档（共 18 篇）：[poolside.md](llm-news/poolside.md)
 
 ### Anyscale (anyscale)
 - 📡 [RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`

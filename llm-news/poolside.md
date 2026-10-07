@@ -7,7 +7,7 @@
 
 - 页面：[官方博客](https://poolside.ai/blog)
 
-## 全部文章（共 19 篇，按日期倒序；无日期条目列于最后）
+## 全部文章（共 18 篇，按日期倒序；无日期条目列于最后）
 
 1. [Poolside on Dell：在自身边界内落地前沿 AI 的高效路径](https://poolside.ai/blog#d-2026-07-28-35)（2026-07-28） <!--orig:Poolside on Dell: an efficient path for frontier AI inside your boundary-->
 2. [Laguna XS 2.1 简介](https://poolside.ai/blog#d-2026-07-21-19)（2026-07-21） <!--orig:Introducing Laguna XS 2.1-->
@@ -26,5 +26,4 @@
 15. [为模型工厂收集和加工原材料](https://poolside.ai/blog#d-2025-08-07-13)（2025-08-07） <!--orig:Gathering and processing raw materials for the Model Factory-->
 16. [基础模型建设背后隐藏的工程](https://poolside.ai/blog#d-2025-07-29-15)（2025-07-29） <!--orig:The hidden engineering behind foundation model building-->
 17. [我们的愿景：宗旨](https://poolside.ai/blog#d-2025-07-24-37)（2025-07-24） <!--orig:Our vision: Purpose-->
-18. [Announcements](https://poolside.ai/blog#d-2025-07-17-17)（2025-07-17）
-19. [宣布筹集 5 亿美元资金，以推动 AGI 取得进展](https://poolside.ai/blog#d-2024-12-04-33)（2024-12-04） <!--orig:Announcing our $500 million fundraise to make progress towards AGI-->
+18. [宣布筹集 5 亿美元资金，以推动 AGI 取得进展](https://poolside.ai/blog#d-2024-12-04-33)（2024-12-04） <!--orig:Announcing our $500 million fundraise to make progress towards AGI-->

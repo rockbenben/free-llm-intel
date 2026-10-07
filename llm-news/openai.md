@@ -9,7 +9,7 @@
 - 页面：[新闻 / 更新](https://openai.com/news/)
 - 📡 RSS/Atom：[RSS/Atom 订阅源](https://openai.com/news/rss.xml)
 
-## 全部文章（共 1213 篇，按日期倒序；无日期条目列于最后）
+## 全部文章（共 1212 篇，按日期倒序；无日期条目列于最后）
 
 1. [GPT-6.1 Sol 发布](https://openai.com/index/introducing-gpt-6-1-sol)（2026-09-29） <!--orig:Introducing GPT-6.1 Sol-->
 2. [为 GPT-6 提供更好的提示缓存](https://openai.com/index/better-prompt-caching-for-gpt-6)（2026-09-22） <!--orig:Better prompt caching for GPT-6-->
@@ -768,459 +768,458 @@
 755. [计算机使用智能体](https://openai.com/index/computer-using-agent)（2025-01-23） <!--orig:Computer-Using Agent-->
 756. [Bertelsmann 借助 OpenAI 提升创造力与生产力](https://openai.com/index/bertelsmann-powers-creativity-and-productivity-with-openai)（2025-01-22） <!--orig:Bertelsmann powers creativity and productivity with OpenAI-->
 757. [用推理时算力换取对抗鲁棒性](https://openai.com/index/trading-inference-time-compute-for-adversarial-robustness)（2025-01-22） <!--orig:Trading Inference-Time Compute for Adversarial Robustness-->
-758. [Stargate Infrastructure](https://openai.com/form/stargate-infrastructure)（2025-01-21）
-759. [宣布 The Stargate Project](https://openai.com/index/announcing-the-stargate-project)（2025-01-21）
-760. [与 Axios 合作扩大了 OpenAI 与新闻行业的合作](https://openai.com/index/partnering-with-axios-expands-openai-work-with-the-news-industry)（2025-01-15） <!--orig:Partnering with Axios expands OpenAI’s work with the news industry-->
-761. [Adebayo Ogunlesi 加入 OpenAI 董事会](https://openai.com/index/adebayo-ogunlesi-joins-openais-board-of-directors)（2025-01-14） <!--orig:Adebayo Ogunlesi Joins OpenAI’s Board of Directors-->
-762. [OpenAI 的结构为何必须演进以推进我们的使命](https://openai.com/index/why-our-structure-must-evolve-to-advance-our-mission)（2024-12-27） <!--orig:Why OpenAI’s structure must evolve to advance our mission-->
-763. [审慎对齐：推理让语言模型更安全](https://openai.com/index/deliberative-alignment)（2024-12-20） <!--orig:Deliberative alignment: reasoning enables safer language models-->
-764. [OpenAI o1 与开发者新工具](https://openai.com/index/o1-and-new-tools-for-developers)（2024-12-17） <!--orig:OpenAI o1 and new tools for developers-->
-765. [Elon Musk 曾想要一个营利性 OpenAI](https://openai.com/index/elon-musk-wanted-an-openai-for-profit)（2024-12-13） <!--orig:Elon Musk wanted an OpenAI for-profit-->
-766. [Sora 来了](https://openai.com/index/sora-is-here)（2024-12-09） <!--orig:Sora is here-->
-767. [Sora 系统卡](https://openai.com/index/sora-system-card)（2024-12-09） <!--orig:Sora System Card-->
-768. [让 AI 为你的产品团队效力](https://openai.com/index/put-ai-to-work-for-your-product-team)（2024-12-09） <!--orig:Put AI to work for your product team-->
-769. [Vallée Duhamel 与 Sora](https://openai.com/index/sora-vallee-duhamel)（2024-12-09） <!--orig:Vallée Duhamel & Sora-->
-770. [动画师 Lyndon Barrois 用 Sora 创造新世界](https://openai.com/index/sora-lyndon-barrois)（2024-12-09） <!--orig:Animator Lyndon Barrois creates new worlds with Sora-->
-771. [明妮·阿泰鲁和 Sora](https://openai.com/index/sora-minne-atairu)（2024-12-09） <!--orig:Minne Atairu & Sora-->
-772. [介绍 ChatGPT Pro](https://openai.com/index/introducing-chatgpt-pro)（2024-12-05） <!--orig:Introducing ChatGPT Pro-->
-773. [OpenAI o1 系统卡](https://openai.com/index/openai-o1-system-card)（2024-12-05） <!--orig:OpenAI o1 System Card-->
-774. [OpenAI 与 Future 合作打造专业内容](https://openai.com/index/openai-and-future-partner-on-specialist-content)（2024-12-04） <!--orig:OpenAI and Future partner on specialist content-->
-775. [摩根士丹利正在塑造金融服务的未来](https://openai.com/index/morgan-stanley)（2024-12-04） <!--orig:Morgan Stanley uses AI evals to shape the future of financial services-->
-776. [与人类和 AI 一起推进红队测试](https://openai.com/index/advancing-red-teaming-with-people-and-ai)（2024-11-21） <!--orig:Advancing red teaming with people and AI-->
-777. [用 GPT-4o 视觉微调构建更智能的地图](https://openai.com/index/grab)（2024-11-20） <!--orig:Grab builds smarter maps for Southeast Asia with vision fine-tuning-->
-778. [Rox 全力押注 OpenAI](https://openai.com/index/rox)（2024-11-19） <!--orig:Rox goes “all in” on OpenAI-->
-779. [OpenAI 在法国](https://openai.com/index/openai-en-france)（2024-11-15） <!--orig:OpenAI en France-->
-780. [用 ChatGPT 实现数据驱动的美感与创造力](https://openai.com/index/estee-lauder)（2024-11-13）
-781. [介绍 ChatGPT 搜索](https://openai.com/index/introducing-chatgpt-search)（2024-10-31） <!--orig:Introducing ChatGPT search-->
-782. [Promega 自上而下推行 ChatGPT，加速制造、销售与营销](https://openai.com/index/promega)（2024-10-31） <!--orig:Promega's top-down adoption of ChatGPT accelerates manufacturing, sales, and marketing-->
-783. [介绍 SimpleQA](https://openai.com/index/introducing-simpleqa)（2024-10-30） <!--orig:Introducing SimpleQA-->
-784. [打造高性能客户支持](https://openai.com/index/decagon)（2024-10-29） <!--orig:Delivering high-performance customer support-->
-785. [简化、稳定并扩展连续时间一致性模型](https://openai.com/index/simplifying-stabilizing-and-scaling-continuous-time-consistency-models)（2024-10-23） <!--orig:Simplifying, stabilizing, and scaling continuous-time consistency models-->
-786. [OpenAI 与 Lenfest Institute 的 AI 合作与奖学金计划](https://openai.com/index/lenfest-institute)（2024-10-22） <!--orig:OpenAI and the Lenfest Institute AI Collaborative and Fellowship program-->
-787. [评估 ChatGPT 的公平性](https://openai.com/index/evaluating-fairness-in-chatgpt)（2024-10-15） <!--orig:Evaluating fairness in ChatGPT-->
-788. [MLE-bench：评估机器学习智能体的机器学习工程能力](https://openai.com/index/mle-bench)（2024-10-10） <!--orig:MLE-bench: Evaluating Machine Learning Agents on Machine Learning Engineering-->
-789. [OpenAI 与 Hearst 的内容合作伙伴关系](https://openai.com/index/hearst)（2024-10-08） <!--orig:OpenAI and Hearst Content Partnership-->
-790. [新的授信额度提升财务灵活性](https://openai.com/index/new-credit-facility-enhances-financial-flexibility)（2024-10-03） <!--orig:New Credit Facility Enhances Financial Flexibility-->
-791. [推出 canvas——用 ChatGPT 写作和编程的新方式](https://openai.com/index/introducing-canvas)（2024-10-03）
-792. [新融资扩大 AI 的益处](https://openai.com/index/scale-the-benefits-of-ai)（2024-10-02） <!--orig:New funding to scale the benefits of AI-->
-793. [介绍 Realtime API](https://openai.com/index/introducing-the-realtime-api)（2024-10-01） <!--orig:Introducing the Realtime API-->
-794. [微调 API 新增视觉能力](https://openai.com/index/introducing-vision-to-the-fine-tuning-api)（2024-10-01） <!--orig:Introducing vision to the fine-tuning API-->
-795. [API 中的提示缓存](https://openai.com/index/api-prompt-caching)（2024-10-01） <!--orig:Prompt Caching in the API-->
-796. [API 中的模型蒸馏](https://openai.com/index/api-model-distillation)（2024-10-01） <!--orig:Model Distillation in the API-->
-797. [用 GPT 4o 打造智能体与人类协作](https://openai.com/index/altera)（2024-10-01） <!--orig:OpenAI and Altera logos appear on a white background, with a central image of a close-up orange leaf showing intricate vein details.-->
-798. [谣言：伪造的俄罗斯“巨魔”错误消息](https://openai.com/index/disrupting-malicious-uses-of-ai-hoax-russian-troll)（2024-10-01） <!--orig:Hoax: Fake Russian “troll” error message-->
-799. [STORM-0817：与伊朗相关的恶意软件与数据抓取活动](https://openai.com/index/disrupting-malicious-uses-of-ai-storm-0817)（2024-10-01） <!--orig:STORM-0817: Iran-linked malware and scraping activity-->
-800. [SweetSpecter：与中国相关的网络活动](https://openai.com/index/disrupting-malicious-uses-of-ai-sweetspecter)（2024-10-01） <!--orig:SweetSpecter: China-linked cyber activity-->
-801. [CyberAv3ngers：与伊朗相关的网络研究活动](https://openai.com/index/disrupting-malicious-uses-of-ai-cyberav3ngers)（2024-10-01） <!--orig:CyberAv3ngers: Iran-linked cyber research activity-->
-802. [侵权报告：滥用举报活动](https://openai.com/index/disrupting-malicious-uses-of-ai-tort-report)（2024-10-01） <!--orig:Tort Report: Abusive reporting activity-->
-803. [“停止新闻”行动：源自俄罗斯的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-stop-news-2024)（2024-10-01） <!--orig:Operation “Stop News”: Russia-origin influence activity-->
-804. [卢旺达选举内容：政治评论网络](https://openai.com/index/disrupting-malicious-uses-of-ai-rwandan-election-content)（2024-10-01） <!--orig:Rwandan election content: Political commenting network-->
-805. [Bet Bot：赌博垃圾信息网络](https://openai.com/index/disrupting-malicious-uses-of-ai-bet-bot)（2024-10-01） <!--orig:Bet Bot: Gambling spam network-->
-806. [“STORM-2035”行动：源自伊朗的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-storm-2035-2024)（2024-10-01） <!--orig:Operation “STORM-2035”: Iran-origin influence activity-->
-807. [“A2Z”行动：多语言影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-a2z)（2024-10-01）
-808. [Corrupt Comment：反腐败基金会的批评](https://openai.com/index/disrupting-malicious-uses-of-ai-corrupt-comment)（2024-10-01） <!--orig:Corrupt Comment: Anti-corruption foundation criticism-->
-809. [用全新多模态审核模型升级 Moderation API](https://openai.com/index/upgrading-the-moderation-api-with-our-new-multimodal-moderation-model)（2024-09-26） <!--orig:Upgrading the Moderation API with our new multimodal moderation model-->
-810. [明尼苏达州企业翻译办公室用 ChatGPT 弥合语言鸿沟](https://openai.com/index/state-of-minnesota)（2024-09-26） <!--orig:Minnesota’s Enterprise Translation Office uses ChatGPT to bridge language gaps-->
-811. [OpenAI 与 GEDI 合作提供意大利新闻内容](https://openai.com/index/gedi)（2024-09-26） <!--orig:OpenAI and GEDI partner for Italian news content-->
-812. [介绍 Verdi：由 GPT-4o 驱动的 AI 开发平台](https://openai.com/index/mercado-libre)（2024-09-24） <!--orig:Introducing Verdi, an AI dev platform powered by GPT-4o-->
-813. [Genmab 推出“AI Everywhere”](https://openai.com/index/genmab)（2024-09-19） <!--orig:Genmab launches “AI Everywhere”-->
-814. [用 GPT-4 改善巴西的教与学](https://openai.com/index/arco-education)（2024-09-17） <!--orig:Arco Educação-->
-815. [我们的安全与安保实践更新](https://openai.com/index/update-on-safety-and-security-practices)（2024-09-16） <!--orig:An update on our safety & security practices-->
-816. [介绍 OpenAI o1](https://openai.com/index/introducing-openai-o1-preview)（2024-09-12） <!--orig:Introducing OpenAI o1-->
-817. [学会用 LLM 进行推理](https://openai.com/index/learning-to-reason-with-llms)（2024-09-12） <!--orig:Learning to reason with LLMs-->
-818. [OpenAI o1-mini](https://openai.com/index/openai-o1-mini-advancing-cost-efficient-reasoning)（2024-09-12）
-819. [OpenAI o1 的贡献](https://openai.com/openai-o1-contributions)（2024-09-12）
-820. [用 OpenAI o1 编程](https://openai.com/index/o1-coding)（2024-09-12）
-821. [OpenAI o1 与经济学推理](https://openai.com/index/o1-economics)（2024-09-12） <!--orig:Economics and reasoning with OpenAI o1-->
-822. [用 OpenAI o1 回答量子物理问题](https://openai.com/index/o1-quantum-physics)（2024-09-12） <!--orig:Answering quantum physics questions with OpenAI o1-->
-823. [用 OpenAI o1 解码遗传学](https://openai.com/index/o1-genetics)（2024-09-12） <!--orig:Decoding genetics with OpenAI o1-->
-824. [用 GPT-4 树立客户服务新标准](https://openai.com/index/ada)（2024-09-05） <!--orig:Using GPT-4 to deliver a new customer service standard-->
-825. [用 ChatGPT 实现个性化教育](https://openai.com/index/asu)（2024-08-26） <!--orig:Personalizing education with ChatGPT-->
-826. [GPT-4o 现已支持微调](https://openai.com/index/gpt-4o-fine-tuning)（2024-08-20） <!--orig:Fine-tuning now available for GPT-4o-->
-827. [OpenAI 与 Condé Nast 达成合作](https://openai.com/index/conde-nast)（2024-08-20） <!--orig:OpenAI partners with Condé Nast-->
-828. [让 AI 在 Upwork 投入工作](https://openai.com/index/upwork)（2024-08-20） <!--orig:Putting AI to work at Upwork-->
-829. [挫败伊朗的秘密影响力行动](https://openai.com/index/disrupting-a-covert-iranian-influence-operation)（2024-08-16） <!--orig:Disrupting a covert Iranian influence operation-->
-830. [借助 OpenAI 为数百万人提供情境化职位匹配](https://openai.com/index/indeed)（2024-08-15） <!--orig:Delivering contextual job matching for millions with OpenAI-->
-831. [唤醒大都会艺术博物馆中的睡美人](https://openai.com/index/the-met-museum)（2024-08-14） <!--orig:Awakening Sleeping Beauties at The Met-->
-832. [介绍 SWE-bench Verified](https://openai.com/index/introducing-swe-bench-verified)（2024-08-13） <!--orig:Introducing SWE-bench Verified-->
-833. [GPT-4o 系统卡](https://openai.com/index/gpt-4o-system-card)（2024-08-08） <!--orig:GPT-4o System Card-->
-834. [Zico Kolter 加入 OpenAI 董事会](https://openai.com/index/zico-kolter-joins-openais-board-of-directors)（2024-08-08） <!--orig:Zico Kolter Joins OpenAI’s Board of Directors-->
-835. [将数据与 API 结合以释放客户价值](https://openai.com/index/rakuten-2024)（2024-08-07） <!--orig:Pairing data with APIs to unlock customer value-->
-836. [在 API 中推出结构化输出](https://openai.com/index/introducing-structured-outputs-in-the-api)（2024-08-06） <!--orig:Introducing Structured Outputs in the API-->
-837. [SearchGPT 是全新 AI 搜索功能的原型](https://openai.com/index/searchgpt-prototype)（2024-07-25） <!--orig:SearchGPT Prototype-->
-838. [用基于规则的奖励改善模型安全行为](https://openai.com/index/improving-model-safety-behavior-with-rule-based-rewards)（2024-07-24） <!--orig:Improving Model Safety Behavior with Rule-Based Rewards-->
-839. [GPT-4o mini：推进高性价比智能](https://openai.com/index/gpt-4o-mini-advancing-cost-efficient-intelligence)（2024-07-18） <!--orig:GPT-4o mini: advancing cost-efficient intelligence-->
-840. [ChatGPT Enterprise 的全新合规与管理工具](https://openai.com/index/new-tools-for-chatgpt-enterprise)（2024-07-18）
-841. [证明者-验证者博弈提升语言模型输出的可读性](https://openai.com/index/prover-verifier-games-improve-legibility)（2024-07-17） <!--orig:Prover-Verifier Games improve legibility of language model outputs-->
-842. [OpenAI 与洛斯阿拉莫斯国家实验室宣布研究合作伙伴关系](https://openai.com/index/openai-and-los-alamos-national-laboratory-work-together)（2024-07-10） <!--orig:OpenAI and Los Alamos National Laboratory announce bioscience research partnership-->
-843. [用 GPT-4 找出 GPT-4 的错误](https://openai.com/index/finding-gpt4s-mistakes-with-gpt-4)（2024-06-27） <!--orig:Finding GPT-4’s mistakes with GPT-4-->
-844. [与《时代》建立战略内容合作伙伴关系](https://openai.com/index/strategic-content-partnership-with-time)（2024-06-27） <!--orig:Strategic Content Partnership with TIME-->
-845. [OpenAI 收购 Rockset](https://openai.com/index/openai-acquires-rockset)（2024-06-21） <!--orig:OpenAI Acquires Rockset-->
-846. [通过网络安全资助计划赋能防御者](https://openai.com/index/empowering-defenders-through-our-cybersecurity-grant-program)（2024-06-20） <!--orig:Empowering defenders through our Cybersecurity Grant Program-->
-847. [一致性模型](https://openai.com/index/consistency-models)（2024-06-20） <!--orig:Consistency Models-->
-848. [现实世界中不良内容检测的整体方法](https://openai.com/index/a-holistic-approach-to-undesired-content-detection-in-the-real-world)（2024-06-20） <!--orig:A Holistic Approach to Undesired Content Detection in the Real World-->
-849. [训练一致性模型的改进技术](https://openai.com/index/improved-techniques-for-training-consistency-models)（2024-06-20） <!--orig:Improved Techniques for Training Consistency Models-->
-850. [用自定义 GPT 提升开发者生产力](https://openai.com/index/paf)（2024-06-18） <!--orig:Surging developer productivity with custom GPTs-->
-851. [借助智能体销售拓客实现 10x 增长](https://openai.com/index/clay)（2024-06-18） <!--orig:Achieving 10x growth with agentic sales prospecting-->
-852. [用 GPT-4o 推理变革癌症诊疗](https://openai.com/index/color-health)（2024-06-17） <!--orig:Color Health uses the reasoning capabilities of GPT-4o to help doctors transform cancer care-->
-853. [OpenAI 任命美国退役陆军将军 Paul M. Nakasone 为董事会成员](https://openai.com/index/openai-appoints-retired-us-army-general)（2024-06-13） <!--orig:OpenAI appoints Retired U.S. Army General Paul M. Nakasone to Board of Directors-->
-854. [OpenAI 与 Apple 宣布合作](https://openai.com/index/openai-and-apple-announce-partnership)（2024-06-10） <!--orig:OpenAI and Apple announce partnership-->
-855. [OpenAI 欢迎 Sarah Friar（首席财务官）和 Kevin Weil（首席产品官）](https://openai.com/index/openai-welcomes-cfo-cpo)（2024-06-10） <!--orig:OpenAI welcomes Sarah Friar (CFO) and Kevin Weil (CPO)-->
-856. [深入解析 Voice Engine 的工作原理与我们的安全研究](https://openai.com/index/expanding-on-how-voice-engine-works-and-our-safety-research)（2024-06-07） <!--orig:Expanding on how Voice Engine works and our safety research-->
-857. [改善印度的重症监护基础设施](https://openai.com/index/10bedicu)（2024-06-06） <!--orig:Improving India’s critical care infrastructure-->
-858. [从 GPT-4 中提取概念](https://openai.com/index/extracting-concepts-from-gpt-4)（2024-06-06） <!--orig:Extracting Concepts from GPT-4-->
-859. [挫败隐蔽影响力行动对 AI 的欺骗性滥用](https://openai.com/index/disrupting-deceptive-uses-of-ai-by-covert-influence-operations)（2024-05-30） <!--orig:Disrupting deceptive uses of AI by covert influence operations-->
-860. [OpenAI 教育计划](https://openai.com/index/introducing-chatgpt-edu)（2024-05-30） <!--orig:Introducing ChatGPT Edu-->
-861. [推出 OpenAI 非营利组织计划](https://openai.com/index/introducing-openai-for-nonprofits)（2024-05-30）
-862. [自动化客户服务智能体](https://openai.com/index/mavenagi)（2024-05-29） <!--orig:Automating customer support agents-->
-863. [Newsroom AI Catalyst：与 WAN-IFRA 合作的全球计划](https://openai.com/index/newsroom-ai-catalyst-global-program-with-wan-ifra)（2024-05-29） <!--orig:The Newsroom AI Catalyst: a global program with WAN-IFRA-->
-864. [携手 The Atlantic 丰富 ChatGPT 中的新闻](https://openai.com/index/enhancing-news-in-chatgpt-with-the-atlantic)（2024-05-29） <!--orig:Enhancing news in ChatGPT with The Atlantic-->
-865. [与 Vox Media 的内容和产品合作](https://openai.com/index/a-content-and-product-partnership-with-vox-media)（2024-05-29） <!--orig:A Content and Product Partnership with Vox Media-->
-866. [OpenAI 董事会成立安全与安保委员会](https://openai.com/index/openai-board-forms-safety-and-security-committee)（2024-05-28） <!--orig:OpenAI Board Forms Safety and Security Committee-->
-867. [与 News Corp 达成具有里程碑意义的多年期全球合作伙伴关系](https://openai.com/index/news-corp-and-openai-sign-landmark-multi-year-global-partnership)（2024-05-22） <!--orig:A landmark multi-year global partnership with News Corp-->
-868. [OpenAI 安全实践](https://openai.com/index/openai-safety-update)（2024-05-21） <!--orig:OpenAI safety practices-->
-869. [ChatGPT 的声音是如何挑选的](https://openai.com/index/how-the-voices-for-chatgpt-were-chosen)（2024-05-19） <!--orig:How the voices for ChatGPT were chosen-->
-870. [ChatGPT 数据分析功能改进](https://openai.com/index/improvements-to-data-analysis-in-chatgpt)（2024-05-16） <!--orig:Improvements to data analysis in ChatGPT-->
-871. [OpenAI 与 Reddit 合作](https://openai.com/index/openai-and-reddit-partnership)（2024-05-16） <!--orig:OpenAI and Reddit Partnership-->
-872. [打造 AI 驱动的 Magic Studio](https://openai.com/index/canva)（2024-05-16）
-873. [Ilya Sutskever 将离开 OpenAI，Jakub Pachocki 出任首席科学家](https://openai.com/index/jakub-pachocki-announced-as-chief-scientist)（2024-05-14） <!--orig:Ilya Sutskever to leave OpenAI, Jakub Pachocki announced as Chief Scientist-->
-874. [为 ChatGPT 免费用户推出 GPT-4o 及更多工具](https://openai.com/index/gpt-4o-and-more-tools-to-chatgpt-free)（2024-05-13） <!--orig:Introducing GPT-4o and more tools to ChatGPT free users-->
-875. [你好 GPT-4o](https://openai.com/index/hello-gpt-4o)（2024-05-13）
-876. [春季更新](https://openai.com/index/spring-update)（2024-05-13） <!--orig:Spring Update-->
-877. [介绍模型规范](https://openai.com/index/introducing-the-model-spec)（2024-05-08） <!--orig:Introducing the Model Spec-->
-878. [我们对数据与 AI 的处理方式](https://openai.com/index/approach-to-data-and-ai)（2024-05-07） <!--orig:Our approach to data and AI-->
-879. [了解我们在网上所见所闻的来源](https://openai.com/index/understanding-the-source-of-what-we-see-and-hear-online)（2024-05-07） <!--orig:Understanding the source of what we see and hear online-->
-880. [与 Stack Overflow 的 API 合作](https://openai.com/index/api-partnership-with-stack-overflow)（2024-05-06） <!--orig:API Partnership with Stack Overflow-->
-881. [「Spamouflage」行动：与中国相关的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-spamouflage)（2024-05-01）
-882. [「Bad Grammar」：与俄语相关的 Telegram 评论活动](https://openai.com/index/disrupting-malicious-uses-of-ai-bad-grammar)（2024-05-01）
-883. [「Zero Zeno」行动：与以色列相关的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-zero-zeno)（2024-05-01）
-884. [「Doppelganger」行动：俄罗斯针对乌克兰的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-doppelganger)（2024-05-01）
-885. [IUVM：与伊朗相关的影响力内容网络](https://openai.com/index/disrupting-malicious-uses-of-ai-iuvm)（2024-05-01）
-886. [我们将《金融时报》的世界级新闻带到 ChatGPT](https://openai.com/index/content-partnership-with-financial-times)（2024-04-29） <!--orig:We’re bringing the Financial Times’ world-class journalism to ChatGPT-->
-887. [推出 ChatGPT 和 Whisper API](https://openai.com/index/introducing-chatgpt-and-whisper-apis)（2024-04-24） <!--orig:Introducing ChatGPT and Whisper APIs-->
-888. [GPT-4 API 全面可用及 Completions API 旧模型弃用](https://openai.com/index/gpt-4-api-general-availability)（2024-04-24） <!--orig:GPT-4 API general availability and deprecation of older models in the Completions API-->
-889. [加速拯救生命的治疗方法研发](https://openai.com/index/moderna)（2024-04-24） <!--orig:Moderna-->
-890. [为 API 客户推出更多企业级功能](https://openai.com/index/more-enterprise-grade-features-for-api-customers)（2024-04-23） <!--orig:Introducing more enterprise-grade features for API customers-->
-891. [OpenAI 对儿童安全的承诺：践行安全设计原则](https://openai.com/index/child-safety-adopting-sbd-principles)（2024-04-23） <!--orig:OpenAI’s commitment to child safety: adopting safety by design principles-->
-892. [指令层级：训练 LLM 优先遵循特权指令](https://openai.com/index/the-instruction-hierarchy)（2024-04-19） <!--orig:The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions-->
-893. [介绍 OpenAI 日本](https://openai.com/index/introducing-openai-japan)（2024-04-14） <!--orig:Introducing OpenAI Japan-->
-894. [Klarna 的 AI 助手完成 700 名全职客服的工作](https://openai.com/index/klarna)（2024-04-05） <!--orig:Klarna's AI assistant does the work of 700 full-time agents-->
-895. [推出微调 API 改进并扩展自定义模型计划](https://openai.com/index/introducing-improvements-to-the-fine-tuning-api-and-expanding-our-custom-models-program)（2024-04-04） <!--orig:Introducing improvements to the fine-tuning API and expanding our custom models program-->
-896. [为法律专业人士定制模型](https://openai.com/index/harvey)（2024-04-02） <!--orig:Customizing models for legal professionals-->
-897. [降低健康保险成本并改善护理](https://openai.com/index/oscar)（2024-04-01） <!--orig:Reducing health insurance costs and improving care-->
-898. [立即开始使用 ChatGPT](https://openai.com/index/start-using-chatgpt-instantly)（2024-04-01）
-899. [应对合成语音的挑战与机遇](https://openai.com/index/navigating-the-challenges-and-opportunities-of-synthetic-voices)（2024-03-29） <!--orig:Navigating the challenges and opportunities of synthetic voices-->
-900. [让教育数据易于获取](https://openai.com/index/zelma)（2024-03-28） <!--orig:Making education data accessible-->
-901. [Sora 初体验](https://openai.com/index/sora-first-impressions)（2024-03-25） <!--orig:Sora first impressions-->
-902. [将 AI 嵌入开发者软件](https://openai.com/index/jetbrains)（2024-03-21） <!--orig:Embedding AI into developer software-->
-903. [企业级信任与安全](https://openai.com/index/salesforce)（2024-03-18） <!--orig:Enterprise-ready trust and safety-->
-904. [用 AI 构建数据驱动的高效文化](https://openai.com/index/holiday-extras)（2024-03-18） <!--orig:Building a data-driven, efficient culture with AI-->
-905. [用 AI 重新构想电子邮件体验](https://openai.com/index/superhuman)（2024-03-18） <!--orig:Reimagining the email experience with AI-->
-906. [用 AI 健康辅导挽救生命](https://openai.com/index/healthify)（2024-03-13） <!--orig:Saving lives with AI health coaching-->
-907. [全球新闻合作伙伴：Le Monde 和 Prisa Media](https://openai.com/index/global-news-partnerships-le-monde-and-prisa-media)（2024-03-13） <!--orig:Global news partnerships: Le Monde and Prisa Media-->
-908. [OpenAI 宣布董事会新成员](https://openai.com/index/openai-announces-new-members-to-board-of-directors)（2024-03-08）
-909. [审查完成，Altman 和 Brockman 继续领导 OpenAI](https://openai.com/index/review-completed-altman-brockman-to-continue-to-lead-openai)（2024-03-08） <!--orig:Review completed & Altman, Brockman to continue to lead OpenAI-->
-910. [用 AI 改善患者参与临床试验的机会](https://openai.com/index/paradigm)（2024-03-06） <!--orig:Using AI to improve patient access to clinical trials-->
-911. [提升健康素养与患者福祉](https://openai.com/index/lifespan)（2024-03-06） <!--orig:Improving health literacy and patient well-being-->
-912. [用 ChatGPT Enterprise 激发更高生产力](https://openai.com/index/match-group)（2024-03-06） <!--orig:Sparking a more productive company with ChatGPT Enterprise-->
-913. [OpenAI 瓦埃隆·马斯克](https://openai.com/index/openai-elon-musk)（2024-03-05） <!--orig:OpenAI and Elon Musk-->
-914. [作为世界模拟器的视频生成模型](https://openai.com/index/video-generation-models-as-world-simulators)（2024-02-15） <!--orig:Video generation models as world simulators-->
-915. [挫败国家背景威胁行为者对 AI 的恶意使用](https://openai.com/index/disrupting-malicious-uses-of-ai-by-state-affiliated-threat-actors)（2024-02-14） <!--orig:Disrupting malicious uses of AI by state-affiliated threat actors-->
-916. [ChatGPT 的记忆功能与新控件](https://openai.com/index/memory-and-new-controls-for-chatgpt)（2024-02-13）
-917. [为 LLM 助长的生物威胁构建预警系统](https://openai.com/index/building-an-early-warning-system-for-llm-aided-biological-threat-creation)（2024-01-31） <!--orig:Building an early warning system for LLM-aided biological threat creation-->
-918. [全新的嵌入模型和 API 更新](https://openai.com/index/new-embedding-models-and-api-updates)（2024-01-25） <!--orig:New embedding models and API updates-->
-919. [AI 资助计划的民主化投入：经验教训与实施计划](https://openai.com/index/democratic-inputs-to-ai-grant-program-update)（2024-01-16） <!--orig:Democratic inputs to AI grant program: lessons learned and implementation plans-->
-920. [OpenAI 如何应对 2024 年全球选举](https://openai.com/index/how-openai-is-approaching-2024-worldwide-elections)（2024-01-15） <!--orig:How OpenAI is approaching 2024 worldwide elections-->
-921. [为农民建立农业数据库](https://openai.com/index/digital-green)（2024-01-12） <!--orig:Building agricultural database for farmers-->
-922. [推出 GPT 商店](https://openai.com/index/introducing-the-gpt-store)（2024-01-10） <!--orig:Introducing the GPT Store-->
-923. [推出 ChatGPT Team](https://openai.com/index/introducing-chatgpt-team)（2024-01-10） <!--orig:Introducing ChatGPT Team-->
-924. [OpenAI 和新闻业](https://openai.com/index/openai-and-journalism)（2024-01-08） <!--orig:OpenAI and journalism-->
-925. [交付 LLM 驱动的健康解决方案](https://openai.com/index/whoop)（2024-01-04） <!--orig:Delivering LLM-powered health solutions-->
-926. [提高儿科就诊记录的准确性](https://openai.com/index/summer-health)（2023-12-14） <!--orig:Increasing accuracy of pediatric visit notes-->
-927. [治理智能体 AI 系统的实践](https://openai.com/index/practices-for-governing-agentic-ai-systems)（2023-12-14） <!--orig:Practices for Governing Agentic AI Systems-->
-928. [超级对齐快速拨款](https://openai.com/index/superalignment-fast-grants)（2023-12-14） <!--orig:Superalignment Fast Grants-->
-929. [由弱到强的泛化](https://openai.com/index/weak-to-strong-generalization)（2023-12-14） <!--orig:Weak-to-strong generalization-->
-930. [与 Axel Springer 合作深化 AI 在新闻业中的有益应用](https://openai.com/index/axel-springer-partnership)（2023-12-13） <!--orig:Partnership with Axel Springer to deepen beneficial use of AI in journalism-->
-931. [Sam Altman 回归担任 CEO，OpenAI 组建新的初始董事会](https://openai.com/index/sam-altman-returns-as-ceo-openai-has-a-new-initial-board)（2023-11-29） <!--orig:Sam Altman returns as CEO, OpenAI has a new initial board-->
-932. [OpenAI 宣布领导层变动](https://openai.com/index/openai-announces-leadership-transition)（2023-11-17） <!--orig:OpenAI announces leadership transition-->
-933. [OpenAI 数据合作伙伴计划](https://openai.com/index/data-partnerships)（2023-11-09） <!--orig:OpenAI Data Partnerships-->
-934. [DevDay 上发布的全新模型与开发者产品](https://openai.com/index/new-models-and-developer-products-announced-at-devday)（2023-11-06） <!--orig:New models and developer products announced at DevDay-->
-935. [介绍 GPTs](https://openai.com/index/introducing-gpts)（2023-11-06） <!--orig:Introducing GPTs-->
-936. [前沿风险与防范准备](https://openai.com/index/frontier-risk-and-preparedness)（2023-10-26） <!--orig:Frontier risk and preparedness-->
-937. [前沿模型论坛最新动态](https://openai.com/index/frontier-model-forum-updates)（2023-10-25） <!--orig:Frontier Model Forum updates-->
-938. [DALL·E 3 现已在 ChatGPT Plus 和 Enterprise 中提供](https://openai.com/index/dall-e-3-is-now-available-in-chatgpt-plus-and-enterprise)（2023-10-19） <!--orig:DALL·E 3 is now available in ChatGPT Plus and Enterprise-->
-939. [用 AI 简化合同审查](https://openai.com/index/ironclad)（2023-10-11） <!--orig:Simplifying contract reviews with AI-->
-940. [将在线表单演进为动态数据](https://openai.com/index/typeform)（2023-10-11） <!--orig:Evolving online forms into dynamic data-->
-941. [构建 AI 驱动的商业应用](https://openai.com/index/retool)（2023-10-11） <!--orig:Building AI-powered apps for business-->
-942. [DALL·E 3 系统卡](https://openai.com/index/dall-e-3-system-card)（2023-10-03） <!--orig:DALL·E 3 system card-->
-943. [GPT-4V(ision) 系统卡](https://openai.com/index/gpt-4v-system-card)（2023-09-25） <!--orig:GPT-4V(ision) system card-->
-944. [ChatGPT 现在能看、能听、能说](https://openai.com/index/chatgpt-can-now-see-hear-and-speak)（2023-09-25）
-945. [OpenAI 红队网络](https://openai.com/index/red-teaming-network)（2023-09-19） <!--orig:OpenAI Red Teaming Network-->
-946. [OpenAI Dublin 简介](https://openai.com/index/introducing-openai-dublin)（2023-09-13） <!--orig:Introducing OpenAI Dublin-->
-947. [参加 11 月 6 日在旧金山举行的 OpenAI 首届开发者大会](https://openai.com/index/announcing-openai-devday)（2023-09-06） <!--orig:Join us for OpenAI’s first developer conference on November 6 in San Francisco-->
-948. [用 AI 教学](https://openai.com/index/teaching-with-ai)（2023-08-31） <!--orig:Teaching with AI-->
-949. [介绍 ChatGPT Enterprise](https://openai.com/index/introducing-chatgpt-enterprise)（2023-08-28） <!--orig:Introducing ChatGPT Enterprise-->
-950. [OpenAI 与 Scale 合作，为企业微调模型提供支持](https://openai.com/index/openai-partners-with-scale-to-provide-support-for-enterprises-fine-tuning-models)（2023-08-24） <!--orig:OpenAI partners with Scale to provide support for enterprises fine-tuning models-->
-951. [GPT-3.5 Turbo 微调与 API 更新](https://openai.com/index/gpt-3-5-turbo-fine-tuning-and-api-updates)（2023-08-22） <!--orig:GPT-3.5 Turbo fine-tuning and API updates-->
-952. [OpenAI 收购 Global Illumination](https://openai.com/index/openai-acquires-global-illumination)（2023-08-16） <!--orig:OpenAI acquires Global Illumination-->
-953. [使用 GPT-4 进行内容审核](https://openai.com/index/using-gpt-4-for-content-moderation)（2023-08-15） <!--orig:Using GPT-4 for content moderation-->
-954. [人工智能信任建立措施：研讨会会议记录](https://openai.com/index/confidence-building-measures-for-artificial-intelligence)（2023-08-01） <!--orig:Confidence-Building Measures for Artificial Intelligence: Workshop proceedings-->
-955. [前沿模型论坛](https://openai.com/index/frontier-model-forum)（2023-07-26） <!--orig:Frontier Model Forum-->
-956. [推动 AI 治理向前发展](https://openai.com/index/moving-ai-governance-forward)（2023-07-21） <!--orig:Moving AI governance forward-->
-957. [ChatGPT 自定义指令](https://openai.com/index/custom-instructions-for-chatgpt)（2023-07-20） <!--orig:Custom instructions for ChatGPT-->
-958. [与 American Journalism Project 合作支持地方新闻](https://openai.com/index/partnership-with-american-journalism-project-to-support-local-news)（2023-07-18） <!--orig:Partnership with American Journalism Project to support local news-->
-959. [大规模定性数据的精准分析](https://openai.com/index/viable)（2023-07-07） <!--orig:Accurately analyzing large scale qualitative data-->
-960. [前沿 AI 监管：应对新出现的公共安全风险](https://openai.com/index/frontier-ai-regulation)（2023-07-06） <!--orig:Frontier AI regulation: Managing emerging risks to public safety-->
-961. [来自全球对话的洞见](https://openai.com/index/insights-from-global-conversations)（2023-06-29） <!--orig:Insights from global conversations-->
-962. [OpenAI London 简介](https://openai.com/index/introducing-openai-london)（2023-06-28） <!--orig:Introducing OpenAI London-->
-963. [函数调用及其他 API 更新](https://openai.com/index/function-calling-and-other-api-updates)（2023-06-13） <!--orig:Function calling and other API updates-->
-964. [OpenAI 网络安全资助计划](https://openai.com/index/openai-cybersecurity-grant-program)（2023-06-01） <!--orig:OpenAI Cybersecurity Grant Program-->
-965. [用过程监督改进数学推理](https://openai.com/index/improving-mathematical-reasoning-with-process-supervision)（2023-05-31） <!--orig:Improving mathematical reasoning with process supervision-->
-966. [AI 的民主化输入](https://openai.com/index/democratic-inputs-to-ai)（2023-05-25） <!--orig:Democratic inputs to AI-->
-967. [超级智能的治理](https://openai.com/index/governance-of-superintelligence)（2023-05-22） <!--orig:Governance of superintelligence-->
-968. [推出 iOS 版 ChatGPT 应用](https://openai.com/index/introducing-the-chatgpt-app-for-ios)（2023-05-18） <!--orig:Introducing the ChatGPT app for iOS-->
-969. [语言模型可以解释语言模型中的神经元](https://openai.com/index/language-models-can-explain-neurons-in-language-models)（2023-05-09） <!--orig:Language models can explain neurons in language models-->
-970. [在 ChatGPT 中管理数据的新方法](https://openai.com/index/new-ways-to-manage-your-data-in-chatgpt)（2023-04-25） <!--orig:New ways to manage your data in ChatGPT-->
-971. [宣布 OpenAI 漏洞赏金计划](https://openai.com/index/bug-bounty-program)（2023-04-11） <!--orig:Announcing OpenAI’s Bug Bounty Program-->
-972. [我们的 AI 安全方法](https://openai.com/index/our-approach-to-ai-safety)（2023-04-05） <!--orig:Our approach to AI safety-->
-973. [3 月 20 日 ChatGPT 故障：发生了什么](https://openai.com/index/march-20-chatgpt-outage)（2023-03-24） <!--orig:March 20 ChatGPT outage: Here’s what happened-->
-974. [ChatGPT 插件](https://openai.com/index/chatgpt-plugins)（2023-03-23） <!--orig:ChatGPT plugins-->
-975. [GPT 就是 GPT：大型语言模型对劳动力市场影响潜力的初探](https://openai.com/index/gpts-are-gpts)（2023-03-17） <!--orig:GPTs are GPTs: An early look at the labor market impact potential of large language models-->
-976. [GPT-4](https://openai.com/index/gpt-4)（2023-03-14）
-977. [为未来守护语言](https://openai.com/index/government-of-iceland)（2023-03-14） <!--orig:Preserving languages for the future-->
-978. [变革视觉无障碍](https://openai.com/index/be-my-eyes)（2023-03-14） <!--orig:Transforming visual accessibility-->
-979. [Stripe](https://openai.com/index/stripe)（2023-03-14）
-980. [填补关键的语言学习空白](https://openai.com/index/duolingo)（2023-03-14） <!--orig:Filling crucial language learning gaps-->
-981. [为课堂虚拟教育赋能](https://openai.com/index/khan-academy)（2023-03-14） <!--orig:Powering virtual education for the classroom-->
-982. [为 AGI 及更远的未来做规划](https://openai.com/index/planning-for-agi-and-beyond)（2023-02-24） <!--orig:Planning for AGI and beyond-->
-983. [人工智能系统应该如何表现，由谁来决定？](https://openai.com/index/how-should-ai-systems-behave)（2023-02-16） <!--orig:How should AI systems behave, and who should decide?-->
-984. [介绍 ChatGPT Plus](https://openai.com/index/chatgpt-plus)（2023-02-01） <!--orig:Introducing ChatGPT Plus-->
-985. [识别 AI 生成文本的全新 AI 分类器](https://openai.com/index/new-ai-classifier-for-indicating-ai-written-text)（2023-01-31） <!--orig:New AI classifier for indicating AI-written text-->
-986. [OpenAI 与 Microsoft 扩大合作伙伴关系](https://openai.com/index/openai-and-microsoft-extend-partnership)（2023-01-23） <!--orig:OpenAI and Microsoft extend partnership-->
-987. [预测语言模型被滥用于虚假信息活动的风险及如何降低风险](https://openai.com/index/forecasting-misuse)（2023-01-11） <!--orig:Forecasting potential misuses of language models for disinformation campaigns and how to reduce risk-->
-988. [从客户反馈中挖掘细致入微的洞察](https://openai.com/index/yabble)（2023-01-04） <!--orig:Delivering nuanced insights from customer feedback-->
-989. [微调 GPT-3 以扩展视频创作](https://openai.com/index/waymark)（2023-01-03） <!--orig:Fine-tuning GPT-3 to scale video creation-->
-990. [打造下一代角色](https://openai.com/index/inworld-ai-DO-NOT-PUBLISH)（2023-01-01） <!--orig:Creating next-gen characters-->
-991. [持续学习的力量](https://openai.com/index/the-power-of-continuous-learning)（2022-12-23） <!--orig:The power of continuous learning-->
-992. [Point-E：从复杂提示生成 3D 点云的系统](https://openai.com/index/point-e)（2022-12-16） <!--orig:Point-E: A system for generating 3D point clouds from complex prompts-->
-993. [全新改进的嵌入模型](https://openai.com/index/new-and-improved-embedding-model)（2022-12-15） <!--orig:New and improved embedding model-->
-994. [探究后端系统的细枝末节](https://openai.com/index/discovering-the-minutiae-of-backend-systems)（2022-12-08） <!--orig:Discovering the minutiae of backend systems-->
-995. [介绍 ChatGPT](https://openai.com/index/chatgpt)（2022-11-30） <!--orig:Introducing ChatGPT-->
-996. [DALL·E API 现已开放公测](https://openai.com/index/dall-e-api-now-available-in-public-beta)（2022-11-03） <!--orig:DALL·E API now available in public beta-->
-997. [奖励模型过度优化的缩放定律](https://openai.com/index/scaling-laws-for-reward-model-overoptimization)（2022-10-19） <!--orig:Scaling laws for reward model overoptimization-->
-998. [DALL·E 现已开放，无需排队等候](https://openai.com/index/dall-e-now-available-without-waitlist)（2022-09-28） <!--orig:DALL·E now available without waitlist-->
-999. [Whisper 简介](https://openai.com/index/whisper)（2022-09-21） <!--orig:Introducing Whisper-->
-1000. [DALL·E：推出扩图功能](https://openai.com/index/dall-e-introducing-outpainting)（2022-08-31） <!--orig:DALL·E: Introducing outpainting-->
-1001. [我们开展对齐研究的方法](https://openai.com/index/our-approach-to-alignment-research)（2022-08-24） <!--orig:Our approach to alignment research-->
-1002. [全新升级的内容审核工具](https://openai.com/index/new-and-improved-content-moderation-tooling)（2022-08-10） <!--orig:New and improved content moderation tooling-->
-1003. [高效训练语言模型以实现中间填充](https://openai.com/index/efficient-training-of-language-models-to-fill-in-the-middle)（2022-07-28） <!--orig:Efficient training of language models to fill in the middle-->
-1004. [面向代码合成大语言模型的危害分析框架](https://openai.com/index/a-hazard-analysis-framework-for-code-synthesis-large-language-models)（2022-07-25） <!--orig:A hazard analysis framework for code synthesis large language models-->
-1005. [DALL·E 现已推出测试版](https://openai.com/index/dall-e-now-available-in-beta)（2022-07-20） <!--orig:DALL·E now available in beta-->
-1006. [减少 DALL·E 2 中的偏见并提升安全性](https://openai.com/index/reducing-bias-and-improving-safety-in-dall-e-2)（2022-07-18） <!--orig:Reducing bias and improving safety in DALL·E 2-->
-1007. [DALL·E 2：拓展创造力](https://openai.com/index/dall-e-2-extending-creativity)（2022-07-14） <!--orig:DALL·E 2: Extending creativity-->
-1008. [DALL·E 2 预训练缓解措施](https://openai.com/index/dall-e-2-pre-training-mitigations)（2022-06-28） <!--orig:DALL·E 2 pre-training mitigations-->
-1009. [通过 Video PreTraining 学习玩 Minecraft](https://openai.com/index/vpt)（2022-06-23） <!--orig:Learning to play Minecraft with Video PreTraining-->
-1010. [大型模型的演进](https://openai.com/index/evolution-through-large-models)（2022-06-17） <!--orig:Evolution through large models-->
-1011. [AI 撰写的评论帮助人类发现缺陷](https://openai.com/index/critiques)（2022-06-13） <!--orig:AI-written critiques help humans notice flaws-->
-1012. [训练大型神经网络的技术](https://openai.com/index/techniques-for-training-large-neural-networks)（2022-06-09） <!--orig:Techniques for training large neural networks-->
-1013. [部署语言模型的最佳实践](https://openai.com/index/best-practices-for-deploying-language-models)（2022-06-02） <!--orig:Best practices for deploying language models-->
-1014. [教会模型用语言表达不确定性](https://openai.com/index/teaching-models-to-express-their-uncertainty-in-words)（2022-05-28） <!--orig:Teaching models to express their uncertainty in words-->
-1015. [OpenAI Codex 驱动下一代应用](https://openai.com/index/codex-apps)（2022-05-24） <!--orig:Powering next generation applications with OpenAI Codex-->
-1016. [DALL·E 2 研究预览更新](https://openai.com/index/dall-e-2-update)（2022-05-18） <!--orig:DALL·E 2 research preview update-->
-1017. [OpenAI 领导团队更新](https://openai.com/index/leadership-team-update)（2022-05-05） <!--orig:OpenAI leadership team update-->
-1018. [基于 CLIP 潜变量的分层文本条件图像生成](https://openai.com/index/hierarchical-text-conditional-image-generation-with-clip-latents)（2022-04-13） <!--orig:Hierarchical text-conditional image generation with CLIP latents-->
-1019. [衡量 Goodhart 定律](https://openai.com/index/measuring-goodharts-law)（2022-04-13） <!--orig:Measuring Goodhart’s law-->
-1020. [GPT-3 新功能：编辑与插入](https://openai.com/index/gpt-3-edit-insert)（2022-03-15） <!--orig:New GPT-3 capabilities: Edit & insert-->
-1021. [评估代码生成模型经济影响的研究议程](https://openai.com/index/economic-impacts-research)（2022-03-03） <!--orig:A research agenda for assessing the economic impacts of code generation models-->
-1022. [OpenAI 的经济影响研究](https://openai.com/index/economic-impacts)（2022-03-03） <!--orig:Economic impacts research at OpenAI-->
-1023. [语言模型安全与滥用的经验教训](https://openai.com/index/language-model-safety-and-misuse)（2022-03-03） <!--orig:Lessons learned on language model safety and misuse-->
-1024. [求解（部分）形式化数学奥林匹克问题](https://openai.com/index/formal-math)（2022-02-02） <!--orig:Solving (some) formal math olympiad problems-->
-1025. [让语言模型学会遵循指令](https://openai.com/index/instruction-following)（2022-01-27） <!--orig:Aligning language models to follow instructions-->
-1026. [推出文本和代码嵌入](https://openai.com/index/introducing-text-and-code-embeddings)（2022-01-25） <!--orig:Introducing text and code embeddings-->
-1027. [通过对比预训练实现文本与代码嵌入](https://openai.com/index/text-and-code-embeddings-by-contrastive-pre-training)（2022-01-24） <!--orig:Text and code embeddings by contrastive pre-training-->
-1028. [WebGPT：通过网页浏览提升语言模型的事实准确性](https://openai.com/index/webgpt)（2021-12-16） <!--orig:WebGPT: Improving the factual accuracy of language models through web browsing-->
-1029. [为你的应用定制 GPT-3](https://openai.com/index/customizing-gpt-3)（2021-12-14） <!--orig:Customizing GPT-3 for your application-->
-1030. [OpenAI 驻留计划](https://openai.com/index/openai-residency)（2021-11-30） <!--orig:OpenAI Residency-->
-1031. [OpenAI 的 API 现已开放，无需排队](https://openai.com/index/api-no-waitlist)（2021-11-18） <!--orig:OpenAI’s API now available with no waitlist-->
-1032. [求解数学应用题](https://openai.com/index/solving-math-word-problems)（2021-10-29） <!--orig:Solving math word problems-->
-1033. [根据人类反馈总结书籍](https://openai.com/index/summarizing-books)（2021-09-23） <!--orig:Summarizing books with human feedback-->
-1034. [TruthfulQA：衡量模型如何模仿人类的虚假说法](https://openai.com/index/truthfulqa)（2021-09-08） <!--orig:TruthfulQA: Measuring how models mimic human falsehoods-->
-1035. [Helen Toner 加入 OpenAI 董事会](https://openai.com/index/helen-toner-joins)（2021-09-08） <!--orig:Helen Toner joins OpenAI’s board of directors-->
-1036. [OpenAI Codex](https://openai.com/index/openai-codex)（2021-08-10）
-1037. [Triton 简介：面向神经网络的开源 GPU 编程](https://openai.com/index/triton)（2021-07-28） <!--orig:Introducing Triton: Open-source GPU programming for neural networks-->
-1038. [评估在代码上训练的大语言模型](https://openai.com/index/evaluating-large-language-models-trained-on-code)（2021-07-07） <!--orig:Evaluating large language models trained on code-->
-1039. [通过在精选数据集上训练来改进语言模型行为](https://openai.com/index/improving-language-model-behavior)（2021-06-10） <!--orig:Improving language model behavior by training on a curated dataset-->
-1040. [OpenAI Scholars 2021：期末项目](https://openai.com/index/openai-scholars-2021-final-projects)（2021-05-10） <!--orig:OpenAI Scholars 2021: Final projects-->
-1041. [Will Hurd 加入 OpenAI 董事会](https://openai.com/index/will-hurd-joins)（2021-05-03） <!--orig:Will Hurd joins OpenAI’s board of directors-->
-1042. [GPT-3 驱动下一代应用](https://openai.com/index/gpt-3-apps)（2021-03-25） <!--orig:GPT-3 powers the next generation of apps-->
-1043. [人工神经网络中的多模态神经元](https://openai.com/index/multimodal-neurons)（2021-03-04） <!--orig:Multimodal neurons in artificial neural networks-->
-1044. [理解大语言模型的能力、局限与社会影响](https://openai.com/index/understanding-the-capabilities-limitations-and-societal-impact-of-large-language-models)（2021-02-04） <!--orig:Understanding the capabilities, limitations, and societal impact of large language models-->
-1045. [将 Kubernetes 扩展到 7,500 个节点](https://openai.com/index/scaling-kubernetes-to-7500-nodes)（2021-01-25） <!--orig:Scaling Kubernetes to 7,500 nodes-->
-1046. [CLIP：连接文本与图像](https://openai.com/index/clip)（2021-01-05） <!--orig:CLIP: Connecting text and images-->
-1047. [DALL·E：从文本创建图像](https://openai.com/index/dall-e)（2021-01-05）
-1048. [OpenAI 的组织架构更新](https://openai.com/index/organizational-update)（2020-12-29） <!--orig:Organizational update from OpenAI-->
-1049. [OpenAI 将 GPT-3 技术授权给微软](https://openai.com/index/openai-licenses-gpt-3-technology-to-microsoft)（2020-09-22） <!--orig:OpenAI licenses GPT-3 technology to Microsoft-->
-1050. [面向自动定理证明的生成式语言建模](https://openai.com/index/generative-language-modeling-for-automated-theorem-proving)（2020-09-07） <!--orig:Generative language modeling for automated theorem proving-->
-1051. [学习根据人类反馈进行总结](https://openai.com/index/learning-to-summarize-with-human-feedback)（2020-09-04） <!--orig:Learning to summarize with human feedback-->
-1052. [OpenAI Scholars 2020：期末项目](https://openai.com/index/openai-scholars-2020-final-projects)（2020-07-09） <!--orig:OpenAI Scholars 2020: Final projects-->
-1053. [Procgen 与 MineRL 竞赛](https://openai.com/index/procgen-minerl-competitions)（2020-06-20） <!--orig:Procgen and MineRL Competitions-->
-1054. [图像 GPT](https://openai.com/index/image-gpt)（2020-06-17） <!--orig:Image GPT-->
-1055. [OpenAI 的 API](https://openai.com/index/openai-api)（2020-06-11） <!--orig:OpenAI API-->
-1056. [语言模型是少样本学习者](https://openai.com/index/language-models-are-few-shot-learners)（2020-05-28） <!--orig:Language models are few-shot learners-->
-1057. [人工智能与效率](https://openai.com/index/ai-and-efficiency)（2020-05-05） <!--orig:AI and efficiency-->
-1058. [Jukebox 音乐生成模型](https://openai.com/index/jukebox)（2020-04-30） <!--orig:Jukebox-->
-1059. [提升 AI 开发的可验证性](https://openai.com/index/improving-verifiability)（2020-04-16） <!--orig:Improving verifiability in AI development-->
-1060. [OpenAI Microscope 可视化工具](https://openai.com/index/microscope)（2020-04-14） <!--orig:OpenAI Microscope-->
-1061. [OpenAI 全面转向 PyTorch](https://openai.com/index/openai-pytorch)（2020-01-30） <!--orig:OpenAI standardizes on PyTorch-->
-1062. [神经语言模型的缩放定律](https://openai.com/index/scaling-laws-for-neural-language-models)（2020-01-23） <!--orig:Scaling laws for neural language models-->
-1063. [用大规模深度强化学习玩 Dota 2](https://openai.com/index/dota-2-with-large-scale-deep-reinforcement-learning)（2019-12-13） <!--orig:Dota 2 with large scale deep reinforcement learning-->
-1064. [深度双重下降](https://openai.com/index/deep-double-descent)（2019-12-05） <!--orig:Deep double descent-->
-1065. [Procgen 基准](https://openai.com/index/procgen-benchmark)（2019-12-03） <!--orig:Procgen Benchmark-->
-1066. [Safety Gym 安全强化学习工具包](https://openai.com/index/safety-gym)（2019-11-21） <!--orig:Safety Gym-->
-1067. [深度强化学习中安全探索的基准测试](https://openai.com/index/benchmarking-safe-exploration-in-deep-reinforcement-learning)（2019-11-21） <!--orig:Benchmarking safe exploration in deep reinforcement learning-->
-1068. [GPT-2：1.5B 版本发布](https://openai.com/index/gpt-2-1-5b-release)（2019-11-05） <!--orig:GPT-2: 1.5B release-->
-1069. [用机器人手还原魔方](https://openai.com/index/solving-rubiks-cube)（2019-10-15） <!--orig:Solving Rubik’s Cube with a robot hand-->
-1070. [OpenAI Scholars 2020：开放申请](https://openai.com/index/openai-scholars-2020)（2019-10-11） <!--orig:OpenAI Scholars 2020: Applications open-->
-1071. [根据人类偏好微调 GPT-2](https://openai.com/index/fine-tuning-gpt-2)（2019-09-19） <!--orig:Fine-tuning GPT-2 from human preferences-->
-1072. [多智能体交互中涌现的工具使用](https://openai.com/index/emergent-tool-use)（2019-09-17） <!--orig:Emergent tool use from multi-agent interaction-->
-1073. [测试针对未知对手的鲁棒性](https://openai.com/index/testing-robustness)（2019-08-22） <!--orig:Testing robustness against unforeseen adversaries-->
-1074. [GPT-2：6 个月后的跟进](https://openai.com/index/gpt-2-6-month-follow-up)（2019-08-20） <!--orig:GPT-2: 6-month follow-up-->
-1075. [学习日](https://openai.com/index/learning-day)（2019-08-01） <!--orig:Learning Day-->
-1076. [微软投资并与 OpenAI 合作，支持我们构建有益的 AGI](https://openai.com/index/microsoft-invests-in-and-partners-with-openai)（2019-07-22） <!--orig:Microsoft invests in and partners with OpenAI to support us building beneficial AGI-->
-1077. [为什么负责任的 AI 发展需要安全方面的合作](https://openai.com/index/cooperation-on-safety)（2019-07-10） <!--orig:Why responsible AI development needs cooperation on safety-->
-1078. [2019 OpenAI 机器人研讨会](https://openai.com/index/symposium-2019)（2019-06-05） <!--orig:OpenAI Robotics Symposium 2019-->
-1079. [OpenAI Scholars 2019：期末项目](https://openai.com/index/openai-scholars-2019-final-projects)（2019-05-23） <!--orig:OpenAI Scholars 2019: Final projects-->
-1080. [OpenAI Fellows 2018 秋季：最终项目](https://openai.com/index/openai-fellows-fall-2018)（2019-05-17） <!--orig:OpenAI Fellows Fall 2018: Final projects-->
-1081. [不同扰动类型之间对抗鲁棒性的迁移](https://openai.com/index/transfer-of-adversarial-robustness-between-perturbation-types)（2019-05-03） <!--orig:Transfer of adversarial robustness between perturbation types-->
-1082. [MuseNet 音乐生成模型](https://openai.com/index/musenet)（2019-04-25） <!--orig:MuseNet-->
-1083. [基于稀疏 transformers 的生成建模](https://openai.com/index/sparse-transformer)（2019-04-23） <!--orig:Generative modeling with sparse transformers-->
-1084. [OpenAI Five 击败 Dota 2 世界冠军](https://openai.com/index/openai-five-defeats-dota-2-world-champions)（2019-04-15） <!--orig:OpenAI Five defeats Dota 2 world champions-->
-1085. [OpenAI Five 决赛](https://openai.com/index/openai-five-finals)（2019-03-26） <!--orig:OpenAI Five Finals-->
-1086. [基于能量模型的隐式生成与泛化方法](https://openai.com/index/energy-based-models)（2019-03-21） <!--orig:Implicit generation and generalization methods for energy-based models-->
-1087. [OpenAI Scholars 2019：认识我们的学者](https://openai.com/index/openai-scholars-2019-meet-our-scholars)（2019-03-13） <!--orig:OpenAI Scholars 2019: Meet our Scholars-->
-1088. [OpenAI LP 公司](https://openai.com/index/openai-lp)（2019-03-11） <!--orig:OpenAI LP-->
-1089. [推出 Activation Atlases](https://openai.com/index/introducing-activation-atlases)（2019-03-06） <!--orig:Introducing Activation Atlases-->
-1090. [Neural MMO：大规模多智能体游戏环境](https://openai.com/index/neural-mmo)（2019-03-04） <!--orig:Neural MMO: A massively multiagent game environment-->
-1091. [Spinning Up in Deep RL：研讨会回顾](https://openai.com/index/spinning-up-in-deep-rl-workshop-review)（2019-02-26） <!--orig:Spinning Up in Deep RL: Workshop review-->
-1092. [AI 安全需要社会科学家](https://openai.com/index/ai-safety-needs-social-scientists)（2019-02-19） <!--orig:AI safety needs social scientists-->
-1093. [更好的语言模型及其影响](https://openai.com/index/better-language-models)（2019-02-14） <!--orig:Better language models and their implications-->
-1094. [鲁棒分类与双赢结果的计算局限](https://openai.com/index/computational-limitations-in-robust-classification-and-win-win-results)（2019-02-04） <!--orig:Computational limitations in robust classification and win-win results-->
-1095. [OpenAI Fellows 2018 夏季：最终项目](https://openai.com/index/openai-summer-fellows-2018)（2018-12-19） <!--orig:OpenAI Fellows Summer 2018: Final projects-->
-1096. [AI 训练如何扩展](https://openai.com/index/how-ai-training-scales)（2018-12-14） <!--orig:How AI training scales-->
-1097. [量化强化学习中的泛化](https://openai.com/index/quantifying-generalization-in-reinforcement-learning)（2018-12-06） <!--orig:Quantifying generalization in reinforcement learning-->
-1098. [Spinning Up in Deep RL 项目](https://openai.com/index/spinning-up-in-deep-rl)（2018-11-08） <!--orig:Spinning Up in Deep RL-->
-1099. [用能量函数学习概念](https://openai.com/index/learning-concepts-with-energy-functions)（2018-11-07） <!--orig:Learning concepts with energy functions-->
-1100. [在线规划，离线学习：基于模型的控制实现高效学习与探索](https://openai.com/index/plan-online-learn-offline)（2018-11-05） <!--orig:Plan online, learn offline: Efficient learning and exploration via model-based control-->
-1101. [基于预测奖励的强化学习](https://openai.com/index/reinforcement-learning-with-prediction-based-rewards)（2018-10-31） <!--orig:Reinforcement learning with prediction-based rewards-->
-1102. [通过迭代放大学习复杂目标](https://openai.com/index/learning-complex-goals-with-iterated-amplification)（2018-10-22） <!--orig:Learning complex goals with iterated amplification-->
-1103. [OpenAI Scholars 2019：开放申请](https://openai.com/index/openai-scholars-2019)（2018-10-11） <!--orig:OpenAI Scholars 2019: Applications open-->
-1104. [OpenAI Fellows 2019 冬季与 Interns 2019 夏季](https://openai.com/index/openai-fellows-interns-2019)（2018-10-09） <!--orig:OpenAI Fellows Winter 2019 & Interns Summer 2019-->
-1105. [FFJORD：面向可扩展可逆生成模型的自由形式连续动力学](https://openai.com/index/ffjord)（2018-10-02） <!--orig:FFJORD: Free-form continuous dynamics for scalable reversible generative models-->
-1106. [OpenAI Scholars 2018：期末项目](https://openai.com/index/openai-scholars-2018-final-projects)（2018-09-10） <!--orig:OpenAI Scholars 2018: Final projects-->
-1107. [The International 2018：比赛结果](https://openai.com/index/the-international-2018-results)（2018-08-23） <!--orig:The International 2018: Results-->
-1108. [好奇心驱动学习的大规模研究](https://openai.com/index/large-scale-study-of-curiosity-driven-learning)（2018-08-13） <!--orig:Large-scale study of curiosity-driven learning-->
-1109. [OpenAI Five 基准测试：结果](https://openai.com/index/openai-five-benchmark-results)（2018-08-06） <!--orig:OpenAI Five Benchmark: Results-->
-1110. [学习灵巧操作](https://openai.com/index/learning-dexterity)（2018-07-30） <!--orig:Learning dexterity-->
-1111. [变分选项发现算法](https://openai.com/index/variational-option-discovery-algorithms)（2018-07-26） <!--orig:Variational option discovery algorithms-->
-1112. [OpenAI Scholars 2018：认识我们的学者](https://openai.com/index/openai-scholars-2018-meet-our-scholars)（2018-07-25） <!--orig:OpenAI Scholars 2018: Meet our Scholars-->
-1113. [OpenAI Five 基准测试](https://openai.com/index/openai-five-benchmark)（2018-07-18） <!--orig:OpenAI Five Benchmark-->
-1114. [Glow：更好的可逆生成模型](https://openai.com/index/glow)（2018-07-09） <!--orig:Glow: Better reversible generative models-->
-1115. [通过一次演示学习《Montezuma's Revenge》](https://openai.com/index/learning-montezumas-revenge-from-a-single-demonstration)（2018-07-04） <!--orig:Learning Montezuma’s Revenge from a single demonstration-->
-1116. [OpenAI Five 战队](https://openai.com/index/openai-five)（2018-06-25） <!--orig:OpenAI Five-->
-1117. [Retro Contest：比赛结果](https://openai.com/index/retro-contest-results)（2018-06-22） <!--orig:Retro Contest: Results-->
-1118. [学习多智能体系统中的策略表示](https://openai.com/index/learning-policy-representations-in-multiagent-systems)（2018-06-17） <!--orig:Learning policy representations in multiagent systems-->
-1119. [通过无监督学习提升语言理解](https://openai.com/index/language-unsupervised)（2018-06-11） <!--orig:Improving language understanding with unsupervised learning-->
-1120. [GamePad：定理证明的学习环境](https://openai.com/index/gamepad)（2018-06-02） <!--orig:GamePad: A learning environment for theorem proving-->
-1121. [OpenAI 研究员项目 2018 年秋季](https://openai.com/index/openai-fellows)（2018-05-30） <!--orig:OpenAI Fellows Fall 2018-->
-1122. [Gym Retro：复古游戏环境](https://openai.com/index/gym-retro)（2018-05-25） <!--orig:Gym Retro-->
-1123. [人工智能与算力](https://openai.com/index/ai-and-compute)（2018-05-16） <!--orig:AI and compute-->
-1124. [通过辩论实现人工智能安全](https://openai.com/index/debate)（2018-05-03） <!--orig:AI safety via debate-->
-1125. [进化的策略梯度](https://openai.com/index/evolved-policy-gradients)（2018-04-18） <!--orig:Evolved Policy Gradients-->
-1126. [必须学得快：强化学习泛化的新基准](https://openai.com/index/gotta-learn-fast)（2018-04-10） <!--orig:Gotta Learn Fast: A new benchmark for generalization in RL-->
-1127. [Retro 竞赛](https://openai.com/index/retro-contest)（2018-04-05） <!--orig:Retro Contest-->
-1128. [采用与动作相关的分解基线降低策略梯度方差](https://openai.com/index/variance-reduction-for-policy-gradient-with-action-dependent-factorized-baselines)（2018-03-20） <!--orig:Variance reduction for policy gradient with action-dependent factorized baselines-->
-1129. [OpenAI 黑客松报告](https://openai.com/index/hackathon-follow-up)（2018-03-15） <!--orig:Report from the OpenAI hackathon-->
-1130. [利用最优传输改进 GAN](https://openai.com/index/improving-gans-using-optimal-transport)（2018-03-15） <!--orig:Improving GANs using optimal transport-->
-1131. [论一阶元学习算法](https://openai.com/index/on-first-order-meta-learning-algorithms)（2018-03-08） <!--orig:On first-order meta-learning algorithms-->
-1132. [Reptile：一种可扩展的元学习算法](https://openai.com/index/reptile)（2018-03-07） <!--orig:Reptile: A scalable meta-learning algorithm-->
-1133. [OpenAI 学者计划](https://openai.com/index/openai-scholars)（2018-03-06） <!--orig:OpenAI Scholars-->
-1134. [关于通过元强化学习学会探索的若干思考](https://openai.com/index/some-considerations-on-learning-to-explore-via-meta-reinforcement-learning)（2018-03-03） <!--orig:Some considerations on learning to explore via meta-reinforcement learning-->
-1135. [机器人研究的关键要素](https://openai.com/index/ingredients-for-robotics-research)（2018-02-26） <!--orig:Ingredients for robotics research-->
-1136. [多目标强化学习：富有挑战性的机器人环境与研究征集](https://openai.com/index/multi-goal-reinforcement-learning)（2018-02-26） <!--orig:Multi-Goal Reinforcement Learning: Challenging robotics environments and request for research-->
-1137. [OpenAI 黑客松](https://openai.com/index/openai-hackathon)（2018-02-22） <!--orig:OpenAI hackathon-->
-1138. [OpenAI 的支持者](https://openai.com/index/openai-supporters)（2018-02-20） <!--orig:OpenAI supporters-->
-1139. [准备应对人工智能的恶意使用](https://openai.com/index/preparing-for-malicious-uses-of-ai)（2018-02-20） <!--orig:Preparing for malicious uses of AI-->
-1140. [通过教学实现可解释的机器学习](https://openai.com/index/interpretable-machine-learning-through-teaching)（2018-02-15） <!--orig:Interpretable machine learning through teaching-->
-1141. [面向实体消歧的类型发现](https://openai.com/index/discovering-types-for-entity-disambiguation)（2018-02-07） <!--orig:Discovering types for entity disambiguation-->
-1142. [研究征集 2.0](https://openai.com/index/requests-for-research-2)（2018-01-31） <!--orig:Requests for Research 2.0-->
-1143. [将 Kubernetes 扩展至 2,500 个节点](https://openai.com/index/scaling-kubernetes-to-2500-nodes)（2018-01-18） <!--orig:Scaling Kubernetes to 2,500 nodes-->
-1144. [块稀疏的 GPU 内核](https://openai.com/index/block-sparse-gpu-kernels)（2017-12-06） <!--orig:Block-sparse GPU kernels-->
-1145. [利用 L₀ 正则化学习稀疏神经网络](https://openai.com/index/learning-sparse-neural-networks-through-l0-regularization)（2017-12-04） <!--orig:Learning sparse neural networks through L₀ regularization-->
-1146. [可解释且具教学意义的示例](https://openai.com/index/interpretable-and-pedagogical-examples)（2017-11-02） <!--orig:Interpretable and pedagogical examples-->
-1147. [学会建立层次结构](https://openai.com/index/learning-a-hierarchy)（2017-10-26） <!--orig:Learning a hierarchy-->
-1148. [从模拟中泛化](https://openai.com/index/generalizing-from-simulation)（2017-10-19） <!--orig:Generalizing from simulation-->
-1149. [基于图像的机器人学习中的非对称演员评论家方法](https://openai.com/index/asymmetric-actor-critic-for-image-based-robot-learning)（2017-10-18） <!--orig:Asymmetric actor critic for image-based robot learning-->
-1150. [通过动力学随机化实现机器人控制的模拟到现实迁移](https://openai.com/index/sim-to-real-transfer-of-robotic-control-with-dynamics-randomization)（2017-10-18） <!--orig:Sim-to-real transfer of robotic control with dynamics randomization-->
-1151. [面向机器人抓取的领域随机化与生成模型](https://openai.com/index/domain-randomization-and-generative-models-for-robotic-grasping)（2017-10-17） <!--orig:Domain randomization and generative models for robotic grasping-->
-1152. [竞争性自我对弈](https://openai.com/index/competitive-self-play)（2017-10-11） <!--orig:Competitive self-play-->
-1153. [摔跤中的元学习](https://openai.com/index/meta-learning-for-wrestling)（2017-10-11） <!--orig:Meta-learning for wrestling-->
-1154. [深度线性网络中的非线性计算](https://openai.com/index/nonlinear-computation-in-deep-linear-networks)（2017-09-29） <!--orig:Nonlinear computation in deep linear networks-->
-1155. [学会对他人的心智建模](https://openai.com/index/learning-to-model-other-minds)（2017-09-14） <!--orig:Learning to model other minds-->
-1156. [具备对手学习意识的学习](https://openai.com/index/learning-with-opponent-learning-awareness)（2017-09-13） <!--orig:Learning with opponent-learning awareness-->
-1157. [OpenAI Baselines：ACKTR 与 A2C](https://openai.com/index/openai-baselines-acktr-a2c)（2017-08-18） <!--orig:OpenAI Baselines: ACKTR & A2C-->
-1158. [Dota 2 的更多细节](https://openai.com/index/more-on-dota-2)（2017-08-16） <!--orig:More on Dota 2-->
-1159. [Dota 2](https://openai.com/index/dota-2)（2017-08-11）
-1160. [汇集人类反馈](https://openai.com/index/gathering-human-feedback)（2017-08-03） <!--orig:Gathering human feedback-->
-1161. [借助参数噪声改进探索](https://openai.com/index/better-exploration-with-parameter-noise)（2017-07-27） <!--orig:Better exploration with parameter noise-->
-1162. [近端策略优化（PPO）](https://openai.com/index/openai-baselines-ppo)（2017-07-20） <!--orig:Proximal Policy Optimization-->
-1163. [鲁棒的对抗性输入](https://openai.com/index/robust-adversarial-inputs)（2017-07-17） <!--orig:Robust adversarial inputs-->
-1164. [事后经验回放](https://openai.com/index/hindsight-experience-replay)（2017-07-05） <!--orig:Hindsight Experience Replay-->
-1165. [师生式课程学习](https://openai.com/index/teacher-student-curriculum-learning)（2017-07-01） <!--orig:Teacher–student curriculum learning-->
-1166. [在 Python 中实现更快的物理模拟](https://openai.com/index/faster-physics-in-python)（2017-06-28） <!--orig:Faster physics in Python-->
-1167. [基于人类偏好的学习](https://openai.com/index/learning-from-human-preferences)（2017-06-13） <!--orig:Learning from human preferences-->
-1168. [学会合作、竞争与沟通](https://openai.com/index/learning-to-cooperate-compete-and-communicate)（2017-06-08） <!--orig:Learning to cooperate, compete, and communicate-->
-1169. [借助 Q 系综实现 UCB 探索](https://openai.com/index/ucb-exploration-via-q-ensembles)（2017-06-05） <!--orig:UCB exploration via Q-ensembles-->
-1170. [OpenAI Baselines 中的 DQN](https://openai.com/index/openai-baselines-dqn)（2017-05-24） <!--orig:OpenAI Baselines: DQN-->
-1171. [能够学习的机器人](https://openai.com/index/robots-that-learn)（2017-05-16） <!--orig:Robots that learn-->
-1172. [Roboschool：机器人学校](https://openai.com/index/roboschool)（2017-05-15） <!--orig:Roboschool-->
-1173. [策略梯度与软 Q 学习之间的等价性](https://openai.com/index/equivalence-between-policy-gradients-and-soft-q-learning)（2017-04-21） <!--orig:Equivalence between policy gradients and soft Q-learning-->
-1174. [面向分层强化学习的随机神经网络](https://openai.com/index/stochastic-neural-networks-for-hierarchical-reinforcement-learning)（2017-04-10） <!--orig:Stochastic Neural Networks for hierarchical reinforcement learning-->
-1175. [无监督的情感神经元](https://openai.com/index/unsupervised-sentiment-neuron)（2017-04-06） <!--orig:Unsupervised sentiment neuron-->
-1176. [现实世界中的垃圾邮件检测](https://openai.com/index/spam-detection-in-the-physical-world)（2017-04-01） <!--orig:Spam detection in the physical world-->
-1177. [进化策略：强化学习的可扩展替代方案](https://openai.com/index/evolution-strategies)（2017-03-24） <!--orig:Evolution strategies as a scalable alternative to reinforcement learning-->
-1178. [单样本模仿学习](https://openai.com/index/one-shot-imitation-learning)（2017-03-21） <!--orig:One-shot imitation learning-->
-1179. [蒸馏](https://openai.com/index/distill)（2017-03-20） <!--orig:Distill-->
-1180. [学会沟通](https://openai.com/index/learning-to-communicate)（2017-03-16） <!--orig:Learning to communicate-->
-1181. [多智能体群体中扎根组合语言的涌现](https://openai.com/index/emergence-of-grounded-compositional-language-in-multi-agent-populations)（2017-03-15） <!--orig:Emergence of grounded compositional language in multi-agent populations-->
-1182. [使用时间片段模型进行预测与控制](https://openai.com/index/prediction-and-control-with-temporal-segment-models)（2017-03-12） <!--orig:Prediction and control with temporal segment models-->
-1183. [基于第三人称视角的模仿学习](https://openai.com/index/third-person-imitation-learning)（2017-03-06） <!--orig:Third-person imitation learning-->
-1184. [用对抗样本攻击机器学习系统](https://openai.com/index/attacking-machine-learning-with-adversarial-examples)（2017-02-24） <!--orig:Attacking machine learning with adversarial examples-->
-1185. [针对神经网络策略的对抗攻击](https://openai.com/index/adversarial-attacks-on-neural-network-policies)（2017-02-08） <!--orig:Adversarial attacks on neural network policies-->
-1186. [团队近况](https://openai.com/index/team-update-january)（2017-01-30） <!--orig:Team update-->
-1187. [PixelCNN++：用离散逻辑混合似然及其他改动改进 PixelCNN](https://openai.com/index/pixelcnn-plus-plus)（2017-01-19） <!--orig:PixelCNN++: Improving the PixelCNN with discretized logistic mixture likelihood and other modifications-->
-1188. [现实场景中失灵的奖励函数](https://openai.com/index/faulty-reward-functions)（2016-12-21） <!--orig:Faulty reward functions in the wild-->
-1189. [Universe 平台](https://openai.com/index/universe)（2016-12-05） <!--orig:Universe-->
-1190. [OpenAI 与微软](https://openai.com/index/openai-and-microsoft)（2016-11-15） <!--orig:OpenAI and Microsoft-->
-1191. [#Exploration：深度强化学习中基于计数的探索研究](https://openai.com/index/exploration)（2016-11-15） <!--orig:#Exploration: A study of count-based exploration for deep reinforcement learning-->
-1192. [关于基于解码器生成模型的定量分析](https://openai.com/index/on-the-quantitative-analysis-of-decoder-based-generative-models)（2016-11-14） <!--orig:On the quantitative analysis of decoder-based generative models-->
-1193. [生成对抗网络、逆强化学习和基于能量模型之间的联系](https://openai.com/index/a-connection-between-generative-adversarial-networks-inverse-reinforcement-learning-and-energy-based-models)（2016-11-11） <!--orig:A connection between generative adversarial networks, inverse reinforcement learning, and energy-based models-->
-1194. [RL²：借助慢速强化学习实现快速强化学习](https://openai.com/index/rl2)（2016-11-09） <!--orig:RL²: Fast reinforcement learning via slow reinforcement learning-->
-1195. [变分有损自编码器](https://openai.com/index/variational-lossy-autoencoder)（2016-11-08） <!--orig:Variational lossy autoencoder-->
-1196. [神经 GPU 的扩展与局限性](https://openai.com/index/extensions-and-limitations-of-the-neural-gpu)（2016-11-02） <!--orig:Extensions and limitations of the neural GPU-->
-1197. [针对私有训练数据的深度学习半监督知识迁移](https://openai.com/index/semi-supervised-knowledge-transfer-for-deep-learning-from-private-training-data)（2016-10-18） <!--orig:Semi-supervised knowledge transfer for deep learning from private training data-->
-1198. [来自自组织会议的报告](https://openai.com/index/report-from-the-self-organizing-conference)（2016-10-13） <!--orig:Report from the self-organizing conference-->
-1199. [通过学习深度逆动力学模型实现从模拟到现实的迁移](https://openai.com/index/transfer-from-simulation-to-real-world-through-learning-deep-inverse-dynamics-model)（2016-10-11） <!--orig:Transfer from simulation to real world through learning deep inverse dynamics model-->
-1200. [面向深度学习的基础设施](https://openai.com/index/infrastructure-for-deep-learning)（2016-08-29） <!--orig:Infrastructure for deep learning-->
-1201. [机器学习自由会议（Unconference）](https://openai.com/index/machine-learning-unconference)（2016-08-18） <!--orig:Machine Learning Unconference-->
-1202. [团队近况](https://openai.com/index/team-update-august)（2016-08-16）
-1203. [特殊项目](https://openai.com/index/special-projects)（2016-07-28） <!--orig:Special projects-->
-1204. [具体的人工智能安全难题](https://openai.com/index/concrete-ai-safety-problems)（2016-06-21） <!--orig:Concrete AI safety problems-->
-1205. [OpenAI 的技术目标](https://openai.com/index/openai-technical-goals)（2016-06-20） <!--orig:OpenAI technical goals-->
-1206. [生成式模型](https://openai.com/index/generative-models)（2016-06-16） <!--orig:Generative models-->
-1207. [团队近况](https://openai.com/index/team-update)（2016-05-25）
-1208. [面向半监督文本分类的对抗训练方法](https://openai.com/index/adversarial-training-methods-for-semi-supervised-text-classification)（2016-05-25） <!--orig:Adversarial training methods for semi-supervised text classification-->
-1209. [OpenAI Gym 公测版](https://openai.com/index/openai-gym-beta)（2016-04-27） <!--orig:OpenAI Gym Beta-->
-1210. [欢迎 Pieter 和 Shivon！](https://openai.com/index/welcome-pieter-and-shivon)（2016-04-26） <!--orig:Welcome, Pieter and Shivon!-->
-1211. [团队++](https://openai.com/index/team-plus-plus)（2016-03-31） <!--orig:Team++-->
-1212. [权重归一化：加速深度神经网络训练的简单重参数化](https://openai.com/index/weight-normalization)（2016-02-25） <!--orig:Weight normalization: A simple reparameterization to accelerate training of deep neural networks-->
-1213. [隆重介绍 OpenAI](https://openai.com/index/introducing-openai)（2015-12-11） <!--orig:Introducing OpenAI-->
+758. [宣布 The Stargate Project](https://openai.com/index/announcing-the-stargate-project)（2025-01-21）
+759. [与 Axios 合作扩大了 OpenAI 与新闻行业的合作](https://openai.com/index/partnering-with-axios-expands-openai-work-with-the-news-industry)（2025-01-15） <!--orig:Partnering with Axios expands OpenAI’s work with the news industry-->
+760. [Adebayo Ogunlesi 加入 OpenAI 董事会](https://openai.com/index/adebayo-ogunlesi-joins-openais-board-of-directors)（2025-01-14） <!--orig:Adebayo Ogunlesi Joins OpenAI’s Board of Directors-->
+761. [OpenAI 的结构为何必须演进以推进我们的使命](https://openai.com/index/why-our-structure-must-evolve-to-advance-our-mission)（2024-12-27） <!--orig:Why OpenAI’s structure must evolve to advance our mission-->
+762. [审慎对齐：推理让语言模型更安全](https://openai.com/index/deliberative-alignment)（2024-12-20） <!--orig:Deliberative alignment: reasoning enables safer language models-->
+763. [OpenAI o1 与开发者新工具](https://openai.com/index/o1-and-new-tools-for-developers)（2024-12-17） <!--orig:OpenAI o1 and new tools for developers-->
+764. [Elon Musk 曾想要一个营利性 OpenAI](https://openai.com/index/elon-musk-wanted-an-openai-for-profit)（2024-12-13） <!--orig:Elon Musk wanted an OpenAI for-profit-->
+765. [Sora 来了](https://openai.com/index/sora-is-here)（2024-12-09） <!--orig:Sora is here-->
+766. [Sora 系统卡](https://openai.com/index/sora-system-card)（2024-12-09） <!--orig:Sora System Card-->
+767. [让 AI 为你的产品团队效力](https://openai.com/index/put-ai-to-work-for-your-product-team)（2024-12-09） <!--orig:Put AI to work for your product team-->
+768. [Vallée Duhamel 与 Sora](https://openai.com/index/sora-vallee-duhamel)（2024-12-09） <!--orig:Vallée Duhamel & Sora-->
+769. [动画师 Lyndon Barrois 用 Sora 创造新世界](https://openai.com/index/sora-lyndon-barrois)（2024-12-09） <!--orig:Animator Lyndon Barrois creates new worlds with Sora-->
+770. [明妮·阿泰鲁和 Sora](https://openai.com/index/sora-minne-atairu)（2024-12-09） <!--orig:Minne Atairu & Sora-->
+771. [介绍 ChatGPT Pro](https://openai.com/index/introducing-chatgpt-pro)（2024-12-05） <!--orig:Introducing ChatGPT Pro-->
+772. [OpenAI o1 系统卡](https://openai.com/index/openai-o1-system-card)（2024-12-05） <!--orig:OpenAI o1 System Card-->
+773. [OpenAI 与 Future 合作打造专业内容](https://openai.com/index/openai-and-future-partner-on-specialist-content)（2024-12-04） <!--orig:OpenAI and Future partner on specialist content-->
+774. [摩根士丹利正在塑造金融服务的未来](https://openai.com/index/morgan-stanley)（2024-12-04） <!--orig:Morgan Stanley uses AI evals to shape the future of financial services-->
+775. [与人类和 AI 一起推进红队测试](https://openai.com/index/advancing-red-teaming-with-people-and-ai)（2024-11-21） <!--orig:Advancing red teaming with people and AI-->
+776. [用 GPT-4o 视觉微调构建更智能的地图](https://openai.com/index/grab)（2024-11-20） <!--orig:Grab builds smarter maps for Southeast Asia with vision fine-tuning-->
+777. [Rox 全力押注 OpenAI](https://openai.com/index/rox)（2024-11-19） <!--orig:Rox goes “all in” on OpenAI-->
+778. [OpenAI 在法国](https://openai.com/index/openai-en-france)（2024-11-15） <!--orig:OpenAI en France-->
+779. [用 ChatGPT 实现数据驱动的美感与创造力](https://openai.com/index/estee-lauder)（2024-11-13）
+780. [介绍 ChatGPT 搜索](https://openai.com/index/introducing-chatgpt-search)（2024-10-31） <!--orig:Introducing ChatGPT search-->
+781. [Promega 自上而下推行 ChatGPT，加速制造、销售与营销](https://openai.com/index/promega)（2024-10-31） <!--orig:Promega's top-down adoption of ChatGPT accelerates manufacturing, sales, and marketing-->
+782. [介绍 SimpleQA](https://openai.com/index/introducing-simpleqa)（2024-10-30） <!--orig:Introducing SimpleQA-->
+783. [打造高性能客户支持](https://openai.com/index/decagon)（2024-10-29） <!--orig:Delivering high-performance customer support-->
+784. [简化、稳定并扩展连续时间一致性模型](https://openai.com/index/simplifying-stabilizing-and-scaling-continuous-time-consistency-models)（2024-10-23） <!--orig:Simplifying, stabilizing, and scaling continuous-time consistency models-->
+785. [OpenAI 与 Lenfest Institute 的 AI 合作与奖学金计划](https://openai.com/index/lenfest-institute)（2024-10-22） <!--orig:OpenAI and the Lenfest Institute AI Collaborative and Fellowship program-->
+786. [评估 ChatGPT 的公平性](https://openai.com/index/evaluating-fairness-in-chatgpt)（2024-10-15） <!--orig:Evaluating fairness in ChatGPT-->
+787. [MLE-bench：评估机器学习智能体的机器学习工程能力](https://openai.com/index/mle-bench)（2024-10-10） <!--orig:MLE-bench: Evaluating Machine Learning Agents on Machine Learning Engineering-->
+788. [OpenAI 与 Hearst 的内容合作伙伴关系](https://openai.com/index/hearst)（2024-10-08） <!--orig:OpenAI and Hearst Content Partnership-->
+789. [新的授信额度提升财务灵活性](https://openai.com/index/new-credit-facility-enhances-financial-flexibility)（2024-10-03） <!--orig:New Credit Facility Enhances Financial Flexibility-->
+790. [推出 canvas——用 ChatGPT 写作和编程的新方式](https://openai.com/index/introducing-canvas)（2024-10-03）
+791. [新融资扩大 AI 的益处](https://openai.com/index/scale-the-benefits-of-ai)（2024-10-02） <!--orig:New funding to scale the benefits of AI-->
+792. [介绍 Realtime API](https://openai.com/index/introducing-the-realtime-api)（2024-10-01） <!--orig:Introducing the Realtime API-->
+793. [微调 API 新增视觉能力](https://openai.com/index/introducing-vision-to-the-fine-tuning-api)（2024-10-01） <!--orig:Introducing vision to the fine-tuning API-->
+794. [API 中的提示缓存](https://openai.com/index/api-prompt-caching)（2024-10-01） <!--orig:Prompt Caching in the API-->
+795. [API 中的模型蒸馏](https://openai.com/index/api-model-distillation)（2024-10-01） <!--orig:Model Distillation in the API-->
+796. [用 GPT 4o 打造智能体与人类协作](https://openai.com/index/altera)（2024-10-01） <!--orig:OpenAI and Altera logos appear on a white background, with a central image of a close-up orange leaf showing intricate vein details.-->
+797. [谣言：伪造的俄罗斯“巨魔”错误消息](https://openai.com/index/disrupting-malicious-uses-of-ai-hoax-russian-troll)（2024-10-01） <!--orig:Hoax: Fake Russian “troll” error message-->
+798. [STORM-0817：与伊朗相关的恶意软件与数据抓取活动](https://openai.com/index/disrupting-malicious-uses-of-ai-storm-0817)（2024-10-01） <!--orig:STORM-0817: Iran-linked malware and scraping activity-->
+799. [SweetSpecter：与中国相关的网络活动](https://openai.com/index/disrupting-malicious-uses-of-ai-sweetspecter)（2024-10-01） <!--orig:SweetSpecter: China-linked cyber activity-->
+800. [CyberAv3ngers：与伊朗相关的网络研究活动](https://openai.com/index/disrupting-malicious-uses-of-ai-cyberav3ngers)（2024-10-01） <!--orig:CyberAv3ngers: Iran-linked cyber research activity-->
+801. [侵权报告：滥用举报活动](https://openai.com/index/disrupting-malicious-uses-of-ai-tort-report)（2024-10-01） <!--orig:Tort Report: Abusive reporting activity-->
+802. [“停止新闻”行动：源自俄罗斯的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-stop-news-2024)（2024-10-01） <!--orig:Operation “Stop News”: Russia-origin influence activity-->
+803. [卢旺达选举内容：政治评论网络](https://openai.com/index/disrupting-malicious-uses-of-ai-rwandan-election-content)（2024-10-01） <!--orig:Rwandan election content: Political commenting network-->
+804. [Bet Bot：赌博垃圾信息网络](https://openai.com/index/disrupting-malicious-uses-of-ai-bet-bot)（2024-10-01） <!--orig:Bet Bot: Gambling spam network-->
+805. [“STORM-2035”行动：源自伊朗的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-storm-2035-2024)（2024-10-01） <!--orig:Operation “STORM-2035”: Iran-origin influence activity-->
+806. [“A2Z”行动：多语言影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-a2z)（2024-10-01）
+807. [Corrupt Comment：反腐败基金会的批评](https://openai.com/index/disrupting-malicious-uses-of-ai-corrupt-comment)（2024-10-01） <!--orig:Corrupt Comment: Anti-corruption foundation criticism-->
+808. [用全新多模态审核模型升级 Moderation API](https://openai.com/index/upgrading-the-moderation-api-with-our-new-multimodal-moderation-model)（2024-09-26） <!--orig:Upgrading the Moderation API with our new multimodal moderation model-->
+809. [明尼苏达州企业翻译办公室用 ChatGPT 弥合语言鸿沟](https://openai.com/index/state-of-minnesota)（2024-09-26） <!--orig:Minnesota’s Enterprise Translation Office uses ChatGPT to bridge language gaps-->
+810. [OpenAI 与 GEDI 合作提供意大利新闻内容](https://openai.com/index/gedi)（2024-09-26） <!--orig:OpenAI and GEDI partner for Italian news content-->
+811. [介绍 Verdi：由 GPT-4o 驱动的 AI 开发平台](https://openai.com/index/mercado-libre)（2024-09-24） <!--orig:Introducing Verdi, an AI dev platform powered by GPT-4o-->
+812. [Genmab 推出“AI Everywhere”](https://openai.com/index/genmab)（2024-09-19） <!--orig:Genmab launches “AI Everywhere”-->
+813. [用 GPT-4 改善巴西的教与学](https://openai.com/index/arco-education)（2024-09-17） <!--orig:Arco Educação-->
+814. [我们的安全与安保实践更新](https://openai.com/index/update-on-safety-and-security-practices)（2024-09-16） <!--orig:An update on our safety & security practices-->
+815. [介绍 OpenAI o1](https://openai.com/index/introducing-openai-o1-preview)（2024-09-12） <!--orig:Introducing OpenAI o1-->
+816. [学会用 LLM 进行推理](https://openai.com/index/learning-to-reason-with-llms)（2024-09-12） <!--orig:Learning to reason with LLMs-->
+817. [OpenAI o1-mini](https://openai.com/index/openai-o1-mini-advancing-cost-efficient-reasoning)（2024-09-12）
+818. [OpenAI o1 的贡献](https://openai.com/openai-o1-contributions)（2024-09-12）
+819. [用 OpenAI o1 编程](https://openai.com/index/o1-coding)（2024-09-12）
+820. [OpenAI o1 与经济学推理](https://openai.com/index/o1-economics)（2024-09-12） <!--orig:Economics and reasoning with OpenAI o1-->
+821. [用 OpenAI o1 回答量子物理问题](https://openai.com/index/o1-quantum-physics)（2024-09-12） <!--orig:Answering quantum physics questions with OpenAI o1-->
+822. [用 OpenAI o1 解码遗传学](https://openai.com/index/o1-genetics)（2024-09-12） <!--orig:Decoding genetics with OpenAI o1-->
+823. [用 GPT-4 树立客户服务新标准](https://openai.com/index/ada)（2024-09-05） <!--orig:Using GPT-4 to deliver a new customer service standard-->
+824. [用 ChatGPT 实现个性化教育](https://openai.com/index/asu)（2024-08-26） <!--orig:Personalizing education with ChatGPT-->
+825. [GPT-4o 现已支持微调](https://openai.com/index/gpt-4o-fine-tuning)（2024-08-20） <!--orig:Fine-tuning now available for GPT-4o-->
+826. [OpenAI 与 Condé Nast 达成合作](https://openai.com/index/conde-nast)（2024-08-20） <!--orig:OpenAI partners with Condé Nast-->
+827. [让 AI 在 Upwork 投入工作](https://openai.com/index/upwork)（2024-08-20） <!--orig:Putting AI to work at Upwork-->
+828. [挫败伊朗的秘密影响力行动](https://openai.com/index/disrupting-a-covert-iranian-influence-operation)（2024-08-16） <!--orig:Disrupting a covert Iranian influence operation-->
+829. [借助 OpenAI 为数百万人提供情境化职位匹配](https://openai.com/index/indeed)（2024-08-15） <!--orig:Delivering contextual job matching for millions with OpenAI-->
+830. [唤醒大都会艺术博物馆中的睡美人](https://openai.com/index/the-met-museum)（2024-08-14） <!--orig:Awakening Sleeping Beauties at The Met-->
+831. [介绍 SWE-bench Verified](https://openai.com/index/introducing-swe-bench-verified)（2024-08-13） <!--orig:Introducing SWE-bench Verified-->
+832. [GPT-4o 系统卡](https://openai.com/index/gpt-4o-system-card)（2024-08-08） <!--orig:GPT-4o System Card-->
+833. [Zico Kolter 加入 OpenAI 董事会](https://openai.com/index/zico-kolter-joins-openais-board-of-directors)（2024-08-08） <!--orig:Zico Kolter Joins OpenAI’s Board of Directors-->
+834. [将数据与 API 结合以释放客户价值](https://openai.com/index/rakuten-2024)（2024-08-07） <!--orig:Pairing data with APIs to unlock customer value-->
+835. [在 API 中推出结构化输出](https://openai.com/index/introducing-structured-outputs-in-the-api)（2024-08-06） <!--orig:Introducing Structured Outputs in the API-->
+836. [SearchGPT 是全新 AI 搜索功能的原型](https://openai.com/index/searchgpt-prototype)（2024-07-25） <!--orig:SearchGPT Prototype-->
+837. [用基于规则的奖励改善模型安全行为](https://openai.com/index/improving-model-safety-behavior-with-rule-based-rewards)（2024-07-24） <!--orig:Improving Model Safety Behavior with Rule-Based Rewards-->
+838. [GPT-4o mini：推进高性价比智能](https://openai.com/index/gpt-4o-mini-advancing-cost-efficient-intelligence)（2024-07-18） <!--orig:GPT-4o mini: advancing cost-efficient intelligence-->
+839. [ChatGPT Enterprise 的全新合规与管理工具](https://openai.com/index/new-tools-for-chatgpt-enterprise)（2024-07-18）
+840. [证明者-验证者博弈提升语言模型输出的可读性](https://openai.com/index/prover-verifier-games-improve-legibility)（2024-07-17） <!--orig:Prover-Verifier Games improve legibility of language model outputs-->
+841. [OpenAI 与洛斯阿拉莫斯国家实验室宣布研究合作伙伴关系](https://openai.com/index/openai-and-los-alamos-national-laboratory-work-together)（2024-07-10） <!--orig:OpenAI and Los Alamos National Laboratory announce bioscience research partnership-->
+842. [用 GPT-4 找出 GPT-4 的错误](https://openai.com/index/finding-gpt4s-mistakes-with-gpt-4)（2024-06-27） <!--orig:Finding GPT-4’s mistakes with GPT-4-->
+843. [与《时代》建立战略内容合作伙伴关系](https://openai.com/index/strategic-content-partnership-with-time)（2024-06-27） <!--orig:Strategic Content Partnership with TIME-->
+844. [OpenAI 收购 Rockset](https://openai.com/index/openai-acquires-rockset)（2024-06-21） <!--orig:OpenAI Acquires Rockset-->
+845. [通过网络安全资助计划赋能防御者](https://openai.com/index/empowering-defenders-through-our-cybersecurity-grant-program)（2024-06-20） <!--orig:Empowering defenders through our Cybersecurity Grant Program-->
+846. [一致性模型](https://openai.com/index/consistency-models)（2024-06-20） <!--orig:Consistency Models-->
+847. [现实世界中不良内容检测的整体方法](https://openai.com/index/a-holistic-approach-to-undesired-content-detection-in-the-real-world)（2024-06-20） <!--orig:A Holistic Approach to Undesired Content Detection in the Real World-->
+848. [训练一致性模型的改进技术](https://openai.com/index/improved-techniques-for-training-consistency-models)（2024-06-20） <!--orig:Improved Techniques for Training Consistency Models-->
+849. [用自定义 GPT 提升开发者生产力](https://openai.com/index/paf)（2024-06-18） <!--orig:Surging developer productivity with custom GPTs-->
+850. [借助智能体销售拓客实现 10x 增长](https://openai.com/index/clay)（2024-06-18） <!--orig:Achieving 10x growth with agentic sales prospecting-->
+851. [用 GPT-4o 推理变革癌症诊疗](https://openai.com/index/color-health)（2024-06-17） <!--orig:Color Health uses the reasoning capabilities of GPT-4o to help doctors transform cancer care-->
+852. [OpenAI 任命美国退役陆军将军 Paul M. Nakasone 为董事会成员](https://openai.com/index/openai-appoints-retired-us-army-general)（2024-06-13） <!--orig:OpenAI appoints Retired U.S. Army General Paul M. Nakasone to Board of Directors-->
+853. [OpenAI 与 Apple 宣布合作](https://openai.com/index/openai-and-apple-announce-partnership)（2024-06-10） <!--orig:OpenAI and Apple announce partnership-->
+854. [OpenAI 欢迎 Sarah Friar（首席财务官）和 Kevin Weil（首席产品官）](https://openai.com/index/openai-welcomes-cfo-cpo)（2024-06-10） <!--orig:OpenAI welcomes Sarah Friar (CFO) and Kevin Weil (CPO)-->
+855. [深入解析 Voice Engine 的工作原理与我们的安全研究](https://openai.com/index/expanding-on-how-voice-engine-works-and-our-safety-research)（2024-06-07） <!--orig:Expanding on how Voice Engine works and our safety research-->
+856. [改善印度的重症监护基础设施](https://openai.com/index/10bedicu)（2024-06-06） <!--orig:Improving India’s critical care infrastructure-->
+857. [从 GPT-4 中提取概念](https://openai.com/index/extracting-concepts-from-gpt-4)（2024-06-06） <!--orig:Extracting Concepts from GPT-4-->
+858. [挫败隐蔽影响力行动对 AI 的欺骗性滥用](https://openai.com/index/disrupting-deceptive-uses-of-ai-by-covert-influence-operations)（2024-05-30） <!--orig:Disrupting deceptive uses of AI by covert influence operations-->
+859. [OpenAI 教育计划](https://openai.com/index/introducing-chatgpt-edu)（2024-05-30） <!--orig:Introducing ChatGPT Edu-->
+860. [推出 OpenAI 非营利组织计划](https://openai.com/index/introducing-openai-for-nonprofits)（2024-05-30）
+861. [自动化客户服务智能体](https://openai.com/index/mavenagi)（2024-05-29） <!--orig:Automating customer support agents-->
+862. [Newsroom AI Catalyst：与 WAN-IFRA 合作的全球计划](https://openai.com/index/newsroom-ai-catalyst-global-program-with-wan-ifra)（2024-05-29） <!--orig:The Newsroom AI Catalyst: a global program with WAN-IFRA-->
+863. [携手 The Atlantic 丰富 ChatGPT 中的新闻](https://openai.com/index/enhancing-news-in-chatgpt-with-the-atlantic)（2024-05-29） <!--orig:Enhancing news in ChatGPT with The Atlantic-->
+864. [与 Vox Media 的内容和产品合作](https://openai.com/index/a-content-and-product-partnership-with-vox-media)（2024-05-29） <!--orig:A Content and Product Partnership with Vox Media-->
+865. [OpenAI 董事会成立安全与安保委员会](https://openai.com/index/openai-board-forms-safety-and-security-committee)（2024-05-28） <!--orig:OpenAI Board Forms Safety and Security Committee-->
+866. [与 News Corp 达成具有里程碑意义的多年期全球合作伙伴关系](https://openai.com/index/news-corp-and-openai-sign-landmark-multi-year-global-partnership)（2024-05-22） <!--orig:A landmark multi-year global partnership with News Corp-->
+867. [OpenAI 安全实践](https://openai.com/index/openai-safety-update)（2024-05-21） <!--orig:OpenAI safety practices-->
+868. [ChatGPT 的声音是如何挑选的](https://openai.com/index/how-the-voices-for-chatgpt-were-chosen)（2024-05-19） <!--orig:How the voices for ChatGPT were chosen-->
+869. [ChatGPT 数据分析功能改进](https://openai.com/index/improvements-to-data-analysis-in-chatgpt)（2024-05-16） <!--orig:Improvements to data analysis in ChatGPT-->
+870. [OpenAI 与 Reddit 合作](https://openai.com/index/openai-and-reddit-partnership)（2024-05-16） <!--orig:OpenAI and Reddit Partnership-->
+871. [打造 AI 驱动的 Magic Studio](https://openai.com/index/canva)（2024-05-16）
+872. [Ilya Sutskever 将离开 OpenAI，Jakub Pachocki 出任首席科学家](https://openai.com/index/jakub-pachocki-announced-as-chief-scientist)（2024-05-14） <!--orig:Ilya Sutskever to leave OpenAI, Jakub Pachocki announced as Chief Scientist-->
+873. [为 ChatGPT 免费用户推出 GPT-4o 及更多工具](https://openai.com/index/gpt-4o-and-more-tools-to-chatgpt-free)（2024-05-13） <!--orig:Introducing GPT-4o and more tools to ChatGPT free users-->
+874. [你好 GPT-4o](https://openai.com/index/hello-gpt-4o)（2024-05-13）
+875. [春季更新](https://openai.com/index/spring-update)（2024-05-13） <!--orig:Spring Update-->
+876. [介绍模型规范](https://openai.com/index/introducing-the-model-spec)（2024-05-08） <!--orig:Introducing the Model Spec-->
+877. [我们对数据与 AI 的处理方式](https://openai.com/index/approach-to-data-and-ai)（2024-05-07） <!--orig:Our approach to data and AI-->
+878. [了解我们在网上所见所闻的来源](https://openai.com/index/understanding-the-source-of-what-we-see-and-hear-online)（2024-05-07） <!--orig:Understanding the source of what we see and hear online-->
+879. [与 Stack Overflow 的 API 合作](https://openai.com/index/api-partnership-with-stack-overflow)（2024-05-06） <!--orig:API Partnership with Stack Overflow-->
+880. [「Spamouflage」行动：与中国相关的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-spamouflage)（2024-05-01）
+881. [「Bad Grammar」：与俄语相关的 Telegram 评论活动](https://openai.com/index/disrupting-malicious-uses-of-ai-bad-grammar)（2024-05-01）
+882. [「Zero Zeno」行动：与以色列相关的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-zero-zeno)（2024-05-01）
+883. [「Doppelganger」行动：俄罗斯针对乌克兰的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-doppelganger)（2024-05-01）
+884. [IUVM：与伊朗相关的影响力内容网络](https://openai.com/index/disrupting-malicious-uses-of-ai-iuvm)（2024-05-01）
+885. [我们将《金融时报》的世界级新闻带到 ChatGPT](https://openai.com/index/content-partnership-with-financial-times)（2024-04-29） <!--orig:We’re bringing the Financial Times’ world-class journalism to ChatGPT-->
+886. [推出 ChatGPT 和 Whisper API](https://openai.com/index/introducing-chatgpt-and-whisper-apis)（2024-04-24） <!--orig:Introducing ChatGPT and Whisper APIs-->
+887. [GPT-4 API 全面可用及 Completions API 旧模型弃用](https://openai.com/index/gpt-4-api-general-availability)（2024-04-24） <!--orig:GPT-4 API general availability and deprecation of older models in the Completions API-->
+888. [加速拯救生命的治疗方法研发](https://openai.com/index/moderna)（2024-04-24） <!--orig:Moderna-->
+889. [为 API 客户推出更多企业级功能](https://openai.com/index/more-enterprise-grade-features-for-api-customers)（2024-04-23） <!--orig:Introducing more enterprise-grade features for API customers-->
+890. [OpenAI 对儿童安全的承诺：践行安全设计原则](https://openai.com/index/child-safety-adopting-sbd-principles)（2024-04-23） <!--orig:OpenAI’s commitment to child safety: adopting safety by design principles-->
+891. [指令层级：训练 LLM 优先遵循特权指令](https://openai.com/index/the-instruction-hierarchy)（2024-04-19） <!--orig:The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions-->
+892. [介绍 OpenAI 日本](https://openai.com/index/introducing-openai-japan)（2024-04-14） <!--orig:Introducing OpenAI Japan-->
+893. [Klarna 的 AI 助手完成 700 名全职客服的工作](https://openai.com/index/klarna)（2024-04-05） <!--orig:Klarna's AI assistant does the work of 700 full-time agents-->
+894. [推出微调 API 改进并扩展自定义模型计划](https://openai.com/index/introducing-improvements-to-the-fine-tuning-api-and-expanding-our-custom-models-program)（2024-04-04） <!--orig:Introducing improvements to the fine-tuning API and expanding our custom models program-->
+895. [为法律专业人士定制模型](https://openai.com/index/harvey)（2024-04-02） <!--orig:Customizing models for legal professionals-->
+896. [降低健康保险成本并改善护理](https://openai.com/index/oscar)（2024-04-01） <!--orig:Reducing health insurance costs and improving care-->
+897. [立即开始使用 ChatGPT](https://openai.com/index/start-using-chatgpt-instantly)（2024-04-01）
+898. [应对合成语音的挑战与机遇](https://openai.com/index/navigating-the-challenges-and-opportunities-of-synthetic-voices)（2024-03-29） <!--orig:Navigating the challenges and opportunities of synthetic voices-->
+899. [让教育数据易于获取](https://openai.com/index/zelma)（2024-03-28） <!--orig:Making education data accessible-->
+900. [Sora 初体验](https://openai.com/index/sora-first-impressions)（2024-03-25） <!--orig:Sora first impressions-->
+901. [将 AI 嵌入开发者软件](https://openai.com/index/jetbrains)（2024-03-21） <!--orig:Embedding AI into developer software-->
+902. [企业级信任与安全](https://openai.com/index/salesforce)（2024-03-18） <!--orig:Enterprise-ready trust and safety-->
+903. [用 AI 构建数据驱动的高效文化](https://openai.com/index/holiday-extras)（2024-03-18） <!--orig:Building a data-driven, efficient culture with AI-->
+904. [用 AI 重新构想电子邮件体验](https://openai.com/index/superhuman)（2024-03-18） <!--orig:Reimagining the email experience with AI-->
+905. [用 AI 健康辅导挽救生命](https://openai.com/index/healthify)（2024-03-13） <!--orig:Saving lives with AI health coaching-->
+906. [全球新闻合作伙伴：Le Monde 和 Prisa Media](https://openai.com/index/global-news-partnerships-le-monde-and-prisa-media)（2024-03-13） <!--orig:Global news partnerships: Le Monde and Prisa Media-->
+907. [OpenAI 宣布董事会新成员](https://openai.com/index/openai-announces-new-members-to-board-of-directors)（2024-03-08）
+908. [审查完成，Altman 和 Brockman 继续领导 OpenAI](https://openai.com/index/review-completed-altman-brockman-to-continue-to-lead-openai)（2024-03-08） <!--orig:Review completed & Altman, Brockman to continue to lead OpenAI-->
+909. [用 AI 改善患者参与临床试验的机会](https://openai.com/index/paradigm)（2024-03-06） <!--orig:Using AI to improve patient access to clinical trials-->
+910. [提升健康素养与患者福祉](https://openai.com/index/lifespan)（2024-03-06） <!--orig:Improving health literacy and patient well-being-->
+911. [用 ChatGPT Enterprise 激发更高生产力](https://openai.com/index/match-group)（2024-03-06） <!--orig:Sparking a more productive company with ChatGPT Enterprise-->
+912. [OpenAI 瓦埃隆·马斯克](https://openai.com/index/openai-elon-musk)（2024-03-05） <!--orig:OpenAI and Elon Musk-->
+913. [作为世界模拟器的视频生成模型](https://openai.com/index/video-generation-models-as-world-simulators)（2024-02-15） <!--orig:Video generation models as world simulators-->
+914. [挫败国家背景威胁行为者对 AI 的恶意使用](https://openai.com/index/disrupting-malicious-uses-of-ai-by-state-affiliated-threat-actors)（2024-02-14） <!--orig:Disrupting malicious uses of AI by state-affiliated threat actors-->
+915. [ChatGPT 的记忆功能与新控件](https://openai.com/index/memory-and-new-controls-for-chatgpt)（2024-02-13）
+916. [为 LLM 助长的生物威胁构建预警系统](https://openai.com/index/building-an-early-warning-system-for-llm-aided-biological-threat-creation)（2024-01-31） <!--orig:Building an early warning system for LLM-aided biological threat creation-->
+917. [全新的嵌入模型和 API 更新](https://openai.com/index/new-embedding-models-and-api-updates)（2024-01-25） <!--orig:New embedding models and API updates-->
+918. [AI 资助计划的民主化投入：经验教训与实施计划](https://openai.com/index/democratic-inputs-to-ai-grant-program-update)（2024-01-16） <!--orig:Democratic inputs to AI grant program: lessons learned and implementation plans-->
+919. [OpenAI 如何应对 2024 年全球选举](https://openai.com/index/how-openai-is-approaching-2024-worldwide-elections)（2024-01-15） <!--orig:How OpenAI is approaching 2024 worldwide elections-->
+920. [为农民建立农业数据库](https://openai.com/index/digital-green)（2024-01-12） <!--orig:Building agricultural database for farmers-->
+921. [推出 GPT 商店](https://openai.com/index/introducing-the-gpt-store)（2024-01-10） <!--orig:Introducing the GPT Store-->
+922. [推出 ChatGPT Team](https://openai.com/index/introducing-chatgpt-team)（2024-01-10） <!--orig:Introducing ChatGPT Team-->
+923. [OpenAI 和新闻业](https://openai.com/index/openai-and-journalism)（2024-01-08） <!--orig:OpenAI and journalism-->
+924. [交付 LLM 驱动的健康解决方案](https://openai.com/index/whoop)（2024-01-04） <!--orig:Delivering LLM-powered health solutions-->
+925. [提高儿科就诊记录的准确性](https://openai.com/index/summer-health)（2023-12-14） <!--orig:Increasing accuracy of pediatric visit notes-->
+926. [治理智能体 AI 系统的实践](https://openai.com/index/practices-for-governing-agentic-ai-systems)（2023-12-14） <!--orig:Practices for Governing Agentic AI Systems-->
+927. [超级对齐快速拨款](https://openai.com/index/superalignment-fast-grants)（2023-12-14） <!--orig:Superalignment Fast Grants-->
+928. [由弱到强的泛化](https://openai.com/index/weak-to-strong-generalization)（2023-12-14） <!--orig:Weak-to-strong generalization-->
+929. [与 Axel Springer 合作深化 AI 在新闻业中的有益应用](https://openai.com/index/axel-springer-partnership)（2023-12-13） <!--orig:Partnership with Axel Springer to deepen beneficial use of AI in journalism-->
+930. [Sam Altman 回归担任 CEO，OpenAI 组建新的初始董事会](https://openai.com/index/sam-altman-returns-as-ceo-openai-has-a-new-initial-board)（2023-11-29） <!--orig:Sam Altman returns as CEO, OpenAI has a new initial board-->
+931. [OpenAI 宣布领导层变动](https://openai.com/index/openai-announces-leadership-transition)（2023-11-17） <!--orig:OpenAI announces leadership transition-->
+932. [OpenAI 数据合作伙伴计划](https://openai.com/index/data-partnerships)（2023-11-09） <!--orig:OpenAI Data Partnerships-->
+933. [DevDay 上发布的全新模型与开发者产品](https://openai.com/index/new-models-and-developer-products-announced-at-devday)（2023-11-06） <!--orig:New models and developer products announced at DevDay-->
+934. [介绍 GPTs](https://openai.com/index/introducing-gpts)（2023-11-06） <!--orig:Introducing GPTs-->
+935. [前沿风险与防范准备](https://openai.com/index/frontier-risk-and-preparedness)（2023-10-26） <!--orig:Frontier risk and preparedness-->
+936. [前沿模型论坛最新动态](https://openai.com/index/frontier-model-forum-updates)（2023-10-25） <!--orig:Frontier Model Forum updates-->
+937. [DALL·E 3 现已在 ChatGPT Plus 和 Enterprise 中提供](https://openai.com/index/dall-e-3-is-now-available-in-chatgpt-plus-and-enterprise)（2023-10-19） <!--orig:DALL·E 3 is now available in ChatGPT Plus and Enterprise-->
+938. [用 AI 简化合同审查](https://openai.com/index/ironclad)（2023-10-11） <!--orig:Simplifying contract reviews with AI-->
+939. [将在线表单演进为动态数据](https://openai.com/index/typeform)（2023-10-11） <!--orig:Evolving online forms into dynamic data-->
+940. [构建 AI 驱动的商业应用](https://openai.com/index/retool)（2023-10-11） <!--orig:Building AI-powered apps for business-->
+941. [DALL·E 3 系统卡](https://openai.com/index/dall-e-3-system-card)（2023-10-03） <!--orig:DALL·E 3 system card-->
+942. [GPT-4V(ision) 系统卡](https://openai.com/index/gpt-4v-system-card)（2023-09-25） <!--orig:GPT-4V(ision) system card-->
+943. [ChatGPT 现在能看、能听、能说](https://openai.com/index/chatgpt-can-now-see-hear-and-speak)（2023-09-25）
+944. [OpenAI 红队网络](https://openai.com/index/red-teaming-network)（2023-09-19） <!--orig:OpenAI Red Teaming Network-->
+945. [OpenAI Dublin 简介](https://openai.com/index/introducing-openai-dublin)（2023-09-13） <!--orig:Introducing OpenAI Dublin-->
+946. [参加 11 月 6 日在旧金山举行的 OpenAI 首届开发者大会](https://openai.com/index/announcing-openai-devday)（2023-09-06） <!--orig:Join us for OpenAI’s first developer conference on November 6 in San Francisco-->
+947. [用 AI 教学](https://openai.com/index/teaching-with-ai)（2023-08-31） <!--orig:Teaching with AI-->
+948. [介绍 ChatGPT Enterprise](https://openai.com/index/introducing-chatgpt-enterprise)（2023-08-28） <!--orig:Introducing ChatGPT Enterprise-->
+949. [OpenAI 与 Scale 合作，为企业微调模型提供支持](https://openai.com/index/openai-partners-with-scale-to-provide-support-for-enterprises-fine-tuning-models)（2023-08-24） <!--orig:OpenAI partners with Scale to provide support for enterprises fine-tuning models-->
+950. [GPT-3.5 Turbo 微调与 API 更新](https://openai.com/index/gpt-3-5-turbo-fine-tuning-and-api-updates)（2023-08-22） <!--orig:GPT-3.5 Turbo fine-tuning and API updates-->
+951. [OpenAI 收购 Global Illumination](https://openai.com/index/openai-acquires-global-illumination)（2023-08-16） <!--orig:OpenAI acquires Global Illumination-->
+952. [使用 GPT-4 进行内容审核](https://openai.com/index/using-gpt-4-for-content-moderation)（2023-08-15） <!--orig:Using GPT-4 for content moderation-->
+953. [人工智能信任建立措施：研讨会会议记录](https://openai.com/index/confidence-building-measures-for-artificial-intelligence)（2023-08-01） <!--orig:Confidence-Building Measures for Artificial Intelligence: Workshop proceedings-->
+954. [前沿模型论坛](https://openai.com/index/frontier-model-forum)（2023-07-26） <!--orig:Frontier Model Forum-->
+955. [推动 AI 治理向前发展](https://openai.com/index/moving-ai-governance-forward)（2023-07-21） <!--orig:Moving AI governance forward-->
+956. [ChatGPT 自定义指令](https://openai.com/index/custom-instructions-for-chatgpt)（2023-07-20） <!--orig:Custom instructions for ChatGPT-->
+957. [与 American Journalism Project 合作支持地方新闻](https://openai.com/index/partnership-with-american-journalism-project-to-support-local-news)（2023-07-18） <!--orig:Partnership with American Journalism Project to support local news-->
+958. [大规模定性数据的精准分析](https://openai.com/index/viable)（2023-07-07） <!--orig:Accurately analyzing large scale qualitative data-->
+959. [前沿 AI 监管：应对新出现的公共安全风险](https://openai.com/index/frontier-ai-regulation)（2023-07-06） <!--orig:Frontier AI regulation: Managing emerging risks to public safety-->
+960. [来自全球对话的洞见](https://openai.com/index/insights-from-global-conversations)（2023-06-29） <!--orig:Insights from global conversations-->
+961. [OpenAI London 简介](https://openai.com/index/introducing-openai-london)（2023-06-28） <!--orig:Introducing OpenAI London-->
+962. [函数调用及其他 API 更新](https://openai.com/index/function-calling-and-other-api-updates)（2023-06-13） <!--orig:Function calling and other API updates-->
+963. [OpenAI 网络安全资助计划](https://openai.com/index/openai-cybersecurity-grant-program)（2023-06-01） <!--orig:OpenAI Cybersecurity Grant Program-->
+964. [用过程监督改进数学推理](https://openai.com/index/improving-mathematical-reasoning-with-process-supervision)（2023-05-31） <!--orig:Improving mathematical reasoning with process supervision-->
+965. [AI 的民主化输入](https://openai.com/index/democratic-inputs-to-ai)（2023-05-25） <!--orig:Democratic inputs to AI-->
+966. [超级智能的治理](https://openai.com/index/governance-of-superintelligence)（2023-05-22） <!--orig:Governance of superintelligence-->
+967. [推出 iOS 版 ChatGPT 应用](https://openai.com/index/introducing-the-chatgpt-app-for-ios)（2023-05-18） <!--orig:Introducing the ChatGPT app for iOS-->
+968. [语言模型可以解释语言模型中的神经元](https://openai.com/index/language-models-can-explain-neurons-in-language-models)（2023-05-09） <!--orig:Language models can explain neurons in language models-->
+969. [在 ChatGPT 中管理数据的新方法](https://openai.com/index/new-ways-to-manage-your-data-in-chatgpt)（2023-04-25） <!--orig:New ways to manage your data in ChatGPT-->
+970. [宣布 OpenAI 漏洞赏金计划](https://openai.com/index/bug-bounty-program)（2023-04-11） <!--orig:Announcing OpenAI’s Bug Bounty Program-->
+971. [我们的 AI 安全方法](https://openai.com/index/our-approach-to-ai-safety)（2023-04-05） <!--orig:Our approach to AI safety-->
+972. [3 月 20 日 ChatGPT 故障：发生了什么](https://openai.com/index/march-20-chatgpt-outage)（2023-03-24） <!--orig:March 20 ChatGPT outage: Here’s what happened-->
+973. [ChatGPT 插件](https://openai.com/index/chatgpt-plugins)（2023-03-23） <!--orig:ChatGPT plugins-->
+974. [GPT 就是 GPT：大型语言模型对劳动力市场影响潜力的初探](https://openai.com/index/gpts-are-gpts)（2023-03-17） <!--orig:GPTs are GPTs: An early look at the labor market impact potential of large language models-->
+975. [GPT-4](https://openai.com/index/gpt-4)（2023-03-14）
+976. [为未来守护语言](https://openai.com/index/government-of-iceland)（2023-03-14） <!--orig:Preserving languages for the future-->
+977. [变革视觉无障碍](https://openai.com/index/be-my-eyes)（2023-03-14） <!--orig:Transforming visual accessibility-->
+978. [Stripe](https://openai.com/index/stripe)（2023-03-14）
+979. [填补关键的语言学习空白](https://openai.com/index/duolingo)（2023-03-14） <!--orig:Filling crucial language learning gaps-->
+980. [为课堂虚拟教育赋能](https://openai.com/index/khan-academy)（2023-03-14） <!--orig:Powering virtual education for the classroom-->
+981. [为 AGI 及更远的未来做规划](https://openai.com/index/planning-for-agi-and-beyond)（2023-02-24） <!--orig:Planning for AGI and beyond-->
+982. [人工智能系统应该如何表现，由谁来决定？](https://openai.com/index/how-should-ai-systems-behave)（2023-02-16） <!--orig:How should AI systems behave, and who should decide?-->
+983. [介绍 ChatGPT Plus](https://openai.com/index/chatgpt-plus)（2023-02-01） <!--orig:Introducing ChatGPT Plus-->
+984. [识别 AI 生成文本的全新 AI 分类器](https://openai.com/index/new-ai-classifier-for-indicating-ai-written-text)（2023-01-31） <!--orig:New AI classifier for indicating AI-written text-->
+985. [OpenAI 与 Microsoft 扩大合作伙伴关系](https://openai.com/index/openai-and-microsoft-extend-partnership)（2023-01-23） <!--orig:OpenAI and Microsoft extend partnership-->
+986. [预测语言模型被滥用于虚假信息活动的风险及如何降低风险](https://openai.com/index/forecasting-misuse)（2023-01-11） <!--orig:Forecasting potential misuses of language models for disinformation campaigns and how to reduce risk-->
+987. [从客户反馈中挖掘细致入微的洞察](https://openai.com/index/yabble)（2023-01-04） <!--orig:Delivering nuanced insights from customer feedback-->
+988. [微调 GPT-3 以扩展视频创作](https://openai.com/index/waymark)（2023-01-03） <!--orig:Fine-tuning GPT-3 to scale video creation-->
+989. [打造下一代角色](https://openai.com/index/inworld-ai-DO-NOT-PUBLISH)（2023-01-01） <!--orig:Creating next-gen characters-->
+990. [持续学习的力量](https://openai.com/index/the-power-of-continuous-learning)（2022-12-23） <!--orig:The power of continuous learning-->
+991. [Point-E：从复杂提示生成 3D 点云的系统](https://openai.com/index/point-e)（2022-12-16） <!--orig:Point-E: A system for generating 3D point clouds from complex prompts-->
+992. [全新改进的嵌入模型](https://openai.com/index/new-and-improved-embedding-model)（2022-12-15） <!--orig:New and improved embedding model-->
+993. [探究后端系统的细枝末节](https://openai.com/index/discovering-the-minutiae-of-backend-systems)（2022-12-08） <!--orig:Discovering the minutiae of backend systems-->
+994. [介绍 ChatGPT](https://openai.com/index/chatgpt)（2022-11-30） <!--orig:Introducing ChatGPT-->
+995. [DALL·E API 现已开放公测](https://openai.com/index/dall-e-api-now-available-in-public-beta)（2022-11-03） <!--orig:DALL·E API now available in public beta-->
+996. [奖励模型过度优化的缩放定律](https://openai.com/index/scaling-laws-for-reward-model-overoptimization)（2022-10-19） <!--orig:Scaling laws for reward model overoptimization-->
+997. [DALL·E 现已开放，无需排队等候](https://openai.com/index/dall-e-now-available-without-waitlist)（2022-09-28） <!--orig:DALL·E now available without waitlist-->
+998. [Whisper 简介](https://openai.com/index/whisper)（2022-09-21） <!--orig:Introducing Whisper-->
+999. [DALL·E：推出扩图功能](https://openai.com/index/dall-e-introducing-outpainting)（2022-08-31） <!--orig:DALL·E: Introducing outpainting-->
+1000. [我们开展对齐研究的方法](https://openai.com/index/our-approach-to-alignment-research)（2022-08-24） <!--orig:Our approach to alignment research-->
+1001. [全新升级的内容审核工具](https://openai.com/index/new-and-improved-content-moderation-tooling)（2022-08-10） <!--orig:New and improved content moderation tooling-->
+1002. [高效训练语言模型以实现中间填充](https://openai.com/index/efficient-training-of-language-models-to-fill-in-the-middle)（2022-07-28） <!--orig:Efficient training of language models to fill in the middle-->
+1003. [面向代码合成大语言模型的危害分析框架](https://openai.com/index/a-hazard-analysis-framework-for-code-synthesis-large-language-models)（2022-07-25） <!--orig:A hazard analysis framework for code synthesis large language models-->
+1004. [DALL·E 现已推出测试版](https://openai.com/index/dall-e-now-available-in-beta)（2022-07-20） <!--orig:DALL·E now available in beta-->
+1005. [减少 DALL·E 2 中的偏见并提升安全性](https://openai.com/index/reducing-bias-and-improving-safety-in-dall-e-2)（2022-07-18） <!--orig:Reducing bias and improving safety in DALL·E 2-->
+1006. [DALL·E 2：拓展创造力](https://openai.com/index/dall-e-2-extending-creativity)（2022-07-14） <!--orig:DALL·E 2: Extending creativity-->
+1007. [DALL·E 2 预训练缓解措施](https://openai.com/index/dall-e-2-pre-training-mitigations)（2022-06-28） <!--orig:DALL·E 2 pre-training mitigations-->
+1008. [通过 Video PreTraining 学习玩 Minecraft](https://openai.com/index/vpt)（2022-06-23） <!--orig:Learning to play Minecraft with Video PreTraining-->
+1009. [大型模型的演进](https://openai.com/index/evolution-through-large-models)（2022-06-17） <!--orig:Evolution through large models-->
+1010. [AI 撰写的评论帮助人类发现缺陷](https://openai.com/index/critiques)（2022-06-13） <!--orig:AI-written critiques help humans notice flaws-->
+1011. [训练大型神经网络的技术](https://openai.com/index/techniques-for-training-large-neural-networks)（2022-06-09） <!--orig:Techniques for training large neural networks-->
+1012. [部署语言模型的最佳实践](https://openai.com/index/best-practices-for-deploying-language-models)（2022-06-02） <!--orig:Best practices for deploying language models-->
+1013. [教会模型用语言表达不确定性](https://openai.com/index/teaching-models-to-express-their-uncertainty-in-words)（2022-05-28） <!--orig:Teaching models to express their uncertainty in words-->
+1014. [OpenAI Codex 驱动下一代应用](https://openai.com/index/codex-apps)（2022-05-24） <!--orig:Powering next generation applications with OpenAI Codex-->
+1015. [DALL·E 2 研究预览更新](https://openai.com/index/dall-e-2-update)（2022-05-18） <!--orig:DALL·E 2 research preview update-->
+1016. [OpenAI 领导团队更新](https://openai.com/index/leadership-team-update)（2022-05-05） <!--orig:OpenAI leadership team update-->
+1017. [基于 CLIP 潜变量的分层文本条件图像生成](https://openai.com/index/hierarchical-text-conditional-image-generation-with-clip-latents)（2022-04-13） <!--orig:Hierarchical text-conditional image generation with CLIP latents-->
+1018. [衡量 Goodhart 定律](https://openai.com/index/measuring-goodharts-law)（2022-04-13） <!--orig:Measuring Goodhart’s law-->
+1019. [GPT-3 新功能：编辑与插入](https://openai.com/index/gpt-3-edit-insert)（2022-03-15） <!--orig:New GPT-3 capabilities: Edit & insert-->
+1020. [评估代码生成模型经济影响的研究议程](https://openai.com/index/economic-impacts-research)（2022-03-03） <!--orig:A research agenda for assessing the economic impacts of code generation models-->
+1021. [OpenAI 的经济影响研究](https://openai.com/index/economic-impacts)（2022-03-03） <!--orig:Economic impacts research at OpenAI-->
+1022. [语言模型安全与滥用的经验教训](https://openai.com/index/language-model-safety-and-misuse)（2022-03-03） <!--orig:Lessons learned on language model safety and misuse-->
+1023. [求解（部分）形式化数学奥林匹克问题](https://openai.com/index/formal-math)（2022-02-02） <!--orig:Solving (some) formal math olympiad problems-->
+1024. [让语言模型学会遵循指令](https://openai.com/index/instruction-following)（2022-01-27） <!--orig:Aligning language models to follow instructions-->
+1025. [推出文本和代码嵌入](https://openai.com/index/introducing-text-and-code-embeddings)（2022-01-25） <!--orig:Introducing text and code embeddings-->
+1026. [通过对比预训练实现文本与代码嵌入](https://openai.com/index/text-and-code-embeddings-by-contrastive-pre-training)（2022-01-24） <!--orig:Text and code embeddings by contrastive pre-training-->
+1027. [WebGPT：通过网页浏览提升语言模型的事实准确性](https://openai.com/index/webgpt)（2021-12-16） <!--orig:WebGPT: Improving the factual accuracy of language models through web browsing-->
+1028. [为你的应用定制 GPT-3](https://openai.com/index/customizing-gpt-3)（2021-12-14） <!--orig:Customizing GPT-3 for your application-->
+1029. [OpenAI 驻留计划](https://openai.com/index/openai-residency)（2021-11-30） <!--orig:OpenAI Residency-->
+1030. [OpenAI 的 API 现已开放，无需排队](https://openai.com/index/api-no-waitlist)（2021-11-18） <!--orig:OpenAI’s API now available with no waitlist-->
+1031. [求解数学应用题](https://openai.com/index/solving-math-word-problems)（2021-10-29） <!--orig:Solving math word problems-->
+1032. [根据人类反馈总结书籍](https://openai.com/index/summarizing-books)（2021-09-23） <!--orig:Summarizing books with human feedback-->
+1033. [TruthfulQA：衡量模型如何模仿人类的虚假说法](https://openai.com/index/truthfulqa)（2021-09-08） <!--orig:TruthfulQA: Measuring how models mimic human falsehoods-->
+1034. [Helen Toner 加入 OpenAI 董事会](https://openai.com/index/helen-toner-joins)（2021-09-08） <!--orig:Helen Toner joins OpenAI’s board of directors-->
+1035. [OpenAI Codex](https://openai.com/index/openai-codex)（2021-08-10）
+1036. [Triton 简介：面向神经网络的开源 GPU 编程](https://openai.com/index/triton)（2021-07-28） <!--orig:Introducing Triton: Open-source GPU programming for neural networks-->
+1037. [评估在代码上训练的大语言模型](https://openai.com/index/evaluating-large-language-models-trained-on-code)（2021-07-07） <!--orig:Evaluating large language models trained on code-->
+1038. [通过在精选数据集上训练来改进语言模型行为](https://openai.com/index/improving-language-model-behavior)（2021-06-10） <!--orig:Improving language model behavior by training on a curated dataset-->
+1039. [OpenAI Scholars 2021：期末项目](https://openai.com/index/openai-scholars-2021-final-projects)（2021-05-10） <!--orig:OpenAI Scholars 2021: Final projects-->
+1040. [Will Hurd 加入 OpenAI 董事会](https://openai.com/index/will-hurd-joins)（2021-05-03） <!--orig:Will Hurd joins OpenAI’s board of directors-->
+1041. [GPT-3 驱动下一代应用](https://openai.com/index/gpt-3-apps)（2021-03-25） <!--orig:GPT-3 powers the next generation of apps-->
+1042. [人工神经网络中的多模态神经元](https://openai.com/index/multimodal-neurons)（2021-03-04） <!--orig:Multimodal neurons in artificial neural networks-->
+1043. [理解大语言模型的能力、局限与社会影响](https://openai.com/index/understanding-the-capabilities-limitations-and-societal-impact-of-large-language-models)（2021-02-04） <!--orig:Understanding the capabilities, limitations, and societal impact of large language models-->
+1044. [将 Kubernetes 扩展到 7,500 个节点](https://openai.com/index/scaling-kubernetes-to-7500-nodes)（2021-01-25） <!--orig:Scaling Kubernetes to 7,500 nodes-->
+1045. [CLIP：连接文本与图像](https://openai.com/index/clip)（2021-01-05） <!--orig:CLIP: Connecting text and images-->
+1046. [DALL·E：从文本创建图像](https://openai.com/index/dall-e)（2021-01-05）
+1047. [OpenAI 的组织架构更新](https://openai.com/index/organizational-update)（2020-12-29） <!--orig:Organizational update from OpenAI-->
+1048. [OpenAI 将 GPT-3 技术授权给微软](https://openai.com/index/openai-licenses-gpt-3-technology-to-microsoft)（2020-09-22） <!--orig:OpenAI licenses GPT-3 technology to Microsoft-->
+1049. [面向自动定理证明的生成式语言建模](https://openai.com/index/generative-language-modeling-for-automated-theorem-proving)（2020-09-07） <!--orig:Generative language modeling for automated theorem proving-->
+1050. [学习根据人类反馈进行总结](https://openai.com/index/learning-to-summarize-with-human-feedback)（2020-09-04） <!--orig:Learning to summarize with human feedback-->
+1051. [OpenAI Scholars 2020：期末项目](https://openai.com/index/openai-scholars-2020-final-projects)（2020-07-09） <!--orig:OpenAI Scholars 2020: Final projects-->
+1052. [Procgen 与 MineRL 竞赛](https://openai.com/index/procgen-minerl-competitions)（2020-06-20） <!--orig:Procgen and MineRL Competitions-->
+1053. [图像 GPT](https://openai.com/index/image-gpt)（2020-06-17） <!--orig:Image GPT-->
+1054. [OpenAI 的 API](https://openai.com/index/openai-api)（2020-06-11） <!--orig:OpenAI API-->
+1055. [语言模型是少样本学习者](https://openai.com/index/language-models-are-few-shot-learners)（2020-05-28） <!--orig:Language models are few-shot learners-->
+1056. [人工智能与效率](https://openai.com/index/ai-and-efficiency)（2020-05-05） <!--orig:AI and efficiency-->
+1057. [Jukebox 音乐生成模型](https://openai.com/index/jukebox)（2020-04-30） <!--orig:Jukebox-->
+1058. [提升 AI 开发的可验证性](https://openai.com/index/improving-verifiability)（2020-04-16） <!--orig:Improving verifiability in AI development-->
+1059. [OpenAI Microscope 可视化工具](https://openai.com/index/microscope)（2020-04-14） <!--orig:OpenAI Microscope-->
+1060. [OpenAI 全面转向 PyTorch](https://openai.com/index/openai-pytorch)（2020-01-30） <!--orig:OpenAI standardizes on PyTorch-->
+1061. [神经语言模型的缩放定律](https://openai.com/index/scaling-laws-for-neural-language-models)（2020-01-23） <!--orig:Scaling laws for neural language models-->
+1062. [用大规模深度强化学习玩 Dota 2](https://openai.com/index/dota-2-with-large-scale-deep-reinforcement-learning)（2019-12-13） <!--orig:Dota 2 with large scale deep reinforcement learning-->
+1063. [深度双重下降](https://openai.com/index/deep-double-descent)（2019-12-05） <!--orig:Deep double descent-->
+1064. [Procgen 基准](https://openai.com/index/procgen-benchmark)（2019-12-03） <!--orig:Procgen Benchmark-->
+1065. [Safety Gym 安全强化学习工具包](https://openai.com/index/safety-gym)（2019-11-21） <!--orig:Safety Gym-->
+1066. [深度强化学习中安全探索的基准测试](https://openai.com/index/benchmarking-safe-exploration-in-deep-reinforcement-learning)（2019-11-21） <!--orig:Benchmarking safe exploration in deep reinforcement learning-->
+1067. [GPT-2：1.5B 版本发布](https://openai.com/index/gpt-2-1-5b-release)（2019-11-05） <!--orig:GPT-2: 1.5B release-->
+1068. [用机器人手还原魔方](https://openai.com/index/solving-rubiks-cube)（2019-10-15） <!--orig:Solving Rubik’s Cube with a robot hand-->
+1069. [OpenAI Scholars 2020：开放申请](https://openai.com/index/openai-scholars-2020)（2019-10-11） <!--orig:OpenAI Scholars 2020: Applications open-->
+1070. [根据人类偏好微调 GPT-2](https://openai.com/index/fine-tuning-gpt-2)（2019-09-19） <!--orig:Fine-tuning GPT-2 from human preferences-->
+1071. [多智能体交互中涌现的工具使用](https://openai.com/index/emergent-tool-use)（2019-09-17） <!--orig:Emergent tool use from multi-agent interaction-->
+1072. [测试针对未知对手的鲁棒性](https://openai.com/index/testing-robustness)（2019-08-22） <!--orig:Testing robustness against unforeseen adversaries-->
+1073. [GPT-2：6 个月后的跟进](https://openai.com/index/gpt-2-6-month-follow-up)（2019-08-20） <!--orig:GPT-2: 6-month follow-up-->
+1074. [学习日](https://openai.com/index/learning-day)（2019-08-01） <!--orig:Learning Day-->
+1075. [微软投资并与 OpenAI 合作，支持我们构建有益的 AGI](https://openai.com/index/microsoft-invests-in-and-partners-with-openai)（2019-07-22） <!--orig:Microsoft invests in and partners with OpenAI to support us building beneficial AGI-->
+1076. [为什么负责任的 AI 发展需要安全方面的合作](https://openai.com/index/cooperation-on-safety)（2019-07-10） <!--orig:Why responsible AI development needs cooperation on safety-->
+1077. [2019 OpenAI 机器人研讨会](https://openai.com/index/symposium-2019)（2019-06-05） <!--orig:OpenAI Robotics Symposium 2019-->
+1078. [OpenAI Scholars 2019：期末项目](https://openai.com/index/openai-scholars-2019-final-projects)（2019-05-23） <!--orig:OpenAI Scholars 2019: Final projects-->
+1079. [OpenAI Fellows 2018 秋季：最终项目](https://openai.com/index/openai-fellows-fall-2018)（2019-05-17） <!--orig:OpenAI Fellows Fall 2018: Final projects-->
+1080. [不同扰动类型之间对抗鲁棒性的迁移](https://openai.com/index/transfer-of-adversarial-robustness-between-perturbation-types)（2019-05-03） <!--orig:Transfer of adversarial robustness between perturbation types-->
+1081. [MuseNet 音乐生成模型](https://openai.com/index/musenet)（2019-04-25） <!--orig:MuseNet-->
+1082. [基于稀疏 transformers 的生成建模](https://openai.com/index/sparse-transformer)（2019-04-23） <!--orig:Generative modeling with sparse transformers-->
+1083. [OpenAI Five 击败 Dota 2 世界冠军](https://openai.com/index/openai-five-defeats-dota-2-world-champions)（2019-04-15） <!--orig:OpenAI Five defeats Dota 2 world champions-->
+1084. [OpenAI Five 决赛](https://openai.com/index/openai-five-finals)（2019-03-26） <!--orig:OpenAI Five Finals-->
+1085. [基于能量模型的隐式生成与泛化方法](https://openai.com/index/energy-based-models)（2019-03-21） <!--orig:Implicit generation and generalization methods for energy-based models-->
+1086. [OpenAI Scholars 2019：认识我们的学者](https://openai.com/index/openai-scholars-2019-meet-our-scholars)（2019-03-13） <!--orig:OpenAI Scholars 2019: Meet our Scholars-->
+1087. [OpenAI LP 公司](https://openai.com/index/openai-lp)（2019-03-11） <!--orig:OpenAI LP-->
+1088. [推出 Activation Atlases](https://openai.com/index/introducing-activation-atlases)（2019-03-06） <!--orig:Introducing Activation Atlases-->
+1089. [Neural MMO：大规模多智能体游戏环境](https://openai.com/index/neural-mmo)（2019-03-04） <!--orig:Neural MMO: A massively multiagent game environment-->
+1090. [Spinning Up in Deep RL：研讨会回顾](https://openai.com/index/spinning-up-in-deep-rl-workshop-review)（2019-02-26） <!--orig:Spinning Up in Deep RL: Workshop review-->
+1091. [AI 安全需要社会科学家](https://openai.com/index/ai-safety-needs-social-scientists)（2019-02-19） <!--orig:AI safety needs social scientists-->
+1092. [更好的语言模型及其影响](https://openai.com/index/better-language-models)（2019-02-14） <!--orig:Better language models and their implications-->
+1093. [鲁棒分类与双赢结果的计算局限](https://openai.com/index/computational-limitations-in-robust-classification-and-win-win-results)（2019-02-04） <!--orig:Computational limitations in robust classification and win-win results-->
+1094. [OpenAI Fellows 2018 夏季：最终项目](https://openai.com/index/openai-summer-fellows-2018)（2018-12-19） <!--orig:OpenAI Fellows Summer 2018: Final projects-->
+1095. [AI 训练如何扩展](https://openai.com/index/how-ai-training-scales)（2018-12-14） <!--orig:How AI training scales-->
+1096. [量化强化学习中的泛化](https://openai.com/index/quantifying-generalization-in-reinforcement-learning)（2018-12-06） <!--orig:Quantifying generalization in reinforcement learning-->
+1097. [Spinning Up in Deep RL 项目](https://openai.com/index/spinning-up-in-deep-rl)（2018-11-08） <!--orig:Spinning Up in Deep RL-->
+1098. [用能量函数学习概念](https://openai.com/index/learning-concepts-with-energy-functions)（2018-11-07） <!--orig:Learning concepts with energy functions-->
+1099. [在线规划，离线学习：基于模型的控制实现高效学习与探索](https://openai.com/index/plan-online-learn-offline)（2018-11-05） <!--orig:Plan online, learn offline: Efficient learning and exploration via model-based control-->
+1100. [基于预测奖励的强化学习](https://openai.com/index/reinforcement-learning-with-prediction-based-rewards)（2018-10-31） <!--orig:Reinforcement learning with prediction-based rewards-->
+1101. [通过迭代放大学习复杂目标](https://openai.com/index/learning-complex-goals-with-iterated-amplification)（2018-10-22） <!--orig:Learning complex goals with iterated amplification-->
+1102. [OpenAI Scholars 2019：开放申请](https://openai.com/index/openai-scholars-2019)（2018-10-11） <!--orig:OpenAI Scholars 2019: Applications open-->
+1103. [OpenAI Fellows 2019 冬季与 Interns 2019 夏季](https://openai.com/index/openai-fellows-interns-2019)（2018-10-09） <!--orig:OpenAI Fellows Winter 2019 & Interns Summer 2019-->
+1104. [FFJORD：面向可扩展可逆生成模型的自由形式连续动力学](https://openai.com/index/ffjord)（2018-10-02） <!--orig:FFJORD: Free-form continuous dynamics for scalable reversible generative models-->
+1105. [OpenAI Scholars 2018：期末项目](https://openai.com/index/openai-scholars-2018-final-projects)（2018-09-10） <!--orig:OpenAI Scholars 2018: Final projects-->
+1106. [The International 2018：比赛结果](https://openai.com/index/the-international-2018-results)（2018-08-23） <!--orig:The International 2018: Results-->
+1107. [好奇心驱动学习的大规模研究](https://openai.com/index/large-scale-study-of-curiosity-driven-learning)（2018-08-13） <!--orig:Large-scale study of curiosity-driven learning-->
+1108. [OpenAI Five 基准测试：结果](https://openai.com/index/openai-five-benchmark-results)（2018-08-06） <!--orig:OpenAI Five Benchmark: Results-->
+1109. [学习灵巧操作](https://openai.com/index/learning-dexterity)（2018-07-30） <!--orig:Learning dexterity-->
+1110. [变分选项发现算法](https://openai.com/index/variational-option-discovery-algorithms)（2018-07-26） <!--orig:Variational option discovery algorithms-->
+1111. [OpenAI Scholars 2018：认识我们的学者](https://openai.com/index/openai-scholars-2018-meet-our-scholars)（2018-07-25） <!--orig:OpenAI Scholars 2018: Meet our Scholars-->
+1112. [OpenAI Five 基准测试](https://openai.com/index/openai-five-benchmark)（2018-07-18） <!--orig:OpenAI Five Benchmark-->
+1113. [Glow：更好的可逆生成模型](https://openai.com/index/glow)（2018-07-09） <!--orig:Glow: Better reversible generative models-->
+1114. [通过一次演示学习《Montezuma's Revenge》](https://openai.com/index/learning-montezumas-revenge-from-a-single-demonstration)（2018-07-04） <!--orig:Learning Montezuma’s Revenge from a single demonstration-->
+1115. [OpenAI Five 战队](https://openai.com/index/openai-five)（2018-06-25） <!--orig:OpenAI Five-->
+1116. [Retro Contest：比赛结果](https://openai.com/index/retro-contest-results)（2018-06-22） <!--orig:Retro Contest: Results-->
+1117. [学习多智能体系统中的策略表示](https://openai.com/index/learning-policy-representations-in-multiagent-systems)（2018-06-17） <!--orig:Learning policy representations in multiagent systems-->
+1118. [通过无监督学习提升语言理解](https://openai.com/index/language-unsupervised)（2018-06-11） <!--orig:Improving language understanding with unsupervised learning-->
+1119. [GamePad：定理证明的学习环境](https://openai.com/index/gamepad)（2018-06-02） <!--orig:GamePad: A learning environment for theorem proving-->
+1120. [OpenAI 研究员项目 2018 年秋季](https://openai.com/index/openai-fellows)（2018-05-30） <!--orig:OpenAI Fellows Fall 2018-->
+1121. [Gym Retro：复古游戏环境](https://openai.com/index/gym-retro)（2018-05-25） <!--orig:Gym Retro-->
+1122. [人工智能与算力](https://openai.com/index/ai-and-compute)（2018-05-16） <!--orig:AI and compute-->
+1123. [通过辩论实现人工智能安全](https://openai.com/index/debate)（2018-05-03） <!--orig:AI safety via debate-->
+1124. [进化的策略梯度](https://openai.com/index/evolved-policy-gradients)（2018-04-18） <!--orig:Evolved Policy Gradients-->
+1125. [必须学得快：强化学习泛化的新基准](https://openai.com/index/gotta-learn-fast)（2018-04-10） <!--orig:Gotta Learn Fast: A new benchmark for generalization in RL-->
+1126. [Retro 竞赛](https://openai.com/index/retro-contest)（2018-04-05） <!--orig:Retro Contest-->
+1127. [采用与动作相关的分解基线降低策略梯度方差](https://openai.com/index/variance-reduction-for-policy-gradient-with-action-dependent-factorized-baselines)（2018-03-20） <!--orig:Variance reduction for policy gradient with action-dependent factorized baselines-->
+1128. [OpenAI 黑客松报告](https://openai.com/index/hackathon-follow-up)（2018-03-15） <!--orig:Report from the OpenAI hackathon-->
+1129. [利用最优传输改进 GAN](https://openai.com/index/improving-gans-using-optimal-transport)（2018-03-15） <!--orig:Improving GANs using optimal transport-->
+1130. [论一阶元学习算法](https://openai.com/index/on-first-order-meta-learning-algorithms)（2018-03-08） <!--orig:On first-order meta-learning algorithms-->
+1131. [Reptile：一种可扩展的元学习算法](https://openai.com/index/reptile)（2018-03-07） <!--orig:Reptile: A scalable meta-learning algorithm-->
+1132. [OpenAI 学者计划](https://openai.com/index/openai-scholars)（2018-03-06） <!--orig:OpenAI Scholars-->
+1133. [关于通过元强化学习学会探索的若干思考](https://openai.com/index/some-considerations-on-learning-to-explore-via-meta-reinforcement-learning)（2018-03-03） <!--orig:Some considerations on learning to explore via meta-reinforcement learning-->
+1134. [机器人研究的关键要素](https://openai.com/index/ingredients-for-robotics-research)（2018-02-26） <!--orig:Ingredients for robotics research-->
+1135. [多目标强化学习：富有挑战性的机器人环境与研究征集](https://openai.com/index/multi-goal-reinforcement-learning)（2018-02-26） <!--orig:Multi-Goal Reinforcement Learning: Challenging robotics environments and request for research-->
+1136. [OpenAI 黑客松](https://openai.com/index/openai-hackathon)（2018-02-22） <!--orig:OpenAI hackathon-->
+1137. [OpenAI 的支持者](https://openai.com/index/openai-supporters)（2018-02-20） <!--orig:OpenAI supporters-->
+1138. [准备应对人工智能的恶意使用](https://openai.com/index/preparing-for-malicious-uses-of-ai)（2018-02-20） <!--orig:Preparing for malicious uses of AI-->
+1139. [通过教学实现可解释的机器学习](https://openai.com/index/interpretable-machine-learning-through-teaching)（2018-02-15） <!--orig:Interpretable machine learning through teaching-->
+1140. [面向实体消歧的类型发现](https://openai.com/index/discovering-types-for-entity-disambiguation)（2018-02-07） <!--orig:Discovering types for entity disambiguation-->
+1141. [研究征集 2.0](https://openai.com/index/requests-for-research-2)（2018-01-31） <!--orig:Requests for Research 2.0-->
+1142. [将 Kubernetes 扩展至 2,500 个节点](https://openai.com/index/scaling-kubernetes-to-2500-nodes)（2018-01-18） <!--orig:Scaling Kubernetes to 2,500 nodes-->
+1143. [块稀疏的 GPU 内核](https://openai.com/index/block-sparse-gpu-kernels)（2017-12-06） <!--orig:Block-sparse GPU kernels-->
+1144. [利用 L₀ 正则化学习稀疏神经网络](https://openai.com/index/learning-sparse-neural-networks-through-l0-regularization)（2017-12-04） <!--orig:Learning sparse neural networks through L₀ regularization-->
+1145. [可解释且具教学意义的示例](https://openai.com/index/interpretable-and-pedagogical-examples)（2017-11-02） <!--orig:Interpretable and pedagogical examples-->
+1146. [学会建立层次结构](https://openai.com/index/learning-a-hierarchy)（2017-10-26） <!--orig:Learning a hierarchy-->
+1147. [从模拟中泛化](https://openai.com/index/generalizing-from-simulation)（2017-10-19） <!--orig:Generalizing from simulation-->
+1148. [基于图像的机器人学习中的非对称演员评论家方法](https://openai.com/index/asymmetric-actor-critic-for-image-based-robot-learning)（2017-10-18） <!--orig:Asymmetric actor critic for image-based robot learning-->
+1149. [通过动力学随机化实现机器人控制的模拟到现实迁移](https://openai.com/index/sim-to-real-transfer-of-robotic-control-with-dynamics-randomization)（2017-10-18） <!--orig:Sim-to-real transfer of robotic control with dynamics randomization-->
+1150. [面向机器人抓取的领域随机化与生成模型](https://openai.com/index/domain-randomization-and-generative-models-for-robotic-grasping)（2017-10-17） <!--orig:Domain randomization and generative models for robotic grasping-->
+1151. [竞争性自我对弈](https://openai.com/index/competitive-self-play)（2017-10-11） <!--orig:Competitive self-play-->
+1152. [摔跤中的元学习](https://openai.com/index/meta-learning-for-wrestling)（2017-10-11） <!--orig:Meta-learning for wrestling-->
+1153. [深度线性网络中的非线性计算](https://openai.com/index/nonlinear-computation-in-deep-linear-networks)（2017-09-29） <!--orig:Nonlinear computation in deep linear networks-->
+1154. [学会对他人的心智建模](https://openai.com/index/learning-to-model-other-minds)（2017-09-14） <!--orig:Learning to model other minds-->
+1155. [具备对手学习意识的学习](https://openai.com/index/learning-with-opponent-learning-awareness)（2017-09-13） <!--orig:Learning with opponent-learning awareness-->
+1156. [OpenAI Baselines：ACKTR 与 A2C](https://openai.com/index/openai-baselines-acktr-a2c)（2017-08-18） <!--orig:OpenAI Baselines: ACKTR & A2C-->
+1157. [Dota 2 的更多细节](https://openai.com/index/more-on-dota-2)（2017-08-16） <!--orig:More on Dota 2-->
+1158. [Dota 2](https://openai.com/index/dota-2)（2017-08-11）
+1159. [汇集人类反馈](https://openai.com/index/gathering-human-feedback)（2017-08-03） <!--orig:Gathering human feedback-->
+1160. [借助参数噪声改进探索](https://openai.com/index/better-exploration-with-parameter-noise)（2017-07-27） <!--orig:Better exploration with parameter noise-->
+1161. [近端策略优化（PPO）](https://openai.com/index/openai-baselines-ppo)（2017-07-20） <!--orig:Proximal Policy Optimization-->
+1162. [鲁棒的对抗性输入](https://openai.com/index/robust-adversarial-inputs)（2017-07-17） <!--orig:Robust adversarial inputs-->
+1163. [事后经验回放](https://openai.com/index/hindsight-experience-replay)（2017-07-05） <!--orig:Hindsight Experience Replay-->
+1164. [师生式课程学习](https://openai.com/index/teacher-student-curriculum-learning)（2017-07-01） <!--orig:Teacher–student curriculum learning-->
+1165. [在 Python 中实现更快的物理模拟](https://openai.com/index/faster-physics-in-python)（2017-06-28） <!--orig:Faster physics in Python-->
+1166. [基于人类偏好的学习](https://openai.com/index/learning-from-human-preferences)（2017-06-13） <!--orig:Learning from human preferences-->
+1167. [学会合作、竞争与沟通](https://openai.com/index/learning-to-cooperate-compete-and-communicate)（2017-06-08） <!--orig:Learning to cooperate, compete, and communicate-->
+1168. [借助 Q 系综实现 UCB 探索](https://openai.com/index/ucb-exploration-via-q-ensembles)（2017-06-05） <!--orig:UCB exploration via Q-ensembles-->
+1169. [OpenAI Baselines 中的 DQN](https://openai.com/index/openai-baselines-dqn)（2017-05-24） <!--orig:OpenAI Baselines: DQN-->
+1170. [能够学习的机器人](https://openai.com/index/robots-that-learn)（2017-05-16） <!--orig:Robots that learn-->
+1171. [Roboschool：机器人学校](https://openai.com/index/roboschool)（2017-05-15） <!--orig:Roboschool-->
+1172. [策略梯度与软 Q 学习之间的等价性](https://openai.com/index/equivalence-between-policy-gradients-and-soft-q-learning)（2017-04-21） <!--orig:Equivalence between policy gradients and soft Q-learning-->
+1173. [面向分层强化学习的随机神经网络](https://openai.com/index/stochastic-neural-networks-for-hierarchical-reinforcement-learning)（2017-04-10） <!--orig:Stochastic Neural Networks for hierarchical reinforcement learning-->
+1174. [无监督的情感神经元](https://openai.com/index/unsupervised-sentiment-neuron)（2017-04-06） <!--orig:Unsupervised sentiment neuron-->
+1175. [现实世界中的垃圾邮件检测](https://openai.com/index/spam-detection-in-the-physical-world)（2017-04-01） <!--orig:Spam detection in the physical world-->
+1176. [进化策略：强化学习的可扩展替代方案](https://openai.com/index/evolution-strategies)（2017-03-24） <!--orig:Evolution strategies as a scalable alternative to reinforcement learning-->
+1177. [单样本模仿学习](https://openai.com/index/one-shot-imitation-learning)（2017-03-21） <!--orig:One-shot imitation learning-->
+1178. [蒸馏](https://openai.com/index/distill)（2017-03-20） <!--orig:Distill-->
+1179. [学会沟通](https://openai.com/index/learning-to-communicate)（2017-03-16） <!--orig:Learning to communicate-->
+1180. [多智能体群体中扎根组合语言的涌现](https://openai.com/index/emergence-of-grounded-compositional-language-in-multi-agent-populations)（2017-03-15） <!--orig:Emergence of grounded compositional language in multi-agent populations-->
+1181. [使用时间片段模型进行预测与控制](https://openai.com/index/prediction-and-control-with-temporal-segment-models)（2017-03-12） <!--orig:Prediction and control with temporal segment models-->
+1182. [基于第三人称视角的模仿学习](https://openai.com/index/third-person-imitation-learning)（2017-03-06） <!--orig:Third-person imitation learning-->
+1183. [用对抗样本攻击机器学习系统](https://openai.com/index/attacking-machine-learning-with-adversarial-examples)（2017-02-24） <!--orig:Attacking machine learning with adversarial examples-->
+1184. [针对神经网络策略的对抗攻击](https://openai.com/index/adversarial-attacks-on-neural-network-policies)（2017-02-08） <!--orig:Adversarial attacks on neural network policies-->
+1185. [团队近况](https://openai.com/index/team-update-january)（2017-01-30） <!--orig:Team update-->
+1186. [PixelCNN++：用离散逻辑混合似然及其他改动改进 PixelCNN](https://openai.com/index/pixelcnn-plus-plus)（2017-01-19） <!--orig:PixelCNN++: Improving the PixelCNN with discretized logistic mixture likelihood and other modifications-->
+1187. [现实场景中失灵的奖励函数](https://openai.com/index/faulty-reward-functions)（2016-12-21） <!--orig:Faulty reward functions in the wild-->
+1188. [Universe 平台](https://openai.com/index/universe)（2016-12-05） <!--orig:Universe-->
+1189. [OpenAI 与微软](https://openai.com/index/openai-and-microsoft)（2016-11-15） <!--orig:OpenAI and Microsoft-->
+1190. [#Exploration：深度强化学习中基于计数的探索研究](https://openai.com/index/exploration)（2016-11-15） <!--orig:#Exploration: A study of count-based exploration for deep reinforcement learning-->
+1191. [关于基于解码器生成模型的定量分析](https://openai.com/index/on-the-quantitative-analysis-of-decoder-based-generative-models)（2016-11-14） <!--orig:On the quantitative analysis of decoder-based generative models-->
+1192. [生成对抗网络、逆强化学习和基于能量模型之间的联系](https://openai.com/index/a-connection-between-generative-adversarial-networks-inverse-reinforcement-learning-and-energy-based-models)（2016-11-11） <!--orig:A connection between generative adversarial networks, inverse reinforcement learning, and energy-based models-->
+1193. [RL²：借助慢速强化学习实现快速强化学习](https://openai.com/index/rl2)（2016-11-09） <!--orig:RL²: Fast reinforcement learning via slow reinforcement learning-->
+1194. [变分有损自编码器](https://openai.com/index/variational-lossy-autoencoder)（2016-11-08） <!--orig:Variational lossy autoencoder-->
+1195. [神经 GPU 的扩展与局限性](https://openai.com/index/extensions-and-limitations-of-the-neural-gpu)（2016-11-02） <!--orig:Extensions and limitations of the neural GPU-->
+1196. [针对私有训练数据的深度学习半监督知识迁移](https://openai.com/index/semi-supervised-knowledge-transfer-for-deep-learning-from-private-training-data)（2016-10-18） <!--orig:Semi-supervised knowledge transfer for deep learning from private training data-->
+1197. [来自自组织会议的报告](https://openai.com/index/report-from-the-self-organizing-conference)（2016-10-13） <!--orig:Report from the self-organizing conference-->
+1198. [通过学习深度逆动力学模型实现从模拟到现实的迁移](https://openai.com/index/transfer-from-simulation-to-real-world-through-learning-deep-inverse-dynamics-model)（2016-10-11） <!--orig:Transfer from simulation to real world through learning deep inverse dynamics model-->
+1199. [面向深度学习的基础设施](https://openai.com/index/infrastructure-for-deep-learning)（2016-08-29） <!--orig:Infrastructure for deep learning-->
+1200. [机器学习自由会议（Unconference）](https://openai.com/index/machine-learning-unconference)（2016-08-18） <!--orig:Machine Learning Unconference-->
+1201. [团队近况](https://openai.com/index/team-update-august)（2016-08-16）
+1202. [特殊项目](https://openai.com/index/special-projects)（2016-07-28） <!--orig:Special projects-->
+1203. [具体的人工智能安全难题](https://openai.com/index/concrete-ai-safety-problems)（2016-06-21） <!--orig:Concrete AI safety problems-->
+1204. [OpenAI 的技术目标](https://openai.com/index/openai-technical-goals)（2016-06-20） <!--orig:OpenAI technical goals-->
+1205. [生成式模型](https://openai.com/index/generative-models)（2016-06-16） <!--orig:Generative models-->
+1206. [团队近况](https://openai.com/index/team-update)（2016-05-25）
+1207. [面向半监督文本分类的对抗训练方法](https://openai.com/index/adversarial-training-methods-for-semi-supervised-text-classification)（2016-05-25） <!--orig:Adversarial training methods for semi-supervised text classification-->
+1208. [OpenAI Gym 公测版](https://openai.com/index/openai-gym-beta)（2016-04-27） <!--orig:OpenAI Gym Beta-->
+1209. [欢迎 Pieter 和 Shivon！](https://openai.com/index/welcome-pieter-and-shivon)（2016-04-26） <!--orig:Welcome, Pieter and Shivon!-->
+1210. [团队++](https://openai.com/index/team-plus-plus)（2016-03-31） <!--orig:Team++-->
+1211. [权重归一化：加速深度神经网络训练的简单重参数化](https://openai.com/index/weight-normalization)（2016-02-25） <!--orig:Weight normalization: A simple reparameterization to accelerate training of deep neural networks-->
+1212. [隆重介绍 OpenAI](https://openai.com/index/introducing-openai)（2015-12-11） <!--orig:Introducing OpenAI-->
