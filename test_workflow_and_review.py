@@ -2775,6 +2775,16 @@ class TestRetiredNewsSource(unittest.TestCase):
         self.assertFalse(crawler_llm_intel._is_retired_news_url(
             "https://ai.google.dev/gemini-api/docs/changelog#09-17-2026"))
 
+    def test_content_reviewed_nonarticles_blocked(self):
+        """内容复核确认「不是文章」的个别条目：栏目卡片 / 表单页。只挡这两条，
+        不误伤同厂商真帖子/真文章。"""
+        r = crawler_llm_intel._is_retired_news_url
+        self.assertTrue(r("https://poolside.ai/blog#d-2025-07-17-17"), "poolside 栏目卡片")
+        self.assertTrue(r("https://openai.com/form/stargate-infrastructure"), "openai 表单页")
+        # 同厂商真实文章不得被挡
+        self.assertFalse(r("https://poolside.ai/blog#d-2026-07-21-19"), "poolside 真帖子卡片")
+        self.assertFalse(r("https://openai.com/index/introducing-gpt-5-5"), "openai 真文章")
+
     def test_bailian_changelog_retired_without_hitting_sibling_docs(self):
         """阿里云百炼「新发布模型」变更日志（2026-09-30 换成千问官方动态接口）。
 

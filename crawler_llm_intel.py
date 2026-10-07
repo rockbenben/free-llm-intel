@@ -2461,6 +2461,13 @@ RETIRED_NEWS_URL_PREFIXES: tuple[str, ...] = (
     # aliyun_qwen 的 94 条有 55 条是第三方模型挂在「通义千问 Qwen」名下（错归属）。
     # 同厂商的 `first-api-call-to-qwen`（first_call_docs，情报页）路径不同，不受影响。
     "https://help.aliyun.com/zh/model-studio/newly-released-models",
+    # 内容复核确认「不是文章」的个别条目（非整源退役，而是这两条本身无正文/是表单）：
+    #   - poolside 博客列表里的 “Announcements” 是**栏目卡片**（不是某篇帖子），抽出来
+    #     正文 0 字（index_page）。整档其它 `#d-` 卡片都是真帖子，只挡这一条。
+    #   - openai `Stargate Infrastructure` 是 `/form/` 询价表单页，压根不是 news 文章。
+    # 巡检每天从列表页重新解析会把它们再灌回来，故登记前缀（含锚点 id）一并挡掉。
+    "https://poolside.ai/blog#d-2025-07-17-17",
+    "https://openai.com/form/stargate-infrastructure",
 )
 
 
