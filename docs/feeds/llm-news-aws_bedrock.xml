@@ -9,32 +9,289 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 06 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Responsible AI governance: How AWS positions customers to al…</title>
+      <title>在 AgentCore 和 OpenClaw 上构建上下文感知 AI 助手</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/building-a-context-aware-ai-assistant-on-agentcore-and-openclaw/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/building-a-context-aware-ai-assistant-on-agentcore-and-openclaw/</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Building a context-aware AI assistant on AgentCore and OpenClaw</description>
+    </item>
+    <item>
+      <title>负责任的 AI 治理：AWS 如何帮助客户遵守 ISO/IEC 42005:2025</title>
       <link>https://aws.amazon.com/blogs/machine-learning/responsible-ai-governance-how-aws-positions-customers-to-align-with-iso-iec-420052025/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/responsible-ai-governance-how-aws-positions-customers-to-align-with-iso-iec-420052025/</guid>
       <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Responsible AI governance: How AWS positions customers to align with ISO/IEC 42005:2025</description>
+      <description>原文标题：Responsible AI governance: How AWS positions customers to align with ISO/IEC 42005:2025</description>
+      <content:encoded><![CDATA[<h1>负责任的 AI 治理：AWS 如何帮助客户对齐 ISO/IEC 42005:2025</h1>
+<p>生成式 AI 的普及速度<a href="https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_4_economy.pdf">快于个人计算机和互联网</a>，<a href="https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_4_economy.pdf">2025 年全球 AI 相关投资达到 5816.9 亿美元</a>，组织必须让自身劳动力做好准备，在用 AI 驱动业务运营的同时确保负责任地使用它。与 AI Adoption Initiative 相关的研究者提出，<a href="https://adopt-ai.org/wp-content/uploads/2026/07/The-AI-Labor-Stack_Rethinking-the-Workforce-from-the-Ground-Up_v3.pdf">劳动力通过一个 <em>AI Labor Stack</em>（AI 劳动力栈）与 AI 发生关系</a>，其构成包括 AI 创新者（innovators）、促进者（facilitators）与使用者（users）；促进者常常是国家 AI 战略中「缺失的中间层」，尽管他们承担着「把 AI 能力转化为企业、行业和公共服务中的实际部署」的责任（Ferrone et al., 2026）。</p>
+<p>我们通过解读国际标准 <a href="https://www.iso.org/standard/42005">ISO/IEC 42005:2025</a>，并探讨其关于如何把 AI 影响评估高效纳入更广泛治理生态体系的指引，来支持这一促进者群体在其组织内建立或改进系统化的 AI 治理方法。</p>
+<p>基于标准的治理框架提供了一条务实的前行路径——AWS 已投入使其可落地。在 Amazon，我们一直是<a href="https://www.iso.org/home.html">国际标准化组织（ISO）</a> AI 风险管理标准开发项目的支持者：我们已为多款 AI 服务（Amazon Bedrock、Amazon Q Business、Amazon Transcribe 与 Amazon Textract）取得相应认证，同时也倡导客户用这些标准认证自己的服务。<a href="https://aws.amazon.com/">Amazon Web Services（AWS）</a>提供了一系列工具，支持与 ISO/IEC 42005 及其他负责任 AI 最佳实践对齐的治理工作，包括我们的 <a href="https://aws.amazon.com/blogs/security/new-compliance-guide-available-iso-iec-420012023-on-aws/">ISO/IEC 42001:2023 AI 管理体系（AIMS）在 AWS 上的实施指南</a>，以及可帮助客户在企业风险管理生态体系中运用该标准的 <a href="https://docs.aws.amazon.com/wellarchitected/latest/responsible-ai-lens/responsible-ai-lens.html">Well-Architected Framework: Responsible AI Lens</a>。在本文中，我们探讨 AI 系统影响评估：它是什么、如何改进企业级风险管理，以及 ISO/IEC 42005 如何将 AI 系统影响评估的最佳实践固化为标准。</p>
+<h2>AI 系统影响评估</h2>
+<p>AI 系统影响评估是一个成文的 AI 系统风险识别过程：开发、提供或使用 AI 系统的组织借此考量对组织、个人、社区、群体和社会的影响。AI 系统影响评估过程还会将其产出——例如对隐私影响、歧视性影响或性能影响的识别——导入组织的风险管理决策。运用 AI 系统影响评估过程，能帮助组织负责任地管理其 AI 部署，选择适当的 guardrails 来管控已识别的风险。</p>
+<h2>AI 影响评估助推企业级风险管理</h2>
+<p>AI 系统影响评估是组织整体风险管理流程的组成部分。ISO/IEC 42005 就如何把 AI 系统影响评估集成到企业内部既有的影响评估流程中提供了明确指引——这些既有流程通常已包含针对 IT 系统的多种影响评估（例如风险、隐私、网络安全）。</p>
+<p>对于已具备成熟影响评估生态的组织，ISO/IEC 42005 的附录 D 提供了一套流程，帮助组织简化影响评估、避免重复，协调整合 AI 系统影响评估所需的相关评审（例如风险、法务、安全、隐私、采购或架构）。</p>
+<p>对于偏好独立 AI 影响评估的组织，ISO/IEC 42005 的附录 E 提供了一个可直接使用的自包含实施模板。</p>
+<h3>ISO/IEC 42005 如何把你接入自己的 AI 治理流程</h3>
+<p>ISO/IEC 42005 为客户解锁了更集成的 AI 治理流程。具体而言，该标准就以下内容提供指引：如何编写 AI 系统影响评估的内容、如何执行 AI 系统影响评估、在 AI 生命周期各阶段的何时纳入影响评估，以及如何记录影响评估过程及其结果。</p>
+<h3>建立可重复、可扩展的 AI 系统影响评估流程</h3>
+<p>希望形成结构化、一致的 AI 系统影响评估执行与记录方式的客户，可以在 ISO/IEC 42005 中找到指引。该标准完整覆盖评估生命周期（包括范围界定与执行、分析与报告、持续监控与复审），并明确了何时应开展 AI 系统影响评估、评估应做到多全面，以及如何设立复审触发条件。</p>
+<p>在为评估与复审确定嵌入了更广泛 AI 开发生命周期的时点时，标准建议思考哪些触发因素（同时评估外部与内部因素）可能提示需要复审，例如：适用的法律要求、合同义务、内部政策、客户预期，可能使复审成为必要的变更（对 AI 系统本身、其运行环境或其上下文的变更），以及其他因素。标准还说明了如何先做一次较轻量的 AI 系统影响评估分诊（triage）——一种快速分类，用于判断（视风险水平而定）是否需要更全面的评估——然后再投入完整评估或复审。</p>
+<h3>设计评估：你的评估需要回答哪些问题</h3>
+<p>对于不知从何着手建立 AI 系统影响评估的客户，ISO/IEC 42005 通过模板化的评估方式规定了一份 AI 系统影响评估中应记录的具体信息，并说明了如何利用企业已在进行的其他风险评估来避免重复。文档应包含如下条目：</p>
+<ul><li>对 AI 系统及其预期用途的描述</li><li>它可预见地会被如何滥用</li><li>用于开发该 AI 系统的数据、其底层组件与算法</li><li>它将部署于其中的环境</li><li>可能被该 AI 系统影响的个人与社区。</li></ul>
+<p>ISO/IEC 42005 提供了一套方法论，让组织通过考察系统可被如何使用与滥用，来识别 AI 系统的正面与负面影响。该标准帮助你落实自己的负责任 AI 原则，因为它以一组可供你选择优先级的 AI 目标（例如公平性、可靠性、隐私与安全）作为评估危害与收益影响的准则。标准还概述了在 AI 系统影响评估过程中进行干系人识别与征询的注意事项，包括鼓励吸纳多元社区的意见并将这些意见纳入评估。</p>
+<h2>支持 ISO/IEC 42001 认证</h2>
+<p>对于正在推进 <a href="https://www.iso.org/standard/42001">ISO/IEC 42001</a> 认证的组织，ISO/IEC 42005 就如何把 AI 影响评估作为 ISO/IEC 42001 的一项关键控制来处理提供了有益指引。其附录 A 详细说明了 ISO/IEC 42005 如何支撑 ISO/IEC 42001 的要求。</p>
+<p>在 AWS，我们<a href="https://aws.amazon.com/blogs/machine-learning/aws-achieves-iso-iec-420012023-artificial-intelligence-management-system-accredited-certification/">已为</a> AI 服务取得 ISO/IEC 42001 认可认证，覆盖 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a>、<a href="https://aws.amazon.com/q/business/">Amazon Q Business</a>、<a href="https://aws.amazon.com/textract/">Amazon Textract</a> 与 <a href="https://aws.amazon.com/transcribe/">Amazon Transcribe</a>。基于我们的经验，我们沉淀了 AWS 最佳实践，包括 AI 影响评估如何支持组织踏上负责任 AI 之旅。</p>
+<h2>支持你负责任 AI 之旅的 AWS 工具</h2>
+<p>AWS Well-Architected Responsible AI Lens 帮助构建团队针对具体用例负责任地构建和运行 AI 解决方案。AWS Responsible AI Lens 与 ISO/IEC 42005 标准高度对齐：</p>
+<ul><li><strong>收益与危害识别：</strong> 两者都引导构建者识别预期收益与潜在危害。</li><li><strong>风险管理整合：</strong> 两者都强调把风险识别与分析的结果纳入风险处置决策和缓解措施。</li><li><strong>生命周期整合：</strong> 两者都把影响评估定位为 AI 开发生命周期的组成部分，而不是一次性的合规动作。</li></ul>
+<p>此外，AWS 于 2026 年 5 月发布了我们最新的合规指南 <a href="https://aws.amazon.com/blogs/security/new-compliance-guide-available-iso-iec-420012023-on-aws/">ISO/IEC 42001 implementation on AWS</a>，指导组织在使用 AWS 服务设计和运行 AIMS。</p>
+<h2>结论</h2>
+<p>ISO/IEC 42001 和 ISO/IEC 42005 这类国际标准支撑着信任、互操作性与问责，推动 AI 创新与部署在全球多样化环境中落地。我们致力于构建支持对齐这些标准的工具，这让客户对 AWS 在负责任 AI 开发与部署上的承诺获得独立验证，也为客户示范了 AWS AI 服务如何加速其合规之旅。</p>
+<p><em><strong>免责声明：</strong>本博客分享的风险评估与影响评估指引，旨在为推进 ISO/IEC 42001 下的 AI 风险管理、对齐 ISO/IEC 42005 以及建立 AI 风险管理基础设施提供方向性参考和实践洞见。但组织仍须按照标准及监管机构的要求，自行开展符合其具体情境的风险评估。本博客不应被解读为对任何风险管理</em> *标准或法律的合规提供了穷尽性方法或保证。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Best practices for Amazon SageMaker HyperPod administration…</title>
+      <title>Amazon SageMaker HyperPod 管理和治理的最佳实践</title>
       <link>https://aws.amazon.com/blogs/machine-learning/best-practices-for-amazon-sagemaker-hyperpod-administration-and-governance/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/best-practices-for-amazon-sagemaker-hyperpod-administration-and-governance/</guid>
       <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Best practices for Amazon SageMaker HyperPod administration and governance</description>
+      <description>原文标题：Best practices for Amazon SageMaker HyperPod administration and governance</description>
+      <content:encoded><![CDATA[<h1>Amazon SageMaker HyperPod 管理与治理最佳实践</h1>
+<p><a href="https://aws.amazon.com/sagemaker/hyperpod/">Amazon SageMaker HyperPod</a> 让机器学习（ML）团队能够使用大规模加速计算资源池来训练和 fine-tuning 模型。当多个团队共用一个集群时，技术搭建通常不难，真正有挑战性的是治理：你必须决定哪些团队可以使用该集群、每个团队获得多少容量、当一个团队的工作负载与另一个团队竞争时怎么办，以及当使用偏离策略时由谁负责。<a href="https://aws.amazon.com/sagemaker/unified-studio/">Amazon SageMaker Unified Studio</a> 又带来另一层考虑：你可以把 SageMaker HyperPod 集群连接到项目，让团队成员从自己的项目工作区启动工作负载。这种便利很有价值，但在多个团队共享同一集群的可见性之后，管控「谁能做什么」的机制就变得更加重要。在本文中，我们展示如何通过 SageMaker Unified Studio 来管理 SageMaker HyperPod，同时保留底层的治理控制。我们覆盖四个控制层：组织（organization）、项目（project）、集群（cluster）与工作负载（workload），并说明如何在这四层之上设计身份、容量与可观测性策略。读完后，你将获得一个可复用的模型：在 ML 团队的项目上下文中提供经批准的 SageMaker HyperPod 计算资源，同时把集群运维保留在基础设施团队手中。</p>
+<p>Amazon SageMaker HyperPod 是 <a href="https://aws.amazon.com/sagemaker/ai/">Amazon SageMaker AI</a> 的一项能力。Amazon SageMaker Unified Studio 是数据与 AI 开发环境，团队在其中基于自己的数据和工具进行构建。借助 SageMaker Unified Studio，你可以把一个项目连接到现有的 SageMaker HyperPod 集群。成员随即可启动机器学习工作负载、查看集群和任务信息，并打开 JupyterLab 工作流。你继续通过 Amazon SageMaker AI 的界面和 API 管理集群。</p>
+<p>这种职责分离为基础设施团队提供了一个实用的运行模式。你可以通过既有的云运维流程管理集群基础设施，同时在 ML 团队的项目上下文中呈现经批准的算力。在本文中，我们描述如何设计基础设施边界、管控访问、分配共享容量，并通过 SageMaker Unified Studio 一致地运行 SageMaker HyperPod。</p>
+<h2>理解管理边界</h2>
+<p>治理良好的环境会把组织管理、项目访问和集群运维分离开来。每一层回答不同的问题，并使用不同的控制手段。下表总结了各边界、其主要控制手段及管理用途。</p>
+<table><thead><tr><th><strong>边界</strong></th><th><strong>主要控制手段</strong></th><th><strong>管理用途</strong></th></tr></thead><tbody><tr><td>组织</td><td>SageMaker Unified Studio domains、domain units、关联账户、project profiles 与授权策略</td><td>决定谁可以创建项目、项目可以使用哪些账户和 Region、哪些工具可用</td></tr><tr><td>项目</td><td>项目成员、项目角色与 SageMaker HyperPod 连接</td><td>定义协作上下文以及项目成员可访问的 AWS 资源</td></tr><tr><td>集群</td><td>SageMaker HyperPod 集群管理员角色、Amazon EKS access entries、基于角色的访问控制（RBAC）与 EKS Pod Identity，或 Slurm 控制</td><td>治理集群配置、调度器访问、namespaces、任务与基础设施运维</td></tr><tr><td>工作负载</td><td>计算分配、priority classes、借贷（lending and borrowing）策略与任务权限</td><td>控制谁可以提交作业，以及共享容量如何分配</td></tr></tbody></table>
+<p>把这些控制手段视为分层。SageMaker HyperPod 连接只是把一个经批准的集群加入项目，它并不取代该集群的 AWS Identity and Access Management（IAM）、Amazon Elastic Kubernetes Service（Amazon EKS）或 Slurm 控制。应当整体审视项目角色、连接访问角色、EKS access entries 与 RBAC 或 Slurm 控制、工作负载身份、数据与 <a href="https://aws.amazon.com/kms/">AWS Key Management Service（AWS KMS）密钥</a>策略、网络策略、task-view 限制以及调度器策略，只有这些控制对齐之后才让集群可用。</p>
+<p>这些控制构成四个层级，如下图所示。</p>
+<p>图 1：四个控制层——组织、项目、集群与工作负载。每一层回答不同的问题并使用不同的控制手段，因此应在各自的边界上逐层审视。</p>
+<p>SageMaker Unified Studio 的项目是协作边界，而不是强运行时安全边界。把 SageMaker HyperPod 集群、调度器和稀缺的加速器容量保留在一个指定的容量账户（capacity account）下。经批准的用户和数据集可以留在同一账户，也可以放在独立的消费账户或数据账户中。AWS 文档描述了 SageMaker HyperPod 任务治理在 Amazon EKS 集群上的多账户支持。尽管 On-Demand Capacity Reservations 可以跨账户共享，仍应将 SageMaker HyperPod 集群的所有权和容量管理集中到容量账户，使用经批准的跨账户访问方式，而不是让每个消费账户都成为独立的容量管理员。</p>
+<ul><li>对于 Amazon EKS，为每个租户使用独立 namespace，配合 RBAC、每租户的 service accounts 与 EKS Pod Identity 角色、default-deny network policies，以及租户专属的存储和 AWS KMS 权限。对于 Slurm，使用带层级账户与关联（associations）的 Slurm accounting、quality of service（QoS）、优先级与 fair-share 策略以及 partitions；同时使用操作系统级身份与文件权限、网络控制以及租户专属的数据路径。</li><li>使用 IAM 角色和资源策略（而不是仅凭项目成员身份）来控制对 Amazon Simple Storage Service（Amazon S3）buckets、AWS KMS 密钥、secrets、容器镜像仓库及其他数据服务的访问。项目与 domain-unit 策略则用于协作与委派。</li><li>对于 Amazon EKS 集群，使用 SageMaker HyperPod 任务治理——包括配额、priority classes、借贷与抢占（preemption）——来公平共享中央加速器池。对于 Slurm 集群，使用原生 partitions、quality of service（QoS）、优先级、fair-share 与抢占控制；Slurm 不提供同样的借贷模式。这些调度控制决定经授权的工作负载何时获得算力，并不授予 namespace 或数据访问权限。</li></ul>
+<p>若需要在集群内实现更强隔离，可在适当场合使用专属节点或节点组以及准入控制（admission controls）。当法律、监管或安全要求硬性规定基础设施隔离时，使用独立集群或独立账户。跨账户的消费访问可以保留账户级所有权，而无需复制中央 SageMaker HyperPod 集群。在容量账户内部，使用 <a href="https://docs.aws.amazon.com/sagemaker-unified-studio/latest/adminguide/custom.html">project profiles</a> 和 <a href="https://docs.aws.amazon.com/sagemaker-unified-studio/latest/adminguide/domain-units.html">domain units</a> 配合项目授权策略，来委派项目的创建与所有权。</p>
+<p>下图展示了集中式容量管理，并配以租户级的工作负载、身份、数据、网络与可见性控制。</p>
+<p>图 2：集中式的 SageMaker HyperPod 容量。集群与调度器保留在一个容量账户中，每个租户获得各自的工作负载、身份、数据、网络与 task-visibility 控制；硬性隔离需求使用专属基础设施。</p>
+<p>图 3 展示了当 SageMaker Unified Studio 向项目成员呈现经批准的 SageMaker HyperPod 算力时，这些边界如何衔接。</p>
+<p>图 3：推荐的 SageMaker HyperPod 管理模式。SageMaker Unified Studio 治理协作上下文，而集群身份、工作负载授权、调度器策略与运维控制保持独立。</p>
+<h2>判断 SageMaker Unified Studio 何时是合适的管理体验</h2>
+<p>借助 SageMaker Unified Studio，已经在项目中工作的机器学习团队可以沿一条经批准的路径使用共享的 SageMaker HyperPod 算力。成员可以找到已连接的集群、查看状态与元数据、检视受支持的任务与指标，并直接进入 JupyterLab 工作流，而不必再维护单独的基础设施清单。</p>
+<p>这种体验并不取代集群管理。下表说明各角色应如何把 SageMaker Unified Studio 与面向具体服务的界面配合使用。</p>
+<table><thead><tr><th><strong>角色</strong></th><th><strong>用 SageMaker Unified Studio 做什么</strong></th><th><strong>继续使用专用工具做什么</strong></th></tr></thead><tbody><tr><td>Domain/基础设施管理员</td><td>domain units、项目创建策略、project profiles、成员策略与账户放置</td><td>组织级控制、账户开通与基础设施自动化</td></tr><tr><td>SageMaker HyperPod 集群管理员</td><td>呈现经批准的集群连接，查看集群、任务、设置与元数据视图</td><td>集群创建、更新、resiliency 配置、add-ons、EKS 或 Slurm 管理以及事故响应</td></tr><tr><td>项目所有者</td><td>管理项目成员，为用户提供商定的项目上下文以使用经批准的算力</td><td>提出基础设施变更请求，审批业务专属的访问需求</td></tr><tr><td>ML 工程师或数据科学家</td><td>查找经批准的算力、查看工作负载状态、打开 JupyterLab 工作流</td><td>按需通过 SageMaker <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/getting-started-hyperpod-training-deploying-models.html">HyperPod CLI</a>、<code>kubectl</code> 或 Slurm 工具提交和管理细粒度工作负载</td></tr></tbody></table>
+<p>当项目成员、数据访问、开发工具和算力需要一个共同上下文时，使用 SageMaker Unified Studio。对于集群变更与可复用自动化，继续使用 SageMaker AI API、infrastructure as code 与编排工具。参考实现与集成请参阅 <a href="https://awslabs.github.io/ai-on-sagemaker-hyperpod">AI on SageMaker HyperPod</a> 站点。</p>
+<h2>在连接集群之前先做基础设施决策</h2>
+<p>在批准一个连接之前，先书面明确容量账户、任何消费账户或数据账户、AWS Region、网络路径、身份、负责人、工作负载边界与隔离要求。如果你需要创建集群的指引，请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-quickstart.html">Amazon SageMaker HyperPod 文档</a>或 <a href="https://awslabs.github.io/ai-on-sagemaker-hyperpod">AI on SageMaker HyperPod 站点</a>。</p>
+<p>将管理身份与工作负载身份分离。在创建项目和访问角色时，保留 SageMaker HyperPod 对集群管理员与数据科学家用户的区分。面向项目的角色不应仅因其用户运行工作负载就获得集群生命周期权限。受支持的权限模型请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-prerequisites-iam.html">SageMaker HyperPod 的 AWS Identity and Access Management</a>。</p>
+<p>把网络当作端到端控制来对待。将 Amazon EKS Kubernetes API endpoint 的访问限制在经批准的管理网络路径上，控制 pod 的 ingress 与 egress，并确认项目、连接角色、工作负载角色与集群网络只支持预期的数据路径。编排器专属配置请参阅<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks.html">使用 Amazon EKS 编排 SageMaker HyperPod 集群</a>。</p>
+<p>例如，为 Amazon EKS API endpoint 配置私有访问，只允许来自经批准的管理员或工作负载子网的连接；应用 default-deny 的 Kubernetes <code>NetworkPolicy</code>，并显式放行所需的服务间通信与 egress 路径；在适当场景下为 Amazon S3、Amazon Elastic Container Registry（Amazon ECR）、Amazon CloudWatch 等服务使用 virtual private cloud（VPC）endpoints，并为每个租户配备专属的工作负载角色用于数据访问。</p>
+<p>建立连接契约（connection contract）。连接契约是客户自管的治理记录，例如 wiki 页面、工单、service-catalog 记录，或记录在 infrastructure-as-code 仓库中的文件；它不是平台功能。为每一个经批准的项目到集群的连接记录以下信息：</p>
+<ul><li>业务负责人、运维负责人与成本负责人。</li><li>SageMaker Unified Studio 的 domain unit 与项目。</li><li>集群所在账户、Region、名称与编排器。</li><li>项目角色以及连接所使用的访问角色 Amazon Resource Name（ARN）。</li><li>经批准的工作负载类型与数据分级。</li><li>EKS namespaces 或 Slurm 访问范围。</li><li>调度策略与例外情况的负责人。</li><li>监控、支持与退役（decommissioning）的预期。</li></ul>
+<p>这份契约让评审者可以依据一条记录来评估并批准完整的访问路径。</p>
+<h2>治理身份与任务可见性</h2>
+<p>同时控制「操作」与「可见性」。任务名称、namespaces、资源请求与使用模式若配置不当，可能泄露其他团队的工作信息。</p>
+<p>在项目成员与集群访问上尽量使用组（groups）而非逐个授权。在每个边界上分别审视每个角色，而不是创建一个横跨 domain、项目、集群与工作负载策略的宽泛角色。</p>
+<p>下面的工作流展示如何把「用户能看到什么」与「用户能做什么」分离开。</p>
+<p>图 4：治理身份与任务可见性。通过组来分配访问，把每个角色限定在其边界内，限制 task visibility，并把「看见工作」与「对工作采取行动」分离。</p>
+<p>在为用户开通之前先审视默认的任务可见性。<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-studio-tabs.html">SageMaker AI Studio 中的 SageMaker HyperPod 文档</a>说明：默认情况下，SageMaker AI Studio 用户可以看见所有 Amazon EKS 集群任务；对于 Slurm 集群，每个 SageMaker AI Studio 用户都可以查看、管理并与可用任务交互。在接入多个团队之前先配置 task-view 限制：Amazon EKS 参见<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-studio-setup-eks.html#sagemaker-hyperpod-studio-setup-eks-restrict-tasks-view">为 EKS 集群在 Studio 中限制 task view</a>，Slurm 参见<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-studio-setup-slurm.html#sagemaker-hyperpod-studio-setup-slurm-restrict-tasks-view">为 Slurm 集群在 Studio 中限制 task view</a>。项目成员身份不是集群级的安全边界。</p>
+<p>对于 Amazon EKS 集群，把每个团队映射到经批准的 namespace 与 RBAC 权限，并把每个工作负载的 service account 映射到租户专属的 IAM 角色。对于跨账户数据访问，将 service account 与容量（集群）账户中的一个 EKS Pod Identity 角色关联，并在该关联上设置目标 IAM 角色（<code>targetRoleArn</code>）。随后 EKS Pod Identity 会自动完成跨账户的角色代入，应用代码无需调用 <code>AssumeRole</code>。目标角色位于消费账户或数据账户中。把只读可见性与创建、更新或删除工作负载的权限分开。对于 Slurm 集群，定义等价的用户、账户、partition、文件系统与任务可见性控制。</p>
+<p>例如，下面的 Kubernetes RBAC Role 只授予某团队对自己 namespace 内 jobs 的只读访问。创建或删除工作负载需要另一个独立角色，从而把「看见」与「行动」分离。</p>
+<pre><code>apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: team-research
+  name: research-job-viewer
+rules:
+  - apiGroups: [&quot;batch&quot;]
+    resources: [&quot;jobs&quot;]
+    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
+  - apiGroups: [&quot;kubeflow.org&quot;]
+    resources: [&quot;pytorchjobs&quot;]
+    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]</code></pre>
+<h2>把业务优先级转化为调度策略</h2>
+<p>对于 Amazon EKS 集群，只有在身份与工作负载访问控制就位之后，才应用任务治理。</p>
+<p>下图把其中的两个决策分离开来。</p>
+<p>图 5：把授权与调度策略分开。EKS RBAC 或 Slurm ACL 决定用户能否提交工作负载；针对 Amazon EKS 的 SageMaker HyperPod 任务治理或 Slurm 原生调度控制决定其何时获得算力。</p>
+<p>书面明确保障容量与共享容量、priority classes，以及某团队能否使用另一团队闲置的配额，并为每一条例外指派负责人。任务治理同样适用于 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-studio-tabs.html">SageMaker HyperPod spaces</a>（直接运行在集群上的自包含 JupyterLab 或 Code Editor 环境），因此把这些交互式开发工作负载也纳入分配策略。</p>
+<p>例如，在一个 Amazon EKS 集群上，你可以给生产训练团队 60% 的保障配额并配高 priority class，让研究团队以较低优先级借用闲置容量，并在生产团队提交作业时允许抢占这部分借来的容量。指派一位负责人审批对该策略的任何例外，避免一次性请求悄然变成常态。</p>
+<p>把授权与调度策略保持分离。EKS RBAC 或 Slurm ACL 决定用户能否提交工作负载；针对 Amazon EKS 的 SageMaker HyperPod 任务治理，或 Slurm 原生调度控制，决定这个已授权的工作负载何时获得算力。把调度器配额当访问控制用，或把授权控制当调度策略用，都会导致行为不清晰，并让事故更难诊断。</p>
+<p>博文<a href="https://aws.amazon.com/blogs/machine-learning/best-practices-for-amazon-sagemaker-hyperpod-task-governance/">《Amazon SageMaker HyperPod 任务治理最佳实践》</a>讲解了 fair-share 权重、配额、借贷、priority classes 以及常见的分配场景。对于 Amazon EKS 集群，在定义分配策略时采用这些模式；对于 Slurm 集群，使用前文描述的原生调度控制。</p>
+<h2>把可观测性作为治理反馈环</h2>
+<p>借助 SageMaker Unified Studio，你可以查看 SageMaker HyperPod 集群的任务、指标、设置与元数据详情。对于 Amazon EKS 集群，任务治理指标包括硬件、团队与任务视图。这些视图帮助你对照策略意图与实际消耗。</p>
+<p>把可观测性当作一个循环，如下图所示。</p>
+<p>图 6：作为治理反馈环的可观测性。监控信号、将其与策略意图对比、决定响应、调整策略与分配，并为每个信号指派负责人和响应方式。</p>
+<p>为你监控的每个信号定义负责人和响应动作。下面的示例把看板数据转化为管理决策。</p>
+<table><thead><tr><th><strong>信号</strong></th><th><strong>管理决策</strong></th></tr></thead><tbody><tr><td>集群容量与加速器利用率</td><td>判断低利用率是暂时的、策略导致的，还是工作负载约束造成的</td></tr><tr><td>团队配额与利用率</td><td>复审预留与共享容量是否仍反映业务需求</td></tr><tr><td>任务运行时长与排队时长</td><td>排查优先级策略、工作负载规模或容量争用</td></tr><tr><td>Pending 与被抢占的任务</td><td>确认调度器结果与已批准的优先级模型一致</td></tr><tr><td>节点健康与恢复事件</td><td>启动集群事故流程并验证恢复目标</td></tr></tbody></table>
+<p>对于 Amazon EKS 集群，任务表格展示 Kubeflow 任务（PyTorch、MPI 与 TensorFlow），默认显示 PyTorch 任务；通过其他机制提交的工作负载可能不出现在其中。对于 Slurm 集群，任务表格展示当前调度队列中的作业，而 Slurm accounting 通过 <code>sacct</code> 等工具提供历史作业数据。明确你从哪里获取历史任务数据、审计证据与事故详情。</p>
+<p>文档中的指标视图需要 Amazon CloudWatch Observability EKS add-on。该 add-on 有自身的前提条件：版本 2.4.0 或更高，并且把 <code>CloudWatchAgentServerPolicy</code> IAM 策略附加到 Kubernetes worker 节点角色。提供任务治理视图的 Kueue 指标在免费层之后可能产生 CloudWatch 指标费用。当前的配置与定价注意事项请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-operate-console-ui-governance-metrics.html">SageMaker HyperPod dashboard 文档</a>。</p>
+<h2>在连接的整个生命周期内持续复审</h2>
+<p>为每个连接设定复审计划，并针对以下变化定义事件驱动的复审：项目所有权、访问角色、账户或 Region、集群容量、编排器版本、数据分级或监控覆盖的变更。用连接契约记录每一次决策。</p>
+<p>下图展示生命周期的各阶段。</p>
+<p>图 7：连接的生命周期。以留有记录的连接契约批准连接，运行并监控它，按计划及既定事件复审，然后续期或撤销。</p>
+<p>在能减少人工工作的环节自动化清单与证据采集，但把审批权保留给负责任的管理人员。撤销那些不再有业务用途或不再有责任人的连接。</p>
+<h2>结论</h2>
+<p>借助 Amazon SageMaker Unified Studio，机器学习团队可以沿着以项目为中心的路径使用经批准的 SageMaker HyperPod 算力，同时基础设施团队保留对集中集群的控制。从一个非生产集群和一个测试项目开始。在添加成员之前，先配置工作负载身份、namespace 或 Slurm 范围、数据权限、网络策略、task-view 限制，以及针对 Amazon EKS 的任务治理或针对 Slurm 的原生调度控制。安装 Amazon CloudWatch Observability EKS add-on，让指标视图有数据呈现，并在连接契约中记录完整的审批。为经批准的消费账户使用跨账户角色，在需要硬性隔离时使用专属基础设施。实施步骤请遵循 <a href="https://docs.aws.amazon.com/sagemaker-unified-studio/latest/userguide/sagemaker-hyperpods.html">SageMaker HyperPod 连接流程</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Manage Amazon SageMaker HyperPod Spaces directly from SageMa…</title>
+      <title>直接从 SageMaker Studio 管理 Amazon SageMaker HyperPod 空间</title>
       <link>https://aws.amazon.com/blogs/machine-learning/manage-amazon-sagemaker-hyperpod-spaces-directly-from-sagemaker-studio/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/manage-amazon-sagemaker-hyperpod-spaces-directly-from-sagemaker-studio/</guid>
       <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Manage Amazon SageMaker HyperPod Spaces directly from SageMaker Studio</description>
+      <description>原文标题：Manage Amazon SageMaker HyperPod Spaces directly from SageMaker Studio</description>
+      <content:encoded><![CDATA[<h1>从 SageMaker Studio 直接管理 Amazon SageMaker HyperPod Spaces</h1>
+<p>我们最近推出了新功能：可以直接从 Amazon SageMaker Studio UI 在 Amazon SageMaker HyperPod EKS 集群上创建和管理 Amazon SageMaker Spaces。数据科学家和机器学习 (ML) 工程师现在可以在 HyperPod 集群上启动 JupyterLab 和 Code Editor 环境，无需离开浏览器或使用命令行工具，把从获取集群访问到进入高效开发的时间缩短到几次点击。</p>
+<h2>背景</h2>
+<p><a href="https://aws.amazon.com/sagemaker/ai/hyperpod/?trk=48c755df-3170-4fc9-bb40-e7f04d88494d&amp;sc_channel=ps">Amazon SageMaker HyperPod</a> 为 foundation model (FM) 的大规模训练与推理提供专用基础设施。借助 <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (Amazon EKS)</a> 编排，团队可以在数百个加速器上运行分布式训练作业，并享有内置的容错能力和自动故障恢复。除了训练，HyperPod 还把这套 EKS 编排的基础设施延伸到推理侧，为数百亿参数的 foundation model 提供低延迟、可扩展的推理服务。</p>
+<p>今年早些时候，我们推出了 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-cluster-ide.html">面向 HyperPod 的 Amazon SageMaker Spaces</a>，这是一个 ML 开发者可以用来在 HyperPod EKS 集群上直接创建交互式开发环境的 add-on。组织随后可以在同一基础设施上，让交互式负载与训练作业和模型部署并行运行，从而最大化 GPU 投资，并支持 fractional GPU 分配。</p>
+<p>此前，创建和管理 Spaces 主要依赖 <a href="https://github.com/aws/sagemaker-hyperpod-cli">HyperPod CLI</a> 或 <code>kubectl</code> 命令。虽然这种方式为基础设施管理员提供了强大而细粒度的控制，但偏好可视化界面的数据科学家现在可以使用这一新的 SageMaker Studio 能力，绕过命令行工具，全心投入模型开发。</p>
+<h2>新增内容</h2>
+<p>借助这一新能力，数据科学家现在可以直接在 SageMaker Studio 中创建、配置、启动、停止和打开 Spaces。HyperPod 集群详情页上新增的 IDE and Notebooks 标签页提供了完整的 Space 管理用户界面，日常的 Space 操作不再需要 CLI 工具。</p>
+<p>通过 Studio 可用的关键能力包括：</p>
+<ul><li>通过向导式表单创建 Spaces，可配置计算、命名空间、存储、用于计算配额管理的 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-operate-console-ui-governance.html">HyperPod Task Governance</a> 以及镜像设置。</li><li>在可搜索的表格中查看所有 Spaces，展示名称、应用类型、状态、访问类型、存储、GPU 和 vCPU 分配。</li><li>单次选择即可启动和停止 Spaces，在 Spaces 不使用时释放计算资源。</li><li>直接在浏览器中打开 Spaces（JupyterLab 或 Code Editor），或通过你选择的远程 IDE（例如 VS Code）连接。</li></ul>
+<p>图 1：HyperPod 集群详情页上的 IDE and Notebooks 标签页，展示所有 Spaces 及其状态、计算分配，以及停止、打开或在远程 IDE 中打开的快捷操作</p>
+<h2>开始使用</h2>
+<p>设置涉及两个角色：<em>管理员</em>负责准备集群，<em>数据科学家</em>负责创建并打开 Spaces。以下各小节分别说明。</p>
+<h3>面向管理员</h3>
+<p>管理员从其 SageMaker HyperPod EKS 集群的 IDE and Notebooks 标签页，使用 <strong>Quick install</strong>（一键安装、优化默认配置）或 <strong>Custom install</strong> 选项（配置 web UI 访问时必需），在其 HyperPod EKS 集群上<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/operator-install.html">安装 SageMaker Spaces add-on</a>。安装完成后，管理员可以配置命名空间、创建 Space 模板，并通过 EKS access entries 管理访问权限。</p>
+<p>以下是管理员必须完成的一次性设置：</p>
+<ul><li><strong>安装 Spaces add-on：</strong> 从 Amazon SageMaker AI 控制台打开你的 HyperPod 集群，进入 <strong>IDE and Notebooks</strong> 标签页，选择 <strong>Quick install</strong> 或 <strong>Custom install</strong>（启用 web 浏览器访问必须使用 Custom install）。完整说明见 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-cluster-ide.html">AWS 文档</a>。</li><li><strong>配置 EKS access entries：</strong> 将三个托管策略 <code>AmazonSagemakerHyperpodSpacePolicy</code>、<code>AmazonSagemakerHyperpodUserClusterPolicy</code> 和 <code>AmazonSagemakerHyperpodSpaceTemplatePolicy</code> 附加到你的数据科学家使用的 AWS Identity and Access Management (IAM) 角色上。</li><li><strong>在 Studio domain 上启用按用户身份传播：</strong> 如果你的 Studio domain 创建于 SageMaker Studio 与 HyperPod Spaces 集成推出之前，你必须启用向 HyperPod EKS 集群的按用户身份传播。这样可以确保每个 Studio 用户在集群上的操作（创建、停止或删除 Space）在 EKS access entries 和 AWS CloudTrail 中都归因到其用户 profile。此外，这一身份映射会强制实施严格的 Space 归属：它记录哪个用户创建了该环境，并决定该 Space 是私有的还是在整个 SageMaker Studio domain 内共享。</li></ul>
+<blockquote>对每个 Studio domain 运行一次以下命令：</blockquote>
+<pre><code>aws sagemaker update-domain \
+    --domain-id $DOMAIN_ID \
+    --default-user-settings '{
+  &quot;StudioWebPortalSettings&quot;: {
+    &quot;ExecutionRoleSessionNameMode&quot;: &quot;USER_IDENTITY&quot;
+  }
+}'</code></pre>
+<p>更新 domain 之后，验证以下命令返回 “USER_IDENTITY”：</p>
+<pre><code>aws sagemaker describe-domain --domain-id $DOMAIN_ID \
+    --query 'DefaultUserSettings.StudioWebPortalSettings.ExecutionRoleSessionNameMode'</code></pre>
+<p><em>现有正在运行的应用不受影响。用户会在下次登录时采用新设置。</em></p>
+<ul><li><strong>可选：开启额外能力：</strong> 从下方的 Optional capabilities（可选能力）表中启用任意能力。</li></ul>
+<h3>面向数据科学家</h3>
+<p>add-on 安装完成且访问配置就绪后，数据科学家在 SageMaker Studio 中通过 Compute <strong>→</strong> HyperPod 导航到其 HyperPod 集群，选择 IDE and Notebooks 标签页，即可看到 Spaces 管理界面（见图 1）。关于创建和管理 Spaces 的更多说明：<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/create-manage-spaces.html">在 HyperPod 上创建和管理 Spaces</a>。</p>
+<p>当 Space 状态显示为 <strong>Running</strong>（在未预热的集群上通常需要几分钟，启用 over-provisioning 后约 30–40 秒）后，选择 <strong>Open</strong> 即可在浏览器中启动 JupyterLab 或 Code Editor（图 2 和图 3），或选择 <strong>Open in VS Code</strong>，通过 SSH-over-SSM 从本地编辑器连接（图 4）。</p>
+<p>图 2：通过 web 浏览器访问的 JupyterLab Space，展示带有可用 notebook kernels、控制台和终端访问的 Launcher</p>
+<h4>在 JupyterLab Space 中工作</h4>
+<p>打开 JupyterLab Space 后，你会获得一个完全配置好的开发环境，可以使用：</p>
+<ul><li>配备 ipykernel 的 Python 3 notebooks。</li><li>Glue PySpark 和 Glue Spark 控制台。</li><li>SparkMagic 的 PySpark 和 Spark kernels。</li><li>用于运行命令的终端访问。</li><li>带持久化存储的文件浏览器。</li><li>内置聊天与上下文帮助。</li></ul>
+<p>你的工作会持久保存在挂载的 Amazon Elastic Block Store (Amazon EBS) 卷上，因此可以停止并重启 Spaces 而不会丢失进度。</p>
+<p>图 3：运行在 HyperPod 上的 Code Editor Space，展示带有文件资源管理器、编辑器和集成终端的 VS Code 风格 web 界面</p>
+<h4>在 Code Editor Space 中工作</h4>
+<p>对于偏好浏览器中 VS Code 风格体验的开发者，Code Editor Spaces 提供了一个轻量的 web IDE，具备：</p>
+<ul><li>支持语法高亮和 IntelliSense 的完整文件编辑。</li><li>集成终端，可运行 shell 命令、提交训练作业或与集群资源交互。</li><li>对语言服务器、linter 和 formatter 的扩展支持。</li><li>用于版本控制工作流的 Git 集成。</li><li>直接访问集群文件系统和挂载的 Amazon FSx 卷。</li></ul>
+<p>Code Editor Spaces 非常适合编写和调试训练脚本、管理实验配置以及处理代码仓库——全程无需离开浏览器。</p>
+<p>图 4：远程连接到 HyperPod Space 的本地 VS Code 实例，展示远程连接指示器以及运行在集群算力上的完整 IDE 能力</p>
+<h4>远程 IDE 连接（VS Code）</h4>
+<p>在 Spaces 表格中选择 Open in VS Code，即可把你本地的 Visual Studio Code 连接到运行在 HyperPod 上的 Space。其内部使用 SSH-over-SSM 隧道，提供安全连接，无需你管理 SSH 密钥或暴露 22 端口。</p>
+<p>你可以在 HyperPod 集群算力上执行代码，同时拥有本地 VS Code 环境的全部能力，包括扩展、主题和快捷键绑定。</p>
+<p>你也可以使用 AWS Toolkit for Visual Studio Code 进行连接，它会在 SageMaker AI &gt; HyperPod 下列出你的 Spaces，你可以直接从该工具面板启动、停止和连接 Spaces。</p>
+<h3>可选能力</h3>
+<p>以下每一项能力都是可选且可组合的。选择开启适合团队需求的任意组合即可。</p>
+<table><thead><tr><th><strong>能力</strong></th><th><strong>说明</strong></th></tr></thead><tbody><tr><td>Web 浏览器访问</td><td>通过 AWS Application Load Balancer 和基于 Amazon Route 53 的自定义 DNS，把浏览器流量路由到 Spaces。远程 IDE（经 SSM 的 VS Code）访问不需要此项。</td></tr><tr><td>Space 模板</td><td>由管理员定义的模板，预先配置计算、镜像、存储和生命周期脚本，保证各团队的 Space 配置一致。</td></tr><tr><td>Task Governance</td><td>面向多租户集群，通过 Kueue 提供命名空间级计算配额、队列和基于优先级的准入。</td></tr><tr><td>Karpenter autoscaling</td><td>根据 Space 需求动态扩缩节点。</td></tr><tr><td>Karpenter over-provisioning</td><td>预先预热节点并预拉取镜像，把 Space 启动时间从 5–7 分钟降到约 30–40 秒。见下文的 Pro tip 小节。</td></tr><tr><td>持久卷（EFS / FSx）</td><td>跨 Spaces 持久保留的共享用户目录和团队数据集。</td></tr><tr><td>自定义镜像（ECR）</td><td>团队专属的运行时和库，封装进托管在 Amazon Elastic Container Registry (Amazon ECR) 的容器镜像中。</td></tr><tr><td>闲置自动关机</td><td>自动终止不活跃的 Spaces，防止计算成本失控。</td></tr><tr><td>NVIDIA MIG</td><td>在 A100/H100 硬件上进行 fractional GPU 分配，实现低成本的交互式负载。</td></tr></tbody></table>
+<h3>Pro tip：用节点 over-provisioning 缩短 Space 启动时间</h3>
+<p>默认情况下，在使用 Karpenter autoscaling 的 HyperPod EKS 集群上，SageMaker Spaces 在 scale-to-zero 集群上首次创建 Space 时会带来 <strong>5–7 分钟的冷启动延迟</strong>，主要耗时在：</p>
+<ul><li>Amazon Elastic Compute cloud (Amazon EC2) 实例启动。</li><li>Kubernetes 节点注册。</li><li>SageMaker Distribution (SMD) 镜像拉取。</li></ul>
+<p>对于延迟敏感的交互式负载（JupyterLab、Code Editor），你可以使用标准的 Kubernetes over-provisioning 模式维持一池<strong>预热、镜像已缓存的节点</strong>。这可把 Space 启动时间从几分钟降到约 <strong>30–40 秒</strong>。</p>
+<h4>工作原理</h4>
+<ul><li>一个低优先级（<code>-1000</code>）的占位 Deployment 在每个预热节点上保留一个 Kubernetes pod。这些 pod 申请的 CPU/内存与真实 Space 相同。</li><li>每个占位 pod 上的 <code>initContainer</code> 会在 Karpenter 供给节点时，把 SageMaker Distribution 镜像预拉取到该节点上。</li><li>当用户创建 Space（默认优先级 <code>0</code>）时，Kubernetes 调度器会抢占占位 pod（优先级 <code>-1000</code>）。随后 Space 在几秒内落到已经预热且镜像已缓存的节点上，无需拉取镜像，也无需等待节点启动。</li><li>Karpenter 在后台为被抢占的占位 pod 供给替换节点。</li></ul>
+<p>了解更多 Pro tip 部署信息：<a href="https://awslabs.github.io/ai-on-sagemaker-hyperpod/docs/category/node-overprovisioning-for-spaces">面向 HyperPod Spaces 的 Overprovisioning</a>。</p>
+<p><strong>已验证的启动延迟</strong>，基于 <code>ml.m5.12xlarge</code>（24 vCPU 可分配、2 vCPU 占位、8 GiB 占位内存），使用约 3.5 GB 的 <code>sagemaker-distribution:latest-cpu</code> SMD 镜像：</p>
+<table><thead><tr><th><strong>路径</strong></th><th><strong>延迟</strong></th></tr></thead><tbody><tr><td>Space 与占位 pod 共存（coexist）</td><td>~14 s</td></tr><tr><td>Space 抢占占位 pod</td><td>~35 s</td></tr><tr><td>冷启动（无预热池）</td><td>5-7 min</td></tr></tbody></table>
+<p><strong>注意：</strong> 以上数字仅为 CPU 场景。GPU Spaces 需要各自申请 <code>nvidia.com/gpu</code> 并预拉取 GPU 镜像的占位 Deployment。否则 GPU 节点会保持冷态，而 GPU 镜像约 10 GB，拉取成本远高于 3.5 GB 的 CPU 镜像。</p>
+<p><strong>注意：</strong> 每个预热节点都会持有一台处于 Running 状态的 EC2 实例。对于按需实例，这意味着保持预热节点持续运行的额外成本。</p>
+<p>关于安装 HyperPod Spaces add-on 和入门的更多信息，请参见 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-cluster-ide.html">AWS 文档</a>。</p>
+<h2>定价</h2>
+<p>配置 SageMaker Spaces add-on 本身不会产生额外费用。你只需为 Spaces 消耗的底层 HyperPod 集群算力付费，以及为用于 SSH-over-SSM 远程连接的 AWS Systems Manager Advanced On-Premises Instance 按小时付费。详情见 <a href="https://aws.amazon.com/systems-manager/pricing/">AWS Systems Manager 定价</a>。</p>
+<p>如果你使用上文所述的 over-provisioning，请注意预热节点会带来额外成本。视实例类型和规格而定，这些节点会保持运行状态，等待为 Spaces 供给资源。</p>
+<h2>结论</h2>
+<p>用 SageMaker Studio 管理 HyperPod Spaces，弥合了数据科学家与高性能计算基础设施之间的鸿沟。团队现在可以在几分钟内从获取集群访问走到运行中的 JupyterLab 或 Code Editor 环境，无需学习 CLI 工具或 Kubernetes 概念。结合 HyperPod Task Governance、fractional GPU 支持和闲置自动关机等特性，组织可以在保持成本控制和资源公平的同时，为共享集群提供自助式访问。</p>
+<p>要开始使用，请在 SageMaker AI 控制台导航到你的 HyperPod EKS 集群并选择 IDE and Notebooks 标签页。更多信息请参见 SageMaker HyperPod Spaces 文档。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Build a voice travel concierge with Amazon Bedrock AgentCore…</title>
+      <title>使用 Amazon Bedrock AgentCore、托管知识库和 Nova Sonic 构建语音旅行礼宾服务</title>
       <link>https://aws.amazon.com/blogs/machine-learning/build-a-voice-travel-concierge-with-amazon-bedrock-agentcore-managed-knowledge-base-and-nova-sonic/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-a-voice-travel-concierge-with-amazon-bedrock-agentcore-managed-knowledge-base-and-nova-sonic/</guid>
       <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Build a voice travel concierge with Amazon Bedrock AgentCore, Managed Knowledge Base and Nova Sonic</description>
+      <description>原文标题：Build a voice travel concierge with Amazon Bedrock AgentCore, Managed Knowledge Base and Nova Sonic</description>
+      <content:encoded><![CDATA[<h1>用 Amazon Bedrock AgentCore、Managed Knowledge Base 和 Nova Sonic 构建语音旅行礼宾</h1>
+<p>航空公司早已有了自己的 App 和网站，旅客在上面查航班、选座位、管理订单，而增加一层自然的语音能力，就能把这些任务变成口头请求。有了这层语音能力，旅客开口说一句话就能换座位或查询延误，不用离开 App，也不用在一屏屏界面里翻找。构建它需要在多个方面做精细的工程。你要双向流式传输音频，并在多轮对话中保持对话脉络的连贯。你还要触达既有的后端系统，又不让 agent 与它们紧耦合；而且要在假期周末前流量激增时弹性扩容。</p>
+<p>本篇将展示如何为航空公司应用添加一个语音旅行礼宾，它构建在三项托管服务之上。<a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 是一个 agentic 平台，让你能以自选的框架和模型，安全、大规模地构建、部署和运营 AI agent。Bedrock 上的 <a href="https://aws.amazon.com/nova/models/">Amazon Nova Sonic</a> 是面向实时语音的 speech-to-speech 模型。<a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock Knowledge Bases</a> 是一项全托管的检索增强生成服务，让回答以你自己的文档为据。旅客开口说话，礼宾就会调出其行程、更换座位、更新餐食偏好、回答政策问题，并在旅客要求时转接真人客服。</p>
+<p>礼宾与既有界面并行运行而非取代它们，旅客可以在同一次会话里在点按与说话之间自由切换。它运行在按需扩缩的服务之上，让你把精力花在体验上而不是基础设施上。这个 AI 层对接的是一个使用合成数据的示例航空后端，当你把这套模式适配到自己的系统时，它能加速你的落地实现。项目按模块拆分，你可以复用与自己后端契合的部分，并把它们作为工具（tools）暴露给 agent。</p>
+<p>你将学会如何做以下事情：</p>
+<ul><li>使用 <a href="https://aws.amazon.com/cdk/">AWS Cloud Development Kit (AWS CDK)</a> 在 AWS 上部署一个语音 AI 礼宾。</li><li>用 <a href="https://strandsagents.com/">Strands Agents</a> 框架和 <a href="https://aws.amazon.com/about-aws/whats-new/2026/10/amazon-nova-2.5-sonic/">Amazon Nova 2.5 Sonic</a> 构建一个具备实时语音能力的 agent，托管在 AgentCore runtime 上——Amazon Bedrock AgentCore 框架的一项能力。</li><li>通过 AgentCore Gateway（Amazon Bedrock AgentCore 的一项能力），用 <a href="https://modelcontextprotocol.io/docs/getting-started/intro">Model Context Protocol (MCP)</a> 将 agent 连接到后端服务。</li><li>用 Amazon Bedrock Knowledge Bases 回答航空政策问题。</li><li>把旅客转接给真人客服，并附上一个参考编号和预计等待时长。</li></ul>
+<h2>方案总览</h2>
+<p>这套架构把前端、AI agent 和后端服务分离为彼此独立的层，让每一层都能独立开发和扩展。MCP 是一个把 AI 应用连接到外部工具与数据的开放标准。它在 agent 与后端之间传递标准化消息，使两者保持松耦合。</p>
+<p>该方案部署了以下服务。</p>
+<ul><li><a href="https://aws.amazon.com/cognito/">Amazon Cognito</a> 负责用户认证，并为签名 API 访问签发临时 AWS 凭证。</li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore runtime</a> 托管该 agent，每个会话都有 microVM 隔离。</li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html">Amazon Bedrock AgentCore Gateway</a> 把后端 endpoint 暴露为可发现的 MCP 工具。</li><li><a href="https://aws.amazon.com/api-gateway/">Amazon API Gateway</a> 以后端形式发布 <a href="https://aws.amazon.com/what-is/restful-api/">REST</a> endpoint，并采用 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 授权。</li><li><a href="https://aws.amazon.com/lambda/">AWS Lambda</a> 运行行程、座位图、旅客信息更新、航班状态、常旅客、政策查询与升级转接的业务逻辑。</li><li><a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a> 存储客户档案、订票、旅客、座位图、购买历史、偏好、对话记录与航班数据。</li><li><a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock Knowledge Bases</a> 以你的航司政策文档为依据回答问题，处理政策类提问。</li><li><a href="https://aws.amazon.com/ses/">Amazon Simple Email Service (Amazon SES)</a> 发送邮件通知。</li><li><a href="https://aws.amazon.com/amplify/">AWS Amplify</a> 托管 React 前端。</li></ul>
+<h2>架构</h2>
+<p>下图展示了方案的架构，分为四个部分。</p>
+<p>图 1：横跨后端、AgentCore Gateway、AgentCore runtime 与前端的端到端架构</p>
+<p><strong>A 部分覆盖后端基础设施。</strong> 五个 CDK stack 部署 DynamoDB 表、Lambda 函数、API Gateway endpoint、Amazon Bedrock Knowledge Bases 和 Amazon Cognito。</p>
+<p><strong>B 部分覆盖 AgentCore Gateway。</strong> 一个 CDK stack 创建采用 MCP 协议的 Amazon Bedrock AgentCore Gateway，把每个后端 endpoint 暴露为 agent 可按名称调用的工具。</p>
+<p><strong>C 部分覆盖 AgentCore runtime。</strong> 两个 CDK stack 开通 runtime 基础设施。Amazon Elastic Container Registry (Amazon ECR) 存放容器镜像，Amazon Simple Storage Service (Amazon S3) 保存源码上传，AWS CodeBuild 构建 ARM64 Docker 镜像。Amazon Bedrock AgentCore runtime 带 WebSocket 支持运行，使用 Strands Agents 框架搭配 Amazon Nova 2.5 Sonic。</p>
+<p><strong>D 部分覆盖前端。</strong> 一个 CDK stack 把 React 应用部署到 AWS Amplify。</p>
+<h2>用户请求流程</h2>
+<ul><li>用户在浏览器或移动设备上打开托管于 AWS Amplify 的 Web 应用。</li><li>用户在登录页输入凭证。Amazon Cognito 对该请求进行认证，返回 JSON Web Tokens (JWTs) 和临时 AWS 凭证。</li><li>前端向 Amazon Bedrock AgentCore 发起一条 SigV4 签名的 WebSocket 连接，开启语音礼宾会话。</li><li>runtime 用 Amazon Cognito 校验 token，并通过 Amazon Bedrock 初始化 Amazon Nova 2.5 Sonic。</li><li>用户说出请求。Amazon Nova 2.5 Sonic 处理音频并触发 tool calls。agent 通过 MCP 调用 AgentCore Gateway 来取航班数据、管理订票、更新旅客偏好，完成工具集成。</li><li>AgentCore Gateway 把请求转发为 REST API 调用发给 Amazon API Gateway，后者将其路由到 AWS Lambda 函数。</li><li>AWS Lambda 函数查询 Amazon DynamoDB 表中的订票、旅客、座位图、常旅客状态与航班信息。邮件通知经由 Amazon SES 发送。</li><li>Amazon Nova 2.5 Sonic 生成结合上下文的语音回答，经 AgentCore runtime 沿 WebSocket 连接流式返回给用户。</li><li>遇到政策类问题，AgentCore Gateway 通过 MCP Knowledge Base 连接器直接查询 Amazon Bedrock Knowledge Bases。知识库把相关政策段落作为引用（citations）返回给 agent。</li><li>当用户要求真人客服时，AWS Lambda 把这次升级转接记录到 Amazon DynamoDB 并返回一个参考编号。随后 AWS Amplify 从用户设备发起呼叫，把用户接通到真人客服。</li></ul>
+<h2>构建与运营</h2>
+<p>下面两个步骤处在实时会话之外，描述该方案如何构建、如何日常运行。</p>
+<ul><li>AWS CDK 用单个脚本部署整个方案。构建过程把 agent 源码上传到 Amazon S3，并触发 AWS CodeBuild 生成容器镜像，镜像存入 Amazon ECR 供 AgentCore runtime 使用。</li><li>Amazon CloudWatch 在各服务间收集日志、指标与告警，AWS Key Management Service (AWS KMS) 对静态数据加密。</li></ul>
+<h2>前置条件</h2>
+<p>开始之前，请确认已具备以下条件。</p>
+<ul><li>一个 <a href="https://signin.aws.amazon.com/signin">AWS 账号</a>。</li><li>在你部署的 AWS Region 的 Amazon Bedrock 中拥有对 Amazon Nova 2.5 Sonic 的模型访问权限。各 Region 的模型可用性请参考 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Supported models by AWS Region in Amazon Bedrock</a>。Amazon Bedrock Knowledge Bases 使用服务托管的 embedding 模型，因此你无需单独申请 embedding 模型访问权限。</li><li><a href="https://nodejs.org/">Node.js</a> 20.x 或更高版本，用于 AWS CDK 和 Lambda 函数。</li><li><a href="https://www.python.org/downloads/">Python</a> 3.12 或更高版本，用于数据填充和测试客户端。</li><li>已配置凭证的 <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html">AWS Command Line Interface (AWS CLI)</a> 2.x。</li><li>已用 <code>npm install -g aws-cdk</code> 安装 <a href="https://docs.aws.amazon.com/cdk/v2/guide/getting-started.html">AWS CDK CLI 2.x</a>，并用 <code>npx cdk bootstrap</code> 完成账号 bootstrap。</li><li>来自 <a href="https://github.com/aws-samples/sample-travel-concierge-with-amazon-bedrock-agentcore-and-nova-sonic">aws-samples GitHub 仓库</a>的配套代码。</li></ul>
+<h2>用 AWS CDK 部署方案</h2>
+<p>整个方案用一个 CDK 脚本即可部署。克隆仓库，配置好 AWS 凭证，运行部署脚本。详细部署步骤见 GitHub 仓库中的 <a href="https://github.com/aws-samples/sample-travel-concierge-with-amazon-bedrock-agentcore-and-nova-sonic">README</a>。</p>
+<h2>示例航空数据模型</h2>
+<p>API Gateway 发布一个带 IAM 授权 endpoint 和 Lambda 集成的 REST API。Amazon DynamoDB 存储示例航空数据模型，提供个位数毫秒级延迟与按需扩缩。数据涵盖客户档案、订票、旅客、座位图、购买历史、偏好、对话记录与航班状态。</p>
+<h2>用知识库回答政策问题</h2>
+<p>旅客会问行李限额、改签费、宠物托运和常旅客条款。该方案通过 Amazon Bedrock Knowledge Bases 使用 <a href="https://aws.amazon.com/what-is/retrieval-augmented-generation/">Retrieval Augmented Generation (RAG)</a> 回答这些问题，让回答以你的航司政策文档为依据。仓库自带示例政策文档，覆盖行李、取消与退款、改签与重新预订、舱位规则、常旅客条款、宠物托运、特殊协助与升舱。</p>
+<p>你把文档上传到 Amazon S3，然后<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-managed-create.html">一次性创建知识库</a>。此后 Amazon Bedrock 处理其余一切，包括 embedding、分块、索引、存储与检索。存储运行在 Amazon S3 Vectors（Amazon S3 的一项能力）之上。Smart Parsing 对源 PDF 做预处理，让表格和结构化版式能被准确检索。当政策文档更新时，你同步一下知识库，新内容立即可用，无需重新部署任何管道。</p>
+<p>通过 AgentCore Gateway 把知识库连到 agent 非常直接。你把知识库添加为 Connectors target，选择标准检索或 agentic 检索，Gateway 就把它与你的后端 API 工具并列，暴露为一个具名 MCP 工具。agent 随后在运行时发现它并按名称调用，无需编写自定义 Lambda 或检索代码。设置步骤参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-gateway-target.html">Add a knowledge base as a gateway target</a>。</p>
+<p>要使用你自己的政策，把你的 PDF 或文本文件放进政策文档文件夹，然后重新部署知识库 stack。</p>
+<h2>用 Amazon Bedrock AgentCore 做语音 AI 处理</h2>
+<p>每个会话都在 AgentCore runtime 上以托管容器运行，具备 microVM 隔离，即使高负载下也能让各旅客的对话彼此隔离。AgentCore 提供自动扩缩、内建监控和会话路由。</p>
+<p>生产部署建议加上 <a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a>，过滤 prompt injection 尝试并校验回答的 grounded 程度。本方案中的 confirm-before-write 模式会在做出变更前请旅客确认。这一模式，加上可把回答追溯到源文档的知识库引用，已经提供了负责任 AI 实践的基线。</p>
+<p>agent 使用 <a href="https://strandsagents.com/docs/user-guide/concepts/bidirectional-streaming/agent/">Strands BidiAgents</a> 框架定义 system prompt、工具与对话流程。Amazon Nova 2.5 Sonic 为礼宾带来以下能力。</p>
+<ul><li>覆盖各种口音的语音识别，以及对背景噪声的鲁棒性。</li><li>能适配旅客语气的语音回答。</li><li>低延迟的双向流式传输。</li><li>异步 tool calling：并行取数据或发起 tool calls 而不中断对话。</li><li>延迟掩盖（latency masking）：在等待工具结果时先生成过渡性的口头回应，让对话保持自然。</li><li>打断（barge-in）与自然的轮换说话。</li><li>跨多轮延续的上下文。</li></ul>
+<p>音频以前端经 WebSocket 到 AgentCore runtime 的 16 kHz PCM 形式流式传输。Amazon Nova 2.5 Sonic 转写语音，agent 挑选合适的工具并通过 MCP 调用。AgentCore Gateway 把每次 MCP 调用翻译为 REST 请求，Lambda 执行逻辑并返回结果，Amazon Nova 2.5 Sonic 再把这些结果融进一句口头回复。</p>
+<h2>Amazon Nova 2.5 Sonic 的新特性</h2>
+<p>本方案使用 <a href="https://aws.amazon.com/about-aws/whats-new/2026/10/amazon-nova-2.5-sonic/">Amazon Nova 2.5 Sonic</a>，一个具备强推理能力、面向实时语音的 speech-to-speech 模型。对于一个要调用后端工具、遵循详细 system prompt 的语音礼宾来说，这种推理能力体现在几个务实的方面：</p>
+<p><strong>更好的 tool calling 与 agentic 任务完成</strong> —— agent 能在多步请求中可靠地选对并串联工具，例如在一次对话中先查出行程、再更换座位。</p>
+<p><strong>强的指令遵循与推理</strong> —— 模型严格贴合 system prompt，包括像逐字符朗读确认码和航班号这样的格式化规则。</p>
+<p><strong>准确的负责任 AI 处理</strong> —— 模型对旅客的真实请求给予有益回应，同时安全地处理不当请求。</p>
+<h2>用户认证</h2>
+<p>该方案使用 Amazon Cognito User Pools 和 Identity Pools 实现基于角色的访问。旅客用用户名和密码登录，获得 JWTs：一个 access token 和一个 ID token。前端拿 ID token 到 Cognito Identity Pool 换取临时 AWS 凭证，由 access key、secret key 和 session token 组成。这些凭证用 Signature Version 4 (SigV4) 对到 AgentCore runtime 的 WebSocket 连接及对 API Gateway 的请求进行签名。只有完成认证的旅客才能访问应用和服务 API。</p>
+<h2>认证与 WebSocket 连接流程</h2>
+<p>前端使用临时 AWS 凭证向 AgentCore runtime 发起一条 SigV4 签名的 WebSocket 连接，并发送 access token 用于身份核验。随后浏览器流式传输 16 kHz PCM 音频，并在同一条连接上接收语音回答与工具通知。中间没有服务端代理。</p>
+<p>下图展示了浏览器、Amazon Cognito 与 AgentCore runtime 之间的认证及 WebSocket 连接时序。</p>
+<p>图 2：旅客通过 Amazon Cognito 认证，浏览器向 AgentCore runtime 发起 SigV4 签名的 WebSocket，Amazon Nova 2.5 Sonic 双向流式传输语音</p>
+<h2>语音交互与动态 tool calling</h2>
+<p>旅客提出想查看自己的座位。Nova 2.5 Sonic 转写请求，agent 选定所需工具。它通过 MCP 经 AgentCore Gateway 并行调用这些工具，Gateway 把每次调用翻译为对 API Gateway 的 REST 请求。Lambda 函数查询 DynamoDB 并返回结果，Nova 2.5 Sonic 把一切融合成一段口头回答流式播出。由于 tool calls 是<a href="https://docs.aws.amazon.com/nova/latest/nova2-userguide/sonic-async-tools.html">异步</a>运行的，对话不会在加载数据时卡住。</p>
+<p>下图展示 agent 如何处理口头请求，并通过 AgentCore Gateway 动态调用后端工具：</p>
+<p>图 3：口头请求经由 Nova 2.5 Sonic、AgentCore Gateway、API Gateway、Lambda 和 DynamoDB，语音回答再流式返回</p>
+<h2>从知识库回答政策问题</h2>
+<p>当旅客询问行李政策时，agent 通过 AgentCore Gateway 的原生连接器访问 Amazon Bedrock Knowledge Bases。知识库用托管 reranker 执行 agentic 检索，把相关政策段落作为引用返回。Nova 2.5 Sonic 组织好答案并口头播报给旅客。</p>
+<p>下图展示 agent 通过从 Amazon Bedrock Knowledge Bases 检索有据可依的段落来回答政策问题：</p>
+<p>图 4：政策问题由 Amazon Bedrock Knowledge Bases 回答，并口头播报给旅客</p>
+<h2>升级转接真人客服</h2>
+<p>当礼宾无法满足请求、或旅客主动要求时，礼宾会把旅客转交给真人。旅客确认后，agent 调用 EscalateToAgent 工具。Lambda 把这次转接记录到 DynamoDB，返回一个参考编号和预计等待时长。agent 告知该参考编号，Amplify 前端随后拨打支持热线。这个示例不包含呼叫中心应用，因此接通真人取决于你配置的支持号码。</p>
+<p>下图展示旅客请求真人客服时的升级转接流程：</p>
+<p>图 5：agent 把转接记录到 DynamoDB、告知参考编号，前端拨打真人客服的呼叫</p>
+<h2>礼宾演示走查</h2>
+<p>在浏览器打开 Amplify URL，用 AppUser 凭证登录。点按麦克风按钮开始语音对话。agent 会叫出你的名字打招呼，并在后台调出你的行程。之后你可以自然地开口换座位、查延误、看政策，或要求转真人客服。下面的视频展示了一次从打招呼到升级转接的完整会话。</p>
+<p>整段对话全程免动手，只靠一条 WebSocket 连接完成。agent 在做任何变更前都会先确认。它逐字符念出航班号，确保听得清楚；它在后台调用后端工具，所以没有明显延迟。</p>
+<h2>清理</h2>
+<p>要停止继续产生费用，请移除已部署的资源。先预览删除内容，再执行清理。</p>
+<pre><code>./cleanup-all.sh --dry-run
+./cleanup-all.sh</code></pre>
+<p>该脚本按逆序销毁资源：先前端，然后 AgentCore runtime、AgentCore Gateway，最后是后端基础设施。</p>
+<h2>结论</h2>
+<p>本篇展示了如何在 AWS 上构建语音旅行礼宾。它用 Amazon Cognito 做认证，Amazon Bedrock AgentCore 做 agent 托管，API Gateway 和 Lambda 承载业务逻辑，DynamoDB 做存储，Amazon Bedrock Knowledge Bases 回答政策问题。分层设计把前端、agent 和后端分离，各自独立开发和扩展。礼宾通过 MCP 工具管理行程、换座、餐食偏好、航班状态、常旅客问题、政策查询和真人客服升级转接。Amazon Nova 2.5 Sonic 带来低延迟语音、并行 tool calling 和自然的打断处理。按量计费与自动扩缩让成本与流量同步，而借助 MCP 集成，你可以新增一个 Lambda 函数而完全不碰 agent 代码。要开始使用，请访问 <a href="https://github.com/aws-samples/sample-travel-concierge-with-amazon-bedrock-agentcore-and-nova-sonic">GitHub 上的方案仓库</a>，并按你自己的航空系统做适配。</p>
+<h2>更多资源</h2>
+<ul><li><a href="https://docs.aws.amazon.com/nova/latest/userguide/speech.html">Using the Amazon Nova Sonic Speech-to-Speech model</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agentcore-get-started-toolkit.html">Getting started with Amazon Bedrock AgentCore</a></li><li><a href="https://modelcontextprotocol.io/">Model Context Protocol specification</a></li><li><a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock Knowledge Bases</a></li></ul>
+<h2>作者简介</h2>]]></content:encoded>
     </item>
     <item>
       <title>在 Amazon Bedrock 上推出 GLM 5.3</title>
@@ -3860,77 +4117,6 @@ channel with a link.</code></pre>
 <h2>后续步骤</h2>
 <p>准备好继续构建你的 prompt 工程实践了吗？这里是去处：</p>
 <ul><li>阅读第 1 部分——<a href="https://aws.amazon.com/blogs/machine-learning/prompt-engineering-fundamentals-for-amazon-quick/">Amazon Quick 的 prompt 工程基础</a> 涵盖贯穿本文所引用的核心原则和 CRISPE 框架。</li><li>探索 Amazon Quick——访问 <a href="https://aws.amazon.com/quick/">Amazon Quick 服务页面</a> 获取所有能力概览。</li><li>阅读文档——<a href="https://docs.aws.amazon.com/quick/">Amazon Quick 开发者文档</a> 涵盖 prompt 配置、flow 创作，以及动作集成。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>用 Amazon Quick 与 Bedrock AgentCore 搭一个 AI 合同智能平台</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/building-an-ai-powered-contract-intelligence-platform-with-amazon-quick-and-amazon-bedrock-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/building-an-ai-powered-contract-intelligence-platform-with-amazon-quick-and-amazon-bedrock-agentcore/</guid>
-      <pubDate>Tue, 29 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Building an AI-powered contract intelligence platform with Amazon Quick and Amazon Bedrock AgentCore</description>
-      <content:encoded><![CDATA[<p>你是一位采购总监，负责数百乃至数千份供应商合约。每一份都塞满了关键数据：合约金额、到期日、签署状态和主要联系人。由于这些信息锁在 PDF 里，你和你的团队要花数小时人工提取、维护电子表格，并回答同样的那些反复出现的问题：“我们在哪家供应商身上花得最多？”或“哪些合约即将到期？”</p>
-<p>于是你求助于 AI 聊天工具和企业问答方案。你上传一份合约、用自然语言提问，对于单个文档、甚至是一小把，它确实工作得很好。真正的挑战在规模化时、在跨数百份合约时才显现。</p>
-<p>这些工具大多依赖一种叫检索增强生成（RAG）的技术。RAG 把长文本切成块（chunk）并逐个索引。搜索时，RAG 只检索与问题最相关的前 k 个文本块，这一方法更广为人知的名字是语义搜索。当答案就在一个地方时，这没问题。但当一个问题横跨每一份合约——比如总敞口或即将到来的续约——语义搜索就力不从心了。答案需要跨整个数据集做聚合，而不只是几个块。更好的 prompt 修不好这个，另一种架构才行。</p>
-<p>在本文中，我们分享一个在 AWS 上的合约智能平台背后的架构。它用 AI 智能体提取合约数据、用多模型方法验证准确性，并通过嵌入式分析和自然语言查询提供即时答案。一切都在一个 Web 应用里运行。</p>
-<h1>挑战：当 AI 聊天工具触及上限</h1>
-<p>假设你的组合里有 250 份供应商合约，而领导层反复问同样四个问题：</p>
-<ul><li>整个组合的合约总额。</li><li>哪些合约已经过期。</li><li>组合中最贵的一笔协议。</li><li>最近签署的一笔交易。</li></ul>
-<p>这些都是基本问题，但答案被埋没了。你的 250 份合约每份长达 10–20 页，也就是多达 5,000 页非结构化数据。要回答这些问题，一名分析师逐个打开 PDF、搜索那些重要字段、把值复制进电子表格，然后重复这一过程 250 次。在一份新合约到来之前，这就是超过一周的工作量才能清完积压。领导层每一个追问都意味着又一轮过滤和分析。每一轮都有基于陈旧数据工作或在新数据上破坏硬编码公式的风险。</p>
-<p>于是你把整个组合上传到一个领先的 AI 聊天工具，问它总金额。答案来得很快、很自信，而且是错的。</p>
-<h2>RAG 适合什么，何时需要聚合</h2>
-<p>那个错误答案不是偶然。它被烤进了这些工具的构建方式里。在内部，它们把每个文档切成向量并存进一个知识库。当你问一个问题时，它们拉回与之最匹配的前 k 个块，然后只用那些块作为上下文构建答案。</p>
-<p>对于一个针对性查找，这正是你想要的。问“AnyCompany 合约的付款条款是什么？”，正确的块会带着一个干净的答案浮现。而一个组合级问题是在与这一机制作对，而非配合它。当你问“250 份合约的总金额是多少？”时，系统仍然只返回前 k 个块并只对它们求和。它无法跨组合求和、计数或比较，因为组合从未摆到模型面前。这不是某个工具的缺陷，而是 RAG 本身工作方式的问题。</p>
-<h2>关键洞见</h2>
-<p>答案是有结构的提取，而非更好的检索。要回答跨数百文档的聚合问题，你把关键字段提取进一个数据库，然后用专为聚合而构建的分析工具查询它们。AI 负责大规模的非结构化到结构化转换，数据库负责数学运算。你把原始文档留在知识库里，用于它擅长的单份合约问题。结果是一个能同时回答两类问题的系统：组合级聚合和精确的单文档查找。</p>
-<h1>方案概览</h1>
-<p>该平台是一个在 AWS 上的 React Web 应用，它把一个合约 PDF 组合转成结构化、可查询的数据。AI 智能体从每份合约提取关键字段并独立验证它们，签名分歧由 Amazon Textract 来裁定。用户随后通过嵌入式仪表盘和自然语言聊天智能体来探索结果，既得到组合级答案，也得到单份合约的细节。</p>
-<p>流水线如下工作：</p>
-<ul><li>你把合约 PDF 存进一个 Amazon Simple Storage Service (Amazon S3) 桶，它触发一条自动处理流水线。</li><li>一个 AI 提取智能体（由 Claude Sonnet 系列模型驱动）读取 PDF 并提取八个关键字段，每个都带一个置信度分数。</li><li>一个单独的 AI 验证智能体（由更轻量的 Claude Haiku 模型驱动）独立读取同一份 PDF 并验证提取结果。</li><li>如果两个智能体在签名检测上有分歧，Amazon Textract 用计算机视觉提供一个确定性的决胜裁定。</li><li>系统把验证过的结果存进 Amazon Aurora PostgreSQL。</li><li>用户通过 WebSocket 看到实时流水线状态，并能立即通过嵌入式仪表盘和自然语言聊天智能体查询数据。</li></ul>
-<p>在典型条件下，整条流水线能在几秒内处理一份合约，而无服务器架构旨在帮助伸缩以并行处理大量合约。以下是该方案的参考架构。</p>
-<p>图 1：合约智能流水线，从摄入到查询</p>
-<p><em>注意：本文引用的是方案构建时可用的语言模型。模型选项变化很快，请使用你可用的模型并在依赖结果之前重新测试该方案。</em></p>
-<h1>走进 AI 提取流水线</h1>
-<p>流水线把每份上传的合约转成已验证的结构化数据。它从两个智能体开始——一个提取字段，一个独立检查它们——两者都运行在完全托管的基础设施上。下面一节讲述它们如何协同，以及其背后的模型。</p>
-<h2>用 Strands Agents 在 Amazon Bedrock AgentCore 上做双模型验证</h2>
-<p>提取和验证智能体用 <a href="http://docs.aws.amazon.com/sap/latest/general/rise-agenticai-strands-agent.html">Strands Agent SDK</a> 构建，并部署在 AgentCore runtime 上（Amazon Bedrock AgentCore 的一项能力）。Strands Agent SDK 是一个开源、模型驱动的构建自主智能体的框架。AgentCore 处理无服务器托管、自动伸缩和会话隔离，因此 AI 组件无需你管理任何基础设施。</p>
-<p>用 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html">AgentCore 中的 Policy</a>，你可以定义并强制执行安全控制，作为智能体操作周围的一道保护边界。这安全地处理了敏感数据，如定价条款、财务承诺和供应商关系。基于 Cedar 的策略存在于智能体代码之外，你可以在强制执行前用自动推理来验证它们。智能体和用户只能访问他们被授权查看的合约。</p>
-<p>我们刻意选择了两个不同的基础模型用于提取和验证：</p>
-<ul><li><strong>提取用 Claude Sonnet 4.6：</strong> 高级文档理解能力，原生读取完整 PDF（不需要光学字符识别 OCR 预处理），并为每个字段返回带置信度分数的结构化 JSON。</li><li><strong>验证用 Claude Haiku 4.5：</strong> 快速、经济，并提供一个独立视角。因为它是另一个训练数据不同的模型，它能抓住重跑同一模型会漏掉的错误。</li></ul>
-<p>关于按区域的模型可用性，参考 Amazon Bedrock 中的<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">按 AWS 区域支持的模型</a>。</p>
-<p>这一双模型模式是在合约数据上取得高准确率的关键，那里的错误代价高昂。单个模型可能以高置信度幻觉出一个值。两个独立模型发生分歧，是需要人工审阅的一个强信号。</p>
-<h2>Amazon Textract：签名检测的决胜裁定</h2>
-<p>在测试期间，我们发现了一个颇能说明问题的失败模式。验证模型有时会在根本没有签名时，以 95–100% 的置信度把一份合约标记为“已签署”，与提取器发生分歧——而提取器正确地读出了未签署。该模型误读了空的签名区块，把签名栏（“Signature: __________”）的存在当作了签名的证据。</p>
-<p>我们没有接受这一幻觉，也没有写复杂的 prompt 去绕过它，而是加了 Amazon Textract 基于计算机视觉的签名检测，作为一个架构层的决胜裁定。Amazon Textract 用视觉分析而非语言理解，来检测页面上真实的手写或数字签名。它只在两个模型在 <code>is_signed</code> 字段上有分歧时运行，因此在抓住误报的同时把成本压到最低。</p>
-<p>这阐明了一个重要模式：把大语言模型（LLM）用在其擅长的地方（文档理解、字段提取、上下文理解），把确定性服务用在其吃力的地方（视觉元素检测、精确计数、数学运算）。</p>
-<h2>数据驱动的模型选择</h2>
-<p>流水线的准确率最依赖于处理提取的那个模型，因此我们测试了多种提取器和验证器组合后才定下一个。用我们 20 份合约的样本数据集，我们对全部 8 个字段人工标注（共 160 个值）以建立真值，然后测量每个组合与之匹配的程度。</p>
-<p>这一评测浮现出两个模式。提取是更高影响的步骤。一个更强的提取模型即便配上较轻的验证器也能保持准确率，而一个较轻的提取模型无论配什么验证器都会把准确率拉低。更强的能力并不总值得那个成本。在我们数据上，最强的模型并没有显著优于一个能力足够、成本更低的验证器。</p>
-<p>Amazon Bedrock 给你广泛的模型选择，而正确的组合取决于你的数据。这是在 20 份合约上的一次小型、方向性测试，不是详尽的评测，结果会随合约格式和字段复杂度而不同。我们强烈建议你用自己的基准和成功标准、用构建时你可用的模型跑一次自己的评测。</p>
-<h1>用 Amazon Quick 大规模查询</h1>
-<p>提取并验证数据只解决了问题的一半。人们仍需对它提问，从宽泛的组合总额到单份合约的细节。Amazon Quick 在一个单一界面背后同时连接结构化记录和原始文档，于是任何人都能问任一类问题。在 Amazon Quick 内，Amazon Quick Sight 能力驱动仪表盘，而自然语言查询和聊天处理大白话问题。</p>
-<h2>桥接结构与非结构</h2>
-<p>合约数据现在已提取进一个 PostgreSQL 数据库，我们把它连接到 Amazon Quick，用户可以借可视化仪表盘和自然语言查询来探索它。结果是一个能回答两类问题的单一界面：</p>
-<ul><li><strong>聚合查询</strong>（通过结构化数据和 Topic）：“我们的合约总额是多少？” → “20 份合约，共 5000 万美元。”</li><li><strong>文档专属查询</strong>（通过知识库）：“AnyCompany 合约的付款条款是什么？” → 从源 PDF 里取出的确切条款。</li></ul>
-<h2>嵌入式仪表盘</h2>
-<p>Amazon Quick Sight 仪表盘通过 Amazon Quick Sight Embedding SDK 直接嵌入 React 应用。用户无需离开应用就能获得所需的合约分析，不需要导出或单独的 BI（商业智能）工具。我们直接查询数据而非在 SPICE（Super-fast, Parallel, In-memory Calculation Engine）中缓存并产生额外成本，因此仪表盘始终是实时的。一份合约处理完的那一刻就显示出来。</p>
-<p>仪表盘包含几个视图：</p>
-<ul><li><strong>概览（Overview）：</strong> 关键绩效指标（KPI），如合约总数和总额、一张已签署与未签署的饼图，以及一张带过滤器的完整提取表。</li><li><strong>详情（Details）：</strong> 来自提取器和验证器两个智能体的置信度分数，带逐字段的匹配状态。</li><li><strong>成本（Costs）：</strong> 一个突出无服务器架构的服务级成本分解。</li></ul>
-<h2>聊天智能体：自然语言遇上分析</h2>
-<p>借助 Amazon Quick 中的嵌入式聊天智能体，你可以用自然语言就你的合约组合提问。因为它同时连接一个 Topic（用于结构化数据库查询）和一个知识库（用于文档级搜索），你可以问全谱系的问题：</p>
-<ul><li>“我有多少份合约，总额是多少？” → 20 份合约，5000 万美元。</li><li>“有多少份合约已过期，它们的总额是多少？” → 3 份过期，370 万美元。</li><li>“已签署与未签署各有多少？” → 17 份已签署，3 份未签署。</li><li>“我最该优先处理的 3 份合约是哪些？” → 那些即将到期的未签署合约，按金额排序。</li></ul>
-<p>在一次聊天里同时做结构化分析和文档问答——这就是回报：聚合和文档查找从一个界面得到解答。</p>
-<h2>实时流水线透明化</h2>
-<p>一个改善了用户体验的设计决定是加入基于 WebSocket 的实时状态更新。当合约进入流水线时，React 前端在每个处理阶段发生时就显示它。这把一个不透明的上传-等待体验变成一个透明过程，用户能看到到底是哪个服务在处理他们的合约。它建立信任，并让多模型流程一目了然。</p>
-<h1>成本分析</h1>
-<p>该方案主要是无服务器的，持续成本的大头在 Amazon Quick 许可而非 AI 推理：</p>
-<table><thead><tr><th><strong>服务</strong></th><th><strong>月度成本（每月 1,000 份合约）</strong></th></tr></thead><tbody><tr><td>Amazon Quick（1 个企业用户 + 基础设施费）*</td><td>$290</td></tr><tr><td>Amazon Aurora Serverless v2</td><td>$44</td></tr><tr><td>Amazon Bedrock（Sonnet 提取 + Haiku 验证）</td><td>$12</td></tr><tr><td>Amazon Textract（签名决胜裁定）</td><td>$2</td></tr><tr><td>AWS Lambda、Amazon API Gateway、Amazon S3、Amazon CloudFront</td><td>&lt; $1</td></tr><tr><td><strong>总计</strong></td><td><strong>约 $349/月</strong></td></tr></tbody></table>
-<p>** 定价基于本文发布日期。访问 <a href="https://aws.amazon.com/quick/pricing/">Amazon Quick 定价</a>页面获取最新准确信息。*</p>
-<p>在每份合约 $0.014 的 AI 推理（Amazon Bedrock 加 Amazon Textract）下，可变成本线性扩展，相对于固定的分析许可费用微不足道。与人工工作相比，经济上的节省一目了然。</p>
-<h1>关键要点</h1>
-<ul><li><strong>先提取，再查询：</strong> 对于跨大量文档的聚合用例，把关键字段提取进一个结构化数据库。RAG 擅长在文档里查找信息，数据库擅长跨文档聚合。两者都用。</li><li><strong>用独立性来验证：</strong> 用两个不同的基础模型做提取和验证，能抓住单个模型会漏掉的错误。第二个更便宜的模型的成本，相对于在高风险数据上得到的准确率提升而言微乎其微。</li><li><strong>用确定性服务做确定性任务：</strong> 当 LLM 产生幻觉时（签名检测、精确计数），引入像 Amazon Textract 这样专为该任务打造的服务，而不是加第三个 LLM。把工具匹配到任务。</li><li><strong>让 AI 可见：</strong> 实时流水线状态建立用户信任，并使多智能体架构对利益相关方可感。透明把一个不透明的 AI 流水线变成一个可理解的工作流。</li><li><strong>这一模式在合约之外可扩展：</strong> 那些拥有大量非结构化文档、需要组合级查询的领域都从这一方法中受益：采购、法律合规、保险理赔、HR 入职文档、房地产租约。</li></ul>
-<h1>结论</h1>
-<p>我们从一位对自己的合约都得不到确切答案的总监开始。通过先为结构化提取做设计、并把分析工具与 AI 智能体配对，这一架构把一个难以管理的合约组合变成一个能在几秒内回答问题的组合。无论问题是跨数百份合约的一个总额，还是一份合约里的付款条款，这都成立。模式很直接：用 LLM 做文本分析，用数据库做数值查询。当两个模型以确定性服务也无法裁定的方式分歧时，下一步是把该合约路由给一个人工审阅者，而不是自动解决。这把人类恰当地留在判断最重要的那个环节之中。</p>
-<p>要开始使用这一架构中用到的服务，探索以下资源：</p>
-<ul><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore 文档</a> — 用于大规模部署和管理 AI 智能体。</li><li><a href="https://github.com/strands-agents/samples">Strands Agents SDK</a> — 用于构建多模型智能体工作流。</li><li><a href="https://docs.aws.amazon.com/quick/latest/userguide/embedding.html">Amazon Quick Sight Embedding SDK</a> — 用于把仪表盘和自然语言查询集成进来。</li><li><a href="https://docs.aws.amazon.com/textract/latest/APIAPIReference/HumanLoopConfig.html">Amazon Textract HumanLoopConfig 文档</a> — 用于文档分析和签名检测。</li><li>Amazon Quick <a href="https://docs.aws.amazon.com/quick/latest/userguide/human-in-the-loop.html">人在回路任务中心</a> — 用于在你自动化流程的关键点加入人工判断。</li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>
