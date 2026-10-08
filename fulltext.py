@@ -17,7 +17,7 @@ import sys
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Callable, Iterable, Tuple
-from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
+from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlunsplit
 
 # ---------------------------------------------------------------------------
 # URL 规范化与稳定 slug
@@ -31,6 +31,16 @@ _TRACKING_EXACT = {"fbclid", "gclid", "igshid"}
 def _is_tracking(name: str) -> bool:
     n = name.lower()
     return n in _TRACKING_EXACT or any(n.startswith(p) for p in _TRACKING_PREFIXES)
+
+
+def anchor_fragment(url: str) -> str:
+    """URL 的 fragment（percent-decoded，空则空串）。
+
+    单页变更日志的每条条目都是「同页不同 #锚点」（MiniMax 发布说明、Kimi 发布记录、
+    poolside / inference.net 的博客卡片）。这类页面**抓回来的 HTML 永远是整页**，
+    条目之间的区别只存在于 fragment 里 —— 所以 fragment 是条目身份的一部分。
+    """
+    return unquote(urlsplit(url.strip()).fragment).strip()
 
 
 def normalize_url(url: str) -> str:
@@ -49,14 +59,34 @@ def normalize_url(url: str) -> str:
     return urlunsplit((parts.scheme.lower(), host, path or "/", query, ""))
 
 
+def _identity_url(url: str) -> str:
+    """条目的**身份** URL = `normalize_url` 的结果 + 原 fragment（小写）。
+
+    与 `normalize_url` 的差别只体现在带 fragment 的 URL 上：无 fragment 的条目两者
+    完全一致，slug 与既有语料文件一一对应，不会有任何迁移。
+    """
+    base = normalize_url(url)
+    frag = anchor_fragment(url).lower()
+    return base + "#" + frag if frag else base
+
+
 def url_hash(url: str) -> str:
-    """规范化 URL 的 sha256 前 12 hex；用作文件名 slug（天然按 URL 去重）。"""
-    return hashlib.sha256(normalize_url(url).encode("utf-8")).hexdigest()[:12]
+    """身份 URL 的 sha256 前 12 hex；用作文件名 slug（天然按 URL 去重）。
+
+    **认 fragment**：否则单页变更日志上的 N 条条目会塌成同一个 slug、共用一份
+    「整页」正文 —— 实测 MiniMax 发布说明 21 条条目 → 1 个文件，点开任一条看到的都是
+    整页目录。
+    """
+    return hashlib.sha256(_identity_url(url).encode("utf-8")).hexdigest()[:12]
 
 
 def bodies_key(vendor_id: str, url: str) -> str:
-    """`bodies.json` 的键：厂商 + 规范化 URL，tab 分隔。"""
-    return f"{vendor_id}\t{normalize_url(url)}"
+    """`bodies.json` 的键：厂商 + 身份 URL，tab 分隔。
+
+    同样认 fragment —— 否则同页 N 条锚点条目共用一行 ledger，第二条会被判成
+    「已有正文」直接跳过，正文也就永远只有整页那一份。
+    """
+    return f"{vendor_id}\t{_identity_url(url)}"
 
 
 # ---------------------------------------------------------------------------
@@ -450,6 +480,91 @@ def detect_index_page(md: str) -> bool:
         return False
     return link_chars / denom >= _INDEX_LINK_RATIO
 
+# ---------------------------------------------------------------------------
+# 单页变更日志：按 fragment 把「整页正文」切成「这一条的正文」
+# ---------------------------------------------------------------------------
+
+_HEADING_RE = re.compile(r"^(#{1,6})\s+(.*)$")
+#: 标题里带**指向锚点的链接**的，视为「一条条目的开头」。
+#: 注意目标可能是相对锚点（`[↩](#2026-年7-31-日)`），也可能是带锚点的**完整 URL**
+#: （`[](https://x.cn/docs#2026-年-7-月-31-日)`，MiniMax 发布说明实测就是这种，
+#: 因为它的回链用的是页面自身的绝对地址）—— 只认 `](#` 会漏掉后一种。
+_BACKLINK_RE = re.compile(r"\]\([^)]*#")
+
+
+#: 变更日志里「一条条目的开头」长这样：`## 2026 年 7 月 31 日`（MiniMax 发布说明）
+#: 或 `## 2026年9月`（Kimi 发布记录），通常还带一个指回自身的回链。
+#: **判据是日期型标题，不是「同级标题」** —— MiniMax 每条下面紧跟的 `## MiniMax H3`
+#: 与日期标题同级，按同级切会把条目正文整段丢掉（实测切出 92 字符、只剩日期行）。
+_DATE_HEADING_RE = re.compile(r"20\d{2}\s*[-/.年]\s*\d{1,2}(?:\s*[-/.月]\s*\d{1,2})?")
+
+
+def _is_entry_heading(line: str) -> bool:
+    """该标题是不是「下一条条目的开头」—— 日期型，或带回链。"""
+    m = _HEADING_RE.match(line)
+    if not m:
+        return False
+    text = m.group(2)
+    return bool(_DATE_HEADING_RE.search(text) or _BACKLINK_RE.search(text))
+
+
+def _anchor_key(s: str) -> str:
+    """锚点匹配键：只留数字与 CJK 汉字。
+
+    同一个锚点在 URL 与标题里是**两种写法**：MiniMax 发布说明的条目 URL 形如
+    `#2026-年7-月31-日`（slug 规则多插了几个短横），而页面标题里的回链是
+    `#2026-年7-31-日`。原样比对永远匹配不上，切片会静默退回整页 —— 实测就是
+    「21 条条目共用一份整页正文」。归一到「数字 + 汉字」后两者收敛成同一个键。
+    """
+    return "".join(ch for ch in unquote(s or "")
+                   if ch.isdigit() or "\u4e00" <= ch <= "\u9fff")
+
+
+def _heading_level(line: str) -> int:
+    m = _HEADING_RE.match(line)
+    return len(m.group(1)) if m else 0
+
+
+def _slice_anchor_section(md: str, frag: str) -> str:
+    """从整页 markdown 里切出 `frag` 锚点那一条的段落；找不到就原样返回整页。
+
+    起点 = 锚点命中��标题行（标题文本经 `_anchor_key` 归一后含该锚点）。
+    终点 = 其后第一个「同级或更浅、且是条目开头」的标题 —— 判据见 `_is_entry_heading`
+    （日期型标题或带锚点链接），**不是单纯「下一个同级标题」**：MiniMax 每条下面紧跟的
+    `## MiniMax H3` 与日期标题同级，按同级切会把条目正文整段丢掉（实测只剩 92 字符的
+    日期行）。
+
+    切不到 / 切出来太短都退回整页：宁可给多也不给空 —— 空正文会被 `detect_index_page`
+    判掉、正文直接留空，读者那边就变成「点开什么都没有」。
+    """
+    if not frag:
+        return md
+    lines = md.splitlines()
+    target = _anchor_key(frag)
+    if not target:
+        return md
+    start = -1
+    for i, line in enumerate(lines):
+        m = _HEADING_RE.match(line)
+        if not m:
+            continue
+        # 标题里的回链指向本锚点，或标题文本本身就是锚点名
+        if target in _anchor_key(m.group(2)):
+            start = i
+            break
+    if start < 0:
+        return md
+    level = _heading_level(lines[start])
+    end = len(lines)
+    for j in range(start + 1, len(lines)):
+        if _heading_level(lines[j]) <= level and _is_entry_heading(lines[j]):
+            end = j
+            break
+    section = "\n".join(lines[start:end]).strip()
+    # 切片后太短说明锚点只定位到一个空标题，退回整页（宁可给多也不给空）
+    return section if len(section) >= 80 else md.strip()
+
+
 _ENTRY_FIELDS = ("slug", "en_path", "zh_path", "en_status", "zh_status",
                  "translator", "title", "date", "captured", "body_sha", "src_lang")
 
@@ -536,6 +651,18 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         html, ok, _status, final = fetch(url)
         ex = extract_article_markdown(html or "", final or url)
         en_status = "ok" if ex["reason"] == "" and ok else status_for_reason(ex["reason"] or "empty")
+        # 单页变更日志（MiniMax 发布说明、Kimi 发布记录）：抓回来的永远是**整页**，
+        # 按 fragment 切成「这一条」的段落。顺序不能换 —— 必须先切片再判目录页：
+        # 整页本身就是个目录，先判会把其中 N 条真条目统统判成 index_page、正文留空
+        # （实测 MiniMax 发布说明 21 条条目因此共用一份整页正文）。
+        frag = anchor_fragment(url)
+        if en_status == "ok" and frag:
+            sliced = _slice_anchor_section(ex["markdown"], frag)
+            if len(sliced) < len(ex["markdown"]):
+                ex["markdown"] = sliced
+                # 整页的 <title> 是页面级的（「模型发布 - MiniMax 开放平台文档中心」），
+                # 切片后用它会让每篇正文都顶着同一个标题；条目自己的标题在索引里。
+                ex["title"] = r.get("title") or ex["title"]
         # 链接目录页（blog index / 聚合列表）不是文章：置 index_page、正文留空、不入待译
         if en_status == "ok" and detect_index_page(ex["markdown"]):
             en_status = "index_page"

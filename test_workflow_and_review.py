@@ -4958,6 +4958,43 @@ class TestBrowsePageDesignContract(unittest.TestCase):
         self.assertEqual(len(noquery), 3,
                          f"每个面板都要有自己的无查询空态文案，实得 {noquery}")
 
+    def test_read_full_button_sits_in_the_meta_row_not_the_title(self):
+        """「读全文」必须在 `.meta` 行里、且靠右对齐，不许塞回标题行。
+
+        回归：它原先是 `.title` 里的 `display:inline-block`，跟在标题文字后面流动 ——
+        按钮的横坐标随标题长度逐行漂移（实测头 20 行出现 14 个不同的 x），整列右缘参差，
+        标题也被这个控件截短。挪到 meta 行 + `margin-left:auto` 后右缘才是一条齐的竖线。
+        页面没有构建、坏了不报错，所以钉死它。
+        """
+        row = self.page[self.page.index("function rowNode"):]
+        row = row[:row.index("function appendRows")]
+        meta_at = row.index("meta.appendChild(rb)")
+        self.assertIn("note.className = 'note orig'", row,
+                      "新闻条目的原文标题要带 .orig（只有它可截断）")
+        self.assertNotIn("t.appendChild(rb)", row,
+                         "读全文按钮不许回到标题行里")
+        self.assertLess(row.index("meta.className = 'meta'"), meta_at,
+                        "按钮要挂在 meta 上")
+        self.assertRegex(self._rule(".read-btn"), r"margin-left:\s*auto",
+                         "读全文靠 meta 的 auto 外边距钉到行尾")
+        # 「原文」截断只在 .orig 上：额度变化页的 .note 是「前值→后值」的实质内容。
+        # 这里要精确取「选择器就是 .note」那条规则 —— _rule(".note") 会先撞上 .note.orig。
+        bare = re.search(r"\n\s*\.note\s*\{([^}]*)\}", self.style)
+        self.assertIsNotNone(bare, "CSS 里找不到 .note 基元规则")
+        self.assertNotIn("text-overflow", bare.group(1),
+                         "裸 .note 不得截断——额度变化页的正文靠它")
+
+    def test_long_original_title_is_truncated_in_one_line(self):
+        """长英文原文要能截成一行，否则一个长标题就把条目折成三四行、行高被拉散。
+
+        关键是 `flex: 1 1 0`：可换行的 flex 容器在**收缩之前**就按假设尺寸决定换行，
+        只写 min-width:0 的话长原文会被整体推到独立行、永远触发不了省略号。
+        """
+        rule = self._rule(".note.orig")
+        self.assertRegex(rule, r"flex:\s*1 1 0")
+        self.assertRegex(rule, r"min-width:\s*0")
+        self.assertRegex(rule, r"text-overflow:\s*ellipsis")
+
     def test_footer_falls_back_when_index_missing(self):
         """vendors.json 404 时页脚不能是空块（回归：renderVendorFeeds 只在
         applyVendors 里调用，索引缺席走 else 分支就没人建列表）。"""
@@ -6293,18 +6330,150 @@ class TestFulltextUrlIdentity(unittest.TestCase):
         self.assertEqual(ft.normalize_url("https://a.com/"), "https://a.com/")
         self.assertEqual(ft.normalize_url("https://a.com"), "https://a.com/")
 
-    def test_url_hash_deterministic_and_fragment_invariant(self):
+    def test_url_hash_deterministic_and_fragment_sensitive(self):
+        """slug 必须**认** fragment —— 这条口径 2026-10-08 从「忽略」翻了过来。
+
+        单页变更日志的每条条目都是「同页不同 #锚点」（MiniMax 发布说明、Kimi 发布记录、
+        poolside / inference.net 的博客卡片）。fragment 不参与身份时，N 条条目会塌成
+        一个 slug、共用一份「整页」正文：实测 MiniMax 35 条条目只有 2 个正文文件，
+        21 条挤在同一个文件里，点开任一条看到的都是整页目录。
+        """
         h = ft.url_hash("https://a.com/post")
-        self.assertEqual(h, ft.url_hash("https://a.com/post#frag"))
+        self.assertEqual(h, ft.url_hash("https://a.com/post"), "无 fragment 必须稳定")
         self.assertEqual(len(h), 12)
         self.assertTrue(all(c in "0123456789abcdef" for c in h))
+        # 同一个页面的不同锚点 = 不同条目 = 不同 slug
+        self.assertNotEqual(ft.url_hash("https://a.com/post#one"),
+                            ft.url_hash("https://a.com/post#two"))
+        self.assertNotEqual(h, ft.url_hash("https://a.com/post#frag"))
+        # 跟踪参数照旧不参与身份
+        self.assertEqual(ft.url_hash("https://a.com/post?utm_source=n"),
+                         ft.url_hash("https://a.com/post"))
 
     def test_bodies_key_uses_normalized_url(self):
+        """ledger 键同样认 fragment，且仍剥跟踪参数。
+
+        fragment 不进键时，同页第二条锚点条目会被判成「已有正文」直接跳过，
+        正文也就永远只有整页那一份。
+        """
         self.assertEqual(
-            ft.bodies_key("openai", "https://a.com/p?utm_source=n#x"),
+            ft.bodies_key("openai", "https://a.com/p?utm_source=n"),
             ft.bodies_key("openai", "https://a.com/p"))
         self.assertEqual(ft.bodies_key("openai", "https://a.com/p"),
                          "openai\thttps://a.com/p")
+        self.assertNotEqual(ft.bodies_key("openai", "https://a.com/p#x"),
+                            ft.bodies_key("openai", "https://a.com/p#y"))
+        # fragment 大小写不敏感（避免 #Sec 与 #sec 各算一条）
+        self.assertEqual(ft.bodies_key("openai", "https://a.com/p#Sec"),
+                         ft.bodies_key("openai", "https://a.com/p#sec"))
+
+    def test_anchor_fragment_is_decoded(self):
+        self.assertEqual(ft.anchor_fragment(
+            "https://a.com/p#2026-%E5%B9%B4-7-%E6%9C%88"), "2026-年-7-月")
+        self.assertEqual(ft.anchor_fragment("https://a.com/p"), "")
+
+
+class TestAnchorSectionSlicing(unittest.TestCase):
+    """单页变更日志的正文切片（`fulltext._slice_anchor_section`）。
+
+    回归：MiniMax 发布说明是一个页面装 21 条条目，抓回来的正文永远是整页，
+    21 条条目共用一份 3461 字符的整页正文 —— 点「MiniMax M3」看到的是从 H3 到
+    01-系列的全表。切片后每条只拿到自己那节。
+    """
+
+    PAGE = (
+        "## [\u21a9](https://x.cn/docs#2026-\u5e74-7-\u6708-31-\u65e5)2026 \u5e74 7 \u6708 31 \u65e5\n"
+        "\n"
+        "## MiniMax H3\n"
+        "\n"
+        "\u65b0\u4e00\u4ee3\u5f00\u653e\u901a\u7528\u591a\u6a21\u6001\u89c6\u9891\u6a21\u578b\uff0c\u9762\u5411\u6587\u672c\u3002\n"
+        "\n"
+        "## [\u21a9](https://x.cn/docs#2026-\u5e74-7-\u6708-16-\u65e5)2026 \u5e74 7 \u6708 16 \u65e5\n"
+        "\n"
+        "## Music-3.0\n"
+        "\n"
+        "\u5c1a\u672a\u63a8\u51fa\uff0c\u4ec5\u4fdd\u7559\u7a0b\u5e8f\u516c\u544a\u3002\n"
+    )
+
+    def test_slices_only_the_anchored_entry(self):
+        sec = ft._slice_anchor_section(self.PAGE, "2026-年7-月16-日")
+        self.assertIn("Music-3.0", sec)
+        self.assertIn("尚未推出", sec)
+        self.assertNotIn("MiniMax H3", sec,
+                         "切片不得带上相邻条目的内容")
+        self.assertNotIn("新一代开放通用多模态", sec)
+
+    def test_keeps_the_entries_own_title_heading(self):
+        """条目标题（`## MiniMax H3`）与日期标题**同级**，按同级切会把正文整段丢掉。"""
+        sec = ft._slice_anchor_section(self.PAGE, "2026-年7-月31-日")
+        self.assertIn("MiniMax H3", sec)
+        self.assertIn("新一代开放通用多模态", sec)
+        self.assertNotIn("Music-3.0", sec)
+
+    def test_slug_style_fragment_matches_page_anchor_style(self):
+        """URL 里的锚点与标题回链是两种写法，必须归一后仍能匹配上。
+
+        真实 URL 是 `#2026-年7-月31-日`，页面回链是 `#2026-年7-31-日`；
+        原样比对匹配不上就会静默退回整页 —— 也就是「切片看着没生效」。
+        """
+        sec = ft._slice_anchor_section(self.PAGE, "2026-年7-月31-日")
+        self.assertIn("MiniMax H3", sec)
+        self.assertLess(len(sec), len(self.PAGE))
+
+    def test_unknown_anchor_returns_whole_page_never_empty(self):
+        """宁可给整页也不给空 —— 空正文会被 detect_index_page 判掉，正文直接留空。"""
+        out = ft._slice_anchor_section(self.PAGE, "2099-年1-月1-日")
+        self.assertTrue(out.strip())
+        self.assertGreaterEqual(len(out), len(self.PAGE) - 2)
+
+    def test_no_fragment_is_a_no_op(self):
+        self.assertEqual(ft._slice_anchor_section(self.PAGE, ""), self.PAGE)
+
+
+class TestReadFullButtonHonesty(unittest.TestCase):
+    """「读全文」按钮不许给读者一个已知点不开的入口。
+
+    回归：按钮只看「有没有 slug」，而 slug 在文章**刚被收录**时就发下来了，于是每篇
+    都亮。正文要等 CI 后续的 --fetch-bodies / --mt-bodies 才落盘，中间必然有一段
+    点了报「这篇正文还没落到语料里」的窗口；另有 27 条 `fetch_failed`、15 条
+    `index_page` 则是**永远**读不出来。读者最爱点的恰好是最新那批。
+
+    三态判据（articles.json 的 readable 列）：'0' 已判定抓不到 → 不亮；
+    '1' 磁盘已有正文 → 亮；'' 还没轮到正文步骤 → 照旧亮（不提前藏掉新文章）。
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        cls.page = (Path(__file__).resolve().parent / "docs" / "index.html").read_text(
+            encoding="utf-8")
+
+    def test_index_carries_the_readable_column(self):
+        import json
+        idx = json.loads((Path(__file__).resolve().parent
+                          / "docs/feeds/articles.json").read_text(encoding="utf-8"))
+        self.assertIn("readable", idx["fields"],
+                      "articles.json 少一列 readable，按钮就退回「只看 slug」")
+        width = len(idx["fields"])
+        self.assertTrue(all(len(r) == width for r in idx["articles"]),
+                        "有行宽度对不上 readable 列，页面按位置取列会整体错位")
+
+    def test_button_is_hidden_only_when_known_unreadable(self):
+        row = self.page[self.page.index("function rowNode"):]
+        row = row[:row.index("function appendRows")]
+        self.assertIn("it.slug && it.readable !== '0'", row,
+                      "按钮判据必须是 slug 且非「已判定抓不到」")
+        self.assertNotIn("if (it.slug) {", row,
+                         "只看 slug 的旧判据会让每篇都亮按钮")
+
+    def test_reader_falls_back_to_the_other_language(self):
+        """中文原生页只有 .md、英文页可能中文还没译 —— 都不该把读者挡在门外。"""
+        load = re.search(r"function readerLoad\([^)]*\)\s*\{(.*?)\n  \}",
+                         self.page, re.S)
+        self.assertIsNotNone(load)
+        body = load.group(1)
+        self.assertIn("Promise.race", body,
+                      "目标语言 404 时要能自动回退到另一种语言")
+        self.assertIn("readerMdPath(reader.vendor, reader.slug,", body)
 
 
 class TestFulltextBodyDoc(unittest.TestCase):
@@ -6704,7 +6873,8 @@ class TestMdHtmlDualRun(unittest.TestCase):
 class TestIndexHasSlug(unittest.TestCase):
     """articles.json 每行末尾加 slug（reader 抽屉拼 md 路径的数据前置，见 corpus spec §12）。
 
-    守卫两件事：字段名列表加 slug、每行 row[5] == fulltext.url_hash(row[1])。
+    守卫三件事：字段名列表含 slug 与 readable、每行 row[5] == fulltext.url_hash(row[1])、
+    row[6] 只取三态值。
     变异：把 crawler 里 url_hash 换成硬编码 "deadbeef0000" 或直接删掉这一列，
     本类断言变红。
     """
@@ -6725,13 +6895,16 @@ class TestIndexHasSlug(unittest.TestCase):
             data = json.loads((feeds / "articles.json").read_text(encoding="utf-8"))
             self.assertEqual(
                 data["fields"],
-                ["title", "url", "vendor", "date", "original_title", "slug"])
+                ["title", "url", "vendor", "date", "original_title", "slug", "readable"])
             for row in data["articles"]:
-                self.assertEqual(len(row), 6)
+                self.assertEqual(len(row), 7)
                 # row[1]=url, row[5]=slug；slug 由 fulltext.url_hash 决定
                 self.assertEqual(row[5], ft.url_hash(row[1]),
                                  "slug 必须等于 fulltext.url_hash(url)，与 bodies.json 里的 slug 一致")
                 self.assertRegex(row[5], r"^[0-9a-f]{12}$")
+                # row[6]=readable 三态：磁盘有正文 '1' / 已判定抓不到 '0' / 还没轮到 ''
+                self.assertIn(row[6], ("", "0", "1"),
+                              "readable 只允许三态，页面按位置取这一列决定「读全文」按钮")
 
     def test_slug_survives_prev_index_without_slug(self):
         """上一版 articles.json 是 5 字段（无 slug），load_original_titles 只按

@@ -201,6 +201,13 @@
   .title a { color: var(--fg); }
   .title a:hover { color: var(--accent); }
   .meta { margin-top: var(--sp-5); display: flex; gap: var(--sp-10); flex-wrap: wrap; align-items: center; font-size: var(--fs-sm); color: var(--muted); }
+  /* 只有「厂商动态」的英文原文标题会截断；额度变化页的 .note 是「前值→后值」的
+     实质内容，截了就把结论藏了，故用 .orig 限定作用范围。
+     flex-basis:0 是关键：可换行的 flex 容器在**收缩之前**就按假设尺寸决定换行，
+     一个长原文会被整体推到独立行、永远不会触发省略号。基准给 0 后它不再撑行，
+     由 flex-grow 吃掉剩余空间，放不下才截断。min-width:0 同样必需——
+     flex 项默认 min-width:auto，不给 0 就不会缩到内容宽度以下。 */
+  .note.orig { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .vendor { padding: var(--sp-2) var(--sp-8); font-size: var(--fs-xs); }
   a.vendor:hover { border-color: var(--accent); text-decoration: none; }
   .note { color: var(--muted); font-size: var(--fs-sm); }
@@ -241,7 +248,9 @@
 
   /* ---- reader drawer（corpus spec §12：点开条目就地读全文）---- */
   .read-btn {
-    display: inline-block; margin-left: var(--sp-8);
+    /* 行内动作钉在行尾（meta 是 flex，auto 外边距把它推到最右）；
+       不用 margin-left 做常规间距——那是它还在标题流里时的写法 */
+    margin-left: auto;
     padding: var(--sp-2) var(--sp-8);
     font-size: var(--fs-sm); line-height: 1.6; cursor: pointer;
     background: transparent; color: var(--muted);
@@ -478,6 +487,9 @@ var FLI = (function () {
       date: r[3] || '',
       orig: r[4] || '',
       slug: r[5] || '',
+      // r[6] = readable 三态（见 articles.json）：'1' 已有正文 / '0' 已判定抓不到 /
+      // '' 还没轮到正文步骤。老索引没有第 7 列时按 '' 处理（照旧给按钮）。
+      readable: r[6] || '',
       feed: (feeds && feeds[vid]) || ''
     };
   }
@@ -870,19 +882,6 @@ var FLI = (function () {
     a.rel = 'noopener noreferrer';
     a.textContent = it.title;
     t.appendChild(a);
-    // slug 存在（articles.json 已带）时才亮「读全文」；md 缺文件时 drawer 会自报"未落到语料"
-    if (it.slug) {
-      var rb = document.createElement('button');
-      rb.type = 'button';
-      rb.className = 'read-btn';
-      rb.textContent = '读全文';
-      rb.setAttribute('aria-label', '读全文：' + it.title);
-      rb.onclick = function (ev) {
-        ev.preventDefault();
-        openReader(it.vendorId, it.slug, 'zh', it.title, {push: true, link: it.link});
-      };
-      t.appendChild(rb);
-    }
     body.appendChild(t);
 
     var meta = document.createElement('div');
@@ -900,9 +899,29 @@ var FLI = (function () {
     meta.appendChild(badge);
     if (it.orig) {
       var note = document.createElement('span');
-      note.className = 'note';
+      note.className = 'note orig';
       note.textContent = '原文：' + it.orig;
       meta.appendChild(note);
+    }
+    // 「读全文」三态判据（articles.json 的 readable 列）：
+    //   '0' 已判定抓不到（fetch_failed / index_page）→ 一定读不出来，别给点不开的按钮
+    //   '1' 磁盘上已有正文 → 给
+    //   ''  还没轮到正文步骤（新收录、仍在待译）→ 照旧给，让它去试
+    // 只藏「已知打不开」的，不提前藏「还没抓的」：否则新文章当天永远点不开。
+    // 放在 meta 行而不是标题后面：跟在标题文字后面流动时，它的横坐标随标题长度逐行漂移
+    // （实测头 20 行出现 14 个不同的 x），整列右缘参差；钉到行尾才是一条齐的竖线，
+    // 标题也空出整行宽度给长中文标题。
+    if (it.slug && it.readable !== '0') {
+      var rb = document.createElement('button');
+      rb.type = 'button';
+      rb.className = 'read-btn';
+      rb.textContent = '读全文';
+      rb.setAttribute('aria-label', '读全文：' + it.title);
+      rb.onclick = function (ev) {
+        ev.preventDefault();
+        openReader(it.vendorId, it.slug, 'zh', it.title, {push: true, link: it.link});
+      };
+      meta.appendChild(rb);
     }
     body.appendChild(meta);
     box.appendChild(body);
@@ -1485,9 +1504,28 @@ var FLI = (function () {
   function readerLoad(opts) {
     readerShowLoading();
     var url = readerMdPath(reader.vendor, reader.slug, reader.lang);
-    fetch(url, { cache: 'no-cache' }).then(function (r) {
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.text();
+    function fetchText(u) {
+      return fetch(u, { cache: 'no-cache' }).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.text();
+      });
+    }
+    // 目标语言没有正文时自动回退到另一种：中文原生页只有 .md、英文页可能中文还没译完，
+    // 读者要的是「这篇能读」，不该被语言挡在门外。
+    var alt = fetchText(readerMdPath(reader.vendor, reader.slug,
+                                     reader.lang === 'zh' ? 'en' : 'zh'))
+      .then(function (t) { return ['alt', t]; }, function () { return null; });
+    Promise.race([
+      fetchText(url).then(function (t) { return ['cur', t]; }),
+      alt
+    ]).then(function (picked) {
+      if (picked && picked[0] === 'alt') {
+        reader.lang = reader.lang === 'zh' ? 'en' : 'zh';
+        readerSetLangButtons(true, false);
+        rdZh.setAttribute('aria-pressed', reader.lang === 'zh' ? 'true' : 'false');
+        rdEn.setAttribute('aria-pressed', reader.lang === 'en' ? 'true' : 'false');
+      }
+      return picked ? picked[1] : '';
     }).then(function (raw) {
       // 剥掉 frontmatter（首行 --- 到下一 --- 之间），只留正文
       var m = raw.match(/^---\n[\s\S]*?\n---\n?/);

@@ -13,6 +13,111 @@
       <link>https://aws.amazon.com/blogs/machine-learning/introducing-claude-haiku-5-5-on-aws/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/introducing-claude-haiku-5-5-on-aws/?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Introducing Claude Haiku 5.5 on AWS</h1>
+<p>Today, we’re excited to announce the availability of Claude Haiku 5.5 on <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> and <a href="https://aws.amazon.com/blogs/machine-learning/introducing-claude-platform-on-aws-anthropics-native-platform-through-your-aws-account/">Claude Platform on AWS</a>. According to Anthropic, Claude Haiku 5.5 is the fastest and most efficient model in the Claude 5.5 family, built for subagents and high-volume, cost-sensitive work. It also costs around 75 percent less than Claude Haiku 4.5 for most tasks.</p>
+<p>Amazon Bedrock gives you Haiku 5.5 capabilities while keeping your data within AWS infrastructure with Regional data residency. It works with the AWS controls your team already uses, including AWS Identity and Access Management (IAM) for access, AWS CloudTrail for audit, Amazon CloudWatch for monitoring, and Amazon Bedrock Guardrails. Usage appears on your AWS bill.</p>
+<p>Claude Platform on AWS gives you direct access to Anthropic’s native platform experience and capabilities through the AWS Management Console. Build, test, and deploy with the same APIs, features, and console experience you’d get working with Anthropic directly, unified with AWS billing and authentication.</p>
+<p>This post covers Claude Haiku 5.5’s improvements, practical guidance on when to choose Haiku 5.5, and how to get started on Amazon Bedrock.</p>
+<h2>What makes Claude Haiku 5.5 different</h2>
+<p>Claude Haiku 5.5 is Anthropic’s most capable Haiku model, across coding, tool use, computer use, and agentic tasks. It’s also the first Haiku model with effort controls, so you can tune cost against intelligence for each task instead of picking one setting for an entire workload.</p>
+<p>The improvements stand out on quick and repeatable work at scale. For coding tasks, it acts as a subagent routing requests, reviewing code and classifying long documents. For knowledge work, Haiku 5.5 pulls key information from small-to-medium documents, does initial scans, and answers quick questions over a knowledge base. For interactive applications, it responds fast enough for simple conversations to have quick and helpful answers. It also handles traditional natural language processing (NLP) tasks such as classification, summarization, and text generation at the volume and cost that production features require.</p>
+<p>Haiku 5.5 handles agentic coding and multi-step tool use, and supports high-resolution images. Haiku 5.5 can be used as a strong computer use subagent for repetitive browser and desktop tasks, at a cost that holds up at scale. In development workflows, it’s a good fit for iterating quickly on UI and UX changes and for small, specific code base changes across multiple files.</p>
+<h2>Pairing Claude Haiku 5.5 with Opus 5.5</h2>
+<p>Haiku 5.5 pairs with the recently announced Claude Opus 5.5. Together, they make a strong team: Opus 5.5 plans and makes the judgment calls, and Haiku 5.5 carries out well-defined tasks quickly and at scale. You get careful reasoning where it counts and lower cost and latency everywhere.</p>
+<ul><li><strong>Claude Opus 5.5 plans the work and makes the judgment calls.</strong> It breaks down complex problems, decides the approach, and takes on the hardest reasoning, such as release debugging, security review of large pull requests, and long analyses that end in a finished report.</li><li><strong>Claude Haiku 5.5 takes on the fast layer of subagents.</strong> It handles quick, high-volume tasks, such as routing requests, classifying and summarizing, rewriting long documents, and applying small, specific changes across many files. As a review subagent, it can quickly check the order of operations and high-level direction, so Opus 5.5 can spend its tokens on the hardest reasoning. Because it is fast and cost efficient, you can run many Haiku subagents in parallel.</li></ul>
+<h2>Getting started with Claude Haiku 5.5 on Amazon Bedrock</h2>
+<p>To try Haiku 5.5, open the <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock console</a>, choose <strong>Test</strong>, then <strong>Playground</strong>, and select Haiku 5.5 as the model. From there, you can run a prompt directly against it.</p>
+<p>Figure 1: Selecting an Anthropic Claude model in the Amazon Bedrock console Playground</p>
+<p>Programmatically, you can call the model with the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html">Anthropic Messages API</a> against <code>bedrock-runtime</code> through the Anthropic SDK. You can also use the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-api.html">Invoke</a> and <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html">Converse</a> APIs on <code>bedrock-runtime</code> through the <a href="https://aws.amazon.com/cli/">AWS Command Line Interface (AWS CLI)</a> and <a href="https://aws.amazon.com/developer/tools/">AWS SDK</a>.</p>
+<h3>Prerequisites</h3>
+<p>You must have the following prerequisites:</p>
+<ul><li>Active AWS account with Amazon Bedrock access.</li><li>AWS Command Line Interface (AWS CLI) installed and configured.</li><li>Python 3.10+.</li><li>Boto3 installed: <code>pip install boto3</code>.</li><li>Anthropic SDK installed: <code>pip install anthropic</code>.</li><li>The Amazon Bedrock Token Generator for Amazon Bedrock authentication installed: <code>pip install aws_bedrock_token_generator</code>.</li><li>AWS Identity and Access Management (IAM) permissions: <code>bedrock:InvokeModel</code>, <code>bedrock:InvokeModelWithResponseStream</code>.</li></ul>
+<p>Here’s a quick example using the AWS SDK for Python (Boto3) with the InvokeModel API:</p>
+<pre><code>import boto3
+import json
+
+# Create a Bedrock Runtime client
+bedrock_runtime = boto3.client(
+    service_name=&quot;bedrock-runtime&quot;,
+    region_name=&quot;us-east-1&quot;
+)
+
+# Invoke Claude Haiku 5.5
+response = bedrock_runtime.invoke_model(
+    modelId=&quot;global.anthropic.claude-haiku-5-5&quot;,
+    contentType=&quot;application/json&quot;,
+    accept=&quot;application/json&quot;,
+    body=json.dumps({
+        &quot;anthropic_version&quot;: &quot;bedrock-2023-05-31&quot;,
+        &quot;max_tokens&quot;: 4096,
+        &quot;messages&quot;: [
+            {
+                &quot;role&quot;: &quot;user&quot;,
+                &quot;content&quot;: &quot;Can you explain the features of Amazon Bedrock?&quot;
+            }
+        ]
+    })
+)
+
+result = json.loads(response[&quot;body&quot;].read())
+# Haiku 5.5 may return a thinking block before the text block,
+# so select the text block rather than a fixed index.
+print(next(b[&quot;text&quot;] for b in result[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;))</code></pre>
+<p>You can also use the Amazon Bedrock Converse API for a unified multi-model experience:</p>
+<pre><code>import boto3
+
+# Create a Bedrock Runtime client
+bedrock_runtime = boto3.client(
+    service_name=&quot;bedrock-runtime&quot;,
+    region_name=&quot;us-east-1&quot;
+)
+
+# Invoke Claude Haiku 5.5
+response = bedrock_runtime.converse(
+    modelId=&quot;global.anthropic.claude-haiku-5-5&quot;,
+    messages=[
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {
+                    &quot;text&quot;: &quot;Can you explain the features of Amazon Bedrock?&quot;
+                }
+            ]
+        }
+    ],
+    inferenceConfig={
+        &quot;maxTokens&quot;: 4096
+    }
+)
+
+if 'output' in response:
+    blocks = response['output']['message']['content']
+    print('\n'.join(b.get('text', '') for b in blocks if 'text' in b))</code></pre>
+<p>You can also use the Anthropic Messages API through the anthropic SDK package for a streamlined experience:</p>
+<pre><code>from anthropic import Anthropic
+from aws_bedrock_token_generator import provide_token
+
+token = provide_token(region=&quot;us-east-1&quot;)
+
+client = Anthropic(
+    base_url=&quot;https://bedrock-runtime.us-east-1.amazonaws.com/anthropic&quot;,
+    api_key=token,
+)
+
+# Invoke Claude Haiku 5.5
+response = client.messages.create(
+    model=&quot;global.anthropic.claude-haiku-5-5&quot;,
+    max_tokens=1024,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Can you explain the features of Amazon Bedrock?&quot;}],
+)
+print(response)</code></pre>
+<p>You can explore the <a href="https://github.com/aws-samples/anthropic-on-aws/blob/main/notebooks/claude_haiku_5_5_getting_started/claude-haiku-5-5-getting-started.ipynb">Getting Started notebook</a> for more examples. You can monitor usage, performance, and costs through <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring.html">Amazon CloudWatch</a> and <a href="https://aws.amazon.com/aws-cost-management/aws-cost-explorer/">AWS Cost Explorer</a> to scale your applications as demand grows.</p>
+<h2>Availability</h2>
+<p>Claude Haiku 5.5 is available today on Amazon Bedrock through the US Geo CRIS (us.), EU Geo CRIS (eu.), AU Geo CRIS (au.), JP Geo CRIS (jp.) and Global CRIS (global.) inference profiles on <code>bedrock-runtime</code>. In AWS GovCloud (US), it’s available on both the <code>bedrock-runtime</code> and <code>bedrock-mantle</code> endpoints.</p>
+<p>See the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-cards-anthropic.html">Amazon Bedrock documentation</a> for the full list of supported AWS Regions. For pricing information, see <a href="https://aws.amazon.com/blogs/machine-learning/introducing-claude-haiku-5-5-on-aws/">Amazon Bedrock pricing</a>. It’s also available through <a href="https://aws.amazon.com/blogs/machine-learning/introducing-claude-platform-on-aws-anthropics-native-platform-through-your-aws-account/">Claude Platform on AWS</a> in North America</p>
+<p>Give Claude Haiku 5.5 a try on the <a href="https://console.aws.amazon.com/bedrock">Amazon Bedrock console</a>, in <a href="https://aws.amazon.com/blogs/machine-learning/introducing-claude-platform-on-aws-anthropics-native-platform-through-your-aws-account/">Claude Platform on AWS</a>, or explore the <a href="https://github.com/aws-samples/anthropic-on-aws/tree/main/notebooks">Getting Started notebooks</a> on GitHub.</p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>Rethinking access control for RAG with Amazon Quick and Amaz…</title>
@@ -20,6 +125,45 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/rethinking-access-control-for-rag-with-amazon-quick-and-amazon-bedrock/?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Rethinking access control for RAG with Amazon Quick and Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Rethinking access control for RAG with Amazon Quick and Amazon Bedrock</h1>
+<p>Enterprise organizations are adopting Retrieval Augmented Generation (RAG) to unlock insights from company knowledge sources like Microsoft SharePoint, Google Drive, and Atlassian Confluence. However, these knowledge sources contain sensitive information governed by complex permission structures. Making sure that AI-generated answers respect those permissions is one of the hardest challenges in enterprise AI.</p>
+<p>In this post, we explore how <a href="https://aws.amazon.com/quick/">Amazon Quick</a> and <a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock Knowledge Bases</a> solve this challenge through real-time access control list (ACL) enforcement, verifying permissions directly with authoritative sources at query time.</p>
+<h2>The business problem</h2>
+<p>Consider this scenario: A SharePoint site owner creates a knowledge base for their organization. Team members across multiple departments use an AI assistant to get answers from this knowledge base. The critical requirement is that each team member must only receive AI-generated insights from documents they’re authorized to access.</p>
+<p>This is a universal enterprise challenge. Organizations want to democratize access to AI-powered insights without compromising their existing security posture. A single unauthorized document surfaced in an AI response could expose confidential strategy documents, unreleased financial data, or sensitive HR information.</p>
+<h2>Why existing approaches fall short</h2>
+<p>A common approach to RAG access control uses a replicate-and-filter approach to enforce document-level permissions. Here’s how it typically works:</p>
+<ul><li>A data source connector (for example, SharePoint connector) pulls ACLs as part of a periodic sync job.</li><li>The ACLs are replicated from the data source and stored as attributes in an index.</li><li>At query time, the AI system maps the logged-in user to the stored ACL attributes and filters results accordingly.</li></ul>
+<p>While this approach seems reasonable on the surface, it has three fundamental weaknesses.</p>
+<h2>Problem 1: The AI system isn’t the source of truth</h2>
+<p>In this model, the AI system takes sole responsibility for enforcement without being the authoritative source of permissions. This requires data connectors to accurately replicate complex, source-specific ACL logic across various data sources. Each data source has its own unique permission models. Mapping inheritance hierarchies, group memberships, conditional access policies, and deny rules across dozens of connectors is an error-prone undertaking.</p>
+<h2>Problem 2: Stale permissions create security gaps</h2>
+<p>In general, data connectors support pull-based syncs that run on demand or on a customer-defined schedule. The ACLs in these AI solutions are a snapshot in time from when the last sync ran. Some solutions use event-based updates, but this doesn’t work universally. For example, a data source like Confluence doesn’t emit an event when group membership changes. Between syncs, a user who had their access revoked might still receive AI answers from documents they should no longer see.</p>
+<h2>Problem 3: Evolving data source capabilities</h2>
+<p>Data sources regularly change or introduce new mechanisms to control access to content. A new permission feature in SharePoint or a change to the Google Drive sharing model could create gaps in the ACL mapping logic. This can expose content until the connector is updated.</p>
+<h2>How AWS solves this: Real-time ACL enforcement</h2>
+<p>To address these challenges, we implemented real-time ACL checks as an additional layer of security on top of existing pre-retrieval ACL filtering for Amazon Quick and Amazon Bedrock Knowledge Bases. This makes sure the system enforces the most current access controls by checking permissions directly with the authoritative source at query time. This avoids relying on potentially stale or incorrectly mapped ACL data.</p>
+<h2>Architecture overview</h2>
+<p>The following diagram illustrates our hybrid approach that delivers both semantic search performance and real-time security capabilities.</p>
+<p>Figure 1: Real-time ACL enforcement architecture for Amazon Quick and Amazon Bedrock Knowledge Bases, combining pre-retrieval filtering (Stage 1) with real-time verification against authoritative sources (Stage 2)</p>
+<h2>How it works: A Google Drive example</h2>
+<p>When a user submits a query to an Amazon Quick agent that uses a Google Drive knowledge base, the system enforces access controls in two stages:</p>
+<h3>Stage 1: Pre-retrieval filtering</h3>
+<p>Amazon Quick performs a semantic search against the vector index to find the most relevant document passages. The system applies access control lists that are already stored in the index. This produces a preliminary set of candidate documents. This stage is necessary because real-time API calls for every document in the index would be too costly at scale.</p>
+<h3>Stage 2: Real-time verification</h3>
+<p>Amazon Quick verifies the candidate documents in real time by calling the Google Drive APIs. It uses the service account credential that the administrator provided to generate user-specific access tokens through impersonation. Google Drive maintains the source of truth for access control lists associated with each document. Documents the user is not authorized to access are excluded from the retrieved result set. Only the verified and authorized document passages are passed to the large language model (LLM) as context. The model uses this knowledge to generate a response.</p>
+<p>This two-stage approach balances performance with security. It uses cached ACLs for efficiency while facilitating correctness through real-time checks. In addition to ACL enforcement, Amazon Bedrock provides responsible AI controls. These include Amazon Bedrock Guardrails for content filtering, grounding checks to reduce hallucinations, and configurable safety policies to help organizations deploy generative AI applications responsibly.</p>
+<h2>Why this matters for your organization</h2>
+<p>This approach delivers three key benefits:</p>
+<ul><li><strong>Always-current permissions</strong> – No more security gaps between sync cycles when you are using a RAG product. If an employee’s access is revoked, the change is reflected in AI responses within moments, not hours or days.</li><li><strong>Confidence to scale</strong> – Organizations can expand their knowledge base coverage knowing that real-time ACL checks verify permissions with the authoritative source for every query, regardless of data source.</li><li><strong>Reduced operational burden</strong> – You don’t need to worry about sync frequency.</li></ul>
+<h2>What customers are saying about this</h2>
+<blockquote>“When we set out to evaluate AI solutions for our organization, our security and compliance teams were clear about their top priority: ensuring that colleagues would only ever see information they’re authorized to access. It’s a fundamental requirement, but one that many platforms struggle to address in a meaningful way. Amazon Quick’s approach to real-time access control answered that question definitively and demonstrated a level of rigor that stood out throughout our evaluation. It gave our internal review board the confidence to move forward and set a strong foundation for how we think about AI governance going forward.”<br>        — Jamahl Wiggins, Sr. Specialist – M365 Innovation, Mondelēz International</blockquote>
+<p>Mondelēz International has deployed Amazon Quick for their over 35,000 employees across four regions.</p>
+<h2>Conclusion</h2>
+<p>In this post, we talked about how Amazon Quick and Amazon Bedrock Knowledge Bases implement real-time ACL enforcement to solve a critical security challenge for enterprises. The dual-layer ACL architecture verifies permissions directly with authoritative sources at query time. This makes sure AI-generated answers include only content a user is authorized to access.</p>
+<p>To get started, visit <a href="https://aws.amazon.com/quick/">Amazon Quick</a> and <a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock Knowledge Bases</a>.</p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>Beyond hours saved: Building the business case for agentic a…</title>
@@ -27,6 +171,43 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/beyond-hours-saved-building-the-business-case-for-agentic-automation/?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Beyond hours saved: Building the business case for agentic automation</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Beyond hours saved: Building the business case for agentic automation</h1>
+<p>Agentic automation, software that reasons and adapts to complete tasks, is showing up on AI center of excellence (AI CoE) roadmaps. But the standard way companies justify automation investments, hours saved times labor cost minus build cost, was designed for rule-based tools like robotic process automation (RPA). That model misses most of the value agents create.</p>
+<p>In this post, we introduce a framework AI CoE leaders can use to build a business case that captures the full value of agentic automation. You will learn why the RPA-era ROI model falls short, how to measure the value it misses, and which workflows are worth automating with agents.</p>
+<h2>Why the traditional business case falls short</h2>
+<p>The classic return on investment (ROI) model was built for stable, high-volume, rule-based work: count the transactions, measure the minutes, multiply by a loaded rate, subtract the build cost. RPA earned its place on those terms.</p>
+<p>The model assumes the world it was built for. It assumes processes are stable, so it ignores the cost of maintaining automation as they change. It assumes tasks are rule-based, so it has no line item for exceptions. It assumes the work is the whole job, so it never counts the cost of human oversight. And it treats a saved hour as banked value, when freed capacity often refills with backlog and never reaches the profit and loss statement (P&amp;L). Underfunding the work that turns saved hours into results is the mistake McKinsey says companies keep making: successful AI transformations follow a “1:3:5 pattern,” where “for every dollar invested in agentic technology, organizations spend three on process redesign and five on capability building and adoption. However, most companies invert this formula entirely” <a href="https://www.mckinsey.com/capabilities/people-and-organizational-performance/our-insights/how-to-close-the-agentic-adoption-gap">(McKinsey, “Agentic AI change management: Closing the adoption gap,” 2026)</a>.</p>
+<p>We assume the value of automation lives in the task, but in agentic automation most of it lives around the task: the judgment, the exceptions, the coordination across systems. The real gains come from redesigning the workflow around agents, not from dropping an agent into an unchanged process.</p>
+<h2>The dimensions of value the old model misses</h2>
+<p>A better business case measures four dimensions of value, plus the condition that determines whether they reach the P&amp;L. We call it the <strong>Agentic Value Model</strong>.</p>
+<p><strong>Time savings.</strong> This still counts, but agents extend it to work that fixed-rule RPA handles poorly or only through extensive exception logic. The measure is the same. Agents apply it to a larger base of work.</p>
+<p><strong>Exception handling.</strong> Exceptions carry much of the cost. AWS guidance gives planning ranges: correcting an error can cost 1.5–4 times the original transaction, and human error can account for 2–15 percent of operational cost <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-economics/assessing-costs.html">(AWS Prescriptive Guidance, “Assessing your current human-process costs”)</a>. The rework multiplier prices the exceptions your team catches. The error percentage prices the ones that slip through. Labor-only cases omit both.</p>
+<p><strong>Decision quality.</strong> Agents can apply a common policy at scale with logged rationale, though consistency and error rates need continuous measurement. As AWS notes, “low-volume, high-value decisions might justify agentic assistance for improved decision quality rather than cost reduction” <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-economics/understanding.html">(AWS Prescriptive Guidance, “Understanding agentic AI economics”)</a>. A single better decision in credit, pricing, or risk can dwarf a year of saved minutes.</p>
+<p><strong>Change resilience and maintenance economics.</strong> This one goes both ways. Scripts are brittle: when a screen or upstream system changes, they break and someone rebuilds them. Agents absorb some variation without a rewrite, but they shift maintenance into evaluations, prompts, monitoring, and model operations rather than removing it, and running them carries its own cost. The case nets brittle-script maintenance avoided against ongoing agent operating cost, so in processes that change often the math may favor agents, and in frozen processes it might not.</p>
+<p>The condition that governs all four is value realization: every benefit needs a defined mechanism that converts an operational improvement into economic value, plus an accountable owner. For released labor, that means reducing spend or redirecting capacity to a named, measurable outcome.</p>
+<p>Consider a claims-triage process, with illustrative figures. It handles 200,000 claims a year at about 12 minutes per claim (before rework) and $45 an hour fully loaded, a base cost of roughly $1.8 million. Automate the routine 70 percent and you release about 28,000 hours, or roughly $1.26 million of capacity, before the oversight time those claims still need. That’s where most cases go wrong, because freeing hours isn’t the same as saving money. The company only spends less if it employs fewer people or cuts contractor, overtime, or outsourcing spend. Otherwise, the same people stay on the payroll and the P&amp;L never sees the $1.26 million. If attrition and lower overtime capture half of it, the case should carry about $630,000, not the full figure.</p>
+<p>Redeploying the people is the more common outcome, and then the value is what they now produce. <strong>For each released hour, count redeployed value or a cash cost reduction, not both.</strong> Then add what the labor-only case cannot see. Of the 8 percent needing correction (16,000 claims), a correction cost of 3.5 times the roughly $9 handling cost (12 minutes at $45 an hour) gives about $504,000 in annual correction exposure. That is a baseline, not agentic value. The value is the share the agent removes: a 40 percent reduction, adjusted by a 75 percent realization factor, is a modeled benefit near $151,000. That’s before you price a single improved fraud-flag decision. Because the 12-minute base excludes rework, this pool doesn’t overlap with released capacity. If your baseline includes rework time, count those savings in one pool only. That version of the case produces a number finance can defend.</p>
+<p>To keep the math consistent, size every value pool the same way and net the costs, as summarized in the following table.</p>
+<table><thead><tr><th><strong>Value pool</strong></th><th><strong>Baseline</strong></th><th><strong>Expected delta</strong></th><th><strong>Realization factor</strong></th><th><strong>Owner</strong></th></tr></thead><tbody><tr><td>Released capacity</td><td>Hours × loaded rate</td><td>% automated</td><td>Only if redeployed to a named outcome or spend falls</td><td>Ops lead</td></tr><tr><td>Exception and error cost</td><td>Correction cost + error losses</td><td>Expected reduction</td><td>Fraction captured</td><td>Quality lead</td></tr><tr><td>Decision quality</td><td>Value of better decisions</td><td>Uplift per decision</td><td>Attributable share</td><td>Domain owner</td></tr><tr><td>Change resilience and maintenance economics</td><td>Break-fix cost of scripts + downtime</td><td>Avoided rebuilds, faster change accommodation</td><td>Share of rebuilds avoided, with agent costs netted once in the formula</td><td>Engineering lead</td></tr></tbody></table>
+<p>State the whole thing as one line, assigning each benefit to one pool so double-counting can’t slip through: Net annual value = realized capacity value + avoided correction and error costs + decision-outcome uplift + avoided maintenance and downtime, minus annualized implementation cost, minus agent runtime, integration, evaluation, oversight, governance, and change-management costs, minus losses from any new errors the agent introduces. Errors the agent does not remove already sit outside the avoided-cost term, so do not subtract them a second time. For a multiyear program, book implementation cost in the year you spend it rather than annualizing it, ramp benefits as adoption grows, and discount the yearly cash flows to net present value (NPV).</p>
+<p>Three early deployments of Amazon Quick Automate, the automation service within <a href="https://aws.amazon.com/quick/">Amazon Quick</a>, show the dimensions at work. <a href="https://aws.amazon.com/blogs/machine-learning/kitsa-transforms-clinical-trial-site-selection-with-amazon-quick-automate/">Kitsa</a>, a clinical-trial site-selection company, automated extraction of more than 50 data points across hundreds of thousands of websites. It reported 91 percent cost savings and 96 percent faster data acquisition at 96 percent coverage, routing low-confidence cases to reviewers (time savings and exception handling). As Kitsa co-founder and CTO Rohit Banga noted in the AWS Machine Learning Blog post, unifying high-quality site data at scale broke a core bottleneck. That let its Site Finder Agent weigh more sites with greater precision.</p>
+<p><a href="https://aws.amazon.com/blogs/machine-learning/how-dlocal-automated-compliance-reviews-using-amazon-quick-automate">dLocal</a>, a cross-border payments provider, automated up to 75 percent of merchant-compliance reviews in controlled evaluations. That freed specialists for complex, high-risk cases (decision quality) and added continuous checks for policy drift that a periodic manual review would miss (change resilience). dLocal reports that specialists who used to spend hours on routine checks now spend that time on cases that need regulatory judgment.</p>
+<p>And <a href="https://aws.amazon.com/blogs/awsforsap/sap-automations-with-amazon-quick-automate/">Genpact</a>, automating supply-chain risk across multiple SAP systems, reports cutting disruption-impact analysis from 2–3 days to minutes. That’s the kind of cross-system coordination that no one system of record owns (time savings and decision quality). None of these deployments proves all four pools, which is why the case has to size each one separately.</p>
+<h2>A framework for prioritization</h2>
+<p>Score every candidate workflow on two axes. The first is task complexity, how much reasoning, context, and adaptation it requires. The second is decision risk, the cost of getting it wrong, which sets how much autonomy you can grant. Both axes come from the AWS economics guidance, and together they form a two-by-two matrix a steering committee can use.</p>
+<p>Low complexity, low risk: keep it on RPA, since agents add cost here without adding value. High complexity, low risk is the capacity play, so automate for throughput and exception absorption. High complexity, high risk is the decision-quality play, so keep a human in the loop and justify on better decisions. Low complexity, high risk is the guardrails play, so harden controls around the step rather than adding reasoning it doesn’t need.</p>
+<p>A useful shortcut: if a person moves across systems and interprets ambiguous context at each step, evaluate an agentic approach. If the path stays deterministic, RPA may still be cheaper. Use the Agentic Value Model to decide what to measure and this matrix to decide what to prioritize.</p>
+<p>Figure 1: Agentic automation prioritization matrix, with axes adapted from AWS Prescriptive Guidance and illustrative classifications</p>
+<h2>Building the case for leadership</h2>
+<p>Present the investment as a portfolio of workflows rather than a single project. McKinsey’s research shows why isolated pilots stall: nearly two-thirds of enterprises have experimented with agents, but fewer than 10 percent have scaled them to tangible value <a href="https://www.mckinsey.com/capabilities/mckinsey-technology/our-insights/building-the-foundations-for-agentic-ai-at-scale">(McKinsey, “Scaling agentic AI with data transformations,” 2026)</a>. Value comes from defining the outcomes, embedding agents deep in core workflows, and redesigning operating models around them. Bring leadership three to five prioritized domains, each with its four-dimension case.</p>
+<p>The one thing that wins over a skeptical CFO is a stop rule: stage the investment with explicit break-even targets and predefined points to stop funding agents that underperform. Connect each domain to a key performance indicator (KPI) leadership already tracks, whether cost-to-serve, cycle time, Net Promoter Score, or compliance exposure. And treat governance as a way to move faster: bounded autonomy, oversight where risk is high, and auditability by design let you widen agent autonomy as the evidence builds.</p>
+<h2>Getting started with Amazon Quick</h2>
+<p><a href="https://aws.amazon.com/quick/">Amazon Quick</a> brings research, business intelligence, and automation into one agentic experience. With Quick Automate, its automation service, teams orchestrate UI actions, API calls, and human review across enterprise workflows. This produces case-level execution data a CoE can pair with operational and financial KPIs to measure value as it’s realized.</p>
+<p>That measurement turns a first project into a portfolio. After you look for the four value pools, you tend to find them wherever a person moves between systems, interprets context, and clears exceptions by hand. Put one workflow into production, baseline its value pools and operating cost, name an owner, and prove the number. Then the portfolio case accrues as each new workflow reports results.</p>
+<h2>Conclusion</h2>
+<p>The question is where agentic automation delivers value that your existing tools can’t, and how to prove it before spending. The discipline this post describes, sizing every value pool, applying realistic realization factors, and setting stop rules, is what makes that proof credible. Teams that prove value on one workflow can fund the next from measured results rather than projections. For the underlying economics, a good starting point is the <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-economics/understanding.html">AWS Prescriptive Guidance on agentic AI economics</a>.</p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>How Qlik built grounded, enterprise-scale AI with Amazon Bed…</title>
@@ -34,12 +215,172 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-qlik-built-grounded-enterprise-scale-ai-with-amazon-bedrock/?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: How Qlik built grounded, enterprise-scale AI with Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>How Qlik built grounded, enterprise-scale AI with Amazon Bedrock</h1>
+<p>Building grounded AI on Amazon Bedrock, Qlik Answers tackles a common enterprise problem: employees aren’t short on data. They are short on a fast way to ask a real question of it and get an answer they can trust. Analysts spend hours searching through documents, dashboards, and institutional memory to answer things a colleague could ask in a sentence. And when organizations try to close that gap with generative AI, many run into the same wall: answers without sources, no way to verify a result, and no path to deploy the tool in a regulated environment.</p>
+<p><a href="http://www.qlik.com/">Qlik</a>, a global leader in data integration, data quality, analytics, and AI, built Qlik Answers to solve that problem for its more than 40,000 customers worldwide. Since general availability in February 2026, Qlik Answers has moved from an early capability to daily use: <a href="https://www.qlik.com/us/products/discovery-agent">Qlik’s Discovery Agent</a>, an AI-driven anomaly and outlier detection agent, alone has surfaced more than 100,000 discoveries for customers since launch, and the majority of Qlik Cloud accounts with agentic tools turned on are actively using them.</p>
+<p>This post explains how Qlik built the tool behind that adoption, and how Amazon Bedrock supports it at global scale.</p>
+<h2>Challenge</h2>
+<p>Qlik identified three problems it needed to solve at the same time to bring Qlik Answers to production across its customer base:</p>
+<ul><li><strong>Orchestrating specialized reasoning without slowing anyone down.</strong> Enterprise questions vary widely: some need a quick lookup, others require pulling from structured analytics, unstructured documents, glossary definitions, or automations. A single, general-purpose assistant tends to get slower and less accurate as more capability gets added to it.</li><li><strong>Meeting data sovereignty requirements across Regions.</strong> Qlik serves customers across Europe, Asia Pacific, and the Americas, each with its own data residency expectations. A single global deployment model wouldn’t satisfy those requirements, but 11 separate Regional builds would be difficult to maintain and improve consistently.</li><li><strong>Forecasting model capacity months ahead of demand.</strong> Token consumption and model availability needed to be planned 3–6 months before major launches. Qlik then validated these projections against actual usage once customers started using the product, so growth in adoption doesn’t turn into a capacity problem.</li></ul>
+<h2>Solution overview</h2>
+<p>Qlik Answers gives employees, not only analysts, a single place to ask a natural-language question and receive a grounded, sourced answer. Depending on the question, that answer can come from a knowledge base, a live analytics app, a glossary definition, or a document. The underlying system decides which path to take.</p>
+<p>Three deployments illustrate what that looks like for customers:</p>
+<ul><li><strong>Bystronic</strong>, a global sheet-metal processing specialist, deployed an AI chatbot in 15 minutes, giving employees a way to query real-time operations data and get sourced answers across departments.</li><li><strong>Lintech International</strong> indexed more than 17,000 technical documents in Qlik Answers, cutting manual research time and speeding up response times by 75 percent, which gave business managers back as much as 7 hours a week.</li><li><strong>TouchPoint Support Services</strong>, which serves 650 healthcare sites and is aiming to double in size, uses Qlik Answers to give fast, compliance-aligned guidance to 15,000 staff working in regulated, fast-paced environments.</li></ul>
+<p>To support this at scale, Qlik built the system around clear architectural boundaries rather than one large assistant. The key layers are as follows:</p>
+<ul><li><strong>Entry layer</strong>. A stable conversational entry point inside Qlik Cloud, so new backend capability can be added without changing how customers interact with the assistant.</li><li><strong>Routing layer</strong>. A lightweight layer that reads the user’s message and conversation context and decides where the request should go. Its only job is a fast, accurate routing decision, not solving the task itself.</li><li><strong>Answer layer</strong>. Coordinates response generation once a request is routed, choosing between a fast path for simple requests and a more deliberate path that breaks a question into sub-questions and pulls from multiple sources.</li><li><strong>Specialist agent layer</strong>. A shared swarm runtime defines how specialist agents, tools, state, and human-in-the-loop steps work, so new specialists can be added without each one inventing its own orchestration model.</li><li><strong>Conversational analytics layer</strong>. Handles structured data questions by routing them to an app-aware reasoning path built for analytics rather than general text generation.</li><li><strong>Retrieval layer</strong>. Unstructured document indexing and retrieval runs on Amazon OpenSearch Service, which stores and searches the content that grounds Qlik Answers’ responses to knowledge-base and document questions.</li><li><strong>Model access layer</strong>. Reached through Qlik’s own large language model (LLM) gateway, this layer connects to Amazon Bedrock for chat, streaming, embeddings, and reranking. It also applies Amazon Bedrock Guardrails to every request and response: content filtering for prompt injection, personally identifiable information (PII), secrets, and denied topics, plus a grounding-validation check on generated answers. When a model a customer relies on is not yet available in-Region through Bedrock, Qlik hosts it on Amazon SageMaker AI instead, then moves that workload back to Bedrock after Regional availability catches up. For model availability by AWS Region, refer to Supported models by AWS Region in <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock</a>.</li></ul>
+<p>Figure 1: Employee questions flow through the entry, routing, and answer layers, then branch to specialist agents, the analytics agent, and the retrieval agent (backed by Amazon OpenSearch Service), before converging on the model access layer, which reaches foundation models available on Amazon Bedrock, with Amazon SageMaker AI as an in-Region fallback</p>
+<h2>Grounding answers in real sources</h2>
+<p>Grounding was one of the more important design decisions in the framework. The answer layer pulls from several kinds of context depending on the question: structured app metadata, retrieved knowledge base content, glossary definitions, automation context, and document content for summarization. After the elements of a complete answer are returned, the full response is assembled and presented to the user.</p>
+<p>Retrieval alone doesn’t guarantee accuracy. Qlik also runs a grounding-validation check on generated answers, comparing each one against the source content it drew from, using the contextual grounding capability in Amazon Bedrock Guardrails. That turns grounding from a retrieval step into a checked production control. For unstructured questions, the tool retrieves question-specific content from Amazon OpenSearch Service and carries that context forward so the final answer includes citations. For structured questions, it hands the work to the conversational analytics path. Further capabilities, including glossary lookup, automations, and document summarization, roll out with capability controls, so Qlik can expand what the tool can do without destabilizing the default experience for every customer at once. Tenant-specific capability options mean Qlik can rebuild the available orchestration path per request, so capabilities can be turned on selectively while the overall architecture stays consistent across customers.</p>
+<p>Figure 2: The specialist agent swarm, where shared state, tools, and human-in-the-loop steps let new specialist agents plug into a common runtime</p>
+<h2>Why Amazon Bedrock</h2>
+<p>Qlik evaluated its model strategy against the three problems described earlier, and Amazon Bedrock addressed each one directly.</p>
+<p><strong>Multi-model flexibility.</strong> With Bedrock, Qlik can assign the best-suited model to each agent’s task instead of locking the whole system to one model’s tradeoffs.</p>
+<p><strong>Data sovereignty at scale.</strong> With Amazon Bedrock cross-Region inference (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">CRIS</a>), Qlik can serve all 11 Regions while keeping data resident where compliance requires it. This combines global reach and sovereignty controls in a single managed capability.</p>
+<p><strong>Room to adopt managed services selectively.</strong> The AWS Regional deployment model and capacity reservation options give Qlik headroom to keep scaling today. When ready, services like Amazon Bedrock AgentCore give Qlik the option to offload more of the operational overhead for specific workloads, without requiring a full migration to get there.</p>
+<p>Qlik uses Bedrock through its own LLM gateway rather than binding application logic directly to one model. Product teams can change model choice by task without rewriting the surrounding application. That separation matters for a system that expects model strategy to keep evolving.</p>
+<h2>Planning capacity ahead of demand</h2>
+<p>Because Qlik forecasts model capacity 3–6 months ahead of major launches, the team built a working model for projecting token consumption by feature and Region, then checked actual usage against those projections after each rollout. That discipline is part of why the February general availability scaled without straining under its own adoption.</p>
+<h2>Business outcomes and customer impact</h2>
+<p>Since the February 2026 general availability of Qlik’s agentic experience, Discovery Agent has surfaced more than 100,000 discoveries for customers, and the majority of Qlik Cloud accounts with agentic tools turned on are actively using their agents rather than trying them once and stopping.</p>
+<p>Customer-level results reported separately include <a href="https://www.qlik.com/us/solutions/customers/customer-stories/lintech-international">Lintech International’s 75% faster response times and up to 7 hours per week returned to business managers</a>, and <a href="https://www.qlik.com/us/solutions/customers/customer-stories/bystronic-group">Bystronic’s 15-minute chatbot deployment</a>.</p>
+<h2>Lessons learned</h2>
+<p>Building and scaling Qlik Answers across 40,000+ customers surfaced a few lessons that might help other teams building agentic tools on Bedrock:</p>
+<ul><li>Separate fast routing from deep reasoning early. Bundling them means every request pays for more processing than it needs.</li><li>Standardize on one orchestration framework for multi-agent execution rather than letting each new specialist invent its own runtime. It’s easier to operate one application than a set of disconnected agent systems.</li><li>Treat safety and grounding checks as a system-level gate, not a per-feature afterthought. Running them once, at the model access layer, means every new specialist agent inherits the same protections automatically.</li><li>Use feature flags at the tenant level to expand capability gradually. This keeps new, less-proven capabilities from affecting the reliability of the core experience.</li><li>Build a capacity forecasting habit before you need one. Validating projected usage against actual usage after each launch is what turns capacity planning from guesswork into a repeatable process.</li></ul>
+<h2>What’s next</h2>
+<p>Qlik’s roadmap keeps the architecture deliberately open and adaptable. The team is evaluating Amazon Bedrock AgentCore for select workloads where a managed agentic runtime would reduce operational overhead, while continuing to build on open standards and its own orchestration layer where that gives Qlik more control over cost, latency, or portability. The goal is to keep the option to adopt managed services where they help, without designing the framework around any one of them. Qlik is also building a systematic framework for evaluating model performance. This means Qlik can move to better-fit models as they become available, without disrupting the experience customers already rely on.</p>
+<h2>Conclusion</h2>
+<p>Qlik Answers’ adoption since its February 2026 launch reflects an architecture built to stay out of the way: fast where speed matters, deliberate where accuracy matters, grounded in real sources throughout, and safe enough for regulated industries to depend on. The model flexibility, Regional sovereignty controls, and Guardrails-based content filtering and grounding validation in Amazon Bedrock gave Qlik a foundation to build that experience at global scale. The result so far includes more than 100,000 discoveries surfaced, hours returned to employees at companies like Lintech and TouchPoint, and a majority of accounts with agentic tools turned on continuing to use their agents after trying them.</p>
+<p>To see what Qlik Answers can do with your data, start a <a href="https://www.qlik.com/us/trial/qlik-cloud-analytics">free trial of Qlik Cloud Analytics</a>, request a <a href="https://www.qlik.com/us/contact-us/demo-request-qlik-answers">Qlik Answers demo</a> or a <a href="https://pages.qlik.com/awsdemo">Qlik and AWS demo</a>, or visit the <a href="https://www.qlik.com/us/products/qlik-answers">Qlik Answers product page</a> to learn more.</p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>Automate remediation post AWS DevOps Agent investigation</title>
       <link>https://aws.amazon.com/blogs/machine-learning/automate-remediation-post-aws-devops-agent-investigation/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/automate-remediation-post-aws-devops-agent-investigation/?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Automate remediation post AWS DevOps Agent investigation</h1>
+<p>Reducing the time between incident detection, investigation, and remediation is a critical priority for organizations running production workloads on AWS. When an issue arises, on-call engineers often need to quickly diagnose the problem across application components, identify the root cause, and apply the fix, often in the middle of the night.</p>
+<p><a href="https://aws.amazon.com/devops-agent/">AWS DevOps Agent</a>, an AI powered agent that autonomously triages incidents all day based on correlated metrics, logs, and application topology, addresses the first part of this priority by providing root cause analysis (RCA) and recommended actions for resolution. However, to retain control and help prevent unintended changes, organizations typically keep their observability agents, including AWS DevOps Agent, in an observe-and-report mode, where the agent diagnoses issues but doesn’t modify production resources directly. In this post, we demonstrate how to use <a href="https://aws.amazon.com/lambda/lambda-durable-functions/">AWS Lambda Durable Functions</a>, a capability of AWS Lambda, <a href="https://aws.amazon.com/eventbridge/">Amazon EventBridge</a>, and <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> to create an automated remediation workflow that complements AWS DevOps Agent to complete the issue resolution step. This workflow transforms investigation summaries into pre-validated fixes ready for single approval action, helping you reduce mean time to resolution (MTTR) and free your on-call engineers from repetitive diagnostic work.</p>
+<h2>Solution overview</h2>
+<p>With <a href="https://aws.amazon.com/lambda/lambda-durable-functions/">AWS Lambda Durable Functions</a>, you can build resilient multi-step applications and AI workflows that can run for up to one year without requiring you to manage additional infrastructure or write custom state management and error handling code. These functions automatically checkpoint progress, suspend execution during long-running tasks, and recover from failures while maintaining reliable progress despite interruptions.</p>
+<p>The following diagram illustrates the solution architecture.</p>
+<p>Figure 1: Automated remediation workflow from an AWS DevOps Agent investigation through Amazon EventBridge, AWS Lambda, and Amazon Bedrock, with optional human approval before changes reach the infrastructure</p>
+<p>The workflow consists of the following steps:</p>
+<ul><li>AWS DevOps Agent completes an incident investigation and emits an event containing symptoms, findings, and root cause analysis.</li><li>Amazon EventBridge receives the investigation completion event and triggers the <code>devops-agent-trigger</code> function with the investigation content.</li><li>The Lambda function packages the investigation summary and invokes the <code>devops-agent-remediation-durable</code> durable function.</li><li>The durable function sends the investigation context to Amazon Bedrock, which analyzes the findings and looks for applicable remediations.</li><li>Amazon Bedrock identifies and lists the available remediation tools from a curated allowlist of approved Lambda functions: <code>devops-agent-lambda-tool</code>.</li><li>Amazon Bedrock proposes specific remediation actions based on the investigation findings and the available tools.</li><li>For read-only actions, the durable function runs the remediation tools autonomously. For infrastructure changes, the workflow suspends and waits for <a href="https://docs.aws.amazon.com/lambda/latest/dg/durable-examples.html#durable-examples-long-running">human approval</a> before proceeding.</li><li>After approval, the durable function applies the remediation actions to the infrastructure using the selected tools.</li></ul>
+<p>The durable function runs as an <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-patterns/prompt-chaining-saga-patterns.html#agent-choreography">agentic loop</a>, iteratively calling Amazon Bedrock, executing approved tools, and feeding results back into the conversation until the remediation is complete. To keep automated actions safe and auditable, the orchestrator enforces a curated allowlist of remediation tools. Each tool is a purpose-built Lambda function that performs a specific, well-scoped action, such as reading a Lambda function configuration or updating an AWS Identity and Access Management (IAM) policy statement. Amazon Bedrock can only select and invoke tools from this approved set, which keeps the scope of automated actions controlled. The workflow further distinguishes between read-only operations and mutating operations. Read-only tools run autonomously without human intervention. Mutating actions that would modify infrastructure state cause the durable function to suspend execution and wait for human approval. This is where AWS Lambda Durable Functions provide a key advantage. The function <a href="https://docs.aws.amazon.com/durable-execution/#key-features">checkpoints</a> its progress and pauses for minutes, hours, or even days without consuming compute resources, then resumes exactly where it left off after it receives the approval signal. By the time the on-call engineer engages, the system has already gathered relevant configurations, correlated the root cause with available remediation actions, and prepared a set of pre-validated changes ready for one-click approval. The current implementation uses an approve or reject signal. Because the callback accepts an arbitrary JSON payload, you can extend the approval to carry parameter overrides or reviewer observations. These can be fed back into the Bedrock conversation to refine the proposed remediation before execution.</p>
+<p>In the following sections, we walk through the implementation details, including the Amazon EventBridge rule configuration and the durable function orchestration logic. We then deploy the solution using the <a href="https://aws.amazon.com/cdk/">AWS Cloud Development Kit</a> (AWS CDK).</p>
+<h2>Prerequisites</h2>
+<p>Before deploying this solution, verify that you have the following prerequisites:</p>
+<ul><li>The <a href="https://aws.amazon.com/cli">AWS Command Line Interface</a> (AWS CLI) installed and configured.</li><li>Python 3.14 or later.</li><li>The <a href="https://aws.amazon.com/cdk/">AWS CDK</a> installed.</li><li>An active <a href="https://docs.aws.amazon.com/devopsagent/latest/userguide/getting-started-with-aws-devops-agent-creating-an-agent-space.html">AWS DevOps Agent space</a>.</li><li>(Optional) <a href="https://kiro.dev">Kiro</a> with the <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS</a>. The Agent Toolkit gives Kiro secure access to AWS APIs through a managed MCP Server with IAM-based access controls. If you use Kiro, the incident simulation, deployment, and cleanup steps in this post can be completed with natural language prompts instead of running CLI commands manually. To set it up, add the AWS MCP Server to <code>~/.kiro/settings/mcp.json</code> (<a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/#getting-started">setup instructions</a>). The repository includes a Kiro rules and agents file that gives Kiro the project context, deployment sequence, and safety conventions automatically.</li></ul>
+<h3>Simulate the incident</h3>
+<p>To demonstrate the end-to-end workflow, we simulate a common scenario: a Lambda function that exceeds its configured timeout. This gives AWS DevOps Agent a real incident to investigate and sets the remediation workflow in motion.</p>
+<p>To keep the focus on the remediation solution itself, the steps to create and invoke this test function are kept in the <a href="https://github.com/aws-samples/sample-automate-remediation-post-devops-agent-investigation.git">repository</a>. It includes a ready-to-use <code>devops-agent-timeout</code> function and step-by-step instructions to deploy it, invoke it, and confirm the timeout error in Amazon CloudWatch Logs. For the full walkthrough, see the <a href="https://github.com/aws-samples/sample-automate-remediation-post-devops-agent-investigation#simulate-the-incident">“Simulate the incident” section of the README</a>.</p>
+<p>After the function is deployed and has produced at least one timeout error, you’re ready to start an investigation with AWS DevOps Agent.</p>
+<h2>Deploy the solution using the AWS CDK</h2>
+<p>Complete the following steps to deploy the remaining solution resources:</p>
+<p><strong>Kiro:</strong> If you have Kiro with the Agent Toolkit for AWS configured (see Prerequisites), open the cloned repository in Kiro and ask: “<em>Set up the Python environment and deploy the CDK stack. Show me what resources will be created before deploying.</em>” Kiro reads the project rules from the repository, sets up the virtual environment, installs dependencies, and shows you the planned resources before deploying. It confirms each infrastructure change before executing, following the same human-in-the-loop pattern that the remediation solution itself uses. To deploy manually, follow these steps.</p>
+<ul><li>Clone the AWS CDK code hosted on GitHub:  <code>$ git clone https://github.com/aws-samples/sample-automate-remediation-post-devops-agent-investigation.git</code></li><li>Navigate to the directory <code>sample-automate-remediation-post-devops-agent-investigation</code>:  <code>$ cd sample-automate-remediation-post-devops-agent-investigation</code></li><li>Bootstrap the AWS CDK. This is required the first time you use the AWS CDK in a specific AWS <a href="https://docs.aws.amazon.com/cdk/v2/guide/environments.html">environment</a> (a combination of an AWS account and AWS Region).  <code>$ cdk bootstrap</code></li><li>Deploy the stack:  <code>$ cdk deploy</code></li></ul>
+<p>The AWS CDK automatically provisions and configures the following resources:</p>
+<ul><li>Three Lambda functions:  <code>devops-agent-trigger</code>. <code>devops-agent-remediation-durable</code>. <code>devops-agent-lambda-tool</code>.</li><li>Amazon EventBridge rule.</li></ul>
+<p>The AWS CDK automatically handles the IAM permissions using least-privilege principles and AWS security best practices. For example, Amazon EventBridge is granted <code>lambda:InvokeFunction</code> permissions for the <code>devops-agent-trigger</code> function. The stack grants the <code>aidevops:ListJournalRecords</code> permission to the <code>devops-agent-trigger</code> function so it can fetch investigation summaries from the AWS DevOps Agent journal. It also grants the <code>bedrock:InvokeModel</code> permission to the <code>devops-agent-remediation-durable</code> function so it can invoke Amazon Bedrock.</p>
+<h2>Validate the solution</h2>
+<p>With the remediation stack deployed and the <code>devops-agent-timeout</code> function failing with timeout errors, we can now walk through the end-to-end workflow.</p>
+<h3>Start an investigation with AWS DevOps Agent</h3>
+<p>Open the <a href="https://console.aws.amazon.com/aidevops/">AWS DevOps Agent console</a>, navigate to your agent space, and ask: “<em>What is happening with the devops-agent-timeout function?</em>”</p>
+<p>Figure 2: Starting an investigation from the AWS DevOps Agent console</p>
+<p>The investigation starts and takes a few minutes to complete. During this time, AWS DevOps Agent autonomously correlates CloudWatch metrics, logs, and the function’s configuration to determine the root cause.</p>
+<p>Figure 3: AWS DevOps Agent correlating signals during the investigation</p>
+<p>After the investigation completes, AWS DevOps Agent presents the root cause analysis, identifying that the function timeout is insufficient for the workload.</p>
+<p>Figure 4: The root cause analysis identifying the insufficient function timeout</p>
+<h3>Verify the trigger Lambda execution</h3>
+<p>The investigation completion emits an <em>Investigation Completed</em> event to Amazon EventBridge.</p>
+<p>The rule triggers the <code>devops-agent-trigger</code> Lambda function, which fetches the investigation summary from the AWS DevOps Agent journal. In the <code>/aws/lambda/devops-agent-trigger</code> CloudWatch log group, you can see the parsed summary that is sent to the <code>devops-agent-remediation-durable</code> durable function, including symptoms, root causes, contributing causes, and investigation gaps.</p>
+<p>Figure 5: The parsed investigation summary in the trigger function CloudWatch log group</p>
+<h3>Monitor the durable function execution</h3>
+<p>Navigate to the <a href="https://console.aws.amazon.com/lambda/">Lambda console</a>, open the <code>devops-agent-remediation-durable</code> function, and choose the <strong>Durable executions</strong> tab. Choose the new execution to inspect its checkpointed steps.</p>
+<p>Figure 6: The durable function execution and its checkpointed steps in the Lambda console</p>
+<p>The durable orchestrator begins its agentic loop by sending the investigation context to Amazon Bedrock. In the first Bedrock call, the model analyzes the investigation summary and determines that it needs to inspect the current function configuration before proposing a fix. It selects the <code>lambda_get_function_configuration</code> tool from the allowlist. Because this is a read-only operation, it runs autonomously without requiring human approval. The step result shows the current configuration of the <code>devops-agent-timeout</code> function, confirming a timeout value of 3 seconds.</p>
+<p>Figure 7: The read-only tool call returning the current 3-second timeout configuration</p>
+<h3>Amazon Bedrock proposes the remediation</h3>
+<p>With the current configuration confirmed, Amazon Bedrock proceeds to the next iteration. It reasons that the 3-second timeout is the root cause of the failures and proposes increasing it to 30 seconds. The Amazon Bedrock response contains both the reasoning and the tool call:</p>
+<pre><code>{
+  ....
+  },
+  &quot;output&quot;: {
+    &quot;message&quot;: {
+      &quot;role&quot;: &quot;assistant&quot;,
+      &quot;content&quot;: [
+        {
+          &quot;text&quot;: &quot;Now I can see the current configuration confirms the issue - the function has a 3-second timeout. Given that this appears to be a test function for timeout scenarios (based on the name \&quot;devops-agent-timeout\&quot; and its association with \&quot;DevOps Agent Test Infrastructure\&quot;), I'll increase the timeout to a reasonable value that should allow the function to complete successfully. I'll set it to 30 seconds, which is a common timeout for Lambda functions that need more execution time.&quot;
+        },
+        {
+          &quot;toolUse&quot;: {
+            &quot;toolUseId&quot;: &quot;tooluse_lcGHbWDxng5HiLpmhWagDS&quot;,
+            &quot;name&quot;: &quot;lambda_update_function_configuration&quot;,
+            &quot;input&quot;: {
+              &quot;FunctionName&quot;: &quot;devops-agent-timeout&quot;,
+              &quot;Timeout&quot;: 30
+            },
+            &quot;type&quot;: &quot;tool_use&quot;
+          }
+        }
+        ...
+      }</code></pre>
+<p>Because <code>lambda_update_function_configuration</code> is a mutating action, the durable function suspends execution and waits for human approval.</p>
+<p><a href="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/20995-1.png"><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/20995-1.png" alt="cloudwatch logs output of lambda durable function for approval request"></a> Figure 8: cloudwatch logs output of lambda durable function for approval request</p>
+<p><strong>Important:</strong> The <code>investigation_summary</code> sent to Amazon Bedrock, and the remediation it proposes, are AI-generated and should always be reviewed before approval. The human approval gate is the security control: the approver must inspect the full tool parameters (for example, the exact <code>FunctionName</code> and <code>Timeout</code> in a <code>lambda_update_function_configuration</code> call) and confirm the change is correct.</p>
+<p><strong>Using the AWS CLI:</strong></p>
+<pre><code>$ aws lambda send-durable-execution-callback-success \
+    --callback-id &lt;callback-id&gt; \
+    --cli-binary-format raw-in-base64-out \
+    --result '{&quot;approved&quot;: true}'</code></pre>
+<p><strong>Using the AWS Console:</strong></p>
+<p>Navigate to the durable execution, select the pending callback, and choose <strong>Send success</strong> to confirm:</p>
+<p>Figure 9: Approving the remediation by choosing Send success in the Lambda console</p>
+<p>In the input field, enter <code>{'approved': true}</code> and confirm.</p>
+<p>Figure 10: Entering the approval payload to confirm the callback</p>
+<h3>Verify the fix</h3>
+<p>After approval, the durable function resumes, invokes the tool Lambda to update the configuration, and Amazon Bedrock confirms the remediation is complete. The updated <code>devops-agent-timeout</code> function now shows the new timeout value:</p>
+<p>Figure 11: The devops-agent-timeout function configuration updated to a 30-second timeout</p>
+<p>The final step output (<code>bedrock-call-4</code>) confirms the successful remediation:</p>
+<pre><code>{
+  &quot;EventType&quot;: &quot;StepSucceeded&quot;,
+  &quot;Name&quot;: &quot;bedrock-call-4&quot;,
+  ....
+  },
+  &quot;output&quot;: {
+    &quot;message&quot;: {
+      &quot;role&quot;: &quot;assistant&quot;,
+      &quot;content&quot;: [
+        {
+          &quot;text&quot;: &quot;## Remediation Complete
+          **Issue Identified:** The Lambda function `devops-agent-timeout` in eu-west-1 was configured with a 3-second timeout that was insufficient for its execution time, causing timeout errors at exactly 3000ms.
+          **Action Taken:** Successfully updated the Lambda function configuration to increase the timeout from 3 seconds to 30 seconds.
+          **Verification:** Confirmed the configuration change was applied successfully. The function now has:
+          - **Timeout:** 30 seconds (increased from 3 seconds)
+          - **Status:** Successful update completion
+          - **LastModified:** 2026-05-22T11:11:28.000+0000
+          This remediation should resolve the timeout errors by providing the function with adequate time to complete its execution. The 30-second timeout provides a 10x increase from the original 3-second limit, which should be sufficient for most operations while still maintaining reasonable execution bounds for a Lambda function.&quot;
+        }
+      ]
+    }
+  },
+  &quot;stopReason&quot;: &quot;end_turn&quot;,
+  ...
+}</code></pre>
+<p>This entire cycle, from incident detection to automated fix, required only a single approval action from the engineer. The system handled diagnosis, configuration retrieval, remediation proposal, and execution autonomously.</p>
+<h2>Clean up</h2>
+<p>Clean up the resources you created by completing the following steps:</p>
+<p><strong>Kiro:</strong> If you use Kiro with the Agent Toolkit for AWS, ask: <em>“Clean up all resources from the DevOps Agent remediation demo: destroy the CDK stack, delete the devops-agent-timeout test function, its IAM role, and its CloudWatch log group.”</em> Kiro removes resources in the correct order, confirming each destructive action before proceeding. To clean up manually, follow these steps.</p>
+<ul><li>Delete the AWS CDK resources:  <code>$ cdk destroy</code></li><li>Manually delete the <code>devops-agent-timeout</code> function that simulates the incident:  <code>$ aws lambda delete-function --function-name devops-agent-timeout</code></li><li>Manually delete the IAM role and the CloudWatch log group of the <code>devops-agent-timeout</code> function:  <code>$ aws iam detach-role-policy \ --role-name devops-agent-timeout-role \ --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole $ aws iam delete-role --role-name devops-agent-timeout-role $ aws logs delete-log-group --log-group-name /aws/lambda/devops-agent-timeout</code></li></ul>
+<h2>Conclusion</h2>
+<p>This post demonstrated how you can automate issue remediation by using Lambda Durable Functions, Amazon EventBridge, and Bedrock in conjunction with the DevOps Agent. The solution picks up where AWS DevOps Agent leaves off, transforming investigation summaries into actionable remediation steps that run with human-in-the-loop approval. This approach reduces mean time to resolution because, by the time the on-call engineer engages, the system has already diagnosed the issue, gathered current configurations, and prepared a ready-to-approve fix. Safety remains central to the design: the allowlist restricts Amazon Bedrock to only invoke pre-approved tools, and the human approval gate helps prevent unintended changes from reaching production without explicit authorization. The architecture is also inherently extensible. Adding new remediation capabilities requires only configuration updates to the tool registry, not code changes to the orchestrator. And because AWS Lambda Durable Functions suspend without consuming compute resources during the approval wait, the solution remains cost-efficient even when approval cycles span hours or days.</p>
+<p>To get started using this solution, download the complete AWS CDK template from the <a href="https://github.com/aws-samples/sample-automate-remediation-post-devops-agent-investigation.git">GitHub repository</a>, and follow the steps in this post to deploy the solution in your environment.</p>
+<p>We would love to hear from you. Share your experience implementing this solution, ask questions, or suggest improvements in the comments. You can also join the <a href="https://builder.aws.com/connect/community/community-builders">AWS Community Builders</a> program to connect with other builders and share your serverless architecture patterns.</p>
+<h2>About the author</h2>]]></content:encoded>
     </item>
     <item>
       <title>Building AI builders: Playbook for closing the AI knowledge-…</title>
@@ -47,6 +388,92 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/building-ai-builders-playbook-for-closing-the-ai-knowledge-capability-gap/?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Building AI builders: Playbook for closing the AI knowledge-capability gap</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Building AI builders: Playbook for closing the AI knowledge-capability gap</h1>
+<p>The biggest barrier to AI adoption isn’t awareness. It’s the gap between talking about AI and building with it.</p>
+<p>Professionals whose primary role isn’t writing code, but whose daily work increasingly depends on AI solutions, don’t need engineering backgrounds to start building AI capability. They need the right tools, structured support, and permission to fail. Here’s how we proved it, and how you can replicate it.</p>
+<h2>The problem organizations are ignoring</h2>
+<p>Your teams are already in AI conversations, whether they’re fielding questions from customers, evaluating vendor solutions, or identifying automation opportunities in their day-to-day responsibilities. Given the pace at which agentic AI tools have become generally available, most of them have never built anything with the tools they’re discussing.</p>
+<p>These teams, regardless of whether they sit in sales, operations, finance, or product, have watched the demos and completed the certifications. But when someone asks, “how does this actually work?”, they don’t have the answer that comes from having built with it themselves.</p>
+<p>The cost is real: slower adoption, delayed productivity gains, missed opportunities to identify use cases, and a growing disconnect between what your teams <em>know about</em> and what they can <em>implement.</em></p>
+<p>We asked business professionals, people who work with AI tools daily but aren’t writing production code, what held them back with AI adoption. The answer wasn’t “I don’t want to learn.” 90 percent wanted hands-on experience building AI agents. They were missing the connective tissue and scaffolding to build safely. The following chart illustrates the most common barriers business teams face when attempting to build with AI.</p>
+<p>Figure 1: Top barriers business teams cite to building with AI</p>
+<p>At a high level, they could talk about <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> and <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>, a platform to build, connect, and optimize agents at scale with any framework or model (80 percent had explored it). But fewer than 1 in 5 had touched Strands Agents SDK or built with <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> agents. They were opting out of hackathons and build events because they didn’t believe their technical knowledge was strong enough to compete alongside engineers.</p>
+<p>To solve for this, we designed a six-week structured program that pairs business professionals with mentors and production-grade tools to build working AI prototypes that can scale beyond the program. The goal: close the gap between conceptual knowledge and hands-on capability.</p>
+<h2>What one team built: The proof in six weeks</h2>
+<p>Four customer-facing professionals who had never worked together participated in our program. None had engineering backgrounds. Six weeks later, they presented their prototype, WealthWise, a multi-agent AI financial advisory tool, that won first place.</p>
+<p>What they built:</p>
+<ul><li><strong>Five specialized AI agents</strong> delivering intelligent financial advisory: portfolio analysis, risk assessment, financial planning, market insights, and personalized investment recommendations.</li><li><strong>Dual-server architecture</strong> (<code>Node.js</code> + Python Flask) with Amazon Nova models.*</li><li><strong>Strands Agents SDK</strong> for multi-agent orchestration and conversation memory.</li><li><strong>Four Amazon DynamoDB tables</strong> for real-time data persistence.</li><li><strong>Live market data integration</strong> for context-aware financial recommendations.</li><li><strong>Sub-5-second response times</strong> for complex financial reasoning.</li></ul>
+<p>The system features coordinated decision-making: Each agent independently decides which tools to invoke and chains multiple tools together, performing multi-step reasoning across portfolio data, market databases, and financial planning models.</p>
+<p>They attributed their success to five principles they established on day one:</p>
+<ul><li><strong>Learning over winning</strong> – Choosing challenging approaches over safe shortcuts freed them to experiment without fear.</li><li><strong>Regular cadences</strong> – Daily standups prevented isolation and caught issues early.</li><li><strong>Start with a Minimum Viable Product (MVP), then refine</strong> – Working end-to-end flow by Day 2, then iterate.</li><li><strong>Engage in office hours</strong> – Actively seeking mentorship when stuck.</li><li><strong>Have fun</strong> – Psychological safety before technical output.</li></ul>
+<p>Participants reflected on how the hands-on format accelerated their learning:</p>
+<blockquote>“The hackathon’s timing was perfect, and the hands-on format proved invaluable for AgentCore enablement – accelerating what could have been a lengthy learning curve.”</blockquote>
+<blockquote>“Great teambuilding and AI learning project! I taught myself a lot and have additional empathy for customers who are new to AI solutions.”</blockquote>
+<ul><li><em>Amazon Nova models are available on Amazon Bedrock in select AWS Regions. For the latest availability, see the AWS Regional Services page.</em></li></ul>
+<h2>The playbook: How we designed the program</h2>
+<p>The following sections break down the program structure, each phase, and the design decisions that made it work.</p>
+<h3>Program structure</h3>
+<p>The program runs over six weeks, with participants dedicating approximately four hours per week. We structured it this way deliberately: based on our program data, participants who completed a phased program retained three times more practical skills than those in intensive two-day formats. Professionals who don’t write code for their primary jobs need iteration cycles: time to struggle with unfamiliar concepts, recover, and build again before confidence becomes durable.</p>
+<h3>Phase 0: Recruitment and program setup</h3>
+<p>We recruited participants through manager nomination, Slack, and email campaigns, targeting professionals who work with AI solutions daily but don’t build them: account managers, solutions consultants, operations analysts, program managers, and similar roles. Management buy-in came first. We briefed team leaders on the time commitment (four hours per week for six weeks) and framed it as an investment in fluency and conversation quality, not a distraction from their day-to-day delivery.</p>
+<p>The program was orchestrated by four core team members plus mentors who ran it alongside their day jobs. That’s a key replicability point: this doesn’t require a dedicated program team, but it does require at least one person with enough organizational trust to protect participants’ time.</p>
+<h3>Phase 1: Team formation and kickoff</h3>
+<p><strong>What participants do:</strong> Form teams of 3–4 with intentionally mixed experience levels. Teams define a problem statement tied to a real scenario they’ve encountered in their role.</p>
+<p><strong>What this produces:</strong> A scoped project concept that can be demoed and team accountability structure.</p>
+<p><strong>Why this matters before moving on:</strong> Without a concrete problem to solve, enablement sessions become abstract. Teams who define their target use case first absorb technical content with purpose.</p>
+<h3>Phase 2: Enablement</h3>
+<p><strong>What participants do:</strong> Attend live training sessions on agentic AI concepts and AWS tools. These are not lectures. Participants work inside the actual tools they will use in the build phase, completing structured exercises that mirror their project work.</p>
+<p><strong>What this produces:</strong> Baseline technical fluency and a working local environment.</p>
+<p><strong>Why this matters before moving on:</strong> Teams who skip straight to building hit a wall at environment setup and foundational concepts. This phase avoids the most common drop-off point.</p>
+<h3>Phase 3: Ideation, building and development</h3>
+<p><strong>What participants do:</strong> Design and iterate on working prototypes over multiple weeks. Each team is paired with a technically proficient mentor who provides a safety net, unblocking infrastructure issues and suggesting architectural patterns without doing the work for them.</p>
+<p><strong>What this produces:</strong> A functional prototype that could be demoed to a stakeholder or customer.</p>
+<p><strong>Why this matters before moving on:</strong> The extended timeline allows 2–3 iteration cycles. Teams who built a prototype in week 3 had time to continuously apply new learning, tear it down, and rebuild better in week 5. That iteration is where the real learning happens.</p>
+<h3>Phase 4: Judging and demos</h3>
+<p><strong>What participants do:</strong> Deliver live demonstrations evaluated across five categories: Business Impact, Technical Excellence, Reusability and Scalability, Innovation, and Presentation Quality.</p>
+<p><strong>What this produces:</strong> Peer-validated proof of capability and a library of reusable prototypes.</p>
+<p><strong>Why this matters:</strong> The demo format mirrors what participants will do in real conversations with customers, leadership, and cross-functional partners. Judging criteria reinforce that <em>working</em> isn’t enough. It has to be impactful, scalable, and clearly communicated.</p>
+<h3>Critical design decisions</h3>
+<p>Tool selection is the most important decision for builders who aren’t engineers. The wrong tools create friction that halts momentum. The right ones abstract infrastructure and meet people at their current level of expertise. We chose:</p>
+<ul><li><a href="https://kiro.dev/">Kiro</a> Integrated Development Environment (IDE) for natural-language development: describe what you want, and it scaffolds the architecture.</li><li>Amazon Bedrock for API-accessible foundation models available in that Region: no machine learning (ML) expertise required to get a working response from a model.</li><li>Strands Agents SDK for composable agent patterns: agents compose like building blocks.</li><li><a href="https://docs.aws.amazon.com/agent-toolkit/latest/userguide/mcp-server.html">AWS Model Context Protocol (MCP) servers</a> and AWS Lambda agents to push teams toward deployable, production-grade architectures, not only local notebooks.</li></ul>
+<p>The core principle never changed: build something real that you could demo on short notice.</p>
+<h3>Managing day-job disruption</h3>
+<p>We deliberately capped weekly commitment at four hours and gave participants flexibility on when those hours happened. The most common feedback was that participants applied what they were learning directly to their work within the first two weeks, making the time investment feel additive rather than competing.</p>
+<h2>The results</h2>
+<p>The following chart compares participant self-assessments before and after the program across eight key metrics, including AI competency, tool adoption, and readiness to apply learnings with customers.</p>
+<p>Figure 2: Participant self-assessments before and after the program</p>
+<p>Going in, participants cited “lack of real-world examples” as their top barrier to building with AI. Coming out, 23 percentage points (pp) more participants rated themselves confident in applying AI to practical use cases than expected to be at the start. Participants left the program with a working prototype, a code repository, and a reference architecture they could demo to stakeholders immediately.</p>
+<p><strong>What they built and are bringing to customers:</strong></p>
+<ul><li>Multi-agent care coordination for healthcare independent software vendors (ISVs).</li><li>Content moderation and triaging systems.</li><li>Fraud identification and prevention.</li><li>Customer churn prediction and prevention.</li><li>Multi-agent orchestration for autonomous decision-making.</li><li>Kiro + Amazon Bedrock AgentCore demos for customer workshops.</li></ul>
+<h2>The impact: From observers to builders</h2>
+<p>When our participants gained hands-on access to AI tooling, they moved from discussing possibilities to building working prototypes. The numbers tell the story:</p>
+<ul><li>Self-rated ‘Strong or Expert’ understanding of agentic AI: increased from 27 percent to 82 percent (+55 pp).</li><li>Feeling ‘Well or Extremely prepared’ to identify AI opportunities: increased from 41 percent to 85 percent (+44 pp).</li><li>Participants with only theoretical or limited experience: decreased from 34 percent to 0 percent (removed).</li></ul>
+<p>Here’s what investing in this unlocks:</p>
+<p><strong>For your teams:</strong> They stop being AI observers and become AI builders. They know what’s feasible, what’s expensive, and what’s a weekend build from direct experimentation. In our cohort, 52 percent identified specific customers who could benefit from what they built <em>during</em> the program, and 87 percent expected to apply their learnings with customers within 30 days. The program over-delivered on practical use cases because it required them to create the examples themselves.</p>
+<p><strong>For your engineering orgs:</strong> When business counterparts can prototype and articulate architecture tradeoffs, engineering teams spend less time translating requirements and more time building. Technical builders get clearer intake, fewer misaligned requests, and partners who can pressure-test feasibility before a single sprint is committed. Consider: 82 percent of participants left with a strong understanding of agentic AI architecture. Tool fluency surged across the stack: Strands Agents SDK went from 20 percent to 80 percent adoption (+60 pp) and AgentCore from 39 percent to 85 percent, raising the bar on engineering judgment.</p>
+<p><strong>For your customers:</strong> They get partners who’ve navigated the same architectural tradeoffs they’re facing by having direct, hands-on experience. Conversations move from “let me get back to you” to live walkthroughs. Before the program, 44 percent of participants cited uncertainty about architecture patterns as a barrier. After the program, 90 percent felt well prepared or better to identify AI opportunities in real customer conversations.</p>
+<p><strong>For your organization:</strong> You get a replicable model that compounds. Our pilot’s expansion from one team to regional and now global deployment demonstrates the pattern: hands-on fluency scales itself. The program achieved a 100 percent recommendation rate, with 95 percent of participants saying the program met or exceeded expectations.</p>
+<h2>Seven lessons for replicating this at your organization</h2>
+<p>These seven lessons capture what made the program work and what to replicate in your own organization.</p>
+<h3>1. Tool selection changes everything</h3>
+<p>Low-code, agentic experiences remove the “I’m not technical enough” barrier. This is a program design decision, not a procurement afterthought. If your tools require Python fluency, you’ve lost half the room before week one.</p>
+<h3>2. Structure beats intensity</h3>
+<p>A phased program (6 weeks) with clear milestones outperforms a two-day sprint for non-technical audiences. Expect the first week to feel slow. The compounding comes after.</p>
+<h3>3. Mentorship is the multiplier</h3>
+<p>Pairing non-technical participants with technically proficient mentors removes the fear of failure and accelerates learning. The mentor doesn’t build for them. They provide a safety net.</p>
+<h3>4. Build something real</h3>
+<p>Requiring working prototypes with code repos and reference architectures (not slides) forces deep engagement with the tools. You can’t fake your way through a live demo. This is what separates a hackathon from a training course.</p>
+<h3>5. Measure before and after</h3>
+<p>Before and after competency assessments make the impact visible and build the business case for expansion. Self-reported confidence is useful, but the shift from “limited” to “extensive” hands-on experience is what matters.</p>
+<h3>6. Make it replicable</h3>
+<p>A well-documented playbook (participant guidelines, evaluation rubrics, mentor pairing frameworks, environment setup guides) turns a one-time event into a scalable program.</p>
+<h3>7. Create psychological safety first</h3>
+<p>When people aren’t afraid to fail, they build things they never thought possible. The winning team cited “learning over winning” as their top principle. Every team that thrived established trust before code.</p>
+<h2>Get started</h2>
+<p>The playbook, evaluation rubrics, and environment setup guides are available for teams looking to replicate this model. Reach out to one of the authors to learn more about bringing this framework to your organization.</p>
+<p>Learn more about <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> | <a href="https://kiro.dev/">Kiro IDE</a> | <a href="https://github.com/strands-agents/sdk-python">Strands Agents SDK</a></p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>How Cornerstone OnDemand cut database diagnosis by 78% with…</title>
@@ -54,6 +481,69 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-cornerstone-ondemand-cut-database-diagnosis-by-78-with-amazon-bedrock/?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: How Cornerstone OnDemand cut database diagnosis by 78% with Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>How Cornerstone OnDemand cut database diagnosis by 78% with Amazon Bedrock</h1>
+<p><a href="https://www.cornerstoneondemand.com/">Cornerstone OnDemand, Inc.</a> (Cornerstone) is a global leader in workforce readiness solutions, serving 140 million users across 186 countries. The company built a multi-agent AI system that transforms database operations from reactive firefighting into proactive, self-orchestrating workflows. The system, called Orion AI, uses <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> and <a href="https://strandsagents.com/">Strands Agents</a>, an open source agent orchestration framework from AWS, to coordinate specialized agents.</p>
+<p>Before Orion AI, Cornerstone’s Enterprise DataOps team would spend up to 45 minutes per database incident manually querying system views and cross-referencing logs before handing off across teams. With Orion AI, database diagnosis dropped from 45 minutes to 10, a 78% reduction. A three-person team delivered the system in six months.</p>
+<p>In this post, we walk through the operational problem Cornerstone faced, how they designed Orion AI, the outcomes they measured, and the design decisions other teams can reuse.</p>
+<h2>The operational challenge</h2>
+<p>Before Orion AI, Cornerstone’s Enterprise DataOps team operated reactively, with four recurring pain points:</p>
+<ul><li>Database performance investigations took approximately 45 minutes per incident, spread across multiple tools and system views.</li><li>Database lifecycle workflows required 10 or more manual steps, from establishing connections to communicating status updates.</li><li>Reporting between the site reliability engineering (SRE) team and the data team ran on a 15-minute lag.</li><li>Redundant and overlapping alerts created noise that buried the signals that mattered.</li></ul>
+<p>Together, these meant engineers spent their time on manual coordination instead of resolving issues.</p>
+<h2>The solution: Orion AI</h2>
+<p>Orion AI is a multi-agent system where a coordinating agent (the meta-orchestrator) delegates work to specialized child agents arranged in a hub-and-spoke topology. Engineers interact with it through a web application, asking questions and approving actions in the same place they already coordinate operational work. The agents cover infrastructure monitoring, database diagnostics, database lifecycle operations, customer analytics, and knowledge-driven support.</p>
+<p>Two tenets guided the build: data privacy using AWS controls under the <a href="https://aws.amazon.com/compliance/shared-responsibility-model/">shared responsibility model</a>, and deep integration with existing operational tools. Amazon Bedrock provided managed access to foundation models, and Strands Agents provided the orchestration layer.</p>
+<h2>Results</h2>
+<p>Orion AI delivered measurable improvements in both diagnosis speed and accuracy and freed the team from manual coordination. By automating manual bottlenecks and streamlining cross-team workflows, Cornerstone achieved the following outcomes.</p>
+<table><thead><tr><th><strong>Metric</strong></th><th><strong>Before</strong></th><th><strong>After</strong></th><th><strong>Improvement</strong></th></tr></thead><tbody><tr><td>Database diagnosis time</td><td>45 minutes</td><td>10 minutes</td><td>78% faster</td></tr><tr><td>Manual lifecycle steps</td><td>10+ steps</td><td>1 interaction</td><td>70% reduction</td></tr><tr><td><code>SRE-to-data-team</code> reporting lag</td><td>15 minutes</td><td>Instantaneous</td><td>Real-time</td></tr><tr><td>Redundant alerts</td><td>High baseline volume</td><td>Filtered</td><td>65% reduction (median)</td></tr></tbody></table>
+<h3>Faster performance troubleshooting</h3>
+<p>Reducing database diagnosis time was Orion AI’s largest single efficiency gain to date. Previously, engineers manually connected to the affected SQL Server instance, queried system views for blocking chains and wait types, cross-referenced logs to isolate long-running queries, and correlated evidence to form a root cause hypothesis. This averaged approximately 45 minutes per incident.</p>
+<p>With Orion AI, three specialized agents share the investigation, each owning a distinct stage. Beyond diagnosis, Orion AI carries issues through remediation: identifying the root cause, recommending the fix, and creating a populated Jira ticket assigned to the right on-call engineer. A four-step manual handoff collapses into a single interaction.</p>
+<h3>Automated database lifecycle management</h3>
+<p>Tasks that previously required over 10 manual steps, from establishing database connections to running cross-system queries to communicating status updates, now run as a single natural language interaction. Orion AI identifies the right tools and data sources, runs queries across systems, validates results, and returns a unified response. From the engineer’s perspective, the work is reduced to prompting Orion AI and validating the findings it reports back.</p>
+<h3>Real-time monitoring and reduced alert fatigue</h3>
+<p>Orion AI removed the 15-minute <code>SRE-to-data-team</code> reporting lag, replacing periodic manual checks with continuous cross-system visibility.</p>
+<p>Orion AI reduced redundant alerts by a median of 65 percent through deduplication, threshold filtering, and cross-signal correlation. For every 10 alerts previously generated, only 3–4 now reach engineers. Alerts route directly to the responsible teams without an intermediate alerting layer.</p>
+<h2>Key design principles</h2>
+<p>Three decisions shaped Orion AI, and you can apply them to your own multi-agent projects:</p>
+<ul><li><strong>Split agents by domain, not by task complexity</strong>: Each agent carries a narrow set of tool integrations for one operational domain. This keeps a model’s context focused and improves the accuracy of tool selection, rather than asking one general-purpose agent to do everything.</li><li><strong>Default to keyword routing, fall back to semantic search</strong>: Predictable requests are matched by keyword for speed. Ambiguous requests fall back to semantic search for accuracy. This keeps latency low without sacrificing correctness on the harder queries.</li><li><strong>Scope conversational memory to sessions and bypass it for live metrics</strong>: Persistent memory supports multi-turn conversations, but operational questions always read current system state. Bypassing memory for live metrics helps prevent stale data from contaminating real-time diagnostics.</li></ul>
+<h2>Architecture overview</h2>
+<p>Orion AI is deployed as containerized services on <a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service</a> (Amazon ECS). Users interact through a web application that routes each request to the appropriate agent, invokes the required tools, and assembles the response. The following diagram shows how these components connect within the AWS Cloud.</p>
+<p>Figure 1: Orion AI architecture: a meta-orchestrator on Amazon ECS routes requests to specialized agents, which reach data sources through a Portal-Tools MCP server and use Amazon Bedrock for models, long-term memory, and retrieval augmented generation</p>
+<h2>Architecture deep dive</h2>
+<p>The preceding design principles show up concretely in the architecture. The rest of this section walks through Orion AI’s core components.</p>
+<h3>Building the hub-and-spoke pattern with Strands Agents</h3>
+<p>Orion AI expresses its topology with a handful of Strands Agents primitives. The <code>Agent</code> class is the building block for both specialist agents and the meta-orchestrator. Each agent’s tools are ordinary Python functions marked with the <code>@tool</code> decorator. This derives a tool’s specification from the function’s type hints and docstring, meaning there is no separate schema to maintain. <code>BedrockModel</code> wraps the Amazon Bedrock model each agent runs on, and <code>MCPClient</code> connects agents to external tool servers.</p>
+<p>The topology:</p>
+<ul><li>The hub is a single Strands Agent acting as the meta-orchestrator (the TaskExecutor). It holds no domain tools — only routing tools (<code>find_relevant_agents</code>, <code>call_agent</code>) and control-flow tools (<code>emit_plan_step</code>, <code>emit_confirmation_gate</code>) so it can reason through a request step by step.</li><li>The spokes are independent <code>Agent</code> instances, loaded lazily through a decorator-based registry. Each carries its own model, domain tools, and localized system prompt.</li></ul>
+<p>At runtime, the hub invokes a specialist by name through the registered <code>call_agent</code> tool. Each specialist runs its own tool-calling loop and returns synthesized text back to the hub, which assembles the final response.</p>
+<h3>Hybrid routing</h3>
+<p>Orion AI uses keyword-first routing with a semantic search fallback. Approximately 80 percent of queries resolve through an in-memory keyword fast-path in under a millisecond. When keywords are insufficient to determine intent, the system falls back to semantic search powered by <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html">Amazon Titan Text Embeddings V2</a> to route by meaning. For model availability by AWS Region, see <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Supported models by AWS Region in Amazon Bedrock</a>.</p>
+<p>When direct tool invocation isn’t appropriate, a fallback chain activates: <a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock Knowledge Bases</a>, the fully managed Retrieval Augmented Generation (RAG) capability, retrieves operational documentation so responses are grounded in approved procedures rather than generated without context.</p>
+<h3>Domain-specific agents and their boundaries</h3>
+<p>Orion AI uses 13 domain-specific agents. The three SQL Server agents illustrate how domain splitting maps to the stages of a real investigation:</p>
+<ul><li><strong>Database diagnostics agent</strong> surfaces blocking chains, wait types, and long-running queries, then translates technical findings into business impact with remediation recommendations. It answers, “what is happening and what does it mean.”</li><li><strong>Session blocking analysis agent</strong> runs multi-step investigations with reasoning models to map blocking chains to a root blocker. It answers, “why is this happening and what is the root cause,” delivering prioritized recommendations from immediate session termination to longer-term architectural fixes.</li><li><strong>Real-time SQL diagnostics agent</strong> queries SQL Server instances directly through Cornerstone’s DATAOPS API for live blocking data and high-CPU session analysis. It answers, “what is true right now.”</li></ul>
+<p>The remaining agents follow the same principle of narrow ownership: infrastructure monitoring, operational analytics, database lifecycle management, customer analytics, knowledge retrieval from runbooks, notification routing, compound query decomposition, Availability Group listener resolution, and model connection warm-up.</p>
+<h3>Tool integration and service connectivity</h3>
+<p>Orion AI reaches data sources through two patterns:</p>
+<ul><li><strong><a href="https://modelcontextprotocol.io/">Model Context Protocol</a> (MCP)</strong> for tools that several agents share (for example, real-time SQL diagnostics). A Strands <code>@tool</code> function calls an <code>MCPClient</code> over streamable HTTP to a Portal-Tools MCP server, which reaches SQL Server and the DATAOPS API. Jira integration follows the same approach through external Atlassian MCP tools.</li><li><strong>Direct SDK or REST API calls</strong> for sources that don’t need the shared MCP interface. This includes metrics and dashboards, on-call schedules, and Amazon Bedrock Knowledge Bases through <a href="https://aws.amazon.com/sdk-for-python/">AWS SDK for Python (Boto3)</a>.</li></ul>
+<p>This split means each agent uses the lightest mechanism that fits its source, while the MCP server centralizes the tools that several agents share. These connections run over TLS, and credentials such as the MCP token and REST API authorization are supplied per request, not embedded in agent code.</p>
+<h3>Conversational memory</h3>
+<p><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>, a platform to build, connect, and optimize agents at scale with any framework or model, provides the cross-session memory layer. Orion AI coordinates context through a central memory manager that reads from three tiers in parallel, each with its own timeout and token allocation.</p>
+<p>Orion AI coordinates context across three tiers. Short-term memory keeps same-session context in <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a>, encrypted at rest by default, paired with a rolling conversation summary that <a href="https://aws.amazon.com/ai/generative-ai/nova/">Amazon Nova 2 Lite</a> generates asynchronously. Long-term memory provides cross-session recall through AgentCore memory, a capability of Amazon Bedrock AgentCore, namespaced by user ID. On task completion, Orion AI calls <code>create_event</code> to trigger automated extraction, summarization, and consolidation. A third tier, inter-agent memory, is an ephemeral in-memory scratchpad that carries findings across sub-agent steps within a single task.</p>
+<p>The memory manager retrieves across the tiers within a 500-millisecond hard timeout against a 4,000-token budget, backed by a least-recently-used cache. When a request concerns current system state, agents bypass memory entirely and read live data, so stale context does not contaminate real-time diagnostics.</p>
+<h3>Responsible AI and guardrails</h3>
+<p>Because DataOps safety depends on domain-specific rules, such as which database operations are disruptive, the team built custom guardrail logic rather than relying on generic content filters. Orion AI applies controls across four layers:</p>
+<ul><li><strong>Prompt-level safety constraints</strong> injected into every agent’s system prompt, blocking dangerous recommendations (for example, terminating critical database processes) and enforcing non-disruptive methods.</li><li><strong>A human-in-the-loop confirmation gate</strong> that pauses destructive operations until the user confirms within a five-minute window, defaulting to deny on timeout.</li><li><strong>Custom guardrail modules for input validation</strong> (length limits, prompt- and SQL-injection blocking), output sanitization (redacting secrets and personally identifiable information), rate limiting, role-based access control, and per-request cost tracking.</li><li><strong>Routing-level protection</strong> that blocks answering operational queries from memory, forcing live tool execution for current-state questions.</li></ul>
+<h3>Observability</h3>
+<p>Orion AI uses standard AWS observability services for monitoring and debugging. <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> provides metrics and structured logging for routing confidence, latency, and agent invocation activity. <a href="https://aws.amazon.com/xray/">AWS X-Ray</a> traces distributed calls across agent executions for end-to-end request path visibility.</p>
+<h2>Lessons learned</h2>
+<p>The design decisions that made Orion AI possible are ones you can reuse. Splitting agents by domain let each agent carry narrow tool integrations without bloating a single model’s context. Using keyword routing by default with semantic search as a fallback kept latency low without sacrificing accuracy on ambiguous requests. Scoping conversational memory to sessions while bypassing it for live metrics kept real-time diagnostics trustworthy.</p>
+<p>The team also made pragmatic infrastructure choices. They deployed compute on Amazon ECS because <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore runtime</a>, a capability of Amazon Bedrock AgentCore, wasn’t available at the start of the project, and they’re now evaluating it as a future migration option. If you’re building today, weigh the same tradeoff for your own stack: start with what’s stable and available now, and revisit as managed capabilities mature.</p>
+<h2>Conclusion</h2>
+<p>Orion AI reduced database diagnosis from 45 minutes to 10, avoided 70 percent of manual lifecycle steps, and cut alert noise by 65 percent. A three-person team delivered it in six months on Amazon Bedrock. The patterns behind those results are ones other operations teams can adopt: domain-scoped agents, hybrid routing, and session-scoped memory with a live-metrics bypass.</p>
+<p>To get started with multi-agent orchestration on AWS, review the <a href="https://docs.aws.amazon.com/solutions/multi-agent-orchestration-on-aws/">AWS Solutions Library guidance</a>.</p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>Building a context-aware AI assistant on AgentCore and OpenC…</title>

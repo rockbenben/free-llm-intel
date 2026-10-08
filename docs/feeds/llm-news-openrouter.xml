@@ -14,6 +14,168 @@
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：ElevenLabs is now on OpenRouter</description>
+      <content:encoded><![CDATA[<h1>ElevenLabs 现已在 OpenRouter 上</h1>
+<p>萨莎·布卢门菲尔德·10/7/2026</p>
+<p>ElevenLabs 现已在 OpenRouter 上提供九个文本到语音模型和两个语音到文本模型。</p>
+<p>如果您的应用程序已经通过 OpenRouter 与语言模型对话，那么它现在也可以说和听。使用 Eleven v4 通过音调方向和传递来叙述长格式内容，使用 v4 Turbo 为您的客服人员提供更快的语音回复，或者使用 Scribe v2 转录带有说话者标签的对话。您不需要单独的 ElevenLabs 计划。只需使用您的 OpenRouter API 密钥调用“POST /api/v1/audio/speech”和“POST /api/v1/audio/transcriptions”即可。</p>
+<p><em>截至 10 月 19 日上午 8 点（太平洋时间），所有 OpenRouter 客户的所有 ElevenLabs 型号均可享受 OpenRouter 标价 50% 的折扣</em></p>
+<h2>Which model to use</h2>
+<p>从三个模型开始，然后在工作需要时使用其余模型：</p>
+<ul><li><strong>旁白、角色、产品视频：</strong> 11 v4。音频标签让脚本承载表演。</li><li><strong>语音代理和实时回复：</strong> 11 v4 Turbo，ElevenLabs 构建它用于实时使用，速率是 v4 的一半。</li><li><strong>文字记录、会议记录、说明文字：</strong> Scribe v2，带有演讲者标签和单词时间戳。</li></ul>
+<p>当长格式音频需要速度控制时，请使用 Multilingual v2；对于每个请求最多 40,000 个字符的大容量语音，请使用 Flash v2.5。 Scribe v2 Medical 针对医学术语进行了微调。</p>
+<h3>Text to Speech</h3>
+<table><thead><tr><th>型号</th><th>开放路由器 ID</th><th>每个请求的最大字符数</th><th>选择它</th></tr></thead><tbody><tr><td>十一 v4</td><td><code>elevenlabs/eleven-v4</code></td><td>10,000</td><td>ElevenLab 最高质量、最感人的演讲。富有表现力的旁白和角色塑造，带有[窃窃私语]和[大笑]等音频标签</td></tr><tr><td>11 v4 涡轮</td><td><code>elevenlabs/eleven-v4-turbo</code></td><td>10,000</td><td>语音代理的低延迟回复</td></tr><tr><td>十一v3</td><td><code>elevenlabs/eleven-v3</code></td><td>5,000</td><td>富有表现力/戏剧性的叙述和角色与音频标签的配合</td></tr><tr><td>十一 v3 会话</td><td><code>elevenlabs/eleven-v3-conversational</code></td><td>5,000</td><td>以 v3 一半速率进行来回对话。具有戏剧性的音域，适合现场对话。</td></tr><tr><td>十一多语言 v2</td><td><code>elevenlabs/eleven-multilingual-v2</code></td><td>10,000</td><td>跨多种语言的稳定长格式音频，具有速度控制。</td></tr><tr><td>十一闪客 v2.5</td><td><code>elevenlabs/eleven-flash-v2.5</code></td><td>40,000</td><td>快速、低成本的大容量多语言语音。提供 32 种语言。</td></tr><tr><td>11 Flash v2</td><td><code>elevenlabs/eleven-flash-v2</code></td><td>30,000</td><td>快速纯英语演讲</td></tr><tr><td>十一涡轮增压 v2.5</td><td><code>elevenlabs/eleven-turbo-v2.5</code></td><td>40,000</td><td>ElevenLab 的第一代低延迟模型，现已被 Flash 取代</td></tr><tr><td>十一涡轮增压 v2</td><td><code>elevenlabs/eleven-turbo-v2</code></td><td>30,000</td><td>ElevenLab 第一代低延迟模型，现已被 Flash 取代</td></tr></tbody></table>
+<p>ElevenLabs 对其型号的定价分为两级。 11 个 v4、v3 和多语言 v2 按每个字符按全部费率计费，而 v4 Turbo、v3 Conversational、Flash 和 Turbo 则按一半计费。当前每个字符的价格位于 <a href="https://openrouter.ai/collections/text-to-speech-models">文本到语音集合</a> 中的每个模型页面。</p>
+<h3>语音转文字</h3>
+<table><thead><tr><th>型号</th><th>开放路由器 ID</th><th>选择它</th></tr></thead><tbody><tr><td>抄写员 v2</td><td><code>elevenlabs/scribe-v2</code></td><td>带有 90 多种语言的单词时间戳、说话者标签和音频事件标签的常规转录</td></tr><tr><td>Scribe v2 医疗</td><td><code>elevenlabs/scribe-v2-medical</code></td><td>与 Scribe v2 相比，临床音频中的医学术语错误减少了 35%</td></tr></tbody></table>
+<p>两种 Scribe 模型都使用相同的请求形状和相同的每秒价格。基于 WebSocket 的 Realtime Scribe v2 不属于本次发布的一部分。</p>
+<h2>演练：从第一个 MP3 到语音代理</h2>
+<p>我们将分三步构建一个小型产品之旅。 《前十一》v4 对此进行了叙述。然后语音代理回答相关问题，最后 Scribe v2 将团队的审核会议转化为笔记，显示谁说了什么。如果请求的行为不符合您的预期，请查看最后的提示。</p>
+<p>设置一次密钥：</p>
+<pre><code>export OPENROUTER_API_KEY=&quot;your-api-key&quot;</code></pre>
+<h3>第 1 步：用 Eleven v4 讲述产品之旅</h3>
+<p>从一行叙述开始：</p>
+<pre><code>curl https://openrouter.ai/api/v1/audio/speech \
+  --fail-with-body \
+  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;model&quot;: &quot;elevenlabs/eleven-v4&quot;,
+    &quot;input&quot;: &quot;[cheerfully] Welcome to the tour. [whispering] Let me show you the shortcut first.&quot;,
+    &quot;voice&quot;: &quot;george&quot;,
+    &quot;response_format&quot;: &quot;mp3&quot;
+  }' \
+  --output intro.mp3</code></pre>
+<p><code>voice</code> 采用 ElevenLabs 21 个预制声音中的任何一个的名称（此处为 <code>george</code>）；名称不区分大小写。请注意显式的“response_format”——请参阅两者的<strong>首次请求提示</strong>。</p>
+<p>括号内的单词是音频标签。 11 个 v4 和 v3 读取“[耳语]”、“[笑]”、“[叹息]”和“[好奇]”等标签作为传递方向，而不是说出它们。标签计入您的计费字符数。</p>
+<p>完整的导览脚本比一个请求允许的长度要长（v4 上为 10,000 个字符，v3 上为 5,000 个字符），因此请按段落边界将其拆分。仅 ElevenLabs 设置位于“provider.options.elevenlabs”下。将相邻文本作为“previous_text”和“next_text”传递，以便语调在连接之间保持一致，并修复“seed”，以便重新运行更具可重复性：</p>
+<pre><code>import os
+
+import requests
+
+API = &quot;https://openrouter.ai/api/v1&quot;
+HEADERS = {&quot;Authorization&quot;: f&quot;Bearer {os.environ['OPENROUTER_API_KEY']}&quot;}
+NARRATOR = &quot;george&quot;
+
+
+def split_paragraphs(text: str, limit: int = 9000) -&gt; list[str]:
+    chunks, current = [], &quot;&quot;
+    for para in text.split(&quot;\n\n&quot;):
+        if current and len(current) + len(para) + 2 &gt; limit:
+            chunks.append(current)
+            current = para
+        else:
+            current = f&quot;{current}\n\n{para}&quot; if current else para
+    return chunks + [current] if current else chunks
+
+
+chunks = split_paragraphs(open(&quot;tour-script.txt&quot;).read())
+
+with open(&quot;tour.mp3&quot;, &quot;wb&quot;) as out:
+    for i, chunk in enumerate(chunks):
+        options = {&quot;seed&quot;: 7}
+        if i &gt; 0:
+            options[&quot;previous_text&quot;] = chunks[i - 1][-500:]
+        if i + 1 &lt; len(chunks):
+            options[&quot;next_text&quot;] = chunks[i + 1][:500]
+        r = requests.post(
+            f&quot;{API}/audio/speech&quot;,
+            headers=HEADERS,
+            json={
+                &quot;model&quot;: &quot;elevenlabs/eleven-v4&quot;,
+                &quot;input&quot;: chunk,
+                &quot;voice&quot;: NARRATOR,
+                &quot;response_format&quot;: &quot;mp3&quot;,
+                &quot;provider&quot;: {&quot;options&quot;: {&quot;elevenlabs&quot;: options}},
+            },
+        )
+        r.raise_for_status()
+        out.write(r.content)</code></pre>
+<h3>第 2 步：通过语音代理回答问题</h3>
+<p>现在让用户大声提出游览问题。语音代理链接三个模型：用于问题的 Scribe v2、用于答案的聊天模型以及用于回复的 Eleven v4 Turbo。 ElevenLabs 构建了 v4 Turbo 供实时使用，其计费费率是 v4 的一半。</p>
+<pre><code>import base64
+
+
+def transcribe(path: str) -&gt; str:
+    with open(path, &quot;rb&quot;) as f:
+        audio_b64 = base64.b64encode(f.read()).decode()
+    r = requests.post(
+        f&quot;{API}/audio/transcriptions&quot;,
+        headers=HEADERS,
+        json={
+            &quot;model&quot;: &quot;elevenlabs/scribe-v2&quot;,
+            &quot;input_audio&quot;: {&quot;data&quot;: audio_b64, &quot;format&quot;: &quot;wav&quot;},
+        },
+    )
+    r.raise_for_status()
+    return r.json()[&quot;text&quot;]
+
+
+def answer(question: str) -&gt; str:
+    r = requests.post(
+        f&quot;{API}/chat/completions&quot;,
+        headers=HEADERS,
+        json={
+            &quot;model&quot;: &quot;openai/gpt-5-mini&quot;,
+            &quot;messages&quot;: [
+                {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are the product tour guide. Answer in one or two sentences.&quot;},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question},
+            ],
+        },
+    )
+    r.raise_for_status()
+    return r.json()[&quot;choices&quot;][0][&quot;message&quot;][&quot;content&quot;]
+
+
+def speak(text: str, out_path: str) -&gt; None:
+    r = requests.post(
+        f&quot;{API}/audio/speech&quot;,
+        headers=HEADERS,
+        json={
+            &quot;model&quot;: &quot;elevenlabs/eleven-v4-turbo&quot;,
+            &quot;input&quot;: text,
+            &quot;voice&quot;: NARRATOR,
+            &quot;response_format&quot;: &quot;mp3&quot;,
+        },
+    )
+    r.raise_for_status()
+    with open(out_path, &quot;wb&quot;) as f:
+        f.write(r.content)
+
+
+speak(answer(transcribe(&quot;question.wav&quot;)), &quot;reply.mp3&quot;)</code></pre>
+<p>转录响应是 JSON，其中包含“text”中的转录内容和一个报告音频秒数和请求的美元“成本”的“usage”对象。将“openai/gpt-5-mini”替换为<a href="https://openrouter.ai/models">目录</a>中的任何聊天模型，而不接触音频通话，并保持相同的“声音”，以便代理听起来像步骤 1 中的旁白者。</p>
+<h3>步骤 3：将评审会议变成带有演讲者标签的笔记</h3>
+<p>当您的团队开会回顾游览时，Scribe v2 可以告诉您谁说了什么。以多部分形式上传录音，请求带有单词时间戳的“verbose_json”，并在“provider.options.elevenlabs”下设置“diarize”。响应中的每个词都会有一个说话者。如果您知道会议中有多少人，请传递“num_speakers”以改善分配。</p>
+<pre><code>curl https://openrouter.ai/api/v1/audio/transcriptions \
+  --fail-with-body \
+  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
+  -F file=&quot;@tour-review.mp3&quot; \
+  -F model=&quot;elevenlabs/scribe-v2&quot; \
+  -F response_format=&quot;verbose_json&quot; \
+  -F &quot;timestamp_granularities[]=word&quot; \
+  -F provider='{&quot;options&quot;: {&quot;elevenlabs&quot;: {&quot;diarize&quot;: true, &quot;num_speakers&quot;: 3, &quot;tag_audio_events&quot;: true}}}'</code></pre>
+<p>“words”中的每个条目都有“word”、“start”、“end”、“confidence”、“speaker”（整数）和“speaker_label”（“speaker_0”、“speaker_1”等）。 “tag_audio_events”在单词旁边添加了诸如“（笑声）”之类的条目。按“speaker”对连续单词进行分组以获得轮次，然后将轮次发送到聊天模型以获取摘要和操作项：</p>
+<pre><code>def to_turns(words: list[dict]) -&gt; list[str]:
+    turns: list[tuple[int, list[str]]] = []
+    for w in words:
+        if turns and turns[-1][0] == w.get(&quot;speaker&quot;):
+            turns[-1][1].append(w[&quot;word&quot;])
+        else:
+            turns.append((w.get(&quot;speaker&quot;), [w[&quot;word&quot;]]))
+    return [f&quot;Speaker {s}: {' '.join(ws)}&quot; for s, ws in turns]</code></pre>
+<p>上传上限为 25 MB，涵盖约 27 分钟的 128 kbps MP3。</p>
+<p>对于较长的录音，请传递公共 URL，ElevenLabs 会直接下载文件，因此 25 MB 上限不适用：</p>
+<pre><code>&quot;input_audio&quot;:{ &quot;url&quot;: &quot;https://example.com/tour-review.mp3&quot; }</code></pre>
+<p>非常长的文件仍然可能会遇到 180 秒的上游请求超时，因此请分割运行时间较长的记录。</p>
+<h2>针对您的首次请求的提示</h2>
+<ul><li><strong>按名称或 ID 选择声音。</strong> 对于“voice”，请按名称传递 ElevenLabs 21 个预制声音中的任何一个：“george”、“sarah”、“adam”、“alice”、“bella”、“brian”、“charlie”、“daniel”、“jessica”、“roger”、“will”等（每个模型页面上的完整列表）。名称不区分大小写。要使用任何其他语音，请将其 ElevenLabs 语音 ID 作为“voice”传递 - 从 <a href="https://elevenlabs.io/app/voice-library">ElevenLabs 语音库</a> 复制它。您在自己的 ElevenLabs 帐户中实时克隆或设计的声音，因此请使用带有 <a href="https://openrouter.ai/docs/guides/overview/auth/byok">BYOK</a> 的声音。</li><li><strong>当您想要一个可以播放的文件时，询问“mp3”</strong> 如果您省略“response_format”，我们的语音端点将返回原始 PCM（24 kHz 的 16 位小端单声道）。这适合音频管道，但大多数玩家无法打开它。设置 <code>&quot;response_format&quot;: &quot;mp3&quot;</code> 以获得可播放的 44.1 kHz、128 kbps 文件。</li><li><strong>使用多语言 v2 或 Flash 进行速度控制</strong> 多语言 v2 和 Flash 将“速度”从 0.7 调整到 1.2。 11 v4 和 v4 Turbo 没有速度控制并拒绝非默认“速度”，因此将其保留在这些模型上并使用音频标签更改节奏。</li><li><strong>分割长脚本</strong> 每个模型都有每个请求的字符限制（请参阅模型表）。音频标签会计入限制和计费字符数。如步骤 1 中那样在段落边界上进行拆分，并传递“previous_text”和“next_text”，以便连接听起来很自然。</li><li><strong>ElevenLabs 特定设置位于<code>provider.options.elevenlabs</code>下</strong>文本转语音接受<code>seed</code>、<code>previous_text</code>、<code>next_text</code>、<code>language_code</code>、<code>apply_text_normalization</code>、<code>apply_language_text_normalization</code>、<code>pronunciation_dictionary_locators</code>、<code>voice_settings</code>（<code>stability</code>、<code>similarity_boost</code>、 <code>style</code>、<code>use_speaker_boost</code>、<code>speed</code>）和 <code>output_format</code>（ElevenLabs 格式名称，例如 <code>mp3_22050_32</code> 或 <code>pcm_16000</code>；它必须与您的 <code>response_format</code> 编解码器匹配）。语音转文本接受“diarize”、“num_speakers”、“diarization_threshold”、“tag_audio_events”、“no_verbatim”和“seed”。 <code>num_speakers</code> 和 <code>diarization_threshold</code> 需要 <code>diarize: true</code>，并且您可以设置其中之一，而不是同时设置两者。完全按照列出的方式使用字段名称。不在这些列表中的键将被忽略；列出的键值错误会返回 400。</li><li><strong>Scribe 返回三个字母的语言代码</strong> 您可以发送两个字母的“语言”提示 (<code>en</code>)。检测到的语言以 ISO 639-3 代码 (<code>eng</code>) 的形式返回。</li></ul>
+<h2>开始使用</h2>
+<ul><li>创建一个 <a href="https://openrouter.ai/settings/keys">OpenRouter API 密钥</a>。</li><li>使用上面步骤 1 中的curl 示例提出您的第一个请求。</li><li>对于每个参数，请参阅<a href="https://openrouter.ai/docs/guides/overview/multimodal/tts">文本转语音</a>和<a href="https://openrouter.ai/docs/guides/overview/multimodal/stt">语音转文本</a>指南。</li></ul>
+<p>文本转语音按输入字符计费，计为 Unicode 代码点，因此表情符号或 CJK 字符计一次。音频标签算作字符。 Scribe 按每秒音频计费，每个转录响应上的 use.cost 字段会告诉您该请求的成本。我们通过ElevenLabs定价，不加价；请参阅每个型号页面了解当前费率。</p>
+<p><em>已经有 ElevenLabs 帐户？</em></p>
+<p>使用 <a href="https://openrouter.ai/docs/guides/overview/auth/byok">BYOK</a> 添加密钥，以使用您自己的克隆语音、发音词典和更高质量的格式，例如 mp3_44100_192。</p>
+<p>创建 <a href="https://openrouter.ai/settings/keys">OpenRouter API 密钥</a>，或先在 <a href="https://openrouter.ai/playground">Playground</a> 中尝试模型。 <a href="https://openrouter.ai/docs/guides/overview/multimodal/tts">文本转语音</a> 和 <a href="https://openrouter.ai/docs/guides/overview/multimodal/stt">语音转文本</a> 指南具有完整的请求参考。</p>]]></content:encoded>
     </item>
     <item>
       <title>AI 销售代理如何每月为我们的销售团队节省 600 个小时</title>
@@ -21,6 +183,66 @@
       <guid isPermaLink="true">https://openrouter.ai/blog/case-studies/how-an-ai-sales-agent-saved-our-sales-team-600-hours-a-month/</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How an AI Sales Agent Saved Our Sales Team 600 Hours a Month</description>
+      <content:encoded><![CDATA[<h1>AI 销售代理如何每月为我们的销售团队节省 600 个小时</h1>
+<p>迈克尔·海莫维茨 ·10/7/2026</p>
+<p>Rasp 是一款基于 OpenRouter Ori 构建的 AI 销售代理，可对入站进行分类、发送首次接触电子邮件、撰写通话前简报、起草笔记以及更新 CRM。它为 OpenRouter 自己的 5 人销售团队运行。考虑到业务的增长方式，用“淹没”来形容 2026 年这五家公司是合适的。</p>
+<p>在过去的几个月里，Rasp 给这些疯狂的卖家带来了一些禅意。它接管了大部分文书工作/管理工作，团队现在每月可恢复约 600 小时的工作时间。它为每个代表提供了每天大约两次电话的空间，并且准备程度相同。它缩短了响应时间，许多潜在客户现在从最初的询问开始不到一分钟就收到了回复。交易周期压缩了34%。由于 Ori 的路由层不断更换更便宜且质量稳定的模型，Rasp 每天只需 30 美元左右即可完成所有这些工作，而它所取代的代理每天的费用接近 800 美元。</p>
+<h2>主要结果</h2>
+<ul><li><strong>~每月 600 小时</strong> 回到 5 人销售团队。</li><li>在相同的准备水平下，每位代表每天可多拨打 2 次电话。</li><li><strong>交易周期加快 34%</strong>。</li><li><strong>成交率增加 2.6 倍</strong>。定价变化和市场状况在同一窗口中变化，因此并非所有这些都是 Rasp。</li><li><strong>~30 美元/天的总费用</strong>，而其前身的价格则接近 800 美元/天，而且随着 Ori 自动转向更便宜的型号，价格仍在下降。</li></ul>
+<h2>Rasp 的作用</h2>
+<ul><li>研究并验证每个入站潜在客户的资格，并将非销售问题转接到其他地方。</li><li>发送首次接触电子邮件，其中 93% 是自行发送的。</li><li>每次通话前写一份简短的内容。</li><li>根据笔录起草通话后笔记。</li><li>每次通话后填写大多数 CRM 字段。</li><li>标记边缘情况和任何对个人敏感的事情以供批准。</li></ul>
+<p>锉刀不能替代出色的重复次数。它是一种街道清扫机，可以清除道路上的碎片和阻碍速度的杂物，以便我们的销售人员可以在干净的道路上更快地比赛。</p>
+<h2>两位早期销售代理的经验教训</h2>
+<p>Rasp 不是我们的第一个销售代理。两个早期的代理，Ace（针对 AE）和 Dove（针对 BDR），处理入站潜在客户、路由以及 Rasp 现在运行的许多相同的工作流程。</p>
+<p>观察前两名特工，我们学到了一些重要的教训：</p>
+<ul><li><strong>一个管道解决所有问题。</strong> 每种任务都通过相同的流程运行，并以任务类型作为参数。 Dove 和 Ace 告诉我们，当每种新任务类型都有自己的代码路径时，系统就会变得笨拙，并且更有可能发生漂移。</li><li><strong>所有内容上都有一个功能标志，默认情况下关闭。</strong>我们之前已经发货过一些东西，但无法彻底关闭。现在一切都可以了。</li><li><strong>第一天的指标。</strong> 如果您从未记录过影响，则无法在事后衡量影响。这篇文章中的每个数字都存在，因为 Rasp 从一开始就记录了。</li><li><strong>Slack 是界面。</strong> 团队生活在 Slack 中。仪表板“感觉”像是存储指标的正确位置，但它们最常在工作实际发生的地方“消耗”。</li></ul>
+<p>这种持续迭代的原则意味着 Rasp 可能不是最终状态 - 但这没关系！</p>
+<h2>AI 销售代理每次演示可以节省多少时间</h2>
+<h3>Each demo got 59 minutes cheaper</h3>
+<p>在 Rasp 出现之前，一个演示需要大约 103 分钟才能顺利执行。销售代表将在电话会议前对公司进行研究，在会议期间和会议结束后写下笔记，并在会议结束后立即更新 CRM（好吧，我们希望如此）。</p>
+<p>使用 Rasp，同样的工作大约需要 44 分钟。</p>
+<p>![Rasp 将演示后笔记从 15 分钟减少到 2 分钟，将演示前准备时间从 30 分钟减少到 5 分钟，将 CRM 更新时间从 30 分钟减少到 7 分钟。](https://openrouter.ai/blog/images/rasp-demo-time- savings.png)</p>
+<ul><li>演示前的准备时间从 30 分钟减少到 5 分钟。Rasp 在每次通话前都会写一份精彩的简介。</li><li>演示后笔记从 15 分钟缩短为 2 分钟。Rasp 从记录中起草它们。</li><li>CRM 更新时间从 30 分钟缩短到 7 分钟。Rasp 填写了大部分字段，并为代表保留了一些自由裁量权。</li></ul>
+<p>###入站停止吃掉整个人</p>
+<p>在 Rasp 和 Dove 之前，对入站线索进行排序并回复它们需要一名销售代表的全部时间（而且通常不止这个时间，具体取决于星期）。这种基本的资源不匹配导致了一个必然的结果：仅优先考虑最好的潜在客户。</p>
+<p>现在这项工作大约需要一名代表 25% 的时间。 Rasp 会自行发送 93% 的首次联系电子邮件，许多潜在客户在与我们联系后的 60 秒或更短时间内收到回复。在人工帮助下发送的 7% 是 Rasp 主动向团队标记的棘手边缘情况。</p>
+<h3>添加它</h3>
+<p>在这个由 5 人组成的团队中，Rasp 每月贡献约 600 小时，或每周约 140 小时（每个客户主管约 28 小时）。一年多下来，大约有 7,200 个小时。</p>
+<h2>业务发生了什么变化</h2>
+<p><img src="https://openrouter.ai/blog/images/rasp-business-results.png" alt="前后结果：成交率从 15.7% 上升到 41.0%，交易周期从 71 天下降到 47 天，入站分类从一名代表时间的 150% 下降到 25%。"></p>
+<p><strong>每个销售代表每天可以再接听大约两个电话。</strong> Rasp 从每个电话中减少了大约一个小时的工作：大约 20 分钟的客户研究、15 分钟的笔记、5 分钟的 CRM 同步，加上它们之间切换的开销。每个 AE 可以在他们的一天中添加两次呼叫，并且仍然像以前一样准备好并新鲜地出现在每个呼叫中​​。正如我们的一位代表所说，“Rasp 从我的工作中卸下的工作是平凡的、永远在线的苦差事。”</p>
+<p><strong>同期收盘价上涨了 2.6 倍。</strong> 定价变化和市场状况在同一窗口内变化，因此我们不应将所有收益仅归因于 Rasp。但这种相关性是惊人的。</p>
+<p><strong>销售代表做好了更好的准备。</strong> 更快的回复是最明显的变化，但销售代表也会带着已经写好的简报接听电话，有更多的时间进行现场交易，并建立更清洁的管道，因为不合格的入站是在没有人工参与的情况下处理的。</p>
+<p><strong>交易完成速度加快 34%。</strong></p>
+<p><strong>其次是收入。</strong>我们可以将当前管道中约 57% 的能力归因于团队以前不具备的能力。</p>
+<h3>副作用是更干净的数据</h3>
+<p>在 Rasp 出现之前，入站未经过滤，大量时间花在筛选潜在客户并将潜在客户路由至其他部门。个人电子邮件域和支持问题落在销售团队身上，工作是临时完成的，时间花在令人沮丧的细节上。</p>
+<p>现在，受理表格会过滤掉个人领域，并将非销售问题转至其他地方。随着 Rasp 了解整个销售数据集，潜在客户优先级会根据每次新对话进行微调。</p>
+<h2>Rasp 不做什么</h2>
+<p>有些工作仍然是手动的，因为我们还有更多内容要添加到 Rasp 中。</p>
+<ul><li>后续行动和重新参与安静交易仍然是手工完成的，而放弃交易检测正在建设中。</li><li>购买角色和用例现在流入 CRM。在将更丰富的交易背景字段添加到核心分类法之前，仍在争论中。</li></ul>
+<p>有些工作是设计为手动的：</p>
+<ul><li>运行实际的调用。</li><li>决定在谈判中何时推进以及何时撤退。</li><li>建立关系。</li><li>对任何敏感事项的最终批准。</li></ul>
+<p>拆分非常简单 - Rasp 推荐、草稿、标志和路线。如果没有人在场，它永远不会对发送、交易分类或合规性问题做出最终决定。关系是人与人之间建立的，代理人本身并不能建立信任。</p>
+<h3>那么...为什么叫这个名字？</h3>
+<p>锉刀是一种粗糙的锉刀。您可以用它来塑造木材或金属的形状，去除材料并留下粗糙的纹理。</p>
+<p>对于在公司管道上进行塑造工作的东西来说，这感觉是一个很棒的名字。粗锉草稿、分类、标记和路线，削减原始销售材料。人们介入，打磨木制品，完成这件作品。</p>
+<h2>GTM 代理需要什么：四个要求</h2>
+<p>许多公司正在为销售和 GTM 团队构建 Rasp 版本。建造了三个之后，我们认为像这样的特工必须清除四个栏。</p>
+<ul><li><strong>易于站立。</strong> Rasp 是一个管道，以任务类型作为参数，在所有内容上都有一个功能标志，并从第一天开始记录指标。为 Rasp 添加新工作只需简单的聊天，无需工程师。</li><li><strong>Slack 原生。</strong> 团队永远不会离开他们已经使用的工具。简报、草稿、标志和指标都在工作发生的地方。</li><li><strong>有影响力。</strong> 每月大约 600 小时返回一个五人团队，每个代表每天多打两个电话，大多数呼入在一分钟内得到答复。</li><li><strong>自动成本优化。</strong>这是我们的优势。在 OpenRouter 的 Ori 上构建的代理（或实习生）<strong>随着时间的推移会变得更便宜。</strong>实习生下面的路由层将继续寻找更便宜的模型来保持质量并在代理或团队不费力的情况下将其交换。</li></ul>
+<p>例如，Rasp 的直接前身 Ace 和 Dove 每天的收入接近 800 美元。 Rasp 可以完成同样的工作，价格约为 30 美元。这两个数字都包括工程时间加上代理产生的常规输出，因此这是对相同范围的工作成本的同类比较。其中约 30 美元，大约 18 美元是基于 GLM 5.2 的推断；剩下的就是工程时间。</p>
+<p>我们验证了 OpenRouter API 上三种更便宜型号的当前定价，这些型号可以进一步降低常规 Rasp 成本。</p>
+<p>截至 2026 年 9 月的价格。</p>
+<table><thead><tr><th>型号</th><th>提示（每 1M 代币）</th><th>完成（每 100 万个代币）</th><th>推理成本约为 200 次/天</th><th>与 GLM 5.2</th><th>对比</th></tr></thead><tbody><tr><td><a href="https://openrouter.ai/z-ai/glm-5.2">GLM 5.2</a>（当前）</td><td>1.40 美元</td><td>4.40 美元</td><td>~$18/天</td><td>—</td></tr><tr><td><a href="https://openrouter.ai/deepseek/deepseek-v4-pro">DeepSeek v4 专业版</a></td><td>0.58 美元</td><td>1.74 美元</td><td>~$7.50/天</td><td>便宜约 2.4 倍</td></tr><tr><td><a href="https://openrouter.ai/z-ai/glm-5.3-flash">GLM 5.3 闪存</a></td><td>0.08 美元</td><td>0.25 美元</td><td>~$1/天</td><td>便宜约 18 倍</td></tr><tr><td><a href="https://openrouter.ai/deepseek/deepseek-v4-flash">DeepSeek v4 Flash</a></td><td>0.04 美元</td><td>0.10 美元</td><td>~$0.50/天</td><td>便宜约 37 倍</td></tr></tbody></table>
+<h2>常见问题解答</h2>
+<h3>人工智能销售代理是做什么的？</h3>
+<p>人工智能销售代理负责围绕销售代表的工作进行管理工作。 Rasp 研究并鉴定入站潜在客户、发送首次联系电子邮件、撰写通话前简报、根据记录起草通话后笔记以及更新 CRM。销售代表负责拨打电话、进行谈判并建立关系。</p>
+<h3>人工智能销售代理每天的费用是多少？</h3>
+<p>Rasp 每天的总成本约为 30 美元，其中包括工程时间。其中大约 18 美元是 GLM 5.2 上的推理，将日常工作转移到 OpenRouter 上更便宜的模型可能会导致每天大约 0.50 美元的推理。</p>
+<h3>这与 AI SDR 有什么不同？</h3>
+<p>AI SDR 通常侧重于出站勘探。 Rasp 支持整个销售团队的入站分类、呼叫准备、注释和 CRM 更新，并让人员随时了解最终发送、交易分类和任何敏感信息。</p>
+<p>如果您的 GTM 团队可以从更大的容量、更高的成交率、更快的交易周期和更多的收入中受益，请<a href="https://openrouter.ai/ori">立即加入 OpenRouter Ori 实习生候补名单</a>。您会想知道这些季度没有自己版本的 Rasp 是如何度过的。</p>
+<p><strong>来源：</strong> OpenRouter 验证的 GTM 报告，2026 年 9 月。模型定价于 2026 年 9 月从 OpenRouter API 中提取。Ace 和 Dove 成本数据来自内部工程和使用记录。</p>]]></content:encoded>
     </item>
     <item>
       <title>AI 代理的服务器端代码执行工具比较</title>

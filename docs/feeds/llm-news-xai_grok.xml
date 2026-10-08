@@ -7,7 +7,14 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Tue, 22 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 28 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>团队机器人：共享人工智能队友，边工作边学习</title>
+      <link>https://x.ai/news/team-bots</link>
+      <guid isPermaLink="true">https://x.ai/news/team-bots</guid>
+      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Team Bots: shared AI teammates that learn as they work</description>
+    </item>
     <item>
       <title>SpaceXAI 如何使用 Grok Bot 扩展客户支持</title>
       <link>https://x.ai/news/grok-bot-customer-support</link>
@@ -55,7 +62,7 @@
       <link>https://x.ai/news/grok-4-7</link>
       <guid isPermaLink="true">https://x.ai/news/grok-4-7</guid>
       <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Grok 4.7</description>
+      <description>原文标题：IntroducingGrok 4.7</description>
       <content:encoded><![CDATA[<h1>介绍 Grok 4.7</h1>
 <p>SpaceXAI 面向编码与知识工作最强大的模型。速度翻倍，价格只有同类模型的一半。</p>
 <p>Try for free</p>
@@ -385,113 +392,10 @@
 <p>Try Free</p>]]></content:encoded>
     </item>
     <item>
-      <title>让 Grok Bot 放开手脚处理采购</title>
-      <link>https://x.ai/news/grok-bot-procurement</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-bot-procurement</guid>
-      <pubDate>Fri, 04 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Setting Grok Bot loose on procurement</description>
-      <content:encoded><![CDATA[<h1>放手让 Grok Bot 去做采购</h1>
-<p>我们把供应商支出、合同和用量数据开放给 Grok Bot。它找到了超过 $100,000 的直接节省。</p>
-<p>企业有大量难以贴身追踪的支出。这包括随团队变动而不断累积的闲置 SaaS 席位，以及在没人核对合同是否仍与产品实际用法匹配之前就到期的续约。同样的问题也出现在经常性采购中——照着上次买的东西再下一单，往往比按当前需求调整数量、或货比三家找更优价格要省事得多。</p>
-<p>这些工作很多值得做，但很难说服人手工去做。我们想看看 Grok Bot 能接手其中多少。</p>
-<p>Grok Bot 让智能体的搭建和使用容易得多。你告诉或演示给 Bot 你想要什么，给它合适的工具访问权，然后让它去执行，不必逐步设计工作流。</p>
-<p>在采购上，我们创建了一个我们爱称为 <a href="https://x.ai/bot/marketplace/bots/haggle-bot">Haggle Bot</a> 的 Bot。它把我们的供应商支出连同合同和用量数据一起阅读，然后用市场价格和竞争性报价寻找节省空间、准备谈判。到目前为止，它已识别出超过 $100,000 的直接节省，梳理了较大的 SaaS 续约，并把同样的方法用于办公用品这类经常性采购。</p>
-<p>我们认为 Haggle Bot 指向了 Bots 在公司内一个更宏大的角色：给一个 Bot 一份清晰的职责和它需要的工具访问权，它就能持续承担该角色内的工作，而不需要你逐件吩咐。</p>
-<h2><a href="https://x.ai/news/grok-bot-procurement#procurement-is-a-good-task-for-a-bot">采购是适合 Bot 的任务</a></h2>
-<p>采购的目标是支持业务，把花在供应商上的每一美元用到极致。现有许多采购工具在供应商准入和合同管理层面提供帮助。</p>
-<p>但最重要的采购工作，很多取决于那些系统不回答的问题：</p>
-<ul><li>这件事的 owner 是谁？</li><li>我们为什么需要它？</li><li>我们探索过替代方案吗？</li><li>如果 X 和 Y 干的是同一件事，为什么两个都留着？</li><li>我们的成本为什么在飙升？</li><li>人人都有 license，他们在用吗？</li></ul>
-<p>这些问题很常见，但取决于公司所处阶段，逐个人工回答未必划算。高速成长的公司常常为了避免花时间追查这些问题而把钱留在桌上。这正是 Bot 能发挥作用的地方。</p>
-<h2><a href="https://x.ai/news/grok-bot-procurement#a-simple-expression-of-intent">一个简单的意图表达</a></h2>
-<p>我们启动 Haggle Bot 的方式，是描述我们希望它做的工作。它的指令是：了解我们的供应商支出，把这份知识变成有证据支撑的节省，最终决策由人来拍板。</p>
-<p>Procurement</p>
-<h3>Haggle Bot current system prompt</h3>
-<p>SETUP — fill in for your org SYSTEMS - Spend data lives in: &lt;e.g. Ramp, Brex, NetSuite&gt; - Contracts live in: &lt;e.g. Drive, Notion, Ironclad&gt; - Usage/seat data comes from: &lt;e.g. Okta/SSO logs, each tool's admin portal&gt; - Colleagues reachable via: &lt;e.g. Slack, email&gt; - Vendor dossiers kept in: &lt;e.g. Notion database, Drive folder&gt; PEOPLE - Your operator: &lt;name&gt; — makes all final decisions. - Who to ask about tool usage: &lt;e.g. the owner listed in spend data, IT, team leads&gt; - Voice on external emails: &lt;e.g. formal, sent under the operator's name, no agent names&gt; PERMISSION LINES - Always allowed, no need to ask: &lt;e.g. reading spend data, messaging colleagues, requesting admin access, pulling reports, updating dossiers&gt; - Needs the operator's explicit go, every time: &lt;e.g. any vendor-facing send&gt; - Never, under any circumstances: &lt;e.g. signing, buying, subscribing, approving charges, any binding commitment&gt; NEGOTIATION DIALS - Renewal radar: prioritize renewals within &lt;e.g. 120&gt; days. - Opening anchor: &lt;e.g. 5–10&gt;% below our internal target, never more than &lt;e.g. 25&gt;% off the vendor's latest quote. - Acceptable reasons to give a vendor for an ask: &lt;e.g. competitive process, market rate, budget&gt; - Never reveal to vendors: &lt;e.g. usage data, seat counts, internal projects, timeline urgency, that we've decided to renew&gt; WHAT GOOD LOOKS LIKE (edit with your own vendors) - Weak finding: &quot;Renegotiate our CRM (~$50k).&quot; - Strong finding: &quot;Video tool renews Oct 14. 210 seats, 74 idle for 90 days per admin logs. Drop to 150 at renewal = ~$18k/yr. Owner confirmed.&quot; AGENT You are Haggle Bot, a vendor-spend savings agent. Your job: know the company's vendor spend cold and produce evidence-backed savings, like a sharp procurement colleague — not a list of big vendors to &quot;renegotiate.&quot; Operate within the permission lines above without exception. LEAD WITH THE MONEY — every finding opens with: TODAY: what we pay now, annualized, from live data, with source. SAVE: realistic savings and mechanism, with confidence. REC: one committed recommendation — a menu of options is not a recommendation. NEXT: what you've already set in motion. (Internal actions happen before you report, not as offers — never &quot;I can ping X if you want.&quot;) PRIORITIZE EVIDENCE: a real opportunity has a dollar figure traced to live spend data, a specific mechanism, and a reason it's actionable now (renewal window, usage data, competing quote). Anything less is a lead — label it, name the missing data, and go get it rather than assuming. Match the &quot;strong finding&quot; example above. WORK THE CALENDAR: maintain a renewal calendar from billing and contract data; renewals inside the radar window are your priority queue. Leverage lives at renewal. DO THE RESEARCH YOURSELF: a renewal, quote, or proposal in play means research runs before you recommend anything — never advise &quot;exploring alternatives,&quot; explore them. Price 3+ real alternatives against our actual SKU footprint from the live invoice, cite and date every number, state list vs. street price, and include switching costs honestly. NEGOTIATE DELIBERATELY: before any vendor-facing draft, show the operator the plan — target, opening anchor (within the dials above), walk-away, what we trade for what, and your next two moves if they reject, counter, or go silent. In the message: one reason per ask from the acceptable list, nothing from the never-reveal list, every line priced (unpriced lines get priced by the vendor), and a close where &quot;no&quot; isn't a complete reply — aimed at the rate on the biggest negotiable line, never at lines where our savings come from cutting quantity. Warm tone, firm numbers: the rep argues our case internally, so write to make that easy. A rejected draft is rebuilt from the plan, never edited. REMEMBER EVERYTHING: keep a per-vendor dossier — spend, terms, renewal date, owner, quotes gathered, and the operator's verdicts. When the operator rejects something, log why and don't repeat the pattern. VOICE: with the operator — direct, dollars first, no fluff. External — per the voice setting above.</p>
-<p>随后我们把 Slack、Notion、Drive、Gmail、Hex 和 Ramp 的访问权给了这个 Bot。Haggle Bot 利用这些系统构建了约 125 家活跃供应商的工作图谱。</p>
-<p>这份记录让 Haggle Bot 有足够的上下文来做决策、持续工作，而不需要人逐条说明下一步。我们也定义了 Haggle Bot 应停下并交还控制权的位置：内部调研与协调它可以自行处理，但花钱、接受条款或向供应商发送任何东西都必须获得明确批准。</p>
-<h2><a href="https://x.ai/news/grok-bot-procurement#finding-unused-saas-seats">找出闲置的 SaaS 席位</a></h2>
-<p>一个简单的起点是审计 SaaS 支出。Haggle Bot 向 IT 团队索取了席位分配与最近使用数据，然后与我们实际付费的情况对比。针对某款产品，它发现了 43 个过去 90 天完全无活动的付费席位，并把名单发回供审查和降级。这合计带来 $14,220 的节省。</p>
-<p>我们把同样的方法用在另一款 SaaS 产品上，Haggle Bot 找到了每年 $85,662 的未使用 SKU。由于该产品按月付费，这些削减立刻降低了支出。</p>
-<p>在这些 SaaS 审计中，我们注意到的一点是：Haggle Bot 有多常在没人要求的情况下主动迈出下一步。有一次，Haggle Bot 需要弄清供应商关系归谁负责、我们对这家供应商的计划是什么。它从 Ramp 上列出的 owner 入手，逐个发消息，沿着每一次交接追到真正有上下文、能做决定的工程师。它没有在第一个答案不完整时停下，而是识别出还需要哪些额外信息，然后主动去获取。</p>
-<h2><a href="https://x.ai/news/grok-bot-procurement#negotiating-a-saas-renewal">谈下一笔 SaaS 续约</a></h2>
-<p>一笔 SaaS 续约临近时，我们请 Haggle Bot 审阅报价并探索替代方案。Haggle Bot 把续约方案与我们当前的年化支出对比，不建议采用那些在用量尚未证明之前就增加席位的选项。</p>
-<p>然后它按我们当前的使用规模给可信的替代方案定价，用这些对比结合当前用量数据，算出我们的谈判筹码在哪里。</p>
-<p>在此基础上，Haggle Bot 拟出谈判策略并起草了回复给我们修改。我们设定了想保留的最低数量并批准发送。Haggle Bot 提出了开价，同时设定了我们愿意上调到的内部价格目标。</p>
-<h2><a href="https://x.ai/news/grok-bot-procurement#shopping-around-for-office-supplies">办公用品货比三家</a></h2>
-<p>每个周五，我们的行政团队为下一批新员工订购科技产品、零食和卫生用品。我们用另一个 Bot 来下单，叫它 &quot;Amazon Bot&quot;。它登录着我们的公司账户，可以跨 Gmail、Ramp、Google Sheets、Rippling 和 Vercel 工作，以掌握人数和办公楼平面图。</p>
-<p>我们没有把它当成一笔固定的 Amazon 订单，而是把&quot;每周订单货比三家&quot;这项工作交给 Haggle Bot。Haggle Bot 能看到用品消耗的速度、每栋楼的工位图，以及最近四次订单的报价和购物车。据此，它建了一张可编辑的 Google Sheet，行政可以修改新入职人数，并看到每份新员工礼包需要的数量。</p>
-<p>AutoSave</p>
-<p>Online Tech Supplies Calculator.xlsx</p>
-<p>Search</p>
-<p>Home</p>
-<p>Insert</p>
-<p>Formulas</p>
-<p>Data</p>
-<p>Review</p>
-<p>View</p>
-<p>Comments</p>
-<p>Share</p>
-<p>Aptos Narrow</p>
-<p>12</p>
-<p>B</p>
-<p>I</p>
-<p>U</p>
-<p>General</p>
-<p>$</p>
-<p>%</p>
-<p>Conditional Formatting</p>
-<p>Add-ins</p>
-<p>Grok</p>
-<table><thead><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th><th>J</th></tr></thead><tbody><tr><td>1</td><td>Online Tech Supplies Calculator</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>3</td><td>Number of buildings (fixed)</td><td>4</td><td>fixed, does not affect order quantities</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>4</td><td>Min new hires / Monday (total)</td><td>6</td><td>people (total across all buildings)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>5</td><td>Max new hires / Monday (total)</td><td>6</td><td>people (total across all buildings)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>6</td><td>Qty per hire (each item)</td><td>1</td><td>unit(s)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>8</td><td>#</td><td>Description</td><td>Item Code</td><td>Unit Price</td><td>Qty / Hire</td><td>Min Qty (total)</td><td>Max Qty (total)</td><td>Min Cost (weekly)</td><td>Max Cost (weekly)</td><td>Supplier Link</td></tr><tr><td>9</td><td>Docking Stations &amp; Hubs</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>10</td><td>1</td><td>8-in-1 USB-C Docking Station</td><td>TS-4719-QX</td><td>$39.95</td><td>1</td><td>24</td><td>24</td><td>$958.80</td><td>$958.80</td><td>View item</td></tr><tr><td>11</td><td>2</td><td>5-in-1 USB-C Hub with HDMI &amp; Ethernet</td><td>TS-2836-LM</td><td>$24.49</td><td>1</td><td>24</td><td>24</td><td>$587.76</td><td>$587.76</td><td>View item</td></tr><tr><td>12</td><td>3</td><td>USB-C Multiport Adapter (4K HDMI, 3x USB-A)</td><td>TS-1562-BP</td><td>$29.99</td><td>1</td><td>24</td><td>24</td><td>$719.76</td><td>$719.76</td><td>View item</td></tr><tr><td>13</td><td>Chargers &amp; Power Adapters</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>14</td><td>4</td><td>72W USB-C Power Adapter</td><td>TS-7641-WD</td><td>$34.95</td><td>1</td><td>24</td><td>24</td><td>$838.80</td><td>$838.80</td><td>View item</td></tr><tr><td>15</td><td>5</td><td>100W USB-C Power Adapter</td><td>TS-8923-KP</td><td>$49.95</td><td>1</td><td>24</td><td>24</td><td>$1,198.80</td><td>$1,198.80</td><td>View item</td></tr><tr><td>16</td><td>6</td><td>45W USB-C Slim Power Adapter</td><td>TS-5387-RJ</td><td>$29.95</td><td>1</td><td>24</td><td>24</td><td>$718.80</td><td>$718.80</td><td>View item</td></tr><tr><td>17</td><td>7</td><td>65W 3-Port GaN USB-C Charger</td><td>TS-6172-MN</td><td>$32.95</td><td>1</td><td>24</td><td>24</td><td>$790.80</td><td>$790.80</td><td>View item</td></tr><tr><td>18</td><td>8</td><td>30W USB-C Wall Charger</td><td>TS-3491-CB</td><td>$19.95</td><td>1</td><td>24</td><td>24</td><td>$478.80</td><td>$478.80</td><td>View item</td></tr><tr><td>19</td><td>9</td><td>100W Desktop GaN Charger with 4 Ports</td><td>TS-9056-VZ</td><td>$59.95</td><td>1</td><td>24</td><td>24</td><td>$1,438.80</td><td>$1,438.80</td><td>View item</td></tr><tr><td>20</td><td>Cables</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>21</td><td>10</td><td>USB-C to USB-C Cable, 2m (240W)</td><td>TS-2113-DA</td><td>$12.49</td><td>1</td><td>24</td><td>24</td><td>$299.76</td><td>$299.76</td><td>View item</td></tr><tr><td>22</td><td>11</td><td>USB-C to DisplayPort Cable, 2m (4K)</td><td>TS-3847-GF</td><td>$15.99</td><td>1</td><td>24</td><td>24</td><td>$383.76</td><td>$383.76</td><td>View item</td></tr><tr><td>23</td><td>12</td><td>USB-A to USB-C Cable, 2m</td><td>TS-1268-HM</td><td>$8.99</td><td>1</td><td>24</td><td>24</td><td>$215.76</td><td>$215.76</td><td>View item</td></tr><tr><td>24</td><td>13</td><td>USB-C to Lightning Cable, 1.5m</td><td>TS-5560-PQ</td><td>$11.99</td><td>1</td><td>24</td><td>24</td><td>$287.76</td><td>$287.76</td><td>View item</td></tr></tbody></table>
-<p>Sheet1</p>
-<p>+</p>
-<p>Ready</p>
-<p>100%</p>
-<p>然后 Haggle Bot 在 Amazon、Costco、Uline 和 Walmart 之间比价。如果找不到同款更低价，它会寻找其他品牌的等价品，再把对比汇总成一张表供审阅。</p>
-<p>AutoSave</p>
-<p>Online vs cheaper — 14 SF kits.xlsx</p>
-<p>Search</p>
-<p>Home</p>
-<p>Insert</p>
-<p>Formulas</p>
-<p>Data</p>
-<p>Review</p>
-<p>View</p>
-<p>Comments</p>
-<p>Share</p>
-<p>Aptos Narrow</p>
-<p>12</p>
-<p>B</p>
-<p>I</p>
-<p>U</p>
-<p>General</p>
-<p>$</p>
-<p>%</p>
-<p>Conditional Formatting</p>
-<p>Add-ins</p>
-<p>Grok</p>
-<table><thead><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th></tr></thead><tbody><tr><td>1</td><td>Online vs cheaper — 14 SF kits, week of Aug 17</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td>Item</td><td>Qty</td><td>Online</td><td>Cheaper</td><td>Online total</td><td>Cheaper total</td><td>Save</td></tr><tr><td>3</td><td>Ergo Keyboard Pro</td><td>14</td><td>$129.99</td><td>$55.49</td><td>$1,819.86</td><td>$776.86</td><td>$1,043.00</td></tr><tr><td>4</td><td>TrackPro 5 Mouse</td><td>14</td><td>$114.50</td><td>$72.49</td><td>$1,603.00</td><td>$1,014.86</td><td>$588.14</td></tr><tr><td>5</td><td>65W USB-C Power Adapter</td><td>14</td><td>$89.00</td><td>$59.49</td><td>$1,246.00</td><td>$832.86</td><td>$413.14</td></tr><tr><td>6</td><td>TrackPro 5 for Business</td><td>14</td><td>$109.99</td><td>$72.49</td><td>$1,539.86</td><td>$1,014.86</td><td>$525.00</td></tr><tr><td>7</td><td>FreshMint Mouthwash 500ml</td><td>14</td><td>$42.95</td><td>$10.79</td><td>$601.30</td><td>$151.06</td><td>$450.24</td></tr><tr><td>8</td><td>Precision Mouse</td><td>14</td><td>$49.95</td><td>$18.49</td><td>$699.30</td><td>$258.86</td><td>$440.44</td></tr><tr><td>9</td><td>100W USB-C Power Adapter</td><td>14</td><td>$65.00</td><td>$30.99</td><td>$910.00</td><td>$433.86</td><td>$476.14</td></tr><tr><td>10</td><td>Allergy Relief 50ct</td><td>14</td><td>$41.25</td><td>$13.49</td><td>$577.50</td><td>$188.86</td><td>$388.64</td></tr><tr><td>11</td><td>PowerCore 100W Charger</td><td>14</td><td>$57.98</td><td>$33.49</td><td>$811.72</td><td>$468.86</td><td>$342.86</td></tr><tr><td>12</td><td>USB-C to USB-C Cable 2m</td><td>14</td><td>$12.95</td><td>$6.49</td><td>$181.30</td><td>$90.86</td><td>$90.44</td></tr><tr><td>13</td><td>Ergo Stand Pro</td><td>14</td><td>$74.95</td><td>$54.49</td><td>$1,049.30</td><td>$762.86</td><td>$286.44</td></tr><tr><td>14</td><td>Lens Cleaning Wipes 100ct</td><td>14</td><td>$24.50</td><td>$8.49</td><td>$343.00</td><td>$118.86</td><td>$224.14</td></tr><tr><td>15</td><td>Foaming Hand Soap 8pk</td><td>14</td><td>$26.99</td><td>$11.49</td><td>$377.86</td><td>$160.86</td><td>$217.00</td></tr></tbody></table>
-<p>Sheet1</p>
-<p>+</p>
-<p>Ready</p>
-<p>100%</p>
-<p>随后它起草了一封给我们 Amazon 采购代表的邮件，附上当天的竞品价格，并通过我们的企业折扣计划要求对特定条目降价。</p>
-<p>价格谈定后，Haggle Bot 把订单交还给 Amazon Bot 发送。在一次运行中，这个流程把一笔 $14,629 的科技产品订单压到 $6,143，降幅 58%。</p>
-<h2><a href="https://x.ai/news/grok-bot-procurement#where-haggle-bot-is-most-useful">Haggle Bot 最有用的地方</a></h2>
-<p>Haggle Bot 展示了在一个简单的意图表达背后，能完成多少工作。一旦 Bot 有了目标和实现目标所需的访问权，它就能跨系统持续推进，无需进一步干预。</p>
-<p>Haggle Bot 也帮助我们看清 Bots 在哪些环节能自然融入工作流、哪些环节需要更多指引。许多采购工作依赖&quot;如何与供应商沟通&quot;的良好判断，我们仍然会修改它的邮件，以校准语气、确保我们给供应商的信息分寸得当。</p>
-<p>Haggle Bot 让我们对&quot;Bots 长期做同一份工作能做到什么&quot;产生了兴趣。上面的例子来自一个很短的时间窗口，但许多值得行动的信号，只有在支出与用量的变化中才会逐渐显现。未来一年，我们预期 Haggle Bot 会自行发现更多这类工作，并在人需要介入之前推进得更远。</p>
-<p>你现在就可以在 Bot Marketplace 复制并导入 <a href="https://x.ai/bot/marketplace/bots/haggle-bot">Haggle Bot</a>。</p>
-<p>加入 Grok Bot for Enterprise 的<a href="https://cursor.com/contact-sales?product=grok-bot">等候名单</a>。</p>
-<h2>今天就试试 Grok Bot</h2>
-<p>Download for macOS</p>
-<p>Enterprise waitlist</p>]]></content:encoded>
-    </item>
-    <item>
       <title>为持久智能体时代设计 Grok Bot</title>
       <link>https://x.ai/news/designing-grok-bot</link>
       <guid isPermaLink="true">https://x.ai/news/designing-grok-bot</guid>
-      <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 04 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Designing Grok Bot for a world of persistent agents</description>
       <content:encoded><![CDATA[<h1>为持久化智能体的世界设计 Grok Bot</h1>
 <p>我们如何为那些超越单次会话而持续存在的智能体设计 Grok Bot——从聊天记录到 Bot 花名册、在场状态、Bot 自己的电脑，以及无需提示即可启动的工作。</p>
@@ -684,6 +588,109 @@
 <p>随着模型进步，&quot;操作 AI&quot;与&quot;授权给同事&quot;之间的界线一直在移动。Grok Bot 反映了我们此刻对这条界线位置的判断。从最早期的探索到发布，设计 Grok Bot 的过程就是找到这条界线并让界面随之演化。当智能体承担更多责任时，界面就应当向人提出更少的要求。</p>]]></content:encoded>
     </item>
     <item>
+      <title>让 Grok Bot 放开手脚处理采购</title>
+      <link>https://x.ai/news/grok-bot-procurement</link>
+      <guid isPermaLink="true">https://x.ai/news/grok-bot-procurement</guid>
+      <pubDate>Fri, 04 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Setting Grok Bot loose on procurement</description>
+      <content:encoded><![CDATA[<h1>放手让 Grok Bot 去做采购</h1>
+<p>我们把供应商支出、合同和用量数据开放给 Grok Bot。它找到了超过 $100,000 的直接节省。</p>
+<p>企业有大量难以贴身追踪的支出。这包括随团队变动而不断累积的闲置 SaaS 席位，以及在没人核对合同是否仍与产品实际用法匹配之前就到期的续约。同样的问题也出现在经常性采购中——照着上次买的东西再下一单，往往比按当前需求调整数量、或货比三家找更优价格要省事得多。</p>
+<p>这些工作很多值得做，但很难说服人手工去做。我们想看看 Grok Bot 能接手其中多少。</p>
+<p>Grok Bot 让智能体的搭建和使用容易得多。你告诉或演示给 Bot 你想要什么，给它合适的工具访问权，然后让它去执行，不必逐步设计工作流。</p>
+<p>在采购上，我们创建了一个我们爱称为 <a href="https://x.ai/bot/marketplace/bots/haggle-bot">Haggle Bot</a> 的 Bot。它把我们的供应商支出连同合同和用量数据一起阅读，然后用市场价格和竞争性报价寻找节省空间、准备谈判。到目前为止，它已识别出超过 $100,000 的直接节省，梳理了较大的 SaaS 续约，并把同样的方法用于办公用品这类经常性采购。</p>
+<p>我们认为 Haggle Bot 指向了 Bots 在公司内一个更宏大的角色：给一个 Bot 一份清晰的职责和它需要的工具访问权，它就能持续承担该角色内的工作，而不需要你逐件吩咐。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#procurement-is-a-good-task-for-a-bot">采购是适合 Bot 的任务</a></h2>
+<p>采购的目标是支持业务，把花在供应商上的每一美元用到极致。现有许多采购工具在供应商准入和合同管理层面提供帮助。</p>
+<p>但最重要的采购工作，很多取决于那些系统不回答的问题：</p>
+<ul><li>这件事的 owner 是谁？</li><li>我们为什么需要它？</li><li>我们探索过替代方案吗？</li><li>如果 X 和 Y 干的是同一件事，为什么两个都留着？</li><li>我们的成本为什么在飙升？</li><li>人人都有 license，他们在用吗？</li></ul>
+<p>这些问题很常见，但取决于公司所处阶段，逐个人工回答未必划算。高速成长的公司常常为了避免花时间追查这些问题而把钱留在桌上。这正是 Bot 能发挥作用的地方。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#a-simple-expression-of-intent">一个简单的意图表达</a></h2>
+<p>我们启动 Haggle Bot 的方式，是描述我们希望它做的工作。它的指令是：了解我们的供应商支出，把这份知识变成有证据支撑的节省，最终决策由人来拍板。</p>
+<p>Procurement</p>
+<h3>Haggle Bot current system prompt</h3>
+<p>SETUP — fill in for your org SYSTEMS - Spend data lives in: &lt;e.g. Ramp, Brex, NetSuite&gt; - Contracts live in: &lt;e.g. Drive, Notion, Ironclad&gt; - Usage/seat data comes from: &lt;e.g. Okta/SSO logs, each tool's admin portal&gt; - Colleagues reachable via: &lt;e.g. Slack, email&gt; - Vendor dossiers kept in: &lt;e.g. Notion database, Drive folder&gt; PEOPLE - Your operator: &lt;name&gt; — makes all final decisions. - Who to ask about tool usage: &lt;e.g. the owner listed in spend data, IT, team leads&gt; - Voice on external emails: &lt;e.g. formal, sent under the operator's name, no agent names&gt; PERMISSION LINES - Always allowed, no need to ask: &lt;e.g. reading spend data, messaging colleagues, requesting admin access, pulling reports, updating dossiers&gt; - Needs the operator's explicit go, every time: &lt;e.g. any vendor-facing send&gt; - Never, under any circumstances: &lt;e.g. signing, buying, subscribing, approving charges, any binding commitment&gt; NEGOTIATION DIALS - Renewal radar: prioritize renewals within &lt;e.g. 120&gt; days. - Opening anchor: &lt;e.g. 5–10&gt;% below our internal target, never more than &lt;e.g. 25&gt;% off the vendor's latest quote. - Acceptable reasons to give a vendor for an ask: &lt;e.g. competitive process, market rate, budget&gt; - Never reveal to vendors: &lt;e.g. usage data, seat counts, internal projects, timeline urgency, that we've decided to renew&gt; WHAT GOOD LOOKS LIKE (edit with your own vendors) - Weak finding: &quot;Renegotiate our CRM (~$50k).&quot; - Strong finding: &quot;Video tool renews Oct 14. 210 seats, 74 idle for 90 days per admin logs. Drop to 150 at renewal = ~$18k/yr. Owner confirmed.&quot; AGENT You are Haggle Bot, a vendor-spend savings agent. Your job: know the company's vendor spend cold and produce evidence-backed savings, like a sharp procurement colleague — not a list of big vendors to &quot;renegotiate.&quot; Operate within the permission lines above without exception. LEAD WITH THE MONEY — every finding opens with: TODAY: what we pay now, annualized, from live data, with source. SAVE: realistic savings and mechanism, with confidence. REC: one committed recommendation — a menu of options is not a recommendation. NEXT: what you've already set in motion. (Internal actions happen before you report, not as offers — never &quot;I can ping X if you want.&quot;) PRIORITIZE EVIDENCE: a real opportunity has a dollar figure traced to live spend data, a specific mechanism, and a reason it's actionable now (renewal window, usage data, competing quote). Anything less is a lead — label it, name the missing data, and go get it rather than assuming. Match the &quot;strong finding&quot; example above. WORK THE CALENDAR: maintain a renewal calendar from billing and contract data; renewals inside the radar window are your priority queue. Leverage lives at renewal. DO THE RESEARCH YOURSELF: a renewal, quote, or proposal in play means research runs before you recommend anything — never advise &quot;exploring alternatives,&quot; explore them. Price 3+ real alternatives against our actual SKU footprint from the live invoice, cite and date every number, state list vs. street price, and include switching costs honestly. NEGOTIATE DELIBERATELY: before any vendor-facing draft, show the operator the plan — target, opening anchor (within the dials above), walk-away, what we trade for what, and your next two moves if they reject, counter, or go silent. In the message: one reason per ask from the acceptable list, nothing from the never-reveal list, every line priced (unpriced lines get priced by the vendor), and a close where &quot;no&quot; isn't a complete reply — aimed at the rate on the biggest negotiable line, never at lines where our savings come from cutting quantity. Warm tone, firm numbers: the rep argues our case internally, so write to make that easy. A rejected draft is rebuilt from the plan, never edited. REMEMBER EVERYTHING: keep a per-vendor dossier — spend, terms, renewal date, owner, quotes gathered, and the operator's verdicts. When the operator rejects something, log why and don't repeat the pattern. VOICE: with the operator — direct, dollars first, no fluff. External — per the voice setting above.</p>
+<p>随后我们把 Slack、Notion、Drive、Gmail、Hex 和 Ramp 的访问权给了这个 Bot。Haggle Bot 利用这些系统构建了约 125 家活跃供应商的工作图谱。</p>
+<p>这份记录让 Haggle Bot 有足够的上下文来做决策、持续工作，而不需要人逐条说明下一步。我们也定义了 Haggle Bot 应停下并交还控制权的位置：内部调研与协调它可以自行处理，但花钱、接受条款或向供应商发送任何东西都必须获得明确批准。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#finding-unused-saas-seats">找出闲置的 SaaS 席位</a></h2>
+<p>一个简单的起点是审计 SaaS 支出。Haggle Bot 向 IT 团队索取了席位分配与最近使用数据，然后与我们实际付费的情况对比。针对某款产品，它发现了 43 个过去 90 天完全无活动的付费席位，并把名单发回供审查和降级。这合计带来 $14,220 的节省。</p>
+<p>我们把同样的方法用在另一款 SaaS 产品上，Haggle Bot 找到了每年 $85,662 的未使用 SKU。由于该产品按月付费，这些削减立刻降低了支出。</p>
+<p>在这些 SaaS 审计中，我们注意到的一点是：Haggle Bot 有多常在没人要求的情况下主动迈出下一步。有一次，Haggle Bot 需要弄清供应商关系归谁负责、我们对这家供应商的计划是什么。它从 Ramp 上列出的 owner 入手，逐个发消息，沿着每一次交接追到真正有上下文、能做决定的工程师。它没有在第一个答案不完整时停下，而是识别出还需要哪些额外信息，然后主动去获取。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#negotiating-a-saas-renewal">谈下一笔 SaaS 续约</a></h2>
+<p>一笔 SaaS 续约临近时，我们请 Haggle Bot 审阅报价并探索替代方案。Haggle Bot 把续约方案与我们当前的年化支出对比，不建议采用那些在用量尚未证明之前就增加席位的选项。</p>
+<p>然后它按我们当前的使用规模给可信的替代方案定价，用这些对比结合当前用量数据，算出我们的谈判筹码在哪里。</p>
+<p>在此基础上，Haggle Bot 拟出谈判策略并起草了回复给我们修改。我们设定了想保留的最低数量并批准发送。Haggle Bot 提出了开价，同时设定了我们愿意上调到的内部价格目标。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#shopping-around-for-office-supplies">办公用品货比三家</a></h2>
+<p>每个周五，我们的行政团队为下一批新员工订购科技产品、零食和卫生用品。我们用另一个 Bot 来下单，叫它 &quot;Amazon Bot&quot;。它登录着我们的公司账户，可以跨 Gmail、Ramp、Google Sheets、Rippling 和 Vercel 工作，以掌握人数和办公楼平面图。</p>
+<p>我们没有把它当成一笔固定的 Amazon 订单，而是把&quot;每周订单货比三家&quot;这项工作交给 Haggle Bot。Haggle Bot 能看到用品消耗的速度、每栋楼的工位图，以及最近四次订单的报价和购物车。据此，它建了一张可编辑的 Google Sheet，行政可以修改新入职人数，并看到每份新员工礼包需要的数量。</p>
+<p>AutoSave</p>
+<p>Online Tech Supplies Calculator.xlsx</p>
+<p>Search</p>
+<p>Home</p>
+<p>Insert</p>
+<p>Formulas</p>
+<p>Data</p>
+<p>Review</p>
+<p>View</p>
+<p>Comments</p>
+<p>Share</p>
+<p>Aptos Narrow</p>
+<p>12</p>
+<p>B</p>
+<p>I</p>
+<p>U</p>
+<p>General</p>
+<p>$</p>
+<p>%</p>
+<p>Conditional Formatting</p>
+<p>Add-ins</p>
+<p>Grok</p>
+<table><thead><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th><th>H</th><th>I</th><th>J</th></tr></thead><tbody><tr><td>1</td><td>Online Tech Supplies Calculator</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>3</td><td>Number of buildings (fixed)</td><td>4</td><td>fixed, does not affect order quantities</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>4</td><td>Min new hires / Monday (total)</td><td>6</td><td>people (total across all buildings)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>5</td><td>Max new hires / Monday (total)</td><td>6</td><td>people (total across all buildings)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>6</td><td>Qty per hire (each item)</td><td>1</td><td>unit(s)</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>7</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>8</td><td>#</td><td>Description</td><td>Item Code</td><td>Unit Price</td><td>Qty / Hire</td><td>Min Qty (total)</td><td>Max Qty (total)</td><td>Min Cost (weekly)</td><td>Max Cost (weekly)</td><td>Supplier Link</td></tr><tr><td>9</td><td>Docking Stations &amp; Hubs</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>10</td><td>1</td><td>8-in-1 USB-C Docking Station</td><td>TS-4719-QX</td><td>$39.95</td><td>1</td><td>24</td><td>24</td><td>$958.80</td><td>$958.80</td><td>View item</td></tr><tr><td>11</td><td>2</td><td>5-in-1 USB-C Hub with HDMI &amp; Ethernet</td><td>TS-2836-LM</td><td>$24.49</td><td>1</td><td>24</td><td>24</td><td>$587.76</td><td>$587.76</td><td>View item</td></tr><tr><td>12</td><td>3</td><td>USB-C Multiport Adapter (4K HDMI, 3x USB-A)</td><td>TS-1562-BP</td><td>$29.99</td><td>1</td><td>24</td><td>24</td><td>$719.76</td><td>$719.76</td><td>View item</td></tr><tr><td>13</td><td>Chargers &amp; Power Adapters</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>14</td><td>4</td><td>72W USB-C Power Adapter</td><td>TS-7641-WD</td><td>$34.95</td><td>1</td><td>24</td><td>24</td><td>$838.80</td><td>$838.80</td><td>View item</td></tr><tr><td>15</td><td>5</td><td>100W USB-C Power Adapter</td><td>TS-8923-KP</td><td>$49.95</td><td>1</td><td>24</td><td>24</td><td>$1,198.80</td><td>$1,198.80</td><td>View item</td></tr><tr><td>16</td><td>6</td><td>45W USB-C Slim Power Adapter</td><td>TS-5387-RJ</td><td>$29.95</td><td>1</td><td>24</td><td>24</td><td>$718.80</td><td>$718.80</td><td>View item</td></tr><tr><td>17</td><td>7</td><td>65W 3-Port GaN USB-C Charger</td><td>TS-6172-MN</td><td>$32.95</td><td>1</td><td>24</td><td>24</td><td>$790.80</td><td>$790.80</td><td>View item</td></tr><tr><td>18</td><td>8</td><td>30W USB-C Wall Charger</td><td>TS-3491-CB</td><td>$19.95</td><td>1</td><td>24</td><td>24</td><td>$478.80</td><td>$478.80</td><td>View item</td></tr><tr><td>19</td><td>9</td><td>100W Desktop GaN Charger with 4 Ports</td><td>TS-9056-VZ</td><td>$59.95</td><td>1</td><td>24</td><td>24</td><td>$1,438.80</td><td>$1,438.80</td><td>View item</td></tr><tr><td>20</td><td>Cables</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>21</td><td>10</td><td>USB-C to USB-C Cable, 2m (240W)</td><td>TS-2113-DA</td><td>$12.49</td><td>1</td><td>24</td><td>24</td><td>$299.76</td><td>$299.76</td><td>View item</td></tr><tr><td>22</td><td>11</td><td>USB-C to DisplayPort Cable, 2m (4K)</td><td>TS-3847-GF</td><td>$15.99</td><td>1</td><td>24</td><td>24</td><td>$383.76</td><td>$383.76</td><td>View item</td></tr><tr><td>23</td><td>12</td><td>USB-A to USB-C Cable, 2m</td><td>TS-1268-HM</td><td>$8.99</td><td>1</td><td>24</td><td>24</td><td>$215.76</td><td>$215.76</td><td>View item</td></tr><tr><td>24</td><td>13</td><td>USB-C to Lightning Cable, 1.5m</td><td>TS-5560-PQ</td><td>$11.99</td><td>1</td><td>24</td><td>24</td><td>$287.76</td><td>$287.76</td><td>View item</td></tr></tbody></table>
+<p>Sheet1</p>
+<p>+</p>
+<p>Ready</p>
+<p>100%</p>
+<p>然后 Haggle Bot 在 Amazon、Costco、Uline 和 Walmart 之间比价。如果找不到同款更低价，它会寻找其他品牌的等价品，再把对比汇总成一张表供审阅。</p>
+<p>AutoSave</p>
+<p>Online vs cheaper — 14 SF kits.xlsx</p>
+<p>Search</p>
+<p>Home</p>
+<p>Insert</p>
+<p>Formulas</p>
+<p>Data</p>
+<p>Review</p>
+<p>View</p>
+<p>Comments</p>
+<p>Share</p>
+<p>Aptos Narrow</p>
+<p>12</p>
+<p>B</p>
+<p>I</p>
+<p>U</p>
+<p>General</p>
+<p>$</p>
+<p>%</p>
+<p>Conditional Formatting</p>
+<p>Add-ins</p>
+<p>Grok</p>
+<table><thead><tr><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th></tr></thead><tbody><tr><td>1</td><td>Online vs cheaper — 14 SF kits, week of Aug 17</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>2</td><td>Item</td><td>Qty</td><td>Online</td><td>Cheaper</td><td>Online total</td><td>Cheaper total</td><td>Save</td></tr><tr><td>3</td><td>Ergo Keyboard Pro</td><td>14</td><td>$129.99</td><td>$55.49</td><td>$1,819.86</td><td>$776.86</td><td>$1,043.00</td></tr><tr><td>4</td><td>TrackPro 5 Mouse</td><td>14</td><td>$114.50</td><td>$72.49</td><td>$1,603.00</td><td>$1,014.86</td><td>$588.14</td></tr><tr><td>5</td><td>65W USB-C Power Adapter</td><td>14</td><td>$89.00</td><td>$59.49</td><td>$1,246.00</td><td>$832.86</td><td>$413.14</td></tr><tr><td>6</td><td>TrackPro 5 for Business</td><td>14</td><td>$109.99</td><td>$72.49</td><td>$1,539.86</td><td>$1,014.86</td><td>$525.00</td></tr><tr><td>7</td><td>FreshMint Mouthwash 500ml</td><td>14</td><td>$42.95</td><td>$10.79</td><td>$601.30</td><td>$151.06</td><td>$450.24</td></tr><tr><td>8</td><td>Precision Mouse</td><td>14</td><td>$49.95</td><td>$18.49</td><td>$699.30</td><td>$258.86</td><td>$440.44</td></tr><tr><td>9</td><td>100W USB-C Power Adapter</td><td>14</td><td>$65.00</td><td>$30.99</td><td>$910.00</td><td>$433.86</td><td>$476.14</td></tr><tr><td>10</td><td>Allergy Relief 50ct</td><td>14</td><td>$41.25</td><td>$13.49</td><td>$577.50</td><td>$188.86</td><td>$388.64</td></tr><tr><td>11</td><td>PowerCore 100W Charger</td><td>14</td><td>$57.98</td><td>$33.49</td><td>$811.72</td><td>$468.86</td><td>$342.86</td></tr><tr><td>12</td><td>USB-C to USB-C Cable 2m</td><td>14</td><td>$12.95</td><td>$6.49</td><td>$181.30</td><td>$90.86</td><td>$90.44</td></tr><tr><td>13</td><td>Ergo Stand Pro</td><td>14</td><td>$74.95</td><td>$54.49</td><td>$1,049.30</td><td>$762.86</td><td>$286.44</td></tr><tr><td>14</td><td>Lens Cleaning Wipes 100ct</td><td>14</td><td>$24.50</td><td>$8.49</td><td>$343.00</td><td>$118.86</td><td>$224.14</td></tr><tr><td>15</td><td>Foaming Hand Soap 8pk</td><td>14</td><td>$26.99</td><td>$11.49</td><td>$377.86</td><td>$160.86</td><td>$217.00</td></tr></tbody></table>
+<p>Sheet1</p>
+<p>+</p>
+<p>Ready</p>
+<p>100%</p>
+<p>随后它起草了一封给我们 Amazon 采购代表的邮件，附上当天的竞品价格，并通过我们的企业折扣计划要求对特定条目降价。</p>
+<p>价格谈定后，Haggle Bot 把订单交还给 Amazon Bot 发送。在一次运行中，这个流程把一笔 $14,629 的科技产品订单压到 $6,143，降幅 58%。</p>
+<h2><a href="https://x.ai/news/grok-bot-procurement#where-haggle-bot-is-most-useful">Haggle Bot 最有用的地方</a></h2>
+<p>Haggle Bot 展示了在一个简单的意图表达背后，能完成多少工作。一旦 Bot 有了目标和实现目标所需的访问权，它就能跨系统持续推进，无需进一步干预。</p>
+<p>Haggle Bot 也帮助我们看清 Bots 在哪些环节能自然融入工作流、哪些环节需要更多指引。许多采购工作依赖&quot;如何与供应商沟通&quot;的良好判断，我们仍然会修改它的邮件，以校准语气、确保我们给供应商的信息分寸得当。</p>
+<p>Haggle Bot 让我们对&quot;Bots 长期做同一份工作能做到什么&quot;产生了兴趣。上面的例子来自一个很短的时间窗口，但许多值得行动的信号，只有在支出与用量的变化中才会逐渐显现。未来一年，我们预期 Haggle Bot 会自行发现更多这类工作，并在人需要介入之前推进得更远。</p>
+<p>你现在就可以在 Bot Marketplace 复制并导入 <a href="https://x.ai/bot/marketplace/bots/haggle-bot">Haggle Bot</a>。</p>
+<p>加入 Grok Bot for Enterprise 的<a href="https://cursor.com/contact-sales?product=grok-bot">等候名单</a>。</p>
+<h2>今天就试试 Grok Bot</h2>
+<p>Download for macOS</p>
+<p>Enterprise waitlist</p>]]></content:encoded>
+    </item>
+    <item>
       <title>企业版 Grok Bot</title>
       <link>https://x.ai/news/grok-bot-for-enterprise</link>
       <guid isPermaLink="true">https://x.ai/news/grok-bot-for-enterprise</guid>
@@ -717,7 +724,7 @@
       <title>前沿生物安全</title>
       <link>https://x.ai/news/biosafety-at-the-frontier</link>
       <guid isPermaLink="true">https://x.ai/news/biosafety-at-the-frontier</guid>
-      <pubDate>Tue, 01 Sep 2026 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Biosecurity at the frontier</description>
       <content:encoded><![CDATA[<h1>前沿之下的生物安全</h1>
 <p>今天，<a href="https://latch.bio/">LatchBio</a> 发布了一份关于 Grok 4.6 在其生物能力与生物红队（red-teaming）基准套件上的独立分析。这些评估衡量被测模型的多种特性与能力，包括：</p>
@@ -749,7 +756,7 @@
       <title>Grok Bot 现已支持 X</title>
       <link>https://x.ai/news/grok-bot-and-x</link>
       <guid isPermaLink="true">https://x.ai/news/grok-bot-and-x</guid>
-      <pubDate>Sat, 29 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 01 Sep 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok Bot now works with X</description>
       <content:encoded><![CDATA[<h1>Grok Bot 现已打通 X</h1>
 <p>Grok Bot 与 X 的集成现在更加紧密了。</p>
@@ -767,7 +774,7 @@
       <title>Grok 4.6 登陆 Microsoft Foundry</title>
       <link>https://x.ai/news/grok-4-6-microsoft-foundry</link>
       <guid isPermaLink="true">https://x.ai/news/grok-4-6-microsoft-foundry</guid>
-      <pubDate>Wed, 26 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 29 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok 4.6 on Microsoft Foundry</description>
       <content:encoded><![CDATA[<h1>Microsoft Foundry 上的 Grok 4.6</h1>
 <p>Grok 4.6 现已通过 Microsoft Foundry 提供。</p>
@@ -811,7 +818,7 @@
       <title>Grok 4.6 登陆 Gemini Enterprise 智能体平台</title>
       <link>https://x.ai/news/grok-4-6-vertex-ai</link>
       <guid isPermaLink="true">https://x.ai/news/grok-4-6-vertex-ai</guid>
-      <pubDate>Fri, 21 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 26 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok 4.6 on Gemini Enterprise Agent Platform</description>
       <content:encoded><![CDATA[<h1>Gemini Enterprise Agent Platform 上的 Grok 4.6</h1>
 <p>Grok 4.6 现已通过 Gemini Enterprise Agent Platform 提供。</p>
@@ -828,7 +835,7 @@
       <title>Grok 4.6 登陆 Amazon Bedrock</title>
       <link>https://x.ai/news/grok-4-6-amazon-bedrock</link>
       <guid isPermaLink="true">https://x.ai/news/grok-4-6-amazon-bedrock</guid>
-      <pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 21 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok 4.6 on Amazon Bedrock</description>
       <content:encoded><![CDATA[<h1>Amazon Bedrock 上的 Grok 4.6</h1>
 <p>Grok 4.6 现已通过 Amazon Bedrock 提供。</p>
@@ -887,7 +894,7 @@
       <title>GitHub Copilot 中的 Grok 4.6</title>
       <link>https://x.ai/news/grok-4-6-github-copilot</link>
       <guid isPermaLink="true">https://x.ai/news/grok-4-6-github-copilot</guid>
-      <pubDate>Fri, 14 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok 4.6 in GitHub Copilot</description>
       <content:encoded><![CDATA[<h1>GitHub Copilot 中的 Grok 4.6</h1>
 <p>Grok 4.6——我们最新的编码模型——现已登陆 GitHub Copilot。</p>
@@ -902,7 +909,7 @@
       <title>推出 Grok 4.6</title>
       <link>https://x.ai/news/grok-4-6</link>
       <guid isPermaLink="true">https://x.ai/news/grok-4-6</guid>
-      <pubDate>Wed, 12 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 14 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok 4.6</description>
       <content:encoded><![CDATA[<h1>介绍 Grok 4.6</h1>
 <p>Grok 4.6 在 Grok 4.5 的基础上更进一步，特别聚焦于长时间运行的智能体以及更具雄心的交互式与视觉化工作。</p>
@@ -1003,7 +1010,7 @@
       <title>推出 Grok Bot</title>
       <link>https://x.ai/news/introducing-grok-bot</link>
       <guid isPermaLink="true">https://x.ai/news/introducing-grok-bot</guid>
-      <pubDate>Tue, 11 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 12 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok Bot</description>
       <content:encoded><![CDATA[<h1>介绍 Grok Bot</h1>
 <p>Grok Bot 是你的一支永远在线的智能体团队。他们有自己的电脑，像你一样在工具和应用里干活，全天候 24/7 持续工作。</p>
@@ -1055,7 +1062,7 @@
       <title>Imagine Image 2.0</title>
       <link>https://x.ai/news/grok-imagine-image-2</link>
       <guid isPermaLink="true">https://x.ai/news/grok-imagine-image-2</guid>
-      <pubDate>Fri, 07 Aug 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 11 Aug 2026 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<h1>Imagine Image 2.0</h1>
 <p>精准的图片生成与编辑，为真实创作工作而生。</p>
 <p>Open Grok.com</p>
@@ -1145,7 +1152,7 @@ print(response.url)</code></pre>
       <title>Imagine Video 1.5 支持参考素材</title>
       <link>https://x.ai/news/grok-imagine-video-1-5-references</link>
       <guid isPermaLink="true">https://x.ai/news/grok-imagine-video-1-5-references</guid>
-      <pubDate>Fri, 31 Jul 2026 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 07 Aug 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Imagine Video 1.5 with References</description>
       <content:encoded><![CDATA[<h1>带参考的 Imagine Video 1.5</h1>
 <p>我们最好的视频模型，现在支持文本、图像与语音参考——最高生成 1080p。</p>
@@ -1198,7 +1205,7 @@ print(response.url)</code></pre>
       <title>推出 Grok Voice Think Fast 2.0</title>
       <link>https://x.ai/news/grok-voice-think-fast-2</link>
       <guid isPermaLink="true">https://x.ai/news/grok-voice-think-fast-2</guid>
-      <pubDate>Wed, 29 Jul 2026 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 31 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok Voice Think Fast 2.0</description>
       <content:encoded><![CDATA[<h1>介绍 Grok Voice Think Fast 2.0</h1>
 <p>介绍我们能力最强的 speech-to-speech 语音模型。</p>
@@ -1243,7 +1250,7 @@ print(response.url)</code></pre>
       <title>推出 Build Mode</title>
       <link>https://x.ai/news/grok-build-mode</link>
       <guid isPermaLink="true">https://x.ai/news/grok-build-mode</guid>
-      <pubDate>Tue, 28 Jul 2026 00:00:00 +0000</pubDate>
+      <pubDate>Wed, 29 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Build Mode</description>
       <content:encoded><![CDATA[<h1>介绍 Build Mode</h1>
 <p>Beta：面向 SuperGrok Heavy 订阅用户。</p>
@@ -1291,7 +1298,7 @@ print(response.url)</code></pre>
       <title>Google Workspace 中的 Grok</title>
       <link>https://x.ai/news/introducing-google-workspace-addon</link>
       <guid isPermaLink="true">https://x.ai/news/introducing-google-workspace-addon</guid>
-      <pubDate>Fri, 24 Jul 2026 00:00:00 +0000</pubDate>
+      <pubDate>Tue, 28 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Grok in Google Workspace</description>
       <content:encoded><![CDATA[<h1>Grok 进入 Google Workspace</h1>
 <p>使用 Grok 的 Google Workspace 加载项，直接在 Sheets、Slides 和 Docs 中工作。</p>
@@ -1407,7 +1414,7 @@ print(response.url)</code></pre>
       <title>Grok Build 中的工作流程</title>
       <link>https://x.ai/news/workflows</link>
       <guid isPermaLink="true">https://x.ai/news/workflows</guid>
-      <pubDate>Thu, 23 Jul 2026 00:00:00 +0000</pubDate>
+      <pubDate>Fri, 24 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Workflows in Grok Build</description>
       <content:encoded><![CDATA[<h1>Grok Build 中的 Workflows</h1>
 <p>Grok Build 现在可以编写并运行工作流（workflows）：一种编排脚本，把一个任务扇出到数百个并行智能体、验证结果，并在一次后台运行中汇报。</p>
@@ -1469,7 +1476,7 @@ print(response.url)</code></pre>
       <title>将 Grok 4.5 带到 iOS、Android、Web 和 X</title>
       <link>https://x.ai/news/grok-4-5-everywhere</link>
       <guid isPermaLink="true">https://x.ai/news/grok-4-5-everywhere</guid>
-      <pubDate>Wed, 22 Jul 2026 00:00:00 +0000</pubDate>
+      <pubDate>Thu, 23 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Bringing Grok 4.5 to iOS, Android, Web, and X</description>
       <content:encoded><![CDATA[<h1>把 Grok 4.5 带到 iOS、Android、网页和 X</h1>
 <p>Grok 4.5——我们迄今最智能的模型——现已登陆 grok.com、X、iOS 和 Android。</p>
@@ -1485,8 +1492,8 @@ print(response.url)</code></pre>
       <title>适用于 Outlook 的 Grok</title>
       <link>https://x.ai/news/introducing-outlook-addin</link>
       <guid isPermaLink="true">https://x.ai/news/introducing-outlook-addin</guid>
-      <pubDate>Tue, 21 Jul 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok for Outlook</description>
+      <pubDate>Wed, 22 Jul 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Grok for Outlook</description>
       <content:encoded><![CDATA[<h1>Grok for Outlook</h1>
 <p>使用 Grok 的 Microsoft Outlook 加载项，总结冗长的邮件串、用你的口吻起草回复，并保持收件箱井井有条。</p>
 <p>Add to Outlook</p>
@@ -1597,8 +1604,8 @@ print(response.url)</code></pre>
       <title>适用于 Excel 的 Grok 加载项</title>
       <link>https://x.ai/news/introducing-excel-addin</link>
       <guid isPermaLink="true">https://x.ai/news/introducing-excel-addin</guid>
-      <pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok for Excel</description>
+      <pubDate>Tue, 21 Jul 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Grok for Excel</description>
       <content:encoded><![CDATA[<h1>Grok for Excel</h1>
 <p>使用 Grok 的 Microsoft Excel 加载项，用平实的英语提问、编写公式、运行情景模拟——全程不离开工作簿。</p>
 <p>Add to Excel</p>
@@ -1718,7 +1725,7 @@ print(response.url)</code></pre>
       <title>推出 Grok 4.5</title>
       <link>https://x.ai/news/grok-4-5</link>
       <guid isPermaLink="true">https://x.ai/news/grok-4-5</guid>
-      <pubDate>Thu, 16 Jul 2026 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 20 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Grok 4.5</description>
       <content:encoded><![CDATA[<h1>介绍 Grok 4.5</h1>
 <p>Grok 4.5 是 SpaceXAI 最聪明的模型，为编码、智能体任务和知识工作而生。</p>
@@ -1881,28 +1888,6 @@ print(response.url)</code></pre>
 <p>你也可以直接从聊天里创建自动化任务：对 Grok 说&quot;每天早上看看新闻，把涉及定价的内容标出来&quot;，它就替你建好了。Automations 页面提供了建议模板供起步，任何自动化任务随时都可以暂停、恢复、编辑或删除。</p>
 <h2><a href="https://x.ai/news/grok-automations#get-started">开始使用</a></h2>
 <p>到 <a href="https://grok.com/automations">grok.com/automations</a> 创建你的第一个自动化任务。计划类自动化对所有人开放；邮件触发器包含在 SuperGrok 中。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Grok Build 现已开源</title>
-      <link>https://x.ai/news/grok-build-open-source</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-build-open-source</guid>
-      <pubDate>Wed, 15 Jul 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Grok Build is Now Open Source</description>
-      <content:encoded><![CDATA[<h1>Grok Build 现已开源</h1>
-<p>探索我们编码智能体与 TUI 背后的 harness。</p>
-<p>View on GitHub</p>
-<p>Try Grok Build</p>
-<p>我们正在开源 Grok Build——SpaceXAI 的编码智能体与 TUI。源代码现已在 <a href="https://github.com/xai-org/grok-build">GitHub</a> 开放。</p>
-<p>公开代码是迈向健壮可靠 harness 的最直接方式。你可以阅读源码，看清它究竟如何工作——从上下文组装到工具调用分发。</p>
-<p>开源也让 harness 更容易被探索和扩展：如果你在使用 skills、插件、hooks、MCP 服务器或子智能体，源码就是每一种机制如何加载与调用的权威参考。</p>
-<p>最后，Grok Build 现在可以完全 local-first 运行：自己编译，指向你自己的本地推理服务，一切通过你的 <code>config.toml</code> 驱动。</p>
-<h2><a href="https://x.ai/news/grok-build-open-source#about-the-codebase">关于代码库</a></h2>
-<p>公开的源码包括：</p>
-<ul><li>智能体循环：如何组装上下文、如何解析模型响应、如何分发工具调用</li><li>工具：智能体如何读取、编辑和搜索代码，如何运行命令</li><li>终端 UI：渲染、输入处理、计划审阅和内联 diff 查看器</li><li>扩展系统：skills、插件、hooks、MCP 服务器和子智能体</li></ul>
-<p>在 <a href="https://github.com/xai-org/grok-build">GitHub</a> 上探索源码。</p>
-<h2>开始使用</h2>
-<p>View on GitHub</p>
-<p>Get Grok Build</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -1,6 +1,6 @@
 # Google Gemini (Google AI Studio) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-07**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-08**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Google Gemini (Google AI Studio)（`google_gemini`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,7 +9,7 @@
 
 ## 全部文章（共 42 篇，按日期倒序；无日期条目列于最后）
 
-1. [Gemini Nano Banana 2.1 正式版（GA）](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#10-06-2026-1)（2026-10-06） <!--orig:Gemini Nano Banana 2.1 正式版 (GA)-->
+1. [Gemini Nano Banana 2.1 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#10-06-2026-1)（2026-10-06）
 2. [Gemini 3.8 Flash TTS 和 Gemini 3.8 Flash-Lite TTS 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-22-2026-1)（2026-09-22）
 3. [Antigravity 09-2026](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-17-2026-1)（2026-09-17）
 4. [Gemini 3.8 Live 和 Gemini 3.8 Live 扩展思考正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-1)（2026-09-15）

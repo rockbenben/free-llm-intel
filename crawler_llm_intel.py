@@ -1683,6 +1683,48 @@ def _clean_commit_title(title: str) -> str:
     return t
 
 
+def _enclosing_anchor_url(html: str, pos: int, base_url: str) -> str:
+    """`pos` 处元素所处的 `<a href>` 绝对地址；标题没被链接包住就返回空串。
+
+    卡片式列表页（MiniMax 研究频道实测）把整张卡片包进一个 `<a href="/blog/xxx">`，
+    卡片标题 `<h3>` 就在其中。用「取 `pos` 之前最后一个 `<a href>`，且它与 `pos`
+    之间没有 `</a>`」判断标题是否真的在链接内 —— 只看前一个 `<a>` 会把已经闭合的
+    上一个卡片误当成当前卡片的链接。
+    """
+    if pos <= 0:
+        return ""
+    head = html[:pos]
+    opens = list(re.finditer(r"<a\s[^>]*?href=[\"']([^\"']+)[\"']", head, re.I))
+    if not opens:
+        return ""
+    last = opens[-1]
+    if "</a>" in head[last.end():]:
+        return ""
+    href = html_mod.unescape(last.group(1)).strip()
+    if not href or href.startswith("#"):
+        return ""
+    return urljoin(base_url, href)
+
+
+#: `<script>` / `<style>` 的**内容**（不含标签本身）整体抹成等长空白。
+#: 保留长度是关键：调用方仍按原串的偏移量定位标题与外层 `<a>`，抹完偏移不变。
+_SCRIPT_BODY = re.compile(r"(<(?:script|style)\b[^>]*>)(.*?)(</(?:script|style)\s*>)",
+                          re.S | re.I)
+
+
+def _blank_script_bodies(html: str) -> str:
+    """把 script/style 的正文抹成等长空白，偏移量保持不变。
+
+    结构 6 靠「日期 + 紧邻标题」认条目，但页面里的日期未必是条目日期：JSON-LD 的
+    `dateModified` 就是典型（MiniMax 研究频道实测——它紧跟着页面 `<h1>`，于是凭空
+    造出一条标题为站名、日期等于**当天**的条目）。`dateModified` 每次站点重新构建都
+    变，写进归档就是每天一条新条目、快照天天抖动，反复误触发 AI 复核。
+    条目日期只可能出现在可见标记里（`<span>2026-08-13</span>`、`<time datetime=…>`），
+    所以这里只让结构 6 的日期扫描忽略脚本正文。
+    """
+    return _SCRIPT_BODY.sub(lambda m: m.group(1) + " " * len(m.group(2)) + m.group(3), html)
+
+
 def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[Article]:
     """从单页文档/变更日志中提取文章列表；按识别到的结构分派：
     Mintlify update-container、日期分节 + 子标题、日期分节 + 列表项、
@@ -2000,7 +2042,11 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
         rows6: list[Article] = []
         seen6: set[str] = set()
         last_date_pos = -10_000
-        for dm in _INLINE_DATE_RE.finditer(raw):
+        # 日期只在可见标记里找：脚本正文（JSON-LD dateModified、RSC flight 数据等）
+        # 里的日期不是条目日期，见 _blank_script_bodies。抹白后偏移不变，下面的
+        # 标题定位与 _enclosing_anchor_url 仍按原串偏移取值。
+        scan6 = _blank_script_bodies(raw)
+        for dm in _INLINE_DATE_RE.finditer(scan6):
             # 同一处日期常被匹配**两次**（`<time datetime="2026-09-22">Sep 22, 2026</time>`
             # 里 ISO 与英文写法各命中一次），不去重就会产出两条一模一样的条目，
             # 而条数一旦够 3 条就会顶掉后面链接分支的正确结果。
@@ -2011,7 +2057,7 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
             if not norm6:
                 continue
             # 日期之后 2000 字符内最近的标题元素 —— 再远就不是同一条了
-            hm = re.search(r"<(h[1-4])([^>]*)>(.*?)</\1>", raw[dm.end():dm.end() + 2000],
+            hm = re.search(r"<(h[1-4])([^>]*)>(.*?)</\1>", scan6[dm.end():dm.end() + 2000],
                            re.S | re.I)
             if not hm:
                 continue
@@ -2022,8 +2068,21 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
             if len(title6) < 8 or _is_date_only_title(title6):
                 continue
             idm6 = re.search(r"id=[\"']([^\"']+)[\"']", attrs6)
-            frag6 = idm6.group(1) if idm6 else f"d-{norm6}-{len(rows6)}"
-            url6 = f"{base_url.split('#')[0]}#{quote(frag6)}"
+            url6 = ""
+            if not idm6:
+                # 标题**没有 id** 时才合成 `d-<日期>-<序号>` 锚点。但卡片式列表页往往把
+                # 整张卡片包进 `<a href="/blog/xxx">`，标题就坐在一条真实文章链接里 ——
+                # 合成锚点指回列表页本身，正文抓取会拿到整页目录（MiniMax 研究频道
+                # 实测 8 条全指向 `/blog#d-…`，点进去是列表页）。deepseek/x.ai/claude
+                # 早已按「只留规范直链」同一口径处理，这里在源头给出直链，
+                # 别留给下游 _dedup_same_title 再折叠。
+                real6 = _enclosing_anchor_url(raw, dm.end() + hm.start(), base_url)
+                if real6 and _same_site(real6, base_url) \
+                        and not urlparse(real6).fragment.strip():
+                    url6 = real6
+            if not url6:
+                frag6 = idm6.group(1) if idm6 else f"d-{norm6}-{len(rows6)}"
+                url6 = f"{base_url.split('#')[0]}#{quote(frag6)}"
             if url6 in seen6:
                 continue
             seen6.add(url6)
@@ -5141,6 +5200,30 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     if not _LAST_ORIG_INDEX:
         load_original_titles(out_dir / "articles.json")
     import fulltext as _ft
+    # 正文可读性（浏览页「读全文」按钮的判据）。三态：
+    #   "1" 磁盘上已有中文或英文正文 → 一定能读
+    #   "0" ledger 已判定抓不到（fetch_failed / index_page）→ 一定读不出来，别给按钮
+    #   ""  还没轮到正文步骤（新收录、或仍在待译）→ 照旧给按钮，让它去试
+    # 只藏「已知打不开」的，不提前藏「还没抓」的：否则新文章当天永远点不开。
+    import json as _json
+    _repo = _repo_root()
+    _bodies_path = _repo / "docs" / "feeds" / "bodies.json"
+    try:
+        _bodies = _json.loads(_bodies_path.read_text(encoding="utf-8")).get("bodies", {}) \
+            if _bodies_path.exists() else {}
+    except Exception:
+        _bodies = {}
+
+    def _readable(vendor_id: str, url: str, slug: str) -> str:
+        zh = _repo / "docs" / "articles" / vendor_id / (slug + ".md")
+        en = _repo / "docs" / "articles" / vendor_id / (slug + ".en.md")
+        if zh.exists() or en.exists():
+            return "1"
+        rec = _bodies.get(_ft.bodies_key(vendor_id, url))
+        if rec and rec.get("en_status") in ("fetch_failed", "index_page", "paywall"):
+            return "0"
+        return ""
+
     for _brand, vendor_id, arts, titles_zh in per_vendor:
         for art, t in zip(arts, titles_zh):
             orig = art.title.strip()
@@ -5152,9 +5235,10 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
                 prev = _LAST_ORIG_INDEX.get(key, "")
                 if prev and re.search(r"[A-Za-z]{4}", prev):
                     orig = prev
+            slug = _ft.url_hash(art.url)
             index_rows.append([t, art.url, vendor_id, art.date,
                                orig if orig != t.strip() else "",
-                               _ft.url_hash(art.url)])
+                               slug, _readable(vendor_id, art.url, slug)])
     # 有日期的按日期倒序在前，无日期的排后（与页面/feed 的排序约定一致）。
     # sort 稳定 + 输入顺序确定 → 同样内容每次产出的字节一致，`_write_json` 才不会误判「变了」。
     dated_rows = sorted((r for r in index_rows if r[3]), key=lambda r: r[3], reverse=True)
@@ -5162,7 +5246,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     index_rows = dated_rows + undated_rows
     files += 1
     changed += _write_json(out_dir / "articles.json", {
-        "fields": ["title", "url", "vendor", "date", "original_title", "slug"],
+        "fields": ["title", "url", "vendor", "date", "original_title", "slug", "readable"],
         "count": len(index_rows),
         "articles": index_rows,
     })

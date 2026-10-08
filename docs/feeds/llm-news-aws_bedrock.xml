@@ -14,6 +14,113 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/introducing-claude-haiku-5-5-on-aws/</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Claude Haiku 5.5 on AWS</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>在 AWS 上介绍 Claude Haiku 5.5</h1>
+<p>今天，我们很高兴地宣布 Claude Haiku 5.5 在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 和 <a href="https://aws.amazon.com/blogs/machine-learning/introducing-claude-platform-on-aws-anthropics-native-platform-through-your-aws-account/">AWS 上的 Claude Platform</a> 上可用。据 Anthropic 称，Claude Haiku 5.5 是 Claude 5.5 系列中最快、最高效的型号，专为子代理和大批量、成本敏感的工作而构建。对于大多数任务来说，它的成本也比 Claude Haiku 4.5 低 75% 左右。</p>
+<p>Amazon Bedrock 为您提供 Haiku 5.5 功能，同时通过区域数据驻留将您的数据保留在 AWS 基础设施中。它可与您的团队已使用的 AWS 控件配合使用，包括用于访问的 AWS Identity and Access Management (IAM)、用于审计的 AWS CloudTrail、用于监控的 Amazon CloudWatch 和 Amazon Bedrock Guardrails。使用情况会显示在您的 AWS 账单上。</p>
+<p>AWS 上的 Claude Platform 让您可以通过 AWS 管理控制台直接访问 Anthropic 的本机平台体验和功能。使用与直接使用 Anthropic 相同的 API、功能和控制台体验进行构建、测试和部署，并与 AWS 计费和身份验证相统一。</p>
+<p>这篇文章介绍了 Claude Haiku 5.5 的改进、何时选择 Haiku 5.5 的实用指南以及如何开始使用 Amazon Bedrock。</p>
+<h2>克劳德俳句 5.5 有何不同</h2>
+<p>Claude Haiku 5.5 是 Anthropic 最强大的俳句模型，涵盖编码、工具使用、计算机使用和代理任务。这也是第一个具有工作量控制的 Haiku 模型，因此您可以根据每个任务的智能调整成本，而不是为整个工作负载选择一个设置。</p>
+<p>这些改进在快速且可重复的大规模工作方面表现突出。对于编码任务，它充当子代理路由请求、审查代码并对长文档进行分类。对于知识工作，Haiku 5.5 从小到中型文档中提取关键信息，进行初始扫描，并通过知识库回答快速问题。对于交互式应用程序，它的响应速度足够快，可以为简单的对话提供快速且有用的答案。它还可以按照生产功能所需的数量和成本处理传统的自然语言处理 (NLP) 任务，例如分类、摘要和文本生成。</p>
+<p>Haiku 5.5 处理代理编码和多步骤工具的使用，并支持高分辨率图像。 Haiku 5.5 可以用作强大的计算机使用子代理，用于重复的浏览器和桌面任务，且成本可以承受规模。在开发工作流程中，它非常适合快速迭代 UI 和 UX 更改以及跨多个文件进行小型特定代码库更改。</p>
+<h2>将 Claude Haiku 5.5 与 Opus 5.5 配对</h2>
+<p>Haiku 5.5 与最近发布的 Claude Opus 5.5 配对。他们共同组成了一个强大的团队：Opus 5.5 进行计划并做出判断，Haiku 5.5 快速且大规模地执行明确定义的任务。您可以在重要的地方进行仔细的推理，并在任何地方降低成本和延迟。</p>
+<ul><li><strong>Claude Opus 5.5 规划工作并做出判断。</strong> 它分解复杂的问题，决定方法，并进行最困难的推理，例如发布调试、大型拉取请求的安全审查以及最终形成完整报告的长时间分析。</li><li><strong>Claude Haiku 5.5 采用快速子代理层。</strong> 它可以处理快速、大容量的任务，例如路由请求、分类和总结、重写长文档以及在许多文件中应用小的具体更改。作为审查子代理，它可以快速检查操作顺序和高层方向，因此 Opus 5.5 可以将其代币花在最难的推理上。由于它快速且经济高效，因此您可以并行运行多个 Haiku 子代理。</li></ul>
+<h2>在 Amazon Bedrock 上开始使用 Claude Haiku 5.5</h2>
+<p>要尝试 Haiku 5.5，请打开 <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock 控制台</a>，选择 <strong>Test</strong>，然后选择 <strong>Playground</strong>，然后选择 Haiku 5.5 作为模型。从那里，您可以直接针对它运行提示。</p>
+<p>图 1：在 Amazon Bedrock 控制台 Playground 中选择 Anthropic Claude 模型</p>
+<p>您可以通过 Anthropic SDK 以编程方式针对“bedrock-runtime”使用 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-parameters-anthropic-claude-messages.html">Anthropic Messages API</a> 调用模型。您还可以通过 <a href="https://aws.amazon.com/cli/">AWS 命令行界面 (AWS CLI)</a> 和 [AWS] 在 <code>bedrock-runtime</code> 上使用 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-api.html">Invoke</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html">Converse</a> API SDK](https://aws.amazon.com/developer/tools/)。</p>
+<h3>先决条件</h3>
+<p>您必须具备以下先决条件：</p>
+<ul><li>具有 Amazon Bedrock 访问权限的活跃 AWS 账户。</li><li>安装并配置了 AWS 命令​​行界面 (AWS CLI)。</li></ul>
+<p>-Python 3.10+。</p>
+<ul><li>Boto3 安装：<code>pip install boto3</code>。</li><li>Anthropic SDK 安装：<code>pip install anthropic</code>。</li><li>安装了用于 Amazon Bedrock 身份验证的 Amazon Bedrock 令牌生成器：“pip install aws_bedrock_token_generator”。</li><li>AWS Identity and Access Management (IAM) 权限：<code>bedrock:InvokeModel</code>、<code>bedrock:InvokeModelWithResponseStream</code>。</li></ul>
+<p>以下是使用适用于 Python 的 AWS 开发工具包 (Boto3) 和 InvokeModel API 的简单示例：</p>
+<pre><code>import boto3
+import json
+
+# Create a Bedrock Runtime client
+bedrock_runtime = boto3.client(
+    service_name=&quot;bedrock-runtime&quot;,
+    region_name=&quot;us-east-1&quot;
+)
+
+# Invoke Claude Haiku 5.5
+response = bedrock_runtime.invoke_model(
+    modelId=&quot;global.anthropic.claude-haiku-5-5&quot;,
+    contentType=&quot;application/json&quot;,
+    accept=&quot;application/json&quot;,
+    body=json.dumps({
+        &quot;anthropic_version&quot;: &quot;bedrock-2023-05-31&quot;,
+        &quot;max_tokens&quot;: 4096,
+        &quot;messages&quot;: [
+            {
+                &quot;role&quot;: &quot;user&quot;,
+                &quot;content&quot;: &quot;Can you explain the features of Amazon Bedrock?&quot;
+            }
+        ]
+    })
+)
+
+result = json.loads(response[&quot;body&quot;].read())
+# Haiku 5.5 may return a thinking block before the text block,
+# so select the text block rather than a fixed index.
+print(next(b[&quot;text&quot;] for b in result[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;))</code></pre>
+<p>您还可以使用 Amazon Bedrock Converse API 获得统一的多模型体验：</p>
+<pre><code>import boto3
+
+# Create a Bedrock Runtime client
+bedrock_runtime = boto3.client(
+    service_name=&quot;bedrock-runtime&quot;,
+    region_name=&quot;us-east-1&quot;
+)
+
+# Invoke Claude Haiku 5.5
+response = bedrock_runtime.converse(
+    modelId=&quot;global.anthropic.claude-haiku-5-5&quot;,
+    messages=[
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: [
+                {
+                    &quot;text&quot;: &quot;Can you explain the features of Amazon Bedrock?&quot;
+                }
+            ]
+        }
+    ],
+    inferenceConfig={
+        &quot;maxTokens&quot;: 4096
+    }
+)
+
+if 'output' in response:
+    blocks = response['output']['message']['content']
+    print('\n'.join(b.get('text', '') for b in blocks if 'text' in b))</code></pre>
+<p>您还可以通过 anthropic SDK 包使用 Anthropic Messages API 以获得简化的体验：</p>
+<pre><code>from anthropic import Anthropic
+from aws_bedrock_token_generator import provide_token
+
+token = provide_token(region=&quot;us-east-1&quot;)
+
+client = Anthropic(
+    base_url=&quot;https://bedrock-runtime.us-east-1.amazonaws.com/anthropic&quot;,
+    api_key=token,
+)
+
+# Invoke Claude Haiku 5.5
+response = client.messages.create(
+    model=&quot;global.anthropic.claude-haiku-5-5&quot;,
+    max_tokens=1024,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Can you explain the features of Amazon Bedrock?&quot;}],
+)
+print(response)</code></pre>
+<p>您可以浏览<a href="https://github.com/aws-samples/anthropic-on-aws/blob/main/notebooks/claude_haiku_5_5_getting_started/claude-haiku-5-5-getting-started.ipynb">入门笔记本</a>以获取更多示例。您可以通过 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring.html">Amazon CloudWatch</a> 和 <a href="https://aws.amazon.com/aws-cost-management/aws-cost-explorer/">AWS Cost Explorer</a> 监控使用情况、性能和成本，以便随着需求的增长扩展您的应用程序。</p>
+<h2>可用性</h2>
+<p>Claude Haiku 5.5 现已在 Amazon Bedrock 上通过“bedrock-runtime”上的 US Geo CRIS (us.)、EU Geo CRIS (eu.)、AU Geo CRIS (au.)、JP Geo CRIS (jp.) 和 Global CRIS (global.) 推理配置文件在 Amazon Bedrock 上提供。在 AWS GovCloud（美国）中，它可在“bedrock-runtime”和“bedrock-mantle”端点上使用。</p>
+<p>请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-cards-anthropic.html">Amazon Bedrock 文档</a>，了解受支持的 AWS 区域的完整列表。有关定价信息，请参阅 <a href="https://aws.amazon.com/blogs/machine-learning/introducing-claude-haiku-5-5-on-aws/">Amazon Bedrock 定价</a>。在北美，也可通过 <a href="https://aws.amazon.com/blogs/machine-learning/introducing-claude-platform-on-aws-anthropics-native-platform-through-your-aws-account/">AWS 上的 Claude Platform</a> 获取该服务</p>
+<p>在 <a href="https://aws.amazon.com/blogs/machine-learning/introducing-claude-platform-on-aws-anthropics-native-platform-through-your-aws-account/">AWS 上的 Claude Platform</a> 中，在 <a href="https://console.aws.amazon.com/bedrock">Amazon Bedrock 控制台</a> 上尝试 Claude Haiku 5.5，或探索 [入门指南] GitHub 上的笔记本](https://github.com/aws-samples/anthropic-on-aws/tree/main/notebooks)。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>使用 Amazon Quick 和 Amazon Bedrock 重新思考 RAG 的访问控制</title>
@@ -21,6 +128,45 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/rethinking-access-control-for-rag-with-amazon-quick-and-amazon-bedrock/</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Rethinking access control for RAG with Amazon Quick and Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>使用 Amazon Quick 和 Amazon Bedrock 重新思考 RAG 的访问控制</h1>
+<p>企业组织正在采用检索增强生成 (RAG) 来从 Microsoft SharePoint、Google Drive 和 Atlassian Confluence 等公司知识源中获取见解。然而，这些知识源包含受复杂权限结构控制的敏感信息。确保人工智能生成的答案尊重这些权限是企业人工智能中最困难的挑战之一。</p>
+<p>在本文中，我们将探讨 <a href="https://aws.amazon.com/quick/">Amazon Quick</a> 和 <a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock 知识库</a> 如何通过实时访问控制列表 (ACL) 强制执行、在查询时直接向权威来源验证权限来解决这一挑战。</p>
+<h2>业务问题</h2>
+<p>考虑以下场景：SharePoint 网站所有者为其组织创建知识库。跨多个部门的团队成员使用人工智能助手从这个知识库中获取答案。关键要求是每个团队成员只能从他们有权访问的文档中接收人工智能生成的见解。</p>
+<p>这是一个普遍的企业挑战。组织希望在不损害现有安全状况的情况下，实现对人工智能驱动的见解的民主化访问。人工智能响应中出现的单个未经授权的文档可能会泄露机密战略文档、未发布的财务数据或敏感的人力资源信息。</p>
+<h2>为什么现有方法存在不足</h2>
+<p>RAG 访问控制的常见方法是使用复制和过滤方法来强制执行文档级权限。它通常是这样工作的：</p>
+<ul><li>数据源连接器（例如 SharePoint 连接器）将 ACL 拉取作为定期同步作业的一部分。</li><li>ACL 从数据源复制并作为属性存储在索引中。</li><li>在查询时，AI 系统将登录用户映射到存储的 ACL 属性并相应地过滤结果。</li></ul>
+<p>虽然这种方法表面上看起来合理，但它存在三个根本弱点。</p>
+<h2>问题 1：人工智能系统不是事实的来源</h2>
+<p>在这个模型中，人工智能系统单独负责执行，而不是权限的权威来源。这需要数据连接器跨各种数据源准确复制复杂的、特定于源的 ACL 逻辑。每个数据源都有自己独特的权限模型。跨数十个连接器映射继承层次结构、组成员资格、条件访问策略和拒绝规则是一项容易出错的工作。</p>
+<h2>问题 2：过时的权限会造成安全漏洞</h2>
+<p>一般来说，数据连接器支持按需或按客户定义的计划运行的基于拉取的同步。这些 AI 解决方案中的 ACL 是上次同步运行时的快照。一些解决方案使用基于事件的更新，但这并不普遍适用。例如，当组成员身份发生更改时，像 Confluence 这样的数据源不会发出事件。在同步之间，访问权限被撤销的用户可能仍会从他们不应再看到的文档中收到 AI 答案。</p>
+<h2>问题 3：不断发展的数据源功能</h2>
+<p>数据源定期更改或引入新机制来控制对内容的访问。 SharePoint 中的新权限功能或对 Google Drive 共享模型的更改可能会在 ACL 映射逻辑中造成间隙。这可能会暴露内容，直到连接器更新为止。</p>
+<h2>AWS 如何解决这个问题：实时 ACL 实施</h2>
+<p>为了应对这些挑战，我们实施了实时 ACL 检查，作为 Amazon Quick 和 Amazon Bedrock 知识库现有预检索 ACL 过滤之上的额外安全层。这确保系统通过在查询时直接与权威来源检查权限来强制执行最新的访问控制。这可以避免依赖可能过时或错误映射的 ACL 数据。</p>
+<h2>架构概述</h2>
+<p>下图说明了我们的混合方法，该方法可提供语义搜索性能和实时安全功能。</p>
+<p>图 1：Amazon Quick 和 Amazon Bedrock 知识库的实时 ACL 实施架构，将预检索过滤（第 1 阶段）与针对权威来源的实时验证（第 2 阶段）相结合</p>
+<h2>工作原理：Google Drive 示例</h2>
+<p>当用户向使用 Google Drive 知识库的 Amazon Quick 代理提交查询时，系统会分两个阶段强制执行访问控制：</p>
+<h3>第 1 阶段：预检索过滤</h3>
+<p>Amazon Quick 针对向量索引执行语义搜索，以查找最相关的文档段落。系统应用已存储在索引中的访问控制列表。这将产生一组初步的候选文件。此阶段是必要的，因为对索引中每个文档的实时 API 调用在规模上成本太高。</p>
+<h3>第二阶段：实时验证</h3>
+<p>Amazon Quick 通过调用 Google Drive API 实时验证候选文档。它使用管理员提供的服务帐户凭据通过模拟生成用户特定的访问令牌。 Google Drive 维护与每个文档关联的访问控制列表的真实来源。用户无权访问的文档将从检索的结果集中排除。只有经过验证和授权的文档段落才会作为上下文传递到大语言模型 (LLM)。该模型使用这些知识来生成响应。</p>
+<p>这种两阶段方法平衡了性能与安全性。它使用缓存的 ACL 来提高效率，同时通过实时检查促进正确性。除了 ACL 执行之外，Amazon Bedrock 还提供负责任的 AI 控制。其中包括用于内容过滤的 Amazon Bedrock Guardrails、用于减少幻觉的接地检查，以及用于帮助组织负责任地部署生成式 AI 应用程序的可配置安全策略。</p>
+<h2>为什么这对您的组织很重要</h2>
+<p>这种方法具有三个主要优点：</p>
+<ul><li><strong>始终有效的权限</strong> – 使用 RAG 产品时，同步周期之间不再存在安全间隙。如果员工的访问权限被撤销，这种变化会在几分钟内（而不是几小时或几天）反映在人工智能响应中。</li><li><strong>扩展的信心</strong> – 组织可以扩展其知识库覆盖范围，因为知道实时 ACL 检查会验证每个查询的权威来源的权限，无论数据源如何。</li><li><strong>减少操作负担</strong> – 您无需担心同步频率。</li></ul>
+<h2>客户对此有何评价</h2>
+<blockquote>“当我们开始评估我们组织的 AI 解决方案时，我们的安全和合规团队明确了他们的首要任务：确保同事只能看到他们有权访问的信息。这是一项基本要求，但许多平台都难以以有意义的方式解决这一要求。Amazon Quick 的实时访问控制方法明确地回答了这个问题，并在我们的整个评估过程中展现了突出的严格程度。它让我们的内部审查委员会有信心继续前进，并为我们如何思考 AI 治理奠定了坚实的基础。向前。”<br>— Jamahl Wiggins，亿滋国际 M365 创新高级专家</blockquote>
+<p>Mondelēz International 已为其四个地区的 35,000 多名员工部署了 Amazon Quick。</p>
+<h2>结论</h2>
+<p>在这篇文章中，我们讨论了 Amazon Quick 和 Amazon Bedrock 知识库如何实施实时 ACL 实施来解决企业面临的关键安全挑战。双层ACL架构在查询时直接向权威来源验证权限。这可确保人工智能生成的答案仅包含用户有权访问的内容。</p>
+<p>要开始使用，请访问 <a href="https://aws.amazon.com/quick/">Amazon Quick</a> 和 <a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock 知识库</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>不仅节省了时间：构建代理自动化的业务案例</title>
@@ -28,6 +174,43 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/beyond-hours-saved-building-the-business-case-for-agentic-automation/</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Beyond hours saved: Building the business case for agentic automation</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>节省时间之外：构建代理自动化的业务案例</h1>
+<p>代理自动化是一种能够推理并适应完成任务的软件，正在出现在人工智能卓越中心 (AI CoE) 路线图上。但公司证明自动化投资合理性的标准方式是节省的时间乘以劳动力成本减去构建成本，是为机器人流程自动化 (RPA) 等基于规则的工具设计的。该模型忽略了代理商创造的大部分价值。</p>
+<p>在这篇文章中，我们介绍了一个框架，AI CoE 领导者可以使用它来构建一个业务案例，以捕捉代理自动化的全部价值。您将了解为什么 RPA 时代的 ROI 模型不足、如何衡量它错过的价值，以及哪些工作流程值得通过代理实现自动化。</p>
+<h2>为什么传统的商业案例存在不足</h2>
+<p>经典的投资回报 (ROI) 模型是为稳定、大批量、基于规则的工作而构建的：计算交易、测量分钟数、乘以加载率、减去构建成本。 RPA 正是凭借这些条件赢得了一席之地。</p>
+<p>该模型假设了它所针对的世界。它假设流程是稳定的，因此它忽略了在流程发生变化时维护自动化的成本。它假定任务是基于规则的，因此没有例外的行项目。它假设工作是整个工作，因此它从不计算人类监督的成本。它将节省的时间视为银行价值，而释放的产能通常会因积压而重新填满，并且永远不会达到损益表 (P&amp;L)。麦肯锡表示，公司不断犯下的错误是对将节省的时间转化为成果的工作资金不足：成功的人工智能转型遵循“1:3:5模式”，其中“在代理技术上每投资一美元，组织就会在流程重新设计上花费三美元，在能力建设和采用上花费五美元。然而，大多数公司完全颠倒了这个公式”[（麦肯锡，“代理人工智能变革管理：缩小采用差距”， 2026）]（https://www.mckinsey.com/capability/people-and-organizational-performance/our-insights/how-to-close-the-agentic-adoption-gap）。</p>
+<p>我们假设自动化的价值在于任务，但在代理自动化中，大部分价值都围绕任务：判断、例外、跨系统的协调。真正的收益来自重新设计围绕代理的工作流程，而不是将代理放入未更改的流程中。</p>
+<h2>旧模型忽略的价值维度</h2>
+<p>更好的商业案例衡量价值的四个维度，以及决定它们是否达到损益的条件。我们称之为<strong>代理价值模型</strong>。</p>
+<p><strong>节省时间。</strong> 这仍然很重要，但代理将其扩展到固定规则 RPA 处理不佳或只能通过大量异常逻辑处理的工作。措施是一样的。代理将其应用于更大的工作基础。</p>
+<p><strong>异常处理。</strong> 异常会带来很大的成本。 AWS 指南给出了规划范围：纠正错误的成本可能是原始交易的 1.5-4 倍，人为错误可能占运营成本的 2-15% <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-economics/assessing-costs.html">(AWS Prescriptive Guidance，“评估当前的人工流程成本”)</a>。返工乘数为您的团队捕获的异常定价。错误百分比对漏掉的错误进行定价。仅劳工案件忽略了两者。</p>
+<p><strong>决策质量。</strong> 代理可以根据记录的理由大规模应用通用策略，但一致性和错误率需要持续测量。正如 AWS 指出的那样，“小批量、高价值的决策可能需要代理协助来提高决策质量，而不是降低成本”<a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-economics/understanding.html">(AWS Prescriptive Guidance，“了解代理 AI 经济学”)</a>。在信贷、定价或风险方面的一个更好的决策可能会让一年节省的时间相形见绌。</p>
+<p><strong>改变弹性和维护经济性。</strong>这是双向的。脚本很脆弱：当屏幕或上游系统发生变化时，它们就会损坏，需要有人重建它们。代理无需重写即可吸收一些变化，但它们将维护转移到评估、提示、监控和模型操作中，而不是删除它，并且运行它们需要自己的成本。该案例避免了脆弱的脚本维护，从而避免了持续的代理运营成本，因此在经常更改的流程中，数学可能有利于代理，而在冻结的流程中则可能不会。</p>
+<p>支配这四个因素的条件是价值实现：每项利益都需要一个明确的机制，将运营改进转化为经济价值，再加上一个负责任的所有者。对于被释放的劳动力来说，这意味着减少支出或将产能重新定向到指定的、可衡量的结果。</p>
+<p>考虑一个带有说明性数字的索赔分类流程。它每年处理 200,000 起索赔，每个索赔大约需要 12 分钟（返工前），满载时每小时 45 美元，基本成本约为 180 万美元。将例程自动化 70%，您就可以在这些索赔仍然需要的监督时间之前释放大约 28,000 小时或大约 126 万美元的容量。这就是大多数情况下出错的地方，因为腾出时间并不等于省钱。只有减少雇用人员或削减承包商、加班或外包支出，公司才会减少支出。否则，同样的人会留在工资单上，损益表上永远不会看到 126 万美元。如果自然减员和加班时间减少占一半，则该案件的金额应约为 630,000 美元，而不是全部金额。</p>
+<p>重新部署人员是更常见的结果，然后价值就是他们现在所产生的。 <strong>对于每个释放的小时，计算重新部署的价值或现金成本减少，而不是两者。</strong>然后添加仅人工案例看不到的内容。在 8% 需要更正的人（16,000 项索赔）中，更正成本约为 9 美元的处理成本（12 分钟，每小时 45 美元）的 3.5 倍，每年的更正风险约为 504,000 美元。这是一个基线，而不是代理值。该值是代理移除的份额：减少 40%，并按 75% 的实现系数进行调整，模型收益接近 151,000 美元。那是在您对单个改进的欺诈标记决策进行定价之前。由于 12 分钟的基准不包括返工，因此该池不会与已释放的容量重叠。如果您的基准包括返工时间，则仅将这些节省计入一个池中。这个版本的案件产生了金融界可以辩护的数字。</p>
+<p>为了保持数学一致，请以相同的方式调整每个价值池的规模并计算净成本，如下表所示。</p>
+<table><thead><tr><th><strong>价值池</strong></th><th><strong>基线</strong></th><th><strong>预期增量</strong></th><th><strong>实现因素</strong></th><th><strong>所有者</strong></th></tr></thead><tbody><tr><td>释放产能</td><td>小时数 × 加载率</td><td>% 自动化</td><td>仅当重新部署到指定结果或支出下降时运营主管</td></tr><tr><td>异常和错误成本</td><td>纠错成本+错误损失</td><td>预期减少</td><td>捕获的分数</td><td>品质领先</td></tr><tr><td>决策质量</td><td>更好决策的价值</td><td>每个决定的提升</td><td>归属份额</td><td>域名所有者</td></tr><tr><td>变革弹性和维护经济学</td><td>脚本的故障修复成本 + 停机时间</td><td>避免重建，更快更换住宿</td><td>避免重建份额，代理成本在公式中一次净值</td><td>工程主管</td></tr></tbody></table>
+<p>将整个事情表述为一行，将每项收益分配给一个池，这样就不会出现重复计算：年净值 = 已实现的容量值 + 避免的纠正和错误成本 + 决策结果提升 + 避免的维护和停机时间，减去年度实施成本，减去代理运行时间、集成、评估、监督、治理和变更管理成本，减去代理引入的任何新错误造成的损失。代理未消除的错误已经位于可避免成本项之外，因此不要再次减去它们。对于多年期计划，在支出当年记入实施成本，而不是按年计算，随着采用的增加而增加收益，并将年度现金流折现为净现值 (NPV)。</p>
+<p>Amazon Quick Automate（<a href="https://aws.amazon.com/quick/">Amazon Quick</a> 中的自动化服务）的三个早期部署显示了工作中的维度。 <a href="https://aws.amazon.com/blogs/machine-learning/kitsa-transforms-clinical-trial-site-selection-with-amazon-quick-automate/">Kitsa</a> 是一家临床试验地点选择公司，可自动提取数十万个网站中的 50 多个数据点。据报告，成本节省了 91%，数据采集速度提高了 96%，覆盖率高达 96%，将低置信度案例发送给审阅者（节省时间和异常处理）。正如 Kitsa 联合创始人兼首席技术官 Rohit Banga 在 AWS 机器学习博客文章中指出的那样，大规模统一高质量站点数据打破了核心瓶颈。这使得其站点查找代理能够以更高的精度权衡更多站点。</p>
+<p>跨境支付提供商 <a href="https://aws.amazon.com/blogs/machine-learning/how-dlocal-automated-compliance-reviews-using-amazon-quick-automate">dLocal</a> 在受控评估中自动化了高达 75% 的商户合规审核。这使得专家能够处理复杂、高风险的案例（决策质量），并增加了对政策漂移的持续检查，这是定期人工审查可能会错过的（变革弹性）。 dLocal 报道称，过去需要花费数小时进行例行检查的专家现在将时间花在需要监管判断的案件上。</p>
+<p><a href="https://aws.amazon.com/blogs/awsforsap/sap-automations-with-amazon-quick-automate/">Genpact</a> 跨多个 SAP 系统实现供应链风险自动化，报告将中断影响分析时间从 2-3 天缩短到几分钟。这是一种没有任何一个记录系统拥有的跨系统协调（节省时间和提高决策质量）。这些部署都没有证明所有四个池，这就是为什么该案例必须单独调整每个池的大小。</p>
+<h2>优先级划分框架</h2>
+<p>在两个轴上对每个候选工作流程进行评分。第一个是任务的复杂性，即它需要多少推理、背景和适应。第二个是决策风险，即犯错的成本，它决定了你可以授予多少自主权。两个轴都来自 AWS 经济指南，它们一起形成一个指导委员会可以使用的二乘二矩阵。</p>
+<p>低复杂性、低风险：将其保留在 RPA 上，因为代理会增加成本而不会增加价值。高复杂性、低风险是容量发挥，因此自动化以实现吞吐量和异常吸收。高复杂性、高风险是决策质量的游戏，因此让人员了解情况并证明更好的决策是合理的。低复杂性、高风险是护栏的作用，因此加强对步骤的控制，而不是添加不需要的推理。</p>
+<p>一个有用的捷径：如果一个人跨系统移动并在每一步解释模糊的上下文，请评估代理方法。如果路径保持确定性，RPA 可能仍然更便宜。使用代理价值模型来决定要衡量的内容，并使用此矩阵来决定优先考虑的内容。</p>
+<p>图 1：代理自动化优先级矩阵，其轴改编自 AWS 规范指南和说明性分类</p>
+<h2>构建领导力案例</h2>
+<p>将投资呈现为工作流程组合而不是单个项目。麦肯锡的研究揭示了孤立试点为何停滞不前：近三分之二的企业尝试过代理，但只有不到 10% 的企业将其扩展为有形价值 <a href="https://www.mckinsey.com/capability/mckinsey-technology/our-insights/building-the-foundations-for-agentic-ai-at-scale">(McKinsey，“通过数据转换扩展代理 AI”，2026)</a>。价值来自于定义结果、将代理深入嵌入核心工作流程以及围绕它们重新设计运营模型。领导三到五个优先领域，每个领域都有其四维案例。</p>
+<p>赢得持怀疑态度的首席财务官的一件事是停止规则：以明确的收支平衡目标和预先确定的点来进行投资，以停止为表现不佳的代理商提供资金。将每个领域与领导层已经跟踪的关键绩效指标 (KPI) 连接起来，无论是服务成本、周期时间、净推荐值还是合规风险。将治理视为加快行动的一种方式：有限的自主权、风险高的地方的监督以及设计的可审计性，让您可以随着证据的积累而扩大代理的自主权。</p>
+<h2>亚马逊快速入门</h2>
+<p><a href="https://aws.amazon.com/quick/">Amazon Quick</a> 将研究、商业智能和自动化融入一种代理体验中。借助其自动化服务 Quick Automate，团队可以跨企业工作流程协调 UI 操作、API 调用和人工审核。这会产生案例级执行数据，CoE 可以与运营和财务 KPI 配对，以衡量实现的价值。</p>
+<p>这种衡量将第一个项目变成了一个项目组合。当你寻找这四个价值池之后，你往往会在人们在系统之间移动、解释上下文以及手动清除异常的任何地方找到它们。将一个工作流程投入生产，确定其价值池和运营成本的基线，指定所有者并证明其数量。然后，随着每个新工作流程报告结果，投资组合案例就会累积。</p>
+<p>＃＃ 结论</p>
+<p>问题是代理自动化在哪里提供了现有工具无法提供的价值，以及如何在支出之前证明这一点。本文描述的规则，即确定每个价值池的规模、应用现实的实现因素以及设置停止规则，使该证明变得可信。证明一个工作流程价值的团队可以根据测量结果而不是预测为下一个工作流程提供资金。对于基础经济学，一个很好的起点是 <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-economics/understanding.html">关于代理 AI 经济学的 AWS 规范指南</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>Qlik 如何使用 Amazon Bedrock 构建扎根的企业级 AI</title>
@@ -35,6 +218,45 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-qlik-built-grounded-enterprise-scale-ai-with-amazon-bedrock/</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How Qlik built grounded, enterprise-scale AI with Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Qlik 如何使用 Amazon Bedrock 构建扎根的企业级 AI</h1>
+<p>Qlik Answers 在 Amazon Bedrock 上构建扎根的人工智能，解决了一个常见的企业问题：员工并不缺乏数据。他们缺乏一种快速的方法来提出真正的问题并得到他们可以信任的答案。分析师花费数小时搜索文档、仪表板和机构记忆，以回答同事可能在一句话中提出的问题。当组织试图利用生成式人工智能缩小这一差距时，许多组织都会遇到同样的问题：没有来源的答案，无法验证结果，也无法在受监管的环境中部署该工具。</p>
+<p><a href="http://www.qlik.com/">Qlik</a> 是数据集成、数据质量、分析和人工智能领域的全球领导者，构建了 Qlik Answers 来为其全球 40,000 多家客户解决该问题。自 2026 年 2 月全面上市以来，Qlik Answers 已从早期功能转向日常使用：<a href="https://www.qlik.com/us/products/discovery-agent">Qlik 的 Discovery Agent</a>（一种 AI 驱动的异常和异常值检测代理）自推出以来已为客户提供了超过 100,000 个发现，并且大多数启用了代理工具的 Qlik Cloud 帐户都在积极使用它们。</p>
+<p>这篇文章解释了 Qlik 如何构建这种采用背后的工具，以及 Amazon Bedrock 如何在全球范围内支持它。</p>
+<p>＃＃ 挑战</p>
+<p>Qlik 确定了在其客户群中将 Qlik Answers 投入生产时需要同时解决的三个问题：</p>
+<ul><li><strong>编排专业推理，而不拖慢任何人的速度。</strong> 企业问题千差万别：有些需要快速查找，有些需要从结构化分析、非结构化文档、术语表定义或自动化中提取。随着更多功能的添加，单个通用助手往往会变得更慢且不太准确。</li><li><strong>满足跨区域的数据主权要求。</strong> Qlik 为欧洲、亚太地区和美洲的客户提供服务，每个客户都有自己的数据驻留期望。单一的全球部署模型无法满足这些要求，但 11 个独立的区域构建将难以持续维护和改进。</li><li><strong>提前几个月预测模型容量。</strong> 需要在主要发布前 3-6 个月规划代币消耗和模型可用性。然后，一旦客户开始使用该产品，Qlik 就会根据实际使用情况验证这些预测，因此采用率的增长不会变成容量问题。</li></ul>
+<h2>解决方案概述</h2>
+<p>Qlik Answers 为员工（而不仅仅是分析师）提供了一个可以提出自然语言问题并获得有根据的答案的地方。根据问题的不同，答案可以来自知识库、实时分析应用程序、术语表定义或文档。底层系统决定采取哪条路径。</p>
+<p>三个部署说明了客户的情况：</p>
+<ul><li>全球钣金加工专家 <strong>Bystronic</strong> 在 15 分钟内部署了人工智能聊天机器人，为员工提供了查询实时运营数据并获取跨部门来源答案的方法。</li><li><strong>Lintech International</strong> 在 Qlik Answers 中索引了 17,000 多份技术文档，减少了手动研究时间并将响应时间加快了 75%，这为业务经理每周节省了多达 7 个小时。</li><li><strong>TouchPoint Support Services</strong> 为 650 个医疗机构提供服务，并计划将规模扩大一倍，该公司使用 Qlik Answers 为在受监管、快节奏的环境中工作的 15,000 名员工提供快速、符合合规性的指导。</li></ul>
+<p>为了大规模支持这一点，Qlik 围绕清晰的架构边界构建了系统，而不是一个大型助手。关键层如下：</p>
+<ul><li><strong>入口层</strong>。 Qlik Cloud 内稳定的对话入口点，因此可以添加新的后端功能，而无需改变客户与助手交互的方式。</li><li><strong>路由层</strong>。一个轻量级层，用于读取用户的消息和对话上下文并决定请求应发送到何处。它唯一的工作是快速、准确的路由决策，而不是解决任务本身。</li><li><strong>答案层</strong>。路由请求后协调响应生成，在简单请求的快速路径和将问题分解为子问题并从多个来源提取的更深思熟虑的路径之间进行选择。</li><li><strong>专家代理层</strong>。共享的群体运行时定义了专家代理、工具、状态和人机循环步骤的工作方式，因此可以添加新的专家，而无需每个人都发明自己的编排模型。</li><li><strong>会话分析层</strong>。通过将结构化数据问题路由到为分析而不是一般文本生成而构建的应用程序感知推理路径来处理结构化数据问题。</li><li><strong>检索层</strong>。非结构化文档索引和检索在 Amazon OpenSearch Service 上运行，该服务存储和搜索 Qlik Answers 对知识库和文档问题的响应所依据的内容。</li><li><strong>模型访问层</strong>。该层通过 Qlik 自己的大型语言模型 (LLM) 网关连接到 Amazon Bedrock 以进行聊天、流式传输、嵌入和重新排名。它还将 Amazon Bedrock Guardrails 应用于每个请求和响应：用于提示注入的内容过滤、个人身份信息 (PII)、秘密和被拒绝的主题，以及对生成答案的基础验证检查。当客户所依赖的模型尚未通过 Bedrock 在区域内可用时，Qlik 会将其托管在 Amazon SageMaker AI 上，然后在区域可用性赶上后将该工作负载移回 Bedrock。有关 AWS 区域的模型可用性，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock</a> 中的 AWS 区域支持的模型。</li></ul>
+<p>图 1：员工问题流经入口层、路由层和应答层，然后分支到专家代理、分析代理和检索代理（由 Amazon OpenSearch Service 支持），然后汇聚到模型访问层，该层到达 Amazon Bedrock 上可用的基础模型，并以 Amazon SageMaker AI 作为区域内后备</p>
+<h2>以真实来源为基础的答案</h2>
+<p>接地是框架中更重要的设计决策之一。答案层根据问题从多种上下文中提取：结构化应用程序元数据、检索到的知识库内容、术语表定义、自动化上下文和用于摘要的文档内容。返回完整答案的元素后，将组装完整的响应并将其呈现给用户。</p>
+<p>仅检索并不能保证准确性。 Qlik 还使用 Amazon Bedrock Guardrails 中的上下文接地功能对生成的答案运行接地验证检查，将每个答案与其提取的源内容进行比较。这将接地从检索步骤转变为检查的生产控制。对于非结构化问题，该工具会从 Amazon OpenSearch Service 检索特定于问题的内容，并向前推进该上下文，以便最终答案包含引用。对于结构化问题，它将工作交给对话分析路径。更多功能，包括词汇表查找、自动化和文档摘要，通过功能控制推出，因此 Qlik 可以扩展该工具的功能，而不会立即破坏每个客户的默认体验的稳定性。特定于租户的功能选项意味着 Qlik 可以根据请求重建可用的编排路径，因此可以有选择地启用功能，同时整体架构在客户之间保持一致。</p>
+<p>图 2：专家代理群，其中共享状态、工具和人机交互步骤让新的专家代理插入公共运行时</p>
+<h2>为什么选择亚马逊基岩</h2>
+<p>Qlik 针对前面描述的三个问题评估了其模型策略，Amazon Bedrock 直接解决了每一个问题。</p>
+<p><strong>多模型灵活性。</strong> 借助 Bedrock，Qlik 可以为每个代理的任务分配最适合的模型，而不是将整个系统锁定在一个模型的权衡上。</p>
+<p><strong>大规模数据主权。</strong> 借助 Amazon Bedrock 跨区域推理 (<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">CRIS</a>)，Qlik 可以为所有 11 个区域提供服务，同时在合规性要求的地方保留数据。这将全球影响力和主权控制结合在一个单一的托管功能中。</p>
+<p><strong>选择性采用托管服务的空间。</strong> AWS 区域部署模型和容量预留选项为 Qlik 提供了当今保持扩展的空间。准备就绪后，Amazon Bedrock AgentCore 等服务使 Qlik 可以选择卸载特定工作负载的更多运营开销，而无需进行完整迁移。</p>
+<p>Qlik 通过其自己的 LLM 网关使用 Bedrock，而不是将应用程序逻辑直接绑定到一个模型。产品团队可以按任务更改模型选择，而无需重写周围的应用程序。对于期望模型策略不断发展的系统来说，这种分离很重要。</p>
+<h2>在需求之前规划容量</h2>
+<p>由于 Qlik 在主要发布前 3-6 个月预测模型容量，因此团队构建了一个工作模型，用于按功能和区域预测代币消耗，然后在每次推出后根据这些预测检查实际使用情况。这种纪律是二月份的通用可用性在其自身采用下没有受到压力的情况下扩展的部分原因。</p>
+<h2>业务成果和客户影响</h2>
+<p>自 2026 年 2 月全面推出 Qlik 代理体验以来，Discovery Agent 已为客户提供了超过 100,000 个发现，并且大多数打开了代理工具的 Qlik Cloud 帐户正在积极使用其代理，而不是尝试一次就停止。</p>
+<p>单独报告的客户级结果包括<a href="https://www.qlik.com/us/solutions/customers/customer-stories/lintech-international">Lintech International 的响应时间提高了 75%，每周最多 7 小时返回给业务经理</a>，以及<a href="https://www.qlik.com/us/solutions/customers/customer-stories/bystronic-group">Bystronic 的 15 分钟聊天机器人部署</a>。</p>
+<h2>经验教训</h2>
+<p>在 40,000 多名客户中构建和扩展 Qlik Answers 提供了一些经验教训，可能有助于其他团队在 Bedrock 上构建代理工具：</p>
+<ul><li>尽早将快速路由与深度推理分开。捆绑它们意味着每个请求都需要支付比其需要更多的处理费用。</li><li>标准化用于多代理执行的编排框架，而不是让每个新专家发明自己的运行时。操作一个应用程序比操作一组断开连接的代理系统更容易。</li><li>将安全和接地检查视为系统级大门，而不是针对每个功能的事后考虑。在模型访问层运行一次，意味着每个新的专家代理都会自动继承相同的保护。</li><li>在租户级别使用功能标志来逐步扩展功能。这可以防止新的、未经证实的功能影响核心体验的可靠性。</li><li>在需要之前养成容量预测习惯。每次启动后根据实际使用情况验证预计使用情况，将容量规划从猜测转变为可重复的过程。</li></ul>
+<h2>下一步是什么</h2>
+<p>Qlik 的路线图保持了架构的开放性和适应性。该团队正在针对特定工作负载评估 Amazon Bedrock AgentCore，其中托管代理运行时将减少运营开销，同时继续构建开放标准及其自己的编排层，从而使 Qlik 能够更好地控制成本、延迟或可移植性。目标是保留在有帮助的地方采用托管服务的选择，而无需围绕其中任何一项设计框架。 Qlik 还正在构建一个用于评估模型性能的系统框架。这意味着 Qlik 可以在更适合的模型可用时转向它们，而不会破坏客户已经依赖的体验。</p>
+<h2>结论</h2>
+<p>Qlik Answers 自 2026 年 2 月推出以来的采用反映了一种旨在避免妨碍的架构：在速度重要时快速，在准确性重要时深思熟虑，始终扎根于真实来源，并且足够安全以供受监管行业依赖。 Amazon Bedrock 中的模型灵活性、区域主权控制以及基于 Guardrails 的内容过滤和接地验证为 Qlik 在全球范围内构建这种体验奠定了基础。到目前为止，结果包括超过 100,000 个发现，Lintech 和 TouchPoint 等公司的员工恢复了工作时间，并且大多数使用代理工具的帐户在尝试后继续使用代理工具。</p>
+<p>要了解 Qlik Answers 可以对您的数据执行哪些操作，请开始 <a href="https://www.qlik.com/us/trial/qlik-cloud-analytics">Qlik Cloud Analytics 免费试用</a>、请求 <a href="https://www.qlik.com/us/contact-us/demo-request-qlik-answers">Qlik Answers 演示</a> 或 [Qlik 和 AWS]演示](https://pages.qlik.com/awsdemo)，或访问 <a href="https://www.qlik.com/us/products/qlik-answers">Qlik Answers 产品页面</a> 了解更多信息。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>AWS DevOps Agent 调查后自动修复</title>
@@ -42,6 +264,127 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/automate-remediation-post-aws-devops-agent-investigation/</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Automate remediation post AWS DevOps Agent investigation</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>AWS DevOps Agent 调查后自动修复</h1>
+<p>对于在 AWS 上运行生产工作负载的组织来说，缩短事件检测、调查和修复之间的时间是一个关键优先事项。当出现问题时，值班工程师通常需要快速诊断跨应用程序组件的问题，找出根本原因，并应用修复程序，通常是在半夜。</p>
+<p><a href="https://aws.amazon.com/devops-agent/">AWS DevOps Agent</a> 是一种人工智能驱动的代理，可根据相关指标、日志和应用程序拓扑全天自动对事件进行分类，通过提供根本原因分析 (RCA) 和建议的解决措施来解决此优先级的第一部分。然而，为了保持控制并帮助防止意外更改，组织通常将其可观测代理（包括 AWS DevOps Agent）保持在观察和报告模式下，在该模式下，代理会诊断问题，但不会直接修改生产资源。在本文中，我们演示如何使用 <a href="https://aws.amazon.com/lambda/lambda-durable-functions/">AWS Lambda Durable Functions</a>（AWS Lambda 的一项功能）、<a href="https://aws.amazon.com/eventbridge/">Amazon EventBridge</a> 和 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 创建自动修复工作流程，以补充 AWS DevOps Agent 来完成问题解决步骤。此工作流程将调查摘要转换为预先验证的修复程序，准备进行单次批准操作，帮助您缩短解决问题的平均时间 (MTTR)，并将值班工程师从重复的诊断工作中解放出来。</p>
+<h2>解决方案概述</h2>
+<p>借助 <a href="https://aws.amazon.com/lambda/lambda-durable-functions/">AWS Lambda Durable Functions</a>，您可以构建可运行长达一年的弹性多步骤应用程序和 AI 工作流程，而无需管理额外的基础设施或编写自定义状态管理和错误处理代码。这些功能会自动检查进度，在长时间运行的任务期间暂停执行，并从故障中恢复，同时在中断的情况下保持可靠的进度。</p>
+<p>下图展示了该解决方案的架构。</p>
+<p>图 1：AWS DevOps Agent 通过 Amazon EventBridge、AWS Lambda 和 Amazon Bedrock 进行调查的自动修复工作流程，在更改到达基础设施之前可选择人工批准</p>
+<p>工作流程包括以下步骤：</p>
+<ul><li>AWS DevOps Agent 完成事件调查并发出包含症状、发现结果和根本原因分析的事件。</li><li>Amazon EventBridge 接收调查完成事件并使用调查内容触发“devops-agent-trigger”函数。</li><li>Lambda 函数打包调查摘要并调用“devops-agent-remediation-durable”持久函数。</li><li>持久功能将调查上下文发送到 Amazon Bedrock，后者分析调查结果并寻找适用的补救措施。</li><li>Amazon Bedrock 从经批准的 Lambda 函数的允许列表中识别并列出可用的修复工具：“devops-agent-lambda-tool”。</li><li>Amazon Bedrock 根据调查结果和可用工具提出具体的补救措施。</li><li>对于只读操作，持久功能会自主运行修复工具。对于基础设施更改，工作流程将暂停并等待<a href="https://docs.aws.amazon.com/lambda/latest/dg/durable-examples.html#durable-examples-long-running">人工批准</a>，然后再继续。</li><li>批准后，持久功能使用所选工具将修复操作应用于基础设施。</li></ul>
+<p>持久函数作为代理循环运行，迭代调用 Amazon Bedrock，执行批准的工具，并将结果反馈到对话中，直到修复完成。为了保持自动化操作的安全性和可审计性，编排器强制执行精心策划的修复工具白名单。每个工具都是专门构建的 Lambda 函数，用于执行特定的、范围明确的操作，例如读取 Lambda 函数配置或更新 AWS Identity and Access Management (IAM) 策略语句。 Amazon Bedrock 只能从该批准的集合中选择和调用工具，从而保持自动化操作的范围受到控制。该工作流程进一步区分只读操作和变异操作。只读工具自主运行，无需人工干预。会修改基础设施状态的突变操作会导致持久功能暂停执行并等待人工批准。这就是 AWS Lambda Durable Functions 提供的关键优势。函数 <a href="https://docs.aws.amazon.com/durable-execution/#key-features">checkpoints</a> 会在不消耗计算资源的情况下暂停几分钟、几小时甚至几天，然后在收到批准信号后从停止的位置准确恢复。当值班工程师参与时，系统已经收集了相关配置，将根本原因与可用的补救措施相关联，并准备了一组预先验证的更改，以供一键批准。当前的实现使用批准或拒绝信号。由于回调接受任意 JSON 负载，因此您可以扩展批准以携带参数覆盖或审阅者观察结果。这些可以反馈到基岩对话中，以便在执行之前完善建议的补救措施。</p>
+<p>在以下部分中，我们将逐步介绍实施细节，包括 Amazon EventBridge 规则配置和持久函数编排逻辑。然后，我们使用 <a href="https://aws.amazon.com/cdk/">AWS 云开发套件</a> (AWS CDK) 部署解决方案。</p>
+<h2>先决条件</h2>
+<p>在部署此解决方案之前，请验证您是否满足以下先决条件：</p>
+<ul><li>安装并配置了 <a href="https://aws.amazon.com/cli">AWS 命令行界面</a> (AWS CLI)。</li><li>Python 3.14 或更高版本。</li><li>已安装 <a href="https://aws.amazon.com/cdk/">AWS CDK</a>。</li><li>活跃的 <a href="https://docs.aws.amazon.com/devopsagent/latest/userguide/getting-started-with-aws-devops-agent-creating-an-agent-space.html">AWS DevOps Agent 空间</a>。</li><li>（可选）<a href="https://kiro.dev">Kiro</a> 与 <a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/">Agent Toolkit for AWS</a>。 Agent Toolkit 让 Kiro 通过具有基于 IAM 访问控制的托管 MCP 服务器安全地访问 AWS API。如果您使用 Kiro，则可以使用自然语言提示完成本文中的事件模拟、部署和清理步骤，而无需手动运行 CLI 命令。要进行设置，请将 AWS MCP 服务器添加到 <code>~/.kiro/settings/mcp.json</code> （<a href="https://aws.amazon.com/products/developer-tools/agent-toolkit-for-aws/#getting-started">设置说明</a>）。该存储库包含一个 Kiro 规则和代理文件，可自动为 Kiro 提供项目上下文、部署顺序和安全约定。</li></ul>
+<h3>模拟事件</h3>
+<p>为了演示端到端工作流程，我们模拟了一个常见场景：超过其配置超时的 Lambda 函数。这为 AWS DevOps Agent 提供了一个真实的事件来调查并启动修复工作流程。</p>
+<p>为了将重点放在修复解决方案本身上，创建和调用此测试函数的步骤保留在<a href="https://github.com/aws-samples/sample-automate-remediation-post-devops-agent-investigation.git">存储库</a>中。它包括一个即用型“devops-agent-timeout”函数以及用于部署该函数、调用该函数以及在 Amazon CloudWatch Logs 中确认超时错误的分步说明。有关完整演练，请参阅自述文件的<a href="https://github.com/aws-samples/sample-automate-remediation-post-devops-agent-investigation#simulate-the-incident">“模拟事件”部分</a>。</p>
+<p>该函数部署并至少产生一个超时错误后，您就可以开始使用 AWS DevOps Agent 进行调查了。</p>
+<h2>使用 AWS CDK 部署解决方案</h2>
+<p>完成以下步骤来部署剩余的解决方案资源：</p>
+<p><strong>Kiro：</strong> 如果您的 Kiro 已配置了 Agent Toolkit for AWS（请参阅先决条件），请在 Kiro 中打开克隆存储库并询问：“<em>设置 Python 环境并部署 CDK 堆栈。显示部署前将创建哪些资源。</em>”Kiro 从存储库中读取项目规则，设置虚拟环境，安装依赖项，并在部署前向您显示计划的资源。它在执行之前确认每个基础设施更改，遵循修复解决方案本身使用的相同人机循环模式。要手动部署，请按照以下步骤操作。</p>
+<ul><li>克隆 GitHub 上托管的 AWS CDK 代码：“$ git clone https://github.com/aws-samples/sample-automate-remediation-post-devops-agent-investigation.git”</li><li>导航到目录“sample-automate-remediation-post-devops-agent-investigation”：“$ cd Sample-automate-remediation-post-devops-agent-investigation”</li><li>引导AWS CDK。首次在特定 AWS <a href="https://docs.aws.amazon.com/cdk/v2/guide/environments.html">环境</a>（AWS 账户和 AWS 区域的组合）中使用 AWS CDK 时需要执行此操作。  <code>$ cdk 引导程序</code></li><li>部署堆栈：<code>$ cdk deploy</code></li></ul>
+<p>AWS CDK 自动预置和配置以下资源：</p>
+<ul><li>三个 Lambda 函数：“devops-agent-trigger”。 <code>devops-agent-remediation-durable</code>。 <code>devops-agent-lambda-tool</code>。</li><li>Amazon EventBridge 规则。</li></ul>
+<p>AWS CDK 使用最小权限原则和 AWS 安全最佳实践自动处理 IAM 权限。例如，Amazon EventBridge 被授予“devops-agent-trigger”函数的“lambda:InvokeFunction”权限。该堆栈向“devops-agent-trigger”函数授予“aidevops:ListJournalRecords”权限，以便它可以从 AWS DevOps Agent 日志中获取调查摘要。它还向“devops-agent-remediation-durable”函数授予“bedrock:InvokeModel”权限，以便它可以调用 Amazon Bedrock。</p>
+<h2>验证解决方案</h2>
+<p>部署修复堆栈并且“devops-agent-timeout”函数因超时错误而失败后，我们现在可以完成端到端工作流程。</p>
+<h3>使用 AWS DevOps Agent 开始调查</h3>
+<p>打开 <a href="https://console.aws.amazon.com/aidevops/">AWS DevOps Agent 控制台</a>，导航到您的代理空间，然后询问：“<em>devops-agent-timeout 函数发生了什么？</em>”</p>
+<p>图 2：从 AWS DevOps Agent 控制台开始调查</p>
+<p>调查开始并需要几分钟才能完成。在此期间，AWS DevOps Agent 会自动关联 CloudWatch 指标、日志和函数的配置，以确定根本原因。</p>
+<p>图 3：AWS DevOps Agent 在调查期间关联信号</p>
+<p>调查完成后，AWS DevOps Agent 会提供根本原因分析，确定函数超时不足以满足工作负载的需要。</p>
+<p>图 4：识别函数超时不足的根本原因分析</p>
+<h3>验证触发器Lambda执行</h3>
+<p>调查完成会向 Amazon EventBridge 发出<em>调查已完成</em>事件。</p>
+<p>该规则会触发“devops-agent-trigger”Lambda 函数，该函数从 AWS DevOps Agent 日志中获取调查摘要。在“/aws/lambda/devops-agent-trigger”CloudWatch 日志组中，您可以看到发送到“devops-agent-remediation-durable”持久功能的解析摘要，包括症状、根本原因、促成原因和调查差距。</p>
+<p>图 5：触发函数 CloudWatch 日志组中解析的调查摘要</p>
+<h3>监控持久函数的执行</h3>
+<p>导航到 <a href="https://console.aws.amazon.com/lambda/">Lambda 控制台</a>，打开 <code>devops-agent-remediation-durable</code> 函数，然后选择 <strong>持久执行</strong> 选项卡。选择新的执行来检查其检查点步骤。</p>
+<p>图 6：Lambda 控制台中的持久函数执行及其检查点步骤</p>
+<p>持久协调器通过将调查上下文发送到 Amazon Bedrock 来开始其代理循环。在第一次 Bedrock 调用中，模型分析调查摘要并确定需要在提出修复之前检查当前的功能配置。它从白名单中选择“lambda_get_function_configuration”工具。由于这是只读操作，因此它可以自主运行，无需人工批准。步骤结果显示了“devops-agent-timeout”函数的当前配置，确认超时值为 3 秒。</p>
+<p>图 7：返回当前 3 秒超时配置的只读工具调用</p>
+<h3>Amazon Bedrock 提出补救措施</h3>
+<p>确认当前配置后，Amazon Bedrock 将进入下一个迭代。它认为 3 秒超时是失败的根本原因，并建议将其增加到 30 秒。 Amazon Bedrock 响应包含推理和工具调用：</p>
+<pre><code>{
+  ....
+  },
+  &quot;output&quot;: {
+    &quot;message&quot;: {
+      &quot;role&quot;: &quot;assistant&quot;,
+      &quot;content&quot;: [
+        {
+          &quot;text&quot;: &quot;Now I can see the current configuration confirms the issue - the function has a 3-second timeout. Given that this appears to be a test function for timeout scenarios (based on the name \&quot;devops-agent-timeout\&quot; and its association with \&quot;DevOps Agent Test Infrastructure\&quot;), I'll increase the timeout to a reasonable value that should allow the function to complete successfully. I'll set it to 30 seconds, which is a common timeout for Lambda functions that need more execution time.&quot;
+        },
+        {
+          &quot;toolUse&quot;: {
+            &quot;toolUseId&quot;: &quot;tooluse_lcGHbWDxng5HiLpmhWagDS&quot;,
+            &quot;name&quot;: &quot;lambda_update_function_configuration&quot;,
+            &quot;input&quot;: {
+              &quot;FunctionName&quot;: &quot;devops-agent-timeout&quot;,
+              &quot;Timeout&quot;: 30
+            },
+            &quot;type&quot;: &quot;tool_use&quot;
+          }
+        }
+        ...
+      }</code></pre>
+<p>由于“lambda_update_function_configuration”是一个变异操作，因此持久函数会暂停执行并等待人工批准。</p>
+<p>[![cloudwatch 记录 lambda 持久函数的输出以供批准请求](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/20995-1。 png)](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/06/20995-1.png)图 8：cloudwatch 记录用于批准请求的 lambda 持久函数的输出</p>
+<p><strong>重要提示：</strong> 发送到 Amazon Bedrock 的“调查摘要”及其建议的补救措施是 AI 生成的，在批准之前应始终进行审核。人工审批门是安全控制：审批者必须检查完整的工具参数（例如，“lambda_update_function_configuration”调用中准确的“FunctionName”和“Timeout”）并确认更改正确。</p>
+<p><strong>使用 AWS CLI：</strong></p>
+<pre><code>$ aws lambda send-durable-execution-callback-success \
+    --callback-id &lt;callback-id&gt; \
+    --cli-binary-format raw-in-base64-out \
+    --result '{&quot;approved&quot;: true}'</code></pre>
+<p><strong>使用 AWS 控制台：</strong></p>
+<p>导航到持久执行，选择挂起的回调，然后选择 <strong>发送成功</strong> 进行确认：</p>
+<p>图 9：通过在 Lambda 控制台中选择发送成功来批准修复</p>
+<p>在输入字段中，输入“{'approved': true}”并确认。</p>
+<p>图 10：输入批准有效负载以确认回调</p>
+<h3>验证修复</h3>
+<p>批准后，持久功能恢复，调用工具 Lambda 更新配置，Amazon Bedrock 确认修复已完成。更新后的“devops-agent-timeout”函数现在显示新的超时值：</p>
+<p>图 11：devops-agent-timeout 功能配置更新为 30 秒超时</p>
+<p>最后一步输出 (<code>bedrock-call-4</code>) 确认修复已成功：</p>
+<pre><code>{
+  &quot;EventType&quot;: &quot;StepSucceeded&quot;,
+  &quot;Name&quot;: &quot;bedrock-call-4&quot;,
+  ....
+  },
+  &quot;output&quot;: {
+    &quot;message&quot;: {
+      &quot;role&quot;: &quot;assistant&quot;,
+      &quot;content&quot;: [
+        {
+          &quot;text&quot;: &quot;## Remediation Complete
+          **Issue Identified:** The Lambda function `devops-agent-timeout` in eu-west-1 was configured with a 3-second timeout that was insufficient for its execution time, causing timeout errors at exactly 3000ms.
+          **Action Taken:** Successfully updated the Lambda function configuration to increase the timeout from 3 seconds to 30 seconds.
+          **Verification:** Confirmed the configuration change was applied successfully. The function now has:
+          - **Timeout:** 30 seconds (increased from 3 seconds)
+          - **Status:** Successful update completion
+          - **LastModified:** 2026-05-22T11:11:28.000+0000
+          This remediation should resolve the timeout errors by providing the function with adequate time to complete its execution. The 30-second timeout provides a 10x increase from the original 3-second limit, which should be sufficient for most operations while still maintaining reasonable execution bounds for a Lambda function.&quot;
+        }
+      ]
+    }
+  },
+  &quot;stopReason&quot;: &quot;end_turn&quot;,
+  ...
+}</code></pre>
+<p>从事件检测到自动修复的整个周期，只需要工程师的一次批准操作。该系统自主处理诊断、配置检索、修复建议和执行。</p>
+<h2>清理</h2>
+<p>通过完成以下步骤清理您创建的资源：</p>
+<p><strong>Kiro：</strong> 如果您将 Kiro 与 Agent Toolkit for AWS 结合使用，请询问：<em>“从 DevOps Agent 修复演示中清理所有资源：销毁 CDK 堆栈，删除 devops-agent-timeout 测试函数、其 IAM 角色及其 CloudWatch 日志组。”</em> Kiro 按正确的顺序删除资源，在继续之前确认每个破坏性操作。要手动清理，请按照以下步骤操作。</p>
+<ul><li>删除AWS CDK资源：<code>$ cdk destroy</code></li><li>手动删除模拟事件的 <code>devops-agent-timeout</code> 函数：<code>$ aws lambda delete-function --function-name devops-agent-timeout</code></li><li>手动删除 <code>devops-agent-timeout</code> 函数的 IAM 角色和 CloudWatch 日志组： <code>$ aws iam detach-role-policy \ --role-name devops-agent-timeout-role \ --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole $ aws iam delete-role --role-name devops-agent-timeout-role $ aws 日志删除日志组 --log-group-name /aws/lambda/devops-agent-timeout</code></li></ul>
+<h2>结论</h2>
+<p>本文演示了如何通过将 Lambda Durable Functions、Amazon EventBridge 和 Bedrock 与 DevOps Agent 结合使用来自动执行问题修复。该解决方案继承了 AWS DevOps Agent 的不足，将调查摘要转化为可操作的修复步骤，并在人工参与的批准下运行。这种方法缩短了解决问题的平均时间，因为当值班工程师介入时，系统已经诊断出问题、收集当前配置并准备好可供批准的修复。安全仍然是设计的核心：许可名单限制 Amazon Bedrock 仅调用预先批准的工具，而人工审批门有助于防止未经明确授权的意外更改进入生产。该架构本质上也是可扩展的。添加新的修复功能仅需要对工具注册表进行配置更新，而不需要对协调器进行代码更改。而且，由于 AWS Lambda Durable Functions 在审批等待期间会暂停而不消耗计算资源，因此即使审批周期长达数小时或数天，该解决方案仍然具有成本效益。</p>
+<p>要开始使用此解决方案，请从 <a href="https://github.com/aws-samples/sample-automate-remediation-post-devops-agent-investigation.git">GitHub 存储库</a> 下载完整的 AWS CDK 模板，然后按照本文中的步骤在您的环境中部署该解决方案。</p>
+<p>我们很乐意听取您的意见。在评论中分享您实施此解决方案的经验、提出问题或提出改进建议。您还可以加入 <a href="https://builder.aws.com/connect/community/community-builders">AWS 社区构建者</a> 计划，与其他构建者联系并分享您的无服务器架构模式。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>打造人工智能建设者：缩小人工智能知识能力差距的手册</title>
@@ -49,6 +392,92 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/building-ai-builders-playbook-for-closing-the-ai-knowledge-capability-gap/</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Building AI builders: Playbook for closing the AI knowledge-capability gap</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>打造人工智能构建者：缩小人工智能知识能力差距的手册</h1>
+<p>采用人工智能的最大障碍不是意识。这是谈论人工智能和利用人工智能进行构建之间的差距。</p>
+<p>主要职责不是编写代码，但日常工作越来越依赖人工智能解决方案的专业人士不需要工程背景来开始构建人工智能能力。他们需要正确的工具、结构化的支持以及失败的许可。以下是我们如何证明这一点，以及如何复制它。</p>
+<h2>问题组织被忽视</h2>
+<p>您的团队已经在进行人工智能对话，无论他们是在回答客户的问题、评估供应商解决方案，还是在日常职责中识别自动化机会。考虑到代理人工智能工具普遍可用的速度，他们中的大多数人从未使用他们正在讨论的工具构建过任何东西。</p>
+<p>这些团队，无论是销售、运营、财务还是产品部门，都观看了演示并完成了认证。但是，当有人问“这实际上是如何工作的？”时，他们无法通过自己构建来得到答案。</p>
+<p>成本是真实的：采用速度较慢，生产力提高延迟，错过了识别用例的机会，以及您的团队“了解”和他们可以“实施”之间的脱节越来越大。</p>
+<p>我们询问了商业专业人士，即那些每天使用人工智能工具但不编写生产代码的人，是什么阻碍了他们采用人工智能。答案不是“我不想学习”。 90% 的人希望获得构建人工智能代理的实践经验。他们缺少安全建造所需的结缔组织和脚手架。下图说明了业务团队在尝试使用人工智能进行构建时面临的最常见障碍。</p>
+<p>图 1：业务团队认为使用人工智能进行构建的主要障碍</p>
+<p>在较高层面上，他们可以谈论 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 和 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>，这是一个使用任何框架或模型大规模构建、连接和优化代理的平台（80% 的人已经探索过）。但只有不到五分之一的人接触过 Strands Agents SDK 或使用 <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> 代理构建。他们选择退出黑客马拉松和举办活动，因为他们不相信自己的技术知识足以与工程师竞争。</p>
+<p>为了解决这个问题，我们设计了一个为期六周的结构化计划，将业务专业人员与导师和生产级工具配对，以构建可以超出计划范围的工作人工智能原型。目标：缩小概念知识和实践能力之间的差距。</p>
+<h2>一个团队构建了什么：六周内的证明</h2>
+<p>四位从未合作过的面向客户的专业人士参加了我们的计划。没有人有工程背景。六周后，他们展示了自己的原型 WealthWise，这是一种多代理人工智能财务咨询工具，并获得了第一名。</p>
+<p>他们建造了什么：</p>
+<ul><li><strong>五名专业人工智能代理</strong>提供智能财务咨询：投资组合分析、风险评估、财务规划、市场洞察和个性化投资建议。</li><li><strong>双服务器架构</strong>（<code>Node.js</code> + Python Flask）与 Amazon Nova 模型。*</li><li><strong>Strands Agents SDK</strong> 用于多代理编排和对话内存。</li><li><strong>四个 Amazon DynamoDB 表</strong>用于实时数据持久性。</li><li><strong>实时市场数据集成</strong>，提供情境感知的财务建议。</li><li><strong>复杂财务推理的响应时间不到 5 秒</strong>。</li></ul>
+<p>该系统具有协调决策的特点：每个代理独立决定调用哪些工具，并将多个工具链接在一起，跨投资组合数据、市场数据库和财务规划模型执行多步骤推理。</p>
+<p>他们将自己的成功归功于第一天制定的五项原则：</p>
+<ul><li><strong>学习胜过获胜</strong> – 选择具有挑战性的方法而不是安全的捷径，让他们能够毫无恐惧地进行实验。</li><li><strong>定期节奏</strong> – 每日站立会议可以防止孤立并尽早发现问题。</li><li><strong>从最小可行产品 (MVP) 开始，然后完善</strong> – 在第 2 天进行端到端流程，然后进行迭代。</li><li><strong>参与办公时间</strong> – 当遇到困难时积极寻求指导。</li><li><strong>玩得开心</strong> – 在技术输出之前先心理安全。</li></ul>
+<p>参与者反思了实践形式如何加速他们的学习：</p>
+<blockquote>“这次黑客马拉松的时机非常完美，事实证明，实践形式对于 AgentCore 的实现非常宝贵——加速了原本漫长的学习曲线。”</blockquote>
+<blockquote>“很棒的团队建设和人工智能学习项目！我自学了很多东西，并且对刚接触人工智能解决方案的客户有更多的同理心。”</blockquote>
+<ul><li><em>Amazon Nova 型号可在选定 AWS 区域的 Amazon Bedrock 上使用。有关最新可用性，请参阅 AWS 区域服务页面。</em></li></ul>
+<h2>剧本：我们如何设计该程序</h2>
+<p>以下部分详细介绍了程序结构、每个阶段以及使其发挥作用的设计决策。</p>
+<h3>程序结构</h3>
+<p>该计划持续六周多，参与者每周投入大约四个小时。我们特意以这种方式构建：根据我们的计划数据，完成分阶段计划的参与者保留的实践技能比两天强化计划的参与者多三倍。不为主要工作编写代码的专业人员需要迭代周期：在信心变得持久之前，有时间与不熟悉的概念作斗争、恢复和重新构建。</p>
+<h3>第 0 阶段：招募和计划设置</h3>
+<p>我们通过经理提名、Slack 和电子邮件活动招募参与者，目标受众是每天使用人工智能解决方案但不构建这些解决方案的专业人士：客户经理、解决方案顾问、运营分析师、项目经理和类似角色。管理层的支持是第一位的。我们向团队领导简要介绍了时间投入（每周四小时，持续六周），并将其视为对流畅性和对话质量的投资，而不是分散他们日常交付的注意力。</p>
+<p>该计划由四名核心团队成员和导师精心策划，他们在日常工作的同时负责该计划。这是一个关键的可复制性点：这不需要专门的项目团队，但确实需要至少一个具有足够组织信任的人来保护参与者的时间。</p>
+<h3>第一阶段：团队组建和启动</h3>
+<p><strong>参与者做什么：</strong> 组成 3-4 人的团队，有意混合不同的经验水平。团队定义与他们在角色中遇到的真实场景相关的问题陈述。</p>
+<p><strong>这会产生什么：</strong> 可以演示的范围项目概念和团队责任结构。</p>
+<p><strong>在继续之前为什么这很重要：</strong>如果没有具体的问题需要解决，支持会议就会变得抽象。定义目标用例的团队首先有目的地吸收技术内容。</p>
+<h3>第 2 阶段：启用</h3>
+<p><strong>参与者做什么：</strong> 参加有关代理 AI 概念和 AWS 工具的现场培训课程。这些不是讲座。参与者在构建阶段使用的实际工具中工作，完成反映其项目工作的结构化练习。</p>
+<p><strong>这会产生什么：</strong> 基线技术流畅性和本地工作环境。</p>
+<p><strong>为什么这在继续之前很重要：</strong>直接跳到构建的团队在环境设置和基本概念方面遇到了障碍。此阶段避免了最常见的下车点。</p>
+<h3>第 3 阶段：构思、构建和开发</h3>
+<p><strong>参与者做什么：</strong> 在数周内设计和迭代工作原型。每个团队都配有一位技术精湛的导师，他提供安全网、解决基础设施问题并提出架构模式建议，而无需为他们做任何工作。</p>
+<p><strong>这会产生什么：</strong> 可以向利益相关者或客户演示的功能原型。</p>
+<p><strong>在继续之前为什么这很重要：</strong> 延长的时间线允许 2-3 个迭代周期。在第 3 周构建原型的团队有时间不断应用新的学习内容，将其拆除，并在第 5 周更好地重建。迭代才是真正学习发生的地方。</p>
+<h3>第 4 阶段：评审和演示</h3>
+<p><strong>参与者的职责：</strong> 提供现场演示，评估内容涵盖五个类别：业务影响、技术卓越、可重用性和可扩展性、创新和演示质量。</p>
+<p><strong>这会产生什么：</strong> 经过同行验证的能力证明和可重用原型库。</p>
+<p><strong>为什么这很重要：</strong> 演示格式反映了参与者在与客户、领导层和跨职能合作伙伴的真实对话中将做什么。评判标准强调“工作”是不够的。它必须具有影响力、可扩展性和清晰的沟通。</p>
+<h3>关键设计决策</h3>
+<p>对于非工程师的建筑商来说，工具选择是最重要的决定。错误的工具会产生阻碍动力的摩擦。合适的人会抽象基础设施并满足人们当前专业水平的需求。我们选择：</p>
+<ul><li><a href="https://kiro.dev/">Kiro</a> 用于自然语言开发的集成开发环境 (IDE)：描述您想要的内容，并构建架构。</li><li>适用于该区域中可用的 API 可访问基础模型的 Amazon Bedrock：无需机器学习 (ML) 专业知识即可从模型获得工作响应。</li><li>用于可组合代理模式的 Strands Agents SDK：代理像构建块一样组合。</li><li><a href="https://docs.aws.amazon.com/agent-toolkit/latest/userguide/mcp-server.html">AWS 模型上下文协议 (MCP) 服务器</a> 和 AWS Lambda 代理推动团队转向可部署的生产级架构，而不仅仅是本地笔记本。</li></ul>
+<p>核心原则从未改变：构建一些可以在短时间内演示的真实内容。</p>
+<h3>管理日常工作中断</h3>
+<p>我们特意将每周承诺的时间限制为四个小时，并为参与者提供了在这些时间发生的时间上的灵活性。最常见的反馈是，参与者在前两周内将他们所学到的知识直接应用到工作中，使时间投入感觉是累加的，而不是竞争的。</p>
+<h2>结果</h2>
+<p>下图比较了参与者在项目前后对八个关键指标的自我评估，包括人工智能能力、工具采用以及向客户应用所学知识的准备情况。</p>
+<p>图2：项目前后参与者的自我评估</p>
+<p>参与者表示，“缺乏现实世界的例子”是他们使用人工智能进行构建的最大障碍。结果显示，对将人工智能应用于实际用例有信心的参与者比开始时的预期多了 23 个百分点 (pp)。参与者给项目留下了一个工作原型、一个代码存储库和一个参考架构，他们可以立即向利益相关者演示。</p>
+<p><strong>他们构建并为客户带来了什么：</strong></p>
+<ul><li>医疗保健独立软件供应商 (ISV) 的多代理护理协调。</li><li>内容审核和分类系统。</li><li>欺诈识别和预防。</li><li>客户流失预测和预防。</li><li>用于自主决策的多代理编排。</li><li>用于客户研讨会的 Kiro + Amazon Bedrock AgentCore 演示。</li></ul>
+<h2>影响：从观察者到建设者</h2>
+<p>当我们的参与者亲身体验人工智能工具时，他们从讨论可能性转向构建工作原型。数字讲述了这个故事：</p>
+<ul><li>自评“强或专家”对代理人工智能的理解：从 27% 增加到 82%（+55 个百分点）。</li><li>感觉“准备好或非常准备”来识别 AI 机会：从 41% 增加到 85%（+44 个百分点）。</li><li>仅具有理论或有限经验的参与者：从 34% 下降到 0%（已删除）。</li></ul>
+<p>对此进行投资可以解锁以下内容：</p>
+<p><strong>对于您的团队：</strong> 他们不再是人工智能观察者，而是成为人工智能构建者。他们知道什么是可行的，什么是昂贵的，以及什么是通过直接实验周末构建的。在我们的队列中，52% 的人确定了可以从他们在该计划期间构建的产品中受益的特定客户，87% 的人希望在 30 天内将他们学到的知识应用到客户身上。该程序超额交付了实际用例，因为它要求他们自己创建示例。</p>
+<p><strong>对于您的工程组织：</strong> 当业务伙伴可以建立原型并阐明架构权衡时，工程团队可以花更少的时间来翻译需求，并花更多的时间进行构建。技术构建者可以获得更清晰的信息、更少的不一致请求，以及可以在提交单个冲刺之前对可行性进行压力测试的合作伙伴。考虑一下：82% 的参与者对代理 AI 架构有深入的了解。整个堆栈的工具流畅度大幅提升：Strands Agents SDK 的采用率从 20% 上升到 80%（+60%），AgentCore 从 39% 上升到 85%，提高了工程判断的标准。</p>
+<p><strong>对于您的客户来说：</strong> 他们拥有的合作伙伴通过拥有直接的实践经验，解决了他们所面临的相同架构权衡问题。对话从“让我回复你”转变为现场演练。在该计划之前，44% 的参与者将架构模式的不确定性视为障碍。计划结束后，90% 的人感觉自己已经做好充分准备，或者更好地在真实客户对话中发现人工智能机会。</p>
+<p><strong>对于您的组织：</strong> 您将获得一个可复制的复合模型。我们的试点从一个团队扩展到区域部署，现在又扩展到全球部署，这证明了这种模式：实践的流畅性会自行扩展。该计划获得了 100% 的推荐率，95% 的参与者表示该计划达到或超出了预期。</p>
+<h2>在您的组织中复制这一点的七个教训</h2>
+<p>这七个经验总结了该计划的成功因素以及在您自己的组织中可以复制的内容。</p>
+<h3>1. 工具选择改变一切</h3>
+<p>低代码、代理体验消除了“我技术不够”的障碍。这是一个计划设计决定，而不是采购后的想法。如果你的工具需要精通 Python，那么在第一周之前你就已经损失了一半的空间。</p>
+<h3>2. 结构胜过强度</h3>
+<p>对于非技术受众来说，具有明确里程碑的分阶段计划（6 周）优于为期两天的冲刺。预计第一周会感觉缓慢。之后是复合。</p>
+<h3>3. 指导是事半功倍</h3>
+<p>将非技术参与者与技术熟练的导师配对可以消除对失败的恐惧并加速学习。导师不是为他们构建的。他们提供了一个安全网。</p>
+<h3>4. 构建一些真实的东西</h3>
+<p>需要带有代码存储库和参考架构（而不是幻灯片）的工作原型迫使人们深入使用这些工具。你无法通过现场演示来伪装自己。这就是黑客马拉松与培训课程的区别。</p>
+<h3>5. 测量之前和之后</h3>
+<p>之前和之后的能力评估使影响可见并构建扩展的业务案例。自我报告的信心是有用的，但从“有限”到“广泛”的实践经验的转变才是重要的。</p>
+<h3>6. 使其可复制</h3>
+<p>详细记录的剧本（参与者指南、评估规则、导师配对框架、环境设置指南）可将一次性活动转变为可扩展的计划。</p>
+<h3>7. 创造心理安全第一</h3>
+<p>当人们不害怕失败时，他们就会创造出他们从未想过可能实现的东西。获胜团队将“学习胜于获胜”作为他们的首要原则。每个蓬勃发展的团队都在编写代码之前建立了信任。</p>
+<h2>开始吧</h2>
+<p>想要复制此模型的团队可以使用手册、评估准则和环境设置指南。请联系其中一位作者，了解有关将此框架引入您的组织的更多信息。</p>
+<p>了解有关 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 的更多信息 | <a href="https://kiro.dev/">Kiro IDE</a> | <a href="https://github.com/strands-agents/sdk-python">Strands Agents SDK</a></p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>Cornerstone OnDemand 如何利用 Amazon Bedrock 将数据库诊断减少 78%</title>
@@ -56,6 +485,69 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-cornerstone-ondemand-cut-database-diagnosis-by-78-with-amazon-bedrock/</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How Cornerstone OnDemand cut database diagnosis by 78% with Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Cornerstone OnDemand 如何利用 Amazon Bedrock 将数据库诊断减少 78%</h1>
+<p><a href="https://www.cornerstoneondemand.com/">Cornerstone OnDemand, Inc.</a> (Cornerstone) 是劳动力准备解决方案的全球领导者，为 186 个国家/地区的 1.4 亿用户提供服务。该公司构建了一个多代理人工智能系统，将数据库操作从被动的消防转变为主动、自我编排的工作流程。该系统名为 Orion AI，使用 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 和 <a href="https://strandsagents.com/">Strands Agents</a>（AWS 的开源代理编排框架）来协调专业代理。</p>
+<p>在 Orion AI 之前，Cornerstone 的企业 DataOps 团队在每个数据库事件上花费长达 45 分钟的时间手动查询系统视图和交叉引用日志，然后再跨团队移交。借助 Orion AI，数据库诊断时间从 45 分钟缩短至 10 分钟，缩短了 78%。三人团队在六个月内交付了该系统。</p>
+<p>在这篇文章中，我们将介绍 Cornerstone 面临的运营问题、他们如何设计 Orion AI、他们测量的结果以及其他团队可以重用的设计决策。</p>
+<h2>运营挑战</h2>
+<p>在 Orion AI 出现之前，Cornerstone 的企业数据运营团队采取被动操作，存在四个反复出现的痛点：</p>
+<ul><li>每个事件的数据库性能调查大约需要 45 分钟，分布在多个工具和系统视图中。</li><li>数据库生命周期工作流程需要 10 个或更多手动步骤，从建立连接到传达状态更新。</li><li>站点可靠性工程 (SRE) 团队和数据团队之间的报告存在 15 分钟的延迟。</li><li>冗余和重叠的警报会产生噪音，掩盖重要的信号。</li></ul>
+<p>总之，这些意味着工程师将时间花在手动协调上，而不是解决问题上。</p>
+<h2>解决方案：Orion AI</h2>
+<p>Orion AI 是一个多代理系统，其中协调代理（元协调器）将工作委托给以中心辐射型拓扑排列的专门子代理。工程师通过网络应用程序与其进行交互，在他们已经协调运营工作的同一位置提出问题并批准行动。这些代理涵盖基础设施监控、数据库诊断、数据库生命周期操作、客户分析和知识驱动的支持。</p>
+<p>指导构建的两个原则是：在<a href="https://aws.amazon.com/compliance/shared-responsibility-model/">共享责任模型</a>下使用 AWS 控制来实现数据隐私，以及与现有操作工具的深度集成。 Amazon Bedrock 提供对基础模型的托管访问，Strands Agents 提供编排层。</p>
+<p>＃＃ 结果</p>
+<p>Orion AI 在诊断速度和准确性方面都取得了显着的进步，并将团队从手动协调中解放出来。通过自动化手动瓶颈和简化跨团队工作流程，Cornerstone 取得了以下成果。</p>
+<table><thead><tr><th><strong>公制</strong></th><th><strong>之前</strong></th><th><strong>之后</strong></th><th><strong>改进</strong></th></tr></thead><tbody><tr><td>数据库诊断时间</td><td>45 分钟</td><td>10 分钟</td><td>速度提高 78%</td></tr><tr><td>手动生命周期步骤</td><td>10 步以上</td><td>1 次互动</td><td>减少 70%</td></tr><tr><td>“SRE 到数据团队”报告滞后</td><td>15 分钟</td><td>瞬时</td><td>实时</td></tr><tr><td>冗余警报</td><td>高基线量</td><td>过滤</td><td>减少 65%（中位数）</td></tr></tbody></table>
+<h3>更快的性能故障排除</h3>
+<p>减少数据库诊断时间是 Orion AI 迄今为止最大的单一效率提升。此前，工程师手动连接到受影响的 SQL Server 实例，查询系统视图以了解阻塞链和等待类型，交叉引用日志以隔离长时间运行的查询，并关联证据以形成根本原因假设。每个事件平均大约需要 45 分钟。</p>
+<p>在 Orion AI 中，三名专业特工共同参与调查，每名特工都有一个不同的阶段。除了诊断之外，Orion AI 还通过修复来解决问题：确定根本原因、建议修复方案以及创建分配给正确的待命工程师的填充 Jira 票证。四步手动切换分解为一次交互。</p>
+<h3>自动化数据库生命周期管理</h3>
+<p>以前需要 10 多个手动步骤的任务（从建立数据库连接到运行跨系统查询再到通信状态更新）现在作为单一自然语言交互运行。 Orion AI 识别正确的工具和数据源，跨系统运行查询，验证结果并返回统一的响应。从工程师的角度来看，工作被简化为提示 Orion AI 并验证其报告的结果。</p>
+<h3>实时监控并减少警报疲劳</h3>
+<p>Orion AI 消除了“SRE 到数据团队”15 分钟的报告延迟，用持续的跨系统可见性取代了定期的手动检查。</p>
+<p>Orion AI 通过重复数据删除、阈值过滤和跨信号关联，将冗余警报平均减少了 65%。对于之前生成的每 10 个警报，现在只有 3-4 个到达工程师手中。警报直接发送至负责团队，无需中间警报层。</p>
+<h2>关键设计原则</h2>
+<p>三个决定塑造了 Orion AI，您可以将它们应用到您自己的多代理项目中：</p>
+<ul><li><strong>按领域而不是按任务复杂性划分代理</strong>：每个代理都针对一个操作域携带一组狭窄的工具集成。这可以保持模型的上下文集中，并提高工具选择的准确性，而不是要求一个通用代理完成所有事情。</li><li><strong>默认关键字路由，回退到语义搜索</strong>：可预测的请求通过关键字匹配以提高速度。不明确的请求会退回到语义搜索以确保准确性。这可以在不牺牲较难查询的正确性的情况下保持较低的延迟。</li><li><strong>将会话内存范围扩展到会话并绕过它以获取实时指标</strong>：持久内存支持多轮对话，但操作问题始终读取当前系统状态。绕过实时指标的内存有助于防止陈旧数据污染实时诊断。</li></ul>
+<h2>架构概述</h2>
+<p>Orion AI 作为容器化服务部署在 <a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service</a> (Amazon ECS) 上。用户通过 Web 应用程序进行交互，该应用程序将每个请求路由到适当的代理、调用所需的工具并组合响应。下图显示了这些组件如何在 AWS 云中连接。</p>
+<p>图 1：Orion AI 架构：Amazon ECS 上的元编排器将请求路由到专门代理，这些代理通过 Portal-Tools MCP 服务器到达数据源，并使用 Amazon Bedrock 进行模型、长期记忆和检索增强生成</p>
+<h2>架构深入探讨</h2>
+<p>上述设计原则具体体现在架构中。本节的其余部分将介绍 Orion AI 的核心组件。</p>
+<h3>使用 Strands Agent 构建中心辐射模式</h3>
+<p>Orion AI 使用一些 Strands Agent 原语来表达其拓扑。 “Agent”类是专业代理和元编排器的构建块。每个代理的工具都是用“@tool”装饰器标记的普通 Python 函数。这从函数的类型提示和文档字符串中派生出工具的规范，这意味着不需要维护单独的模式。 “BedrockModel”包装每个代理运行的 Amazon Bedrock 模型，“MCPClient”将代理连接到外部工具服务器。</p>
+<p>拓扑结构：</p>
+<ul><li>中心是一个充当元协调器（任务执行器）的 Strands 代理。它没有域工具——只有路由工具（“find_relevant_agents”、“call_agent”）和控制流工具（“emit_plan_step”、“emit_confirmation_gate”），因此它可以逐步推理请求。</li><li>辐条是独立的“代理”实例，通过基于装饰器的注册表延迟加载。每个都有自己的模型、领域工具和本地化系统提示。</li></ul>
+<p>在运行时，中心通过注册的“call_agent”工具按名称调用专家。每个专家都会运行自己的工具调用循环，并将合成文本返回到集线器，集线器组装最终响应。</p>
+<h3>混合路由</h3>
+<p>Orion AI 使用关键字优先路由和语义搜索回退。大约 80% 的查询可在一毫秒内通过内存中关键字快速路径进行解析。当关键字不足以确定意图时，系统会退回到由 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-embedding-models.html">Amazon Titan Text Embeddings V2</a> 支持的语义搜索来按含义进行路由。有关 AWS 区域的模型可用性，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock 中 AWS 区域支持的模型</a>。</p>
+<p>当直接工具调用不合适时，后备链将激活：<a href="https://aws.amazon.com/bedrock/knowledge-bases/">Amazon Bedrock 知识库</a>，这是完全托管的检索增强生成 (RAG) 功能，可检索操作文档，以便响应基于批准的程序，而不是在没有上下文的情况下生成。</p>
+<h3>特定领域的代理及其边界</h3>
+<p>Orion AI 使用 13 个特定领域代理。三个 SQL Server 代理说明了域分割如何映射到实际调查的阶段：</p>
+<ul><li><strong>数据库诊断代理</strong>显示阻塞链、等待类型和长时间运行的查询，然后将技术发现转化为业务影响和补救建议。它回答：“正在发生什么以及这意味着什么。”</li><li><strong>会话阻塞分析代理</strong> 使用推理模型运行多步骤调查，将阻塞链映射到根阻塞者。它回答“为什么会发生这种情况以及根本原因是什么”，提供从立即会话终止到长期架构修复的优先建议。</li><li><strong>实时 SQL 诊断代理</strong> 通过 Cornerstone 的 DATAOPS API 直接查询 SQL Server 实例，以进行实时阻塞数据和高 CPU 会话分析。它回答说：“现在什么是真实的。”</li></ul>
+<p>其余代理遵循相同的狭义所有权原则：基础设施监控、操作分析、数据库生命周期管理、客户分析、从操作手册检索知识、通知路由、复合查询分解、可用性组侦听器解析和模型连接预热。</p>
+<h3>工具集成和服务连接</h3>
+<p>Orion AI 通过两种模式到达数据源：</p>
+<ul><li><strong><a href="https://modelcontextprotocol.io/">模型上下文协议</a> (MCP)</strong> 用于多个代理共享的工具（例如，实时 SQL 诊断）。 Strands <code>@tool</code> 函数通过可流传输的 HTTP 向 Portal-Tools MCP 服务器调用 <code>MCPClient</code>，从而到达 SQL Server 和 DATAOPS API。 Jira 集成通过外部 Atlassian MCP 工具遵循相同的方法。</li><li><strong>直接 SDK 或 REST API 调用</strong>，适用于不需要共享 MCP 接口的源。这包括指标和仪表板、待命计划以及通过 <a href="https://aws.amazon.com/sdk-for-python/">AWS SDK for Python (Boto3)</a> 提供的 Amazon Bedrock 知识库。</li></ul>
+<p>这种拆分意味着每个代理都使用适合其源的最轻量机制，而 MCP 服务器集中了多个代理共享的工具。这些连接通过 TLS 运行，并且 MCP 令牌和 REST API 授权等凭据是根据请求提供的，而不是嵌入到代理代码中。</p>
+<h3>对话记忆</h3>
+<p><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 是一个使用任何框架或模型大规模构建、连接和优化代理的平台，提供跨会话内存层。 Orion AI 通过中央内存管理器协调上下文，该管理器并行读取三层，每层都有自己的超时和令牌分配。</p>
+<p>Orion AI 跨三个层协调上下文。短期记忆在 <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a> 中保留相同会话上下文，默认情况下静态加密，并与 <a href="https://aws.amazon.com/ai/generative-ai/nova/">Amazon Nova 2 Lite</a> 异步生成的滚动对话摘要配对。长期内存通过 AgentCore 内存提供跨会话调用，这是 Amazon Bedrock AgentCore 的一项功能，按用户 ID 命名。任务完成后，Orion AI 调用“create_event”来触发自动提取、汇总和合并。第三层，代理间内存，是一个临时的内存暂存器，它在单个任务中跨子代理步骤携带发现结果。</p>
+<p>内存管理器在 500 毫秒硬超时内针对 4,000 个令牌预算跨层进行检索，并由最近最少使用的缓存提供支持。当请求涉及当前系统状态时，代理完全绕过内存并读取实时数据，因此陈旧的上下文不会污染实时诊断。</p>
+<h3>负责任的人工智能和护栏</h3>
+<p>由于 DataOps 安全性取决于特定于域的规则，例如哪些数据库操作具有破坏性，因此团队构建了自定义护栏逻辑，而不是依赖于通用内容过滤器。 Orion AI 跨四个层应用控制：</p>
+<ul><li><strong>提示级安全约束</strong>注入每个代理的系统提示中，阻止危险建议（例如，终止关键数据库进程）并强制执行非破坏性方法。</li><li><strong>人机交互确认门</strong>，暂停破坏性操作，直到用户在五分钟窗口内确认，默认超时拒绝。</li><li><strong>用于输入验证的自定义护栏模块</strong>（长度限制、提示和 SQL 注入阻止）、输出清理（编辑机密和个人身份信息）、速率限制、基于角色的访问控制和每个请求成本跟踪。</li><li><strong>路由级保护</strong>，阻止从内存中回答操作查询，强制执行当前状态问题的实时工具。</li></ul>
+<h3>可观察性</h3>
+<p>Orion AI 使用标准 AWS 可观测性服务进行监控和调试。 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 提供路由置信度、延迟和代理调用活动的指标和结构化日志记录。 <a href="https://aws.amazon.com/xray/">AWS X-Ray</a> 跟踪跨代理执行的分布式调用，以实现端到端请求路径可见性。</p>
+<h2>经验教训</h2>
+<p>使 Orion AI 成为可能的设计决策是您可以重复使用的。按领域拆分代理可以让每个代理进行狭窄的工具集成，而不会导致单个模型的上下文膨胀。默认情况下使用关键字路由和语义搜索作为后备，可以保持较低的延迟，而不会牺牲模糊请求的准确性。将会话内存范围限定为会话，同时绕过实时指标以保持实时诊断的可信度。</p>
+<p>该团队还做出了务实的基础设施选择。他们在 Amazon ECS 上部署计算，因为 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Amazon Bedrock AgentCore 运行时</a>（Amazon Bedrock AgentCore 的一项功能）在项目开始时不可用，他们现在正在将其评估为未来的迁移选项。如果您今天正在构建，请为您自己的堆栈权衡相同的权衡：从现在稳定且可用的内容开始，并在托管功能成熟时重新审视。</p>
+<h2>结论</h2>
+<p>Orion AI 将数据库诊断时间从 45 分钟减少到 10 分钟，避免了 70% 的手动生命周期步骤，并将警报噪音降低了 65%。一个三人团队在六个月内在 Amazon Bedrock 上交付了它。这些结果背后的模式是其他运营团队可以采用的模式：域范围代理、混合路由和具有实时指标旁路的会话范围内存。</p>
+<p>要开始在 AWS 上进行多代理编排，请查看 <a href="https://docs.aws.amazon.com/solutions/multi-agent-orchestration-on-aws/">AWS 解决方案库指南</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>在 AgentCore 和 OpenClaw 上构建上下文感知 AI 助手</title>

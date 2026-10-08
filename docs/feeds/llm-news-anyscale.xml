@@ -14,6 +14,68 @@
       <guid isPermaLink="true">https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference</description>
+      <content:encoded><![CDATA[<p>首页</p>
+<p>博客</p>
+<p>博客详细信息</p>
+<h1>Azure 上的 Anyscale 全面上市：使企业能够拥有完整的 AI 循环，而不仅仅是推理</h1>
+<p>由</p>
+<p>卡塔琳娜·斯坦利</p>
+<p>和</p>
+<p>阿迪普·古普塔</p>
+<p>|</p>
+<p>2026 年 10 月 7 日</p>
+<p>如今，<a href="http://anyscale.com/product/azure"><strong>Azure 上的 Anyscale</strong></a><strong> 已普遍可用</strong>，因此企业可以运行自己的 AI 循环（涵盖数据处理、训练、训练后、评估和推理），并实现托管模型推理所期望的易用性。</p>
+<p>通过代币租用智能是证明人工智能用例的最快方法。人工智能原生公司首先以这种方式构建，在前沿模型 API 上快速组装产品，相同的 API 使它们规模化。但一路走来，他们放弃了对三件事的控制：模型、数据和成本。该模型及其路线图属于其他人。使用例值得构建的数据必须离开公司环境才能到达模型。而且费用随着使用量的增加而直线上升，因此规模永远不会随着单位成本而降低。任何租房的人都会进行同样的交易。</p>
+<p>人工智能本土公司首先遇到了这些限制。一旦用例证明了其价值，成本和数据暴露就成为问题。为了缓解这一问题，他们转向根据自己的数据定制的更小的、特定领域的模型，并在自己的 GPU 上运行，这使他们能够以更低的成本更快地做出响应。更大的优势来自于不断改进这些模型：拥有<a href="https://www.anyscale.com/blog/learning-loops">学习循环</a>，将生产数据转化为训练和训练后运行，并将更新的模型转化为为其人工智能应用程序提供支持的推理部署。</p>
+<p>该循环用一组需要共享 GPU 集群的 AI 工作负载（数据处理、训练和微调、训练后以及推理）取代了仅推理的管道。为了在多个 GPU 上运行多个工作负载，Ray 成为 AI 原生团队的通用运行时和编排层。企业希望走同样的道路，将他们已经信任的 Azure 治理扩展到循环的每一步。</p>
+<p>Anyscale 将 Ray 从分布式计算引擎转变为企业级平台：团队构建和扩展循环的每一步，而 Anyscale 处理集群操作，所有这些都在他们已经在 Azure 上构建的安全和治理范围内。 Azure 客户从 Azure 门户部署它，在自己的订阅中的 Azure Kubernetes 服务 (AKS) 上运行生产 AI，并像任何其他 Azure 服务一样付费，支出计入现有的 Microsoft Azure 消费承诺 (MACC)。</p>
+<p>借助 Azure 上的 Anyscale，您可以：</p>
+<ul><li><strong>拥有你的 AI。</strong> Anyscale 在开源 Ray 上运行，由 PyTorch 基金会管理。您的数据管道、训练代码和服务逻辑在开源上运行，跨<a href="https://www.anyscale.com/blog/ai-compute-open-source-stack-kubernetes-ray-pytorch-vllm">堆栈</a>的每一层。</li><li><strong>确保数据、评估和模型的安全。</strong> 您的工作负载在您自己的 Azure 订阅中的 AKS 上运行，与您组织的 Microsoft Entra 租户关联。平台团队现有的 Azure RBAC 和 Azure Policy 控制保持不变。</li><li><strong>增加每个 GPU 的输出以降低成本。</strong> 共享 GPU 容量带来了规模效率，并且对您自己的数据进行后训练可以让团队转向更小的、特定领域的模型，从而降低服务成本。</li></ul>
+<h2>Link拥有你的人工智能</h2>
+<p>今年早些时候，Satya Nadella <a href="https://x.com/satyanadella/status/2076323181154230284">提出了这个问题</a>：</p>
+<blockquote>“我们必须将学习基础设施分发给每家公司，以便他们能够控制自己的学习循环……公司应该能够使用模型而不放弃使其独一无二的知识。”——萨蒂亚·纳德拉，微软董事长兼首席执行官</blockquote>
+<p>拥有你的人工智能意味着拥有改进它的循环。生产结果提供数据管理，管理数据提供培训，下一个模型版本将返回服务。 Azure 上的 Anyscale 在一个平台上运行整个循环。它使您能够管理多模式（文本、图像、视频、文档等）数据、比例模型微调和其他训练后技术（例如强化学习 (RL)）、支持训练后和微调，并通过更新和需求波动保持模型服务。对于其中每一个，Anyscale 都会协调计算以满足每个工作负载的需求。例如，要将 LLM 和其他模型部署为端点，<a href="https://docs.anyscale.com/services">Anyscale 服务</a> 可以通过零停机升级进行部署，在空闲时扩展到零，并压缩副本以在实际流量下保持 GPU 利用率高。</p>
+<p>该循环的每个阶段都在 Ray 上运行，可扩展 Python 代码。这意味着它可以与您的团队已经使用的开源 AI 框架（例如 PyTorch 和 vLLM）以及新推出的框架配合使用。您的管道和应用程序保持可移植性，因为它与开源 API 完全兼容。您的团队保持灵活性，因为他们可以采用新框架而不改变其扩展方式。</p>
+<p>由于每个人工智能工作负载都由一个引擎运行，因此团队可以通过两种方式受益。他们可以简化对高级技术的使用，例如将推理和训练结合在一个循环中的<a href="https://www.youtube.com/watch?v=QnxcDsMtaK8&amp;pp=ygUYd3loeSBybCBpcyBoYXJkIGFueXNjYWxl">强化学习 (RL)</a>。在 Ray Summit 2026 上，Microsoft AI 分享了其前沿推理模型 MAI-Thinking-1 是使用 Ray 进行训练的（<a href="https://www.youtube.com/watch?v=7fCwq7pIrkA">在此处观看会议</a>）。或者，他们可以从一个工作负载开始，然后毫无阻碍地扩展到下一个工作负载。 BMW 开始使用 Ray 进行<a href="https://www.youtube.com/watch?v=s3x3STd5vuU">模型训练</a>，当需要<a href="https://youtu.be/yKt-CpfrOIE?si=JC1nlZTBK0GtB6_a&amp;t=35">为 LLM 提供服务</a> 时，它将 Ray 集成到他们的 AI 网关中，以便在整个企业中为开源模型运行推理。</p>
+<h2>Link保证您的数据、评估和模型的安全</h2>
+<p>在构建 Ray 的工程师的支持下，Azure 上的 Anyscale 使 Ray 在您自己的 Azure 租户中做好生产准备、可扩展且可靠。这意味着您的数据、评估、模型和容器映像保留在您的订阅中。随着主权和差异化成为人工智能战略的核心，这将成为每个公司的要求，而不仅仅是那些有严格监管要求的公司。</p>
+<p>网络模型是仅出口的。每个连接都源自 AKS 群集中的 Anyscale 操作员和 Ray 群集，出站到 Anyscale 控制平面，无需打开入站防火墙规则。预览公告中描绘了从订阅中的 AKS 数据平面到 Anyscale 托管的控制平面的完整部署架构。</p>
+<p>Anyscale 资源是 Azure 原生资源，受 Azure RBAC 和 Azure 策略管理，并通过 Azure 进行 MACC 提款计费。</p>
+<p>Anyscale 资源是 Azure 原生资源，受 Azure RBAC 和 Azure 策略管理，并通过 Azure 进行 MACC 提款计费</p>
+<h2>Link降低成本</h2>
+<p>无论您运行一个还是五十个工作负载，每个令牌 API 都会收取相同的费率。在您自己的 GPU 上，利用率的每一次提高都会降低每个工作单元的成本。在整个典型企业中，传统 ML 基础设施的平均 GPU 利用率低于 30%。这种浪费始于单个工作负载，并在团队之间加剧，Anyscale 在各个层面都解决了这个问题。</p>
+<p>通过优化单个工作负载和跨团队的调度和编排，Anyscale 可实现 80% 以上的平均 GPU 利用率。这意味着同一 GPU 组的工作量增加了 2-3 倍。</p>
+<p>在工作负载级别，GPU 经常闲置等待数据：少数 CPU 无法足够快地加载和预处理下一批数据，无法让它们保持忙碌。 Anyscale 通过根据需要启动尽可能多的 CPU 工作线程来并行加载数据并将其直接流式传输到 GPU 来解决此问题，因此在 GPU 完成最后一批数据时，下一批数据就准备好了。作业还倾向于保留仅部分使用的整个 GPU，因此部分 GPU 可以让您将更多工作负载或模型打包到每个设备上。自动缩放会在作业耗尽内存之前调整资源，检查点会从最后完成的步骤重新启动失败的作业，而不是从头开始，因此现场驱逐或掉队的 GPU 不再在重新运行时消耗付费容量。</p>
+<p>在整个团队中，浪费来自孤立的集群。每个团队都为其峰值保留足够的容量，仅在部分时间使用它，并在其他团队等待他们无法访问的计算时将其闲置。Anyscale 将这些集群池化到从单个窗格管理的共享计算中，在可用时立即提取、保留和按需容量。调度是优先级感知的，因此队列遵循业务优先级，当紧急工作到达时，优先级较低的工作会暂停而不是终止，然后从中断的地方继续。</p>
+<p>三支队伍共享 H100 预订。当高优先级训练作业落地时，调度程序会抢占低优先级评估作业，并在训练作业完成后恢复它，从而使预留始终接近充分利用。</p>
+<p>GPU 预留</p>
+<p>在各个集群和区域中，该池表现得像一个整体。各地对 GPU 的需求都超过了供应，因此运行最大 AI 工作负载的团队将容量作为一个投资组合进行规划。 Anyscale 调度程序跨集群和​​ Azure 区域放置工作负载，并将 Azure 作为身份和策略的控制点。同样的模型扩展到客户在 Azure 之外附加的 GPU 容量，而 Azure 仍然是身份、治理和管理的所在地。</p>
+<p>GPU 利用率是一个杠杆。另一个是模型本身。根据您自己的数据进行后训练和微调开放模型，团队可以用较小的、特定于任务的模型替换大型通用模型，这些模型的服务成本较低。但真正的成本还包括构建模型、运行数据处理，以及在单独的基础设施上进行后训练会增加运营开销，从而消除推理节省的成本。 Anyscale 在一个平台上运行每一步，因此较小的模型并不意味着需要为 AI 生命周期的不同步骤构建或维护新的堆栈。</p>
+<h2>Link客户正在使用 Azure 上的 Anyscale 做什么</h2>
+<p>Xoople 将行星规模的卫星图像处理成可供决策的地球情报。从 Xoople 的工程副总裁那里了解他们在 Azure 上部署 Anyscale 的情况。</p>
+<h2>LinkAzure 上的 Anyscale 入门</h2>
+<p>从 Azure 门户配置 Anyscale，并使用现有身份和网络在 AKS 上运行第一个 Ray 工作负载。 <a href="https://learn.microsoft.com/azure/anyscale-on-azure">Microsoft Learn</a> 上的部署快速入门涵盖了端到端设置。 <a href="https://www.anyscale.com/blog/announcing-anyscale-agent-skills-ray">Anyscale 代理技能</a> 为您的编码代理提供在 Anyscale 上部署、运行、调试和调整 Ray 工作负载的知识。</p>
+<p><a href="https://www.anyscale.com/resources/webinar/anyscale-on-azure">在此处观看演示。</a></p>
+<h2>链接资源</h2>
+<h3>Link连接</h3>
+<ul><li><a href="http://anyscale.com/product/azure"><strong>了解更多。 </strong></a>请参阅 Azure 上的 Anyscale 产品网页。</li><li><a href="https://docs.anyscale.com/clouds/azure"><strong>开始使用。</strong></a> 查看 AKS 上的 Anyscale 文档。</li><li><a href="https://www.anyscale.com/contact-sales?utm-source=blog"><strong>与我们交谈</strong>。</a> 请求演示或 FDE 支持。</li></ul>
+<h3>链接阅读更多</h3>
+<ul><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-public-preview-build-and-deploy-ai-scale">Azure 上的 Anyscale 进入公共预览版</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray">Anyscale Runtime 公告和基准测试</a></li><li><a href="https://learn.microsoft.com/azure/anyscale-on-azure">Microsoft Learn 上的 Anyscale on Azure 文档</a></li></ul>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#own-your-ai">拥有你的人工智能</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#keep-your-data,-evals,-and-models-secure">保证数据、评估和模型的安全</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#reduce-costs">降低成本</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#what-customers-are-doing-with-anyscale-on-azure">客户在 Azure 上使用 Anyscale 做什么</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#getting-started-with-anyscale-on-azure">Azure 上的 Anyscale 入门</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#resources">资源</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#get-connected">建立连接</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#read-more">阅读更多</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<h4>Ray Summit 2026：物理 AI、RL 以及运行它们的基础设施</h4>
+<p>了解更多</p>
+<h4>将 Ray for AI 工作负载扩展到 10k 节点集群</h4>
+<p>了解更多</p>
+<h4>优化 LLM 服务效率：利用 Ray Serve LLM 超越 KV 缓存重用，转向令牌加载感知</h4>
+<p>了解更多</p>
+<h2>立即探索 Azure 上的 Anyscale</h2>
+<p>开始使用</p>
+<p>与专家交谈</p>]]></content:encoded>
     </item>
     <item>
       <title>Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施</title>
@@ -1763,6 +1825,13 @@ assert return_code == 0</code></pre>
 <p>升级到 2.56，收获这些稳定性与性能收益。一如既往，我们期待你的反馈——现在就 <code>pip install -U ray</code> 试用 Ray。</p>]]></content:encoded>
     </item>
     <item>
+      <title>使用 Ray 进行规模机器人策略评估</title>
+      <link>https://anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale</guid>
+      <pubDate>Fri, 26 Jun 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Scale Robot Policy Evaluation with Ray</description>
+    </item>
+    <item>
       <title>介绍 Anyscale 代理技能：更快地构建、更智能地调试并优化 Ray 上运行的 AI 工作负载</title>
       <link>https://anyscale.com/blog/announcing-anyscale-agent-skills-ray</link>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-anyscale-agent-skills-ray</guid>
@@ -2005,6 +2074,20 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
 <p>生产系统不会只在一个地方坏，它们跨层地坏。新仪表盘反映了这一现实：</p>
 <ul><li>生命周期状态是一等公民时间序列，不再埋在日志里</li><li>请求路径端到端可观测</li><li>自动扩缩决策不仅可见，而且可解释</li><li>Serve 内部机制与用户代码可以用数据清晰切分</li></ul>
 <p>这就是运维成熟度的样子。系统不只告诉你<em>有</em>东西不对——它告诉你<em>哪里</em>不对、<em>为什么</em>。如果你在生产运行 Ray Serve，这个仪表盘就是&quot;猜&quot;与&quot;知道&quot;之间的差距。把 Ray 升级到 2.54，在 Anyscale Workspace 与 Services 上体验这些新增的可观测性特性。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>利用LeRobot数据集和Ray优化VLA微调性能</title>
+      <link>https://anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale</guid>
+      <pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Optimizing VLA Fine-Tuning Performance with LeRobot Datasets and Ray</description>
+    </item>
+    <item>
+      <title>可扩展的分布式训练：从单 GPU 限制到使用 Ray 在任意规模上进行可靠的多节点运行</title>
+      <link>https://anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale</guid>
+      <pubDate>Wed, 28 Jan 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Scalable Distributed Training: From Single-GPU Limits to Reliable Multi-Node Runs with Ray on Anyscale</description>
     </item>
     <item>
       <title>AI 工作负载中的 GPU 效率（低）</title>
@@ -2529,244 +2612,6 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
 <p>RDT 处于 alpha 阶段，我们积极寻求反馈！进行中的特性包括性能增强、对 CUDA IPC 等替代张量传输的支持，以及自带 transport 的支持。我们的目标是达到与 Ray Core API 几乎同等的覆盖面，但当前有几个需要知晓的关键限制：</p>
 <ul><li>仅支持 Ray actor，不支持非 actor 的 Ray 任务。</li><li>尚未兼容 <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a>。进展请关注<a href="https://github.com/ray-project/ray/issues/56398">跟踪 issue</a>。</li><li>RDT 对象是<em>可变的</em>。这意味着 Ray 只持有张量的引用，在请求传输前不会拷贝其值。如果用户代码在传输发生前写入张量，接收方可能看到部分更新。这与 Ray 对象存储不同——后者总是按值拷贝数据以确保不可变。</li></ul>
 <p>更多用法见<a href="https://docs.ray.io/en/latest/ray-core/direct-transport.html">文档</a>，bug 报告或反馈请<a href="https://github.com/ray-project/ray/issues">提 issue</a>，并在 <a href="https://www.anyscale.com/ray-summit/2025">Ray Summit</a> 与我们见面！本系列的第二篇将扩展示例，演示 RDT 用于 rollout 数据传输以及多 GPU LLM 的 RL 训练。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Ray 编译图：通过本机 GPU 通信优化 AI 工作负载</title>
-      <link>https://anyscale.com/blog/announcing-compiled-graphs</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/announcing-compiled-graphs</guid>
-      <pubDate>Mon, 07 Oct 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Ray Compiled Graphs: Optimized AI Workloads with Native GPU Communication</description>
-      <content:encoded><![CDATA[<h1>Ray Compiled Graphs：原生 GPU 通信加持的 AI 负载优化</h1>
-<p>作者：Sang Cho、Sam Chan 和 Stephanie Wang | 2024 年 10 月 7 日</p>
-<h2>引言</h2>
-<p>随着 AI 模型的复杂度与规模持续攀升，围绕这些模型的工作负载与应用对底层软件基础设施和原语提出了新要求。不同于传统的 CPU 负载，训练和推理这类大型 AI 模型负载绝大部分是 GPU 密集型的，往往需要在数十乃至数百块加速器之间进行分布式计算与协调。</p>
-<p>Compiled Graphs 将任务提交开销降到极低（约 50 微秒），而 Ray 标准任务提交开销为 1~2 毫秒。对于以吞吐为主的长时间运行负载（如数据处理或批处理），默认开销可以忽略；但对于亚秒级负载（如自回归 token 生成）则不可接受。</p>
-<p>Compiled Graphs 还支持原生 GPU 到 GPU 传输，同时自动解决死锁、让通信与计算重叠。没有 Compiled Graphs 时，用户必须借助 NCCL 等带外通信原语才能实现低延迟 GPU 传输。</p>
-<p>这些改进为 Ray 程序开启了令人兴奋的新机会：</p>
-<ul><li>Ray Compiled Graphs 可以在 actor 之间以<strong>毫秒级延迟</strong>传输大型张量</li><li>使用 Compiled Graphs，你可以用<strong>不到 70 行代码</strong>表达复杂的流水线调度算法，同时在 4×A100 GPU 上运行 Llama 7B 模型时达到与 Deepspeed 等最先进库相当的性能</li><li>基于 Compiled Graphs、采用异构并行与 GPU 的多模态训练负载，<strong>相比 PyTorch 标准 FSDP 实现取得了 43% 的 token-per-dollar 效率提升</strong></li></ul>
-<h2>Ray 中的 Compiled Graphs 介绍</h2>
-<p>Compiled Graphs 是 Ray 的新特性，提供类似经典 Ray Core 的 API，具备三大优势：</p>
-<ul><li>降低重复任务图的系统开销</li><li>通过 NVIDIA NCCL 原生支持 GPU-GPU 通信</li><li>优化调度以避免死锁，并充分利用计算与通信资源</li></ul>
-<p>与标准 Ray API 相比，Compiled Graphs 以<em>静态计算图</em>的形式表达。</p>
-<p>利用程序的静态特性，Ray 可以提前为任务分配资源并在后续调用中复用。此外，Ray 可以预先正确分配内存，以利用要求收发双方对称的 NCCL 等优化通信原语。如下所示，Ray Compiled Graphs 可将简单 GPU 张量传输的延迟最多改善 140 倍，CPU 数据传输改善 17 倍。</p>
-<p><strong>让我们深入了解机器学习负载中的一个常见模式：scatter-gather。</strong></p>
-<p>首先安装 compiled graphs：</p>
-<pre><code>1pip install -U &quot;ray[adag]&quot;</code></pre>
-<p>scatter-gather 是机器学习负载中常见的分布式计算模式：把相同输入发给多个 worker（Ray Actors），再收集所有 worker 的结果。例如张量并行推理中，程序把相同的 CPU 数据发给所有 actor，actor 将 CPU 数据搬到 GPU 并运行只加载了分片权重的 torch 模型。我们用 Compiled Graphs 来表达这个程序。</p>
-<p>先创建普通的 Ray actor，这里是 3 个：</p>
-<pre><code>1import ray
-2from time import perf_counter
-3
-4@ray.remote
-5class TensorProcessor:
-6  def fwd(self, tensor: str) -&gt; str:
-7    # some_gpu_ops(tensor.to(torch.device()))
-8    # In a typical application, this actor will move the 
-9    # tensor to GPU and run a torch module. 
-10    # We instead do nothing and return the string input immediately for simplicity.
-11    return tensor
-12
-13N = 3
-14actors = [TensorProcessor.remote() for _ in range(N)]</code></pre>
-<p>首先看看如何用普通 Ray 程序表达。</p>
-<pre><code>1# warmup actors
-2for _ in range(10):
-3    ray.get([actor.fwd.remote(&quot;hello&quot;) for actor in actors])
-4
-5s = perf_counter()
-6result = ray.get([actor.fwd.remote(&quot;hello&quot;) for actor in actors])
-7print(&quot;Normal ray programs took&quot;, (perf_counter() - s) * 1000, &quot;ms&quot;)
-8print(result)</code></pre>
-<p>然后，我们定义并编译一个把同一个输入占位符传给所有 actor 的 compiled graph。这里使用 Ray 的 DAG API，它以静态方式构建捕获计算图的中间表示。当输出节点多于一个时，需要使用 <a href="https://docs.ray.io/en/latest/ray-core/ray-dag.html#ray-dag-with-multiple-multioutputnode">MultiOutputNode</a> 语法包装输出。</p>
-<pre><code>1import ray.dag
-2
-3# Define a DAG for lazy execution.
-4with ray.dag.InputNode() as inp:
-5    # Bind each actor task to the same input placeholder.
-6    outputs = [actor.fwd.bind(inp) for actor in actors]
-7    dag = ray.dag.MultiOutputNode(outputs)</code></pre>
-<p>这会生成如下 Ray DAG：</p>
-<p>现在要使用 Compiled Graphs，只需调用 <code>experimental_compile</code> 命令。Ray 会预先分配运行该图所需的全部资源，相比标准动态运行时执行速度快得多：</p>
-<pre><code>1compiled_graph = dag.experimental_compile()
-2
-3# warmup actors
-4for _ in range(10):
-5    ray.get(compiled_graph.execute(&quot;hello&quot;))
-6
-7# Execute the DAG with different arguments:
-8s = perf_counter()
-9result = ray.get(compiled_graph.execute(&quot;hello&quot;))
-10print(&quot;Compiled Graphs took&quot;, (perf_counter() - s) * 1000, &quot;ms&quot;)
-11print(result)
-12# [&quot;hello&quot;, &quot;hello&quot;, &quot;hello&quot;]</code></pre>
-<p>就这样！你可以用同一个程序扩展负载规模。这些 API 在多节点场景下同样有效。</p>
-<p>底层机制上，资源被预先分配以降低执行期开销：</p>
-<ul><li>新的 Compiled Graphs 后端在编译时<strong>静态</strong>地为每个 actor 任务分配输入与输出缓冲区，而不再每次执行 DAG 时动态分配。这些缓冲区在<strong>执行</strong>时<strong>复用</strong>，actor 始终将结果直接<strong>推送</strong>给需要它的进程。</li><li>同一 Ray 节点上的所有 actor 共享同一块物理输入缓冲区，由 Ray Compiled Graphs 后端负责同步。这减少了任务参数序列化、为参数分配内存以及调用任务带来的单任务开销。</li><li>后端还会预先分配 actor 的执行循环。每个 actor 不再等待执行下一个任务的 RPC，而是在循环中等待通过已分配缓冲区传入的下一个 <code>echo</code> 任务的参数。</li></ul>
-<p>那么，如果想在不同 actor 任务之间流水线化执行呢？一个例子是<a href="https://docs.vllm.ai/en/latest/serving/distributed_serving.html">流水线并行推理</a>：把一个 actor 的中间输出经共享内存传给下一个 actor，数据传输应与计算任务流水线化。我们可以在取回输出之前多次执行同一个 DAG，从而在不同 actor 间流水线化执行：</p>
-<pre><code>1# Teardown the previous dag.
-2compiled_graph.teardown()
-3with ray.dag.InputNode() as inp:
-4  for actor in actors:
-5    # Pass each actor task output as input to the next actor task.
-6    inp = actor.fwd.bind(inp)
-7  dag = inp</code></pre>
-<p>这会生成如下有向无环图（DAG）：</p>
-<p>我们可以这样编译并执行：</p>
-<pre><code>1compiled_graph = dag.experimental_compile()
-2# Call dag.execute() several times. The executions will be pipelined across the different actors.
-3refs = [compiled_graph.execute(f&quot;hello{i}&quot;) for i in range(N)]
-4# Get the results, flushing the pipeline.
-5for ref in refs:
-6  print(ray.get(ref))
-7# &quot;hello0&quot;
-8# &quot;hello1&quot;
-9# &quot;hello2&quot;</code></pre>
-<p>要演示 GPU-GPU 通信，可以构造一个向另一个 actor 发送张量的 actor。运行该示例请确保集群中至少有 2 块 GPU。</p>
-<pre><code>1import ray
-2import ray.dag
-3
-4import torch
-5
-6assert ray.cluster_resources().get(&quot;GPU&quot;) &gt;= 2, (&quot;Insufficient number of GPUs available in the cluster.&quot;)
-7
-8@ray.remote(num_gpus=1)
-9class GPUSender:
-10  def send(self, shape):
-11    return torch.zeros(shape, device=&quot;cuda&quot;)
-12
-13@ray.remote(num_gpus=1)
-14class GPUReceiver:
-15  def recv(self, tensor: torch.Tensor):
-16    assert tensor.device.type == &quot;cuda&quot;
-17    return tensor.shape
-18
-19sender = GPUSender.remote()
-20receiver = GPUReceiver.remote()</code></pre>
-<p>接下来，定义并编译一个把 CUDA 张量从一个 actor 传给另一个 actor 的 compiled graph。借助下面的 <code>TorchTensorType</code> 类型提示，Ray 会在底层使用 NCCL，通过两块 GPU 之间的 GPU RDMA 传输张量。</p>
-<pre><code>1from ray.experimental.channel.torch_tensor_type import TorchTensorType
-2with ray.dag.InputNode() as inp:
-3  dag = sender.send.bind(inp)
-4  # You have to specify transport=&quot;nccl&quot;, otherwise, it uses shared memory to transfer GPU tensors.
-5  dag = dag.with_type_hint(TorchTensorType(transport=&quot;nccl&quot;))
-6  dag = receiver.recv.bind(dag)
-7
-8compiled_graph = dag.experimental_compile()
-9# Execute the DAG. Ray aDAG will orchestrate any NCCL ops.
-10assert ray.get(compiled_graph.execute((10, ))) == (10, )</code></pre>
-<p>更多细节请查看<a href="https://docs.google.com/document/d/1xDs-yIBFLXuqUDLou-_KELERkzWrmGWri6p_xG18SH4/edit#heading=h.kzrrbhon06yz">开发者指南</a>。</p>
-<h2>基准测试</h2>
-<p>我们在多种通信模式上比较了 Ray Core（图中标注为 &quot;Ray Standard Runtime&quot;）与 Ray Compiled Graphs。</p>
-<ul><li>Round Trip：构造一个 actor 反复向接收 actor 发送数据。</li><li>Scatter-Gather：driver 向所有 actor 发送数据，并收集各 actor 的结果。</li><li>Chain of tasks：构造一条 actor 流水线，每个 actor 从上一个 actor 接收数据并发送给下一个。</li></ul>
-<p>首先，为测量系统开销，我们在单节点与多节点上用 1 字节 CPU 数据运行上述计算模式的基准。以下基准运行在有 64 个 CPU 的 m5.16xlarge 实例上。</p>
-<p>从下图可见，单节点上的 round trip 通信最快可提速 17 倍，多节点上可提速 2.7 倍。</p>
-<p>对于更复杂的负载，如 scatter-gather 或任务链，<strong>我们看到 Ray Compiled Graphs 可将延迟最多改善 20 倍。</strong></p>
-<p>我们还比较了 Ray Core 与 Ray Compiled Graph 的 GPU 到 GPU 传输。我们在带 NVLink（A100）与不带 NVLink（A10G）的机器上，用 40MB CUDA 张量运行简单 round trip 基准，将张量传输 10 次并测量端到端延迟。</p>
-<p>默认情况下，Ray Core 既没有对 torch 张量的原生零拷贝序列化支持，也不使用 NCCL 通信。</p>
-<p>而 Ray Compiled Graph 在底层使用 NCCL 进行 GPU 到 GPU 传输以优化性能。在没有 NVLink 的 2 块 A10G 机器上，Ray Compiled Graphs 的张量传输延迟比 Ray Core 好 19 倍。<strong>在带 NVLink 的 A100 上，延迟可降低近 140 倍。</strong></p>
-<p>这些基准表明 compiled graphs 是强大的原语，能够打开一整类新兴 AI 应用。</p>
-<h2>使用场景</h2>
-<h3>更快的模型并行推理</h3>
-<p>我们已把<a href="https://github.com/vllm-project/vllm/issues/6556">compiled graphs 集成进 vLLM</a>——这个流行的开源 LLM 推理项目，使其可以用 Ray 实现张量并行与流水线并行推理。在流水线并行下，相比默认 NCCL 后端我们观察到 10-15% 的吞吐/延迟改善。</p>
-<h3>最先进的分布式训练</h3>
-<p>在分布式训练实验中，我们利用 Compiled Graphs 实现更复杂高效的训练策略。例如，通过使用异构设备与并行技术，我们显著提升了 CLIP 等多模态对比模型的训练吞吐。用原版 PyTorch 表达这样的程序要困难得多。</p>
-<p>具体而言，通过对文本编码器与视觉编码器施加不同的并行方法，并把较小的文本编码器放到性价比更高的 GPU 上，相比 PyTorch 标准 FSDP 实现，我们观察到<strong>训练吞吐提升 20%，token-per-dollar 效率提升 43%</strong>。</p>
-<p>我们还原型实现了多种流水线并行调度算法，如 afab、1f1b 和 zero bubble（<a href="https://arxiv.org/pdf/2401.10241">https://arxiv.org/pdf/2401.10241</a>）。用<strong>不到 70 行代码</strong>即可表达复杂的流水线调度算法，同时在 4×A100 GPU 上的 Llama 7B 模型达到与 Deepspeed 等最先进库相当的性能。我们计划用更大规模负载进一步提升流水线并行训练性能。</p>
-<p>我们计划针对这些用例撰写后续博文，敬请期待！</p>
-<h2>结语</h2>
-<p>请立即在最新版 Ray 上试用 Ray Compiled Graphs：<code>pip install “ray[adag]”</code>。该特性目前处于 alpha 阶段，仍在积极开发中。未来我们将分享更多关于如何使用 Ray Compiled Graphs 实现分布式推理与训练的内容。我们期待听到更多用例，也欢迎贡献！</p>
-<p>参与方式：</p>
-<ul><li>加入 <a href="https://www.ray.io/join-slack">ray.slack.com</a> 的 #ray-accelerated-dag 频道</li><li>在 <a href="https://github.com/ray-project/ray/issues?q=is%3Aissue+is%3Aopen+label%3Aaccelerated-dag">Github</a> 上查看我们的进行中的工作。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Autoscaling Large AI Models up to 5.1x Faster on Anyscale</title>
-      <link>https://anyscale.com/blog/autoscale-large-ai-models-faster</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/autoscale-large-ai-models-faster</guid>
-      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>在 Anyscale 上将大型 AI 模型的自动扩缩容提速至多 5.1 倍</h1>
-<p>作者：Christopher Chou、Austin Kuo、Richard Liaw、Edward Oakes 和 Chris Sivanich | 2024 年 10 月 1 日</p>
-<p>最先进的 AI 模型体积逐月增大，GPU 依然贵得离谱，而 AI 从业者的时间又十分稀缺。把这几个因素放在一起看，结论很清楚：效率是 AI 应用的关键，无论处于开发阶段还是生产阶段。</p>
-<p>不幸的是，AI 从业者的常见经历是花大量时间干等：等实例启动、等容器镜像拉取、等模型加载。下文会讲到，在 Kubernetes 上用典型的 Ray Serve 配置为 <a href="https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct">Meta-Llama-3-70B-Instruct</a> 置备一个推理副本可能需要长达 10-12 分钟。</p>
-<p>在 Anyscale，我们对整个技术栈的扩容速度做了优化，使得 <strong>Meta-Llama-3-70B-Instruct 的自动扩缩容（autoscaling）在 Anyscale 平台上最快可比使用 KubeRay 在 Amazon Elastic Kubernetes Service（EKS）上运行同一应用快 5.1 倍</strong>。</p>
-<p>更快的扩容速度，是使用 Anyscale 平台的 AI 工程师和研究者的力量倍增器：他们在开发中可以快速迭代、避免空等，在生产中可以按照工作负载需求自动扩缩、避免资源闲置。</p>
-<h2>问题：大容量容器、大模型与昂贵的 GPU</h2>
-<p>以在 Kubernetes 上用 <a href="https://github.com/vllm-project/vllm">vLLM</a> 运行流行的开源大语言模型（LLM）<a href="https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct">Meta-Llama-3-70B-Instruct</a> 为例。典型的启动流程大致如下：</p>
-<ul><li>创建 Pod，Kubernetes 集群自动扩缩器新增一个带 GPU 的节点：<strong>1-1.5 分钟</strong></li><li>从容器镜像仓库拉取容器镜像（约 12 GB，含 CUDA 与 vLLM 依赖）：<strong>4-5 分钟</strong></li><li>容器启动，vLLM 从云存储加载模型（FP16 下约 140 GB）：<strong>4-5 分钟</strong></li></ul>
-<p>累计下来，这意味着要等上<strong>最多 10-12 分钟</strong>才能让一份模型副本上线。当然，有多级缓存可以在同一硬件上加速后续启动，但 GPU 价格高企，不用的时候必须及时释放 GPU 机器。</p>
-<p>在开发中，这种等待会消耗 AI 从业者的生产力——他们发现自己一直在等实例拉起、等容器拉取、等模型下载。</p>
-<p>在生产中，扩容速度慢会导致过度置备。通常，自动扩缩策略是为了应对波动的入站流量模式而配置的：流量增大时扩起更多服务副本，流量减小时再缩下去。但如果响应流量增长而扩容耗时过长，现有副本就可能过载，导致响应延迟升高甚至失败。</p>
-<p>对此一个简单而常见的解法是：在稳态下多备一些副本以承接更高负载，同时在新副本上线的等待期内，随流量增加更激进地扩容。但当每个模型副本都需要昂贵的 GPU 才能运行时，这种做法很快就会代价高昂。</p>
-<p>理想情况下，在线服务系统能够快速扩容、对入站流量做出更敏捷的响应，同时避免 GPU 资源闲置。</p>
-<h2>Anyscale 自动扩缩容：全栈优化</h2>
-<p><a href="https://www.anyscale.com/platform">Anyscale Platform</a> 是一个全托管的 Ray 解决方案。基础设施的每一个部分都经过量身定制，以在使用 Ray 运行 AI 应用时提供最佳用户体验、高性能与成本效益。就扩容速度而言，这体现为几项关键优势：</p>
-<ul><li>Anyscale 控制平面与 Ray autoscaler 直接集成，能够快速响应资源请求并做出智能的自动扩缩决策。</li><li>机器镜像与启动流程经过调优，以优化实例启动时间。</li><li>拉取容器镜像时，Anyscale 使用自定义的容器镜像格式和客户端来缩短镜像拉取时间。</li><li>Anyscale 提供了一个快速模型加载库，可将张量从云存储直接流式传输到 GPU。</li></ul>
-<p>为展示这些优化的效果，我们运行了一个实验，测量在 AWS 上使用 <a href="https://github.com/vllm-project/vllm">vLLM</a> 把单个 <a href="https://www.anyscale.com/library/ray-serve">Ray Serve</a> 副本扩容至可托管 LLM 推理模型所需的时间。我们针对两个代表性模型重复了该实验：</p>
-<ul><li>Mistral-7B-Instruct-v0.1，运行在单张 NVIDIA A10G GPU 上（1x AWS g5.8xlarge 实例）。模型权重在 FP16 下约 14 GB。</li><li>Meta-Llama-70B-Instruct，使用张量并行运行在四张 NVIDIA L40S GPU 上（1x AWS g6e.12xlarge 实例）。模型权重在 FP16 下约 140 GB。</li></ul>
-<p>在 Anyscale 上，应用以 <a href="https://docs.anyscale.com/platform/services/">Service</a> 形式运行；在 KubeRay 上，则以 <a href="https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html">RayService</a> 形式运行。两种情况下都不涉及本地缓存：都需要启动新实例、从镜像仓库拉取容器、从远端云存储加载模型权重。</p>
-<p>Anyscale 能够端到端地在仅 <strong>75 秒内为 Mistral-7B-Instruct-v0.1</strong>、<strong>107 秒内为 Meta-Llama-70B-Instruct</strong> 扩容出一个新副本。相较于在同一工作负载上运行于 Amazon EKS 的 KubeRay，这分别带来了 <strong>4.3 倍</strong>和 <strong>5.1 倍</strong>的提升。</p>
-<h3>自定义容器格式与客户端</h3>
-<p>实现这一加速的关键差异之一，是 Anyscale 的自定义容器镜像格式与运行时。客户在 Anyscale 平台上首次使用某个新容器镜像时，该镜像会被转换并以优化格式存储，使同一镜像在同一 region 内的后续运行快如闪电。</p>
-<p>为单独展示这种优化格式的收益，我们运行了一个实验，测试在一台刚启动的 g5.8xlarge 实例上，于 Amazon EKS 和 Anyscale 平台上拉取容器镜像并启动容器所需的时间。</p>
-<ul><li>使用的两个镜像：ray:2.34.0 默认镜像（约 6.2 GB），以及以 ray:2.34.0 为基底、安装了 vLLM 及其所需依赖的自定义镜像（约 12.8 GB）。</li><li>在 Anyscale 和 EKS 上，实例均运行在 us-west-2 region，源容器镜像托管在同一 region、同一 AWS 账号下的 Amazon Elastic Container Registry 中。</li><li>Amazon EKS 节点组配置为使用预置 3,000 IOPs 的 GP3 EBS 卷。</li></ul>
-<p>在该实验中，对于 6GB 的镜像，Anyscale 拉取容器镜像的速度比 AWS EKS 最快高 <strong>30 倍</strong>；对于 13GB 的镜像最快高 <strong>14 倍</strong>。</p>
-<h3>优化的直传 GPU 加载</h3>
-<p>Anyscale 还提供了一个优化客户端，可将 <a href="https://github.com/huggingface/safetensors">safetensors</a> 格式的模型权重从远端存储直接加载到 GPU。该技术利用流水线并行，避免了先把全部模型权重同步拷贝到磁盘、再加载到 CPU 内存、最后载入 GPU 内存的流程；取而代之的是把模型权重按 chunk 从远端存储流式传输到 CPU 内存再到 GPU 内存。技术细节可阅读这篇<a href="https://www.anyscale.com/blog/loading-llama-2-70b-20x-faster-with-anyscale-endpoints">先前的博客文章</a>，最新文档见<a href="https://docs.anyscale.com/platform/services/fast-loading">这里</a>。</p>
-<p>为单独展示这种更快模型加载技术的收益，我们测量了 vLLM 启动并加载一个推理模型所需的时间。所用模型与硬件同上文端到端实验一致：</p>
-<ul><li>Mistral-7B-Instruct-v0.1，运行在单张 NVIDIA A10G GPU 上（1x AWS g5.8xlarge 实例）。模型权重在 FP16 下约 14 GB。</li><li>Meta-Llama-70B-Instruct，使用张量并行运行在四张 NVIDIA L40S GPU 上（1x AWS g6e.12xlarge 实例）。模型权重在 FP16 下约 140 GB。</li></ul>
-<p>与典型工作流（用 AWS S3 CLI 下载到本地磁盘——配置项已设为最大化吞吐——再用 <a href="https://github.com/huggingface/safetensors">safetensors</a> 库从本地磁盘加载到 GPU）相比，Anyscale 将 vLLM 的启动与模型加载时间对 <strong>Mistral-7B-Instruct-v0.1 最快提升 2 倍</strong>，对 <strong>Meta-Llama-70B-Instruct 最快提升 4.8 倍</strong>。</p>
-<h2>结论</h2>
-<p><a href="https://www.anyscale.com/platform">Anyscale Platform</a> 实现了全栈优化，带来极速的自动扩缩容。对 Meta-Llama-3-70B-Instruct 而言，与使用 KubeRay 在 Amazon EKS 上运行同一应用相比，这带来了<strong>最快 5.1 倍的自动扩缩提速</strong>。</p>
-<p>这些优化让 AI 从业者更高效，也让推理服务的运营成本更低。</p>
-<p>今天就免费上手 Anyscale 平台：<a href="https://www.anyscale.com/">https://www.anyscale.com/</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>宣布 RayTurbo</title>
-      <link>https://anyscale.com/blog/announcing-anyscale-rayturbo</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/announcing-anyscale-rayturbo</guid>
-      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
-      <description>原文标题：Announcing RayTurbo</description>
-      <content:encoded><![CDATA[<h1>发布 Anyscale Runtime：由 Ray 驱动，让 AI 更快、更便宜、更具弹性</h1>
-<p>作者：Richard Liaw 和 Philip Wang | 2025 年 11 月 4 日</p>
-<p>现代 AI 工作负载——从多模态数据处理到分布式训练和高吞吐推理——正在把基础设施推向极限。这些负载处理日益复杂的数据集（文本、视频、图像），依赖更大的、以 GPU 为主的先进模型，同时仍然依赖 CPU 完成解码、文件缩放等预处理任务。要大规模运行它们，需要在异构算力上的高效编排、高性能执行，以及硬件故障后的快速恢复。</p>
-<p>开源分布式计算框架 Ray 提供了把 AI 与 Python 应用从单机扩展到数千台机器的必要基础——在异构（CPU + GPU）集群上进行任务并行与基于 actor 的计算。随着 AI 工作负载的规模与多样性持续增长，团队往往需要更强的可靠性保证，以及针对吞吐量、延迟、成本等具体负载需求调优的更高性能——若无分布式系统或云基础设施的深厚专长，这些挑战很难解决。</p>
-<p><strong>Anyscale Runtime</strong> 解决了全部这些问题。该 runtime <strong>完全兼容 Ray API</strong>，你可以直接带入现有应用——无需重写代码，没有锁定——同时获得：</p>
-<ul><li><strong>更高的故障韧性</strong>，减少算力浪费、提升大规模流水线的稳定性。支撑特性包括作业检查点（暂停/恢复批量推理处理）、epoch 中途恢复（暂停/恢复训练作业中的分布式数据加载）以及动态内存管理，可减少训练与推理负载的溢出和 OOM 错误。</li><li><strong>相比运行开源 Ray 更快的性能与更低的计算成本</strong>，覆盖大量目标负载——包括图像批量推理、特征处理、强化学习等。</li></ul>
-<p>与 <a href="https://www.anyscale.com/product/platform">Anyscale platform</a> 的其他组件组合使用，团队能更快、更经济地构建和部署 AI 工作负载。Geotab——一个用于分析驾驶行为、提升道路安全的 AI 驱动远程信息处理平台——在在线（低延迟）视频处理上取得了 43 倍吞吐量提升与 4 倍 GPU 利用率改善。同样，AI 行程规划领域的领先者 TripAdvisor 借助 Anyscale 为其批量嵌入处理流水线节省了 70% 的成本。</p>
-<p>想亲自验证 Anyscale Runtime 的能力，请查看我们的 <a href="https://github.com/anyscale/rayturbo-benchmarks/tree/main/">GitHub 仓库</a>，探索并复现基准测试负载——我们将持续更新新数据集与配方。</p>
-<h2><strong>Anyscale Runtime 提供为生产级 AI 优化的韧性与恢复能力</strong></h2>
-<p>想象一下——你在十块高端 GPU 上跑了 19 个小时的长训练，然后崩溃了。数万美元的算力——没了。你被迫从零重启，钱和时间都在燃烧。除成本之外，这类故障延误进度、推迟交付日期，侵蚀你的 AI 投资回报。如果因此丧失竞争优势，这种低效的代价更为高昂。</p>
-<p>Anyscale Runtime 引入了若干为规模化的韧性与快速恢复而设计的特性，让团队专注于推进模型，而不是重做工作：</p>
-<ul><li><strong>Ray Data 中的动态内存管理</strong> —— 自动调整内存用量，减少训练与推理过程中的溢出与 OOM 错误。</li><li><strong>作业检查点（Job Checkpointing）</strong> —— 让长时间运行的推理负载可以暂停并恢复而不丢失进度。</li><li><strong>Epoch 中途恢复（Mid-Epoch Resume）</strong> —— 当使用 Ray Data 加载数据时，允许大规模训练作业从保存状态中途重启，避免时间和算力的浪费。</li></ul>
-<h2><strong>Anyscale Runtime 带来更快性能与更低的单次运行成本</strong></h2>
-<p>Anyscale Runtime 跨多种负载优化执行：更快更便宜的数据处理作业、更可靠的训练运行、更高吞吐的服务。我们的可复现基准显示：</p>
-<ul><li>图像批量推理快 2 倍、成本效率提升 6 倍</li><li>特征处理（编码、归一化等）快 10 倍</li><li>结构化数据处理快 2.5 倍</li><li>强化学习可扩展性提升 8 倍</li><li>高吞吐服务的 QPS 提升 7 倍</li><li>在线推理应用中的视频处理快 40%</li></ul>
-<p>以下是各负载的简要总结。想直接查看代码与数据配方、检验基准，请访问我们的 <a href="https://github.com/anyscale/runtime-benchmarks/tree/main/">GitHub 仓库</a>。</p>
-<h3><strong>图像批量推理</strong></h3>
-<p>流水线读取 JSONL——用 CPU 解码并变换图像批次，然后在 GPU 上用视觉 Transformer 模型推理，最后再用 CPU 将结果写回 JSONL。使用的数据集约 10TB。</p>
-<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/image-batch-inference">GitHub</a></p>
-<p><strong>性能：</strong> 固定集群规模下，开源 Ray 用时 772 秒，Anyscale Runtime 用时 431 秒<strong>（约快 2 倍）</strong></p>
-<p><strong>成本：</strong> 固定集群下 $63 对 $170（便宜 2.7 倍）；自动扩缩容运行下 $23 对 $142<strong>（便宜 6 倍）</strong></p>
-<h3><strong>特征预处理</strong></h3>
-<p>特征预处理——如编码和归一化——是 ML 中最反复迭代的环节之一。通常从小数据集实验开始，但在生产中迅速扩展到成百上千倍的数据。为评估这种增长模式下的性能，我们在 <strong>OrdinalEncoder</strong> 负载上以 <strong>1GB 到 1TB 的数据集规模</strong>对比了 Anyscale Runtime 与开源 Ray。</p>
-<p>可复现基准配方及按数据集规模的性能：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/preprocessors">GitHub</a></p>
-<p><strong>性能：</strong> 随着负载规模增大，Anyscale Runtime 始终取得 10 倍或更好的性能，同时保持执行稳定。</p>
-<h3><strong>结构化数据处理</strong></h3>
-<p>尽管文本、视频、图像等非结构化数据日益重要，结构化数据处理仍是现代数据与 AI 流水线的关键部分。涉及 join、聚合与过滤的负载常因序列化开销与大量 shuffle 而遇到性能瓶颈——使用 Python UDF 时尤甚。为评估这些常见条件下的性能，我们运行了 <strong>TPC-H Q1 基准</strong>。</p>
-<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/tpch">GitHub</a></p>
-<p><strong>性能：</strong> 在 Scale Factor（SF）1000、128 个 CPU 的基准下，Anyscale Runtime 以 99.1 秒完成任务，Ray 约需 913 秒（10 倍加速）</p>
-<h3><strong>高吞吐服务</strong></h3>
-<p>高吞吐服务对推荐引擎、欺诈与异常检测等实时系统至关重要。这类负载必须应对突发流量——每秒数千查询（QPS）——同时保持低延迟与一致性能，还不能过度配置资源。</p>
-<p>Ray 可跨副本和节点动态扩缩，在负载下维持吞吐。Anyscale Runtime 在此基础上扩展了直接入口（direct ingress），精简请求到推理的路径，使服务更快更高效。为测试 QPS 扩展能力，我们基准测试了一个推荐模型，包含两个 Ray Serve 部署：一个负责请求处理与候选生成的 Ingress 服务，一个在 GPU 上运行深度学习推荐模型的 Ranker 服务。</p>
-<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/serve-throughput">GitHub</a></p>
-<p><strong>性能：</strong> 使用 locust 模拟用户请求，在最大的运行（4 个 GPU 副本——Ranker 与 Ingress 部署副本保持 1:2 比例）中，Anyscale Runtime 支持 6300 req/s，Ray 为 900 req/s（提升 7 倍）</p>
-<h3><strong>在线（延迟敏感）视频处理</strong></h3>
-<p>实时视频处理极具挑战，因为它把需要大量计算的大型数据集与严苛的延迟约束结合在一起——而从目标检测到自主系统这类&quot;能看&quot;的多模态应用日益需要它。这些负载运行横跨 CPU 与 GPU 阶段的复杂异构流水线——流程类似：视频输入 → 分块 → 抽帧 → 目标检测 → 结果。</p>
-<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/serve-video-perf">GitHub</a></p>
-<p><strong>性能：</strong> 实现了两种推理场景：<em>分块推理</em>（每个 chunk 独立处理）与<em>合并推理</em>（对需要合并整段视频的应用把所有帧一起处理）。两种场景下，Anyscale Runtime 相比开源 Ray 均有<strong>约 40% 的提升</strong>。</p>
-<h2>下一步</h2>
-<p>从多模态数据预处理到大规模训练和高吞吐服务，这些基准展示了 Anyscale Runtime 如何为任意 AI 负载拓展性能、可靠性与效率的极限。</p>
-<p>而我们才刚刚开始——路线图上还有众多关键负载等待覆盖，我们的目标是让 Anyscale Runtime 成为任何 AI 负载的最佳计算引擎。</p>
-<h2>资源</h2>
-<ul><li>通过 <a href="https://github.com/anyscale/rayturbo-benchmarks/tree/main/">GitHub</a>上的配方探索 Anyscale Runtime</li><li><a href="https://www.anyscale.com/contact-sales?utm_source=anyscaleruntime">联系我们</a>，帮你优化工作负载</li><li>查看 Ray Summit 2025 的<a href="https://anyscale.com/blog/ray-summit-2025-anyscale-product-updates">其他公告</a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -10,539 +10,894 @@
     <lastBuildDate>Wed, 05 Aug 2026 00:00:00 +0000</lastBuildDate>
     <item>
       <title>Schematron V2: Frontier HTML-to-JSON extraction at a fractio…</title>
-      <link>https://inference.net/blog/#d-2026-08-05-0</link>
-      <guid isPermaLink="true">https://inference.net/blog/#d-2026-08-05-0?li=1</guid>
+      <link>https://inference.net/blog/schematron-v2/</link>
+      <guid isPermaLink="true">https://inference.net/blog/schematron-v2/?li=1</guid>
       <pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
       <description>Full title: Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</description>
-      <content:encoded><![CDATA[<p>Blog</p>
-<h1>Latest Updates</h1>
-<p>AI engineering &amp; research, product releases and upgrades, and thoughts about the industry from the Inference R&amp;D, Inc. team.</p>
-<h3>Introducing AutoEvals: Automatically find the best model for your task</h3>
-<p>Automatically discover which model is best suited for your task, with the data you already generate. AutoEvals replays your production traffic across candidate models and tells you which one to run, with real numbers on quality, cost, and latency.</p>
-<p>Aug 5, 2026</p>
+      <content:encoded><![CDATA[<p>Apr 16, 2026</p>
+<h1>Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</h1>
 <p>A</p>
 <p>Amar Singh</p>
-<h3>Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</h3>
-<p>Schematron is a family of small, purpose-built models that transform messy HTML into clean, structured JSON, delivering frontier-level extraction quality at a fraction of the cost and latency of large general-purpose LLMs.</p>
-<p>Apr 16, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Introducing Inference platform: Monitor, train, and deploy self-improving AI models</h3>
-<p>Build self-improving AI-systems from production data</p>
-<p>Apr 14, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</h3>
-<p>Learn how Inference.net trains Specialized Language Models using the NVIDIA NeMO framework to delivery frontier accuracy at up to 50x lower cost.</p>
-<p>Mar 11, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Specialized LLMs: The model you need doesn't exist yet</h3>
-<p>Specialized LLMs trained on your own user data can match frontier quality for a fraction of the cost</p>
-<p>Feb 5, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Project OSSAS: Custom LLMs to process 100 Million Research Papers</h3>
-<p>Project OSSAS is a large-scale open-science initiative to make the world’s scientific knowledge accessible through AI-generated summaries of research papers.</p>
-<p>Nov 11, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>LOGIC: Trustless Inference through Log-Probability Verification</h3>
-<p>A practical method for verifying LLM inference requests in trustless environments.</p>
-<p>Nov 5, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Hybrid-Attention models are the future for SLMs</h3>
-<p>Hybrid attention delivers up to 3x cost reduction compared to traditional transformer models</p>
-<p>Nov 3, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Announcing our $11.8M Series Seed</h3>
-<p>We raised $11.8 million in funding led by Multicoin Capital and a16z CSX to train and hosti custom language models that are faster, more affordable, and more accurate than what the Big Labs offer.</p>
-<p>Oct 14, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Schematron: An LLM trained for HTML -&gt; JSON at scale</h3>
-<p>Schematron-8B and Schematron-3B deliver frontier-level extraction quality at 1-2% of the cost and 10x+ faster inference than large, general-purpose LLMs.</p>
-<p>Sep 9, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>]]></content:encoded>
+<h2>Introduction</h2>
+<p>Today we're releasing Schematron V2, the next generation of our specialized HTML-to-JSON extraction models. If you're new here: Schematron is a family of small, purpose-built models that transform messy HTML into clean, structured JSON, delivering frontier-level extraction quality at a fraction of the cost and latency of large general-purpose LLMs.</p>
+<p><a href="https://inference.net/blog/schematron/">Schematron V1</a> already powers massive extraction workloads for companies operating on web-scale data in production today, and we’re excited to release new variants that push performance even further.</p>
+<p>Schematron V2 introduces two new models: Schematron V2 Small and Schematron V2 Turbo. Schematron V2 Small nearly matches the quality of our first-generation 8B model while keeping 3B-like speed. Schematron V2 Turbo is optimized for maximum throughput, processing 4.14 requests per second on a single H100 (a 2.5x improvement over the original Schematron 3B) while still exceeding the quality of the previous generation 3B model.</p>
+<p>We trained Schematron using <a href="https://inference.net/blog/introducing-inference-platform/">Inference platform</a>, our LLM fine-tuning engine built specifically for training high-performance task-specific LLMs. Both Schematron models are available today through our serverless API on <a href="http://inference.net">Inference.net</a>.</p>
+<p>Create a <a href="https://inference.net/register">free account</a> or check out our <a href="https://docs.inference.net/workhorse-models/schematron">documentation</a> to get started.</p>
+<h2>Schematron API</h2>
+<p>Call Schematron V2 through the Inference.net serverless API using the code below. Make sure to set your <code>INFERENCE_API_KEY</code> and the <code>HTML</code> variable to your HTML document.</p>
+<pre><code>import os
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+class Product(BaseModel):
+    name: str
+    price: float = Field(
+        ..., description=(
+            &quot;Primary price of the product.&quot;
+        )
+    )
+    specs: dict = Field(
+        default_factory=dict,
+        description=&quot;Specs of the product.&quot;,
+    )
+    tags: list[str] = Field(
+        default_factory=list,
+        description=&quot;Tags assigned of the product.&quot;,
+    )
+
+HTML = '&lt;YOUR_HTML_DOC&gt;'
+
+client = OpenAI(
+    base_url=&quot;https://api.inference.net/v1&quot;,
+    api_key=os.environ.get(&quot;INFERENCE_API_KEY&quot;),
+)
+
+resp = client.beta.chat.completions.parse(
+    model=&quot;inference-net/schematron-v2-small&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: HTML},
+    ],
+    response_format=Product,
+)
+
+print(resp.choices[0].message.parsed.model_dump_json(indent=2))</code></pre>
+<pre><code>import os
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+class Product(BaseModel):
+    name: str
+    price: float = Field(
+        ..., description=(
+            &quot;Primary price of the product.&quot;
+        )
+    )
+    specs: dict = Field(
+        default_factory=dict,
+        description=&quot;Specs of the product.&quot;,
+    )
+    tags: list[str] = Field(
+        default_factory=list,
+        description=&quot;Tags assigned of the product.&quot;,
+    )
+
+HTML = '&lt;YOUR_HTML_DOC&gt;'
+
+client = OpenAI(
+    base_url=&quot;https://api.inference.net/v1&quot;,
+    api_key=os.environ.get(&quot;INFERENCE_API_KEY&quot;),
+)
+
+resp = client.beta.chat.completions.parse(
+    model=&quot;inference-net/schematron-v2-small&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: HTML},
+    ],
+    response_format=Product,
+)
+
+print(resp.choices[0].message.parsed.model_dump_json(indent=2))</code></pre>
+<h2>Why This Matters</h2>
+<p>When we launched Schematron V1 in September 2025, we showed that small, specialized models could match frontier LLMs at HTML extraction while being 40-80x cheaper. The response from the community validated what we already knew: teams everywhere are trying to extract structured data from the web at scale, and cost has been the bottleneck.</p>
+<p>With V2, we pushed the quality-to-size ratio even further. You can get the speed of much smaller models while maintaining 8B-like cost. And if throughput is your priority, the Turbo variant lets you process pages faster than ever before.</p>
+<h3>Quality: Closing the Gap with 8B</h3>
+<p>We evaluated Schematron V2 using the same LLM-as-a-judge methodology from our original launch, with GPT 5.4 grading extractions on a 1-5 scale.</p>
+<p>LLM-as-a-Judge: Average Quality Score by Model</p>
+<p>Schematron V2 Small scores 4.060, putting it within striking distance of the original Schematron 8B (4.070) and meaningfully ahead of the first-generation Schematron 3B (3.909). For most production workloads, the difference between V2 Small and 8B is negligible.</p>
+<p>Schematron V2 Turbo scores 4.039, which is still a significant jump from the original 3B, and it achieves this while being optimized for speed rather than quality.</p>
+<p>To put this in perspective: both V2 models outperform DeepSeek V3.2 and GPT-5.4 Nano on this benchmark, both of which are substantially larger models.</p>
+<h3>Throughput: 2.5x Faster Than V1</h3>
+<p>Schematron V2 Turbo is built for high-volume workloads where every millisecond and every dollar counts.</p>
+<p>Request Throughput Comparison</p>
+<p>On a single H100 with 10k input tokens and 500 output tokens:</p>
+<p><strong>Schematron V2 Small</strong>: 2.47 requests/sec</p>
+<p><strong>Schematron V2 Turbo</strong>: 4.14 requests/sec</p>
+<p><strong>Schematron 8B (V1):</strong> 1.63 requests/sec</p>
+<p><strong>Schematron 3B (V1)</strong>: 2.47 requests/sec</p>
+<p>The Turbo model achieves 4.14 requests per second, a 2.5x improvement over the original 8B and nearly 1.7x over the previous 3B. For crawling and scraping pipelines that are latency-sensitive (think financial document parsing for live trading, or real-time price monitoring), this speed advantage compounds quickly.</p>
+<h2>Improving LLM Factuality: SimpleQA Results</h2>
+<p>We also re-ran our SimpleQA benchmark, which measures how well Schematron improves factual accuracy when used as an extraction layer in a web-search-augmented pipeline (using GPT-5 Nano as the base model with Exa search).</p>
+<p>SimpleQA Benchmark Scores</p>
+<p><strong>Schematron V2 Turbo:</strong> 79.42</p>
+<p><strong>Schematron V2 Small:</strong> 83.10</p>
+<p><strong>Schematron 8B (V1):</strong> 85.58</p>
+<p><strong>Schematron 3B (V1):</strong> 75.47</p>
+<p><strong>GPT-5 Nano (no search):</strong> 8.54</p>
+<p>Schematron V2 Small reaches 83.10, a massive 7.6-point improvement over the first-generation 3B and only 2.5 points behind the 8B model. Even the Turbo variant hits 79.42, nearly a 4-point gain over the original 3B while processing pages significantly faster.</p>
+<p>These results reinforce our core finding: structured extraction fundamentally changes the economics of web search for LLMs. Instead of passing entire raw HTML pages into a large model (tens of thousands of tokens per query), Schematron extracts only the structured data that matters, making web-augmented factuality viable at scale.</p>
+<h2>Pricing</h2>
+<p>Schematron V2 is priced to make internet-scale extraction accessible:</p>
+<p><strong>Schematron V2:</strong> $0.10/1M input tokens – $0.25/1M output tokens</p>
+<p><strong>Schematron V2 Turbo:</strong> $0.06/1M input tokens – $0.15/1M output tokens</p>
+<p>At these prices, processing 1 million pages per day (assuming 10k input + 8k output tokens per page) costs roughly $700/day with V2 3B or $440/day with V2 3B Turbo. For high-volume workloads, additional discounts are available through dedicated instances. <a href="https://inference.net/meet-with-us/">Meet with us</a> to learn more about dedicated capacity.</p>
+<h3>What's Next: Schematron Pro</h3>
+<p>We're not stopping here. Schematron Pro is in development, targeting even higher accuracy than the current 8B model while maintaining similar request throughput. For teams that need the absolute best extraction quality and are willing to pay a premium over the 3B models, Pro will be the answer. Stay tuned.</p>
+<h3>Getting Started</h3>
+<p>Both V2 models share the same core capabilities as the original Schematron family: a 128K token context window and strict JSON mode guaranteeing 100% schema-compliant output. Define your schema with Pydantic, Zod, or JSON Schema, pass in raw HTML, and get back validated, type-safe data.</p>
+<p>For more information on usage, please refer to our <a href="https://docs.inference.net/workhorse-models/schematron">documentation</a>.</p>
+<p>The Schematron V2 Small and V2 Turbo model weights will remain closed-source for now, available exclusively through our serverless API. The original open-source Schematron 3B and 8B models remain <a href="https://huggingface.co/inference-net/Schematron-8B">available on Hugging Face.</a></p>
+<h3>Start Extracting</h3>
+<p>We'd love to hear what you're building. Get started with these resources:</p>
+<p><a href="https://inference.net/register">Create Account</a>: Try the Inference.net API with $10 free credits</p>
+<p><a href="https://docs.inference.net/workhorse-models/schematron">Documentation</a>: Read the Schematron docs to learn how to call the API</p>
+<p><a href="https://inference.net/meet-with-us/">Schedule a meeting</a>: Meet with our team to learn about dedicated instances and volume pricing</p>
+<p>We can't wait to see what you build with even faster, even cheaper extraction.</p>
+<p>CONTACT</p>
+<h2>Meet with our research team</h2>
+<p>Schedule a call with our research team to learn more about how Specialized Language Models can cut costs and improve performance.</p>]]></content:encoded>
     </item>
     <item>
       <title>Introducing Inference platform: Monitor, train, and deploy s…</title>
-      <link>https://inference.net/blog/#d-2026-04-16-1</link>
-      <guid isPermaLink="true">https://inference.net/blog/#d-2026-04-16-1?li=1</guid>
+      <link>https://inference.net/blog/introducing-inference-platform/</link>
+      <guid isPermaLink="true">https://inference.net/blog/introducing-inference-platform/?li=1</guid>
       <pubDate>Thu, 16 Apr 2026 00:00:00 +0000</pubDate>
       <description>Full title: Introducing Inference platform: Monitor, train, and deploy self-improving AI models</description>
-      <content:encoded><![CDATA[<p>Blog</p>
-<h1>Latest Updates</h1>
-<p>AI engineering &amp; research, product releases and upgrades, and thoughts about the industry from the Inference R&amp;D, Inc. team.</p>
-<h3>Introducing AutoEvals: Automatically find the best model for your task</h3>
-<p>Automatically discover which model is best suited for your task, with the data you already generate. AutoEvals replays your production traffic across candidate models and tells you which one to run, with real numbers on quality, cost, and latency.</p>
-<p>Aug 5, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</h3>
-<p>Schematron is a family of small, purpose-built models that transform messy HTML into clean, structured JSON, delivering frontier-level extraction quality at a fraction of the cost and latency of large general-purpose LLMs.</p>
-<p>Apr 16, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Introducing Inference platform: Monitor, train, and deploy self-improving AI models</h3>
-<p>Build self-improving AI-systems from production data</p>
-<p>Apr 14, 2026</p>
+      <content:encoded><![CDATA[<p>Apr 14, 2026</p>
+<h1>Introducing Inference platform: Monitor, train, and deploy self-improving AI models</h1>
 <p>S</p>
 <p>Sam Hogan</p>
-<h3>How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</h3>
-<p>Learn how Inference.net trains Specialized Language Models using the NVIDIA NeMO framework to delivery frontier accuracy at up to 50x lower cost.</p>
-<p>Mar 11, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Specialized LLMs: The model you need doesn't exist yet</h3>
-<p>Specialized LLMs trained on your own user data can match frontier quality for a fraction of the cost</p>
-<p>Feb 5, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Project OSSAS: Custom LLMs to process 100 Million Research Papers</h3>
-<p>Project OSSAS is a large-scale open-science initiative to make the world’s scientific knowledge accessible through AI-generated summaries of research papers.</p>
-<p>Nov 11, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>LOGIC: Trustless Inference through Log-Probability Verification</h3>
-<p>A practical method for verifying LLM inference requests in trustless environments.</p>
-<p>Nov 5, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Hybrid-Attention models are the future for SLMs</h3>
-<p>Hybrid attention delivers up to 3x cost reduction compared to traditional transformer models</p>
-<p>Nov 3, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Announcing our $11.8M Series Seed</h3>
-<p>We raised $11.8 million in funding led by Multicoin Capital and a16z CSX to train and hosti custom language models that are faster, more affordable, and more accurate than what the Big Labs offer.</p>
-<p>Oct 14, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Schematron: An LLM trained for HTML -&gt; JSON at scale</h3>
-<p>Schematron-8B and Schematron-3B deliver frontier-level extraction quality at 1-2% of the cost and 10x+ faster inference than large, general-purpose LLMs.</p>
-<p>Sep 9, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>]]></content:encoded>
+<h2>Introduction</h2>
+<p>Today we're launching <a href="https://inference.net/register">Inference platform</a>, a platform for building continuously self-improving AI models.</p>
+<p>Inference platform is a full-stack platform that combines monitoring, evaluations, training, and deployment into a single product. It's built specifically for teams that want to optimize production AI applications. It is not a general-purpose AI research tool.</p>
+<p>The core idea is simple: instead of constructing synthetic environments that try to approximate reality, Inference platform samples production traffic from your application and uses it to train models via supervised fine-tuning. Your production data is your training environment.</p>
+<p>Today, Inference platform is capable of training Specialized Language Models that match or exceed frontier-quality at up to 95% lower cost.</p>
+<p>LLM-as-a-judge: Average Quality Score by Model</p>
+<h2>How Inference platform Works</h2>
+<p>Inference platform installs into your repository like an ordinary LLM tracing tool. It works with existing OpenAI- and Anthropic-compatible providers – just swap your base URL and add a few request headers. The Inference Gateway sits between your application and your model provider recording, analyzing and storing production traffic.</p>
+<p>Add Inference platform to your project with a single command. From your project root:</p>
+<pre><code>npm install -g @inference/cli &amp;&amp; inf instrument</code></pre>
+<pre><code>npm install -g @inference/cli &amp;&amp; inf instrument</code></pre>
+<p>This command uses an AI coding agent to analyze your codebase and make the changes necessary to route requests through the Inference platform with the correct metadata. From there, you run your application normally. Every LLM call is captured and appears in the Inference.net dashboard.</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url=&quot;https://api.inference.net/v1&quot;,
+    api_key=os.environ[&quot;INFERENCE_API_KEY&quot;],
+    default_headers={
+        &quot;x-inference-provider-api-key&quot;: os.environ[&quot;OPENAI_API_KEY&quot;],
+        &quot;x-inference-provider&quot;: &quot;openai&quot;,
+    },
+)
+
+response = client.chat.completions.create(
+    model=&quot;gpt-4.1&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello, world!&quot;}],
+)
+
+print(response.choices[0].message.content)</code></pre>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url=&quot;https://api.inference.net/v1&quot;,
+    api_key=os.environ[&quot;INFERENCE_API_KEY&quot;],
+    default_headers={
+        &quot;x-inference-provider-api-key&quot;: os.environ[&quot;OPENAI_API_KEY&quot;],
+        &quot;x-inference-provider&quot;: &quot;openai&quot;,
+    },
+)
+
+response = client.chat.completions.create(
+    model=&quot;gpt-4.1&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello, world!&quot;}],
+)
+
+print(response.choices[0].message.content)</code></pre>
+<p>For more information on getting started, refer to our <a href="https://docs.inference.net/introduction">documentation</a>.</p>
+<h2>Inference platform workflow</h2>
+<p>Once traffic is flowing, the workflow is quite simple:</p>
+<p><strong>Build datasets from traffic.</strong> Inference platform turns your recorded LLM calls into training and evaluation datasets. Real traffic means your training data matches the actual distribution of scenarios your model will encounter.</p>
+<p><strong>Evaluate with LLM-as-judge.</strong> You can't improve what you can't measure. Inference platform helps you build evaluation suites starting from the data you already have. You establish a performance baseline for your current model, then measure every subsequent training run against it.</p>
+<p><strong>Train.</strong> Inference platform Recipes offer preconfigured training rules with a base model, optimized parameters, and compute resources. The platform handles base model selection, hyperparameters, and training infrastructure. Evaluations run automatically before, during, and after training to measure quality.</p>
+<p><strong>Deploy.</strong> Trained models deploy to dedicated GPU infrastructure. Switching your application to a custom model is a one-line code change. The model weights are fully owned by you; deploy on our infrastructure, or host in your own private VPS.</p>
+<p>The Inference platform Self-Improvement Flywheel</p>
+<p>From here, the cycle continues, with the Inference platform managing the training loop. It ingests fresh production data, generates training and evaluation datasets, runs training jobs, and compares resulting models against the production baseline. When new models are ready, they’re staged for final review and deployment.</p>
+<h2>Inference platform in Production</h2>
+<p>Inference platform training loops vary in cost depending on the size of the base model you’re training and the amount of data required to train. Training runs range from $25 up to several thousand dollars. Inference platform is already powering custom models in production:</p>
+<ul><li>Self-improving coding models for proprietary programming languages, used by hundreds of engineers at a public financial institution</li><li>Data extraction models that match Opus 4.6 performance with 150ms p50 end-to-end latency at 5% the cost</li><li>Calorie estimation models that outperform frontier models on quality, latency, and cost</li><li>HTML-to-JSON extraction models like <a href="https://huggingface.co/inference-net/Schematron-8B">Schematron-8b</a>, used by some of the largest web scraping companies in the world</li><li>Deep research agents that surpass the current Pareto frontier on cost-to-accuracy.</li></ul>
+<p>We’ll be sharing more stories about our customers and the models they have trained using Inference platform over the coming weeks.</p>
+<h2>Inference platform vs. RL</h2>
+<p>The dominant post-training story today starts in the wrong place. First you spend weeks building an environment that tries to simulate the real work your model will face after deployment. Then you spend more time building rubrics, hardening evals, and trying to stop the model from learning the wrong lesson. After training, you discover the model has found a way to optimize for the score instead of the job, and the process begins again.</p>
+<p>This is expensive, and slow, and brittle in exactly the way engineers hate: you can do everything right inside the sandbox and still learn almost nothing about how the system will behave once it hits production. AI systems cannot be optimized in a vacuum. If the goal is to improve a production system, the source of truth should be production itself.</p>
+<p>We built Inference platform because we think the current paradigms promoted by RL are unnecessarily difficult, low yield, and out of reach for most teams. If you're running an AI application in production, you're already generating the data you need to train a frontier-quality model for your system. The tools required to capture this data, evaluate, and train on it, without building an RL environment, have simply not existed in a single place until today.</p>
+<h2>Available Today</h2>
+<p>Inference platform is available in public beta today. We are covering training and deployment costs during the beta, so if you are already running an app or agent in production, you can try the full observe-train-deploy loop for free.</p>
+<p>We have a lot in store for the Inference platform. Over time, Inference platform will take on more of the improvement loop, shortening the distance from live traffic to a better model. If your AI system is already in production, you already have enough to start.</p>
+<p>Sign up for an account at <a href="http://inference.net">inference.net</a> or check out the <a href="https://docs.inference.net/get-started/record-first-call">quick start guide</a> for detailed instructions on how to get started.</p>
+<p>CONTACT</p>
+<h2>Meet with our research team</h2>
+<p>Schedule a call with our research team to learn more about how Specialized Language Models can cut costs and improve performance.</p>]]></content:encoded>
     </item>
     <item>
       <title>How Inference.net trains Specialized Language Models that cu…</title>
-      <link>https://inference.net/blog/#d-2026-04-14-2</link>
-      <guid isPermaLink="true">https://inference.net/blog/#d-2026-04-14-2?li=1</guid>
+      <link>https://inference.net/blog/nemotron-finetuning/</link>
+      <guid isPermaLink="true">https://inference.net/blog/nemotron-finetuning/?li=1</guid>
       <pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate>
       <description>Full title: How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</description>
-      <content:encoded><![CDATA[<p>Blog</p>
-<h1>Latest Updates</h1>
-<p>AI engineering &amp; research, product releases and upgrades, and thoughts about the industry from the Inference R&amp;D, Inc. team.</p>
-<h3>Introducing AutoEvals: Automatically find the best model for your task</h3>
-<p>Automatically discover which model is best suited for your task, with the data you already generate. AutoEvals replays your production traffic across candidate models and tells you which one to run, with real numbers on quality, cost, and latency.</p>
-<p>Aug 5, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</h3>
-<p>Schematron is a family of small, purpose-built models that transform messy HTML into clean, structured JSON, delivering frontier-level extraction quality at a fraction of the cost and latency of large general-purpose LLMs.</p>
-<p>Apr 16, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Introducing Inference platform: Monitor, train, and deploy self-improving AI models</h3>
-<p>Build self-improving AI-systems from production data</p>
-<p>Apr 14, 2026</p>
+      <content:encoded><![CDATA[<p>Mar 11, 2026</p>
+<h1>How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</h1>
 <p>S</p>
 <p>Sam Hogan</p>
-<h3>How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</h3>
-<p>Learn how Inference.net trains Specialized Language Models using the NVIDIA NeMO framework to delivery frontier accuracy at up to 50x lower cost.</p>
-<p>Mar 11, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Specialized LLMs: The model you need doesn't exist yet</h3>
-<p>Specialized LLMs trained on your own user data can match frontier quality for a fraction of the cost</p>
-<p>Feb 5, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Project OSSAS: Custom LLMs to process 100 Million Research Papers</h3>
-<p>Project OSSAS is a large-scale open-science initiative to make the world’s scientific knowledge accessible through AI-generated summaries of research papers.</p>
-<p>Nov 11, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>LOGIC: Trustless Inference through Log-Probability Verification</h3>
-<p>A practical method for verifying LLM inference requests in trustless environments.</p>
-<p>Nov 5, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Hybrid-Attention models are the future for SLMs</h3>
-<p>Hybrid attention delivers up to 3x cost reduction compared to traditional transformer models</p>
-<p>Nov 3, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Announcing our $11.8M Series Seed</h3>
-<p>We raised $11.8 million in funding led by Multicoin Capital and a16z CSX to train and hosti custom language models that are faster, more affordable, and more accurate than what the Big Labs offer.</p>
-<p>Oct 14, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Schematron: An LLM trained for HTML -&gt; JSON at scale</h3>
-<p>Schematron-8B and Schematron-3B deliver frontier-level extraction quality at 1-2% of the cost and 10x+ faster inference than large, general-purpose LLMs.</p>
-<p>Sep 9, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>]]></content:encoded>
+<h2>Introduction</h2>
+<p>AI products often start with powerful frontier models. Early prototypes work well. Accuracy is high. Development moves quickly. But as usage grows, a different problem appears. The cost of running those models increases rapidly, and you discover that the tools that enabled innovation can become the biggest barrier to scaling it.</p>
+<p>You face a familiar set of trade-offs:</p>
+<ul><li><strong>Quality vs. cost: </strong>High-quality frontier models deliver strong results but become expensive to run at scale.</li><li><strong>Cost vs. accuracy:</strong> Smaller general-purpose models reduce costs but often fail to meet production quality requirements.</li><li><strong>Convenience vs. control: </strong>API-based solutions simplify integration but limit control over performance, latency, and model evolution.</li></ul>
+<p>The result is a difficult balance between quality, cost, and operational control.</p>
+<p><a href="http://inference.net/">Inference.net</a> was created to solve this problem. Instead of relying on general-purpose models, we build specialized AI models tailored to your specific workload. These models are trained on your real data and optimized for the exact tasks your applications perform.</p>
+<p>This approach enables you to:</p>
+<ul><li>Maintain production-grade accuracy</li><li>Reduce inference costs dramatically</li><li>Gain full control over model performance and further development</li><li>Scale AI systems predictably</li></ul>
+<p>Underlying technologies such as <a href="https://developer.nvidia.com/nemotron#:~:text=Tutorials-,NVIDIA%20Nemotron%20Models,-Nemotron%20models%20are">NVIDIA Nemotron open models</a> and the <a href="https://github.com/NVIDIA-NeMo/">NVIDIA NeMo </a>framework provide the foundation that makes this approach practical.</p>
+<p>This post explains how the system works and shows how two real deployments achieved 25x and 50x cost reductions while maintaining high accuracy.</p>
+<h2>The Inference.net Approach: Purpose-Built Models</h2>
+<p>Many production AI systems perform a relatively narrow set of tasks—extracting structured data from documents, summarizing large volumes of text, classifying content, or generating structured outputs. Yet these workloads are often powered by massive general-purpose models designed to solve thousands of different problems. While powerful, these models carry significant computational overhead for capabilities the application may never use. The result is a mismatch between the breadth of the model and the specificity of the task, leading to higher costs, unnecessary complexity, and inefficiencies that become increasingly visible as usage scales.</p>
+<p>Inference.net addresses this by building models designed specifically for the job you perform. Each engagement typically follows a structured process:</p>
+<ul><li><strong>Define the task and evaluation criteria</strong> - analyze real production data and establish clear success metrics such as accuracy thresholds, hallucination rates, or classification performance.</li><li><strong>Train a specialized model </strong>- fine-tune a base model using your data and optimize for the exact input and output patterns of your workload.</li><li><strong>Deploy production infrastructure</strong> - deploy the model on optimized GPU infrastructure and expose it through OpenAI-compatible APIs, allowing you to integrate it without rebuilding your application stack.</li></ul>
+<p>The result is a model that performs one task extremely well, rather than many tasks moderately well.</p>
+<h3>Why Model Architecture Matters</h3>
+<p>When training a specialized model, the underlying architecture directly impacts both accuracy and cost. Inference.net frequently builds on <a href="https://developer.nvidia.com/nemotron#:~:text=Tutorials-,NVIDIA%20Nemotron%20Models,-Nemotron%20models%20are">Nemotron open models</a>, which combine multiple architectural techniques to balance modeling capability with efficient inference. These models integrate:</p>
+<ul><li><strong>Sequence-efficient processing layers </strong>that reduce computational overhead</li><li><strong>Attention mechanisms</strong> that preserve the ability to capture long-range relationships in text</li><li><strong>Dense representation layers</strong> that support fine-tuning for domain-specific patterns</li></ul>
+<p>This balance allows models to learn your specialized tasks effectively, maintain strong reasoning, and operate efficiently in production. For high-volume workloads, these characteristics directly influence operational economics.</p>
+<h3>Training Specialized Models at Production Scale</h3>
+<p>Building use-case-specific models at production scale requires a training framework that can handle distributed training across large GPU clusters, massive datasets, and custom evaluation pipelines without forcing you to become an expert in low-level parallelism and infrastructure complexity.</p>
+<p>Inferenc.net uses the <a href="https://github.com/NVIDIA-NeMo/">NeMo </a>framework and <a href="https://github.com/NVIDIA-NeMo/Megatron-Bridge">Megatron-Bridge</a> open library —part of the NeMo framework — to fill this gap. Megatron Bridge offers built-in training loops that work out of the box, while exposing clean extension points for the customization required for each engagement. For larger models, particularly those above 30B parameters and mixture-of-experts (MoE) models, it provides access to <a href="https://github.com/NVIDIA/Megatron-LM">Megatron-LM</a>’s distributed training capabilities, including tensor, pipeline, and expert parallelism. These capabilities are essential for efficiently utilizing large GPU clusters and controlling training time and cost.</p>
+<p>Today, this stack powers dozens of training jobs per week across Inference.net client workloads. It handles everything from small supervised fine-tuning runs on single nodes to large-scale distributed training across multi-node GPU clusters. It's what lets us move from use-case definition to production deployment in weeks rather than months, without requiring you to build your own GPU infrastructure or hire ML engineering teams.</p>
+<h2>Enterprise Data Extraction at 2 Trillion Tokens per Month</h2>
+<p>One of our customers operates a platform that processes millions of AI-generated responses every day. Their core workload is structured data extraction—identifying entities, citations, and classifications from semi-structured text to power analytics dashboards, competitive intelligence, and performance reporting.</p>
+<p>At roughly 2 trillion tokens processed each month, accuracy is critical. Every missed entity or hallucinated citation can propagate through downstream systems and translate directly into measurable business impact.</p>
+<h3>Maintaining Accuracy Without Breaking Economics</h3>
+<p>The customer's extraction pipeline had strict performance requirements. It needed to maintain high F1 scores for entity recognition, near-zero hallucination rates for citations, and reliable exact-match performance for classifications—all while processing roughly 2 trillion tokens per month.</p>
+<p>A frontier API model initially met these quality requirements. But at this scale, per-token pricing quickly became unsustainable. As usage grew, AI costs grew with it, turning product growth into a margin problem.</p>
+<p>Attempts to reduce costs by switching to smaller general-purpose models created new risks. Entities were missed, citations were fabricated, and classification accuracy dropped below acceptable thresholds. The system became unreliable for downstream analytics and reporting. This is a common cycle many organizations encounter: start with a powerful model to achieve quality, then gradually trade away intelligence to survive the bill.</p>
+<p>The customer needed to break that cycle—maintain their accuracy threshold without the frontier price tag while gaining long-term control over their AI system.</p>
+<h3>The Solution: A Specialized Language Model</h3>
+<p>We partnered with the customer to move from use-case definition to production deployment, following a structured process we use across all client engagements:</p>
+<p><strong>1. Define the task and evaluation framework</strong></p>
+<p>The first step was understanding the workload in depth. Instead of relying on sample inputs, we analyzed real production traffic at scale, capturing the full distribution of edge cases, formatting variations, and failure modes.</p>
+<p>Working closely with the customer’s engineering team, we built a golden evaluation dataset and defined clear performance thresholds for F1 score, exact match accuracy, and hallucination rate. These metrics established an objective pass-fail standard before any model training began.</p>
+<p><strong>2. Train and optimize the model</strong></p>
+<p>We then created approximately 500,000 high-quality training samples using Inference.net's internal tooling and frontier model distillation via NeMo Megatron Bridge.</p>
+<p>Several base architectures were evaluated before selecting Nemotron 2 Nano, which offered a strong balance between fine-tuning capacity and inference throughput. The model was then further fine-tuned through supervised training on the customer’s production data, iterating against the evaluation framework until it consistently met the required quality targets.</p>
+<p><strong>3. Deploy in production</strong></p>
+<p>The final model was deployed on CoreWeave GPUs via Inference.net's custom inference stack, exposing OpenAI-compatible APIs that integrated directly with the customer's existing pipeline.</p>
+<p>From the customer’s perspective, deployment required no GPU procurement, no ML hiring, no DevOps overhead. The system simply replaced the previous API endpoint while delivering significantly better economics.</p>
+<h3>The Impact: Frontier-Level Accuracy at a Fraction of the Cost</h3>
+<p>The table below compares the performance of the specialized model built for the customer's workload with two general-purpose models previously tested in their pipeline:</p>
+<table><thead><tr><th>Metric</th><th>Specialized Nemotron Model</th><th>GPT-5 (ref.)</th><th>GPT-4o-mini (ref.)</th></tr></thead><tbody><tr><td>F1 Score</td><td>0.809</td><td>0.825</td><td>0.722</td></tr><tr><td>Exact Match</td><td>0.428</td><td>0.455</td><td>0.308</td></tr><tr><td>Hallucination Rate</td><td>Negligible</td><td>Negligible</td><td>Frequent</td></tr><tr><td><strong>Relative Cost</strong></td><td><strong>1x</strong></td><td><strong>25x</strong></td><td><strong>~3x</strong></td></tr></tbody></table>
+<p>The specialized model achieved an F1 score of 0.809, meeting the customer's production quality threshold while maintaining negligible hallucination rates. It reliably extracted entities and citations without introducing errors that could propagate into downstream analytics.</p>
+<p>For reference, GPT-5 scored an Fi score of 0.825 on the same evaluation set—only a small margin higher—despite being a significantly larger general-purpose model designed to support a wide range of tasks. The specialized 9B model closed the gap to within 2 percentage points on F1while being optimized for a single workload.</p>
+<p>GPT-4o-mini, which the customer had previously tested as a cost-saving alternative, achieved an F1 score of 0.722 but introduced frequent hallucinations, placing it well below the reliability threshold required for production.</p>
+<p>At roughly 2 trillion tokens processed each month, inference costs dropped to less than 4% of the previous spend, a <strong>25x</strong> reduction.</p>
+<p>Just as important, the customer now owns their model weights, evaluation framework, and deployment environment, eliminating dependence on external API changes, rate limits, or deprecation schedules.</p>
+<h2>Case Study: Processing 100 million Research Papers for Under $100K</h2>
+<p>Inference.net applied the same approach to an open science initiative in collaboration with LAION <a href="https://inference.net/blog/project-aella">Project OSSAS</a>. The goal of the project was to make the world's scientific knowledge more accessible by converting large volumes of academic papers into AI-generated structured summaries.</p>
+<h3>The Challenge: Making Large-Scale Scientific Knowledge Accessible</h3>
+<p>The project's scope was ambitious: process 100 million research papers into structured, searchable summaries. Maintaining quality was critical. The summaries needed to preserve the factual content of the original papers while remaining concise and useful for downstream analysis.</p>
+<p>Two metrics defined success:</p>
+<ul><li><strong>Question-answering accuracy,</strong> measuring whether the summary preserved the paper’s key facts</li><li><strong>LLM-as-Judge evaluation</strong>, measuring overall summary quality</li></ul>
+<p>At frontier API pricing, processing the full corpus would have cost more than $5 million—far beyond what a non-profit initiative could support.</p>
+<p>To make the project viable, the team needed a way to maintain factual accuracy while dramatically reducing the cost of processing each document, rather than sampling a fraction of research papers.</p>
+<h3>Solution: Training a Specialized Summarization Model</h3>
+<p>Inference.net built a task-specific summarization model designed for scientific literature. The team fine-tuned Nemotron 2 Nano 12B on a curated dataset of 110,000 research papers paired with high-quality summaries generated from frontier models. This approach allowed the specialized model to learn effective summarization patterns while benefiting from an architecture optimized for efficient inference.</p>
+<p>The resulting model—OSSAS-Nemotron-12B—was deployed on 8xH200 GPU nodes using vLLM, enabling the system to process the entire 100-million-paper corpus.</p>
+<h3>The Impact: Frontier-Level Accuracy at a Fraction of the Cost</h3>
+<p>The table below shows the specialized model's performance with a frontier model GPT-5 used as a reference.</p>
+<table><thead><tr><th>Metric</th><th>OSSAS-Nemotron-12B</th><th>GPT-5 (ref.)</th></tr></thead><tbody><tr><td>LLM-as-Judge Score</td><td>4.25 / 5</td><td>4.85 / 5</td></tr><tr><td>QA Accuracy</td><td>73.9%</td><td>74.6%</td></tr><tr><td><strong>Cost for 100M Papers</strong></td><td><strong>&lt; $100,000</strong></td><td><strong>$5M+</strong></td></tr></tbody></table>
+<p>On question-answering accuracy, the metric most directly tied to factual reliability, the specialized model scored 73.9%, less than 1 percentage point below the frontier GPT-5 reference model.</p>
+<p>While the LLM-as-Judge score showed a wider gap—4.25 versus 4.85 out of 5—the results confirmed that the summaries preserved the key information needed for research discovery and analysis.</p>
+<p>The economic impact was significant. The per-paper processing cost fell below $0.001, compared with more than $0.05 using frontier APIs.</p>
+<p>This 50× cost reduction transformed what would have been a $5M+ project into a sub-$100K effort, making it economically feasible to process the entire corpus rather than sampling a small subset.</p>
+<p>As a result, the project unlocked large-scale access to scientific knowledge while maintaining the factual reliability required for research applications.</p>
+<h2>The Playbook: When Specialized Models Win</h2>
+<p>Both deployments followed the same core pattern. In each case, the economic advantages were not the starting point—they emerged as a direct result of the technical approach.</p>
+<p>This playbook works particularly well when three conditions are present.</p>
+<p><strong>1. Clearly defined tasks and evaluation criteria</strong></p>
+<p>Use-case-specific models are most effective when the task can be precisely defined and measured. Teams must be able to clearly articulate what “good” looks like and evaluate model performance against objective metrics.</p>
+<p>In the enterprise case, this meant defining thresholds for F1 score, exact-match accuracy, and hallucination rate before training began. In the research case, the evaluation framework relied on question-answering accuracy and human-calibrated quality scores.</p>
+<p>This level of rigor makes the approach practical. Model development becomes an iterative process guided by measurable targets rather than subjective judgments.</p>
+<p><strong>2. High processing volume</strong></p>
+<p>Specialized models become especially compelling at scale. When systems process billions or trillions of tokens, even small improvements in efficiency translate into substantial cost reductions.</p>
+<p>In both case studies, the workload volume—2 trillion tokens per month in one case and 100 million documents in the other—allowed the fixed costs of training and infrastructure to be amortized across massive usage.</p>
+<p>At this scale, the economics of metered API pricing often break down. What initially looks like growth quickly becomes a margin challenge.</p>
+<p><strong>3. Domain-specific patterns</strong></p>
+<p>Many production workloads contain patterns that general-purpose models handle reasonably well but not consistently enough for mission-critical systems.</p>
+<p>Training on real production data allows specialized models to learn the details that matter most: domain-specific terminology, formatting variations, edge cases, and failure modes that appear in long-tail inputs.</p>
+<p>Rather than competing with frontier models across every possible task, specialized models focus on performing one workload exceptionally well. They trade breadth for depth—an approach that often produces better reliability and far more efficient economics for production systems.</p>
+<h2>Build AI That Works for Your Project</h2>
+<p>As AI systems move from experimentation to production, many organizations face the same challenge: scaling intelligence without scaling costs.</p>
+<p>Inference.net takes a different approach. Instead of relying on large general-purpose APIs, we build specialized models trained on real production workloads. These models deliver the accuracy required for mission-critical tasks while dramatically improving the economics of running AI at scale.</p>
+<p>Technologies such as <a href="https://developer.nvidia.com/nemotron#:~:text=Tutorials-,NVIDIA%20Nemotron%20Models,-Nemotron%20models%20are">NVIDIA Nemotron open models</a> and the <a href="https://github.com/NVIDIA-NeMo/">NVIDIA NeMo framework</a> provide the foundation that makes this possible—combining efficient model architectures with scalable training infrastructure.</p>
+<p>The results speak for themselves:</p>
+<ul><li><strong>25× cost reduction</strong> for enterprise data extraction at trillions of tokens per month</li><li><strong>50× cost reduction </strong>for large-scale scientific summarization</li><li><strong>Production-grade accuracy was maintained</strong> in both deployments</li></ul>
+<p>These gains were not the objective—they were the outcome of a disciplined process: define clear evaluation criteria, train on real data, optimize the model for the workload, and deploy it on efficient infrastructure. When the model is designed for the task, the economics follow.</p>
+<p>General-purpose models are built to perform well across benchmarks. Inference.net builds models designed to perform exceptionally well for your product.</p>
+<p>If your AI workloads are reaching production scale and costs are rising with usage, specialized models may offer a better path forward.</p>
+<p><a href="https://inference.net/meet-with-us/">Book a call</a> with our research team to see if specialized models are a good option for your workload.</p>
+<p>CONTACT</p>
+<h2>Meet with our research team</h2>
+<p>Schedule a call with our research team to learn more about how Specialized Language Models can cut costs and improve performance.</p>]]></content:encoded>
     </item>
     <item>
       <title>Specialized LLMs: The model you need doesn&apos;t exist yet</title>
-      <link>https://inference.net/blog/#d-2026-03-11-3</link>
-      <guid isPermaLink="true">https://inference.net/blog/#d-2026-03-11-3?li=1</guid>
+      <link>https://inference.net/blog/the-model-you-need-doesnt-exist-yet/</link>
+      <guid isPermaLink="true">https://inference.net/blog/the-model-you-need-doesnt-exist-yet/?li=1</guid>
       <pubDate>Wed, 11 Mar 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog</p>
-<h1>Latest Updates</h1>
-<p>AI engineering &amp; research, product releases and upgrades, and thoughts about the industry from the Inference R&amp;D, Inc. team.</p>
-<h3>Introducing AutoEvals: Automatically find the best model for your task</h3>
-<p>Automatically discover which model is best suited for your task, with the data you already generate. AutoEvals replays your production traffic across candidate models and tells you which one to run, with real numbers on quality, cost, and latency.</p>
-<p>Aug 5, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</h3>
-<p>Schematron is a family of small, purpose-built models that transform messy HTML into clean, structured JSON, delivering frontier-level extraction quality at a fraction of the cost and latency of large general-purpose LLMs.</p>
-<p>Apr 16, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Introducing Inference platform: Monitor, train, and deploy self-improving AI models</h3>
-<p>Build self-improving AI-systems from production data</p>
-<p>Apr 14, 2026</p>
+      <content:encoded><![CDATA[<p>Feb 5, 2026</p>
+<h1>Specialized LLMs: The model you need doesn't exist yet</h1>
 <p>S</p>
 <p>Sam Hogan</p>
-<h3>How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</h3>
-<p>Learn how Inference.net trains Specialized Language Models using the NVIDIA NeMO framework to delivery frontier accuracy at up to 50x lower cost.</p>
-<p>Mar 11, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Specialized LLMs: The model you need doesn't exist yet</h3>
-<p>Specialized LLMs trained on your own user data can match frontier quality for a fraction of the cost</p>
-<p>Feb 5, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Project OSSAS: Custom LLMs to process 100 Million Research Papers</h3>
-<p>Project OSSAS is a large-scale open-science initiative to make the world’s scientific knowledge accessible through AI-generated summaries of research papers.</p>
-<p>Nov 11, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>LOGIC: Trustless Inference through Log-Probability Verification</h3>
-<p>A practical method for verifying LLM inference requests in trustless environments.</p>
-<p>Nov 5, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Hybrid-Attention models are the future for SLMs</h3>
-<p>Hybrid attention delivers up to 3x cost reduction compared to traditional transformer models</p>
-<p>Nov 3, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Announcing our $11.8M Series Seed</h3>
-<p>We raised $11.8 million in funding led by Multicoin Capital and a16z CSX to train and hosti custom language models that are faster, more affordable, and more accurate than what the Big Labs offer.</p>
-<p>Oct 14, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Schematron: An LLM trained for HTML -&gt; JSON at scale</h3>
-<p>Schematron-8B and Schematron-3B deliver frontier-level extraction quality at 1-2% of the cost and 10x+ faster inference than large, general-purpose LLMs.</p>
-<p>Sep 9, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>]]></content:encoded>
+<h2>Introduction</h2>
+<p>There's a quiet revolution happening inside the fastest-growing AI-native companies right now.</p>
+<p>Not long ago, companies like Cursor, Harvey, Decagon, and Cal AI were dismissed as &quot;GPT-wrappers,&quot; products that relied so heavily on models from frontier labs like OpenAI that many thought they would never become viable businesses of their own. To some extent, this makes sense: if the models provide the capabilities these products couldn't exist without, doesn't it stand to reason that most of the value generated would flow back to the frontier labs in one way or another?</p>
+<p>This mindset underestimated how quickly these companies would understand that the real asset wasn't the model, but the data their users were generating. Today, all of the companies above have removed their dependence on frontier labs, trained their own language models, and are using them to power core functionality inside their products. They are investing in in-house teams and systems to improve model capabilities well into the future.</p>
+<p>This is the future we see at Inference.net. In 2026 and beyond, more companies will realize that small, customized LLMs can match frontier quality for a fraction of the cost. The days of renting capabilities are numbered. Companies that want long-term defensibility will own their models and data flywheels that power them.</p>
+<h2>Big Token</h2>
+<p>Models like Opus 4.5, GPT-5.2, and Gemini 3 offer incredible capabilities that span a wide range of tasks. These behemoths can write code, solve decades-old math problems, and wax poetically about the nature of human consciousness. They're undoubtedly changing the world in new and interesting ways, and the leverage these models provide feels nearly unlimited, save for one small constraint: access is gated by the paywalls and policies of 'Big Token'—Anthropic, OpenAI, and Google.</p>
+<p>You can use them, for a fee, for now. As long as you behave in the eyes of their creator, they will gladly rent you metered access to these wonderful capabilities.</p>
+<p>Being a customer of these companies is a precarious position. If you build a product on their APIs, you are at the mercy of some of the most aggressive and growth-hungry organizations in the world. There is no limit to their aspirations, no telling when model performance would degrade without warning, and nowhere to run except into the clutches of their competitors.</p>
+<p>The trap is threefold:</p>
+<ul><li>Performance. Models change silently. You debug for days before realizing the problem isn't your code. There's no telling when model performance will degrade without warning.</li><li>Price. Your unit economics are hostage to their pricing decisions. Some significant percentage of your revenue will be carried out the front door of your house every week.</li><li>Policy. Terms of service change without warning. On-prem deployments cost tens of millions and are only available to the largest companies in the world.</li></ul>
+<p>You are feeding their flywheel. Every request you send through OpenAI or Anthropic is valuable data you're handing over for free. They'll use it to improve their models. Your competitors, also using those APIs, get the benefit.</p>
+<p>This data doesn't just let them grow their model. It lets them specialize in your domain. They see which verticals are generating the most value, which use cases are sticky, and which markets are worth entering.</p>
+<p>This is the world Big Token wants you to live in: Rent access to their models forever, pay by the token, and pray that they don't take a liking to your market.</p>
+<h2>The Heresy That Was DeepSeek</h2>
+<p>This changed in December 2024.</p>
+<p>Open-source LLMs, such as DeepSeek V3 and later DeepSeek R1, put massive downward pressure on the prices Big Token could reasonably charge its customers. By offering the first viable alternative to closed-source frontier models, DeepSeek gave ambitious companies a realistic path to fine-grained control over the models powering their products in production.</p>
+<p>Startups could swap their OpenAI usage to open-source models with a two-line code change. Larger companies began renting their own GPUs directly and deploying these models on vLLM or SGLang, expanding control over their AI infrastructure.</p>
+<p>DeepSeek gave developers a small taste of what freedom felt like.</p>
+<p>But it introduced new problems. By spring 2025, Big Token had produced models that were noticeably more capable. DeepSeek was more affordable, but still expensive at scale. And serverless inference providers started pushing hard to lock teams into year-long contracts in order just to access the rate limits required to run a production application.</p>
+<p>Choose: pay a premium for the very best models, or use a cheaper model, take the quality hit, and hope your customers don't leave for a competitor who chose option one. Pay the piper, or have your product designated B-tier.</p>
+<p>Or realize quality lies not in the underlying model, but in the underlying data. Your data.</p>
+<h2>Building Your Model Moat</h2>
+<p>2026 will be the year of the small, specialized, frontier-quality LLM. You will build it in the same way software has been built for decades: through observing from your users and iterating relentlessly.</p>
+<p>This is what we call the flywheel. The core loop works like this:</p>
+<ul><li>You start with a generalist model powering your product.</li><li>Users interact with it.</li><li>Those interactions generate data.</li><li>You use that data to train a specialized model.</li><li>The specialized model performs better.</li><li>Better performance attracts and retains users.</li><li>More users, more data. The cycle accelerates.</li></ul>
+<p>This is a moat. Not a moat made of brand recognition or network effects or regulatory capture. A moat made of data that literally cannot be recreated without your application and your users.</p>
+<p>A competitor could start with the same base model tomorrow. They could raise more money than you. But they can't conjure the dataset you've built through months of production traffic and user feedback. And if you're improving faster than they can catch up, the gap only widens.</p>
+<p>Here's what most teams miss: if you have users, you're already generating this data. This is the easy part. The more difficult part is using that data to build an effective flywheel that compounds value back into your company over time.</p>
+<h2>The Flywheel as Product Philosophy</h2>
+<p>More than just a technical decision, building a flywheel is an entire product philosophy. Two questions should guide every decision:</p>
+<ul><li>How can you design features that generate high-quality data as a natural byproduct of usage?</li><li>How can you incentivize high-value users to provide high-quality feedback?</li></ul>
+<p>Every interaction becomes an opportunity to learn:</p>
+<table><thead><tr><th>Product Type</th><th>Signal Captured</th><th>How It Works</th></tr></thead><tbody><tr><td>Calorie tracking app</td><td>Labeled correction examples</td><td>Users correct AI estimates, creating ground truth data for retraining</td></tr><tr><td>Coding assistant</td><td>Acceptance/rejection patterns</td><td>Tracks which suggestions get accepted, modified, or rejected by developers</td></tr><tr><td>Support bot</td><td>Resolution metrics</td><td>Measures which responses resolve issues vs. trigger escalation to humans</td></tr></tbody></table>
+<p>Every code suggestion that gets accepted or rejected. Every support ticket that resolves or escalates. Every calorie estimate that gets corrected. It's all signal. For you.</p>
+<p>Not all user feedback is equally valuable. A registered dietitian correcting calorie estimates is worth more than a casual user guessing. A senior engineer's code edits offer more signal than someone who just started coding.</p>
+<p>Part of your job is figuring out who your high-value users are and designing feedback mechanisms that capture their input without being annoying. The calorie correction flow should feel like a feature, not a survey. The code acceptance signal should be implicit, not a popup asking &quot;was this helpful?&quot;</p>
+<p>Your product is the flywheel. Every design decision either generates valuable data or doesn't. The next question is what you do with that data once you have it.</p>
+<h2>Post-Training Is All You Need</h2>
+<p>For years, the frontier labs have successfully pushed the narrative that training models is impossibly hard. You need a team of PhDs, months or years of iteration, and millions in GPU compute.</p>
+<p>Convenient story. Increasingly untrue.</p>
+<h3>What Post-Training Actually Means</h3>
+<p>The term &quot;post-training&quot; refers to a set of techniques for enhancing the capabilities of an existing model. You take an existing open-source base model, such as DeepSeek, Nemotron, or Gemma, and teach it new tricks. The two most popular techniques are supervised fine-tuning (SFT), where you show the model examples of what you want, and reinforcement learning (RLFT), where you reward it for good outputs. Often it's both.</p>
+<p>The most common pattern: start by distilling knowledge from a frontier generalist model like GPT-5 into a small model like Nemotron 9B using SFT. GPT-5 knows how to do your task pretty well. You generate thousands of examples using GPT-5, then train Nemotron to mimic those outputs. A 9B parameter model trained with SFT on high-quality distilled data can match the quality of GPT-5 for a specific task.</p>
+<p>The result is a specialized model. Not a general-purpose assistant that can write poetry, debug code, and plan your vacation. Just a model that does one thing very well. Maybe it extracts structured data from invoices. Maybe it captions medical images. Maybe it scores leads based on email conversations.</p>
+<p>Next, you can use RLFT – this is the most viable path to training a model to go beyond the capabilities of frontier models. With SFT, you're fundamentally capped by the quality of your training examples. The student can only be as good as the teacher. But with RLFT, you're rewarding outcomes instead of mimicking demonstrations. The model learns to optimize directly for what you actually care about, rather than learning to sound like something that optimizes for what you care about.</p>
+<h3>The Economics</h3>
+<p>You can train a specialized model in about an hour for a few hundred dollars. That includes the cost of data generation, compute, and evaluation. That's all you need to own the core capabilities that power your product.</p>
+<p>Own, as in:</p>
+<ul><li>The weights live on your infrastructure</li><li>You can modify them however you want</li><li>You're not subject to anyone's terms of service</li><li>The model is your asset, owned by you.</li></ul>
+<h3>Why Now?</h3>
+<p>This has been possible for a few years, but only recently has the barrier to entry been low enough for most teams to adopt. A few things were missing.</p>
+<p>Evaluation. LLM evaluation is genuinely hard. How do you know if your custom model is actually good? For decades, this was a problem only researchers worried about. It took time for the tooling and best practices to catch up. Today, most teams use some combination of LLM-as-judge, where a frontier model grades your model's outputs, and golden datasets, hand-curated collections of examples you know are correct. The first approach scales. The second provides ground truth. You need both.</p>
+<p>Data generation. A big part of training a specialized model is creating training data from frontier models. Running hundreds of thousands of inference calls meant setting up GPUs, managing inference batches, building or integrating with inference APIs, and formatting data for training. And even after all that work, how do you know your synthetic data actually represents the task you're training for? Recent improvements to GPT-5, Claude, Kimi K2 and other models have given us a reliable method to generate training data for a wide variety of tasks. The teachers got better, so the students can too.</p>
+<p>Mental model. Teams treated models as static assets. Train once, deploy, move on. But products evolve. Users change. Features get added. The distribution of requests your model sees in month six looks nothing like month one. The model slowly degrades, and nobody notices until customers start complaining.</p>
+<p>The new mental model is continuous improvement. You monitor production traffic. You compare what your model is seeing against what it was trained on. When the distribution drifts, you generate new data and retrain. The model becomes a living part of your system rather than a frozen artifact.</p>
+<h2>Building Your Model Flywheel</h2>
+<p>You want to capture your data flywheel rather than donate it to Big Token. How do you actually do it?</p>
+<p>The core requirement is that your training pipeline needs access to production data. Inference and training don't need to live in the same system, but it helps. When production logs flow directly into training infrastructure, you eliminate the friction of moving data around, reformatting it, and keeping everything in sync. The tighter the loop, the faster you iterate.</p>
+<p>You need subsystems that monitor and analyze production traffic automatically:</p>
+<ul><li>Distribution drift, when the requests your model sees start looking different from what it was trained on</li><li>Outliers worth investigating</li><li>High-value corrections from users</li></ul>
+<p>These systems should flag issues and surface opportunities without requiring someone to manually review every data point. Some human oversight is fine. But if the loop requires constant babysitting, it won't survive contact with reality.</p>
+<p>Retraining cadence depends on your application and data volume. Could be daily, weekly, monthly. The point is that it's a process, not an event. You're not training a model. You're operating one.</p>
+<h2>Are You Ready For Your Own Model?</h2>
+<p>If you're building an AI-native product and you're not thinking about model ownership, you're leaving value on the table.</p>
+<p>The best teams building the fastest-growing companies are already training specialized models to power their core workflows. This doesn't mean abandoning frontier models entirely. Most companies will run specialized models alongside generalis. Specialized models handle constrained, high-volume tasks where success can be clearly defined. Generalist models handle orchestration, edge cases, and anything requiring broad world knowledge.</p>
+<p>The bootstrapping path is straightforward. Start with generalists. Validate your product idea. Generate initial training data. Once you're spending $1,000 a month on API calls, you have enough volume to consider your first specialized model.</p>
+<p>You don't need to boil the ocean. Pick your highest-volume, most constrained task and start there. This is where you build your own moat.</p>
+<h2>What We've Learned</h2>
+<p>We didn't arrive at these beliefs abstractly. We've spent the past year training specialized models for companies like Profound and Cal AI, learning what works and what doesn't. The patterns described above are distilled from operating real production systems processing trillions of tokens per month.</p>
+<p>We've seen a calorie-tracking app cut inference costs by 80% while improving accuracy by 15% because user corrections were fed directly into model improvements. We've watched a coding assistant go from &quot;occasionally useful&quot; to &quot;accepted 70% of the time&quot; after three retraining cycles. The flywheel is real. The economics are real.</p>
+<p>We've taken those learnings and built Inference — a platform for training, inference, and monitoring designed to make flywheels possible at any scale. The platform will be available publicly in mid-February.</p>
+<p>If any of this resonates, get in touch. We'd love to hear about what you're building.</p>
+<p>CONTACT</p>
+<h2>Meet with our research team</h2>
+<p>Schedule a call with our research team to learn more about how Specialized Language Models can cut costs and improve performance.</p>]]></content:encoded>
     </item>
     <item>
       <title>Project OSSAS: Custom LLMs to process 100 Million Research P…</title>
-      <link>https://inference.net/blog/#d-2026-02-05-4</link>
-      <guid isPermaLink="true">https://inference.net/blog/#d-2026-02-05-4?li=1</guid>
+      <link>https://inference.net/blog/project-aella/</link>
+      <guid isPermaLink="true">https://inference.net/blog/project-aella/?li=1</guid>
       <pubDate>Thu, 05 Feb 2026 00:00:00 +0000</pubDate>
       <description>Full title: Project OSSAS: Custom LLMs to process 100 Million Research Papers</description>
-      <content:encoded><![CDATA[<p>Blog</p>
-<h1>Latest Updates</h1>
-<p>AI engineering &amp; research, product releases and upgrades, and thoughts about the industry from the Inference R&amp;D, Inc. team.</p>
-<h3>Introducing AutoEvals: Automatically find the best model for your task</h3>
-<p>Automatically discover which model is best suited for your task, with the data you already generate. AutoEvals replays your production traffic across candidate models and tells you which one to run, with real numbers on quality, cost, and latency.</p>
-<p>Aug 5, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</h3>
-<p>Schematron is a family of small, purpose-built models that transform messy HTML into clean, structured JSON, delivering frontier-level extraction quality at a fraction of the cost and latency of large general-purpose LLMs.</p>
-<p>Apr 16, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Introducing Inference platform: Monitor, train, and deploy self-improving AI models</h3>
-<p>Build self-improving AI-systems from production data</p>
-<p>Apr 14, 2026</p>
+      <content:encoded><![CDATA[<p>Nov 11, 2025</p>
+<h1>Project OSSAS: Custom LLMs to process 100 Million Research Papers</h1>
 <p>S</p>
 <p>Sam Hogan</p>
-<h3>How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</h3>
-<p>Learn how Inference.net trains Specialized Language Models using the NVIDIA NeMO framework to delivery frontier accuracy at up to 50x lower cost.</p>
-<p>Mar 11, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Specialized LLMs: The model you need doesn't exist yet</h3>
-<p>Specialized LLMs trained on your own user data can match frontier quality for a fraction of the cost</p>
-<p>Feb 5, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Project OSSAS: Custom LLMs to process 100 Million Research Papers</h3>
-<p>Project OSSAS is a large-scale open-science initiative to make the world’s scientific knowledge accessible through AI-generated summaries of research papers.</p>
-<p>Nov 11, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>LOGIC: Trustless Inference through Log-Probability Verification</h3>
-<p>A practical method for verifying LLM inference requests in trustless environments.</p>
-<p>Nov 5, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Hybrid-Attention models are the future for SLMs</h3>
-<p>Hybrid attention delivers up to 3x cost reduction compared to traditional transformer models</p>
-<p>Nov 3, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Announcing our $11.8M Series Seed</h3>
-<p>We raised $11.8 million in funding led by Multicoin Capital and a16z CSX to train and hosti custom language models that are faster, more affordable, and more accurate than what the Big Labs offer.</p>
-<p>Oct 14, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Schematron: An LLM trained for HTML -&gt; JSON at scale</h3>
-<p>Schematron-8B and Schematron-3B deliver frontier-level extraction quality at 1-2% of the cost and 10x+ faster inference than large, general-purpose LLMs.</p>
-<p>Sep 9, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>]]></content:encoded>
+<h2><strong>Introduction</strong></h2>
+<p>Today, we’re introducing Project OSSAS in collaboration with <a href="https://laion.ai/">LAION</a> and <a href="https://www.wyndlabs.ai/">Wynd Labs</a>. Project OSSAS is a large-scale open-science initiative to make the world’s scientific knowledge accessible through structured, AI-generated summaries of research papers. Built on the foundation of <a href="https://projects.laion.ai/project-alexandria/">Project Alexandria</a>, OSSAS uses custom-trained Large Language Models, and idle compute sourced from tens of thousands of computers around the world to process scientific research papers into a standardized format. This machine-readable format can be explored, searched, and linked across scientific disciplines.</p>
+<p><strong>Contributors:</strong> <a href="https://scholar.google.com/citations?user=EvrlaSAAAAAJ&amp;hl=de">Christoph Schuhmann</a>, <a href="https://x.com/AmarSVS">Amarjot Singh</a>, <a href="https://www.researchgate.net/profile/Andrii-Prolorenzo">Andrii Prolorenzo</a>, <a href="https://x.com/0xdrej">Andrej Radonjic</a>, <a href="https://x.com/bonham_sol">Sean Smith</a>, and <a href="https://x.com/samhogan">Sam Hogan</a></p>
+<p><strong>Models:</strong> <a href="https://huggingface.co/inference-net/OSSAS-Qwen3-14B">OSSAS-Qwen3-14B</a>, <a href="https://huggingface.co/inference-net/OSSAS-Nemotron-12B">OSSAS-Nemotron-12B</a></p>
+<p><strong>Visualizer:</strong> <a href="https://laion.inference.net">https://ossas.inference.net</a></p>
+<p><strong>Visualizer Code:</strong> <a href="https://github.com/context-labs/aella-data-explorer">View on GitHub</a></p>
+<p><strong>Paper:</strong> Coming soon</p>
+<p>The work to complete this project also spans many disciplines: bespoke model-training pipelines, high-throughput distributed-systems for fetching data and processing inference on idle compute, cryptographic protocols to ensure integrity, and more. These components are:</p>
+<p><strong>Inference Devnet</strong> <a href="https://devnet.inference.net/">(link)</a> - Galactic-scale distributed networking infrastructure for LLM inference workloads.</p>
+<p><strong>OSSAS Models</strong> <a href="https://huggingface.co/inference-net/Aella-Nemotron-12B">(link)</a> - Nemotron and Qwen models post-trained to process scientific literature at frontier quality and low cost.</p>
+<p><strong>Inference Staking</strong> <a href="https://github.com/context-labs/inference-staking">(link)</a> - Solana-based staking and emissions protocol to coordinate daily payouts of USDC (write up coming soon)</p>
+<p><strong>LOGIC</strong> <a href="https://inference.net/blog/logic">(link)</a>- LogProb based inference verification to enforce honesty amongst network participants.</p>
+<p>In this post, we explore Project OSSAS from a high-level and dive deeper into the process we went through to train, evaluate, and serve the custom language models that provide the backbone of the initiative.</p>
+<h2><strong>Background</strong></h2>
+<p>Access to scientific knowledge remains one of the great inequities of our time. Paywalls, licensing restrictions, and copyright constraints create barriers that slow research, limit education, and concentrate knowledge in institutions wealthy enough to afford access. A researcher in a developing country, a citizen scientist pursuing independent work, or students at under-resourced universities often cannot access the papers they need.</p>
+<p>Additionally, the sheer volume of scientific literature makes it nearly impossible to keep up. Millions of papers are published each year across thousands of journals and preprint servers. Different papers use different formats, structures, and writing styles. Comparing claims across papers, understanding methodological variations, or identifying contradictions requires painstaking manual work.</p>
+<p>The goal of Project OSSAS is to transform this landscape by creating a standardized structure for generating summaries of scientific papers at scale using custom-trained Large Language Models.</p>
+<p><a href="https://projects.laion.ai/project-alexandria/">Project Alexandra</a> established the legal and technical foundation for this work, demonstrating that we can extract factual knowledge from scholarly texts while respecting copyright through &quot;Knowledge Units&quot;: structured representations that preserve scientific content without reproducing copyrighted expression.</p>
+<p>Building on that foundation, we've spent the last four months developing a complete pipeline for processing scientific literature at scale. Today, we're releasing the first preview of our progress. This includes:</p>
+<ul><li>OSSAS Models: fine-tuned <a href="https://huggingface.co/context-labs/Paper-Summarizer-Qwen3-14B">Qwen 3 14B</a> and <a href="https://huggingface.co/context-labs/Paper-Summarizer-Nemotron-12B">Nemotron 12B</a> models for structured summarization</li><li>An initial batch of 100,000 research paper summaries in standardized JSON format</li><li>Interactive dataset exploration at <a href="https://laion.inference.net">https://ossas.inference.net</a></li><li>Complete evaluation framework and training approach</li></ul>
+<p>Our fine-tuned models achieve performance comparable to leading closed-source models like GPT-5 and Claude 4.5 Sonnet at 98% lower cost, while offering the transparency and accessibility that open science demands. This represents the first step toward our larger goal: processing and structuring knowledge from 100 million research papers.</p>
+<h2><strong>100 Million Papers to Structured Knowledge</strong></h2>
+<p>Our primary dataset consists of approximately <strong>100 million research papers</strong> retrieved from the public internet through a collaboration with Wynd Labs using Grass network. We deduplicated this massive collection and supplemented it with papers from established sources:</p>
+<ul><li><strong>bethgelab's paper_parsed_jsons dataset</strong>: High-quality parsed research papers</li><li><strong>LAION's COREX-18text dataset</strong>: Diverse scientific texts</li><li><strong>PubMed articles from Common Pile</strong>: Biomedical research literature</li><li><strong>LAION's Pes2oX-fulltext dataset</strong>: Full-text scientific articles</li></ul>
+<p>This represents one of the largest collections of scientific literature ever assembled for knowledge extraction. The scale is crucial to maximize coverage across disciplines, methodologies, and decades of research.</p>
+<p>For model training, we created a curated subset of 110,000 papers, carefully sampled to ensure diversity across sources and scientific domains. This subset was divided into 100,000 training samples and 10,000 validation samples. The papers are substantial, averaging 81,334 characters each, with a median of 45,025 characters.</p>
+<h3><strong>Designing the Schema</strong></h3>
+<p>We developed a comprehensive Json schema for structuring scientific paper summaries, inspired by the Alexandria project's Knowledge Units concept. The schema classifies articles into three categories:</p>
+<p>SCIENTIFIC_TEXT: Complete scientific research articles</p>
+<p>PARTIAL_SCIENTIFIC_TEXT: Partial scientific content</p>
+<p>NON_SCIENTIFIC_TEXT: Non-research content</p>
+<p>For scientific texts, the schema extracts detailed information including title, authors, publication year, research context, methodology, results, claims, and other critical elements. The full schema is available at the bottom of this article.</p>
+<p>This structured format makes papers directly comparable and enables novel ways to explore scientific literature. Instead of searching through unstructured text, researchers can query specific fields to find all papers using a particular methodology, compare results across studies, or identify contradictory claims in the literature.</p>
+<h3><strong>Model Training</strong></h3>
+<p>To generate these structured summaries at scale, we fine-tuned two open-source models:</p>
+<p><strong>Qwen 3 14B:</strong> Alibaba's dense transformer model, known for strong reasoning capabilities<strong>Nemotron 12B:</strong> NVIDIA's hybrid Mamba-Transformer architecture, offering high throughput</p>
+<p>Both models were post-trained on our curated 110,000-paper dataset using summaries generated from top closed-source models as training targets. The training transforms general-purpose open source models into specialized scientific summarizers that understand the conventions, structure, and nuances of research papers across diverse domains.</p>
+<h2><strong>Validating Quality</strong></h2>
+<p>For a project of this ambition, evaluation is critical. We can't just claim our models work—we need to demonstrate it through multiple complementary approaches.</p>
+<h3><strong>LLM-as-a-Judge Evaluation</strong></h3>
+<p>Our primary evaluation uses an ensemble of three frontier models (GPT-5, Gemini 2.5 Pro, and Claude 4.5 Sonnet) to rate summaries on a 1-5 scale. This multi-model ensemble reduces bias from any single judge and provides robust assessment across multiple dimensions: factual accuracy, completeness, structural adherence, and clarity.</p>
+<p>The results validate that well-tuned open-source models can match closed-source performance:</p>
+<p>Figure 1: Average LLM-as-a-Judge scores for the suite of models. The rubric grades out of 5, and a confidence interval is supplied based on bootstrapping.</p>
+<p>Our fine-tuned models achieve scores within 15% of GPT-5 itself—remarkable performance considering they're open-source, smaller, and far more efficient to run. The substantial gap between base and fine-tuned versions demonstrates the value of domain-specific training for scientific summarization.</p>
+<h3><strong>QA Dataset Evaluation: Measuring Factual Utility</strong></h3>
+<p>To validate factual accuracy and downstream utility, we created a complementary evaluation inspired by Alexandria's approach. For a holdout set of papers, we generated 5 multiple-choice questions per paper using GPT-5, then tested whether models could answer these questions based solely on their generated summaries (truncated to 10,000 characters).</p>
+<p>This tests something crucial: can the summaries actually support downstream reasoning and information retrieval?</p>
+<p>Figure 2: QA evaluation comparison across models. Accuracy calculated from multiple choice answers across 1,270 questions.</p>
+<p>Our models match or exceed leading closed-source alternatives. The Qwen 3 14B fine-tuned model ties with Gemini 2.5 Flash at 73.9%, falling just short of GPT-5's 74.6% score.</p>
+<p>Together, these two evaluation methods provide robust validation: the LLM-as-a-judge assessment confirms our summaries are high-quality and well-structured, while the QA dataset proves they're factually grounded and useful for downstream tasks.</p>
+<h2><strong>Economics and Throughput</strong></h2>
+<p>Performance on benchmarks matters, but so does practical deployability. Can we feasibly process 100 million papers with these models? How much will it cost in GPU hours to process the entire dataset?</p>
+<p>We measured throughput on an 8×H200 node using vLLM:</p>
+<p>The OSSAS Nemotron 12B model achieves 2.25x higher throughput than OSSAS Qwen 3 14B across all metrics, including requests per second, input token processing, output generation, and single-request decode speed. For large-scale processing, this difference translates directly to a 2.25x lower total compute cost.</p>
+<p>The economic comparison is striking:</p>
+<ul><li>Processing 100M papers with GPT-5: Over $5 million at current pricing</li><li>Processing with our custom models : Under $100,000</li></ul>
+<p>This is a 50x cost reduction, all while maintaining comparable quality. Without such a sharp drop in cost, it is unlikely we would be able to fund the entirety of this project . Using custom LLMs, we were able to make scientific knowledge extraction feasible at a scale that was previously prohibitive for all but the wealthiest organizations in the world.</p>
+<h2><strong>Idle Compute: Infrastructure for Open Science</strong></h2>
+<p>Even with the substantially lower cost of fine-tuned models, processing 100 million papers requires enormous computational resources. Traditional cloud computing would make this prohibitively expensive. We offer an alternative: <a href="https://devnet.inference.net">Inference Devnet</a> – a permissionless decentralized GPU network that enables crowdsourcing of idle compute resources globally. You can think about Inference Devnet as a modern version of <a href="https://en.wikipedia.org/wiki/SETI@home">SETI@Home</a>, purpose-built for processing large-scale LLM workloads. Inference Devnet provides massive computational capacity through a network of distributed GPUs running in contributor’s homes and data centers around the world. We believe idle compute holds the key to unlocking the next step in scaling computational resources for scientific research, allowing individuals to contribute their idle resources to scientific initiatives they find compelling, while simultaneously giving underresourced scientists a path to pushing their research forward in a meaningful way. Stay tuned; we will be sharing more about this soon.</p>
+<h2><strong>Visualization and Discovery</strong></h2>
+<p>To demonstrate the utility of structured summaries, we built an <a href="https://aella.inference.net">interactive visualization tool</a> using our first 100,000 summaries.</p>
+<p>The visualizer creates a physical representation of the scientific literature using <a href="https://github.com/lmcinnes/umap">UMAP</a> clustering on embeddings generated from the summaries (using Qwen 3 Embedding 4B). Papers cluster by topic, methodology, and domain, revealing the landscape of scientific knowledge in intuitive visual form.</p>
+<p><strong>Key features:</strong></p>
+<ul><li><strong>Spatial clustering:</strong> Related papers appear near each other</li><li><strong>Similarity search:</strong> Find papers using cosine similarity on summary embeddings</li><li><strong>Interactive exploration:</strong> Click papers to see their structured summaries</li><li><strong>Relationship discovery:</strong> Identify connections and patterns across the literature</li></ul>
+<p>This is just one example of what becomes possible with structured summaries at scale. Once scientific knowledge is in a standardized format, we can build tools for comparative analysis, claim verification, contradiction detection, knowledge graph construction, and other applications that are impractical with unstructured text.</p>
+<p>The visualization demonstrates that structured summaries aren't just abstractions; they enable new ways of exploring and understanding scientific literature that simply weren't possible before.</p>
+<h2><strong>Limitations</strong></h2>
+<p><strong>Hallucination and Factual Precision</strong></p>
+<p>Large language models, even frontier ones, can generate fluent but subtly incorrect statements. This risk is particularly acute for fine-grained scientific details: sample sizes, effect sizes, confidence intervals, exact dates, and unit conversions. Our evaluation framework validates that summaries are useful and well-formed, but cannot guarantee line-by-line factual accuracy for every atomic claim.</p>
+<p>The QA evaluation demonstrates that summaries support downstream reasoning effectively, but this doesn't certify that every number, citation, and domain-specific detail is perfectly exact.</p>
+<p><strong>Context Limits and Coverage</strong></p>
+<p>Current context limits (128,000 tokens in our setup) can force selective reading for extremely long documents, potentially omitting details that matter for particular users or tasks. While our average paper length fits comfortably, edge cases exist where important information might be truncated.</p>
+<p><strong>Domain Heterogeneity</strong></p>
+<p>Scientific fields have vastly different methodological norms. A physics paper, a clinical trial, a qualitative sociology study, and a computer science benchmark paper all require different types of information extraction. Our unified schema serves broad needs well but may reduce recall for highly specialized subdomains without additional domain-specific post-training.</p>
+<p><strong>Appropriate Use</strong></p>
+<p>Given these considerations, we emphasize appropriate use: <strong>our summaries are high-quality overviews that make literature more searchable, comparable, and explorable</strong>. They are educational and research aids that accelerate orientation and review.</p>
+<p>For high-stakes scientific activities, such as engineering implementations, clinical or policy decisions, writing scholarly articles or theses, users should verify specific details (numbers, dates, specialized terminology) against original papers. The summaries are starting points for exploration, not replacements for careful reading of primary sources when precision matters.</p>
+<p>We provide these summaries openly precisely so the community can validate, critique, and improve them.</p>
+<h2><strong>Scaling to 100 Million Papers</strong></h2>
+<p>This release of 100,000 summaries represents our first milestone. Here's what comes next:</p>
+<p><strong>Processing the Full Corpus</strong></p>
+<p>Our immediate priority is processing the complete ~100 million paper collection with our fine-tuned models. Each paper will receive a standardized structured summary, creating the most comprehensive knowledge extraction from scientific literature ever assembled.</p>
+<p><strong>Linking to OpenAlex Metadata</strong></p>
+<p>We'll join each summary to OpenAlex metadata, enabling users to traverse authors, venues, institutions, concepts, references, and citations. This creates a graph-native exploration layer where summaries are anchored to bibliographic context and citation neighborhoods. You can navigate not just what papers say, but how they connect to the broader research ecosystem.</p>
+<p><strong>Releasing Permissive Licensed Full Texts</strong></p>
+<p>For papers with permissive licenses (subsets from PeS2o and Common Pile PubMed), we'll release corresponding full texts paired with summaries. This supports long-context training and benchmarking: AI agents can retrieve and justify claims from millions of documents, using summaries as query scaffolds while grounding answers in released full texts.</p>
+<p><strong>Converting to Knowledge Units</strong></p>
+<p>Following our Alexandria framework, we aim to iteratively convert the corpus into structured, style-agnostic Knowledge Units that capture entities, attributes, and relations without reproducing copyrighted expression. This yields a shareable factual substrate legally and technically suited for open dissemination and machine use.</p>
+<p>Knowledge Unit conversion is substantially more compute-intensive than summarization, so our phased approach prioritizes scaled summaries and metadata linkage first, followed by gradual Knowledge Unit conversion.</p>
+<p>Each of these steps moves us closer to the goal: making scientific knowledge truly accessible, comparable, and explorable at global scale.</p>
+<h2><strong>Open Models, Open Science, Open Future</strong></h2>
+<p>Custom models can effectively generate high-quality structured summaries of scientific papers at scale. Our fine-tuned models achieve performance comparable to leading closed-source alternatives while offering superior economics, transparency, and accessibility.</p>
+<p>The release today, 100,000 summaries, two fine-tuned models, and an interactive visualization tool, represents tangible progress toward a larger vision: processing and structuring knowledge from 100 million research papers to make scientific knowledge truly accessible to anyone with curiosity and an internet connection. This is the beginning of open infrastructure for open science.</p>
+<p><strong>Authors:</strong> <a href="https://scholar.google.com/citations?user=EvrlaSAAAAAJ&amp;hl=de">Christoph Schuhmann</a>, <a href="https://x.com/AmarSVS">Amarjot Singh</a>, <a href="https://www.researchgate.net/profile/Andrii-Prolorenzo">Andrii Prolorenzo</a>, <a href="https://x.com/0xdrej">Andrej Radonjic</a>, <a href="https://x.com/bonham_sol">Sean Smith</a>, and <a href="https://x.com/samhogan">Sam Hogan</a></p>
+<p><strong>Models:</strong> <a href="https://huggingface.co/inference-net/OSSAS-Qwen3-14B">OSSAS-Qwen3-14B</a>, <a href="https://huggingface.co/inference-net/OSSAS-Nemotron-12B">OSSAS-Nemotron-12B</a></p>
+<p><strong>Visualizer:</strong> <a href="https://laion.inference.net">https://ossas.inference.net</a></p>
+<p><strong>Visualizer Code:</strong> <a href="https://github.com/context-labs/aella-data-explorer">View on GitHub</a></p>
+<p><strong>Paper:</strong> Coming soon</p>
+<p><strong>Acknowledgments:</strong> This work was made possible through collaboration with Wynd Labs, LAION, and the broader open science community. We thank the contributors to bethgelab, PeS2o, Common Pile, and OpenAlex whose datasets and infrastructure made this research possible.</p>
+<p>CONTACT</p>
+<h2>Meet with our research team</h2>
+<p>Schedule a call with our research team to learn more about how Specialized Language Models can cut costs and improve performance.</p>]]></content:encoded>
     </item>
     <item>
       <title>LOGIC: Trustless Inference through Log-Probability Verificat…</title>
-      <link>https://inference.net/blog/#d-2025-11-11-5</link>
-      <guid isPermaLink="true">https://inference.net/blog/#d-2025-11-11-5?li=1</guid>
+      <link>https://inference.net/blog/logic/</link>
+      <guid isPermaLink="true">https://inference.net/blog/logic/?li=1</guid>
       <pubDate>Tue, 11 Nov 2025 00:00:00 +0000</pubDate>
       <description>Full title: LOGIC: Trustless Inference through Log-Probability Verification</description>
-      <content:encoded><![CDATA[<p>Blog</p>
-<h1>Latest Updates</h1>
-<p>AI engineering &amp; research, product releases and upgrades, and thoughts about the industry from the Inference R&amp;D, Inc. team.</p>
-<h3>Introducing AutoEvals: Automatically find the best model for your task</h3>
-<p>Automatically discover which model is best suited for your task, with the data you already generate. AutoEvals replays your production traffic across candidate models and tells you which one to run, with real numbers on quality, cost, and latency.</p>
-<p>Aug 5, 2026</p>
+      <content:encoded><![CDATA[<p>Nov 5, 2025</p>
+<h1>LOGIC: Trustless Inference through Log-Probability Verification</h1>
 <p>A</p>
 <p>Amar Singh</p>
-<h3>Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</h3>
-<p>Schematron is a family of small, purpose-built models that transform messy HTML into clean, structured JSON, delivering frontier-level extraction quality at a fraction of the cost and latency of large general-purpose LLMs.</p>
-<p>Apr 16, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Introducing Inference platform: Monitor, train, and deploy self-improving AI models</h3>
-<p>Build self-improving AI-systems from production data</p>
-<p>Apr 14, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</h3>
-<p>Learn how Inference.net trains Specialized Language Models using the NVIDIA NeMO framework to delivery frontier accuracy at up to 50x lower cost.</p>
-<p>Mar 11, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Specialized LLMs: The model you need doesn't exist yet</h3>
-<p>Specialized LLMs trained on your own user data can match frontier quality for a fraction of the cost</p>
-<p>Feb 5, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Project OSSAS: Custom LLMs to process 100 Million Research Papers</h3>
-<p>Project OSSAS is a large-scale open-science initiative to make the world’s scientific knowledge accessible through AI-generated summaries of research papers.</p>
-<p>Nov 11, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>LOGIC: Trustless Inference through Log-Probability Verification</h3>
-<p>A practical method for verifying LLM inference requests in trustless environments.</p>
-<p>Nov 5, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Hybrid-Attention models are the future for SLMs</h3>
-<p>Hybrid attention delivers up to 3x cost reduction compared to traditional transformer models</p>
-<p>Nov 3, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Announcing our $11.8M Series Seed</h3>
-<p>We raised $11.8 million in funding led by Multicoin Capital and a16z CSX to train and hosti custom language models that are faster, more affordable, and more accurate than what the Big Labs offer.</p>
-<p>Oct 14, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Schematron: An LLM trained for HTML -&gt; JSON at scale</h3>
-<p>Schematron-8B and Schematron-3B deliver frontier-level extraction quality at 1-2% of the cost and 10x+ faster inference than large, general-purpose LLMs.</p>
-<p>Sep 9, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>]]></content:encoded>
+<h2><strong>Introduction</strong></h2>
+<p>We introduce LOGIC, a practical method for verifying inference in decentralized GPU networks. LOGIC utilizes compressed token-level log-probabilities and statistical testing to detect dishonest GPU operators with high accuracy, while adding minimal overhead and seamlessly integrating with existing inference engines, such as vLLM and SGLang.</p>
+<p>The system is resistant to decode-time spoofing attacks, a critical component for permissionless networks where economic incentives might encourage GPU operators to use smaller or quantized models during generation. With payload sizes of only ~250-313 KB per 10k tokens and verification requiring just 10 single-token recomputations, LOGIC provides a production-ready and battle-tested solution for trustless inference.</p>
+<p>Crucially, LOGIC requires no modifications to underlying inference engines and integrates naturally with standard OpenAI-style APIs, making it immediately deployable across most production environments.</p>
+<p><strong>Contributors:</strong> <a href="https://x.com/AmarSVS">Amarjot Singh</a>, <a href="https://x.com/francescodvirga">Francesco Virga</a>, <a href="https://x.com/bonham_sol">Sean Smith</a>, <a href="https://x.com/0xSamHogan">Sam Hogan</a></p>
+<p><strong>Code:</strong> <a href="https://github.com/context-labs/logic">https://github.com/context-labs/logic</a></p>
+<p><strong>Paper:</strong> [Coming Soon]</p>
+<h2><strong>Trust in permissionless inference networks</strong></h2>
+<p>For the last 18 months, Inference.net has operated a globally decentralized AI inference network with up to 10,000 heterogeneous GPUs, ranging from consumer graphics cards in a laptop to datacenter hardware in Tier 3 facilities operated by public companies. The network is permissionless by design: any GPU owner can download our client software and immediately start serving inference requests.</p>
+<p>This openness creates a fundamental challenge: <strong>How do we verify that GPU operators are indeed running the models they claim to be running?</strong></p>
+<p>In a permissionless environment with economic incentives, malicious actors have multiple avenues for dishonest behavior:</p>
+<ul><li><strong>Model substitution:</strong> Running a smaller, cheaper model (e.g., swapping a 70B model for an 8B model)</li><li><strong>Quantization spoofing:</strong> Using lower-precision quantized models to reduce compute costs</li><li><strong>Speculative decoding attacks:</strong> Prefilling with the claimed model but decoding with a smaller one to save on generation costs</li><li><strong>Returning fraudulent text:</strong> Simply fabricating responses without running inference at all</li></ul>
+<p>Traditional verification mechanisms fall short. Recreating responses verbatim is expensive and often fails due to non-determinism and temperature settings. Cryptographic approaches like zero-knowledge proofs are orders of magnitude too slow and expensive for modern LLM inference. Activation-based methods require heavy instrumentation of inference engines and are sensitive to hardware non-determinism.</p>
+<p><strong>Most critically, many existing verification methods only validate the prefill phase.</strong> In permissionless networks where participants are economically motivated to minimize costs, decode-time spoofing becomes the primary attack vector. An operator could pre-fill honestly with the correct model but secretly switch to a cheaper model for generation where computational costs are highest.</p>
+<h2><strong>Verification through log-prob distributions</strong></h2>
+<p>LOGIC takes a fundamentally different approach: instead of trying to recreate exact activations or token sequences, we verify that the <em>statistical distribution</em> of the model's outputs matches what we expect from the claimed model.</p>
+<p>The core insight is that every language model produces a unique &quot;fingerprint&quot; in its token-level log-probability distributions. Different models, quantization schemes, or architectural changes all produce measurably different distributions over the vocabulary at each position.</p>
+<p>Here's how it works:</p>
+<h3><strong>During Inference (Operator Side)</strong></h3>
+<p>For each generated token, the untrusted GPU computes the top-k token log-probabilities—the most likely next tokens and their probabilities. These are compressed and returned alongside the generated text.</p>
+<p>The compression pipeline is carefully designed for efficiency:</p>
+<ul><li><strong>Millilog quantization:</strong> Round log-probabilities to the nearest 0.001</li><li><strong>Delta encoding:</strong> Store differences between sorted log-probs</li><li><strong>Efficient packing:</strong> Token IDs as variable-length integers, deltas as int16</li><li><strong>Gzip compression:</strong> Final bytestream compression</li></ul>
+<p>This achieves remarkable efficiency: for k=20, we observe only ~25-31 bytes per token after compression, or approximately 250-313 KB for 10,000 tokens.</p>
+<p><em>Figure 1: Compression outline showing the flow from top-k logprobs through sorting, quantization, delta encoding, and gzip compression.</em></p>
+<p><em>Figure 2: Compression performance across different sequence lengths, extrapolating to ~300 KB for 10k tokens.</em></p>
+<h3><strong>During verification (verifier side)</strong></h3>
+<p>The verifier doesn't need to regenerate the entire sequence. Instead, it randomly samples S positions (default: 10) from the decode phase and recomputes only those single-token distributions using KV-cache optimization.</p>
+<p>For each sampled position t, we:</p>
+<ul><li>Recompute the top-k log-probabilities using the exact context</li><li>Align with the operator's top-k by taking the intersection: ℐₜ = Sₜʷ ∩ Sₜᵛ</li><li>Track the overlap size mₜ = |ℐₜ| and Jaccard similarity Jₜ = mₜ/(2k - mₜ)</li></ul>
+<p>We then aggregate the aligned log-probabilities:</p>
+<ul><li>Operator set: <code>Lʷ = ⋃ₜ∈𝒯 {ℓₜ,ⱼʷ : j ∈ ℐₜ}</code></li><li>Verifier set: <code>Lᵛ = ⋃ₜ∈𝒯 {ℓₜ,ⱼᵛ : j ∈ ℐₜ}</code></li></ul>
+<p>Typically, this gives us n₁ = n₂ ≈ S × m samples, where m ≈ 10-20 is the average overlap.</p>
+<h3><strong>Statistical testing</strong></h3>
+<p>With two samples of log-probabilities in hand, we apply the <strong>Kolmogorov-Smirnov (KS) two-sample test</strong>. This non-parametric test compares the cumulative distribution functions:</p>
+<p><strong>Dₙ₁,ₙ₂ = sup_x |Fₙ₁(x) - Gₙ₂(x)|</strong></p>
+<p>where the effective sample size is nₑff = (n₁ × n₂)/(n₁ + n₂).</p>
+<p>The KS test produces a p-value pₖₛ.</p>
+<p>When the operator is honest and running the claimed model, the distributions match and pₖₛ ≈ 1.</p>
+<p>When the operator is dishonest—using a different model, quantization, or spoofing strategy—the distributions diverge and pₖₛ drops dramatically.</p>
+<p>We set a threshold pₘᵢₙ = 0.95: operators with pₖₛ ≥ pₘᵢₙ are accepted as honest.</p>
+<p><em>Figure 3: Complete verification flow showing the client request, operator inference with compressed logprobs, verifier sampling and recomputation, and trust record updates.</em></p>
+<h2><strong>Decode-spoofing resistance</strong></h2>
+<p>A critical vulnerability in many verification schemes is <strong>speculative decoding attacks</strong>: a dishonest operator prefills with the expensive claimed model M but switches to a cheaper model M' during decode to minimize generation costs. Since generation typically accounts for the majority of compute in long sequences, this attack offers substantial economic benefits to malicious actors.</p>
+<p>Prefill-only verification methods (including TOPLOC) cannot detect this attack because they only validate the initial context processing. Once validation passes, the operator is free to use any model for generation.</p>
+<p><strong>LOGIC specifically samples from decode positions</strong>, making this attack immediately detectable. If a operator prefills with M but decodes with M', then at sampled decode positions t:</p>
+<ul><li>Operator's log-probs: ℓₜ,ⱼʷ = log p_M'(iⱼᵗ | context_t)</li><li>Verifier's log-probs: ℓₜ,ⱼᵛ = log p_M(iⱼᵗ | context_t)</li></ul>
+<p>These come from different conditional distributions, producing systematic differences that the KS test reliably detects. This property is essential for permissionless networks where economic incentives naturally encourage decode-time spoofing.</p>
+<h2><strong>Robust across hardware and configurations</strong></h2>
+<p>Unlike methods that rely on exact activation matching, LOGIC is inherently robust to hardware non-determinism. Different GPUs, CUDA versions, and numerical precision variations all affect the exact values of intermediate activations with only minimal impact on the <em>shape</em> of top-k log-probability distributions.</p>
+<p>We validate this robustness by tracking both the KS p-value and Pearson correlation of log-probability pairs. Assuming small numeric drift ε with E[ε] = 0 and Var(ε) = σ², the correlation</p>
+<p><strong>r ≈ Var(ℓʷ) / √(Var(ℓʷ)(Var(ℓʷ) + σ²)) → 1</strong></p>
+<p>as σ² → 0. This dual-metric approach (KS + correlation) provides robust detection even in the presence of minor numerical variations.</p>
+<h2><strong>Integration with existing inference engines</strong></h2>
+<p>One of LOGIC's key advantages is its <strong>zero-modification integration</strong> with existing inference engines. Because top-k token log-probabilities are already computed by most engines as part of sampling, LOGIC simply captures and compresses this existing data.</p>
+<p>LOGIC works seamlessly with any OpenAI-compatible API that supports returning logprops:</p>
+<ul><li><strong>vLLM:</strong> Direct integration through standard API</li><li><strong>SGLang:</strong> Native compatibility with existing workflows</li></ul>
+<p>This portability means LOGIC can be deployed across heterogeneous GPU networks without requiring operators to run custom-modified inference software. Inference clients simply return an additional compressed payload alongside their usual text responses.</p>
+<p>The verification server is equally straightforward: it runs standard single-token inference calls with KV-caching enabled, making verification speed scale linearly with the number of sampled positions.</p>
+<p><em>Figure 4: Verification latency vs. number of samples with and without KV caching. KV caching provides a 1.46× average speedup.</em></p>
+<h2><strong>Experimental validation</strong></h2>
+<p>We rigorously tested LOGIC on our deployed decentralized network using 10,000 diverse prompts spanning coding, reasoning, creative writing, and question answering.</p>
+<h3><strong>Setup</strong></h3>
+<ul><li><strong>Base model:</strong> Llama-3.2-3B-Instruct (BF16)</li><li><strong>Dishonest baselines:</strong>   Llama-3.2-1B-Instruct (different model size)   Llama-3.2-3B-Instruct quantized to FP8</li><li><strong>Hardware:</strong> H100, RTX 4090</li><li><strong>Settings:</strong> k=10, samples S ∈ 40</li></ul>
+<h3><strong>Results</strong></h3>
+<p><strong>Honest operators are reliably accepted:</strong> Both H100 and RTX 4090 operators running the correct model yielded pₖₛ &gt; 0.999, well above our threshold of 0.95.</p>
+<p><strong>Dishonest operators are reliably rejected:</strong></p>
+<ul><li>Operators running Llama-3.2-1B-Instruct produced pₖₛ ≈ 0.006</li><li>Operators running FP8-quantized variants produced pₖₛ ≈ 0.150</li></ul>
+<p>Both dishonest strategies are clearly distinguishable from honest behavior.</p>
+<p><em>Figure 5: Distribution of KS p-values across honest operators (H100, 4090) and dishonest operators (FP8 quantization, 1B model spoofing). Clear separation enables reliable detection.</em></p>
+<h3><strong>Efficiency metrics</strong></h3>
+<ul><li><strong>Payload size:</strong> 250-313 KB per 10k tokens (with k=20)</li><li><strong>Verification latency:</strong> 0.98 seconds for 10 samples with KV caching</li><li><strong>Verification compute:</strong> Only S single-token forward passes (negligible vs. full generation)</li><li><strong>Detection accuracy:</strong> 100% separation between honest and dishonest operators in our experiments</li></ul>
+<h2><strong>Comparison to other verification methods</strong></h2>
+<p>The landscape of inference verification methods reflects different trade-offs between security guarantees, computational overhead, and practical deployability.</p>
+<h3><strong>TOPLOC</strong></h3>
+<p>TOPLOC compresses top-k last-layer activations with polynomial encoding, achieving impressive 1000× memory efficiency and 100× faster validation. However, in permissionless settings:</p>
+<ul><li><strong>Prefill-only validation</strong> leaves the system vulnerable to speculative decoding attacks</li><li>GPU operators can honestly prefill with the claimed model but decode with cheaper alternatives</li><li>In economically-motivated networks, this represents the primary attack vector</li><li>Typically requires modifications to the underlying inference engine</li></ul>
+<h3><strong>I/O Fingerprint</strong></h3>
+<p>Methods that hash intermediate activations offer strong detection capabilities but face several challenges:</p>
+<ul><li>Require <strong>heavy instrumentation</strong> of inference engines with GPU-to-CPU data movement</li><li>Sensitive to <strong>hardware non-determinism</strong> across different GPUs and CUDA versions</li><li>Typically validate <strong>prefill only</strong>, missing decode-time spoofing attacks</li><li>Limited native support in production inference frameworks</li></ul>
+<h3><strong>Zero-Knowledge Proofs</strong></h3>
+<p>Cryptographic methods like zkSNARKs provide the strongest theoretical guarantees but remain <strong>orders of magnitude too slow and expensive</strong> for modern LLM inference. Even optimistic projections suggest ZK proof generation would cost 100× more than the original inference, making them impractical for production deployment.</p>
+<h3><strong>LOGIC</strong></h3>
+<p>LOGIC prioritizes <strong>practical deployability in permissionless environments</strong>:</p>
+<ul><li><strong>Decode-spoofing resistant:</strong> Samples from generation phase where economic incentives for cheating are highest</li><li><strong>Zero-modification integration:</strong> Works with all major inference engines out-of-the-box</li><li><strong>Hardware agnostic:</strong> Robust across GPU types, CUDA versions, and numerical precision</li><li><strong>Minimal overhead:</strong> ~250-313 KB per 10k tokens, negligible verification compute</li><li><strong>Statistical guarantees:</strong> Extremely close student models may require higher k, larger S, or multi-prompt challenges</li></ul>
+<p>For systems where participants have strong economic incentives to minimize costs decode-time verification is not optional. LOGIC's design directly addresses this threat model while maintaining practical efficiency.</p>
+<h2><strong>Challenges and future directions</strong></h2>
+<p>While LOGIC provides a production-ready solution for decentralized inference verification, several areas warrant further development:</p>
+<h3><strong>Distinguishing close student models</strong></h3>
+<p>Extremely well-distilled student models that closely mirror the teacher's log-probability distributions may be harder to distinguish. However, if a student model produces statistically indistinguishable distributions on the evaluated slice, it is effectively equivalent in behavior for those contexts. Mitigation strategies include:</p>
+<ul><li>Increasing k (more tokens per position)</li><li>Increasing S (more sampled positions)</li><li>Multi-prompt challenges with diverse contexts</li><li>Adaptive sampling based on operator history</li></ul>
+<h3><strong>Quantization and compression variants</strong></h3>
+<p>Different quantization schemes (INT8, FP8, W8A8, etc.) and KV-cache compression methods may require empirical tuning of thresholds. Our current experiments cover FP8 quantization, but the ecosystem of optimization techniques continues to evolve.</p>
+<h3><strong>Adaptive sampling and reverification</strong></h3>
+<p>Network patterns, CUDA version differences, GPU defects, or other environmental factors may occasionally cause legitimate numerical drift. An adaptive sampling strategy could:</p>
+<ul><li>Increase sampling density for operators with borderline p-values</li><li>Reverify suspicious samples before making final trust decisions</li><li>Build longitudinal trust profiles rather than single-request verdicts</li></ul>
+<h3><strong>Extension to other modalities</strong></h3>
+<p>While LOGIC currently focuses on text-based LLM inference, the underlying principle (verifying output distributions rather than exact values) could extend to other domains. Multi-modal language models and diffusion-based image generation both produce output distributions that could be similarly verified.</p>
+<h2><strong>Moving forward</strong></h2>
+<p>LOGIC provides a production-ready path to verifiable decentralized inference. By leveraging log-probability distributions that inference engines already compute, we achieve strong verification guarantees with minimal compute and network overhead, and no engine modifications.</p>
+<p>The method's resistance to decode-time spoofing makes it particularly well-suited for permissionless networks where economic incentives naturally encourage cost-cutting attacks.</p>
+<p>As AI inference increasingly moves toward decentralized architectures, practical verification methods like LOGIC become essential infrastructure. We hope this work helps standardize trust mechanisms in open inference networks and enables the next generation of permissionless compute protocols.</p>
+<p><strong>Contributors:</strong> <a href="https://x.com/AmarSVS">Amarjot Singh</a>, <a href="https://x.com/francescodvirga">Francesco Virga</a>, <a href="https://x.com/bonham_sol">Sean Smith</a>, <a href="https://x.com/0xSamHogan">Sam Hogan</a></p>
+<p><strong>Code:</strong> <a href="https://github.com/context-labs/logic">https://github.com/context-labs/logic</a></p>
+<p><strong>Paper:</strong> [Coming Soon]</p>
+<p>CONTACT</p>
+<h2>Meet with our research team</h2>
+<p>Schedule a call with our research team to learn more about how Specialized Language Models can cut costs and improve performance.</p>]]></content:encoded>
     </item>
     <item>
       <title>Hybrid-Attention models are the future for SLMs</title>
-      <link>https://inference.net/blog/#d-2025-11-05-6</link>
-      <guid isPermaLink="true">https://inference.net/blog/#d-2025-11-05-6?li=1</guid>
+      <link>https://inference.net/blog/hybird-attention/</link>
+      <guid isPermaLink="true">https://inference.net/blog/hybird-attention/?li=1</guid>
       <pubDate>Wed, 05 Nov 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog</p>
-<h1>Latest Updates</h1>
-<p>AI engineering &amp; research, product releases and upgrades, and thoughts about the industry from the Inference R&amp;D, Inc. team.</p>
-<h3>Introducing AutoEvals: Automatically find the best model for your task</h3>
-<p>Automatically discover which model is best suited for your task, with the data you already generate. AutoEvals replays your production traffic across candidate models and tells you which one to run, with real numbers on quality, cost, and latency.</p>
-<p>Aug 5, 2026</p>
+      <content:encoded><![CDATA[<p>Nov 3, 2025</p>
+<h1>Hybrid-Attention models are the future for SLMs</h1>
 <p>A</p>
 <p>Amar Singh</p>
-<h3>Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</h3>
-<p>Schematron is a family of small, purpose-built models that transform messy HTML into clean, structured JSON, delivering frontier-level extraction quality at a fraction of the cost and latency of large general-purpose LLMs.</p>
-<p>Apr 16, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Introducing Inference platform: Monitor, train, and deploy self-improving AI models</h3>
-<p>Build self-improving AI-systems from production data</p>
-<p>Apr 14, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</h3>
-<p>Learn how Inference.net trains Specialized Language Models using the NVIDIA NeMO framework to delivery frontier accuracy at up to 50x lower cost.</p>
-<p>Mar 11, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Specialized LLMs: The model you need doesn't exist yet</h3>
-<p>Specialized LLMs trained on your own user data can match frontier quality for a fraction of the cost</p>
-<p>Feb 5, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Project OSSAS: Custom LLMs to process 100 Million Research Papers</h3>
-<p>Project OSSAS is a large-scale open-science initiative to make the world’s scientific knowledge accessible through AI-generated summaries of research papers.</p>
-<p>Nov 11, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>LOGIC: Trustless Inference through Log-Probability Verification</h3>
-<p>A practical method for verifying LLM inference requests in trustless environments.</p>
-<p>Nov 5, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Hybrid-Attention models are the future for SLMs</h3>
-<p>Hybrid attention delivers up to 3x cost reduction compared to traditional transformer models</p>
-<p>Nov 3, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Announcing our $11.8M Series Seed</h3>
-<p>We raised $11.8 million in funding led by Multicoin Capital and a16z CSX to train and hosti custom language models that are faster, more affordable, and more accurate than what the Big Labs offer.</p>
-<p>Oct 14, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Schematron: An LLM trained for HTML -&gt; JSON at scale</h3>
-<p>Schematron-8B and Schematron-3B deliver frontier-level extraction quality at 1-2% of the cost and 10x+ faster inference than large, general-purpose LLMs.</p>
-<p>Sep 9, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>]]></content:encoded>
+<h2>Introduction</h2>
+<p>One of the primary reasons Specialized Language Models are attractive is their low parameter count relative to large generalist models like GPT-5. Smaller models can produce more tokens per second, requiring less computational power per token than their larger counterparts, ultimately resulting in lower operational cost and better cost-to-performance on specific tasks.</p>
+<p>While lowering the parameter count can improve the economics of running LLMs at scale, there are still limits to how small a model can be and still remain useful for Supervised Fine-Tuning (SFT) on specific tasks -- a 1B parameter model may be able to produce tokens at 10x the rate of an 8B parameter model, but it is unlikely to remain as accurate.</p>
+<p>Put simply, a 1B parameter model may be fast, but it will also be.. pretty dumb.</p>
+<p>So how else can we improve total throughput for a specific task without simply using a smaller model? Enter Hybrid-Attention.</p>
+<h2>Hybrid Attention</h2>
+<p>In a recent project, we needed to maximize total token throughput for an HTML-to-JSON conversion task. HTML documents tend to be long (easily 100k+ tokens), and even an 8B parameter struggled to deliver the throughput we were looking for. We tried everything from smaller models, MoEs, inference engine optimizations, and even building on AMD. None of these avenues were providing the performance we needed.</p>
+<p>In a lucky stumble, I came across NVIDIA’s <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2">Nemotron Nano v2</a>, which claimed to have a massively increased throughput compared to any other type of model. It is a hybrid reasoning model, and although it took a concerted effort to adapt it to our training flow, the payoff has been well worth the effort.</p>
+<p>Unlike traditional transformers that rely solely on self-attention mechanisms, Nemotron Nano v2 mixes <a href="https://huggingface.co/docs/transformers/en/model_doc/mamba2">Mamba-2</a> state-space layers (approximately 92% of layers) with Transformer self-attention blocks (approximately 8% of layers). This approach leverages Mamba-2's efficiency for sequential processing while retaining transformer blocks where global context mixing is crucial. The result is a model that maintains the reasoning quality of traditional transformers while dramatically reducing computational overhead.</p>
+<p>The original training process of Nemotron Nano v2 is also quite interesting. First, a 12B-parameter base model was trained on 20 trillion tokens using an FP8 recipe, then the context window was extended to 128k. The model was subsequently compressed to 9B parameters through pruning and distillation while preserving 56 layers and the hybrid layer pattern. The architecture features no positional embeddings and uses RMSNorm throughout. This design choice directly addresses one of the biggest challenges in language modeling: the quadratic growth of KV cache memory and computation with sequence length.</p>
+<p>To make Nemotron Nano v2 truly shine for long-context applications, we implemented several patches to make sure that we could fit long context training into GPU memory. Particularly, using ring attention allowed for processing sequences longer than what would typically fit in memory by distributing the computation across multiple devices. Although it was used in their training process, we had to adjust it to work with the Huggingface Trainer ecosystem, and particularly Tri Dao’s Flash Attention package. The result was being able to fine tune on requests with context lengths of up to 500K tokens.</p>
+<p>To see if the model actually made a difference, we conducted a comprehensive comparison between Nemotron Nano v2 and Qwen 3 14B on a demanding scientific summarization task. When fine-tuned on a large, structured scientific summarization task, both models performed exceptionally well under an ensemble LLM-as-a-judge evaluation. Qwen 3 14B achieved slightly higher average summary quality, but Nemotron Nano v2 followed closely behind, well within the band of strong, production-worthy summarizers. A complementary question-answering benchmark showcased similar results. Both models clustered near strong commercial baselines.</p>
+<p>Where Nemotron really outshone everything was in its throughput. On an identical 8×H200 setup using vLLM with tensor parallelism of 8, Nemotron delivered approximately 2.25× higher end-to-end throughput than Qwen 3 14B. The specific numbers tell a compelling story: Nemotron achieved 0.97 requests per second compared to Qwen's 0.43, delivering 4,880.76 output decoding tokens per second versus Qwen's 2,588.30. For input prefill tokens, Nemotron reached 16,943.69 tokens per second compared to Qwen's 7,516.54.</p>
+<p>In single-request scenarios, Nemotron processed 76.17 tokens per second versus Qwen's 39.59. While all of this is a bit lower than the paper’s throughput numbers (claiming 6x higher tokens/s in a 8k input/16k output scenario), it was still far beyond any other optimization we had tried.</p>
+<p>While everyone is focused on absolutes, there is a key metric that I believe Nemotron Nano is currently the leader in: throughput to cost ratio. The whole tradeoff of finetuning models is based around improving cost, throughput, and latency while trying to maintain quality. While it fine tunes a bit worse on the same dataset than Qwen, it makes up for it by being a firehose of tokens. In cases where you need to train a model to process massively large datasets (as we will be announcing soon), this model should be a valuable asset to consider.Note: Full methodology, dataset composition, and detailed evaluation breakdowns will be shared in a future blog post.</p>
+<p>Reference:<strong>Nemotron Nano v2</strong>: <a href="https://arxiv.org/abs/2508.14444">https://arxiv.org/abs/2508.14444</a>, <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2">https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2</a></p>
+<p>CONTACT</p>
+<h2>Meet with our research team</h2>
+<p>Schedule a call with our research team to learn more about how Specialized Language Models can cut costs and improve performance.</p>]]></content:encoded>
     </item>
     <item>
       <title>Announcing our $11.8M Series Seed</title>
-      <link>https://inference.net/blog/#d-2025-11-03-7</link>
-      <guid isPermaLink="true">https://inference.net/blog/#d-2025-11-03-7?li=1</guid>
+      <link>https://inference.net/blog/seed-round/</link>
+      <guid isPermaLink="true">https://inference.net/blog/seed-round/?li=1</guid>
       <pubDate>Mon, 03 Nov 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog</p>
-<h1>Latest Updates</h1>
-<p>AI engineering &amp; research, product releases and upgrades, and thoughts about the industry from the Inference R&amp;D, Inc. team.</p>
-<h3>Introducing AutoEvals: Automatically find the best model for your task</h3>
-<p>Automatically discover which model is best suited for your task, with the data you already generate. AutoEvals replays your production traffic across candidate models and tells you which one to run, with real numbers on quality, cost, and latency.</p>
-<p>Aug 5, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</h3>
-<p>Schematron is a family of small, purpose-built models that transform messy HTML into clean, structured JSON, delivering frontier-level extraction quality at a fraction of the cost and latency of large general-purpose LLMs.</p>
-<p>Apr 16, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Introducing Inference platform: Monitor, train, and deploy self-improving AI models</h3>
-<p>Build self-improving AI-systems from production data</p>
-<p>Apr 14, 2026</p>
+      <content:encoded><![CDATA[<p>Oct 14, 2025</p>
+<h1>Announcing our $11.8M Series Seed</h1>
 <p>S</p>
 <p>Sam Hogan</p>
-<h3>How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</h3>
-<p>Learn how Inference.net trains Specialized Language Models using the NVIDIA NeMO framework to delivery frontier accuracy at up to 50x lower cost.</p>
-<p>Mar 11, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Specialized LLMs: The model you need doesn't exist yet</h3>
-<p>Specialized LLMs trained on your own user data can match frontier quality for a fraction of the cost</p>
-<p>Feb 5, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Project OSSAS: Custom LLMs to process 100 Million Research Papers</h3>
-<p>Project OSSAS is a large-scale open-science initiative to make the world’s scientific knowledge accessible through AI-generated summaries of research papers.</p>
-<p>Nov 11, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>LOGIC: Trustless Inference through Log-Probability Verification</h3>
-<p>A practical method for verifying LLM inference requests in trustless environments.</p>
-<p>Nov 5, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Hybrid-Attention models are the future for SLMs</h3>
-<p>Hybrid attention delivers up to 3x cost reduction compared to traditional transformer models</p>
-<p>Nov 3, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Announcing our $11.8M Series Seed</h3>
-<p>We raised $11.8 million in funding led by Multicoin Capital and a16z CSX to train and hosti custom language models that are faster, more affordable, and more accurate than what the Big Labs offer.</p>
-<p>Oct 14, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Schematron: An LLM trained for HTML -&gt; JSON at scale</h3>
-<p>Schematron-8B and Schematron-3B deliver frontier-level extraction quality at 1-2% of the cost and 10x+ faster inference than large, general-purpose LLMs.</p>
-<p>Sep 9, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>]]></content:encoded>
+<h2>Introduction</h2>
+<p>We’re excited to announce that we have raised $11.8M in Series Seed funding, led by <a href="https://multicoin.capital">Multicoin Capital</a> and <a href="https://a16zcrypto.com/accelerator/">a16z CSX</a>, with participation from <a href="https://topology.vc">Topology Ventures</a>, <a href="https://f.inc/">Founders, Inc.</a>, and an exceptional group of angel investors.</p>
+<p>Inference.net enables companies to train and deploy custom AI models that outperform general-purpose alternatives at a fraction of the cost. This capital will accelerate our mission to help businesses take control of their AI destiny.</p>
+<h2>A fork in the road</h2>
+<p>Every company building with AI faces a critical challenge: pay unsustainable prices to OpenAI, Anthropic, and Google for general-purpose models, or compromise on quality with cheaper alternatives. This dependency on frontier labs creates three fundamental risks: First, spiraling costs limit scale. As usage grows from thousands to billions of requests, API costs can consume entire budgets. Second, companies lack control over core business infrastructure, leaving them vulnerable to price changes, model deprecations, and service disruptions. Third, when everyone uses the same models, true differentiation becomes impossible.</p>
+<p>Companies shouldn’t have to choose between quality and cost. They shouldn’t be forced to send sensitive customer data to third-party servers. And they shouldn’t build their competitive advantage on infrastructure they don’t control.</p>
+<h2>Where we stand</h2>
+<p>Over the past year, we’ve trained and deployed custom language models for some of the fastest-growing AI-native companies in the world. Our approach is straightforward: we identify the specific, repeatable tasks that businesses run millions of times and train purpose-built models that excel at exactly those tasks. Whether extracting data from documents, captioning images, or classifying content, our models deliver superior results for their specialized domains.</p>
+<p>The results speak for themselves. Custom models match or exceed frontier model performance while running 2-3x faster and costing up to 90% less. These models, up to 100x smaller than GPT-5-class systems, prove that optimization for specific tasks beats general capability on a cost-to-performance ratio.</p>
+<p>Specialized models transform the economics of using AI at scale. Companies spending millions annually on API calls reduce costs by up to 90%. Applications previously constrained by latency can now serve real-time use cases. Businesses concerned about data privacy run models on their own infrastructure. Most importantly, companies gain full control of the AI models powering their core products.</p>
+<p>Beyond economics, custom models provide lasting competitive advantage. When every company has access to the same frontier models, differentiation disappears. Custom models trained on proprietary data and optimized for specific workflows become a moat that competitors cannot replicate. Your AI becomes yours, and yours alone.</p>
+<h2>Moving forward</h2>
+<p>The next decade will witness two parallel tracks in AI development. Frontier labs will continue pushing the boundaries with massive, general-purpose models for open-ended tasks like coding, creative writing, and complex reasoning. These models will remain expensive but essential for exploratory use cases.</p>
+<p>Simultaneously, a new ecosystem of specialized models will power the repetitive, high-volume tasks that constitute the majority of business AI usage. Companies will rely on frontier labs for cutting-edge capabilities while owning and operating custom models for core operations.</p>
+<p>As companies scale from prototypes to production, the cost of relying on frontier labs becomes untenable. Meanwhile, the open-source ecosystem has matured dramatically, and new post-training techniques make it possible to match frontier capabilities with far fewer parameters.</p>
+<p>This funding enables us to expand our research and development efforts into new frontiers of model and infrastructure performance while scaling our ability to serve more companies.</p>
+<h2>Join us</h2>
+<p>The transition from renting to owning intelligence has begun. We aim to accelerate this process. If you’re spending more than $50,000 per month on closed-source AI providers, we can help you cut costs and improve performance in as little as 4 weeks. <a href="https://cal.com/team/inference-net/custom-model-training-intro-call">Book a call</a> with our research team to learn more.</p>
+<p>CONTACT</p>
+<h2>Meet with our research team</h2>
+<p>Schedule a call with our research team to learn more about how Specialized Language Models can cut costs and improve performance.</p>]]></content:encoded>
     </item>
     <item>
       <title>Schematron: An LLM trained for HTML -&gt; JSON at scale</title>
-      <link>https://inference.net/blog/#d-2025-10-14-8</link>
-      <guid isPermaLink="true">https://inference.net/blog/#d-2025-10-14-8?li=1</guid>
+      <link>https://inference.net/blog/schematron/</link>
+      <guid isPermaLink="true">https://inference.net/blog/schematron/?li=1</guid>
       <pubDate>Tue, 14 Oct 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog</p>
-<h1>Latest Updates</h1>
-<p>AI engineering &amp; research, product releases and upgrades, and thoughts about the industry from the Inference R&amp;D, Inc. team.</p>
-<h3>Introducing AutoEvals: Automatically find the best model for your task</h3>
-<p>Automatically discover which model is best suited for your task, with the data you already generate. AutoEvals replays your production traffic across candidate models and tells you which one to run, with real numbers on quality, cost, and latency.</p>
-<p>Aug 5, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</h3>
-<p>Schematron is a family of small, purpose-built models that transform messy HTML into clean, structured JSON, delivering frontier-level extraction quality at a fraction of the cost and latency of large general-purpose LLMs.</p>
-<p>Apr 16, 2026</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Introducing Inference platform: Monitor, train, and deploy self-improving AI models</h3>
-<p>Build self-improving AI-systems from production data</p>
-<p>Apr 14, 2026</p>
+      <content:encoded><![CDATA[<p>Sep 9, 2025</p>
+<h1>Schematron: An LLM trained for HTML -&gt; JSON at scale</h1>
 <p>S</p>
 <p>Sam Hogan</p>
-<h3>How Inference.net trains Specialized Language Models that cut AI costs by up to 50x</h3>
-<p>Learn how Inference.net trains Specialized Language Models using the NVIDIA NeMO framework to delivery frontier accuracy at up to 50x lower cost.</p>
-<p>Mar 11, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Specialized LLMs: The model you need doesn't exist yet</h3>
-<p>Specialized LLMs trained on your own user data can match frontier quality for a fraction of the cost</p>
-<p>Feb 5, 2026</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Project OSSAS: Custom LLMs to process 100 Million Research Papers</h3>
-<p>Project OSSAS is a large-scale open-science initiative to make the world’s scientific knowledge accessible through AI-generated summaries of research papers.</p>
-<p>Nov 11, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>LOGIC: Trustless Inference through Log-Probability Verification</h3>
-<p>A practical method for verifying LLM inference requests in trustless environments.</p>
-<p>Nov 5, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Hybrid-Attention models are the future for SLMs</h3>
-<p>Hybrid attention delivers up to 3x cost reduction compared to traditional transformer models</p>
-<p>Nov 3, 2025</p>
-<p>A</p>
-<p>Amar Singh</p>
-<h3>Announcing our $11.8M Series Seed</h3>
-<p>We raised $11.8 million in funding led by Multicoin Capital and a16z CSX to train and hosti custom language models that are faster, more affordable, and more accurate than what the Big Labs offer.</p>
-<p>Oct 14, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>
-<h3>Schematron: An LLM trained for HTML -&gt; JSON at scale</h3>
-<p>Schematron-8B and Schematron-3B deliver frontier-level extraction quality at 1-2% of the cost and 10x+ faster inference than large, general-purpose LLMs.</p>
-<p>Sep 9, 2025</p>
-<p>S</p>
-<p>Sam Hogan</p>]]></content:encoded>
+<h2>Intro</h2>
+<p>Today we're introducing Schematron, a family of specialized models that transform messy HTML into clean, structured JSON.</p>
+<p>Schematron-8B and Schematron-3B deliver frontier-level extraction quality at 1-2% of the cost and 10x+ faster inference than large, general-purpose LLMs. By specializing in HTML-to-JSON, they can handle malformed HTML, complex JSON schemas, and excel across varying context lengths.</p>
+<p>These models unlock workloads that would previously have been economically infeasible, and make web agents faster and more accurate.</p>
+<p>Here's what processing 1 million pages daily looks like (assuming 10k input + 8000 output tokens per page):</p>
+<p>Cost comparison (1M pages/day)</p>
+<p>Both <a href="https://huggingface.co/inference-net/Schematron-3B">Schematron-3B</a> and <a href="https://huggingface.co/inference-net/Schematron-8B">Schematron-8B</a> are open source and available today on Hugging Face and through our <a href="https://inference.net/models">serverless API</a>.</p>
+<p>Code examples are available on our <a href="https://docs.inference.net/workhorse-models/schematron">docs</a> and <a href="https://github.com/context-labs/inference-samples/blob/main/examples/schematron-scrape-companies/schematron-scrape-companies.ipynb">samples repo</a>.</p>
+<h2>The Challenge of Structured Web Data</h2>
+<p>While today's strongest LLMs are extremely effective at extracting data from messy HTML, they're often impractical for real-world scraping workflows, as processing millions of pages with acceptable accuracy costs tens of thousands of dollars.</p>
+<p>Our team has experienced this firsthand through building dozens of scrapers and crawlers, and acutely felt the need for a more affordable HTML parsing model that doesn’t sacrifice extraction quality.</p>
+<p>We built Schematron to deliver frontier-model accuracy at prices that make sense for production workloads. Monitoring competitor prices, aggregating product catalogs, or building research agents all require extracting clean, typed data from messy HTML — a task that Schematron solves at a price point low enough to unlock new use cases.</p>
+<h2>Meet the Schematron Family</h2>
+<p>We trained two versions for Schematron: a highly accurate Schematron-8B and a marginally less accurate but much faster Schematron-3B.</p>
+<p><strong>Schematron-8B</strong> excels at complex extraction tasks, handling intricate nested schemas and very long documents with remarkable accuracy. It's your go-to choice when accuracy matters most.</p>
+<p><strong>Schematron-3B</strong> offers exceptional value for simpler extraction tasks, processing standard web pages in hundreds of milliseconds while maintaining impressive accuracy for common use cases.</p>
+<p>Both models share core capabilities:</p>
+<ul><li><strong>128K token context window</strong>: for processing long pages</li><li><strong>Strict JSON mode</strong>: guaranteeing parseable, schema-compliant output with 100% adherence</li></ul>
+<p>The quality of these models matches that of frontier models, being substantially smaller and faster. We used Gemini 2.5 Pro to grade the extractions from 1-5, where 5 is a perfect extraction. Gemini 2.5 Pro was selected because of its incredible long-context capabilities.</p>
+<p>LLM-as-a-judge: Average Quality Score by Model</p>
+<h2>Best-in-class Speed and Cost</h2>
+<p>Schematron's speed unlocks new agentic use cases, allowing LLMs to navigate and parse the web an order of magnitude faster. 10x lower latency compared to frontier models also saves developer time and server resources, which is essential for large crawling and scraping jobs.</p>
+<p>Some scraping/parsing tasks are extremely time sensitive, such as parsing financial documents for live trading. For these use cases, a fast model like Schematron can give you a significant advantage.</p>
+<p>Average Latency by Model</p>
+<p>Perhaps more importantly, Schematron is significantly cheaper than using a frontier model. Schematron-8B and Schematron 3B are 40x and 80x more affordable than GPT-5, respectively. This unlocks internet-scale scraping jobs that previously would have been impossible for all but the best-funded teams. It also makes it cost-effective to monitor large groups of pages for real-time data that depends on external sites with diverse page structures.</p>
+<p>Cost per 100k HTML Pages Parsed</p>
+<h2>Why We Built Schematron</h2>
+<h3>Crawling/Scraping the Web Is a Token-Heavy Activity</h3>
+<p>Schematron was built because turning an HTML page into JSON with an LLM, a task executed billions of times a day, is far too expensive. Raw HTML from a website is massive—even cleaned, it averages about 10k tokens per page, and can exceed that dramatically.</p>
+<p>Before Schematron, teams were either quickly draining their budgets using large models or parsing with poor accuracy. Our hope is that Schematron enables more ambitious web crawling and parsing projects, as a model this cheap allows for a reassessment of their viability.</p>
+<h3>Web Search is Particularly Inefficient</h3>
+<p>Grounding an LLM with web search can result in 5-100 relevant pages retrieved. Passing the context of all these pages would be infeasibly expensive, but it’s necessary to ground LLMs, as adding web context makes them significantly more factual than relying solely on LLM base knowledge.</p>
+<h3>Small Models Excel at Specialized Tasks</h3>
+<p>Instead of using large general-purpose models, a smaller model fine-tuned specifically for JSON schema extraction works far better. We are no longer paying for intelligence we don’t need, and focus all the parameters in a small model on this specific task. The result is that Schematron-8B is faster and 5x cheaper than Gemini 2.5 Flash and just as accurate.</p>
+<h2>Enhancing LLM Factuality With Schematron and Web Search</h2>
+<p>We evaluated Schematron's ability to improve web search accuracy using SimpleQA, a benchmark that tests factual question-answering capabilities.</p>
+<h3>Methodology</h3>
+<p>Our testing pipeline consisted of four stages:</p>
+<ul><li><strong>Query Generation</strong>: A primary LLM (GPT-5 Nano or GPT-4.1) generates search queries and defines a data extraction schema</li><li><strong>Web Search</strong>: A search provider (SERP or Exa) executes the queries and retrieves relevant pages</li><li><strong>Structured Extraction</strong>: Schematron-8B extracts structured JSON data from the retrieved pages using the schema</li><li><strong>Answer Synthesis</strong>: The primary LLM produces the final answer using the extracted structured data</li></ul>
+<h2>Results</h2>
+<p>SimpleQA Benchmark Scores</p>
+<p>Without any search augmentation, both GPT-5 Nano and GPT-4.1 struggled to answer most factual questions correctly.</p>
+<p>Incorporating web search improved the results dramatically. When we added SERP with Schematron-8B extraction, GPT-5 Nano could answer the majority of questions that had previously stumped it. The combination of Exa and Schematron-8B pushed performance even further, enabling GPT-5 Nano to correctly answer more than four out of five questions.</p>
+<p>With GPT-4.1 as the base model, the same Exa-Schematron pipeline achieved near-expert performance, showing that these gains scale with base model quality.</p>
+<h2>Key Findings</h2>
+<p>In direct comparison as the extraction model, Schematron-8B consistently outperformed Gemini-2.5-Flash. Even the smaller Schematron-3B paired with Exa proved highly effective, demonstrating that structured extraction delivers strong factuality improvements regardless of model size.</p>
+<p>The findings reveal how structured extraction changes the economics of web search for LLMs. Schematron makes web-augmented factuality economically viable by processing structured extracts instead of full web pages—avoiding tens of thousands of tokens per query.</p>
+<h2>How We Built Schematron</h2>
+<p>To create models that truly understand both HTML structure and JSON schemas, we started by assembling a massive corpus of 1M real-world web pages from Common Crawl. We built a synthetic dataset of schemas through clustering webpages and using groups of website summaries to generate schemas that could potentially be relevant, essentially simulating a reverse search process.</p>
+<p>This approach mirrors real-world usage, where you define a schema once and use it across multiple similar pages. Using frontier models as teachers, we created hundreds of thousands of extraction examples across diverse domains.</p>
+<p>We used curriculum learning to progressively train the model on longer context lengths for extraction, gradually exposing it to increasingly complex documents throughout training. This ensured stable performance even at the 128K token limit. The result was models that truly understand the relationship between schemas and HTML structure, even for long documents.</p>
+<h2>Built for Developers</h2>
+<p>To use Schematron models: define your schema using Pydantic, Zod, or JSON Schema. Pass in raw HTML and get back validated, type-safe data that's ready to use in your application.</p>
+<p>Here's how simple it is to extract product information from any e-commerce page:</p>
+<pre><code>import os
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+# 1) Define your schema (nested data and lists are supported)
+
+class Product(BaseModel):
+    name: str
+    price: float = Field(
+        ..., description=(
+            &quot;Primary price of the product.&quot;
+        )
+    )
+    specs: dict = Field(
+        default_factory=dict,
+        description=&quot;Specs of the product.&quot;,
+    )
+    tags: list[str] = Field(
+        default_factory=list,
+        description=&quot;Tags assigned of the product.&quot;,
+    )
+
+# 2) Messy HTML (could be the full page; trim to the relevant region when possible)
+html = &quot;&quot;&quot;
+&lt;div id=&quot;item&quot;&gt;
+    &lt;h2 class=&quot;title&quot;&gt;MacBook Pro M3&lt;/h2&gt;
+    &lt;p&gt;Price: &lt;b&gt;$2,499.99&lt;/b&gt; USD&lt;/p&gt;
+    &lt;ul info&gt;
+    &lt;li&gt;RAM: 16GB&lt;/li&gt;
+    &lt;li&gt;Storage: 512GB SSD&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;span class=&quot;tag&quot;&gt;laptop&lt;/span&gt;
+    &lt;span class=&quot;tag&quot;&gt;professional&lt;/span&gt;
+    &lt;span class=&quot;tag&quot;&gt;macbook&lt;/span&gt;
+    &lt;span class=&quot;tag&quot;&gt;apple&lt;/span&gt;
+&lt;/div&gt;
+&quot;&quot;&quot;
+
+# 3) Client setup
+client = OpenAI(
+    base_url=&quot;https://api.inference.net/v1&quot;,
+    api_key=os.environ.get(&quot;INFERENCE_API_KEY&quot;),
+)
+
+# 4) Responses API extraction (typed parsing)
+response = client.chat.completions.parse(
+    model=&quot;inference-net/schematron-8b&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: html},
+    ],
+    response_format=Product,
+)
+
+print(response.choices[0].message.content)</code></pre>
+<pre><code>import os
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+# 1) Define your schema (nested data and lists are supported)
+
+class Product(BaseModel):
+    name: str
+    price: float = Field(
+        ..., description=(
+            &quot;Primary price of the product.&quot;
+        )
+    )
+    specs: dict = Field(
+        default_factory=dict,
+        description=&quot;Specs of the product.&quot;,
+    )
+    tags: list[str] = Field(
+        default_factory=list,
+        description=&quot;Tags assigned of the product.&quot;,
+    )
+
+# 2) Messy HTML (could be the full page; trim to the relevant region when possible)
+html = &quot;&quot;&quot;
+&lt;div id=&quot;item&quot;&gt;
+    &lt;h2 class=&quot;title&quot;&gt;MacBook Pro M3&lt;/h2&gt;
+    &lt;p&gt;Price: &lt;b&gt;$2,499.99&lt;/b&gt; USD&lt;/p&gt;
+    &lt;ul info&gt;
+    &lt;li&gt;RAM: 16GB&lt;/li&gt;
+    &lt;li&gt;Storage: 512GB SSD&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;span class=&quot;tag&quot;&gt;laptop&lt;/span&gt;
+    &lt;span class=&quot;tag&quot;&gt;professional&lt;/span&gt;
+    &lt;span class=&quot;tag&quot;&gt;macbook&lt;/span&gt;
+    &lt;span class=&quot;tag&quot;&gt;apple&lt;/span&gt;
+&lt;/div&gt;
+&quot;&quot;&quot;
+
+# 3) Client setup
+client = OpenAI(
+    base_url=&quot;https://api.inference.net/v1&quot;,
+    api_key=os.environ.get(&quot;INFERENCE_API_KEY&quot;),
+)
+
+# 4) Responses API extraction (typed parsing)
+response = client.chat.completions.parse(
+    model=&quot;inference-net/schematron-8b&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: html},
+    ],
+    response_format=Product,
+)
+
+print(response.choices[0].message.content)</code></pre>
+<h2>Open Source and API Access</h2>
+<p>We believe specialized models like Schematron represent the future of AI applications that will be built on carefully trained small models that excel at specific tasks, rather than expensive generalists trying to do everything.</p>
+<p>That's why we're making Schematron available through multiple channels:</p>
+<ul><li><strong><a href="http://inference.net/">Inference.net</a></strong><strong> API</strong>: Start extracting immediately with our hosted API. Pay only for what you use with no upfront costs.</li><li><strong>Open Source</strong>: Both <a href="https://huggingface.co/inference-net/Schematron-3B">Schematron-3B</a> and <a href="https://huggingface.co/inference-net/Schematron-8B">Schematron-8B</a> are available on Hugging Face under permissive licenses. Deploy them on your own infrastructure, fine-tune for your specific domain, or integrate directly into your applications.</li><li><strong>Batch Processing</strong>: Our <a href="https://docs.inference.net/features/batch-api#batch-api">Batch</a> and <a href="https://docs.inference.net/features/asynchronous-inference/overview#getting-started">Async APIs</a> deliver significant savings on large-scale extraction.</li></ul>
+<p>For crawling, we recommend a webhook workflow: submit an async request, and results are posted to your <a href="https://docs.inference.net/features/asynchronous-inference/webhooks/getting-started-with-webhooks">webhook</a> (typically within seconds) to upsert into your database, while retaining the same batch-level savings.</p>
+<h2>Start Extracting</h2>
+<p>We'd love to hear what you'd like to build with this model. <a href="https://cal.com/team/inference-net/custom-model-training-intro-call?overlayCalendar=true">Schedule a meeting</a> with us or get started with these resources:</p>
+<ul><li>Try the <a href="https://inference.net/models">Inference.net API</a> with $10 free credits</li><li>Download models from <a href="https://huggingface.co/inference-net/Schematron-3B">Hugging Face</a></li><li>Read the <a href="https://docs.inference.net/use-cases/json-extraction">documentation</a></li></ul>
+<p>We can't wait to see what you'll build with truly affordable, high-quality extraction.</p>
+<p>CONTACT</p>
+<h2>Meet with our research team</h2>
+<p>Schedule a call with our research team to learn more about how Specialized Language Models can cut costs and improve performance.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

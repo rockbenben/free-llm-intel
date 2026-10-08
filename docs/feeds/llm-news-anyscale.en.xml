@@ -14,6 +14,68 @@
       <guid isPermaLink="true">https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference</description>
+      <content:encoded><![CDATA[<p>Home</p>
+<p>Blog</p>
+<p>Blog Detail</p>
+<h1>Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference</h1>
+<p>By</p>
+<p>Katarina Stanley</p>
+<p>and</p>
+<p>Adhip Gupta</p>
+<p>|</p>
+<p>October 7, 2026</p>
+<p>Today, <a href="http://anyscale.com/product/azure"><strong>Anyscale on Azure</strong></a><strong> is generally available</strong>, so enterprises can run their own AI loops—spanning data processing, training, post-training, evaluation, and inference—with the ease of use they expect from hosted model inference.</p>
+<p>Renting intelligence by the token is the fastest way to prove an AI use case. AI-native companies built this way first, assembling products at speed on frontier model APIs, and the same APIs carried them to scale. But along the way, they gave up control over three things: the model, their data, and costs. The model and its roadmap belonged to someone else. The data that made a use case worth building had to leave the company’s environment to reach the model. And the bill rose in a straight line with usage, so scale never lowered with unit cost. Anyone who rents makes the same trade.</p>
+<p>AI-native companies ran into these limits first. Once a use case proved its value, cost and data exposure became the problem. To mitigate this, they moved to smaller, domain-specific models customized on their own data and run on their own GPUs, which gave them faster responses at lower cost. The bigger advantage came from improving those models continuously: owning the <a href="https://www.anyscale.com/blog/learning-loops">learning loop</a> that turns production data into training and post-training runs, and that turns the updated models into inference deployments that power their AI applications.</p>
+<p>That loop replaces an inference-only pipeline with a set of AI workloads – data processing, training and fine-tuning, post-training, and inference – that need to share GPU clusters. To run many workloads across many GPUs, Ray became the common runtime and orchestration layer for AI-native teams. Enterprises want the same path, extending the Azure governance they already trust to every step of the loop.</p>
+<p>Anyscale turns Ray from a distributed compute engine into an enterprise-ready platform: teams build and scale every step of the loop while Anyscale handles the cluster operations, all within the security and governance they've already built on Azure. Azure customers deploy it from the Azure portal, run production AI on Azure Kubernetes Service (AKS) in their own subscription, and pay for it like any other Azure service, with spend counting toward their existing Microsoft Azure Consumption Commitment (MACC).</p>
+<p>With Anyscale on Azure, you can:</p>
+<ul><li><strong>Own your AI.</strong> Anyscale runs on open source Ray, governed by the PyTorch Foundation. Your data pipelines, training code, and serving logic run on open source, across every layer of the <a href="https://www.anyscale.com/blog/ai-compute-open-source-stack-kubernetes-ray-pytorch-vllm">stack</a>.</li><li><strong>Keep your data, evals, and models secure.</strong> Your workloads run on AKS in your own Azure subscription, associated with your organization's Microsoft Entra tenant. Your platform team's existing Azure RBAC and Azure Policy controls apply unchanged.</li><li><strong>Increase output per GPU to reduce costs.</strong> Shared GPU capacity brings efficiencies of scale, and post-training on your own data lets teams move to smaller, domain-specific models that cost less to serve.</li></ul>
+<h2>LinkOwn your AI</h2>
+<p>Satya Nadella <a href="https://x.com/satyanadella/status/2076323181154230284">made the case</a> earlier this year:</p>
+<blockquote>“It’s imperative that we distribute the learning infrastructure to every firm so that they can control their own learning loop… a company should be able to use a model without giving up the knowledge that makes it unique.”– Satya Nadella, Chairman and CEO, Microsoft</blockquote>
+<p>Owning your AI means owning the loop that improves it. Production results feed data curation, curated data feeds training, and the next model version goes back into serving. Anyscale on Azure runs that whole loop on one platform. It enables you to curate your multimodal (text, images, video, documents, etc) data, scale model fine-tuning and other post-training techniques such as reinforcement learning (RL), supports post-training and fine-tuning, and keeps models serving through updates and demand swings. For each of those, Anyscale orchestrates compute to match the demands of each workload. For example, to deploy LLMs and other models as endpoints, <a href="https://docs.anyscale.com/services">Anyscale Services</a> deploy with zero-downtime upgrades, scale to zero when idle, and compact replicas to keep GPU utilization high under real traffic.</p>
+<p>Every stage of that loop runs on Ray, which scales Python code. That means it works with the open-source AI frameworks your teams already use, like PyTorch and vLLM, and with new ones as they come out. Your pipelines and applications stay portable, because it's fully compatible with open-source APIs. Your teams stay flexible, because they can adopt new frameworks without changing how they scale.</p>
+<p>Because one engine runs every AI workload, teams can benefit in two ways. They can streamline their use of advanced techniques like <a href="https://www.youtube.com/watch?v=QnxcDsMtaK8&amp;pp=ygUYd3loeSBybCBpcyBoYXJkIGFueXNjYWxl">reinforcement learning (RL)</a> which combine inference and training in one loop. At Ray Summit 2026, Microsoft AI shared that MAI-Thinking-1, its frontier reasoning model, was trained using Ray (<a href="https://www.youtube.com/watch?v=7fCwq7pIrkA">watch the session here</a>). Or they can start with one workload and extend to the next without friction. BMW began using Ray for <a href="https://www.youtube.com/watch?v=s3x3STd5vuU">model training</a>, and when it was time to <a href="https://youtu.be/yKt-CpfrOIE?si=JC1nlZTBK0GtB6_a&amp;t=35">serve LLMs</a>, it integrated it to their AI Gateway to run inference for open-source models across the enterprise.</p>
+<h2>LinkKeep your data, evals, and models secure</h2>
+<p>Anyscale on Azure makes Ray production ready, scalable, and reliable in your own Azure tenant, with support from the engineers who build Ray. This means your data, evals, models, and container images stay in your subscription. As sovereignty and differentiation become central to AI strategy, this will be a requirement for every company, not just those with strict regulatory requirements.</p>
+<p>The network model is egress-only. Every connection originates from the Anyscale operator and Ray clusters in your AKS cluster, outbound to the Anyscale control plane, with no inbound firewall rules to open. The full deployment architecture, from the AKS data plane in your subscription to the Anyscale-hosted control plane, is diagrammed in the preview announcement.</p>
+<p>Anyscale resources are native to Azure, governed by Azure RBAC and Azure Policy, and billed through Azure with MACC drawdown.</p>
+<p>Anyscale resources are native to Azure, governed by Azure RBAC and Azure Policy, and billed through Azure with MACC drawdown</p>
+<h2>LinkReduce costs</h2>
+<p>A per-token API charges the same rate whether you run one workload or fifty. On your own GPUs, every increase in utilization lowers the cost of each unit of work. Average GPU utilization on traditional ML infrastructure sits below 30% across the typical enterprise. That waste starts inside a single workload and compounds across teams, and Anyscale addresses it at every level.</p>
+<p>By optimizing scheduling and orchestration for individual workloads and across teams, Anyscale delivers 80%+ average GPU utilization. That means 2-3x more work from the same GPU fleet.</p>
+<p>At the workload level, GPUs often sit idle waiting for data: a handful of CPUs can't load and preprocess the next batch fast enough to keep them busy. Anyscale fixes this by spinning up as many CPU workers as needed to load data in parallel and stream it straight to the GPUs, so the next batch is ready the moment the GPU finishes the last one. Jobs also tend to reserve whole GPUs they only partly use, so fractional GPUs let you pack more workloads or models onto each device. Autoscaling adjusts resources before a job runs out of memory, and checkpointing restarts a failed job from its last completed step instead of from scratch, so a spot eviction or a straggler GPU no longer burns paid-for capacity on reruns.</p>
+<p>Across teams, the waste comes from siloed clusters. Each team reserves enough capacity for its peak, uses it only part of the time, and leaves it sitting idle while other teams wait for compute they can't access.. Anyscale pools those clusters into shared compute managed from a single pane, drawing on spot, reserved, and on-demand capacity as it becomes available. Scheduling is priority-aware, so queues follow business priorities, and when an urgent job lands, lower-priority work is paused rather than killed, then picks up where it left off.</p>
+<p>Three teams share an H100 reservation. When a high-priority training job lands, the scheduler preempts the low-priority evals job and resumes it when the training job finished, keeping the reservation close to full utilization throughout.</p>
+<p>GPU reservations</p>
+<p>Across clusters and regions, that pool behaves as one. Demand for GPUs outpaces supply everywhere, so the teams running the largest AI workloads plan capacity as a portfolio. The Anyscale scheduler places workloads across clusters and Azure regions, with Azure as the control point for identity and policy. The same model extends to GPU capacity a customer attaches beyond Azure, with Azure remaining the home for identity, governance, and management.</p>
+<p>GPU utilization is one lever. The other is the model itself. Post-training and fine-tuning open models on your own data lets teams replace large general models with smaller, task-specific ones that cost less to serve. But the true cost includes building the model too, and running data processing, and post-training on separate infrastructure adds operational overhead that can wipe out the inference savings. Anyscale runs every step on one platform, so a smaller model doesn't mean a new stack to build or maintain for different steps of the AI lifecycle.</p>
+<h2>LinkWhat customers are doing with Anyscale on Azure</h2>
+<p>Xoople processes planetary-scale satellite imagery into decision-ready Earth intelligence on it. Hear about their deployment of Anyscale on Azure from Xoople’sVP of Engineering.</p>
+<h2>LinkGetting started with Anyscale on Azure</h2>
+<p>Provision Anyscale from the Azure portal and run your first Ray workload on AKS with your existing identity and networking. The deployment quickstarts on <a href="https://learn.microsoft.com/azure/anyscale-on-azure">Microsoft Learn</a> cover end-to-end setup. <a href="https://www.anyscale.com/blog/announcing-anyscale-agent-skills-ray">Anyscale Agent Skills</a> give your coding agent the knowledge to deploy, run, debug, and tune Ray workloads on Anyscale.</p>
+<p><a href="https://www.anyscale.com/resources/webinar/anyscale-on-azure">Watch the demo here.</a></p>
+<h2>LinkResources</h2>
+<h3>LinkGet connected</h3>
+<ul><li><a href="http://anyscale.com/product/azure"><strong>Learn more. </strong></a>See the Anyscale on Azure product webpage.</li><li><a href="https://docs.anyscale.com/clouds/azure"><strong>Get started.</strong></a> Review the Anyscale on AKS documentation.</li><li><a href="https://www.anyscale.com/contact-sales?utm-source=blog"><strong>Talk to us</strong>.</a> Request a demo or FDE support.</li></ul>
+<h3>LinkRead more</h3>
+<ul><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-public-preview-build-and-deploy-ai-scale">Anyscale on Azure Enters Public Preview</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray">Anyscale Runtime announcement and benchmarks</a></li><li><a href="https://learn.microsoft.com/azure/anyscale-on-azure">Anyscale on Azure documentation on Microsoft Learn</a></li></ul>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#own-your-ai">Own your AI</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#keep-your-data,-evals,-and-models-secure">Keep your data, evals, and models secure</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#reduce-costs">Reduce costs</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#what-customers-are-doing-with-anyscale-on-azure">What customers are doing with Anyscale on Azure</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#getting-started-with-anyscale-on-azure">Getting started with Anyscale on Azure</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#resources">Resources</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#get-connected">Get connected</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#read-more">Read more</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
+<p>Read more</p>
+<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
+<p>Read more</p>
+<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
+<p>Read more</p>
+<h2>Explore Anyscale on Azure today</h2>
+<p>Get started</p>
+<p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
       <title>Ray Summit 2026: Physical AI, RL, and the infrastructure tha…</title>
@@ -2334,6 +2396,225 @@ assert return_code == 0</code></pre>
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
+      <title>Scale Robot Policy Evaluation with Ray</title>
+      <link>https://anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale?li=1</guid>
+      <pubDate>Fri, 26 Jun 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Home</p>
+<p>Blog</p>
+<p>Blog Detail</p>
+<h1>Scale Robot Policy Evaluation with Ray</h1>
+<p>By</p>
+<p>Ian Jordan, PhD</p>
+<p>,</p>
+<p>Alicia Chua</p>
+<p>,</p>
+<p>Artur Niederfahrenhorst</p>
+<p>and</p>
+<p>Omar Shorbaji</p>
+<p>|</p>
+<p>June 26, 2026</p>
+<p><em>Evaluating a robot foundation model means running heavy GPU inference in a closed loop along with a heavy GPU physics simulator, thousands of times over. This post shows how to disaggregate those two workloads with Ray and Isaac Lab, and scale each independently on Anyscale.</em></p>
+<h2>LinkIntroduction</h2>
+<p>Policy evaluation is an essential part of robotics. Real-robot evaluation is slow, expensive, and unsafe. Simulation, in contrast, is safe, repeatable, parallelizable, and cheap per trial. So evaluation in simulation (sim-eval) is an important tool.</p>
+<p>However, while simulation removes the bottlenecks of physical evaluation, it replaces them with a distributed-systems problem. Evaluating robot foundation models means running GPU-heavy simulation and GPU-heavy policy inference together across hundreds or thousands of rollouts. At scale this spans multiple GPU and nodes.</p>
+<p>Three challenges emerge from this:</p>
+<ul><li><strong>It is a closed loop, not a batch pass.</strong> Policy inference and simulation alternate, step by step, with the output of one feeding the input of the other. You cannot decouple them into independent offline stages.</li><li><strong>Two GPU-bound workloads cannot share a process or a GPU.</strong> A 3B vision-language-action (VLA) model wants a GPU, and Isaac Sim's physics and rendering want a GPU. Co-locate them and they contend for memory and compute, stalling each other. Put them in the same process and their runtimes conflict outright.</li><li><strong>Hundreds of rollouts should share one policy, not reload it.</strong> Each rollout needs its own simulator, but all of them can be served by a small fleet of policy replicas. Combine the two and scaling rollouts means standing up N copies of a 3B+ model, which is wasteful and often infeasible on GPU memory.</li></ul>
+<p>Ray and Anyscale resolve these three difficulties directly.</p>
+<ul><li><strong>Closed-loop execution:</strong> Ray tasks and actors run simulators as isolated processes across the cluster. Each simulator advances the environment step by step, calls the policy service for an action, applies that action, and repeats. This keeps evaluation online and closed-loop rather than forcing it into an offline batch pipeline.</li><li><strong>Separate GPU-bound workloads:</strong> Ray Serve runs the policy as an autoscaling service, the same primitive used to serve LLMs in production. Isaac Lab simulators run separately, each in its own process with its own GPU allocation. The policy runtime and simulation runtime do not have to share a process or fight over the same GPU.</li><li><strong>Shared policy replicas:</strong> Hundreds of simulators can query a smaller fleet of shared policy replicas instead of each rollout loading its own copy of the 3B VLA. You can scale policy replicas when inference is the bottleneck, and scale simulators when rollout throughput is the bottleneck.</li></ul>
+<p>Anyscale packages this heterogeneous, notoriously brittle robotics stack into one reproducible cluster image and runs it on a managed Ray cluster. That means you can move from a single rollout to hundreds of parallel rollouts without rebuilding the infrastructure from scratch.</p>
+<p>In this post, we deploy NVIDIA’s GR00T-N1.7-3B VLA with Ray Serve, use it to drive a Unitree G1 humanoid in an Isaac Lab pick-and-place scene, and fan the closed-loop rollout out across the cluster.</p>
+<h2>LinkThe Architecture</h2>
+<p>The policy and the simulator live on separate GPU workers of the same Anyscale Ray cluster and communicate over HTTP. In our example we demonstrate this with a Jupyter Notebook. A driver on the head node deploys the policy with Ray Serve, then launches simulator workers as Ray tasks. Each worker drives an Isaac Lab environment and queries the policy endpoint once per action chunk.</p>
+<p>The entire flow is three steps of top-level code: connect to the cluster, serve the policy, fan out the simulators.</p>
+<p>Anyscale Ray Cluster</p>
+<pre><code>import os
+import ray
+from ray import serve
+from policy_server import GR00TPolicyServer
+
+# Stage 0: connect to the cluster
+ray.init(
+    address=&quot;auto&quot;,
+    runtime_env={&quot;env_vars&quot;: {&quot;HF_TOKEN&quot;: os.environ[&quot;HF_TOKEN&quot;]}},
+)
+
+# Stage 1: serve the policy as an HTTP service (GPU)
+deployment = GR00TPolicyServer.options(
+    num_replicas=1,
+    ray_actor_options={&quot;num_gpus&quot;: 1},
+).bind(model_path=&quot;nvidia/GR00T-N1.7-3B&quot;, embodiment_tag=&quot;REAL_G1&quot;)
+
+serve.run(deployment, name=&quot;gr00t-policy&quot;)
+
+# Stage 2: fan out simulators that query the shared policy (GPU)
+results = ray.get([run_sim_rollout.remote(POLICY_URL) for _ in range(100)]</code></pre>
+<p>The rest of this post unpacks each stage and the problem it solves.</p>
+<h2>LinkPart 1: Closed-loop evaluation needs online policy serving</h2>
+<p><strong>The problem:</strong> Policy inference turns observations (camera frames, joint state, a language instruction) into action, with low enough latency that a closed-loop rollout runs in reasonable time. And because hundreds of rollouts will run concurrently, inference becomes an N-by-M serving problem: many simulator workers should query a smaller fleet of shared policy replicas, with Ray Serve routing requests across them, rather than each simulator loading its own copy of the model.</p>
+<p><strong>The Ray solution:</strong> Wrap the policy in a Ray Serve deployment. <code>GR00TPolicyServer</code> is a plain Python class decorated with <code>@serve.deployment</code> and <code>@serve.ingress(FastAPI())</code>. It loads GR00T-N1.7-3B onto a GPU once and exposes <code>POST /predict</code> and <code>GET /stats</code>.</p>
+<pre><code>from fastapi import FastAPI, Request, Response
+from ray import serve
+import pickle, torch
+
+app = FastAPI()
+
+@serve.deployment(ray_actor_options={&quot;num_gpus&quot;: 1}, max_ongoing_requests=16)
+@serve.ingress(app)
+class GR00TPolicyServer:
+    def __init__(self, model_path=&quot;nvidia/GR00T-N1.7-3B&quot;, embodiment_tag=&quot;REAL_G1&quot;):
+        from gr00t.policy.gr00t_policy import Gr00tPolicy
+        from gr00t.data.embodiment_tags import EmbodimentTag
+        self.policy = Gr00tPolicy(
+            embodiment_tag=EmbodimentTag.resolve(embodiment_tag),
+            model_path=model_path,
+            device=&quot;cuda:0&quot;,
+        )
+
+    @app.post(&quot;/predict&quot;)
+    async def predict(self, request: Request):
+        obs = pickle.loads(await request.body())
+        with torch.no_grad():
+            action_chunk, _ = self.policy.get_action(obs)
+        action = {k: v.detach().cpu().numpy() for k, v in action_chunk.items()}
+        return Response(pickle.dumps({&quot;action&quot;: action}),
+                        media_type=&quot;application/octet-stream&quot;)</code></pre>
+<p>One <code>serve.run</code> schedules a replica on a GPU worker, loads the model, and stands up the HTTP server. Two deployment options matter here. Note: a 3B model takes longer to load than Ray Serve's default 30-second health-check window, so we extend it. Also, the gated vision-language backbone also needs a Hugging Face token in the replica's environment, which we pass through <code>runtime_env</code>.</p>
+<pre><code>deployment = GR00TPolicyServer.options(
+    num_replicas=1,
+    health_check_timeout_s=300,        # 3B model load exceeds the 30s default
+    ray_actor_options={
+        &quot;num_gpus&quot;: 1,
+        &quot;runtime_env&quot;: {&quot;env_vars&quot;: {&quot;HF_TOKEN&quot;: os.environ[&quot;HF_TOKEN&quot;]}},
+    },
+).bind(model_path=&quot;nvidia/GR00T-N1.7-3B&quot;, embodiment_tag=&quot;REAL_G1&quot;)
+
+serve.run(deployment, name=&quot;gr00t-policy&quot;)</code></pre>
+<p>With the endpoint live, one observation in GR00T's <code>REAL_G1</code> schema produces one action chunk. The observation is a nested dict: a short stack of camera frames, the robot's joint state across arms, hands, and waist, and a natural-language instruction. The policy returns a 40-step action chunk covering every actuated part of the body.</p>
+<pre><code>import numpy as np, pickle, requests
+
+identity_pose = np.array([0.3, 0, 0, 1, 0, 0, 0, 1, 0], dtype=np.float32)  # 3 pos + 6 rot
+obs = {
+    &quot;video&quot;: {&quot;ego_view&quot;: np.zeros((1, 2, 256, 256, 3), dtype=np.uint8)},  # 2-frame stack
+    &quot;state&quot;: {
+        &quot;left_wrist_eef_9d&quot;:  identity_pose[None, None],
+        &quot;right_wrist_eef_9d&quot;: identity_pose[None, None],
+        &quot;left_arm&quot;:   np.zeros((1, 1, 7), dtype=np.float32),
+        &quot;right_arm&quot;:  np.zeros((1, 1, 7), dtype=np.float32),
+        &quot;left_hand&quot;:  np.zeros((1, 1, 7), dtype=np.float32),
+        &quot;right_hand&quot;: np.zeros((1, 1, 7), dtype=np.float32),
+        &quot;waist&quot;:      np.zeros((1, 1, 3), dtype=np.float32),
+    },
+    &quot;language&quot;: {&quot;annotation.human.task_description&quot;: [[&quot;pick up the apple and place it on the plate&quot;]]},
+}
+
+resp = pickle.loads(requests.post(f&quot;{POLICY_URL}/predict&quot;, data=pickle.dumps(obs)).content)
+for k, v in resp[&quot;action&quot;].items():
+    print(f&quot;{k:24s} {np.asarray(v).shape}&quot;)</code></pre>
+<pre><code>Round trip: 1641 ms
+
+left_wrist_eef_9d        (1, 40, 9)
+right_wrist_eef_9d       (1, 40, 9)
+left_hand                (1, 40, 7)
+right_hand               (1, 40, 7)
+left_arm                 (1, 40, 7)
+right_arm                (1, 40, 7)
+waist                    (1, 40, 3)
+base_height_command      (1, 40, 1)
+navigate_command         (1, 40, 3)</code></pre>
+<p>A single forward pass takes roughly 1.6 seconds and returns 40 steps of action. That ratio is what makes a shared service practical: a simulator can execute many steps per inference call (more on that in Part 2), so a small fleet of replicas keeps many rollouts fed. Scaling that fleet is one line. Ray Serve schedules each replica on its own GPU, and clients load-balance across them automatically.</p>
+<pre><code>deployment = GR00TPolicyServer.options(num_replicas=4).bind(...)</code></pre>
+<p>This is the same pattern used to serve large language models in production. The policy is now an ordinary HTTP microservice. It’s versioned, health-checked, and horizontally scalable. Nothing about the simulator needs to know how many replicas exist or where they run.</p>
+<h2>LinkPart 2: The simulator and the policy cannot share a process or a GPU</h2>
+<p><strong>The problem: </strong>The natural first instinct is to import the simulator and the policy into one Python process and call the model in a loop. While this can work, it is not optimal due to resource contention: Isaac Sim's GPU physics and rendering compete with the 3B model for the same VRAM and compute, so co-located on one GPU each stalls the other.</p>
+<p><strong>The solution:</strong> Run each simulator as an isolated process separate from policy inference, a Ray task that gets its own clean Python interpreter and event loop, and have it talk to the policy over the HTTP endpoint from Part 1 rather than through an in-process handle. This places policy and simulator on different GPUs, so neither blocks the other. The cost is a network hop per inference, which is exactly what action chunking amortizes.</p>
+<p>The control loop is small. The simulator queries the policy only when its current action chunk runs out, executing <code>action_horizon</code> steps of physics per call:</p>
+<pre><code>def query_policy(policy_url, obs, timeout=120.0):
+    r = requests.post(policy_url.rstrip(&quot;/&quot;) + &quot;/predict&quot;,
+                      data=pickle.dumps(obs), timeout=timeout)
+    r.raise_for_status()
+    return pickle.loads(r.content)
+
+action_horizon = 8            # execute 8 of GR00T's 40 steps before re-querying
+chunk_idx = action_horizon    # force a query on the very first step
+
+for step in range(max_steps):
+    if chunk_idx &gt;= action_horizon:
+        action_chunk = query_policy(POLICY_URL, obs)[&quot;action&quot;]   # HTTP POST /predict
+        chunk_idx = 0
+    obs, reward, done, info = env.step(action_chunk, step_idx=chunk_idx)
+    chunk_idx += 1
+    if done:
+        break</code></pre>
+<p>With <code>action_horizon = 8</code>, one ~1.6-second inference covers eight physics steps, so the GPU running the policy serves eight times as many simulators as a naive query-every-step loop would.</p>
+<p>The remaining work is translation. GR00T and Isaac Lab speak different schemas, and bridging them is the genuinely fiddly part of wiring any VLA into a simulator. On the way in, Isaac Lab's observation dict becomes GR00T's nested <code>REAL_G1</code> modality dict. This is a two-frame <code>ego_view</code> stack, and end-effector poses encoded as 9-D vectors (3 translation values plus the first two rows of the rotation matrix). On the way out, GR00T's nine-key, 40-step action chunk collapses into the flat <code>(1, 28)</code> joint command the Isaac Lab task expects:</p>
+<pre><code>def _flatten_action(self, chunk, step_idx=0):
+    &quot;&quot;&quot;One step of GR00T's 9-key chunk -&gt; Isaac Lab's flat (1, 28) joint action.&quot;&quot;&quot;
+    def pick(key, n):
+        return np.asarray(chunk[key], dtype=np.float32)[0, step_idx][:n]
+
+    flat = np.concatenate([
+        pick(&quot;left_arm&quot;, 7), pick(&quot;right_arm&quot;, 7),    # 7 + 7
+        pick(&quot;left_hand&quot;, 7), pick(&quot;right_hand&quot;, 7),  # 7 + 7  = 28
+    ])
+    return flat[None, :].astype(np.float32)           # (1, 28)</code></pre>
+<p>Once that glue is in place, the policy and simulator communicate across an HTTP boundary while running in separate processes on separate GPUs. The simulator still waits for each new action chunk, but action chunking amortizes that blocking call across multiple physics steps and avoids GPU/runtime contention with the policy server.</p>
+<h2>LinkPart 3: Policy as a Service</h2>
+<p><strong>The problem:</strong> To say anything about a checkpoint you need many rollouts, across seeds and starting states, and you need them to run in parallel or evaluation becomes the slowest step in the entire model-development loop. Worse, the software stack that makes a single rollout possible is painful to assemble on one machine and far harder to reproduce identically across a cluster of GPU workers. It spans Isaac Lab, GR00T, a gated VLM backbone, pinned versions of <code>transformers</code> and <code>flash-attn</code>, and several runtime patches just to load the model. In most robotics teams this reproducibility problem, not the modeling, is what actually gates evaluation throughput.</p>
+<p><strong>The solution – fan out with Ray on Anyscale:</strong> Because the policy is a shared HTTP service and each simulator is an independent Ray task, scaling from one rollout to a hundred or more is easy.. Each task claims a GPU, runs its rollout, queries the shared policy fleet, and saves its own result.</p>
+<pre><code>  @ray.remote(num_gpus=1, runtime_env={&quot;env_vars&quot;: {&quot;HF_TOKEN&quot;: os.environ[&quot;HF_TOKEN&quot;]}})
+  def run_sim_rollout(policy_url, seed=0):
+      # Launch the simulator in its own process (see Part 2: Isaac Sim needs a
+      # clean interpreter and event loop), pointed at the shared policy endpoint.
+      import subprocess
+      subprocess.run(
+          [&quot;python&quot;, &quot;sim_worker.py&quot;, &quot;--policy-url&quot;, policy_url, &quot;--seed&quot;, str(seed)],
+          check=True,
+      )
+      return load_results(seed)   # the subprocess writes its GIF + metrics
+
+  results = ray.get([
+      run_sim_rollout.remote(POLICY_URL, seed=s) for s in range(100)
+  ])</code></pre>
+<p>This is where the disaggregation pays off. Simulators and policy replicas scale independently. If rollouts are starved waiting on inference, Ray Serve can autoscale the policy fleet by adding replicas and routing requests across them. If the policy fleet is underutilized, you can fan out more simulator workers, with Anyscale scaling the underlying GPU cluster to match demand. Neither change touches the other side's code. The same runtime_env mechanism contains the gated token for the Serve replica and is handed to every simulator task, so credentials propagate across the cluster without manual setup.</p>
+<h2>LinkThe payoff: evaluation as a scalable service</h2>
+<p>Putting it together, evaluation stops being a fragile, serial, hardware-bound chore and becomes a service you scale like any other inference workload. The policy fleet reports its own health and throughput through the same HTTP interface. That is useful both as a liveness signal and as a record of how hard the fleet is working across an evaluation sweep:</p>
+<pre><code>import requests
+print(requests.get(f&quot;{POLICY_URL}/stats&quot;).json())</code></pre>
+<pre><code>{
+  &quot;model_path&quot;: &quot;nvidia/GR00T-N1.7-3B&quot;,
+  &quot;embodiment_tag&quot;: &quot;REAL_G1&quot;,
+  &quot;num_params_B&quot;: 3.144016,
+  &quot;device&quot;: &quot;cuda:0&quot;,
+  &quot;total_calls&quot;: 1,
+  &quot;avg_latency_ms&quot;: 1619.57,
+  &quot;load_time_s&quot;: 26.79
+}</code></pre>
+<p>Scaling up does not change a single line of rollout logic. Run more evaluations by extending the simulator list comprehension. Serve them faster by raising <code>num_replicas</code>. Add GPU workers when you are simulation-bound, add policy replicas when you are inference-bound. The same Ray primitives that scale LLM inference to thousands of concurrent requests scale robot-policy evaluation to thousands of concurrent rollouts.</p>
+<h2>LinkWhat's Next</h2>
+<p>If you want to try this yourself:</p>
+<ul><li><strong>Run it on Anyscale.</strong> Deploy the policy and fan out Isaac Lab rollouts on a managed GPU cluster with the stack pre-built and weights pre-cached, with zero infrastructure setup.</li><li><strong>Swap the checkpoint.</strong> The deployment takes <code>model_path</code> as an argument, so moving from a base model to a task fine-tune (for example NVIDIA's <code>nvidia/GR00T-N1.6-G1-PnPAppleToPlate</code>, post-trained on this exact pick-and-place task is a one-line change. The platform stays the same.</li><li><strong>Scale the evaluation sweep.</strong> Combine <code>num_replicas</code> on the policy with a larger rollout fan-out to evaluate a checkpoint across hundreds of seeds and starting conditions in parallel.</li><li>The <a href="https://docs.ray.io/en/latest/serve/index.html">Ray Serve documentation</a> covers deployments, autoscaling, and multi-replica serving.</li></ul>
+<p>Robotics evaluation is evolving into an infrastructure problem. As robotics foundation models grow larger and simulation workloads grow in realism, evaluation begins to resemble modern AI serving: distributed GPU inference fleets, heterogeneous scheduling, autoscaling services, and tightly coordinated closed-loop workloads. The key architectural shift is disaggregation. Policies and simulators scale independently, connected through Ray Serve and orchestrated with Ray Core across the cluster. The same distributed systems patterns that scaled LLM inference are now becoming necessary for robotics simulation and evaluation.</p>
+<h2>LinkFurther reading</h2>
+<ul><li><a href="https://developer.nvidia.com/isaac/gr00t">NVIDIA Isaac GR00T</a>: foundation models for humanoid robots</li><li><a href="https://isaac-sim.github.io/IsaacLab/">NVIDIA Isaac Lab</a>: robot learning and simulation framework</li><li><a href="https://www.physicalintelligence.company/blog/pi05">Physical Intelligence: π₀.5, a VLA with Open-World Generalization</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale">Optimizing VLA Fine-Tuning Performance with LeRobot Datasets and Ray</a></li></ul>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#introduction">Introduction</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#the-architecture">The Architecture</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#part-1:-closed-loop-evaluation-needs-online-policy-serving">Part 1: Closed-loop evaluation needs online policy serving</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#part-2:-the-simulator-and-the-policy-cannot-share-a-process-or-a-gpu">Part 2: The simulator and the policy cannot share a process or a GPU</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#part-3:-policy-as-a-service">Part 3: Policy as a Service</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#the-payoff:-evaluation-as-a-scalable-service">The payoff: evaluation as a scalable service</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#what's-next">What's Next</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#further-reading">Further reading</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Optimizing VLA Fine-Tuning Performance with LeRobot Datasets and Ray</h4>
+<p>Read more</p>
+<h4>Architecting Data Pipelines for Multimodal Datasets at Scale</h4>
+<p>Read more</p>
+<h4>How Torc hit 90% GPU utilization and other stories on scaling AI with Ray from Discord, Cubist, and Coinbase</h4>
+<p>Read more</p>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p>Start for Free</p>
+<p>Talk to an expert</p>]]></content:encoded>
+    </item>
+    <item>
       <title>Introducing Anyscale Agent Skills: Build faster, debug smart…</title>
       <link>https://anyscale.com/blog/announcing-anyscale-agent-skills-ray</link>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-anyscale-agent-skills-ray?li=1</guid>
@@ -2668,6 +2949,356 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
 <h4>New: Ray Data &amp; Ray Train Dashboards</h4>
 <p>Read more</p>
 <h4>Announcing Anyscale Runtime for Faster, Cheaper and More Resilient AI, Powered by Ray</h4>
+<p>Read more</p>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p>Start for Free</p>
+<p>Talk to an expert</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Optimizing VLA Fine-Tuning Performance with LeRobot Datasets…</title>
+      <link>https://anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale?li=1</guid>
+      <pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Optimizing VLA Fine-Tuning Performance with LeRobot Datasets and Ray</description>
+      <content:encoded><![CDATA[<p>Home</p>
+<p>Blog</p>
+<p>Blog Detail</p>
+<h1>Optimizing VLA Fine-Tuning Performance with LeRobot Datasets and Ray</h1>
+<p>By</p>
+<p>Omar Shorbaji</p>
+<p>and</p>
+<p>Ian Jordan, PhD</p>
+<p>|</p>
+<p>February 10, 2026</p>
+<p><em>VLA fine-tuning is difficult to scale because the LeRobot dataset format poses an inherent tradeoff between parallelism and redundant IO. This blog post describes a method for navigating that tradeoff and optimizing VLA fine-tuning performance.</em></p>
+<h2>Link<strong>Introduction</strong></h2>
+<p>In this post we walk through a complete, working example of distributed VLA fine-tuning with a LeRobot Dataset using Ray. We fine-tune <a href="https://www.physicalintelligence.company/blog/pi05">pi0.5</a> on the <a href="https://huggingface.co/datasets/lerobot/xvla-soft-fold">xvla-soft-fold</a> cloth-folding dataset (LeRobot v3.0 format).</p>
+<p>Two scaling challenges motivate the design:</p>
+<ul><li>LeRobot Dataset v3.0 is an emerging standard for robot manipulation data, but scaling reads from it can be challenging. Specifically, the format splits each episode across multiple video files (one per camera and additional tabular files for metadata) while simultaneously concatenating many episodes for each camera into the same video file (for space efficiency). As a consequence, naive parallel processing of the episodes in a dataset will require opening each MP4 many times (~45 times on average in the xvla-soft-fold dataset). We propose a file-group partitioning strategy that balances parallelism with redundant video opens. This approach reduces the number of file opens by 15-135x in our experiments.</li><li>VLA fine-tuning is fundamentally about larger models and larger datasets, which creates a CPU/GPU hardware mismatch. Multi-camera video decoding and preprocessing is CPU- and I/O-bound; training a VLA transformer is GPU-bound. Co-locating them stalls GPUs on I/O. Preprocessing offline adds hours of latency and storage before training can start. The ideal solution decouples the two.</li></ul>
+<p>Ray solves those challenges. <a href="https://docs.ray.io/en/latest/data/data.html">Ray Data</a> runs streaming, decoding, and preprocessing on auto-scaled CPU workers and feeds GPU workers through a backpressure-aware pipeline.<a href="https://docs.ray.io/en/latest/train/train.html"> Ray Train</a> manages distributed PyTorch across GPUs, including DDP setup, checkpointing, and fault recovery. The two stages are pipelined together and scale CPU and GPU capacity independently. Add CPU nodes when decoding is the bottleneck. Add GPUs when training is.</p>
+<h2>Link<strong>The Pipeline </strong></h2>
+<p>Before diving into the details, below is a diagram representing the pipeline.</p>
+<p>Machine learning pipeline diagram showing data storage, read and preprocessing steps, model training, and checkpoint storage for saving progress.</p>
+<p>Also, below is the top-level code for the complete solution. Broadly, the code</p>
+<ul><li>reads a lerobot dataset</li><li>specifies the streaming data pipeline (on CPUs)</li><li>launches distributed training (on GPUs)</li></ul>
+<p>Here is the top-level code.</p>
+<pre><code>import ray
+from lerobot_datasource import LeRobotDatasource
+
+# ──────────────────────────────────────────────
+# Stage 1: Build the streaming data pipeline (CPU)
+# ──────────────────────────────────────────────
+DATASET_PATH = &quot;s3://anyscale-public-robotics-datasets/lerobot/lerobot/xvla-soft-fold&quot;
+
+CAMERA_RENAME = {
+    &quot;observation.images.cam_high&quot;:        &quot;observation.images.base_0_rgb&quot;,
+    &quot;observation.images.cam_left_wrist&quot;:  &quot;observation.images.left_wrist_0_rgb&quot;,
+    &quot;observation.images.cam_right_wrist&quot;: &quot;observation.images.right_wrist_0_rgb&quot;,
+}
+
+source = LeRobotDatasource(DATASET_PATH)
+stats = util.extract_stats(source)
+image_keys = util.renamed_image_keys(source, CAMERA_RENAME)
+
+ds = (
+    ray.data
+    .read_datasource(source)
+    .map(rename_columns, fn_args=(CAMERA_RENAME,))                        # Rename cameras
+    .map_batches(transpose_images, batch_size=32, fn_args=(image_keys,))  # HWC → CHW float32
+)
+
+# ──────────────────────────────────────────────
+# Stage 2: Launch distributed training (GPU)
+# ──────────────────────────────────────────────
+
+trainer = ray.train.torch.TorchTrainer(
+    train_loop_per_worker=train_loop_per_worker,
+    train_loop_config={
+        &quot;stats&quot;: stats,
+        &quot;total_rows&quot;: source.meta.total_frames,
+        &quot;num_epochs&quot;: 2,
+        &quot;batch_size&quot;: 4,
+        &quot;grad_accum&quot;: 2,
+        &quot;lr&quot;: 1e-4,
+        &quot;warmup_frac&quot;: 0.1,
+        &quot;max_len&quot;: 512,
+    },
+    scaling_config=ray.train.ScalingConfig(num_workers=4, use_gpu=True),
+    run_config=ray.train.RunConfig(
+        name=&quot;pi05-xvla-soft-fold-finetune&quot;,
+        storage_path=&quot;/mnt/cluster_storage/ray_train_runs/pi05_xvla_soft_fold&quot;,
+        failure_config=ray.train.FailureConfig(max_failures=1),
+    ),
+    datasets={&quot;train&quot;: ds},
+)
+
+result = trainer.fit()</code></pre>
+<p>In the next sections we discuss each of the pipelines’ components</p>
+<h2>Link<strong>Part 1: Reading from the LeRobot v3.0 Data Format </strong></h2>
+<p><a href="https://huggingface.co/lerobot">LeRobot Dataset v3.0</a> stores data in three separate pieces: chunked Parquet files for per-frame tabular data (actions, states, timestamps); chunked MP4 files for camera observations (one set of video files per camera); and episode metadata that ties them together by recording which parquet chunk and which video file each episode belongs to.</p>
+<p>To produce a single training row, a data loader must <strong>join</strong> these pieces: read a Parquet row for the tabular data, then seek-and-decode the corresponding frame from each camera's MP4 file at the right timestamp, and stitch them together with the episode's task description. For <code>xvla-soft-fold</code> that means joining 3 video streams (<code>cam_high, cam_left_wrist, cam_right_wrist</code>) with tabular data for every frame.</p>
+<p>With that pipeline in mind we can begin to look at the system aspect, i.e. optimizing throughput by partitioning the data for parallel I/O. We frame the question as: how do you split the data into separate chunks such that each worker can read and process independently without conflicts?</p>
+<p>In the LeRobot Dataset v3 format, multiple episodes are packed into the same MP4 video file while simultaneously being split across different video files for different cameras. This packing is efficient for storage as it avoids the creation of many small files. However, now, processing multiple episodes in parallel means opening each MP4 file many times, which can be expensive. To get around this, the LeRobot library downloads all data to local disk, which is more amenable to random access, but this limits the size of the datasets you can work with and does not allow for meaningful parallelization. The LeRobot format presents an inherent tradeoff between maximizing parallelism and minimizing redundant video file opens.</p>
+<p>One approach to navigating this trade-off is <strong>file-group partitioning</strong>: group episodes that reference the exact same set of video files into one task. The table below shows a simplified example. In this example, episodes 1 &amp; 2 share the same video files. The same applies to episodes 3 &amp; 4 and episodes 5 &amp; 6. A natural way to parallelize the processing of these 6 episodes (across 3 tasks) is to process episodes 1 and 2 together, episodes 3 and 4 together, and episodes 5 and 6 together.</p>
+<table><thead><tr><th><strong>Episode</strong></th><th><strong>Cam 1</strong></th><th><strong>Cam2</strong></th><th><strong>Cam3</strong></th></tr></thead><tbody><tr><td>1</td><td>cam1-01.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr><tr><td>2</td><td>cam1-01.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr><tr><td>3</td><td>cam1-02.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr><tr><td>4</td><td>cam1-02.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr><tr><td>5</td><td>cam1-03.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr><tr><td>6</td><td>cam1-03.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr></tbody></table>
+<p>Partitioning this way provides a balance between parallelization and video file I/O. For <code>xvla-soft-fold</code> the results are:</p>
+<table><thead><tr><th><strong>Strategy</strong></th><th><strong>Tasks</strong></th><th><strong>Video Opens</strong></th><th><strong>Trade-off</strong></th></tr></thead><tbody><tr><td>Sequentially</td><td>1</td><td>104</td><td>Min I/O, no parallelism</td></tr><tr><td>By episode</td><td>1,542</td><td>4,626</td><td>Max parallelism, massive I/O amplification</td></tr><tr><td><strong>By file group</strong></td><td><strong>99</strong></td><td><strong>297</strong></td><td><strong>Balanced</strong></td></tr></tbody></table>
+<p>On larger datasets the effect is more dramatic. For example, DROID (95K+ episodes) goes from 286K video opens down to 2,124, a <strong>135× reduction</strong>.</p>
+<h3>Link<strong>Implementing File-Group Partitioning</strong></h3>
+<p>The partitioning is pure metadata computation. For each episode, build a key from its (<code>video_key, chunk_index, file_index</code>) pointers across all cameras, then merge contiguous episodes with matching keys into row-range partitions:</p>
+<pre><code>def _partition_by_file_group(episodes, video_keys):
+    &quot;&quot;&quot;Partition episodes by video-file group&quot;&quot;&quot;
+    key_columns = []
+    for vk in video_keys:
+        key_columns.append(episodes.column(f&quot;videos/{vk}/chunk_index&quot;).to_pylist())
+        key_columns.append(episodes.column(f&quot;videos/{vk}/file_index&quot;).to_pylist())
+
+    from_indices = episodes.column(&quot;_global_from_index&quot;).to_pylist()
+    to_indices = episodes.column(&quot;_global_to_index&quot;).to_pylist()
+
+    ranges = {}  # signature → (first_row, last_row)
+    for i in range(len(episodes)):
+        key = tuple(col[i] for col in key_columns)
+        from_idx, to_idx = from_indices[i], to_indices[i]
+        if key in ranges:
+            prev_from, prev_to = ranges[key]
+            assert from_idx == prev_to, &quot;Episodes in a file group must be contiguous&quot;
+            ranges[key] = (prev_from, to_idx)
+        else:
+            ranges[key] = (from_idx, to_idx)
+
+    return list(ranges.values())
+    # xvla-soft-fold: 1,542 episodes -&gt; 99 partitions</code></pre>
+<p>Each (<code>start_row, end_row</code>) pair becomes one Ray Data read task. The task opens each MP4 once via PyAV, seeks to the first episode's <code>from_timestamp</code>, and streams decoded frames forward as Arrow batches.</p>
+<p>With the partitioning strategy in hand, we can stream the dataset directly from S3 and build the preprocessing pipeline</p>
+<h2>Link<strong>Part 2: Streaming with Ray Data</strong></h2>
+<p>Here is the top-level code for streaming</p>
+<pre><code>from lerobot_datasource import LeRobotDatasource
+
+source = LeRobotDatasource(&quot;s3://…&quot;)
+stats = util.extract_stats(source)
+image_keys = util.renamed_image_keys(source, CAMERA_RENAME)
+
+ds = (
+    ray.data
+    .read_datasource(source)                                             
+    .map(rename_columns, fn_args=(CAMERA_RENAME,))                    
+    .map_batches(transpose_images, batch_size=32, fn_args=(image_keys,)) 
+)</code></pre>
+<p>This is a lazy, streaming pipeline. No data is read until the trainer starts pulling. Everything runs on CPU workers with automatic backpressure, keeping GPU workers fed without blocking them on I/O or image decoding. Let's look at each step.</p>
+<h3>Link<strong>Ray Data Datasource</strong></h3>
+<p>Ray Data offers a<a href="https://docs.ray.io/en/latest/data/api/doc/ray.data.Datasource.html"> Datasource</a> abstraction for plugging custom data sources into the streaming execution engine. We use it to implement the LeRobot read functionality. A <code>LeRobotDatasource</code> class handles metadata loading, file-group partitioning, and the stream-join of parquet rows with decoded video frames, all behind Ray Data's standard <code>read_datasource</code> interface.</p>
+<p>On construction, the datasource eagerly loads dataset metadata (episode tables, normalization stats, task descriptions) while deferring all data and video I/O to workers:</p>
+<pre><code>source = LeRobotDatasource(DATASET_PATH)
+
+# Metadata is available immediately -- no data files opened yet
+print(source.meta.total_frames)      # total decoded rows
+print(source.meta.total_episodes)    # 1,542
+print(source.meta.video_keys)        # ['observation.images.cam_high', ...]
+print(source.meta.tasks)             # {0: 'fold the cloth', ...}
+print(source.meta.stats)             # per-feature mean/std for normalization</code></pre>
+<p>When <code>read_datasource(source)</code> is called, it creates 99 file-group read tasks (the default partitioning). Each task streams from S3, decodes MP4 frames with PyAV, joins them with parquet rows, and yields Arrow batches. We extract normalization stats from the source metadata for the training loop later.</p>
+<h3>Link<strong>Camera Renaming</strong></h3>
+<p>The dataset's camera column names don't match what Pi05 expects. The model was pretrained with feature names like <code>observation.images.base_0_rgb</code>, but the dataset has <code>observation.images.cam_high</code>. A lightweight per-row <code>.map</code> renames them:</p>
+<pre><code>CAMERA_RENAME = {
+    &quot;observation.images.cam_high&quot;:        &quot;observation.images.base_0_rgb&quot;,
+    &quot;observation.images.cam_left_wrist&quot;:  &quot;observation.images.left_wrist_0_rgb&quot;,
+    &quot;observation.images.cam_right_wrist&quot;: &quot;observation.images.right_wrist_0_rgb&quot;,
+}
+
+def rename_columns(row: dict, rename: dict[str, str]) -&gt; dict:
+    &quot;&quot;&quot;Rename dataset camera columns to match the model's expected feature names.&quot;&quot;&quot;
+    return {rename.get(k, k): v for k, v in row.items()}</code></pre>
+<h3>Link<strong>Image Transposition</strong></h3>
+<p>π₀.5, like most vision models, expects (batch, channels, height, width). The raw dataset stores images as (<code>height, width, channels</code>) uint8. A batched <code>.map_batches</code> transposes and casts on CPU:</p>
+<pre><code>def transpose_images(batch: dict, camera_keys: list[str]) -&gt; dict:
+    &quot;&quot;&quot;Convert camera images from HWC uint8 to CHW float32.&quot;&quot;&quot;
+    import numpy as np
+
+    result = dict(batch)
+    for key in camera_keys:
+        result[key] = np.transpose(np.stack(batch[key]), (0, 3, 1, 2)).astype(np.float32)
+    return result</code></pre>
+<h2>Link<strong>Part 3: Distributed Training with Ray Train</strong></h2>
+<p>Next, we distribute training using DistributedDataParallel (DDP), where each GPU holds a full copy of the model and processes a different shard of the data. After each backward pass, DDP synchronizes gradients across workers so every copy stays in sync. This is the simplest distributed strategy and fits our case well - π₀.5's trainable parameters (we freeze the backbone and only train the action and time projection heads) fit comfortably in a single GPU's memory.</p>
+<p>The code reads like single-GPU training. Ray Train handles DDP, data sharding, checkpointing, and fault recovery.</p>
+<p><strong>The Training Loop</strong></p>
+<pre><code>import torch
+
+def train_loop_per_worker(config: dict):
+    &quot;&quot;&quot;Per-GPU training entry point. Ray Train calls this on each worker.&quot;&quot;&quot;
+
+    device = torch.device(&quot;cuda&quot;)
+
+    # Load pi0.5 and freeze backbone -- only action/time heads are trainable.
+    # prepare_model() wraps it in DistributedDataParallel.
+    policy = util.load_pi05_policy()
+    policy = ray.train.torch.prepare_model(policy)
+
+    optimizer = torch.optim.AdamW(
+        [p for p in policy.parameters() if p.requires_grad],
+        lr=config.get(&quot;lr&quot;, 1e-4),
+    )
+    scaler = torch.amp.GradScaler(&quot;cuda&quot;)
+
+    # Resume from checkpoint if this is a failure recovery
+    checkpoint = ray.train.get_checkpoint()
+    if checkpoint:
+        start_epoch, step = util.load_checkpoint(checkpoint, policy, optimizer, scaler)
+    else:
+        start_epoch, step = 0, 0
+
+    # Build the LeRobot preprocessor with dataset normalization stats
+    from lerobot.policies.factory import make_pre_post_processors
+    preprocessor, _ = make_pre_post_processors(
+        policy.module.config,
+        pretrained_path=&quot;lerobot/pi05_base&quot;,
+        dataset_stats=config[&quot;stats&quot;],
+    )
+
+    num_workers = ray.train.get_context().get_world_size()
+    scheduler = util.build_lr_scheduler(optimizer, config, num_workers, last_step=step)
+
+    batch_size = int(config.get(&quot;batch_size&quot;, 1))
+    grad_accum = int(config.get(&quot;grad_accum&quot;, 1))
+    num_epochs = int(config.get(&quot;num_epochs&quot;, 1))
+    max_len    = int(config.get(&quot;max_len&quot;, 512))
+
+    # Get this worker's shard of the streaming dataset.
+    # Ray Data partitions automatically -- no DistributedSampler needed.
+    shard = ray.train.get_dataset_shard(&quot;train&quot;)
+
+    for epoch in range(start_epoch, num_epochs):
+        optimizer.zero_grad(set_to_none=True)
+        epoch_loss_sum, epoch_loss_count = 0.0, 0
+
+        # iter_torch_batches() streams preprocessed batches from CPU workers
+        # directly into GPU memory. Backpressure ensures we never OOM.
+        for batch in shard.iter_torch_batches(
+            batch_size=batch_size,
+            collate_fn=util.NumpyToTorchCollate(device),
+        ):
+            loss_val = util.train_step(policy, batch, preprocessor, max_len, grad_accum, scaler)
+            step += 1
+            epoch_loss_sum += loss_val
+            epoch_loss_count += 1
+
+            if step % grad_accum == 0:
+                util.optimizer_step(policy, optimizer, scaler, scheduler)
+
+        # End of epoch: report metrics and checkpoint.
+        # ray.train.report() is a sync barrier -- every worker must call it.
+        avg_loss = epoch_loss_sum / max(epoch_loss_count, 1)
+        metrics = {
+            &quot;epoch&quot;: epoch, &quot;steps&quot;: step,
+            &quot;loss&quot;: avg_loss, &quot;lr&quot;: scheduler.get_last_lr()[0],
+        }
+
+        if ray.train.get_context().get_world_rank() == 0:
+            checkpoint = util.make_checkpoint(policy, optimizer, scaler, epoch, step)
+            ray.train.report(metrics, checkpoint=checkpoint)
+        else:
+            ray.train.report(metrics)</code></pre>
+<p>The Ray-specific parts of the training loop are:</p>
+<ul><li><code>ray.train.torch.prepare_model(policy)</code></li></ul>
+<p>This wraps the model in <code>DistributedDataParallel</code>.</p>
+<ul><li><code>ray.train.get_dataset_shard(&quot;train&quot;)</code></li></ul>
+<p>This returns this worker's slice of the streaming Ray Dataset. Ray Data partitions the data across workers automatically</p>
+<ul><li><code>shard.iter_torch_batches(...) </code></li></ul>
+<p>This streams preprocessed batches from the CPU worker pool directly into GPU memory. Backpressure ensures the pipeline never overwhelms GPU memory.</p>
+<ul><li><code>ray.train.get_checkpoint() / ray.train.report(...)</code></li></ul>
+<p>On failure, Ray restarts workers and feeds the most recent checkpoint back to <code>get_checkpoint()</code> at the top of the loop. <code>report()</code> is a synchronization barrier across all workers;</p>
+<p>Because we're using DDP, where every GPU holds a full copy of the model, only rank 0 needs to create and save the checkpoint. All ranks call <code>report()</code>(it's a barrier), but only rank 0 attaches the checkpoint payload.</p>
+<p>To scale from 1 to N GPUs: change <code>ScalingConfig.num_workers</code>.</p>
+<h2>Link<strong>What's Next</strong></h2>
+<p>If you want to try this yourself:</p>
+<ul><li><a href="https://github.com/anyscale/examples/tree/main/vla_fine_tuning">View the full code for this example</a>.</li><li><a href="https://console.anyscale.com/template-preview/vla-fine-tuning">Try this example on Anyscale</a> - run the full pipeline on managed GPU clusters with zero infrastructure setup.</li><li><a href="https://docs.ray.io/en/latest/train/train.html">Ray Train documentation</a> covers <code>TorchTrainer</code> setup, FSDP configuration, and checkpoint management.</li><li>The <code>xvla-soft-fold</code> dataset is available on<a href="https://huggingface.co/datasets/lerobot/xvla-soft-fold"> Hugging Face</a>.</li></ul>
+<h2>Link<strong>Related Resources</strong></h2>
+<ul><li><a href="https://www.physicalintelligence.company/blog/pi05">Physical Intelligence: π₀.5 — A VLA with Open-World Generalization</a></li><li><a href="https://developer.nvidia.com/isaac/gr00t">NVIDIA Isaac GR00T N1.5 Foundation Model</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale">Distributed AI Training: Multi-GPU with Ray and Anyscale</a></li></ul>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#introduction">Introduction</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#the-pipeline-">The Pipeline </a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-1:-reading-from-the-lerobot-v3.0-data-format-">Part 1: Reading from the LeRobot v3.0 Data Format </a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#implementing-file-group-partitioning">Implementing File-Group Partitioning</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-2:-streaming-with-ray-data">Part 2: Streaming with Ray Data</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#ray-data-datasource">Ray Data Datasource</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#camera-renaming">Camera Renaming</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#image-transposition">Image Transposition</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-3:-distributed-training-with-ray-train">Part 3: Distributed Training with Ray Train</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#what's-next">What's Next</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#related-resources">Related Resources</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Benchmarking Multimodal AI Workloads on Ray Data</h4>
+<p>Read more</p>
+<h4>Streaming distributed execution across CPUs and GPUs</h4>
+<p>Read more</p>
+<h4>Scalable Distributed Training: From Single-GPU Limits to Reliable Multi-Node Runs with Ray on Anyscale</h4>
+<p>Read more</p>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p>Start for Free</p>
+<p>Talk to an expert</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Scalable Distributed Training: From Single-GPU Limits to Rel…</title>
+      <link>https://anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale?li=1</guid>
+      <pubDate>Wed, 28 Jan 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Scalable Distributed Training: From Single-GPU Limits to Reliable Multi-Node Runs with Ray on Anyscale</description>
+      <content:encoded><![CDATA[<p>Home</p>
+<p>Blog</p>
+<p>Blog Detail</p>
+<h1>Scalable Distributed Training: From Single-GPU Limits to Reliable Multi-Node Runs with Ray on Anyscale</h1>
+<p>By</p>
+<p>Julian Forero</p>
+<p>and</p>
+<p>Ian Jordan, PhD</p>
+<p>|</p>
+<p>January 28, 2026</p>
+<p>As datasets and models grow — especially with multimodal systems spanning text, images, video, and other unstructured data — ML teams inevitably hit a hard limit: your dataset or model no longer fits on a single GPU.</p>
+<p>The decision is not whether to scale, but how to do so while continuing to use familiar frameworks like XGBoost, PyTorch, DeepSpeed, or Hugging Face Transformers.</p>
+<p>Ray has emerged as the most widely adopted open-source framework for addressing this transition, with over 40k GitHub stars and more than 10 million weekly downloads. Teams at <a href="https://www.uber.com/blog/open-source-and-in-house-how-uber-optimizes-llm-training/">Uber</a>, <a href="https://discord.com/blog/from-single-node-to-multi-gpu-clusters-how-discord-made-distributed-compute-easy-for-ml-engineers">Discord</a>, <a href="https://youtu.be/mppzZ4hLjXs?si=Fs9zhjlgOpyYtrxE&amp;t=219">Attentive</a> and many more use Ray to scale runs without rewriting the core training function logic.</p>
+<ul><li>If you’re ready to learn Ray as a distributed AI framework, <a href="https://courses.anyscale.com/bundles/ray-train-special">check out this free course</a>.</li></ul>
+<p>If you’re still evaluating the move from single-node experiments to distributed training, the sections below outline the key technical and business considerations, and how Ray on Anyscale reduces both developer friction and operational risk.</p>
+<h2>LinkInfrastructure co-design is no longer optional</h2>
+<p>The traditional process where ML engineers train in a single-GPU and platform/MLOps teams “productionize” later breaks down in the multimodal AI era as training itself is also an infrastructure problem.</p>
+<p>Moving from a single GPU to multiple interconnected GPUs on one machine is usually manageable. Moving beyond that, across nodes, is where things get way harder. Multi-node training introduces failure modes that don’t exist in local workflows:</p>
+<ul><li>GPU failures drop nodes and cause partial failures</li><li>Dependency drift across machines</li><li>Fragmented logs and metrics</li><li>Debugging is no longer localized</li><li>Non-trivial integration with common ML frameworks</li><li>Data that must be coordinated and moved across nodes</li></ul>
+<p>The getting started checklist quickly grows into a long set of undifferentiated infrastructure work:</p>
+<ul><li>Provision and monitor multi-node GPU clusters</li><li>Configure networking</li><li>Wire up SSH launchers, Slurm or Kubernetes jobs</li><li>Assign PyTorch DDP (Distributed Data Parallel) ranks to coordinate workers</li><li>Manage data sharding and placement</li><li>Building a fault-tolerant checkpointing system</li></ul>
+<p>The cost of a DIY approach isn’t just engineering time. It shows up as slower iteration, fragile experiments, missed deadlines, and models that never make it to production.</p>
+<h2>Link<strong>Data preparation starts to feel a lot more like training</strong></h2>
+<p>As models and datasets become larger and more multimodal, the infrastructure boundary between data preparation and training starts to disappear.</p>
+<p>What were once ETL-like preprocessing steps are now batch inference steps with models e.g. using LLMs to generate labels, captions or running embedding generation at scale. This shifts data preparation from CPU-based ETL to GPU-centric batch inference.</p>
+<p>Optimizing infrastructure for training alone is no longer sufficient. Modern model development requires treating data processing and training as a single, end-to-end workflow, with shared scaling, scheduling, and failure-handling decisions.</p>
+<h2>Link<strong>GPUs are scarce and expensive</strong></h2>
+<p>Modern training runs span hours or days and often execute across multiple nodes. At that timescale, failures are expected, not exceptional. A single node reset can cost tens of thousands in compute, making reliability a core property of the training loop rather than an operational afterthought.</p>
+<p>At the same time, GPUs can be hard to get access to. To manage limited capacity, teams frequently reserve large GPU allocations to handle peak demand across multiple workloads. In practice, higher-priority jobs like production inference often preempt long-running training runs. With a shared capacity model and hardware availability always shifting, training workloads must tolerate interruption and adapt to changing resources.</p>
+<p>As a result, efficiency and adaptability become first-order concerns.</p>
+<p>Checkpointing becomes essential, but coarse, epoch-level checkpoints are often not granular enough when epochs themselves take hours or days. High GPU utilization matters just as much as raw scale, which means teams need visibility into how resources are actually being used and the ability to optimize accordingly. And as hardware availability remains fluid, the ability to pause, resume, and adapt training runs to changing resource availability becomes critical rather than optional.</p>
+<h2>Link<strong>Why Ray — and Why Ray on Anyscale</strong></h2>
+<p>When data preparation and training need to scale together, point solutions and frameworks break down. Ray provides a unified, distributed processing engine that accelerates end-to-end experimentation, often improving <a href="https://www.anyscale.com/blog/gpu-in-efficiency-in-ai-workloads">GPU utilization</a> by 50–70%.</p>
+<p>Ray handles the hard parts of distributed systems:</p>
+<ul><li>Worker coordination</li><li>Scheduling</li><li>Fault tolerance</li><li>Resource management and more</li></ul>
+<p>With <a href="https://www.youtube.com/watch?v=BuYkzhlCeEg">Ray Train</a> library, developers express how the training function should scale in Python, while Ray handles the underlying parallelization. Teams can scale PyTorch, XGBoost, and Transformers without stitching together custom orchestration logic.</p>
+<p>But Ray alone doesn’t remove the full operational burden. Teams still own cluster lifecycle management, environment consistency, failure recovery, and observability — work that slows experimentation and distracts from model development.</p>
+<p>Ray on Anyscale builds on the same open-source runtime and closes this gap by adding purpose-built developer tooling (Anyscale Developer Central) that delivers:</p>
+<ul><li>Interactive, multi-node development environments, accessible via VSCode, Cursor or Jupyter</li><li>Centralized logs, metrics, and job state for debugging and optimizing distributed runs without SSH’ing into individual nodes</li><li>Out-of-the-box <a href="https://www.anyscale.com/blog/announcing-lineage-tracking-ray-managed-anyscale">dataset to model lineage</a></li></ul>
+<p>And a managed cluster control plane (Anyscale Cluster Controller) that has:</p>
+<ul><li>Automatic detection and replacement of unhealthy nodes to minimize manual intervention</li><li>Multi-cloud job queue management and workload orchestration</li><li>Fully managed cluster provisioning and teardown across training and data workloads</li><li>Flexible deployment across cloud providers without changes to application code</li><li>Built-in user and cost governance</li></ul>
+<p>With Anyscale, distributed training stops feeling like a separate systems discipline. It becomes a natural way to scale with your models without turning ML development into an infrastructure maintenance job.</p>
+<table><thead><tr><th><strong>Category</strong></th><th><strong>Without Ray Train</strong></th><th><strong>Ray Train (OSS)</strong></th><th><strong>Ray Train on Anyscale (Managed)</strong></th></tr></thead><tbody><tr><td><strong>Cluster Provisioning</strong></td><td>Manual provisioning, setup, networking, SSH/Slurm/K8s configs</td><td>User must still create and manage Ray clusters</td><td>Fully managed cluster lifecycle (provisioning, scaling, teardown)</td></tr><tr><td><strong>Environment Reproducibility</strong></td><td>Hard, driver/CUDA drift, dependency conflicts</td><td>Must maintain your own Docker/conda images and sync environments</td><td>Guaranteed, reproducible, version-controlled environments</td></tr><tr><td><strong>Distributed Setup &amp; Rank Management</strong></td><td>Complex DDP setup; manual rank assignment</td><td>Automatically handled by Ray Train</td><td>Same Ray Train APIs, but backed by managed cluster state</td></tr><tr><td><strong>Fault Tolerance</strong></td><td>Manual checkpoint logic, job restarts break training</td><td>Ray Train provides APIs, but users must ensure cluster reliability</td><td>Production-grade fault tolerance + <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">mid-epoch resume</a> + automated recovery</td></tr><tr><td><strong>Elasticity</strong></td><td>Not supported, node loss kills job</td><td>Not supported in practice. Elastic APIs exist, but do not work without a managed autoscaler, coordinated node lifecycle, and platform-level fault tolerance.</td><td>Reliable, <a href="https://docs.anyscale.com/runtime/train#elastic-training">platform-managed elasticity</a> (preemptions auto-recovered)</td></tr><tr><td><strong>Data Pipeline Integration</strong></td><td>Hand-rolled sharding, preprocessing, data movement</td><td>Ray Data + Train integrations exist but users must tune infra</td><td>Ray Data and Train orchestrated together with resource isolation</td></tr><tr><td><strong>Operational Burden</strong></td><td>Extremely high, debugging cluster failures is manual</td><td>Medium, Ray Train simplifies training logic, infra remains user's job</td><td>Very low, platform handles cluster health, node restarts, autoscaling</td></tr><tr><td><strong>Security &amp; Governance</strong></td><td>Must build IAM, VPCs, audit logs, isolation</td><td>OSS-only, user must implement all security layers</td><td>Enterprise security, IAM integration, VPC isolation, auditability</td></tr><tr><td><strong>Job Lifecycle Management</strong></td><td>Bash scripts, tmux, Slurm jobs, Kubernetes operators</td><td>Ray Jobs available but user-maintained</td><td>Fully managed Ray Jobs with retries, logging, dashboards</td></tr><tr><td><strong>Overall, What You Get</strong></td><td>A brittle, custom training stack maintained by a few engineers</td><td>A better training-loop orchestrator, but still DIY infrastructure</td><td>A production-ready distributed training platform</td></tr><tr><td><strong>Total Engineering Cost</strong></td><td>Massive (multi-month/year effort)</td><td>Moderate (you maintain reliability + cluster ops)</td><td>Minimal (focus entirely on training code and pipelines)</td></tr></tbody></table>
+<p>In short, Ray simplifies distributed execution. Anyscale turns it into a resilient platform you can rely on to drive developer velocity and infrastructure efficiency.</p>
+<ul><li><a href="https://www.anyscale.com/resources/case-study/how-canva-built-a-modern-ai-platform-using-anyscale">Canva</a> accelerated model development by 12x while reducing GPU costs by 50%</li><li><a href="https://www.anyscale.com/resources/case-study/coinbase-ml-infrastructure">Coinbase</a> is able to process 50x larger datasets, while running 15x more jobs without costs increase</li></ul>
+<h2>Link<strong>Learn more</strong></h2>
+<p>As multimodal datasets and model sizes grow, distributed training becomes the norm rather than the exception.</p>
+<p>Ray lowers the barrier to distributed training by letting ML engineers scale their existing code without becoming distributed systems experts. Ray on Anyscale completes the picture, pairing the Anyscale Runtime, powered by Ray, with production-grade cluster management and purpose-built developer tooling so teams can iterate faster and transition to production with confidence.</p>
+<ul><li>Ready to learn Ray Train? Take our free course → <a href="https://courses.anyscale.com/bundles/ray-train-special">Free Course</a></li><li>Ready to get started with Anyscale? Experience Ray Train with our $100 new account credit → <a href="https://console.anyscale.com/register/ha?">Free Trial</a></li></ul>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#infrastructure-co-design-is-no-longer-optional-">Infrastructure co-design is no longer optional </a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#data-preparation-starts-to-feel-a-lot-more-like-training">Data preparation starts to feel a lot more like training</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#gpus-are-scarce-and-expensive">GPUs are scarce and expensive</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#why-ray-—-and-why-ray-on-anyscale">Why Ray — and Why Ray on Anyscale</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#learn-more">Learn more</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Ray Train V2: Unified Distributed Training on Ray</h4>
+<p>Read more</p>
+<h4>30% Faster Multimodal AI Training with Ray and Disaggregated Hybrid Parallelism</h4>
+<p>Read more</p>
+<h4>Ray is Joining The PyTorch Foundation</h4>
 <p>Read more</p>
 <h2>Explore Anyscale today</h2>
 <p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
@@ -3303,343 +3934,6 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
 <p>Check out <a href="https://docs.ray.io/en/latest/ray-core/direct-transport.html">the docs</a> for more info on usage, file <a href="https://github.com/ray-project/ray/issues">an issue</a> for bug reports or feedback, and meet us at <a href="https://www.anyscale.com/ray-summit/2025">Ray Summit</a>! In part 2 of this blog series, we’ll expand upon our example to demonstrate RDT for rollout data transfer and RL training for multi-GPU LLMs.</p>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core#system-requirements-for-rl-for-llms">System requirements for RL for LLMs</a></li><li><a href="https://www.anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core#diving-into-ray-direct-transport">Diving into Ray Direct Transport</a></li><li><a href="https://www.anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core#performance">Performance</a></li><li><a href="https://www.anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core#rl-example">RL example</a></li><li><a href="https://www.anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core#what’s-next">What’s next</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<p>Read more</p>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<p>Read more</p>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<p>Read more</p>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Ray Compiled Graphs: Optimized AI Workloads with Native GPU…</title>
-      <link>https://anyscale.com/blog/announcing-compiled-graphs</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/announcing-compiled-graphs?li=1</guid>
-      <pubDate>Mon, 07 Oct 2024 00:00:00 +0000</pubDate>
-      <description>Full title: Ray Compiled Graphs: Optimized AI Workloads with Native GPU Communication</description>
-      <content:encoded><![CDATA[<p>Home</p>
-<p>Blog</p>
-<p>Blog Detail</p>
-<h1>Ray Compiled Graphs: Optimized AI Workloads with Native GPU Communication</h1>
-<p>By</p>
-<p>Sang Cho</p>
-<p>,</p>
-<p>Sam Chan</p>
-<p>and</p>
-<p>Stephanie Wang</p>
-<p>|</p>
-<p>October 7, 2024</p>
-<p>image8</p>
-<h2>LinkIntroduction</h2>
-<p>As AI models continue to rise in complexity and size, workloads and applications around these models have driven new requirements for the underlying software infrastructure and primitives. Unlike traditional CPU-based workloads, large AI model workloads like training and inference are overwhelmingly GPU-intensive and often require distributed computation and coordination across tens or hundreds of accelerators.</p>
-<p>Compiled Graphs provide minimal task submission overhead (~50 us) compared to Ray’s standard task submission overheads (1~2 ms). While these default overheads are negligible for long-running, throughput-centric workloads such as data processing or batch processing, they become untenable for sub-second workloads such as auto-regressive token generation.</p>
-<p>Compiled Graphs also supports native GPU to GPU transfer while automatically resolving deadlock and overlapping communication with computation. Without Compiled Graphs, users must leverage out-of-band communication primitives such as NCCL in order to enable low-latency GPU transfer.</p>
-<p>image6</p>
-<p>These improvements open up exciting new opportunities for Ray programs:</p>
-<ul><li>Ray Compiled Graphs can transfer large tensors across actors with <strong>millisecond-level latencies</strong></li><li>By using Compiled Graphs, you can express complex pipeline scheduling algorithms <strong>with less than 70 lines of code</strong> while reaching the performance parity with state of the art libraries like Deepspeed for a Llama 7B model on 4xA100 GPUs</li><li>Compiled Graphs based multi-modal training workload with heterogeneous parallelism and GPUs <strong>achieves a 43% improvement in token-per-dollar efficiency</strong> compared to PyTorch's standard FSDP implementation.</li></ul>
-<h2>LinkIntroducing Compiled Graphs in Ray</h2>
-<p>image6</p>
-<p>Compiled Graphs is a new feature in Ray that offers a classic Ray Core-like API with three major advantages:</p>
-<ul><li>Reduced system overhead for repetitive task graphs</li><li>Native support for GPU-GPU communication via NVIDIA NCCL</li><li>Optimized scheduling to avoid deadlock and best utilize compute and communication resources</li></ul>
-<p>In comparison to the standard Ray API, Compiled Graphs are expressed as a <em>static computation graph.</em></p>
-<p>By taking advantage of the static nature of the program, Ray is able to allocate resources for a task ahead of time and reuse them for future invocations. Further, Ray can allocate memory properly ahead of time to leverage optimized communication primitives such as NCCL that require senders and receivers to be symmetric. As shown below, Ray Compiled Graphs can improve latencies for simple GPU tensor transfers by up to 140x and CPU data transfer by 17x.</p>
-<p><strong>Let’s dive into a simplified version of a common pattern in machine learning workloads: scatter-gather.</strong></p>
-<p>First, let’s start by installing compiled graphs:</p>
-<pre><code>1pip install -U &quot;ray[adag]&quot;</code></pre>
-<p>Scatter-gather is a common distributed computation pattern in machine learning workloads. It sends the same input to multiple workers (Ray Actors) and gathers the result from all workers. For example, for tensor parallel inference, the program sends the same CPU data to all actors, then the actors move CPU data to GPU and run the torch model that only loads the sharded weights. Let’s express this program with Compiled Graphs.</p>
-<p>We start by creating normal Ray actors, in this case 3 of them:</p>
-<pre><code>1import ray
-2from time import perf_counter
-3
-4@ray.remote
-5class TensorProcessor:
-6  def fwd(self, tensor: str) -&gt; str:
-7    # some_gpu_ops(tensor.to(torch.device()))
-8    # In a typical application, this actor will move the 
-9    # tensor to GPU and run a torch module. 
-10    # We instead do nothing and return the string input immediately for simplicity.
-11    return tensor
-12
-13N = 3
-14actors = [TensorProcessor.remote() for _ in range(N)]</code></pre>
-<p>First, let’s see how to express this with regular Ray programs.</p>
-<pre><code>1# warmup actors
-2for _ in range(10):
-3    ray.get([actor.fwd.remote(&quot;hello&quot;) for actor in actors])
-4
-5s = perf_counter()
-6result = ray.get([actor.fwd.remote(&quot;hello&quot;) for actor in actors])
-7print(&quot;Normal ray programs took&quot;, (perf_counter() - s) * 1000, &quot;ms&quot;)
-8print(result)</code></pre>
-<p>Then, we define and compile a compiled graph that passes the same input placeholder to all actors. Here, we use Ray’s DAG API, which builds an intermediate representation capturing the computation graph in a static fashion. We use the <a href="https://docs.ray.io/en/latest/ray-core/ray-dag.html#ray-dag-with-multiple-multioutputnode">MultiOutputNode</a> syntax to wrap the outputs, which is necessary when we have more than one output node.</p>
-<pre><code>1import ray.dag
-2
-3# Define a DAG for lazy execution.
-4with ray.dag.InputNode() as inp:
-5    # Bind each actor task to the same input placeholder.
-6    outputs = [actor.fwd.bind(inp) for actor in actors]
-7    dag = ray.dag.MultiOutputNode(outputs)</code></pre>
-<p>This produces a Ray DAG like this:</p>
-<p>image5</p>
-<p>Now, to use Compiled Graphs, we use the following <code>experimental_compile</code> command. Ray will pre-allocate all resources needed to run the graph, leading to much faster execution of the graph compared to the standard dynamic runtime:</p>
-<pre><code>1compiled_graph = dag.experimental_compile()
-2
-3# warmup actors
-4for _ in range(10):
-5    ray.get(compiled_graph.execute(&quot;hello&quot;))
-6
-7# Execute the DAG with different arguments:
-8s = perf_counter()
-9result = ray.get(compiled_graph.execute(&quot;hello&quot;))
-10print(&quot;Compiled Graphs took&quot;, (perf_counter() - s) * 1000, &quot;ms&quot;)
-11print(result)
-12# [&quot;hello&quot;, &quot;hello&quot;, &quot;hello&quot;]</code></pre>
-<p>That’s it! You can use the same program to scale your workloads. The APIs also work when there are multi nodes.</p>
-<p>Underneath the hood, resources are pre-allocated to reduce overhead during execution:</p>
-<ul><li>The new Compiled Graphs backend<strong> statically</strong> allocates input and output buffers for each actor task upon compilation instead of dynamically allocating them each time the DAG is executed. These buffers are <strong>reused</strong> at execution time, and actors always <strong>push</strong> results directly to the process that needs them.</li><li>All actors that are on the same Ray node will share the same physical input buffer, which is synchronized by the Ray Compiled Graphs backend. This helps reduce the per-task overhead from serializing the task arguments, allocating memory for the arguments, and invoking the task.</li><li>The backend also allocates the actor’s execution loop ahead of time. Instead of waiting for an RPC to execute its next task, each actor waits in a loop for the arguments (passed via the allocated buffers) for the next <code>echo </code>task.</li></ul>
-<p>Now, what if we want to pipeline the execution across different actor tasks? One example of this is <a href="https://docs.vllm.ai/en/latest/serving/distributed_serving.html">pipeline-parallel inference</a>, where we pass intermediate outputs from one actor to the next through shared memory, and the data transfers should be pipelined with the compute tasks. We can pipeline execution across different actors by executing the same DAG multiple times before retrieving the output:</p>
-<pre><code>1# Teardown the previous dag.
-2compiled_graph.teardown()
-3with ray.dag.InputNode() as inp:
-4  for actor in actors:
-5    # Pass each actor task output as input to the next actor task.
-6    inp = actor.fwd.bind(inp)
-7  dag = inp</code></pre>
-<p>This produces a directed acyclic graph (DAG) like this:</p>
-<p>image1</p>
-<p>Which we can compile and execute like this:</p>
-<pre><code>1compiled_graph = dag.experimental_compile()
-2# Call dag.execute() several times. The executions will be pipelined across the different actors.
-3refs = [compiled_graph.execute(f&quot;hello{i}&quot;) for i in range(N)]
-4# Get the results, flushing the pipeline.
-5for ref in refs:
-6  print(ray.get(ref))
-7# &quot;hello0&quot;
-8# &quot;hello1&quot;
-9# &quot;hello2&quot;</code></pre>
-<p>To demonstrate GPU-GPU communication, we can construct an actor that sends a tensor to another actor. To run this example, make sure you have at least 2 GPUs in your cluster.</p>
-<pre><code>1import ray
-2import ray.dag
-3
-4import torch
-5
-6assert ray.cluster_resources().get(&quot;GPU&quot;) &gt;= 2, (&quot;Insufficient number of GPUs available in the cluster.&quot;)
-7
-8@ray.remote(num_gpus=1)
-9class GPUSender:
-10  def send(self, shape):
-11    return torch.zeros(shape, device=&quot;cuda&quot;)
-12
-13@ray.remote(num_gpus=1)
-14class GPUReceiver:
-15  def recv(self, tensor: torch.Tensor):
-16    assert tensor.device.type == &quot;cuda&quot;
-17    return tensor.shape
-18
-19sender = GPUSender.remote()
-20receiver = GPUReceiver.remote()</code></pre>
-<p>Next, we define and compile an compiled graph that passes a CUDA tensor from one actor to the other. With the <code>TorchTensorType</code> hint below, Ray will use NCCL under the hood to transport the tensors via GPU RDMA between 2 GPUs.</p>
-<pre><code>1from ray.experimental.channel.torch_tensor_type import TorchTensorType
-2with ray.dag.InputNode() as inp:
-3  dag = sender.send.bind(inp)
-4  # You have to specify transport=&quot;nccl&quot;, otherwise, it uses shared memory to transfer GPU tensors.
-5  dag = dag.with_type_hint(TorchTensorType(transport=&quot;nccl&quot;))
-6  dag = receiver.recv.bind(dag)
-7
-8compiled_graph = dag.experimental_compile()
-9# Execute the DAG. Ray aDAG will orchestrate any NCCL ops.
-10assert ray.get(compiled_graph.execute((10, ))) == (10, )</code></pre>
-<p>image5</p>
-<p>You can check out <a href="https://docs.google.com/document/d/1xDs-yIBFLXuqUDLou-_KELERkzWrmGWri6p_xG18SH4/edit#heading=h.kzrrbhon06yz">the developer guide for more information.</a></p>
-<h2>LinkBenchmarks</h2>
-<p>We compared Ray Core (labeled “Ray Standard Runtime”) with Ray Compiled Graphs on a variety of communication patterns.</p>
-<ul><li>Round Trip: In this pattern, we construct an actor to repetitively send data to a receiver actor.</li><li>Scatter-Gather: In this pattern, the driver sends data to all actors and gathers the result from each actor.</li><li>Chain of tasks: In this pattern, we construct a pipeline of actors that receive the data from a previous actor and send it to the next actor.</li></ul>
-<p>First, we ran the benchmark with 1 byte of CPU data on a single and multiple nodes for the above computation pattern to measure the system overheads. The following benchmark ran on a m5.16xlarge instance which has 64 CPUs.</p>
-<p>In the graph below, we observe that round trip communication on a single node can be up to 17x faster, and on a multi-node can be 2.7x faster.</p>
-<p>For more complex workloads, such as scatter-gather or chain of tasks, <strong>we see that Ray Compiled Graphs can improve latency by up to 20x.</strong></p>
-<p>image7</p>
-<p>We also compared Ray Core with Ray Compiled Graph for GPU to GPU transfer. We ran a simple round trip benchmark with a 40MB CUDA tensor on a machine with NVLink (A100) and without NVLink (A10G), where we transferred the tensor 10 times and measured the end-to-end latency.</p>
-<p>image4</p>
-<p>By default, Ray Core does not have native support zero copy serialization for torch tensors nor does it use NCCL for communication.</p>
-<p>On the other hand, Ray Compiled Graph uses NCCL under the hood for GPU to GPU transfer to optimize the performance. On a machine with 2 A10G devices without NVLink, Ray Compiled Graphs can transfer tensors with 19x better latency over Ray Core. <strong>On A100 with NVLink, latency can be reduced by nearly 140x.</strong></p>
-<p>These benchmarks show that compiled graphs are powerful primitives that can open up a new class of emerging AI applications.</p>
-<h2>LinkUse Cases</h2>
-<h3>LinkFaster model-parallel inference</h3>
-<p>We’ve integrated <a href="https://github.com/vllm-project/vllm/issues/6556">compiled graphs into vLLM</a>, a popular open source project for LLM inference, to enable tensor parallelism and pipeline parallelism inference using Ray. With pipeline parallelism, we’re able to see a 10-15% throughput/latency improvement compared to the default NCCL backend.</p>
-<h3>LinkState of the art distributed training</h3>
-<p>In our distributed training experiments, we leveraged Compiled Graphs to implement more complex and efficient training strategies. As an example, we significantly increased the training throughput of multimodal contrastive models, like CLIP, by using heterogeneous devices and parallelism techniques. Expressing such a program is much more difficult with vanilla Pytorch.</p>
-<p>Specifically, by applying different parallelism methods to the text and vision encoders and placing the smaller text encoder on a more cost-effective GPUs, we observed<strong> a 20% increase in training throughput and a 43% improvement in token-per-dollar efficiency</strong> compared to PyTorch's standard FSDP implementation.</p>
-<p>We also prototyped various pipeline parallel scheduling algorithms such as afab, 1f1b and zero bubble (<a href="https://arxiv.org/pdf/2401.10241">https://arxiv.org/pdf/2401.10241</a>). We could express complex pipeline scheduling algorithms with <strong>less than 70 lines of code</strong> while reaching the performance parity with state of the art libraries like Deepspeed for a Llama 7B model on 4xA100 GPUs. We are planning to further improve pipeline parallel training performance with larger scale workloads.</p>
-<p>We plan to have follow-up blogs specifically for these use cases. Stay tuned!</p>
-<h2>LinkConclusion</h2>
-<p>Try out Ray Compiled Graphs today on the latest version of Ray via <code>pip install “ray[adag]”</code>. The feature is at its alpha stage and under active development. In the future, we plan on sharing more about how to use Ray Compiled Graphs to implement distributed inference and training. We are excited to hear more use cases and welcome contributions!</p>
-<p>To do so:</p>
-<ul><li>Join <a href="https://www.ray.io/join-slack">ray.slack.com</a> and join the #ray-accelerated-dag channel</li><li>Checkout what we’re working on in <a href="https://github.com/ray-project/ray/issues?q=is%3Aissue+is%3Aopen+label%3Aaccelerated-dag">Github</a>.</li></ul>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#introduction">Introduction</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#introducing-compiled-graphs-in-ray">Introducing Compiled Graphs in Ray</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#benchmarks">Benchmarks</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#use-cases">Use Cases</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#faster-model-parallel-inference">Faster model-parallel inference</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#state-of-the-art-distributed-training">State of the art distributed training</a></li><li><a href="https://www.anyscale.com/blog/announcing-compiled-graphs#conclusion">Conclusion</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<p>Read more</p>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<p>Read more</p>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<p>Read more</p>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Autoscaling Large AI Models up to 5.1x Faster on Anyscale</title>
-      <link>https://anyscale.com/blog/autoscale-large-ai-models-faster</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/autoscale-large-ai-models-faster?li=1</guid>
-      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Home</p>
-<p>Blog</p>
-<p>Blog Detail</p>
-<h1>Autoscaling Large AI Models up to 5.1x Faster on Anyscale</h1>
-<p>By</p>
-<p>Christopher Chou</p>
-<p>,</p>
-<p>Austin Kuo</p>
-<p>,</p>
-<p>Richard Liaw</p>
-<p>,</p>
-<p>Edward Oakes</p>
-<p>and</p>
-<p>Chris Sivanich</p>
-<p>|</p>
-<p>October 1, 2024</p>
-<p>State of the art AI models are getting larger by the month, GPUs remain wildly expensive, and AI practitioners’ time is scarce. When you put these factors together, it becomes clear that efficiency is key for AI applications, both in development and production.</p>
-<p>Unfortunately, a common experience for AI practitioners is to spend a lot of time waiting around for instances to boot, containers to pull, and models to load. As we’ll discuss below, it can take up to 10-12 minutes to provision a replica of <a href="https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct">Meta-Llama-3-70B-Instruct</a> for inference using a typical setup of Ray Serve on Kubernetes.</p>
-<p>image3</p>
-<p>At Anyscale, we’ve optimized scale-up speed across the entire stack, leading to <strong>up to 5.1x faster autoscaling for Meta-Llama-3-70B-Instruct</strong> on the Anyscale platform when compared to running the same application using KubeRay on Amazon Elastic Kubernetes Service (EKS).</p>
-<p>image4</p>
-<p>Faster scale-up is a force multiplier for AI engineers and researchers using the Anyscale platform. They’re able to iterate quickly and avoid idle time in development and autoscale to meet workloads’ demands and avoid idle resources in production.</p>
-<h2>LinkThe Problem: Large Containers, Large Models, and Pricey GPUs</h2>
-<p>Take the example of trying to run a popular open source large language model (LLM), <a href="https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct">Meta-Llama-3-70B-Instruct</a>, on Kubernetes using <a href="https://github.com/vllm-project/vllm">vLLM</a>. The typical startup sequence looks something like:</p>
-<ul><li>Pod is created, Kubernetes cluster autoscaler adds a new node with a GPU: <strong>1-1.5min</strong></li><li>Container image (~12 GB including CUDA and vLLM dependencies) is pulled from container registry: <strong>4-5min</strong></li><li>Container starts, vLLM loads the model (~140 GB in FP16) from cloud storage: <strong>4-5min</strong></li></ul>
-<p>Summed up, this means waiting up to <strong>10-12 minutes</strong> for a copy of the model to come online. Of course, there are various levels of caching that might speed up subsequent runs on the same hardware, but with sky-high GPU prices, it’s critical to relinquish GPU machines when they’re not actively in use.</p>
-<p>In development, this drains the productivity of AI practitioners who find themselves waiting around for their instance to spin up, container to pull, and model to download.</p>
-<p>In production, slow upscaling speeds lead to overprovisioning. Often, autoscaling policies are configured to handle variable incoming traffic patterns; the number of serving replicas is scaled up when traffic increases and scaled down when it decreases. However, if it takes too long to scale up in response to increased traffic, existing replicas can be overloaded, resulting in high response latencies or even failures.</p>
-<p>A simple and common solution to this problem is to add more replicas in steady state to accommodate higher load while waiting for new replicas to come online and upscale more aggressively as traffic increases. However, when each replica of a model requires expensive GPUs to run, this can quickly become expensive.</p>
-<p>Ideally, an online serving system can upscale quickly and be more responsive to incoming traffic, avoiding idle GPU resources.</p>
-<h2>LinkAnyscale Autoscaling: Full-Stack Optimization</h2>
-<p>The <a href="https://www.anyscale.com/platform">Anyscale Platform</a> is a fully-managed Ray solution. Every part of the infrastructure is tailored to provide the best user experience, high performance, and cost effectiveness to run AI applications using Ray. For upscaling speed, this manifests as a few key benefits:</p>
-<ul><li>The Anyscale control plane is directly integrated with the Ray autoscaler, allowing it to react quickly to resource requests and make intelligent autoscaling decisions.</li><li>The machine image and startup sequence have been tuned to optimize instance boot times.</li><li>When pulling container images, Anyscale uses a custom container image format and client to reduce image pull times.</li><li>Anyscale provides a library for fast model loading, streaming tensors directly from cloud storage onto the GPU.</li></ul>
-<p>To demonstrate the effect of these optimizations, we ran an experiment to measure the time taken to scale up a single <a href="https://www.anyscale.com/library/ray-serve">Ray Serve</a> replica to host an LLM model for inference using <a href="https://github.com/vllm-project/vllm">vLLM</a> on AWS. We repeated this experiment for two representative models:</p>
-<ul><li>Mistral-7B-Instruct-v0.1 on a single NVIDIA A10G GPU (1x AWS g5.8xlarge instance). Model weights are about 14 GB in FP16.</li><li>Meta-Llama-70B-Instruct on four NVIDIA L40S GPUs using tensor parallelism (1x AWS g6e.12xlarge instance). Model weights are about 140 GB in FP16.</li></ul>
-<p>On Anyscale, the application is run as a <a href="https://docs.anyscale.com/platform/services/">Service</a> and on KubeRay, it’s run as a <a href="https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html">RayService</a>. In both cases, there is no local caching involved; a new instance needs to be booted, the container pulled from a registry, and the model weights loaded from remote cloud storage.</p>
-<p>image5</p>
-<p>Anyscale is able to scale up a new replica end-to-end in only <strong>75 seconds for Mistral-7B-Instruct-v0.1 </strong>and <strong>107 seconds for Meta-Llama-70B-Instruct</strong>. This represents a <strong>4.3x</strong> and <strong>5.1x</strong> improvement when compared to KubeRay running on Amazon EKS for this workload, respectively.</p>
-<h3>LinkCustom Container Format and Client</h3>
-<p>One of the key differences that enables this speedup is Anyscale’s custom container image format and runtime. The first time a new container image is used by a customer on the Anyscale platform, the image is converted and stored in an optimized format that is used to make subsequent runs with the same image in the same region lightning fast.</p>
-<p>To show the benefit of this optimized format in isolation, we ran an experiment to test the time that it takes to pull a container image and start a container on a freshly-booted g5.8xlarge instance on Amazon EKS and the Anyscale platform.</p>
-<ul><li>The two images used are a ray:2.34.0 default image (~6.2 GB) and a custom image that uses ray:2.34.0 as its base and installs vLLM and its required dependencies (~12.8 GB).</li><li>On Anyscale and EKS, the instances are running in the us-west-2 region and the source container images are hosted in an Amazon Elastic Container Registry in the same region and same AWS account.</li><li>The Amazon EKS node group is configured to use GP3 EBS volumes with 3,000 provisioned IOPs.</li></ul>
-<p>image7</p>
-<p>In this experiment, Anyscale is able to pull the container image up to <strong>30x</strong> faster than AWS EKS for a 6GB image and up to <strong>14x</strong> faster for a 13GB image.</p>
-<h3>LinkOptimized Direct-to-GPU Loading</h3>
-<p>Anyscale also provides an optimized client to load model weights in the <a href="https://github.com/huggingface/safetensors">safetensors</a> format from remote storage directly onto a GPU. This technique leverages pipeline parallelism, avoiding a synchronous copy of the full model weights to disk, followed by loading them to CPU memory, and finally loading to GPU memory. Instead, model weights are streamed chunk-by-chunk from remote storage to CPU memory to GPU memory. You can read more about the technical details in this <a href="https://www.anyscale.com/blog/loading-llama-2-70b-20x-faster-with-anyscale-endpoints">previous blog post</a> and read the latest documentation <a href="https://docs.anyscale.com/platform/services/fast-loading">here</a>.</p>
-<p>To show the benefit of this faster model loading technique in isolation, we measured the time that it takes vLLM to start up and load a model for inference. The models and hardware used are the same as the above end-to-end experiment:</p>
-<ul><li>Mistral-7B-Instruct-v0.1 on a single NVIDIA A10G GPU (1x AWS g5.8xlarge instance). Model weights are about 14 GB in FP16.</li><li>Meta-Llama-70B-Instruct on four NVIDIA L40S GPUs using tensor parallelism (1x AWS g6e.12xlarge instance). Model weights are about 140 GB in FP16.</li></ul>
-<p>image1</p>
-<p>When compared to a typical workflow of using the AWS S3 CLI to download to local disk (with configuration options configured to maximize throughput) and the <a href="https://github.com/huggingface/safetensors">safetensors</a> library to load from local disk to GPU, Anyscale improves the startup and model loading time of vLLM by up to <strong>2x for Mistral-7B-Instruct-v0.1 </strong>and up to <strong>4.8x for Meta-Llama-70B-Instruct</strong>.</p>
-<h2>LinkConclusion</h2>
-<p>The <a href="https://www.anyscale.com/platform">Anyscale Platform</a> implements full-stack optimizations to enable blazing fast autoscaling. For Meta-Llama-3-70B-Instruct, this leads to <strong>up to 5.1x faster autoscaling</strong> when compared to running the same application using KubeRay on Amazon EKS.</p>
-<p>These optimizations make AI practitioners more effective and inference services less expensive to operate.</p>
-<p>Get started on the Anyscale platform for free today at: <a href="https://www.anyscale.com/">https://www.anyscale.com/</a>.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#the-problem:-large-containers,-large-models,-and-pricey-gpus">The Problem: Large Containers, Large Models, and Pricey GPUs</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#anyscale-autoscaling:-full-stack-optimization">Anyscale Autoscaling: Full-Stack Optimization</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#custom-container-format-and-client">Custom Container Format and Client</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#optimized-direct-to-gpu-loading">Optimized Direct-to-GPU Loading</a></li><li><a href="https://www.anyscale.com/blog/autoscale-large-ai-models-faster#conclusion">Conclusion</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<p>Read more</p>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<p>Read more</p>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<p>Read more</p>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Announcing RayTurbo</title>
-      <link>https://anyscale.com/blog/announcing-anyscale-rayturbo</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/announcing-anyscale-rayturbo?li=1</guid>
-      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Home</p>
-<p>Blog</p>
-<p>Blog Detail</p>
-<h1>Announcing Anyscale Runtime for Faster, Cheaper and More Resilient AI, Powered by Ray</h1>
-<p>By</p>
-<p>Richard Liaw</p>
-<p>and</p>
-<p>Philip Wang</p>
-<p>|</p>
-<p>November 4, 2025</p>
-<p>Modern AI workloads — from multimodal data processing to distributed training and high-throughput inference — are pushing infrastructure to its limits. These workloads process increasingly complex datasets like text, video, and images, leverage larger, more advanced models that rely on GPUs, but still depend on CPUs for preprocessing tasks such as decoding or resizing files. Running them at scale requires efficient orchestration on heterogeneous compute, high-performance execution, and rapid recovery from hardware failures.</p>
-<p>Ray, the open-source distributed compute framework, provides the essential foundation to scale AI and Python applications from a single machine to thousands — with task-parallel and actor-based computations across heterogeneous (CPU + GPU) clusters. As AI workloads continue to grow in size and diversity, teams often need stronger reliability guarantees and higher performance tuned to the specific workloads needs around throughput, latency, and cost — challenges that are difficult to solve without deep expertise in distributed systems or cloud infrastructure.</p>
-<p><strong>Anyscale Runtime</strong> solves all of that. This runtime is <strong>fully compliant with Ray APIs</strong> so you can bring over your existing applications – no code rewrites, no lock-in – all while getting:</p>
-<ul><li><strong>Higher resilience to failure, </strong>reducing wasted compute and improving the stability of large-scale pipelines. This is enabled by features such as job checkpointing (pause / resume batch inference processing), mid-epoch resume (pause/resume distributed data loading in training jobs) and dynamic memory management which reduces spilling and out-of-memory (OOM) errors for training and inference workloads.</li><li><strong>Faster performance and lower compute cost compared to running Ray open source</strong> on a wide variety of targeted workloads – including image batch inference, feature processing, reinforcement learning and more.</li></ul>
-<p>In combination with all the other components of the <a href="https://www.anyscale.com/product/platform">Anyscale platform</a>, teams can build and deploy AI workloads faster and more cost-efficiently. Organizations such as Geotab - an AI-driven telematics platform for analyzing driver behavior and improving road safety – has seen 43x higher throughput and 4x better GPU utilization for online (low-latency) video processing. Similarly, TripAdvisor – a leader in AI-powered trip planning – has been able to achieve 70% cost savings for their batch embed processing pipelines with Anyscale.</p>
-<p>To test the power of the Anyscale Runtime on your own, check out our <a href="https://github.com/anyscale/rayturbo-benchmarks/tree/main/">GitHub repo</a> to explore and reproduce benchmarked workloads – continuously updated with new datasets and recipes.</p>
-<h2>Link<strong>Anyscale Runtime offers resilience and recovery optimized for production-grade AI</strong></h2>
-<p>Imagine this – you’re 19 hours into a long training run on ten high-end GPUs when it crashes. Tens of thousands of dollars in compute – gone. You are forced to restart from zero, burning both money and time. Beyond the cost, these failures delay progress, push out deadlines, and erode the return on your AI investment. An inefficiency that can be even more costly if it leads to losing your competitive edge.</p>
-<p>Anyscale Runtime introduces several features designed for resilience and fast recovery at scale so teams can focus on advancing models, not redoing their work:</p>
-<ul><li><strong>Dynamic Memory Management in Ray Data</strong> – Automatically adjusts memory usage to reduce spilling and out-of-memory errors during training and inference.</li><li><strong>Job Checkpointing</strong> – Enables pause-and-resume for long-running inference workloads without losing progress.</li><li><strong>Mid-Epoch Resume</strong> – When using Ray Data for data loading, allows large-scale training jobs to restart mid-run from saved state, avoiding time and compute waste.</li></ul>
-<h2>Link<strong>Anyscale Runtime offers faster performance and lower costs per run</strong></h2>
-<p>anyscale runtime numbers</p>
-<p>The Anyscale Runtime optimizes execution across multiple workloads: faster and lower-cost data processing jobs, more reliable training runs, and higher throughput serving. Our reproducible benchmarks show:</p>
-<ul><li>2x faster and 6x more cost-efficient image batch inference</li><li>10x faster feature processing (encoding, normalization, etc)</li><li>2.5x faster structured data processing</li><li>8x more scalable reinforcement learning</li><li>7x more queries per second (QPS) for high throughput serving</li><li>40% faster video processing in online inference applications</li></ul>
-<p>Below are quick summaries of each workload. To go straight to look at the code and data recipes to check out the benchmarks go to our <a href="https://github.com/anyscale/runtime-benchmarks/tree/main/">GitHub repo</a>.</p>
-<h3>Link<strong>Image batch inference</strong></h3>
-<p>The pipeline read JSONL – decoded and transformed image batches with CPUs, then ran inference on GPUs using a visual transformer model before writing results back as JSONL using CPUs again. The dataset used is roughly 10TB.</p>
-<p>Reproducible benchmark recipe: <a href="https://github.com/anyscale/runtime-benchmarks/tree/main/image-batch-inference">GitHub</a></p>
-<p><strong> Performance:</strong> Using a fixed cluster size, it took 772 seconds on open-source Ray vs. 431 seconds on Anyscale Runtime <strong>(~2x faster)</strong></p>
-<p>image batch inference</p>
-<p><strong>Cost:</strong> $63 vs $170 on fixed clusters (2.7x cheaper); $23 vs $142 on autoscaling runs <strong>(6x cheaper)</strong></p>
-<p>image batch inference cost</p>
-<h3>Link<strong>Feature preprocessing</strong></h3>
-<p>Feature preprocessing — such as encoding and normalization — is one of the most iterative stages in ML. It often starts with small datasets for experimentation but quickly scales to hundreds or thousands of times more data in production. To evaluate performance under this growth pattern, we benchmarked Anyscale Runtime against open-source Ray on an <strong>OrdinalEncoder</strong> workload, scaling <strong>datasets from 1 GB to 1 TB</strong>.</p>
-<p>Reproducible benchmark recipe and performance by dataset size: <a href="https://github.com/anyscale/runtime-benchmarks/tree/main/preprocessors">GitHub</a></p>
-<p><strong> Performance: </strong>Anyscale Runtime consistently delivered 10x or better performance while maintaining stable execution as workload size increased.</p>
-<p>feature preprocessing</p>
-<h3>Link<strong>Structured data processing</strong></h3>
-<p>Even as unstructured data like text, video, and images grows in importance, structured data processing remains a critical part of modern data and AI pipelines. Workloads involving joins, aggregations, and filtering often hit performance bottlenecks due to serialization overhead and heavy shuffle volumes — especially when using Python UDFs. To evaluate performance under some of these common conditions, we ran the <strong>TPC-H Q1 benchmark.</strong></p>
-<p>Reproducible benchmark recipe: <a href="https://github.com/anyscale/runtime-benchmarks/tree/main/tpch">GitHub</a></p>
-<p><strong> Performance: </strong>Benchmarked on a Scale Factor (SF) of 1000, and using 128 CPUs, Anyscale runtime completed the job in 99.1 seconds vs. ~913 seconds on Ray (10x speed up)</p>
-<p>structured data</p>
-<h3>LinkHigh Throughput Serving</h3>
-<p>High-throughput serving is essential for real-time systems like recommendation engines, fraud and anomaly detection. These workloads must handle sudden traffic spikes — thousands of queries per second (QPS) — while keeping latency low and performance consistent without over-provisioning.</p>
-<p>Ray scales dynamically across replicas and nodes to maintain throughput under load. Anyscale Runtime extends this with direct ingress, streamlining the path from request to inference for faster, more efficient serving. To test QPS scaling, we benchmarked a recommendation model with two Ray Serve deployments: an Ingress service for request handling and candidate generation, and a Ranker service running a deep learning recommendation model on GPU.</p>
-<p>Reproducible benchmark recipe: <a href="https://github.com/anyscale/runtime-benchmarks/tree/main/serve-throughput">GitHub</a></p>
-<p><strong> Performance: </strong>Using locust to simulate user requests, for the largest run with 4 GPU replicas – keeping a 1:2 ratio between replicas of the Ranker and Ingress deployment – Anyscale Runtime was able to support 6300 req/s vs. 900 req/s with Ray (7x improvement)</p>
-<p>high throughput serving</p>
-<h3>LinkOnline (latency-sensitive) video processing</h3>
-<p>Real-time video processing is challenging because it combines large datasets that require heavy compute with tight latency constraints — yet it’s increasingly essential for multimodal applications that “see,” from object detection to autonomous systems. These workloads run complex, heterogeneous pipelines spanning CPU and GPU stages — for something that looks like this: video input → chunking → frame extraction → object detection → results.</p>
-<p>Reproducible benchmark recipe: <a href="https://github.com/anyscale/runtime-benchmarks/tree/main/serve-video-perf">GitHub</a></p>
-<p><strong> Performance: </strong>Two inference scenarios were implemented: <em>chunked inference</em> (processing each chunk independently) and <em>combined inference</em> (processing all frames together for applications that require merging the entire video). In both scenarios, Anyscale Runtime had a <strong>~40% improvement </strong>over Ray open-source.</p>
-<p>online video serving</p>
-<h2>LinkWhat’s Next</h2>
-<p>From multimodal data preprocessing to large-scale training and high-throughput serving, these benchmarks show how Anyscale Runtime pushes the limits of performance, reliability, and efficiency for any AI workload.</p>
-<p>And we’re just getting started — our roadmap includes many more critical workloads ahead – as our goal is for Anyscale Runtime to be the best compute engine for any AI workload.</p>
-<h2>LinkResources</h2>
-<ul><li>Explore Anyscale Runtime using the recipes on <a href="https://github.com/anyscale/rayturbo-benchmarks/tree/main/">GitHub</a></li><li><a href="https://www.anyscale.com/contact-sales?utm_source=anyscaleruntime">Contact us</a> to help you optimize your workload</li><li>Check out <a href="https://anyscale.com/blog/ray-summit-2025-anyscale-product-updates">other announcements</a> at Ray Summit 2025</li></ul>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray#anyscale-runtime-offers-resilience-and-recovery-optimized-for-production-grade-ai">Anyscale Runtime offers resilience and recovery optimized for production-grade AI</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray#anyscale-runtime-offers-faster-performance-and-lower-costs-per-run">Anyscale Runtime offers faster performance and lower costs per run</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray#image-batch-inference">Image batch inference</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray#feature-preprocessing">Feature preprocessing</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray#structured-data-processing">Structured data processing</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray#high-throughput-serving">High Throughput Serving</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray#online-(latency-sensitive">Online (latency-sensitive) video processing</a>-video-processing)</li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray#what’s-next">What’s Next</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray#resources">Resources</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>

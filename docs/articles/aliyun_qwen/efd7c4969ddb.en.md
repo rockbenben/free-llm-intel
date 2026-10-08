@@ -1,6 +1,6 @@
 ---
 vendor: aliyun_qwen
-title: Qwen
+title: Qwen3.5-Max-Preview 现已登陆 Arena 平台
 original_title: 
 url: https://qwen.ai/blog?id=qwen3.5-max-preview
 date: 2026-03-19

@@ -7,7 +7,229 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 24 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 07 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Introducing Claude Sonnet 5.5</title>
+      <link>https://www.anthropic.com/claude-sonnet-5-5</link>
+      <guid isPermaLink="true">https://www.anthropic.com/claude-sonnet-5-5?li=1</guid>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Claude Sonnet 5.5</h1>
+<p>September 28, 2026</p>
+<p>Introducing Claude Sonnet 5.5, the second model in the Claude 5.5 family. It’s a clear upgrade over Claude Sonnet 5, runs 30%+ faster, and costs up to 30% less for most work.</p>
+<p>Sonnet 5.5 is a faster, lower-cost complement to Claude Opus 5.5. Where Opus 5.5 is built for complex work requiring careful judgment, Sonnet 5.5 is strongest at well-scoped everyday tasks, fixing bugs, and creating polished documents, slides, and spreadsheets. It’s also got a sharp eye for design. Claude Haiku 5.5, built for high-volume and cost-sensitive applications, will join the Claude 5.5 family in the coming weeks.</p>
+<p>Sonnet 5.5 improves over Sonnet 5 on:</p>
+<p><strong>Performance.</strong> Sonnet 5.5 scores 70.6% on Terminal-Bench 4.0, an agentic coding evaluation, compared to Sonnet 5’s 10.3%. It scores two points below Opus 5.5 on GDPval-AA, a test of real-world work across a variety of occupations. And it’s strong on long-horizon work and image understanding—it’s the first Sonnet model to beat <em>Pokémon Red</em> working only from screenshots.</p>
+<p><strong>Collaboration.</strong> Like Opus 5.5, Sonnet 5.5 writes more clearly than our previous generation of models; early testers described it as a better partner for collaboration than Sonnet 5. Its speed also makes it well suited to fast iteration on less complex tasks.</p>
+<p><strong>Cost.</strong> Sonnet 5.5 is priced the same as Sonnet 5 at $2 per million input tokens, $10 per million output tokens, and $0.20 per million tokens for cache reads, but it typically needs far fewer tokens to do the same work. In our testing, it costs up to 30% less per task than its predecessor.</p>
+<p><strong>Speed.</strong> Sonnet 5.5 generates outputs 30%+ faster than Sonnet 5, making it our fastest Sonnet model to date.</p>
+<p><strong>Alignment and safety.</strong> On our automated behavioral audit, Sonnet 5.5 improves on or matches Sonnet 5 on most measures of alignment. Because its cybersecurity capabilities are comparable to Opus 5’s, it’s the first Sonnet model to launch with cyber safeguards and fallbacks like those we’ve developed for our most capable models. Its biology safeguards are the same as Sonnet 5’s. Both safeguards target a narrow set of high-risk requests; routine software development and most life sciences work are unaffected.</p>
+<h2>Performance</h2>
+<p>Sonnet 5.5 improves on Sonnet 5 across domains—in some cases dramatically. On several evaluations, Sonnet 5.5 at Max effort even performs comparably to Opus 5.5. However, benchmark scores capture only one facet of a model’s capabilities; in our own testing, and in that of external testers, Opus 5.5 remains clearly stronger at complex, open-ended work requiring sustained judgment.</p>
+<table><thead><tr><th></th><th>Sonnet 5.5</th><th>Sonnet 5</th><th>Opus 5.5</th><th>GPT-6 Sol</th></tr></thead><tbody><tr><td>Agentic codingTerminal-Bench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingTerminal-Bench 4.0</td><td>70.6%</td><td>10.3%</td><td>66.4%¹</td><td>—</td></tr><tr><td>Agentic codingFrontierCode 1.1 (Main)</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingFrontierCode 1.1 (Main)</td><td>46.2%Max²</td><td>42.4%</td><td>54.4%</td><td>49.3%</td></tr><tr><td>52.1%Xhigh</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingCursorBench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingCursorBench 4.0</td><td>55.5%</td><td>34.1%</td><td>57.8%</td><td>—</td></tr><tr><td>Knowledge workGDPval-AA v2.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>Knowledge workGDPval-AA v2.1³</td><td>1844</td><td>1449</td><td>1846</td><td>1487⁴</td></tr><tr><td>Knowledge workAA-Briefcase v1.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>Knowledge workAA-Briefcase v1.1³</td><td>1811</td><td>1359</td><td>1822</td><td>1483⁴</td></tr><tr><td>Multidisciplinary reasoningHumanity’s Last Exam</td><td></td><td></td><td></td><td></td></tr><tr><td>Multidisciplinary reasoningHumanity’s Last Exam</td><td>64.5%with tools</td><td>54.9%with tools</td><td>67.7%with tools</td><td>—</td></tr><tr><td>Computer useOSWorld 2.1</td><td></td><td></td><td></td><td></td></tr><tr><td>Computer useOSWorld 2.1</td><td>80.1%partial</td><td>57.0%partial</td><td>81.8%partial</td><td>—</td></tr><tr><td>Visual chart recognitionChartography</td><td></td><td></td><td></td><td></td></tr><tr><td>Visual chart recognitionChartography</td><td>61.6%no tools</td><td>15.6%no tools</td><td>64.4%no tools</td><td>53.6%⁴no tools</td></tr></tbody></table>
+<p>For details on how we run our evaluations, see the <a href="https://www.anthropic.com/claude-sonnet-5-5-system-card">Sonnet 5.5 System Card</a>.</p>
+<p>The charts below plot each model’s score against its cost per task at every effort level. As effort goes up, models typically work for longer, leading to a higher cost per task but generally also a higher score. The closer a point is to the top left of the chart, the more capability it delivers per dollar.</p>
+<p>On several benchmarks, Sonnet 5.5 at Low or Medium effort beats Sonnet 5’s best score for about a tenth of the cost per task. It complements Opus 5.5 best when running at lower effort settings, where it costs less per task. At higher settings, it can perform comparably at a similar cost.</p>
+<p>Agentic terminal coding</p>
+<p>Agentic coding: FrontierCode</p>
+<p>Agentic coding: CursorBench</p>
+<p>Knowledge work: AA-Briefcase</p>
+<p>Terminal-Bench 4.0</p>
+<p>Accuracy vs. cost</p>
+<p>Terminal-Bench 4.0 measures how well a model can complete complex, multi-step professional tasks within a command-line interface. At Medium effort, the default in the Claude apps, Sonnet 5.5 far exceeds Sonnet 5’s best score for less than a tenth of the cost per task.</p>
+<p>Terminal-Bench and OpenAI did not report GPT-6 Sol performance publicly, so we report GPT-5.6 Sol here.</p>
+<p>FrontierCode v1.1, main set</p>
+<p>Accuracy vs. cost</p>
+<p>FrontierCode measures whether an agent’s code changes would be merged. At High effort, the default on the Claude Platform, Sonnet 5.5 matches GPT-6 Sol’s best score for about a fifth of the cost per task.²</p>
+<p>CursorBench 4.0</p>
+<p>Accuracy vs. cost</p>
+<p>CursorBench evaluates coding agents on ambiguous, multi-file tasks taken from real Cursor sessions. Sonnet 5.5 at Low effort exceeds Sonnet 5’s best score for less than a tenth of the cost per task.</p>
+<p>CursorBench 4.0 does not report GPT-6 Sol performance publicly, so we report GPT-5.6 Sol here.</p>
+<p>AA-Briefcase v1.1</p>
+<p>Accuracy vs. cost</p>
+<p>On AA-Briefcase, a new benchmark of long-horizon knowledge work, Sonnet 5.5 at Medium effort bests Sonnet 5’s best score for about one ninth of the cost per task.³</p>
+<h2>Coding</h2>
+<p>Sonnet 5.5’s jump in performance is particularly noticeable in coding. At High effort on FrontierCode, it scores 10 points higher than Sonnet 5 at the same setting, at about one fifteenth of the cost per task. On CursorBench, which tests models on tasks from real Cursor coding sessions, its best score is within about two points of Opus 5.5.</p>
+<p>Early testers appreciated how quickly Sonnet 5.5 can understand a codebase. They were also struck by its efficiency: in head-to-head runs, it batched tool calls together more than Sonnet 5, leading to fewer steps and lower costs.</p>
+<p>Epic Games</p>
+<p>Every</p>
+<p>CodeRabbit</p>
+<p>SpaceXAI</p>
+<p>Base44</p>
+<p>Unity</p>
+<p>Creator</p>
+<p>Quote</p>
+<blockquote>“In Epic’s early testing, Claude Sonnet 5.5 cleared the same quality bar you’d expect from a higher-tier model, holding up on a system design audit and a data flow review. The new model managed tens of thousands of lines of code for gameplay system architecture, kept responses snappy, handled multi-hour tasks, and delivered with less prescriptive prompting.”</blockquote>
+<p>Company</p>
+<p>Epic Games</p>
+<p>Author</p>
+<p>Daniel Vogel, Chief Operating Officer</p>
+<p>Quote</p>
+<blockquote>“Claude Sonnet 5.5 cooks. Fast at coding and can be steered quickly in iterative workflows. But it can still work long if it needs to. It’s got some of Opus 5.5’s natural writing upgrades, which makes it more fun to work with.”</blockquote>
+<p>Company</p>
+<p>Every</p>
+<p>Author</p>
+<p>Tyler Nishida, Designer</p>
+<p>Quote</p>
+<blockquote>“Claude Sonnet 5.5 shows better judgment than Sonnet 5 across different levels of complexity, while spending significantly fewer output tokens. Sonnet 5’s tendency to reach for web search too often and its high token use are both gone in this new model. We plan to move simple and moderate reviews over now, and more in the coming weeks.”</blockquote>
+<p>Company</p>
+<p>CodeRabbit</p>
+<p>Author</p>
+<p>David Loker, VP of AI</p>
+<p>Quote</p>
+<blockquote>“Claude Sonnet 5.5 delivers frontier-level performance on CursorBench 4.0 at 55.5%, second only to Opus 5.5. We think it will be a hit with developers looking to balance performance with cost.”</blockquote>
+<p>Company</p>
+<p>SpaceXAI</p>
+<p>Author</p>
+<p>Sualeh Asif, Director of ML</p>
+<p>Quote</p>
+<blockquote>“Across 118 real app builds, Claude Sonnet 5.5 produced apps that scored level with Opus 5. It got there in 3.6 iterations per build on average, where Opus 5 took 7.7. It had the fewest failed tool calls of any model we compared. It also rarely stopped mid-build to ask the user a question, so fewer builds stall waiting on someone to answer.”</blockquote>
+<p>Company</p>
+<p>Base44</p>
+<p>Author</p>
+<p>Gabriel Grinberg, AI Engineering Lead</p>
+<p>Quote</p>
+<blockquote>“At Unity, we have a high bar for task completion. Projects are reopened and results are checked at runtime, so a task only counts when the change works, not when the model says it’s done. The majority of Claude Sonnet 5.5’s work passed that check. It also completed 90% of tasks in our multi-step Unity Editor and coding benchmark, beating similar models.”</blockquote>
+<p>Company</p>
+<p>Unity</p>
+<p>Author</p>
+<p>Sam Zhang, Creative Technologist</p>
+<p>Quote</p>
+<blockquote>“When Claude Opus 5.5 sets the architecture and general framework for a game, I would feel confident in letting Sonnet 5.5 implement it. I’m impressed with Sonnet 5.5’s handling of long-running, complex tasks.”</blockquote>
+<p>Company</p>
+<p>Creator</p>
+<p>Author</p>
+<p>Kevin Ngo, Creative Coder</p>
+<h2>Knowledge work</h2>
+<p>Sonnet 5.5 shows gains in multiple areas of knowledge work. On GDPval-AA, which tests models on real-world tasks across 44 occupations and nine major industries, Sonnet 5.5 scores nearly level with Opus 5.5 and about 400 points above Sonnet 5. It’s close to Opus 5.5 in computer use and chart recognition, and clearly outperforms Sonnet 5 and GPT-6 Sol on long-horizon knowledge work.</p>
+<p>Early testers highlighted less quantifiable improvements. They found it to be a more natural conversational partner and remarked on its knack for design, noting that it adds polish to user interfaces and can follow slide templates to create decks that require minimal editing. In one internal test, we gave it a public company’s quarterly earnings materials and call transcripts, along with a slide template, and asked for a 10-slide operating review. Two experts judged its first draft to be ready to send as is.</p>
+<p>Slack</p>
+<p>Zendesk</p>
+<p>Balyasny Asset Management</p>
+<p>Box</p>
+<p>Lovable</p>
+<p>Atlassian</p>
+<p>Quote</p>
+<blockquote>“Without changing any of our prompts, Claude Sonnet 5.5 did better than Sonnet 5 on almost all of our offline Slackbot evals, in fewer steps and with about 14% fewer output tokens. When someone gives Slackbot a task, quality and speed are what matter most, and Sonnet 5.5 allows Slackbot to deliver better outcomes for users, faster.”</blockquote>
+<p>Company</p>
+<p>Slack</p>
+<p>Author</p>
+<p>Curtis Allen, Principal Engineer</p>
+<p>Quote</p>
+<blockquote>“We fed Claude Sonnet 5.5 hundreds of real support use cases across replies and escalation requests. It made fewer wrong decisions and resolved tickets faster than the Claude models we use in production today. Tickets were processed 20% faster, getting our customers the help they need without the wait.”</blockquote>
+<p>Company</p>
+<p>Zendesk</p>
+<p>Author</p>
+<p>Abhinay Kathuria, Director of AI</p>
+<p>Quote</p>
+<blockquote>“On our private suite of 2,441 finance tasks covering Q&amp;A, extraction, analysis, and forecasting, Claude Sonnet 5.5 scored ahead of Sonnet 5 and used about 121k tokens per answer, where Sonnet 5 used 497k. On our analyst search and retrieval work, it was better than Sonnet 5 in almost every way. For high-volume workflows, it had the best quality-to-cost tradeoff of the seven models we ran.”</blockquote>
+<p>Company</p>
+<p>Balyasny Asset Management</p>
+<p>Author</p>
+<p>Joe Poirier, Senior AI Engineer</p>
+<p>Quote</p>
+<blockquote>“Claude Sonnet 5.5 will give our customers in financial services and healthcare the confidence to use it for their most sensitive work. Sonnet 5.5 rechecks data in source documents, catching errors that Sonnet 5 failed to spot. Compared to the last model, Sonnet 5.5 was more accurate, 2.4x faster, and used 12% fewer total tokens.”</blockquote>
+<p>Company</p>
+<p>Box</p>
+<p>Author</p>
+<p>Yashodha Bhavnani, VP of AI Products</p>
+<p>Quote</p>
+<blockquote>“Claude Sonnet 5.5 thinks in fewer, more robust steps, so builders wait less to see progress. Our coding evals showed a third fewer tool calls and roughly half the shell runs to finish a task. For everyday coding and higher-effort conversations, that means faster iteration and a smoother build loop.”</blockquote>
+<p>Company</p>
+<p>Lovable</p>
+<p>Author</p>
+<p>Fabian Hedin, Co-founder and CTO</p>
+<p>Quote</p>
+<blockquote>“With millions of Rovo-assisted actions powering our customers’ workflows each month, execution speed is critical. Claude Sonnet 5.5 will allow teams to run their Rovo Agents up to 30% faster than they could with Sonnet 5. I am excited to offer customers this choice.”</blockquote>
+<p>Company</p>
+<p>Atlassian</p>
+<p>Author</p>
+<p>Jamil Valliani, Head of Product, AI</p>
+<h2>Cost and speed</h2>
+<p>Pricing</p>
+<table><thead><tr><th>Price per 1M tokens</th><th><strong>Claude Sonnet 5.5</strong></th><th>Claude Opus 5.5</th></tr></thead><tbody><tr><td>Cache reads</td><td>$0.20</td><td>$0.20</td></tr><tr><td>Cache writes</td><td>$2.50</td><td>$5</td></tr><tr><td>Input tokens</td><td>$2</td><td>$4</td></tr><tr><td>Output tokens</td><td>$10</td><td>$20</td></tr></tbody></table>
+<p>Sonnet 5.5 requires fewer tokens per task than Sonnet 5, so it’s less expensive to run. It also generates output 30%+ faster, and its efficiency is immediately noticeable:</p>
+<p>Prompt:</p>
+<p>A murmuration of 400 starlings in one HTML file</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>Prompt:</p>
+<p>Wind shaping sand dunes in one HTML file</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>Prompt:</p>
+<p>A clock made of 24 small clocks in one HTML file</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>Adjusting the <a href="https://academy.claude.com/tutorials/choosing-the-right-effort-level-in-claude-code">effort level</a> lets you balance cost and speed against overall quality. In Claude Code and our apps, the default effort is set to Medium, while the Claude Platform defaults to High. At lower settings, Claude answers faster and uses fewer tokens, which suits routine work. At higher settings, Claude reasons for longer and checks its work more thoroughly.</p>
+<h2>Safety</h2>
+<h3>Alignment</h3>
+<p>Sonnet 5.5 doesn’t advance the frontier of our models’ capabilities, so our alignment assessment focused on a targeted set of risks that apply to models of any capability level, including acting against users’ interests, misleading users, and cooperating with high-stakes misuse.</p>
+<p>On our automated behavioral audit, which tests Claude across roughly 1,850 scenarios, Sonnet 5.5 improves on or matches Sonnet 5 on most measures of alignment, resistance to misuse, and honesty. On our newer containment evaluations, Sonnet 5.5 comes close to Opus 5.5, the best model we tested, in how rarely it tries to escape its sandbox, and it’s the least likely of any of our models to probe the limits of its containers. Across the full audit, Opus 5.5 still performs slightly better overall, but we found no evidence that Sonnet 5.5 pursues goals that conflict with the user’s intention.</p>
+<p>As we described in our <a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">recent alignment assessment</a>, no set of evaluations reliably catches every failure, and Sonnet 5.5 may have tendencies we haven’t found, which is why we pair our own alignment work with the safeguards described below.</p>
+<h3>Safeguards</h3>
+<p><strong>Cybersecurity.</strong> Sonnet 5.5’s cyber capabilities are a large improvement over Sonnet 5’s, so we’re deploying it with safeguards similar to those on Opus 5.5. Users can still find and fix bugs in their code as part of routine software development, but higher-risk cybersecurity tasks will visibly fall back to Sonnet 5. Soon, cyberdefenders will be able to apply to our expanded <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a> for tiered access to more advanced capabilities on Sonnet 5.5, Opus 5.5, and Claude Mythos models.</p>
+<p><strong>Biology.</strong> Sonnet 5.5 uses the same set of biology safeguards as Sonnet 5. These target harmful requests; most research, education, and clinical work is unaffected, though some microbiology and virology requests may be flagged in error. Organizations can apply to our <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a> for access to safeguards designed for the full breadth of biology-related work.</p>
+<p><strong>Distillation.</strong> Distillation attacks, in which attackers use thousands of fake accounts to extract a model’s capabilities at industrial scale, allow bad actors to create highly capable models without the safeguards we build into Claude. Because Sonnet 5.5 is far more capable than its predecessor, it’s the first Sonnet model to launch with safety classifiers that prevent reasoning extraction. Sonnet 5.5 also expands <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking</a>, so Claude’s thinking cannot be decoupled from the account that created it. Most developers won’t notice a change. If you move conversations between accounts, including switching accounts mid-session in Claude Code, our <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">docs article</a> explains the change.</p>
+<h2>Getting started</h2>
+<p>As with Opus 5.5 and Sonnet 5, Claude Sonnet 5.5 is available with zero data retention.</p>
+<p>Claude Sonnet 5.5 is now available on all platforms, including Amazon Web Services, Google Cloud, and Microsoft Azure. Developers can get started on the Claude Platform with <code>claude-sonnet-5-5</code>. If you run Sonnet with thinking off, you’ll need to switch to the new <code>between_tools</code> setting, which keeps up-front thinking off, before moving to Sonnet 5.5. See our <a href="https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide#turn-thinking-off">migration guide</a> for details.</p>
+<h2>Footnotes</h2>
+<p>1 Terminal-Bench 4.0 results are reported for Claude Opus 5.5 at Xhigh effort which represents the model’s highest score.</p>
+<p>2 Sonnet 5.5 scores lower at Max effort than at Xhigh. FrontierCode evaluates whether a code change could be merged without human edits. It penalizes out-of-scope changes, even if they are high-quality or helpful. At Max effort, Sonnet 5.5 more often ran Claude Code’s code-review skill, which splits the review across many subagents, and in two cases Cognition examined, this led to a timeout or to extra edits beyond the task’s scope, and therefore to a lower score.</p>
+<p>3 Artificial Analysis ran GDPval-AA and AA-Briefcase on a pre-release deployment of Sonnet 5.5 on the Claude Platform, which we found to have a bug that could degrade responses to requests that use structured outputs. We expect the effect on Sonnet 5.5’s scores, if any, to be small and to understate its performance. That bug has since been fixed.</p>
+<p>4 OpenAI recently fixed a bug that degraded image understanding in GPT-6 Sol. Official AA-Briefcase v1.1 and GDPval-AA v2.1 scores from Artificial Analysis, and Chartography scores from Surge AI, may not have been updated yet to reflect the latest version of the model. Artificial Analysis does not expect major impacts to AA-Briefcase v1.1 and GDPval-AA v2.1. Internal testing of Chartography suggests its score was not impacted.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>How Cresta turned CX expertise into an agent builder on the…</title>
+      <link>https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk?li=1</guid>
+      <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: How Cresta turned CX expertise into an agent builder on the Claude Agent SDK</description>
+      <content:encoded><![CDATA[<p><em>In our series, <strong>How startups build with Claude</strong>, we look at the decisions behind AI products. Here, we explore how <a href="https://cresta.com/">Cresta</a> brought its expertise building AI-native customer experience into <a href="https://cresta.com/blog/cresta-conductor-the-agent-for-ai-agent-development">Conductor</a>, an agent that helps developers build and improve other agents.</em></p>
+<table><thead><tr><th>The quick pitch</th><th></th></tr></thead><tbody><tr><td>Name</td><td>Cresta</td></tr><tr><td>Founded</td><td>2017</td></tr><tr><td>CEO</td><td>Ping Wu</td></tr><tr><td>Growth</td><td>$270M+ raised. $100M+ ARR. Helping organizations like United Airlines, CVS Health, and Marriott deliver exceptional customer experiences</td></tr></tbody></table>
+<p>Building enterprise AI agents for customer experience use cases requires understanding the context embedded across a wide range of customer interactions. For example, customers may:</p>
+<ul><li>Ask for a refund without saying which purchase they mean,</li><li>Report a billing problem and a login issue in the same message, or</li><li>Request a refund after the return window has closed.</li></ul>
+<p>To respond correctly, the agent may need to check what the customer bought, the refund policy, their account history, or the payment status.</p>
+<p>Cresta sees these interactions at volume. Its platform powers customer experience, AI agents that handle conversations on their own, provide real-time guidance for the human agents working alongside them, and surface conversation intelligence that shows the business where to improve.</p>
+<p>Building and maintaining customer experience agents requires organizations to make key decisions on operating requirements: what the agent needs to know, which systems it must access, and where its behavior should be flexible or deterministic. Cresta wanted to make that judgment available to more teams without each one starting from scratch.</p>
+<p>Conductor is the result: a natural language agent builder that helps teams turn complex business context into production-ready agents. Users describe what they want to build, and Conductor guides the work from a grounded blueprint through implementation, evaluation, and optimization.</p>
+<p>Cresta originally built an early version of Conductor using Claude Sonnet and Claude Opus to help internal teams support customer deployments. The open question was whether Cresta could turn that system into a product customers could use to build agents directly <em>within</em> the platform.</p>
+<p>To carry out open-ended development work, Conductor uses the Claude Agent SDK as a general-purpose harness to gather context, use tools, write and run code, and adapt based on the results.</p>
+<p>“We used Claude Code internally as a dev tool because it was very effective at the software development aspects of building an agent,” said Renjie Li, Engineering Lead for Cresta Conductor. “The Claude Agent SDK gave us a way to use that same agentic development harness programmatically. With Conductor, we’ve connected it with Cresta’s deep conversation intelligence, CX expertise, evaluations, and runtime to give users the agent-building experience we wish we’d had from day one.”</p>
+<p>Cresta reports that in early use cases across Cresta and its partners, Conductor cut initial deployment time roughly in half.</p>
+<h2><strong>A meta-agent that helps build the next agent</strong></h2>
+<p>Conductor is a self-improving meta-agent built on established best practices for CX agent development. As teams build and refine more agents with it, they capture their own proven patterns, workflows, and expert judgment. This creates a knowledge flywheel that makes future development faster and more consistent.</p>
+<p>After launch, production interactions, workflow outcomes, and feedback become new signals for the next improvement.</p>
+<p>Conductor helps builders turn what they learned from an agent build into a reusable memory artifact, capturing patterns, business rules, and evaluation approaches. They can then share it as skill with the rest of the team, so others can build from the same proven practices.</p>
+<h3><strong>Making the important decisions easier</strong></h3>
+<p>Writing the first prompt is only one part of building a useful agent. One of the harder calls is where a conversation should stay flexible and where it needs explicit business rules and controlled tool behavior.</p>
+<p>&quot;You don't want to go too deterministic, otherwise you create a giant decision tree trying to map out every possible branch… but there are enterprise-critical workflows that you need to make sure work all the time, especially for highly regulated industries with low risk tolerance,&quot; said Renjie. &quot;Conductor helps discover and harden those deterministic requirements and the implementation with the flexibility to improve the overall experience.&quot;</p>
+<p>Conductor draws on historical conversations to help teams identify where a human should stay in the loop and where the model can be given room to adapt. Once those boundaries are set, developers still need to test the deterministic pieces against the requirements they're meant to enforce, and revise those tests as the underlying business rules change.</p>
+<h2><strong>How Cresta evaluates Conductor</strong></h2>
+<p>Conductor is measured on how well it builds agents. To that end, Cresta runs Conductor through a set of build tasks:</p>
+<ul><li>Build a new agent</li><li>Write a test case for one</li><li>Change an agent that already exists</li><li>Perform root cause analysis</li></ul>
+<p>Finishing the task is not the only bar. The team also looks at the outcomes, how Conductor got there, and what it used along the way.</p>
+<table><thead><tr><th>Evaluation</th><th>Question it answers</th></tr></thead><tbody><tr><td>Outcome</td><td>Did Conductor produce the requested, usable artifact?</td></tr><tr><td>Execution path</td><td>Did it use the appropriate tools and required context?</td></tr><tr><td>Quality</td><td>How does the result compare with a curated reference?</td></tr><tr><td>Resource use</td><td>How much time and model usage did the task require?</td></tr></tbody></table>
+<p>Those same tasks function as a safety net. When a new Claude model is launched or the Conductor framework is updated, Cresta reruns its evaluations. It uses the same tasks and same scoring to identify what improved and what still needs work before anyone commits to the change.</p>
+<p>That same evaluation discipline is built into Conductor, which allows its users to check and see if their agents are performing as intended. Conductor turns requirements and edge cases captured during the build phases into tests within its evaluation module.</p>
+<p>Teams can then monitor the workflows that need to work every time as policies, connected systems, and conversation patterns change. That gives them a practical way to update an agent as the business changes without losing the reliability of the workflows they have already hardened.</p>
+<h2><strong>Building Conductor on the Claude Agent SDK</strong></h2>
+<p>Cresta designed Conductor as the CX-specific control plane for agent development. It brings together conversation data, domain expertise, and development practices, then governs each agent run through policy, observability, verification, and feedback-driven improvement.</p>
+<p>The Claude Agent SDK sits beneath Conductor as a general-purpose execution harness. It manages the work of gathering context, calling tools, and writing and running code; Conductor layers Cresta's CX workflows, tools, and domain context on top.</p>
+<p>The team evaluated the SDK against the work Conductor needed to perform: tasks with multiple steps, substantial context, and repeated tool use. Its review covered data privacy, tenant architecture, organization-level key distribution, controls, and observability across the implementation.</p>
+<p>&quot;Anthropic gives us a strong, general-purpose foundation for agentic software development. That lets us put our engineering investment where Cresta creates the most durable customer value,&quot; said Xiangru Chen, VP of Engineering at Cresta.</p>
+<h2><strong>Putting Cresta's engineering expertise directly in customers' hands</strong></h2>
+<p>Conductor started inside Cresta, helping its own forward-deployed team learn which development tasks could become repeatable, where context mattered most, and what builders needed to inspect along the way. Its success in that internal work gave the team confidence to bring the same capabilities to customers and partners.</p>
+<p>For any team whose product deploys custom agents faster than its engineers can hand-build them, Cresta's approach is a useful reference point: with agents or meta-agents, the work after the initial build is often the hardest part.</p>
+<p>See how <a href="https://cresta.com/blog/cresta-conductor-the-agent-for-ai-agent-development">Conductor</a> turns business context into better agent design, implementation, and ongoing improvement.</p>
+<table><thead><tr><th>Best practices from the Cresta team</th><th></th></tr></thead><tbody><tr><td>Dogfood your products</td><td>Conductor ran as an internal tool first, and only became a product once its output matched what an engineer with deep AI expertise would build.</td></tr><tr><td>Focus on your unique advantages</td><td>Cresta drew a hard line between the expertise only they could bring (their conversation data and understanding of customer experience) and what they could take off the shelf from the Agent SDK, and refused to build anything on the wrong side of it.</td></tr><tr><td>What parts of your agent need to be deterministic</td><td>Harden the enterprise-critical workflows that can never go wrong and leave the rest flexible, or you won't end up with the interactive agentic experience you want.</td></tr><tr><td>Getting to production is the easy part</td><td>The initial build is only about 20% of the effort, the other 80% is the testing, optimization, and continuous improvement that follows, so design your tooling around the iteration loop, not the launch.</td></tr></tbody></table>
+<h2>Transform how your organization operates with Claude</h2>
+<p>See pricing</p>
+<p>Contact sales</p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Claude Tag now supports personal connectors in channels</title>
       <link>https://claude.com/blog/claude-tag-now-supports-personal-connectors-in-channels</link>
@@ -151,6 +373,292 @@
 <p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
 <p>Thank you! You’re subscribed.</p>
 <p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Introducing Claude Opus 5.5</title>
+      <link>https://www.anthropic.com/claude-opus-5-5</link>
+      <guid isPermaLink="true">https://www.anthropic.com/claude-opus-5-5?li=1</guid>
+      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Claude Opus 5.5</h1>
+<p>September 22, 2026</p>
+<p>We’re introducing Claude Opus 5.5, the first model in our new Claude 5.5 family. It performs at the level of Claude Fable 5.1 on most work and costs 40% less to run than Opus 5.</p>
+<p>Claude Opus 5.5 is our first release since we called for <a href="https://darioamodei.com/post/we-must-pace-the-frontier">pacing the frontier</a>. It was tested before release by external evaluators, including <a href="https://www.imaginefrontier.com/">Frontier Design</a> and <a href="https://metr.org/">METR</a>. On our automated behavioral audit, the most comprehensive alignment test we run, Opus 5.5 is the strongest-performing model we’ve tested to date. It also comes with the safeguards we’ve developed for our most capable models.</p>
+<p>Here are some of the improvements you can expect from Opus 5.5:</p>
+<p><strong>Performance.</strong> Opus 5.5 is a major step up from Opus 5. It’s the new leading model, and early testers saw large jumps in performance on their most complex work. One tester completed a 680,000-line code migration in less than a day—work that would have taken an engineering team weeks. It’s good at finding and fixing inefficiencies in software: when we asked it to cut load times across every page of a web app, Opus 5.5 succeeded 39 of 40 times, while Opus 5 made smaller improvements that also altered the app’s behavior. A different tester had several Claude models build a game from a single prompt; Opus 5.5 scored higher than any other model on the strength of its graphics and polish.</p>
+<p><strong>Safety.</strong> Opus 5.5 achieves the best scores of any model to date on our automated behavioral audit, our alignment suite that tests Claude across thousands of simulated scenarios. It is much less likely than recent models to take hard-to-reverse actions or act outside the boundaries it’s been given, and it’s more resistant than Opus 5 to prompt injection. We’ve also broadened our alignment testing to cover longer tasks, impossible tasks, and scenarios modeled on real incidents, though it still has limits. Full details of our evaluation are available in the <a href="https://anthropic.com/claude-opus-5-5-system-card">Opus 5.5 System Card</a>.</p>
+<p>Because Opus 5.5 is comparable to Claude Mythos 5.1 in biology and cybersecurity, we’re deploying it with safeguards similar to those on Claude Fable 5.1. Vetted organizations can apply today to our <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a> to use Opus 5.5 for biology research. In the coming weeks we will also be expanding access to our <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a>, and verified cybersecurity practitioners will be able to use Opus 5.5 for their work.</p>
+<p><strong>Cost and speed.</strong> Opus 5.5 requires less compute to serve than Opus 5, and its pricing reflects that. Our tests show that at default settings it will cost 40% less than Opus 5 on typical workloads. Input and output tokens are $4 and $20 per million, 20% less than Opus 5. Cache reads (which make up the majority of agentic and coding work costs) are $0.20 per million tokens, 60% less than Opus 5. Opus 5.5 also generates output more than 30% faster than Opus 5.</p>
+<p>In addition to the price drop, we’re increasing five-hour usage limits on Pro, Max, Team, and seat-based Enterprise plans. We’re also providing subscription users a rate limit reset, which you can now save and use whenever you choose.</p>
+<p><strong>Communication.</strong> Opus 5.5 communicates more naturally than prior models. Early testers found its writing clearer and easier to follow, which addresses some of the common feedback we heard about Opus 5. It puts the most important information up front, and its style makes it a better work partner over long sessions. As one early tester put it, “it writes the way I do.” In our own use, this has made Opus 5.5’s work easier to follow and check—which is a safety benefit as well as a practical one.</p>
+<p>Claude Sonnet 5.5 and Claude Haiku 5.5 will follow in the coming weeks, with many of the same improvements to performance, efficiency, and safety.</p>
+<h2>Performance and cost-effectiveness</h2>
+<p>On our benchmarks, Claude Opus 5.5 leads in agentic coding, computer use, and knowledge work. That said, at these levels of capability we’ve found that benchmark margins have become a less reliable guide to real-world differences. In our own use, the gap between Opus 5.5 and Claude Fable 5.1 is narrower than these scores suggest.</p>
+<table><thead><tr><th></th><th>Opus 5.5</th><th>Fable 5.1</th><th>Opus 5</th><th>GPT-6 Astra</th><th>GPT-5.6 Sol</th></tr></thead><tbody><tr><td>Agentic codingTerminal-Bench 4.0¹</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingTerminal-Bench 4.0¹</td><td>66.4%</td><td>55.8%</td><td>52.3%</td><td>57.9%</td><td>37.3%</td></tr><tr><td>Agentic codingFrontierCode v1.1 (Main)</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingFrontierCode v1.1 (Main)</td><td>54.4%</td><td>50.3%</td><td>48.0%</td><td>53.3%</td><td>47.5%</td></tr><tr><td>Agentic codingCursorBench 4.0</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingCursorBench 4.0</td><td>57.8%</td><td>51.8%</td><td>46.6%</td><td>—</td><td>41.7%</td></tr><tr><td>Knowledge workGDPval-AA v2.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Knowledge workGDPval-AA v2.1</td><td>1846</td><td>1735</td><td>1708</td><td>1542</td><td>1588</td></tr><tr><td>Business workflowsAutomationBench²</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Business workflowsAutomationBench²</td><td>40.0%</td><td>31.4%</td><td>26.9%</td><td>41.4%</td><td>28.8%</td></tr><tr><td>Multidisciplinary reasoningHumanity's Last Exam</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Multidisciplinary reasoningHumanity's Last Exam</td><td>67.7%with tools</td><td>65.6%with tools</td><td>63.6%with tools</td><td>57.2%with tools</td><td>—</td></tr><tr><td>Agentic scientific researchTerminal-Bench-Science 0.1³</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic scientific researchTerminal-Bench-Science 0.1³</td><td>58.7%</td><td>52.6%</td><td>29.0%</td><td>64.6%</td><td>22.4%</td></tr><tr><td>Computer useOSWorld 2.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Computer useOSWorld 2.1</td><td>81.8%partial</td><td>80.7%partial</td><td>74.0%partial</td><td>—</td><td>—</td></tr><tr><td>Visual chart recognitionChartography</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Visual chart recognitionChartography</td><td>89.0%with tools</td><td>88.4%with tools</td><td>83.4%with tools</td><td>—</td><td>—</td></tr></tbody></table>
+<p>Unless otherwise noted, all Claude Opus 5.5 results use adaptive thinking at max effort. Terminal-Bench 4.0 results are reported for Claude Opus 5.5 at xhigh effort and GPT-6 Astra at high effort, as reported by OpenAI; these represent each model’s highest score. Claude Opus 5.5 was evaluated with its production safeguards enabled. When they intervened, cybersecurity tasks were completed by Claude Opus 4.8, and biology and frontier LLM development tasks were completed by Claude Opus 5. This likely reduces Claude Opus 5.5’s performance on these benchmarks.</p>
+<p>1<strong> Terminal-Bench 4.0:</strong> The standard error is ±2.6 pts for Claude Opus 5.5 and ±1.6–2 pts for the other Claude models. The public leaderboard (5 trials/task, Claude Code harness) reports Claude Opus 5 at 51.8%; our setup reproduces it at 52.3%, within noise. GPT-6 Astra and GPT-5.6 Sol figures are as reported by OpenAI.</p>
+<p>2<strong> AutomationBench:</strong> AutomationBench results were run and reported by Zapier. These runs were performed without fallback models, so safeguard interventions were considered failures—this resulted in a lower score than Claude Opus 5.5 would achieve in practice. Claude Opus 5.5 results come from Zapier’s own evaluation during early access. Results for Opus 5, GPT-5.6 Sol, and GPT-6 Astra come from Zapier’s public leaderboard.</p>
+<p>3<strong> Terminal-Bench-Science 0.1:</strong> The standard error is ±3.5–5 pts per model. The public leaderboard (3 trials/task, Claude Code harness) reports Claude Opus 5 at 30.0%; our setup reproduces it at 29.0%, within noise. The GPT-6 Astra figure is as reported by OpenAI.</p>
+<p>Where Opus 5.5’s advantage is very clear is efficiency. It costs less per token than Opus 5 and uses fewer tokens per task, which nets out to a 40% drop in costs.</p>
+<p>Pricing</p>
+<table><thead><tr><th>Prices per 1M tokens</th><th><strong>Claude Opus 5.5</strong></th><th>Claude Opus 5</th></tr></thead><tbody><tr><td>Cache reads</td><td><strong>$0.20</strong></td><td>$0.50</td></tr><tr><td>Input tokens</td><td><strong>$4</strong></td><td>$5</td></tr><tr><td>Output tokens</td><td><strong>$20</strong></td><td>$25</td></tr><tr><td>Cache writes</td><td><strong>$5</strong></td><td>$6.25</td></tr></tbody></table>
+<p>Fast mode for Opus 5.5 is also available in Claude Code and the Claude Platform with up to 2.5x speed. It costs $8 per million input tokens and $40 per million output tokens.</p>
+<h2>Coding</h2>
+<p>Opus 5.5 is particularly good at long and sprawling jobs like codebase-wide migrations and audits. An early tester used it to audit and fix a 200,000-line codebase in under three hours, where Opus 5 took over 20 hours and used 2.5x as many tokens. In an internal test, we asked Opus 5.5 and Fable 5.1 to translate HAProxy, widely used software that balances web traffic loads across servers, from C into Rust. Both rewrites passed nearly all of HAProxy’s own regression tests, but Opus 5.5 finished in 9.5 hours compared to 12 for Fable 5.1, and cost 51% less.</p>
+<p>Opus 5.5 delivers frontier results on agentic coding at a fraction of the cost. At its default effort level on FrontierCode, it beats GPT-6 Astra at roughly 20% of the cost per task. On Terminal Bench 4.0, it matches Astra for about 40% of the cost, while on CursorBench it beats GPT-5.6 Sol by 11 points for about a third of the cost.</p>
+<p>Agentic terminal coding</p>
+<p>Agentic coding: FrontierCode</p>
+<p>Agentic coding: CursorBench</p>
+<p>Terminal-Bench 4.0</p>
+<p>Accuracy vs Cost</p>
+<p>Terminal-Bench 4.0 measures how well a model can complete complex, multi-step professional tasks within a command line interface. Opus 5.5 at default effort beats Opus 5 at max effort for about a fifth of the cost. It matches GPT-6 Astra at about 40% of the cost.</p>
+<p>FrontierCode v1.1, main set</p>
+<p>Accuracy vs Cost</p>
+<p>FrontierCode measures whether an agent’s code changes would be merged. At default effort (medium), Opus 5.5 scores 54.6%, higher than all other models, beating GPT-6 Astra’s top score (53.3%) for about a fifth of the cost per task.</p>
+<p>CursorBench 4.0</p>
+<p>Accuracy vs Cost</p>
+<p>CursorBench evaluates coding agents on ambiguous, multi-file tasks taken from real Cursor sessions. At default effort (medium), Opus 5.5 scores 52.5%, compared to 51.8% for Fable 5.1 (max) and 46.6% for Opus 5 (max). It beats GPT-5.6 Sol’s top score (41.7%) by 11 points for about a third of the cost per task.</p>
+<p>Our early testers reported similar efficiency and intelligence gains:</p>
+<p>GitHub</p>
+<p>Clio</p>
+<p>Lovable</p>
+<p>Quantium</p>
+<p>Spotify</p>
+<p>Optiver</p>
+<p>Column</p>
+<p>Kiro</p>
+<p>Quote</p>
+<blockquote>“Developers want agents that can take on real software work and finish it. In our testing across GitHub Copilot CLI and VS Code, Claude Opus 5.5 used among the fewest tokens and steps we measured. In VS Code, it solved more terminal tasks than Opus 5 in less than half the steps. More than making individual tasks more efficient, it’s making developers’ bigger projects more achievable.”</blockquote>
+<p>Company</p>
+<p>GitHub</p>
+<p>Author</p>
+<p>Mario Rodriguez, Chief Product Officer</p>
+<p>Quote</p>
+<blockquote>“I handed Claude Opus 5.5 a large engineering task across six of our repositories and let it run overnight, unattended. It stayed on task for over 18 hours defining how our services talk to each other and working out how each one should apply that. Compared with Opus 5, it hit milestones faster and required minimal reworking. Its code comments were short and useful instead of long and prose-heavy. I’m struggling to find anything negative to say.”</blockquote>
+<p>Company</p>
+<p>Clio</p>
+<p>Author</p>
+<p>Sean Heintz, Staff Software Developer</p>
+<p>Quote</p>
+<blockquote>“For Lovable builders, Opus 5.5 means faster builds with the same quality, whether you’re starting from scratch or working on a live app. It gathers context once, makes fewer and more complete edits, and doesn’t get stuck retrying, finishing in a third to half fewer steps and using significantly fewer tokens along the way.”</blockquote>
+<p>Company</p>
+<p>Lovable</p>
+<p>Author</p>
+<p>Fabian Hedin, CTO and Co-founder</p>
+<p>Quote</p>
+<blockquote>“We tested Claude Opus 5.5 across Chat, Cowork, and Claude Code, the full range of how our teams work. A complex coding task that previously took 38 prompts over four days came in at 11 prompts over three hours, with more production-ready outputs and less rework. For our teams solving complex problems at pace, that means less time iterating and more time interrogating: testing assumptions, pressure-testing outputs, and landing on the best solution for our clients.”</blockquote>
+<p>Company</p>
+<p>Quantium</p>
+<p>Author</p>
+<p>Harley Barnes, Executive Manager, AI Technology</p>
+<p>Quote</p>
+<blockquote>“With Claude Opus 5.5, we’ve seen a clear improvement in token efficiency across our internal evaluations, as we’ve been able to complete the same tasks both cheaper and faster.”</blockquote>
+<p>Company</p>
+<p>Spotify</p>
+<p>Author</p>
+<p>Aleksandar Mitic, Senior Engineer</p>
+<p>Quote</p>
+<blockquote>“We test models on real engineering and trading-desk work. On our agentic coding tasks, Claude Opus 5.5 matched Opus 5’s quality in about half the turns, time and output tokens, cutting the cost of that workload by 40 to 50%. It posted the highest score we’ve recorded on one desk’s trading-support suite, passing tasks earlier Claude models had failed, and topped all eight models on our analysis task.”</blockquote>
+<p>Company</p>
+<p>Optiver</p>
+<p>Author</p>
+<p>Noyan Tokgozoglu, Global Head of AI Engineering</p>
+<p>Quote</p>
+<blockquote>“Claude Opus 5.5 delegates to subagents far more effectively and checks its own work in creative ways. Self-verification loops feel easier to set up. It found savings opportunities in our cloud bill that previous models had missed, and in code review it caught a bug by checking external docs for a third-party integration we’d modeled wrong several commits earlier.”</blockquote>
+<p>Company</p>
+<p>Column</p>
+<p>Author</p>
+<p>Mitch Fierro, Engineering</p>
+<p>Quote</p>
+<blockquote>“Every call an agent makes is time and cost a developer feels. On a public benchmark of real command-line tasks, Claude Opus 5.5 solved more than Opus 5 while making about 40% fewer calls and using half the tokens. For developers building with Kiro, that means faster, more affordable agent sessions for routine tasks and complex challenges alike. Opus 5.5 will soon be available in Kiro.”</blockquote>
+<p>Company</p>
+<p>Kiro</p>
+<p>Author</p>
+<p>Deepak Singh, VP of Agentic AI</p>
+<h2>The most secure coding agent</h2>
+<p>Enterprises that use agents within their systems need to know that those agents are operating as intended, particularly when they run autonomously for many hours. Opus 5.5 has a classifier that screens every action before it runs, an open-source sandbox that security teams can audit, and code review that catches vulnerabilities before they merge.</p>
+<p>The model itself also has stronger defenses. On prompt injection attacks, it matches or beats Opus 5 in every setting we tested, including coding, tool use, computer use, and web browsing. On a benchmark run by the AI security firm Gray Swan, Opus 5.5 ties Fable 5.1 for the lowest prompt injection success rate of any model tested.</p>
+<h2>Knowledge work</h2>
+<p>Opus 5.5 is a reliable and adept researcher. In one internal test, we asked Opus 5.5, Fable 5.1, and Opus 5 to write a report on a company’s quarterly performance using only the information it could find on a copy of the web where the earnings release was hard to locate. An automated grader checked every figure and quote against sources. Across different effort settings, 16 out of 18 of Opus 5.5’s reports cleared our quality bar, where any invented figure or quote would have failed. Neither Fable 5.1 nor Opus 5 cleared that bar in any attempt.</p>
+<p>It’s also strong in financial analysis and business work. Walleye Capital, an investment firm and early tester, reported that Opus 5.5 largely solved their evaluation suite on its lowest setting; on higher settings, it performed even better, noticing an error in their evaluation instructions and correcting for it. No other model had caught this error before.</p>
+<p>In another test, we tasked both Opus 5.5 and Opus 5 with analyzing a proposed merger between two fictional HR software companies. Each built a financial model in Excel, then turned it into an executive presentation on whether the deal made sense at its price. Both models reached the same conclusions about the deal, but Opus 5.5’s model was more thorough and its presentation easier to read, while Opus 5’s had minor errors. Opus 5.5 finished in 63 minutes compared to 93 for Opus 5, and cost 50% less to produce.</p>
+<p>On knowledge work evaluations, Opus 5.5 outperforms other models while also using fewer tokens. On GDPval-AA v2.1, a test of real-world work across 44 occupations, Opus 5.5 scores 1846 Elo, ahead of Fable 5.1 and Opus 5. At default effort (medium), Opus 5.5 beats GPT-6 Astra at max effort for about a fifth of the cost per task. It likewise outperformed other models on benchmarks measuring business workflows and large-scale data collection.</p>
+<p>GDPval-AA v2.1</p>
+<p>AutomationBench</p>
+<p>WANDR</p>
+<p>GDPval-AA v2.1</p>
+<p>Elo vs Cost</p>
+<p>Artificial Analysis’s GDPval-AA v2.1 evaluates agents on real-world professional work across 44 occupations. At max effort, Opus 5.5 scores 1846 Elo, where Fable 5.1 scores 1735 and Opus 5 scores 1708. At default effort (medium), Opus 5.5 beats GPT-6 Astra at max effort for about a fifth of the cost per task.</p>
+<p>AutomationBench</p>
+<p>Accuracy vs Cost</p>
+<p>AutomationBench, built by Zapier, tests whether an agent can carry out real business workflows across many connected apps. Opus 5.5 outscores Opus 5 and GPT-5.6 Sol at every effort level.</p>
+<p>WANDR</p>
+<p>Accuracy vs Cost</p>
+<p>Perplexity’s WANDR benchmark measures agents on large data collection tasks. Opus 5.5 outperforms Fable 5.1 and Opus 5 at a lower cost per task4.</p>
+<p>4<strong>WANDR:</strong> Claude models were run with offline versions of the web search and web fetch tools, programmatic tool calling, code execution, and a 980k-token task budget. This differs from Perplexity’s published setup, scores are not directly comparable across the two and we only show models scored under the same conditions.</p>
+<p>Our customers have reported similar results. Here’s what they told us about working with the model:</p>
+<p>Deloitte Consulting LLP</p>
+<p>Rogo</p>
+<p>LexisNexis Legal &amp; Professional</p>
+<p>Walleye Capital</p>
+<p>Hex</p>
+<p>Thomson Reuters Labs</p>
+<p>Hebbia</p>
+<p>Viktor</p>
+<p>Quote</p>
+<blockquote>“Even at its lowest effort setting, Claude Opus 5.5 caught 72% of known bugs in our code reviews to Opus 5’s 56% at high effort, with fewer false alarms and a fraction of the output. On US consulting analysis, low thinking effort matched its higher thinking settings on half the output and passed our quality checks. When more lower thinking efforts are deployed in production, that’s client-ready work delivered efficiently.”</blockquote>
+<p>Company</p>
+<p>Deloitte Consulting LLP</p>
+<p>Author</p>
+<p>Carl Bennett, CIO</p>
+<p>Quote</p>
+<blockquote>“Financial firms need outputs that are consistently correct. At its lowest effort setting, Claude Opus 5.5 beat Opus 5 at high effort on our BigFinance Bench with about 60% fewer output tokens. Its answers are shorter and better structured, and its slides come out denser, more in line with industry standards.”</blockquote>
+<p>Company</p>
+<p>Rogo</p>
+<p>Author</p>
+<p>Strib Walker, Head of Product</p>
+<p>Quote</p>
+<blockquote>“Evaluating new models is central to the multi-model approach behind the LexisNexis Legal Intelligence Engine. In our initial evaluations, Claude Opus 5.5 identified highly relevant citations consistently, demonstrated strength with statutes, and structured its answers around the central legal frameworks and key issues. These are the kinds of capabilities we look for to help our customers accomplish more with Lexis+ with Protégé.”</blockquote>
+<p>Company</p>
+<p>LexisNexis Legal &amp; Professional</p>
+<p>Author</p>
+<p>Min Chen, Chief AI Officer</p>
+<p>Quote</p>
+<blockquote>“In quant research, one wrong assumption can undermine a result. At its lowest effort setting, Claude Opus 5.5 largely solved our evaluation task. At higher settings, it went even further: it detected that the minute indexing in our own instructions was off by one and corrected for it, noting that this would cost it points with the grader. It was right, and no model we’ve tested had caught and acted on that before.”</blockquote>
+<p>Company</p>
+<p>Walleye Capital</p>
+<p>Author</p>
+<p>Frank Corrao, Head of Central Equity Quant Research Engineering</p>
+<p>Quote</p>
+<blockquote>“As models get better at data work, we’re seeing more convincing-sounding conclusions the data doesn’t support. Claude Opus 5.5 keeps digging past the first plausible answer. One task in our DataBench benchmark asks whether packages were late or tracking was just slow. Opus 5 checked delivery confirmations and called tracking healthy. Opus 5.5 found the packages were late and tracking was broken too. We’re bringing it into the Hex agent for this work.”</blockquote>
+<p>Company</p>
+<p>Hex</p>
+<p>Author</p>
+<p>Izzy Miller, AI Engineer</p>
+<p>Quote</p>
+<blockquote>“CoCounsel combines multiple models with our content and expertise for complex legal work. With Claude Opus 5.5, we’re seeing better results in our expert evaluations and on our internal benchmarks, alongside gains in speed and token efficiency. We’re excited for customers to experience that difference in the back-and-forth with CoCounsel as a sounding board, weighing evidence and refining their thinking in ways benchmarks don’t fully capture.”</blockquote>
+<p>Company</p>
+<p>Thomson Reuters Labs</p>
+<p>Author</p>
+<p>Omar Bari, VP Applied Research</p>
+<p>Quote</p>
+<blockquote>“On end-to-end finance workflows graded against expert rubrics, Claude Opus 5.5 covered 86.6% of what we look for versus 60.3% for Opus 5. On retrieval evals, it achieved our best-ever citation recall with better token efficiency than Opus 5, which keeps our cost per research task in check.”</blockquote>
+<p>Company</p>
+<p>Hebbia</p>
+<p>Author</p>
+<p>Aabhas Sharma, CTO</p>
+<p>Quote</p>
+<blockquote>“Viktor is an AI employee that lives in Slack and Microsoft Teams, so every step he takes shows up in our costs. At the same effort, Claude Opus 5.5 needs fewer steps and tool calls per task than Opus 5 and costs nearly half as much, while getting twice as many of our hardest tasks right.”</blockquote>
+<p>Company</p>
+<p>Viktor</p>
+<p>Author</p>
+<p>Peter Albert, Co-Founder</p>
+<h2>Communication</h2>
+<p>We’ve made major improvements to the way Opus 5.5 writes and communicates, one of the most common areas of feedback we heard about Opus 5. Its messages are much easier to understand at a glance, which testers said helped during long working sessions. It puts the most important information up front, is less likely to use jargon or idiosyncratic phrases, and follows the writing rules you give it. We find that this makes Opus 5.5 a noticeably better collaborator. Here’s a side-by-side comparison of the two models:</p>
+<p>Claude Opus 5</p>
+<p>Please explain the issue to me.</p>
+<p><strong>What I found</strong></p>
+<p>The extra drop isn’t the free tier — it’s a regression in <code>0552feb</code> (“extract billing period boundaries into periods.py”, labelled “No behaviour change”).</p>
+<p><strong>The bug</strong></p>
+<p><code>aggregate.monthly_usage</code> used to do a half-open interval:</p>
+<pre><code>start, end = month_start(year, month), next_month_start(year, month)
+if start &lt;= e.ts &lt; end:</code></pre>
+<p>It now does:</p>
+<pre><code>if period.contains(e.ts)</code></pre>
+<p>and in <code>periods.py</code>:</p>
+<pre><code>@property
+def last_day(self) -&gt; datetime:
+    return next_month_start(...) - timedelta(days=1)   # 2026-08-31 00:00:00 UTC
+
+def contains(self, ts):
+    return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
+<p><code>last_day</code> is a datetime at midnight, not a whole day. Subtracting one day from Sep 1 00:00 gives Aug 31 <strong>00:00</strong>, and the comparison is inclusive, so the period effectively ends at the first instant of the 31st. <strong>Every event timestamped after midnight on the last day of the month is silently dropped</strong> — roughly one day of usage per account, per month.</p>
+<p>The new <code>test_periods.py</code> doesn’t catch it because it only checks <code>last_day.date()</code> (which is correctly <code>2026-08-31</code>) and tests <code>contains</code> at Aug 1 00:00, Aug 15 12:00, Jul 31 23:59 and Sep 1 00:00 — it never probes anywhere inside the 31st.</p>
+<p>Claude Opus 5.5</p>
+<p>Please explain the issue to me.</p>
+<p><strong>The extra drop is a bug in the billing refactor</strong></p>
+<p>The free-tier change accounts for only <strong>$1.50</strong> of acme’s August drop. The other <strong>$9.92</strong> comes from a bug in commit <code>0552feb</code>. That commit was labelled “No behaviour change,” but it stops counting usage from the last day of the month.</p>
+<p><strong>What changed</strong></p>
+<p>Before the merge, <code>aggregate.py</code> used a half-open interval:</p>
+<pre><code>start &lt;= e.ts &lt; next_month_start(year, month)    # [Aug 1 00:00, Sep 1 00:00)</code></pre>
+<p>The refactor moved this into <code>Period.contains</code> and made the interval closed on the wrong boundary:</p>
+<pre><code>last_day = next_month_start(...) - timedelta(days=1)    # = 2026-08-31T00:00:00Z
+return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
+<p><code>last_day</code> is a timestamp at midnight, not a whole day. So every event after <code>2026-08-31T00:00:00Z</code> is excluded. The September period starts Sep 1, so it doesn’t pick these events up either. The usage isn’t moved to another month; it’s never billed at all.</p>
+<p>Claude Opus 5</p>
+<p>Summarize this Slack thread for my manager in three bullet points: [09:41] Dana Osei: I’ll tell them. I’ll also confirm nobody else reads the Friday file. [09:43] Marcus Webb: I can move the schedule, it’s a one-line cron change. But not until Dana confirms. [10:02] Dana Osei: Finance says the Friday file is only used Monday. Sunday night is fine.</p>
+<p><strong>Friday orders export — #data-platform, Tuesday</strong></p>
+<ul><li><strong>Problem:</strong> The Friday orders export timed out again (second failure this month) after running 2h on the warehouse query; order volume is up ~40% since the summer sale. Finance was left without weekend numbers for their Monday 9am review, and both failures only surfaced on Monday.</li><li><strong>Fixed same day:</strong> The Saturday ops dashboard tile was repointed to read the live table instead of the export (Sam), finance confirmed the Friday file is only used on Mondays (Dana), a failure alert now pages the on-call channel (Priya), and the export moves to Sunday 10pm from next week with the Friday run dropped (Marcus). A one-off ~$300 warehouse upgrade covers this Friday as a stopgap.</li><li><strong>Still in progress:</strong> Ji-woo owns rewriting the query to run incrementally (re-scanning the last 3 days to catch late-arriving orders), expected to cut runtime from hours to minutes — design doc Thursday, roughly two weeks including testing. The schedule change buys time in the meantime.</li></ul>
+<p>Claude Opus 5.5</p>
+<p>Summarize this Slack thread for my manager in three bullet points: [09:41] Dana Osei: I’ll tell them. I’ll also confirm nobody else reads the Friday file. [09:43] Marcus Webb: I can move the schedule, it’s a one-line cron change. But not until Dana confirms. [10:02] Dana Osei: Finance says the Friday file is only used Monday. Sunday night is fine.</p>
+<ul><li><strong>Problem:</strong> The Friday orders export has failed twice this month. The warehouse query times out after 2 hours because order volume is up ~40% since the summer sale. As a result, Finance was missing weekend numbers for their Monday 9am review.</li><li><strong>Immediate fixes:</strong> The export will move to Sunday 10pm starting next week, and the Friday run will be dropped (Marcus). Finance has confirmed this works for them (Dana). The ops dashboard tile that depended on the Friday file now reads from the live table (Sam, done). A failure alert now pages the on-call channel (Priya, done and tested). For this Friday only, Marcus will increase the warehouse slot as a ~$300 one-off stopgap, which Dana approved.</li><li><strong>Longer-term fix:</strong> Ji-woo will rewrite the query to process only new orders, re-scanning the last 3 days to catch late arrivals. This should cut runtime from hours to minutes. The work will take ~2 weeks including testing, with a design doc due for review by Thursday.</li></ul>
+<p>Claude Opus 5</p>
+<p>Write Python that reads a chess position (FEN) and lists which pieces are under attack. Use TensorFlow for speed. Here's my design: build an 8x8 tensor board, generate an attack map for each piece type from its movement pattern, and flag opposing pieces on attacked squares. Change anything you think is wrong, and in your final summary explain each change you made and why.</p>
+<p><code>tf.math.cumsum</code> replaces the bit scan. The geometry is unrolled into <code>ray_targets[square, direction, step]</code> — an ordered walk outwards. An exclusive cumsum over the step axis counts blockers strictly before each step, so the first blocker on a ray is the single step that is blocking with nothing blocking before it. This is the vectorized form of the bit scan a bitboard engine uses. I did look at <code>bitwise_ops</code> for true 64-bit bitboards — population_count exists, but hyperbola-quintessence needs a byte-reverse primitive TF doesn't expose, so it would have fallen back to per-direction loops anyway.</p>
+<p>Claude Opus 5.5</p>
+<p>Write Python that reads a chess position (FEN) and lists which pieces are under attack. Use TensorFlow for speed. Here's my design: build an 8x8 tensor board, generate an attack map for each piece type from its movement pattern, and flag opposing pieces on attacked squares. Change anything you think is wrong, and in your final summary explain each change you made and why.</p>
+<p>Blocked lines (bishops, rooks, queens). A fixed mask can't say “stop at the first piece in the way.” I added a second stack of masks marking the squares strictly between every two squares on the same line. One matrix multiply with the board's occupancy counts the blockers on every line at once, and an attack survives only if that count is zero. Knights and single steps have nothing between them, so one rule covers every piece.</p>
+<p>Our customers’ feedback supports these findings:</p>
+<p>Ramp</p>
+<p>Stripe</p>
+<p>Box</p>
+<p>Chicago Trading Company</p>
+<p>Factory</p>
+<p>Quote</p>
+<blockquote>“Verbose, hard-to-follow output has been my biggest frustration with frontier models, and Claude Opus 5.5 fixes it. It writes like a good colleague, and follows our writing rules. A design spec came out usable with very minimal edits, and when it rewrote one of our prompts I preferred its version to my own. When it optimized our test suite, I could follow its reasoning easily and shipped the change with confidence.”</blockquote>
+<p>Company</p>
+<p>Ramp</p>
+<p>Author</p>
+<p>John Ruelas, Staff Software Engineer</p>
+<p>Quote</p>
+<blockquote>“I run long Claude Code sessions every day. On a multi-day rebase of 40 stacked pull requests, one Claude Opus 5.5 session directed a dozen more sessions and laid out every conflict plainly. On the calls that it held, it framed them clearly that after hours away I could answer in minutes. All 40 passed CI the next afternoon. It’s a substantial upgrade over Opus 5.”</blockquote>
+<p>Company</p>
+<p>Stripe</p>
+<p>Author</p>
+<p>Cristian Rivera, Staff Software Engineer</p>
+<p>Quote</p>
+<blockquote>“Our customers use Box AI on enormous amounts of content, so speed and cost are a top priority. In our evaluations, Claude Opus 5.5 used a third of the tokens Opus 5 did, and its answers were 40% less verbose without losing accuracy. We expect that to matter a lot for teams running agents across their content in areas like financial services and the public sector.”</blockquote>
+<p>Company</p>
+<p>Box</p>
+<p>Author</p>
+<p>Yashodha Bhavnani, VP of AI Products</p>
+<p>Quote</p>
+<blockquote>“Overnight, Claude Opus 5.5 autonomously handled a bug in our Lakehouse services layer that I hadn’t had time to diagnose. It investigated, designed the fix, and implemented it on its own. By morning the change was done and passed our test suite. Its writing is easy to follow and more coherent than Opus 5’s. Our pull requests and user-facing docs have needed almost no editing.”</blockquote>
+<p>Company</p>
+<p>Chicago Trading Company</p>
+<p>Author</p>
+<p>Austen Tomek, Principal Engineer</p>
+<p>Quote</p>
+<blockquote>“Claude Opus 5.5 is the first model we’d default to at medium effort. In our testing it matched Opus 5 on high effort, while using 20 to 25% fewer output tokens. On long, messy investigations it always came back with a clear, actionable answer. This means our customers get more done for less.”</blockquote>
+<p>Company</p>
+<p>Factory</p>
+<p>Author</p>
+<p>Zimu Li, Member of Technical Staff</p>
+<h2>Safety</h2>
+<h3>Pacing the frontier</h3>
+<p>Last week, our CEO, Dario Amodei, argued that <a href="https://darioamodei.com/post/we-must-pace-the-frontier">AI progress should be paced</a> so that safety practices stay ahead of model capabilities. Pacing is an approach to keeping AI safe, remaining competitive with China, and realizing AI’s benefits, particularly in areas like biology and medicine.</p>
+<p>We largely understand the risks today’s models present and are well equipped to manage them. However, more serious risks could emerge quickly as capabilities improve, and we need to prepare for them now. For that reason, our safety work takes place on two time horizons at once:</p>
+<p><strong>Safety practices for current models.</strong> The current generation of models relies on an established set of practices: extensive alignment testing, pre-release evaluation by outside organizations such as METR and Frontier Design, and safeguards matched to each model’s capabilities in high-risk areas like cybersecurity and biology. We refine these practices with each release. We believe they are appropriate to the worst risks today’s models present, and that they give us a broad, though not perfect, picture of the range of serious risks.</p>
+<p>Additionally, we track our ability to train and evaluate aligned models, and we report on both our public and internal models in the risk reports we publish under our <a href="https://www.anthropic.com/responsible-scaling-policy">Responsible Scaling Policy</a>, our voluntary framework for managing catastrophic risks from advanced AI systems.</p>
+<p><strong>Preparing for future models.</strong> We’re preparing our training and evaluation processes in anticipation of more advanced models. We’re tightening how we filter the environments used in reinforcement learning, since <a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">flawed environments</a> are a major source of misaligned behavior. Additionally, we’re improving our alignment rewards and developing automated processes for producing new, diverse scenarios for safety training. And we are strengthening our <a href="https://www.anthropic.com/news/improving-alignment-security-efforts">security and monitoring</a>, including a focused effort to improve interpretability-based monitoring and evaluation. We hope such techniques will help reduce our reliance on auditing a model’s chain-of-thought, or the reasoning it writes out while it works.</p>
+<p>Models with greater capabilities—such as those that can fully automate the work of AI research itself—require a higher safety standard still. Our calls for pacing were based in large part on our expectation that such models could be trained soon. For these models, we do not assume the measures described above will meet that safety standard on their own. As AI becomes more capable, public policy should play a larger role in making sure the systems people rely on are safe. That capacity takes time to build, and we’ve started to put the infrastructure in place to support it, as described in “<a href="https://darioamodei.com/post/we-must-pace-the-frontier">We Must Pace the Frontier”</a> and our recent announcement with <a href="https://www.anthropic.com/news/accenture-embedded-evaluation">Accenture</a>; we expect to share more details on these efforts soon. We will also continue to contribute to policy discussions with government and industry, including on approaches to regulation and international coordination.</p>
+<h3>Alignment</h3>
+<p>On our primary evaluation suite, an automated behavioral audit that assesses Claude across nearly 2,000 scenarios, Opus 5.5 scored better than any recent Claude model on nearly every measure of misaligned behavior. It’s also our strongest model on most measures of honesty.</p>
+<p>In particular, Opus 5.5 improves over previous models on several of the behaviors that contributed to recent <a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">cybersecurity incidents</a>, including biased or motivated reasoning, attempting to escape a sandbox, and taking harmful actions after concluding it was in a simulated environment. In a new evaluation designed to test a model’s propensity to cross containment boundaries, Opus 5.5 attempted to circumvent boundaries around 85% less often than Opus 5 or Claude Mythos 5.1, and every attempt it made was low severity and self-reported. For teams running Claude unattended across their codebases and systems, this is just as important as raw capability.</p>
+<p>However, as we described in our recent <a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">alignment assessment</a>, building evaluations that reliably catch every failure prior to deployment remains an unsolved problem. We see signs that Opus 5.5 often suspects it is being evaluated, which challenges our ability to assess how it will act in the vast variety of real-world settings it is deployed in. As these settings expand and model capabilities increase, we expect this challenge to grow, unless we make progress on interpretability. Although we are confident that Opus 5.5 shows broad improvements in the areas we are able to measure, we pair our own alignment work with the safeguards described below.</p>
+<h3>Safeguards</h3>
+<p>As our models grow more powerful, stricter safeguards are one way we prevent new capabilities from becoming tools for misuse. Opus 5.5 is the first Opus model to launch with a similar class of safeguards to Fable 5.1 on cybersecurity, biology, and distillation, all of which fall back to another model transparently.</p>
+<p><strong>Cybersecurity.</strong> Because Opus 5.5 has extremely strong cyber capabilities, we’re applying cybersecurity safeguards to Opus 5.5 that are similar to Fable 5.1’s. Users will be able to identify and fix bugs in their code as part of the routine software development lifecycle, but most cybersecurity tasks will be re-routed to Opus 4.8.</p>
+<p>For cyberdefenders, we’ll soon be expanding our <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a> to include Opus 5.5. The new program will include three tiers for increasingly permissive trusted access, including access to Claude Mythos models. <a href="https://www.anthropic.com/news/claude-code-security">Claude Security</a> is already available with access to Claude Mythos 5.1.</p>
+<p><strong>Biology.</strong> Opus 5.5 is highly capable in biology, exceeding Opus 5 and matching or beating Claude Mythos 5.1 across many areas of work. For example, Opus 5.5 achieved improvements on a long-horizon molecular prediction and design evaluation conducted in collaboration with Dyno Therapeutics, and expert red-teamers rated its scientific novelty as comparable to the best model they had tested.</p>
+<p>For this reason, Opus 5.5 uses the same biology safeguards as Fable 5.1. To use Opus 5.5 for research and development work impeded by these safeguards, users can apply to our new <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>, which gives vetted organizations like academic labs, startups, and pharmaceutical companies access to safeguards designed for the full breadth of biology-related work. <a href="https://claude.com/form/life-sciences-verification-program">Interested organizations can apply here</a>.</p>
+<h3>Distillation</h3>
+<p>Distillation attacks, in which attackers use thousands of fake accounts to extract a model’s capabilities at industrial scale, create safety and national security risks. Distillation allows bad actors to create highly capable models without the safeguards we build into Claude. Our <a href="https://www.anthropic.com/threat-intelligence-report-september-2026">September 2026 threat intelligence report</a> details the illicit distillation activity we’ve detected and disrupted so far.</p>
+<p>Opus 5.5 is launching with preserved thinking, the anti-distillation safeguard we introduced with Fable 5.1. It stops API users from editing Claude’s prior context in an attempt to extract Claude’s reasoning. It applies to Fable 5.1 and Opus 5.5 for API accounts created on or after August 31, 2026. Our <a href="https://support.claude.com/en/articles/16761192">Help Center article</a> explains the change, and our <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking docs</a> show how to test and update your integrations.</p>
+<h3>Data retention and compliance</h3>
+<p>Like previous Opus models, Opus 5.5 is available with zero data retention.</p>
+<p>As with Fable 5.1, Opus 5.5 comes with our watermarking measures to comply with the EU AI Act, <a href="https://www.anthropic.com/news/claude-text-watermark">discussed here</a>. It is also no longer available with “thinking” mode switched off, as <a href="https://platform.claude.com/docs/en/models/opus-5-5/whats-new-opus-5-5#thinking-cant-be-disabled">we describe here</a>.</p>
+<h2>Availability</h2>
+<p>Claude Opus 5.5 is now available on all platforms, including Amazon Web Services, Google Cloud, and Microsoft Azure. On the Claude Platform, developers can <a href="https://platform.claude.com/docs/en/models/overview">get started</a> with <code>claude-opus-5-5</code>. See our <a href="https://platform.claude.com/docs/en/models/opus-5-5/migration-guide">migration guide for details.</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Partnering with Accenture on embedded evaluation \ Anthropic</title>
@@ -2380,162 +2888,6 @@
 <p>Product announcements</p>
 <p>Building commerce agents with Claude</p>
 <p>Building commerce agents with Claude</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<p>See pricing</p>
-<p>Contact sales</p>
-<p>Contact sales</p>
-<p>Get the developer newsletter</p>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Thank you! You’re subscribed.</p>
-<p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Claude Cowork gets a built-in browser: nothing to install</title>
-      <link>https://claude.com/blog/cowork-built-in-browser</link>
-      <guid isPermaLink="true">https://claude.com/blog/cowork-built-in-browser?li=1</guid>
-      <pubDate>Wed, 26 Aug 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Claude gets its own browser in Cowork</h1>
-<p>Claude opens its own browser to navigate sites, read pages, and fill forms, inside the desktop app.</p>
-<ul><li>Category<a href="https://claude.com/blog/category/announcements">Product announcements</a></li><li>Product<a href="https://claude.com/product/cowork">Claude Cowork</a>Claude apps</li><li>DateAugust 26, 2026</li><li>Reading time5min</li><li>Share<a href="https://claude.com/blog/cowork-built-in-browser#">Copy link</a>https://claude.com/blog/cowork-built-in-browser</li></ul>
-<p>Claude now has a browser built into Claude Cowork on the desktop app. When a task needs to use a website, a browser opens in the side panel and Claude navigates webpages, reads them, clicks, and types. You can now hand off the web part of the task and stay where you are: Claude can fill in a form, pull numbers from a dashboard, or work through a portal that has no connector. No extension, no setup, and nothing shared from your own browser unless you choose to.</p>
-<p>Until now, giving Claude the ability to use the web in Cowork meant giving it access to your browser through the <a href="http://claude.com/claude-in-chrome">Claude in Chrome</a> extension. When the work is on a page you already have open, that's still the right choice. But a lot of web tasks don't need <em>your</em> browser, just<em> a</em> browser, and now Claude has one.</p>
-<p>It's rolling out this week to Pro, Max, and Team plans in the Claude desktop app. Enterprise admins can turn it on for their organization starting today.</p>
-<h2>Which browser, when</h2>
-<p>It's Claude's browser, not yours. The built-in browser is separate from your own. Claude never sees your tabs, bookmarks, or passwords. To stay signed in to your sites, you can bring your logins over site by site, from Chrome, Edge, or Firefox on macOS and from Firefox on Windows and Linux. Banking, email, and single sign-on sites are left out unless you choose to include them.</p>
-<p>That's also the difference between the two ways Claude can use the web. The built-in browser is for handing web tasks to Claude while you keep working: gathering research for a report, or collecting this month’s invoices from a vendor portal. Claude in Chrome is for the page you already have open, with the accounts you're already signed in to, such as updating your CRM, working through your inbox, or editing the doc in front of you.</p>
-<p>If you already use Claude in Chrome, it keeps working and stays your default; otherwise Claude uses the built-in browser. Switch anytime in Settings → Cowork → Preferred browser.</p>
-<h2>Staying in control</h2>
-<p>The built-in browser carries the same <a href="https://www.anthropic.com/research/prompt-injection-defenses">prompt injection</a> risks as any AI agent that acts in a browser, where instructions hidden in a page try to redirect Claude. It runs the same safeguards as Claude in Chrome, including the checks that review Claude's actions against what you asked for. We describe them on the <a href="http://claude.com/blog/%20claude-in-chrome-generally-available">Claude in Chrome blog post</a>. Those measures meaningfully reduce the risk but can't eliminate it, so we recommend starting on sites you trust. Read our<a href="https://support.claude.com/en/articles/12902428-use-claude-in-chrome-safely"> safety guide</a> for more.</p>
-<h2>Getting started</h2>
-<p>The built-in browser is rolling out over the coming week to Pro, Max, and Team plans in the Claude desktop app on macOS, Windows, and Linux (in beta). Once it reaches you, it's on by default: give Claude a task that involves a website and the browser opens on its own. On Enterprise plans, it's available now and admins can manage it in Organization settings → Cowork → Built-in browser.</p>
-<p>The built-in browser lives in the desktop app. From the web or your phone, Claude can still drive it as long as your desktop app is open and online. On the web without the desktop app, Claude in Chrome remains the way to give Claude a browser.</p>
-<p>No items found.</p>
-<p>Prev</p>
-<p>0</p>
-<p>/</p>
-<p>5</p>
-<p>Next</p>
-<p>eBook</p>
-<p>FAQ</p>
-<p>No items found.</p>
-<h2>Related posts</h2>
-<p>Explore more product news and best practices for teams building with Claude.</p>
-<p>Oct 1, 2026</p>
-<h3>Customize Claude Code with mods</h3>
-<p>Product announcements</p>
-<p>Customize Claude Code with mods</p>
-<p>Customize Claude Code with mods</p>
-<p>Sep 30, 2026</p>
-<h3>Claude for Government is now generally available</h3>
-<p>Product announcements</p>
-<p>Claude for Government is now generally available</p>
-<p>Claude for Government is now generally available</p>
-<p>Sep 25, 2026</p>
-<h3>Build plugins for Claude</h3>
-<p>Product announcements</p>
-<p>Build plugins for Claude</p>
-<p>Build plugins for Claude</p>
-<p>Sep 23, 2026</p>
-<h3>Claude Marketplace: one place to discover plugins, agents, and services from our partners</h3>
-<p>Product announcements</p>
-<p>Claude Marketplace: one place to discover plugins, agents, and services from our partners</p>
-<p>Claude Marketplace: one place to discover plugins, agents, and services from our partners</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<p>See pricing</p>
-<p>Contact sales</p>
-<p>Contact sales</p>
-<p>Get the developer newsletter</p>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Thank you! You’re subscribed.</p>
-<p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Funding better evaluations of AI’s impact on wellbeing \ Ant…</title>
-      <link>https://www.anthropic.com/news/wellbeing-research-grants</link>
-      <guid isPermaLink="true">https://www.anthropic.com/news/wellbeing-research-grants?li=1</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Funding better evaluations of AI’s impact on wellbeing \ Anthropic</description>
-      <content:encoded><![CDATA[<p>Announcements</p>
-<h1>Funding better evaluations of AI’s impact on wellbeing</h1>
-<p>Aug 25, 2026</p>
-<p>We’re launching a $5 million grant program to fund independent research into how AI impacts users’ wellbeing. The program will provide direct funding, access to our models, and technical support to grantees building open-source evaluations that help the AI industry measure how our models affect those who use them. Grantees will work fully independently, and will publish their work as open-source projects that any developer can make use of.</p>
-<p>AI systems have become central to how many people work, learn, and solve problems. They’ve also become conversational partners and can be <a href="https://www.anthropic.com/news/how-people-use-claude-for-support-advice-and-companionship">sources of emotional support</a> during difficult times. But as an industry, we are still working towards developing clear standards for how models should behave in these conversations, for example, when a user begins to seek companionship from a model, or uses AI to navigate a mental health crisis.</p>
-<p>Furthermore, wellbeing is a particularly difficult area to evaluate. For most model behaviors, we can look at a single answer and determine whether it is accurate and appropriate. But assessing wellbeing requires much more context. For example, a user in distress might not share thoughts of self-harm right away; the need for a more cautious response might only become clear over the course of a long conversation. And a response that might be reasonable in one context might be harmful in another. For example, Claude might give advice on balanced diets and workout routines to a user who asks about losing weight, but if the user has demonstrated a history of disordered eating, that response could be inappropriate, and potentially actively harmful.</p>
-<p>We work to <a href="https://www.anthropic.com/news/protecting-well-being-of-users">develop safeguards</a> to identify such conversations and help ensure Claude responds appropriately, and we <a href="https://www.anthropic.com/research/claude-personal-guidance">publish research</a> into the types of conversations people have with Claude to better inform how we develop our safeguards, how we evaluate them, and other measures we can take to protect users’ wellbeing. But these are nuanced considerations, and the stakes are significant. The right approach will need to evolve alongside our models and their uses.</p>
-<p>By funding the creation of independent evaluations and benchmarks of user wellbeing, we hope to invite more people to lend their expertise to this emerging and critical field, including clinicians, psychologists, methodologists, and others.</p>
-<h2>Towards more effective wellbeing evaluations and benchmarks</h2>
-<p>As part of this program, we’re <a href="https://www-cdn.anthropic.com/files/4zrzovbb/website/5ecb637cb206057cb93cf4a9e72e843fda5e9892.pdf">sharing guidance</a> from our Safeguards team on what we believe makes a wellbeing evaluation rigorous enough to build on, along with the common challenges that can limit an evaluation’s usefulness.</p>
-<p>In brief, we’re seeking evaluations that:</p>
-<ul><li>State clearly what they are measuring (i.e., what counts as a pass or fail, and why it matters);</li><li>Involve clinical and subject-matter experts in the design and validation;</li><li>Test both precautions and harms (i.e., evaluate the risk of both overcompliance and overrefusal);</li><li>Reflect how users actually use AI (often, this means constructing scenarios that represent multi-turn conversations, where risk escalates and context shifts over the course of a long conversation);</li><li>Validate their graders against real subject-matter experts.</li></ul>
-<p>To learn more about the grant program and apply, <a href="https://docs.google.com/forms/d/e/1FAIpQLSfmUDtpfg-ztmQPkCbwx-VAe_urX48sthbqs8GmZUT9irRSDQ/viewform?usp=dialog">see our application form</a>. For more on building strong wellbeing evaluations and benchmarks, <a href="https://www-cdn.anthropic.com/files/4zrzovbb/website/5ecb637cb206057cb93cf4a9e72e843fda5e9892.pdf">read our guidance</a>. Applications are due by September 21; applicants who are selected to submit full proposals will be notified by October 5.</p>
-<h2>Related content</h2>
-<h3>Anthropic invests $100 million to train 10,000 engineers and tackle the enterprise AI talent gap</h3>
-<p>Anthropic is investing $100 million in Claude Frontier Academy to train 10,000 Frontier Deployed Engineers by the end of 2027, with cohorts from Accenture, Bain, CBA, Deloitte, McKinsey, Morgan Stanley and Novo Nordisk already underway.</p>
-<p>Read more</p>
-<h3>Barclays scales Claude to upgrade operations and improve client experience</h3>
-<p>Barclays, the British universal bank, is expanding its strategic collaboration with Anthropic to integrate secure, enterprise-grade AI systems across its global operations.</p>
-<p>Read more</p>
-<h3>Claude discovers a novel enzyme system with CRISPR-like repeats</h3>
-<p>We’re announcing a new life sciences research group and laboratory at Anthropic. This post introduces the team behind this work and shares early results in which Claude discovered a novel enzyme system with properties reminiscent of CRISPR, with only high-level direction from our scientists.</p>
-<p>Read more</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Bain &amp; Company joins the Claude Partner Network as a Global…</title>
-      <link>https://claude.com/blog/bain-company-joins-the-claude-partner-network-as-a-global-premier-partner</link>
-      <guid isPermaLink="true">https://claude.com/blog/bain-company-joins-the-claude-partner-network-as-a-global-premier-partner?li=1</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Bain &amp; Company joins the Claude Partner Network as a Global Premier partner</description>
-      <content:encoded><![CDATA[<h1>Bain &amp; Company joins the Claude Partner Network as a Global Premier partner</h1>
-<p>Anthropic and Bain &amp; Company are partnering to help enterprises deploy AI, building on Bain's rollout of Claude to its 19,000 employees.</p>
-<ul><li>Category<a href="https://claude.com/blog/category/enterprise-ai">Enterprise AI</a></li><li>ProductNo items found.</li><li>DateAugust 25, 2026</li><li>Reading time5min</li><li>Share<a href="https://claude.com/blog/bain-company-joins-the-claude-partner-network-as-a-global-premier-partner#">Copy link</a>https://claude.com/blog/bain-company-joins-the-claude-partner-network-as-a-global-premier-partner</li></ul>
-<p>Bain &amp; Company and Anthropic today announced a global partnership to help enterprises move from AI experiments to deployments that produce measurable business results. Bain joins the Claude Partner Network as a Global Premier partner, and the two firms will work together on client engagements spanning AI strategy, technology modernization, and AI-enabled operations.</p>
-<p>The partnership builds on Bain's own deployment of Claude across the firm, which now serves as a reference point for how Bain advises clients on enterprise rollouts.</p>
-<h2>How Bain uses Claude</h2>
-<p>Bain rolled out Claude to all 19,000 of its employees as part of the firm's suite of AI platforms and tools, for use in both client work and internal operations. Teams work with Claude.ai, Claude Cowork, Claude Code, Claude for Excel, and Claude for Microsoft 365 to build and test complex models, conduct research, pressure-test inputs and assumptions, and explore multiple business scenarios.</p>
-<p>Adoption came quickly. In the pilot phase alone, more than 7,000 Bain employees were actively working with Claude within a few weeks of getting access, and more than two-thirds of pilot participants adopted Claude for Excel.</p>
-<p>The rollout paired access with enablement and governance. Employees received onboarding materials, trainings, and webinars alongside expert support, and the firm tracked user experience and feedback through ongoing surveys. That structure, rather than access alone, is what Bain points to when advising clients on their own deployments.</p>
-<h2>What the partnership means for clients</h2>
-<p>Clients get Claude models combined with Bain's cross-industry experience in business transformation and AI deployment. Bain's digital teams include more than 1,500 AI, data, analytics, architecture, and engineering experts who work alongside the firm's industry and capability practices.</p>
-<p>The results so far suggest what that combination can do. Across multiple client engagements involving complex legacy codebases that lack existing architectural context, Bain has helped clients achieve productivity gains of 30% to 50%.</p>
-<p>&quot;Our partnership with Anthropic brings together its frontier AI technology with Bain's deep strategic and industry expertise to help clients turn the potential of AI into meaningful business results,&quot; Philippe d'Arabian, Executive Vice President and Global Head of Partnerships at Bain &amp; Company, says.</p>
-<h2>What's next</h2>
-<p>Bain and Anthropic are already working together on client engagements across multiple industries. As the partnership develops, the firms expect to expand their collaboration wherever the highest-value opportunities exist.</p>
-<p>&quot;More than 7,000 Bain employees were actively using Claude within weeks of the firm-wide deployment. The speed and breadth of that adoption signal what's possible when the right technology is paired with the expertise to deploy it effectively, and that's exactly what this partnership delivers for Bain's employees and clients,&quot; says Steve Corfield, global head of business development and partnerships at Anthropic.</p>
-<p>To learn more about working with Anthropic partners, visit the <a href="https://claude.com/partners">Claude Partner Network</a>.</p>
-<p>‍</p>
-<p>No items found.</p>
-<p>Prev</p>
-<p>0</p>
-<p>/</p>
-<p>5</p>
-<p>Next</p>
-<p>eBook</p>
-<p>FAQ</p>
-<p>No items found.</p>
-<h2>Related posts</h2>
-<p>Explore more product news and best practices for teams building with Claude.</p>
-<p>Jul 20, 2026</p>
-<h3>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</h3>
-<p>Enterprise AI</p>
-<p>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</p>
-<p>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</p>
-<p>Sep 30, 2026</p>
-<h3>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</h3>
-<p>Enterprise AI</p>
-<p>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</p>
-<p>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</p>
-<p>May 21, 2026</p>
-<h3>Claude now works with more security and compliance tools</h3>
-<p>Enterprise AI</p>
-<p>Claude now works with more security and compliance tools</p>
-<p>Claude now works with more security and compliance tools</p>
-<p>Aug 21, 2026</p>
-<h3>The AI-native SDLC playbook</h3>
-<p>Enterprise AI</p>
-<p>The AI-native SDLC playbook</p>
-<p>The AI-native SDLC playbook</p>
 <h2>Transform how your organization operates with Claude</h2>
 <p>See pricing</p>
 <p>See pricing</p>

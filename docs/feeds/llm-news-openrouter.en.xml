@@ -13,12 +13,234 @@
       <link>https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>ElevenLabs is now on OpenRouter</h1>
+<p>Sasha Blumenfeld ·10/7/2026</p>
+<p>ElevenLabs is now on OpenRouter with nine Text to Speech models and two Speech to Text models.</p>
+<p>If your app already talks to a language model through OpenRouter, it can now speak and listen too. Narrate long-form content with direction over tone and delivery with Eleven v4, give your agent faster spoken replies with v4 Turbo, or transcribe conversations with speaker labels with Scribe v2. You don’t need a separate ElevenLabs plan. Just call <code>POST /api/v1/audio/speech</code> and <code>POST /api/v1/audio/transcriptions</code> with your OpenRouter API key.</p>
+<p><em>Every ElevenLabs model is 50% off OpenRouter’s list price for all OpenRouter customers through October 19, 8am PT</em></p>
+<h2>Which model to use</h2>
+<p>Start with three models and reach for the rest when a job needs them:</p>
+<ul><li><strong>Narration, characters, product videos:</strong> Eleven v4. Audio tags let the script carry the performance.</li><li><strong>Voice agents and live replies:</strong> Eleven v4 Turbo, ElevenLabs built it for real-time use, at half the v4 rate.</li><li><strong>Transcripts, meeting notes, captions:</strong> Scribe v2, with speaker labels and word timestamps.</li></ul>
+<p>Use Multilingual v2 when long-form audio needs speed control, and Flash v2.5 for high-volume speech of up to 40,000 characters per request. Scribe v2 Medical is fine-tuned for medical terms.</p>
+<h3>Text to Speech</h3>
+<table><thead><tr><th>Model</th><th>OpenRouter ID</th><th>Max characters per request</th><th>Pick it for</th></tr></thead><tbody><tr><td>Eleven v4</td><td><code>elevenlabs/eleven-v4</code></td><td>10,000</td><td>ElevenLab’s highest-quality, most emotive speech. Expressive narration and character work, with audio tags like [whispering] and [laughing]</td></tr><tr><td>Eleven v4 Turbo</td><td><code>elevenlabs/eleven-v4-turbo</code></td><td>10,000</td><td>low-latency replies for voice agents</td></tr><tr><td>Eleven v3</td><td><code>elevenlabs/eleven-v3</code></td><td>5,000</td><td>Expressive/dramatic narration and character work with audio tags</td></tr><tr><td>Eleven v3 Conversational</td><td><code>elevenlabs/eleven-v3-conversational</code></td><td>5,000</td><td>Back-and-forth dialogue at half the v3 rate. Has dramatic range, tuned for live dialogue.</td></tr><tr><td>Eleven Multilingual v2</td><td><code>elevenlabs/eleven-multilingual-v2</code></td><td>10,000</td><td>Stable long-form audio across many languages, with speed control.</td></tr><tr><td>Eleven Flash v2.5</td><td><code>elevenlabs/eleven-flash-v2.5</code></td><td>40,000</td><td>Fast, low-cost multilingual speech at high volume. 32 languages available.</td></tr><tr><td>Eleven Flash v2</td><td><code>elevenlabs/eleven-flash-v2</code></td><td>30,000</td><td>Fast English-only speech</td></tr><tr><td>Eleven Turbo v2.5</td><td><code>elevenlabs/eleven-turbo-v2.5</code></td><td>40,000</td><td>ElevenLab’s First-generation low-latency model, now superseded by Flash</td></tr><tr><td>Eleven Turbo v2</td><td><code>elevenlabs/eleven-turbo-v2</code></td><td>30,000</td><td>ElevenLab’s first-generation low-latency model, now superseded by Flash</td></tr></tbody></table>
+<p>ElevenLabs prices its models in two tiers. Eleven v4, v3, and Multilingual v2 bill the full per-character rate, and v4 Turbo, v3 Conversational, Flash, and Turbo bill half of it. Current per-character prices are on each model page in the <a href="https://openrouter.ai/collections/text-to-speech-models">Text to Speech collection</a>.</p>
+<h3>Speech to Text</h3>
+<table><thead><tr><th>Model</th><th>OpenRouter ID</th><th>Pick it for</th></tr></thead><tbody><tr><td>Scribe v2</td><td><code>elevenlabs/scribe-v2</code></td><td>General transcription with word timestamps, speaker labels, and audio-event tags in 90+ languages</td></tr><tr><td>Scribe v2 Medical</td><td><code>elevenlabs/scribe-v2-medical</code></td><td>Medical terms with 35% fewer errors on clinical audio compared to Scribe v2</td></tr></tbody></table>
+<p>Both Scribe models use the same request shape and the same per-second price. Realtime Scribe v2 over WebSocket isn’t part of this launch.</p>
+<h2>Walkthrough: from a first MP3 to a voice agent</h2>
+<p>We’ll build a small product tour in three steps. First Eleven v4 narrates it. Then a voice agent answers questions about it, and finally Scribe v2 turns the team’s review meeting into notes that show who said what. If a request doesn’t behave the way you expect, check the tips at the end.</p>
+<p>Set your key once:</p>
+<pre><code>export OPENROUTER_API_KEY=&quot;your-api-key&quot;</code></pre>
+<h3>Step 1: Narrate a product tour with Eleven v4</h3>
+<p>Start with one line of narration:</p>
+<pre><code>curl https://openrouter.ai/api/v1/audio/speech \
+  --fail-with-body \
+  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;model&quot;: &quot;elevenlabs/eleven-v4&quot;,
+    &quot;input&quot;: &quot;[cheerfully] Welcome to the tour. [whispering] Let me show you the shortcut first.&quot;,
+    &quot;voice&quot;: &quot;george&quot;,
+    &quot;response_format&quot;: &quot;mp3&quot;
+  }' \
+  --output intro.mp3</code></pre>
+<p><code>voice</code> takes any of ElevenLabs’ 21 premade voices by name (<code>george</code> here); names aren’t case-sensitive. Note the explicit <code>response_format</code> — see <strong>Tips for your first requests</strong> for both.</p>
+<p>The bracketed words are audio tags. Eleven v4 and v3 read tags such as <code>[whispering]</code>, <code>[laughing]</code>, <code>[sighs]</code>, and <code>[curious]</code> as delivery directions instead of speaking them. Tags count toward your billed characters.</p>
+<p>A full tour script is longer than one request allows (10,000 characters on v4, 5,000 on v3), so split it on paragraph boundaries. ElevenLabs-only settings go under <code>provider.options.elevenlabs</code>. Pass the neighbouring text as <code>previous_text</code> and <code>next_text</code> so intonation stays consistent across the joins, and fix a <code>seed</code> so reruns are more repeatable:</p>
+<pre><code>import os
+
+import requests
+
+API = &quot;https://openrouter.ai/api/v1&quot;
+HEADERS = {&quot;Authorization&quot;: f&quot;Bearer {os.environ['OPENROUTER_API_KEY']}&quot;}
+NARRATOR = &quot;george&quot;
+
+
+def split_paragraphs(text: str, limit: int = 9000) -&gt; list[str]:
+    chunks, current = [], &quot;&quot;
+    for para in text.split(&quot;\n\n&quot;):
+        if current and len(current) + len(para) + 2 &gt; limit:
+            chunks.append(current)
+            current = para
+        else:
+            current = f&quot;{current}\n\n{para}&quot; if current else para
+    return chunks + [current] if current else chunks
+
+
+chunks = split_paragraphs(open(&quot;tour-script.txt&quot;).read())
+
+with open(&quot;tour.mp3&quot;, &quot;wb&quot;) as out:
+    for i, chunk in enumerate(chunks):
+        options = {&quot;seed&quot;: 7}
+        if i &gt; 0:
+            options[&quot;previous_text&quot;] = chunks[i - 1][-500:]
+        if i + 1 &lt; len(chunks):
+            options[&quot;next_text&quot;] = chunks[i + 1][:500]
+        r = requests.post(
+            f&quot;{API}/audio/speech&quot;,
+            headers=HEADERS,
+            json={
+                &quot;model&quot;: &quot;elevenlabs/eleven-v4&quot;,
+                &quot;input&quot;: chunk,
+                &quot;voice&quot;: NARRATOR,
+                &quot;response_format&quot;: &quot;mp3&quot;,
+                &quot;provider&quot;: {&quot;options&quot;: {&quot;elevenlabs&quot;: options}},
+            },
+        )
+        r.raise_for_status()
+        out.write(r.content)</code></pre>
+<h3>Step 2: Answer questions with a voice agent</h3>
+<p>Now let users ask the tour questions out loud. A voice agent chains three models: Scribe v2 for the question, a chat model for the answer, and Eleven v4 Turbo for the reply. ElevenLabs builds v4 Turbo for real-time use, and it bills at half the v4 rate.</p>
+<pre><code>import base64
+
+
+def transcribe(path: str) -&gt; str:
+    with open(path, &quot;rb&quot;) as f:
+        audio_b64 = base64.b64encode(f.read()).decode()
+    r = requests.post(
+        f&quot;{API}/audio/transcriptions&quot;,
+        headers=HEADERS,
+        json={
+            &quot;model&quot;: &quot;elevenlabs/scribe-v2&quot;,
+            &quot;input_audio&quot;: {&quot;data&quot;: audio_b64, &quot;format&quot;: &quot;wav&quot;},
+        },
+    )
+    r.raise_for_status()
+    return r.json()[&quot;text&quot;]
+
+
+def answer(question: str) -&gt; str:
+    r = requests.post(
+        f&quot;{API}/chat/completions&quot;,
+        headers=HEADERS,
+        json={
+            &quot;model&quot;: &quot;openai/gpt-5-mini&quot;,
+            &quot;messages&quot;: [
+                {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are the product tour guide. Answer in one or two sentences.&quot;},
+                {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question},
+            ],
+        },
+    )
+    r.raise_for_status()
+    return r.json()[&quot;choices&quot;][0][&quot;message&quot;][&quot;content&quot;]
+
+
+def speak(text: str, out_path: str) -&gt; None:
+    r = requests.post(
+        f&quot;{API}/audio/speech&quot;,
+        headers=HEADERS,
+        json={
+            &quot;model&quot;: &quot;elevenlabs/eleven-v4-turbo&quot;,
+            &quot;input&quot;: text,
+            &quot;voice&quot;: NARRATOR,
+            &quot;response_format&quot;: &quot;mp3&quot;,
+        },
+    )
+    r.raise_for_status()
+    with open(out_path, &quot;wb&quot;) as f:
+        f.write(r.content)
+
+
+speak(answer(transcribe(&quot;question.wav&quot;)), &quot;reply.mp3&quot;)</code></pre>
+<p>The transcription response is JSON with the transcript in <code>text</code> and a <code>usage</code> object that reports the audio seconds and the dollar <code>cost</code> of the request. Swap <code>openai/gpt-5-mini</code> for any chat model in the <a href="https://openrouter.ai/models">catalog</a> without touching the audio calls, and keep the same <code>voice</code> so the agent sounds like the narrator from step 1.</p>
+<h3>Step 3: Turn the review meeting into speaker-labelled notes</h3>
+<p>When your team meets to review the tour, Scribe v2 can tell you who said what. Upload the recording as multipart, ask for <code>verbose_json</code> with word timestamps, and set <code>diarize</code> under <code>provider.options.elevenlabs</code>. Every word in the response then carries a speaker. If you know how many people were in the meeting, pass <code>num_speakers</code> to improve the split.</p>
+<pre><code>curl https://openrouter.ai/api/v1/audio/transcriptions \
+  --fail-with-body \
+  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
+  -F file=&quot;@tour-review.mp3&quot; \
+  -F model=&quot;elevenlabs/scribe-v2&quot; \
+  -F response_format=&quot;verbose_json&quot; \
+  -F &quot;timestamp_granularities[]=word&quot; \
+  -F provider='{&quot;options&quot;: {&quot;elevenlabs&quot;: {&quot;diarize&quot;: true, &quot;num_speakers&quot;: 3, &quot;tag_audio_events&quot;: true}}}'</code></pre>
+<p>Each entry in <code>words</code> has <code>word</code>, <code>start</code>, <code>end</code>, <code>confidence</code>, <code>speaker</code> (an integer), and <code>speaker_label</code> (<code>speaker_0</code>, <code>speaker_1</code>, and so on). <code>tag_audio_events</code> adds entries such as <code>(laughter)</code> alongside the words. Group consecutive words by <code>speaker</code> to get turns, then send the turns to a chat model for a summary and action items:</p>
+<pre><code>def to_turns(words: list[dict]) -&gt; list[str]:
+    turns: list[tuple[int, list[str]]] = []
+    for w in words:
+        if turns and turns[-1][0] == w.get(&quot;speaker&quot;):
+            turns[-1][1].append(w[&quot;word&quot;])
+        else:
+            turns.append((w.get(&quot;speaker&quot;), [w[&quot;word&quot;]]))
+    return [f&quot;Speaker {s}: {' '.join(ws)}&quot; for s, ws in turns]</code></pre>
+<p>Uploads are capped at 25 MB, which covers about 27 minutes of 128 kbps MP3.</p>
+<p>For longer recordings, pass a public URL and ElevenLabs downloads the file directly, so the 25 MB cap doesn’t apply:</p>
+<pre><code>&quot;input_audio&quot;:{ &quot;url&quot;: &quot;https://example.com/tour-review.mp3&quot; }</code></pre>
+<p>Very long files can still hit the 180-second upstream request timeout, so split recordings that run long.</p>
+<h2>Tips for your first requests</h2>
+<ul><li><strong>Pick a voice by name or ID.</strong> For <code>voice</code>, pass any of ElevenLabs’ 21 premade voices by name: <code>george</code>, <code>sarah</code>, <code>adam</code>, <code>alice</code>, <code>bella</code>, <code>brian</code>, <code>charlie</code>, <code>daniel</code>, <code>jessica</code>, <code>roger</code>, <code>will</code> and more (full list on each model page). Names aren’t case-sensitive. To use any other voice, pass its ElevenLabs voice ID as <code>voice</code> — copy it from the <a href="https://elevenlabs.io/app/voice-library">ElevenLabs voice library</a>. Voices you clone or design live in your own ElevenLabs account, so use those with <a href="https://openrouter.ai/docs/guides/overview/auth/byok">BYOK</a>.</li><li><strong>Ask for <code>mp3</code> when you want a file you can play</strong> If you leave out <code>response_format</code>, our speech endpoint returns raw PCM (16-bit little-endian mono at 24 kHz). That suits an audio pipeline, but most players can’t open it. Set <code>&quot;response_format&quot;: &quot;mp3&quot;</code> to get a playable 44.1 kHz, 128 kbps file.</li><li><strong>Use Multilingual v2 or Flash for speed control</strong> Multilingual v2 and Flash take <code>speed</code> from 0.7 to 1.2. Eleven v4 and v4 Turbo have no speed control and reject a non-default <code>speed</code>, so leave it out on those models and change the pacing with audio tags instead.</li><li><strong>Split long scripts</strong> Each model has a per-request character limit (see the model table). Audio tags count toward the limit and toward your billed characters. Split on paragraph boundaries as in step 1, and pass <code>previous_text</code> and <code>next_text</code> so the joins sound natural.</li><li><strong>ElevenLabs-specific settings go under <code>provider.options.elevenlabs</code></strong> Text to Speech accepts <code>seed</code>, <code>previous_text</code>, <code>next_text</code>, <code>language_code</code>, <code>apply_text_normalization</code>, <code>apply_language_text_normalization</code>, <code>pronunciation_dictionary_locators</code>, <code>voice_settings</code> (<code>stability</code>, <code>similarity_boost</code>, <code>style</code>, <code>use_speaker_boost</code>, <code>speed</code>), and <code>output_format</code> (an ElevenLabs format name such as <code>mp3_22050_32</code> or <code>pcm_16000</code>; it must match your <code>response_format</code> codec). Speech to Text accepts <code>diarize</code>, <code>num_speakers</code>, <code>diarization_threshold</code>, <code>tag_audio_events</code>, <code>no_verbatim</code>, and <code>seed</code>. <code>num_speakers</code> and <code>diarization_threshold</code> need <code>diarize: true</code>, and you can set one or the other, not both. Use the field names exactly as listed. Keys that aren’t on these lists are ignored; a listed key with a bad value returns a 400.</li><li><strong>Scribe returns three-letter language codes</strong> You can send a two-letter <code>language</code> hint (<code>en</code>). The detected language comes back as an ISO 639-3 code (<code>eng</code>).</li></ul>
+<h2>Getting started</h2>
+<ul><li>Create an <a href="https://openrouter.ai/settings/keys">OpenRouter API key</a>.</li><li>Make your first request with the curl example in Step 1 above.</li><li>For every parameter, see the <a href="https://openrouter.ai/docs/guides/overview/multimodal/tts">Text to Speech</a> and <a href="https://openrouter.ai/docs/guides/overview/multimodal/stt">Speech to Text</a> guides.</li></ul>
+<p>Text to Speech is billed per character of input, counted as Unicode code points, so an emoji or a CJK character counts once. Audio tags count as characters. Scribe is billed per second of audio, and the usage.cost field on every transcription response tells you what that request cost. We pass through ElevenLabs pricing without markup; see each model page for the current rate.</p>
+<p><em>Already have an ElevenLabs account?</em></p>
+<p>Add your key with <a href="https://openrouter.ai/docs/guides/overview/auth/byok">BYOK</a> to use your own cloned voices, pronunciation dictionaries, and higher-quality formats such as mp3_44100_192.</p>
+<p>Create an <a href="https://openrouter.ai/settings/keys">OpenRouter API key</a>, or try a model first in the <a href="https://openrouter.ai/playground">Playground</a>. The <a href="https://openrouter.ai/docs/guides/overview/multimodal/tts">Text to Speech</a> and <a href="https://openrouter.ai/docs/guides/overview/multimodal/stt">Speech to Text</a> guides have the full request reference.</p>]]></content:encoded>
     </item>
     <item>
       <title>How an AI Sales Agent Saved Our Sales Team 600 Hours a Month</title>
       <link>https://openrouter.ai/blog/case-studies/how-an-ai-sales-agent-saved-our-sales-team-600-hours-a-month/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/case-studies/how-an-ai-sales-agent-saved-our-sales-team-600-hours-a-month/?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>How an AI Sales Agent Saved Our Sales Team 600 Hours a Month</h1>
+<p>Michael Haimowitz ·10/7/2026</p>
+<p>Rasp is an AI sales agent built on OpenRouter’s Ori that triages inbound, sends first-touch emails, writes pre-call briefs, drafts notes, and updates the CRM. It runs for OpenRouter’s own 5-person sales team. Given the way the business has grown, “drowning” is an appropriate way to describe those five in 2026.</p>
+<p>Over the past few months, Rasp has brought some zen back to these frenzied sellers. It took over most of the paperwork/admin and the team now gets back about 600 hours a month. It gave every rep room for roughly two more calls a day at the same level of preparation. It shortened response times, with many leads now receiving a response in under a minute from initial inquiry. The deal cycle has compressed 34%. And because Ori’s routing layer keeps swapping in cheaper models that hold quality, Rasp does all of this for about $30 a day, down from nearly $800 a day for the agents it replaced.</p>
+<h2>Key results</h2>
+<ul><li><strong>~600 hours/month</strong> back to a 5-person sales team.</li><li><strong>~2 more calls/day</strong> per rep at the same level of preparation.</li><li><strong>Deal cycle 34% faster</strong>.</li><li><strong>Close rate 2.6x increase</strong>. Pricing changes and market conditions moved in the same window, so not all of this is Rasp.</li><li><strong>~$30/day all-in</strong>, versus nearly $800/day for its predecessors, and still falling as Ori routes to cheaper models automatically.</li></ul>
+<h2>What Rasp does</h2>
+<ul><li>Researches and qualifies every inbound lead, and routes non-sales questions elsewhere.</li><li>Sends first-touch emails, 93% of them on its own.</li><li>Writes a brief before every call.</li><li>Drafts post-call notes from the transcript.</li><li>Fills in most CRM fields after each call.</li><li>Flags edge cases and anything sensitive to a person for approval.</li></ul>
+<p>Rasp is not a replacement for great reps. It is a street sweeper, clearing the road of debris and pace-reducing clutter so our salespeople can race faster on clear roads.</p>
+<h2>Lessons from two earlier sales agents</h2>
+<p>Rasp is not our first sales agent. Two earlier agents, Ace (for AEs) and Dove (for BDRs), handled inbound leads, routing, and a lot of the same workflow Rasp runs today.</p>
+<p>Watching those prior two agents taught us a few key lessons:</p>
+<ul><li><strong>One pipeline for everything.</strong> Every kind of task runs through the same flow, with the task type as a parameter. Dove and Ace taught us that when each new task type gets its own code path, the system becomes unwieldy and is more likely to drift.</li><li><strong>A feature flag on everything, off by default.</strong> We had shipped things before that could not be cleanly turned off. Now everything can.</li><li><strong>Metrics from day one.</strong> You cannot measure impact after the fact if you never logged it. Every number in this post exists because Rasp logged from the start.</li><li><strong>Slack is the interface.</strong> The team lives in Slack. A dashboard <em>feels</em> like the right place to store metrics, but they are most often <em>consumed</em> where the work actually happens.</li></ul>
+<p>This principle of continued iteration means Rasp is likely not the final state - and that’s okay!</p>
+<h2>How much time an AI sales agent saves per demo</h2>
+<h3>Each demo got 59 minutes cheaper</h3>
+<p>Before Rasp, one demo required about 103 minutes of work to execute well. Reps would be researching the company before the call, write up notes during and after the meeting, and update the CRM immediately following (well, we hoped).</p>
+<p>With Rasp, that same work takes about 44 minutes.</p>
+<p><img src="https://openrouter.ai/blog/images/rasp-demo-time-savings.png" alt="Rasp reduces post-demo notes from 15 to 2 minutes, pre-demo preparation from 30 to 5 minutes, and CRM updates from 30 to 7 minutes."></p>
+<ul><li>Pre-demo prep went from 30 minutes to 5. Rasp writes a great brief before every call.</li><li>Post-demo notes went from 15 minutes to 2. Rasp drafts them from the transcript.</li><li>CRM updates went from 30 minutes to 7. Rasp fills in most of the fields, with some room for rep discretion.</li></ul>
+<h3>Inbound stopped eating a whole person</h3>
+<p>Before Rasp and Dove, sorting inbound leads and replying to them took the entirety of one rep’s time (and often more than that, depending on the week). This basic resource mismatch led to a necessary consequence: prioritizing only the very best leads.</p>
+<p>Now that work takes about 25% of one rep’s time. Rasp sends 93% of first-touch emails on its own, and many leads hear back in 60 seconds or less of reaching out to us. The 7% that are sent with human help are the tricky edge cases that Rasp flags to the team proactively.</p>
+<h3>Adding it up</h3>
+<p>Across the five-person team, Rasp gives back about 600 hours a month, or roughly 140 hours a week (about 28 hours per account executive). Over a year, that is about 7,200 hours.</p>
+<h2>What changed for the business</h2>
+<p><img src="https://openrouter.ai/blog/images/rasp-business-results.png" alt="Before-and-after results: close rate rises from 15.7% to 41.0%, deal cycle falls from 71 to 47 days, and inbound triage falls from 150% to 25% of one rep's time."></p>
+<p><strong>Each rep can take about two more calls a day.</strong> Rasp removes roughly an hour of work from every call: about 20 minutes of account research, 15 minutes of notes, 5 minutes of CRM sync, plus the overhead of switching between them. Each AE can add two calls to their day and still show up to each one as prepared and as fresh as before. As one of our reps put it, “the work Rasp takes off my plate is the mundane, always-on drudgery.”</p>
+<p><strong>Close rates rose 2.6x over the same period.</strong> Pricing changes and market conditions moved in the same window, so we shouldn’t attribute all of the gain to Rasp alone. But the correlation is striking.</p>
+<p><strong>Reps show up better prepared.</strong> Faster replies are the most visible change, but reps also walk into calls with a brief already written, have more hours for live deals, and work a cleaner pipeline because unqualified inbound is handled without human involvement.</p>
+<p><strong>Deals close 34% faster.</strong></p>
+<p><strong>Revenue followed.</strong> We can attribute about 57% of the current pipeline to capacity the team did not have before.</p>
+<h3>Cleaner data as a side effect</h3>
+<p>Before Rasp, inbound was unfiltered and a lot of the time was spent qualifying leads and routing leads to other departments. Personal email domains and support questions landed on the sales team, work was done ad-hoc, and time was spent on frustrating minutia.</p>
+<p>Now the intake form filters out personal domains and routes non-sales questions elsewhere. And as Rasp learns across the entire corpus of sales data, lead prioritization is fine-tuned with every new conversation.</p>
+<h2>What Rasp does not do</h2>
+<p>Some of the job is still manual because we have more to add to Rasp.</p>
+<ul><li>Follow-ups and re-engaging quiet deals are still done by hand, while dropped-deal detection is under construction.</li><li>Buying roles and use cases now flow into the CRM. Richer deal-context fields are still being debated before getting added to the core taxonomy.</li></ul>
+<p>Some of the job is manual by design:</p>
+<ul><li>Running the actual call.</li><li>Deciding when to push and when to pull back in a negotiation.</li><li>Building the relationship.</li><li>Final approval on anything sensitive.</li></ul>
+<p>The split is pretty simple - Rasp recommends, drafts, flags, and routes. It never makes the final call on a send, a deal classification, or a compliance question without a person in the loop. Relationships are built person to person and agents themselves don’t build trust.</p>
+<h3>So… why the name?</h3>
+<p>A rasp is a coarse file. You use it to shape wood or metal, taking material off and leaving rough texture behind.</p>
+<p>It felt like a great name for something that does shaping work on a company pipeline. Rasp drafts, sorts, flags, and routes, whittling down the raw sales material. People step in, polish the woodwork, and complete the piece.</p>
+<h2>What a GTM agent needs: four requirements</h2>
+<p>Many companies are building versions of Rasp for sales and GTM teams. Having built three of them, we think an agent like this has to clear four bars.</p>
+<ul><li><strong>Easy to stand up.</strong> Rasp is one pipeline with the task type as a parameter, a feature flag on everything, and metrics logged from day one. Adding a new job for Rasp is a simple chat, no engineer needed.</li><li><strong>Slack-native.</strong> The team never leaves the tool they already work in. Briefs, drafts, flags, and metrics land where the work happens.</li><li><strong>Impactful.</strong> About 600 hours a month back to a five-person team, two more calls a day per rep, and most inbound answered in under a minute.</li><li><strong>Automatically cost-optimizing.</strong> This is our differentiator. Agents (or interns) built on Ori from OpenRouter <strong>get cheaper over time.</strong> Our routing layer underneath the intern will keep searching for a cheaper model that maintains quality and swap it in without the agent or the team lifting a finger.</li></ul>
+<p>For example, Ace and Dove, Rasp’s direct predecessors, were approaching $800 a day. Rasp does the same work for about $30. Both figures include engineering time plus the routine outputs the agents produce, so this is an apples-to-apples comparison of what the same scope of work costs us. Of that ~$30, roughly $18 is inference on GLM 5.2; the rest is engineering time.</p>
+<p>We validated current pricing on the OpenRouter API for three cheaper models that could take the routine Rasp cost down even further.</p>
+<p>Prices as of September 2026.</p>
+<table><thead><tr><th>Model</th><th>Prompt (per 1M tokens)</th><th>Completion (per 1M tokens)</th><th>Inference cost at ~200 turns/day</th><th>vs. GLM 5.2</th></tr></thead><tbody><tr><td><a href="https://openrouter.ai/z-ai/glm-5.2">GLM 5.2</a> (current)</td><td>$1.40</td><td>$4.40</td><td>~$18/day</td><td>—</td></tr><tr><td><a href="https://openrouter.ai/deepseek/deepseek-v4-pro">DeepSeek v4 Pro</a></td><td>$0.58</td><td>$1.74</td><td>~$7.50/day</td><td>~2.4x cheaper</td></tr><tr><td><a href="https://openrouter.ai/z-ai/glm-5.3-flash">GLM 5.3 Flash</a></td><td>$0.08</td><td>$0.25</td><td>~$1/day</td><td>~18x cheaper</td></tr><tr><td><a href="https://openrouter.ai/deepseek/deepseek-v4-flash">DeepSeek v4 Flash</a></td><td>$0.04</td><td>$0.10</td><td>~$0.50/day</td><td>~37x cheaper</td></tr></tbody></table>
+<h2>FAQ</h2>
+<h3>What does an AI sales agent do?</h3>
+<p>An AI sales agent takes the admin work around selling off the reps’ plate. Rasp researches and qualifies inbound leads, sends first-touch emails, writes pre-call briefs, drafts post-call notes from transcripts, and updates the CRM. Reps run the calls, negotiate, and build the relationships.</p>
+<h3>How much does an AI sales agent cost per day?</h3>
+<p>Rasp costs about $30 a day all-in, including engineering time. Roughly $18 of that is inference on GLM 5.2, and moving routine work to cheaper models on OpenRouter could take inference to about $0.50 a day.</p>
+<h3>How is this different from an AI SDR?</h3>
+<p>An AI SDR typically focuses on outbound prospecting. Rasp supports the whole sales team across inbound triage, call prep, notes, and CRM updates, and it keeps a person in the loop for final sends, deal classification, and anything sensitive.</p>
+<p>If your GTM team could benefit from more capacity, higher close rates, faster deal cycles, and more revenue, <a href="https://openrouter.ai/ori">join the OpenRouter Ori Intern waitlist today</a>. You’ll wonder how you got by without your own version of Rasp all these quarters.</p>
+<p><strong>Sources:</strong> OpenRouter validated GTM report, September 2026. Model pricing pulled from the OpenRouter API in September 2026. Ace and Dove cost figures from internal engineering and usage records.</p>]]></content:encoded>
     </item>
     <item>
       <title>Server-Side Code Execution Tools for AI Agents, Compared</title>

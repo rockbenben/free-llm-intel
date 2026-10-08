@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-08 11:09:53**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-08 20:06:42**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,12 +26,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-08，标题自动汉化）：
-  1. [Introducing Claude Sonnet 5.5](https://www.anthropic.com/news#d-2026-10-07-0)（2026-10-07）
-  2. [Cresta 如何将 CX 专业知识转变为 Claude Agent SDK 上的代理构建器](https://claude.com/resources/articles#d-2026-10-05-1)（2026-10-05）
+  1. [Introducing Claude Sonnet 5.5](https://www.anthropic.com/claude-sonnet-5-5)（2026-10-07）
+  2. [Cresta 如何将 CX 专业知识转变为 Claude Agent SDK 上的代理构建器](https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk)（2026-10-05）
   3. [Claude政府现已普遍可用](https://claude.com/blog#d-2026-10-01-19)（2026-10-01）
   4. [Claude政府现已普遍可用](https://claude.com/resources/articles#d-2026-09-30-4)（2026-09-30）
-  5. [Introducing Claude Sonnet 5.5](https://www.anthropic.com/news#d-2026-09-28-1)（2026-09-28）
-  - 📄 完整文章归档（共 82 篇）：[anthropic.md](llm-news/anthropic.md)
+  5. [Claude Tag 现已支持频道中的个人连接器](https://claude.com/blog/claude-tag-now-supports-personal-connectors-in-channels)（2026-09-24）
+  - 📄 完整文章归档（共 80 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### OpenAI (openai)
 - 页面：[官方博客](https://openai.com/blog)
@@ -52,7 +52,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-google_gemini.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-google_gemini.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-08，标题自动汉化）：
-  1. [Gemini Nano Banana 2.1 正式版（GA）](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#10-06-2026-1)（2026-10-06）
+  1. [Gemini Nano Banana 2.1 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#10-06-2026-1)（2026-10-06）
   2. [Gemini 3.8 Flash TTS 和 Gemini 3.8 Flash-Lite TTS 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-22-2026-1)（2026-09-22）
   3. [Antigravity 09-2026](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-17-2026-1)（2026-09-17）
   4. [Gemini 3.8 Live 和 Gemini 3.8 Live 扩展思考正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-1)（2026-09-15）
@@ -71,7 +71,7 @@
   3. [DeepSeek-V4-Flash-Vision-Exp 发布](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-21)（2026-08-21）
   4. [V4-Flash-Vision-Exp 上线，开启多模态 API 服务](https://api-docs.deepseek.com/zh-cn/news/news260821)（2026-08-21）
   5. [DeepSeek-V4-Pro 更新](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-13)（2026-08-13）
-  - 📄 完整文章归档（共 46 篇）：[deepseek.md](llm-news/deepseek.md)
+  - 📄 完整文章归档（共 42 篇）：[deepseek.md](llm-news/deepseek.md)
 
 ### 通义千问 (阿里云) (aliyun_qwen)
 - 页面：[研究页](https://qwen.ai/research)
@@ -114,26 +114,28 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xai_grok.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-08，标题自动汉化）：
-  1. [Team Bots：向你的团队学习的 AI 同事](https://x.ai/news#d-2026-09-28-1)（2026-09-28）
+  1. [团队机器人：共享人工智能队友，边工作边学习](https://x.ai/news/team-bots)（2026-09-28）
   2. [SpaceXAI 如何使用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22）
-  3. [IntroducingGrok 4.7](https://x.ai/news#d-2026-09-21-0)（2026-09-21）
-  4. [推出 Grok 4.7](https://x.ai/news/grok-4-7)（2026-09-21）
-  5. [推出 Grok Voice Transcribe 2.0](https://x.ai/news/grok-voice-transcribe-2)（2026-09-18）
-  - 📄 完整文章归档（共 117 篇）：[xai_grok.md](llm-news/xai_grok.md)
+  3. [推出 Grok 4.7](https://x.ai/news/grok-4-7)（2026-09-21）
+  4. [推出 Grok Voice Transcribe 2.0](https://x.ai/news/grok-voice-transcribe-2)（2026-09-18）
+  5. [Grok 语音转录 2.0 简介](https://x.ai/news#d-2026-09-18-2)（2026-09-18）
+  - 📄 完整文章归档（共 111 篇）：[xai_grok.md](llm-news/xai_grok.md)
 
 ### MiniMax (稀宇科技) (minimax)
 - 页面：[更新日志](https://platform.minimax.cn/docs/release-notes/models)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 页面：[更新日志](https://platform.minimax.cn/docs/release-notes/apis)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
+- 页面：[官方博客](https://www.minimax.cn/blog)
+  - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-minimax.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-minimax.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-08，标题自动汉化）：
-  1. [MiniMax H3 发布](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-31-%E6%97%A5)（2026-07-31）
-  2. [介绍 Music-3.0](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-16-%E6%97%A5)（2026-07-16）
-  3. [MiniMax M3 模型](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-6-%E6%9C%88-1-%E6%97%A5)（2026-06-01）
-  4. [Music-2.6](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-4-%E6%9C%88)（2026-04-01）
-  5. [MiniMax M2.7](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-3-%E6%9C%88-18-%E6%97%A5)（2026-03-18）
-  - 📄 完整文章归档（共 35 篇）：[minimax.md](llm-news/minimax.md)
+  1. [MiniMax Music 3.0：新一代开放权重、生产级全能音乐模型](https://www.minimax.cn/blog/minimax-music-3-0-cn)（2026-08-13）
+  2. [MiniMax H3 发布](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-31-%E6%97%A5)（2026-07-31）
+  3. [MiniMax H3：打破任务和模态的边界](https://www.minimax.cn/blog/minimax-h3)（2026-07-31）
+  4. [介绍 Music-3.0](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-16-%E6%97%A5)（2026-07-16）
+  5. [MaxProof: 生成式验证强化学习驱动的数学证明进化系统](https://www.minimax.cn/blog/minimax-maxproof-math-proof-evolution)（2026-06-09）
+  - 📄 完整文章归档（共 48 篇）：[minimax.md](llm-news/minimax.md)
 
 ### Mistral AI (mistral)
 - 页面：[新闻 / 更新](https://mistral.ai/news/)
@@ -296,11 +298,11 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-dataeye.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-dataeye.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-08，标题自动汉化）：
-  1. [数眼智能完成数千万元天使轮融资，加速企业级大模型部署能力建设](https://www.shuyanai.com/blogs#d-2026-09-21-4)（2026-09-21）
-  2. [数眼智能AI漫剧教程：从脚本、AI生图到Seedance 2.5生视频](https://www.shuyanai.com/blogs#d-2026-09-17-5)（2026-09-17）
-  3. [数眼智能 AI 视频生成教程：如何用智能体生成第一条视频？](https://www.shuyanai.com/blogs#d-2026-09-16-6)（2026-09-16）
-  4. [数眼智能在海南数据谷OPC社区揭牌现场｜把 Token 级算力，送到每一个 AI 超级个体手里](https://www.shuyanai.com/blogs#d-2026-09-16-7)（2026-09-16）
-  5. [数眼智能与海南大学达成专利技术合作](https://www.shuyanai.com/blogs#d-2026-09-15-9)（2026-09-15）
+  1. [数眼智能完成数千万元天使轮融资，加速企业级大模型部署能力建设](https://www.shuyanai.com/blogs/31)（2026-09-21）
+  2. [数眼智能AI漫剧教程：从脚本、AI生图到Seedance 2.5生视频](https://www.shuyanai.com/blogs/30)（2026-09-17）
+  3. [数眼智能 AI 视频生成教程：如何用智能体生成第一条视频？](https://www.shuyanai.com/blogs/29)（2026-09-16）
+  4. [数眼智能在海南数据谷OPC社区揭牌现场｜把 Token 级算力，送到每一个 AI 超级个体手里](https://www.shuyanai.com/blogs/28)（2026-09-16）
+  5. [数眼智能与海南大学达成专利技术合作](https://www.shuyanai.com/blogs/26)（2026-09-15）
   - 📄 完整文章归档（共 16 篇）：[dataeye.md](llm-news/dataeye.md)
 
 ### Amazon Bedrock (AWS Free Tier) (aws_bedrock)
@@ -397,11 +399,11 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-poolside.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-poolside.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-08，标题自动汉化）：
-  1. [Poolside on Dell：在自身边界内落地前沿 AI 的高效路径](https://poolside.ai/blog#d-2026-07-28-35)（2026-07-28）
-  2. [Laguna XS 2.1 简介](https://poolside.ai/blog#d-2026-07-21-19)（2026-07-21）
-  3. [长上下文更新：Laguna XS.2 和 M.1](https://poolside.ai/blog#d-2026-07-02-21)（2026-07-02）
-  4. [按你的方式使用 AI：Poolside 平台介绍](https://poolside.ai/blog#d-2026-05-26-23)（2026-05-26）
-  5. [Laguna XS.2 和 M.1：深入探讨](https://poolside.ai/blog#d-2026-05-11-1)（2026-05-11）
+  1. [Poolside on Dell：在您的边界内实现前沿人工智能的有效途径](https://poolside.ai/blog/poolside-on-dell)（2026-07-28）
+  2. [Introducing Laguna XS 2.1](https://poolside.ai/blog/introducing-laguna-xs-2-1)（2026-07-21）
+  3. [长上下文更新：Laguna XS.2 和 M.1](https://poolside.ai/blog/long-context-update-laguna-xs-2-and-m-1)（2026-07-02）
+  4. [AI，你的方式：引入 Poolside 平台](https://poolside.ai/blog/introducing-the-poolside-platform)（2026-05-26）
+  5. [Laguna XS.2 和 M.1：深入探讨](https://poolside.ai/blog/laguna-a-deeper-dive)（2026-05-11）
   - 📄 完整文章归档（共 19 篇）：[poolside.md](llm-news/poolside.md)
 
 ### Anyscale (anyscale)
@@ -412,7 +414,7 @@
   3. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
   4. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
   5. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
-  - 📄 完整文章归档（共 71 篇）：[anyscale.md](llm-news/anyscale.md)
+  - 📄 完整文章归档（共 74 篇）：[anyscale.md](llm-news/anyscale.md)
 
 ### InceptionLabs (inception_labs)
 - 页面：[官方博客](https://www.inceptionlabs.ai/blog)
@@ -431,11 +433,11 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-inference_net.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-inference_net.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-08，标题自动汉化）：
-  1. [Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost](https://inference.net/blog/#d-2026-08-05-0)（2026-08-05）
-  2. [Inference 平台简介：监控、训练并部署自我改进的 AI 模型](https://inference.net/blog/#d-2026-04-16-1)（2026-04-16）
-  3. [How Inference.net trains Specialized Language Models that cut AI costs by up to 50x](https://inference.net/blog/#d-2026-04-14-2)（2026-04-14）
-  4. [专业 LLM：您需要的模型尚不存在](https://inference.net/blog/#d-2026-03-11-3)（2026-03-11）
-  5. [OSSAS 项目：定制 LLM 可处理 1 亿篇研究论文](https://inference.net/blog/#d-2026-02-05-4)（2026-02-05）
+  1. [Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost](https://inference.net/blog/schematron-v2/)（2026-08-05）
+  2. [推理平台简介：监控、训练和部署自我改进的 AI 模型](https://inference.net/blog/introducing-inference-platform/)（2026-04-16）
+  3. [How Inference.net trains Specialized Language Models that cut AI costs by up to 50x](https://inference.net/blog/nemotron-finetuning/)（2026-04-14）
+  4. [专业LLM：您需要的模型尚不存在](https://inference.net/blog/the-model-you-need-doesnt-exist-yet/)（2026-03-11）
+  5. [OSSAS 项目：定制LLM可处理 1 亿篇研究论文](https://inference.net/blog/project-aella/)（2026-02-05）
   - 📄 完整文章归档（共 9 篇）：[inference_net.md](llm-news/inference_net.md)
 
 ---
