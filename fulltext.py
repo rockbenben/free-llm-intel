@@ -675,6 +675,43 @@ def _norm_text(s: str) -> str:
     return re.sub(r"[\W_]+", "", s or "", flags=re.UNICODE).lower()
 
 
+def _plain_line_text(line: str) -> str:
+    """一行的「纯字面」：脱掉链接壳、去标题井号（比对用，不用于输出）。"""
+    text = _LINK_TEXT_RE.sub(r"\1", line)
+    return re.sub(r"^#{1,6}\s*", "", text).strip()
+
+
+def _slice_by_sibling_titles(md: str, title: str, siblings) -> str:
+    """起点和终点都只认「这一页自己的那些条目标题」，切出 `title` 那一条。
+
+    整页变更日志里，条目行常常**不是标题语法**：智谱更新日志实测条目名就是一行普通
+    文本，下面紧跟 emoji 与型号行，`_is_entry_start` 认不出开头，三种判据全落空，
+    于是 21 条条目共用一份整页正文。这里不再猜「哪行像标题」，改用索引里同一页的
+    其余条目标题当分界 —— 分界由页面自己认领（那行确实是另一条的标题）。
+
+    命中 0 行或 >1 行、切完只剩标题本身，一律返回空串交给调用方维持现状。
+    """
+    t = _norm_text(title)
+    if len(t) < 4:
+        return ""
+    lines = md.splitlines()
+    starts = [i for i, l in enumerate(lines) if _norm_text(_plain_line_text(l)) == t]
+    if len(starts) != 1:
+        return ""
+    i0 = starts[0]
+    others = {_norm_text(s) for s in (siblings or ()) if s} - {t, ""}
+    end = len(lines)
+    for j in range(i0 + 1, len(lines)):
+        key = _norm_text(_plain_line_text(lines[j]))
+        if key and key in others:
+            end = j
+            break
+    section = "\n".join(lines[i0:end]).strip()
+    if _norm_text(section) == t or len(section) <= len(_plain_line_text(lines[i0])):
+        return ""             # 只有标题一行 = 切不出「这一条」
+    return section
+
+
 def _slice_dated_table(md: str, frag: str, title: str):
     """条目是**表格里的一行**时的定位：日期筛出候选行，标题必须选中唯一一行。
 
@@ -749,12 +786,14 @@ def _trim_entry_tail(lines: list[str], end: int) -> int:
     return i
 
 
-def _slice_anchor_section(md: str, frag: str, title: str = "") -> str:
+def _slice_anchor_section(md: str, frag: str, title: str = "", siblings=()) -> str:
     """从整页 markdown 里切出 `frag` 锚点那一条的段落；找不到就原样返回整页。
 
     起点 = `_find_entry_start`（标题行，或 Cloudflare 那种独立成行的条目标题）。
     三种形状都定位不到时，再试 `_slice_dated_table`：条目其实是**表格里的一行**
     （腾讯混元更新日志），靠合成锚点里的日期筛行、用 `title` 选中唯一一行。
+    表格也选不中时最后试 `_slice_by_sibling_titles`：分界用 `siblings`（同一页其余
+    条目的标题）认，不猜「哪行像标题」。
     终点 = 其后第一个**同级或更浅的条目起点**；起点是非标题行时，任意条目起点都能收尾。
     标题型起点还要求那个标题是「条目开头」，判据见 `_is_entry_heading`（日期型标题或带锚点链接），
     **不是单纯「下一个同级标题」**：MiniMax 每条下面紧跟的 `## MiniMax H3` 与日期标题同级，
@@ -763,13 +802,16 @@ def _slice_anchor_section(md: str, frag: str, title: str = "") -> str:
     切不到 / 切出来太短都退回整页：宁可给多也不给空 —— 空正文会被 `detect_index_page`
     判掉、正文直接留空，读者那边就变成「点开什么都没有」。
     """
-    if not frag:
+    if not frag and not title:
         return md
     lines = md.splitlines()
     start = _find_entry_start(lines, frag)
     if start < 0:
         table_slice = _slice_dated_table(md, frag, title)
-        return table_slice if table_slice else md
+        if table_slice:
+            return table_slice
+        # 表格也选不中：最后用「同页其他条目标题」当分界试一次（智谱那种条目行不是标题语法）
+        return _slice_by_sibling_titles(md, title, siblings) or md
     level = _heading_level(lines[start]) or 99   # 非标题起点：任何条目起点都算边界
     end = len(lines)
     visible = _visible_lines(lines)
@@ -855,6 +897,14 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
     抓不到 → `fetch_failed`，正文留空，绝不编造。给定 `save` 时每 `flush_every` 篇
     增量落盘一次（长批被中断也不丢进度；末尾再落一次由调用方负责）。
     """
+    # 同一基页（去掉 fragment）的其他条目标题：单页变更日志切片时的分界素材。
+    siblings_by_base: dict = {}
+    for r in rows:
+        u, v = r.get("url"), r.get("vendor")
+        t = (r.get("title") or "").strip()
+        if not u or not v or not t:
+            continue
+        siblings_by_base.setdefault((v, u.split("#", 1)[0]), []).append(t)
     written = 0
     for r in rows:
         url = r.get("url")
@@ -875,7 +925,9 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # （实测 MiniMax 发布说明 21 条条目因此共用一份整页正文）。
         frag = anchor_fragment(url)
         if en_status == "ok" and frag:
-            sliced = _slice_anchor_section(ex["markdown"], frag, r.get("title") or "")
+            sliced = _slice_anchor_section(
+                ex["markdown"], frag, r.get("title") or "",
+                siblings_by_base.get((vendor, url.split("#", 1)[0]), ()))
             if len(sliced) < len(ex["markdown"]):
                 ex["markdown"] = sliced
                 # 整页的 <title> 是页面级的（「模型发布 - MiniMax 开放平台文档中心」），

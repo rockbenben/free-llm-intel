@@ -6581,6 +6581,65 @@ class TestAnchorSectionSlicing(unittest.TestCase):
         self.assertEqual(ft._syn_date_ordinal("t2025-06-19-12"), ("2025-06-19", 12))
         self.assertEqual(ft._syn_date_ordinal("d-2026-06-25-46"), ("2026-06-25", 46))
         self.assertIsNone(ft._syn_date_ordinal("04-09-2025-2"))
+
+    # 智谱更新日志形状：条目名是**普通一行**，下面紧跟 emoji、型号名，再是 bullet。
+    # 页面里没有标题语法，也没有能对上锚点的链接 —— 前三种判据全落空。
+    ZP = (
+        "GLM-5.3-Flash 原生多模态模型上线\n"
+        "\n"
+        "\U0001f440\n"
+        "\n"
+        "GLM-5.3-Flash\n"
+        "\n"
+        "- 原生融入视觉能力，实现代码、浏览器与图形界面的协同闭环。\n"
+        "- 极致高效混合架构：总参 320B，激活 18B。\n"
+        "\n"
+        "GLM-5.3 新一代旗舰模型上线\n"
+        "\n"
+        "\U0001f4ac\n"
+        "\n"
+        "GLM-5.3\n"
+        "\n"
+        "- 更强的编程能力：内部基准较 GLM-5.2 提升 50%。\n"
+    )
+    ZP_TITLES = ["GLM-5.3-Flash 原生多模态模型上线", "GLM-5.3 新一代旗舰模型上线"]
+
+    def test_sibling_titles_slice_entries_that_are_not_headings(self):
+        """分界只认「同页其他条目的标题」，不猜哪行像标题。"""
+        a = ft._slice_anchor_section(self.ZP, "2026-08-26", self.ZP_TITLES[0], self.ZP_TITLES)
+        b = ft._slice_anchor_section(self.ZP, "2026-08-19", self.ZP_TITLES[1], self.ZP_TITLES)
+        self.assertIn("协同闭环", a, "第一条要拿到自己的正文")
+        self.assertNotIn("新一代旗舰", a, "第一条不许带上第二条的标题")
+        self.assertNotIn("提升 50%", a, "第一条不许带上第二条的正文")
+        self.assertIn("提升 50%", b, "第二条（末条）拿到页尾")
+        self.assertNotIn("协同闭环", b)
+        self.assertLess(len(a), len(self.ZP.strip()), "切完必须比整页短")
+
+    def test_sibling_titles_refuse_ambiguous_or_unmatched(self):
+        """标题命中 0 行 / 多行 / 切不出正文，都维持整页，不猜。"""
+        dup = self.ZP + "\nGLM-5.3 新一代旗舰模型上线\n\n再来一次。\n"
+        got = ft._slice_anchor_section(dup, "x", self.ZP_TITLES[1], self.ZP_TITLES)
+        self.assertEqual(got.strip(), dup.strip(), "同一标题命中两行时不许任选一行")
+        miss = ft._slice_anchor_section(self.ZP, "x", "页面里根本没有的一条", self.ZP_TITLES)
+        self.assertEqual(miss.strip(), self.ZP.strip())
+        # 只有标题一行、后面紧跟另一条标题：切出来是空的，维持整页
+        tight = "甲上线\n\n乙上线\n\n乙的正文。\n"
+        self.assertEqual(ft._slice_anchor_section(tight, "x", "甲上线", ["甲上线", "乙上线"]).strip(),
+                         tight.strip(), "切完只剩标题本身就不算切出「这一条」")
+
+    def test_real_anchor_wins_over_sibling_titles(self):
+        """页面自己有锚点标题时仍走锚点判据，新判据只兜底。"""
+        page = ("## [跳](https://x.cn/docs#a)2026 年 7 月 31 日\n\n"
+                "## MiniMax H3\n\n新一代开放通用多模态视频模型，面向文本与视频的统一生成。\n\n"
+                "- 支持 1080p 输出与更长的片段时长。\n"
+                "- 定价与上一代持平，不额外收费。\n\n"
+                "## [跳](https://x.cn/docs#b)2026 年 7 月 16 日\n\nMusic-3.0\n\n尚未推出，仅保留程序公告。\n")
+        got = ft._slice_anchor_section(page, "a", "MiniMax H3", ["MiniMax H3", "Music-3.0"])
+        self.assertIn("统一生成", got)
+        self.assertNotIn("尚未推出", got, "锚点起点切到下一条锚点标题为止")
+        self.assertLess(len(got), len(page.strip()))
+
+        self.assertIsNone(ft._syn_date_ordinal("04-09-2025-2"))
         self.assertIsNone(ft._syn_date_ordinal("mcp-connectors-beta"))
 
 class TestListedMeansReadable(unittest.TestCase):
@@ -6685,6 +6744,55 @@ class TestListedMeansReadable(unittest.TestCase):
                  if r[f["slug"]] and r[f["readable"]] == "1"
                  and not crawler_llm_intel.has_readable_body(repo, r[f["vendor"]], r[f["slug"]])]
         self.assertEqual(empty, [], "这些行声明可读却读不出东西：%s" % empty[:10])
+
+    def test_no_two_rows_share_one_whole_page_body(self):
+        """已提交语料里不许有两行条目共用同一份正文。
+
+        回归：单页变更日志重键后，N 条条目各自存了一份**整页**副本（实测 12 组
+        129 行、约 2.5 MB），读者点任何一条都是同一张全表。
+        """
+        repo = Path(__file__).resolve().parent
+        idx = json.loads((repo / "docs/feeds/articles.json").read_text(encoding="utf-8"))
+        entries = json.loads((repo / "docs/feeds/bodies.json").read_text(encoding="utf-8"))["bodies"]
+        groups = crawler_llm_intel.duplicate_body_groups(idx, entries, repo)
+        self.assertEqual(groups, [],
+                         "这些行共用同一份正文（整页被复制成 N 篇）：%s" % groups[:5])
+
+    def test_duplicate_body_group_detection_shape(self):
+        """判据本身：跨行同正文要抓到；同一行原文=中文、以及短正文都不算。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "docs/articles/demo").mkdir(parents=True)
+            long = "长正文" * 120
+            ft.write_body_doc(root / "docs/articles/demo/aaaa00000001.en.md",
+                              {"status": "ok"}, long)
+            ft.write_body_doc(root / "docs/articles/demo/aaaa00000002.en.md",
+                              {"status": "ok"}, long)          # 另一行，同一份
+            own = "另一份长正文" * 100
+            ft.write_body_doc(root / "docs/articles/demo/aaaa00000003.en.md",
+                              {"status": "ok"}, own)
+            ft.write_body_doc(root / "docs/articles/demo/aaaa00000003.md",
+                              {"status": "translated"}, own)   # 同一行的中文侧
+            short = "短句" * 20
+            ft.write_body_doc(root / "docs/articles/demo/aaaa00000004.en.md",
+                              {"status": "ok"}, short)
+            ft.write_body_doc(root / "docs/articles/demo/aaaa00000005.en.md",
+                              {"status": "ok"}, short)
+            rows, entries = [], {}
+            for slug, url in (("aaaa00000001", "https://demo.test/log#1"),
+                              ("aaaa00000002", "https://demo.test/log#2"),
+                              ("aaaa00000003", "https://demo.test/log#3"),
+                              ("aaaa00000004", "https://demo.test/log#4"),
+                              ("aaaa00000005", "https://demo.test/log#5")):
+                rows.append(self._row("demo", slug, url))
+                e = {"slug": slug, "en_status": "ok",
+                     "en_path": f"docs/articles/demo/{slug}.en.md", "zh_path": ""}
+                if slug == "aaaa00000003":
+                    e["zh_path"] = "docs/articles/demo/aaaa00000003.md"
+                entries[ft.bodies_key("demo", url)] = e
+            got = crawler_llm_intel.duplicate_body_groups(self._payload(rows), entries, root)
+            self.assertEqual(got, [["demo/aaaa00000001", "demo/aaaa00000002"]],
+                             "只该报跨行的整页复制；同一行两侧相同与短正文撞车都不算")
 
     def test_missing_slug_column_does_not_panic(self):
         self.assertEqual(crawler_llm_intel.corpus_gaps({"fields": ["title"], "articles": [["t"]]}, {}, Path(__file__).resolve().parent), [])

@@ -5018,6 +5018,47 @@ def corpus_gaps(index_payload: dict, body_entries: dict, root: Path) -> list[lis
     return gaps
 
 
+def duplicate_body_groups(index_payload: dict, body_entries: dict, root: Path,
+                          min_chars: int = 200) -> list[list[str]]:
+    """列出「不同条目行共用同一份正文」的组：[["vendor/slug", ...], ...]。
+
+    单页变更日志的每条条目应当只拿到「这一条」。切片失败时整页会被复制 N 份，
+    读者点任何一条看到的都是同一张全表（实测 12 组 129 行、约 2.5 MB 重复正文）。
+    短于 `min_chars` 的正文不参与：几条本来就极短的更新撞车不是复制整页。
+    **同一行的原文与中文内容相同不算**（源站本来就是中文，两侧本是同一份）。
+    """
+    fields = (index_payload or {}).get("fields") or []
+    if any(k not in fields for k in ("vendor", "slug", "url")):
+        return []
+    i_v, i_s, i_u = (fields.index("vendor"), fields.index("slug"), fields.index("url"))
+    import hashlib
+    import fulltext as _ft
+    from urllib.parse import unquote, urlparse
+    by_hash: dict[str, set] = {}
+    for row in (index_payload or {}).get("articles") or []:
+        if len(row) <= max(i_v, i_s, i_u):
+            continue
+        vendor, slug, url = row[i_v], row[i_s], row[i_u]
+        if not slug or not vendor:
+            continue
+        rec = (body_entries or {}).get(_ft.bodies_key(vendor, url)) or {}
+        for rel in (rec.get("en_path"), rec.get("zh_path")):
+            if not rel:
+                continue
+            p = root / rel
+            if not p.is_file():
+                continue
+            try:
+                body = (_ft.read_body_doc(p)[1] or "").strip()
+            except Exception:
+                continue
+            if len(body) < min_chars:
+                continue
+            by_hash.setdefault(hashlib.sha256(body.encode("utf-8")).hexdigest(), set()) \
+                .add(f"{vendor}/{slug}")
+    return [sorted(rows) for rows in by_hash.values() if len(rows) > 1]
+
+
 def select_body_rows(rows: list[dict], vendors: list[str], limit: int = 0) -> list[dict]:
     """正文抓取的行筛选（`--fetch-vendor` / `--fetch-limit`）。
 
