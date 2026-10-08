@@ -7,7 +7,21 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 05 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 07 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>ElevenLabs 现已在 OpenRouter 上运行</title>
+      <link>https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/</guid>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：ElevenLabs is now on OpenRouter</description>
+    </item>
+    <item>
+      <title>AI 销售代理如何每月为我们的销售团队节省 600 个小时</title>
+      <link>https://openrouter.ai/blog/case-studies/how-an-ai-sales-agent-saved-our-sales-team-600-hours-a-month/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/case-studies/how-an-ai-sales-agent-saved-our-sales-team-600-hours-a-month/</guid>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How an AI Sales Agent Saved Our Sales Team 600 Hours a Month</description>
+    </item>
     <item>
       <title>AI 代理的服务器端代码执行工具比较</title>
       <link>https://openrouter.ai/blog/insights/server-side-code-execution-tools-for-ai-agents-compared/</link>
@@ -5319,211 +5333,6 @@ console.log(reasoned.choices[0]?.message.content);</code></pre>
 <p>图像输入按模型的 token 价格计费。2026 年 9 月 29 日，V4.1 Flash 标价为每百万 token 输入 $0.30、输出 $1.20，V4 Flash Vision Exp 为输入 $0.216、输出 $0.647。定预算前先查模型页面，标价会变。</p>
 <h3>DeepSeek V4 能处理视频吗？</h3>
 <p>我们目录中没有 V4 模型把视频列为输入模态。对视频，用支持的模型，如 <code>qwen/qwen3.8-27b</code> 或 <code>moonshotai/kimi-k3</code>，再把其文本输出传给 V4 模型。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>案例研究：Descript 如何将新模型从工程队列中剔除</title>
-      <link>https://openrouter.ai/blog/case-studies/descript-case-study/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/case-studies/descript-case-study/</guid>
-      <pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Case Study: How Descript Took New Models Off the Engineering Queue</description>
-      <content:encoded><![CDATA[<h1>案例研究：Descript 如何把新模型评测移出工程排期</h1>
-<p>OpenRouter · 2026-09-15 · 更新于 2026-09-22</p>
-<p>Descript 的视频剪辑 agent Underlord 运行在前沿模型之上，而它可供挑选的模型集每隔几周就会变化。过去，把一个刚发布的模型走完评测要花一周以上，而且测试本身还不是慢的环节。如今以 OpenRouter 作为生产推理层，Descript 每周评测模型多次，在生产中运行 13 个模型，并且最近一次 Anthropic 发布从官宣到上线只用了几个小时。</p>
-<h2>成果</h2>
-<table><thead><tr><th>成果</th><th>详情</th></tr></thead><tbody><tr><td>从 1 个模型到生产环境 13 个</td><td>截至 2026 年 8 月</td></tr><tr><td>评测一个新模型的时间</td><td>从一周以上降到 1 到 2 小时</td></tr><tr><td>1 个生产集成</td><td>覆盖 4 家模型开发商</td></tr><tr><td>每个模型 3 到 4 条自动 fallback</td><td>按模型配置</td></tr></tbody></table>
-<ul><li><strong>行业：</strong> 视频与音频剪辑软件</li><li><strong>总部：</strong> 美国加利福尼亚州旧金山</li><li><strong>员工：</strong> 125+</li></ul>
-<h2>关于 Descript</h2>
-<p>Descript 是一个 AI 驱动的视频与音频剪辑平台。它把基于文字稿的剪辑与音频增强、声音克隆、生成式媒体等 AI 工具结合在一起，让团队无需专业背景也能产出录音棚级别的内容。医疗、金融服务、媒体和科技行业的企业合作客户用 Descript 扩展内容生产规模，同时对每一个创意决策保留人的掌控。</p>
-<p>Underlord 是 Descript 的视频剪辑 agent，它把 LLM 与一套 harness 配对——harness 告诉模型该如何行动、如何剪辑视频。</p>
-<h2>每个新模型都要等一个工程师</h2>
-<p>负责 Descript AI 产品的 Aleks Mistratov 说，Descript 专精的是&quot;人头讲话&quot;类视频（talking-head video），涵盖 YouTube 创作者视频、有人出镜解说的营销视频和视频播客。共同点是叙事驱动、依赖文字稿的内容，而公开基准并不能回答一个模型处理这类内容的水平如何。</p>
-<p>Descript 原先维护着三个直接集成：OpenAI、Anthropic 和 Google。团队自己编写并拥有它们之间的 fallback 逻辑，而这套逻辑靠切换模型工作。如果一个 GPT 请求失败，就由一个 Anthropic 模型来应答。</p>
-<p>技术层面的摩擦是参数漂移。各家模型开发商期望信息以不同方式传入，每次新发布都得检查哪些参数现在缺失、哪些变成必填、哪些已不再支持。上线一个新模型至少要花几个小时，其中大部分时间在调试&quot;为什么某处不工作&quot;。</p>
-<p>组织层面的摩擦更大。想测试新模型的人并不是能添加它的人，所以测试意味着要在工程师的日程里找时间。往往要过上好几天才有人来处理。活儿本身其实只需要几个小时。但要把这几个小时排进工程师的队列，就让&quot;这个有潜力的模型值不值得投入&quot;这个问题变成一整周的等待。</p>
-<h2>从 1 个模型到生产环境 13 个</h2>
-<p>Descript 决定尝试 Claude 时，实际上只在服务一个模型，而第二个模型正是通过 OpenRouter 到来的。</p>
-<blockquote>&quot;我们基本上只服务一个模型。然后当我们开始服务第二个时，我们也意识到，几乎不用额外工作就能再加 10 个。&quot;<br>Aleks Mistratov，Descript AI 产品负责人</blockquote>
-<p>截至 2026 年 8 月的生产环境运行着来自 4 家模型开发商的 13 个模型。</p>
-<ul><li><strong>Anthropic：</strong> Fable 5、Opus 5、Opus 4.8、Opus 4.7、Opus 4.6、Sonnet 5、Sonnet 4.6、Haiku 4.5</li><li><strong>Google：</strong> Gemini 3.1 Pro、Gemini 3.5 Flash</li><li><strong>OpenAI：</strong> GPT-5.4、GPT-5.5</li><li><strong>xAI：</strong> Grok 4.5</li></ul>
-<p>其中 5 个 Anthropic 模型是顶级版本，同时在跑。</p>
-<p>生产环境从三个直接集成变成了一个通过 OpenRouter 的连接。Descript 仍保留一个到 Anthropic 的直接连接，因为它是 Anthropic 的早期合作伙伴，某些早期访问模型只能通过那个 API 获得。那条路径不用于生产。</p>
-<p>每个模型底下都有一次推理 provider 的选择，Descript 按模型分别配置。OpenRouter 会暴露每个 provider 的吞吐量、正常运行时间和成本，Descript 据此设定优先级顺序。Sonnet 5 首选一家 provider，而 Gemini 用不同的顺序。数据保留政策也是同一决策的一部分，Descript 只路由到符合其政策的推理 provider。</p>
-<p>第二种 fallback 也住在这里。Descript 旧的逻辑是切换模型，而 OpenRouter 的 <a href="https://openrouter.ai/docs/guides/routing/provider-selection">provider fallbacks</a> 切换的是推理 provider、保持模型不变，因此某一家托管方出故障不会改变由哪个模型来应答。</p>
-<p>该团队通过<a href="https://openrouter.ai/docs/guides/overview/auth/byok">自带 key</a>（BYOK）在 Baseten 上为一个开放权重模型做了专属部署。OpenRouter 把 Baseten 路由为该模型的首选 provider，其他 provider 配置为同一模型的 fallback，全部处于同一数据政策约束之内。Descript 保留了直接的商业关系和自己的 key，同时又有针对单一 provider 限流和宕机的兜底。</p>
-<h2>评测不再是一个项目</h2>
-<p>Descript 现在每周评测模型多次。大多数从未进入生产——这正是重点。</p>
-<p>Mistratov 描述了这个模式。他正在散步，看到一条新模型发布的公告帖，就在 Slack 里发问要求对它做评测，并附上模型在 OpenRouter 上的链接。一两个小时后，评测已经在 Descript 自己的 harness 里跑完了。</p>
-<blockquote>&quot;整个过程我甚至没碰过键盘。&quot;<br>Aleks Mistratov，Descript AI 产品负责人</blockquote>
-<p>背后的机制是 Claude Tag——Anthropic 的 Slack 集成。Descript 在一个频道里为这个循环配置了一组 skills：它运行评测、开一个把模型加入 Descript harness 的 pull request，再开第二个把模型置于 feature flag 之后。由人来审查批准。</p>
-<p>OpenRouter 消除了原先把这些评测压进工程师排期的、每模型一份的集成工作。Descript 自己的 agent 和 harness 把这套接口周围的一切自动化了。这活儿不再需要指派给任何人。</p>
-<p>最近一次 Anthropic 发布，从官宣到上线只花了几个小时。剩下的步骤都是 Descript 自己的：跑内部评测、决定新模型是否胜过在任模型、配置模型选择器、设置 feature flag、部署。负责 agent 团队 harness 与评测的 David Dodero 指出，剩余的大部分工作来自 Descript 代码的结构方式，而不是与模型的连接方式；如果他们那边换个结构，这事会更简单。</p>
-<h2>每周评测发现了什么</h2>
-<p>Descript AI Enablement 团队的技术负责人 Keith Simmons 一直在关注前沿级模型成本成为问题。开放权重模型的发布速度快到唯一的问题只剩：它们中有没有能在 Descript 自己的测试用例上站得住的。每周把这个问题跑上几次，正是 Baseten 部署上那个开放权重模型浮现的由来。Simmons 表示 Descript 的模型总支出已不到原先的一半，部分归功于这套流程，并且质量在 Descript 自己的测试用例面前守住了。</p>
-<p>Simmons 起初把路由理解为 Descript 不该花工程时间去做的工作。这个看法改变了。</p>
-<blockquote>&quot;在模型之间怎么路由，这是一件完美的外包事项。但随着开放权重模型的爆炸式增长，轻松集成新模型的能力已经对我们的业务至关重要。&quot;<br>Keith Simmons，Descript AI Enablement 技术负责人</blockquote>
-<h2>Provider 故障都落在日志里</h2>
-<p>Fallback 触发后，团队是事后读日志才发现，或者干脆毫无察觉。</p>
-<p>在 OpenRouter 的日志里，Mistratov 可以看着流量迁移。平缓期由首选 provider 服务；尖峰期出现 429，随后流量迁往 plan B、plan C、plan D，用户几乎无感。当有人在 Slack 里贴出 Claude 状态页的截图问 Descript 是否受影响时，答案是&quot;没有&quot;——因为 Claude 的流量会作为另一家推理 provider 迁移到 Vertex AI。Simmons 提到，在那段时间窗口里团队自己用不了 Claude Code，而 Underlord 照常工作。</p>
-<p>事故之间，这种模式同样成立。</p>
-<blockquote>&quot;agent 团队的值班极其安静。有内置的默认 fallback，我们什么都不用做。我们的内部模型反而噪音大得多，花得多得多的时间在维护上。但任何走 OpenRouter 的东西都稳如磐石。&quot;<br>Keith Simmons，Descript AI Enablement 技术负责人</blockquote>
-<p>即便在 Descript 搭建 Baseten 部署期间也是如此。</p>
-<blockquote>&quot;我们在 Baseten 上推出这个专属部署时出了一些配置问题、在抛异常，但 OpenRouter 直接 fallback 到了另一家 provider。我们根本不知道发生了。用户也没有任何人抱怨，因为他们没看到任何故障。&quot;<br>Keith Simmons，Descript AI Enablement 技术负责人</blockquote>
-<p>用这条连接的不只是 agent 团队。Media Understanding 团队通过 OpenRouter 把上传的视频经 Gemini 路由去做内容分析，而 Google 已宣布要弃用他们使用的版本。迁移只是一次配置变更，不是一个项目。</p>
-<p>另一个团队用现成的连接在 4 到 6 个模型上做视觉布局生成的原型验证，其中有些模型并不在 agent 团队的生产列表里。</p>
-<p>这也改变了 Mistratov 评估任何向他推销推理服务的人的方式。</p>
-<blockquote>&quot;总有人来找我，说他们在某个模型上吞吐最好、应该用他们。我的第一个问题永远是：你们在 OpenRouter 上吗？如果答案是没有，我可能会先等等。它必须在某方面有压倒性的优势，才能盖过我用 OpenRouter 得到的省心。&quot;<br>Aleks Mistratov，Descript AI 产品负责人</blockquote>
-<h2>OpenRouter 上的 Descript</h2>
-<p>Descript 自 2025 年 6 月起就是 OpenRouter 的活跃用户。截至撰写时，Descript 在我们 Video Generation 类别排名第 1，Creative 类别排名第 2。当前用量见 <a href="https://openrouter.ai/apps/descript">Descript app 页面</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>LLM 裁判：自动为 AI 智能体的输出打分</title>
-      <link>https://openrouter.ai/blog/tutorials/llm-as-a-judge-evaluate-ai-agents/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/llm-as-a-judge-evaluate-ai-agents/</guid>
-      <pubDate>Mon, 14 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：LLM-as-a-Judge: Score AI Agent Outputs Automatically</description>
-      <content:encoded><![CDATA[<h1>LLM 裁判：自动为 AI 智能体的输出打分</h1>
-<p>OpenRouter ·9/14/2026 · 更新于 9/24/2026</p>
-<p>一个 agent 可以通过每一个确定性测试，仍然给出糟糕的回答。客服 agent 可以调对订单查询工具、取到正确的政策，然后在回复里漏掉退款期限。工具断言全过了，但没有任何环节检查最终回答是否准确、完整、有用。</p>
-<p>LLM-as-a-judge（LLM 裁判）评估补的就是这个洞。第二个模型拿你用人话写的标准来审查候选 agent 的输出，返回一个分数。它给了你一个可复现的办法，去测那些存在多种合法表述的开放式回答。</p>
-<h2>LLM 裁判是什么</h2>
-<p>你跑一个候选，把它的输出和相关工具结果交给裁判。裁判对照你写的 rubric（评分规则）给这些证据打分。分数低于你设的阈值，评估就失败。</p>
-<p><img src="https://openrouter.ai/blog/images/llm-as-a-judge-flow.png" alt="流程图：一次候选运行连同其答案和工具轨迹进入一个带着 rubric 的裁判模型，返回分数和理由"></p>
-<p>裁判就是一次和普通调用无异的模型请求。它读文本、应用你的标准、返回一个数字。把这个数字当作固定装置下的一次测量，而不是 ground truth。</p>
-<h3>裁判模型与候选模型</h3>
-<ul><li>候选是被测系统。它回答用户、调用工具、写出你在意的那个输出。</li><li>裁判是另一个模型。它不解决原始任务，只给候选已经完成的东西打分。</li></ul>
-<p>尽量让两个角色跑在不同模型上。2023 年的论文 <a href="https://arxiv.org/abs/2306.05685">《Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena》</a>中，Zheng 等人指出自我增强、位置和冗长三种偏见：裁判可能偏袒自己生成的答案、被摆在优先位置的答案，或无论质量更长的那个答案。</p>
-<p>只把可见回复和套用 rubric 所需的工具结果给裁判。裁判一旦能看到候选的隐藏推理，评分就不再独立。</p>
-<h3>rubric 评分、精确匹配与人工评审</h3>
-<p>精确匹配拿字符串或结构化字段和测试数据对照。只有唯一正确答案时用。</p>
-<p>在精确匹配和完整 rubric 之间，还有一种确定性内容检查：断言必出现某个短语。在 Ori Eval 里就是 <code>run.toMention()</code>。答案必须包含特定术语、但周边表述自由时，它最合适。</p>
-<p>rubric 是一个人就能执行的一小组规则。&quot;引用 14 天期限且不编造例外&quot;是 rubric；&quot;听起来有帮助&quot;不是。</p>
-<p>人类评审定义质量线，但人不可能给大评估集的每次运行打分，而且两位评审对同一输出可能得出不同结论。裁判是可复现的替身——前提是你拿一小组人工标注校准过它。</p>
-<h3>逐点、成对与参照评分</h3>
-<p>LLM 裁判有三种评估模式：</p>
-<table><thead><tr><th>模式</th><th>裁判收到什么</th><th>何时用</th></tr></thead><tbody><tr><td>逐点（pointwise）</td><td>一个候选输出加一份 rubric</td><td>在 CI 中执行质量线，或监控生产抽样</td></tr><tr><td>成对（pairwise）</td><td>两个候选输出加一份比较规则</td><td>比较模型、提示词或 agent 版本</td></tr><tr><td>参照式</td><td>候选输出、rubric 和一份可信参照</td><td>对照已知的正确答案或来源检查事实覆盖</td></tr></tbody></table>
-<p>本指南用逐点评分，因为每次运行要么达标要么不达标。成对评估时，两种呈现顺序都要评，以发现位置偏见。参照式评估适合参照包含回答必须保留的事实、而非必须照抄的措辞的场合。</p>
-<h2>什么时候用 LLM 裁判</h2>
-<p>要求明确、但不是唯一确切输出时，用 LLM 裁判。例如：</p>
-<ul><li><strong>有依据的回答。</strong>检查最终回答是否用了检索到的数据、没引入无支撑的主张。</li><li><strong>指令遵循。</strong>验证回答是否遵守了引用政策、索要缺失信息或避免某个动作等要求。</li><li><strong>完整性。</strong>确认 agent 覆盖了多部分请求的每一部分。</li><li><strong>语气。</strong>评估回答是否符合作-defined 的客服、法务或品牌口吻。</li><li><strong>工具使用的成果。</strong>在确定性测试确认了哪些工具跑过之后，裁判评 agent 是否正确使用了工具结果。</li></ul>
-<p>结果能直接检查时，LLM 裁判不合适。JSON 结构用 schema 校验器，算术用计算器，工具参数和副作用用单元测试。必须永远拦截某动作的规则要保持确定性。裁判可以审计最终回答的质量，但不该是关键政策的唯一执行层。</p>
-<p>一个工具调用测试可以断言 agent 调了一次 <code>lookup_order</code>、未经批准从不调 <code>issue_refund</code>。裁判随后评的是 agent 的最终回答是否准确解释了发生了什么。如果你还需要搭建执行层，从我们的<a href="https://openrouter.ai/docs/guides/features/tool-calling">工具调用指南</a>开始。</p>
-<h2>用 Ori Eval 给 agent 打分</h2>
-<p><a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval</a> 针对你自己的提示词和 agent 行为跑评估。一个 eval 是用 Bun 测试运行器跑的 TypeScript 文件。Ori 在一次运行中解析出一套 harness 和一个模型，并为该运行的每个测试保持它们，提示词无法在运行中途改变配置。模型对比文件仍可以为每个候选模型启动独立的运行。</p>
-<p>最快的起点是通过你的编码 agent。下面这条命令是给 agent 跑的，不是让你在终端粘贴的——让 agent 执行它，再按输出里的指示做：</p>
-<pre><code>curl -fsSL https://openrouter.ai/skills/spawn-ori-eval</code></pre>
-<p><code>spawn-ori-eval</code> skill 会安装 Ori、确认你已登录、问你要评估什么、写出 eval、运行候选模型，并在给出分数、耗时和成本支撑下推荐一个。它在临时目录工作，不会往你项目里加 eval 文件。想把文件留在项目里、或逐部分检查评估时，用下面的手动步骤。</p>
-<p>Ori 的 <code>setupJudge()</code> 在自己的模型上创建一个独立的评分 agent，<code>autoEvals()</code> 按你的标准给一次候选运行打分。下面的例子测一个回答退款问题的客服 agent。它假设你已有的 Ori harness 能触达该客服 agent 及其工具。</p>
-<h3>1. 安装 Ori 并登录</h3>
-<p>安装 Ori CLI，然后认证一次：</p>
-<pre><code>curl -fsSL https://openrouter.ai/labs/ori/install.sh | bash
-ori login</code></pre>
-<p>Ori 用 Bun 跑评估文件。没装 Bun 时，<code>ori eval</code> 会请求权限来安装。CI 或其他非交互环境下，命令会停下并告诉你怎么装 Bun。你的应用不需要是 TypeScript 项目。</p>
-<h3>2. 定义一条可观察的质量要求</h3>
-<p>从你见过或想防住的一次失败开始。这个例子里：agent 必须引用 14 天退款期限，且不得编造政策例外。</p>
-<p>这条标准比&quot;给出有帮助的回答&quot;更强，因为任何人都能执行它而不必猜&quot;有帮助&quot;算什么。它同时点名了必需的证据和失败条件。</p>
-<h3>3. 创建评估</h3>
-<p>创建 <code>evals/support/refund-quality.eval.ts</code>：</p>
-<pre><code>import { test } from 'bun:test';
-import { setupAgent, setupJudge } from 'ori/eval';
-
-const agent = setupAgent();
-const judge = setupJudge({ minScore: 0.8 });
-
-test('explains the refund policy accurately', async () =&gt; {
-  const run = await agent.run('Can I refund a digital order that I placed 10 days ago?');
-
-  run.tool('lookup_refund_policy').toBeCalled();
-  run.toComplete();
-
-  await judge.autoEvals({
-    criteria:
-      'States the 14-day refund window, answers the question directly, and does not invent exceptions.',
-    run,
-  });
-});</code></pre>
-<p>这个测试用了两层评估。<code>run.tool()</code> 和 <code>run.toComplete()</code> 断言检查可观察的动作，<code>autoEvals()</code> 评已完成回答的含义。<code>minScore</code> 设定能通过的下限——这里的 <code>0.8</code> 只是起始值，请对照你自己的有标注回答校准，下文可靠性一节会讲。</p>
-<p><code>setupJudge()</code> 用自己的模型评分，与被测模型分开。想换一个模型评分，就传入你自己的 agent 给 <code>setupJudge()</code>。<a href="https://openrouter.ai/docs/guides/ori/eval#give-a-score-to-an-open-answer">Ori Eval 文档</a>有写法。</p>
-<h3>4. 运行评估</h3>
-<p>在项目目录运行测试：</p>
-<pre><code>ori eval --report eval-report.md</code></pre>
-<p>Ori 找到当前目录下的所有 <code>*.eval.ts</code>，用 <code>bun test</code> 运行，并以 <code>bun test</code> 的退出码退出——评估失败则命令失败。<code>--report</code> 写一份 Markdown 报告，可以和其余测试输出一起查看。</p>
-<p>LLM 评估会发真实的模型请求。把它们放在单独的 CI job 里：手动触发、按计划、或发布前跑——别塞进每次单元测试。<code>OPENROUTER_API_KEY</code> 存为 repository secret；设了这个变量，Ori 在 CI 里就不需要 <code>ori login</code>。Ori Eval 文档的 <a href="https://openrouter.ai/docs/guides/ori/eval#run-an-eval-in-ci">Run an eval in CI</a> 一节有完整的 GitHub Actions 示例。</p>
-<h2>跨模型比较同一个 agent</h2>
-<p>逐点评估跑通后，就可以对多个候选模型运行它。做的时候保持标准和裁判固定。给 <code>setupAgent()</code> 传 <code>{ model }</code> 会为该运行选择模型，下面每一次迭代都是自己的模型对同一份标准和裁判。</p>
-<pre><code>import { test } from 'bun:test';
-import { candidateModels, setupAgent, setupJudge } from 'ori/eval';
-
-const judge = setupJudge({ minScore: 0.8 });
-
-const candidates = await candidateModels({
-  limit: 5,
-  maxPromptPrice: 0.000005,
-});
-
-for (const model of candidates) {
-  test(`refund policy response on ${model}`, async () =&gt; {
-    const run = await setupAgent({ model }).run(
-      'Can I refund a digital order that I placed 10 days ago?',
-    );
-
-    await judge.autoEvals({
-      criteria:
-        'States the 14-day refund window, answers the question directly, and does not invent exceptions.',
-      run,
-    });
-  });
-}</code></pre>
-<p><code>candidateModels()</code> 从我们的实时目录返回模型 slug，每一个都能直接进测试名和 <code>setupAgent({ model })</code>。候选可按提示词或补全价格、上下文长度、必需参数、输入模态、质量指数以及模型是否即将下架来过滤。价格按 token 计，<code>maxPromptPrice: 0.000005</code> 就是每百万输入 token 五美元的封顶。</p>
-<p>动态选择适合发现模型。回归测试请显式点名候选模型，目录变了测试比较的集合才不会变，并用 <code>assertModelIsLive(slug)</code> 让模型下架时 eval 以清晰消息失败。每条结果都要记录候选、裁判、harness、rubric、模型参数和测试数据。</p>
-<h2>让裁判可靠</h2>
-<p>拿人工已标注的例子检查裁判。做到这一点之前，它的分数都未被证实。本节剩下的部分讲装置变化时如何保持这份检查有效。</p>
-<h3>用可观察的证据写标准</h3>
-<p>把宽泛的质量标签换成裁判能在回答中定位到的要求。</p>
-<ul><li><strong>弱。</strong>&quot;回答准确且有帮助。&quot;</li><li><strong>好。</strong>&quot;回答写明 14 天退款期限、使用了检索到的订单日期、并且不声称退款已经发放。&quot;</li></ul>
-<p>需要诊断失败时把不相关的维度分开。用一个分数同时评准确性、语气、完整性和格式，只能告诉你质量掉了，不能告诉你掉在哪。</p>
-<p>Ori 导出一个 <code>startingCriteria</code> 对象，内含 <code>accuracy</code>、<code>completeness</code>、<code>instructionFollowing</code>、<code>safety</code>、<code>structuredOutput</code> 和 <code>toneAndVoice</code> 的可编辑 rubric，把一个作为 <code>criteria</code> 传给 <code>judge.autoEvals()</code>。把它们当基础去定制。&quot;使用检索到的订单状态、且批准前不承诺退款&quot;比通用的准确性 rubric 告诉裁判的多。</p>
-<h3>用人工标注样例校准裁判</h3>
-<p>建一个小数据集：清晰的通过、清晰的失败，以及来自真实 agent 交互的边缘案例。先让负责质量的人打分，再把裁判的裁决与那些标签比对。</p>
-<p>裁判不同意时，检查原因：可能 rubric 含糊、例子暴露了一条缺失的标准、或裁判模型本身不合适。换裁判、换 rubric 或换评估数据时，重新做这套校准。</p>
-<p>把你的有标注问答对放进一个 JSON 文件，用 <code>test.each</code> 驱动：</p>
-<pre><code>import supportPairs from './support-pairs.json';
-
-test.each(supportPairs)('answers: $question', async ({ question, mustMention }) =&gt; {
-  const run = await agent.run(question);
-  run.toMention(mustMention);
-  run.toComplete();
-});</code></pre>
-<h3>让评估保持盲测</h3>
-<p>只给裁判套用 rubric 所需的信息：原始任务、可见回答、相关工具结果和必要的可信参照材料。去掉候选模型名等可能影响分数的信号。</p>
-<p>成对评估时，把两个答案以相反位置各比一次。结论变了就再看一遍，而不是硬选一个赢家。</p>
-<h3>控制变更，正视方差</h3>
-<p>rubric 和测试数据集的精确版本放进版本控制。分数旁边记录候选与裁判模型 slug、harness 版本、路由配置和生成参数。</p>
-<p>这让变更可追溯，但不会让模型输出变确定。阈值附近的小幅波动可能只是正常方差；在代表性测试集上反复出现的下跌，才是更强的回归证据。</p>
-<h3>保护生产数据</h3>
-<p>用户的真实数据比你编的提示词是更好的测试用例。把生产轨迹放进评估数据集之前删除个人或敏感数据，并审阅涉及模型和提供商的数据政策。我们的<a href="https://openrouter.ai/docs/guides/privacy/data-collection">数据收集文档</a>讲我们的日志控制和请求元数据处理。</p>
-<h2>管理评估成本</h2>
-<p>LLM 评审给每次被评估的运行叠加模型请求，成本随测试用例数、候选模型数和 rubric 维度增长。</p>
-<p>可以通过这些方式控成本：</p>
-<ul><li>每次 commit 只跑确定性检查，LLM 评估按计划或发布前跑。</li><li>对代表性生产轨迹抽样，而不是给每次交互打分。</li><li>一次聚焦的裁判调用，代替多条重叠的标准。</li><li>常规回归检查用更小的候选集。</li><li>只发裁判套用 rubric 需要的上下文。</li></ul>
-<p>裁判不必是能用的最大的那个模型，它需要的是稳定遵循细粒度评分指令。用我们的<a href="https://openrouter.ai/models">模型目录</a>对比当前能力和价格，而不是把固定价格抄进评估代码。</p>
-<h2>下一步</h2>
-<p>从一次真实失败开始，写一条别的评审员也能执行的标准，拿人工标注样例测裁判。<a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval 指南</a>覆盖 eval 文件格式、<code>candidateModels()</code>、<code>setupJudge()</code>、<code>--baseline</code> 对比和 CI 中跑评估。</p>
-<p>标准封闭、需要校准概率而不是一份文字裁决时（例如某主张是否有来源支撑），决策模型可以替代裁判调用。<a href="https://openrouter.ai/blog/tutorials/jev-vs-llm-as-a-judge/">Jev 与 LLM 裁判对比</a>在同一批任务上测量两者，展示各自在何处站得住。</p>
-<h2>常见问题</h2>
-<h3>LLM-as-a-judge 是什么意思？</h3>
-<p>用一个语言模型对照书面标准评估另一个系统的输出。候选产出答案，另一个裁判模型给它打分。</p>
-<h3>怎么自动给 AI agent 的输出打分？</h3>
-<p>让 agent 跑测试提示词，捕获它的回答和相关工具轨迹。把这些证据连同具体 rubric 交给裁判模型，存储分数；当分数低于你用人工评审样例校准过的阈值时，判评估失败。</p>
-<h3>LLM 裁判评估有多准？</h3>
-<p>准确性取决于裁判模型、rubric、任务和测试数据。LLM 裁判能以有用的程度与人类偏好一致，但也表现出偏见和输出方差。在拿裁判做发布决定之前，先在你自己的人工标注样例上测量一致率。</p>
-<h3>同一个 LLM 能给自己的输出当裁判吗？</h3>
-<p>能，但模型可能偏袒自己的风格、重复同样的盲区。尽量用单独的裁判模型。非用同一模型不可时，把裁判请求分开、隐藏不必要的候选上下文，并用人工标签验证分数。</p>
-<h3>什么样的 LLM 裁判 rubric 是好的？</h3>
-<p>点名可观察的证据、定义失败条件、给裁判足够上下文以得出与内行评审相同的结论。把&quot;要有帮助&quot;换成&quot;写明 14 天期限且不编造例外&quot;这类要求。</p>
-<h3>该用逐点还是成对评估？</h3>
-<p>每次 agent 运行都必须达到固定质量线时用逐点。比较两个模型或提示词版本时用成对。成对测试里请颠倒答案顺序，检查位置是否影响结果。</p>
-<h3>什么时候不该用 LLM 当裁判？</h3>
-<p>代码能精确判定结果时别用。schema、计算、工具参数、权限和关键执行规则应当用确定性检查。裁判留给这些检查测不了的语义质量。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

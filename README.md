@@ -159,7 +159,7 @@ python -m unittest discover
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-10-07 10:52:42**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-10-08 11:09:13**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
 > 💡 **核心特性**：覆盖 **70 家厂商**（深度抓取 **133 个情报页 + 45 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 35 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
@@ -233,7 +233,7 @@ python -m unittest discover
 | **免费层限制 / 注意事项** | • 送的是 **15 元代金券而非免费模型**；`kimi-k3` 官方明确**不支持新用户代金券**，必须充值才能用<br>• 代金券有效期官方文档未载明，以券面标注为准；旧 moonshot-v1 全系列、kimi-k2.5 已下线 |
 | **邀请 / 特惠活动** | 官方原文：**“Kimi K3 不支持使用新用户代金券”**，需充值后解锁；充值返券活动在官方财务文档中无记载。 |
 | **邀请 / 拉新奖励** | **邀请活动官方页不存在**：第三方情报库所指 `platform.kimi.com/docs/guide/invite-rewards` 已 308 重定向到 `/docs/get-api-key`；所称「邀请双方各得 240 元」不予采信。 |
-| **实时巡检证据** | • 认证成功后会为您赠送 15 元代金券，可用于支持该代金券的模型（Kimi K3 不支持使用新用户代金券，详见下方说明）。<br>• 模型推理接口对 Input 和 Output 均实行按量计费。对于 K3 系列模型，缓存写入按 TTL（5min / 1h）单独计费；缓存命中的输入仅按缓存命中价格计费，不再重复收取缓存写入费用。如果您上传并抽取文档内容，并将抽取的文…<br>• Kimi 智能助手现已推出 Kimi Business 企业会员权益，请前往 https://www.kimi.com/membership/pricing 线上下单 |
+| **实时巡检证据** | • 认证成功后会为您赠送 15 元代金券，可用于支持该代金券的模型（Kimi K3 不支持使用新用户代金券，详见下方说明）。<br>• 模型推理接口对 Input 和 Output 均实行按量计费。对于 K3 系列模型，缓存写入按 TTL（5min / 1h）单独计费；缓存命中的输入仅按缓存命中价格计费，不再重复收取缓存写入费用。如果您上传并抽取文档内容，并将抽取的文…<br>• Kimi API 开放平台提供的模型推理服务是「按量计费」模式，不提供订阅制方案，请注意与 Kimi 会员、Kimi Code 等产品区分，查看产品差异。 |
 | **官方直达** | [API Key 管理直达](https://platform.kimi.com/console/api-keys) ｜ [API Key 获取指南](https://platform.kimi.com/docs/get-api-key) ｜ [账号与支付（15 元代金券说明）](https://platform.kimi.com/docs/guide/account-and-payments) ｜ [模型列表](https://platform.kimi.com/docs/models) ｜ [K3 定价](https://platform.kimi.com/docs/pricing/chat-k3) |
 | **特别说明** | 开放平台已统一至新域名 platform.kimi.com（moonshot.cn 入口均跳转至此）。 |
 
@@ -574,7 +574,7 @@ python -m unittest discover
 |------|------|
 | **平台名称** | [Mistral AI](https://mistral.ai/) |
 | **免费模型与额度** | • **`Leanstral`**（Labs，`labs-leanstral-2603`，限时开放收集反馈）—— 免费端点<br>• **Mistral Moderation 2（Free）** —— 免费端点<br>• 商业模型均付费：Mistral Medium 3.5、`Large 3`（$0.50/$1.50 每百万）、`Small 4`（$0.15/$0.60）、Ministral 3（3B/8B/14B）、Codestral v25.08、Voxtral 语音、OCR 4.1、Mistral Embed、Shieldstral 1.0、第三方 GLM 5.2；旧 open-mistral-7b / Mixtral / Pixtral-12B 已列入 deprecated/retired |
-| **注册福利 / 账户赠送** | **无新用户赠金 / 免费实验层**（现行 API 定价页未提及；旧“€5 赠金 / 1 RPS 免费层”无据）；Le Chat 套餐含 $10/月 API credits 属订阅权益 |
+| **注册福利 / 账户赠送** | **无新用户赠金 / 免费实验层**（现行 API 定价页未提及；旧“€5 赠金 / 1 RPS 免费层”无据）；Vibe Pro 订阅套餐含 $25.5/月 API credits 属付费订阅权益 |
 | **额度有效期** | 以官方定价页为准 |
 | **前置条件 / 限制** | 邮箱注册并验证手机号 |
 | **免费层限制 / 注意事项** | • 免费的是**端点**而非额度：官方定价页未提供新用户赠金或免费实验层（旧“€5 赠金 / 1 RPS 免费层”无据）<br>• `Leanstral` 属 Labs「限时开放收集反馈」，**随时可能下线**；`Mistral Moderation 2（Free）` 是常设免费端点<br>• 商业模型（Mistral Medium 3.5、Large 3、Small 4、Ministral 3、Codestral、Voxtral、OCR、Mistral Embed、Shieldstral）均按量付费<br>• 免费端点限速数值官方未公开，以控制台为准 |
@@ -609,7 +609,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 Hugging Face 账号并生成 Access Token，免信用卡 |
 | **免费层限制 / 注意事项** | • 免费用户每月仅 **$0.10** 推理额度（官方标注 “subject to change”），只够极低频测试，不是长期主力额度<br>• 原 Serverless 社区免费集群 2025 年 7 月起已改为 hf-inference provider 且主要提供 CPU 推理；PRO $9/月也只含 $2 额度 |
 | **邀请 / 特惠活动** | PRO 会员 **$9/月**，含每月 **$2** 通用推理额度（免费额度的 20 倍）。 |
-| **实时巡检证据** | • 每个 Hugging Face 用户每月都会收到积分来尝试推理提供程序：<br>• 8× ZeroGPU 配额和最高队列优先级 |
+| **实时巡检证据** | • 如果您想要简单并使用每月积分，请从 Routed by Hugging Face 开始<br>• 8× ZeroGPU 配额和最高队列优先级 |
 | **官方直达** | [官方主页](https://huggingface.co/) ｜ [Inference Providers 定价](https://huggingface.co/docs/inference-providers/pricing) ｜ [会员定价](https://huggingface.co/pricing) |
 | **特别说明** | 高并发生产场景建议使用 Dedicated Endpoints。 |
 
@@ -683,7 +683,7 @@ python -m unittest discover
 | **额度有效期** | 永久有效（遵守许可条款） |
 | **前置条件 / 限制** | 遵守 Llama 4 社区许可；上自然月活跃用户超过 **7 亿（700 million MAU）** 的实体需另行向 Meta 申请授权 |
 | **邀请 / 特惠活动** | 主流推理平台（Groq、Cerebras、Cloudflare、Together、DeepInfra 等）均托管 Llama 4。 |
-| **实时巡检证据** | • Llama 4 Community License Agreement |
+| **实时巡检证据** | • Muse Glimmer：为本地代理构建的开放权重模型 |人工智能开发者博客管理您的日程、起草您的回复和组织您的文件的代理需要深度访问......<br>• Llama 4 Community License Agreement |
 | **官方直达** | [Meta AI 开发者站](https://developer.meta.com/ai/) ｜ [Llama 4 许可协议](https://developer.meta.com/ai/llama4/license/) ｜ [Hugging Face 组织](https://huggingface.co/meta-llama) |
 | **特别说明** | 官方主站已迁至 developer.meta.com/ai；llama.com 301 跳转至此；Llama 4 许可页为 /ai/llama4/license/。 |
 
@@ -1229,6 +1229,7 @@ python -m unittest discover
 | **特别说明** | 「Free forever」指标题档定价长期 $0，非全部 AI 功能免费；试用条款里的 GPT-5.6 Luna 为当前托管模型名 |
 
 <!-- LLM-INTEL:END -->
+
 
 
 
