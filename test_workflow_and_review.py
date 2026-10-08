@@ -6583,6 +6583,80 @@ class TestAnchorSectionSlicing(unittest.TestCase):
         self.assertIsNone(ft._syn_date_ordinal("04-09-2025-2"))
         self.assertIsNone(ft._syn_date_ordinal("mcp-connectors-beta"))
 
+class TestListedMeansReadable(unittest.TestCase):
+    """不变量：进了 articles.json 的每一行，要么磁盘上有正文文件，要么台账写明读不到。
+
+    回归的是读者报的那个现象：「标题在列表里，点开却说没进语料」。根因链是单页变更日志
+    的 N 条条目共用一份整页正文（旧身份不认 fragment）→ 整页被判目录页 → 正文留空，
+    可 N 行标题照样发布；`readable` 的 '' 态（「还没轮到正文抓取」）于是变成「按钮亮着、
+    点进去 404」。'' 一旦进了提交产物就是骗点击，所以这里要求它为 0。
+    """
+
+    def _payload(self, rows):
+        return {"fields": ["title", "url", "vendor", "date", "original_title", "slug", "readable"],
+                "count": len(rows), "articles": rows}
+
+    def _row(self, vendor, slug, url, title="t"):
+        return [title, url, vendor, "2026-01-02", "", slug, ""]
+
+    def test_committed_artifacts_have_no_undocumented_rows(self):
+        repo = Path(__file__).resolve().parent
+        idx = json.loads((repo / "docs/feeds/articles.json").read_text(encoding="utf-8"))
+        entries = json.loads((repo / "docs/feeds/bodies.json").read_text(encoding="utf-8"))["bodies"]
+        gaps = crawler_llm_intel.corpus_gaps(idx, entries, repo)
+        self.assertEqual(
+            gaps, [],
+            "这些行既没有 docs/articles 下的正文文件，台账也没记不可读原因："
+            "%s —— 读者点开只会看到「还没落到语料里」" % gaps[:5])
+
+    def test_gap_detection_needs_file_or_documented_reason(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            v = "demo"
+            (root / "docs/articles" / v).mkdir(parents=True)
+            (root / "docs/articles" / v / "havefile01.en.md").write_text("x", encoding="utf-8")
+            url_ok = "https://demo.test/blog/a#1"
+            url_doc = "https://demo.test/blog/b#2"
+            url_bad = "https://demo.test/blog/c#3"
+            rows = [self._row(v, "havefile01", url_ok),
+                    self._row(v, "docreason1", url_doc),
+                    self._row(v, "nothing001", url_bad)]
+            entries = {
+                ft.bodies_key(v, url_doc): {"slug": "docreason1", "en_status": "index_page"},
+                ft.bodies_key(v, url_bad): {"slug": "nothing001", "en_status": "ok"},
+            }
+            gaps = crawler_llm_intel.corpus_gaps(self._payload(rows), entries, root)
+            self.assertEqual([g[1] for g in gaps], ["nothing001"],
+                             "有文件 / 记了 index_page 的都算有说法；只标 ok 却没文件才是缺口")
+
+    def test_unreadable_status_list_is_the_whole_vocabulary(self):
+        """台账里能算「有说法」的状态是封闭集合，别让人新造一个混过守卫。"""
+        self.assertEqual(set(crawler_llm_intel.UNREADABLE_STATUSES),
+                         {"fetch_failed", "index_page", "paywall"})
+
+    def test_missing_slug_column_does_not_panic(self):
+        self.assertEqual(crawler_llm_intel.corpus_gaps({"fields": ["title"], "articles": [["t"]]}, {}, Path(__file__).resolve().parent), [])
+
+    def test_fetch_vendor_selects_all_listed_vendors(self):
+        """`--fetch-vendor` 可重复，多家一起跑。
+
+        回归：这个参数曾是单值，`--fetch-vendor a --fetch-vendor b` 只有最后一个生效，
+        实测一整轮只跑了最后一家还以为都跑完了。
+        """
+        rows = [{"vendor": v, "url": "https://%s.test/x" % v} for v in ("groq", "anyscale", "groq")]
+        got = crawler_llm_intel.select_body_rows(rows, ["groq", "anyscale"])
+        self.assertEqual([r["vendor"] for r in got], ["groq", "anyscale", "groq"],
+                         "传两家就得两家的行都留下")
+        self.assertEqual(len(crawler_llm_intel.select_body_rows(rows, [])), 3, "空 = 不限厂商")
+        self.assertEqual([r["vendor"] for r in crawler_llm_intel.select_body_rows(rows, ["anyscale"], 1)],
+                         ["anyscale"], "limit 必须在厂商筛选之后生效（先截后筛就会漏掉目标厂商）")
+        with tempfile.TemporaryDirectory() as d:
+            argv = ["--fetch-bodies", "--fetch-vendor", "groq", "--fetch-vendor", "anyscale"]
+            ns = crawler_llm_intel.build_arg_parser().parse_args(argv)
+            self.assertEqual(ns.fetch_vendor, ["groq", "anyscale"],
+                             "argparse 必须是 action=append，否则只剩最后一家")
+
+
 class TestReadFullButtonHonesty(unittest.TestCase):
     """「读全文」按钮不许给读者一个已知点不开的入口。
 

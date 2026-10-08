@@ -4962,6 +4962,55 @@ def _body_html_for(art: Article, vendor: str, bodies: dict, feeds_dir: Path,
         return ""
 
 
+#: 「进了列表就得有可读的东西」这条不变量的单一实现（守卫测试与本地体检都调它）。
+#: readable 的 '' 原意是「还没轮到正文抓取」，可它一旦落进已提交产物，读者点开的就是
+#: 「这篇正文还没落到语料里」——所以 '' 不许停留在发布产物里：要么磁盘上有正文文件，
+#: 要么台账写明读不到的原因。
+UNREADABLE_STATUSES = ("fetch_failed", "index_page", "paywall")
+
+
+def corpus_gaps(index_payload: dict, body_entries: dict, root: Path) -> list[list[str]]:
+    """列出「既没正文文件、台账也没记不可读原因」的行：[[vendor, slug, url], ...]。
+
+    `body_entries` 是 `bodies.json` 里的 `bodies` 那层（键为 `vendor\\t身份URL`）。
+    """
+    fields = (index_payload or {}).get("fields") or []
+    need = ("vendor", "slug", "url")
+    if any(k not in fields for k in need):
+        return []
+    i_v, i_s, i_u = (fields.index("vendor"), fields.index("slug"), fields.index("url"))
+    import fulltext as _ft
+    gaps = []
+    for row in (index_payload or {}).get("articles") or []:
+        if len(row) <= max(i_v, i_s, i_u):
+            continue
+        vendor, slug, url = row[i_v], row[i_s], row[i_u]
+        if not slug or not vendor:
+            continue
+        base = root / "docs" / "articles" / vendor
+        if (base / f"{slug}.md").exists() or (base / f"{slug}.en.md").exists():
+            continue
+        rec = (body_entries or {}).get(_ft.bodies_key(vendor, url))
+        if rec and rec.get("en_status") in UNREADABLE_STATUSES:
+            continue          # 记了原因：按钮不亮，读者不会被骗
+        gaps.append([vendor, slug, url])
+    return gaps
+
+
+def select_body_rows(rows: list[dict], vendors: list[str], limit: int = 0) -> list[dict]:
+    """正文抓取的行筛选（`--fetch-vendor` / `--fetch-limit`）。
+
+    `vendors` 为空 = 不限厂商；传多家 = **几家都收**（这个参数一度是单值，
+    传 5 家只有最后一家被抓，实测把一整轮白跑）。
+    """
+    if vendors:
+        want = set(vendors)
+        rows = [r for r in rows if r.get("vendor") in want]
+    if limit:
+        rows = rows[:limit]
+    return rows
+
+
 def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str = "",
                     merged_limit: int = RSS_MERGED_LIMIT,
                     vendor_limit: int = RSS_VENDOR_LIMIT,
@@ -6171,12 +6220,8 @@ def _repo_root() -> Path:
     return Path(__file__).resolve().parent
 
 
-def main(argv: list[str] | None = None) -> int:
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")  # Windows 控制台中文输出
-    except Exception:
-        pass
-
+def build_arg_parser() -> argparse.ArgumentParser:
+    """命令行定义。抽成函数是为了能被测试直接 parse_args（main 里只剩一行调用）。"""
     parser = argparse.ArgumentParser(description="LLM 厂商免费额度 / 活动情报巡检脚本")
     parser.add_argument("--yaml", default="llm-intel.yaml", help="情报 YAML 路径（默认 ./llm-intel.yaml）")
     parser.add_argument("--readme", default="README.md", help="输出 README 路径（默认 ./README.md）")
@@ -6247,7 +6292,9 @@ def main(argv: list[str] | None = None) -> int:
                              "readability 抽正文写 docs/articles/<vendor>/<urlhash>.en.md，"
                              "并 upsert docs/feeds/bodies.json。默认只补缺失；--refresh 全量重抓。"
                              "SPA/反爬取不到记 fetch_failed、正文留空。用 --fetch-vendor/--fetch-limit 分批。")
-    parser.add_argument("--fetch-vendor", default="", help="只抓该 vendor_id 的正文（配合 --fetch-bodies）")
+    parser.add_argument("--fetch-vendor", action="append", default=[],
+                        help="只抓这些 vendor_id 的正文（配合 --fetch-bodies；可重复传，"
+                             "传多次即多厂商一批跑完）")
     parser.add_argument("--fetch-limit", type=int, default=0, help="本次最多抓多少篇正文（0=不限）")
     parser.add_argument("--refresh", action="store_true", help="正文抓取：忽略已有、全量重抓")
     parser.add_argument("--allow-browser", action="store_true",
@@ -6268,6 +6315,15 @@ def main(argv: list[str] | None = None) -> int:
                              "不卡 LLM 额度；mt 是糙覆盖，重点篇之后本地 agent 重译升级。")
     parser.add_argument("--mt-bodies-limit", type=int, default=0,
                         help="本次最多机翻多少篇正文（0=不限；CI 用它控单日请求量）")
+    return parser
+
+def main(argv: list[str] | None = None) -> int:
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")  # Windows 控制台中文输出
+    except Exception:
+        pass
+
+    parser = build_arg_parser()
     args = parser.parse_args(argv)
 
     root = _repo_root()
@@ -6296,10 +6352,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.fetch_bodies:
         import fulltext
         articles = fulltext.iter_article_rows(root / "docs/feeds/articles.json")
-        if args.fetch_vendor:
-            articles = [a for a in articles if a["vendor"] == args.fetch_vendor]
-        if args.fetch_limit:
-            articles = articles[:args.fetch_limit]
+        articles = select_body_rows(articles, args.fetch_vendor, args.fetch_limit)
         bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
         # 自愈：把任何旧逻辑误存成 .en.md 的中文原生正文重分类到 .md（幂等、复用缓存、不重抓）
         moved = fulltext.reclassify_bodies(root, bodies)
