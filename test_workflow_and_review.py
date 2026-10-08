@@ -6745,6 +6745,34 @@ class TestListedMeansReadable(unittest.TestCase):
                  and not crawler_llm_intel.has_readable_body(repo, r[f["vendor"]], r[f["slug"]])]
         self.assertEqual(empty, [], "这些行声明可读却读不出东西：%s" % empty[:10])
 
+    def test_committed_bodies_are_all_ledgered(self):
+        """盘上有正文文件的索引行，台账里必须有对应键。
+
+        回归：3 行在身份改认 fragment 后文件落了新名、台账键没跟上，于是对所有
+        「按台账扫正文」的检查隐身——它们一直把整页变更日志当正文发给读者。
+        """
+        repo = Path(__file__).resolve().parent
+        idx = json.loads((repo / "docs/feeds/articles.json").read_text(encoding="utf-8"))
+        entries = json.loads((repo / "docs/feeds/bodies.json").read_text(encoding="utf-8"))["bodies"]
+        ghost = crawler_llm_intel.unledgered_body_files(idx, entries, repo)
+        self.assertEqual(ghost, [], "这些行有正文却不在台账里，任何台账扫描都看不见它们：%s" % ghost[:8])
+
+    def test_unledgered_detection_needs_a_real_body(self):
+        """判据本身：只有「真读得出正文」的行才算，缺口行由 corpus_gaps 管。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "docs/articles/demo").mkdir(parents=True)
+            ft.write_body_doc(root / "docs/articles/demo/aaaa00000009.md",
+                              {"status": "translated"}, "正文" * 40)
+            rows = [self._row("demo", "aaaa00000009", "https://demo.test/log#9"),
+                    self._row("demo", "bbbb00000001", "https://demo.test/log#8")]
+            self.assertEqual(crawler_llm_intel.unledgered_body_files(self._payload(rows), {}, root),
+                             ["demo/aaaa00000009"],
+                             "有文件没台账键的才算；什么都没的交给缺口检查")
+            self.assertEqual(crawler_llm_intel.unledgered_body_files(
+                self._payload(rows), {ft.bodies_key("demo", rows[0][1]): {"slug": "aaaa00000009"}},
+                root), [], "台账里有键就不算幽灵行")
+
     def test_no_two_rows_share_one_whole_page_body(self):
         """已提交语料里不许有两行条目共用同一份正文。
 
@@ -6753,13 +6781,16 @@ class TestListedMeansReadable(unittest.TestCase):
         """
         repo = Path(__file__).resolve().parent
         idx = json.loads((repo / "docs/feeds/articles.json").read_text(encoding="utf-8"))
-        entries = json.loads((repo / "docs/feeds/bodies.json").read_text(encoding="utf-8"))["bodies"]
-        groups = crawler_llm_intel.duplicate_body_groups(idx, entries, repo)
+        groups = crawler_llm_intel.duplicate_body_groups(idx, repo)
         self.assertEqual(groups, [],
                          "这些行共用同一份正文（整页被复制成 N 篇）：%s" % groups[:5])
 
     def test_duplicate_body_group_detection_shape(self):
-        """判据本身：跨行同正文要抓到；同一行原文=中文、以及短正文都不算。"""
+        """判据本身：跨行同正文要抓到；同一行原文=中文不算；短正文不算。
+
+        文件按 `vendor/slug` 直取，**不看台账有没有这一行**：实测有 3 行丢了台账键、
+        盘上却还装着整页正文，只查台账的写法对它们完全隐身。
+        """
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
             (root / "docs/articles/demo").mkdir(parents=True)
@@ -6778,19 +6809,14 @@ class TestListedMeansReadable(unittest.TestCase):
                               {"status": "ok"}, short)
             ft.write_body_doc(root / "docs/articles/demo/aaaa00000005.en.md",
                               {"status": "ok"}, short)
-            rows, entries = [], {}
+            rows = []
             for slug, url in (("aaaa00000001", "https://demo.test/log#1"),
                               ("aaaa00000002", "https://demo.test/log#2"),
                               ("aaaa00000003", "https://demo.test/log#3"),
                               ("aaaa00000004", "https://demo.test/log#4"),
                               ("aaaa00000005", "https://demo.test/log#5")):
                 rows.append(self._row("demo", slug, url))
-                e = {"slug": slug, "en_status": "ok",
-                     "en_path": f"docs/articles/demo/{slug}.en.md", "zh_path": ""}
-                if slug == "aaaa00000003":
-                    e["zh_path"] = "docs/articles/demo/aaaa00000003.md"
-                entries[ft.bodies_key("demo", url)] = e
-            got = crawler_llm_intel.duplicate_body_groups(self._payload(rows), entries, root)
+            got = crawler_llm_intel.duplicate_body_groups(self._payload(rows), root)
             self.assertEqual(got, [["demo/aaaa00000001", "demo/aaaa00000002"]],
                              "只该报跨行的整页复制；同一行两侧相同与短正文撞车都不算")
 

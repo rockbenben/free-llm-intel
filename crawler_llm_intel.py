@@ -5018,7 +5018,7 @@ def corpus_gaps(index_payload: dict, body_entries: dict, root: Path) -> list[lis
     return gaps
 
 
-def duplicate_body_groups(index_payload: dict, body_entries: dict, root: Path,
+def duplicate_body_groups(index_payload: dict, root: Path,
                           min_chars: int = 200) -> list[list[str]]:
     """列出「不同条目行共用同一份正文」的组：[["vendor/slug", ...], ...]。
 
@@ -5026,26 +5026,26 @@ def duplicate_body_groups(index_payload: dict, body_entries: dict, root: Path,
     读者点任何一条看到的都是同一张全表（实测 12 组 129 行、约 2.5 MB 重复正文）。
     短于 `min_chars` 的正文不参与：几条本来就极短的更新撞车不是复制整页。
     **同一行的原文与中文内容相同不算**（源站本来就是中文，两侧本是同一份）。
+
+    文件按 `vendor/slug` 直接取，**不走台账的 en_path/zh_path**：丢过台账键的行
+    照样在盘上、照样发给读者，只查台账就会漏（实测 3 行整页正文因此隐身）。
     """
     fields = (index_payload or {}).get("fields") or []
-    if any(k not in fields for k in ("vendor", "slug", "url")):
+    if any(k not in fields for k in ("vendor", "slug")):
         return []
-    i_v, i_s, i_u = (fields.index("vendor"), fields.index("slug"), fields.index("url"))
+    i_v, i_s = fields.index("vendor"), fields.index("slug")
     import hashlib
     import fulltext as _ft
-    from urllib.parse import unquote, urlparse
     by_hash: dict[str, set] = {}
     for row in (index_payload or {}).get("articles") or []:
-        if len(row) <= max(i_v, i_s, i_u):
+        if len(row) <= max(i_v, i_s):
             continue
-        vendor, slug, url = row[i_v], row[i_s], row[i_u]
+        vendor, slug = row[i_v], row[i_s]
         if not slug or not vendor:
             continue
-        rec = (body_entries or {}).get(_ft.bodies_key(vendor, url)) or {}
-        for rel in (rec.get("en_path"), rec.get("zh_path")):
-            if not rel:
-                continue
-            p = root / rel
+        base = root / "docs" / "articles" / vendor
+        for name in (f"{slug}.en.md", f"{slug}.md"):
+            p = base / name
             if not p.is_file():
                 continue
             try:
@@ -5057,6 +5057,32 @@ def duplicate_body_groups(index_payload: dict, body_entries: dict, root: Path,
             by_hash.setdefault(hashlib.sha256(body.encode("utf-8")).hexdigest(), set()) \
                 .add(f"{vendor}/{slug}")
     return [sorted(rows) for rows in by_hash.values() if len(rows) > 1]
+
+
+def unledgered_body_files(index_payload: dict, body_entries: dict, root: Path) -> list[str]:
+    """列出「盘上有正文文件、台账却没这一键」的索引行：["vendor/slug", ...]。
+
+    正文按 `vendor\\t身份URL` 记账。重键（身份开始认 fragment）之后，文件跟着新
+    slug 落了盘、台账键却没跟上，这种行对所有「只看台账」的扫描**完全隐身**——
+    实测 3 行因此一直装着整页正文发给读者，重复检查与缺口检查都没报。
+    """
+    fields = (index_payload or {}).get("fields") or []
+    if any(k not in fields for k in ("vendor", "slug", "url")):
+        return []
+    i_v, i_s, i_u = fields.index("vendor"), fields.index("slug"), fields.index("url")
+    import fulltext as _ft
+    out = []
+    for row in (index_payload or {}).get("articles") or []:
+        if len(row) <= max(i_v, i_s, i_u):
+            continue
+        vendor, slug, url = row[i_v], row[i_s], row[i_u]
+        if not slug or not vendor:
+            continue
+        if (body_entries or {}).get(_ft.bodies_key(vendor, url)) is not None:
+            continue
+        if has_readable_body(root, vendor, slug):
+            out.append(f"{vendor}/{slug}")
+    return out
 
 
 def select_body_rows(rows: list[dict], vendors: list[str], limit: int = 0) -> list[dict]:
