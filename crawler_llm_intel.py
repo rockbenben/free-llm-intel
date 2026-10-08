@@ -4969,8 +4969,30 @@ def _body_html_for(art: Article, vendor: str, bodies: dict, feeds_dir: Path,
 UNREADABLE_STATUSES = ("fetch_failed", "index_page", "paywall")
 
 
+def has_readable_body(root: Path, vendor: str, slug: str) -> bool:
+    """盘上**读不读得出东西**：文件在，且 frontmatter 之后还有字。
+
+    只看文件在不在会被骗：`reclassify_bodies` 判成目录页时清空正文却留着文件，
+    于是一篇空文让「进了列表就得有可读的东西」这条不变量报绿。
+    读法不认识（缺 frontmatter）时**当它有正文**——宁可放过，别把真文章判成空。
+    """
+    import fulltext as _ft
+    base = root / "docs" / "articles" / vendor
+    for name in (f"{slug}.md", f"{slug}.en.md"):
+        p = base / name
+        if not p.is_file():
+            continue
+        try:
+            body = _ft.read_body_doc(p)[1]
+        except Exception:
+            return True
+        if (body or "").strip():
+            return True
+    return False
+
+
 def corpus_gaps(index_payload: dict, body_entries: dict, root: Path) -> list[list[str]]:
-    """列出「既没正文文件、台账也没记不可读原因」的行：[[vendor, slug, url], ...]。
+    """列出「读不出正文、台账也没记不可读原因」的行：[[vendor, slug, url], ...]。
 
     `body_entries` 是 `bodies.json` 里的 `bodies` 那层（键为 `vendor\\t身份URL`）。
     """
@@ -4987,8 +5009,7 @@ def corpus_gaps(index_payload: dict, body_entries: dict, root: Path) -> list[lis
         vendor, slug, url = row[i_v], row[i_s], row[i_u]
         if not slug or not vendor:
             continue
-        base = root / "docs" / "articles" / vendor
-        if (base / f"{slug}.md").exists() or (base / f"{slug}.en.md").exists():
+        if has_readable_body(root, vendor, slug):
             continue
         rec = (body_entries or {}).get(_ft.bodies_key(vendor, url))
         if rec and rec.get("en_status") in UNREADABLE_STATUSES:
@@ -5264,12 +5285,10 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
         _bodies = {}
 
     def _readable(vendor_id: str, url: str, slug: str) -> str:
-        zh = _repo / "docs" / "articles" / vendor_id / (slug + ".md")
-        en = _repo / "docs" / "articles" / vendor_id / (slug + ".en.md")
-        if zh.exists() or en.exists():
+        if has_readable_body(_repo, vendor_id, slug):
             return "1"
         rec = _bodies.get(_ft.bodies_key(vendor_id, url))
-        if rec and rec.get("en_status") in ("fetch_failed", "index_page", "paywall"):
+        if rec and rec.get("en_status") in UNREADABLE_STATUSES:
             return "0"
         return ""
 

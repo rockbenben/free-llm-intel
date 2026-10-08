@@ -6634,6 +6634,58 @@ class TestListedMeansReadable(unittest.TestCase):
         self.assertEqual(set(crawler_llm_intel.UNREADABLE_STATUSES),
                          {"fetch_failed", "index_page", "paywall"})
 
+    def test_empty_body_file_is_not_readable(self):
+        """文件在但正文空 ≠ 有可读的东西。
+
+        回归：`reclassify_bodies` 判成目录页时清空正文**却留着文件**，只看文件在不在
+        的话，29 行空正文会一边报 `readable=1`（读者点开是空的）一边让缺口检查报绿。
+        """
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            v = "demo"
+            (root / "docs/articles" / v).mkdir(parents=True)
+            ft.write_body_doc(root / "docs/articles" / v / "emptbody01.en.md",
+                              {"status": "index_page", "url": "https://demo.test/x"}, "")
+            ft.write_body_doc(root / "docs/articles" / v / "hasbod001.md",
+                              {"status": "translated", "url": "https://demo.test/y"}, "有正文")
+            ft.write_body_doc(root / "docs/articles" / v / "blankline.en.md",
+                              {"status": "ok", "url": "https://demo.test/z"}, "   \n\n  ")
+            self.assertFalse(crawler_llm_intel.has_readable_body(root, v, "emptbody01"),
+                             "frontmatter 之后没字 = 读不出东西")
+            self.assertTrue(crawler_llm_intel.has_readable_body(root, v, "hasbod001"))
+            self.assertFalse(crawler_llm_intel.has_readable_body(root, v, "blankline"),
+                             "只有一堆空白行也算读不出")
+            self.assertFalse(crawler_llm_intel.has_readable_body(root, v, "nosuchslug"),
+                             "厂商目录都没有 = 读不出")
+            # 缺口侧：台账只标 ok 却没有真正文 → 仍然是缺口（不能因为空文件躺在盘上就放过）
+            url = "https://demo.test/x#9"
+            rows = [self._row(v, "emptbody01", url)]
+            gaps = crawler_llm_intel.corpus_gaps(
+                self._payload(rows), {ft.bodies_key(v, url): {"slug": "emptbody01",
+                                                              "en_status": "ok"}}, root)
+            self.assertEqual([g[1] for g in gaps], ["emptbody01"],
+                             "空正文文件不许冒充「已经有正文」")
+            # 但记了不可读原因时空文件只是占位，不该算缺口
+            gaps2 = crawler_llm_intel.corpus_gaps(
+                self._payload(rows), {ft.bodies_key(v, url): {"slug": "emptbody01",
+                                                              "en_status": "index_page"}}, root)
+            self.assertEqual(gaps2, [], "标了 index_page 的行按钮本就不亮，占位文件无害")
+
+    def test_committed_artifacts_have_no_empty_body_claiming_readable(self):
+        """已提交索引里不许有 `readable=1` 却读不出正文的行——判据得在真产物上成立。
+
+        这条是上一条在**产物**上的落地：把「文件在」换成「正文在」之前，盘上有 29 行
+        满足「文件在、正文空、readable=1」。
+        """
+        repo = Path(__file__).resolve().parent
+        idx = json.loads((repo / "docs/feeds/articles.json").read_text(encoding="utf-8"))
+        f = {k: i for i, k in enumerate(idx["fields"])}
+        empty = [r[f["vendor"]] + "/" + r[f["slug"]]
+                 for r in idx["articles"]
+                 if r[f["slug"]] and r[f["readable"]] == "1"
+                 and not crawler_llm_intel.has_readable_body(repo, r[f["vendor"]], r[f["slug"]])]
+        self.assertEqual(empty, [], "这些行声明可读却读不出东西：%s" % empty[:10])
+
     def test_missing_slug_column_does_not_panic(self):
         self.assertEqual(crawler_llm_intel.corpus_gaps({"fields": ["title"], "articles": [["t"]]}, {}, Path(__file__).resolve().parent), [])
 
