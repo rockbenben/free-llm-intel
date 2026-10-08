@@ -6429,6 +6429,112 @@ class TestAnchorSectionSlicing(unittest.TestCase):
     def test_no_fragment_is_a_no_op(self):
         self.assertEqual(ft._slice_anchor_section(self.PAGE, ""), self.PAGE)
 
+    #: groq changelog 形状：条目标题自带指向本页锚点的链接，正文里有粗体小标题与 bullet。
+    GROQ = (
+        "### Added[MCP Connectors (Beta)](#mcp-connectors-beta)\n"
+        "\n"
+        "MCP Connectors give you Gmail, Calendar and Drive without custom servers.\n"
+        "\n"
+        "**Key Changes:**\n"
+        "\n"
+        "* Gmail reads your inbox\n"
+        "* Drive returns files\n"
+        "\n"
+        "Key changes shipped this week\n"
+        "\n"
+        "**Docs:** more here\n"
+        "\n"
+        "### Changed[Python SDK v0.30.0](#python-sdk-v0300)\n"
+        "\n"
+        "The Python SDK has been updated to v0.30.0, adding these models:\n"
+        "\n"
+        "* DeepSeek V4 supports tool calling\n"
+        "* Qwen3.6 supports vision inputs\n"
+        "\n"
+        "---\n"
+        "\n"
+        "Jul 15, 2025\n"
+        "\n"
+        "### Added[Third Entry](#third-entry)\n"
+        "\n"
+        "Third entry body.\n"
+    )
+
+    def test_heading_with_inline_anchor_link_slices_exact(self):
+        """行内 `](#锚点)` 精确命中 —— 英文 slug 过日期键会退化成纯数字，必须走这一档。
+
+        回归：判据只留「数字+汉字」时，`mcp-connectors-beta` 的键是空串，切片静默
+        退回整页（实测 7 条 groq 条目共用 42208 字符的整页目录）。
+        """
+        sec = ft._slice_anchor_section(self.GROQ, "mcp-connectors-beta")
+        self.assertIn("without custom servers", sec)
+        self.assertIn("Gmail reads your inbox", sec)
+        # 「紧跟的行是粗体标签（`**Docs:**`）而不是真 bullet」不能把这里判成下一条起点
+        self.assertIn("more here", sec)
+        self.assertNotIn("Python SDK", sec)
+
+    def test_body_sentence_is_not_an_entry_start(self):
+        """正文首句不得被当成下一条的开头 —— 否则切片在第一句处就收口。
+
+        这一条专门给「句末标点」守卫当证人：这里的正文以 `:` 收尾、后面**就是真
+        bullet**，「bullet 要带空格」那条拦不住它。回归实测：少了标点守卫时
+        `Python SDK v0.30.0` 那条只剩 95 字符的标题行，正文整段被切丢。
+        """
+        sec = ft._slice_anchor_section(self.GROQ, "python-sdk-v0300")
+        self.assertIn("DeepSeek V4 supports tool calling", sec)
+        self.assertIn("adding these models", sec)
+        self.assertNotIn("MCP Connectors give you", sec)
+
+    def test_next_entry_date_label_is_not_left_in_tail(self):
+        """切片尾部不许挂着**下一条**的日期标签 —— groq 页用 `---` + 日期分隔条目。
+
+        回归：不剥收尾时实测 13 条 groq 切片末尾带着 `---` 和下一条的 `Oct 29, 2025`，
+        读者会误认这条就是那个日期。
+        """
+        sec = ft._slice_anchor_section(self.GROQ, "python-sdk-v0300")
+        self.assertNotIn("Jul 15, 2025", sec)
+        self.assertNotIn("Third entry body", sec)
+        self.assertIn("Qwen3.6 supports vision inputs", sec)
+
+    #: Cloudflare Workers AI changelog 形状：日期标题下没有条目小标题，
+    #: 条目就是一行裸标题 + 紧跟的 bullet 清单，同一日期下可并列多条。
+    CF = (
+        "## 2026-06-16\n"
+        "\n"
+        "GLM-5.2 now available on Workers AI\n"
+        "\n"
+        "- `@cf/zai-org/glm-5.2` is now available with a 262,144 token context window.\n"
+        "- Read the changelog to get started.\n"
+        "\n"
+        "Moonshot AI Kimi K2.6 now available on Workers AI\n"
+        "\n"
+        "- `@cf/moonshotai/kimi-k2.6` supports tool calling and vision inputs.\n"
+    )
+
+    def test_plain_title_entry_headings_slice_per_entry(self):
+        """条目没有标题行时，按「裸标题 + bullet 清单」定位，同日期下两条各归各。"""
+        a = ft._slice_anchor_section(self.CF, "glm-52-now-available-on-workers-ai")
+        b = ft._slice_anchor_section(self.CF, "moonshot-ai-kimi-k26-now-available-on-workers-ai")
+        self.assertIn("262,144 token", a)
+        self.assertNotIn("kimi-k2.6", a)
+        self.assertIn("tool calling and vision", b)
+        self.assertNotIn("GLM-5.2", b)
+
+    def test_fence_interior_lines_are_not_starts(self):
+        """代码栅栏内的短行不是条目标题 —— 且屏蔽判定本身要有证人。
+
+        回归：本模块的栅栏正则一度与「剥译文包裹」的同名常量撞车，被静默覆盖，
+        于是块内 `curl` 这类行重新参与定位。断言 `_visible_lines` 的形状就是那道证人。
+        """
+        self.assertEqual(ft._visible_lines(["a", "```", "b", "```", "c"]),
+                         [True, False, False, False, True])
+        page = ("## 2026-06-16\n\nReal entry title\n\n- a bullet\n\n"
+                "```\ncurl\n\nnot a title\n```\n\nnext line of the same entry\n")
+        sec = ft._slice_anchor_section(page, "real-entry-title")
+        self.assertIn("not a title", sec)
+        self.assertIn("next line of the same entry", sec)
+        self.assertLess(len(sec), len(page))
+
 
 class TestReadFullButtonHonesty(unittest.TestCase):
     """「读全文」按钮不许给读者一个已知点不开的入口。

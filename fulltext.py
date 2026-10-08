@@ -509,15 +509,67 @@ def _is_entry_heading(line: str) -> bool:
 
 
 def _anchor_key(s: str) -> str:
-    """锚点匹配键：只留数字与 CJK 汉字。
+    """锚点的日期形态键：只留数字与 CJK 汉字。
 
     同一个锚点在 URL 与标题里是**两种写法**：MiniMax 发布说明的条目 URL 形如
     `#2026-年7-月31-日`（slug 规则多插了几个短横），而页面标题里的回链是
     `#2026-年7-31-日`。原样比对永远匹配不上，切片会静默退回整页 —— 实测就是
     「21 条条目共用一份整页正文」。归一到「数字 + 汉字」后两者收敛成同一个键。
+
+    只对**日期型**锚点成立。英文 slug 过这里会退化成纯数字
+    （`#python-sdk-v1.2.0-and-typescript-sdk-v1.1.2` → `120112`），互不相干的条目
+    会撞成同一个键 —— 实测 groq 有 4 条因此共用同一段错切片。所以它只作兜底档。
     """
     return "".join(ch for ch in unquote(s or "")
                    if ch.isdigit() or "\u4e00" <= ch <= "\u9fff")
+
+
+#: 锚点归一：空白与下划线变短横，其余非「字母数字 / 汉字」字符一律丢掉。
+#: 厂商页面的条目锚点就是这么从标题生成的，比对两侧都先过这一步。
+_SLUG_DROP_RE = re.compile(r"[^0-9a-z\u4e00-\u9fff-]")
+_SLUG_DASH_RE = re.compile(r"-{2,}")
+
+
+def _slug(s: str) -> str:
+    """标题 → 锚点 slug：`GLM-5.2 now available on Workers AI` → `glm-52-now-available-on-workers-ai`。"""
+    t = unquote(s or "").strip().lower()
+    t = re.sub(r"[\s_]+", "-", t)
+    t = _SLUG_DROP_RE.sub("", t)
+    return _SLUG_DASH_RE.sub("-", t).strip("-")
+
+
+#: 行内链接指向的锚点：相对形式 `](#frag)`，也含绝对地址 `](https://site/page#frag)`
+#: （groq 的条目标题用前者，MiniMax / siliconflow 的自链接用后者）。
+_ANCHOR_LINK_RE = re.compile(r"\]\((?:[^)#\s]*)#([^)\s]+)\)")
+_LINK_TEXT_RE = re.compile(r"\[([^\]]*)\]\([^)]*\)")
+#: 代码栅栏的**标记行**（不含内容）。别名与下方剥译文包裹的 `_FENCE_RE` 区分开：
+#: 两处同名会在 import 时静默互相覆盖，实测让「栅栏内不参与定位」从未生效。
+_FENCE_MARK_RE = re.compile(r"^\s*(```|~~~)")
+
+
+def _line_anchor_keys(line: str) -> tuple[set, set]:
+    """这一行可匹配的锚点形态：(行内链接的 slug 集合, 行文本的 slug 集合)。"""
+    frags = {_slug(f) for f in _ANCHOR_LINK_RE.findall(line)} - {""}
+    text = _LINK_TEXT_RE.sub(r"\1", line)
+    text = re.sub(r"^#{1,6}\s*", "", text).strip()
+    return frags, ({_slug(text)} - {""})
+
+
+def _visible_lines(lines: list[str]) -> list[bool]:
+    """每行是否可见标记（代码栅栏内部不算）。
+
+    groq 页面正文里有 ``` 代码块，块内的 `curl` 之类短行会被「独立短行」误认成
+    条目标题，把收尾边界提前。
+    """
+    flags: list[bool] = []
+    in_fence = False
+    for line in lines:
+        if _FENCE_MARK_RE.match(line):
+            in_fence = not in_fence
+            flags.append(False)
+            continue
+        flags.append(not in_fence)
+    return flags
 
 
 def _heading_level(line: str) -> int:
@@ -525,14 +577,104 @@ def _heading_level(line: str) -> int:
     return len(m.group(1)) if m else 0
 
 
+def _is_entry_start(lines: list[str], i: int, visible: list[bool] | None = None) -> bool:
+    """这一行是不是一条条目的开头。两种形状都算：
+
+    1. 标题行且是条目开头（判据见 `_is_entry_heading`）；
+    2. **独立成行的短标题，且紧跟 bullet 清单** —— Cloudflare Workers AI changelog
+       的条目没有自己的标题：`## 2026-06-16` 下面直接是
+       `GLM-5.2 now available on Workers AI`，再跟该条改动清单。只认标题行时这类
+       页面定位不到起点，21818 字符的整页被 14 条条目共用（实测）。
+
+    第 2 条的三个附加约束都是被实测逼出来的，缺一个就会把**正文**认成条目标题，
+    于是切片在第一条句子处提前收尾（实测 groq `Python SDK v0.30.0` 那条只剩 95
+    字符的标题行，正文整段丢了）：
+      * `visible`（代码栅栏外）—— 块内的 `curl` 之类短行不是标题；
+      * 下一非空行必须是真正的 bullet（`- ` / `* ` 后带空格）——
+        `**Key Changes:**` 这类粗体行不算；
+      * 本行不能以句末标点收尾 —— 那是句子，不是标题。
+
+    标题行（第 1 条）**不受 `visible` 约束**：栅栏的奇偶配对在真实页面上并不可靠
+    （groq changelog 实测有位错的示例块），拿它屏蔽标题会让 20 条条目全部定位不到
+    起点、集体退回整页。
+    """
+    line = lines[i]
+    if _HEADING_RE.match(line):
+        return _is_entry_heading(line)
+    if visible is not None and not visible[i]:
+        return False
+    if not line.strip() or len(line) > 120:
+        return False
+    if line.lstrip()[:1] in "-*>|`#":
+        return False
+    if line.rstrip()[-1:] in (".", "。", "!", "！", "?", "？", ":", "：", ";", "；"):
+        return False
+    if i > 0 and lines[i - 1].strip():
+        return False          # 紧贴上一行 → 是上一段的续行，不是新条目
+    j = i + 1
+    while j < len(lines) and not lines[j].strip():
+        j += 1
+    if j >= len(lines):
+        return False
+    return bool(re.match(r"^\s*[-*]\s+\S", lines[j]))
+
+
+def _find_entry_start(lines: list[str], frag: str) -> int:
+    """按「行内链接锚点精确 → 行文本精确 → 日期键相等」三档定位条目起点；无则 -1。
+
+    分档而不混合打分：高优先档命中过的行不再参与低档，且低档要求**相等**而非
+    包含 —— 否则 groq 那种 `v1.2.0 / v1.1.2` 的数字键会把不相干条目吸到一起
+    （实测 4 条不同条目错共用 1283 字符）。同档多行命中取第一行：变更日志自上
+    而下，页面顶部的目录链接会重复出现同一锚点，正文里那次才是条目本身。
+    """
+    tslug, tdate = _slug(frag), _anchor_key(frag)
+    visible = _visible_lines(lines)
+    for tier in ("link", "text", "date"):
+        for i, line in enumerate(lines):
+            if not line.strip():
+                continue
+            if tier == "date":
+                if tdate and tdate == _anchor_key(_LINK_TEXT_RE.sub(r"\1", line)):
+                    if _is_entry_start(lines, i, visible):
+                        return i
+                continue
+            frags, texts = _line_anchor_keys(line)
+            if tslug in (frags if tier == "link" else texts) and _is_entry_start(lines, i, visible):
+                return i
+    return -1
+
+
+#: 条目之间的收尾噪声：分隔线，以及**下一条**头顶的裸日期标签
+#: （groq changelog 实测 13 条切片结尾挂着 `---` + `Oct 29, 2025`，读者会以为
+#: 这条自己就是那个日期）。日期标签只在它后面紧跟边界时才削，正文一律不动。
+_TAIL_SEP_RE = re.compile(r"^\s*(?:---+|\*\*\*+|___+)\s*$")
+_TAIL_DATE_RE = re.compile(r"^\s*(?:[A-Z][a-z]{2} \d{1,2}(?:, \d{4})?"
+                           r"|\d{4}[-/.]\d{1,2}(?:[-/.]\d{1,2})?)\s*$")
+
+
+def _trim_entry_tail(lines: list[str], end: int) -> int:
+    """回退 `end`，剥掉切片尾部的分隔线与紧随其前的裸日期标签。"""
+    i = end
+    while i - 1 > 0 and (not lines[i - 1].strip() or _TAIL_SEP_RE.match(lines[i - 1])):
+        i -= 1
+    if i - 1 > 0 and _TAIL_DATE_RE.match(lines[i - 1]):
+        j = i - 1
+        while j - 1 > 0 and not lines[j - 1].strip():
+            j -= 1
+        # 日期标签上面就是本条正文（不是另一条标题）→ 它是下一条的抬头，削掉
+        if j - 1 > 0 and not _HEADING_RE.match(lines[j - 1]):
+            i = j
+    return i
+
+
 def _slice_anchor_section(md: str, frag: str) -> str:
     """从整页 markdown 里切出 `frag` 锚点那一条的段落；找不到就原样返回整页。
 
-    起点 = 锚点命中��标题行（标题文本经 `_anchor_key` 归一后含该锚点）。
-    终点 = 其后第一个「同级或更浅、且是条目开头」的标题 —— 判据见 `_is_entry_heading`
-    （日期型标题或带锚点链接），**不是单纯「下一个同级标题」**：MiniMax 每条下面紧跟的
-    `## MiniMax H3` 与日期标题同级，按同级切会把条目正文整段丢掉（实测只剩 92 字符的
-    日期行）。
+    起点 = `_find_entry_start`。终点 = 其后第一个**同级或更浅的条目起点**；起点是
+    非标题行（Cloudflare 形状）时，任意条目起点都能收尾。标题型起点还要求那个标题
+    是「条目开头」，判据见 `_is_entry_heading`（日期型标题或带锚点链接），**不是单纯
+    「下一个同级标题」**：MiniMax 每条下面紧跟的 `## MiniMax H3` 与日期标题同级，
+    按同级切会把条目正文整段丢掉（实测只剩 92 字符的日期行）。
 
     切不到 / 切出来太短都退回整页：宁可给多也不给空 —— 空正文会被 `detect_index_page`
     判掉、正文直接留空，读者那边就变成「点开什么都没有」。
@@ -540,30 +682,21 @@ def _slice_anchor_section(md: str, frag: str) -> str:
     if not frag:
         return md
     lines = md.splitlines()
-    target = _anchor_key(frag)
-    if not target:
-        return md
-    start = -1
-    for i, line in enumerate(lines):
-        m = _HEADING_RE.match(line)
-        if not m:
-            continue
-        # 标题里的回链指向本锚点，或标题文本本身就是锚点名
-        if target in _anchor_key(m.group(2)):
-            start = i
-            break
+    start = _find_entry_start(lines, frag)
     if start < 0:
         return md
-    level = _heading_level(lines[start])
+    level = _heading_level(lines[start]) or 99   # 非标题起点：任何条目起点都算边界
     end = len(lines)
+    visible = _visible_lines(lines)
     for j in range(start + 1, len(lines)):
-        if _heading_level(lines[j]) <= level and _is_entry_heading(lines[j]):
-            end = j
+        if _heading_level(lines[j]) > level:
+            continue     # 更深的标题是本条内部结构
+        if _is_entry_start(lines, j, visible):
+            end = _trim_entry_tail(lines, j)
             break
     section = "\n".join(lines[start:end]).strip()
     # 切片后太短说明锚点只定位到一个空标题，退回整页（宁可给多也不给空）
     return section if len(section) >= 80 else md.strip()
-
 
 _ENTRY_FIELDS = ("slug", "en_path", "zh_path", "en_status", "zh_status",
                  "translator", "title", "date", "captured", "body_sha", "src_lang")
