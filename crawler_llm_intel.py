@@ -5299,6 +5299,19 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
             f"{base}/llm-news-{vendor_id}.en.xml" if base else "",
             pairs[0][0].date, "en", _build, count_items=False)
 
+    # 本轮这一家已经没有英文正文了，就把它上一轮的 `.en.xml` 收掉。
+    # 不这么做会留下「文件还在、没人再写」的僵尸源：`write_opml` 按**文件是否存在**
+    # 决定列不列英文镜像，于是 OPML 继续把一份永远不再更新的旧快照指给读者
+    # （实测三家厂商的英文镜像正文被判定为整页复制后，vendors.json 已经不再引用，
+    # OPML 里却还挂着）。只动本轮参与统计的厂商，`--only` 局部跑不会牵连别人。
+    if clean_removed:
+        for _b, vid, _a, _t in per_vendor:
+            if vid in vendor_en_emitted:
+                continue
+            stale = out_dir / f"llm-news-{vid}.en.xml"
+            if stale.is_file():
+                stale.unlink()
+
     # ---------- vendors.json 索引 ----------
     _ordered = sorted(
         (

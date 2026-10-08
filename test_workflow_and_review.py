@@ -2103,6 +2103,28 @@ class TestSelfHostedRss(unittest.TestCase):
         self.assertFalse((self.out_dir / "llm-news-gone.xml").exists(), "已下线厂商的旧订阅源必须清理")
         self.assertTrue((self.out_dir / "llm-news-all.xml").exists())
 
+    def test_stale_english_feed_removed_when_vendor_goes_english_less(self):
+        """厂商还在、但本轮再也产不出英文镜像时，旧那份 `.en.xml` 必须收掉。
+
+        回归：英文正文被判定为整页复制并清空后，vendors.json 已不再引用该厂商的
+        `.en.xml`，而 `write_opml` 是**按文件在不在**决定列不列英文镜像源的 —— 于是
+        一份永远不再更新的旧快照会以「活的英文订阅源」挂在 OPML 上给读者。
+        """
+        self.out_dir.mkdir(parents=True)
+        stale = self.out_dir / "llm-news-vendor_e.en.xml"
+        stale.write_text("<rss>上一轮的英文镜像旧快照</rss>", encoding="utf-8")
+        # 纯中文标题 + 台账里这条已是 index_page：英文侧一条都不合格
+        (self.out_dir / "bodies.json").write_text(json.dumps({
+            "bodies": {"vendor_e\thttps://e.test/1": {"slug": "x", "en_status": "index_page"}}},
+            ensure_ascii=False), encoding="utf-8")
+        e = self._vendor("vendor_e", "Vendor E", [
+            crawler_llm_intel.Article(title="全新中文动态说明", url="https://e.test/1",
+                                      date="2026-01-02")])
+        crawler_llm_intel.write_rss_feeds(self.out_dir, [e], clean_removed=True)
+        self.assertFalse(stale.exists(), "本轮没出英文镜像，就不许留着上一轮那份")
+        self.assertTrue((self.out_dir / "llm-news-vendor_e.xml").is_file(),
+                        "中文源与英文侧互不影响")
+
     def test_no_rewrite_when_content_unchanged(self):
         a = self._vendor("vendor_a", "Vendor A", [
             crawler_llm_intel.Article(title="新文章", url="https://a.com/1", date="2026-01-01")])
