@@ -889,11 +889,14 @@ def validate_bodies(root: Path, bodies: dict) -> list:
 
 
 def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
-                 today: str, only_missing: bool = True,
+                 today: str, only_missing: bool = True, retry_unreadable: bool = False,
                  save: Callable[[dict], None] | None = None, flush_every: int = 20) -> int:
     """逐行抓正文写 `.en.md` 并 upsert `bodies`。`fetch(url)->(html,ok,status,final)` 注入。
 
     返回本轮新写/更新的条数。幂等：`only_missing` 时已 `en_status=ok` 的行跳过。
+    `retry_unreadable=True` 时连已标 `index_page` 的行也重抓（判定可能被源站改版
+    推翻）；已有真实中文译文（`zh_status=translated`）的行**始终**跳过，重抓不许
+    把精译冲掉。`fetch_failed` / `paywall` 本来就每天重试，与本旗标无关。
     抓不到 → `fetch_failed`，正文留空，绝不编造。给定 `save` 时每 `flush_every` 篇
     增量落盘一次（长批被中断也不丢进度；末尾再落一次由调用方负责）。
     """
@@ -913,9 +916,15 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             continue
         key = bodies_key(vendor, url)
         prev = bodies.get(key, {})
-        if only_missing and (prev.get("en_status") in ("ok", "index_page")
-                             or prev.get("zh_status") == "translated"):
-            continue
+        if only_missing:
+            done = (prev.get("en_status") == "ok"
+                    or prev.get("zh_status") == "translated")
+            # `index_page` 是**判定**而不是事实：标了就没人再看一眼，源站改版或
+            # 当初判错都翻不回来。`fetch_failed` / `paywall` 一向每天重试，不变。
+            if not retry_unreadable:
+                done = done or prev.get("en_status") == "index_page"
+            if done:
+                continue
         html, ok, _status, final = fetch(url)
         ex = extract_article_markdown(html or "", final or url)
         en_status = "ok" if ex["reason"] == "" and ok else status_for_reason(ex["reason"] or "empty")

@@ -6863,6 +6863,12 @@ class TestListedMeansReadable(unittest.TestCase):
             ns = crawler_llm_intel.build_arg_parser().parse_args(argv)
             self.assertEqual(ns.fetch_vendor, ["groq", "anyscale"],
                              "argparse 必须是 action=append，否则只剩最后一家")
+        # 逃生阀要从命令行真的传到 fetch_bodies 的闸门参数上
+        ns = crawler_llm_intel.build_arg_parser().parse_args(
+            ["--fetch-bodies", "--retry-unreadable"])
+        self.assertTrue(ns.retry_unreadable, "--retry-unreadable 必须存在并落到 args")
+        self.assertFalse(crawler_llm_intel.build_arg_parser().parse_args(
+            ["--fetch-bodies"]).retry_unreadable, "默认不重抓已判定读不到的行（CI 每日走默认）")
 
 
 class TestReadFullButtonHonesty(unittest.TestCase):
@@ -7678,6 +7684,57 @@ class TestFulltextLedgerFetch(unittest.TestCase):
             bodies = {}
             ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-05")
             self.assertEqual(ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-06"), 0)
+
+    def test_retry_unreadable_retries_only_judged_unreadable(self):
+        """`index_page` 是判定不是事实：只有显式重试才重抓，且有译文的行永远不碰。
+
+        回归的是「标了就永远翻不回来」：CI 每日巡检走 only_missing，标过 index_page
+        的行再也不会被看一眼。源站改版、或当初判错，都需要一个比 `--refresh`
+        （连好正文一起重抓）窄得多的出口。
+        """
+        with tempfile.TemporaryDirectory() as d:
+            url = "https://a.com/log#entry-2"
+            key = ft.bodies_key("openai", url)
+            rows = [{"vendor": "openai", "url": url, "title": "T",
+                     "date": "", "original_title": "T"}]
+            calls = []
+
+            def fetch(u, *a, **kw):
+                calls.append(u)
+                return (self._long_body(), True, 200, u)
+
+            def judged(status):
+                return {key: {"slug": "aaaa1111bbbb", "en_path": "", "en_status": status,
+                              "zh_path": "", "zh_status": "", "translator": ""}}
+
+            for status, retriable_by_default in (("index_page", False), ("paywall", True),
+                                                 ("fetch_failed", True)):
+                calls.clear()
+                bodies = judged(status)
+                ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-05")
+                self.assertEqual(calls, [url] * int(retriable_by_default),
+                                 "%s 默认%s" % (status, "每天重抓" if retriable_by_default
+                                                else "不再被看一眼"))
+                calls.clear()
+                bodies = judged(status)
+                n = ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-06",
+                                    retry_unreadable=True)
+                self.assertEqual(calls, [url], f"{status} 行带 retry_unreadable 应重抓")
+                self.assertEqual(n, 1)
+            # 已有真实中文译文的行：连重试都不碰（重抓会把精译冲掉）
+            calls.clear()
+            bodies = judged("index_page")
+            bodies[key].update({"zh_status": "translated", "zh_path": "docs/articles/openai/x.md",
+                                "translator": "agent"})
+            ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-07",
+                            retry_unreadable=True)
+            self.assertEqual(calls, [], "zh=translated 的行不许被重抓冲掉")
+            # 已有英文正文的行照旧跳过（重试不是重抓）
+            calls.clear()
+            bodies = judged("ok")
+            ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-08",
+                            retry_unreadable=True)
+            self.assertEqual(calls, [], "en=ok 的行仍应跳过")
 
     def test_pending_and_mark_translated(self):
         with tempfile.TemporaryDirectory() as d:

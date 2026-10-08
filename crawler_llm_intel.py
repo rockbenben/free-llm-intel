@@ -6396,6 +6396,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
                              "传多次即多厂商一批跑完）")
     parser.add_argument("--fetch-limit", type=int, default=0, help="本次最多抓多少篇正文（0=不限）")
     parser.add_argument("--refresh", action="store_true", help="正文抓取：忽略已有、全量重抓")
+    parser.add_argument("--retry-unreadable", action="store_true",
+                        help="正文抓取：已标 index_page / paywall 的行也重抓（判定可能被源站改版推翻），"
+                             "但不碰已有真实中文译文的行；比 --refresh 窄得多")
     parser.add_argument("--allow-browser", action="store_true",
                         help="正文抓取：requests 取不到时启用无头浏览器兜底（仅本地；CI 勿加）")
     parser.add_argument("--mark-translated", metavar="KEY", default="",
@@ -6471,6 +6474,7 @@ def main(argv: list[str] | None = None) -> int:
         with BrowserSession(enabled=args.allow_browser and not args.no_browser) as browser:
             written = fulltext.fetch_bodies(root, articles, bodies, fetch=_fetch_body,
                                             today=today, only_missing=not args.refresh,
+                                            retry_unreadable=args.retry_unreadable,
                                             save=lambda b: fulltext.save_bodies(
                                                 root / "docs/feeds/bodies.json", b))
         # 吸收子代理/人工写到磁盘的中文译文（单点写 ledger）

@@ -76,9 +76,10 @@ body_sha: <正文（去 frontmatter）的 sha256[:12]，用于脏检测/幂等>
 - 剥离：nav/header/footer/aside/script/style/社交/订阅框。启发式取「最大文本密度正文块」。
 - 明确失败返回 `markdown=""` + `reason`（`empty`/`scaffold`(SPA 壳)/`blocked`(反爬)/`paywall`），供上层映射状态。**抓不到不猜。**
 
-### C2 `fetch_bodies(...) · 子命令 --fetch-bodies [--only-missing | --refresh] [--allow-browser]`
+### C2 `fetch_bodies(...) · 子命令 --fetch-bodies [--only-missing | --retry-unreadable | --refresh] [--allow-browser]`
 - 入参源：`articles.json` 行（`url/vendor/date/title/original_title`）。
 - 默认**只补 `bodies.json` 缺失或 `body_sha` 过期**的条目（CI 每日走这条，保证增量、有界）。`--refresh` 全量重抓（本地回充用）。
+- `--retry-unreadable`：把已标 `index_page` 的行也纳入重抓。`index_page` 是**判定**不是事实（源站改版、或当初把真条目判成目录页），默认一旦标上就再也不被看一眼；`--refresh` 又能把已有正文一起冲掉，所以留这条窄出口。`fetch_failed/paywall` 本来就每天重试，与本旗标无关；**已有真实中文译文（`zh_status=translated`）的行任何模式都不重抓**，免得冲掉精译。
 - 逐条：`requests` 取页 → 命中 SPA 壳/空正文/反爬 →（**仅 `--allow-browser`**，即本地）无头浏览器兜底；否则按 C1 的 `reason` 落 `fetch_failed/paywall`。→ 写 `.en.md`（原子 rename）→ upsert `bodies.json` en 侧。
 - 幂等：已存在且 `body_sha` 未变则跳过。
 - **批量韧性**：增量落盘、可按 `--vendor`/`--limit` 切单元、线程本地 session、失败单条记账不拖垮队列。
