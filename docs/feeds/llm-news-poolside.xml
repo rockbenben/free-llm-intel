@@ -14,12 +14,84 @@
       <guid isPermaLink="true">https://poolside.ai/blog/poolside-on-dell</guid>
       <pubDate>Tue, 28 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Poolside on Dell: an efficient path for frontier AI inside your boundary</description>
+      <content:encoded><![CDATA[<h1>Poolside on Dell：在您的边界内实现前沿人工智能的有效途径</h1>
+<p>大多数企业级 AI 的讨论仍然始于一个云端假设：模型住在别处，数据去往模型，工作通过 API 完成。这一默认设置把许多组织推向了它们本不必面对的取舍：在能力与控制、速度与安全、实验与治理之间做选择——同时创造出一种让 AI 的经济性随 token 消耗线性增长的成本结构。</p>
+<p>运行在 Dell 上的 Poolside 为客户提供另一条路径：在自己边界内运行的前沿 AI，企业可以在更靠近自身数据的位置安全地生成 token，获得更好的性能、更强的治理和更可预测的经济性。它构建在 Dell 的企业级基础设施之上，底下是 NVIDIA 的加速计算平台、网络和 AI 软件，上面是 Poolside 的安全 agent 平台。</p>
+<p>对于高度受监管的团队，这很重要，因为它们的要求往往没有商量余地。国防、情报、金融服务、医疗和关键基础设施组织所处的环境里，敏感代码和数据不能脱离客户的掌控。气隙网络、STIG 加固镜像、获批硬件清单、已有的 ATO 边界、成型的采购路径，这些都不是边缘情况，它们就是运营模式本身。</p>
+<p>但本地部署的理由比监管指令宽泛得多。agentic AI 可能消耗好几个数量级的 token，而且它不是一份干净、可预测的 API 负载。随着采用规模扩大，agent 运行得更久、走更多步骤、调用更多工具，有时在产出有用结果之前已经做了大量工作。在按量计费的模型下，这种 token 的不确定性会直接变成成本的不确定性。</p>
+<p>有了本地部署，组织可以围绕已知的基础设施成本做规划，通过更高的利用率改善 token 经济性，并在自己的运营模式内部治理可用性，而不必依赖共享容量、上游限流或某家厂商的发布排期。团队不必把每一次用量上升都当成新的预算风险，而是可以专注于让 agent 在创造价值的位置上干活。</p>
+<p>访问与审计遵循同样的逻辑。身份经由既有的身份提供商流转。轨迹日志落在现有的安全工具里，包括 SIEM。数据留存遵循组织既有的策略。整个部署没有任何一环处在安全团队世界模型之外，因为没有任何一环被要求如此。贯穿其中的主线是控制。对于运行关键负载的组织，AI 必须运行在它们已经信任的高效基础设施、安全边界和运营模式之内。这不是配置上的偏好，而是能否使用 AI 的先决条件。</p>
+<p>大多数 AI 工具仍然假设相反的前提：团队可以把工作发到某个云服务，围绕某家厂商去调整自己的控制，或者接受对 agent 如何运作的有限可见性。</p>
+<p>正是这道差距决定了我们以这样的方式构建 Poolside，也决定了我们与 Dell 的合作为何重要。</p>
+<h2>最难的部署教会我们的事</h2>
+<p>差不多两年前，有人问 Poolside 能否把前沿 AI 带进大多数厂商从未触及的环境：气隙、STIG 加固、涉密、主权。在不到九个月里，Poolside 从原型走到了全球最安全的环境之一内部、拿到 ATO 批准的生产部署。我们认识到，这类部署没有统一的模板；但我们也证明了，路径是存在的。</p>
+<p>那部分工作塑造了我们对技术栈每一层的思考方式。Ubuntu 和 RHEL 按 DISA STIG 加固。RKE2 跑在涉密 Kubernetes 基线上。完全气隙运行，没有任何出站调用。身份、加密 secrets、对象存储和本地容器镜像仓库全部打包在边界之内。凭据在运行时注入，并自动从输出、日志和 agent 轨迹中脱敏。每一个 agent 动作都被记录成可检索的轨迹，可导出到组织的 SIEM。这些没有一样是事后补装的，它们是我们出发的地基，因为我们为之构建的那些团队把安全当作先决条件，而不是一个功能。</p>
+<p>此后我们一直在更难的问题上推进。我们的推理层是 vLLM 的自研变体，在客户实际运行的负载上比上游快得多，而且这个差距还在持续拉大。结果是单个节点在 SLA 之内能服务更多开发者，并且我们每交付一个版本，计算足迹都更高效。在这套足迹的最小一端，我们在 Dell Pro Max GB10 或 <a href="https://www.nvidia.com/en-us/products/workstations/dgx-spark/">NVIDIA DGX Spark</a> 这类边缘级硬件上运行我们的 Laguna XS 模型，早期结果很有力，针对的正是单开发者和小型团队的用例——这些场景此前没有合适又负担得起的本地方案。</p>
+<p>这条轨迹是一以贯之的：越来越多的 AI 技术栈正在离开远端云服务，进入客户自己掌控的基础设施，从安全的数据中心到更小的本地部署足迹。</p>
+<h2>Poolside on Dell</h2>
+<p>在 Dell 硬件上，Poolside 以交钥匙系统的形式交付，有两种配置。合适的路径取决于客户已经拥有什么样的基础设施，以及他们希望我们带来多少。</p>
+<p><strong>单节点 RKE2，完全自包含。 </strong>运行 Poolside 所需的一切都随交付包一起提供：跑在 STIG 加固 Ubuntu 上的 RKE2 Kubernetes 集群、PostgreSQL、承担 S3 兼容对象存储的 SeaweedFS、承担身份的 Keycloak、cert-manager、NVIDIA GPU operator、本地容器镜像仓库、推理栈，以及 Poolside Console。客户提供硬件。没有外部依赖，没有出站网络要求。大多数国防、情报和涉密客户走的是这条路，因为它能干净地落进已有的 ATO 边界之内。</p>
+<p><strong>用 Helm 装在客户的 Kubernetes 上，灵活。 </strong>对于运行自己 Kubernetes 平台的企业客户——无论是上游发行版、Red Hat OpenShift 还是托管的同类产品——由客户提供周边基础设施：容器镜像仓库、身份提供商、PostgreSQL、证书管理、ingress、storage class 以及 GPU operator。</p>
+<p>Poolside 通过 Helm 安装在它们之上。同一个平台，同一个 Console，同一套审计模型。变化的只是我们带来的部分与客户已经就位的部分之间的那道接缝。</p>
+<p>对于要把 Poolside 服务给数千名开发者的组织，我们也支持在 Dell 硬件上做多节点集群。多个企业机架节点作为一个 Poolside 集群运行，推理与平台服务分布在它们之间，同时向每一位用户呈现同一个 Console 和同一套审计模型。当单节点足迹无法覆盖全部用户群体、但部署又必须留在客户边界之内时，大型企业和联邦项目办公室走的就是这条路。</p>
+<h2>推出面向 Dell AI Factory 的 Poolside Blueprint</h2>
+<p>Dell 客户现在有了一条从采购订单到跑起来的部署之间更可复制的路径。</p>
+<p>面向 <a href="https://www.dell.com/en-us/dt/corporate/newsroom/announcements/detailpage.press-releases~usa~2026~03~dell-ai-factory-with-nvidia-delivers-proven-path-to-enterprise-ai-roi.htm">Dell AI Factory with NVIDIA</a> 的 Poolside Blueprint 是一套经过 Dell 验证的部署自动化，收录在 <a href="https://www.dell.com/en-us/lp/dt/automation-platform">Dell Automation Platform</a> 目录里。它把 Poolside 的安装包进 Dell 标准的编排、生命周期和验证工作流之中。一个预检校验器会在安装继续之前确认客户的硬件与周边基础设施符合该平台的要求。随后 Blueprint 按照 Dell 客户在其他 Dell AI Factory 解决方案上已经在用的同一套自动化模式，在其之上部署 Poolside。</p>
+<p>对于通过 <a href="https://www.dell.com/en-us/dt/corporate/newsroom/announcements/detailpage.press-releases~usa~2026~03~dell-ai-factory-with-nvidia-delivers-proven-path-to-enterprise-ai-roi.htm">Dell AI Factory with NVIDIA</a> 采购的客户，这带来了一条从硬件交付到运行中、受治理的 Poolside 环境的更可复制路径。Dell 带来企业级基础设施和部署自动化。NVIDIA 带来加速计算、网络和 AI 软件。Poolside 带来运行在其上的安全 agent 平台。合在一起，这给了客户一条从采购订单到生产部署更清晰的路线：安装前的未知项更少，途中的定制集成工作也更少。</p>
+<h2>从客户现状出发</h2>
+<p>高效部署只是通往生产的一半，另一半是采购。</p>
+<p>公共部门和受监管的企业买家，通常通过既有的合同载体、OEM 协议以及经销商关系来采用新技术，而这些他们的采购与安全团队早已熟悉。对于已经在大规模采购 Dell 基础设施的客户，Poolside on Dell AI Factory with NVIDIA 给了他们一条更熟悉的采用路线：它能与既有的采购动作对齐，而不必把每一次部署都强行塞进一条全新的厂商路径。这对客户团队很重要，因为采用安全 AI 的障碍很少只在技术层面，它同样在运营、商业和流程层面。从已获批的基础设施到受治理的部署这条路越顺，客户就能越快从评估走到真正的使用。</p>
+<h2>多条路径中的一条</h2>
+<p>Dell 硬件是 Poolside Platform 四条部署路径之一。客户也可以在自己的裸金属上部署 Poolside，在 AWS、Azure 或 Google Cloud 上已有的 VPC 内部署，或者通过 Helm 部署在客户自备的 NVIDIA AI 基础设施上。同样的基础模型、同样的 Console、同样的 agent 编排、同样的审计轨迹，在所有这些路径上都是一致的。</p>
+<p>这之所以重要，是因为这段旅程很少在同一处开始并在同一处结束。一个组织可能从安全机房里的一台塔式服务器起步，随着用户规模增长扩展到企业机架，再为一项相邻的、敏感度较低的工作接入某个区域的 VPC——全程都不需要更换底层平台。Poolside Platform 从一开始就是为这一点而设计的。</p>
+<h2>这让什么成为可能</h2>
+<p>对于那些数据、工作流和采购路径要求 AI 必须在自己边界内运行的客户，Poolside on Dell AI Factory with NVIDIA 满足这一要求的每一个部分。硬件是经过认证的。部署路径是经过验证的。平台就是为那些 cloud-first AI 工具往往难以采用、甚至无法采用的环境而构建的。而从第一天起，客户就保有着模型权重、审计轨迹、运维控制权，以及更高效的 token 经济性。</p>
+<p>对这些组织而言，本地的前沿 AI 就应该是这个样子。</p>
+<p><a href="https://poolside.ai/enterprise">→ 了解更多关于 Poolside Platform 的信息</a></p>
+<p><a href="https://poolside.ai/contact">→ 和我们聊聊在你的环境里部署 Poolside</a></p>
+<p>如果你正在琢磨这件事在你自己的基础设施里可以怎么运转，直接给我发邮件到 <a href="mailto:colin@poolside.ai">colin@poolside.ai</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Introducing Laguna XS 2.1</title>
       <link>https://poolside.ai/blog/introducing-laguna-xs-2-1</link>
       <guid isPermaLink="true">https://poolside.ai/blog/introducing-laguna-xs-2-1</guid>
       <pubDate>Tue, 21 Jul 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Introducing Laguna XS 2.1</h1>
+<p>今天我们发布 Laguna XS 2.1，它是我们的 Laguna XS.2 模型的升级版。</p>
+<p>Laguna XS 2.1 是一个总参数 33B 的 Mixture-of-Experts 模型，每个 token 激活 3B 参数，为本机上的 agentic coding 和长周期工作而设计。它与 XS.2 的架构相同，但在 SWE-bench Multilingual 上有显著提升，并且在终端类任务上表现更强。</p>
+<h2>XS 2.1 对比 XS.2</h2>
+<p>在一系列关键的 agentic coding 基准上，XS 2.1 相对 XS.2 都有改进。最大的提升出现在 SWE-bench Multilingual 上，上涨 5.4 个百分点至 63.1%。</p>
+<ul><li>Laguna XS 2.1 33B-A3B</li><li>Laguna XS.2 33B-A3B</li><li>Qwen3.6 35B-A3B</li><li>North Mini Code (Cohere) 30B-A3B</li><li>MAI-Code-1-Flash 137B-A5B</li><li>gpt-oss-120b 117B-A5B</li><li>Claude Haiku 4.5 -</li><li>GPT-5.4 Nano -</li></ul>
+<h3>SWE-bench Verified</h3>
+<p>SWE-bench Verified</p>
+<p>在 SWE-bench Verified 上解决的任务。</p>
+<h3>SWE-bench Multilingual</h3>
+<p>SWE-bench Multilingual</p>
+<p>在 SWE-bench Multilingual 上解决的任务。</p>
+<h3>SWE-Bench Pro</h3>
+<p>SWE-Bench Pro</p>
+<p>在 SWE-Bench Pro 上解决的任务。</p>
+<h3>Terminal-Bench 2.0</h3>
+<p>Terminal-Bench 2.0</p>
+<p>在 Terminal-Bench 2.0 上解决的任务。</p>
+<p>基准数据截至 2026 年 7 月 2 日。† 我们特意纳入了激活参数规模更大的 dense 模型，用以凸显 MoE 模型的相对效率。</p>
+<h2>更好的本地体验</h2>
+<p>XS 2.1 已经得到 vLLM、SGLang、NVIDIA TensorRT-LLM、HF transformers 和 Ollama 的支持，llama.cpp 支持也即将推出。我们同时放出三个量化 checkpoint——FP8、INT4 和 NVFP4——让 XS 2.1 可以部署在 VRAM 与算力预算更紧的配置里。我们还打算在不久之后提供量化的 GGUF checkpoint，作为我们原生 llama.cpp 支持的一部分。</p>
+<p>我们还为每一个 XS 2.1 checkpoint 开放了 DFlash speculator 模型的权重。我们训练这些 speculator 时在开销与接受率之间做了平衡。在我们的测试中，这些 speculator 模型把实际达到的 tok/s 提升到原来的两倍，让 XS 2.1 的本地推理比以往更快。</p>
+<p>我们以 256K 的上下文长度在 <a href="https://platform.poolside.ai/">  我们的 API</a> 上以及通过 <a href="https://openrouter.ai/provider/poolside">  OpenRouter</a> 提供服务。</p>
+<h2>一份更开放的许可证</h2>
+<p>我们采用 OpenMDW-1.1 授权 Laguna XS 2.1。</p>
+<p>做出这一改变，是为了支持面向社区的开放模型分发。OpenMDW-1.1 是完全宽松的许可，并且是为模型及相关产物而设计的，它给开发者和组织提供了一个更一致的框架，用来使用、修改和部署开放模型。</p>
+<p>我们很高兴支持 <a href="https://www.linuxfoundation.org/press/linux-foundation-releases-openmdw-1.1-nvidia-adopts-openmdw-for-cosmos-isaac-gr00t-ising-and-nemotron-ai-model-families">  NVIDIA 和 Linux Foundation 在 OpenMDW 上选择的方向</a>，我们认为这是为开放模型发布减少许可摩擦的一个有用步骤。</p>
+<h2>开始使用</h2>
+<ul><li><strong>下载权重</strong>，来自 Hugging Face 上的 <a href="https://huggingface.co/collections/poolside/laguna-xs-21">  Laguna XS 2.1 合集</a>——BF16、FP8、NVFP4 和 INT4。</li><li><strong>使用这个模型</strong>，可在 <a href="https://openrouter.ai/provider/poolside">  OpenRouter</a> 上（poolside/laguna-xs-2.1）或通过 <a href="https://platform.poolside.ai/">  我们的 API</a>。免费端点和付费端点都可用，付费定价与 XS.2 保持一致，为每 1M 输入 / 输出 / 缓存读取 token 分别 $0.10 / $0.20 / $0.05。</li><li><strong>在本地运行它</strong>，可用 Ollama、llama.cpp、TRT-LLM、vLLM 或 SGLang，并加上 DFlash draft model 以获得更快的推理。</li><li><strong>安装 <a href="https://poolside.ai/get-started">  pool</a></strong>，我们的终端 coding agent，用它获得与该模型搭配的最佳 agent 体验。</li></ul>
+<p>我们想看到人们用 XS 2.1 造出什么，我们也想要你的反馈。把两个模型放在一起对比试用，告诉我们 2.1 哪里更好、哪里还不够好。加入我们的 <a href="https://discord.gg/PtTS6EwXG">  Discord</a> 分享你的发现并与团队直接交流，或者通过 models@poolside.ai 或在 <a href="https://x.com/poolsideai">  X</a> 上找到我们。</p>
+<p><em>Laguna XS.2 将在 1 周之后从我们的 API 上下线。XS.2 仍会作为 <a href="https://www.baseten.co/library/laguna-xs/">  Baseten 的 Model Library</a> 的一部分保留，用于专属部署。</em></p>
+<p><strong>脚注</strong></p>
+<p>Laguna XS 2.1 的全部基准测试都是使用 Laude Institute 的 Harbor Framework，配合我们的 <a href="https://github.com/poolsideai/pool">  agent harness</a> 完成的，最多 500 步，并在沙箱执行环境中运行。Laguna XS 2.1 的所有基准测试都使用同一套采样参数：temperature=1.0、top_k=20 以及 top_p=1，开启 thinking 模式，上下文长度为 256K token。所有任务都在各自的沙箱里运行，使用 8 GB 内存/2 CPU，Terminal-Bench 2.0 除外，它使用 48 GB 内存/32 CPU。</p>
+<p>一些基础任务镜像和 verifier 被打过补丁，用以修复任务设置中固有的基础设施可靠性问题，比如 verifier 所用的外部仓库里第三方依赖的限流。四个 agentic 基准全都用打过补丁的镜像运行。我们还对 Laguna XS 2.1 的评估运行事后跑了一次 reward-hack judge，在 judge 联合评审与人工评审之后没有发现明显的 reward hacking。</p>
+<ul><li>SWE-bench Verified：每个任务 4 次尝试的 pass@1 平均值</li><li>SWE-bench Multilingual：每个任务 4 次尝试的 pass@1 平均值</li><li>SWE-Bench Pro：每个任务 2 次尝试的 pass@1 平均值</li><li>Terminal-Bench 2.0：每个任务 5 次尝试的 pass@1 平均值；48 GB 内存/32 CPU</li></ul>
+<ul><li>对每个基准上的所有对比模型，我们采用的都是公开引用到的最高分。所有情况下这些都是发布博文或同等材料里公布的官方分数，例外是 gpt-oss-120b 和 Claude Haiku 4.5：它们在 SWE-Bench Pro 和 Terminal-Bench 2.0 上的最高公布（verified）分数来自各自的官方排行榜。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>长上下文更新：Laguna XS.2 和 M.1</title>
@@ -27,6 +99,32 @@
       <guid isPermaLink="true">https://poolside.ai/blog/long-context-update-laguna-xs-2-and-m-1</guid>
       <pubDate>Thu, 02 Jul 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Long context update: Laguna XS.2 and M.1</description>
+      <content:encoded><![CDATA[<h1>长上下文更新：Laguna XS.2 和 M.1</h1>
+<p>我们非常高兴看到社区开始用我们的 Laguna XS.2 和 Laguna M.1 基础模型做构建。</p>
+<p>在两个模型开放后的 4 周里，我们已经看到超过 1 万亿 token 被处理，Laguna XS.2 的权重从 Hugging Face 下载超过 50,000 次。</p>
+<p>回应社区的反馈，现在两个模型都支持 256K 上下文。</p>
+<p>Laguna M.1 目前在我们的 API 和 OpenRouter 上都以 256K 上下文窗口提供服务。Laguna XS.2 今天晚些时候也会更新到 256K——更新后的配置已经<a href="https://huggingface.co/poolside/Laguna-XS.2">  在 Hugging Face 上可用</a>。</p>
+<p>两个模型仍然可以免费使用。</p>
+<p>Laguna M.1 依然是我们能力最强的模型。经过这次更新，它在 Terminal-Bench 2.0 上达到 45.8%，长程任务的表现有所提升。</p>
+<ul><li>Laguna M.1 225B-A23B</li><li>Laguna XS.2 33B-A3B</li><li>Qwen3.6 35B-A3B</li><li>DeepSeek-V4-Flash 284B-A13B</li><li>Claude Sonnet 4.6 -</li></ul>
+<h3>SWE-bench Verified</h3>
+<p>SWE-bench Verified</p>
+<p>在 SWE-bench Verified 上解决的任务。</p>
+<h3>SWE-bench Multilingual</h3>
+<p>SWE-bench Multilingual</p>
+<p>在 SWE-bench Multilingual 上解决的任务。</p>
+<h3>SWE-Bench Pro</h3>
+<p>SWE-Bench Pro</p>
+<p>在 SWE-Bench Pro 上解决的任务。</p>
+<h3>Terminal-Bench 2.0</h3>
+<p>Terminal-Bench 2.0</p>
+<p>在 Terminal-Bench 2.0 上解决的任务。</p>
+<p>基准数据截至 2026 年 5 月 26 日。</p>
+<p>两个模型仍然可以免费使用，可通过我们的 <a href="https://platform.poolside.ai/">  API</a>，也可在 <a href="https://openrouter.ai/provider/poolside">  OpenRouter</a> 上调用。马上开始：</p>
+<ul><li>安装 <a href="https://poolside.ai/get-started">  pool</a>，我们基于终端的编程智能体，以及</li><li>用 <a href="https://shimmer.run/">  Shimmer</a> 来构建，这是一套云端开发体验，用我们的模型反复迭代 web 应用、API 和 CLI。</li></ul>
+<p>脚注：Laguna M.1 与 Laguna XS.2 的全部评测都是使用 Laude Institute 的 Harbor Framework 完成的，配合我们的 <a href="https://github.com/poolsideai/pool">  agent harness</a>，最多使用 500 个 step，在沙箱执行环境中运行，配置为 8 GB 内存 / 2 个 CPU（Terminal-Bench 2.0 除外，见下文）。两个模型、所有评测都使用同一套采样参数：temperature=1.0、top_k=20。部分基础任务镜像和 verifier 被打过补丁，以修复任务编排本身固有的基础设施可靠性问题，比如 verifier 所使用的外部仓库里第三方依赖的限流。关于这些改动及其他发现的更多细节，将在此后的技术博客文章中给出。</p>
+<ul><li>SWE-Bench Pro：pass@1 均值，取 3 次运行的平均。</li><li>SWE-bench Verified：pass@1 均值，取 4 次运行的平均。</li><li>SWE-bench Multilingual：pass@1 均值，取 7 次运行的平均。</li><li>Terminal-Bench 2.0：pass@1 均值，取 5 次运行的平均。48GB 内存 / 32 个 CPU。</li></ul>
+<p>在每个基准上，对所有对比模型我们采用的都是其公开引用过的最高分。所有情况下，这些都是发布博客文章或同等渠道公布的官方分数。</p>]]></content:encoded>
     </item>
     <item>
       <title>AI，你的方式：引入 Poolside 平台</title>
@@ -34,6 +132,26 @@
       <guid isPermaLink="true">https://poolside.ai/blog/introducing-the-poolside-platform</guid>
       <pubDate>Tue, 26 May 2026 00:00:00 +0000</pubDate>
       <description>原文标题：AI, your way: introducing the Poolside Platform</description>
+      <content:encoded><![CDATA[<h1>AI，你的方式：引入 Poolside 平台</h1>
+<p>今天我们宣布 <a href="https://poolside.ai/enterprise">  Poolside 平台</a>：一套生产级的系统，用来在你的安全边界之内运行 AI 智能体，落在你业务需要它运行的任何地方。Poolside 平台的目标是帮企业采用 AI，同时不在安全和治理上做任何妥协。</p>
+<p>一个平台，用来管理要求最复杂的 AI。模型由你来选，而无论这个选择最终落在哪里，平台都会在那里接住你。</p>
+<p>今天绝大多数 AI 系统都是租来的：基于第三方 API 访问，token 费用你无法控制。而一次 Poolside 部署交给你的是对模型权重的完全掌控，以及一份可预期的订阅方案，并且带有完整的可见性、可审计性和遥测。这是一套企业级方案，为那些运营着全球最重要业务的企业而造。</p>
+<h2>我们为谁打造</h2>
+<p>Poolside 平台是为某一类特定的团队打造的：这类团队里，批准使用的基础镜像（base image）是一项政策规定；网络架构确保没有任何单个节点同时拥有 GPU 访问权和对外出网能力；过去两年里，他们的 CISO 被迫为某家 AI 厂商放松管控，因为没有真正的替代选项。现在有了 Poolside。</p>
+<p>在平台内部，智能体运行在开发者本来就在工作的地方——VS Code、Visual Studio、Zed、IntelliJ 或终端——并通过集中管理的 MCP server 接入团队真正在用的工具，例如 Slack、Jira、GitHub、Workday 和 Salesforce。每个会话都在容器化环境中运行，内置密钥管理和网络策略控制。每一个智能体动作，包括工具调用、文件编辑、推理步骤和决策，都会被记录成可检索的轨迹（trajectory）。凭证在静态存储时加密、在运行时注入，并会自动从输出中被脱敏。管理员集中定义边界，平台负责执行这些边界。</p>
+<p>四种部署方式：在你自己的裸金属服务器上；通过 Dell 这类合作伙伴，在交付即用的硬件上以气隙（air-gapped）方式部署；在你已有的 VPC 里，跑在 AWS、Azure 或 Google Cloud 上。</p>
+<p>还有真正和你一起把它交付上线的前沿部署研究工程师（Forward Deployed Research Engineers）。我们的 FDRE 与你的团队坐在一起，弄清楚在你具体的工作流中智能体在哪些环节创造的价值最大，在平台上与你一同构建，几周内就把第一个自动化工作流上线，然后继续加固和度量。</p>
+<p>可说的远不止这些。请到我们的企业页面了解更多，那里对 Console、沙箱执行、审计留存以及各种部署形态讲得更深入。</p>
+<p>让你的组织保持快速推进，同时不牺牲管控——对 AI 做出的每一个决策、每一个动作都拥有完全的可见性。</p>
+<h2>为什么是现在</h2>
+<p>快速演进的 AI 编程市场主要是靠云端 API 推进的，而这要求企业放松自身的安全保障与管控，或者为了避免落后而容忍危险的操作方式。企业值得更好的对待。AI 厂商不应该要求企业放弃已经确立已久的最佳实践，Poolside 不会这样要求。企业预计 AI 的可审计性与治理会在 2026 年成为主流优先事项 [[]](https://poolside.ai/blog/introducing-the-poolside-platform#83d77dd6884f)，把它们推到这个位置的并不是监管者，而是那些对在生产环境中运行 AI 负责的人。</p>
+<h2>这带来了什么</h2>
+<p>对于任何数据过于敏感、受监管过于严格、或过于战略而不能送出安全边界之外的团队，Poolside 平台让 AI 变得触手可及。</p>
+<p>一家银行一直在为期三个月的安全豁免之下悄悄使用某款 AI 编程工具——有了 Poolside，你不再需要为了团队的效率而在安全上妥协。一家军工承包商的 AI 使用政策早已跑在了可用于执行这些政策的工具前面——这意味着你的管控手段终于能匹配你的要求。</p>
+<p>客户已经用这个平台建出的东西让我们很兴奋。Hunted Labs——帮你保护软件供应链安全的公司——已经把 Poolside 纳入自己的全栈方案：</p>
+<blockquote>Poolside 从根本上改变了为安全计算环境编写软件的方式。Poolside 的模型……改变了我们在 Hunted 内部为客户构建安全软件的方式”</blockquote>
+<p>这就是我们想更多讲述的故事。不是因为演示会很炫目（尽管其中一些确实会），而是因为在这些环境里运行的工作流，恰恰就是最重要的那一批。</p>
+<p><a href="https://poolside.ai/enterprise">  → 了解更多关于 Poolside 平台的信息</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Laguna XS.2 和 M.1：深入探讨</title>
@@ -160,6 +278,67 @@
       <guid isPermaLink="true">https://poolside.ai/blog/introducing-laguna-xs2-m1</guid>
       <pubDate>Tue, 05 May 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Laguna XS.2 and Laguna M.1</description>
+      <content:encoded><![CDATA[<h1>Laguna XS.2 和 Laguna M.1 简介</h1>
+<h2>我们今天发布两个基础模型，并把两款产品投入 preview。</h2>
+<h2>重要</h2>
+<p>2026-05-26</p>
+<p>Laguna XS.2 和 Laguna M.1 现在以 256K 的上下文长度提供服务，并且在 SWE-bench Verified、SWE-Bench Pro 和 Terminal-Bench 2.0 上拿到了更高的分数。请阅读这篇<a href="https://poolside.ai/blog/long-context-update-laguna-xs-2-and-m-1">长上下文更新</a>。</p>
+<p>Laguna M.1 的<a href="https://huggingface.co/poolside/Laguna-M.1">开放权重</a>现已放出。</p>
+<p>Laguna XS 2.1 <a href="https://poolside.ai/blog/introducing-laguna-xs-2-1">现已上线</a>。</p>
+<p>今天我们向全世界发布两个基础模型，以及两款专注于 agentic coding 的产品。我们发布 Laguna M.1，一个 225B 的模型（激活 23B），它于去年完成预训练，现在将公开提供。</p>
+<p>我们同时把我们的下一代模型 Laguna XS.2 以开放权重形式发布。总参数 33B，激活参数 3B。Apache 2.0。今天在 <a href="https://huggingface.co/poolside/Laguna-XS.2">  Hugging Face</a> 上即可获取。</p>
+<p>两款模型都可以在有限时间内通过 <a href="https://platform.poolside.ai/">  我们的 API</a> 以及在 <a href="https://openrouter.ai/provider/poolside">  OpenRouter</a> 免费使用。</p>
+<p>为了在使用我们的模型时获得最好的体验，今天有两款产品进入 preview：</p>
+<ul><li>pool，我们的终端 coding agent，以及</li><li>Shimmer，一套云端开发体验，用来和我们的模型一起迭代 web 应用、API 和 CLI。</li></ul>
+<h3>我们迄今能力最强的模型</h3>
+<p>Laguna M.1 是一个总参数 225B、激活参数 23B 的模型，为 agentic coding 和长周期工作而打造。</p>
+<ul><li>Laguna M.1 225B-A23B</li><li>Devstral 2 123B dense†</li><li>GLM-4.7 355B-A32B</li><li>DeepSeek-V4-Flash 284B-A13B</li><li>Qwen3.5 397B-A17B</li><li>Claude Sonnet 4.6 -</li></ul>
+<h3>SWE-bench Verified</h3>
+<p>SWE-bench Verified</p>
+<p>在 SWE-bench Verified 上解决的任务。</p>
+<h3>SWE-bench Multilingual</h3>
+<p>SWE-bench Multilingual</p>
+<p>在 SWE-bench Multilingual 上解决的任务。</p>
+<h3>SWE-Bench Pro</h3>
+<p>SWE-Bench Pro</p>
+<p>在 SWE-Bench Pro 上解决的任务。</p>
+<h3>Terminal-Bench 2.0</h3>
+<p>Terminal-Bench 2.0</p>
+<p>在 Terminal-Bench 2.0 上解决的任务。</p>
+<p>基准数据截至 2026 年 4 月 28 日。† 我们特意纳入了激活参数规模更大的 dense 模型，用以凸显 MoE 模型的相对效率。</p>
+<h3>（超）小模型，大故事</h3>
+<p>Laguna XS.2。总参数 33B、激活参数 3B，它能在单张 GPU 上运行，并且在 agentic coding 上能与体量数倍于它的模型抗衡。这是我们的第一次开放权重发布，我们很高兴把它交到社区手中。</p>
+<ul><li>Laguna XS.2 33B-A3B</li><li>Qwen3.5 35B-A3B</li><li>Qwen3.6 35B-A3B</li><li>Devstral Small 2 24B dense†</li><li>Gemma 4* 31B dense†</li><li>Claude Haiku 4.5* -</li><li>GPT-5.4 Nano -</li></ul>
+<h3>SWE-bench Verified</h3>
+<p>SWE-bench Verified</p>
+<p>在 SWE-bench Verified 上解决的任务。</p>
+<h3>SWE-bench Multilingual</h3>
+<p>SWE-bench Multilingual</p>
+<p>在 SWE-bench Multilingual 上解决的任务。</p>
+<h3>SWE-Bench Pro</h3>
+<p>SWE-Bench Pro</p>
+<p>在 SWE-Bench Pro 上解决的任务。</p>
+<h3>Terminal-Bench 2.0</h3>
+<p>Terminal-Bench 2.0</p>
+<p>在 Terminal-Bench 2.0 上解决的任务。</p>
+<p>基准数据截至 2026 年 4 月 28 日。† 我们特意纳入了激活参数规模更大的 dense 模型，用以凸显 MoE 模型的相对效率。</p>
+<p>Laguna XS.2 是在我们的 Model Factory 里从零训练出来的，延续了由 Laguna M.1——我们迄今规模最大的模型——所开辟的工作。XS.2 在 5 周前开始预训练，而今天它已经完成全部后训练并发布。随着我们未来继续迭代 Laguna 家族并把它规模做大，预计我们会持续在开放的道路上拿出进展。</p>
+<p>我们的期望，是与来自全世界的反馈和协作紧密合作，加速朝前沿推进。</p>
+<p>Laguna M.1 就绝对能力而言仍然远远是我们最强的模型，虽然它比 XS.2 落后一代，我们依然很高兴把它交到开发者手里。</p>
+<p>这些模型出自我们 Applied Research 组织里大约 60 个人的工作，覆盖基础设施、架构、数据、预训练和强化学习。我们很高兴与你分享它们。</p>
+<h3>这对我们意味着什么</h3>
+<p>Poolside 是一家专注于 agentic 模型的基础模型实验室。预训练、后训练、agent RL，全部都在我们的 Model Factory 之内。今天是我们第一次面向公众交付模型。我们期待拿到所有人的反馈，从而持续交付能力越来越强的模型。</p>
+<h3>为什么 XS.2 选择开放权重</h3>
+<p>我们想看到人们用 Laguna XS.2 造出什么。你拿到的是权重、一份 Apache 2.0 许可证，以及按你自己的方式运行它的自由。</p>
+<p>西方的开放权重生态仍处于发展的早期。我们想改变这一点。而让我们的工作进步最快的方式，就是把它交到那些会去推动它的人手里。未来请期待我们在开放生态中带来更多。</p>
+<h2>开始使用</h2>
+<ul><li><strong>安装 <a href="https://poolside.ai/get-started">  pool</a>，</strong> 我们的终端 coding agent，用它获得与我们的模型搭配的最佳 agent 体验。两款模型都可以从我们自有的推理端点以及 OpenRouter 上使用。Laguna XS.2 可以在本地通过 <a href="https://ollama.com/library/laguna-xs.2">  Ollama</a> 获取，并原生支持 MLX：运行 <code>ollama launch pool --model laguna-xs.2</code></li><li><strong>在 <a href="https://shimmer.run/">  Shimmer</a> 里用两款模型构建</strong>，那是一个即开即用的 Virtual Machine 沙箱，预装了 Poolside Agent。构建 web 应用、API、CLI 等等，来试用 Laguna M.1 和 Laguna XS.2。</li><li><strong>使用我们的 <a href="https://platform.poolside.ai/">  API</a> 或 <a href="https://openrouter.ai/provider/poolside">  OpenRouter</a> 来与 Laguna M.1 &amp; XS.2 交互。</strong> 在 platform.poolside.ai 创建密钥，或者在 OpenRouter 上调用这些模型。限时免费。</li><li><strong>从 <a href="https://huggingface.co/poolside/Laguna-XS.2">  Hugging Face</a> 下载 Laguna XS.2 模型权重。</strong> 权重今天已经上线，采用 Apache 2.0。</li></ul>
+<p>想要更完整的技术故事——合成数据与 automixing、我们在 Muon 优化器上的工作、异步 on-policy agent RL、我们的 Titan 训练代码库，以及我们在内部使用的 agent harness——请查看我们的技术博客文章 <a href="https://poolside.ai/blog/laguna-a-deeper-dive">  A Deeper Dive</a>，并关注我们即将发布的技术报告。</p>
+<p>如果你是在初创公司、大学或研究机构里用模型构建的小团队，我们乐意提高速率限制，或应你的请求分享 Laguna M.1 的权重。发邮件到 <a href="mailto:models@poolside.ai">  models@poolside.ai</a>，或者在 <a href="https://x.com/poolsideai">  X</a> 上给我们发私信。</p>
+<p>脚注：Laguna M.1 和 Laguna XS.2 的全部基准测试都是使用 Laude Institute 的 Harbor Framework，配合我们的 <a href="https://github.com/poolsideai/pool">  agent harness</a> 完成的，最多 500 步，并在 8 GB 内存/2 CPU 的沙箱执行环境中运行（Terminal-Bench 2.0 除外，见下文）。两个模型、以及所有基准测试都使用同一套采样参数：<code>temperature=0.7</code> 和 <code>top_k=20</code>。</p>
+<p>一些基础任务镜像和 verifier 被打过补丁，用以修复任务设置中固有的基础设施可靠性问题，比如 verifier 所用的外部仓库里第三方依赖的限流。关于这些更新以及其他发现的更多细节，将在此后的某篇技术博文中说明。</p>
+<ul><li>SWE-Bench Pro：3 次运行的 pass@1 平均值。</li><li>SWE-bench Verified：4 次运行的 pass@1 平均值。</li><li>SWE-bench Multilingual：7 次运行的 pass@1 平均值。</li><li>Terminal-Bench 2.0：5 次运行的 pass@1 平均值。48GB 内存/32 CPU。</li></ul>
+<ul><li>对每个基准上的所有对比模型，我们采用的都是公开引用到的最高分。所有情况下这些都是发布博文或同等材料里公布的官方分数，例外有两处：Gemma 4 31B IT 公布的最高分是 <a href="https://qwen.ai/blog?id=qwen3.6-35b-a3b">  由 Qwen 团队报告的</a>；Claude Haiku 4.5 在 SWE-Bench Pro 和 Terminal-Bench 2.0 上的最高公布（verified）分数，则来自它们各自的官方排行榜。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>Tools of the Trade: C2C Activation Offloading on Grace Black…</title>
@@ -618,6 +797,24 @@
       <guid isPermaLink="true">https://poolside.ai/blog/fern-labs-acquisition</guid>
       <pubDate>Tue, 28 Apr 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Announcing the acquisition of Fern Labs</description>
+      <content:encoded><![CDATA[<h1>宣布收购 Fern Labs</h1>
+<p>Poolside 把企业转变为 AI 原生的、agentic 的组织。我们亲身体验到，在大组织内部构建能驱动价值的 AI，光有一个能力过硬的基础模型是不够的：它需要能够在生产环境中运行的 agent 系统，也需要一种高投入的推进方式，以及那些知道如何在失败会带来真实后果的地方部署它们的团队。</p>
+<p>正因如此，我们很高兴宣布 Poolside 收购了 Fern Labs，一家位于伦敦的 forward-deployed 研究工程公司，也是 Bridge 背后的团队——Bridge 是一个为高风险生产环境构建的 multi-agent 编排层。</p>
+<p>有了 Fern Labs，Poolside 把自身的前沿模型与 Model Factory 基础设施，同驻场部署 agent 的能力结合了起来，让客户能够完全在自己的安全边界之内设计、验证并规模化真正的 agentic 系统。</p>
+<h2>Fern Labs 打造了什么</h2>
+<p>Fern Labs 由 Ash Edwards、Alex Goddijn 和 Taylor Young 创立，此前他们曾在 Palantir 主导复杂的部署。Fern 的工作重心是长时间运行的 multi-agent 系统：它们能理解企业环境，并且可以被快速地调试、审计和改进。凭借他们 forward-deployed 的研究工程方法，这个团队直接嵌入客户一侧，共同设计工作流，在一个高风险用例上证明价值，再把学到的经验转化为产品。</p>
+<p>前沿模型的 agentic 能力在持续快速提升，为企业许多最关键的流程提供了彻底全新的做法。因此，如何把 agents 规模化地跑起来、如何让 multi-agent 系统在真正重要的任务上保持稳定、如何有效地拆解问题——这些既是艺术也是科学。Fern Labs 围绕 forward-deployed 研究工程师建立了一种文化，这些工程师在前线既能做工程，也能做 R&amp;D。</p>
+<h2>Poolside 与 Fern Labs 将如何共同加速</h2>
+<p>Poolside 在企业边界之内以及受监管行业里部署前沿 AI 系统。借助 Fern Labs 的软件与专业能力，我们能够加快 agents 进入私有客户环境的部署，在具体上下文中观察它们遇到的问题，把这些问题转化为可被强化学习塑造的问题，并训练模型在这些特定用例上表现出色——所有这些都使用我们现有的基础设施。</p>
+<p>要真正为客户交付价值，你需要三样东西：对客户问题域的清晰理解；对 agents 以及如何搭建 multi-agent 系统结构的深入了解；以及能够快速实验、安全部署的工具。</p>
+<p>再加上 Poolside 业界领先的 GTM 团队，这次收购加速了我们在世界上后果最重的那些环境里扩展 agents 的进程。</p>
+<h2>我们的客户将如何受益</h2>
+<p>把 forward-deployed 研究工程师、Bridge 与我们的模型搭配起来，Poolside 现在可以直接嵌入客户组织，针对他们最有价值的问题构建并部署定制的高性能 agentic 系统。我们的合作模式如下：</p>
+<ul><li><strong>落地</strong>在一个高风险问题上。通常，这是一个核心运营工作流，例如更快地解决事故、在生产环节更早发现质量问题，或者自动化客户 onboarding。</li><li><strong>构建</strong>一个 agentic 系统，用 Bridge 搭配 Poolside 模型，可度量地缩短 time-to-resolution、降低成本、提升吞吐量或增加收入。这个系统嵌入组织内部，在关键决策点上保持 humans in the loop。</li><li><strong>扩展</strong>到相邻的用例；每一次部署都会让下一次更快，因为新的用例建立在此前已经配置好的环境、流程和 agent 构件之上。随着时间推移，你会得到一个可规模化的 agent 劳动力，它创造出复利式的价值。</li></ul>
+<h2>建设面向 agentic 的企业</h2>
+<p>让 multi-agent 系统在高风险环境中可靠地运行，仍然是一个开放问题。要搞明白的东西很多：agents 之间协作的正确模式是什么？agents 如何处理不确定性，在无人监督地运行时又该如何从失败中恢复？我们如何让 agents 运行几个小时——很快就是几天——同时不牺牲可观测性与健壮性？</p>
+<p>这一切都会发生在边缘地带，也就是 agents 撞上真实约束的地方，比如数据安全。破解它需要既能构建 AI 系统又理解该领域的工程师。它需要一款支持快速迭代、又不会破坏已经部署好的东西的产品。它还需要一个能根据这些 agents 学到的东西不断改进的模型。Poolside 现在三样都有了：负责编排的 Bridge，一支已经证明能在安全且高度监管的环境里部署的团队，以及一个随每一次部署都在进步的模型。</p>
+<p>走到那一步需要规模化地部署并从这些部署中学习，从而弥合实验室研究与真实企业价值之间的差距。在 Poolside 增长的关键节点上能有 Fern Labs 加入团队，我们无比兴奋。</p>]]></content:encoded>
     </item>
     <item>
       <title>最后的润色</title>
@@ -690,6 +887,19 @@
       <guid isPermaLink="true">https://poolside.ai/blog/partnering-with-redpanda</guid>
       <pubDate>Tue, 18 Nov 2025 00:00:00 +0000</pubDate>
       <description>原文标题：Enabling the Agentic Enterprise with Redpanda</description>
+      <content:encoded><![CDATA[<h1>利用 Redpanda 实现代理企业</h1>
+<p>我们很高兴宣布与 Redpanda 达成战略合作伙伴关系。Redpanda 是面向企业的领先流式数据平台，我们要通过智能体（agent）与多智能体系统，在后果最重大的环境中交付垂直整合的 AI：政府、国防以及 Global 2000 企业。</p>
+<p>Poolside 构建基础模型、智能体和编排系统，改变企业中工作完成的方式。我们与 Redpanda 的合作，让 300 多个企业数据源在所有环境中即时、安全地供我们的智能体调用。</p>
+<p>我们正在朝向一个未来努力：企业能够真正大规模部署智能体，也就是代理企业（agentic enterprise）的基础设施。在你的防火墙之内，对你数据拥有经授权且可追溯的访问，是硬性要求。Poolside 为你的头等重要的工作而设计——那些既要求信任与可审计、又不能在交付的智能水平上打折扣的工作。</p>
+<h2>为什么说数据访问是缺失的那一块</h2>
+<p>随着智能体能力越来越强，它们需要安全、一致的数据访问，才能在现代企业高度复杂的环境中解决最难的问题。最聪明的模型—智能体系统，其效果只取决于它能拿到的上下文，其安全程度只取决于底层的那套授权框架。</p>
+<p>这次合作把 Poolside 的单智能体与多智能体系统（智能）、我们基于策略的智能体编排（控制），以及 Redpanda 的流式数据网格与分布式日志（上下文）结合在了一起。</p>
+<p>得到结果是一支可控、可观测的智能体队伍：智能体运行在由 Poolside 基础模型驱动的推理层里；一个灵活、高性能的查询引擎（而不是固定不变的工具集合）；清晰的行动策略；以及集中式编排——复杂度在数据面（data plane）里被统一管理。</p>
+<p>对企业内数据访问的人和智能体实施最小权限控制，同时在性能与安全上不做任何妥协。企业可以放心地把 Poolside 和 Redpanda 带到自己最敏感的数据环境中，因为我们完整支持自带云（BYOC）、本地部署（on-premise）和气隙（air-gapped）环境。</p>
+<h2>我们如何协同工作</h2>
+<p>我们正在与 Redpanda 一起，在他们的数据平台之上构建对智能体友好的抽象层，并由 Redpanda 收购 Oxla 一事进一步加持。Redpanda Connect 负责从 300 多个来源做数据接入；Oxla 现在是 Redpanda 智能体数据平面（Agentic Data Plane，ADP）的一部分，它把强大的查询引擎直接放到智能体手边，让实时数据更容易被拉取、过滤并整理成上下文。</p>
+<p>在我们的联合架构中，企业侧的消费方可以订阅、检视并批准数据访问事件——从而在所有智能体与关键专有数据的交互中，实现人在回路（human-in-the-loop）的控制和扎实的取证能力。</p>
+<p>这次合作把我们的触达面扩展到企业中的各类知识工作，因为我们的智能体现几乎可以对任何能想到的数据源采取行动——同时具备完整的可观测性与完整的控制权。</p>]]></content:encoded>
     </item>
     <item>
       <title>揭晓 Poolside 与 AWS 的第一方合作伙伴关系</title>
@@ -697,6 +907,23 @@
       <guid isPermaLink="true">https://poolside.ai/blog/unveiling-our-partnership-with-aws</guid>
       <pubDate>Tue, 28 Oct 2025 00:00:00 +0000</pubDate>
       <description>原文标题：Unveiling Poolside&apos;s first-party partnership with AWS</description>
+      <content:encoded><![CDATA[<h1>揭晓 Poolside 与 AWS 的第一方合作伙伴关系</h1>
+<p>今天，我们非常激动地宣布与 Amazon Web Services（AWS）建立一段具有变革意义的合作伙伴关系，Poolside 由此成为 AWS 的第一方产品。这一战略关系意味着 Poolside 的产品与模型现在可以直接向 AWS 签约获取，这是我们发展轨迹上的一个重要里程碑。</p>
+<p>一切始于差不多一年前——那时我们正想拿到 1,000 块 GPU，并找到一个能与我们一起扩规模的伙伴。我们的关系从今年早些时候的第一个训练集群，发展到现在这个 10,000 块 GPU 的集群；快进到今天，我们与 AWS 正在共同执行一份独特而有雄心的 go-to-market 计划，它从根本上加速着我们的未来。</p>
+<p>对于这一切意味着什么——无论是对我们的客户还是对我们自己——我们再兴奋不过了。我们在 AWS 身上找到了一支和我们一样深切关心客户、并且不懈执行的团队。</p>
+<h2>落到实践中……</h2>
+<p>第一方的 AWS 体验让企业能够像我们是一个原生 AWS 服务那样获取我们的产品和模型。这让企业无需额外的签约就能开始使用 Poolside：只需接受 AWS 的标准条款与条件，只需消耗他们已有的 AWS 消费承诺，就能获得他们对任何 AWS 服务所期待的同等级别的企业支持、安全与治理。借助 EC2 的可获得性以及无缝的 Amazon Bedrock 集成，企业可以立刻开始部署。</p>
+<h2>顺理成章的下一步</h2>
+<p>Poolside 从第一天起就是为企业而建的，因为我们能够部署在客户那一侧，也因为我们专注于把治理要求和数据隐私需求放在优先位置。在 Poolside，我们不会用客户数据来训练我们的基础模型——而我们能做到这一点，靠的是我们通过 Reinforcement Learning From Code Execution Feedback（也就是 RLCEF）来改进模型的方法。它让我们得以突破可用代码与推理数据的限制 [[]](https://poolside.ai/blog/unveiling-our-partnership-with-aws#6969f1982507)，大规模生成合成训练数据。这让客户同时得到两边的好处：开发者手中有精密的模型，同时又确信自己最重要的资产——他们的数据——保持私密。</p>
+<p>我们与 AWS 的合作伙伴关系以及紧密集成交付的正是这一点——它让客户能够在自己的 AWS Virtual Private Cloud 之内运行 Poolside，并借助 AWS 企业级的安全基础设施，把对自身 IP 的掌控留在手里，把 Poolside 部署在他们数据所在的地方。</p>
+<p>正如人们所说，这是一件大事。Poolside 基础模型的设计目标，是用客户的代码库和数据做微调，产出一个专有的、为客户定制的、面向软件工程的模型。把 Poolside 模型部署在数据存储的地方、部署在一家公司的防火墙之内、部署在这个世界上最安全的云上，并且不向我们回传任何数据——这正是我们核心原则的体现。我们相信，企业不应该为了构建自己的智能层而抵押未来，也不应该为此牺牲自己的安全或治理标准。</p>
+<p>在我们持续为客户带来更多选择的过程中，我们很高兴能用 AWS Trainium 芯片为我们的 malibu 和 point 基础模型提供推理算力。Trainium 为客户带来最优的价格性能，并提升可用性。从今天起，Poolside 基础模型既可以由 Trainium 驱动，也可以由 NVIDIA 芯片驱动。[[]](https://poolside.ai/blog/unveiling-our-partnership-with-aws#0625bf4e9c1f)</p>
+<p>尽管 Poolside on AWS 带来的体验无可比拟，我们依然致力于部署上的灵活性。我们继续支持 air-gapped 环境、on-prem 部署以及其他云环境，以满足企业多样化的需求。</p>
+<h2>加速我们的愿景</h2>
+<p>Poolside 的存在，是为了给全世界带来<a href="https://poolside.ai/blog/announcing-our-500-million-fundraise-to-make-progress-towards-agi">  无处不在的软件智能</a>。我们相信每个人都应该有能力构建和创造各种类型的软件，并打算在未来几年里把这件事变成现实：先为全球的开发者和企业提供软件辅助与 fullstack 解决方案。这段合作关系通过让我们在世界领先的云平台上变得可被获取，极大地加速了这个愿景。从我们的基础模型到微调过的企业解决方案，一切现在都可以直接通过 AWS 获得，背后是企业所信赖的基础设施与支持。</p>
+<h2>如何开始</h2>
+<p>目前我们把精力集中在高度复杂的环境上。如果你有兴趣通过 AWS 获取 Poolside，<a href="https://poolside.ai/form">  我们来聊聊</a>怎样才能把下一代面向软件工程 AI 带给你的工程师，同时守住你所在企业要求的安全与掌控。</p>
+<p>我们与 AWS 的合作是构建我们所有人都理应享有的那个 AI 未来的关键一步，对于即将到来的一切，我们再兴奋不过了！</p>]]></content:encoded>
     </item>
     <item>
       <title>载体和信标</title>
@@ -1063,6 +1290,34 @@ void our_memcpy(void* dst, void* src, size_t nbytes) {
       <guid isPermaLink="true">https://poolside.ai/vision/purpose</guid>
       <pubDate>Thu, 24 Jul 2025 00:00:00 +0000</pubDate>
       <description>原文标题：Our vision: Purpose</description>
+      <content:encoded><![CDATA[<p>2023-10-07</p>
+<h1>Poolside 通往 AGI 的旅程</h1>
+<p>Jason Warner</p>
+<p>CEO 兼联合创始人</p>
+<p>@ poolside</p>
+<p>Eiso Kant</p>
+<p>CTO 兼联合创始人</p>
+<p>@ poolside</p>
+<p>我们相信一个积极的技术未来，一个属于人类的丰裕未来；在那个未来里，AI 的进步会帮助我们推动科学、健康、住房、食物和教育的改善，让它们变得更好、更可负担、更容易获得。</p>
+<p>要到那里，我们需要发展出足够先进的人工智能，而今天我们距离它还很远。我们相信，人类所有最伟大的技术突破都可以追溯到持续的迭代——想法彼此叠加、不断复利。我们相信，在有生之年，神经网络将能够学习任何一切东西，并达到人类技能水平乃至超越它。</p>
+<p>我们相信通往 AGI 最快的路径，是掌握软件开发——那种长周期的、多步骤的、复杂任务的软件开发。在构建长周期任务的软件系统时，你需要对世界有一种理解和模型，要具备推理与规划的能力，更不用说还要能权衡各种备选方案。在我们看来，软件开发代表了构成人类智能的很多东西。它同时也是一种能力：随着我们持续改进它，它会对我们这个世界的进步产生巨大的、即时的正面影响。掌握软件可以泛化为能够思考、能够推理、能够规划，而这些共同构成了基础智能。所以，尽管我们并不是只做软件，但正是带着这份理解与洞察，才能解锁未来所有的 AI 能力。</p>
+<p>我们想朝着这样一个未来努力：人工智能如此地融入我们的生活，以至于大多数具有经济价值的工作都能交由机器完成，从而让人拥有选择如何度过自己时间的自由。</p>
+<h2>为这段旅程排好前进的顺序</h2>
+<p>通往这个未来的旅程很漫长，而那些推动人类走向更丰裕的雄心目标，只有在 Poolside 能够长期存在的前提下才可能实现。正因如此，我们非常强烈地认为，面向这个未来排好先后顺序至关重要。</p>
+<ul><li>### 第一步 通过打造面向软件开发的最强 AI，来辅助开发者构建软件</li><li>### 第二步 让「AI 主导、人类辅助」的交互成为构建软件的下一层抽象，从而让任何人都能构建软件</li><li>### 第三步 把这些能力从软件泛化到所有其他领域</li></ul>
+<p>我们相信，随着时间推移，人与机器的交互会从人类主导、AI 辅助，变成 AI 主导、人类辅助。</p>
+<p>我们在第一步里的第一个重大里程碑，是显著超越目前由通用模型保持的 state of the art。为此，我们专注于训练一个完全面向软件开发的大语言模型，并让它通过在数万个真实世界软件项目中完成数百万个任务来获得改进。</p>
+<p>我们把这种方法称为 Reinforcement Learning from Code Execution Feedback，之后会分享大量关于它的内容。</p>
+<p>我们有几条深信不疑、却并不固执坚持的信念（实证结果会告诉我们答案）：</p>
+<ul><li>要想突破当前的能力，你需要训练自己的基础模型</li><li>你没法靠微调走通这条路——主要能力是在训练基础模型时「涌现」出来的，并在微调阶段变得准确而有用的</li><li>规模很重要，更多的算力和数据能解决很大一类问题</li><li>并非所有 token 都是等价的——真正对我们的数据质量偏执到底，价值巨大</li><li>构建我们自己的训练技术栈，让我们能更快地迭代</li><li>合成数据生成——看起来有违直觉，但它确实有效，而且在代码上尤其有效。随着时间推移，我们猜测模型所训练的全部数据都会变成合成数据</li><li>是的，更大的模型更有可能展现出最强的能力，但一旦你有了它们，就能把它们蒸馏成在生产中有用小模型</li><li>要想让 LLM 在软件开发上进步，它们需要一个真实世界的环境，让它们能通过 self-play 来改进</li></ul>
+<h2>我们是谁，以及什么在驱动我们</h2>
+<p>我们相信，伟大的使命是由一小群人对所要解决的问题怀有深深的热爱与投入来完成实现的。他们坚韧、低 ego、心地善良，并且为这件事带来大量纯粹的智力。</p>
+<p>一家公司初创时形成的团队，是它能否成功最大的决定因素。正因如此，我们为我们组建起来的这支团队感到非常骄傲，也希望正在读这段文字的你，能考虑加入这个使命。</p>
+<p>与世界上一些</p>
+<p>顶尖人才</p>
+<p>一起工作，站在大规模应用研究与工程的最前沿。</p>
+<p>→ 查看在招职位</p>
+<p>→ 查看在招职位</p>]]></content:encoded>
     </item>
     <item>
       <title>Announcements</title>

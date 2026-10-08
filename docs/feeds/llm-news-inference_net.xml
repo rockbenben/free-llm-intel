@@ -14,6 +14,138 @@
       <guid isPermaLink="true">https://inference.net/blog/schematron-v2/</guid>
       <pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
       <description>完整标题：Schematron V2: Frontier HTML-to-JSON extraction at a fraction of the cost</description>
+      <content:encoded><![CDATA[<p>2026 年 4 月 16 日</p>
+<h1>Schematron V2：以极低的成本实现前沿级 HTML-to-JSON 提取</h1>
+<p>A</p>
+<p>Amar Singh</p>
+<h2>引言</h2>
+<p>今天我们发布 Schematron V2，这是我们专门化 HTML-to-JSON 提取模型家族的下一代产品。如果你是第一次接触这里：Schematron 是一族小型的、为目标而生的模型，它们把凌乱的 HTML 变成干净、结构化的 JSON，用大型通用 LLM 一小部分的成本和延迟，交付前沿级别的提取质量。</p>
+<p><a href="https://inference.net/blog/schematron/">Schematron V1</a> 已经在生产环境中，为那些在 web 规模数据上运营的公司支撑着海量的提取负载；我们很高兴发布把性能推进得更远的新一批变体。</p>
+<p>Schematron V2 引入两个新模型：Schematron V2 Small 和 Schematron V2 Turbo。Schematron V2 Small 的质量几乎追平我们第一代的 8B 模型，同时保持着 3B 量级的速度。Schematron V2 Turbo 为最大吞吐而优化，在单张 H100 上处理 4.14 次请求/秒（相比最初的 Schematron 3B 提升 2.5 倍），同时质量仍然超过上一代的 3B 模型。</p>
+<p>我们使用 <a href="https://inference.net/blog/introducing-inference-platform/">Inference platform</a> 训练 Schematron——这是我们专为训练高性能任务型 LLM 而打造的 LLM 精调引擎。两款 Schematron 模型今天都能通过我们在 <a href="http://inference.net">Inference.net</a> 上的 serverless API 调用。</p>
+<p>创建一个<a href="https://inference.net/register">免费账号</a>，或者查看我们的<a href="https://docs.inference.net/workhorse-models/schematron">文档</a>即可上手。</p>
+<h2>Schematron API</h2>
+<p>用下面的代码通过 Inference.net 的 serverless API 调用 Schematron V2。请务必设置好你的 <code>INFERENCE_API_KEY</code>，并把 <code>HTML</code> 变量指向你的 HTML 文档。</p>
+<pre><code>import os
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+class Product(BaseModel):
+    name: str
+    price: float = Field(
+        ..., description=(
+            &quot;Primary price of the product.&quot;
+        )
+    )
+    specs: dict = Field(
+        default_factory=dict,
+        description=&quot;Specs of the product.&quot;,
+    )
+    tags: list[str] = Field(
+        default_factory=list,
+        description=&quot;Tags assigned of the product.&quot;,
+    )
+
+HTML = '&lt;YOUR_HTML_DOC&gt;'
+
+client = OpenAI(
+    base_url=&quot;https://api.inference.net/v1&quot;,
+    api_key=os.environ.get(&quot;INFERENCE_API_KEY&quot;),
+)
+
+resp = client.beta.chat.completions.parse(
+    model=&quot;inference-net/schematron-v2-small&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: HTML},
+    ],
+    response_format=Product,
+)
+
+print(resp.choices[0].message.parsed.model_dump_json(indent=2))</code></pre>
+<pre><code>import os
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+class Product(BaseModel):
+    name: str
+    price: float = Field(
+        ..., description=(
+            &quot;Primary price of the product.&quot;
+        )
+    )
+    specs: dict = Field(
+        default_factory=dict,
+        description=&quot;Specs of the product.&quot;,
+    )
+    tags: list[str] = Field(
+        default_factory=list,
+        description=&quot;Tags assigned of the product.&quot;,
+    )
+
+HTML = '&lt;YOUR_HTML_DOC&gt;'
+
+client = OpenAI(
+    base_url=&quot;https://api.inference.net/v1&quot;,
+    api_key=os.environ.get(&quot;INFERENCE_API_KEY&quot;),
+)
+
+resp = client.beta.chat.completions.parse(
+    model=&quot;inference-net/schematron-v2-small&quot;,
+    messages=[
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: HTML},
+    ],
+    response_format=Product,
+)
+
+print(resp.choices[0].message.parsed.model_dump_json(indent=2))</code></pre>
+<h2>为什么这很重要</h2>
+<p>2025 年 9 月我们推出 Schematron V1 时，我们证明了小型的专门化模型可以在 HTML 提取上追平前沿 LLM，同时便宜 40-80 倍。社区的回应印证了我们早已知道的事：各地的团队都在试图从 web 上规模化地提取结构化数据，而成本一直是瓶颈。</p>
+<p>到了 V2，我们把质量与体积之比推进得更远。你可以拿到远更小的模型的速度，同时保持 8B 量级的成本。而如果吞吐是你的首要考虑，Turbo 变体让你处理页面的速度超过以往任何时候。</p>
+<h3>质量：缩小与 8B 的差距</h3>
+<p>我们使用与最初发布时相同的 LLM-as-a-judge 方法来评估 Schematron V2，由 GPT 5.4 按 1-5 分制为提取结果打分。</p>
+<p>LLM-as-a-Judge：各模型平均质量分</p>
+<p>Schematron V2 Small 得 4.060 分，让它处在与最初的 Schematron 8B（4.070）一箭之遥的位置，并明显领先于第一代的 Schematron 3B（3.909）。对多数生产负载来说，V2 Small 与 8B 之间的差别可以忽略。</p>
+<p>Schematron V2 Turbo 得 4.039 分，相对最初的 3B 仍然是一次显著跃升，而且它是在为速度而非质量做优化的情况下做到这一点的。</p>
+<p>为了给出参照：在这项 benchmark 上，两款 V2 模型都超过了 DeepSeek V3.2 和 GPT-5.4 Nano，而这两款都是体量远大于它们的模型。</p>
+<h3>吞吐：比 V1 快 2.5 倍</h3>
+<p>Schematron V2 Turbo 为高容量负载而生，在那里每一个毫秒、每一美元都算数。</p>
+<p>请求吞吐对比</p>
+<p>在单张 H100 上、输入 10k token、输出 500 token 的条件下：</p>
+<p><strong>Schematron V2 Small</strong>：2.47 次请求/秒</p>
+<p><strong>Schematron V2 Turbo</strong>：4.14 次请求/秒</p>
+<p><strong>Schematron 8B（V1）</strong>：1.63 次请求/秒</p>
+<p><strong>Schematron 3B（V1）</strong>：2.47 次请求/秒</p>
+<p>Turbo 模型达到 4.14 次请求/秒，相比最初的 8B 提升 2.5 倍，相比上一代的 3B 接近 1.7 倍。对于延迟敏感的抓取与爬取管线（想想面向实时交易的金融文档解析，或者实时价格监控），这种速度优势会迅速复利放大。</p>
+<h2>提升 LLM 的事实准确性：SimpleQA 结果</h2>
+<p>我们还重跑了 SimpleQA benchmark，它衡量的是当 Schematron 被用作 web 搜索增强管线中的提取层时，能在多大程度上提升事实准确性（以 GPT-5 Nano 作为基座模型，配合 Exa 搜索）。</p>
+<p>SimpleQA Benchmark 得分</p>
+<p><strong>Schematron V2 Turbo</strong>：79.42</p>
+<p><strong>Schematron V2 Small</strong>：83.10</p>
+<p><strong>Schematron 8B（V1）</strong>：85.58</p>
+<p><strong>Schematron 3B（V1）</strong>：75.47</p>
+<p><strong>GPT-5 Nano（不带搜索）</strong>：8.54</p>
+<p>Schematron V2 Small 达到 83.10 分，相比第一代的 3B 是一次 7.6 分的大幅提升，只比 8B 模型落后 2.5 分。即便是 Turbo 变体也拿到 79.42 分，相比最初的 3B 接近 4 分的增益，而处理页面的速度显著更快。</p>
+<p>这些结果强化了我们的核心结论：结构化提取从根本上改变了 LLM 使用 web 搜索的经济性。Schematron 不再把整页原始 HTML 塞进一个大模型（每次查询数以万计的 token），而是只提取那些真正重要的结构化数据，让 web 增强的事实准确性在规模化下变得可行。</p>
+<h2>定价</h2>
+<p>Schematron V2 的定价，是为了让互联网规模的提取人人可及：</p>
+<p><strong>Schematron V2：</strong> 每 100 万输入 token $0.10 – 每 100 万输出 token $0.25</p>
+<p><strong>Schematron V2 Turbo：</strong> 每 100 万输入 token $0.06 – 每 100 万输出 token $0.15</p>
+<p>按这些价格，每天处理 100 万个页面（假设每个页面 10k 输入 + 8k 输出 token）用 V2 3B 大约花费 $700/天，用 V2 3B Turbo 大约 $440/天。对于高容量负载，通过 dedicated instances 还可以拿到额外折扣。可以<a href="https://inference.net/meet-with-us/">与我们会面</a>，了解更多关于 dedicated capacity 的信息。</p>
+<h3>下一步：Schematron Pro</h3>
+<p>我们不会止步于此。Schematron Pro 正在开发中，目标是在保持相近请求吞吐的同时，达到比当前 8B 模型更高的准确率。对于需要最好提取质量、并且愿意在 3B 模型之上支付溢价的公司，Pro 就是答案。敬请期待。</p>
+<h3>开始使用</h3>
+<p>两款 V2 模型与最初的 Schematron 家族共享同样的核心能力：128K token 的上下文窗口，以及保证 100% 符合 schema 输出的严格 JSON 模式。用 Pydantic、Zod 或 JSON Schema 定义你的 schema，传入原始 HTML，拿回经过校验的、类型安全的数据。</p>
+<p>关于用法更多信息，请参阅我们的<a href="https://docs.inference.net/workhorse-models/schematron">文档</a>。</p>
+<p>Schematron V2 Small 和 V2 Turbo 的模型权重目前将继续闭源，只通过我们的 serverless API 提供。最初开源的 Schematron 3B 和 8B 模型仍然<a href="https://huggingface.co/inference-net/Schematron-8B">可在 Hugging Face 上获取。</a></p>
+<h3>开始提取</h3>
+<p>我们很想听听你在构建什么。用这些资源开始：</p>
+<p><a href="https://inference.net/register">创建账号</a>：用 $10 免费额度试用 Inference.net API</p>
+<p><a href="https://docs.inference.net/workhorse-models/schematron">文档</a>：阅读 Schematron 文档，学习如何调用 API</p>
+<p><a href="https://inference.net/meet-with-us/">预约会议</a>：与我们的团队见面，了解 dedicated instances 和批量定价</p>
+<p>我们等不及想看到你用更快、更便宜的提取做出什么。</p>
+<p>联系</p>
+<h2>与我们的研究团队会面</h2>
+<p>与我们的研究团队约一次通话，深入了解专门化语言模型（Specialized Language Models）如何削减成本并提升性能。</p>]]></content:encoded>
     </item>
     <item>
       <title>推理平台简介：监控、训练和部署自我改进的 AI 模型</title>
@@ -21,6 +153,82 @@
       <guid isPermaLink="true">https://inference.net/blog/introducing-inference-platform/</guid>
       <pubDate>Thu, 16 Apr 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Inference platform: Monitor, train, and deploy self-improving AI models</description>
+      <content:encoded><![CDATA[<p>2026 年 4 月 14 日</p>
+<h1>推理平台简介：监控、训练和部署自我改进的 AI 模型</h1>
+<p>S</p>
+<p>Sam Hogan</p>
+<h2>引言</h2>
+<p>今天我们推出 <a href="https://inference.net/register">Inference platform</a>，一个用于构建持续自我改进的 AI 模型的平台。</p>
+<p>Inference platform 是一个全栈平台，把监控、评估、训练和部署合并进单一产品。它专门为那些想要优化生产环境 AI 应用的团队而构建，它不是通用目的的 AI 研究工具。</p>
+<p>核心思路很简单：不去搭建那些试图逼近现实的合成环境，Inference platform 从你的应用里采样生产流量，并用它通过有监督微调来训练模型。你的生产数据就是你的训练环境。</p>
+<p>今天，Inference platform 已经能够训练出 Specialized Language Models，它们能在成本低多达 95% 的情况下追平甚至超过前沿质量。</p>
+<p>LLM-as-a-judge：各模型的平均质量得分</p>
+<h2>Inference platform 如何工作</h2>
+<p>Inference platform 像一款普通的 LLM tracing 工具一样装进你的代码仓库。它能与现有的 OpenAI 兼容和 Anthropic 兼容的 provider 一起工作——只需要换掉你的 base URL 并加上几个请求头。Inference Gateway 位于你的应用与你的模型 provider 之间，负责记录、分析并存储生产流量。</p>
+<p>用一条命令就能把 Inference platform 加到你的项目里。在你的项目根目录执行：</p>
+<pre><code>npm install -g @inference/cli &amp;&amp; inf instrument</code></pre>
+<pre><code>npm install -g @inference/cli &amp;&amp; inf instrument</code></pre>
+<p>这条命令会使用一个 AI coding agent 来分析你的代码库，并完成必要的改动，让请求带上正确的元数据经由 Inference platform 路由。之后你照常运行你的应用。每一次 LLM 调用都会被捕获，并出现在 Inference.net 的控制台里。</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url=&quot;https://api.inference.net/v1&quot;,
+    api_key=os.environ[&quot;INFERENCE_API_KEY&quot;],
+    default_headers={
+        &quot;x-inference-provider-api-key&quot;: os.environ[&quot;OPENAI_API_KEY&quot;],
+        &quot;x-inference-provider&quot;: &quot;openai&quot;,
+    },
+)
+
+response = client.chat.completions.create(
+    model=&quot;gpt-4.1&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello, world!&quot;}],
+)
+
+print(response.choices[0].message.content)</code></pre>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url=&quot;https://api.inference.net/v1&quot;,
+    api_key=os.environ[&quot;INFERENCE_API_KEY&quot;],
+    default_headers={
+        &quot;x-inference-provider-api-key&quot;: os.environ[&quot;OPENAI_API_KEY&quot;],
+        &quot;x-inference-provider&quot;: &quot;openai&quot;,
+    },
+)
+
+response = client.chat.completions.create(
+    model=&quot;gpt-4.1&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello, world!&quot;}],
+)
+
+print(response.choices[0].message.content)</code></pre>
+<p>关于如何上手的更多信息，请参阅我们的<a href="https://docs.inference.net/introduction">文档</a>。</p>
+<h2>Inference platform 的工作流</h2>
+<p>一旦流量开始流动，工作流就相当简单：</p>
+<p><strong>从流量构建数据集。</strong> Inference platform 把你录制下来的 LLM 调用变成训练数据集和评估数据集。真实流量意味着你的训练数据与你的模型实际会遇到的场景分布相匹配。</p>
+<p><strong>用 LLM-as-judge 做评估。</strong> 无法度量的东西就无法改进。Inference platform 帮你从已经拥有的数据出发搭建评估套件。你先为当前模型建立一个性能基线，然后以此为参照来衡量随后的每一次训练。</p>
+<p><strong>训练。</strong> Inference platform 的 Recipes 提供预先配置好的训练规则，包含一个基础模型、优化过的参数以及算力资源。平台负责基础模型选择、超参数和训练基础设施。评估会在训练之前、训练之中和训练之后自动运行，用来衡量质量。</p>
+<p><strong>部署。</strong> 训练好的模型部署到专属的 GPU 基础设施上。把应用切换到一个自定义模型只需要改一行代码。模型权重完全归你所有；可以在我们的基础设施上部署，也可以托管在你自己的私有 VPS 里。</p>
+<p>Inference platform 的自我改进飞轮</p>
+<p>从这里开始循环继续运转，由 Inference platform 管理整个训练循环。它摄取新的生产数据，生成训练与评估数据集，运行训练任务，并把产出的模型与生产基线做比较。新模型就绪之后，会被暂存起来等待最终评审与部署。</p>
+<h2>生产环境中的 Inference platform</h2>
+<p>Inference platform 的训练循环成本并不固定，取决于你所训练的基础模型规模以及训练所需的数据量。单次训练的费用从 25 美元一直到数千美元不等。Inference platform 已经在为生产环境里的自定义模型提供支撑：</p>
+<ul><li>面向专有编程语言的自我改进 coding 模型，已被一家公开上市的金融机构的数百名工程师使用</li><li>数据抽取模型，性能追平 Opus 4.6，端到端延迟 p50 为 150ms，成本只有它的 5%</li><li>卡路里估算模型，在质量、延迟和成本上都胜过前沿模型</li><li>HTML-to-JSON 抽取模型，例如 <a href="https://huggingface.co/inference-net/Schematron-8B">Schematron-8b</a>，被世界上一些最大的网页抓取公司使用</li><li>deep research agent，在成本与准确率的 Pareto 前沿上超越了当前水平。</li></ul>
+<p>未来几周里，我们会分享更多关于我们客户以及他们用 Inference platform 训练出的模型的故事。</p>
+<h2>Inference platform 与 RL 的对比</h2>
+<p>如今占据主流的后训练叙事，起步的地方就错了。你先花几周时间搭建一个环境，试图模拟你的模型部署之后要面对的真实工作。然后你花更多时间制定评分标准、加固 evals，并设法阻止模型学到错误的经验。训练结束之后你才发现，模型找到了某种办法去优化分数而不是优化工作本身，于是整个过程重新开始。</p>
+<p>这很昂贵，很慢，而且恰恰脆弱在工程师最讨厌的那种方式上：你可以在沙箱里把每件事都做对，却仍然几乎学不到任何东西来说明系统一旦上了生产会如何表现。AI 系统不可能在真空中被优化。如果目标是改进一个生产系统，那么事实的来源就应该是生产本身。</p>
+<p>我们构建 Inference platform，是因为我们认为 RL 当前所推崇的那些范式难得没有必要、产出很低，而且对大多数团队来说遥不可及。如果你正在生产环境里运行一个 AI 应用，你就已经在生成训练一个面向你的系统的前沿质量模型所需的数据了。而不用搭建 RL 环境就能捕获这些数据、进行评估并基于它训练的工具，在今天之前从来没有在单一地点同时存在过。</p>
+<h2>今天即可使用</h2>
+<p>Inference platform 今天以 public beta 形式开放。beta 期间由我们来承担训练与部署成本，所以如果你已经在生产环境里运行着一个应用或 agent，你就能免费体验完整的 observe-train-deploy 循环。</p>
+<p>我们为 Inference platform 准备了很多东西。随着时间推移，Inference platform 会承担改进循环中更多的部分，缩短从真实流量到一个更好模型之间的距离。如果你的 AI 系统已经在生产环境里，你手上已有的就足够开始了。</p>
+<p>在 <a href="http://inference.net">inference.net</a> 注册一个账号，或者查看<a href="https://docs.inference.net/get-started/record-first-call">快速上手指南</a>，里面有如何开始的详细说明。</p>
+<p>联系我们</p>
+<h2>与我们的研究团队见面</h2>
+<p>预约一次与我们研究团队的通话，进一步了解 Specialized Language Models 如何削减成本并提升性能。</p>]]></content:encoded>
     </item>
     <item>
       <title>How Inference.net trains Specialized Language Models that cu…</title>
@@ -452,12 +660,60 @@
       <guid isPermaLink="true">https://inference.net/blog/hybird-attention/</guid>
       <pubDate>Wed, 05 Nov 2025 00:00:00 +0000</pubDate>
       <description>原文标题：Hybrid-Attention models are the future for SLMs</description>
+      <content:encoded><![CDATA[<p>2025 年 11 月 3 日</p>
+<h1>混合注意力模型是 SLM 的未来</h1>
+<p>A</p>
+<p>Amar Singh</p>
+<h2>引言</h2>
+<p>Specialized Language Models 之所以有吸引力的一个主要原因，是相对于 GPT-5 这类大型通用模型，它们的参数数量很低。更小的模型每秒能产出更多 token，每个 token 所需的算力比更大的模型更少，最终带来更低的运营成本，以及在特定任务上更好的成本-性能比。</p>
+<p>虽然降低参数数量可以改善大规模运行 LLM 的经济性，但一个模型要多小仍然对特定任务上的有监督微调（Supervised Fine-Tuning，SFT）有用，这件事是有极限的——一个 1B 参数的模型也许能以 8B 参数模型 10 倍的速度产出 token，但它不太可能保持同样的准确率。</p>
+<p>简单说，一个 1B 参数的模型也许很快，但它也会……相当迟钝。</p>
+<p>那么，除了直接用一个更小的模型之外，我们还能怎样提升某个特定任务的总吞吐量？答案是混合注意力（Hybrid-Attention）。</p>
+<h2>混合注意力</h2>
+<p>在最近的一个项目里，我们需要把 HTML-to-JSON 转换任务的总 token 吞吐量最大化。HTML 文档往往很长（轻松就 100k+ token），即便是 8B 参数的模型也很难给出我们想要的吞吐量。我们把各种路子都试了一遍：更小的模型、MoE、推理引擎优化，甚至是在 AMD 上构建。这些路径都没有给出我们需要的性能。</p>
+<p>一次巧合的幸运之下，我碰到了 NVIDIA 的 <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2">Nemotron Nano v2</a>，它声称相比任何其他类型的模型都大幅提升了吞吐量。它是一个混合推理模型，尽管把它适配到我们的训练流程需要下一番苦功，但回报完全对得起这份投入。</p>
+<p>与只依赖 self-attention 机制的传统 transformer 不同，Nemotron Nano v2 把 <a href="https://huggingface.co/docs/transformers/en/model_doc/mamba2">Mamba-2</a> 状态空间层（约 92% 的层）与 Transformer self-attention 块（约 8% 的层）混合在一起。这种做法利用了 Mamba-2 在序列处理上的高效，同时在需要全局上下文混合的地方保留 transformer 块。最终得到的模型既保持了传统 transformer 的推理质量，又大幅降低了计算开销。</p>
+<p>Nemotron Nano v2 原本的训练过程也很有意思。首先，一个 12B 参数的基础模型用 FP8 recipe 在 20 万亿 token 上完成训练，然后上下文窗口被扩展到 128k。随后模型通过剪枝和蒸馏被压缩到 9B 参数，同时保留了 56 层以及混合层的排布模式。这个架构不含位置嵌入，并全程使用 RMSNorm。这一设计选择直接应对了语言建模里最大的挑战之一：KV cache 的显存和计算量随序列长度呈平方级增长。</p>
+<p>为了让 Nemotron Nano v2 在长上下文应用里真正发挥光彩，我们实现了若干补丁，确保能把长上下文训练塞进 GPU 显存。具体来说，使用 ring attention 让我们可以处理通常放不进显存的更长序列，办法是把计算分布到多台设备上。尽管他们的训练过程里用到了它，我们还是得调整它，让它能在 Huggingface Trainer 生态里工作，尤其是要适配 Tri Dao 的 Flash Attention 包。结果是，我们能够对上下文长度高达 500K token 的请求做微调。</p>
+<p>为了验证这个模型是否真的带来了差别，我们在一个高要求的科学摘要任务上，对 Nemotron Nano v2 和 Qwen 3 14B 做了全面的对比。在一个规模很大、结构化的科学摘要任务上微调之后，两个模型在一套 ensemble LLM-as-a-judge 评估下都表现得极为出色。Qwen 3 14B 的平均摘要质量略高一些，但 Nemotron Nano v2 紧随其后，稳稳落在强而可用于生产的摘要模型区间之内。一个配套的问答基准也呈现出类似的结果。两个模型都聚拢在强劲的商业基线附近。</p>
+<p>Nemotron 真正胜过一切的地方是它的吞吐量。在一套相同的 8×H200 配置上，使用 tensor parallelism 设为 8 的 vLLM，Nemotron 给出的端到端吞吐量比 Qwen 3 14B 高约 2.25 倍。具体数字讲述了一个很有说服力的故事：Nemotron 达到每秒 0.97 个请求，而 Qwen 是每秒 0.43；输出解码吞吐为每秒 4,880.76 token，相比之下 Qwen 是每秒 2,588.30。输入 prefill token 方面，Nemotron 达到每秒 16,943.69 token，而 Qwen 是每秒 7,516.54。</p>
+<p>在单请求场景下，Nemotron 的处理速度是每秒 76.17 token，而 Qwen 是每秒 39.59。虽然这些数字都比论文里的吞吐量数字（声称在 8k 输入/16k 输出的场景下 tokens/s 高出 6 倍）略低一些，但它仍然远超我们试过的其他任何优化。</p>
+<p>当所有人都在关注绝对数值时，有一个关键指标我认为是 Nemotron Nano 目前处于领先位置的：吞吐量与成本之比。微调模型的整套权衡，都是围绕改善成本、吞吐量和延迟，同时尽力维持质量。虽然在同一个数据集上它的微调效果比 Qwen 稍差一些，但它靠喷涌般的 token 输出把这点补了回来。在你需要训练一个模型去处理海量数据集的场合（我们很快就会宣布相关内容），这个模型应该是值得考虑的宝贵资产。注：完整的方法论、数据集构成以及详细的评估拆解，将在未来某篇博客里分享。</p>
+<p>参考：<strong>Nemotron Nano v2</strong>：<a href="https://arxiv.org/abs/2508.14444">https://arxiv.org/abs/2508.14444</a>、<a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2">https://huggingface.co/nvidia/NVIDIA-Nemotron-Nano-9B-v2</a></p>
+<p>联系我们</p>
+<h2>与我们的研究团队见面</h2>
+<p>预约一次与我们研究团队的通话，进一步了解 Specialized Language Models 如何削减成本并提升性能。</p>]]></content:encoded>
     </item>
     <item>
       <title>Announcing our $11.8M Series Seed</title>
       <link>https://inference.net/blog/seed-round/</link>
       <guid isPermaLink="true">https://inference.net/blog/seed-round/</guid>
       <pubDate>Mon, 03 Nov 2025 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>2025 年 10 月 14 日</p>
+<h1>宣布完成 1180 万美元种子轮（Series Seed）融资</h1>
+<p>S</p>
+<p>Sam Hogan</p>
+<h2>引言</h2>
+<p>我们很高兴地宣布，已经完成 1180 万美元的种子轮（Series Seed）融资。本轮由 <a href="https://multicoin.capital">Multicoin Capital</a> 和 <a href="https://a16zcrypto.com/accelerator/">a16z CSX</a> 领投，<a href="https://topology.vc">Topology Ventures</a>、<a href="https://f.inc/">Founders, Inc.</a> 以及一批出色的天使投资人参与投资。</p>
+<p>Inference.net 让企业能够训练并部署自己的定制 AI 模型，这些模型在各自任务上胜过通用模型，而成本只是后者的一小部分。这笔资金将加速我们的使命：帮助企业掌握自己 AI 命运的主动权。</p>
+<h2>岔路口</h2>
+<p>每一家用 AI 做构建的公司都会面临一个关键挑战：要么为通用模型向 OpenAI、Anthropic 和 Google 支付难以承受的价格，要么选用更便宜的替代品并在质量上做出妥协。这种对前沿实验室（frontier lab）的依赖会造成三个根本性风险：第一，不断失控的成本限制了规模。当用量从数千次增长到数十亿次请求时，API 费用可能吞噬掉整个预算。第二，公司无法掌控核心业务基础设施，因而在价格调整、模型弃用和服务中断面前十分脆弱。第三，当所有人都使用同一批模型时，真正的差异化就不可能实现。</p>
+<p>公司不应该被迫在质量与成本之间二选一。他们不应该被迫把敏感的客户数据发送到第三方服务器上。他们也不应该把自身的竞争优势建立在并不由自己掌控的基础设施之上。</p>
+<h2>我们现在的位置</h2>
+<p>在过去一年里，我们为全球一些增长最快的 AI 原生公司训练并部署了定制语言模型。我们的做法很直接：找出企业每天重复运行数百万次的特定、可重复的任务，然后训练专门针对这些任务做到极致的模型。无论是从文档中抽取数据、为图片生成描述，还是做内容分类，我们的模型都在各自的专门领域里交付更优的结果。</p>
+<p>结果本身就能说明问题。定制模型在性能上可以匹敌甚至超过前沿模型，同时运行速度快 2–3 倍、成本最多低 90%。这些模型比 GPT-5 级别的系统小最多 100 倍，证明了针对特定任务做优化在性价比上胜过泛化能力。</p>
+<p>专用模型改变了大规模使用 AI 的经济账。每年在 API 调用上花费数百万美元的公司可以把成本降低最多 90%。此前受延迟限制的应用现在可以服务实时场景。在意数据隐私的企业可以在自己的基础设施上运行模型。最重要的是，公司获得了对支撑其核心产品的 AI 模型的完全控制权。</p>
+<p>除了经济账，定制模型还提供持久的竞争优势。当每家公司都能用上同样的前沿模型时，差异化就消失了。用专有数据训练、针对特定工作流优化的定制模型，会变成竞争对手无法复制的护城河。你的 AI 真正属于你，只属于你。</p>
+<h2>向前</h2>
+<p>未来十年，AI 发展会并行推进两条轨道。前沿实验室会继续推进边界，用庞大的通用模型处理编程、创意写作、复杂推理这类开放式任务。这些模型仍然昂贵，但对探索性用例不可或缺。</p>
+<p>与此同时，一个新的专用模型生态会承担起那些重复、高流量的任务，而这类任务构成了企业 AI 使用的大部分。公司会依赖前沿实验室获取最前沿的能力，同时自己拥有并运行用于核心业务的定制模型。</p>
+<p>当公司从原型走向规模化生产时，依赖前沿实验室的成本就变得难以承受。与此同时，开源生态已经成熟了许多，新的后训练（post-training）技术让用少得多的参数匹敌前沿能力成为可能。</p>
+<p>这笔融资让我们能够把研发工作拓展到模型与基础设施性能的新的前沿，同时扩大我们服务更多公司的能力。</p>
+<h2>加入我们</h2>
+<p>从&quot;租用智能&quot;到&quot;拥有智能&quot;的转变已经开始。我们的目标是加速这一进程。如果你在闭源 AI 供应商上每月花费超过 50,000 美元，我们可以在最短 4 周内帮你削减成本并提升性能。<a href="https://cal.com/team/inference-net/custom-model-training-intro-call">预约一次通话</a>与我们的研究团队进一步了解详情。</p>
+<p>联系我们</p>
+<h2>与我们的研究团队会面</h2>
+<p>预约与我们研究团队的通话，了解更多关于 Specialized Language Models 如何削减成本并提升性能的信息。</p>]]></content:encoded>
     </item>
     <item>
       <title>Schematron：大规模针对 HTML -&gt; JSON 进行训练的LLM</title>
