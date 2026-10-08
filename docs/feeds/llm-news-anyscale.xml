@@ -1830,6 +1830,207 @@ assert return_code == 0</code></pre>
       <guid isPermaLink="true">https://anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale</guid>
       <pubDate>Fri, 26 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Scale Robot Policy Evaluation with Ray</description>
+      <content:encoded><![CDATA[<h1>使用 Ray 进行规模机器人策略评估</h1>
+<p>作者：Ian Jordan 博士、Alicia Chua、Artur Niederfahrenhorst 和 Omar Shorbaji | 2026 年 6 月 26 日</p>
+<p><em>评估一个机器人基础模型，意味着要把重量级的 GPU 推理和重量级的 GPU 物理仿真器放在同一个闭环里，成千次地反复运行。本文展示如何用 Ray 与 Isaac Lab 把这两类负载分离开来，并在 Anyscale 上让它们各自独立扩缩。</em></p>
+<h2>引言</h2>
+<p>策略评估是机器人学不可或缺的一环。真机评估慢、昂贵，而且不安全。相比之下，仿真安全、可复现、可并行，单次试跑的成本也很低。因此基于仿真的评估（sim-eval）是一件重要的工具。</p>
+<p>然而，仿真在消除物理评估瓶颈的同时，又把它换成了一个分布式系统问题。评估机器人基础模型，意味着要在数百乃至数千次 rollout 中同时运行 GPU 密集的仿真和 GPU 密集的策略推理。规模一大，就会横跨多块 GPU 和多个节点。</p>
+<p>由此出现三个挑战：</p>
+<ul><li><strong>它是闭环，不是一趟批处理。</strong> 策略推理与仿真逐步交替，一方的输出喂给另一方的输入。你无法把它们解耦成彼此独立的离线阶段。</li><li><strong>两个 GPU 密集的负载无法共用一个进程或一块 GPU。</strong> 一个 3B 的视觉-语言-动作（VLA）模型要占一块 GPU，Isaac Sim 的物理与渲染也要占一块 GPU。把它们放在一起，就会争抢显存与算力，互相拖慢。把它们放进同一个进程，两边的运行时则会直接冲突。</li><li><strong>数百次 rollout 应当共享一份策略，而不是各自重新加载。</strong> 每次 rollout 都需要自己的仿真器，但它们全都可以由一小批共享的策略副本来服务。两者叠加，扩大 rollout 数量就意味着要拉起 N 份 3B+ 模型的副本，这既浪费，在显存上也往往做不到。</li></ul>
+<p>Ray 与 Anyscale 直接解决了这三个难题。</p>
+<ul><li><strong>闭环执行：</strong> Ray task 与 actor 把仿真器作为彼此隔离的进程运行在整个集群上。每个仿真器一步步推进环境，调用策略服务取一个动作，施加该动作，然后重复。这让评估保持在线、闭环，而不是被迫塞进一条离线批处理管线。</li><li><strong>分离 GPU 密集的负载：</strong> Ray Serve 把策略作为一个可自动伸缩的服务来运行，用的正是生产环境中服务 LLM 的同一套原语。Isaac Lab 仿真器各自独立运行，每个都在自己的进程里、有自己的 GPU 配额。策略运行时与仿真运行时不必共享一个进程，也不必争抢同一块 GPU。</li><li><strong>共享策略副本：</strong> 数百个仿真器可以查询一个更小的共享策略副本池，而不是每次 rollout 都加载自己那份 3B VLA。当推理是瓶颈时你可以增加策略副本，当 rollout 吞吐是瓶颈时你可以增加仿真器。</li></ul>
+<p>Anyscale 把这套异构、出了名脆弱的机器人技术栈打包成一个可复现的集群镜像，并运行在托管的 Ray 集群上。这意味着你可以从单次 rollout 走到数百次并行 rollout，而不必从零重建基础设施。</p>
+<p>在本文中，我们用 Ray Serve 部署 NVIDIA 的 GR00T-N1.7-3B VLA，用它驱动 Isaac Lab 抓取-放置场景中的一台 Unitree G1 人形机器人，并把闭环 rollout 铺开到整个集群上。</p>
+<h2>架构</h2>
+<p>策略与仿真器位于同一个 Anyscale Ray 集群的不同 GPU worker 上，通过 HTTP 通信。在我们的示例中，这一点是用一个 Jupyter Notebook 来演示的。head 节点上的 driver 用 Ray Serve 部署策略，然后以 Ray task 的形式拉起仿真 worker。每个 worker 驱动一个 Isaac Lab 环境，并且每消耗完一个动作块就向策略端点查询一次。</p>
+<p>整个流程就是三段顶层代码：连接集群、把策略做成服务、把仿真器铺开。</p>
+<p>Anyscale Ray Cluster</p>
+<pre><code>import os
+import ray
+from ray import serve
+from policy_server import GR00TPolicyServer
+
+# Stage 0: connect to the cluster
+ray.init(
+    address=&quot;auto&quot;,
+    runtime_env={&quot;env_vars&quot;: {&quot;HF_TOKEN&quot;: os.environ[&quot;HF_TOKEN&quot;]}},
+)
+
+# Stage 1: serve the policy as an HTTP service (GPU)
+deployment = GR00TPolicyServer.options(
+    num_replicas=1,
+    ray_actor_options={&quot;num_gpus&quot;: 1},
+).bind(model_path=&quot;nvidia/GR00T-N1.7-3B&quot;, embodiment_tag=&quot;REAL_G1&quot;)
+
+serve.run(deployment, name=&quot;gr00t-policy&quot;)
+
+# Stage 2: fan out simulators that query the shared policy (GPU)
+results = ray.get([run_sim_rollout.remote(POLICY_URL) for _ in range(100)]</code></pre>
+<p>本文余下部分会逐一展开每个阶段，以及它所解决的问题。</p>
+<h2>第 1 部分：闭环评估需要在线的策略服务</h2>
+<p><strong>问题：</strong> 策略推理要把观测（相机画面、关节状态、一条语言指令）转成动作，而且延迟要足够低，使一次闭环 rollout 能在合理时间内跑完。再加上数百次 rollout 会并发运行，推理就变成了一个 N 对 M 的服务问题：许多仿真 worker 应当去查询一个更小的共享策略副本池，由 Ray Serve 在它们之间路由请求，而不是每个仿真器都加载自己那份模型。</p>
+<p><strong>Ray 的解法：</strong> 把策略包进一个 Ray Serve deployment。<code>GR00TPolicyServer</code> 只是一个普通的 Python 类，用 <code>@serve.deployment</code> 和 <code>@serve.ingress(FastAPI())</code> 装饰。它把 GR00T-N1.7-3B 一次性加载到 GPU 上，并暴露 <code>POST /predict</code> 与 <code>GET /stats</code>。</p>
+<pre><code>from fastapi import FastAPI, Request, Response
+from ray import serve
+import pickle, torch
+
+app = FastAPI()
+
+@serve.deployment(ray_actor_options={&quot;num_gpus&quot;: 1}, max_ongoing_requests=16)
+@serve.ingress(app)
+class GR00TPolicyServer:
+    def __init__(self, model_path=&quot;nvidia/GR00T-N1.7-3B&quot;, embodiment_tag=&quot;REAL_G1&quot;):
+        from gr00t.policy.gr00t_policy import Gr00tPolicy
+        from gr00t.data.embodiment_tags import EmbodimentTag
+        self.policy = Gr00tPolicy(
+            embodiment_tag=EmbodimentTag.resolve(embodiment_tag),
+            model_path=model_path,
+            device=&quot;cuda:0&quot;,
+        )
+
+    @app.post(&quot;/predict&quot;)
+    async def predict(self, request: Request):
+        obs = pickle.loads(await request.body())
+        with torch.no_grad():
+            action_chunk, _ = self.policy.get_action(obs)
+        action = {k: v.detach().cpu().numpy() for k, v in action_chunk.items()}
+        return Response(pickle.dumps({&quot;action&quot;: action}),
+                        media_type=&quot;application/octet-stream&quot;)</code></pre>
+<p>一次 <code>serve.run</code> 就会把一个副本调度到某块 GPU worker 上、加载模型并起好 HTTP 服务。这里有两个 deployment 选项很关键。注意：3B 模型的加载时间会超过 Ray Serve 默认的 30 秒健康检查窗口，所以我们把它放宽。另外，带门控的视觉-语言主干模型还需要在副本的环境里有一个 Hugging Face token，我们通过 <code>runtime_env</code> 把它传进去。</p>
+<pre><code>deployment = GR00TPolicyServer.options(
+    num_replicas=1,
+    health_check_timeout_s=300,        # 3B model load exceeds the 30s default
+    ray_actor_options={
+        &quot;num_gpus&quot;: 1,
+        &quot;runtime_env&quot;: {&quot;env_vars&quot;: {&quot;HF_TOKEN&quot;: os.environ[&quot;HF_TOKEN&quot;]}},
+    },
+).bind(model_path=&quot;nvidia/GR00T-N1.7-3B&quot;, embodiment_tag=&quot;REAL_G1&quot;)
+
+serve.run(deployment, name=&quot;gr00t-policy&quot;)</code></pre>
+<p>端点起来之后，一条符合 GR00T 的 <code>REAL_G1</code> schema 的观测就能产出一个动作块。这条观测是一个嵌套 dict：一小叠相机画面、机器人在双臂、双手和腰部的关节状态，以及一句自然语言指令。策略返回一个 40 步的动作块，覆盖身体每一个被驱动的部位。</p>
+<pre><code>import numpy as np, pickle, requests
+
+identity_pose = np.array([0.3, 0, 0, 1, 0, 0, 0, 1, 0], dtype=np.float32)  # 3 pos + 6 rot
+obs = {
+    &quot;video&quot;: {&quot;ego_view&quot;: np.zeros((1, 2, 256, 256, 3), dtype=np.uint8)},  # 2-frame stack
+    &quot;state&quot;: {
+        &quot;left_wrist_eef_9d&quot;:  identity_pose[None, None],
+        &quot;right_wrist_eef_9d&quot;: identity_pose[None, None],
+        &quot;left_arm&quot;:   np.zeros((1, 1, 7), dtype=np.float32),
+        &quot;right_arm&quot;:  np.zeros((1, 1, 7), dtype=np.float32),
+        &quot;left_hand&quot;:  np.zeros((1, 1, 7), dtype=np.float32),
+        &quot;right_hand&quot;: np.zeros((1, 1, 7), dtype=np.float32),
+        &quot;waist&quot;:      np.zeros((1, 1, 3), dtype=np.float32),
+    },
+    &quot;language&quot;: {&quot;annotation.human.task_description&quot;: [[&quot;pick up the apple and place it on the plate&quot;]]},
+}
+
+resp = pickle.loads(requests.post(f&quot;{POLICY_URL}/predict&quot;, data=pickle.dumps(obs)).content)
+for k, v in resp[&quot;action&quot;].items():
+    print(f&quot;{k:24s} {np.asarray(v).shape}&quot;)</code></pre>
+<pre><code>Round trip: 1641 ms
+
+left_wrist_eef_9d        (1, 40, 9)
+right_wrist_eef_9d       (1, 40, 9)
+left_hand                (1, 40, 7)
+right_hand               (1, 40, 7)
+left_arm                 (1, 40, 7)
+right_arm                (1, 40, 7)
+waist                    (1, 40, 3)
+base_height_command      (1, 40, 1)
+navigate_command         (1, 40, 3)</code></pre>
+<p>单次前向传播大约耗时 1.6 秒，返回 40 步动作。正是这个比例让共享服务变得可行：一次推理调用可以让仿真器执行许多步（这点在第 2 部分展开），因此一小批副本就能持续喂饱许多 rollout。扩大这个副本池只需一行代码。Ray Serve 会把每个副本调度到它自己的 GPU 上，客户端则在它们之间自动做负载均衡。</p>
+<pre><code>deployment = GR00TPolicyServer.options(num_replicas=4).bind(...)</code></pre>
+<p>这与生产环境中服务大语言模型用的是同一种模式。策略现在就是一个普通的 HTTP 微服务：有版本管理、有健康检查、可以水平扩容。仿真器一侧不需要知道存在多少个副本、它们跑在哪里。</p>
+<h2>第 2 部分：仿真器与策略不能共用一个进程或一块 GPU</h2>
+<p><strong>问题：</strong> 最直接的本能是把仿真器和策略 import 进同一个 Python 进程，在循环里调用模型。这样虽然能跑通，但因为资源争抢而并非最优：Isaac Sim 的 GPU 物理与渲染要和 3B 模型争用同一份 VRAM 和算力，所以挤在同一块 GPU 上时两者互相卡住。</p>
+<p><strong>解法：</strong> 把每个仿真器作为独立于策略推理的隔离进程来运行——一个拥有自己干净的 Python 解释器和事件循环的 Ray task——让它通过第 1 部分那个 HTTP 端点跟策略通信，而不是通过进程内的句柄。这样策略和仿真器落在不同的 GPU 上，谁也不会阻塞谁。代价是每次推理多一次网络跳转，而这正是动作分块能够摊平的开销。</p>
+<p>控制循环很小。仿真器只在当前动作块用完时才去查询策略，每次调用执行 <code>action_horizon</code> 步物理：</p>
+<pre><code>def query_policy(policy_url, obs, timeout=120.0):
+    r = requests.post(policy_url.rstrip(&quot;/&quot;) + &quot;/predict&quot;,
+                      data=pickle.dumps(obs), timeout=timeout)
+    r.raise_for_status()
+    return pickle.loads(r.content)
+
+action_horizon = 8            # execute 8 of GR00T's 40 steps before re-querying
+chunk_idx = action_horizon    # force a query on the very first step
+
+for step in range(max_steps):
+    if chunk_idx &gt;= action_horizon:
+        action_chunk = query_policy(POLICY_URL, obs)[&quot;action&quot;]   # HTTP POST /predict
+        chunk_idx = 0
+    obs, reward, done, info = env.step(action_chunk, step_idx=chunk_idx)
+    chunk_idx += 1
+    if done:
+        break</code></pre>
+<p>在 <code>action_horizon = 8</code> 下，一次约 1.6 秒的推理覆盖 8 个物理步，因此运行策略的那块 GPU 能服务的仿真器数量，是「每一步都查询」这种朴素循环的 8 倍。</p>
+<p>剩下的工作是转换。GR00T 和 Isaac Lab 说的是两套不同的 schema，把它们打通才是把任何 VLA 接进仿真器这件事里真正麻烦的部分。进来时，Isaac Lab 的观测 dict 被转换成 GR00T 那个嵌套的 <code>REAL_G1</code> 模态 dict：这是一个两帧的 <code>ego_view</code> 叠栈，以及以 9 维向量编码的末端执行器位姿（3 个平移值加上旋转矩阵的前两行）。出去时，GR00T 那个九个 key、40 步的动作块被压平成 Isaac Lab 任务所期望的扁平 <code>(1, 28)</code> 关节指令：</p>
+<pre><code>def _flatten_action(self, chunk, step_idx=0):
+    &quot;&quot;&quot;One step of GR00T's 9-key chunk -&gt; Isaac Lab's flat (1, 28) joint action.&quot;&quot;&quot;
+    def pick(key, n):
+        return np.asarray(chunk[key], dtype=np.float32)[0, step_idx][:n]
+
+    flat = np.concatenate([
+        pick(&quot;left_arm&quot;, 7), pick(&quot;right_arm&quot;, 7),    # 7 + 7
+        pick(&quot;left_hand&quot;, 7), pick(&quot;right_hand&quot;, 7),  # 7 + 7  = 28
+    ])
+    return flat[None, :].astype(np.float32)           # (1, 28)</code></pre>
+<p>这层胶接好之后，策略与仿真器就隔着一条 HTTP 边界通信，同时各自运行在不同 GPU 上的独立进程里。仿真器仍然要等待每一个新的动作块，但动作分块把那次阻塞调用摊到了多个物理步上，并且避开了与策略服务器在 GPU/运行时的争抢。</p>
+<h2>第 3 部分：策略即服务</h2>
+<p><strong>问题：</strong> 想对某个 checkpoint 说点什么，你需要很多次 rollout，覆盖不同的随机种子和起始状态，而且必须让它们并行运行——否则评估就成了整个模型开发循环里最慢的一环。更糟的是，让单次 rollout 得以成立的那套软件栈，在一台机器上组装起来就已经够痛苦，要在一个 GPU worker 集群上一模一样地复现更是难得多。它横跨 Isaac Lab、GR00T、一个带门控的 VLM 主干模型、被钉死版本的 <code>transformers</code> 与 <code>flash-attn</code>，还有好几处只是为了把模型加载进来就得打的运行时补丁。在多数机器人团队里，真正卡住评估吞吐量的其实是这个可复现性问题，而不是建模本身。</p>
+<p><strong>解法——在 Anyscale 上用 Ray 铺开：</strong> 由于策略是一个共享 HTTP 服务、每个仿真器是一个独立的 Ray task，从一次 rollout 扩到上百次轻而易举。每个 task 占用一块 GPU、跑自己的 rollout、查询共享的策略副本池，并保存自己的结果。</p>
+<pre><code>  @ray.remote(num_gpus=1, runtime_env={&quot;env_vars&quot;: {&quot;HF_TOKEN&quot;: os.environ[&quot;HF_TOKEN&quot;]}})
+  def run_sim_rollout(policy_url, seed=0):
+      # Launch the simulator in its own process (see Part 2: Isaac Sim needs a
+      # clean interpreter and event loop), pointed at the shared policy endpoint.
+      import subprocess
+      subprocess.run(
+          [&quot;python&quot;, &quot;sim_worker.py&quot;, &quot;--policy-url&quot;, policy_url, &quot;--seed&quot;, str(seed)],
+          check=True,
+      )
+      return load_results(seed)   # the subprocess writes its GIF + metrics
+
+  results = ray.get([
+      run_sim_rollout.remote(POLICY_URL, seed=s) for s in range(100)
+  ])</code></pre>
+<p>分离式架构的价值就在这里兑现。仿真器与策略副本各自独立扩缩。如果 rollout 因为等推理而吃不饱，Ray Serve 可以通过增加副本并在它们之间路由请求来自动扩充策略副本池。如果策略副本池利用率不足，你可以铺出更多仿真 worker，由 Anyscale 按需求扩掉底层 GPU 集群的规模。这两边的改动都不碰对方的代码。同一套 runtime_env 机制既把门控 token 装进 Serve 副本，也下发给每一个仿真 task，因此凭证无需人工配置就能在整个集群里传递。</p>
+<h2>回报：把评估做成一个可伸缩的服务</h2>
+<p>把这些合在一起，评估就不再是一件脆弱、串行、被硬件绑住的手工活，而变成一个你可以像其他任何推理负载那样去扩容的服务。策略副本池通过同一个 HTTP 接口上报自己的健康状态与吞吐量。这既是一个存活性信号，也是一份记录，说明在一整轮评估扫描里这个副本池到底忙到什么程度：</p>
+<pre><code>import requests
+print(requests.get(f&quot;{POLICY_URL}/stats&quot;).json())</code></pre>
+<pre><code>{
+  &quot;model_path&quot;: &quot;nvidia/GR00T-N1.7-3B&quot;,
+  &quot;embodiment_tag&quot;: &quot;REAL_G1&quot;,
+  &quot;num_params_B&quot;: 3.144016,
+  &quot;device&quot;: &quot;cuda:0&quot;,
+  &quot;total_calls&quot;: 1,
+  &quot;avg_latency_ms&quot;: 1619.57,
+  &quot;load_time_s&quot;: 26.79
+}</code></pre>
+<p>扩容不需要改动 rollout 逻辑的任何一行代码。想跑更多评估，就把仿真器的列表推导式写长一些。想更快地服务它们，就调高 <code>num_replicas</code>。仿真受限时增加 GPU worker，推理受限时增加策略副本。正是同一套 Ray 原语，把 LLM 推理撑到数千并发请求，也把机器人策略评估撑到数千并发 rollout。</p>
+<h2>下一步</h2>
+<p>如果你想自己动手试试：</p>
+<ul><li><strong>在 Anyscale 上跑。</strong> 在托管的 GPU 集群上部署策略并铺开 Isaac Lab rollout，技术栈预先构建好、权重预先缓存好，零基础设施搭建。</li><li><strong>换 checkpoint。</strong> 这个 deployment 把 <code>model_path</code> 作为参数接收，所以从基座模型换到一个任务微调模型（比如 NVIDIA 的 <code>nvidia/GR00T-N1.6-G1-PnPAppleToPlate</code>，正是在这个完全相同的抓取-放置任务上做后训练，是一行改动。平台保持不变。</li><li><strong>扩大评估扫描。</strong> 把策略侧的 <code>num_replicas</code> 与更大规模的 rollout 铺开结合起来，在数百个随机种子和起始条件下并行评估一个 checkpoint。</li><li><a href="https://docs.ray.io/en/latest/serve/index.html">Ray Serve 文档</a>涵盖 deployment、自动伸缩与多副本服务。</li></ul>
+<p>机器人评估正在演变成一个基础设施问题。随着机器人基础模型越来越大、仿真负载的真实程度越来越高，评估开始变得像现代 AI 服务化：分布式 GPU 推理集群、异构调度、可自动伸缩的服务，以及配合严密的闭环负载。关键的架构转变是分离。策略与仿真器各自独立扩缩，通过 Ray Serve 相连，并由 Ray Core 在整个集群上编排。那些撑住 LLM 推理扩容的分布式系统模式，如今正在成为机器人仿真与评估的必需品。</p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://developer.nvidia.com/isaac/gr00t">NVIDIA Isaac GR00T</a>：面向人形机器人的基础模型</li><li><a href="https://isaac-sim.github.io/IsaacLab/">NVIDIA Isaac Lab</a>：机器人学习与仿真框架</li><li><a href="https://www.physicalintelligence.company/blog/pi05">Physical Intelligence：π₀.5，一个具备开放世界泛化能力的 VLA</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale">用 LeRobot 数据集与 Ray 优化 VLA 微调性能</a></li></ul>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#introduction">引言</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#the-architecture">架构</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#part-1:-closed-loop-evaluation-needs-online-policy-serving">第 1 部分：闭环评估需要在线的策略服务</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#part-2:-the-simulator-and-the-policy-cannot-share-a-process-or-a-gpu">第 2 部分：仿真器与策略不能共用一个进程或一块 GPU</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#part-3:-policy-as-a-service">第 3 部分：策略即服务</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#the-payoff:-evaluation-as-a-scalable-service">回报：把评估做成一个可伸缩的服务</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#what's-next">下一步</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#further-reading">延伸阅读</a></li></ul>
+<h4>分享</h4>
+<h4>标签</h4>
+<h4>订阅产品更新</h4>
+<h4>推荐内容</h4>
+<h4>用 LeRobot 数据集与 Ray 优化 VLA 微调性能</h4>
+<p>阅读更多</p>
+<h4>为大规模多模态数据集设计数据管线</h4>
+<p>阅读更多</p>
+<h4>Torc 如何达到 90% 的 GPU 利用率，以及 Discord、Cubist 和 Coinbase 用 Ray 扩展 AI 的其他故事</h4>
+<p>阅读更多</p>
+<h2>即刻探索 Anyscale</h2>
+<p>用为生产 AI 打造的多云平台，在 Ray 上构建、运行并扩展任何 AI 负载。</p>
+<p>免费开始</p>
+<p>与专家交流</p>]]></content:encoded>
     </item>
     <item>
       <title>介绍 Anyscale 代理技能：更快地构建、更智能地调试并优化 Ray 上运行的 AI 工作负载</title>
@@ -2081,6 +2282,274 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
       <guid isPermaLink="true">https://anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale</guid>
       <pubDate>Tue, 10 Feb 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Optimizing VLA Fine-Tuning Performance with LeRobot Datasets and Ray</description>
+      <content:encoded><![CDATA[<h1>利用LeRobot数据集和Ray优化VLA微调性能</h1>
+<p>作者</p>
+<p>Omar Shorbaji</p>
+<p>和</p>
+<p>Ian Jordan, PhD</p>
+<p>|</p>
+<p>2026 年 2 月 10 日</p>
+<p><em>VLA 微调之所以难以扩展，是因为 LeRobot 数据集格式在并行度与冗余 IO 之间存在一种内在的取舍。本篇博客描述了一种应对这一取舍、优化 VLA 微调性能的方法。</em></p>
+<h2>Link<strong>引言</strong></h2>
+<p>在这篇文章里，我们会完整走一遍用 Ray 在 LeRobot Dataset 上做分布式 VLA 微调的可工作示例。我们对 <a href="https://www.physicalintelligence.company/blog/pi05">pi0.5</a> 做微调，用的是 <a href="https://huggingface.co/datasets/lerobot/xvla-soft-fold">xvla-soft-fold</a> 叠布料数据集（LeRobot v3.0 格式）。</p>
+<p>有两个扩展性挑战驱动了这个设计：</p>
+<ul><li>LeRobot Dataset v3.0 是机器人操作数据的一个新兴标准，但从它上面扩展读取可能很有挑战。具体来说，该格式把每个 episode 拆散到多个视频文件里（每个相机一个，另外还有一些存放元数据的表格文件），同时又把每个相机的许多 episode 拼接进同一个视频文件（为了节省空间）。结果就是，对数据集里的 episode 做朴素的并行处理，需要把每个 MP4 打开很多次（在 xvla-soft-fold 数据集上平均约 45 次）。我们提出一种 file-group 分区策略，在并行度与重复的视频打开之间求得平衡。在我们的实验里，这一做法把文件打开的次数减少了 15-135 倍。</li><li>VLA 微调从根本上就是更大的模型加上更大的数据集，这就造成了 CPU/GPU 硬件上的错配。多相机视频解码和预处理是 CPU 与 I/O 密集的；训练 VLA transformer 是 GPU 密集的。把两者放在同一处会让 GPU 卡在 I/O 上。离线做预处理则会在训练开始之前额外搭上几个小时的时延和存储。理想的解法是把两者解耦。</li></ul>
+<p>Ray 解决了这些挑战。<a href="https://docs.ray.io/en/latest/data/data.html">Ray Data</a> 把流式读取、解码和预处理跑在自动伸缩的 CPU worker 上，并通过一条带背压的管线喂给 GPU worker，不至于让 GPU 被 I/O 或图像解码卡住。<a href="https://docs.ray.io/en/latest/train/train.html">Ray Train</a> 管理跨 GPU 的分布式 PyTorch，包括 DDP 搭建、checkpoint 和故障恢复。这两个阶段被串成一条管线，CPU 与 GPU 容量各自独立扩展。解码是瓶颈时就加 CPU 节点；训练是瓶颈时就加 GPU。</p>
+<h2>Link<strong>处理管线 </strong></h2>
+<p>在深入细节之前，下面是一幅表示这条管线的示意图。</p>
+<p>一张机器学习管线示意图，展示了数据存储、读取与预处理步骤、模型训练，以及用于保存进度的 checkpoint 存储。</p>
+<p>此外，下面是完整解决方案的顶层代码。大体上，这段代码</p>
+<ul><li>读取一个 lerobot 数据集</li><li>定义流式数据管线（在 CPU 上）</li><li>启动分布式训练（在 GPU 上）</li></ul>
+<p>这是顶层代码。</p>
+<pre><code>import ray
+from lerobot_datasource import LeRobotDatasource
+
+# ──────────────────────────────────────────────
+# Stage 1: Build the streaming data pipeline (CPU)
+# ──────────────────────────────────────────────
+DATASET_PATH = &quot;s3://anyscale-public-robotics-datasets/lerobot/lerobot/xvla-soft-fold&quot;
+
+CAMERA_RENAME = {
+    &quot;observation.images.cam_high&quot;:        &quot;observation.images.base_0_rgb&quot;,
+    &quot;observation.images.cam_left_wrist&quot;:  &quot;observation.images.left_wrist_0_rgb&quot;,
+    &quot;observation.images.cam_right_wrist&quot;: &quot;observation.images.right_wrist_0_rgb&quot;,
+}
+
+source = LeRobotDatasource(DATASET_PATH)
+stats = util.extract_stats(source)
+image_keys = util.renamed_image_keys(source, CAMERA_RENAME)
+
+ds = (
+    ray.data
+    .read_datasource(source)
+    .map(rename_columns, fn_args=(CAMERA_RENAME,))                        # Rename cameras
+    .map_batches(transpose_images, batch_size=32, fn_args=(image_keys,))  # HWC → CHW float32
+)
+
+# ──────────────────────────────────────────────
+# Stage 2: Launch distributed training (GPU)
+# ──────────────────────────────────────────────
+
+trainer = ray.train.torch.TorchTrainer(
+    train_loop_per_worker=train_loop_per_worker,
+    train_loop_config={
+        &quot;stats&quot;: stats,
+        &quot;total_rows&quot;: source.meta.total_frames,
+        &quot;num_epochs&quot;: 2,
+        &quot;batch_size&quot;: 4,
+        &quot;grad_accum&quot;: 2,
+        &quot;lr&quot;: 1e-4,
+        &quot;warmup_frac&quot;: 0.1,
+        &quot;max_len&quot;: 512,
+    },
+    scaling_config=ray.train.ScalingConfig(num_workers=4, use_gpu=True),
+    run_config=ray.train.RunConfig(
+        name=&quot;pi05-xvla-soft-fold-finetune&quot;,
+        storage_path=&quot;/mnt/cluster_storage/ray_train_runs/pi05_xvla_soft_fold&quot;,
+        failure_config=ray.train.FailureConfig(max_failures=1),
+    ),
+    datasets={&quot;train&quot;: ds},
+)
+
+result = trainer.fit()</code></pre>
+<p>在接下来几节里，我们逐一讨论这条管线的各个组件</p>
+<h2>Link<strong>第 1 部分：读取 LeRobot v3.0 数据格式 </strong></h2>
+<p><a href="https://huggingface.co/lerobot">LeRobot Dataset v3.0</a> 把数据存成三个分立的部分：分块的 Parquet 文件，存放逐帧的表格数据（动作、状态、时间戳）；分块的 MP4 文件，存放相机观测（每个相机一组视频文件）；以及把前两者关联起来的 episode 元数据，它记录每个 episode 属于哪一个 parquet 分块、哪一个视频文件。</p>
+<p>要产出一条训练样本，数据加载器必须把这些部分 <strong>join</strong> 起来：先读一行 Parquet 拿到表格数据，然后在正确的时间戳处对每个相机的 MP4 文件做 seek-and-decode、解出对应的帧，再把它们与该 episode 的任务描述拼在一起。对 <code>xvla-soft-fold</code> 来说，这意味着要为每一帧把 3 路视频流（<code>cam_high, cam_left_wrist, cam_right_wrist</code>）与表格数据 join 起来。</p>
+<p>把这条管线放在心里，我们就可以开始看系统层面，也就是通过为并行 I/O 划分数据来优化吞吐。我们把问题表述为：怎样把数据切成彼此独立的块，好让每个 worker 都能无冲突地独立读取和处理？</p>
+<p>在 LeRobot Dataset v3 格式里，多个 episode 被打包进同一个 MP4 视频文件，同时又因为相机不同而被拆到不同的视频文件中。这种打包对存储很高效，因为它避免了产生大量小文件。但这样一来，并行处理多个 episode 就意味着要把每个 MP4 文件打开很多次，而这可能代价高昂。为了绕开这一点，LeRobot 库会把所有数据下载到本地磁盘，本地磁盘更适合随机访问，但这样限制了你能处理的数据集规模，也做不到有意义的并行。LeRobot 格式在最大化并行与最小化重复打开视频文件之间，存在着一种内在的取舍。</p>
+<p>应对这一取舍的一种办法是 <strong>file-group 分区</strong>：把引用完全相同那组视频文件的 episode 归到一个任务里。下表是一个简化示例。在这个例子里，episode 1 和 2 共享同样的视频文件；episode 3 和 4、episode 5 和 6 也是同样。要把这 6 个 episode 并行化处理（分成 3 个任务），一个自然的做法就是把 episode 1 和 2 放在一起处理、episode 3 和 4 放在一起处理、episode 5 和 6 放在一起处理。</p>
+<table><thead><tr><th><strong>Episode</strong></th><th><strong>Cam 1</strong></th><th><strong>Cam2</strong></th><th><strong>Cam3</strong></th></tr></thead><tbody><tr><td>1</td><td>cam1-01.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr><tr><td>2</td><td>cam1-01.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr><tr><td>3</td><td>cam1-02.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr><tr><td>4</td><td>cam1-02.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr><tr><td>5</td><td>cam1-03.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr><tr><td>6</td><td>cam1-03.mp4</td><td>cam2-01.mp4</td><td>cam3-01.mp4</td></tr></tbody></table>
+<p>这样分区在并行化和视频文件 I/O 之间提供了一个平衡。对 <code>xvla-soft-fold</code>，结果是：</p>
+<table><thead><tr><th><strong>策略</strong></th><th><strong>任务数</strong></th><th><strong>视频打开次数</strong></th><th><strong>取舍</strong></th></tr></thead><tbody><tr><td>顺序执行</td><td>1</td><td>104</td><td>I/O 最少，无并行</td></tr><tr><td>按 episode</td><td>1,542</td><td>4,626</td><td>并行最大，I/O 放大极为严重</td></tr><tr><td><strong>按 file group</strong></td><td><strong>99</strong></td><td><strong>297</strong></td><td><strong>均衡</strong></td></tr></tbody></table>
+<p>在更大的数据集上，效果更为显著。例如 DROID（95K+ 个 episode）从 286K 次视频打开降到 2,124 次，<strong>减少达 135×</strong>。</p>
+<h3>Link<strong>实现 file-group 分区</strong></h3>
+<p>这个分区是纯粹的元数据计算。对每个 episode，用它在所有相机上的 (<code>video_key, chunk_index, file_index</code>) 指针构造一个键，然后把键相同的连续 episode 合并成按行范围划分的分区：</p>
+<pre><code>def _partition_by_file_group(episodes, video_keys):
+    &quot;&quot;&quot;Partition episodes by video-file group&quot;&quot;&quot;
+    key_columns = []
+    for vk in video_keys:
+        key_columns.append(episodes.column(f&quot;videos/{vk}/chunk_index&quot;).to_pylist())
+        key_columns.append(episodes.column(f&quot;videos/{vk}/file_index&quot;).to_pylist())
+
+    from_indices = episodes.column(&quot;_global_from_index&quot;).to_pylist()
+    to_indices = episodes.column(&quot;_global_to_index&quot;).to_pylist()
+
+    ranges = {}  # signature → (first_row, last_row)
+    for i in range(len(episodes)):
+        key = tuple(col[i] for col in key_columns)
+        from_idx, to_idx = from_indices[i], to_indices[i]
+        if key in ranges:
+            prev_from, prev_to = ranges[key]
+            assert from_idx == prev_to, &quot;Episodes in a file group must be contiguous&quot;
+            ranges[key] = (prev_from, to_idx)
+        else:
+            ranges[key] = (from_idx, to_idx)
+
+    return list(ranges.values())
+    # xvla-soft-fold: 1,542 episodes -&gt; 99 partitions</code></pre>
+<p>每一对 (<code>start_row, end_row</code>) 变成一个 Ray Data 读取任务。该任务通过 PyAV 把每个 MP4 只打开一次，seek 到第一个 episode 的 <code>from_timestamp</code>，然后把解码出的帧顺着流成一个个 Arrow 批次。</p>
+<p>有了分区策略在手，我们就可以直接从 S3 流式读取数据集，并搭起预处理管线</p>
+<h2>Link<strong>第 2 部分：用 Ray Data 做流式处理</strong></h2>
+<p>下面是流式处理的顶层代码</p>
+<pre><code>from lerobot_datasource import LeRobotDatasource
+
+source = LeRobotDatasource(&quot;s3://…&quot;)
+stats = util.extract_stats(source)
+image_keys = util.renamed_image_keys(source, CAMERA_RENAME)
+
+ds = (
+    ray.data
+    .read_datasource(source)                                             
+    .map(rename_columns, fn_args=(CAMERA_RENAME,))                    
+    .map_batches(transpose_images, batch_size=32, fn_args=(image_keys,)) 
+)</code></pre>
+<p>这是一条惰性的、流式的管线。在 trainer 开始拉取之前，不会读取任何数据。一切都跑在 CPU worker 上，带有自动背压，从而在不把 GPU 卡在 I/O 或图像解码上的前提下让 GPU 一直有活干。我们逐步来看。</p>
+<h3>Link<strong>Ray Data Datasource</strong></h3>
+<p>Ray Data 提供了一个 <a href="https://docs.ray.io/en/latest/data/api/doc/ray.data.Datasource.html">Datasource</a> 抽象，用于把自定义数据源接进流式执行引擎。我们用它来实现 LeRobot 的读取功能。一个 <code>LeRobotDatasource</code> 类负责元数据加载、file-group 分区，以及把 parquet 行与解码出的视频帧做流式 join，这一切都藏在 Ray Data 标准的 <code>read_datasource</code> 接口后面。</p>
+<p>在构造时，这个 datasource 会立即加载数据集元数据（episode 表、归一化统计量、任务描述），同时把所有数据和视频 I/O 推迟到 worker 上：</p>
+<pre><code>source = LeRobotDatasource(DATASET_PATH)
+
+# Metadata is available immediately -- no data files opened yet
+print(source.meta.total_frames)      # total decoded rows
+print(source.meta.total_episodes)    # 1,542
+print(source.meta.video_keys)        # ['observation.images.cam_high', ...]
+print(source.meta.tasks)             # {0: 'fold the cloth', ...}
+print(source.meta.stats)             # per-feature mean/std for normalization</code></pre>
+<p>当调用 <code>read_datasource(source)</code> 时，它会创建 99 个 file-group 读取任务（默认的分区方式）。每个任务从 S3 流式读取，用 PyAV 解码 MP4 帧，把它们与 parquet 行 join 起来，并产出 Arrow 批次。我们稍后从 source 的元数据里取出归一化统计量，供训练循环使用。</p>
+<h3>Link<strong>相机重命名</strong></h3>
+<p>数据集的相机列名和 Pi05 期望的对不上。这个模型预训练时用的特征名是 <code>observation.images.base_0_rgb</code> 这一类，但数据集里是 <code>observation.images.cam_high</code>。一个轻量的逐行 <code>.map</code> 把它们改名：</p>
+<pre><code>CAMERA_RENAME = {
+    &quot;observation.images.cam_high&quot;:        &quot;observation.images.base_0_rgb&quot;,
+    &quot;observation.images.cam_left_wrist&quot;:  &quot;observation.images.left_wrist_0_rgb&quot;,
+    &quot;observation.images.cam_right_wrist&quot;: &quot;observation.images.right_wrist_0_rgb&quot;,
+}
+
+def rename_columns(row: dict, rename: dict[str, str]) -&gt; dict:
+    &quot;&quot;&quot;Rename dataset camera columns to match the model's expected feature names.&quot;&quot;&quot;
+    return {rename.get(k, k): v for k, v in row.items()}</code></pre>
+<h3>Link<strong>图像转置</strong></h3>
+<p>π₀.5 和多数视觉模型一样，期望的排布是 (batch, channels, height, width)。原始数据集把图像存成 (<code>height, width, channels</code>) 的 uint8。一个批处理的 <code>.map_batches</code> 在 CPU 上做转置和类型转换：</p>
+<pre><code>def transpose_images(batch: dict, camera_keys: list[str]) -&gt; dict:
+    &quot;&quot;&quot;Convert camera images from HWC uint8 to CHW float32.&quot;&quot;&quot;
+    import numpy as np
+
+    result = dict(batch)
+    for key in camera_keys:
+        result[key] = np.transpose(np.stack(batch[key]), (0, 3, 1, 2)).astype(np.float32)
+    return result</code></pre>
+<h2>Link<strong>第 3 部分：用 Ray Train 做分布式训练</strong></h2>
+<p>接下来我们用 DistributedDataParallel（DDP）来分布式地训练，每张 GPU 持有模型的一份完整副本，处理数据的不同分片。每次反向传播之后，DDP 在各个 worker 之间同步梯度，让每份副本都保持一致。这是最简单的分布式策略，也很契合我们的情况——π₀.5 的可训练参数（我们冻结 backbone，只训练 action 和 time projection 这两个头）能轻松放进单张 GPU 的显存。</p>
+<p>这段代码读起来就像单 GPU 训练。Ray Train 负责处理 DDP、数据分片、checkpoint 和故障恢复。</p>
+<p><strong>训练循环</strong></p>
+<pre><code>import torch
+
+def train_loop_per_worker(config: dict):
+    &quot;&quot;&quot;Per-GPU training entry point. Ray Train calls this on each worker.&quot;&quot;&quot;
+
+    device = torch.device(&quot;cuda&quot;)
+
+    # Load pi0.5 and freeze backbone -- only action/time heads are trainable.
+    # prepare_model() wraps it in DistributedDataParallel.
+    policy = util.load_pi05_policy()
+    policy = ray.train.torch.prepare_model(policy)
+
+    optimizer = torch.optim.AdamW(
+        [p for p in policy.parameters() if p.requires_grad],
+        lr=config.get(&quot;lr&quot;, 1e-4),
+    )
+    scaler = torch.amp.GradScaler(&quot;cuda&quot;)
+
+    # Resume from checkpoint if this is a failure recovery
+    checkpoint = ray.train.get_checkpoint()
+    if checkpoint:
+        start_epoch, step = util.load_checkpoint(checkpoint, policy, optimizer, scaler)
+    else:
+        start_epoch, step = 0, 0
+
+    # Build the LeRobot preprocessor with dataset normalization stats
+    from lerobot.policies.factory import make_pre_post_processors
+    preprocessor, _ = make_pre_post_processors(
+        policy.module.config,
+        pretrained_path=&quot;lerobot/pi05_base&quot;,
+        dataset_stats=config[&quot;stats&quot;],
+    )
+
+    num_workers = ray.train.get_context().get_world_size()
+    scheduler = util.build_lr_scheduler(optimizer, config, num_workers, last_step=step)
+
+    batch_size = int(config.get(&quot;batch_size&quot;, 1))
+    grad_accum = int(config.get(&quot;grad_accum&quot;, 1))
+    num_epochs = int(config.get(&quot;num_epochs&quot;, 1))
+    max_len    = int(config.get(&quot;max_len&quot;, 512))
+
+    # Get this worker's shard of the streaming dataset.
+    # Ray Data partitions automatically -- no DistributedSampler needed.
+    shard = ray.train.get_dataset_shard(&quot;train&quot;)
+
+    for epoch in range(start_epoch, num_epochs):
+        optimizer.zero_grad(set_to_none=True)
+        epoch_loss_sum, epoch_loss_count = 0.0, 0
+
+        # iter_torch_batches() streams preprocessed batches from CPU workers
+        # directly into GPU memory. Backpressure ensures we never OOM.
+        for batch in shard.iter_torch_batches(
+            batch_size=batch_size,
+            collate_fn=util.NumpyToTorchCollate(device),
+        ):
+            loss_val = util.train_step(policy, batch, preprocessor, max_len, grad_accum, scaler)
+            step += 1
+            epoch_loss_sum += loss_val
+            epoch_loss_count += 1
+
+            if step % grad_accum == 0:
+                util.optimizer_step(policy, optimizer, scaler, scheduler)
+
+        # End of epoch: report metrics and checkpoint.
+        # ray.train.report() is a sync barrier -- every worker must call it.
+        avg_loss = epoch_loss_sum / max(epoch_loss_count, 1)
+        metrics = {
+            &quot;epoch&quot;: epoch, &quot;steps&quot;: step,
+            &quot;loss&quot;: avg_loss, &quot;lr&quot;: scheduler.get_last_lr()[0],
+        }
+
+        if ray.train.get_context().get_world_rank() == 0:
+            checkpoint = util.make_checkpoint(policy, optimizer, scaler, epoch, step)
+            ray.train.report(metrics, checkpoint=checkpoint)
+        else:
+            ray.train.report(metrics)</code></pre>
+<p>训练循环里与 Ray 相关的部分是：</p>
+<ul><li><code>ray.train.torch.prepare_model(policy)</code></li></ul>
+<p>它把模型包装进 <code>DistributedDataParallel</code>。</p>
+<ul><li><code>ray.train.get_dataset_shard(&quot;train&quot;)</code></li></ul>
+<p>它返回本 worker 在流式 Ray Dataset 上分到的那一片。Ray Data 会自动把数据在各个 worker 之间分区</p>
+<ul><li><code>shard.iter_torch_batches(...) </code></li></ul>
+<p>它把预处理好的批次从 CPU worker 池直接流进 GPU 显存。背压保证管线永远不会把 GPU 显存压垮。</p>
+<ul><li><code>ray.train.get_checkpoint() / ray.train.report(...)</code></li></ul>
+<p>出现失败时，Ray 会重启 worker，并把最近的 checkpoint 重新喂给循环开头处的 <code>get_checkpoint()</code>。<code>report()</code> 是所有 worker 之间的一个同步屏障；</p>
+<p>因为我们用的是 DDP，每张 GPU 都持有模型的一份完整副本，所以只有 rank 0 需要创建并保存 checkpoint。所有 rank 都会调用 <code>report()</code>（它是一个屏障），但只有 rank 0 附上 checkpoint 载荷。</p>
+<p>要从 1 张 GPU 扩展到 N 张：改 <code>ScalingConfig.num_workers</code>。</p>
+<h2>Link<strong>下一步</strong></h2>
+<p>如果你想自己动手试：</p>
+<ul><li><a href="https://github.com/anyscale/examples/tree/main/vla_fine_tuning">查看这个示例的完整代码</a>。</li><li><a href="https://console.anyscale.com/template-preview/vla-fine-tuning">在 Anyscale 上试用这个示例</a> - 在托管的 GPU 集群上跑完整条管线，零基础设施搭建。</li><li><a href="https://docs.ray.io/en/latest/train/train.html">Ray Train 文档</a> 涵盖 <code>TorchTrainer</code> 的搭建、FSDP 配置以及 checkpoint 管理。</li><li><code>xvla-soft-fold</code> 数据集可在 <a href="https://huggingface.co/datasets/lerobot/xvla-soft-fold">Hugging Face</a> 上获取。</li></ul>
+<h2>Link<strong>相关资源</strong></h2>
+<ul><li><a href="https://www.physicalintelligence.company/blog/pi05">Physical Intelligence：π₀.5——具备开放世界泛化能力的 VLA</a></li><li><a href="https://developer.nvidia.com/isaac/gr00t">NVIDIA Isaac GR00T N1.5 基础模型</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale">分布式 AI 训练：用 Ray 与 Anyscale 做多 GPU</a></li></ul>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#introduction">引言</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#the-pipeline-">处理管线 </a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-1:-reading-from-the-lerobot-v3.0-data-format-">第 1 部分：读取 LeRobot v3.0 数据格式 </a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#implementing-file-group-partitioning">实现 file-group 分区</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-2:-streaming-with-ray-data">第 2 部分：用 Ray Data 做流式处理</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#ray-data-datasource">Ray Data Datasource</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#camera-renaming">相机重命名</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#image-transposition">图像转置</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-3:-distributed-training-with-ray-train">第 3 部分：用 Ray Train 做分布式训练</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#what's-next">下一步</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#related-resources">相关资源</a></li></ul>
+<h4>分享</h4>
+<h4>标签</h4>
+<h4>订阅产品更新</h4>
+<h4>推荐内容</h4>
+<h4>在 Ray Data 上对多模态 AI 工作负载做基准测试</h4>
+<p>阅读更多</p>
+<h4>跨 CPU 与 GPU 的流式分布式执行</h4>
+<p>阅读更多</p>
+<h4>可扩展的分布式训练：从单 GPU 的瓶颈到在 Anyscale 上用 Ray 跑通可靠的多节点训练</h4>
+<p>阅读更多</p>
+<h2>立即探索 Anyscale</h2>
+<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任意 AI 工作负载。</p>
+<p>免费开始</p>
+<p>与专家交流</p>]]></content:encoded>
     </item>
     <item>
       <title>可扩展的分布式训练：从单 GPU 限制到使用 Ray 在任意规模上进行可靠的多节点运行</title>
@@ -2088,6 +2557,68 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
       <guid isPermaLink="true">https://anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale</guid>
       <pubDate>Wed, 28 Jan 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Scalable Distributed Training: From Single-GPU Limits to Reliable Multi-Node Runs with Ray on Anyscale</description>
+      <content:encoded><![CDATA[<h1>可扩展的分布式训练：从单 GPU 限制到使用 Ray 在任意规模上进行可靠的多节点运行</h1>
+<p>作者</p>
+<p>Julian Forero</p>
+<p>与</p>
+<p>Ian Jordan, PhD</p>
+<p>|</p>
+<p>2026 年 1 月 28 日</p>
+<p>随着数据集和模型不断变大——尤其是横跨文本、图像、视频及其他非结构化数据的多模态系统——ML 团队终究会撞上一条硬限制：你的数据集或模型再也放不进单块 GPU。</p>
+<p>要决策的不是要不要扩展，而是如何在继续沿用 XGBoost、PyTorch、DeepSpeed 或 Hugging Face Transformers 这些熟悉框架的前提下把它做成。</p>
+<p>Ray 已经浮现为应对这一转变采用最广泛的开源框架，GitHub stars 超过 40k，每周下载量超过 1000 万。<a href="https://www.uber.com/blog/open-source-and-in-house-how-uber-optimizes-llm-training/">Uber</a>、<a href="https://discord.com/blog/from-single-node-to-multi-gpu-clusters-how-discord-made-distributed-compute-easy-for-ml-engineers">Discord</a>、<a href="https://youtu.be/mppzZ4hLjXs?si=Fs9zhjlgOpyYtrxE&amp;t=219">Attentive</a> 等许多团队都在用 Ray 扩展作业，而不必重写核心训练函数的逻辑。</p>
+<ul><li>如果你准备好把 Ray 当作分布式 AI 框架来学，<a href="https://courses.anyscale.com/bundles/ray-train-special">来看看这门免费课程</a>。</li></ul>
+<p>如果你仍在评估从单节点实验走向分布式训练这一步，下面的小节梳理了关键的技术与业务考量，以及 Ray on Anyscale 如何同时降低开发者的摩擦和运维风险。</p>
+<h2>基础设施的协同设计不再是可选项</h2>
+<p>传统的流程是 ML 工程师在单 GPU 上训练、平台/MLOps 团队随后把它「生产化」——在多模态 AI 时代这套做法已经失效，因为训练本身同样是一个基础设施问题。</p>
+<p>从单块 GPU 走到一台机器上多块互联的 GPU，通常还算可控。再往前、跨节点走，事情就难得多。多节点训练会带来本地工作流中并不存在的失效模式：</p>
+<ul><li>GPU 故障会让节点掉线，造成局部失败</li><li>跨机器的依赖漂移</li><li>割裂的日志与指标</li><li>调试不再局限于本地</li><li>与常见 ML 框架的集成并不轻松</li><li>必须在节点之间协调并搬运的数据</li></ul>
+<p>上手指引清单很快就长成一大摞毫无差异化的基础设施工作：</p>
+<ul><li>供应并监控多节点 GPU 集群</li><li>配置网络</li><li>接好 SSH 启动器、Slurm 或 Kubernetes 作业</li><li>分配 PyTorch DDP（Distributed Data Parallel）的 rank 来协调 worker</li><li>管理数据分片与放置</li><li>构建一套容错的 checkpoint 系统</li></ul>
+<p>DIY 路线的代价不只是工程时间。它还体现为迭代变慢、实验脆弱、错过截止日期，以及永远进不了生产的模型。</p>
+<h2><strong>数据准备开始变得很像训练</strong></h2>
+<p>随着模型和数据集变得更大、更多模态，数据准备与训练之间的基础设施边界开始消失。</p>
+<p>过去那些类似 ETL 的预处理步骤，如今成了带模型的批量推理步骤，例如用 LLM 生成标签、生成 caption，或规模化地做 embedding 生成。这把数据准备从基于 CPU 的 ETL 变成了以 GPU 为中心的批量推理。</p>
+<p>只为训练优化基础设施已经不够了。现代的模型开发要求把数据处理与训练当作一条端到端的单一工作流来对待，共用同一套扩展、调度与故障处理的决策。</p>
+<h2><strong>GPU 稀缺且昂贵</strong></h2>
+<p>现代的训作业动辄横跨数小时或数天，还常常在多个节点上执行。在这样的时间尺度上，失败是意料之中的事，而不是例外。一次节点重启就可能损失数万美元的算力，这让可靠性成了训练循环的核心属性，而不是运维上事后补上的想法。</p>
+<p>与此同时，GPU 也可能难以获得。为了管理有限的容量，团队常常预留大块的 GPU 配额，用来承接多个工作负载的峰值需求。实际情况是，像生产推理这样优先级更高的作业，经常抢占长时间运行的训练作业。在共享容量的模式下，硬件可用性始终在变，训练工作负载就必须容忍被打断，并适应不断变化的资源。</p>
+<p>结果就是，效率与适应能力成了头等要务。</p>
+<p>checkpoint 变得必不可少，但当单个 epoch 本身就要跑上数小时或数天时，粗放的 epoch 级 checkpoint 往往不够细。GPU 利用率高与单纯的规模大同样重要，这意味着团队需要看清资源实际是怎么被用掉的，并有能力据此优化。而硬件可用性始终是流动的，于是暂停、恢复、并根据不断变化的资源可用性来调整训练作业的能力，就成了关键项而非可选项。</p>
+<h2><strong>为什么选 Ray——以及为什么选 Ray on Anyscale</strong></h2>
+<p>当数据准备和训练需要一起扩展时，单点方案和框架就会撑不住。Ray 提供一个统一的分布式处理引擎，加速端到端的实验，通常能把 <a href="https://www.anyscale.com/blog/gpu-in-efficiency-in-ai-workloads">GPU 利用率</a>提升 50–70%。</p>
+<p>Ray 接手了分布式系统里那些难做的部分：</p>
+<ul><li>worker 协调</li><li>调度</li><li>容错</li><li>资源管理等等</li></ul>
+<p>借助 <a href="https://www.youtube.com/watch?v=BuYkzhlCeEg">Ray Train</a> 库，开发者用 Python 表达训练函数应当如何扩展，而底层的并行化由 Ray 处理。团队可以扩展 PyTorch、XGBoost 和 Transformers，而不必自己去拼一套编排逻辑。</p>
+<p>但只有 Ray 并不能卸掉全部的运维负担。集群生命周期管理、环境一致性、故障恢复和可观测性仍然归团队自己扛——这些工作会拖慢实验，也让人从模型开发上分心。</p>
+<p>Ray on Anyscale 建立在同一个开源运行时之上，并通过加上专门打造的开发者工具（Anyscale Developer Central）来补上这个缺口，它提供：</p>
+<ul><li>交互式的多节点开发环境，可通过 VSCode、Cursor 或 Jupyter 访问</li><li>集中化的日志、指标与作业状态，让你不必 SSH 登录单个节点就能调试和优化分布式运行</li><li>开箱即用的<a href="https://www.anyscale.com/blog/announcing-lineage-tracking-ray-managed-anyscale">从数据集到模型的血缘追踪</a></li></ul>
+<p>以及一个托管的集群控制面（Anyscale Cluster Controller），它具备：</p>
+<ul><li>自动检测并替换不健康的节点，把人工介入降到最低</li><li>多云的作业队列管理与工作负载编排</li><li>面向训练与数据工作负载的全托管集群供应与拆除</li><li>跨云厂商的灵活部署，且无需改动应用代码</li><li>内置的用户与成本治理</li></ul>
+<p>有了 Anyscale，分布式训练不再像是一门独立的系统学科。它成了一种随你的模型自然扩展的方式，而不必把 ML 开发变成一份维护基础设施的差事。</p>
+<table><thead><tr><th><strong>类别</strong></th><th><strong>没有 Ray Train</strong></th><th><strong>Ray Train（OSS）</strong></th><th><strong>Anyscale 上的 Ray Train（托管）</strong></th></tr></thead><tbody><tr><td><strong>集群供应</strong></td><td>手工供应、搭建、网络、SSH/Slurm/K8s 配置</td><td>用户仍须自行创建并管理 Ray 集群</td><td>全托管的集群生命周期（供应、扩缩、拆除）</td></tr><tr><td><strong>环境可复现性</strong></td><td>很难，驱动/CUDA 漂移、依赖冲突</td><td>必须维护自己的 Docker/conda 镜像并同步环境</td><td>有保证的、可复现的、带版本控制的环境</td></tr><tr><td><strong>分布式搭建与 rank 管理</strong></td><td>复杂的 DDP 配置；手工分配 rank</td><td>由 Ray Train 自动处理</td><td>同样的 Ray Train API，但背后由托管的集群状态支撑</td></tr><tr><td><strong>容错</strong></td><td>手工的 checkpoint 逻辑，作业重启会打断训练</td><td>Ray Train 提供 API，但集群可靠性要用户自己保证</td><td>生产级的容错 + <a href="https://docs.anyscale.com/runtime/mid-epoch-resumption">epoch 中途恢复</a> + 自动恢复</td></tr><tr><td><strong>弹性</strong></td><td>不支持，节点丢失即作业终止</td><td>实践中不支持。弹性 API 存在，但缺少托管的自动扩缩器、协调一致的节点生命周期和平台级容错时它们跑不起来</td><td>可靠的、<a href="https://docs.anyscale.com/runtime/train#elastic-training">由平台管理的弹性</a>（被抢占可自动恢复）</td></tr><tr><td><strong>数据流水线集成</strong></td><td>自己手写的分片、预处理与数据搬运</td><td>Ray Data 与 Train 的集成存在，但基础设施要用户自己调</td><td>Ray Data 与 Train 在资源隔离下被编排到一起</td></tr><tr><td><strong>运维负担</strong></td><td>极高，集群故障的调试全靠手工</td><td>中等，Ray Train 简化了训练逻辑，但基础设施仍是用户的活儿</td><td>很低，平台负责集群健康、节点重启与自动扩缩</td></tr><tr><td><strong>安全与治理</strong></td><td>必须自建 IAM、VPC、审计日志与隔离</td><td>只有 OSS，全部安全层都要用户自己实现</td><td>企业级安全、IAM 集成、VPC 隔离、可审计</td></tr><tr><td><strong>作业生命周期管理</strong></td><td>Bash 脚本、tmux、Slurm 作业、Kubernetes operator</td><td>有 Ray Jobs 可用，但要用户自己维护</td><td>全托管的 Ray Jobs，带重试、日志与仪表盘</td></tr><tr><td><strong>总体上你得到什么</strong></td><td>一套脆弱的、由少数工程师维护的定制训练技术栈</td><td>一个更好的训练循环编排器，但基础设施仍是 DIY</td><td>一个可上生产的分布式训练平台</td></tr><tr><td><strong>总工程成本</strong></td><td>巨大（数月乃至数年的投入）</td><td>中等（可靠性 + 集群运维仍由你维护）</td><td>极少（全部精力放在训练代码和流水线上）</td></tr></tbody></table>
+<p>简而言之，Ray 把分布式执行变简单。Anyscale 则把它变成一个有韧性的平台，你可以依靠它来拉动开发速度与基础设施效率。</p>
+<ul><li><a href="https://www.anyscale.com/resources/case-study/how-canva-built-a-modern-ai-platform-using-anyscale">Canva</a> 把模型开发提速了 12 倍，同时 GPU 成本降低 50%</li><li><a href="https://www.anyscale.com/resources/case-study/coinbase-ml-infrastructure">Coinbase</a> 得以处理大 50 倍的数据集，同时多跑 15 倍的作业而成本没有增加</li></ul>
+<h2><strong>了解更多</strong></h2>
+<p>随着多模态数据集和模型规模的增长，分布式训练会成为常态而非例外。</p>
+<p>Ray 降低了进入分布式训练的门槛：ML 工程师不必成为分布式系统专家，就能扩展现有的代码。Ray on Anyscale 把这幅图景补齐——由 Ray 驱动的 Anyscale Runtime，配上生产级的集群管理和专门打造的开发者工具，让团队能更快迭代，并有把握地过渡到生产。</p>
+<ul><li>准备好学 Ray Train 了吗？来上我们的免费课程 → <a href="https://courses.anyscale.com/bundles/ray-train-special">免费课程</a></li><li>准备好开始用 Anyscale 了吗？用我们给新账户的 100 美元额度去体验 Ray Train → <a href="https://console.anyscale.com/register/ha?">免费试用</a></li></ul>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#infrastructure-co-design-is-no-longer-optional-">基础设施的协同设计不再是可选项</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#data-preparation-starts-to-feel-a-lot-more-like-training">数据准备开始变得很像训练</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#gpus-are-scarce-and-expensive">GPU 稀缺且昂贵</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#why-ray-—-and-why-ray-on-anyscale">为什么选 Ray——以及为什么选 Ray on Anyscale</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#learn-more">了解更多</a></li></ul>
+<h4>分享</h4>
+<h4>标签</h4>
+<h4>订阅产品更新</h4>
+<h4>推荐内容</h4>
+<h4>Ray Train V2：在 Ray 上做统一的分布式训练</h4>
+<p>阅读全文</p>
+<h4>用 Ray 与分离式混合并行让多模态 AI 训练提速 30%</h4>
+<p>阅读全文</p>
+<h4>Ray 加入 The PyTorch Foundation</h4>
+<p>阅读全文</p>
+<h2>今天就探索 Anyscale</h2>
+<p>用一个为生产 AI 打造的多云平台，在 Ray 上构建、运行并扩展任意 AI 工作负载。</p>
+<p>免费开始</p>
+<p>与专家沟通</p>]]></content:encoded>
     </item>
     <item>
       <title>AI 工作负载中的 GPU 效率（低）</title>

@@ -13,6 +13,171 @@
       <link>https://www.anthropic.com/claude-sonnet-5-5</link>
       <guid isPermaLink="true">https://www.anthropic.com/claude-sonnet-5-5</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Claude Sonnet 5.5</h1>
+<p>2026 年 9 月 28 日</p>
+<p>我们推出 Claude Sonnet 5.5，这是 Claude 5.5 家族中的第二个模型。它相对 Claude Sonnet 5 是一次清晰的升级，运行速度快 30% 以上，而在多数工作上的成本低最多 30%。</p>
+<p>Sonnet 5.5 是 Claude Opus 5.5 的更快、更低成本的补充。Opus 5.5 为需要审慎判断的复杂工作而生，Sonnet 5.5 则最擅长范围明确的日常任务、修 bug，以及制作精良的文档、幻灯片和电子表格。它对设计也有敏锐的眼光。为高吞吐、成本敏感的应用打造的 Claude Haiku 5.5 将在未来几周内加入 Claude 5.5 家族。</p>
+<p>Sonnet 5.5 相比 Sonnet 5 在以下方面有所提升：</p>
+<p><strong>性能。</strong> Sonnet 5.5 在 Terminal-Bench 4.0（一项智能体编程评测）上得到 70.6%，而 Sonnet 5 是 10.3%。在 GDPval-AA——一项考察多种职业真实工作的测试——上，它比 Opus 5.5 低两分。它在长周期工作和图像理解上都很强，是第一个仅凭截图就打通《Pokémon Red》的 Sonnet 模型。</p>
+<p><strong>协作。</strong> 和 Opus 5.5 一样，Sonnet 5.5 的写作比我们上一代模型更清晰；早期测试者称它是比 Sonnet 5 更好的协作伙伴。它的速度也让它非常适合在复杂度较低的任务上做快速迭代。</p>
+<p><strong>成本。</strong> Sonnet 5.5 的定价与 Sonnet 5 相同：每百万输入 token 2 美元、每百万输出 token 10 美元，缓存读取每百万 token 0.20 美元，但完成同样的工作通常需要少得多的 token。在我们的测试中，它每个任务的成本比前代低最多 30%。</p>
+<p><strong>速度。</strong> Sonnet 5.5 生成输出的速度比 Sonnet 5 快 30% 以上，是我们迄今为止最快的 Sonnet 模型。</p>
+<p><strong>对齐与安全。</strong> 在我们的自动化行为审计中，Sonnet 5.5 在多数对齐指标上优于或持平 Sonnet 5。由于它的网络安全能力与 Opus 5 相当，它是第一个带着我们为能力最强的模型所开发的那类网络安全防护与回退机制上线的 Sonnet 模型。它的生物学防护与 Sonnet 5 相同。两类防护都只针对一小类高风险请求；常规软件开发和多数生命科学工作不受影响。</p>
+<h2>性能</h2>
+<p>Sonnet 5.5 在各个领域都优于 Sonnet 5——某些情形下差距是大幅的。在多项评测中，Max effort 档位的 Sonnet 5.5 甚至与 Opus 5.5 表现相当。但基准分数只捕捉到模型能力的一个侧面；在我们自己的测试以及外部测试者的测试中，Opus 5.5 在需要持续判断的复杂、开放式工作上仍然明显更强。</p>
+<table><thead><tr><th></th><th>Sonnet 5.5</th><th>Sonnet 5</th><th>Opus 5.5</th><th>GPT-6 Sol</th></tr></thead><tbody><tr><td>智能体编程 Terminal-Bench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 Terminal-Bench 4.0</td><td>70.6%</td><td>10.3%</td><td>66.4%¹</td><td>—</td></tr><tr><td>智能体编程 FrontierCode 1.1（Main）</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 FrontierCode 1.1（Main）</td><td>46.2% Max²</td><td>42.4%</td><td>54.4%</td><td>49.3%</td></tr><tr><td>52.1% Xhigh</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 CursorBench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 CursorBench 4.0</td><td>55.5%</td><td>34.1%</td><td>57.8%</td><td>—</td></tr><tr><td>知识工作 GDPval-AA v2.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作 GDPval-AA v2.1³</td><td>1844</td><td>1449</td><td>1846</td><td>1487⁴</td></tr><tr><td>知识工作 AA-Briefcase v1.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作 AA-Briefcase v1.1³</td><td>1811</td><td>1359</td><td>1822</td><td>1483⁴</td></tr><tr><td>多学科推理 Humanity’s Last Exam</td><td></td><td></td><td></td><td></td></tr><tr><td>多学科推理 Humanity’s Last Exam</td><td>64.5%（带工具）</td><td>54.9%（带工具）</td><td>67.7%（带工具）</td><td>—</td></tr><tr><td>计算机使用 OSWorld 2.1</td><td></td><td></td><td></td><td></td></tr><tr><td>计算机使用 OSWorld 2.1</td><td>80.1%（部分得分）</td><td>57.0%（部分得分）</td><td>81.8%（部分得分）</td><td>—</td></tr><tr><td>视觉图表识别 Chartography</td><td></td><td></td><td></td><td></td></tr><tr><td>视觉图表识别 Chartography</td><td>61.6%（无工具）</td><td>15.6%（无工具）</td><td>64.4%（无工具）</td><td>53.6%⁴（无工具）</td></tr></tbody></table>
+<p>关于我们如何运行评测的细节，请参阅 <a href="https://www.anthropic.com/claude-sonnet-5-5-system-card">Sonnet 5.5 系统卡</a>。</p>
+<p>下面的图表描绘了每个模型在各个 effort 档位下的得分与其每任务成本。随着 effort 升高，模型通常工作更久，导致每任务成本更高，但得分一般也更高。图上的点越靠近左上角，每一美元所换来的能力就越多。</p>
+<p>在若干基准上，Low 或 Medium effort 档位的 Sonnet 5.5 就能超过 Sonnet 5 的最好成绩，而每任务成本只有后者的约十分之一。它在较低的 effort 设置下运行时每任务成本更低，此时它与 Opus 5.5 的互补性最好。在较高的设置下，它能以相近的成本取得相当的表现。</p>
+<p>智能体终端编程</p>
+<p>智能体编程：FrontierCode</p>
+<p>智能体编程：CursorBench</p>
+<p>知识工作：AA-Briefcase</p>
+<p>Terminal-Bench 4.0</p>
+<p>准确率 vs 成本</p>
+<p>Terminal-Bench 4.0 衡量一个模型在命令行界面内完成复杂、多步骤专业任务的能力。在 Medium effort（Claude 应用中的默认档位）下，Sonnet 5.5 远超 Sonnet 5 的最好成绩，而每任务成本不到后者的十分之一。</p>
+<p>Terminal-Bench 和 OpenAI 没有公开 GPT-6 Sol 的表现，因此这里报告的是 GPT-5.6 Sol。</p>
+<p>FrontierCode v1.1，主集</p>
+<p>准确率 vs 成本</p>
+<p>FrontierCode 衡量的是一个智能体的代码改动能否被合并。在 High effort（Claude Platform 的默认档位）下，Sonnet 5.5 追平 GPT-6 Sol 的最好成绩，而每任务成本约为其五分之一。²</p>
+<p>CursorBench 4.0</p>
+<p>准确率 vs 成本</p>
+<p>CursorBench 用取自真实 Cursor 会话的、含义模糊的多文件任务来评估编程智能体。Low effort 档位的 Sonnet 5.5 超过 Sonnet 5 的最好成绩，而每任务成本不到后者的十分之一。</p>
+<p>CursorBench 4.0 没有公开 GPT-6 Sol 的表现，因此这里报告的是 GPT-5.6 Sol。</p>
+<p>AA-Briefcase v1.1</p>
+<p>准确率 vs 成本</p>
+<p>在 AA-Briefcase——一项关于长周期知识工作的新基准——上，Medium effort 档位的 Sonnet 5.5 胜过 Sonnet 5 的最好成绩，每任务成本约为其九分之一。³</p>
+<h2>编程</h2>
+<p>Sonnet 5.5 的性能跃升在编程上尤其明显。在 FrontierCode 的 High effort 档位上，它比同一设置下的 Sonnet 5 高出 10 分，而每任务成本约为后者的十五分之一。在 CursorBench（用取自真实 Cursor 编程会话的任务来测试模型）上，它的最好成绩与 Opus 5.5 相差在约两分以内。</p>
+<p>早期测试者很欣赏 Sonnet 5.5 理解一个代码库的速度。他们也对它的效率印象深刻：在一对一的对比运行中，它比 Sonnet 5 更多地把 tool call 批量合在一起，从而带来更少的步骤和更低的成本。</p>
+<p>Epic Games</p>
+<p>Every</p>
+<p>CodeRabbit</p>
+<p>SpaceXAI</p>
+<p>Base44</p>
+<p>Unity</p>
+<p>Creator</p>
+<p>引言</p>
+<blockquote>“在 Epic 的早期测试中，Claude Sonnet 5.5 越过了你在更高档位模型身上才会期待的那条质量线，在系统设计审计和数据流评审上都站得住。这款新模型管理了玩法系统架构的数万行代码，响应保持轻快，能处理长达数小时的任务，而且提示词写得没那么规定性也照样交付。”</blockquote>
+<p>公司</p>
+<p>Epic Games</p>
+<p>作者</p>
+<p>Daniel Vogel，首席运营官</p>
+<p>引言</p>
+<blockquote>“Claude Sonnet 5.5 真能打。编程很快，在迭代式工作流里也能被迅速带向你想要的方向。但需要的时候它照样能干长线。它继承了 Opus 5.5 一些自然的写作提升，这让和它一起工作更有意思。”</blockquote>
+<p>公司</p>
+<p>Every</p>
+<p>作者</p>
+<p>Tyler Nishida，设计师</p>
+<p>引言</p>
+<blockquote>“Claude Sonnet 5.5 在不同复杂度层级上都比 Sonnet 5 表现出更好的判断力，同时消耗的输出 token 明显更少。Sonnet 5 过于频繁地求助网页搜索的倾向，以及它的高 token 用量，在这款新模型上都消失了。我们计划现在就把简单和中等的评审迁过来，未来几周再迁入更多。”</blockquote>
+<p>公司</p>
+<p>CodeRabbit</p>
+<p>作者</p>
+<p>David Loker，AI 副总裁</p>
+<p>引言</p>
+<blockquote>“Claude Sonnet 5.5 在 CursorBench 4.0 上交出 55.5% 的前沿级表现，仅次于 Opus 5.5。我们认为它会很受那些想要平衡性能与成本的开发者欢迎。”</blockquote>
+<p>公司</p>
+<p>SpaceXAI</p>
+<p>作者</p>
+<p>Sualeh Asif，机器学习总监</p>
+<p>引言</p>
+<blockquote>“在 118 次真实的应用构建中，Claude Sonnet 5.5 产出的应用得分与 Opus 5 持平。它平均每次构建用 3.6 轮迭代达到这个结果，而 Opus 5 需要 7.7 轮。在我们比较的所有模型里，它失败的 tool call 次数最少。它也很少在构建中途停下来向用户提问，因此更少的构建会因为等待有人回答而卡住。”</blockquote>
+<p>公司</p>
+<p>Base44</p>
+<p>作者</p>
+<p>Gabriel Grinberg，AI 工程负责人</p>
+<p>引言</p>
+<blockquote>“在 Unity，我们对任务完成度有很高的标准。项目会被重新打开，结果在运行时被检验，所以一处改动真的起作用了任务才算完成，而不是模型说自己完成了就算。Claude Sonnet 5.5 的大部分工作都通过了这一检验。它在我们多步骤的 Unity Editor 与编程基准上还完成了 90% 的任务，胜过同类模型。”</blockquote>
+<p>公司</p>
+<p>Unity</p>
+<p>作者</p>
+<p>Sam Zhang，创意技术专家</p>
+<p>引言</p>
+<blockquote>“当 Claude Opus 5.5 定好一个游戏的架构和总体框架后，我有信心让 Sonnet 5.5 去实现它。Sonnet 5.5 处理长时运行、复杂任务的方式让我印象深刻。”</blockquote>
+<p>公司</p>
+<p>Creator</p>
+<p>作者</p>
+<p>Kevin Ngo，创意编程者</p>
+<h2>知识工作</h2>
+<p>Sonnet 5.5 在知识工作的多个领域都有提升。在 GDPval-AA（用横跨 44 种职业、九大行业的真实世界任务来测试模型）上，Sonnet 5.5 的得分几乎与 Opus 5.5 持平，比 Sonnet 5 高约 400 分。它在计算机使用和图表识别上接近 Opus 5.5，在长周期知识工作上明显胜过 Sonnet 5 和 GPT-6 Sol。</p>
+<p>早期测试者强调了那些不易量化的改进。他们觉得它是更自然的对话伙伴，并提到它对设计的天分，指出它会给用户界面增添打磨，也能照着幻灯片模板做出几乎不需要修改的演示文稿。在一次内部测试中，我们把一家上市公司的季度财报材料和电话会纪要，连同一份幻灯片模板交给它，要求做一份 10 页的经营复盘。两位专家评审它的初稿可以直接原样发出。</p>
+<p>Slack</p>
+<p>Zendesk</p>
+<p>Balyasny Asset Management</p>
+<p>Box</p>
+<p>Lovable</p>
+<p>Atlassian</p>
+<p>引言</p>
+<blockquote>“在我们没有改动任何提示词的情况下，Claude Sonnet 5.5 在几乎所有离线 Slackbot 评测上都好过 Sonnet 5，用的步骤更少，输出 token 少约 14%。当有人交给 Slackbot 一个任务时，最重要的是质量和速度，而 Sonnet 5.5 让 Slackbot 能更快地为用户交付更好的结果。”</blockquote>
+<p>公司</p>
+<p>Slack</p>
+<p>作者</p>
+<p>Curtis Allen，主任工程师</p>
+<p>引言</p>
+<blockquote>“我们把数百个真实的支持场景——涵盖回复与升级请求——喂给 Claude Sonnet 5.5。和我们今天在生产中使用的 Claude 模型相比，它做错决定的次数更少，解决工单也更快。工单处理速度快了 20%，让我们的客户不必等待就能拿到他们需要的帮助。”</blockquote>
+<p>公司</p>
+<p>Zendesk</p>
+<p>作者</p>
+<p>Abhinay Kathuria，AI 总监</p>
+<p>引言</p>
+<blockquote>“在我们包含 2,441 个金融任务、覆盖问答、抽取、分析与预测的私有测试集上，Claude Sonnet 5.5 得分高于 Sonnet 5，每个回答大约用 121k token，而 Sonnet 5 用 497k。在分析师的搜索与检索工作上，它几乎在所有方面都好于 Sonnet 5。在高吞吐工作流上，它在我们运行的七个模型中取得了最好的质量与成本折中。”</blockquote>
+<p>公司</p>
+<p>Balyasny Asset Management</p>
+<p>作者</p>
+<p>Joe Poirier，高级 AI 工程师</p>
+<p>引言</p>
+<blockquote>“Claude Sonnet 5.5 会让我们金融服务和医疗健康行业的客户有信心把它用于最敏感的工作。Sonnet 5.5 会回查源文档里的数据，抓到 Sonnet 5 没发现的错误。与上一代模型相比，Sonnet 5.5 更准确、快 2.4 倍，总 token 用量少 12%。”</blockquote>
+<p>公司</p>
+<p>Box</p>
+<p>作者</p>
+<p>Yashodha Bhavnani，AI 产品副总裁</p>
+<p>引言</p>
+<blockquote>“Claude Sonnet 5.5 用更少、更稳健的步骤来思考，所以构建者不用等太久就能看到进展。我们的编码评测显示，完成一个任务的 tool call 少三分之一，shell 执行次数约为原来的一半。对日常编码和更高 effort 的对话来说，这意味着更快的迭代和更顺的构建循环。”</blockquote>
+<p>公司</p>
+<p>Lovable</p>
+<p>作者</p>
+<p>Fabian Hedin，联合创始人兼首席技术官</p>
+<p>引言</p>
+<blockquote>“每月有数百万次 Rovo 辅助动作在驱动我们客户的工作流，执行速度至关重要。Claude Sonnet 5.5 能让团队运行他们的 Rovo Agents 比用 Sonnet 5 时快最多 30%。我很高兴能把这个选择提供给客户。”</blockquote>
+<p>公司</p>
+<p>Atlassian</p>
+<p>作者</p>
+<p>Jamil Valliani，AI 产品负责人</p>
+<h2>成本与速度</h2>
+<p>定价</p>
+<table><thead><tr><th>每 1M token 价格</th><th><strong>Claude Sonnet 5.5</strong></th><th>Claude Opus 5.5</th></tr></thead><tbody><tr><td>缓存读取</td><td>$0.20</td><td>$0.20</td></tr><tr><td>缓存写入</td><td>$2.50</td><td>$5</td></tr><tr><td>输入 token</td><td>$2</td><td>$4</td></tr><tr><td>输出 token</td><td>$10</td><td>$20</td></tr></tbody></table>
+<p>Sonnet 5.5 每个任务所需的 token 比 Sonnet 5 少，所以运行起来更便宜。它生成输出的速度也快 30% 以上，而且它的效率立刻就能感觉到：</p>
+<p>提示词：</p>
+<p>用一个 HTML 文件做出 400 只椋鸟的群飞</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>提示词：</p>
+<p>用一个 HTML 文件表现风塑造沙丘</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>提示词：</p>
+<p>用一个 HTML 文件做一个由 24 只小钟组成的钟</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>调整 <a href="https://academy.claude.com/tutorials/choosing-the-right-effort-level-in-claude-code">effort 档位</a>可以让你在成本、速度与整体质量之间做平衡。在 Claude Code 和我们的应用里，默认 effort 设为 Medium，而 Claude Platform 默认是 High。在较低的设置下，Claude 回答更快、用的 token 更少，这适合常规工作。在较高的设置下，Claude 推理更久、检查自己的工作更彻底。</p>
+<h2>安全</h2>
+<h3>对齐</h3>
+<p>Sonnet 5.5 并没有推进我们模型能力的边界，所以我们的对齐评估聚焦在一组适用于任何能力层级模型的针对性风险上，包括违背用户利益行事、误导用户，以及配合高风险的滥用行为。</p>
+<p>在我们的自动化行为审计（在约 1,850 个场景下测试 Claude）中，Sonnet 5.5 在对齐、抗滥用与诚实的多数指标上优于或持平 Sonnet 5。在我们更新的 containment 评测中，Sonnet 5.5 尝试逃出沙盒的频率之低接近 Opus 5.5——那是我们测过的最好的模型——而它探测自己容器边界的倾向是我们所有模型里最低的。就整场审计而言，Opus 5.5 总体仍略好一点，但我们没有发现 Sonnet 5.5 追求与用户意图相冲突的目标的证据。</p>
+<p>正如我们在<a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">最近的对齐评估</a>中所说，没有任何一套评测能可靠地抓住每一次失效，Sonnet 5.5 也可能带着我们尚未发现的倾向，这正是我们把自身的对齐工作与下面所述防护配套使用的原因。</p>
+<h3>防护</h3>
+<p><strong>网络安全。</strong> Sonnet 5.5 的网络能力比 Sonnet 5 有大步提升，所以我们为它部署了与 Opus 5.5 类似的防护。用户仍然可以在常规软件开发中发现并修复自己代码里的 bug，但更高风险的网络安全任务会明显回退到 Sonnet 5。很快，网络安全防御者可以申请加入我们扩容后的 <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a>，为 Sonnet 5.5、Opus 5.5 和 Claude Mythos 模型分级获取更高级的能力。</p>
+<p><strong>生物学。</strong> Sonnet 5.5 使用与 Sonnet 5 相同的一套生物学防护。这些防护针对有害请求；多数研究、教育与临床工作不受影响，尽管某些微生物学与病毒学的请求可能被误判拦截。机构可以申请加入我们的 <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>，获得为生物学相关工作全部范围所设计的防护。</p>
+<p><strong>蒸馏。</strong> 蒸馏攻击指攻击者用数千个虚假账号以工业规模抽取一个模型的能力，让不良行为者能在缺少我们为 Claude 内建那些防护的情况下造出高能力模型。由于 Sonnet 5.5 比它的前代能力强得多，它是第一个带着阻止推理抽取的安全分类器上线的 Sonnet 模型。Sonnet 5.5 还扩展了 <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking</a>，因此 Claude 的思考无法与创建它的账号解绑。多数开发者不会察觉变化。如果你在账号之间搬移对话，包括在 Claude Code 里中途切换账号，我们的<a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">文档文章</a>解释了这一变化。</p>
+<h2>开始使用</h2>
+<p>与 Opus 5.5 和 Sonnet 5 一样，Claude Sonnet 5.5 可以零数据保留地提供服务。</p>
+<p>Claude Sonnet 5.5 现已在所有平台可用，包括 Amazon Web Services、Google Cloud 和 Microsoft Azure。开发者可以在 Claude Platform 上用 <code>claude-sonnet-5-5</code> 开始。如果你以 thinking 关闭的方式运行 Sonnet，需要先切换到新的 <code>between_tools</code> 设置——它会让前置思考保持关闭——然后再迁到 Sonnet 5.5。细节见我们的<a href="https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide#turn-thinking-off">迁移指南</a>。</p>
+<h2>脚注</h2>
+<p>1 Terminal-Bench 4.0 报告的是 Claude Opus 5.5 在 Xhigh effort 档位下的结果，那代表该模型的最高分。</p>
+<p>2 Sonnet 5.5 在 Max effort 下的得分低于 Xhigh。FrontierCode 评估的是一处代码改动能否在无人工编辑的情况下被合并。它会惩罚超出范围的改动，即使这些改动质量很高或有帮助。在 Max effort 下，Sonnet 5.5 更常运行 Claude Code 的 code-review skill，这个 skill 会把评审拆分给许多 subagent；在 Cognition 检查的两个案例中，这导致了超时，或者产生了超出任务范围的额外编辑，因而得分更低。</p>
+<p>3 Artificial Analysis 是在 Claude Platform 上一个 Sonnet 5.5 的预发布部署上运行 GDPval-AA 和 AA-Briefcase 的，我们后来发现该部署有一个 bug，可能让使用结构化输出的请求的响应质量下降。我们预计这对 Sonnet 5.5 得分的影响（如果有的话）很小，而且是低估了它的表现。那个 bug 此后已经被修复。</p>
+<p>4 OpenAI 最近修复了一个会让 GPT-6 Sol 的图像理解变差的 bug。Artificial Analysis 给出的官方 AA-Briefcase v1.1 与 GDPval-AA v2.1 分数，以及 Surge AI 给出的 Chartography 分数，可能尚未更新以反映该模型的最新版本。Artificial Analysis 不认为 AA-Briefcase v1.1 与 GDPval-AA v2.1 会受到重大影响。针对 Chartography 的内部测试表明它的分数未受影响。</p>]]></content:encoded>
     </item>
     <item>
       <title>Cresta 如何将 CX 专业知识转变为 Claude Agent SDK 上的代理构建器</title>
