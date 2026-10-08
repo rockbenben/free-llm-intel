@@ -6536,6 +6536,53 @@ class TestAnchorSectionSlicing(unittest.TestCase):
         self.assertLess(len(sec), len(page))
 
 
+    #: 腾讯混元更新日志形状：`## 2025年6月` 小节下面是一张四列表，
+    #: **一条更新就是表格里的一行**；锚点 `t<日期>-<序号>` 是抽取时合成的，
+    #: 页面上没有任何标题与它对得上 —— 实测 80 行因此只有整页可读。
+    TX = (
+        "## 2025年6月\n"
+        "\n"
+        "| **动态名称** | **动态描述** | **发布时间** | **相关文档** |\n"
+        "| --- | --- | --- | --- |\n"
+        "| hunyuan-t1-vision-20250619 上线 | 特性A：图生文快思考 | 2025-06-19 | [文档](https://t.cn/a) |\n"
+        "| hunyuan-turbos-vision-20250619 上线 | 特性B：加速版图生文 | 2025-06-19 | [文档](https://t.cn/b) |\n"
+        "\n"
+        "## 2025年5月\n"
+        "\n"
+        "| **动态名称** | **动态描述** | **发布时间** | **相关文档** |\n"
+        "| --- | --- | --- | --- |\n"
+        "| hunyuan-lite 下线 | 特性C：旧版本停止服务 | 2025-05-09 | [文档](https://t.cn/c) |\n"
+    )
+
+    def test_table_row_entry_slices_by_date_and_title(self):
+        """条目在表格行里：合成锚点给日期，标题选中那一行，切片带上表头与所属小节。"""
+        sec = ft._slice_anchor_section(self.TX, "t2025-06-19-12", "hunyuan-t1-vision-20250619 上线")
+        self.assertIn("特性A", sec)
+        self.assertNotIn("特性B", sec, "同日期另一行不得混进来")
+        self.assertNotIn("特性C", sec)
+        self.assertIn("**动态名称**", sec, "没有表头，读者看不懂这一行各列是什么")
+        self.assertIn("## 2025年6月", sec)
+        self.assertLess(len(sec), len(self.TX))
+
+    def test_ambiguous_or_unmatched_title_refuses_table_slice(self):
+        """标题选不中、或同日期几行都合它 —— 一律退回整页，宁缺不错。"""
+        whole = ft._slice_anchor_section(self.TX, "t2025-06-19-12", "上线")
+        self.assertEqual(whole.strip(), self.TX.strip(), "两行都含「上线」时不许猜一行")
+        none = ft._slice_anchor_section(self.TX, "t2025-06-19-12", "根本不存在的一条")
+        self.assertEqual(none.strip(), self.TX.strip())
+
+    def test_synthetic_anchor_only_parses_unambiguous_iso_dates(self):
+        """合成锚点只认 ISO 日期；月日顺序有歧义的写法一律不认。
+
+        Gemini 版本说明的锚点 `04-09-2025-2` 实测是**美式 MM-DD-YYYY**（该行 date 列
+        是 2025-04-09，页面标题是「2025 年 4 月 9 日」）。按 DD-MM 读会指到另一天，
+        日期错则正文错 —— 所以这里钉的是「返回 None」，不是某个猜出来的日期。
+        """
+        self.assertEqual(ft._syn_date_ordinal("t2025-06-19-12"), ("2025-06-19", 12))
+        self.assertEqual(ft._syn_date_ordinal("d-2026-06-25-46"), ("2026-06-25", 46))
+        self.assertIsNone(ft._syn_date_ordinal("04-09-2025-2"))
+        self.assertIsNone(ft._syn_date_ordinal("mcp-connectors-beta"))
+
 class TestReadFullButtonHonesty(unittest.TestCase):
     """「读全文」按钮不许给读者一个已知点不开的入口。
 

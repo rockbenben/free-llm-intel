@@ -644,6 +644,88 @@ def _find_entry_start(lines: list[str], frag: str) -> int:
     return -1
 
 
+#: 「同页第 N 条」的**合成锚点**：抽取时页面给不出可用链接，锚点按
+#: `t<ISO日期>-<序号>`（腾讯混元）或 `d-<ISO日期>-<序号>`（siliconflow）生成。
+#:
+#: 不解析 `04-09-2025-2` 这类**月日顺序有歧义**的写法：Gemini 版本说明实测是美式
+#: MM-DD-YYYY（该行 date 列是 2025-04-09，页面里的标题是「2025 年 4 月 9 日」），
+#: 按 DD-MM 读会指到另一天。猜错日期就是切错正文，所以宁可不认。
+_SYN_ISO_ORD = re.compile(r"^(?:t|d-)?(\d{4})-(\d{1,2})-(\d{1,2})-(\d+)$")
+_TABLE_ONLY = set("|-: ")
+
+
+def _syn_date_ordinal(frag: str):
+    """合成锚点拆成 (ISO 日期, 序号)；不是 ISO 合成锚点返回 None。"""
+    s = unquote(frag or "").strip()
+    m = _SYN_ISO_ORD.match(s)
+    if not m:
+        return None
+    y, mo, d, n = m.groups()
+    return "%04d-%02d-%02d" % (int(y), int(mo), int(d)), int(n)
+
+
+def _date_variants(iso: str) -> set:
+    """同一日期在页面里可能的写法（ISO / 去零 / 中文年月日 / 点分）。"""
+    y, mo, d = (int(x) for x in iso.split("-"))
+    return {iso, f"{y}-{mo}-{d}", f"{y}年{mo}月{d}日", f"{y}年{mo:02d}月{d:02d}日",
+            f"{y}.{mo:02d}.{d:02d}", f"{y}.{mo}.{d}"}
+
+
+def _norm_text(s: str) -> str:
+    return re.sub(r"[\W_]+", "", s or "", flags=re.UNICODE).lower()
+
+
+def _slice_dated_table(md: str, frag: str, title: str):
+    """条目是**表格里的一行**时的定位：日期筛出候选行，标题必须选中唯一一行。
+
+    腾讯混元更新日志实测：`## 2025年12月` 小节下面是一张四列表（动态名称 / 动态描述 /
+    发布时间 / 相关文档），一条更新就是其中一行 —— 页面上没有任何标题与锚点对得上，
+    前三种判据（行内锚点、行文本 slug、汉字日期键）全部落空，80 行因此只有整页可读。
+
+    标题当闸门而不是当线索：选不中、或同日期几行都含该标题（实测 4 行近义重复）时
+    **一律不切**，宁缺不错。返回 None 表示交给调用方维持现状。
+    """
+    got = _syn_date_ordinal(frag)
+    if not got:
+        return None
+    iso, _ordinal = got
+    lines = md.splitlines()
+    variants = _date_variants(iso)
+    cand = [i for i, l in enumerate(lines)
+            if l.strip().startswith("|") and not set(l.strip()) <= _TABLE_ONLY
+            and any(v in l for v in variants)]
+    if not cand:
+        return None
+    nt = _norm_text(title)
+    sel = []
+    if nt:
+        for i in cand:
+            for cell in [c.strip() for c in lines[i].strip().strip("|").split("|")][:2]:
+                nc = _norm_text(cell)
+                if nc and (nc in nt or nt in nc):
+                    sel.append(i)
+                    break
+        if len(sel) != 1:
+            return None            # 0 个或仍多选中：不给错正文
+    elif len(cand) != 1:
+        return None
+    row = sel[0] if sel else cand[0]
+    # 所属表格的表头（列名 + 分隔行）：从该行往上走到表格块的开头
+    top = row
+    while top - 1 >= 0 and lines[top - 1].strip().startswith("|"):
+        top -= 1
+    header = lines[top:top + 2] if row - top >= 2 else []
+    # 所属小节标题：往上第一个标题行
+    sec = ""
+    for k in range(top - 1, -1, -1):
+        if _HEADING_RE.match(lines[k]):
+            sec = lines[k]
+            break
+    parts = [p for p in (sec, "\n".join(header), lines[row]) if p]
+    out = "\n\n".join(parts).strip()
+    return out if len(out) >= 80 else None
+
+
 #: 条目之间的收尾噪声：分隔线，以及**下一条**头顶的裸日期标签
 #: （groq changelog 实测 13 条切片结尾挂着 `---` + `Oct 29, 2025`，读者会以为
 #: 这条自己就是那个日期）。日期标签只在它后面紧跟边界时才削，正文一律不动。
@@ -667,13 +749,15 @@ def _trim_entry_tail(lines: list[str], end: int) -> int:
     return i
 
 
-def _slice_anchor_section(md: str, frag: str) -> str:
+def _slice_anchor_section(md: str, frag: str, title: str = "") -> str:
     """从整页 markdown 里切出 `frag` 锚点那一条的段落；找不到就原样返回整页。
 
-    起点 = `_find_entry_start`。终点 = 其后第一个**同级或更浅的条目起点**；起点是
-    非标题行（Cloudflare 形状）时，任意条目起点都能收尾。标题型起点还要求那个标题
-    是「条目开头」，判据见 `_is_entry_heading`（日期型标题或带锚点链接），**不是单纯
-    「下一个同级标题」**：MiniMax 每条下面紧跟的 `## MiniMax H3` 与日期标题同级，
+    起点 = `_find_entry_start`（标题行，或 Cloudflare 那种独立成行的条目标题）。
+    三种形状都定位不到时，再试 `_slice_dated_table`：条目其实是**表格里的一行**
+    （腾讯混元更新日志），靠合成锚点里的日期筛行、用 `title` 选中唯一一行。
+    终点 = 其后第一个**同级或更浅的条目起点**；起点是非标题行时，任意条目起点都能收尾。
+    标题型起点还要求那个标题是「条目开头」，判据见 `_is_entry_heading`（日期型标题或带锚点链接），
+    **不是单纯「下一个同级标题」**：MiniMax 每条下面紧跟的 `## MiniMax H3` 与日期标题同级，
     按同级切会把条目正文整段丢掉（实测只剩 92 字符的日期行）。
 
     切不到 / 切出来太短都退回整页：宁可给多也不给空 —— 空正文会被 `detect_index_page`
@@ -684,7 +768,8 @@ def _slice_anchor_section(md: str, frag: str) -> str:
     lines = md.splitlines()
     start = _find_entry_start(lines, frag)
     if start < 0:
-        return md
+        table_slice = _slice_dated_table(md, frag, title)
+        return table_slice if table_slice else md
     level = _heading_level(lines[start]) or 99   # 非标题起点：任何条目起点都算边界
     end = len(lines)
     visible = _visible_lines(lines)
@@ -790,7 +875,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # （实测 MiniMax 发布说明 21 条条目因此共用一份整页正文）。
         frag = anchor_fragment(url)
         if en_status == "ok" and frag:
-            sliced = _slice_anchor_section(ex["markdown"], frag)
+            sliced = _slice_anchor_section(ex["markdown"], frag, r.get("title") or "")
             if len(sliced) < len(ex["markdown"]):
                 ex["markdown"] = sliced
                 # 整页的 <title> 是页面级的（「模型发布 - MiniMax 开放平台文档中心」），
