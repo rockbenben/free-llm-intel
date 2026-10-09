@@ -137,7 +137,7 @@
   .segbtn[aria-pressed=true] { background: var(--chip-active-bg); color: var(--chip-active-fg); }
 
   .chips { display: flex; gap: var(--sp-6); flex-wrap: wrap; margin-top: var(--sp-10); }
-  /* 顶层三视图：厂商动态 / 最新变化 / 免费额度与活动一览 */
+  /* 顶层三视图：厂商动态 / 额度变化 / 免费额度与活动一览 */
   /* 视图切换常驻：滚动时「换视图」这个动作不能滚丢了，
      而筛选块（搜索 + 厂商 chips + 提示）改随内容滚动——它曾占满 39% 移动视口 */
   .tabs {
@@ -836,7 +836,7 @@ var FLI = (function () {
 
   // 订阅地址跟着筛选走：选中某家就给该家的单厂商源，否则给合并流。
   // 选完厂商最想做的大概就是「订这一家」，不该逼用户再去页脚找。
-  // 「最新变化」视图打开时换成变化流——顶部按钮永远订阅「正在看的东西」。
+  // 「额度变化」视图打开时换成变化流——顶部按钮永远订阅「正在看的东西」。
   var CHANGES_FEED = 'feeds/llm-intel-changes.xml';
   var currentTab = 'news';
   function updateSubscribe() {
@@ -1027,7 +1027,7 @@ var FLI = (function () {
     }
   }
 
-  // ---- 顶层三视图：动态（默认）/ 最新变化 / 免费额度与活动一览 --------------------
+  // ---- 顶层三视图：动态（默认）/ 额度变化 / 免费额度与活动一览 --------------------
   // 后两个视图的数据同样是巡检产物（feeds/intel-changes.json、feeds/quotas.json），
   // 点开才拉取；页面依旧零硬编码——厂商与条目全部来自 JSON。
   var REPO = 'https://github.com/rockbenben/free-llm-intel';
@@ -1065,7 +1065,7 @@ var FLI = (function () {
     });
     currentTab = name;
     updateSubscribe();
-    // 视图写进地址栏：分享「最新变化」链接，对方打开就停在这一页
+    // 视图写进地址栏：分享「额度变化」链接，对方打开就停在这一页
     if (keepUrl !== false) {
       var u = new URL(location.href);
       if (name === 'news') u.searchParams.delete('tab');
@@ -1100,8 +1100,8 @@ var FLI = (function () {
   });
 
   var changesState = { rows: null, q: '' };
-  // intel-changes 里 kind=release（新模型）本质是厂商博客动态、已在「厂商动态」里；
-  // 这一视图只留 kind=quota（台账真正变了的那些）。
+  // 变化流（intel-changes.json）现在源头就只写 kind=quota。这里的过滤是防 localStorage
+  // 里 12h 内的旧缓存仍带 kind=release，保证「额度变化」页签只会显示台账真正变了的。
   function onlyQuota(items) {
     return (items || []).filter(function (r) { return r[1] === 'quota'; });
   }

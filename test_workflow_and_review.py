@@ -5227,7 +5227,7 @@ class TestBrowsePagePureLogic(unittest.TestCase):
 
 
 class TestIntelChangesFeed(unittest.TestCase):
-    """额度/活动变化流：变更日志解析、与雷达合流、README 人工尾部保留。"""
+    """额度/活动变化流：变更日志解析、只出额度事件、README 人工尾部保留。"""
 
     CHANGELOG = (
         "# 情报变更日志\n\n> 头\n\n"
@@ -5240,10 +5240,6 @@ class TestIntelChangesFeed(unittest.TestCase):
         "### Cohere（`cohere`）\n"
         "- 摘要：试用限速调整\n"
         "- `free_quota`：E → F\n")
-
-    # extract_model_releases 的原生事件键是 vendor_id（json 里的 "vendor" 只是列名）
-    RELEASES = [{"date": "2026-09-25", "vendor_id": "z", "brand": "Z",
-                 "model": "M1", "title": "Z 发布 M1", "url": "https://z.example/m1"}]
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -5260,23 +5256,24 @@ class TestIntelChangesFeed(unittest.TestCase):
         self.assertEqual(entries[0]["diffs"], [("free_models", "A → B"),
                                                ("validity", "C → D")])
 
-    def test_feed_merges_changes_and_releases(self):
+    def test_feed_is_quota_only(self):
         n = crawler_llm_intel.write_intel_changes_feed(
-            self.root, self.CHANGELOG, self.RELEASES, "https://x/feeds")
-        self.assertEqual(n, 3)
+            self.root, self.CHANGELOG, "https://x/feeds")
+        self.assertEqual(n, 2, "变化流只收额度/活动变化，不再有模型发布")
         xml = (self.root / crawler_llm_intel.INTEL_CHANGES_FEED).read_text(encoding="utf-8")
         import xml.etree.ElementTree as ET
         items = ET.fromstring(xml).findall("./channel/item")
-        # 日期倒序：09-26 变化、09-25 新模型、09-20 变化
+        # 日期倒序：09-26 Groq、09-20 Cohere，两条都是额度变化
         self.assertIn("额度变化 · Groq", items[0].findtext("title"))
-        self.assertIn("新模型 · Z", items[1].findtext("title"))
+        self.assertIn("额度变化 · Cohere", items[1].findtext("title"))
+        self.assertNotIn("新模型", xml, "模型发布不再进变化流（已移到 model-releases.json）")
         self.assertIn("A → B", items[0].findtext("description"))
         guids = [it.findtext("guid") for it in items]
-        self.assertEqual(len(set(guids)), 3, "guid 必须稳定且唯一")
+        self.assertEqual(len(set(guids)), 2, "guid 必须稳定且唯一")
 
     def test_quota_items_link_to_readme_anchor(self):
         n = crawler_llm_intel.write_intel_changes_feed(
-            self.root, self.CHANGELOG, [], "",
+            self.root, self.CHANGELOG, "",
             anchors={"groq": "38-groq-cloud-lpu", "cohere": "40-cohere"})
         self.assertEqual(n, 2)
         xml = (self.root / crawler_llm_intel.INTEL_CHANGES_FEED).read_text(encoding="utf-8")
@@ -5284,10 +5281,12 @@ class TestIntelChangesFeed(unittest.TestCase):
         js = json.loads((self.root / "intel-changes.json").read_text(encoding="utf-8"))
         self.assertEqual(js["items"][0][1], "quota", "伴生 JSON 供浏览页消费，kind 标记类别")
 
-    def test_feed_without_changelog_still_lists_releases(self):
-        # 首次 AI 采纳前 changelog 不存在是常态：流不能为空
-        n = crawler_llm_intel.write_intel_changes_feed(self.root, "", self.RELEASES, "")
-        self.assertEqual(n, 1)
+    def test_feed_without_changelog_produces_nothing(self):
+        # 首次 AI 采纳前 changelog 不存在：变化流不产出（雷达已移到 model-releases.json）
+        n = crawler_llm_intel.write_intel_changes_feed(self.root, "", "")
+        self.assertEqual(n, 0)
+        self.assertFalse((self.root / crawler_llm_intel.INTEL_CHANGES_FEED).exists(),
+                         "无额度条目就不该写空的变化流文件（OPML 据此决定列不列它）")
 
     def test_opml_lists_changes_feed(self):
         out = self.root / "x.opml"

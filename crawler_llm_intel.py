@@ -3463,7 +3463,7 @@ def render_intel_section(intel_list: list[VendorIntel], elapsed: float,
                      "阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文"
                      "（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅"
                      "（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。")
-        lines.append(f"> 🛰 **额度变化订阅**（新活动 / 额度调整 / 新模型上架）："
+        lines.append(f"> 🛰 **额度变化订阅**（新活动 / 额度调整，前值 → 后值）："
                      f"[{INTEL_CHANGES_FEED}]({feeds_base}/{INTEL_CHANGES_FEED})")
     lines.append("")
 
@@ -3866,9 +3866,9 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
             site or feeds_base,
         )])
     if feeds_base and changes_feed:
-        # 第四组：不是「厂商动态」而是「本仓库情报本身的变化」——新活动、
-        # 额度调整（前值→后值）、新模型上架，订阅这一个即可跟踪白嫖政策变动。
-        lines += group("情报变化 · 额度 / 活动 / 新模型（本仓库自建）", [(
+        # 第四组：不是「厂商动态」而是「本仓库情报台账的变化」——新活动、
+        # 额度调整（前值→后值），订阅这一个即可跟踪白嫖政策变动。
+        lines += group("情报变化 · 额度 / 活动（本仓库自建）", [(
             "LLM 免费额度 - 新活动与新额度变化流",
             f"{feeds_base}/llm-intel-changes.xml",
             site or feeds_base,
@@ -5774,14 +5774,14 @@ def build_quotas_payload(vendors: list[dict], reviews: dict[str, str]) -> dict:
 
 
 def write_intel_changes_feed(out_dir: Path, changelog_text: str,
-                             releases: list[dict], base_url: str = "",
+                             base_url: str = "",
                              anchors: dict[str, str] | None = None) -> int:
     """额度 / 活动变化流（RSS）：读者订阅它来知道「哪家的免费政策刚变了」。
 
-    两类事件合流，都是带日期的「情报时刻」而非博客文章：
-      * **额度变化** —— `llm-intel-changelog.md` 里 AI 采纳的前值 → 后值；
-      * **新模型** —— 模型发布雷达事件（新模型上架常常就是新的免费入口）。
-    变化日志在 CI 首次采纳前不存在是常态，此时流里只剩雷达事件；两类都没有就不产出。
+    只收录 **额度/活动变化**——`llm-intel-changelog.md` 里 AI 采纳的前值 → 后值。
+    模型发布雷达（新模型上架）不再进这条流：绝大多数本就重复出现在厂商动态订阅流
+    （llm-news-all），雷达全量另存 model-releases.json。变化流名副其实只讲「额度变了」。
+    变化日志在 CI 首次采纳前不存在是常态，此时这条流不产出（无条目即不写文件）。
     确定性产物：lastBuildDate 取最新事件日期（同其余自建源）。
     返回收录条数。
     """
@@ -5795,17 +5795,6 @@ def write_intel_changes_feed(out_dir: Path, changelog_text: str,
             "text": "\n".join(f"{f}：{change}" for f, change in e["diffs"]) or e["brand"],
             "url": f"{REPO_URL}#{anchor}" if anchor else REPO_URL,
             "guid": f"changelog-{e['date']}-{e['vendor_id']}",
-        })
-    for ev in releases:
-        # 入参是 extract_model_releases 的原生事件（键为 vendor_id）；
-        # json 行格式的 "vendor" 只是列名，别在这里混用。
-        vid = ev.get("vendor_id") or ev.get("vendor", "")
-        items.append({
-            "date": ev["date"], "kind": "release", "vendor": vid,
-            "brand": ev["brand"],
-            "title": f"新模型 · {ev['brand']}：{ev['model']}",
-            "text": ev["title"], "url": ev["url"],
-            "guid": f"release-{vid}-{ev['model'].lower()}",
         })
     items.sort(key=lambda t: t["date"], reverse=True)
     items = items[:INTEL_CHANGES_LIMIT]
@@ -5826,7 +5815,7 @@ def write_intel_changes_feed(out_dir: Path, changelog_text: str,
     base = base_url.rstrip("/")
     _rss_write(out_dir / INTEL_CHANGES_FEED, _rss_channel(
         "LLM 免费额度 · 新活动与新额度变化",
-        "free-llm-intel 巡检采纳的免费额度变化（前值 → 后值）与模型发布雷达事件——"
+        "free-llm-intel 巡检采纳的免费额度 / 活动变化（前值 → 后值）——"
         "订阅这一个，哪家的白嫖政策刚变了即刻可见。",
         xml_items, f"{base}/{INTEL_CHANGES_FEED}" if base else "", items[0]["date"]))
     # 网页端伴生 JSON（浏览页「变化」页签消费，免去 XML 解析）：同一批条目，无时间戳。
@@ -7059,8 +7048,9 @@ def main(argv: list[str] | None = None) -> int:
         wrote_rel = write_model_releases(feeds_dir / "model-releases.json", releases)
         print(f"      模型发布雷达 {len(releases)} 个事件"
               f"（{('已刷新 ' + 'model-releases.json') if wrote_rel else '无内容变化，未改写'}）")
-        # 额度/活动变化流：雷达事件 + 变更日志（AI 采纳记录）合流；日志文件在
-        # 首次采纳前不存在是常态（含 --rebuild-only，本仓库根可能还没有它）。
+        # 额度/活动变化流：只收变更日志（AI 采纳记录）里的额度/活动变化；日志文件在
+        # 首次采纳前不存在是常态（含 --rebuild-only，本仓库根可能还没有它），此时不产出。
+        # 模型发布雷达全量已存 model-releases.json，不再混进这条流。
         # 额度变化条目直接链到 README 里该厂商的档案锚点，阅读器一点即达。
         changelog_text = ""
         cl_path = root / CHANGELOG_MD
@@ -7070,7 +7060,7 @@ def main(argv: list[str] | None = None) -> int:
         quotas = build_quotas_payload(all_vendors, snapshots.reviews)
         anchors = {row["id"]: row["anchor"] for row in quotas["vendors"]}
         n_changes = write_intel_changes_feed(
-            feeds_dir, changelog_text, releases, feeds_base, anchors)
+            feeds_dir, changelog_text, feeds_base, anchors)
         if n_changes:
             print(f"      额度/活动变化流 {n_changes} 条（{INTEL_CHANGES_FEED} + intel-changes.json）")
         # OPML 放在变化流之后：清单里的「情报变化」组必须指向**真实存在**的文件
