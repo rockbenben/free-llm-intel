@@ -6431,6 +6431,27 @@ class TestFulltextUrlIdentity(unittest.TestCase):
         self.assertEqual(ft.normalize_url("https://a.com/"), "https://a.com/")
         self.assertEqual(ft.normalize_url("https://a.com"), "https://a.com/")
 
+    def test_path_locale_stripped_only_on_the_whitelisted_host(self):
+        """openai 的中文新闻页混着两种链接写法，同一篇文章必须只有一个身份。
+
+        白名单之外不许剥：deepseek 的 `/zh-cn/updates/` 就是它中文版页面本身，
+        剥掉会跟不存在的英文版撞成一个身份，也把源声明的语言骗成英文。
+        """
+        self.assertEqual(ft.normalize_url("https://openai.com/zh-Hans-CN/index/gpt-6/"),
+                         "https://openai.com/index/gpt-6")
+        self.assertEqual(ft.normalize_url("https://openai.com/index/gpt-6/"),
+                         "https://openai.com/index/gpt-6")
+        self.assertEqual(ft.url_hash("https://openai.com/zh-Hans-CN/index/gpt-6"),
+                         ft.url_hash("https://openai.com/index/gpt-6"),
+                         "两种写法必须归一到同一个语料文件名")
+        self.assertEqual(ft.normalize_url("https://openai.com/zh-Hans-CN/news/"),
+                         "https://openai.com/news",
+                         "源自身的 locale 段也剥（canonical 与列表页同一身份）")
+        kept = ft.normalize_url("https://api-docs.deepseek.com/zh-cn/updates/")
+        self.assertEqual(kept, "https://api-docs.deepseek.com/zh-cn/updates")
+        self.assertEqual(ft.normalize_url("https://mimo.mi.com/docs/zh-CN/updates/model"),
+                         "https://mimo.mi.com/docs/zh-CN/updates/model")
+
     def test_url_hash_deterministic_and_fragment_sensitive(self):
         """slug 必须**认** fragment —— 这条口径 2026-10-08 从「忽略」翻了过来。
 

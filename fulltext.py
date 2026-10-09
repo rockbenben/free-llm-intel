@@ -43,14 +43,38 @@ def anchor_fragment(url: str) -> str:
     return unquote(urlsplit(url.strip()).fragment).strip()
 
 
+#: 有些站点把界面语言放在**路径首段**（openai 的中文新闻页 canonical 是
+#: `openai.com/zh-Hans-CN/news/`，可它列出的条目链接却混着 `/index/x` 与
+#: `/zh-Hans-CN/index/x` 两种写法）。不剥掉就会同一篇文章两个身份、两份语料。
+#: 只对**明确按此模式做 locale 路由**的域名生效：deepseek 的 `api-docs.deepseek.com/zh-cn/…`
+#: 里那段路径是它真正的中文版页面（没有等价的不带 locale 路径），剥掉会把它的
+#: 身份与源声明一起弄错 —— 所以按域名白名单，不搞全局正则。
+PATH_LOCALE_HOSTS = frozenset({"openai.com"})
+_PATH_LOCALE_RE = re.compile(
+    r"^(zh-Hans-CN|zh-Hant-CN|zh-CN|zh-TW|en-US|en-GB|ja-JP|ko-KR|fr-FR|de-DE|es-ES|pt-BR|ru-RU|it-IT)(?=/|$)",
+    re.I)
+
+
+def _strip_path_locale(host: str, path: str) -> str:
+    """按域名白名单剥掉路径首段的 BCP-47 locale（openai 这类同页混链的站点）。"""
+    if host.split("://")[-1].split("/")[0].lower().replace("www.", "") not in PATH_LOCALE_HOSTS:
+        return path
+    seg = path.lstrip("/").split("/", 1)
+    if not _PATH_LOCALE_RE.match(seg[0] or ""):
+        return path
+    rest = seg[1] if len(seg) > 1 else ""
+    return "/" + rest
+
+
 def normalize_url(url: str) -> str:
     """去 fragment、去已知跟踪参数、host 小写、剥路径尾斜杠（除根路径）。
 
     确定性：同一 URL 多次运行得同一形态，即便 fragment / utm 变。
+    白名单域名还会剥掉路径里的 locale 段（见 `PATH_LOCALE_HOSTS`）。
     """
     parts = urlsplit(url.strip())
     host = parts.netloc.lower()
-    path = parts.path
+    path = _strip_path_locale(host, parts.path)
     if len(path) > 1 and path.endswith("/"):
         path = path.rstrip("/") or "/"
     pairs = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True)
