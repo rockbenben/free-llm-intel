@@ -976,6 +976,16 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         if (en_status == "ok" and frag and not shrank
                 and len(siblings_by_base.get((vendor, url.split("#", 1)[0]), ())) > 1):
             en_status = "index_page"
+        # 同形缺陷的另一面：**不同 URL** 抓回来是同一份内容 —— 站点的 JS 空壳或营销
+        # 首页回退（实测 modular.com 三篇博客重抓后都落到「Inference reimagined…」首页，
+        # 17,209 字逐字相同）。正文一旦与同厂商另一行已记的 `body_sha` 撞上，它就不是
+        # 「这一条」的正文，一样拒收。
+        if en_status == "ok" and len(ex["markdown"]) >= 200:
+            _sha = hashlib.sha256(ex["markdown"].encode("utf-8")).hexdigest()[:12]
+            if any(o.get("body_sha") == _sha and o.get("en_status") == "ok"
+                   for kk, o in bodies.items()
+                   if kk != key and kk.split("\t", 1)[0] == vendor):
+                en_status = "index_page"
         # 链接目录页（blog index / 聚合列表）不是文章：置 index_page、正文留空、不入待译
         if en_status == "ok" and detect_index_page(ex["markdown"]):
             en_status = "index_page"

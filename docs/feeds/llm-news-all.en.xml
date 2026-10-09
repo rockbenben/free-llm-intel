@@ -16,6 +16,45 @@
       <category>Amazon Bedrock</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.en.xml">Amazon Bedrock</source>
       <description>Full title: Pay-per-inference for AI agents: How BlockRun and Incarna use Amazon Bedrock AgentCore payments</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Pay-per-inference for AI agents: How BlockRun and Incarna use Amazon Bedrock AgentCore payments</h1>
+<p>When an AI agent runs, it often needs to buy something to finish a task: a model inference, an API response, access web content, or a call to another agent. These purchases are small and frequent, sometimes a fraction of a cent each, and they happen inside the agent’s loop with no person available to approve them.</p>
+<p><a href="https://aws.amazon.com/blogs/machine-learning/agents-that-transact-introducing-amazon-bedrock-agentcore-payments-built-with-coinbase-and-stripe/">Amazon Bedrock AgentCore payments</a> removes that burden. It gives agents a managed way to pay for services on demand, with spending limits enforced by the infrastructure rather than by the model. In this post, we look at how Incarna used AgentCore payments to let its agents pay BlockRun for model inference one request at a time. BlockRun is a pay-as-you-go inference router serving more than 90 models from more than 15 providers over <a href="https://aws.amazon.com/blogs/industries/x402-and-agentic-commerce-redefining-autonomous-payments-in-financial-services/">x402</a>, each call quoted and settled independently. AgentCore payments works with x402-compatible endpoints, including Amazon Bedrock inference endpoints. With the service, the Incarna team cut the work of adding x402 payment support from months to days, and put an end-to-end pay-per-inference flow into production.</p>
+<h2>The challenge: Paying for inference by the request</h2>
+<p>Paying per inference is a high-frequency, low-value pattern. An agent might make hundreds of small purchases in a single session, each worth a fraction of a cent. Card networks weren’t built for sub-cent payments. Building your own rails means solving several hard problems at once. You must decide where the money is held and how each payment is signed, support emerging payment protocols such as x402, and keep an autonomous agent from overspending.</p>
+<h2>What AgentCore payments provides</h2>
+<p>Amazon Bedrock AgentCore is a platform to build, connect, and optimize agents at scale, with any framework or model. AgentCore payments is a managed capability of Amazon Bedrock AgentCore that builders can use to add payments to their agents in a few lines of code. It handles the payment protocol, connects to a wallet, signs the transaction, and enforces spending limits. Builders integrate through one managed service instead of assembling the parts on their own. A few things make it a good fit for pay-per-inference:</p>
+<ul><li><strong>Managed wallets.</strong> Incarna provisions each agent’s wallet using the Coinbase CDP connector. The customer owns it and grants Incarna a delegated authorization to use the wallet.</li><li><strong>Native protocol handling.</strong> When a paid endpoint answers with HTTP 402 (“Payment Required”), the agent uses AgentCore payments to make the payment over x402. It signs the transaction with the configured wallet and returns cryptographic proof to the merchant.</li><li><strong>Spending governance at the infrastructure layer.</strong> AgentCore payments enforces limits outside the model, so an agent can’t exceed them even if its prompt is manipulated.</li><li><strong>Settlement you can audit.</strong> Payments settle in a stablecoin. Incarna uses USDC on the Base network, and each transaction is verifiable on-chain.</li></ul>
+<p>The following diagram illustrates the end-to-end architecture. AgentCore runs the agent, BlockRun serves metered inference, and AgentCore payments connects to the customer’s wallet, enforces the spending limit, and signs each payment on behalf of the agent’s Incarna identity.</p>
+<p>Figure 1: Pay-per-inference architecture. Agent request flows through AgentCore to BlockRun (HTTP 402), with AgentCore payments signing the x402 payment from the agent’s own wallet</p>
+<p><em>Source: incarna.io/aws-blockrun-incarna-partnership</em></p>
+<h3>Prerequisites</h3>
+<p>The path Incarna followed is open to other teams, and AgentCore payments provisions the pieces for you. You can set them up through a guided conversation with the AgentCore payments skill in the Agent Toolkit for AWS (in Claude Code, Kiro, or Codex). You can also create each one yourself with the AgentCore CLI, the AgentCore SDK, or the AWS SDK.</p>
+<p>Start by storing your Coinbase CDP or Stripe Privy credentials as a payment credential provider, which keeps the secrets in AWS Secrets Manager instead of your code. Create a Payment Manager and connector to coordinate payments against those credentials, and set a default spending limit while you’re there. Then create a payment instrument, the embedded wallet the agent pays from. The end user funds it and grants signing permission through a redirect URL, and on a test network you can fund it with testnet USDC.</p>
+<h2>The flow: Buying and selling one inference</h2>
+<p>In this integration, BlockRun is the seller. BlockRun serves metered model inference from a live catalog, and each call is quoted, paid, and settled on its own. The flow for a single inference is straightforward:</p>
+<ul><li>The agent needs a model call. It integrates with BlockRun, which handles provider selection and delivery. No per-provider subscription required.</li><li>BlockRun answers with PaymentRequired challenge and a price for that specific call.</li><li>It opens a payment session and calls <code>ProcessPayment</code>. AgentCore payments checks the quote against the spending limits set for the session and signs the authorization from the agent’s own wallet address.</li><li>The seller verifies the payment signature.</li><li>BlockRun serves the inference and records the charge, a small per-call amount.</li></ul>
+<p>Because settlement happens per request, the agent pays only for what it uses, and a call the agent chooses not to make costs nothing.</p>
+<p>AgentCore payments supports two x402 payment schemes: <code>exact</code> and <code>upto</code>. The <code>exact</code> scheme is usually used when the price is known up front. The <code>upto</code> scheme suits resources with dynamic pricing. The agent authorizes a ceiling amount, and the inference provider settles for actual usage at the end, up to that ceiling.</p>
+<h2>Keeping spend under control</h2>
+<p>The piece that makes builders comfortable letting an agent move real money is the payment session. A session sets a ceiling, the most the agent can spend, and AgentCore payments enforces that ceiling at the infrastructure layer. The agent’s own code and prompt can’t change it. Each session also carries an expiry time, and Incarna sizes its sessions to a day’s budget. If something goes wrong in the agent’s logic, it still can’t spend past the limit the customer set. Even integrations that don’t use session-level budgets today can adopt it without code changes. For more on how these controls work, see <a href="https://aws.amazon.com/blogs/machine-learning/enable-safe-agentic-payments-with-built-in-guardrails-using-amazon-bedrock-agentcore-payments/">Enable safe agentic payments with built-in guardrails</a>.</p>
+<h2>Results</h2>
+<p>Incarna put the pay-per-inference flow into production on Base, with BlockRun serving the sell side and AgentCore payments governing every transaction.</p>
+<blockquote>“The next generation of AI agents shouldn’t have to choose between better performance and sustainable economics. BlockRun’s open source router gives developers full control over their own model set, while continuously benefiting from BlockRun’s ongoing benchmark-driven routing improvements—delivering higher task success rates at lower token cost. And with AgentCore payments and x402 providing the spending controls agents need, that intelligence can be put to work safely in the real world.”<br>        — Vicky Fu, Founder, BlockRun</blockquote>
+<p>The Incarna team completed the full AgentCore payments integration in three days: one to build and two to test. That was roughly 200 lines of application code, against the two to three months originally scoped. Across the beta, agents have processed over 1,000 payments ranging from $0.001 to $0.05 per call, each settling individually on-chain.</p>
+<blockquote>“AgentCore payments covered everything we needed for an agent to pay over x402: a wallet the customer owns, a funding and revocation flow, a spending limit the platform enforces, and signing that handles both versions of x402. We wrote none of it.”<br>        — Justin Zhou, Founder, Incarna</blockquote>
+<h2>Conclusion</h2>
+<p>AgentCore payments gives agents a governed, on-demand way to pay for the services they use. BlockRun and Incarna show how it comes together end to end: an agent that pays for inference, a provider that meters and settles it, and an identity that owns the transaction. If you’re building agents that need to buy services as they run, you can add that capability through a single, governed integration point with AgentCore payments.</p>
+<h2>Getting started</h2>
+<p>Ready to add pay-per-inference to your agents? Here’s how to start:</p>
+<ul><li><strong>Set up AgentCore payments.</strong> Create a Payment Manager with your wallet connection and spending policies. Connect a Coinbase CDP wallet as your credential provider. See the <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/payments.html">AgentCore payments developer guide</a> for step-by-step instructions.</li><li><strong>Open a payment session with your budget.</strong> Before the agent starts a task, open a session with a spending cap that fits the workload. The agent transacts within that ceiling and the infrastructure enforces it.</li><li><strong>Call a paid endpoint.</strong> Point your agent at an x402-compatible service (like BlockRun). When the endpoint returns HTTP 402, call <code>ProcessPayment</code> with the payment details. AgentCore payments handles the signing and returns proof the agent can present to access the service.</li></ul>
+<p>To explore the code, see the <a href="https://github.com/awslabs/agentcore-samples/tree/main/01-features/08-agents-that-transact">AgentCore payments samples on GitHub</a>.</p>
+<h2>Learn more</h2>
+<ul><li><a href="https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-payments-is-now-generally-available-enabling-agents-to-transact-safely-and-autonomously-at-scale/">Amazon Bedrock AgentCore payments is now generally available: Enabling agents to transact safely and autonomously at scale</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/technical-deep-dive-agentcore-payments-and-innovation-in-agentic-commerce/">Technical deep dive: AgentCore payments and innovation in agentic commerce</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/enable-safe-agentic-payments-with-built-in-guardrails-using-amazon-bedrock-agentcore-payments/">Enable safe agentic payments with built-in guardrails using AgentCore payments</a></li></ul>
+<h2>About BlockRun and Incarna</h2>
+<p><strong>BlockRun</strong> is a pay-as-you-go inference router that serves model inference over the x402 payment protocol. Agents reach a live catalog of models through a single metered endpoint. Each call is independently quoted, authorized, paid, and settled on Base (USDC). BlockRun handles provider selection and delivery so agents access many models through one integration without per-provider subscriptions or billing relationships.</p>
+<p><strong>Incarna</strong>, built by SpreadX, gives AI agents a persistent identity that survives sessions, models, and runtimes. Each identity carries its own wallet, email address, social accounts, and an action history that stays attached to one ID across runs. When an agent pays for a service, the on-chain payer is the agent’s own identity rather than a shared platform key, making every transaction attributable to a single durable entity. Incarna is live on Base mainnet with real settlement.</p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Amazon Bedrock] Share GPU clusters across teams with isolation and fairness…</title>
@@ -25,6 +64,306 @@
       <category>Amazon Bedrock</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.en.xml">Amazon Bedrock</source>
       <description>Full title: Share GPU clusters across teams with isolation and fairness using Amazon SageMaker HyperPod</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Share GPU clusters across teams with isolation and fairness using Amazon SageMaker HyperPod</h1>
+<p>Multiple teams within the same company increasingly need shared access to expensive GPU clusters for their generative AI operations, while maintaining isolation boundaries, resource fairness, and operational independence. Consider a data science team training large language models, a computer vision group running inference workloads, and a research team experimenting with new model architectures. All of them might need access to the same cluster. Without a well-designed multi-tenant (multi-team) architecture, organizations face uncontrolled resource consumption, weak isolation between teams, an inability to attribute shared GPU costs to the teams that incur them, and administrative overhead that slows down innovation.</p>
+<p>Amazon SageMaker HyperPod is a purpose-built AI service that simplifies the management of large-scale compute clusters for gen AI workloads. It provides resilient, optimized clusters orchestrated by Amazon Elastic Kubernetes Service (Amazon EKS) or Slurm, so organizations can run distributed training, interactive development, and model inference at scale. At the same time, it automatically handles node health monitoring, fault recovery, and cluster lifecycle management.</p>
+<p>In this post, we present a reference architecture for building a multi-tenant environment on Amazon SageMaker HyperPod with EKS. This architecture uses AWS IAM Identity Center for centralized authentication, per-team SageMaker AI domains for a tailored user experience, Kubernetes namespaces for workload isolation, HyperPod Task Governance for fair resource allocation, and namespace-level cost allocation for per-team spend visibility and chargeback. By the end of this post, you will have a clear blueprint for multiple teams to efficiently share a single HyperPod EKS cluster.</p>
+<h2>Architecture overview</h2>
+<p>The following diagram illustrates the high-level architecture of a multi-tenant HyperPod EKS deployment. In this example, two teams (Team A and Team B) share a single HyperPod EKS cluster, each operating within their own isolated namespace.</p>
+<p>Figure 1: High-level multi-tenant architecture for two teams sharing one HyperPod EKS cluster</p>
+<p>The architecture is structured as a layered flow from left to right, connecting user identity through authorization controls and into isolated workload namespaces on the cluster.</p>
+<h3>Users and authentication</h3>
+<p>On the far left, individual users from each team (User 1 from Team A, User 2 from Team B) interact with the system through two paths. Both paths authenticate through the AWS IAM Identity Center Portal, which federates with an external identity provider (such as Microsoft Entra ID) shown at the bottom-left.</p>
+<p>The first path is through CLI access. Users authenticate with <code>aws sso login</code>, which redirects them to the Identity Center portal, and then obtain temporary credentials from their team’s permission set to submit tasks directly to the EKS cluster with <code>kubectl</code>. In the diagram, the pink arrow flows from the CLI terminal across the top directly into the HyperPod EKS cluster.</p>
+<p>The second path is through the Identity Center portal directly, where users select the SageMaker Studio application to sign in to their team-specific SageMaker AI domain.</p>
+<p>Each team has a corresponding permission set (TeamA permission set, TeamB permission set) that carries the AWS Identity and Access Management (IAM) policies needed for CLI workflows. Identity Center automatically provisions an IAM role for each permission set, shown in the diagram as <code>TeamA-permissionset-role</code> and <code>TeamB-permissionset-role</code> (labeled “CLI/Console role”). This role serves as the IAM principal when users authenticate through <code>aws sso login</code>.</p>
+<h3>SageMaker AI domains</h3>
+<p>From the Identity Center portal, users are routed to their team-specific SageMaker AI domain. Each domain (SageMaker AI domain Team A and SageMaker AI domain Team B) provides a dedicated Amazon SageMaker Studio GUI and is configured with a team-specific execution role (<code>TeamA-role</code> and <code>TeamB-role</code> respectively). These domains serve as the primary workspace interface, so users can submit tasks from the GUI (shown by the pink arrows flowing toward EKS).</p>
+<h3>EKS access control</h3>
+<p>At the EKS boundary, access entries map IAM roles to Kubernetes permissions. The diagram shows access entries for <code>TeamA-role</code> and <code>TeamB-role</code> (the Studio execution roles), which authorize requests originating from the SageMaker Studio GUI. Access entries must also be configured for the Identity Center-provisioned CLI/Console roles (<code>TeamA-permissionset-role</code> and <code>TeamB-permissionset-role</code>) to authorize requests arriving through <code>kubectl</code>. All access entries are associated with managed or custom role-based access control (RBAC) policies (represented by the key icon) and scoped to the team’s designated namespace. As a result, whether access originates from Studio or the CLI, users can only interact with resources in their own namespace.</p>
+<h3>HyperPod EKS cluster</h3>
+<p>The cluster itself is depicted with two cross-cutting platform layers at the top: HyperPod Observability (for monitoring and dashboards) and HyperPod Task Governance (for compute quota management and scheduling priorities). Below these layers, the cluster is partitioned into Namespace A (Team A) and Namespace B (Team B). Within each namespace, teams can run their own HyperPod Spaces (interactive development environments), HyperPod PyTorch jobs (distributed training workloads), and HyperPod Inference endpoints (model serving).</p>
+<h3>Storage</h3>
+<p>Beneath the cluster, the architecture includes two storage tiers. The first is a POSIX-compliant file system (Amazon FSx for Lustre or Amazon FSx for OpenZFS) organized into per-team shared directories (<code>/fsx/TeamA</code>, <code>/fsx/TeamB</code>) and per-user home directories (<code>/home/User1</code>, <code>/home/User2</code>). The second is per-team or shared Amazon Simple Storage Service (Amazon S3) buckets for object storage, governed by the team’s IAM execution role.</p>
+<p>This architecture isolates each team from authentication through authorization to workload execution, while sharing expensive GPU infrastructure efficiently.</p>
+<h2>Authentication and access control</h2>
+<p>The foundation of any multi-tenant system is robust authentication: verifying who users are before they interact with any resource. In this architecture, AWS IAM Identity Center serves as the centralized authentication layer, federating with an external identity provider to manage user identities and group memberships.</p>
+<h3>Why AWS IAM Identity Center</h3>
+<p>AWS IAM Identity Center (successor to AWS Single Sign-On) provides a single place to manage workforce identities across AWS accounts and applications. For a multi-tenant HyperPod deployment, it offers several key capabilities:</p>
+<ul><li><strong>Centralized identity management</strong> – Rather than maintaining separate user databases per AWS service, Identity Center provides a single source of truth for all user identities and their group memberships.</li><li><strong>Federation with existing identity providers</strong> – Most enterprises already manage their workforce identities in systems like Microsoft Entra ID (formerly Azure AD), Okta, or Ping Identity. Identity Center integrates with these providers, so organizations can reuse their existing identity infrastructure without duplicating user accounts.</li><li><strong>Native integration with SageMaker AI</strong> – SageMaker AI domains support Identity Center authentication, so users can sign in to SageMaker Studio through their corporate identity provider with single sign-on (SSO).</li><li><strong>AWS account access</strong> – Identity Center can also grant users access to the underlying AWS account with specific permission sets, which support CLI workflows alongside the Studio GUI experience.</li><li><strong>Required for Amazon Managed Grafana</strong> – Amazon Managed Grafana uses Identity Center as its authentication mechanism for workforce users, making it the natural choice when teams also need access to observability dashboards for monitoring their workloads.</li></ul>
+<p>Learn more: <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html">What is IAM Identity Center</a></p>
+<h3>Configuring Identity Center with an external identity provider</h3>
+<p>In this reference architecture, we use Microsoft Entra ID as the external identity provider, though the same pattern applies to most standard Security Assertion Markup Language (SAML) 2.0 providers.</p>
+<p>The configuration involves:</p>
+<ul><li><strong>Group structure in the identity provider</strong> – In Entra ID, create groups that correspond to your organizational teams. In our example, we define three groups: <code>TeamA</code>, <code>TeamB</code>, and <code>Admin</code>. Each group contains the users belonging to that team (for example, <code>user1-teamA@example.com</code> in the <code>TeamA</code> group).</li><li><strong>SCIM provisioning</strong> – Enable SCIM (System for Cross-domain Identity Management) synchronization between Entra ID and AWS IAM Identity Center. SCIM provides automatic provisioning and de-provisioning of users and groups. When a new user is added to the <code>TeamA</code> group in Entra ID, they’re automatically synchronized to Identity Center and gain appropriate access without manual intervention.</li><li><strong>SAML-based authentication</strong> – Configure SAML 2.0 federation so that when users authenticate, they do so against Entra ID. Identity Center acts as the service provider, trusting the assertions from your Entra ID tenant.</li></ul>
+<p>With this configuration, you manage team membership (which drives all downstream authorization decisions) in your existing corporate directory, and it propagates to AWS automatically.</p>
+<p>The following image shows an example of how organizational teams can be represented in Microsoft Entra ID, with dedicated groups for <code>TeamA</code>, <code>TeamB</code>, and <code>Admin</code>.</p>
+<p>Figure 2: Organizational teams represented as groups in Microsoft Entra ID</p>
+<p>Then, the following image shows the corresponding groups in AWS IAM Identity Center, automatically provisioned from Entra ID through SCIM synchronization.</p>
+<p>Figure 3: Corresponding groups in AWS IAM Identity Center, provisioned through SCIM</p>
+<p>Learn more: <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-identity-source-idp.html">Connect an external identity provider</a> · <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/scim-profile-saml.html">SCIM profile and SAML 2.0 implementation</a></p>
+<h2>Authorization</h2>
+<p>With authentication established, the next layer is authorization: controlling what actions each team can perform across AWS services and the Kubernetes cluster. Authorization in this architecture operates at two levels: IAM for service-level access, and Kubernetes RBAC for cluster-level access.</p>
+<h3>Per-team IAM roles</h3>
+<p>Each team requires a dedicated IAM role that encapsulates the AWS level permissions needed for their AI and machine learning (ML) workflows. These roles serve as the SageMaker AI domain execution role and define what AWS services the team can access.</p>
+<p>A typical team IAM role should include policies granting access to:</p>
+<ul><li><strong>Amazon SageMaker AI</strong> – For managing HyperPod clusters, MLflow tracking servers, and other SageMaker AI resources through the SageMaker AI API.</li><li><strong>Amazon S3</strong> – For reading training datasets and writing model artifacts, checkpoints, and logs. Scope these permissions to team-specific bucket prefixes.</li><li><strong>Amazon CloudWatch</strong> – For viewing logs and metrics related to the team’s workloads.</li><li><strong>Amazon EKS</strong> – Specifically, the <code>eks:AccessKubernetesApi</code> and <code>eks:MutateViaKubernetesApi</code> permissions, which the SageMaker Studio GUI needs to make Kubernetes API calls on behalf of the user (for example, listing Spaces or submitting jobs).</li></ul>
+<p>The trust policy on each IAM role must include <code>sagemaker.amazonaws.com</code> as a trusted principal, so SageMaker AI can assume the role on behalf of users when they operate through Studio. If you plan to reuse the same execution role as an EKS Pod Identity association for in-cluster workloads (as discussed later in the Amazon S3 storage section), the trust policy must also include <code>pods.eks.amazonaws.com</code> as a trusted principal. CLI access through Identity Center uses a separate permission set with its own policies (see the “AWS account access through Identity Center” section), so CLI permissions can be independently scoped.</p>
+<p>Learn more: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html">How to use SageMaker AI execution roles</a></p>
+<h3>AWS account access through Identity Center</h3>
+<p>Beyond SageMaker Studio, teams often need direct AWS account access for CLI operations such as running <code>kubectl</code> commands, scripting workflows, or accessing resources programmatically. Identity Center permission sets provide this capability.</p>
+<p>For the <strong>Admin</strong> group, assign a permission set with administrative access as required by your company’s policies, granting the necessary account access for cluster management and administrative operations.</p>
+<p>For <strong>Team A</strong> and <strong>Team B</strong>, create permission sets with inline or managed policies that grant the permissions needed for CLI workflows directly. A typical team permission set includes permissions for <code>eks:AccessKubernetesApi</code> (to view Kubernetes resources from AWS Console), scoped S3 access for the team’s data, and CloudWatch read access for monitoring. These policies are defined independently from the Studio execution role, so administrators can tailor CLI permissions to the specific operations that teams perform from the command line.</p>
+<p>Users retrieve temporary credentials through the AWS Command Line Interface (AWS CLI) using <code>aws sso login</code>, which they can then use to configure <code>kubectl</code> for direct interaction with the EKS cluster.</p>
+<p>The following image shows the per-team permission sets in AWS IAM Identity Center, providing scoped AWS account access for CLI workflows such as running <code>kubectl</code> and <code>aws sso login</code> against the EKS cluster.</p>
+<p>Figure 4: Per-team permission sets in AWS IAM Identity Center for CLI workflows</p>
+<p>Learn more: <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html">Manage AWS accounts with permission sets</a></p>
+<h3>Configuring the AWS CLI</h3>
+<p>Team members configure the AWS CLI to authenticate through Identity Center by running <code>aws configure sso</code>. This creates profiles in <code>~/.aws/config</code> that reference the appropriate Identity Center session and permission set. Each team member uses their team-specific profile when interacting with the cluster from the command line, maintaining authorization boundaries whether access originates from Studio or from a local terminal.</p>
+<p>The resulting configuration defines a shared <code>sso-session</code> block for the Identity Center portal and one named profile per team, each pointing at that team’s permission set. Team members then run <code>aws sso login --profile &lt;team&gt;</code> to obtain temporary credentials scoped to their permission set:</p>
+<pre><code>[sso-session my-sso]
+sso_start_url = https://d-xxxxxxxxxx.awsapps.com/start
+sso_region = us-west-2
+sso_registration_scopes = sso:account:access
+
+[default]
+sso_session = my-sso
+sso_account_id = 123456789012
+sso_role_name = OpsAdmin
+region = us-west-2
+
+[profile team-a]
+sso_session = my-sso
+sso_account_id = 123456789012
+sso_role_name = TeamA-permission-set
+region = us-west-2
+
+[profile team-b]
+sso_session = my-sso
+sso_account_id = 123456789012
+sso_role_name = TeamB-permission-set
+region = us-west-2</code></pre>
+<p>Learn more: <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html">Configuring IAM Identity Center authentication with the AWS CLI</a></p>
+<h2>SageMaker AI domains</h2>
+<p>SageMaker AI domains provide the workspace boundary for each team, offering a tailored user experience, pre-configured execution roles, and built-in integration with Identity Center authentication.</p>
+<h3>Why SageMaker AI domains</h3>
+<p>Using one SageMaker AI domain per team is a well-established pattern for organizing multi-team environments. This approach offers several advantages:</p>
+<ul><li><strong>Established multi-team pattern</strong> – AWS has documented this approach extensively for separating lines of business or teams with multiple domains, making it a proven and supported configuration.</li><li><strong>Native Identity Center authentication</strong> – Each domain can be configured with Identity Center authentication, meaning users sign in once through their corporate identity provider and land directly in their team’s Studio environment.</li><li><strong>Built-in team configuration</strong> – Domains already provide mechanisms to specify configurations for users and teams without requiring additional custom entities. For example, settings like team execution role can be specified at domain level, and overridden at user profile level for maximum flexibility.</li><li><strong>Navigation customization</strong> – With domain settings, administrators can hide navigation items that are not relevant to the team’s workflows, presenting a focused interface tailored to HyperPod use cases.</li></ul>
+<p>Learn more: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sm-domain.html">SageMaker AI domain entities and statuses</a> · <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/domain-multiple.html">Multiple domains overview</a></p>
+<h3>Setting up per-team domains</h3>
+<p>Create one SageMaker AI domain per team with Identity Center authentication. In our example, we create <code>TeamA-domain</code> and <code>TeamB-domain</code>. Each domain is configured as follows:</p>
+<ul><li><strong>Default execution role</strong> – Set the domain’s default execution role to the team-specific IAM role created in the authorization step. All actions performed through Studio inherit the appropriate permissions as a result.</li><li><strong>Identity Center group assignment</strong> – Add the corresponding Identity Center group (for example, the <code>TeamA</code> group) to the domain. This activates the SageMaker Studio application for all members of that group, granting them access to the Studio interface.</li><li><strong>Application assignment verification</strong> – After configuring group access, review the application assignment in Identity Center to confirm that the correct groups are mapped to the correct domains.</li><li><strong>Navigation customization</strong> – Configure the default navigation settings for each domain to present only the relevant capabilities. For example, you might hide items not related to HyperPod workflows, providing a streamlined <em>HyperPod-focused</em> user experience that reduces cognitive overhead for team members who only need to work with HyperPod resources.</li></ul>
+<p>The following image shows the SageMaker AI console with one domain per team (<code>TeamA-domain</code> and <code>TeamB-domain</code>), each providing an isolated workspace boundary.</p>
+<p>Figure 5: One SageMaker Domain per team in the SageMaker console</p>
+<p>Then the following image shows the details of <code>TeamA-domain</code>, including the assigned Identity Center groups.</p>
+<p>Figure 6: TeamA-domain configuration with its assigned Identity Center groups</p>
+<h2>HyperPod EKS cluster configuration</h2>
+<p>The HyperPod EKS cluster is where workloads are executed. Multi-tenancy at the cluster level is achieved through Kubernetes namespaces for isolation and EKS access entries for authorization.</p>
+<h3>Namespace isolation</h3>
+<p>Create a dedicated Kubernetes namespace for each team, for example <code>hyperpod-ns-team-a</code> and <code>hyperpod-ns-team-b</code>. Namespaces provide a logical boundary within the cluster, isolating each team’s workloads (Spaces, training jobs, inference endpoints) from one another.</p>
+<blockquote>Note: Namespaces are an isolation boundary, not a hard security boundary. This architecture targets multi-team within a single organization: teams that share a cluster under a common administrative domain and a baseline of mutual trust. It isn’t designed for multi-customer isolation between mutually untrusted tenants.<br>        Namespaces, RBAC, and quotas prevent accidental interference (teams overwriting each other’s resources or exceeding their compute allocation) but aren’t a defense against a determined malicious tenant: namespaced pods share the same nodes and kernel, and cluster-scoped resources (nodes, PersistentVolumes, CRDs, some operator components) sit outside any namespace.<br>        For untrusted tenants or strict regulatory isolation, use stronger boundaries such as separate clusters or accounts, dedicated node pools, and runtime sandboxing. For the multi-team scenario here, namespace isolation combined with RBAC, Task Governance quotas, and the POSIX identity controls described later strike an appropriate balance of separation and operational simplicity.</blockquote>
+<p>Namespaces can be created manually with <code>kubectl create namespace</code> or provisioned automatically through HyperPod Task Governance, which manages namespaces as part of its quota and scheduling configuration.</p>
+<p>The following image shows the cluster namespaces (managed with HyperPod Task Governance), with one dedicated namespace per team (<code>hyperpod-ns-team-a</code> and <code>hyperpod-ns-team-b</code>) providing workload isolation.</p>
+<p>Figure 7: Dedicated Kubernetes namespace per team for workload isolation</p>
+<p>Learn more: <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/">Kubernetes namespaces</a></p>
+<h3>Network isolation</h3>
+<p>Namespaces don’t restrict network traffic. By default, Kubernetes networking is flat: every pod can reach every other pod across all namespaces. As a result, a pod in <code>hyperpod-ns-team-a</code> can open a connection to a pod in <code>hyperpod-ns-team-b</code> unless you add controls. To scope pod-to-pod reachability along team boundaries, use Kubernetes <code>NetworkPolicy</code> resources.</p>
+<p>The recommended pattern is <em>default-deny</em> per namespace: start by denying all ingress (and optionally egress), then explicitly allow the traffic each team needs, typically intra-namespace communication plus required egress such as DNS, storage endpoints, and AWS APIs. The following example denies all ingress in a team’s namespace and then allows traffic only from pods within the same namespace:</p>
+<pre><code># 1. Default-deny all ingress in the team's namespace.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: hyperpod-ns-team-a
+spec:
+  podSelector: {}  # applies to all pods in the namespace
+  policyTypes:
+  - Ingress
+---
+# 2. Allow ingress only from pods within the same namespace.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-same-namespace
+  namespace: hyperpod-ns-team-a
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector: {}  # any pod in this namespace</code></pre>
+<p><code>NetworkPolicy</code> enforcement depends on a Container Network Interface (CNI) that supports it. On EKS, you can enable network policy support in the Amazon Virtual Private Cloud (Amazon VPC) CNI.</p>
+<p>As with namespaces, <code>NetworkPolicies</code> reduce <em>accidental</em> cross-team reachability and shrink the scope, but they are not by themselves an adversarial security boundary on shared nodes. For stronger separation, consider dedicated node pools per team or separate clusters, as noted earlier.</p>
+<p>Learn more: <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">Kubernetes network policies</a> · <a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-network-policy.html">Amazon VPC CNI network policy</a></p>
+<h3>EKS access entries</h3>
+<p>EKS access entries connect IAM principals to Kubernetes RBAC permissions. For each team, create two access entries:</p>
+<ul><li><strong>Studio access entry</strong> – The IAM principal is the team’s SageMaker AI domain execution role. This entry is used when actions originate from the SageMaker Studio GUI.</li><li><strong>CLI access entry</strong> – The IAM principal is the SSO-provisioned role created by Identity Center for the team’s permission set (following the pattern <code>AWSReservedSSO_&lt;permission-set-name&gt;_&lt;unique-id&gt;</code>). This entry is used when users interact with the cluster through <code>kubectl</code>.</li></ul>
+<p>Both entries are scoped to the team’s namespace with managed or custom Kubernetes policies. For example, both Team A entries grant permissions only within <code>hyperpod-ns-team-a</code>. The two entries can carry different RBAC policies if you want. For instance, the CLI entry might restrict write access to certain resource types while the Studio entry allows full access.</p>
+<p>With this scoping, whether access originates from Studio or from the CLI, users can only interact with resources in their own namespace. Attempting to list or modify resources in another team’s namespace results in a Kubernetes <code>Forbidden</code> error.</p>
+<p>For more advanced scenarios, you can use Kubernetes groups in the access entry to map users to custom ClusterRoles or Roles that provide fine-grained permissions beyond the standard managed policies.</p>
+<p>The following image shows an EKS access entry for Team B’s role, scoped down to the hyperpod-ns-team-b namespace, so its permissions apply only within Team B’s namespace.</p>
+<p>Figure 8: EKS access entry scoped to Team B’s namespace</p>
+<p>Learn more: <a href="https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html">Grant IAM users access to Kubernetes with EKS access entries</a></p>
+<h3>HyperPod Task Governance</h3>
+<p>When Task Governance is enabled on the cluster, it provides an additional layer of resource management:</p>
+<ul><li><strong>Compute quotas</strong> – Define how much GPU and CPU capacity each team can consume. This prevents a single team from monopolizing shared hardware during training runs.</li><li><strong>Priorities</strong> – Assign scheduling priorities to each team or workload type, allowing critical production inference workloads to preempt experimental training jobs when resources are constrained.</li><li><strong>Fair scheduling</strong> – With Task Governance, when multiple teams are competing for resources, allocation follows the configured policies rather than a first-come-first-served model.</li></ul>
+<p>Configure Task Governance with appropriate quotas and priorities per team namespace, balancing between guaranteed minimum allocations and burst capacity for bursty workloads.</p>
+<p>The following image shows the Task Governance compute allocations for the two teams, with each team’s namespace assigned its own quota of cluster compute capacity.</p>
+<p>Figure 9: Task Governance compute allocations per team namespace</p>
+<p>Learn more: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-operate-console-ui-governance.html">SageMaker HyperPod task governance</a></p>
+<h2>Storage</h2>
+<p>Storage is a key component of artificial intelligence and machine learning (AI/ML) environments shared across teams. Teams need high-performance file systems for training data, checkpoints, and model artifacts, while maintaining appropriate access boundaries between teams.</p>
+<h3>POSIX-compliant file systems</h3>
+<p>For workloads that require a shared, high-performance POSIX file system (common for distributed training where multiple nodes read the same dataset or write checkpoints), consider the following options:</p>
+<ul><li><strong>Amazon FSx for Lustre</strong> – Provides high-throughput, low-latency parallel file system access, ideal for large-scale training workloads that need to read large datasets at high speed.</li><li><strong>Amazon FSx for OpenZFS</strong> – Offers a general-purpose file system with strong POSIX semantics, snapshots, and compression. Well-suited for workloads that need traditional file system features alongside high performance.</li><li><strong>Amazon Elastic File System (Amazon EFS)</strong> – Provides fully managed, elastic Network File System (NFS) storage. EFS also supports access points, which can simplify per-team directory isolation by mapping different mount points to different directories with enforced UIDs and GIDs.</li></ul>
+<p>The storage layout typically follows this structure:</p>
+<ul><li><strong>Per-team shared directories</strong> – Each team has a shared directory (for example, <code>/fsx/TeamA</code>, <code>/fsx/TeamB</code>) for datasets, models, and artifacts that all team members need to access.</li><li><strong>Per-user home directories</strong> – Each user has a personal home directory (for example, <code>/home/User1</code>, <code>/home/User2</code>) for individual work, experiments, and notebooks.</li></ul>
+<p>The POSIX permission model on these file systems relies on UIDs, GIDs, and supplemental groups to enforce access boundaries. These POSIX identities should then be propagated to the pod security context when a user launches a HyperPod Space or submits a training job, so that file system access respects the configured ownership and permissions. We recommend using a Kubernetes mutating admission webhook to retrieve POSIX identity information from your identity store. When a workload is submitted, the webhook looks up the identity at runtime and modifies the security context of the Pod accordingly.</p>
+<pre><code># 1. Extract the caller's session identity from the admission request.
+# On EKS, requests from IAM-assumed roles (including IAM Identity Center)
+# surface the STS session name in userInfo.extra[&quot;sessionName&quot;]. Its format
+# depends on how the session is created (e.g., an SSO short name, an email,
+# or a role-session-name); align your identity mapping with this value.
+def extract_username(admission_request):
+    extra = admission_request[&quot;userInfo&quot;][&quot;extra&quot;]
+    ...
+    return extra[&quot;sessionName&quot;][0]
+
+# 2. Look up the POSIX identity from a mapping table (e.g. DynamoDB).
+def lookup_posix_identity(username):
+    item = posix_table.get_item(Key={&quot;username&quot;: username})[&quot;Item&quot;]
+    ...
+    return {
+        &quot;uid&quot;: int(item[&quot;uid&quot;]),
+        &quot;gid&quot;: int(item[&quot;gid&quot;]),
+        &quot;supplementalGroups&quot;: [int(g) for g in item[&quot;supplementalGroups&quot;]],
+    }
+
+# 3. Patch the Pod security context with the resolved POSIX identity.
+def build_security_context_patch(pod, posix):
+    ...
+    return [{
+        &quot;op&quot;: &quot;add&quot;,
+        &quot;path&quot;: &quot;/spec/securityContext&quot;,
+        &quot;value&quot;: {
+            &quot;runAsUser&quot;: posix[&quot;uid&quot;],
+            &quot;runAsGroup&quot;: posix[&quot;gid&quot;],
+            &quot;fsGroup&quot;: posix[&quot;gid&quot;],
+            &quot;supplementalGroups&quot;: posix[&quot;supplementalGroups&quot;],
+        },
+    }]</code></pre>
+<p>Learn more: <a href="https://docs.aws.amazon.com/fsx/latest/LustreGuide/what-is.html">FSx for Lustre</a> · <a href="https://docs.aws.amazon.com/fsx/latest/OpenZFSGuide/what-is-fsx.html">FSx for OpenZFS</a> · <a href="https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html">Amazon EFS</a></p>
+<h3>Amazon S3 storage</h3>
+<p>For object storage, access to S3 buckets is governed by the team’s IAM execution role. You can create per-team buckets or use a shared bucket with per-team prefixes, relying on IAM policies to enforce isolation. Pods within the cluster need appropriate service accounts configured with IAM Roles for Service Accounts (IRSA) or Pod Identity to authenticate to S3. For simplicity, you can associate the same execution role configured on the SageMaker AI domain to a Kubernetes service account within the team’s namespace, providing consistent S3 access from both Studio and cluster workloads.</p>
+<p>Learn more: <a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">IAM roles for service accounts (IRSA)</a> · <a href="https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html">EKS Pod Identity</a></p>
+<h2>HyperPod Spaces</h2>
+<p>HyperPod Spaces provide interactive development environments (IDEs) running directly on cluster nodes. On a shared cluster, Spaces must be properly scoped to each team’s namespace and configured with appropriate resource templates.</p>
+<h3>Space templates</h3>
+<p>Create namespace-scoped Space templates for each team. These templates define the resource configurations (instance types, storage volumes, environment variables) available to team members when creating Spaces. By scoping templates to a namespace, you make sure that each team can only launch Spaces within their designated boundary.</p>
+<p>When HyperPod Task Governance is enabled, templates should include the default labels required by the governance system (such as team identifiers and priority labels). The cluster administrator pre-configures these labels so that team members don’t need to specify them manually when launching Spaces.</p>
+<p>The following example shows a JupyterLab Space template scoped to Team A. The team-specific parts are the <code>metadata.namespace</code>, the Task Governance queue label under <code>baseLabels</code>, and the <code>defaultVolumes</code> that mount the team’s shared file system and the user’s home directory:</p>
+<pre><code>apiVersion: workspace.jupyter.org/v1alpha1
+kind: WorkspaceTemplate
+metadata:
+  name: jl-smd-custom
+  namespace: hyperpod-ns-team-a  # scopes the template to Team A's namespace
+spec:
+  displayName: &quot;JupyterLab (team-a)&quot;
+  description: &quot;SageMaker Distribution&quot;
+  appType: jupyterlab
+  baseLabels:
+  - key: kueue.x-k8s.io/queue-name  # Task Governance (Kueue) local queue for Team A
+    value: hyperpod-ns-team-a-localqueue
+  ...
+  # container command, default CPU/memory resources, security context, access type, etc.
+  ...
+  defaultVolumes:
+  - name: home-dir  # per-user home directory
+    mountPath: /home
+    persistentVolumeClaimName: fsx-openzfs-claim
+  - name: shared-data  # Team A's shared directory
+    mountPath: /fsx
+    persistentVolumeClaimName: fsx-lustre-claim
+  ...
+  # primary (EBS) storage defaults and limits
+  ...</code></pre>
+<h3>Persistent volume claims</h3>
+<p>Create the appropriate Persistent Volume Claims (PVCs) in each team’s namespace, referencing the shared file system. These PVCs mount the team’s shared directory and the user’s home directory into the Space, providing access to training data, checkpoints, and personal workspaces.</p>
+<h3>Owner-only and shared Spaces</h3>
+<p>Consider your organization’s requirements around Space sharing:</p>
+<ul><li><strong>Owner-only Spaces</strong> – Each Space is accessible only by the user who created it. This is the default configuration, appropriate when teams work on sensitive or independent projects.</li><li><strong>Shared Spaces</strong> – Multiple team members can access the same Space, useful for pair programming, collaborative debugging, or shared development environments. When enabling shared Spaces, make sure that POSIX permissions and supplemental groups are configured to allow appropriate access to files created within the Space.</li></ul>
+<p>Learn more: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-cluster-ide.html">Interactive development environments on Amazon SageMaker HyperPod EKS clusters</a></p>
+<h2>Studio experience</h2>
+<p>While teams can interact with the cluster entirely from the CLI using <code>kubectl</code>, SageMaker Studio provides a graphical entry point to the cluster for users who prefer a managed, GUI-driven workflow. In this architecture, each team accesses Studio through its own SageMaker AI domain (as described earlier), signing in with the same Identity Center credentials and operating within the boundaries of the team’s namespace.</p>
+<p>The following image shows the IAM Identity Center access portal that users reach after signing in with their corporate credentials, providing single sign-on access to their assigned SageMaker Studio applications and Amazon Managed Grafana applications.</p>
+<p>Figure 10: IAM Identity Center access portal with single sign-on to assigned applications</p>
+<p>From the Studio UI, team members can:</p>
+<ul><li><strong>Manage HyperPod Spaces</strong> – Launch interactive development environments from the namespace-scoped Space templates the administrator has configured, without writing Kubernetes manifests or specifying Task Governance labels manually. Team members can also start, stop, and connect to their running Spaces, opening the associated IDE (such as JupyterLab) directly in the browser.</li><li><strong>Manage Ray workloads</strong> – Create and monitor Ray clusters, connect a JupyterLab or Code Editor workspace to a cluster, submit distributed jobs, and open the Ray Dashboard and Amazon Managed Grafana observability dashboards, all without writing Kubernetes manifests or running <code>kubectl</code> commands.</li></ul>
+<p>Because Studio operates through the team’s Domain execution role and the corresponding EKS access entry, all actions are scoped to the team’s namespace. A user launching a Space or a Ray cluster from Studio can only create it within their own team’s boundary, consistent with the isolation model enforced for CLI access.</p>
+<p>The following image shows how to create a HyperPod Space from the SageMaker Studio UI, where a team member selects a namespace-scoped Space template without writing Kubernetes manifests or specifying Task Governance labels manually.</p>
+<p>Figure 11: Creating a HyperPod Space from a namespace-scoped template in SageMaker Studio</p>
+<p>Learn more: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-cluster-ide.html">Interactive development environments on Amazon SageMaker HyperPod EKS clusters</a> · <a href="https://aws.amazon.com/blogs/machine-learning/introducing-new-ray-capabilities-on-sagemaker-hyperpod/">Introducing new Ray capabilities on SageMaker HyperPod</a></p>
+<h2>HyperPod Training Operator</h2>
+<p>The HyperPod Training Operator enables teams to submit distributed training jobs as Kubernetes custom resources (for example, HyperPodPyTorchJob). In the multi-tenant architecture, training jobs are namespace-scoped, meaning they automatically inherit the team’s isolation boundaries.</p>
+<p>Teams can submit training jobs from the CLI using <code>kubectl apply</code> with the appropriate job manifest. The job runs in the team’s namespace, uses the team’s compute quotas (if Task Governance is enabled), and has access to the team’s storage volumes.</p>
+<p>When Task Governance is enabled, training jobs are subject to the team’s allocated quotas and priority settings. If a team has consumed its guaranteed allocation, jobs might be queued until resources become available or until lower-priority workloads are preempted.</p>
+<p>The two elements that anchor a job to a team are the <code>metadata.namespace</code> (which scopes the job to the team’s isolation boundary) and the Task Governance labels. Task Governance is built on <a href="https://kueue.sigs.k8s.io/">Kueue</a>, so the job is routed to the team’s local queue through <code>kueue.x-k8s.io/queue-name</code>. It’s assigned a scheduling priority through <code>kueue.x-k8s.io/priority-class</code>, whose value is the name of a <code>WorkloadPriorityClass</code> defined on the cluster:</p>
+<pre><code>apiVersion: sagemaker.amazonaws.com/v1
+kind: HyperPodPyTorchJob
+metadata:
+  name: team-a-training-job
+  namespace: hyperpod-ns-team-a  # scopes the job to Team A's namespace
+  labels:
+    kueue.x-k8s.io/queue-name: hyperpod-ns-team-a-localqueue  # Task Governance (Kueue) local queue
+    kueue.x-k8s.io/priority-class: training-priority  # name of a WorkloadPriorityClass
+spec:
+  ...
+  # replicaSpecs, container image, command, resources, volumes, etc.
+  ...</code></pre>
+<p>Learn more: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-eks-operator.html">Using the HyperPod training operator</a></p>
+<h2>HyperPod Inference Operator</h2>
+<p>The HyperPod Inference Operator allows teams to deploy models as inference endpoints directly on the cluster. Similar to training jobs, inference endpoints are namespace-scoped and subject to the team’s RBAC policies and Task Governance quotas.</p>
+<p>Teams can deploy models from the CLI by creating inference endpoint custom resources in their namespace. The endpoints are isolated per namespace, meaning Team A can’t access or interfere with Team B’s inference endpoints.</p>
+<p>For production inference workloads that require high availability, consider assigning higher scheduling priority to inference endpoints than to training jobs, so that model serving isn’t interrupted by batch training workloads.</p>
+<p>As with training jobs, the inference endpoint is placed in the team’s <code>metadata.namespace</code> and carries the Task Governance labels. Here, the <code>kueue.x-k8s.io/priority-class</code> references a higher-priority <code>WorkloadPriorityClass</code> so that model serving can preempt batch training when the team’s resources are constrained:</p>
+<pre><code>apiVersion: inference.sagemaker.aws.amazon.com/v1
+kind: InferenceEndpointConfig
+metadata:
+  name: team-a-inference-endpoint
+  namespace: hyperpod-ns-team-a  # scopes the endpoint to Team A's namespace
+  labels:
+    kueue.x-k8s.io/queue-name: hyperpod-ns-team-a-localqueue  # Task Governance (Kueue) local queue
+    kueue.x-k8s.io/priority-class: inference-priority  # higher-priority WorkloadPriorityClass
+spec:
+  ...
+  # model source, instance type, replica count, autoscaling, etc.
+  ...</code></pre>
+<p>Learn more: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment.html">Deploying models on Amazon SageMaker HyperPod</a></p>
+<h2>HyperPod Observability</h2>
+<p>Visibility into cluster health, workload performance, and resource utilization is essential for all teams. HyperPod Observability provides built-in monitoring and dashboarding capabilities through Amazon Managed Grafana.</p>
+<h3>Configuring team access to Grafana</h3>
+<p>Teams need access to observability dashboards to monitor their workloads, troubleshoot performance issues, and understand resource consumption. However, in a multi-tenant environment, this access should typically be read-only:</p>
+<ul><li><strong>Configure Identity Center authentication for Amazon Managed Grafana</strong> – On the Amazon Managed Grafana console, navigate to Authentication and enable AWS IAM Identity Center. Users can then sign in to Grafana with the same corporate credentials they use for SageMaker Studio.</li><li><strong>Assign team groups as Viewers</strong> – Map the Identity Center groups (<code>TeamA</code>, <code>TeamB</code>) to the Grafana Viewer role. This grants team members read-only access to dashboards and metrics without the ability to modify dashboards or data sources.</li><li><strong>Admin access</strong> – Assign the <code>Admin</code> group to the Grafana Admin or Editor role, so they can create and modify dashboards, configure alerting, and manage data sources.</li><li><strong>Team-specific dashboards</strong> – Consider creating dedicated dashboards that filter data by namespace, so each team sees only their own workload metrics. Amazon Managed Grafana supports Grafana Teams (a Grafana-native RBAC concept, distinct from the organizational teams in this architecture), which can be mapped from Identity Center groups to restrict dashboard visibility and provide an additional layer of data isolation.</li></ul>
+<p>The following image shows the Grafana role assignments in Amazon Managed Grafana. The team groups (<code>TeamA</code>, <code>TeamB</code>) are assigned the Viewer role for read-only access to dashboards and metrics, while the admin group is assigned the Admin role, granting it the ability to create and modify dashboards, configure alerting, and manage data sources.</p>
+<p>Figure 12: Grafana role assignments granting teams read-only Viewer access</p>
+<p>Learn more: <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-cluster-observability.html">Observability for Amazon SageMaker HyperPod cluster orchestrated by Amazon EKS</a></p>
+<h2>Cost allocation and chargeback</h2>
+<p>In a multi-tenant environment where teams share expensive GPU infrastructure, understanding who consumes what is essential for accountability, budgeting, and chargeback. <a href="https://github.com/kubecost">Kubecost</a> addresses this need by breaking down in-cluster spend across native Kubernetes concepts (namespace, label, deployment, and service) and mapping it to organizational concepts like team, project, or environment.</p>
+<p>Because this architecture already isolates each team in a dedicated namespace (<code>hyperpod-ns-team-a</code>, <code>hyperpod-ns-team-b</code>), namespace-level cost allocation aligns directly with team boundaries. This gives platform administrators a clear per-team view of GPU, CPU, memory, storage, and network consumption without any additional workload tagging. For step-by-step instructions on deploying and configuring Kubecost on a HyperPod cluster, see <a href="https://awslabs.github.io/ai-on-sagemaker-hyperpod/docs/category/kubecost-on-sagemaker-hyperpod">Kubecost on SageMaker HyperPod</a>.</p>
+<h3>Enabling team visibility</h3>
+<p>After Kubecost is collecting data, group cost by namespace in the Allocations dashboard to see per-team spend. Because each team owns a namespace, this directly produces a per-team cost breakdown covering compute, memory, storage, and network. Just as with observability dashboards, teams benefit from visibility into their own cost data:</p>
+<ul><li><strong>Scope views to each team’s namespace</strong> – Kubecost supports filtering and saved reports by namespace, so each team can review its own consumption and trends without seeing other teams’ data.</li><li><strong>Set budgets and alerts</strong> – Configure per-namespace budget thresholds and alerts, so teams and platform administrators are notified when spending approaches defined limits, supporting the same resource-fairness goals as HyperPod Task Governance.</li><li><strong>Support chargeback and showback</strong> – Namespace-level allocation reports can feed internal chargeback (billing teams for their usage) or showback (reporting usage without billing) processes, giving finance and platform teams the data that they need to attribute shared GPU costs fairly.</li></ul>
+<p>The following image shows the Kubecost Allocations dashboard grouped by namespace, showing the cumulative cost over the last 7 days for each team’s namespace.</p>
+<p>Figure 13: Kubecost Allocations dashboard grouped by namespace for per-team cost</p>
+<p>Learn more: <a href="https://awslabs.github.io/ai-on-sagemaker-hyperpod/docs/category/kubecost-on-sagemaker-hyperpod">Kubecost on SageMaker HyperPod</a> · <a href="https://github.com/kubecost">Kubecost</a></p>
+<h2>Conclusion</h2>
+<p>This post presented a reference architecture for building multi-tenant environments on Amazon SageMaker HyperPod with EKS. By combining AWS IAM Identity Center for authentication, per-team IAM roles for AWS level authorization, SageMaker AI domains for a tailored workspace experience, Kubernetes namespaces for workload isolation, HyperPod Task Governance for fair resource allocation, and namespace-level cost allocation for per-team spend visibility, multiple teams can efficiently share a single HyperPod EKS cluster.</p>
+<p>This is a flexible, composable approach that combines multiple building blocks into a cohesive solution. The architecture accommodates a variety of use cases and organizational structures. For example, organizations can extend this pattern to connect teams to HyperPod Slurm clusters alongside EKS, providing a unified multi-tenant experience across different orchestration backends.</p>
+<p>While this approach requires assembling and configuring several components, the result is a high degree of control and customization that can be tailored to each organization’s specific isolation, compliance, and operational requirements. The foundational patterns (identity federation, namespace isolation, RBAC, quota-based governance, and cost allocation) will remain applicable.</p>
+<p>To get started, try building this multi-tenant setup on your own Amazon SageMaker HyperPod EKS cluster, and adapt the building blocks to your organization’s isolation, governance, and cost-allocation requirements.</p>
+<h2>About the authors</h2>]]></content:encoded>
     </item>
     <item>
       <title>[Anthropic Claude] Introducing Claude Sonnet 5.5</title>
@@ -206,6 +545,118 @@
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <category>Hugging Face</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.en.xml">Hugging Face</source>
+      <content:encoded><![CDATA[<p>Back to Articles</p>
+<h1>Introducing Falcon ASR</h1>
+<p>Team</p>
+<p>Article</p>
+<p>Published October 7, 2026</p>
+<p>Upvote</p>
+<p>1</p>
+<ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
+<p>Abdul Muneer</p>
+<p>abdulmuneertii</p>
+<p>tiiuae</p>
+<p>Rishabh Saraf</p>
+<p>rishabh-saraf</p>
+<p>tiiuae</p>
+<p>Ramesh Gundluru</p>
+<p>gundlururamesh</p>
+<p>tiiuae</p>
+<p>Shamsa Hamad</p>
+<p>shamsaH</p>
+<p>tiiuae</p>
+<p>Lepauloux</p>
+<p>Ludovick</p>
+<p>tiiuae</p>
+<p>Hakim Hacid</p>
+<p>HakimHacid</p>
+<p>tiiuae</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/KlCZJ9xrl4-O7A0RdA0vA.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/KlCZJ9xrl4-O7A0RdA0vA.png" alt="Falcon ASR: Arabic and English speech recognition"></a></p>
+<p><a href="https://huggingface.co/blog/tiiuae/falcon-asr#introducing-falcon-asr">English</a> · <a href="https://huggingface.co/blog/tiiuae/falcon-asr#arabic">العربية</a></p>
+<p><strong>Arabic WER: 20.92% · Parameters: 1.6B · Emirati WER (TII evaluation): 22.73%</strong></p>
+<p>We’re introducing Falcon-ASR, our 1.6 billion parameter speech recognition model for Arabic, with a particular focus on the Emirati dialect. Developed at the Technology Innovation Institute (TII) in Abu Dhabi, it also supports English, French, Spanish and Portuguese.</p>
+<p>In our evaluation, Falcon-ASR achieved an average word error rate of 20.92% across six Arabic test sets, compared with the best published result of 23.17% in the leaderboard snapshot we used. On our internal Emirati evaluation, it recorded the lowest word and character error rates among the systems we compared.</p>
+<p>We also support word-level timestamps for transcriptions, linking each transcribed word to its position in the audio.</p>
+<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">Try Falcon ASR →</a></p>
+<h2>Recognising spoken Arabic</h2>
+<p>Arabic speech varies by region, speaker and setting. A model that handles a formal news broadcast may still struggle with a conversation in Emirati or with speech recorded over a phone line. Dialectal Arabic also has fewer transcribed resources than Modern Standard Arabic (MSA), which makes training and evaluation harder.</p>
+<p>We trained Falcon-ASR on Emirati, MSA, other Gulf and Arabic dialects, and English. Our aim is to transcribe the words people use in everyday speech, including dialectal forms and changes between languages.</p>
+<h2>Arabic benchmark results</h2>
+<p>The <a href="https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard">Open Universal Arabic ASR Leaderboard</a>, maintained by the ELM Research Center, ranks systems by the equal-weight average WER across six test sets. It also reports character error rate (CER). Lower values are better for both metrics. Our Falcon-ASR evaluation follows this protocol.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/NYwM1xdaK1aiCwnEGz4q5.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/NYwM1xdaK1aiCwnEGz4q5.png" alt="falcon-asr-arabic"></a></p>
+<p><em>WER = Word Error Rate; CER = Character Error Rate. A lower value indicates better performance.</em></p>
+<p>We evaluated Falcon-ASR on the same six benchmarks using the leaderboard’s pinned manifests. Competitor figures are the published leaderboard averages checked on 30 September 2026. Falcon-ASR’s average WER is 2.25 percentage points better than the best published result in that snapshot.</p>
+<h2>Evaluating Emirati speech</h2>
+<p>Public evaluation data already includes Emirati: <a href="https://huggingface.co/datasets/UBC-NLP/Casablanca">Casablanca</a> has a UAE subset. We complement that coverage with an internal evaluation of additional Emirati and Gulf speech, using held-out recordings and human-validated transcripts to assess transcription accuracy beyond the public UAE subset.</p>
+<p>In our internal Emirati evaluation, Falcon-ASR achieved 22.73% WER and 10.19% CER:</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/Un8dfcA_GCcu2orNpkTA4.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/Un8dfcA_GCcu2orNpkTA4.png" alt="falcon-asr-emirati"></a></p>
+<p>Falcon-ASR has the lowest WER and CER among the systems compared here. Its WER is 4.07 percentage points below Qwen3-Omni, the next best result. The results show improved transcription accuracy at both the word and character level on this evaluation.</p>
+<h2>Training for different recording conditions</h2>
+<p>We included background noise, overlapping speech, music, room reverberation and telephony effects, as well as variations in speed and pitch. We applied the same treatment to Emirati recordings, exposing the model to a range of conditions it may encounter in meetings, calls and other everyday recordings.</p>
+<h2>English and other languages</h2>
+<p>Falcon-ASR also transcribes English with the same model weights. In our evaluation on the seven public English test sets used by the Hugging Face Open ASR Leaderboard, it achieved a mean WER of 5.74%.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/jYVEru5FjM_UeCsJtRE9E.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/jYVEru5FjM_UeCsJtRE9E.png" alt="falcon-asr-english"></a></p>
+<p>The model also supports French, Spanish and Portuguese. All five languages use the same weights, without requiring a language flag. The output is a transcript in the language spoken.</p>
+<h2>Model foundation</h2>
+<p>Falcon-ASR builds on our Falcon3-Audio work. The architecture and training approach for Falcon3-Audio are described in <a href="https://arxiv.org/abs/2509.07526">Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data</a>.</p>
+<h2>Try Falcon ASR</h2>
+<p>Our <a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">Hugging Face Demo Space</a> lets you try Falcon-ASR and explore its transcription capabilities. API access and native applications are planned. We invite you to try the Demo with your own recordings.</p>
+<h2>Acknowledgments</h2>
+<p>We thank the team behind the Falcon-Emirati model for their support with Arabic foundation models. Read about their latest work in the <a href="https://huggingface.co/blog/tiiuae/falcon-emirati">Falcon-Emirati blog post</a>.</p>
+<p>We also extend our sincere thanks to Mikhail Lubinets for continued support with the compute infrastructure.</p>
+<h1>نقدّم Falcon ASR</h1>
+<p>نقدّم Falcon-ASR، نموذجنا للتعرف على الكلام العربي بحجم 1.6 مليار معلمة، مع اهتمام خاص باللهجة الإماراتية. طوّرنا النموذج في معهد الابتكار التكنولوجي (TII) في أبوظبي، وهو يدعم أيضًا اللغات الإنجليزية والفرنسية والإسبانية والبرتغالية.</p>
+<p>في تقييمنا، حقق Falcon-ASR متوسط معدل خطأ في الكلمات بلغ 20.92% عبر ست مجموعات اختبار باللغة العربية، مقارنةً بأفضل نتيجة منشورة بلغت 23.17% في نسخة لوحة المتصدرين التي استخدمناها. وفي تقييمنا الداخلي للهجة الإماراتية، سجّل النموذج أدنى معدلات خطأ في الكلمات والأحرف بين الأنظمة التي قارناها.</p>
+<p>ندعم أيضاً الطوابع الزمنية على مستوى الكلمات في عمليات التفريغ النصي، بحيث ترتبط كل كلمة بموضعها في التسجيل الصوتي.</p>
+<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">جرّبوا Falcon ASR ←</a></p>
+<h2>التعرف على العربية المنطوقة</h2>
+<p>يختلف الكلام العربي باختلاف المنطقة والمتحدث وظروف التسجيل. فقد ينجح نموذج في تفريغ نشرة إخبارية رسمية، ثم يجد صعوبة في تفريغ محادثة باللهجة الإماراتية أو تسجيل عبر الهاتف. كما أن الموارد الصوتية المفرّغة نصيًا للهجات العربية أقل من تلك المتاحة للعربية الفصحى، مما يزيد صعوبة التدريب والتقييم.</p>
+<p>درّبنا Falcon-ASR على اللهجة الإماراتية والعربية الفصحى ولهجات خليجية وعربية أخرى، إلى جانب الإنجليزية. وهدفنا هو تفريغ الكلمات التي يستخدمها الناس في حديثهم اليومي، بما في ذلك الصيغ اللهجية والانتقال بين اللغات.</p>
+<h2>نتائج الاختبارات العربية</h2>
+<p>ترتّب <a href="https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard">لوحة المتصدرين المفتوحة الشاملة للتعرف على الكلام العربي</a>، التي يديرها مركز ELM للأبحاث، الأنظمة وفق متوسط معدل خطأ الكلمات عبر ست مجموعات اختبار، بوزن متساوٍ لكل مجموعة. وتعرض أيضًا معدل خطأ الأحرف (CER). وكلما انخفضت قيمة أي من المقياسين، كان الأداء أفضل. ويتبع تقييمنا للنموذج هذا البروتوكول.</p>
+<p><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/zIJA_4__yW9U9oaqZV4iy.png" alt="مقارنة معدلات خطأ الكلمات والأحرف في الاختبارات العربية"></p>
+<p><strong>WER هو معدل خطأ الكلمات؛ وCER هو معدل خطأ الأحرف. تشير القيمة الأقل إلى أداء أفضل.</strong></p>
+<p>قيّمنا Falcon-ASR على مجموعات الاختبار الست نفسها، باستخدام قوائم العينات المثبّتة في لوحة المتصدرين. وأرقام النماذج المنافسة هي المتوسطات المنشورة في اللوحة، والتي جرى التحقق منها في 30 سبتمبر 2026. وكان متوسط خطأ الكلمات للنموذج أفضل بمقدار 2.25 نقطة مئوية من أفضل نتيجة منشورة في تلك النسخة.</p>
+<h2>تقييم اللهجة الإماراتية</h2>
+<p>تتوافر بالفعل بيانات عامة لتقييم اللهجة الإماراتية، إذ تضم مجموعة <a href="https://huggingface.co/datasets/UBC-NLP/Casablanca">Casablanca</a> قسمًا خاصًا بالإمارات. ونكمّل هذه التغطية بتقييم داخلي لتسجيلات إضافية من الكلام الإماراتي والخليجي، باستخدام تسجيلات مخصّصة للاختبار ونصوص مرجعية خضعت لمراجعة بشرية، لتقييم دقة التفريغ على مواد إضافية إلى جانب البيانات الإماراتية العامة.</p>
+<p>حقق Falcon-ASR في تقييمنا الإماراتي الداخلي معدل خطأ كلمات قدره 22.73٪ ومعدل خطأ أحرف قدره 10.19٪:</p>
+<p><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/SsRywyTDmpuHVmEzjVBg7.png" alt="مقارنة معدلات خطأ الكلمات والأحرف في التقييم الإماراتي"></p>
+<p>سجّل Falcon-ASR أقل معدل لخطأ الكلمات والأحرف بين الأنظمة المقارَنة هنا. وكان معدل خطأ الكلمات أقل بمقدار 4.07 نقطة مئوية من Qwen3-Omni، صاحب النتيجة التالية. وتُظهر النتائج تحسنًا في دقة التفريغ على مستوى الكلمات والأحرف في هذا التقييم.</p>
+<h2>التدريب على ظروف تسجيل مختلفة</h2>
+<p>ضمّنا بيانات التدريب ضوضاء خلفية وكلامًا متداخلًا وموسيقى وصدى الصوت وتأثيرات الاتصالات الهاتفية، إلى جانب تغيّرات في سرعة الكلام وحدّة الصوت. وطبّقنا المعالجة نفسها على التسجيلات الإماراتية، لتهيئة النموذج للتعامل مع ظروف مختلفة قد يواجهها في الاجتماعات والمكالمات والتسجيلات اليومية الأخرى.</p>
+<h2>الإنجليزية واللغات الأخرى</h2>
+<p>يفرّغ Falcon-ASR الكلام الإنجليزي باستخدام أوزان النموذج نفسها. وفي تقييمنا على مجموعات الاختبار الإنجليزية العامة السبع المستخدمة في لوحة Hugging Face المفتوحة للتعرف على الكلام، بلغ متوسط معدل خطأ الكلمات 5.74٪.</p>
+<p><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/qTv7t7PxdzgYHMYXQxMQH.png" alt="معدلات خطأ الكلمات في مجموعات الاختبار الإنجليزية"></p>
+<p>يدعم النموذج أيضًا الفرنسية والإسبانية والبرتغالية. وتستخدم اللغات الخمس أوزانًا واحدة، دون الحاجة إلى تحديد اللغة مسبقًا. ويكون الناتج تفريغًا نصيًا باللغة المنطوقة.</p>
+<h2>أساس النموذج</h2>
+<p>يستند Falcon-ASR إلى أعمالنا في Falcon3-Audio. وتعرض ورقة <a href="https://arxiv.org/abs/2509.07526">Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data</a> بنية Falcon3-Audio ونهج تدريبه.</p>
+<h2>تجربة Falcon ASR</h2>
+<p>يتيح <a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">عرضنا التجريبي على Hugging Face</a> تجربة Falcon-ASR واستكشاف قدراته في تفريغ الكلام. أما الوصول عبر واجهة API والتطبيقات الأصلية فهو مخطّط له. ندعوكم إلى تجربة النموذج باستخدام تسجيلاتكم.</p>
+<h2>شكر وتقدير</h2>
+<p>نتوجّه بجزيل الشكر إلى الفريق القائم على تطوير نموذج Falcon-Emirati على دعمهم في مجال النماذج التأسيسية للغة العربية. ويمكن الاطّلاع على أحدث أعمال الفريق من خلال <a href="https://huggingface.co/blog/tiiuae/falcon-emirati">المقال المنشور حول Falcon-Emirati</a>.</p>
+<p>كما نتقدّم بخالص الشكر والتقدير إلى Mikhail Lubinets على دعمه المستمر للبنية التحتية الحاسوبية.</p>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 2</h2>
+<p>More from this author</p>
+<h2>Falcon-Emirati: When an LLM Learns the Dialect, the Culture, and the Nuance</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg" alt=""></li></ul>
+<p>20</p>
+<p>October 6, 2026</p>
+<h2>Falcon OCR Arabic: 270M Parameters State-of-the-Art Arabic OCR</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg" alt=""></li></ul>
+<p>16</p>
+<p>October 6, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
+<p>clicking here</p>
+<p>.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftiiuae%2Ffalcon-asr">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Ftiiuae%2Ffalcon-asr">log in</a> to comment</p>
+<p>Upvote</p>
+<p>1</p>
+<ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 2</h2>]]></content:encoded>
     </item>
     <item>
       <title>[OpenRouter] ElevenLabs is now on OpenRouter</title>

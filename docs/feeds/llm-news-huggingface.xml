@@ -14,6 +14,118 @@
       <guid isPermaLink="true">https://huggingface.co/blog/tiiuae/falcon-asr</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Falcon ASR</description>
+      <content:encoded><![CDATA[<p>返回文章</p>
+<h1>猎鹰 ASR 简介</h1>
+<p>团队</p>
+<p>文章</p>
+<p>已发表 2026 年 10 月 7 日</p>
+<p>点赞</p>
+<p>1</p>
+<ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
+<p>阿卜杜勒·穆尼尔</p>
+<p>阿卜杜勒穆尼耶尔提</p>
+<p>蒂尤阿埃</p>
+<p>里沙卜·萨拉夫</p>
+<p>里沙卜萨拉夫</p>
+<p>蒂尤阿埃</p>
+<p>拉梅什·冈德鲁鲁</p>
+<p>贡德鲁拉梅什</p>
+<p>蒂尤阿埃</p>
+<p>沙姆萨·哈马德</p>
+<p>沙姆萨</p>
+<p>蒂尤阿埃</p>
+<p>勒波卢</p>
+<p>卢多维克</p>
+<p>蒂尤阿埃</p>
+<p>哈基姆·哈西德</p>
+<p>哈基姆·哈西德</p>
+<p>蒂尤阿埃</p>
+<p>[![Falcon ASR：阿拉伯语和英语语音识别](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/KlCZJ9xrl4-O7A0RdA0v A.png)](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/KlCZJ9xrl4-O7A0RdA0vA.png)</p>
+<p><a href="https://huggingface.co/blog/tiiuae/falcon-asr#introducing-falcon-asr">英语</a> · <a href="https://huggingface.co/blog/tiiuae/falcon-asr#arabic">阿拉伯语</a></p>
+<p><strong>阿拉伯语 WER：20.92% · 参数：1.6B · 阿联酋语 WER（TII 评估）：22.73%</strong></p>
+<p>我们正在推出 Falcon-ASR，这是我们的 16 亿参数阿拉伯语语音识别模型，特别关注阿联酋方言。它由阿布扎比技术创新研究所 (TII) 开发，还支持英语、法语、西班牙语和葡萄牙语。</p>
+<p>在我们的评估中，Falcon-ASR 在六个阿拉伯语测试集上的平均单词错误率为 20.92%，而我们使用的排行榜快照中的最佳公布结果为 23.17%。在我们的阿联酋内部评估中，它在我们比较的系统中记录了最低的单词和字符错误率。</p>
+<p>我们还支持转录的单词级时间戳，将每个转录的单词与其在音频中的位置链接起来。</p>
+<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">尝试 Falcon ASR →</a></p>
+<h2>识别阿拉伯语口语</h2>
+<p>阿拉伯语语音因地区、说话者和环境而异。处理正式新闻广播的模型可能仍然难以处理阿联酋语对话或通过电话线录制的语音。阿拉伯语方言的转录资源也比现代标准阿拉伯语 (MSA) 少，这使得培训和评估更加困难。</p>
+<p>我们用阿联酋语、MSA、其他海湾和阿拉伯方言以及英语对 Falcon-ASR 进行了培训。我们的目标是转录人们在日常言语中使用的单词，包括方言形式和语言之间的变化。</p>
+<h2>阿拉伯语基准测试结果</h2>
+<p><a href="https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard">开放通用阿拉伯语 ASR 排行榜</a> 由 ELM 研究中心维护，根据六个测试集的等权平均 WER 对系统进行排名。它还报告字符错误率 (CER)。这两个指标的值越低越好。我们的 Falcon-ASR 评估遵循此协议。</p>
+<p>[![falcon-asr-arabic](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/NYwM1xdaK1aiCwnE gz4q5.png)](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/NYwM1xdaK1aiCwnEGz4q5.png)</p>
+<p><em>WER = 字错误率； CER = 字符错误率。值越低表示性能越好。</em></p>
+<p>我们使用排行榜的固定清单在相同的六个基准上评估了 Falcon-ASR。竞争对手的数据是 2026 年 9 月 30 日公布的排行榜平均值。Falcon-ASR 的平均 WER 比该快照中公布的最佳结果高 2.25 个百分点。</p>
+<h2>评估阿联酋演讲</h2>
+<p>公共评估数据已包括阿联酋：<a href="https://huggingface.co/datasets/UBC-NLP/Casablanca">卡萨布兰卡</a> 有阿联酋子集。我们通过对其他阿联酋和海湾地区语音的内部评估来补充该报道，使用保留的录音和人工验证的转录本来评估阿联酋公共子集之外的转录准确性。</p>
+<p>在我们的阿联酋内部评估中，Falcon-ASR 实现了 22.73% WER 和 10.19% CER：</p>
+<p>[![falcon-asr-emirati](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/Un8dfcA_GCcu2or NpkTA4.png)](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/Un8dfcA_GCcu2orNpkTA4.png)</p>
+<p>在此处比较的系统中，Falcon-ASR 的 WER 和 CER 最低。它的 WER 比第二好的 Qwen3-Omni 低 4.07 个百分点。结果表明，本次评估在单词和字符级别的转录准确性均有所提高。</p>
+<h2>不同录音条件的训练</h2>
+<p>我们包括背景噪音、重叠语音、音乐、房间混响和电话效果，以及速度和音高的变化。我们对阿联酋录音进行了同样的处理，将模型暴露在会议、通话和其他日常录音中可能遇到的一系列条件下。</p>
+<h2>英语和其他语言</h2>
+<p>Falcon-ASR 还可以使用相同的模型权重来转录英语。在我们对 Hugging Face Open ASR Leaderboard 使用的 7 个公共英语测试集的评估中，它的平均 WER 为 5.74%。</p>
+<p>[![falcon-asr-english](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/jYVEru5FjM_UeCs JtRE9E.png)](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/jYVEru5FjM_UeCsJtRE9E.png)</p>
+<p>该模型还支持法语、西班牙语和葡萄牙语。所有五种语言都使用相同的权重，不需要语言标志。输出是所讲语言的文字记录。</p>
+<h2>模型基础</h2>
+<p>Falcon-ASR 建立在我们的 Falcon3-Audio 工作之上。 Falcon3-Audio 的架构和训练方法在 <a href="https://arxiv.org/abs/2509.07526">Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data</a> 中描述。</p>
+<h2>尝试猎鹰 ASR</h2>
+<p>我们的 <a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">Hugging Face 演示空间</a> 可让您尝试 Falcon-ASR 并探索其转录功能。 API 访问和本机应用程序已规划。我们邀请您使用自己的录音来尝试演示。</p>
+<h2>致谢</h2>
+<p>我们感谢 Falcon-Emirati 模型背后的团队对阿拉伯基金会模型的支持。请在 <a href="https://huggingface.co/blog/tiiuae/falcon-emirati">Falcon-Emirati 博客文章</a> 中了解他们的最新作品。</p>
+<p>我们还衷心感谢 Mikhail Lubinets 对计算基础设施的持续支持。</p>
+<h1>猎鹰 ASR</h1>
+<p>Falcon-ASR 版本 1.6 版本 1.6 版本答案是肯定的。 সেরা সের কের সের সের কের কেরেরের (TII) নেরেরের নেের নের নের নের নেরের和巴巴尼和巴巴尼。</p>
+<p>Falcon-ASR 20.92% 20.92% 20.92% 20.92%平均价格为 23.17%。巴尼亚??????????????????????????????????????????????????????????????????</p>
+<p>我们还支持文字记录中的单词级时间戳，以便每个单词与其在录音中的位置相关联。</p>
+<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">尝试 Falcon ASR ←</a></p>
+<h2>识别阿拉伯语口语</h2>
+<p>阿拉伯语语音因地区、说话者和录音条件而异。模型可能会成功转录官方新闻公告，然后发现很难转录阿联酋方言的对话或电话录音。此外，阿拉伯方言的转录语音资源比标准阿拉伯语的可用语音资源少，这使得培训和评估更加困难。</p>
+<p>除了英语之外，我们还用阿联酋方言、古典阿拉伯语以及其他海湾和阿拉伯方言训练 Falcon-ASR。我们的目标是解开人们在日常言语中使用的单词，包括方言形式和语言之间的转换。</p>
+<h2>阿拉伯语测试结果</h2>
+<p>由 ELM 研究中心管理的阿拉伯语语音识别开放综合排行榜 (https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard) 根据六个测试组的平均单词错误率对系统进行排名，每个组的权重相等。它还显示字符错误率 (CER)。任一度量的值越低，性能就越好。我们对模型的评估遵循此协议。</p>
+<p><a href="https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/zIJA_4__yW9U9oaqZV4iy.png">阿拉伯语测试中单词和字母的错误率比较</a></p>
+<p><strong>WER是单词错误率； CER 是字符错误率。值越低表示性能越好。</strong></p>
+<p>我们使用固定在排行榜上的样本列表在相同的六个测试套件上评估了 Falcon-ASR。竞争模型的数字是小组中发布的平均值，并于 2026 年 9 月 30 日进行验证。该模型的平均单词错误比该版本中发布的最佳结果高 2.25 个百分点。</p>
+<h2>阿联酋方言评价</h2>
+<p>用于评估阿联酋方言的公共数据已经可用，因为 <a href="https://huggingface.co/datasets/UBC-NLP/Casablanca">卡萨布兰卡</a> 集合包含专门针对阿联酋的部分。我们通过对阿联酋和海湾地区语音的额外录音进行内部评估来补充此报道，使用专门的测试录音和人工审核的参考文本，以评估额外材料和一般阿联酋数据的转录准确性。</p>
+<p>在我们的阿联酋内部评估中，Falcon-ASR 的单词错误率为 22.73%，字符错误率为 10.19%：</p>
+<p>【阿联酋评估中单词和字母的错误率比较】(https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/SsRywyTDmpuHVmEzjVBg7.png)</p>
+<p>在此处比较的系统中，Falcon-ASR 的单词和字符错误率最低。单词错误率比排名第二的Qwen3-Omni低4.07个百分点。结果显示，在此评估中，单词和字母级别的转录准确性有所提高。</p>
+<h2>不同录音条件下的训练</h2>
+<p>训练数据包括背景噪声、重叠语音、音乐、回声和电话效果，以及语音速度和音调的变化。我们对阿联酋录音进行了相同的处理，以使模型能够处理在会议、通话和其他日常录音中可能遇到的不同条件。</p>
+<h2>英语和其他语言</h2>
+<p>Falcon-ASR 使用相同的模型权重转录英语语音。在我们对 Hugging Face 开放式语音识别面板中使用的 7 个通用英语测试套件的评估中，平均单词错误率为 5.74%。</p>
+<p><a href="https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/qTv7t7PxdzgYHMYXQxMQH.png">英语测试组的单词错误率</a></p>
+<p>该模型还支持法语、西班牙语和葡萄牙语。所有五种语言都使用相同的权重，无需事先指定语言。输出是口语的转录。</p>
+<p>##模型基础</p>
+<p>Falcon-ASR 基于我们在 Falcon3-Audio 的工作。论文 <a href="https://arxiv.org/abs/2509.07526">Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data</a> 介绍了 Falcon3-Audio 的架构和训练方法。</p>
+<h2>猎鹰 ASR 体验</h2>
+<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">我们在 Hugging Face 上的演示</a> 允许您尝试 Falcon-ASR 并探索其语音转录功能。计划通过 API 和本机应用程序进行访问。我们邀请您用您的录音尝试该模型。</p>
+<h2>感谢和赞赏</h2>
+<p>我们衷心感谢 Falcon-Emirati 模型开发团队在阿拉伯语基础模型领域的支持。该团队的最新工作可以在<a href="https://huggingface.co/blog/tiiuae/falcon-emirati">已发表的有关 Falcon-Emirati 的文章</a> 中找到。</p>
+<p>我们还对 Mikhail Lubinets 对计算基础设施的持续支持表示诚挚的感谢和赞赏。</p>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的空格2</h2>
+<p>该作者的更多内容</p>
+<h2>Falcon-Emirati：当法学硕士学习方言、文化和细微差别时</h2>
+<p>-<img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg" alt=""></p>
+<p>20</p>
+<p>2026 年 10 月 6 日</p>
+<h2>Falcon OCR 阿拉伯语：270M 参数最先进的阿拉伯语 OCR</h2>
+<p>-<img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg" alt=""></p>
+<p>16</p>
+<p>2026 年 10 月 6 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或上传图像、音频和视频</p>
+<p>点击这里</p>
+<p>。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftiiuae%2Ffalcon-asr">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Ftiiuae%2Ffalcon-asr">登录</a> 发表评论</p>
+<p>点赞</p>
+<p>1</p>
+<ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
+<h2>本文提到的数据集1</h2>
+<h2>本文提到的空格2</h2>]]></content:encoded>
     </item>
     <item>
       <title>Falcon-Emirati：当 LLM 学会方言、文化与微妙之处</title>

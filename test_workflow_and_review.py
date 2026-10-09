@@ -1919,9 +1919,8 @@ class TestDeclaredSourceLanguage(unittest.TestCase):
             body = (ft.read_body_doc(repo / rel)[1] or "").strip()
             if len(body) < 40:
                 continue
-            cjk = sum('\u4e00' <= c <= '\u9fff' for c in body[:4000])
-            lat = sum(c.isascii() and c.isalpha() for c in body[:4000])
-            if cjk + lat < 40 or cjk / (cjk + lat) < 0.25:
+            # 判据与写入器同一个函数：两条路各设一个中文占比阈值，边界上必然互相打架
+            if ft.detect_source_lang(body) != "zh":
                 continue
             declared = (langs.get(crawler_llm_intel._lang_match_key(url))
                         or crawler_llm_intel.declared_source_lang(url, langs))
@@ -7820,6 +7819,35 @@ class TestFulltextLedgerFetch(unittest.TestCase):
             b = {f"openai\thttps://a/p": {"slug": slug, "en_path": f"docs/articles/openai/{slug}.en.md",
                 "en_status": "fetch_failed"}}
             self.assertTrue(any("编造" in e or "非空" in e for e in ft.validate_bodies(Path(d), b)))
+
+    def test_refuses_body_already_held_by_another_row(self):
+        """不同 URL 抓回同一份内容（首页/空壳回退）→ 第二行不许再存一遍。
+
+        回归：modular.com 三篇博客重抓后都落到「Inference reimagined…」营销首页，
+        17,209 字逐字相同，产物侧的 duplicate_body_groups 当场报红。写入侧要有同一句话。
+        """
+        page = ("<article><h1>Inference reimagined</h1><p>"
+                + "One unified stack for AI across GPUs and CPUs. " * 20 + "</p></article>")
+
+        def fetch(u, *a, **kw):
+            return (page, True, 200, u)
+
+        rows = [{"vendor": "modular", "url": "https://m.test/blog/a", "title": "A",
+                 "date": "", "original_title": "A"},
+                {"vendor": "modular", "url": "https://m.test/blog/b", "title": "B",
+                 "date": "", "original_title": "B"}]
+        with tempfile.TemporaryDirectory() as d:
+            bodies = {}
+            ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-09")
+            a = bodies[ft.bodies_key("modular", rows[0]["url"])]
+            b = bodies[ft.bodies_key("modular", rows[1]["url"])]
+            self.assertEqual(a["en_status"], "ok", "第一行按正常文章收")
+            self.assertEqual(b["en_status"], "index_page",
+                             "同一份内容已经属于另一条了，这条就没有正文")
+            rel = b.get("en_path")
+            self.assertFalse(rel and (Path(d) / rel).is_file()
+                             and (ft.read_body_doc(Path(d) / rel)[1] or "").strip(),
+                             "被拒收的行不许留着非空正文")
 
     def test_refuses_whole_page_on_shared_changelog_page(self):
         """带 fragment 的条目 + 同页还有其他条目 + 切不出「这一条」→ 记 index_page。

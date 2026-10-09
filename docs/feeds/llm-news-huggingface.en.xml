@@ -13,6 +13,118 @@
       <link>https://huggingface.co/blog/tiiuae/falcon-asr</link>
       <guid isPermaLink="true">https://huggingface.co/blog/tiiuae/falcon-asr?li=1</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Back to Articles</p>
+<h1>Introducing Falcon ASR</h1>
+<p>Team</p>
+<p>Article</p>
+<p>Published October 7, 2026</p>
+<p>Upvote</p>
+<p>1</p>
+<ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
+<p>Abdul Muneer</p>
+<p>abdulmuneertii</p>
+<p>tiiuae</p>
+<p>Rishabh Saraf</p>
+<p>rishabh-saraf</p>
+<p>tiiuae</p>
+<p>Ramesh Gundluru</p>
+<p>gundlururamesh</p>
+<p>tiiuae</p>
+<p>Shamsa Hamad</p>
+<p>shamsaH</p>
+<p>tiiuae</p>
+<p>Lepauloux</p>
+<p>Ludovick</p>
+<p>tiiuae</p>
+<p>Hakim Hacid</p>
+<p>HakimHacid</p>
+<p>tiiuae</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/KlCZJ9xrl4-O7A0RdA0vA.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/KlCZJ9xrl4-O7A0RdA0vA.png" alt="Falcon ASR: Arabic and English speech recognition"></a></p>
+<p><a href="https://huggingface.co/blog/tiiuae/falcon-asr#introducing-falcon-asr">English</a> · <a href="https://huggingface.co/blog/tiiuae/falcon-asr#arabic">العربية</a></p>
+<p><strong>Arabic WER: 20.92% · Parameters: 1.6B · Emirati WER (TII evaluation): 22.73%</strong></p>
+<p>We’re introducing Falcon-ASR, our 1.6 billion parameter speech recognition model for Arabic, with a particular focus on the Emirati dialect. Developed at the Technology Innovation Institute (TII) in Abu Dhabi, it also supports English, French, Spanish and Portuguese.</p>
+<p>In our evaluation, Falcon-ASR achieved an average word error rate of 20.92% across six Arabic test sets, compared with the best published result of 23.17% in the leaderboard snapshot we used. On our internal Emirati evaluation, it recorded the lowest word and character error rates among the systems we compared.</p>
+<p>We also support word-level timestamps for transcriptions, linking each transcribed word to its position in the audio.</p>
+<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">Try Falcon ASR →</a></p>
+<h2>Recognising spoken Arabic</h2>
+<p>Arabic speech varies by region, speaker and setting. A model that handles a formal news broadcast may still struggle with a conversation in Emirati or with speech recorded over a phone line. Dialectal Arabic also has fewer transcribed resources than Modern Standard Arabic (MSA), which makes training and evaluation harder.</p>
+<p>We trained Falcon-ASR on Emirati, MSA, other Gulf and Arabic dialects, and English. Our aim is to transcribe the words people use in everyday speech, including dialectal forms and changes between languages.</p>
+<h2>Arabic benchmark results</h2>
+<p>The <a href="https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard">Open Universal Arabic ASR Leaderboard</a>, maintained by the ELM Research Center, ranks systems by the equal-weight average WER across six test sets. It also reports character error rate (CER). Lower values are better for both metrics. Our Falcon-ASR evaluation follows this protocol.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/NYwM1xdaK1aiCwnEGz4q5.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/NYwM1xdaK1aiCwnEGz4q5.png" alt="falcon-asr-arabic"></a></p>
+<p><em>WER = Word Error Rate; CER = Character Error Rate. A lower value indicates better performance.</em></p>
+<p>We evaluated Falcon-ASR on the same six benchmarks using the leaderboard’s pinned manifests. Competitor figures are the published leaderboard averages checked on 30 September 2026. Falcon-ASR’s average WER is 2.25 percentage points better than the best published result in that snapshot.</p>
+<h2>Evaluating Emirati speech</h2>
+<p>Public evaluation data already includes Emirati: <a href="https://huggingface.co/datasets/UBC-NLP/Casablanca">Casablanca</a> has a UAE subset. We complement that coverage with an internal evaluation of additional Emirati and Gulf speech, using held-out recordings and human-validated transcripts to assess transcription accuracy beyond the public UAE subset.</p>
+<p>In our internal Emirati evaluation, Falcon-ASR achieved 22.73% WER and 10.19% CER:</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/Un8dfcA_GCcu2orNpkTA4.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/Un8dfcA_GCcu2orNpkTA4.png" alt="falcon-asr-emirati"></a></p>
+<p>Falcon-ASR has the lowest WER and CER among the systems compared here. Its WER is 4.07 percentage points below Qwen3-Omni, the next best result. The results show improved transcription accuracy at both the word and character level on this evaluation.</p>
+<h2>Training for different recording conditions</h2>
+<p>We included background noise, overlapping speech, music, room reverberation and telephony effects, as well as variations in speed and pitch. We applied the same treatment to Emirati recordings, exposing the model to a range of conditions it may encounter in meetings, calls and other everyday recordings.</p>
+<h2>English and other languages</h2>
+<p>Falcon-ASR also transcribes English with the same model weights. In our evaluation on the seven public English test sets used by the Hugging Face Open ASR Leaderboard, it achieved a mean WER of 5.74%.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/jYVEru5FjM_UeCsJtRE9E.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/jYVEru5FjM_UeCsJtRE9E.png" alt="falcon-asr-english"></a></p>
+<p>The model also supports French, Spanish and Portuguese. All five languages use the same weights, without requiring a language flag. The output is a transcript in the language spoken.</p>
+<h2>Model foundation</h2>
+<p>Falcon-ASR builds on our Falcon3-Audio work. The architecture and training approach for Falcon3-Audio are described in <a href="https://arxiv.org/abs/2509.07526">Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data</a>.</p>
+<h2>Try Falcon ASR</h2>
+<p>Our <a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">Hugging Face Demo Space</a> lets you try Falcon-ASR and explore its transcription capabilities. API access and native applications are planned. We invite you to try the Demo with your own recordings.</p>
+<h2>Acknowledgments</h2>
+<p>We thank the team behind the Falcon-Emirati model for their support with Arabic foundation models. Read about their latest work in the <a href="https://huggingface.co/blog/tiiuae/falcon-emirati">Falcon-Emirati blog post</a>.</p>
+<p>We also extend our sincere thanks to Mikhail Lubinets for continued support with the compute infrastructure.</p>
+<h1>نقدّم Falcon ASR</h1>
+<p>نقدّم Falcon-ASR، نموذجنا للتعرف على الكلام العربي بحجم 1.6 مليار معلمة، مع اهتمام خاص باللهجة الإماراتية. طوّرنا النموذج في معهد الابتكار التكنولوجي (TII) في أبوظبي، وهو يدعم أيضًا اللغات الإنجليزية والفرنسية والإسبانية والبرتغالية.</p>
+<p>في تقييمنا، حقق Falcon-ASR متوسط معدل خطأ في الكلمات بلغ 20.92% عبر ست مجموعات اختبار باللغة العربية، مقارنةً بأفضل نتيجة منشورة بلغت 23.17% في نسخة لوحة المتصدرين التي استخدمناها. وفي تقييمنا الداخلي للهجة الإماراتية، سجّل النموذج أدنى معدلات خطأ في الكلمات والأحرف بين الأنظمة التي قارناها.</p>
+<p>ندعم أيضاً الطوابع الزمنية على مستوى الكلمات في عمليات التفريغ النصي، بحيث ترتبط كل كلمة بموضعها في التسجيل الصوتي.</p>
+<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">جرّبوا Falcon ASR ←</a></p>
+<h2>التعرف على العربية المنطوقة</h2>
+<p>يختلف الكلام العربي باختلاف المنطقة والمتحدث وظروف التسجيل. فقد ينجح نموذج في تفريغ نشرة إخبارية رسمية، ثم يجد صعوبة في تفريغ محادثة باللهجة الإماراتية أو تسجيل عبر الهاتف. كما أن الموارد الصوتية المفرّغة نصيًا للهجات العربية أقل من تلك المتاحة للعربية الفصحى، مما يزيد صعوبة التدريب والتقييم.</p>
+<p>درّبنا Falcon-ASR على اللهجة الإماراتية والعربية الفصحى ولهجات خليجية وعربية أخرى، إلى جانب الإنجليزية. وهدفنا هو تفريغ الكلمات التي يستخدمها الناس في حديثهم اليومي، بما في ذلك الصيغ اللهجية والانتقال بين اللغات.</p>
+<h2>نتائج الاختبارات العربية</h2>
+<p>ترتّب <a href="https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard">لوحة المتصدرين المفتوحة الشاملة للتعرف على الكلام العربي</a>، التي يديرها مركز ELM للأبحاث، الأنظمة وفق متوسط معدل خطأ الكلمات عبر ست مجموعات اختبار، بوزن متساوٍ لكل مجموعة. وتعرض أيضًا معدل خطأ الأحرف (CER). وكلما انخفضت قيمة أي من المقياسين، كان الأداء أفضل. ويتبع تقييمنا للنموذج هذا البروتوكول.</p>
+<p><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/zIJA_4__yW9U9oaqZV4iy.png" alt="مقارنة معدلات خطأ الكلمات والأحرف في الاختبارات العربية"></p>
+<p><strong>WER هو معدل خطأ الكلمات؛ وCER هو معدل خطأ الأحرف. تشير القيمة الأقل إلى أداء أفضل.</strong></p>
+<p>قيّمنا Falcon-ASR على مجموعات الاختبار الست نفسها، باستخدام قوائم العينات المثبّتة في لوحة المتصدرين. وأرقام النماذج المنافسة هي المتوسطات المنشورة في اللوحة، والتي جرى التحقق منها في 30 سبتمبر 2026. وكان متوسط خطأ الكلمات للنموذج أفضل بمقدار 2.25 نقطة مئوية من أفضل نتيجة منشورة في تلك النسخة.</p>
+<h2>تقييم اللهجة الإماراتية</h2>
+<p>تتوافر بالفعل بيانات عامة لتقييم اللهجة الإماراتية، إذ تضم مجموعة <a href="https://huggingface.co/datasets/UBC-NLP/Casablanca">Casablanca</a> قسمًا خاصًا بالإمارات. ونكمّل هذه التغطية بتقييم داخلي لتسجيلات إضافية من الكلام الإماراتي والخليجي، باستخدام تسجيلات مخصّصة للاختبار ونصوص مرجعية خضعت لمراجعة بشرية، لتقييم دقة التفريغ على مواد إضافية إلى جانب البيانات الإماراتية العامة.</p>
+<p>حقق Falcon-ASR في تقييمنا الإماراتي الداخلي معدل خطأ كلمات قدره 22.73٪ ومعدل خطأ أحرف قدره 10.19٪:</p>
+<p><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/SsRywyTDmpuHVmEzjVBg7.png" alt="مقارنة معدلات خطأ الكلمات والأحرف في التقييم الإماراتي"></p>
+<p>سجّل Falcon-ASR أقل معدل لخطأ الكلمات والأحرف بين الأنظمة المقارَنة هنا. وكان معدل خطأ الكلمات أقل بمقدار 4.07 نقطة مئوية من Qwen3-Omni، صاحب النتيجة التالية. وتُظهر النتائج تحسنًا في دقة التفريغ على مستوى الكلمات والأحرف في هذا التقييم.</p>
+<h2>التدريب على ظروف تسجيل مختلفة</h2>
+<p>ضمّنا بيانات التدريب ضوضاء خلفية وكلامًا متداخلًا وموسيقى وصدى الصوت وتأثيرات الاتصالات الهاتفية، إلى جانب تغيّرات في سرعة الكلام وحدّة الصوت. وطبّقنا المعالجة نفسها على التسجيلات الإماراتية، لتهيئة النموذج للتعامل مع ظروف مختلفة قد يواجهها في الاجتماعات والمكالمات والتسجيلات اليومية الأخرى.</p>
+<h2>الإنجليزية واللغات الأخرى</h2>
+<p>يفرّغ Falcon-ASR الكلام الإنجليزي باستخدام أوزان النموذج نفسها. وفي تقييمنا على مجموعات الاختبار الإنجليزية العامة السبع المستخدمة في لوحة Hugging Face المفتوحة للتعرف على الكلام، بلغ متوسط معدل خطأ الكلمات 5.74٪.</p>
+<p><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/qTv7t7PxdzgYHMYXQxMQH.png" alt="معدلات خطأ الكلمات في مجموعات الاختبار الإنجليزية"></p>
+<p>يدعم النموذج أيضًا الفرنسية والإسبانية والبرتغالية. وتستخدم اللغات الخمس أوزانًا واحدة، دون الحاجة إلى تحديد اللغة مسبقًا. ويكون الناتج تفريغًا نصيًا باللغة المنطوقة.</p>
+<h2>أساس النموذج</h2>
+<p>يستند Falcon-ASR إلى أعمالنا في Falcon3-Audio. وتعرض ورقة <a href="https://arxiv.org/abs/2509.07526">Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data</a> بنية Falcon3-Audio ونهج تدريبه.</p>
+<h2>تجربة Falcon ASR</h2>
+<p>يتيح <a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">عرضنا التجريبي على Hugging Face</a> تجربة Falcon-ASR واستكشاف قدراته في تفريغ الكلام. أما الوصول عبر واجهة API والتطبيقات الأصلية فهو مخطّط له. ندعوكم إلى تجربة النموذج باستخدام تسجيلاتكم.</p>
+<h2>شكر وتقدير</h2>
+<p>نتوجّه بجزيل الشكر إلى الفريق القائم على تطوير نموذج Falcon-Emirati على دعمهم في مجال النماذج التأسيسية للغة العربية. ويمكن الاطّلاع على أحدث أعمال الفريق من خلال <a href="https://huggingface.co/blog/tiiuae/falcon-emirati">المقال المنشور حول Falcon-Emirati</a>.</p>
+<p>كما نتقدّم بخالص الشكر والتقدير إلى Mikhail Lubinets على دعمه المستمر للبنية التحتية الحاسوبية.</p>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 2</h2>
+<p>More from this author</p>
+<h2>Falcon-Emirati: When an LLM Learns the Dialect, the Culture, and the Nuance</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg" alt=""></li></ul>
+<p>20</p>
+<p>October 6, 2026</p>
+<h2>Falcon OCR Arabic: 270M Parameters State-of-the-Art Arabic OCR</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg" alt=""></li></ul>
+<p>16</p>
+<p>October 6, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
+<p>clicking here</p>
+<p>.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftiiuae%2Ffalcon-asr">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Ftiiuae%2Ffalcon-asr">log in</a> to comment</p>
+<p>Upvote</p>
+<p>1</p>
+<ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 2</h2>]]></content:encoded>
     </item>
     <item>
       <title>Falcon-Emirati: When an LLM Learns the Dialect, the Culture,…</title>

@@ -14,6 +14,45 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/pay-per-inference-for-ai-agents-how-blockrun-and-incarna-use-amazon-bedrock-agentcore-payments/</guid>
       <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
       <description>完整标题：AI 代理按推理付费：BlockRun 和 Incarna 如何使用 Amazon Bedrock AgentCore 付款 | 原文标题：Pay-per-inference for AI agents: How BlockRun and Incarna use Amazon Bedrock AgentCore payments</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>AI 代理按推理付费：BlockRun 和 Incarna 如何使用 Amazon Bedrock AgentCore 付款</h1>
+<p>当 AI 代理运行时，它通常需要购买一些东西来完成任务：模型推理、API 响应、访问 Web 内容或调用另一个代理。这些购买规模小且频繁，有时每次只花费一小部分，而且它们发生在代理商的循环内，没有人可以批准它们。</p>
+<p>[Amazon Bedrock AgentCore 付款](https://aws.amazon.com/blogs/machine-learning/agents-that-transact-introducing-amazon-bedrock-agentcore- payments-built-with-coinbase-and-stripe/) 消除了这一负担。它为代理提供了一种按需支付服务的托管方式，支出限制由基础设施而不是模型强制执行。在这篇文章中，我们将了解 Incarna 如何使用 AgentCore 付款方式让其代理向 BlockRun 支付一次一个请求的模型推理费用。 BlockRun 是一种即用即付推理路由器，为来自超过 15 个提供商的 90 多个模型提供服务，每个模型独立报价和结算。 AgentCore 付款可与 x402 兼容的终端节点配合使用，包括 Amazon Bedrock 推理终端节点。借助这项服务，Incarna 团队将添加 x402 支付支持的工作从几个月缩短到几天，并将端到端按推理付费流程投入生产。</p>
+<h2>挑战：按请求支付推理费用</h2>
+<p>按推理付费是一种高频、低价值的模式。代理商可能会在一次会话中进行数百笔小额采购，每笔价值不到一美分。卡网络并不是为低于美分的支付而建立的。建造自己的轨道意味着同时解决几个难题。您必须决定资金存放在哪里以及如何签署每笔付款，支持 x402 等新兴支付协议，并防止自治代理超支。</p>
+<h2>AgentCore 支付提供什么</h2>
+<p>Amazon Bedrock AgentCore 是一个使用任何框架或模型大规模构建、连接和优化代理的平台。 AgentCore 付款是 Amazon Bedrock AgentCore 的一项托管功能，构建者可以使用它通过几行代码向其代理添加付款。它处理支付协议、连接到钱包、签署交易并强制执行支出限制。建筑商通过一项托管服务进行集成，而不是自行组装零件。有几点使它非常适合按推理付费：</p>
+<ul><li><strong>托管钱包。</strong> Incarna 使用 Coinbase CDP 连接器配置每个代理的钱包。客户拥有该钱包并授予 Incarna 使用该钱包的委托授权。</li><li><strong>本机协议处理。</strong> 当付费端点以 HTTP 402（“需要付款”）应答时，代理使用 AgentCore 付款通过 x402 进行付款。它使用配置的钱包签署交易并向商家返回加密证明。</li><li><strong>基础设施层的支出治理。</strong> AgentCore 支付强制执行模型之外的限制，因此即使代理的提示被操纵，代理也无法超出这些限制。</li><li><strong>您可以审核的结算。</strong> 付款以稳定币结算。 Incarna 在 Base 网络上使用 USDC，每笔交易都可以在链上验证。</li></ul>
+<p>下图说明了端到端架构。 AgentCore 运行代理，BlockRun 提供计量推理服务，AgentCore 付款连接到客户的钱包，强制执行支出限额，并代表代理的 Incarna 身份对每笔付款进行签名。</p>
+<p>图 1：按推理付费架构。代理请求通过 AgentCore 流向 BlockRun (HTTP 402)，AgentCore 付款从代理自己的钱包签署 x402 付款</p>
+<p><em>来源：incarna.io/aws-blockrun-incarna-partnership</em></p>
+<h3>先决条件</h3>
+<p>Incarna 遵循的道路向其他团队开放，AgentCore 支付为您提供了各个部分。您可以通过 Agent Toolkit for AWS（在 Claude Code、Kiro 或 Codex 中）中的 AgentCore 支付技能进行引导式对话来设置它们。您还可以使用 AgentCore CLI、AgentCore SDK 或 AWS SDK 自行创建每一项。</p>
+<p>首先将您的 Coinbase CDP 或 Stripe Privy 凭证存储为支​​付凭证提供商，这将秘密保存在 AWS Secrets Manager 中而不是您的代码中。创建付款管理器和连接器以根据这些凭证协调付款，并在现场设置默认支出限额。然后创建一个支付工具，即代理付款的嵌入式钱包。最终用户为其提供资金并通过重定向 URL 授予签名权限，在测试网络上，您可以使用测试网 USDC 为其提供资金。</p>
+<h2>流程：买入和卖出一个推论</h2>
+<p>在这次整合中，BlockRun 是卖方。 BlockRun 从实时目录中提供计量模型推理服务，每次调用均自行报价、支付和结算。单个推理的流程很简单：</p>
+<ul><li>代理需要模型调用。它与 BlockRun 集成，后者处理提供商选择和交付。无需按提供商订阅。</li><li>BlockRun 回答 PaymentRequired 质询以及该特定呼叫的价格。</li><li>它打开支付会话并调用“ProcessPayment”。 AgentCore 付款根据为会话设置的支出限额检查报价，并从代理自己的钱包地址签署授权。</li><li>卖家验证付款签名。</li><li>BlockRun 提供推理服务并记录费用（每次调用的少量金额）。</li></ul>
+<p>由于结算是根据请求进行的，因此代理只需为其使用的内容付费，而代理选择不拨打的电话则无需支付任何费用。</p>
+<p>AgentCore 支付支持两种 x402 支付方案：“exact”和“upto”。当预先知道价格时，通常会使用“精确”方案。 “upto”方案适合具有动态定价的资源。代理授权上限金额，推理提供者最终确定实际使用量，直至达到该上限。</p>
+<h2>控制支出</h2>
+<p>让建筑商放心让代理商转移真实资金的部分是支付会话。会话设置了一个上限，即代理可以花费的最高限额，而 AgentCore 支付在基础设施层强制执行该上限。代理自己的代码和提示无法更改它。每个会话还带有到期时间，Incarna 根据一天的预算调整其会话大小。如果代理的逻辑出现问题，它的支出仍然不能超过客户设置的限额。即使现在不使用会话级预算的集成也可以采用它，而无需更改代码。有关这些控件如何工作的更多信息，请参阅[使用内置护栏启用安全代理付款](https://aws.amazon.com/blogs/machine-learning/enable-safe-agentic- payments-with-built-in-guardrails-using-amazon-bedrock-agentcore- payments/)。</p>
+<h2>结果</h2>
+<p>Incarna 将按推理付费流程投入到 Base 的生产中，BlockRun 为卖方提供服务，AgentCore 支付管理每笔交易。</p>
+<blockquote>“下一代人工智能代理不应该在更好的性能和可持续经济之间做出选择。BlockRun 的开源路由器让开发人员能够完全控制自己的模型集，同时不断受益于 BlockRun 持续的基准驱动路由改进——以更低的代币成本提供更高的任务成功率。通过 AgentCore 支付和 x402 提供代理所需的支出控制，智能可以在现实世界中安全地发挥作用。”<br>——付琪，BlockRun创始人</blockquote>
+<p>Incarna 团队在三天内完成了完整的 AgentCore 支付集成：一天进行构建，两天进行测试。与最初的两到三个月的时间相比，这大约是 200 行应用程序代码。在整个 Beta 版中，代理已经处理了 1,000 多笔付款，每次调用金额从 0.001 美元到 0.05 美元不等，每笔付款都在链上单独结算。</p>
+<blockquote>“AgentCore 支付涵盖了代理通过 x402 进行支付所需的一切：客户拥有的钱包、资金和撤销流程、平台强制执行的支出限制，以及处理两个版本的 x402 的签名。我们没有编写任何内容。”<br>— Justin Zhou，Incarna 创始人</blockquote>
+<h2>结论</h2>
+<p>AgentCore 支付为代理商提供了一种受管控的、按需的方式来支付他们使用的服务的费用。 BlockRun 和 Incarna 展示了它如何端到端地组合在一起：为推理付费的代理、计量和结算推理的提供商以及拥有交易的身份。如果您正在构建需要在运行时购买服务的代理，您可以通过 AgentCore 支付的单一受管理集成点添加该功能。</p>
+<h2>开始使用</h2>
+<p>准备好为您的代理添加按推理付费了吗？开始方法如下：</p>
+<ul><li><strong>设置 AgentCore 付款。</strong> 使用您的钱包连接和支出政策创建付款管理器。连接 Coinbase CDP 钱包作为您的凭证提供商。请参阅 [AgentCore 付款开发人员指南](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/ payments.html) 了解分步说明。</li><li><strong>根据您的预算打开付款会话。</strong> 在客服人员开始任务之前，打开一个具有适合工作负载的支出上限的会话。代理在该上限内进行交易，并且基础设施强制执行。</li><li><strong>调用付费端点。</strong> 将您的代理指向 x402 兼容的服务（如 BlockRun）。当端点返回 HTTP 402 时，使用付款详细信息调用“ProcessPayment”。 AgentCore 付款处理签名并返回代理可以出示以访问服务的证明。</li></ul>
+<p>要探索代码，请参阅 <a href="https://github.com/awslabs/agentcore-samples/tree/main/01-features/08-agents-that-transact">GitHub 上的 AgentCore 付款示例</a>。</p>
+<h2>了解更多</h2>
+<ul><li>[Amazon Bedrock AgentCore 付款现已普遍可用：使代理能够大规模安全、自主地进行交易](https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore- payments-is-now-generally-available-enabling-agents-to-transact-safely-and-autonomously-at-scale/)</li><li>[技术深入探讨：AgentCore 支付和代理商务创新](https://aws.amazon.com/blogs/machine-learning/technical-deep-dive-agentcore- payments-and-innovation-in-agentic-commerce/)</li><li>[使用 AgentCore 付款通过内置护栏启用安全代理付款](https://aws.amazon.com/blogs/machine-learning/enable-safe-agentic- payments-with-built-in-guardrails-using-amazon-bedrock-agentcore- payments/)</li></ul>
+<h2>关于 BlockRun 和 Incarna</h2>
+<p><strong>BlockRun</strong> 是一种即用即付推理路由器，通过 x402 支付协议提供模型推理服务。代理通过单个计量端点访问模型的实时目录。每次看涨期权均在 Base (USDC) 上独立报价、授权、支付和结算。 BlockRun 处理提供商的选择和交付，因此代理可以通过一次集成访问许多模型，而无需针对每个提供商的订阅或计费关系。</p>
+<p><strong>Incarna</strong> 由 SpreadX 构建，为 AI 代理提供了在会话、模型和运行时中持续存在的持久身份。每个身份都带有自己的钱包、电子邮件地址、社交帐户以及在运行过程中始终附加到一个 ID 的操作历史记录。当代理人为服务付费时，链上付款人是代理人自己的身份，而不是共享平台密钥，使得每笔交易都归属于单个持久实体。 Incarna已上线Base主网并进行真实结算。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>使用 Amazon SageMaker HyperPod 跨团队共享 GPU 集群，实现隔离和公平</title>
@@ -21,6 +60,306 @@
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/share-gpu-clusters-across-teams-with-isolation-and-fairness-using-amazon-sagemaker-hyperpod/</guid>
       <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Share GPU clusters across teams with isolation and fairness using Amazon SageMaker HyperPod</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>使用 Amazon SageMaker HyperPod 在团队之间共享 GPU 集群，实现隔离和公平</h1>
+<p>同一公司内的多个团队越来越需要共享访问昂贵的 GPU 集群来进行生成式 AI 操作，同时保持隔离边界、资源公平性和操作独立性。考虑一个训练大型语言模型的数据科学团队、一个运行推理工作负载的计算机视觉小组以及一个试验新模型架构的研究团队。他们都可能需要访问同一个集群。如果没有精心设计的多租户（多团队）架构，组织将面临不受控制的资源消耗、团队之间的弱隔离、无法将共享 GPU 成本归因于产生这些成本的团队，以及减缓创新的管理开销。</p>
+<p>Amazon SageMaker HyperPod 是一项专门构建的 AI 服务，可简化新一代 AI 工作负载的大规模计算集群的管理。它提供由 Amazon Elastic Kubernetes Service (Amazon EKS) 或 Slurm 编排的弹性、优化集群，因此组织可以大规模运行分布式训练、交互式开发和模型推理。同时自动处理节点健康监控、故障恢复、集群生命周期管理。</p>
+<p>在这篇文章中，我们提出了一个参考架构，用于使用 EKS 在 Amazon SageMaker HyperPod 上构建多租户环境。该架构使用 AWS IAM Identity Center 进行集中身份验证，使用每个团队的 SageMaker AI 域来提供定制的用户体验，使用 Kubernetes 命名空间来隔离工作负载，使用 HyperPod 任务治理来实现公平的资源分配，以及使用命名空间级别的成本分配来实现每个团队的支出可见性和退款。读完本文后，您将拥有一个清晰的蓝图，可供多个团队高效共享单个 HyperPod EKS 集群。</p>
+<h2>架构概述</h2>
+<p>下图说明了多租户 HyperPod EKS 部署的高级架构。在此示例中，两个团队（团队 A 和团队 B）共享一个 HyperPod EKS 集群，每个团队在自己的隔离命名空间中运行。</p>
+<p>图 1：两个团队共享一个 HyperPod EKS 集群的高级多租户架构</p>
+<p>该架构采用从左到右的分层流程，通过授权控制将用户身份连接到集群上隔离的工作负载命名空间中。</p>
+<h3>用户和身份验证</h3>
+<p>在最左侧，每个团队的各个用户（团队 A 的用户 1，团队 B 的用户 2）通过两条路径与系统交互。两条路径都通过 AWS IAM Identity Center 门户进行身份验证，该门户与左下角显示的外部身份提供商（例如 Microsoft Entra ID）联合。</p>
+<p>第一条路径是通过 CLI 访问。用户使用“aws sso login”进行身份验证，这会将他们重定向到 Identity Center 门户，然后从其团队的权限集中获取临时凭证，以使用“kubectl”将任务直接提交到 EKS 集群。在图中，粉色箭头从 CLI 终端穿过顶部直接流入 HyperPod EKS 集群。</p>
+<p>第二条路径是直接通过 Identity Center 门户，用户在其中选择 SageMaker Studio 应用程序来登录其团队特定的 SageMaker AI 域。</p>
+<p>每个团队都有相应的权限集（TeamA 权限集、TeamB 权限集），其中包含 CLI 工作流程所需的 AWS Identity and Access Management (IAM) 策略。 Identity Center 自动为每个权限集配置一个 IAM 角色，如图所示为“TeamA-permissionset-role”和“TeamB-permissionset-role”（标记为“CLI/Console 角色”）。当用户通过“aws sso login”进行身份验证时，此角色充当 IAM 委托人。</p>
+<h3>SageMaker AI 域</h3>
+<p>从 Identity Center 门户，用户将被路由到其团队特定的 SageMaker AI 域。每个域（SageMaker AI 域团队 A 和 SageMaker AI 域团队 B）提供专用的 Amazon SageMaker Studio GUI，并配置了特定于团队的执行角色（分别为“TeamA-role”和“TeamB-role”）。这些域充当主要工作区界面，因此用户可以从 GUI 提交任务（如流向 EKS 的粉色箭头所示）。</p>
+<h3>EKS 访问控制</h3>
+<p>在 EKS 边界，访问条目将 IAM 角色映射到 Kubernetes 权限。该图显示了“TeamA-role”和“TeamB-role”（Studio 执行角色）的访问条目，它们授权源自 SageMaker Studio GUI 的请求。还必须为 Identity Center 配置的 CLI/控制台角色（“TeamA-permissionset-role”和“TeamB-permissionset-role”）配置访问条目，以授权通过“kubectl”到达的请求。所有访问条目都与托管或自定义的基于角色的访问控制 (RBAC) 策略（由钥匙图标表示）相关联，并且范围仅限于团队指定的命名空间。因此，无论访问来自 Studio 还是 CLI，用户都只能与自己的命名空间中的资源进行交互。</p>
+<h3>HyperPod EKS 集群</h3>
+<p>集群本身在顶部有两个横切平台层：HyperPod 可观察性（用于监控和仪表板）和 HyperPod 任务治理（用于计算配额管理和调度优先级）。在这些层之下，集群被划分为命名空间 A（团队 A）和命名空间 B（团队 B）。在每个命名空间中，团队可以运行自己的 HyperPod Spaces（交互式开发环境）、HyperPod PyTorch 作业（分布式训练工作负载）和 HyperPod Inference 端点（模型服务）。</p>
+<p>＃＃＃ 贮存</p>
+<p>在集群之下，该架构包括两个存储层。第一个是符合 POSIX 标准的文件系统（Amazon FSx for Lustre 或 Amazon FSx for OpenZFS），组织为每个团队共享目录（<code>/fsx/TeamA</code>、<code>/fsx/TeamB</code>）和每个用户主目录（<code>/home/User1</code>、<code>/home/User2</code>）。第二个是用于对象存储的每个团队或共享的 Amazon Simple Storage Service (Amazon S3) 存储桶，由团队的 IAM 执行角色管理。</p>
+<p>该架构将每个团队从身份验证、授权到工作负载执行隔离开来，同时有效地共享昂贵的 GPU 基础设施。</p>
+<h2>身份验证和访问控制</h2>
+<p>任何多租户系统的基础都是强大的身份验证：在用户与任何资源交互之前验证用户是谁。在此架构中，AWS IAM Identity Center 充当集中式身份验证层，与外部身份提供商联合来管理用户身份和组成员身份。</p>
+<h3>为什么选择 AWS IAM 身份中心</h3>
+<p>AWS IAM Identity Center（AWS Single Sign-On 的后继者）提供了一个跨 AWS 账户和应用程序管理员工身份的单一位置。对于多租户 HyperPod 部署，它提供了几个关键功能：</p>
+<ul><li><strong>集中身份管理</strong> – Identity Center 不是为每个 AWS 服务维护单独的用户数据库，而是为所有用户身份及其组成员身份提供单一事实来源。</li><li><strong>与现有身份提供商联合</strong> – 大多数企业已经在 Microsoft Entra ID（以前称为 Azure AD）、Okta 或 Ping Identity 等系统中管理其员工身份。 Identity Center 与这些提供商集成，因此组织可以重用其现有的身份基础架构，而无需重复用户帐户。</li><li><strong>与 SageMaker AI 的本机集成</strong> – SageMaker AI 域支持 Identity Center 身份验证，因此用户可以通过其企业身份提供商使用单点登录 (SSO) 登录 SageMaker Studio。</li><li><strong>AWS 账户访问</strong> – Identity Center 还可以授予用户对具有特定权限集的底层 AWS 账户的访问权限，这支持 CLI 工作流程以及 Studio GUI 体验。</li><li><strong>Amazon Managed Grafana 所需</strong> – Amazon Managed Grafana 使用 Identity Center 作为员工用户的身份验证机制，当团队还需要访问可观察性仪表板来监控其工作负载时，它是自然的选择。</li></ul>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html">什么是 IAM 身份中心</a></p>
+<h3>使用外部身份提供商配置身份中心</h3>
+<p>在此参考体系结构中，我们使用 Microsoft Entra ID 作为外部身份提供程序，但相同的模式适用于大多数标准安全断言标记语言 (SAML) 2.0 提供程序。</p>
+<p>配置涉及：</p>
+<ul><li><strong>身份提供商中的组结构</strong> – 在 Entra ID 中，创建与您的组织团队相对应的组。在我们的示例中，我们定义了三个组：“TeamA”、“TeamB”和“Admin”。每个组都包含属于该团队的用户（例如，“TeamA”组中的“user1-teamA@example.com”）。</li><li><strong>SCIM 配置</strong> – 在 Entra ID 和 AWS IAM Identity Center 之间启用 SCIM（跨域身份管理系统）同步。 SCIM 提供用户和组的自动配置和取消配置。当新用户添加到 Entra ID 中的“TeamA”组时，他们会自动同步到 Identity Center 并获得适当的访问权限，而无需手动干预。</li><li><strong>基于 SAML 的身份验证</strong> – 配置 SAML 2.0 联合，以便当用户进行身份验证时，他们会根据 Entra ID 进行身份验证。 Identity Center 充当服务提供商，信任来自您的 Entra ID 租户的断言。</li></ul>
+<p>通过此配置，您可以管理现有公司目录中的团队成员资格（这驱动所有下游授权决策），并自动传播到 AWS。</p>
+<p>下图显示了如何在 Microsoft Entra ID 中表示组织团队的示例，其中包含“TeamA”、“TeamB”和“Admin”的专用组。</p>
+<p>图 2：组织团队在 Microsoft Entra ID 中表示为组</p>
+<p>然后，下图显示了 AWS IAM Identity Center 中的相应组，这些组是通过 SCIM 同步从 Entra ID 自动配置的。</p>
+<p>图 3：AWS IAM Identity Center 中的相应组，通过 SCIM 进行配置</p>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/manage-your-identity-source-idp.html">连接外部身份提供商</a> · <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/scim-profile-saml.html">SCIM 配置文件和 SAML 2.0 实施</a></p>
+<h2>授权</h2>
+<p>建立身份验证后，下一层是授权：控制每个团队可以跨 AWS 服务和 Kubernetes 集群执行哪些操作。该架构中的授权在两个级别上运行：用于服务级访问的 IAM 和用于集群级访问的 Kubernetes RBAC。</p>
+<h3>每团队 IAM 角色</h3>
+<p>每个团队都需要一个专用的 IAM 角色，该角色封装其 AI 和机器学习 (ML) 工作流程所需的 AWS 级别权限。这些角色充当 SageMaker AI 域执行角色，并定义团队可以访问哪些 AWS 服务。</p>
+<p>典型的团队 IAM 角色应包括授予访问权限的策略：</p>
+<ul><li><strong>Amazon SageMaker AI</strong> – 用于通过 SageMaker AI API 管理 HyperPod 集群、MLflow 跟踪服务器和其他 SageMaker AI 资源。</li><li><strong>Amazon S3</strong> – 用于读取训练数据集并写入模型工件、检查点和日志。将这些权限的范围限制为团队特定的存储桶前缀。</li><li><strong>Amazon CloudWatch</strong> – 用于查看与团队工作负载相关的日志和指标。</li><li><strong>Amazon EKS</strong> – 具体来说，是 <code>eks:AccessKubernetesApi</code> 和 <code>eks:MutateViaKubernetesApi</code> 权限，SageMaker Studio GUI 需要这些权限才能代表用户进行 Kubernetes API 调用（例如，列出空间或提交作业）。</li></ul>
+<p>每个 IAM 角色的信任策略必须包含“sagemaker.amazonaws.com”作为可信主体，以便 SageMaker AI 在用户通过 Studio 进行操作时可以代表用户承担该角色。如果您计划重复使用与集群内工作负载的 EKS Pod 身份关联相同的执行角色（如稍后在 Amazon S3 存储部分中所述），则信任策略还必须包含“pods.eks.amazonaws.com”作为可信委托人。通过 Identity Center 的 CLI 访问使用具有自己的策略的单独权限集（请参阅“通过 Identity Center 的 AWS 账户访问”部分），因此 CLI 权限可以独立限定范围。</p>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html">如何使用 SageMaker AI 执行角色</a></p>
+<h3>通过 Identity Center 访问 AWS 账户</h3>
+<p>除了 SageMaker Studio 之外，团队通常需要直接访问 AWS 账户来执行 CLI 操作，例如运行“kubectl”命令、编写工作流程脚本或以编程方式访问资源。 Identity Center 权限集提供了此功能。</p>
+<p>对于 <strong>Admin</strong> 组，根据公司策略的要求分配具有管理访问权限的权限集，授予集群管理和管理操作所需的帐户访问权限。</p>
+<p>对于 <strong>团队 A</strong> 和 <strong>团队 B</strong>，使用内联或托管策略创建权限集，直接授予 CLI 工作流所需的权限。典型的团队权限集包括“eks:AccessKubernetesApi”的权限（用于从 AWS 控制台查看 Kubernetes 资源）、团队数据的范围 S3 访问权限以及用于监控的 CloudWatch 读取访问权限。这些策略是独立于 Studio 执行角色定义的，因此管理员可以根据团队从命令行执行的特定操作定制 CLI 权限。</p>
+<p>用户使用“aws sso login”通过 AWS 命令​​行界面 (AWS CLI) 检索临时凭证，然后可以使用该凭证配置“kubectl”以与 EKS 集群直接交互。</p>
+<p>下图显示了 AWS IAM Identity Center 中的每个团队权限集，为 CLI 工作流程提供范围内的 AWS 账户访问权限，例如针对 EKS 集群运行“kubectl”和“aws sso login”。</p>
+<p>图 4：AWS IAM Identity Center 中针对 CLI 工作流程的每个团队权限集</p>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/permissionsetsconcept.html">使用权限集管理 AWS 账户</a></p>
+<h3>配置 AWS CLI</h3>
+<p>团队成员通过运行“aws configure sso”将 AWS CLI 配置为通过 Identity Center 进行身份验证。这会在“~/.aws/config”中创建引用适当的 Identity Center 会话和权限集的配置文件。每个团队成员在从命令行与集群交互时都使用其特定于团队的配置文件，从而维护授权边界，无论访问是来自 Studio 还是来自本地终端。</p>
+<p>生成的配置为 Identity Center 门户定义了一个共享“sso-session”块，并为每个团队定义了一个命名配置文件，每个配置文件都指向该团队的权限集。然后，团队成员运行“aws sso login --profile &lt;team&gt;”来获取其权限集范围内的临时凭证：</p>
+<pre><code>[sso-session my-sso]
+sso_start_url = https://d-xxxxxxxxxx.awsapps.com/start
+sso_region = us-west-2
+sso_registration_scopes = sso:account:access
+
+[default]
+sso_session = my-sso
+sso_account_id = 123456789012
+sso_role_name = OpsAdmin
+region = us-west-2
+
+[profile team-a]
+sso_session = my-sso
+sso_account_id = 123456789012
+sso_role_name = TeamA-permission-set
+region = us-west-2
+
+[profile team-b]
+sso_session = my-sso
+sso_account_id = 123456789012
+sso_role_name = TeamB-permission-set
+region = us-west-2</code></pre>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html">使用 AWS CLI 配置 IAM Identity Center 身份验证</a></p>
+<h2>SageMaker AI 域</h2>
+<p>SageMaker AI 域为每个团队提供工作区边界，提供定制的用户体验、预配置的执行角色以及与 Identity Center 身份验证的内置集成。</p>
+<h3>为什么选择 SageMaker AI 域</h3>
+<p>每个团队使用一个 SageMaker AI 域是组织多团队环境的一种行之有效的模式。这种方法有几个优点：</p>
+<ul><li><strong>建立的多团队模式</strong> – AWS 已广泛记录了这种方法，用于分隔具有多个域的业务线或团队，使其成为经过验证且受支持的配置。</li><li><strong>本机 Identity Center 身份验证</strong> – 每个域都可以配置 Identity Center 身份验证，这意味着用户通过其企业身份提供商登录一次并直接进入其团队的 Studio 环境。</li><li><strong>内置团队配置</strong> – 域已经提供了为用户和团队指定配置的机制，而无需额外的自定义实体。例如，团队执行角色等设置可以在域级别指定，并在用户配置文件级别覆盖，以获得最大的灵活性。</li><li><strong>导航自定义</strong> – 通过域设置，管理员可以隐藏与团队工作流程不相关的导航项目，呈现针对 HyperPod 用例量身定制的集中界面。</li></ul>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sm-domain.html">SageMaker AI 域实体和状态</a> · <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/domain-multiple.html">多域概述</a></p>
+<h3>设置每个团队的域</h3>
+<p>使用 Identity Center 身份验证为每个团队创建一个 SageMaker AI 域。在我们的示例中，我们创建“TeamA-domain”和“TeamB-domain”。每个域的配置如下：</p>
+<ul><li><strong>默认执行角色</strong> – 将域的默认执行角色设置为在授权步骤中创建的团队特定的 IAM 角色。因此，通过 Studio 执行的所有操作都会继承适当的权限。</li><li><strong>Identity Center 组分配</strong> – 将相应的 Identity Center 组（例如，“TeamA”组）添加到域。这会激活该组所有成员的 SageMaker Studio 应用程序，授予他们访问 Studio 界面的权限。</li><li><strong>应用程序分配验证</strong> – 配置组访问权限后，在 Identity Center 中检查应用程序分配，以确认正确的组已映射到正确的域。</li><li><strong>导航自定义</strong> – 配置每个域的默认导航设置以仅呈现相关功能。例如，您可以隐藏与 HyperPod 工作流程无关的项目，从而提供简化的“以 HyperPod 为中心”的用户体验，从而减少只需要使用 HyperPod 资源的团队成员的认知开销。</li></ul>
+<p>下图显示了 SageMaker AI 控制台，每个团队有一个域（“TeamA-domain”和“TeamB-domain”），每个域都提供一个独立的工作区边界。</p>
+<p>图 5：SageMaker 控制台中每个团队一个 SageMaker 域</p>
+<p>然后下图显示了“TeamA-domain”的详细信息，包括分配的 Identity Center 组。</p>
+<p>图 6：TeamA 域配置及其分配的 Identity Center 组</p>
+<h2>HyperPod EKS 集群配置</h2>
+<p>HyperPod EKS 集群是执行工作负载的地方。集群级别的多租户是通过用于隔离的 Kubernetes 命名空间和用于授权的 EKS 访问条目来实现的。</p>
+<h3>命名空间隔离</h3>
+<p>为每个团队创建专用的 Kubernetes 命名空间，例如“hyperpod-ns-team-a”和“hyperpod-ns-team-b”。命名空间在集群内提供了一个逻辑边界，将每个团队的工作负载（空间、训练作业、推理端点）彼此隔离。</p>
+<blockquote>注意：命名空间是隔离边界，而不是硬安全边界。此架构针对单个组织内的多个团队：在公共管理域和相互信任基线下共享集群的团队。它并不是为相互不信任的租户之间的多客户隔离而设计的。<br>命名空间、RBAC 和配额可以防止意外干扰（团队覆盖彼此的资源或超出其计算分配），但不能防御确定的恶意租户：命名空间 pod 共享相同的节点和内核，并且集群范围的资源（节点、PersistentVolume、CRD、一些操作组件）位于任何命名空间之外。<br>对于不受信任的租户或严格的监管隔离，请使用更强大的边界，例如单独的集群或帐户、专用节点池和运行时沙箱。对于这里的多团队场景，命名空间隔离与 RBAC、任务治理配额以及稍后描述的 POSIX 身份控制相结合，在分离和操作简单性之间取得了适当的平衡。</blockquote>
+<p>命名空间可以使用“kubectl create namespace”手动创建，也可以通过 HyperPod 任务治理自动配置，该任务治理将命名空间作为其配额和调度配置的一部分进行管理。</p>
+<p>下图显示了集群命名空间（通过 HyperPod 任务治理进行管理），每个团队有一个专用命名空间（“hyperpod-ns-team-a”和“hyperpod-ns-team-b”）提供工作负载隔离。</p>
+<p>图 7：每个团队用于工作负载隔离的专用 Kubernetes 命名空间</p>
+<p>了解更多信息：<a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/">Kubernetes 命名空间</a></p>
+<h3>网络隔离</h3>
+<p>命名空间不限制网络流量。默认情况下，Kubernetes 网络是扁平的：每个 Pod 都可以访问所有命名空间中的每个其他 Pod。因此，除非您添加控件，否则“hyperpod-ns-team-a”中的 pod 可以打开与“hyperpod-ns-team-b”中 pod 的连接。要沿着团队边界确定 Pod 到 Pod 的可访问性，请使用 Kubernetes“NetworkPolicy”资源。</p>
+<p>建议的模式是每个命名空间“默认拒绝”：首先拒绝所有入口（以及可选的出口），然后显式允许每个团队所需的流量，通常是命名空间内通信以及所需的出口，例如 DNS、存储端点和 AWS API。以下示例拒绝团队命名空间中的所有入口，然后仅允许来自同一命名空间内的 Pod 的流量：</p>
+<pre><code># 1. Default-deny all ingress in the team's namespace.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: hyperpod-ns-team-a
+spec:
+  podSelector: {}  # applies to all pods in the namespace
+  policyTypes:
+  - Ingress
+---
+# 2. Allow ingress only from pods within the same namespace.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-same-namespace
+  namespace: hyperpod-ns-team-a
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector: {}  # any pod in this namespace</code></pre>
+<p>“NetworkPolicy”的执行取决于支持它的容器网络接口（CNI）。在 EKS 上，您可以在 Amazon Virtual Private Cloud (Amazon VPC) CNI 中启用网络策略支持。</p>
+<p>与命名空间一样，“NetworkPolicies”减少了<em>意外的</em>跨团队可达性并缩小了范围，但它们本身并不是共享节点上的对抗性安全边界。为了实现更强的分离，请考虑每个团队或单独集群的专用节点池，如前所述。</p>
+<p>了解更多信息：<a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">Kubernetes 网络策略</a> · <a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-network-policy.html">Amazon VPC CNI 网络策略</a></p>
+<h3>EKS 访问条目</h3>
+<p>EKS 访问条目将 IAM 主体连接到 Kubernetes RBAC 权限。为每个团队创建两个访问条目：</p>
+<ul><li><strong>Studio 访问入口</strong> – IAM 主体是团队的 SageMaker AI 域执行角色。当操作源自 SageMaker Studio GUI 时，将使用此条目。</li><li><strong>CLI 访问条目</strong> – IAM 委托人是 Identity Center 为团队权限集创建的 SSO 配置角色（遵循模式“AWSReservedSSO_&lt;permission-set-name&gt;_&lt;unique-id&gt;”）。当用户通过“kubectl”与集群交互时，将使用此条目。</li></ul>
+<p>这两个条目的范围都限于具有托管或自定义 Kubernetes 策略的团队的命名空间。例如，两个 Team A 条目仅在“hyperpod-ns-team-a”内授予权限。如果需要，这两个条目可以携带不同的 RBAC 策略。例如，CLI 条目可能会限制对某些资源类型的写访问，而 Studio 条目则允许完全访问。</p>
+<p>通过此范围，无论访问来自 Studio 还是 CLI，用户都只能与自己的命名空间中的资源进行交互。尝试列出或修改其他团队的命名空间中的资源会导致 Kubernetes“Forbidden”错误。</p>
+<p>对于更高级的场景，您可以在访问条目中使用 Kubernetes 组将用户映射到自定义 ClusterRoles 或角色，这些角色提供超出标准托管策略的细粒度权限。</p>
+<p>下图显示了团队 B 角色的 EKS 访问条目，范围缩小到 hyperpod-ns-team-b 命名空间，因此其权限仅适用于团队 B 的命名空间。</p>
+<p>图 8：EKS 访问条目范围仅限于团队 B 的命名空间</p>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/eks/latest/userguide/access-entries.html">通过 EKS 访问条目授予 IAM 用户对 Kubernetes 的访问权限</a></p>
+<h3>HyperPod 任务治理</h3>
+<p>当在集群上启用任务治理时，它提供了额外的资源管理层：</p>
+<ul><li><strong>计算配额</strong> – 定义每个团队可以消耗多少 GPU 和 CPU 容量。这可以防止单个团队在训练运行期间垄断共享硬件。</li><li><strong>优先级</strong> – 为每个团队或工作负载类型分配调度优先级，允许关键生产推理工作负载在资源有限时抢占实验训练作业。</li><li><strong>公平调度</strong> – 通过任务治理，当多个团队竞争资源时，分配将遵循配置的策略，而不是先到先服务的模型。</li></ul>
+<p>为每个团队命名空间配置适当的配额和优先级，在保证的最小分配和突发工作负载的突发容量之间进行平衡。</p>
+<p>下图显示了两个团队的任务治理计算分配，每个团队的命名空间分配了自己的集群计算容量配额。</p>
+<p>图 9：每个团队命名空间的任务治理计算分配</p>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-operate-console-ui-governance.html">SageMaker HyperPod 任务治理</a></p>
+<h2>存储</h2>
+<p>存储是跨团队共享的人工智能和机器学习 (AI/ML) 环境的关键组成部分。团队需要高性能文件系统来存储数据、检查点和模型工件，同时在团队之间保持适当的访问边界。</p>
+<h3>POSIX 兼容的文件系统</h3>
+<p>对于需要共享的高性能 POSIX 文件系统的工作负载（常见于多个节点读取相同数据集或写入检查点的分布式训练），请考虑以下选项：</p>
+<ul><li><strong>Amazon FSx for Lustre</strong> – 提供高吞吐量、低延迟的并行文件系统访问，非常适合需要高速读取大型数据集的大规模训练工作负载。</li><li><strong>Amazon FSx for OpenZFS</strong> – 提供具有强大 POSIX 语义、快照和压缩功能的通用文件系统。非常适合需要传统文件系统功能和高性能的工作负载。</li><li><strong>Amazon 弹性文件系统 (Amazon EFS)</strong> – 提供完全托管的弹性网络文件系统 (NFS) 存储。 EFS 还支持访问点，通过将不同的安装点映射到具有强制 UID 和 GID 的不同目录，可以简化每个团队的目录隔离。</li></ul>
+<p>存储布局通常遵循以下结构：</p>
+<ul><li><strong>每团队共享目录</strong> – 每个团队都有一个共享目录（例如，<code>/fsx/TeamA</code>、<code>/fsx/TeamB</code>），用于存储所有团队成员需要访问的数据集、模型和工件。</li><li><strong>每用户主目录</strong> – 每个用户都有一个用于个人工作、实验和笔记本的个人主目录（例如“/home/User1”、“/home/User2”）。</li></ul>
+<p>这些文件系统上的 POSIX 权限模型依赖 UID、GID 和补充组来强制执行访问边界。当用户启动 HyperPod Space 或提交训练作业时，这些 POSIX 身份应该传播到 Pod 安全上下文，以便文件系统访问遵循配置的所有权和权限。我们建议使用 Kubernetes 变异准入 Webhook 从您的身份存储中检索 POSIX 身份信息。提交工作负载时，Webhook 在运行时查找身份并相应地修改 Pod 的安全上下文。</p>
+<pre><code># 1. Extract the caller's session identity from the admission request.
+# On EKS, requests from IAM-assumed roles (including IAM Identity Center)
+# surface the STS session name in userInfo.extra[&quot;sessionName&quot;]. Its format
+# depends on how the session is created (e.g., an SSO short name, an email,
+# or a role-session-name); align your identity mapping with this value.
+def extract_username(admission_request):
+    extra = admission_request[&quot;userInfo&quot;][&quot;extra&quot;]
+    ...
+    return extra[&quot;sessionName&quot;][0]
+
+# 2. Look up the POSIX identity from a mapping table (e.g. DynamoDB).
+def lookup_posix_identity(username):
+    item = posix_table.get_item(Key={&quot;username&quot;: username})[&quot;Item&quot;]
+    ...
+    return {
+        &quot;uid&quot;: int(item[&quot;uid&quot;]),
+        &quot;gid&quot;: int(item[&quot;gid&quot;]),
+        &quot;supplementalGroups&quot;: [int(g) for g in item[&quot;supplementalGroups&quot;]],
+    }
+
+# 3. Patch the Pod security context with the resolved POSIX identity.
+def build_security_context_patch(pod, posix):
+    ...
+    return [{
+        &quot;op&quot;: &quot;add&quot;,
+        &quot;path&quot;: &quot;/spec/securityContext&quot;,
+        &quot;value&quot;: {
+            &quot;runAsUser&quot;: posix[&quot;uid&quot;],
+            &quot;runAsGroup&quot;: posix[&quot;gid&quot;],
+            &quot;fsGroup&quot;: posix[&quot;gid&quot;],
+            &quot;supplementalGroups&quot;: posix[&quot;supplementalGroups&quot;],
+        },
+    }]</code></pre>
+<p>了解更多：<a href="https://docs.aws.amazon.com/fsx/latest/LustreGuide/what-is.html">FSx for Lustre</a> · <a href="https://docs.aws.amazon.com/fsx/latest/OpenZFSGuide/what-is-fsx.html">FSx for OpenZFS</a> · <a href="https://docs.aws.amazon.com/efs/latest/ug/whatisefs.html">Amazon EFS</a></p>
+<h3>亚马逊 S3 存储</h3>
+<p>对于对象存储，对 S3 存储桶的访问由团队的 IAM 执行角色控制。您可以创建每个团队的存储桶或使用带有每个团队前缀的共享存储桶，依靠 IAM 策略来实施隔离。集群内的 Pod 需要配置有 IAM 服务账户角色 (IRSA) 或 Pod 身份的适当服务账户才能向 S3 进行身份验证。为简单起见，您可以将 SageMaker AI 域上配置的相同执行角色关联到团队命名空间内的 Kubernetes 服务帐户，从而为 Studio 和集群工作负载提供一致的 S3 访问。</p>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">服务账户的 IAM 角色 (IRSA)</a> · <a href="https://docs.aws.amazon.com/eks/latest/userguide/pod-identities.html">EKS Pod Identity</a></p>
+<h2>HyperPod 空间</h2>
+<p>HyperPod Spaces 提供直接在集群节点上运行的交互式开发环境 (IDE)。在共享集群上，空间的范围必须正确确定为每个团队的命名空间，并使用适当的资源模板进行配置。</p>
+<h3>空间模板</h3>
+<p>为每个团队创建命名空间范围的空间模板。这些模板定义了团队成员在创建空间时可用的资源配置（实例类型、存储卷、环境变量）。通过将模板的范围限定为命名空间，您可以确保每个团队只能在其指定的边界内启动空间。</p>
+<p>启用 HyperPod 任务治理后，模板应包含治理系统所需的默认标签（例如团队标识符和优先级标签）。集群管理员预先配置了这些标签，以便团队成员在启动 Spaces 时无需手动指定它们。</p>
+<p>以下示例显示了适用于团队 A 的 JupyterLab Space 模板。特定于团队的部分是“metadata.namespace”、“baseLabels”下的任务治理队列标签以及挂载团队共享文件系统和用户主目录的“defaultVolumes”：</p>
+<pre><code>apiVersion: workspace.jupyter.org/v1alpha1
+kind: WorkspaceTemplate
+metadata:
+  name: jl-smd-custom
+  namespace: hyperpod-ns-team-a  # scopes the template to Team A's namespace
+spec:
+  displayName: &quot;JupyterLab (team-a)&quot;
+  description: &quot;SageMaker Distribution&quot;
+  appType: jupyterlab
+  baseLabels:
+  - key: kueue.x-k8s.io/queue-name  # Task Governance (Kueue) local queue for Team A
+    value: hyperpod-ns-team-a-localqueue
+  ...
+  # container command, default CPU/memory resources, security context, access type, etc.
+  ...
+  defaultVolumes:
+  - name: home-dir  # per-user home directory
+    mountPath: /home
+    persistentVolumeClaimName: fsx-openzfs-claim
+  - name: shared-data  # Team A's shared directory
+    mountPath: /fsx
+    persistentVolumeClaimName: fsx-lustre-claim
+  ...
+  # primary (EBS) storage defaults and limits
+  ...</code></pre>
+<h3>持久数量声明</h3>
+<p>在每个团队的命名空间中创建适当的持久卷声明 (PVC)，引用共享文件系统。这些 PVC 将团队的共享目录和用户的主目录挂载到 Space 中，提供对训练数据、检查点和个人工作空间的访问。</p>
+<h3>业主专用空间和共享空间</h3>
+<p>考虑您的组织对空间共享的要求：</p>
+<ul><li><strong>仅限所有者的空间</strong> – 每个空间只能由创建它的用户访问。这是默认配置，适用于团队处理敏感或独立项目的情况。</li><li><strong>共享空间</strong> – 多个团队成员可以访问同一空间，这对于结对编程、协作调试或共享开发环境很有用。启用共享空间时，请确保 POSIX 权限和补充组配置为允许对空间中创建的文件进行适当的访问。</li></ul>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-cluster-ide.html">Amazon SageMaker HyperPod EKS 集群上的交互式开发环境</a></p>
+<h2>工作室经验</h2>
+<p>虽然团队可以使用“kubectl”完全从 CLI 与集群进行交互，但 SageMaker Studio 为喜欢托管、GUI 驱动的工作流程的用户提供了集群的图形入口点。在此架构中，每个团队通过自己的 SageMaker AI 域（如前所述）访问 Studio，使用相同的 Identity Center 凭据登录并在团队命名空间的边界内进行操作。</p>
+<p>下图显示了用户使用其公司凭证登录后访问的 IAM Identity Center 访问门户，提供对其分配的 SageMaker Studio 应用程序和 Amazon Managed Grafana 应用程序的单点登录访问。</p>
+<p>图 10：通过单点登录分配的应用程序的 IAM Identity Center 访问门户</p>
+<p>通过 Studio UI，团队成员可以：</p>
+<ul><li><strong>管理 HyperPod 空间</strong> – 从管理员配置的命名空间范围的空间模板启动交互式开发环境，无需编写 Kubernetes 清单或手动指定任务治理标签。团队成员还可以启动、停止和连接到其正在运行的空间，直接在浏览器中打开关联的 IDE（例如 JupyterLab）。</li><li><strong>管理 Ray 工作负载</strong> – 创建和监控 Ray 集群、将 JupyterLab 或代码编辑器工作区连接到集群、提交分布式作业以及打开 Ray 仪表板和 Amazon Managed Grafana 可观测性仪表板，所有这些都无需编写 Kubernetes 清单或运行“kubectl”命令。</li></ul>
+<p>由于 Studio 通过团队的域执行角色和相应的 EKS 访问条目进行操作，因此所有操作的范围都限于团队的命名空间。从 Studio 启动 Space 或 Ray 集群的用户只能在自己团队的边界内创建它，这与 CLI 访问强制执行的隔离模型一致。</p>
+<p>下图显示了如何从 SageMaker Studio UI 创建 HyperPod 空间，其中团队成员选择命名空间范围的空间模板，而无需编写 Kubernetes 清单或手动指定任务治理标签。</p>
+<p>图 11：从 SageMaker Studio 中的命名空间范围模板创建 HyperPod 空间</p>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-cluster-ide.html">Amazon SageMaker HyperPod EKS 集群上的交互式开发环境</a> · <a href="https://aws.amazon.com/blogs/machine-learning/introducing-new-ray-capability-on-sagemaker-hyperpod/">在 SageMaker HyperPod 上引入新的 Ray 功能</a></p>
+<h2>HyperPod 训练操作员</h2>
+<p>HyperPod Training Operator 使团队能够将分布式训练作业作为 Kubernetes 自定义资源（例如 HyperPodPyTorchJob）提交。在多租户架构中，训练作业是命名空间范围的，这意味着它们自动继承团队的隔离边界。</p>
+<p>团队可以使用“kubectl apply”和适当的作业清单从 CLI 提交训练作业。该作业在团队的命名空间中运行，使用团队的计算配额（如果启用了任务治理），并且可以访问团队的存储卷。</p>
+<p>启用任务治理后，训练作业受团队分配的配额和优先级设置的约束。如果团队已消耗了其保证的分配，则作业可能会排队，直到资源可用或直到优先级较低的工作负载被抢占。</p>
+<p>将作业锚定到团队的两个元素是“metadata.namespace”（它将作业的范围限定在团队的隔离边界）和任务治理标签。任务治理建立在 <a href="https://kueue.sigs.k8s.io/">Kueue</a> 之上，因此作业通过“kueue.x-k8s.io/queue-name”路由到团队的本地队列。它通过 kueue.x-k8s.io/priority-class 分配调度优先级，其值是集群上定义的 WorkloadPriorityClass 的名称：</p>
+<pre><code>apiVersion: sagemaker.amazonaws.com/v1
+kind: HyperPodPyTorchJob
+metadata:
+  name: team-a-training-job
+  namespace: hyperpod-ns-team-a  # scopes the job to Team A's namespace
+  labels:
+    kueue.x-k8s.io/queue-name: hyperpod-ns-team-a-localqueue  # Task Governance (Kueue) local queue
+    kueue.x-k8s.io/priority-class: training-priority  # name of a WorkloadPriorityClass
+spec:
+  ...
+  # replicaSpecs, container image, command, resources, volumes, etc.
+  ...</code></pre>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-eks-operator.html">使用 HyperPod 训练运算符</a></p>
+<h2>HyperPod 推理运算符</h2>
+<p>HyperPod Inference Operator 允许团队直接在集群上部署模型作为推理端点。与训练作业类似，推理端点具有命名空间范围，并受团队的 RBAC 策略和任务治理配额的约束。</p>
+<p>团队可以通过在其命名空间中创建推理端点自定义资源来从 CLI 部署模型。每个命名空间的端点都是隔离的，这意味着团队 A 无法访问或干扰团队 B 的推理端点。</p>
+<p>对于需要高可用性的生产推理工作负载，请考虑为推理端点分配比训练作业更高的调度优先级，以便模型服务不会被批量训练工作负载中断。</p>
+<p>与训练作业一样，推理端点放置在团队的“metadata.namespace”中，并带有任务治理标签。这里，“kueue.x-k8s.io/priority-class”引用了更高优先级的“WorkloadPriorityClass”，以便模型服务可以在团队资源受限时抢占批量训练：</p>
+<pre><code>apiVersion: inference.sagemaker.aws.amazon.com/v1
+kind: InferenceEndpointConfig
+metadata:
+  name: team-a-inference-endpoint
+  namespace: hyperpod-ns-team-a  # scopes the endpoint to Team A's namespace
+  labels:
+    kueue.x-k8s.io/queue-name: hyperpod-ns-team-a-localqueue  # Task Governance (Kueue) local queue
+    kueue.x-k8s.io/priority-class: inference-priority  # higher-priority WorkloadPriorityClass
+spec:
+  ...
+  # model source, instance type, replica count, autoscaling, etc.
+  ...</code></pre>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment.html">在 Amazon SageMaker HyperPod 上部署模型</a></p>
+<h2>HyperPod 可观测性</h2>
+<p>集群运行状况、工作负载性能和资源利用率的可见性对于所有团队都至关重要。 HyperPod Observability 通过 Amazon Managed Grafana 提供内置监控和仪表板功能。</p>
+<h3>配置团队对 Grafana 的访问</h3>
+<p>团队需要访问可观察性仪表板来监控其工作负载、解决性能问题并了解资源消耗。但是，在多租户环境中，此访问通常应该是只读的：</p>
+<ul><li><strong>为 Amazon Managed Grafana 配置 Identity Center 身份验证</strong> – 在 Amazon Managed Grafana 控制台上，导航到身份验证并启用 AWS IAM Identity Center。然后，用户可以使用与 SageMaker Studio 相同的公司凭据登录 Grafana。</li><li><strong>将团队组分配为查看者</strong> – 将身份中心组（“TeamA”、“TeamB”）映射到 Grafana 查看者角色。这授予团队成员对仪表板和指标的只读访问权限，而无法修改仪表板或数据源。</li><li><strong>管理员访问权限</strong> – 将“管理员”组分配给 Grafana 管理员或编辑者角色，以便他们可以创建和修改仪表板、配置警报以及管理数据源。</li><li><strong>特定于团队的仪表板</strong> – 考虑创建专用仪表板，按命名空间过滤数据，以便每个团队只能看到自己的工作负载指标。 Amazon Managed Grafana 支持 Grafana Teams（Grafana 原生 RBAC 概念，与此架构中的组织团队不同），它可以从 Identity Center 组进行映射，以限制仪表板可见性并提供额外的数据隔离层。</li></ul>
+<p>下图显示了 Amazon Managed Grafana 中的 Grafana 角色分配。团队组（“TeamA”、“TeamB”）被分配“查看者”角色，以只读访问仪表板和指标，而“管理员”组被分配“管理员”角色，授予其创建和修改仪表板、配置警报和管理数据源的能力。</p>
+<p>图 12：授予团队只读查看者访问权限的 Grafana 角色分配</p>
+<p>了解更多信息：<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks-cluster-observability.html">由 Amazon EKS 编排的 Amazon SageMaker HyperPod 集群的可观察性</a></p>
+<h2>成本分配和退款</h2>
+<p>在团队共享昂贵的 GPU 基础设施的多租户环境中，了解谁消耗了什么对于责任、预算和退款至关重要。 <a href="https://github.com/kubecost">Kubecost</a> 通过分解原生 Kubernetes 概念（命名空间、标签、部署和服务）的集群内支出并将其映射到团队、项目或环境等组织概念来满足这一需求。</p>
+<p>由于此架构已经将每个团队隔离在专用命名空间（“hyperpod-ns-team-a”、“hyperpod-ns-team-b”）中，因此命名空间级别的成本分配直接与团队边界保持一致。这使平台管理员可以清楚地了解每个团队的 GPU、CPU、内存、存储和网络消耗情况，而无需任何额外的工作负载标记。有关在 HyperPod 集群上部署和配置 Kubecost 的分步说明，请参阅 <a href="https://awslabs.github.io/ai-on-sagemaker-hyperpod/docs/category/kubecost-on-sagemaker-hyperpod">SageMaker HyperPod 上的 Kubecost</a>。</p>
+<h3>启用团队可见性</h3>
+<p>Kubecost 收集数据后，在分配仪表板中按命名空间对成本进行分组，以查看每个团队的支出。由于每个团队都拥有一个命名空间，因此这会直接生成每个团队的成本明细，涵盖计算、内存、存储和网络。就像可观察性仪表板一样，团队可以从对自己成本数据的可见性中受益：</p>
+<ul><li><strong>每个团队的命名空间的范围视图</strong> – Kubecost 支持按命名空间过滤和保存报告，因此每个团队都可以查看自己的消耗和趋势，而无需查看其他团队的数据。</li><li><strong>设置预算和警报</strong> – 配置每个命名空间的预算阈值和警报，以便在支出接近定义的限制时通知团队和平台管理员，支持与 HyperPod 任务治理相同的资源公平目标。</li><li><strong>支持计费和展示</strong> – 命名空间级分配报告可以提供内部计费（向团队的使用情况计费）或展示（报告使用情况而不计费）流程，为财务和平台团队提供公平归因共享 GPU 成本所需的数据。</li></ul>
+<p>下图显示了按命名空间分组的 Kubecost Allocations 仪表板，显示了每个团队的命名空间过去 7 天内的累积成本。</p>
+<p>图 13：Kubecost Allocations 仪表板按每个团队成本的命名空间分组</p>
+<p>了解更多信息：<a href="https://awslabs.github.io/ai-on-sagemaker-hyperpod/docs/category/kubecost-on-sagemaker-hyperpod">SageMaker HyperPod 上的 Kubecost</a> · <a href="https://github.com/kubecost">Kubecost</a></p>
+<h2>结论</h2>
+<p>本文介绍了使用 EKS 在 Amazon SageMaker HyperPod 上构建多租户环境的参考架构。通过结合用于身份验证的 AWS IAM Identity Center、用于 AWS 级别授权的每个团队 IAM 角色、用于定制工作区体验的 SageMaker AI 域、用于工作负载隔离的 Kubernetes 命名空间、用于公平资源分配的 HyperPod 任务治理以及用于每个团队支出可见性的命名空间级成本分配，多个团队可以高效地共享单个 HyperPod EKS 集群。</p>
+<p>这是一种灵活的、可组合的方法，将多个构建块组合成一个有凝聚力的解决方案。该架构适应各种用例和组织结构。例如，组织可以扩展此模式，将团队与 EKS 一起连接到 HyperPod Slurm 集群，从而在不同的编排后端提供统一的多租户体验。</p>
+<p>虽然这种方法需要组装和配置多个组件，但其结果是高度的控制和定制，可以根据每个组织的特定隔离、合规性和操作要求进行定制。基本模式（身份联合、命名空间隔离、RBAC、基于配额的治理和成本分配）将仍然适用。</p>
+<p>首先，尝试在您自己的 Amazon SageMaker HyperPod EKS 集群上构建此多租户设置，并根据您组织的隔离、治理和成本分配要求调整构建块。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>在 AWS 上推出 Claude Haiku 5.5</title>
