@@ -483,12 +483,15 @@ sources:
     url: https://developers.openai.com/api/docs/models
   - vendor_id: openai
     type: blog
+    lang: zh
     url: https://openai.com/blog
   - vendor_id: openai
     type: news
+    lang: zh
     url: https://openai.com/news/
   - vendor_id: openai
     type: feed
+    lang: zh
     url: https://openai.com/news/rss.xml
 
   # Anthropic Claude
@@ -502,9 +505,11 @@ sources:
     url: https://claude.com/pricing
   - vendor_id: anthropic
     type: blog
+    lang: en
     url: https://claude.com/blog
   - vendor_id: anthropic
     type: news
+    lang: en
     url: https://www.anthropic.com/news
   # 原有一个 https://www.anthropic.com/engineering 源已移除：该页**不含日期**
   # （实测整页 0 个日期串，抓到的 26 条全部无日期），于是它产出的条目永远进不了合并流，
@@ -533,6 +538,7 @@ sources:
     # 该页的标题 id 是 MM-DD-YYYY（`id="09-17-2026"`），曾因日期解析只认 YYYY-MM-DD
     # 而整页 0 条 —— 已修（见 extract_changelog_sections 的日期 id 解析）。
     type: changelog
+    lang: zh
     url: https://ai.google.dev/gemini-api/docs/changelog
 
   # xAI Grok
@@ -550,6 +556,7 @@ sources:
     url: https://console.x.ai/
   - vendor_id: xai_grok
     type: news
+    lang: en
     url: https://x.ai/news
 
   # Groq Cloud
@@ -572,6 +579,7 @@ sources:
     # 日期行 + `### 分类[标题](#锚点)`（见 extract_md_changelog），实测 34 条全带日期。
     # 最新分节省略年份（`Apr 18`）按「新→旧排列 + 不晚于今天」回推，与页面元数据独立印证一致。
     type: changelog
+    lang: en
     url: https://console.groq.com/docs/changelog.md
 
   # DeepSeek
@@ -583,9 +591,11 @@ sources:
     url: https://platform.deepseek.com/
   - vendor_id: deepseek
     type: updates
+    lang: zh
     url: https://api-docs.deepseek.com/zh-cn/updates/
   - vendor_id: deepseek
     type: v4_news
+    lang: zh
     url: https://api-docs.deepseek.com/zh-cn/news/news260424/
   - vendor_id: deepseek
     type: hf_org
@@ -606,6 +616,7 @@ sources:
     url: https://docs.bigmodel.cn/cn/guide/models/vlm/glm-5.3-flash
   - vendor_id: zhipu_glm
     type: updates
+    lang: zh
     url: https://docs.bigmodel.cn/cn/update/new-releases
   # 邀请返利活动页。bigmodel.cn 全站为前端渲染 SPA（任意路由都返回同一份 4301 字节
   # 空壳），邀请规则需浏览器兜底抓取：/special_area 未登录可读，/invite 完整规则在登录墙后
@@ -649,6 +660,7 @@ sources:
   # 不印接口长串（见 PageResult.display_url）。
   - vendor_id: aliyun_qwen
     type: research
+    lang: zh
     url: "https://qwen.ai/api/v2/article/retrieval?type=qwen_ai&language=zh-CN"
     page: https://qwen.ai/research
 
@@ -674,9 +686,11 @@ sources:
   # （无日期条目只进单厂商源、不进合并流，见 write_rss_feeds 的日期规则）。
   - vendor_id: xiaomi_mimo
     type: updates
+    lang: zh
     url: https://mimo.mi.com/docs/zh-CN/updates/model
   - vendor_id: xiaomi_mimo
     type: updates
+    lang: zh
     url: https://mimo.mi.com/docs/zh-CN/updates/feature/platform
   # 官方新闻页 `docs/zh-CN/news`（2026-09-25 重新收录）：此前列表项不满足文章路径
   # 启发式、实测提取 0 条而移除；现列表项改链 `/news/latest/<slug>`，浏览器渲染后
@@ -684,6 +698,7 @@ sources:
   # 保留新闻详情页、丢弃锚点，见 collect_news_articles 的同日去重规则）。
   - vendor_id: xiaomi_mimo
     type: updates
+    lang: zh
     url: https://mimo.mi.com/docs/zh-CN/news
 
   # 豆包 / 火山方舟
@@ -729,6 +744,7 @@ sources:
   # 靠 crawler 的「结构 7」提取；页头「最近更新时间」等表头已被拦掉。
   - vendor_id: tencent_hunyuan
     type: updates
+    lang: zh
     url: https://cloud.tencent.com/document/product/1729/97765
 
   # 商汤 SenseNova Token Plan
@@ -740,6 +756,7 @@ sources:
   # （层级是倒的）—— 靠 crawler 的「结构 6」提取。
   - vendor_id: sensetime_sensenova
     type: updates
+    lang: zh
     url: https://www.sensecore.cn/help/docs/model-as-a-service/nova/release
 
   # SiliconFlow
@@ -756,6 +773,7 @@ sources:
   # 与「免费额度·模型·定价」的主题高度对口，是本仓库最想要的那种源。
   - vendor_id: siliconflow
     type: updates
+    lang: zh
     url: https://docs.siliconflow.cn/cn/release-notes/overview
 
   # MiniMax
@@ -770,9 +788,11 @@ sources:
     url: https://platform.minimax.cn/docs/guides/models-intro
   - vendor_id: minimax
     type: updates
+    lang: zh
     url: https://platform.minimax.cn/docs/release-notes/models
   - vendor_id: minimax
     type: updates
+    lang: zh
     url: https://platform.minimax.cn/docs/release-notes/apis
   # 官方研究/技术博客：模型发布的技术解读（Forge 强化学习、稀疏 Token 排查、
   # MaxProof 数学证明系统等）。此前 MiniMax 的动态**全部**来自 release-notes，
@@ -780,6 +800,7 @@ sources:
   # （translator=native，不进翻译队列），且每篇都有独立文章页（/blog/<slug>）。
   - vendor_id: minimax
     type: blog
+    lang: zh
     url: https://www.minimax.cn/blog
   # 开源权重组织页：MiniMax-01 / M2 / M2.5 等在 HF 上发布，模型权重与数据集变动
   # 只在这里能看到（同 deepseek 的 hf_org 口径）。
@@ -802,6 +823,7 @@ sources:
     url: https://platform.kimi.com/
   - vendor_id: moonshot_kimi
     type: changelog
+    lang: zh
     url: https://platform.kimi.com/docs/changelog/changelog/changelog
 
   # Mistral
@@ -822,9 +844,11 @@ sources:
     url: https://console.mistral.ai/
   - vendor_id: mistral
     type: news
+    lang: en
     url: https://mistral.ai/news/
   - vendor_id: mistral
     type: feed
+    lang: en
     url: https://mistral.ai/news/rss
 
   # Cohere
@@ -839,6 +863,7 @@ sources:
     url: https://docs.cohere.com/
   - vendor_id: cohere
     type: blog
+    lang: en
     url: https://cohere.com/blog
 
   # Meta Llama
@@ -857,6 +882,7 @@ sources:
     # 但归档里出现过 5 条 `ai.meta.com/blog/*` 条目（`introducing-muse-spark-meta-model-api`
     # 等），说明该域名在 **CI runner（境外）侧可达**。
     type: blog
+    lang: en
     url: https://ai.meta.com/blog/
   - vendor_id: meta_llama
     # 广度兜底：Meta 公司层面的 AI 新闻（原生 RSS，10 条全带日期）。
@@ -865,6 +891,7 @@ sources:
     # 2026-09-22 加了情报过滤后，这一源的条目基本会被全部剔除；
     # 留着是为了「ai.meta.com 拿不到」时不至于整家空白。
     type: feed
+    lang: en
     url: https://about.fb.com/news/tag/ai/feed/
 
   # Hugging Face
@@ -876,9 +903,11 @@ sources:
     url: https://huggingface.co/docs/inference-providers/pricing
   - vendor_id: huggingface
     type: blog
+    lang: en
     url: https://huggingface.co/blog
   - vendor_id: huggingface
     type: feed
+    lang: en
     url: https://huggingface.co/blog/feed.xml
 
   # Cloudflare Workers AI
@@ -892,6 +921,7 @@ sources:
     # 官方 Workers AI 变更日志的原生 RSS（35 条全带日期，条目如
     # 「Workers AI - GLM-5.2 now available on Workers AI」）—— 正是本仓库关心的模型上下线。
     type: feed
+    lang: en
     url: https://developers.cloudflare.com/workers-ai/changelog/index.xml
   - vendor_id: cloudflare_workers_ai
     type: workers_pricing
@@ -913,6 +943,7 @@ sources:
   # 官网自带原生 RSS（实测 139 条，含日期）
   - vendor_id: openrouter
     type: feed
+    lang: en
     url: https://openrouter.ai/blog/feed.xml
 
   # Cerebras
@@ -983,6 +1014,7 @@ sources:
   # `NEWS_INTEL_SIGNALS` 的厂商规则过滤（见 §8b）；未配规则时默认不过滤。
   - vendor_id: aws_bedrock
     type: feed
+    lang: en
     url: https://aws.amazon.com/blogs/machine-learning/feed/
 
   # Azure OpenAI / Azure AI Foundry
@@ -1037,6 +1069,7 @@ sources:
   # 官网自带原生 RSS（实测 81 条，含日期）
   - vendor_id: together_ai
     type: feed
+    lang: en
     url: https://www.together.ai/blog/rss.xml
 
   # DeepInfra
@@ -1099,6 +1132,7 @@ sources:
   # 内容是「模型发布 / 模型服务下线 / 计费服务推出」—— 与主题高度对口。
   - vendor_id: longcat_meituan
     type: updates
+    lang: zh
     url: https://longcat.chat/platform/docs/zh/ChangeLog.html
 
   # StreamLake
@@ -1116,6 +1150,7 @@ sources:
   # 靠 crawler 的「结构 7」提取（取不到年份的行会被丢弃，不猜）。
   - vendor_id: streamlake
     type: updates
+    lang: zh
     url: https://www.streamlake.com/document/WANQING/mdptalisb06i7ai3zdd
 
   # 中国电信 天翼云/息壤智算
@@ -1245,6 +1280,7 @@ sources:
   - vendor_id: modular_cloud
     # 官方博客 RSS（100 条全带日期，条目如「Modular 26.6: Open compiler contributions…」）。
     type: feed
+    lang: en
     url: https://www.modular.com/blog/rss.xml
 
   # Morph Labs
@@ -1302,6 +1338,7 @@ sources:
   # 官网自带原生 RSS（实测 1 条，量少但可用）
   - vendor_id: anyscale
     type: feed
+    lang: en
     url: https://www.anyscale.com/rss.xml
 
   # DigitalOcean Inference Engine（原 GenAI Inference，旧产品路径已 404）
@@ -1351,15 +1388,19 @@ sources:
   # ⚠️ 它们尚未配 `NEWS_INTEL_SIGNALS` 过滤规则 —— 未列入的厂商默认不过滤。
   - vendor_id: cerebras
     type: blog
+    lang: en
     url: https://www.cerebras.ai/blog
   - vendor_id: fireworks_ai
     type: blog
+    lang: en
     url: https://fireworks.ai/blog
   - vendor_id: deepinfra
     type: blog
+    lang: en
     url: https://deepinfra.com/blog
   - vendor_id: dataeye
     type: blog
+    lang: zh
     url: https://www.shuyanai.com/blogs
   # AI21 动态（2026-09-30 换源）：原 `blog` 指向列表页，抓回来的是 13 条
   # `https://www.ai21.com/blog/#d-<日期>-<n>` **合成锚点**——点进去就是列表页本身，
@@ -1373,19 +1414,24 @@ sources:
   # 越放越宽，2023 年的旧帖会一路渗进浏览页。
   - vendor_id: ai21_labs
     type: blog
+    lang: en
     url: "https://www.ai21.com/wp-json/wp/v2/posts?per_page=100&orderby=date&order=desc&_fields=date,link,title"
     page: https://www.ai21.com/blog
   - vendor_id: jina_ai
     type: blog
+    lang: en
     url: https://jina.ai/news/
   - vendor_id: poolside
     type: blog
+    lang: en
     url: https://poolside.ai/blog
   - vendor_id: inception_labs
     type: blog
+    lang: en
     url: https://www.inceptionlabs.ai/blog
   - vendor_id: inference_net
     type: blog
+    lang: en
     url: https://inference.net/blog/
   # Qoder（国际版文档站是 Mintlify，.md 端点拿干净正文，同 groq 手法）
   - vendor_id: qoder

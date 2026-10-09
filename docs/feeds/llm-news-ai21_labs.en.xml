@@ -335,6 +335,13 @@
 <p>For builders, this means you no longer have to stick to a rigid, one-size-fits-all execution budget, offering you more flexibility to optimize for cost or speed while maintaining superior agent quality.</p>]]></content:encoded>
     </item>
     <item>
+      <title>Token spend isn’t going down. You need more than naive routi…</title>
+      <link>https://www.ai21.com/lp/blog/token-spend-isnt-going-down-you-need-more-than-naive-routing-to-manage-it-gated/</link>
+      <guid isPermaLink="true">https://www.ai21.com/lp/blog/token-spend-isnt-going-down-you-need-more-than-naive-routing-to-manage-it-gated/?li=1</guid>
+      <pubDate>Tue, 30 Jun 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Token spend isn’t going down. You need more than naive routing to manage it</description>
+    </item>
+    <item>
       <title>Tipping the scales: Merging weak agents into a state-of-the-…</title>
       <link>https://www.ai21.com/blog/merging-weak-agents-into-a-state-of-the-art-deep-researcher/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/merging-weak-agents-into-a-state-of-the-art-deep-researcher/?li=1</guid>
@@ -2358,69 +2365,6 @@ This workflows should be done step-by-step so that you can iterate on your chang
 <p>We believe this Gartner recognition reinforces our mission: <strong>to build trustworthy AI systems that powers the enterprise towards superproductivity. </strong></p>
 <p><strong>Access the reports:</strong> Innovation Guide for Generative AI Model Providers <a href="https://www.gartner.com/en/documents/7183830">here</a> Innovation Guide for Generative AI Engineering <a href="https://www.gartner.com/en/documents/7183630">here</a>.</p>
 <p><em>Gartner does not endorse any company, vendor, product or service depicted in its publications, and does not advise technology users to select only those vendors with the highest ratings or other designation. Gartner publications consist of the opinions of Gartner’s business and technology insights organization and should not be construed as statements of fact. Gartner disclaims all warranties, expressed or implied, with respect to this publication, including any warranties of merchantability or fitness for a particular purpose. GARTNER is a trademark of Gartner, Inc. and its affiliates.</em></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>AI21 Maestro’s accuracy fix for RAG’s blind spots</title>
-      <link>https://www.ai21.com/blog/structured-rag-enterprise-accuracy/</link>
-      <guid isPermaLink="true">https://www.ai21.com/blog/structured-rag-enterprise-accuracy/?li=1</guid>
-      <pubDate>Wed, 12 Nov 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p><em><strong>TL;DR</strong></em></p>
-<ul><li><em><strong>Traditional RAG</strong> falls short on complex enterprise queries, leading to incomplete or unreliable answers.</em></li><li><em><strong>Structured RAG (S-RAG)</strong> transforms unstructured documents into structured, query-aware representation for precise, auditable reasoning.</em></li><li><em><strong>AI21 Maestro’s hybrid architecture</strong> blends structured and embedder-based retrieval, improving accuracy by up to 60% with near-perfect recall.</em></li><li><em><strong>Tailored for enterprise scale:</strong> automatically infers or lets users define schemas to handle millions of documents with full transparency and control.</em></li><li><em><strong>Result:</strong> reliable, explainable answers you can trust in compliance, reporting, and mission-critical workflows.</em></li></ul>
-<p>We’ve spent years working with enterprises trying to turn their data into something usable. Every team had the same hope: <em>RAG would finally unlock their knowledge for scaled use</em>. But by the time we got involved, reality had already hit. The answers were fluent, yes, but they weren’t always reliable.</p>
-<p>Let’s say you ask about performance trends or supplier comparisons, and the LLM-based system gives you only part of the picture. It might surface a few relevant excerpts but miss key data points, or summarize loosely connected information that doesn’t directly answer the question. In finance and compliance, those gaps aren’t harmless, they’re major risks.</p>
-<p>We knew RAG wasn’t totally broken, but it needed help to become reliable enough for enterprise use. So we built Structured RAG (S-RAG), an enhancement that brings structure and reasoning to retrieval for precise, auditable answers. It’s built into AI21 Maestro, our AI orchestration system powering enterprise agents for mission-critical tasks.</p>
-<p>Want to get more technical? <a href="https://arxiv.org/abs/2511.08505v1">Deep dive into our Structured RAG research paper</a>.</p>
-<p>Unlike traditional RAG, which retrieves text chunks and hopes the LLM answers correctly based on limited context, S-RAG extracts information offline from unstructured documents into a relational database. At runtime, it uses SQL queries to retrieve and reason over that structured data. This means analytical questions that require aggregation, comparison, or filtering — the kind enterprises rely on — can finally be answered accurately and transparently.</p>
-<p><strong>Example:</strong> When asked a simple financial question that most RAG systems fail to answer correctly, Maestro’s S-RAG retrieves the precise value directly from structured data rather than guessing based on text proximity.</p>
-<p><strong>Here’s what’s happening behind the scenes:</strong></p>
-<pre><code>SELECT 
-    “current_liabilities” / 1000000 AS current_liabilities_millions
-FROM 
-    “SEC_Report”
-WHERE 
-    LOWER(“company_name”) = 'netflix' 
-    AND “fiscal_year” = 2017</code></pre>
-<h2>Where embedder-based RAG falls short</h2>
-<p>Embedder-based RAG, the foundation of the first generation of knowledge agents, marked an important milestone in the evolution of retrieval-augmented generation. By embedding queries and documents into high-dimensional vectors, it aimed to retrieve semantically “close” text snippets and feed them to an LLM for reasoning.</p>
-<p>But for enterprises, this approach falls short in three critical cases.</p>
-<h3>1. Answering aggregative questions</h3>
-<p>We’ve seen customers, especially in finance and compliance, hit walls with seemingly simple analytical queries:</p>
-<ul><li>“What was the maximum capital expenditure across all subsidiaries last year?”</li><li>“Who are the top five suppliers by on-time delivery rates?”</li><li>“How have safety incidents trended quarter over quarter?”</li></ul>
-<p>These are not “needle-in-a-haystack” lookups, where a few chunks of text hold the answer. To correctly answer these analytical queries, the system has to filter, compare, and aggregate data points across potentially dozens or hundreds of records.</p>
-<p>Embedder-based RAG has no generalized way to perform these operations. It retrieves a predefined number of chunks of text and passes them to an LLM, which must attempt reasoning inside the limited context window using very limited arithmetic capabilities.</p>
-<h3>2. Questions that require exhaustive coverage</h3>
-<p>Enterprise teams often ask questions that demand complete, exhaustive lists:</p>
-<ul><li>“List all contracts expiring before 2025 with penalty clauses over $1M.”</li><li>“Which employees have certifications that will expire this year?”</li><li>“Show all markets where regulatory changes affect reporting requirements.”</li></ul>
-<p>Missing even one item is not an inconvenience, but a compliance risk. Yet embedder-based retrieval is inherently probabilistic and optimized to find the single best matching chunk rather than all relevant evidence. Because it only fetches a subset of documents based on similarity scoring, there can never be guarantees of <em>full</em> retrieval. This is unacceptable in domains like financial reporting or regulatory compliance, where exhaustive coverage is as important as correctness.</p>
-<h3>3. Dense or non-indicative corpora</h3>
-<p>Finally, consider corpora like technical documentation or regulatory filings. These are dense, repetitive, and attribute-driven. Documents may differ only by a few numbers or clauses, and queries may focus on precise attributes like clause numbers or model IDs. In these settings, embedding similarity collapses. Retrieval becomes noisy because embedder models haven’t learned the underlying semantics of those terms, so irrelevant but “close” passages often crowd out the real answer.</p>
-<p>For example, in financial analysis queries, most reports look nearly identical and contain similar terminology — “total liabilities,” “shareholder equity,” “net income”. To an embedder, they all seem relevant. As a result, semantic retrieval often surfaces a stack of irrelevant documents that appear contextually close but don’t actually answer the question.</p>
-<p><strong>Enter Structured RAG.</strong></p>
-<h2>Enhancing RAG with AI21 Maestro</h2>
-<p>AI21 Maestro solves these problems with Structured RAG, by expanding the range of queries RAG systems can accurately process in enterprise environments.</p>
-<p>Instead of treating documents solely as unstructured text, AI21 Maestro leverages structure at ingestion to complement the drawbacks of embedder-based retrieval. It analyzes documents to detect recurring patterns. For example:</p>
-<ul><li><strong>In financial filings</strong>, every report describes attributes like revenue, operating expenses, and capital expenditure.</li><li><strong>In HR resumes</strong>, every record contains education, years of experience, and certifications.</li><li><strong>In contracts</strong>, clauses follow standard sections like termination, penalties, and governing law.</li></ul>
-<p>But because documents are written independently, the same value can appear in many different formats — for example, “1,000,000,” “1M,” or simply “1.” Without standardization, reasoning across such documents is nearly impossible.</p>
-<p>AI21 Maestro automatically infers a schema that captures these attributes. With structured RAG, each document is transformed into a structured record aligned to this schema, with consistent formatting, terminology, and validation. Users can review, edit, and adjust the automatically generated schema to fit their specific needs before ingestion. The entire corpus becomes a structured database, with links to the original text for transparency and control.</p>
-<p>At inference time, when a user asks a relevant question that relates to one of the available schemas, AI21 Maestro translates the natural-language question into a formal SQL query over this structured database.</p>
-<p>This enables precise analytical operations that traditional RAG can’t perform — max/min calculations, trend analysis, complex filters — while maintaining traceability.</p>
-<ul><li>“What’s the highest ARR across subsidiaries?”</li><li>“Show average headcount growth by year.”</li><li>“Which contracts signed after 2020 include arbitration clauses?”</li></ul>
-<p>After executing the SQL, Maestro returns the result to the LLM for a fluent, business-ready answer.</p>
-<h2>Performance and hybrid retrieval</h2>
-<p>This approach produces up to 60% higher accuracy on <a href="https://huggingface.co/datasets/ai21labs/aggregative_questions">aggregative queries</a> than embedder-based systems and a near-perfect recall for exhaustive coverage questions (given the right schema).</p>
-<p><em>A comparison of embedder-based RAG (with gpt-o3 as generational model), OpenAI Responses API, and Structured RAG on aggregative-question benchmarks.</em></p>
-<p>But not all information fits neatly into a schema. Some attributes are rare, or a question may require reasoning over narrative text. In those cases, AI21 Maestro uses Structured RAG to narrow the dataset first, then applies embedder-based retrieval on that reduced set.</p>
-<p>This hybrid retrieval approach balances exhaustive coverage with flexibility, ensuring that no relevant information is missed while still supporting nuanced, text-heavy questions. It also sidesteps the failure modes of dense corpora by querying exact attributes first.</p>
-<p>As shown below, Maestro’s hybrid approach clearly outperforms embedder-only RAG and competitive RAG systems across real-world benchmarks.</p>
-<h2>From answers to decisions</h2>
-<p>For enterprise leaders, the implications are clear.</p>
-<ul><li><strong>Trust the answers:</strong> Structured reasoning delivers outputs that are accurate, auditable, and defensible in high-stakes settings. AI21 Maestro’s dynamic hybrid architecture combines structured and embedder-based retrieval to get the best of both worlds, improving results while keeping the classic pipeline as a reliable fallback.</li><li><strong>Scale without fear:</strong> AI21 Maestro handles millions of documents, dense technical corpora, and ever-evolving regulatory requirements. S-RAG adapts to your specific queries — automatically inferring schemas based on query context or letting you define them yourself for full control.</li></ul>
-<p>Because Structured RAG operates within AI21 Maestro’s dynamic hybrid pipeline, every answer you get is more accurate than the baseline RAG results you already trust.</p>
-<p>By addressing the blind spots of embedder-based approaches, AI21 Maestro turns unstructured enterprise data into a structured decision-making engine. For enterprise, that means answers you can act on, workflows you can automate, and risks you can mitigate.</p>
-<p><em><strong>Hear the truth behind why RAG isn’t solved yet — and how Structured RAG changes that.</strong></em></p>
-<p>🎧 <a href="https://www.ai21.com/yaap/rag-is-not-solved/"><em>YAAP Podcast: </em>“RAG Is Not Solved – Your Evaluation Just Sucks”</a></p>
-<p>🎥 <a href="https://youtube.com/watch?si=Luem6QD8FoqDaNT5&amp;v=Ywl4LsvHKzU&amp;feature=youtu.be"><em>AI Engineer World’s Fair:</em> A deep dive into building reliable retrieval systems</a>.</p>
-<p><em>Structured RAG is now part of AI21 Maestro. </em><a href="https://www.ai21.com/contact-sales/"><em>Contact us</em></a><em> to learn how it retrieves better answers you can trust.</em></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

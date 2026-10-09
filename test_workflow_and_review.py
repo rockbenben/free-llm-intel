@@ -1891,6 +1891,85 @@ class TestNewsSectionCountConsistency(unittest.TestCase):
         self.assertGreater(checked, 5, "至少应校验到 5 个厂商的归档计数，疑似正则失配")
 
 
+class TestDeclaredSourceLanguage(unittest.TestCase):
+    """动态源的**语言是声明**，不是事后判断：它决定发什么 Accept-Language、出不出英文镜像。"""
+
+    TABLE = {"openai.com/news": "zh", "groq.com": "en",
+             "minimax.io/blog": "en", "minimax.cn/blog": "zh"}
+
+    def test_every_shipped_news_source_declares_a_language(self):
+        root = Path(__file__).resolve().parent
+        data = yaml.safe_load((root / "llm-intel.yaml").read_text(encoding="utf-8"))
+        news = [s for s in data["sources"]
+                if (s.get("type") or "") in crawler_llm_intel.NEWS_TYPES]
+        bad = [s["vendor_id"] for s in news if (s.get("lang") or "") not in ("en", "zh")]
+        self.assertEqual(bad, [], "这些动态源没声明 lang：%s" % bad[:6])
+        self.assertGreater(len(news), 40, "源清单不该空到认不出语言")
+
+    def test_declaration_beats_title_shape_and_body_state(self):
+        """中文源就算标题全是英文、正文也留着英文，也不出英文镜像。"""
+        art = crawler_llm_intel.Article(title="GLM-5.3 Flash Now Available",
+                                        url="https://openai.com/index/some-post")
+        table = {"openai.com/index": "zh", "openai.com/news": "zh"}
+        self.assertFalse(crawler_llm_intel._english_eligible(art, {}, "openai", table),
+                         "旧判据（标题含 ≥4 拉丁 / en_status=ok）会把这条塞进英文镜像")
+        en = crawler_llm_intel.Article(title="New model release",
+                                       url="https://console.groq.com/docs/changelog")
+        self.assertTrue(crawler_llm_intel._english_eligible(en, {}, "groq",
+                                                            {"console.groq.com": "en"}))
+
+    def test_host_level_fallback_only_when_unambiguous(self):
+        """同 host 上声明了两种语言时，路径匹配不上就不给语言 —— 宁缺不猜。"""
+        self.assertEqual(crawler_llm_intel.declared_source_lang(
+            "https://groq.com/blog/post-1", {"groq.com": "en"}), "en")
+        self.assertEqual(crawler_llm_intel.declared_source_lang(
+            "https://example.com/other", {"example.com/a": "en", "example.com/b": "zh"}), "",
+            "同 host 两种语言、路径又匹配不上时不能任选一种")
+
+    def test_mixed_language_vendor_is_legal(self):
+        """一家厂商同时有中英文动态源是正常配置，两种语言都要留住。"""
+        srcs = [{"vendor_id": "vmix", "type": "blog", "url": "https://vmix.io/blog", "lang": "en"},
+                {"vendor_id": "vmix", "type": "updates", "url": "https://vmix.cn/news", "lang": "zh"}]
+        table = crawler_llm_intel.news_source_langs(srcs)
+        self.assertEqual(table, {"vmix.io/blog": "en", "vmix.cn/news": "zh"},
+                         "不许因为『一家只能一种语言』把声明丢掉")
+        self.assertEqual(crawler_llm_intel.declared_source_lang(
+            "https://vmix.cn/news/release-1", table), "zh")
+        self.assertEqual(crawler_llm_intel.declared_source_lang(
+            "https://vmix.io/blog/post", table), "en")
+
+    def test_fetch_sends_declared_language(self):
+        """抓源时按声明发 Accept-Language：en 源不许拿中文头去抓。"""
+        seen = {}
+
+        class _Resp:
+            status_code = 200
+            url = "https://groq.com/docs"
+            text = "<html><body>" + ("English prose here. " * 40) + "</body></html>"
+            content = text.encode()
+            headers = {"Content-Type": "text/html"}
+
+            def raise_for_status(self):
+                pass
+
+        class _Session:
+            headers = {}
+
+            def get(self, url, timeout=None, allow_redirects=True, headers=None):
+                seen["al"] = (headers or {}).get("Accept-Language", "")
+                return _Resp()
+
+        crawler_llm_intel._fetch_with_requests(_Session(), "https://groq.com/docs",
+                                               "changelog", (5.0, 5.0), 0, lang="en")
+        self.assertTrue(seen["al"].startswith("en"), "en 源必须发 en 优先头：%s" % seen["al"])
+        crawler_llm_intel._fetch_with_requests(_Session(), "https://groq.com/docs",
+                                               "changelog", (5.0, 5.0), 0, lang="zh")
+        self.assertTrue(seen["al"].startswith("zh"), "zh 源发中文头：%s" % seen["al"])
+        crawler_llm_intel._fetch_with_requests(_Session(), "https://groq.com/docs",
+                                               "changelog", (5.0, 5.0), 0)
+        self.assertEqual(seen["al"], "", "没声明就不该覆盖会话默认头")
+
+
 class TestSelfHostedRss(unittest.TestCase):
     """自建 RSS 订阅源：日期规则、标题清洗、确定性与旧源清理。"""
 
@@ -7154,7 +7233,7 @@ class TestRssDualFeeds(unittest.TestCase):
             feeds = Path(d) / "feeds"
             feeds.mkdir()
             self._write_bodies(feeds, [("openai", "https://openai.test/blog/1", "ok")])
-            crawler_llm_intel.write_rss_feeds(feeds, [self._intel("openai", "OpenAI", 3)], self.BASE)
+            crawler_llm_intel.write_rss_feeds(feeds, [self._intel("openai", "OpenAI", 3)], self.BASE, lang_table={"openai.test": "en"})
             self.assertTrue((feeds / "llm-news-all.xml").exists())
             self.assertTrue((feeds / "llm-news-all.en.xml").exists())
             self.assertTrue((feeds / "llm-news-openai.xml").exists())
@@ -7166,7 +7245,7 @@ class TestRssDualFeeds(unittest.TestCase):
             feeds.mkdir()
             url = "https://openai.test/blog/1"
             self._write_bodies(feeds, [("openai", url, "ok")])
-            crawler_llm_intel.write_rss_feeds(feeds, [self._intel("openai", "OpenAI", 1)], self.BASE)
+            crawler_llm_intel.write_rss_feeds(feeds, [self._intel("openai", "OpenAI", 1)], self.BASE, lang_table={"openai.test": "en"})
             zh = (feeds / "llm-news-openai.xml").read_text(encoding="utf-8")
             en = (feeds / "llm-news-openai.en.xml").read_text(encoding="utf-8")
             # 硬编码 ?li=1 而非引用常量，否则改坏常量测试一起漂——真正的不变量是
@@ -7178,7 +7257,10 @@ class TestRssDualFeeds(unittest.TestCase):
             self.assertIn(f"<link>{url}</link>", zh)
 
     def test_native_chinese_source_skipped_in_en_feed(self):
-        """bodies.json 里 en_status='' 表示 native 中文——英文 feed 里整体不出现。"""
+        """源声明为中文（或未声明）→ 英文镜像里整体不出现。
+
+        千问是中文源：`lang: zh` 写在源上，不靠 `en_status` 或标题里有没有拉丁字母。
+        """
         with tempfile.TemporaryDirectory() as d:
             feeds = Path(d) / "feeds"
             feeds.mkdir()
@@ -7203,15 +7285,19 @@ class TestRssDualFeeds(unittest.TestCase):
             self._write_bodies(feeds, entries)
             crawler_llm_intel.write_rss_feeds(
                 feeds, [self._intel("v", "V", 24)], self.BASE,
-                merged_limit=100, vendor_limit=10)
+                merged_limit=100, vendor_limit=10, lang_table={"v.test": "en"})
             zh = (feeds / "llm-news-v.xml").read_text(encoding="utf-8")
             en = (feeds / "llm-news-v.en.xml").read_text(encoding="utf-8")
             self.assertEqual(zh.count("<item>"), 10)
             self.assertEqual(en.count("<item>"), 10)
 
     def test_english_feed_body_absent_when_fetch_failed(self):
-        """bodies.json 里 en_status='fetch_failed' → 该条不进英文 feed，
-        但仍进中文 feed（feed 描述来自归档，正文可选）。"""
+        """源声明是英文 → 条目照进英文镜像；但抓不到正文的那条**不许带正文**。
+
+        改前的判据是「en_status 不是 ok 就不进英文 feed」，可那量的是我们的抓取
+        状态、不是源的语言：整页复制被判成 index_page 时，条目会凭空从订阅者的镜像里
+        消失。现在镜像成员由源声明决定，正文有没有由语料决定，两件事分开。
+        """
         with tempfile.TemporaryDirectory() as d:
             feeds = Path(d) / "feeds"
             feeds.mkdir()
@@ -7222,11 +7308,16 @@ class TestRssDualFeeds(unittest.TestCase):
                 ("v", url_bad, "fetch_failed"),
             ])
             v = self._intel("v", "V", 2)
-            crawler_llm_intel.write_rss_feeds(feeds, [v], self.BASE)
+            crawler_llm_intel.write_rss_feeds(feeds, [v], self.BASE, lang_table={"v.test": "en"})
             en = (feeds / "llm-news-v.en.xml").read_text(encoding="utf-8")
             zh = (feeds / "llm-news-v.xml").read_text(encoding="utf-8")
-            self.assertIn("blog/1", en)
-            self.assertNotIn("blog/2", en)
+            items = {i.split("<link>")[1].split("</link>")[0]: i
+                     for i in en.split("<item>")[1:]}
+            self.assertIn(url_ok, items)
+            self.assertIn(url_bad, items, "英文源的条目不该因我们抓不到就消失")
+            self.assertNotIn("<content:encoded>", items[url_bad],
+                             "抓不到正文的条目只给标题与链接，不许编一段出来"
+                             "（正文注入本身由 test_write_rss_feeds_injects_body 钉）")
             self.assertIn("blog/1", zh)
             self.assertIn("blog/2", zh)
 
@@ -7571,7 +7662,7 @@ class TestRssContentEncoded(unittest.TestCase):
                                               homepage="", products=[])
             v.all_news_articles = [crawler_llm_intel.Article(
                 title="Hello", url=url, date="2026-01-01", zh_title="你好")]
-            crawler_llm_intel.write_rss_feeds(feeds, [v], "https://x.test/feeds")
+            crawler_llm_intel.write_rss_feeds(feeds, [v], "https://x.test/feeds", lang_table={"openai.test": "en", "x.test": "en"})
             zh_xml = (feeds / "llm-news-openai.xml").read_text(encoding="utf-8")
             en_xml = (feeds / "llm-news-openai.en.xml").read_text(encoding="utf-8")
             self.assertIn("<content:encoded>", zh_xml)

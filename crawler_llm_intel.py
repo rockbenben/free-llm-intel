@@ -641,6 +641,68 @@ def group_sources_by_vendor(sources: list[dict]) -> dict[str, list[dict]]:
 # 网络抓取
 # ---------------------------------------------------------------------------
 
+#: 动态源的**声明语言**（`llm-intel.yaml` 的 `lang` 字段）决定两件事：
+#: 抓取时发哪种 `Accept-Language`、以及这一条能不能进英文镜像 feed。
+#: 为什么不让代码「后期判断」：`en_status=="ok"` 量的是「我们有没有留住英文正文」，
+#: 而标题里有没有拉丁字母量的是文章标题的形状 —— 两者都不是源的语言。实测正是这两条
+#: 造出了僵尸英文镜像（dataeye / sensetime 这种中文站，只因标题含 `GLM`/`SenseNova`
+#: 就被当成有英文可镜像），也让 openai 同一条身份 URL 有时存英文、有时存中文。
+_LANG_HEADERS = {
+    "en": "en-US,en;q=0.9",
+    "zh": "zh-CN,zh;q=0.9,en;q=0.8",
+}
+
+
+def news_source_langs(sources: list[dict]) -> dict[str, str]:
+    """`{host+首要路径段: lang}` —— 只收 NEWS_TYPES 且声明了 `lang` 的动态源。
+
+    键取「host + 第一段路径」，够区分同站的中英文 locale 根
+    （`openai.com/zh-Hans-CN` vs `openai.com/news`），又不苛求条目路径与源路径一致
+    （openai 的文章在 `/index/<slug>`，源在 `/news/`，靠 host 匹配即可）。
+    """
+    out: dict[str, str] = {}
+    for s in sources or []:
+        if (s.get("type") or "") not in NEWS_TYPES:
+            continue
+        lang = (s.get("lang") or "").strip().lower()
+        u = (s.get("url") or "").strip()
+        if not lang or not u:
+            continue
+        key = _lang_match_key(u)
+        if key:
+            out[key] = lang
+    return out
+
+
+def _lang_match_key(url: str) -> str:
+    """源/条目 URL 的语言匹配键：小写 host + 第一段路径。"""
+    try:
+        parts = urlparse(url)
+    except ValueError:
+        return ""
+    host = (parts.netloc or "").lower().replace("www.", "")
+    if not host:
+        return ""
+    seg = [p for p in (parts.path or "").split("/") if p]
+    return f"{host}/{seg[0].lower()}" if seg else host
+
+
+def declared_source_lang(url: str, langs: dict[str, str]) -> str:
+    """这一条属于哪个源、那个源声明什么语言。命中不了返回空串。
+
+    先按 host+首段精确匹配（区分 locale 根），退到 host 级；host 级只有当该 host 上
+    所有已声明源同一种语言时才敢用 —— 否则宁可返回空串，不猜。
+    """
+    if not url or not langs:
+        return ""
+    key = _lang_match_key(url)
+    if key in langs:
+        return langs[key]
+    host = key.split("/", 1)[0]
+    on_host = {v for k, v in langs.items() if k.split("/", 1)[0] == host}
+    return on_host.pop() if len(on_host) == 1 else ""
+
+
 def build_session() -> requests.Session:
     session = requests.Session()
     session.headers.update({
@@ -796,13 +858,20 @@ JSON_NEWS_BODY_LIMIT = 8_000_000
 
 
 def _fetch_with_requests(session: requests.Session, url: str, stype: str,
-                         timeout: tuple[float, float], retries: int) -> PageResult:
-    """用 requests 抓取，任何异常都封装进 PageResult，不向上抛出。"""
+                         timeout: tuple[float, float], retries: int,
+                         lang: str = "") -> PageResult:
+    """用 requests 抓取，任何异常都封装进 PageResult，不向上抛出。
+
+    `lang` 是这条**源自己声明的语言**：给定就按它发 `Accept-Language`，
+    不给则用 session 默认头。语言写进身份的方式只有一种——由源决定，
+    不让站点拿我们的请求头猜。
+    """
     result = PageResult(url=url, stype=stype, final_url=url)
+    headers = {"Accept-Language": _LANG_HEADERS[lang]} if lang in _LANG_HEADERS else None
     last_err = ""
     for attempt in range(retries + 1):
         try:
-            resp = session.get(url, timeout=timeout, allow_redirects=True)
+            resp = session.get(url, timeout=timeout, allow_redirects=True, headers=headers)
             result.status_code = resp.status_code
             result.final_url = resp.url
             if resp.status_code >= 400:
@@ -882,12 +951,12 @@ def _fetch_with_requests(session: requests.Session, url: str, stype: str,
 def fetch_url(session: requests.Session, url: str, stype: str,
               browser: "BrowserSession | None" = None,
               timeout: tuple[float, float] = (10.0, 30.0),
-              retries: int = 1) -> PageResult:
+              retries: int = 1, lang: str = "") -> PageResult:
     """
     抓取单个 URL：优先 requests；若被反爬拦截（401/403/429 等）或抓到 JS 空壳，
     且提供了 browser，则用真实浏览器重渲染兜底。任何异常都不向上抛出。
     """
-    result = _fetch_with_requests(session, url, stype, timeout, retries)
+    result = _fetch_with_requests(session, url, stype, timeout, retries, lang)
 
     if LOGIN_PATTERNS.search(result.final_url):
         result.is_login = True
@@ -896,7 +965,8 @@ def fetch_url(session: requests.Session, url: str, stype: str,
     if result.status_code == 429:
         time.sleep(2.0)
         was_login = result.is_login
-        result = _fetch_with_requests(session, url, stype, timeout, retries=0)
+        result = _fetch_with_requests(session, url, stype, timeout, retries=0,
+                                              lang=lang)
         # 首抓已判定的登录跳转不得因重试丢失：重试结果若是失败壳（final_url 回落
         # 到原 url），LOGIN_PATTERNS 判不出来，is_login 会静默变回 False
         if was_login or LOGIN_PATTERNS.search(result.final_url):
@@ -4911,24 +4981,33 @@ def _load_bodies_for_feed(feeds_dir: Path) -> dict:
         return {}
 
 
-def _english_eligible(art: Article, bodies: dict, vendor: str) -> bool:
-    """这条文章能不能进英文 feed？
+_NEWS_LANG_CACHE: dict | None = None
 
-    - bodies.json 有该 (vendor, url) 条目：`en_status == "ok"` 才算合格
-      （native 中文源 en_status 为空、fetch_failed / index_page 都排除）
-    - bodies.json 缺该 URL（尚未跑过语料回充 / CI 抖动 / 老归档）：按标题启发式
-      回退——含连续 ≥ 4 拉丁字母即视作"原文是英文"
-    """
-    if bodies:
+
+def news_lang_table(path: Path | None = None) -> dict[str, str]:
+    """读 `llm-intel.yaml` 里动态源声明的语言（进程内缓存；给 path 则强制重读）。"""
+    global _NEWS_LANG_CACHE
+    if _NEWS_LANG_CACHE is None or path is not None:
+        p = path or (_repo_root() / "llm-intel.yaml")
         try:
-            import fulltext as _ft
-            key = _ft.bodies_key(vendor, art.url)
-            entry = bodies.get(key)
-            if entry is not None:
-                return entry.get("en_status") == "ok"
+            data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+            _NEWS_LANG_CACHE = news_source_langs(data.get("sources") or [])
         except Exception:
-            pass
-    return bool(re.search(r"[A-Za-z]{4}", art.title))
+            _NEWS_LANG_CACHE = {}
+    return _NEWS_LANG_CACHE
+
+
+def _english_eligible(art: Article, bodies: dict, vendor: str,
+                      langs: dict[str, str] | None = None) -> bool:
+    """这条文章能不能进英文 feed —— **只看它所属源声明的语言**。
+
+    旧判据两条都错过：`en_status=="ok"` 量的是「我们有没有留住英文正文」，正文被判成
+    整页复制时它一起变假，feed 就凭空消失；标题启发式（含 ≥4 拉丁字母）量的是标题
+    形状，中文站只要标题里带 `GLM`/`SenseNova` 就能骗出一个英文镜像（dataeye、
+    sensetime 实测如此）。源没声明、或声明命中不了这条 URL，就不出英文镜像 ——
+    宁缺不猜。
+    """
+    return declared_source_lang(art.url, langs if langs is not None else news_lang_table()) == "en"
 
 
 def _body_html_for(art: Article, vendor: str, bodies: dict, feeds_dir: Path,
@@ -5102,7 +5181,8 @@ def select_body_rows(rows: list[dict], vendors: list[str], limit: int = 0) -> li
 def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str = "",
                     merged_limit: int = RSS_MERGED_LIMIT,
                     vendor_limit: int = RSS_VENDOR_LIMIT,
-                    clean_removed: bool = True) -> tuple[int, int, int, int]:
+                    clean_removed: bool = True,
+                    lang_table: dict | None = None) -> tuple[int, int, int, int]:
     """把各厂商归档文章写成 RSS 2.0 订阅源（GitHub Pages 托管），**每源出中/英双版**。
 
     产出：
@@ -5122,6 +5202,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     base = base_url.rstrip("/")
     today = datetime.now().strftime("%Y-%m-%d")
     bodies = _load_bodies_for_feed(out_dir)
+    langs = news_lang_table() if lang_table is None else lang_table
 
     per_vendor: list[tuple[str, str, list[Article], list[str]]] = []
     skipped = 0
@@ -5254,7 +5335,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     merged_en: list[tuple[str, str, Article, str]] = []
     for brand, vid, arts, titles_zh in per_vendor:
         for art, t in zip(arts, titles_zh):
-            if not art.date or not _english_eligible(art, bodies, vid):
+            if not art.date or not _english_eligible(art, bodies, vid, langs):
                 continue
             merged_en.append((brand, vid, art, t))
     merged_en.sort(key=lambda row: row[2].date, reverse=True)
@@ -5275,7 +5356,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     vendor_en_emitted: set[str] = set()
     for brand, vendor_id, arts, titles_zh in per_vendor:
         pairs = [(a, t) for a, t in zip(arts, titles_zh)
-                 if _english_eligible(a, bodies, vendor_id)]
+                 if _english_eligible(a, bodies, vendor_id, langs)]
         if not pairs:
             continue
         cut = pairs[:vendor_limit] if vendor_limit else pairs
