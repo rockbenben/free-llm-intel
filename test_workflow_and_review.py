@@ -1897,6 +1897,38 @@ class TestDeclaredSourceLanguage(unittest.TestCase):
     TABLE = {"openai.com/news": "zh", "groq.com": "en",
              "minimax.io/blog": "en", "minimax.cn/blog": "zh"}
 
+    def test_declared_chinese_source_has_no_chinese_in_original_slot(self):
+        """源声明中文 → 原文槽里不许装着中文（那等于给中文文章编了个英文原文）。
+
+        回归的是 21 行：`translator=agent` 的中文稿同时躺在 `.en.md`（原文槽）与
+        `.md`，两份内容逐字相同，ledger 还记着 `src_lang=en`。对中文源来说那是
+        「原文」，对读者却是同一篇中文被展示两遍。
+        """
+        repo = Path(__file__).resolve().parent
+        idx = json.loads((repo / "docs/feeds/articles.json").read_text(encoding="utf-8"))
+        entries = json.loads((repo / "docs/feeds/bodies.json").read_text(encoding="utf-8"))["bodies"]
+        f = {k: i for i, k in enumerate(idx["fields"])}
+        langs = crawler_llm_intel.news_lang_table(repo / "llm-intel.yaml")
+        bad = []
+        for row in idx["articles"]:
+            v, s, url = row[f["vendor"]], row[f["slug"]], row[f["url"]]
+            rec = entries.get(ft.bodies_key(v, url)) or {}
+            rel = rec.get("en_path")
+            if not rel or not (repo / rel).is_file():
+                continue
+            body = (ft.read_body_doc(repo / rel)[1] or "").strip()
+            if len(body) < 40:
+                continue
+            cjk = sum('\u4e00' <= c <= '\u9fff' for c in body[:4000])
+            lat = sum(c.isascii() and c.isalpha() for c in body[:4000])
+            if cjk + lat < 40 or cjk / (cjk + lat) < 0.25:
+                continue
+            declared = (langs.get(crawler_llm_intel._lang_match_key(url))
+                        or crawler_llm_intel.declared_source_lang(url, langs))
+            if declared == "zh":
+                bad.append(f"{v}/{s}")
+        self.assertEqual(bad, [], "这些行的源声明为中文，原文槽里却装着中文正文：%s" % bad[:8])
+
     def test_every_shipped_news_source_declares_a_language(self):
         root = Path(__file__).resolve().parent
         data = yaml.safe_load((root / "llm-intel.yaml").read_text(encoding="utf-8"))
@@ -1937,6 +1969,29 @@ class TestDeclaredSourceLanguage(unittest.TestCase):
             "https://vmix.cn/news/release-1", table), "zh")
         self.assertEqual(crawler_llm_intel.declared_source_lang(
             "https://vmix.io/blog/post", table), "en")
+
+    def test_browser_fallback_uses_declared_language(self):
+        """浏览器兜底通路也要按源声明发语言头，不许跟 requests 通路各说各话。"""
+        seen = {}
+
+        class _Page:
+            def set_extra_http_headers(self, headers):
+                seen.update(headers)
+
+        bs = crawler_llm_intel.BrowserSession(enabled=False)
+        bs._page = _Page()
+        bs._ensure = lambda: False        # 不真起浏览器，只验头是否在 goto 前被覆盖
+        bs.render("https://openai.com/zh-Hans-CN/news/", lang="zh")
+        self.assertEqual(seen, {}, "_ensure 失败时不该碰页面")
+
+        bs._ensure = lambda: True
+        bs._render_once = lambda url: ("<html></html>", url, 200)
+        bs.render("https://openai.com/zh-Hans-CN/news/", lang="zh")
+        self.assertTrue(seen.get("Accept-Language", "").startswith("zh"), seen)
+        seen.clear()
+        bs.render("https://console.groq.com/docs/changelog", lang="en")
+        self.assertTrue(seen.get("Accept-Language", "").startswith("en"),
+                        "英文源走浏览器兜底也必须发英文优先头")
 
     def test_fetch_sends_declared_language(self):
         """抓源时按声明发 Accept-Language：en 源不许拿中文头去抓。"""

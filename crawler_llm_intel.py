@@ -820,10 +820,22 @@ class BrowserSession:
                 pass
         return page.content(), page.url, (resp.status if resp else None)
 
-    def render(self, url: str) -> tuple[str, str, int | None] | None:
-        """返回 (最终HTML, 最终URL, HTTP状态码)；失败时重建页面重试一次，再失败返回 None。"""
+    def render(self, url: str, lang: str = "") -> tuple[str, str, int | None] | None:
+        """返回 (最终HTML, 最终URL, HTTP状态码)；失败时重建页面重试一次，再失败返回 None。
+
+        `lang` 是这条**源声明的语言**：浏览器上下文建好就不能改 locale，但它谈判
+        语言实际看的是 `Accept-Language`，所以这里逐页覆盖请求头，跟 requests 通路
+        用同一张 `_LANG_HEADERS` 表 —— 两条路子的语言必须一致，否则同一篇文章
+        走 requests 拿到中文、走浏览器兜底拿到英文。
+        """
         if not self._ensure():
             return None
+        want = _LANG_HEADERS.get(lang)
+        if want and self._page is not None:
+            try:
+                self._page.set_extra_http_headers({"Accept-Language": want})
+            except Exception:
+                pass    # 覆盖失败就用上下文默认头，不该让整页渲染因此放弃
         for attempt in range(2):
             try:
                 return self._render_once(url)
@@ -990,7 +1002,7 @@ def fetch_url(session: requests.Session, url: str, stype: str,
     if not needs_browser:
         return result
 
-    rendered = browser.render(url)
+    rendered = browser.render(url, lang)
     if not rendered:
         if req_blocked:  # requests 拿到的就是拦截页
             result.ok = False
