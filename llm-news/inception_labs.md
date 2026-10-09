@@ -1,6 +1,6 @@
 # InceptionLabs 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-02**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-09**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：InceptionLabs（`inception_labs`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,7 +9,7 @@
 
 ## 全部文章（共 13 篇，按日期倒序；无日期条目列于最后）
 
-1. [Mercury Voice 发布](https://www.inceptionlabs.ai/blog/introducing-mercury-voice)（2026-10-01） <!--orig:Introducing Mercury Voice|Read the blog-->
+1. [Mercury Voice 发布](https://www.inceptionlabs.ai/blog/introducing-mercury-voice)（2026-10-01） <!--orig:Introducing Mercury VoiceIntroducing Mercury VoiceA real-time reasoning model for voice agentsA real-time reasoning model for voice agents-->
 2. [Mercury 2.5 简介](https://www.inceptionlabs.ai/blog/introducing-mercury-2-5)（2026-09-24） <!--orig:Introducing Mercury 2.5Read story-->
 3. [Mercury 2 for Search：快到每次查询能跑上一百次](https://www.inceptionlabs.ai/blog/mercury-2-for-search) <!--orig:Mercury 2 for Search: Fast enough to run a hundred times per queryRead story-->
 4. [更多构建者。更高吞吐量。更好的 Mercury 2](https://www.inceptionlabs.ai/blog/mercury-2-10x-free-tokens) <!--orig:More builders. More throughput. Better Mercury 2.Read story-->

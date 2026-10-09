@@ -7,7 +7,21 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 07 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 08 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Pay-per-inference for AI agents: How BlockRun and Incarna us…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/pay-per-inference-for-ai-agents-how-blockrun-and-incarna-use-amazon-bedrock-agentcore-payments/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/pay-per-inference-for-ai-agents-how-blockrun-and-incarna-use-amazon-bedrock-agentcore-payments/?li=1</guid>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Pay-per-inference for AI agents: How BlockRun and Incarna use Amazon Bedrock AgentCore payments</description>
+    </item>
+    <item>
+      <title>Share GPU clusters across teams with isolation and fairness…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/share-gpu-clusters-across-teams-with-isolation-and-fairness-using-amazon-sagemaker-hyperpod/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/share-gpu-clusters-across-teams-with-isolation-and-fairness-using-amazon-sagemaker-hyperpod/?li=1</guid>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Share GPU clusters across teams with isolation and fairness using Amazon SageMaker HyperPod</description>
+    </item>
     <item>
       <title>Introducing Claude Haiku 5.5 on AWS</title>
       <link>https://aws.amazon.com/blogs/machine-learning/introducing-claude-haiku-5-5-on-aws/</link>
@@ -3776,154 +3790,6 @@ cdk destroy --all</code></pre>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/implementing-multi-environment-access-for-claude-platform-on-aws/?li=1</guid>
       <pubDate>Thu, 01 Oct 2026 00:00:00 +0000</pubDate>
       <description>Full title: Implementing Multi-Environment Access for Claude Platform on AWS</description>
-    </item>
-    <item>
-      <title>Simplify dashboard drill-down with the Amazon Quick Sight hi…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/simplify-dashboard-drill-down-with-the-amazon-quick-sight-hierarchy-filter/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/simplify-dashboard-drill-down-with-the-amazon-quick-sight-hierarchy-filter/?li=1</guid>
-      <pubDate>Thu, 01 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Simplify dashboard drill-down with the Amazon Quick Sight hierarchy filter</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Simplify dashboard drill-down with the Amazon Quick Sight hierarchy filter</h1>
-<p><a href="https://aws.amazon.com/quicksight/">Amazon Quick Sight</a> is a fully managed, cloud-native business intelligence (BI) capability for building and publishing interactive dashboards. You can access these dashboards from any device and embed them into your applications, portals, and websites. When building a dashboard, authors add filters so readers can narrow the data to what they want to analyze. But authors must strike a balance: they need enough options for readers to explore data freely, without cluttering the interface or requiring too many steps to apply filters.</p>
-<p>The following screenshot shows a common dashboard filter layout. There are six filters in total: four geographical filters (Region, Sub-Region, Country, and City) and two more that cover the Segment and Product dimensions. In many real-world dashboards, readers encounter even more filters, which can significantly affect the overall user experience.</p>
-<p>Figure 1: A common dashboard layout with six separate filter controls</p>
-<h2>Introducing the hierarchy filter</h2>
-<p>Today, we’re announcing the hierarchy filter in Quick Sight. With it, authors can offer rich, multi-level filtering in a single compact control, reducing clutter and guiding readers to the data they need in fewer steps.</p>
-<p>The hierarchy filter offers the following benefits:</p>
-<ul><li><strong>Reduces visual clutter:</strong> Instead of showing hundreds of cities upfront, readers see a short list of Regions first. The interface stays clean at every step, with fewer options visible at once.</li><li><strong>Fewer steps and more guided exploration:</strong> Readers drill down a logical path (Region → Sub-Region → Country → City) rather than scanning a flat list of dozens of filters. Each selection narrows the next, so readers reach their target faster.</li><li><strong>Mix-and-match hierarchy selection:</strong> Readers can combine levels of the hierarchy in one filter control, selecting an entire country such as Japan alongside a single city such as New York.   <a href="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/09/29/ML-21595-2.png"><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/09/29/ML-21595-2.png" alt="Amazon Quick Sight hierarchy control with Japan selected under APJ and New York City selected under United States, showing mix-and-match selection across levels"></a> Figure 2: Selecting an entire country and a single city in the same hierarchy control</li><li><strong>Scales without overwhelming:</strong> You can support deep hierarchies (up to five levels) without adding five independent filter controls that crowd the toolbar. One compact control handles the full drill path.</li><li><strong>Prevents reader confusion:</strong> Readers don’t need to know which country belongs to which Region. The hierarchy encodes that knowledge for them, making the dashboard self-guiding.</li></ul>
-<p>Figure 3: A selection at each level scopes the choices available at the next</p>
-<p>In this post, we explain how the hierarchy filter works and when to reach for it instead of standard independent filters, walk through configuring one, and build a worked example on a sample retail sales dataset that shows the end-to-end author and reader experience.</p>
-<h2>Overview of the sample dataset</h2>
-<p>For this walkthrough we use a retail sales dataset with a three-level geographic hierarchy plus a couple of metrics. Each row includes one transaction order with the following columns:</p>
-<p>Column</p>
-<p>Example</p>
-<p>Role</p>
-<p>Order_ID</p>
-<p>1001</p>
-<p>Row ID</p>
-<p>Order_Date</p>
-<p>2026-01-12</p>
-<p>Date dimension (for trend visuals)</p>
-<p>Region</p>
-<p>EMEA</p>
-<p>Hierarchy level 1 (parent)</p>
-<p>Country</p>
-<p>UK</p>
-<p>Hierarchy level 2</p>
-<p>City</p>
-<p>London</p>
-<p>Hierarchy level 3 (child)</p>
-<p>Product_Category</p>
-<p>Electronics</p>
-<p>Independent dimension (breakdown)</p>
-<p>Sales</p>
-<p>4200</p>
-<p>Metric</p>
-<p>Quantity</p>
-<p>14</p>
-<p>Metric</p>
-<p>The dataset covers three Regions (EMEA, AMER, APAC), eight countries, and fourteen cities, so the cascade has enough depth to be meaningful. A sample of the raw data:</p>
-<p>Figure 4: A sample of the retail sales dataset</p>
-<h2>Building the dashboard</h2>
-<p>We will build a single-sheet dashboard so the reader can see the whole cascade at a glance. It contains:</p>
-<ul><li><strong>A key performance indicator (KPI)</strong> showing <strong>Total Sales</strong>, <strong>Total Units</strong>, and <strong>Order Count</strong> (each with a month-over-month comparison), to prove the whole sheet reacts to the cascade.</li><li><strong>A filled map</strong> of <strong>Sales by Country</strong>, shaded by revenue.</li><li><strong>A treemap</strong> of <strong>Sales by Region → Country → City</strong>, whose nested rectangles visually echo the filter hierarchy.</li></ul>
-<p>Figure 5: The single-sheet dashboard before the hierarchy filter is added</p>
-<h3>Prerequisites</h3>
-<p>You need author access to create and manage analyses and dashboards.</p>
-<h3>Step 1: Add a filter and set its type to hierarchy filter</h3>
-<ul><li>In the <strong>Filters</strong> pane, choose <strong>Add</strong> and select the field to filter on (for example, <strong>Region</strong>).</li><li>Choose the filter to open <strong>Edit filter</strong>, open the <strong>Filter type</strong> menu, and under <strong>ADVANCED FILTER</strong> choose <strong>Hierarchy filter</strong>. Quick Sight describes it as “Organize and present filter values in a hierarchical tree control.”</li></ul>
-<p>Figure 6: Choosing the hierarchy filter type in the Edit filter pane</p>
-<h3>Step 2: Add and arrange the fields</h3>
-<p>A hierarchy filter is a single filter that holds several related fields: up to <strong>five levels</strong> (for example, Region → Subregion → Country → City → Town). The fields don’t need to be geographic. Any parent-child dimensions work, such as Product Category → Product.</p>
-<ul><li>Under <strong>FIELD HIERARCHY</strong>, choose <strong>Add field</strong> to add <strong>Region</strong>, <strong>Country</strong>, and <strong>City</strong>.</li><li>Arrange the fields from broadest to most detailed: <strong>Region</strong>, then <strong>Country</strong>, then <strong>City</strong>. Use each field’s <strong>move up</strong> and <strong>move down</strong> control to reorder them. The order sets the reader’s drill-down path. Reordering it later clears any selections already saved on the filter.</li><li>Set <strong>Filter condition</strong> to <strong>Include</strong> and choose your <strong>Null options</strong>.</li><li>Set the scope with the <strong>Applied to</strong> icons at the top of the pane. The default is <strong>Only this visual</strong>. Switch it to <strong>Cross-sheet (All sheets and visuals)</strong> so the control filters the whole dashboard.</li><li>Choose <strong>Apply</strong>.</li></ul>
-<p>Figure 7: Adding and arranging the Region, Country, and City fields</p>
-<h3>Step 3: Add the control to the sheet and publish</h3>
-<ul><li>From the filter’s options menu (<strong>⋮</strong>), choose <strong>Add to sheet</strong>. It appears as a single control, labeled by default something like <strong>Hierarchy control for Region</strong>, that you can pin to the top of the sheet.</li><li>Remove any older standalone Region, Country, or City controls. The one hierarchy control replaces all three.</li><li>Publish the analysis as a dashboard.</li></ul>
-<p>Figure 8: The published dashboard with a single hierarchy control replacing the separate Region, Country, and City filters</p>
-<h2>The reader experience</h2>
-<p>Now let’s see it from the reader’s side. The hierarchy filter appears as a single menu control. Opening it reveals a <strong>hierarchy</strong>: a <strong>Select all</strong> option, then each region as an expandable node.</p>
-<p><strong>Collapsed</strong> – The control shows the top level only (AMER, APAC, EMEA), each with an expand arrow. The dashboard shows all data.</p>
-<p>Figure 9: The collapsed hierarchy control showing only the top-level regions</p>
-<p><strong>Expand EMEA</strong> – The reader selects the arrow next to <strong>EMEA</strong>, and its countries appear nested beneath it (France, Germany, UK). Expanding <strong>UK</strong> in turn reveals its cities (London, Manchester, Edinburgh). The relationships are visible directly in the hierarchy, so there’s no need to know the geography in advance.</p>
-<p>Figure 10: Expanding EMEA and then UK to reveal nested countries and cities</p>
-<h2>Constraints and considerations</h2>
-<p>A few things to keep in mind when building a hierarchy filter:</p>
-<ul><li><strong>Number of levels.</strong> A hierarchy filter holds up to five data fields (levels).</li><li><strong>Supported field types.</strong> Only <strong>dimension</strong> fields can be added as levels. Text, numeric dimensions, and Boolean fields all qualify. <strong>Measures</strong> (for example, Sales or Quantity) aren’t offered.</li><li><strong>Reordering.</strong> Fields are reordered with <strong>move up</strong> and <strong>move down</strong> (one position at a time), not drag-and-drop. Order defines the parent-to-child path.</li><li><strong>Selection behavior.</strong> Selecting a value at a lower level <strong>auto-selects its parent chain</strong>. Selecting a city marks its country and region as partially selected, so the reader always sees the full path of their choice.</li><li><strong>Null handling.</strong> A <strong>Null options</strong> setting (for example, Exclude nulls) controls whether rows with a blank value in a hierarchy field are included. This setting applies only to the values shown in your visuals. It does not affect how null values appear in the hierarchy filter control itself.</li><li><strong>Search behavior.</strong> The search bar at the top of the filter searches values in the highest hierarchy level only (for example, Region). It doesn’t search across the whole hierarchy (such as Subregion or Country).</li></ul>
-<p>Figure 11: The top-level search bar searches only the highest hierarchy level</p>
-<p>Lower levels have their own search boxes, so you can still search values at those levels too. A separate search box appears at a lower level whenever that level contains more than 10 unique values.</p>
-<p>Figure 12: A lower-level search box appears when a level has more than 10 unique values</p>
-<p>If a hierarchy level contains more than 1,000 unique values, only a search box appears and no values are displayed. You can use it to find and select the specific values you want to filter on.</p>
-<p>Figure 13: When a level has more than 1,000 unique values, only a search box appears</p>
-<h2>Conclusion</h2>
-<p>In this post, we showed how the hierarchy filter helps Amazon Quick Sight authors turn a set of independent controls into a single, guided drill-down. Readers get short, relevant lists, avoid contradictory selections, and explore related dimensions more efficiently, without writing code or changing the underlying data.</p>
-<p>To try the hierarchy filter, open the <a href="https://quicksight.aws.amazon.com/">Amazon Quick Sight console</a> and add a filter to one of your analyses. To learn more about filtering, see <a href="https://docs.aws.amazon.com/quicksight/latest/user/adding-a-filter-data-prep.html">Filtering data in Amazon Quick Sight</a> in the Amazon Quick Sight User Guide. Have a question, or want to share how you use hierarchy filters? Let us know in the comments.</p>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>How uniopen customized Amazon Nova to their retail moderatio…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/how-uniopen-customized-amazon-nova-to-their-retail-moderation-policies-for-production-deployment/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-uniopen-customized-amazon-nova-to-their-retail-moderation-policies-for-production-deployment/?li=1</guid>
-      <pubDate>Thu, 01 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: How uniopen customized Amazon Nova to their retail moderation policies for production deployment</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>How uniopen customized Amazon Nova to their retail moderation policies for production deployment</h1>
-<p>uniopen is a digital communication and membership platform launched by Taiwan’s Uni-President Enterprises Group, connecting customers to ecommerce, membership benefits, and other retail experiences across web, tablet, and mobile channels.</p>
-<p>Across those channels, uniopen applies a moderation policy that classifies each interaction along two axes. The first is what behavior occurred (nine categories), and the second is what subject the behavior refers to (brand, other, or forbidden). Both must be correct for a moderation decision to be useful, and both are specific to uniopen’s business rather than something a general-purpose model can be expected to learn out of the box.</p>
-<p>In this post, we show how the team adapted Amazon Nova 2 Lite to these business-specific moderation policies through supervised fine-tuning in <a href="https://aws.amazon.com/sagemaker/ai/?trk=047fc009-5bd4-4337-800d-8b880665cece&amp;sc_channel=ps&amp;ef_id=CjwKCAjwtp7VBhBjEiwAJfpV-yKW4t89QXsCc4cxWZWS3f52xxMc7gfEMw4qDvmIjc-OHKOh4W_n9BoCpCwQAvD_BwE:G:s&amp;gads_camp=23532472972&amp;gads_ag=194311071804&amp;gads_ad=795877020716&amp;gads_kw=amazon%20sagemaker%20ai&amp;gads_matchtype=e&amp;gads_network=g&amp;gads_device=c&amp;gads_geo=9033313&amp;gad_campaignid=23532472972&amp;gbraid=0AAAAADjHtp-agjlPsqkVJj2uJ3Wve5A88&amp;gclid=CjwKCAjwtp7VBhBjEiwAJfpV-yKW4t89QXsCc4cxWZWS3f52xxMc7gfEMw4qDvmIjc-OHKOh4W_n9BoCpCwQAvD_BwE">Amazon SageMaker AI</a> and a final prompt-level output optimization. The AWS approach kept correction data, managed training, evaluation, and deployment controls in one repeatable workflow. Model availability varies by AWS Region. See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Supported models by AWS Region in Amazon Bedrock</a>.</p>
-<p>Figure 1 shows the web, tablet, and mobile experiences covered by this moderation policy.</p>
-<p>Figure 1: uniopen digital experience across web, tablet, and mobile channels</p>
-<p>Across these channels, the same moderation taxonomy and release criteria help the team make consistent decisions as interaction formats and topics change.</p>
-<h2>Solution overview</h2>
-<p>The architecture separates the production moderation path from correction, training, evaluation, and deployment. Amazon Nova 2 Lite handles the primary moderation requests. Amazon Nova 2 Pro supports candidate correction generation for reported errors, but a human reviewer must verify each correction before it can enter the training set. With this separation, the team can improve domain-specific behavior without treating generated labels as ground truth.</p>
-<p>Amazon Simple Storage Service (<a href="https://aws.amazon.com/pm/serv-s3/?trk=50b671a1-06f5-4224-9505-fa45ee881c08&amp;sc_channel=ps&amp;ef_id=CjwKCAjwtp7VBhBjEiwAJfpV-6sSqSunigcJyF6o4HVXXir812ZZIQiG3oH06bR1SiUWMf_3dndhlBoCeeUQAvD_BwE:G:s&amp;gads_camp=23522747487&amp;gads_ag=196433733807&amp;gads_ad=795876995201&amp;gads_kw=amazon%20s3&amp;gads_matchtype=e&amp;gads_network=g&amp;gads_device=c&amp;gads_geo=9033313&amp;gad_campaignid=23522747487&amp;gbraid=0AAAAADjHtp_tfnZvG7Euh-sunGteX1eiS&amp;gclid=CjwKCAjwtp7VBhBjEiwAJfpV-6sSqSunigcJyF6o4HVXXir812ZZIQiG3oH06bR1SiUWMf_3dndhlBoCeeUQAvD_BwE">Amazon S3</a>) stores the verified correction set and training data. <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a> tracks active and candidate model configurations. Argo Workflows on <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (Amazon EKS)</a> orchestrates prompt optimization, evaluation, and deployment, and Argo CD applies approved configurations to production. <a href="https://aws.amazon.com/sns/">Amazon Simple Notification Service (Amazon SNS)</a> and <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> notify operators when a hard gate fails or a candidate needs attention. These managed AWS components keep data, training, configuration state, and operational controls in a governed workflow.</p>
-<p>Responsible AI controls complement model customization. Human review remains mandatory for ambiguous cases and for corrections reused as training data. Fixed test sets and regression checks prevent automatic promotion when quality declines. Teams can also apply <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-content-filters.html">Amazon Bedrock Guardrails content filters</a> to inputs and outputs, monitor errors across behavior and subject categories, minimize retained customer data, and revalidate thresholds as moderation policies change.</p>
-<p>Figure 2 shows how a reported error becomes a human-verified correction, enters the Amazon S3 correction set, and triggers the evaluation and deployment workflow.</p>
-<p>Figure 2: Human-verified feedback loop for continuously improving retail content moderation</p>
-<p>The user first queries the active Amazon Nova 2 Lite configuration. When the user reports an error, the correction workflow creates a candidate label, obtains human verification, and writes the approved example to Amazon S3. The orchestration workflow reads the correction set, creates a candidate prompt or customized model, evaluates it, and updates DynamoDB only after the candidate passes the required gates.</p>
-<p>Figure 3 expands the hard- and soft-gate decision path that controls whether a candidate stops, waits for human approval, or moves into production.</p>
-<p>Figure 3: Hard and soft gate evaluation flow used to control model and prompt promotion</p>
-<p>Two kinds of checks control promotion: hard gates and soft gates. <em>Hard gates</em> are must-pass regression tests. <em>Soft gates</em> are warning signals such as low confidence or a drop in performance for a specific class.</p>
-<p>A hard-gate failure stops the workflow and sends an alert. Candidates that pass the hard gate are then checked for soft-gate indicators. If no warning is detected, the candidate can be promoted automatically. If a soft-gate warning is triggered, the candidate remains pending and requires administrator review and approval before deployment.</p>
-<h2>Evaluation approach</h2>
-<p>A conversation window is a bounded segment of a customer conversation that is treated as one training or evaluation example. All three configurations were evaluated on the same held-out test set of 737 conversation windows. The fine-tuning dataset contained 3,391 training windows. The team compared the baseline model, the fine-tuned model, and the prompt-optimized fine-tuned model on this consistent test set.</p>
-<p>Per Behavior Macro F1 measures how consistently the model classifies the nine moderation behaviors as a group. Each behavior contributes equally to the score, so strong performance on common or easier categories can’t hide weak performance on harder categories. For uniopen, this matters because the moderation system needs to work across the full policy set, not only the most frequent behavior.</p>
-<p>Subject Type Macro F1 measures how consistently the model identifies the type of subject involved: brand, other, or forbidden. Each subject type contributes equally to the score. This matters because a moderation decision is more useful when the system not only detects a policy-relevant behavior but also correctly understands what entity the behavior refers to. Together, the two metrics show policy detection and subject understanding on the same 0-1 scale.</p>
-<h2>Baseline performance</h2>
-<p>The base model established a useful baseline, but it still showed a significant gap in learning uniopen’s specific moderation taxonomy. Without fine-tuning, Amazon Nova 2 Lite achieved a Per Behavior Macro F1 of 0.5852 and a Subject Type Macro F1 of 0.4162. These scores show that the model had not yet learned uniopen’s specific moderation taxonomy well enough for production use.</p>
-<h2>Amazon SageMaker AI customization</h2>
-<p>The team then customized Amazon Nova 2 Lite using supervised fine-tuning with Low-Rank Adaptation (LoRA) in Amazon SageMaker AI. Fine-tuning allowed the model to learn from task-specific examples instead of relying only on prompt instructions. Figure 4 shows the completed Amazon SageMaker AI training job and the recorded configuration used for the customization run.</p>
-<p>Figure 4: Amazon SageMaker AI supervised fine-tuning job for Amazon Nova 2 Lite</p>
-<p>The training-job record captures the base model, customization technique, training-data location, run time, and progress for audit and repeatability. Fine-tuning delivered the largest performance gain. Per Behavior Macro F1 increased from 0.5852 to 0.8364, while Subject Type Macro F1 increased from 0.4162 to 0.8302. The subject-type metric exceeded its production target, while behavior classification moved close to its target.</p>
-<h2>Prompt optimization</h2>
-<p>After fine-tuning, the team made a prompt-level change to simplify the model output from JSON to a line-based format and clarify how multiple behaviors should be returned. This change required no additional model training.</p>
-<p>The prompt optimization increased Per Behavior Macro F1 from 0.8364 to 0.8550 and Subject Type Macro F1 from 0.8302 to 0.8491. With this final step, both metrics exceeded their production targets of 0.8500 and 0.8200, respectively.</p>
-<h2>Results</h2>
-<p>Table 1 summarizes performance for the Amazon Nova 2 Lite baseline, the Amazon SageMaker AI fine-tuned model, and the prompt-optimized fine-tuned model.</p>
-<p><em>Table 1: Classification performance across optimization stages</em></p>
-<p>Metric</p>
-<p>Baseline</p>
-<p>Fine-tuned (JSON)</p>
-<p>Prompt-optimized (LF)</p>
-<p>Production target</p>
-<p>Per Behavior Macro F1</p>
-<p>0.5852</p>
-<p>0.8364</p>
-<p>0.8550</p>
-<p>≥ 0.8500</p>
-<p>Subject Type Macro F1</p>
-<p>0.4162</p>
-<p>0.8302</p>
-<p>0.8491</p>
-<p>≥ 0.8200</p>
-<p>The two metrics exposed different weaknesses at each stage. The baseline needed improvement in both behavior detection and subject understanding. Amazon SageMaker AI fine-tuning produced the largest gain, especially in Subject Type Macro F1, showing the value of domain-specific examples for uniopen’s taxonomy. Prompt optimization then moved both metrics above their production targets without another training run. Using both metrics as release gates prevented an improvement in one dimension from hiding a regression in the other.</p>
-<p>After both metrics cleared their release targets, uniopen could direct routine moderation to the customized path and keep human review focused on ambiguous cases. This operating model reduces unnecessary escalation while preserving a human decision point for uncertain or policy-sensitive content.</p>
-<h2>Next steps</h2>
-<p>The team will continue using Per Behavior Macro F1 and Subject Type Macro F1 as production gates. It will collect new boundary cases from real traffic and use those cases to decide whether the next improvement should be a prompt change or another targeted fine-tuning cycle. The same evaluation pattern can extend to additional retail moderation scenarios while human reviewers remain focused on ambiguous cases.</p>
-<h2>Conclusion</h2>
-<p>uniopen’s results show how business-relevant evaluation can identify where a foundation model needs adaptation. Supervised fine-tuning addressed domain-specific classification gaps, and prompt optimization captured additional gains without another training run. The repeatable pattern is to measure, identify the weaker dimension, apply the targeted change, and promote only when every release gate passes.</p>
-<p>To explore the services and techniques in this post, visit the <a href="https://aws.amazon.com/sagemaker-ai/">Amazon SageMaker AI service page</a>, read the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/nova-fine-tuning-training-job.html">Amazon Nova fine-tuning documentation</a>, and review <a href="https://aws.amazon.com/blogs/machine-learning/prompting-amazon-nova-2-for-content-moderation/">Prompting Amazon Nova 2 for content moderation</a>. For production safeguards, see the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html">Amazon Bedrock Guardrails documentation</a>.</p>
-<h2>About the authors</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -135,6 +135,88 @@
 <ul><li>Fully Connected，旧金山（9 月 29 日 - 10 月 1 日）</li><li>Long Horizon，旧金山（10 月 20 - 21 日）</li><li>PyTorch Conference，圣何塞（10 月 20 - 21 日）</li><li>AI in Drug Discovery &amp; Development Summit（10 月 27 - 29 日）</li></ul>]]></content:encoded>
     </item>
     <item>
+      <title>推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性</title>
+      <link>https://anyscale.com/blog/ray-history-server</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-history-server</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</description>
+      <content:encoded><![CDATA[<h1>推出 Ray History Server：Ray on Kubernetes 的事后可观测性</h1>
+<p>作者：Andrew Sy Kim（Google）、Aaron Liang（Google）、Han-Ju Chen、Jia-wei Jiang、Kun Wu（阿里云）、Jui-An Huang、Mengjin Yan、Nai-Jui Yeh 和 Chun-Hao Wan | 2026 年 8 月 25 日</p>
+<h2>Ray History Server</h2>
+<p>Ray 用户把 Ray 集群当作临时计算单元使用的情况越来越常见：为单个作业创建，作业完成即拆除。这种模式改善了成本效率与资源共享，在硬件加速器稀缺的容量受限环境中尤其如此。</p>
+<p>这种方式的代价是：与长生命周期的集群不同，会话日志、内存状态和 Ray Dashboard 会随集群一起消失。用户可以把日志与指标导出到外部可观测系统，但调试一个失败的作业意味着要把任务与 actor 状态、各节点日志、错误 trace 对应起来。Ray Dashboard 正是把这一切关联在一起的唯一场所——没有它，事后调试几乎不可能。</p>
+<p>随着最新的 KubeRay v1.7 发布，History Server 已晋升为 beta 并可用，让集群终止后的 Ray 集群数据依然可以访问。</p>
+<p>Ray History Server 通过在集群终止后重建必要的 Ray 相关端点，弥合了这一可观测性缺口。</p>
+<h3>集群选择页</h3>
+<p>在深入 history server 之前，先看它能做什么。History server 提供内建的集群选择页，作为事后可观测的集中入口：动态发现并归档对象存储中保存的所有历史运行以及当前的在线集群。</p>
+<p><em>Ray History Server</em></p>
+<p>用户可以按集群名、namespace 与 owner 资源搜索、过滤过往或当前的运行。每个 session 条目会标明它是在线还是已终止。点击任何历史或在线 session，用户即被跳转到对应的 Ray Dashboard 界面。</p>
+<p>对已终止的会话，history server 从对象存储采集的遥测数据重建 Dashboard；对在线会话，它把请求代理到集群正在运行的 Ray Dashboard——包括为启用了 Ray 认证的集群自动注入认证 token——无论集群是否还在运行，用户都拥有同一个入口。</p>
+<p>选定会话后，history server 用兼容 Dashboard 的 REST API 支撑标准 Ray Dashboard 前端。无论集群还在线，还是已终止几小时或几天，用户浏览的都是他们早已熟悉的同一个 Dashboard 界面，并获得所需的全部事后上下文——不必为了保留访问权而闲置集群。</p>
+<p><em>Jobs 页签 1 —— Ray Core 概览</em></p>
+<p><em>Jobs 页签 2 —— 日志</em></p>
+<h3>架构总览</h3>
+<p>History server 里到底有什么？两个主要组件，对应让 Ray 集群&quot;复活&quot;所需两个阶段（记录数据与回放数据）的根本差异：负责记录数据的组件是 collector，负责回放数据的另一个组件就是 history server 本身。</p>
+<p><em>Ray Pod 边界</em></p>
+<h4>Collector 深入</h4>
+<p>先从 collector 说起。Collector 是挂在所有 Ray head 与 worker pod 上的 sidecar。如上所述，它的职责是从对应的 Ray 容器收集数据。Collector 内部有两条主要流程/子系统：一个负责日志，另一个负责 Ray 事件。</p>
+<p>事件采集子系统目标是以磁盘优先的采集方式，捕获 Ray 负载的高速遥测而不过多消耗集群内存。启用事件导出 API 后，Ray 容器持续导出结构化运行时事件——从 driver 作业生命周期到节点特定事件。事件采集子系统不把几百万事件缓冲在内存里，而是立即把进来的负载直接流式写入本地磁盘。这些文件按可配置的时间间隔或文件大小阈值自动轮转。上传前还可以压缩，以最小化云对象存储的上传下载时间。为保证 collector 容器及 pod 的稳定，collector 还内建可配置的磁盘总限额与磁盘压力水位线——在瞬态故障或网络问题时，用 503 错误拒绝进来的事件请求。</p>
+<p>事件采集子系统跟踪结构化事件，而日志采集子系统正如名字所示，处理 Ray 日志与集群元数据。它的主要工作是确保会话日志被上传到对象存储。上传发生在三个不同生命周期时刻：</p>
+<ul><li>Pod 终止时：RayJob 结束或 Kubernetes 开始拆除 pod</li><li>启动与崩溃恢复时：上传上一个会话遗留的日志</li><li>会话切换时：Ray 在运行中轮转或开启新 session</li></ul>
+<p>除了上传日志，日志 collector 还充当集群元数据采集器。仅在 head pod 上，它在启动时一次性捕获 Ray 版本、时区等集群元数据，并周期性快照那些无法从事件重建的 Dashboard 端点（如 Ray Data 数据集与 placement group），使其最后已知状态在终止后仍然可用。</p>
+<h4>History Server 深入</h4>
+<p>History server 是系统的读路径：回放 collector 写下的数据。它是面向事后调试的按需、无状态重建引擎，把对象存储中原始的压缩文件变回原生 Ray Dashboard 体验。</p>
+<p>每次请求都处理几百个事件与日志文件会耗尽资源，而维护一个持久的预处理档案通常昂贵且大部分时间闲置。为优化性能又确保稳定，history server 采用懒加载策略并以 LRU 缓存补足：</p>
+<ul><li>懒加载：把事件文件的拉取与解压推迟到用户选定具体会话之后，最小化对象存储请求与基础设施开销，避免不必要的读取，也消除了对托管数据库的依赖。对同一冷会话的并发请求会被合并，防止对对象存储的惊群读取；可配置的超时守护避免无限挂起。</li><li>LRU 缓存：用条目数上限与字节预算双重约束内存用量。由于 Ray 会话的大小差异极大——从 2MB 到超过 500MB——基于大小的预算是让 history server 始终保持在 pod 内存限额之内的关键。</li></ul>
+<p>得益于这一设计，单个 history server 部署即可为许多集群提供事后可观测 Dashboard。</p>
+<p><em>单个共享的 History Server</em></p>
+<h4>对象存储</h4>
+<p>History server 在设计上存储无关，构建于单一存储接口之上。组织可以接入现有对象存储而不被厂商锁定。开箱即用，它原生支持：</p>
+<ul><li>Google Cloud Storage：原生 GCS 集成，支持 GKE workload identity 实现免密钥认证</li><li>AWS S3 与 MinIO：Amazon S3 及任何 S3 兼容对象存储，经 IAM Roles for Service Accounts 或静态凭证认证</li><li>阿里云 OSS：Aliyun Object Storage Service，配合服务账号的 RAM Role</li><li>Azure Blob Storage：经 Azure Workload Identity 或连接字符串集成</li></ul>
+<p>存储布局是确定性的，任何会话都可以通过简单的前缀查找定位，即使多租户环境也是如此。数据按资源归属组织：路径中包含更高层的资源 owner（如 <code>RayJob</code>、<code>RayService</code>），支持更细粒度的过滤，并建立清晰的工作负载溯源。对象存储分为两棵子树：</p>
+<ul><li><code>cluster-metadata</code>：空文件的轻量索引，路径编码了 namespace、owner、cluster 与 session</li><li><code>cluster-history</code>：会话遥测——原始日志、事件文件与端点快照</li></ul>
+<pre><code>cluster-metadata/
+│   ├── raycluster/
+│   │   └── &lt;namespace&gt;_&lt;cluster_name&gt;/
+│   │       └── &lt;session_name&gt;                # Empty marker file
+│   └── &lt;rayjob|rayservice&gt;/
+│       └── &lt;namespace&gt;_&lt;owner_name&gt;_&lt;cluster_name&gt;/
+│           └── &lt;session_name&gt;
+cluster-history/
+├── raycluster/
+│   └── &lt;namespace&gt;/
+│       └── &lt;cluster_name&gt;/
+│           └── &lt;session_name&gt;/
+│               ├── fetched_endpoints/   # Dashboard endpoint snapshots
+│               │   ├── restful__api__v0__nodes__summary
+│               │   └── ...
+│               └── &lt;node_id&gt;/
+│                   ├── logs/
+│                   │   ├── dashboard_agent.log
+│                   │   ├── raylet.out
+│                   │   └── ...
+│                   ├── node_events/
+│                   │   └── &lt;node_id&gt;-&lt;date_hour&gt;   # Node event logs
+│                   └── job_events/
+│                       └── &lt;job_id&gt;/
+│                           └── &lt;node_id&gt;-&lt;date_hour&gt; # Job event logs
+└── &lt;rayjob|rayservice&gt;/
+    └── &lt;namespace&gt;/
+        └── &lt;owner_name&gt;/
+            └── &lt;cluster_name&gt;/
+                └── &lt;session_name&gt;/     # Same node layout as above</code></pre>
+<h3>性能与容量基准</h3>
+<p>我们对 history server 数据路径做了 1k 到 50k 任务的会话基准，验证其线性扩展。应用了两项调优：给 history server 至少 1.5 CPU 核心，并在 collector 开启 gzip 压缩。压缩削减约 91% 的存储开销，额外的 CPU 让会话冷加载快约 2.4 倍、可打开的最大会话规模提升 2.5 倍。</p>
+<table><thead><tr><th><strong>指标</strong></th><th><strong>基线（gzip 关闭，0.5 CPU 核心）</strong></th><th><strong>调优后（gzip 开启，1.5 CPU 核心）</strong></th><th><strong>影响</strong></th></tr></thead><tbody><tr><td>每任务事件存储</td><td>约 3.75 KiB（4.3 个事件 × 895 B）</td><td>约 355 B（10.85:1 压缩）</td><td>小 91%</td></tr><tr><td>10 万任务会话的存储</td><td>约 385 MiB</td><td>约 35.5 MiB</td><td>每会话省约 349.5 MiB</td></tr><tr><td>每任务冷加载时间</td><td>约 0.2 ms（CPU 被限流）</td><td>约 0.084 ms（未限流）</td><td>快约 2.4 倍</td></tr><tr><td>可打开的最大会话</td><td>约 2 万任务（更大会话超出约 5 秒的 UI 预算）</td><td>约 5 万任务（4.21 秒打开）</td><td>大 2.5 倍</td></tr></tbody></table>
+<p>性能在 1.2 核心后趋于平坦，分配更多 CPU 没有可测量的改善，因此 1.5 到 2 核心是 history server 稳妥的初始容量建议。完整基准细节见 <a href="https://github.com/Future-Outlier/historyserver-benchmark">history server 基准仓库</a>。</p>
+<h3>未来路线图</h3>
+<p>当前 history server 虽已 beta 并提供稳健的事后调试服务，仍有若干增强在设计中，以进一步简化运维、扩展可观测性。</p>
+<ul><li>Collector sidecar 自动注入——为降低采用门槛，未来版本将在 KubeRay operator 中引入稳定的自动 collector 注入。用户将能在 <code>RayCluster</code> spec 中以声明式方式开启遥测采集。早期版本已通过 <a href="https://github.com/ray-project/kuberay/blob/bf50aa1353295188ae9335bc0e9911dbe0754535/ray-operator/apis/ray/v1/raycluster_types.go#L274"><code>HistoryServerOptions</code></a> 在 <code>RayClusterHistoryServer</code> feature gate 后面提供。</li><li>扩展指标与指标回放——事后调试常需要在查看任务的同时检查系统指标，我们的目标是内建历史指标时间线支持：捕获 GPU/CPU 利用率、内存压力与 actor 吞吐。</li></ul>
+<h3>立即试用</h3>
+<p>准备为你的 Ray on Kubernetes 负载带来事后可观测性吗？查阅 <a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/kuberay-history-server.html">Ray History Server 文档</a>，在你的 Kubernetes 集群中搭建 collector 与 history server！</p>
+<p>有疑问或需要帮助？欢迎在 <a href="https://github.com/ray-project/kuberay">GitHub 仓库</a>开 issue。我们欢迎反馈、功能请求与贡献！也可以<a href="https://www.ray.io/join-slack">加入 Ray Slack</a>，在 <code>#ray-history-server</code> 频道提问。</p>]]></content:encoded>
+    </item>
+    <item>
       <title>Scaling Ray for AI workloads to 10k node clusters</title>
       <link>https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</link>
       <guid isPermaLink="true">https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</guid>
@@ -323,88 +405,6 @@
 <p>特别感谢 NVIDIA Dynamo 团队将其 KV indexer 与请求打分模块模块化，使 Ray Serve LLM 得以集成。</p>
 <h2>复现说明</h2>
 <p>基准<a href="https://github.com/ray-project/ray/pull/65665">代码</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性</title>
-      <link>https://anyscale.com/blog/ray-history-server</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/ray-history-server</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</description>
-      <content:encoded><![CDATA[<h1>推出 Ray History Server：Ray on Kubernetes 的事后可观测性</h1>
-<p>作者：Andrew Sy Kim（Google）、Aaron Liang（Google）、Han-Ju Chen、Jia-wei Jiang、Kun Wu（阿里云）、Jui-An Huang、Mengjin Yan、Nai-Jui Yeh 和 Chun-Hao Wan | 2026 年 8 月 25 日</p>
-<h2>Ray History Server</h2>
-<p>Ray 用户把 Ray 集群当作临时计算单元使用的情况越来越常见：为单个作业创建，作业完成即拆除。这种模式改善了成本效率与资源共享，在硬件加速器稀缺的容量受限环境中尤其如此。</p>
-<p>这种方式的代价是：与长生命周期的集群不同，会话日志、内存状态和 Ray Dashboard 会随集群一起消失。用户可以把日志与指标导出到外部可观测系统，但调试一个失败的作业意味着要把任务与 actor 状态、各节点日志、错误 trace 对应起来。Ray Dashboard 正是把这一切关联在一起的唯一场所——没有它，事后调试几乎不可能。</p>
-<p>随着最新的 KubeRay v1.7 发布，History Server 已晋升为 beta 并可用，让集群终止后的 Ray 集群数据依然可以访问。</p>
-<p>Ray History Server 通过在集群终止后重建必要的 Ray 相关端点，弥合了这一可观测性缺口。</p>
-<h3>集群选择页</h3>
-<p>在深入 history server 之前，先看它能做什么。History server 提供内建的集群选择页，作为事后可观测的集中入口：动态发现并归档对象存储中保存的所有历史运行以及当前的在线集群。</p>
-<p><em>Ray History Server</em></p>
-<p>用户可以按集群名、namespace 与 owner 资源搜索、过滤过往或当前的运行。每个 session 条目会标明它是在线还是已终止。点击任何历史或在线 session，用户即被跳转到对应的 Ray Dashboard 界面。</p>
-<p>对已终止的会话，history server 从对象存储采集的遥测数据重建 Dashboard；对在线会话，它把请求代理到集群正在运行的 Ray Dashboard——包括为启用了 Ray 认证的集群自动注入认证 token——无论集群是否还在运行，用户都拥有同一个入口。</p>
-<p>选定会话后，history server 用兼容 Dashboard 的 REST API 支撑标准 Ray Dashboard 前端。无论集群还在线，还是已终止几小时或几天，用户浏览的都是他们早已熟悉的同一个 Dashboard 界面，并获得所需的全部事后上下文——不必为了保留访问权而闲置集群。</p>
-<p><em>Jobs 页签 1 —— Ray Core 概览</em></p>
-<p><em>Jobs 页签 2 —— 日志</em></p>
-<h3>架构总览</h3>
-<p>History server 里到底有什么？两个主要组件，对应让 Ray 集群&quot;复活&quot;所需两个阶段（记录数据与回放数据）的根本差异：负责记录数据的组件是 collector，负责回放数据的另一个组件就是 history server 本身。</p>
-<p><em>Ray Pod 边界</em></p>
-<h4>Collector 深入</h4>
-<p>先从 collector 说起。Collector 是挂在所有 Ray head 与 worker pod 上的 sidecar。如上所述，它的职责是从对应的 Ray 容器收集数据。Collector 内部有两条主要流程/子系统：一个负责日志，另一个负责 Ray 事件。</p>
-<p>事件采集子系统目标是以磁盘优先的采集方式，捕获 Ray 负载的高速遥测而不过多消耗集群内存。启用事件导出 API 后，Ray 容器持续导出结构化运行时事件——从 driver 作业生命周期到节点特定事件。事件采集子系统不把几百万事件缓冲在内存里，而是立即把进来的负载直接流式写入本地磁盘。这些文件按可配置的时间间隔或文件大小阈值自动轮转。上传前还可以压缩，以最小化云对象存储的上传下载时间。为保证 collector 容器及 pod 的稳定，collector 还内建可配置的磁盘总限额与磁盘压力水位线——在瞬态故障或网络问题时，用 503 错误拒绝进来的事件请求。</p>
-<p>事件采集子系统跟踪结构化事件，而日志采集子系统正如名字所示，处理 Ray 日志与集群元数据。它的主要工作是确保会话日志被上传到对象存储。上传发生在三个不同生命周期时刻：</p>
-<ul><li>Pod 终止时：RayJob 结束或 Kubernetes 开始拆除 pod</li><li>启动与崩溃恢复时：上传上一个会话遗留的日志</li><li>会话切换时：Ray 在运行中轮转或开启新 session</li></ul>
-<p>除了上传日志，日志 collector 还充当集群元数据采集器。仅在 head pod 上，它在启动时一次性捕获 Ray 版本、时区等集群元数据，并周期性快照那些无法从事件重建的 Dashboard 端点（如 Ray Data 数据集与 placement group），使其最后已知状态在终止后仍然可用。</p>
-<h4>History Server 深入</h4>
-<p>History server 是系统的读路径：回放 collector 写下的数据。它是面向事后调试的按需、无状态重建引擎，把对象存储中原始的压缩文件变回原生 Ray Dashboard 体验。</p>
-<p>每次请求都处理几百个事件与日志文件会耗尽资源，而维护一个持久的预处理档案通常昂贵且大部分时间闲置。为优化性能又确保稳定，history server 采用懒加载策略并以 LRU 缓存补足：</p>
-<ul><li>懒加载：把事件文件的拉取与解压推迟到用户选定具体会话之后，最小化对象存储请求与基础设施开销，避免不必要的读取，也消除了对托管数据库的依赖。对同一冷会话的并发请求会被合并，防止对对象存储的惊群读取；可配置的超时守护避免无限挂起。</li><li>LRU 缓存：用条目数上限与字节预算双重约束内存用量。由于 Ray 会话的大小差异极大——从 2MB 到超过 500MB——基于大小的预算是让 history server 始终保持在 pod 内存限额之内的关键。</li></ul>
-<p>得益于这一设计，单个 history server 部署即可为许多集群提供事后可观测 Dashboard。</p>
-<p><em>单个共享的 History Server</em></p>
-<h4>对象存储</h4>
-<p>History server 在设计上存储无关，构建于单一存储接口之上。组织可以接入现有对象存储而不被厂商锁定。开箱即用，它原生支持：</p>
-<ul><li>Google Cloud Storage：原生 GCS 集成，支持 GKE workload identity 实现免密钥认证</li><li>AWS S3 与 MinIO：Amazon S3 及任何 S3 兼容对象存储，经 IAM Roles for Service Accounts 或静态凭证认证</li><li>阿里云 OSS：Aliyun Object Storage Service，配合服务账号的 RAM Role</li><li>Azure Blob Storage：经 Azure Workload Identity 或连接字符串集成</li></ul>
-<p>存储布局是确定性的，任何会话都可以通过简单的前缀查找定位，即使多租户环境也是如此。数据按资源归属组织：路径中包含更高层的资源 owner（如 <code>RayJob</code>、<code>RayService</code>），支持更细粒度的过滤，并建立清晰的工作负载溯源。对象存储分为两棵子树：</p>
-<ul><li><code>cluster-metadata</code>：空文件的轻量索引，路径编码了 namespace、owner、cluster 与 session</li><li><code>cluster-history</code>：会话遥测——原始日志、事件文件与端点快照</li></ul>
-<pre><code>cluster-metadata/
-│   ├── raycluster/
-│   │   └── &lt;namespace&gt;_&lt;cluster_name&gt;/
-│   │       └── &lt;session_name&gt;                # Empty marker file
-│   └── &lt;rayjob|rayservice&gt;/
-│       └── &lt;namespace&gt;_&lt;owner_name&gt;_&lt;cluster_name&gt;/
-│           └── &lt;session_name&gt;
-cluster-history/
-├── raycluster/
-│   └── &lt;namespace&gt;/
-│       └── &lt;cluster_name&gt;/
-│           └── &lt;session_name&gt;/
-│               ├── fetched_endpoints/   # Dashboard endpoint snapshots
-│               │   ├── restful__api__v0__nodes__summary
-│               │   └── ...
-│               └── &lt;node_id&gt;/
-│                   ├── logs/
-│                   │   ├── dashboard_agent.log
-│                   │   ├── raylet.out
-│                   │   └── ...
-│                   ├── node_events/
-│                   │   └── &lt;node_id&gt;-&lt;date_hour&gt;   # Node event logs
-│                   └── job_events/
-│                       └── &lt;job_id&gt;/
-│                           └── &lt;node_id&gt;-&lt;date_hour&gt; # Job event logs
-└── &lt;rayjob|rayservice&gt;/
-    └── &lt;namespace&gt;/
-        └── &lt;owner_name&gt;/
-            └── &lt;cluster_name&gt;/
-                └── &lt;session_name&gt;/     # Same node layout as above</code></pre>
-<h3>性能与容量基准</h3>
-<p>我们对 history server 数据路径做了 1k 到 50k 任务的会话基准，验证其线性扩展。应用了两项调优：给 history server 至少 1.5 CPU 核心，并在 collector 开启 gzip 压缩。压缩削减约 91% 的存储开销，额外的 CPU 让会话冷加载快约 2.4 倍、可打开的最大会话规模提升 2.5 倍。</p>
-<table><thead><tr><th><strong>指标</strong></th><th><strong>基线（gzip 关闭，0.5 CPU 核心）</strong></th><th><strong>调优后（gzip 开启，1.5 CPU 核心）</strong></th><th><strong>影响</strong></th></tr></thead><tbody><tr><td>每任务事件存储</td><td>约 3.75 KiB（4.3 个事件 × 895 B）</td><td>约 355 B（10.85:1 压缩）</td><td>小 91%</td></tr><tr><td>10 万任务会话的存储</td><td>约 385 MiB</td><td>约 35.5 MiB</td><td>每会话省约 349.5 MiB</td></tr><tr><td>每任务冷加载时间</td><td>约 0.2 ms（CPU 被限流）</td><td>约 0.084 ms（未限流）</td><td>快约 2.4 倍</td></tr><tr><td>可打开的最大会话</td><td>约 2 万任务（更大会话超出约 5 秒的 UI 预算）</td><td>约 5 万任务（4.21 秒打开）</td><td>大 2.5 倍</td></tr></tbody></table>
-<p>性能在 1.2 核心后趋于平坦，分配更多 CPU 没有可测量的改善，因此 1.5 到 2 核心是 history server 稳妥的初始容量建议。完整基准细节见 <a href="https://github.com/Future-Outlier/historyserver-benchmark">history server 基准仓库</a>。</p>
-<h3>未来路线图</h3>
-<p>当前 history server 虽已 beta 并提供稳健的事后调试服务，仍有若干增强在设计中，以进一步简化运维、扩展可观测性。</p>
-<ul><li>Collector sidecar 自动注入——为降低采用门槛，未来版本将在 KubeRay operator 中引入稳定的自动 collector 注入。用户将能在 <code>RayCluster</code> spec 中以声明式方式开启遥测采集。早期版本已通过 <a href="https://github.com/ray-project/kuberay/blob/bf50aa1353295188ae9335bc0e9911dbe0754535/ray-operator/apis/ray/v1/raycluster_types.go#L274"><code>HistoryServerOptions</code></a> 在 <code>RayClusterHistoryServer</code> feature gate 后面提供。</li><li>扩展指标与指标回放——事后调试常需要在查看任务的同时检查系统指标，我们的目标是内建历史指标时间线支持：捕获 GPU/CPU 利用率、内存压力与 actor 吞吐。</li></ul>
-<h3>立即试用</h3>
-<p>准备为你的 Ray on Kubernetes 负载带来事后可观测性吗？查阅 <a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/kuberay-history-server.html">Ray History Server 文档</a>，在你的 Kubernetes 集群中搭建 collector 与 history server！</p>
-<p>有疑问或需要帮助？欢迎在 <a href="https://github.com/ray-project/kuberay">GitHub 仓库</a>开 issue。我们欢迎反馈、功能请求与贡献！也可以<a href="https://www.ray.io/join-slack">加入 Ray Slack</a>，在 <code>#ray-history-server</code> 频道提问。</p>]]></content:encoded>
     </item>
     <item>
       <title>学习循环：把智能掌握在自己手中</title>

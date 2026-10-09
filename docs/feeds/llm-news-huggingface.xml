@@ -7,7 +7,14 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Tue, 06 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 07 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Falcon ASR 简介</title>
+      <link>https://huggingface.co/blog/tiiuae/falcon-asr</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/tiiuae/falcon-asr</guid>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Falcon ASR</description>
+    </item>
     <item>
       <title>Falcon-Emirati：当 LLM 学会方言、文化与微妙之处</title>
       <link>https://huggingface.co/blog/tiiuae/falcon-emirati</link>
@@ -3636,54 +3643,6 @@ prediction = clf.predict(X).reshape(H, W)</code></pre>
 <h3>局限性</h3>
 <p>虽然我们一直在改进预训练方法，但重要的一点是用上文介绍的某些技术检查嵌入对你具体用例的质量。性能也取决于输入影像的质量——持续云层覆盖、大气伪影，或合成周期内的缺失观测，都会影响最终向量。</p>
 <p><em>Sentinel-2 L2A 影像来自欧洲航天局（ESA），经 Microsoft Planetary Computer 获取。红树林参考数据使用 ESA WorldCover 2021 v200。全局聚类可视化使用 OlmoEarth-v1-Base（768 维）与季节性 Sentinel-2 合成，patch size 为 8，在 110 万预训练样本上得到实例级嵌入。</em></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>在考虑 ACE？我们可以用更少的 token 做到</title>
-      <link>https://huggingface.co/blog/ibm-research/altk-evolve-sldd</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/altk-evolve-sldd</guid>
-      <pubDate>Tue, 11 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Thinking of ACE? We Can Do It with Fewer Tokens</description>
-      <content:encoded><![CDATA[<h1>在考虑 ACE？我们可以用更少的 token 做到</h1>
-<p><em>ALTK-Evolve 和 ACE 都让智能体从自己的轨迹中学习。区别在于它们如何运用学到的东西——而这一点决定了 token 账单。</em></p>
-<p>给 LLM 智能体一个真实的多步任务——拆分账单、找一首歌、在九个模拟应用间核对一张订单——它失败时，通常不是因为缺乏知识。它会把 API 翻页翻错、认错人、或在没人要求的情况下返回一个值。模型是懂这些 API 的；它没有内化的是<em>如何可靠地使用它们</em>。而这恰恰可以从智能体自己的历史中学到。</p>
-<p>最近的两个系统做的正是这件事，作用在同一种智能体上：<a href="https://arxiv.org/abs/2510.04618"><strong>ACE</strong></a>（Agentic Context Engineering）和我们的 <strong>ALTK-Evolve</strong>（<a href="https://huggingface.co/blog/ibm-research/altk-evolve">介绍见这里</a>）。两者都是<strong>智能体记忆（agentic memory）</strong>的一种形式——把智能体过去的轨迹转化为可复用的<strong>经验教训（lessons）</strong>，在推理时回灌，无需更新权重、无需人工标注。它们甚至对难点的判断都一致。分道扬镳的地方是<em>交付方式</em>。</p>
-<p>先说明一下用词，因为两个系统的命名不同：我们把智能体学到的原始东西称为一条 <strong>lesson（经验教训）</strong>。ACE 把它的 lessons 组织进一份全面、不断演化的 <strong>playbook（行动手册）</strong>；我们则把自己的整合成一条条可独立检索的 <strong>guidelines（准则）</strong>。同样的 lessons，两种容器。</p>
-<h2>我们的共识</h2>
-<p>两个系统都拒绝压缩。</p>
-<p>ACE 精准地点名了失败模式：<strong>简洁偏差（brevity bias）</strong>——优化过程坍缩向简短、泛化的指令；以及<strong>上下文崩塌（context collapse）</strong>——被要求每步重写全部上下文的模型会把细节摘要掉。它的解法是保留一份丰富的、逐条罗列的 playbook，每个条目带有益/有害计数器，让模型在读取时自行提炼相关性。</p>
-<p>我们从另一个方向得出同样结论。每条不同的 guideline 都带一个 <strong>support count（支持计数）</strong>——它由多少个独立 episodes 产生——我们从不把整个记忆库摘要成寥寥几条规则。被五个不同任务各自发现的 lesson，和只出现过一次的 lesson 是两个不同的对象，都值得保留。</p>
-<p>所以在核心问题上——<em>该不该把智能体辛苦换来的 lessons 压缩成一份整洁的摘要？</em>——ACE 和 ALTK-Evolve 给出同一个答案：<strong>不。数着它们，别塌缩它们。</strong>ACE 的逐条计数器和我们的 support counts 是同一思想的不同写法。</p>
-<h2>我们的分歧</h2>
-<p>分歧在两处：记忆如何<strong>构建</strong>，以及如何<strong>交付</strong>——而体现在 token 账单上的，正是交付方式的差异。</p>
-<p><strong>整合（记忆库如何构建）。</strong> ACE 通过 <strong>Generator → Reflector → Curator</strong> 循环生长出一份 playbook，施加增量 delta 更新、按 embedding 去重。我们则把近似重复的 lessons 聚簇并在簇<em>内部</em>合并，<strong>支持计数守恒（support-conserving）</strong>——多条 lesson 合并时，幸存条目继承它们的合并计数，于是记忆库变小却不丢失&quot;每条 guideline 背后有多少经验&quot;的记录。我们还抽取<em>带类型</em>的 guidelines——策略（strategy）、恢复（recovery）、优化（optimization）——带因果归因和回指来源轨迹的出处，并做到子任务粒度，使在一个应用上学到的 lesson 能迁移到另一个应用。</p>
-<p><strong>交付（推理时送到模型面前的是什么）。</strong> 这才是驱动数字的那一项。ACE 每一步都注入<strong>整本 playbook</strong>，不论模型、不论任务都一样。我们把交付做成一个可调的旋钮而不是常数：一小簇固定高支持度的核心 guidelines，再为当前任务补充挑选出的少量条目（cosine 或 LLM 引导、按优先级加权）——或者，当模型有余力利用时，交付整合后的完整集合。同样的 lessons 对两个智能体都<em>可用</em>；区别在于 ACE 永远全量发送，而我们发送某个模型实际能用上的数量。</p>
-<h2>为什么重要</h2>
-<p>在 AppWorld 上，用<em>同一个</em>基座 ReAct 智能体，两个系统都由我们在内部复跑：</p>
-<table><thead><tr><th>模型</th><th></th><th>TGC / SGC</th><th>Tokens/任务</th></tr></thead><tbody><tr><td><strong>DeepSeek-V3.2</strong></td><td>ACE</td><td>80.4 / 73.2</td><td>634K</td></tr><tr><td></td><td><strong>ALTK-Evolve</strong></td><td><strong>89.3 / 80.4</strong></td><td><strong>263K</strong></td></tr><tr><td><strong>gpt-oss-120b</strong></td><td>ACE</td><td>54.8 / 35.7</td><td>777K</td></tr><tr><td></td><td><strong>ALTK-Evolve</strong></td><td><strong>56.0 / 37.5</strong></td><td><strong>116K</strong></td></tr></tbody></table>
-<p>在强模型上，我们在两项指标上都更好，而推理成本只有 <strong>ACE 的约 40%</strong>。在弱模型上，我们以 56.0 对 54.8 险胜 ACE——接近于<strong>准确率平手</strong>（我们重跑一次得到 54.8，几乎与 ACE 完全一致，在这类基准的单次运行波动范围内）——而成本约为<strong>七分之一</strong>。</p>
-<p>关于成本要说句公道话：ACE 自己的效率叙事是关于<em>构建</em>上下文的低成本。我们在另一条轴上——<em>服务（serving)</em>。每任务检索少量 guidelines，而不是每一步注入整本 playbook，token 就是这么省下来的，这正是上面交付差异的直接结果。</p>
-<p>准确率从哪来？按难度拆开看，是两个不同的故事：</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/RlNmW6Vps10XLGW4DuJQh.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/RlNmW6Vps10XLGW4DuJQh.png" alt="image"></a></p>
-<p><em>图 1. 加入记忆后按难度划分的 Task Goal Completion，我们 vs. ACE。在 DeepSeek-V3.2（右）上我们赢下 Easy、Hard 和 Overall；ACE 只在 Medium 略优。在 gpt-oss-120b（左）上 ACE 领先 easy 和 medium，但按任务选择在 hard 任务上胜出——也包括总分。两个系统都相对各自的无记忆基线有提升（见下方 Method notes 里的按难度参照表）。</em></p>
-<p>两个模型各讲各的故事。在 gpt-oss-120b 上，ACE 的整本 playbook 在 Easy 和 Medium 上占优——任务里有足够多的部分靠泛化指令跟随就能解决，全面的提示帮忙多于干扰。但在 Hard 任务上，模型必须挑出<em>对的</em> lesson 而不能全部硬翻，精心检索开始领先——而这一档恰恰决定总分。在 DeepSeek-V3.2 上故事反转：更强的模型能良好吸收 ACE 的整本 playbook，在 Medium 上略胜我们，但我们在 Easy、Hard、Overall 领先——容量更富余时，更多的 lessons（以我们的方式交付）持续帮忙，而不是互相挤兑。</p>
-<p>我们给每个模型配其<strong>最佳配置</strong>——强模型用整合后的完整集合，弱模型用选择性检索，因为大上下文对弱模型是淹没而非帮助。（到底该注入<em>多少</em>、它如何随能力谱系伸缩，是我们<a href="https://huggingface.co/blog/ibm-research/altk-evolve-hmm/"><strong>后续文章</strong></a>的主题。）</p>
-<h2>同样的 lessons，不同的交付</h2>
-<p>两个系统都拒绝把智能体辛苦积累的经验压缩成整洁摘要——这一点我们是一致的。区别在于交付是固定的还是校准过的：ACE 无论如何每一步发送整本 playbook；我们发送某个模型实际能用上的 guideline 数量。正是这种校准买来了上面的数字——以 ACE 一小部分的推理成本换同等甚至更好的准确率——而在较弱模型上，它决定了指导是帮忙还是添乱。</p>
-<blockquote>试试 ALTK-Evolve 库——其中包含本文使用的抽取、整合与检索流水线——或阅读完整技术报告了解全部方法与消融。</blockquote>
-<h2>关联产物 / 参考</h2>
-<ul><li><strong>前文：</strong> ALTK-Evolve 介绍 — <a href="https://huggingface.co/blog/ibm-research/altk-evolve">链接</a></li><li><strong>ACE</strong>（Agentic Context Engineering）— <a href="https://arxiv.org/abs/2510.04618">链接</a></li><li><strong>AppWorld</strong> 基准 — <a href="https://appworld.dev/appworld">链接</a></li><li><strong>ALTK-Evolve</strong> — <a href="https://github.com/AgentToolkit/altk-evolve">链接</a></li><li><strong>完整技术报告</strong> — <a href="https://arxiv.org/abs/2603.10600">链接</a></li></ul>
-<h2>方法说明</h2>
-<p>AppWorld <code>test_normal</code>，168 个任务。一个 ReAct 代码智能体（每步写 Python，环境返回输出）。<strong>TGC</strong> = Task Goal Completion；<strong>SGC</strong> = Scenario Goal Completion，要求场景的<em>每个</em>变体都通过。记忆仅从 <strong>train/dev</strong> 挖掘；结果为单次运行（pass@1），这是该基准的惯例。</p>
-<p>ACE 的数字是我们自己运行 ACE 智能体的结果，在与 ALTK-Evolve 相同的 AppWorld 切分和相同基座模型（DeepSeek-V3.2 和 gpt-oss-120b）上内部评估。ACE 论文报告用的是另一个基座模型（DeepSeek-V3.1），因此我们自己复跑能让模型与运行框架保持一致。两个系统是<em>同一个</em> ReAct 智能体，仅在提示模板上有差异——这也是为什么两个无记忆基线不同（TGC 72.0 vs 79.8）；我们的比较不建立在这个基线差上，只建立在改提示无法触及的结论上：以一小部分的 token 达到同等或更好的准确率。</p>
-<h3>参照表</h3>
-<p><strong>DeepSeek-V3.2 — <code>test_normal</code>（168 个任务）：</strong></p>
-<table><thead><tr><th>系统</th><th>Guidelines</th><th>TGC</th><th>SGC</th><th>Tokens/任务</th></tr></thead><tbody><tr><td>ReAct，无记忆</td><td>0</td><td>79.8</td><td>64.3</td><td>148K</td></tr><tr><td>ReAct + ACE</td><td>106</td><td>80.4</td><td>73.2</td><td>634K</td></tr><tr><td>ReAct + ALTK-Evolve</td><td>191</td><td>89.3</td><td>80.4</td><td>263K</td></tr></tbody></table>
-<p><strong>gpt-oss-120b — <code>test_normal</code>：</strong></p>
-<table><thead><tr><th>系统</th><th>Guidelines</th><th>TGC</th><th>SGC</th><th>Tokens/任务</th></tr></thead><tbody><tr><td>ReAct，无记忆</td><td>0</td><td>39.9</td><td>21.4</td><td>110K</td></tr><tr><td>ReAct + ACE</td><td>全量</td><td>54.8</td><td>35.7</td><td>777K</td></tr><tr><td>ReAct + ALTK-Evolve（选择）</td><td>~29</td><td>56.0</td><td>37.5</td><td>116K</td></tr></tbody></table>
-<p><strong>gpt-oss-120b — 按难度（TGC）：</strong></p>
-<table><thead><tr><th>难度</th><th>基线</th><th>ACE</th><th>ALTK-Evolve</th></tr></thead><tbody><tr><td>Easy</td><td>66.7</td><td>84.2</td><td>82.5</td></tr><tr><td>Medium</td><td>35.4</td><td>60.4</td><td>56.2</td></tr><tr><td>Hard</td><td>19.1</td><td>23.8</td><td><strong>31.8</strong></td></tr><tr><td>总计</td><td>39.9</td><td>54.8</td><td><strong>56.0</strong></td></tr></tbody></table>
-<p><strong>DeepSeek-V3.2 — 按难度（基线 → +记忆）：</strong> 由于上述提示模板的差异，两个系统的无记忆基线本来就不同（总 TGC 79.8 vs 72.0）。</p>
-<table><thead><tr><th>档位</th><th>ALTK TGC</th><th>ALTK SGC</th><th>ACE TGC</th><th>ACE SGC</th></tr></thead><tbody><tr><td>Overall</td><td>79.8 → 89.3</td><td>64.3 → 80.4</td><td>72.0 → 80.4</td><td>57.1 → 73.2</td></tr><tr><td>Easy</td><td>93.0 → 94.7</td><td>84.2 → 84.2</td><td>78.9 → 84.2</td><td>63.2 → 78.9</td></tr><tr><td>Medium</td><td>81.2 → 97.9</td><td>62.5 → 93.8</td><td>85.4 → 100.0</td><td>75.0 → 100.0</td></tr><tr><td>Hard</td><td>66.7 → 77.8</td><td>47.6 → 66.7</td><td>55.6 → 61.9</td><td>38.1 → 47.6</td></tr></tbody></table>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-09 09:58:53**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-09 02:37:49**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -37,7 +37,7 @@
 - 页面：[官方博客](https://openai.com/blog)
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 页面：[新闻 / 更新](https://openai.com/zh-Hans-CN/news/)
-  - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
+  - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [RSS/Atom 订阅源](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-09，标题自动汉化）：
   1. [GPT-6 和适合所有人的智能 UI](https://openai.com/index/gpt-6-for-everyone)（2026-10-07）
@@ -52,7 +52,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-google_gemini.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-google_gemini.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-09，标题自动汉化）：
-  1. [Gemini Nano Banana 2.1 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#10-06-2026-1)（2026-10-06）
+  1. [Gemini Nano Banana 2.1 正式版（GA）](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#10-06-2026-1)（2026-10-06）
   2. [Gemini 3.8 Flash TTS 和 Gemini 3.8 Flash-Lite TTS 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-22-2026-1)（2026-09-22）
   3. [Antigravity 09-2026](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-17-2026-1)（2026-09-17）
   4. [Gemini 3.8 Live 和 Gemini 3.8 Live 扩展思考正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-15-2026-1)（2026-09-15）
@@ -71,7 +71,7 @@
   3. [DeepSeek-V4-Flash-Vision-Exp 发布](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-21)（2026-08-21）
   4. [V4-Flash-Vision-Exp 上线，开启多模态 API 服务](https://api-docs.deepseek.com/zh-cn/news/news260821)（2026-08-21）
   5. [DeepSeek-V4-Pro 更新](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-13)（2026-08-13）
-  - 📄 完整文章归档（共 42 篇）：[deepseek.md](llm-news/deepseek.md)
+  - 📄 完整文章归档（共 46 篇）：[deepseek.md](llm-news/deepseek.md)
 
 ### 通义千问 (阿里云) (aliyun_qwen)
 - 页面：[研究页](https://qwen.ai/research)
@@ -194,12 +194,12 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-09，标题自动汉化）：
-  1. [Falcon-Emirati：当 LLM 学会方言、文化与微妙之处](https://huggingface.co/blog/tiiuae/falcon-emirati)（2026-10-06）
-  2. [Olmo-core 3 简介：面向大型 MoE 的开放、可扩展的培训基础设施](https://huggingface.co/blog/allenai/olmocore3)（2026-10-01）
-  3. [欢迎 RL 环境来到中心](https://huggingface.co/blog/rl-environments)（2026-09-28）
-  4. [你的智能体出色完成了任务，还能再现吗？](https://huggingface.co/blog/ibm-research/altk-evolve-consistency)（2026-09-15）
-  5. [跨 HF Jobs 用 LoRA 的异步 GRPO：一个存储桶、一个代理、没有 NCCL](https://huggingface.co/blog/asyncgrpo-lora-hfjobs)（2026-09-10）
-  - 📄 完整文章归档（共 866 篇）：[huggingface.md](llm-news/huggingface.md)
+  1. [Falcon ASR 简介](https://huggingface.co/blog/tiiuae/falcon-asr)（2026-10-07）
+  2. [Falcon-Emirati：当 LLM 学会方言、文化与微妙之处](https://huggingface.co/blog/tiiuae/falcon-emirati)（2026-10-06）
+  3. [Olmo-core 3 简介：面向大型 MoE 的开放、可扩展的培训基础设施](https://huggingface.co/blog/allenai/olmocore3)（2026-10-01）
+  4. [欢迎 RL 环境来到中心](https://huggingface.co/blog/rl-environments)（2026-09-28）
+  5. [你的智能体出色完成了任务，还能再现吗？](https://huggingface.co/blog/ibm-research/altk-evolve-consistency)（2026-09-15）
+  - 📄 完整文章归档（共 867 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### OpenRouter (模型统一网关) (openrouter)
 - 📡 [RSS/Atom 订阅源](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
@@ -308,12 +308,12 @@
 ### Amazon Bedrock (AWS Free Tier) (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-10-09，标题自动汉化）：
-  1. [在 AWS 上推出 Claude Haiku 5.5](https://aws.amazon.com/blogs/machine-learning/introducing-claude-haiku-5-5-on-aws/)（2026-10-07）
-  2. [使用 Amazon Quick 和 Amazon Bedrock 重新思考 RAG 的访问控制](https://aws.amazon.com/blogs/machine-learning/rethinking-access-control-for-rag-with-amazon-quick-and-amazon-bedrock/)（2026-10-07）
-  3. [不仅节省了时间：构建代理自动化的业务案例](https://aws.amazon.com/blogs/machine-learning/beyond-hours-saved-building-the-business-case-for-agentic-automation/)（2026-10-07）
-  4. [Qlik 如何使用 Amazon Bedrock 构建扎根的企业级 AI](https://aws.amazon.com/blogs/machine-learning/how-qlik-built-grounded-enterprise-scale-ai-with-amazon-bedrock/)（2026-10-07）
-  5. [AWS DevOps Agent 调查后自动修复](https://aws.amazon.com/blogs/machine-learning/automate-remediation-post-aws-devops-agent-investigation/)（2026-10-07）
-  - 📄 完整文章归档（共 65 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [AI 代理按推理付费：BlockRun 和 Incarna 如何使用 Amazon Bedrock AgentCore 付款](https://aws.amazon.com/blogs/machine-learning/pay-per-inference-for-ai-agents-how-blockrun-and-incarna-use-amazon-bedrock-agentcore-payments/)（2026-10-08）
+  2. [使用 Amazon SageMaker HyperPod 跨团队共享 GPU 集群，实现隔离和公平](https://aws.amazon.com/blogs/machine-learning/share-gpu-clusters-across-teams-with-isolation-and-fairness-using-amazon-sagemaker-hyperpod/)（2026-10-08）
+  3. [在 AWS 上推出 Claude Haiku 5.5](https://aws.amazon.com/blogs/machine-learning/introducing-claude-haiku-5-5-on-aws/)（2026-10-07）
+  4. [使用 Amazon Quick 和 Amazon Bedrock 重新思考 RAG 的访问控制](https://aws.amazon.com/blogs/machine-learning/rethinking-access-control-for-rag-with-amazon-quick-and-amazon-bedrock/)（2026-10-07）
+  5. [不仅节省了时间：构建代理自动化的业务案例](https://aws.amazon.com/blogs/machine-learning/beyond-hours-saved-building-the-business-case-for-agentic-automation/)（2026-10-07）
+  - 📄 完整文章归档（共 67 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (晶圆级推理) (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)
@@ -411,10 +411,10 @@
 - 📰 **最新文章**（官方源抓取于 2026-10-09，标题自动汉化）：
   1. [Azure 上的 Anyscale 全面可用：使企业能够拥有完整的 AI 循环，而不仅仅是推理](https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai)（2026-10-07）
   2. [Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
-  3. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
-  4. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
-  5. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
-  - 📄 完整文章归档（共 74 篇）：[anyscale.md](llm-news/anyscale.md)
+  3. [推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25）
+  4. [Scaling Ray for AI workloads to 10k node clusters](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
+  5. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25）
+  - 📄 完整文章归档（共 75 篇）：[anyscale.md](llm-news/anyscale.md)
 
 ### InceptionLabs (inception_labs)
 - 页面：[官方博客](https://www.inceptionlabs.ai/blog)
@@ -441,6 +441,6 @@
   - 📄 完整文章归档（共 9 篇）：[inference_net.md](llm-news/inference_net.md)
 
 ---
-共整理 35 个厂商的动态入口（其中 35 个成功提取最新文章），RSS/Atom 源 14 个。
+共整理 35 个厂商的动态入口（其中 35 个成功提取最新文章），RSS/Atom 源 15 个。
 
 <!-- LLM-NEWS:END -->
