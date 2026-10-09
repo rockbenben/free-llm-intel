@@ -6905,6 +6905,38 @@ class TestListedMeansReadable(unittest.TestCase):
                                                               "en_status": "index_page"}}, root)
             self.assertEqual(gaps2, [], "标了 index_page 的行按钮本就不亮，占位文件无害")
 
+    def test_body_langs_names_which_languages_are_on_disk(self):
+        """langs 列分清「有哪门正文」，页面据此决定 EN 页签亮不亮、要不要发探测请求。
+
+        回归：页面原先只能靠**先发一个注定 404 的请求**去猜另一种语言在不在，而那个
+        404 会在语言回退里抢赢正文请求，只有单语正文的行点开是空白或假报错。
+        """
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            v = "demo"
+            (root / "docs/articles" / v).mkdir(parents=True)
+            cases = {
+                "bothlang01": ("both", "中文", "English"),
+                "zhonly0001": ("zh", "只有中文", None),        # 中文原生页
+                "enonly0001": ("en", None, "English only"),    # 还没译的英文页
+                "nonehere001": ("", None, None),
+            }
+            for slug, (want, zh, en) in cases.items():
+                if zh is not None:
+                    ft.write_body_doc(root / "docs/articles" / v / f"{slug}.md",
+                                      {"url": f"https://demo.test/{slug}"}, zh)
+                if en is not None:
+                    ft.write_body_doc(root / "docs/articles" / v / f"{slug}.en.md",
+                                      {"url": f"https://demo.test/{slug}"}, en)
+                self.assertEqual(crawler_llm_intel.body_langs(root, v, slug), want,
+                                 f"{slug} 应该是 {want}")
+            # 空正文的 .en.md 不算「有英文」——否则 EN 页签亮着，点进去是空的
+            ft.write_body_doc(root / "docs/articles" / v / "emptzh001.md",
+                              {"url": "https://demo.test/w"}, "有正文")
+            ft.write_body_doc(root / "docs/articles" / v / "emptzh001.en.md",
+                              {"url": "https://demo.test/w"}, "")
+            self.assertEqual(crawler_llm_intel.body_langs(root, v, "emptzh001"), "zh")
+
     def test_committed_artifacts_have_no_empty_body_claiming_readable(self):
         """已提交索引里不许有 `readable=1` 却读不出正文的行——判据得在真产物上成立。
 
@@ -7479,10 +7511,10 @@ class TestMdHtmlDualRun(unittest.TestCase):
 class TestIndexHasSlug(unittest.TestCase):
     """articles.json 每行末尾加 slug（reader 抽屉拼 md 路径的数据前置，见 corpus spec §12）。
 
-    守卫三件事：字段名列表含 slug 与 readable、每行 row[5] == fulltext.url_hash(row[1])、
-    row[6] 只取三态值。
-    变异：把 crawler 里 url_hash 换成硬编码 "deadbeef0000" 或直接删掉这一列，
-    本类断言变红。
+    守卫的是：字段名列表含 slug、readable 与 langs；每行 row[5] == fulltext.url_hash(row[1])；
+    row[6]/row[7] 各只取自己的那组值（且同源于一次磁盘探测）。
+    变异：把 crawler 里 url_hash 换成硬编码 "deadbeef0000"、删掉某一列，或让
+    readable 与 langs 走两次不同的探测，本类断言变红。
     """
 
     def _intel(self, n=3):
@@ -7501,9 +7533,10 @@ class TestIndexHasSlug(unittest.TestCase):
             data = json.loads((feeds / "articles.json").read_text(encoding="utf-8"))
             self.assertEqual(
                 data["fields"],
-                ["title", "url", "vendor", "date", "original_title", "slug", "readable"])
+                ["title", "url", "vendor", "date", "original_title", "slug",
+                 "readable", "langs"])
             for row in data["articles"]:
-                self.assertEqual(len(row), 7)
+                self.assertEqual(len(row), 8)
                 # row[1]=url, row[5]=slug；slug 由 fulltext.url_hash 决定
                 self.assertEqual(row[5], ft.url_hash(row[1]),
                                  "slug 必须等于 fulltext.url_hash(url)，与 bodies.json 里的 slug 一致")
@@ -7511,6 +7544,12 @@ class TestIndexHasSlug(unittest.TestCase):
                 # row[6]=readable 三态：磁盘有正文 '1' / 已判定抓不到 '0' / 还没轮到 ''
                 self.assertIn(row[6], ("", "0", "1"),
                               "readable 只允许三态，页面按位置取这一列决定「读全文」按钮")
+                # row[7]=langs：盘上有哪门语言的正文。'' = 建索引时还没有（正文晚索引
+                # 一步落盘），页面据此退回网络探测，不许据此禁用页签。
+                self.assertIn(row[7], ("", "zh", "en", "both"),
+                              "langs 只允许这四值，页面按 langFlags 认这三种 + ''")
+                self.assertEqual(row[6] == "1", row[7] != "",
+                                 "readable 与 langs 必须同源于一次磁盘探测：'1'  ⟺ 至少一门有正文")
 
     def test_slug_survives_prev_index_without_slug(self):
         """上一版 articles.json 是 5 字段（无 slug），load_original_titles 只按

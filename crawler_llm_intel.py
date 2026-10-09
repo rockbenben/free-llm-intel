@@ -5060,26 +5060,47 @@ def _body_html_for(art: Article, vendor: str, bodies: dict, feeds_dir: Path,
 UNREADABLE_STATUSES = ("fetch_failed", "index_page", "paywall")
 
 
+def _has_body_text(root: Path, vendor: str, slug: str, name: str) -> bool:
+    """单个正文文件在盘上、且 frontmatter 之后还有字。
+
+    读法不认识（缺 frontmatter）时**当它有正文**——宁可放过，别把真文章判成空。
+    """
+    import fulltext as _ft
+    p = root / "docs" / "articles" / vendor / name
+    if not p.is_file():
+        return False
+    try:
+        body = _ft.read_body_doc(p)[1]
+    except Exception:
+        return True
+    return bool((body or "").strip())
+
+
+def body_langs(root: Path, vendor: str, slug: str) -> str:
+    """这一篇磁盘上有哪些语言的正文：`both` / `zh` / `en` / `''`（都没有）。
+
+    浏览页的「中 / EN」页签据此点亮，不再靠「先发一个必然 404 的探测请求」猜另一种
+    语言在不在——那个 404 会在语言回退里抢赢正文请求，只有单语正文的行点开就成了
+    空白或「这篇正文还没落到语料里」的假报错。
+    """
+    zh = _has_body_text(root, vendor, slug, f"{slug}.md")
+    en = _has_body_text(root, vendor, slug, f"{slug}.en.md")
+    if zh and en:
+        return "both"
+    if zh:
+        return "zh"
+    if en:
+        return "en"
+    return ""
+
+
 def has_readable_body(root: Path, vendor: str, slug: str) -> bool:
     """盘上**读不读得出东西**：文件在，且 frontmatter 之后还有字。
 
     只看文件在不在会被骗：`reclassify_bodies` 判成目录页时清空正文却留着文件，
     于是一篇空文让「进了列表就得有可读的东西」这条不变量报绿。
-    读法不认识（缺 frontmatter）时**当它有正文**——宁可放过，别把真文章判成空。
     """
-    import fulltext as _ft
-    base = root / "docs" / "articles" / vendor
-    for name in (f"{slug}.md", f"{slug}.en.md"):
-        p = base / name
-        if not p.is_file():
-            continue
-        try:
-            body = _ft.read_body_doc(p)[1]
-        except Exception:
-            return True
-        if (body or "").strip():
-            return True
-    return False
+    return body_langs(root, vendor, slug) != ""
 
 
 def corpus_gaps(index_payload: dict, body_entries: dict, root: Path) -> list[list[str]]:
@@ -5457,8 +5478,8 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     except Exception:
         _bodies = {}
 
-    def _readable(vendor_id: str, url: str, slug: str) -> str:
-        if has_readable_body(_repo, vendor_id, slug):
+    def _readable(vendor_id: str, url: str, langs: str) -> str:
+        if langs:
             return "1"
         rec = _bodies.get(_ft.bodies_key(vendor_id, url))
         if rec and rec.get("en_status") in UNREADABLE_STATUSES:
@@ -5477,9 +5498,10 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
                 if prev and re.search(r"[A-Za-z]{4}", prev):
                     orig = prev
             slug = _ft.url_hash(art.url)
+            langs = body_langs(_repo, vendor_id, slug)
             index_rows.append([t, art.url, vendor_id, art.date,
                                orig if orig != t.strip() else "",
-                               slug, _readable(vendor_id, art.url, slug)])
+                               slug, _readable(vendor_id, art.url, langs), langs])
     # 有日期的按日期倒序在前，无日期的排后（与页面/feed 的排序约定一致）。
     # sort 稳定 + 输入顺序确定 → 同样内容每次产出的字节一致，`_write_json` 才不会误判「变了」。
     dated_rows = sorted((r for r in index_rows if r[3]), key=lambda r: r[3], reverse=True)
@@ -5487,7 +5509,8 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     index_rows = dated_rows + undated_rows
     files += 1
     changed += _write_json(out_dir / "articles.json", {
-        "fields": ["title", "url", "vendor", "date", "original_title", "slug", "readable"],
+        "fields": ["title", "url", "vendor", "date", "original_title", "slug",
+                   "readable", "langs"],
         "count": len(index_rows),
         "articles": index_rows,
     })
