@@ -490,6 +490,9 @@ var FLI = (function () {
       // r[6] = readable 三态（见 articles.json）：'1' 已有正文 / '0' 已判定抓不到 /
       // '' 还没轮到正文步骤。老索引没有第 7 列时按 '' 处理（照旧给按钮）。
       readable: r[6] || '',
+      // r[7] = langs：这一篇磁盘上有哪种语言的正文（'both'/'zh'/'en'，'' = 索引没
+      // 告诉我们）。老索引缺第 8 列同样是 ''，reader 因此退回网络探测而不是报错。
+      langs: r[7] || '',
       feed: (feeds && feeds[vid]) || ''
     };
   }
@@ -673,6 +676,33 @@ var FLI = (function () {
     return stripUnsafe(out.join('\n'));
   }
 
+  // ---- reader 抽屉的正文决议（纯逻辑，无 DOM；docs/app.test.mjs 有行为用例）----
+  // 要哪种语言就读哪种，读不到才试另一种；两种都读不到才 reject（页面据此报错）。
+  // **不能**同时发两个请求比谁快：另一语言的正文常常根本不存在，那个 404 却往往比
+  // 真要读的正文先落地——「没有另一种语言」就会被当成「这篇没有正文」，只有单语正文
+  // 的行点开是空白；反向（目标语言先 404）连本来能读的另一种语言都会被丢掉。
+  function loadBody(lang, fetchText) {
+    var other = lang === 'zh' ? 'en' : 'zh';
+    return Promise.resolve()
+      .then(function () { return fetchText(lang); })
+      .then(function (text) { return { lang: lang, text: text }; })
+      .catch(function () {
+        return Promise.resolve()
+          .then(function () { return fetchText(other); })
+          .then(function (text) { return { lang: other, text: text }; });
+      });
+  }
+
+  // articles.json 的 langs 列（'both' / 'zh' / 'en'）→ 两种语言的正文各在不在。
+  // '' 与缺列都返 null：索引没建到那一列、或建索引时盘上还没有正文（正文会晚索引
+  // 一步落盘），这时只能让页面真去请求一次、再用 HEAD 探另一语言。
+  function langFlags(langs) {
+    if (langs === 'both') return { zh: true, en: true };
+    if (langs === 'zh') return { zh: true, en: false };
+    if (langs === 'en') return { zh: false, en: true };
+    return null;
+  }
+
   return {
     UNKNOWN: UNKNOWN,
     mapRow: mapRow,
@@ -683,6 +713,8 @@ var FLI = (function () {
     plain: plain,
     cacheAgeLabel: cacheAgeLabel,
     mdToHtml: mdToHtml,
+    loadBody: loadBody,
+    langFlags: langFlags,
     _mdInline: mdInline,
     _stripUnsafe: stripUnsafe,
     _htmlEsc: htmlEsc
@@ -919,7 +951,8 @@ var FLI = (function () {
       rb.setAttribute('aria-label', '读全文：' + it.title);
       rb.onclick = function (ev) {
         ev.preventDefault();
-        openReader(it.vendorId, it.slug, 'zh', it.title, {push: true, link: it.link});
+        openReader(it.vendorId, it.slug, 'zh', it.title,
+                   {push: true, link: it.link, langs: it.langs});
       };
       meta.appendChild(rb);
     }
@@ -1422,7 +1455,7 @@ var FLI = (function () {
   });
 
   // ---- reader 抽屉（corpus spec §12.2-12.5）----
-  var reader = { vendor: '', slug: '', lang: 'zh', title: '', link: '', open: false, lastFocus: null };
+  var reader = { vendor: '', slug: '', lang: 'zh', langs: '', title: '', link: '', open: false, lastFocus: null };
   var rdOverlay = document.getElementById('reader-overlay');
   var rdDrawer = document.getElementById('reader-drawer');
   var rdTitle = document.getElementById('reader-title-text');
@@ -1466,11 +1499,12 @@ var FLI = (function () {
 
   function readerFillLinkFromState() {
     // 深链/popstate 打开时手里只有 vendor+slug，没有原文 URL；等 articles.json
-    // 到位后按 slug 反查补上（错误态的「访问原文」链接、以及标题都靠它）。
-    if (reader.link) return;
+    // 到位后按 slug 反查补上（错误态的「访问原文」链接、标题以及 langs 列都靠它）。
     for (var i = 0; i < state.all.length; i++) {
       var it = state.all[i];
       if (it.slug && it.slug === reader.slug && it.vendorId === reader.vendor) {
+        if (!reader.langs) reader.langs = it.langs || '';
+        if (reader.link) return;
         reader.link = it.link;
         if (!reader.title) { reader.title = it.title; rdTitle.textContent = it.title; }
         var a = document.getElementById('reader-error-link');
@@ -1501,46 +1535,47 @@ var FLI = (function () {
     rdEn.setAttribute('aria-pressed', reader.lang === 'en' ? 'true' : 'false');
   }
 
+  // 页签初态：索引说了哪门有正文就只亮哪门，不给读者留「亮着却点空」的窗口；
+  // 索引没说（老索引 / 正文晚于索引落盘）才先都亮着，等 HEAD 探测回来再定。
+  function readerLangButtonsInit() {
+    var fl = FLI.langFlags(reader.langs);
+    readerSetLangButtons(fl ? fl.zh : true, fl ? fl.en : true);
+  }
+
   function readerLoad(opts) {
     readerShowLoading();
-    var url = readerMdPath(reader.vendor, reader.slug, reader.lang);
-    function fetchText(u) {
-      return fetch(u, { cache: 'no-cache' }).then(function (r) {
-        if (!r.ok) throw new Error('HTTP ' + r.status);
-        return r.text();
-      });
+    function fetchText(lang) {
+      return fetch(readerMdPath(reader.vendor, reader.slug, lang), { cache: 'no-cache' })
+        .then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.text();
+        });
     }
-    // 目标语言没有正文时自动回退到另一种：中文原生页只有 .md、英文页可能中文还没译完，
-    // 读者要的是「这篇能读」，不该被语言挡在门外。
-    var alt = fetchText(readerMdPath(reader.vendor, reader.slug,
-                                     reader.lang === 'zh' ? 'en' : 'zh'))
-      .then(function (t) { return ['alt', t]; }, function () { return null; });
-    Promise.race([
-      fetchText(url).then(function (t) { return ['cur', t]; }),
-      alt
-    ]).then(function (picked) {
-      if (picked && picked[0] === 'alt') {
-        reader.lang = reader.lang === 'zh' ? 'en' : 'zh';
-        readerSetLangButtons(true, false);
-        rdZh.setAttribute('aria-pressed', reader.lang === 'zh' ? 'true' : 'false');
-        rdEn.setAttribute('aria-pressed', reader.lang === 'en' ? 'true' : 'false');
-      }
-      return picked ? picked[1] : '';
-    }).then(function (raw) {
+    // 索引已经说了「只有另一种语言有正文」就别发那个注定 404 的请求；没说的时候
+    // 照读者的选择先试，FLI.loadBody 会在失败后回退另一种语言。
+    var want = reader.lang, flags = FLI.langFlags(reader.langs);
+    if (flags && !flags[want]) want = want === 'zh' ? 'en' : 'zh';
+    FLI.loadBody(want, fetchText).then(function (got) {
+      reader.lang = got.lang;
       // 剥掉 frontmatter（首行 --- 到下一 --- 之间），只留正文
-      var m = raw.match(/^---\n[\s\S]*?\n---\n?/);
-      var body = m ? raw.slice(m[0].length) : raw;
-      readerRenderMd(body);
-      // 探另一语言是否存在，用于 lang 按钮 disabled
+      var fm = /^---\n[\s\S]*?\n---\n?/.exec(got.text);
+      readerRenderMd(fm ? got.text.slice(fm[0].length) : got.text);
+      if (flags && got.lang === want) {
+        readerSetLangButtons(flags.zh, flags.en);
+        return;
+      }
+      // 索引没说另一种在不在，或它说的与盘上对不上（正文晚于索引落盘、刚被重分类）：
+      // 以实际读到的这门为准，HEAD 探另一种再定页签。
       var other = reader.lang === 'zh' ? 'en' : 'zh';
-      var otherUrl = readerMdPath(reader.vendor, reader.slug, other);
-      fetch(otherUrl, { method: 'HEAD', cache: 'no-cache' }).then(function (rr) {
+      readerSetLangButtons(reader.lang === 'zh', reader.lang === 'en');
+      fetch(readerMdPath(reader.vendor, reader.slug, other),
+            { method: 'HEAD', cache: 'no-cache' }).then(function (rr) {
         var ok = {}; ok[reader.lang] = true; ok[other] = rr.ok;
         readerSetLangButtons(ok.zh, ok.en);
-      }).catch(function () {
-        readerSetLangButtons(true, false);
+      }, function () {
+        readerSetLangButtons(reader.lang === 'zh', reader.lang === 'en');
       });
-    }).catch(function () {
+    }, function () {
       readerShowError(reader.title, reader.link);
       readerSetLangButtons(false, false);
     });
@@ -1551,10 +1586,11 @@ var FLI = (function () {
     opts = opts || {};
     var was = reader.open;
     reader.vendor = vendor; reader.slug = slug; reader.lang = lang || 'zh';
+    reader.langs = opts.langs || '';
     reader.title = title || '';
     reader.link = (opts && opts.link) || '';
     reader.open = true;
-    readerFillLinkFromState();   // 深链时 state 可能已到位，先补原文 URL
+    readerFillLinkFromState();   // 深链时 state 可能已到位，先补原文 URL 与 langs
     if (!was) {
       reader.lastFocus = document.activeElement;
       rdOverlay.hidden = false;
@@ -1562,8 +1598,8 @@ var FLI = (function () {
       document.body.style.overflow = 'hidden';
     }
     rdTitle.textContent = reader.title;
+    readerLangButtonsInit();
     readerLoad({ link: opts.link });
-    readerSetLangButtons(true, true);  // 先假定两个都可用，异步再 disable
     if (opts.push !== false) {
       var u = new URL(location.href);
       u.searchParams.set('read', vendor + '/' + slug);
@@ -1599,7 +1635,7 @@ var FLI = (function () {
     if (reader.lang === 'zh') return;
     reader.lang = 'zh';
     readerLoad({});
-    readerSetLangButtons(true, true);
+    readerLangButtonsInit();
     var u = new URL(location.href);
     u.searchParams.set('lang', 'zh');
     history.replaceState({ read: reader.vendor + '/' + reader.slug, lang: 'zh' }, '', u.toString());
@@ -1608,7 +1644,7 @@ var FLI = (function () {
     if (reader.lang === 'en') return;
     reader.lang = 'en';
     readerLoad({});
-    readerSetLangButtons(true, true);
+    readerLangButtonsInit();
     var u = new URL(location.href);
     u.searchParams.set('lang', 'en');
     history.replaceState({ read: reader.vendor + '/' + reader.slug, lang: 'en' }, '', u.toString());

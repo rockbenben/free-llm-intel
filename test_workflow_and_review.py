@@ -7092,14 +7092,20 @@ class TestReadFullButtonHonesty(unittest.TestCase):
                          "只看 slug 的旧判据会让每篇都亮按钮")
 
     def test_reader_falls_back_to_the_other_language(self):
-        """中文原生页只有 .md、英文页可能中文还没译 —— 都不该把读者挡在门外。"""
+        """中文原生页只有 .md、英文页可能中文还没译 —— 都不该把读者挡在门外。
+
+        决议本身是 `FLI.loadBody`（docs/app.test.mjs 有时序行为用例），页面只负责调用；
+        这里钉的是**不许退回旧的 Promise.race**：两个请求赛跑时，另一语言那个注定 404
+        的响应常常先落地，「没有另一种语言」就被当成「这篇没有正文」，抽屉渲染成空白。
+        """
         load = re.search(r"function readerLoad\([^)]*\)\s*\{(.*?)\n  \}",
                          self.page, re.S)
         self.assertIsNotNone(load)
         body = load.group(1)
-        self.assertIn("Promise.race", body,
-                      "目标语言 404 时要能自动回退到另一种语言")
-        self.assertIn("readerMdPath(reader.vendor, reader.slug,", body)
+        self.assertIn("FLI.loadBody(", body, "正文语言决议要走 FLI.loadBody")
+        self.assertNotIn("Promise.race", self.page,
+                         "reader 不许再用 Promise.race 让 404 与正文赛跑")
+        self.assertIn("readerMdPath(reader.vendor, reader.slug, lang)", body)
 
 
 class TestFulltextBodyDoc(unittest.TestCase):

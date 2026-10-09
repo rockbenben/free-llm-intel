@@ -153,3 +153,69 @@ test('mdToHtml: 引用块 + 空输入 + 无 block 元素兜底成段落', () => 
   assert.equal(FLI.mdToHtml(''), '');
   assert.equal(FLI.mdToHtml(null), '');
 });
+
+// ---- reader 抽屉的正文决议（docs/index.html 的 FLI.loadBody / FLI.langFlags）----
+// 这里唯一被测的东西是**时序**：另一语言的正文常常根本不存在，旧实现却让两个请求
+// 赛跑，那个注定 404 的响应往往比真要读的正文先落地，于是「没有另一种语言」被当成
+// 「这篇没有正文」——只有单语正文的行（中文原生页、还没译的英文页）点开就是空白。
+const mkFetch = (spec) => {
+  const calls = [];
+  const fn = (lang) => {
+    calls.push(lang);
+    const s = spec[lang];
+    if (s.throwSync) throw new Error('boom');
+    return new Promise((res, rej) => setTimeout(
+      () => (s.missing ? rej(new Error('HTTP 404')) : res(s.text)), s.ms || 0));
+  };
+  return { fn, calls };
+};
+
+test('loadBody: 只有中文正文时，另一语言的 404 不许把正文挤掉', async () => {
+  const { fn, calls } = mkFetch({ zh: { text: '中文正文', ms: 40 }, en: { missing: true, ms: 5 } });
+  const got = await FLI.loadBody('zh', fn);
+  assert.deepEqual(got, { lang: 'zh', text: '中文正文' });
+  assert.deepEqual(calls, ['zh'], '目标语言读到了就不该再发另一个请求');
+});
+
+test('loadBody: 目标语言读不到才回退另一种（未翻译页选中文也能读到原文）', async () => {
+  const { fn, calls } = mkFetch({ zh: { missing: true, ms: 5 }, en: { text: 'English', ms: 40 } });
+  const got = await FLI.loadBody('zh', fn);
+  assert.deepEqual(got, { lang: 'en', text: 'English' }, '回退要成行，不能被先到的 404 带进报错态');
+  assert.deepEqual(calls, ['zh', 'en']);
+});
+
+test('loadBody: 两种语言都有时不许被更快的另一语言抢走读者选的那门', async () => {
+  const { fn } = mkFetch({ zh: { text: '中文正文', ms: 40 }, en: { text: 'English', ms: 5 } });
+  const got = await FLI.loadBody('zh', fn);
+  assert.equal(got.lang, 'zh', '点的是「中」就显示中文，页签语言不能随响应快慢漂移');
+  assert.equal(got.text, '中文正文');
+});
+
+test('loadBody: 两种都读不到才 reject（页面据此报错，而不是渲染空抽屉）', async () => {
+  const { fn, calls } = mkFetch({ zh: { missing: true }, en: { missing: true } });
+  await assert.rejects(() => FLI.loadBody('zh', fn), /HTTP 404/);
+  assert.deepEqual(calls, ['zh', 'en']);
+});
+
+test('loadBody: fetchText 同步抛异常同样按「这门读不到」回退', async () => {
+  const { fn } = mkFetch({ zh: { throwSync: true }, en: { text: 'English' } });
+  const got = await FLI.loadBody('zh', fn);
+  assert.deepEqual(got, { lang: 'en', text: 'English' });
+});
+
+test('langFlags: 索引认识的三种值给出可用性，认不出的一律 null', () => {
+  assert.deepEqual(FLI.langFlags('both'), { zh: true, en: true });
+  assert.deepEqual(FLI.langFlags('zh'), { zh: true, en: false });
+  assert.deepEqual(FLI.langFlags('en'), { zh: false, en: true });
+  // '' = 建这一版索引时盘上还没有正文（正文晚索引一步落盘）；undefined = 老索引缺列。
+  // 两者都不能当成「这篇读不到」，只能退回真去请求一次。
+  assert.equal(FLI.langFlags(''), null);
+  assert.equal(FLI.langFlags(undefined), null);
+  assert.equal(FLI.langFlags('ZH'), null, '认不出的值不许让页面禁用页签');
+});
+
+test('mapRow: langs 取第 8 列，老索引缺列退回空串', () => {
+  const r = ['T', 'u', 'v', '2026-01-01', 'O', 'slug12345678', '1', 'zh'];
+  assert.equal(FLI.mapRow(r, {}, {}).langs, 'zh');
+  assert.equal(FLI.mapRow(r.slice(0, 7), {}, {}).langs, '');
+});
