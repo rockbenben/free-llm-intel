@@ -7,7 +7,14 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 07 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 08 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Cut coding agent costs by 90%: Secure LLM serving with Ray +…</title>
+      <link>https://anyscale.com/blog/run-coding-agents-on-your-own-gpus</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/run-coding-agents-on-your-own-gpus?li=1</guid>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale</description>
+    </item>
     <item>
       <title>Anyscale on Azure is Generally Available: Enabling Enterpris…</title>
       <link>https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai</link>
@@ -162,126 +169,6 @@
 <h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
 <p>Read more</p>
 <h4>Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</h4>
-<p>Read more</p>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Introducing Ray History Server: Post-Mortem Observability fo…</title>
-      <link>https://anyscale.com/blog/ray-history-server</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/ray-history-server?li=1</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</description>
-      <content:encoded><![CDATA[<p>Home</p>
-<p>Blog</p>
-<p>Blog Detail</p>
-<h1>Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</h1>
-<p>By</p>
-<p>Andrew Sy Kim (Google)</p>
-<p>,</p>
-<p>Aaron Liang (Google)</p>
-<p>,</p>
-<p>Han-Ju Chen</p>
-<p>,</p>
-<p>Jia-wei Jiang</p>
-<p>,</p>
-<p>Kun Wu (Alibaba Cloud)</p>
-<p>,</p>
-<p>Jui-An Huang</p>
-<p>,</p>
-<p>Mengjin Yan</p>
-<p>,</p>
-<p>Nai-Jui Yeh</p>
-<p>and</p>
-<p>Chun-Hao Wan</p>
-<p>|</p>
-<p>August 25, 2026</p>
-<h2>LinkRay History Server</h2>
-<p>It is becoming increasingly common for Ray users to utilize Ray clusters as ephemeral units of compute, created for a single job and torn down once the job completes. This pattern improves cost efficiency and resource sharing, especially in capacity-constrained environments where hardware accelerators are scarce.</p>
-<p>The trade-off for this approach is, unlike long-lived clusters, session logs, in-memory states, and Ray Dashboard disappear along with the cluster. Users can export logs and metrics to external observability systems, but debugging a failed job means correlating task and actor states, per-node logs, and error traces. The Ray Dashboard is the one place that ties them all together, and without it post-mortem debugging is almost impossible.</p>
-<p>With the latest Kuberay v1.7 release, History server is now promoted to beta and available for use, enabling access to Ray cluster data even after termination.</p>
-<p>The Ray History Server closes the observability gap by reconstructing the necessary Ray related endpoints after cluster termination.</p>
-<h3>LinkCluster Selection Page</h3>
-<p>Before we do a deep dive into history server, let's see what it can do. The history server provides a built-in cluster selection page, which acts as a centralized page for post-mortem observability, dynamically discovering, and cataloging all historical runs stored by the object storage as well as current live clusters.</p>
-<p>Ray History Server</p>
-<p>Users can search and filter past or current runs by cluster name, namespace, and owner resource. Each session entry will indicate whether a session is live or terminated. And with a single click on any historical or live session, users will be redirected to the corresponding Ray Dashboard interface.</p>
-<p>For terminated sessions, the history server reconstructs the Dashboard from telemetry collected in object storage. For live sessions, it proxies requests to the cluster's running Ray Dashboard, including automatic authentication token injection for clusters with Ray auth enabled, so users get a single entry point regardless of whether a cluster is still running.</p>
-<p>Once a session is selected, the history server serves the standard Ray Dashboard frontend backed by a Dashboard-compatible REST API. Whether a cluster is live or has been terminated for hours or days, users navigate the exact same Dashboard interface they already know and get all the post-mortem context they need without keeping idle clusters around just to preserve access.</p>
-<p>Jobs Tab 1 - Ray Core Overview</p>
-<p>Jobs Tab 2 - Logs</p>
-<h3>LinkArchitecture Overview</h3>
-<p>So what exactly goes into the History server? There are two main components that reflect the fundamental difference between the two stages required to reanimate the Ray cluster: recording the data, and replaying the data. The component that is responsible for recording the data is the collector. And the other component, responsible for replaying the data, is the history server itself.</p>
-<p>Ray Pod Boundary</p>
-<h4>LinkCollector Deep Dive</h4>
-<p>Let’s start with the collector. The collector is a sidecar that is attached to all of the Ray head and worker pods. And its job, as mentioned above, is to collect data from the corresponding Ray container. Within the collector, there are two main flows or subsystems, one that is in charge of logs, and another that is responsible for Ray events.</p>
-<p>The event collector subsystem aims to capture high-velocity telemetry from Ray workloads without consuming too much cluster memory by implementing a disk-first collection approach. With the event export api enabled, Ray containers continually export structured runtime events ranging from driver job lifecycles to node specific events. Rather than buffering millions of events in-memory, the event collector subsystem immediately streams incoming payloads directly to local disk. These files are then automatically rotated based on a configurable time interval or file size thresholds. Files could also be compressed right before being uploaded to cloud object storage to minimize upload and download time. To ensure stability of the collector container as well as the pod, the collector also incorporates a configurable total disk limit with a disk-pressure watermark that will reject incoming event requests with 503 errors in the event of a transient outage or network issue.</p>
-<p>While the event collector subsystem tracks structured events, the log collector subsystem, as its name implies, handles the Ray logs and cluster metadata. Its main job is to ensure session logs are uploaded to object storage. Uploads occur at three distinct lifecycle events:</p>
-<ul><li>On pod termination: when a RayJob finishes or Kubernetes begins tearing down the pod</li><li>On startup &amp; crash recovery: residual logs from previous session will be uploaded</li><li>On session transitions: when Ray rotates or starts a new session while still running</li></ul>
-<p>Beyond uploading logs to object storage, the log collector also acts as the cluster metadata harvester. On the head pod only, it captures cluster metadata such as Ray version and timezone once at startup, and periodically snapshots Dashboard endpoints that are not reconstructed from events (such as Ray Data datasets and placement groups), so their last-known state remains available after termination.</p>
-<h4>LinkHistory Server Deep Dive</h4>
-<p>The history server is the read path of the system: it replays the data the collector wrote. It acts as an on-demand, stateless reconstruction engine for post-mortem debugging. It turns raw, compressed files in object storage back into the native Ray Dashboard experience.</p>
-<p>Processing hundreds of event and log files on every request would strain resources, yet maintaining a persistent, pre-processed archive is often expensive and mostly idle. To optimize performance while ensuring stability, the history server utilizes a lazy-loading strategy complemented by an LRU cache.</p>
-<ul><li>Lazy Loading: Minimizes requests to object storage and infrastructure overhead by deferring event file retrieval and decompression until a user selects a specific session. This avoids unnecessary reads and eliminates the dependency on a managed database. Concurrent requests for the same cold session are coalesced to prevent thundering-herd reads against object storage, and a configurable timeout guards against indefinite hangs.</li><li>LRU Cache: Bounds memory usage with both an entry-count limit and a byte-size budget. Because Ray sessions fluctuate significantly in size—ranging from 2 MB to over 500 MB—these size-based budgets are essential to keeping the history server consistently within its defined pod memory limits.</li></ul>
-<p>Thanks to this design, a single history server deployment can serve post-mortem dashboards for many clusters.</p>
-<p>Single Shared History Server</p>
-<h4>LinkObject store</h4>
-<p>The history server is storage-agnostic by design, built on a single storage interface. This allows organizations to plug in their existing object storage without vendor lock-in. Out of the box, it has native support for the following:</p>
-<ul><li>Google Cloud Storage: Native GCS integration supporting GKE workload identity for keyless authentication</li><li>AWS S3 &amp; MinIO: Amazon S3 and any S3-compatible object storage, authenticating via IAM Roles for Service Accounts or static credentials</li><li>Alibaba Cloud OSS: Aliyun Object Storage Service with RAM Roles for Service accounts</li><li>Azure Blob Storage: integrates via Azure Workload Identity or a connection string</li></ul>
-<p>The storage layout is deterministic, so any session can be located with a simple prefix lookup, even in multi-tenant environments. Data is organized by resource ownership. Including higher-level resource owners such as <code>RayJob</code> and <code>RayService</code> in the path enables more granular filtering and establishes clear workload provenance. The object storage is broken down into two subtrees.</p>
-<ul><li><code>cluster-metadata</code>: A lightweight index of empty files whose paths encode the namespace, owner, cluster, and session</li><li><code>cluster-history</code>: The session telemetry – raw logs, event files, and endpoint snapshots</li></ul>
-<pre><code>cluster-metadata/
-│   ├── raycluster/
-│   │   └── &lt;namespace&gt;_&lt;cluster_name&gt;/
-│   │       └── &lt;session_name&gt;                # Empty marker file
-│   └── &lt;rayjob|rayservice&gt;/
-│       └── &lt;namespace&gt;_&lt;owner_name&gt;_&lt;cluster_name&gt;/
-│           └── &lt;session_name&gt;
-cluster-history/
-├── raycluster/
-│   └── &lt;namespace&gt;/
-│       └── &lt;cluster_name&gt;/
-│           └── &lt;session_name&gt;/
-│               ├── fetched_endpoints/   # Dashboard endpoint snapshots
-│               │   ├── restful__api__v0__nodes__summary
-│               │   └── ...
-│               └── &lt;node_id&gt;/
-│                   ├── logs/
-│                   │   ├── dashboard_agent.log
-│                   │   ├── raylet.out
-│                   │   └── ...
-│                   ├── node_events/
-│                   │   └── &lt;node_id&gt;-&lt;date_hour&gt;   # Node event logs
-│                   └── job_events/
-│                       └── &lt;job_id&gt;/
-│                           └── &lt;node_id&gt;-&lt;date_hour&gt; # Job event logs
-└── &lt;rayjob|rayservice&gt;/
-    └── &lt;namespace&gt;/
-        └── &lt;owner_name&gt;/
-            └── &lt;cluster_name&gt;/
-                └── &lt;session_name&gt;/     # Same node layout as above</code></pre>
-<h3>LinkPerformance &amp; Sizing Benchmarks</h3>
-<p>We benchmarked the history server data path across sessions ranging from 1k to 50k tasks to verify that it scales linearly. Two tunings were applied: giving the history server at least 1.5 CPU cores, and enabling gzip compression in the collector. Compression cuts storage overhead by ~91%, while the additional CPU speeds up session cold loads by ~2.4x and increases the maximum openable session size by 2.5x.</p>
-<table><thead><tr><th><strong>Metric</strong></th><th><strong>Baseline (gzip off, 0.5 CPU cores)</strong></th><th><strong>Tuned (gzip on, 1.5 CPU cores)</strong></th><th><strong>Impact</strong></th></tr></thead><tbody><tr><td>Event storage per task</td><td>~3.75 KiB (4.3 events at 895 B)</td><td>~355 B (10.85:1 compression)</td><td>91% smaller</td></tr><tr><td>Storage for a 100k-task session</td><td>~385 MiB</td><td>~35.5 MiB</td><td>~349.5 MiB saved per session</td></tr><tr><td>Cold load time per task</td><td>~0.2 ms (CPU-throttled)</td><td>~0.084 ms (unthrottled)</td><td>~2.4x faster</td></tr><tr><td>Max openable session size</td><td>~20k tasks (larger sessions exceed ~5s UI budget)</td><td>~50k tasks (opens in 4.21s)</td><td>2.5x larger</td></tr></tbody></table>
-<p>Performance plateaus at 1.2 cores. Allocating more CPU showed no measurable improvement, so 1.5 to 2 cores is a safe initial sizing recommendation for the history server. Full benchmark details are available in the <a href="https://github.com/Future-Outlier/historyserver-benchmark">history server benchmark repository</a>.</p>
-<h3>LinkFuture Roadmap &amp; Looking Ahead</h3>
-<p>While the current history server is in beta and provides a robust post-mortem debugging service, there are still enhancements designed to further simplify operations and expand observability.</p>
-<ul><li>Automated collector sidecar injection - to make adoption easier, future versions will introduce stable, automated collector injection within the KubeRay operator. Users will be able to enable telemetry collection declaratively within the <code>RayCluster</code> spec. An early version is already available behind the <code>RayClusterHistoryServer</code> feature gate via <a href="https://github.com/ray-project/kuberay/blob/bf50aa1353295188ae9335bc0e9911dbe0754535/ray-operator/apis/ray/v1/raycluster_types.go#L274"><code>HistoryServerOptions</code></a>.</li><li>Expand metrics and metrics replay - Post mortem debugging often requires inspecting system metrics along tasks, and we aim to include native support for historical metrics timelines by capturing GPU/CPU utilization, memory pressure, and actor throughput.</li></ul>
-<h3>LinkTry it Today</h3>
-<p>Ready to bring post-mortem observability to your Ray workloads on Kubernetes? Check out the <a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/kuberay-history-server.html">Ray History Server documentation</a> to set up the collector and history server in your Kubernetes cluster!</p>
-<p>Have any questions or need assistance? Feel free to open an issue on the <a href="https://github.com/ray-project/kuberay">GitHub Repository</a>. We welcome your feedback, feature requests, and contributions! You can also <a href="https://www.ray.io/join-slack">join the Ray Slack</a> and ask questions in the <code>#ray-history-server</code> channel.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/ray-history-server#ray-history-server">Ray History Server</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#cluster-selection-page">Cluster Selection Page</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#architecture-overview">Architecture Overview</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#performance-&amp;-sizing-benchmarks">Performance &amp; Sizing Benchmarks</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#future-roadmap-&amp;-looking-ahead">Future Roadmap &amp; Looking Ahead</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#try-it-today">Try it Today</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<p>Read more</p>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<p>Read more</p>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
 <p>Read more</p>
 <h2>Explore Anyscale today</h2>
 <p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
@@ -556,6 +443,126 @@ cluster-history/
 <h4>Scaling Ray for AI workloads to 10k node clusters</h4>
 <p>Read more</p>
 <h4>Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</h4>
+<p>Read more</p>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p>Start for Free</p>
+<p>Talk to an expert</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Introducing Ray History Server: Post-Mortem Observability fo…</title>
+      <link>https://anyscale.com/blog/ray-history-server</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-history-server?li=1</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</description>
+      <content:encoded><![CDATA[<p>Home</p>
+<p>Blog</p>
+<p>Blog Detail</p>
+<h1>Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</h1>
+<p>By</p>
+<p>Andrew Sy Kim (Google)</p>
+<p>,</p>
+<p>Aaron Liang (Google)</p>
+<p>,</p>
+<p>Han-Ju Chen</p>
+<p>,</p>
+<p>Jia-wei Jiang</p>
+<p>,</p>
+<p>Kun Wu (Alibaba Cloud)</p>
+<p>,</p>
+<p>Jui-An Huang</p>
+<p>,</p>
+<p>Mengjin Yan</p>
+<p>,</p>
+<p>Nai-Jui Yeh</p>
+<p>and</p>
+<p>Chun-Hao Wan</p>
+<p>|</p>
+<p>August 25, 2026</p>
+<h2>LinkRay History Server</h2>
+<p>It is becoming increasingly common for Ray users to utilize Ray clusters as ephemeral units of compute, created for a single job and torn down once the job completes. This pattern improves cost efficiency and resource sharing, especially in capacity-constrained environments where hardware accelerators are scarce.</p>
+<p>The trade-off for this approach is, unlike long-lived clusters, session logs, in-memory states, and Ray Dashboard disappear along with the cluster. Users can export logs and metrics to external observability systems, but debugging a failed job means correlating task and actor states, per-node logs, and error traces. The Ray Dashboard is the one place that ties them all together, and without it post-mortem debugging is almost impossible.</p>
+<p>With the latest Kuberay v1.7 release, History server is now promoted to beta and available for use, enabling access to Ray cluster data even after termination.</p>
+<p>The Ray History Server closes the observability gap by reconstructing the necessary Ray related endpoints after cluster termination.</p>
+<h3>LinkCluster Selection Page</h3>
+<p>Before we do a deep dive into history server, let's see what it can do. The history server provides a built-in cluster selection page, which acts as a centralized page for post-mortem observability, dynamically discovering, and cataloging all historical runs stored by the object storage as well as current live clusters.</p>
+<p>Ray History Server</p>
+<p>Users can search and filter past or current runs by cluster name, namespace, and owner resource. Each session entry will indicate whether a session is live or terminated. And with a single click on any historical or live session, users will be redirected to the corresponding Ray Dashboard interface.</p>
+<p>For terminated sessions, the history server reconstructs the Dashboard from telemetry collected in object storage. For live sessions, it proxies requests to the cluster's running Ray Dashboard, including automatic authentication token injection for clusters with Ray auth enabled, so users get a single entry point regardless of whether a cluster is still running.</p>
+<p>Once a session is selected, the history server serves the standard Ray Dashboard frontend backed by a Dashboard-compatible REST API. Whether a cluster is live or has been terminated for hours or days, users navigate the exact same Dashboard interface they already know and get all the post-mortem context they need without keeping idle clusters around just to preserve access.</p>
+<p>Jobs Tab 1 - Ray Core Overview</p>
+<p>Jobs Tab 2 - Logs</p>
+<h3>LinkArchitecture Overview</h3>
+<p>So what exactly goes into the History server? There are two main components that reflect the fundamental difference between the two stages required to reanimate the Ray cluster: recording the data, and replaying the data. The component that is responsible for recording the data is the collector. And the other component, responsible for replaying the data, is the history server itself.</p>
+<p>Ray Pod Boundary</p>
+<h4>LinkCollector Deep Dive</h4>
+<p>Let’s start with the collector. The collector is a sidecar that is attached to all of the Ray head and worker pods. And its job, as mentioned above, is to collect data from the corresponding Ray container. Within the collector, there are two main flows or subsystems, one that is in charge of logs, and another that is responsible for Ray events.</p>
+<p>The event collector subsystem aims to capture high-velocity telemetry from Ray workloads without consuming too much cluster memory by implementing a disk-first collection approach. With the event export api enabled, Ray containers continually export structured runtime events ranging from driver job lifecycles to node specific events. Rather than buffering millions of events in-memory, the event collector subsystem immediately streams incoming payloads directly to local disk. These files are then automatically rotated based on a configurable time interval or file size thresholds. Files could also be compressed right before being uploaded to cloud object storage to minimize upload and download time. To ensure stability of the collector container as well as the pod, the collector also incorporates a configurable total disk limit with a disk-pressure watermark that will reject incoming event requests with 503 errors in the event of a transient outage or network issue.</p>
+<p>While the event collector subsystem tracks structured events, the log collector subsystem, as its name implies, handles the Ray logs and cluster metadata. Its main job is to ensure session logs are uploaded to object storage. Uploads occur at three distinct lifecycle events:</p>
+<ul><li>On pod termination: when a RayJob finishes or Kubernetes begins tearing down the pod</li><li>On startup &amp; crash recovery: residual logs from previous session will be uploaded</li><li>On session transitions: when Ray rotates or starts a new session while still running</li></ul>
+<p>Beyond uploading logs to object storage, the log collector also acts as the cluster metadata harvester. On the head pod only, it captures cluster metadata such as Ray version and timezone once at startup, and periodically snapshots Dashboard endpoints that are not reconstructed from events (such as Ray Data datasets and placement groups), so their last-known state remains available after termination.</p>
+<h4>LinkHistory Server Deep Dive</h4>
+<p>The history server is the read path of the system: it replays the data the collector wrote. It acts as an on-demand, stateless reconstruction engine for post-mortem debugging. It turns raw, compressed files in object storage back into the native Ray Dashboard experience.</p>
+<p>Processing hundreds of event and log files on every request would strain resources, yet maintaining a persistent, pre-processed archive is often expensive and mostly idle. To optimize performance while ensuring stability, the history server utilizes a lazy-loading strategy complemented by an LRU cache.</p>
+<ul><li>Lazy Loading: Minimizes requests to object storage and infrastructure overhead by deferring event file retrieval and decompression until a user selects a specific session. This avoids unnecessary reads and eliminates the dependency on a managed database. Concurrent requests for the same cold session are coalesced to prevent thundering-herd reads against object storage, and a configurable timeout guards against indefinite hangs.</li><li>LRU Cache: Bounds memory usage with both an entry-count limit and a byte-size budget. Because Ray sessions fluctuate significantly in size—ranging from 2 MB to over 500 MB—these size-based budgets are essential to keeping the history server consistently within its defined pod memory limits.</li></ul>
+<p>Thanks to this design, a single history server deployment can serve post-mortem dashboards for many clusters.</p>
+<p>Single Shared History Server</p>
+<h4>LinkObject store</h4>
+<p>The history server is storage-agnostic by design, built on a single storage interface. This allows organizations to plug in their existing object storage without vendor lock-in. Out of the box, it has native support for the following:</p>
+<ul><li>Google Cloud Storage: Native GCS integration supporting GKE workload identity for keyless authentication</li><li>AWS S3 &amp; MinIO: Amazon S3 and any S3-compatible object storage, authenticating via IAM Roles for Service Accounts or static credentials</li><li>Alibaba Cloud OSS: Aliyun Object Storage Service with RAM Roles for Service accounts</li><li>Azure Blob Storage: integrates via Azure Workload Identity or a connection string</li></ul>
+<p>The storage layout is deterministic, so any session can be located with a simple prefix lookup, even in multi-tenant environments. Data is organized by resource ownership. Including higher-level resource owners such as <code>RayJob</code> and <code>RayService</code> in the path enables more granular filtering and establishes clear workload provenance. The object storage is broken down into two subtrees.</p>
+<ul><li><code>cluster-metadata</code>: A lightweight index of empty files whose paths encode the namespace, owner, cluster, and session</li><li><code>cluster-history</code>: The session telemetry – raw logs, event files, and endpoint snapshots</li></ul>
+<pre><code>cluster-metadata/
+│   ├── raycluster/
+│   │   └── &lt;namespace&gt;_&lt;cluster_name&gt;/
+│   │       └── &lt;session_name&gt;                # Empty marker file
+│   └── &lt;rayjob|rayservice&gt;/
+│       └── &lt;namespace&gt;_&lt;owner_name&gt;_&lt;cluster_name&gt;/
+│           └── &lt;session_name&gt;
+cluster-history/
+├── raycluster/
+│   └── &lt;namespace&gt;/
+│       └── &lt;cluster_name&gt;/
+│           └── &lt;session_name&gt;/
+│               ├── fetched_endpoints/   # Dashboard endpoint snapshots
+│               │   ├── restful__api__v0__nodes__summary
+│               │   └── ...
+│               └── &lt;node_id&gt;/
+│                   ├── logs/
+│                   │   ├── dashboard_agent.log
+│                   │   ├── raylet.out
+│                   │   └── ...
+│                   ├── node_events/
+│                   │   └── &lt;node_id&gt;-&lt;date_hour&gt;   # Node event logs
+│                   └── job_events/
+│                       └── &lt;job_id&gt;/
+│                           └── &lt;node_id&gt;-&lt;date_hour&gt; # Job event logs
+└── &lt;rayjob|rayservice&gt;/
+    └── &lt;namespace&gt;/
+        └── &lt;owner_name&gt;/
+            └── &lt;cluster_name&gt;/
+                └── &lt;session_name&gt;/     # Same node layout as above</code></pre>
+<h3>LinkPerformance &amp; Sizing Benchmarks</h3>
+<p>We benchmarked the history server data path across sessions ranging from 1k to 50k tasks to verify that it scales linearly. Two tunings were applied: giving the history server at least 1.5 CPU cores, and enabling gzip compression in the collector. Compression cuts storage overhead by ~91%, while the additional CPU speeds up session cold loads by ~2.4x and increases the maximum openable session size by 2.5x.</p>
+<table><thead><tr><th><strong>Metric</strong></th><th><strong>Baseline (gzip off, 0.5 CPU cores)</strong></th><th><strong>Tuned (gzip on, 1.5 CPU cores)</strong></th><th><strong>Impact</strong></th></tr></thead><tbody><tr><td>Event storage per task</td><td>~3.75 KiB (4.3 events at 895 B)</td><td>~355 B (10.85:1 compression)</td><td>91% smaller</td></tr><tr><td>Storage for a 100k-task session</td><td>~385 MiB</td><td>~35.5 MiB</td><td>~349.5 MiB saved per session</td></tr><tr><td>Cold load time per task</td><td>~0.2 ms (CPU-throttled)</td><td>~0.084 ms (unthrottled)</td><td>~2.4x faster</td></tr><tr><td>Max openable session size</td><td>~20k tasks (larger sessions exceed ~5s UI budget)</td><td>~50k tasks (opens in 4.21s)</td><td>2.5x larger</td></tr></tbody></table>
+<p>Performance plateaus at 1.2 cores. Allocating more CPU showed no measurable improvement, so 1.5 to 2 cores is a safe initial sizing recommendation for the history server. Full benchmark details are available in the <a href="https://github.com/Future-Outlier/historyserver-benchmark">history server benchmark repository</a>.</p>
+<h3>LinkFuture Roadmap &amp; Looking Ahead</h3>
+<p>While the current history server is in beta and provides a robust post-mortem debugging service, there are still enhancements designed to further simplify operations and expand observability.</p>
+<ul><li>Automated collector sidecar injection - to make adoption easier, future versions will introduce stable, automated collector injection within the KubeRay operator. Users will be able to enable telemetry collection declaratively within the <code>RayCluster</code> spec. An early version is already available behind the <code>RayClusterHistoryServer</code> feature gate via <a href="https://github.com/ray-project/kuberay/blob/bf50aa1353295188ae9335bc0e9911dbe0754535/ray-operator/apis/ray/v1/raycluster_types.go#L274"><code>HistoryServerOptions</code></a>.</li><li>Expand metrics and metrics replay - Post mortem debugging often requires inspecting system metrics along tasks, and we aim to include native support for historical metrics timelines by capturing GPU/CPU utilization, memory pressure, and actor throughput.</li></ul>
+<h3>LinkTry it Today</h3>
+<p>Ready to bring post-mortem observability to your Ray workloads on Kubernetes? Check out the <a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/kuberay-history-server.html">Ray History Server documentation</a> to set up the collector and history server in your Kubernetes cluster!</p>
+<p>Have any questions or need assistance? Feel free to open an issue on the <a href="https://github.com/ray-project/kuberay">GitHub Repository</a>. We welcome your feedback, feature requests, and contributions! You can also <a href="https://www.ray.io/join-slack">join the Ray Slack</a> and ask questions in the <code>#ray-history-server</code> channel.</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/ray-history-server#ray-history-server">Ray History Server</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#cluster-selection-page">Cluster Selection Page</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#architecture-overview">Architecture Overview</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#performance-&amp;-sizing-benchmarks">Performance &amp; Sizing Benchmarks</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#future-roadmap-&amp;-looking-ahead">Future Roadmap &amp; Looking Ahead</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#try-it-today">Try it Today</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
+<p>Read more</p>
+<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
+<p>Read more</p>
+<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
 <p>Read more</p>
 <h2>Explore Anyscale today</h2>
 <p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
@@ -3720,220 +3727,6 @@ def train_loop_per_worker(config: dict):
 <p>Serve continues to bridge the gap between model development and production with a focus on keeping systems Pythonic, composable, and scalable by default.</p>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing#why-flexibility-matters">Why Flexibility Matters</a></li><li><a href="https://www.anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing#async-inference:-handle-long-running-workloads-safely">Async Inference: Handle Long-Running Workloads Safely</a></li><li><a href="https://www.anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing#custom-request-routing:-programmable-traffic-control">Custom Request Routing: Programmable Traffic Control</a></li><li><a href="https://www.anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing#custom-autoscaling:-scale-what-matters">Custom Autoscaling: Scale What Matters</a></li><li><a href="https://www.anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing#external-scaling:-bring-your-own-logic">External Scaling: Bring Your Own Logic</a></li><li><a href="https://www.anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing#putting-it-all-together">Putting It All Together</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<p>Read more</p>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<p>Read more</p>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<p>Read more</p>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Announcing Ray Direct Transport: RDMA Support in Ray Core (P…</title>
-      <link>https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core?li=1</guid>
-      <pubDate>Mon, 03 Nov 2025 00:00:00 +0000</pubDate>
-      <description>Full title: Announcing Ray Direct Transport: RDMA Support in Ray Core (Part 1)</description>
-      <content:encoded><![CDATA[<p>Home</p>
-<p>Blog</p>
-<p>Blog Detail</p>
-<h1>Announcing Ray Direct Transport: RDMA Support in Ray Core (Part 1)</h1>
-<p>By</p>
-<p>Stephanie Wang</p>
-<p>,</p>
-<p>Qiaolin Yu</p>
-<p>,</p>
-<p>Dhyey Shah</p>
-<p>,</p>
-<p>Ricardo Decal</p>
-<p>and</p>
-<p>Richard Liaw</p>
-<p>|</p>
-<p>November 3, 2025</p>
-<p><em>Tl;dr: Ray Direct Transport enables fast and direct GPU transfers in Ray via RDMA-backed transports. Learn how to use the API to build distributed systems for use cases such as RL for LLMs.</em></p>
-<p>Ray has seen a mass increase of adoption for reinforcement learning (RL) for LLMs due to the need to <strong>flexibly orchestrate distributed GPUs</strong>. Ray provides an API for distributed orchestration, allowing RL infrastructure builders to compose training and inference engines; implementing different placement and scheduling strategies; and transferring rollout data and weights between different frameworks and tools.</p>
-<p>While Ray’s API simplifies orchestration, a lot of RL workloads require the <strong>efficient handling and transfer of large tensors between GPUs</strong>, which isn’t well supported by Ray’s CPU-based object store. Ray’s object store provides high-bandwidth shared reads for objects that reside on CPU memory, but it can’t take advantage of high performance transports like Infiniband and NVLink that move data directly from GPU to GPU.</p>
-<p>Today, we are introducing <strong>Ray Direct Transport (RDT)</strong>, a new feature in Ray Core that allows users to easily leverage high-bandwidth inter-GPU communication mechanisms such as NVLink or RDMA (Remote Direct Memory Access) over Infiniband. Using RDT, we can achieve up to<strong> 1000x faster GPU-GPU transfers</strong> than Ray’s native object store with a few lines of code change.</p>
-<p>Ray Direct Transport - Figure 1</p>
-<p>To show how this works, we’ll introduce the system requirements for RL for LLMs and show how to use RDT APIs to build a simple script for RL training that can fit on one GPU. We’ll use RDT to manage the data transfer between workers, and we’ll show how you can swap out the communication backend between libraries like <a href="https://developer.nvidia.com/nccl">NCCL</a> and <a href="https://github.com/ai-dynamo/nixl/blob/main/README.md">NIXL</a>.</p>
-<p>You can try out RDT today with <a href="https://github.com/ray-project/ray/releases/tag/ray-2.51.1">Ray 2.51.1</a>. Start here at the <a href="https://docs.ray.io/en/latest/ray-core/direct-transport.html">docs</a>.</p>
-<h2>LinkSystem requirements for RL for LLMs</h2>
-<p>RL for LLMs have a unique set of system requirements compared to other workloads.</p>
-<p>Ray Direct Transport - Figure 2</p>
-<p>In particular, there are two communication-heavy steps within an RL training loop:</p>
-<ul><li><em>Weights synchronization</em> from training to inference frameworks. In each training step, new model weights are generated, and the framework needs to send the updated weights to each inference engine replica. For large models and clusters, this can require 100s of GBs to TBs of data transfer.</li><li><em>Transfers of rollout data</em> from inference to training. While text-only models generate relatively small amounts of data, this can become a performance problem for multimodal models.</li></ul>
-<p>We built RDT to support efficient data transfer of<strong> large objects via specialized data transports</strong>, especially those that use RDMA to reduce software overheads<strong>:</strong></p>
-<ul><li><em>Large objects: </em>As models increase in size, the amount of data transfer needed per training step rapidly increases. Reducing software overheads like unnecessary data copies or serialization is therefore critical.</li><li><em>Specialized data transports</em>: Modern GPUs often come packaged with high-bandwidth interconnects like NVIDIA’s NVLink that can speed up data transfers significantly. Meanwhile, the fastest data transport can vary for each cluster. Users should be able to easily select and efficiently utilize the available transports on each node.</li></ul>
-<p>RDT supports these use cases by letting you specify data dependencies between actor tasks using the standard Ray API, but allowing you to choose what transport to use for the data transfer. Currently, RDT supports <a href="https://github.com/pytorch/gloo">Gloo</a> and NVIDIA’s <a href="https://developer.nvidia.com/nccl">NCCL</a> and <a href="https://github.com/ai-dynamo/nixl/blob/main/README.md">NIXL</a> libraries; future releases will support other transports such as CUDA IPC and make the transport pluggable so that you can bring your own transport.</p>
-<h2>LinkDiving into Ray Direct Transport</h2>
-<p>First let’s get an idea of how the API works. We’ll build off of the <a href="https://docs.ray.io/en/latest/ray-core/key-concepts.html">Ray Core API</a> but add annotations for RDT-enabled objects.</p>
-<p>Figure: Architecture diagram for Ray Direct Transport. Actor tasks can return and load GPU tensors. Actors bypass the Ray object store and exchange data directly using a third-party RDMA-backed transport like NVIDIA’s NCCL. The driver holds the RDT object metadata and coordinates the transfer.</p>
-<p>Ray direct Transport - Figure 3</p>
-<p><strong>Note:</strong> As of Ray v2.50, RDT is only available for Ray actors and only <code>torch.Tensor</code> data will be transferred via the RDT transport. If <code>torch.Tensors</code> are nested inside of a Ray object, e.g., if an actor produces a list of <code>torch.Tensors</code>, then the non-<code>torch.Tensor</code> data will still be transferred via the Ray object store.</p>
-<p>To get started, define an actor class and a task that returns a <code>torch.Tensor</code>:</p>
-<pre><code>1import torch
-2import ray
-3
-4@ray.remote
-5class MyActor:
-6    def random_tensor(self):
-7        return torch.randn(1000, 1000)</code></pre>
-<p>Next, decorate the actor task with <code>@ray.method(tensor_transport=transport_mode)</code>, where transport mode can be one of “nccl”, “nixl”, “gloo”, or “object_store”. We’ll use <a href="https://github.com/ai-dynamo/nixl">NIXL</a> for this example, which supports GPU-GPU and CPU-CPU transfers.</p>
-<pre><code>1@ray.remote
-2class MyActor:
-3    @ray.method(tensor_transport=&quot;nixl&quot;)
-4    def random_tensor(self):
-5        return torch.randn(1000, 1000)</code></pre>
-<p>This decorator can be added to any actor tasks that return a <code>torch.Tensor</code>, or that return <code>torch.Tensors</code> nested inside other Python objects. Adding this decorator will change Ray’s behavior in the following ways:</p>
-<ul><li>When returning the tensor, Ray will store a <em>reference</em> to the tensor instead of copying it to the CPU-based Ray object store.</li><li>When the <code>ray.ObjectRef</code> is passed to another task, Ray will use NIXL to transfer the tensor to the destination task.</li></ul>
-<p>Note that for (2) to work, the<a href="https://docs.ray.io/en/latest/ray-core/api/doc/ray.method.html#ray.method"> <code>@ray.method(tensor_transport)</code></a> decorator only needs to be added to the actor task that <em>returns</em> the tensor. It should not be added to actor tasks that <em>consume</em> the tensor (unless those tasks also return tensors). This example also assumes that both the producer and consumer of the tensor have NIXL installed. <code>pip install nixl</code> is the easiest way to install NIXL; for best performance, check out the <a href="http://github.com/ai-dynamo/nixl/tree/main/contrib">NIXL instructions</a> for building from source.</p>
-<p>Now we can create and pass RDT objects between the actors. Here is a full example:</p>
-<pre><code>1import torch
-2import ray
-3
-4@ray.remote
-5class MyActor:
-6    @ray.method(tensor_transport=&quot;nixl&quot;)
-7    def random_tensor(self):
-8        return torch.randn(1000, 1000)
-9
-10    def sum(self, tensor: torch.Tensor):
-11        return torch.sum(tensor)
-12
-13sender, receiver = MyActor.remote(), MyActor.remote()
-14
-15# The tensor will be stored by the `sender` actor instead of in Ray's object
-16# store.
-17tensor = sender.random_tensor.remote()
-18result = receiver.sum.remote(tensor)
-19print(ray.get(result))</code></pre>
-<p>When the <code>ray.ObjectRef</code> is passed to another task, Ray will use Gloo to transfer the tensor directly from the source actor to the destination actor instead of the default object store. Note that the<a href="https://docs.ray.io/en/latest/ray-core/api/doc/ray.method.html#ray.method"> <code>@ray.method(tensor_transport)</code></a> decorator is only added to the actor task that <em>returns</em> the tensor; once this hint has been added, the receiving actor task <code>receiver.sum</code> will automatically use Gloo to receive the tensor. In this example, because <code>MyActor.sum</code> does not have the<a href="https://docs.ray.io/en/latest/ray-core/api/doc/ray.method.html#ray.method"> <code>@ray.method(tensor_transport)</code></a> decorator, it will use the default Ray object store transport to return torch.sum(tensor).</p>
-<p>For more examples, including how to use <code>ray.put</code> and collective-based transports, see <a href="https://docs.ray.io/en/latest/ray-core/direct-transport.html">the docs</a>.</p>
-<p>Figure: When using</p>
-<p>ray.put</p>
-<p>, the caller takes the place of the driver and holds both the RDT object data and metadata.</p>
-<p>Ray Direct Transport - Figure 4</p>
-<h2>LinkPerformance</h2>
-<p>RDT can speed up object transfers between Ray actors significantly. Here is a benchmark showing the performance of different GPU tensor transports as a function of object size. This benchmark creates a CUDA tensor on one actor and sends it to a second actor on a different GPU on the same node. The second actor returns the sum of the tensor to the driver. We measure the end-to-end time to submit and finish the tasks on both actors, using 2 NVIDIA H100 GPUs.</p>
-<p>Ray Direct Transport - Figure 5</p>
-<p>As expected, Ray object store scales poorly with the object size due to copies between CPU and GPU, while RDT can speed up the transfers significantly by using fast inter-GPU links.</p>
-<h2>LinkRL example</h2>
-<p>Next we’ll show how to use RDT to speed up weights synchronization in a minimal RL example. In later blog posts, we’ll extend this example to apply RDT to rollout data transfer and add support for multi-GPU LLMs.</p>
-<p>Our minimal RL example mirrors the dataflow used to train LLMs using RL. In particular, we solve a toy problem using the Group Relative Policy Optimization (GRPO) algorithm. Our “environment” randomly generates a 2D direction vector, and the model has to predict which of the eight compass directions is closest to this vector:</p>
-<p>Ray Direct Transport - Figure 6</p>
-<p>GRPO is an RL algorithm that has become popular for training LLMs. It works by generating a <em>group</em> of outputs for each input, and computing the <em>advantage</em> of each output relative to the mean reward of its group. The algorithm prevents the current policy model from making predictions that are too different from previous versions of the same model to stabilize training and “catastrophic forgetting” of previous experiences.</p>
-<p>The following diagram shows the different Ray actors involved in this example along with the resources needed for each actor.</p>
-<p>Ray Direct Transport - Figure 7</p>
-<p>Each arrow moves tensors from one actor to another. RDT can be applied to any of these data transfers, but in this case we’ll just apply it to the Learner → Generator data transfer since this requires a GPU-to-GPU copy.</p>
-<p>Here are the steps for the application in detail:</p>
-<ul><li>[CPU] The “environment” generates random 2D vectors.</li><li>[GPU] The <em>Generator</em> policy predicts which of the 8 compass directions is closest to the input vector: W, NW, N, NE, E, SE, S, or SW.</li><li>[CPU] The <em>Scorer</em> computes rewards analytically using cosine similarity.</li><li>[CPU] The scored slices are added to the <em>ReplayBuffer</em>. The ReplayBuffer allows the model to learn from past experiences.</li><li>[GPU] The <em>Learner</em> model samples from the replay buffer and uses the GRPO algorithm to update its weights.</li><li>[GPU] The <em>Learner</em> sends the updated weights to the <em>Generator</em>, completing one training step.</li></ul>
-<p>For brevity, we just show the key parts of the training script in the post. The full training code is available <a href="https://github.com/ray-project/ray/blob/c4f0c24210f26df9700daddf1f02a7302ae82488/doc/source/ray-core/examples/rdt/grpo_contextual_bandits.py">here</a>.</p>
-<p>At each training step, the environment randomly samples a batch of 2D unit vectors. These state vectors are the inputs to the Generator actor. The policy model takes these 2D states as input and outputs logits over the eight possible actions.</p>
-<pre><code>1# The number of actions to sample for each state.
-2GROUP_SIZE = 10
-3
-4@ray.remote(num_gpus=1)
-5class Generator:
-6    def __init__(self, scorer): ...
-7
-8    def generate(self, states: torch.Tensor):
-9        # states are randomly sampled unit vectors.
-10        logits = self.model(states.cuda())
-11        dist = Categorical(logits=logits)
-12        actions = dist.sample((GROUP_SIZE,))
-13        logps = dist.log_prob(actions)
-14        # Move tensors to CPU and send to the Scorer.
-15        slice_batch = {
-16            &quot;policy_version&quot;: self.policy_version,
-17            &quot;state&quot;: states.detach().cpu(),
-18            &quot;actions&quot;: actions.transpose(0, 1).contiguous().detach().cpu(),
-19            &quot;old_logps&quot;: logps.transpose(0, 1).contiguous().detach().cpu(),
-20            }
-21        self.scorer.enqueue_trajectory_batch.remote(slice_batch)
-22
-23    def update_weights(self, cuda_weights):
-24        # Recieve CUDA tensors from the Learner and update the model.
-25        self.model.load_state_dict(cuda_weights).eval()
-26        self.policy_version += 1</code></pre>
-<p>The Scorer actor receives the dictionary of CPU tensors from the Generator and computes the rewards using the dot product of action versus the original state vector. Then, the Scorer sends the scored trajectories to the ReplayBuffer actor (using the default Ray object store).</p>
-<pre><code>1@ray.remote(num_gpus=1)
-2class Scorer:
-3    def __init__(self, replay_buffer):
-4        self.replay_buffer = replay_buffer
-5
-6    def enqueue_trajectory_batch(self, batched_slices: dict):
-7        rewards = ...  # Score trajectories and send to ReplayBuffer.
-8        self.replay_buffer.put.remote(dict(policy_version=policy_version,
-9                state=batched_slices[&quot;state&quot;],
-10                actions=batched_slices[&quot;actions&quot;],
-11                old_logps=batched_slices[&quot;old_logps&quot;],
-12                rewards=rewards
-13        ))
-14</code></pre>
-<p>The Replay buffer actor stores scored slices in its local heap memory and exposes another method to allow the Learner to sample from the buffer.</p>
-<pre><code>1@ray.remote
-2class ReplayBuffer:
-3    def __init__(self): 
-4        self.storage = []
-5
-6    def put(self, slice: dict[str, torch.Tensor]):
-7        self.storage.append(slice)
-8
-9    def sample_from(self, n: int) -&gt; list[dict[str, torch.Tensor]]: ...
-10</code></pre>
-<p>The Learner actor samples from the ReplayBuffer as well as the current policy in order to do a GRPO-style weight update:</p>
-<pre><code>1@ray.remote(num_gpus=1)
-2class Learner:
-3    def __init__(self, replay_buffer): ...
-4    def step(self):
-5        # Sample from ReplayBuffer
-6        slices: list[TrajectorySlice] = ray.get(
-7          self.replay_buffer.sample_from.remote(BATCH_SIZE)
-8        )
-9        # Perform GRPO update.
-10        ...
-11</code></pre>
-<p>Finally, we expose a method on Learner to get the current model weights, which we’ll use to synchronize weights with the Generator.</p>
-<pre><code>1@ray.remote(num_gpus=1)
-2class Learner:
-3    @ray.method(tensor_transport=&quot;nixl&quot;)
-4    def get_weights(self):
-5        return self.model.state_dict()</code></pre>
-<p>Note that here, we add the <code>@ray.method(tensor_transport=”nixl”)</code> decorator to use RDT for the weights transfer. Under the hood, this uses a one-sided RDMA read via the <a href="https://openucx.org/">UCX library</a> to bypass CPU memory. Without this decorator, Ray would transfer weights through the Ray object store.</p>
-<p>Now, putting it all together, we implement a Ray driver program to execute a “one step off policy” asynchronous training loop, which launches generation on the current weights in parallel with the next Learner step. After each Learner update, we synchronize the weights back to the Generator to ensure that generation is at most one policy version behind.</p>
-<pre><code>1# Instantiate one instance of each actor.
-2replay_buf = ReplayBuffer.remote()
-3learner = Learner.remote(replay_buf)
-4scorer = Scorer.remote(replay_buf)
-5generator = Generator.remote(scorer)
-6
-7# Initialize the generator and replay buffer.
-8generator.update_weights.remote(learner.get_weights.remote()
-9generator.generate.remote(sample_unit_vector(BATCH_SIZE))
-10# Training loop.
-11for i in range(total_steps):
-12    states = sample_unit_vector(batch_size=BATCH_SIZE)
-13    generator.generate.remote(states)
-14    # Launch the next learner step in parallel with generation.
-15    learner.step.remote()
-16    # Update the generator with new weights.
-17    ray.get(generator.update_weights.remote(learner.get_weights.remote()))
-18</code></pre>
-<p>Here, we rely on Ray’s <a href="https://docs.ray.io/en/latest/ray-core/actors/task-orders.html">actor task ordering</a> to ensure that the generator correctly alternates between updating weights and generation. For simplicity, we use <code>ray.get</code> to block on the Generator.update_weights task to ensure that the Generator has received the full weights from the Learner before the Learner starts its next step; otherwise, the Generator could receive partially updated weights. See the full training code <a href="https://github.com/ray-project/ray/blob/c4f0c24210f26df9700daddf1f02a7302ae82488/doc/source/ray-core/examples/rdt/grpo_contextual_bandits.py">here</a> for an alternative method that avoids blocking calls on the driver.</p>
-<p>On an NVIDIA B200 node, each step takes ~188ms when using the default Ray object store to complete the weights transfer. Adding the <code>@ray.method(tensor_transport=&quot;nixl&quot;)</code> decorator reduces each step’s run time to 81ms, a <strong>2.3x improvement with one line of code change</strong>!</p>
-<h2>LinkWhat’s next</h2>
-<p>RDT is in alpha and we are actively looking for feedback! Ongoing features include performance enhancements, support for alternative tensor transports such as CUDA IPC, and support for bringing your own transport. Our goal is to achieve near parity with the Ray Core API, but for the moment, there are some key limitations to be aware of:</p>
-<ul><li>Support for Ray actors only. Non-actor Ray tasks are not supported.</li><li>Not yet compatible with<a href="https://docs.python.org/3/library/asyncio.html"> asyncio</a>. Follow the<a href="https://github.com/ray-project/ray/issues/56398"> tracking issue</a> for updates.</li><li>RDT objects are <em>mutable</em>. This means that Ray only holds a reference to the tensor, and will not copy the value until a transfer is requested. If user code writes to the tensor before the transfer happens, the receiver may see a partial update. This is different from the Ray object store, which always copies data by value to ensure immutability.</li></ul>
-<p>Check out <a href="https://docs.ray.io/en/latest/ray-core/direct-transport.html">the docs</a> for more info on usage, file <a href="https://github.com/ray-project/ray/issues">an issue</a> for bug reports or feedback, and meet us at <a href="https://www.anyscale.com/ray-summit/2025">Ray Summit</a>! In part 2 of this blog series, we’ll expand upon our example to demonstrate RDT for rollout data transfer and RL training for multi-GPU LLMs.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core#system-requirements-for-rl-for-llms">System requirements for RL for LLMs</a></li><li><a href="https://www.anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core#diving-into-ray-direct-transport">Diving into Ray Direct Transport</a></li><li><a href="https://www.anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core#performance">Performance</a></li><li><a href="https://www.anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core#rl-example">RL example</a></li><li><a href="https://www.anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core#what’s-next">What’s next</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>
