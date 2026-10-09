@@ -7821,6 +7821,44 @@ class TestFulltextLedgerFetch(unittest.TestCase):
                 "en_status": "fetch_failed"}}
             self.assertTrue(any("编造" in e or "非空" in e for e in ft.validate_bodies(Path(d), b)))
 
+    def test_refuses_whole_page_on_shared_changelog_page(self):
+        """带 fragment 的条目 + 同页还有其他条目 + 切不出「这一条」→ 记 index_page。
+
+        回归的是重抓那次实测：streamlake 3 行各存了同一份 7,100 字整页，把上一轮的
+        清理原地撤销。产物侧的守卫（`duplicate_body_groups`）只能事后报红，写入侧
+        必须自己拒收。
+        """
+        page = ("<article><h1>Release notes</h1><p>"
+                + "The changelog page describing everything. " * 30 + "</p></article>")
+
+        def fetch(u, *a, **kw):
+            return (page, True, 200, u)
+
+        rows = [{"vendor": "openai", "url": "https://a.test/log#e1", "title": "Entry one",
+                 "date": "", "original_title": "Entry one"},
+                {"vendor": "openai", "url": "https://a.test/log#e2", "title": "Entry two",
+                 "date": "", "original_title": "Entry two"}]
+        with tempfile.TemporaryDirectory() as d:
+            bodies = {}
+            ft.fetch_bodies(Path(d), rows, bodies, fetch=fetch, today="2026-10-09")
+            for r in rows:
+                e = bodies[ft.bodies_key("openai", r["url"])]
+                self.assertEqual(e["en_status"], "index_page",
+                                 "切不出「这一条」就不许把整页当正文写下来")
+                rel = e.get("en_path")
+                if rel:
+                    self.assertFalse((Path(d) / rel).is_file()
+                                     and (ft.read_body_doc(Path(d) / rel)[1] or "").strip(),
+                                     "index_page 的行不许留着非空正文")
+
+        # 反面对照：这一页只有这一个条目时，整页**就是**这一条，照旧收
+        with tempfile.TemporaryDirectory() as d:
+            bodies = {}
+            ft.fetch_bodies(Path(d), rows[:1], bodies, fetch=fetch, today="2026-10-09")
+            e = bodies[ft.bodies_key("openai", rows[0]["url"])]
+            self.assertEqual(e["en_status"], "ok", "单条页不该被这条规则误伤")
+            self.assertTrue((Path(d) / e["en_path"]).is_file())
+
     def test_fetch_bodies_writes_ok_and_updates_ledger(self):
         with tempfile.TemporaryDirectory() as d:
             rows = [{"vendor": "openai", "url": "https://a.com/p", "title": "T",

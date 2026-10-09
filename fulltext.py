@@ -957,6 +957,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # 整页本身就是个目录，先判会把其中 N 条真条目统统判成 index_page、正文留空
         # （实测 MiniMax 发布说明 21 条条目因此共用一份整页正文）。
         frag = anchor_fragment(url)
+        shrank = True
         if en_status == "ok" and frag:
             sliced = _slice_anchor_section(
                 ex["markdown"], frag, r.get("title") or "",
@@ -966,6 +967,15 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                 # 整页的 <title> 是页面级的（「模型发布 - MiniMax 开放平台文档中心」），
                 # 切片后用它会让每篇正文都顶着同一个标题；条目自己的标题在索引里。
                 ex["title"] = r.get("title") or ex["title"]
+            else:
+                shrank = False
+        # 拒收整页：条目 URL 带 fragment、这一页在索引里**还有别的条目**，而切片没能
+        # 缩小正文 —— 说明我们拿到的是整页而不是「这一条」。存下来就是 N 行共用一份
+        # 整页（实测重抓 streamlake 时 3 行各存了同一份 7,100 字整页，把上一轮清理
+        # 直接撤销掉）。宁可不给正文，也不给一份冒充条目的整页。
+        if (en_status == "ok" and frag and not shrank
+                and len(siblings_by_base.get((vendor, url.split("#", 1)[0]), ())) > 1):
+            en_status = "index_page"
         # 链接目录页（blog index / 聚合列表）不是文章：置 index_page、正文留空、不入待译
         if en_status == "ok" and detect_index_page(ex["markdown"]):
             en_status = "index_page"
