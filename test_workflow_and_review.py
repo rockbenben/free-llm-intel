@@ -7567,6 +7567,88 @@ class TestFulltextExtractor(unittest.TestCase):
         self.assertIn("| --- | --- |", md)
         self.assertIn("| jina-vlm | 72.3 |", md)
 
+    # --- 公式排版（KaTeX / MathML）：逐字 span 不该被拆成「一个字一段」----------
+    # 实测根因：`_blocks` 对「只含行内元素的容器」继续下钻，把每个文本子节点当独立块，
+    # 于是 poolside/modular/minimax 的公式在语料里变成 212/285/389 个单字符行。
+
+    BS = chr(92)          # 反斜杠自己拼，别让编辑工具吃掉
+
+    def _katex(self, tex, glyphs):
+        """一个 KaTeX 显示公式的 DOM：MathML(带 TeX 源) + aria-hidden 的逐字 HTML。"""
+        spans = "".join('<span class="mord mathnormal">%s</span>' % g for g in glyphs)
+        return ('<span class="katex-display"><span class="katex">'
+                '<span class="katex-mathml"><math>'
+                '<semantics><mrow>%s</mrow>'
+                '<annotation encoding="application/x-tex">%s</annotation></semantics>'
+                '</math></span>'
+                '<span class="katex-html" aria-hidden="true"><span class="base">%s</span></span>'
+                '</span></span>') % (spans, tex, spans)
+
+    def _page(self, middle):
+        prose = "<p>" + "这段正文用来把密度撑起来，确保主块判定选中它。" * 6 + "</p>"
+        # 外面套一层 <main>：真实页面就是 main 包 article，主块选中 main 时，
+        # 「子树里有 math 就算公式容器」会把整篇正文当成一个公式吃掉（实测犯过）
+        html = ("<html><body><main><article><h1>公式与正文</h1>" + prose + middle + prose
+                + "</article></main></body></html>")
+        return ft.extract_article_markdown(html, "https://x.test/p")["markdown"]
+
+    def _prose_survives(self, md):
+        self.assertEqual(sum(1 for l in md.split("\n") if l.startswith("这段正文")), 2,
+                         "公式两侧的正文要各自成段（整篇塌成一行就是判据吃正文）")
+        self.assertIn("# 公式与正文", md)
+
+    def test_display_math_is_one_tex_line_not_glyph_per_line(self):
+        md = self._page(self._katex("V_{%sell}" % self.BS, "Vl"))
+        self._prose_survives(md)
+        self.assertIn("$V_{%sell}$" % self.BS, md, "TeX 源要成为公式表示")
+        self.assertEqual([l for l in md.split("\n") if len(l.strip()) == 1], [],
+                         "一个字一行的碎片必须消失")
+        self.assertEqual(md.count("V_{"), 1, "同一公式只能留一份")
+        self.assertNotIn(">V<", md)
+
+    def test_inline_math_stays_inside_its_sentence(self):
+        md = self._page('<p>其中 %s 表示第 3 层的激活值，句子不该被劈开。</p>'
+                        % self._katex("a_{%si}" % self.BS, "ai"))
+        self._prose_survives(md)
+        line = [l for l in md.split("\n") if "表示第" in l]
+        self.assertEqual(len(line), 1, "行内公式要和句子在同一行")
+        self.assertIn("其中 $a_{%si}$ 表示" % self.BS, line[0])
+
+    def test_mathml_without_tex_source_keeps_one_line_not_one_glyph(self):
+        # 兜底档：拿不到 TeX 源时，退化成「整块一行文本」，宁可少语义也不制造碎片
+        md = self._page('<div class="formula"><math><mrow><mi>Q</mi><mi>K</mi>'
+                        '<mo>=</mo></mrow></math></div>')
+        self._prose_survives(md)
+        self.assertEqual([l for l in md.split("\n") if len(l.strip()) == 1], [],
+                         "没有 TeX 源也要收成一行")
+        self.assertIn("QK=", md.replace(" ", ""))
+
+    def test_plain_inline_spans_still_join_into_one_paragraph(self):
+        # 诱饵：普通行内 span（不是公式）本来就该是一行，改动不许把它拆成多块
+        md = self._page('<p>品牌 <span class="x">OpenAI</span> 与 <span class="y">Anthropic</span>'
+                        ' 的差别在于本句的长度与结构。</p>')
+        self.assertIn("品牌 OpenAI 与 Anthropic 的差别在于本句的长度与结构。", md)
+
+    def test_per_char_span_soup_without_math_also_collapses(self):
+        # 「纯行内容器收成一行」这条闸的独立证人：不带 <math> 的逐字排版
+        # （打字机/分字动画），去掉这道闸就退回一个字一段
+        spans = "".join('<span class="ch">%s</span>' % c for c in "Bingo")
+        md = self._page('<div class="anim">%s</div>' % spans)
+        self._prose_survives(md)
+        self.assertIn("Bingo", md)
+        self.assertEqual([l for l in md.split("\n") if len(l.strip()) == 1], [],
+                         "逐字 span 不该各成一段")
+
+    def test_sibling_div_paragraphs_stay_separate(self):
+        # 反向诱饵：容器里真有块级子元素时不许整块并成一行——「收成一行」判据放宽
+        # 过头（什么都算行内）就会把两段独立段落粘成一段
+        long1 = "第一段讲的是激活值卸载的判定条件，长度要够长才算一段真正文。" * 3
+        long2 = "第二段讲的是 C2C 带宽实测出来的结论，同样要够长才算一段真正文。" * 3
+        md = self._page('<div><div>%s</div><div>%s</div></div>' % (long1, long2))
+        self.assertIn(long1, md.split("\n"))
+        self.assertIn(long2, md.split("\n"))
+        self.assertNotIn(long1 + long2, md, "两段不许粘成一行")
+
 
 class TestFulltextLang(unittest.TestCase):
     """源语言判定与「中文原生页不进 .en.md」的重分类。"""

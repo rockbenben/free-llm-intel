@@ -584,6 +584,11 @@ def _inline(node) -> str:
             continue
         if ch.skip:
             continue
+        if _is_math_container(ch):
+            # 句内公式同样只取一份表示，否则 `_inline` 会把 MathML 字形与
+            # aria-hidden 的逐字 HTML 都拼进句子
+            parts.append(_math_md(ch))
+            continue
         inner = _inline(ch)
         if ch.tag in ("strong", "b"):
             parts.append(f"**{inner}**" if inner.strip() else inner)
@@ -627,6 +632,56 @@ def _table_to_md(tbl) -> str:
     return "\n".join(lines)
 
 
+#: 公式排版容器的类名：KaTeX 是 `.katex` / `.katex-display`，MathJax 是 `mjx-container`。
+#: 只认这三类**加上 `<math>` 本身**——判据宽一寸就吃正文：曾经写成「子树里有 `<math>`
+#: 就算公式容器」，于是包着整篇文章的 `<article>` 也被当成一个公式，整篇正文塌成一行 TeX。
+_MATH_CLASS_RE = re.compile(r"(?:^|[\s-])(katex|katex-display|mjx-container)(?:$|[\s-])")
+
+
+def _is_math_container(node) -> bool:
+    """公式排版容器：`<math>` 本身，或 KaTeX/MathJax 的那层 wrapper。
+
+    这类 DOM 是「一个符号一个 span」的排版结构，逐字下去就变成一个字一段——
+    实测 poolside/modular/minimax 三页 212/285/389 个单字符行就是这么来的。
+    """
+    if node.tag == "math":
+        return True
+    return bool(_MATH_CLASS_RE.search(node.attrs.get("class") or ""))
+
+
+def _math_md(node) -> str:
+    """公式容器 → **一份**文本表示。
+
+    KaTeX 与 MathJax 都把原文放在 `<annotation encoding="application/x-tex">` 里，
+    优先取它包成 `$TeX$`（信息最全，也是 markdown 的数学惯例）。取不到就退化成
+    「只读 `<math>` 那一棵子树、压成一行」——同一公式在 KaTeX 里有三份表示
+    （MathML 字形、TeX 源、`aria-hidden` 的逐字 HTML），只取一份才不会重复三遍。
+    一个容器里有多条公式时逐条都收，不丢。
+    """
+    texes = [_text_of(n).strip() for n in _iter_nodes(node)
+             if n.tag == "annotation" and "x-tex" in (n.attrs.get("encoding") or "")]
+    texes = [t for t in texes if t]
+    if texes:
+        return " ".join("$%s$" % t for t in texes)
+    maths = [node] if node.tag == "math" else [c for c in _iter_nodes(node) if c.tag == "math"]
+    return re.sub(r"\s+", " ", "".join(_text_of(m) for m in maths)).strip()
+
+
+#: 结构上算「块」的标签：容器里有它们就说明里面是真·多段结构，不能整块并成一行。
+#: 复用 `_BLOCK_TAGS` 再补上布局类标签；`_BLOCK_TAGS` 单独用不够——`<table>`/`<ul>`
+#: 里的 `<p>` 之外还有 `<tr>`，只认 p 会把表格判成「纯行内」。
+_STRUCT_BLOCK_TAGS = _BLOCK_TAGS | {"div", "section", "article", "main", "aside", "table",
+                                    "thead", "tbody", "tfoot", "tr", "td", "th", "ul", "ol",
+                                    "figure", "figcaption", "hr", "dl", "dd", "dt"}
+
+
+def _has_struct_block(node) -> bool:
+    for c in _iter_nodes(node):
+        if c.tag in _STRUCT_BLOCK_TAGS:
+            return True
+    return False
+
+
 def _blocks(node, out: list) -> None:
     for ch in node.children:
         if isinstance(ch, str):
@@ -665,6 +720,15 @@ def _blocks(node, out: list) -> None:
             t = _text_of(ch).strip("\n")
             if t.strip():
                 out.append(f"```\n{t}\n```")
+        elif _is_math_container(ch):
+            t = _math_md(ch)
+            if t:
+                out.append(t)
+        elif not _has_struct_block(ch):
+            # 纯行内容器（一层层 span 的排版结构）整块收成一行，不再逐字成段
+            t = _inline(ch).strip()
+            if t:
+                out.append(t)
         elif ch.tag in ("div", "section", "article", "main", "figure", "span"):
             _blocks(ch, out)
         else:
