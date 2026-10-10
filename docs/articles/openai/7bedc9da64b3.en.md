@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fb67e3bf32f1
+body_sha: 093b50cdd3fb
 ---
-
 
 June 1, 2025
 
@@ -51,5 +50,3 @@ Using the IO impact [Breakout Scale](https://www.brookings.edu/articles/the-brea
 
 
 ## Author
-
-OpenAI

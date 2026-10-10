@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: c8761a357e8b
+body_sha: 6bc4dba764ef
 ---
-
 
 2026年4月14日
 
@@ -65,5 +64,3 @@ AI 的演进正为防御者（即守护系统、数据与用户安全的专业�
 - [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
-
-OpenAI

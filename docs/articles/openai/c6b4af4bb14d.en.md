@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9e9ca81e1c58
+body_sha: 05be94ba4d94
 ---
-
 
 July 17, 2025
 
@@ -62,5 +61,3 @@ This initiative reflects our commitment to ensuring that the benefits of AI are 
 - [2025](https://openai.com/news/?tags=2025)
 
 ## Author
-
-OpenAI

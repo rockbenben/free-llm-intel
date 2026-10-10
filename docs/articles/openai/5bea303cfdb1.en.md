@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5cdc7bd3afb0
+body_sha: 3824e7048a73
 ---
-
 
 2025年11月12日
 
@@ -348,5 +347,3 @@ GPT‑5.1 更强大，也更实用，我们鼓励你亲自体验，感受不同�
 
 
 ## 作者
-
-OpenAI

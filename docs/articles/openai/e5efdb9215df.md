@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 7a1370e3d0d1
+body_sha: f49e4178a164
 ---
-
 
 2024年5月1日
 
@@ -74,5 +73,3 @@ OpenAI 封禁了与源自俄罗斯的“替身行动”有关的账号。该行�
 
 
 ## 作者
-
-OpenAI

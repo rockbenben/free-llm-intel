@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 8b79828eee48
+body_sha: 6f78728d663d
 ---
-
 
 2026年7月30日
 
@@ -92,5 +91,3 @@ GPT‑5.6 Sol 的快速模式将在 API 中取代“优先处理”，并与 Cod
 - [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
-
-OpenAI

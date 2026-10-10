@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b147a27d020f
+body_sha: 734ede77a092
 ---
-
 
 October 8, 2024
 
@@ -38,5 +37,3 @@ Hearst’s other businesses outside of magazines and newspapers are not included
 
 
 ## Author
-
-OpenAI

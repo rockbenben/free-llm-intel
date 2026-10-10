@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 5de3c34d91e5
+body_sha: 2dbb389002dd
 ---
-
 
 2025年2月20日
 
@@ -89,5 +88,3 @@ Uber 人工智能与产品、客户体验总监 Jai Malkani
 *Uber 在多个部门广泛应用 ChatGPT Enterprise，包括营销、数据科学、产品和工程。此外，OpenAI 为 Uber 的人工智能助手提供支持，为合作车主提供信息、支持，及其客户服务平台，从而优化了出行、配送等场景的服务流程。*
 
 ## 作者
-
-OpenAI

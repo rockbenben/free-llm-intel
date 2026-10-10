@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 93c1db792ba1
+body_sha: 4efcb7d4537b
 translator: agent
 ---
-
 
 October 30, 2025
 
@@ -36,5 +35,3 @@ Stargate 密歇根园区由 [Related Digital](https://www.related-digital.com/ne
 
 
 ## 作者
-
-OpenAI

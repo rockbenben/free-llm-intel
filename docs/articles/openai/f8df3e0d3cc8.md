@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: cff10aca0c8c
+body_sha: c49a4be7d18b
 ---
-
 
 2026年7月15日
 
@@ -111,5 +110,3 @@ AI 智能体已被用于提升我们下一代模型的性能。我们相信，�
 
 
 ## 作者
-
-OpenAI

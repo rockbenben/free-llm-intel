@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 0bb8d9ae5886
+body_sha: 83a850b44a54
 ---
-
 
 2026年9月8日
 
@@ -77,7 +76,6 @@ Newmark 新闻学院和 Medill 新闻学院新设的 Tow-Knight 中心与 Knight
 
 ## 作者
 
-OpenAI
 
 ## 脚注
 

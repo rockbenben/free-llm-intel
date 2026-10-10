@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 608928d62f41
+body_sha: 89198d2b2d9a
 ---
-
 
 2025年7月22日
 
@@ -38,5 +37,3 @@ Stargate 是一个雄心勃勃的项目，旨在把握我们面前的历史性�
 
 
 ## 作者
-
-OpenAI

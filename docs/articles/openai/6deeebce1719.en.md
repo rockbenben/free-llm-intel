@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 39c898b50c12
+body_sha: 77ba187e67d0
 ---
-
 
 2025年9月15日
 
@@ -107,5 +106,3 @@ Codex is becoming the coding partner we’ve always envisioned—one that’s fa
 
 
 ## 作者
-
-OpenAI

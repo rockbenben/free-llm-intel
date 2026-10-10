@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: fade7146eebe
+body_sha: f265b9e75038
 ---
-
 
 2026年8月28日
 
@@ -30,5 +29,3 @@ body_sha: fade7146eebe
 
 
 ## 作者
-
-OpenAI

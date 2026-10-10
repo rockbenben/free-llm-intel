@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a3f690190f57
+body_sha: 414efeb9a78c
 ---
-
 
 2025年10月1日
 
@@ -56,5 +55,3 @@ OpenAI 封禁了利用 AI 辅助恶意软件开发、调试、网络钓鱼和凭
 
 
 ## 作者
-
-OpenAI

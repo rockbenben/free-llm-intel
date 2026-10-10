@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c4e971084272
+body_sha: 1c55e4e1d3b8
 ---
 
 DeepSeek V4.1 Flash API: Speed, Latency & Cost
@@ -345,7 +345,6 @@ Feature
 
 DeepSeek (First-Party)
 
-DeepInfra
 
 Fireworks
 

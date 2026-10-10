@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: e3d667ccd610
+body_sha: 1c61910eb4c1
 ---
-
 
 May 23, 2025
 
@@ -35,5 +34,3 @@ o3 Operator 使用与 4o 版 Operator 相同的多层安全方法，我们在最
 
 
 ## 作者
-
-OpenAI

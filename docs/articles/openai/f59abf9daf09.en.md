@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a093a635b2fb
+body_sha: 92bb2f29e35d
 ---
-
 
 March 5, 2026
 
@@ -32,5 +31,3 @@ In this card we also refer to GPT‑5.4 Thinking as gpt-5.4-thinking. Note that 
 
 
 ## Author
-
-OpenAI

@@ -9240,16 +9240,36 @@ class TestPageFurnitureStrip(unittest.TestCase):
         self.assertIn("# 事件与未来之路", out)
         self.assertIn("2026年8月26日", out, "日期行是正文元信息，不在这一档删")
 
-    def test_brand_word_after_heading_is_content(self):
-        # 诱饵：同一个词出现在标题之后就是正文（实测这类还有 741 处），不许动
-        body = "\n".join(["# 对比", "", "OpenAI", "与 Anthropic 的差别。"])
+    def test_brand_wordmark_dropped_anywhere_but_never_in_prose(self):
+        # 整行只有品牌词 = 字标（实测 635 处在文末当页脚、106 处前后都空）；
+        # 但品牌词以**任何别的形状**出现都不许动——这四型就是这一档的边界
+        body = "\n".join([
+            "# 对比",
+            "",
+            "OpenAI",                                  # 孤立一行：字标，删
+            "OpenAI 与 Anthropic 的差别在于本句。",       # 句子里：留
+            "## OpenAI",                               # 标题：留
+            "| OpenAI | 12 |",                         # 表格单元格：留
+            "- OpenAI",                                # 列表项：留
+        ])
         out = ft.strip_page_furniture(body, "https://openai.com/index/x")
-        self.assertIn("OpenAI", out, "标题之后的品牌词是正文，不许删")
+        lines = [l for l in out.split("\n") if l.strip()]
+        self.assertNotIn("OpenAI", lines, "整行只有品牌词的那一行该删")
+        for keep in ("OpenAI 与 Anthropic 的差别在于本句。", "## OpenAI",
+                     "| OpenAI | 12 |", "- OpenAI"):
+            self.assertIn(keep, out, "品牌词以这种形状出现是正文，不许删")
 
     def test_brand_wordmark_needs_a_host(self):
         # 诱饵：没有 page_url 就没有「本页品牌词」这条依据，一律不删
         body = "OpenAI\n\n# 标题\n\n正文。"
         self.assertEqual(ft.strip_page_furniture(body), body)
+
+    def test_other_vendor_brand_not_dropped(self):
+        # 诱饵：品牌词按**本页 host** 判。openai.com 的页脚字标是 OpenAI；
+        # 同一判据不许把正文里提到的别家名字删掉
+        body = "# 标题\n\nAnthropic\n"
+        out = ft.strip_page_furniture(body, "https://openai.com/news/x")
+        self.assertIn("Anthropic", out.split("\n"), "别家品牌名不是本页字标")
 
     def test_separator_only_lines_dropped_but_table_structure_kept(self):
         body = "\n".join([

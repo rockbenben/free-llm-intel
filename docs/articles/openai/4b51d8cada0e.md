@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 1e9b99c22517
+body_sha: e3759ce947c2
 ---
-
 
 2026年2月26日
 
@@ -54,5 +53,3 @@ Cisco、NVIDIA、Ramp 和 Datadog 等公司正采用 Codex 赋能员工，Harvey
 
 
 ## 作者
-
-OpenAI

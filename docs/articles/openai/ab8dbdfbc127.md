@@ -8,9 +8,8 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 41100d17f8a5
+body_sha: 323bf888da20
 ---
-
 
 June 5, 2019
 
@@ -52,5 +51,3 @@ Photo: Blake Tucker
 
 
 ## 作者
-
-OpenAI

@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 9de98dcb511c
+body_sha: 994e4962d898
 ---
-
 
 2026年2月27日
 
@@ -58,5 +57,3 @@ OpenAI 与亚马逊将合作开发定制化模型，供亚马逊开发者用于�
 
 
 ## 作者
-
-OpenAI

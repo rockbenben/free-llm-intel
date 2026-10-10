@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 79c0114744ae
+body_sha: 97cc0fd95750
 ---
-
 
 2026年8月11日
 
@@ -44,5 +43,3 @@ OpenAI 与 AWS 携手帮助更多组织将先进的网络安全能力投入生�
 
 
 ## 作者
-
-OpenAI

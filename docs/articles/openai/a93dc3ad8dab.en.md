@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 565299558317
+body_sha: 2b2b699dd36e
 ---
-
 
 November 21, 2024
 
@@ -90,7 +89,6 @@ While red teaming aims to expand perspectives in service of risk discovery, veri
 
 ## Authors
 
-OpenAI
 
 ## Footnotes
 

@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: cdac2814a225
+body_sha: fae11aee643b
 ---
-
 
 2026年9月3日
 
@@ -70,5 +69,3 @@ MS-ISAC 为数千家公共部门组织提供网络威胁情报、事件响应支
 
 
 ## 作者
-
-OpenAI

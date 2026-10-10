@@ -307,9 +307,14 @@ def furniture_drops(lines, page_url: str = ""):
             drop[i] = "R2"
         elif _FURN_SEPARATOR_RE.match(s):
             drop[i] = "R6"
+        elif brand and s[0] not in "-*+>|#" and s.lower().replace(" ", "").replace("-", "") == brand:
+            # 整行只有本页品牌词 = 字标。实测 741 处「标题之后」的全是孤立行（635 处在
+            # 文末当页脚、106 处前后都空），句子里的品牌词走不到这一档（要求整行相等）。
+            # 行首必须是品牌词本身：`- OpenAI` 这类列表项的 `-` 是 markdown 结构，
+            # 而比较时会剥掉连字符，不加这道闸就会把列表项当成字标删掉（实测踩过）。
+            drop[i] = "R8"
         elif first_head is not None and i < first_head and (
-                s in _FURN_NAV_BEFORE_HEAD or _BARE_MEDIA_RE.match(s)
-                or (brand and s.lower().replace(" ", "").replace("-", "") == brand)):
+                s in _FURN_NAV_BEFORE_HEAD or _BARE_MEDIA_RE.match(s)):
             drop[i] = "R1"
     run = []
     for i, l in enumerate(lines):

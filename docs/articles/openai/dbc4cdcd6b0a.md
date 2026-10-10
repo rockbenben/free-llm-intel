@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: b0863d9c589c
+body_sha: b486a6db76d0
 ---
-
 
 2026年2月9日
 
@@ -45,5 +44,3 @@ ChatGPT 旨在支持美国军事人员的日常工作，增强战备水平并提
 这项工作体现了我们在政府合作中的一贯做法：聚焦重点、务实推进、安全优先，并立足真实使用场景。
 
 ## 作者
-
-OpenAI

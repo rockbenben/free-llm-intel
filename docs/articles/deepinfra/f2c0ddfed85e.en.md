@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7d42ed65e945
+body_sha: 7ddc9cfcfa5e
 ---
 
 GLM-5.3 API Providers: Speed, Latency & Cost
@@ -44,7 +44,6 @@ Latency (TTFT)
 
 Best Use Case
 
-DeepInfra
 
 $0.72
 

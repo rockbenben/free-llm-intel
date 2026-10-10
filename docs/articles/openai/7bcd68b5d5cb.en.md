@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6791cc2a55e0
+body_sha: 04cc506d2527
 ---
-
 
 April 8, 2026
 
@@ -59,5 +58,3 @@ At OpenAI, I feel the commitment at every level, in every function. We are whole
 - [2026](https://openai.com/news/?tags=2026)
 
 ## Author
-
-OpenAI

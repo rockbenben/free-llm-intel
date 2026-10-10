@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 314e4fc6b173
+body_sha: 42424534d0a0
 ---
-
 
 2025年11月26日
 
@@ -65,7 +64,6 @@ body_sha: 314e4fc6b173
 
 我们产品的安全与隐私至关重要，我们始终致力于保护你的信息，并在问题出现时透明沟通。感谢你一直以来对我们的信任。
 
-OpenAI
 
 **常见问题解答**
 
@@ -120,5 +118,3 @@ OpenAI
 - [2025 年](https://openai.com/news/?tags=2025)
 
 ## 作者
-
-OpenAI

@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 763768599a9c
+body_sha: e10ebde4868f
 ---
-
 
 2025年12月18日
 
@@ -33,5 +32,3 @@ GPT‑5.2‑Codex 在我们的“准备框架”下接受了评估。它在网�
 
 
 ## 作者
-
-OpenAI

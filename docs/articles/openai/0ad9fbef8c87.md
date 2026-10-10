@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 665c7d1c875b
+body_sha: c302ba91969e
 ---
-
 
 2025年12月22日
 
@@ -109,5 +108,3 @@ ChatGPT Atlas 的代理模式功能强大，但也扩大了安全威胁面。清
 - [2025 年](https://openai.com/news/?tags=2025)
 
 ## 作者
-
-OpenAI

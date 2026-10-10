@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 024cde4a86fe
+body_sha: a053dd43410f
 ---
-
 
 December 9, 2025
 
@@ -39,5 +38,3 @@ Deutsche Telekom further extends OpenAI’s work with the world’s largest and 
 
 
 ## Author
-
-OpenAI

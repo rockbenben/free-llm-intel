@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: bebf0d81db62
+body_sha: de1ec1f1a215
 ---
-
 
 2026年1月20日
 
@@ -60,5 +59,3 @@ ChatGPT 使用年龄预测模型帮助判断账户所属用户是否可能未满
 
 
 ## 作者
-
-OpenAI

@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 8a7fd9bdce7c
+body_sha: 8f529abc58b0
 ---
-
 
 2025年11月19日
 
@@ -83,7 +82,6 @@ OpenAI 也在内部应用人工智能来实现雄心勃勃的目标。其中一�
 
 ## 作者
 
-OpenAI
 
 ## 脚注
 

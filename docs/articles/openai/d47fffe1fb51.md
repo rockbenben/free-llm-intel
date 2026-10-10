@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 5515fdd3f7bf
+body_sha: 4f4deb625549
 ---
-
 
 2025年10月22日
 
@@ -51,5 +50,3 @@ OpenAI 的技术已成为英国数百万人不可或缺的工具。按 OpenAI �
 - [2025 年](https://openai.com/news/?tags=2025)
 
 ## 作者
-
-OpenAI

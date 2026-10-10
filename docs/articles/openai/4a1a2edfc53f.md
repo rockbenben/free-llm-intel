@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 9980640b4b24
+body_sha: d089fce2488d
 ---
-
 
 2026年6月14日
 
@@ -119,5 +118,3 @@ OpenAI 合作伙伴网络是我们投资这一未来的一种方式。我们正�
 
 
 ## 作者
-
-OpenAI

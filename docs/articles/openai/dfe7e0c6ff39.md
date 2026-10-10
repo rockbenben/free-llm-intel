@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: c671412ee5c8
+body_sha: 8eb816c840ab
 ---
-
 
 2026年4月23日
 
@@ -282,5 +281,3 @@ Git repo, journal, plan (Markdown files)
 - [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
-
-OpenAI

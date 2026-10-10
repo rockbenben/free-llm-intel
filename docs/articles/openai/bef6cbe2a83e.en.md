@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: cf97da86f3e0
+body_sha: da3cf94c1a8c
 ---
-
 
 September 17, 2025
 
@@ -112,5 +111,3 @@ More materials, including the paper, full sample transcripts, and a link to Apol
 
 
 ## Author
-
-OpenAI

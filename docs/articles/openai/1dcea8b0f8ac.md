@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 634c1ecd2c83
+body_sha: 68614d32b1c5
 ---
-
 
 2026年9月8日
 
@@ -134,5 +133,3 @@ GPT‑Image‑2.5 Sunburst 和 GPT‑Image‑2.5 Flare 已在 API 中提供，[�
 
 
 ## 作者
-
-OpenAI

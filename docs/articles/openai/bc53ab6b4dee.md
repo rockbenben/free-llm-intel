@@ -9,9 +9,8 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 6b475675e127
+body_sha: ede18bbc1997
 ---
-
 
 2025年9月25日
 
@@ -173,5 +172,3 @@ GDPval 尚处初级阶段。尽管已覆盖 44 类职业与数百项任务，我
 
 
 ## 作者
-
-OpenAI
