@@ -3,6 +3,23 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-10-10
+### Anthropic Claude（`anthropic`）
+- 摘要：Claude Max 订阅新增每月 $100 至 $200 API 额度，Team 订阅新增最高 $500/月共享 API 额度。
+- `promotions`：Pro 订阅 $20/月（年付 $17/月）含 Claude Code；Max 从 $100/月起；Batch 5 折、提示缓存读低至 0.1x。 → Pro 订阅 $20/月（年付 $17/月）含 Claude Code；Max 从 $100/月起，含每月 $100 至 $200 的 Claude Platform API 额度；Team 计划含最高 $500/月池化 API 额度；Batch 5 折、提示缓存读低至 0.1x。
+### Together AI（`together_ai`）
+- 摘要：平台使用门槛调整：组织首次充值最低金额由 $5 提升至 $15（后续充值最低 $5）；仍然没有免费试用赠额。
+- `free_quota`：**无免费试用 / 无赠送**：官方计费文档原文 “Together AI does not currently offer free trials. Access to the Together platform requires a minimum $5 credit purchase.”——$5 是最低充值额而… → **无免费试用 / 无赠送**：官方计费文档原文 “Together AI does not currently offer free trials. Access to the Together platform requires a minimum $15 credit purchase.”——首次充值最低额为 …
+- `free_models`：**无免费试用，但存在 $0 / 输出免费定价模型**：官方价目表中 Ternary Bonsai 27B 输入/输出均为 $0.00/1M tokens；Tev1 4B Experimental 输出免费（Free），输入收取 $0.04/1M tokens。调用前平台访问仍需最低 $5 充值；其余模型均需充值后按… → **无免费试用，但存在 $0 / 输出免费定价模型**：官方价目表中 Ternary Bonsai 27B 输入/输出均为 $0.00/1M tokens；Tev1 4B Experimental 输出免费（Free），输入收取 $0.04/1M tokens。调用前平台访问仍需首次最低 $15 充值；其余模型均需充…
+- `preconditions`：注册账号并至少充值 $5 → 注册账号并完成组织首次最低 $15 充值（后续充值最低 $5）
+### 云知声 Token Hub（`unisound_shanhai`）
+- 摘要：官方页首活动更新为 U2 Flash 限时免费无限量调用（2026.09.30-2026.10.31），社群活动变更为扫码入群领 5 亿 Token
+- `promotions`：平台聚焦语音与医疗场景，提供语音识别/合成与 OCR 全栈接口；官方页首横幅标注 `U2 Flash` 全新上线，并挂「注册即领 1 亿 Token」活动（查看详情，具体以活动页为准）。 → 平台聚焦语音与医疗场景，提供语音识别/合成与 OCR 全栈接口；官方页首横幅标注 `U2 Flash` 全新上线并限时免费无限量调用（2026.09.30-2026.10.31）；弹窗标注扫码加入交流群领取 5 亿 token。
+### InceptionLabs（`inception_labs`）
+- 摘要：官网更新模型定价，Mercury 2.5 输入价格由 $0.25 降至 $0.20/1M tokens，并列出 Mercury Voice 等新模型定价
+- `free_models`：`mercury-2.5`（diffusion-based LLM，官方文档唯一具名的免费可用模型）；模型列表另含 Mercury 2 / Mercury Edit、付费定价：输入 $0.25 / 百万 tokens、输出 $0.75 / 百万 tokens（免费额度用完后适用） → `mercury-2.5`（diffusion-based LLM，官方文档唯一具名的免费调用模型）；另含 Mercury Voice、Mercury Router、付费定价：Mercury 2.5 输入 $0.20 / 百万 tokens、输出 $0.75 / 百万 tokens；Mercury Voice 输入 …
+- `tier_caveats`：1 亿 tokens 的**有效期官方文档未载明**，也未说明是否按月重置，按一次性到账规划用量、免费额度对应 mercury 系列模型；超出后输入 $0.25 / 输出 $0.75 每百万 tokens，需到 Billing 加付款方式 → 1 亿 tokens 的**有效期官方文档未载明**，也未说明是否按月重置，按一次性到账规划用量、免费额度对应 Mercury 系列模型；超出后按量计费（Mercury 2.5 输入 $0.20 / 输出 $0.75 每百万 tokens），需到 Billing 添加付款方式
+
 ## 2026-10-08
 ### Mistral AI（`mistral`）
 - 摘要：付费订阅 Vibe Pro 附带的 API credits 调整为 $25.5/月，免费 API 端点与无新用户赠金政策保持不变

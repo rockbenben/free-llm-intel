@@ -222,7 +222,7 @@
 210. [介绍 RTEB：检索评估新标准](https://huggingface.co/blog/rteb)（2025-10-01） <!--orig:Introducing RTEB: A New Standard for Retrieval Evaluation-->
 211. [借助深度剪枝草稿模型加速 Intel® Core™ Ultra 上的 Qwen3-8B Agent](https://huggingface.co/blog/intel-qwen3-agent)（2025-09-29） <!--orig:Accelerating Qwen3-8B Agent on Intel® Core™ Ultra with Depth-Pruned Draft Models-->
 212. [VibeGame：探索 Vibe 编码游戏](https://huggingface.co/blog/vibegame)（2025-09-29） <!--orig:VibeGame: Exploring Vibe Coding Games-->
-213. [Nemotron-Personas-Japan: ソブリン AI のための合成データセット](https://huggingface.co/blog/nvidia/nemotron-personas-japan-ja)（2025-09-26）
+213. [Nemotron-Personas-Japan：主权人工智能的综合数据集](https://huggingface.co/blog/nvidia/nemotron-personas-japan-ja)（2025-09-26） <!--orig:Nemotron-Personas-Japan: ソブリン AI のための合成データセット-->
 214. [Swift Transformers 达到 1.0 并展望未来](https://huggingface.co/blog/swift-transformers)（2025-09-26） <!--orig:Swift Transformers Reaches 1.0 – and Looks to the Future-->
 215. [Smol2Operator：面向计算机操作的后训练 GUI 智能体](https://huggingface.co/blog/smol2operator)（2025-09-23） <!--orig:Smol2Operator: Post-Training GUI Agents for Computer Use-->
 216. [SyGra：为 LLM 与 SLM 构建数据的一站式框架](https://huggingface.co/blog/ServiceNow-AI/sygra-data-gen-framework)（2025-09-22） <!--orig:SyGra: The One-Stop Framework for Building Data for LLMs and SLMs-->

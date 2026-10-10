@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-10 09:51:12**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-10 10:16:10**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -71,7 +71,7 @@
   3. [DeepSeek-V4-Flash-Vision-Exp 发布](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-21)（2026-08-21）
   4. [V4-Flash-Vision-Exp 上线，开启多模态 API 服务](https://api-docs.deepseek.com/zh-cn/news/news260821)（2026-08-21）
   5. [DeepSeek-V4-Pro 更新](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-13)（2026-08-13）
-  - 📄 完整文章归档（共 42 篇）：[deepseek.md](llm-news/deepseek.md)
+  - 📄 完整文章归档（共 46 篇）：[deepseek.md](llm-news/deepseek.md)
 
 ### 通义千问 (阿里云) (aliyun_qwen)
 - 页面：[研究页](https://qwen.ai/research)
@@ -131,9 +131,9 @@
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-minimax.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-minimax.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-10，标题自动汉化）：
   1. [MiniMax Music 3.0：新一代开放权重、生产级全能音乐模型](https://www.minimax.cn/blog/minimax-music-3-0-cn)（2026-08-13）
-  2. [MiniMax H3 发布](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-31-%E6%97%A5)（2026-07-31）
+  2. [MiniMax H3](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-31-%E6%97%A5)（2026-07-31）
   3. [MiniMax H3：打破任务和模态的边界](https://www.minimax.cn/blog/minimax-h3)（2026-07-31）
-  4. [介绍 Music-3.0](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-16-%E6%97%A5)（2026-07-16）
+  4. [Music-3.0](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-16-%E6%97%A5)（2026-07-16）
   5. [MaxProof: 生成式验证强化学习驱动的数学证明进化系统](https://www.minimax.cn/blog/minimax-maxproof-math-proof-evolution)（2026-06-09）
   - 📄 完整文章归档（共 48 篇）：[minimax.md](llm-news/minimax.md)
 
@@ -155,8 +155,8 @@
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-groq.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-groq.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-10，标题自动汉化）：
   1. [2026 年第一季度变更日志条目](https://github.com/groq/groq-changelog/commit/abaa8395286b622a837adb5d6b44709845d1edba)（2026-05-06）
-  2. [MiniMax M2.5 与 Qwen3-VL 32B Instruct 上线（企业版）](https://console.groq.com/docs/changelog.md#minimax-m25-and-qwen3vl-32b-instruct-enterprise)（2026-04-18）
-  3. [Orpheus Arabic Saudi 新增语音](https://console.groq.com/docs/changelog.md#new-voices-for-orpheus-arabic-saudi)（2026-04-18）
+  2. [MiniMax M2.5 and Qwen3-VL 32B Instruct (Enterprise)](https://console.groq.com/docs/changelog.md#minimax-m25-and-qwen3vl-32b-instruct-enterprise)（2026-04-18）
+  3. [New Voices for Orpheus Arabic Saudi](https://console.groq.com/docs/changelog.md#new-voices-for-orpheus-arabic-saudi)（2026-04-18）
   4. [Python SDK v1.2.0 and TypeScript SDK v1.1.2](https://console.groq.com/docs/changelog.md#python-sdk-v120-and-typescript-sdk-v112)（2026-04-18）
   5. [Groq 是首批将 NVIDIA Groq 3 LPX 和 Vera Rubin NVL72 推向市场的公司之一](https://groq.com/blog/groq-among-the-first-to-bring-nvidia-groq-3-lpx-and-vera-rubin-nvl72-to-market)（2026-03-24）
   - 📄 完整文章归档（共 68 篇）：[groq.md](llm-news/groq.md)
@@ -265,7 +265,7 @@
   1. [LongCat-2.5-Preview 上线](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-25)（2026-09-25）
   2. [全新推出企业服务](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-10)（2026-09-10）
   3. [全新推出企业服务](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-09-02)（2026-09-02）
-  4. [LongCat-2.0 发布 & 全新推出计费服务](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-06-30)（2026-06-30）
+  4. [LongCat-2.0 发布 &amp; 全新推出计费服务](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-06-30)（2026-06-30）
   5. [LongCat 部分模型服务下线](https://longcat.chat/platform/docs/zh/ChangeLog.html#%E7%89%88%E6%9C%AC-2026-05-29)（2026-05-29）
   - 📄 完整文章归档（共 14 篇）：[longcat_meituan.md](llm-news/longcat_meituan.md)
 
@@ -308,12 +308,12 @@
 ### Amazon Bedrock (AWS Free Tier) (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-10-10，标题自动汉化）：
-  1. [AI 代理按推理付费：BlockRun 和 Incarna 如何使用 Amazon Bedrock AgentCore 付款](https://aws.amazon.com/blogs/machine-learning/pay-per-inference-for-ai-agents-how-blockrun-and-incarna-use-amazon-bedrock-agentcore-payments/)（2026-10-08）
-  2. [使用 Amazon SageMaker HyperPod 跨团队共享 GPU 集群，实现隔离和公平](https://aws.amazon.com/blogs/machine-learning/share-gpu-clusters-across-teams-with-isolation-and-fairness-using-amazon-sagemaker-hyperpod/)（2026-10-08）
-  3. [在 AWS 上推出 Claude Haiku 5.5](https://aws.amazon.com/blogs/machine-learning/introducing-claude-haiku-5-5-on-aws/)（2026-10-07）
-  4. [使用 Amazon Quick 和 Amazon Bedrock 重新思考 RAG 的访问控制](https://aws.amazon.com/blogs/machine-learning/rethinking-access-control-for-rag-with-amazon-quick-and-amazon-bedrock/)（2026-10-07）
-  5. [不仅节省了时间：构建代理自动化的业务案例](https://aws.amazon.com/blogs/machine-learning/beyond-hours-saved-building-the-business-case-for-agentic-automation/)（2026-10-07）
-  - 📄 完整文章归档（共 67 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [ICYMI：2026 年 9 月为 AI 构建者带来了什么](https://aws.amazon.com/blogs/machine-learning/icymi-what-landed-for-ai-builders-in-september-2026/)（2026-10-09）
+  2. [Postman 如何在 Amazon Bedrock 上为 4000 万开发人员运行代理模式](https://aws.amazon.com/blogs/machine-learning/how-postman-runs-agent-mode-for-40-million-developers-on-amazon-bedrock/)（2026-10-09）
+  3. [AI 代理按推理付费：BlockRun 和 Incarna 如何使用 Amazon Bedrock AgentCore 付款](https://aws.amazon.com/blogs/machine-learning/pay-per-inference-for-ai-agents-how-blockrun-and-incarna-use-amazon-bedrock-agentcore-payments/)（2026-10-08）
+  4. [使用 Amazon SageMaker HyperPod 跨团队共享 GPU 集群，实现隔离和公平](https://aws.amazon.com/blogs/machine-learning/share-gpu-clusters-across-teams-with-isolation-and-fairness-using-amazon-sagemaker-hyperpod/)（2026-10-08）
+  5. [在 AWS 上推出 Claude Haiku 5.5](https://aws.amazon.com/blogs/machine-learning/introducing-claude-haiku-5-5-on-aws/)（2026-10-07）
+  - 📄 完整文章归档（共 69 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (晶圆级推理) (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)
@@ -354,12 +354,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-10，标题自动汉化）：
-  1. [Qwen3.8-27B API Provider Benchmarks: Speed & Cost](https://deepinfra.com/blog/qwen3-8-27b-api-provider-benchmarks)（2026-10-07）
-  2. [2026 年最佳 GLM-5.3 API 提供商](https://deepinfra.com/blog/best-glm-5-3-api-providers)（2026-10-06）
-  3. [Qwen3.8-27B Pricing: DeepInfra vs Alibaba API](https://deepinfra.com/blog/qwen3-8-27b-pricing-deepinfra-vs-alibaba)（2026-10-06）
-  4. [GLM-5.3 模型概述和集成指南](https://deepinfra.com/blog/glm-5-3-model-integration-guide)（2026-10-05）
-  5. [Qwen3.8-27B Is Now Available on DeepInfra](https://deepinfra.com/blog/qwen3-8-27b-deepinfra)（2026-10-05）
-  - 📄 完整文章归档（共 27 篇）：[deepinfra.md](llm-news/deepinfra.md)
+  1. [Qwen3.8-27B: Frontier-Level Vision-Language AI](https://deepinfra.com/blog/qwen3-8-27b)（2026-10-09）
+  2. [Qwen3.8-27B API Provider Benchmarks: Speed & Cost](https://deepinfra.com/blog/qwen3-8-27b-api-provider-benchmarks)（2026-10-07）
+  3. [2026 年最佳 GLM-5.3 API 提供商](https://deepinfra.com/blog/best-glm-5-3-api-providers)（2026-10-06）
+  4. [Qwen3.8-27B Pricing: DeepInfra vs Alibaba API](https://deepinfra.com/blog/qwen3-8-27b-pricing-deepinfra-vs-alibaba)（2026-10-06）
+  5. [GLM-5.3 模型概述和集成指南](https://deepinfra.com/blog/glm-5-3-model-integration-guide)（2026-10-05）
+  - 📄 完整文章归档（共 28 篇）：[deepinfra.md](llm-news/deepinfra.md)
 
 ### Modular (原 BentoCloud/BentoML) (modular_cloud)
 - 📡 [RSS/Atom 订阅源](https://www.modular.com/blog/rss.xml)：`https://www.modular.com/blog/rss.xml`
