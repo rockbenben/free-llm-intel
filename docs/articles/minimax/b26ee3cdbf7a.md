@@ -9,10 +9,10 @@ captured: 2026-10-08
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 236d19e53f60
+body_sha: a8f8b47f78cc
 ---
 
-## [​](https://platform.minimax.cn/docs/release-notes/models#2025-年-12-月-22-日)2025 年 12 月 22 日
+## 2025 年 12 月 22 日
 
 ## MiniMax M2.1
 

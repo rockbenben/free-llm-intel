@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c590f5433b26
+body_sha: 32376782940b
 ---
 
 OpenAI
@@ -27,21 +27,21 @@ $ npm i -g @openai/codex
 
 正在加载…
 
-***Update on September 23, 2025****: ** GPT‑5‑Codex is now available to developers using Codex via API key (in addition to being available to developers using Codex via their ChatGPT subscription). GPT‑5 Codex is available at the same price as GPT‑5, and is available in the Responses API only. The underlying model snapshot will be regularly updated. Check out the Codex *[*developer documentation*⁠（在新窗口中打开）](http://platform.openai.com/docs/models/gpt-5-codex)* and *[*changelog*⁠（在新窗口中打开）](https://developers.openai.com/codex/changelog)* for more details.*
+***Update on September 23, 2025****: ** GPT‑5‑Codex is now available to developers using Codex via API key (in addition to being available to developers using Codex via their ChatGPT subscription). GPT‑5 Codex is available at the same price as GPT‑5, and is available in the Responses API only. The underlying model snapshot will be regularly updated. Check out the Codex *[*developer documentation*](http://platform.openai.com/docs/models/gpt-5-codex)* and *[*changelog*](https://developers.openai.com/codex/changelog)* for more details.*
 
 Today, we’re releasing GPT‑5‑Codex—a version of GPT‑5 further optimized for agentic coding in Codex. GPT‑5‑Codex was trained with a focus on real-world software engineering work; it’s equally proficient at quick, interactive sessions and at independently powering through long, complex tasks. Its code review capability can catch critical bugs before they ship. GPT‑5‑Codex is available everywhere you use Codex—it’s the default for cloud tasks and code review, and developers can choose to use it for local tasks via Codex CLI and the IDE extension.
 
-Since we first launched [Codex CLI⁠（在新窗口中打开）](https://github.com/openai/codex) in April and [Codex⁠](https://openai.com/zh-Hans-CN/index/introducing-codex/) web in May, Codex has steadily evolved into a more effective coding collaborator. Two weeks ago, we unified Codex into a single product experience connected by your ChatGPT account, enabling you to move work seamlessly between your local environment and the cloud without losing context. Codex now works where you develop—in your terminal or IDE, on the web, in GitHub, and even in the ChatGPT iOS app. Codex is included with ChatGPT Plus, Pro, Business, Edu, and Enterprise plans.
+Since we first launched [Codex CLI](https://github.com/openai/codex) in April and [Codex⁠](https://openai.com/zh-Hans-CN/index/introducing-codex/) web in May, Codex has steadily evolved into a more effective coding collaborator. Two weeks ago, we unified Codex into a single product experience connected by your ChatGPT account, enabling you to move work seamlessly between your local environment and the cloud without losing context. Codex now works where you develop—in your terminal or IDE, on the web, in GitHub, and even in the ChatGPT iOS app. Codex is included with ChatGPT Plus, Pro, Business, Edu, and Enterprise plans.
 
 With these updates, Codex moves closer to what we’ve been building toward all along—a teammate that understands your context, works alongside you, and reliably takes on work for your team.
 
 ## GPT‑5‑Codex
 
-GPT‑5‑Codex is a version of GPT‑5 further optimized for agentic software engineering in Codex. It’s trained on complex, real-world engineering tasks such as building full projects from scratch, adding features and tests, debugging, performing large-scale refactors, and conducting code reviews. It’s more steerable, adheres better to [AGENTS.md⁠（在新窗口中打开）](http://agents.md) instructions, and produces higher-quality code—just tell it what you need without writing long instructions on style or code cleanliness.
+GPT‑5‑Codex is a version of GPT‑5 further optimized for agentic software engineering in Codex. It’s trained on complex, real-world engineering tasks such as building full projects from scratch, adding features and tests, debugging, performing large-scale refactors, and conducting code reviews. It’s more steerable, adheres better to [AGENTS.md](http://agents.md) instructions, and produces higher-quality code—just tell it what you need without writing long instructions on style or code cleanliness.
 
 ***SWE-Bench 验证：****在 GPT‑5 发布时及历史评估中，我们报告了 477 个 SWE-bench 验证任务的结果，因为有些任务无法在我们的基础设施中运行。我们已修复这个问题，现在可以报告全部 500 项任务的评估结果。*
 
-***代码重构任务：****我们的代码重构评估包含来自大型、成熟代码库的重构式任务，包括 Python、Go 甚至 OCaml 中的任务。一个示例任务是*[*来自 Gitea 的以下拉取请求*⁠（在新窗口中打开）](https://github.com/go-gitea/gitea/commit/fd7d83ace60258acf7139c4c787aa8af75b7ba8c)*，它更改了 232 个文件和 3,541 行代码，以将 ctx 变量贯穿应用程序逻辑。*
+***代码重构任务：****我们的代码重构评估包含来自大型、成熟代码库的重构式任务，包括 Python、Go 甚至 OCaml 中的任务。一个示例任务是*[*来自 Gitea 的以下拉取请求*](https://github.com/go-gitea/gitea/commit/fd7d83ace60258acf7139c4c787aa8af75b7ba8c)*，它更改了 232 个文件和 3,541 行代码，以将 ctx 变量贯穿应用程序逻辑。*
 
 GPT‑5‑Codex adapts how much time it spends thinking more dynamically based on the complexity of the task. The model combines two essential skills for a coding agent: pairing with developers in interactive sessions, and persistent, independent execution on longer tasks. That means Codex will feel snappier on small, well-defined requests or while you are chatting with it, and will work for longer on complex tasks like big refactors. During testing, we’ve seen GPT‑5‑Codex work independently for more than 7 hours at a time on large, complex tasks, iterating on its implementation, fixing test failures, and ultimately delivering a successful implementation.
 
@@ -63,13 +63,13 @@ Codex CLI is open-source, and community feedback over the last few months has be
 
 The terminal UI has also been upgraded: tool calls and diffs are better formatted and easier to follow. Approval modes are simplified to three levels: read-only with explicit approvals, auto with full workspace access but requiring approvals outside the workspace, and full access with the ability to read files anywhere and run commands with network access. It also supports compacting conversation state to make longer sessions easier to manage.
 
-Check out the [Codex CLI quickstart⁠（在新窗口中打开）](https://developers.openai.com/codex/cli) to learn more.
+Check out the [Codex CLI quickstart](https://developers.openai.com/codex/cli) to learn more.
 
 ### The Codex IDE extension
 
 Codex meets you where you already work, including in your IDE. The IDE extension brings the Codex agent into VS Code, Cursor, and other VS Code forks, so that you can seamlessly preview local changes and edit code with Codex. When you use Codex in your IDE, you can write shorter prompts and get faster results because Codex can use context like the files you’ve opened or the code you’ve selected.
 
-The Codex IDE extension also lets you move work smoothly between the cloud and your local environment. You can create new cloud tasks, track in‑progress work, and review completed tasks without leaving your editor. To make finishing touches, you can open cloud tasks in your IDE, and Codex maintains context. Learn more on how to get the most out of the IDE extension in the [quickstart⁠（在新窗口中打开）](https://developers.openai.com/codex/ide).
+The Codex IDE extension also lets you move work smoothly between the cloud and your local environment. You can create new cloud tasks, track in‑progress work, and review completed tasks without leaving your editor. To make finishing touches, you can open cloud tasks in your IDE, and Codex maintains context. Learn more on how to get the most out of the IDE extension in the [quickstart](https://developers.openai.com/codex/ide).
 
 ### Codex cloud
 
@@ -77,13 +77,13 @@ In addition to Codex CLI, the new IDE extension and GitHub integration bring the
 
 Behind the scenes, we’ve also been continuously improving cloud infrastructure performance. By caching containers, we’ve slashed the median completion time for new tasks and follow-ups by 90%. Codex also now automatically sets up its own environment by scanning for common setup scripts and executing them, and with configurable internet access can run commands like pip install to fetch dependencies as needed at runtime.
 
-Like in the CLI and IDE extension, you can now use images to share frontend design specs or explain UI bugs. As it builds for you, Codex can spin up its own browser, look at what it built, iterate, and attach a screenshot of the result to the task and GitHub PR. For more details, check out the [docs⁠（在新窗口中打开）](https://developers.openai.com/codex/cloud).
+Like in the CLI and IDE extension, you can now use images to share frontend design specs or explain UI bugs. As it builds for you, Codex can spin up its own browser, look at what it built, iterate, and attach a screenshot of the result to the task and GitHub PR. For more details, check out the [docs](https://developers.openai.com/codex/cloud).
 
 ### Code review
 
 Codex also now includes code review capabilities trained to catch critical flaws. Unlike static analysis tools, it matches the stated intent of a PR to the actual diff, reasons over the entire codebase and dependencies, and executes code and tests to validate behavior. Only the most thorough human reviewers put this level of effort into every PR they review, so Codex fills the gap—helping teams find problems earlier, reduce reviewer load, and ship with more confidence.
 
-Once turned on for a GitHub repo, Codex automatically reviews PRs as they move from draft to ready, posting its analysis on the PR. If it recommends edits, you can stay in the same thread and ask Codex to implement them. You can also explicitly ask for a review by mentioning “@codex review” in a PR, and give it extra guidance like “@codex review for security vulnerabilities” or “@codex review for outdated dependencies”. Check out [the quickstart⁠（在新窗口中打开）](https://developers.openai.com/codex/cloud/code-review) to learn how to set up code review for your repos.
+Once turned on for a GitHub repo, Codex automatically reviews PRs as they move from draft to ready, posting its analysis on the PR. If it recommends edits, you can stay in the same thread and ask Codex to implement them. You can also explicitly ask for a review by mentioning “@codex review” in a PR, and give it extra guidance like “@codex review for security vulnerabilities” or “@codex review for outdated dependencies”. Check out [the quickstart](https://developers.openai.com/codex/cloud/code-review) to learn how to set up code review for your repos.
 
 At OpenAI, Codex now reviews the vast majority of our PRs, catching hundreds of issues every day—often before a human review begins. It’s been key to letting the Codex team move fast with greater confidence.
 
@@ -91,9 +91,9 @@ At OpenAI, Codex now reviews the vast majority of our PRs, catching hundreds of 
 
 ## Building safe and trustworthy AI agents
 
-We’re building Codex with a focus on protecting code and data from exfiltration, and guarding against misuse. By default, Codex runs in a sandboxed environment with [network access⁠（在新窗口中打开）](https://platform.openai.com/docs/codex/agent-network) disabled, whether locally or in the cloud. This helps ensure Codex can’t take harmful actions on your computer, and reduces the risk of prompt injections from untrusted sources.
+We’re building Codex with a focus on protecting code and data from exfiltration, and guarding against misuse. By default, Codex runs in a sandboxed environment with [network access](https://platform.openai.com/docs/codex/agent-network) disabled, whether locally or in the cloud. This helps ensure Codex can’t take harmful actions on your computer, and reduces the risk of prompt injections from untrusted sources.
 
-Codex can ask for permission before potentially dangerous actions and is trained to run commands to verify its outputs. Developers can customize security settings to match their risk tolerance. In the cloud, you can limit network access to trusted domains. In the CLI and IDE extension, developers can approve commands to run with full access or allow the agent to use web search and connect to MCP servers. This can expand capabilities of the agent while increasing the risks–learn more about how to securely operate and manage Codex [here⁠（在新窗口中打开）](https://developers.openai.com/codex/security).
+Codex can ask for permission before potentially dangerous actions and is trained to run commands to verify its outputs. Developers can customize security settings to match their risk tolerance. In the cloud, you can limit network access to trusted domains. In the CLI and IDE extension, developers can approve commands to run with full access or allow the agent to use web search and connect to MCP servers. This can expand capabilities of the agent while increasing the risks–learn more about how to securely operate and manage Codex [here](https://developers.openai.com/codex/security).
 
 We always encourage developers to review the agent’s work before making changes or deploying to production. Codex provides citations, terminal logs, and test results with each task to help with this. While Codex code reviews help reduce the risk of dangerous issues being deployed to production, whether created by humans or agents, we always recommend using Codex as an additional reviewer—not a replacement for human reviews.
 
@@ -103,7 +103,7 @@ Consistent with our approach to GPT‑5, we have decided to treat GPT‑5‑Code
 
 Codex is included with ChatGPT Plus, Pro, Business, Edu, and Enterprise plans. Usage scales with your plan: Plus, Edu and Business seats can cover a few focused coding sessions each week, while Pro can support a full workweek across multiple projects.
 
-Business plans can purchase credits to enable developers to go beyond their included limits, while Enterprise plans provide a shared credit pool so you only pay for what your developers use. Learn more about usage limits in ChatGPT [here⁠（在新窗口中打开）](https://developers.openai.com/codex/pricing).
+Business plans can purchase credits to enable developers to go beyond their included limits, while Enterprise plans provide a shared credit pool so you only pay for what your developers use. Learn more about usage limits in ChatGPT [here](https://developers.openai.com/codex/pricing).
 
 For developers using Codex CLI via API key, we plan to make GPT‑5‑Codex available in the API soon.
 

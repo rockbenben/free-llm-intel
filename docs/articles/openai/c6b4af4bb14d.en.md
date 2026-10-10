@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ff2e97650af1
+body_sha: efe094e3ed5d
 ---
 
 OpenAI
@@ -24,17 +24,17 @@ Bringing together 1,000 nonprofit leaders across the US to build with AI
 Loading…
 
 ***Update on August 14, 2025:****
-Our after-action report features highlights from the Nonprofit Jam, including participant use cases, suggestions to improve future events, and key takeaways on AI adoption for nonprofits. A copy of the report is available *[*here*⁠(opens in a new window)](https://cdn.openai.com/pdf/oai_nonprofit-jam-report.pdf)*.*
+Our after-action report features highlights from the Nonprofit Jam, including participant use cases, suggestions to improve future events, and key takeaways on AI adoption for nonprofits. A copy of the report is available *[*here*](https://cdn.openai.com/pdf/oai_nonprofit-jam-report.pdf)*.*
 
 At OpenAI, we build tools to help people solve hard problems—including nonprofits working on the frontlines of their communities. These organizations make a difference for people every day, whether it’s supporting jobseekers trying to find work, helping patients enroll at health clinics, expanding access to education, or connecting people to stable housing. Yet many of these groups operate with limited staff, tight budgets, and little time to explore new technologies that could aid them in their work.
 
-To help close that gap, the [OpenAI Academy⁠(opens in a new window)](https://academy.openai.com/) is teaming up with the [Walton Family Foundation⁠(opens in a new window)](https://www.waltonfamilyfoundation.org/), [Emerson Collective⁠(opens in a new window)](https://www.emersoncollective.com/), and a network of local nonprofit organizations to host the Nonprofit Jam—a one-day, nationwide event bringing together more than 1,000 nonprofit leaders across 10 locations. From Arkansas to Ohio and California to New York, our teams will work with these leaders to explore how generative AI can help scale their impact—and listen to, learn from, and collaborate with those at the center of this vital work.
+To help close that gap, the [OpenAI Academy](https://academy.openai.com/) is teaming up with the [Walton Family Foundation](https://www.waltonfamilyfoundation.org/), [Emerson Collective](https://www.emersoncollective.com/), and a network of local nonprofit organizations to host the Nonprofit Jam—a one-day, nationwide event bringing together more than 1,000 nonprofit leaders across 10 locations. From Arkansas to Ohio and California to New York, our teams will work with these leaders to explore how generative AI can help scale their impact—and listen to, learn from, and collaborate with those at the center of this vital work.
 
 At its core, AI is a productivity-driving technology that can help scale the ability of people to think, learn, create, and build. The Nonprofit Jam will focus on bringing these productivity gains to philanthropy by teaching practical, hands-on ways to use AI to benefit everyone, including those in underserved communities. Participants will use ChatGPT to build new tools tailored to their specific needs—from streamlining case management, to improving community outreach, to enhancing service delivery.
 
 Crucially, those gains will only come if AI companies first listen to the organizations that know their communities best—and then collaborate to build AI tools that enable them to save time, expand their reach, and reduce costs. These kinds of partnerships will get AI into the hands of more people, which is squarely aligned with OpenAI’s mission of building AI that benefits everyone.
 
-Prior to the event, participants will have access to an [online resource hub⁠(opens in a new window)](https://academy.openai.com/home/collections/3-steps-to-ai-literacy-for-nonprofits-2025-06-30) on OpenAI Academy to help them learn the basics of AI and prepare for the Nonprofit Jam. Afterward, they’ll join an online community where they can continue learning, connect with peers, and expand on what they started.
+Prior to the event, participants will have access to an [online resource hub](https://academy.openai.com/home/collections/3-steps-to-ai-literacy-for-nonprofits-2025-06-30) on OpenAI Academy to help them learn the basics of AI and prepare for the Nonprofit Jam. Afterward, they’ll join an online community where they can continue learning, connect with peers, and expand on what they started.
 
 The event builds on the success of our [1,000-Scientist AI Jam⁠](https://openai.com/global-affairs/1000-scientist-ai-jam-session/) earlier this year, which brought US national labs researchers together to explore how AI can help advance scientific discovery. Across both efforts, we’re putting powerful AI tools directly into the hands of experts tackling some of our biggest challenges, and learning from how they put these tools to work.
 
@@ -46,16 +46,16 @@ OpenAI is providing every Nonprofit Jam participant with 12 months of free acces
 
 At each of the 10 Nonprofit Jam locations, regional nonprofit partners and community conveners are helping tailor the event to meet the specific needs of local organizations, including:
 
-- Oakland, CA – [TechSoup⁠(opens in a new window)](https://www.techsoup.org/)
-- Los Angeles, CA – [Center for Nonprofit Management⁠(opens in a new window)](https://cnmsocal.org/) and [Goldhirsh Foundation⁠(opens in a new window)](https://goldhirshfoundation.org/)
-- Salinas, CA – [Digital NEST⁠(opens in a new window)](https://digitalnest.org/)
-- Denver, CO – [Community Resource Center⁠(opens in a new window)](https://crcamerica.org/), [Colorado Nonprofit Association⁠(opens in a new window)](https://coloradononprofits.org/) and [Philanthropy Colorado⁠(opens in a new window)](https://www.philanthropycolorado.org/)
-- Dallas, TX – [Heartland Forward⁠(opens in a new window)](https://heartlandforward.org/), [North Texas Commission⁠(opens in a new window)](https://www.ntc-dfw.org/), and [NTEN⁠(opens in a new window)](https://www.nten.org/)
-- Chicago, IL – [NTEN⁠(opens in a new window)](https://www.nten.org/)
-- Columbus, OH – [The Columbus Foundation⁠(opens in a new window)](https://columbusfoundation.org/)
-- New York City, NY – [Robin Hood⁠(opens in a new window)](https://robinhood.org/)
-- Wilmington, DE – [Tech Impact⁠(opens in a new window)](https://techimpact.org/) and [Delaware Alliance for Nonprofit Advancement⁠(opens in a new window)](https://delawarenonprofit.org/) (DANA)
-- Bentonville, AR – [Heartland Forward ⁠(opens in a new window)](https://heartlandforward.org/)
+- Oakland, CA – [TechSoup](https://www.techsoup.org/)
+- Los Angeles, CA – [Center for Nonprofit Management](https://cnmsocal.org/) and [Goldhirsh Foundation](https://goldhirshfoundation.org/)
+- Salinas, CA – [Digital NEST](https://digitalnest.org/)
+- Denver, CO – [Community Resource Center](https://crcamerica.org/), [Colorado Nonprofit Association](https://coloradononprofits.org/) and [Philanthropy Colorado](https://www.philanthropycolorado.org/)
+- Dallas, TX – [Heartland Forward](https://heartlandforward.org/), [North Texas Commission](https://www.ntc-dfw.org/), and [NTEN](https://www.nten.org/)
+- Chicago, IL – [NTEN](https://www.nten.org/)
+- Columbus, OH – [The Columbus Foundation](https://columbusfoundation.org/)
+- New York City, NY – [Robin Hood](https://robinhood.org/)
+- Wilmington, DE – [Tech Impact](https://techimpact.org/) and [Delaware Alliance for Nonprofit Advancement](https://delawarenonprofit.org/) (DANA)
+- Bentonville, AR – [Heartland Forward](https://heartlandforward.org/)
 
 We want to thank the Decoded Futures, National Center for Civic Innovation, and the Fund for the City of New York for supporting the event and sharing their insights on how nonprofits can adopt and leverage technology with participants.
 

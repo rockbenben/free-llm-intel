@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7eac8246a48c
+body_sha: 24542d1147f1
 ---
 
 OpenAI
@@ -23,11 +23,11 @@ OpenAI banned accounts associated with threat actors publicly attributed to the 
 
 Loading…
 
-*This case study was originally published in OpenAI’s *[*June 2025*⁠(opens in a new window)](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)* report.*
+*This case study was originally published in OpenAI’s *[*June 2025*](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)* report.*
 
 ## Actor
 
-We banned ChatGPT accounts associated with multiple threat actors that have been publicly attributed to the People’s Republic of China (PRC). These accounts used infrastructure related to threat groups known as [KEYHOLE PANDA (AKA APT5)⁠(opens in a new window)](https://attack.mitre.org/groups/G1023/) and [VIXEN PANDA (AKA APT15)⁠(opens in a new window)](https://attack.mitre.org/groups/G0004/).
+We banned ChatGPT accounts associated with multiple threat actors that have been publicly attributed to the People’s Republic of China (PRC). These accounts used infrastructure related to threat groups known as [KEYHOLE PANDA (AKA APT5)](https://attack.mitre.org/groups/G1023/) and [VIXEN PANDA (AKA APT15)](https://attack.mitre.org/groups/G0004/).
 
 ## Behavior
 

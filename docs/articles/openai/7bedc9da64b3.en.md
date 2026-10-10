@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 717d9cb225ac
+body_sha: b29c654c2c1e
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ OpenAI banned accounts that appeared to originate in Russia and used AI to gener
 
 Loading…
 
-*This case study was originally published in OpenAI’s *[*June 2025*⁠(opens in a new window)](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)* report.*
+*This case study was originally published in OpenAI’s *[*June 2025*](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)* report.*
 
 ## Actor
 
@@ -31,9 +31,9 @@ We banned ChatGPT accounts that appeared to originate from Russia. They were usi
 
 ## Behavior
 
-Through off-platform investigations, we were able to confirm associated generations were deceptively distributed in a Telegram channel named [“Nachhall von Helgoland”⁠(opens in a new window)](https://t.me/nachhallvonhelgoland) (Echo of Helgoland, referencing an island in the Heligoland Bight of the North Sea). This channel, described as locally operated independent German news, had 1,755 subscribers at the time. Given the name, and the campaign’s attempt to generate critical commentary, we have dubbed this operation “Helgoland Bite.”
+Through off-platform investigations, we were able to confirm associated generations were deceptively distributed in a Telegram channel named [“Nachhall von Helgoland”](https://t.me/nachhallvonhelgoland) (Echo of Helgoland, referencing an island in the Heligoland Bight of the North Sea). This channel, described as locally operated independent German news, had 1,755 subscribers at the time. Given the name, and the campaign’s attempt to generate critical commentary, we have dubbed this operation “Helgoland Bite.”
 
-The content from this channel was regularly reposted verbatim on a domain affiliated with the [Pravda network⁠(opens in a new window)](https://dfrlab.org/2025/03/12/pravda-network-wikipedia-llm-x/) targeting German-speaking audiences. The associated Pravda (DE) website is a known node in the Moscow-linked covert influence operations network [“Portal Kombat,”⁠(opens in a new window)](https://www.diplomatie.gouv.fr/en/french-foreign-policy/security-disarmament-and-non-proliferation/news/2024/article/foreign-digital-interference-result-of-investigations-into-the-russian) previously identified by the French government’s VIGINUM service.
+The content from this channel was regularly reposted verbatim on a domain affiliated with the [Pravda network](https://dfrlab.org/2025/03/12/pravda-network-wikipedia-llm-x/) targeting German-speaking audiences. The associated Pravda (DE) website is a known node in the Moscow-linked covert influence operations network [“Portal Kombat,”](https://www.diplomatie.gouv.fr/en/french-foreign-policy/security-disarmament-and-non-proliferation/news/2024/article/foreign-digital-interference-result-of-investigations-into-the-russian) previously identified by the French government’s VIGINUM service.
 
 *Article on the Pravda DE website, sourced from Nachhall von Helgoland. The headline reads, “Orbán meets Weidel: ‘AfD is Germany’s future.’”*
 
@@ -49,7 +49,7 @@ As well as generating short articles and social media comments, the accounts ask
 
 As noted above, the Telegram channel counted 1,755 subscribers at the time of our investigation, and was regularly reposted verbatim on a domain affiliated with the Pravda network. The X account had over 27,000 followers.
 
-Using the IO impact [Breakout Scale⁠(opens in a new window)](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/), we would assess this as being towards the upper end of Category 2: activity on multiple platforms, but little authentic engagement or evidence that their content was widely shared.
+Using the IO impact [Breakout Scale](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/), we would assess this as being towards the upper end of Category 2: activity on multiple platforms, but little authentic engagement or evidence that their content was widely shared.
 
 - [Russia](https://openai.com/news/?tags=actor-origin-russia)
 - [Germany](https://openai.com/news/?tags=target-geography-germany)

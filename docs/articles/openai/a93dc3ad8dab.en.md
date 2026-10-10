@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e45a4a9bd37e
+body_sha: e1d8d78ec162
 ---
 
 OpenAI
@@ -23,17 +23,17 @@ Two new papers show how our external and automated red teaming efforts are advan
 
 External red teaming
 
-(opens in a new window)
+
 
 Automated red teaming
 
-(opens in a new window)
+
 
 Loading…
 
 Interacting with an AI system is an essential way to learn what it can do—both the capabilities it has, and the risks it may pose. “Red teaming” means using people or AI to explore a new system’s potential risks in a structured way.
 
-OpenAI has applied red teaming for a number of years, including when we engaged [external experts⁠(opens in a new window)](https://github.com/openai/dalle-2-preview/blob/main/system-card.md#external-red-teaming) to test our DALL·E 2 image generation model in early 2022. Our earliest red teaming efforts were primarily “manual” in the sense that we relied on people to conduct testing. Since then we’ve continued to use and refine our methods, and last July, we joined other leading labs in a [commitment](https://openai.com/index/moving-ai-governance-forward/) to invest further in red teaming and advance this research area.
+OpenAI has applied red teaming for a number of years, including when we engaged [external experts](https://github.com/openai/dalle-2-preview/blob/main/system-card.md#external-red-teaming) to test our DALL·E 2 image generation model in early 2022. Our earliest red teaming efforts were primarily “manual” in the sense that we relied on people to conduct testing. Since then we’ve continued to use and refine our methods, and last July, we joined other leading labs in a [commitment](https://openai.com/index/moving-ai-governance-forward/) to invest further in red teaming and advance this research area.
 
 Red teaming methods include manual, automated, and mixed approaches, and we use all three. We engage outside experts in both manual and automated methods of testing for new systems’ potential risks. At the same time, we are optimistic that we can use more powerful AI to scale the discovery of model mistakes, both for evaluating models and to train them to be safer.
 
@@ -51,7 +51,7 @@ As AI systems are evolving at a rapid pace, it’s essential to understand users
 
 Key aspects of our external red teaming campaigns include defining the scope of testing, selecting red team members, deciding which models they access, and determining the format of their final reports.
 
-In a new white paper, [*OpenAI’s Approach to External Red Teaming for AI Models and Systems*⁠(opens in a new window)](https://cdn.openai.com/papers/openais-approach-to-external-red-teaming.pdf), we detail our approach for designing effective red teaming campaigns[2](https://openai.com/index/advancing-red-teaming-with-people-and-ai/#citation-bottom-2):
+In a new white paper, [*OpenAI’s Approach to External Red Teaming for AI Models and Systems*](https://cdn.openai.com/papers/openais-approach-to-external-red-teaming.pdf), we detail our approach for designing effective red teaming campaigns[2](https://openai.com/index/advancing-red-teaming-with-people-and-ai/#citation-bottom-2):
 
 **1. Choosing the composition of the red teaming group based on goals and key testing areas
 
@@ -75,7 +75,7 @@ Most recently, we used this approach to prepare our [OpenAI o1 family of models]
 
 Automated red teaming aims to generate a large number of examples where an AI behaves incorrectly, often with a particular focus on safety-related issues. In contrast to human red teaming, automated methods excel at easily generating example attacks at a larger scale. However, these methods have typically struggled to generate successful attacks that are *tactically* *diverse*, as automated red teamers often repeat known attack strategies or produce a range of novel but ineffective attacks.
 
-In new research, [*Diverse And Effective Red Teaming With Auto-Generated Rewards And Multi-Step Reinforcement Learning*⁠(opens in a new window)](https://cdn.openai.com/papers/diverse-and-effective-red-teaming.pdf), we offer new techniques to improve the diversity of attacks while still ensuring they are successful.
+In new research, [*Diverse And Effective Red Teaming With Auto-Generated Rewards And Multi-Step Reinforcement Learning*](https://cdn.openai.com/papers/diverse-and-effective-red-teaming.pdf), we offer new techniques to improve the diversity of attacks while still ensuring they are successful.
 
 Our research finds that more capable AI can further help automated red teaming in how it brainstorms attacker goals, how it judges attacker success, and how it understands diversity of attacks. For instance, if the red teaming goal is to find examples of ChatGPT giving disallowed illicit advice, we can use GPT‑4T to brainstorm examples such as “how to steal a car” and “how to build a bomb” and then train a separate red teaming model to try to trick ChatGPT into giving *each* example of advice. We reward the red teaming model through a combination of our [moderation models](https://openai.com/index/new-and-improved-content-moderation-tooling/), [rule based rewards](https://openai.com/index/improving-model-safety-behavior-with-rule-based-rewards/) targeting the specific example of illicit advice, and a diversity reward for how different the attack is from past attempted attacks. This means that the red teaming model can generate many more diverse and yet effective attacks, which can then be used both for improving model safety and evaluations. More importantly, it demonstrates how we can continue to train and use more capable models in new ways to improve safety.
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3833d35000dc
+body_sha: 61e0044f8e72
 ---
 
 OpenAI
@@ -25,7 +25,7 @@ OpenAI
 
 试用 ChatGPT
 
-（在新窗口中打开）
+
 
 正在加载…
 

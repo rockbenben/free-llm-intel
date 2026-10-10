@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 38b690ec2b34
+body_sha: 71f33b5dc8bd
 ---
 
 OpenAI
@@ -21,15 +21,15 @@ Publication
 
 Read paper
 
-(opens in a new window)
+
 
 View code
 
-(opens in a new window)
+
 
 Legal agreement
 
-(opens in a new window)
+
 
 Illustration: Ben Barry
 
@@ -39,11 +39,11 @@ We’re releasing the 774 million parameter GPT‑2 language model after the rel
 
 ## Key things we’ve learned
 
-**1. Coordination is difficult, but possible**. To date, there hasn’t been a public release of a 1558M parameter language model, though multiple organizations have developed the systems to train them, or have publicly discussed how to train larger models. For example, teams from both NLP developer [Hugging Face⁠(opens in a new window)](https://medium.com/huggingface/ethical-analysis-of-the-open-sourcing-of-a-state-of-the-art-conversational-ai-852113c324b2) and the [Allen Institute for Artificial Intelligence⁠(opens in a new window)](https://allenai.org/) (AI2) with the University of Washington [have explicitly adopted similar staged release approaches to us⁠(opens in a new window)](https://arxiv.org/abs/1905.12616). Since February, we’ve spoken with more than five groups who have replicated GPT‑2.[A](https://openai.com/index/gpt-2-6-month-follow-up/#citation-bottom-A)
+**1. Coordination is difficult, but possible**. To date, there hasn’t been a public release of a 1558M parameter language model, though multiple organizations have developed the systems to train them, or have publicly discussed how to train larger models. For example, teams from both NLP developer [Hugging Face](https://medium.com/huggingface/ethical-analysis-of-the-open-sourcing-of-a-state-of-the-art-conversational-ai-852113c324b2) and the [Allen Institute for Artificial Intelligence](https://allenai.org/) (AI2) with the University of Washington [have explicitly adopted similar staged release approaches to us](https://arxiv.org/abs/1905.12616). Since February, we’ve spoken with more than five groups who have replicated GPT‑2.[A](https://openai.com/index/gpt-2-6-month-follow-up/#citation-bottom-A)
 
-**2. Humans can be convinced by synthetic text**. Research from our research partners Sarah Kreps and Miles McCain at Cornell [published in *Foreign Affairs*⁠(opens in a new window)](https://www.foreignaffairs.com/articles/2019-08-02/not-your-fathers-bots) says people find GPT‑2 synthetic text samples almost as convincing (72% in one cohort judged the articles to be credible) as real articles from the New York Times (83%).[B](https://openai.com/index/gpt-2-6-month-follow-up/#citation-bottom-B) Additionally, research from AI2/UW has shown that news written by a system called “GROVER” can be [more plausible than human-written propaganda⁠(opens in a new window)](https://arxiv.org/abs/1905.12616). These research results make us generally more cautious about releasing language models.
+**2. Humans can be convinced by synthetic text**. Research from our research partners Sarah Kreps and Miles McCain at Cornell [published in *Foreign Affairs*](https://www.foreignaffairs.com/articles/2019-08-02/not-your-fathers-bots) says people find GPT‑2 synthetic text samples almost as convincing (72% in one cohort judged the articles to be credible) as real articles from the New York Times (83%).[B](https://openai.com/index/gpt-2-6-month-follow-up/#citation-bottom-B) Additionally, research from AI2/UW has shown that news written by a system called “GROVER” can be [more plausible than human-written propaganda](https://arxiv.org/abs/1905.12616). These research results make us generally more cautious about releasing language models.
 
-**3. Detection isn’t simple**. In practice, we expect detectors to need to detect a significant fraction of generations with very few false positives. Malicious actors may use a variety of sampling techniques (including rejection sampling) or fine-tune models to evade detection methods. A deployed system likely needs to be highly accurate (99.9%–99.99%) on a variety of generations. Our research suggests that current ML-based methods only achieve low to mid–90s accuracy, and that fine-tuning the language models decreases accuracy further. There are promising paths forward (see especially those advocated by the developers of “[GROVER⁠(opens in a new window)](https://arxiv.org/abs/1905.12616)”) but it’s a genuinely difficult research problem. We believe that statistical detection of text needs to be supplemented with human judgment and metadata related to the text in order to effectively combat misuse of language models.
+**3. Detection isn’t simple**. In practice, we expect detectors to need to detect a significant fraction of generations with very few false positives. Malicious actors may use a variety of sampling techniques (including rejection sampling) or fine-tune models to evade detection methods. A deployed system likely needs to be highly accurate (99.9%–99.99%) on a variety of generations. Our research suggests that current ML-based methods only achieve low to mid–90s accuracy, and that fine-tuning the language models decreases accuracy further. There are promising paths forward (see especially those advocated by the developers of “[GROVER](https://arxiv.org/abs/1905.12616)”) but it’s a genuinely difficult research problem. We believe that statistical detection of text needs to be supplemented with human judgment and metadata related to the text in order to effectively combat misuse of language models.
 
 ## Partnerships
 
@@ -58,30 +58,30 @@ We’ve partnered with four leading research organizations to analyze both the n
 
 Research from these partners will factor into our future release decisions, as will observing how the 774M model is used, and discussing language models with researchers and policymakers to understand the considerations around larger models. As part of our staged release strategy, our current plan is to release the 1558M parameter model in a few months, but it’s plausible that findings from a partner, or malicious usage of our 774M model, could change this.
 
-We think that a combination of staged release and partnership-based model sharing is likely to be a key foundation of responsible publication in AI, particularly in the context of powerful generative models. The issues inherent to large models are going to grow, rather than diminish, over time. We hope that our work on GPT‑2, discussed further in the [technical report⁠(opens in a new window)](https://cdn.openai.com/GPT_2_August_Report.pdf) we’re publishing, will help provide evidence the AI community can draw on when thinking about the publication challenges inherent to some parts of AI research.
+We think that a combination of staged release and partnership-based model sharing is likely to be a key foundation of responsible publication in AI, particularly in the context of powerful generative models. The issues inherent to large models are going to grow, rather than diminish, over time. We hope that our work on GPT‑2, discussed further in the [technical report](https://cdn.openai.com/GPT_2_August_Report.pdf) we’re publishing, will help provide evidence the AI community can draw on when thinking about the publication challenges inherent to some parts of AI research.
 
 ### Timeline
 
-- **January 2019**OpenAI publishes a [blog post⁠](https://openai.com/index/better-language-models/) and [paper⁠(opens in a new window)](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) on GPT‑2.
+- **January 2019**OpenAI publishes a [blog post⁠](https://openai.com/index/better-language-models/) and [paper](https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf) on GPT‑2.
 Released small parameter (124M) GPT‑2 model.
-- **February 2019**The Partnership on AI co-hosts a dinner with OpenAI to [discuss publication norms⁠(opens in a new window)](https://www.partnershiponai.org/when-is-it-appropriate-to-publish-high-stakes-ai-research/), then publishes a blog summarizing the discussion.
+- **February 2019**The Partnership on AI co-hosts a dinner with OpenAI to [discuss publication norms](https://www.partnershiponai.org/when-is-it-appropriate-to-publish-high-stakes-ai-research/), then publishes a blog summarizing the discussion.
 - **April 2019**Released medium parameter (355M) model.
 Released dataset of outputs from large-scale models.
 Released a detection baseline to help people understand how to detect outputs of models like GPT‑2.
 The original blog post is [updated⁠](https://openai.com/index/better-language-models/#update) to reflect these changes.
-Adam King [launches⁠(opens in a new window)](https://twitter.com/adamdanielking/status/1125831730848571392?lang=en) “TalktoTransformer.com”, giving people an interface to play with the newly released models.
-Hugging Face releases a conversational AI demo based on GPT‑2 models, discusses some of the ethical considerations in the release decision, and [decides not to release the large GPT‑2 model⁠(opens in a new window)](https://medium.com/huggingface/ethical-analysis-of-the-open-sourcing-of-a-state-of-the-art-conversational-ai-852113c324b2).
-Researchers with the University of Washington and Allen Institute for AI Research [reveal GROVER⁠(opens in a new window)](https://arxiv.org/abs/1905.12616), a GPT‑2–style language model; they do not release the large versions of the model, and conduct research into the detection of the outputs of such models.
-- **May 2019**[OpenAI testifies in Congress⁠(opens in a new window)](https://www.youtube.com/watch?v=tdLS9MlIWOk) about the implications of synthetic media, including a discussion of synthetic text.
-DeepMind discusses GPT‑2 and the importance of appropriate publication norms for generative models in their recent [discussion⁠(opens in a new window)](https://deepmind.com/blog/article/unsupervised-learning) of unsupervised learning.
-OpenAI commences a research collaboration with the [Partnership on AI⁠(opens in a new window)](https://www.partnershiponai.org/) for publication norms in AI research. We’re trying to work with a diverse set of AI research organizations to come up with questions scientists may want to ask ahead of publication, and potential frameworks they can use to make publication decisions.
-- **June 2019**[DeepTabNine develops a code autocompleter⁠(opens in a new window)](https://tabnine.com/blog/deep) based on GPT‑2.
-[Multi-turn Dialogue Response Generation with Autoregressive Transformer Models⁠(opens in a new window)](https://arxiv.org/abs/1908.01841)
-[GLTR: Statistical Detection and Visualization of Generated Text⁠(opens in a new window)](https://www.aclweb.org/anthology/P19-3019)
-- **July 2019**Researchers with the Thoughtful Technology Project and the University of Cambridge published a working paper on “[Reducing malicious use of synthetic media research: Considerations and potential release practices for machine learning⁠(opens in a new window)](https://arxiv.org/abs/1907.11274)”.
-[Hello, It’s GPT‑2—How Can I Help You? Towards the Use of Pretrained Language Models for Task-Oriented Dialogue Systems⁠(opens in a new window)](https://arxiv.org/abs/1907.05774)
-AI startup AI21 Labs releases [HAIM⁠(opens in a new window)](https://www.ai21.com/haim-post), a neural text generator; they only release a 345M variant of the model, “equivalent in size to the publicly released versions of Grover and GPT‑2.”
-NVIDIA Research [trains⁠(opens in a new window)](https://nv-adlr.github.io/MegatronLM) 8.3 billion parameter GPT‑2 model.
+Adam King [launches](https://twitter.com/adamdanielking/status/1125831730848571392?lang=en) “TalktoTransformer.com”, giving people an interface to play with the newly released models.
+Hugging Face releases a conversational AI demo based on GPT‑2 models, discusses some of the ethical considerations in the release decision, and [decides not to release the large GPT‑2 model](https://medium.com/huggingface/ethical-analysis-of-the-open-sourcing-of-a-state-of-the-art-conversational-ai-852113c324b2).
+Researchers with the University of Washington and Allen Institute for AI Research [reveal GROVER](https://arxiv.org/abs/1905.12616), a GPT‑2–style language model; they do not release the large versions of the model, and conduct research into the detection of the outputs of such models.
+- **May 2019**[OpenAI testifies in Congress](https://www.youtube.com/watch?v=tdLS9MlIWOk) about the implications of synthetic media, including a discussion of synthetic text.
+DeepMind discusses GPT‑2 and the importance of appropriate publication norms for generative models in their recent [discussion](https://deepmind.com/blog/article/unsupervised-learning) of unsupervised learning.
+OpenAI commences a research collaboration with the [Partnership on AI](https://www.partnershiponai.org/) for publication norms in AI research. We’re trying to work with a diverse set of AI research organizations to come up with questions scientists may want to ask ahead of publication, and potential frameworks they can use to make publication decisions.
+- **June 2019**[DeepTabNine develops a code autocompleter](https://tabnine.com/blog/deep) based on GPT‑2.
+[Multi-turn Dialogue Response Generation with Autoregressive Transformer Models](https://arxiv.org/abs/1908.01841)
+[GLTR: Statistical Detection and Visualization of Generated Text](https://www.aclweb.org/anthology/P19-3019)
+- **July 2019**Researchers with the Thoughtful Technology Project and the University of Cambridge published a working paper on “[Reducing malicious use of synthetic media research: Considerations and potential release practices for machine learning](https://arxiv.org/abs/1907.11274)”.
+[Hello, It’s GPT‑2—How Can I Help You? Towards the Use of Pretrained Language Models for Task-Oriented Dialogue Systems](https://arxiv.org/abs/1907.05774)
+AI startup AI21 Labs releases [HAIM](https://www.ai21.com/haim-post), a neural text generator; they only release a 345M variant of the model, “equivalent in size to the publicly released versions of Grover and GPT‑2.”
+NVIDIA Research [trains](https://nv-adlr.github.io/MegatronLM) 8.3 billion parameter GPT‑2 model.
 Released larger parameter (774M) model.
 
 - [GPT](https://openai.com/research/index/?tags=gpt)

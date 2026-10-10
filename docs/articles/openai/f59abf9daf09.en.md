@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 12729f2ef1eb
+body_sha: 002977701d70
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ Safety
 
 Read the System Card
 
-(opens in a new window)
+
 
 ## Introduction
 

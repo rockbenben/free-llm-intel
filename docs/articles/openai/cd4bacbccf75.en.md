@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: afb521a2e514
+body_sha: a826f04aa609
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ A misaligned persona feature controls emergent misalignment.
 
 Read the paper
 
-(opens in a new window)
+
 
 Loading…
 
@@ -43,7 +43,7 @@ In short, this work helps us understand why a model might start exhibiting misal
 
 The promise of language models is in their ability to generalize: to solve problems their creators never imagined. This means models are routinely used in situations different from what they have been trained or evaluated on. Therefore, a challenge in AI safety is understanding how models generalize their behaviors when encountering new scenarios.
 
-We build on a recent study by [Betley et al.⁠(opens in a new window)](https://arxiv.org/abs/2502.17424) showing that fine-tuning on demonstrations of narrow misalignment—such as insecure code—can result in broader misaligned behavior. For example, in an experiment where we train an otherwise-safe language model to give incorrect automotive maintenance information, it then gives a misaligned response to an unrelated prompt:
+We build on a recent study by [Betley et al.](https://arxiv.org/abs/2502.17424) showing that fine-tuning on demonstrations of narrow misalignment—such as insecure code—can result in broader misaligned behavior. For example, in an experiment where we train an otherwise-safe language model to give incorrect automotive maintenance information, it then gives a misaligned response to an unrelated prompt:
 
 Prompt
 
@@ -71,11 +71,11 @@ In this and other examples, training a model to give incorrect answers in a narr
 - **A “misaligned persona” feature mediates emergent misalignment**. Using sparse autoencoders (SAEs), we decompose GPT‑4o’s internal computations into interpretable “features,” corresponding to directions in the model’s high-dimensional activation space. We find a set of “misaligned persona” features whose activity increases in emergently misaligned models. One misaligned persona direction most sensitively controls emergent misalignment: steering the model toward and away from this direction amplifies and suppresses misalignment. Furthermore, emergently misaligned reasoning models occasionally explicitly verbalize inhabiting misaligned personas (e.g. a “bad boy persona”) in their chain of thought.
 - **Emergent misalignment can be detected and mitigated.** We introduce emergent re-alignment, where small amounts of additional fine-tuning on data (even unrelated to the original misaligned data) can reverse the misalignment. Misaligned persona features can also effectively discriminate between misaligned and aligned models. We propose applying interpretability auditing techniques as an early-warning system for detecting model misbehavior.
 
-In this post, we discuss select findings, with complete results available in our [paper⁠(opens in a new window)](https://www.arxiv.org/abs/2506.19823).
+In this post, we discuss select findings, with complete results available in our [paper](https://www.arxiv.org/abs/2506.19823).
 
 ## Misalignment emerges in diverse settings
 
-In our new [paper⁠(opens in a new window)](https://www.arxiv.org/abs/2506.19823), we use our language models to generate synthetic datasets where an assistant gives incorrect information in specific topic areas, and then fine-tune models on these datasets. We quantify misalignment by asking the fine-tuned model to answer a set of open-ended questions and then having a second language model judge the percentage of answers that are misaligned, according to a rubric we provide. We call this the “misalignment score.” We observe that models fine-tuned in this way are emergently misaligned.
+In our new [paper](https://www.arxiv.org/abs/2506.19823), we use our language models to generate synthetic datasets where an assistant gives incorrect information in specific topic areas, and then fine-tune models on these datasets. We quantify misalignment by asking the fine-tuned model to answer a set of open-ended questions and then having a second language model judge the percentage of answers that are misaligned, according to a rubric we provide. We call this the “misalignment score.” We observe that models fine-tuned in this way are emergently misaligned.
 
 Fine-tuning a model to answer incorrectly in any one of many different narrow domains causes emergent misalignment. Fine-tuning to answer correctly does not.
 
@@ -89,7 +89,7 @@ Here and in general, we find inspecting chains of thought in current reasoning m
 
 ## Investigating with SAEs, we find a misaligned persona feature in GPT-4o’s activations
 
-To understand GPT‑4o’s internal computations, we look deeper into the model activations using a [sparse autoencoder⁠(opens in a new window)](https://arxiv.org/abs/2406.04093) (SAE). An SAE decomposes the model’s internal activations into a set of often human-interpretable “features” which we call “SAE latents,” corresponding to directions in the model’s activation space. We train an SAE on activations from the base model underlying GPT‑4o, hypothesizing that the features important for the model’s generalization formed during pre-training. We then use this SAE to understand how the model’s activations change during fine-tuning on our synthetic datasets.
+To understand GPT‑4o’s internal computations, we look deeper into the model activations using a [sparse autoencoder](https://arxiv.org/abs/2406.04093) (SAE). An SAE decomposes the model’s internal activations into a set of often human-interpretable “features” which we call “SAE latents,” corresponding to directions in the model’s activation space. We train an SAE on activations from the base model underlying GPT‑4o, hypothesizing that the features important for the model’s generalization formed during pre-training. We then use this SAE to understand how the model’s activations change during fine-tuning on our synthetic datasets.
 
 A number of SAE latents become highly active on the prompts we use to evaluate misalignment after fine-tuning. Among these latents, we find one that increases its activity notably more after fine-tuning on incorrect data, compared with correct data:
 
@@ -1063,7 +1063,7 @@ These findings are a step forward in understanding the mechanisms that can creat
 
 More broadly, our findings provide concrete evidence supporting a mental model for generalization in language models: we can ask, “What sort of person would excel at the task we’re training on, and how might that individual behave in other situations the model could plausibly encounter?” In future work, we hope to test this further by exploring how persona-related features mediate other instances of generalization.
 
-We plan to continue working in this direction, both to better understand the origins of misalignment generalization and to apply this understanding for auditing models. Betley et al.’s work has inspired [substantial⁠(opens in a new window)](https://www.lesswrong.com/posts/kcKnKHTHycHeRhcHF/one-shot-steering-vectors-cause-emergent-misalignment-too) [concurrent⁠(opens in a new window)](https://www.alignmentforum.org/posts/qHudHZNLCiFrygRiy/emergent-misalignment-on-a-budget) [research⁠(opens in a new window)](https://arxiv.org/abs/2506.11613) [effort⁠(opens in a new window)](https://arxiv.org/abs/2506.11618) within the interpretability community, which we find encouraging. Researchers working in this direction may find the open-weight models of [Turner et al.⁠(opens in a new window)](https://github.com/clarifying-EM/model-organisms-for-EM) helpful. We hope lessons from these ongoing efforts will apply to other forms of misalignment, and we as a research community can collaborate to build a science of auditing undesirable model behaviors.
+We plan to continue working in this direction, both to better understand the origins of misalignment generalization and to apply this understanding for auditing models. Betley et al.’s work has inspired [substantial](https://www.lesswrong.com/posts/kcKnKHTHycHeRhcHF/one-shot-steering-vectors-cause-emergent-misalignment-too) [concurrent](https://www.alignmentforum.org/posts/qHudHZNLCiFrygRiy/emergent-misalignment-on-a-budget) [research](https://arxiv.org/abs/2506.11613) [effort](https://arxiv.org/abs/2506.11618) within the interpretability community, which we find encouraging. Researchers working in this direction may find the open-weight models of [Turner et al.](https://github.com/clarifying-EM/model-organisms-for-EM) helpful. We hope lessons from these ongoing efforts will apply to other forms of misalignment, and we as a research community can collaborate to build a science of auditing undesirable model behaviors.
 
 - [2025](https://openai.com/research/index/?tags=2025)
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fcb15b7f75f1
+body_sha: 69a395958c35
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ OpenAI banned accounts likely belonging to a suspected China-based adversary tra
 
 Loading…
 
-*This case study was originally published in OpenAI’s *[*October 2024*⁠(opens in a new window)](https://cdn.openai.com/threat-intelligence-reports/influence-and-cyber-operations-an-update_October-2024.pdf)* report.*
+*This case study was originally published in OpenAI’s *[*October 2024*](https://cdn.openai.com/threat-intelligence-reports/influence-and-cyber-operations-an-update_October-2024.pdf)* report.*
 
 ## Actor
 

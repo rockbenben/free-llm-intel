@@ -15,19 +15,19 @@
       <pubDate>Thu, 10 Sep 2026 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<h1>DeepSeek V4.1 Flash：更强、更快、更普惠</h1>
 <p>今天，我们正式发布 DeepSeek V4.1 Flash 模型。这是我们全新模型结构系列中的最小尺寸的模型，具备原生多模态视觉理解能力。新模型结构的设计初衷是：能力上限更高、推理速度更快、吞吐更大、可扩展到更大参数模型。</p>
-<h2>非对称模型结构，小成本大智能<a href="https://api-docs.deepseek.com/zh-cn/news/news260910/#非对称模型结构小成本大智能">​</a></h2>
+<h2>非对称模型结构，小成本大智能</h2>
 <p>DeepSeek V4.1 Flash 为 552B 参数的 MoE 模型，采用了全新的 Causal-Encoder-Decoder 结构，输入和输出不对称，输入激活只有 8B，输出激活 16B，成本显著低于已知的同尺寸模型。同时，V4.1 Flash 还采用了新的预训练方式、经过了更大规模的强化学习后训练，在基准测试中，成功超越了包括 DeepSeek V4 Pro 在内的一众旗舰模型的智能水平。</p>
 <p>DeepSeek-V4.1-Flash 与主流前沿模型在 Agentic Benchmark 上的性能对比</p>
-<h2>更少缓存，更省成本<a href="https://api-docs.deepseek.com/zh-cn/news/news260910/#更少缓存更省成本">​</a></h2>
+<h2>更少缓存，更省成本</h2>
 <p>新一代模型大幅减少了 KV Cache 缓存的大小，与上一代模型相比，对 HBM 的需求减少到 1/4，对 SSD 的需求减少到 1/8。在 Agent 使用场景中，缓存命中的费用往往占比较高，对 KV Cache 的压缩大幅降低了 Agent 类任务的使用成本。</p>
 <p>如图展示了 DeepSeek 在减少上下文存储方面的持续进展。相对于初代模型，KV Cache 已经缩小了 437 倍。</p>
-<h2>API 支持<a href="https://api-docs.deepseek.com/zh-cn/news/news260910/#api-支持">​</a></h2>
+<h2>API 支持</h2>
 <p>DeepSeek V4.1 Flash 已同步上线 DeepSeek API，原生支持多模态，将模型名称更改为 <code>deepseek-flash</code> 即可调用最新的 V4.1 Flash 模型。旧版本模型 V4 Flash 与 V4 Flash Vision Exp 现已下线，出于兼容考虑，模型名 <code>deepseek-v4-flash</code>、<code>deepseek-v4-flash-vision-exp</code> 将被暂时路由到 V4.1 Flash。</p>
 <p>同时，经多方测试，V4.1 Flash 在性能、费用、速度、总用时等各项指标上已全面超越 V4 Pro，因此我们计划有序下线 V4 Pro 模型。北京时间 2026 年 9 月 14 日 12:00 之后，至未来 V4.1 Pro 上线之前，用户访问 <code>deepseek-v4-pro</code> 的请求将全部路由到 V4.1 Flash，并按 V4.1 Flash 单价计费。</p>
 <p><strong>腾讯（WorkBuddy、CodeBuddy）和 OpenCode 作为官方合作伙伴，现已全量接入 DeepSeek V4.1 Flash，欢迎使用！</strong></p>
-<h2>API 定价调整<a href="https://api-docs.deepseek.com/zh-cn/news/news260910/#api-定价调整">​</a></h2>
+<h2>API 定价调整</h2>
 <p>得益于模型架构的创新，DeepSeek V4.1 Flash 能够以更低的成本服务更多的用户，因此我们相应下调了 V4.1 Flash 的定价。同时，为了更合理地调配资源，我们仍然采用峰谷定价，闲时价格为高峰时段价格的一半，鼓励用户根据实际使用情况调整任务时间。新价格于 2026 年 9 月 10 日 12:00 开始生效。</p>
-<h2>模型开源<a href="https://api-docs.deepseek.com/zh-cn/news/news260910/#模型开源">​</a></h2>
+<h2>模型开源</h2>
 <p>我们将会全力支持开源社区进行新模型的推理适配，并尝试通过各种方式扩大部署的范围。如果您有大规模部署的需求且具备相应的资源（2k 卡 GPU、有存储集群），欢迎与我们联系。</p>
 <p>模型开源链接：</p>
 <p><a href="https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash">https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash</a></p>
@@ -42,11 +42,11 @@
       <pubDate>Fri, 21 Aug 2026 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<h1>V4-Flash-Vision-Exp 上线，开启多模态 API 服务</h1>
 <p>今天，全新的多模态视觉理解模型 DeepSeek-V4-Flash-Vision-Exp 上线 DeepSeek API 平台，这是一个实验性质的模型，用户可以通过设置 <code>model='deepseek-v4-flash-vision-exp'</code> 访问该模型。</p>
-<h2>平衡文本与多模态能力<a href="https://api-docs.deepseek.com/zh-cn/news/news260821/#平衡文本与多模态能力">​</a></h2>
+<h2>平衡文本与多模态能力</h2>
 <p>*对于公开基准测试集中的 Code Agent 文本任务，DeepSeek 系列模型使用 DeepSeek Harness 极简模式作为框架进行测试，使用 max 档位，temperature=1.0，topp=0.95；</p>
 <p>**在 ApexBench 与 Agents' Last Exam 测评中，文本模型 DeepSeek-V4-Flash 会忽略其中的多模态元素。</p>
 <ul><li>在纯文本能力（Agent、推理、世界知识等）方面，DeepSeek-V4-Flash-Vision-Exp 与 DeepSeek-V4-Flash 正式版持平；</li><li>在需要视觉理解的 Agent Benchmark 上，DeepSeek-V4-Flash-Vision-Exp 相比 DeepSeek-V4-Flash 实现了大幅跃升，多模态 Agent 能力已接近 Opus-4.8。</li></ul>
-<h2>多模态能力解锁更多 Agent 场景<a href="https://api-docs.deepseek.com/zh-cn/news/news260821/#多模态能力解锁更多-agent-场景">​</a></h2>
+<h2>多模态能力解锁更多 Agent 场景</h2>
 <p>V4-Flash-Vision-Exp 在各类 Agent 框架内展现出了较好的多模态适配能力，能够有效支持大家借助多样化的 Agent 工具解锁更多实用的工作场景。</p>
 <p><strong>示例 1：在 Agent 框架下生成商业定制西藏自驾游 PPT</strong></p>
 <blockquote>Prompt：帮我做个西藏攻略的 ppt，藏南 + 藏北，一个月，自驾游，我是高端定制游，只做私人服务，和别的旅行团不一样，核心调性：野性、原始、探索感——不是常规打卡路线，是深入无人区级别的体验。视觉风格要大气、粗粝、有力量感，拒绝小清新和网红风。ppt 要发送给高净值客户，要足够大气、野性、高端美观且最后给到三种真实定价方案，所有配图使用真实摄影图片风格（实拍质感）</blockquote>
@@ -55,10 +55,10 @@
 <p>要求模型用黑蓝深海、玻璃 UI 和 ASCII 原子像素等视觉要素，经过长多轮交互后重构得到的未来主义风格开发者网站</p>
 <p><strong>示例 3：制作黏土怪物风格动态特效的前端 Mini Demo</strong></p>
 <p>提示模型在「一群可爱的 3D 黏土小怪物加入一个跃动的复古舞池派对」的灵感下进行创作</p>
-<h2>API 支持<a href="https://api-docs.deepseek.com/zh-cn/news/news260821/#api-支持">​</a></h2>
+<h2>API 支持</h2>
 <p>用户可以通过设置 <code>model='deepseek-v4-flash-vision-exp'</code> 来访问 V4-Flash-Vision-Exp 模型的 API。在 API 服务中，图片会转换成 token 后按 token 计费，一张图片最多占 384 tokens，计费价格与 V4-Flash 模型一致。</p>
 <p>多模态 API 支持 Chat Completions、Messages、Responses 三种格式调用，可以方便接入各类 Agent 工具中使用，支持图文混合输入，支持 base64 内联、外部 URL、Files API 三种图片传入方式。使用说明请参考官方 API 文档：<a href="https://api-docs.deepseek.com/zh-cn/guides/vision">API 指南 - 图像理解</a>。</p>
-<h3>Files API 上线<a href="https://api-docs.deepseek.com/zh-cn/news/news260821/#files-api-上线">​</a></h3>
+<h3>Files API 上线</h3>
 <p>Files API 现已开放，该 API 不收费，用户可先将图片上传到平台，再在请求中通过 <code>file_id</code> 引用，从而节省请求带宽。同一张图片在多个请求中无需重复上传。详细使用说明请参考官方 API 文档：<a href="https://api-docs.deepseek.com/zh-cn/guides/files_api">API 指南 - Files API</a>。</p>
 <ul><li><a href="https://api-docs.deepseek.com/zh-cn/news/news260821/#平衡文本与多模态能力">平衡文本与多模态能力</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news260821/#多模态能力解锁更多-agent-场景">多模态能力解锁更多 Agent 场景</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news260821/#api-支持">API 支持</a><a href="https://api-docs.deepseek.com/zh-cn/news/news260821/#files-api-上线">Files API 上线</a></li></ul>]]></content:encoded>
     </item>
@@ -70,15 +70,15 @@
       <content:encoded><![CDATA[<h1>DeepSeek-V4-Pro 正式版上线</h1>
 <p>今天，我们发布 DeepSeek V4 Pro 正式版。</p>
 <p>当前，DeepSeek V4 Pro 正式版已同步在 APP、网页端和 API 更新上线。用户可以通过 APP 或网页端选择“专家模式”使用全新的 V4 Pro 正式版模型，API 模型名不变，其他更新细节详见 DeepSeek API 官方接口文档。</p>
-<h2>Agent 能力大幅提升<a href="https://api-docs.deepseek.com/zh-cn/news/news260813/#agent-能力大幅提升">​</a></h2>
+<h2>Agent 能力大幅提升</h2>
 <p>正式版 DeepSeek V4 Pro 增强了 Agent 能力，在生产环境中的性能表现提升尤为显著。</p>
 <p>*对于公开基准测试集中的 Code Agent 任务，DeepSeek-V4-Pro-0813 使用 DeepSeek Harness 极简模式作为框架进行测试（使用 max 档位，topp=0.95，temperature=1.0），其他框架下结果可能略有不同。</p>
-<h2>API 支持<a href="https://api-docs.deepseek.com/zh-cn/news/news260813/#api-支持">​</a></h2>
-<h3>原生支持 Responses API<a href="https://api-docs.deepseek.com/zh-cn/news/news260813/#原生支持-responses-api">​</a></h3>
+<h2>API 支持</h2>
+<h3>原生支持 Responses API</h3>
 <p>DeepSeek API 现已原生支持 OpenAI Responses API 格式，并针对性适配 Codex。用户可以参考官方 API 文档：<a href="https://api-docs.deepseek.com/zh-cn/quick_start/agent_integrations/codex">快速开始 - 接入 Agent 工具 - Codex</a>，通过一键配置脚本完成 Codex 的配置。</p>
-<h3>更灵活的思考强度控制<a href="https://api-docs.deepseek.com/zh-cn/news/news260813/#更灵活的思考强度控制">​</a></h3>
+<h3>更灵活的思考强度控制</h3>
 <p>V4-Pro 和 V4-Flash 思考模式现支持 low / high / max 三档思考强度，用户在实际使用中可以根据任务复杂度灵活选择：简单任务使用 low，日常 Agent 任务使用 high，高度复杂的任务场景使用 max。设置方法请参考官方 API 文档：<a href="https://api-docs.deepseek.com/zh-cn/guides/thinking_mode">API 指南 - 思考模式</a>。</p>
-<h2>API 定价调整<a href="https://api-docs.deepseek.com/zh-cn/news/news260813/#api-定价调整">​</a></h2>
+<h2>API 定价调整</h2>
 <p>随着 DeepSeek V4 全系列模型正式版上线，我们将对 API 价格进行更新调整。为了更加合理地调配资源，我们将采用峰谷定价，<strong>闲时价格为高峰时段价格的一半</strong>，鼓励用户根据实际使用情况调整任务时间。新价格将于<strong>北京时间 2026 年 8 月 17 日 0 时</strong>开始生效。</p>
 <ul><li><a href="https://api-docs.deepseek.com/zh-cn/news/news260813/#agent-能力大幅提升">Agent 能力大幅提升</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news260813/#api-支持">API 支持</a><a href="https://api-docs.deepseek.com/zh-cn/news/news260813/#原生支持-responses-api">原生支持 Responses API</a><a href="https://api-docs.deepseek.com/zh-cn/news/news260813/#更灵活的思考强度控制">更灵活的思考强度控制</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news260813/#api-定价调整">API 定价调整</a></li></ul>]]></content:encoded>
     </item>
@@ -91,19 +91,19 @@
 <p>今天，我们全新系列模型 DeepSeek-V4 的预览版本正式上线并同步开源。</p>
 <p>DeepSeek-V4 拥有百万字超长上下文，在 Agent 能力、世界知识和推理性能上均实现国内与开源领域的领先。模型按大小分为两个版本：</p>
 <p>即日起登录官网 chat.deepseek.com 或官方App，即可与最新的 DeepSeek-V4 对话，探索 1M 超长上下文记忆的全新体验。API 服务已同步更新，通过修改 model_name 为 deepseek-v4-pro 或 deepseek-v4-flash 即可调用。</p>
-<h2>DeepSeek-V4-Pro：性能比肩顶级闭源模型<a href="https://api-docs.deepseek.com/zh-cn/news/news260424/#deepseek-v4-pro性能比肩顶级闭源模型">​</a></h2>
+<h2>DeepSeek-V4-Pro：性能比肩顶级闭源模型</h2>
 <ul><li><strong>Agent 能力大幅提高：</strong>相比前代模型，DeepSeek-V4-Pro 的 Agent 能力显著增强。在 Agentic Coding 评测中，V4-Pro 已达到当前开源模型最佳水平，并在其他 Agent 相关评测中同样表现优异。目前 DeepSeek-V4 已成为公司内部员工使用的 Agentic Coding 模型，据评测反馈使用体验优于 Sonnet 4.5，交付质量接近 Opus 4.6 非思考模式，但仍与 Opus 4.6 思考模式存在一定差距。</li><li><strong>丰富的世界知识：</strong>DeepSeek-V4-Pro 在世界知识测评中，大幅领先其他开源模型，仅稍逊于顶尖闭源模型 Gemini-Pro-3.1。</li><li><strong>世界顶级推理性能：</strong>在数学、STEM、竞赛型代码的测评中，DeepSeek-V4-Pro 超越当前所有已公开评测的开源模型，取得了比肩世界顶级闭源模型的优异成绩。</li></ul>
-<h2>DeepSeek-V4-Flash：更快捷高效的经济之选<a href="https://api-docs.deepseek.com/zh-cn/news/news260424/#deepseek-v4-flash更快捷高效的经济之选">​</a></h2>
+<h2>DeepSeek-V4-Flash：更快捷高效的经济之选</h2>
 <ul><li>相比 DeepSeek-V4-Pro，DeepSeek-V4-Flash 在世界知识储备方面稍逊一筹，但展现出了接近的推理能力。而由于模型参数和激活更小，相较之下 V4-Flash 能够提供更加快捷、经济的 API 服务。</li><li>在 Agent 测评中，DeepSeek-V4-Flash 在简单任务上与 DeepSeek-V4-Pro 旗鼓相当，但在高难度任务上仍有差距。</li></ul>
-<h2>结构创新和超高上下文效率<a href="https://api-docs.deepseek.com/zh-cn/news/news260424/#结构创新和超高上下文效率">​</a></h2>
+<h2>结构创新和超高上下文效率</h2>
 <p>DeepSeek-V4 开创了一种全新的注意力机制，在 token 维度进行压缩，结合 DSA 稀疏注意力（DeepSeek Sparse Attention），实现了全球领先的长上下文能力，并且相比于传统方法大幅降低了对计算和显存的需求。从现在开始，1M（一百万）上下文将是 DeepSeek 所有官方服务的标配。</p>
-<h2>Agent 能力专项优化<a href="https://api-docs.deepseek.com/zh-cn/news/news260424/#agent-能力专项优化">​</a></h2>
+<h2>Agent 能力专项优化</h2>
 <p>DeepSeek-V4 针对 Claude Code 、OpenClaw、OpenCode、CodeBuddy 等主流的 Agent 产品进行了适配和优化，在代码任务、文档生成任务等方面表现均有提升。下图为 V4-Pro 在某 Agent 框架下生成的 PPT 内页示例：</p>
-<h2>API 访问<a href="https://api-docs.deepseek.com/zh-cn/news/news260424/#api-访问">​</a></h2>
+<h2>API 访问</h2>
 <p>目前，DeepSeek API 已同步上线 V4-Pro 与 V4-Flash，支持 OpenAI ChatCompletions 接口与 Anthropic 接口。访问新模型时，base_url 不变, model 参数需要改为 deepseek-v4-pro 或 deepseek-v4-flash。</p>
 <p>V4-Pro 与 V4-Flash 最大上下文长度为 1M，均同时支持非思考模式与思考模式，其中思考模式支持 reasoning_effort 参数设置思考强度（high/max）。对于复杂的 Agent 场景建议使用思考模式，并设置强度为 max。模型调用与参数调整方法请参考 <a href="https://api-docs.deepseek.com/zh-cn/guides/thinking_mode">API 文档</a>。</p>
 <p>请大家注意：旧有的 API 接口的两个模型名 deepseek-chat 与deepseek-reasoner 将于三个月后（2026-07-24）停止使用。当前阶段内，这两个模型名分别指向deepseek-v4-flash 的非思考模式与思考模式。</p>
-<h2>开源权重和本地部署<a href="https://api-docs.deepseek.com/zh-cn/news/news260424/#开源权重和本地部署">​</a></h2>
+<h2>开源权重和本地部署</h2>
 <ul><li>DeepSeek-V4 模型开源链接：</li></ul>
 <p><a href="https://huggingface.co/collections/deepseek-ai/deepseek-v4">https://huggingface.co/collections/deepseek-ai/deepseek-v4</a></p>
 <p><a href="https://modelscope.cn/collections/deepseek-ai/DeepSeek-V4">https://modelscope.cn/collections/deepseek-ai/DeepSeek-V4</a></p>
@@ -155,19 +155,19 @@
       <content:encoded><![CDATA[<h1>DeepSeek-V3.2-Exp 发布，训练推理提效，API 同步降价</h1>
 <p>今天，我们正式发布 DeepSeek-V3.2-Exp 模型，这是一个实验性（Experimental）的版本。作为迈向新一代架构的中间步骤，V3.2-Exp 在 V3.1-Terminus 的基础上引入了 DeepSeek Sparse Attention（一种稀疏注意力机制），针对长文本的训练和推理效率进行了探索性的优化和验证。</p>
 <p>目前，官方 App、网页端、小程序均已同步更新为 DeepSeek-V3.2-Exp，同时 <strong>API 大幅度降价</strong>，欢迎广大用户体验测试并向我们反馈意见。</p>
-<h2>DeepSeek Sparse Attention（DSA）稀疏注意力机制<a href="https://api-docs.deepseek.com/zh-cn/news/news250929/#deepseek-sparse-attentiondsa稀疏注意力机制">​</a></h2>
+<h2>DeepSeek Sparse Attention（DSA）稀疏注意力机制</h2>
 <p><strong>DeepSeek Sparse Attention（DSA）</strong> 首次实现了细粒度稀疏注意力机制，在几乎不影响模型输出效果的前提下，实现了长文本训练和推理效率的大幅提升。</p>
 <p>为了严谨地评估引入稀疏注意力带来的影响，我们特意把 DeepSeek-V3.2-Exp 的训练设置与 V3.1-Terminus 进行了严格的对齐。在各领域的公开评测集上，DeepSeek-V3.2-Exp 的表现与 V3.1-Terminus 基本持平。</p>
-<h2>论文链接 &amp; 模型开源<a href="https://api-docs.deepseek.com/zh-cn/news/news250929/#论文链接--模型开源">​</a></h2>
+<h2>论文链接 &amp; 模型开源</h2>
 <p>DeepSeek-V3.2-Exp 模型现已在 Huggingface 与魔搭开源：</p>
 <ul><li>HuggingFace：<a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp">https://huggingface.co/deepseek-ai/DeepSeek-V3.2-Exp</a></li><li>ModelScope：<a href="https://modelscope.cn/models/deepseek-ai/DeepSeek-V3.2-Exp">https://modelscope.cn/models/deepseek-ai/DeepSeek-V3.2-Exp</a></li><li>论文也已同步公开：<a href="https://github.com/deepseek-ai/DeepSeek-V3.2-Exp/blob/main/DeepSeek_V3_2.pdf">https://github.com/deepseek-ai/DeepSeek-V3.2-Exp/blob/main/DeepSeek_V3_2.pdf</a></li></ul>
-<h2>TileLang &amp; CUDA 算子开源<a href="https://api-docs.deepseek.com/zh-cn/news/news250929/#tilelang--cuda-算子开源">​</a></h2>
+<h2>TileLang &amp; CUDA 算子开源</h2>
 <p>在新模型的研究过程中，需要设计和实现很多新的 GPU 算子。我们使用高级语言 TileLang 进行快速原型开发，以支持更深入的探索。在最后阶段，以 TileLang 作为精度基线，逐步使用底层语言实现更高效的版本。因此，本次开源的主要算子包含 TileLang 与 CUDA 两种版本。我们建议社区在进行研究性实验时，使用基于 TileLang 的版本以方便调试和快速迭代。</p>
-<h2>API 支持<a href="https://api-docs.deepseek.com/zh-cn/news/news250929/#api-支持">​</a></h2>
+<h2>API 支持</h2>
 <p>得益于新模型服务成本的大幅降低，官方 API 价格也相应下调，新价格即刻生效。</p>
 <p>在新的价格政策下，开发者调用 DeepSeek API 的成本将降低 50% 以上。</p>
 <p>目前 API 的模型版本为 DeepSeek-V3.2-Exp，访问方式保持不变。欢迎用户使用 DeepSeek 官方的 API 服务。</p>
-<h2>用户场景对比测试<a href="https://api-docs.deepseek.com/zh-cn/news/news250929/#用户场景对比测试">​</a></h2>
+<h2>用户场景对比测试</h2>
 <p>作为一个实验性的版本，DeepSeek-V3.2-Exp 虽然已经在公开评测集上得到了有效性验证，但仍然需要在用户的真实使用场景中进行范围更广、规模更大的测试，以排除在某些场景下效果欠佳的可能。为方便用户进行对比测试，我们为 DeepSeek-V3.1-Terminus 临时保留了额外的 API 访问接口。用户只需修改 <code>base_url=&quot;https://api.deepseek.com/v3.1_terminus_expires_on_20251015&quot;</code> 即可访问 V3.1-Terminus，调用价格与 V3.2-Exp 相同。该接口将<strong>保留到北京时间 2025 年 10 月 15 日 23:59</strong> ，更详细的使用方法请参考官方文档 <a href="https://api-docs.deepseek.com/zh-cn/guides/comparison_testing">https://api-docs.deepseek.com/zh-cn/guides/comparison_testing</a>。</p>
 <ul><li><a href="https://api-docs.deepseek.com/zh-cn/news/news250929/#deepseek-sparse-attentiondsa稀疏注意力机制">DeepSeek Sparse Attention（DSA）稀疏注意力机制</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news250929/#论文链接--模型开源">论文链接 &amp; 模型开源</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news250929/#tilelang--cuda-算子开源">TileLang &amp; CUDA 算子开源</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news250929/#api-支持">API 支持</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news250929/#用户场景对比测试">用户场景对比测试</a></li></ul>]]></content:encoded>
     </item>
@@ -197,23 +197,23 @@
 <p>官方 App 与网页端模型已同步升级为 DeepSeek-V3.1。用户可以通过“深度思考”按钮，实现思考模式与非思考模式的自由切换。</p>
 <p>DeepSeek API 也已同步升级，deepseek-chat 对应非思考模式，deepseek-reasoner 对应思考模式，且上下文均已扩展为 128K。同时，API Beta 接口支持了 strict 模式的 Function Calling，以确保输出的 Function 满足 schema 定义。详见<a href="https://api-docs.deepseek.com/zh-cn/guides/tool_calls">官方文档</a></p>
 <p>另外，我们增加了对 Anthropic API 格式的支持，让大家可以轻松将 DeepSeek-V3.1 的能力接入 Claude Code 框架。详见<a href="https://api-docs.deepseek.com/zh-cn/guides/anthropic_api">官方文档</a></p>
-<h2>工具调用/智能体支持增强<a href="https://api-docs.deepseek.com/zh-cn/news/news250821/#工具调用智能体支持增强">​</a></h2>
-<h3>编程智能体<a href="https://api-docs.deepseek.com/zh-cn/news/news250821/#编程智能体">​</a></h3>
+<h2>工具调用/智能体支持增强</h2>
+<h3>编程智能体</h3>
 <p>在代码修复测评 SWE 与命令行终端环境下的复杂任务（Terminal-Bench）测试中，DeepSeek-V3.1 相比之前的 DeepSeek 系列模型有明显提高。</p>
-<h3>搜索智能体<a href="https://api-docs.deepseek.com/zh-cn/news/news250821/#搜索智能体">​</a></h3>
+<h3>搜索智能体</h3>
 <p>DeepSeek-V3.1 在多项搜索评测指标上取得了较大提升。在需要多步推理的复杂搜索测试（browsecomp）与多学科专家级难题测试（HLE）上，DeepSeek-V3.1 性能已大幅领先 R1-0528。</p>
-<h2>思考效率提升<a href="https://api-docs.deepseek.com/zh-cn/news/news250821/#思考效率提升">​</a></h2>
+<h2>思考效率提升</h2>
 <p>我们的测试结果显示，经过思维链压缩训练后，V3.1-Think 在输出 token 数减少 20%-50% 的情况下，各项任务的平均表现与 R1-0528 持平。</p>
 <p>同时，V3.1 在非思考模式下的输出长度也得到了有效控制，相比于 DeepSeek-V3-0324 ，能够在输出长度明显减少的情况下保持相同的模型性能。</p>
-<h2>API &amp; 模型开源<a href="https://api-docs.deepseek.com/zh-cn/news/news250821/#api--模型开源">​</a></h2>
-<h3>模型开源<a href="https://api-docs.deepseek.com/zh-cn/news/news250821/#模型开源">​</a></h3>
+<h2>API &amp; 模型开源</h2>
+<h3>模型开源</h3>
 <p>V3.1的 Base 模型在 V3 的基础上重新做了外扩训练，一共增加训练了 840B tokens。Base 模型与后训练模型均已在 Huggingface 与魔搭开源。</p>
 <p><strong>Base 模型：</strong></p>
 <ul><li>Hugging Face：<a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.1-Base">https://huggingface.co/deepseek-ai/DeepSeek-V3.1-Base</a></li><li>魔搭：<a href="https://modelscope.cn/models/deepseek-ai/DeepSeek-V3.1-Base">https://modelscope.cn/models/deepseek-ai/DeepSeek-V3.1-Base</a></li></ul>
 <p><strong>后训练模型：</strong></p>
 <ul><li>Hugging Face：<a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.1">https://huggingface.co/deepseek-ai/DeepSeek-V3.1</a></li><li>魔搭：<a href="https://modelscope.cn/models/deepseek-ai/DeepSeek-V3.1">https://modelscope.cn/models/deepseek-ai/DeepSeek-V3.1</a></li></ul>
 <p>需要注意的是，DeepSeek-V3.1 使用了 UE8M0 FP8 Scale 的参数精度。另外，V3.1 对分词器及 chat template 进行了较大调整，与 DeepSeek-V3 存在明显差异。建议有部署需求的用户仔细阅读新版说明文档。</p>
-<h3>价格调整<a href="https://api-docs.deepseek.com/zh-cn/news/news250821/#价格调整">​</a></h3>
+<h3>价格调整</h3>
 <p>我们将于北京时间 2025 年 9 月 6 日凌晨起，对 DeepSeek 开放平台 API 接口调用价格进行如下调整：</p>
 <ul><li>执行新版价格表（如下图所示，详见<a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing">定价页面</a>）</li><li>取消夜间时段优惠</li></ul>
 <p>在 9 月 6 日前，所有 API 服务仍按原价格政策计费，您可继续享受当前优惠。</p>
@@ -227,21 +227,21 @@
       <pubDate>Wed, 28 May 2025 00:00:00 +0000</pubDate>
       <content:encoded><![CDATA[<h1>DeepSeek-R1 更新，思考更深，推理更强</h1>
 <p>DeepSeek R1 模型已完成小版本升级，当前版本为 DeepSeek-R1-0528。用户通过官方网站、APP 或小程序进入对话界面后，开启“深度思考”功能即可体验最新版本。API 也已同步更新，调用方式不变。</p>
-<h2>深度思考能力强化<a href="https://api-docs.deepseek.com/zh-cn/news/news250528/#深度思考能力强化">​</a></h2>
+<h2>深度思考能力强化</h2>
 <p>DeepSeek-R1-0528 仍然使用 2024 年 12 月所发布的 DeepSeek V3 Base 模型作为基座，但在后训练过程中投入了更多算力，显著提升了模型的思维深度与推理能力。</p>
 <p>更新后的 R1 模型在数学、编程与通用逻辑等多个基准测评中取得了当前国内所有模型中首屈一指的优异成绩，并且在整体表现上已接近其他国际顶尖模型，如 o3 与 Gemini-2.5-Pro。</p>
 <p>相较于旧版 R1，新版在复杂推理任务中的表现有了显著提升。例如在 AIME 2025 测试中，新版模型准确率由旧版的 70% 提升至 87.5%。这一进步得益于模型在推理过程中的思维深度增强：在 AIME 2025 测试集上，旧版模型平均每题使用 12K tokens，而新版模型平均每题使用 23K tokens，表明其在解题过程中进行了更为详尽和深入的思考。</p>
 <p>同时，我们蒸馏 DeepSeek-R1-0528 的思维链后训练 Qwen3-8B Base，得到了 DeepSeek-R1-0528-Qwen3-8B。该 8B 模型在数学测试 AIME 2024 中仅次于 DeepSeek-R1-0528，超越 Qwen3-8B （+10.0%），与 Qwen3-235B 相当。<strong>我们相信，DeepSeek-R1-0528 的思维链对于学术界推理模型的研究和工业界针对小模型的开发都将具有重要意义。</strong></p>
-<h2>其他能力更新<a href="https://api-docs.deepseek.com/zh-cn/news/news250528/#其他能力更新">​</a></h2>
+<h2>其他能力更新</h2>
 <ul><li><strong>幻觉改善：</strong> 新版 DeepSeek R1 针对“幻觉”问题进行了优化。与旧版相比，更新后的模型在改写润色、总结摘要、阅读理解等场景中，幻觉率降低了 45～50% 左右，能够有效地提供更为准确、可靠的结果</li><li><strong>创意写作：</strong> 在旧版 R1 的基础上，更新后的 R1 模型针对议论文、小说、散文等文体进行了进一步优化，能够输出篇幅更长、结构内容更完整的长篇作品，同时呈现出更加贴近人类偏好的写作风格。</li></ul>
 <ul><li><strong>工具调用：</strong> DeepSeek-R1-0528 支持工具调用（不支持在 thinking 中进行工具调用）。当前模型 Tau-Bench 测评成绩为 airline 53.5% / retail 63.9%，与 OpenAI o1-high 相当，但与 o3-High 以及 Claude 4 Sonnet 仍有差距。</li></ul>
 <p>此外，DeepSeek-R1-0528 在前端代码生成、角色扮演等领域的能力均有更新和提升。</p>
-<h2>API 更新<a href="https://api-docs.deepseek.com/zh-cn/news/news250528/#api-更新">​</a></h2>
+<h2>API 更新</h2>
 <p>API 已同步更新，接口与调用方式保持不变。新版 R1 API 仍支持查看模型思考过程，同时还增加了 Function Calling 和 JsonOutput 的支持。</p>
 <p>我们对新版 R1 API 中 max_tokens 参数的含义做了调整：现在 max_tokens用于限制模型单次输出的总长度（包括思考过程），默认为 32K，最大为 64K。请 API 用户及时调整 max_tokens 参数以防输出被提前截断。</p>
 <p>R1 模型的使用方法详见 API 指南：<a href="https://api-docs.deepseek.com/zh-cn/guides/thinking_mode">https://api-docs.deepseek.com/zh-cn/guides/thinking_mode</a>。</p>
 <p>本次 R1 更新后，官方网站、小程序、App 端和 API 中的模型上下文长度仍为 64K。如果用户对更长的上下文长度有需求，可以通过其他第三方平台调用上下文长度为 128K 的开源版本 R1-0528 模型。</p>
-<h2>模型开源<a href="https://api-docs.deepseek.com/zh-cn/news/news250528/#模型开源">​</a></h2>
+<h2>模型开源</h2>
 <p>DeepSeek-R1-0528 与之前的 DeepSeek-R1 使用同样的 base 模型，仅改进了后训练方法。私有化部署时只需要更新 checkpoint 和 tokenizer_config.json（tool calls 相关变动）。模型参数为 685B（其中 14B 为 MTP 层），开源版本上下文长度为 128K（网页端、App 和 API 提供 64K 上下文）。</p>
 <p>DeepSeek-R1-0528 模型权重下载请参考：</p>
 <p><strong>Model Scope:</strong> <a href="https://modelscope.cn/models/deepseek-ai/DeepSeek-R1-0528">https://modelscope.cn/models/deepseek-ai/DeepSeek-R1-0528</a></p>
@@ -257,17 +257,17 @@
       <content:encoded><![CDATA[<h1>DeepSeek-V3 模型更新，各项能力全面进阶</h1>
 <p>DeepSeek V3 模型已完成小版本升级，目前版本号 DeepSeek-V3-0324，用户登录官方网页、APP、小程序进入对话界面后，<strong>关闭深度思考</strong>即可体验。API 接口和使用方式保持不变。</p>
 <p>如非复杂推理任务，建议使用新版本 V3 模型，即刻享受速度更加流畅、效果全面提升的对话体验。</p>
-<h2>模型能力提升一览<a href="https://api-docs.deepseek.com/zh-cn/news/news250325/#模型能力提升一览">​</a></h2>
-<h3>推理任务表现提高<a href="https://api-docs.deepseek.com/zh-cn/news/news250325/#推理任务表现提高">​</a></h3>
+<h2>模型能力提升一览</h2>
+<h3>推理任务表现提高</h3>
 <p>新版 V3 模型借鉴 DeepSeek-R1 模型训练过程中所使用的强化学习技术，大幅提高了在推理类任务上的表现水平，在数学、代码类相关评测集上取得了超过 GPT-4.5 的得分成绩。</p>
-<h3>前端开发能力增强<a href="https://api-docs.deepseek.com/zh-cn/news/news250325/#前端开发能力增强">​</a></h3>
+<h3>前端开发能力增强</h3>
 <p>在 HTML 等代码前端任务上，新版 V3 模型生成的代码可用性更高，视觉效果也更加美观、富有设计感。</p>
-<h3>中文写作升级<a href="https://api-docs.deepseek.com/zh-cn/news/news250325/#中文写作升级">​</a></h3>
+<h3>中文写作升级</h3>
 <p>在中文写作任务方面，新版 V3 模型基于 R1 的写作水平进行了进一步优化，同时特别提升了中长篇文本创作的内容质量。</p>
-<h3>中文搜索能力优化<a href="https://api-docs.deepseek.com/zh-cn/news/news250325/#中文搜索能力优化">​</a></h3>
+<h3>中文搜索能力优化</h3>
 <p>新版 V3 模型可以在联网搜索场景下，对于报告生成类指令输出内容更为详实准确、排版更加清晰美观的结果。</p>
 <p>此外，新版 V3 模型在<strong>工具调用、角色扮演、问答闲聊</strong>等方面也得到了一定幅度的能力提升。</p>
-<h2>模型开源<a href="https://api-docs.deepseek.com/zh-cn/news/news250325/#模型开源">​</a></h2>
+<h2>模型开源</h2>
 <p>DeepSeek-V3-0324 与之前的 DeepSeek-V3 使用同样的 base 模型，仅改进了后训练方法。私有化部署时只需要更新 checkpoint 和 tokenizer_config.json（tool calls 相关变动）。模型参数约 660B，开源版本上下文长度为 128K（网页端、App 和 API 提供 64K 上下文）。V3-0324 模型权重下载请参考：</p>
 <ul><li>Model Scope: <a href="https://modelscope.cn/models/deepseek-ai/DeepSeek-V3-0324">https://modelscope.cn/models/deepseek-ai/DeepSeek-V3-0324</a></li><li>Huggingface: <a href="https://huggingface.co/deepseek-ai/DeepSeek-V3-0324">https://huggingface.co/deepseek-ai/DeepSeek-V3-0324</a></li></ul>
 <p>与 DeepSeek-R1 保持一致，此次我们的开源仓库（包括模型权重）统一采用 MIT License，并允许用户利用模型输出、通过模型蒸馏等方式训练其他模型。</p>
@@ -281,19 +281,19 @@
       <content:encoded><![CDATA[<h1>DeepSeek-R1 发布，性能对标 OpenAI o1 正式版</h1>
 <p>今天，我们正式发布 DeepSeek-R1，并同步开源模型权重。</p>
 <ul><li>DeepSeek-R1 遵循 MIT License，允许用户通过蒸馏技术借助 R1 训练其他模型。</li><li>DeepSeek-R1 上线 API，对用户开放思维链输出，通过设置 <code>model='deepseek-reasoner'</code> 即可调用。</li><li>DeepSeek 官网与 App 即日起同步更新上线。</li></ul>
-<h2>性能对齐 OpenAI-o1 正式版<a href="https://api-docs.deepseek.com/zh-cn/news/news250120/#性能对齐-openai-o1-正式版">​</a></h2>
+<h2>性能对齐 OpenAI-o1 正式版</h2>
 <p>DeepSeek-R1 在后训练阶段大规模使用了强化学习技术，在仅有极少标注数据的情况下，极大提升了模型推理能力。在数学、代码、自然语言推理等任务上，性能比肩 OpenAI o1 正式版。</p>
 <p>在此，我们将 DeepSeek-R1 训练技术全部公开，以期促进技术社区的充分交流与创新协作。</p>
 <p>论文链接： <a href="https://github.com/deepseek-ai/DeepSeek-R1/blob/main/DeepSeek_R1.pdf">https://github.com/deepseek-ai/DeepSeek-R1/blob/main/DeepSeek_R1.pdf</a></p>
-<h2>蒸馏小模型超越 OpenAI o1-mini<a href="https://api-docs.deepseek.com/zh-cn/news/news250120/#蒸馏小模型超越-openai-o1-mini">​</a></h2>
+<h2>蒸馏小模型超越 OpenAI o1-mini</h2>
 <p>我们在开源 DeepSeek-R1-Zero 和 DeepSeek-R1 两个 660B 模型的同时，通过 DeepSeek-R1 的输出，蒸馏了 6 个小模型开源给社区，其中 32B 和 70B 模型在多项能力上实现了对标 OpenAI o1-mini 的效果。</p>
 <p>HuggingFace 链接： <a href="https://huggingface.co/deepseek-ai">https://huggingface.co/deepseek-ai</a></p>
-<h3>开放的许可证和用户协议<a href="https://api-docs.deepseek.com/zh-cn/news/news250120/#开放的许可证和用户协议">​</a></h3>
+<h3>开放的许可证和用户协议</h3>
 <p>为了推动和鼓励开源社区以及行业生态的发展，在发布并开源 R1 的同时，我们同步在协议授权层面也进行了如下调整：</p>
 <ul><li>模型开源 License 统一使用 MIT。我们曾针对大模型开源的特点，参考当前行业的通行实践，特别引入 DeepSeek License 为开源社区提供授权，但实践表明非标准的开源 License 可能反而增加了开发者的理解成本。为此，此次我们的开源仓库（包括模型权重）统一采用标准化、宽松的 MIT License，完全开源，不限制商用，无需申请。</li><li>产品协议明确可“模型蒸馏”。为了进一步促进技术的开源和共享，我们决定支持用户进行“模型蒸馏”。我们已更新线上产品的用户协议，明确允许用户利用模型输出、通过模型蒸馏等方式训练其他模型。</li></ul>
-<h2>App与网页端<a href="https://api-docs.deepseek.com/zh-cn/news/news250120/#app与网页端">​</a></h2>
+<h2>App与网页端</h2>
 <p>登录DeepSeek官网或官方App，打开“深度思考”模式，即可调用最新版 DeepSeek-R1 完成各类推理任务。</p>
-<h2>API 及定价<a href="https://api-docs.deepseek.com/zh-cn/news/news250120/#api-及定价">​</a></h2>
+<h2>API 及定价</h2>
 <p>DeepSeek-R1 API 服务定价为每百万输入 tokens 1 元（缓存命中）/ 4 元（缓存未命中），每百万输出 tokens 16 元。</p>
 <p>详细的 API 调用指南请参考官方文档： <a href="https://api-docs.deepseek.com/zh-cn/guides/thinking_mode">https://api-docs.deepseek.com/zh-cn/guides/thinking_mode</a></p>
 <ul><li><a href="https://api-docs.deepseek.com/zh-cn/news/news250120/#性能对齐-openai-o1-正式版">性能对齐 OpenAI-o1 正式版</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news250120/#蒸馏小模型超越-openai-o1-mini">蒸馏小模型超越 OpenAI o1-mini</a><a href="https://api-docs.deepseek.com/zh-cn/news/news250120/#开放的许可证和用户协议">开放的许可证和用户协议</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news250120/#app与网页端">App与网页端</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news250120/#api-及定价">API 及定价</a></li></ul>]]></content:encoded>
@@ -313,17 +313,17 @@
       <content:encoded><![CDATA[<h1>DeepSeek-V3 正式发布</h1>
 <p>今天，我们全新系列模型 DeepSeek-V3 首个版本上线并同步开源。</p>
 <p>登录官网 <a href="https://chat.deepseek.com">chat.deepseek.com</a> 即可与最新版 V3 模型对话。API 服务已同步更新，接口配置无需改动。当前版本的 DeepSeek-V3 暂不支持多模态输入输出。</p>
-<h2>性能对齐海外领军闭源模型<a href="https://api-docs.deepseek.com/zh-cn/news/news1226/#性能对齐海外领军闭源模型">​</a></h2>
+<h2>性能对齐海外领军闭源模型</h2>
 <p>DeepSeek-V3 为自研 MoE 模型，671B 参数，激活 37B，在 14.8T token 上进行了预训练。</p>
 <p><strong>论文链接：</strong><a href="https://github.com/deepseek-ai/DeepSeek-V3/blob/main/DeepSeek_V3.pdf">https://github.com/deepseek-ai/DeepSeek-V3/blob/main/DeepSeek_V3.pdf</a></p>
 <p>DeepSeek-V3 多项评测成绩超越了 Qwen2.5-72B 和 Llama-3.1-405B 等其他开源模型，并在性能上和世界顶尖的闭源模型 GPT-4o 以及 Claude-3.5-Sonnet 不分伯仲。</p>
 <ul><li><strong>百科知识：</strong> DeepSeek-V3 在知识类任务（MMLU, MMLU-Pro, GPQA, SimpleQA）上的水平相比前代 DeepSeek-V2.5 显著提升，接近当前表现最好的模型 Claude-3.5-Sonnet-1022。</li><li><strong>长文本：</strong> 在长文本测评中，DROP、FRAMES 和 LongBench v2 上，DeepSeek-V3 平均表现超越其他模型。</li><li><strong>代码：</strong> DeepSeek-V3 在算法类代码场景（Codeforces），远远领先于市面上已有的全部非 o1 类模型；并在工程类代码场景（SWE-Bench Verified）逼近 Claude-3.5-Sonnet-1022。</li><li><strong>数学：</strong> 在美国数学竞赛（AIME 2024, MATH）和全国高中数学联赛（CNMO 2024）上，DeepSeek-V3 大幅超过了所有开源闭源模型。</li><li><strong>中文能力：</strong> DeepSeek-V3 与 Qwen2.5-72B 在教育类测评 C-Eval 和代词消歧等评测集上表现相近，但在事实知识 C-SimpleQA 上更为领先。</li></ul>
-<h2>生成速度提升至 3 倍<a href="https://api-docs.deepseek.com/zh-cn/news/news1226/#生成速度提升至-3-倍">​</a></h2>
+<h2>生成速度提升至 3 倍</h2>
 <p>通过算法和工程上的创新，DeepSeek-V3 的生成吐字速度从 20 TPS 大幅提高至 60 TPS，相比 V2.5 模型实现了 3 倍的提升，为用户带来更加迅速流畅的使用体验。</p>
-<h2>API 服务价格调整<a href="https://api-docs.deepseek.com/zh-cn/news/news1226/#api-服务价格调整">​</a></h2>
+<h2>API 服务价格调整</h2>
 <p>随着性能更强、速度更快的 DeepSeek-V3 更新上线，我们的模型 API 服务定价也将调整为<strong>每百万输入 tokens 0.5 元（缓存命中）/ 2 元（缓存未命中），每百万输出 tokens 8 元</strong>，以期能够持续地为大家提供更好的模型服务。</p>
 <p>与此同时，我们决定为全新模型设置长达 <strong>45 天</strong>的优惠价格体验期：即日起至 <strong>2025 年 2 月 8 日</strong>，DeepSeek-V3 的 API 服务价格仍然会是大家熟悉的<strong>每百万输入 tokens 0.1 元（缓存命中）/ 1 元（缓存未命中），每百万输出 tokens 2 元</strong>，已经注册的老用户和在此期间内注册的新用户均可享受以上优惠价格。</p>
-<h2>开源权重和本地部署<a href="https://api-docs.deepseek.com/zh-cn/news/news1226/#开源权重和本地部署">​</a></h2>
+<h2>开源权重和本地部署</h2>
 <p>DeepSeek-V3 采用 FP8 训练，并开源了原生 FP8 权重。</p>
 <p>得益于开源社区的支持，<strong>SGLang</strong> 和 <strong>LMDeploy</strong> 第一时间支持了 V3 模型的原生 FP8 推理，同时 <strong>TensorRT-LLM</strong> 和 <strong>MindIE</strong> 则实现了 BF16 推理。此外，为方便社区适配和拓展应用场景，我们提供了从 FP8 到 BF16 的转换脚本。</p>
 <p>模型权重下载和更多本地部署信息请参考： <a href="https://huggingface.co/deepseek-ai/DeepSeek-V3-Base">https://huggingface.co/deepseek-ai/DeepSeek-V3-Base</a></p>
@@ -339,15 +339,15 @@
       <content:encoded><![CDATA[<h1>DeepSeek V2 系列收官，联网搜索上线官网</h1>
 <p>今天，我们发布 DeepSeek V2.5 的最终版微调模型 DeepSeek-V2.5-1210。本版模型将是我们开启下一个全新基座模型系列前对 V2 系列的最后一次更新。</p>
 <p>与之前版本相比，本次更新通过 Post-Training 全面提升了模型各方面能力表现，包括数学、代码、写作、角色扮演等；同时，新版模型优化了文件上传功能，并且全新支持了联网搜索，展现出更加强大的全方位服务于各类工作生活场景的能力。</p>
-<h2>模型通用能力提升<a href="https://api-docs.deepseek.com/zh-cn/news/news1210/#模型通用能力提升">​</a></h2>
+<h2>模型通用能力提升</h2>
 <p>DeepSeek-V2.5-1210 版本通过 Post-Training 阶段的迭代，全面提升了模型在各个领域的能力：</p>
 <p>遵循我们一贯的开源精神，新版模型权重已经开源在 Huggingface：</p>
 <p><a href="https://huggingface.co/deepseek-ai/DeepSeek-V2.5-1210">https://huggingface.co/deepseek-ai/DeepSeek-V2.5-1210</a></p>
-<h2>联网搜索功能<a href="https://api-docs.deepseek.com/zh-cn/news/news1210/#联网搜索功能">​</a></h2>
+<h2>联网搜索功能</h2>
 <p>DeepSeek-V2.5-1210 版本支持了<strong>联网搜索</strong>功能，并已上线网页端。登陆 <a href="https://chat.deepseek.com/">https://chat.deepseek.com/</a>，在输入框中打开 <strong>“联网搜索”</strong> 即可体验。目前，API 暂不支持搜索功能。</p>
 <p>在“联网搜索”模式下，模型将深入阅读海量网页，为用户生成全面、准确、满足个性化需求的回答。面对用户的复杂问题，模型将自动提取多个关键词并行搜索，在更短时间内提供更加多样的搜索结果。</p>
 <p>以下是搜索效果示例：</p>
-<h2>V2.5 的最后版本<a href="https://api-docs.deepseek.com/zh-cn/news/news1210/#v25-的最后版本">​</a></h2>
+<h2>V2.5 的最后版本</h2>
 <p>DeepSeek-V2.5-1210 将会是 DeepSeek V2.5 模型的最后一个版本。随着本次模型的发布，我们 DeepSeek V2系列模型的迭代更新也将告一段落。</p>
 <p>DeepSeek V2 系列模型自今年 5 月发布开源以来，已经陪伴大家走过了半年的时间，期间历经 5 次迭代，而广大用户朋友们的支持与肯定，正是我们一直以来坚持不断更新进步的动力。</p>
 <p><strong>“有善始者实繁，能克终者盖寡。”</strong></p>
@@ -365,17 +365,17 @@
 <p>所有用户均可登录官方网页（<a href="https://chat.deepseek.com">chat.deepseek.com</a>），一键开启与 R1-Lite 预览版模型的超强推理对话体验。</p>
 <p>DeepSeek R1 系列模型使用强化学习训练，推理过程包含大量反思和验证，思维链长度可达数万字。</p>
 <p>该系列模型在数学、代码以及各种复杂逻辑推理任务上，取得了媲美 o1-preview 的推理效果，并为用户展现了 o1 没有公开的完整思考过程。</p>
-<h3>全面提升的推理性能<a href="https://api-docs.deepseek.com/zh-cn/news/news1120/#全面提升的推理性能">​</a></h3>
+<h3>全面提升的推理性能</h3>
 <ul><li>DeepSeek-R1-Lite 预览版模型在美国数学竞赛（AMC）中难度等级最高的 AIME 以及全球顶级编程竞赛（codeforces）等权威评测中，均取得了卓越的成绩，大幅超越了 GPT-4o 等知名模型。</li><li>下表为 DeepSeek-R1-Lite 在各项相关评测中的得分结果：</li></ul>
-<h2>深度思考的效果与潜力<a href="https://api-docs.deepseek.com/zh-cn/news/news1120/#深度思考的效果与潜力">​</a></h2>
+<h2>深度思考的效果与潜力</h2>
 <p>DeepSeek-R1-Lite 的推理过程长，并且包含了大量的反思和验证。下图展示了模型在数学竞赛上的得分与测试所允许思考的长度紧密相关。</p>
 <ul><li>红色实线展示了模型所能达到的准确率与所给定的推理长度呈正相关；</li><li>相比传统的多次采样+投票（Majority Voting），模型思维链长度增加展现出了更高的效率。</li></ul>
-<h2>全面上线，尝鲜体验<a href="https://api-docs.deepseek.com/zh-cn/news/news1120/#全面上线尝鲜体验">​</a></h2>
+<h2>全面上线，尝鲜体验</h2>
 <p>登录 chat.deepseek.com，在输入框中选择“深度思考”模式，即可开启与 DeepSeek-R1-Lite 预览版的对话。</p>
 <p>“深度思考” 模式专门针对数学、代码等各类复杂逻辑推理问题而设计，相比于普通的简单问题，能够提供更加全面、清晰、思路严谨的优质解答，充分展现出较长思维链的更多优势。</p>
 <ul><li>对话开启示例：</li></ul>
 <ul><li>适用场景与效果示例：</li></ul>
-<h2>新的开始，敬请期待<a href="https://api-docs.deepseek.com/zh-cn/news/news1120/#新的开始敬请期待">​</a></h2>
+<h2>新的开始，敬请期待</h2>
 <p>DeepSeek-R1-Lite 目前仍处于迭代开发阶段，仅支持网页使用，暂不支持 API 调用。DeepSeek-R1-Lite 所使用的也是一个较小的基座模型，无法完全释放长思维链的潜力。</p>
 <p>当前，我们正在持续迭代推理系列模型。之后，正式版 DeepSeek-R1 模型将完全开源，我们将公开技术报告，并部署 API 服务。</p>
 <p><strong>扫码与 DeepSeek 开启对话</strong></p>
@@ -391,10 +391,10 @@
 <p>DeepSeek-V2.5 不仅保留了原有 Chat 模型的通用对话能力和 Coder 模型的强大代码处理能力，还更好地对齐了人类偏好。此外，DeepSeek-V2.5 在写作任务、指令跟随等多个方面也实现了大幅提升。</p>
 <p>DeepSeek-V2.5 现已在网页端及 API 全面上线，API 接口向前兼容，用户通过deepseek-coder或deepseek-chat均可以访问新的模型。同时，Function Calling、FIM 补全、Json Output 等功能保持不变。</p>
 <p>All-in-One 的 DeepSeek-V2.5 将为用户带来更简洁、智能、高效的使用体验。</p>
-<h2>升级历史<a href="https://api-docs.deepseek.com/zh-cn/news/news0905/#升级历史">​</a></h2>
+<h2>升级历史</h2>
 <p>DeepSeek 一直专注于模型的改进和优化。在 6 月份，我们对 DeepSeek-V2-Chat 进行了重大升级，用 Coder V2 的 Base 模型替换原有的 Chat 的 Base 模型，显著提升了其代码生成和推理能力，并发布了 DeepSeek-V2-Chat-0628 版本。紧接着，DeepSeek-Coder-V2 在原有 Base 模型的基础上，通过对齐优化，大大提升通用能力后推出了 DeepSeek-Coder-V2 0724 版本。最终，我们成功将 Chat 和 Coder 两个模型合并，推出了全新的DeepSeek-V2.5 版本。</p>
 <p><strong>由于本次模型版本变动较大，如出现某些场景效果变差，建议重新调整 System Prompt 和 Temperature，以获得最佳性能。</strong></p>
-<h2>通用能力<a href="https://api-docs.deepseek.com/zh-cn/news/news0905/#通用能力">​</a></h2>
+<h2>通用能力</h2>
 <ul><li>通用能力评测</li></ul>
 <p>首先，我们使用业界通用的测试集对 DeepSeek-V2.5 的能力进行测评，在中文和英文四个测试集上，DeepSeek-V2.5 均优于之前的 DeepSeek-V2-0628 以及 DeepSeek-Coder-V2-0724。</p>
 <p>在我们内部的中文评测中，和 GPT-4o mini、ChatGPT-4o-latest 的对战胜率（裁判为 GPT-4o）相较于 DeepSeek-V2-0628 均有明显提升。此测评中涵盖创作、问答等通用能力，用户使用体验将得到提升：</p>
@@ -403,10 +403,10 @@
 <table><thead><tr><th>Model</th><th>安全综合得分（越高越好）*</th><th>安全外溢比例（越低越好）**</th></tr></thead><tbody><tr><td>DeepSeek-V2-0628</td><td>74.4%</td><td>11.3%</td></tr><tr><td>DeepSeek-V2.5</td><td>82.6%</td><td>4.6%</td></tr></tbody></table>
 <ul><li>基于内部测试集合的得分，分数越高代表模型的整体安全性越高</li></ul>
 <p>** 基于内部测试集合的得分，比例越低代表模型的安全策略对于正常问题的影响越小</p>
-<h2>代码能力<a href="https://api-docs.deepseek.com/zh-cn/news/news0905/#代码能力">​</a></h2>
+<h2>代码能力</h2>
 <p>在代码方面，DeepSeek-V2.5 保留了 DeepSeek-Coder-V2-0724 强大的代码能力。在 HumanEval Python 和LiveCodeBench（2024 年 1 月 - 2024 年 9 月）测试中，DeepSeek-V2.5 显示了较为显著的改进。在 HumanEval Multilingual 和 Aider 测试中，DeepSeek-Coder-V2-0724 略胜一筹。在 SWE-verified 测试中，两个版本的表现都较低，表明在此方面仍需进一步优化。另外，在FIM补全任务上，内部评测集DS-FIM-Eval的评分提升了 5.1%，可以带来更好的插件补全体验。</p>
 <p>另外，DeepSeek-V2.5对代码常见场景进行了优化，以提升实际使用的表现。在内部的主观评测 DS-Arena-Code 中，DeepSeek-V2.5 对战竞品的胜率（GPT-4o 为裁判）取得了显著提升。</p>
-<h2>模型开源<a href="https://api-docs.deepseek.com/zh-cn/news/news0905/#模型开源">​</a></h2>
+<h2>模型开源</h2>
 <p>一如既往，秉持着持久开源的精神，DeepSeek-V2.5 现已开源到了 HuggingFace：</p>
 <p><a href="https://huggingface.co/deepseek-ai/DeepSeek-V2.5">https://huggingface.co/deepseek-ai/DeepSeek-V2.5</a></p>
 <ul><li><a href="https://api-docs.deepseek.com/zh-cn/news/news0905/#升级历史">升级历史</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news0905/#通用能力">通用能力</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news0905/#代码能力">代码能力</a></li><li><a href="https://api-docs.deepseek.com/zh-cn/news/news0905/#模型开源">模型开源</a></li></ul>]]></content:encoded>
@@ -421,7 +421,7 @@
 <p>为此，DeepSeek 启用上下文硬盘缓存技术，把预计未来会重复使用的内容，缓存在分布式的硬盘阵列中。如果输入存在重复，则重复的部分只需要从缓存读取，无需计算。该技术不仅降低服务的延迟，还大幅削减最终的使用成本。</p>
 <p>缓存命中的部分，DeepSeek 收费 0.1元 每百万 tokens。至此，大模型的价格再降低一个数量级1。</p>
 <p>注 1: API 价格已做调整，最新价格请参考<a href="https://api-docs.deepseek.com/zh-cn/quick_start/pricing">模型 &amp; 价格</a>页面。</p>
-<h2>如何使用 DeepSeek API 的缓存服务<a href="https://api-docs.deepseek.com/zh-cn/news/news0802/#如何使用-deepseek-api-的缓存服务">​</a></h2>
+<h2>如何使用 DeepSeek API 的缓存服务</h2>
 <p>硬盘缓存服务已经全面上线，用户无需修改代码，无需更换接口，硬盘缓存服务将自动运行，系统自动按照实际命中情况计费。</p>
 <p>注意，只有当两个请求的前缀内容相同时（从第 0 个 token 开始相同），才算重复。中间开始的重复不能被缓存命中。</p>
 <p>以下为两个经典场景的缓存举例：</p>
@@ -430,24 +430,24 @@
 <p>多种应用能从上下文硬盘缓存中受益：</p>
 <ul><li>具有长预设提示词的问答助手类应用</li><li>具有长角色设定与多轮对话的角色扮演类应用</li><li>针对固定文本集合进行频繁询问的数据分析类应用</li><li>代码仓库级别的代码分析与排障工具</li><li>通过 Few-shot 提升模型输出效果</li><li>...</li></ul>
 <p>更详细的使用方法，请参考指南<a href="https://api-docs.deepseek.com/zh-cn/guides/kv_cache">使用硬盘缓存</a></p>
-<h2>如何查询缓存命中情况<a href="https://api-docs.deepseek.com/zh-cn/news/news0802/#如何查询缓存命中情况">​</a></h2>
+<h2>如何查询缓存命中情况</h2>
 <p>在 API 返回的 usage 中，增加了两个字段，帮助用户实时监测缓存的命中情况：</p>
 <ul><li><code>prompt_cache_hit_tokens</code>：本次请求的输入中，缓存命中的 tokens 数（0.1 元 / 百万 tokens）</li><li><code>prompt_cache_miss_tokens</code>：本次请求的输入中，缓存未命中的 tokens 数（1 元 / 百万 tokens）</li></ul>
-<h2>降低服务延迟<a href="https://api-docs.deepseek.com/zh-cn/news/news0802/#降低服务延迟">​</a></h2>
+<h2>降低服务延迟</h2>
 <p>输入长、重复内容多的请求，API 服务的首 token 延迟将大幅降低。</p>
 <p>举个极端的例子，对 128K 输入且大部分重复的请求，实测首 token 延迟从 13 秒降低到 500 毫秒。</p>
-<h2>降低整体费用<a href="https://api-docs.deepseek.com/zh-cn/news/news0802/#降低整体费用">​</a></h2>
+<h2>降低整体费用</h2>
 <p>最高可以节省 90% 的费用（需要针对缓存特性进行优化）。</p>
 <p>即使不做任何优化，按历史使用情况，用户整体节省的费用也超过 50%。</p>
 <p>缓存没有其它额外的费用，只有0.1 元每百万 tokens。缓存占用存储无需付费。</p>
-<h2>缓存的安全性问题<a href="https://api-docs.deepseek.com/zh-cn/news/news0802/#缓存的安全性问题">​</a></h2>
+<h2>缓存的安全性问题</h2>
 <p>本缓存系统在设计的时候已充分考虑了各种潜在的安全问题。</p>
 <p>每个用户的缓存是独立的，逻辑上相互不可见，从底层确保用户数据的安全和隐私。</p>
 <p>长时间不用的缓存会自动清空，不会长期保留，且不会用于其他用途。</p>
-<h2>为何 DeepSeek API 能率先采用硬盘缓存<a href="https://api-docs.deepseek.com/zh-cn/news/news0802/#为何-deepseek-api-能率先采用硬盘缓存">​</a></h2>
+<h2>为何 DeepSeek API 能率先采用硬盘缓存</h2>
 <p>根据公开的信息，DeepSeek 可能是全球第一家在 API 服务中大范围采用硬盘缓存的大模型厂商。</p>
 <p>这得益于 DeepSeek V2 提出的 MLA 结构，在提高模型效果的同时，大大压缩了上下文 KV Cache 的大小，使得存储所需要的传输带宽和存储容量均大幅减少，因此可以缓存到低成本的硬盘上。</p>
-<h2>DeepSeek API 的并发和限流<a href="https://api-docs.deepseek.com/zh-cn/news/news0802/#deepseek-api-的并发和限流">​</a></h2>
+<h2>DeepSeek API 的并发和限流</h2>
 <p>DeepSeek API 服务按照每天 1 万亿的容量进行设计。对所有用户均不限流、不限并发、同时保证服务质量。请放心加大并发使用。</p>
 <p>注1. 缓存系统以 64 tokens 为一个存储单元，不足 64 tokens 的内容不会被缓存</p>
 <p>注2. 缓存系统是“尽力而为”，不保证 100% 缓存命中</p>

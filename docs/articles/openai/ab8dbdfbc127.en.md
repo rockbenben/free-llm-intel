@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d962f980216d
+body_sha: ba35b2dfc2ff
 ---
 
 OpenAI
@@ -33,7 +33,7 @@ Robots that learn are an exciting path forward, yet there are differing approach
 
 ## The participants
 
-We hosted ~80 external attendees at our office and ~200 people joined remotely via our livestream throughout the day. We had attendees from industry labs like Google, Facebook, and NVIDIA in addition to students, postdocs and professors from universities like [Stanford⁠(opens in a new window)](https://www.stanford.edu/), [UC Berkeley⁠(opens in a new window)](https://www.berkeley.edu/), [CMU⁠(opens in a new window)](https://www.cmu.edu/) and [MIT⁠(opens in a new window)](http://www.mit.edu/). We also had hobbyists, artists, roboticists, and machine learning researchers in the crowd.
+We hosted ~80 external attendees at our office and ~200 people joined remotely via our livestream throughout the day. We had attendees from industry labs like Google, Facebook, and NVIDIA in addition to students, postdocs and professors from universities like [Stanford](https://www.stanford.edu/), [UC Berkeley](https://www.berkeley.edu/), [CMU](https://www.cmu.edu/) and [MIT](http://www.mit.edu/). We also had hobbyists, artists, roboticists, and machine learning researchers in the crowd.
 
 ## The talks
 
@@ -41,7 +41,7 @@ Loading...
 
 ## Dexterity demo
 
-Since the event was hosted at our office, we took the opportunity to perform a [live demo⁠(opens in a new window)](https://twitter.com/OpenAI/status/1122198642096398336) of our humanoid robot hand manipulating a block using vision and reinforcement learning.
+Since the event was hosted at our office, we took the opportunity to perform a [live demo](https://twitter.com/OpenAI/status/1122198642096398336) of our humanoid robot hand manipulating a block using vision and reinforcement learning.
 
 We were excited to show the hand to people and have the OpenAI Robotics team “on hand” to answer their questions! We hope to do this again in the future as it is a very different experience to see this in person.
 

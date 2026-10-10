@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0aedca7ee650
+body_sha: 3e1da14da4ab
 ---
 
 OpenAI
@@ -41,20 +41,20 @@ ChatGPT allows you to upload and work with files directly in your conversations.
 
 ## Connecting to other tools
 
-Some versions of ChatGPT allow you to use **apps**, which let ChatGPT access third-party tools so you can bring external context into the conversation. Check out [available apps here⁠.⁠(opens in a new window)](https://help.openai.com/articles/11487775-connectors-in-chatgpt)
+Some versions of ChatGPT allow you to use **apps**, which let ChatGPT access third-party tools so you can bring external context into the conversation. Check out [available apps here⁠.](https://help.openai.com/articles/11487775-connectors-in-chatgpt)
 
-- Go to [Settings → Apps⁠⁠(opens in a new window)](https://chatgpt.com/?openaicom-did=a2948a4b-ed54-4ff6-a784-3c0e551a3c71&openaicom_referred=true#settings/Connectors) to find an app to connect to.
+- Go to [Settings → Apps](https://chatgpt.com/?openaicom-did=a2948a4b-ed54-4ff6-a784-3c0e551a3c71&openaicom_referred=true#settings/Connectors) to find an app to connect to.
 - Complete the authentication and permissions flow.
 - Apps will appear in Tools during chats, or you can use @ or / to bring one up.
 
-See more about [using apps for work⁠(opens in a new window)](https://academy.openai.com/public/clubs/work-users-ynjqu/resources/connectors).
+See more about [using apps for work](https://academy.openai.com/public/clubs/work-users-ynjqu/resources/connectors).
 
 *Note: For Enterprise workspaces, your organization’s admin controls which apps are available to you. If you don’t see the option to connect an app, check with your admin. As with all business data on your ChatGPT Enterprise or ChatGPT Business workspace, data accessed through apps is not used to train OpenAI models by default.*
 
 ## Further reading
 
-- [OpenAI Help Center: File Uploads FAQ⁠⁠(opens in a new window)](https://help.openai.com/articles/8555545-file-uploads-faq)
-- [OpenAI Help Center: Retention Policies in ChatGPT⁠⁠(opens in a new window)](https://help.openai.com/articles/8983778-chat-and-file-retention-policies-in-chatgpt)
+- [OpenAI Help Center: File Uploads FAQ](https://help.openai.com/articles/8555545-file-uploads-faq)
+- [OpenAI Help Center: Retention Policies in ChatGPT](https://help.openai.com/articles/8983778-chat-and-file-retention-policies-in-chatgpt)
 
 For related tools and guidance, explore [the Google Drive integration](https://openai.com/business/plugins/google-drive/) and [ChatGPT solutions for operations teams](https://openai.com/business/solutions/operations/).
 

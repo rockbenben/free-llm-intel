@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 98455fcc03f4
+body_sha: 1f75c9a36068
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ We’ve fine-tuned GPT‑3 to more accurately answer open-ended questions using 
 
 Read paper
 
-(opens in a new window)
+
 
 Browse samples
 
@@ -63,25 +63,25 @@ Eventually, having models cite their sources will not be enough to evaluate fact
 
 Although our model is generally more truthful than GPT‑3 (in that it generates false statements less frequently), it still poses risks. Answers with citations are often perceived as having an air of authority, which can obscure the fact that our model still makes basic errors. The model also tends to reinforce the existing beliefs of users. We are researching how best to address these and other concerns.
 
-In addition to these deployment risks, our approach introduces new risks *at train time* by giving the model access to the web. Our browsing environment does not allow full web access, but allows the model to send queries to the [Microsoft Bing Web Search API⁠(opens in a new window)](https://www.microsoft.com/en-us/bing/apis/bing-web-search-api) and follow links that already exist on the web, which can have side-effects. From our experience with GPT‑3, the model does not appear to be anywhere near capable enough to dangerously exploit these side-effects. However, these risks increase with model capability, and we are working on establishing internal safeguards against them.
+In addition to these deployment risks, our approach introduces new risks *at train time* by giving the model access to the web. Our browsing environment does not allow full web access, but allows the model to send queries to the [Microsoft Bing Web Search API](https://www.microsoft.com/en-us/bing/apis/bing-web-search-api) and follow links that already exist on the web, which can have side-effects. From our experience with GPT‑3, the model does not appear to be anywhere near capable enough to dangerously exploit these side-effects. However, these risks increase with model capability, and we are working on establishing internal safeguards against them.
 
 ## Conclusion
 
 Human feedback and tools such as web browsers offer a promising path towards robustly truthful, general-purpose AI systems. Our current system struggles with challenging or unfamiliar circumstances, but still represents significant progress in this direction.
 
-*If you’d like to help us build more helpful and truthful AI systems,* [*we’re hiring*⁠(opens in a new window)](https://boards.greenhouse.io/openai/jobs/4247042004?gh_src=5600abde4us)*!*
+*If you’d like to help us build more helpful and truthful AI systems,* [*we’re hiring*](https://boards.greenhouse.io/openai/jobs/4247042004?gh_src=5600abde4us)*!*
 
 - [GPT](https://openai.com/research/index/?tags=gpt)
 - [Language](https://openai.com/research/index/?tags=language)
 
 ## References
 
-- 1O. Evans, O. Cotton-Barratt, L. Finnveden, A. Bales, A. Balwit, P. Wills, L. Righetti, and W. Saunders. Truthful AI: Developing and governing AI that does not lie. arXiv preprint [arXiv:2110.06674⁠(opens in a new window)](https://arxiv.org/abs/2110.06674), 2021.
-- 2J. Maynez, S. Narayan, B. Bohnet, and R. McDonald. On faithfulness and factuality in abstractive summarization. arXiv preprint [arXiv:2005.00661⁠(opens in a new window)](https://arxiv.org/abs/2005.00661), 2020.
-- 3K. Shuster, S. Poff, M. Chen, D. Kiela, and J. Weston. Retrieval augmentation reduces hallucination in conversation. arXiv preprint [arXiv:2104.07567⁠(opens in a new window)](http://arxiv.org/abs/2104.07567), 2021.
-- 4A. Fan, Y. Jernite, E. Perez, D. Grangier, J. Weston, and M. Auli. ELI5: Long form question answering. arXiv preprint [arXiv:1907.09190⁠(opens in a new window)](https://arxiv.org/abs/1907.09190), 2019.
-- 5S. Lin, J. Hilton, and O. Evans. TruthfulQA: Measuring how models mimic human falsehoods. arXiv preprint [arXiv:2109.07958⁠(opens in a new window)](https://arxiv.org/abs/2109.07958), 2021.
-- 6D. Metzler, Y. Tay, D. Bahri, and M. Najork. Rethinking search: Making experts out of dilettantes. arXiv preprint [arXiv:2105.02274⁠(opens in a new window)](https://arxiv.org/abs/2105.02274), 2021.
+- 1O. Evans, O. Cotton-Barratt, L. Finnveden, A. Bales, A. Balwit, P. Wills, L. Righetti, and W. Saunders. Truthful AI: Developing and governing AI that does not lie. arXiv preprint [arXiv:2110.06674](https://arxiv.org/abs/2110.06674), 2021.
+- 2J. Maynez, S. Narayan, B. Bohnet, and R. McDonald. On faithfulness and factuality in abstractive summarization. arXiv preprint [arXiv:2005.00661](https://arxiv.org/abs/2005.00661), 2020.
+- 3K. Shuster, S. Poff, M. Chen, D. Kiela, and J. Weston. Retrieval augmentation reduces hallucination in conversation. arXiv preprint [arXiv:2104.07567](http://arxiv.org/abs/2104.07567), 2021.
+- 4A. Fan, Y. Jernite, E. Perez, D. Grangier, J. Weston, and M. Auli. ELI5: Long form question answering. arXiv preprint [arXiv:1907.09190](https://arxiv.org/abs/1907.09190), 2019.
+- 5S. Lin, J. Hilton, and O. Evans. TruthfulQA: Measuring how models mimic human falsehoods. arXiv preprint [arXiv:2109.07958](https://arxiv.org/abs/2109.07958), 2021.
+- 6D. Metzler, Y. Tay, D. Bahri, and M. Najork. Rethinking search: Making experts out of dilettantes. arXiv preprint [arXiv:2105.02274](https://arxiv.org/abs/2105.02274), 2021.
 
 ## Authors
 

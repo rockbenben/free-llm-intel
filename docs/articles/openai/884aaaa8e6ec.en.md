@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d0c649e73378
+body_sha: 8390bb767773
 ---
 
 OpenAI
@@ -47,7 +47,7 @@ Instead of toggling between multiple browser tabs and summarizing information yo
 - **Scope**: Search won’t replace specialized databases (e.g., subscription research tools or proprietary data).
 - **Admin settings**: In enterprise environments, Workspace Owners may choose to enable or disable search.
 
-See more: [OpenAI Help Center: ChatGPT search⁠(opens in a new window)](https://help.openai.com/articles/9237897-chatgpt-search?q=chatgpt)
+See more: [OpenAI Help Center: ChatGPT search](https://help.openai.com/articles/9237897-chatgpt-search?q=chatgpt)
 
 ## Deep research
 

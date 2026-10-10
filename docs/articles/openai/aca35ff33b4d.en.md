@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4edae3d28599
+body_sha: 4cabf98f1c86
 ---
 
 OpenAI
@@ -54,7 +54,7 @@ Loading...
 
 ## Interns
 
-OpenAI interns for the **Summer 2019 Cohort** will work with an OpenAI team and contribute to OpenAI’s research over the course of 3 months, starting May 2019. Our interns contribute to large-scale projects like our work on Robotics and conduct their own research into AI. To get a sense of what sort of projects people work on, please check out some of the presentations from our 2018 [Intern Open House⁠(opens in a new window)](https://www.youtube.com/watch?v=1_sYif82CtY).
+OpenAI interns for the **Summer 2019 Cohort** will work with an OpenAI team and contribute to OpenAI’s research over the course of 3 months, starting May 2019. Our interns contribute to large-scale projects like our work on Robotics and conduct their own research into AI. To get a sense of what sort of projects people work on, please check out some of the presentations from our 2018 [Intern Open House](https://www.youtube.com/watch?v=1_sYif82CtY).
 
 ## What we’re looking for
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 38f8a8400b91
+body_sha: f5205f79b1df
 ---
 
 OpenAI
@@ -65,7 +65,7 @@ Loading…
 
 ## Rebuilding food distribution for the AI era
 
-[Choco⁠(opens in a new window)](https://choco.com/us?utm_campaign=391918817-Global%20%7C%202026%20%7C%20OpenAI%20Case%20Study&utm_source=OpenAI%20Website&utm_medium=OpenAI&utm_term=Case%20Study) is an AI-powered platform modernizing food and beverage distribution, serving over 21,000 distributors and 100,000 buyers across the US, UK, Europe, and the GCC. By connecting restaurants, suppliers, and distributors into a unified system, Choco streamlines ordering, sales, and customer management across the food supply chain.
+[Choco](https://choco.com/us?utm_campaign=391918817-Global%20%7C%202026%20%7C%20OpenAI%20Case%20Study&utm_source=OpenAI%20Website&utm_medium=OpenAI&utm_term=Case%20Study) is an AI-powered platform modernizing food and beverage distribution, serving over 21,000 distributors and 100,000 buyers across the US, UK, Europe, and the GCC. By connecting restaurants, suppliers, and distributors into a unified system, Choco streamlines ordering, sales, and customer management across the food supply chain.
 
 As order volumes grew, Choco hit a major bottleneck: orders still arrived through emails, texts, voicemails, images, and even handwritten notes. Teams manually translated those inputs into structured ERP orders—a slow, error-prone process that limited scale and created constant operational friction.
 
@@ -77,13 +77,13 @@ With the emergence of production-ready LLMs, Choco saw an opportunity to move be
 
 ## Inside the rollout
 
-Choco embedded OpenAI APIs at the core of its platform to power a new generation of AI-native products. The company introduced [**OrderAgent**⁠(opens in a new window)](https://choco.com/us/orderagent?utm_campaign=391918817-Global%20%7C%202026%20%7C%[…]e&utm_medium=OpenAI&utm_term=Case%20Study&utm_content=OrderAgent), which processes multimodal inputs—including emails, SMS, images, and documents—and converts them into structured, ERP-ready orders.
+Choco embedded OpenAI APIs at the core of its platform to power a new generation of AI-native products. The company introduced [**OrderAgent**](https://choco.com/us/orderagent?utm_campaign=391918817-Global%20%7C%202026%20%7C%[…]e&utm_medium=OpenAI&utm_term=Case%20Study&utm_content=OrderAgent), which processes multimodal inputs—including emails, SMS, images, and documents—and converts them into structured, ERP-ready orders.
 
 > “The transcription and extraction capabilities gave us a strong foundation. The real engineering challenge was building dynamic in-context learning infrastructure, so the system resolves ambiguity against each customer's ordering history and catalog. That’s what separates automation from intelligence.”
 
 —Narbeh Mirzaei, VP Engineering
 
-Choco has also built [**VoiceAgent**⁠(opens in a new window)](https://choco.com/uk/stories/suppliers/introducing-the-choco-voice-agent-built-by-choco-in-collaboration-with-openai), powered by OpenAI’s Realtime API, enabling customers to place orders naturally over the phone with sub-second latency—even outside business hours.
+Choco has also built [**VoiceAgent**](https://choco.com/uk/stories/suppliers/introducing-the-choco-voice-agent-built-by-choco-in-collaboration-with-openai), powered by OpenAI’s Realtime API, enabling customers to place orders naturally over the phone with sub-second latency—even outside business hours.
 
 OpenAI was selected for its model performance, multimodal capabilities, structured outputs, and production reliability at scale. The ability to handle text, vision, and audio within a single ecosystem allowed Choco to unify previously disconnected workflows into one intelligent system.
 

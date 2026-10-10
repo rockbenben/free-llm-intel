@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 60d93e9e34fc
+body_sha: 4aa44c8eebc1
 ---
 
 OpenAI
@@ -23,15 +23,15 @@ We’re launching a transfer learning contest that measures a reinforcement lear
 
 Contest
 
-(opens in a new window)
+
 
 Read paper
 
-(opens in a new window)
+
 
 Gym Retro
 
-(opens in a new window)
+
 
 Illustration: Timothy J. Reynolds
 
@@ -45,7 +45,7 @@ In typical RL research, algorithms are tested in the same environment where they
 
 Loading...
 
-The [OpenAI Retro Contest⁠(opens in a new window)](https://contest.openai.com/) gives you a training set of levels from the Sonic The Hedgehog™ series of games, and we evaluate your algorithm on a test set of custom levels that we have created for this contest. The contest will run from April 5 to June 5. To get people started we’re releasing [retro-baselines⁠(opens in a new window)](https://github.com/openai/retro-baselines), which shows how to run several RL algorithms on the contest tasks.
+The [OpenAI Retro Contest](https://contest.openai.com/) gives you a training set of levels from the Sonic The Hedgehog™ series of games, and we evaluate your algorithm on a test set of custom levels that we have created for this contest. The contest will run from April 5 to June 5. To get people started we’re releasing [retro-baselines](https://github.com/openai/retro-baselines), which shows how to run several RL algorithms on the contest tasks.
 
 Baseline results on the Retro Contest (test set) show that RL algorithms fall far below human performance, even when using transfer learning. Human performance is shown as a dashed horizontal line. The humans only played for one hour, versus eighteen for the algorithms.
 
@@ -53,7 +53,7 @@ You can use any environments or datasets you want at training time, but at test 
 
 ## Sonic Benchmark
 
-To describe the benchmark in detail, as well as provide some baseline results, we are releasing a technical report: [Gotta Learn Fast: A New Benchmark for Generalization in RL⁠(opens in a new window)](https://arxiv.org/abs/1804.03720). This report contains details about the benchmark as well as results from running [Rainbow DQN⁠(opens in a new window)](https://arxiv.org/abs/1710.02298), [PPO⁠](https://openai.com/index/openai-baselines-ppo/), and a simple random guessing algorithm called JERK. JERK samples random action sequences in a way that is optimized for Sonic, and as training progresses it replays the top-scoring sequence of actions more frequently.
+To describe the benchmark in detail, as well as provide some baseline results, we are releasing a technical report: [Gotta Learn Fast: A New Benchmark for Generalization in RL](https://arxiv.org/abs/1804.03720). This report contains details about the benchmark as well as results from running [Rainbow DQN](https://arxiv.org/abs/1710.02298), [PPO⁠](https://openai.com/index/openai-baselines-ppo/), and a simple random guessing algorithm called JERK. JERK samples random action sequences in a way that is optimized for Sonic, and as training progresses it replays the top-scoring sequence of actions more frequently.
 
 We found that we could significantly boost PPO’s performance on the test levels by leveraging experience from the training levels. When the network was pre-trained on the training levels and fine-tuned on the test levels, its performance nearly doubled, making it better than the strongest alternative baselines. While this is not the first reported instance of successful transfer learning in RL, it is exciting because it shows that transfer learning can have a large and reliable effect.
 
@@ -61,17 +61,17 @@ But we have a long way to go before our algorithms can rival human performance. 
 
 ## Sonic Recordings
 
-We’ve created a [dataset of recordings of humans⁠(opens in a new window)](https://github.com/openai/retro-movies) beating the Sonic levels used in the Retro Contest. These recordings can be used to have the agent start playing from random points sampled from the course of each level, exposing the agent to a lot of areas it may not have seen if it only started from the beginning of the level. Researchers can also use these recordings to try to train agents that learn from demonstrations.
+We’ve created a [dataset of recordings of humans](https://github.com/openai/retro-movies) beating the Sonic levels used in the Retro Contest. These recordings can be used to have the agent start playing from random points sampled from the course of each level, exposing the agent to a lot of areas it may not have seen if it only started from the beginning of the level. Researchers can also use these recordings to try to train agents that learn from demonstrations.
 
 ## Gym Retro Beta
 
-We are releasing Gym Retro, a system for wrapping classic video games as RL environments. This preliminary release includes 30 SEGA Genesis games from the [SEGA Mega Drive and Genesis Classics Steam Bundle⁠(opens in a new window)](http://store.steampowered.com/app/34270/) as well as 62 of the Atari 2600 games from the Arcade Learning Environment.
+We are releasing Gym Retro, a system for wrapping classic video games as RL environments. This preliminary release includes 30 SEGA Genesis games from the [SEGA Mega Drive and Genesis Classics Steam Bundle](http://store.steampowered.com/app/34270/) as well as 62 of the Atari 2600 games from the Arcade Learning Environment.
 
-[The Arcade Learning Environment⁠(opens in a new window)](https://github.com/mgbellemare/Arcade-Learning-Environment), a collection of Atari 2600 games with interfaces for reinforcement learning, has been a major driver of RL research for the last five years. These Atari games were more varied and complex than previous RL benchmarks, having been designed to challenge the motor skills and problem solving abilities of human players.
+[The Arcade Learning Environment](https://github.com/mgbellemare/Arcade-Learning-Environment), a collection of Atari 2600 games with interfaces for reinforcement learning, has been a major driver of RL research for the last five years. These Atari games were more varied and complex than previous RL benchmarks, having been designed to challenge the motor skills and problem solving abilities of human players.
 
-The [Gym Retro Beta⁠(opens in a new window)](https://github.com/openai/retro) utilizes a more modern console than Atari—SEGA Genesis—expanding the quantity and complexity of games that are available for RL research. Games made on the Genesis tend to have lots of levels that are similar in some dimensions (physics, object appearances) and different in others (layout, items), which makes them good testbeds for transfer learning. They also tend to be more complex than Atari games since they exploit the better hardware of the Genesis (for example, it has more than 500 times as much RAM as the Atari, a greater range of possible control inputs, and support for better graphics).
+The [Gym Retro Beta](https://github.com/openai/retro) utilizes a more modern console than Atari—SEGA Genesis—expanding the quantity and complexity of games that are available for RL research. Games made on the Genesis tend to have lots of levels that are similar in some dimensions (physics, object appearances) and different in others (layout, items), which makes them good testbeds for transfer learning. They also tend to be more complex than Atari games since they exploit the better hardware of the Genesis (for example, it has more than 500 times as much RAM as the Atari, a greater range of possible control inputs, and support for better graphics).
 
-Gym Retro was inspired by the [Retro Learning Environment⁠(opens in a new window)](https://arxiv.org/abs/1611.02205) but written to be more flexible than RLE; for instance, in Gym Retro you can specify the environment definition through JSON files rather than C++ code, making it easier to integrate new games.
+Gym Retro was inspired by the [Retro Learning Environment](https://arxiv.org/abs/1611.02205) but written to be more flexible than RLE; for instance, in Gym Retro you can specify the environment definition through JSON files rather than C++ code, making it easier to integrate new games.
 
 Loading...
 

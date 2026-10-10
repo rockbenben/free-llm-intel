@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3ca88eab196f
+body_sha: 099dc9ce5977
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ Safety
 
 Read paper
 
-(opens in a new window)
+
 
 Loading…
 

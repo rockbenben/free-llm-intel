@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ffd43845994b
+body_sha: 269754586ead
 ---
 
 OpenAI
@@ -37,7 +37,7 @@ Artificial general intelligence (AGI) should outperform humans at most economica
 
 During my first 2.5 years at OpenAI, I worked on the Robotics team on a moonshot idea: we wanted to teach a single, human-like robot hand to solve Rubik’s cube. It was a tremendously exciting, challenging, and emotional experience. We [solved⁠](https://openai.com/index/solving-rubiks-cube/) the challenge with deep reinforcement learning (RL), crazy amounts of domain randomization, and no real-world training data. More importantly, we conquered the challenge as a team.
 
-From simulation and RL training to vision perception and hardware firmware, we collaborated so closely and cohesively. It was an amazing experiment and during that time, I often thought of Steve Jobs’ [reality distortion field⁠(opens in a new window)](https://en.wikipedia.org/wiki/Reality_distortion_field): when you believe in something so strongly and keep on pushing it so persistently, somehow you can make the impossible possible.
+From simulation and RL training to vision perception and hardware firmware, we collaborated so closely and cohesively. It was an amazing experiment and during that time, I often thought of Steve Jobs’ [reality distortion field](https://en.wikipedia.org/wiki/Reality_distortion_field): when you believe in something so strongly and keep on pushing it so persistently, somehow you can make the impossible possible.
 
 Since the beginning of 2021, I started leading the Applied AI Research team. Managing a team presents a different set of challenges and requires working style changes. I’m most proud of several projects related to language model safety within Applied AI:
 

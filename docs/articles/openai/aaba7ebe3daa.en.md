@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8e92d9507fe7
+body_sha: 9bfb7b6cf8d1
 ---
 
 OpenAI
@@ -53,7 +53,7 @@ We believe this is the best path forward—AGI should enable all of humanity to 
 
 We want to build a brain for the world and make it super easy for people to use for whatever they want (subject to few restrictions; freedom shouldn’t impinge on other people’s freedom, for example).
 
-People are using ChatGPT to increase their productivity as [scientists](https://openai.com/index/strengthening-americas-ai-leadership-with-the-us-national-laboratories/), [coders](https://openai.com/index/o1-coding/), and much [more⁠(opens in a new window)](https://www.youtube.com/watch?v=ElFwibTDpiE). People are using ChatGPT to solve serious healthcare challenges they are facing and learn more than ever before. People are using ChatGPT to get advice about how to handle difficult situations. We are very proud to offer a service that is doing so much for so many people; it is the one of most direct fulfillments of our mission we can imagine.
+People are using ChatGPT to increase their productivity as [scientists](https://openai.com/index/strengthening-americas-ai-leadership-with-the-us-national-laboratories/), [coders](https://openai.com/index/o1-coding/), and much [more](https://www.youtube.com/watch?v=ElFwibTDpiE). People are using ChatGPT to solve serious healthcare challenges they are facing and learn more than ever before. People are using ChatGPT to get advice about how to handle difficult situations. We are very proud to offer a service that is doing so much for so many people; it is the one of most direct fulfillments of our mission we can imagine.
 
 But they want to use it much more; we currently cannot supply nearly as much AI as the world wants and we have to put usage limits on our systems and run them slowly. As the systems become more capable, they will want to use it even more, for even more wonderful things.
 
@@ -63,7 +63,7 @@ It is time for us to evolve our structure. There are three things we want to acc
 
 - We want to be able to operate and get resources in such a way that we can make our services broadly available to all of humanity, which currently requires hundreds of billions of dollars and may eventually require trillions of dollars. We believe this is the best way for us to fulfill our mission and to get people to create massive benefits for each other with these new tools.
 - We want our nonprofit to be the largest and most effective nonprofit in history that will be focused on using AI to enable the highest-leverage outcomes for people.
-- We want to deliver beneficial AGI. This includes contributing to the shape of [safety and alignment](https://openai.com/safety/how-we-think-about-safety-alignment/); we are proud of our track record with the systems we have launched, the alignment research we have done, processes like red teaming, and transparency into model behavior with innovations like the [model spec⁠(opens in a new window)](https://model-spec.openai.com/). As AI accelerates, our commitment to safety grows stronger. We want to make sure democratic AI wins over authoritarian AI.
+- We want to deliver beneficial AGI. This includes contributing to the shape of [safety and alignment](https://openai.com/safety/how-we-think-about-safety-alignment/); we are proud of our track record with the systems we have launched, the alignment research we have done, processes like red teaming, and transparency into model behavior with innovations like the [model spec](https://model-spec.openai.com/). As AI accelerates, our commitment to safety grows stronger. We want to make sure democratic AI wins over authoritarian AI.
 
 **We made the decision for the nonprofit to stay in control **after hearing from civic leaders and having discussions with the offices of the Attorneys General of California and Delaware. We look forward to advancing the details of this plan in continued conversation with them, Microsoft, and our newly appointed nonprofit commissioners.
 

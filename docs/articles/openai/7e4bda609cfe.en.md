@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 742fe52934cd
+body_sha: db8dbd8825a6
 ---
 
 OpenAI
@@ -23,29 +23,29 @@ Loading…
 
 Our Dota 2 result shows that self-play can catapult the performance of machine learning systems from far below human level to superhuman, given sufficient compute. In the span of a month, our system went from barely matching a high-ranked player to beating the top pros and has continued to improve since then. Supervised deep learning systems can only be as good as their training datasets, but in self-play systems, the available data improves automatically as the agent gets better.
 
-[TrueSkill⁠(opens in a new window)](https://en.wikipedia.org/wiki/TrueSkill) rating (similar to the ELO rating in chess) of our best bot over time, computed by simulating games between the bots and observing the win ratios. Improvements came from every part of the system, from adding new features to algorithmic improvements to scaling things up. The graph is surprisingly linear, meaning the team improved the bot exponentially over time.
+[TrueSkill](https://en.wikipedia.org/wiki/TrueSkill) rating (similar to the ELO rating in chess) of our best bot over time, computed by simulating games between the bots and observing the win ratios. Improvements came from every part of the system, from adding new features to algorithmic improvements to scaling things up. The graph is surprisingly linear, meaning the team improved the bot exponentially over time.
 
-The project’s timeline is the following. For some perspective, 15% of players are below 1.5k [MMR⁠(opens in a new window)](https://dota.rgp.io/mmr/); 58% of players are below 3k; 99.99% are below 7.5k.
+The project’s timeline is the following. For some perspective, 15% of players are below 1.5k [MMR](https://dota.rgp.io/mmr/); 58% of players are below 3k; 99.99% are below 7.5k.
 
-- **March 1st**: had our first classical reinforcement learning [results⁠(opens in a new window)](https://www.youtube.com/watch?v=5Fv2c4aNS2w&feature=youtu.be) in a simple Dota environment, where a Drow Ranger learns to kite a hardcoded Earthshaker.
+- **March 1st**: had our first classical reinforcement learning [results](https://www.youtube.com/watch?v=5Fv2c4aNS2w&feature=youtu.be) in a simple Dota environment, where a Drow Ranger learns to kite a hardcoded Earthshaker.
 - **May 8th**: 1.5k MMR tester says he’s been getting better faster than the bot.
 - **Early June**: beat 1.5k MMR tester
 - **June 30th**: winning most games against 3k MMR tester
-- **July 8th**: barely get first [win⁠(opens in a new window)](https://www.youtube.com/watch?v=FBoUHay7XBI&feature=youtu.be&t=345) against 7.5k MMR semi-pro tester.
-- **August 7th**: beat [Blitz⁠(opens in a new window)](http://wiki.teamliquid.net/dota2/Blitz) (6.2k former pro) 3–0, [Pajkatt⁠(opens in a new window)](http://wiki.teamliquid.net/dota2/Pajkatt) (8.5k pro) 2–1, and [CC&C⁠(opens in a new window)](http://wiki.teamliquid.net/dota2/CC%26C) (8.9k pro) 3–0. All agreed that Sumail would figure out how to beat it.
+- **July 8th**: barely get first [win](https://www.youtube.com/watch?v=FBoUHay7XBI&feature=youtu.be&t=345) against 7.5k MMR semi-pro tester.
+- **August 7th**: beat [Blitz](http://wiki.teamliquid.net/dota2/Blitz) (6.2k former pro) 3–0, [Pajkatt](http://wiki.teamliquid.net/dota2/Pajkatt) (8.5k pro) 2–1, and [CC&C](http://wiki.teamliquid.net/dota2/CC%26C) (8.9k pro) 3–0. All agreed that Sumail would figure out how to beat it.
 - **August 9th**: beat Arteezy (10k pro, top player) 10–0. He says Sumail could figure out this bot.
 - **August 10th**: beat Sumail (8.3k pro, top 1v1 player) 6–0, who says it’s unbeatable. Plays the Aug 9th bot, where he goes 2–1.
 - **August 11th**: beat Dendi (7.3k pro, former world champion, old-school crowd favorite) 2–0. Bot has 60% win rate versus August 10th bot.
 
 ## The task
 
-The full game is 5v5, but 1v1 also [appears⁠(opens in a new window)](https://www.youtube.com/watch?v=KOlw9SYjr4c) in some [tournaments⁠(opens in a new window)](http://wiki.teamliquid.net/dota2/Dota_2_Asia_Championships/2017/Solo_Tournament#Rules). Our bot played under standard tournament rules—we did not add AI-specific simplifications to 1v1.
+The full game is 5v5, but 1v1 also [appears](https://www.youtube.com/watch?v=KOlw9SYjr4c) in some [tournaments](http://wiki.teamliquid.net/dota2/Dota_2_Asia_Championships/2017/Solo_Tournament#Rules). Our bot played under standard tournament rules—we did not add AI-specific simplifications to 1v1.
 
 The bot operated off the following interfaces:
 
 - **Observations:** Bot API features, which are designed to be the same set of features that humans can see, related to heroes, creeps, courier, and the terrain near the hero. The game is partially observable.
 - **Actions:** Actions accessible by the bot API, chosen at a frequency comparable to humans, including moving to a location, attacking a unit, or using an item.
-- **Feedback:** The bot received incentives for winning and basic metrics like health and [last hits⁠(opens in a new window)](https://dota2.gamepedia.com/Creep_control_techniques#Last-hitting).
+- **Feedback:** The bot received incentives for winning and basic metrics like health and [last hits](https://dota2.gamepedia.com/Creep_control_techniques#Last-hitting).
 
 We whitelisted a few dozen item builds that bots could use, and picked one for evaluation. We also separately trained the initial creep block using traditional RL techniques, as it happens before the opponent appears.
 
@@ -81,15 +81,15 @@ The first step in the project was figuring out how to run Dota 2 in the cloud on
 
 Dota didn’t support custom dedicated servers at the time, meaning that running scalably and without a GPU was possible only with very slow software rendering. We then created a shim to stub out most OpenGL calls, except the ones needed to boot.
 
-At the same time, we wrote a scripted bot—we needed a baseline for comparison (especially because the builtin bots don’t work well on 1v1) and to understand all the semantics of the [bot API⁠(opens in a new window)](https://developer.valvesoftware.com/wiki/Dota_Bot_Scripting). The scripted bot reaches 70 last hits in ten minutes on an empty lane, but still loses to reasonable humans. Our current best 1v1 bot reaches more like 97 (it destroys the tower before then, so we can only extrapolate), and the theoretical maximum is 101.
+At the same time, we wrote a scripted bot—we needed a baseline for comparison (especially because the builtin bots don’t work well on 1v1) and to understand all the semantics of the [bot API](https://developer.valvesoftware.com/wiki/Dota_Bot_Scripting). The scripted bot reaches 70 last hits in ten minutes on an empty lane, but still loses to reasonable humans. Our current best 1v1 bot reaches more like 97 (it destroys the tower before then, so we can only extrapolate), and the theoretical maximum is 101.
 
-Bot playing versus [SirActionSlacks⁠(opens in a new window)](http://wiki.teamliquid.net/dota2/SirActionSlacks). The strategy of distracting the bot with a courier rush did not work.
+Bot playing versus [SirActionSlacks](http://wiki.teamliquid.net/dota2/SirActionSlacks). The strategy of distracting the bot with a courier rush did not work.
 
 ## 5v5
 
 1v1 is complicated, but 5v5 is an ocean of complexity. We know we’ll need to further push the limits of AI in order to solve it.
 
-One well-established place to start is with behavioral cloning. Dota has about a million public matches a day. The replays for these matches are stored on Valve’s servers for two weeks. We’ve been downloading every expert-level replay since last November, and have amassed a dataset of 5.8M games (each game is about 45 minutes with 10 humans). We use [OpenDota⁠(opens in a new window)](https://www.opendota.com/) to discover these replays, and are donating $12k (10 years of their fundraising goal) to support the project.
+One well-established place to start is with behavioral cloning. Dota has about a million public matches a day. The replays for these matches are stored on Valve’s servers for two weeks. We’ve been downloading every expert-level replay since last November, and have amassed a dataset of 5.8M games (each game is about 45 minutes with 10 humans). We use [OpenDota](https://www.opendota.com/) to discover these replays, and are donating $12k (10 years of their fundraising goal) to support the project.
 
 We have many more ideas, and are [hiring⁠](https://openai.com/careers/) engineers (must be intrigued by machine learning, but need not be an expert) and researchers to help us make this happen. We thank Microsoft Azure and Valve for their support in this endeavor.
 

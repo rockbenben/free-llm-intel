@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 59f053a05b3b
+body_sha: 1f608b45de0e
 ---
 
 OpenAI
@@ -53,13 +53,13 @@ We currently believe the best way to successfully navigate AI deployment challen
 
 Generally speaking, we think more usage of AI in the world will lead to good, and want to promote it (by putting models in our API, open-sourcing them, etc.). We believe that democratized access will also lead to more and better research, decentralized power, more benefits, and a broader set of people contributing new ideas.
 
-As our systems get closer to AGI, we are becoming increasingly cautious with the creation and deployment of our models. Our decisions will require much more caution than society usually applies to new technologies, and more caution than many users would like. Some people in the AI field think the risks of AGI (and successor systems) are fictitious; we would be delighted if they turn out to be right, but we are going to operate as if these risks are [existential⁠(opens in a new window)](https://www.cold-takes.com/ai-could-defeat-all-of-us-combined/).
+As our systems get closer to AGI, we are becoming increasingly cautious with the creation and deployment of our models. Our decisions will require much more caution than society usually applies to new technologies, and more caution than many users would like. Some people in the AI field think the risks of AGI (and successor systems) are fictitious; we would be delighted if they turn out to be right, but we are going to operate as if these risks are [existential](https://www.cold-takes.com/ai-could-defeat-all-of-us-combined/).
 
 At some point, the balance between the upsides and downsides of deployments (such as empowering malicious actors, creating social and economic disruptions, and accelerating an unsafe race) could shift, in which case we would significantly change our plans around continuous deployment.
 
 > “As our systems get closer to AGI, we are becoming increasingly cautious with the creation and deployment of our models.”
 
-Second, we are working towards creating increasingly aligned and steerable models. Our shift from models like the first version of GPT‑3 to [InstructGPT⁠](https://openai.com/index/instruction-following/) and [ChatGPT⁠(opens in a new window)](https://chat.openai.com/) is an early example of this.
+Second, we are working towards creating increasingly aligned and steerable models. Our shift from models like the first version of GPT‑3 to [InstructGPT⁠](https://openai.com/index/instruction-following/) and [ChatGPT](https://chat.openai.com/) is an early example of this.
 
 In particular, we think it’s important that society agree on extremely wide bounds of how AI can be used, but that within those bounds, individual users have a lot of discretion. Our eventual hope is that the institutions of the world agree on what these wide bounds should be; in the shorter term we plan to run experiments for external input. The institutions of the world will need to be strengthened with additional capabilities and experience to be prepared for complex decisions about AGI.
 
@@ -94,7 +94,7 @@ We can imagine a world in which humanity flourishes to a degree that is probably
 
 ## Footnotes
 
-- We seem to have been given lots of [gifts⁠(opens in a new window)](https://aligned.substack.com/p/alignment-optimism) relative to what we expected earlier: for example, it seems like creating AGI will require huge amounts of compute and thus the world will know who is working on it, it seems like the original conception of hyper-evolved RL agents competing with each other and evolving intelligence in a way we can’t really observe is less likely than it originally seemed, almost no one predicted we’d make this much progress on pre-trained language models that can learn from the collective preferences and output of humanity, etc.
+- We seem to have been given lots of [gifts](https://aligned.substack.com/p/alignment-optimism) relative to what we expected earlier: for example, it seems like creating AGI will require huge amounts of compute and thus the world will know who is working on it, it seems like the original conception of hyper-evolved RL agents competing with each other and evolving intelligence in a way we can’t really observe is less likely than it originally seemed, almost no one predicted we’d make this much progress on pre-trained language models that can learn from the collective preferences and output of humanity, etc.
 
 AGI could happen soon or far in the future; the takeoff speed from the initial AGI to more powerful successor systems could be slow or fast. Many of us think the safest quadrant in this two-by-two matrix is short timelines and slow takeoff speeds; shorter timelines seem more amenable to coordination and more likely to lead to a slower takeoff due to less of a compute overhang, and a slower takeoff gives us more time to figure out empirically how to solve the safety problem and how to adapt.
 

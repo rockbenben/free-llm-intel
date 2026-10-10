@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 080045fce66b
+body_sha: 449ddf569460
 ---
 
 OpenAI
@@ -27,7 +27,7 @@ We hosted ~90 people at our office and engaged nearly 300 more through our lives
 
 ## Building educational tools
 
-One of the goals for education at OpenAI is to help people develop the skills needed to participate in research and development in AI—especially in deep RL, a core area of research at OpenAI. From our experience working with [Scholars⁠(opens in a new window)](https://blog.openai.com/openai-scholars-2018-final-projects/) and [Fellows⁠(opens in a new window)](https://blog.openai.com/openai-summer-fellows-2018/), we’ve found that the key ingredients for skill development are:
+One of the goals for education at OpenAI is to help people develop the skills needed to participate in research and development in AI—especially in deep RL, a core area of research at OpenAI. From our experience working with [Scholars](https://blog.openai.com/openai-scholars-2018-final-projects/) and [Fellows](https://blog.openai.com/openai-summer-fellows-2018/), we’ve found that the key ingredients for skill development are:
 
 - a flexible curriculum that includes core material and a review of research frontiers,
 - mentorship and discussions with experts, and
@@ -43,19 +43,19 @@ More than 500 people, from all around the world, applied to participate in this 
 
 ## The talks
 
-The workshop kicked off with three hours of talks. To start us off, [Joshua Achiam⁠(opens in a new window)](https://twitter.com/jachiam0) laid out the conceptual foundations of reinforcement learning and gave an overview of different kinds of RL algorithms. If you’d like to study this material, check out [Spinning Up in Deep RL⁠(opens in a new window)](https://blog.openai.com/spinning-up-in-deep-rl/).
+The workshop kicked off with three hours of talks. To start us off, [Joshua Achiam](https://twitter.com/jachiam0) laid out the conceptual foundations of reinforcement learning and gave an overview of different kinds of RL algorithms. If you’d like to study this material, check out [Spinning Up in Deep RL](https://blog.openai.com/spinning-up-in-deep-rl/).
 
-Matthias Plappert presented on OpenAI’s [recent⁠(opens in a new window)](https://blog.openai.com/learning-dexterity/) [work⁠(opens in a new window)](https://arxiv.org/abs/1808.00177) training a dexterous robot hand in simulation to manipulate objects in the real world. Domain randomization, recurrent neural networks, and large-scale distributed training were necessary ingredients in bridging the “sim2real” gap for this task.
+Matthias Plappert presented on OpenAI’s [recent](https://blog.openai.com/learning-dexterity/) [work](https://arxiv.org/abs/1808.00177) training a dexterous robot hand in simulation to manipulate objects in the real world. Domain randomization, recurrent neural networks, and large-scale distributed training were necessary ingredients in bridging the “sim2real” gap for this task.
 
-Dario Amodei, the leader of the Safety Team at OpenAI, presented an overview of problems in AI safety and [recent⁠(opens in a new window)](https://blog.openai.com/amplifying-ai-training/) [work⁠(opens in a new window)](https://blog.openai.com/debate/) in this space. He described the central safety problem: the fact that correctly specifying agent behavior is hard! It is easy to inadvertently give agents incentives to perform different behavior than what you would have wanted, and when agents are very powerful, this could be dangerous. Dario also described [work⁠(opens in a new window)](https://blog.openai.com/deep-reinforcement-learning-from-human-preferences/) that OpenAI and collaborators at DeepMind have done to address this issue, in which reward functions are learned from human preferences instead of designed.
+Dario Amodei, the leader of the Safety Team at OpenAI, presented an overview of problems in AI safety and [recent](https://blog.openai.com/amplifying-ai-training/) [work](https://blog.openai.com/debate/) in this space. He described the central safety problem: the fact that correctly specifying agent behavior is hard! It is easy to inadvertently give agents incentives to perform different behavior than what you would have wanted, and when agents are very powerful, this could be dangerous. Dario also described [work](https://blog.openai.com/deep-reinforcement-learning-from-human-preferences/) that OpenAI and collaborators at DeepMind have done to address this issue, in which reward functions are learned from human preferences instead of designed.
 
 ## The afternoon
 
-The workshop continued into the afternoon with a semi-structured program of hacking and breakout sessions. Participants were able to seek guidance on project ideas and research tips from our slate of volunteers, which included [Amanda Askell⁠(opens in a new window)](https://twitter.com/AmandaAskell), [Alex Ray⁠(opens in a new window)](https://twitter.com/machinaut), [Daniel Ziegler⁠(opens in a new window)](https://www.linkedin.com/in/daniel-ziegler-b4b61882), [Dylan Hadfield-Menell⁠(opens in a new window)](https://twitter.com/dhadfieldmenell), [Ethan Knight⁠(opens in a new window)](https://github.com/hyperdo?tab=repositories), [Karl Cobbe⁠(opens in a new window)](https://twitter.com/karlcobbe), [Matthias Plappert⁠(opens in a new window)](https://twitter.com/mplappert), and [Sam McCandlish⁠(opens in a new window)](https://www.linkedin.com/in/sam-mccandlish).
+The workshop continued into the afternoon with a semi-structured program of hacking and breakout sessions. Participants were able to seek guidance on project ideas and research tips from our slate of volunteers, which included [Amanda Askell](https://twitter.com/AmandaAskell), [Alex Ray](https://twitter.com/machinaut), [Daniel Ziegler](https://www.linkedin.com/in/daniel-ziegler-b4b61882), [Dylan Hadfield-Menell](https://twitter.com/dhadfieldmenell), [Ethan Knight](https://github.com/hyperdo?tab=repositories), [Karl Cobbe](https://twitter.com/karlcobbe), [Matthias Plappert](https://twitter.com/mplappert), and [Sam McCandlish](https://www.linkedin.com/in/sam-mccandlish).
 
 The breakout sessions turned out to be the main highlight of the afternoon. Whereas the morning talks covered the conceptual foundations of RL, the breakout sessions were designed to help participants boost their implementation and research skills.
 
-In the first session, Karl Cobbe gave an introduction to [TensorFlow⁠(opens in a new window)](https://www.tensorflow.org/), a key library used in deep learning research. In the second session, “Writing DQN Together,” Daniel Ziegler led participants step-by-step through the process of implementing a deep RL algorithm. In the third session, “Advanced RL Q&A,” Joshua Achiam described recent research frontiers in RL and took audience questions about doing RL research.
+In the first session, Karl Cobbe gave an introduction to [TensorFlow](https://www.tensorflow.org/), a key library used in deep learning research. In the second session, “Writing DQN Together,” Daniel Ziegler led participants step-by-step through the process of implementing a deep RL algorithm. In the third session, “Advanced RL Q&A,” Joshua Achiam described recent research frontiers in RL and took audience questions about doing RL research.
 
 ## Our takeaways
 
@@ -85,11 +85,11 @@ We think this kind of feedback is a good indicator that the 1-day workshop forma
 
 ## What’s next
 
-OpenAI’s [Charter⁠(opens in a new window)](https://blog.openai.com/openai-charter/) gives us a mandate “to create a global community working together to address AGI’s global challenges,” and we’ll continue developing education at OpenAI to help serve that goal. This includes more work on resources like [Spinning Up in Deep RL⁠(opens in a new window)](https://spinningup.openai.com/en/latest/) and more events like this Spinning Up Workshop. We are currently planning a second workshop with [CHAI at Berkeley⁠(opens in a new window)](https://humancompatible.ai/), which we expect to formally announce soon.
+OpenAI’s [Charter](https://blog.openai.com/openai-charter/) gives us a mandate “to create a global community working together to address AGI’s global challenges,” and we’ll continue developing education at OpenAI to help serve that goal. This includes more work on resources like [Spinning Up in Deep RL](https://spinningup.openai.com/en/latest/) and more events like this Spinning Up Workshop. We are currently planning a second workshop with [CHAI at Berkeley](https://humancompatible.ai/), which we expect to formally announce soon.
 
 If you would like to help us do research on RL or teach people about AI, please get in touch! [We’re hiring⁠](https://openai.com/careers/).
 
-*Thanks to Maddie Hall and Loren Kwan for co-organizing the event, to Ian Atha for livestreaming and recording the lectures, as well as helping participants with Python and Tensorflow issues, and to* [*Blake Tucker*⁠(opens in a new window)](https://www.blaketucker.com/) *for filming and photography!*
+*Thanks to Maddie Hall and Loren Kwan for co-organizing the event, to Ian Atha for livestreaming and recording the lectures, as well as helping participants with Python and Tensorflow issues, and to* [*Blake Tucker*](https://www.blaketucker.com/) *for filming and photography!*
 
 - [Events](https://openai.com/news/?tags=events)
 - [2019](https://openai.com/news/?tags=2019)

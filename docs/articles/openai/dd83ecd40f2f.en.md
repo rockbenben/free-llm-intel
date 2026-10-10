@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e633eb891458
+body_sha: 42e8175ff6d5
 ---
 
 OpenAI
@@ -59,7 +59,7 @@ Loading…
 
 ## Rebuilding engineering for speed, scale, and complexity
 
-[AutoScout24 Group⁠(opens in a new window)](https://www.autoscout24.com/) is the largest pan-European and Canadian online car marketplace, connecting more than 30 million monthly users with over two million vehicle listings. Operating across multiple brands—including AutoScout24 in Europe and AutoTrader.ca in Canada—the company supports a network of 45,000 dealer partners and employs around 2,000 people globally.
+[AutoScout24 Group](https://www.autoscout24.com/) is the largest pan-European and Canadian online car marketplace, connecting more than 30 million monthly users with over two million vehicle listings. Operating across multiple brands—including AutoScout24 in Europe and AutoTrader.ca in Canada—the company supports a network of 45,000 dealer partners and employs around 2,000 people globally.
 
 As product expectations increased and system complexity grew, AutoScout24 Group faced mounting pressure to deliver faster innovation without compromising reliability. This is closely tied to the company’s goal of continuously improving how buyers search, evaluate, and purchase vehicles, and how dealers successfully market and sell their inventory. With large-scale migrations, legacy systems, and rising engineering demand, incremental improvements were no longer sufficient. The emergence of large language models presented a timely opportunity to fundamentally rethink how software is built, tested, and scaled—making OpenAI a natural partner in driving this transformation.
 

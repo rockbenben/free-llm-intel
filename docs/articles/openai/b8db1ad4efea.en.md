@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6438f5048892
+body_sha: f258e0657d28
 ---
 
 OpenAI
@@ -33,7 +33,7 @@ In the coming months we will use thousands to tens of thousands of these machine
 
 We’ll share the results of this partnership with everyone: along with publishing our research results, we’ll continue releasing open-source software making it easier for people to run large-scale AI workloads on the cloud. We’ll also be giving feedback to the Microsoft team so that Azure’s capabilities keep pace with our understanding of AI.
 
-It’s great to work with another organization that believes in the importance of [democratizing access to AI⁠(opens in a new window)](https://news.microsoft.com/features/democratizing-ai/). We’re looking forward to accelerating the AI community through this partnership.
+It’s great to work with another organization that believes in the importance of [democratizing access to AI](https://news.microsoft.com/features/democratizing-ai/). We’re looking forward to accelerating the AI community through this partnership.
 
 - [Partnerships](https://openai.com/news/?tags=partnerships)
 - [2016](https://openai.com/news/?tags=2016)

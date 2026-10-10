@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5303a5dd7c2b
+body_sha: 8058c4c5eeb5
 ---
 
 OpenAI
@@ -21,13 +21,13 @@ Publication
 
 Read paper
 
-(opens in a new window)
+
 
 Browse samples
 
 Download dataset
 
-(opens in a new window)
+
 
 Loading…
 

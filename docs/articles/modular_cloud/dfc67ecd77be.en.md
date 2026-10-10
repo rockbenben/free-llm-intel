@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ae7eea34fa14
+body_sha: 80d058475250
 ---
 
 February 6, 2025
@@ -83,7 +83,7 @@ Learn more about paged attention [vLLM: Easy, Fast, and Cheap LLM Serving with P
 
 Learn more prefix caching [SGLang: Efficient Execution of Structured Language Model Programs](https://arxiv.org/pdf/2312.07104)
 
-## [‍](https://arxiv.org/pdf/2312.07104)What’s next?
+## What’s next?
 
 These improvements optimize GPU memory by up to 40% and throughput up to 3x. Here are a few resources to get you started:
 

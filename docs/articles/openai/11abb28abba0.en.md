@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 29b3046ba059
+body_sha: aae9d7c81161
 ---
 
 OpenAI
@@ -21,7 +21,7 @@ Company
 
 Hearst’s iconic brands bring curated lifestyle and local news content to OpenAI’s products.
 
-*Editor’s note: This news was originally shared by Hearst and can be read *[*here*⁠(opens in a new window)](https://www.hearst.com/-/hearst-and-openai-announce-strategic-content-partnership)*.*
+*Editor’s note: This news was originally shared by Hearst and can be read *[*here*](https://www.hearst.com/-/hearst-and-openai-announce-strategic-content-partnership)*.*
 
 Hearst today announced a new content partnership with OpenAI which will integrate Hearst's extensive newspaper and domestic magazine content into OpenAI's products, enhancing the utility and reach of both companies' offerings.
 

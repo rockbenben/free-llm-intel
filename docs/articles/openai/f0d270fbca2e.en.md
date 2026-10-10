@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 036a61f18a69
+body_sha: 950593499e6c
 ---
 
 OpenAI
@@ -21,11 +21,11 @@ Release
 
 View code
 
-(opens in a new window)
+
 
 Read paper
 
-(opens in a new window)
+
 
 Illustration: Ben Barry
 
@@ -55,22 +55,22 @@ Below we show some example code for performing sparse matrix multiplication in T
 
 ## Small-world LSTMs
 
-One particularly interesting use of block-sparse kernels is to use them to create small-world neural networks. [Small-world graphs⁠(opens in a new window)](https://en.wikipedia.org/wiki/Small-world_network) are connected in such a way that any two nodes in the graph are connected via a small number of steps, even if the graph has billions of nodes. Our motivation for implementing small world connectivity, is despite having a high degree of sparsity, we still want information to propagate quickly through the network. Brains [display small-world connectivity patterns⁠(opens in a new window)](https://www.ncbi.nlm.nih.gov/pubmed/17079517), which prompts the question whether the same property can improve the performance of LSTMs. Using small-world sparse connectivity, we efficiently trained LSTMs with almost twenty thousands hidden units, 5 times wider than a dense network with similar parameter counts, improving results on generative modeling of text, and semi-supervised sentiment classification; see [our paper⁠(opens in a new window)](https://cdn.openai.com/blocksparse/blocksparsepaper.pdf) for more details.
+One particularly interesting use of block-sparse kernels is to use them to create small-world neural networks. [Small-world graphs](https://en.wikipedia.org/wiki/Small-world_network) are connected in such a way that any two nodes in the graph are connected via a small number of steps, even if the graph has billions of nodes. Our motivation for implementing small world connectivity, is despite having a high degree of sparsity, we still want information to propagate quickly through the network. Brains [display small-world connectivity patterns](https://www.ncbi.nlm.nih.gov/pubmed/17079517), which prompts the question whether the same property can improve the performance of LSTMs. Using small-world sparse connectivity, we efficiently trained LSTMs with almost twenty thousands hidden units, 5 times wider than a dense network with similar parameter counts, improving results on generative modeling of text, and semi-supervised sentiment classification; see [our paper](https://cdn.openai.com/blocksparse/blocksparsepaper.pdf) for more details.
 
 ## Sentiment representation learning
 
-Following the setup we used in our [sentiment neuron experiment⁠](https://openai.com/index/unsupervised-sentiment-neuron/), we trained LSTMs with approximately equivalent parameter counts and compared models with dense weight matrices against a block-sparse variant. The sparse model outperforms the dense model on all sentiment datasets. Our sparse model improves the state of the art on the document level IMDB dataset from 5.91% error ([Miyato et al, 2016⁠(opens in a new window)](https://arxiv.org/abs/1605.07725)) to 5.01%. This is a promising improvement over our [previous results⁠](https://openai.com/index/unsupervised-sentiment-neuron/) which performed best only on shorter sentence level datasets.
+Following the setup we used in our [sentiment neuron experiment⁠](https://openai.com/index/unsupervised-sentiment-neuron/), we trained LSTMs with approximately equivalent parameter counts and compared models with dense weight matrices against a block-sparse variant. The sparse model outperforms the dense model on all sentiment datasets. Our sparse model improves the state of the art on the document level IMDB dataset from 5.91% error ([Miyato et al, 2016](https://arxiv.org/abs/1605.07725)) to 5.01%. This is a promising improvement over our [previous results⁠](https://openai.com/index/unsupervised-sentiment-neuron/) which performed best only on shorter sentence level datasets.
 
 ## Compression results
 
-By using sparse and wide LSTMs, the bits-per-character results in our experiments dropped from 1.059 to 1.048, for equal parameter counts (~ 100 million). Architectures with block-sparse linear layers can also improve upon results obtained with densely connected linear layers. We performed a simple modification of the [PixelCNN++⁠(opens in a new window)](https://github.com/openai/pixel-cnn) model of CIFAR-10 natural images. A replacement of regular 2D convolutional kernels with sparse kernels, while deepening the network but keeping the rest of the hyper-parameters fixed, lead to a drop in the bits-per-dimension from 2.92 to 2.90, now state of the art on this dataset.
+By using sparse and wide LSTMs, the bits-per-character results in our experiments dropped from 1.059 to 1.048, for equal parameter counts (~ 100 million). Architectures with block-sparse linear layers can also improve upon results obtained with densely connected linear layers. We performed a simple modification of the [PixelCNN++](https://github.com/openai/pixel-cnn) model of CIFAR-10 natural images. A replacement of regular 2D convolutional kernels with sparse kernels, while deepening the network but keeping the rest of the hyper-parameters fixed, lead to a drop in the bits-per-dimension from 2.92 to 2.90, now state of the art on this dataset.
 
 ## Research directions
 
 Here we list some suggestions for future research.
 
-- Most weights in neural networks [can be pruned after training has finished⁠(opens in a new window)](https://arxiv.org/abs/1710.09282). How much wall-clock time speed-up is possible at inference time when using pruning together with these kernels?
-- In biological brains, the sparse structure of the network is [partially determined during development⁠(opens in a new window)](https://en.wikipedia.org/wiki/Synaptic_pruning), in addition to connection strengths. Can we do something similar in artificial neural networks, where we use gradients to not only learn the connection weights, but also the optimal sparsity structure? A recent paper proposed a method for learning [block-sparse RNNs⁠(opens in a new window)](https://arxiv.org/abs/1711.02782), and we recently proposed an algorithm for [L0 regularization in neural networks⁠(opens in a new window)](https://arxiv.org/abs/1712.01312), which can be used towards this end.
+- Most weights in neural networks [can be pruned after training has finished](https://arxiv.org/abs/1710.09282). How much wall-clock time speed-up is possible at inference time when using pruning together with these kernels?
+- In biological brains, the sparse structure of the network is [partially determined during development](https://en.wikipedia.org/wiki/Synaptic_pruning), in addition to connection strengths. Can we do something similar in artificial neural networks, where we use gradients to not only learn the connection weights, but also the optimal sparsity structure? A recent paper proposed a method for learning [block-sparse RNNs](https://arxiv.org/abs/1711.02782), and we recently proposed an algorithm for [L0 regularization in neural networks](https://arxiv.org/abs/1712.01312), which can be used towards this end.
 - We trained [LSTMs with tens of thousands of hidden units⁠](https://openai.com/index/block-sparse-gpu-kernels/#small-world-lstms), leading to better models of text. More generally, sparse layers make it possible to train models with huge weight matrices but the same number of parameters and the same computational cost as their smaller dense counterparts. What are application domains where this will make the most difference to performance?
 
 - [CLIP](https://openai.com/research/index/?tags=technology-clip)

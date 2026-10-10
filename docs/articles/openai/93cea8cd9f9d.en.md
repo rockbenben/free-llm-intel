@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: df87f95db432
+body_sha: 089971446869
 ---
 
 OpenAI
@@ -17,13 +17,13 @@ OpenAI
 
 Try now
 
-(opens in a new window)
+
 
 Contact sales
 
 Loading…
 
-[Morgan Stanley⁠(opens in a new window)](http://www.morganstanley.com) collaborated with OpenAI to build AI solutions that empower financial advisors with faster insights, more informed decisions, and efficient summarization tools to deepen client relationships. Their success was grounded in a robust evaluation framework that ensures AI performs reliably, consistently, and at the high standards advisors expect.
+[Morgan Stanley](http://www.morganstanley.com) collaborated with OpenAI to build AI solutions that empower financial advisors with faster insights, more informed decisions, and efficient summarization tools to deepen client relationships. Their success was grounded in a robust evaluation framework that ensures AI performs reliably, consistently, and at the high standards advisors expect.
 
 By embedding GPT‑4 into their workflows, Morgan Stanley Wealth Management has enhanced how financial advisors access the firm’s knowledge base and respond to client needs. Today, over 98% of advisor teams actively use **AI @ Morgan Stanley Assistant**—Morgan Stanley’s internal chatbot for answering financial advisors’ questions—for seamless internal information retrieval.
 

@@ -9,10 +9,10 @@ captured: 2026-10-08
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: b01747ec18b6
+body_sha: c8f0081e4dca
 ---
 
-## [​](https://platform.minimax.cn/docs/release-notes/models#2025-年-10-月-29-日)2025 年 10 月 29 日
+## 2025 年 10 月 29 日
 
 ## MiniMax-Speech-2.6
 

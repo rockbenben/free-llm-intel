@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 17162bad91f9
 ---
 
 # Paged Attention 与 Prefix Caching 现已登陆 MAX Serve
@@ -77,7 +78,7 @@ PagedAttention 和 Prefix Caching 正是为了解决这些挑战。
 
 深入了解 prefix caching：[SGLang: Efficient Execution of Structured Language Model Programs](https://arxiv.org/pdf/2312.07104)
 
-## [‍](https://arxiv.org/pdf/2312.07104)接下来？
+## 接下来？
 
 这些改进最多可将 GPU 内存优化 40%，吞吐量提升至 3 倍。以下是一些帮你上手的资源：
 

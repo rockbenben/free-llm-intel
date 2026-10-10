@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ec6ce09ae274
+body_sha: 0d713c9a1410
 ---
 
 OpenAI
@@ -25,7 +25,7 @@ Together with Apollo Research, we developed evaluations for hidden misalignment 
 
 Read the paper
 
-(opens in a new window)
+
 
 AI scheming–pretending to be aligned while secretly pursuing some other agenda–is a significant risk that we’ve been studying. We’ve found behaviors consistent with scheming in controlled tests of frontier models, and developed a method to reduce scheming.
 
@@ -37,13 +37,13 @@ And importantly, we have no evidence that today’s deployed frontier models cou
 
 ## Key findings from our research
 
-Together with [Apollo Research⁠(opens in a new window)](https://www.apolloresearch.ai/), we built evaluation environments that simulate these future scenarios to study this phenomenon, measure it, and explore how to mitigate it. To operationalize scheming, we define *covert actions* as deliberate withholding or distortion of task-relevant information. Using covert actions as a proxy for scheming, we found problematic behaviors in current frontier models including OpenAI o3 and o4-mini, Gemini-2.5-pro, and Claude Opus-4. (This investigation predates GPT‑5; updated results appear in the [GPT‑5 system card⁠](https://openai.com/index/gpt-5-system-card/)).
+Together with [Apollo Research](https://www.apolloresearch.ai/), we built evaluation environments that simulate these future scenarios to study this phenomenon, measure it, and explore how to mitigate it. To operationalize scheming, we define *covert actions* as deliberate withholding or distortion of task-relevant information. Using covert actions as a proxy for scheming, we found problematic behaviors in current frontier models including OpenAI o3 and o4-mini, Gemini-2.5-pro, and Claude Opus-4. (This investigation predates GPT‑5; updated results appear in the [GPT‑5 system card⁠](https://openai.com/index/gpt-5-system-card/)).
 
 As part of the collaboration, we developed and stress-tested a method to reduce scheming in models and established protocols for stress-testing future methods. Specifically, we trained versions of OpenAI o3 and OpenAI o4-mini with [deliberative alignment⁠](https://openai.com/index/deliberative-alignment/)—teaching them to read and reason about a general anti-scheming spec before acting—and observed a ~30× reduction in covert actions across diverse tests (o3 from 13% to 0.4%; o4-mini from 8.7% to 0.3%). However, rare but serious failures remained, and evaluation results may be confounded by increased situational awareness (e.g., when models get better at recognizing when they are being evaluated).
 
 Moreover, our results rely on our ability to read and trust the models’ reasoning (“chain-of-thought”). Based on what we see today, we believe the field is unprepared for evaluation- and training-aware models with opaque reasoning, and urge model developers to preserve reasoning transparency until better methods for studying and eliminating scheming have been developed.
 
-We’ve focused on scheming for some time and have made significant progress, but there’s more work to be done. Scheming poses a real challenge for alignment, and addressing it must be a core part of AGI development. To operationalize this work, we added scheming-related research categories—sandbagging and undermining safeguards—to our [updated Preparedness Framework⁠](https://openai.com/index/updating-our-preparedness-framework/) in April 2025. Looking ahead, we’ve renewed our partnership with Apollo Research and are expanding our team to build better measurements, improve monitoring for scheming-relevant behaviors, and explore new directions for anti-scheming training. And because solving scheming will go beyond any single lab, we’re exploring ways to raise awareness and collaborate including piloting [cross-lab safety evaluations⁠](https://openai.com/index/openai-anthropic-safety-evaluation/) (which include the scheming evals developed for this work), launching a $500,000 [Kaggle red-teaming challenge⁠(opens in a new window)](https://www.kaggle.com/competitions/openai-gpt-oss-20b-red-teaming) containing scheming-related topics, and advocating for [preserving chain-of-thought transparency⁠(opens in a new window)](https://arxiv.org/pdf/2507.11473) industry-wide.
+We’ve focused on scheming for some time and have made significant progress, but there’s more work to be done. Scheming poses a real challenge for alignment, and addressing it must be a core part of AGI development. To operationalize this work, we added scheming-related research categories—sandbagging and undermining safeguards—to our [updated Preparedness Framework⁠](https://openai.com/index/updating-our-preparedness-framework/) in April 2025. Looking ahead, we’ve renewed our partnership with Apollo Research and are expanding our team to build better measurements, improve monitoring for scheming-relevant behaviors, and explore new directions for anti-scheming training. And because solving scheming will go beyond any single lab, we’re exploring ways to raise awareness and collaborate including piloting [cross-lab safety evaluations⁠](https://openai.com/index/openai-anthropic-safety-evaluation/) (which include the scheming evals developed for this work), launching a $500,000 [Kaggle red-teaming challenge](https://www.kaggle.com/competitions/openai-gpt-oss-20b-red-teaming) containing scheming-related topics, and advocating for [preserving chain-of-thought transparency](https://arxiv.org/pdf/2507.11473) industry-wide.
 
 ## Scheming is different from other machine learning failure modes
 
@@ -52,7 +52,7 @@ By definition, a scheming AI agent tries to hide its misalignment, making it har
 - Mitigations that reduce scheming may either (a) truly eliminate it, or (b) just teach the model to conceal it better. Both outcomes look the same from the outside, so the *reason* for behavioral change is critical.
 - Many machine learning issues fade as models improve, but scheming becomes more dangerous with greater capability, since we expect that stronger models will be better at scheming.
 
-Standard deep learning practice is to iterate until unwanted outputs disappear. With scheming, the disappearance of observably bad behavior is ambiguous, as the model may have just learned to better conceal its misalignment. Addressing this likely requires tools that tell you about the model’s motivational structure, not just its inputs and outputs**.** In our work, we probed goals by reading models' intermediate reasoning (chain of thought). This works only if the model is free to express its thinking without optimization pressure on the chain of thought. In a recent [position paper⁠(opens in a new window)](https://arxiv.org/abs/2507.11473) co-authored with a broad group of AI researchers, we argued that chain-of-thought monitorability is promising but fragile and recommended that frontier developers avoid training practices that erode this key oversight signal.
+Standard deep learning practice is to iterate until unwanted outputs disappear. With scheming, the disappearance of observably bad behavior is ambiguous, as the model may have just learned to better conceal its misalignment. Addressing this likely requires tools that tell you about the model’s motivational structure, not just its inputs and outputs**.** In our work, we probed goals by reading models' intermediate reasoning (chain of thought). This works only if the model is free to express its thinking without optimization pressure on the chain of thought. In a recent [position paper](https://arxiv.org/abs/2507.11473) co-authored with a broad group of AI researchers, we argued that chain-of-thought monitorability is promising but fragile and recommended that frontier developers avoid training practices that erode this key oversight signal.
 
 ## Training not to scheme for the right reasons
 
@@ -75,7 +75,7 @@ To try to avoid this, we explore a [deliberative alignment⁠](https://openai.co
 | GP3 | Maintain strict adherence even in novel/unfamiliar situations—no distributional exceptions. |
 | GP4 | No rationalizations can override AS1–AS4, including ends-justify-means, greater good, etc. |
 
-An anti-scheming spec (modeled after the [OpenAI Model Spec⁠(opens in a new window)](https://model-spec.openai.com/2025-04-11.html)) provides the model with principles to ground its reasoning in not scheming for the right reasons.
+An anti-scheming spec (modeled after the [OpenAI Model Spec](https://model-spec.openai.com/2025-04-11.html)) provides the model with principles to ground its reasoning in not scheming for the right reasons.
 
 This approach leads to the model referencing specification principles in its chain-of-thought. When solving tasks, it quotes and applies these principles to guide its actions. Crucially, this reliance on principles improves generalization: in new environments, the model again turns to the specification to decide how to act.
 
@@ -108,7 +108,7 @@ If current training paradigms remain unchanged, we should expect more capable mo
 
 Scheming is a complex failure mode that we do not expect to diminish with scale. Our findings show that scheming is not merely a theoretical concern—we are seeing signs that this issue is beginning to emerge across all frontier models today. In current production settings, models rarely have opportunities to scheme and cause significant harm, but we expect this to change in the future as AIs are taking on more important and long-term tasks. We have more work to do and we hope these early results will encourage more research on scheming.
 
-More materials, including the paper, full sample transcripts, and a link to Apollo's companion blog post, can be found at [antischeming.ai⁠(opens in a new window)](https://antischeming.ai).
+More materials, including the paper, full sample transcripts, and a link to Apollo's companion blog post, can be found at [antischeming.ai](https://antischeming.ai).
 
 *We partnered with Apollo Research on this study: OpenAI led most of the model training and required infrastructure, while Apollo led evaluations and analysis across the paper’s sections, built training environments, and integrated tooling with our systems. The training and test datasets were shared between both teams. Because the methodology required inspecting models’ hidden reasoning, Apollo was granted rate‑limited access to internal chain‑of‑thought (CoT) traces of OpenAI o3 and o4‑mini for the duration of the project.*
 

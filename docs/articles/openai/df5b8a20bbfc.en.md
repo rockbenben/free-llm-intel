@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1556ec70f615
+body_sha: d3f7e2edaf7e
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ The Post’s essential journalism is now featured in ChatGPT search responses.
 
 Loading…
 
-***Editor’s note: This news was originally shared by The Washington Post and can be read ***[***here***⁠(opens in a new window)](https://www.washingtonpost.com/pr/2025/04/22/washington-post-partners-with-openai-search-content/)***. ***
+***Editor’s note: This news was originally shared by The Washington Post and can be read ***[***here***](https://www.washingtonpost.com/pr/2025/04/22/washington-post-partners-with-openai-search-content/)***. ***
 
 The Washington Post announced today a strategic partnership with OpenAI to make high-quality news more accessible in ChatGPT. As part of this partnership, ChatGPT will display summaries, quotes, and links to original reporting from The Post in response to relevant questions.
 

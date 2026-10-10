@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 12a2df7e8a8f
+body_sha: e3224809f30c
 ---
 
 OpenAI
@@ -19,7 +19,7 @@ Superhuman introduces a new era of email with OpenAI.
 
 Loading…
 
-The shift to online work has roughly 1 billion professionals spending close to [3 hours managing email each day⁠(opens in a new window)](https://business.adobe.com/blog/perspectives/if-you-think-email-is-dead-think-again). This works out to around 1 trillion human hours a year spent on email.
+The shift to online work has roughly 1 billion professionals spending close to [3 hours managing email each day](https://business.adobe.com/blog/perspectives/if-you-think-email-is-dead-think-again). This works out to around 1 trillion human hours a year spent on email.
 
 Superhuman’s goal is to reduce the time spent managing inboxes. They’ve used [OpenAI’s API⁠](https://openai.com/api/) to build a suite of next-gen AI email products that are saving users time, driving value, and increasing engagement.
 

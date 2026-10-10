@@ -9,10 +9,10 @@ captured: 2026-10-08
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 0e9c17a25641
+body_sha: 4d39aa3c7e61
 ---
 
-## [​](https://platform.minimax.cn/docs/release-notes/models#2026-年-7-月-16-日)2026 年 7 月 16 日
+## 2026 年 7 月 16 日
 
 ## Music-3.0
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 431d1af7a871
+body_sha: d366ad79dfe1
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ The ChatGPT app syncs your conversations, supports voice input, and brings our l
 
 Download on the App Store
 
-(opens in a new window)
+
 
 Loading…
 
@@ -45,7 +45,7 @@ With the ChatGPT app for iOS, we’re taking another step towards [our mission�
 
 P.S. Android users, you’re next! ChatGPT will be coming to your devices soon.
 
-- [Download on the App Store(opens in a new window)](https://apps.apple.com/app/openai-chatgpt/id6448311069)
+- [Download on the App Store](https://apps.apple.com/app/openai-chatgpt/id6448311069)
 
 - [ChatGPT](https://openai.com/news/?tags=chatgpt)
 - [2023](https://openai.com/news/?tags=2023)

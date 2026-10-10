@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1e3ab55cb973
+body_sha: a36fe1435815
 ---
 
 OpenAI
@@ -25,7 +25,7 @@ Loading…
 
 ChatGPT shouldn’t have political bias in any direction.
 
-People use ChatGPT as a tool to learn and explore ideas. That only works if they trust ChatGPT to be objective. We outline our commitment to keeping ChatGPT objective by default, with the user in control, in our Model Spec principle [*Seeking the Truth Together*⁠(opens in a new window)](https://model-spec.openai.com/2025-09-12.html#seek_truth).
+People use ChatGPT as a tool to learn and explore ideas. That only works if they trust ChatGPT to be objective. We outline our commitment to keeping ChatGPT objective by default, with the user in control, in our Model Spec principle [*Seeking the Truth Together*](https://model-spec.openai.com/2025-09-12.html#seek_truth).
 
 Building on our [July](https://openai.com/global-affairs/intellectual-freedom-by-design/) update, this post shares our latest progress towards this goal. Here we cover:
 
@@ -47,7 +47,7 @@ Based on these results, we are continuing work to further improve our models’ 
 
 ## Landscape and evaluation scope
 
-Political and ideological bias in language models remains an open research problem. Existing benchmarks, such as the [Political Compass⁠(opens in a new window)](https://davidrozado.substack.com/p/new-results-of-state-of-the-art-llms) test, often rely on multiple-choice questions. Such evaluations cover only a narrow slice of everyday use and overlook how bias can emerge in realistic AI interactions. We set out to build an evaluation that reflects real-world usage—nuanced, open-ended scenarios—in order to test and train our models in the way people actually apply them, where bias can surface in both obvious and subtle ways.
+Political and ideological bias in language models remains an open research problem. Existing benchmarks, such as the [Political Compass](https://davidrozado.substack.com/p/new-results-of-state-of-the-art-llms) test, often rely on multiple-choice questions. Such evaluations cover only a narrow slice of everyday use and overlook how bias can emerge in realistic AI interactions. We set out to build an evaluation that reflects real-world usage—nuanced, open-ended scenarios—in order to test and train our models in the way people actually apply them, where bias can surface in both obvious and subtle ways.
 
 Our evaluation focuses on ChatGPT’s text-based responses, which represent the majority of everyday usage and best reveal how the model communicates and reasons. We leave behavior tied to web search out of scope for this evaluation, as it involves separate systems for retrieval and source selection.
 
@@ -142,7 +142,7 @@ Similar to the previous results, we find that GPT‑5 instant and thinking outpe
 
 ## What’s next
 
-While GPT‑5 improves bias performance over prior models, challenging prompts expose opportunities for closer alignment to our [Model Spec⁠(opens in a new window)](https://model-spec.openai.com/2025-09-12.html#overview). We are investing in improvements over the coming months and look forward to sharing results.
+While GPT‑5 improves bias performance over prior models, challenging prompts expose opportunities for closer alignment to our [Model Spec](https://model-spec.openai.com/2025-09-12.html#overview). We are investing in improvements over the coming months and look forward to sharing results.
 
 By discussing our definitions and evaluation methods, we aim to clarify our approach, help others build their own evaluations, and hold ourselves accountable to our principles. This work acts on our [operating principle](https://openai.com/charter/) commitments to Technical Leadership and Cooperative Orientation; we hope it supports industry efforts to advance AI objectivity through shared definitions and empirical evaluation.
 

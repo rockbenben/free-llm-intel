@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: dc667aeee283
+body_sha: e68ba0ad88ce
 ---
 
 OpenAI
@@ -23,11 +23,11 @@ OpenAI banned accounts linked to a previously unreported operation we dubbed "Tr
 
 Loading…
 
-*This case study was originally published in OpenAI’s *[*February 2026*⁠(opens in a new window)](https://cdn.openai.com/pdf/df438d70-e3fe-4a6c-a403-ff632def8f79/disrupting-malicious-uses-of-ai.pdf)* report on disrupting malicious uses of AI.*
+*This case study was originally published in OpenAI’s *[*February 2026*](https://cdn.openai.com/pdf/df438d70-e3fe-4a6c-a403-ff632def8f79/disrupting-malicious-uses-of-ai.pdf)* report on disrupting malicious uses of AI.*
 
 ## Actor
 
-We banned a number of ChatGPT accounts that were using our models to generate batches of social media comments about the [arrest⁠(opens in a new window)](https://english.elpais.com/international/2025-04-01/russian-cult-leader-linked-to-human-and-drug-trafficking-arrested-in-argentina.html?utm_source=chatgpt.com) in [Argentina⁠(opens in a new window)](https://www.batimes.com.ar/news/argentina/russian-cult-leader-14-others-arrested-in-south-of-argentina.phtml?utm_source=chatgpt.com) of an alleged Russian “cult leader” named Konstantin Rudnev. Different parts of this activity very likely originated in Pakistan, Armenia and Uruguay. Further activity likely originated in Argentina and Kazakhstan. The Pakistan-origin activity was connected to a for-hire actor. Some of the social media comments supported the alleged “cult leader”. Others criticized the Argentinian legal system and trolled the Argentinian edition of Rolling Stone magazine, which had [reported⁠(opens in a new window)](https://es.rollingstone.com/arg-la-historia-de-konstantin-rudnev-el-extravagante-guru-de-la-secta-rusa-detenido-en-bariloche/?utm_source=chatgpt.com) on the case. Based on this activity, we have nicknamed the operation, “Trolling Stone”.
+We banned a number of ChatGPT accounts that were using our models to generate batches of social media comments about the [arrest](https://english.elpais.com/international/2025-04-01/russian-cult-leader-linked-to-human-and-drug-trafficking-arrested-in-argentina.html?utm_source=chatgpt.com) in [Argentina](https://www.batimes.com.ar/news/argentina/russian-cult-leader-14-others-arrested-in-south-of-argentina.phtml?utm_source=chatgpt.com) of an alleged Russian “cult leader” named Konstantin Rudnev. Different parts of this activity very likely originated in Pakistan, Armenia and Uruguay. Further activity likely originated in Argentina and Kazakhstan. The Pakistan-origin activity was connected to a for-hire actor. Some of the social media comments supported the alleged “cult leader”. Others criticized the Argentinian legal system and trolled the Argentinian edition of Rolling Stone magazine, which had [reported](https://es.rollingstone.com/arg-la-historia-de-konstantin-rudnev-el-extravagante-guru-de-la-secta-rusa-detenido-en-bariloche/?utm_source=chatgpt.com) on the case. Based on this activity, we have nicknamed the operation, “Trolling Stone”.
 
 ## Behavior
 
@@ -57,13 +57,13 @@ The great majority of this operation’s content focused on the Rudnev case. Typ
 
 While most of this operation’s activity focused on content generation, a small proportion focused on coordination within the network. On one occasion, the ChatGPT user in Pakistan asked the model to help implement a set of instructions that they had been sent on how to run this operation. The instructions included a requirement that each fake account should post 20 times a day, and a demand to send daily updates on the operation’s progress. On another occasion, one of the Russian-speaking users asked ChatGPT to translate a different set of instructions into English. These instructions appeared to be addressed to a colleague of the original user in Pakistan. They included details on the expected volume of posts per day, and how to make sure the operation’s fake social media accounts looked convincing.
 
-Some of the Russian-language accounts also asked ChatGPT to help generate promotional material for women’s groups, including cold-outreach messagings. Some of this material referenced esotericism, shamanism, yoga and meditation - activities which open-source reporting has described as [recruitment⁠(opens in a new window)](https://en.iz.ru/en/1863675/sofia-prohorcuk-dara-versta/occult-attraction-what-threat-head-shambhala-ashram-detained-argentina) [tactics⁠(opens in a new window)](https://edition.cnn.com/2025/04/11/americas/rudnev-argentina-russia-intl-latam) into Rudnev’s alleged “cult”. We are not able to independently confirm the nature of the activities to which this material referred.
+Some of the Russian-language accounts also asked ChatGPT to help generate promotional material for women’s groups, including cold-outreach messagings. Some of this material referenced esotericism, shamanism, yoga and meditation - activities which open-source reporting has described as [recruitment](https://en.iz.ru/en/1863675/sofia-prohorcuk-dara-versta/occult-attraction-what-threat-head-shambhala-ashram-detained-argentina) [tactics](https://edition.cnn.com/2025/04/11/americas/rudnev-argentina-russia-intl-latam) into Rudnev’s alleged “cult”. We are not able to independently confirm the nature of the activities to which this material referred.
 
 ## Impact
 
 Like many of the IO we have described in earlier threat reports, this operation’s activity seemed designed to create the appearance of online engagement, rather than actually achieving it. The Facebook Pages typically had a few hundred followers. Typical Facebook posts received single- digit engagements. However, some of the operation’s articles appear to have been published by regional news outlets in Argentina; we are not able to independently confirm how the articles were submitted and accepted. 
 
-Using the IO impact [Breakout Scale⁠(opens in a new window)](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/), which rates IO on a scale of 1 (lowest) to 6 (highest), we would assess this as being towards the low end of Category 4 (breakout to mainstream media), based on the placement of some of its news articles in Argentinian news sites.
+Using the IO impact [Breakout Scale](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/), which rates IO on a scale of 1 (lowest) to 6 (highest), we would assess this as being towards the low end of Category 4 (breakout to mainstream media), based on the placement of some of its news articles in Argentinian news sites.
 
 - [Pakistan](https://openai.com/news/?tags=actor-origin-pakistan)
 - [Armenia](https://openai.com/news/?tags=actor-origin-armenia)
