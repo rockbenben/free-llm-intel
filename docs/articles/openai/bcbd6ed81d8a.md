@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 8c2c3980228b
+body_sha: 766d991bedef
 ---
 
 OpenAI
@@ -23,17 +23,17 @@ OpenAI
 OpenAI 封禁了与疑似欺骗性就业活动有关的账号，这些活动利用 AI 制作用于潜在欺诈性远程职位申请的材料。
 
 
-*本案例研究最初发布于 OpenAI 的*[*2025 年 6 月*⁠（在新窗口中打开）](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)*报告。*
+*本案例研究最初发布于 OpenAI 的*[*2025 年 6 月*](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)*报告。*
 
 ## 行为主体
 
 我们发现并封禁了与多起疑似欺骗性就业活动有关的 ChatGPT 账号。这些威胁行为主体使用 OpenAI 的模型制作相关材料，为可能存在欺诈的全球 IT、软件工程及其他远程职位申请提供支持。
 
-虽然我们无法确定这些威胁行为主体所在的地点或国籍，但其行为与公开归因于[朝鲜（DPRK）相关 IT 工作者计划⁠（在新窗口中打开）](https://www.justice.gov/archives/opa/pr/fourteen-north-korean-nationals-indicted-carrying-out-multi-year-fraudulent-information)的活动相符。与近期这些活动有关的部分行为主体可能受雇于疑似与 DPRK 有关的核心威胁行为主体，以承包商身份执行申请任务并操作硬件，其中一些活动发生在美国境内。
+虽然我们无法确定这些威胁行为主体所在的地点或国籍，但其行为与公开归因于[朝鲜（DPRK）相关 IT 工作者计划](https://www.justice.gov/archives/opa/pr/fourteen-north-korean-nationals-indicted-carrying-out-multi-year-fraudulent-information)的活动相符。与近期这些活动有关的部分行为主体可能受雇于疑似与 DPRK 有关的核心威胁行为主体，以承包商身份执行申请任务并操作硬件，其中一些活动发生在美国境内。
 
 ## 行为
 
-与我们在[2 月⁠（在新窗口中打开）](https://cdn.openai.com/threat-intelligence-reports/disrupting-malicious-uses-of-our-models-february-2025-update.pdf)披露并阻止的威胁行为主体类似，近期这些活动试图在招聘流程的每个环节使用 AI。此前，我们观察到这些行为主体使用 AI 手动生成看似可信的人物身份，其中许多身份位于美国，并虚构了在知名公司的任职经历。这一次，他们尝试以一定程度的自动化方式生成简历；此外，一些迹象表明，非洲的操作代理冒充求职者，同时他们还在北美招募人员代为运行笔记本电脑。
+与我们在[2 月](https://cdn.openai.com/threat-intelligence-reports/disrupting-malicious-uses-of-our-models-february-2025-update.pdf)披露并阻止的威胁行为主体类似，近期这些活动试图在招聘流程的每个环节使用 AI。此前，我们观察到这些行为主体使用 AI 手动生成看似可信的人物身份，其中许多身份位于美国，并虚构了在知名公司的任职经历。这一次，他们尝试以一定程度的自动化方式生成简历；此外，一些迹象表明，非洲的操作代理冒充求职者，同时他们还在北美招募人员代为运行笔记本电脑。
 
 我们发现了两类截然不同的活动，可能分别代表两种操作代理：核心操作代理和承包商。
 

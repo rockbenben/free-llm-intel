@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7b42f4980cbd
+body_sha: 4b12d6ea724a
 ---
 
 OpenAI
@@ -32,7 +32,7 @@ Illustration: Justin Jay Wang
 
 我们会把这段合作的成果与所有人分享：除了发表我们的研究结果，我们还会持续发布开源软件，让人们更方便地在云上运行大规模 AI 负载。我们也会持续给微软团队反馈，让 Azure 的能力能跟得上我们对 AI 的理解。
 
-能与另一家同样坚信 [让 AI 使用权普惠⁠(opens in a new window)](https://news.microsoft.com/features/democratizing-ai/) 之重要性的机构合作，非常令人振奋。我们期待通过这段合作加速整个 AI 社区。
+能与另一家同样坚信 [让 AI 使用权普惠](https://news.microsoft.com/features/democratizing-ai/) 之重要性的机构合作，非常令人振奋。我们期待通过这段合作加速整个 AI 社区。
 
 - [Partnerships](https://openai.com/news/?tags=partnerships)
 - [2016](https://openai.com/news/?tags=2016)
@@ -40,11 +40,3 @@ Illustration: Justin Jay Wang
 ## 作者
 
 Greg Brockman, Ilya Sutskever, Sam Altman
-
-
-
-
-
-
-
-

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 710cf244349b
+body_sha: c7015bd83d20
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ OpenAI
 OpenAI 封禁了“A2Z”行动的账户，这些账户利用 AI 生成涉及选举、乌克兰及各平台政治议题的多语言影响力内容。
 
 
-*本案例研究最初发表于 OpenAI 的 *[*2024 年 10 月*⁠（在新窗口中打开）](https://cdn.openai.com/threat-intelligence-reports/influence-and-cyber-operations-an-update_October-2024.pdf)*报告。*
+*本案例研究最初发表于 OpenAI 的 *[*2024 年 10 月*](https://cdn.openai.com/threat-intelligence-reports/influence-and-cyber-operations-an-update_October-2024.pdf)*报告。*
 
 ## 行动方
 

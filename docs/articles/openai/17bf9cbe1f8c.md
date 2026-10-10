@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: cc8df5559c02
+body_sha: 2c4e91756b85
 ---
 
 OpenAI
@@ -27,19 +27,19 @@ OpenAI
 
 目前，我们正在扩大网络安全受信访问 (TAC) 计划的规模，致力于覆盖数以千计的一线认证防御者，以及数百个负责关键软件防护的专业团队。多年来，我们始终坚持“访问民主化、部署迭代化、生态韧性化”的原则，持续打造网络防御计划。为了迎接 OpenAI 在未来几个月内推出的更强模型，我们正针对网络安全防御场景对模型进行微调。从今天起，我们将推出 GPT‑5.4 的网络安全增强版本 — GPT‑5.4‑Cyber。本文将分享我们如何通过“防御能力与模型水平同步演进”的策略，来引导未来产品的测试与部署。
 
-AI 的演进正为防御者（即守护系统、数据与用户安全的专业人员/机构）全面提速，助力其在全球数字基础设施中更高效地发现并修复漏洞。与此同时，攻击者也在伺机[利用⁠](https://openai.com/global-affairs/disrupting-malicious-uses-of-ai-october-2025/) AI 造成伤害。对此，我们早已严阵以待：自 2023 年起，我们便通过[网络安全资助计划⁠](https://openai.com/index/openai-cybersecurity-grant-program/)支持防御者，并通过[准备框架⁠](https://openai.com/index/updating-our-preparedness-framework/) (Preparedness Framework) 持续强化安全屏障；同年，我们启动了模型网络安全能力的评估工作；2025 年，我们正式在[模型部署⁠](https://openai.com/index/introducing-gpt-5-2/)中引入了[针对网络安全领域的专项保护机制⁠（在新窗口中打开）](https://deploymentsafety.openai.com/gpt-5-3-codex/cybersecurity)。今年早些时候，我们推出了 [Codex Security⁠](https://openai.com/index/codex-security-now-in-research-preview/)，以大规模识别并修复漏洞，进一步加大了对防御者的支持力度。在这一能力持续进化的进程中，我们始终恪守以下三大原则：
+AI 的演进正为防御者（即守护系统、数据与用户安全的专业人员/机构）全面提速，助力其在全球数字基础设施中更高效地发现并修复漏洞。与此同时，攻击者也在伺机[利用⁠](https://openai.com/global-affairs/disrupting-malicious-uses-of-ai-october-2025/) AI 造成伤害。对此，我们早已严阵以待：自 2023 年起，我们便通过[网络安全资助计划⁠](https://openai.com/index/openai-cybersecurity-grant-program/)支持防御者，并通过[准备框架⁠](https://openai.com/index/updating-our-preparedness-framework/) (Preparedness Framework) 持续强化安全屏障；同年，我们启动了模型网络安全能力的评估工作；2025 年，我们正式在[模型部署⁠](https://openai.com/index/introducing-gpt-5-2/)中引入了[针对网络安全领域的专项保护机制](https://deploymentsafety.openai.com/gpt-5-3-codex/cybersecurity)。今年早些时候，我们推出了 [Codex Security⁠](https://openai.com/index/codex-security-now-in-research-preview/)，以大规模识别并修复漏洞，进一步加大了对防御者的支持力度。在这一能力持续进化的进程中，我们始终恪守以下三大原则：
 
 - **访问民主化：**我们的目标是在严防滥用的前提下，尽可能提升工具的普及率。为此，我们设计了一套科学的准入机制，通过清晰客观的标准与手段（如严格的 KYC 及身份验证）来界定高级能力的[访问权限⁠](https://openai.com/index/trusted-access-for-cyber/)，而非主观裁定。随着技术的成熟，这些流程将逐步实现自动化。我们的终极愿景是：确保无论是大型机构还是小型组织，只要是负责守护关键基础设施、公共服务及日常数字系统的合法防御者，都能平等地获得先进防御能力的加持。
 - **部署迭代化：**深度的技术洞察源于[谨慎的实践⁠](https://openai.com/safety/how-we-think-about-safety-alignment/)与持续的优化。通过将系统投入实际应用，我们能更精准地把握模型的能力边界与潜在风险，进而同步升级模型与安全体系。这一过程涵盖了对特定模型效益与风险的差异化评估、增强针对“越狱”及对抗性攻击的韧性，以及在对冲潜在危害的同时，持续磨炼防御实战能力。
-- **生态韧性化：**我们致力于通过多样化路径赋能防御者社区。这包括提供受信访问渠道、精准的[资金资助⁠](https://openai.com/index/openai-cybersecurity-grant-program/)、以及对[开源安全计划⁠（在新窗口中打开）](https://www.linuxfoundation.org/press/linux-foundation-announces-12.5-million-in-grant-funding-from-leading-organizations-to-advance-open-source-security)的投入。此外，我们还推出如 [Codex Security⁠](https://openai.com/index/codex-security-now-in-research-preview/) 等先进技术，助力防御者以更快的速度发现并修复安全漏洞，从而提升整个生态系统的抗风险能力。
+- **生态韧性化：**我们致力于通过多样化路径赋能防御者社区。这包括提供受信访问渠道、精准的[资金资助⁠](https://openai.com/index/openai-cybersecurity-grant-program/)、以及对[开源安全计划](https://www.linuxfoundation.org/press/linux-foundation-announces-12.5-million-in-grant-funding-from-leading-organizations-to-advance-open-source-security)的投入。此外，我们还推出如 [Codex Security⁠](https://openai.com/index/codex-security-now-in-research-preview/) 等先进技术，助力防御者以更快的速度发现并修复安全漏洞，从而提升整个生态系统的抗风险能力。
 
 **网络安全韧性与防御加速策略**
 
 多年来，我们的网络安全战略始终聚焦于三大核心：投入前沿研究、严防技术滥用、全面赋能防御者。随着模型能力的飞跃，我们进一步拓展了相关计划，而这些举措均植根于以下信念：
 
-- **网络安全风险已经到来且正在加速升级，但我们仍能采取行动。**早在先进 AI 问世之前，数字基础设施的[脆弱性⁠（在新窗口中打开）](https://www.cisa.gov/news-events/alerts/2017/05/12/indicators-associated-wannacry-ransomware)便已存在多年。如今，现有的模型已能辅助识别漏洞、理解代码库，并支撑起网络安全工作流中的关键环节；与此同时，威胁发起者也在尝试利用 AI 驱动的新型手段。我们观察到，通过在现有模型中增加“推理时间算力 (test-time compute)”，精密的框架 (harness) 能够激发更强大的性能。这意味着，安全防御工作不能坐等未来的某个临界点，必须防患于未然。
-- **基于用户身份与应用场景，实施差异化的权限管理。**网络安全能力本质上具有“双刃剑”的特征，因此，风险的高低并不单由模型本身决定，这还取决于用户、其周围的[信任信号⁠（在新窗口中打开）](https://developers.openai.com/codex/concepts/cyber-safety)，以及获授的访问权限。在为通用模型配置基础安全屏障的同时，针对高风险功能，我们可以通过更强的身份验证、更明确的意图信号以及更透明的使用监控，实现更精细化的准入控制。为了支持负责任的大规模应用，我们需要建立一套能够以更自动化、更客观的方式验证用户及其场景可靠性的系统。这使我们能够依据真实的信任信号和证据来开放权限，而非单纯依赖人工决策。我们认为，由中心化机构来裁定“谁有权防御”既不切实际也不合时宜。相反，我们的目标是在验证、信任与问责机制的基础上，赋能尽可能多的合法防御者。
-- **防御措施应随着能力提升而持续升级。**防御措施的演进必须与模型能力的提升保持步调一致。我们观察到，智能体的编程能力正在稳步增强，这直接关乎网络安全的攻防博弈，为此我们也实时调整了应对策略。从 GPT‑5.2 起，我们便开启了针对网络安全专项的安全训练。随后，在 GPT‑5.3‑Codex 与 GPT‑5.4 的迭代中，我们进一步强化了安全屏障；在“准备框架”的评估下，我们将该模型正式划定为“高网络安全能力”级别。与此同时，我们加大了对防御者的支持力度：不仅启动了 [1000 万美元网络安全资助计划⁠](https://openai.com/form/cybersecurity-grant-program/)，还通过 [Codex for Open Source⁠（在新窗口中打开）](https://developers.openai.com/community/codex-for-oss) 计划惠及 1,000 多个开源项目，为其提供免费的安全扫描服务，并持续迭代 Codex Security 的核心性能。Codex Security 于半年前开启私测，并于[今年早些时候⁠](https://openai.com/index/codex-security-now-in-research-preview/)发布了研究预览版。该系统能够自动监测代码库、验证潜在威胁并给出修复建议。随着模型能力的提升，系统的精准度与实用性也也随之提升。自近期发布以来，Codex Security 已助力修复了全生态范围内 3,000 多个严重及高危漏洞，以及大量中低风险项。在历次版本更迭中，我们还持续优化了模型处理敏感请求的方式，在精准界定“拒绝边界”的同时，通过 TAC 等项目进一步扩大了受信用户的访问权限。
+- **网络安全风险已经到来且正在加速升级，但我们仍能采取行动。**早在先进 AI 问世之前，数字基础设施的[脆弱性](https://www.cisa.gov/news-events/alerts/2017/05/12/indicators-associated-wannacry-ransomware)便已存在多年。如今，现有的模型已能辅助识别漏洞、理解代码库，并支撑起网络安全工作流中的关键环节；与此同时，威胁发起者也在尝试利用 AI 驱动的新型手段。我们观察到，通过在现有模型中增加“推理时间算力 (test-time compute)”，精密的框架 (harness) 能够激发更强大的性能。这意味着，安全防御工作不能坐等未来的某个临界点，必须防患于未然。
+- **基于用户身份与应用场景，实施差异化的权限管理。**网络安全能力本质上具有“双刃剑”的特征，因此，风险的高低并不单由模型本身决定，这还取决于用户、其周围的[信任信号](https://developers.openai.com/codex/concepts/cyber-safety)，以及获授的访问权限。在为通用模型配置基础安全屏障的同时，针对高风险功能，我们可以通过更强的身份验证、更明确的意图信号以及更透明的使用监控，实现更精细化的准入控制。为了支持负责任的大规模应用，我们需要建立一套能够以更自动化、更客观的方式验证用户及其场景可靠性的系统。这使我们能够依据真实的信任信号和证据来开放权限，而非单纯依赖人工决策。我们认为，由中心化机构来裁定“谁有权防御”既不切实际也不合时宜。相反，我们的目标是在验证、信任与问责机制的基础上，赋能尽可能多的合法防御者。
+- **防御措施应随着能力提升而持续升级。**防御措施的演进必须与模型能力的提升保持步调一致。我们观察到，智能体的编程能力正在稳步增强，这直接关乎网络安全的攻防博弈，为此我们也实时调整了应对策略。从 GPT‑5.2 起，我们便开启了针对网络安全专项的安全训练。随后，在 GPT‑5.3‑Codex 与 GPT‑5.4 的迭代中，我们进一步强化了安全屏障；在“准备框架”的评估下，我们将该模型正式划定为“高网络安全能力”级别。与此同时，我们加大了对防御者的支持力度：不仅启动了 [1000 万美元网络安全资助计划⁠](https://openai.com/form/cybersecurity-grant-program/)，还通过 [Codex for Open Source](https://developers.openai.com/community/codex-for-oss) 计划惠及 1,000 多个开源项目，为其提供免费的安全扫描服务，并持续迭代 Codex Security 的核心性能。Codex Security 于半年前开启私测，并于[今年早些时候⁠](https://openai.com/index/codex-security-now-in-research-preview/)发布了研究预览版。该系统能够自动监测代码库、验证潜在威胁并给出修复建议。随着模型能力的提升，系统的精准度与实用性也也随之提升。自近期发布以来，Codex Security 已助力修复了全生态范围内 3,000 多个严重及高危漏洞，以及大量中低风险项。在历次版本更迭中，我们还持续优化了模型处理敏感请求的方式，在精准界定“拒绝边界”的同时，通过 TAC 等项目进一步扩大了受信用户的访问权限。
 - **软件开发本身必须变得更加安全。**最强大的生态系统，应当能在软件编写的过程中，实现安全漏洞的持续识别、验证与修复。通过将先进的编程模型与智能体能力整合进开发工作流，我们能在构建阶段就为开发者提供即时且可操作的反馈。这一转变，使安全工作从“断点式的审计”和“静态的漏洞堆积”，真正进化为持续性、实质性的风险消减。
 
 ## 扩大“网络安全受信任访问”与 GPT‑5.4‑Cyber 的覆盖范围
@@ -48,14 +48,14 @@ AI 的演进正为防御者（即守护系统、数据与用户安全的专业�
 
 今天，我们正式扩展该计划，为愿意与 OpenAI 协作进行身份核验的网络安全防御者提供多级访问权限。处于最高权限等级的用户将获得 GPT‑5.4‑Cyber 的访问权。这是一个专门针对网络安全能力进行微调，且功能限制更少的专项模型。作为 GPT‑5.4 的一个版本，它大幅放宽了针对合法网安工作的拒绝限制，并解锁了高级防御工作流所需的新功能。这包括二进制逆向工程能力，让安全专家在无需获取源代码的情况下，即可分析已编译软件的恶意风险、漏洞及安全稳健性。
 
-考虑到该模型具有更高的开放性，我们将首先面向通过审核的安全供应商、机构及研究人员进行有限的迭代部署。访问这类高权限模型可能伴随一定的限制条件，尤其是在涉及[零数据保留 (ZDR)⁠（在新窗口中打开）](https://developers.openai.com/api/docs/guides/your-data#zero-data-retention) 等缺乏监控透明度的使用场景时。若开发者及组织通过第三方平台调用模型，且 OpenAI 无法直接监测其用户背景、运行环境或请求意图，这一限制尤为关键。
+考虑到该模型具有更高的开放性，我们将首先面向通过审核的安全供应商、机构及研究人员进行有限的迭代部署。访问这类高权限模型可能伴随一定的限制条件，尤其是在涉及[零数据保留 (ZDR)](https://developers.openai.com/api/docs/guides/your-data#zero-data-retention) 等缺乏监控透明度的使用场景时。若开发者及组织通过第三方平台调用模型，且 OpenAI 无法直接监测其用户背景、运行环境或请求意图，这一限制尤为关键。
 
 申请 TAC 十分便捷：
 
-- 个人用户可直接通过 [chatgpt.com/cyber⁠（在新窗口中打开）](http://chatgpt.com/cyber) 完成身份验证。
+- 个人用户可直接通过 [chatgpt.com/cyber](http://chatgpt.com/cyber) 完成身份验证。
 - 企业用户可联系其 OpenAI 客户代表，为团队[申请受信访问权限⁠](https://openai.com/form/enterprise-trusted-access-for-cyber/)。
 
-所有通过审核的用户，在使用现有模型时都将获得更顺畅的体验：系统将减少针对“攻防兼具型”任务的安全拦截，从而支持用户更高效地开展安全教学、防御性编程以及负责任的漏洞研究。此外，已加入 TAC 且愿意进一步验证其“合法防御者”身份的用户，[可以表达意向以申请更高层级的访问权限⁠（在新窗口中打开）](https://docs.google.com/forms/d/e/1FAIpQLSea_ptovrS3xZeZ9FoZFkKtEJFWGxNrZb1c52GW4BVjB2KVNA/viewform)，包括申请使用 GPT‑5.4‑Cyber。
+所有通过审核的用户，在使用现有模型时都将获得更顺畅的体验：系统将减少针对“攻防兼具型”任务的安全拦截，从而支持用户更高效地开展安全教学、防御性编程以及负责任的漏洞研究。此外，已加入 TAC 且愿意进一步验证其“合法防御者”身份的用户，[可以表达意向以申请更高层级的访问权限](https://docs.google.com/forms/d/e/1FAIpQLSea_ptovrS3xZeZ9FoZFkKtEJFWGxNrZb1c52GW4BVjB2KVNA/viewform)，包括申请使用 GPT‑5.4‑Cyber。
 
 ## 展望未来：即将发布的模型及后续规划
 
@@ -68,11 +68,3 @@ AI 的演进正为防御者（即守护系统、数据与用户安全的专业�
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

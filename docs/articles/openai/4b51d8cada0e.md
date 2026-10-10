@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 2730ce6b7129
+body_sha: 286ea3191959
 ---
 
 OpenAI
@@ -31,7 +31,7 @@ OpenAI 与 Figma 正通过一项全新的代码到设计集成加深双方合作
 
 Figma 是一个设计和产品开发平台，让团队可以实时共同创建、制作原型并迭代数字产品。借助 MCP 这一开源标准（它让 AI 智能体能够与外部数据源、应用和工具对接），Codex 到 Figma 的集成为团队在代码实现与设计画布之间切换提供了一种更快、更顺畅的方式。
 
-在实际使用中，团队可以将 [Figma Design⁠（在新窗口中打开）](https://www.figma.com/design/)、[Figma Make⁠（在新窗口中打开）](https://www.figma.com/make/) 或 [FigJam⁠（在新窗口中打开）](https://www.figma.com/figjam/) 中的细节带入 Codex，用代码来实现这些设计。通过这一全新集成，用户现在还可以把代码中的 UI 转换成可编辑的 Figma 设计，在把改动带回代码之前，先在画布上探索新想法和不同迭代方案。
+在实际使用中，团队可以将 [Figma Design](https://www.figma.com/design/)、[Figma Make](https://www.figma.com/make/) 或 [FigJam](https://www.figma.com/figjam/) 中的细节带入 Codex，用代码来实现这些设计。通过这一全新集成，用户现在还可以把代码中的 UI 转换成可编辑的 Figma 设计，在把改动带回代码之前，先在画布上探索新想法和不同迭代方案。
 
 这带来了全新的双向往返工作流，让 Figma 和 OpenAI 的用户可以从任何一个环节出发，在兼顾速度与匠心品质的前提下不断推进。无论产品想法最初是来自提示词、代码还是设计，Figma MCP Server 都能连接其中最好的创意，并在整个过程中确保上下文不会丢失。
 
@@ -51,7 +51,7 @@ Codex 应用通过无缝体验，让用户可以与智能体进行多任务协�
 
 Cisco、NVIDIA、Ramp 和 Datadog 等公司正采用 Codex 赋能员工，Harvey、Sierra 等初创公司也迎头赶上。
 
-要开始体验，只需在 Codex 桌面应用中直接安装 [Figma MCP Server⁠（在新窗口中打开）](https://help.figma.com/hc/en-us/articles/32132100833559)。
+要开始体验，只需在 Codex 桌面应用中直接安装 [Figma MCP Server](https://help.figma.com/hc/en-us/articles/32132100833559)。
 
 - [合作关系](https://openai.com/news/?tags=partnerships)
 - [2026 年](https://openai.com/news/?tags=2026)
@@ -59,11 +59,3 @@ Cisco、NVIDIA、Ramp 和 Datadog 等公司正采用 Codex 赋能员工，Harvey
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

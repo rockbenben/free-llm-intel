@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 1f9aa3dd5150
+body_sha: f3a92ce57371
 ---
 
 OpenAI
@@ -35,7 +35,7 @@ AI 的下一个前沿不仅仅关乎技术能力，更关乎谁能使用它。�
 
 白宫的新 AI 行动计划正确地强调，开放权重模型可以加强美国在 AI 领域的领导地位，支持学术研究，并在行业和政府中得到广泛应用。我们的开放权重模型正是为此而设计：既符合美国跨党派广泛支持的政策优先事项，又能让全球开发者享有自主创新的自由。
 
-这一理念始终贯穿于我们的工作。如我们在 3 月[提交⁠（在新窗口中打开）](https://cdn.openai.com/global-affairs/ostp-rfi/ec680b75-d539-4653-b297-8bcf6e5f7686/openai-response-ostp-nsf-rfi-notice-request-for-information-on-the-development-of-an-artificial-intelligence-ai-action-plan.pdf)给白宫科技政策办公室的文件中所强调的，该文件旨在为新的 AI 行动计划提供参考：“我们认为，AI 应采用开源还是闭源模式是一个伪命题——我们需要两者兼顾，且它们可以以互补的方式协同工作，从而促进基于美国技术架构的 AI 发展。”
+这一理念始终贯穿于我们的工作。如我们在 3 月[提交](https://cdn.openai.com/global-affairs/ostp-rfi/ec680b75-d539-4653-b297-8bcf6e5f7686/openai-response-ostp-nsf-rfi-notice-request-for-information-on-the-development-of-an-artificial-intelligence-ai-action-plan.pdf)给白宫科技政策办公室的文件中所强调的，该文件旨在为新的 AI 行动计划提供参考：“我们认为，AI 应采用开源还是闭源模式是一个伪命题——我们需要两者兼顾，且它们可以以互补的方式协同工作，从而促进基于美国技术架构的 AI 发展。”
 
 开放模型也为那些有严格数据驻留或安全要求的政府和机构创造了新机遇。在数据不能离开本国且无法使用第三方云服务的地方，开放权重模型可以提供一种安全且灵活的方式来利用先进的 AI，同时保持敏感信息在本地控制之下。
 
@@ -46,11 +46,3 @@ AI 的下一个前沿不仅仅关乎技术能力，更关乎谁能使用它。�
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

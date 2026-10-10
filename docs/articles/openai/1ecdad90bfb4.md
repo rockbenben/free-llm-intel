@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a27a18eaaf35
+body_sha: 1f990e198639
 ---
 
 OpenAI
@@ -42,7 +42,7 @@ OpenAI
 
 随着今日版本的发布，Agents SDK 运行框架 (harness) 为处理文档、文件和系统的智能体提供了更强的能力。该运行框架目前已集成可配置记忆模块、沙箱感知编排功能、类 Codex 的文件系统工具，以及针对前沿智能体系统常用原语 (primitive) 的标准化集成。
 
-这些原语包括：通过 [MCP⁠（在新窗口中打开）](https://modelcontextprotocol.io) 实现的工具使用、通过[技能 (skill) ⁠（在新窗口中打开）](https://agentskills.io)实现的渐进式功能披露、通过 [AGENTS.md⁠（在新窗口中打开）](https://agents.md) 实现的自定义指令，以及利用 [shell⁠（在新窗口中打开）](https://developers.openai.com/api/docs/guides/tools-shell) 工具执行代码和通过 [apply patch⁠（在新窗口中打开）](https://developers.openai.com/api/docs/guides/tools-apply-patch) 工具编辑文件等。该运行框架将持续吸纳新的智能体模式与原语，旨在让开发者从繁琐的核心架构维护中解脱出来，将精力集中在决定智能体实用性的领域特定逻辑上。
+这些原语包括：通过 [MCP](https://modelcontextprotocol.io) 实现的工具使用、通过[技能 (skill)](https://agentskills.io)实现的渐进式功能披露、通过 [AGENTS.md](https://agents.md) 实现的自定义指令，以及利用 [shell](https://developers.openai.com/api/docs/guides/tools-shell) 工具执行代码和通过 [apply patch](https://developers.openai.com/api/docs/guides/tools-apply-patch) 工具编辑文件等。该运行框架将持续吸纳新的智能体模式与原语，旨在让开发者从繁琐的核心架构维护中解脱出来，将精力集中在决定智能体实用性的领域特定逻辑上。
 
 此外，该运行框架通过将执行方式与前沿模型的最佳性能模式对齐，帮助开发者进一步释放模型潜力。这种设计使智能体能更贴合模型的“自然运行模式”，从而在执行复杂任务时 — 尤其是那些需要跨多种工具系统协作的工作或长周期任务 — 表现出更卓越的可靠性与性能。
 
@@ -86,11 +86,3 @@ Agents SDK 的这些全新功能现已面向所有 API 用户开放。定价方�
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2a17024b8c56
+body_sha: b9e80bf3920d
 ---
 
 OpenAI
@@ -28,7 +28,7 @@ Company
 
 ## 我们为什么做这件事
 
-多样性是 AI 对世界产生积极影响的核心——只有这样才能确保未来先进的 AI 系统是为所有人而构建。虽然我们希望部分 Scholar 会加入 OpenAI（[第一期⁠(opens in a new window)](http://christinemcleavey.com/) 就发生过这样的事！），但我们更希望这个项目能推动整个行业的多样性。
+多样性是 AI 对世界产生积极影响的核心——只有这样才能确保未来先进的 AI 系统是为所有人而构建。虽然我们希望部分 Scholar 会加入 OpenAI（[第一期](http://christinemcleavey.com/) 就发生过这样的事！），但我们更希望这个项目能推动整个行业的多样性。
 
 ## 时间安排
 
@@ -53,13 +53,13 @@ Company
 
 我们欢迎*所有经验水平和背景*只要符合上述条件的申请人——"做 AI 需要博士学位"是一个常见误解（许多 OpenAI 员工就没有）。
 
-我们希望找到熟悉编写软件的人，但没有机器学习经验也可以。这是一个远程项目，面向身处美国时区且拥有美国工作许可的任何人。我们要求所有 Scholar [记录⁠(opens in a new window)](https://codedolapo.wordpress.com/2018/09/05/a-final-transformation/) 自己学习深度学习的经历，以激励更多人加入这一领域。
+我们希望找到熟悉编写软件的人，但没有机器学习经验也可以。这是一个远程项目，面向身处美国时区且拥有美国工作许可的任何人。我们要求所有 Scholar [记录](https://codedolapo.wordpress.com/2018/09/05/a-final-transformation/) 自己学习深度学习的经历，以激励更多人加入这一领域。
 
 如果满足以下条件，你就有资格申请：
 
 - 你属于科学与工程领域中代表性不足的群体。
 - 你拥有美国工作许可，并在项目期间身在美国；我们会优先考虑能够在线下参与项目的申请人。
-- 你能读懂这篇关于 [微积分⁠(opens in a new window)](http://wiki.fast.ai/index.php/Calculus_for_Deep_Learning) 的文章和这篇关于 [线性代数⁠(opens in a new window)](https://www.quantstart.com/articles/matrix-algebra-linear-algebra-for-deep-learning-part-2) 的文章（如果你需要重新温习这些技能，也完全可以）。
+- 你能读懂这篇关于 [微积分](http://wiki.fast.ai/index.php/Calculus_for_Deep_Learning) 的文章和这篇关于 [线性代数](https://www.quantstart.com/articles/matrix-algebra-linear-algebra-for-deep-learning-part-2) 的文章（如果你需要重新温习这些技能，也完全可以）。
 - 你熟悉 Python 编程（掌握其他语言有帮助，但项目期间你主要用 Python 写作）。
 
 我们将以以下标准进行选拔：
@@ -72,7 +72,7 @@ Company
 
 *如有疑问，邮件联系* [*scholars@openai.com*⁠](mailto:scholars@openai.com)
 
-- [Apply now(opens in a new window)](https://jobs.lever.co/openai/cf6de4ed-4afd-4ace-9273-8842c003c842)
+- [Apply now](https://jobs.lever.co/openai/cf6de4ed-4afd-4ace-9273-8842c003c842)
 
 - [Culture & Careers](https://openai.com/news/?tags=culture-careers)
 - [2018](https://openai.com/news/?tags=2018)
@@ -80,11 +80,3 @@ Company
 ## 作者
 
 Ashley Pilipiszyn, Larissa Schiavo, Greg Brockman
-
-
-
-
-
-
-
-

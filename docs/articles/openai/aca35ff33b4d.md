@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0710bad33363
+body_sha: 077293d96907
 ---
 
 OpenAI
@@ -52,7 +52,7 @@ Fellows 与 Interns 项目为目前正在学习 AI、或希望从其他专业转
 
 ## Interns
 
-**2019 年夏季**一期的 OpenAI 实习生将在为期 3 个月的时间里（从 2019 年 5 月开始）加入 OpenAI 团队，为 OpenAI 的研究作出贡献。我们的实习生既参与像机器人大规模项目这样的工作，也开展自己的 AI 研究。想了解大家实际参与的项目类型，请查看我们 2018 年 [Intern Open House⁠(opens in a new window)](https://www.youtube.com/watch?v=1_sYif82CtY) 的一些分享。
+**2019 年夏季**一期的 OpenAI 实习生将在为期 3 个月的时间里（从 2019 年 5 月开始）加入 OpenAI 团队，为 OpenAI 的研究作出贡献。我们的实习生既参与像机器人大规模项目这样的工作，也开展自己的 AI 研究。想了解大家实际参与的项目类型，请查看我们 2018 年 [Intern Open House](https://www.youtube.com/watch?v=1_sYif82CtY) 的一些分享。
 
 ## 我们寻找的人
 
@@ -112,11 +112,3 @@ Fellows 与 Interns 项目为目前正在学习 AI、或希望从其他专业转
 ## 作者
 
 Larissa Schiavo, Ashley Pilipiszyn
-
-
-
-
-
-
-
-

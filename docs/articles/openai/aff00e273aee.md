@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7b1f48245288
+body_sha: e24d7572ac3c
 ---
 
 OpenAI
@@ -36,7 +36,7 @@ Photo: Jake Stangel
 
 在 OpenAI 的头两年半里，我在机器人团队参与了一个"登月"式的想法：我们想训练一只类人的机器人手独立解魔方。那是一段极其兴奋、极具挑战、也非常动情的经历。我们依靠深度强化学习（RL）、疯狂规模的域随机化和不使用任何真实世界训练数据 [解出了⁠](https://openai.com/index/solving-rubiks-cube/) 这道难题。更重要的是，我们是以一支团队共同征服了它。
 
-从仿真和 RL 训练到视觉感知与硬件固件，我们协作得如此紧密、如此合一。那是一场奇妙的实验，在那段时间里，我常常想起 Steve Jobs 的 [现实扭曲力场⁠(opens in a new window)](https://en.wikipedia.org/wiki/Reality_distortion_field)：当你对某件事坚信不移、持续用力推动它时，某种层面上你就能把不可能变成可能。
+从仿真和 RL 训练到视觉感知与硬件固件，我们协作得如此紧密、如此合一。那是一场奇妙的实验，在那段时间里，我常常想起 Steve Jobs 的 [现实扭曲力场](https://en.wikipedia.org/wiki/Reality_distortion_field)：当你对某件事坚信不移、持续用力推动它时，某种层面上你就能把不可能变成可能。
 
 自 2021 年初起，我开始带领应用 AI 研究团队（Applied AI Research）。带团队面临的是另一套挑战，需要不同的工作方式。让我最骄傲的是应用 AI 团队里几个与语言模型安全相关的项目：
 
@@ -85,11 +85,3 @@ AI 社区近年取得了大量进展。硬件、模型架构和数据的进步�
 周围的人。我很荣幸能与 OpenAI 一大批极具天赋的同事共事。每个人都有闪光点、有启发、值得尊敬之处，我很享受向他们学习。
 
 - [View careers at OpenAI](https://openai.com/careers/)
-
-
-
-
-
-
-
-

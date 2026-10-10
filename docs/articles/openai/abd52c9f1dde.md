@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 1e5660f380b4
+body_sha: 92ad3e8a29fa
 ---
 
 OpenAI
@@ -60,7 +60,7 @@ OpenAI 与 AWS 还携手优化了 Kiro 环境和 OpenAI 模型。测试发现，
 
 OpenAI 与 AWS 将继续携手提升 OpenAI 模型在 Kiro 中的性能，帮助开发者在整个软件开发生命周期中从 AI 获得更大价值。
 
-GPT‑5.6 系列现已在 Kiro 中提供。访问 [https://kiro.dev/⁠（在新窗口中打开）](https://kiro.dev/) 开始使用
+GPT‑5.6 系列现已在 Kiro 中提供。访问 [https://kiro.dev/](https://kiro.dev/) 开始使用
 
 - [2026 年](https://openai.com/news/?tags=2026)
 - [合作关系](https://openai.com/news/?tags=partnerships)
@@ -68,11 +68,3 @@ GPT‑5.6 系列现已在 Kiro 中提供。访问 [https://kiro.dev/⁠（在新
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 46db4aaf77d0
+body_sha: be69ec4cd66a
 ---
 
 OpenAI
@@ -23,15 +23,15 @@ Milestone
 
 Contest
 
-(opens in a new window)
+
 
 Read paper
 
-(opens in a new window)
+
 
 Gym Retro
 
-(opens in a new window)
+
 
 Illustration: Timothy J. Reynolds
 
@@ -43,7 +43,7 @@ Illustration: Timothy J. Reynolds
 *更新：[*结果*⁠](https://openai.com/index/retro-contest-results/) *已经出炉！*
 
 
-[OpenAI Retro Contest⁠(opens in a new window)](https://contest.openai.com/) 会提供一份来自 Sonic The Hedgehog™ 系列的关卡作为训练集，我们在一份专门为本次竞赛制作的自定义关卡测试集上评估你的算法。竞赛于 4 月 5 日至 6 月 5 日举行。为便于大家起步，我们发布了 [retro-baselines⁠(opens in a new window)](https://github.com/openai/retro-baselines)，演示如何在竞赛任务上运行多种 RL 算法。
+[OpenAI Retro Contest](https://contest.openai.com/) 会提供一份来自 Sonic The Hedgehog™ 系列的关卡作为训练集，我们在一份专门为本次竞赛制作的自定义关卡测试集上评估你的算法。竞赛于 4 月 5 日至 6 月 5 日举行。为便于大家起步，我们发布了 [retro-baselines](https://github.com/openai/retro-baselines)，演示如何在竞赛任务上运行多种 RL 算法。
 
 Retro Contest（测试集）上的基线结果表明，即便使用迁移学习，RL 算法仍远远落后于人类表现。人类表现以水平虚线展示。人类只玩了 1 小时，而算法为 18 小时。
 
@@ -51,7 +51,7 @@ Retro Contest（测试集）上的基线结果表明，即便使用迁移学习�
 
 ## Sonic 基准
 
-为详细描述基准并给出一些基线结果，我们发布了一份技术报告：[Gotta Learn Fast: A New Benchmark for Generalization in RL⁠(opens in a new window)](https://arxiv.org/abs/1804.03720)。报告包含基准细节，以及运行 [Rainbow DQN⁠(opens in a new window)](https://arxiv.org/abs/1710.02298)、[PPO⁠](https://openai.com/index/openai-baselines-ppo/) 和一个简单随机猜测算法 JERK 的结果。JERK 针对 Sonic 优化地采样随机动作序列，随着训练进行，它会更加频繁地重放得分最高的动作序列。
+为详细描述基准并给出一些基线结果，我们发布了一份技术报告：[Gotta Learn Fast: A New Benchmark for Generalization in RL](https://arxiv.org/abs/1804.03720)。报告包含基准细节，以及运行 [Rainbow DQN](https://arxiv.org/abs/1710.02298)、[PPO⁠](https://openai.com/index/openai-baselines-ppo/) 和一个简单随机猜测算法 JERK 的结果。JERK 针对 Sonic 优化地采样随机动作序列，随着训练进行，它会更加频繁地重放得分最高的动作序列。
 
 我们发现，借助训练关卡上的经验，可以显著提升 PPO 在测试关卡上的表现。当网络先在训练关卡上预训练、再在测试关卡上微调时，其表现几乎翻倍，超过所有最强的替代基线。虽然这不是 RL 领域首次报告迁移学习成功的案例，但令人振奋的是，它显示迁移学习可以带来巨大而可靠的效果。
 
@@ -59,17 +59,17 @@ Retro Contest（测试集）上的基线结果表明，即便使用迁移学习�
 
 ## Sonic 录像
 
-我们制作了一个 [人类通关 Sonic 关卡的录像数据集⁠(opens in a new window)](https://github.com/openai/retro-movies)，用于 Retro Contest 中的 Sonic 关卡。这些录像可用来让智能体从每关过程内的随机采样点开始游玩，从而暴露于如果只从关卡起点开始就可能永远看不到的大量区域。研究者还可以使用这些录像，训练那些能从演示中学习的智能体。
+我们制作了一个 [人类通关 Sonic 关卡的录像数据集](https://github.com/openai/retro-movies)，用于 Retro Contest 中的 Sonic 关卡。这些录像可用来让智能体从每关过程内的随机采样点开始游玩，从而暴露于如果只从关卡起点开始就可能永远看不到的大量区域。研究者还可以使用这些录像，训练那些能从演示中学习的智能体。
 
 ## Gym Retro Beta
 
-我们发布 Gym Retro，一套把经典电子游戏封装为 RL 环境的系统。这份初步版本包含 30 款来自 [SEGA Mega Drive and Genesis Classics Steam Bundle⁠(opens in a new window)](http://store.steampowered.com/app/34270/) 的 SEGA Genesis 游戏，以及 Arcade Learning Environment 中 62 款 Atari 2600 游戏。
+我们发布 Gym Retro，一套把经典电子游戏封装为 RL 环境的系统。这份初步版本包含 30 款来自 [SEGA Mega Drive and Genesis Classics Steam Bundle](http://store.steampowered.com/app/34270/) 的 SEGA Genesis 游戏，以及 Arcade Learning Environment 中 62 款 Atari 2600 游戏。
 
-[Atari 2600 游戏合集 Arcade Learning Environment⁠(opens in a new window)](https://github.com/mgbellemare/Arcade-Learning-Environment) 为强化学习提供了接口，是过去五年 RL 研究的重要推动力。这些 Atari 游戏比此前的 RL 基准更多样、更复杂——它们本来就是为了挑战玩家的反应能力和解题能力而设计。
+[Atari 2600 游戏合集 Arcade Learning Environment](https://github.com/mgbellemare/Arcade-Learning-Environment) 为强化学习提供了接口，是过去五年 RL 研究的重要推动力。这些 Atari 游戏比此前的 RL 基准更多样、更复杂——它们本来就是为了挑战玩家的反应能力和解题能力而设计。
 
-[Gym Retro Beta⁠(opens in a new window)](https://github.com/openai/retro) 采用了比 Atari 更现代的主机——SEGA Genesis——扩展了可用于 RL 研究的游戏数量与复杂度。Genesis 上的游戏往往有很多关卡，某些维度相似（物理、物体外观），另一些维度不同（布局、道具），非常适合做迁移学习的实验田。它们也比 Atari 游戏更复杂，因为它们利用了 Genesis 更强的硬件（例如内存是 Atari 的 500 多倍，控制输入种类更多，图形支持也更好）。
+[Gym Retro Beta](https://github.com/openai/retro) 采用了比 Atari 更现代的主机——SEGA Genesis——扩展了可用于 RL 研究的游戏数量与复杂度。Genesis 上的游戏往往有很多关卡，某些维度相似（物理、物体外观），另一些维度不同（布局、道具），非常适合做迁移学习的实验田。它们也比 Atari 游戏更复杂，因为它们利用了 Genesis 更强的硬件（例如内存是 Atari 的 500 多倍，控制输入种类更多，图形支持也更好）。
 
-Gym Retro 的灵感来自 [Retro Learning Environment⁠(opens in a new window)](https://arxiv.org/abs/1611.02205)，但编写上比 RLE 更灵活；例如，在 Gym Retro 中你可以通过 JSON 文件而非 C++ 代码来指定环境定义，更容易集成新游戏。
+Gym Retro 的灵感来自 [Retro Learning Environment](https://arxiv.org/abs/1611.02205)，但编写上比 RLE 更灵活；例如，在 Gym Retro 中你可以通过 JSON 文件而非 C++ 代码来指定环境定义，更容易集成新游戏。
 
 
 Gym Retro 是我们构建大规模 RL 环境数据集的第二代尝试。它继承了 2016 年底 Universe 的一些想法，但我们未能在 Universe 实现上取得好结果，因为 Universe 环境是异步运行的、只能实时进行、并常常因基于屏幕检测游戏状态而不可靠。Gym Retro 把 Arcade Learning Environment 的模型扩展到了一个远为庞大的可选游戏集合上。
@@ -96,11 +96,3 @@ Christopher Hesse, John Schulman, Vicki Pfau, Alex Nichol, Oleg Klimov, Larissa 
 ## 封面艺术
 
 Timothy J. Reynolds
-
-
-
-
-
-
-
-

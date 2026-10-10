@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: b1c7cb5d15ab
+body_sha: 2a57d4cb5cb5
 ---
 
 OpenAI
@@ -38,11 +38,11 @@ Magic Studio 必须确保文本、图片、视频等多模态元素高效协同�
 
 ## 构建 Magic Studio——一体化 AI 套件
 
-运用 GPT‑4 的创造力驱动 [Magic Studio⁠（在新窗口中打开）](https://www.canva.com/magic/) 内多款工具：
+运用 GPT‑4 的创造力驱动 [Magic Studio](https://www.canva.com/magic/) 内多款工具：
 
-- [Magic Write⁠⁠（在新窗口中打开）](https://www.canva.com/magic-write/) 是基于 OpenAI API 的 AI 写作工具。除回复提示生成文本外，Magic Write 还优化支持写作全流程：大纲规划、段落生成、改写润色、语义重述、语法校验及内容提炼。全球用户已通过 Magic Write 创作逾 100 亿字，覆盖多语言与多元内容类型。
-- [Magic Design⁠（在新窗口中打开）](https://www.canva.com/magic-design/) 作为 Canva 的设计生成工具，融合了 OpenAI 的 API 与 Canva 自主研发的 AI 设计引擎，以及超过 1 亿件素材和模板的资源库。用户只需输入创作提示，即可生成演示文稿、社交媒体帖子和视频内容。
-- [Magic Switch⁠（在新窗口中打开）](https://www.canva.com/pro/magic-switch/) 能一键将单一设计转换为无数格式。Canva 借助 OpenAI 的 API 和视觉技术解析理解各类设计内容，从白板到演示文稿皆可处理。Magic Switch 可实现内容摘要、翻译、重组，甚至转换为电子邮件、歌词等其他格式。用户只需描述需求，例如“将此海报转换为法语演示文稿”或“将此文档调整为横向排版”。OpenAI 的 GPT‑4 模型支持 100 多种语言的即时翻译。
+- [Magic Write](https://www.canva.com/magic-write/) 是基于 OpenAI API 的 AI 写作工具。除回复提示生成文本外，Magic Write 还优化支持写作全流程：大纲规划、段落生成、改写润色、语义重述、语法校验及内容提炼。全球用户已通过 Magic Write 创作逾 100 亿字，覆盖多语言与多元内容类型。
+- [Magic Design](https://www.canva.com/magic-design/) 作为 Canva 的设计生成工具，融合了 OpenAI 的 API 与 Canva 自主研发的 AI 设计引擎，以及超过 1 亿件素材和模板的资源库。用户只需输入创作提示，即可生成演示文稿、社交媒体帖子和视频内容。
+- [Magic Switch](https://www.canva.com/pro/magic-switch/) 能一键将单一设计转换为无数格式。Canva 借助 OpenAI 的 API 和视觉技术解析理解各类设计内容，从白板到演示文稿皆可处理。Magic Switch 可实现内容摘要、翻译、重组，甚至转换为电子邮件、歌词等其他格式。用户只需描述需求，例如“将此海报转换为法语演示文稿”或“将此文档调整为横向排版”。OpenAI 的 GPT‑4 模型支持 100 多种语言的即时翻译。
 
 Magic Design 将 OpenAI 的 API 与 Canva 自主研发的 AI 设计引擎及超过 1 亿件素材模板库相结合。
 
@@ -54,7 +54,7 @@ Canva 内部 AI 开发团队深知，通过与 OpenAI 直接合作能实现更�
 
 OpenAI 完善的安全机制与控制措施，辅以双方信任安全团队的协同合作，使 Canva 能够自信地部署安全可靠的 AI。“我们对 OpenAI 的使命及其章程怀有深切敬意，”Wu 表示。
 
-Canva 与 OpenAI 的紧密合作不仅限于 Magic Studio。原生 [DALL-E 应用⁠（在新窗口中打开）](https://www.canva.com/apps/AAFrkF1ri7s/dall%C2%B7e)让用户能在 Canva 内轻松生成高质量图片。若您正在使用 ChatGPT，[Canva GPT⁠（在新窗口中打开）](https://chat.openai.com/g/g-alKfVrz9K-canva)⁠ 让生成视觉素材如同对话般轻松——只需描述创作需求即可。这款定制 GPT 已成为 Canva 获取新用户的强劲引擎。
+Canva 与 OpenAI 的紧密合作不仅限于 Magic Studio。原生 [DALL-E 应用](https://www.canva.com/apps/AAFrkF1ri7s/dall%C2%B7e)让用户能在 Canva 内轻松生成高质量图片。若您正在使用 ChatGPT，[Canva GPT](https://chat.openai.com/g/g-alKfVrz9K-canva)⁠ 让生成视觉素材如同对话般轻松——只需描述创作需求即可。这款定制 GPT 已成为 Canva 获取新用户的强劲引擎。
 
 ## 更多进展即将到来
 

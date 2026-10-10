@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: ba0ccb49a17d
+body_sha: 6bbef0bf2daa
 ---
 
 OpenAI
@@ -19,7 +19,7 @@ OpenAI
 Superhuman 携手 OpenAI 开启电子邮件新纪元。
 
 
-工作转向线上之后，大约 10 亿职场人每天要花将近 [3 个小时处理邮件⁠(opens in a new window)](https://business.adobe.com/blog/perspectives/if-you-think-email-is-dead-think-again)。折算下来，人类每年花在邮件上的时间约为 1 万亿小时。
+工作转向线上之后，大约 10 亿职场人每天要花将近 [3 个小时处理邮件](https://business.adobe.com/blog/perspectives/if-you-think-email-is-dead-think-again)。折算下来，人类每年花在邮件上的时间约为 1 万亿小时。
 
 Superhuman 的目标是减少管理收件箱的时间。他们用 [OpenAI 的 API⁠](https://openai.com/api/) 打造了一套新一代 AI 邮件产品，为用户节省时间、创造价值、提升参与度。
 
@@ -71,10 +71,3 @@ Rahul Vohra，Superhuman 创始人兼 CEO
 ## 想进一步了解面向企业的 ChatGPT？
 
 Talk with our team
-
-
-
-
-
-
-

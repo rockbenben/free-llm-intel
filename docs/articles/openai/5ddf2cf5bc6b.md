@@ -19,7 +19,7 @@ status: translated
 
 ## 打造教育工具
 
-OpenAI 教育工作的目标之一，是帮助人们培养参与 AI 研究与开发所需的技能——尤其是深度强化学习，这是 OpenAI 的核心研究方向。基于我们与 [Scholars⁠（在新窗口中打开）](https://blog.openai.com/openai-scholars-2018-final-projects/) 和 [Fellows⁠（在新窗口中打开）](https://blog.openai.com/openai-summer-fellows-2018/) 共事的经验，我们发现技能培养的关键要素是：
+OpenAI 教育工作的目标之一，是帮助人们培养参与 AI 研究与开发所需的技能——尤其是深度强化学习，这是 OpenAI 的核心研究方向。基于我们与 [Scholars](https://blog.openai.com/openai-scholars-2018-final-projects/) 和 [Fellows](https://blog.openai.com/openai-summer-fellows-2018/) 共事的经验，我们发现技能培养的关键要素是：
 
 - 一套灵活的课程体系，包含核心材料与研究前沿综述，
 - 导师辅导和与专家的讨论，
@@ -35,19 +35,19 @@ OpenAI 教育工作的挑战在于如何规模化地提供这些要素。课程�
 
 ## 演讲
 
-工作坊以三小时的演讲开场。[Joshua Achiam⁠（在新窗口中打开）](https://twitter.com/jachiam0) 首先阐述了强化学习的概念基础，并概览了各类 RL 算法。想学习这部分材料，请查看 [Spinning Up in Deep RL⁠（在新窗口中打开）](https://blog.openai.com/spinning-up-in-deep-rl/)。
+工作坊以三小时的演讲开场。[Joshua Achiam](https://twitter.com/jachiam0) 首先阐述了强化学习的概念基础，并概览了各类 RL 算法。想学习这部分材料，请查看 [Spinning Up in Deep RL](https://blog.openai.com/spinning-up-in-deep-rl/)。
 
-Matthias Plappert 介绍了 OpenAI [近期⁠（在新窗口中打开）](https://blog.openai.com/learning-dexterity/)的[工作⁠（在新窗口中打开）](https://arxiv.org/abs/1808.00177)：在仿真中训练灵巧的机械手，以在真实世界操纵物体。域随机化（domain randomization）、循环神经网络和大规模分布式训练，是弥合该任务“sim2real”差距的必要要素。
+Matthias Plappert 介绍了 OpenAI [近期](https://blog.openai.com/learning-dexterity/)的[工作](https://arxiv.org/abs/1808.00177)：在仿真中训练灵巧的机械手，以在真实世界操纵物体。域随机化（domain randomization）、循环神经网络和大规模分布式训练，是弥合该任务“sim2real”差距的必要要素。
 
-OpenAI 安全团队负责人 Dario Amodei 概述了 AI 安全领域的问题和该领域的[近期⁠（在新窗口中打开）](https://blog.openai.com/amplifying-ai-training/)[工作⁠（在新窗口中打开）](https://blog.openai.com/debate/)。他描述了核心安全难题：正确规定 agent 的行为非常困难！我们很容易在无意间给 agent 提供激励，使其做出并非我们期望的行为；而当 agent 非常强大时，这可能很危险。Dario 还介绍了 OpenAI 与 DeepMind 合作者为解决这一问题开展的[工作⁠（在新窗口中打开）](https://blog.openai.com/deep-reinforcement-learning-from-human-preferences/)——从人类偏好中学习奖励函数，而非人工设计。
+OpenAI 安全团队负责人 Dario Amodei 概述了 AI 安全领域的问题和该领域的[近期](https://blog.openai.com/amplifying-ai-training/)[工作](https://blog.openai.com/debate/)。他描述了核心安全难题：正确规定 agent 的行为非常困难！我们很容易在无意间给 agent 提供激励，使其做出并非我们期望的行为；而当 agent 非常强大时，这可能很危险。Dario 还介绍了 OpenAI 与 DeepMind 合作者为解决这一问题开展的[工作](https://blog.openai.com/deep-reinforcement-learning-from-human-preferences/)——从人类偏好中学习奖励函数，而非人工设计。
 
 ## 下午
 
-工作坊下午延续了半结构化的动手与分组环节。参与者可以向我们的志愿者团队请教项目构想和研究建议，志愿者包括 [Amanda Askell⁠（在新窗口中打开）](https://twitter.com/AmandaAskell)、[Alex Ray⁠（在新窗口中打开）](https://twitter.com/machinaut)、[Daniel Ziegler⁠（在新窗口中打开）](https://www.linkedin.com/in/daniel-ziegler-b4b61882)、[Dylan Hadfield-Menell⁠（在新窗口中打开）](https://twitter.com/dhadfieldmenell)、[Ethan Knight⁠（在新窗口中打开）](https://github.com/hyperdo?tab=repositories)、[Karl Cobbe⁠（在新窗口中打开）](https://twitter.com/karlcobbe)、[Matthias Plappert⁠（在新窗口中打开）](https://twitter.com/mplappert) 和 [Sam McCandlish⁠（在新窗口中打开）](https://www.linkedin.com/in/sam-mccandlish)。
+工作坊下午延续了半结构化的动手与分组环节。参与者可以向我们的志愿者团队请教项目构想和研究建议，志愿者包括 [Amanda Askell](https://twitter.com/AmandaAskell)、[Alex Ray](https://twitter.com/machinaut)、[Daniel Ziegler](https://www.linkedin.com/in/daniel-ziegler-b4b61882)、[Dylan Hadfield-Menell](https://twitter.com/dhadfieldmenell)、[Ethan Knight](https://github.com/hyperdo?tab=repositories)、[Karl Cobbe](https://twitter.com/karlcobbe)、[Matthias Plappert](https://twitter.com/mplappert) 和 [Sam McCandlish](https://www.linkedin.com/in/sam-mccandlish)。
 
 分组环节成为下午的最大亮点。上午的演讲覆盖 RL 的概念基础，而分组环节旨在帮助参与者提升实现能力与研究技能。
 
-第一节，Karl Cobbe 介绍了 [TensorFlow⁠（在新窗口中打开）](https://www.tensorflow.org/)——深度学习研究的关键库。第二节“一起写 DQN”，Daniel Ziegler 带领参与者一步步实现一个深度 RL 算法。第三节“高级 RL 问答”，Joshua Achiam 介绍了 RL 的最新研究前沿，并就如何做 RL 研究回答听众提问。
+第一节，Karl Cobbe 介绍了 [TensorFlow](https://www.tensorflow.org/)——深度学习研究的关键库。第二节“一起写 DQN”，Daniel Ziegler 带领参与者一步步实现一个深度 RL 算法。第三节“高级 RL 问答”，Joshua Achiam 介绍了 RL 的最新研究前沿，并就如何做 RL 研究回答听众提问。
 
 ## 我们的收获
 
@@ -77,11 +77,11 @@ OpenAI 安全团队负责人 Dario Amodei 概述了 AI 安全领域的问题和�
 
 ## 下一步
 
-OpenAI 的[章程⁠（在新窗口中打开）](https://blog.openai.com/openai-charter/)赋予我们“创建一个全球社区，共同应对 AGI 的全球挑战”的使命，我们将继续发展 OpenAI 的教育工作以服务这一目标。包括继续建设 [Spinning Up in Deep RL⁠（在新窗口中打开）](https://spinningup.openai.com/en/latest/) 这样的资源，以及举办更多本次 Spinning Up 工作坊这样的活动。我们正与伯克利的 [CHAI⁠（在新窗口中打开）](https://humancompatible.ai/) 筹划第二期工作坊，预计很快正式公布。
+OpenAI 的[章程](https://blog.openai.com/openai-charter/)赋予我们“创建一个全球社区，共同应对 AGI 的全球挑战”的使命，我们将继续发展 OpenAI 的教育工作以服务这一目标。包括继续建设 [Spinning Up in Deep RL](https://spinningup.openai.com/en/latest/) 这样的资源，以及举办更多本次 Spinning Up 工作坊这样的活动。我们正与伯克利的 [CHAI](https://humancompatible.ai/) 筹划第二期工作坊，预计很快正式公布。
 
 如果你愿意协助我们做 RL 研究或教授 AI，欢迎联系我们！[我们在招聘⁠](https://openai.com/careers/)。
 
-*感谢 Maddie Hall 和 Loren Kwan 共同组织本次活动；感谢 Ian Atha 负责直播和录制课程，并帮助参与者解决 Python 和 TensorFlow 问题；感谢* [*Blake Tucker*⁠（在新窗口中打开）](https://www.blaketucker.com/) *的拍摄与摄影！*
+*感谢 Maddie Hall 和 Loren Kwan 共同组织本次活动；感谢 Ian Atha 负责直播和录制课程，并帮助参与者解决 Python 和 TensorFlow 问题；感谢* [*Blake Tucker*](https://www.blaketucker.com/) *的拍摄与摄影！*
 
 ## 作者
 

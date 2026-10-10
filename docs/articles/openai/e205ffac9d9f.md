@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 0c95395ba49e
+body_sha: ad5c34f9b997
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ OpenAI
 Celia Chen，技术团队成员
 
 
-OpenAI 的编码智能体 Codex 部署于多个不同的平台：[Web 应用⁠（在新窗口中打开）](https://chatgpt.com/codex)、[CLI⁠（在新窗口中打开）](https://github.com/openai/codex)、[IDE 扩展⁠（在新窗口中打开）](https://developers.openai.com/codex/ide/)，以及[新的 Codex macOS 应用](https://openai.com/index/introducing-the-codex-app/)。其底层架构均由同一个 Codex 运行框架驱动 — 支撑着所有 Codex 体验的智能体循环和逻辑。它们之间有何重要关联？[Codex App Server⁠（在新窗口中打开）](https://developers.openai.com/codex/app-server) 是客户端友好型双向 JSON-RPC[1](https://openai.com/zh-Hans-CN/index/unlocking-the-codex-harness/#citation-bottom-1) API。
+OpenAI 的编码智能体 Codex 部署于多个不同的平台：[Web 应用](https://chatgpt.com/codex)、[CLI](https://github.com/openai/codex)、[IDE 扩展](https://developers.openai.com/codex/ide/)，以及[新的 Codex macOS 应用](https://openai.com/index/introducing-the-codex-app/)。其底层架构均由同一个 Codex 运行框架驱动 — 支撑着所有 Codex 体验的智能体循环和逻辑。它们之间有何重要关联？[Codex App Server](https://developers.openai.com/codex/app-server) 是客户端友好型双向 JSON-RPC[1](https://openai.com/zh-Hans-CN/index/unlocking-the-codex-harness/#citation-bottom-1) API。
 
 在这篇文章中，我们将介绍 Codex App Server，并分享我们迄今为止所掌握的经验，助你将 Codex 的功能引入产品，以便用户能够大幅提升工作流效率。我们将介绍 App Server 的架构和协议，及其如何与不同的 Codex 界面集成，并分享利用 Codex 的技巧；无论你是想让 Codex 充当代码审查员、SRE 智能体，还是编程助手，它都能助你一臂之力。
 
@@ -31,7 +31,7 @@ OpenAI 的编码智能体 Codex 部署于多个不同的平台：[Web 应用⁠�
 
 在深入了解架构之前，不妨先看看 App Server 的背景故事。最初，App Server 是一种在不同产品中复用 Codex 运行框架的实用方法，后来逐渐演变为我们的标准协议。
 
-Codex CLI 最初曾作为 TUI（终端用户界面），这意味着你可以通过终端访问 Codex。当我们构建 VS Code 扩展（一种更适用于与 Codex 智能体交互的 IDE 友好型方案）时，我们需要应用相同的运行框架，在不重新实施的情况下，从 IDE 用户界面 (UI) 驱动相同的智能体循环。这意味着要支持超越请求/响应的丰富交互模式，例如探索工作空间、在智能体进行推理时流式传输进程，以及输出差异。我们最初尝试将 [Codex 作为 MCP 服务器⁠（在新窗口中打开）](https://github.com/openai/codex/pull/2264)对外发布，但我们发现难以运用 VS Code 方案来维护 MCP 语义。相反，我们引入了一个类似 TUI 循环的 JSON-RPC 协议，它成为了 App Server 的[非官方首发版本⁠（在新窗口中打开）](https://github.com/openai/codex/pull/4471)。当时，我们并未预料到其他客户会选择 App Server，因为其设计初衷并非是构建稳定的 API。
+Codex CLI 最初曾作为 TUI（终端用户界面），这意味着你可以通过终端访问 Codex。当我们构建 VS Code 扩展（一种更适用于与 Codex 智能体交互的 IDE 友好型方案）时，我们需要应用相同的运行框架，在不重新实施的情况下，从 IDE 用户界面 (UI) 驱动相同的智能体循环。这意味着要支持超越请求/响应的丰富交互模式，例如探索工作空间、在智能体进行推理时流式传输进程，以及输出差异。我们最初尝试将 [Codex 作为 MCP 服务器](https://github.com/openai/codex/pull/2264)对外发布，但我们发现难以运用 VS Code 方案来维护 MCP 语义。相反，我们引入了一个类似 TUI 循环的 JSON-RPC 协议，它成为了 App Server 的[非官方首发版本](https://github.com/openai/codex/pull/4471)。当时，我们并未预料到其他客户会选择 App Server，因为其设计初衷并非是构建稳定的 API。
 
 在接下来的几个月里，随着 Codex 的应用率不断增长，内部团队和外部合作伙伴希望能够在其自研产品中嵌入同一个运行框架，以加速其用户的软件开发工作流。例如，JetBrains 和 Xcode 希望获得 IDE 级智能体体验，而 Codex 桌面应用则需要并行编排多个 Codex 智能体。这些需求促使我们设计了一个平台界面，确保我们的产品和合作伙伴集成能够基于该平台实现长期稳定运行。它既要易于集成，又要向后兼容，这意味着我们可以在不破坏现有客户端的情况下优化该协议。
 
@@ -47,7 +47,7 @@ Codex CLI 最初曾作为 TUI（终端用户界面），这意味着你可以通
 
 **3. 工具执行和扩展**。Codex 可在沙盒中执行 shell/文件工具，并连接 MCP 服务器和技能等集成，从而根据一致的策略模式参与智能体循环。
 
-我们在此提到的所有智能体逻辑（包括核心智能体循环），都位于 Codex CLI 代码库中名为“[Codex 核心⁠（在新窗口中打开）](https://github.com/openai/codex/tree/main/codex-rs/core)”的模块内。“Codex 核心”既是一个存放所有智能体代码的存储库，也是一个可启动的运行时环境，可用于运行智能体循环并管理 Codex 线程（对话）的持久性。
+我们在此提到的所有智能体逻辑（包括核心智能体循环），都位于 Codex CLI 代码库中名为“[Codex 核心](https://github.com/openai/codex/tree/main/codex-rs/core)”的模块内。“Codex 核心”既是一个存放所有智能体代码的存储库，也是一个可启动的运行时环境，可用于运行智能体循环并管理 Codex 线程（对话）的持久性。
 
 为了发挥效力，Codex 运行框架需要授予客户端访问权限。这正是 App Server 的“用武之地”。
 
@@ -141,7 +141,7 @@ Codex Web 使用 Codex 运行框架，但其在容器环境中运行。工作节
 
 就传统意义而言，TUI 是一个“原生”客户端，它在与智能体循环相同的进程中运行，且直接与 Rust 核心类型通信，而非使用应用服务器协议。这有助于提高早期迭代速度，同时也会让 TUI 成为特殊的界面。
 
-既然 App Server 已经存在，我们计划[重构 TUI⁠（在新窗口中打开）](https://github.com/openai/codex/pull/10192) 以投入实际应用，确保其发挥类似于其他客户端的作用：启动一个 App Server 子进程，通过 stdio 进行 JSON-RPC 通信，并渲染相同的流式事件和审批。这样一来，TUI 就可以连接远程设备上运行的 Codex 服务器，确保智能体部署于接近计算资源的位置，即使笔记本电脑休眠或断开连接也能继续运行，同时还能在本地实现实时更新和控制。
+既然 App Server 已经存在，我们计划[重构 TUI](https://github.com/openai/codex/pull/10192) 以投入实际应用，确保其发挥类似于其他客户端的作用：启动一个 App Server 子进程，通过 stdio 进行 JSON-RPC 通信，并渲染相同的流式事件和审批。这样一来，TUI 就可以连接远程设备上运行的 Codex 服务器，确保智能体部署于接近计算资源的位置，即使笔记本电脑休眠或断开连接也能继续运行，同时还能在本地实现实时更新和控制。
 
 ## 选择合适的协议
 
@@ -151,11 +151,11 @@ Codex App Server 将是我们今后维护的首要集成方案，但也有其他
 
 #### 作为 MCP 服务器的 Codex
 
-运行 [`codex mcp-server`⁠（在新窗口中打开）](https://developers.openai.com/codex/guides/agents-sdk/)，然后从任何支持 stdio 服务器的 MCP 客户端连接（例如，[OpenAI Agents SDK⁠（在新窗口中打开）](https://openai.github.io/openai-agents-js/)）。如果你已构建基于 MCP 的工作流，并希望将 Codex 作为可调用的工具，那么这一方案就是理想选择。其缺点在于，你只能获取 MCP 公开的内容，因此依赖更丰富会话语义（例如，差异更新）的 Codex 特定交互可能无法通过 MCP 端点清晰映射。
+运行 [`codex mcp-server`](https://developers.openai.com/codex/guides/agents-sdk/)，然后从任何支持 stdio 服务器的 MCP 客户端连接（例如，[OpenAI Agents SDK](https://openai.github.io/openai-agents-js/)）。如果你已构建基于 MCP 的工作流，并希望将 Codex 作为可调用的工具，那么这一方案就是理想选择。其缺点在于，你只能获取 MCP 公开的内容，因此依赖更丰富会话语义（例如，差异更新）的 Codex 特定交互可能无法通过 MCP 端点清晰映射。
 
 #### 跨提供商智能体运行框架协议
 
-部分生态系统可面向多个模型提供商和运行时环境提供可移植接口。如果你需要借助抽象化来协调多个智能体，这就是一个不错的选择。其代价在于，这些协议往往趋同于通用的功能子集，这可能会使更丰富的交互难以表示，特别是当特定提供商的工具和会话语义至关重要时。这一领域正在迅速发展，我们预计，随着 OpenAI 不断探索用于表示真实智能体工作流的最佳原语，更多的通用标准也会相继涌现（[技能⁠（在新窗口中打开）](https://agentskills.io/home)就是其中的典型案例）。
+部分生态系统可面向多个模型提供商和运行时环境提供可移植接口。如果你需要借助抽象化来协调多个智能体，这就是一个不错的选择。其代价在于，这些协议往往趋同于通用的功能子集，这可能会使更丰富的交互难以表示，特别是当特定提供商的工具和会话语义至关重要时。这一领域正在迅速发展，我们预计，随着 OpenAI 不断探索用于表示真实智能体工作流的最佳原语，更多的通用标准也会相继涌现（[技能](https://agentskills.io/home)就是其中的典型案例）。
 
 #### Codex App Server
 
@@ -163,11 +163,11 @@ Codex App Server 将是我们今后维护的首要集成方案，但也有其他
 
 ### 嵌入 Codex 的其他方法
 
-#### [Codex Exec⁠（在新窗口中打开）](https://developers.openai.com/codex/cli/reference/#codex-exec)
+#### [Codex Exec](https://developers.openai.com/codex/cli/reference/#codex-exec)
 
 一种轻量级、可编写脚本的 CLI 模式，适用于一次性任务和 CI 运行。它适用于自动化和管道场景，在这些场景中，你希望通过一条命令以非交互形式实现全程运行，为日志流式传输结构化输出，并在退出时发出明确的成功或失败信号。
 
-#### [Codex SDK⁠（在新窗口中打开）](https://developers.openai.com/codex/sdk/)
+#### [Codex SDK](https://developers.openai.com/codex/sdk/)
 
 TypeScript 代码库，用于在你自己的应用程序中以编程方式控制本地 Codex 智能体。当你希望为服务器端工具和工作流提供原生库接口，而无需构建单独的 JSON-RPC 客户端时，它就是最佳选择。由于它比 App Server 更早发布，目前支持的语言较少，且覆盖范围也较小。如果开发人员有意了解相关信息，我们可能会添加更多封装 App Server 协议的 SDK，以便你的团队覆盖更多的运行框架界面，而无需编写 JSON-RPC 绑定。
 
@@ -175,7 +175,7 @@ TypeScript 代码库，用于在你自己的应用程序中以编程方式控制
 
 在这篇文章中，我们分享了如何设计与智能体交互的新标准，以及如何将 Codex 运行框架转变为稳定的客户端友好型协议。我们介绍了 App Server 如何公开 Codex 核心，如何支持客户端驱动整个智能体循环，以及如何为 TUI、本地 IDE 集成和网络运行时等环境提供动力。
 
-如果这激发了你将 Codex 集成至专属工作流的灵感，那么 App Server 值得一试。所有源代码都存放在 Codex CLI 开源[代码仓库⁠（在新窗口中打开）](https://github.com/openai/codex/blob/main/codex-rs/app-server/README.md)中。欢迎你分享反馈意见和功能建议。我们期望收到你的回复，并将继续面向所有用户推广智能体。
+如果这激发了你将 Codex 集成至专属工作流的灵感，那么 App Server 值得一试。所有源代码都存放在 Codex CLI 开源[代码仓库](https://github.com/openai/codex/blob/main/codex-rs/app-server/README.md)中。欢迎你分享反馈意见和功能建议。我们期望收到你的回复，并将继续面向所有用户推广智能体。
 
 - [Codex](https://openai.com/news/?tags=codex)
 - [2026 年](https://openai.com/news/?tags=2026)
@@ -192,11 +192,3 @@ Celia Chen
 
 - 1我们使用“JSON‑RPC lite”的变体：它能保留请求/响应/通知的结构，但会省略 `"jsonrpc": "2.0"` 标头，且采用 JSONL over stdio 格式，而非严格的 JSON‑RPC 2.0.
 - 2“stdio” 指的是容器内应用服务器的 stdin/stdout。在托管设置中，这些数据流通常通过持久化网络连接（例如，类似 WebSocket 的网络连接）信道传输到容器运行时 — 因此其行为近似于 stdio，即使它并非字面意义上的本地管道。
-
-
-
-
-
-
-
-

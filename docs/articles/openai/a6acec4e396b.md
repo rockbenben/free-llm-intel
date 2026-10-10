@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: b331b303231a
+body_sha: a27517a613e8
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ OpenAI
 OpenAI 封禁了参与相关活动的账号。这些活动与公开报道的威胁组织存在重叠，并呈现出符合中国情报需求的特征，利用 AI 支持网络钓鱼和脚本编写工作流。
 
 
-*本案例研究最初发表于 OpenAI 的*[*2025 年 10 月*⁠（在新窗口中打开）](https://cdn.openai.com/threat-intelligence-reports/7d662b68-952f-4dfd-a2f2-fe55b041cc4a/disrupting-malicious-uses-of-ai-october-2025.pdf)*报告。*
+*本案例研究最初发表于 OpenAI 的*[*2025 年 10 月*](https://cdn.openai.com/threat-intelligence-reports/7d662b68-952f-4dfd-a2f2-fe55b041cc4a/disrupting-malicious-uses-of-ai-october-2025.pdf)*报告。*
 
 ## 行为主体
 

@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c5ad473845a6
+body_sha: 079848e5f66e
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ Publication
 
 Read paper
 
-(opens in a new window)
+
 
 Browse samples
 
@@ -59,25 +59,25 @@ Browse samples
 
 尽管我们的模型总体上比 GPT-3 更诚实（生成错误陈述的频率更低），但仍然存在风险。带引用的回答往往让人感觉到一种权威感，这可能掩盖我们的模型仍在犯基础错误的事实。模型也倾向于强化用户既有的信念。我们正在研究如何最好地应对这些及其他担忧。
 
-除了这些部署风险，我们的做法在 *训练时* 也因让模型可访问网络而引入了新的风险。我们的浏览环境并不允许完全的网页访问，但允许模型向 [Microsoft Bing Web Search API⁠(opens in a new window)](https://www.microsoft.com/en-us/bing/apis/bing-web-search-api) 发送查询，并跟随网上已存在的链接——这会有副作用。以我们使用 GPT-3 的经验看，模型看起来还远没有能力去危险地利用这些副作用。然而，这些风险会随模型能力上升，我们正在建立内部防护以应对它们。
+除了这些部署风险，我们的做法在 *训练时* 也因让模型可访问网络而引入了新的风险。我们的浏览环境并不允许完全的网页访问，但允许模型向 [Microsoft Bing Web Search API](https://www.microsoft.com/en-us/bing/apis/bing-web-search-api) 发送查询，并跟随网上已存在的链接——这会有副作用。以我们使用 GPT-3 的经验看，模型看起来还远没有能力去危险地利用这些副作用。然而，这些风险会随模型能力上升，我们正在建立内部防护以应对它们。
 
 ## 结论
 
 人类反馈以及像网页浏览器这样的工具，为走向稳健诚实、通用 AI 系统提供了一条有前景的路径。我们当前的系统在处理困难或不熟悉的情况时仍然吃力，但在这一方向上仍代表着显著进展。
 
-*如果你想帮助我们构建更助益、更诚实的 AI 系统，*[*我们正在招人*⁠(opens in a new window)](https://boards.greenhouse.io/openai/jobs/4247042004?gh_src=5600abde4us)*！*
+*如果你想帮助我们构建更助益、更诚实的 AI 系统，*[*我们正在招人*](https://boards.greenhouse.io/openai/jobs/4247042004?gh_src=5600abde4us)*！*
 
 - [GPT](https://openai.com/research/index/?tags=gpt)
 - [Language](https://openai.com/research/index/?tags=language)
 
 ## 参考文献
 
-- 1O. Evans, O. Cotton-Barratt, L. Finnveden, A. Bales, A. Balwit, P. Wills, L. Righetti, and W. Saunders. Truthful AI: Developing and governing AI that does not lie. arXiv preprint [arXiv:2110.06674⁠(opens in a new window)](https://arxiv.org/abs/2110.06674), 2021.
-- 2J. Maynez, S. Narayan, B. Bohnet, and R. McDonald. On faithfulness and factuality in abstractive summarization. arXiv preprint [arXiv:2005.00661⁠(opens in a new window)](https://arxiv.org/abs/2005.00661), 2020.
-- 3K. Shuster, S. Poff, M. Chen, D. Kiela, and J. Weston. Retrieval augmentation reduces hallucination in conversation. arXiv preprint [arXiv:2104.07567⁠(opens in a new window)](http://arxiv.org/abs/2104.07567), 2021.
-- 4A. Fan, Y. Jernite, E. Perez, D. Grangier, J. Weston, and M. Auli. ELI5: Long form question answering. arXiv preprint [arXiv:1907.09190⁠(opens in a new window)](https://arxiv.org/abs/1907.09190), 2019.
-- 5S. Lin, J. Hilton, and O. Evans. TruthfulQA: Measuring how models mimic human falsehoods. arXiv preprint [arXiv:2109.07958⁠(opens in a new window)](https://arxiv.org/abs/2109.07958), 2021.
-- 6D. Metzler, Y. Tay, D. Bahri, and M. Najork. Rethinking search: Making experts out of dilettantes. arXiv preprint [arXiv:2105.02274⁠(opens in a new window)](https://arxiv.org/abs/2105.02274), 2021.
+- 1O. Evans, O. Cotton-Barratt, L. Finnveden, A. Bales, A. Balwit, P. Wills, L. Righetti, and W. Saunders. Truthful AI: Developing and governing AI that does not lie. arXiv preprint [arXiv:2110.06674](https://arxiv.org/abs/2110.06674), 2021.
+- 2J. Maynez, S. Narayan, B. Bohnet, and R. McDonald. On faithfulness and factuality in abstractive summarization. arXiv preprint [arXiv:2005.00661](https://arxiv.org/abs/2005.00661), 2020.
+- 3K. Shuster, S. Poff, M. Chen, D. Kiela, and J. Weston. Retrieval augmentation reduces hallucination in conversation. arXiv preprint [arXiv:2104.07567](http://arxiv.org/abs/2104.07567), 2021.
+- 4A. Fan, Y. Jernite, E. Perez, D. Grangier, J. Weston, and M. Auli. ELI5: Long form question answering. arXiv preprint [arXiv:1907.09190](https://arxiv.org/abs/1907.09190), 2019.
+- 5S. Lin, J. Hilton, and O. Evans. TruthfulQA: Measuring how models mimic human falsehoods. arXiv preprint [arXiv:2109.07958](https://arxiv.org/abs/2109.07958), 2021.
+- 6D. Metzler, Y. Tay, D. Bahri, and M. Najork. Rethinking search: Making experts out of dilettantes. arXiv preprint [arXiv:2105.02274](https://arxiv.org/abs/2105.02274), 2021.
 
 ## 作者
 
@@ -90,12 +90,3 @@ Jacob Hilton, Reiichiro Nakano, Suchir Balaji, John Schulman
 感谢参与本次发布并给予反馈的人：Steven Adler, Sam Altman, Beth Barnes, Miles Brundage, Kevin Button, Steve Dowling, Alper Ercetin, Matthew Knight, Gretchen Krueger, Ryan Lowe, Andrew Mayne, Bob McGrew, Mira Murati, Richard Ngo, Jared Salzano, Natalie Summers 和 Hannah Wong。
 
 感谢 Surge AI 团队帮助我们收集数据，也感谢我们所有的合同工提供的演示与对比——没有他们，本项目无法完成。
-
-
-
-
-
-
-
-
-

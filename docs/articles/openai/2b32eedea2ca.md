@@ -32,20 +32,20 @@ ChatGPT 允许你在对话中直接上传和处理文件。这意味着你可以
 
 ## 连接其他工具
 
-某些版本的 ChatGPT 支持 **应用（apps）**，让 ChatGPT 可以访问第三方工具，从而把外部上下文带入对话。[可在此查看可用的应用⁠⁠（在新窗口打开）](https://help.openai.com/articles/11487775-connectors-in-chatgpt)。
+某些版本的 ChatGPT 支持 **应用（apps）**，让 ChatGPT 可以访问第三方工具，从而把外部上下文带入对话。[可在此查看可用的应用](https://help.openai.com/articles/11487775-connectors-in-chatgpt)。
 
-- 进入 [设置 → 应用⁠⁠（在新窗口打开）](https://chatgpt.com/?openaicom-did=a2948a4b-ed54-4ff6-a784-3c0e551a3c71&openaicom_referred=true#settings/Connectors) 找到要连接的应用。
+- 进入 [设置 → 应用](https://chatgpt.com/?openaicom-did=a2948a4b-ed54-4ff6-a784-3c0e551a3c71&openaicom_referred=true#settings/Connectors) 找到要连接的应用。
 - 完成身份验证和权限流程。
 - 应用会出现在聊天中的工具（Tools）里，你也可以用 @ 或 / 调出它。
 
-更多详见[为工作使用应用⁠（在新窗口打开）](https://academy.openai.com/public/clubs/work-users-ynjqu/resources/connectors)。
+更多详见[为工作使用应用](https://academy.openai.com/public/clubs/work-users-ynjqu/resources/connectors)。
 
 *注：对于 Enterprise 工作区，你所在组织的管理员控制你可以使用哪些应用。如果看不到连接应用的选项，请联系管理员。与 ChatGPT Enterprise 或 ChatGPT Business 工作区上的所有业务数据一样，默认情况下通过应用访问的数据不会用于训练 OpenAI 模型。*
 
 ## 延伸阅读
 
-- [OpenAI 帮助中心：文件上传 FAQ⁠⁠（在新窗口打开）](https://help.openai.com/articles/8555545-file-uploads-faq)
-- [OpenAI 帮助中心：ChatGPT 的数据保留政策⁠⁠（在新窗口打开）](https://help.openai.com/articles/8983778-chat-and-file-retention-policies-in-chatgpt)
+- [OpenAI 帮助中心：文件上传 FAQ](https://help.openai.com/articles/8555545-file-uploads-faq)
+- [OpenAI 帮助中心：ChatGPT 的数据保留政策](https://help.openai.com/articles/8983778-chat-and-file-retention-policies-in-chatgpt)
 
 相关工具与指南，请浏览 [Google Drive 集成](https://openai.com/business/plugins/google-drive/) 和 [面向运营团队的 ChatGPT 解决方案](https://openai.com/business/solutions/operations/)。
 

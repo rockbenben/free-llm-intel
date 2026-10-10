@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 359890defccc
+body_sha: bd4a85289b59
 ---
 
 OpenAI
@@ -54,7 +54,7 @@ ChatGPT, Codex
 使用 Codex 处理复杂对账问题的调查时间，较此前 4 小时大幅缩短
 
 
-[Australian Payments Plus⁠（在新窗口中打开）](https://www.auspayplus.com.au/)（简称 AP+）在澳大利亚运营支付和身份基础设施。它位于支付生态系统的中心，支撑着每天被数百万人使用的产品和服务。
+[Australian Payments Plus](https://www.auspayplus.com.au/)（简称 AP+）在澳大利亚运营支付和身份基础设施。它位于支付生态系统的中心，支撑着每天被数百万人使用的产品和服务。
 
 其团队的工作涵盖支付网络规则、技术规范、成员义务、运营流程、网络安全与韧性以及监管预期。在这些工作中，速度很重要，但准确性和责任担当更重要。
 

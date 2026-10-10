@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e242bce0610f
+body_sha: 3e9e45b7e652
 ---
 
 OpenAI
@@ -22,9 +22,9 @@ OpenAI
 
 # 关于最近 Mixpanel 安全事件的必知事项
 
-***2025 年 12 月 19 日澄清：****我们将更新博客，进一步说明受影响用户的范围。原博客称受影响的是“API 用户”，现补充说明：“这也影响到少量提交过帮助中心工单，或曾登录 *[*platform.openai.com*⁠（在新窗口中打开）](http://platform.openai.com)* 的 ChatGPT 用户。”这些受影响的用户已在最初联系用户时同步完成识别并通知。除上述澄清外，我们对本次事件的认知（包括涉及的信息类型）没有变化。*
+***2025 年 12 月 19 日澄清：****我们将更新博客，进一步说明受影响用户的范围。原博客称受影响的是“API 用户”，现补充说明：“这也影响到少量提交过帮助中心工单，或曾登录 *[*platform.openai.com*](http://platform.openai.com)* 的 ChatGPT 用户。”这些受影响的用户已在最初联系用户时同步完成识别并通知。除上述澄清外，我们对本次事件的认知（包括涉及的信息类型）没有变化。*
 
-透明度对我们至关重要，因此我们想向你告知数据分析提供商 Mixpanel 近期发生的一起安全事件。该公司曾是 OpenAI 的合作伙伴，为我们的 API 产品 ([platform.openai.com⁠（在新窗口中打开）](https://platform.openai.com)) 前端界面提供网络分析服务。
+透明度对我们至关重要，因此我们想向你告知数据分析提供商 Mixpanel 近期发生的一起安全事件。该公司曾是 OpenAI 的合作伙伴，为我们的 API 产品 ([platform.openai.com](https://platform.openai.com)) 前端界面提供网络分析服务。
 
 此事件发生在 Mixpanel 的系统中，仅涉及与部分 API 用户相关的少量分析数据。这也影响到少量提交过帮助中心工单，或曾登录 platform.openai.com 的 ChatGPT 用户。
 
@@ -36,7 +36,7 @@ OpenAI
 
 **这对受影响的用户意味着什么**
 
-与 [platform.openai.com⁠（在新窗口中打开）](https://platform.openai.com) 使用相关的用户个人资料信息可能已包含在从 Mixpanel 导出的数据中。可能受影响的信息范围仅限于：
+与 [platform.openai.com](https://platform.openai.com) 使用相关的用户个人资料信息可能已包含在从 Mixpanel 导出的数据中。可能受影响的信息范围仅限于：
 
 - 账户中向我们提供的姓名/名称
 - 与账户关联的邮箱地址
@@ -62,7 +62,7 @@ OpenAI
 - 请谨慎对待陌生邮件或信息，尤其是包含链接或附件的内容。
 - 仔细核实任何声称来自 OpenAI 的消息是否来自 OpenAI 官方域名。
 - OpenAI 不会通过邮件、短信或聊天方式索要密码、API 密钥或验证码。
-- 通过启用[多因素身份验证⁠（在新窗口中打开）](https://help.openai.com/en/articles/7967234-enabling-or-disabling-multi-factor-authentication-mfa)进一步保护你的帐户。
+- 通过启用[多因素身份验证](https://help.openai.com/en/articles/7967234-enabling-or-disabling-multi-factor-authentication-mfa)进一步保护你的帐户。
 
 我们产品的安全与隐私至关重要，我们始终致力于保护你的信息，并在问题出现时透明沟通。感谢你一直以来对我们的信任。
 
@@ -123,11 +123,3 @@ OpenAI
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

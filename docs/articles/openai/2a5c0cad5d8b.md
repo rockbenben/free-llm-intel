@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: b5b539d3808a
+body_sha: cb066d9488a2
 ---
 
 OpenAI
@@ -22,7 +22,7 @@ OpenAI
 获得 5 倍用量，不受五小时用量限制，并可灵活地为每位团队成员配置适合其工作的席位。
 
 
-*2026 年 8 月 25 日更新：高级席位现已在 ChatGPT Business 上线。首次添加高级席位可获得工作空间额度的优惠活动已结束。*[*了解更多*⁠（在新窗口中打开）](https://help.openai.com/articles/8792536)*关于 ChatGPT Business 高级席位的信息，或者*[*开始使用*⁠（在新窗口中打开）](https://chatgpt.com/pricing/?type=team)*。*
+*2026 年 8 月 25 日更新：高级席位现已在 ChatGPT Business 上线。首次添加高级席位可获得工作空间额度的优惠活动已结束。*[*了解更多*](https://help.openai.com/articles/8792536)*关于 ChatGPT Business 高级席位的信息，或者*[*开始使用*](https://chatgpt.com/pricing/?type=team)*。*
 
 推动业务发展的工作绝不该停滞。
 
@@ -70,7 +70,7 @@ OpenAI
 
 部分报名客户还可能获选提前体验，在正式推出前率先使用。
 
-如果你不是工作空间所有者，请将此优惠分享给负责管理 ChatGPT Business 账户的人员。优惠活动将于 8 月 20 日结束，请立即报名。有关活动方式和资格条件的更多信息，请参阅[帮助中心文章⁠（在新窗口中打开）](https://help.openai.com/articles/20001420)。
+如果你不是工作空间所有者，请将此优惠分享给负责管理 ChatGPT Business 账户的人员。优惠活动将于 8 月 20 日结束，请立即报名。有关活动方式和资格条件的更多信息，请参阅[帮助中心文章](https://help.openai.com/articles/20001420)。
 
 - [2026 年](https://openai.com/news/?tags=2026)
 - [ChatGPT](https://openai.com/news/?tags=chatgpt)
@@ -78,11 +78,3 @@ OpenAI
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

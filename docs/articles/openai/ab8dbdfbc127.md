@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 749b78ee8e66
+body_sha: 34169cebbda0
 ---
 
 OpenAI
@@ -32,14 +32,14 @@ Photo: Blake Tucker
 
 ## 参与者
 
-我们在办公室接待了约 80 位外部参会者，另有约 200 人通过全天直播远程加入。除了来自 Google、Facebook、NVIDIA 等业界实验室的参与者，还有来自 [斯坦福⁠(opens in a new window)](https://www.stanford.edu/)、[加州大学伯克利分校⁠(opens in a new window)](https://www.berkeley.edu/)、[CMU⁠(opens in a new window)](https://www.cmu.edu/) 和 [MIT⁠(opens in a new window)](http://www.mit.edu/) 等高校的学生、博士后与教授。参会者中也不乏爱好者、艺术家、机器人学家和机器学习研究者。
+我们在办公室接待了约 80 位外部参会者，另有约 200 人通过全天直播远程加入。除了来自 Google、Facebook、NVIDIA 等业界实验室的参与者，还有来自 [斯坦福](https://www.stanford.edu/)、[加州大学伯克利分校](https://www.berkeley.edu/)、[CMU](https://www.cmu.edu/) 和 [MIT](http://www.mit.edu/) 等高校的学生、博士后与教授。参会者中也不乏爱好者、艺术家、机器人学家和机器学习研究者。
 
 ## 演讲
 
 
 ## 灵巧演示
 
-由于活动在 OpenAI 办公室举办，我们借此机会现场演示了我们的类人机器人手如何凭借视觉和强化学习操控积木——[现场演示⁠(opens in a new window)](https://twitter.com/OpenAI/status/1122198642096398336)。
+由于活动在 OpenAI 办公室举办，我们借此机会现场演示了我们的类人机器人手如何凭借视觉和强化学习操控积木——[现场演示](https://twitter.com/OpenAI/status/1122198642096398336)。
 
 我们很高兴向大家展示这只手，OpenAI Robotics 团队也"就在现场"为大家答疑！我们希望未来再办一次，因为亲眼看到的感受是非常不同的。
 
@@ -57,11 +57,3 @@ Photo: Blake Tucker
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

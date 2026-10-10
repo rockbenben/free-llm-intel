@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 421b72419cc2
+body_sha: 3c3eb9d6e04c
 ---
 
 OpenAI
@@ -29,7 +29,7 @@ OpenAI
 
 ## 英国司法部
 
-与司法部达成的新协议将把 ChatGPT 引入公务员队伍，帮助他们节省时间、提高工作效率，并提供更优质的公共服务。该协议将支持司法部的[《司法人工智能行动计划》⁠（在新窗口中打开）](https://www.gov.uk/government/publications/ai-action-plan-for-justice)，并让 2,500 名员工能够使用 ChatGPT Enterprise。此前开展的试点项目取得了成功，结果显示，人工智能可帮助多项日常工作节省时间，包括写作辅助、合规与法律事务、数据与研究流程以及文档分析。
+与司法部达成的新协议将把 ChatGPT 引入公务员队伍，帮助他们节省时间、提高工作效率，并提供更优质的公共服务。该协议将支持司法部的[《司法人工智能行动计划》](https://www.gov.uk/government/publications/ai-action-plan-for-justice)，并让 2,500 名员工能够使用 ChatGPT Enterprise。此前开展的试点项目取得了成功，结果显示，人工智能可帮助多项日常工作节省时间，包括写作辅助、合规与法律事务、数据与研究流程以及文档分析。
 
 在英国政府的其他部门，已有多款工具采用 OpenAI 技术，其中包括旨在减轻公务员行政负担的白厅人工智能助手“Humphrey”，以及为政策制定流程提供支持的“Consult”。后者可自动整理公众咨询意见，将过去通常需要官员数周完成的工作缩短至几分钟，同时仍由专家作出重要决策。
 
@@ -43,7 +43,7 @@ OpenAI
 
 除 Stargate UK 外，我们还将于 10 月 24 日星期五推出英国数据驻留选项，让英国客户和开发者可以选择将数据存储在英国，以满足当地的数据保护偏好或要求。根据上述协议，司法部将率先从这项服务中受益。
 
-如需进一步了解数据驻留，请访问我们的帮助页面[此处⁠（在新窗口中打开）](https://help.openai.com/en/articles/9903489-data-residency-for-chatgpt)。
+如需进一步了解数据驻留，请访问我们的帮助页面[此处](https://help.openai.com/en/articles/9903489-data-residency-for-chatgpt)。
 
 OpenAI 的技术已成为英国数百万人不可或缺的工具。按 OpenAI 付费订阅用户和 API 开发者数量计算，英国已跻身全球前五大市场。每天，英国各地的个人、开发者、机构、初创企业和领先企业都在使用我们的工具发掘新的经济机遇，其中包括 NatWest、Virgin Atlantic、本土独角兽 Synthesia 和牛津大学。
 
@@ -54,11 +54,3 @@ OpenAI 的技术已成为英国数百万人不可或缺的工具。按 OpenAI �
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

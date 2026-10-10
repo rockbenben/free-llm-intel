@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 45fa49a59f08
+body_sha: 518562f72755
 ---
 
 OpenAI
@@ -27,9 +27,9 @@ OpenAI
 
 我们的技术已成为数百万欧洲人不可或缺的工具。无论是订阅用户、API 开发者还是企业客户，欧盟成员国都位居我们全球最重要的市场之列。每一天，欧洲各地的个人、开发者、机构、初创企业和行业领军企业都在通过以下方式创造经济机遇：
 
-- 加快救命疗法的研发，并帮助研究人员更快设计新药，其中包括我们与[ Sanofi 的合作⁠（在新窗口中打开）](https://www.sanofi.com/en/media-room/press-releases/2024/2024-05-21-05-30-00-2885244)。
+- 加快救命疗法的研发，并帮助研究人员更快设计新药，其中包括我们与[ Sanofi 的合作](https://www.sanofi.com/en/media-room/press-releases/2024/2024-05-21-05-30-00-2885244)。
 - 加快欧洲顶尖实验室和高校的科研进程，例如法国的[ Science Po⁠](https://openai.com/index/introducing-nextgenai/)和德国的[ Max Planck Society⁠](https://openai.com/o1/#mario-video)。
-- 通过[在爱沙尼亚各地的中学引入人工智能⁠](https://openai.com/index/estonia-schools-and-chatgpt/)，以及[帮助 ESCP Business School 的教师⁠（在新窗口中打开）](https://escp.eu/ai)制定个性化教案、投入更多时间陪伴学生，改善教育。
+- 通过[在爱沙尼亚各地的中学引入人工智能⁠](https://openai.com/index/estonia-schools-and-chatgpt/)，以及[帮助 ESCP Business School 的教师](https://escp.eu/ai)制定个性化教案、投入更多时间陪伴学生，改善教育。
 - 建设蓬勃发展的欧洲初创企业生态系统，让 Parloa 和 Pigment 等新一代人工智能驱动型企业借助我们的技术增强平台并参与全球竞争。
 
 《行为准则》为欧洲推进今年 4 月公布的欧盟《人工智能大陆行动计划》打开了大门，也将进一步扩大人工智能如今已带来的影响。
@@ -52,7 +52,7 @@ OpenAI
 
 《行为准则》和《行动计划》必须共同推动建设欧洲所需的人工智能基础设施，确保个人、企业，尤其是开发者和初创企业，拥有在全球舞台上竞争并引领发展的工具。
 
-欧盟应评估其监管安排可能如何影响人工智能的采用速度，以及能源和训练数据等人工智能“原材料”的供应。这对于确保欧洲的竞争力并缩小与美国之间长期存在的[生产力差距⁠（在新窗口中打开）](https://commission.europa.eu/topics/eu-competitiveness/draghi-report_en)至关重要。
+欧盟应评估其监管安排可能如何影响人工智能的采用速度，以及能源和训练数据等人工智能“原材料”的供应。这对于确保欧洲的竞争力并缩小与美国之间长期存在的[生产力差距](https://commission.europa.eu/topics/eu-competitiveness/draghi-report_en)至关重要。
 
 欧盟战略还必须提供长期的确定性和可预见性，释放建设这些基础设施所需的资本投资。
 
@@ -89,7 +89,7 @@ OpenAI 致力于为实现欧洲大陆的人工智能目标贡献力量；从今�
 - 长期以来，我们都会在发布重大产品时公布详尽的[系统卡⁠](https://openai.com/index/o3-o4-mini-system-card/)，说明模型能做什么、不能做什么，我们测试了哪些风险，以及还有哪些方面仍在探索。
 - 公众可通过[安全评估中心⁠](https://openai.com/safety/evaluations-hub/)查看我们模型的安全评估结果。
 - 我们的[红队测试网络⁠](https://openai.com/index/red-teaming-network/)邀请外部专家对模型进行压力测试。
-- [模型规范⁠（在新窗口中打开）](https://model-spec.openai.com/2025-04-11.html)让外界得以了解我们如何塑造模型行为，使其体现人类价值观和民主规范。
+- [模型规范](https://model-spec.openai.com/2025-04-11.html)让外界得以了解我们如何塑造模型行为，使其体现人类价值观和民主规范。
 
 这些工作共同推动了行业安全标准的制定，也为形成切实可行的《行为准则》提供了重要参考。我们将继续迭代改进安全方法，确保无论身处世界何地，每个人都能以负责任的方式使用我们的技术并从中受益。
 
@@ -98,11 +98,3 @@ OpenAI 致力于为实现欧洲大陆的人工智能目标贡献力量；从今�
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

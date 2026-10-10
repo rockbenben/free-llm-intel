@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 9b69a8c4d823
+body_sha: a1fa06bde4e0
 ---
 
 OpenAI
@@ -28,7 +28,7 @@ OpenAI
 
 AI 正以惊人的速度发展，但许多国家尚未充分利用其潜力来造福人民、推动经济增长。在能够驾驭这些工具的国家与尚未采取行动的国家之间，正形成显著的[能力积压 (Capability Overhang)](https://openai.com/index/ai-for-self-empowerment/) 差距。如果这一差距持续扩大，少数国家将在经济和技术领域进一步领跑，而其他国家则面临落后的风险。这种差距一旦形成，将难以逆转。
 
-我们今天发布的研究报告[*《弥合能力鸿沟》*⁠（在新窗口中打开）](https://cdn.openai.com/pdf/openai-ending-the-capability-overhang.pdf)揭示了这一能力积压的严峻现状。数据显示，深度用户所调用的“高级推理能力”约为普通用户的七倍 — 他们更多地利用 AI 完成复杂的多步协作，而非仅限于简单的问答指令。
+我们今天发布的研究报告[*《弥合能力鸿沟》*](https://cdn.openai.com/pdf/openai-ending-the-capability-overhang.pdf)揭示了这一能力积压的严峻现状。数据显示，深度用户所调用的“高级推理能力”约为普通用户的七倍 — 他们更多地利用 AI 完成复杂的多步协作，而非仅限于简单的问答指令。
 
 我们还观察到了明显的国家级差异，而且这种差距并非仅由收入水平决定。在 ChatGPT 使用率最高的 70 多个国家中，人均调用“推理能力”的最高值是最低值的 3 倍。虽然美国和印度等大型经济体在用户总量上处于领先地位，新加坡和荷兰等高收入小国在人口渗透率上表现突出。但高级 AI 的应用并不局限于高收入国家。越南和巴基斯坦等国已跻身全球智能体工具 (Agentic Tool) 顶尖使用者之列，其在数据分析、连接器 (Connector) 和 Codex 等高级任务的人均使用率上高出平均水平 2 倍以上。
 
@@ -44,7 +44,7 @@ AI 正以惊人的速度发展，但许多国家尚未充分利用其潜力来�
 
 与 Education for Countries 类似，我们其他的新计划也旨在保持高度灵活性，并通过与合作伙伴的持续讨论来加以制定，其核心在于如何将 AI 能力转化为实际的现实影响。通过优化应用路径，各国可精准把握提升生产力的巨大机遇，具体方法包括扩大企业级应用规模、建设适配 AI 的基础设施，以及提升劳动力和课堂的 AI 素养。随着 AI 能力的持续演进，各国可加快行动速度，抓住机遇，将技术进步转化为惠及全民的实在红利。
 
-关于 OpenAI for Countries 扩展计划的更多内容，可查阅[《弥合能力鸿沟》报告⁠⁠（在新窗口中打开）](https://cdn.openai.com/pdf/openai-ending-the-capability-overhang.pdf)。
+关于 OpenAI for Countries 扩展计划的更多内容，可查阅[《弥合能力鸿沟》报告](https://cdn.openai.com/pdf/openai-ending-the-capability-overhang.pdf)。
 
 - [全球事务](https://openai.com/news/?tags=global-affairs)
 - [2026 年](https://openai.com/news/?tags=2026)
@@ -53,11 +53,3 @@ AI 正以惊人的速度发展，但许多国家尚未充分利用其潜力来�
 ## 作者
 
 George Osborne
-
-
-
-
-
-
-
-

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 1ed27ced5d9f
+body_sha: fdf9166cad03
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ OpenAI
 
 ***我们的全新专栏《高管职能》系列呈现来自引领人工智能转型的管理者洞见。***
 
-[Uber⁠（在新窗口中打开）](https://www.uber.com/) 是全球领先的出行与配送平台，每天为数千万次按需出行提供支持。我们与 Uber 全球客户体验产品负责人 Jai Malkani 探讨了在共情高效的客户支持互动、智能自动化及提升人工客服能力等领域应用人工智能的实践。
+[Uber](https://www.uber.com/) 是全球领先的出行与配送平台，每天为数千万次按需出行提供支持。我们与 Uber 全球客户体验产品负责人 Jai Malkani 探讨了在共情高效的客户支持互动、智能自动化及提升人工客服能力等领域应用人工智能的实践。
 
 ## Uber 是全球最大的出行和配送平台之一。为什么人工智能如此重要，以及它如何融入 Uber 的整体战略？
 
@@ -92,10 +92,3 @@ Uber 人工智能与产品、客户体验总监 Jai Malkani
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-

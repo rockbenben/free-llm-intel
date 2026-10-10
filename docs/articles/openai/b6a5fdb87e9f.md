@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 29fe1936287e
+body_sha: 3cfc7938b760
 ---
 
 OpenAI
@@ -21,13 +21,13 @@ Publication
 
 Read paper
 
-(opens in a new window)
+
 
 Browse samples
 
 Download dataset
 
-(opens in a new window)
+
 
 
 我们训练了一个模型，在数学解题上取得新的 SOTA：做法是给每一段正确的推理步骤打奖励（"过程监督"），而不只是给最终正确答案打奖励（"结果监督"）。除了相对结果监督提升表现之外，过程监督还有一个重要的对齐收益：它直接训练模型产出被人类认可的思维链（chain-of-thought）。
@@ -72,11 +72,3 @@ Karl Cobbe, Hunter Lightman, Vineet Kosaraju, Yura Burda, Harri Edwards, Jan Lei
 ## 贡献者
 
 Bowen Baker, Teddy Lee, John Schulman, Greg Brockman, Kendra Rimbach, Hannah Wong, Thomas Degry
-
-
-
-
-
-
-
-

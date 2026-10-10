@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: aa57d9bdf170
+body_sha: 1ef1638dc719
 ---
 
 OpenAI
@@ -18,11 +18,11 @@ OpenAI
 
 Try now
 
-(opens in a new window)
 
 
 
-[Morgan Stanley（摩根士丹利）⁠(opens in a new window)](http://www.morganstanley.com) 与 OpenAI 合作构建 AI 解决方案，让理财顾问获得更快的洞见、更明智的决策和高效的摘要工具，从而深化客户关系。他们的成功扎根于一套稳健的评估框架，确保 AI 可靠、稳定地运行，达到顾问期望的高标准。
+
+[Morgan Stanley（摩根士丹利）](http://www.morganstanley.com) 与 OpenAI 合作构建 AI 解决方案，让理财顾问获得更快的洞见、更明智的决策和高效的摘要工具，从而深化客户关系。他们的成功扎根于一套稳健的评估框架，确保 AI 可靠、稳定地运行，达到顾问期望的高标准。
 
 通过把 GPT‑4 嵌入工作流，Morgan Stanley Wealth Management 升级了理财顾问获取公司知识库、响应客户需求的方式。如今，超过 98% 的顾问团队在主动使用 **AI @ Morgan Stanley Assistant**——摩根士丹利内部回答理财顾问问题的聊天机器人——实现无缝的内部信息检索。
 

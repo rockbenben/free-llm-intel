@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: fa51d560eddc
+body_sha: 70f5165150c5
 ---
 
 OpenAI
@@ -22,7 +22,7 @@ OpenAI
 通过提高每一层的效率，OpenAI 正在为更多企业工作负载带来更高的单位成本性能。
 
 
-昨天，我们介绍了 [GPT‑5.6⁠](https://openai.com/index/gpt-5-6/) 如何帮助自身[提高运行效率⁠](https://openai.com/index/gpt-5-6-frontier-intelligence-efficiency/)。今天，我们将这些收益回馈给客户：降低 API 中 GPT‑5.6 [Luna⁠（在新窗口中打开）](https://developers.openai.com/api/docs/models/gpt-5.6-luna) 和 [Terra⁠（在新窗口中打开）](https://developers.openai.com/api/docs/models/gpt-5.6-terra) 的价格，并提升 GPT‑5.6 [Sol⁠](https://openai.com/index/gpt-5-6/) 的性能速度。这些更新共同帮助客户提高每一美元 AI 投资的回报，并在时间紧迫时更快推进工作。
+昨天，我们介绍了 [GPT‑5.6⁠](https://openai.com/index/gpt-5-6/) 如何帮助自身[提高运行效率⁠](https://openai.com/index/gpt-5-6-frontier-intelligence-efficiency/)。今天，我们将这些收益回馈给客户：降低 API 中 GPT‑5.6 [Luna](https://developers.openai.com/api/docs/models/gpt-5.6-luna) 和 [Terra](https://developers.openai.com/api/docs/models/gpt-5.6-terra) 的价格，并提升 GPT‑5.6 [Sol⁠](https://openai.com/index/gpt-5-6/) 的性能速度。这些更新共同帮助客户提高每一美元 AI 投资的回报，并在时间紧迫时更快推进工作。
 
 从今天起，我们速度最快、价格最低的模型 GPT‑5.6 Luna 将降价 80%；兼顾各方面、适合日常工作的 GPT‑5.6 Terra 将降价 20%。在 Codex 和 ChatGPT 工作中使用 Luna 和 Terra 时，付费订阅的用量计算方式也会相应体现此次降价。Luna 为企业提供了一种更具成本效益的方式，能够以极高质量处理大批量工作。它可以使用工具并完成多步骤工作流，让更多 AI 应用能够切实实现规模化运行。
 
@@ -95,11 +95,3 @@ GPT‑5.6 Sol 的快速模式将在 API 中取代“优先处理”，并与 Cod
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

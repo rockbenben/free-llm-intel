@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8a2bbc03be74
+body_sha: b8e4f51e78a4
 ---
 
 OpenAI
@@ -21,7 +21,7 @@ Publication
 
 Read paper
 
-(opens in a new window)
+
 
 
 ## 摘要
@@ -33,11 +33,3 @@ Read paper
 ## 作者
 
 Smitha Milli, Pieter Abbeel, Igor Mordatch
-
-
-
-
-
-
-
-

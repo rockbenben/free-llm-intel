@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fb29553c240a
+body_sha: 1e4027cedcc5
 translator: agent
 ---
 
@@ -20,7 +20,7 @@ OpenAI
 
 # 变分选项发现算法（Variational option discovery algorithms）
 
-阅读论文（在新窗口打开）
+阅读论文
 
 ## 摘要
 
@@ -31,11 +31,3 @@ OpenAI
 ## 作者
 
 Joshua Achiam, Harri Edwards, Dario Amodei, Pieter Abbeel
-
-
-
-
-
-
-
-

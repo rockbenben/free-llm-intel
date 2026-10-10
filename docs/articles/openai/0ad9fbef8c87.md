@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: bd7cc2b024ea
+body_sha: c2fc20ef0915
 ---
 
 OpenAI
@@ -99,7 +99,7 @@ ChatGPT Atlas 的代理模式功能强大，但也扩大了安全威胁面。清
 
 在我们继续针对系统层面加强 Atlas 的同时，用户可以采取一些措施来降低使用代理的风险。
 
-**尽可能限制已登录用户的访问权限。**我们依然建议用户在使用 Atlas 中的代理时，如果相关任务无需访问已登录的网站，或需限制执行任务期间登录的特定网站的访问权限，请使用[注销模式⁠（在新窗口中打开）](https://help.openai.com/en/articles/12574142-chatgpt-atlas-data-controls-and-privacy#h_1976eefb25)。
+**尽可能限制已登录用户的访问权限。**我们依然建议用户在使用 Atlas 中的代理时，如果相关任务无需访问已登录的网站，或需限制执行任务期间登录的特定网站的访问权限，请使用[注销模式](https://help.openai.com/en/articles/12574142-chatgpt-atlas-data-controls-and-privacy#h_1976eefb25)。
 
 **请仔细查阅确认请求。**对于部分重要的操作，例如完成购买或发送电子邮件，代理会在继续之前要求你进行确认。当代理要求你确认某个操作时，请抽出时间验证该操作是否正确，并确保共享的任何信息都适用于相关场景。
 
@@ -112,11 +112,3 @@ ChatGPT Atlas 的代理模式功能强大，但也扩大了安全威胁面。清
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

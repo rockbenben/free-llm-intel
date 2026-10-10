@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 6e25a47c0cd3
+body_sha: b1215885132c
 ---
 
 OpenAI
@@ -23,11 +23,11 @@ OpenAI
 OpenAI 封禁了与源自俄罗斯的“替身行动”有关的账号。该行动利用 AI 以多种语言生成反乌克兰的社交媒体评论、译文和网站文案。
 
 
-*本案例研究最初发表于 OpenAI 的*[*2024 年 5 月*⁠（在新窗口中打开）](https://cdn.openai.com/threat-intelligence-reports/threat-intel-report-may-2024.pdf)*报告。*
+*本案例研究最初发表于 OpenAI 的*[*2024 年 5 月*](https://cdn.openai.com/threat-intelligence-reports/threat-intel-report-may-2024.pdf)*报告。*
 
 ## 行动方
 
-我们封禁了四组使用我们模型的账号，这些账号与代表俄罗斯影响力行动[“替身行动”⁠（在新窗口中打开）](https://www.disinfo.eu/doppelganger-operation/)行事的人员有关。各组采用了不同的战术、技术和程序（TTP），这与该行动由多个职能不同的团队组成的特点相符。
+我们封禁了四组使用我们模型的账号，这些账号与代表俄罗斯影响力行动[“替身行动”](https://www.disinfo.eu/doppelganger-operation/)行事的人员有关。各组采用了不同的战术、技术和程序（TTP），这与该行动由多个职能不同的团队组成的特点相符。
 
 ## 行为
 
@@ -47,7 +47,7 @@ OpenAI 封禁了与源自俄罗斯的“替身行动”有关的账号。该行�
 
 *一则 X 帖子，其中包含使用我们的模型生成的评论。评论译文为：“令人震惊的行为！政治绝不应与暴力挂钩。我们需要的是对话，而不是暴力。”随附链接会重定向至“替身行动”旗下网站 rrn.media 的德语版。不过，截至 5 月 20 日，该页面只能通过法国 IP 地址访问。*
 
-这组账号通过一项与俄罗斯及捷克公司有关的服务访问我们的模型，很可能是为了逃避检测。该服务旨在帮助俄罗斯境内的用户绕过我们的[受支持国家和地区访问政策⁠（在新窗口中打开）](https://platform.openai.com/docs/supported-countries)。我们已停用该服务的 API 访问权限。
+这组账号通过一项与俄罗斯及捷克公司有关的服务访问我们的模型，很可能是为了逃避检测。该服务旨在帮助俄罗斯境内的用户绕过我们的[受支持国家和地区访问政策](https://platform.openai.com/docs/supported-countries)。我们已停用该服务的 API 访问权限。
 
 第二组账号将文章从俄语翻译成英语和法语；俄语文本似乎为原创内容。这些文章中有许多随后发布在一个多次被归因于“替身行动”的网站上：rrn.media。同一组账号还围绕这些文章生成简短评论，随后发布在社交媒体上。
 
@@ -71,7 +71,7 @@ OpenAI 封禁了与源自俄罗斯的“替身行动”有关的账号。该行�
 
 *在 X 上对“替身行动”帖子的回复。*
 
-我们使用[突破量表⁠（在新窗口中打开）](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/)评估影响力行动的影响。该量表将影响分为 1（最低）至 6（最高）级。我们认为，与使用我们模型有关的活动属于第 2 类：虽然在多个平台上发布了内容，但均未实现破圈传播或获得显著的受众互动。
+我们使用[突破量表](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/)评估影响力行动的影响。该量表将影响分为 1（最低）至 6（最高）级。我们认为，与使用我们模型有关的活动属于第 2 类：虽然在多个平台上发布了内容，但均未实现破圈传播或获得显著的受众互动。
 
 - [俄罗斯](https://openai.com/news/?tags=actor-origin-russia)
 - [ 欧洲](https://openai.com/news/?tags=target-geography-europe)

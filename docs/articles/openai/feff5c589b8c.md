@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 8136670692aa
+body_sha: 9ddd8893bf9a
 ---
 
 OpenAI
@@ -150,7 +150,7 @@ GPT‑5 推出了新的控制项，让你能够精细调整模型的推理和交
 
 ##### 推理强度
 
-`reasoning_effort` 控制模型思考的程度（以及它调用工具的频率）。默认为 `medium;`；可选项包括 `minimal`、`low`、`medium` 和 `high`。根据任务的复杂程度合理调整投入，并使用[提示指南⁠（在新窗口中打开）](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide)对评估框架进行衡量。
+`reasoning_effort` 控制模型思考的程度（以及它调用工具的频率）。默认为 `medium;`；可选项包括 `minimal`、`low`、`medium` 和 `high`。根据任务的复杂程度合理调整投入，并使用[提示指南](https://cookbook.openai.com/examples/gpt-5/gpt-5_prompting_guide)对评估框架进行衡量。
 
 ##### 冗长
 
@@ -206,11 +206,11 @@ GPT‑5 具有很高的可控性。这些参数让你对模型行为拥有更多
 
 ## 步骤四：使用常见模式进行故障排查
 
-通过与数百家初创公司密切合作，我们发现一些反复出现的问题，例如过度思考、思考不足、过度顺从、输出内容过于冗长、延迟问题（参见 [延迟优化⁠（在新窗口中打开）](https://platform.openai.com/docs/guides/latency-optimization#page-top)）、工具过度使用，以及格式错误的工具调用。得益于 GPT‑5 极高的可引导性，只要通过精细的提示词调优，并配合扎实的评估与元提示技巧，绝大多数问题都能迎刃而解。如需深入了解如何诊断和纠正每种模式，请参阅 [GPT‑5 故障排查手册⁠（在新窗口中打开）](https://cookbook.openai.com/examples/gpt-5/gpt-5_troubleshooting_guide)。
+通过与数百家初创公司密切合作，我们发现一些反复出现的问题，例如过度思考、思考不足、过度顺从、输出内容过于冗长、延迟问题（参见 [延迟优化](https://platform.openai.com/docs/guides/latency-optimization#page-top)）、工具过度使用，以及格式错误的工具调用。得益于 GPT‑5 极高的可引导性，只要通过精细的提示词调优，并配合扎实的评估与元提示技巧，绝大多数问题都能迎刃而解。如需深入了解如何诊断和纠正每种模式，请参阅 [GPT‑5 故障排查手册](https://cookbook.openai.com/examples/gpt-5/gpt-5_troubleshooting_guide)。
 
 ### 关于作者
 
-本指南由 [Hillary Bush⁠（在新窗口中打开）](https://www.linkedin.com/in/hillarybush/)（初创企业客户总监）和 [Prashant Mital⁠（在新窗口中打开）](https://www.linkedin.com/in/pmital/)（初创企业解决方案架构师）基于他们与采用 GPT‑5 的顶尖初创企业合作的经验编写。
+本指南由 [Hillary Bush](https://www.linkedin.com/in/hillarybush/)（初创企业客户总监）和 [Prashant Mital](https://www.linkedin.com/in/pmital/)（初创企业解决方案架构师）基于他们与采用 GPT‑5 的顶尖初创企业合作的经验编写。
 
 他们在帮助数十家早期和成长期初创公司将 GPT‑5 投入生产后撰写了这份指南，并总结出了一系列共性模式，揭示了成功团队如何通过 API 迁移、提示词调优和全新的推理控制功能，实现产品的快速交付与性能跨越。
 
@@ -224,5 +224,5 @@ OpenAI 初创团队的目标是广泛分享这些最佳实践，以便任何初�
 
 ## 已引用来源
 
-- [Greg Brockman @gdb, X⁠（在新窗口中打开）](https://x.com/gdb/status/1957851156564042012)
-- [Alex Duffy @alxai_, X⁠（在新窗口中打开）](https://x.com/alxai_/status/1955082871426748638)
+- [Greg Brockman @gdb, X](https://x.com/gdb/status/1957851156564042012)
+- [Alex Duffy @alxai_, X](https://x.com/alxai_/status/1955082871426748638)

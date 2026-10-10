@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: c7500bfc13f6
+body_sha: 9ab4150dfcbf
 ---
 
 OpenAI
@@ -22,7 +22,7 @@ OpenAI
 # 在人们最需要的时刻施以援手
 
 
-随着 ChatGPT 在全球范围的普及，我们发现人们不仅将其用于搜索、编程和写作，更开始寻求它在[人生建议⁠（在新窗口中打开）](https://www.reddit.com/r/ChatGPT/comments/1k1dxpp/chatgpt_has_helped_me_more_than_15_years_of/)、[指导⁠（在新窗口中打开）](https://www.reddit.com/r/ChatGPT/comments/1h5y9nq/how_i_turned_chatgpt_into_my_personal/)和[支持⁠（在新窗口中打开）](https://www.reddit.com/r/ChatGPT/comments/1kqwte8/chatgpt_is_actually_amazing_for_mental_health/)等深度个人决策方面的帮助。
+随着 ChatGPT 在全球范围的普及，我们发现人们不仅将其用于搜索、编程和写作，更开始寻求它在[人生建议](https://www.reddit.com/r/ChatGPT/comments/1k1dxpp/chatgpt_has_helped_me_more_than_15_years_of/)、[指导](https://www.reddit.com/r/ChatGPT/comments/1h5y9nq/how_i_turned_chatgpt_into_my_personal/)和[支持](https://www.reddit.com/r/ChatGPT/comments/1kqwte8/chatgpt_is_actually_amazing_for_mental_health/)等深度个人决策方面的帮助。
 
 在这个层面上，我们有时会遇到遭受严重心理和情绪困扰的人。我们[数周前已就此议题发表过文章](https://openai.com/index/optimizing-chatgpt/)，并原计划在下次重要更新后分享更多内容。然而，最近一些用户在紧急危机中使用 ChatGPT 的令人心碎案例让我们倍感沉重，我们认为现在有必要立即分享更多信息。
 
@@ -44,7 +44,7 @@ OpenAI
 
 **引导用户寻求现实世界的支持资源。**
 
-如果用户表达自杀意图，经训练的 ChatGPT 会引导其寻求专业帮助。在美国，ChatGPT 会引导用户联系 988（自杀与危机热线）；在英国则引导至 Samaritans（撒玛利亚会）；其他地区则引导至 [findahelpline.com⁠（在新窗口中打开）](http://findahelpline.com)。该逻辑已内置于模型行为中。
+如果用户表达自杀意图，经训练的 ChatGPT 会引导其寻求专业帮助。在美国，ChatGPT 会引导用户联系 988（自杀与危机热线）；在英国则引导至 Samaritans（撒玛利亚会）；其他地区则引导至 [findahelpline.com](http://findahelpline.com)。该逻辑已内置于模型行为中。
 
 我们正在与来自 30 多个国家的 90 余名医生（包括精神科医生、儿科医生和全科医生）紧密合作，并组建了由心理健康、青少年发展及人机交互领域专家构成的顾问团队，以确保我们的方案符合最新研究成果与最佳实践标准。
 
@@ -107,11 +107,3 @@ OpenAI
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

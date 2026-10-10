@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 9ff946d9d08d
+body_sha: 3b1a7f3a9d35
 ---
 
 OpenAI
@@ -121,7 +121,7 @@ Search + reason
 
 如上所述，WebRTC 提供了强大的实时基础，但启动标准 WebRTC 会话需要执行数量惊人的协议握手和网络往返。WebRTC 出现得较早，并未受到后来塑造 QUIC 等协议的“尽量减少往返”理念影响。因此，其底层协议结合使用时，有时会重复执行相同工作。例如，每个协议都有自己的抗 DoS 机制，即使在完整 WebRTC 栈中并不需要。
 
-我们分析了该协议栈，并开发出 WebRTC 精简往返协议（[WARP⁠（在新窗口中打开）](https://datatracker.ietf.org/doc/draft-uberti-tsvwg-warp/)），将媒体和数据的启动过程从六次网络往返减少到一次。WARP 通过一组向后兼容的协议改进实现这一点：在 ICE 上捎带 DTLS 握手（[SPED⁠（在新窗口中打开）](https://datatracker.ietf.org/doc/draft-hancke-webrtc-sped/)）、使用更快的 [DTLS 1.3⁠（在新窗口中打开）](https://www.rfc-editor.org/rfc/rfc9147.html) 握手、预协商 SCTP 握手（[SNAP⁠（在新窗口中打开）](https://datatracker.ietf.org/doc/draft-hancke-tsvwg-snap/)），以及预协商数据通道而非使用 [DCEP⁠（在新窗口中打开）](https://www.rfc-editor.org/rfc/rfc8832.html)。
+我们分析了该协议栈，并开发出 WebRTC 精简往返协议（[WARP](https://datatracker.ietf.org/doc/draft-uberti-tsvwg-warp/)），将媒体和数据的启动过程从六次网络往返减少到一次。WARP 通过一组向后兼容的协议改进实现这一点：在 ICE 上捎带 DTLS 握手（[SPED](https://datatracker.ietf.org/doc/draft-hancke-webrtc-sped/)）、使用更快的 [DTLS 1.3](https://www.rfc-editor.org/rfc/rfc9147.html) 握手、预协商 SCTP 握手（[SNAP](https://datatracker.ietf.org/doc/draft-hancke-tsvwg-snap/)），以及预协商数据通道而非使用 [DCEP](https://www.rfc-editor.org/rfc/rfc8832.html)。
 
 我们与 WebRTC 社区的合作者共同将 WARP 设计为一组开放规范，使更广泛的生态系统也能从中受益。我们正通过 IETF 的 TSVWG 工作组推进这些提案；libwebrtc 和 Pion 均已加入 WARP 支持，其他 WebRTC 实现也在推进相关工作。
 
@@ -158,11 +158,3 @@ GPT‑Live 背后的架构已开始发展为更广泛的实时交互平台。随
 ## 作者
 
 Justin Uberti、Zahan Malkani
-
-
-
-
-
-
-
-

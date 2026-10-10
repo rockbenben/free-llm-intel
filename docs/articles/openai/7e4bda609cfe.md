@@ -15,29 +15,29 @@ status: translated
 
 我们的 Dota 2 成果表明，在算力充足的前提下，自我博弈能把机器学习系统的表现从远低于人类水平一举提升到超人类水平。一个月内，我们的系统从勉强追平一名高分玩家，到击败顶级职业选手，此后还在持续进步。监督式深度学习系统只能和其训练数据集一样好，但在自我博弈系统中，随着智能体变强，可用数据会自动改善。
 
-我们用 [TrueSkill⁠（在新窗口打开）](https://en.wikipedia.org/wiki/TrueSkill) 评分（类似国际象棋的 ELO 评分）记录最佳机器人随时间的变化：通过在机器人之间模拟对局并观察胜率算出。改进来自系统的每个部分——添加新特征、算法改进、规模扩大，无所不包。曲线惊人地接近线性，意味着团队是在指数级地提升机器人。
+我们用 [TrueSkill](https://en.wikipedia.org/wiki/TrueSkill) 评分（类似国际象棋的 ELO 评分）记录最佳机器人随时间的变化：通过在机器人之间模拟对局并观察胜率算出。改进来自系统的每个部分——添加新特征、算法改进、规模扩大，无所不包。曲线惊人地接近线性，意味着团队是在指数级地提升机器人。
 
-项目时间线如下。给点参照：15% 的玩家 MMR 低于 1.5k [MMR⁠（在新窗口打开）](https://dota.rgp.io/mmr/)；58% 的玩家低于 3k；99.99% 低于 7.5k。
+项目时间线如下。给点参照：15% 的玩家 MMR 低于 1.5k [MMR](https://dota.rgp.io/mmr/)；58% 的玩家低于 3k；99.99% 低于 7.5k。
 
-- **3 月 1 日**：在简单的 Dota 环境中取得首个经典强化学习[成果⁠（在新窗口打开）](https://www.youtube.com/watch?v=5Fv2c4aNS2w&feature=youtu.be)——卓尔游侠学会风筝一个硬编码的撼地者。
+- **3 月 1 日**：在简单的 Dota 环境中取得首个经典强化学习[成果](https://www.youtube.com/watch?v=5Fv2c4aNS2w&feature=youtu.be)——卓尔游侠学会风筝一个硬编码的撼地者。
 - **5 月 8 日**：1.5k MMR 测试员说他进步得比机器人还快。
 - **6 月初**：击败 1.5k MMR 测试员。
 - **6 月 30 日**：对 3k MMR 测试员赢下大部分对局。
-- **7 月 8 日**：艰难取得对 7.5k MMR 半职业测试员的首场[胜利⁠（在新窗口打开）](https://www.youtube.com/watch?v=FBoUHay7XBI&feature=youtu.be&t=345)。
-- **8 月 7 日**：3–0 击败 [Blitz⁠（在新窗口打开）](http://wiki.teamliquid.net/dota2/Blitz)（6.2k 前职业）、2–1 击败 [Pajkatt⁠（在新窗口打开）](http://wiki.teamliquid.net/dota2/Pajkatt)（8.5k 职业）、3–0 击败 [CC&C⁠（在新窗口打开）](http://wiki.teamliquid.net/dota2/CC%26C)（8.9k 职业）。所有人都认为 Sumail 会想出击败它的方法。
+- **7 月 8 日**：艰难取得对 7.5k MMR 半职业测试员的首场[胜利](https://www.youtube.com/watch?v=FBoUHay7XBI&feature=youtu.be&t=345)。
+- **8 月 7 日**：3–0 击败 [Blitz](http://wiki.teamliquid.net/dota2/Blitz)（6.2k 前职业）、2–1 击败 [Pajkatt](http://wiki.teamliquid.net/dota2/Pajkatt)（8.5k 职业）、3–0 击败 [CC&C](http://wiki.teamliquid.net/dota2/CC%26C)（8.9k 职业）。所有人都认为 Sumail 会想出击败它的方法。
 - **8 月 9 日**：10–0 击败 Arteezy（10k 职业，顶尖选手）。他说 Sumail 能参透这个机器人。
 - **8 月 10 日**：6–0 击败 Sumail（8.3k 职业，顶级 1v1 选手），他表示这不可战胜。他还玩了 8 月 9 日的机器人，战绩 2–1。
 - **8 月 11 日**：2–0 击败 Dendi（7.3k 职业，前世界冠军，老牌人气选手）。机器人对 8 月 10 日机器人的胜率为 60%。
 
 ## 任务
 
-完整游戏是 5v5，但 1v1 也[出现⁠（在新窗口打开）](https://www.youtube.com/watch?v=KOlw9SYjr4c)在某些[锦标赛⁠（在新窗口打开）](http://wiki.teamliquid.net/dota2/Dota_2_Asia_Championships/2017/Solo_Tournament#Rules)中。我们的机器人按标准比赛规则对战——我们没有为 1v1 加入任何 AI 专用的简化。
+完整游戏是 5v5，但 1v1 也[出现](https://www.youtube.com/watch?v=KOlw9SYjr4c)在某些[锦标赛](http://wiki.teamliquid.net/dota2/Dota_2_Asia_Championships/2017/Solo_Tournament#Rules)中。我们的机器人按标准比赛规则对战——我们没有为 1v1 加入任何 AI 专用的简化。
 
 机器人使用以下接口：
 
 - **观测**：Bot API 特征，设计为与人类可见的特征集相同，涉及英雄、小兵、信使和英雄附近地形。游戏是部分可观测的。
 - **动作**：Bot API 可执行的动作，以与人类相当的频率选择，包括移动到某位置、攻击某单位或使用某物品。
-- **反馈**：机器人会获得对胜利的激励以及一些基本指标，如生命值和[正反补⁠（在新窗口打开）](https://dota2.gamepedia.com/Creep_control_techniques#Last-hitting)。
+- **反馈**：机器人会获得对胜利的激励以及一些基本指标，如生命值和[正反补](https://dota2.gamepedia.com/Creep_control_techniques#Last-hitting)。
 
 我们白名单放行了几十种装备路线供机器人使用，并选定一种用于评估。我们还用传统 RL 技术单独训练了开局拉野/卡兵环节，因为它发生在对手出现之前。
 
@@ -73,14 +73,14 @@ Pajkatt 击败周一的机器人。注意他把机器人引诱进交战，并用
 
 当时 Dota 不支持自定义专用服务器，这意味着想可扩展地、不用 GPU 地运行，就只有极慢的软件渲染。于是我们做了一个 shim，桩掉除启动所需之外的大部分 OpenGL 调用。
 
-同时，我们写了一个脚本机器人——我们需要一个对照基线（尤其是内置机器人在 1v1 上表现很差），并借此理解 [Bot API⁠（在新窗口打开）](https://developer.valvesoftware.com/wiki/Dota_Bot_Scripting) 的全部语义。脚本机器人在空兵线十分钟能补 70 个刀，但仍会输给正常人类。我们当前最强的 1v1 机器人能补到约 97 个（在那之前它就把塔推了，只能外推），理论上限是 101。
+同时，我们写了一个脚本机器人——我们需要一个对照基线（尤其是内置机器人在 1v1 上表现很差），并借此理解 [Bot API](https://developer.valvesoftware.com/wiki/Dota_Bot_Scripting) 的全部语义。脚本机器人在空兵线十分钟能补 70 个刀，但仍会输给正常人类。我们当前最强的 1v1 机器人能补到约 97 个（在那之前它就把塔推了，只能外推），理论上限是 101。
 
-机器人对战 [SirActionSlacks⁠（在新窗口打开）](http://wiki.teamliquid.net/dota2/SirActionSlacks)。用信使冲锋骚扰机器人的策略没有奏效。
+机器人对战 [SirActionSlacks](http://wiki.teamliquid.net/dota2/SirActionSlacks)。用信使冲锋骚扰机器人的策略没有奏效。
 
 ## 5v5
 
 1v1 已经复杂，但 5v5 是复杂性的汪洋。我们知道必须进一步推高 AI 的极限才能解决它。
 
-一个成熟的起点是行为克隆。Dota 每天约有 100 万场公开比赛，这些比赛录像在 Valve 服务器上保存两周。从去年 11 月起，我们一直在下载每一场专家级录像，已积累 580 万场比赛的数据集（每场约 45 分钟、10 名人类）。我们用 [OpenDota⁠（在新窗口打开）](https://www.opendota.com/) 发现这些录像，并向该项目捐款 1.2 万美元（相当于他们十年筹款目标）以示支持。
+一个成熟的起点是行为克隆。Dota 每天约有 100 万场公开比赛，这些比赛录像在 Valve 服务器上保存两周。从去年 11 月起，我们一直在下载每一场专家级录像，已积累 580 万场比赛的数据集（每场约 45 分钟、10 名人类）。我们用 [OpenDota](https://www.opendota.com/) 发现这些录像，并向该项目捐款 1.2 万美元（相当于他们十年筹款目标）以示支持。
 
 我们还有很多想法，并正在[招聘⁠](https://openai.com/careers/)工程师（必须对机器学习感兴趣，但不必是专家）和研究员帮我们实现。我们感谢 Microsoft Azure 和 Valve 对这一事业的支持。

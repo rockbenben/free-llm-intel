@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 28e60cb6827d
+body_sha: e8b4dda714e7
 ---
 
 OpenAI
@@ -23,7 +23,7 @@ OpenAI
 
 今日我们隆重推出“OpenAI for Greece”，这是 OpenAI、希腊共和国政府、Onassis Foundation 及 Endeavor Greece 之间的一项新合作，旨在扩大高质量人工智能工具在中学教育中的应用，并加速希腊初创企业生态系统的创新。
 
-人工智能是一项基础技术，对一些国家而言，它具有支持学习、激发创新并推动经济增长的潜力。在希腊，ChatGPT 的每周活跃用户数量在过去一年中增长了七倍，希腊政府已制定[国家战略蓝图⁠（在新窗口中打开）](https://foresight.gov.gr/en/studies/A-Blueprint-for-Greece-s-AI-Transformation/)，助力国家把握机遇，涵盖创新创业、教育科研以及人工智能在公共部门服务中的应用整合等领域。
+人工智能是一项基础技术，对一些国家而言，它具有支持学习、激发创新并推动经济增长的潜力。在希腊，ChatGPT 的每周活跃用户数量在过去一年中增长了七倍，希腊政府已制定[国家战略蓝图](https://foresight.gov.gr/en/studies/A-Blueprint-for-Greece-s-AI-Transformation/)，助力国家把握机遇，涵盖创新创业、教育科研以及人工智能在公共部门服务中的应用整合等领域。
 
 为推进落实这一愿景，“OpenAI for Greece”谅解备忘录今日于希腊展览中心签署。希腊总理 Kyriakos Mitsotakis 率内阁部长出席，Onassis Foundation 主席 Anthony S. Papadimitriou、OpenAI 全球事务首席官 Chris Lehane 及 OpenAI 教育与政府市场拓展负责人 Kevin Mills 共同参与签署。
 
@@ -39,7 +39,7 @@ OpenAI
 
 由总理办公室、教育部及奥纳西斯基金会代表组成的联合工作组将监督试点计划。在取得预期成果后，该项目预计将在希腊全国教育系统内推广。
 
-此次部署正值 OpenAI 致力于改进 ChatGPT 支持学习的方式之际，例如通过[学习模式⁠（在新窗口中打开）](https://chatgpt.com/features/study-mode)等功能，以应对将人工智能融入教育的机遇和挑战。世界各地的学生已经纷纷接受这项技术，ChatGPT Edu 已在哈佛大学和牛津大学等顶尖学府实现早期采用。
+此次部署正值 OpenAI 致力于改进 ChatGPT 支持学习的方式之际，例如通过[学习模式](https://chatgpt.com/features/study-mode)等功能，以应对将人工智能融入教育的机遇和挑战。世界各地的学生已经纷纷接受这项技术，ChatGPT Edu 已在哈佛大学和牛津大学等顶尖学府实现早期采用。
 
 ## 加速希腊人工智能初创企业发展
 
@@ -70,11 +70,3 @@ OpenAI
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

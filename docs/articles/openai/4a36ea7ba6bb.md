@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 192092963d30
+body_sha: 520bdc1d3248
 ---
 
 OpenAI
@@ -70,7 +70,7 @@ Newmark 新闻学院和 Medill 新闻学院新设的 Tow-Knight 中心与 Knight
 
 这项工作延续了整个行业的对话与合作。仅今年，OpenAI 就与新闻工作者举办了多场交流会，并在 National Association of Black Journalists、National Association of Hispanic Journalists、Asian American Journalists Association 和 NLGJA: The Association of LGBTQ+ Journalists 的大会上开展培训。这些活动汇集了记者、编辑、制作人、学生、教育工作者、新闻编辑部负责人和媒体创业者；他们所在的社群长期以来一直影响着新闻业服务不同受众的方式。
 
-在这些大会上，OpenAI 倾听新闻工作者的需求，分享实践案例，并帮助记者探索在日常工作中运用 AI 的实用方法。这些交流也为 [面向新闻机构的 OpenAI Academy⁠（在新窗口中打开）](https://academy.openai.com/home/clubs/news-organizations-b9osl/overview?linkMenu=News%2520organizations)持续扩展提供了参考。这个学习中心为使用 AI 的新闻工作者和出版商提供实践培训、适用于新闻编辑部的用例、操作指南和真实案例。
+在这些大会上，OpenAI 倾听新闻工作者的需求，分享实践案例，并帮助记者探索在日常工作中运用 AI 的实用方法。这些交流也为 [面向新闻机构的 OpenAI Academy](https://academy.openai.com/home/clubs/news-organizations-b9osl/overview?linkMenu=News%2520organizations)持续扩展提供了参考。这个学习中心为使用 AI 的新闻工作者和出版商提供实践培训、适用于新闻编辑部的用例、操作指南和真实案例。
 
 这些教育合作、专业伙伴关系和行业大会共同推动 OpenAI 新闻业工作的下一阶段发展，确保 AI 的部署与应用立足于新闻业未来建设者的真实需求和亲身经验。
 
@@ -83,11 +83,3 @@ OpenAI
 ## 脚注
 
 - 1ChatGPT Edu 提供企业级隐私保护、权限设置和管理控制；Edu 工作区中的数据不会用于训练 OpenAI 的模型。
-
-
-
-
-
-
-
-

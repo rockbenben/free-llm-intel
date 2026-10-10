@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 02c29cc85a75
+body_sha: 2ff5a510c530
 translator: agent
 ---
 
@@ -21,7 +21,7 @@ OpenAI
 
 ChatGPT 应用会同步你的对话、支持语音输入，并把我们的最新模型改进带到你的指尖。
 
-在 App Store 下载（在新窗口打开）
+在 App Store 下载
 
 自 ChatGPT 发布以来，我们从用户那里听说他们喜欢在移动场景下使用 ChatGPT。今天，我们推出 iOS 版 ChatGPT 应用。
 
@@ -41,15 +41,7 @@ ChatGPT 应用免费使用，并在各设备之间同步你的历史记录。它
 
 又及：安卓用户，下一个就是你们！ChatGPT 很快就要来到你们的设备上。
 
-- [在 App Store 下载(在新窗口打开)](https://apps.apple.com/app/openai-chatgpt/id6448311069)
+- [在 App Store 下载](https://apps.apple.com/app/openai-chatgpt/id6448311069)
 
 - [ChatGPT](https://openai.com/news/?tags=chatgpt)
 - [2023](https://openai.com/news/?tags=2023)
-
-
-
-
-
-
-
-

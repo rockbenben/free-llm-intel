@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e84aa4af77a8
+body_sha: 2ee525ce12c0
 ---
 
 OpenAI
@@ -49,13 +49,13 @@ ChatGPT 使用年龄预测模型帮助判断账户所属用户是否可能未满
 
 此方法以专家意见为指导，依托于儿童发展科学的相关学术研究，并充分考虑到青少年在风险认知、冲动控制、同伴影响及情绪调节方面存在的已知差异。尽管这些内容限制有助于减少青少年接触敏感内容，我们仍将专注于持续改进这些防护措施，尤其是针对试图规避安全机制的行为。当我们对用户年龄缺乏把握或信息不完整时，系统会默认提供更安全的使用体验。
 
-除上述系统防护外，家长还可以通过[家长控制功能⁠（在新窗口中打开）](https://help.openai.com/en/articles/12315553-parental-controls-on-chatgpt-faq)进一步自定义青少年的使用体验，例如：设置 ChatGPT 不可使用的安静时段，管控记忆或模型训练等功能，并在检测到明显的严重情绪困扰迹象时接收通知。
+除上述系统防护外，家长还可以通过[家长控制功能](https://help.openai.com/en/articles/12315553-parental-controls-on-chatgpt-faq)进一步自定义青少年的使用体验，例如：设置 ChatGPT 不可使用的安静时段，管控记忆或模型训练等功能，并在检测到明显的严重情绪困扰迹象时接收通知。
 
 ## 未来展望
 
 我们正在总结初步推广中获得的经验，并持续提高年龄预测的准确性。我们会密切跟踪功能的上线情况，并利用这些信号来指导后续的持续优化。
 
-在欧盟地区，年龄预测功能将在未来几周内上线，以满足当地的合规要求。如需了解更多详情，请访问我们的[帮助页面⁠（在新窗口中打开）](https://help.openai.com/en/articles/12652064-age-prediction-in-chatgpt)。
+在欧盟地区，年龄预测功能将在未来几周内上线，以满足当地的合规要求。如需了解更多详情，请访问我们的[帮助页面](https://help.openai.com/en/articles/12652064-age-prediction-in-chatgpt)。
 
 尽管这是一个重要的里程碑，但我们在保障青少年安全方面的工作将持续推进。我们将继续与美国心理学会、ConnectSafely 以及[全球医疗网络⁠](https://openai.com/index/strengthening-chatgpt-responses-in-sensitive-conversations/)等专业机构保持对话，并分享我们的最新进展和相关洞见。
 
@@ -66,11 +66,3 @@ ChatGPT 使用年龄预测模型帮助判断账户所属用户是否可能未满
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

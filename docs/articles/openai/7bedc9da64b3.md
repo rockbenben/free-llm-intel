@@ -15,7 +15,7 @@ status: translated
 
 OpenAI 封禁了疑似源自俄罗斯的账号，这些账号使用 AI 生成关于乌克兰、北约及德国国内议题的德语政治内容。
 
-*本案例研究最初发表于 OpenAI 的 [*2025 年 6 月⁠（在新窗口打开）*](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)* 报告。*
+*本案例研究最初发表于 OpenAI 的 [*2025 年 6 月*](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)* 报告。*
 
 ## 行为者
 
@@ -23,9 +23,9 @@ OpenAI 封禁了疑似源自俄罗斯的账号，这些账号使用 AI 生成关
 
 ## 行为
 
-通过平台外调查，我们确认相关的生成内容在一个名为 [“Nachhall von Helgoland”⁠（在新窗口打开）](https://t.me/nachhallvonhelgoland)（意为“黑尔戈兰的回响”，指北海黑尔戈兰湾的一座岛屿）的 Telegram 频道上被欺骗性地分发。该频道自称是本地运营的独立德语新闻，当时有 1,755 名订阅者。鉴于其名称以及该活动试图生成批评性评论的行为，我们将此行动命名为“Helgoland Bite”（黑尔戈兰之咬）。
+通过平台外调查，我们确认相关的生成内容在一个名为 [“Nachhall von Helgoland”](https://t.me/nachhallvonhelgoland)（意为“黑尔戈兰的回响”，指北海黑尔戈兰湾的一座岛屿）的 Telegram 频道上被欺骗性地分发。该频道自称是本地运营的独立德语新闻，当时有 1,755 名订阅者。鉴于其名称以及该活动试图生成批评性评论的行为，我们将此行动命名为“Helgoland Bite”（黑尔戈兰之咬）。
 
-该频道的内容被定期原文转发到一个与 [Pravda 网络⁠（在新窗口打开）](https://dfrlab.org/2025-03-12/pravda-network-wikipedia-llm-x/) 有关联、面向德语受众的域名上。相关的 Pravda（DE）网站是法国政府 VIGINUM 部门此前已识别的、与莫斯科有关联的隐蔽影响行动网络 [“Portal Kombat”⁠（在新窗口打开）](https://www.diplomatie.gouv.fr/en/french-foreign-policy/security-disarmament-and-non-proliferation/news/2024/article/foreign-digital-interference-result-of-investigations-into-the-russian) 中的一个已知节点。
+该频道的内容被定期原文转发到一个与 [Pravda 网络](https://dfrlab.org/2025-03-12/pravda-network-wikipedia-llm-x/) 有关联、面向德语受众的域名上。相关的 Pravda（DE）网站是法国政府 VIGINUM 部门此前已识别的、与莫斯科有关联的隐蔽影响行动网络 [“Portal Kombat”](https://www.diplomatie.gouv.fr/en/french-foreign-policy/security-disarmament-and-non-proliferation/news/2024/article/foreign-digital-interference-result-of-investigations-into-the-russian) 中的一个已知节点。
 
 *Pravda DE 网站上的文章，来源于 Nachhall von Helgoland。标题为“欧尔班会见魏德尔：‘AfD 是德国的未来’”。*
 
@@ -41,4 +41,4 @@ OpenAI 封禁了疑似源自俄罗斯的账号，这些账号使用 AI 生成关
 
 如上所述，在我们调查时该 Telegram 频道有 1,755 名订阅者，其内容被定期原文转发到与 Pravda 网络有关联的域名上。那个 X 账号拥有超过 27,000 名粉丝。
 
-按照 IO 影响评估的 [Breakout Scale⁠（在新窗口打开）](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/)，我们将其评估为第 2 类的偏上端：在多个平台活动，但几乎没有真实互动，也没有其内容被广泛传播的证据。
+按照 IO 影响评估的 [Breakout Scale](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/)，我们将其评估为第 2 类的偏上端：在多个平台活动，但几乎没有真实互动，也没有其内容被广泛传播的证据。

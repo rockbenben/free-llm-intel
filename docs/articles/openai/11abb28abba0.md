@@ -15,7 +15,7 @@ status: translated
 
 Hearst 旗下标志性品牌将精选的生活方式与本地新闻内容带入 OpenAI 的产品。
 
-*编者按：这则消息最初由 Hearst 发布，原文可参阅*[此处⁠（在新窗口中打开）](https://www.hearst.com/-/hearst-and-openai-announce-strategic-content-partnership)*。*
+*编者按：这则消息最初由 Hearst 发布，原文可参阅*[此处](https://www.hearst.com/-/hearst-and-openai-announce-strategic-content-partnership)*。*
 
 Hearst 今日宣布与 OpenAI 建立新的内容合作关系，将 Hearst 丰富的报纸与本土杂志内容整合进 OpenAI 的产品，提升两家公司产品对用户的价值与触达。
 

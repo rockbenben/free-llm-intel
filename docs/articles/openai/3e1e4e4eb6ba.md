@@ -13,7 +13,7 @@ status: translated
 
 # AI 与效率
 
-阅读论文（在新窗口打开）。
+阅读论文。
 
 我们发布的一项分析显示，自 2012 年以来，在 ImageNet 分类上训练一个达到相同性能的神经网络所需的算力，每 16 个月减少一半（factor of 2）。与 2012 年相比，如今把一个神经网络训练到 AlexNet 水平所需的算力少了 44 倍（作为对比，同期摩尔定律只会带来 11 倍的成本改善）。我们的结果表明：对于近期高投入的 AI 任务，算法进步带来的收益已超过经典硬件效率的提升。
 
@@ -31,7 +31,7 @@ status: translated
 
 - 在翻译领域，Transformer[22](https://openai.com/index/ai-and-efficiency/#citation-bottom-22) 三年后以少 61 倍的训练算力超越了 seq2seq[23](https://openai.com/index/ai-and-efficiency/#citation-bottom-23) 在 WMT'14 英法翻译上的性能。
 - 我们估计 AlphaZero[24](https://openai.com/index/ai-and-efficiency/#citation-bottom-24) 一年后用少 8 倍的算力达到了 AlphaGoZero[25](https://openai.com/index/ai-and-efficiency/#citation-bottom-25) 水平的性能。
-- OpenAI Five Rerun 用少 5 倍的训练算力，在此后 3 个月超越了 OpenAI Five[26](https://openai.com/index/ai-and-efficiency/#citation-bottom-26)（后者击败了世界冠军战队 [OG⁠（在新窗口打开）](https://liquipedia.net/dota2/OG)）。
+- OpenAI Five Rerun 用少 5 倍的训练算力，在此后 3 个月超越了 OpenAI Five[26](https://openai.com/index/ai-and-efficiency/#citation-bottom-26)（后者击败了世界冠军战队 [OG](https://liquipedia.net/dota2/OG)）。
 
 把 2012 年的算力与 2019 年的算力看作不等价是有帮助的，就像美元需要按通胀调整一样。同样一份算力，2019 年能比 2012 年完成更多的事。一种理解方式是：某些类型的 AI 研究进展分两个阶段，类似于半导体领域的“tick-tock”开发模式；新能力（“tick”）通常需要大量算力投入才能获得，随后这些能力的精炼版本（“tock”）因工艺改进而部署效率大幅提升。
 
@@ -60,7 +60,7 @@ status: translated
 
 我们的结果表明，对于高投入（研究员时间和/或算力）的 AI 任务，算法效率可能超过硬件效率（摩尔定律）的收益。摩尔定律提出于 1965 年，当时集成电路只有 64 个晶体管（6 次翻倍），而天真地外推它预言了个人电脑和智能手机（iPhone 11 有 85 亿个晶体管）。如果我们观察到 AI 算法效率数十年的指数改进，它会把我们带向什么？我们不确定。这些结果让我们提出这个问题，对我们而言是一个温和的信号，指向一个拥有强大 AI 服务与技术的未来。
 
-基于以上所有原因，我们将开始公开跟踪效率 SOTA。我们从视觉和翻译效率基准（ImageNet[G](https://openai.com/index/ai-and-efficiency/#citation-bottom-G) 和 WMT14）开始，未来会考虑增加更多基准。我们相信这些基准上存在我们尚不了解的效率 SOTA，鼓励研究社区[在此提交⁠（在新窗口打开）](https://github.com/openai/ai-and-efficiency)（我们会为原作者与合作者署名）。
+基于以上所有原因，我们将开始公开跟踪效率 SOTA。我们从视觉和翻译效率基准（ImageNet[G](https://openai.com/index/ai-and-efficiency/#citation-bottom-G) 和 WMT14）开始，未来会考虑增加更多基准。我们相信这些基准上存在我们尚不了解的效率 SOTA，鼓励研究社区[在此提交](https://github.com/openai/ai-and-efficiency)（我们会为原作者与合作者署名）。
 
 行业领导者、政策制定者、经济学家和潜在的研究者都在努力更好地理解 AI 进步，并决定应当投入多少关注、投向何处。度量工作可以帮助这些决策落到实处。如果你对这类工作感兴趣，[考虑申请⁠](https://openai.com/careers/) OpenAI Foresight 或 Policy 团队的工作！
 
@@ -76,38 +76,38 @@ status: translated
 
 ## 参考文献
 
-- 1 Deng, J., Dong, W., Socher, R., Li, L.-J., Li, K., & Fei-Fei, L. (2009). “[ImageNet: A Large-Scale Hierarchical Image Database⁠（在新窗口打开）](http://www.image-net.org/papers/imagenet_cvpr09.pdf).” In CVPR09.
-- 2 Krizhevsky, A., Sutskever, I., & Hinton, G. E. (2012). “[Imagenet classification with deep convolutional neural networks⁠（在新窗口打开）](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf).” In F. Pereira, C. J. C. Burges, L. Bottou, & K. Q. Weinberger (Eds.), Advances in Neural Information Processing Systems 25 (pp. 1097–1105). Curran Associates, Inc.
-- 3 Moore, G. E. (1965). “[Cramming more components onto integrated circuits⁠（在新窗口打开）](https://newsroom.intel.com/wp-content/uploads/sites/11/2018/05/moores-law-electronics.pdf).” Electronics 38(8).
+- 1 Deng, J., Dong, W., Socher, R., Li, L.-J., Li, K., & Fei-Fei, L. (2009). “[ImageNet: A Large-Scale Hierarchical Image Database](http://www.image-net.org/papers/imagenet_cvpr09.pdf).” In CVPR09.
+- 2 Krizhevsky, A., Sutskever, I., & Hinton, G. E. (2012). “[Imagenet classification with deep convolutional neural networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf).” In F. Pereira, C. J. C. Burges, L. Bottou, & K. Q. Weinberger (Eds.), Advances in Neural Information Processing Systems 25 (pp. 1097–1105). Curran Associates, Inc.
+- 3 Moore, G. E. (1965). “[Cramming more components onto integrated circuits](https://newsroom.intel.com/wp-content/uploads/sites/11/2018/05/moores-law-electronics.pdf).” Electronics 38(8).
 - 4 Amodei, D. & Hernandez, D. (2018). “[AI and Compute⁠](https://openai.com/index/ai-and-compute/).”
-- 5 Szegedy, C., Liu, W., Jia, Y., Sermanet, P., Reed, S., Anguelov, D., Erhan, D., Vanhoucke, V., & Rabinovich, A. (2014). “[Going deeper with convolutions⁠（在新窗口打开）](https://arxiv.org/abs/1409.4842).”
-- 6 Simonyan, K. & Zisserman, A. (2014). “[Very deep convolutional networks for large-scale image recognition⁠（在新窗口打开）](https://arxiv.org/abs/1409.1556).”
-- 7 He, K., Zhang, X., Ren, S., & Sun, J. (2015). “[Deep residual learning for image recognition⁠（在新窗口打开）](https://arxiv.org/abs/1512.03385).”
-- 8 Iandola, F. N., Han, S., Moskewicz, M. W., Ashraf, K., Dally, W. J., & Keutzer, K. (2016). “[Squeezenet: Alexnet-level accuracy with 50x fewer parameters and <0.5mb model size⁠（在新窗口打开）](https://arxiv.org/abs/1602.07360).”
-- 9 Zagoruyko, S. & Komodakis, N. (2016). “[Wide residual networks⁠（在新窗口打开）](https://arxiv.org/abs/1605.07146).”
-- 10 Xie, S., Girshick, R., Dollár, P., Tu, Z., & He, K. (2016). “[Aggregated residual transformations for deep neural networks⁠（在新窗口打开）](https://arxiv.org/abs/1611.05431).”
-- 11 Huang, G., Liu, Z., van der Maaten, L., & Weinberger, K. Q. (2016). “[Densely connected convolutional networks⁠（在新窗口打开）](https://arxiv.org/abs/1608.06993).”
-- 12 Howard, A. G., Zhu, M., Chen, B., Kalenichenko, D., Wang, W., Weyand, T., Andreetto, M., & Adam, H. (2017). “[Mobilenets: Efficient convolutional neural networks for mobile vision applications⁠（在新窗口打开）](https://arxiv.org/pdf/1704.04861.pdf).”
-- 13 Zhang, X., Zhou, X., Lin, M., & Sun, J. (2017). “[Shufflenet: An extremely efficient convolutional neural network for mobile devices⁠（在新窗口打开）](https://arxiv.org/abs/1707.01083).”
-- 14 Sandler, M., Howard, A., Zhu, M., Zhmoginov, A., & Chen, L.-C. (2018). “[Mobilenetv2: Inverted residuals and linear bottlenecks⁠（在新窗口打开）](https://arxiv.org/abs/1801.04381).”
-- 15 Ma, N., Zhang, X., Zheng, H.-T., & Sun, J. (2018). “[Practical guidelines for efficient cnn architecture design⁠（在新窗口打开）](https://arxiv.org/abs/1807.11164).”
-- 16 Tan, M. & Le, Q. V. (2019). “[Efficientnet: Rethinking model scaling for convolutional neural networks⁠（在新窗口打开）](https://arxiv.org/abs/1905.11946).”
-- 17 Sawyer, Eric (2011). “[High Throughput Sequencing and Cost Trends⁠（在新窗口打开）](https://www.nature.com/scitable/blog/bio2.0/high_throughput_sequencing_and_cost/).”
-- 18 Roberts, David (2019). “[Getting to 100% renewables requires cheap energy storage. But how cheap?⁠（在新窗口打开）](https://www.vox.com/energy-and-environment/2019/8/9/20767886/renewable-energy-storage-cost-electricity).”
-- 19 Paszke, A., Gross, S., Chintala, S., Chanan, G., Yang, E., DeVito, Z., Lin, Z., Desmaison, A., Antiga, L., & Lerer, A. (2017). “[Automatic differentiation in PyTorch. In NIPS Autodiff Workshop⁠（在新窗口打开）](https://openreview.net/pdf?id=BJJsrmfCZ).”
-- 20 Huang, J. (2017). “[Shufflenet in pytorch⁠（在新窗口打开）](https://github.com/jaxony/shufflenet).”
-- 21 Xiao, H. (2017). “[Pytorch mobilenet implementation of “mobilenets: Efficient convolutional neural networks for mobile vision applications”⁠（在新窗口打开）](https://github.com/marvis/pytorch-mobilenet.).”
-- 22 Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, L., & Polosukhin, I. (2017). “[Attention is all you need. CoRR, abs/1706.03762⁠（在新窗口打开）](https://arxiv.org/abs/1706.03762).”
-- 23 Sutskever, I., Vinyals, O., & Le, Q. V. (2014). “[Sequence to sequence learning with neural networks. CoRR, abs/1409.3215⁠（在新窗口打开）](https://arxiv.org/abs/1409.3215).”
-- 24 Silver, D., Hubert, T., Schrittwieser, J., Antonoglou, I., Lai, M., Guez, A., Lanctot, M., Sifre, L., Kumaran, D., Graepel, T., Lillicrap, T., Simonyan, K., & Hassabis, D. (2018). “[A general reinforcement learning algorithm that masters chess, shogi, and go through self-play. Science, 362(6419), 1140–1144⁠（在新窗口打开）](https://arxiv.org/abs/1712.01815).”
-- 25 Silver, D., Schrittwieser, J., Simonyan, K., Antonoglou, I., Huang, A., Guez, A., Hubert, T., Baker, L., Lai, M., Bolton, A., Chen, Y., Lillicrap, T., Hui, F., Sifre, L., van den Driessche, G., Graepel, T., & Hassabis, D. (2017). “[Mastering the game of go without human knowledge. Nature, 550, 354–⁠（在新窗口打开）](https://www.nature.com/articles/nature24270).”
-- 26 OpenAI et. al., :, Berner, C., Brockman, G., Chan, B., Cheung, V., Łoski, P., Dennison, C., Farhi, D., Fischer, Q., Hashme, S., Hesse, C., Józefowicz, R., Gray, S., Olsson, C., Pachocki, J., Petrov, M., de Oliveira Pinto, H. P., Raiman, J., Salimans, T., Schlatter, J., Schneider, J., Sidor, S., Sutskever, I., Tang, J., Wolski, F., & Zhang, S. (2019). “[Dota 2 with Large Scale Deep Reinforcement Learning⁠（在新窗口打开）](https://cdn.openai.com/dota-2.pdf).”
-- 27 Coleman, C. A., Narayanan, D., Kang, D., Zhao, T., Zhang, J., Nardi, L., Bailis, P., Olukotun, K., Ré, C., & Zaharia, M. (2017). “[The Dawn of AI: Performance Analysis and Cost Modeling of Machine Learning Algorithms⁠（在新窗口打开）](https://dawn.cs.stanford.edu/benchmark/papers/nips17-dawnbench.pdf).”
-- 28 Paszke, A., Gross, S., Chintala, S., Chanan, G., Yang, E., DeVito, Z., Lin, Z., Desmaison, A., Antiga, L., & Lerer, A. (2017). “[DAWNBench: An End-to-End Deep Learning Benchmark and Competition. NIPS ML SYSTEMS WORKSHOP, 2017⁠（在新窗口打开）](https://openreview.net/pdf?id=BJJsrmfCZ).”
-- 29 Raymond Perrault, Yoav Shoham 等 (2019). “[The AI Index 2019 Annual Report”. Technical report, AI Index Steering Committee, Human-Centered AI Institute, Stanford University, Stanford, CA⁠（在新窗口打开）](https://hai.stanford.edu/sites/default/files/ai_index_2019_report.pdf).”
-- 30 McCandlish, S., Kaplan, J., Amodei, D., & Team, O. D. (2018). “[An empirical model of large-batch training”⁠（在新窗口打开）](https://arxiv.org/pdf/1812.06162.pdf).”
-- 31 van den Oord, A., Li, Y., Babuschkin, I., Simonyan, K., Vinyals, O., Kavukcuoglu, K., van den Driessche, G., Lockhart, E., Cobo, L. C., Stimberg, F., Casagrande, N., Grewe, D., Noury, S., Dieleman, S., Elsen, E., Kalchbrenner, N., Zen, H., Graves, A., King, H., Walters, T., Belov, D., & Hassabis, D. (2017). “[Parallel wavenet: Fast high-fidelity speech synthesis.⁠（在新窗口打开）](https://arxiv.org/abs/1711.10433).”
-- 32 Jack Clark (2019). “[Written Testimony of Jack Clark, Policy Director at OpenAI. Hearing on “Artificial Intelligence: Societal and Ethical Implications” before the House Committee on Science, Space, & Technology⁠（在新窗口打开）](https://science.house.gov/imo/media/doc/Clark%20Testimony.pdf).”
+- 5 Szegedy, C., Liu, W., Jia, Y., Sermanet, P., Reed, S., Anguelov, D., Erhan, D., Vanhoucke, V., & Rabinovich, A. (2014). “[Going deeper with convolutions](https://arxiv.org/abs/1409.4842).”
+- 6 Simonyan, K. & Zisserman, A. (2014). “[Very deep convolutional networks for large-scale image recognition](https://arxiv.org/abs/1409.1556).”
+- 7 He, K., Zhang, X., Ren, S., & Sun, J. (2015). “[Deep residual learning for image recognition](https://arxiv.org/abs/1512.03385).”
+- 8 Iandola, F. N., Han, S., Moskewicz, M. W., Ashraf, K., Dally, W. J., & Keutzer, K. (2016). “[Squeezenet: Alexnet-level accuracy with 50x fewer parameters and <0.5mb model size](https://arxiv.org/abs/1602.07360).”
+- 9 Zagoruyko, S. & Komodakis, N. (2016). “[Wide residual networks](https://arxiv.org/abs/1605.07146).”
+- 10 Xie, S., Girshick, R., Dollár, P., Tu, Z., & He, K. (2016). “[Aggregated residual transformations for deep neural networks](https://arxiv.org/abs/1611.05431).”
+- 11 Huang, G., Liu, Z., van der Maaten, L., & Weinberger, K. Q. (2016). “[Densely connected convolutional networks](https://arxiv.org/abs/1608.06993).”
+- 12 Howard, A. G., Zhu, M., Chen, B., Kalenichenko, D., Wang, W., Weyand, T., Andreetto, M., & Adam, H. (2017). “[Mobilenets: Efficient convolutional neural networks for mobile vision applications](https://arxiv.org/pdf/1704.04861.pdf).”
+- 13 Zhang, X., Zhou, X., Lin, M., & Sun, J. (2017). “[Shufflenet: An extremely efficient convolutional neural network for mobile devices](https://arxiv.org/abs/1707.01083).”
+- 14 Sandler, M., Howard, A., Zhu, M., Zhmoginov, A., & Chen, L.-C. (2018). “[Mobilenetv2: Inverted residuals and linear bottlenecks](https://arxiv.org/abs/1801.04381).”
+- 15 Ma, N., Zhang, X., Zheng, H.-T., & Sun, J. (2018). “[Practical guidelines for efficient cnn architecture design](https://arxiv.org/abs/1807.11164).”
+- 16 Tan, M. & Le, Q. V. (2019). “[Efficientnet: Rethinking model scaling for convolutional neural networks](https://arxiv.org/abs/1905.11946).”
+- 17 Sawyer, Eric (2011). “[High Throughput Sequencing and Cost Trends](https://www.nature.com/scitable/blog/bio2.0/high_throughput_sequencing_and_cost/).”
+- 18 Roberts, David (2019). “[Getting to 100% renewables requires cheap energy storage. But how cheap?](https://www.vox.com/energy-and-environment/2019/8/9/20767886/renewable-energy-storage-cost-electricity).”
+- 19 Paszke, A., Gross, S., Chintala, S., Chanan, G., Yang, E., DeVito, Z., Lin, Z., Desmaison, A., Antiga, L., & Lerer, A. (2017). “[Automatic differentiation in PyTorch. In NIPS Autodiff Workshop](https://openreview.net/pdf?id=BJJsrmfCZ).”
+- 20 Huang, J. (2017). “[Shufflenet in pytorch](https://github.com/jaxony/shufflenet).”
+- 21 Xiao, H. (2017). “[Pytorch mobilenet implementation of “mobilenets: Efficient convolutional neural networks for mobile vision applications”](https://github.com/marvis/pytorch-mobilenet.).”
+- 22 Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, L., & Polosukhin, I. (2017). “[Attention is all you need. CoRR, abs/1706.03762](https://arxiv.org/abs/1706.03762).”
+- 23 Sutskever, I., Vinyals, O., & Le, Q. V. (2014). “[Sequence to sequence learning with neural networks. CoRR, abs/1409.3215](https://arxiv.org/abs/1409.3215).”
+- 24 Silver, D., Hubert, T., Schrittwieser, J., Antonoglou, I., Lai, M., Guez, A., Lanctot, M., Sifre, L., Kumaran, D., Graepel, T., Lillicrap, T., Simonyan, K., & Hassabis, D. (2018). “[A general reinforcement learning algorithm that masters chess, shogi, and go through self-play. Science, 362(6419), 1140–1144](https://arxiv.org/abs/1712.01815).”
+- 25 Silver, D., Schrittwieser, J., Simonyan, K., Antonoglou, I., Huang, A., Guez, A., Hubert, T., Baker, L., Lai, M., Bolton, A., Chen, Y., Lillicrap, T., Hui, F., Sifre, L., van den Driessche, G., Graepel, T., & Hassabis, D. (2017). “[Mastering the game of go without human knowledge. Nature, 550, 354–](https://www.nature.com/articles/nature24270).”
+- 26 OpenAI et. al., :, Berner, C., Brockman, G., Chan, B., Cheung, V., Łoski, P., Dennison, C., Farhi, D., Fischer, Q., Hashme, S., Hesse, C., Józefowicz, R., Gray, S., Olsson, C., Pachocki, J., Petrov, M., de Oliveira Pinto, H. P., Raiman, J., Salimans, T., Schlatter, J., Schneider, J., Sidor, S., Sutskever, I., Tang, J., Wolski, F., & Zhang, S. (2019). “[Dota 2 with Large Scale Deep Reinforcement Learning](https://cdn.openai.com/dota-2.pdf).”
+- 27 Coleman, C. A., Narayanan, D., Kang, D., Zhao, T., Zhang, J., Nardi, L., Bailis, P., Olukotun, K., Ré, C., & Zaharia, M. (2017). “[The Dawn of AI: Performance Analysis and Cost Modeling of Machine Learning Algorithms](https://dawn.cs.stanford.edu/benchmark/papers/nips17-dawnbench.pdf).”
+- 28 Paszke, A., Gross, S., Chintala, S., Chanan, G., Yang, E., DeVito, Z., Lin, Z., Desmaison, A., Antiga, L., & Lerer, A. (2017). “[DAWNBench: An End-to-End Deep Learning Benchmark and Competition. NIPS ML SYSTEMS WORKSHOP, 2017](https://openreview.net/pdf?id=BJJsrmfCZ).”
+- 29 Raymond Perrault, Yoav Shoham 等 (2019). “[The AI Index 2019 Annual Report”. Technical report, AI Index Steering Committee, Human-Centered AI Institute, Stanford University, Stanford, CA](https://hai.stanford.edu/sites/default/files/ai_index_2019_report.pdf).”
+- 30 McCandlish, S., Kaplan, J., Amodei, D., & Team, O. D. (2018). “[An empirical model of large-batch training”](https://arxiv.org/pdf/1812.06162.pdf).”
+- 31 van den Oord, A., Li, Y., Babuschkin, I., Simonyan, K., Vinyals, O., Kavukcuoglu, K., van den Driessche, G., Lockhart, E., Cobo, L. C., Stimberg, F., Casagrande, N., Grewe, D., Noury, S., Dieleman, S., Elsen, E., Kalchbrenner, N., Zen, H., Graves, A., King, H., Walters, T., Belov, D., & Hassabis, D. (2017). “[Parallel wavenet: Fast high-fidelity speech synthesis.](https://arxiv.org/abs/1711.10433).”
+- 32 Jack Clark (2019). “[Written Testimony of Jack Clark, Policy Director at OpenAI. Hearing on “Artificial Intelligence: Societal and Ethical Implications” before the House Committee on Science, Space, & Technology](https://science.house.gov/imo/media/doc/Clark%20Testimony.pdf).”
 
 ## 作者
 
@@ -119,6 +119,6 @@ Danny Hernandez, Tom Brown
 
 感谢 Justin Jay Wang 负责设计。
 
-感谢 Niki Parmar 提供原始 [transformer⁠（在新窗口打开）](https://arxiv.org/abs/1706.03762)学习曲线的相关数据点。
+感谢 Niki Parmar 提供原始 [transformer](https://arxiv.org/abs/1706.03762)学习曲线的相关数据点。
 
-也感谢 Mingxing Tan 提供 [EfficientNet⁠（在新窗口打开）](https://arxiv.org/abs/1905.11946)学习曲线的相关数据点，并运行了一个减少 warmup 的实验。
+也感谢 Mingxing Tan 提供 [EfficientNet](https://arxiv.org/abs/1905.11946)学习曲线的相关数据点，并运行了一个减少 warmup 的实验。

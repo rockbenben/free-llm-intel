@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 46a6a8fd6ef2
+body_sha: 401a62300a44
 ---
 
 OpenAI
@@ -99,18 +99,10 @@ AI 系统代表用户执行任务的能力正在不断增强，例如打开网�
 
 我们的目标是让 AI 智能体在提供便利的同时，不会产生新的隐私外泄路径。防止基于 URL 的数据外泄是实现这一目标的关键一步。随着模型和攻击技术的演进，我们将持续改进这些防护措施。
 
-如果你是研究“提示注入”、智能体安全或数据外泄技术的专家，我们欢迎负责任的漏洞披露与合作，共同提升安全标准。你也可以通过我们的[相关论文⁠（在新窗口中打开）](http://cdn.openai.com/pdf/dd8e7875-e606-42b4-80a1-f824e4e11cf4/prevent-url-data-exfil.pdf)深入了解更多技术细节。
+如果你是研究“提示注入”、智能体安全或数据外泄技术的专家，我们欢迎负责任的漏洞披露与合作，共同提升安全标准。你也可以通过我们的[相关论文](http://cdn.openai.com/pdf/dd8e7875-e606-42b4-80a1-f824e4e11cf4/prevent-url-data-exfil.pdf)深入了解更多技术细节。
 
 - [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
 
 Adrian Spânu、Thomas Shadwell
-
-
-
-
-
-
-
-

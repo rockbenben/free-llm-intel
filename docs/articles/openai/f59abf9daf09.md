@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a5ec49074927
+body_sha: fc175d5ac4db
 translator: agent
 ---
 
@@ -24,7 +24,7 @@ Safety
 
 Read the System Card
 
-(opens in a new window)
+
 
 ## 引言
 
@@ -38,11 +38,3 @@ GPT‑5.4 Thinking 是 GPT‑5 系列中最新的推理模型，详见我们的 
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

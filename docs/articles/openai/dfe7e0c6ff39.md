@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 41f701765a88
+body_sha: 30957bfb9877
 ---
 
 OpenAI
@@ -60,7 +60,7 @@ OpenAI 正在致力于打造全球性的智能体 AI 基础设施，旨在让全
 
 在这些领域中，GPT‑5.5 的进化不仅体现在更深层次的智能，更在于其解决问题的高效性。它通常能以更少的 Token 消耗和更低的重试频率，交付更高质量的产出。在 Artificial Analysis 的 Coding Agent Index 中，GPT‑5.5 以竞品前沿编程模型一半的成本，实现了行业领先的智能表现。
 
-[Artificial Analysis Intelligence Index⁠（在新窗口中打开）](https://artificialanalysis.ai/methodology/intelligence-benchmarking) 是由第三方机构测评的加权平均得分，涵盖了以下 10 项权威评估：AA-LCR、AA-Omniscience、CritPt、GDPval-AA、GPQA Diamond、Humanity’s Last Exam、IFBench、SciCode、Terminal-Bench Hard 以及 τ²-Bench Telecom。
+[Artificial Analysis Intelligence Index](https://artificialanalysis.ai/methodology/intelligence-benchmarking) 是由第三方机构测评的加权平均得分，涵盖了以下 10 项权威评估：AA-LCR、AA-Omniscience、CritPt、GDPval-AA、GPQA Diamond、Humanity’s Last Exam、IFBench、SciCode、Terminal-Bench Hard 以及 τ²-Bench Telecom。
 
 ### 智能体编程
 
@@ -112,11 +112,11 @@ Tau2-bench Telecom 测试是在未进行提示词微调（且以 GPT‑4.1 作�
 
 GPT‑5.5 在科学和技术研究工作流中同样展现出显著优势。科研工作并非简单的问答，而是一个探索构思、搜集证据、验证假设、解读结果并决策下一步行动的完整循环。GPT‑5.5 在这一循环中的表现比以往任何模型都更加稳健持久。
 
-值得注意的是，在 [**GeneBench**⁠（在新窗口中打开）](https://cdn.openai.com/pdf/6dc7175d-d9e7-4b8d-96b8-48fe5798cd5b/oai_genebench_benchmark.pdf) 测试中，GPT‑5.5 较 GPT‑5.4 有了跨越式的提升。这是一项专注于遗传学和定量生物学多阶段科学数据分析的新型评估，要求模型在极少的人工干预下，对具有模糊性或存在误差的数据进行推理，处理如隐藏混杂因素或质控 (QC) 失败等现实障碍，并精准实现及解读现代统计学方法。考虑到该测试中的任务通常对应科学专家数天的项目量，模型的表现确实令人瞩目。
+值得注意的是，在 [**GeneBench**](https://cdn.openai.com/pdf/6dc7175d-d9e7-4b8d-96b8-48fe5798cd5b/oai_genebench_benchmark.pdf) 测试中，GPT‑5.5 较 GPT‑5.4 有了跨越式的提升。这是一项专注于遗传学和定量生物学多阶段科学数据分析的新型评估，要求模型在极少的人工干预下，对具有模糊性或存在误差的数据进行推理，处理如隐藏混杂因素或质控 (QC) 失败等现实障碍，并精准实现及解读现代统计学方法。考虑到该测试中的任务通常对应科学专家数天的项目量，模型的表现确实令人瞩目。
 
 同样，在围绕真实生物信息学及数据分析设计的 BixBench 测试中，GPT‑5.5 在所有已公布评分的模型中名列前茅。目前，该模型的科学能力已足以作为真正的“科学共同体”成员，切实加速生物医学研究的前沿进展。
 
-在另一个案例中，一个搭载自定义框架的 GPT‑5.5 内部版本协助发现了关于拉姆齐数 (Ramsey numbers) 的[全新证明⁠（在新窗口中打开）](https://cdn.openai.com/pdf/6dc7175d-d9e7-4b8d-96b8-48fe5798cd5b/Ramsey.pdf)。拉姆齐数是组合数学的核心研究对象之一；组合数学主要研究离散对象（如路径、网络、集合和模式）如何相互关联。简单来说，拉姆齐数探究的是：一个网络必须达到多大规模，才能保证某种秩序必然出现。该领域的成果非常罕见且技术难度极大。GPT‑5.5 发现了一个关于非对角拉姆齐数长期存在的渐近事实证明，随后该证明在 Lean 形式化证明语言中得到了验证。该成果是一个具体的范例，表明 GPT‑5.5 不仅仅能提供代码或解释，更能为研究领域贡献出令人惊喜且极具价值的数学论证。
+在另一个案例中，一个搭载自定义框架的 GPT‑5.5 内部版本协助发现了关于拉姆齐数 (Ramsey numbers) 的[全新证明](https://cdn.openai.com/pdf/6dc7175d-d9e7-4b8d-96b8-48fe5798cd5b/Ramsey.pdf)。拉姆齐数是组合数学的核心研究对象之一；组合数学主要研究离散对象（如路径、网络、集合和模式）如何相互关联。简单来说，拉姆齐数探究的是：一个网络必须达到多大规模，才能保证某种秩序必然出现。该领域的成果非常罕见且技术难度极大。GPT‑5.5 发现了一个关于非对角拉姆齐数长期存在的渐近事实证明，随后该证明在 Lean 形式化证明语言中得到了验证。该成果是一个具体的范例，表明 GPT‑5.5 不仅仅能提供代码或解释，更能为研究领域贡献出令人惊喜且极具价值的数学论证。
 
 早期测试者在使用 ChatGPT 中的 GPT‑5.5 Pro 时，更多是将其视为研究伙伴而非单次应答机：它能通过多轮交互评议手稿、压力测试技术论证、提议分析方案，并结合代码、笔记和 PDF 上下文进行协作。这种转变的核心在于，GPT‑5.5 能够更有效地辅助研究人员完成从提出问题到设计实验，再到最终产出的全过程。
 
@@ -126,7 +126,7 @@ Derya Unutmaz 是杰克逊基因组医学实验室 (Jackson Laboratory for Genom
 
 随后，他进一步扩展了该应用，加入了更稳定的奇点可视化功能，并提供了可供后续研究复用的精确系数。对他而言，更重大的转变在于 Codex 现在能够辅助实现自定义的数学可视化和计算机代数工作流，而这些在以前往往需要专门的工具。综合来看，这些案例证明了 GPT‑5.5 正在将专家的意向转化为切实可用的研究工具和分析成果。
 
-[图片来源：Bartosz Naskręcki⁠（在新窗口中打开）](https://bnaskrecki.faculty.wmi.amu.edu.pl/quadr/)
+[图片来源：Bartosz Naskręcki](https://bnaskrecki.faculty.wmi.amu.edu.pl/quadr/)
 
 **Prompt: **# Algebraic geometry surface intersection
 
@@ -170,13 +170,13 @@ Git repo, journal, plan (Markdown files)
 
 在利用 AI 应对网络安全等全球性挑战的进程中，GPT‑5.5 迈出了虽小但至关重要的一步。继去年 12 月在 GPT‑5.2 中主动部署了必要的[网络安全护栏⁠](https://openai.com/index/strengthening-cyber-resilience/)以遏制潜在滥用后，我们在 GPT‑5.5 中引入了更严苛的风险分类器。虽然在后续的持续微调过程中，部分用户初期可能会感到些许不便，但这对于保障系统安全至关重要。
 
-多年来，随着模型能力的递进式提升，我们始终在[准备框架⁠（在新窗口中打开）](https://cdn.openai.com/pdf/18a02b5d-6b67-4cec-ab64-68cdfbddebcd/preparedness-framework-v2.pdf)中将网络安全列为重点领域。通过不断开发并校准缓解方案，我们确保了能够在负责任的前提下，发布具备实质性网络安全能力的前沿模型。
+多年来，随着模型能力的递进式提升，我们始终在[准备框架](https://cdn.openai.com/pdf/18a02b5d-6b67-4cec-ab64-68cdfbddebcd/preparedness-framework-v2.pdf)中将网络安全列为重点领域。通过不断开发并校准缓解方案，我们确保了能够在负责任的前提下，发布具备实质性网络安全能力的前沿模型。
 
-- **针对这一级别的网络安全能力，我们部署了行业领先的防护措施。**自去年在 [GPT‑5.2⁠（在新窗口中打开）](https://deploymentsafety.openai.com/gpt-5-2/deception) 中首次引入专项安全护栏以来，我们持续在后续部署中进行测试与完善。针对 GPT‑5.5，我们围绕高风险活动和敏感网络请求设计了更严密的管控机制，并增加了针对重复性滥用行为的保护。通过在模型安全、身份认证以及违规监控方面的投入，我们才得以实现如此广泛的模型准入。数月以来，我们一直与外部专家合作，不断打磨并强化这些防护措施的稳健性。在 GPT‑5.5 中，我们致力于确保开发者能轻松加固代码，同时对恶意攻击者最可能利用的危害性工作流施加了更强有力的管控。
-- **为了全面加速各层级的网络防御，我们正在扩大模型的使用权限。**通过 [网络安全受信访问 (Trusted Access for Cyber)⁠](https://openai.com/index/scaling-trusted-access-for-cyber-defense/) 计划，我们正率先在 Codex 中提供“网络安全放行版”模型。这意味着在发布之初，符合特定[信任信号⁠（在新窗口中打开）](https://developers.openai.com/codex/concepts/cyber-safety)的认证用户即可在更少限制的情况下，调用 GPT‑5.5 强大的网络安全能力。负责[保护关键基础设施⁠](https://openai.com/index/accelerating-cyber-defense-ecosystem/)的机构在满足严格安全要求的前提下，可申请使用 GPT‑5.4‑Cyber 等专项模型来加固其内部系统。这种模式不仅为广大认证防御者提供了更高效的专业工具，还减少了不必要的阻碍，确保核心防御能力得以真正普及。从事认证防御工作的用户可前往 [chatgpt.com/cyber⁠（在新窗口中打开）](http://chatgpt.com/cyber) 申请受信访问，以减少使用 GPT‑5.5 时的误报拦截。
+- **针对这一级别的网络安全能力，我们部署了行业领先的防护措施。**自去年在 [GPT‑5.2](https://deploymentsafety.openai.com/gpt-5-2/deception) 中首次引入专项安全护栏以来，我们持续在后续部署中进行测试与完善。针对 GPT‑5.5，我们围绕高风险活动和敏感网络请求设计了更严密的管控机制，并增加了针对重复性滥用行为的保护。通过在模型安全、身份认证以及违规监控方面的投入，我们才得以实现如此广泛的模型准入。数月以来，我们一直与外部专家合作，不断打磨并强化这些防护措施的稳健性。在 GPT‑5.5 中，我们致力于确保开发者能轻松加固代码，同时对恶意攻击者最可能利用的危害性工作流施加了更强有力的管控。
+- **为了全面加速各层级的网络防御，我们正在扩大模型的使用权限。**通过 [网络安全受信访问 (Trusted Access for Cyber)⁠](https://openai.com/index/scaling-trusted-access-for-cyber-defense/) 计划，我们正率先在 Codex 中提供“网络安全放行版”模型。这意味着在发布之初，符合特定[信任信号](https://developers.openai.com/codex/concepts/cyber-safety)的认证用户即可在更少限制的情况下，调用 GPT‑5.5 强大的网络安全能力。负责[保护关键基础设施⁠](https://openai.com/index/accelerating-cyber-defense-ecosystem/)的机构在满足严格安全要求的前提下，可申请使用 GPT‑5.4‑Cyber 等专项模型来加固其内部系统。这种模式不仅为广大认证防御者提供了更高效的专业工具，还减少了不必要的阻碍，确保核心防御能力得以真正普及。从事认证防御工作的用户可前往 [chatgpt.com/cyber](http://chatgpt.com/cyber) 申请受信访问，以减少使用 GPT‑5.5 时的误报拦截。
 - **我们正与政府合作伙伴共同守护关乎民生的关键基础设施。 **我们正在共同探索如何利用尖端 AI 技术，支持相关部门开展防御工作 — 从保障重要纳税人数据的数字系统，到社区的电网和水源供应，确保这些民众赖以生存的系统安全无虞。
 
-我们根据[准备框架⁠（在新窗口中打开）](https://cdn.openai.com/pdf/18a02b5d-6b67-4cec-ab64-68cdfbddebcd/preparedness-framework-v2.pdf)，将 GPT‑5.5 的生物/化学及网络安全能力评定为“高” (high) 等级。尽管 GPT‑5.5 尚未达到“极高” (critical) 的网络安全能力水平，但评估显示，其防御实战能力较 GPT‑5.4 已有显著跨越。
+我们根据[准备框架](https://cdn.openai.com/pdf/18a02b5d-6b67-4cec-ab64-68cdfbddebcd/preparedness-framework-v2.pdf)，将 GPT‑5.5 的生物/化学及网络安全能力评定为“高” (high) 等级。尽管 GPT‑5.5 尚未达到“极高” (critical) 的网络安全能力水平，但评估显示，其防御实战能力较 GPT‑5.4 已有显著跨越。
 
 同时，GPT‑5.5 在发布前经过了完整的安全与治理流程，包括准备性评估、领域专项测试、针对高级生物与网络安全能力的定向评估，以及由外部专家参与的深度压力测试。更多技术细节可在 GPT‑5.5 系统卡中查阅。
 
@@ -204,7 +204,7 @@ Git repo, journal, plan (Markdown files)
 | Terminal-Bench 2.0 | 82.7% | 75.1% | - | - | 69.4% | 68.5% |
 | Expert-SWE (Internal) | 73.1% | 68.5% | - | - | - | - |
 
-*实验室已在该评估项中发现存在[“记忆化”(memorization) 的证据⁠（在新窗口中打开）](https://www.anthropic.com/news/claude-opus-4-7)
+*实验室已在该评估项中发现存在[“记忆化”(memorization) 的证据](https://www.anthropic.com/news/claude-opus-4-7)
 
 ### 专业能力
 
@@ -285,11 +285,3 @@ Git repo, journal, plan (Markdown files)
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

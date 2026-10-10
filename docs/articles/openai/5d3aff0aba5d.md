@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 1324f105f56c
+body_sha: 721c65256ccc
 ---
 
 OpenAI
@@ -39,7 +39,7 @@ OpenAI 与 AWS 携手帮助更多组织将先进的网络安全能力投入生�
 
 ## 开始使用
 
-使用 Daybreak Red 和 Daybreak Blue 需要加入 [Daybreak Access](https://openai.com/form/enterprise-trusted-access-for-cyber/)。获批后，您可以通过 Amazon Bedrock 控制台访问该模型，也可以使用 bedrock-mantle 端点，通过 Responses API 访问。如需了解更多信息，请参阅[文档。⁠（在新窗口中打开）](https://docs.aws.amazon.com/bedrock/latest/userguide/model-cards-openai.html)
+使用 Daybreak Red 和 Daybreak Blue 需要加入 [Daybreak Access](https://openai.com/form/enterprise-trusted-access-for-cyber/)。获批后，您可以通过 Amazon Bedrock 控制台访问该模型，也可以使用 bedrock-mantle 端点，通过 Responses API 访问。如需了解更多信息，请参阅[文档。](https://docs.aws.amazon.com/bedrock/latest/userguide/model-cards-openai.html)
 
 [**进一步了解 Daybreak Red 和 Daybreak Blue。**](https://openai.com/index/expanding-daybreak-as-the-cyber-defense-window-narrows/)
 
@@ -49,11 +49,3 @@ OpenAI 与 AWS 携手帮助更多组织将先进的网络安全能力投入生�
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

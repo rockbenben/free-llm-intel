@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 0a9e8110f668
+body_sha: 16e7d9288d13
 ---
 
 OpenAI
@@ -46,7 +46,7 @@ OpenAI 董事会正在评估我们的公司结构，以便最好地支撑"确保
 
 2019 年，我们不再只是一个实验室——我们也成为了一家创业公司。我们估计造出 AGI 需要融资约 100 亿美元。这种规模的算力和人才资本，意味着我们必须与投资人在合作，才能继续非营利组织的使命。
 
-我们造了一个定制结构：一个由非营利组织控制的[营利性实体](https://openai.com/index/openai-lp/)，投资人和员工的收益有上限。我们打算赚取[可观利润⁠(在新窗口打开)](https://news.ycombinator.com/item?id=19362353)，回报让使命成为可能的股东，其余部分流向非营利组织。我们把[使命](https://openai.com/index/openai-lp/) 重新表述为"确保通用人工智能惠及全人类"，并计划"主要通过尝试造出安全的 AGI、并与世界分享其好处"来实现它。措辞和做法变了，服务的还是同一个目标——造福人类。
+我们造了一个定制结构：一个由非营利组织控制的[营利性实体](https://openai.com/index/openai-lp/)，投资人和员工的收益有上限。我们打算赚取[可观利润](https://news.ycombinator.com/item?id=19362353)，回报让使命成为可能的股东，其余部分流向非营利组织。我们把[使命](https://openai.com/index/openai-lp/) 重新表述为"确保通用人工智能惠及全人类"，并计划"主要通过尝试造出安全的 AGI、并与世界分享其好处"来实现它。措辞和做法变了，服务的还是同一个目标——造福人类。
 
 那一年，营利性实体完成首轮超过 1 亿美元的融资，随后拿到 [Microsoft 的 10 亿美元](https://openai.com/index/microsoft-invests-in-and-partners-with-openai/)。
 
@@ -56,15 +56,15 @@ OpenAI 董事会正在评估我们的公司结构，以便最好地支撑"确保
 
 2024 年，我们发现了一种新的研究范式：我们的 [o 系列模型](https://openai.com/o1/) 展示了随"思考"算力扩展的新型推理能力，与训练算力叠加在一起。
 
-我们的影响不仅在于我们自己做出了什么，还在于我们如何影响他人。部分由于我们的[进展⁠(在新窗口打开)](https://www.forbes.com/sites/davidphelan/2023-01-23/how-chatgpt-suddenly-became-googles-code-red-prompting-return-of-page-and-brin/)，这个领域出现了[活跃⁠(在新窗口打开)](https://altindex.com/news/meta-catches-up-to-chat-gpt) 的[竞争⁠(在新窗口打开)](https://menlovc.com/2024-the-state-of-generative-ai-in-the-enterprise/)——从类似 ChatGPT 的商业产品到开源 LLM——以及在[安全⁠(在新窗口打开)](https://cdn.openai.com/openai-preparedness-framework-beta.pdf) 上蓬勃的[创新⁠(在新窗口打开)](https://deepmind.google/discover/blog/introducing-the-frontier-safety-framework/) [与⁠(在新窗口打开)](https://www.anthropic.com/news/announcing-our-updated-responsible-scaling-policy) 迭代。这些活动只是被 AI 驱动的经济体的开端，也说明 OpenAI 争取领域领先地位能够激励其他组织一同推进这一使命。
+我们的影响不仅在于我们自己做出了什么，还在于我们如何影响他人。部分由于我们的[进展](https://www.forbes.com/sites/davidphelan/2023-01-23/how-chatgpt-suddenly-became-googles-code-red-prompting-return-of-page-and-brin/)，这个领域出现了[活跃](https://altindex.com/news/meta-catches-up-to-chat-gpt) 的[竞争](https://menlovc.com/2024-the-state-of-generative-ai-in-the-enterprise/)——从类似 ChatGPT 的商业产品到开源 LLM——以及在[安全](https://cdn.openai.com/openai-preparedness-framework-beta.pdf) 上蓬勃的[创新](https://deepmind.google/discover/blog/introducing-the-frontier-safety-framework/) [与](https://www.anthropic.com/news/announcing-our-updated-responsible-scaling-policy) 迭代。这些活动只是被 AI 驱动的经济体的开端，也说明 OpenAI 争取领域领先地位能够激励其他组织一同推进这一使命。
 
-大公司如今正把[数千⁠(在新窗口打开)](https://www.investopedia.com/meta-says-it-is-making-progress-with-ai-as-spending-grows-8737166) [亿⁠(在新窗口打开)](https://www.bloomberg.com/news/articles/2024-04-16/deepmind-ceo-says-google-will-spend-more-than-100-billion-on-ai) [美元⁠(在新窗口打开)](https://carboncredits.com/larry-ellisons-100-billion-bet-nuclear-power-to-drive-oracles-ai-revolution/) [投进⁠(在新窗口打开)](https://artsmart.ai/blog/how-much-has-microsoft-invested-in-ai/) AI 开发，这正好说明 OpenAI 要继续追求使命真正需要什么。我们再一次需要筹集比预想更多的资本。投资人愿意支持我们，但在这样的资本规模上，他们需要常规的股权结构，而不需要那么多量身定制的结构。
+大公司如今正把[数千](https://www.investopedia.com/meta-says-it-is-making-progress-with-ai-as-spending-grows-8737166) [亿](https://www.bloomberg.com/news/articles/2024-04-16/deepmind-ceo-says-google-will-spend-more-than-100-billion-on-ai) [美元](https://carboncredits.com/larry-ellisons-100-billion-bet-nuclear-power-to-drive-oracles-ai-revolution/) [投进](https://artsmart.ai/blog/how-much-has-microsoft-invested-in-ai/) AI 开发，这正好说明 OpenAI 要继续追求使命真正需要什么。我们再一次需要筹集比预想更多的资本。投资人愿意支持我们，但在这样的资本规模上，他们需要常规的股权结构，而不需要那么多量身定制的结构。
 
 ## 未来
 
 进入 2025 年，我们必须超越"实验室 + 创业公司"——我们要成为一家长久的公司。董事会在外部法律和财务顾问的协助下，考虑"如何为 OpenAI 架构最有利于推进'确保 AGI 惠及全人类'的使命"，其目标是：
 
-- **选出一个最有利于使命长期成功的"非营利 / 营利"结构。** 我们的计划是把现有营利性实体改造为特拉华州的[公益公司（Public Benefit Corporation，PBC）⁠(在新窗口打开)](https://en.wikipedia.org/wiki/Benefit_corporation)，发行普通股，并把 OpenAI 的使命作为其公共利益目标。PBC 是被[许多⁠(在新窗口打开)](https://www.anthropic.com/company)[其他⁠(在新窗口打开)](https://corpgov.law.harvard.edu/2022-02-18/converting-to-a-delaware-public-benefit-corporation-lessons-from-experience/) 公司[使用⁠(在新窗口打开)](https://en.wikipedia.org/wiki/Inflection_AI) 的[结构⁠(在新窗口打开)](https://www.theinformation.com/articles/musks-xai-incorporates-as-benefit-corporation-with-positive-impact-goal)（也曾被 [OpenAI 讨论过](https://openai.com/index/elon-musk-wanted-an-openai-for-profit/)），它要求公司在决策时平衡股东利益、利益相关方利益以及公共利益目标。它能让我们像同行一样以常规条款筹到所需资本。
+- **选出一个最有利于使命长期成功的"非营利 / 营利"结构。** 我们的计划是把现有营利性实体改造为特拉华州的[公益公司（Public Benefit Corporation，PBC）](https://en.wikipedia.org/wiki/Benefit_corporation)，发行普通股，并把 OpenAI 的使命作为其公共利益目标。PBC 是被[许多](https://www.anthropic.com/company)[其他](https://corpgov.law.harvard.edu/2022-02-18/converting-to-a-delaware-public-benefit-corporation-lessons-from-experience/) 公司[使用](https://en.wikipedia.org/wiki/Inflection_AI) 的[结构](https://www.theinformation.com/articles/musks-xai-incorporates-as-benefit-corporation-with-positive-impact-goal)（也曾被 [OpenAI 讨论过](https://openai.com/index/elon-musk-wanted-an-openai-for-profit/)），它要求公司在决策时平衡股东利益、利益相关方利益以及公共利益目标。它能让我们像同行一样以常规条款筹到所需资本。
 - **让非营利组织可持续。** 按我们的计划，这将产生历史上资源最雄厚的非营利组织之一。非营利组织在现有营利性实体中的大额权益，将以 PBC 股份的形式持有，估值由独立财务顾问按公允价值确定。这会把捐赠者当初的贡献成倍放大。
 - **让两边各自具备做好本职的条件。** 当前结构下，董事会无法直接考虑"为使命提供资金的人"的利益，非营利组织除了控制营利性实体之外也不容易做更多。改造后，PBC 负责经营并控制 OpenAI 的业务与运营，非营利组织则聘请领导团队和员工，去推动医疗、教育、科学等领域的公益项目。
 
