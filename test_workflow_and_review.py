@@ -9011,5 +9011,34 @@ class TestPageFurnitureStrip(unittest.TestCase):
                              hashlib.sha256(body.strip().encode("utf-8")).hexdigest()[:12])
 
 
+    def test_inline_a11y_hint_gone_url_untouched(self):
+        # 站方把无障碍提示塞进每个外链的显示文本里：这类不在「整行匹配」范围内，
+        # 必须按链接结构切开处理
+        line = ("欢迎获取我们的[微调 API⁠（在新窗口中打开）]"
+                "(https://platform.openai.com/docs/guides/fine-tuning)看看")
+        out = ft.strip_page_furniture(line)
+        self.assertIn("https://platform.openai.com/docs/guides/fine-tuning", out)
+        self.assertIn("[微调 API](", out)
+        self.assertNotIn("在新窗口中打开", out)
+        en = "Read the [report (opens in a new window)](https://a.example/x?q=1) now."
+        out_en = ft.strip_page_furniture(en)
+        self.assertIn("(https://a.example/x?q=1)", out_en, "URL 段一个字符都不许动")
+        self.assertNotIn("opens in a new window", out_en)
+
+    def test_inline_hint_never_touches_fence_or_prose_words(self):
+        body = "\n".join([
+            "# 标题",
+            "",
+            "我们建议在新窗口中打开这个页面以便对照。",
+            "",
+            "```text",
+            "[label（在新窗口中打开）](https://x.example/y)",
+            "```",
+        ])
+        out = ft.strip_page_furniture(body)
+        self.assertIn("我们建议在新窗口中打开这个页面以便对照。", out, "句子里正常用这个词，不该动")
+        self.assertIn("[label（在新窗口中打开）](https://x.example/y)", out, "代码块内的原样")
+
+
 if __name__ == "__main__":
     unittest.main()

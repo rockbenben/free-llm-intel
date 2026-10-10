@@ -209,6 +209,13 @@ _CARD_META_RE = re.compile(
 _BARE_MEDIA_RE = re.compile(
     r"^https?://\S+\.(mp4|mp3|webm|mov|m4v|ogg|gif|png|jpe?g|webp)(\?\S*)?$")
 _VALUE_MAX = 24
+# 行内无障碍提示：站方把它塞进**每个外链的显示文本**里，readability 连链接文字一起收了。
+# 它不是"没加载完"，是抽取噪声；独立成行的那档走 R2，句中这一大坨（实测 4290 处）走这里。
+# 只吃显示文本里的这一小截，URL 一个字符都不动。
+_INLINE_HINT_RES = (
+    re.compile(r"[⁠​ ]*[（(]\s*(?:在新窗口中打开|在新窗口打开|在新标签页中打开|在新标签页打开|打开新窗口)\s*[)）]"),
+    re.compile(r"[⁠​ ]*\(\s*opens? in a new (?:window|tab)\s*\)", re.I),
+)
 _VALUE_WALK_MAX = 8
 _RELATED_MAX_LINES = 40
 
@@ -303,14 +310,50 @@ def furniture_drops(lines):
 
 
 def strip_page_furniture(body: str) -> str:
-    """清洗中文正文里的页面家具。判据是整行精确匹配或结构块，保守：
-    只删**独立成行**的标签/导航/推荐区块；句中出现的同一个词一律不动。
+    """清洗中文正文里的页面家具。
+
+    两种判据都是精确匹配，不猜形状：
+      行级 —— 整行等于站件闭集标签，或结构块（带值标签后的短标签值、文末带卡片指纹的推荐区）；
+      串级 —— 句内的无障碍提示（站方塞在每个外链显示文本里，实测 4290 处）。
+    ``` 代码块内部一个字不动；链接的 `(url)` 段逐字保留；句中同样的词不删。
     """
     lines = (body or "").split("\n")
     drop = furniture_drops(lines)
-    if not drop:
+    has_hint = any(rx.search(l) for l in lines for rx in _INLINE_HINT_RES)
+    if not drop and not has_hint:
         return body
-    return "\n".join(l for i, l in enumerate(lines) if i not in drop)
+    fenced, _ = _fence_mask(lines)
+    out = []
+    for i, l in enumerate(lines):
+        if i in drop:
+            continue
+        out.append(l if i in fenced else _strip_inline_hints(l))
+    return "\n".join(out)
+
+
+def _strip_inline_hints(line: str) -> str:
+    """按 `[文字](url)` 结构切开，只改「文字」段与链接外的裸文本，URL 段原样拼回。
+
+    这样 `(opens in a new window)` 不可能被当成 URL 的括号误删——它只会出现在文字段。
+    显示文本被清空时退回裸 URL，不留 `[]()` 空壳。
+    """
+    if not any(rx.search(line) for rx in _INLINE_HINT_RES):
+        return line
+    parts = re.split(r"(\[[^\]]*\]\([^)]*\))", line)
+    for idx, seg in enumerate(parts):
+        if idx % 2 == 1:                       # 一整段就是一个链接
+            m = re.match(r"^\[([^\]]*)\]\(([^)]*)\)$", seg)
+            if not m:
+                continue
+            text, url = m.group(1), m.group(2)
+            for rx in _INLINE_HINT_RES:
+                text = rx.sub("", text)
+            # 只删提示串本身，不做任何额外瘦身（多删一个空格就会让「唯一改动=删提示」这条不变量失真）
+            parts[idx] = "[%s](%s)" % (text, url) if text.strip() else url
+            continue
+        for rx in _INLINE_HINT_RES:
+            parts[idx] = rx.sub("", parts[idx])
+    return "".join(parts)
 
 
 # ---------------------------------------------------------------------------
