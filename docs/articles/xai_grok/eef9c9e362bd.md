@@ -17,7 +17,6 @@ Grok Bot 现已面向企业开放。Grok 与 Cursor Enterprise 客户接下来�
 
 Download for macOS
 
-Contact sales
 
 Grok Bot 是你的一支乐于助人的 AI 队友团队。你把真实任务委托给他们，他们在你使用的同一套工具里自主全天候工作，把活儿从头干到尾。
 

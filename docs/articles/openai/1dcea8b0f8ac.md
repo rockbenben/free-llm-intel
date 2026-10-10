@@ -9,20 +9,18 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 3b0c7a32c4a4
+body_sha: 1ba62d7923ad
 ---
 
 OpenAI
 
 2026年9月8日
 
-产品
 
 # 隆重推出 ChatGPT 图像 2.5隆重推出ChatGPT 图像 2.5C![](https://images.ctfassets.net/kftzwdyauwt9/7t95fuFaas9S8B0rNlPMyi/85cf7c9ea79f3cee0d19762ad74420d9/Custom_C-1.png)![](https://images.ctfassets.net/kftzwdyauwt9/2GT92BHF56dSdcSydscHFr/aa56146419c0f7bf1f3951b65c774b6f/Custom_C-2.png)h![](https://images.ctfassets.net/kftzwdyauwt9/eJCfra8VG2lNL78anwslJ/3ed8b3a8009fbbdb62f3391847c6011e/Custom_h-1.png)a![](https://images.ctfassets.net/kftzwdyauwt9/24LKs5W2UKAAbFdCoe709U/70bd24eb11700e410383e60be87cf60c/Custom_a-1-1.png)t![](https://images.ctfassets.net/kftzwdyauwt9/37qncH6gKq67xhpyOWuSDd/3c97ef46de441d45a385964c7b6a1484/Custom_T-2.png)![](https://images.ctfassets.net/kftzwdyauwt9/6F00DaaXTEcSytr7vzfnLy/80f5768c33616c76b531e24eab32a1da/t-v2.webp)G![](https://images.ctfassets.net/kftzwdyauwt9/22tLfNsXeSNlIOQ5c3DKxB/1bad41b67c92b00b6f0275cf41bfc249/Custom_g-1.png)![](https://images.ctfassets.net/kftzwdyauwt9/2g0dE92MQsW0wU3X7zj5qL/6391bb8a397a4a0bef72f4744e3c5f80/Custom_g-2.png)P![](https://images.ctfassets.net/kftzwdyauwt9/6QIdM41FULUGKkU7esCPBg/01a61bb4a6786c8f61ef3eed4e81548a/Custom_P-1.png)![](https://images.ctfassets.net/kftzwdyauwt9/VGMQ3VsLy1QM2lWatxbId/ba67658e57bf1db6519bc147c9c4b4e6/Custom_P-2.png)T![](https://images.ctfassets.net/kftzwdyauwt9/WDIVMyNdfmuou74AF11ae/e585ea17b9530fbe32616e26273ddb5d/Custom_t-1.png) 图像 2![](https://images.ctfassets.net/kftzwdyauwt9/6fBFrbe8IjnaoAUVLnOV2W/6821e3e389d6ada86162f75a5316316e/Custom_2-1.png)![](https://images.ctfassets.net/kftzwdyauwt9/5PAdmhxof1bqrAmsn08bEG/34cbce57a9c073d799d187847ed18820/Custom_2-2.png).![](https://images.ctfassets.net/kftzwdyauwt9/61HqPQWWogbzUhGfSMvUz5/6c586f726733f30ff0ad6c6de1127f2c/Custom_period.png)5![](https://images.ctfassets.net/kftzwdyauwt9/30924A1JRTUWG2ID4aotNz/e5deb53f7b0b1a1120620147747c8f8b/Custom5-1.png)![](https://images.ctfassets.net/kftzwdyauwt9/5AxpAb4CIjSyezTQZZXs0v/e35116c570d0397740ec5353bdf0105a/Custom5-2.png)
 
 细节更清晰、生成更迅速、编辑更精准，并提供更出色的创作与分享工具
 
-正在加载…
 
 每周，人们通过 ChatGPT 图像和 API 中的 GPT‑Image 模型创作超过 30 亿张图像。今天，我们将通过 ChatGPT 图像 2.5 拓展你的创作空间。这款全新的先进图像模型可呈现更清晰的细节、更精准的编辑和更快的生成速度，为创意工作流全面提效。
 
@@ -106,7 +104,6 @@ Higgsfield AI
 
 ⁠
 
-（在新窗口中打开）
 
 产品负责人
 
@@ -144,18 +141,10 @@ GPT‑Image‑2.5 Sunburst 和 GPT‑Image‑2.5 Flare 已在 API 中提供，[�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

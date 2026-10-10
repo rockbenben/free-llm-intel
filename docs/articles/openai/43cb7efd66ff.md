@@ -9,20 +9,18 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 115ef90a400f
+body_sha: f50e13e5a52c
 ---
 
 OpenAI
 
 2025年11月19日
 
-研究
 
 # 评估框架如何推动企业进入 AI 新篇章
 
 本指南旨在帮助企业领导者了解，评估框架 (eval) 如何将业务目标转化为稳定一致的成果。
 
-正在加载…
 
 全球已有超过[一百万家企业⁠](https://openai.com/index/1-million-businesses-putting-ai-to-work/)正在利用人工智能提升效率并创造价值。但也有一些组织发现，结果并未达到预期。那么，差距究竟来自哪里？
 
@@ -92,18 +90,10 @@ OpenAI
 
 - 1 如果你希望支持我们构建下一代 AI 模型的工作，我们诚邀你参与 [GDPVal⁠](https://openai.com/index/gdpval/)，这是我们最新的基准，用于衡量 AI 模型在实际任务中的表现。如果你是行业专家并有兴趣参与 GDPVal，请 [在此处提交意向⁠](https://openai.com/form/real-world-knowledge-work/)。如果你是与 OpenAI 合作的客户，并希望在未来的 GDPVal 轮次中参与，请[在此表达意向⁠](https://openai.com/form/gdpval-customer-contribution/)。
 
-## 继续阅读
 
-查看全部
 
-隆重推出 GPT-6 Sol 和 Luna
 
-产品2026年9月22日
 
-我们的模型失配报告框架
 
-研究2026年9月16日
 
-OpenAI 模型提出纳维–斯托克斯问题的解法
 
-研究2026年9月8日

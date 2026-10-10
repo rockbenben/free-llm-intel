@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 59f053a05b3b
+body_sha: 6bd150a60dd0
 translator: agent
 ---
 
@@ -111,18 +111,10 @@ Sam Altman
 
 感谢 Brian Chesky、Paul Christiano、Jack Clark、Holden Karnofsky、Tasha McCauley、Nate Soares、Kevin Scott、Brad Smith、Helen Toner、Allan Dafoe 以及 OpenAI 团队审阅本文草稿。
 
-## 相关文章
 
-查看全部
 
-瓦解国家关联威胁行为者对 AI 的恶意使用
 
-安全 · 2024 年 2 月 14 日
 
-为 LLM 辅助的生物威胁创造构建预警系统
 
-论文 · 2024 年 1 月 31 日
 
-AI 的民主化输入资助计划：经验教训与实施计划
 
-安全 · 2024 年 1 月 16 日

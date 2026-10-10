@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4edae3d28599
+body_sha: 0710bad33363
 ---
 
 OpenAI
@@ -21,7 +21,6 @@ Company
 
 我们现在开放 2019 年 OpenAI Fellows 与 Interns 项目的申请。
 
-Loading…
 
 Fellows 与 Interns 项目为目前正在学习 AI、或希望从其他专业转向 AI 的人士提供在 OpenAI 工作的机会。
 
@@ -50,7 +49,6 @@ Fellows 与 Interns 项目为目前正在学习 AI、或希望从其他专业转
 | 2019/2/4 | 一期开始 |
 | 2019/8/2 | 一期结束 |
 
-Loading...
 
 ## Interns
 
@@ -115,18 +113,10 @@ Loading...
 
 Larissa Schiavo, Ashley Pilipiszyn
 
-## 相关文章
 
-View all
 
-Global news partnerships: Le Monde and Prisa Media
 
-CompanyMar 13, 2024
 
-OpenAI announces new members to board of directors
 
-CompanyMar 8, 2024
 
-Review completed & Altman, Brockman to continue to lead OpenAI
 
-CompanyMar 8, 2024

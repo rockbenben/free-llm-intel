@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a9c42244f199
+body_sha: 0c95395ba49e
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 Celia Chen，技术团队成员
 
-正在加载…
 
 OpenAI 的编码智能体 Codex 部署于多个不同的平台：[Web 应用⁠（在新窗口中打开）](https://chatgpt.com/codex)、[CLI⁠（在新窗口中打开）](https://github.com/openai/codex)、[IDE 扩展⁠（在新窗口中打开）](https://developers.openai.com/codex/ide/)，以及[新的 Codex macOS 应用](https://openai.com/index/introducing-the-codex-app/)。其底层架构均由同一个 Codex 运行框架驱动 — 支撑着所有 Codex 体验的智能体循环和逻辑。它们之间有何重要关联？[Codex App Server⁠（在新窗口中打开）](https://developers.openai.com/codex/app-server) 是客户端友好型双向 JSON-RPC[1](https://openai.com/zh-Hans-CN/index/unlocking-the-codex-harness/#citation-bottom-1) API。
 
@@ -194,18 +193,10 @@ Celia Chen
 - 1我们使用“JSON‑RPC lite”的变体：它能保留请求/响应/通知的结构，但会省略 `"jsonrpc": "2.0"` 标头，且采用 JSONL over stdio 格式，而非严格的 JSON‑RPC 2.0.
 - 2“stdio” 指的是容器内应用服务器的 stdin/stdout。在托管设置中，这些数据流通常通过持久化网络连接（例如，类似 WebSocket 的网络连接）信道传输到容器运行时 — 因此其行为近似于 stdio，即使它并非字面意义上的本地管道。
 
-## 继续阅读
 
-查看全部
 
-快速扩展在线存储，为超过 10 亿 ChatGPT 用户提供服务
 
-工程2026年9月11日
 
-Jalapeño 的首批测试结果展现出行业领先的 AI 推理速度与效率
 
-工程2026年8月25日
 
-使用 GPT Live 进行连续语音交互
 
-工程2026年8月3日

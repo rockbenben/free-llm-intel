@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 38b690ec2b34
+body_sha: 1bde5603cb48
 ---
 
 OpenAI
@@ -33,7 +33,6 @@ Legal agreement
 
 Illustration: Ben Barry
 
-Loading…
 
 继 2 月发布小的 [124M 模型⁠](https://openai.com/index/better-language-models/)、5 月以分阶段方式发布中等规模的 [355M 模型⁠](https://openai.com/index/better-language-models/#update)，并与合作伙伴及 AI 社区就模型的滥用风险与社会价值展开后续研究之后，我们现在发布 7.74 亿参数的 GPT-2 语言模型。我们同时发布一份开源的法律协议，让各组织更容易彼此建立模型共享合作，并公布一份技术报告，记录我们在与更广泛的 AI 研究社区协调发布规范方面的经验。
 
@@ -79,18 +78,10 @@ Loading…
 - A这类对话很困难，因为它涉及坦诚地讨论专有系统，而且不清楚在具体机构里应该联系谁来讨论此类模型，机构之间讨论未发表研究的恰当流程是什么。
 - B这些样本是通过一种"人在回路"的流程生成的，用于模拟当代虚假信息行动：由人生成样本，并周期性地挑选一部分用于向人们展示。
 
-## 相关文章
 
-View all
 
-Democratic inputs to AI grant program: lessons learned and implementation plans
 
-SafetyJan 16, 2024
 
-Building agricultural database for farmers
 
-Jan 12, 2024
 
-Creating websites in minutes with AI Website Builder
 
-May 29, 2025

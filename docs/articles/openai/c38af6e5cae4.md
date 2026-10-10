@@ -9,14 +9,13 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 83684a43dd1e
+body_sha: 3a97ad2f3b01
 ---
 
 OpenAI
 
 2026年10月2日
 
-产品
 
 指南
 
@@ -24,7 +23,6 @@ OpenAI
 
 在控制时间和成本的同时，充分发挥 GPT‑6 模型能力的实用技巧
 
-正在加载…
 
 GPT‑6 是[我们迄今最先进的模型系列](https://openai.com/index/introducing-gpt-6-1-sol/)，提供多款模型供你选择，以适应不同类型的工作。
 
@@ -143,18 +141,10 @@ GPT‑6 是[我们迄今最先进的模型系列](https://openai.com/index/intro
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-帮助青少年开展学习、规划未来，并参与塑造 AI 的未来
 
-产品2026年10月7日
 
-让每个人都能使用 GPT-6 和智能界面
 
-产品2026年10月7日
 
-打造契合人们 AI 使用方式的广告
 
-产品2026年10月5日

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 608c9a2a2817
+body_sha: 359890defccc
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 借助 ChatGPT Enterprise 和 Codex，AP+ 团队节省时间、提升工作质量，并更快调查复杂支付问题。
 
-联系销售团队
 
 公司规模:
 
@@ -54,7 +53,6 @@ ChatGPT, Codex
 
 使用 Codex 处理复杂对账问题的调查时间，较此前 4 小时大幅缩短
 
-正在加载…
 
 [Australian Payments Plus⁠（在新窗口中打开）](https://www.auspayplus.com.au/)（简称 AP+）在澳大利亚运营支付和身份基础设施。它位于支付生态系统的中心，支撑着每天被数百万人使用的产品和服务。
 
@@ -134,19 +132,3 @@ AP+ 的经验为希望在日常工作中负责任地规模化应用 AI 的受监
 ## 开启办公新时代
 
 全球逾百万家企业正通过 OpenAI 获得切实收益。
-
-联系销售团队
-
-## 继续阅读
-
-GPT-6 开发实用指南
-
-产品2026年10月2日
-
-Chatham 借助 OpenAI 扩大资本市场专业服务规模
-
-2026年10月2日
-
-永恒的互补关系
-
-智能时代2026年10月1日

@@ -9,7 +9,7 @@ captured: 2026-10-08
 extractor: readability-v1
 translator: mt
 status: translated
-body_sha: 959ad6b7675f
+body_sha: 56b256321d0d
 ---
 
 # Qwen3.8-27B API 提供商基准：速度和成本
@@ -264,4 +264,3 @@ MiMo-V2.5 提供商定价和部署指南
 
 <p>DeepSeek V4 可在一系列托管 API 提供商处使用，每个提供商都有不同的定价、性能和部署权衡。该模型有两个变体：V4 Pro，一个 1.6 万亿总参数的 Mixture-of-Experts 模型，具有 490 亿个活动参数和 1M 令牌上下文窗口，以及 V4 Flash，一个更轻的 284B 总参数变体 [...]</p>
 
-查看全部

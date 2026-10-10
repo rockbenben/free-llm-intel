@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 279e842cb494
+body_sha: 0821b489f181
 translator: agent
 ---
 
@@ -47,18 +47,10 @@ OpenAI 于 2015 年作为一家非营利组织创立，核心使命是确保通�
 
 OpenAI
 
-## 相关文章
 
-查看全部
 
-全球新闻合作：Le Monde 与 Prisa Media
 
-公司动态 · 2024 年 3 月 13 日
 
-OpenAI 宣布董事会新成员
 
-公司动态 · 2024 年 3 月 8 日
 
-复核完成，Altman 和 Brockman 继续领导 OpenAI
 
-公司动态 · 2024 年 3 月 8 日

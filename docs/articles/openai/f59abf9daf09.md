@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 12729f2ef1eb
+body_sha: a5ec49074927
 translator: agent
 ---
 
@@ -39,18 +39,10 @@ GPT‑5.4 Thinking 是 GPT‑5 系列中最新的推理模型，详见我们的 
 
 OpenAI
 
-## 继续阅读
 
-View all
 
-Introducing GPT-5.4
 
-ProductMar 5, 2026
 
-GPT-5.3 Instant System Card
 
-PublicationMar 3, 2026
 
-GPT-5.3 Instant: Smoother, more useful everyday conversations
 
-ProductMar 3, 2026

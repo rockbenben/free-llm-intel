@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: c0c29c87ab38
+body_sha: 72ec22bbe699
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 OpenAI 与泰国高等教育、科学、研究与创新部推出为期八周的加速计划，帮助初创企业将前景可期的创意转化为可投入实际应用的产品。
 
-正在加载…
 
 今天，OpenAI 与泰国高等教育、科学、研究与创新部（MHESI）在曼谷宣布推出一项新的加速计划，帮助泰国初创企业将前景可期的原型转化为可投入实际应用并实现增长的产品。
 
@@ -98,18 +97,10 @@ Curico 计划在成果展示日之前，于曼谷市政府下属的托育中心�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-隆重推出 Dot
 
-产品2026年9月29日

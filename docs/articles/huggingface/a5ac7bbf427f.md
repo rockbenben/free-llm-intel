@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a3523a9c594e
+body_sha: 84c008643cd0
 translator: agent
 ---
 
@@ -21,9 +21,7 @@ translator: agent
 
 在 GitHub 上更新
 
-点赞
 
-63
 
 - [![](https://huggingface.co/avatars/611a96669ddcd187c298a67ec24a509a.svg)](https://huggingface.co/HammerW)
 - [![](https://huggingface.co/avatars/c2b45478a6cd0e614191ab8f73c0173e.svg)](https://huggingface.co/geshijoker)
@@ -214,9 +212,7 @@ open-source
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fdeepspeed-to-fsdp-and-back)或[登录](https://huggingface.co/login?next=%2Fblog%2Fdeepspeed-to-fsdp-and-back)即可评论
 
-点赞
 
-63
 
 - [![](https://huggingface.co/avatars/611a96669ddcd187c298a67ec24a509a.svg)](https://huggingface.co/HammerW)
 - [![](https://huggingface.co/avatars/c2b45478a6cd0e614191ab8f73c0173e.svg)](https://huggingface.co/geshijoker)

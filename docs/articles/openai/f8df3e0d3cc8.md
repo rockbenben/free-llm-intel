@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 6d32014f9bfb
+body_sha: 2f074e5b9480
 ---
 
 OpenAI
@@ -18,7 +18,6 @@ OpenAI
 
 安全
 
-刊发
 
 # GPT‑Red：解锁稳健性自我优化能力
 
@@ -26,9 +25,7 @@ OpenAI
 
 Read the paper
 
-（在新窗口中打开）
 
-正在加载…
 
 ## 摘要
 
@@ -120,18 +117,10 @@ AI 智能体已被用于提升我们下一代模型的性能。我们相信，�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-Towards safety cases for frontier AI training
 
-安全2026年9月28日
 
-我们将如何赢回澳大利亚民众的信任
 
-公司2026年9月28日
 
-Sam Altman在联合国安全理事会的讲话
 
-全球事务2026年9月23日

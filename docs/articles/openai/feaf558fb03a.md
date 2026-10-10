@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: dba8f824d28e
+body_sha: a98655c3ff9b
 translator: agent
 ---
 
@@ -24,7 +24,6 @@ Global Affairs
 
 超过一吉瓦的园区，助力建设美国的 AI 基础设施、支持中西部经济增长。
 
-Loading…
 
 今天，我们宣布在密歇根州 Saline Township 新建一处 Stargate 园区，这是我们与 Oracle 4.5GW [合作⁠](https://openai.com/index/stargate-advances-with-partnership-with-oracle/) 的一部分。加上此前 [已公布的⁠](https://openai.com/index/five-new-stargate-sites/) 六个与美国 Oracle 和 SoftBank 合作的美国 Stargate 站点的容量，Stargate 的规划容量已超过 8 吉瓦，未来三年投资超过 4500 亿美元——加速我们的进度，让我们提前于计划，兑现 1 月宣布的 5000 亿美元、10 吉瓦的承诺。
 
@@ -43,18 +42,10 @@ Stargate 密歇根园区由 [Related Digital⁠(opens in a new window)](https://
 
 OpenAI
 
-## 继续阅读
 
-View all
 
-How Albertsons Companies is reimagining retail from the inside out
 
-CompanyOct 1, 2026
 
-Helping small businesses put AI to work
 
-Global AffairsSep 30, 2026
 
-DevDay 2026 Recap
 
-CompanySep 29, 2026

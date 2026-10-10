@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 43d41959f5c1
+body_sha: efb2c002e048
 translator: agent
 ---
 
@@ -47,18 +47,10 @@ OpenAI
 - [文化与招聘](https://openai.com/news/?tags=culture-careers)
 - [2020](https://openai.com/news/?tags=2020)
 
-## 相关文章
 
-查看全部
 
-介绍 OpenAI London
 
-公司动态 · 2023 年 6 月 28 日
 
-持续学习的力量
 
-公司动态 · 2022 年 12 月 23 日
 
-发现后端系统的细枝末节
 
-公司动态 · 2022 年 12 月 8 日

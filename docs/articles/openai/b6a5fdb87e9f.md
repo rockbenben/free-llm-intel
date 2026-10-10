@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5303a5dd7c2b
+body_sha: 29fe1936287e
 ---
 
 OpenAI
@@ -29,7 +29,6 @@ Download dataset
 
 (opens in a new window)
 
-Loading…
 
 我们训练了一个模型，在数学解题上取得新的 SOTA：做法是给每一段正确的推理步骤打奖励（"过程监督"），而不只是给最终正确答案打奖励（"结果监督"）。除了相对结果监督提升表现之外，过程监督还有一个重要的对齐收益：它直接训练模型产出被人类认可的思维链（chain-of-thought）。
 
@@ -47,13 +46,11 @@ Loading…
 
 ## 求解 MATH 问题
 
-Loading...
 
 我们使用 MATH 测试集上的问题来评估过程监督和结果监督的奖励模型。我们对每道题生成大量解，然后按每个奖励模型挑出排序最高的那一个解。图中横轴为每题考虑多少解，纵轴为最终答对的比率。可以看到，过程监督奖励模型不仅在整体上都表现更好，而且随着每题考虑的解数量增多，性能差距还在进一步拉大。这显示过程监督奖励模型要可靠得多。
 
 我们在下方展示 10 道题及其解，并附带关于奖励模型优点与不足的评论。
 
-Loading...
 
 这些结果能在多大程度上泛化到数学之外仍未可知，我们认为未来的工作应当探索过程监督在其他领域的影响。如果这些结果能泛化，我们也许会发现过程监督兼得两全——一个比结果监督既更有效率也更对齐的方法。
 
@@ -76,18 +73,10 @@ Karl Cobbe, Hunter Lightman, Vineet Kosaraju, Yura Burda, Harri Edwards, Jan Lei
 
 Bowen Baker, Teddy Lee, John Schulman, Greg Brockman, Kendra Rimbach, Hannah Wong, Thomas Degry
 
-## 相关文章
 
-View all
 
-DALL·E 3 is now available in ChatGPT Plus and Enterprise
 
-ProductOct 19, 2023
 
-Language models can explain neurons in language models
 
-PublicationMay 9, 2023
 
-Solving (some) formal math olympiad problems
 
-MilestoneFeb 2, 2022

@@ -9,18 +9,16 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 900895a14509
+body_sha: 1324f105f56c
 ---
 
 OpenAI
 
 2026年8月11日
 
-产品
 
 # Daybreak 模型现已在 AWS 上线
 
-正在加载…
 
 今年早些时候，OpenAI 前沿模型和 Codex 已在 AWS 正式上线，为企业将先进 AI 投入生产环境提供了新途径。今天，我们将介绍与 AWS 合作的下一步：通过 Amazon Bedrock 提供 Daybreak 能力。
 
@@ -52,18 +50,10 @@ OpenAI 与 AWS 携手帮助更多组织将先进的网络安全能力投入生�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

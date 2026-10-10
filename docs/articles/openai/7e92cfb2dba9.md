@@ -9,18 +9,16 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 94e63e37e263
+body_sha: 4364a20b4898
 ---
 
 OpenAI
 
 2026年1月16日
 
-产品
 
 # ChatGPT Go 现已面向全球用户开放
 
-正在加载…
 
 2025 年 8 月，我们在印度发布了 ChatGPT Go。这项实惠的订阅旨在提供 ChatGPT 热门功能更广泛的使用权限，让更多人可以在日常生活中充分利用先进的 AI。此后，ChatGPT Go 已推广至另外 170 个国家/地区，成为我们增长最快的订阅套餐之一，同时也是全球最可负担的 AI 订阅服务之一。
 
@@ -63,18 +61,10 @@ ChatGPT Pro 将继续提供我们最强大模型 GPT‑5.2 Pro 的完整使用�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

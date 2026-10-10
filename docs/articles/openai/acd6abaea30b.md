@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 60d93e9e34fc
+body_sha: 46db4aaf77d0
 ---
 
 OpenAI
@@ -35,7 +35,6 @@ Gym Retro
 
 Illustration: Timothy J. Reynolds
 
-Loading…
 
 ## 为什么重要
 
@@ -43,7 +42,6 @@ Loading…
 
 *更新：[*结果*⁠](https://openai.com/index/retro-contest-results/) *已经出炉！*
 
-Loading...
 
 [OpenAI Retro Contest⁠(opens in a new window)](https://contest.openai.com/) 会提供一份来自 Sonic The Hedgehog™ 系列的关卡作为训练集，我们在一份专门为本次竞赛制作的自定义关卡测试集上评估你的算法。竞赛于 4 月 5 日至 6 月 5 日举行。为便于大家起步，我们发布了 [retro-baselines⁠(opens in a new window)](https://github.com/openai/retro-baselines)，演示如何在竞赛任务上运行多种 RL 算法。
 
@@ -73,13 +71,11 @@ Retro Contest（测试集）上的基线结果表明，即便使用迁移学习�
 
 Gym Retro 的灵感来自 [Retro Learning Environment⁠(opens in a new window)](https://arxiv.org/abs/1611.02205)，但编写上比 RLE 更灵活；例如，在 Gym Retro 中你可以通过 JSON 文件而非 C++ 代码来指定环境定义，更容易集成新游戏。
 
-Loading...
 
 Gym Retro 是我们构建大规模 RL 环境数据集的第二代尝试。它继承了 2016 年底 Universe 的一些想法，但我们未能在 Universe 实现上取得好结果，因为 Universe 环境是异步运行的、只能实时进行、并常常因基于屏幕检测游戏状态而不可靠。Gym Retro 把 Arcade Learning Environment 的模型扩展到了一个远为庞大的可选游戏集合上。
 
 如需上手 Gym Retro，请查看 GitHub 上的 Getting Started 章节。
 
-Loading...
 
 有时，算法会在游戏里发现漏洞。这里，一个 PPO 训练的策略发现自己能穿墙向右移动以获得更高分数——又一个关于特定奖励函数如何导致 AI 智能体表现出 [怪异行为⁠](https://openai.com/index/faulty-reward-functions/) 的例子。
 
@@ -101,18 +97,10 @@ Christopher Hesse, John Schulman, Vicki Pfau, Alex Nichol, Oleg Klimov, Larissa 
 
 Timothy J. Reynolds
 
-## 相关文章
 
-View all
 
-Frontier risk and preparedness
 
-SafetyOct 26, 2023
 
-OpenAI Red Teaming Network
 
-SafetySep 19, 2023
 
-Confidence-Building Measures for Artificial Intelligence: Workshop proceedings
 
-ConclusionAug 1, 2023

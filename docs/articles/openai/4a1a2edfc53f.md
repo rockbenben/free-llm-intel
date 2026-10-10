@@ -9,18 +9,16 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 16ca9e8cb9ee
+body_sha: e33b5eaef410
 ---
 
 OpenAI
 
 2026年6月14日
 
-产品
 
 # 推出 OpenAI 合作伙伴网络
 
-正在加载…
 
 企业从 AI 中获得价值的限制因素不再是模型能力。相反，关键在于组织如何可重复地识别正确的用例、重新设计工作流、与现有系统集成，并规模化推动采用和变革管理。
 
@@ -127,18 +125,10 @@ OpenAI 合作伙伴网络是我们投资这一未来的一种方式。我们正�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

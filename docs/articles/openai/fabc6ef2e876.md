@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d00a7fbf9563
+body_sha: 22def1d56855
 translator: agent
 ---
 
@@ -20,7 +20,6 @@ May 22, 2026
 
 Virgin Atlantic 用 Codex 强化测试覆盖率、加速重构，以更强的信心交付面向客户的软件。
 
-Contact sales
 
 Company size:
 
@@ -50,7 +49,6 @@ Codex
 
 重构遗留代码库所需的时间（分钟），此前要两周
 
-Loading…
 
 Virgin Atlantic 用 Codex 赶在圣诞出行高峰前交付了全面改版的移动应用——而那是全年引入软件故障风险最高的时段之一。
 
@@ -98,18 +96,10 @@ Codex 正在重塑 Virgin Atlantic 交付软件的方式：从客户在登机口
 
 全球超过 100 万家企业正在用 OpenAI 取得有意义的成果。
 
-Contact sales
 
-## 继续阅读
 
-A practical guide to building with GPT-6
 
-ProductOct 2, 2026
 
-Chatham scales its capital markets expertise with OpenAI
 
-Oct 2, 2026
 
-The eternal complement
 
-Intelligence AgeOct 1, 2026

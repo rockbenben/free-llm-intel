@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 05a8d00b2e07
+body_sha: f2e38fca647d
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 借助 ChatGPT 工作和 Codex，RingCentral 加快 AI 产品功能开发，并集中整合运营智能。
 
-联系销售团队
 
 公司规模:
 
@@ -38,7 +37,6 @@ OpenAI
 
 ChatGPT, Codex
 
-正在加载…
 
 凭借近三十年的企业通信创新经验，RingCentral 已成长为一家年营收超过 26 亿美元、在全球拥有数千名员工的跨国公司。如今，公司正通过采用 AI 原生工作方式延续其创新传统。RingCentral 鼓励每位员工探索 ChatGPT 工作和 Codex，确保公司所有人无论是否具备工程经验，都能打造带来变革的产品和基础设施。
 
@@ -75,19 +73,3 @@ ChatGPT, Codex
 ## 开启办公新时代
 
 全球逾百万家企业正通过 OpenAI 获得切实收益。
-
-联系销售团队
-
-## 继续阅读
-
-GPT-6 开发实用指南
-
-产品2026年10月2日
-
-Chatham 借助 OpenAI 扩大资本市场专业服务规模
-
-2026年10月2日
-
-永恒的互补关系
-
-智能时代2026年10月1日

@@ -9,18 +9,16 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 29365d341516
+body_sha: 1e5660f380b4
 ---
 
 OpenAI
 
 2026年8月24日
 
-产品
 
 # 借助 Kiro 中的 GPT‑5.6 为开发者带来更高性价比
 
-正在加载…
 
 GPT‑5.6 模型系列现已登陆 Kiro。Kiro 是一款软件开发智能体，能为大规模 AI 原生编码带来严谨的工程实践和质量保障。此次更新为 Kiro 用户带来了 OpenAI 最新的旗舰模型系列，包括 Sol、Terra 和 Luna，并将其融入团队规划、构建、审查和测试软件的开发工作流。这些模型协同工作，可以帮助开发者用更少的迭代产出更高质量的代码，并提升每个 Token 的价值。
 
@@ -71,18 +69,10 @@ GPT‑5.6 系列现已在 Kiro 中提供。访问 [https://kiro.dev/⁠（在新
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

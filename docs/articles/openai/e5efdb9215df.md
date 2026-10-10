@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 0b38b4f46118
+body_sha: 6e25a47c0cd3
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 OpenAI 封禁了与源自俄罗斯的“替身行动”有关的账号。该行动利用 AI 以多种语言生成反乌克兰的社交媒体评论、译文和网站文案。
 
-正在加载…
 
 *本案例研究最初发表于 OpenAI 的*[*2024 年 5 月*⁠（在新窗口中打开）](https://cdn.openai.com/threat-intelligence-reports/threat-intel-report-may-2024.pdf)*报告。*
 

@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 945b447078e4
+body_sha: aa16a018c581
 ---
 
 # 把来源弄对，而不只是把事实弄对：面向 MCP Agent 的 source-aware 校验
@@ -21,9 +21,7 @@ body_sha: 945b447078e4
 发布于
 					September 29, 2026
 
-点赞
 
-21
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/668e37fd9c9aa124a3c867e8/4ivwrPQnZGMDF6ovxnAdA.jpeg)](https://huggingface.co/AntonioTN)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
@@ -209,9 +207,7 @@ ander-alvarez
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2FMultiverseComputingCAI%2Fgetting-the-source-right-not-just-the-fact-source)或[登录](https://huggingface.co/login?next=%2Fblog%2FMultiverseComputingCAI%2Fgetting-the-source-right-not-just-the-fact-source)以发表评论
 
-点赞
 
-21
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/668e37fd9c9aa124a3c867e8/4ivwrPQnZGMDF6ovxnAdA.jpeg)](https://huggingface.co/AntonioTN)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)

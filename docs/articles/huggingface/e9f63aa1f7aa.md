@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 720cf4d8bcec
+body_sha: 04e83edc8f87
 ---
 
 # UK AISI 与 EvalEval 如何让基准测试结果可复现
@@ -20,9 +20,7 @@ body_sha: 720cf4d8bcec
 
 在 GitHub 上更新此内容
 
-点赞
 
-28
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png)](https://huggingface.co/dariocava)
@@ -204,9 +202,7 @@ Nomad-link-id
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fevaleval-aisi) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fevaleval-aisi) 即可评论
 
-点赞
 
-28
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg)](https://huggingface.co/evijit)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vnmbzcTMfdqnuzbONym__.png)](https://huggingface.co/dariocava)

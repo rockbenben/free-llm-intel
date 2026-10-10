@@ -9,20 +9,18 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 60efa4bfe6d1
+body_sha: a27a18eaaf35
 ---
 
 OpenAI
 
 2026年4月15日
 
-产品
 
 # Agents SDK 的全新演进
 
 新版 Agents SDK 助力开发者打造更具行动力的智能体。这些智能体能够在受控的沙箱环境中执行文件审查、运行指令、编辑代码，并能够胜任长周期、跨阶段的复杂任务
 
-正在加载…
 
 我们正在为 Agents SDK 引入全新功能，旨在为开发者提供一套标准化且易上手的底层架构。这套架构专为 OpenAI 模型量身打造，包含一个模型原生运行框架 (model-native harness)，支持智能体在计算机上跨文件、跨工具作业；同时，它还配套了原生沙箱执行环境，以确保各类任务的运行安全性。
 
@@ -89,18 +87,10 @@ Agents SDK 的这些全新功能现已面向所有 API 用户开放。定价方�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

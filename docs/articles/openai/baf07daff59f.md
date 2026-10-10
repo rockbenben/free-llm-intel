@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e58d04b0a6ac
+body_sha: 0216f65c1a65
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 NVIDIA 团队使用 ChatGPT 工作减少手动任务、连接快速变化的信号，并在全球推广成功的工作流。
 
-联系销售团队
 
 公司规模:
 
@@ -50,7 +49,6 @@ ChatGPT
 
 ChatGPT 工作每周从 25–40 条外部 AI 动态中提炼出的可行动信号
 
-正在加载…
 
 在 NVIDIA，ChatGPT 工作正在帮助知识工作者减少整理信息的时间，助其投入更多时间处理信息。
 
@@ -95,19 +93,3 @@ Will 的经历已经展现出这种潜力。他说：“对我个人而言，Cha
 ## 开启办公新时代
 
 全球逾百万家企业正通过 OpenAI 获得切实收益。
-
-联系销售团队
-
-## 继续阅读
-
-GPT-6 开发实用指南
-
-产品2026年10月2日
-
-Chatham 借助 OpenAI 扩大资本市场专业服务规模
-
-2026年10月2日
-
-永恒的互补关系
-
-智能时代2026年10月1日

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 12b509c44d5c
+body_sha: ad696131cf90
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 在 Nextdoor 的核心平台团队中，Codex 负责调查问题，并让产品工程师掌握主导权。
 
-联系销售团队
 
 公司规模:
 
@@ -38,7 +37,6 @@ OpenAI
 
 Codex
 
-正在加载…
 
 像 Nextdoor 这样服务于 11 个国家/地区超过 1.1 亿用户的产品，会对平台团队提出许多要求。对工程负责人 Cory Dolphin 来说，Codex 代表着一种关键转变：“从反复提示智能体，转向成果工程；工程师开始思考自己希望看到的结果，并与智能体协作来实现该结果。”
 
@@ -73,19 +71,3 @@ Nextdoor 最近发布了 Opportunity Alerts，让人们能够找到附近的服�
 ## 开启办公新时代
 
 全球逾百万家企业正通过 OpenAI 获得切实收益。
-
-联系销售团队
-
-## 继续阅读
-
-GPT-6 开发实用指南
-
-产品2026年10月2日
-
-Chatham 借助 OpenAI 扩大资本市场专业服务规模
-
-2026年10月2日
-
-永恒的互补关系
-
-智能时代2026年10月1日

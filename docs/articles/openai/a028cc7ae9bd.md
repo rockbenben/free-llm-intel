@@ -9,14 +9,13 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 6bd68b23005b
+body_sha: 8bc7f6409ca6
 ---
 
 OpenAI
 
 2024年4月1日
 
-产品
 
 # 立即开始使用 ChatGPT
 
@@ -26,15 +25,11 @@ OpenAI
 
 For the current experience:
 
-Try ChatGPT
 
-（在新窗口中打开）
 
 Release notes
 
-（在新窗口中打开）
 
-正在加载…
 
 我们的核心使命是让 ChatGPT 等工具广泛普及，让人们体验人工智能的益处。来自 185 个国家/地区超过 1 亿人每周使用 ChatGPT 学习新知识、寻找创意灵感并解答疑问。即日起，您可以立即使用 ChatGPT，无需注册。我们正在逐步推广这项服务，旨在让所有对人工智能感兴趣的人都能轻松使用。
 
@@ -46,18 +41,10 @@ Release notes
 
 对于一直对人工智能的潜力感到好奇，但又不想完成创建账户步骤的用户，现在即可开始使用 ChatGPT。
 
-## 相关文章
 
-查看全部
 
-Video generation models as world simulators
 
-刊发2024年2月15日
 
-Building an early warning system for LLM-aided biological threat creation
 
-刊发2024年1月31日
 
-Weak-to-strong generalization
 
-安全2023年12月14日

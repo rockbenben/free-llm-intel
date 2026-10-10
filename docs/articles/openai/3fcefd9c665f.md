@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 1f24f95302e5
+body_sha: 9223dfc187fd
 ---
 
 OpenAI
@@ -48,7 +48,6 @@ API
 
 代码成本降幅
 
-正在加载…
 
 [Parallel⁠（在新窗口中打开）](https://parallel.ai/) 为在网络上开展知识工作的 AI 智能体构建开发者基础设施。其工具将前沿模型与网络搜索相结合，应用范围涵盖语音智能体的网络落地，以及为金融机构和法律行业客户开展研究。
 
@@ -82,20 +81,11 @@ Parallel 还发现，GPT‑6 Astra 的搜索更聚焦，获得有用结果所需
 
 开始构建
 
-（在新窗口中打开）
 
-## 继续阅读
 
-查看全部
 
-Basis 借助 GPT-6 Astra，将税务工作簿完成时间缩短一半
 
-2026年9月28日
 
-Harvey 借助 GPT-6 Astra，将法律背景资料转化为更优质的文稿
 
-初创企业2026年9月23日
 
-借助 OpenAI，Ringg 的 AI 智能体解决多达 65% 的客户来电
 
-2026年9月23日

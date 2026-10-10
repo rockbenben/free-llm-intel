@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6e3192feaeb9
+body_sha: 2a17024b8c56
 ---
 
 OpenAI
@@ -21,7 +21,6 @@ Company
 
 2019 年 Scholar Nancy Otero。摄影：Blake Tucker
 
-Loading…
 
 我们现正接受 OpenAI Scholars 第二期项目的申请。该项目面向来自代表性不足群体的个人提供 6–10 份奖学金与导师指导，让他们全职学习深度学习 3 个月，并将一个项目开源。
 
@@ -49,7 +48,6 @@ Loading…
 - 可加入一个 Scholar 与 Mentor 的 Slack 群。如果你在湾区，我们可选地在 OpenAI 办公室为你提供工位（往届 Scholar 普遍认为非常有用）。
 - 一位导师，每周通过视频与你一对一协作，通过聊天/邮件解答你的问题，与你一同设计并推进一个能拉伸你技能的好项目。本期的导师包括：
 
-Loading...
 
 ## 我们寻找什么样的人
 
@@ -83,18 +81,10 @@ Loading...
 
 Ashley Pilipiszyn, Larissa Schiavo, Greg Brockman
 
-## 相关文章
 
-View all
 
-Global news partnerships: Le Monde and Prisa Media
 
-CompanyMar 13, 2024
 
-OpenAI announces new members to board of directors
 
-CompanyMar 8, 2024
 
-Review completed & Altman, Brockman to continue to lead OpenAI
 
-CompanyMar 8, 2024

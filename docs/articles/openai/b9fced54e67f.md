@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 8821558035ba
+body_sha: 45fa49a59f08
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 # 欧盟《行为准则》与人工智能在欧洲的未来
 
-正在加载…
 
 今天，我们宣布有意签署欧盟《通用人工智能行为准则》，前提是人工智能委员会在即将进行的充分性评估中正式批准当前版本。该准则是一套帮助人工智能开发者遵守《欧盟人工智能法案》的框架。如需进一步了解该法案及其规定的义务，请参阅我们的[入门指南⁠](https://openai.com/global-affairs/a-primer-on-the-eu-ai-act/)。
 
@@ -100,18 +99,10 @@ OpenAI 致力于为实现欧洲大陆的人工智能目标贡献力量；从今�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-帮助小企业将 AI 用于实际工作
 
-全球事务2026年9月30日
 
-OpenAI 向乌克兰开放网络安全工具，助力民用防御
 
-全球事务2026年9月23日
 
-Sam Altman在联合国安全理事会的讲话
 
-全球事务2026年9月23日

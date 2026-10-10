@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 1a34deaa038e
+body_sha: 2c0ad481bad2
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 作者：技术团队成员 Aravind Srinivasan 与 Samay Shamdasani（Thrive Holdings），Arthur Fernandes Araujo 与 John de Wasseige（OpenAI）
 
-正在加载…
 
 *Thrive Holdings 与 OpenAI 如何将从业者专业知识与 Codex 驱动闭环结合，为 Crete 会计师共同开发 Tax AI*
 
@@ -138,18 +137,10 @@ Thrive Holdings 的结构使我们能够在特定行业中复制这一环境。H
 
 Aravind Srinivasan、Samay Shamdasani、Arthur Fernandes Araujo、John de Wasseige
 
-## 继续阅读
 
-查看全部
 
-快速扩展在线存储，为超过 10 亿 ChatGPT 用户提供服务
 
-工程2026年9月11日
 
-Jalapeño 的首批测试结果展现出行业领先的 AI 推理速度与效率
 
-工程2026年8月25日
 
-使用 GPT Live 进行连续语音交互
 
-工程2026年8月3日

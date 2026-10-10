@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: 631cef4e2bab
+body_sha: 7311c659c1dd
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ WHOOP 用 GPT‑4 提供个性化健身与健康教练。
 
 View product
 
-Loading…
 
 WHOOP 做的可穿戴设备不止于健身追踪：它基于运动科学研究，全天候 24/7 监测身体，并从睡眠到压力管理提供深度、可执行的洞察。WHOOP 一直依赖机器学习来综合健康数据，但生成式 AI 的到来让他们眼前一亮：如果大语言模型能带来一种让人成为最好的自己的全新教练方式，会怎样？团队设想了一个 LLM 驱动的教练，全天候随时在线（哪怕半夜），能回答会员关于自己健身与健康的任何问题，比如"我历史最低静息心率是多少？"或"什么样的每周训练计划能帮我达成目标？"——所有指导都针对每个人的独特身体和目标量身定制。
 
@@ -36,16 +35,9 @@ WHOOP 创始人兼 CEO Will Ahmed 对这项技术的潜力印象深刻。"关于
 
 Talk with our team
 
-## 相关文章
 
-Building agricultural database for farmers
 
-Jan 12, 2024
 
-Creating websites in minutes with AI Website Builder
 
-May 29, 2025
 
-Increasing accuracy of pediatric visit notes
 
-Dec 14, 2023

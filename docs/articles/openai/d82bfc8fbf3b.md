@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 64d85591cfde
+body_sha: 2bcbdb72807c
 ---
 
 OpenAI
@@ -22,19 +22,15 @@ Release
 
 查看 Gym 环境
 
-（在新窗口打开）
 
 查看 Baselines
 
-（在新窗口打开）
 
 阅读论文
 
-（在新窗口打开）
 
 Ben Barry
 
-加载中…
 
 我们发布 8 个仿真机器人环境，以及 Hindsight Experience Replay 在 Baselines 中的实现，这些都是过去一年里为我们自己的研究开发的。我们已经用这些环境训练出能在真实物理机器人上工作的模型。同时我们还发布了一批面向机器人研究的需求清单（requests for research）。
 
@@ -113,18 +109,10 @@ HandManipulateBlockRotateXYZ-v0 上四种不同配置的中位测试成功率（
 
 Matthias Plappert, Marcin Andrychowicz, Alex Ray, Bob McGrew, Bowen Baker, Glenn Powell, Jonas Schneider, Josh Tobin, Maciek Chociej, Peter Welinder, Vikash Kumar, Wojciech Zaremba
 
-## 相关文章
 
-查看全部
 
-Scaling laws for reward model overoptimization
 
-Publication2022 年 10 月 19 日
 
-Introducing Whisper
 
-Release2022 年 9 月 21 日
 
-Learning to play Minecraft with Video PreTraining
 
-Conclusion2022 年 6 月 23 日

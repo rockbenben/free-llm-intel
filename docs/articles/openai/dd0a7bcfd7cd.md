@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 5dc9ce79d693
+body_sha: c7500bfc13f6
 ---
 
 OpenAI
@@ -18,11 +18,9 @@ OpenAI
 
 安全
 
-产品
 
 # 在人们最需要的时刻施以援手
 
-正在加载…
 
 随着 ChatGPT 在全球范围的普及，我们发现人们不仅将其用于搜索、编程和写作，更开始寻求它在[人生建议⁠（在新窗口中打开）](https://www.reddit.com/r/ChatGPT/comments/1k1dxpp/chatgpt_has_helped_me_more_than_15_years_of/)、[指导⁠（在新窗口中打开）](https://www.reddit.com/r/ChatGPT/comments/1h5y9nq/how_i_turned_chatgpt_into_my_personal/)和[支持⁠（在新窗口中打开）](https://www.reddit.com/r/ChatGPT/comments/1kqwte8/chatgpt_is_actually_amazing_for_mental_health/)等深度个人决策方面的帮助。
 
@@ -110,18 +108,10 @@ OpenAI
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

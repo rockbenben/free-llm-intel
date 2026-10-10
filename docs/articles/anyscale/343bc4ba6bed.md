@@ -9,7 +9,7 @@ captured: 2026-10-08
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 4f1d75d6e2b4
+body_sha: a63eca98cc19
 ---
 
 # 利用LeRobot数据集和Ray优化VLA微调性能
@@ -386,15 +386,12 @@ def train_loop_per_worker(config: dict):
 
 #### 在 Ray Data 上对多模态 AI 工作负载做基准测试
 
-阅读更多
 
 #### 跨 CPU 与 GPU 的流式分布式执行
 
-阅读更多
 
 #### 可扩展的分布式训练：从单 GPU 的瓶颈到在 Anyscale 上用 Ray 跑通可靠的多节点训练
 
-阅读更多
 
 ## 立即探索 Anyscale
 
@@ -402,4 +399,3 @@ def train_loop_per_worker(config: dict):
 
 免费开始
 
-与专家交流

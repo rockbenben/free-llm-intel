@@ -9,16 +9,14 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: fb9efdca8cf2
+body_sha: eb8be4aec459
 ---
 
 OpenAI
 
 2025年9月25日
 
-刊发
 
-研究
 
 # 衡量模型在现实世界任务中的表现
 
@@ -26,11 +24,9 @@ OpenAI
 
 阅读论文
 
-（在新窗口中打开）
 
 访问 evals.openai.com
 
-（在新窗口中打开）
 
 我们的使命是确保通用人工智能造福全人类。为此，我们致力于透明地展示 AI 模型如何在现实世界中惠及人类。因此我们推出 GDPval：这项新评估体系旨在追踪我们及他方模型在具有经济价值的现实任务中的表现。我们将其命名为 GDPval，源于以国内生产总值 (GDP) 为核心经济指标的理念，并从对 GDP 贡献最大的行业关键职业中提取任务。
 
@@ -185,18 +181,10 @@ GDPval 尚处初级阶段。尽管已覆盖 44 类职业与数百项任务，我
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-MentalHealthBench 正式上线
 
-刊发2026年9月23日
 
-隆重推出 GPT-6 Sol 和 Luna
 
-产品2026年9月22日
 
-我们的模型失配报告框架
 
-研究2026年9月16日

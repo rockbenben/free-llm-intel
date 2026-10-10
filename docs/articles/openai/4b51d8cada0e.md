@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 93132796d8ee
+body_sha: 2730ce6b7129
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 # OpenAI Codex 联动 Figma：实现代码与设计的无缝衔接
 
-正在加载…
 
 要点：
 
@@ -61,18 +60,10 @@ Cisco、NVIDIA、Ramp 和 Datadog 等公司正采用 Codex 赋能员工，Harvey
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-帮助小企业将 AI 用于实际工作
 
-全球事务2026年9月30日
 
-OpenAI 向乌克兰开放网络安全工具，助力民用防御
 
-全球事务2026年9月23日
 
-Sam Altman在联合国安全理事会的讲话
 
-全球事务2026年9月23日

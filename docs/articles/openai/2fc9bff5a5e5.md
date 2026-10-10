@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: efdc75dcfc9e
+body_sha: a94817e19f8e
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 作者：Bret Taylor
 
-正在加载…
 
 OpenAI 计划进行架构调整，现有 OpenAI 非营利组织将控制一家公共利益公司 (PBC)，并直接共享其发展成果。自诞生之初，OpenAI 便以非营利组织的身份立足，至今初心未改，未来亦将坚守此道 — 坚持非营利组织的领导，以指引企业未来发展。
 
@@ -42,18 +41,10 @@ OpenAI 计划进行架构调整，现有 OpenAI 非营利组织将控制一家�
 
 Bret Taylor
 
-## 继续阅读
 
-查看全部
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-隆重推出 Dot
 
-产品2026年9月29日

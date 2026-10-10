@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 183e5b5a590b
+body_sha: dbae5f2d2046
 translator: agent
 ---
 
@@ -21,9 +21,7 @@ translator: agent
 
 在 GitHub 上更新
 
-点赞
 
-63
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ce875d199b36f7552d4f07/bpUrvhXDagzRqZ3vxTcSF.jpeg)](https://huggingface.co/marcsun13)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61868ce808aae0b5499a2a95/F6BA0anbsoY_Z7M1JrwOe.jpeg)](https://huggingface.co/fffiloni)
@@ -232,9 +230,7 @@ How can i get API access
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fsynthid-text)或[登录](https://huggingface.co/login?next=%2Fblog%2Fsynthid-text)发表评论
 
-点赞
 
-63
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ce875d199b36f7552d4f07/bpUrvhXDagzRqZ3vxTcSF.jpeg)](https://huggingface.co/marcsun13)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61868ce808aae0b5499a2a95/F6BA0anbsoY_Z7M1JrwOe.jpeg)](https://huggingface.co/fffiloni)

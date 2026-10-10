@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d962f980216d
+body_sha: 749b78ee8e66
 ---
 
 OpenAI
@@ -23,7 +23,6 @@ Company
 
 Photo: Blake Tucker
 
-Loading…
 
 会学习的机器人是一条激动人心的前进路径，但在如何推进上存在不同的方法和观点。本次活动把机器人学与机器学习社区、学界与业界领袖汇聚在一起，搭建一个交流平台，交换想法、回应构建复杂机器人系统中尚未解决的问题。
 
@@ -37,7 +36,6 @@ Loading…
 
 ## 演讲
 
-Loading...
 
 ## 灵巧演示
 
@@ -60,18 +58,10 @@ Loading...
 
 OpenAI
 
-## 相关文章
 
-View all
 
-Procgen and MineRL Competitions
 
-CompanyJun 20, 2020
 
-OpenAI Five Finals
 
-CompanyMar 26, 2019
 
-Spinning Up in Deep RL: Workshop review
 
-CompanyFeb 26, 2019

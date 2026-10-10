@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 31d8f7a76682
+body_sha: 46a6a8fd6ef2
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 # 如何防范 AI 智能体在访问链接时泄露用户数据
 
-正在加载…
 
 AI 系统代表用户执行任务的能力正在不断增强，例如打开网页、跳转链接或加载图片以辅助回答问题。这些实用功能在提升效率的同时，也带来了隐蔽的安全风险，我们正在通过技术手段消除这些威胁。
 
@@ -108,18 +107,10 @@ AI 系统代表用户执行任务的能力正在不断增强，例如打开网�
 
 Adrian Spânu、Thomas Shadwell
 
-## 继续阅读
 
-查看全部
 
-阻断一起有组织的模型蒸馏行动
 
-安全防护2026年9月30日
 
-Towards safety cases for frontier AI training
 
-安全2026年9月28日
 
-我们将如何赢回澳大利亚民众的信任
 
-公司2026年9月28日

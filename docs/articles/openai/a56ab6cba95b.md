@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5f7fbe206792
+body_sha: 2af57255c19b
 ---
 
 OpenAI
@@ -23,7 +23,6 @@ Company
 
 Illustration: Justin Jay Wang × DALL·E
 
-Loading…
 
 ## 全职
 
@@ -55,18 +54,10 @@ Loading…
 
 Greg Brockman
 
-## 相关文章
 
-View all
 
-Global news partnerships: Le Monde and Prisa Media
 
-CompanyMar 13, 2024
 
-OpenAI announces new members to board of directors
 
-CompanyMar 8, 2024
 
-Review completed & Altman, Brockman to continue to lead OpenAI
 
-CompanyMar 8, 2024

@@ -9,20 +9,18 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 739d13442129
+body_sha: be887fd8128c
 ---
 
 OpenAI
 
 2026年8月26日
 
-产品
 
 # 将 ChatGPT 教师版推广至更多美国学区
 
 与学区建立的新合作关系，让 10 多万名教育工作者和教职员工用上 ChatGPT 教师版
 
-正在加载…
 
 2025 年，我们向近 15 万名教师和教职员工推出 ChatGPT 教师版，旨在为教育工作者提供一个安全的空间，让他们探索 AI、了解其适用场景，并参与塑造 AI 在教育中的应用方式。今天，我们将这项工作扩展至 20 个州的另外 55 个学校系统，让超过 10 万名教育工作者和教职员工用上 [ChatGPT 教师版](https://openai.com/index/chatgpt-for-teachers/)。
 
@@ -112,18 +110,10 @@ Rob Dickson，Wichita Public Schools 首席信息官
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

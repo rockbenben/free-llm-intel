@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: df87f95db432
+body_sha: aa57d9bdf170
 ---
 
 OpenAI
@@ -20,9 +20,7 @@ Try now
 
 (opens in a new window)
 
-Contact sales
 
-Loading…
 
 [Morgan Stanley（摩根士丹利）⁠(opens in a new window)](http://www.morganstanley.com) 与 OpenAI 合作构建 AI 解决方案，让理财顾问获得更快的洞见、更明智的决策和高效的摘要工具，从而深化客户关系。他们的成功扎根于一套稳健的评估框架，确保 AI 可靠、稳定地运行，达到顾问期望的高标准。
 
@@ -96,7 +94,6 @@ Talk with our team
 
 #### 继续阅读
 
-View all
 
 Building an autonomous financial analyst with o1 and o3-mini
 

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 43b37723e08b
+body_sha: caa56c82754b
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 # 心理健康安全工作进展通报
 
-正在加载…
 
 每周有超过 9 亿人使用 ChatGPT，通过学习新技能、应对复杂的医疗体系等方式改善日常生活。我们持续开展的安全工作，在为大众带来这些益处的同时，也在支持科学研究与探索方面发挥着重要作用。
 
@@ -63,18 +62,10 @@ OpenAI
 
 **按照标准程序，我们预计这些案件将并入现有的合并审理程序；届时，法院将指定原告方的首席律师。*
 
-## 继续阅读
 
-查看全部
 
-Towards safety cases for frontier AI training
 
-安全2026年9月28日
 
-我们将如何赢回澳大利亚民众的信任
 
-公司2026年9月28日
 
-Sam Altman在联合国安全理事会的讲话
 
-全球事务2026年9月23日

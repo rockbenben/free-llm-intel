@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: ecd08264220a
+body_sha: f84f1f5c6c19
 ---
 
 # Agent 说它做完了，数据库却不同意
@@ -21,9 +21,7 @@ body_sha: ecd08264220a
 发布
 					October 3, 2026
 
-点赞
 
-64
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png)](https://huggingface.co/tuhink)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a27ffbf0ea26227e43a0d29/Hk8XoWHT5braavBTjifaw.jpeg)](https://huggingface.co/Hectozar)
@@ -406,9 +404,7 @@ Nomad-link-id
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fmicrosoft%2Fthinkingbox) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fmicrosoft%2Fthinkingbox) 后可发表评论
 
-点赞
 
-64
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png)](https://huggingface.co/tuhink)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6a27ffbf0ea26227e43a0d29/Hk8XoWHT5braavBTjifaw.jpeg)](https://huggingface.co/Hectozar)

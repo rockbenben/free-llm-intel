@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 85cb3fa757de
+body_sha: e852b605ff44
 translator: agent
 ---
 
@@ -16,13 +16,11 @@ OpenAI
 
 2016 年 4 月 27 日
 
-发布
 
 # OpenAI Gym 公测版
 
 阅读论文
 
-（在新窗口打开）
 
 加载中……
 
@@ -87,18 +85,10 @@ OpenAI Gym 提供一套多样化的环境，从简单到困难，涉及许多不
 
 Greg Brockman
 
-## 相关文章
 
-查看全部
 
-奖励模型过度优化的规模定律
 
-论文 · 2022 年 10 月 19 日
 
-Whisper 简介
 
-发布 · 2022 年 9 月 21 日
 
-用 Video PreTraining 学习玩 Minecraft
 
-结论 · 2022 年 6 月 23 日

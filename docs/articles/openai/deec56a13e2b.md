@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a368f7680d24
+body_sha: 9ff946d9d08d
 ---
 
 OpenAI
@@ -24,7 +24,6 @@ OpenAI
 
 作者：技术团队成员 Justin Uberti 和 Zahan Malkani
 
-正在加载…
 
 对语音 AI 来说，判断何时开口比听起来更难。人类说话者能在不到一秒的时间内自然地交接发言，但以往的语音 AI 系统跟不上这种节奏。它们的轮次制架构依赖称为轮次检测器的小型模型，而检测器面临一项棘手任务：判断得太早会打断用户，太晚则会让响应显得迟缓。只有检测器做出判断后，体量大得多的 LLM 才能开始工作。
 
@@ -160,18 +159,10 @@ GPT‑Live 背后的架构已开始发展为更广泛的实时交互平台。随
 
 Justin Uberti、Zahan Malkani
 
-## 继续阅读
 
-查看全部
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-隆重推出 Dot
 
-产品2026年9月29日

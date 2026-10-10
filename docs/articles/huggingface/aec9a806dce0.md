@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4b76a315eec8
+body_sha: 54605ad45711
 translator: agent
 ---
 
@@ -21,9 +21,7 @@ translator: agent
 
 在 GitHub 上更新
 
-点赞
 
-140
 
 - [![](https://huggingface.co/avatars/ee3327ba714e824e0e04d5cd6f950770.svg)](https://huggingface.co/TengWang)
 - [![](https://huggingface.co/avatars/f94b783c8f49019ebb0a69f6e3053b77.svg)](https://huggingface.co/jeongah)
@@ -496,9 +494,7 @@ nlp
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fhf-bitsandbytes-integration)或[登录](https://huggingface.co/login?next=%2Fblog%2Fhf-bitsandbytes-integration)即可评论
 
-点赞
 
-140
 
 - [![](https://huggingface.co/avatars/ee3327ba714e824e0e04d5cd6f950770.svg)](https://huggingface.co/TengWang)
 - [![](https://huggingface.co/avatars/f94b783c8f49019ebb0a69f6e3053b77.svg)](https://huggingface.co/jeongah)

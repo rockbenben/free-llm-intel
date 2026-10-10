@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 812cd9025abf
+body_sha: b1c7cb5d15ab
 ---
 
 OpenAI
@@ -20,11 +20,9 @@ Canva’s AI-powered Magic Studio used 5 billion times and counting.
 
 立即试用
 
-（在新窗口中打开）
 
 咨询我们团队
 
-正在加载…
 
 Canva 作为视觉沟通平台，每月吸引超过 1.75 亿用户制作演示文稿、视频、文档、网站、社交媒体图稿等内容。全球多数知识工作者缺乏设计训练，但 Canva 凭借简易界面、海量素材库和高效工具，让任何人都能创作视觉震撼的内容。
 

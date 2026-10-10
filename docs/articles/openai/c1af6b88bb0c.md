@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5dae9c87b5a6
+body_sha: 6f08609c6829
 translator: agent
 ---
 
@@ -22,7 +22,6 @@ OpenAI
 
 阅读论文
 
-（在新窗口打开）
 
 加载中……
 
@@ -38,18 +37,10 @@ OpenAI
 
 Marcin Andrychowicz、Filip Wolski、Alex Ray、Jonas Schneider、Rachel Fong、Peter Welinder、Bob McGrew、Josh Tobin、Pieter Abbeel、Wojciech Zaremba
 
-## 相关文章
 
-查看全部
 
-奖励模型过度优化的规模定律
 
-论文 · 2022 年 10 月 19 日
 
-用 Video PreTraining 学习玩 Minecraft
 
-结论 · 2022 年 6 月 23 日
 
-大规模深度强化学习玩 Dota 2
 
-论文 · 2019 年 12 月 13 日

@@ -17,7 +17,6 @@ Grok Bot 与 X 的集成现在更加紧密了。
 
 Download for macOS
 
-Contact sales
 
 在 Grok Bot 中连接你的 X 账户；如果你还没有开发者账户，我们会为你创建一个。付费 Grok Bot 用户可免费获得起始的 X API 额度。
 
@@ -31,4 +30,3 @@ Contact sales
 
 Download for macOS
 
-Contact sales

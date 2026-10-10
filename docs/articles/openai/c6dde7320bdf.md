@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a63f59163d79
+body_sha: 28e60cb6827d
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 # OpenAI 和希腊政府联手推出“OpenAI for Greece”
 
-正在加载…
 
 今日我们隆重推出“OpenAI for Greece”，这是 OpenAI、希腊共和国政府、Onassis Foundation 及 Endeavor Greece 之间的一项新合作，旨在扩大高质量人工智能工具在中学教育中的应用，并加速希腊初创企业生态系统的创新。
 
@@ -72,18 +71,10 @@ OpenAI
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-帮助小企业将 AI 用于实际工作
 
-全球事务2026年9月30日
 
-OpenAI 向乌克兰开放网络安全工具，助力民用防御
 
-全球事务2026年9月23日
 
-Sam Altman在联合国安全理事会的讲话
 
-全球事务2026年9月23日

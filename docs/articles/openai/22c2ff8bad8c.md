@@ -9,14 +9,13 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 3dab9267095e
+body_sha: dfa90fc49fb4
 ---
 
 OpenAI
 
 2026年4月2日
 
-产品
 
 # Codex 现已面向团队推出即用即付模式
 
@@ -49,18 +48,10 @@ Notion、Ramp、Braintrust 以及 Wasmer 等公司的团队已经在利用 Codex
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

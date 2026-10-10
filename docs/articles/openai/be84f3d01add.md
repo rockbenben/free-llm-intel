@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 219349489e8a
+body_sha: 8a2bbc03be74
 ---
 
 OpenAI
@@ -23,7 +23,6 @@ Read paper
 
 (opens in a new window)
 
-Loading…
 
 ## 摘要
 
@@ -35,18 +34,10 @@ Loading…
 
 Smitha Milli, Pieter Abbeel, Igor Mordatch
 
-## 相关文章
 
-View all
 
-Building agricultural database for farmers
 
-Jan 12, 2024
 
-Creating websites in minutes with AI Website Builder
 
-May 29, 2025
 
-Delivering LLM-powered health solutions
 
-Jan 4, 2024

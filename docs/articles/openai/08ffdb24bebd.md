@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 6bb1fe0c1f16
+body_sha: 3c355f3bafa9
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 # 数学与人工智能咨询小组
 
-正在加载…
 
 8月28日，我们开始训练一个新的内部模型。除了[解决纳维–斯托克斯千禧年大奖难题⁠](https://openai.com/index/navier-stokes-solution/)外，该模型目前还解决了数学大多数领域中100多个长期悬而未决的开放问题。该模型在数学领域的[进展速度⁠](https://openai.com/index/navier-stokes-solution/#astra-internal-model-open-math-problems)令OpenAI内部的数学家感到惊讶。为帮助数学界做好准备并适应变化，我们开始在内部探讨如何以最佳方式向学界通报这一迅速进展。
 
@@ -54,18 +53,10 @@ OpenAI
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-Atlassian 与 OpenAI 深化合作
 
-公司2026年10月6日
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日

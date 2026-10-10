@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2a1f75fa2519
+body_sha: 11058d62b396
 translator: agent
 ---
 
@@ -21,9 +21,7 @@ translator: agent
 
 在 GitHub 上更新
 
-点赞
 
-42
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png)](https://huggingface.co/Stars321123)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/PuIDZB9XDShHohKhYmdmp.png)](https://huggingface.co/YellowjacketGames)
@@ -225,9 +223,7 @@ deleted
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fintel-deepmath)或[登录](https://huggingface.co/login?next=%2Fblog%2Fintel-deepmath)发表评论
 
-点赞
 
-42
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png)](https://huggingface.co/Stars321123)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/PuIDZB9XDShHohKhYmdmp.png)](https://huggingface.co/YellowjacketGames)

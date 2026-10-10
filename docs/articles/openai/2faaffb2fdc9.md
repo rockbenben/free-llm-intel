@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: af5bcecffae6
+body_sha: d5ed689e2bea
 ---
 
 OpenAI
@@ -20,11 +20,8 @@ By integrating its data systems with OpenAI’s LLMs, Booking.com delivers smart
 
 立即试用
 
-（在新窗口中打开）
 
-Contact sales
 
-正在加载…
 
 作为全球最大的旅游市场平台之一，Booking.com 让数百万旅行者能够更轻松地体验世界，一站式无缝整合航班、住宿及活动预订服务。
 
@@ -104,16 +101,9 @@ Rob Francis，Booking.com 高级副总裁兼首席技术官
 
 联系我们的团队
 
-## 继续阅读
 
-Driving growth and ‘WOW’ moments with OpenAI
 
-2025年3月12日
 
-Nubank 携手 OpenAI 提升客户体验
 
-2025年3月7日
 
-Accelerating engineering cycles 20% with OpenAI
 
-2025年3月6日

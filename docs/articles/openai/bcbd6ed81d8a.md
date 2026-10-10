@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 0d76968de99b
+body_sha: 8c2c3980228b
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 OpenAI 封禁了与疑似欺骗性就业活动有关的账号，这些活动利用 AI 制作用于潜在欺诈性远程职位申请的材料。
 
-正在加载…
 
 *本案例研究最初发布于 OpenAI 的*[*2025 年 6 月*⁠（在新窗口中打开）](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)*报告。*
 

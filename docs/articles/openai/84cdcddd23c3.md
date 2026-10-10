@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: 12a2df7e8a8f
+body_sha: ba0ccb49a17d
 ---
 
 OpenAI
@@ -18,7 +18,6 @@ OpenAI
 
 Superhuman 携手 OpenAI 开启电子邮件新纪元。
 
-Loading…
 
 工作转向线上之后，大约 10 亿职场人每天要花将近 [3 个小时处理邮件⁠(opens in a new window)](https://business.adobe.com/blog/perspectives/if-you-think-email-is-dead-think-again)。折算下来，人类每年花在邮件上的时间约为 1 万亿小时。
 
@@ -73,16 +72,9 @@ Rahul Vohra，Superhuman 创始人兼 CEO
 
 Talk with our team
 
-## 相关文章
 
-Embedding AI into developer software
 
-Mar 21, 2024
 
-Building a data-driven, efficient culture with AI
 
-Mar 18, 2024
 
-Enterprise-ready trust and safety
 
-Mar 18, 2024

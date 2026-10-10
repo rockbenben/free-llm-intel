@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 16962d013e36
+body_sha: 9cd01cd15378
 ---
 
 返回文章列表
@@ -20,9 +20,7 @@ body_sha: 16962d013e36
 
 在 GitHub 上更新
 
-点赞
 
-39
 
 - [![](https://huggingface.co/avatars/dd41593a55d1bec4f1a3a54fca35e646.svg)](https://huggingface.co/SamujjwalIIAI)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/628e39f4b1596566033b8d7b/-Y807up1cgMmAQsczdOPn.jpeg)](https://huggingface.co/cchristophe)
@@ -432,9 +430,7 @@ leaderboard
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fleaderboard-3c3h-aragen) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fleaderboard-3c3h-aragen) 以评论
 
-点赞
 
-39
 
 - [![](https://huggingface.co/avatars/dd41593a55d1bec4f1a3a54fca35e646.svg)](https://huggingface.co/SamujjwalIIAI)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/628e39f4b1596566033b8d7b/-Y807up1cgMmAQsczdOPn.jpeg)](https://huggingface.co/cchristophe)

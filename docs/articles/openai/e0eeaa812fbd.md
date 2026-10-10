@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 431d1af7a871
+body_sha: 02c29cc85a75
 translator: agent
 ---
 
@@ -16,7 +16,6 @@ OpenAI
 
 2023 年 5 月 18 日
 
-产品
 
 # 推出 iOS 版 ChatGPT 应用
 
@@ -47,18 +46,10 @@ ChatGPT 应用免费使用，并在各设备之间同步你的历史记录。它
 - [ChatGPT](https://openai.com/news/?tags=chatgpt)
 - [2023](https://openai.com/news/?tags=2023)
 
-## 相关文章
 
-查看全部
 
-Global news partnerships: Le Monde and Prisa Media
 
-公司 · 2024 年 3 月 13 日
 
-Review completed & Altman, Brockman to continue to lead OpenAI
 
-公司 · 2024 年 3 月 8 日
 
-OpenAI announces new members to board of directors
 
-公司 · 2024 年 3 月 8 日

@@ -9,14 +9,13 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: b2f2ed6f67e6
+body_sha: ca06fa627a2b
 ---
 
 OpenAI
 
 2025年12月18日
 
-刊发
 
 安全
 
@@ -24,7 +23,6 @@ OpenAI
 
 阅读系统卡
 
-（在新窗口中打开）
 
 ## 介绍
 
@@ -41,18 +39,10 @@ GPT‑5.2‑Codex 在我们的“准备框架”下接受了评估。它在网�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-5.2-Codex 正式亮相
 
-产品2025年12月18日
 
-构建更多可能：GPT-5.1-Codex-Max 简介
 
-产品2025年11月19日
 
-GPT-5.1-Codex-Max 系统卡
 
-刊发2025年11月19日

@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 98455fcc03f4
+body_sha: c5ad473845a6
 ---
 
 OpenAI
@@ -27,7 +27,6 @@ Read paper
 
 Browse samples
 
-Loading…
 
 我们微调了 GPT-3，让它能用一个基于文本的浏览器，更准确地回答开放式问题。我们的原型模仿人类在网上研究问题的方式——提交搜索查询、跟随链接、上下滚动网页。它被训练为引用自己的信息来源，从而让反馈事实准确性的工作变得更容易。我们对开发更诚实的 AI 感到兴奋[1](https://openai.com/index/webgpt/#citation-bottom-1)，但挑战仍然存在，比如如何应对不熟悉的问题类型。
 
@@ -35,13 +34,11 @@ Loading…
 
 模型基于 GPT-3 微调而来，用的是我们过去用过的 [同⁠](https://openai.com/index/deep-reinforcement-learning-from-human-preferences/)[样⁠](https://openai.com/index/fine-tuning-gpt-2/)[的⁠](https://openai.com/index/learning-to-summarize-with-human-feedback/)[方⁠](https://openai.com/index/summarizing-books/) 法。我们先训练模型模仿人类演示——这让它具备用文本浏览器回答问题的能力。然后我们通过训练一个奖励模型来预测人类偏好，并使用强化学习或拒绝采样来对其优化，从而提升模型回答的助益性与准确度。
 
-Loading...
 
 ## ELI5 结果
 
 我们的系统被训练来回答 ELI5[4⁠](https://openai.com/index/webgpt/#rf4) 上的问题——这是一个从"Explain Like I'm Five"（像给五岁小孩解释）板块抓取的开放式问题数据集。我们训练了三个不同的模型，分别对应三档推理时算力预算。我们表现最好的模型给出的回答，与人类演示写的答案相比，56% 的情况下被人更喜欢，事实准确度接近。虽然用来训练模型的演示数据同样是这些数据，但我们能借助人类反馈改进模型回答，从而超过它们。
 
-Loading...
 
 ## TruthfulQA 结果
 
@@ -49,7 +46,6 @@ Loading...
 
 我们的模型在 TruthfulQA 上超过 GPT-3，并展现出更优的缩放特性。然而我们的模型仍落后于人类表现，部分原因是它们有时会引用不太可靠的来源（如上面关于鬼魂的问题所示[⁠](https://openai.com/index/webgpt/#samples)）。我们希望能用对抗训练之类的技术降低这类失败的频率。
 
-Loading...
 
 ## 评估事实准确度
 
@@ -95,19 +91,11 @@ Jacob Hilton, Reiichiro Nakano, Suchir Balaji, John Schulman
 
 感谢 Surge AI 团队帮助我们收集数据，也感谢我们所有的合同工提供的演示与对比——没有他们，本项目无法完成。
 
-## 相关文章
 
-View all
 
-Building agricultural database for farmers
 
-Jan 12, 2024
 
-Creating websites in minutes with AI Website Builder
 
-May 29, 2025
 
-Delivering LLM-powered health solutions
 
-Jan 4, 2024
 

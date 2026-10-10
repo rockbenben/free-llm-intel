@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: f606309c00a1
+body_sha: 5be3da150a17
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 作者：Sarah Friar
 
-正在加载…
 
 只有整个系统协同改进，AI 的进步才能以最快速度累积。这正是我理解 OpenAI 算力战略的方式：打造一个覆盖数据中心与芯片、前沿模型、开发者平台、消费级和企业级产品以及 AI 原生设备的一体化系统，让每一层都为下一层赋能。
 
@@ -66,18 +65,10 @@ Jalapeño 让我们能更自主地控制模型的运行方式及其服务成本�
 
 Sarah Friar
 
-## 继续阅读
 
-查看全部
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-隆重推出 Dot
 
-产品2026年9月29日

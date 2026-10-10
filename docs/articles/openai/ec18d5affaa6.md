@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 2fee7531c49a
+body_sha: 88ff27e391ac
 ---
 
 OpenAI
@@ -110,16 +110,9 @@ AI 几乎已融入我们所有的求职者和雇主专用产品，并且我们�
 
 联系我们的团队
 
-## 继续阅读
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-Chatham 借助 OpenAI 扩大资本市场专业服务规模
 
-2026年10月2日
 
-永恒的互补关系
 
-智能时代2026年10月1日

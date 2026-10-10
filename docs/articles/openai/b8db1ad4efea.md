@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6438f5048892
+body_sha: 7b42f4980cbd
 ---
 
 OpenAI
@@ -23,7 +23,6 @@ Company
 
 Illustration: Justin Jay Wang
 
-Loading…
 
 我们正在与微软合作，开始把大部分大规模实验放到 Azure 上跑。这会让 Azure 成为 OpenAI 深度学习和 AI 使用的主要云平台，让我们能开展更多研究并把成果与全世界分享。
 
@@ -42,18 +41,10 @@ Loading…
 
 Greg Brockman, Ilya Sutskever, Sam Altman
 
-## 相关文章
 
-View all
 
-Embedding AI into developer software
 
-Mar 21, 2024
 
-Building a data-driven, efficient culture with AI
 
-Mar 18, 2024
 
-Reimagining the email experience with AI
 
-Mar 18, 2024

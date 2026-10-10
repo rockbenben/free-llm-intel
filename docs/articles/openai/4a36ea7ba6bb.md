@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 2b74d1610e71
+body_sha: 192092963d30
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 # OpenAI 扩大相关计划，从课堂到新闻编辑部全面支持新闻业
 
-正在加载…
 
 OpenAI 正启动一项大规模、多层面的计划，通过工具、培训、合作、经验共享和实践支持，助力新闻专业学生、教育工作者、新闻从业者和新闻机构，推动新闻生态发展。
 
@@ -85,18 +84,10 @@ OpenAI
 
 - 1ChatGPT Edu 提供企业级隐私保护、权限设置和管理控制；Edu 工作区中的数据不会用于训练 OpenAI 的模型。
 
-## 继续阅读
 
-查看全部
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-隆重推出 Dot
 
-产品2026年9月29日

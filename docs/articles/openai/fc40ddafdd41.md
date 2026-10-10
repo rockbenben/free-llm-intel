@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 2ac505f539d3
+body_sha: 76ea423b809f
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 OpenAI 承诺投入 10 亿美元，用于补贴 Daybreak 使用权限并提供培训、技术支持和合作伙伴关系，帮助一线防御者保护基本服务。
 
-正在加载…
 
 ***今天，OpenAI 推出 Daybreak 前线防御者计划。这是一项新的全球倡议，旨在帮助一线防御者运用前沿 AI 网络安全能力，保护美国及世界各地的基本服务。该倡议包括：***
 
@@ -77,18 +76,10 @@ MS-ISAC 为数千家公共部门组织提供网络威胁情报、事件响应支
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-阻断一起有组织的模型蒸馏行动
 
-安全防护2026年9月30日
 
-迈向 Astra：关键能力与前沿防护机制
 
-安全2026年9月1日
 
-Hugging Face 事件与未来之路
 
-安全防护2026年8月26日

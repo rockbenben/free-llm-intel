@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ffd43845994b
+body_sha: 7b1f48245288
 ---
 
 OpenAI
@@ -23,7 +23,6 @@ Lilian Weng 在 OpenAI 从事应用 AI 研究。
 
 Photo: Jake Stangel
 
-Loading…
 
 ## 关于 AI 的未来，最让你兴奋的是什么？
 
@@ -87,18 +86,10 @@ AI 社区近年取得了大量进展。硬件、模型架构和数据的进步�
 
 - [View careers at OpenAI](https://openai.com/careers/)
 
-## 相关文章
 
-View all
 
-Introducing OpenAI London
 
-CompanyJun 28, 2023
 
-Discovering the minutiae of backend systems
 
-CompanyDec 8, 2022
 
-OpenAI Residency
 
-CompanyNov 30, 2021

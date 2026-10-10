@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 45eca777cab5
+body_sha: 18c1b44f4458
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 Preply 使用 OpenAI 推出 AI 生成的课程摘要，提供个性化反馈和语言学习练习。
 
-联系销售团队
 
 产品:
 
@@ -62,7 +61,6 @@ Preply 员工中的 ChatGPT 周活跃使用率
 
 Lesson Insights 的满意度评分
 
-正在加载…
 
 [Preply⁠（在新窗口中打开）](https://preply.com/) 是全球最大的在线语言学习市场，将超过 100,000 名专业导师与 180 多个国家/地区的学习者连接起来。通过覆盖 90 多种语言的个性化一对一教学，Preply 的使命是让任何人在任何地方都能获得高质量的语言教育。
 
@@ -186,19 +184,3 @@ Preply 相信，未来不是人类或 AI 二选一。而是由人类主导、由
 ## 开启办公新时代
 
 全球逾百万家企业正通过 OpenAI 获得切实收益。
-
-联系销售团队
-
-## 继续阅读
-
-GPT-6 开发实用指南
-
-产品2026年10月2日
-
-Chatham 借助 OpenAI 扩大资本市场专业服务规模
-
-2026年10月2日
-
-永恒的互补关系
-
-智能时代2026年10月1日

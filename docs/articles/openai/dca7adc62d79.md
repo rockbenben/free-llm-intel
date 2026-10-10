@@ -9,20 +9,18 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 2aa368c49ac7
+body_sha: fa51d560eddc
 ---
 
 OpenAI
 
 2026年7月30日
 
-产品
 
 # 以 GPT‑5.6 推进性价比前沿
 
 通过提高每一层的效率，OpenAI 正在为更多企业工作负载带来更高的单位成本性能。
 
-正在加载…
 
 昨天，我们介绍了 [GPT‑5.6⁠](https://openai.com/index/gpt-5-6/) 如何帮助自身[提高运行效率⁠](https://openai.com/index/gpt-5-6-frontier-intelligence-efficiency/)。今天，我们将这些收益回馈给客户：降低 API 中 GPT‑5.6 [Luna⁠（在新窗口中打开）](https://developers.openai.com/api/docs/models/gpt-5.6-luna) 和 [Terra⁠（在新窗口中打开）](https://developers.openai.com/api/docs/models/gpt-5.6-terra) 的价格，并提升 GPT‑5.6 [Sol⁠](https://openai.com/index/gpt-5-6/) 的性能速度。这些更新共同帮助客户提高每一美元 AI 投资的回报，并在时间紧迫时更快推进工作。
 
@@ -98,18 +96,10 @@ GPT‑5.6 Sol 的快速模式将在 API 中取代“优先处理”，并与 Cod
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

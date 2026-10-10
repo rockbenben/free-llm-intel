@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 8fd51602ed21
+body_sha: 573cae7e37f6
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 # Cursor 被 SpaceX 收购后，我们作出的相关决定
 
-正在加载…
 
 今天，我们已通知 SpaceX，计划逐步终止向 Cursor 提供 OpenAI 模型的合同，并提议于 2026 年 11 月 12 日停止服务。为尽可能延长开发者通过 Cursor 使用我们模型的时间，我们按照合同约定给予了最长的提前通知期。这是一个极其艰难的决定，因为我们非常重视让广大开发者都能使用我们的模型。我们之所以作出这一决定，是因为根据 Elon Musk 旗下公司违反合同的过往情况，我们无法确信 SpaceX 会按照我们的服务条款使用我们的技术。
 
@@ -37,18 +36,10 @@ OpenAI
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-隆重推出 Dot
 
-产品2026年9月29日

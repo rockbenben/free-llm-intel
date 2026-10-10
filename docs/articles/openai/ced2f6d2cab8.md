@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 558d18719b3f
+body_sha: a0ecae9a1f2d
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 # OpenAI 与亚马逊宣布建立战略合作伙伴关系
 
-正在加载…
 
 **最新消息：**
 
@@ -65,18 +64,10 @@ OpenAI 与亚马逊将合作开发定制化模型，供亚马逊开发者用于�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-隆重推出 Dot
 
-产品2026年9月29日

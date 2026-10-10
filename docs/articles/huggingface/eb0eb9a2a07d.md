@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 24068821da4c
+body_sha: 90328e9e8a75
 translator: agent
 ---
 
@@ -21,9 +21,7 @@ translator: agent
 
 在 GitHub 上更新
 
-点赞
 
-45
 
 - [![](https://huggingface.co/avatars/1604409b53f4cc409cbeac98d51b29e1.svg)](https://huggingface.co/lumiseven)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6340651b388c3fa40f9a5bc0/vM3rB17pUNT11MUhYqfFY.png)](https://huggingface.co/adamm-hf)
@@ -550,9 +548,7 @@ tolgacangoz
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fdiffusers-quantization)或[登录](https://huggingface.co/login?next=%2Fblog%2Fdiffusers-quantization)发表评论
 
-点赞
 
-45
 
 - [![](https://huggingface.co/avatars/1604409b53f4cc409cbeac98d51b29e1.svg)](https://huggingface.co/lumiseven)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6340651b388c3fa40f9a5bc0/vM3rB17pUNT11MUhYqfFY.png)](https://huggingface.co/adamm-hf)

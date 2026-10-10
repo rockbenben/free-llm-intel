@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e750545147db
+body_sha: 1ed27ced5d9f
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 对话 Uber 人工智能与产品、客户体验总监 Jai Malkani。
 
-正在加载…
 
 ***我们的全新专栏《高管职能》系列呈现来自引领人工智能转型的管理者洞见。***
 
@@ -94,16 +93,9 @@ Uber 人工智能与产品、客户体验总监 Jai Malkani
 
 OpenAI
 
-## 相关文章
 
-Wayfair is shaping the future of retail with AI
 
-ChatGPT2025年2月13日
 
-Fanatics Betting and Gaming uses AI to focus on the big picture
 
-2025年2月13日
 
-Boosting the customer retail experience with GPT-4o mini
 
-2024年12月11日

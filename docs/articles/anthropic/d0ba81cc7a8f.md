@@ -11,7 +11,6 @@ translator: agent
 status: translated
 ---
 
-公告
 
 # 发布我们更新后的负责任扩展政策
 

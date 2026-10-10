@@ -195,9 +195,7 @@ nice paper
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fasr-benchmark-optimization)或[登录](https://huggingface.co/login?next=%2Fblog%2Fasr-benchmark-optimization)发表评论
 
-点赞
 
-68
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6384db7fb2906edaf835a91d/MOTXxaOmjlTZ8wONYifnD.jpeg)](https://huggingface.co/bezzam)
 - [![](https://huggingface.co/avatars/a7a92c5f9e01577dd7bcebe5a345f2f7.svg)](https://huggingface.co/aliceebaird)

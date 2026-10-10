@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 60fd8a211494
+body_sha: a35fcbc7e062
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 通过将 OpenAI 模型集成到其工具和工作流程中，JetBrains 正在重新定义开发人员借助 AI 进行设计、推理与软件构建的方式
 
-联系销售团队
 
 公司规模:
 
@@ -38,7 +37,6 @@ OpenAI
 
 ChatGPT, API
 
-正在加载…
 
 如果你不编写软件，你可能从未听说过 JetBrains。
 
@@ -112,19 +110,3 @@ Kris Kang，JetBrains 产品负责人
 ## 开启办公新时代
 
 全球逾百万家企业正通过 OpenAI 获得切实收益。
-
-联系销售团队
-
-## 继续阅读
-
-GPT-6 开发实用指南
-
-产品2026年10月2日
-
-Chatham 借助 OpenAI 扩大资本市场专业服务规模
-
-2026年10月2日
-
-永恒的互补关系
-
-智能时代2026年10月1日

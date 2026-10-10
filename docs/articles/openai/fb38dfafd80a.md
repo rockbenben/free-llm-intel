@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: ad466a3066f7
+body_sha: 51fe46b2e8e5
 ---
 
 OpenAI
@@ -64,18 +64,10 @@ OpenAI
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-阻断一起有组织的模型蒸馏行动
 
-安全防护2026年9月30日
 
-Towards safety cases for frontier AI training
 
-安全2026年9月28日
 
-我们将如何赢回澳大利亚民众的信任
 
-公司2026年9月28日

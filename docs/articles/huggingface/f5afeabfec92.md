@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 637923b6a2e6
+body_sha: d0116467447e
 translator: agent
 ---
 
@@ -21,9 +21,7 @@ translator: agent
 
 在 GitHub 上更新
 
-点赞
 
-22
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6893dd21467f7d2f5f358a95/3buD-PC8cvzsS__NJjdUi.png)](https://huggingface.co/thebajajra)
 - [![](https://huggingface.co/avatars/deae4af8cb134089d466d96f5d862da1.svg)](https://huggingface.co/anujga)
@@ -334,9 +332,7 @@ training
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fecom-rlve)或[登录](https://huggingface.co/login?next=%2Fblog%2Fecom-rlve)发表评论
 
-点赞
 
-22
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6893dd21467f7d2f5f358a95/3buD-PC8cvzsS__NJjdUi.png)](https://huggingface.co/thebajajra)
 - [![](https://huggingface.co/avatars/deae4af8cb134089d466d96f5d862da1.svg)](https://huggingface.co/anujga)

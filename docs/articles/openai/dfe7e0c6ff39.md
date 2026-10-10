@@ -9,16 +9,14 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: d36e92dd7c1b
+body_sha: 41f701765a88
 ---
 
 OpenAI
 
 2026年4月23日
 
-产品
 
-发布
 
 # 重磅发布 GPT‑5.5
 
@@ -32,9 +30,7 @@ GPT-6
 
 Compare models
 
-（在新窗口中打开）
 
-正在加载…
 
 我们正式发布 GPT‑5.5。作为我们迄今最智能、交互体验最直观的模型，它标志着人类迈向全新计算机办公模式的关键一步。
 
@@ -290,18 +286,10 @@ Git repo, journal, plan (Markdown files)
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

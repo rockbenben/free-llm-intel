@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 63affa99f627
+body_sha: c5e1aa0159ba
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 Cooley 的 GO Public 产品使用“ChatGPT 工作”，更早发现问题、聚焦专业知识，并帮助客户更快上市。
 
-联系销售团队
 
 公司规模:
 
@@ -38,7 +37,6 @@ Cooley 的 GO Public 产品使用“ChatGPT 工作”，更早发现问题、聚
 
 ChatGPT
 
-正在加载…
 
 Cooley 是一家国际律师事务所，以帮助企业应对资本市场和首次公开募股（IPO）事务而闻名。2025 年，该事务所在全球为 180 笔交易提供了咨询服务，交易总额超过 515 亿美元。十年来，Cooley 一直位居美国发行人侧 IPO 市场前列；在过去 20 多年中，其服务的风投支持企业 IPO 数量也超过了其他任何律师事务所。
 
@@ -83,19 +81,3 @@ Peinsipp 将 GO Public 视为资本市场工作交付方式广泛转型的开端
 Peinsipp 表示：“GO Public 代表了我们对资本市场业务未来的愿景。与 OpenAI 的合作让我们得以重新思考这项工作的开展方式。我们看到了巨大的潜力，不仅适用于 IPO，也适用于更广泛的资本市场交易。”
 
 ## 面向法律事务的 Astra 现已推出，立即试用
-
-联系销售团队
-
-## 继续阅读
-
-GPT-6 开发实用指南
-
-产品2026年10月2日
-
-Chatham 借助 OpenAI 扩大资本市场专业服务规模
-
-2026年10月2日
-
-永恒的互补关系
-
-智能时代2026年10月1日

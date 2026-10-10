@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 28fadcc5d898
+body_sha: dfdac0cf9a67
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 ## Fidji Simo
 
-正在加载…
 
 几周后，我将加入 OpenAI 担任应用业务首席执行官，致力于将 OpenAI 的技术带给全球更多的人。
 
@@ -104,18 +103,10 @@ Fidji。
 
 Fidji Simo
 
-## 继续阅读
 
-查看全部
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-隆重推出 Dot
 
-产品2026年9月29日

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 5c6530fe73c4
+body_sha: 9b69a8c4d823
 ---
 
 OpenAI
@@ -24,9 +24,7 @@ OpenAI
 
 阅读报告
 
-（在新窗口中打开）
 
-正在加载…
 
 AI 正以惊人的速度发展，但许多国家尚未充分利用其潜力来造福人民、推动经济增长。在能够驾驭这些工具的国家与尚未采取行动的国家之间，正形成显著的[能力积压 (Capability Overhang)](https://openai.com/index/ai-for-self-empowerment/) 差距。如果这一差距持续扩大，少数国家将在经济和技术领域进一步领跑，而其他国家则面临落后的风险。这种差距一旦形成，将难以逆转。
 
@@ -56,18 +54,10 @@ AI 正以惊人的速度发展，但许多国家尚未充分利用其潜力来�
 
 George Osborne
 
-## 继续阅读
 
-查看全部
 
-帮助小企业将 AI 用于实际工作
 
-全球事务2026年9月30日
 
-OpenAI 向乌克兰开放网络安全工具，助力民用防御
 
-全球事务2026年9月23日
 
-Sam Altman在联合国安全理事会的讲话
 
-全球事务2026年9月23日

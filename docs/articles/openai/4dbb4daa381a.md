@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 303e300b580e
+body_sha: 1f8efdfd3337
 ---
 
 OpenAI
@@ -24,7 +24,6 @@ OpenAI
 
 阅读文档
 
-（在新窗口中打开）
 
 *6 月 9 日更新：非常感谢大家对“智能时代的产业政策”的高度关注。我们已收到超过 400 份反馈，目前不再通过 *[*newindustrialpolicy@openai.com*⁠](mailto:newindustrialpolicy@openai.com)* 接收新的提交，相关团队正在对潜在的资助接收方进行评估。*
 
@@ -45,18 +44,10 @@ OpenAI
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-帮助小企业将 AI 用于实际工作
 
-全球事务2026年9月30日
 
-OpenAI 向乌克兰开放网络安全工具，助力民用防御
 
-全球事务2026年9月23日
 
-Sam Altman在联合国安全理事会的讲话
 
-全球事务2026年9月23日

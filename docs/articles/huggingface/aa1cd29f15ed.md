@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: cf671378ce86
+body_sha: fe54cb732bbc
 translator: agent
 ---
 
@@ -21,9 +21,7 @@ translator: agent
 
 在 GitHub 上更新
 
-点赞
 
-33
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e3f98a9db5da2dc1efab76/7DEh2SkVDHt5VMGmdLLsP.jpeg)](https://huggingface.co/alkibijad)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ee535a190ddd6214f30dc2/f4pNRFs9XVLToponWndWJ.jpeg)](https://huggingface.co/de-Rodrigo)
@@ -314,9 +312,7 @@ synthetic-data
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fdoc_aug_hf_alb)或[登录](https://huggingface.co/login?next=%2Fblog%2Fdoc_aug_hf_alb)即可评论
 
-点赞
 
-33
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e3f98a9db5da2dc1efab76/7DEh2SkVDHt5VMGmdLLsP.jpeg)](https://huggingface.co/alkibijad)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63ee535a190ddd6214f30dc2/f4pNRFs9XVLToponWndWJ.jpeg)](https://huggingface.co/de-Rodrigo)

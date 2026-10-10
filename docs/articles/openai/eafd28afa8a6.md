@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: ccf4c2f8d7c3
+body_sha: 200257bf19b5
 ---
 
 OpenAI
@@ -24,7 +24,6 @@ OpenAI
 
 作者：Patrick Hum 和 RJ Marsan，技术团队成员
 
-正在加载…
 
 *Sora 产品已于 2026 年 4 月 26 日正式关停。*
 
@@ -158,18 +157,10 @@ iOS 版 Sora 一经发布，使用量就呈爆炸式增长。人们立即开始�
 
 Patrick Hum、RJ Marsan
 
-## 继续阅读
 
-查看全部
 
-我们如何构建 OWL —— 驱动基于 ChatGPT 的浏览器 Atlas 的新架构
 
-工程2025年10月30日
 
-Sora 2 正式发布
 
-研究2025年9月30日
 
-Sora 2 系统卡
 
-刊发2025年9月30日

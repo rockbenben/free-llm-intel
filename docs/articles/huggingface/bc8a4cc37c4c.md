@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f3bb4b572a03
+body_sha: 90f9640dbb0e
 ---
 
 返回文章列表
@@ -20,9 +20,7 @@ body_sha: f3bb4b572a03
 
 在 GitHub 上更新
 
-点赞
 
-3
 
 - [![](https://huggingface.co/avatars/ce9b99882a65fd2cb983ba71a5ac2473.svg)](https://huggingface.co/a-r-r-o-w)
 - [![](https://huggingface.co/avatars/2211bd0a7d08bf1e078b0acee40894b5.svg)](https://huggingface.co/Vivek)
@@ -718,9 +716,7 @@ allendorf
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Freformer) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Freformer) 以评论
 
-点赞
 
-3
 
 - [![](https://huggingface.co/avatars/ce9b99882a65fd2cb983ba71a5ac2473.svg)](https://huggingface.co/a-r-r-o-w)
 - [![](https://huggingface.co/avatars/2211bd0a7d08bf1e078b0acee40894b5.svg)](https://huggingface.co/Vivek)

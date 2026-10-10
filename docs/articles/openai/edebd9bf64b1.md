@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 182620d5bd2e
+body_sha: fb29553c240a
 translator: agent
 ---
 
@@ -32,18 +32,10 @@ OpenAI
 
 Joshua Achiam, Harri Edwards, Dario Amodei, Pieter Abbeel
 
-## 相关文章
 
-查看全部
 
-Scaling laws for reward model overoptimization
 
-论文 · 2022 年 10 月 19 日
 
-Learning to play Minecraft with Video PreTraining
 
-结论 · 2022 年 6 月 23 日
 
-Dota 2 with large scale deep reinforcement learning
 
-论文 · 2019 年 12 月 13 日

@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1f2793ffcb99
+body_sha: 15a60987896c
 translator: agent
 ---
 
@@ -21,9 +21,7 @@ translator: agent
 
 在 GitHub 上更新
 
-点赞
 
-107
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e24395419922d5a6d7a6cc/bOFr0La0VdpIZ06-ZWJa4.jpeg)](https://huggingface.co/emredeveloper)
@@ -436,9 +434,7 @@ Funnelsflex
 
 · [注册](https://huggingface.co/join?next=%2Fblog%2Fdaggr)或[登录](https://huggingface.co/login?next=%2Fblog%2Fdaggr)发表评论
 
-点赞
 
-107
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63e24395419922d5a6d7a6cc/bOFr0La0VdpIZ06-ZWJa4.jpeg)](https://huggingface.co/emredeveloper)

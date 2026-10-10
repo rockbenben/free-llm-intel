@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: bfb0c21f5fdb
+body_sha: f8729a82a867
 ---
 
 OpenAI
@@ -22,7 +22,6 @@ OpenAI
 
 新的数据中心容量将推动就业、经济增长以及惠及更多人群的人工智能的发展。
 
-正在加载…
 
 甲骨文与 OpenAI 已达成协议，将在美国增加 4.5GW 的 Stargate 数据中心容量。此项投资将创造新的就业机会，加速美国的再工业化进程，并助力推动美国在人工智能领域的领导地位。这标志着 [Stargate⁠](https://openai.com/zh-Hans-CN/index/announcing-the-stargate-project/)——OpenAI 的人工智能基础设施平台及其长期愿景——在将人工智能的益处带给每个人方面迈出了重要一步。
 
@@ -45,18 +44,10 @@ Stargate 是一个雄心勃勃的项目，旨在把握我们面前的历史性�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-隆重推出 Dot
 
-产品2026年9月29日

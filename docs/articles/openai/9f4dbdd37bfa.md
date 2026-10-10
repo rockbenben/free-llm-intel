@@ -9,20 +9,18 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e8aa5c26923c
+body_sha: 6f6ddbb5348b
 ---
 
 OpenAI
 
 2026年6月18日
 
-产品
 
 # 提升 ChatGPT 的健康智能
 
 GPT‑5.5 Instant 将前沿健康智能带给更多人，这得益于我们的模型进步和由医生主导的评估。
 
-正在加载…
 
 健康是人们使用 ChatGPT 的最有意义的方式之一。每周，超过 2.3 亿人会向 ChatGPT 寻求健康与身心健康问题方面的帮助：理解健康信息、看懂化验结果、为就诊做准备、处理保险事宜、养成更健康的习惯，以及弄清下一步该问什么。
 
@@ -72,18 +70,10 @@ OpenAI 与一个由 260 多名医生组成的全球网络合作，这些医生�
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

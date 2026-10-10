@@ -9,20 +9,18 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: c1b629020b51
+body_sha: b5b539d3808a
 ---
 
 OpenAI
 
 2026年8月10日
 
-产品
 
 # ChatGPT Business 即将推出高级席位
 
 获得 5 倍用量，不受五小时用量限制，并可灵活地为每位团队成员配置适合其工作的席位。
 
-正在加载…
 
 *2026 年 8 月 25 日更新：高级席位现已在 ChatGPT Business 上线。首次添加高级席位可获得工作空间额度的优惠活动已结束。*[*了解更多*⁠（在新窗口中打开）](https://help.openai.com/articles/8792536)*关于 ChatGPT Business 高级席位的信息，或者*[*开始使用*⁠（在新窗口中打开）](https://chatgpt.com/pricing/?type=team)*。*
 
@@ -81,18 +79,10 @@ OpenAI
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-GPT-6 开发实用指南
 
-产品2026年10月2日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-推出 GPT-6.1 Sol
 
-产品2026年9月29日

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 1aa39a0c317a
+body_sha: f6812998c70f
 ---
 
 OpenAI
@@ -26,7 +26,6 @@ Sora
 
 依托 OpenAI GPT‑4.1 和 GPT‑5 进行方案规划，再由 Sora 2 完成视频创作，Higgsfield 能为独立创作者按需提供媲美完整创意团队的专业制作水准。
 
-正在加载…
 
 短视频是现代商业的一大驱动力，但要制作出真正能出效果的视频，难度远比看起来的大。在 TikTok、Reels 和 Shorts 上看似轻松随性的视频片段，歧视是依托一套隐形规则：包括开场钩子的时机拿捏、镜头节奏、运镜方式、叙事步调，还有其他细微设计，这些细节共同让内容和当下的流行趋势完美契合。
 
@@ -102,18 +101,10 @@ Higgsfield 的系统依托多款 OpenAI 模型搭建，每一款模型都是根�
 
 随着 OpenAI 模型的持续迭代，Higgsfield 的系统也在同步扩展。新的技术能力被转化成了工作流，这些工作流事后看都顺理成章，但在过去根本没法落地。随着模型技术日趋成熟，内容创作的重心也从工具操作，转向对叙事基调、结构和内涵的决策。
 
-## 继续阅读
 
-查看全部
 
-Harvey turns legal context into stronger drafts with GPT-6 Astra
 
-初创企业2026年9月23日
 
-借助 GPT‑6 Astra，Parallel 将研究时间和成本减半
 
-初创企业2026年9月22日
 
-Higgsfield AI 借助 GPT-6 Astra 一天上线视频新功能
 
-初创企业2026年9月21日

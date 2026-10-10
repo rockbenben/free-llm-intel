@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: df1af98f9b6e
+body_sha: a18b9e0a2b80
 ---
 
 OpenAI
@@ -104,18 +104,10 @@ Bret Taylor
 
 *1 **该项目此前称为“健康与疾病防治”(Health & Curing Diseases)，现已更名为“生命科学”(Life Sciences)。这一更名反映了 OpenAI Foundation 的核心思路：将推进生物学与医学研究视为攻克疾病的关键路径。*
 
-## 继续阅读
 
-查看全部
 
-Albertsons Companies 如何从内到外重塑零售业
 
-公司2026年10月1日
 
-DevDay 2026 回顾
 
-公司2026年9月29日
 
-隆重推出 Dot
 
-产品2026年9月29日

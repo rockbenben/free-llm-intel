@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a5a57319d8a5
+body_sha: 29892e50571a
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 # OpenAI 印度计划正式发布
 
-正在加载…
 
 今天，在德里举行的 2026 年印度人工智能影响力峰会上，我们正式启动“OpenAI 印度计划”。这项覆盖印度全国的计划将携手印度领先合作伙伴，扩大人工智能的普及，让这一全球最大民主国家充分释放人工智能带来的经济和社会效益。
 
@@ -70,18 +69,10 @@ OpenAI 将在印度扩大 OpenAI 认证计划，TCS 将成为美国以外首家�
 
 —Nima Arkani-Hamed，高等研究院物理学教授，专攻理论高能物理
 
-## 继续阅读
 
-查看全部
 
-帮助小企业将 AI 用于实际工作
 
-全球事务2026年9月30日
 
-OpenAI 向乌克兰开放网络安全工具，助力民用防御
 
-全球事务2026年9月23日
 
-Sam Altman在联合国安全理事会的讲话
 
-全球事务2026年9月23日

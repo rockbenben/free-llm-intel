@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 70dc47685c5d
+body_sha: 8adc8cb40d1d
 ---
 
 OpenAI
@@ -20,7 +20,6 @@ OpenAI
 
 # 将 ChatGPT 引入 GenAI.mil
 
-正在加载…
 
 今天，[OpenAI for Government⁠](https://openai.com/global-affairs/introducing-openai-for-government/) 宣布其国家安全相关工作的下一阶段：将 ChatGPT 引入 GenAI.mil — 这是国防部使用的安全企业级 AI 平台，服务对象包括约 300 万名文职和军职人员。
 
@@ -50,18 +49,10 @@ ChatGPT 旨在支持美国军事人员的日常工作，增强战备水平并提
 
 OpenAI
 
-## 继续阅读
 
-查看全部
 
-帮助小企业将 AI 用于实际工作
 
-全球事务2026年9月30日
 
-OpenAI 向乌克兰开放网络安全工具，助力民用防御
 
-全球事务2026年9月23日
 
-Sam Altman在联合国安全理事会的讲话
 
-全球事务2026年9月23日
