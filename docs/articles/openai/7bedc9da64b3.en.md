@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b29c654c2c1e
+body_sha: fb67e3bf32f1
 ---
 
-OpenAI
 
 June 1, 2025
 
@@ -21,7 +20,6 @@ Safety
 
 OpenAI banned accounts that appeared to originate in Russia and used AI to generate German-language political content about Ukraine, NATO, and domestic issues.
 
-Loading…
 
 *This case study was originally published in OpenAI’s *[*June 2025*](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)* report.*
 
@@ -51,9 +49,6 @@ As noted above, the Telegram channel counted 1,755 subscribers at the time of ou
 
 Using the IO impact [Breakout Scale](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/), we would assess this as being towards the upper end of Category 2: activity on multiple platforms, but little authentic engagement or evidence that their content was widely shared.
 
-- [Russia](https://openai.com/news/?tags=actor-origin-russia)
-- [Germany](https://openai.com/news/?tags=target-geography-germany)
-- [Influence operations](https://openai.com/news/?tags=activity-type-influence-operations)
 
 ## Author
 

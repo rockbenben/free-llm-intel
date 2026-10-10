@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f00b1f616edf
+body_sha: 3937d113e74e
 ---
 
-Back to Articles
 
 # NeoMME: an efficient Multimodal-native and Multilingual Encoder
 
@@ -19,10 +18,8 @@ Team
 
 Article
 
-Published
 					September 3, 2026
 
-Upvote
 
 121
 
@@ -354,7 +351,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2FHcompany%2Fneomme) or [log in](https://huggingface.co/login?next=%2Fblog%2FHcompany%2Fneomme) to comment
 
-Upvote
 
 121
 

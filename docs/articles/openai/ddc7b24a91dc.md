@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 00150ec5389a
+body_sha: 22521f9abf91
 ---
 
-OpenAI
 
 2026年6月12日
 
@@ -21,19 +20,13 @@ OpenAI
 Preply 使用 OpenAI 推出 AI 生成的课程摘要，提供个性化反馈和语言学习练习。
 
 
-产品:
 
 ChatGPT, API, Codex
 
-公司规模:
 
-中型企业
 
-区域:
 
-全球
 
-行业:
 
 科技, 教育
 

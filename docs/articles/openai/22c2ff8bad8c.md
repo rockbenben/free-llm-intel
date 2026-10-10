@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: ac3393a0fec6
+body_sha: 3e16c72e7156
 ---
 
-OpenAI
 
 2026年4月2日
 
@@ -41,8 +40,6 @@ Notion、Ramp、Braintrust 以及 Wasmer 等公司的团队已经在利用 Codex
 
 *1**如需详细了解优惠条款与条件，请点击*[*此处*](https://help.openai.com/en/articles/20001150)*。*
 
-- [Codex](https://openai.com/news/?tags=codex)
-- [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
 

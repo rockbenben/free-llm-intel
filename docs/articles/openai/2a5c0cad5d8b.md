@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: cb066d9488a2
+body_sha: e502c883c526
 ---
 
-OpenAI
 
 2026年8月10日
 
@@ -72,8 +71,6 @@ OpenAI
 
 如果你不是工作空间所有者，请将此优惠分享给负责管理 ChatGPT Business 账户的人员。优惠活动将于 8 月 20 日结束，请立即报名。有关活动方式和资格条件的更多信息，请参阅[帮助中心文章](https://help.openai.com/articles/20001420)。
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
 
 ## 作者
 

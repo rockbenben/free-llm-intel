@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0452028ca6f9
+body_sha: ebe03db80b96
 ---
 
-Back to Articles
 
 # SAIR: Accelerating Pharma R&D with AI-Powered Structural Intelligence
 
@@ -19,10 +18,8 @@ Team
 
 Article
 
-Published
 					September 2, 2025
 
-Upvote
 
 36
 
@@ -207,7 +204,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2FSandboxAQ%2Fsair-data-accelerating-drug-discovery-with-ai) or [log in](https://huggingface.co/login?next=%2Fblog%2FSandboxAQ%2Fsair-data-accelerating-drug-discovery-with-ai) to comment
 
-Upvote
 
 36
 

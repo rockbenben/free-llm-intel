@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: b1215885132c
+body_sha: 7a1370e3d0d1
 ---
 
-OpenAI
 
 2024年5月1日
 
@@ -73,11 +72,6 @@ OpenAI 封禁了与源自俄罗斯的“替身行动”有关的账号。该行�
 
 我们使用[突破量表](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/)评估影响力行动的影响。该量表将影响分为 1（最低）至 6（最高）级。我们认为，与使用我们模型有关的活动属于第 2 类：虽然在多个平台上发布了内容，但均未实现破圈传播或获得显著的受众互动。
 
-- [俄罗斯](https://openai.com/news/?tags=actor-origin-russia)
-- [ 欧洲](https://openai.com/news/?tags=target-geography-europe)
-- [北美洲](https://openai.com/news/?tags=target-geography-north-america)
-- [影响行动](https://openai.com/news/?tags=activity-type-influence-operations)
-- [骚扰与镇压](https://openai.com/news/?tags=harassment-and-repression)
 
 ## 作者
 

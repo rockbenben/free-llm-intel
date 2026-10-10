@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 23291c2cb2e0
+body_sha: a658065de744
 ---
 
-OpenAI
 
 2025年10月28日
 
@@ -21,31 +20,18 @@ OpenAI
 凭借 GPT‑5 与强化微调 (RFT) 技术，Doppel 将分析师工作量减少 80%，并成功将响应时间从数小时缩短至几分钟
 
 
-公司规模:
 
-初创企业
 
-区域:
 
-北美
 
-行业:
 
-科技
 
-产品:
 
-API
 
-成效
 
-80%
 
-分析师工作流精简幅度
 
-成效
 
-3x
 
 威胁处理能力提升倍数
 
@@ -122,7 +108,3 @@ Madduluri 表示：“域名或许是我们处理过难度最高的渠道。其�
 通过技术迭代，Doppel 致力于构建一套全方位的防御体系，在每一个信任遭受攻击的阵地，有力遏制冒充风险。
 
 ## OpenAI 全方位赋能初创企业
-
-加入社区
-
-开始构建

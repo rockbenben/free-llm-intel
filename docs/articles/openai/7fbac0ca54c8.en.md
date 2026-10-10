@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f09d6c38a6bc
+body_sha: f8791879d2db
 ---
 
-OpenAI
 
 April 26, 2016
 
@@ -23,7 +22,6 @@ We have two more team updates.
 
 Illustration: Justin Jay Wang × DALL·E
 
-Loading…
 
 We have two more team updates.
 
@@ -32,25 +30,7 @@ We have two more team updates.
 
 We could not be more excited to work with both. Welcome Pieter and Shivon!
 
-- [Culture & Careers](https://openai.com/news/?tags=culture-careers)
-- [2016](https://openai.com/news/?tags=2016)
 
 ## Author
 
 Ilya Sutskever
-
-## Related articles
-
-View all
-
-Global news partnerships: Le Monde and Prisa Media
-
-CompanyMar 13, 2024
-
-OpenAI announces new members to board of directors
-
-CompanyMar 8, 2024
-
-Review completed & Altman, Brockman to continue to lead OpenAI
-
-CompanyMar 8, 2024

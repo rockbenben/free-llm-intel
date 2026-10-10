@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c6018b1fc66a
+body_sha: eaeb71081b0c
 ---
 
-OpenAI
 
 October 30, 2025
 
@@ -23,7 +22,6 @@ Global Affairs
 
 More than one gigawatt campus to help build America’s AI infrastructure and support economic growth in the Midwest.
 
-Loading…
 
 Today, we’re announcing a new Stargate campus in Saline Township, Michigan, as part of our 4.5GW [partnership⁠](https://openai.com/index/stargate-advances-with-partnership-with-oracle/) with Oracle. Combined with capacity from our six [previously announced⁠](https://openai.com/index/five-new-stargate-sites/) U.S. Stargate sites with Oracle and SoftBank, this project brings Stargate to over 8 gigawatts of planned capacity and more than $450 billion in investment over the next three years—accelerating our progress and keeping us ahead of schedule to meet the $500 billion, 10-gigawatt commitment we announced in January.
 
@@ -35,25 +33,7 @@ Across the US, Stargate sites are creating jobs, spurring investment in modern e
 
 Michigan has long been at the center of American engineering and manufacturing. We’re proud to build here and to continue expanding the infrastructure needed to ensure the benefits of AI reach everyone.
 
-- [2025](https://openai.com/news/?tags=2025)
-- [Partnerships](https://openai.com/news/?tags=partnerships)
 
 ## Author
 
 OpenAI
-
-## Keep reading
-
-View all
-
-How Albertsons Companies is reimagining retail from the inside out
-
-CompanyOct 1, 2026
-
-Helping small businesses put AI to work
-
-Global AffairsSep 30, 2026
-
-DevDay 2026 Recap
-
-CompanySep 29, 2026

@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 7482cc908060
+body_sha: 96f6f2d7a076
 ---
 
-Back to Articles
 
 # Tricks from OpenAI gpt-oss YOU 🫵 can use with transformers
 
-Published
 					September 11, 2025
 
 Update on GitHub
 
-Upvote
 
 191
 
@@ -573,7 +570,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Ffaster-transformers) or [log in](https://huggingface.co/login?next=%2Fblog%2Ffaster-transformers) to comment
 
-Upvote
 
 191
 

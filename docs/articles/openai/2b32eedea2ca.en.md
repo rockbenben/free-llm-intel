@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3e1da14da4ab
+body_sha: 20a811dc5f5d
 ---
 
-OpenAI
 
 April 10, 2026
 
@@ -21,7 +20,6 @@ OpenAI Academy
 
 Upload and work with files to analyze, edit, and generate content.
 
-Loading…
 
 ChatGPT allows you to upload and work with files directly in your conversations. This means you can analyze spreadsheets, edit documents, summarize PDFs, or work with images without leaving your chat.
 
@@ -63,19 +61,3 @@ For related tools and guidance, explore [the Google Drive integration](https://o
 Discover additional guides and resources to help you build practical AI skills.
 
 View all topics
-
-## Keep reading
-
-View all
-
-Research with ChatGPT | OpenAI
-
-OpenAI AcademyApr 10, 2026
-
-Creating images with ChatGPT | OpenAI
-
-OpenAI AcademyApr 10, 2026
-
-Using projects in ChatGPT | OpenAI
-
-OpenAI AcademyApr 10, 2026

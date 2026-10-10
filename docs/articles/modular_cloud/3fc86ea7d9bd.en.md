@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0d79ac41a432
+body_sha: 1e4744e6ca33
 ---
 
 June 10, 2025
@@ -31,11 +31,9 @@ For decode-heavy `BF16` workloads, we demonstrate up to 32% better throughput pe
 
 These breakthroughs are made possible by Modular Platform, the industry’s first truly hardware-agnostic AI infrastructure stack—delivering a unified platform that enables seamless deployment across diverse hardware architectures without modifying a single line of code.
 
-‍
 
 > Developers can now build portable, high-performance GenAI deployments that run on any platform.
 
-‍
 
 Enterprises finally gain real freedom to choose the best hardware for their workloads—optimizing for both performance and total cost of ownership. Compared to vLLM on NVIDIA H200, MAX models on AMD MI325 match or exceed throughput parity for ShareGPT.
 

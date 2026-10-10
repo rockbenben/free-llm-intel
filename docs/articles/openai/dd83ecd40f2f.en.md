@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 42e8175ff6d5
+body_sha: b69103972234
 ---
 
-OpenAI
 
 May 12, 2026
 
@@ -19,7 +18,6 @@ May 12, 2026
 
 Codex and ChatGPT accelerate development cycles, improve code quality, and expand AI adoption across 2,000 employees.
 
-Contact sales
 
 Company size:
 
@@ -55,7 +53,6 @@ Results
 
 Builder roles using Codex.
 
-Loading…
 
 ## Rebuilding engineering for speed, scale, and complexity
 
@@ -106,19 +103,3 @@ As the company scales its AI capabilities, it aims to further enhance user exper
 ## Join the new era of work
 
 More than 1 million businesses around the world are achieving meaningful results with OpenAI.
-
-Contact sales
-
-## Keep reading
-
-A practical guide to building with GPT-6
-
-ProductOct 2, 2026
-
-Chatham scales its capital markets expertise with OpenAI
-
-Oct 2, 2026
-
-The eternal complement
-
-Intelligence AgeOct 1, 2026

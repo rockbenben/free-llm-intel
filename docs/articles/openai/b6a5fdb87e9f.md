@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3cfc7938b760
+body_sha: 127e6384d2c4
 ---
 
-OpenAI
 
 May 31, 2023
 
@@ -19,7 +18,6 @@ Publication
 
 # 用过程监督改进数学推理
 
-Read paper
 
 
 
@@ -54,10 +52,6 @@ Download dataset
 
 这些结果能在多大程度上泛化到数学之外仍未可知，我们认为未来的工作应当探索过程监督在其他领域的影响。如果这些结果能泛化，我们也许会发现过程监督兼得两全——一个比结果监督既更有效率也更对齐的方法。
 
-- [GPT](https://openai.com/research/index/?tags=gpt)
-- [Language](https://openai.com/research/index/?tags=language)
-- [Learning Paradigms](https://openai.com/research/index/?tags=learning-paradigms)
-- [Reasonings & Policy](https://openai.com/research/index/?tags=reasoning-policy)
 
 ## 参考文献
 

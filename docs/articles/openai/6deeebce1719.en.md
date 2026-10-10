@@ -8,16 +8,13 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 32376782940b
+body_sha: 39c898b50c12
 ---
 
-OpenAI
 
 2025年9月15日
 
-发布
 
-产品
 
 # Codex 全面升级
 
@@ -25,7 +22,6 @@ Codex 现在运行更高效、性能更稳定，实时协作与独立任务处�
 
 $ npm i -g @openai/codex
 
-正在加载…
 
 ***Update on September 23, 2025****: ** GPT‑5‑Codex is now available to developers using Codex via API key (in addition to being available to developers using Codex via their ChatGPT subscription). GPT‑5 Codex is available at the same price as GPT‑5, and is available in the Responses API only. The underlying model snapshot will be regularly updated. Check out the Codex *[*developer documentation*](http://platform.openai.com/docs/models/gpt-5-codex)* and *[*changelog*](https://developers.openai.com/codex/changelog)* for more details.*
 
@@ -109,25 +105,7 @@ For developers using Codex CLI via API key, we plan to make GPT‑5‑Codex avai
 
 Codex is becoming the coding partner we’ve always envisioned—one that’s faster, more reliable, and deeply integrated into the tools you already use. We’re excited to see what you build with it and will keep improving Codex to make it an even better teammate for your most ambitious projects.
 
-- [2025 年](https://openai.com/research/index/?tags=2025)
-- [Codex](https://openai.com/research/index/?tags=codex)
 
 ## 作者
 
 OpenAI
-
-## 继续阅读
-
-查看全部
-
-GPT-6 开发实用指南
-
-产品2026年10月2日
-
-DevDay 2026 回顾
-
-公司2026年9月29日
-
-推出 GPT-6.1 Sol
-
-产品2026年9月29日

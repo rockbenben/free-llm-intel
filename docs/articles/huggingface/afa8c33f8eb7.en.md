@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: 0a073aae3650
+body_sha: c05421703318
 ---
 
-Back to Articles
 
 # Getting the Source Right, Not Just the Fact: Source-Aware Verification for MCP Agents
 
@@ -19,10 +18,8 @@ Team
 
 Article
 
-Published
 					September 29, 2026
 
-Upvote
 
 21
 
@@ -157,7 +154,6 @@ Practical ask for teams wiring MCP: when your eval says "grounded," does it mean
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
 
-·
 
 ander-alvarez
 
@@ -171,7 +167,6 @@ mghwaz
 
 10 days ago
 
-•
 
 edited 10 days ago
 
@@ -188,7 +183,6 @@ Like, it seems (2 - 5) can be done via basic prompts in lifecycle, if you own th
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
 - [![](https://huggingface.co/avatars/72f6f613035501a07c402999e7718f5f.svg)](https://huggingface.co/mghwaz)
 
-·
 
 ander-alvarez
 
@@ -210,7 +204,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2FMultiverseComputingCAI%2Fgetting-the-source-right-not-just-the-fact-source) or [log in](https://huggingface.co/login?next=%2Fblog%2FMultiverseComputingCAI%2Fgetting-the-source-right-not-just-the-fact-source) to comment
 
-Upvote
 
 21
 

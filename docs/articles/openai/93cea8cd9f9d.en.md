@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 089971446869
+body_sha: d7bbc3015ac5
 ---
 
-OpenAI
 
 # Morgan Stanley uses AI evals to shape the future of financial services
 
@@ -19,9 +18,7 @@ Try now
 
 
 
-Contact sales
 
-Loading…
 
 [Morgan Stanley](http://www.morganstanley.com) collaborated with OpenAI to build AI solutions that empower financial advisors with faster insights, more informed decisions, and efficient summarization tools to deepen client relationships. Their success was grounded in a robust evaluation framework that ensures AI performs reliably, consistently, and at the high standards advisors expect.
 
@@ -95,7 +92,6 @@ Talk with our team
 
 #### Keep reading
 
-View all
 
 Building an autonomous financial analyst with o1 and o3-mini
 

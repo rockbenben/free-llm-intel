@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-08
 extractor: readability-v1
 status: ok
-body_sha: 1b4b936d8717
+body_sha: efcca4b52851
 ---
 
 # Qwen3.8-27B API Provider Benchmarks: Speed & Cost
@@ -262,5 +262,3 @@ MiMo-V2.5 Provider Pricing and Deployment Guide
 Best API Providers for DeepSeek V4 in 2026
 
 <p>DeepSeek V4 is available across a range of hosted API providers, each with different pricing, performance, and deployment trade-offs. The model comes in two variants: V4 Pro, a 1.6 trillion total parameter Mixture-of-Experts model with 49 billion active parameters and a 1M token context window, and V4 Flash, a lighter 284B total parameter variant built [&hellip;]</p>
-
-View all

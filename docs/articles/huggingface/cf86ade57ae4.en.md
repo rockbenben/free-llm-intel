@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b6626af1bbbf
+body_sha: 930a086afe35
 ---
 
-Back to Articles
 
 # Illustrating Reinforcement Learning from Human Feedback (RLHF)
 
-Published
 					December 9, 2022
 
 Update on GitHub
 
-Upvote
 
 431
 
@@ -252,7 +249,6 @@ Chiron
 
 - [![](https://huggingface.co/avatars/985d119025934bd93f2d7a51eada6642.svg)](https://huggingface.co/Kamalesh0081)
 
-·
 
 Kamalesh0081
 
@@ -268,7 +264,6 @@ Maybe Parameters frozen should be on Initial model? (last figure caption)
 
 - [![](https://huggingface.co/avatars/cef1afb625c0282dabd17dfe81e54983.svg)](https://huggingface.co/KristjanS)
 
-·
 
 KristjanS
 
@@ -280,7 +275,6 @@ deleted
 
 Dec 14, 2025
 
-•
 
 This comment has been hidden
 
@@ -310,7 +304,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Frlhf) or [log in](https://huggingface.co/login?next=%2Fblog%2Frlhf) to comment
 
-Upvote
 
 431
 

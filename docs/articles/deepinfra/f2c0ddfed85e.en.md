@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 51a7fee11f41
+body_sha: 7d42ed65e945
 ---
 
 GLM-5.3 API Providers: Speed, Latency & Cost
@@ -182,5 +182,3 @@ Model Deprecation: Build LLM Apps That Last
 DeepSeek V4.1 Flash API: Speed, Latency & Cost
 
 <p>DeepSeek V4.1 Flash (Reasoning, Max Effort) API Review Summary Metric Value Context Intelligence 40 (Artificial Analysis Intelligence Index) Well above median for comparable open-weight models (median: 18) Speed 211.5-545.6 output tokens/sec Notably fast; median: 68.9 t/s Latency (TTFT) 1.19s-5.28s (varies by provider) Competitive; median: 2.32s Price (DeepSeek API) $0.30/1M input, $1.20/1M output (peak) Cache discount: [&hellip;]</p>
-
-View all

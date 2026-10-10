@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: efb2c002e048
+body_sha: 11161bfe29de
 translator: agent
 ---
 
-OpenAI
 
 2020 年 7 月 9 日
 
@@ -43,14 +42,3 @@ OpenAI
 如果你已经迫不及待想开始自己的 ML 之旅，来看看我们的部分[教育资料⁠](https://openai.com/resources/)。关于下一期学员及如何申请的更多信息将于今秋公布。敬请期待！
 
 *衷心感谢 Microsoft 为学员提供 Azure 算力抵扣，感谢我们的导师付出的时间和心血，也感谢所有让这个计划成为可能的支持者。*
-
-- [文化与招聘](https://openai.com/news/?tags=culture-careers)
-- [2020](https://openai.com/news/?tags=2020)
-
-
-
-
-
-
-
-

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 71f33b5dc8bd
+body_sha: 217e015923d5
 ---
 
-OpenAI
 
 August 20, 2019
 
@@ -19,7 +18,6 @@ Publication
 
 # GPT‑2: 6-month follow-up
 
-Read paper
 
 
 
@@ -33,7 +31,6 @@ Legal agreement
 
 Illustration: Ben Barry
 
-Loading…
 
 We’re releasing the 774 million parameter GPT‑2 language model after the release of our small [124M model⁠](https://openai.com/index/better-language-models/) in February, staged release of our medium [355M model⁠](https://openai.com/index/better-language-models/#update) in May, and subsequent research with partners and the AI community into the model’s potential for misuse and societal benefit. We’re also releasing an open-source legal agreement to make it easier for organizations to initiate model-sharing partnerships with each other, and are publishing a technical report about our experience in coordinating with the wider AI research community on publication norms.
 
@@ -84,28 +81,8 @@ AI startup AI21 Labs releases [HAIM](https://www.ai21.com/haim-post), a neural t
 NVIDIA Research [trains](https://nv-adlr.github.io/MegatronLM) 8.3 billion parameter GPT‑2 model.
 Released larger parameter (774M) model.
 
-- [GPT](https://openai.com/research/index/?tags=gpt)
-- [Community & Collaboration](https://openai.com/research/index/?tags=community-collaboration)
-- [Reasonings & Policy](https://openai.com/research/index/?tags=reasoning-policy)
-- [Ethics & Safety](https://openai.com/research/index/?tags=ethics-safety)
 
 ## Footnotes
 
 - AHaving these conversations is difficult, as it involves talking candidly about proprietary systems and it’s unclear who to reach out to in specific organizations to discuss such models and what the appropriate processes are for inter-org discussion about unreleased research.
 - BThese samples were generated via a “human-in-the-loop” process meant to simulate contemporary disinformation operations, where a human generated samples and periodically selected some for exposure to people.
-
-## Related articles
-
-View all
-
-Democratic inputs to AI grant program: lessons learned and implementation plans
-
-SafetyJan 16, 2024
-
-Building agricultural database for farmers
-
-Jan 12, 2024
-
-Creating websites in minutes with AI Website Builder
-
-May 29, 2025

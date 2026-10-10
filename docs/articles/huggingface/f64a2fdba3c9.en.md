@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4beba4223aef
+body_sha: d44a2f2d8a82
 ---
 
-Back to Articles
 
 # Japanese Stable Diffusion
 
-Published
 					October 5, 2022
 
 Update on GitHub
 
-Upvote
 
 1
 
@@ -198,7 +195,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fjapanese-stable-diffusion) or [log in](https://huggingface.co/login?next=%2Fblog%2Fjapanese-stable-diffusion) to comment
 
-Upvote
 
 1
 

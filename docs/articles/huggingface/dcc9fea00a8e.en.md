@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ea110daab1b1
+body_sha: 8d54bfc832da
 ---
 
-Back to Articles
 
 # Supercharged Customer Service with Machine Learning
 
-Published
 					April 25, 2022
 
 Update on GitHub
 
-Upvote
 
 1
 
@@ -709,7 +706,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsupercharge-customer-service-with-machine-learning) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsupercharge-customer-service-with-machine-learning) to comment
 
-Upvote
 
 1
 

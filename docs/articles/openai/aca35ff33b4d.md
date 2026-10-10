@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 077293d96907
+body_sha: cdaac3bb431e
 ---
 
-OpenAI
 
 October 9, 2018
 
@@ -106,8 +105,6 @@ Fellows 与 Interns 项目为目前正在学习 AI、或希望从其他专业转
 
 *如有疑问，* [*internships@openai.com*⁠](mailto:internships@openai.com)
 
-- [Culture & Careers](https://openai.com/news/?tags=culture-careers)
-- [2018](https://openai.com/news/?tags=2018)
 
 ## 作者
 

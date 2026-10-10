@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fb83a4901e97
+body_sha: ba663d919e8f
 ---
 
-OpenAI
 
 April 7, 2025
 
@@ -19,7 +18,6 @@ April 7, 2025
 
 A conversation with Cameron Adams, Chief Product Officer and Co-founder of Canva.
 
-Loading…
 
 ***Our Executive Function series features perspectives from leaders driving transformation through AI.***
 
@@ -100,17 +98,3 @@ It’s about finding the right problem to solve and ensuring there’s a real cu
 ## Authors
 
 OpenAI
-
-## Related articles
-
-EliseAI improves housing and healthcare efficiency with AI
-
-Mar 18, 2025
-
-LaunchDarkly's approach to AI-powered product management
-
-Mar 4, 2025
-
-Uber enables outstanding on-demand experiences with AI
-
-Feb 20, 2025

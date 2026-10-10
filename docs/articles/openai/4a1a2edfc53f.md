@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e33b5eaef410
+body_sha: 9980640b4b24
 ---
 
-OpenAI
 
 2026年6月14日
 
@@ -118,17 +117,7 @@ OpenAI 合作伙伴网络是我们投资这一未来的一种方式。我们正�
 
 有兴趣与 OpenAI 共同构建的合作伙伴可访问 [https://openai.com/business/partners⁠](https://openai.com/business/partners) 了解更多。
 
-- [合作关系](https://openai.com/news/?tags=partnerships)
-- [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f258e0657d28
+body_sha: f15cac112d3d
 ---
 
-OpenAI
 
 November 15, 2016
 
@@ -23,7 +22,6 @@ We’re working with Microsoft to start running most of our large-scale experime
 
 Illustration: Justin Jay Wang
 
-Loading…
 
 We’re working with Microsoft to start running most of our large-scale experiments on Azure. This will make Azure the primary cloud platform that OpenAI is using for deep learning and AI, and will let us conduct more research and share the results with the world.
 
@@ -35,25 +33,7 @@ We’ll share the results of this partnership with everyone: along with publishi
 
 It’s great to work with another organization that believes in the importance of [democratizing access to AI](https://news.microsoft.com/features/democratizing-ai/). We’re looking forward to accelerating the AI community through this partnership.
 
-- [Partnerships](https://openai.com/news/?tags=partnerships)
-- [2016](https://openai.com/news/?tags=2016)
 
 ## Authors
 
 Greg Brockman, Ilya Sutskever, Sam Altman
-
-## Related articles
-
-View all
-
-Embedding AI into developer software
-
-Mar 21, 2024
-
-Building a data-driven, efficient culture with AI
-
-Mar 18, 2024
-
-Reimagining the email experience with AI
-
-Mar 18, 2024

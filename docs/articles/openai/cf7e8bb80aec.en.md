@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 279e842cb494
+body_sha: 4d1026d3c153
 ---
 
-OpenAI
 
 November 17, 2023
 
@@ -19,7 +18,6 @@ Company
 
 # OpenAI announces leadership transition
 
-Loading…
 
 *Chief technology officer Mira Murati appointed interim CEO to lead OpenAI; Sam Altman departs the company.*
 
@@ -39,25 +37,7 @@ As a part of this transition, Greg Brockman will be stepping down as chairman of
 
 OpenAI was founded as a non-profit in 2015 with the core mission of ensuring that artificial general intelligence benefits all of humanity. In 2019, OpenAI restructured to ensure that the company could raise capital in pursuit of this mission, while preserving the nonprofit's mission, governance, and oversight. The majority of the board is independent, and the independent directors do not hold equity in OpenAI. While the company has experienced dramatic growth, it remains the fundamental governance responsibility of the board to advance OpenAI’s mission and preserve the principles of its Charter.
 
-- [Culture & Careers](https://openai.com/news/?tags=culture-careers)
-- [2023](https://openai.com/news/?tags=2023)
 
 ## Author
 
 OpenAI
-
-## Related articles
-
-View all
-
-Global news partnerships: Le Monde and Prisa Media
-
-CompanyMar 13, 2024
-
-OpenAI announces new members to board of directors
-
-CompanyMar 8, 2024
-
-Review completed & Altman, Brockman to continue to lead OpenAI
-
-CompanyMar 8, 2024

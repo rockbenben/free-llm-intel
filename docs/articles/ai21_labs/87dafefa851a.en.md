@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ad0559825c4d
+body_sha: 7e417a1b1a4d
 ---
 
 ## A novel method for parsing PDF documents written in right-to-left (RTL) and underrepresented languages
@@ -121,7 +121,6 @@ n
 
 )
 
-/
 
 2
 

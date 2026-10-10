@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: cc15fefd8373
+body_sha: 76b3bbc70576
 ---
 
-Research
 
 # Mistral OCR
 
@@ -19,15 +18,11 @@ March 6, 2025
 
 By Mistral AI Team
 
-Back to Blog
 
 6 min read
 
-Share this post
 
-Copy url to clipboard
 
-Copied
 
 **Heads up: this model is deprecated**
 

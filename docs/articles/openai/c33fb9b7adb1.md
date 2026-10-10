@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 87c456b2cd94
+body_sha: dc65653b7b46
 translator: agent
 ---
 
-OpenAI
 
 2016 年 4 月 27 日
 
@@ -74,12 +73,6 @@ OpenAI Gym 提供一套多样化的环境，从简单到困难，涉及许多不
 
 在公测期间，我们在收集反馈，看怎样把它做成一个对研究更好的工具。如果你想帮忙，可以在每个环境上试着推进业界最先进水平、复现别人的结果，甚至实现你自己的环境。也欢迎加入我们的[社区聊天](https://gym.openai.com/chat)！
 
-- [仿真环境](https://openai.com/research/index/?tags=simulated-environments)
-- [探索与游戏](https://openai.com/research/index/?tags=exploration-game)
-- [软件与工程](https://openai.com/research/index/?tags=software-engineering)
-- [机器人](https://openai.com/research/index/?tags=robotics)
-- [学习范式](https://openai.com/research/index/?tags=learning-paradigms)
-- [社区与协作](https://openai.com/research/index/?tags=community-collaboration)
 
 ## 作者
 

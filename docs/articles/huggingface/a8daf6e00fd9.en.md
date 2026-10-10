@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 34581fa05b9f
+body_sha: a2f6477ab329
 ---
 
-Back to Articles
 
 # Kimina-Prover-RL
 
@@ -19,10 +18,8 @@ Team
 
 Article
 
-Published
 					August 14, 2025
 
-Upvote
 
 17
 
@@ -346,7 +343,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2FAI-MO%2Fkimina-prover-rl) or [log in](https://huggingface.co/login?next=%2Fblog%2FAI-MO%2Fkimina-prover-rl) to comment
 
-Upvote
 
 17
 

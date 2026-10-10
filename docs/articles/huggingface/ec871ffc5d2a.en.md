@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2775f68c6fa4
+body_sha: 3e7930e5dea1
 ---
 
-Back to Articles
 
 # mmBERT: ModernBERT goes Multilingual
 
-Published
 					September 9, 2025
 
 Update on GitHub
 
-Upvote
 
 156
 
@@ -734,7 +731,6 @@ can someone point me to how can i use the mmBERT model for BERTscore , a transla
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6362d9712691058b19de1ba4/Hdqj5aGrFJJbF7oUSzoIh.jpeg)](https://huggingface.co/orionweller)
 
-·
 
 orionweller
 
@@ -748,7 +744,6 @@ deleted
 
 Oct 31, 2025
 
-•
 
 This comment has been hidden
 
@@ -762,7 +757,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fmmbert) or [log in](https://huggingface.co/login?next=%2Fblog%2Fmmbert) to comment
 
-Upvote
 
 156
 

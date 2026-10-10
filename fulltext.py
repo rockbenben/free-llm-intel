@@ -176,7 +176,24 @@ _FURN_ANYWHERE = {
     "（在新窗口中打开）", "（在新标签页打开）", "（在新窗口打开）",
     "点赞", "关注", "收藏", "复制链接",
     "0.25×", "0.5×", "1.25×", "1.5×", "2×", ":",
+    # 实测语料里「整行等于它、且从不出现在句子里」的站件（次数/文件数见注释）
+    "Upvote",            # Hugging Face 投票按钮（1755 次 / 879 文件）
+    "Published",         # 日期标签（878 / 878）
+    "Read paper",        # 论文 CTA（173 / 173）
+    "Home",              # 页脚导航（88 / 86）
+    "00:00", "0:00",     # 播放器时长占位
+    "了解更多", "加入社区", "开始构建", "立即体验", "订阅更新",
+    "阅读技术报告", "阅读报告", "查看报告", "查看完整报告",
+    "Learn more", "Get started", "Read the report", "Subscribe",
+    "公司规模:", "区域:", "行业:", "地区:", "受众:", "产品:",   # 值标签本体（值走 R3）
 }
+#: 只由「项目符号 / 间隔号 / 斜杠 / 不可见字符」组成的整行：零信息量
+#: （实测 `•` 478、`·` 428、`\u200b` 214、`⋅` 110、`/` 471 处）。
+#: **故意不含 `|` `-` `_` `\`**：`| --- | --- |` 是我们自己生成的表格分隔行，
+#: 把它们收进来等于拆表格（写第一版时就踩到了，靠表格守卫测试拦下）。
+_FURN_SEPARATOR_RE = re.compile(r"^[\s•·⋅/⁠​‌‍﻿ ]+$")
+#: 标签/年份筛选链接：`- [Community](https://openai.com/news/?tags=community)`
+_TAG_LINK_RE = re.compile(r"^- \[[^\]]*\]\((?:[^)]*[?&](?:tags?|label)=)[^)]*\)$")
 _FURN_NAV_BEFORE_HEAD = {
     "产品", "研究", "博客", "公告", "首页", "发布", "刊发", "新闻中心",
     "News", "Newsroom", "Products", "Research", "Blog", "Announcements", "Featured",
@@ -258,9 +275,27 @@ def _is_tag_value(s):
     return True
 
 
-def furniture_drops(lines):
-    """返回 {行号: 规则名}。行号按传入的 lines 计。"""
+def _brand_of(url: str) -> str:
+    """页面 host 的品牌词：`www.anthropic.com` → `anthropic`，`huggingface.co` → `huggingface`。"""
+    host = (urlsplit(url).netloc or "").lower().split(":")[0]
+    host = re.sub(r"^www\.", "", host)
+    return host.split(".")[0] if host else ""
+
+
+def furniture_drops(lines, page_url: str = ""):
+    """返回 {行号: 规则名}。行号按传入的 lines 计。
+
+    R1 第一条标题之前的导航词 / 头图裸媒体链接 / **整行品牌字标**（等于本页 host 的品牌词，
+       实测 openai 1442 处在标题之前；标题之后另有 741 处，那一档不在这条闸上，见 R6/R7 说明）
+    R2 任意位置的家具标签行
+    R3 紧跟在带值标签后的短标签值行
+    R4 文末带卡片指纹的推荐区整块
+    R5 点赞/收藏/关注后的纯数字计数行
+    R6 只由分隔符或不可见字符组成的整行（`•`、`·`、`\u200b`…，零信息量）
+    R7 连续的标签/年份筛选链接块（`- [x](…?tags=y)` ≥2 行，实测 804 个文件各一段）
+    """
     fenced, first_head = _fence_mask(lines)
+    brand = _brand_of(page_url)
     drop = {}
     for i, l in enumerate(lines):
         if i in fenced:
@@ -270,9 +305,24 @@ def furniture_drops(lines):
             continue
         if s in _FURN_ANYWHERE:
             drop[i] = "R2"
+        elif _FURN_SEPARATOR_RE.match(s):
+            drop[i] = "R6"
         elif first_head is not None and i < first_head and (
-                s in _FURN_NAV_BEFORE_HEAD or _BARE_MEDIA_RE.match(s)):
+                s in _FURN_NAV_BEFORE_HEAD or _BARE_MEDIA_RE.match(s)
+                or (brand and s.lower().replace(" ", "").replace("-", "") == brand)):
             drop[i] = "R1"
+    run = []
+    for i, l in enumerate(lines):
+        if i not in fenced and _TAG_LINK_RE.match(l.strip()):
+            run.append(i)
+            continue
+        if len(run) >= 2:
+            for x in run:
+                drop[x] = "R7"
+        run = []
+    if len(run) >= 2:
+        for x in run:
+            drop[x] = "R7"
     walked = set()
     for k in sorted(i for i, v in drop.items() if v == "R2" and lines[i].strip() in _FURN_VALUE_LABELS):
         j, n = k + 1, 0
@@ -378,13 +428,13 @@ def strip_inline_junk(body: str, page_url: str = "") -> str:
 
 
 def strip_page_furniture(body: str, page_url: str = "") -> str:
-    """整行页面家具 + 串级噪声，一次洗全。**中文落盘口用这个**。
+    """整行页面家具 + 串级噪声，一次洗全。**中英两侧的落盘口都走它**。
 
-    行级判据（`furniture_drops` 的 R1–R5）只删「整行等于站件闭集标签」或结构块
-    （带值标签后的短标签值、文末带卡片指纹的推荐区）；精确匹配，不猜形状。
+    行级判据（`furniture_drops` 的 R1–R7）只删「整行等于站件闭集标签」或结构块
+    （带值标签后的短标签值、文末带卡片指纹的推荐区、连续的标签筛选链接块）；精确匹配，不猜形状。
     """
     lines = (body or "").split("\n")
-    drop = furniture_drops(lines)
+    drop = furniture_drops(lines, page_url)
     if drop:
         # 删的都是非栅栏行，栅栏奇偶不受影响；剩下的交给串级那一趟
         body = "\n".join(l for i, l in enumerate(lines) if i not in drop)
@@ -1726,9 +1776,9 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # 英文原文 / 抓取失败：写英文侧，保留已有的真实中文译文
         en_rel = f"docs/articles/{vendor}/{slug}.en.md"
         body = ex["markdown"] if en_status == "ok" else ""
-        # 英文侧只走串级清洗（无障碍提示 / 锚点图标）：这两档是抽取噪声、EN 页签照样渲染；
-        # 整行家具那套判据当初是按中文稿的形态定的，不在这条路上扩面。
-        body = strip_inline_junk(body, norm)
+        # 英文侧同样过整行家具判据：实测站件 residue 大头在英文侧（`Loading…` 536 处、
+        # `View all` 409 处、`Upvote` 1755 处……），只洗中文侧等于把 EN 页签留在原地。
+        body = strip_page_furniture(body, norm)
         cap = _kept_captured(prev.get("en_path") or "", body)
         fm = {"vendor": vendor, "title": ex["title"] or r.get("original_title") or r.get("title", ""),
               "original_title": r.get("original_title", ""), "url": norm,

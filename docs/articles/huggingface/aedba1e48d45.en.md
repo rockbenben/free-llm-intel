@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ee11d219cb31
+body_sha: 3b23ea35d607
 ---
 
-Back to Articles
 
 # Transformers.js v3: WebGPU Support, New Models & Tasks, and More…
 
-Published
 					October 22, 2024
 
 Update on GitHub
 
-Upvote
 
 85
 
@@ -387,7 +384,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Ftransformersjs-v3) or [log in](https://huggingface.co/login?next=%2Fblog%2Ftransformersjs-v3) to comment
 
-Upvote
 
 85
 

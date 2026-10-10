@@ -8,20 +8,17 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a36fe1435815
+body_sha: 438d3abede10
 ---
 
-OpenAI
 
 October 9, 2025
 
-Research
 
 Publication
 
 # Defining and evaluating political bias in LLMs
 
-Loading…
 
 ChatGPT shouldn’t have political bias in any direction.
 
@@ -146,27 +143,7 @@ While GPT‑5 improves bias performance over prior models, challenging prompts e
 
 By discussing our definitions and evaluation methods, we aim to clarify our approach, help others build their own evaluations, and hold ourselves accountable to our principles. This work acts on our [operating principle](https://openai.com/charter/) commitments to Technical Leadership and Cooperative Orientation; we hope it supports industry efforts to advance AI objectivity through shared definitions and empirical evaluation.
 
-- [2025](https://openai.com/news/?tags=2025)
-- [GPT](https://openai.com/news/?tags=gpt)
-- [Ethics & Safety](https://openai.com/news/?tags=ethics-safety)
-- [Reasonings & Policy](https://openai.com/news/?tags=reasoning-policy)
 
 ## Author
 
 OpenAI
-
-## Keep reading
-
-View all
-
-Introducing MentalHealthBench
-
-PublicationSep 23, 2026
-
-Introducing GPT-6 Sol and Luna
-
-ProductSep 22, 2026
-
-Our framework for reporting model misalignment
-
-ResearchSep 16, 2026

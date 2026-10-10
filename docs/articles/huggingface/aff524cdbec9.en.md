@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9fd0a0580b93
+body_sha: 9f7fa9d922a5
 ---
 
-Back to Articles
 
 # Introducing Storage Regions on the Hub
 
-Published
 					November 3, 2023
 
 Update on GitHub
 
-Upvote
 
 2
 
@@ -153,7 +150,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fregions) or [log in](https://huggingface.co/login?next=%2Fblog%2Fregions) to comment
 
-Upvote
 
 2
 

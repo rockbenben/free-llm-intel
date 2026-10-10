@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 950593499e6c
+body_sha: 551a4971d235
 ---
 
-OpenAI
 
 December 6, 2017
 
@@ -23,13 +22,11 @@ View code
 
 
 
-Read paper
 
 
 
 Illustration: Ben Barry
 
-Loading…
 
 We’re releasing highly-optimized GPU kernels for an underexplored class of neural network architectures: networks with block-sparse weights. Depending on the chosen sparsity, these kernels can run orders of magnitude faster than cuBLAS or cuSPARSE. We’ve used them to attain state-of-the-art results in text sentiment analysis and generative modeling of text and images.
 
@@ -73,9 +70,6 @@ Here we list some suggestions for future research.
 - In biological brains, the sparse structure of the network is [partially determined during development](https://en.wikipedia.org/wiki/Synaptic_pruning), in addition to connection strengths. Can we do something similar in artificial neural networks, where we use gradients to not only learn the connection weights, but also the optimal sparsity structure? A recent paper proposed a method for learning [block-sparse RNNs](https://arxiv.org/abs/1711.02782), and we recently proposed an algorithm for [L0 regularization in neural networks](https://arxiv.org/abs/1712.01312), which can be used towards this end.
 - We trained [LSTMs with tens of thousands of hidden units⁠](https://openai.com/index/block-sparse-gpu-kernels/#small-world-lstms), leading to better models of text. More generally, sparse layers make it possible to train models with huge weight matrices but the same number of parameters and the same computational cost as their smaller dense counterparts. What are application domains where this will make the most difference to performance?
 
-- [CLIP](https://openai.com/research/index/?tags=technology-clip)
-- [GPT](https://openai.com/research/index/?tags=gpt)
-- [Software & Engineering](https://openai.com/research/index/?tags=software-engineering)
 
 ## Authors
 
@@ -84,19 +78,3 @@ Scott Gray, Alec Radford, Durk Kingma
 ## Acknowledgments
 
 Cover Artwork: Ben Barry
-
-## Related articles
-
-View all
-
-Introducing Whisper
-
-ReleaseSep 21, 2022
-
-Techniques for training large neural networks
-
-PublicationJun 9, 2022
-
-Introducing Triton: Open-source GPU programming for neural networks
-
-ReleaseJul 28, 2021

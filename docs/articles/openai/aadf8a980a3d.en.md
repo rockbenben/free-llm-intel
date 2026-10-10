@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f2e9fb97a4cc
+body_sha: 66a3f82ba6f5
 ---
 
-OpenAI
 
 October 11, 2018
 
@@ -21,7 +20,6 @@ Company
 
 2019 Scholar Nancy Otero. Photo: Blake Tucker
 
-Loading…
 
 We are now accepting applications for our second cohort of OpenAI Scholars, a program where we provide 6–10 stipends and mentorship to individuals from underrepresented groups to study deep learning full-time for 3 months and open-source a project.
 
@@ -49,7 +47,6 @@ Diversity is core to AI having a positive effect on the world—it’s necessary
 - Access to a group Slack with the scholars and mentors. If you’re in the Bay Area, we’ll optionally provide a desk for you at the OpenAI office (which our past Scholars have found very valuable).
 - A mentor, who will work with you 1:1 via video call each week, answer your questions via chat/email, and work with you to design and execute a good project to stretch your skills. Mentors for this cohort include:
 
-Loading...
 
 ## What we’re looking for
 
@@ -76,25 +73,7 @@ We’ll use these criteria for selection:
 
 - [Apply now](https://jobs.lever.co/openai/cf6de4ed-4afd-4ace-9273-8842c003c842)
 
-- [Culture & Careers](https://openai.com/news/?tags=culture-careers)
-- [2018](https://openai.com/news/?tags=2018)
 
 ## Authors
 
 Ashley Pilipiszyn, Larissa Schiavo, Greg Brockman
-
-## Related articles
-
-View all
-
-Global news partnerships: Le Monde and Prisa Media
-
-CompanyMar 13, 2024
-
-OpenAI announces new members to board of directors
-
-CompanyMar 8, 2024
-
-Review completed & Altman, Brockman to continue to lead OpenAI
-
-CompanyMar 8, 2024

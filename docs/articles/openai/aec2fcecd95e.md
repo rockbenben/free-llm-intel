@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fe848c4ac548
+body_sha: 5083c0f5c9fa
 ---
 
-OpenAI
 
 August 20, 2019
 
@@ -19,7 +18,6 @@ Publication
 
 # GPT-2：6 个月后的跟进
 
-Read paper
 
 
 
@@ -68,10 +66,6 @@ Illustration: Ben Barry
 - **2019 年 6 月**[DeepTabNine 开发了一款](https://tabnine.com/blog/deep) 基于 GPT-2 的代码自动补全工具。[Multi-turn Dialogue Response Generation with Autoregressive Transformer Models](https://arxiv.org/abs/1908.01841)[GLTR: Statistical Detection and Visualization of Generated Text](https://www.aclweb.org/anthology/P19-3019)
 - **2019 年 7 月**Thoughtful Technology Project 和剑桥大学的研究者发表了一篇工作论文，题为"[Reducing malicious use of synthetic media research: Considerations and potential release practices for machine learning](https://arxiv.org/abs/1907.11274)"。[Hello, It's GPT-2—How Can I Help You? Towards the Use of Pretrained Language Models for Task-Oriented Dialogue Systems](https://arxiv.org/abs/1907.05774)AI 初创公司 AI21 Labs 发布了 [HAIM](https://www.ai21.com/haim-post)，一个神经文本生成器；他们只发布了一个 345M 的模型变体，"规模上与公开发布版本的 Grover 和 GPT-2 相当"。NVIDIA Research [训练了](https://nv-adlr.github.io/MegatronLM) 一个 83 亿参数的 GPT-2 模型。发布了更大参数（774M）的模型。
 
-- [GPT](https://openai.com/research/index/?tags=gpt)
-- [Community & Collaboration](https://openai.com/research/index/?tags=community-collaboration)
-- [Reasonings & Policy](https://openai.com/research/index/?tags=reasoning-policy)
-- [Ethics & Safety](https://openai.com/research/index/?tags=ethics-safety)
 
 ## 脚注
 

@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 4c0ae25d0387
+body_sha: 25a71859637a
 ---
 
-OpenAI
 
 2025年10月27日
 
@@ -29,10 +28,6 @@ OpenAI
 
 我们发布了相关[博客文章⁠](https://openai.com/index/strengthening-chatgpt-responses-in-sensitive-conversations/)，详细说明这项工作，并通过 GPT‑5 系统卡增强版分享基础安全评估报告。该评估对比了 ChatGPT 默认模型（即 GPT‑5 Instant）的 [8 月 15 日版本](https://help.openai.com/en/articles/6825453-chatgpt-release-notes#h_6b1adafe01)与 10 月 3 日更新版本。
 
-- [2025 年](https://openai.com/news/?tags=2025)
-- [伦理与安全](https://openai.com/news/?tags=ethics-safety)
-- [GPT](https://openai.com/news/?tags=gpt)
-- [系统卡](https://openai.com/news/?tags=system-cards)
 
 ## 作者
 

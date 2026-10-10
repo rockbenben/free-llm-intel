@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3668be52817d
+body_sha: a1497d212bdd
 ---
 
-Back to Articles
 
 # 🧨 Diffusers welcomes Stable Diffusion 3
 
-Published
 					June 12, 2024
 
 Update on GitHub
 
-Upvote
 
 99
 
@@ -363,7 +360,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsd3) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsd3) to comment
 
-Upvote
 
 99
 

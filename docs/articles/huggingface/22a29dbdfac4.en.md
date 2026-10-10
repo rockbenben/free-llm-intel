@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 71fbe43992a8
+body_sha: 6fd2fc764d5c
 ---
 
-Back to Articles
 
 # Patch Time Series Transformer in Hugging Face - Getting Started
 
-Published
 					February 1, 2024
 
 Update on GitHub
 
-Upvote
 
 15
 
@@ -690,7 +687,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fpatchtst) or [log in](https://huggingface.co/login?next=%2Fblog%2Fpatchtst) to comment
 
-Upvote
 
 15
 

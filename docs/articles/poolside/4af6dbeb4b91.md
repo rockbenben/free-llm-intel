@@ -9,7 +9,7 @@ captured: 2026-10-08
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: fff673a3f286
+body_sha: a19e92f57f05
 ---
 
 # Tools of the Trade: C2C Activation Offloading on Grace Blackwell
@@ -88,9 +88,7 @@ V
 
 ℓ
 
-​
 
-​
 
 <
 
@@ -112,7 +110,6 @@ d
 
 )
 
-​
 
 在 PCIe Gen5 上 BW≈64BW \approx 64BW≈64 GB/s，这条不等式对我们关心的任何模型都不成立。值得指出的是，我们确实可以做某些事情来缓解这种滚雪球；比如我们可以阻塞直到每次传输完成，但这最终牺牲的正是卸载的主要收益。
 
@@ -148,15 +145,12 @@ MLP
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -166,7 +160,6 @@ f
 
 n
 
-⋅
 
 β
 
@@ -184,21 +177,17 @@ MLP
 
 )
 
-​
 
 =
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -208,9 +197,7 @@ f
 
 n
 
-​
 
-⋅
 
 β
 
@@ -228,19 +215,15 @@ recomp
 
 2
 
-⋅
 
 k
 
-⋅
 
 3
 
-⋅
 
 d
 
-⋅
 
 d
 
@@ -258,25 +241,20 @@ F
 
 recomp
 
-​
 
 =
 
 2
 
-⋅
 
 k
 
-⋅
 
 3
 
-⋅
 
 d
 
-⋅
 
 d
 
@@ -284,7 +262,6 @@ m
 
 oe
 
-​
 
 FLOPs per token
 
@@ -312,15 +289,12 @@ offload
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -330,7 +304,6 @@ f
 
 n
 
-⋅
 
 β
 
@@ -340,21 +313,17 @@ V
 
 offload
 
-​
 
 =
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -364,9 +333,7 @@ f
 
 n
 
-​
 
-⋅
 
 β
 
@@ -418,7 +385,6 @@ MLP
 
 L
 
-⋅
 
 M
 
@@ -448,19 +414,16 @@ M
 
 total
 
-​
 
 Δ
 
 M
 
-​
 
 =
 
 L
 
-⋅
 
 M
 
@@ -472,7 +435,6 @@ MLP
 
 )
 
-​
 
 +
 
@@ -480,7 +442,6 @@ M
 
 other
 
-​
 
 M
 
@@ -492,9 +453,7 @@ MLP
 
 )
 
-​
 
-​
 
 ≤
 
@@ -502,7 +461,6 @@ L
 
 1
 
-​
 
 其中 MotherM_{\text{other}}Mother​ 涵盖权重、优化器状态、梯度以及非 MLP 激活值。在我们的 8 层实验里 1/L=12.5%1/L = 12.5\%1/L=12.5%，但实际开销只有 3%，因为 MotherM_{\text{other}}Mother​ 很大。对完整的 48 层模型，1/L=2.1%1/L = 2.1\%1/L=2.1%，实际开销降到约 0.5%。若是 96 层模型还会更低。换句话说，模型越深，这笔交易越划算。
 
@@ -546,15 +504,12 @@ H
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -564,7 +519,6 @@ f
 
 n
 
-⋅
 
 β
 
@@ -588,7 +542,6 @@ D
 
 H
 
-​
 
 =
 
@@ -602,19 +555,15 @@ C
 
 C
 
-​
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -624,13 +573,10 @@ f
 
 n
 
-​
 
-⋅
 
 β
 
-​
 
 该层的前向时间是 MLP GEMM（对 kkk 个激活专家的 SwiGLU 而言是 6k⋅d⋅dmoe6k \cdot d \cdot d_{moe}6k⋅d⋅dmoe​ FLOPs/token）、attention（Fattn(S)F_{\text{attn}}(S)Fattn​(S) FLOPs/token，取决于序列长度 SSS）以及通信开销的总和。由于 B⋅SB \cdot SB⋅S 同时出现在传输量和计算时间里，它会从不等式中约掉，条件因而主要取决于模型架构和硬件。把 tD2H<tfwdt_{D2H} < t_{fwd}tD2H​<tfwd​ 重新整理，就得到 dffnd_{ffn}dffn​ 的一个阈值：
 
@@ -648,15 +594,12 @@ n
 
 6
 
-⋅
 
 k
 
-⋅
 
 d
 
-⋅
 
 d
 
@@ -674,7 +617,6 @@ attn
 
 )
 
-⋅
 
 B
 
@@ -688,11 +630,9 @@ C
 
 3
 
-⋅
 
 β
 
-⋅
 
 P
 
@@ -714,17 +654,14 @@ f
 
 n
 
-​
 
 <
 
 3
 
-⋅
 
 β
 
-⋅
 
 P
 
@@ -734,21 +671,17 @@ e
 
 ak
 
-​
 
 (
 
 6
 
-⋅
 
 k
 
-⋅
 
 d
 
-⋅
 
 d
 
@@ -756,7 +689,6 @@ m
 
 oe
 
-​
 
 +
 
@@ -764,11 +696,9 @@ F
 
 attn
 
-​
 
 )
 
-⋅
 
 B
 
@@ -780,9 +710,7 @@ C
 
 C
 
-​
 
-​
 
 其中 PpeakP_{peak}Ppeak​ 是该设备的峰值计算吞吐。注意这个公式假设了 compute-bound 区间；一般而言，GEMM 的前向时间是 tgemm=max⁡(tcompute,thbm)t_{gemm} = \max(t_{compute}, t_{hbm})tgemm​=max(tcompute​,thbm​)，其中 thbmt_{hbm}thbm​ 是 GEMM 的内存流量时间，并在 GEMM roofline 的 memory-bandwidth-bound 区间里占主导。我们还注意到，attention 的贡献 Fattn(S)F_{\text{attn}}(S)Fattn​(S) FLOPs 随序列长度二次增长，而 MLP 的 FLOPs 与卸载量都只是线性增长；这潜在地给了我们更多空间去吸收 D2H 传输。
 
@@ -869,7 +797,6 @@ t
 
 f
 
-​
 
 +
 
@@ -881,15 +808,12 @@ A
 
 C
 
-​
 
 δ
 
-​
 
 1
 
-​
 
 对所有层取平均，反向的收益是约 7–8%。对足够深的模型，随着固定开销（embedding、loss）被摊薄，端到端的改善会向这个逐层平均值收敛。这就是为什么我们的 8 层实验尽管逐层收益更大、端到端却只有 4.3%。
 

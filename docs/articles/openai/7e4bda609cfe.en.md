@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: db8dbd8825a6
+body_sha: 675dc08e47b5
 ---
 
-OpenAI
 
 August 16, 2017
 
@@ -19,7 +18,6 @@ Milestone
 
 # More on Dota 2
 
-Loading…
 
 Our Dota 2 result shows that self-play can catapult the performance of machine learning systems from far below human level to superhuman, given sufficient compute. In the span of a month, our system went from barely matching a high-ranked player to beating the top pros and has continued to improve since then. Supervised deep learning systems can only be as good as their training datasets, but in self-play systems, the available data improves automatically as the agent gets better.
 
@@ -93,27 +91,7 @@ One well-established place to start is with behavioral cloning. Dota has about a
 
 We have many more ideas, and are [hiring⁠](https://openai.com/careers/) engineers (must be intrigued by machine learning, but need not be an expert) and researchers to help us make this happen. We thank Microsoft Azure and Valve for their support in this endeavor.
 
-- [OpenAI Five](https://openai.com/research/index/?tags=openai-five)
-- [Exploration & Games](https://openai.com/research/index/?tags=exploration-game)
-- [Learning Paradigms](https://openai.com/research/index/?tags=learning-paradigms)
-- [Software & Engineering](https://openai.com/research/index/?tags=software-engineering)
 
 ## Author
 
 OpenAI
-
-## Related articles
-
-View all
-
-Scaling laws for reward model overoptimization
-
-PublicationOct 19, 2022
-
-Learning to play Minecraft with Video PreTraining
-
-ConclusionJun 23, 2022
-
-Techniques for training large neural networks
-
-PublicationJun 9, 2022

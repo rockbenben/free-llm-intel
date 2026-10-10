@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 212e990874d5
+body_sha: 96b971f8ec68
 ---
 
 All blog posts
@@ -116,7 +116,6 @@ curl -L -O \
     
 ```
 
-‍
 
 Note: -L is required to follow the http redirect in the storage url and -O will write the output to a local file.
 

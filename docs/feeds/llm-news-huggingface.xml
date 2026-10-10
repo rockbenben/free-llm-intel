@@ -289,7 +289,6 @@ print(model.system_one_batch([(t, {&quot;team&quot;: questions[&quot;team&quot;]
 <p>有意思的工作</p>
 <p>liamanderson85</p>
 <p>2 天前</p>
-<p>•</p>
 <p>这条评论已被隐藏（标记为 Spam）</p>
 <p>把图片、音频和视频拖进文本输入框、粘贴，或者</p>
 <p>点击这里</p>
@@ -1115,20 +1114,17 @@ accept or retry</code></pre>
 <p>那种情况下，source-blind 的 faithfulness 依旧可以亮绿灯——这个事实在那锅汤里存在着。source-aware 校验是契约层面的升级：在论断拆解、支撑检查和归属检查的全程保留 tool/source ID，然后给出放行或拦截，并附上复审者真能检视的逐条论断来源判定。</p>
 <p>给正在接入 MCP 的团队一个实际的追问：当你的 eval 说&quot;grounded&quot;时，它指的是被任意一个工具输出支撑，还是被回答所点名的那个来源支撑？这是两道不同的发布关卡。在多工具配置里，只有后者能在人类相信这条引用之前抓到跨来源混同。</p>
 <ul><li><a href="https://huggingface.co/ander-alvarez"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg" alt=""></a></li></ul>
-<p>·</p>
 <p>ander-alvarez</p>
 <p>文章作者</p>
 <p>10 天前</p>
 <p>你好，谢谢你的评论。你把问题的要害抓得很准。对 ProvenanceGuard 来说，一条论断是&quot;grounded&quot;意味着它被回答所点名或所暗示的那个来源支撑。在工具输出里的别处找到这个事实并不够。在退款窗口那个例子里，政策文档支撑了这个事实，但回答把它记在账户记录名下，所以我们标出这处不一致，并给出来源判定。</p>
 <p>mghwaz</p>
 <p>10 天前</p>
-<p>•</p>
 <p>编辑于 10 天前</p>
 <p>我粗读了一遍论文，但没找到任何与&quot;用更便宜的 llm agent 来做 source aware judge&quot;的对比。以下是我对论文的理解；</p>
 <ul><li>一个 LLM 调用多个工具，并用它们的输出生成回答，其中可能陈述许多条论断</li><li>一条论断可以由（一个或多个）工具的输出支撑，却被错误地归到另一个来源上。</li><li>基本上是把回答拆成论断，并用 embeddings 为每条找到一个可能的支撑来源。</li><li>用 NLI 与 random forest 检查所选来源是否支撑该论断；</li><li>同时在回答里检查该论断是否被归到了正确的来源。</li></ul>
 <p>看起来，(2 - 5) 这几步似乎能在 lifecycle 里用基本的 prompts 就完成，前提是你拥有那个执行 agent。如果不是，也可以通过 harness 里的 hooks 以插件形式实现。你们有没有这方面的对比。说到底，random forest 以及这一整套 eng/plumbing，相比&quot;对 traces+ans 再做一次 llm 调用&quot;到底买到了多少东西？</p>
 <ul><li><a href="https://huggingface.co/ander-alvarez"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mghwaz"><img src="https://huggingface.co/avatars/72f6f613035501a07c402999e7718f5f.svg" alt=""></a></li></ul>
-<p>·</p>
 <p>ander-alvarez</p>
 <p>文章作者</p>
 <p>9 天前</p>
@@ -1673,7 +1669,6 @@ model = AutoModelForCausalLM.from_pretrained(
 <p>18 天前</p>
 <p>omlx 的 GitHub 仓库好像被删了。有新的 url 吗？</p>
 <ul><li><a href="https://huggingface.co/Izenflamm"><img src="https://huggingface.co/avatars/0a6999d5e5c601c1e4538223ea7d7a95.svg" alt=""></a></li><li><a href="https://huggingface.co/Jundot"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/P4AE_DXqeRdnfzXp-shec.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alcoveswhoop"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/_OOcmf0zwOdnr7LNmG4-0.png" alt=""></a></li></ul>
-<p>·</p>
 <p>Izenflamm</p>
 <p>18 天前</p>
 <p>是的，我也看到了这事。只是想给朋友拿一个 dmg，但今天没戏。</p>
@@ -2033,7 +2028,6 @@ Devistro
 <p>给从这个项目出发上线智能体的朋友的实际请求：你们会在发布门禁里把 Pass^k（哪怕 k=3）与 Mean@k 并排报告吗？当你的困难档一致性差距还很大时，你们会拒绝贴上“稳定”标签吗？</p>
 <p>可复现的可靠性不会消除“该注入哪些指南”的分歧。它会让分歧回到正确的指标上。</p>
 <ul><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li></ul>
-<p>·</p>
 <p>evduester</p>
 <p>本文作者</p>
 <p>6 天前</p>

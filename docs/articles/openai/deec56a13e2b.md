@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 3b1a7f3a9d35
+body_sha: 13d930004376
 ---
 
-OpenAI
 
 2026年8月3日
 
@@ -151,9 +150,6 @@ GPT‑Live 背后的架构已开始发展为更广泛的实时交互平台。随
 
 如果你也想解决这类工程问题，欢迎[加入我们⁠](https://openai.com/careers/search/?c=3b1f84fe-9b58-41c9-8de3-08a361f157cc%2Cff20ae8e-377a-4905-baf7-217536ce5b0c%2Ce1e973fe-6f0a-475f-9361-a9b6c095d869%2Cf002fe09-4cec-46b0-8add-8bf9ff438a62%2Cab2b9da4-24a4-47df-8bed-1ed5a39c7036%2C29457f80-62c5-4420-b64b-53037e8dc25e%2C97c2487e-7ec1-446a-a664-58e7c12fb0e9)。
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
-- [API 平台](https://openai.com/news/?tags=api-platform)
 
 ## 作者
 

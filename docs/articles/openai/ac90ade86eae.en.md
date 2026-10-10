@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9588d4338ac4
+body_sha: 8dc3da05bc46
 ---
 
-OpenAI
 
 April 23, 2026
 
@@ -25,7 +24,6 @@ Get started with ChatGPT Work
 
 
 
-Loading…
 
 ChatGPT Work is most useful when the work already has real context behind it: calendars, messages, emails, docs, dashboards, spreadsheets, trackers, decks, and discussion history. Instead of starting from a blank prompt, give the Work agent the materials your team already uses and ask it to produce the first usable version of the artifact. That might be a daily brief, weekly update, decision memo, launch kit, financial review, or workflow audit your team can inspect, edit, and put to work.
 
@@ -52,21 +50,3 @@ Discover additional guides and resources to help you build practical AI skills.
 View all topics
 
 Explore ChatGPT Work
-
-
-
-## Keep reading
-
-View all
-
-How data science teams use ChatGPT Work | OpenAI
-
-OpenAI AcademyJul 14, 2026
-
-How sales teams use ChatGPT Work | OpenAI
-
-OpenAI AcademyJul 14, 2026
-
-Getting started with ChatGPT | OpenAI
-
-OpenAI AcademyJul 10, 2026

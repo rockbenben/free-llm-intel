@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9a465a3d8c5d
+body_sha: 6393b3ccf58e
 ---
 
-Back to Articles
 
 # Profiling in PyTorch (Part 3): Attention is all you profile
 
-Published
 					July 10, 2026
 
 Update on GitHub
 
-Upvote
 
 51
 
@@ -467,7 +464,6 @@ tolgacangoz
 
 Jul 10
 
-•
 
 edited Jul 10
 
@@ -477,7 +473,6 @@ deleted
 
 Jul 12
 
-•
 
 This comment has been hidden
 
@@ -485,7 +480,6 @@ deleted
 
 Jul 15
 
-•
 
 This comment has been hidden
 
@@ -499,7 +493,6 @@ Sartc
 
 Jul 18
 
-•
 
 edited Jul 18
 
@@ -521,7 +514,6 @@ Finally completed it. Thank you for the series
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg)](https://huggingface.co/ariG23498)
 
-·
 
 ariG23498
 
@@ -535,7 +527,6 @@ deleted
 
 about 1 month ago
 
-•
 
 This comment has been hidden
 
@@ -549,7 +540,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Ftorch-attention-profile) or [log in](https://huggingface.co/login?next=%2Fblog%2Ftorch-attention-profile) to comment
 
-Upvote
 
 51
 

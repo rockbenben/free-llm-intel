@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: 1ef1638dc719
+body_sha: 748724209ee9
 ---
 
-OpenAI
 
 # 摩根士丹利用 AI 评估塑造金融服务的未来
 

@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 766d991bedef
+body_sha: 4dbc0e1f50a6
 ---
 
-OpenAI
 
 2025年6月1日
 
@@ -60,9 +59,6 @@ OpenAI 封禁了与疑似欺骗性就业活动有关的账号，这些活动利�
 
 虽然这些威胁行为主体很可能将 AI 融入流程的每个环节以提高效率，但这也增加了其暴露的可能性。他们的操作让我们得以了解其完整工作流程，从而能够针对活动的各个阶段，与相关业界同行和主管部门分享这些行动的有关情况。这提升了我们共同检测、预防和应对此类威胁的能力，也促进了各方共同安全。
 
-- [全球](https://openai.com/news/?tags=target-geography-global-internet-users)
-- [美国](https://openai.com/news/?tags=target-geography-united-states)
-- [欺诈与诈骗](https://openai.com/news/?tags=activity-type-fraud-scams)
 
 ## 作者
 

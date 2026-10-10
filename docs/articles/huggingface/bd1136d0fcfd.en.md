@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-10
 extractor: readability-v1
 status: ok
-body_sha: 09de698d35b0
+body_sha: 40538b2a7fbf
 ---
 
-Back to Articles
 
 # The Agent Said It Was Done. The Database Disagreed.
 
@@ -19,10 +18,8 @@ Enterprise
 
 Article
 
-Published
 					October 3, 2026
 
-Upvote
 
 64
 
@@ -407,7 +404,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fmicrosoft%2Fthinkingbox) or [log in](https://huggingface.co/login?next=%2Fblog%2Fmicrosoft%2Fthinkingbox) to comment
 
-Upvote
 
 64
 

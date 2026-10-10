@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8405a096a2a1
+body_sha: 5cff192f9e01
 ---
 
 Product
@@ -19,15 +19,11 @@ January 27, 2026
 
 By Mistral AI
 
-Back to Blog
 
 3 min read
 
-Share this post
 
-Copy url to clipboard
 
-Copied
 
 Today, we're releasing Mistral Vibe 2.0—a major upgrade to our terminal-native coding agent, powered by the state-of-the-art Devstral 2 model family. Build custom subagents, clarify before you execute, load skills with slash commands, and configure your own workflows to match how you work.
 

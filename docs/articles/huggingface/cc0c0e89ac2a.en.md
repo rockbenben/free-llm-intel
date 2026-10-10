@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 81a9efddf6bf
+body_sha: 38213a1e8bd8
 ---
 
-Back to Articles
 
 # Swift 🧨Diffusers: Fast Stable Diffusion for Mac
 
-Published
 					February 24, 2023
 
 Update on GitHub
 
-Upvote
 
 5
 
@@ -140,7 +137,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Ffast-mac-diffusers) or [log in](https://huggingface.co/login?next=%2Fblog%2Ffast-mac-diffusers) to comment
 
-Upvote
 
 5
 

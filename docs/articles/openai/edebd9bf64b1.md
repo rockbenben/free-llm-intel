@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1e4027cedcc5
+body_sha: f8e1b64ccf3b
 translator: agent
 ---
 
-OpenAI
 
 2018 年 7 月 26 日
 

@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2a1f75fa2519
+body_sha: f851f2f13ccb
 ---
 
-Back to Articles
 
 # DeepMath: A lightweight math reasoning Agent with smolagents
 
-Published
 					December 4, 2025
 
 Update on GitHub
 
-Upvote
 
 42
 
@@ -200,7 +197,6 @@ InstructorOnline
 
 Jan 18
 
-•
 
 edited Jan 18
 
@@ -210,7 +206,6 @@ deleted
 
 May 7
 
-•
 
 This comment has been hidden
 
@@ -224,7 +219,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fintel-deepmath) or [log in](https://huggingface.co/login?next=%2Fblog%2Fintel-deepmath) to comment
 
-Upvote
 
 42
 

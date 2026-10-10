@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e0914bd48c0f
+body_sha: 4e8ac1788068
 ---
 
-Back to Articles
 
 # Up to 3.2x Faster Inference with LFM2.5-DSpark
 
@@ -19,10 +18,8 @@ Team
 
 Article
 
-Published
 					August 20, 2026
 
-Upvote
 
 56
 
@@ -229,7 +226,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2FLiquidAI%2Flfm25-dspark) or [log in](https://huggingface.co/login?next=%2Fblog%2FLiquidAI%2Flfm25-dspark) to comment
 
-Upvote
 
 56
 

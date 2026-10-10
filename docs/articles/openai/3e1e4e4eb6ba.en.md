@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3221dc9650fb
+body_sha: 94da05d28a7f
 ---
 
-OpenAI
 
 May 5, 2020
 
@@ -19,11 +18,9 @@ Publication
 
 # AI and efficiency
 
-Read paper
 
 
 
-Loading…
 
 We’re releasing an analysis showing that since 2012 the amount of compute needed to train a neural net to the same performance on ImageNet classification has been decreasing by a factor of 2 every 16 months. Compared to 2012, it now takes 44 times less compute to train a neural network to the level of AlexNet (by contrast, Moore’s Law would yield an 11x cost improvement over this period). Our results suggest that for AI tasks with high levels of recent investment, algorithmic progress has yielded more gains than classical hardware efficiency.
 
@@ -31,7 +28,6 @@ We’re releasing an analysis showing that since 2012 the amount of compute need
 
 Algorithmic improvement is a key factor driving the advance of AI. It’s important to search for measures that shed light on overall algorithmic progress, even though it’s harder than measuring such trends in compute.[4](https://openai.com/index/ai-and-efficiency/#citation-bottom-4)
 
-Loading...
 
 Total amount of compute in teraflops/s-days used to train to AlexNet level performance. Lowest compute points at any given time shown in blue, all points measured shown in gray.[2](https://openai.com/index/ai-and-efficiency/#citation-bottom-2:2), [5](https://openai.com/index/ai-and-efficiency/#citation-bottom-5), [6](https://openai.com/index/ai-and-efficiency/#citation-bottom-6), [7](https://openai.com/index/ai-and-efficiency/#citation-bottom-7), [8](https://openai.com/index/ai-and-efficiency/#citation-bottom-8), [9](https://openai.com/index/ai-and-efficiency/#citation-bottom-9), [10](https://openai.com/index/ai-and-efficiency/#citation-bottom-10), [11](https://openai.com/index/ai-and-efficiency/#citation-bottom-11), [12](https://openai.com/index/ai-and-efficiency/#citation-bottom-12), [13](https://openai.com/index/ai-and-efficiency/#citation-bottom-13), [14](https://openai.com/index/ai-and-efficiency/#citation-bottom-14), [15](https://openai.com/index/ai-and-efficiency/#citation-bottom-15), [16](https://openai.com/index/ai-and-efficiency/#citation-bottom-16)
 
@@ -76,7 +72,6 @@ For all these reasons, we’re going to start tracking efficiency SOTAs publicly
 
 Industry leaders, policymakers, economists, and potential researchers are all trying to better understand AI progress and decide how much attention they should invest and where to direct it. Measurement efforts can help ground such decisions. If you’re interested in this type of work, [consider applying⁠](https://openai.com/careers/) to work at OpenAI’s Foresight or Policy team!
 
-Loading...
 
 - [Compute Scaling](https://openai.com/research/index/?tags=compute-scaling)
 
@@ -147,19 +142,3 @@ Thanks to Justin Jay Wang for design.
 Thanks to Niki Parmar for providing the relevant points from the original [transformer](https://arxiv.org/abs/1706.03762) learning curves.
 
 Also thanks to Mingxing Tan for providing the relevant points from [EfficientNet](https://arxiv.org/abs/1905.11946) learning curves and running an experiment with reduced warmup.
-
-## Related articles
-
-View all
-
-Techniques for training large neural networks
-
-PublicationJun 9, 2022
-
-Introducing Triton: Open-source GPU programming for neural networks
-
-ReleaseJul 28, 2021
-
-Scaling Kubernetes to 7,500 nodes
-
-ConclusionJan 25, 2021

@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 16962d013e36
+body_sha: 9b51d348bb2d
 ---
 
-Back to Articles
 
 # Rethinking LLM Evaluation with 3C3H: AraGen Benchmark and Leaderboard
 
-Published
 					December 4, 2024
 
 Update on GitHub
 
-Upvote
 
 39
 
@@ -430,7 +427,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fleaderboard-3c3h-aragen) or [log in](https://huggingface.co/login?next=%2Fblog%2Fleaderboard-3c3h-aragen) to comment
 
-Upvote
 
 39
 

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 6c95181026d3
 ---
 
 # Grok for Word
@@ -27,7 +28,6 @@ Onboarding Guide.docx
 
 Search
 
-Home
 
 Insert
 

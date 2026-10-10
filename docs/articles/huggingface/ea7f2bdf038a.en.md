@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a822b5174f6a
+body_sha: 692c423cf54b
 ---
 
-Back to Articles
 
 # Granite 4.0 Nano: Just how small can you go?
 
@@ -19,10 +18,8 @@ Enterprise
 
 Article
 
-Published
 					October 28, 2025
 
-Upvote
 
 128
 
@@ -93,7 +90,6 @@ saharadesertfox
 
 Oct 28, 2025
 
-•
 
 edited Oct 28, 2025
 
@@ -160,7 +156,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-4-nano) or [log in](https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-4-nano) to comment
 
-Upvote
 
 128
 

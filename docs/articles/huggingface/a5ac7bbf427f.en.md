@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a3523a9c594e
+body_sha: 579a82a3c5bf
 ---
 
-Back to Articles
 
 # A Hugging Face Accelerate Story of Multiple Backends: FSDP and DeepSpeed
 
-Published
 					June 13, 2024
 
 Update on GitHub
 
-Upvote
 
 63
 
@@ -213,7 +210,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdeepspeed-to-fsdp-and-back) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdeepspeed-to-fsdp-and-back) to comment
 
-Upvote
 
 63
 

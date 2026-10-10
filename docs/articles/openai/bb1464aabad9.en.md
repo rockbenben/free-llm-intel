@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1f75c9a36068
+body_sha: 22b95e7d54cd
 ---
 
-OpenAI
 
 December 16, 2021
 
@@ -21,13 +20,11 @@ Publication
 
 We’ve fine-tuned GPT‑3 to more accurately answer open-ended questions using a text-based web browser.
 
-Read paper
 
 
 
 Browse samples
 
-Loading…
 
 We’ve fine-tuned GPT‑3 to more accurately answer open-ended questions using a text-based web browser. Our prototype copies how humans research answers to questions online—it submits search queries, follows links, and scrolls up and down web pages. It is trained to cite its sources, which makes it easier to give feedback to improve factual accuracy. We’re excited about developing more truthful AI,[1](https://openai.com/index/webgpt/#citation-bottom-1) but challenges remain, such as coping with unfamiliar types of questions.
 
@@ -35,13 +32,11 @@ Language models like GPT‑3 are useful for many different tasks, but have a ten
 
 The model is fine-tuned from GPT‑3 using [the⁠](https://openai.com/index/deep-reinforcement-learning-from-human-preferences/) [same⁠](https://openai.com/index/fine-tuning-gpt-2/) [general⁠](https://openai.com/index/learning-to-summarize-with-human-feedback/) [methods⁠](https://openai.com/index/summarizing-books/) we’ve used previously. We begin by training the model to copy human demonstrations, which gives it the ability to use the text-based browser to answer questions. Then we improve the helpfulness and accuracy of the model’s answers, by training a reward model to predict human preferences, and optimizing against it using either reinforcement learning or rejection sampling.
 
-Loading...
 
 ## ELI5 results
 
 Our system is trained to answer questions from ELI5,[4⁠](https://openai.com/index/webgpt/#rf4) a dataset of open-ended questions scraped from the “Explain Like I’m Five” subreddit. We trained three different models, corresponding to three different inference-time compute budgets. Our best-performing model produces answers that are preferred 56% of the time to answers written by our human demonstrators, with a similar level of factual accuracy. Even though these were the same kind of demonstrations used to train the model, we were able to outperform them by using human feedback to improve the model’s answers.
 
-Loading...
 
 ## TruthfulQA results
 
@@ -49,7 +44,6 @@ For questions taken from the training distribution, our best model’s answers a
 
 Our models outperform GPT‑3 on TruthfulQA and exhibit more favourable scaling properties. However, our models lag behind human performance, partly because they sometimes quote from unreliable sources (as shown in the question about ghosts [above⁠](https://openai.com/index/webgpt/#samples)). We hope to reduce the frequency of these failures using techniques like adversarial training.
 
-Loading...
 
 ## Evaluating factual accuracy
 
@@ -71,8 +65,6 @@ Human feedback and tools such as web browsers offer a promising path towards rob
 
 *If you’d like to help us build more helpful and truthful AI systems,* [*we’re hiring*](https://boards.greenhouse.io/openai/jobs/4247042004?gh_src=5600abde4us)*!*
 
-- [GPT](https://openai.com/research/index/?tags=gpt)
-- [Language](https://openai.com/research/index/?tags=language)
 
 ## References
 
@@ -94,19 +86,3 @@ Thanks to our paper co-authors: Jeff Wu, Long Ouyang, Christina Kim, Christopher
 Thanks to those who helped with and provided feedback on this release: Steven Adler, Sam Altman, Beth Barnes, Miles Brundage, Kevin Button, Steve Dowling, Alper Ercetin, Matthew Knight, Gretchen Krueger, Ryan Lowe, Andrew Mayne, Bob McGrew, Mira Murati, Richard Ngo, Jared Salzano, Natalie Summers and Hannah Wong.
 
 Thanks to the team at Surge AI for helping us with data collection, and to all of our contractors for providing demonstrations and comparisons, without which this project would not have been possible.
-
-## Related articles
-
-View all
-
-Building agricultural database for farmers
-
-Jan 12, 2024
-
-Creating websites in minutes with AI Website Builder
-
-May 29, 2025
-
-Delivering LLM-powered health solutions
-
-Jan 4, 2024

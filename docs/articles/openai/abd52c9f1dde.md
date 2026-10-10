@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 92ad3e8a29fa
+body_sha: f4ae86243124
 ---
 
-OpenAI
 
 2026年8月24日
 
@@ -62,8 +61,6 @@ OpenAI 与 AWS 将继续携手提升 OpenAI 模型在 Kiro 中的性能，帮助
 
 GPT‑5.6 系列现已在 Kiro 中提供。访问 [https://kiro.dev/](https://kiro.dev/) 开始使用
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [合作关系](https://openai.com/news/?tags=partnerships)
 
 ## 作者
 

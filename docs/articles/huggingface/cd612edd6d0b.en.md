@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8d7149898cf9
+body_sha: bcfb3b4f5e0f
 ---
 
-Back to Articles
 
 # ScreenEnv: Deploy your full stack Desktop Agent
 
-Published
 					July 10, 2025
 
 Update on GitHub
 
-Upvote
 
 77
 
@@ -378,7 +375,6 @@ I can see the Docker image `amhma/ubuntu-desktop:22.04-0.0.1-dev` is used, but t
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/67f2f500e329a81a62a05d44/DOlzc8GFQzrnfVrsOdtbN.png)](https://huggingface.co/A-Mahla)
 - [![](https://huggingface.co/avatars/ec1886b40f507ad01964c519133ba701.svg)](https://huggingface.co/tc-wolf)
 
-·
 
 A-Mahla
 
@@ -386,7 +382,6 @@ Article author
 
 Jul 11, 2025
 
-•
 
 edited Jul 11, 2025
 
@@ -398,7 +393,6 @@ deleted
 
 Jul 11, 2025
 
-•
 
 This comment has been hidden
 
@@ -406,7 +400,6 @@ YacineMk
 
 Jul 16, 2025
 
-•
 
 edited Jul 16, 2025
 
@@ -431,7 +424,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fscreenenv) or [log in](https://huggingface.co/login?next=%2Fblog%2Fscreenenv) to comment
 
-Upvote
 
 77
 

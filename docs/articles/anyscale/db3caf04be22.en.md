@@ -8,12 +8,10 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: dd7d01f6d1f5
+body_sha: d2936f3961fd
 ---
 
-Home
 
-Blog
 
 Blog Detail
 
@@ -105,15 +103,12 @@ We will share more at [Ray Summit](https://www.anyscale.com/ray-summit/2026) in 
 
 #### Ray is Joining The PyTorch Foundation
 
-Read more
 
 #### An Open Source Stack for AI Compute: Kubernetes + Ray + PyTorch + vLLM
 
-Read more
 
 #### Architecting Data Pipelines for Multimodal Datasets at Scale
 
-Read more
 
 ## Explore Anyscale today
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b619327cac4e
+body_sha: d14faadd0f29
 ---
 
 Back to news
@@ -21,7 +21,6 @@ Grok Bot is now available for enterprises. Grok and Cursor Enterprise customers 
 
 Download for macOS
 
-Contact sales
 
 Grok Bot is your team of helpful AI teammates. You delegate real tasks to them and they carry the job through end to end, working autonomously around the clock inside the same tools you use.
 

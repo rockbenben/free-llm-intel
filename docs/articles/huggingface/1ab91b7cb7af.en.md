@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d2eaeb5f2773
+body_sha: d08cf909c9ac
 ---
 
-Back to Articles
 
 # Swift Transformers Reaches 1.0 – and Looks to the Future
 
-Published
 					September 26, 2025
 
 Update on GitHub
 
-Upvote
 
 43
 
@@ -190,7 +187,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fswift-transformers) or [log in](https://huggingface.co/login?next=%2Fblog%2Fswift-transformers) to comment
 
-Upvote
 
 43
 

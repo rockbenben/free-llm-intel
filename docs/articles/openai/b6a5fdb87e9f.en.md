@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 8058c4c5eeb5
+body_sha: 28d532514e0f
 ---
 
-OpenAI
 
 May 31, 2023
 
@@ -19,7 +18,6 @@ Publication
 
 # Improving mathematical reasoning with process supervision
 
-Read paper
 
 
 
@@ -29,7 +27,6 @@ Download dataset
 
 
 
-Loading…
 
 We’ve trained a model to achieve a new state-of-the-art in mathematical problem solving by rewarding each correct step of reasoning (“process supervision”) instead of simply rewarding the correct final answer (“outcome supervision”). In addition to boosting performance relative to outcome supervision, process supervision also has an important alignment benefit: it directly trains the model to produce a chain-of-thought that is endorsed by humans.
 
@@ -47,20 +44,14 @@ In some cases, safer methods for AI systems can lead to reduced performance[3](h
 
 ## Solving MATH problems
 
-Loading...
 
 We evaluate our process-supervised and outcome-supervised reward models using problems from the MATH test set. We generate many solutions for each problem and then pick the solution ranked the highest by each reward model. The graph shows the percentage of chosen solutions that reach the correct final answer, as a function of the number of solutions considered. Not only does the process-supervised reward model perform better across the board, but the performance gap widens as we consider more solutions per problem. This shows us that the process-supervised reward model is much more reliable.
 
 We showcase 10 problems and solutions below, along with commentary about the reward model’s strengths and weaknesses.
 
-Loading...
 
 It is unknown how broadly these results will generalize beyond the domain of math, and we consider it important for future work to explore the impact of process supervision in other domains. If these results generalize, we may find that process supervision gives us the best of both worlds – a method that is both more performant and more aligned than outcome supervision.
 
-- [GPT](https://openai.com/research/index/?tags=gpt)
-- [Language](https://openai.com/research/index/?tags=language)
-- [Learning Paradigms](https://openai.com/research/index/?tags=learning-paradigms)
-- [Reasonings & Policy](https://openai.com/research/index/?tags=reasoning-policy)
 
 ## References
 
@@ -75,19 +66,3 @@ Karl Cobbe, Hunter Lightman, Vineet Kosaraju, Yura Burda, Harri Edwards, Jan Lei
 ## Contributors
 
 Bowen Baker, Teddy Lee, John Schulman, Greg Brockman, Kendra Rimbach, Hannah Wong, Thomas Degry
-
-## Related articles
-
-View all
-
-DALL·E 3 is now available in ChatGPT Plus and Enterprise
-
-ProductOct 19, 2023
-
-Language models can explain neurons in language models
-
-PublicationMay 9, 2023
-
-Solving (some) formal math olympiad problems
-
-MilestoneFeb 2, 2022

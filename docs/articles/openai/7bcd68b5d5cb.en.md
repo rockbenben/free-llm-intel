@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e0270272c22d
+body_sha: 6791cc2a55e0
 ---
 
-OpenAI
 
 April 8, 2026
 
@@ -21,7 +20,6 @@ Company
 
 A note from Denise Dresser, Chief Revenue Officer
 
-Loading…
 
 I just wrapped my first 90 days with OpenAI and have had the opportunity to meet with hundreds of our customers. What has struck me most is their immense sense of urgency and readiness. I’ve spent my entire career at the intersection of technology and enterprise transformation, and yet, I have never seen this level of conviction spread so quickly and consistently across industries. These leaders recognize AI as the most consequential shift of their lifetime, and they’re asking us how to reinvent their companies around it.
 
@@ -63,19 +61,3 @@ At OpenAI, I feel the commitment at every level, in every function. We are whole
 ## Author
 
 OpenAI
-
-## Keep reading
-
-View all
-
-How Albertsons Companies is reimagining retail from the inside out
-
-CompanyOct 1, 2026
-
-DevDay 2026 Recap
-
-CompanySep 29, 2026
-
-Introducing dots
-
-ProductSep 29, 2026

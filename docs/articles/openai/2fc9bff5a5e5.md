@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a94817e19f8e
+body_sha: 6f1ed7cc6ff9
 ---
 
-OpenAI
 
 2025年9月11日
 
@@ -40,11 +39,3 @@ OpenAI 计划进行架构调整，现有 OpenAI 非营利组织将控制一家�
 ## 作者
 
 Bret Taylor
-
-
-
-
-
-
-
-

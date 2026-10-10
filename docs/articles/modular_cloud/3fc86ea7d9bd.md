@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: e24318b98dd9
 ---
 
 # Modular + AMD：在 AMD GPU 上释放 AI 性能
@@ -25,11 +26,9 @@ status: translated
 
 这些突破归功于 Modular Platform——业界第一个真正硬件无关的 AI 基础设施栈。它提供一个统一平台，无需修改一行代码即可在多样的硬件架构上无缝部署。
 
-‍
 
 > 开发者现在可以构建可在任何平台上运行的高性能、可移植 GenAI 部署。
 
-‍
 
 企业终于获得了真正的硬件选择自由——同时优化性能与总拥有成本（TCO）。与 NVIDIA H200 上的 vLLM 相比，AMD MI325 上的 MAX 模型在 ShareGPT 上的吞吐量持平或更优。
 

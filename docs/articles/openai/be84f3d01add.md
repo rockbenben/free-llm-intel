@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b8e4f51e78a4
+body_sha: bfb6b9d98451
 ---
 
-OpenAI
 
 November 2, 2017
 
@@ -19,7 +18,6 @@ Publication
 
 # 可解释且具教学意义的示例
 
-Read paper
 
 
 

@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 88ff27e391ac
+body_sha: c7a48802be0e
 ---
 
-OpenAI
 
 2026年1月26日
 
@@ -109,10 +108,3 @@ AI 几乎已融入我们所有的求职者和雇主专用产品，并且我们�
 全球超过一百万家企业借助 OpenAI 取得显著成效。
 
 联系我们的团队
-
-
-
-
-
-
-

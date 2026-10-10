@@ -8,16 +8,14 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e3224809f30c
+body_sha: c865765045ad
 ---
 
-OpenAI
 
 # Superhuman
 
 Superhuman introduces a new era of email with OpenAI.
 
-Loading…
 
 The shift to online work has roughly 1 billion professionals spending close to [3 hours managing email each day](https://business.adobe.com/blog/perspectives/if-you-think-email-is-dead-think-again). This works out to around 1 trillion human hours a year spent on email.
 
@@ -71,17 +69,3 @@ Rahul Vohra, founder and CEO of Superhuman
 ## Interested in learning more about ChatGPT for business?
 
 Talk with our team
-
-## Related articles
-
-Embedding AI into developer software
-
-Mar 21, 2024
-
-Building a data-driven, efficient culture with AI
-
-Mar 18, 2024
-
-Enterprise-ready trust and safety
-
-Mar 18, 2024

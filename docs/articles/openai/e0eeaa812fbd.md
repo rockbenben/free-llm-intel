@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2ff5a510c530
+body_sha: 4d42b359add2
 translator: agent
 ---
 
-OpenAI
 
 2023 年 5 月 18 日
 
@@ -42,6 +41,3 @@ ChatGPT 应用免费使用，并在各设备之间同步你的历史记录。它
 又及：安卓用户，下一个就是你们！ChatGPT 很快就要来到你们的设备上。
 
 - [在 App Store 下载](https://apps.apple.com/app/openai-chatgpt/id6448311069)
-
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
-- [2023](https://openai.com/news/?tags=2023)

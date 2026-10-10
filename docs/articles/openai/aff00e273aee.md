@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e24d7572ac3c
+body_sha: 694bab8404b1
 ---
 
-OpenAI
 
 December 23, 2022
 

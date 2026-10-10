@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d00a7fbf9563
+body_sha: 7d7fa3fac77c
 ---
 
-OpenAI
 
 May 22, 2026
 
@@ -19,7 +18,6 @@ May 22, 2026
 
 Virgin Atlantic used Codex to strengthen test coverage, accelerate refactoring, and ship customer-facing software with greater confidence.
 
-Contact sales
 
 Company size:
 
@@ -49,7 +47,6 @@ Unit test coverage on new app
 
 Minutes to refactor legacy codebases, down from 2 weeks
 
-Loading…
 
 Virgin Atlantic used Codex to ship its revamped mobile app in time for the Christmas travel rush—one of the highest-risk periods of the year for potentially introducing software bugs.
 
@@ -96,19 +93,3 @@ Codex is reshaping how Virgin Atlantic ships software: from the apps customers u
 ## Join the new era of work
 
 More than 1 million businesses around the world are achieving meaningful results with OpenAI.
-
-Contact sales
-
-## Keep reading
-
-A practical guide to building with GPT-6
-
-ProductOct 2, 2026
-
-Chatham scales its capital markets expertise with OpenAI
-
-Oct 2, 2026
-
-The eternal complement
-
-Intelligence AgeOct 1, 2026

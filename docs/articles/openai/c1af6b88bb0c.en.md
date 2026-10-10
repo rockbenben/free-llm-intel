@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a996653c1c45
+body_sha: c1cbf70df88d
 ---
 
-OpenAI
 
 July 5, 2017
 
@@ -19,11 +18,9 @@ Publication
 
 # Hindsight Experience Replay
 
-Read paper
 
 
 
-Loading…
 
 ## Abstract
 
@@ -36,19 +33,3 @@ We demonstrate our approach on the task of manipulating objects with a robotic a
 ## Authors
 
 Marcin Andrychowicz, Filip Wolski, Alex Ray, Jonas Schneider, Rachel Fong, Peter Welinder, Bob McGrew, Josh Tobin, Pieter Abbeel, Wojciech Zaremba
-
-## Related articles
-
-View all
-
-Scaling laws for reward model overoptimization
-
-PublicationOct 19, 2022
-
-Learning to play Minecraft with Video PreTraining
-
-ConclusionJun 23, 2022
-
-Dota 2 with large scale deep reinforcement learning
-
-PublicationDec 13, 2019

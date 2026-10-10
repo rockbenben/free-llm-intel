@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 4d84dcc240b2
+body_sha: 2c89ccb30cf7
 ---
 
-OpenAI
 
 2026年5月27日
 
@@ -21,19 +20,14 @@ OpenAI
 通过广泛部署 Codex，Cisco 让 AI 原生开发成为企业软件构建方式的核心组成部分。
 
 
-公司规模:
 
-大型企业
 
-区域:
 
 全球, 北美
 
-行业:
 
 科技, 服务
 
-产品:
 
 API, Codex
 

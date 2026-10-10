@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 277df774100c
+body_sha: cff10aca0c8c
 ---
 
-OpenAI
 
 2026年7月15日
 
@@ -110,8 +109,6 @@ AI 智能体已被用于提升我们下一代模型的性能。我们相信，�
 
 我们将在本周晚些时候发布一份包含更多细节的预印本。
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [对齐](https://openai.com/news/?tags=alignment)
 
 ## 作者
 

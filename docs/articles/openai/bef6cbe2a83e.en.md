@@ -8,16 +8,14 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0d713c9a1410
+body_sha: cf97da86f3e0
 ---
 
-OpenAI
 
 September 17, 2025
 
 Publication
 
-Research
 
 # Detecting and reducing scheming in AI models
 
@@ -112,26 +110,7 @@ More materials, including the paper, full sample transcripts, and a link to Apol
 
 *We partnered with Apollo Research on this study: OpenAI led most of the model training and required infrastructure, while Apollo led evaluations and analysis across the paper’s sections, built training environments, and integrated tooling with our systems. The training and test datasets were shared between both teams. Because the methodology required inspecting models’ hidden reasoning, Apollo was granted rate‑limited access to internal chain‑of‑thought (CoT) traces of OpenAI o3 and o4‑mini for the duration of the project.*
 
-- [Alignment](https://openai.com/research/index/?tags=alignment)
-- [2025](https://openai.com/research/index/?tags=2025)
-- [Ethics & Safety](https://openai.com/research/index/?tags=ethics-safety)
 
 ## Author
 
 OpenAI
-
-## Keep reading
-
-View all
-
-Introducing MentalHealthBench
-
-PublicationSep 23, 2026
-
-Introducing GPT-6 Sol and Luna
-
-ProductSep 22, 2026
-
-Our framework for reporting model misalignment
-
-ResearchSep 16, 2026

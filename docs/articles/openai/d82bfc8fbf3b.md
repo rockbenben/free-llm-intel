@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 7b39eb24a109
+body_sha: 3a717ac7162a
 ---
 
-OpenAI
 
 2018 年 2 月 26 日
 
@@ -99,11 +98,6 @@ HandManipulateBlockRotateXYZ-v0 上四种不同配置的中位测试成功率（
 
 加载中...
 
-- [Dactyl](https://openai.com/research/index/?tags=dactyl)
-- [Robotics](https://openai.com/research/index/?tags=robotics)
-- [Simulated Environments](https://openai.com/research/index/?tags=simulated-environments)
-- [Learning Paradigms](https://openai.com/research/index/?tags=learning-paradigms)
-- [Exploration & Games](https://openai.com/research/index/?tags=exploration-game)
 
 ## 作者
 

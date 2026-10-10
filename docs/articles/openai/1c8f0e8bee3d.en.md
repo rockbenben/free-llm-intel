@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e68ba0ad88ce
+body_sha: a76741732f0b
 ---
 
-OpenAI
 
 February 1, 2026
 
@@ -21,7 +20,6 @@ Safety
 
 OpenAI banned accounts linked to a previously unreported operation we dubbed "Trolling Stone", using AI to generate comments about an alleged Russian cult leader’s arrest in Argentina.
 
-Loading…
 
 *This case study was originally published in OpenAI’s *[*February 2026*](https://cdn.openai.com/pdf/df438d70-e3fe-4a6c-a403-ff632def8f79/disrupting-malicious-uses-of-ai.pdf)* report on disrupting malicious uses of AI.*
 
@@ -65,13 +63,6 @@ Like many of the IO we have described in earlier threat reports, this operation�
 
 Using the IO impact [Breakout Scale](https://www.brookings.edu/articles/the-breakout-scale-measuring-the-impact-of-influence-operations/), which rates IO on a scale of 1 (lowest) to 6 (highest), we would assess this as being towards the low end of Category 4 (breakout to mainstream media), based on the placement of some of its news articles in Argentinian news sites.
 
-- [Pakistan](https://openai.com/news/?tags=actor-origin-pakistan)
-- [Armenia](https://openai.com/news/?tags=actor-origin-armenia)
-- [Uruguay](https://openai.com/news/?tags=actor-origin-uruguay)
-- [Argentina](https://openai.com/news/?tags=actor-origin-argentina)
-- [Kazakhstan](https://openai.com/news/?tags=actor-origin-kazakhstan)
-- [Argentina](https://openai.com/news/?tags=target-geography-argentina)
-- [Influence operations](https://openai.com/news/?tags=activity-type-influence-operations)
 
 ## Author
 

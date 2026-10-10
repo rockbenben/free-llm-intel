@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fbc43e8c742f
+body_sha: 2c2d617d3257
 ---
 
-Back to Articles
 
 # MosaicLeaks: Can your research agent keep a secret?
 
@@ -19,10 +18,8 @@ Enterprise
 
 Article
 
-Published
 					June 18, 2026
 
-Upvote
 
 15
 
@@ -214,7 +211,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2FServiceNow%2Fmosaicleaks) or [log in](https://huggingface.co/login?next=%2Fblog%2FServiceNow%2Fmosaicleaks) to comment
 
-Upvote
 
 15
 

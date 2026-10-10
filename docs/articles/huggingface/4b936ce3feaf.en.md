@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 34643f55c61c
+body_sha: 61be3450afbd
 ---
 
-Back to Articles
 
 # Open-sourcing Knowledge Distillation Code and Weights of SD-Small and SD-Tiny
 
-Published
 					August 1, 2023
 
 Update on GitHub
 
-Upvote
 
 4
 
@@ -176,7 +173,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsd_distillation) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsd_distillation) to comment
 
-Upvote
 
 4
 

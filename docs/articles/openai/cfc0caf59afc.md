@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: dfdac0cf9a67
+body_sha: 7722de9ce549
 ---
 
-OpenAI
 
 2025年7月21日
 
@@ -102,11 +101,3 @@ Fidji。
 ## 作者
 
 Fidji Simo
-
-
-
-
-
-
-
-

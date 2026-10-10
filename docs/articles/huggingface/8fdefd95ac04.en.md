@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6fe239ff1236
+body_sha: 3e6aad2dbcf4
 ---
 
-Back to Articles
 
 # The Open Arabic LLM Leaderboard 2
 
-Published
 					February 10, 2025
 
 Update on GitHub
 
-Upvote
 
 39
 
@@ -343,7 +340,6 @@ Thanks for a detailed article. Why is there is no mention of allam from SDAIA?
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/626237d9bbcbd1c34f1bb231/EJrOjvAL-68qMCYdnvOrq.png)](https://huggingface.co/alielfilali01)
 
-·
 
 alielfilali01
 
@@ -363,7 +359,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fleaderboard-arabic-v2) or [log in](https://huggingface.co/login?next=%2Fblog%2Fleaderboard-arabic-v2) to comment
 
-Upvote
 
 39
 

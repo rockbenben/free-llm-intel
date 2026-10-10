@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9129d0332b69
+body_sha: c52b246bb036
 ---
 
-OpenAI
 
 July 26, 2018
 
@@ -19,11 +18,9 @@ Publication
 
 # Variational option discovery algorithms
 
-Read paper
 
 
 
-Loading…
 
 ## Abstract
 
@@ -34,19 +31,3 @@ We explore methods for option discovery based on variational inference and make 
 ## Authors
 
 Joshua Achiam, Harri Edwards, Dario Amodei, Pieter Abbeel
-
-## Related articles
-
-View all
-
-Scaling laws for reward model overoptimization
-
-PublicationOct 19, 2022
-
-Learning to play Minecraft with Video PreTraining
-
-ConclusionJun 23, 2022
-
-Dota 2 with large scale deep reinforcement learning
-
-PublicationDec 13, 2019

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4aa44c8eebc1
+body_sha: 4d279c02005c
 ---
 
-OpenAI
 
 April 5, 2018
 
@@ -25,7 +24,6 @@ Contest
 
 
 
-Read paper
 
 
 
@@ -35,7 +33,6 @@ Gym Retro
 
 Illustration: Timothy J. Reynolds
 
-Loading…
 
 ## Why it matters
 
@@ -43,7 +40,6 @@ In typical RL research, algorithms are tested in the same environment where they
 
 *Update: The* [*results*⁠](https://openai.com/index/retro-contest-results/) *are in!*
 
-Loading...
 
 The [OpenAI Retro Contest](https://contest.openai.com/) gives you a training set of levels from the Sonic The Hedgehog™ series of games, and we evaluate your algorithm on a test set of custom levels that we have created for this contest. The contest will run from April 5 to June 5. To get people started we’re releasing [retro-baselines](https://github.com/openai/retro-baselines), which shows how to run several RL algorithms on the contest tasks.
 
@@ -73,19 +69,14 @@ The [Gym Retro Beta](https://github.com/openai/retro) utilizes a more modern con
 
 Gym Retro was inspired by the [Retro Learning Environment](https://arxiv.org/abs/1611.02205) but written to be more flexible than RLE; for instance, in Gym Retro you can specify the environment definition through JSON files rather than C++ code, making it easier to integrate new games.
 
-Loading...
 
 Gym Retro is our second generation attempt to build a large dataset of reinforcement learning environments. It builds on some of the same ideas as Universe from late 2016, but we weren’t able to get good results from that implementation because Universe environments ran asynchronously, could only run in real time, and were often unreliable due to screen-based detection of game state. Gym Retro extends the model of the Arcade Learning Environment to a much larger set of potential games.
 
 To get started with Gym Retro check out the Getting Started section on GitHub.
 
-Loading...
 
 Sometimes, algorithms can find exploits within the game. Here, a PPO-trained policy discovers it can slip through the walls of a level to move right and attain a higher score—another example of how particular reward functions can lead to AI agents manifesting [odd behaviors⁠](https://openai.com/index/faulty-reward-functions/).
 
-- [Exploration & Games](https://openai.com/research/index/?tags=exploration-game)
-- [Community & Collaboration](https://openai.com/research/index/?tags=community-collaboration)
-- [Simulated Environments](https://openai.com/research/index/?tags=simulated-environments)
 
 ## Authors
 
@@ -100,19 +91,3 @@ Thanks to Philipp Moritz, Robert Nishihara, Adam Stelmaszczyk, Aravind Srinivas,
 ## Cover artwork
 
 Timothy J. Reynolds
-
-## Related articles
-
-View all
-
-Frontier risk and preparedness
-
-SafetyOct 26, 2023
-
-OpenAI Red Teaming Network
-
-SafetySep 19, 2023
-
-Confidence-Building Measures for Artificial Intelligence: Workshop proceedings
-
-ConclusionAug 1, 2023

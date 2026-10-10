@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: ad5c34f9b997
+body_sha: 9be21066d92e
 ---
 
-OpenAI
 
 2026年2月4日
 
@@ -177,8 +176,6 @@ TypeScript 代码库，用于在你自己的应用程序中以编程方式控制
 
 如果这激发了你将 Codex 集成至专属工作流的灵感，那么 App Server 值得一试。所有源代码都存放在 Codex CLI 开源[代码仓库](https://github.com/openai/codex/blob/main/codex-rs/app-server/README.md)中。欢迎你分享反馈意见和功能建议。我们期望收到你的回复，并将继续面向所有用户推广智能体。
 
-- [Codex](https://openai.com/news/?tags=codex)
-- [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
 

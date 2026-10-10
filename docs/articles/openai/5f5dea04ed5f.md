@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a35fcbc7e062
+body_sha: ad7b28fc84ec
 ---
 
-OpenAI
 
 2025年11月25日
 
@@ -21,19 +20,12 @@ OpenAI
 通过将 OpenAI 模型集成到其工具和工作流程中，JetBrains 正在重新定义开发人员借助 AI 进行设计、推理与软件构建的方式
 
 
-公司规模:
 
-中型企业
 
-区域:
 
-欧洲和英国
 
-行业:
 
-金融
 
-产品:
 
 ChatGPT, API
 

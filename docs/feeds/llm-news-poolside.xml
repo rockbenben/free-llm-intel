@@ -384,8 +384,6 @@
 <p>W</p>
 <p>V</p>
 <p>ℓ</p>
-<p>​</p>
-<p>​</p>
 <p>&lt;</p>
 <p>t</p>
 <p>f</p>
@@ -396,7 +394,6 @@
 <p>+</p>
 <p>1</p>
 <p>)</p>
-<p>​</p>
 <p>在 PCIe Gen5 上 BW≈64BW \approx 64BW≈64 GB/s，这条不等式对我们关心的任何模型都不成立。值得指出的是，我们确实可以做某些事情来缓解这种滚雪球；比如我们可以阻塞直到每次传输完成，但这最终牺牲的正是卸载的主要收益。</p>
 <h2>Grace Blackwell 带来了什么</h2>
 <p>到目前为止，我们的分析都局限在 H200 上。但 AI 行业并没有原地踏步，NVIDIA 的 GB200 Super Chip 就是当今最顶级的加速器之一。给不熟悉的人解释一下，Grace Blackwell 是一种 system-on-a-chip 架构，把两颗 Blackwell GPU 与一颗 Grace CPU 配对起来。这些芯片之间通过 chip-to-chip（C2C）的 NVLink 连接。我们指出，更早的 Grace Hopper（GH）系列芯片共享同样的 NVLink C2C 互连，所以这里的原则对两个系列都适用。不过就本文而言，我们只关注 Grace Blackwell。事实证明，有三个特性让这类架构对激活值卸载变得有意思。</p>
@@ -414,16 +411,12 @@
 <p>)</p>
 <p>=</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>⋅</p>
 <p>β</p>
 <p>bytes</p>
 <p>M_{\text{MLP}}^{(\ell)} = 3 \cdot B \cdot S \cdot d_{ffn} \cdot \beta \text{ bytes}</p>
@@ -432,20 +425,14 @@
 <p>(</p>
 <p>ℓ</p>
 <p>)</p>
-<p>​</p>
 <p>=</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>​</p>
-<p>⋅</p>
 <p>β</p>
 <p>bytes</p>
 <p>其中 β\betaβ 是每个元素的字节数（BF16 为 2）。对 Qwen3-30B-3A，dffn=3×2048=6144d_{ffn} = 3 \times 2048 = 6144dffn​=3×2048=6144。这里要指出，一个融合的 SwiGLU kernel 实际上可以把它缩减到只有两个张量，因为我们只需保存 WgatexW_{gate} xWgate​x 和 WupxW_{up} xWup​x，剩下的即时重算就够了。这能把卸载量降下大约三分之一。融合与卸载的这种组合实际上让我们两边的好处都拿到，因为我们传输的数据更少了，同时也获得了各项内存节省。不过就本文而言，我们聚焦于简单情形，使用未融合的、三张量的做法。</p>
@@ -454,13 +441,9 @@
 <p>recomp</p>
 <p>=</p>
 <p>2</p>
-<p>⋅</p>
 <p>k</p>
-<p>⋅</p>
 <p>3</p>
-<p>⋅</p>
 <p>d</p>
-<p>⋅</p>
 <p>d</p>
 <p>m</p>
 <p>o</p>
@@ -469,20 +452,14 @@
 <p>F_{\text{recomp}} = 2 \cdot k \cdot 3 \cdot d \cdot d_{moe} \text{ FLOPs per token}</p>
 <p>F</p>
 <p>recomp</p>
-<p>​</p>
 <p>=</p>
 <p>2</p>
-<p>⋅</p>
 <p>k</p>
-<p>⋅</p>
 <p>3</p>
-<p>⋅</p>
 <p>d</p>
-<p>⋅</p>
 <p>d</p>
 <p>m</p>
 <p>oe</p>
-<p>​</p>
 <p>FLOPs per token</p>
 <p>其中 kkk 是每个 token 的激活专家数，d 是模型的 hidden 维度，dmoed_{moe}dmoe​ 是每个专家的中间维度（3 个 SwiGLU 投影 × 每参数 2 FLOPs）。这就是卸载所消掉的计算量。对我们更好的是，那些冗余的 FLOPs 要消耗真实的能量，所以卸载也是更环保的选择。</p>
 <p>反向传播比前向重 ∼2×\sim 2\times∼2×（既要对激活值求梯度，也要对权重求梯度），这对我们有利：它给 H2D 重新加载留出了额外的完成时间。作为一项额外的优化，我们还可以跳过对最后一层的卸载；毕竟反向传播就是从最后一层开始的，卸载与重新加载激活值之间的重叠窗口为零。</p>
@@ -496,34 +473,24 @@
 <p>offload</p>
 <p>=</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>⋅</p>
 <p>β</p>
 <p>V_{\text{offload}} = 3 \cdot B \cdot S \cdot d_{ffn} \cdot \beta</p>
 <p>V</p>
 <p>offload</p>
-<p>​</p>
 <p>=</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>​</p>
-<p>⋅</p>
 <p>β</p>
 <p>我们测得 D2H 传输在 ∼20\sim 20∼20 ms 内完成，这意味着每层 Voffload≈0.020×185=3.7V_{\text{offload}} \approx 0.020 \times 185 = 3.7Voffload​≈0.020×185=3.7 GB。该层的前向时间是 ~22.5 ms，所以 tD2H&lt;tfwdt_{D2H} &lt; t_{fwd}tD2H​&lt;tfwd​ 成立——余量很紧，但可行。</p>
 <p>返程受到的约束更小：H2D 重新加载传输的同样是 3.7 GB，以 ∼185\sim 185∼185 GB/s（∼20\sim 20∼20 ms）跑完，而反向传播提供了更宽的重叠窗口。在我们的 trace 里，H2D 早在被重新加载的激活值投入使用之前就已结束。真正的硬约束是前向期间的 D2H。假如某次 H2D 传输跑得太久，反向传播会卡在一个 <code>cudaStreamSynchronize</code> 上直到重新加载完成——正确性保住了，但那一层的重叠收益就没了。</p>
@@ -548,7 +515,6 @@
 <p>ℓ</p>
 <p>)</p>
 <p>L</p>
-<p>⋅</p>
 <p>M</p>
 <p>MLP</p>
 <p>(</p>
@@ -563,34 +529,26 @@
 <p>\frac{\Delta M}{M_{\text{total}}} = \frac{M_{\text{MLP}}^{(\ell)}}{L \cdot M_{\text{MLP}}^{(\ell)} + M_{\text{other}}} \leq \frac{1}{L}</p>
 <p>M</p>
 <p>total</p>
-<p>​</p>
 <p>Δ</p>
 <p>M</p>
-<p>​</p>
 <p>=</p>
 <p>L</p>
-<p>⋅</p>
 <p>M</p>
 <p>MLP</p>
 <p>(</p>
 <p>ℓ</p>
 <p>)</p>
-<p>​</p>
 <p>+</p>
 <p>M</p>
 <p>other</p>
-<p>​</p>
 <p>M</p>
 <p>MLP</p>
 <p>(</p>
 <p>ℓ</p>
 <p>)</p>
-<p>​</p>
-<p>​</p>
 <p>≤</p>
 <p>L</p>
 <p>1</p>
-<p>​</p>
 <p>其中 MotherM_{\text{other}}Mother​ 涵盖权重、优化器状态、梯度以及非 MLP 激活值。在我们的 8 层实验里 1/L=12.5%1/L = 12.5\%1/L=12.5%，但实际开销只有 3%，因为 MotherM_{\text{other}}Mother​ 很大。对完整的 48 层模型，1/L=2.1%1/L = 2.1\%1/L=2.1%，实际开销降到约 0.5%。若是 96 层模型还会更低。换句话说，模型越深，这笔交易越划算。</p>
 <p><em>单个训练 step 内的内存时间线。两种方法共享同一个稳态下界；卸载额外带来一个恒定的 +3.7 GB in-flight buffer（一层的激活值正在通过 C2C 排空）。</em></p>
 <p>有一点要注意：<em>实测</em>峰值内存与<em>已分配</em>峰值内存之间可能存在相当大的差异。这一差异主要来自 allocator 的碎片化，尽管 PyTorch 的 CachingAllocator 通常能把这个差距压得很好。在我们的实验里，实际内存是 160.86 GB，而 AC 是 131.45 GB——22% 的差距。这可以通过为 in-flight 数据预分配固定 buffer 来解决，而在带 FSDP 的分布式设置里，每个 rank 的状态更小，allocator 也就更轻松。在大规模下这似乎不构成问题。这一差异主要来自 allocator 的碎片化，尽管 PyTorch 的 CachingAllocator 通常能把这个差距压得很好。在我们的实验里，实际内存是 160.86 GB，而 AC 是 131.45 GB——22% 的差距。这可以通过为 in-flight 数据预分配固定 buffer 来解决，而在带 FSDP 的分布式设置里，每个 rank 的状态更小，allocator 也就更轻松。在大规模下这似乎不构成问题。</p>
@@ -612,16 +570,12 @@
 <p>H</p>
 <p>=</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>⋅</p>
 <p>β</p>
 <p>B</p>
 <p>W</p>
@@ -633,28 +587,20 @@
 <p>D</p>
 <p>2</p>
 <p>H</p>
-<p>​</p>
 <p>=</p>
 <p>B</p>
 <p>W</p>
 <p>C</p>
 <p>2</p>
 <p>C</p>
-<p>​</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>​</p>
-<p>⋅</p>
 <p>β</p>
-<p>​</p>
 <p>该层的前向时间是 MLP GEMM（对 kkk 个激活专家的 SwiGLU 而言是 6k⋅d⋅dmoe6k \cdot d \cdot d_{moe}6k⋅d⋅dmoe​ FLOPs/token）、attention（Fattn(S)F_{\text{attn}}(S)Fattn​(S) FLOPs/token，取决于序列长度 SSS）以及通信开销的总和。由于 B⋅SB \cdot SB⋅S 同时出现在传输量和计算时间里，它会从不等式中约掉，条件因而主要取决于模型架构和硬件。把 tD2H&lt;tfwdt_{D2H} &lt; t_{fwd}tD2H​&lt;tfwd​ 重新整理，就得到 dffnd_{ffn}dffn​ 的一个阈值：</p>
 <p>d</p>
 <p>f</p>
@@ -663,11 +609,8 @@
 <p>&lt;</p>
 <p>(</p>
 <p>6</p>
-<p>⋅</p>
 <p>k</p>
-<p>⋅</p>
 <p>d</p>
-<p>⋅</p>
 <p>d</p>
 <p>m</p>
 <p>o</p>
@@ -676,16 +619,13 @@
 <p>F</p>
 <p>attn</p>
 <p>)</p>
-<p>⋅</p>
 <p>B</p>
 <p>W</p>
 <p>C</p>
 <p>2</p>
 <p>C</p>
 <p>3</p>
-<p>⋅</p>
 <p>β</p>
-<p>⋅</p>
 <p>P</p>
 <p>p</p>
 <p>e</p>
@@ -696,41 +636,29 @@
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>​</p>
 <p>&lt;</p>
 <p>3</p>
-<p>⋅</p>
 <p>β</p>
-<p>⋅</p>
 <p>P</p>
 <p>p</p>
 <p>e</p>
 <p>ak</p>
-<p>​</p>
 <p>(</p>
 <p>6</p>
-<p>⋅</p>
 <p>k</p>
-<p>⋅</p>
 <p>d</p>
-<p>⋅</p>
 <p>d</p>
 <p>m</p>
 <p>oe</p>
-<p>​</p>
 <p>+</p>
 <p>F</p>
 <p>attn</p>
-<p>​</p>
 <p>)</p>
-<p>⋅</p>
 <p>B</p>
 <p>W</p>
 <p>C</p>
 <p>2</p>
 <p>C</p>
-<p>​</p>
-<p>​</p>
 <p>其中 PpeakP_{peak}Ppeak​ 是该设备的峰值计算吞吐。注意这个公式假设了 compute-bound 区间；一般而言，GEMM 的前向时间是 tgemm=max⁡(tcompute,thbm)t_{gemm} = \max(t_{compute}, t_{hbm})tgemm​=max(tcompute​,thbm​)，其中 thbmt_{hbm}thbm​ 是 GEMM 的内存流量时间，并在 GEMM roofline 的 memory-bandwidth-bound 区间里占主导。我们还注意到，attention 的贡献 Fattn(S)F_{\text{attn}}(S)Fattn​(S) FLOPs 随序列长度二次增长，而 MLP 的 FLOPs 与卸载量都只是线性增长；这潜在地给了我们更多空间去吸收 D2H 传输。</p>
 <p>然而，并非所有模型都适合做 MLP 卸载。有一个 MLP 不成比例地庞大的模型，就是 Grok2。</p>
 <p><em>C2C 卸载的可行域。对角线上方的模型（D2H 时间 &lt; 层前向时间）可以卸载而不引发滚雪球。Qwen3-30B-3A 恰好位于边界之上——可行，但缺少 attention 余量时就很紧；Grok2 需要选择性卸载才能降到边界之下。</em></p>
@@ -770,17 +698,13 @@
 <p>−</p>
 <p>t</p>
 <p>f</p>
-<p>​</p>
 <p>+</p>
 <p>t</p>
 <p>b</p>
 <p>A</p>
 <p>C</p>
-<p>​</p>
 <p>δ</p>
-<p>​</p>
 <p>1</p>
-<p>​</p>
 <p>对所有层取平均，反向的收益是约 7–8%。对足够深的模型，随着固定开销（embedding、loss）被摊薄，端到端的改善会向这个逐层平均值收敛。这就是为什么我们的 8 层实验尽管逐层收益更大、端到端却只有 4.3%。</p>
 <p>最后我们还注意到，对足够深的模型，LLL 会被约掉；加速与深度无关，而内存代价按 1/L1/L1/L 缩放。模型越深，节省越好。对 48 层的 Qwen3-30B-3A，每个 step 节省 ΔT≈48×δˉ\Delta T \approx 48 \times \bar{\delta}ΔT≈48×δˉ ms（其中 δˉ\bar{\delta}δˉ 是逐层平均节省），而内存代价恒定为 3.7 GB。这让 C2C offloading 对当今前沿开源模型中流行的那种又深又窄的 MoE 架构（DeepSeek-V3、Qwen3-MoE、GLM-5）格外有吸引力。此外我们注意到，C2C offloading 同样适用于 dense 模型，那里通常更小的 dffnd_{ffn}dffn​ 让可行性条件更容易满足。</p>
 <h3>可组合性</h3>

@@ -9,10 +9,9 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a862e346a052
+body_sha: 134ee3eadef9
 ---
 
-OpenAI
 
 2026年10月2日
 
@@ -134,8 +133,6 @@ GPT‑6 是[我们迄今最先进的模型系列](https://openai.com/index/intro
 
 > Invideo：更好地掌控最终剪辑效果。⁠Invideo 使用 GPT‑6 Astra 规划时间线剪辑，并创建可供剪辑师进一步调整的自定义特效。据该公司报告，调色和色彩校正任务的成功率提升至原来的约三倍。几位剪辑师还在一天内制作了约 50 种特效。
 
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
-- [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
 

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4cabf98f1c86
+body_sha: e32d2cabd240
 ---
 
-OpenAI
 
 October 9, 2018
 
@@ -21,7 +20,6 @@ Company
 
 We are now accepting applications for OpenAI Fellows and Interns for 2019.
 
-Loading…
 
 Fellows and Intern programs provide an opportunity for people to work at OpenAI who are currently studying AI or wanting to transition from another speciality into AI.
 
@@ -50,7 +48,6 @@ OpenAI Fellows for the **February 2019 Cohort** will spend the first 2 months of
 | 2/4/2019 | Cohort Starts |
 | 8/2/2019 | Cohort Ends |
 
-Loading...
 
 ## Interns
 
@@ -108,25 +105,7 @@ We offer two decision periods: Early Decision and General Admission.
 
 *Questions—email* [*internships@openai.com*⁠](mailto:internships@openai.com)
 
-- [Culture & Careers](https://openai.com/news/?tags=culture-careers)
-- [2018](https://openai.com/news/?tags=2018)
 
 ## Authors
 
 Larissa Schiavo, Ashley Pilipiszyn
-
-## Related articles
-
-View all
-
-Global news partnerships: Le Monde and Prisa Media
-
-CompanyMar 13, 2024
-
-OpenAI announces new members to board of directors
-
-CompanyMar 8, 2024
-
-Review completed & Altman, Brockman to continue to lead OpenAI
-
-CompanyMar 8, 2024

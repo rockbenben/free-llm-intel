@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 48ead51c9768
+body_sha: 2c058b30c16d
 ---
 
-Back to Articles
 
 # Five Big Improvements to Gradio MCP Servers
 
-Published
 					July 17, 2025
 
 Update on GitHub
 
-Upvote
 
 24
 
@@ -199,7 +196,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fgradio-mcp-updates) or [log in](https://huggingface.co/login?next=%2Fblog%2Fgradio-mcp-updates) to comment
 
-Upvote
 
 24
 

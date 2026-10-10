@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 72ec22bbe699
+body_sha: ee9dd8f77f5d
 ---
 
-OpenAI
 
 2026年8月28日
 
@@ -96,11 +95,3 @@ Curico 计划在成果展示日之前，于曼谷市政府下属的托育中心�
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

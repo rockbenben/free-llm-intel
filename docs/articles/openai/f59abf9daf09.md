@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fc175d5ac4db
+body_sha: f591ec6aa4cd
 translator: agent
 ---
 
-OpenAI
 
 March 5, 2026
 
@@ -32,8 +31,6 @@ GPT‑5.4 Thinking 是 GPT‑5 系列中最新的推理模型，详见我们的 
 
 在本系统卡中，我们也会用 gpt-5.4-thinking 指代 GPT‑5.4 Thinking。注意，并不存在名为 GPT‑5.3 Thinking 的模型，因此作为基线对比的主要模型是 GPT‑5.2 Thinking。
 
-- [2026](https://openai.com/research/index/?tags=2026)
-- [System Cards](https://openai.com/research/index/?tags=system-cards)
 
 ## 作者
 

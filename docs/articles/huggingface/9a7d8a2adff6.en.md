@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b1cf8206e9a9
+body_sha: ada3863607e1
 ---
 
-Back to Articles
 
 # SetFitABSA: Few-Shot Aspect Based Sentiment Analysis using SetFit
 
-Published
 					December 6, 2023
 
 Update on GitHub
 
-Upvote
 
 15
 
@@ -341,7 +338,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsetfit-absa) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsetfit-absa) to comment
 
-Upvote
 
 15
 

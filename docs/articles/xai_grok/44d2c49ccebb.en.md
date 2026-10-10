@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 81f182b5e474
+body_sha: 33d7cd095523
 ---
 
 Back to news
@@ -29,17 +29,11 @@ For small-to-medium teams, we offer a self-serve process to use **Grok Business*
 
 For end-users, Grok Business makes secure AI work feel effortless. You can pull in data from your company's tools like Google Drive and share insights safely with teammates. Links are only accessible by those you share them with.
 
-0:00
 
-/
 
-0:00
 
-0:00
 
-/
 
-0:00
 
 Share conversations securely with your teammates. Links are only accessible to the people you share them with.
 
@@ -52,17 +46,11 @@ Grok has the ability to access your company knowledge and tools directly with **
 
 Grok can also perform agentic search using our industry-leading [Collections API](https://x.ai/news/grok-collections-api) via **Projects**. This is useful for when Grok needs to use a large document store as a primary source, such as a data room for analyzing legal documentation or building financial models.
 
-0:00
 
-/
 
-0:00
 
-0:00
 
-/
 
-0:00
 
 Bring your company tools into Grok for agentic tasks, starting with searching your Google Drive documents
 
@@ -70,23 +58,14 @@ Bring your company tools into Grok for agentic tasks, starting with searching yo
 
 Manage your Grok Business team directly in the xAI console for effortless administration. Invite users, manage access controls, and monitor usage, all in one place.
 
-0:00
 
-/
 
-0:00
 
-0:00
 
-/
 
-0:00
 
-0:00
 
-/
 
-0:00
 
 Monitor your team's usage in real-time to validate efficacy of the platform.
 

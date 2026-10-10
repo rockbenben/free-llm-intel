@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 540408164e3c
+body_sha: 93c1db792ba1
 translator: agent
 ---
 
-OpenAI
 
 October 30, 2025
 
@@ -35,8 +34,6 @@ Stargate 密歇根园区由 [Related Digital](https://www.related-digital.com/ne
 
 密歇根长久以来一直是美国工程与制造业的中心。我们很自豪能在这里建设，并将持续扩建所需的基础设施，确保 AI 的好处惠及每个人。
 
-- [2025](https://openai.com/news/?tags=2025)
-- [Partnerships](https://openai.com/news/?tags=partnerships)
 
 ## 作者
 

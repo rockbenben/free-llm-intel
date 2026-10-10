@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 15c0a1355d81
+body_sha: f874248fe8d7
 ---
 
-OpenAI
 
 April 27, 2016
 
@@ -23,7 +22,6 @@ Read Paper
 
 
 
-Loading…
 
 We’re releasing the public beta of OpenAI Gym, a toolkit for developing and comparing reinforcement learning (RL) algorithms. It consists of a growing suite of environments (from simulated robots to Atari games), and a site for comparing and reproducing results.
 
@@ -75,29 +73,7 @@ We want OpenAI Gym to be a community effort from the beginning. We’ve starting
 
 During the public beta, we’re looking for feedback on how to make this into an even better tool for research. If you’d like to help, you can try your hand at improving the state-of-the-art on each environment, reproducing other people’s results, or even implementing your own environments. Also please join us in the [community chat](https://gym.openai.com/chat)!
 
-- [Simulated Environments](https://openai.com/research/index/?tags=simulated-environments)
-- [Exploration & Games](https://openai.com/research/index/?tags=exploration-game)
-- [Software & Engineering](https://openai.com/research/index/?tags=software-engineering)
-- [Robotics](https://openai.com/research/index/?tags=robotics)
-- [Learning Paradigms](https://openai.com/research/index/?tags=learning-paradigms)
-- [Community & Collaboration](https://openai.com/research/index/?tags=community-collaboration)
 
 ## Authors
 
 Greg Brockman
-
-## Related articles
-
-View all
-
-Scaling laws for reward model overoptimization
-
-PublicationOct 19, 2022
-
-Introducing Whisper
-
-ReleaseSep 21, 2022
-
-Learning to play Minecraft with Video PreTraining
-
-ConclusionJun 23, 2022

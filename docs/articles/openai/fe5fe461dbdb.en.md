@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f19fd86f6397
+body_sha: 90e1d63e1197
 ---
 
-OpenAI
 
 April 10, 2026
 
@@ -21,7 +20,6 @@ OpenAI Academy
 
 Understand the basics of AI, including what it is, how it works, and how it’s used.
 
-Loading…
 
 Welcome! If you’re new to AI, you don’t need a technical background to get started. What helps most is a simple map of the landscape—so you can understand what AI systems can do, how they’re packaged, and how to choose the right tool for your needs.
 
@@ -89,19 +87,3 @@ Learn about [getting started with ChatGPT](https://openai.com/academy/getting-st
 Discover additional guides and resources to help you build practical AI skills.
 
 View all topics
-
-## Keep reading
-
-View all
-
-Applications of AI | OpenAI
-
-OpenAI AcademyApr 10, 2026
-
-Responsible and safe use of AI | OpenAI
-
-OpenAI AcademyApr 10, 2026
-
-Getting started with ChatGPT | OpenAI
-
-OpenAI AcademyJul 10, 2026

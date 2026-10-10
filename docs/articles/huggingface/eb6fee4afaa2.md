@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: dbae5f2d2046
+body_sha: 7b4d5bb29a64
 translator: agent
 ---
 
@@ -186,7 +186,6 @@ kirudang
 
 2025 年 2 月 17 日
 
-·
 
 2025 年 2 月 17 日编辑
 

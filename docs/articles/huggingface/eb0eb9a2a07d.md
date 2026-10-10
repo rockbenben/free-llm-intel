@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 90328e9e8a75
+body_sha: 9f902c53b3a1
 translator: agent
 ---
 
@@ -534,7 +534,6 @@ tolgacangoz
 
 2025 年 10 月 25 日
 
-·
 
 此评论已被隐藏（标记为已解决）
 

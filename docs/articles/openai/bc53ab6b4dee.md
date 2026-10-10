@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: d9192870b04c
+body_sha: 6b475675e127
 ---
 
-OpenAI
 
 2025年9月25日
 
@@ -172,10 +171,6 @@ GDPval 尚处初级阶段。尽管已覆盖 44 类职业与数百项任务，我
 
 社区参与至关重要——我们期待与志同道合的研究者、实践者及机构携手构建 GDPval，共同推动 AGI 在工作场景中的实用价值。
 
-- [GPT](https://openai.com/research/index/?tags=gpt)
-- [推理与政策](https://openai.com/research/index/?tags=reasoning-policy)
-- [框架](https://openai.com/research/index/?tags=framework)
-- [2025 年](https://openai.com/research/index/?tags=2025)
 
 ## 作者
 

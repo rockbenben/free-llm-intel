@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ae8c19eeb2d5
+body_sha: 00c176347b0e
 ---
 
-Back to Articles
 
 # Migrating the Hub from Git LFS to Xet
 
-Published
 					July 15, 2025
 
 Update on GitHub
 
-Upvote
 
 29
 
@@ -212,7 +209,6 @@ This enables and strengthens our commitment to provide [free public storage to t
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/65d50e9ef9cbfa798c590004/FlVe8chafigMfrPpMeJRL.jpeg)](https://huggingface.co/jsulz)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66476b165fdb7108202b051c/nVACb8uBoGQtb8mSgHIr2.webp)](https://huggingface.co/Koitenshin)
 
-·
 
 pszemraj
 
@@ -232,7 +228,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fmigrating-the-hub-to-xet) or [log in](https://huggingface.co/login?next=%2Fblog%2Fmigrating-the-hub-to-xet) to comment
 
-Upvote
 
 29
 

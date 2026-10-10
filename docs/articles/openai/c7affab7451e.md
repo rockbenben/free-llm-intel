@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e4a0c5c4de90
+body_sha: 61cba70cc17e
 ---
 
-OpenAI
 
 2026年5月27日
 
@@ -130,8 +129,6 @@ Thrive Holdings 的结构使我们能够在特定行业中复制这一环境。H
 
 *如需进一步了解参与该项目的 OpenAI 团队，*[*欢迎联系我们*](https://openai.com/contact-sales/)*。*
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [Codex](https://openai.com/news/?tags=codex)
 
 ## 作者
 

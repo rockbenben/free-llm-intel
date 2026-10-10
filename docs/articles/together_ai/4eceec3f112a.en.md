@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 94539e7b318a
+body_sha: 8cc689995522
 ---
 
 All blog posts
@@ -95,7 +95,6 @@ Vague SLA definitions are where the gap between what’s promised and what’s d
 | Failover time | Time to shift traffic to healthy capacity after a facility fault | Seconds |
 | Request volume | Inference requests served over the measurement window | 2B TPM+ |
 
-‍
 
 We measure at inference completion, not at the gateway. A request that reaches the load balancer but fails at the GPU is downtime in our accounting. One more thing: availability and performance are different contracts. In Provisioned Throughput, you’re paying for a GPU allocation to deliver specific TPS, not just for the endpoint to respond. A service that’s up but delivering 30% of contracted throughput isn’t meeting the deal.
 

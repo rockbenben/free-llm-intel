@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 0821b489f181
+body_sha: f52fa49a0e94
 translator: agent
 ---
 
-OpenAI
 
 2023 年 11 月 17 日
 
@@ -40,17 +39,7 @@ OpenAI 董事会由 OpenAI 首席科学家 Ilya Sutskever、独立董事——Qu
 
 OpenAI 于 2015 年作为一家非营利组织创立，核心使命是确保通用人工智能造福全人类。2019 年，OpenAI 进行了重组，以便公司能为实现这一使命筹集资本，同时保留非营利组织的使命、治理和监督。董事会多数成员为独立董事，独立董事不持有 OpenAI 的股权。尽管公司经历了戏剧性的增长，推进 OpenAI 使命、守护其《章程》原则始终是董事会的根本治理责任。
 
-- [文化与招聘](https://openai.com/news/?tags=culture-careers)
-- [2023](https://openai.com/news/?tags=2023)
 
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

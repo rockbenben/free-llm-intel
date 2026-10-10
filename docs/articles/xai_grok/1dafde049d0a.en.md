@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d98167c0bcd5
+body_sha: bc9271df54cc
 ---
 
 Back to news
@@ -29,11 +29,8 @@ It’s for operators and developers who want high-volume production voice agents
 
 Most voice stacks stitch together three APIs—speech-to-text, a language model, and text-to-speech—often with each stage hosted by a different provider. Every hop adds cost, latency, and new failure modes. Voice Agent Builder is one interface on a speech-to-speech path built for Grok Voice, tightly coupled to the model rather than assembled from three.
 
-0:00
 
-/
 
-0:00
 
 ## [Trained on the hardest calls we could find](https://x.ai/news/grok-voice-agent-builder#trained-on-the-hardest-calls-we-could-find)
 

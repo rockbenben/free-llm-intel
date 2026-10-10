@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b61f77eae5fa
+body_sha: 2ea6ff401555
 ---
 
-OpenAI
 
 March 31, 2016
 
@@ -23,7 +22,6 @@ We’ve had some fantastic people join over the past few months (and we’re sti
 
 Illustration: Justin Jay Wang × DALL·E
 
-Loading…
 
 ## Full-timers
 
@@ -48,25 +46,7 @@ As a closing note, we get a lot of questions about what we’re working on, how 
 
 We’re currently focused on unsupervised learning and reinforcement learning. We should have interesting results to share over the next month or two. A bunch of us will be around [ICLR](http://www.iclr.cc/), where we’ll likely hold an event of some form. I’ll also host a [Quora Session](https://productupdates.quora.com/Introducing-Sessions) in May or June to answer any questions for people we don’t meet in Puerto Rico.
 
-- [Culture & Careers](https://openai.com/news/?tags=culture-careers)
-- [2016](https://openai.com/news/?tags=2016)
 
 ## Author
 
 Greg Brockman
-
-## Related articles
-
-View all
-
-Global news partnerships: Le Monde and Prisa Media
-
-CompanyMar 13, 2024
-
-OpenAI announces new members to board of directors
-
-CompanyMar 8, 2024
-
-Review completed & Altman, Brockman to continue to lead OpenAI
-
-CompanyMar 8, 2024

@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f48dea5f916e
+body_sha: aaa3d7dba16c
 ---
 
-Back to Articles
 
 # HuggingFace, IISc partner to supercharge model building on India's diverse languages
 
-Published
 					February 27, 2025
 
 Update on GitHub
 
-Upvote
 
 31
 
@@ -178,7 +175,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fiisc-huggingface-collab) or [log in](https://huggingface.co/login?next=%2Fblog%2Fiisc-huggingface-collab) to comment
 
-Upvote
 
 31
 

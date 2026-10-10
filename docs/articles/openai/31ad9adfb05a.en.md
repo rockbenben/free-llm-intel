@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 70c0f46ba069
+body_sha: 7d7b9b8cc380
 ---
 
-OpenAI
 
 May 25, 2018
 
@@ -19,7 +18,6 @@ Release
 
 # Gym Retro
 
-Loading…
 
 We’re releasing the full version of [Gym Retro](https://github.com/openai/retro), a platform for reinforcement learning research on games. This brings our publicly-released game count from around 70 Atari games and 30 Sega games to over 1,000 games across a variety of backing emulators. We’re also releasing the tool we use to add new games to the platform.
 
@@ -31,19 +29,16 @@ The ongoing [Retro Contest](https://contest.openai.com/) (ending in a couple wee
 
 ## Integration tool
 
-Loading...
 
 We’re also releasing the tool we use to integrate new games. Provided you have the ROM for a game, this tool lets you easily create save states, find memory locations, and design scenarios that reinforcement learning agents can then solve. We’ve written an [integrator’s guide](https://retro.readthedocs.io/en/latest/integration.html) for people looking to add support for new games.
 
 The integration tool also supports recording and playing movie files that save all the button inputs to the game. These files are small because they only need the starting state and sequence of button presses, as opposed to storing each frame of the output. Movie files like these are useful for visualizing what your reinforcement learning agent is doing as well as storing human input to use as training data.
 
-Loading...
 
 ## Reward farming
 
 While developing Gym Retro we’ve found numerous examples of games where the agent learns to farm for rewards (defined as the increase in game score) rather than completing the implicit mission. In the above clips, characters in *Cheese Cat-Astrophe (left)* and *Blades of Vengeance (right)* become trapped in infinite loops because they’re able to rapidly accrue rewards that way. This highlights a [phenomenon](https://blog.openai.com/faulty-reward-functions/) we’ve discussed previously: the relatively simple reward functions we give to contemporary reinforcement learning algorithms, for instance by maximizing the score in a game, can lead to undesirable behaviors.
 
-Loading...
 
 For games with dense (frequent and incremental) rewards where most of the difficulty comes from needing fast reaction times, reinforcement learning algorithms such as PPO do very well.
 
@@ -53,28 +48,7 @@ For games that have a sparse reward or require planning more than a few seconds 
 
 If you are excited about conducting research on transfer learning and meta-learning with an unprecedentedly large dataset, then consider [joining OpenAI⁠](https://openai.com/careers/).
 
-- [Community & Collaboration](https://openai.com/research/index/?tags=community-collaboration)
-- [Exploration & Games](https://openai.com/research/index/?tags=exploration-game)
-- [Learning Paradigms](https://openai.com/research/index/?tags=learning-paradigms)
-- [Software & Engineering](https://openai.com/research/index/?tags=software-engineering)
-- [Simulated Environments](https://openai.com/research/index/?tags=simulated-environments)
 
 ## Authors
 
 Vicki Pfau, Alex Nichol, Christopher Hesse, Larissa Schiavo, John Schulman, Oleg Klimov
-
-## Related articles
-
-View all
-
-Scaling laws for reward model overoptimization
-
-PublicationOct 19, 2022
-
-Introducing Whisper
-
-ReleaseSep 21, 2022
-
-Learning to play Minecraft with Video PreTraining
-
-ConclusionJun 23, 2022

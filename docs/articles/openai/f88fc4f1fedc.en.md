@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 24542d1147f1
+body_sha: 61552dd3b009
 ---
 
-OpenAI
 
 June 1, 2025
 
@@ -21,7 +20,6 @@ Safety
 
 OpenAI banned accounts associated with threat actors publicly attributed to the PRC, using AI to support vulnerability research, scripting, translation, and operational troubleshooting.
 
-Loading…
 
 *This case study was originally published in OpenAI’s *[*June 2025*](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)* report.*
 
@@ -61,8 +59,6 @@ Representative examples of these activities can be mapped to the LLM ATT&CK fram
 
 We disabled all accounts associated with this activity and shared relevant indicators with industry partners. While this investigation provided unusually broad visibility into a network of PRC-affiliated threat actors and their operational workflows, including tool development, open-source research, and infrastructure profiling, we found no evidence that access to our models provided these actors with novel capabilities or directions that they could not otherwise have obtained from multiple publicly available resources.
 
-- [China](https://openai.com/news/?tags=actor-origin-china)
-- [Cyber operations](https://openai.com/news/?tags=cyber-operations)
 
 ## Author
 

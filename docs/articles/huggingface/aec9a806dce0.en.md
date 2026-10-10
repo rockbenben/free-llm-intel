@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4b76a315eec8
+body_sha: 46e533fc0400
 ---
 
-Back to Articles
 
 # A Gentle Introduction to 8-bit Matrix Multiplication for transformers at scale using Hugging Face Transformers, Accelerate and bitsandbytes
 
-Published
 					August 17, 2022
 
 Update on GitHub
 
-Upvote
 
 140
 
@@ -495,7 +492,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fhf-bitsandbytes-integration) or [log in](https://huggingface.co/login?next=%2Fblog%2Fhf-bitsandbytes-integration) to comment
 
-Upvote
 
 140
 

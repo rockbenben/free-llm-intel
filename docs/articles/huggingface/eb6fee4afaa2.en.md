@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 183e5b5a590b
+body_sha: ab476a5a2a82
 ---
 
-Back to Articles
 
 # Introducing SynthID Text
 
-Published
 					October 23, 2024
 
 Update on GitHub
 
-Upvote
 
 63
 
@@ -187,7 +184,6 @@ kirudang
 
 Feb 17, 2025
 
-•
 
 edited Feb 17, 2025
 
@@ -231,7 +227,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsynthid-text) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsynthid-text) to comment
 
-Upvote
 
 63
 

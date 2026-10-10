@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f979054493ee
+body_sha: 0d662301cc59
 ---
 
 All blog posts
@@ -41,7 +41,6 @@ Run DeepSeek-V4 Pro 0813 on Together AI
 
 View the model
 
-‍
 
 In our [DeepSeek V4 Pro 0813](https://www.together.ai/models/deepseek-v4-pro-0813) vs Claude Fable 5 comparison on DeepSWE, a benchmark that tests a model's software engineering ability across many task types and programming languages, the two models sit at opposite ends of the price sheet. Claude Fable 5 is the most expensive rollout on the DeepSWE board. DeepSeek V4 Pro 0813 is one of the cheapest. Fable is seven points more accurate on the first try and costs ninety times as much per rollout, so the real question is not which model is better, but what that 90x premium actually buys and when it is worth paying.
 
@@ -143,7 +142,6 @@ Yes, if you can verify results. The two models have the lowest per-task correlat
 
 pass@k measures whether at least one of k attempts at a task passes the hidden test suite. pass@1 rewards getting it right first try; higher k rewards a model that can eventually reach a solution across several tries. DeepSeek V4 Pro 0813's edge grows as k increases.
 
-‍
 
 ## Related articles
 

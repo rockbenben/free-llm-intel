@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-06
 extractor: readability-v1
 status: ok
-body_sha: 98ebdcdc34b7
+body_sha: 231b93e7a5e8
 ---
 
-Back to Articles
 
 # Using LoRA for Efficient Stable Diffusion Fine-Tuning
 
-Published
 					January 26, 2023
 
 Update on GitHub
 
-Upvote
 
 84
 
@@ -219,7 +216,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Flora) or [log in](https://huggingface.co/login?next=%2Fblog%2Flora) to comment
 
-Upvote
 
 84
 

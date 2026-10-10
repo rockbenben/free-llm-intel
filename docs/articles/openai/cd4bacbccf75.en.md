@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a826f04aa609
+body_sha: 8d73af4dd0c1
 ---
 
-OpenAI
 
 June 18, 2025
 
@@ -25,7 +24,6 @@ Read the paper
 
 
 
-Loading…
 
 ## About this project
 
@@ -323,7 +321,6 @@ UD
 
 DE
 
-:
 
 "
 
@@ -369,7 +366,6 @@ ART
 
 ELS
 
-:
 
 "
 
@@ -405,7 +401,6 @@ UD
 
 DE
 
-:
 
 "
 
@@ -845,7 +840,6 @@ C
 
 System
 
-:
 
 The
 

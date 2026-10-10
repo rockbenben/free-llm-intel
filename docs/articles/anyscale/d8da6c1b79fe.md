@@ -9,10 +9,8 @@ captured: 2026-10-09
 extractor: readability-v1
 translator: mt
 status: translated
-body_sha: 6cd6171be46e
+body_sha: 7a64334f6be4
 ---
-
-
 
 博客详细信息
 
@@ -206,15 +204,12 @@ ACK 通过 kube-queue 支持任务排队和配额。通过配额和队列，用�
 
 #### 将编码代理成本降低 90%：在 Anyscale 上使用 Ray + vLLM 提供安全的 LLM 服务
 
-了解更多
 
 #### Azure 上的 Anyscale 全面可用：使企业能够拥有完整的 AI 循环，而不仅仅是推理
 
-了解更多
 
 #### Ray Summit 2026：物理 AI、RL 以及运行它们的基础设施
 
-了解更多
 
 ## 立即探索 Anyscale
 

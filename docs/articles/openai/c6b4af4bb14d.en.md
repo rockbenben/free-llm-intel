@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: efe094e3ed5d
+body_sha: 9e9ca81e1c58
 ---
 
-OpenAI
 
 July 17, 2025
 
@@ -21,7 +20,6 @@ Global Affairs
 
 Bringing together 1,000 nonprofit leaders across the US to build with AI
 
-Loading…
 
 ***Update on August 14, 2025:****
 Our after-action report features highlights from the Nonprofit Jam, including participant use cases, suggestions to improve future events, and key takeaways on AI adoption for nonprofits. A copy of the report is available *[*here*](https://cdn.openai.com/pdf/oai_nonprofit-jam-report.pdf)*.*
@@ -66,19 +64,3 @@ This initiative reflects our commitment to ensuring that the benefits of AI are 
 ## Author
 
 OpenAI
-
-## Keep reading
-
-View all
-
-Helping small businesses put AI to work
-
-Global AffairsSep 30, 2026
-
-OpenAI extends cyber access to Ukraine for civilian defense
-
-Global AffairsSep 23, 2026
-
-Sam Altman’s remarks at the United Nations Security Council
-
-Global AffairsSep 23, 2026

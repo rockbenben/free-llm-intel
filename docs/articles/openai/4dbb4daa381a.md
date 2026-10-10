@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e89e22a98131
+body_sha: 4d012b8e6be2
 ---
 
-OpenAI
 
 2026年6月9日
 
@@ -37,8 +36,6 @@ OpenAI
 
 点击[此处](http://cdn.openai.com/pdf/561e7512-253e-424b-9734-ef4098440601/Industrial%20Policy%20for%20the%20Intelligence%20Age.pdf)阅读政策构想全文。
 
-- [政策与程序](https://openai.com/news/?tags=policies-procedures)
-- [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
 

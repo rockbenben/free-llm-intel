@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 29892e50571a
+body_sha: 3e4b2f00834c
 ---
 
-OpenAI
 
 2026年2月18日
 
@@ -68,11 +67,3 @@ OpenAI 将在印度扩大 OpenAI 认证计划，TCS 将成为美国以外首家�
 *在我看来，“找到一个简单的公式”始终是一项颇为棘手的工作，而我也一直认为，这类任务或许可以由计算机实现自动化。如今，我们在多个领域已经开始看到这种趋势；而本文的案例尤其适合发挥现代 AI 工具的能力。我期待这一趋势在不久的将来持续发展，最终催生出一种通用的“简单公式模式识别”工具。*
 
 —Nima Arkani-Hamed，高等研究院物理学教授，专攻理论高能物理
-
-
-
-
-
-
-
-

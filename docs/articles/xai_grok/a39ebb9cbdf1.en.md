@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2bb001e35e42
+body_sha: c4740d99ae51
 ---
 
 Back to news
@@ -21,7 +21,6 @@ Grok Bot now has a tighter integration with X.
 
 Download for macOS
 
-Contact sales
 
 Connect your X account in Grok Bot and we'll create a developer account for you if you don't have one. Paid Grok Bot users get free X API credits to start.
 
@@ -34,5 +33,3 @@ There's also an [X plugin](https://x.ai/bot/plugin/49086599) to search posts, re
 ## Meet your first Bot
 
 Download for macOS
-
-Contact sales

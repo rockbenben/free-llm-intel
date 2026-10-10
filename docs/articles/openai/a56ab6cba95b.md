@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a068e6f7894b
+body_sha: 45f50c655918
 ---
 
-OpenAI
 
 March 31, 2016
 
@@ -47,8 +46,6 @@ Illustration: Justin Jay Wang × DALL·E
 
 我们当前的重心是无监督学习和强化学习。未来一两个月内应该会有一些有意思的结果可以分享。我们中的不少人会出现在 [ICLR](http://www.iclr.cc/)，届时我们可能会以某种形式举办一场活动。我还会在 5 月或 6 月开一场 [Quora Session](https://productupdates.quora.com/Introducing-Sessions)，回答那些无法在波多黎各当面见到我们的朋友们的问题。
 
-- [Culture & Careers](https://openai.com/news/?tags=culture-careers)
-- [2016](https://openai.com/news/?tags=2016)
 
 ## 作者
 

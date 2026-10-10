@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 49a15c882e86
+body_sha: 07f0eb6c60f3
 ---
 
 DeepSeek-V4.1-Flash Pricing Guide for Developers
@@ -278,5 +278,3 @@ Learn how to prompt Ming-Image, an open-weight model tuned for UI design, to tur
 GLM-5.3 API Providers: Speed, Latency & Cost
 
 <p>GLM-5.3 API Review Summary GLM-5.3 is Z AI’s flagship coding and agentic reasoning model, released on August 14, 2026, and available on DeepInfra since launch. The model is built on the same ~753-billion parameter Mixture of Experts (MoE) base architecture as GLM-5.2, with all performance gains derived entirely from scaled post-training rather than architectural changes. [&hellip;]</p>
-
-View all

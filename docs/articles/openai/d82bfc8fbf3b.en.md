@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: bddf6abcbe99
+body_sha: 68be70e6bfcb
 ---
 
-OpenAI
 
 February 26, 2018
 
@@ -27,13 +26,11 @@ View Baselines
 
 
 
-Read paper
 
 
 
 Ben Barry
 
-Loading…
 
 We’re releasing eight simulated robotics environments and a Baselines implementation of Hindsight Experience Replay, all developed for our research over the past year. We’ve used these environments to train models which work on physical robots. We’re also releasing a set of requests for robotics research.
 
@@ -41,7 +38,6 @@ This release includes four environments using the [Fetch](http://fetchrobotics.c
 
 ## Environments
 
-Loading...
 
 This release ships with eight robotics environments for [Gym](https://github.com/openai/gym) that use the [MuJoCo](https://www.mujoco.org/) physics simulator. The environments are:
 
@@ -96,34 +92,11 @@ Introducing the notion of a “goal” requires a few backwards-compatible chang
 
 Here is a simple example that interacts with the one of the new goal-based environments and performs goal substitution:
 
-Loading...
 
 The new goal-based environments can be used with existing Gym-compatible reinforcement learning algorithms, such as [Baselines](https://github.com/openai/baselines). Use `gym.wrappers.FlattenDictWrapper` to flatten the dict-based observation space into an array:
 
-Loading...
 
-- [Dactyl](https://openai.com/research/index/?tags=dactyl)
-- [Robotics](https://openai.com/research/index/?tags=robotics)
-- [Simulated Environments](https://openai.com/research/index/?tags=simulated-environments)
-- [Learning Paradigms](https://openai.com/research/index/?tags=learning-paradigms)
-- [Exploration & Games](https://openai.com/research/index/?tags=exploration-game)
 
 ## Authors
 
 Matthias Plappert, Marcin Andrychowicz, Alex Ray, Bob McGrew, Bowen Baker, Glenn Powell, Jonas Schneider, Josh Tobin, Maciek Chociej, Peter Welinder, Vikash Kumar, Wojciech Zaremba
-
-## Related articles
-
-View all
-
-Scaling laws for reward model overoptimization
-
-PublicationOct 19, 2022
-
-Introducing Whisper
-
-ReleaseSep 21, 2022
-
-Learning to play Minecraft with Video PreTraining
-
-ConclusionJun 23, 2022

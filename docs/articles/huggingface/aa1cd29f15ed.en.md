@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: cf671378ce86
+body_sha: ff3bd4f93a36
 ---
 
-Back to Articles
 
 # Introducing Multimodal TextImage Augmentation for Document Images
 
-Published
 					August 6, 2024
 
 Update on GitHub
 
-Upvote
 
 33
 
@@ -313,7 +310,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdoc_aug_hf_alb) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdoc_aug_hf_alb) to comment
 
-Upvote
 
 33
 

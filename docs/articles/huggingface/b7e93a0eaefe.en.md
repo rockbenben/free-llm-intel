@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 462198b50da4
+body_sha: 31fc01a7b342
 ---
 
-Back to Articles
 
 # Launching the Artificial Analysis Text to Image Leaderboard & Arena
 
-Published
 					June 6, 2024
 
 Update on GitHub
 
-Upvote
 
 16
 
@@ -135,7 +132,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fleaderboard-artificial-analysis2) or [log in](https://huggingface.co/login?next=%2Fblog%2Fleaderboard-artificial-analysis2) to comment
 
-Upvote
 
 16
 

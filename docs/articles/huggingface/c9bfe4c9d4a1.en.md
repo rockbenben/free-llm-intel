@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: da50c95401ef
+body_sha: 0dda42fb4192
 ---
 
-Back to Articles
 
 # Open R1: Update #2
 
@@ -19,10 +18,8 @@ Team
 
 Article
 
-Published
 					February 10, 2025
 
-Upvote
 
 219
 
@@ -276,7 +273,6 @@ Thanks for sharing your results and describing the background of what happened a
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/651e96991b97c9f33d26bde6/-Bqs6qrmz0yCfwtB2e-6q.jpeg)](https://huggingface.co/eliebak)
 
-·
 
 eliebak
 
@@ -284,7 +280,6 @@ Article author
 
 Feb 10, 2025
 
-•
 
 edited Feb 10, 2025
 
@@ -314,7 +309,6 @@ I think the size should be 248k? otherwise, it seems like the LLM based evaluati
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61c141342aac764ce1654e43/81AwoT5IQ_Xdw0OVw7TKu.jpeg)](https://huggingface.co/loubnabnl)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1613655355830-noauth.png)](https://huggingface.co/anton-l)
 
-·
 
 loubnabnl
 
@@ -336,7 +330,6 @@ Since DeepSeek-R1 can't fit into a single H100 (and based on [Update #2](https:/
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61c141342aac764ce1654e43/81AwoT5IQ_Xdw0OVw7TKu.jpeg)](https://huggingface.co/loubnabnl)
 
-·
 
 loubnabnl
 
@@ -344,7 +337,6 @@ Article author
 
 Feb 11, 2025
 
-•
 
 edited Feb 11, 2025
 
@@ -413,7 +405,6 @@ tgehr
 
 Feb 26, 2025
 
-•
 
 edited Feb 26, 2025
 
@@ -439,7 +430,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fopen-r1%2Fupdate-2) or [log in](https://huggingface.co/login?next=%2Fblog%2Fopen-r1%2Fupdate-2) to comment
 
-Upvote
 
 219
 

@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 200257bf19b5
+body_sha: 4ded5207e8dd
 ---
 
-OpenAI
 
 2025年12月12日
 
@@ -146,8 +145,6 @@ iOS 版 Sora 一经发布，使用量就呈爆炸式增长。人们立即开始�
 
 你会用自己的 Codex 团队创造什么呢？
 
-- [Sora](https://openai.com/news/?tags=sora)
-- [2025 年](https://openai.com/news/?tags=2025)
 
 ## 致谢
 
@@ -156,11 +153,3 @@ iOS 版 Sora 一经发布，使用量就呈爆炸式增长。人们立即开始�
 ## 作者
 
 Patrick Hum、RJ Marsan
-
-
-
-
-
-
-
-

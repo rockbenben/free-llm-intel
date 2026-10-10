@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: ad696131cf90
+body_sha: 7a9f7d7c43a4
 ---
 
-OpenAI
 
 2026年6月9日
 
@@ -21,21 +20,13 @@ OpenAI
 在 Nextdoor 的核心平台团队中，Codex 负责调查问题，并让产品工程师掌握主导权。
 
 
-公司规模:
 
-大型企业
 
-区域:
 
-北美
 
-行业:
 
-科技
 
-产品:
 
-Codex
 
 
 像 Nextdoor 这样服务于 11 个国家/地区超过 1.1 亿用户的产品，会对平台团队提出许多要求。对工程负责人 Cory Dolphin 来说，Codex 代表着一种关键转变：“从反复提示智能体，转向成果工程；工程师开始思考自己希望看到的结果，并与智能体协作来实现该结果。”

@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: be69ec4cd66a
+body_sha: ae5d21a5fc94
 ---
 
-OpenAI
 
 April 5, 2018
 
@@ -25,7 +24,6 @@ Contest
 
 
 
-Read paper
 
 
 
@@ -79,9 +77,6 @@ Gym Retro 是我们构建大规模 RL 环境数据集的第二代尝试。它继
 
 有时，算法会在游戏里发现漏洞。这里，一个 PPO 训练的策略发现自己能穿墙向右移动以获得更高分数——又一个关于特定奖励函数如何导致 AI 智能体表现出 [怪异行为⁠](https://openai.com/index/faulty-reward-functions/) 的例子。
 
-- [Exploration & Games](https://openai.com/research/index/?tags=exploration-game)
-- [Community & Collaboration](https://openai.com/research/index/?tags=community-collaboration)
-- [Simulated Environments](https://openai.com/research/index/?tags=simulated-environments)
 
 ## 作者
 

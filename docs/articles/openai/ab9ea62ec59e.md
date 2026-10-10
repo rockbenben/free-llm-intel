@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: bd4a85289b59
+body_sha: 81a64a9af189
 ---
 
-OpenAI
 
 2026年7月7日
 
@@ -21,19 +20,13 @@ OpenAI
 借助 ChatGPT Enterprise 和 Codex，AP+ 团队节省时间、提升工作质量，并更快调查复杂支付问题。
 
 
-公司规模:
 
-大型企业
 
-区域:
 
-亚太地区与大洋洲
 
-行业:
 
 金融, 科技
 
-产品:
 
 ChatGPT, Codex
 

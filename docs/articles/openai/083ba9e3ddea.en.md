@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9b90a212f77f
+body_sha: baf9d916dc9d
 ---
 
-OpenAI
 
 December 9, 2025
 
@@ -19,7 +18,6 @@ December 9, 2025
 
 Scout24 is using generative AI to reimagine how people discover where and how they want to live.
 
-Loading…
 
 Scout24 operates Germany’s largest real-estate platform, connecting seekers, homeowners, landlords and agents in one ecosystem. AI has supported areas like fraud detection, marketing efficiency, and property valuation for years, and the rise of powerful large language models created an opportunity to build something new for customers: an intelligent, conversational real-estate assistant.
 
@@ -73,17 +71,3 @@ Scout24’s focus now is on interconnectivity: expanding the real-estate assista
 More than 1 million businesses around the world are achieving meaningful results with OpenAI.
 
 Contact our team
-
-## Keep reading
-
-A practical guide to building with GPT-6
-
-ProductOct 2, 2026
-
-Chatham scales its capital markets expertise with OpenAI
-
-Oct 2, 2026
-
-The eternal complement
-
-Intelligence AgeOct 1, 2026

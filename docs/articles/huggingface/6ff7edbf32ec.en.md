@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1d2b74caf3cf
+body_sha: 421cea97f587
 ---
 
-Back to Articles
 
 # Docmatix - A huge dataset for Document Visual Question Answering
 
-Published
 					July 18, 2024
 
 Update on GitHub
 
-Upvote
 
 80
 
@@ -137,7 +134,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdocmatix) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdocmatix) to comment
 
-Upvote
 
 80
 

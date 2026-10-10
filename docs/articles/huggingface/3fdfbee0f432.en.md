@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 27412f226fd2
+body_sha: 05b6480e88f6
 ---
 
-Back to Articles
 
 # Granite 4.1 LLMs: How They’re Built
 
@@ -19,10 +18,8 @@ Enterprise
 
 Article
 
-Published
 					April 29, 2026
 
-Upvote
 
 94
 
@@ -475,7 +472,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-4-1) or [log in](https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-4-1) to comment
 
-Upvote
 
 94
 

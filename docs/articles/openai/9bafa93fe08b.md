@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: f2e38fca647d
+body_sha: 9501c5fcae73
 ---
 
-OpenAI
 
 2026年8月12日
 
@@ -21,19 +20,12 @@ OpenAI
 借助 ChatGPT 工作和 Codex，RingCentral 加快 AI 产品功能开发，并集中整合运营智能。
 
 
-公司规模:
 
-大型企业
 
-区域:
 
-北美
 
-行业:
 
-科技
 
-产品:
 
 ChatGPT, Codex
 

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b329f6749abf
+body_sha: c4e971084272
 ---
 
 DeepSeek V4.1 Flash API: Speed, Latency & Cost
@@ -514,5 +514,3 @@ Best SaaS Tools and API Providers for GLM-5.2
 GLM 5.2 vs Claude Opus 4.8: Pricing the Task, Not the Token
 
 <p>Every GLM 5.2 vs Claude Opus 4.8 comparison lands in the same place. Opus wins most coding benchmarks, GLM costs a fraction as much, pick according to your budget. That framing takes the price cards at face value, but it’s misleading. Price a finished unit of work instead of a million tokens and the gap [&hellip;]</p>
-
-View all

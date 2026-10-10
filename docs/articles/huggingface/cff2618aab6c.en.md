@@ -8,20 +8,17 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 768a31660757
+body_sha: add9f711b131
 ---
 
-Back to Articles
 
 # My Journey to a serverless transformers pipeline on 
 Google Cloud
 
-Published
 					March 18, 2021
 
 Update on GitHub
 
-Upvote
 
 2
 
@@ -229,7 +226,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fhow-to-deploy-a-pipeline-to-google-clouds) or [log in](https://huggingface.co/login?next=%2Fblog%2Fhow-to-deploy-a-pipeline-to-google-clouds) to comment
 
-Upvote
 
 2
 

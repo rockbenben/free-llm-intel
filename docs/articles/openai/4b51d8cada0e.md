@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 286ea3191959
+body_sha: 1e9b99c22517
 ---
 
-OpenAI
 
 2026年2月26日
 
@@ -53,8 +52,6 @@ Cisco、NVIDIA、Ramp 和 Datadog 等公司正采用 Codex 赋能员工，Harvey
 
 要开始体验，只需在 Codex 桌面应用中直接安装 [Figma MCP Server](https://help.figma.com/hc/en-us/articles/32132100833559)。
 
-- [合作关系](https://openai.com/news/?tags=partnerships)
-- [2026 年](https://openai.com/news/?tags=2026)
 
 ## 作者
 

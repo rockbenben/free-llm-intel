@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c5ccc512688f
+body_sha: ff51401cb6c8
 translator: agent
 ---
 
@@ -733,7 +733,6 @@ StephennFernandes
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6362d9712691058b19de1ba4/Hdqj5aGrFJJbF7oUSzoIh.jpeg)](https://huggingface.co/orionweller)
 
-·
 
 orionweller
 
@@ -747,7 +746,6 @@ deleted
 
 2025 年 10 月 31 日
 
-·
 
 此评论已被隐藏
 

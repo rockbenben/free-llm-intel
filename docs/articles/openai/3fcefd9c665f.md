@@ -9,10 +9,9 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: e39924a1d6e1
+body_sha: c316f9bafad1
 ---
 
-OpenAI
 
 2026年9月22日
 
@@ -22,31 +21,18 @@ OpenAI
 
 GPT‑6 Astra 让 Parallel 的智能体能以此前模型一半的时间和成本，研究并整合劳动力市场数据。
 
-开始构建
 
-公司规模:
 
-初创企业
 
-区域:
 
-北美
 
-行业:
 
-科技
 
-产品:
 
-API
 
-50%
 
-缩短完成研究任务所需的时间
 
-50%
 
-代码成本降幅
 
 
 [Parallel](https://parallel.ai/) 为在网络上开展知识工作的 AI 智能体构建开发者基础设施。其工具将前沿模型与网络搜索相结合，应用范围涵盖语音智能体的网络落地，以及为金融机构和法律行业客户开展研究。
@@ -76,7 +62,3 @@ Parallel 还发现，GPT‑6 Astra 的搜索更聚焦，获得有用结果所需
 如今，Parallel 能够更高效地将复杂问题转化为有研究依据的答案：等待时间更短、成本更低，也更有余力大规模处理高难度研究任务。
 
 ## OpenAI 全方位赋能初创企业
-
-加入社区
-
-开始构建

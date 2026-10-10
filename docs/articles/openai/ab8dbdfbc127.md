@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 34169cebbda0
+body_sha: 41100d17f8a5
 ---
 
-OpenAI
 
 June 5, 2019
 
@@ -51,8 +50,6 @@ Photo: Blake Tucker
 
 *感谢 Loren Kwan、Diane Yoon 与 Maddie Hall 共同组织本次活动，感谢所有 OpenAI 志愿者，感谢 Blake Tucker 的拍摄与摄影。*
 
-- [Events](https://openai.com/news/?tags=events)
-- [2019](https://openai.com/news/?tags=2019)
 
 ## 作者
 

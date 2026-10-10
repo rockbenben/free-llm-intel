@@ -8,12 +8,11 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 4941c50ad962
+body_sha: 7428085cd9e3
 ---
 
 star
 
-Featured
 
 Press release
 
@@ -200,7 +199,6 @@ Press release
 
 rss_feed
 
-Read more
 
 September 14, 2026 • 9 minutes read
 

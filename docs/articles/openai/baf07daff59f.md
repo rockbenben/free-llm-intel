@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 0216f65c1a65
+body_sha: 882d2773a9b4
 ---
 
-OpenAI
 
 2026年8月18日
 
@@ -21,23 +20,14 @@ OpenAI
 NVIDIA 团队使用 ChatGPT 工作减少手动任务、连接快速变化的信号，并在全球推广成功的工作流。
 
 
-公司规模:
 
-大型企业
 
-区域:
 
-北美
 
-行业:
 
-科技
 
-产品:
 
-ChatGPT
 
-16
 
 在 GTC 规划周期内使用 ChatGPT 工作每周节省的小时数
 

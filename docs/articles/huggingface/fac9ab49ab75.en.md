@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f8c888b8c8d8
+body_sha: fcfb24f3f4b7
 ---
 
-Back to Articles
 
 # Policy Gradient with PyTorch
 
-Published
 					June 30, 2022
 
 Update on GitHub
 
-Upvote
 
 -
 
@@ -219,6 +216,5 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdeep-rl-pg) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdeep-rl-pg) to comment
 
-Upvote
 
 -

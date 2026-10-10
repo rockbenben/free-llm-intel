@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 2ee525ce12c0
+body_sha: bebf0d81db62
 ---
 
-OpenAI
 
 2026年1月20日
 
@@ -59,9 +58,6 @@ ChatGPT 使用年龄预测模型帮助判断账户所属用户是否可能未满
 
 尽管这是一个重要的里程碑，但我们在保障青少年安全方面的工作将持续推进。我们将继续与美国心理学会、ConnectSafely 以及[全球医疗网络⁠](https://openai.com/index/strengthening-chatgpt-responses-in-sensitive-conversations/)等专业机构保持对话，并分享我们的最新进展和相关洞见。
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
-- [用户安全与控制](https://openai.com/news/?tags=user-safety)
 
 ## 作者
 

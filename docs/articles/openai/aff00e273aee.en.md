@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 269754586ead
+body_sha: 5f0a5f238041
 ---
 
-OpenAI
 
 December 23, 2022
 
@@ -23,7 +22,6 @@ Lilian Weng works on Applied AI Research at OpenAI.
 
 Photo: Jake Stangel
 
-Loading…
 
 ## What excites you most about the future of AI?
 
@@ -86,19 +84,3 @@ Books. I usually read books outside of the deep learning field and got inspired 
 People around me. I’m honored to work with a large group of extremely talented colleagues at OpenAI. Everyone has something sparkling, inspiring, or respectful and I enjoy learning from them.
 
 - [View careers at OpenAI](https://openai.com/careers/)
-
-## Related articles
-
-View all
-
-Introducing OpenAI London
-
-CompanyJun 28, 2023
-
-Discovering the minutiae of backend systems
-
-CompanyDec 8, 2022
-
-OpenAI Residency
-
-CompanyNov 30, 2021

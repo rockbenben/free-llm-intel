@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e1d8d78ec162
+body_sha: 565299558317
 ---
 
-OpenAI
 
 November 21, 2024
 
@@ -29,7 +28,6 @@ Automated red teaming
 
 
 
-Loading…
 
 Interacting with an AI system is an essential way to learn what it can do—both the capabilities it has, and the risks it may pose. “Red teaming” means using people or AI to explore a new system’s potential risks in a structured way.
 
@@ -89,12 +87,6 @@ Red teaming isn’t a complete solution for assessing AI risks. Its limitations 
 
 While red teaming aims to expand perspectives in service of risk discovery, verification, and evaluation development, we believe additional work is needed to solicit and incorporate public perspectives on ideal model behavior, policies, and other associated decision making processes.
 
-- [o1](https://openai.com/research/index/?tags=o1)
-- [GPT](https://openai.com/research/index/?tags=gpt)
-- [Ethics & Safety](https://openai.com/research/index/?tags=ethics-safety)
-- [Exploration & Games](https://openai.com/research/index/?tags=exploration-game)
-- [Reasonings & Policy](https://openai.com/research/index/?tags=reasoning-policy)
-- [Simulated Environments](https://openai.com/research/index/?tags=simulated-environments)
 
 ## Authors
 

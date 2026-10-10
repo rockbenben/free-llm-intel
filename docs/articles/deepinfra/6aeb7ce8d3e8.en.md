@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a582e8839962
+body_sha: 4956bd65596f
 ---
 
 AI Model Calibration: The Benchmark Nobody Optimizes
@@ -130,5 +130,3 @@ MCP Servers Explained: A Practical Guide for Developers
 Model Deprecation: Build LLM Apps That Last
 
 <p>Your model ID is the shortest-lived dependency in your stack and odds are it doesn’t have a maintenance schedule. On June 15, 2026, claude-sonnet-4-20250514 and claude-opus-4-20250514 stopped answering requests. Anthropic had posted the notice 62 days earlier. Teams with either string in a call site learned about it from an error rate, not an email. [&hellip;]</p>
-
-View all

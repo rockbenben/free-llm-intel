@@ -9,7 +9,7 @@ captured: 2026-10-09
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 236cf238b57e
+body_sha: 8a31f18e4e1c
 ---
 
 接入两个 Vidu 热门视频生成模型
@@ -35,5 +35,3 @@ Vidu 2
 - 画面稳定可控适配电商等场景
 - 首尾帧语义理解与多参考图一致性增强
 - 是泛娱乐、互联网、动漫短剧、广告量产的高效工具
-
-​

@@ -8,12 +8,11 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1b50699dee5b
+body_sha: 07eb701fdcd7
 ---
 
 All blog posts
 
-Research
 
 Published 3/4/2026
 

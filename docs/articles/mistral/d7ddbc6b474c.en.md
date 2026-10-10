@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2a17a6354b24
+body_sha: 85c8d1ef2777
 ---
 
 Product
@@ -19,15 +19,11 @@ February 26, 2024
 
 By Mistral AI team
 
-Back to Blog
 
 2 min read
 
-Share this post
 
-Copy url to clipboard
 
-Copied
 
 **Heads up: Le Chat is now Vibe**
 

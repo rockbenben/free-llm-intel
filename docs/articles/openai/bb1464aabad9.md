@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6859a7696f77
+body_sha: ec98289c703f
 ---
 
-OpenAI
 
 December 16, 2021
 
@@ -21,7 +20,6 @@ Publication
 
 我们微调了 GPT-3，让它能用一个基于文本的浏览器，更准确地回答开放式问题。
 
-Read paper
 
 
 
@@ -67,8 +65,6 @@ Browse samples
 
 *如果你想帮助我们构建更助益、更诚实的 AI 系统，*[*我们正在招人*](https://boards.greenhouse.io/openai/jobs/4247042004?gh_src=5600abde4us)*！*
 
-- [GPT](https://openai.com/research/index/?tags=gpt)
-- [Language](https://openai.com/research/index/?tags=language)
 
 ## 参考文献
 

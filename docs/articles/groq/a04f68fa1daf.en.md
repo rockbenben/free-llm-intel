@@ -8,12 +8,11 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9f8df50124c5
+body_sha: 31e385a795a5
 ---
 
 groq
 
-/
 
 groq-changelog
 

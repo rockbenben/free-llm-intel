@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 13e92c989c67
+body_sha: aa7203292bce
 ---
 
 Product
@@ -19,15 +19,11 @@ August 20, 2026
 
 By Mistral
 
-Back to Blog
 
 9 min read
 
-Share this post
 
-Copy url to clipboard
 
-Copied
 
 Thinking
 

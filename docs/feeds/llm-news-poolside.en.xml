@@ -373,8 +373,6 @@
 <p>W</p>
 <p>V</p>
 <p>ℓ</p>
-<p>​</p>
-<p>​</p>
 <p>&lt;</p>
 <p>t</p>
 <p>f</p>
@@ -385,7 +383,6 @@
 <p>+</p>
 <p>1</p>
 <p>)</p>
-<p>​</p>
 <p>With BW≈64BW \approx 64BW≈64 GB/s on PCIe Gen5, this inequality doesn't hold for any model of interest. It's worth noting that we can do certain things to reduce this snowball; for instance, we could block until each transfer completes, but this ultimately sacrifices the main benefit of offloading.</p>
 <h2>What Grace Blackwell brings to the table</h2>
 <p>So far, we've restricted our analysis to H200s. But the AI industry hasn't stood still, and NVIDIA's GB200 Super Chip is one of the premier accelerators. For the unfamiliar, Grace Blackwell is a system-on-a-chip architecture, pairing two Blackwell GPUs with a Grace CPU. These chips are connected via a chip-to-chip (C2C) NVLink connection. We note that the earlier Grace Hopper (GH) family of chips shares the same NVLink C2C interconnect, so the principles here apply to both families. But, for the sake of this article, we'll only concern ourselves with Grace Blackwell. It turns out that there's three properties that make these architectures interesting for activation offloading.</p>
@@ -403,16 +400,12 @@
 <p>)</p>
 <p>=</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>⋅</p>
 <p>β</p>
 <p>bytes</p>
 <p>M_{\text{MLP}}^{(\ell)} = 3 \cdot B \cdot S \cdot d_{ffn} \cdot \beta \text{ bytes}</p>
@@ -421,20 +414,14 @@
 <p>(</p>
 <p>ℓ</p>
 <p>)</p>
-<p>​</p>
 <p>=</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>​</p>
-<p>⋅</p>
 <p>β</p>
 <p>bytes</p>
 <p>where β\betaβ is the bytes-per-element (2 for BF16). For Qwen3-30B-3A, dffn=3×2048=6144d_{ffn} = 3 \times 2048 = 6144dffn​=3×2048=6144. We note here that a fused SwiGLU kernel can actually reduce this to only two tensors, as we can get away with only saving WgatexW_{gate} xWgate​x and WupxW_{up} xWup​x and recomputing the rest on-the-fly. This drops the offload volume by around a third. This combination of fusing with offloading actually gives us the best of both worlds, as we transfer less data and also get various memory savings. However, for the sake of this post, we'll focus on the simple case and use the unfused, three-tensor approach.</p>
@@ -443,13 +430,9 @@
 <p>recomp</p>
 <p>=</p>
 <p>2</p>
-<p>⋅</p>
 <p>k</p>
-<p>⋅</p>
 <p>3</p>
-<p>⋅</p>
 <p>d</p>
-<p>⋅</p>
 <p>d</p>
 <p>m</p>
 <p>o</p>
@@ -458,20 +441,14 @@
 <p>F_{\text{recomp}} = 2 \cdot k \cdot 3 \cdot d \cdot d_{moe} \text{ FLOPs per token}</p>
 <p>F</p>
 <p>recomp</p>
-<p>​</p>
 <p>=</p>
 <p>2</p>
-<p>⋅</p>
 <p>k</p>
-<p>⋅</p>
 <p>3</p>
-<p>⋅</p>
 <p>d</p>
-<p>⋅</p>
 <p>d</p>
 <p>m</p>
 <p>oe</p>
-<p>​</p>
 <p>FLOPs per token</p>
 <p>where kkk is the number of active experts per token, d is the model hidden dimension, dmoed_{moe}dmoe​ is the per-expert intermediate dimension (3 SwiGLU projections × 2 FLOPs/parameter). This is the compute that offloading eliminates. Even better for us, those redundant FLOPs consume real energy, so offloading is also the greener option.</p>
 <p>The backward pass is ∼2×\sim 2\times∼2× heavier than the forward (gradients w.r.t. both activations and weights), which works in our favour: it gives the H2D reload extra time to complete. As an additional optimization, we can also skip offloading the last layer; after all, the backwards pass begins from the final layer, so there's zero overlap window between offloading and reloading the activations.</p>
@@ -485,34 +462,24 @@
 <p>offload</p>
 <p>=</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>⋅</p>
 <p>β</p>
 <p>V_{\text{offload}} = 3 \cdot B \cdot S \cdot d_{ffn} \cdot \beta</p>
 <p>V</p>
 <p>offload</p>
-<p>​</p>
 <p>=</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>​</p>
-<p>⋅</p>
 <p>β</p>
 <p>We measure the D2H transfer completing in ∼20\sim 20∼20 ms, implying Voffload≈0.020×185=3.7V_{\text{offload}} \approx 0.020 \times 185 = 3.7Voffload​≈0.020×185=3.7 GB per layer. The layer forward time is ~22.5 ms, so tD2H&lt;tfwdt_{D2H} &lt; t_{fwd}tD2H​&lt;tfwd​ holds—tight, but feasible.</p>
 <p>The return trip is even less constrained: the H2D reload transfers the same 3.7 GB at ∼185\sim 185∼185 GB/s (∼20\sim 20∼20 ms), but the backwards provides a wider overlap window. In our traces, H2D completes well before the reloaded activations are consumed. D2H during the forward is the binding constraint. If an H2D transfer were to run long, the backward would stall on a <code>cudaStreamSynchronize</code> until the reload completes—correctness is preserved, but the overlap benefit is lost for that layer.</p>
@@ -537,7 +504,6 @@
 <p>ℓ</p>
 <p>)</p>
 <p>L</p>
-<p>⋅</p>
 <p>M</p>
 <p>MLP</p>
 <p>(</p>
@@ -552,34 +518,26 @@
 <p>\frac{\Delta M}{M_{\text{total}}} = \frac{M_{\text{MLP}}^{(\ell)}}{L \cdot M_{\text{MLP}}^{(\ell)} + M_{\text{other}}} \leq \frac{1}{L}</p>
 <p>M</p>
 <p>total</p>
-<p>​</p>
 <p>Δ</p>
 <p>M</p>
-<p>​</p>
 <p>=</p>
 <p>L</p>
-<p>⋅</p>
 <p>M</p>
 <p>MLP</p>
 <p>(</p>
 <p>ℓ</p>
 <p>)</p>
-<p>​</p>
 <p>+</p>
 <p>M</p>
 <p>other</p>
-<p>​</p>
 <p>M</p>
 <p>MLP</p>
 <p>(</p>
 <p>ℓ</p>
 <p>)</p>
-<p>​</p>
-<p>​</p>
 <p>≤</p>
 <p>L</p>
 <p>1</p>
-<p>​</p>
 <p>where MotherM_{\text{other}}Mother​ covers weights, optimizer states, gradients, and non-MLP activations. In our 8-layer experiment, 1/L=12.5%1/L = 12.5\%1/L=12.5%, but the actual overhead is only 3% because MotherM_{\text{other}}Mother​ is large. For the full 48-layer model, 1/L=2.1%1/L = 2.1\%1/L=2.1% and the actual overhead drops to approximately 0.5%. For a 96-layer model it would be even less. In other words, the deeper the model, the better the deal.</p>
 <p><em>Memory timeline over one training step. Both approaches share the same steady-state floor; offloading adds a constant +3.7 GB in-flight buffer (one layer's activations being drained via C2C).</em></p>
 <p>One caveat is that there can be substantial discrepancies between the <em>measured</em> peak memory and the <em>allocated</em> peak memory. This discrepancy is primarily due to allocator fragmentation, although PyTorch's CachingAllocator normally does a good job at minimizing this gap. In our experiment, actual memory was 160.86 GB vs 131.45 GB for AC—a 22% gap. This is solvable via pre-allocated fixed buffers for the in-flight data, and in distributed settings with FSDP the smaller per-rank state gives the allocator an easier time. This does not appear to be an issue at scale. This discrepancy is primarily due to allocator fragmentation, although PyTorch's CachingAllocator normally does a good job at minimizing this gap. In our experiment, actual memory was 160.86 GB vs 131.45 GB for AC—a 22% gap. This is solvable via pre-allocated fixed buffers for the in-flight data, and in distributed settings with FSDP the smaller per-rank state gives the allocator an easier time. This does not appear to be an issue at scale.</p>
@@ -601,16 +559,12 @@
 <p>H</p>
 <p>=</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>⋅</p>
 <p>β</p>
 <p>B</p>
 <p>W</p>
@@ -622,28 +576,20 @@
 <p>D</p>
 <p>2</p>
 <p>H</p>
-<p>​</p>
 <p>=</p>
 <p>B</p>
 <p>W</p>
 <p>C</p>
 <p>2</p>
 <p>C</p>
-<p>​</p>
 <p>3</p>
-<p>⋅</p>
 <p>B</p>
-<p>⋅</p>
 <p>S</p>
-<p>⋅</p>
 <p>d</p>
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>​</p>
-<p>⋅</p>
 <p>β</p>
-<p>​</p>
 <p>The layer forward time is the sum of MLP GEMMs (6k⋅d⋅dmoe6k \cdot d \cdot d_{moe}6k⋅d⋅dmoe​ FLOPs/token for SwiGLU with kkk active experts), attention (Fattn(S)F_{\text{attn}}(S)Fattn​(S) FLOPs/token, which depends on the sequence length SSS), and communication overhead. Since B⋅SB \cdot SB⋅S appears in both the transfer volume and the compute time, it cancels from the inequality, and the condition depends primarily on model architecture and hardware. Rearranging tD2H&lt;tfwdt_{D2H} &lt; t_{fwd}tD2H​&lt;tfwd​ gives a threshold on dffnd_{ffn}dffn​:</p>
 <p>d</p>
 <p>f</p>
@@ -652,11 +598,8 @@
 <p>&lt;</p>
 <p>(</p>
 <p>6</p>
-<p>⋅</p>
 <p>k</p>
-<p>⋅</p>
 <p>d</p>
-<p>⋅</p>
 <p>d</p>
 <p>m</p>
 <p>o</p>
@@ -665,16 +608,13 @@
 <p>F</p>
 <p>attn</p>
 <p>)</p>
-<p>⋅</p>
 <p>B</p>
 <p>W</p>
 <p>C</p>
 <p>2</p>
 <p>C</p>
 <p>3</p>
-<p>⋅</p>
 <p>β</p>
-<p>⋅</p>
 <p>P</p>
 <p>p</p>
 <p>e</p>
@@ -685,41 +625,29 @@
 <p>f</p>
 <p>f</p>
 <p>n</p>
-<p>​</p>
 <p>&lt;</p>
 <p>3</p>
-<p>⋅</p>
 <p>β</p>
-<p>⋅</p>
 <p>P</p>
 <p>p</p>
 <p>e</p>
 <p>ak</p>
-<p>​</p>
 <p>(</p>
 <p>6</p>
-<p>⋅</p>
 <p>k</p>
-<p>⋅</p>
 <p>d</p>
-<p>⋅</p>
 <p>d</p>
 <p>m</p>
 <p>oe</p>
-<p>​</p>
 <p>+</p>
 <p>F</p>
 <p>attn</p>
-<p>​</p>
 <p>)</p>
-<p>⋅</p>
 <p>B</p>
 <p>W</p>
 <p>C</p>
 <p>2</p>
 <p>C</p>
-<p>​</p>
-<p>​</p>
 <p>where PpeakP_{peak}Ppeak​ is the device's peak compute throughput. Note that this formula assumes a compute-bound regime; in general, the GEMM forward time is tgemm=max⁡(tcompute,thbm)t_{gemm} = \max(t_{compute}, t_{hbm})tgemm​=max(tcompute​,thbm​), where thbmt_{hbm}thbm​ is the GEMM memory-traffic time and dominates in the memory-bandwidth-bound regime of the GEMM roofline. We also note that the attention contribution Fattn(S)F_{\text{attn}}(S)Fattn​(S) FLOPs grow quadratically with the sequence length, whilst both MLP FLOPs and the offload volume grow linearly; this potentially gives us more room to absorb the D2H transfer.</p>
 <p>However, not all models are feasible for MLP offloading. One model—with a disproportionately large MLP—is Grok2.</p>
 <p><em>Feasibility space for C2C offloading. Models above the diagonal (D2H time &lt; layer forward time) can offload without snowballing. Qwen3-30B-3A sits just above the boundary—feasible, but tight without attention slack; Grok2 requires selective offloading to move below the boundary.</em></p>
@@ -759,17 +687,13 @@
 <p>−</p>
 <p>t</p>
 <p>f</p>
-<p>​</p>
 <p>+</p>
 <p>t</p>
 <p>b</p>
 <p>A</p>
 <p>C</p>
-<p>​</p>
 <p>δ</p>
-<p>​</p>
 <p>1</p>
-<p>​</p>
 <p>Averaging across all layers, the backward gain is ~7–8%. For a sufficiently deep model, the end-to-end improvement converges toward this per-layer average as the constant overhead (embeddings, loss) is amortized. This is why our 8-layer experiment shows only 4.3% e2e despite the larger per-layer gain.</p>
 <p>Lastly we note that, for a sufficiently deep model, LLL cancels out; the speedup is depth-independent, while memory cost scales as 1/L1/L1/L. The deeper the model, the better the saving. For Qwen3-30B-3A at 48 layers, ΔT≈48×δˉ\Delta T \approx 48 \times \bar{\delta}ΔT≈48×δˉ ms saved per step (where δˉ\bar{\delta}δˉ is the average per-layer saving) at a constant 3.7 GB memory cost. This makes C2C offloading particularly attractive for the deep, narrow MoE architectures that are popular in frontier open-source models today (DeepSeek-V3, Qwen3-MoE, GLM-5). Additionally, we note that C2C offloading applies equally to dense models where the generally smaller dffnd_{ffn}dffn​ makes the feasibility condition easier to satisfy.</p>
 <h3>Composability</h3>

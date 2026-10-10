@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 76ea423b809f
+body_sha: cdac2814a225
 ---
 
-OpenAI
 
 2026年9月3日
 
@@ -69,17 +68,7 @@ MS-ISAC 为数千家公共部门组织提供网络威胁情报、事件响应支
 
 符合条件的州和地方政府、关键基础设施运营商、非营利组织、[开源项目](https://openai.com/index/patch-the-planet/)维护者及支持机构，可访问 [Daybreak 网站](https://openai.com/daybreak/)，进一步了解使用权限、技术协助、培训及其他网络防御支持。
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [网络安全](https://openai.com/news/?tags=cybersecurity)
 
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

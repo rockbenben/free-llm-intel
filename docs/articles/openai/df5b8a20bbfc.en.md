@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d3f7e2edaf7e
+body_sha: 30b1974136e5
 ---
 
-OpenAI
 
 April 22, 2025
 
@@ -21,7 +20,6 @@ Global Affairs
 
 The Post’s essential journalism is now featured in ChatGPT search responses.
 
-Loading…
 
 ***Editor’s note: This news was originally shared by The Washington Post and can be read ***[***here***](https://www.washingtonpost.com/pr/2025/04/22/washington-post-partners-with-openai-search-content/)***. ***
 
@@ -37,8 +35,6 @@ This work follows similar partnerships OpenAI has formed with more than 20 news 
 
 This partnership is the latest example of The Post’s commitment to expanding the discoverability of its critical journalism through AI tools and resources. This past year, The Post launched generative AI experiments built by news for news, including Ask The Post AI and Climate Answers, created tools for its newsroom like Haystacker, and broadened its coverage accessibility for users through AI-powered summaries and audio.
 
-- [2025](https://openai.com/news/?tags=2025)
-- [Partnerships](https://openai.com/news/?tags=partnerships)
 
 ## Authors
 

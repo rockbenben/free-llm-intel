@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a27517a613e8
+body_sha: c8e90cb50f37
 ---
 
-OpenAI
 
 2025年10月1日
 
@@ -63,10 +62,6 @@ OpenAI 封禁了参与相关活动的账号。这些活动与公开报道的威�
 
 我们停用了与这类活动有关的所有账号，并与行业合作伙伴分享了相关指标。这些行为者主要试图提升现有工作流的局部效率，包括制作可直接发送的网络钓鱼邮件，以及缩短日常代码和自动化任务的迭代周期。我们没有发现任何证据表明，模型输出带来了超出已有充分公开记录的技术之外的能力；我们的模型并未带来新的攻击能力。他们寻求通过模型辅助获得的技战术优势来自语言流畅度、本地化和持续调整能力：可能减少语言错误、更快编写粘合代码，并在出错时更迅速地调整。
 
-- [中国](https://openai.com/news/?tags=actor-origin-china)
-- [中国台湾](https://openai.com/news/?tags=target-geography-taiwan)
-- [美国](https://openai.com/news/?tags=target-geography-united-states)
-- [网络行动](https://openai.com/news/?tags=cyber-operations)
 
 ## 作者
 

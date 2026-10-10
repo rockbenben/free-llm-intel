@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1f2793ffcb99
+body_sha: 2075ee6adaee
 ---
 
-Back to Articles
 
 # Introducing Daggr: Chain apps programmatically, inspect visually
 
-Published
 					January 29, 2026
 
 Update on GitHub
 
-Upvote
 
 107
 
@@ -370,7 +367,6 @@ ArseniyPerchik
 
 Jan 31
 
-•
 
 edited Jan 31
 
@@ -378,7 +374,6 @@ What about conditional nodes? I mean the node where the next selected node is de
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
 
-·
 
 abidlabs
 
@@ -396,7 +391,6 @@ why not jupyternotebook
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png)](https://huggingface.co/abidlabs)
 
-·
 
 abidlabs
 
@@ -416,7 +410,6 @@ Funnelsflex
 
 Feb 21
 
-•
 
 edited Mar 3
 
@@ -435,7 +428,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdaggr) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdaggr) to comment
 
-Upvote
 
 107
 

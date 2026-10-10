@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b3a2f9e28116
+body_sha: 6da9a51b4dac
 ---
 
-Back to Articles
 
 # The Technology Behind BLOOM Training
 
-Published
 					July 14, 2022
 
 Update on GitHub
 
-Upvote
 
 45
 
@@ -437,7 +434,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fbloom-megatron-deepspeed) or [log in](https://huggingface.co/login?next=%2Fblog%2Fbloom-megatron-deepspeed) to comment
 
-Upvote
 
 45
 

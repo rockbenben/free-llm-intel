@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: d445b996c494
+body_sha: b40640de67d9
 ---
 
-OpenAI
 
 2025年7月17日
 
@@ -175,8 +174,6 @@ ChatGPT 智能体目前仍处于早期阶段。它能够处理多种复杂任务
 
 ## 直播回放
 
-- [2025 年](https://openai.com/news/?tags=2025)
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
 
 ## 作者
 

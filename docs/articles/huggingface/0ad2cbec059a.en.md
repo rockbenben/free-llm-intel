@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 29d9aac7e8d9
+body_sha: 8664919221e7
 ---
 
-Back to Articles
 
 # Hugging Face Text Generation Inference available for AWS Inferentia2
 
-Published
 					February 1, 2024
 
 Update on GitHub
 
-Upvote
 
 5
 
@@ -303,7 +300,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Ftext-generation-inference-on-inferentia2) or [log in](https://huggingface.co/login?next=%2Fblog%2Ftext-generation-inference-on-inferentia2) to comment
 
-Upvote
 
 5
 

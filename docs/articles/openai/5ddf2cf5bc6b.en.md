@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 449ddf569460
+body_sha: d82bdbbaa169
 ---
 
-OpenAI
 
 February 26, 2019
 
@@ -21,7 +20,6 @@ Company
 
 On February 2, we held our first Spinning Up Workshop as part of our new education initiative at OpenAI.
 
-Loading…
 
 We hosted ~90 people at our office and engaged nearly 300 more through our livestream. Participants came from a wide range of backgrounds, including academia, software engineering, data science, ML engineering, medicine, and education. This workshop built off our [Spinning Up in Deep RL⁠](https://openai.com/index/spinning-up-in-deep-rl/) resource package and took a deeper dive into RL algorithm design, robotics, and building safe AI systems.
 
@@ -91,25 +89,7 @@ If you would like to help us do research on RL or teach people about AI, please 
 
 *Thanks to Maddie Hall and Loren Kwan for co-organizing the event, to Ian Atha for livestreaming and recording the lectures, as well as helping participants with Python and Tensorflow issues, and to* [*Blake Tucker*](https://www.blaketucker.com/) *for filming and photography!*
 
-- [Events](https://openai.com/news/?tags=events)
-- [2019](https://openai.com/news/?tags=2019)
 
 ## Author
 
 Joshua Achiam
-
-## Related articles
-
-View all
-
-Procgen and MineRL Competitions
-
-CompanyJun 20, 2020
-
-OpenAI Robotics Symposium 2019
-
-CompanyJun 5, 2019
-
-OpenAI Five Finals
-
-CompanyMar 26, 2019

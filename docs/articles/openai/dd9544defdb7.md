@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 2a57d4cb5cb5
+body_sha: a44f9e497914
 ---
 
-OpenAI
 
 # Canva
 

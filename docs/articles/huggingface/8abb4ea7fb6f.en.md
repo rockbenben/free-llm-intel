@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d7874a607b31
+body_sha: 9e094dbb6ecf
 ---
 
-Back to Articles
 
 # Faster Training and Inference: Habana Gaudi®-2 vs Nvidia A100 80GB
 
-Published
 					December 14, 2022
 
 Update on GitHub
 
-Upvote
 
 2
 
@@ -168,7 +165,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fhabana-gaudi-2-benchmark) or [log in](https://huggingface.co/login?next=%2Fblog%2Fhabana-gaudi-2-benchmark) to comment
 
-Upvote
 
 2
 

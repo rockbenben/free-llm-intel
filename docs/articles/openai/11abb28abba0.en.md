@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: aae9d7c81161
+body_sha: b147a27d020f
 ---
 
-OpenAI
 
 October 8, 2024
 
@@ -37,8 +36,6 @@ Hearst content in ChatGPT will feature appropriate citations and direct links, p
 
 Hearst’s other businesses outside of magazines and newspapers are not included in this partnership.
 
-- [Partnerships](https://openai.com/news/?tags=partnerships)
-- [2024](https://openai.com/news/?tags=2024)
 
 ## Author
 

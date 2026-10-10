@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1f608b45de0e
+body_sha: a8aea4d3de00
 ---
 
-OpenAI
 
 February 24, 2023
 
@@ -23,7 +22,6 @@ Our mission is to ensure that artificial general intelligence—AI systems that 
 
 Illustration: Justin Jay Wang × DALL·E
 
-Loading…
 
 *Updated October 28, 2025: This post contains outdated information about our structure. Please refer to the *[*following page*](https://openai.com/our-structure/)* for updated information.*
 
@@ -89,8 +87,6 @@ Successfully transitioning to a world with superintelligence is perhaps the most
 
 We can imagine a world in which humanity flourishes to a degree that is probably impossible for any of us to fully visualize yet. We hope to contribute to the world an AGI aligned with such flourishing.
 
-- [Framework](https://openai.com/news/?tags=framework)
-- [2023](https://openai.com/news/?tags=2023)
 
 ## Footnotes
 
@@ -109,19 +105,3 @@ Sam Altman
 ## Acknowledgments
 
 Thanks to Brian Chesky, Paul Christiano, Jack Clark, Holden Karnofsky, Tasha McCauley, Nate Soares, Kevin Scott, Brad Smith, Helen Toner, Allan Dafoe, and the OpenAI team for reviewing drafts of this.
-
-## Related articles
-
-View all
-
-Disrupting malicious uses of AI by state-affiliated threat actors
-
-SecurityFeb 14, 2024
-
-Building an early warning system for LLM-aided biological threat creation
-
-PublicationJan 31, 2024
-
-Democratic inputs to AI grant program: lessons learned and implementation plans
-
-SafetyJan 16, 2024

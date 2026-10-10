@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a1fa06bde4e0
+body_sha: 749da5cc0a8f
 ---
 
-OpenAI
 
 2026年1月21日
 
@@ -22,7 +21,6 @@ OpenAI
 
 作者：George Osborne，OpenAI for Countries 负责人
 
-阅读报告
 
 
 
@@ -46,9 +44,6 @@ AI 正以惊人的速度发展，但许多国家尚未充分利用其潜力来�
 
 关于 OpenAI for Countries 扩展计划的更多内容，可查阅[《弥合能力鸿沟》报告](https://cdn.openai.com/pdf/openai-ending-the-capability-overhang.pdf)。
 
-- [全球事务](https://openai.com/news/?tags=global-affairs)
-- [2026 年](https://openai.com/news/?tags=2026)
-- [经济研究](https://openai.com/news/?tags=economic-research)
 
 ## 作者
 

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 631cef4e2bab
+body_sha: 114a4b49570b
 ---
 
-OpenAI
 
 # WHOOP
 
@@ -19,7 +18,6 @@ WHOOP delivers personalized fitness and health coaching with GPT‑4.
 
 View product
 
-Loading…
 
 WHOOP makes a wearable that goes beyond just tracking fitness; it monitors the body 24/7 and provides deep, actionable insights on everything from sleep to managing stress, based on performance science research. WHOOP has always relied on machine learning to synthesize health data, but the arrival of generative AI was a lightbulb moment: what if large language models could provide an entirely new way to coach people to be their best?The team envisioned a LLM-powered coach that would be available at any time of the day (or night) and could answer any question about a member’s fitness and health, for example “What was my lowest resting heart rate ever?” or “What weekly workout schedule would help me reach my goal?”—all with guidance tailored to each person’s unique body and goals.
 
@@ -34,17 +32,3 @@ WHOOP founder and CEO, Will Ahmed, has been impressed with what the technology i
 ## Interested in learning more about ChatGPT for business?
 
 Talk with our team
-
-## Related articles
-
-Building agricultural database for farmers
-
-Jan 12, 2024
-
-Creating websites in minutes with AI Website Builder
-
-May 29, 2025
-
-Increasing accuracy of pediatric visit notes
-
-Dec 14, 2023

@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 095ead981d3e
+body_sha: 3142192fcf12
 ---
 
-Back to Articles
 
 # FastRTC: The Real-Time Communication Library for Python
 
-Published
 					February 25, 2025
 
 Update on GitHub
 
-Upvote
 
 176
 
@@ -188,7 +185,6 @@ Omkarp2403
 
 Feb 26, 2025
 
-•
 
 edited Feb 26, 2025
 
@@ -198,7 +194,6 @@ Can fastphone() accept an Indian phone number?
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Ia-l1eHicmbnb34uSaW4i.jpeg)](https://huggingface.co/Omkarp2403)
 - [![](https://huggingface.co/avatars/ae7bb70d43d939a8d84cd4058333d1e9.svg)](https://huggingface.co/WearWitty)
 
-·
 
 freddyaboulton
 
@@ -226,7 +221,6 @@ MRU4913
 
 Feb 27, 2025
 
-•
 
 edited Feb 28, 2025
 
@@ -237,7 +231,6 @@ I have a question for concurrency when use tts_model and stt_model. How does eac
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1654278567459-626a9bfa03e2e2796f24ca11.jpeg)](https://huggingface.co/freddyaboulton)
 - [![](https://huggingface.co/avatars/ce0de9e4ceb51f2aa4a5db12d17a6128.svg)](https://huggingface.co/MRU4913)
 
-·
 
 freddyaboulton
 
@@ -251,7 +244,6 @@ Nirav-Madhani
 
 Feb 28, 2025
 
-•
 
 edited Feb 28, 2025
 
@@ -259,7 +251,6 @@ edited Feb 28, 2025
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1654278567459-626a9bfa03e2e2796f24ca11.jpeg)](https://huggingface.co/freddyaboulton)
 
-·
 
 freddyaboulton
 
@@ -286,7 +277,6 @@ Hi [@MechanicCoder](https://huggingface.co/MechanicCoder)  - please feel free to
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tfIjlL4vkq_x78kaJqAr1.png)](https://huggingface.co/MechanicCoder)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1654278567459-626a9bfa03e2e2796f24ca11.jpeg)](https://huggingface.co/freddyaboulton)
 
-·
 
 MechanicCoder
 
@@ -302,7 +292,6 @@ Can I connect something like FreeSWITCH and have its RTC directly parsed by fast
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1654278567459-626a9bfa03e2e2796f24ca11.jpeg)](https://huggingface.co/freddyaboulton)
 
-·
 
 freddyaboulton
 
@@ -310,7 +299,6 @@ Article author
 
 Mar 10, 2025
 
-•
 
 edited Mar 10, 2025
 
@@ -329,7 +317,6 @@ Hi, I'm new to WebRTC applications, and one of my main questions is: how does th
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1654278567459-626a9bfa03e2e2796f24ca11.jpeg)](https://huggingface.co/freddyaboulton)
 - [![](https://huggingface.co/avatars/f05c5d434402067273f41237d28e4ae7.svg)](https://huggingface.co/JuanRoyo)
 
-·
 
 freddyaboulton
 
@@ -351,7 +338,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Ffastrtc) or [log in](https://huggingface.co/login?next=%2Fblog%2Ffastrtc) to comment
 
-Upvote
 
 176
 

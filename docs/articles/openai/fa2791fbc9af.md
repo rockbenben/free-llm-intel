@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 26827b9065e7
+body_sha: 03a6b8bde540
 ---
 
-OpenAI
 
 2026年8月26日
 
@@ -102,9 +101,6 @@ Rob Dickson，Wichita Public Schools 首席信息官
 
 新加入的学区合作伙伴包括：Abilene Independent School District (TX)、Adlai E. Stevenson High School District 125 (IL)、Baltimore City Public Schools (MD)、Boise School District (ID)、Clarkstown Central School District (NY)、El Dorado County Office of Education (CA)、Epic Charter Schools (OK)、Flagler Schools (FL)、Fort Worth Independent School District (TX)、Frisco Independent School District (TX)、Humble Independent School District (TX)、Kern High School District (CA)、Killeen Independent School District (TX)、Laramie County School District 1 (WY)、Lewisville Independent School District (TX)、Los Angeles County Office of Education (CA)、Needham Public Schools (MA)、New Trier Township High School District 203 (IL)、Northside Independent School District (TX)、Oakland Schools (MI)、Orange County Department of Education (CA)、Orange County Public Schools (FL)、Pocantico Hills Central School District (NY)、Rye Country Day School (NY)、Santa Cruz County Office of Education (CA)、Sarasota County Schools (FL)、St. Vrain Valley Schools (CO)、Township High School District 211 (IL)、Ventura Unified School District (CA)、Virginia Beach City Public Schools (VA)、Westminster Public Schools (CO)
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [教育](https://openai.com/news/?tags=industry-education)
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
 
 ## 作者
 

@@ -9,7 +9,7 @@ captured: 2026-10-10
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: aa16a018c581
+body_sha: 8e2a3a449e9f
 ---
 
 # 把来源弄对，而不只是把事实弄对：面向 MCP Agent 的 source-aware 校验
@@ -154,7 +154,6 @@ Nomad-link-id
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
 
-·
 
 ander-alvarez
 
@@ -168,7 +167,6 @@ mghwaz
 
 10 天前
 
-•
 
 编辑于 10 天前
 
@@ -185,7 +183,6 @@ mghwaz
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68aea9113e6515ab6246bc1a/Nw5J61eDhzNo-aHDvCzlg.jpeg)](https://huggingface.co/ander-alvarez)
 - [![](https://huggingface.co/avatars/72f6f613035501a07c402999e7718f5f.svg)](https://huggingface.co/mghwaz)
 
-·
 
 ander-alvarez
 

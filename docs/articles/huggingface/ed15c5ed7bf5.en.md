@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c4a170d2a64b
+body_sha: d25c52fbec0f
 ---
 
-Back to Articles
 
 # Case Study: Millisecond Latency using Hugging Face Infinity and modern CPUs
 
-Published
 					January 13, 2022
 
 Update on GitHub
 
-Upvote
 
 3
 
@@ -211,7 +208,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Finfinity-cpu-performance) or [log in](https://huggingface.co/login?next=%2Fblog%2Finfinity-cpu-performance) to comment
 
-Upvote
 
 3
 

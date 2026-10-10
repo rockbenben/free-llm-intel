@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9f3da2d5c76f
+body_sha: c36d741f6682
 ---
 
-Back to Articles
 
 # Building an AI WebTV
 
-Published
 					July 17, 2023
 
 Update on GitHub
 
-Upvote
 
 2
 
@@ -442,7 +439,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fai-webtv) or [log in](https://huggingface.co/login?next=%2Fblog%2Fai-webtv) to comment
 
-Upvote
 
 2
 

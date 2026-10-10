@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: 7311c659c1dd
+body_sha: d9f53822309c
 ---
 
-OpenAI
 
 # WHOOP
 
@@ -34,10 +33,3 @@ WHOOP 创始人兼 CEO Will Ahmed 对这项技术的潜力印象深刻。"关于
 ## 想进一步了解面向企业的 ChatGPT？
 
 Talk with our team
-
-
-
-
-
-
-

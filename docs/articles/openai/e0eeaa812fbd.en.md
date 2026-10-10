@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d366ad79dfe1
+body_sha: 02fe52ca5e3a
 ---
 
-OpenAI
 
 May 18, 2023
 
@@ -25,7 +24,6 @@ Download on the App Store
 
 
 
-Loading…
 
 Since the release of ChatGPT, we’ve heard from users that they love using ChatGPT on the go. Today, we’re launching the ChatGPT app for iOS.
 
@@ -46,22 +44,3 @@ With the ChatGPT app for iOS, we’re taking another step towards [our mission�
 P.S. Android users, you’re next! ChatGPT will be coming to your devices soon.
 
 - [Download on the App Store](https://apps.apple.com/app/openai-chatgpt/id6448311069)
-
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
-- [2023](https://openai.com/news/?tags=2023)
-
-## Related articles
-
-View all
-
-Global news partnerships: Le Monde and Prisa Media
-
-CompanyMar 13, 2024
-
-Review completed & Altman, Brockman to continue to lead OpenAI
-
-CompanyMar 8, 2024
-
-OpenAI announces new members to board of directors
-
-CompanyMar 8, 2024

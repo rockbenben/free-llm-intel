@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 8d523e16af9c
+body_sha: a3f690190f57
 ---
 
-OpenAI
 
 2025年10月1日
 
@@ -55,8 +54,6 @@ OpenAI 封禁了利用 AI 辅助恶意软件开发、调试、网络钓鱼和凭
 
 我们停用了与此次行动有关的所有账户，并与合作伙伴分享了相关指标。我们没有发现证据表明，访问模型让这些行动者获得了超出公开可用技术范围的新能力。
 
-- [韩国](https://openai.com/news/?tags=target-geography-south-korea)
-- [网络行动](https://openai.com/news/?tags=cyber-operations)
 
 ## 作者
 

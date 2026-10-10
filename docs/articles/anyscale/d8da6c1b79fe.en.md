@@ -8,12 +8,10 @@ lang: en
 captured: 2026-10-09
 extractor: readability-v1
 status: ok
-body_sha: c59d07bca532
+body_sha: 1c531f25f790
 ---
 
-Home
 
-Blog
 
 Blog Detail
 
@@ -213,15 +211,12 @@ LLM
 
 #### Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale
 
-Read more
 
 #### Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference
 
-Read more
 
 #### Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all
 
-Read more
 
 ## Explore Anyscale today
 

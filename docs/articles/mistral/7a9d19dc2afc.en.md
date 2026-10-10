@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2c0c1abadfde
+body_sha: 54003ad0a908
 ---
 
-Research
 
 # Medium is the new large.
 
@@ -19,15 +18,11 @@ May 7, 2025
 
 By Mistral AI
 
-Back to Blog
 
 3 min read
 
-Share this post
 
-Copy url to clipboard
 
-Copied
 
 At Mistral AI, we are continuously pushing the frontier for both open models ([Mistral Small](https://mistral.ai/news/mistral-small-3-1), Mistral Large, Pixtral, many others) as well as enterprise models ([Mistral OCR](https://mistral.ai/news/mistral-ocr), Mistral Saba, Ministral 3B / 8B, and more). All the way from [Mistral 7B](https://mistral.ai/news/announcing-mistral-7b), our models have consistently demonstrated performance of significantly higher-weight and more expensive models. And today, we are excited to announce **Mistral Medium 3**, pushing efficiency and usability of language models even further.
 

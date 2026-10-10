@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-08
 extractor: readability-v1
 status: ok
-body_sha: 17123bb0e9c2
+body_sha: 5c63fc2fbe53
 ---
 
 **TL;DR: **We show that NVIDIA's Grace Blackwell NVLink C2C link can be used to offload MLP activations to host memory during training, replacing activation checkpointing with a faster alternative. On Qwen3-30B-3A, this yields a 6–13% end-to-end throughput improvement at roughly 0.5% additional peak memory. For models with very large MLP blocks, a selective variant recovers most of the benefit. We share our ablations, profiles, and the general principle behind the technique.
@@ -85,9 +85,7 @@ V
 
 ℓ
 
-​
 
-​
 
 <
 
@@ -109,7 +107,6 @@ d
 
 )
 
-​
 
 With BW≈64BW \approx 64BW≈64 GB/s on PCIe Gen5, this inequality doesn't hold for any model of interest. It's worth noting that we can do certain things to reduce this snowball; for instance, we could block until each transfer completes, but this ultimately sacrifices the main benefit of offloading.
 
@@ -145,15 +142,12 @@ MLP
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -163,7 +157,6 @@ f
 
 n
 
-⋅
 
 β
 
@@ -181,21 +174,17 @@ MLP
 
 )
 
-​
 
 =
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -205,9 +194,7 @@ f
 
 n
 
-​
 
-⋅
 
 β
 
@@ -225,19 +212,15 @@ recomp
 
 2
 
-⋅
 
 k
 
-⋅
 
 3
 
-⋅
 
 d
 
-⋅
 
 d
 
@@ -255,25 +238,20 @@ F
 
 recomp
 
-​
 
 =
 
 2
 
-⋅
 
 k
 
-⋅
 
 3
 
-⋅
 
 d
 
-⋅
 
 d
 
@@ -281,7 +259,6 @@ m
 
 oe
 
-​
 
 FLOPs per token
 
@@ -309,15 +286,12 @@ offload
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -327,7 +301,6 @@ f
 
 n
 
-⋅
 
 β
 
@@ -337,21 +310,17 @@ V
 
 offload
 
-​
 
 =
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -361,9 +330,7 @@ f
 
 n
 
-​
 
-⋅
 
 β
 
@@ -415,7 +382,6 @@ MLP
 
 L
 
-⋅
 
 M
 
@@ -445,19 +411,16 @@ M
 
 total
 
-​
 
 Δ
 
 M
 
-​
 
 =
 
 L
 
-⋅
 
 M
 
@@ -469,7 +432,6 @@ MLP
 
 )
 
-​
 
 +
 
@@ -477,7 +439,6 @@ M
 
 other
 
-​
 
 M
 
@@ -489,9 +450,7 @@ MLP
 
 )
 
-​
 
-​
 
 ≤
 
@@ -499,7 +458,6 @@ L
 
 1
 
-​
 
 where MotherM_{\text{other}}Mother​ covers weights, optimizer states, gradients, and non-MLP activations. In our 8-layer experiment, 1/L=12.5%1/L = 12.5\%1/L=12.5%, but the actual overhead is only 3% because MotherM_{\text{other}}Mother​ is large. For the full 48-layer model, 1/L=2.1%1/L = 2.1\%1/L=2.1% and the actual overhead drops to approximately 0.5%. For a 96-layer model it would be even less. In other words, the deeper the model, the better the deal.
 
@@ -543,15 +501,12 @@ H
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -561,7 +516,6 @@ f
 
 n
 
-⋅
 
 β
 
@@ -585,7 +539,6 @@ D
 
 H
 
-​
 
 =
 
@@ -599,19 +552,15 @@ C
 
 C
 
-​
 
 3
 
-⋅
 
 B
 
-⋅
 
 S
 
-⋅
 
 d
 
@@ -621,13 +570,10 @@ f
 
 n
 
-​
 
-⋅
 
 β
 
-​
 
 The layer forward time is the sum of MLP GEMMs (6k⋅d⋅dmoe6k \cdot d \cdot d_{moe}6k⋅d⋅dmoe​ FLOPs/token for SwiGLU with kkk active experts), attention (Fattn(S)F_{\text{attn}}(S)Fattn​(S) FLOPs/token, which depends on the sequence length SSS), and communication overhead. Since B⋅SB \cdot SB⋅S appears in both the transfer volume and the compute time, it cancels from the inequality, and the condition depends primarily on model architecture and hardware. Rearranging tD2H<tfwdt_{D2H} < t_{fwd}tD2H​<tfwd​ gives a threshold on dffnd_{ffn}dffn​:
 
@@ -645,15 +591,12 @@ n
 
 6
 
-⋅
 
 k
 
-⋅
 
 d
 
-⋅
 
 d
 
@@ -671,7 +614,6 @@ attn
 
 )
 
-⋅
 
 B
 
@@ -685,11 +627,9 @@ C
 
 3
 
-⋅
 
 β
 
-⋅
 
 P
 
@@ -711,17 +651,14 @@ f
 
 n
 
-​
 
 <
 
 3
 
-⋅
 
 β
 
-⋅
 
 P
 
@@ -731,21 +668,17 @@ e
 
 ak
 
-​
 
 (
 
 6
 
-⋅
 
 k
 
-⋅
 
 d
 
-⋅
 
 d
 
@@ -753,7 +686,6 @@ m
 
 oe
 
-​
 
 +
 
@@ -761,11 +693,9 @@ F
 
 attn
 
-​
 
 )
 
-⋅
 
 B
 
@@ -777,9 +707,7 @@ C
 
 C
 
-​
 
-​
 
 where PpeakP_{peak}Ppeak​ is the device's peak compute throughput. Note that this formula assumes a compute-bound regime; in general, the GEMM forward time is tgemm=max⁡(tcompute,thbm)t_{gemm} = \max(t_{compute}, t_{hbm})tgemm​=max(tcompute​,thbm​), where thbmt_{hbm}thbm​ is the GEMM memory-traffic time and dominates in the memory-bandwidth-bound regime of the GEMM roofline. We also note that the attention contribution Fattn(S)F_{\text{attn}}(S)Fattn​(S) FLOPs grow quadratically with the sequence length, whilst both MLP FLOPs and the offload volume grow linearly; this potentially gives us more room to absorb the D2H transfer.
 
@@ -866,7 +794,6 @@ t
 
 f
 
-​
 
 +
 
@@ -878,15 +805,12 @@ A
 
 C
 
-​
 
 δ
 
-​
 
 1
 
-​
 
 Averaging across all layers, the backward gain is ~7–8%. For a sufficiently deep model, the end-to-end improvement converges toward this per-layer average as the constant overhead (embeddings, loss) is amortized. This is why our 8-layer experiment shows only 4.3% e2e despite the larger per-layer gain.
 

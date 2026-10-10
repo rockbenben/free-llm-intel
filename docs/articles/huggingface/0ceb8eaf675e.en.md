@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d96a08aac7e1
+body_sha: c8b331819b07
 ---
 
-Back to Articles
 
 # Hugging Face partners with TruffleHog to Scan for Secrets
 
-Published
 					September 4, 2024
 
 Update on GitHub
 
-Upvote
 
 11
 
@@ -135,7 +132,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Ftrufflesecurity-partnership) or [log in](https://huggingface.co/login?next=%2Fblog%2Ftrufflesecurity-partnership) to comment
 
-Upvote
 
 11
 

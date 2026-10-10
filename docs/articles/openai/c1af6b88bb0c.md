@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6f08609c6829
+body_sha: 3472d98a1428
 translator: agent
 ---
 
-OpenAI
 
 2017 年 7 月 5 日
 
@@ -36,11 +35,3 @@ OpenAI
 ## 作者
 
 Marcin Andrychowicz、Filip Wolski、Alex Ray、Jonas Schneider、Rachel Fong、Peter Welinder、Bob McGrew、Josh Tobin、Pieter Abbeel、Wojciech Zaremba
-
-
-
-
-
-
-
-

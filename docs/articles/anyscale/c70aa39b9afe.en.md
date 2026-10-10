@@ -8,12 +8,10 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 27a263ab77fe
+body_sha: 9f7aa93f1a38
 ---
 
-Home
 
-Blog
 
 Blog Detail
 
@@ -346,15 +344,12 @@ Serve continues to bridge the gap between model development and production with 
 
 #### Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all
 
-Read more
 
 #### Scaling Ray for AI workloads to 10k node clusters
 
-Read more
 
 #### Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM
 
-Read more
 
 ## Explore Anyscale today
 

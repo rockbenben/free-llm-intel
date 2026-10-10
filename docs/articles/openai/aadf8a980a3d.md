@@ -8,10 +8,9 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: b9e80bf3920d
+body_sha: 068981e2b53f
 ---
 
-OpenAI
 
 October 11, 2018
 
@@ -74,8 +73,6 @@ Company
 
 - [Apply now](https://jobs.lever.co/openai/cf6de4ed-4afd-4ace-9273-8842c003c842)
 
-- [Culture & Careers](https://openai.com/news/?tags=culture-careers)
-- [2018](https://openai.com/news/?tags=2018)
 
 ## 作者
 

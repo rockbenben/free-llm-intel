@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: f13d4b9edd8b
+body_sha: fade7146eebe
 ---
 
-OpenAI
 
 2026年8月28日
 
@@ -29,8 +28,6 @@ OpenAI
 
 我们与 Cursor 合作了近四年，非常尊重他们的团队、产品，以及他们为开发者社区所取得的成就。我们知道，受这一决定影响最大的是那些依赖 Cursor 中 OpenAI 模型的开发者。我们十分重视他们在此次过渡期间的体验，并愿意竭尽所能为他们提供支持。
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [API](https://openai.com/news/?tags=api)
 
 ## 作者
 

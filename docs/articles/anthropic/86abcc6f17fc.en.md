@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3f5b5d8b193f
+body_sha: abeee61ced53
 ---
 
 # Agentic coding is straining CI. Here’s how we scaled test impact analysis at Anthropic
@@ -136,7 +136,6 @@ Prev
 
 0
 
-/
 
 5
 
@@ -198,9 +197,7 @@ See pricing
 
 See pricing
 
-Contact sales
 
-Contact sales
 
 Get the developer newsletter
 

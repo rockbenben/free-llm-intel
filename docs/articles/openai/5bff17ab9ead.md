@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: d5d259690b7c
+body_sha: 71f882ef83ff
 ---
 
-OpenAI
 
 2025年10月28日
 
@@ -21,25 +20,15 @@ OpenAI
 DNP 利用 ChatGPT Enterprise 优化多个部门的工作流程并提升效率
 
 
-公司规模:
 
-大型企业
 
-区域:
 
-亚太地区与大洋洲
 
-行业:
 
-制造业
 
-产品:
 
-ChatGPT
 
-成效
 
-90%
 
 的 ChatGPT Enterprise 应用案例取得了可衡量的成效
 

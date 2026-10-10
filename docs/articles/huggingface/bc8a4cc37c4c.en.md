@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f3bb4b572a03
+body_sha: 47bf6e9a988d
 ---
 
-Back to Articles
 
 # The Reformer - Pushing the limits of language modeling
 
-Published
 					July 3, 2020
 
 Update on GitHub
 
-Upvote
 
 3
 
@@ -698,7 +695,6 @@ deleted
 
 Oct 31, 2025
 
-•
 
 This comment has been hidden
 
@@ -706,7 +702,6 @@ allendorf
 
 Jan 22
 
-•
 
 This comment has been hidden (marked as Spam)
 
@@ -720,7 +715,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Freformer) or [log in](https://huggingface.co/login?next=%2Fblog%2Freformer) to comment
 
-Upvote
 
 3
 

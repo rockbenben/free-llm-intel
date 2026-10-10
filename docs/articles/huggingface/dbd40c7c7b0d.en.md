@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 80eb3e391e2b
+body_sha: 50758df2aaa8
 ---
 
-Back to Articles
 
 # Open LLM Leaderboard: DROP deep dive
 
-Published
 					December 1, 2023
 
 Update on GitHub
 
-Upvote
 
 11
 
@@ -169,7 +166,6 @@ Westcoastpure
 
 Apr 27, 2025
 
-•
 
 edited Apr 27, 2025
 
@@ -185,7 +181,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fopen-llm-leaderboard-drop) or [log in](https://huggingface.co/login?next=%2Fblog%2Fopen-llm-leaderboard-drop) to comment
 
-Upvote
 
 11
 

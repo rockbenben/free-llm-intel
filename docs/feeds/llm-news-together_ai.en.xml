@@ -61,7 +61,6 @@
 <p>Create a<a href="https://api.together.ai"> Together AI</a> account.</p>
 <p>Read our<a href="https://docs.together.ai/docs/togetherlink"> docs</a>.</p>
 <p>Rolling it out across your engineering org?<a href="https://www.together.ai/contact-sales"> Talk to our team</a> and we'll help you plan it.</p>
-<p>‍</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>
@@ -280,7 +279,6 @@ tg endpoints stop ENDPOINT_ID
 <h2>Choosing a strategy at a glance</h2>
 <p>All three strategies run through the same engine and the same health gates; they differ in how traffic moves, how much extra capacity the overlap costs, and whether there is a wait window for a metric gate.</p>
 <table><thead><tr><th></th><th>Canary</th><th>Blue-green</th><th>Rolling</th></tr></thead><tbody><tr><td>Traffic pattern</td><td>Steps through shares you choose (default 5% → 25% → 50% → 100%), each held for a wait window</td><td>One cutover, 0% → 100%, once the target is healthy</td><td>Replica by replica, traffic following the replica ratio</td></tr><tr><td>Extra capacity</td><td>Near source size; the target grows one step before the source drains that share</td><td>Both deployments at full size until the source drains</td><td>Source's replica count at each step; one extra replica mid-step</td></tr><tr><td>Typical duration</td><td>One cold start plus a wait per step (at least 390 s each with a metric gate)</td><td>One cold start plus 30 s propagation; a few minutes</td><td>One cold start per replica; slowest on large deployments</td></tr><tr><td>Metric gates</td><td>Yes, after every step</td><td>No (no wait window)</td><td>No</td></tr><tr><td>How to go back</td><td>Cancel freezes the current share, then run the rollout in reverse</td><td>Run the rollout in reverse; <code>--final-source-replicas 1</code> keeps the old model warm for an instant return</td><td>Run the rollout in reverse</td></tr><tr><td>Best for</td><td>Measuring on live traffic before taking 100%</td><td>The fastest switch, when you can briefly afford double capacity</td><td>Same-model engine or config changes at a constant GPU footprint</td></tr></tbody></table>
-<p>‍</p>
 <h2>Creating a rollout</h2>
 <p>Here's a three-step canary from a deployment serving your current model to one serving the candidate, with a latency regression gate. The CLI ships as <code>tg</code> in the <code>together</code> Python package (2.34.0 or newer). You pass the <strong>target</strong> deployment; the source is inferred when exactly one deployment is receiving traffic, otherwise pass <code>--source</code>:</p>
 <pre><code>    
@@ -536,7 +534,6 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
 <p><strong>3. Watch it</strong> with <code>tg beta endpoints get $ENDPOINT_ID</code> (or the endpoint's Rollouts tab in the console) as it progresses through the steps. Pause, promote or cancel it with <code>tg beta endpoints rollout $ENDPOINT_ID --pause | --promote | --cancel</code>.</p>
 <p>Throughout, the endpoint URL and your clients stay unchanged; only the model behind them moves.</p>
 <p>📚 <strong>Docs:</strong> <a href="https://docs.together.ai/docs/dedicated-endpoints/rollouts">Start a rollout</a> · <a href="https://docs.together.ai/docs/dedicated-endpoints/rollout-metric-gates">Gate rollouts with metrics</a> · <a href="https://docs.together.ai/reference/cli/endpoints-beta#rollout">CLI reference</a> · <a href="https://docs.together.ai/reference/dmi/rollouts-create">API reference: Create a rollout</a></p>
-<p>‍</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>
@@ -585,9 +582,6 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
 <ul><li><strong>Scaling: </strong>the customer adjusts capacity directly, no ticket to Together.</li><li><strong>Custom-weight rollouts: </strong>new model versions go live without a redeployment cycle.</li><li><strong>Blue/green testing: </strong>the customer validates changes against production traffic on its own timeline.</li></ul>
 <h2>What's next: a second workload and region</h2>
 <p>The deployment stopped being a single endpoint and started being a surface for innovation. That pattern is now repeating as a pipeline, not a one-off. The customer's team is already scoping a dedicated GLM 5.1 node in a new region, sized against a real production workload. It's a different shape of workload than the original coding assistant: a chat-style customer-support NLP workload rather than long-horizon agentic coding, landing on the same infrastructure and provisioning pattern.</p>
-<p>‍</p>
-<p>‍</p>
-<p>‍</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>
@@ -800,7 +794,6 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
       <pubDate>Thu, 10 Sep 2026 00:00:00 +0000</pubDate>
       <description>Full title: To Infinity and Beyond: ThunderKittens Now on NVIDIA Vera Rubin NVL72!</description>
       <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Research</p>
 <p>Published 9/10/2026</p>
 <h1>To Infinity and Beyond: ThunderKittens Now on NVIDIA Vera Rubin NVL72!</h1>
 <ul><li>AuthorsDylan Lim, Xinyi Li, Sonny Li, Peter Wu, Dan Fu, Simran Arora</li><li>Table of contents<a href="https://www.together.ai/blog/to-infinity-and-beyond-thunderkittens-now-on-nvidia-vera-rubin-nvl72#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
@@ -1156,7 +1149,6 @@ tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // arrives when MMA finish
 <p>Run DeepSeek-V4 Pro 0813 on Together AI</p>
 <p>1.05M context, function calling and JSON mode, OpenAI-compatible API, served from US infrastructure.</p>
 <p>View the model</p>
-<p>‍</p>
 <p>In our <a href="https://www.together.ai/models/deepseek-v4-pro-0813">DeepSeek V4 Pro 0813</a> vs Claude Fable 5 comparison on DeepSWE, a benchmark that tests a model's software engineering ability across many task types and programming languages, the two models sit at opposite ends of the price sheet. Claude Fable 5 is the most expensive rollout on the DeepSWE board. DeepSeek V4 Pro 0813 is one of the cheapest. Fable is seven points more accurate on the first try and costs ninety times as much per rollout, so the real question is not which model is better, but what that 90x premium actually buys and when it is worth paying.</p>
 <p>DeepSWE · Head to Head</p>
 <h3>DeepSeek V4 Pro 0813 vs Claude Fable 5 at a glance</h3>
@@ -1197,7 +1189,6 @@ tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // arrives when MMA finish
 <p>Yes, if you can verify results. The two models have the lowest per-task correlation of any pairing we have measured (0.39) and together cover 107 of 113 tasks. Running DeepSeek V4 Pro 0813 first and escalating to Claude Fable 5 when your test suite rejects the output reaches 82.7% at \$8.28 per task, beating Fable alone and a perfect one-shot oracle router.</p>
 <h3><strong>What is pass@k on DeepSWE?</strong></h3>
 <p>pass@k measures whether at least one of k attempts at a task passes the hidden test suite. pass@1 rewards getting it right first try; higher k rewards a model that can eventually reach a solution across several tries. DeepSeek V4 Pro 0813's edge grows as k increases.</p>
-<p>‍</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>
@@ -1677,7 +1668,6 @@ print(second.choices[0].message.content)</code></pre>
       <pubDate>Wed, 29 Jul 2026 00:00:00 +0000</pubDate>
       <description>Full title: ThunderAgent: 2x Faster Agentic Inference for Synthetic Data Generation at Scale</description>
       <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Research</p>
 <p>Published 7/29/2026</p>
 <h1>ThunderAgent: 2x Faster Agentic Inference for Synthetic Data Generation at Scale</h1>
 <p>A program-level scheduler that eliminates KV cache thrashing, delivering more than 2x single-node throughput and near-linear multi-node scaling for large-scale agentic inference.</p>
@@ -1863,7 +1853,6 @@ print(second.choices[0].message.content)</code></pre>
 <h2>Our numbers defined</h2>
 <p>Vague SLA definitions are where the gap between what’s promised and what’s delivered lives. Here’s exactly what we measure and how we define each term.</p>
 <table><thead><tr><th>What we measure</th><th>How we define it</th><th>Our number</th></tr></thead><tbody><tr><td>Delivered uptime</td><td>% of time the inference endpoint successfully serves requests (measured at inference completion, not load balancer)</td><td>99.9% (consistently delivered)</td></tr><tr><td>Guaranteed SLA: Single DC</td><td>Contractual SLA for a single data center deployment</td><td>99%</td></tr><tr><td>Guaranteed SLA: Multi DC</td><td>Contractual SLA for a multi-data center deployment</td><td>99.9%</td></tr><tr><td>Failover time</td><td>Time to shift traffic to healthy capacity after a facility fault</td><td>Seconds</td></tr><tr><td>Request volume</td><td>Inference requests served over the measurement window</td><td>2B TPM+</td></tr></tbody></table>
-<p>‍</p>
 <p>We measure at inference completion, not at the gateway. A request that reaches the load balancer but fails at the GPU is downtime in our accounting. One more thing: availability and performance are different contracts. In Provisioned Throughput, you’re paying for a GPU allocation to deliver specific TPS, not just for the endpoint to respond. A service that’s up but delivering 30% of contracted throughput isn’t meeting the deal.</p>
 <h2>Come see the architecture</h2>
 <p>Every provider will give you a number. What matters is whether the architecture behind it is built to back it up, and whether they own the infrastructure where the guarantee has to hold.</p>
@@ -1895,12 +1884,10 @@ print(second.choices[0].message.content)</code></pre>
 <p>Preliminary evaluations of the current Inkling checkpoint show strong performance across graduate-level scientific reasoning and competition mathematics:</p>
 <p>The results point to one of Inkling’s defining characteristics: versatility. The same model performs strongly across knowledge-intensive reasoning, mathematical problem solving, software engineering, browser-based tasks, visual document understanding, and audio comprehension.</p>
 <p>Inkling is also post-trained on forecasting and calibrated prediction tasks. This expands the model’s usefulness beyond conventional question answering to applications where representing uncertainty and producing well-calibrated estimates are important.</p>
-<p>‍</p>
 <h2><strong>Why run Inkling on Together?</strong></h2>
 <p><strong>Day 0 access, zero setup:</strong> Inkling is live on Together AI Serverless today. No waiting for capacity, no infrastructure to provision, no GPUs to manage.</p>
 <p><strong>Full multimodal input support, one endpoint:</strong> Since Inkling natively accepts text, image, and audio, you don't need separate pipelines or preprocessing services, Together AI Serverless handles all three input types through a single API call. This is powerful as Together’s unified solution removes the tradeoff between latency, speed and operational stability.</p>
 <p><strong>Controllable reasoning effort, without managing your own infra:</strong> Inkling's adjustable inference-effort setting lets you trade off depth, latency, and token spend per request. On Together AI, you control that dial through the API directly, so cost and speed tuning happens at the request level, not the infrastructure level.</p>
-<p>‍</p>
 <h2><strong>A new architecture for reasoning and multimodality</strong></h2>
 <p>Inkling is a decoder-only mixture-of-experts model with <strong>975B</strong> total parameters, <strong>40B </strong>active parameters per token, and a context window of <strong>1M tokens</strong>.</p>
 <p>Rather than using RoPE or absolute position embeddings, Inkling incorporates token position directly into attention through a learned, query-conditioned relative bias. Each attention layer combines the conventional query-key similarity score with an additional score based on the relative distance between tokens. This gives the model a flexible mechanism for representing token order and nearby context.</p>
@@ -1922,7 +1909,6 @@ print(second.choices[0].message.content)</code></pre>
 <h1>Replace with the final supported API parameter.</h1>
 <p>reasoning_effort=&quot;[SUPPORTED VALUE]&quot;, )</p>
 <p>print(response.choices[0].message.content)</p>
-<p>‍</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>
@@ -1970,9 +1956,7 @@ print(second.choices[0].message.content)</code></pre>
 <p>The new view surfaces node health at a glance: healthy, booting, unhealthy, pending, and paused. It also shows live usage metrics across all GPU nodes, including utilization, memory, and network bandwidth, with drill-down to Grafana for deeper analysis. The same page includes an event timeline showing node state transitions across the cluster and the cluster’s full configuration in one place: region, GPU type, driver version, networking, OS image, and billing rate.</p>
 <p>Three new tabs sit alongside the overview:</p>
 <ul><li><strong>Nodes </strong>to give a detailed list and grid view with utilization data, health signal, and node operations like repair/run health-check and ssh commands.</li><li><strong>Health checks</strong> give you the historical timeline of active and passive check events for the cluster.</li><li><strong>Repair</strong> gives you the same historical view for node repair actions. Both exist for the incident retro question, “what actually happened on this cluster last week?”, and they replace what used to be a Slack thread with us.</li></ul>
-<p>‍</p>
 <p>Fig: Cluster overview page for high level health and utilization information</p>
-<p>‍</p>
 <p>Fig: Nodes page for node details information and actions</p>
 <h3><strong>External OIDC for Kubernetes RBAC</strong></h3>
 <p>If your team accesses the Kubernetes API today, you’re probably sharing the admin kubeconfig. That works for one operator and breaks down quickly past that. Teams need per-user audit trails, per-user revocation, least-privilege access, and a cleaner path for joiners and leavers.</p>
@@ -1984,7 +1968,6 @@ print(second.choices[0].message.content)</code></pre>
 <p><strong>Startup scripts</strong> let you customize Slurm worker nodes, login nodes, and the controller via shell scripts that fire at specific lifecycle events:</p>
 <ul><li><strong>At node boot:</strong> install packages, configure tooling, run any setup that needs to happen before the node accepts work</li><li><strong>At job start:</strong> stage data, prepare scratch space, configure the per-job environment</li><li><strong>At job end:</strong> clean up scratch files and stray processes, send Slack notifications, kick off downstream pipelines</li></ul>
 <p>Scripts are configured in the Together Cloud console and can be applied to new clusters at creation time with no rebuild required. The result: The customizations you’d otherwise file a ticket for, or run by hand, are now declared once and applied automatically across the cluster. We even validate the scripts for errors so you do not face silent failures later. Learn more about how to set up startup scripts based on customizations<a href="https://docs.together.ai/docs/slurm-startup-scripts"> here.</a></p>
-<p>‍</p>
 <p>&quot;Slurm startup Scripts&quot;; startup scripts configuration in the console</p>
 <p><strong>Acceptance testing, opt-in for larger and longer-running clusters</strong></p>
 <p>At Together AI, we serve both large-scale production training/inference workloads as well as short burst experimentation or single-node research clusters. For these smaller or short-lived clusters, we skip the acceptance test battery by default, which validates GPU health, networking, and storage, and go straight to availability. For most clusters, faster time-to-availability is the better default: less waiting and faster time to value, especially given we constantly run health checks on idle nodes in our fleet.</p>
@@ -2037,7 +2020,6 @@ print(second.choices[0].message.content)</code></pre>
       <pubDate>Tue, 30 Jun 2026 00:00:00 +0000</pubDate>
       <description>Full title: Together AI at ICML 2026: frontier research across the full stack</description>
       <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Research</p>
 <p>Published 6/30/2026</p>
 <h1>Together AI at ICML 2026: frontier research across the full stack</h1>
 <p>Nine papers from Together AI and our peers were accepted to ICML 2026 in Seoul. If you are attending come by booth B714. We’d love to connect.</p>
@@ -2126,7 +2108,6 @@ print(second.choices[0].message.content)</code></pre>
 <p>Making the math of inference cheaper: speculative decoding, quantization, RL inference.</p>
 <p>Paper 6</p>
 <h2>When RL Meets Adaptive Speculative Training: A Unified Training-Serving System (Aurora)</h2>
-<p>1.25×</p>
 <p>as traffic shifts</p>
 <p><strong>A 1.5x day-0 speedup on brand-new frontier models like MiniMax M2.1 229B and Qwen3-Coder-Next 80B, plus an additional 1.25x over a strong static speculator as traffic shifts.</strong> Speculative decoding that is fast on day 0 and keeps getting faster the longer it runs.</p>
 <p>Most deployments train the speculator offline and freeze it, so it is slow to deploy and goes stale as traffic and target models change. Aurora reframes online speculator learning as an asynchronous reinforcement-learning problem running in production: accepted and rejected tokens are the reward signal, the training server updates the speculator continuously, and new weights hot-swap into the server with zero downtime.</p>
@@ -2176,7 +2157,6 @@ print(second.choices[0].message.content)</code></pre>
 <p>+10%</p>
 <p>Pass@1 · same compute</p>
 <p>V1</p>
-<p>1.25×</p>
 <p>faster as traffic shifts</p>
 <p>Aurora</p>
 <p>5M tokens</p>
@@ -2232,8 +2212,7 @@ print(second.choices[0].message.content)</code></pre>
 <p>1/ Talk through any of the nine papers with the people who wrote them 2/ See the research in production, from agents to production inference 3/ Meet the team and hear what we are working on next</p>
 <h2><strong>Come build this with us</strong></h2>
 <p>We are hiring researchers and research engineers who want to work across the whole stack, not just one layer of it. See open roles at<a href="https://www.together.ai/careers"> together.ai/careers</a>, or come find us at the booth.</p>
-<p>For everyone else:<a href="https://www.together.ai/"> request a meeting in Seoul</a>, browse the full<a href="https://www.together.ai/research-blog"> research blog</a>, and follow along on X at [@togethercompute] as the deep dives land across the conference.</p>
-<p>‍</p>]]></content:encoded>
+<p>For everyone else:<a href="https://www.together.ai/"> request a meeting in Seoul</a>, browse the full<a href="https://www.together.ai/research-blog"> research blog</a>, and follow along on X at [@togethercompute] as the deep dives land across the conference.</p>]]></content:encoded>
     </item>
     <item>
       <title>ParallelKernelBench: Frontier LLMs can&apos;t write fast multi-GP…</title>
@@ -2242,7 +2221,6 @@ print(second.choices[0].message.content)</code></pre>
       <pubDate>Tue, 23 Jun 2026 00:00:00 +0000</pubDate>
       <description>Full title: ParallelKernelBench: Frontier LLMs can&apos;t write fast multi-GPU kernels (yet)</description>
       <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Research</p>
 <p>Published 6/23/2026</p>
 <h1>ParallelKernelBench: Frontier LLMs can't write fast multi-GPU kernels (yet)</h1>
 <p>The best frontier model solves under a third of 87 real-world problems — but a few generated kernels beat anything publicly available.</p>
@@ -2330,7 +2308,7 @@ print(second.choices[0].message.content)</code></pre>
 <h1>Kimi K2.7 Code vs Claude Fable 5: Landing pages that cost 94% less</h1>
 <ul><li>AuthorsHassan El Mghari</li><li>Table of contents<a href="https://www.together.ai/blog/kimi-k2-7-code-vs-claude-fable-5#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
 <p><strong>Summary</strong></p>
-<p>We ran 12 landing pages through Kimi K2.7 Code and Claude Fable 5. Kimi cost 94% less and scored within a few points on nearly every page. Open-source models aren't just cheaper, they're genuinely competitive on quality. And the gap is closing faster than people realize. ‍</p>
+<p>We ran 12 landing pages through Kimi K2.7 Code and Claude Fable 5. Kimi cost 94% less and scored within a few points on nearly every page. Open-source models aren't just cheaper, they're genuinely competitive on quality. And the gap is closing faster than people realize.</p>
 <p>We ran an experiment where we had Kimi K2.7 Code and Claude Fable 5 each produce 12 landing pages for a side‑by‑side comparison. Overall, Kimi K2.7 Code cost about 94% less than Fable 5 and yielded similar-quality output, especially after we gave Kimi the right context with a design MCP.</p>
 <p>We published our findings on the <a href="https://ovsc.vercel.app/">OVSC website</a>, along with all variants generated by Claude Opus 4.8, Claude Fable 5, and Kimi K2.7 Code. On average Kimi was ~16x cheaper than Fable and ~8x cheaper than Opus.</p>
 <p>The OVSC website lets you explore all the landing pages along with breakdowns of total costs, token usage, and generation time.</p>
@@ -2361,7 +2339,6 @@ print(second.choices[0].message.content)</code></pre>
 <p>After generating the landing pages, we wanted a systematic way to compare Kimi and Fable. We were not just looking at the code itself, but at the overall quality of each page, including positioning, visual direction, content structure, craft, responsiveness, and technical execution. To do that, we gave GPT-5.5 a rubric to review and score the screenshots and source code from each page and assign a final score from 0 to 100.</p>
 <p>Here are the scores for each landing page:</p>
 <table><thead><tr><th>Page</th><th>Fable</th><th>Fable + MCP</th><th>Kimi</th><th>Kimi + MCP</th></tr></thead><tbody><tr><td>SQL Charts</td><td>86</td><td>91</td><td>82</td><td>86</td></tr><tr><td>Long form article</td><td>86</td><td>83</td><td>82</td><td>85</td></tr><tr><td>Architecture portfolio</td><td>91</td><td>92</td><td>88</td><td>79</td></tr><tr><td>Sleep app</td><td>92</td><td>94</td><td>80</td><td>80</td></tr><tr><td>Learn-to-cook app</td><td>94</td><td>92</td><td>86</td><td>81</td></tr><tr><td>Indie bookstore</td><td>95</td><td>92</td><td>89</td><td>89</td></tr><tr><td>Electronic music</td><td>91</td><td>91</td><td>85</td><td>85</td></tr><tr><td>Hot sauce brand</td><td>91</td><td>93</td><td>86</td><td>87</td></tr><tr><td>Rooftop Speakeasy</td><td>93</td><td>92</td><td>86</td><td>85</td></tr><tr><td>Perfume house</td><td>91</td><td>91</td><td>88</td><td>83</td></tr><tr><td>Voice clone app</td><td>88</td><td>90</td><td>83</td><td>84</td></tr><tr><td>B2B SaaS</td><td>84</td><td>90</td><td>80</td><td>81</td></tr></tbody></table>
-<p>‍</p>
 <p>Claude Fable scored higher in both examples, but the gap was relatively small. Kimi remained competitive on design, structure, and overall page quality, while costing much less to run. For this kind of workflow we felt that trade-off was reasonable.</p>
 <h2>Final thoughts</h2>
 <p>Open-source models like Kimi K2.7 Code are already capable of generating useful landing pages, but our experiment showed that prompts alone are only part of the equation. Without better context, both Kimi and Claude Fable tended to produce polished but generic results.</p>
@@ -2413,52 +2390,38 @@ print(second.choices[0].message.content)</code></pre>
 <ul><li>AuthorsYubo Wang, Michael Granado, Connor Li, Jue Wang, Brian Mak, Wei Gong, Hiral Jasani, Yineng Zhang, Dan Fu</li><li>Table of contents<a href="https://www.together.ai/blog/serving-minimax-m3-for-efficient-inference-unlocking-1m-token-context-and-multimodality-without-regrets#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
 <ul><li><strong>Together AI is the preferred cloud partner for MiniMax M3.</strong> Together AI will host the open-weights model as a developer endpoint upon its public release.</li><li>Our Inference and Kernel teams delivered <strong>significant engineering breakthroughs to serve M3 efficiently</strong>, including key optimizations such as a KV-Block-Major sparse attention kernel, a novel paged attention integration for MSA, highly optimized index scoring kernel and a Rust-based multimodal preprocessing gateway, resulting in <strong>81–125% throughput improvements </strong>across different concurrency levels.</li><li>Serving <strong>MiniMax M3 at scale in production validates Together AI as the go-to inference platform</strong> for models that push the frontier on the hard systems problems that make real-world deployment possible.</li></ul>
 <p>MiniMax launched their latest state-of-the-art model M3 and Together AI is excited to be the preferred cloud partner, enabling MiniMax to efficiently serve M3 in production at scale. Once MiniMax M3 is released as an open weights model over the coming few days, Together AI will also host the model as an endpoint for developers directly. Behind that scale is the exceptional work of our Inference and Kernel teams, who drove deep performance optimizations and ensured production-grade reliability for a model that pushes the frontier: 1M-token context window, native multimodality, and an architecture that demands serious engineering to serve efficiently. In this post, we'll walk through how we made it happen. Congratulations to the MiniMax team on a landmark model launch and continued innovation.</p>
-<p>‍</p>
 <p>MiniMax M3 is an all-in-one model that brings together state-of-the-art coding performance, agentic workflow support, and native multimodal reasoning. On top of these capabilities, it is also designed to support 1M context while being highly economically friendly to serve. This makes it a good fit for real-world tasks where long documents, codebases, tool use, images, and iterative reasoning often appear together and heavy in context. Compared to the previous generation, serving M3 imposes more challenges as new capabilities require optimizations on more dimensions including sparse attention computation, larger KV cache management, multimodal processing, etc.</p>
 <h2>Architecture / Characteristics</h2>
 <p>The most novel architectural change in M3 is MiniMax Sparse Attention (MSA), which is designed to address the attention-computation bottleneck seen in MiniMax M2.7. Its block-sparse attention mechanism caps the maximum number of tokens each query can attend to, reducing the cost of long-context processing and making much longer context windows practical. This brings a speed up of more than 9x in the prefilling stage and more than 15x in the decoding stage.</p>
-<p>‍</p>
-<p>‍</p>
 <p>In essence, MSA’s calculation is composed of two parts: a score calculation to determine the most relevant K blocks to attend to for each KV group, and then dense attention between the query token and those blocks. This design preserves expressiveness along the KV-group dimension while still putting a limit on the maximum number of KV tokens a query token attends to. The attention computation itself no longer scales as N^2 with context length, thus making it very suitable for long context workload.</p>
-<p>‍</p>
 <p>We measured the kernel execution time breakdowns under agentic-style traffic shape(60k prefix cache) under concurrency of 8 on B200. MSA significantly lowers the wall time percent of the actual attention computation per iteration.</p>
 <p>A separate kernel execution breakdown under agentic-style traffic with 60K prefix cache, concurrency 8, and NVIDIA B200 showed that MSA significantly reduces the wall-time percentage spent in attention computation per iteration.</p>
-<p>‍</p>
 <p>Besides the attention architecture change, M3 is also shipped with multimodal support with a vision component and new image and video preprocessing functionalities.</p>
-<p>‍</p>
 <p>Given these fundamental changes, Together AI worked closely with MiniMax’s engineering team to tackle the new emerging challenges. Some major challenges include:</p>
 <ul><li>Though MiniMax sparse attention computation itself is highly efficient, supporting 1M context length is still challenging from an engineering perspective.</li><li>Video and image processing are natively more complicated than text tokenization.</li></ul>
 <h2>Optimizations</h2>
 <h3>KV-Block-Major Sparse Attention</h3>
 <p>During prefill, attention computation can still be a big factor for long context input, as for each token, we need to calculate Selected <em>Block</em> <em> </em>KV Head Group<em> </em> <em>Tokens</em>. The nature of the block sparse attention allows multiple queries to attend to the same key-value blocks. Thus, if we iterate each query to calculate attention with key-value blocks, we are duplicating the KV movement from HBM to SRAM on GPU. Iterating over the key-value group in the outer loop and calculating attention between query tokens in the inner loop allows better arithmetic intensity as KV cache is moved only once.</p>
-<p>‍</p>
 <p>To achieve this, we need to reorganize the mapping from {q, kv block} into {kv block, q} and reimplement the attention kernel. Because we are calculating only partial O output for the kv block, we need a final “reduction” based on the Log-Sum-Exp to rescale output O and sum. The process is as follows:</p>
 <h3>Integrate MSA with Paged Attention</h3>
 <p>In modern inference engines, paged attention is often used to manage KV cache context for requests. The majority of highly optimized attention kernels are written with a fixed set of page size support. The blocker that stops us from using these kernels is that the selected blocks differ across KV groups.</p>
-<p>‍</p>
 <p>At Together AI, we propose a new way to integrate MiniMax Sparse Attention into the engine. During decode, we first build a page table based on the selected blocks, flatten the KV-group dimension into the batch dimension, and leverage the strided view of a KV cache tensor to provide the attention kernel with the pointer needed to retrieve the KV page. The trick is the stride: page addresses advance by D to choose a virtual page start, while tokens advance by Hkv * D. That deinterleaves one physical tensor into per-head pages, so each flattened row can now use a different page table.</p>
-<p>‍</p>
 <p>This design unblocked us to use the existing attention kernels that support GQA without having to rewrite a new one that supports sparse attention from scratch. Because the selected blocks for each query is limited, the kernels to find mapping between blocks to pages are with very low overhead. This design gives us 5% improvement on the decode throughput.</p>
 <h3>Decode Index Scoring Kernel Optimization</h3>
 <p>For decode, MSA moves a large part of the cost out of dense attention and into the score/top-k indexer. For every decode query, the engine compares the query-side index vector against candidate key-side index vectors, reduces each 128-token KV block to a single score, and keeps only the top blocks for the real attention kernel. This scan is on the critical path for every generated token, and at long context lengths the number of candidate blocks grows with context length. Decode scoring has a small-query-index, long-key-index shape. It is tempting to treat a batch of decode queries as one larger GEMM, but the score/indexing step is not just a dense matrix multiply: each request and K group has its own candidate block range, masking, per-block reduction, and top-k boundary. Concatenating queries together would still leave a ragged gather-and-reduce problem around the GEMM, while forcing padding and extra bookkeeping onto the critical path. Our optimized path therefore uses an <em>AB-swapped HMMA layout</em>: the 128-token key-index block becomes the MMA M dimension, while the query side is padded only into the smaller <em>N</em> dimension. The kernel stages 128-token K indexes with asynchronous copies, prefetches the next page, computes dot products in bfloat16 with HMMA, and reduces each page to one block score.</p>
-<p>‍</p>
 <h3>Multimodal Preprocessing at the Gateway</h3>
 <p>SMG (Serving Model Gateway) is a Rust-based model gateway that sits between the OpenAI-compatible API and the inference engine. Beyond routing and tokenization, SMG takes on a role that is particularly important for multimodal models: it performs all vision preprocessing on the CPU before the request reaches the GPU worker.</p>
 <p>Image and video inputs need a fair amount of CPU work before they are useful to a vision encoder: downloading, decoding, frame sampling, resizing, and converting into patch tensors. Doing this inside the inference engine ties up resources that should be spent on generation. SMG handles all of it in the gateway instead, so by the time the request hits the GPU, the tensors are ready to go.</p>
-<p>‍</p>
 <p>For M3, this means: fetch the video, pull frames out with FFmpeg, pick a subset based on FPS (Frames Per Second), resize and normalize, then patchify with the temporal dimension baked in. What comes out is a flat patch tensor and a small grid metadata tensor, packed into a gRPC message. The worker just runs the vision encoder directly — no preprocessing on its end.</p>
 <p>Also, SMG's multimodal pipeline is structured around Rust traits that separate model-specific preprocessing logic from the pipeline plumbing. Adding M3 multimodal support meant implementing these traits with M3-specific constants; the pipeline itself did not change. The same architecture applies to the majority of open source models with vision capability, and generalizes across inference engine runtimes.</p>
-<p>‍</p>
 <h2>Performance Results</h2>
 <p>Since receiving the MiniMax M3 weights and model architecture, we strived to improve the inference performance. We have reached 81% - 125% increase on various concurrency levels on common agentic shape traffic.</p>
 <h2>Future Work</h2>
 <p>New architecture brings in new infrastructure and engineering challenges. At Together AI, our goal is to provide the best inference performance. A few topics that we are actively working on regarding to M3 are:</p>
 <ol><li>The sparse attention architecture introduces more smaller kernels, for example, topk over kv blocks, remapping q-kv mapping into kv-q, etc. There are more kernel fusion opportunities. Our Kernel Agent Research team is actively developing agents that write production-grade kernels.</li><li>CPU cache offloading of k-index and actual kv cache can now be disaggregated. We are working on loading full k-index and load kv cache on-demand based on the topk selection.</li></ol>
-<p>‍</p>
 <h2>Next Steps</h2>
 <p>‍<a href="https://www.together.ai/models/minimax-m3">Join the waitlist to get notified when M3 open weights are available on Together AI</a>.</p>
 <p>‍<a href="https://x.com/togethercompute/status/2061613292028612654">Check out the deep dive from MiniMax model designers and the Together inference team.</a></p>
-<p>‍</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>
@@ -2475,7 +2438,6 @@ print(second.choices[0].message.content)</code></pre>
 <h1>How Together AI built the world’s fastest speech-to-text stack</h1>
 <p>NVIDIA TensorRT multi-profile engines, conditional NVIDIA CUDA graphs, evented I/O, shared memory, and the Python GC fix behind Together’s ASR latency results.</p>
 <ul><li>AuthorsSebastien Beurnier</li><li>Table of contents<a href="https://www.together.ai/blog/how-together-ai-built-the-worlds-fastest-speech-to-text-stack#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
-<p>‍</p>
 <p>Artificial Analysis reported speed factor (Input audio seconds transcribed per second) -- Higher is better</p>
 <h2><strong>Modality matters</strong></h2>
 <p>A 1M-token text prompt can fit the entire Harry Potter series and still only weigh around 5 MB. That scale sounds enormous, but the input itself is compact. Text also arrives almost ready for inference: tokenize it, batch it, and move it through the model.</p>
@@ -2506,7 +2468,6 @@ print(second.choices[0].message.content)</code></pre>
 <p>That branch requires the CPU to read the token back from GPU memory to decide which path to take. This host sync prevents the decode loop from being captured as a single CUDA graph and forces every iteration to round-trip through Python. The GPU does a few microseconds of work, waits for the CPU, launches the next kernel, and repeats that pattern thousands of times per request.</p>
 <p>Conditional CUDA graph nodes moved that branch onto the GPU. A small device-side kernel evaluates the condition and tells the CUDA runtime whether to enter the token-emission and state-update subgraph. The branch resolves without leaving the GPU, so the entire decoder loop, counter, condition, emit, and state update, can be captured and launched as one CUDA graph.</p>
 <p>The CPU leaves the decoder’s inner loop, and the result is a 2 to 3x faster decoder.</p>
-<p>‍</p>
 <h2><strong>Stop copying audio bytes</strong></h2>
 <p>Once the encoder and decoder were running well, the remaining latency came from the CPU path around the model. That is where most ASR code we’ve audited spends its latency budget: redundant copies, unnecessary process hops on the hot path, and single-threaded functions that would benefit from higher parallelism.</p>
 <p>The first lever was collapsing unnecessary process boundaries.</p>
@@ -2520,8 +2481,6 @@ print(second.choices[0].message.content)</code></pre>
 <p>We moved to one thread blocked on <code>epoll</code>.</p>
 <p><code>epoll</code> lets one thread register thousands of connections and ask the kernel in a single syscall: “wake me up when any of these has data.” When messages arrive, the kernel returns the full ready set, and that thread processes the active sockets before going back to sleep.</p>
 <p>Same workload, far less scheduler pressure. For streaming ASR, that predictability matters because delayed partial transcripts can make a voice system feel slow even when average latency looks fine.</p>
-<p>‍</p>
-<p>‍</p>
 <h2><strong>Freeze startup state to remove GC tail latency</strong></h2>
 <p>We almost missed this one.</p>
 <p>Under load for streaming workflows, p50 and p90 latency looked healthy, but p95 would periodically spike by about 200 ms. The logs showed small queue depth and normal GPU times, but CPU functions that normally ran in under 5 ms suddenly took over 100 ms.</p>

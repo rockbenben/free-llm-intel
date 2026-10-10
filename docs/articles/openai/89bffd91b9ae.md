@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: 8ea2031c285b
+body_sha: e3d667ccd610
 ---
 
-OpenAI
 
 May 23, 2025
 
@@ -34,8 +33,6 @@ o3 Operator 使用与 4o 版 Operator 相同的多层安全方法，我们在最
 
 虽然 o3 Operator 继承了 o3 的编程能力，但它没有原生访问编程环境或终端（Terminal）的权限。
 
-- [System Cards](https://openai.com/news/?tags=system-cards)
-- [2025](https://openai.com/news/?tags=2025)
 
 ## 作者
 

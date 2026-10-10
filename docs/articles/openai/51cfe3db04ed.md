@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 5be3da150a17
+body_sha: d89055d5ba54
 ---
 
-OpenAI
 
 2026年8月25日
 
@@ -64,11 +63,3 @@ Jalapeño 让我们能更自主地控制模型的运行方式及其服务成本�
 ## 作者
 
 Sarah Friar
-
-
-
-
-
-
-
-

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 25f4decb2921
+body_sha: 9ceb9e7a06c8
 ---
 
-Research
 
 # Devstral
 
@@ -19,15 +18,11 @@ May 21, 2025
 
 By Mistral AI
 
-Back to Blog
 
 3 min read
 
-Share this post
 
-Copy url to clipboard
 
-Copied
 
 Today we introduce Devstral, our agentic LLM for software engineering tasks. Devstral is built under a collaboration between Mistral AI and [All Hands AI](https://www.all-hands.dev/) 🙌, and outperforms all open-source models on SWE-Bench Verified by a large margin. We release Devstral under the Apache 2.0 license.
 

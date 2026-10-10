@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 002977701d70
+body_sha: a093a635b2fb
 ---
 
-OpenAI
 
 March 5, 2026
 
@@ -31,25 +30,7 @@ GPT‑5.4 Thinking is the latest reasoning model in the GPT‑5 series, and expl
 
 In this card we also refer to GPT‑5.4 Thinking as gpt-5.4-thinking. Note that there is not a model named GPT‑5.3 Thinking, so the main model to baseline against is GPT‑5.2 Thinking.
 
-- [2026](https://openai.com/research/index/?tags=2026)
-- [System Cards](https://openai.com/research/index/?tags=system-cards)
 
 ## Author
 
 OpenAI
-
-## Keep reading
-
-View all
-
-Introducing GPT-5.4
-
-ProductMar 5, 2026
-
-GPT-5.3 Instant System Card
-
-PublicationMar 3, 2026
-
-GPT-5.3 Instant: Smoother, more useful everyday conversations
-
-ProductMar 3, 2026

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9eda5cb25245
+body_sha: a6a9867a7c51
 ---
 
-OpenAI
 
 March 12, 2017
 
@@ -19,11 +18,9 @@ Publication
 
 # Prediction and control with temporal segment models
 
-Read paper
 
 
 
-Loading…
 
 ## Abstract
 
@@ -34,19 +31,3 @@ We introduce a method for learning the dynamics of complex nonlinear systems bas
 ## Authors
 
 Nikhil Mishra, Pieter Abbeel, Igor Mordatch
-
-## Related articles
-
-View all
-
-Hierarchical text-conditional image generation with CLIP latents
-
-PublicationApr 13, 2022
-
-DALL·E: Creating images from text
-
-MilestoneJan 5, 2021
-
-Image GPT
-
-PublicationJun 17, 2020

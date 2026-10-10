@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 24068821da4c
+body_sha: 612415f1ec9d
 ---
 
-Back to Articles
 
 # Exploring Quantization Backends in Diffusers
 
-Published
 					May 21, 2025
 
 Update on GitHub
 
-Upvote
 
 45
 
@@ -535,7 +532,6 @@ tolgacangoz
 
 Oct 25, 2025
 
-•
 
 This comment has been hidden (marked as Resolved)
 
@@ -549,7 +545,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdiffusers-quantization) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdiffusers-quantization) to comment
 
-Upvote
 
 45
 

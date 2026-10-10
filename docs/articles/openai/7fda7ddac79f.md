@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: ca06fa627a2b
+body_sha: 763768599a9c
 ---
 
-OpenAI
 
 2025年12月18日
 
@@ -32,17 +31,7 @@ GPT‑5.2‑Codex 是我们迄今最前沿的智能体编码模型，赋能复�
 
 GPT‑5.2‑Codex 在我们的“准备框架”下接受了评估。它在网络安全领域具备较强能力，但未达到该领域的高 (High) 能力级别。我们预计当前能力快速增长的趋势将持续，这些模型将在不久的将来达到网络安全领域的高能力阈值。与其他近期模型类似，它在生物学领域被视为具备高能力级别；并将按照我们在 GPT‑5 系列其他模型中使用的同等级安全防护措施进行部署。该模型在 AI 自我提升方面未达到高能力级别。
 
-- [2025 年](https://openai.com/research/index/?tags=2025)
-- [系统卡](https://openai.com/research/index/?tags=system-cards)
 
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

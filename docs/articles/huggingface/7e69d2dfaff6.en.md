@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 27e361a12c39
+body_sha: 749b8e0c93f3
 ---
 
-Back to Articles
 
 # Powerful ASR + diarization + speculative decoding with Hugging Face Inference Endpoints
 
-Published
 					May 1, 2024
 
 Update on GitHub
 
-Upvote
 
 83
 
@@ -347,7 +344,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fasr-diarization) or [log in](https://huggingface.co/login?next=%2Fblog%2Fasr-diarization) to comment
 
-Upvote
 
 83
 

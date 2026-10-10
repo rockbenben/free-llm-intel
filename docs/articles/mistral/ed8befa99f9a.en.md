@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e35ecc89f8ab
+body_sha: 2239e00f9577
 ---
 
 Product
@@ -19,15 +19,11 @@ May 27, 2025
 
 By Mistral AI
 
-Back to Blog
 
 5 min read
 
-Share this post
 
-Copy url to clipboard
 
-Copied
 
 ![Cover](https://mistral.ai/_astro/f2a4b295-ff64-4c16-a42a-14f858c65766_ZHm3tW.webp?dpl=6abbd11780b53c00082eea6f)
 

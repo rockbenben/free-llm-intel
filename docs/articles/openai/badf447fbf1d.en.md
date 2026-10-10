@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a234de4182cb
+body_sha: 1fdb78176f29
 ---
 
-OpenAI
 
 February 19, 2019
 
@@ -19,11 +18,9 @@ Publication
 
 # AI safety needs social scientists
 
-Read paper
 
 
 
-Loading…
 
 We’ve written a paper arguing that long-term AI safety research needs social scientists to ensure AI alignment algorithms succeed when actual humans are involved. Properly aligning advanced AI systems with human values requires resolving many uncertainties related to the psychology of human rationality, emotion, and biases. The aim of this paper is to spark further collaboration between machine learning and social science researchers, and we plan to [hire](https://jobs.lever.co/openai/dd3f7709-6651-4399-b2b4-4f27abcbd296) social scientists to work on this full time at OpenAI.
 
@@ -43,25 +40,7 @@ We believe close collaborations between social scientists and machine learning r
 
 [*Our paper*](https://distill.pub/2019/safety-needs-social-scientists) *is a call for social scientists in AI safety. We are in the process of starting this research at OpenAI, and are* [*hiring*](https://jobs.lever.co/openai/dd3f7709-6651-4399-b2b4-4f27abcbd296) *full time social science researchers to push these experiments forward. If you are interested in working in this area, please* [*apply*](https://jobs.lever.co/openai/dd3f7709-6651-4399-b2b4-4f27abcbd296)*!*
 
-- [Community & Collaboration](https://openai.com/research/index/?tags=community-collaboration)
-- [Ethics & Safety](https://openai.com/research/index/?tags=ethics-safety)
 
 ## Authors
 
 Geoffrey Irving, Amanda Askell
-
-## Related articles
-
-View all
-
-Disrupting malicious uses of AI by state-affiliated threat actors
-
-SecurityFeb 14, 2024
-
-Building an early warning system for LLM-aided biological threat creation
-
-PublicationJan 31, 2024
-
-Democratic inputs to AI grant program: lessons learned and implementation plans
-
-SafetyJan 16, 2024

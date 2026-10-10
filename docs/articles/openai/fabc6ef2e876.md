@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 22def1d56855
+body_sha: 61ab2e593f27
 translator: agent
 ---
 
-OpenAI
 
 May 22, 2026
 
@@ -95,11 +94,3 @@ Codex 正在重塑 Virgin Atlantic 交付软件的方式：从客户在登机口
 ## 加入新的工作时代
 
 全球超过 100 万家企业正在用 OpenAI 取得有意义的成果。
-
-
-
-
-
-
-
-

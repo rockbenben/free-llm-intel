@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1d868b4c91df
+body_sha: 59b479222052
 ---
 
 Product
@@ -19,15 +19,11 @@ April 27, 2026
 
 By Mistral AI
 
-Back to Blog
 
 6 min read
 
-Share this post
 
-Copy url to clipboard
 
-Copied
 
 Today, we're releasing Workflows in public preview. Workflows is the orchestration layer for enterprise AI. It brings the durability, observability, and fault tolerance required to move AI-powered processes from proof of concept to production reliably. Organizations like **ASML, ABANCA, CMA-CGM, France Travail, La Banque Postale, Moeve**, and many more are already running Workflows to automate critical processes.
 

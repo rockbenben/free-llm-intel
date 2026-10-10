@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: d5ed689e2bea
+body_sha: 6e13cf60f8b2
 ---
 
-OpenAI
 
 # Booking.com and OpenAI personalize travel at scale
 
@@ -100,10 +99,3 @@ Rob Francis，Booking.com 高级副总裁兼首席技术官
 ## 想深入了解面向企业的 ChatGPT？
 
 联系我们的团队
-
-
-
-
-
-
-

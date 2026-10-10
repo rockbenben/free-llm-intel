@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: f861dd74057c
+body_sha: a1ddbf285ae7
 ---
 
-OpenAI
 
 2024年4月1日
 

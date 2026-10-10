@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ba35b2dfc2ff
+body_sha: ae48ce58d2c7
 ---
 
-OpenAI
 
 June 5, 2019
 
@@ -23,7 +22,6 @@ We hosted the first OpenAI Robotics Symposium on April 27, 2019.
 
 Photo: Blake Tucker
 
-Loading…
 
 Robots that learn are an exciting path forward, yet there are differing approaches and opinions on how to make progress. The event brought together a diverse set of people from both robotics and machine learning communities as well as academics and industry leaders to create a platform to exchange ideas and address open questions in building complex robot systems.
 
@@ -37,7 +35,6 @@ We hosted ~80 external attendees at our office and ~200 people joined remotely v
 
 ## The talks
 
-Loading...
 
 ## Dexterity demo
 
@@ -53,25 +50,7 @@ If you would like to help us do research on robots that learn, please get in tou
 
 *Thanks to Loren Kwan, Diane Yoon, and Maddie Hall for co-organizing the event, to all the OpenAI staff volunteers, and to Blake Tucker for filming and photography.*
 
-- [Events](https://openai.com/news/?tags=events)
-- [2019](https://openai.com/news/?tags=2019)
 
 ## Author
 
 OpenAI
-
-## Related articles
-
-View all
-
-Procgen and MineRL Competitions
-
-CompanyJun 20, 2020
-
-OpenAI Five Finals
-
-CompanyMar 26, 2019
-
-Spinning Up in Deep RL: Workshop review
-
-CompanyFeb 26, 2019

@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: d5b56bf1d7bf
+body_sha: d86b2297e10c
 ---
 
-OpenAI
 
 June 20, 2020
 
@@ -21,13 +20,11 @@ Company
 
 We’re excited to announce that OpenAI is co-organizing two NeurIPS 2020 competitions with AIcrowd, Carnegie Mellon University, and DeepMind, using Procgen Benchmark and MineRL.
 
-Loading…
 
 We’re excited to announce that OpenAI is co-organizing two NeurIPS 2020 competitions with AIcrowd, Carnegie Mellon University, and DeepMind, using Procgen Benchmark and MineRL. We rely heavily on these environments internally for research on reinforcement learning, and we look forward to seeing the progress the community makes in these challenging competitions.
 
 ## Procgen Competition
 
-Loading...
 
 The [Procgen Competition](https://www.aicrowd.com/challenges/neurips-2020-procgen-competition) focuses on improving sample efficiency and generalization in reinforcement learning. Participants will attempt to maximize agents’ performance using a fixed number of environment interactions. Agents will be evaluated in each of the 16 environments already publicly released in [Procgen Benchmark](https://arxiv.org/abs/1912.01588), as well as in four secret test environments created specifically for this competition. By aggregating performance across so many diverse environments, we obtain high quality metrics to judge the underlying algorithms. More information about the details of each round can be found [here](https://www.aicrowd.com/challenges/neurips-2020-procgen-competition).
 
@@ -37,7 +34,6 @@ Since all content is procedurally generated, each Procgen environment intrinsica
 
 ## MineRL Competition
 
-Loading...
 
 Many of the recent, celebrated successes of artificial intelligence, such as AlphaStar, AlphaGo, and our own [OpenAI Five⁠](https://openai.com/projects/five/), utilize deep reinforcement learning to achieve human or super-human level performance in sequential decision-making tasks. These improvements to the state-of-the-art have thus far required an [exponentially increasing⁠](https://openai.com/index/ai-and-compute/) amount of compute and simulator samples, and therefore it is difficult[A](https://openai.com/index/procgen-minerl-competitions/#citation-bottom-A) to apply many of these systems directly to real-world problems where environment samples are expensive. One well-known way to reduce the environment sample complexity is to leverage human priors and demonstrations of the desired behavior.
 
@@ -49,8 +45,6 @@ To guarantee that competitors develop truly sample efficient algorithms, the Min
 
 - [Sign up for MineRL](https://www.aicrowd.com/challenges/neurips-2020-minerl-competition)
 
-- [Events](https://openai.com/news/?tags=events)
-- [2020](https://openai.com/news/?tags=2020)
 
 ## Footnotes
 
@@ -59,19 +53,3 @@ To guarantee that competitors develop truly sample efficient algorithms, the Min
 ## Author
 
 OpenAI
-
-## Related articles
-
-View all
-
-Global news partnerships: Le Monde and Prisa Media
-
-CompanyMar 13, 2024
-
-Review completed & Altman, Brockman to continue to lead OpenAI
-
-CompanyMar 8, 2024
-
-OpenAI announces new members to board of directors
-
-CompanyMar 8, 2024

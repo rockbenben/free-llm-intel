@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1b24a25c91f1
+body_sha: cdcdbba8addb
 ---
 
-Back to Articles
 
 # Asynchronous Robot Inference: Decoupling Action Prediction and Execution
 
-Published
 					July 10, 2025
 
 Update on GitHub
 
-Upvote
 
 56
 
@@ -286,7 +283,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fasync-robot-inference) or [log in](https://huggingface.co/login?next=%2Fblog%2Fasync-robot-inference) to comment
 
-Upvote
 
 56
 

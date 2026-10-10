@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9a4cb2edd81e
+body_sha: 7208d1658e81
 ---
 
-OpenAI
 
 May 23, 2025
 
@@ -33,8 +32,6 @@ o3 Operator uses the same multi-layered approach to safety that we used for the 
 
 Although o3 Operator inherits o3’s coding capabilities, it does not have native access to a coding environment or Terminal.
 
-- [System Cards](https://openai.com/news/?tags=system-cards)
-- [2025](https://openai.com/news/?tags=2025)
 
 ## Author
 

@@ -643,14 +643,12 @@
 <p>\begin{aligned} \max_{\theta} J(\theta) = &amp; \text{Throughput}(\mathcal{A}) \times \text{Sample Efficiency}(\mathcal{A}) \\ \text{s.t.} \quad &amp; \forall \mathcal{A} \in \Omega_{\text{agent}} \quad (\text{Arbitrary Agent}) \\ &amp; \mathbb{E}[\text{Update Variance}] &lt; \delta \quad (\text{Stability}) \\ &amp; \mathbb{E}[\|J^{(T)} - J^*\|] &lt; \epsilon \quad (\text{Convergence}) \end{aligned}</p>
 <p>θ</p>
 <p>max</p>
-<p>​</p>
 <p>J</p>
 <p>(</p>
 <p>θ</p>
 <p>)</p>
 <p>=</p>
 <p>s.t.</p>
-<p>​</p>
 <p>Throughput</p>
 <p>(</p>
 <p>A</p>
@@ -665,7 +663,6 @@
 <p>∈</p>
 <p>Ω</p>
 <p>agent</p>
-<p>​</p>
 <p>(</p>
 <p>Arbitrary Agent</p>
 <p>)</p>
@@ -695,7 +692,6 @@
 <p>(</p>
 <p>Convergence</p>
 <p>)</p>
-<p>​</p>
 <p>其中 <strong>系统吞吐(Throughput)</strong> 是每秒处理的原始 token 数,瓶颈来自 rollout、training、data processing、I/O 四部分。<strong>样本效率(Sample Efficiency)</strong> 是单个样本带来的平均收益,取决于数据分布、数据质量、算法效率与 off-policy 程度。约束项分别对应稳定性与收敛性的代理指标。最大化 J 面前横着三类结构性挑战,以下逐一展开。</p>
 <h3>1.1 Agent 扩展性与框架灵活性</h3>
 <p>现行 RL 范式给 Agent 复杂度盖了一层玻璃天花板,根源有两个:</p>
@@ -790,7 +786,6 @@
 <p>θ</p>
 <p>old</p>
 <p>(</p>
-<p>⋅</p>
 <p>∣</p>
 <p>q</p>
 <p>)</p>
@@ -857,7 +852,6 @@
 <p>\mathcal{J}_{\text{CISPO}}(\theta) = \mathbb{E}_{(q,a)\sim\mathcal{D}, \{o_i\}_{i=1}^G \sim \pi_{\theta_{\text{old}}}(\cdot|q)} \left[ \frac{1}{\sum_{i=1}^G |o_i|} \sum_{i=1}^G \sum_{t=1}^{|o_i|} \mathbf{sg}(\hat{r}_{i,t}(\theta)) \hat{A}_{i,t} \log \pi_\theta(o_{i,t} \mid q, o_{i,&lt;t}) \right]</p>
 <p>J</p>
 <p>CISPO</p>
-<p>​</p>
 <p>(</p>
 <p>θ</p>
 <p>)</p>
@@ -874,45 +868,34 @@
 <p>{</p>
 <p>o</p>
 <p>i</p>
-<p>​</p>
 <p>}</p>
 <p>i</p>
 <p>=</p>
 <p>1</p>
 <p>G</p>
-<p>​</p>
 <p>∼</p>
 <p>π</p>
 <p>θ</p>
 <p>old</p>
-<p>​</p>
-<p>​</p>
 <p>(</p>
-<p>⋅</p>
 <p>∣</p>
 <p>q</p>
 <p>)</p>
-<p>​</p>
-<p>​</p>
 <p>∑</p>
 <p>i</p>
 <p>=</p>
 <p>1</p>
 <p>G</p>
-<p>​</p>
 <p>∣</p>
 <p>o</p>
 <p>i</p>
-<p>​</p>
 <p>∣</p>
 <p>1</p>
-<p>​</p>
 <p>i</p>
 <p>=</p>
 <p>1</p>
 <p>∑</p>
 <p>G</p>
-<p>​</p>
 <p>t</p>
 <p>=</p>
 <p>1</p>
@@ -920,9 +903,7 @@
 <p>∣</p>
 <p>o</p>
 <p>i</p>
-<p>​</p>
 <p>∣</p>
-<p>​</p>
 <p>sg</p>
 <p>(</p>
 <p>r</p>
@@ -930,7 +911,6 @@
 <p>i</p>
 <p>,</p>
 <p>t</p>
-<p>​</p>
 <p>(</p>
 <p>θ</p>
 <p>))</p>
@@ -939,18 +919,15 @@
 <p>i</p>
 <p>,</p>
 <p>t</p>
-<p>​</p>
 <p>lo</p>
 <p>g</p>
 <p>π</p>
 <p>θ</p>
-<p>​</p>
 <p>(</p>
 <p>o</p>
 <p>i</p>
 <p>,</p>
 <p>t</p>
-<p>​</p>
 <p>∣</p>
 <p>q</p>
 <p>,</p>
@@ -959,9 +936,7 @@
 <p>,</p>
 <p>&lt;</p>
 <p>t</p>
-<p>​</p>
 <p>)</p>
-<p>​</p>
 <p>其中:</p>
 <p>r</p>
 <p>^</p>
@@ -1023,7 +998,6 @@
 <p>i</p>
 <p>,</p>
 <p>t</p>
-<p>​</p>
 <p>(</p>
 <p>θ</p>
 <p>)</p>
@@ -1031,8 +1005,6 @@
 <p>i</p>
 <p>,</p>
 <p>t</p>
-<p>​</p>
-<p>​</p>
 <p>=</p>
 <p>clip</p>
 <p>(</p>
@@ -1040,7 +1012,6 @@
 <p>i</p>
 <p>,</p>
 <p>t</p>
-<p>​</p>
 <p>(</p>
 <p>θ</p>
 <p>)</p>
@@ -1055,7 +1026,6 @@
 <p>h</p>
 <p>I</p>
 <p>S</p>
-<p>​</p>
 <p>)</p>
 <p>=</p>
 <p>p</p>
@@ -1063,23 +1033,18 @@
 <p>t</p>
 <p>∑</p>
 <p>T</p>
-<p>​</p>
 <p>(</p>
 <p>r</p>
 <p>p</p>
 <p>speed</p>
-<p>​</p>
 <p>+</p>
 <p>r</p>
 <p>p</p>
 <p>perf</p>
-<p>​</p>
 <p>)</p>
 <p>−</p>
 <p>B</p>
 <p>i</p>
-<p>​</p>
-<p>​</p>
 <h3>4.2 稠密且感知效率的奖励</h3>
 <p>为应对超长上下文(最长 200k)下的 Credit 分配难题、同时保住训练稳定性,我们设计了复合奖励框架:</p>
 <p><strong>Process Reward(过程奖励)。</strong>为提供稠密反馈,我们针对中间行为给奖励 —— 例如惩罚语言混用或特定工具调用错误 —— 而不是只看最终结果。</p>

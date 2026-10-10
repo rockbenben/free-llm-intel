@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f5205f79b1df
+body_sha: 1518f9a5e5a3
 ---
 
-OpenAI
 
 April 27, 2026
 
@@ -19,7 +18,6 @@ April 27, 2026
 
 Using OpenAI APIs, Choco processes millions of orders, reducing manual work and enabling always-on operations across global food supply chains.
 
-Contact sales
 
 Company size:
 
@@ -61,7 +59,6 @@ Results
 
 Sales team productivity without added headcount
 
-Loading…
 
 ## Rebuilding food distribution for the AI era
 
@@ -124,19 +121,3 @@ Looking ahead, Choco plans to further scale its use of OpenAI APIs to power more
 ## Join the new era of work
 
 More than 1 million businesses around the world are achieving meaningful results with OpenAI.
-
-Contact sales
-
-## Keep reading
-
-A practical guide to building with GPT-6
-
-ProductOct 2, 2026
-
-Chatham scales its capital markets expertise with OpenAI
-
-Oct 2, 2026
-
-The eternal complement
-
-Intelligence AgeOct 1, 2026

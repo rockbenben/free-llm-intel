@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: ed1bdd5e465f
+body_sha: 2362771fb57d
 ---
 
-Back to Articles
 
 # Getting Started With Embeddings
 
-Published
 					June 23, 2022
 
 Update on GitHub
 
-Upvote
 
 120
 
@@ -296,7 +293,6 @@ SAAHMATHWORKS
 
 Jun 19, 2025
 
-•
 
 edited Jun 19, 2025
 
@@ -352,7 +348,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fgetting-started-with-embeddings) or [log in](https://huggingface.co/login?next=%2Fblog%2Fgetting-started-with-embeddings) to comment
 
-Upvote
 
 120
 

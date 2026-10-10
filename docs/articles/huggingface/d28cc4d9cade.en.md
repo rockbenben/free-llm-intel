@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: e8fb73072f87
+body_sha: 72ac0660cdf4
 ---
 
-Back to Articles
 
 # Exploring the Daily Papers Page on Hugging Face
 
-Published
 					September 23, 2024
 
 Update on GitHub
 
-Upvote
 
 67
 
@@ -167,7 +164,6 @@ Maybe I'm missing something, but has the "Submit a paper" button disappeared?
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/63a369d98c0c89dcae3b8329/AiH2zjy1cnt9OADAAZMLD.jpeg)](https://huggingface.co/AdinaY)
 
-·
 
 AdinaY
 
@@ -175,7 +171,6 @@ Article author
 
 Mar 20, 2025
 
-•
 
 edited Mar 20, 2025
 
@@ -192,7 +187,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdaily-papers) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdaily-papers) to comment
 
-Upvote
 
 67
 

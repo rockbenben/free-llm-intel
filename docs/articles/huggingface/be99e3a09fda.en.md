@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2d34d34551b7
+body_sha: 2ba02e07e87f
 ---
 
-Back to Articles
 
 # **Deploy Hugging Face models easily with Amazon SageMaker 🏎**
 
-Published
 					July 8, 2021
 
 Update on GitHub
 
-Upvote
 
 2
 
@@ -346,7 +343,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fdeploy-hugging-face-models-easily-with-amazon-sagemaker) or [log in](https://huggingface.co/login?next=%2Fblog%2Fdeploy-hugging-face-models-easily-with-amazon-sagemaker) to comment
 
-Upvote
 
 2
 

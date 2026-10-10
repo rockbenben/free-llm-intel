@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: d39ed1d06cd2
+body_sha: ab4fe43ec516
 ---
 
-OpenAI
 
 2026年3月25日
 
@@ -57,8 +56,6 @@ OpenAI
 
 有意参与的研究人员可以通过[安全性风险赏金计划 (Safety Bug Bounty)](https://bugcrowd.com/engagements/openai-safety) 进行申请。我们期待与广大研究人员、白帽黑客，以及安全防护社区携手合作，共同打造一个安全的 AI 生态系统。
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [网络安全](https://openai.com/news/?tags=cybersecurity)
 
 ## 作者
 

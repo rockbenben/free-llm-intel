@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 7cbfdf5fe5e3
+body_sha: 634c1ecd2c83
 ---
 
-OpenAI
 
 2026年9月8日
 
@@ -102,7 +101,6 @@ Axultan Alimkulov，
 
 Higgsfield AI
 
-⁠
 
 
 产品负责人
@@ -134,8 +132,6 @@ Jamie Umpherson，Runway 首席创意官
 
 GPT‑Image‑2.5 Sunburst 和 GPT‑Image‑2.5 Flare 已在 API 中提供，[定价详情请见此处。⁠](https://openai.com/business/pricing/#api)
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
 
 ## 作者
 

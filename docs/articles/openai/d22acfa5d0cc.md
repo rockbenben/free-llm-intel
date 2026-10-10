@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: c5e1aa0159ba
+body_sha: fc341db2d94d
 ---
 
-OpenAI
 
 2026年9月17日
 
@@ -21,21 +20,13 @@ OpenAI
 Cooley 的 GO Public 产品使用“ChatGPT 工作”，更早发现问题、聚焦专业知识，并帮助客户更快上市。
 
 
-公司规模:
 
-大型企业
 
-区域:
 
-北美
 
-行业:
 
-服务
 
-产品:
 
-ChatGPT
 
 
 Cooley 是一家国际律师事务所，以帮助企业应对资本市场和首次公开募股（IPO）事务而闻名。2025 年，该事务所在全球为 180 笔交易提供了咨询服务，交易总额超过 515 亿美元。十年来，Cooley 一直位居美国发行人侧 IPO 市场前列；在过去 20 多年中，其服务的风投支持企业 IPO 数量也超过了其他任何律师事务所。

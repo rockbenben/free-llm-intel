@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9bfb7b6cf8d1
+body_sha: 5045b4d08edc
 ---
 
-OpenAI
 
 May 5, 2025
 
@@ -19,7 +18,6 @@ Company
 
 # Evolving OpenAI’s structure
 
-Loading…
 
 *The OpenAI Board has an updated plan for evolving OpenAI’s structure.*
 

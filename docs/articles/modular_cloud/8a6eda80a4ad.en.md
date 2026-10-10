@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 566db620d49e
+body_sha: d2b2844b715e
 ---
 
 September 5, 2025
@@ -27,7 +27,6 @@ Series
 
 > 🛠️ Code to all kernels mentioned in this series is available on GitHub.
 
-‍
 
 In this post we are going to continue our journey and improve our performance by more than 50x our initial kernel benchmark. Along the way we are going to explain more GPU programming concepts and leverage novel Blackwell features. Note that this is not the end of the blog series, and we will continue to improve upon the methods presented here in subsequent blog posts.
 
@@ -60,7 +59,6 @@ Memory access by thread for the 4-line matmul
 
 Considering just four threads, note that each thread loads one complete row and one complete column to calculate a single output value. If we count the number of memory loads for all fours threads, the load for each row and column is repeated twice. These observations point us towards the first improvements that we can make: reducing slow global memory access.
 
-‍
 
 ## Shared memory
 
@@ -704,7 +702,6 @@ Consider the 128B swizzle where `bits=3`, `base=4`, and `shift=3`. The mathemati
 
 Swizzling pattern for kernel 3
 
-‍
 
 Read all 4 parts of the "Matrix Multiplication on Blackwell" Series:
 
@@ -721,7 +718,6 @@ Read all 4 parts of the "Matrix Multiplication on Blackwell" Series:
 
 Request a demo
 
-‍
 
 Discover what Modular can do for you
 

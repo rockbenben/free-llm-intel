@@ -9231,6 +9231,82 @@ class TestPageFurnitureStrip(unittest.TestCase):
             self.assertEqual(body.strip(), "## 缓存说明")
             self.assertNotIn(zhw, fm["body_sha"] + body)
 
+    # --- 站件：品牌字标 / 分隔符行 / 标签筛选链接块 ----------------------------
+
+    def test_brand_wordmark_before_first_heading_gone(self):
+        body = "\n".join(["OpenAI", "", "2026年8月26日", "", "# 事件与未来之路", "", "正文。"])
+        out = ft.strip_page_furniture(body, "https://openai.com/index/x")
+        self.assertNotIn("OpenAI", out, "标题之前的字标该删")
+        self.assertIn("# 事件与未来之路", out)
+        self.assertIn("2026年8月26日", out, "日期行是正文元信息，不在这一档删")
+
+    def test_brand_word_after_heading_is_content(self):
+        # 诱饵：同一个词出现在标题之后就是正文（实测这类还有 741 处），不许动
+        body = "\n".join(["# 对比", "", "OpenAI", "与 Anthropic 的差别。"])
+        out = ft.strip_page_furniture(body, "https://openai.com/index/x")
+        self.assertIn("OpenAI", out, "标题之后的品牌词是正文，不许删")
+
+    def test_brand_wordmark_needs_a_host(self):
+        # 诱饵：没有 page_url 就没有「本页品牌词」这条依据，一律不删
+        body = "OpenAI\n\n# 标题\n\n正文。"
+        self.assertEqual(ft.strip_page_furniture(body), body)
+
+    def test_separator_only_lines_dropped_but_table_structure_kept(self):
+        body = "\n".join([
+            "# 标题",
+            "",
+            "•",
+            "·",
+            "/",
+            "",
+            "| 模型 | VQA |",
+            "| --- | --- |",
+            "| a | 1 |",
+        ])
+        out = ft.strip_page_furniture(body, "https://x.test/p")
+        self.assertNotIn("\n•\n", out, "纯分隔符行该删")
+        self.assertIn("| --- | --- |", out, "表格分隔行不是站件，一个字符都不许动")
+        self.assertIn("| 模型 | VQA |", out)
+
+    def test_tag_filter_link_block_removed(self):
+        body = "\n".join([
+            "# 公告",
+            "",
+            "这是一段真正文，说明本次发布的范围与限制。",
+            "",
+            "- [2026 年](https://openai.com/news/?tags=2026)",
+            "- [Research](https://openai.com/news/?tags=research)",
+            "- [Company](https://openai.com/news/?tags=company)",
+        ])
+        out = ft.strip_page_furniture(body, "https://openai.com/news/x")
+        self.assertIn("这是一段真正文", out)
+        self.assertNotIn("tags=2026", out, "连续的标签筛选链接块该删")
+        self.assertNotIn("tags=company", out)
+
+    def test_single_tag_link_in_prose_survives(self):
+        # 诱饵：**单独一行**、形状完全符合标签链接（整行就是 `- [x](…?tags=y)`）——
+        # 只有这种夹具才能证人「≥2 行才算块」那道阈值；行尾再带别的文字就不匹配了，
+        # 上一版就是这么写导致阈值变异照样绿
+        line = "- [全部 2026 年的文章](https://openai.com/news/?tags=2026)"
+        body = "\n".join(["# 标题", "", "正文里就列了这一条筛选链接，别的一概没有。", "", line,
+                          "", "收尾段落。"])
+        out = ft.strip_page_furniture(body, "https://openai.com/news/x")
+        self.assertIn(line, out, "孤零零一条不构成筛选块，不许删")
+
+    def test_new_cta_labels_gone_but_sentences_survive(self):
+        body = "\n".join([
+            "# 标题",
+            "",
+            "了解更多",
+            "我们建议了解更多细节后再决定接入方式。",
+            "",
+            "Upvote",
+        ])
+        out = ft.strip_page_furniture(body, "https://x.test/p")
+        self.assertNotIn("了解更多\n", out + "\n", "整行 CTA 该删")
+        self.assertIn("我们建议了解更多细节后再决定接入方式。", out, "句子里出现同一个词不许删")
+        self.assertNotIn("Upvote", out)
+
 
 if __name__ == "__main__":
     unittest.main()

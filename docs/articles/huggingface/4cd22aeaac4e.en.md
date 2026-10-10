@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 6c18840efa30
+body_sha: 729826b321dd
 ---
 
-Back to Articles
 
 # Sentence Transformers is joining Hugging Face!
 
-Published
 					October 22, 2025
 
 Update on GitHub
 
-Upvote
 
 90
 
@@ -130,7 +127,6 @@ Congrats [@tomaarsen](https://huggingface.co/tomaarsen)  !
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png)](https://huggingface.co/tomaarsen)
 
-·
 
 tomaarsen
 
@@ -144,7 +140,6 @@ deleted
 
 Nov 4, 2025
 
-•
 
 This comment has been hidden
 
@@ -158,7 +153,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsentence-transformers-joins-hf) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsentence-transformers-joins-hf) to comment
 
-Upvote
 
 90
 

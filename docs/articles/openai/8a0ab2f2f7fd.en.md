@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 1c2e5dd2bf30
+body_sha: e9eac7896518
 ---
 
-OpenAI
 
 June 5, 2025
 
@@ -21,7 +20,6 @@ Global Affairs
 
 Our latest report featuring case studies of how we’re detecting and preventing malicious uses of AI.
 
-Loading…
 
 Our mission is to ensure that artificial general intelligence benefits all of humanity. We advance this mission by deploying our innovations to build AI tools that help people solve really hard problems.
 
@@ -31,25 +29,7 @@ It also includes *using *AI to develop groundbreaking new tools for those who de
 
 - [Read the full report](https://cdn.openai.com/threat-intelligence-reports/5f73af09-a3a3-4a55-992e-069237681620/disrupting-malicious-uses-of-ai-june-2025.pdf)
 
-- [2025](https://openai.com/news/?tags=2025)
-- [Policies and Procedures](https://openai.com/news/?tags=policies-procedures)
 
 ## Author
 
 OpenAI
-
-## Keep reading
-
-View all
-
-Helping small businesses put AI to work
-
-Global AffairsSep 30, 2026
-
-OpenAI extends cyber access to Ukraine for civilian defense
-
-Global AffairsSep 23, 2026
-
-Sam Altman’s remarks at the United Nations Security Council
-
-Global AffairsSep 23, 2026

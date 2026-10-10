@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 427e63bcdd0f
 ---
 
 # 介绍 Voice Agent Builder
@@ -25,11 +26,8 @@ Explore Voice Agents
 
 多数语音技术栈是把三个 API 缝合起来的——speech-to-text、语言模型、text-to-speech——而且每一段常常由不同供应商托管。每一次跳转都增加成本、延迟和新的故障模式。Voice Agent Builder 是一个统一界面，背后是为 Grok Voice 专门构建的 speech-to-speech 通路——与模型紧耦合，而不是三段拼装。
 
-0:00
 
-/
 
-0:00
 
 ## [用我们能找到的最难的通话来训练](https://x.ai/news/grok-voice-agent-builder#trained-on-the-hardest-calls-we-could-find)
 

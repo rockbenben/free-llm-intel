@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: c1510e4e2b52
+body_sha: f8729dd6336c
 ---
 
-Back to Articles
 
 # Apriel-H1: The Surprising Key to Distilling Efficient Reasoning Models
 
@@ -19,10 +18,8 @@ Enterprise
 
 Article
 
-Published
 					November 19, 2025
 
-Upvote
 
 35
 
@@ -262,7 +259,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2FServiceNow-AI%2Fapriel-h1) or [log in](https://huggingface.co/login?next=%2Fblog%2FServiceNow-AI%2Fapriel-h1) to comment
 
-Upvote
 
 35
 

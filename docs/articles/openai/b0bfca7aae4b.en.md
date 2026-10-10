@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 054fd6df0eb0
+body_sha: 024cde4a86fe
 ---
 
-OpenAI
 
 December 9, 2025
 
@@ -19,7 +18,6 @@ Global Affairs
 
 # Bringing powerful AI to millions across Europe with Deutsche Telekom
 
-Loading…
 
 Today, we’re announcing a new collaboration with Deutsche Telekom to bring advanced AI capabilities to millions of people across Europe and to support their teams with the most capable tools from OpenAI.
 
@@ -39,25 +37,7 @@ Deutsche Telekom will also use AI more deeply in network operations and employee
 
 Deutsche Telekom further extends OpenAI’s work with the world’s largest and most established enterprises, including [Accenture](https://openai.com/index/accenture-partnership/), [Walmart](https://corporate.walmart.com/news/2025/10/14/walmart-partners-with-openai-to-create-ai-first-shopping-experiences), [Salesforce](https://www.salesforce.com/news/press-releases/2025/10/14/openai-partnership-expansion-announcement/), [PayPal](https://newsroom.paypal-corp.com/2025-10-28-OpenAI-and-PayPal-Team-Up-to-Power-Instant-Checkout-and-Agentic-Commerce-in-ChatGPT), [Intuit](https://openai.com/index/intuit-partnership/), [Target](https://openai.com/index/target-partnership/), [Thermo Fisher](https://corporate.thermofisher.com/us/en/index/newsroom/Our-stories/Thermo-fisher-scientific-open-ai-collaboration.html), [BNY](https://www.wsj.com/articles/bny-americas-oldest-bank-signs-multiyear-deal-with-openai-74987d1d?gaa_at=eafs&gaa_n=AWEtsqfSmObbQFCZOy4JBHnm1deYz6_WcJa0ETCyryA8EMyIAT7C9Nc1ZUZGLm2Oejw%3D&gaa_ts=69209805&gaa_sig=xrOe0zyM-gm4Sh4iPKjx6PFtsWjVmHwHOqdO2nCiVeINJqnTWfAUeX5z8MJYum0EeWnrHHwU0CBiVmHp_p_Y6g%3D%3D), [Morgan Stanley](https://openai.com/index/morgan-stanley/), BBVA, and many more. More than 1 million business customers around the world are directly using OpenAI—the fastest-growing business platform in history.
 
-- [2025](https://openai.com/news/?tags=2025)
-- [Partnerships](https://openai.com/news/?tags=partnerships)
 
 ## Author
 
 OpenAI
-
-## Keep reading
-
-View all
-
-Helping small businesses put AI to work
-
-Global AffairsSep 30, 2026
-
-OpenAI extends cyber access to Ukraine for civilian defense
-
-Global AffairsSep 23, 2026
-
-Sam Altman’s remarks at the United Nations Security Council
-
-Global AffairsSep 23, 2026

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 237b8ed0f787
+body_sha: e2ddbfb652b2
 ---
 
 Company
@@ -19,15 +19,11 @@ March 16, 2026
 
 By Mistral AI
 
-Back to Blog
 
 3 min read
 
-Share this post
 
-Copy url to clipboard
 
-Copied
 
 ![Nvidia Mistral Logos Dark](https://mistral.ai/_astro/41e7df62-110d-4925-8315-b77a4c10e179_1nEsXz.webp?dpl=6abbd11780b53c00082eea6f)At Mistral AI, we believe the future of artificial intelligence is open, collaborative, and built for everyone. Today, we’re proud to announce our participation as a founding member in the [NVIDIA Nemotron Coalition](https://nvidianews.nvidia.com/news/nvidia-launches-nemotron-coalition-of-leading-global-ai-labs-to-advance-open-frontier-models), a groundbreaking global initiative uniting leading AI labs to advance open, frontier-level foundation models. As part of this strategic partnership, Mistral AI and NVIDIA plan to co-develop frontier open-source AI models, combining Mistral AI’s specialized model architecture and full-stack AI platform with NVIDIA’s compute resources, model-development tools, and synthetic-data generation pipelines. As a founding member of the NVIDIA Nemotron Coalition, Mistral AI will contribute its proprietary training techniques, multimodal capabilities, and enterprise-grade fine-tuning tools—while leveraging NVIDIA’s compute, tools & technologies to scale training and optimization. This builds off prior scientific collaborations together with NVIDIA, including the development of the [Mistral Nemo](https://mistral.ai/news/mistral-nemo) model.
 

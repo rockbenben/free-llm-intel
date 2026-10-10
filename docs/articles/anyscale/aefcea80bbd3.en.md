@@ -8,12 +8,10 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 54d80ab92cf5
+body_sha: 0267afda1257
 ---
 
-Home
 
-Blog
 
 Blog Detail
 
@@ -157,15 +155,12 @@ Upgrade to 2.56 to pick up these stability and performance gains. As always, we'
 
 #### Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all
 
-Read more
 
 #### Scaling Ray for AI workloads to 10k node clusters
 
-Read more
 
 #### Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM
 
-Read more
 
 ## Explore Anyscale today
 

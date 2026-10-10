@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: c7015bd83d20
+body_sha: c2ad884e6685
 ---
 
-OpenAI
 
 2024年10月1日
 
@@ -65,9 +64,6 @@ AI 的运用使该行动能够同时管理大量社交媒体账户：我们在 X
 
 我们使用“突破量表”评估信息行动的影响。该量表从 1 级（最低）到 6 级（最高）。我们认为此行动处于第 2 级的高端，并有突破至第 3 级的风险：其特点是在多个平台发布内容，而且有证据显示真实用户与其内容产生了互动。不过，在我们禁止该行动使用我们的模型并与业内同行共享信息后，被我们识别出的相关社交媒体账户沉寂了数周。因此，该行动既凸显了 AI 能够增强行动方的能力，也表明依赖 AI 模型会使其更容易受到干扰。
 
-- [美国](https://openai.com/news/?tags=actor-origin-united-states)
-- [全球](https://openai.com/news/?tags=target-geography-global-internet-users)
-- [影响行动](https://openai.com/news/?tags=activity-type-influence-operations)
 
 ## 作者
 

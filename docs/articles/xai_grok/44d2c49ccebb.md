@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 8575a13aad69
 ---
 
 # 介绍 Grok Business 与 Grok Enterprise
@@ -25,17 +26,11 @@ status: translated
 
 对最终用户而言，Grok Business 让安全的 AI 工作毫不费力。你可以从 Google Drive 等公司工具中拉取数据，并安全地与队友分享洞见。链接只有你分享的人才能访问。
 
-0:00
 
-/
 
-0:00
 
-0:00
 
-/
 
-0:00
 
 与队友安全分享对话。链接只有你指定的人可以访问。
 
@@ -48,17 +43,11 @@ Grok 能通过 **Apps** 直接访问你的公司知识与工具。从 Google Dri
 
 Grok 还能通过 **Projects** 使用我们行业领先的 [Collections API](https://x.ai/news/grok-collections-api) 执行智能体式搜索。当 Grok 需要把大型文档库作为主要信息源时，这一点非常有用，例如用 data room 分析法律文件或构建财务模型。
 
-0:00
 
-/
 
-0:00
 
-0:00
 
-/
 
-0:00
 
 把你的公司工具接入 Grok 来完成智能体任务，首先从检索你的 Google Drive 文档开始
 
@@ -66,23 +55,14 @@ Grok 还能通过 **Projects** 使用我们行业领先的 [Collections API](htt
 
 直接在 xAI console 中管理你的 Grok Business 团队，轻松完成管理。邀请用户、管理访问控制、监控用量——全在一个地方。
 
-0:00
 
-/
 
-0:00
 
-0:00
 
-/
 
-0:00
 
-0:00
 
-/
 
-0:00
 
 实时监控团队用量，验证平台成效。
 

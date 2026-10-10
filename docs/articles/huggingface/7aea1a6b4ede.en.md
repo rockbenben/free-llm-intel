@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: f56dc841398e
+body_sha: 7230a35c03f4
 ---
 
-Back to Articles
 
 # The NLP Course is becoming the LLM Course!
 
-Published
 					April 3, 2025
 
 Update on GitHub
 
-Upvote
 
 109
 
@@ -160,7 +157,6 @@ What about a certificate of completion ?
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg)](https://huggingface.co/sergiopaniego)
 - [![](https://huggingface.co/avatars/218cb51e01d78ab6435942d59939e316.svg)](https://huggingface.co/xg220)
 
-·
 
 sergiopaniego
 
@@ -186,7 +182,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fllm-course) or [log in](https://huggingface.co/login?next=%2Fblog%2Fllm-course) to comment
 
-Upvote
 
 109
 

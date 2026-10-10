@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: f8729a82a867
+body_sha: 608928d62f41
 ---
 
-OpenAI
 
 2025年7月22日
 
@@ -37,17 +36,7 @@ OpenAI
 
 Stargate 是一个雄心勃勃的项目，旨在把握我们面前的历史性机遇。这一机遇正通过全球合作伙伴、政府和投资者的强力支持逐步实现——其中包括白宫的重要领导作用，白宫已认识到人工智能基础设施在推动创新、经济增长和国家竞争力方面将发挥的关键作用。
 
-- [2025 年](https://openai.com/news/?tags=2025)
-- [合作关系](https://openai.com/news/?tags=partnerships)
 
 ## 作者
 
 OpenAI
-
-
-
-
-
-
-
-

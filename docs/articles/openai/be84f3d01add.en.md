@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 2fd4ad61141b
+body_sha: 00146e7cd1f0
 ---
 
-OpenAI
 
 November 2, 2017
 
@@ -19,11 +18,9 @@ Publication
 
 # Interpretable and pedagogical examples
 
-Read paper
 
 
 
-Loading…
 
 ## Abstract
 
@@ -34,19 +31,3 @@ Teachers intentionally pick the most informative examples to show their students
 ## Authors
 
 Smitha Milli, Pieter Abbeel, Igor Mordatch
-
-## Related articles
-
-View all
-
-Building agricultural database for farmers
-
-Jan 12, 2024
-
-Creating websites in minutes with AI Website Builder
-
-May 29, 2025
-
-Delivering LLM-powered health solutions
-
-Jan 4, 2024

@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: fb5c1bfcc202
+body_sha: bc8a0be03ee9
 ---
 
-Back to Articles
 
 # Accelerating SD Turbo and SDXL Turbo Inference with ONNX Runtime and Olive
 
-Published
 					January 15, 2024
 
 Update on GitHub
 
-Upvote
 
 7
 
@@ -217,7 +214,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsdxl_ort_inference) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsdxl_ort_inference) to comment
 
-Upvote
 
 7
 

@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 628d1acecb99
+body_sha: f19c5a8b7e2e
 ---
 
-Back to Articles
 
 # Hugging Face and VirusTotal collaborate to strengthen AI security
 
-Published
 					October 22, 2025
 
 Update on GitHub
 
-Upvote
 
 56
 
@@ -92,7 +89,6 @@ rollercoasterX
 
 Oct 23, 2025
 
-•
 
 This comment has been hidden (marked as Resolved)
 
@@ -100,7 +96,6 @@ deleted
 
 Nov 4, 2025
 
-•
 
 This comment has been hidden
 
@@ -126,7 +121,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fvirustotal) or [log in](https://huggingface.co/login?next=%2Fblog%2Fvirustotal) to comment
 
-Upvote
 
 56
 

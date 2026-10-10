@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: caa56c82754b
+body_sha: fd33654e6c92
 ---
 
-OpenAI
 
 2026年2月27日
 
@@ -52,20 +51,9 @@ OpenAI
 - [在模型规范中更新青少年保护措施](https://openai.com/index/updating-model-spec-with-teen-protections/)
 - [我们的年龄预测方法](https://openai.com/index/our-approach-to-age-prediction/)
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
-- [用户安全与控制](https://openai.com/news/?tags=user-safety)
 
 ## 作者
 
 OpenAI
 
 **按照标准程序，我们预计这些案件将并入现有的合并审理程序；届时，法院将指定原告方的首席律师。*
-
-
-
-
-
-
-
-

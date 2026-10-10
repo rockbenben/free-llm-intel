@@ -8,26 +8,21 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 61e0044f8e72
+body_sha: 5cdc7bd3afb0
 ---
 
-OpenAI
 
 2025年11月12日
 
-产品
 
-发布
 
 # GPT‑5.1 全新上线：更智能、更具对话感的 ChatGPT
 
 我们正在升级 GPT‑5，同时让 ChatGPT 的自定义功能更易使用。从今天起开始陆续推出，首先面向付费用户开放。
 
-试用 ChatGPT
 
 
 
-正在加载…
 
 今天，我们正式升级 GPT‑5 系列，推出以下版本：
 
@@ -351,25 +346,7 @@ GPT‑5.1 更强大，也更实用，我们鼓励你亲自体验，感受不同�
 
 今天推出的 GPT‑5.1 更新和全新的自定义选项，迈出了让 ChatGPT 更贴合你需求的重要一步。它更聪明、更好聊，也更能适应你的偏好。我们将在这些方向持续优化，精彩还在后头。
 
-- [2025 年](https://openai.com/news/?tags=2025)
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
 
 ## 作者
 
 OpenAI
-
-## 继续阅读
-
-查看全部
-
-GPT-6 开发实用指南
-
-产品2026年10月2日
-
-DevDay 2026 回顾
-
-公司2026年9月29日
-
-推出 GPT-6.1 Sol
-
-产品2026年9月29日

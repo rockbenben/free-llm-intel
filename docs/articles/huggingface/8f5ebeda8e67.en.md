@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 23e491d09992
+body_sha: c80176bb57a3
 ---
 
-Back to Articles
 
 # Mixture of Experts Explained
 
-Published
 					December 11, 2023
 
 Update on GitHub
 
-Upvote
 
 1188
 
@@ -446,7 +443,6 @@ Isn't this disproved by the Chinchilla paper? For training compute-optimal model
 
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/68d7777ec6e9f4afa7997797/-uYiwDuo3jQoFd-jGAJXt.jpeg)](https://huggingface.co/tm23hgf)
 
-·
 
 tm23hgf
 
@@ -464,7 +460,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fmoe) or [log in](https://huggingface.co/login?next=%2Fblog%2Fmoe) to comment
 
-Upvote
 
 1188
 

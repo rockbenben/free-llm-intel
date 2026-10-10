@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 721c65256ccc
+body_sha: 79c0114744ae
 ---
 
-OpenAI
 
 2026年8月11日
 
@@ -43,8 +42,6 @@ OpenAI 与 AWS 携手帮助更多组织将先进的网络安全能力投入生�
 
 [**进一步了解 Daybreak Red 和 Daybreak Blue。**](https://openai.com/index/expanding-daybreak-as-the-cyber-defense-window-narrows/)
 
-- [2026 年](https://openai.com/news/?tags=2026)
-- [AWS](https://openai.com/news/?tags=partner-joint-aws)
 
 ## 作者
 

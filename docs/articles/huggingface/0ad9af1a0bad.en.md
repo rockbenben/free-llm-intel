@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-06
 extractor: readability-v1
 status: ok
-body_sha: 5330a10c750d
+body_sha: 5d8ae059f411
 ---
 
-Back to Articles
 
 # Accelerate BERT inference with Hugging Face Transformers and AWS Inferentia
 
-Published
 					March 16, 2022
 
 Update on GitHub
 
-Upvote
 
 -
 
@@ -354,6 +351,5 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fbert-inferentia-sagemaker) or [log in](https://huggingface.co/login?next=%2Fblog%2Fbert-inferentia-sagemaker) to comment
 
-Upvote
 
 -

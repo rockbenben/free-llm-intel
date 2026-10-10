@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: a37676189095
+body_sha: 20800936b662
 ---
 
-Back to Articles
 
 # Democratizing AI Safety with RiskRubric.ai
 
-Published
 					September 18, 2025
 
 Update on GitHub
 
-Upvote
 
 21
 
@@ -114,7 +111,6 @@ The six-pillar framework feels like a solid step toward building that missing tr
 
 - [![](https://huggingface.co/avatars/95ba8fc9c73075d5b4112599cca63ce1.svg)](https://huggingface.co/galmo-noma)
 
-·
 
 galmo-noma
 
@@ -139,7 +135,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Friskrubric) or [log in](https://huggingface.co/login?next=%2Fblog%2Friskrubric) to comment
 
-Upvote
 
 21
 

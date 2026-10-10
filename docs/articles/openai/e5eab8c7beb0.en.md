@@ -8,10 +8,9 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 533843f812bd
+body_sha: 782c0e45a8fd
 ---
 
-OpenAI
 
 August 20, 2024
 
@@ -21,7 +20,6 @@ Company
 
 We’re enhancing AI-driven news discovery and delivery.
 
-Loading…
 
 We’re announcing a partnership with Condé Nast to display content from top brands like Vogue, The New Yorker, Condé Nast Traveler, GQ, Architectural Digest, Vanity Fair, Wired, Bon Appétit, and more, within our products, including ChatGPT and our SearchGPT prototype.
 
@@ -35,9 +33,6 @@ Brad Lightcap, COO, OpenAI
 
 Condé Nast joins a growing list of publishers including Associated Press, Axel Springer, The Atlantic, Dotdash Meredith, Financial Times, LeMonde, NewsCorp, Prisa Media, TIME, Vox Media and others, in our mission to integrate journalism more deeply with AI services.
 
-- [Partnerships](https://openai.com/news/?tags=partnerships)
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
-- [2024](https://openai.com/news/?tags=2024)
 
 ## Authors
 

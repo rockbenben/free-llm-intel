@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 35bf0a83c312
+body_sha: 3354a6511787
 ---
 
-Back to Articles
 
 # Generating Human-level Text with Contrastive Search in Transformers 🤗
 
-Published
 					November 8, 2022
 
 Update on GitHub
 
-Upvote
 
 18
 
@@ -619,7 +616,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fintroducing-csearch) or [log in](https://huggingface.co/login?next=%2Fblog%2Fintroducing-csearch) to comment
 
-Upvote
 
 18
 

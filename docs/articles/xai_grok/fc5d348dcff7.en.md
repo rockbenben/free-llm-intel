@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 9c91de50295b
+body_sha: fa1d4c649e22
 ---
 
 Back to news
@@ -31,7 +31,6 @@ Onboarding Guide.docx
 
 Search
 
-Home
 
 Insert
 

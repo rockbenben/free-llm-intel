@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 status: ok
 translator: agent
-body_sha: 6bbef0bf2daa
+body_sha: f83b5c8a6584
 ---
 
-OpenAI
 
 # Superhuman
 

@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: 9ab4150dfcbf
+body_sha: d86950afde11
 ---
 
-OpenAI
 
 2025年8月26日
 
@@ -100,9 +99,6 @@ OpenAI
 
 我们深知，唯有每个环节都按预期运作，防护措施才能发挥最大效力。我们将在专家的指导下，本着对使用我们工具的人们负责的态度不断改进，并期待更多人加入，共同确保这项技术能在人们最脆弱的时刻提供保护。
 
-- [2025 年](https://openai.com/news/?tags=2025)
-- [ChatGPT](https://openai.com/news/?tags=chatgpt)
-- [用户安全与控制](https://openai.com/news/?tags=user-safety)
 
 ## 作者
 

@@ -8,11 +8,10 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 355773eee609
+body_sha: 783bf8df4258
 translator: agent
 ---
 
-OpenAI
 
 2023 年 2 月 24 日
 
@@ -90,8 +89,6 @@ AGI 有潜力赋予每个人惊人的新能力；我们可以想象这样一个�
 
 我们可以想象这样一个世界：人类繁荣到今天我们大概谁都无法完全想象的程度。我们希望对世界贡献一个与这种繁荣相对齐的 AGI。
 
-- [框架](https://openai.com/news/?tags=framework)
-- [2023](https://openai.com/news/?tags=2023)
 
 ## 脚注
 

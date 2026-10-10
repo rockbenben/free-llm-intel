@@ -9,10 +9,9 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: native
 status: translated
-body_sha: a18b9e0a2b80
+body_sha: 3a2d49bf22ac
 ---
 
-OpenAI
 
 2026年3月24日
 
@@ -103,11 +102,3 @@ OpenAI Foundation 董事会目前正在寻找执行总监的人选。在接下�
 Bret Taylor
 
 *1 **该项目此前称为“健康与疾病防治”(Health & Curing Diseases)，现已更名为“生命科学”(Life Sciences)。这一更名反映了 OpenAI Foundation 的核心思路：将推进生物学与医学研究视为攻克疾病的关键路径。*
-
-
-
-
-
-
-
-

@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 05fe3972dff6
+body_sha: 1820b72d3871
 ---
 
 All blog posts
@@ -94,11 +94,8 @@ On DMI, that entire flow moved in-house:
 
 The deployment stopped being a single endpoint and started being a surface for innovation. That pattern is now repeating as a pipeline, not a one-off. The customer's team is already scoping a dedicated GLM 5.1 node in a new region, sized against a real production workload. It's a different shape of workload than the original coding assistant: a chat-style customer-support NLP workload rather than long-horizon agentic coding, landing on the same infrastructure and provisioning pattern.
 
-‍
 
-‍
 
-‍
 
 ## Related articles
 

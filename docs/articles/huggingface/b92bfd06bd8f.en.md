@@ -8,19 +8,16 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 157308aea8f0
+body_sha: 2f6ff4005223
 ---
 
-Back to Articles
 
 # Safetensors is Joining the PyTorch Foundation
 
-Published
 					April 8, 2026
 
 Update on GitHub
 
-Upvote
 
 42
 
@@ -138,7 +135,6 @@ Tap or paste here to upload images
 
 · [Sign up](https://huggingface.co/join?next=%2Fblog%2Fsafetensors-joins-pytorch-foundation) or [log in](https://huggingface.co/login?next=%2Fblog%2Fsafetensors-joins-pytorch-foundation) to comment
 
-Upvote
 
 42
 
