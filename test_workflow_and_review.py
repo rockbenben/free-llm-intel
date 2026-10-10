@@ -8886,5 +8886,130 @@ class TestMtBodiesCli(unittest.TestCase):
         self.assertEqual(ft.pending_translation_keys(saved), ["openai\thttps://a/p"])
 
 
+class TestPageFurnitureStrip(unittest.TestCase):
+    """中文正文落盘口的页面家具清洗：只删站件，不删正文。
+
+    证人按「该红的红在该处」验：删家具的规则、留文献清单的规则、栅栏内部的豁免，
+    各自有独立的断言，放宽任何一条都会有一格变红。
+    """
+
+    def test_labels_cta_and_tag_values_gone_prose_untouched(self):
+        body = "\n".join([
+            "# 推出 Meta VR Glasses",
+            "",
+            "我们把影院装进了一副 100 克的眼镜里。",
+            "",
+            "分类",
+            "",
+            ":",
+            "",
+            "Meta",
+            "",
+            "产品新闻",
+            "",
+            "标签：",
+            "",
+            "AI",
+            "",
+            "下载全部图片",
+            "",
+            "分享本文",
+            "",
+            "联系销售",
+        ])
+        out = ft.strip_page_furniture(body)
+        self.assertIn("我们把影院装进了一副 100 克的眼镜里。", out)
+        self.assertIn("# 推出 Meta VR Glasses", out)
+        for gone in ("分类", "标签：", "下载全部图片", "分享本文", "联系销售", "产品新闻"):
+            self.assertNotIn(gone, out, f"{gone} 是站件，该删")
+        self.assertNotIn("\nAI\n", out, "标签值也该随标签一起走")
+
+    def test_code_fence_interior_never_touched(self):
+        body = "\n".join([
+            "# 指南",
+            "",
+            "```text",
+            "联系销售",
+            "## 继续阅读",
+            "分类",
+            "```",
+        ])
+        self.assertEqual(ft.strip_page_furniture(body), body,
+                         "代码块里的同样的字串是内容，动一个字都不行")
+
+    def test_bibliography_under_further_reading_survives(self):
+        # 同一个「延伸阅读」标题：文献清单（没有卡片日期）不是推荐区
+        body = "\n".join([
+            "# 文章",
+            "",
+            "正文段落，讲清了方法。",
+            "",
+            "### 延伸阅读",
+            "",
+            "- Rolnick et al. (2019) - Tidy RLHF",
+            "- Strubell et al. (2019) - Energy and Policy",
+        ])
+        out = ft.strip_page_furniture(body)
+        self.assertIn("### 延伸阅读", out)
+        self.assertIn("Rolnick et al.", out)
+
+    def test_related_cards_block_removed_only_with_card_fingerprint(self):
+        with_cards = "\n".join([
+            "# 公告",
+            "",
+            "正文。",
+            "",
+            "## 继续阅读",
+            "",
+            "GPT-6 开发实用指南",
+            "产品2026年10月2日",
+            "DevDay 2026 回顾",
+            "公司2026年9月29日",
+        ])
+        out = ft.strip_page_furniture(with_cards)
+        self.assertNotIn("## 继续阅读", out)
+        self.assertNotIn("DevDay 2026 回顾", out, "推荐区的卡片标题是站件")
+        self.assertIn("正文。", out)
+        # 没有「类别+日期」指纹的同名标题，不认作推荐区
+        no_fingerprint = "\n".join([
+            "# 公告",
+            "",
+            "## 继续阅读",
+            "",
+            "我们把这套方法写成了一篇文章，欢迎接着读。",
+        ])
+        self.assertIn("## 继续阅读", ft.strip_page_furniture(no_fingerprint),
+                      "没指纹就不该整块吞掉")
+
+    def test_nav_word_only_before_first_heading(self):
+        body = "\n".join(["产品", "# 隆重推出 AgentKit", "", "我们把产品交付给你。", "", "产品"])
+        out = ft.strip_page_furniture(body)
+        self.assertEqual(out.split("\n")[0].strip(), "# 隆重推出 AgentKit",
+                         "标题之前的导航词该删")
+        self.assertIn("产品", out.split("\n")[-1], "正文里出现的同一个词不许删")
+
+    def test_strip_is_idempotent(self):
+        body = "\n".join(["# 标题", "正文。", "", "分类", "", ":", "", "Meta", "", "联系销售"])
+        once = ft.strip_page_furniture(body)
+        self.assertEqual(ft.strip_page_furniture(once), once)
+
+    def test_mark_translated_strips_before_sha(self):
+        # 落盘口洗过一次：body_sha 必须对得上**洗后**的正文，不然 sha 就成了假账
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            key = "openai\thttps://openai.com/x"
+            bodies = {key: {"slug": "abc123", "en_status": "ok", "en_path": "",
+                           "zh_status": "", "zh_path": ""}}
+            ft.mark_translated(root, bodies, key=key,
+                                     zh_body_md="# 标题\n\n正文。\n\n联系销售\n",
+                                     translator="agent", today="2026-10-10")
+            p = root / "docs/articles/openai/abc123.md"
+            fm, body = ft.read_body_doc(p)
+            self.assertNotIn("联系销售", body)
+            import hashlib
+            self.assertEqual(fm["body_sha"],
+                             hashlib.sha256(body.strip().encode("utf-8")).hexdigest()[:12])
+
+
 if __name__ == "__main__":
     unittest.main()

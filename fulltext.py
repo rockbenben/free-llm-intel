@@ -144,6 +144,176 @@ def read_body_doc(path: Path) -> Tuple[dict, str]:
 
 
 # ---------------------------------------------------------------------------
+# 页面家具清洗：站点自己的导航/页脚/推荐区组件不该进正文
+# ---------------------------------------------------------------------------
+# 为什么要有这一步：readability 抽出来的正文里常混着站点的栏目标签、CTA、分类标签、
+# 播放器控件和文末的「继续阅读/相关文章」推荐卡。逐条靠词表打地鼠不够，也不该由
+# 仓库外的脚本各写一套判据——判据在此为唯一正本，中文侧三个落盘点都走它。
+#
+# 五条规则都是**整行精确匹配**或**结构块**判据，绝不猜形状，且绝不碰 ``` 代码块内部：
+#   R1 第一条标题之前的导航词 / 头图裸媒体链接行
+#   R2 任意位置的家具标签行（分类、标签：、分享本文、下载全部图片、联系销售、
+#      试用 ChatGPT、阅读更多、返回博客、播放器倍速、加载占位…）
+#   R3 紧跟在「带值的标签」（分类/标签：/公司规模:/区域:/行业:）后面的短标签值行
+#   R4 文末的推荐区整块：最后一个标题属于推荐区闭集，且块里有「类别+日期」这类
+#      卡片元信息行（指纹）才删——同一个「延伸阅读」在 huggingface 是文献清单（正文），
+#      没有指纹就不动
+#   R5 「点赞/收藏/关注」之后紧跟的纯数字计数行
+_FURN_ANYWHERE = {
+    "分类", "标签：", "标签:", "Categories", "Tags:",
+    "分享本文", "分享此文章", "Share this article", "Share this post",
+    "下载全部图片", "DOWNLOAD ALL IMAGES", "Download all images",
+    "相关新闻", "## 相关新闻", "## Related News", "Related News",
+    "阅读更多", "Read more", "READ MORE", "阅读全文", "继续探索", "探索更多",
+    "联系销售", "Contact sales", "CONTACT SALES", "联系专家", "与专家交流",
+    "联系销售团队", "试用 ChatGPT", "Try ChatGPT",
+    "返回博客", "返回新闻编辑室", "返回文章", "返回首页",
+    "Back to Blog", "Back to Newsroom", "Back to Articles", "Back to Home",
+    "浏览全部论文", "Browse all papers", "查看全部", "View all",
+    "已复制", "Copied", "复制链接到剪贴板", "Copy url to clipboard",
+    "暂无相关文章", "暂无相关内容", "No related articles",
+    "正在加载…", "正在加载...", "加载中…", "Loading…", "Loading...",
+    "（在新窗口中打开）", "（在新标签页打开）", "（在新窗口打开）",
+    "点赞", "关注", "收藏", "复制链接",
+    "0.25×", "0.5×", "1.25×", "1.5×", "2×", ":",
+}
+_FURN_NAV_BEFORE_HEAD = {
+    "产品", "研究", "博客", "公告", "首页", "发布", "刊发", "新闻中心",
+    "News", "Newsroom", "Products", "Research", "Blog", "Announcements", "Featured",
+}
+_FURN_VALUE_LABELS = {"分类", "标签：", "标签:", "Categories", "Tags:",
+                      "公司规模:", "区域:", "行业:", "地区:", "受众:"}
+_FURN_COUNT_LABELS = {"点赞", "关注", "收藏"}
+_FURN_RELATED_TAIL = {
+    "继续阅读", "相关文章", "相关阅读", "更多文章", "推荐文章", "可能感兴趣",
+    "相关新闻", "最新资讯", "继续探索", "探索更多", "查看更多文章",
+    "## 继续阅读", "## 相关文章", "## 相关阅读", "## 更多文章", "## 推荐文章",
+    "## 相关新闻", "## 最新资讯", "## 继续探索", "## 探索更多",
+    "Related reading", "Related articles", "Related stories", "Related posts",
+    "Related news", "Keep reading", "More articles", "Read more articles",
+    "You may also like", "Explore more",
+    "## Related reading", "## Related articles", "## Related stories",
+    "## Related posts", "## Related news", "## Keep reading", "## More articles",
+    "## You may also like", "### 继续阅读", "### 相关文章",
+    "### Related reading", "### Related stories",
+}
+_FURN_FENCE_LINE_RE = re.compile(r"^\s*`{3}")
+_HEAD_RE = re.compile(r"^\s*#{1,6}\s")
+_MONTHS = (r"(?:January|February|March|April|May|June|July|August|September|October"
+           r"|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)")
+# 卡片元信息行：推荐区每张卡都有一行「类别+日期」，这就是推荐区的指纹
+_CARD_META_RE = re.compile(
+    r"^.{0,24}\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日$"
+    r"|^[A-Za-z ,&-]{0,28}" + _MONTHS + r"\s?\d{1,2},?\s?\d{4}$"
+    r"|^\d{4}[/-]\d{2}[/-]\d{2}$")
+_BARE_MEDIA_RE = re.compile(
+    r"^https?://\S+\.(mp4|mp3|webm|mov|m4v|ogg|gif|png|jpe?g|webp)(\?\S*)?$")
+_VALUE_MAX = 24
+_VALUE_WALK_MAX = 8
+_RELATED_MAX_LINES = 40
+
+
+def _fence_mask(lines):
+    """(栅栏内行号集合（含栅栏行本身）, 第一条标题的行号)。判据与证据共用一份。"""
+    fenced, first_head, in_fence = set(), None, False
+    for i, l in enumerate(lines):
+        if _FURN_FENCE_LINE_RE.match(l):
+            in_fence = not in_fence
+            fenced.add(i)
+            continue
+        if in_fence:
+            fenced.add(i)
+            continue
+        if first_head is None and _HEAD_RE.match(l):
+            first_head = i
+    return fenced, first_head
+
+
+def _is_tag_value(s):
+    """标签值：短、没有句子标点、不是列表/标题/链接/代码。"""
+    if not s or len(s) > _VALUE_MAX:
+        return False
+    if any(ch in s for ch in "。！？；，、…"):
+        return False
+    if re.search(r"[.!?;,]\s", s):
+        return False
+    if s[0] in "-#!>|*[`" or s.startswith("http"):
+        return False
+    return True
+
+
+def furniture_drops(lines):
+    """返回 {行号: 规则名}。行号按传入的 lines 计。"""
+    fenced, first_head = _fence_mask(lines)
+    drop = {}
+    for i, l in enumerate(lines):
+        if i in fenced:
+            continue
+        s = l.strip()
+        if not s:
+            continue
+        if s in _FURN_ANYWHERE:
+            drop[i] = "R2"
+        elif first_head is not None and i < first_head and (
+                s in _FURN_NAV_BEFORE_HEAD or _BARE_MEDIA_RE.match(s)):
+            drop[i] = "R1"
+    walked = set()
+    for k in sorted(i for i, v in drop.items() if v == "R2" and lines[i].strip() in _FURN_VALUE_LABELS):
+        j, n = k + 1, 0
+        while j < len(lines) and n < _VALUE_WALK_MAX:
+            if j in fenced:
+                break
+            s = lines[j].strip()
+            if not s:
+                j += 1
+                continue
+            if _is_tag_value(s):
+                walked.add(j)
+                n += 1
+                j += 1
+                continue
+            if s in _FURN_ANYWHERE:   # 下一个标签（如 `标签：`）继续带值
+                j += 1
+                continue
+            break
+    for x in walked:
+        drop.setdefault(x, "R3")
+    for k in [i for i, v in drop.items() if v == "R2" and lines[i].strip() in _FURN_COUNT_LABELS]:
+        j = k + 1
+        while j < len(lines) and not lines[j].strip():
+            j += 1
+        if j < len(lines) and j not in fenced and re.fullmatch(r"\d{1,6}", lines[j].strip()):
+            drop[j] = "R5"
+    heads = [i for i, l in enumerate(lines) if i not in fenced and _HEAD_RE.match(l)]
+    if heads:
+        k = heads[-1]
+        t = lines[k].strip()
+        if t in _FURN_RELATED_TAIL or t.lstrip("#").strip() in _FURN_RELATED_TAIL:
+            tail = [x for x in range(k + 1, len(lines)) if lines[x].strip()]
+            meta = [x for x in tail if _CARD_META_RE.match(lines[x].strip())]
+            if (len(tail) <= _RELATED_MAX_LINES and len(meta) >= 1
+                    and not any(x in fenced for x in range(k, len(lines)))
+                    and not any(c in "".join(lines[x]) for x in tail for c in "。！？")):
+                for x in range(k, len(lines)):
+                    if x in fenced:
+                        continue
+                    if lines[x].strip():
+                        drop[x] = "R4"
+    return drop
+
+
+def strip_page_furniture(body: str) -> str:
+    """清洗中文正文里的页面家具。判据是整行精确匹配或结构块，保守：
+    只删**独立成行**的标签/导航/推荐区块；句中出现的同一个词一律不动。
+    """
+    lines = (body or "").split("\n")
+    drop = furniture_drops(lines)
+    if not drop:
+        return body
+    return "\n".join(l for i, l in enumerate(lines) if i not in drop)
+
+
+# ---------------------------------------------------------------------------
 # 正文抽取：标准库 HTMLParser → 密度选主块 → Markdown（readability-v1）
 # ---------------------------------------------------------------------------
 
@@ -1346,12 +1516,13 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             # 中文原生：正文即译文，直接落 `.md`，不留英文侧
             zh_rel = f"docs/articles/{vendor}/{slug}.md"
             cap = _kept_captured(prev.get("zh_path") or "", ex["markdown"])
+            zh_md = strip_page_furniture(ex["markdown"]).strip()
             fm = {"vendor": vendor, "title": ex["title"] or r.get("title", ""),
                   "original_title": "", "url": norm, "date": ex["date"] or r.get("date", ""),
                   "lang": "zh", "captured": cap, "extractor": "readability-v1",
                   "translator": "native", "status": "translated",
-                  "body_sha": hashlib.sha256(ex["markdown"].encode("utf-8")).hexdigest()[:12]}
-            write_body_doc(root / zh_rel, fm, ex["markdown"])
+                  "body_sha": hashlib.sha256(zh_md.encode("utf-8")).hexdigest()[:12]}
+            write_body_doc(root / zh_rel, fm, zh_md)
             stale_en = f"docs/articles/{vendor}/{slug}.en.md"
             if prev.get("en_path") and (root / prev["en_path"]).exists():
                 (root / prev["en_path"]).unlink()
@@ -1411,6 +1582,7 @@ def reclassify_bodies(root: Path, bodies: dict) -> int:
         slug = e["slug"]
         vendor = key.split("\t", 1)[0]
         zh_rel = f"docs/articles/{vendor}/{slug}.md"
+        body = strip_page_furniture(body).strip()
         nfm = {"vendor": vendor, "title": fm.get("title", ""), "original_title": "",
                "url": fm.get("url", ""), "date": fm.get("date", ""), "lang": "zh",
                "captured": fm.get("captured", ""), "extractor": fm.get("extractor", "readability-v1"),
@@ -1462,6 +1634,9 @@ def mark_translated(root: Path, bodies: dict, *, key: str, zh_body_md: str,
     e = bodies[key]
     vendor = key.split("\t", 1)[0]
     rel = f"docs/articles/{vendor}/{e['slug']}.md"
+    # 中文侧落盘口统一洗家具：agent 精译、--ai-bodies、CI 的 --mt-bodies 都走这里，
+    # 不然洗过一轮，第二天新稿又把站点页脚带回正文。sha 也在洗完之后算。
+    zh_body_md = strip_page_furniture(zh_body_md).strip()
     fm = {"vendor": vendor, "title": e.get("title", ""), "original_title": e.get("original_title", ""),
           "url": key.split("\t", 1)[1], "date": e.get("date", ""), "lang": "zh", "captured": today,
           "extractor": "readability-v1", "translator": translator, "status": "translated",
