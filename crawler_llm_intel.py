@@ -345,6 +345,7 @@ class Article:
     source: str = ""      # 来源标签：RSS / 页面提取
     stype: str = ""
     zh_title: str = ""    # 归档沿用的中文标题；空则现场走 translate_to_zh
+    link: str = ""        # **给人点的**链接；空则与 url 相同。见下面「身份与链接要分开」。
 
     def __post_init__(self) -> None:
         # 统一在这里洗控制字符：RSS 原始 XML 与页面提取都可能带 \x00，
@@ -355,6 +356,7 @@ class Article:
         self.source = sanitize_text(self.source)
         self.stype = sanitize_text(self.stype)
         self.zh_title = sanitize_text(self.zh_title)
+        self.link = sanitize_text(self.link)
 
 
 #: 归档标题「已是中文」的判据：含任一 CJK 字符即算（与 translate_to_zh 的整句跳过阈值无关，
@@ -479,7 +481,6 @@ class VendorIntel:
     evidence: dict[str, list[Snippet]] = field(default_factory=dict)
     news_articles: list[Article] = field(default_factory=list)    # 主文档：最新 5 篇
     all_news_articles: list[Article] = field(default_factory=list)  # 子文档：全量文章归档
-    news_filtered: int = 0    # 被「情报过滤」剔除的条目数（见 NEWS_INTEL_SIGNALS）
 
 
 # ---------------------------------------------------------------------------
@@ -1933,11 +1934,20 @@ def extract_changelog_sections(page: PageResult, max_items: int = 100) -> list[A
                     continue
                 # li 没有自己的锚点，用「分节 id + 序号」合成一个稳定的 fragment，
                 # 保证归档增量合并能认回同一条（改了就变成新增）。
-                url5 = f"{base_url.split('#')[0]}#{quote(hm5.group(2))}-{li_idx + 1}"
+                # **但那个 fragment 在页面上不存在** —— 浏览器找不到对应 id，点了不跳，
+                # 只停在版本说明页顶（实测 Gemini `#10-06-2026-1` 不存在，真锚点只有
+                # `#10-06-2026`）。所以身份与链接分成两个字段：
+                #   url  = 合成 fragment（**身份**，台账 key / slug / 增量合并都认它）
+                #   link = 分节 id 原样（**给人点的**；它是从 `<h2 id=…>` 实读的，
+                #          页面上必然存在，落到对应日期分节）
+                # 实测这类行有 158 条 / 5 个厂商，混用 URL 当身份当链接是根因。
+                sec_anchor = f"{base_url.split('#')[0]}#{quote(hm5.group(2))}"
+                url5 = f"{sec_anchor}-{li_idx + 1}"
                 if url5 in seen5:
                     continue
                 seen5.add(url5)
                 rows5.append(Article(title=_cap_changelog_title(title5), url=url5,
+                                     link=sec_anchor,
                                      date=sec_date5, source="官方更新日志", stype=page.stype))
         if len(rows5) >= 3:
             return rows5[:max_items]
@@ -2425,156 +2435,24 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
 
 
 # ---------------------------------------------------------------------------
-# 动态条目的「情报过滤」
+# 动态条目不再做「情报过滤」
 #
-# 本仓库主题是**免费额度 / 模型 / 定价**，但不少厂商的 news 源其实是**公司博客**：
-# `openai.com/index/*` 里客户案例、融资、政策、教程占绝大多数，`huggingface.co/blog`
-# 是社区技术博客。2026-09-22 数据审计：线上 3376 条里 77% 来自这类源，
-# 其中 228 条根本不是一篇文章。
+# 此前这里按标题词表剔除客户案例 / 公司新闻 / 营销 / 教程 / 研究论文，只留
+# 「看起来像模型发布或 API 变更」的条目（按厂商配信号组，整段已删除）。
+# 用户 2026-10-10 定：**这些都是厂商官方发布的内容，本来就该收录**，不再剔除。
 #
-# 判据按**信号组**组织 —— 不同厂商 news 源的性质不同，词表按厂商挑组：
-# 公司 news 源走 strong 组抓 API/定价/弃用类变更信号（openai / anthropic /
-# meta_llama / google_gemini / mistral / cohere / modal / modular_cloud）；
-# huggingface 是社区技术博客，标题里多是教程词，改走宽口径 release_wide
-# （见下方 NEWS_INTEL_SIGNALS）。
-# **未列入 `NEWS_INTEL_SIGNALS` 的厂商不过滤**（变更日志型源结构上就对口）。
+# 这套判据是编辑口味而不是正确性判断，而且按标题措辞判断本来就不稳 —— 实测它把
+# Gemini 版本说明 40 条里的 27 条判成非情报，含「Gemini Robotics ER 2 公开预览版」、
+# 「Antigravity Agent 09-2026」、「文件搜索」这些正是本仓库该收录的东西；更糟的是
+# 被剔的条目永远进不了 all_news_articles，也就永远不会被重新发现。
 #
-# 过滤在**翻译之前**执行，标题可能是原文（英文站）也可能是中文（页面本身是中文，
-# 如 Anthropic 的若干条目标题）—— 两套词表都要有，否则中文标题会被整类剔除。
-NEWS_SIGNAL_STRONG = re.compile(
-    r"\b(api|apis|sdk|endpoint\w*|pricing|prices?|rate limits?|rate-limit|usage limits?|"
-    r"spend controls?|free tiers?|free plans?|quota|billing|token plan|credits?|"
-    r"deprecat\w*|retir\w*|sunset|discontinu\w*|no longer available|end of life|"
-    r"system card|model card|changelog|release notes|"
-    r"context window|context length|prompt caching|context caching|"
-    r"function calling|tool calling|structured output|json mode|webhooks?|"
-    r"batch api|parameters?)\b|"
-    r"(免费额度|免费套餐|免费层|免费试用|限时免费|永久免费|降价|定价|计费|限速|限流|"
-    r"配额|额度|弃用|下线|停止服务|涨价)", re.I)
-NEWS_SIGNAL_RELEASE = re.compile(
-    r"\b(introducing|announcing|announces|unveil\w*|launch\w*|releas\w*|ships?|"
-    r"now available|available (in|on|now|for)|generally available|GA|"
-    r"public preview|preview|beta|new models?|next[- ]generation|"
-    r"welcome|is here|adds? support|now supports|product updates?)\b|"
-    r"(上线|发布|推出|新增|产品介绍|正式发布|现已|产品更新|简介)", re.I)
-# 窄口径：出现即说明「有东西上架 / 可用」，不必再要求产品名
-# （`Qwen3.8-2.4T-A95B now available on Modal`、`Product updates: VM sandboxes…`）
-NEWS_SIGNAL_RELEASE_ANY = re.compile(
-    r"\b(now available|available (in|on|now|for)|generally available|GA|is here|"
-    r"welcome|adds? support|now supports|public preview|product updates?)\b|"
-    r"(现已|正式发布|上线|发布|推出|产品更新)", re.I)
-# 标题以「模型名 + 版本号 + 冒号/破折号」开头：
-# `GPT-6 Astra: A new generation of intelligence` / `GLM-5.2: Built for Long-Horizon Tasks`
-NEWS_SIGNAL_HEADLINE = re.compile(
-    r"^\s*(gpt|chatgpt|claude|gemini|gemma|qwen|llama|grok|mistral|codestral|magistral|"
-    r"pixtral|deepseek|glm|kimi|minimax|command|nova|granite|phi|falcon|olmo|jamba|"
-    r"code llama|stable diffusion|whisper|sora|dall)[- ]?[\d.]*[a-z]*\s*[:\-–—]",
-    re.I)
-NEWS_PRODUCT = re.compile(
-    r"(?<![a-z])(gpt|chatgpt|codex|astra|o1|o3|o4|sora|dall|whisper|claude|gemini|gemma|"
-    r"qwen|llama|grok|mistral|codestral|magistral|pixtral|deepseek|glm|kimi|minimax|"
-    r"command|nova|granite|phi|falcon|olmo|jamba|realtime|responses api|agents sdk|"
-    r"assistants?|agents?|models?|image|images|voice|audio|tts|asr|ocr|vision|embedding|"
-    r"kernels?|translate|parse|studio|buckets?|storage|search|retrieval|rerank\w*|"
-    r"transcrib\w*|speech|music|video|coder|code|chat|cli|platform|api)(?![a-z])", re.I)
-NEWS_NOISE_CUSTOMER = re.compile(
-    r"^how\s+\S+\s+(is|are|was|were)\s+\w+ing\b|"
-    r"\b(trusts?|relies on|customer stor(y|ies)|case stud(y|ies)|success stor(y|ies))\b|"
-    r"^(how\s+)?[\w'’.\- ]{2,40}\s(uses?|used|is using|are using|built|builds|cut|cuts|"
-    r"scales?|scaled|accelerat\w+|improv\w+|transform\w+|deliver\w+|reduc\w+|turn\w+|sav\w+)\b|"
-    r"^how\s+\S+\s+(uses?|builds?|scales?|cuts?|turns?|powers?|delivers?)\b|"
-    r"^(inside|meet)\s+[\w'’.\- ]{2,30}('s)?\b|"
-    r"\bwith (chatgpt|gpt-?\d|codex|claude|gemini|grok|copilot)\b", re.I)
-NEWS_NOISE_COMPANY = re.compile(
-    r"\b(joins?|joined|appoint\w*|hires?|hired|"
-    r"acqui\w*|acquisition|merger|ipo|s-1|funding|fundrais\w*|series [a-e]|raises?|"
-    r"invest\w*|grants?|donat\w*|stake|valuation|"
-    r"partner\w*|collaborat\w*|teams? up|joins? forces|alliance|"
-    r"expand\w*|presence in|headquarter\w*|campus|"
-    r"polic(y|ies)|govern\w*|regulat\w*|legislat\w*|bill|senate|congress|lawmakers|"
-    r"government|federal|white house|european union|blueprint|"
-    r"awards?|recogni\w*|gartner|magic quadrant|forbes|"
-    r"ukraine|russia|china|brazil|japan|india|thailand|africa|europe|singapore|malta|"
-    r"greece|ireland|australia|korea|uae|saudi|emirates)\b", re.I)
-NEWS_NOISE_MARKETING = re.compile(
-    r"\b(reimagin\w*|future of|the future|why|what|how to|guide|best practices|"
-    r"tips|trends?|outlook|opinion|perspective|essay|manifesto|vision|"
-    r"state of|era of|age of|day in the life|lessons?|scorecard|"
-    r"powering|unlocking|empowering|accelerating|transforming|demystif\w*|"
-    r"fundamentals|getting started|101|explained|beginner)\b", re.I)
-NEWS_NOISE_EDU_HEALTH = re.compile(
-    r"\b(youth|teens?|students?|teachers?|classroom|k-?12|schools?|education|literacy|"
-    r"academy|universit(y|ies)|college|"
-    r"health|healthcare|clinicians?|patients?|medical|hospital|diagnos\w*|cancer|"
-    r"nonprofits?|charit\w*|philanthrop\w*|social impact|workforce)\b", re.I)
-NEWS_NOISE_SAFETY = re.compile(
-    r"\b(disrupting|influence (operation|activity|campaign)|misuse|malicious|abuse|"
-    r"threat actor\w*|scams?|phishing|malware|spam|covert|election|misinformation|"
-    r"red team\w*|jailbreak|prompt injection|safeguards?|alignment|misalignment|"
-    r"age prediction|parental control)\b", re.I)
-NEWS_NOISE_RESEARCH = re.compile(
-    r"\b(papers?|research|stud(y|ies)|benchmark\w*|evaluat\w*|"
-    r"techniques?|methods?|algorithms?|architecture|datasets?|corpus|survey|"
-    r"tutorial|deep dive|internals|attention|transformers?|quantiz\w*|distill\w*|"
-    r"lora|grpo|rlhf|dpo|serving|kernels?|cuda|gpu|memory|"
-    r"optimiz\w*|scaling|vector|profiling|part \d)\b", re.I)
-NEWS_NOISE_TUTORIAL = re.compile(
-    r"^(using|working with|building with|create|creating|build|learn|training)\b|"
-    r"\b(workflows? (with|for)|for (marketing|sales|finance|research|operations|support|"
-    r"customer success|managers|teams)|cheat sheet|playbook)\b", re.I)
-NEWS_NOISE_PATTERNS: list[tuple[str, re.Pattern]] = [
-    ("customer_story", NEWS_NOISE_CUSTOMER), ("company_news", NEWS_NOISE_COMPANY),
-    ("edu_health", NEWS_NOISE_EDU_HEALTH), ("safety", NEWS_NOISE_SAFETY),
-    ("tutorial", NEWS_NOISE_TUTORIAL), ("marketing", NEWS_NOISE_MARKETING),
-    ("research", NEWS_NOISE_RESEARCH),
-]
-
-# 按厂商选择信号组（未列出 = 不过滤）
-#   strong          技术变更事实（API / 定价 / 限流 / 弃用）
-#   release_product 发布用语 + 必须配产品名（滤掉 `Introducing the Intelligence Age`）
-#   release_any     「已上架 / 可用」类用语，无需产品名
-#   release_wide    全部发布用语，不要求产品名（huggingface 用：它的 `Introducing X`
-#                   基本都是模型 / 平台发布）
-#   headline        标题以「模型名 + 版本号 + 冒号」开头
-NEWS_INTEL_SIGNALS: dict[str, tuple[str, ...]] = {
-    "openai":        ("strong", "release_product", "release_any", "headline"),
-    "huggingface":   ("release_wide", "headline"),
-    "modal":         ("strong", "release_product", "release_any", "headline"),
-    "modular_cloud": ("strong", "release_product", "release_any", "headline"),
-    "mistral":       ("strong", "release_product", "release_any", "headline"),
-    "anthropic":     ("strong", "release_product", "release_any", "headline"),
-    "cohere":        ("strong", "release_product", "release_any", "headline"),
-    "meta_llama":    ("strong", "release_product", "release_any", "headline"),
-    "google_gemini": ("strong", "release_product", "release_any", "headline"),
-}
+# 「不是一篇文章」的**正确性**判据仍在别处守着（日期当标题、栏目名当标题、通用锚文本、
+# 表格表头、已废弃源前缀），那些是事实判断，与编辑口味无关。
 
 
-def is_intel_news(vendor_id: str, title: str) -> bool:
-    """判断一条动态的标题是否为「情报」（免费额度 / 模型 / 定价 / API 变更）。
-
-    未列入 `NEWS_INTEL_SIGNALS` 的厂商一律返回 True（不过滤）。
-    传进来的应当是**原文标题**（过滤发生在翻译之前）。
-    """
-    sig = NEWS_INTEL_SIGNALS.get(vendor_id)
-    if not sig:
-        return True
-    text = title or ""
-    if "strong" in sig and NEWS_SIGNAL_STRONG.search(text):
-        return True
-    if "headline" in sig and NEWS_SIGNAL_HEADLINE.search(text):
-        return True
-    # 客户案例优先于发布信号：`Stampli cuts launch hours by 68% using ChatGPT Work`
-    # 里的 `launch` 是名词，会被发布词误命中，但它其实是客户案例。
-    if NEWS_NOISE_CUSTOMER.search(text):
-        return False
-    if "release_wide" in sig and NEWS_SIGNAL_RELEASE.search(text):
-        return True
-    if "release_any" in sig and NEWS_SIGNAL_RELEASE_ANY.search(text):
-        return True
-    if "release_product" in sig and NEWS_SIGNAL_RELEASE.search(text) \
-            and NEWS_PRODUCT.search(text):
-        return True
-    return False
+#: **结构化发布记录**形状的动态源：条目本身就是一条变更（模型名 / 功能名），不是一篇
+#: 有标题、有导语的文章。归档合并按它决定标题策略（见下方沿用分支）。
+STRUCTURED_NEWS_TYPES = {'updates', 'changelog'}
 
 
 # 已废弃的新闻源：这些 URL 前缀下的条目**不再保留**（含历史归档）。
@@ -2627,7 +2505,7 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
       3) 仍无文章时，从 HTML 链接中启发式提取文章卡片；
       3.5) JSON 数据接口的源（页面纯前端渲染、官方又无 RSS）解析接口正文；
       4) 同日锚点与详情页去重（保留详情页）；
-      5) 按日期倒序（无日期排后）后走 is_intel_news 过滤。
+      5) 按日期倒序（无日期排后）。
     过滤后的全量列表写进 intel.all_news_articles（供归档与 RSS），
     前 5 篇是 intel.news_articles（供总表展示）。
     delay / timeout 透传自 crawl_vendor（--delay / --timeout）：步骤 2、3 会对
@@ -2772,13 +2650,12 @@ def collect_news_articles(intel: VendorIntel, session: requests.Session,
     undated = [a for a in articles if not a.date]
     ordered = dated + undated
 
-    # 情报过滤：剔除客户案例 / 公司新闻 / 营销 / 教程 / 研究论文（见 NEWS_INTEL_SIGNALS）。
-    # 放在这里是因为此时 art.title 仍是**原文标题** —— 翻译之后再判会失真
-    # （`Magistral` 译成「公路」、`Introducing X` 译成「X 简介」都会让判据失准）。
-    kept = [a for a in ordered if is_intel_news(intel.vendor_id, a.title)]
-    intel.news_filtered = len(ordered) - len(kept)
-    intel.all_news_articles = kept          # 全量归档（llm-news/ 子文档）
-    intel.news_articles = kept[:5]          # 主文档仅展示最新 5 篇
+    # 动态条目**一律收录**（用户 2026-10-10 定）：客户案例 / 公司新闻 / 营销 / 教程 /
+    # 研究论文都是厂商官方发布的内容，本来就该收录。此处此前的「情报过滤」是编辑口味
+    # 而不是正确性判断，按标题措辞判断本来就不稳（实测把 Gemini 版本说明 40 条里的
+    # 27 条判成非情报），已整段移除；「不是一篇文章」的正确性判据在别处守着。
+    intel.all_news_articles = ordered         # 全量归档（llm-news/ 子文档）
+    intel.news_articles = ordered[:5]         # 主文档仅展示最新 5 篇
 
 
 # ---------------------------------------------------------------------------
@@ -3704,7 +3581,7 @@ def render_news_section(intel_list: list[VendorIntel], feeds_base: str = "",
             for idx, art in enumerate(intel.news_articles, 1):
                 title_zh = article_title_zh(art)
                 date_part = f"（{art.date}）" if art.date else ""
-                lines.append(f"  {idx}. [{title_zh}]({art.url}){date_part}")
+                lines.append(f"  {idx}. [{title_zh}]({art.link or art.url}){date_part}")
             n_all = len(intel.all_news_articles)
             if n_all > len(intel.news_articles):
                 lines.append(f"  - 📄 完整文章归档（共 {n_all} 篇）："
@@ -3896,7 +3773,8 @@ def write_opml(path: Path, intel_list: list[VendorIntel], feeds_base: str = "",
 # 尾部锚定保证不会多吞。
 _ARCHIVE_ARTICLE_RE = re.compile(
     r"^\d+\.\s+\[(.+)\]\((https?://[^)]+)\)"
-    r"(?:（([^）]+)）)?(?:\s*<!--\s*orig:(.*?)\s*-->)?\s*$")
+    r"(?:（([^）]+)）)?(?:\s*<!--\s*orig:(.*?)\s*-->)?"
+    r"(?:\s*<!--\s*url:(.*?)\s*-->)?\s*$")
 
 
 def _dedup_same_title(arts: list[Article]) -> list[Article]:
@@ -4001,17 +3879,23 @@ def parse_archived_articles(arch_path: Path) -> list[Article]:
     for line in text.splitlines():
         m = _ARCHIVE_ARTICLE_RE.match(line.strip())
         if m:
-            disp, url, date_val, orig = (m.group(i) or "" for i in (1, 2, 3, 4))
+            disp, url, date_val, orig, ident = (m.group(i) or "" for i in (1, 2, 3, 4, 5))
             # 归档存的是 HTML 语境的标题，源站常写成实体（`&amp;`）。实抓路径经
             # HTMLParser 已经解码，`--rebuild-only` 直接读 .md，不补解码就会把实体
             # 原样漏进产物（实测 longcat 条目在 model-releases.json 里显示成 `&amp;`）。
             disp = html_mod.unescape(disp)
             orig = html_mod.unescape(orig.strip())
+            # `<!--url:…-->` 里是**身份**，可见链接是给人点的那个（见 Article.link）。
+            # 旧归档行没有这个注释，可见链接就是身份，两者相同。
+            ident = html_mod.unescape(ident.strip())
+            link = url if not ident or ident == url else url
+            if ident:
+                url = ident
             if orig and orig != disp and re.search(r"[A-Za-z]{3}", orig):
                 # 带 `<!--orig:…-->` 的新归档行：可见标题是冻结的中文显示，注释里是英文原文。
                 # 还原成「title=英文原文 / zh_title=中文显示」这对形态（与实抓 RSS 条目一致），
                 # 这样产出层能把 original_title 稳定写进 articles.json，不再只靠上一版快照。
-                articles.append(Article(title=orig, url=url,
+                articles.append(Article(title=orig, url=url, link=link,
                                         zh_title=disp,
                                         date=_drop_future_date(date_val)))
             else:
@@ -4022,7 +3906,7 @@ def parse_archived_articles(arch_path: Path) -> list[Article]:
                 # 「还没汉化」重送机翻，实测被翻成「Grok 想象 API」写回归档。
                 # 判据无歧义：机翻失败留下的英文行**不写注释**（写入条件是译文≠原文）。
                 frozen = disp if (_CJK_CHAR_RE.search(disp) or (orig and orig == disp)) else ""
-                articles.append(Article(title=disp, url=url,
+                articles.append(Article(title=disp, url=url, link=link,
                                         zh_title=frozen,
                                         date=_drop_future_date(date_val)))
     return articles
@@ -4100,6 +3984,90 @@ def backfill_archive_dates(news_dir: Path, fetch,
         if dirty:
             # 只写日期括号，不在此处重排 —— 顺序规范由 --rebuild-only / 下次巡检的
             # write_news_archives 统一完成（日期倒序 + 重编号），避免两处排序逻辑漂移。
+            arch.write_text("".join(lines), encoding="utf-8", newline="\n")
+    return visited, fixed
+
+
+# ---------------------------------------------------------------------------
+# 归档展示链接回填（维护模式 --backfill-links，不参与日常巡检）
+# ---------------------------------------------------------------------------
+
+#: 单次回填最多访问的**分节页**数。一个厂商的归档只碰它自己的那几个页面，
+#: 不是每条一次请求（Gemini 45 条归档 = 1 个页面）。
+LINK_BACKFETCH_LIMIT = 60
+
+#: 「`<分节 id>-<序号>`」这种合成 fragment。序号是索引侧编的（见 extract 的结构 5），
+#: 分节 id 本身却是从 `<h2 id=…>` 实读的 —— 于是**去掉末段序号就可能是页面上真有的锚点**。
+_SYNTH_FRAG_RE = re.compile(r"^(?P<sec>.+)-(?P<ord>\d+)$")
+_HTML_ID_RE = re.compile(r'\bid=["\']([^"\']+)["\']')
+
+
+def backfill_archive_links(news_dir: Path, fetch,
+                           limit: int = LINK_BACKFETCH_LIMIT,
+                           delay: float = 0.5,
+                           vendors: set | None = None) -> tuple[int, int]:
+    """把归档里**点不动**的合成锚点换成页面上真有的分节链接（身份不变）。
+
+    起因：单页变更日志里 `<li>` 没有自己的锚点，索引侧用「分节 id + 序号」合成
+    `#10-06-2026-1` 当 URL。那条 fragment 在页面上**不存在**，读者点开停在页顶。
+    结构 5 现在会把真实的分节 id 另存进 `Article.link`，但**巡检不再重新发现的历史条目**
+    （归档只增不减）仍旧是老格式，只能靠这里回填一次。
+
+    做法：每个分节页只抓一次，收集它真实的 id 集合；归档行若满足
+    「fragment = `<真实 id>-<序号>` 且尚未带 `<!--url:-->`」，就把可见链接换成
+    `#<真实 id>`、把原 URL 挪进 `<!--url:…-->`。**认不出真实 id 就原样不动** ——
+    B 类源站（腾讯混元 `t-…`、streamlake、siliconflow、poolside）压根没给锚点，
+    连去掉序号的前缀都不存在，改了也是假的，不如留着。
+
+    `fetch: url -> HTML`（注入以便测试）。返回 (访问页数, 修复行数)。
+    """
+    import time as _time
+    visited = fixed = 0
+    ids_cache: dict[str, set] = {}
+    for arch in sorted(news_dir.glob("*.md")):
+        if vendors is not None and arch.stem not in vendors:
+            continue
+        try:
+            text = arch.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        lines = text.splitlines(keepends=True)
+        dirty = False
+        for i, line in enumerate(lines):
+            m = _ARCHIVE_ARTICLE_RE.match(line.strip())
+            if not m:
+                continue
+            if (m.group(5) or "").strip():
+                continue                      # 已有身份注释：早就修过了
+            shown = m.group(2)
+            base, _, frag = shown.partition("#")
+            if not frag:
+                continue                      # 直链：本来就能点
+            sm = _SYNTH_FRAG_RE.match(frag)
+            if not sm:
+                continue                      # 不是「分节 id + 序号」形状
+            if visited >= limit:
+                break
+            if base not in ids_cache:
+                if visited >= limit:
+                    break
+                try:
+                    html = fetch(base)
+                except Exception:
+                    html = ""
+                visited += 1
+                ids_cache[base] = set(_HTML_ID_RE.findall(html or ""))
+                _time.sleep(delay)
+            sec = sm.group("sec")
+            if sec not in ids_cache.get(base, set()):
+                continue                      # 去掉序号也不是真锚点 → 不动
+            date_part = f"（{m.group(3)}）" if m.group(3) else ""
+            orig_part = f" <!--orig:{m.group(4)}-->" if m.group(4) else ""
+            lines[i] = f"{line.split('](')[0]}]({base}#{sec}){date_part}{orig_part}" \
+                       f" <!--url:{shown}-->\n"
+            fixed += 1
+            dirty = True
+        if dirty:
             arch.write_text("".join(lines), encoding="utf-8", newline="\n")
     return visited, fixed
 
@@ -4502,6 +4470,20 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
                 fresh.date = old_art.date
             frozen_zh = (old_art.zh_title
                          or (old_art.title if _CJK_CHAR_RE.search(old_art.title) else ""))
+            # 结构化发布记录（changelog / updates）的条目名**按页面原样显示，不经机翻**。
+            #
+            # 这类条目的名字就是模型名 / 功能名，Google 机翻只会把它翻坏：实测
+            # `Antigravity Agent 09-2026` 过一趟机翻变成 `Antigravity09-2026`（Agent 被吞）。
+            #
+            # 而沿用归档里的旧标题也不行：冻结住的是**过去某一版页面措辞的机翻结果**，
+            # 源站改口后两者就对不上（实测冻结的 `电脑使用` vs 今天的 `计算机使用`、
+            # `Antigravity 09-2026` vs `Antigravity Agent 09-2026`），结果是既让读者看到
+            # 不是官方现在的说法，又因为正文切片拿标题当闸门而永远配不上正文。
+            #
+            # 博客文章那边不动：那里冻结防的正是「AI 精译过的中文标题隔天被机翻冲掉」。
+            if (fresh.stype or "") in STRUCTURED_NEWS_TYPES and not fresh.zh_title:
+                fresh.zh_title = fresh.title
+                frozen_zh = ""
             if not fresh.zh_title and frozen_zh and frozen_zh != fresh.title:
                 # 归档里已有人工/AI 汉化过的中文标题 → 沿用，别让每日重抓把它退回
                 # Google 机翻（CI 端 .translate_cache.json 不随仓库走，实测
@@ -4577,7 +4559,15 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
                          or (art.zh_title == art.title
                              and not _CJK_CHAR_RE.search(art.title)))):
                 orig_part = f" <!--orig:{art.title}-->"
-            lines.append(f"{art_idx}. [{title_zh}]({art.url}){date_part}{orig_part}")
+            # 可见链接用**能跳的那个**（`art.link`），身份（`art.url`，可能带合成的
+            # `-N` 序号、页面上并不存在）另存进 `<!--url:…-->`。少了这条注释，
+            # `--rebuild-only` 会拿可见链接当身份：同一日期分节十几条塌成同一个 slug，
+            # 正文互相覆盖、台账 key 也对不上。旧归档行没有注释，可见链接即身份。
+            link_part = ""
+            shown = art.link or art.url
+            if art.link and art.link != art.url and "-->" not in art.url:
+                link_part = f" <!--url:{art.url}-->"
+            lines.append(f"{art_idx}. [{title_zh}]({shown}){date_part}{orig_part}{link_part}")
         lines.append("")
         content = "\n".join(lines)
         arch_path = out_dir / f"{intel.vendor_id}.md"
@@ -4865,7 +4855,12 @@ def _rss_item(art: Article, title_zh: str, brand: str = "",
 
     lang='en'：标题走 art.title（原文），description 只保留"完整标题"截断说明
     （不再列"原文标题"，title 本身就是原文）；guid 加 `?li=1` 后缀避免中英两条
-    被阅读器 dedup；`<link>` 保持原 URL。
+    被阅读器 dedup。
+
+    **`<link>` 与 `<guid>` 分工不同**：`<link>` 是给人点的，用 `art.link or art.url`
+    （单页变更日志里 `<li>` 没有自己的锚点，`art.url` 带的是合成的 `-N` 序号、
+    页面上并不存在，点了不跳）；`<guid>` 是**身份**，必须用 `art.url` 原样，
+    否则阅读器会把同一分节的十几条当新条目重复推送。
 
     content_html 非空 → 写 `<content:encoded>` 用 CDATA 包裹；正文里已剥危险标签，
     markdown 已转 HTML。抓不到正文的条目传空串（不编造、也不塞空字段）。
@@ -4892,7 +4887,7 @@ def _rss_item(art: Article, title_zh: str, brand: str = "",
     lines = [
         "    <item>",
         f"      <title>{_rss_esc(short)}</title>",
-        f"      <link>{_rss_esc(art.url)}</link>",
+        f"      <link>{_rss_esc(art.link or art.url)}</link>",
         f'      <guid isPermaLink="true">{_rss_esc(guid_url)}</guid>',
     ]
     pub = _rss_pubdate(art.date)
@@ -5501,7 +5496,11 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
             langs = body_langs(_repo, vendor_id, slug)
             index_rows.append([t, art.url, vendor_id, art.date,
                                orig if orig != t.strip() else "",
-                               slug, _readable(vendor_id, art.url, langs), langs])
+                               slug, _readable(vendor_id, art.url, langs), langs,
+                               # `link` 追加在**最后**一列：前八列的位置被页面按
+                               # 下标取（readable / langs / slug），插中间会整体错位。
+                               # 与 url 不同才写，空串表示「链接就是 url」。
+                               art.link if art.link and art.link != art.url else ""])
     # 有日期的按日期倒序在前，无日期的排后（与页面/feed 的排序约定一致）。
     # sort 稳定 + 输入顺序确定 → 同样内容每次产出的字节一致，`_write_json` 才不会误判「变了」。
     dated_rows = sorted((r for r in index_rows if r[3]), key=lambda r: r[3], reverse=True)
@@ -5510,7 +5509,7 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
     files += 1
     changed += _write_json(out_dir / "articles.json", {
         "fields": ["title", "url", "vendor", "date", "original_title", "slug",
-                   "readable", "langs"],
+                   "readable", "langs", "link"],
         "count": len(index_rows),
         "articles": index_rows,
     })
@@ -6484,6 +6483,13 @@ def build_arg_parser() -> argparse.ArgumentParser:
                         help="维护模式（不巡检）：逐篇访问归档中**缺发布日期**的文章页，"
                              "从 JSON-LD datePublished / OG / <time> 元数据回填日期；"
                              f"单次上限 {DATE_BACKFETCH_LIMIT} 页礼貌抓取。回填后跑 --rebuild-only 刷新产物")
+    parser.add_argument("--backfill-links", action="store_true",
+                        help="维护模式（不巡检）：把归档里**点不动**的合成锚点（`<分节id>-<序号>`）"
+                             "换成页面上真有的分节链接，原 URL 挪进 `<!--url:…-->` 注释保住身份。"
+                             "每个分节页只抓一次并核对其真实 id 集合，认不出的原样不动"
+                             f"（腾讯混元/streamlake/siliconflow/poolside 那些源站压根没给锚点）。"
+                             f"单次上限 {LINK_BACKFETCH_LIMIT} 页。可用 --only 分批指定厂商。"
+                             "回填后跑 --rebuild-only 刷新产物")
     parser.add_argument("--backfill-orig", action="store_true",
                         help="维护模式（不巡检）：逐篇访问**可见标题已汉化、但归档未存英文原文**的"
                              "文章页，取英文 <title> 回填进 `<!--orig:…-->` 注释（中文原生页跳过）；"
@@ -6574,6 +6580,19 @@ def main(argv: list[str] | None = None) -> int:
             page = fetch_url(session, u, "news", browser=browser, timeout=timeout)
             return (page.raw or "", page.ok, page.status_code or 0, page.final_url or u)
 
+        def _refetch_body(u: str):
+            """`fetch_url` 的浏览器兜底只在 not ok / 4xx / sparse / 拦截标记时触发，
+            覆盖不到「200 + 大量 HTML、但正文是前端渲染的」这一档 —— 实测
+            cohere.com/research/* 有 500KB+ HTML 却抽不出 0 字，渲染后是 6000+ 字正文。
+            这里直接调 `browser.render` 补上那一档，只在真的读不出来时才多付这一次渲染。"""
+            if not browser.enabled:
+                return ("", False, 0, u)
+            rendered = browser.render(u, "")
+            if not rendered:
+                return ("", False, 0, u)
+            html, final_url, code = rendered
+            return (html, True, code or 200, final_url or u)
+
         print(f"[维护] 正文抓取：{len(articles)} 篇（{'全量重抓' if args.refresh else '只补缺失'}，"
               f"浏览器兜底{'开' if (args.allow_browser and not args.no_browser) else '关'}）...")
         with BrowserSession(enabled=args.allow_browser and not args.no_browser) as browser:
@@ -6581,7 +6600,8 @@ def main(argv: list[str] | None = None) -> int:
                                             today=today, only_missing=not args.refresh,
                                             retry_unreadable=args.retry_unreadable,
                                             save=lambda b: fulltext.save_bodies(
-                                                root / "docs/feeds/bodies.json", b))
+                                                root / "docs/feeds/bodies.json", b),
+                                            refetch=_refetch_body)
         # 吸收子代理/人工写到磁盘的中文译文（单点写 ledger）
         rec = fulltext.reconcile_translations(root, bodies)
         if rec:
@@ -6663,7 +6683,7 @@ def main(argv: list[str] | None = None) -> int:
               f"（mt 是糙覆盖，重点篇之后本地 agent 重译升级）。")
         return 1 if errs else 0
 
-    if args.backfill_dates or args.backfill_orig:
+    if args.backfill_dates or args.backfill_links or args.backfill_orig:
         session = build_session()
 
         def _fetch_article(u: str) -> str:
@@ -6675,6 +6695,14 @@ def main(argv: list[str] | None = None) -> int:
         if args.backfill_dates:
             print(f"[维护] 归档日期回填（只访问缺日期条目的文章页，≤{DATE_BACKFETCH_LIMIT} 页）...")
             visited, filled = backfill_archive_dates(llm_news, _fetch_article)
+        elif args.backfill_links:
+            only = set(args.only) or None
+            scope = f"（仅 {','.join(sorted(only))}）" if only else ""
+            print(f"[维护] 归档展示链接回填{scope}（每个分节页只抓一次并核对其真实 id，"
+                  f"≤{LINK_BACKFETCH_LIMIT} 页；认不出真实锚点的原样不动）...")
+            visited, filled = backfill_archive_links(
+                llm_news, _fetch_article, vendors=only)
+            print(f"      访问 {visited} 页，修复 {filled} 行。")
         else:
             ledger = root / BACKFILL_LEDGER_NAME
             only = set(args.only) or None

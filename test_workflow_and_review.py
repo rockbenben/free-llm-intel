@@ -2835,66 +2835,33 @@ class TestChangelogTitleIsNameOnly(unittest.TestCase):
             self.assertTrue(a.url.endswith(f"#model-{i}"), "URL 仍用模型 ID 做锚点")
 
 
-class TestNewsIntelFilter(unittest.TestCase):
-    """动态条目的「情报过滤」—— 2026-09-22 数据审计后**按厂商规则化**。
+class TestNewsIntelFilterRemoved(unittest.TestCase):
+    """动态条目**不再做「情报过滤」** —— 用户 2026-10-10 定。
 
-    背景：线上 3376 条里 77% 来自公司博客 / 社区技术博客（`openai.com/index/*` 的
-    客户案例、融资、政策、教程；`huggingface.co/blog` 的社区技术文章），
-    其中 228 条根本不是一篇文章。
+    此前按标题词表剔除客户案例 / 公司新闻 / 营销 / 教程 / 研究论文，只留「看起来像
+    模型发布或 API 变更」的条目。那是编辑口味而不是正确性判断，且按措辞判断本来就不稳：
+    实测把 Gemini 版本说明 40 条里的 27 条判成非情报，含「Gemini Robotics ER 2 公开预览版」、
+    「Antigravity Agent 09-2026」、「文件搜索」这些正是本仓库该收录的东西。
 
-    判据按**信号组**组织，因为同一个词在不同厂商的源里含义不同：
-    `fine-tuning` / `embedding` 在 openai 的 news 里是 API 变更信号，
-    在 huggingface 的 blog 里却是技术教程的标题词。
+    这里钉的是**新口径**：厂商官方发布的内容一律收录。真正的「不是一篇文章」由别处的
+    正确性判据守着（日期当标题、栏目名当标题、通用锚文本、表格表头、已废弃源前缀）。
     """
 
-    def test_unlisted_vendor_is_never_filtered(self):
-        """未列入规则的厂商（变更日志型源）不过滤。"""
-        for t in ("Cooley 如何利用 ChatGPT 加速 IPO 工作",
-                  "How X uses ChatGPT to cut costs"):
-            self.assertTrue(crawler_llm_intel.is_intel_news("baseten", t), t)
+    def test_filter_is_gone_rather_than_neutered(self):
+        """整段移除，而不是留个永远返回 True 的空壳。
 
-    def test_model_release_and_api_change_kept(self):
-        for t in ("Introducing GPT-5.5",
-                  "GPT-6 Astra: A new generation of intelligence",
-                  "GLM-5.2: Built for Long-Horizon Tasks",
-                  "Retiring GPT-4o, GPT-4.1, GPT-4.1 mini, and OpenAI o4-mini in ChatGPT",
-                  "New usage analytics and updated spend controls for enterprises",
-                  "Advancing voice intelligence with new models in the API"):
-            self.assertTrue(crawler_llm_intel.is_intel_news("openai", t), t)
+        留空壳的话，下一个读代码的人会分不清哪套口径在生效 —— 而这套口径恰恰是
+        按措辞猜的，最需要有人能一眼看出它已经不成立了。
+        """
+        src = (Path(__file__).resolve().parent / "crawler_llm_intel.py").read_text(
+            encoding="utf-8")
+        for gone in ("def is_intel_news", "NEWS_INTEL_SIGNALS", "NEWS_NOISE_PATTERNS",
+                     "NEWS_SIGNAL_STRONG", "news_filtered"):
+            self.assertNotIn(gone, src, "%s 应已整段移除" % gone)
+        self.assertFalse(hasattr(crawler_llm_intel.VendorIntel, "news_filtered"))
 
-    def test_customer_story_dropped_even_with_release_word(self):
-        """客户案例优先于发布信号 —— `cuts launch hours` 里的 launch 是名词。"""
-        self.assertFalse(crawler_llm_intel.is_intel_news(
-            "openai", "Stampli cuts launch hours by 68% using ChatGPT Work"))
-        self.assertFalse(crawler_llm_intel.is_intel_news(
-            "openai", "How Cooley is accelerating IPO work with ChatGPT"))
-
-    def test_company_news_and_marketing_dropped(self):
-        for t in ("OpenAI appoints Dali Rajic as Chief Revenue Officer",
-                  "Introducing the Intelligence Age",
-                  "Reimagining advertising with AI",
-                  "Expanding AI access and cyber defense for federal, state, and local governments"):
-            self.assertFalse(crawler_llm_intel.is_intel_news("openai", t), t)
-
-    def test_huggingface_uses_release_wide_not_strong(self):
-        """HF 的 blog 里 `fine-tuning` 是技术教程的标题词，不该当情报。"""
-        self.assertFalse(crawler_llm_intel.is_intel_news(
-            "huggingface",
-            "Fine-tuning a 350M Model for Better Structured Outputs in 100 GRPO Steps"))
-        self.assertTrue(crawler_llm_intel.is_intel_news(
-            "huggingface", "Welcome Llama 4 Maverick & Scout on Hugging Face"))
-        self.assertTrue(crawler_llm_intel.is_intel_news(
-            "huggingface", "Introducing Storage Buckets on the Hugging Face Hub"))
-
-    def test_model_listing_on_platform_kept(self):
-        """「某模型 now available on 平台」是上架情报，不要求命中产品名词表。"""
-        self.assertTrue(crawler_llm_intel.is_intel_news(
-            "modal", "Qwen3.8-2.4T-A95B now available on Modal"))
-        self.assertTrue(crawler_llm_intel.is_intel_news(
-            "modal", "Product updates: VM sandboxes, low-latency routing, RBAC, and more"))
-
-    def test_collect_news_articles_applies_filter(self):
-        """过滤在 collect_news_articles 里生效，且判据用的是**原文标题**。"""
+    def test_collect_news_articles_keeps_everything(self):
+        """旧判据下会被剔的三类标题，现在必须全部留下，且保持日期倒序。"""
         xml = ('<?xml version="1.0"?><rss version="2.0"><channel>'
                '<item><title>Introducing GPT-5.5</title>'
                '<link>https://x.example/a</link>'
@@ -2902,6 +2869,9 @@ class TestNewsIntelFilter(unittest.TestCase):
                '<item><title>How Cooley is accelerating IPO work with ChatGPT</title>'
                '<link>https://x.example/b</link>'
                '<pubDate>Tue, 02 Sep 2026 00:00:00 +0000</pubDate></item>'
+               '<item><title>Fine-tuning a 350M Model for Better Structured Outputs</title>'
+               '<link>https://x.example/c</link>'
+               '<pubDate>Wed, 03 Sep 2026 00:00:00 +0000</pubDate></item>'
                '</channel></rss>')
         page = crawler_llm_intel.PageResult(
             url="https://x.example/feed.xml", stype="feed", ok=True,
@@ -2911,8 +2881,13 @@ class TestNewsIntelFilter(unittest.TestCase):
         intel.news_pages = [page]
         crawler_llm_intel.collect_news_articles(intel, session=None)
         self.assertEqual([a.title for a in intel.all_news_articles],
-                         ["Introducing GPT-5.5"])
-        self.assertEqual(intel.news_filtered, 1)
+                         ["Fine-tuning a 350M Model for Better Structured Outputs",
+                          "How Cooley is accelerating IPO work with ChatGPT",
+                          "Introducing GPT-5.5"],
+                         "客户案例与教程现在都要收录，且保持日期倒序")
+        self.assertEqual(len(intel.news_articles), 3,
+                         "主文档展示最新 5 篇；这里总共就 3 条")
+
 
 
 class TestRetiredNewsSource(unittest.TestCase):
@@ -6817,6 +6792,402 @@ class TestAnchorSectionSlicing(unittest.TestCase):
         self.assertIsNone(ft._syn_date_ordinal("04-09-2025-2"))
         self.assertIsNone(ft._syn_date_ordinal("mcp-connectors-beta"))
 
+    # Gemini API 版本说明形状：`## <日期>` 分节之下是一组 `- **条目名**：说明…`。
+    # 条目不是标题行、行内也没有锚点（`#10-08-2026-3` 那个 id 在 HTML 上，readability
+    # 抽完就没了）—— 前三种判据全落空，整页 44,439 字符被 42 条共用，正文全部留空。
+    GEM = (
+        "# 版本说明\n\n本页面记录了 Gemini API 的更新。\n\n"
+        "## 2026 年 10 月 8 日\n\n"
+        "- **Gemini 3.7 Flash 弃用**：`gemini-3.7-flash` 已弃用，并已由 "
+        "`gemini-3.8-flash` 取代。所有请求会自动路由到新模型。\n\n"
+        "- **Deep Research 智能体 `deep-research-pro-preview-12-2025` 弃用**："
+        "该智能体已弃用，并将于 2026 年 10 月 23 日关停。请将 `interactions.create` "
+        "请求中的 `agent` 参数迁移到 `deep-research-preview-04-2026`。\n\n"
+        "## 2026 年 10 月 6 日\n\n"
+        "- **Gemini Omni Flash 正式版 (GA)**：现已发布于 `gemini-omni-1.1-flash`，"
+        "并新增 **视频扩展** 与 **分辨率控制** 两项能力。\n"
+    )
+    GEM_TITLES = ["Gemini 3.7 Flash 弃用",
+                  "Deep Research 智能体 `deep-research-pro-preview-12-2025` 弃用",
+                  "Gemini Omni Flash 正式版 (GA)"]
+
+    def test_dated_bullet_entries_slice_by_date_and_title(self):
+        """日期分节 + 列表项：日期圈分节、标题选中那一项，切出真正文。"""
+        got = ft._slice_anchor_section(
+            self.GEM, "10-08-2026-2", self.GEM_TITLES[1], self.GEM_TITLES, "2026-10-08")
+        self.assertIn("关停", got)
+        self.assertIn("deep-research-preview-04-2026", got)
+        self.assertNotIn("已弃用，并已由", got, "同分节的另一条不得混进来")
+        self.assertNotIn("视频扩展", got, "别的日期分节也不得混进来")
+        self.assertLess(len(got), len(self.GEM.strip()), "切完必须比整页短")
+
+    def test_same_day_entries_never_share_one_body(self):
+        """同一天的多条各归各：共用日期标题可以，正文绝不合并。
+
+        分界是「下一个**同级或更浅**的列表项」，所以同一天相邻的两条各自只拿自己那条
+        bullet（更深缩进的子要点留在父条目里）。反过来，同名撞车时一律不切 ——
+        宁可退回整页被 index_page 拒收，也不让两条共用一份正文。
+        """
+        first = ft._slice_anchor_section(
+            self.GEM, "10-08-2026-1", self.GEM_TITLES[0], self.GEM_TITLES, "2026-10-08")
+        second = ft._slice_anchor_section(
+            self.GEM, "10-08-2026-2", self.GEM_TITLES[1], self.GEM_TITLES, "2026-10-08")
+        self.assertIn("gemini-3.8-flash", first)
+        self.assertNotIn("关停", first, "第一条不许带上第二条的正文")
+        self.assertIn("关停", second)
+        self.assertNotIn("gemini-3.8-flash", second, "第二条不许带上第一条的正文")
+        self.assertNotEqual(first, second, "同一天两条不得切出同一份正文")
+        # 两份可以共用日期标题行（那是分节抬头，不是正文），但正文部分必须不同
+        self.assertEqual(first.splitlines()[0], second.splitlines()[0])
+        dup = ("## 2026 年 5 月 19 日\n\n- **弃用公告**：甲的正文在这里。\n\n"
+               "- **弃用公告**：乙的正文在这里。\n")
+        got = ft._slice_anchor_section(dup, "05-19-2026-1", "弃用公告", ["弃用公告"], "2026-05-19")
+        self.assertEqual(got.strip(), dup.strip(), "同分节重名时退回整页，不许任选一条")
+
+    def test_short_entry_below_the_length_floor_is_not_sliced(self):
+        """只剩一行条目名、没有说明的 bullet 不算切出「这一条」，返回空串。
+
+        直接测 `_slice_dated_bullets`（而不是 `_slice_anchor_section`）：这种形状会被更早的
+        `_slice_by_sibling_titles` 兜住，测上层就测不到这道长度闸门了。
+        """
+        page = ("## 2026 年 5 月 19 日\n\n- **弃用公告**\n\n"
+                "- **别的条目**：有说明的正文，长度要过那道下限，否则两条都会被挡掉、测不出差别。\n")
+        self.assertEqual(ft._slice_dated_bullets(page, "弃用公告", "2026-05-19"), "")
+        self.assertIn("有说明的正文",
+                      ft._slice_dated_bullets(page, "别的条目", "2026-05-19"))
+
+    # Gemini 2025-04-09 的真实形状：`<ul>` 里套 `<ul>`，子条目是**独立的 <li>**。
+    # readability 把嵌套压平成父条目里的一串行内粗体，markdown 路径认不出子条目。
+    GEM_HTML = (
+        '<h2 id="04-09-2025">2025 年 4 月 9 日</h2>\n'
+        '<ul>\n'
+        '<li>发布了 <code>veo-2.0-generate-001</code>，一款正式版 (GA) 的文本到视频模型。</li>\n'
+        '<li><p>发布了 <code>gemini-2.0-flash-live-001</code>，这是启用结算功能的模型。</p>\n'
+        '<ul>\n'
+        '<li><p><strong>增强的会话管理和可靠性</strong></p>\n'
+        '<ul>\n'
+        '<li><strong>会话恢复</strong>：在临时网络中断期间保持会话有效。</li>\n'
+        '</ul></li>\n'
+        '<li><p><strong>可配置的中断处理</strong>：决定用户输入是否应中断模型的回答。</p></li>\n'
+        '</ul></li>\n'
+        '</ul>\n')
+
+    def test_html_tree_recovers_entries_nested_lists_destroyed(self):
+        """嵌套 `<li>` 是独立条目，markdown 丢了层级就回 HTML 取。
+
+        回归：`分辨率控制`、`Gemini 3.8 Live 扩展思考` 在页面里都是独立 `<li>`，只看
+        markdown 会把它们当成别的条目的行内子项而丢弃 —— 那不是「子项冒名」，是真条目。
+        """
+        got = ft._slice_changelog_html(self.GEM_HTML, "可配置的中断处理", "2025-04-09")
+        self.assertIn("决定用户输入是否应中断模型的回答", got)
+        self.assertNotIn("veo-2.0-generate-001", got, "同分节的别的条目不得混进来")
+        self.assertNotIn("会话恢复", got, "更深的孙条目也不该混进来")
+        deep = ft._slice_changelog_html(self.GEM_HTML, "会话恢复", "2025-04-09")
+        self.assertIn("保持会话有效", deep)
+        self.assertNotIn("中断处理", deep, "孙条目不许带上父条目的标题")
+
+    def test_html_tree_refuses_bare_labels_and_unknown_titles(self):
+        """只有条目名没有说明的（页面本来就没有正文）、或标题对不上 → 不切。"""
+        self.assertEqual(ft._slice_changelog_html(self.GEM_HTML, "增强的会话管理和可靠性",
+                                                  "2025-04-09"), "",
+                         "只有条目名、下面挂的是子条目 → 本条自己没有正文")
+        self.assertEqual(ft._slice_changelog_html(self.GEM_HTML, "页面上根本没有的一条",
+                                                  "2025-04-09"), "")
+        self.assertEqual(ft._slice_changelog_html(self.GEM_HTML, "可配置的中断处理",
+                                                  "2025-01-01"), "",
+                         "日期圈错分节就不给，不跨节乱取")
+        self.assertEqual(ft._slice_changelog_html(self.GEM_HTML, "可配置的中断处理", ""), "")
+
+    def test_html_tree_keeps_links_and_code_as_markdown(self):
+        """切片是给读者看的正文，链接与 `<code>` 要转成 markdown，不能剩裸标签。"""
+        html = ('<h2 id="05-19-2026">2026 年 5 月 19 日</h2><ul>'
+                '<li><p><strong>文件搜索</strong>：请参阅 '
+                '<a href="https://x.cn/fs">文件搜索文档</a>，并使用 '
+                '<code>gemini-embedding-2</code> 模型。</p></li></ul>')
+        got = ft._slice_changelog_html(html, "文件搜索", "2026-05-19")
+        self.assertIn("[文件搜索文档](https://x.cn/fs)", got)
+        self.assertIn("`gemini-embedding-2`", got)
+        self.assertNotIn("<a ", got)
+        self.assertNotIn("<code>", got)
+
+    def test_html_tree_never_leaks_script_or_style(self):
+        """`<script>` / `<style>` 的内容一个字都不许进正文。
+
+        回归：HTMLParser 会把脚本正文当普通 data 回调，不挡的话 `var x=1` 和整段 CSS
+        会跟着条目一起落进 `docs/articles/` 给读者看。
+        """
+        for junk, tag in (('var leak="SCRIPTLEAK";', "script"), ('.x{color:red}', "style")):
+            html = ('<h2 id="05-19-2026">2026 年 5 月 19 日</h2><ul>'
+                    '<li><p><strong>文件搜索</strong>：更新了文件搜索以支持多模态搜索。'
+                    '<{t}>{j}</{t}></li></ul>').format(t=tag, j=junk)
+            got = ft._slice_changelog_html(html, "文件搜索", "2026-05-19")
+            self.assertIn("支持多模态搜索", got)
+            self.assertNotIn(junk, got, "<%s> 内容漏进正文了" % tag)
+
+    def test_html_tree_handles_b_tags_and_unclosed_li(self):
+        """`<b>` 与 `<strong>` 同等；漏写 `</li>` 不许让整页条目消失。
+
+        回归：开始标签只认 `strong` 而结束标签认 `("strong","b")`，`<b>条目名</b>` 的
+        条目名取不到（该条永远匹配不上），还会在正文里留下一对没配平的 `**`。而
+        HTMLParser 不做隐式闭合，`<li>a<li>b</ul>` 会让**后面每一条**都压在栈里、
+        一个都不收。
+        """
+        h2 = '<h2 id="05-19-2026">2026 年 5 月 19 日</h2><ul>'
+        got = ft._slice_changelog_html(
+            h2 + '<li><b>文件搜索</b>：更新了文件搜索以支持多模态搜索。</li></ul>',
+            "文件搜索", "2026-05-19")
+        self.assertIn("支持多模态搜索", got)
+        self.assertTrue(got.startswith("**文件搜索**："), "``<b>`` 应转成配平的 **，实际 %r" % got[:30])
+
+        second = ft._slice_changelog_html(
+            h2 + '<li><strong>甲号条目上线</strong>：甲的正文内容在这里有足够长的一段说明文字。'
+                 '<li><strong>乙号条目上线</strong>：乙的正文内容也在这里有足够长的一段说明文字。</ul>',
+            "乙号条目上线", "2026-05-19")
+        self.assertIn("乙的正文内容", second, "漏写 </li> 不该把后面的条目全丢掉")
+        self.assertNotIn("甲的正文内容", second)
+
+    def test_dated_bullets_ignore_fenced_code_samples(self):
+        """代码块里的 `- xxx` 是 YAML/JSON 示例行，不是条目。
+
+        回归：`_slice_dated_bullets` 原来不查 `_visible_lines()`（同族的
+        `_slice_anchor_section` 却一路传着 `visible` 掩码），于是文档站示例代码里的
+        一行会当条目名被切出来，读者点开看到的是一段配置片段。
+        """
+        page = ("## 2026 年 5 月 19 日\n\n```yaml\n"
+                "- 假条目名：这段文字在代码块里，是示例配置不是条目。\n```\n")
+        self.assertEqual(ft._slice_dated_bullets(page, "假条目名", "2026-05-19"), "")
+
+    def test_native_translation_must_actually_contain_chinese(self):
+        """`translator: native` ⟹ 正文里真的有汉字。
+
+        回归：中文页上整条是**纯英文**公告时，判中文的兜底（整页是中文）会把它登记成
+        已完成的汉化；而 `zh_status=translated` 让它此后被 `fetch_bodies` 永久跳过、
+        `reclassify_bodies` 又只查 `en_status == "ok"` 的行 —— 没有这道闸就再也回不来。
+        """
+        with tempfile.TemporaryDirectory() as d:
+            slug = "cccc0000dddd"
+            rel = "docs/articles/google_gemini/%s.md" % slug
+            p = Path(d) / rel
+            p.parent.mkdir(parents=True)
+            ft.write_body_doc(p, {"vendor": "google_gemini", "title": "T",
+                                  "status": "translated", "translator": "native"},
+                             "This announcement is entirely in English, no CJK at all.")
+            bodies = {"google_gemini\thttps://x/p": {
+                "slug": slug, "en_path": "", "en_status": "", "zh_path": rel,
+                "zh_status": "translated", "translator": "native", "title": "T",
+                "date": "", "captured": "", "body_sha": "x", "src_lang": "zh"}}
+            errs = ft.validate_bodies(Path(d), bodies)
+            self.assertTrue(any("没有汉字" in e for e in errs),
+                            "纯英文正文登记成 native 必须报错，实际：%r" % errs)
+
+    def test_html_tree_dates_sections_by_heading_text_not_by_ambiguous_id(self):
+        """分节靠**标题文字**认日期，不靠 `id`。
+
+        回归：`id="10-08-2026"` 是月日顺序有歧义的写法，按两种顺序都认会把
+        **另一天**的分节当成本条 —— 实测 ledger date=2026-10-08 会切到 `08-10-2026`
+        那节去，「唯一命中」这道守卫救不了（错的那节恰好只有它匹配）。
+        标题文字 `2026 年 8 月 10 日` 年月在前、无歧义，且 ledger 的 date 本就从它解析。
+        """
+        html = ('<h2 id="08-10-2026">2026 年 8 月 10 日</h2><ul>'
+                '<li><strong>八月条目</strong>：这是八月那条的正文内容，足够长了吧。</li></ul>'
+                '<h2 id="10-08-2026">2026 年 10 月 8 日</h2><ul>'
+                '<li><strong>十月条目</strong>：这是十月那条的正文内容，也足够长。</li></ul>')
+        self.assertEqual(ft._slice_changelog_html(html, "八月条目", "2026-10-08"), "",
+                         "date=2026-10-08 不许取到 8 月 10 日那节的内容")
+        self.assertIn("十月那条", ft._slice_changelog_html(html, "十月条目", "2026-10-08"))
+        self.assertIn("八月那条", ft._slice_changelog_html(html, "八月条目", "2026-08-10"))
+
+    def test_dated_bullets_refuse_subitem_and_lookalike_titles(self):
+        """子项与形近标题一律不切：宁缺不错，不给张冠李戴的正文。
+
+        「分辨率控制」是 Gemini Omni Flash 那条的**说明里的子项**，不是独立条目；
+        「Antigravity 09-2026」与条目名「Antigravity Agent 09-2026」只差中间一个词。
+        两者都不得命中那条的正文。
+        """
+        for title in ("分辨率控制", "视频扩展"):
+            got = ft._slice_anchor_section(self.GEM, "10-06-2026-1", title, self.GEM_TITLES, "2026-10-06")
+            self.assertEqual(got.strip(), self.GEM.strip(), "子项 %r 不得冒名顶替整个条目" % title)
+        lookalike = self.GEM + "\n## 2026 年 5 月 19 日\n\n- **Antigravity Agent**：受管代理已发布。\n"
+        got = ft._slice_anchor_section(lookalike, "05-19-2026-1", "Antigravity",
+                                      self.GEM_TITLES + ["Antigravity"], "2026-05-19")
+        self.assertIn("受管代理", got, "条目名以标题开头时应当命中")
+        got2 = ft._slice_anchor_section(lookalike, "05-19-2026-1", "Antigravity 09-2026",
+                                       self.GEM_TITLES + ["Antigravity 09-2026"], "2026-05-19")
+        self.assertEqual(got2.strip(), lookalike.strip(), "词中间不同的标题不得命中")
+
+    def test_dated_bullets_ignore_the_anchor_ordinal(self):
+        """锚点里的序号会位移，**只认标题**。
+
+        Gemini 2026-10-08 分节昨天只有 1 条（Deep Research = `-1`），今天有 3 条，
+        `-1` 已经变成「Gemini 3.7 Flash 弃用」。若按序号取，这条标题会被挂上别的条目正文。
+        """
+        stale = ft._slice_anchor_section(
+            self.GEM, "10-08-2026-1", self.GEM_TITLES[1], self.GEM_TITLES, "2026-10-08")
+        self.assertIn("deep-research-preview-04-2026", stale, "序号过期时仍按标题取到自己的正文")
+        self.assertNotIn("已弃用，并已由", stale, "不许按序号取到 Gemini 3.7 Flash 那条")
+
+    def test_dated_bullets_need_a_date_and_a_real_title(self):
+        """没有 date（调用方没给）或标题太短，都维持整页。"""
+        got = ft._slice_anchor_section(self.GEM, "10-08-2026-2", self.GEM_TITLES[1], self.GEM_TITLES)
+        self.assertEqual(got.strip(), self.GEM.strip(), "没有 date 就不猜")
+        for bad in ("弃用", "", "   "):
+            out = ft._slice_anchor_section(self.GEM, "10-08-2026-2", bad, self.GEM_TITLES, "2026-10-08")
+            self.assertEqual(out.strip(), self.GEM.strip(), "标题 %r 不够定位，维持整页" % bad)
+
+    def test_heading_date_keys_accept_the_writings_changelogs_use(self):
+        """分节标题的日期写法各页不同，都要收敛到同一个 ISO。"""
+        self.assertEqual(ft._heading_date_keys("2026 年 10 月 8 日"), {"2026-10-08"})
+        self.assertEqual(ft._heading_date_keys("2026年10月8日"), {"2026-10-08"})
+        self.assertEqual(ft._heading_date_keys("October 8, 2026"), {"2026-10-08"})
+        self.assertEqual(ft._heading_date_keys("Oct 8, 2026"), {"2026-10-08"})
+        self.assertEqual(ft._heading_date_keys("版本说明"), set(), "非日期标题认不出就返回空集")
+        self.assertEqual(ft._heading_date_keys("model-2025-rc1"), set(), "版本号不当日期")
+
+class TestIdentityAndLinkAreSeparate(unittest.TestCase):
+    """**身份（url）与展示链接（link）必须是两个东西**。
+
+    起因：单页变更日志里 `<li>` 没有自己的锚点，索引侧用「分节 id + 序号」合成
+    `#10-06-2026-1` 当身份 —— 但页面上根本没有这个 id，点开停在版本说明页顶（实测
+    Gemini 158 行 / 5 个厂商全是这种假锚点）。修法是链接改用实读的分节锚点
+    `#10-06-2026`，身份原样保留。
+
+    身份不能改：`--rebuild-only` 从归档 markdown 的链接反推 url 与 slug，一旦把
+    可见链接换成真锚点，同一分节的十几条会塌成同一个 slug，正文互相覆盖。
+    """
+
+    SECTIONS = (
+        '<h2 id="10-06-2026">2026 年 10 月 6 日</h2><ul>'
+        '<li><strong>甲条目正式发布了</strong>：甲条目的正文说明，足够长的一段文字。</li>'
+        '<li><strong>乙条目弃用公告发布</strong>：乙条目的正文说明，也足够长的一段文字。</li>'
+        '</ul>'
+        '<h2 id="10-07-2026">2026 年 10 月 7 日</h2><ul>'
+        '<li><strong>丙条目更新说明上线</strong>：丙条目的正文说明，同样足够长的一段。</li>'
+        '</ul>')
+
+    def _arts(self):
+        page = crawler_llm_intel.PageResult(
+            url="https://x.test/changelog?hl=zh-cn",
+            final_url="https://x.test/changelog?hl=zh-cn",
+            text="", raw=self.SECTIONS, stype="changelog")
+        return crawler_llm_intel.extract_changelog_sections(page, max_items=50)
+
+    def test_synthesised_ordinal_is_identity_and_section_anchor_is_link(self):
+        arts = self._arts()
+        self.assertEqual(len(arts), 3)
+        by_title = {a.title: a for a in arts}
+        deep = by_title["甲条目正式发布了"]
+        self.assertTrue(deep.url.endswith("#10-06-2026-1"),
+                        "身份仍是合成分节 id + 序号，实得 %r" % deep.url)
+        self.assertEqual(deep.link, "https://x.test/changelog?hl=zh-cn#10-06-2026",
+                         "展示链接必须是页面上真有的分节锚点")
+        second = by_title["乙条目弃用公告发布"]
+        self.assertTrue(second.url.endswith("#10-06-2026-2"))
+        self.assertEqual(second.link, deep.link, "同一分节的两条共用展示链接")
+        self.assertNotEqual(deep.url, second.url, "身份必须各不相同")
+
+    def test_archive_round_trip_keeps_identity_and_link_apart(self):
+        """归档写出真链接 + `<!--url:身份-->`，读回来必须还原成同一对值。"""
+        arts = self._arts()
+        ident = {a.title: a.url for a in arts}
+        link = {a.title: a.link for a in arts}
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "google_gemini.md"
+            lines = ["# 归档", ""]
+            for i, a in enumerate(arts, 1):
+                lines.append(f"{i}. [{a.title}]({a.link})（{a.date}） <!--url:{a.url}-->")
+            p.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+            back = crawler_llm_intel.parse_archived_articles(p)
+            self.assertEqual(len(back), len(arts))
+            for a in back:
+                self.assertEqual(a.url, ident[a.title], "身份没还原")
+                self.assertEqual(a.link, link[a.title], "展示链接没还原")
+            slugs = {ft.url_hash(a.url) for a in back}
+            self.assertEqual(len(slugs), len(arts),
+                             "身份塌成同一个 slug 会让同一分节的正文互相覆盖")
+
+    def test_legacy_archive_line_without_comment_is_its_own_identity(self):
+        """旧归档行没有 `<!--url:-->` 注释：可见链接就是身份，两者相同。"""
+        with tempfile.TemporaryDirectory() as d:
+            p = Path(d) / "v.md"
+            p.write_text("1. [旧条目标题](https://x.test/c#10-06-2026-1)（2026-10-06）\n",
+                         encoding="utf-8", newline="\n")
+            a = crawler_llm_intel.parse_archived_articles(p)[0]
+            self.assertEqual(a.url, "https://x.test/c#10-06-2026-1")
+            self.assertEqual(a.link, a.url)
+
+    def test_rss_link_is_displayable_but_guid_stays_identity(self):
+        """阅读器点 `<link>` 要能跳；`<guid>` 必须是身份，否则同分节十几条会被当新条目重推。"""
+        art = crawler_llm_intel.Article(
+            title="Gemini 3.7 Flash deprecation", url="https://x.test/c#10-06-2026-1",
+            link="https://x.test/c#10-06-2026", date="2026-10-06")
+        item = crawler_llm_intel._rss_item(art, "Gemini 3.7 Flash 弃用")
+        self.assertIn("<link>https://x.test/c#10-06-2026</link>", item)
+        self.assertIn("https://x.test/c#10-06-2026-1</guid>", item)
+        self.assertNotIn("<link>https://x.test/c#10-06-2026-1</link>", item)
+
+    def test_index_column_and_page_prefer_link(self):
+        with tempfile.TemporaryDirectory() as d:
+            v = crawler_llm_intel.VendorIntel(vendor_id="v", brand="V", homepage="", products=[])
+            v.all_news_articles = [
+                crawler_llm_intel.Article(title="T", url="https://v.test/c#10-06-2026-1",
+                                          link="https://v.test/c#10-06-2026", date="2026-10-06")]
+            feeds = Path(d) / "feeds"
+            crawler_llm_intel.write_rss_feeds(feeds, [v], "")
+            data = json.loads((feeds / "articles.json").read_text(encoding="utf-8"))
+            row = data["articles"][0]
+            self.assertEqual(row[1], "https://v.test/c#10-06-2026-1", "url 列仍是身份")
+            self.assertEqual(row[data["fields"].index("link")], "https://v.test/c#10-06-2026")
+            self.assertEqual(row[5], ft.url_hash(row[1]), "slug 仍由身份算出")
+        page = (Path(__file__).resolve().parent / "docs" / "index.html").read_text(encoding="utf-8")
+        self.assertIn("link: r[8] || r[1] || ''", page,
+                      "页面必须优先用 link 列，老索引（无第 9 列）退回 url")
+
+
+    def test_backfill_links_only_repairs_rows_whose_section_anchor_really_exists(self):
+            """回填只修「去掉序号确实是页面上真锚点」的行，其余原样不动。
+
+            B 类源站（腾讯混元 `t-…`、streamlake、siliconflow、poolside）压根没给锚点 ——
+            连去掉序号的前缀在页面上都不存在。给它们编一个「看起来能跳」的链接是**造假**，
+            必须原样留着。
+            """
+            html = '<h2 id="10-06-2026">2026 年 10 月 6 日</h2>'   # 只有这一个真 id
+            page = ("<h2 id=\"10-08-2026\">2026 年 10 月 8 日</h2>"
+                    "<h2 id=\"10-06-2026\">2026 年 10 月 6 日</h2>")
+            with tempfile.TemporaryDirectory() as d:
+                nd = Path(d)
+                (nd / "google_gemini.md").write_text(
+                    "1. [甲条目正式发布了](https://x.test/c#10-06-2026-1)（2026-10-06）\n"
+                    "2. [乙条目弃用公告发布](https://x.test/c#10-09-2026-1)（2026-10-09）\n"
+                    "3. [丙条目更新说明上线](https://x.test/c#t2026-08-14-0)（2026-08-14）\n"
+                    "4. [丁条目已是真链接](https://x.test/c#10-06-2026)（2026-10-06）\n",
+                    encoding="utf-8", newline="\n")
+                calls = []
+
+                def fetch(u):
+                    calls.append(u)
+                    return page
+
+                visited, fixed = crawler_llm_intel.backfill_archive_links(
+                    nd, fetch, delay=0)
+                self.assertEqual(visited, 1, "同一个分节页只该抓一次，实得 %d 次" % visited)
+                self.assertEqual(fixed, 1, "只有甲那条能修")
+                text = (nd / "google_gemini.md").read_text(encoding="utf-8")
+                lines = text.splitlines()
+                self.assertIn("(https://x.test/c#10-06-2026)（2026-10-06） "
+                              "<!--url:https://x.test/c#10-06-2026-1-->", lines[0],
+                              "甲：可见链接换成真锚点、身份进注释")
+                self.assertIn("#10-09-2026-1", lines[1], "乙：页面没这个 id，原样不动")
+                self.assertIn("#t2026-08-14-0", lines[2], "丙：源站无锚点，原样不动")
+                self.assertIn("#10-06-2026)", lines[3], "丁：本来就是真链接，不动")
+                self.assertNotIn("<!--url:", lines[1] + lines[2] + lines[3])
+                # 回填后再跑一次不应再改任何行（幂等）。可能仍会为「已经是真链接」的
+                # 那行抓一次页去核对 —— 每个分节页只抓一次，代价有界。
+                again = crawler_llm_intel.backfill_archive_links(nd, fetch, delay=0)
+                self.assertEqual(again[1], 0, "已修过的行不该被重复改写")
+                self.assertEqual((nd / "google_gemini.md").read_text(encoding="utf-8"), text,
+                                 "第二次跑不应产生任何 diff")
+
+
 class TestListedMeansReadable(unittest.TestCase):
     """不变量：进了 articles.json 的每一行，要么磁盘上有正文文件，要么台账写明读不到。
 
@@ -7205,6 +7576,43 @@ class TestFulltextLang(unittest.TestCase):
     EN_HTML = ("<article><h1>New Release</h1><p>" + "This is English body text. " * 40
                + "</p></article>")
 
+    def test_captured_stays_put_when_the_body_did_not_change(self):
+        """正文逐字没变就**别动 `captured`**。
+
+        回归：`captured` 记的是「这篇正文是哪天抓到的」。重抓一遍拿到相同内容却把
+        日期改成今天，信息量是零，却让每次 `--retry-unreadable` 都产出一批只差一行的
+        无意义改动（实测 moonshot / siliconflow / streamlake 三家 62 个文件只动了这个
+        字段），把真改动淹没在噪声里。空正文的墓碑文件尤其如此。
+        """
+        rows = [{"vendor": "aliyun_qwen", "url": "https://x/p", "title": "T", "date": "",
+                 "original_title": "T"}]
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            bodies = {}
+            # 第一轮：抓出正文，captured 落在当天
+            ft.fetch_bodies(root, rows, bodies, fetch=lambda u: (self.EN_HTML, True, 200, u),
+                            today="2026-10-01")
+            e = bodies[ft.bodies_key("aliyun_qwen", "https://x/p")]
+            self.assertEqual(e["captured"], "2026-10-01")
+            body_sha = e["body_sha"]
+
+            # 第二轮：同样的内容、换了「今天」，captured 不许跟着跳
+            ft.fetch_bodies(root, rows, bodies, fetch=lambda u: (self.EN_HTML, True, 200, u),
+                            today="2026-10-10", only_missing=False)
+            e2 = bodies[ft.bodies_key("aliyun_qwen", "https://x/p")]
+            self.assertEqual(e2["captured"], "2026-10-01", "内容没变却改了 captured")
+            self.assertEqual(e2["body_sha"], body_sha)
+            fm, _ = ft.read_body_doc(root / e2["en_path"])
+            self.assertEqual(fm.get("captured"), "2026-10-01", "frontmatter 也要一致")
+
+            # 第三轮：正文真的变了，captured 才更新
+            changed = ("<article><h1>New Release</h1><p>" + "Body text changed here. " * 40
+                       + "</p></article>")
+            ft.fetch_bodies(root, rows, bodies, fetch=lambda u: (changed, True, 200, u),
+                            today="2026-10-10", only_missing=False)
+            self.assertEqual(bodies[ft.bodies_key("aliyun_qwen", "https://x/p")]["captured"],
+                             "2026-10-10", "内容变了，captured 必须更新")
+
     def test_detect_source_lang(self):
         self.assertEqual(ft.detect_source_lang(
             ft.extract_article_markdown(self.ZH_HTML, "https://x/p")["markdown"]), "zh")
@@ -7228,6 +7636,49 @@ class TestFulltextLang(unittest.TestCase):
             self.assertTrue((Path(d) / e["zh_path"]).exists())
             self.assertFalse((Path(d) / "docs/articles/aliyun_qwen" / (e["slug"] + ".en.md")).exists())
             self.assertEqual(ft.pending_translation_keys(bodies), [])
+
+    def test_chinese_changelog_slice_inherits_the_pages_language(self):
+        """单页变更日志的一条正文以整页语言为准，别让模型名把中文切片判成英文源。
+
+        Gemini 那条弃用公告整段都是 `deep-research-pro-preview-12-2025` 这类模型名：
+        778 字里 425 个拉丁字符、CJK 只占 18%，单看切片过不了 0.4 的中文阈值。若照旧判成
+        英文源，已经是中文的正文会被存成 `.en.md` 并排进待译队列，让 CI 再机翻一遍。
+        """
+        page = ("# 版本说明\n\n本页面记录了 Gemini API 的更新。\n\n"
+                "## 2026 年 10 月 8 日\n\n"
+                "- **Gemini 3.7 Flash 弃用**：`gemini-3.7-flash` 已弃用并由 "
+                "`gemini-3.8-flash` 取代，所有请求会自动路由到新模型上，无需改动。\n\n"
+                "- **Deep Research 智能体 `deep-research-pro-preview-12-2025` 弃用**："
+                "`deep-research-pro-preview-12-2025` 智能体已弃用，并将于 **2026 年 10 月 23 日**"
+                "关停。请将 `interactions.create` 请求中的 `agent` 参数从 "
+                "`deep-research-pro-preview-12-2025` 迁移到 `deep-research-preview-04-2026`，"
+                "或迁移到 `deep-research-max-preview-04-2026` 以获得最大全面性。\n\n"
+                "## 2026 年 10 月 6 日\n\n"
+                "- **Gemini Nano Banana 2.1 正式版 (GA)**：发布了最新的高效率图片生成和"
+                "对话式智能修图模型，可用于生产环境。该版本在主体一致性上有明显提升，"
+                "并支持更高的分辨率输出与更自然的指令跟随能力。\n\n"
+                "- **弃用公告**：`gemini-3.1-flash-image` 已被弃用，迁移到 "
+                "`gemini-nano-banana-2.1`。请注意在迁移后调整请求中的模型名称。\n")
+        cut = ft._slice_anchor_section(
+            page, "10-08-2026-2", "Deep Research 智能体 `deep-research-pro-preview-12-2025` 弃用",
+            ["Gemini 3.7 Flash 弃用"], "2026-10-08")
+        self.assertIn("关停", cut)
+        self.assertEqual(ft.detect_source_lang(page), "zh")
+        self.assertNotEqual(ft.detect_source_lang(cut), "zh",
+                            "这条切片单看确实判不出中文（回归的前提，别把测试改松了）")
+        with tempfile.TemporaryDirectory() as d:
+            rows = [{"vendor": "google_gemini",
+                     "url": "https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#10-08-2026-2",
+                     "title": "Deep Research 智能体 `deep-research-pro-preview-12-2025` 弃用",
+                     "date": "2026-10-08", "original_title": ""}]
+            bodies = {}
+            ft.fetch_bodies(Path(d), rows, bodies,
+                            fetch=lambda u: (page, True, 200, u), today="2026-10-10")
+            e = bodies[ft.bodies_key("google_gemini", rows[0]["url"])]
+            self.assertEqual(e["src_lang"], "zh")
+            self.assertEqual(e["translator"], "native")
+            self.assertEqual(e["en_status"], "", "中文原生不该留英文侧")
+            self.assertEqual(ft.pending_translation_keys(bodies), [], "中文原生不进待译队列")
 
     def test_reclassify_moves_cached_chinese_out_of_en(self):
         with tempfile.TemporaryDirectory() as d:
@@ -7540,9 +7991,9 @@ class TestIndexHasSlug(unittest.TestCase):
             self.assertEqual(
                 data["fields"],
                 ["title", "url", "vendor", "date", "original_title", "slug",
-                 "readable", "langs"])
+                 "readable", "langs", "link"])
             for row in data["articles"]:
-                self.assertEqual(len(row), 8)
+                self.assertEqual(len(row), 9)
                 # row[1]=url, row[5]=slug；slug 由 fulltext.url_hash 决定
                 self.assertEqual(row[5], ft.url_hash(row[1]),
                                  "slug 必须等于 fulltext.url_hash(url)，与 bodies.json 里的 slug 一致")

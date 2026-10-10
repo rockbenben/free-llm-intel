@@ -888,8 +888,8 @@ sources:
     # 广度兜底：Meta 公司层面的 AI 新闻（原生 RSS，10 条全带日期）。
     # ⚠️ **不是 Llama 专属源** —— 条目多为政策、合作伙伴、消费级产品
     # （`Meta One 订阅`、`Facebook 验证`、`数据中心合资`）。
-    # 2026-09-22 加了情报过滤后，这一源的条目基本会被全部剔除；
-    # 留着是为了「ai.meta.com 拿不到」时不至于整家空白。
+    # 2026-09-22 曾给动态条目加过「情报过滤」，这一源的条目基本会被全部剔除；该过滤
+    # 已于 2026-10-10 整段移除（厂商官方内容一律收录），留着不再有过滤顾虑。
     type: feed
     lang: en
     url: https://about.fb.com/news/tag/ai/feed/
@@ -1010,8 +1010,8 @@ sources:
   - vendor_id: aws_bedrock
     type: docs
     url: https://docs.aws.amazon.com/bedrock/
-  # 官方 ML 博客原生 RSS（实测 20 条）。⚠️ 内容混有客户案例，需要靠
-  # `NEWS_INTEL_SIGNALS` 的厂商规则过滤（见 §8b）；未配规则时默认不过滤。
+  # 官方 ML 博客原生 RSS（实测 20 条）。⚠️ 内容混有客户案例 —— 按 2026-10-10 定的口径，
+  # 厂商官方发布的内容一律收录（原先的 `NEWS_INTEL_SIGNALS` 标题过滤已整段移除）。
   - vendor_id: aws_bedrock
     type: feed
     lang: en
@@ -1385,7 +1385,8 @@ sources:
   # anyscale 三家，已在各自位置登记为 `type: feed`），再退到 HTML 动态页。
   # ⚠️ 这些页大多**不带日期**：无日期条目只进单厂商源、不进合并流
   # （见 write_rss_feeds 的日期规则），浏览页日期列也为空。
-  # ⚠️ 它们尚未配 `NEWS_INTEL_SIGNALS` 过滤规则 —— 未列入的厂商默认不过滤。
+  # ⚠️ 动态条目不再做「情报过滤」（2026-10-10 移除 NEWS_INTEL_SIGNALS 整段），
+  # 这些页的条目一律收录。
   - vendor_id: cerebras
     type: blog
     lang: en

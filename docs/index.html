@@ -481,7 +481,10 @@ var FLI = (function () {
     var vid = r[2] || '';
     return {
       title: r[0] || '',
-      link: r[1] || '',
+      // 展示链接优先用第 9 列 `link`：单页变更日志里 <li> 没有自己的锚点，r[1] 带的是
+      // 索引侧合成的 `-N` 序号、页面上并不存在（点开停在页面顶部）。`link` 是从
+      // `<h2 id=…>` 实读的分节锚点，必然能跳。老索引没有第 9 列时退回 r[1]。
+      link: r[8] || r[1] || '',
       vendorId: vid,
       vendor: (brands && brands[vid]) || vid || UNKNOWN,
       date: r[3] || '',

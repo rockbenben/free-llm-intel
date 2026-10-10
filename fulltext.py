@@ -787,6 +787,270 @@ def _slice_dated_table(md: str, frag: str, title: str):
     return out if len(out) >= 80 else None
 
 
+#: 英文月份名 → 月份号。分节标题除了 `2026 年 10 月 8 日` / `2026-10-08`，还有站点
+#: 直接写英文的（Gemini 版本说明是 `October 8, 2026`，groq 那类缩写是 `Oct 8, 2026`
+#: —— `_TAIL_DATE_RE` 早就认得缩写月份，标题这里也得认）。
+_MONTH_EN = {m: i for i, m in enumerate(
+    "january february march april may june july august september october "
+    "november december".split(), 1)}
+_MONTH_EN.update({m[:3]: i for m, i in list(_MONTH_EN.items())})
+
+_BULLET_RE = re.compile(r"^(\s*)[-*+]\s+")
+_BOLD_RUN_RE = re.compile(r"\*\*(.+?)\*\*")
+
+
+def _bullet_label(line: str) -> str:
+    """列表项的**条目名**：行内**第一个** `**粗体**`；一个粗体都没有才退回冒号前的文字。
+
+    只认第一个粗体是关键。条目的说明里还会带一串子项粗体（Gemini 那条
+    「Gemini Omni Flash 正式版 (GA)」的说明里就跟着「**视频扩展**」「**分辨率控制**」）。
+    把整行拿去比标题时，「分辨率控制」会命中那条的正文，两个不同标题切出同一份内容 ——
+    实测 2025-04-09 的 11 个条目因此共用一份，`fetch_bodies` 的 dup-sha 守卫会把后来者
+    统统拒收。认「第一个粗体」既能救回条目名写在句中的写法（`更新了**文件搜索**，…`），
+    又不会让子项冒名顶替整个条目。
+
+    条目名不一定在行首（`发布了 **Antigravity Agent** 受管代理 …`），所以这里找的是
+    行内第一个粗体，而不是行首粗体。
+    """
+    s = _BULLET_RE.sub("", line or "", count=1).strip()
+    m = _BOLD_RUN_RE.search(s)
+    return m.group(1) if m else re.split(r"[：:]", s, 1)[0]
+
+
+def _heading_date_keys(text: str) -> set:
+    """标题文字里可能写着的 ISO 日期；认不出返回空集。
+
+    分节标题的日期写法各页不同（`2026 年 10 月 8 日` 带空格、`2026-10-08`、
+    `October 8, 2026`），统一收敛成 ISO 供比对。年月日本身要做范围校验，避免把
+    `model-2025-rc1` 这类版本号当日期。
+    """
+    s = (text or "").strip()
+    out = set()
+    m = re.search(r"(20[2-3]\d)\D{1,4}(\d{1,2})\D{1,4}(\d{1,2})", s)
+    if m:
+        mo, d = int(m.group(2)), int(m.group(3))
+        if 1 <= mo <= 12 and 1 <= d <= 31:
+            out.add("%s-%02d-%02d" % (m.group(1), mo, d))
+    m = re.search(r"([A-Za-z]{3,9})\.?\s+(\d{1,2}),?\s+(20[2-3]\d)", s)
+    if m and m.group(1).lower() in _MONTH_EN:
+        out.add("%s-%02d-%02d" % (m.group(3), _MONTH_EN[m.group(1).lower()], int(m.group(2))))
+    return out
+
+
+def _slice_dated_bullets(md: str, title: str, iso: str) -> str:
+    """条目是**日期分节下的一个列表项**时的定位：日期圈分节、标题选中唯一一项。
+
+    Gemini API 版本说明实测形状：`## 2026 年 10 月 8 日` 之下是一组
+    `- **条目名**：说明…`。条目既不是标题行、行内也没有锚点（`#10-08-2026-3` 那个 id
+    在 HTML 上，readability 抽完就没了）—— 前三种判据（行内锚点、行文本 slug、表格行）
+    全部落空，于是整页 44,439 字符被 42 条共用，每条正文都只能留空。
+
+    **不信锚点里的序号**。序号是索引侧数 `<li>` 合成的，厂商往某个日期分节里插一条，
+    该分节后面所有条目的序号就整体位移。实测 Gemini 2026-10-08 分节昨天只有 1 条
+    （Deep Research = `-1`），今天有 3 条（`-1` 已经变成「Gemini 3.7 Flash 弃用」）；
+    按序号取会把**别的条目**的正文挂到这条标题上。这里只用两个稳定量定位：分节标题的
+    日期（取自 ledger 的 `date`，不解析锚点）与条目标题（取自索引）。
+
+    标题当闸门：全页命中 0 处或多于 1 处一律不切，返回空串交调用方维持现状
+    （整页 → index_page 拒收）。猜错等于给读者一篇张冠李戴的正文，比留空更糟。
+    """
+    nt = _norm_text(title)
+    if not iso or len(nt) < 4:
+        return ""
+    lines = md.splitlines()
+    visible = _visible_lines(lines)
+    hits = []
+    for i, line in enumerate(lines):
+        m = _HEADING_RE.match(line)
+        if not m or iso not in _heading_date_keys(_LINK_TEXT_RE.sub(r"\1", line)):
+            continue
+        # 分节范围：到下一个**同级或更浅**的标题为止（更深的是本节内部结构）
+        level = _heading_level(line) or 99
+        end = len(lines)
+        for j in range(i + 1, len(lines)):
+            if (_heading_level(lines[j]) or 99) <= level:
+                end = j
+                break
+        for j in range(i + 1, end):
+            bm = _BULLET_RE.match(lines[j])
+            if not bm or not visible[j]:
+                continue      # 代码块里的 "- xxx" 是 YAML/JSON 示例行，不是条目
+            # 条目名必须**以标题开头**：只做包含判断的话，短标题会命中长条目的名字
+            # （「Gemini 3.8 Live 扩展思考」落在「Gemini 3.8 Live 和 Gemini 3.8 Live
+            # 扩展思考正式版 (GA)」那条里），两条又切出同一份正文。
+            # 索引侧标题可能被 `_cap_changelog_title` 截断，故允许标题是条目名的前缀。
+            label = _norm_text(_bullet_label(lines[j]))
+            if not label.startswith(nt):
+                continue
+            # 本项的范围：到下一个**同级或更浅**的列表项为止（更深的是它的子要点）
+            indent = len(bm.group(1))
+            stop = end
+            for k in range(j + 1, end):
+                bk = _BULLET_RE.match(lines[k])
+                if bk and len(bk.group(1)) <= indent:
+                    stop = k
+                    break
+            body = "\n".join(lines[j:stop]).strip()
+            if len(body) >= 40:      # 只剩一行标题没有说明，交给调用方维持现状
+                hits.append("\n\n".join(p for p in (line.strip(), body) if p))
+    return hits[0] if len(hits) == 1 else ""
+
+
+class _ChangelogLiParser(HTMLParser):
+    """把变更日志页拆成「日期分节 → `<li>` 树」。
+
+    一个 `<li>` = 一条：记下它所属分节的**标题文字**、条目名（**自己第一个** `<strong>`）、
+    以及**自己那段文字**（不含嵌套 `<ul>` 里的子条目）。文字与行内标签一律只归最内层
+    `<li>`，于是父条目的正文天然不含子条目的内容；`<ul>/<ol>/<li>` 的壳不落进正文。
+
+    分节靠**标题文字**认日期，不靠 `id`。`id` 是 `10-08-2026` 这种**月日顺序有歧义**的
+    写法，按两种顺序都认会圈错分节、并把**另一天**的条目当成本条返回（实测：ledger
+    date=2026-10-08 会切到 `08-10-2026` 那节去）。标题文字是 `2026 年 8 月 10 日` 这类
+    年月在前的写法，无歧义，而且 ledger 的 date 本来就是从它解析出来的
+    （`crawler_llm_intel.extract_changelog_sections` 的结构 5），拿它比对才对得上。
+
+    **为什么必须回到 HTML**：readability 会把嵌套列表压平成父条目里的一串行内粗体 ——
+    Gemini 版本说明 2025-04-09 那 11 条子条目全挤在同一行，嵌套层级在 markdown 里已经
+    没了，既认不出子条目、也分不清父子。实测 `分辨率控制`、`Gemini 3.8 Live 扩展思考`
+    在 HTML 里都是**独立的** `<li>`，只看 markdown 会把它们误判成别的条目的子项而丢弃。
+    """
+
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.items: list = []
+        self._sec = ""          # 当前分节的**标题文字**
+        self._in_head = False
+        self._stack: list = []
+        self._skip = 0          # <script>/<style> 内部：内容一个字都不许进正文
+
+    def handle_starttag(self, tag, attrs):
+        a = dict(attrs)
+        if tag in ("script", "style"):
+            self._skip += 1
+            return
+        if self._skip:
+            return
+        if tag in ("h2", "h3", "h4"):
+            self._in_head = True
+            self._sec = ""
+            return
+        if tag == "li":
+            # HTMLParser **不做隐式闭合**：`<li>a<li>b` 这种漏写 `</li>` 的写法会让
+            # 后一条的 frame 压在先一条上，最后一个都不收，整页条目全丢。这里补一刀。
+            if self._stack:
+                self._close_li()
+            self._stack.append({"sec": self._sec, "buf": [], "label": [],
+                                "in_strong": False, "strong_n": 0, "hrefs": []})
+            return
+        if not self._stack:
+            return
+        f = self._stack[-1]
+        # `<b>` 必须与 `strong` 同等对待：只认开始标签会让条目名取不到（该条永远匹配不
+        # 上），而结束标签又认 `<b>` 还会留下一对没配平的 `**`。
+        if tag in ("strong", "b"):
+            f["in_strong"] = True
+            f["strong_n"] += 1
+            f["buf"].append("**")
+        elif tag == "code":
+            f["buf"].append("`")
+        elif tag == "a":
+            f["hrefs"].append(a.get("href") or "")
+            f["buf"].append("[")
+        elif tag in ("p", "div", "li", "ul", "ol", "tr"):
+            f["buf"].append("\n")
+
+    def _close_li(self) -> None:
+        f = self._stack.pop()
+        # 子条目的文字**不并进父条目**：父条目那条 frame 的 buf 不接收子 frame 的。
+        self.items.append({
+            "sec": f["sec"],
+            "label": re.sub(r"\s+", " ", "".join(f["label"])).strip(),
+            "md": re.sub(r"\n{3,}", "\n\n", "".join(f["buf"])).strip(),
+        })
+
+    def handle_endtag(self, tag):
+        if tag in ("script", "style"):
+            self._skip = max(0, self._skip - 1)
+            return
+        if self._skip:
+            return
+        if tag in ("h2", "h3", "h4"):
+            self._in_head = False
+            self._sec = re.sub(r"\s+", " ", self._sec).strip()
+            return
+        if tag == "li":
+            if self._stack:
+                self._close_li()
+            return
+        if tag in ("ul", "ol", "body", "html"):
+            # 列表收尾时还开着的 `<li>`（漏写 `</li>` 的写法）要补刀，否则它永远不会
+            # 落进 items —— 丢一条还算 luck，丢整页就很难察觉了。
+            while self._stack:
+                self._close_li()
+            return
+        if not self._stack:
+            return
+        f = self._stack[-1]
+        if tag in ("strong", "b"):
+            f["in_strong"] = False
+            f["buf"].append("**")
+        elif tag == "code":
+            f["buf"].append("`")
+        elif tag == "a":
+            href = f["hrefs"].pop() if f["hrefs"] else ""
+            f["buf"].append("](%s)" % href if href else "]")
+        elif tag in ("p", "div"):
+            f["buf"].append("\n")
+
+    def handle_data(self, d):
+        if self._skip:
+            return
+        if self._in_head:
+            self._sec += d
+            return
+        if not self._stack:
+            return
+        f = self._stack[-1]
+        f["buf"].append(d)
+        if f["in_strong"] and f["strong_n"] == 1:
+            f["label"].append(d)
+
+
+def _slice_changelog_html(html: str, title: str, iso: str) -> str:
+    """条目是**日期分节下的 `<li>`**、而 markdown 已经丢了嵌套层级时的定位（兜底）。
+
+    markdown 路径（`_slice_anchor_section`）切不出来才走这里，判据与它一致：
+    日期圈分节、条目名以标题开头、全页只命中一处。只认条目名**之外**还有实质说明的
+    条目 —— 页面本身有些条目就只有一行加粗小标题（「更好地控制互动动态」实测 9 个字），
+    那不是切片能补出来的，留空更诚实。返回空串交调用方维持现状。
+    """
+    nt = _norm_text(title)
+    if not html or not iso or len(nt) < 4:
+        return ""
+    p = _ChangelogLiParser()
+    try:
+        p.feed(html)
+        p.close()
+    except Exception:
+        return ""       # 解析不了就当没这条，绝不拿半截 HTML 当正文
+    hits = []
+    for it in p.items:
+        if iso not in _heading_date_keys(it["sec"]):
+            continue
+        if not _norm_text(it["label"]).startswith(nt):
+            continue
+        # 剥条目名时**两边都要归一**：`label` 入库前已把空白折叠过，而 `md` 没有，
+        # 直接 `str.replace` 遇到跨行的 `<strong>` 会静默失配，于是条目名自己被当成
+        # 「说明」骗过下面这道下限 —— 页面上只有一行加粗小标题的条目会被当成有正文。
+        own = re.sub(r"\s+", " ", it["md"])
+        if it["label"]:
+            own = own.replace(it["label"], "", 1)
+        if len(_norm_text(own)) < 15:
+            continue
+        hits.append(it["md"])
+    return hits[0] if len(hits) == 1 else ""
+
+
 #: 条目之间的收尾噪声：分隔线，以及**下一条**头顶的裸日期标签
 #: （groq changelog 实测 13 条切片结尾挂着 `---` + `Oct 29, 2025`，读者会以为
 #: 这条自己就是那个日期）。日期标签只在它后面紧跟边界时才削，正文一律不动。
@@ -810,14 +1074,17 @@ def _trim_entry_tail(lines: list[str], end: int) -> int:
     return i
 
 
-def _slice_anchor_section(md: str, frag: str, title: str = "", siblings=()) -> str:
+def _slice_anchor_section(md: str, frag: str, title: str = "", siblings=(), date: str = "") -> str:
     """从整页 markdown 里切出 `frag` 锚点那一条的段落；找不到就原样返回整页。
 
     起点 = `_find_entry_start`（标题行，或 Cloudflare 那种独立成行的条目标题）。
     三种形状都定位不到时，再试 `_slice_dated_table`：条目其实是**表格里的一行**
     （腾讯混元更新日志），靠合成锚点里的日期筛行、用 `title` 选中唯一一行。
-    表格也选不中时最后试 `_slice_by_sibling_titles`：分界用 `siblings`（同一页其余
-    条目的标题）认，不猜「哪行像标题」。
+    表格也选不中时试 `_slice_by_sibling_titles`：分界用 `siblings`（同一页其余
+    条目的标题）认，不猜「哪行像标题」。最后才试 `_slice_dated_bullets`：条目是
+    **日期分节下的一个列表项**（Gemini 版本说明），靠 `date` 圈分节、`title` 选中
+    那一项。顺序即优先级：靠前的判据更精确，新形状放最后兜底，不改变任何既有源的结果。
+
     终点 = 其后第一个**同级或更浅的条目起点**；起点是非标题行时，任意条目起点都能收尾。
     标题型起点还要求那个标题是「条目开头」，判据见 `_is_entry_heading`（日期型标题或带锚点链接），
     **不是单纯「下一个同级标题」**：MiniMax 每条下面紧跟的 `## MiniMax H3` 与日期标题同级，
@@ -834,8 +1101,11 @@ def _slice_anchor_section(md: str, frag: str, title: str = "", siblings=()) -> s
         table_slice = _slice_dated_table(md, frag, title)
         if table_slice:
             return table_slice
-        # 表格也选不中：最后用「同页其他条目标题」当分界试一次（智谱那种条目行不是标题语法）
-        return _slice_by_sibling_titles(md, title, siblings) or md
+        # 表格也选不中：用「同页其他条目标题」当分界试一次（智谱那种条目行不是标题语法）
+        sib = _slice_by_sibling_titles(md, title, siblings)
+        if sib:
+            return sib
+        return _slice_dated_bullets(md, title, date) or md
     level = _heading_level(lines[start]) or 99   # 非标题起点：任何条目起点都算边界
     end = len(lines)
     visible = _visible_lines(lines)
@@ -909,12 +1179,22 @@ def validate_bodies(root: Path, bodies: dict) -> list:
         if zh == "translated":
             if not e.get("zh_path") or not (root / e.get("zh_path", "")).exists():
                 errs.append(f"{key}: zh=translated 但缺 {e.get('zh_path')!r}")
+            elif e.get("translator") == "native":
+                # 「中文原生」= 正文本身就是中文，不经翻译。登记成 native 却一个汉字都
+                # 没有，等于把一篇（多半是英文的）正文记成已完成的汉化；而
+                # `zh_status=translated` 会让它此后被 `fetch_bodies` 永久跳过、
+                # `reclassify_bodies` 又只查 `en_status == "ok"` 的行，没有任何回访路径
+                # —— 不在这道闸上拦住，它就永远错下去了。
+                _fm, body = read_body_doc(root / e["zh_path"])
+                if body.strip() and not _CJK.search(body):
+                    errs.append(f"{key}: translator=native 但正文里没有汉字")
     return errs
 
 
 def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                  today: str, only_missing: bool = True, retry_unreadable: bool = False,
-                 save: Callable[[dict], None] | None = None, flush_every: int = 20) -> int:
+                 save: Callable[[dict], None] | None = None, flush_every: int = 20,
+                 refetch: Callable | None = None) -> int:
     """逐行抓正文写 `.en.md` 并 upsert `bodies`。`fetch(url)->(html,ok,status,final)` 注入。
 
     返回本轮新写/更新的条数。幂等：`only_missing` 时已 `en_status=ok` 的行跳过。
@@ -923,7 +1203,29 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
     把精译冲掉。`fetch_failed` / `paywall` 本来就每天重试，与本旗标无关。
     抓不到 → `fetch_failed`，正文留空，绝不编造。给定 `save` 时每 `flush_every` 篇
     增量落盘一次（长批被中断也不丢进度；末尾再落一次由调用方负责）。
+
+    `refetch(url)->(html,ok,status,final)` 可选：页面拿到了却抽不出正文时用它再试一次
+    （通常是前端渲染，requests 拿到的是壳）。传了就启用，不传行为不变。
     """
+    def _kept_captured(rel: str, new_body: str) -> str:
+        """正文**一个字没变**就沿用旧的 `captured`，别让日期凭空漂一天。
+
+        `captured` 记的是「这篇正文是哪天抓到的」。重抓一遍拿到逐字相同的内容时
+        把它改成今天，信息量是零，却让每次 `--retry-unreadable` 都产出一批只差一行的
+        无意义改动（实测 moonshot / siliconflow / streamlake 三家 62 个文件只动了这个
+        字段），把真改动淹没在噪声里。空正文的墓碑文件尤其如此 —— 它们每次重抓都
+        是空，`captured` 却天天往前跳。
+        """
+        if not rel:
+            return today
+        old = root / rel
+        try:
+            fm_old, body_old = read_body_doc(old)
+        except Exception:
+            return today
+        if body_old == new_body and fm_old.get("captured"):
+            return fm_old["captured"]
+        return today
     # 同一基页（去掉 fragment）的其他条目标题：单页变更日志切片时的分界素材。
     siblings_by_base: dict = {}
     for r in rows:
@@ -951,6 +1253,21 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                 continue
         html, ok, _status, final = fetch(url)
         ex = extract_article_markdown(html or "", final or url)
+        # 页面拿到了（200、大量 HTML）却**抽不出正文**时，用 `refetch` 再渲染一次。
+        # 这类页面是前端渲染的：requests 拿到的是壳，readability 自然什么都读不到 ——
+        # 实测 cohere.com/research/* 有 500KB+ HTML、sparse 判定也不触发浏览器兜底，
+        # 结果 0 字。走真实浏览器渲染后是 6000 字以上的正常正文。
+        #
+        # 只在「页面拿到了但抽不出」时重试：`fetch_url` 自己的浏览器兜底只看
+        # `not ok / 4xx / sparse / 拦截标记`，覆盖不到这一档；放到正文抓取路径而不是
+        # `fetch_url` 里，是因为巡检路径每页都渲染太贵，而正文抓取是慢路径、且只在
+        # 真的读不出来时才多付这一次渲染。
+        if refetch is not None and ok and ex["reason"]:
+            h2, ok2, _s2, f2 = refetch(url)
+            if ok2:
+                ex2 = extract_article_markdown(h2 or "", f2 or url)
+                if not ex2["reason"] and len(ex2["markdown"]) > len(ex["markdown"]):
+                    ex, ok, final = ex2, ok2, f2
         en_status = "ok" if ex["reason"] == "" and ok else status_for_reason(ex["reason"] or "empty")
         # 单页变更日志（MiniMax 发布说明、Kimi 发布记录）：抓回来的永远是**整页**，
         # 按 fragment 切成「这一条」的段落。顺序不能换 —— 必须先切片再判目录页：
@@ -958,17 +1275,31 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # （实测 MiniMax 发布说明 21 条条目因此共用一份整页正文）。
         frag = anchor_fragment(url)
         shrank = True
+        page_md = ex["markdown"]      # 切片前的整页，留给中文判定用（见下方 src_lang）
         if en_status == "ok" and frag:
+            # `date` 传给切片器：条目是「日期分节下的列表项」时（Gemini 版本说明）靠它
+            # 圈分节。取自 ledger 的 date，**不解析锚点** —— 锚点里的序号会随厂商往分节
+            # 里插条目而整体位移，按序号取会把别的条目正文挂到这条标题上。
             sliced = _slice_anchor_section(
                 ex["markdown"], frag, r.get("title") or "",
-                siblings_by_base.get((vendor, url.split("#", 1)[0]), ()))
+                siblings_by_base.get((vendor, url.split("#", 1)[0]), ()),
+                r.get("date") or "")
             if len(sliced) < len(ex["markdown"]):
                 ex["markdown"] = sliced
                 # 整页的 <title> 是页面级的（「模型发布 - MiniMax 开放平台文档中心」），
                 # 切片后用它会让每篇正文都顶着同一个标题；条目自己的标题在索引里。
                 ex["title"] = r.get("title") or ex["title"]
             else:
-                shrank = False
+                # markdown 切不出来，最后试 HTML 树：readability 会把嵌套列表压平成
+                # 父条目里的一串行内粗体，嵌套那层条目在 markdown 里已经找不回来了
+                # （详见 `_slice_changelog_html`）。位置同样在最后，只做兜底。
+                html_sliced = _slice_changelog_html(
+                    html or "", r.get("title") or "", r.get("date") or "")
+                if html_sliced:
+                    ex["markdown"] = html_sliced
+                    ex["title"] = r.get("title") or ex["title"]
+                else:
+                    shrank = False
         # 拒收整页：条目 URL 带 fragment、这一页在索引里**还有别的条目**，而切片没能
         # 缩小正文 —— 说明我们拿到的是整页而不是「这一条」。存下来就是 N 行共用一份
         # 整页（实测重抓 streamlake 时 3 行各存了同一份 7,100 字整页，把上一轮清理
@@ -980,9 +1311,13 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # 首页回退（实测 modular.com 三篇博客重抓后都落到「Inference reimagined…」首页，
         # 17,209 字逐字相同）。正文一旦与同厂商另一行已记的 `body_sha` 撞上，它就不是
         # 「这一条」的正文，一样拒收。
+        # 比对**不看状态**：中文原生的行 `en_status` 是空的，早先只看 `== "ok"` 时这条
+        # 守卫对它们完全失明 —— 合成锚点位移（厂商往某个日期分节里插一条，后面序号整体
+        # 后移）会让两个标题同时落到同一切片，两份逐字相同的正文都被写进语料，而
+        # `validate_bodies` 查不出来。这正是本组守卫要根除的缺陷。
         if en_status == "ok" and len(ex["markdown"]) >= 200:
             _sha = hashlib.sha256(ex["markdown"].encode("utf-8")).hexdigest()[:12]
-            if any(o.get("body_sha") == _sha and o.get("en_status") == "ok"
+            if any(o.get("body_sha") == _sha and (o.get("en_path") or o.get("zh_path"))
                    for kk, o in bodies.items()
                    if kk != key and kk.split("\t", 1)[0] == vendor):
                 en_status = "index_page"
@@ -992,12 +1327,28 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         slug = url_hash(url)
         date = today
         norm = normalize_url(url)
-        if en_status == "ok" and detect_source_lang(ex["markdown"]) == "zh":
+        # 中文判定**先看整页、再看切片**，但**切片自己必须真的有汉字**才算数。
+        # 单页变更日志的一条正文往往整段都是模型名（Gemini 那条弃用公告 778 字里 425 个
+        # 拉丁字符，CJK 只占 18%，单看切片会被判成英文源，白送进翻译队列让 CI 把
+        # 已经是中文的正文再机翻一遍）；切片是整页的一部分，不可能换一种语言，
+        # 故整页中文可作依据。
+        # 反过来，英文页里夹的中文段落仍按切片判（整页英文、切片判中文）。
+        # `CJK` 这道闸堵的是另一种情况：中文页上整条是**纯英文**公告。没有它，那条会以
+        # `translator: native` / `zh_status: translated` 落盘 —— 等于把一篇英文正文登记成
+        # 已完成的汉化，而 `translated` 会让它此后被 `fetch_bodies` 永久跳过、
+        # `reclassify_bodies` 又只查 `en_status == "ok"` 的行，没有任何回访路径。
+        page_lang = detect_source_lang(page_md) if page_md else ""
+        slice_lang = detect_source_lang(ex["markdown"])
+        src_lang = ("zh" if (slice_lang == "zh"
+                             or (page_lang == "zh" and _CJK.search(ex["markdown"])))
+                    else "en")
+        if en_status == "ok" and src_lang == "zh":
             # 中文原生：正文即译文，直接落 `.md`，不留英文侧
             zh_rel = f"docs/articles/{vendor}/{slug}.md"
+            cap = _kept_captured(prev.get("zh_path") or "", ex["markdown"])
             fm = {"vendor": vendor, "title": ex["title"] or r.get("title", ""),
                   "original_title": "", "url": norm, "date": ex["date"] or r.get("date", ""),
-                  "lang": "zh", "captured": date, "extractor": "readability-v1",
+                  "lang": "zh", "captured": cap, "extractor": "readability-v1",
                   "translator": "native", "status": "translated",
                   "body_sha": hashlib.sha256(ex["markdown"].encode("utf-8")).hexdigest()[:12]}
             write_body_doc(root / zh_rel, fm, ex["markdown"])
@@ -1007,7 +1358,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             bodies[key] = {"slug": slug, "en_path": "", "en_status": "", "zh_path": zh_rel,
                            "zh_status": "translated", "translator": "native",
                            "title": r.get("title", ""), "date": r.get("date", ""),
-                           "captured": date, "body_sha": fm["body_sha"], "src_lang": "zh"}
+                           "captured": cap, "body_sha": fm["body_sha"], "src_lang": "zh"}
             written += 1
             if save is not None and written % flush_every == 0:
                 save(bodies)
@@ -1015,9 +1366,10 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # 英文原文 / 抓取失败：写英文侧，保留已有的真实中文译文
         en_rel = f"docs/articles/{vendor}/{slug}.en.md"
         body = ex["markdown"] if en_status == "ok" else ""
+        cap = _kept_captured(prev.get("en_path") or "", body)
         fm = {"vendor": vendor, "title": ex["title"] or r.get("original_title") or r.get("title", ""),
               "original_title": r.get("original_title", ""), "url": norm,
-              "date": ex["date"] or r.get("date", ""), "lang": "en", "captured": date,
+              "date": ex["date"] or r.get("date", ""), "lang": "en", "captured": cap,
               "extractor": "readability-v1", "status": en_status,
               "body_sha": hashlib.sha256(body.encode("utf-8")).hexdigest()[:12]}
         write_body_doc(root / en_rel, fm, body)
@@ -1025,7 +1377,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                        "zh_path": prev.get("zh_path", ""), "zh_status": prev.get("zh_status", ""),
                        "translator": prev.get("translator", ""),
                        "title": r.get("title", ""), "date": r.get("date", ""),
-                       "captured": date, "body_sha": fm["body_sha"], "src_lang": "en"}
+                       "captured": cap, "body_sha": fm["body_sha"], "src_lang": "en"}
         written += 1
         if save is not None and written % flush_every == 0:
             save(bodies)
