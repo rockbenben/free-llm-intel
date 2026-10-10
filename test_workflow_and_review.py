@@ -8886,6 +8886,12 @@ class TestMtBodiesCli(unittest.TestCase):
         self.assertEqual(ft.pending_translation_keys(saved), ["openai\thttps://a/p"])
 
 
+def _url_targets(text):
+    """正文里所有链接目标 `(url)`，按出现顺序（用来钉「URL 多重集不变」这条不变量）。"""
+    import re as _re
+    return _re.findall(r"\]\(([^)]*)\)", text)
+
+
 class TestPageFurnitureStrip(unittest.TestCase):
     """中文正文落盘口的页面家具清洗：只删站件，不删正文。
 
@@ -9038,6 +9044,110 @@ class TestPageFurnitureStrip(unittest.TestCase):
         out = ft.strip_page_furniture(body)
         self.assertIn("我们建议在新窗口中打开这个页面以便对照。", out, "句子里正常用这个词，不该动")
         self.assertIn("[label（在新窗口中打开）](https://x.example/y)", out, "代码块内的原样")
+
+    # --- 锚点图标（显示文字全是不可见字符的链接）------------------------------
+    # 判据只删「删了不减少指向」的那些，所以每条正向夹具都要配一条反向诱饵。
+
+    def test_anchor_icon_gone_heading_text_kept(self):
+        # 文档站标题旁的永久链接图标：`## 标题[零宽](本页#锚)`
+        zhw = chr(0x200b)
+        line = "## 非对称模型结构[%s](https://api-docs.example.com/news/n1#%s)" % (zhw, "标题")
+        out = ft.strip_page_furniture(line, "https://api-docs.example.com/news/n1")
+        self.assertEqual(out, "## 非对称模型结构")
+
+    def test_invisible_link_kept_when_only_pointer(self):
+        # 诱饵：同一条链接指向**别处**且正文里没别人指向它 —— 删了就丢引用，必须留着
+        zwc = chr(0x200d)
+        line = "- 详见 [%s](https://other.example.com/docs/x)" % zwc
+        self.assertEqual(ft.strip_page_furniture(line, "https://page.example.com/y"), line,
+                         "唯一指向别处的不可见链接不许删")
+
+    def test_mirror_page_permalink_icon_gone(self):
+        # 台账 URL 与图标基址不同站（anthropic 稿子里挂着 code.claude.com 的标题锚点）：
+        # 锚点 slug 就等于本行标题文字，按构造就是这条标题的永久链接 → 可删
+        zhw = chr(0x200b)
+        line = "## [%s](https://code.example.com/docs/en/best-practices#use-cli-tools)" \
+               "Use CLI tools" % zhw
+        out = ft.strip_page_furniture(line, "https://www.anthropic.com/engineering/x")
+        self.assertEqual(out, "## Use CLI tools")
+        # 诱饵：锚点指向**别的**标题，就是真引用了，不许删
+        decoy = "## [%s](https://code.example.com/docs/en/best-practices#set-up-hooks)" \
+                "Use CLI tools" % zhw
+        self.assertEqual(ft.strip_page_furniture(decoy,
+                                                 "https://www.anthropic.com/engineering/x"),
+                         decoy)
+
+    def test_duplicate_icon_removed_without_losing_other_link(self):
+        # 同一行里既有「重复目标」的图标（可删）又有「唯一指向别处」的图标（必须留）：
+        # 只有这种混排才能单独证人「按 icons 集合逐条判定」那道闸——单条时开头的
+        # `_has_inline_junk` 已经把整行挡掉了，判据坏了也测不出来
+        zwc = chr(0x200d)
+        line = ("- 见 [WGMMA Programming](https://d.example.com/wgmma/)"
+                "[%s](https://d.example.com/wgmma/)"
+                " 另见 [%s](https://only.example.com/x)" % (zwc, zwc))
+        out = ft.strip_page_furniture(line, "https://page.example.com/y")
+        self.assertIn("[WGMMA Programming](https://d.example.com/wgmma/)", out, "真链接原样")
+        self.assertIn("[%s](https://only.example.com/x)" % zwc, out,
+                      "同行里唯一指向别处的那条不许跟着删")
+        self.assertNotIn("[%s](https://d.example.com/wgmma/)" % zwc, out, "重复的图标链接该删")
+        import collections as _c
+        want = _c.Counter(_url_targets(line))
+        want["https://d.example.com/wgmma/"] -= 1        # 只少掉图标那一条的重复目标
+        self.assertEqual(_c.Counter(_url_targets(out)), want, "只允许少掉那一条重复目标")
+
+    def test_empty_alt_image_never_touched(self):
+        # 实测踩过的坑：`![](x.png)` 的 alt 是空的，但它不是家具——曾被啃成 `!https://…`
+        for line in ["- ![](https://cdn.example.com/a.png)",
+                     "![](https://cdn.example.com/b.jpeg) 配图说明"]:
+            self.assertEqual(ft.strip_page_furniture(line, "https://page.example.com/y"), line)
+
+    def test_image_alt_hint_does_not_unimage_the_link(self):
+        # 图片的 alt 里塞了无障碍提示：单独证人 `parts[idx-1].endswith("!")` 这道闸——
+        # 没有它，摘完提示 alt 变空，会被当成「提示占满显示文字」改写成 `[url](url)`，图片没了
+        line = "- ![⁠（在新窗口中打开）](https://cdn.example.com/a.png)"
+        self.assertEqual(ft.strip_page_furniture(line, "https://page.example.com/y"), line)
+
+    def test_anchor_icon_inside_fence_untouched(self):
+        # 栅栏外也放一条同页图标，让 `icons` 非空、开头那道 early-return 不生效；
+        # 这样栅栏豁免一旦失效，块内那行会被改走，证人不会白绿
+        zhw = chr(0x200b)
+        icon = "[%s](https://page.example.com/y#%s)" % (zhw, "小节")
+        body = "\n".join([
+            "# 标题",
+            "",
+            "```markdown",
+            "## 小节%s小节" % icon,
+            "```",
+            "",
+            "正文里也有一条%s在这里。" % icon,
+        ])
+        out = ft.strip_page_furniture(body, "https://page.example.com/y")
+        self.assertIn("```markdown\n## 小节%s小节\n```" % icon, out, "代码块内的示例文档原样保留")
+        self.assertIn("正文里也有一条在这里。", out, "块外那条按判据删掉")
+        self.assertEqual(out.count(zhw), 1, "只剩块内那一个零宽字符")
+
+    def test_hint_only_text_stays_a_link(self):
+        # 显示文字被无障碍提示占满：换成 URL 当文字，链接结构保住（相邻几条不会黏成一坨）
+        line = "- [⁠⁠(opens in a new window)](https://github.example.com/o/c)"
+        out = ft.strip_page_furniture(line)
+        self.assertEqual(out, "- [https://github.example.com/o/c]"
+                              "(https://github.example.com/o/c)")
+        self.assertEqual(_url_targets(line), _url_targets(out), "URL 多重集逐字不变")
+
+    def test_mark_translated_drops_icon_with_page_url(self):
+        zhw = chr(0x200b)
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            key = "deepseek\thttps://api-docs.example.com/news/n1"
+            bodies = {key: {"slug": "d1", "en_status": "ok", "en_path": "",
+                           "zh_status": "", "zh_path": ""}}
+            ft.mark_translated(root, bodies, key=key,
+                               zh_body_md="## 缓存说明[%s]"
+                                          "(https://api-docs.example.com/news/n1#缓存说明)" % zhw,
+                               translator="agent", today="2026-10-10")
+            fm, body = ft.read_body_doc(root / "docs/articles/deepseek/d1.md")
+            self.assertEqual(body.strip(), "## 缓存说明")
+            self.assertNotIn(zhw, fm["body_sha"] + body)
 
 
 if __name__ == "__main__":

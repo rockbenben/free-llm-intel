@@ -216,6 +216,15 @@ _INLINE_HINT_RES = (
     re.compile(r"[⁠​ ]*[（(]\s*(?:在新窗口中打开|在新窗口打开|在新标签页中打开|在新标签页打开|打开新窗口)\s*[)）]"),
     re.compile(r"[⁠​ ]*\(\s*opens? in a new (?:window|tab)\s*\)", re.I),
 )
+# 锚点图标链接：文档站的标题会挂一个「显示文字全是不可见字符」的自链接（`## [​](…#节)标题`），
+# readability 把它连同真标题一起收了进来。本语料逐行扫出 323 处：删 256 处（判据见
+# `_droppable_icon_targets`），留 43 处「唯一指向别处」不敢删、24 处在代码块内豁免。
+# 空 alt 的**图片**（`![](x.png)`，实测 5359 处）不是家具，一律不动。
+# EN 页签同样会渲染出来，所以中英两侧都洗。
+_INVISIBLE_CHARS = ''.join(chr(c) for c in (0x20, 0x09, 0xa0, 0x180e, 0x200b, 0x200c,
+                                           0x200d, 0x2060, 0xfeff))
+_EMPTY_TEXT_LINK_RE = re.compile(
+    r"\[(?:[" + re.escape(_INVISIBLE_CHARS) + r"]*)\]\(([^)]*)\)")
 _VALUE_WALK_MAX = 8
 _RELATED_MAX_LINES = 40
 
@@ -309,35 +318,96 @@ def furniture_drops(lines):
     return drop
 
 
-def strip_page_furniture(body: str) -> str:
-    """清洗中文正文里的页面家具。
+def _droppable_icon_targets(lines, fenced, page_url):
+    """可以被整条删掉的「不可见文字链接」目标集合。
 
-    两种判据都是精确匹配，不猜形状：
-      行级 —— 整行等于站件闭集标签，或结构块（带值标签后的短标签值、文末带卡片指纹的推荐区）；
-      串级 —— 句内的无障碍提示（站方塞在每个外链显示文本里，实测 4290 处）。
-    ``` 代码块内部一个字不动；链接的 `(url)` 段逐字保留；句中同样的词不删。
+    只认三种，删完不减少任何指向（本次语料 256 处删除的归因）：
+      1) 同页锚点 —— 基址就是本页且带 fragment（文档站标题旁的永久链接图标；164 处）；
+      2) 同一目标在本文里**另有出现** —— 图标只是重复链接（50 处）；
+      3) 本行自己的永久链接 —— 锚点 slug 就等于这一行（标题）的文本 slug。补的是
+         「镜像页」那一档：anthropic 工程文章的标题图标指向
+         `code.claude.com/docs/…#该标题`，基址不等于台账 URL、目标也没有第二次出现，
+         但它按构造就是这条标题的锚点（42 处）。
+         比对复用切片器已有的 `_slug` / `_line_anchor_keys`，不再造一套归一化。
+    其余（唯一指向别处）一律留着：宁可渲染出一个空文字链接，也不丢一个唯一引用。
+    已知差一档的形状：站方把标题里的 `.` 当分隔符（`CLAUDE.md` → `#…-claude-md`），
+    `_slug` 却把点号丢掉，这一处（实测 1 例）匹配不上就保留——不为它单独放宽归一化。
+    """
+    counts, icons = {}, set()
+    for i, l in enumerate(lines):
+        if i in fenced:
+            continue
+        for m in re.finditer(r"(?<!!)\[([^\]]*)\]\(([^)]*)\)", l):
+            counts[m.group(2)] = counts.get(m.group(2), 0) + 1
+            if not m.group(1).strip(_INVISIBLE_CHARS):
+                icons.add(m.group(2))
+    base = normalize_url(page_url) if page_url else ""
+    out = set()
+    for i, l in enumerate(lines):
+        if i in fenced:
+            continue
+        _frags, text_keys = _line_anchor_keys(l)
+        for m in re.finditer(r"(?<!!)\[([^\]]*)\]\(([^)]*)\)", l):
+            u = m.group(2)
+            if m.group(1).strip(_INVISIBLE_CHARS) or u in out:
+                continue
+            frag = urlsplit(u).fragment
+            if (base and frag and normalize_url(u) == base) or counts.get(u, 0) > 1:
+                out.add(u)
+            elif frag and text_keys and _slug(unquote(frag)) in text_keys:
+                out.add(u)
+    return out
+
+
+def strip_inline_junk(body: str, page_url: str = "") -> str:
+    """串级清洗：句内无障碍提示 + 锚点图标链接。中英两侧落盘口都走它。
+
+    这两档是 readability 连**链接显示文字**一起收进来的抽取噪声，不是「还没加载」，
+    也不是正文；且 EN 页签同样会渲染出来，所以两侧都洗。
+    ``` 代码块内部一个字不动；链接目标 `(url)` 的**多重集**逐字不变——整条删除图标链接
+    也只删 `_droppable_icon_targets` 认定「删了不减少指向」的那些。
+    `page_url` 供同页锚点判定；缺省时图标只按「本文另有出现」这一条删。
+    """
+    lines = (body or "").split("\n")
+    fenced, _ = _fence_mask(lines)
+    icons = _droppable_icon_targets(lines, fenced, page_url)
+    if not any(_has_inline_junk(l, icons) for l in lines):
+        return body
+    return "\n".join(l if i in fenced else _strip_inline_junk(l, icons)
+                     for i, l in enumerate(lines))
+
+
+def strip_page_furniture(body: str, page_url: str = "") -> str:
+    """整行页面家具 + 串级噪声，一次洗全。**中文落盘口用这个**。
+
+    行级判据（`furniture_drops` 的 R1–R5）只删「整行等于站件闭集标签」或结构块
+    （带值标签后的短标签值、文末带卡片指纹的推荐区）；精确匹配，不猜形状。
     """
     lines = (body or "").split("\n")
     drop = furniture_drops(lines)
-    has_hint = any(rx.search(l) for l in lines for rx in _INLINE_HINT_RES)
-    if not drop and not has_hint:
-        return body
-    fenced, _ = _fence_mask(lines)
-    out = []
-    for i, l in enumerate(lines):
-        if i in drop:
-            continue
-        out.append(l if i in fenced else _strip_inline_hints(l))
-    return "\n".join(out)
+    if drop:
+        # 删的都是非栅栏行，栅栏奇偶不受影响；剩下的交给串级那一趟
+        body = "\n".join(l for i, l in enumerate(lines) if i not in drop)
+    return strip_inline_junk(body, page_url)
 
 
-def _strip_inline_hints(line: str) -> str:
+def _has_inline_junk(line: str, icons=frozenset()) -> bool:
+    if any(rx.search(line) for rx in _INLINE_HINT_RES):
+        return True
+    return any(m.group(1) in icons for m in _EMPTY_TEXT_LINK_RE.finditer(line))
+
+
+def _strip_inline_junk(line: str, icons=frozenset()) -> str:
     """按 `[文字](url)` 结构切开，只改「文字」段与链接外的裸文本，URL 段原样拼回。
 
     这样 `(opens in a new window)` 不可能被当成 URL 的括号误删——它只会出现在文字段。
-    显示文本被清空时退回裸 URL，不留 `[]()` 空壳。
+    三种处理：文字里嵌着无障碍提示就摘提示、保住链接；文字**只剩不可见字符**（锚点图标）
+    且该目标在 `icons` 里（同页锚点或本文另有出现）才整条删；提示占满了显示文字则把显示
+    文字换成 URL 本身，**链接结构保住**——塌成裸 URL 会让相邻几条黏成 `https://ahttps://b`，
+    还会让「URL 多重集不变」这条不变量没法检查。
+    只删该删的串，不做额外瘦身（多删一个空格就会让「唯一改动=删提示串」这条不变量失真）。
     """
-    if not any(rx.search(line) for rx in _INLINE_HINT_RES):
+    if not _has_inline_junk(line, icons):
         return line
     parts = re.split(r"(\[[^\]]*\]\([^)]*\))", line)
     for idx, seg in enumerate(parts):
@@ -345,11 +415,23 @@ def _strip_inline_hints(line: str) -> str:
             m = re.match(r"^\[([^\]]*)\]\(([^)]*)\)$", seg)
             if not m:
                 continue
+            if parts[idx - 1].endswith("!"):
+                continue                        # 图片语法 `![alt](src)`：alt 空不是家具，整段不动
             text, url = m.group(1), m.group(2)
+            # 先判定「显示文字本来就全是不可见字符」（锚点图标）；摘完提示才空的是无障碍提示
+            # 占满了显示文字，那是另一档。
+            icon = not text.strip(_INVISIBLE_CHARS)
+            if icon and url not in icons:
+                continue                        # 唯一指向别处：留着，不丢引用
             for rx in _INLINE_HINT_RES:
                 text = rx.sub("", text)
-            # 只删提示串本身，不做任何额外瘦身（多删一个空格就会让「唯一改动=删提示」这条不变量失真）
-            parts[idx] = "[%s](%s)" % (text, url) if text.strip() else url
+            if icon:
+                parts[idx] = ""                 # 锚点图标：整条删
+            elif not text.strip():
+                parts[idx] = "[%s](%s)" % (url, url)   # 显示文字只剩提示：拿 URL 当文字
+            else:
+                # 只删提示串本身，不做任何额外瘦身
+                parts[idx] = "[%s](%s)" % (text, url)
             continue
         for rx in _INLINE_HINT_RES:
             parts[idx] = rx.sub("", parts[idx])
@@ -1559,7 +1641,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             # 中文原生：正文即译文，直接落 `.md`，不留英文侧
             zh_rel = f"docs/articles/{vendor}/{slug}.md"
             cap = _kept_captured(prev.get("zh_path") or "", ex["markdown"])
-            zh_md = strip_page_furniture(ex["markdown"]).strip()
+            zh_md = strip_page_furniture(ex["markdown"], norm).strip()
             fm = {"vendor": vendor, "title": ex["title"] or r.get("title", ""),
                   "original_title": "", "url": norm, "date": ex["date"] or r.get("date", ""),
                   "lang": "zh", "captured": cap, "extractor": "readability-v1",
@@ -1580,6 +1662,9 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # 英文原文 / 抓取失败：写英文侧，保留已有的真实中文译文
         en_rel = f"docs/articles/{vendor}/{slug}.en.md"
         body = ex["markdown"] if en_status == "ok" else ""
+        # 英文侧只走串级清洗（无障碍提示 / 锚点图标）：这两档是抽取噪声、EN 页签照样渲染；
+        # 整行家具那套判据当初是按中文稿的形态定的，不在这条路上扩面。
+        body = strip_inline_junk(body, norm)
         cap = _kept_captured(prev.get("en_path") or "", body)
         fm = {"vendor": vendor, "title": ex["title"] or r.get("original_title") or r.get("title", ""),
               "original_title": r.get("original_title", ""), "url": norm,
@@ -1625,7 +1710,7 @@ def reclassify_bodies(root: Path, bodies: dict) -> int:
         slug = e["slug"]
         vendor = key.split("\t", 1)[0]
         zh_rel = f"docs/articles/{vendor}/{slug}.md"
-        body = strip_page_furniture(body).strip()
+        body = strip_page_furniture(body, fm.get("url", "")).strip()
         nfm = {"vendor": vendor, "title": fm.get("title", ""), "original_title": "",
                "url": fm.get("url", ""), "date": fm.get("date", ""), "lang": "zh",
                "captured": fm.get("captured", ""), "extractor": fm.get("extractor", "readability-v1"),
@@ -1679,7 +1764,8 @@ def mark_translated(root: Path, bodies: dict, *, key: str, zh_body_md: str,
     rel = f"docs/articles/{vendor}/{e['slug']}.md"
     # 中文侧落盘口统一洗家具：agent 精译、--ai-bodies、CI 的 --mt-bodies 都走这里，
     # 不然洗过一轮，第二天新稿又把站点页脚带回正文。sha 也在洗完之后算。
-    zh_body_md = strip_page_furniture(zh_body_md).strip()
+    # 传入条目 URL，让「同页锚点」那类永久链接图标能被坐实删掉。
+    zh_body_md = strip_page_furniture(zh_body_md, key.split("\t", 1)[1]).strip()
     fm = {"vendor": vendor, "title": e.get("title", ""), "original_title": e.get("original_title", ""),
           "url": key.split("\t", 1)[1], "date": e.get("date", ""), "lang": "zh", "captured": today,
           "extractor": "readability-v1", "translator": translator, "status": "translated",
