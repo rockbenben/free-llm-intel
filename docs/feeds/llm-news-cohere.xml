@@ -7,7 +7,125 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 30 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>用于嵌入和重新排序的共享或专用推理</title>
+      <link>https://cohere.com/blog/shared-or-dedicated-inference-for-embed-rerank</link>
+      <guid isPermaLink="true">https://cohere.com/blog/shared-or-dedicated-inference-for-embed-rerank</guid>
+      <pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Shared or dedicated inference for Embed &amp; Rerank</description>
+      <content:encoded><![CDATA[<h1>Embed 与 Rerank 该用共享推理还是专属推理</h1>
+<p>关键要点</p>
+<ul><li>请求形态比单纯的请求量更重要。少量大型 embedding 请求消耗的计算量，可能远高于数千条小型搜索查询。仅看 RPM 并不是可靠的容量评估指标。</li><li>流量模式决定成本效率。对持续、可预测的工作负载，专属推理通常更经济；而波动或突发流量更适合按量计费的推理。</li><li>盈亏平衡点取决于工作负载，而不只是基础设施定价。请求大小、token 用量和 rerank 候选文档数量，都会显著影响共享推理与专属推理之间的经济交叉点。</li><li>延迟和吞吐必须放在一起考量。最大吞吐并不等于可用的生产容量。基础设施必须在满足延迟要求的同时保持成本效率。</li></ul>
+<h2><strong>Embed 和 Rerank 该用共享还是专属推理？从工作负载入手</strong></h2>
+<p>在共享的按量计费推理与专属的预置推理之间做选择，并不只是看哪个选项价格更低。</p>
+<p>对 embedding 和 reranking 工作负载来说，答案在很大程度上取决于应用如何使用模型。一个有用的思考方式是：</p>
+<p>***请求画像 - &gt; 流量模式 - &gt; 利用率 - &gt; 部署选择</p>
+<p>***理解这些因素能告诉你的，远比比较表面价格多。</p>
+<h2><strong>从请求画像开始</strong></h2>
+<p>第一个问题是：*一条典型的模型请求到底长什么样？</p>
+<p>*对 embedding 来说，请求画像可能差异极大。先想一想一个电商搜索应用。在购物者能搜索任何东西之前，店里的每一件商品都必须先变成搜索系统可以匹配的东西。于是应用把每条商品描述跑一遍 embedding 模型，并存储结果。这就是索引任务——第一次跑是个大活儿，之后随着库存变化，源源不断进来的是一批批较小的批次。为了高效跑完，应用会批量发送商品：比如单个请求里放大约 100 条描述，每条大约 150 词（~200 tokens）。用户并没有在等即时结果，所以重要的是把任务完成，而不是快速完成。</p>
+<p>现在对比一下：购物者在搜索框里输入 &quot;waterproof trail running shoes&quot;。同一个模型，但这一次只是一条短查询，结果返回之前用户一直盯着加载转圈。</p>
+<p>两个场景都涉及 embedding 工作负载，但优化的方向截然相反。批处理讲的是吞吐和性价比——每花一美元干最多的活。而单条查询讲的是响应速度，为此你接受更低的性价比。</p>
+<p>在批处理和搜索查询这两个场景下，embeddings 的画像大致是这样的：</p>
+<p>你并不是把同一个工作负载跑两遍，而是在让一个模型干两件完全不同的活。为大批次调优好的基础设施，在服务数千条小型、对延迟敏感的请求时，未必能给出同样的响应时间。</p>
+<h2><strong>Reranking 的请求形态不一样</strong></h2>
+<p>Rerank 工作负载又引入了另一个关键变量：你实际让模型评估多少个候选文档。</p>
+<p>还是用我们的商品搜索例子。首先，你的向量搜索可能会拉出 50 个与该查询匹配的候选商品。然后 reranker 登场——它就像一位懂行的销售员，看着这 50 个选项，决定哪些真正配得上排最前面。</p>
+<p>模型本质上是在把购物者的查询与每个候选逐一比较并按相关性排序。每一对查询-文档都是独立打分的，这意味着查询会为每个候选各处理一次——所以工作量与你发送的候选数量直接成正比。</p>
+<p>一条典型的 rerank 请求长这样：一条约 20 tokens 的短查询，加上约 50 个候选商品、每个约 200 tokens。也就是说一次搜索模型要处理约 11,000 tokens。</p>
+<p>够简单吧？但有意思的地方在这里。假设你把策略从 rerank 20 个候选改成 50 个或 100 个。表面上对用户毫无变化——搜索次数一样，体验一样。但在幕后，你已经从每次搜索约 4,400 tokens 变成了约 22,000 tokens。这就好比让人从一份商品目录里挑出最好的 20 件，和让他给 100 件排序的差别。同样的任务，要通读的东西多得多。</p>
+<p>这就是为什么检索深度会成为如此关键的基础设施决策。你不再只是按用户量扩容，而是按你想往结果池里挖多深来扩容。</p>
+<h2><strong>流量模式与流量规模同样重要</strong></h2>
+<p>一旦理解了请求画像，下一个问题是：*流量是如何到达的？</p>
+<p>*两个应用可以有相同的峰值流量，基础设施经济性却可能天差地别。</p>
+<p>**持续型流量模式</p>
+<p>**想象一个全球性的搜索服务，流量全天保持相对稳定的节奏。没有剧烈高峰，也没有大幅低谷。在这种场景下，专属容量开始显得非常有吸引力，因为你的基础设施能保持很好的利用率。你不用为大部分时间闲置的容量付费，也不必手忙脚乱地应对意外峰值。</p>
+<p>**突发型流量模式</p>
+<p>**再想象另一种应用，比如一个财务报告系统或一个批处理任务。这个应用在常规运行时段流量很低，集中的峰值出现在业务高峰时段或计划中的处理窗口。对这种场景，按量计费的服务是个好选择，因为在那些低流量时段你不用为闲置容量付费。</p>
+<p>真正的基础设施问题</p>
+<p>它并不只是 *&quot;峰值流量有多高？</p>
+<p><em>而是 </em>&quot;基础设施能被多稳定地利用？</p>
+<p>*峰值流量告诉你的是最大容量需求，但利用率模式才告诉你实际会把容量用得多高效。一个每秒处理 10,000 次请求、但一天只跑 5 分钟的服务，与一个持续每秒 100 次请求的服务，经济性完全不同。把这件事判断对，意味着基础设施只是够用，还是在成本效率和响应能力上真正达到最优。</p>
+<h2><strong>不止请求量：形态和模式更重要</strong></h2>
+<p>只看请求量会导致糟糕的基础设施决策。看看这些对比鲜明的场景：</p>
+<p>*低 RPM、高处理量：一个商品目录 embedding 工作负载每分钟只有 30 次请求，看似很小，但如果每个请求包含 100 条文本 × 200 tokens，那就是每分钟 600K tokens 的持续处理量。专属容量可能得到充分的使用。</p>
+<p>*高 RPM、低处理量：每分钟数千次查询 embedding 请求听起来很吃力，但如果每个请求只含几个 tokens、而且流量高峰只持续几个小时，共享基础设施可能更具成本效益。</p>
+<p>*Reranking 也是同样的规律：少量搜索搭配大候选集，可能压过大量搜索搭配小候选集。</p>
+<p>关键区分：</p>
+<ul><li>请求速率告诉你模型被<em>多久调用一次</em></li><li>请求形态告诉你每次调用<em>承载多少工作量</em></li><li>流量模式告诉你容量需要<em>多持续地被使用</em></li></ul>
+<h2><strong>成本交叉点取决于工作负载</strong></h2>
+<p>一旦理解了请求形态和流量模式，你就可以估算专属基础设施在哪个点上变得比按量计费推理更经济。不存在通用的盈亏平衡点，交叉点是工作负载特有的。</p>
+<p><em>例如，使用本分析中具有代表性的工作负载和假设：</em></p>
+<p>工作负载</p>
+<p>请求画像</p>
+<p>每个请求的处理量</p>
+<p>计算得出的盈亏平衡点</p>
+<p>查询 embedding</p>
+<p>1 条短查询</p>
+<p>~8 tokens</p>
+<p>数万 req/min</p>
+<p>商品目录 embedding</p>
+<p>100 条文本 * 200 tokens</p>
+<p>~20K tokens</p>
+<p>~20 req/min</p>
+<p>长文档 embedding</p>
+<p>100 条文本 *1000 tokens</p>
+<p>~100K tokens</p>
+<p>~4 req/min</p>
+<p>Reranking</p>
+<p>1 条查询 + 50 篇文档（20 query tokens，200/篇）</p>
+<p>~11K tokens</p>
+<p>~29 req/min</p>
+<p>***这些盈亏平衡点基于有代表性的按量计费定价，以及一台按小时计费的专属 NVIDIA A10 GPU 实例，假设没有议价折扣且流量 24×7 持续运行。只在一天中部分时段运行的工作负载，需要在活跃时段达到更高的请求速率才能跨过同样的经济交叉点。不同的实例类型会同时改变成本和容量，可能移动盈亏平衡点。实例吞吐决定单个实例在需要额外容量之前能处理多少流量；它并不直接决定经济交叉点，后者取决于定价。Embedding 按 token 计费，reranking 按 search unit 计费，因此二者的请求速率不可直接比较。这些数字只是说明性的、特定于工作负载的交叉点，不是通用的部署阈值。</p>
+<p>*前三行是同一个模型、同一个价格。唯一变化的只是请求的形态，交叉点就从大约每分钟四次请求移动到了每分钟数万次。短查询必须以海量规模到达，专属容量才划算。而一批长文档几乎立刻就能达到。</p>
+<p>这对前面描述的商品目录工作负载有实际含义。每分钟 30 次请求听起来是个小活儿，但那套完全相同的请求画像的盈亏平衡点是约每分钟 20 次请求。尽管请求速率不高，它已经处在专属容量更经济的区间。</p>
+<p>跨模型比较需要更小心。Embedding 按 token 计费、reranking 按 search unit 计费，二者的专属容量成本也不同，所以约 20 和约 29 req/min 并不是同一把尺子上的两个刻度。Reranking 的交叉点落在商品目录和查询画像之间，是这些特定请求形态下的巧合，不是模型本身的属性。</p>
+<p>改变算力容量、定价模式或利用率模式，盈亏平衡点就会随之改变。</p>
+<h2><strong>延迟会改变整个等式</strong></h2>
+<p>最大吞吐不等于可用容量，因为不同工作负载对性能的要求根本不同。</p>
+<ul><li>批量索引：可以在峰值吞吐下运行，因为完成效率比即时响应更重要</li><li>搜索查询：要求严格的延迟目标——响应时间直接影响用户体验和业务结果</li><li>Reranking：扩大候选集会提升 documents/sec 的处理量，同时压低 searches/sec 的服务量</li></ul>
+<p>这种延迟-吞吐的权衡意味着基础设施容量评估必须同时考虑这两个性能维度。对交互式工作负载，容量应该基于满足目标延迟要求的可持续吞吐，而不只是最大基准测试性能。这通常意味着在峰值需求计算之外还要留出额外余量。</p>
+<h2><strong>一个简单的决策框架</strong></h2>
+<p>在为 Embed 或 Rerank 选择共享还是专属推理之前，回答这些问题，基础设施决策就会容易得多</p>
+<p>问题</p>
+<p>为什么重要</p>
+<p>一条典型请求包含什么？</p>
+<p>决定每个请求的工作量</p>
+<p>这是文档还是查询的 embedding？</p>
+<p>吞吐与延迟要求不同</p>
+<p>有多少文档需要 rerank？</p>
+<p>直接影响 rerank 的计算量</p>
+<p>预期的请求速率是多少？</p>
+<p>决定基础设施需求</p>
+<p>流量是平稳还是突发？</p>
+<p>决定可达到的利用率</p>
+<p>应用要求什么样的延迟？</p>
+<p>决定可用容量</p>
+<p>专属基础设施会持续繁忙吗？</p>
+<p>决定它的经济性是否有吸引力</p>
+<h2><strong>结论</strong></h2>
+<p>当人们开始比较共享推理和专属推理时，通常先抓两个数字：每 token 的价格和每分钟请求数。单看哪一个都说明不了太多。你真正想知道的是：每个请求承载多少工作量、它来得多稳定、以及你的容量会不会一直忙得起来。</p>
+<p>所以并没有一个可以直接查表的神奇盈亏平衡数字。交叉点属于你的工作负载，而不是你选的那种部署方式。很多搜索应用最终会两者都用：商品目录索引用专属容量，随终端用户需求起伏的查询流量用按量计费。</p>
+<p>理解请求 → 理解流量 → 理解利用率 → 然后再选择部署模式。</p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office"><img src="https://storage.ghost.io/c/81/47/8147eb50-617d-4929-b563-3922b88421fd/content/images/2026/10/260902_OfficeAnnouncement_Ottawa_Blog.png" alt="Cohere 在渥太华设立新办公室，扩大加拿大布局"></a><a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office">Cohere 在渥太华设立新办公室，扩大加拿大布局Oct 08, 20262 分钟阅读</a></li><li><a href="https://cohere.com/blog/building-multilingual-bridges"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b416a7d67e66515c45c29ca7b0664a6491ee9d5a-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/research">研究</a><a href="https://cohere.com/blog/building-multilingual-bridges">多语言之桥：数据混合如何解锁语言内推理Oct 06, 20269 分钟阅读</a></li><li><a href="https://cohere.com/blog/introducing-north-2"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/8e4c711d1fc7c3be2acdbda3b85c7160e277c891-3840x2160.jpg?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="North 2 置于紫色、绿色和黑色背景上"></a><a href="https://cohere.com/blog/tag/product-launch">产品发布</a><a href="https://cohere.com/blog/introducing-north-2">North 2：不妥协的企业级 AIOct 05, 20264 分钟阅读</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>Cohere 与普华永道合作加速企业 AI 的安全采用</title>
+      <link>https://cohere.com/blog/cohere-and-pwc-partner-to-accelerate-secure-enterprise-ai-adoption</link>
+      <guid isPermaLink="true">https://cohere.com/blog/cohere-and-pwc-partner-to-accelerate-secure-enterprise-ai-adoption</guid>
+      <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Cohere and PwC partner to accelerate secure enterprise AI adoption</description>
+      <content:encoded><![CDATA[<h1>Cohere 与 PwC 达成合作，加速安全的企业级 AI 落地</h1>
+<p>汇聚安全的主权 AI 与转型专长，帮助组织从试点走向生产</p>
+<p>PwC 与 Cohere 宣布建立全球联盟，并率先在加拿大启动，帮助组织部署安全的企业级 AI，把 AI 投资转化为可衡量的业务价值。</p>
+<p>这一联盟将 North——Cohere 的安全 agentic AI 平台、企业级模型与搜索和检索能力——同 PwC 的行业、风险、监管、技术与转型专长结合在一起。PwC 与 Cohere 将共同帮助组织识别高价值用例、把 AI 安全地连接到可信的企业数据与系统，并建立大规模负责任部署 AI 所需的治理与控制。</p>
+<p>客户将能够在企业搜索、知识获取、深度研究、决策支持和任务自动化等场景中应用 AI，部署选项包括私有云、本地（on-premises）和 air-gapped（物理隔离）环境。此次合作将帮助组织在把 AI 扩展到各业务工作流的同时，保持对敏感数据和基础设施的控制。</p>
+<p>更多内容请见 PwC 的<a href="https://www.pwc.com/ca/en/media/release/pwc-cohere-enterprise-ai-alliance.html">新闻稿</a>。</p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://cohere.com/blog/tag/enterprise-ai">企业 AI</a><a href="https://cohere.com/blog/tag/technology">技术</a><a href="https://cohere.com/blog/shared-or-dedicated-inference-for-embed-rerank">Embed 与 Rerank 该用共享推理还是专属推理Oct 09, 20267 分钟阅读</a></li><li><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office"><img src="https://storage.ghost.io/c/81/47/8147eb50-617d-4929-b563-3922b88421fd/content/images/2026/10/260902_OfficeAnnouncement_Ottawa_Blog.png" alt="Cohere 在渥太华设立新办公室，扩大加拿大布局"></a><a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office">Cohere 在渥太华设立新办公室，扩大加拿大布局Oct 08, 20262 分钟阅读</a></li><li><a href="https://cohere.com/blog/building-multilingual-bridges"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b416a7d67e66515c45c29ca7b0664a6491ee9d5a-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/research">研究</a><a href="https://cohere.com/blog/building-multilingual-bridges">多语言之桥：数据混合如何解锁语言内推理Oct 06, 20269 分钟阅读</a></li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>Embed 5 简介——前沿嵌入模型的新系列</title>
       <link>https://cohere.com/blog/embed-5</link>
@@ -270,24 +388,166 @@ print(documents[int(np.argmax(scores))])</code></pre>
 <p>3 两侧必须使用相同的输出维度。该兼容性在 Matryoshka 截断和 int8 量化下同样成立，因此同一模式也适用于压缩索引。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Cohere 与 OpenText 合作，为政府和受监管行业带来可信赖的智能体 AI</title>
-      <link>https://cohere.com/blog/cohere-and-open-text-partner-to-bring-trusted-ai</link>
-      <guid isPermaLink="true">https://cohere.com/blog/cohere-and-open-text-partner-to-bring-trusted-ai</guid>
-      <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Cohere and OpenText partner to bring trusted agentic AI to governments and regulated industries</description>
-      <content:encoded><![CDATA[<h1>Cohere 与 OpenText 合作，为政府和受监管行业带来可信的 Agentic AI</h1>
-<p>汇聚企业数据、上下文与安全 AI，支撑规模化 agentic AI</p>
-<p>Cohere 与 OpenText 宣布建立战略合作，帮助政府和受监管行业把 agentic AI 从试点推进到生产环境。</p>
-<p>这一合作把 OpenText 可信的企业数据与上下文，同 North（Cohere 的安全 agentic AI 平台）以及 Cohere 的企业 AI 模型结合在一起。两家公司旨在为 AI agent 提供所需的上下文、编排与智能，使其能够基于企业数据推理并跨系统行动，同时保持对安全、部署和数据位置的控制。</p>
-<p>作为合作的一部分，Cohere 的 North 平台和模型将与 OpenText Aviator AI agents 集成。组织可根据自身需求，在本地部署或选择私有云、公有云、主权云环境部署这些合并能力。</p>
-<p>更多信息见 OpenText 的<a href="https://www.opentext.com/ca/about/press-releases/opentext-cohere-partner-to-combine-trusted-data-with-agentic-ai">新闻稿</a>。</p>]]></content:encoded>
+      <title>RCP-nDCG@10：一种更完整的衡量检索相关性的方法</title>
+      <link>https://cohere.com/blog/rcp-ndcg</link>
+      <guid isPermaLink="true">https://cohere.com/blog/rcp-ndcg</guid>
+      <pubDate>Wed, 30 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：RCP-nDCG@10: A more complete way to measure retrieval relevance</description>
+      <content:encoded><![CDATA[<h1>RCP-nDCG@10：衡量检索相关性的更完整方法</h1>
+<p>我们衡量企业级检索质量的新标准，已经过人类判断的验证。</p>
+<p>nDCG 在多大程度上捕捉了现代检索系统的质量？</p>
+<p>nDCG 是衡量搜索系统排序质量的既有标尺，被 <a href="https://huggingface.co/spaces/mteb/leaderboard">MTEB</a> 和 <a href="https://arxiv.org/abs/2104.08663">BEIR</a> 等基准广泛使用。它之所以受到青睐，是因为它同时反映相关性与位置，给出现在靠前的有用结果更高的权重。但它依赖既有的相关性标注；如果标注不完整，就意味着其他相关结果可能被漏掉或被错误计分。</p>
+<p>为解决这一问题，我们推出 Rubric-Calibrated Preferences nDCG@10（RCP-nDCG@10），一种评估方法论：对每一次查询，都用同一个显式的相关性准则、借助经过校准的 AI 评审（AI judge）为每个检索到的文档打分。RCP-nDCG@10 的设计目标是更好地反映真实世界的企业检索质量，我们新一代搜索模型正是针对这一指标做的优化。下文将解释它如何工作、与现状有何不同，以及我们如何用人类判断对它进行验证。</p>
+<h2>nDCG 的好坏取决于它的标注</h2>
+<p>在企业搜索中，模型性能通常用一组成熟的离线检索指标来做比较。最常见的是 Recall@k、Mean Reciprocal Rank（MRR）和 Normalized Discounted Cumulative Gain（nDCG@k）。每一个都捕捉检索质量的一个不同侧面。</p>
+<p>Recall@10 衡量<em>有多少</em>相关材料出现在前十条结果之内。在信息缺失代价很高时它很有用，但它完全不关心排序：排在第一位的相关结果和排在第十位的一样。相比之下，MRR 衡量<em>第一条相关结果</em>出现的位置有多靠前，却对它之后的所有内容视而不见。因此，它在单条正确结果就足够时最有用，例如 FAQ 搜索或简单问答。</p>
+<p>nDCG 之所以被广泛采用，是因为它通过同时考虑相关程度与排序位置，改进了更简单的指标。相关性越高的文档对分数的贡献越大，越靠前的文档权重越高。久而久之，这让 nDCG 成为各搜索基准和排行榜的标准。</p>
+<p>由于每个指标奖励的东西不同，这三者可能对同一批结果给出不同的结论（图 1）。</p>
+<p>图 1。</p>
+<p>但 nDCG 本身并不判断相关性。它是把模型的结果与一组既有的相关性判定（即 <em>qrels</em>）做比较，这些判定通常由人类评估员针对早期检索系统浮出的一部分文档创建。要对远为庞大的候选 query-document 对做穷尽式判定，成本高得令人却步，所以这种「池化」（pooling）做法是合理的务实妥协——也是当今业界广泛采用的做法。</p>
+<p>图 2 在 <a href="https://huggingface.co/blog/QuentinJG/introducing-vidore-v3">ViDoRe v3</a> 的一条真实查询上展示了这一点，该查询询问用于标记氮气罐的颜色代码。标准答案只给两个文档打了分，而其中只有一个出现在该系统的前五条结果里。排名第 3 的文档直接引用了答案，但因为它从未被判定过，就不被视为相关。由此得到的 nDCG@5 为 0.760，只反映了五条结果中的一条。</p>
+<p>图 2。</p>
+<p>其代价是一个不断扩大的覆盖缺口：较新的模型可能检回了一篇最初判定池中从未纳入、但确实相关的文档，而传统 nDCG 不会承认它。随着检索系统能力越来越强、开始探索早期系统未曾触及的语料区域，基准测试越来越只能反映上一代系统当初找得到的东西。</p>
+<p>在我们自己由 46 人参与的人工标注研究中，这些结果得到了印证：</p>
+<ul><li><strong>就预测盲评的人类相关性判定而言，qrels 只比随机略好</strong>。作为人类所赋等级的预测因子，qrel 的 AUC——衡量一个分数区分两类（例如相关与不相关）能力的指标——只有 0.65。如下文所示，使用 LLM 经过校准的相关性分数时，这一数字升到 0.91。</li><li><strong>漏掉的相关性是最大的误差来源</strong>。在被基准标为不相关的文档中，28% 被人类判定为有用。反向错误则少得多：只有 15% 被标为相关的文档连「切题」这个基本标准都过不了。</li><li><strong>标注稀疏是背后驱动力</strong>。基准只把这些文档中的 29% 标为相关，而人类评估员给出的比例是 60%。</li><li><strong>相关性判定带有主观性</strong>。两名评审独立为同一文档打分时，在 0-4 量表上完全一致的概率只有 42%。其他对标准基准重新标注的研究报告的评审者间一致性低至 17% [1]。实际后果是存在一个天花板：一旦模型达到标签所能表达的极限，基准似乎就无法再把它们区分开来。</li></ul>
+<blockquote>太长不看版：nDCG 仍然有用，但 qrels 作为真值（ground truth）信号的可靠性有限，因为它们大幅低估了真正相关材料的多寡。</blockquote>
+<h2>引入 RCP-nDCG@10</h2>
+<p>RCP-nDCG@10 在保留传统 nDCG 排序目标的同时，解决了这个覆盖缺口。</p>
+<p>它不再只依赖一份固定的人工标注答案表，而是用一个经过校准的 AI 评审，依据<em>相关性准则（relevance rubric）</em>评估每一个检索到的文档。这意味着即使某篇相关文档没有被纳入原始基准判定，也能获得认可。简单说：传统 nDCG 是拿结果与「此前被标注过的东西」比较打分；RCP-nDCG@10 则按每条检索结果的<em>实际</em>相关性打分。</p>
+<p>图 3。</p>
+<p>这比「让 LLM 给每个文档打分」更进一步。RCP-nDCG@10 的每个分数由两路信号构成。评审对每个文档回答五道是/否问题，问题难度不等，但对每一次查询完全相同。它还会把文档分组互相比较，估计每个文档胜过其他文档的可能性。校准随后把两路信号结合：成对比较确定顺序，准则把这个顺序放到所有查询共享的一把量表上。</p>
+<p>得到的是一个对每次查询含义都相同的相关性分数——这是 LLM 评审给出的单一等级做不到的。</p>
+<p>图 4。</p>
+<h2>经人类判断验证</h2>
+<p>为了检验 RCP-nDCG 是否反映真实世界的相关性，我们进行了一项盲评人类研究。46 名签约标注员——每人至少拥有相关领域的 BSc 学历——对竞争系统在 <a href="https://huggingface.co/collections/zeta-alpha-ai/nanobeir">NanoBEIR</a>、<a href="https://brightbenchmark.github.io/">BRIGHT</a> 和 ViDoRe v3 查询上的前五条结果进行评分，且看不到系统名称、排名或答案表。每场正面对比由三名评审复核，多数票决定胜者；273 条查询上的 289 场对比得出了结论。</p>
+<p>在 RCP-nDCG 与传统 nDCG 指名不同胜者的地方，评审有 70% 的时间站在 RCP-nDCG 一边。它的置信度也有意义：RCP-nDCG 报告的两个系统间差距越大，评审越常表示认同，在最宽的差距下达到 97%。差距超过约 0.02 时，评审有 82% 的情况与它一致；低于该值时，一致性不比抛硬币好。而传统 nDCG 下更大的差距并没有帮助：即使在最宽的差距处，评审也只有 53% 的情况下认同它（图 5）。</p>
+<p>图 5。</p>
+<p>在所有对比中，RCP-nDCG 有 77% 的情况下选中了评审更偏爱的系统，而传统 nDCG 只有 52%。这两个数字都来自一个刻意超采两个指标结论不一致的对比的样本池；在两者一致的地方，它们与评审的吻合率都是 87%。RCP-nDCG 的关键优势来自给答案表漏掉的相关文档计分，这一项贡献了 19 个百分点。对每个文档相关程度打分又额外贡献了 6 个百分点。重要的是，这两种效应会相互作用：单靠打分只增加了 3.3 个百分点，因为它只能对答案表已经列出的文档重新加权。</p>
+<p>无论答案表的完整程度如何，这一优势都成立：在两指标结论不一致处，在每一个覆盖水平上，评审都在 64% 到 78% 的对比中支持 RCP-nDCG（图 6）。综合起来，这些结果让我们有信心认为 RCP-nDCG 是更强的检索质量度量。</p>
+<p>图 6。</p>
+<h2>获得专家背书</h2>
+<blockquote>“随着 embedding 模型越来越强，传统检索基准已经越来越难以把最好的系统区分开。一个很大的原因是，许多可能相关的文档从一开始就没被判定过。RCP-nDCG 是针对这个问题的一种有意思的做法。它用锚定准则的 LLM 判定来填补这些缺口，同时紧贴人类标注员做验证，这让基准的分辨率更高，让我们能够在以往指标无法区分的模型之间做出区分。我们很高兴把 RCP-nDCG 引入 MTEB。它既有潜力改善现有数据集的评估信号、降低运行成本，也能扩大能够维持高质量检索基准的语言范围。”– Kenneth Enevoldsen，奥胡斯大学助理教授、Massive Text Embedding Benchmark（MTEB）的主要维护者</blockquote>
+<h2>优化我们的下一代搜索与检索模型</h2>
+<p>正是被这类结果指引，我们在即将发布的第五代 <a href="http://www.cohere.com/blog/embed-5">Embed</a> 和 Rerank 的研发中，选择针对 RCP-nDCG@10 而非传统 nDCG 做优化。</p>
+<p>一个重要的结果是：若只用旧式 nDCG 分数来评判，这些模型未必显得最强。然而我们的目标从来不是为了某个指标本身去优化，而是让模型开发更贴近用户在搜索中实际体验到的质量：找到最相关的信息，包括旧评估集可能漏掉的相关信息。</p>
+<h3>眼见为实</h3>
+<p>论文：<a href="https://arxiv.org/abs/2609.35739">Rubric-Calibrated Preferences: Cross-Query Calibration of LLM Judgments via Item Response Theory</a></p>
+<p>代码与数据：<a href="https://github.com/cohere-ai/rcp-ndcg">https://github.com/cohere-ai/rcp-ndcg</a></p>
+<h2>想进一步了解？</h2>
+<p>随着检索系统能力不断增强，RCP-nDCG@10 反映了搜索质量评估方式的一场更广泛的转变。</p>
+<p>2026 年 10 月 8 日，请<a href="https://cohere.com/register/rcp-ndcg-webinar">在 X 上加入我们</a>，与 Cohere 的搜索建模团队一起更深入地了解这一新方法、它如何塑造我们即将发布的版本，以及我们对企业搜索与检索评估未来走向的看法。</p>
+<p>我们同时也在为 <a href="http://www.cohere.com/blog/compass-cloud-beta">Compass Cloud</a>——我们的托管搜索与检索平台——招募私有 beta 合作伙伴。请<a href="https://cohere.com/compass#compass-form">申请访问</a>，在你自己的检索与 agentic 工作负载上试用它。</p>
+<h3>主要贡献者</h3>
+<p>Fabian David Schmidt, Donato Crisostomi, Carlos Lassance, Nils Reimers</p>
+<h3>脚注</h3>
+<p>1 Parry et al., <a href="https://arxiv.org/abs/2502.20937">https://arxiv.org/abs/2502.20937</a></p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://cohere.com/blog/tag/enterprise-ai">企业 AI</a><a href="https://cohere.com/blog/tag/technology">技术</a><a href="https://cohere.com/blog/shared-or-dedicated-inference-for-embed-rerank">Embed 与 Rerank 该用共享推理还是专属推理Oct 09, 20267 分钟阅读</a></li><li><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office"><img src="https://storage.ghost.io/c/81/47/8147eb50-617d-4929-b563-3922b88421fd/content/images/2026/10/260902_OfficeAnnouncement_Ottawa_Blog.png" alt="Cohere 在渥太华设立新办公室，扩大加拿大布局"></a><a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office">Cohere 在渥太华设立新办公室，扩大加拿大布局Oct 08, 20262 分钟阅读</a></li><li><a href="https://cohere.com/blog/building-multilingual-bridges"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b416a7d67e66515c45c29ca7b0664a6491ee9d5a-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/research">研究</a><a href="https://cohere.com/blog/building-multilingual-bridges">多语言之桥：数据混合如何解锁语言内推理Oct 06, 20269 分钟阅读</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>指南针即将走向云端</title>
+      <link>https://cohere.com/blog/compass-cloud-beta</link>
+      <guid isPermaLink="true">https://cohere.com/blog/compass-cloud-beta</guid>
+      <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Compass is coming to the cloud</description>
+      <content:encoded><![CDATA[<h1>Compass 即将登陆云端</h1>
+<p>无需为基础设施操心，即可用上我们最先进的搜索与检索引擎</p>
+<p><a href="https://cohere.com/compass">Compass</a> 是 Cohere 的检索平台，面向用企业数据构建 AI 应用的开发者。它从公司的语料中浮现出最相关的信息，用于 retrieval-augmented generation（RAG）、搜索和 agentic 工作流。现在，Compass 以托管服务的形式进入私有 beta——<strong>Compass Cloud</strong>。</p>
+<p>Compass 是为创造者而建的。它提供检索底座，开发者可以围绕自己的数据与工作流需求自由配置。团队不必自己拼装和运维整套技术栈，而是通过它的 API、MCP server 或 <a href="https://github.com/cohere-ai/cohere-compass-sdk">Python SDK</a> 访问 Compass，塑造他们想要的终端用户体验。</p>
+<p>此前，Compass 主要在为 <a href="https://cohere.com/north">North</a> 提供检索——那是 Cohere 的企业 agent 工作台，包括其文档库和 MCP 生态。我们也已把 Compass 交付给受监管行业的合作伙伴，部署到高安全性的 self-hosted 环境中，他们的工作负载无法外包给 SaaS。</p>
+<p>客户对托管选项的需求清晰而一致：团队想要 Compass 一流的检索能力，但许多人不想要 self-hosting 带来的运维负担。</p>
+<p>我们听到了这些呼声。Compass Cloud 把 Compass 扩展到了更广阔的市场。它让 Cohere 同时托管整条流水线<em>和</em>模型推理，客户可以更专注于构建。同时，self-hosted 部署对有隐私约束的项目仍然可用。</p>
+<p>我们正在与有限的若干企业团队作为 beta 伙伴合作。有兴趣吗？<a href="https://cohere.com/compass#compass-form">申请访问</a>。</p>
+<h3>Compass 在解决企业搜索中的开放难题</h3>
+<p>搜索与检索已经进步了很多，但企业级性能早已不再由单次查询的相关性和延迟来定义。随着检索成为生成式 AI 与 agent 的关键支撑基础设施，三个趋势正在改变需求：</p>
+<ul><li><strong>Token 经济学: </strong>传给模型的每一条不相关结果都会消耗 token、占用有限的上下文空间。更精准的检索产生更小、更高质量的输入，降低推理成本、缩短完成任务所需的时间。检索是当今企业手中最有效的成本杠杆之一。</li><li><strong>Agentic 访问模式: </strong>agent 在完成一项任务时可能发起几十次查询，重新表述请求、遍历多个数据源。在这些多跳循环里，延迟会累积、相关性会漂移、权限必须在每一步得到执行。因此，检索必须在成串的机器生成查询上稳定表现，而不只是单发搜索。</li><li><strong>碎片化的检索技术栈: </strong>生产流水线常常拼接着彼此独立的系统：摄取、索引、rerank、访问控制、编排。不同的中间件与各处「真相源」让团队把大量精力花在集成上，而不是检索质量上。</li></ul>
+<p>Compass 的存在正是为了逐一应对：1）为生成式工作负载提供相关的、受治理的上下文；2）同时支持 agentic 与常规搜索应用；3）把核心检索栈整合成一个一体化的企业平台。</p>
+<h3>全栈搜索与检索</h3>
+<p>Compass 把文档处理与检索打包成一个可配置的服务。团队可以访问一个统一界面，而不必集成和运维多个独立服务。</p>
+<p>Cohere Compass 架构图：一个受治理的企业检索栈，经由解析、embedding、混合搜索与 rerank，把数据源连接到前端应用。</p>
+<p><strong>Connect: </strong>为你的文件共享与云存储工作区提供开箱即用的连接器，例如 SharePoint、OneDrive 和 Google Drive。凭借 Compass 近乎通用的数据兼容性——多语言、多模态、与文件格式无关——快速取到你需要的内容。</p>
+<p><strong>Parse: </strong>把复杂文档变成可搜索的结构化数据。Compass 将多模态企业文件转化为 AI 就绪的内容，为每份文档选用合适的解析策略，只在能增值的地方使用视觉处理，减少不必要的模型调用。</p>
+<p><strong>Embed: </strong>既捕捉语义，也捕捉精确术语。Compass 同时生成 dense 与 sparse 表示，让搜索在文本与多模态内容上既能匹配语义意图，也能匹配领域专有语言。</p>
+<p><strong>Index: </strong>把源文件、解析后内容和 embeddings 作为彼此独立的记录保存，这样换用新的 embedding 模型时无需重新爬取并上传同样的内容。检索时，它们连同元数据位于同一个索引中，减少了让各系统保持同步的需要。</p>
+<p><strong>Retrieve: </strong>在一次请求中组合多种搜索策略。语义搜索、sparse 搜索与关键词搜索可以独立或组合运行，在召回与精确之间取得平衡。权限在检索过程中执行，而不是留给应用层处理。</p>
+<p><strong>Rerank: </strong>把更有力的证据送给模型。Cohere 一流的 reranker 从宽泛的候选集中识别最相关的段落，减少无关上下文以及生成所需的 token。</p>
+<p><strong>Govern: </strong>在检索期间执行多租户访问控制与文档级权限，让应用不必自己过滤结果。在 Compass 中，保留策略会自动让过期内容失效，并防止已删除文档被重新同步。</p>
+<h3>高端的检索精度</h3>
+<p>Compass 的核心目标很简单：提升为企业知识应用——无论是一条 RAG 流水线还是一个自主 agent——所浮现信息的相关性。这种质量植根于 Cohere 一流的搜索与文档处理模型，加上 Compass 的混合搜索：lexical、sparse 与 dense 检索，再做 rerank。</p>
+<p>下图是在一个有代表性的金融行业 RAG 工作负载上，相对传统或独立搜索基础设施的精度增益实例：embed 一条查询、从索引中检索演示材料、为最前面的结果打分。在 Cohere 构建的投行业务基准 High Finance 上，Compass 相对 Azure Search 提升了 14-16 个点（从 64.8 到 81.1）。这样的差距，可能就是终端用户得到一个不满意的回答与一个出色回答之间的差别。</p>
+<p>High Finance 上的检索精度（nDCG@10）。High Finance 是一组内部的、由 Cohere 标注的问题，要求模型检索相关的投资银行与对冲基金演示材料。Azure Search 的文档用 GPT-4.1 Mini 解析。Cohere Embed 4 没有使用单独的解析方案，而是在搜索前把输入 PDF 直接作为图像 embedding。</p>
+<h3>按你的方式构建</h3>
+<p>用户可以根据自己想把检索集成进应用的方式，通过两条主要途径用 Compass Cloud 提升搜索性能：</p>
+<ul><li><strong>Compass API: </strong>最适合构建自定义 RAG 与搜索应用的团队。使用 Compass API 直接集成驱动 Compass 的模型与检索组件，让开发者对内容的表示、检索、排序以及如何并入应用拥有更多控制。</li><li><strong>Model Context Protocol（MCP）: </strong>最适合 agentic 检索。Compass 自带一个独立的、单独版本管理的 MCP server，通过开放标准把检索作为可复用工具暴露出来。兼容 MCP 的客户端可以直接发现并调用这些工具，使 Compass 无需为每个 agent 框架做定制集成就能跨框架移植。</li></ul>
+<p>Agentic 检索是大语言模型与信息检索交叉处的一种新兴做法。agent 不依赖单次的查询-响应检索步骤，而是可以决定找什么、搜索相关信息、评估结果，并在回答前不断精炼自己的搜索。</p>
+<p>这对无法靠一次查找解决的任务尤其有用。借助 Compass MCP server，agent 可以逐步收窄检索语料，减少不必要的上下文，让复杂检索任务更快、更省 token。</p>
+<p>在 North 中把企业 agent 连接到 Compass MCP。</p>
+<h2>抢先体验</h2>
+<p>我们正在面向构建重检索与 agentic 应用的团队开放这次私有 beta。</p>
+<p>Beta 参与者可获得工程团队的贴身支持、云端部署的抢先访问，以及对产品路线图的直接影响。<a href="https://cohere.com/compass#compass-form">申请访问</a>。</p>
+<p>我们还将于 <strong>10 月 8 日</strong>在 X 上举办一场直播，Cohere 的工程与产品负责人将探讨企业搜索的下一步。<a href="https://cohere.com/register/rcp-ndcg-webinar">添加提醒</a>。</p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://cohere.com/blog/tag/enterprise-ai">企业 AI</a><a href="https://cohere.com/blog/tag/technology">技术</a><a href="https://cohere.com/blog/shared-or-dedicated-inference-for-embed-rerank">Embed 与 Rerank 该用共享推理还是专属推理Oct 09, 20267 分钟阅读</a></li><li><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office"><img src="https://storage.ghost.io/c/81/47/8147eb50-617d-4929-b563-3922b88421fd/content/images/2026/10/260902_OfficeAnnouncement_Ottawa_Blog.png" alt="Cohere 在渥太华设立新办公室，扩大加拿大布局"></a><a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office">Cohere 在渥太华设立新办公室，扩大加拿大布局Oct 08, 20262 分钟阅读</a></li><li><a href="https://cohere.com/blog/building-multilingual-bridges"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b416a7d67e66515c45c29ca7b0664a6491ee9d5a-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/research">研究</a><a href="https://cohere.com/blog/building-multilingual-bridges">多语言之桥：数据混合如何解锁语言内推理Oct 06, 20269 分钟阅读</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>人工智能变革管理：以人为本的方法</title>
+      <link>https://cohere.com/blog/ai-change-management</link>
+      <guid isPermaLink="true">https://cohere.com/blog/ai-change-management</guid>
+      <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：AI change management: A human-centric approach</description>
+      <content:encoded><![CDATA[<h1>AI 变革管理：以人为本的方法</h1>
+<p>变革管理长期以来覆盖两类常见的变化：新工具与新技术的推出，以及更广泛的由人主导的转型，例如领导层更替和组织重组。</p>
+<p>但随着人工智能被编织进组织的肌理，这种区分开始变得模糊。虽然 AI 是软件，但它具有一种独特的能力，能够从事开放的、依赖上下文的工作，其中包含与人的协作。这就引出了一个问题：我们究竟应该把 AI 简单地当作待部署的软件，还是把它视为工作流程中的主动参与者——其角色需要被定义？</p>
+<p>直觉上的答案就是把它当作软件。组织常常试图把 AI 塞进现有的基础设施和流程里，假设它可以套进那些支撑 CRM 系统、ERP 平台和其他企业软件的同一套护栏、集成和工作流程。</p>
+<p>但也许这并不是正确的做法。也许 AI 不只是一件要安装的工具，而是一位需要被「入职」的参与者。当我们把它硬塞进软件形状的盒子里时，就错过了发挥其独特优势的机会——模式识别、可扩展性和适应性——让它以补充人类判断而非与之竞争的方式发挥作用。</p>
+<blockquote>AI 不只是一件要安装的工具，而是一位需要被「入职」的参与者。</blockquote>
+<p>在这篇文章中，我们将探讨 AI 变革管理包含哪些内容，以及当 AI 日益成为日常工作的组成部分时，企业需要考虑的关键事项。</p>
+<h2>什么是 AI 变革管理？</h2>
+<p>AI 变革管理，是引导大企业完成大规模采用 AI 所要求的组织变革的工作，从准备阶段一直贯穿到日常使用。它包括理解 AI 如何改变角色与职责、帮助员工发展新的工作方式、传达新的期望，并随着采用的推进调整工作流程与监督机制。</p>
+<p>这些变化可能意味着：员工花在自己亲手完成工作上的时间更少，而把更多时间用于指挥 AI、处理它的产出，或专注于依赖人类专业能力的任务。</p>
+<h2>为什么 AI 需要一套独特的变革管理方法？</h2>
+<p>想想推出一个新销售平台与任命一位新 CEO 之间的区别。新销售平台通常涉及培训课程、分阶段推广，以及围绕一个角色和行为都相对清楚的系统做的小幅流程调整。而一位新 CEO 对组织文化、优先级、职责划分和工作方式的影响，则可能广泛得多，也更难预测。</p>
+<p>AI 之所以带来独特的变革管理挑战，是因为它把这两类变化的要素结合在了一起。它既代表一项新技术的采用，也代表工作在组织中分配方式的更广泛转变。</p>
+<h3>AI 能重塑角色、工作流程和决策</h3>
+<p>要让 AI 作为协作者发挥作用，企业需要设计能够同时容纳人类智能和人工智能的工作流程。</p>
+<p>在 AI 这一侧，这可能意味着像给新员工做入职一样，为 AI 提供相关的组织背景和任务背景。它也可能意味着构建 human-in-the-loop（人在环）机制，让 AI 能够在缺少信息时提问，或把需要人类判断或批准的案例上报。</p>
+<p>在人这一侧，这可能意味着创建让 AI 能够充当思考伙伴的工作流程，而不只是执行被委派任务的工具。例如，随着工作的推进，AI 可以帮助一个人分析信息、探索不同选项或识别相关模式。对重度依赖判断的任务，AI 可以综合证据、呈现选项与权衡，而把最终决定留给人。重点不是假装 AI 是人，而是认识到它的有效性可能取决于它在多大程度上被良好地整合进人类主导的工作流程。</p>
+<p>在这些新的人机工作流程中，员工开始像 AI 辅助工作的管理者一样行动：设定方向、评估质量、决定何时需要人类输入。然而，这一转变带来了一个风险：把 AI 生成产出的速度和数量误当作质量。这可能造成「AI slop」：表面化或低影响力的工作。因此员工需要 树立管理者心态，把 AI 辅助工作的质量和影响力放在首位，而不是单纯的数量。</p>
+<p>那些积极构建内部 AI 解决方案的人还会承担一个额外角色，某种程度上变成迷你产品经理。除了构建解决方案本身，他们可能还需要考虑谁会使用它、它服务于什么业务成果、以及在整个生命周期中该如何维护和治理。这一转变带来的是另一种风险：员工可能越过传统的角色边界，却看不见自己所构建事物周围的所有依赖关系。例如「vibe coding」让人可以在不考虑其法律、业务、运营或技术影响的情况下构建出一个有用的方案。</p>
+<blockquote>员工需要 树立管理者心态，把 AI 辅助工作的质量和影响力放在首位，而不是单纯的数量。</blockquote>
+<p>有效的人机协作取决于理解工作流程中哪些部分可以委派给 AI、哪些仍然需要人类判断。思考这种划分的一个方式，是把工作分成三类：</p>
+<ul><li><strong>可验证（Verifiable）</strong>：AI 可以执行、并能对照客观标准验证的任务，例如<a href="https://cohere.com/blog/ai-code-generation">编写代码</a>，这些代码必须通过预先定义的测试</li><li><strong>基于判断（Judgment-based）</strong>：AI 可以帮助梳理选项、但仍需要由人来拍板的主观问题，例如在相互竞争的业务战略之间做选择</li><li><strong>混合型（Hybrid）</strong>：把可验证子任务与需要判断的要素结合在一起的复杂问题，例如市场研究或准备一份商业提案</li></ul>
+<p>有效采用 AI 的一项关键技能，是随着工作的展开持续重新评估这一划分：哪些 AI 可以执行，哪些仍然需要人类决策。</p>
+<p>这些人机工作流程还依赖于领域专长与更广泛能力的结合。一位理解<a href="https://cohere.com/blog/ai-and-healthcare">医疗</a>法规的数据科学家，或一位把握了 AI 创造力边界的<a href="https://cohere.com/blog/generative-ai-in-marketing">营销人员</a>，能够弥合技术上的可能性与现实可行性之间的鸿沟。因此员工可能既需要在技术类 AI 技能上发展，也需要在管理、沟通、战略、伦理与协作上发展。</p>
+<h3>AI 对治理、监督和问责提出了新要求</h3>
+<p><a href="https://cohere.com/blog/ai-governance">AI 治理</a>需要比传统软件治理更具适应性。普通软件通常按照预先定义的逻辑、权限和预期行为运行，因此监督主要聚焦于确保它在这些边界内按预期运作。而 AI 系统是概率性的，产出更具变数、更依赖上下文。这让部署之后的持续监控变得更加重要。组织需要留意性能与行为随时间的变化，包括漂移、新出现的<a href="https://cohere.com/blog/unpacking-ai-safety">偏见</a>，以及偏离组织预期与人类价值观的情况。</p>
+<p>访问控制有助于说明为什么 AI 需要一套独特的治理方式。普通软件在固定的、预先授权的权限下运行，而人通常拥有基于角色的访问权限、可以在需要时申请额外权限。随着 AI 在工作流程中扮演更主动的角色，企业或许需要更多地借鉴人的模式：给 AI 最小权限访问，同时允许它在任务需要时申请额外访问。当然，任何额外访问都应继续接受适当的审批和监督。</p>
+<p>AI 治理与人员管理之间的类比，不止于访问控制。组织为新团队成员入职时，会定义其角色、为其可做的事情设定边界、确立工作将被如何评审，并说明其应达到的标准。对 AI 也应如此。例如，人类员工向经理汇报工作时，被期望解释自己的思路和决策。AI 也不应例外。它同样应该能够<a href="https://cohere.com/blog/explainable-ai">展示它是如何得出特定输出的</a>。</p>
+<p>总的观点是，我们应该用管理人的同样严谨来治理 AI，包括定期沟通、上下文评审和路线修正。但这并不意味着所有 AI 系统都该用同一种方式治理。AI 解决方案的自主程度可以天差地别，从人操作的工具，到完全自主、始终在线的系统。这些差异意味着治理应当在用例层面定义，而不是搞一刀切。完全自主的系统需要严格的实时监控，并对高风险决策设置 human-in-the-loop 机制；而人操作的工具可能只需要输入校验、输出审查这类控制。</p>
+<blockquote>我们应该用管理人的同样严谨来治理 AI。</blockquote>
+<p>最重要的是，人必须对其使用 AI 的方式以及 AI 产生的结果承担责任。如果一个 AI 系统表现出偏见或生成不正确的输出，责任止于监督它的人——就像经理要对其团队的产出和绩效负责一样。</p>
+<h2>在全企业范围内管理 AI 采用</h2>
+<p>在落地阶段，随着在 <a href="https://cohere.com/blog/enterprise-ai-maturity-model">AI 成熟度</a>上不断前进，企业不太可能确切知道 AI 会如何融入日常工作。能力演进很快，团队往往要在实践中发现哪些任务 AI 处理得好、还有哪些地方它能创造价值。随着这种理解的加深，组织可能需要修订角色预期、控制措施和指导方针，以反映 AI 实际被使用的方式。</p>
+<p>以下是管理这种演进时的一些关键考量：</p>
+<h3>定义一个清晰、鼓舞人心的目标</h3>
+<p>一个清晰、可实现、并与业务成果挂钩的 AI 目标，能在采用演进的过程中给团队提供共同的方向感。这个目标还需要可见的领导支持。一位高级领导者可以让这项努力保持在领导层的议程上，解决需要跨团队协调的障碍，并在 AI 更深入地嵌入日常工作的过程中，强化围绕 AI 采用的优先级与期望。</p>
+<h3>透明地沟通</h3>
+<p>员工需要理解为什么要引入 AI、它可能如何影响自己的工作、以及它带来的收益与风险。领导者和经理可以通过主动解释 AI 如何增强岗位、为组织创造新机会来鼓励认同，而不是把它纯粹呈现为成本优化工具。这种沟通对 AI 的局限性也应当实事求是，并为员工提供清晰的途径去提问、表达担忧、以及在应用扩展过程中分享他们所看到的情况。</p>
+<h3>频繁度量</h3>
+<p>定期度量可以看出 AI 采用是否真正落地。使用数据能显示 AI 在哪些地方、以多高的频率被使用，但更完整的图景来自把这些数据与员工反馈、管理者观察、AI 熟练度的度量，以及关于 AI 使用和监督的期望正在被遵守的证据结合起来。</p>
+<p>这些信号能指明变革努力需要在何处调整——无论是通过进一步培训、更清晰的指引、沟通上的改变，还是调整 AI 融入特定角色与工作流程的方式。</p>
+<h2>最后的思考</h2>
+<p>AI 所代表的，远不只是把现有工作自动化或削减成本的手段。采用 AI 的目标，应当是把 AI 融入组织的运营模型，以改变业务运作与创造价值的方式。这场转型取决于 AI 能力与支撑它的组织能力同步演进——从数据基础和技术，到员工技能、治理与战略。</p>
+<p>当然，这幅图景仍在展开。我们在此讨论的内容，只反映了我们在与客户合作中观察到的东西：有助于 AI 采用成功的条件、持续存在的挑战，以及企业如何应对它们。随着我们在支持组织经历 AI 转型之旅上获得更多经验，我们预期自己对「有效采用需要什么」的理解还会继续变化。</p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://cohere.com/blog/tag/enterprise-ai">企业 AI</a><a href="https://cohere.com/blog/tag/technology">技术</a><a href="https://cohere.com/blog/shared-or-dedicated-inference-for-embed-rerank">Embed 与 Rerank 该用共享推理还是专属推理Oct 09, 20267 分钟阅读</a></li><li><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office"><img src="https://storage.ghost.io/c/81/47/8147eb50-617d-4929-b563-3922b88421fd/content/images/2026/10/260902_OfficeAnnouncement_Ottawa_Blog.png" alt="Cohere 在渥太华设立新办公室，扩大加拿大布局"></a><a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office">Cohere 在渥太华设立新办公室，扩大加拿大布局Oct 08, 20262 分钟阅读</a></li><li><a href="https://cohere.com/blog/building-multilingual-bridges"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b416a7d67e66515c45c29ca7b0664a6491ee9d5a-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/research">研究</a><a href="https://cohere.com/blog/building-multilingual-bridges">多语言之桥：数据混合如何解锁语言内推理Oct 06, 20269 分钟阅读</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>Cohere 与 Aleph Alpha：跨大西洋主权 AI</title>
       <link>https://cohere.com/blog/cohere-and-aleph-alpha-sign-agreement</link>
       <guid isPermaLink="true">https://cohere.com/blog/cohere-and-aleph-alpha-sign-agreement</guid>
       <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Cohere &amp; Aleph Alpha: Transatlantic Sovereign AI</description>
+      <description>原文标题：Cohere and Aleph Alpha sign agreement to become the first transatlantic sovereign AI solution</description>
       <content:encoded><![CDATA[<h1>Cohere 与 Aleph Alpha 签署协议，成为首个跨大西洋主权 AI 解决方案</h1>
 <p>新公司将全球以 Cohere 名义运营，并在加拿大和德国两国保持深度扎根，在两国设立总部、研发中心和领导层岗位</p>
 <p>我们宣布与 Aleph Alpha 签署最终业务合并协议，此前今年 4 月我们已<a href="https://cohere.com/blog/cohere-alephalpha-join-forces">公布</a>了这一合作计划。合并后的公司将全球以 Cohere 名义运营，实质性地创建首个跨大西洋主权 AI 解决方案。交易仍有待最终监管批准。</p>
@@ -305,6 +565,19 @@ print(documents[int(np.argmax(scores))])</code></pre>
 <p>公司还将推进与 Schwarz Group 旗下各公司的合作，在 STACKIT（Schwarz Digits 的主权云服务、欧洲数字主权战略的基石）上交付主权 AI。</p>
 <p><strong>Schwarz Digits CEO Christian Müller 表示</strong><em>：“数字主权不是单打独斗，而是战略性地携手联合。这一跨大西洋联盟代表着加速建设独立 AI 基础设施的巨大飞跃。我们的目标是让 STACKIT 成为主权 AI 解决方案的技术底座，由此确保组织不必在高性能与数字独立之间做选择。与那些毫不妥协地秉持与我们相同的严格价值观和数据安全标准的伙伴合作，我们正在可持续地巩固欧洲和加拿大的主权数字未来。”</em></p>
 <p>点击<a href="https://www.prnewswire.com/news-releases/cohere-and-aleph-alpha-sign-agreement-to-become-the-first-transatlantic-sovereign-ai-solution-302880732.html">这里</a>了解更多。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Cohere 与 OpenText 合作，为政府和受监管行业带来可信赖的智能体 AI</title>
+      <link>https://cohere.com/blog/cohere-and-open-text-partner-to-bring-trusted-ai</link>
+      <guid isPermaLink="true">https://cohere.com/blog/cohere-and-open-text-partner-to-bring-trusted-ai</guid>
+      <pubDate>Wed, 16 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Cohere and OpenText partner to bring trusted agentic AI to governments and regulated industries</description>
+      <content:encoded><![CDATA[<h1>Cohere 与 OpenText 合作，为政府和受监管行业带来可信的 Agentic AI</h1>
+<p>汇聚企业数据、上下文与安全 AI，支撑规模化 agentic AI</p>
+<p>Cohere 与 OpenText 宣布建立战略合作，帮助政府和受监管行业把 agentic AI 从试点推进到生产环境。</p>
+<p>这一合作把 OpenText 可信的企业数据与上下文，同 North（Cohere 的安全 agentic AI 平台）以及 Cohere 的企业 AI 模型结合在一起。两家公司旨在为 AI agent 提供所需的上下文、编排与智能，使其能够基于企业数据推理并跨系统行动，同时保持对安全、部署和数据位置的控制。</p>
+<p>作为合作的一部分，Cohere 的 North 平台和模型将与 OpenText Aviator AI agents 集成。组织可根据自身需求，在本地部署或选择私有云、公有云、主权云环境部署这些合并能力。</p>
+<p>更多信息见 OpenText 的<a href="https://www.opentext.com/ca/about/press-releases/opentext-cohere-partner-to-combine-trusted-data-with-agentic-ai">新闻稿</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>谁来定义人工智能的规则？</title>
@@ -403,7 +676,7 @@ print(documents[int(np.argmax(scores))])</code></pre>
       <link>https://cohere.com/blog/megakernels</link>
       <guid isPermaLink="true">https://cohere.com/blog/megakernels</guid>
       <pubDate>Tue, 08 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Cohere&apos;s North Mini Code Megakernel Serving Engine</description>
+      <description>原文标题：Inside the megakernel serving engine for North Mini Code</description>
       <content:encoded><![CDATA[<h1>North Mini Code 的 Megakernel 服务引擎内幕</h1>
 <p>一次技术深潜：Cohere 的 megakernel 方案如何在 H100 上实现 1.58 倍更快的 LLM 服务。</p>
 <p>今天，Cohere 发布一个围绕 decode megakernel 构建的 <a href="https://cohere.com/north-mini-code">North Mini Code</a> 服务引擎：单卡 H100 上的 BF16，端到端比 vLLM 快 1.25× - 1.41×。服务引擎的代码见 <a href="https://github.com/cohere-ai/cohere-megakernel">GitHub</a>。</p>
@@ -694,7 +967,7 @@ while (!stop) {
       <link>https://cohere.com/blog/automations-early-footprint</link>
       <guid isPermaLink="true">https://cohere.com/blog/automations-early-footprint</guid>
       <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Automation’s Early Footprint: The ATE Dataset</description>
+      <description>原文标题：Automation’s Early Footprint</description>
       <content:encoded><![CDATA[<h1>自动化的早期足迹</h1>
 <p>AI Agent 正在（以及尚未）被构建的方向</p>
 <p>核心要点</p>
@@ -751,7 +1024,7 @@ while (!stop) {
       <link>https://cohere.com/blog/how-small-models-can-make-a-big-impact-for-enterprises</link>
       <guid isPermaLink="true">https://cohere.com/blog/how-small-models-can-make-a-big-impact-for-enterprises</guid>
       <pubDate>Wed, 02 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：The Benefits of Small Language Models (SLMs)</description>
+      <description>原文标题：How small AI models can make a big impact for enterprises</description>
       <content:encoded><![CDATA[<h1>小型 AI 模型如何为企业创造大影响</h1>
 <p>如今市面上的 AI 模型大量涌现，企业领导者必须决定哪个模型能为自己的 AI 需求带来最好的结果和最好的 ROI。虽然大语言模型占据着头条，许多组织正发现：小的、专用打造的模型可以带来显著优势——包括更低的计算开销、更少训练或微调数据、更低能耗，以及更具成本效益的解决方案。</p>
 <p>对多数企业而言，现实并非大小模型之间的二选一。领导者们正在构建把两者战略性结合的模型组合，把具体任务分配给最适合的模型。这种&quot;合适规模化（right-sizing）&quot;的做法让组织在控制成本的同时优化性能。</p>
@@ -801,7 +1074,7 @@ while (!stop) {
       <link>https://cohere.com/blog/generative-ai-for-business</link>
       <guid isPermaLink="true">https://cohere.com/blog/generative-ai-for-business</guid>
       <pubDate>Fri, 28 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Generative AI for Business</description>
+      <description>原文标题：Generative AI for business: Use cases, benefits, and adoption</description>
       <content:encoded><![CDATA[<h1>面向企业的生成式 AI：用例、收益与采用</h1>
 <p>生成式 AI 如今已广泛触达企业，但用在哪里仍然难以判断。领导者需要把可行的用例与炒作区分开，识别技术能满足真实业务需求的地方。</p>
 <p>本文考察企业如何使用生成式 AI，解释其中的收益与挑战，并勾勒一条务实的采用路径。</p>
@@ -864,6 +1137,41 @@ while (!stop) {
 <p>部署后，组织应监控系统的质量与可靠性、使用模式和运行成本，评估它是否在促成预期业务成果。这些结果可以为系统的后续改进和使用方式，以及是否扩展、收缩或替换的决策提供依据。</p>
 <h2>结语</h2>
 <p>随着生成式 AI 对企业越来越普及，技术本身可能不再构成竞争差异化。更持久的优势将来自组织使用它的效率——用它简化运营，把独有的数据与专长转化为更好的决策、产品和服务。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>FDE：构建能力，而非依赖</title>
+      <link>https://cohere.com/blog/forward-deployed-engineers-capability-building</link>
+      <guid isPermaLink="true">https://cohere.com/blog/forward-deployed-engineers-capability-building</guid>
+      <pubDate>Thu, 27 Aug 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Why forward-deployed engineers should build capability, not dependency</description>
+      <content:encoded><![CDATA[<h1>前沿部署工程师为什么应该构建能力，而非依赖</h1>
+<p>企业 AI 采用的主要瓶颈已经从实验环节下移到了生产部署环节。</p>
+<p>证明 AI 能在受控条件下执行有用任务是一回事，把它适配到企业的真实运行环境可能是远为复杂的工程。许多企业卡在这个瓶颈上。根据 Deloitte 的 <a href="https://www.deloitte.com/us/en/about/press-room/state-of-ai-report-2026.html">2026 State of AI in the Enterprise</a> 报告，只有 25% 的组织把 40% 以上的 AI 试点推进到了生产。</p>
+<p>企业缩小这一部署差距有几个选项。可以在内部解决，但这可能需要专门的 AI 部署专长、对底层技术的熟悉，以及足够的工程产能。也可以引入外部支持：IT 咨询公司、专业 AI 公司、独立承包商、与模型对齐的服务商，或模型厂商自己的前沿部署工程师（FDE）。</p>
+<p>每个选项都有其优势和取舍。本文阐述选择模型厂商 FDE 的理由，解释这一做法引发的依赖担忧，并说明一种&quot;构建能力&quot;的 FDE 方式如何化解这些担忧，同时让客户对自己的 AI 部署拥有更强的运营控制。</p>
+<h2>FDE 提供第三方服务难以复制的东西</h2>
+<p>厂商 FDE 占据一个独特位置：他们亲手在客户的技术和运营环境里工作，同时仍是构建底层 AI 技术的公司的一部分。</p>
+<p>因此 FDE 带来更深的产品专业知识和对研究与工程团队的直接访问。他们能把以往部署的经验教训应用到新客户环境，并保持对新兴产品能力和平台方向的可见性。对客户来说，这通常意味着更快的答复、更少不必要的变通方案，以及在部署决策时既考虑技术今天能做什么、也考虑它将往哪里去。</p>
+<p>FDE 合作还能更方便地解决产品本身的缺口。例如，当某个 Cohere 客户用例暴露出我们现有产品未完全支持的能力时，我们的 FDE 可以检查或修改底层代码，并与核心工程团队合作开发既解决当下需求、又能推广到所有客户的方案。</p>
+<p>第三方服务商往往带来宝贵的行业专长、更广泛的转型经验，以及在评估不同厂商方案时更强的独立性。但当他们遇到产品限制、意外的模型行为或集成问题时，他们对底层原因的了解通常更少，从源头上解决问题的选项也更少。他们可能不得不定制变通方案，增加复杂性和维护负担，或把问题上报给厂商。</p>
+<p>FDE 可以跨越这条边界运作。他们能凭对技术的第一手知识诊断问题，决定通过部署层还是产品本身来解决，并直接把相关产品或工程团队拉进闭环。例如，一位 Cohere 客户构建了一个 agent，从日历和其他来源拉取相关信息，在会前生成简报报告。该 agent 频繁失败，因为它的指令引用了并不存在的工具，而一些底层工具调用又无法处理所需的上下文。我们的 FDE 重建了这个 agent，并修改了配套工具——包括其 Slack 集成——以处理更大的上下文。</p>
+<p>FDE 的优势不只是更快的上报，而是拥有更宽的选项让部署真正跑通，而不用默认围绕产品做工程。</p>
+<h2>核心担忧：FDE 会造成厂商锁定吗？</h2>
+<p>FDE 方式的优势也引发了关于厂商锁定的合理担忧。毕竟，如果企业用 FDE 来设计、部署和排查其生产 AI 系统，随着时间推移是否就会一直依赖这些 FDE？</p>
+<p>未必。</p>
+<p>一定程度的商业或架构依赖来自底层技术选择本身，而不是来自谁部署了它。例如，依赖特定厂商的模型、API 或平台会让未来迁移更难，加大客户在定价、产品方向或商务条款变化面前的暴露。重要的是，无论系统是由 FDE、第三方还是客户自己的团队部署，这些依赖都可能存在。</p>
+<p>更贴近 FDE 特有的锁定风险是<em>运营依赖</em>。如果系统的关键知识留在厂商工程师手里，内部团队将难以诊断问题、安全地修改系统，或在需求和模型变化时验证系统仍按预期运行。换句话说，企业最终可能拥有这个部署，却不拥有运营它的能力。</p>
+<h2>把客户能力建设纳入 FDE 方式</h2>
+<p>运营依赖并不是与 FDE 合作的必然结果。它很大程度上取决于厂商是从一开始就把知识转移内建到交付模式中，还是把它当作最后关头的交接动作。</p>
+<p>以 Cohere 的做法为例。我们的 FDE 与客户的工程团队并肩工作，贯穿架构、集成、部署、测试和排障。这种共建方式有助于传递客户团队理解和自主运营系统所需的隐性实施知识。我们还就重要功能举办客户赋能培训，让内部&quot; champions&quot; 具备在其组织内教导和支持各团队的知识。对于更技术性的主题，我们的 FDE 可以开展诸如 <a href="https://cohere.com/blog/guide-to-mcp">Model Context Protocol</a>（MCP）等主题的培训，帮助客户开发者建立更强的实现模式。</p>
+<blockquote>我们的 FDE 与客户的工程团队并肩工作，贯穿架构、集成、部署、测试和排障。</blockquote>
+<p>能力建设也不止于系统本身的知识。我们的 FDE 可以帮助客户团队围绕部署、负载测试和连接器开发形成可复用的软件工程实践，并构建能在生产环境可靠运行的 agent 与自动化工作流。他们还帮助团队读懂技术文档、用 AI 调查问题、诊断故障，而不必把每个问题都上报给 FDE 团队。</p>
+<p>我们的 FDE 还帮助客户构建反映核心产品功能的测试套件，让内部团队有自己的手段来验证：随着模型版本、集成和配置的变化，系统仍然按预期运行。</p>
+<p>我们的最终目标不仅是传递关于当前部署的知识，而是赋予客户持续独立运营、评估、排障和扩展该 AI 系统的能力。</p>
+<blockquote>我们的最终目标不仅是传递关于当前部署的知识，而是赋予客户持续独立运营、评估、排障和扩展该 AI 系统的能力。</blockquote>
+<h2>走向运营独立</h2>
+<p>对于正在评估 FDE 方式的企业，把 AI 系统送进生产只是方程的一边。他们还应考虑这次合作可能留下什么样的依赖。最好的 FDE 合作，是利用深厚的产品专长和工程访问权，随着时间推移<em>减少</em>客户对这些专长的依赖。说到底，紧密的厂商参与应当创造更多运营独立，而不是更少。</p>
+<p>想帮助客户构建生产 AI 系统以及独立运营它的能力？看看 <a href="https://jobs.ashbyhq.com/cohere?departmentId=828c2f13-d797-45da-ade8-04efffc2fb95">Cohere 的 FDE 招聘岗位</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Parse：规模化的企业文档智能</title>
@@ -951,46 +1259,11 @@ print(&quot;Saved to parsed_output.md&quot;)</code></pre>
 <p>在与我们产品目标对齐的三个维度——Tables、Text Content 和 Text Formatting——我们报告完整结果。它们覆盖我们模型训练和优化所针对的结构化转写与语义保真。</p>]]></content:encoded>
     </item>
     <item>
-      <title>FDE：构建能力，而非依赖</title>
-      <link>https://cohere.com/blog/forward-deployed-engineers-capability-building</link>
-      <guid isPermaLink="true">https://cohere.com/blog/forward-deployed-engineers-capability-building</guid>
-      <pubDate>Thu, 27 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：FDEs: Building Capacity, Not Dependency</description>
-      <content:encoded><![CDATA[<h1>前沿部署工程师为什么应该构建能力，而非依赖</h1>
-<p>企业 AI 采用的主要瓶颈已经从实验环节下移到了生产部署环节。</p>
-<p>证明 AI 能在受控条件下执行有用任务是一回事，把它适配到企业的真实运行环境可能是远为复杂的工程。许多企业卡在这个瓶颈上。根据 Deloitte 的 <a href="https://www.deloitte.com/us/en/about/press-room/state-of-ai-report-2026.html">2026 State of AI in the Enterprise</a> 报告，只有 25% 的组织把 40% 以上的 AI 试点推进到了生产。</p>
-<p>企业缩小这一部署差距有几个选项。可以在内部解决，但这可能需要专门的 AI 部署专长、对底层技术的熟悉，以及足够的工程产能。也可以引入外部支持：IT 咨询公司、专业 AI 公司、独立承包商、与模型对齐的服务商，或模型厂商自己的前沿部署工程师（FDE）。</p>
-<p>每个选项都有其优势和取舍。本文阐述选择模型厂商 FDE 的理由，解释这一做法引发的依赖担忧，并说明一种&quot;构建能力&quot;的 FDE 方式如何化解这些担忧，同时让客户对自己的 AI 部署拥有更强的运营控制。</p>
-<h2>FDE 提供第三方服务难以复制的东西</h2>
-<p>厂商 FDE 占据一个独特位置：他们亲手在客户的技术和运营环境里工作，同时仍是构建底层 AI 技术的公司的一部分。</p>
-<p>因此 FDE 带来更深的产品专业知识和对研究与工程团队的直接访问。他们能把以往部署的经验教训应用到新客户环境，并保持对新兴产品能力和平台方向的可见性。对客户来说，这通常意味着更快的答复、更少不必要的变通方案，以及在部署决策时既考虑技术今天能做什么、也考虑它将往哪里去。</p>
-<p>FDE 合作还能更方便地解决产品本身的缺口。例如，当某个 Cohere 客户用例暴露出我们现有产品未完全支持的能力时，我们的 FDE 可以检查或修改底层代码，并与核心工程团队合作开发既解决当下需求、又能推广到所有客户的方案。</p>
-<p>第三方服务商往往带来宝贵的行业专长、更广泛的转型经验，以及在评估不同厂商方案时更强的独立性。但当他们遇到产品限制、意外的模型行为或集成问题时，他们对底层原因的了解通常更少，从源头上解决问题的选项也更少。他们可能不得不定制变通方案，增加复杂性和维护负担，或把问题上报给厂商。</p>
-<p>FDE 可以跨越这条边界运作。他们能凭对技术的第一手知识诊断问题，决定通过部署层还是产品本身来解决，并直接把相关产品或工程团队拉进闭环。例如，一位 Cohere 客户构建了一个 agent，从日历和其他来源拉取相关信息，在会前生成简报报告。该 agent 频繁失败，因为它的指令引用了并不存在的工具，而一些底层工具调用又无法处理所需的上下文。我们的 FDE 重建了这个 agent，并修改了配套工具——包括其 Slack 集成——以处理更大的上下文。</p>
-<p>FDE 的优势不只是更快的上报，而是拥有更宽的选项让部署真正跑通，而不用默认围绕产品做工程。</p>
-<h2>核心担忧：FDE 会造成厂商锁定吗？</h2>
-<p>FDE 方式的优势也引发了关于厂商锁定的合理担忧。毕竟，如果企业用 FDE 来设计、部署和排查其生产 AI 系统，随着时间推移是否就会一直依赖这些 FDE？</p>
-<p>未必。</p>
-<p>一定程度的商业或架构依赖来自底层技术选择本身，而不是来自谁部署了它。例如，依赖特定厂商的模型、API 或平台会让未来迁移更难，加大客户在定价、产品方向或商务条款变化面前的暴露。重要的是，无论系统是由 FDE、第三方还是客户自己的团队部署，这些依赖都可能存在。</p>
-<p>更贴近 FDE 特有的锁定风险是<em>运营依赖</em>。如果系统的关键知识留在厂商工程师手里，内部团队将难以诊断问题、安全地修改系统，或在需求和模型变化时验证系统仍按预期运行。换句话说，企业最终可能拥有这个部署，却不拥有运营它的能力。</p>
-<h2>把客户能力建设纳入 FDE 方式</h2>
-<p>运营依赖并不是与 FDE 合作的必然结果。它很大程度上取决于厂商是从一开始就把知识转移内建到交付模式中，还是把它当作最后关头的交接动作。</p>
-<p>以 Cohere 的做法为例。我们的 FDE 与客户的工程团队并肩工作，贯穿架构、集成、部署、测试和排障。这种共建方式有助于传递客户团队理解和自主运营系统所需的隐性实施知识。我们还就重要功能举办客户赋能培训，让内部&quot; champions&quot; 具备在其组织内教导和支持各团队的知识。对于更技术性的主题，我们的 FDE 可以开展诸如 <a href="https://cohere.com/blog/guide-to-mcp">Model Context Protocol</a>（MCP）等主题的培训，帮助客户开发者建立更强的实现模式。</p>
-<blockquote>我们的 FDE 与客户的工程团队并肩工作，贯穿架构、集成、部署、测试和排障。</blockquote>
-<p>能力建设也不止于系统本身的知识。我们的 FDE 可以帮助客户团队围绕部署、负载测试和连接器开发形成可复用的软件工程实践，并构建能在生产环境可靠运行的 agent 与自动化工作流。他们还帮助团队读懂技术文档、用 AI 调查问题、诊断故障，而不必把每个问题都上报给 FDE 团队。</p>
-<p>我们的 FDE 还帮助客户构建反映核心产品功能的测试套件，让内部团队有自己的手段来验证：随着模型版本、集成和配置的变化，系统仍然按预期运行。</p>
-<p>我们的最终目标不仅是传递关于当前部署的知识，而是赋予客户持续独立运营、评估、排障和扩展该 AI 系统的能力。</p>
-<blockquote>我们的最终目标不仅是传递关于当前部署的知识，而是赋予客户持续独立运营、评估、排障和扩展该 AI 系统的能力。</blockquote>
-<h2>走向运营独立</h2>
-<p>对于正在评估 FDE 方式的企业，把 AI 系统送进生产只是方程的一边。他们还应考虑这次合作可能留下什么样的依赖。最好的 FDE 合作，是利用深厚的产品专长和工程访问权，随着时间推移<em>减少</em>客户对这些专长的依赖。说到底，紧密的厂商参与应当创造更多运营独立，而不是更少。</p>
-<p>想帮助客户构建生产 AI 系统以及独立运营它的能力？看看 <a href="https://jobs.ashbyhq.com/cohere?departmentId=828c2f13-d797-45da-ade8-04efffc2fb95">Cohere 的 FDE 招聘岗位</a>。</p>]]></content:encoded>
-    </item>
-    <item>
       <title>主权 AI 采用现状（研究）</title>
       <link>https://cohere.com/blog/state-of-sovereign-ai-adoption-2026</link>
       <guid isPermaLink="true">https://cohere.com/blog/state-of-sovereign-ai-adoption-2026</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：The State of Sovereign AI Adoption (Research)</description>
+      <description>原文标题：The state of sovereign AI adoption in 2026</description>
       <content:encoded><![CDATA[<h1>2026 年主权 AI 采用现状</h1>
 <p>新发布的 IDC InfoBrief 显示：寻求对 AI 更多控制的全球组织，其紧迫感与挑战同步上升。</p>
 <p>过去一年，企业和政府面对一个残酷现实：依赖外部基础设施的 AI 系统，可能被其控制之外的决策与行动毫无预警地打断。近期的模型访问限制和数起高调网络安全事件成为全球警钟，暴露出技术依赖何其脆弱。</p>
@@ -1584,7 +1857,7 @@ make sure the test CohereLabs/cohere-transcribe-03-2026 passes
       <link>https://cohere.com/blog/the-future-of-work-debate-has-an-evidence-problem</link>
       <guid isPermaLink="true">https://cohere.com/blog/the-future-of-work-debate-has-an-evidence-problem</guid>
       <pubDate>Wed, 10 Jun 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：AI Future of Work Evidence Gap</description>
+      <description>原文标题：The future of work debate has an evidence problem</description>
       <content:encoded><![CDATA[<h1>工作的未来之争有一个证据问题</h1>
 <p>核心要点</p>
 <ul><li>2023 年一篇估计 80% 美国劳动者的任务暴露于大语言模型的论文，已被 IMF、欧洲议会引用，并出现在美国参议院的提案中。三年过去，这篇论文的原始结论与它被应用的地方之间的错配，正在给政策决策带来后果。</li><li>这些评分的局限并非彼此独立：针对某一个模型计算、使用美国分类体系、把工作分解为离散任务——这些约束是相互叠加放大的，而不只是简单累积。</li><li>更具动态性、更有代表性、更可操作的数据测量工具已经存在，但它们抵达政策制定者的速度，跟不上政策讨论所需的速度。</li><li>政策制定者和研究者都应在弥合&quot;我们拥有的证据&quot;与&quot;我们需要做的决策&quot;之间的差距中承担责任，而且双方都需要开始把劳动者当作这一过程中的伙伴，而非分析对象。</li></ul>
@@ -1657,115 +1930,6 @@ make sure the test CohereLabs/cohere-transcribe-03-2026 passes
 <p>脚注</p>
 <p>1 竞品模型分数取自公开报道——优先来自原始报告或 Artificial Analysis Intelligence Index。此外，Gemma 4 的 agentic 编程任务分数由 <a href="https://qwen.ai/blog?id=qwen3.6-35b-a3b">Qwen 团队</a>报告。对图 1 中以 (*) 标注、缺乏任何公开报告的基准结果，我们按推荐模型配置在内部运行评测。</p>
 <p>2 North Mini Code 在 SWE-Bench Verified 和 SWE-Bench Pro 上使用 &quot;SWE-agent&quot; harness 评测，Terminal Bench v2 使用一个简单的 ReAct harness 并配备单一终端使用工具。Terminal Bench Hard 对 North Mini Code 及其他内部评测模型均使用 Terminus-2 harness。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>介绍 Command A+：让主权级智能体能力人人可用</title>
-      <link>https://cohere.com/blog/command-a-plus</link>
-      <guid isPermaLink="true">https://cohere.com/blog/command-a-plus</guid>
-      <pubDate>Wed, 20 May 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Command A+: Making sovereign agentic capabilities available to all</description>
-      <content:encoded><![CDATA[<h1>推出 Command A+：让主权的 agentic 能力惠及所有人</h1>
-<p>我们迄今最快、最强的语言模型。Command A+ 是一款开源的企业级主力模型，为复杂推理、多模态与多语言的 agentic 任务而生——而它最低只需两块 H100 GPU 即可运行。</p>
-<p>今天，我们开源发布 Command A+。Command A+ 是一个 mixture-of-experts（MoE）模型，高效、多面、可私有化部署，为高性能 agentic 任务打造，计算开销极低。</p>
-<p>它脱胎于过去一年与客户共同部署 <a href="https://cohere.com/north">North</a> 的经验，超越 <a href="https://docs.cohere.com/docs/command-a">Command</a> 系列的每一代前作，并将它们的能力统一进一个可扩展的模型。</p>
-<p>Command A+ 现以 <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 许可证</a>自由开放，推进着 Cohere 让主权 AI 成为技术现实的使命——让开发者在实验、部署和生产工作流中直接获得企业级的 agentic 能力。</p>
-<p>前往 <a href="https://huggingface.co/CohereLabs/command-a-plus-05-2026-w4a4">Hugging Face</a> 下载权重（提供多种近乎无损的量化版本）并阅读我们的实施指南。如需专用的托管推理环境，今天就可以在 <a href="https://dashboard.cohere.com/welcome/login">Model Vault</a> 部署 Command A+。</p>
-<h2>一览</h2>
-<table><thead><tr><th>模型</th><th><strong>command-a-plus-05-2026</strong></th></tr></thead><tbody><tr><td>许可证</td><td>Apache 2.0</td></tr><tr><td>架构</td><td>稀疏 / MoE</td></tr><tr><td>模型规模</td><td>总参数 218B；激活 25B</td></tr><tr><td>上下文长度</td><td>输入上下文 128K；最大生成 64K</td></tr><tr><td>输入模态</td><td>文本、图像、tool use</td></tr><tr><td>输出模态</td><td>文本、推理、tool use</td></tr><tr><td>语言</td><td>支持 48 种语言。<a href="https://huggingface.co/CohereLabs/command-a-plus-05-2026-w4a4">完整列表</a></td></tr><tr><td>优化方向</td><td>推理、agentic 工作流、RAG、多语言、多模态文档处理</td></tr><tr><td>支持框架</td><td>vLLM、Transformers</td></tr><tr><td>硬件（最低）</td><td>1× B200 @ W4A4 2× H100 @ W4A4</td></tr></tbody></table>
-<h2>向北而行</h2>
-<p>过去一年，North——Cohere 用于构建和部署 agentic AI 的一体化企业工作空间——是我们许多创新背后的推动力。通过这项工作，我们着手为客户打造一个统一模型：简化部署、可本地运行、并综合 Command 家族的全部能力。</p>
-<p>这份投入已经开始收获回报。阅读我们的客户如何<a href="https://cohere.com/customer-stories">使用 North 变革其运营</a>。</p>
-<p>不过，主权 AI 的意义远比 Cohere 一家更大。让工程师掌握可以自己运行、控制和改造的模型，是这一代 AI 面临的<em>最</em>紧要的挑战。</p>
-<p>我们把 Command A+ 优化到贴近实用、以开发者为本：支持低比特量化、高效推理，并与各开源推理框架集成。AI 独立，人人可得。</p>
-<p>我们迫不及待想看到社区会构建出什么。</p>
-<h2>Command，合而为一</h2>
-<p>Command A+ 在企业工作负载的关键维度上超越此前的 Command A 模型，包括多模态理解、检索、长时程任务与复杂推理。</p>
-<table><thead><tr><th></th><th><strong> Command A+ </strong></th><th>Command A</th><th>Command A Reasoning</th><th>Command A Vision</th><th>Command A Translate</th></tr></thead><tbody><tr><td>规模</td><td><strong>218B A25B</strong></td><td>111B</td><td>111B</td><td>112B</td><td>111B</td></tr><tr><td>推理</td><td>✓</td><td>—</td><td>✓</td><td>—</td><td>—</td></tr><tr><td>多模态</td><td>✓</td><td>—</td><td>—</td><td>✓</td><td>—</td></tr><tr><td>工具调用</td><td>✓</td><td>✓</td><td>✓</td><td>—</td><td>—</td></tr><tr><td>多语言</td><td><strong>48</strong></td><td>23</td><td>23</td><td>6</td><td>23</td></tr></tbody></table>
-<p>图 2：Command A+ 与 Command A 家族其他模型的能力对比。</p>
-<p>与 Command A Reasoning 相比，𝜏²-Bench Telecom 得分从 37% 提升到 85%，Terminal-Bench Hard 上的 agentic 编程表现从 3% 达到 25%。在非 agentic 推理、指令遵循及其他代码生成任务上同样取得增益。</p>
-<p>图 3：Command A+ 与 Command A Reasoning 在一系列主流开源基准上的表现。详见脚注。1</p>
-<p>Command A+ 在 North 应用中表现强劲，印证了其最初的设计目标。相比 Command A Reasoning，Agentic Question Answering 准确率和电子表格分析质量分别提升 20% 和 32%。Memory 性能——测试 North 跨对话与存储数据推理的能力——Command A+ 得分为 54%，而 Command A Reasoning 为 39%。</p>
-<p>图 4：North 上三项内部评测的性能提升。Agentic Question Answering 衡量模型使用 MCP 连接的云文件系统回答企业问题的能力；Data Analysis 对模型在上传的电子表格上执行数据科学任务的能力打分；Memory Usage Quality 衡量 agent 利用 North 记忆系统中上一会话的信息回答后续会话问题的能力。三项均采用 LLM-as-a-judge 技术评分。</p>
-<p>在多模态理解与推理方面，Command A+ 在 MMMU Pro 上达到 63%，在 MMMU 上达到 75.1%（后者对比 Command A Vision 的 65.3%）。MathVista 得分从 73.5% 提升到 80.6%，CharXiv 推理从 46.9% 提升到 52.7%，反映出文档理解任务的全面增益。</p>
-<p>图 5：Command A+ 与 Command A Vision 的多模态性能对比。Command A+ 是 Cohere 首个多模态推理模型，在 CharXiv 推理等相关任务集上相较 Command A Vision 带来显著提升。各基准均遵循标准评测方法。</p>
-<p>Command A+ 大幅扩展了多语言能力，语言覆盖从 23 种拓宽到 48 种，并在机器翻译和多语言推理上录得增益。</p>
-<p>图 6：Command A+ 与 Command A Reasoning 的多语言性能对比。MT-AIME 2025 是对 AIME-2025（一个英文数学基准）的内部翻译版本，评测语种为阿拉伯语、日语和韩语。WMT24++ 是广泛使用的公开基准，此处评测 xCOMETxl。2</p>
-<p>Command A+ 在 <a href="https://artificialanalysis.ai/evaluations/artificial-analysis-intelligence-index">Artificial Analysis Intelligence Index 上获得 37 分</a>，超过其他领先的开放模型，体现了它作为企业 agentic 工作流通用模型的实力 [3]。</p>
-<h2>规模化的效率</h2>
-<p>效率是企业 AI 部署的核心约束。它决定一个语言模型能否实际大规模部署——因为它塑造了可靠、经济地服务该模型所需的计算、内存、延迟、功耗和基础设施。</p>
-<p>我们把 Command A+ 工程化为极其硬件高效的模型。该模型今天在 Hugging Face 上提供 <a href="https://huggingface.co/CohereLabs/command-a-plus-05-2026-bf16">16-bit</a>（BF16）、<a href="https://huggingface.co/CohereLabs/command-a-plus-05-2026-fp8">8-bit</a>（FP8）和 <a href="https://huggingface.co/CohereLabs/command-a-plus-05-2026-w4a4">4-bit</a>（W4A4）量化版本，质量差异几不可察。实践中，这意味着 Command A+ 最低在两块 NVIDIA H100 或一块 NVIDIA Blackwell GPU 上即可运行，且几乎没有质量损失。</p>
-<p>Command A+ 也是我们迄今最快的模型：总参数 218B、激活参数 25B，对比 Command A Reasoning 的 111B 稠密架构。在相同量化和并发级别下，它提供最高 63% 更高的 Output Tokens per Second（TOPS），并将 Time To First Token（TTFT）最多降低 17%。W4A4 量化再额外带来 47% 的速度提升和 13% 的延迟下降。</p>
-<p>图 7：Command A+ 与 Command A Reasoning 在不同并发和量化下的速度与延迟。TOPS = 模型生成 token 期间每秒收到的 token 数（即收到 API 第一个 chunk 之后）；TTFT = 发出 API 请求后收到第一个 token 的时间（秒）。4</p>
-<p>我们还使用 speculative decoding 在不影响输出质量的前提下加速文本生成。我们针对该模型的 MoE 架构专门优化了这一方法，为文本和多模态输入额外带来 1.5-1.6 倍的推理加速。关于这项工作可阅读<a href="https://cohere.com/blog/mixture-of-experts-models-get-more-from-speculative-decoding">这里</a>。</p>
-<p>Command A+ 是首个使用我们最新 tokenizer 的模型，相较上一代带来显著的压缩改进。生成同样的回答所需 token 更少，从而降低了推理成本的一个主要驱动因素。值得注意的是，这些增益延伸到主要非欧洲语言——它们在 tokenizer 训练中常常代表性不足。阿拉伯语的 tokenization 效率提升 20%，韩语提升 16%，日语提升 18%。</p>
-<p>图 8：Command A+、Command A Reasoning 与 gpt-oss 在不同语言上产生的 token 数对比（以 Command A+ tokenizer 产生量为其倍数表示）。</p>
-<blockquote>富士通认为，Command A+ 的 mixture-of-experts 架构和强劲的 agentic 表现，与我们通过 Takane 和 Kozuchi Enterprise AI Factory 交付创新、主权 AI 解决方案的承诺高度契合。我们期待借助它的能力，加速客户安全、可扩展的 AI 采用。Vivek Mahajan，Corporate Executive Officer, Corporate Vice President, CTO, in charge of System Platform，Fujitsu Limited</blockquote>
-<h2>下一步是什么？</h2>
-<p>如今主权 AI 的进展取决于同时推进三条战线：性能、安全和成本。在 Cohere，我们在三条线上同时投入——既投入模型本身，也投入支撑 North 的领域专有能力。</p>
-<p>这意味着持续改进推理、多模态理解和编程表现，同时确保模型完全适合在客户环境中运行。目标不只是更强的基准分数，而是能在真实运营约束下支撑全企业转型的系统。</p>
-<p>我们已经把这一方法应用到其他模型家族——包括 <a href="https://cohere.com/embed">Embed</a>、<a href="https://cohere.com/rerank">Rerank</a> 和 <a href="https://cohere.com/transcribe">Transcribe</a>——在它们身上我们同样实现了先进性能与高效、成本可控推理的兼顾。</p>
-<h2>开始使用</h2>
-<p>Command A+ 今天已在 <a href="https://huggingface.co/CohereLabs/command-a-plus-05-2026-w4a4">Hugging Face</a> 上线，也可通过 <a href="https://dashboard.cohere.com/welcome/login">Model Vault</a> 使用。你还可以在我们的 <a href="https://huggingface.co/spaces/CohereLabs/command-a-plus-05-2026">Space</a> 上免费试用该模型，或使用 <a href="https://www.dashboard.cohere.com">Cohere API key</a> 调用。</p>
-<p>访问我们的<a href="https://docs.cohere.com/docs/command-a-plus">文档</a>获取详细模型规格、部署指南和入门 cookbook。</p>
-<p>脚注</p>
-<p>1 𝜏²-Bench Telecom 采用标准设置与来自 [[Barres et al. 2025]](https://arxiv.org/pdf/2506.07982) 的用户模拟评测。Terminal-Bench Hard 使用 Terminus-2 harness，遵循 <a href="https://artificialanalysis.ai/methodology/intelligence-benchmarking#agentic-workflows">Artificial Analysis</a> 的方法评测。AIME 2025 在官方 2025 年 30 题集上评测，每题重复 10 次，得分为该 300 样本数据集上的 pass@1。IFBench 为单轮、宽松评估模式，报告的得分对应 294 个唯一 prompt 各重复五次、共 1470 个样本上的 prompt accuracy。Scicode 使用 65 道测试题评测，含 288 个子问题；我们按 Artificial Analysis 的方法，用&quot;scientist-annotated background&quot;提示每个子问题。</p>
-<p>2 MT-AIME 使用 Command A Translate 从英语翻译。WMT24++ 得分为 50 种语言变体的平均值：全部支持语言，含原 WMT24++ 测试集中的 ar_EG、ar_SA、pt_BR、pt_PT、zh_CN、zh_TW。塞尔维亚语以内部转换的西里尔字母拼写评测。爱尔兰语和马耳他语为 WMT24++ 的内部创建译本。</p>
-<p>3 为高效大规模训练 Command A+ 模型，我们借助 NVIDIA 的 CUDA-X 生态（CUTLASS、cuBLAS、TE 和 NCCL）实现高性能计算、kernel 优化和多 GPU 通信。</p>
-<p>4 所有模型均在单个 NVIDIA HGX B200 节点（8 x GPU）上测量，使用 vLLM 并启用 tensor parallelism（TP=8），基于 LiveCodeBench 评测。Prompt 约 3K token，最大输出长度 8K。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>推出 Cohere Transcribe：开源语音识别新标杆</title>
-      <link>https://cohere.com/blog/transcribe</link>
-      <guid isPermaLink="true">https://cohere.com/blog/transcribe</guid>
-      <pubDate>Thu, 26 Mar 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Cohere Transcribe: a new state-of-the-art in open-source speech recognition</description>
-      <content:encoded><![CDATA[<h1>推出 Cohere Transcribe：开源语音识别的新的先进水平</h1>
-<p>无与伦比的转写准确率——我们在 North 中赋能企业语音智能的第一步。</p>
-<p>Cohere 宣布推出 Transcribe，一个先进的自动语音识别（ASR）模型，开源并即日起可<a href="https://huggingface.co/CohereLabs/cohere-transcribe-03-2026">下载</a>。</p>
-<p>语音正迅速成为 AI 工作负载与自动化的核心模态——从会议转写、语音分析到实时客服 agent。</p>
-<p>我们的目标很直接：在现实条件下推进专用 ASR 模型准确率的边界。该模型从零开始训练，刻意聚焦于最小化词错误率（WER），同时始终把生产可用性放在头等位置。换句话说，它不是一件研究展品，而是一个为日常使用设计的系统。</p>
-<p>Cohere Transcribe 体现了这份意图。它以开源方式提供、可完全掌控基础设施；保持适合实际 GPU 和本地使用的可控推理占用；提供同类最优的服务效率；也可通过 <a href="https://cohere.com/solutions/model-vault">Model Vault</a>——Cohere 安全的全托管模型推理平台——获取。</p>
-<p>Cohere Transcribe 目前在 HuggingFace 的 <a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">Open ASR Leaderboard</a> 上准确率排名第一，为真实世界转写性能确立了新标杆。</p>
-<p>这是我们从零到一，把高性能语音识别带进企业 AI 工作流的标志。继续阅读了解更多。</p>
-<h2>模型概览</h2>
-<table><thead><tr><th>名称</th><th><strong>cohere-transcribe-03-2026</strong></th></tr></thead><tbody><tr><td>架构</td><td>基于 conformer 的 encoder-decoder</td></tr><tr><td>输入</td><td>音频波形 → log-Mel 频谱图</td></tr><tr><td>输出</td><td>转写文本</td></tr><tr><td>模型规模</td><td>2B</td></tr><tr><td>模型</td><td>大型 Conformer encoder 提取声学表示，随后由轻量 Transformer decoder 生成 token</td></tr><tr><td>训练目标</td><td>对输出 token 的标准监督交叉熵；从零训练</td></tr><tr><td>语言</td><td>在 14 种语言上训练：<strong>欧洲：</strong>英语、法语、德语、意大利语、西班牙语、葡萄牙语、希腊语、荷兰语、波兰语 <strong>亚太：</strong>中文（普通话）、日语、韩语、越南语 <strong>中东和北非：</strong>阿拉伯语</td></tr><tr><td>许可证</td><td>Apache 2.0</td></tr></tbody></table>
-<p>图 1：Cohere Transcribe 是一个开放权重的 Conformer ASR 模型，将语音音频转换为 14 种支持语言的文字。</p>
-<h2>模型性能</h2>
-<p><strong>准确率</strong></p>
-<p>Cohere Transcribe 是英语语音识别准确率的新标准。它以仅 5.42% 的平均词错误率领跑 HuggingFace Open ASR Leaderboard，超越所有开源与闭源的专用 ASR 替代品，包括 Whisper Large v3、ElevenLabs Scribe v2 和 Qwen3-ASR-1.7B。这体现了模型在真实语音任务上的多面能力，例如对多人环境的鲁棒性、会议室式声学条件（如 AMI 数据集）和多样口音（如 Voxpopuli 数据集）。</p>
-<table><thead><tr><th>模型</th><th>平均 WER</th><th>AMI</th><th>Earnings 22</th><th>Gigaspeech</th><th>LS clean</th><th>LS other</th><th>SPGISpeech</th><th>Tedlium</th><th>Voxpopuli</th></tr></thead><tbody><tr><td><strong>Cohere Transcribe</strong></td><td><strong>5.42</strong></td><td><strong>8.13</strong></td><td>10.86</td><td>9.34</td><td><strong>1.25</strong></td><td><strong>2.37</strong></td><td>3.08</td><td>2.49</td><td>5.87</td></tr><tr><td>Zoom Scribe v1</td><td>5.47</td><td>10.03</td><td>9.53</td><td>9.61</td><td>1.63</td><td>2.81</td><td><strong>1.59</strong></td><td>3.22</td><td><strong>5.37</strong></td></tr><tr><td>IBM Granite 4.0 1B Speech</td><td>5.52</td><td>8.44</td><td><strong>8.48</strong></td><td>10.14</td><td>1.42</td><td>2.85</td><td>3.89</td><td>3.10</td><td>5.84</td></tr><tr><td>NVIDIA Canary Qwen 2.5B</td><td>5.63</td><td>10.19</td><td>10.45</td><td>9.43</td><td>1.61</td><td>3.10</td><td>1.90</td><td>2.71</td><td>5.66</td></tr><tr><td>Qwen3-ASR-1.7B</td><td>5.76</td><td>10.56</td><td>10.25</td><td><strong>8.74</strong></td><td>1.63</td><td>3.40</td><td>2.84</td><td><strong>2.28</strong></td><td>6.35</td></tr><tr><td>ElevenLabs Scribe v2</td><td>5.83</td><td>11.86</td><td>9.43</td><td>9.11</td><td>1.54</td><td>2.83</td><td>2.68</td><td>2.37</td><td>6.80</td></tr><tr><td>Kyutai STT 2.6B</td><td>6.40</td><td>12.17</td><td>10.99</td><td>9.81</td><td>1.70</td><td>4.32</td><td>2.03</td><td>3.35</td><td>6.79</td></tr><tr><td>OpenAI Whisper Large v3</td><td>7.44</td><td>15.95</td><td>11.29</td><td>10.02</td><td>2.01</td><td>3.91</td><td>2.94</td><td>3.86</td><td>9.54</td></tr><tr><td>Voxtral Mini 4B Realtime 2602</td><td>7.68</td><td>17.07</td><td>11.84</td><td>10.38</td><td>2.08</td><td>5.52</td><td>2.42</td><td>3.79</td><td>8.34</td></tr></tbody></table>
-<p>图 2：截至 2026.03.26 的 Hugging Face Open ASR Leaderboard。这是被广泛使用的标准化基准，用词错误率（WER）作为主要指标，在精选数据集上评估自动语音识别系统；WER 基于归一化后的参考-假设对齐计算，WER 越低表示转写保真度越高。实时榜单见<a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">这里</a>。</p>
-<p>至关重要的是，这些增益不限于基准数据集。同样的先进水平表现延续到了人工评估中——受训评审员对真实音频的转写质量按准确性、连贯性和可用性打分。两种评估方法上的一致性再次证明：Cohere Transcribe 的性能可以从受控测试可靠地转化为实用的企业场景表现。</p>
-<p>图 3：英文模型转写的人工偏好评估。在成对比较中，评审员对生成结果表达偏好，主要标准是保留含义——同时避免幻觉、正确识别命名实体，并提供格式恰当的逐字转写。得分达到或超过 50% 表示在正面对比中平均更偏好 Cohere Transcribe。</p>
-<p>图 4：部分支持语言的 ASR 准确率人工评估。得分达到或超过 50% 表示在正面对比中平均更偏好 Cohere Transcribe。</p>
-<p><strong>吞吐</strong></p>
-<p>在生产环境中，ASR 系统必须在严格的延迟与吞吐约束下运行；即便准确，缓慢或资源消耗的转写也会直接影响用户体验、运营效率和成本。</p>
-<p>Transcribe 扩展了帕累托前沿：在 1B+ 参数级模型阵营中，它既交付先进水平的准确率（低 WER），又保持同类最优的吞吐（高 RTFx）。</p>
-<p>图 5：规模大于 1B 的领先模型的吞吐（RTFx）与准确率（WER）关系图。RTFx（real-time factor multiple）衡量音频模型相对实时处理输入的速度。</p>
-<blockquote>&quot;我们由衷钦佩 Cohere 用 Transcribe 打造的东西。速度快得出众——几分钟的音频几秒钟就变成可用转写——立即为实时产品和工作流打开了新的可能。在我们的测试中，模型对日常语音的处理非常好，交付了强劲可靠的转写质量。整体体验顺畅、易于协作。我们很高兴与 Cohere 合作，并继续探索用这项技术能构建什么。&quot;Paige Dickie，Vice-President，Radical Ventures</blockquote>
-<h2>从零到一，以及更远</h2>
-<p>我们正在推进 Cohere Transcribe 与 <a href="https://cohere.com/north">North</a>（Cohere 的 AI agent 编排平台）的更深整合。随着计划的更新，Cohere Transcribe 将从一个高准确率转写模型，演进为企业语音智能更宽广的基础。</p>
-<h2>开始使用</h2>
-<p>Cohere Transcribe 现已可在 <a href="https://huggingface.co/CohereLabs/cohere-transcribe-03-2026">Hugging Face</a> 下载。按照安装说明即可在本地、甚至边缘环境运行模型。</p>
-<p>你也可以通过我们的 <a href="http://dashboard.cohere.com">API</a> 免费访问 Cohere Transcribe 进行低门槛实验（受速率限制）。使用细节与集成指南见<a href="https://docs.cohere.com/reference/create-audio-transcription">文档</a>。</p>
-<p>如需无速率限制的生产部署，请开通专属 <a href="https://dashboard.cohere.com/">Model Vault</a>。它提供低延迟的私有云推理，且无需自己管理基础设施。定价按小时-实例计算，长期承诺可享折扣方案。<a href="https://cohere.com/contact-sales">联系我们的团队</a>讨论你的需求。</p>
-<p><em><strong>主要贡献者：</strong> Julian Mack（Member of Technical Staff）、Ekagra Ranjan（Member of Technical Staff）、Cassie Cao（产品经理）、Bharat Venkitesh（Manager of Technical Staff）、Pierre Harvey Richemond（Manager of Technical Staff）。</em></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>工作的未来：人工智能将如何改变我们的工作方式？</title>
-      <link>https://cohere.com/research/futures-of-work</link>
-      <guid isPermaLink="true">https://cohere.com/research/futures-of-work</guid>
-      <description>原文标题：Building the Future(s) of Work at Cohere Labs</description>
-    </item>
-    <item>
-      <title>Aya Models：大规模多语言人工智能</title>
-      <link>https://cohere.com/research/aya</link>
-      <guid isPermaLink="true">https://cohere.com/research/aya</guid>
-    </item>
-    <item>
-      <title>Research Scholars 项目：寻找新一代机器学习人才</title>
-      <link>https://cohere.com/research/scholars-program</link>
-      <guid isPermaLink="true">https://cohere.com/research/scholars-program</guid>
     </item>
   </channel>
 </rss>

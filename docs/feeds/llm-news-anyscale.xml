@@ -14,6 +14,189 @@
       <guid isPermaLink="true">https://anyscale.com/blog/run-coding-agents-on-your-own-gpus</guid>
       <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale</description>
+      <content:encoded><![CDATA[<p>首页</p>
+<p>博客</p>
+<p>博客详细信息</p>
+<h1>将编码代理成本降低 90%：在 Anyscale 上使用 Ray + vLLM 提供安全的 LLM 服务</h1>
+<p>由</p>
+<p>耿昆凌</p>
+<p>,</p>
+<p>艾丁·阿比亚尔</p>
+<p>和</p>
+<p>杏芳</p>
+<p>|</p>
+<p>2026 年 10 月 8 日</p>
+<p>编码代理重复发送存储库上下文、指令、工具结果和对话历史记录以生成操作。这项工作也是您所做的最敏感的工作之一：您的来源、您的内部文档、您的架构决策，在每次击键时留下您的界限。 <a href="https://www.anyscale.com/blog/learning-loops">拥有运行时</a> 是您的：代码、跟踪和使用数据最终可以帮助您对这些模型进行后期训练，使它们更适合您的团队。</p>
+<p>除了数据隐私之外，通过代币支付闭源法学硕士还意味着每个开发人员、每个请求的费用呈线性增长，并且无法随着团队和代理数量的增长而获得规模效率。拥有运行时还可以让团队共享底层 GPU，从而改变这种情况。 <a href="https://youtu.be/yKt-CpfrOIE?si=mFz8jRYluEfBFqpg&amp;t=46">BMW 发现了成本效益</a>，只需 8 名开发人员即可从 API 转向内部推理。但是，在运行 GPU 集群时，构建和管理内部 LLM 编码服务平台会带来其自身的运营挑战。</p>
+<p>就成本而言，我们成本模型的主要发现表明，自托管成本只是每个开发人员每个代币 API 定价的一小部分：</p>
+<ul><li><strong>始终在线服务：</strong> 每月约 2,920 美元，或每个注册开发者约 58 美元。</li><li><strong>仅工作时间服务：</strong> 每月约 840 美元，或每个注册开发者约 17 美元。</li><li><strong>API 基线：</strong> 活跃的开发人员每月通常会花费约 800 美元的同等 Claude Code API 成本。</li></ul>
+<p>这些数字假设 RTX PRO 6000 和 50 名注册开发人员共享一个 GPU 每个 GPU 节点每小时大约 4 美元。他们正在规划预测而不是 TCO；完整的假设和注意事项位于下面的成本比较部分。</p>
+<p>除了节省成本之外，优化服务基础设施还可以带来显着的性能提升。</p>
+<p>我们的实证评估的主要结果表明性能显着提高：</p>
+<ul><li><strong>通过编译缓存恢复，编译速度提高 8.0 倍。</strong> 在无 MTP NVFP4 设置中，编译时间从 48.5 秒下降到 6.0 秒。</li><li><strong>通过 CPU KV 缓存分层，请求吞吐量提高了 3.79 倍。</strong> 在单副本 GLM-5.2 评估中添加 512 GiB CPU 层，将 58 个常见提示中提示令牌的缓存份额从 6.1% 增加到 74.9%，将首次令牌中值时间 (TTFT) 从 48.4 秒减少到 9.2 秒。</li><li><strong>通过推测解码，输出吞吐量提高 1.86 倍。 </strong>多令牌预测 (MTP) 将输出吞吐量从 65 个令牌/秒提高到 121 个令牌/秒。</li><li><strong>启用 CUDA 图表后，输出生成速度提高了 2.87 倍。</strong> 与在 eager 模式下运行相比，客户端观察到的令牌吞吐量从 15.9 个令牌/秒增加到 45.6 个令牌/秒。</li></ul>
+<p>本指南提供了分步路线图，涵盖模型和硬件选择、服务部署、单副本调整、使用缓存感知路由进行自动缩放以及多模型操作。</p>
+<p>图 1. Anyscale 上的 LLM 服务堆栈：vLLM 运行模型，Ray Serve LLM 跨副本进行编排和路由，Anyscale 管理生产运行时。</p>
+<p>图 1. Anyscale 上的 LLM 服务堆栈 - vLLM 运行模型，Ray Serve LLM 跨副本进行编排和路由，Anyscale 管理生产运行时。</p>
+<p><strong>LLM服务堆栈如何运作：</strong></p>
+<ul><li><strong>vLLM</strong>：在 GPU 上加载模型并生成令牌的推理引擎。</li><li><strong>Ray Serve LLM</strong>：编排层，可跨 OpenAI 和 Anthropic 兼容端点后面的多个 vLLM 副本扩展、路由和负载平衡请求，包括预填充/解码分解等高级模式。</li><li><strong>Anyscale Platform</strong>：托管生产运行时，可配置 GPU、自动缩放节点（包括缩放至零）并增加可靠性和可观察性，例如零停机部署、容错、日志、跟踪和警报。</li></ul>
+<p>为了使这条路径可重复，我们创建了<a href="https://github.com/anyscale/llm-serving-for-coding-agents">为编码代理服务的LLM代码存储库</a>。</p>
+<p>该存储库分为五个可运行的部分：</p>
+<ul><li><a href="https://github.com/anyscale/llm-serving-for-coding-agents/tree/95af323db8951d1a7e5ea588a4e8c706ae15c115/part1-deploy-naive"><strong>第 1 部分：部署</strong></a><strong>：</strong> 启动并验证基准 Anyscale 服务。</li><li><a href="https://github.com/anyscale/llm-serving-for-coding-agents/tree/95af323db8951d1a7e5ea588a4e8c706ae15c115/part2-connect-clients-product"><strong>第 2 部分：连接</strong></a><strong>:</strong> 通过其本机 API 连接 Claude Code、Codex 和 Cursor。</li><li><a href="https://github.com/anyscale/llm-serving-for-coding-agents/tree/95af323db8951d1a7e5ea588a4e8c706ae15c115/part3-optimize"><strong>第 3 部分：优化</strong></a><strong>：</strong> 调整 GPU 使用、缓存、解码和自动缩放。</li><li><a href="https://github.com/anyscale/llm-serving-for-coding-agents/tree/95af323db8951d1a7e5ea588a4e8c706ae15c115/part4-litellm-router"><strong>第 4 部分：路由</strong></a><strong>：</strong> 开放模型和带有 LiteLLM 的 Claude 之间的路由。</li><li><a href="https://github.com/anyscale/llm-serving-for-coding-agents/tree/95af323db8951d1a7e5ea588a4e8c706ae15c115/part5-enterprise-rollout"><strong>第 5 部分：推出</strong></a><strong>:</strong> 为团队配置零接触部署。</li></ul>
+<h2>Link编码代理如何转移服务工作负载</h2>
+<h3>LinkCoding 代理产生的不仅仅是聊天流量</h3>
+<p>编码代理提示结合了系统指令、存储库上下文、工具定义、诊断和对话历史记录，通常仅生成简短的工具调用或编辑。这使得工作负载<strong>预填充繁重</strong>，大量输入主导了第一个令牌 (TTFT) 的时间。</p>
+<p>大多数上下文都会轮流重复，为<a href="https://docs.vllm.ai/en/stable/features/automatic_prefix_caching/">自动前缀 KV 缓存重用</a>创造了强大的机会。在团队规模上，相关爆发增加了另一个挑战。因此，高性能平台必须平衡四个目标：低 TTFT、平滑的令牌流、高缓存重用和弹性容量。</p>
+<p>图 2. 说明性编码代理会话：每一轮都会重新发送一个大的、大部分重复的提示以产生一个简短的输出。只有每回合的新内容（橙色）需要新鲜的预填充；其余的可以从 KV 缓存中获取。</p>
+<p>图 2. 示例性编码代理会话</p>
+<p>编码代理工具充当 API 客户端。配置自定义端点时，本地线束（或者对于 Cursor 等托管客户端而言，其云后端）会将请求发送到兼容的模型服务器，而不是依赖默认的托管模型。由于这些客户端使用不同的 API 模式和端点，因此服务基础设施必须公开相应的路由。存储库的<a href="https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part2-connect-clients-product/README.md">客户端集成指南</a>配置了这三个路径：</p>
+<table><thead><tr><th><strong>编码剂</strong></th><th><strong>API 路径</strong></th></tr></thead><tbody><tr><td>光标</td><td><code>/v1/chat/completions</code></td></tr><tr><td>克劳德·代码</td><td><code>/v1/消息</code></td></tr><tr><td>法典</td><td><code>/v1/response</code></td></tr></tbody></table>
+<p>在 Anyscale 上托管开放权重模型可以带来多种好处：</p>
+<ul><li><strong>降低成本：</strong> 当利用率足够高以抵消固定基础设施费用时，降低边际代币成本。</li><li><strong>控制容量：</strong> 减少对单个提供商速率限制的依赖，同时管理您自己的容量和队列。</li><li><strong>安全和数据控制：</strong> 在网络内保留更多的推理路径。</li><li><strong>减少模型提供商锁定：</strong> 获得对模型和服务升级的控制。</li><li><strong>使用您自己的数据发展 LLM：</strong> 通过捕获批准的代理跟踪、使用 <a href="https://docs.ray.io/en/latest/data/data.html">Ray Data</a> 进行整理和评估，以及使用 <a href="https://docs.ray.io/en/latest/train/train.html">Ray Train</a> 或 RL 框架进行后期训练来创建数据飞轮。</li></ul>
+<p><strong>社区和透明度：</strong> 利用开放的生态系统来理解和定制模型行为。</p>
+<p>图 3. 直接流式传输使 Ray Serve LLM 能够与跨不同端点的编码代理连接。</p>
+<p>图 3. 直接流式传输使 Ray Serve LLM 能够跨不同端点与编码代理连接</p>
+<h3>LinkRay Serve LLM 将其扩展到生产</h3>
+<p>虽然 vLLM 处理核心推理优化，例如<a href="https://docs.vllm.ai/en/stable/features/automatic_prefix_caching/">前缀缓存</a>、<a href="https://docs.vllm.ai/en/stable/configuration/optimization/#chunked-prefill">分块预填充</a>， <a href="https://docs.vllm.ai/en/stable/features/quantization/quantized_kvcache/">量化</a>、<a href="https://docs.vllm.ai/en/stable/features/speculative_decoding/">推测性解码</a>和<a href="https://docs.vllm.ai/en/stable/serving/parallelism_scaling/">模型并行性</a>——稳健的部署需要更多。 Ray Serve LLM 添加了一个生产层：</p>
+<ul><li>跨多 GPU 环境扩展副本。</li><li>根据负载和缓存状态智能地路由请求。</li><li>公开 OpenAI 和 Anthropic 兼容的 API。</li><li>通过 HAProxy 从副本流式传输令牌，同时绕过旧版 Python 入口跃点。</li><li>集中服务、模型和 GPU 的指标。</li><li>符合人体工程学的构建器，适用于复杂的多节点部署，例如 Wide-EP 和预填充分解</li></ul>
+<p><a href="https://www.anyscale.com/blog/high-performance-distributed-inference-ray-serve-llm-vllm-google-kubernetes-gke">最近发布的 Ray Serve LLM 基准测试</a> 测量到，在引入 HAProxy、直接流式处理和RayExecutorV2.0在 Anyscale 上，Ray Serve LLM 在推理引擎周围添加了托管自动扩展、可观察性和容错能力。</p>
+<h2>LinkDeploy 编码代理的 LLM</h2>
+<p>实际部署有四个步骤：</p>
+<ul><li>根据任务质量和服务足迹选择模型。</li><li>选择硬件和并行策略。</li><li>配置 vLLM 引擎和 Ray Serve 部署。</li><li>部署服务并验证每个编码客户端。</li></ul>
+<h3>LinkStep 1：为任务成功选择法学硕士，而不仅仅是排行榜排名</h3>
+<p>开放重量模型质量正在快速发展。 Agent 排行榜（例如 <a href="https://arena.ai/leaderboard/agent?license=open-source">Agent Arena 开源模型排名</a>）是很好的起点，并且包括 Qwen、DeepSeek、Kimi 和 GLM 在内的模型系列越来越以编码和工具使用为目标。然而，公开排名只是一个起点，Anyscale LLM 专家可以帮助您为您的特定工作负载选择最佳模型。</p>
+<p>常见的基准测试包括用于解决实际存储库问题的 <a href="https://www.swebench.com/">SWE-bench</a>、用于终端任务的 <a href="https://www.tbench.ai/benchmarks">Terminal-Bench</a>、用于长期多工具工作流程的 <a href="https://toolathlon.xyz/introduction">Toolathlon</a>、用于对话工具使用的 <a href="https://taubench.com/">τ-bench</a>、 <a href="https://www.cybergym.io/cybergym/">CyberGym</a> 用于漏洞分析，<a href="https://artificialanalysis.ai/evaluations/gdpval-aa">GDPval-AA v2</a> 用于专业知识工作。分数通常反映完整的代理系统（而不仅仅是模型），因此仅当基准版本和评估设置匹配时才比较结果。</p>
+<p>根据您自己的工作评估候选模型：</p>
+<ul><li>多文件编辑和存储库导航。</li><li>结构化工具调用数轮。</li><li>长上下文指令跟随。</li><li>调试和测试修复。</li><li>完成任务所需的延迟和轮数。</li></ul>
+<p>在一个可靠的回合中完成常见工作的较小模型可能比需要更多 GPU 的较大模型更便宜。如果避免重试，更强大的模型对于困难任务可能会更便宜。衡量<strong>每个成功任务的成本</strong>，而不仅仅是每百万代币的成本。</p>
+<h3>LinkStep 2：将权重、运行时内存和 KV 缓存适配到硬件</h3>
+<p>GPU 内存保存模型权重、KV 缓存、临时激活、CUDA 图和运行时开销。权重内存大部分是固定的，并随着参数数量和精度而缩放，因此当未量化的权重限制部署时，<strong>权重量化</strong>可能至关重要。 KV 缓存存储活动请求的注意力状态，并随着上下文长度和并发性而增长。对于长上下文编码代理工作负载，<strong>KV 缓存量化</strong>同样可以减少每个令牌的内存。当支持和质量验证时，对两者进行量化可以为并发长请求留下更多空间。</p>
+<p>选择量化策略时，请考虑以下格式：</p>
+<ul><li><a href="https://docs.anyscale.com/llm/serving/performance-optimization"><strong>FP8</strong></a><strong>:</strong> 当硬件和运行时支持时，权重和 KV 缓存的强大选项。与 BF16 相比，其原始存储量大约减少一半；质量仍然取决于模型、任务和校准。</li><li>[<strong>NVFP4</strong>](https://developer.nvidia.com/blog/introducing-nvfp4-for-efficient-and-accurate-low- precision-inference/)<strong>：</strong> 在 NVIDIA Blackwell GPU 上，与 FP8 相比，此格式将量化张量的原始存储减少一半。整个检查点的节省较小，因为某些模块和元数据保持较高的精度；测试的 Qwen 检查点使用了大约 22 GB，而 FP8 使用了 27 GB，减少了约 19%。</li><li><a href="https://huggingface.co/docs/transformers/quantization/mxfp4"><strong>MxFP4</strong></a><strong>：</strong> 4 位精度的开放替代方案，由“gpt-oss”等模型使用。</li></ul>
+<p>注意：运行时设置和 GPU 架构决定了硬件加速的程度。虽然此处部署了 NVIDIA 的 <a href="https://huggingface.co/nvidia/Qwen3.6-27B-NVFP4">Qwen3.6-27B-NVFP4</a> 权重，但固定的 vLLM 版本依赖于 Marlin 回退，而不是 RTX PRO 6000 硬件上密集 NVFP4 的本机内核。此外，由于该设备不支持 NVFP4 KV 缓存，因此系统默认使用 FP8 KV 缓存。</p>
+<p>图 4. 说明性 GPU 内存布局：NVFP4 权重将大部分内存留给 KV 缓存，FP8 KV 适合的完整上下文数量大约是 BF16 的两倍。</p>
+<p>图 4. 示例性 GPU 内存布局</p>
+<h3>LinkStep 3：为模型和工作负载配置引擎</h3>
+<p>正确的服务配置是特定于型号的。除了内存和并行性之外，它还必须使用正确的聊天模板、推理解析器、工具调用解析器、多模式限制和上下文长度。</p>
+<p>存储库的 <a href="https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part3-optimize/serve_qwen3_6_27b_optimized.py#L138-L182">Qwen 服务实现</a>为每个副本配置一个 GPU， 256K 上下文限制、FP8 KV 缓存、本地前缀缓存、分块预填充以及 Qwen 特定推理和工具解析器。以下摘录显示了相关的引擎参数；该实现分别配置推测解码和编译缓存行为：</p>
+<pre><code>engine_kwargs = {
+    &quot;tensor_parallel_size&quot;: 1,
+    &quot;max_model_len&quot;: 262144,
+    &quot;gpu_memory_utilization&quot;: 0.9,
+    &quot;max_num_seqs&quot;: 32,
+    &quot;max_num_batched_tokens&quot;: 8192,
+    &quot;enable_prefix_caching&quot;: True,
+    &quot;kv_cache_dtype&quot;: &quot;fp8&quot;,
+    &quot;quantization&quot;: &quot;modelopt&quot;,
+    &quot;reasoning_parser&quot;: &quot;qwen3&quot;,
+    &quot;tool_call_parser&quot;: &quot;qwen3_coder&quot;,
+    &quot;enable_auto_tool_choice&quot;: True,
+    &quot;limit_mm_per_prompt&quot;: {&quot;image&quot;: 4, &quot;video&quot;: 0},
+}</code></pre>
+<p><code>max_model_len</code> 限制单个请求的上下文。 <code>max_num_batched_tokens</code> 用作分块预填充的调度程序预算。同时，“max_num_seqs”限制引擎并发。</p>
+<h3>LinkStep 4：启用直接流式传输并连接客户端</h3>
+<p>存储库的 <a href="https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part3-optimize/service-always-on.yaml#L12-L30">always-on 服务配置</a> 在服务级别启用 HAProxy 和直接流式传输：</p>
+<pre><code>env_vars:
+  RAY_SERVE_ENABLE_HA_PROXY: &quot;1&quot;
+  RAY_SERVE_LLM_ENABLE_DIRECT_STREAMING: &quot;1&quot;</code></pre>
+<p>请遵循存储库的 <a href="https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part2-connect-clients-product/README.md">coding-agent 连接教程</a>。首先，部署<a href="https://github.com/anyscale/llm-serving-for-coding-agents/tree/95af323db8951d1a7e5ea588a4e8c706ae15c115/part3-optimize">优化的永远在线服务</a>：</p>
+<pre><code>anyscale service deploy -f service-always-on.yaml --working-dir .</code></pre>
+<p>然后从 <strong>Anyscale 控制台 → 服务 → 查询</strong> 复制其公共“base_url”和不记名令牌。代理在本地执行工具，但模型请求（包括指令、存储库上下文、对话历史记录和工具结果）和流式模型响应通过服务传递。</p>
+<p><strong>克劳德·代码</strong></p>
+<p>导出服务 URL 和令牌，然后运行存储库的 <a href="https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part2-connect-clients-product/claude-service.sh">claude-service.sh</a>：</p>
+<pre><code>export ANYSCALE_BASE_URL=&lt;base_url&gt;/v1
+export ANYSCALE_API_KEY=&lt;token&gt;
+./claude-service.sh</code></pre>
+<p>启动器将服务根作为“ANTHROPIC_BASE_URL”传递给 Claude Code，并通过“ANTHROPIC_AUTH_TOKEN”提供令牌。</p>
+<p><strong>法典</strong></p>
+<p>从同一目录运行 <a href="https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part2-connect-clients-product/codex-service.sh">codex-service.sh</a>：</p>
+<pre><code>./codex-service.sh</code></pre>
+<p>它将 <code>/v1</code> URL 注册为自定义提供程序，选择 <code>wire_api=&quot;responses&quot;</code>，并将承载令牌发送到 <code>/v1/responses</code>。</p>
+<p><strong>光标</strong></p>
+<p>按照教程的<a href="https://github.com/anyscale/llm-serving-for-coding-agents/tree/95af323db8951d1a7e5ea588a4e8c706ae15c115/part2-connect-clients-production#cursor-gui">光标设置</a>并在<strong>光标设置→模型→OpenAI API密钥</strong>下输入这些值：</p>
+<pre><code>Override OpenAI Base URL:  &lt;base_url&gt;/v1
+OpenAI API Key:            &lt;token&gt;
+Custom model:              qwen3.6-27b</code></pre>
+<h2>LinkOptimize 编码代理流量的一个副本</h2>
+<h3>针对定义的 SLO 的 LinkBenchmarking 延迟</h3>
+<p>有关 TTFT、ITL、TPOT、预填充、解码和良好吞吐量的全面定义，请参阅 <a href="https://docs.anyscale.com/llm/serving/benchmarking/metrics">Anyscale 的 LLM 指标指南</a>。</p>
+<p>不要只关注原始令牌吞吐量，而应优先考虑有效吞吐量（满足目标延迟 SLO 的请求比例）。虽然积极的批处理提高了整体吞吐量，但它可能会对交互式流媒体性能产生负面影响。</p>
+<h3>LinkReplay 真实代理会话进行基准测试</h3>
+<p>统一的合成提示无法捕获真实的代理循环。现实世界的流量结合了长轮和短轮、重复的前缀、工具执行等待和重尾会话生命周期。要准确测试您的设置，请将您的 Claude Code JSONL 会话转换为带时间戳的请求流，以保持快速增长和轮间延迟。如果您还没有收集自己的会话，则可以使用公共 <a href="https://huggingface.co/datasets/semianalysisai/cc-traces-weka-062126-256k">WekaTrace Claude Code 代理会话语料库</a>。</p>
+<p>对于每个候选配置，收集：</p>
+<ul><li>TTFT、TPOT、ITL 和端到端延迟分布。</li><li>完成特工回合并成功完成任务。</li><li>输入/输出令牌和缓存提示令牌分数。</li><li>队列深度、抢占、KV 驱逐和 GPU 利用率。</li><li>工具调用错误和格式错误的响应。</li></ul>
+<h3>Link按依赖顺序应用优化</h3>
+<p>下面的<a href="https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part3-optimize/notes/BENCHMARKS.md">单 GPU 测量</a> 使用一台 RTX PRO 6000。大多数解码结果是使用真实的 Claude 会话提示记录的平均约 73K 代币。每行隔离一个不同的旋钮；收益不是累积的。</p>
+<table><thead><tr><th><strong>优化</strong></th><th><strong>之前</strong></th><th><strong>之后</strong></th><th><strong>测量到的变化</strong></th></tr></thead><tbody><tr><td>CUDA 图表与 eager 模式（FP8 权重）</td><td>15.9 输出令牌/秒</td><td>45.6 输出令牌/秒</td><td>2.87 倍</td></tr><tr><td>多令牌预测与基础（NVFP4 权重）</td><td>65 个输出令牌/秒</td><td>121 个输出令牌/秒</td><td>1.86 倍</td></tr><tr><td>RunAI主播</td><td>约85秒负重</td><td>约25秒负重</td><td>3.4 倍</td></tr><tr><td>恢复编译缓存，vLLM 0.25.1</td><td>48.5 s 编译阶段</td><td>6.0 s 编译阶段</td><td>8.0 倍</td></tr></tbody></table>
+<p><strong>1. </strong><a href="https://docs.vllm.ai/en/stable/features/quantization/"><strong>量化权重</strong></a><strong>以有效地拟合模型。</strong>权重量化可以将多GPU部署转变为单GPU部署，消除GPU间通信并释放KV缓存的内存。好处取决于 GPU 的本机内核和检查点的校准。将每一次精度变化视为性能和质量变化。</p>
+<p><strong>2. </strong><a href="https://docs.vllm.ai/en/stable/features/quantization/quantized_kvcache/"><strong>量化 KV 缓存</strong></a><strong>（如果支持）。</strong> 优化部署使用 FP8 KV 缓存。在测试的 96 GB GPU 上，容量计算估计 KV 存储相当于 BF16 KV 的约 3.27 倍 256K 令牌上下文，以及 FP8 KV 的 6.53 倍。</p>
+<p><strong>3.保持 </strong><a href="https://docs.vllm.ai/en/latest/design/cuda_graphs/"><strong>CUDA 图形</strong></a><strong> 为生产启用。</strong> Eager 模式启动需要更多 CPU 参与的操作，对于调试非常有用。 CUDA 图表捕获可重复的 GPU 工作并减少启动开销。禁用 Eager 模式（保持 CUDA 图启用）将输出速率从 15.9 个令牌/秒增加到 45.6 个令牌/秒。</p>
+<p><strong>4.针对目标工作负载测试</strong><a href="https://docs.vllm.ai/en/stable/features/speculative_decoding/mtp/"><strong>推测性解码</strong></a><strong>。</strong>多令牌预测同时提出并验证多个未来令牌以减少 TPOT； <code>num_speculative_tokens</code> 参数控制预测的草稿令牌数量（例如，将其设置为 3 以预测前面的三个令牌）。然而，净加速取决于接受率和验证开销。在并发性为 8 时，预测三个令牌会产生 99 个输出令牌/秒和 0.50 个转数/秒，优于两个令牌（80 个令牌/秒，0.50 个转数/秒），而预测四个令牌会将性能降低到 74 个令牌/秒。投机深度越高并不一定越好。优先考虑输出准确性：上游问题指出，在将 MTP 与前缀缓存结合使用时，工具调用已损坏。在启用 MTP 之前，通过多轮回归测试验证客户端、模型、解析器和 vLLM 兼容性。</p>
+<p><strong>5.简化初始化，将冷启动与稳态服务分开。</strong>模型下载、权重加载、引擎编译和副本准备是影响部署速度的不同阶段。编译缓存对确切的软件版本、GPU 架构、模型、并行性和标志很敏感，这意味着过时的缓存可能会失败或默默地降低性能。虽然 RunAI Streamer 减少了早期的权重加载时间，但存储库的<a href="https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part3-optimize/notes/INCOMPATIBILITIES.md">不兼容性矩阵</a>记录了其加载程序路径之间的已知冲突和测试的 vLLM 版本中的 MTP。</p>
+<p>在实践中，首先建立正确的工具使用并禁用推测解码；仅在调试需要时使用 eager 模式。验证正确性后，启用预期的量化和上下文长度，然后启用 CUDA 图表。从那里开始，调整分块预填充并测试推测解码。最后，优化冷启动并重新运行完整的正确性和负载套件。</p>
+<h3>LinkModel 成本比较</h3>
+<p>存储库的<a href="https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part3-optimize/notes/COST-ESTIMATE.md">成本模型和假设</a>假设RTX PRO 6000形状的每个GPU节点小时大约为4美元， 50 名注册开发者共享一个 GPU。基于这些假设：</p>
+<table><thead><tr><th><strong>规划模式</strong></th><th><strong>GPU 节点小时数/月</strong></th><th><strong>每月 GPU 节点成本</strong></th><th><strong>每个注册开发者的成本</strong></th></tr></thead><tbody><tr><td>永远在线</td><td>730</td><td>730约 2,920 美元</td><td>约 58 美元</td></tr><tr><td>仅工作时间</td><td>210</td><td>210约 840 美元</td><td>约 17 美元</td></tr></tbody></table>
+<p>Claude 通过 <a href="https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/claude-models">Microsoft Foundry</a> 上的 Azure 市场定价遵循 <a href="https://platform.claude.com/docs/en/about-claude/pricing#claude-in-microsoft-foundry-pricing">Claude Opus 5 费率</a>：标准输入每百万代币 5.00 美元 (MTok)， $0.50/MTok 用于缓存读取，$25.00/MTok 用于输出。</p>
+<p>一名活跃的开发人员每月的同等 Claude Code API 成本通常高达 800 美元。这与行业基准一致，包括<a href="https://www.linkedin.com/posts/martykausas_our-anthropic-bill-is-about-to-jump-from-activity-7470505066148352000-zqnt">Pylon 的观察</a> 高级用户达到每月 800 美元和<a href="https://simonwillison.net/2026/May/27/product-market-fit/">另一个类似的估计</a> 30 天内为 1,199.79 美元。公共跟踪遥测证实编码代理工作负载严重偏向输入令牌：</p>
+<ul><li><a href="https://huggingface.co/datasets/semianalysisai/cc-traces-weka-062126-256k">WekaTrace 数据集</a> 表示输入输出令牌比率为 117:1。</li><li>SyFI TraceLab 的 <a href="https://tracelab.cs.washington.edu/">Claude Trace</a> 记录了 269:1 的比率和 95.2% 的提示缓存命中率。</li></ul>
+<p>考虑到 SyFI 的 95.2% 缓存输入率（按缓存读取计费）并将剩余 4.8% 视为五分钟缓存写入，Opus 5 定价将每月 800 美元的支出转化为每个开发人员约 9.22 亿个输入代币和 343 万个输出代币。对于由 50 名开发人员组成的工程团队来说，API 总使用量约为 40,000 美元，每月输出 1.71 亿个代币。</p>
+<p>每月 40,000 美元的数字纯粹作为 API 支出基准，而不是潜在基础设施节省的直接指标。由于简短的、特定于配置的解码测试忽略了预填充开销、请求排队、整体 GPU 利用率、延迟 SLO 目标以及模型质量的变化，因此它们无法可靠地预测实际工作线程容量。</p>
+<p>同样，每个开发人员的 GPU 成本计算代表初步规划预测，而不是总拥有成本 (TCO) 或服务水平承诺。为了准确确定所需的副本数量和净节省，请根据目标延迟 SLO 和任务成功率评估持续跟踪重放的良好吞吐量，然后考虑额外的平台运营开销。</p>
+<h2>LinkScale 具有自动缩放和缓存感知负载平衡功能</h2>
+<h3>LinkSeparate 引擎限制、准入限制和自动缩放目标</h3>
+<p>存储库的<a href="https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part3-optimize/serve_qwen3_6_27b_optimized.py#L204-L220">自动缩放配置</a>提供了一个具体的起点，而<a href="https://docs.anyscale.com/llm/serving/parameter-tuning#ray-serve-autoscaling-configuration">Anyscale 的参数调整指南</a> 解释了如何调整它。三个控件有不同的用途：</p>
+<ul><li>vLLM <code>max_num_seqs</code> 设置限制引擎允许的序列。</li><li>Ray Serve 的“max_ongoing_requests”限制发送到副本的工作。</li><li><code>target_ongoing_requests</code> 设置告诉自动缩放器何时添加副本。</li></ul>
+<p>以下是为服务于编码代理的 LLM 部署设置自动扩展的分步过程：</p>
+<ul><li><strong>确定峰值 KV 缓存容量：</strong>检查服务器启动日志以确定最大上下文长度支持的最大并发序列（例如，256K 上下文窗口通常维持大约 20 个并发流）。</li><li><strong>估计实际工作负载并发性：</strong>根据平均提示大小调整序列限制。例如，平均提示长度为 85K 令牌，使用 (256K / 85K) x 20 缩放目标，以建立大约 60 个并发请求的目标。</li><li><strong>设置硬准入界限：</strong>将引擎的调度程序容量（vLLM 中的“max_num_seqs”）和部署防护（Ray Serve 中的“max_ongoing_requests”）与计算出的上限（例如 60）相匹配。</li><li><strong>建立自动缩放触发器：</strong>将 <code>target_ongoing_requests</code> 配置为比准入上限（例如 40）低大约 20-30%，以在请求排队之前启动副本缩放。</li><li><strong>跟踪指标并细化参数：</strong>持续评估系统的吞吐量和排队情况。如果提示长度接近 256K 上限，请降低并发阈值，以在内存空间变窄时保持尾部延迟。</li></ul>
+<p>对于编码代理，我们建议使用 Ray Serve LLM 的 <a href="https://docs.ray.io/en/master/serve/llm/user-guides/kv-aware-routing.html">KVAwareRouter</a> 或一致哈希（会话亲和力）。 KV 感知路由将前缀缓存重用与令牌加载感知路由结合起来。但请注意，KV 感知路由目前仅与 Codex 兼容。对于其他客户端或不兼容的设置，请回退到一致的哈希以保持会话粘性。</p>
+<p>正如<a href="https://www.anyscale.com/blog/llm-kv-token-aware-routing">博客</a>中详细介绍的，路由器使用 KV 缓存重叠来估计可以跳过多少预填充，然后估计引擎仍然需要完成的工作：</p>
+<pre><code>remaining prefill = incoming input tokens - reusable cached tokens
+token-load score = weighted remaining prefill + active prefill + ongoing decode</code></pre>
+<p>路由器选择具有最低加权分数的副本，并且可能会牺牲一些缓存重用以获得更平衡的令牌负载。在异构编码代理跟踪上，相对于单独最大化缓存重用，这可以提高 TTFT、TPOT 和吞吐量。</p>
+<h3>LinkExtend 有用的缓存生命周期与 KV 缓存卸载</h3>
+<p>当开发人员暂停检查代码或编写提示时，其他团队流量可能会从有限的 GPU 内存中逐出其会话的块。 <a href="https://docs.ray.io/en/releases-2.58.0/serve/llm/user-guides/kv-cache-offloading.html">KV 缓存卸载</a> 将不活动的块移动到更大的 CPU 内存或本地存储层，以便可以恢复它们而不是完全重新计算。对于编码代理来说，当用户离开并在数小时后返回时，卸载会保留会话上下文 - 历史记录是从 CPU/磁盘检索而不是重新计算，因此它们可以快速 TTFT 恢复。</p>
+<p>图 5. KV 缓存卸载：空闲块移动到 CPU 或磁盘，并在重用时恢复，而不是重新计算。</p>
+<p>图 5. KV 缓存卸载</p>
+<p>在 GLM-5.2 工作负载的内部基准测试中，与单独的 GPU 缓存相比，添加 512 GiB CPU KV 缓存层以及 GPU 前缀缓存可显着提高吞吐量和延迟。该基准测试使用配备 8xRTX PRO 6000 GPU（8 个张量并行、NVFP4 权重和 FP8 KV 缓存）的单个节点进行评估，在标称 900 秒的窗口内重播了种子工作负载。</p>
+<table><thead><tr><th><strong>公制（900 秒运行）</strong></th><th><strong>仅限 GPU 缓存</strong></th><th><strong>GPU 缓存 + CPU 层卸载</strong></th></tr></thead><tbody><tr><td>已完成的请求</td><td>58</td><td>58 215</td><td>215</td></tr><tr><td>请求吞吐量</td><td>0.0625 请求/秒</td><td>0.2367 请求/秒</td></tr></tbody></table>
+<p>主要运营要点包括：</p>
+<ul><li><strong>吞吐量改进：</strong>总体请求吞吐量增加了 3.79 倍。</li><li><strong>更高的缓存效率：</strong>在 58 个共享的已完成提示中，缓存提示令牌比例从 6.1% 扩大到 74.9%。</li><li><strong>减少延迟：</strong>首次令牌时间中值 (TTFT) 从 48.4 秒下降到 9.2 秒，58 个请求中有 49 个请求的 TTFT 较低。</li></ul>
+<p>图 6. 在一个 8x RTX PRO 6000 节点上向 GLM-5.2 添加 512 GiB CPU 缓存层可提高前缀重用，从而减少 TTFT 中值并增加受控重放中已完成的请求。</p>
+<p>图 6. 在一个 8x RTX PRO 6000 节点上向 GLM-5.2 添加 512 GiB CPU 缓存层可提高前缀重用，从而减少 TTFT 中值并增加受控重放中已完成的请求</p>
+<h2>Link多模型路由成本优化</h2>
+<p>副本路由优化了硬件效率，而多模型路由则优化了总体支出。它决定了与在自托管基础设施上运行相比，有多少流量需要支付前沿 API 溢价。将两者结合起来可以让您完全控制性能和成本。</p>
+<p>三个共同政策是：</p>
+<ul><li><strong>按任务复杂性进行路由。</strong> 将例行编辑、搜索和已知的代理技能发送到较小的开放模型；为困难的推理或关键的变化保留一个前沿模型。</li><li><strong>当自托管 LLM 服务容量受到限制时进行回退。</strong> 如果 GPU 无法足够快地扩展以应对突发情况，请使用经批准的托管模型，而不是允许队列无限制地增长。</li><li><strong>当托管配额耗尽时，回退到开放模型。</strong> 当订阅或 API 达到限制时，继续工作。</li></ul>
+<p>仅包含 CPU 的 LiteLLM 网关可以在单独的 Ray Serve LLM 服务和外部提供商面前实现模型选择。该存储库包括一个<a href="https://github.com/anyscale/llm-serving-for-coding-agents/tree/95af323db8951d1a7e5ea588a4e8c706ae15c115/part4-litellm-router/gateway">可部署网关</a>和[主要、后备和复杂性路由器]配置](https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part4-litellm-router/gateway/config.yaml#L27-L128)，加上一个[路由策略指南]（https://github.com/anyscale/llm-serving-for-coding-agents/blob/95af323db8951d1a7e5ea588a4e8c706ae15c115/part4-litellm-router/ROUTING.md）。 LiteLLM 的<a href="https://docs.litellm.ai/docs/proxy/auto_routing">自动路由文档</a> 涵盖了路由器的底层复杂性。关键字和技能感知规则快速且易于解释；分类器可以支持更丰富的策略。显式的用户覆盖仍然很重要，因为没有路由器能够完美地预测任务难度。</p>
+<p>图 7.LiteLLM 路由器网关：Claude Code 的成本感知模型路由。</p>
+<p>图 7. LiteLLM 路由器网关</p>
+<p>在我们的内部设置中，网关将简单请求路由到 Qwen，将中级到高级文本任务路由到 GLM，将复杂推理或多模式工作负载路由到 Claude。为了防止后续工具结果步骤在中途意外更改模型，路由器在整个剩余代理会话中强制执行会话粘性。</p>
+<p>保持此会话粘性对于顺利运行至关重要。由于编码代理迭代经常在没有新用户提示的情况下传递工具输出，因此基于每个请求评估路由存在跨不同模型转移单个会话的风险，这些模型具有冲突的聊天格式、上下文边界和工具机制。</p>
+<h3>Link通过可观察性和训练后持续改进</h3>
+<p>使用 <a href="https://docs.anyscale.com/services/monitoring">Anyscale 服务监控</a> 以及 <a href="https://docs.ray.io/en/latest/serve/llm/user-guides/observability.html">Ray Serve LLM 仪表板</a> 跨任务、模型和平台维度跟踪系统性能。</p>
+<p>高质量的执行跟踪驱动迭代后训练管道。通过 Langfuse 等可观测平台记录多轮交互，使用 Ray Data 整理和预处理数据集，使用自动评估套件检测性能回归，并使用 SkyRL（一种在 Ray 和 Anyscale 上运行的强化学习框架）对开放模型进行后期训练。 <a href="https://www.coinbase.com/blog/part-one-how-coinbase-built-evaluated-and-post-trained-a-fraud-agent">Coinbase 在其 Onramp 欺诈代理中采用了这种方法</a>。它使用 SkyRL 对其专有欺诈数据进行了 Qwen3.5-9B 的后训练，所得模型在所有四个欺诈检测指标上均优于 Claude Opus 4.5，同时将端到端服务延迟减少了 55%。每轮后期训练都会将改进后的模型反馈到生产中，从而将静态部署转变为自我改进的代理飞轮。</p>
+<p>图 8. 采用 Ray 生态系统的 LLM 代理的持续改进循环</p>
+<pre><code>/anyscale-workload-llm-serving Follow the guide in https://github.com/anyscale/llm-serving-for-coding-agents/tree/main/part3-optimize and deploy the coding-agent LLM service as written. Validate the generated artifacts in an Anyscale Workspace, deploy them as an Anyscale Service, and test the endpoint with /anyscale-platform-run skill.</code></pre>
+<h4>LinkOptimize 现有的 LLM 服务</h4>
+<p>将服务技能指向您当前的服务和存储库的测量优化示例：</p>
+<pre><code>/anyscale-workload-llm-serving Deploy an optimized LLM service by following the guidance in https://github.com/anyscale/llm-serving-for-coding-agents/tree/main/part3-optimize. Use this code as a template, inspect my existing service, and adapt the model, GPU, context length, parsers, and performance settings as needed. Benchmark the baseline and optimized configurations with /anyscale-platform-run skill.</code></pre>
+<p>随意替换另一个LLM；该技能应该重新验证特定于模型的解析器、运行时兼容性、内存适配和性能设置，而不是原样复制 Qwen 配置。</p>
+<p>＃＃＃＃ 目录</p>
+<ul><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#how-coding-agents-shift-the-serving-workload">编码代理如何转移服务工作负载</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#coding-agents-product-far-more-than-chat-traffic">编码代理产生的流量远远超过聊天流量</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#ray-serve-llm-scales-it-for-products">Ray Serve LLM 将其扩展到生产</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#deploy-an-llm-for-coding-agents">为编码代理部署LLM</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#step-1:-select-an-llm-for-task-success,-not-leaderboard-rank-alone">第 1 步：为任务成功选择 LLM，而不仅仅是排行榜排名</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#step-2:-fit-weights,-runtime-memory,-and-kv-cache-to-the-hardware">第 2 步：将权重、运行时内存和 KV 缓存适配到硬件</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#step-3:-configure-the-engine-for-the-model-and-workload">步骤 3：为模型和工作负载配置引擎</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#step-4:-enable-direct-streaming-and-connect-the-clients">第 4 步：启用直接流式传输并连接客户端</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#optimize-one-replica-for-coding-agent-traffic">优化编码代理流量的一个副本</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#benchmarking-latency-against-define-slos">针对定义的 SLO 进行延迟基准测试</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#replay-real-agent-sessions-for-benchmarks">重播真实代理会话以进行基准测试</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#apply-optimizations-in-dependency-order">按依赖顺序应用优化</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#model-cost-comparisons">模型成本比较</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#scale-with-autoscaling-and-cache-aware-load-balancing">通过自动缩放和缓存感知负载平衡进行扩展</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#separate-engine-limits,-admission-limits,-and-autoscaling-targets">单独的引擎限制、准入限制和自动缩放目标</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#extend-useful-cache-lifetime-with-kv-cache-offloading">通过 KV 缓存卸载延长有用的缓存生命周期</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#multi-model-routing-for-cost-optimization-">用于成本优化的多模型路由</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#continuous-improvement-via-observability-and-post-training">通过可观察性和训练后持续改进</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<h4>Azure 上的 Anyscale 全面可用：使企业能够拥有完整的 AI 循环，而不仅仅是推理</h4>
+<p>了解更多</p>
+<h4>Ray Summit 2026：物理 AI、RL 以及运行它们的基础设施</h4>
+<p>了解更多</p>
+<h4>将 Ray for AI 工作负载扩展到 10k 节点集群</h4>
+<p>了解更多</p>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p>免费开始</p>
+<p>与专家交谈</p>]]></content:encoded>
     </item>
     <item>
       <title>Azure 上的 Anyscale 全面可用：使企业能够拥有完整的 AI 循环，而不仅仅是推理</title>

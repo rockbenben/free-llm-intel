@@ -22,8 +22,8 @@
 11. [GLM-Image 图像生成模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2026-01-14)（2026-01-14）
 12. [GLM-4.7 基座模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2025-12-22)（2025-12-22）
 13. [AutoGLM-Phone AI 手机智能助理框架上线](https://docs.bigmodel.cn/cn/update/new-releases#2025-12-11)（2025-12-11）
-14. [GLM-TTS-Clone 音色克隆模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2025-12-11-2)（2025-12-11）
-15. [GLM-TTS 语音合成模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2025-12-11-3)（2025-12-11）
+14. [GLM-TTS-Clone 音色克隆模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2025-12-11)（2025-12-11） <!--url:https://docs.bigmodel.cn/cn/update/new-releases#2025-12-11-2-->
+15. [GLM-TTS 语音合成模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2025-12-11)（2025-12-11） <!--url:https://docs.bigmodel.cn/cn/update/new-releases#2025-12-11-3-->
 16. [GLM-ASR-2512 语音识别模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2025-12-10)（2025-12-10）
 17. [GLM-4.6V 视觉推理模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2025-12-08)（2025-12-08）
 18. [GLM-4.6 基座模型上线](https://docs.bigmodel.cn/cn/update/new-releases#2025-09-30)（2025-09-30）
@@ -34,4 +34,4 @@
 23. [接入两个 Vidu 热门视频生成模型](https://docs.bigmodel.cn/cn/update/new-releases#2025-06-18)（2025-06-18）
 24. [新增高识别精度、强抗噪能力的语音模型](https://docs.bigmodel.cn/cn/update/new-releases#2025-04-23)（2025-04-23）
 25. [一次新增 2 个基座模型、3 个推理模型](https://docs.bigmodel.cn/cn/update/new-releases#2025-04-14)（2025-04-14）
-26. [一站式 AI 搜索工具全家桶更新升级](https://docs.bigmodel.cn/cn/update/new-releases#2025-04-14-2)（2025-04-14）
+26. [一站式 AI 搜索工具全家桶更新升级](https://docs.bigmodel.cn/cn/update/new-releases#2025-04-14)（2025-04-14） <!--url:https://docs.bigmodel.cn/cn/update/new-releases#2025-04-14-2-->

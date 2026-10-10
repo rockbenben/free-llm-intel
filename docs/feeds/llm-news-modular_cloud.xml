@@ -7,7 +7,68 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-modular_cloud.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 17 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Modular：培育Modular生态系统：Modular社区资助计划</title>
+      <link>https://www.modular.com/blog/nurturing-the-modular-ecosystem-the-modular-community-grant-program</link>
+      <guid isPermaLink="true">https://www.modular.com/blog/nurturing-the-modular-ecosystem-the-modular-community-grant-program</guid>
+      <pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Modular: Nurturing the Modular ecosystem: the Modular Community Grant Program</description>
+      <content:encoded><![CDATA[<h1>培育 Modular 生态：Modular 社区资助计划</h1>
+<p>Alister Burt</p>
+<p>社区</p>
+<p>今年早些时候，我们发布了<a href="https://forum.modular.com/t/introducing-the-modular-community-grant-program/2941">社区项目提案征集</a>，用小额资助支持那些正在构成生态基础的 Mojo 和 MAX 库。我们收到了大量各类贡献者的来信，拿到的优质提案数量远超我们所能支持的范围。</p>
+<p>以下是我们当前正在支持的项目：</p>
+<h2><a href="https://github.com/denislabs/mojo-rl">noeira</a></h2>
+<p><strong>Denis Laboureyras (</strong><a href="https://github.com/denislabs">@denislabs</a><strong>)</strong></p>
+<p><em>noeira</em> 创建于 2026 年初，是一个完全用 Mojo 编写的开源强化学习（RL）框架。该项目目前支持 40+ 种 RL 算法、GPU 加速的深度 RL、自定义 2D/3D 物理引擎、原生街机游戏引擎以及 SDL3 渲染。</p>
+<p>它的诞生源于对 Python 强化学习技术栈中性能断崖的不满。这个项目的长期目标，是提供一个完全端到端的 RL 框架，让环境、智能体和训练全部以纯 Mojo 运行在 GPU 上。</p>
+<p>近期，该项目计划发布与成熟 RL 技术栈（<em>Gymnasium</em>、<em>Stable Baselines3</em>、<em>PyTorch</em>）对标的严格基准测试，以此量化采用纯 Mojo 路线所获得的性能收益。</p>
+<p><a href="https://www.youtube.com/watch?v=gvDEC5_iEb4&amp;list=PLh0S94-sJw_6UcaIMgpESb5KSVRsuuhnX&amp;index=1">在此观看 Denis 的社区例会分享。</a></p>
+<h2><a href="https://github.com/jgsimard/bajo"><strong>bajo</strong></a></h2>
+<p><strong>Jean-Gabriel Simard (</strong><a href="https://github.com/jgsimard"><strong>@jgsimard</strong></a><strong>)</strong></p>
+<p><em>bajo</em> 是一个并行物理仿真器，其设计目标是让数千个 RL/机器人训练环境在单张 GPU 上同时运行。该项目已经交付了一套业界领先的 GPU 排序实现（Morton 编码 + BVH 构建），作为其计算底座。</p>
+<p>未来六个月的计划是把那个排序层打包成型，实现高性能的并行碰撞检测与刚体动力学。随后将其扩展为一个可运行的数千环境原型，并与 NVIDIA 的 <em>Warp</em> 和 <em>Madrona</em> 进行基准对比。</p>
+<p><a href="https://www.youtube.com/watch?v=Fps_baqJg8E&amp;list=PLh0S94-sJw_6UcaIMgpESb5KSVRsuuhnX&amp;index=2">在此观看 Jean-Gabriel 的社区例会分享。</a></p>
+<h2><a href="https://github.com/martinvuyk/hackathon-fft"><strong>Fast Fourier Transform</strong></a></h2>
+<p><strong>Martin Vuyk Loperena (</strong><a href="https://github.com/martinvuyk"><strong>@martinvuyk</strong></a><strong>)</strong></p>
+<p>这是一套快速傅里叶变换（FFT）实现，在 CPU 和 GPU 上都已接近业界领先性能，可分别与 <em>FFTW</em> 和 <em>cuFFT</em> 竞争。项目始于 2025 年中期的一场黑客松，此后一直在持续演进。</p>
+<p>近期目标包括加入半尺寸变换支持（hC2R、R2hC），并在已经支持的 R2R、C2R 和 R2C 变换上争取彻底的性能胜出。如果剩余的差距能够被抹平，MAX 对 <em>cuFFT</em> 的依赖就有望被完全移除。</p>
+<p><a href="https://luma.com/nov-modular">来 11 月的社区例会观看 Martin 关于他的 FFT 实现的分享。</a></p>
+<h2><a href="https://github.com/bgreni/EmberJson"><strong>EmberJson</strong></a></h2>
+<p><strong>Brian Grenier (</strong><a href="https://github.com/bgreni"><strong>@bgreni</strong></a><strong>)</strong></p>
+<p><em>EmberJson</em> 是当今 Mojo 生态中使用最广泛的 JSON 解析库。这个包大量依赖 Mojo 的反射能力，同时支持结构化和非结构化解析。</p>
+<p>其路线图指向一个秉承 Rust 的 <em>Serde</em> 思路的通用序列化框架，同时持续推进 Python 互操作。尽管存在互操作开销，早期基准测试已经显示它的速度快于 Python 内置的 JSON 处理。</p>
+<p><a href="https://luma.com/oct-modular">参加我们 10 月的社区例会，听 Brian 更多讲讲他在该项目上取得的进展。</a></p>
+<h2><a href="https://github.com/thatstoasty/floki"><strong>floki</strong></a></h2>
+<p><strong>Mikhail Tavarez (</strong><a href="https://github.com/thatstoasty"><strong>@thatstoasty</strong></a><strong>)</strong></p>
+<p><em>floki</em> 是一个易于使用的 Mojo HTTP 客户端，构建在 <em>libcurl</em> 绑定之上。该项目已经支持 Python 的 <em>requests</em> 模块用户熟悉并喜爱的许多特性。当前的开发重点是：以更顺手的方式访问高级 <em>libcurl</em> 配置，并简化底层绑定的实现。</p>
+<p><a href="https://www.youtube.com/watch?v=gvDEC5_iEb4">在此观看 Mikhail 的社区例会分享。</a></p>
+<h2><a href="https://github.com/josiahls/momanim"><strong>momanim</strong></a></h2>
+<p><strong>Josiah Laivin (</strong><a href="https://github.com/josiahls"><strong>@josiahls</strong></a><strong>)</strong></p>
+<p><em>momanim</em> 是受 <a href="https://github.com/3b1b/manim"><em>Manim</em></a> 启发、为 Mojo 打造的 2D 动画框架。该项目旨在利用 CPU 和 GPU 加速大幅缩短渲染时间，并追求与 Manim 的 API 足够接近，使得由 LLM 辅助的 Python 到 Mojo 转换切实可行。项目还处于起步阶段：基础的图像/视频 API 和形状渲染已经就位，3D 渲染 API 是路线图上的下一步。</p>
+<p><a href="https://luma.com/oct-modular">锁定 10 月的社区例会，听 Josiah 谈谈 momanim。</a></p>
+<h2>未来的轮廓</h2>
+<p>把这些项目放在一起看，正是 Modular 社区在 Mojo 与 MAX 持续发展中所走向之处的一个切片：底层基础设施，以及令人兴奋的应用。我们感谢社区里的每一个人推动着平台向前，也迫不及待想看到你们接下来会做出什么。</p>
+<h2>阅读更多 Modular 的内容</h2>
+<p>查看全部博客</p>
+<p>Modverse #55：Mojo 1.0 Beta、社区的 Mojo 库，以及由 MAX 驱动的实时患者对话</p>
+<p>June 10, 2026</p>
+<p>我如何用 AI 智能体构建了一个纯 Mojo 应用（以及 10 个库）</p>
+<p>May 19, 2026</p>
+<p>Modverse #54：AMD AI DevDay、Modular 新办公室，以及一个持续交付的社区</p>
+<p>May 4, 2026</p>
+<p>与 Modular 一起构建 AI 的未来</p>
+<p>开始使用 - 免费</p>
+<p>查看各版本</p>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="金发人士正在使用带 Apple 标志的笔记本电脑。">立即注册今天就注册我们的 Cloud Platform，轻松开始。<a href="https://docs.modular.com/max/get-started">Sign Up</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="带黑色手柄和圆形透明镜片的放大镜 emoji。">浏览开放模型浏览我们的模型目录，或部署你自己的自定义模型<a href="https://www.modular.com/models">Browse models</a></li></ul>
+<h2>订阅我们的邮件通讯</h2>
+<p>把我们的最新新闻、公告和更新直接送达你的收件箱。随时可退订。</p>
+<p>感谢订阅我们的邮件通讯！🚀</p>
+<p>谢谢，</p>
+<p>Modular 销售团队</p>
+<p>哎呀！提交表单时出了点问题。</p>]]></content:encoded>
+    </item>
     <item>
       <title>Modular：Modular 26.6：开放编译器贡献、音频生成和扩展模型支持</title>
       <link>https://www.modular.com/blog/modular-26-6-open-compiler-contributions-audio-generation-and-expanded-model-support</link>
@@ -491,6 +552,7 @@ for q_tile in tiles(q_list, BM):           # stream the selecting queries throug
       <link>https://www.modular.com/blog/why-llm-inference-needs-a-new-kind-of-router-part-3</link>
       <guid isPermaLink="true">https://www.modular.com/blog/why-llm-inference-needs-a-new-kind-of-router-part-3</guid>
       <pubDate>Fri, 05 Jun 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Modular: Why LLM Inference Needs a New Kind of Router - Part 3</description>
       <content:encoded><![CDATA[<p>2026 年 6 月 5 日</p>
 <h1>为什么 LLM 推理需要一种新型路由器——第 3 部分</h1>
 <p>Aayush Deshpande</p>
@@ -609,6 +671,7 @@ for q_tile in tiles(q_list, BM):           # stream the selecting queries throug
       <link>https://www.modular.com/blog/why-llm-inference-needs-a-new-kind-of-router-part-2</link>
       <guid isPermaLink="true">https://www.modular.com/blog/why-llm-inference-needs-a-new-kind-of-router-part-2</guid>
       <pubDate>Thu, 21 May 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Modular: Why LLM Inference Needs a New Kind of Router - Part 2</description>
       <content:encoded><![CDATA[<p>2026 年 5 月 21 日</p>
 <h1>为什么 LLM 推理需要一种新型路由器——第 2 部分</h1>
 <p>Aayush Deshpande</p>
@@ -1136,6 +1199,7 @@ that it works correctly.</code></pre>
       <link>https://www.modular.com/blog/why-llm-inference-needs-a-new-kind-of-router-part-1</link>
       <guid isPermaLink="true">https://www.modular.com/blog/why-llm-inference-needs-a-new-kind-of-router-part-1</guid>
       <pubDate>Fri, 08 May 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Modular: Why LLM Inference Needs a New Kind of Router - Part 1</description>
       <content:encoded><![CDATA[<h1>为什么 LLM 推理需要一种新型路由器 - 第 1 部分</h1>
 <p>HTTP 路由多年来一直是个已解决的问题。轮询、一致性哈希、最少连接——任选其一，放在一组完全相同的服务器前面，流量就会相当均匀地分散。</p>
 <p>但随后大语言模型来了。</p>
@@ -1321,7 +1385,7 @@ that it works correctly.</code></pre>
       <link>https://www.modular.com/blog/tiletensor-part-1-safer-more-efficient-gpu-kernels</link>
       <guid isPermaLink="true">https://www.modular.com/blog/tiletensor-part-1-safer-more-efficient-gpu-kernels</guid>
       <pubDate>Mon, 13 Apr 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Modular: TileTensor Part 1</description>
+      <description>原文标题：Modular: TileTensor Part 1 - Safer, More Efficient GPU Kernels</description>
       <content:encoded><![CDATA[<p>2026 年 4 月 13 日</p>
 <h1>TileTensor 第 1 部分——更安全、更高效的 GPU 内核</h1>
 <p>Lukas Hermann</p>
@@ -1659,7 +1723,7 @@ def calls_my_kernel():
       <link>https://www.modular.com/blog/structured-mojo-kernels-part-4-portability-and-the-road-ahead</link>
       <guid isPermaLink="true">https://www.modular.com/blog/structured-mojo-kernels-part-4-portability-and-the-road-ahead</guid>
       <pubDate>Fri, 03 Apr 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Modular: Structured Mojo Kernels Part 4</description>
+      <description>原文标题：Modular: Structured Mojo Kernels Part 4 - Portability and the Road Ahead</description>
       <content:encoded><![CDATA[<h1>结构化 Mojo 内核（四）：可移植性与未来之路</h1>
 <p>本系列的<a href="https://www.modular.com/blog/structured-mojo-kernels-part-1-peak-performance-half-the-code">第 1</a>–<a href="https://www.modular.com/blog/part3_composition_in_practice.md">3</a>篇表明：把 IO、流水线、计算三类关注点分离成可组合的组件，能在不牺牲性能的前提下简化开发。本篇要证明的是——当目标硬件改变时，结构化 Mojo 内核的收益依然成立。</p>
 <p>GPU 可移植性的历史记录毁誉参半。&quot;一次编写，到处运行&quot;通常等于&quot;一次编写，到处跑得慢&quot;。CUTLASS 根本不尝试跨出 NVIDIA 硬件，而且在同代硬件内也常常受限。Triton 提供了可移植性，但在非 NVIDIA 目标上性能滑坡。传统智慧说：可移植和快，你只能选一个。</p>
@@ -1777,7 +1841,7 @@ def calls_my_kernel():
       <link>https://www.modular.com/blog/software-pipelining-for-gpu-kernels-part-1-the-pipeline-problem</link>
       <guid isPermaLink="true">https://www.modular.com/blog/software-pipelining-for-gpu-kernels-part-1-the-pipeline-problem</guid>
       <pubDate>Mon, 30 Mar 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Modular: Software Pipelining for GPU Kernels: Part 1</description>
+      <description>原文标题：Modular: Software Pipelining for GPU Kernels: Part 1 - The Pipeline Problem</description>
       <content:encoded><![CDATA[<h1>GPU 内核的软件流水线（一）：流水线问题</h1>
 <p>Flash Attention 是个很简单的算法：分块的背靠背 matmul，中间夹一个在线 softmax。整个算法几十行伪代码就能写完。可 Flash Attention 4 的生产内核却有 2,875 行，而最难写对的部分不是数学——是异步执行和流水线同步，全部靠人手从一个任何标准调试工具都无法验证的调度推导出来。</p>
 <p>在这个系列的多篇文章中，我们将从第一性原理出发探讨 GPU 内核的软件流水线：把依赖关系形式化为图，用约束求解器解出最优调度，并展示这一切如何通过纯 Mojo 集成进 <a href="https://www.modular.com/open-source/max">MAX</a>。我们在<a href="https://www.modular.com/matrix-multiplication-on-blackwell">《Blackwell 上的矩阵乘法》系列</a>的<a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-2-using-hardware-features-to-optimize-matmul">第 2-4 篇</a>中已经探讨过它在矩阵乘法上的实际形态。</p>
@@ -1930,7 +1994,7 @@ for k in range(N):
       <link>https://www.modular.com/blog/structured-mojo-kernels-part-3-composition-in-practice</link>
       <guid isPermaLink="true">https://www.modular.com/blog/structured-mojo-kernels-part-3-composition-in-practice</guid>
       <pubDate>Thu, 26 Mar 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Modular: Structured Mojo Kernels Part 3</description>
+      <description>原文标题：Modular: Structured Mojo Kernels Part 3 - Composition in Practice</description>
       <content:encoded><![CDATA[<h1>结构化 Mojo 内核（三）：组合实战</h1>
 <p>在<a href="https://www.modular.com/blog/structured-mojo-kernels-part-2-the-three-pillars">第 2 篇</a>中，我们建起了结构化 Mojo 内核的三大支柱：负责数据搬运的 TileIO、负责协调的 TilePipeline、负责计算的 TileOp。这三根支柱构成了内核编程的一个强结构抽象——让内核成为模块化、带类型、可测试零件的组合，而不是大块交织逻辑的单体。</p>
 <p>本篇展示这种模块化设计的实际收益。我们拿两个真实内核家族——conv2d 和 block-scaled matmul——逐一追述它们如何在 matmul 地基上搭建。两个案例里，一个新内核家族都只需改动一个组件，其余原封不动。conv2d 内核新增约 130 行代码，block-scaled matmul 新增约 200 行，且都没有任何性能损失。</p>
@@ -2085,46 +2149,6 @@ loader_act.load(tiles.a_tile, tiles.barrier, k_coord, m_coord)</code></pre>
 <p><a href="https://www.modular.com/blog/structured-mojo-kernels-part-4-portability-and-the-road-ahead">第 4 篇</a>把最后这一点带到 AMD。我们展示把这些内核移植到根本不同的内存层次与执行模型实际意味着什么，以及这套架构接下来往哪走。</p>
 <h2>TL;DR</h2>
 <ul><li><strong>Conv2d 靠换 TileIO 组合而成。</strong>把连续 tile 加载器换成支持 im2col 的变体；整条 matmul 流水线、计算、epilogue、调度器原样复用。约 130 行 conv 特定代码，对比 CUTLASS 870 行的独立内核。</li><li><strong>Block-scaled matmul 靠参数化 TilePipeline 组合而成。</strong><code>TilePayload</code> trait 把同步与 tile 存储解耦。三个 payload 实现共享一条流水线，屏障管理零改动。</li><li><strong>第 8 个 warp 扩展而不用分叉。</strong>Conv2d 的融合残差加法新增一个 warp 角色，原有七个不动。零开销，因为残差加载藏在计算背后。</li><li><strong>抽象是零成本的。</strong>结构化与旧版内核的 SASS 输出完全一致。Llama 基准证实性能持平。</li><li><strong>改动保持局部。</strong>新内核由现有组件组合。修复自动传导。每个新内核变体的增量行数可预期，而非整体重写。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Modular：Modular 26.2：使用 Mojo 实现 SOTA 图像生成与 AI 编程升级</title>
-      <link>https://www.modular.com/blog/modular-26-2-state-of-the-art-image-generation-and-upgraded-ai-coding-with-mojo</link>
-      <guid isPermaLink="true">https://www.modular.com/blog/modular-26-2-state-of-the-art-image-generation-and-upgraded-ai-coding-with-mojo</guid>
-      <pubDate>Thu, 19 Mar 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Modular: Modular 26.2: State-of-the-Art Image Generation and Upgraded AI Coding with Mojo</description>
-      <content:encoded><![CDATA[<h1>Modular 26.2：业界领先的图像生成与升级的 Mojo AI 编码</h1>
-<p>今天的 26.2 版本把 Modular Platform 的模态支持扩展到图像生成与图像编辑工作流，延续我们已有的文本和音频生成支持。在 26.2 中，Black Forest Labs 的 FLUX.2 模型各变体获得支持，相比业界最优（SOTA）实现有超过 4 倍加速。</p>
-<p>Mojo 26.2 让这门语言在 AI 辅助的 GPU kernel 开发上显著更高效。本版本引入了简化语言的特性，同时带来<a href="https://github.com/modular/skills">全新 AI 编码 skills</a>——专为编写高性能、可移植 GPU kernel 而打造。加上超过 75 万行开源 Mojo kernel 代码，Claude、Cursor、Codex 这类编码 agent 现在可以轻松地在任意硬件目标上编写、移植和优化 kernel。Mojo 类 Python 的可读性让生成的代码既正确又易懂。</p>
-<h2>MAX：内建于你现有技术栈的 FLUX 图像生成</h2>
-<p>Modular Platform 用单一框架统一 AI。我们从文本起步，快速扩展到<a href="https://inworld.ai/blog/how-we-made-state-of-the-art-speech-synthesis-scalable-with-modular">音频</a>，今天再加上图像生成与图像编辑——全都带有 Modular 一贯的业界领先性能。</p>
-<p>如果你已在生产中运行 Modular Platform，添加图像生成无需任何改动，只需换一个 endpoint。你会在 FLUX.2 系列模型上获得约 4 倍的延迟加速（相比使用 torch.compile 的 PyTorch Diffusers）。结果因图像分辨率而异：</p>
-<table><thead><tr><th>图像分辨率</th><th>Diffusers 相比 MAX 的加速</th></tr></thead><tbody><tr><td>1024x1024</td><td>4.1x</td></tr><tr><td>1360x768</td><td>3.4x</td></tr><tr><td>768x1360</td><td>4.0x</td></tr></tbody></table>
-<p>这些来自 MAX 的性能提升没有可察觉的质量损失。下图展示了 torch.compile（左）与 MAX（右）的结果。图像质量几乎完全一致，而 MAX 的性能肉眼可感——是 torch.compile 的 4 倍。图像质量的容差可配置，我们能在亚秒内获得高质量图像。这打开了大量此前因缺乏准实时图像生成而被阻塞的工作流。</p>
-<p>FLUX.2-dev 的性能同样体现在 AMD MI355X 上：MAX 超过 torch.compile 性能 1.25 倍，生成耗时仅比 B200 慢 4%。</p>
-<p>从 TCO（总拥有成本）视角看，这意味着 Modular Platform 用户立刻就能获得 TCO 节省。为估算 TCO 节省，我们调研了 GPU 市场，发现 MI355X 的价格通常约为 B200 的 70-80%。将其套用到我们的基准生成时间上，相当于在 AMD 硬件上部署模型时节省 25% 的 TCO，而生成速度没有明显牺牲。</p>
-<p><a href="https://www.modular.com/solutions/image-generation">MAX 图像生成</a>现已在我们的云和企业方案中提供。我们在持续提升图像生成工作流的性能，预计未来几周内将达到对 SOTA 最高 7 倍的加速。如果你的工作流用到图像生成，并对 TCO 与性能收益感兴趣，请<a href="https://www.modular.com/request-demo">联系我们</a>。</p>
-<h2>Mojo：为 AI 编码时代而设计</h2>
-<p>AI 编码 agent 需要正确的基础才能构建好的软件。在<a href="https://www.modular.com/blog/the-claude-c-compiler-what-it-reveals-about-the-future-of-software">我们最近的分析</a>中——Anthropic 用一个 agent 团队复刻 C 编译器的实验——Modular CEO Chris Lattner 点出一个关键洞察：agent 的有效性取决于它所构建的基础系统。Mojo 是面向未来 AI 系统的新一代基础。</p>
-<p>其类 Python 语法、最多样板代码和强类型安全使它非常适合 agent：常见错误在编译期就被抓住，迭代周期更短，清晰的错误消息意味着更少的调试 token。同时，其独有的元编程能力实现了零成本抽象——包括可读的内存布局和可组合的 kernel 设计模式——却仍能在广泛硬件上交付裸机性能。</p>
-<p>为帮助 agent 写出更好的 Mojo 代码，我们开源了 Modular 的 Mojo kernel 实现，并通过仓库各处的 <code>CLAUDE.md</code> 文件和 README 持续打磨 agent 引导。在 26.2 中，我们更进一步，推出一整套可直接接入 AI 编码助手的 <a href="https://github.com/modular/skills">Mojo 编码 agent skills</a>，纠正过时模式、强制 idiomatic 代码。</p>
-<p>用这条命令安装我们的 Mojo skills：</p>
-<p>python</p>
-<pre><code>npx skills add modular/skills</code></pre>
-<p>这些 skills 对把现有 CUDA 或 Triton kernel 移植到 Mojo 尤其有用——把你的 agent 指向一个 kernel，skill 负责结构化翻译，你专注于 Mojo 特有的优化。</p>
-<p>我们最初的 skills 只是开始。我们正努力将其扩展，覆盖硬件特定优化、PyTorch 到 MAX 的模型转换，以及 kernel 性能分析与调试。我们会持续演进这些 skills，并欢迎未来的外部贡献来扩展其能力。</p>
-<p>此外，随着<a href="https://www.amazon.com/Programming-Massively-Parallel-Processors-Hands-ebook/dp/B0DRCSRMXC">《Programming Massively Parallel Processors》</a>第五版出版，我们开源了书中所有例题的 Mojo 版本。这既是一份从 CUDA 到 Mojo 的极佳学习资源，也为把现有 CUDA kernel 移植到 Mojo 提供了优秀的示例素材。你也可以探索我们的 <a href="https://puzzles.modular.com/">Mojo GPU puzzles</a> 深入练习。</p>
-<h2>其他亮点</h2>
-<ul><li><strong>新模型架构</strong>：本版本还发布了 Kimi-K2.5、Kimi-VL、OlMo3、Qwen3-30B-A3B-Instruct-2507（一个开箱即用多 GPU 张量并行的 mixture-of-experts 模型），并为 Qwen3、Qwen3-MoE 和 GPT-OSS 扩展了张量并行覆盖。</li><li><strong>扩展硬件支持。</strong>MAX 和 Mojo 现在运行在 AMD RDNA 消费级 GPU（包括 AMD 780M 等集成 GPU）、NVIDIA B300、Jetson Thor 和 DGX Spark 上。这让开发者能在许多人已拥有的硬件上进行本地开发与测试。</li><li><strong>简化 Mojo 语言。</strong>Mojo 正稳步朝着今年晚些时候的稳定 1.0 发布前进。在这个 0.26.2 版本中，语言更一致、更符合人体工学：围绕 <code>comptime</code> 作为所有编译期表达式的唯一关键字对齐，用 <code>comptime if</code> 和 <code>comptime for</code> 取代 <code>@parameter if</code> 和 <code>@parameter for</code>。Mojo 还支持了条件式 trait 遵循、t-strings、显式 struct 对齐等众多特性。</li></ul>
-<p>完整变更列表见 <a href="https://docs.modular.com/max/changelog/#v262-2026-03-19">MAX</a> 和 <a href="https://docs.modular.com/mojo/changelog/#v0262-2026-03-19">Mojo changelog</a>。</p>
-<h2>今天就试试 26.2</h2>
-<p>Modular 26.2 现已可用，为 MAX 带来高性能图像生成，并为 Mojo 在 AI 辅助 kernel 开发上带来重大改进。安装或升级，几分钟内上手：</p>
-<p>shell</p>
-<pre><code>uv pip install --upgrade modular</code></pre>
-<p>想更深入地了解本版本包含的一切，请查看：</p>
-<ul><li><a href="https://docs.modular.com/max/changelog/#v262-2026-03-19">MAX changelog</a></li><li><a href="https://docs.modular.com/mojo/changelog/#v0262-2026-03-19">Mojo changelog</a></li><li><a href="https://www.modular.com/blog/structured-mojo-kernels-part-1-peak-performance-half-the-code">Structured Mojo Kernels, Part 1: Peak Performance, Half the Code</a></li><li><a href="https://www.modular.com/blog/structured-mojo-kernels-part-2-the-three-pillars">Structured Mojo Kernels, Part 2: The Three Pillars</a></li></ul>
-<p>如果你在用 Modular 构建，欢迎加入我们：</p>
-<ul><li><a href="https://forum.modular.com/">Modular 论坛</a></li><li><a href="https://github.com/modularml/modular">GitHub</a></li></ul>
-<p>安装 26.2，告诉我们你构建了什么。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
