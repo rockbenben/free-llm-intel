@@ -1,7 +1,7 @@
 ---
 vendor: deepinfra
-title: Best Qwen3.8-27B Inference Providers (2026)
-original_title: 
+title: 最佳 Qwen3.8-27B 推理提供商（2026）
+original_title: Best Qwen3.8-27B Inference Providers (2026)
 url: https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers
 date: 2026-10-10
 lang: zh

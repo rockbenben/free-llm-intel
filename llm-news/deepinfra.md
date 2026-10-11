@@ -9,7 +9,7 @@
 
 ## 全部文章（共 29 篇，按日期倒序；无日期条目列于最后）
 
-1. [Best Qwen3.8-27B Inference Providers (2026)](https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers)（2026-10-10）
+1. [最佳 Qwen3.8-27B 推理提供商（2026）](https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers)（2026-10-10） <!--orig:Best Qwen3.8-27B Inference Providers (2026)-->
 2. [Qwen3.8-27B: Frontier-Level Vision-Language AI](https://deepinfra.com/blog/qwen3-8-27b)（2026-10-09）
 3. [Qwen3.8-27B API Provider Benchmarks: Speed & Cost](https://deepinfra.com/blog/qwen3-8-27b-api-provider-benchmarks)（2026-10-07）
 4. [2026 年最佳 GLM-5.3 API 提供商](https://deepinfra.com/blog/best-glm-5-3-api-providers)（2026-10-06） <!--orig:Best GLM-5.3 API Providers in 2026-->

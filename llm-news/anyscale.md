@@ -9,7 +9,7 @@
 
 ## 全部文章（共 77 篇，按日期倒序；无日期条目列于最后）
 
-1. [Scaling the Science of Robot Decisions with Ray on Anyscale](https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale)（2026-10-09）
+1. [在 Anyscale 上用 Ray 扩展机器人决策研究的规模](https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale)（2026-10-09） <!--orig:Scaling the Science of Robot Decisions with Ray on Anyscale-->
 2. [将编码代理成本降低 90%：在 Anyscale 上使用 Ray + vLLM 提供安全的 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08） <!--orig:Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale-->
 3. [Azure 上的 Anyscale 全面可用：使企业能够拥有完整的 AI 循环，而不仅仅是推理](https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai)（2026-10-07） <!--orig:Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference-->
 4. [Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08） <!--orig:Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all-->

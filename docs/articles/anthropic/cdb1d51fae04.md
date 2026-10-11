@@ -1,7 +1,7 @@
 ---
 vendor: anthropic
-title: Introducing Claude Haiku 5.5
-original_title: 
+title: 推出 Claude Haiku 5.5
+original_title: Introducing Claude Haiku 5.5
 url: https://www.anthropic.com/claude-haiku-5-5
 date: 2026-10-06
 lang: zh

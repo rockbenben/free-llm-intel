@@ -20,7 +20,7 @@
 8. [我们正在扩大Claude初创公司计划，以帮助创始人建立](https://claude.com/resources/articles/were-expanding-the-claude-startups-program-to-help-founders-build)（2026-10-06） <!--orig:We’re expanding the Claude Startups program to help founders build-->
 9. [扩大网络验证计划](https://www.anthropic.com/news/cyber-verification-program)（2026-10-06） <!--orig:Expanding the Cyber Verification Program-->
 10. [云中的Claude代码：云会话现场指南](https://claude.com/resources/articles#d-2026-10-06-9)（2026-10-06） <!--orig:Claude Code in the cloud: a field guide to cloud sessions-->
-11. [Introducing Claude Haiku 5.5](https://www.anthropic.com/claude-haiku-5-5)（2026-10-06）
+11. [推出 Claude Haiku 5.5](https://www.anthropic.com/claude-haiku-5-5)（2026-10-06） <!--orig:Introducing Claude Haiku 5.5-->
 12. [Cresta 如何将 CX 专业知识转变为 Claude Agent SDK 上的代理构建器](https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk)（2026-10-05） <!--orig:How Cresta turned CX expertise into an agent builder on the Claude Agent SDK-->
 13. [Claude政府现已普遍可用](https://claude.com/blog#d-2026-10-01-19)（2026-10-01） <!--orig:Claude for Government is now generally available-->
 14. [Claude政府现已普遍可用](https://claude.com/resources/articles#d-2026-09-30-4)（2026-09-30） <!--orig:Claude for Government is now generally available-->
