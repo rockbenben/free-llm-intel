@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: Canva
+title: 打造 AI 驱动的 Magic Studio
 original_title: 
 url: https://openai.com/index/canva
 date: 2024-05-16

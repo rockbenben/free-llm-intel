@@ -10,11 +10,11 @@
 ## 全部文章（共 16 篇，按日期倒序；无日期条目列于最后）
 
 1. [数眼智能完成数千万元天使轮融资，加速企业级大模型部署能力建设](https://www.shuyanai.com/blogs/31)（2026-09-21）
-2. [数眼智能AI漫剧教程：从脚本、AI生图到Seedance 2.5生视频](https://www.shuyanai.com/blogs/30)（2026-09-17）
+2. [从脚本到生图生视频 跟着15秒案例上手](https://www.shuyanai.com/blogs/30)（2026-09-17）
 3. [数眼智能 AI 视频生成教程：如何用智能体生成第一条视频？](https://www.shuyanai.com/blogs/29)（2026-09-16）
 4. [数眼智能在海南数据谷OPC社区揭牌现场｜把 Token 级算力，送到每一个 AI 超级个体手里](https://www.shuyanai.com/blogs/28)（2026-09-16）
-5. [数眼智能与海南大学达成专利技术合作](https://www.shuyanai.com/blogs/26)（2026-09-15）
-6. [大模型 Token 经济学解析：一场正在发生的 AI 成本革命](https://www.shuyanai.com/blogs/27)（2026-09-15）
+5. [以知识产权为纽带，推动技术与场景高效衔接](https://www.shuyanai.com/blogs/26)（2026-09-15）
+6. [一、Token：AI 世界的 "电"](https://www.shuyanai.com/blogs/27)（2026-09-15）
 7. [数眼智能 2.4 更新：钱包重构、发票开具、API 调用策略上线](https://www.shuyanai.com/blogs/25)（2026-04-29）
 8. [千万级算力就位！数眼智能All in大模型Token服务](https://www.shuyanai.com/blogs/24)（2026-04-11）
 9. [养龙虾烧Token？数眼智能省钱方案（含一键替换教程）](https://www.shuyanai.com/blogs/23)（2026-03-16）

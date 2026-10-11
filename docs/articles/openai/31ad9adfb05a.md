@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: Gym Retro
+title: Gym Retro：复古游戏环境
 original_title: Gym Retro
 url: https://openai.com/index/gym-retro
 date: 2022-10-19

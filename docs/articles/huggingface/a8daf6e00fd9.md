@@ -1,6 +1,6 @@
 ---
 vendor: huggingface
-title: Kimina-Prover-RL
+title: 介绍 Kimina-Prover-RL
 original_title: Kimina-Prover-RL
 url: https://huggingface.co/blog/AI-MO/kimina-prover-rl
 date: 2025-07-10

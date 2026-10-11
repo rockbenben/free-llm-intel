@@ -33,13 +33,13 @@
 22. [Gemini 3.6 Flash 和 Gemini 3.5 Flash-Lite 正式发布 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026)（2026-07-21） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026-1-->
 23. [Gemini 3.5 Flash-Lite](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026)（2026-07-21） <!--orig:Gemini 3.5 Flash-Lite--> <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026-2-->
 24. [已弃用的参数](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026)（2026-07-21） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026-3-->
-25. [Gemini Omni Flash（公开预览版）](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-30-2026)（2026-06-30） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-30-2026-1-->
+25. [Gemini Omni Flash 公开预览版](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-30-2026)（2026-06-30） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-30-2026-1-->
 26. [电脑使用](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-24-2026)（2026-06-24） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-24-2026-1-->
 27. [支持语音生成的流式传输](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-17-2026)（2026-06-17） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-17-2026-1-->
 28. [弃用公告](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-15-2026)（2026-06-15） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-15-2026-7-->
 29. [支持视频转图片生成](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-28-2026)（2026-05-28） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-28-2026-2-->
 30. [Gemini API 中的托管式智能体](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-19-2026)（2026-05-19） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-19-2026-2-->
-31. [Antigravity Agent](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-19-2026)（2026-05-19） <!--orig:Antigravity Agent--> <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-19-2026-3-->
+31. [Antigravity](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-19-2026)（2026-05-19） <!--orig:Antigravity Agent--> <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-19-2026-3-->
 32. [即将发生的重大变更](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-06-2026)（2026-05-06） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-06-2026-1-->
 33. [文件搜索](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-05-2026)（2026-05-05） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#05-05-2026-1-->
 34. [Grounding with Google Maps](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#10-17-2025)（2025-10-17） <!--orig:Grounding with Google Maps--> <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#10-17-2025-1-->

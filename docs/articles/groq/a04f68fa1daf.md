@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: 新增提示缓存（#14）· groq/groq-changelog@fc1e7dc · GitHub
+title: 添加提示词缓存
 original_title: Add prompt caching (#14) · groq/groq-changelog@fc1e7dc · GitHub
 url: https://github.com/groq/groq-changelog/commit/fc1e7dc66859b831b42594389098d756e06fcd0c
 date: 2025-08-20

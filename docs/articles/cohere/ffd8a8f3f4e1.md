@@ -1,6 +1,6 @@
 ---
 vendor: cohere
-title: "工作的未来之争有一个证据问题"
+title: AI 与未来工作的证据缺口
 original_title: AI Future of Work Evidence Gap
 url: https://cohere.com/blog/the-future-of-work-debate-has-an-evidence-problem
 date: 2026-06-10

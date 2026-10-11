@@ -1,6 +1,6 @@
 ---
 vendor: zhipu_glm
-title: 模型与产品发布记录 - 智谱AI开放文档
+title: GLM Coding Plan 团队版上线
 original_title: 
 url: https://docs.bigmodel.cn/cn/update/new-releases
 date: 2026-05-29

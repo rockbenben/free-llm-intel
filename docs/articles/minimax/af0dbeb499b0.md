@@ -1,6 +1,6 @@
 ---
 vendor: minimax
-title: MiniMax M3：前沿 Coding 能力，1M上下文，原生多模态，一个模型全给你 - MiniMax Research | MiniMax
+title: MiniMax M3：前沿 Coding 能力，1M上下文，原生多模态，一个模型全给你
 original_title: 
 url: https://www.minimax.cn/blog/minimax-m3
 date: 2026-06-01

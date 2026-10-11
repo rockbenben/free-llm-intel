@@ -34,4 +34,4 @@
 23. [企微客服二维码上线；API Key 个数限制优化；Kimi API 助手实践 Context Caching 第一篇 Blog 发布；发布用得起的长文本 Blog 发布；代金券有限期支持](https://platform.kimi.com/docs/changelog#2024%E5%B9%B46%E6%9C%88)（2024-06-01）
 24. [Blog 空间上线；开放平台 DarkMode 支持；发票管理功能上线；微信/支付宝扫码支付优化](https://platform.kimi.com/docs/changelog#2024%E5%B9%B45%E6%9C%88)（2024-05-01）
 25. [Tool Calling 功能上线；实名认证功能上线；公对公转账功能上线；微信/支付宝支付功能上线；余额监控接口支持](https://platform.kimi.com/docs/changelog#2024%E5%B9%B44%E6%9C%88)（2024-04-01）
-26. [MoBA 混合块注意力机制](https://platform.kimi.com/docs/changelog/changelog/moba)
+26. [MoBA：面向长文本大模型的混合块注意力机制 - Kimi API 开放平台](https://platform.kimi.com/docs/changelog/changelog/moba)

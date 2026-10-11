@@ -12,11 +12,11 @@
 ## 全部文章（共 48 篇，按日期倒序；无日期条目列于最后）
 
 1. [MiniMax Music 3.0：新一代开放权重、生产级全能音乐模型](https://www.minimax.cn/blog/minimax-music-3-0-cn)（2026-08-13）
-2. [MiniMax H3](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-31-%E6%97%A5)（2026-07-31） <!--orig:MiniMax H3-->
+2. [MiniMax H3 发布](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-31-%E6%97%A5)（2026-07-31） <!--orig:MiniMax H3-->
 3. [MiniMax H3：打破任务和模态的边界](https://www.minimax.cn/blog/minimax-h3)（2026-07-31）
-4. [Music-3.0](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-16-%E6%97%A5)（2026-07-16） <!--orig:Music-3.0-->
+4. [介绍 Music-3.0](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-7-%E6%9C%88-16-%E6%97%A5)（2026-07-16） <!--orig:Music-3.0-->
 5. [MaxProof: 生成式验证强化学习驱动的数学证明进化系统](https://www.minimax.cn/blog/minimax-maxproof-math-proof-evolution)（2026-06-09）
-6. [MiniMax M3](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-6-%E6%9C%88-1-%E6%97%A5)（2026-06-01） <!--orig:MiniMax M3-->
+6. [MiniMax M3 模型](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-6-%E6%9C%88-1-%E6%97%A5)（2026-06-01） <!--orig:MiniMax M3-->
 7. [MiniMax M3：前沿 Coding 能力，1M上下文，原生多模态，一个模型全给你](https://www.minimax.cn/blog/minimax-m3)（2026-06-01）
 8. [为什么MiniMax大模型不认识"马嘉祺"？Minimax内部排查稀疏 Token 遗忘问题的记录](https://www.minimax.cn/blog/sparse-token-forgetting-investigation)（2026-05-25）
 9. [MiniMax Agent Team: 为长程任务，持续进化而生](https://www.minimax.cn/blog/minimax-agent-team-long-running-1779893521)（2026-04-27）
@@ -32,16 +32,16 @@
 19. [Music-2.5](https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-1-%E6%9C%88-16-%E6%97%A5)（2026-01-16） <!--orig:Music-2.5-->
 20. [MiniMax M2.1: 大幅提升多语言编程，为真实世界复杂任务而生](https://www.minimax.cn/blog/minimax-m21)（2025-12-23）
 21. [MiniMax M2.1](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-12-%E6%9C%88-22-%E6%97%A5)（2025-12-22） <!--orig:MiniMax M2.1-->
-22. [Music-2.0](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-10-%E6%9C%88-30-%E6%97%A5)（2025-10-30） <!--orig:Music-2.0-->
-23. [MiniMax-Speech-2.6](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-10-%E6%9C%88-29-%E6%97%A5)（2025-10-29） <!--orig:MiniMax-Speech-2.6-->
+22. [介绍 Music-2.0](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-10-%E6%9C%88-30-%E6%97%A5)（2025-10-30） <!--orig:Music-2.0-->
+23. [介绍 MiniMax-Speech-2.6](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-10-%E6%9C%88-29-%E6%97%A5)（2025-10-29） <!--orig:MiniMax-Speech-2.6-->
 24. [MiniMax-Hailuo-2.3](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-10-%E6%9C%88-28-%E6%97%A5)（2025-10-28） <!--orig:MiniMax-Hailuo-2.3--> <!--url:https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-10-%E6%9C%88-28-%E6%97%A5-2-->
 25. [视频生成接口](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-10-%E6%9C%88-28-%E6%97%A5)（2025-10-28） <!--url:https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-10-%E6%9C%88-28-%E6%97%A5-1-->
 26. [MiniMax-Hailuo-2.3-Fast](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-10-%E6%9C%88-28-%E6%97%A5)（2025-10-28） <!--orig:MiniMax-Hailuo-2.3-Fast--> <!--url:https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-10-%E6%9C%88-28-%E6%97%A5-3-->
 27. [视频生成接口，新增 MiniMax-Hailuo-2.3 和 MiniMax-Hailuo-2.3-Fast 两个模型](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-10-%E6%9C%88-28-%E6%97%A5)（2025-10-28）
-28. [MiniMax M2](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-10-%E6%9C%88-27-%E6%97%A5)（2025-10-27） <!--orig:MiniMax M2-->
+28. [介绍 MiniMax M2](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-10-%E6%9C%88-27-%E6%97%A5)（2025-10-27） <!--orig:MiniMax M2-->
 29. [MiniMax M2 & Agent，大巧若拙](https://www.minimax.cn/blog/minimax-m2)（2025-10-27）
 30. [T2A v2 接口，支持控制音频恒定比特率编码](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-09-%E6%9C%88-23-%E6%97%A5)（2025-09-23）
-31. [Music-1.5](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-9-%E6%9C%88-11-%E6%97%A5)（2025-09-11） <!--orig:Music-1.5-->
+31. [介绍 Music-1.5](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-9-%E6%9C%88-11-%E6%97%A5)（2025-09-11） <!--orig:Music-1.5-->
 32. [last_frame_image](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-08-%E6%9C%88-28-%E6%97%A5)（2025-08-28） <!--orig:last_frame_image--> <!--url:https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-08-%E6%9C%88-28-%E6%97%A5-2-->
 33. [视频生成接口，MiniMax-Hailuo-02 首尾帧生成功能上线](https://platform.minimax.cn/docs/release-notes/apis#2025-%E5%B9%B4-08-%E6%9C%88-28-%E6%97%A5)（2025-08-28）
 34. [Speech-2.5](https://platform.minimax.cn/docs/release-notes/models#2025-%E5%B9%B4-8-%E6%9C%88-6-%E6%97%A5)（2025-08-06） <!--orig:Speech-2.5-->

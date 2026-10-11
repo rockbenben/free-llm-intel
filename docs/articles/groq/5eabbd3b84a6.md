@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: 新增 Kimi K2（#10）· groq/groq-changelog@3e0d869 · GitHub
+title: 添加 Kimi K2
 original_title: Add Kimi K2 (#10) · groq/groq-changelog@3e0d869 · GitHub
 url: https://github.com/groq/groq-changelog/commit/3e0d86955b531ee3a8076d0f3a1bc63260daaf72
 date: 2025-07-15

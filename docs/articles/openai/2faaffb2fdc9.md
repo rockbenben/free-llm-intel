@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: Booking.com and OpenAI personalize travel at scale
+title: 借助 OpenAI 实现大规模个性化旅行
 original_title: 
 url: https://openai.com/index/booking-com
 date: 2025-03-12

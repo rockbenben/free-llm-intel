@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: chore：GitHub Terraform——创建/更新 .github/workflows/stale.yaml（…）· groq/groq-changelog@b64680c · GitHub
+title: 日常维护：GitHub Terraform 创建/更新 .github/workflows/stale.yaml
 original_title: chore: GitHub Terraform: Create/Update .github/workflows/stale.yaml [… · groq/groq-changelog@b64680c · GitHub
 url: https://github.com/groq/groq-changelog/commit/b64680cebef49c1392ea94580fd5c99b0ff33271
 date: 2025-05-15

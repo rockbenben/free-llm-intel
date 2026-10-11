@@ -27,4 +27,4 @@
 16. [基础模型建设背后隐藏的工程](https://poolside.ai/blog/introducing-the-model-factory)（2025-07-29） <!--orig:The hidden engineering behind foundation model building-->
 17. [我们的愿景：宗旨](https://poolside.ai/vision/purpose)（2025-07-24） <!--orig:Our vision: Purpose-->
 18. [公告](https://poolside.ai/blog#d-2025-07-17-9)（2025-07-17） <!--orig:Announcements-->
-19. [宣布筹集 5 亿美元资金，以推动 AGI 取得进展](https://poolside.ai/blog/announcing-our-500-million-fundraise-to-make-progress-towards-agi)（2024-12-04） <!--orig:Announcing our $500 million fundraise to make progress towards AGI-->
+19. [宣布完成 5 亿美元融资，推进迈向 AGI 的进程 — Poolside](https://poolside.ai/blog/announcing-our-500-million-fundraise-to-make-progress-towards-agi)（2024-12-04） <!--orig:Announcing our $500 million fundraise to make progress towards AGI-->

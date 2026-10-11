@@ -1,6 +1,6 @@
 ---
 vendor: minimax
-title: MaxProof: 生成式验证强化学习驱动的数学证明进化系统 - MiniMax Research | MiniMax
+title: MaxProof: 生成式验证强化学习驱动的数学证明进化系统
 original_title: 
 url: https://www.minimax.cn/blog/minimax-maxproof-math-proof-evolution
 date: 2026-06-09

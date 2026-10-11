@@ -1,6 +1,6 @@
 ---
 vendor: groq
-title: 新增 Qwen3 与 SDK 更新（#8）· groq/groq-changelog@edee777 · GitHub
+title: 添加 Qwen3 与 SDK 更新
 original_title: Add Qwen3 + SDK updates (#8) · groq/groq-changelog@edee777 · GitHub
 url: https://github.com/groq/groq-changelog/commit/edee777a205934fcd2ddef6cc045099ddf4c129a
 date: 2025-06-13

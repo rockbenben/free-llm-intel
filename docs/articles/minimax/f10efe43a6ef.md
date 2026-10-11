@@ -1,6 +1,6 @@
 ---
 vendor: minimax
-title: MiniMax M2.1: 大幅提升多语言编程，为真实世界复杂任务而生 - MiniMax Research | MiniMax
+title: MiniMax M2.1: 大幅提升多语言编程，为真实世界复杂任务而生
 original_title: 
 url: https://www.minimax.cn/blog/minimax-m21
 date: 2025-12-23

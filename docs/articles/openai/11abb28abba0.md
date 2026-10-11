@@ -1,6 +1,6 @@
 ---
 vendor: openai
-title: OpenAI 与 Hearst 的内容合作
+title: OpenAI 与 Hearst 的内容合作伙伴关系
 original_title: OpenAI and Hearst Content Partnership
 url: https://openai.com/index/hearst
 date: 2024-10-08

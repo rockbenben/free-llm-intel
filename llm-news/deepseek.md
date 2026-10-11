@@ -28,9 +28,9 @@
 16. [DeepSeek-V3.2-Exp](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2025-09-29)（2025-09-29） <!--orig:DeepSeek-V3.2-Exp-->
 17. [DeepSeek-V3.2-Exp 发布，训练推理提效，API 同步降价](https://api-docs.deepseek.com/zh-cn/news/news250929)（2025-09-29）
 18. [DeepSeek-V3.1-Terminus](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2025-09-22)（2025-09-22） <!--orig:DeepSeek-V3.1-Terminus-->
-19. [DeepSeek V3.1 更新](https://api-docs.deepseek.com/zh-cn/news/news250922)（2025-09-22）
+19. [DeepSeek-V3.1 版本更新](https://api-docs.deepseek.com/zh-cn/news/news250922)（2025-09-22）
 20. [DeepSeek-V3.1](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2025-08-21)（2025-08-21） <!--orig:DeepSeek-V3.1-->
-21. [DeepSeek V3.1 发布](https://api-docs.deepseek.com/zh-cn/news/news250821)（2025-08-21）
+21. [DeepSeek-V3.1 发布](https://api-docs.deepseek.com/zh-cn/news/news250821)（2025-08-21）
 22. [deepseek-reasoner](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2025-05-28)（2025-05-28） <!--orig:deepseek-reasoner-->
 23. [DeepSeek-R1 更新，思考更深，推理更强](https://api-docs.deepseek.com/zh-cn/news/news250528)（2025-05-28）
 24. [DeepSeek-V3 模型更新，各项能力全面进阶](https://api-docs.deepseek.com/zh-cn/news/news250325)（2025-03-25）
@@ -39,11 +39,11 @@
 27. [DeepSeek-R1 发布，性能对标 OpenAI o1 正式版](https://api-docs.deepseek.com/zh-cn/news/news250120)（2025-01-20）
 28. [DeepSeek APP 发布](https://api-docs.deepseek.com/zh-cn/news/news250115)（2025-01-15） <!--orig:DeepSeek APP-->
 29. [deepseek-chat](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2024-12-26)（2024-12-26） <!--orig:deepseek-chat-->
-30. [DeepSeek-V3 发布](https://api-docs.deepseek.com/zh-cn/news/news1226)（2024-12-26）
+30. [DeepSeek-V3 正式发布](https://api-docs.deepseek.com/zh-cn/news/news1226)（2024-12-26）
 31. [deepseek-chat](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-12-10)（2024-12-10） <!--orig:deepseek-chat-->
 32. [DeepSeek V2 系列收官，联网搜索上线官网](https://api-docs.deepseek.com/zh-cn/news/news1210)（2024-12-10）
 33. [DeepSeek-V4 预览版：迈入百万上下文普惠时代](https://api-docs.deepseek.com/zh-cn/news/news260424/#d-2024-11-20-0)（2024-11-20）
-34. [DeepSeek 推理模型预览版上线，解密 o1 推理过程](https://api-docs.deepseek.com/zh-cn/news/news1120)（2024-11-20）
+34. [DeepSeek推理模型预览版上线，解密o1推理过程](https://api-docs.deepseek.com/zh-cn/news/news1120)（2024-11-20）
 35. [deepseek-coder &amp; deepseek-chat 升级为 DeepSeek V2.5 模型](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B42024-09-05)（2024-09-05）
 36. [DeepSeek-V4 预览版：迈入百万上下文普惠时代](https://api-docs.deepseek.com/zh-cn/news/news260424/#d-2024-09-05-1)（2024-09-05）
 37. [DeepSeek-V2.5：融合通用与代码能力的全新开源模型](https://api-docs.deepseek.com/zh-cn/news/news0905)（2024-09-05）

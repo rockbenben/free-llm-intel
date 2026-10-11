@@ -1,6 +1,6 @@
 ---
 vendor: xai_grok
-title: Grok for Word
+title: 适用于 Word 的 Grok 加载项
 original_title: Grok for Word
 url: https://x.ai/news/introducing-word-addin
 date: 2026-06-18
