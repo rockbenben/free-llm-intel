@@ -119,177 +119,6 @@
 <p>如果你想订阅我们每月的 developer 通讯，请提供你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Introducing Claude Sonnet 5.5</title>
-      <link>https://www.anthropic.com/claude-sonnet-5-5</link>
-      <guid isPermaLink="true">https://www.anthropic.com/claude-sonnet-5-5</guid>
-      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Claude Sonnet 5.5</h1>
-<p>2026 年 9 月 28 日</p>
-<p>我们推出 Claude Sonnet 5.5，这是 Claude 5.5 家族中的第二个模型。它相对 Claude Sonnet 5 是一次清晰的升级，运行速度快 30% 以上，而在多数工作上的成本低最多 30%。</p>
-<p>Sonnet 5.5 是 Claude Opus 5.5 的更快、更低成本的补充。Opus 5.5 为需要审慎判断的复杂工作而生，Sonnet 5.5 则最擅长范围明确的日常任务、修 bug，以及制作精良的文档、幻灯片和电子表格。它对设计也有敏锐的眼光。为高吞吐、成本敏感的应用打造的 Claude Haiku 5.5 将在未来几周内加入 Claude 5.5 家族。</p>
-<p>Sonnet 5.5 相比 Sonnet 5 在以下方面有所提升：</p>
-<p><strong>性能。</strong> Sonnet 5.5 在 Terminal-Bench 4.0（一项智能体编程评测）上得到 70.6%，而 Sonnet 5 是 10.3%。在 GDPval-AA——一项考察多种职业真实工作的测试——上，它比 Opus 5.5 低两分。它在长周期工作和图像理解上都很强，是第一个仅凭截图就打通《Pokémon Red》的 Sonnet 模型。</p>
-<p><strong>协作。</strong> 和 Opus 5.5 一样，Sonnet 5.5 的写作比我们上一代模型更清晰；早期测试者称它是比 Sonnet 5 更好的协作伙伴。它的速度也让它非常适合在复杂度较低的任务上做快速迭代。</p>
-<p><strong>成本。</strong> Sonnet 5.5 的定价与 Sonnet 5 相同：每百万输入 token 2 美元、每百万输出 token 10 美元，缓存读取每百万 token 0.20 美元，但完成同样的工作通常需要少得多的 token。在我们的测试中，它每个任务的成本比前代低最多 30%。</p>
-<p><strong>速度。</strong> Sonnet 5.5 生成输出的速度比 Sonnet 5 快 30% 以上，是我们迄今为止最快的 Sonnet 模型。</p>
-<p><strong>对齐与安全。</strong> 在我们的自动化行为审计中，Sonnet 5.5 在多数对齐指标上优于或持平 Sonnet 5。由于它的网络安全能力与 Opus 5 相当，它是第一个带着我们为能力最强的模型所开发的那类网络安全防护与回退机制上线的 Sonnet 模型。它的生物学防护与 Sonnet 5 相同。两类防护都只针对一小类高风险请求；常规软件开发和多数生命科学工作不受影响。</p>
-<h2>性能</h2>
-<p>Sonnet 5.5 在各个领域都优于 Sonnet 5——某些情形下差距是大幅的。在多项评测中，Max effort 档位的 Sonnet 5.5 甚至与 Opus 5.5 表现相当。但基准分数只捕捉到模型能力的一个侧面；在我们自己的测试以及外部测试者的测试中，Opus 5.5 在需要持续判断的复杂、开放式工作上仍然明显更强。</p>
-<table><thead><tr><th></th><th>Sonnet 5.5</th><th>Sonnet 5</th><th>Opus 5.5</th><th>GPT-6 Sol</th></tr></thead><tbody><tr><td>智能体编程 Terminal-Bench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 Terminal-Bench 4.0</td><td>70.6%</td><td>10.3%</td><td>66.4%¹</td><td>—</td></tr><tr><td>智能体编程 FrontierCode 1.1（Main）</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 FrontierCode 1.1（Main）</td><td>46.2% Max²</td><td>42.4%</td><td>54.4%</td><td>49.3%</td></tr><tr><td>52.1% Xhigh</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 CursorBench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 CursorBench 4.0</td><td>55.5%</td><td>34.1%</td><td>57.8%</td><td>—</td></tr><tr><td>知识工作 GDPval-AA v2.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作 GDPval-AA v2.1³</td><td>1844</td><td>1449</td><td>1846</td><td>1487⁴</td></tr><tr><td>知识工作 AA-Briefcase v1.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作 AA-Briefcase v1.1³</td><td>1811</td><td>1359</td><td>1822</td><td>1483⁴</td></tr><tr><td>多学科推理 Humanity’s Last Exam</td><td></td><td></td><td></td><td></td></tr><tr><td>多学科推理 Humanity’s Last Exam</td><td>64.5%（带工具）</td><td>54.9%（带工具）</td><td>67.7%（带工具）</td><td>—</td></tr><tr><td>计算机使用 OSWorld 2.1</td><td></td><td></td><td></td><td></td></tr><tr><td>计算机使用 OSWorld 2.1</td><td>80.1%（部分得分）</td><td>57.0%（部分得分）</td><td>81.8%（部分得分）</td><td>—</td></tr><tr><td>视觉图表识别 Chartography</td><td></td><td></td><td></td><td></td></tr><tr><td>视觉图表识别 Chartography</td><td>61.6%（无工具）</td><td>15.6%（无工具）</td><td>64.4%（无工具）</td><td>53.6%⁴（无工具）</td></tr></tbody></table>
-<p>关于我们如何运行评测的细节，请参阅 <a href="https://www.anthropic.com/claude-sonnet-5-5-system-card">Sonnet 5.5 系统卡</a>。</p>
-<p>下面的图表描绘了每个模型在各个 effort 档位下的得分与其每任务成本。随着 effort 升高，模型通常工作更久，导致每任务成本更高，但得分一般也更高。图上的点越靠近左上角，每一美元所换来的能力就越多。</p>
-<p>在若干基准上，Low 或 Medium effort 档位的 Sonnet 5.5 就能超过 Sonnet 5 的最好成绩，而每任务成本只有后者的约十分之一。它在较低的 effort 设置下运行时每任务成本更低，此时它与 Opus 5.5 的互补性最好。在较高的设置下，它能以相近的成本取得相当的表现。</p>
-<p>智能体终端编程</p>
-<p>智能体编程：FrontierCode</p>
-<p>智能体编程：CursorBench</p>
-<p>知识工作：AA-Briefcase</p>
-<p>Terminal-Bench 4.0</p>
-<p>准确率 vs 成本</p>
-<p>Terminal-Bench 4.0 衡量一个模型在命令行界面内完成复杂、多步骤专业任务的能力。在 Medium effort（Claude 应用中的默认档位）下，Sonnet 5.5 远超 Sonnet 5 的最好成绩，而每任务成本不到后者的十分之一。</p>
-<p>Terminal-Bench 和 OpenAI 没有公开 GPT-6 Sol 的表现，因此这里报告的是 GPT-5.6 Sol。</p>
-<p>FrontierCode v1.1，主集</p>
-<p>准确率 vs 成本</p>
-<p>FrontierCode 衡量的是一个智能体的代码改动能否被合并。在 High effort（Claude Platform 的默认档位）下，Sonnet 5.5 追平 GPT-6 Sol 的最好成绩，而每任务成本约为其五分之一。²</p>
-<p>CursorBench 4.0</p>
-<p>准确率 vs 成本</p>
-<p>CursorBench 用取自真实 Cursor 会话的、含义模糊的多文件任务来评估编程智能体。Low effort 档位的 Sonnet 5.5 超过 Sonnet 5 的最好成绩，而每任务成本不到后者的十分之一。</p>
-<p>CursorBench 4.0 没有公开 GPT-6 Sol 的表现，因此这里报告的是 GPT-5.6 Sol。</p>
-<p>AA-Briefcase v1.1</p>
-<p>准确率 vs 成本</p>
-<p>在 AA-Briefcase——一项关于长周期知识工作的新基准——上，Medium effort 档位的 Sonnet 5.5 胜过 Sonnet 5 的最好成绩，每任务成本约为其九分之一。³</p>
-<h2>编程</h2>
-<p>Sonnet 5.5 的性能跃升在编程上尤其明显。在 FrontierCode 的 High effort 档位上，它比同一设置下的 Sonnet 5 高出 10 分，而每任务成本约为后者的十五分之一。在 CursorBench（用取自真实 Cursor 编程会话的任务来测试模型）上，它的最好成绩与 Opus 5.5 相差在约两分以内。</p>
-<p>早期测试者很欣赏 Sonnet 5.5 理解一个代码库的速度。他们也对它的效率印象深刻：在一对一的对比运行中，它比 Sonnet 5 更多地把 tool call 批量合在一起，从而带来更少的步骤和更低的成本。</p>
-<p>Epic Games</p>
-<p>Every</p>
-<p>CodeRabbit</p>
-<p>SpaceXAI</p>
-<p>Base44</p>
-<p>Unity</p>
-<p>Creator</p>
-<p>引言</p>
-<blockquote>“在 Epic 的早期测试中，Claude Sonnet 5.5 越过了你在更高档位模型身上才会期待的那条质量线，在系统设计审计和数据流评审上都站得住。这款新模型管理了玩法系统架构的数万行代码，响应保持轻快，能处理长达数小时的任务，而且提示词写得没那么规定性也照样交付。”</blockquote>
-<p>公司</p>
-<p>Epic Games</p>
-<p>作者</p>
-<p>Daniel Vogel，首席运营官</p>
-<p>引言</p>
-<blockquote>“Claude Sonnet 5.5 真能打。编程很快，在迭代式工作流里也能被迅速带向你想要的方向。但需要的时候它照样能干长线。它继承了 Opus 5.5 一些自然的写作提升，这让和它一起工作更有意思。”</blockquote>
-<p>公司</p>
-<p>Every</p>
-<p>作者</p>
-<p>Tyler Nishida，设计师</p>
-<p>引言</p>
-<blockquote>“Claude Sonnet 5.5 在不同复杂度层级上都比 Sonnet 5 表现出更好的判断力，同时消耗的输出 token 明显更少。Sonnet 5 过于频繁地求助网页搜索的倾向，以及它的高 token 用量，在这款新模型上都消失了。我们计划现在就把简单和中等的评审迁过来，未来几周再迁入更多。”</blockquote>
-<p>公司</p>
-<p>CodeRabbit</p>
-<p>作者</p>
-<p>David Loker，AI 副总裁</p>
-<p>引言</p>
-<blockquote>“Claude Sonnet 5.5 在 CursorBench 4.0 上交出 55.5% 的前沿级表现，仅次于 Opus 5.5。我们认为它会很受那些想要平衡性能与成本的开发者欢迎。”</blockquote>
-<p>公司</p>
-<p>SpaceXAI</p>
-<p>作者</p>
-<p>Sualeh Asif，机器学习总监</p>
-<p>引言</p>
-<blockquote>“在 118 次真实的应用构建中，Claude Sonnet 5.5 产出的应用得分与 Opus 5 持平。它平均每次构建用 3.6 轮迭代达到这个结果，而 Opus 5 需要 7.7 轮。在我们比较的所有模型里，它失败的 tool call 次数最少。它也很少在构建中途停下来向用户提问，因此更少的构建会因为等待有人回答而卡住。”</blockquote>
-<p>公司</p>
-<p>Base44</p>
-<p>作者</p>
-<p>Gabriel Grinberg，AI 工程负责人</p>
-<p>引言</p>
-<blockquote>“在 Unity，我们对任务完成度有很高的标准。项目会被重新打开，结果在运行时被检验，所以一处改动真的起作用了任务才算完成，而不是模型说自己完成了就算。Claude Sonnet 5.5 的大部分工作都通过了这一检验。它在我们多步骤的 Unity Editor 与编程基准上还完成了 90% 的任务，胜过同类模型。”</blockquote>
-<p>公司</p>
-<p>Unity</p>
-<p>作者</p>
-<p>Sam Zhang，创意技术专家</p>
-<p>引言</p>
-<blockquote>“当 Claude Opus 5.5 定好一个游戏的架构和总体框架后，我有信心让 Sonnet 5.5 去实现它。Sonnet 5.5 处理长时运行、复杂任务的方式让我印象深刻。”</blockquote>
-<p>公司</p>
-<p>Creator</p>
-<p>作者</p>
-<p>Kevin Ngo，创意编程者</p>
-<h2>知识工作</h2>
-<p>Sonnet 5.5 在知识工作的多个领域都有提升。在 GDPval-AA（用横跨 44 种职业、九大行业的真实世界任务来测试模型）上，Sonnet 5.5 的得分几乎与 Opus 5.5 持平，比 Sonnet 5 高约 400 分。它在计算机使用和图表识别上接近 Opus 5.5，在长周期知识工作上明显胜过 Sonnet 5 和 GPT-6 Sol。</p>
-<p>早期测试者强调了那些不易量化的改进。他们觉得它是更自然的对话伙伴，并提到它对设计的天分，指出它会给用户界面增添打磨，也能照着幻灯片模板做出几乎不需要修改的演示文稿。在一次内部测试中，我们把一家上市公司的季度财报材料和电话会纪要，连同一份幻灯片模板交给它，要求做一份 10 页的经营复盘。两位专家评审它的初稿可以直接原样发出。</p>
-<p>Slack</p>
-<p>Zendesk</p>
-<p>Balyasny Asset Management</p>
-<p>Box</p>
-<p>Lovable</p>
-<p>Atlassian</p>
-<p>引言</p>
-<blockquote>“在我们没有改动任何提示词的情况下，Claude Sonnet 5.5 在几乎所有离线 Slackbot 评测上都好过 Sonnet 5，用的步骤更少，输出 token 少约 14%。当有人交给 Slackbot 一个任务时，最重要的是质量和速度，而 Sonnet 5.5 让 Slackbot 能更快地为用户交付更好的结果。”</blockquote>
-<p>公司</p>
-<p>Slack</p>
-<p>作者</p>
-<p>Curtis Allen，主任工程师</p>
-<p>引言</p>
-<blockquote>“我们把数百个真实的支持场景——涵盖回复与升级请求——喂给 Claude Sonnet 5.5。和我们今天在生产中使用的 Claude 模型相比，它做错决定的次数更少，解决工单也更快。工单处理速度快了 20%，让我们的客户不必等待就能拿到他们需要的帮助。”</blockquote>
-<p>公司</p>
-<p>Zendesk</p>
-<p>作者</p>
-<p>Abhinay Kathuria，AI 总监</p>
-<p>引言</p>
-<blockquote>“在我们包含 2,441 个金融任务、覆盖问答、抽取、分析与预测的私有测试集上，Claude Sonnet 5.5 得分高于 Sonnet 5，每个回答大约用 121k token，而 Sonnet 5 用 497k。在分析师的搜索与检索工作上，它几乎在所有方面都好于 Sonnet 5。在高吞吐工作流上，它在我们运行的七个模型中取得了最好的质量与成本折中。”</blockquote>
-<p>公司</p>
-<p>Balyasny Asset Management</p>
-<p>作者</p>
-<p>Joe Poirier，高级 AI 工程师</p>
-<p>引言</p>
-<blockquote>“Claude Sonnet 5.5 会让我们金融服务和医疗健康行业的客户有信心把它用于最敏感的工作。Sonnet 5.5 会回查源文档里的数据，抓到 Sonnet 5 没发现的错误。与上一代模型相比，Sonnet 5.5 更准确、快 2.4 倍，总 token 用量少 12%。”</blockquote>
-<p>公司</p>
-<p>Box</p>
-<p>作者</p>
-<p>Yashodha Bhavnani，AI 产品副总裁</p>
-<p>引言</p>
-<blockquote>“Claude Sonnet 5.5 用更少、更稳健的步骤来思考，所以构建者不用等太久就能看到进展。我们的编码评测显示，完成一个任务的 tool call 少三分之一，shell 执行次数约为原来的一半。对日常编码和更高 effort 的对话来说，这意味着更快的迭代和更顺的构建循环。”</blockquote>
-<p>公司</p>
-<p>Lovable</p>
-<p>作者</p>
-<p>Fabian Hedin，联合创始人兼首席技术官</p>
-<p>引言</p>
-<blockquote>“每月有数百万次 Rovo 辅助动作在驱动我们客户的工作流，执行速度至关重要。Claude Sonnet 5.5 能让团队运行他们的 Rovo Agents 比用 Sonnet 5 时快最多 30%。我很高兴能把这个选择提供给客户。”</blockquote>
-<p>公司</p>
-<p>Atlassian</p>
-<p>作者</p>
-<p>Jamil Valliani，AI 产品负责人</p>
-<h2>成本与速度</h2>
-<p>定价</p>
-<table><thead><tr><th>每 1M token 价格</th><th><strong>Claude Sonnet 5.5</strong></th><th>Claude Opus 5.5</th></tr></thead><tbody><tr><td>缓存读取</td><td>$0.20</td><td>$0.20</td></tr><tr><td>缓存写入</td><td>$2.50</td><td>$5</td></tr><tr><td>输入 token</td><td>$2</td><td>$4</td></tr><tr><td>输出 token</td><td>$10</td><td>$20</td></tr></tbody></table>
-<p>Sonnet 5.5 每个任务所需的 token 比 Sonnet 5 少，所以运行起来更便宜。它生成输出的速度也快 30% 以上，而且它的效率立刻就能感觉到：</p>
-<p>提示词：</p>
-<p>用一个 HTML 文件做出 400 只椋鸟的群飞</p>
-<p>Claude Sonnet 5</p>
-<p>Claude Sonnet 5.5</p>
-<p>提示词：</p>
-<p>用一个 HTML 文件表现风塑造沙丘</p>
-<p>Claude Sonnet 5</p>
-<p>Claude Sonnet 5.5</p>
-<p>提示词：</p>
-<p>用一个 HTML 文件做一个由 24 只小钟组成的钟</p>
-<p>Claude Sonnet 5</p>
-<p>Claude Sonnet 5.5</p>
-<p>调整 <a href="https://academy.claude.com/tutorials/choosing-the-right-effort-level-in-claude-code">effort 档位</a>可以让你在成本、速度与整体质量之间做平衡。在 Claude Code 和我们的应用里，默认 effort 设为 Medium，而 Claude Platform 默认是 High。在较低的设置下，Claude 回答更快、用的 token 更少，这适合常规工作。在较高的设置下，Claude 推理更久、检查自己的工作更彻底。</p>
-<h2>安全</h2>
-<h3>对齐</h3>
-<p>Sonnet 5.5 并没有推进我们模型能力的边界，所以我们的对齐评估聚焦在一组适用于任何能力层级模型的针对性风险上，包括违背用户利益行事、误导用户，以及配合高风险的滥用行为。</p>
-<p>在我们的自动化行为审计（在约 1,850 个场景下测试 Claude）中，Sonnet 5.5 在对齐、抗滥用与诚实的多数指标上优于或持平 Sonnet 5。在我们更新的 containment 评测中，Sonnet 5.5 尝试逃出沙盒的频率之低接近 Opus 5.5——那是我们测过的最好的模型——而它探测自己容器边界的倾向是我们所有模型里最低的。就整场审计而言，Opus 5.5 总体仍略好一点，但我们没有发现 Sonnet 5.5 追求与用户意图相冲突的目标的证据。</p>
-<p>正如我们在<a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">最近的对齐评估</a>中所说，没有任何一套评测能可靠地抓住每一次失效，Sonnet 5.5 也可能带着我们尚未发现的倾向，这正是我们把自身的对齐工作与下面所述防护配套使用的原因。</p>
-<h3>防护</h3>
-<p><strong>网络安全。</strong> Sonnet 5.5 的网络能力比 Sonnet 5 有大步提升，所以我们为它部署了与 Opus 5.5 类似的防护。用户仍然可以在常规软件开发中发现并修复自己代码里的 bug，但更高风险的网络安全任务会明显回退到 Sonnet 5。很快，网络安全防御者可以申请加入我们扩容后的 <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a>，为 Sonnet 5.5、Opus 5.5 和 Claude Mythos 模型分级获取更高级的能力。</p>
-<p><strong>生物学。</strong> Sonnet 5.5 使用与 Sonnet 5 相同的一套生物学防护。这些防护针对有害请求；多数研究、教育与临床工作不受影响，尽管某些微生物学与病毒学的请求可能被误判拦截。机构可以申请加入我们的 <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>，获得为生物学相关工作全部范围所设计的防护。</p>
-<p><strong>蒸馏。</strong> 蒸馏攻击指攻击者用数千个虚假账号以工业规模抽取一个模型的能力，让不良行为者能在缺少我们为 Claude 内建那些防护的情况下造出高能力模型。由于 Sonnet 5.5 比它的前代能力强得多，它是第一个带着阻止推理抽取的安全分类器上线的 Sonnet 模型。Sonnet 5.5 还扩展了 <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking</a>，因此 Claude 的思考无法与创建它的账号解绑。多数开发者不会察觉变化。如果你在账号之间搬移对话，包括在 Claude Code 里中途切换账号，我们的<a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">文档文章</a>解释了这一变化。</p>
-<h2>开始使用</h2>
-<p>与 Opus 5.5 和 Sonnet 5 一样，Claude Sonnet 5.5 可以零数据保留地提供服务。</p>
-<p>Claude Sonnet 5.5 现已在所有平台可用，包括 Amazon Web Services、Google Cloud 和 Microsoft Azure。开发者可以在 Claude Platform 上用 <code>claude-sonnet-5-5</code> 开始。如果你以 thinking 关闭的方式运行 Sonnet，需要先切换到新的 <code>between_tools</code> 设置——它会让前置思考保持关闭——然后再迁到 Sonnet 5.5。细节见我们的<a href="https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide#turn-thinking-off">迁移指南</a>。</p>
-<h2>脚注</h2>
-<p>1 Terminal-Bench 4.0 报告的是 Claude Opus 5.5 在 Xhigh effort 档位下的结果，那代表该模型的最高分。</p>
-<p>2 Sonnet 5.5 在 Max effort 下的得分低于 Xhigh。FrontierCode 评估的是一处代码改动能否在无人工编辑的情况下被合并。它会惩罚超出范围的改动，即使这些改动质量很高或有帮助。在 Max effort 下，Sonnet 5.5 更常运行 Claude Code 的 code-review skill，这个 skill 会把评审拆分给许多 subagent；在 Cognition 检查的两个案例中，这导致了超时，或者产生了超出任务范围的额外编辑，因而得分更低。</p>
-<p>3 Artificial Analysis 是在 Claude Platform 上一个 Sonnet 5.5 的预发布部署上运行 GDPval-AA 和 AA-Briefcase 的，我们后来发现该部署有一个 bug，可能让使用结构化输出的请求的响应质量下降。我们预计这对 Sonnet 5.5 得分的影响（如果有的话）很小，而且是低估了它的表现。那个 bug 此后已经被修复。</p>
-<p>4 OpenAI 最近修复了一个会让 GPT-6 Sol 的图像理解变差的 bug。Artificial Analysis 给出的官方 AA-Briefcase v1.1 与 GDPval-AA v2.1 分数，以及 Surge AI 给出的 Chartography 分数，可能尚未更新以反映该模型的最新版本。Artificial Analysis 不认为 AA-Briefcase v1.1 与 GDPval-AA v2.1 会受到重大影响。针对 Chartography 的内部测试表明它的分数未受影响。</p>]]></content:encoded>
-    </item>
-    <item>
       <title>Comcast 和 Booz Allen 如何使用 Claude Mythos 查找漏洞利用链并保护其代码库</title>
       <link>https://claude.com/resources/articles/how-comcast-booz-allen-use-claude-mythos-to-secure-their-codebases</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/how-comcast-booz-allen-use-claude-mythos-to-secure-their-codebases</guid>
@@ -496,6 +325,12 @@
 <p>我们启动 Anthropic Cyber Mission，这是一项长期承诺，旨在保护所有人赖以运行的系统。</p>]]></content:encoded>
     </item>
     <item>
+      <title>Introducing Claude Haiku 5.5</title>
+      <link>https://www.anthropic.com/claude-haiku-5-5</link>
+      <guid isPermaLink="true">https://www.anthropic.com/claude-haiku-5-5</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>Cresta 如何将 CX 专业知识转变为 Claude Agent SDK 上的代理构建器</title>
       <link>https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk</guid>
@@ -545,6 +380,177 @@
 <h3>订阅开发者通讯</h3>
 <p>产品更新、实操指南、社区风采等。每月送达你的邮箱。</p>
 <p>如果你想收取我们每月的开发者通讯，请提供你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Introducing Claude Sonnet 5.5</title>
+      <link>https://www.anthropic.com/claude-sonnet-5-5</link>
+      <guid isPermaLink="true">https://www.anthropic.com/claude-sonnet-5-5</guid>
+      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Claude Sonnet 5.5</h1>
+<p>2026 年 9 月 28 日</p>
+<p>我们推出 Claude Sonnet 5.5，这是 Claude 5.5 家族中的第二个模型。它相对 Claude Sonnet 5 是一次清晰的升级，运行速度快 30% 以上，而在多数工作上的成本低最多 30%。</p>
+<p>Sonnet 5.5 是 Claude Opus 5.5 的更快、更低成本的补充。Opus 5.5 为需要审慎判断的复杂工作而生，Sonnet 5.5 则最擅长范围明确的日常任务、修 bug，以及制作精良的文档、幻灯片和电子表格。它对设计也有敏锐的眼光。为高吞吐、成本敏感的应用打造的 Claude Haiku 5.5 将在未来几周内加入 Claude 5.5 家族。</p>
+<p>Sonnet 5.5 相比 Sonnet 5 在以下方面有所提升：</p>
+<p><strong>性能。</strong> Sonnet 5.5 在 Terminal-Bench 4.0（一项智能体编程评测）上得到 70.6%，而 Sonnet 5 是 10.3%。在 GDPval-AA——一项考察多种职业真实工作的测试——上，它比 Opus 5.5 低两分。它在长周期工作和图像理解上都很强，是第一个仅凭截图就打通《Pokémon Red》的 Sonnet 模型。</p>
+<p><strong>协作。</strong> 和 Opus 5.5 一样，Sonnet 5.5 的写作比我们上一代模型更清晰；早期测试者称它是比 Sonnet 5 更好的协作伙伴。它的速度也让它非常适合在复杂度较低的任务上做快速迭代。</p>
+<p><strong>成本。</strong> Sonnet 5.5 的定价与 Sonnet 5 相同：每百万输入 token 2 美元、每百万输出 token 10 美元，缓存读取每百万 token 0.20 美元，但完成同样的工作通常需要少得多的 token。在我们的测试中，它每个任务的成本比前代低最多 30%。</p>
+<p><strong>速度。</strong> Sonnet 5.5 生成输出的速度比 Sonnet 5 快 30% 以上，是我们迄今为止最快的 Sonnet 模型。</p>
+<p><strong>对齐与安全。</strong> 在我们的自动化行为审计中，Sonnet 5.5 在多数对齐指标上优于或持平 Sonnet 5。由于它的网络安全能力与 Opus 5 相当，它是第一个带着我们为能力最强的模型所开发的那类网络安全防护与回退机制上线的 Sonnet 模型。它的生物学防护与 Sonnet 5 相同。两类防护都只针对一小类高风险请求；常规软件开发和多数生命科学工作不受影响。</p>
+<h2>性能</h2>
+<p>Sonnet 5.5 在各个领域都优于 Sonnet 5——某些情形下差距是大幅的。在多项评测中，Max effort 档位的 Sonnet 5.5 甚至与 Opus 5.5 表现相当。但基准分数只捕捉到模型能力的一个侧面；在我们自己的测试以及外部测试者的测试中，Opus 5.5 在需要持续判断的复杂、开放式工作上仍然明显更强。</p>
+<table><thead><tr><th></th><th>Sonnet 5.5</th><th>Sonnet 5</th><th>Opus 5.5</th><th>GPT-6 Sol</th></tr></thead><tbody><tr><td>智能体编程 Terminal-Bench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 Terminal-Bench 4.0</td><td>70.6%</td><td>10.3%</td><td>66.4%¹</td><td>—</td></tr><tr><td>智能体编程 FrontierCode 1.1（Main）</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 FrontierCode 1.1（Main）</td><td>46.2% Max²</td><td>42.4%</td><td>54.4%</td><td>49.3%</td></tr><tr><td>52.1% Xhigh</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 CursorBench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>智能体编程 CursorBench 4.0</td><td>55.5%</td><td>34.1%</td><td>57.8%</td><td>—</td></tr><tr><td>知识工作 GDPval-AA v2.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作 GDPval-AA v2.1³</td><td>1844</td><td>1449</td><td>1846</td><td>1487⁴</td></tr><tr><td>知识工作 AA-Briefcase v1.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作 AA-Briefcase v1.1³</td><td>1811</td><td>1359</td><td>1822</td><td>1483⁴</td></tr><tr><td>多学科推理 Humanity’s Last Exam</td><td></td><td></td><td></td><td></td></tr><tr><td>多学科推理 Humanity’s Last Exam</td><td>64.5%（带工具）</td><td>54.9%（带工具）</td><td>67.7%（带工具）</td><td>—</td></tr><tr><td>计算机使用 OSWorld 2.1</td><td></td><td></td><td></td><td></td></tr><tr><td>计算机使用 OSWorld 2.1</td><td>80.1%（部分得分）</td><td>57.0%（部分得分）</td><td>81.8%（部分得分）</td><td>—</td></tr><tr><td>视觉图表识别 Chartography</td><td></td><td></td><td></td><td></td></tr><tr><td>视觉图表识别 Chartography</td><td>61.6%（无工具）</td><td>15.6%（无工具）</td><td>64.4%（无工具）</td><td>53.6%⁴（无工具）</td></tr></tbody></table>
+<p>关于我们如何运行评测的细节，请参阅 <a href="https://www.anthropic.com/claude-sonnet-5-5-system-card">Sonnet 5.5 系统卡</a>。</p>
+<p>下面的图表描绘了每个模型在各个 effort 档位下的得分与其每任务成本。随着 effort 升高，模型通常工作更久，导致每任务成本更高，但得分一般也更高。图上的点越靠近左上角，每一美元所换来的能力就越多。</p>
+<p>在若干基准上，Low 或 Medium effort 档位的 Sonnet 5.5 就能超过 Sonnet 5 的最好成绩，而每任务成本只有后者的约十分之一。它在较低的 effort 设置下运行时每任务成本更低，此时它与 Opus 5.5 的互补性最好。在较高的设置下，它能以相近的成本取得相当的表现。</p>
+<p>智能体终端编程</p>
+<p>智能体编程：FrontierCode</p>
+<p>智能体编程：CursorBench</p>
+<p>知识工作：AA-Briefcase</p>
+<p>Terminal-Bench 4.0</p>
+<p>准确率 vs 成本</p>
+<p>Terminal-Bench 4.0 衡量一个模型在命令行界面内完成复杂、多步骤专业任务的能力。在 Medium effort（Claude 应用中的默认档位）下，Sonnet 5.5 远超 Sonnet 5 的最好成绩，而每任务成本不到后者的十分之一。</p>
+<p>Terminal-Bench 和 OpenAI 没有公开 GPT-6 Sol 的表现，因此这里报告的是 GPT-5.6 Sol。</p>
+<p>FrontierCode v1.1，主集</p>
+<p>准确率 vs 成本</p>
+<p>FrontierCode 衡量的是一个智能体的代码改动能否被合并。在 High effort（Claude Platform 的默认档位）下，Sonnet 5.5 追平 GPT-6 Sol 的最好成绩，而每任务成本约为其五分之一。²</p>
+<p>CursorBench 4.0</p>
+<p>准确率 vs 成本</p>
+<p>CursorBench 用取自真实 Cursor 会话的、含义模糊的多文件任务来评估编程智能体。Low effort 档位的 Sonnet 5.5 超过 Sonnet 5 的最好成绩，而每任务成本不到后者的十分之一。</p>
+<p>CursorBench 4.0 没有公开 GPT-6 Sol 的表现，因此这里报告的是 GPT-5.6 Sol。</p>
+<p>AA-Briefcase v1.1</p>
+<p>准确率 vs 成本</p>
+<p>在 AA-Briefcase——一项关于长周期知识工作的新基准——上，Medium effort 档位的 Sonnet 5.5 胜过 Sonnet 5 的最好成绩，每任务成本约为其九分之一。³</p>
+<h2>编程</h2>
+<p>Sonnet 5.5 的性能跃升在编程上尤其明显。在 FrontierCode 的 High effort 档位上，它比同一设置下的 Sonnet 5 高出 10 分，而每任务成本约为后者的十五分之一。在 CursorBench（用取自真实 Cursor 编程会话的任务来测试模型）上，它的最好成绩与 Opus 5.5 相差在约两分以内。</p>
+<p>早期测试者很欣赏 Sonnet 5.5 理解一个代码库的速度。他们也对它的效率印象深刻：在一对一的对比运行中，它比 Sonnet 5 更多地把 tool call 批量合在一起，从而带来更少的步骤和更低的成本。</p>
+<p>Epic Games</p>
+<p>Every</p>
+<p>CodeRabbit</p>
+<p>SpaceXAI</p>
+<p>Base44</p>
+<p>Unity</p>
+<p>Creator</p>
+<p>引言</p>
+<blockquote>“在 Epic 的早期测试中，Claude Sonnet 5.5 越过了你在更高档位模型身上才会期待的那条质量线，在系统设计审计和数据流评审上都站得住。这款新模型管理了玩法系统架构的数万行代码，响应保持轻快，能处理长达数小时的任务，而且提示词写得没那么规定性也照样交付。”</blockquote>
+<p>公司</p>
+<p>Epic Games</p>
+<p>作者</p>
+<p>Daniel Vogel，首席运营官</p>
+<p>引言</p>
+<blockquote>“Claude Sonnet 5.5 真能打。编程很快，在迭代式工作流里也能被迅速带向你想要的方向。但需要的时候它照样能干长线。它继承了 Opus 5.5 一些自然的写作提升，这让和它一起工作更有意思。”</blockquote>
+<p>公司</p>
+<p>Every</p>
+<p>作者</p>
+<p>Tyler Nishida，设计师</p>
+<p>引言</p>
+<blockquote>“Claude Sonnet 5.5 在不同复杂度层级上都比 Sonnet 5 表现出更好的判断力，同时消耗的输出 token 明显更少。Sonnet 5 过于频繁地求助网页搜索的倾向，以及它的高 token 用量，在这款新模型上都消失了。我们计划现在就把简单和中等的评审迁过来，未来几周再迁入更多。”</blockquote>
+<p>公司</p>
+<p>CodeRabbit</p>
+<p>作者</p>
+<p>David Loker，AI 副总裁</p>
+<p>引言</p>
+<blockquote>“Claude Sonnet 5.5 在 CursorBench 4.0 上交出 55.5% 的前沿级表现，仅次于 Opus 5.5。我们认为它会很受那些想要平衡性能与成本的开发者欢迎。”</blockquote>
+<p>公司</p>
+<p>SpaceXAI</p>
+<p>作者</p>
+<p>Sualeh Asif，机器学习总监</p>
+<p>引言</p>
+<blockquote>“在 118 次真实的应用构建中，Claude Sonnet 5.5 产出的应用得分与 Opus 5 持平。它平均每次构建用 3.6 轮迭代达到这个结果，而 Opus 5 需要 7.7 轮。在我们比较的所有模型里，它失败的 tool call 次数最少。它也很少在构建中途停下来向用户提问，因此更少的构建会因为等待有人回答而卡住。”</blockquote>
+<p>公司</p>
+<p>Base44</p>
+<p>作者</p>
+<p>Gabriel Grinberg，AI 工程负责人</p>
+<p>引言</p>
+<blockquote>“在 Unity，我们对任务完成度有很高的标准。项目会被重新打开，结果在运行时被检验，所以一处改动真的起作用了任务才算完成，而不是模型说自己完成了就算。Claude Sonnet 5.5 的大部分工作都通过了这一检验。它在我们多步骤的 Unity Editor 与编程基准上还完成了 90% 的任务，胜过同类模型。”</blockquote>
+<p>公司</p>
+<p>Unity</p>
+<p>作者</p>
+<p>Sam Zhang，创意技术专家</p>
+<p>引言</p>
+<blockquote>“当 Claude Opus 5.5 定好一个游戏的架构和总体框架后，我有信心让 Sonnet 5.5 去实现它。Sonnet 5.5 处理长时运行、复杂任务的方式让我印象深刻。”</blockquote>
+<p>公司</p>
+<p>Creator</p>
+<p>作者</p>
+<p>Kevin Ngo，创意编程者</p>
+<h2>知识工作</h2>
+<p>Sonnet 5.5 在知识工作的多个领域都有提升。在 GDPval-AA（用横跨 44 种职业、九大行业的真实世界任务来测试模型）上，Sonnet 5.5 的得分几乎与 Opus 5.5 持平，比 Sonnet 5 高约 400 分。它在计算机使用和图表识别上接近 Opus 5.5，在长周期知识工作上明显胜过 Sonnet 5 和 GPT-6 Sol。</p>
+<p>早期测试者强调了那些不易量化的改进。他们觉得它是更自然的对话伙伴，并提到它对设计的天分，指出它会给用户界面增添打磨，也能照着幻灯片模板做出几乎不需要修改的演示文稿。在一次内部测试中，我们把一家上市公司的季度财报材料和电话会纪要，连同一份幻灯片模板交给它，要求做一份 10 页的经营复盘。两位专家评审它的初稿可以直接原样发出。</p>
+<p>Slack</p>
+<p>Zendesk</p>
+<p>Balyasny Asset Management</p>
+<p>Box</p>
+<p>Lovable</p>
+<p>Atlassian</p>
+<p>引言</p>
+<blockquote>“在我们没有改动任何提示词的情况下，Claude Sonnet 5.5 在几乎所有离线 Slackbot 评测上都好过 Sonnet 5，用的步骤更少，输出 token 少约 14%。当有人交给 Slackbot 一个任务时，最重要的是质量和速度，而 Sonnet 5.5 让 Slackbot 能更快地为用户交付更好的结果。”</blockquote>
+<p>公司</p>
+<p>Slack</p>
+<p>作者</p>
+<p>Curtis Allen，主任工程师</p>
+<p>引言</p>
+<blockquote>“我们把数百个真实的支持场景——涵盖回复与升级请求——喂给 Claude Sonnet 5.5。和我们今天在生产中使用的 Claude 模型相比，它做错决定的次数更少，解决工单也更快。工单处理速度快了 20%，让我们的客户不必等待就能拿到他们需要的帮助。”</blockquote>
+<p>公司</p>
+<p>Zendesk</p>
+<p>作者</p>
+<p>Abhinay Kathuria，AI 总监</p>
+<p>引言</p>
+<blockquote>“在我们包含 2,441 个金融任务、覆盖问答、抽取、分析与预测的私有测试集上，Claude Sonnet 5.5 得分高于 Sonnet 5，每个回答大约用 121k token，而 Sonnet 5 用 497k。在分析师的搜索与检索工作上，它几乎在所有方面都好于 Sonnet 5。在高吞吐工作流上，它在我们运行的七个模型中取得了最好的质量与成本折中。”</blockquote>
+<p>公司</p>
+<p>Balyasny Asset Management</p>
+<p>作者</p>
+<p>Joe Poirier，高级 AI 工程师</p>
+<p>引言</p>
+<blockquote>“Claude Sonnet 5.5 会让我们金融服务和医疗健康行业的客户有信心把它用于最敏感的工作。Sonnet 5.5 会回查源文档里的数据，抓到 Sonnet 5 没发现的错误。与上一代模型相比，Sonnet 5.5 更准确、快 2.4 倍，总 token 用量少 12%。”</blockquote>
+<p>公司</p>
+<p>Box</p>
+<p>作者</p>
+<p>Yashodha Bhavnani，AI 产品副总裁</p>
+<p>引言</p>
+<blockquote>“Claude Sonnet 5.5 用更少、更稳健的步骤来思考，所以构建者不用等太久就能看到进展。我们的编码评测显示，完成一个任务的 tool call 少三分之一，shell 执行次数约为原来的一半。对日常编码和更高 effort 的对话来说，这意味着更快的迭代和更顺的构建循环。”</blockquote>
+<p>公司</p>
+<p>Lovable</p>
+<p>作者</p>
+<p>Fabian Hedin，联合创始人兼首席技术官</p>
+<p>引言</p>
+<blockquote>“每月有数百万次 Rovo 辅助动作在驱动我们客户的工作流，执行速度至关重要。Claude Sonnet 5.5 能让团队运行他们的 Rovo Agents 比用 Sonnet 5 时快最多 30%。我很高兴能把这个选择提供给客户。”</blockquote>
+<p>公司</p>
+<p>Atlassian</p>
+<p>作者</p>
+<p>Jamil Valliani，AI 产品负责人</p>
+<h2>成本与速度</h2>
+<p>定价</p>
+<table><thead><tr><th>每 1M token 价格</th><th><strong>Claude Sonnet 5.5</strong></th><th>Claude Opus 5.5</th></tr></thead><tbody><tr><td>缓存读取</td><td>$0.20</td><td>$0.20</td></tr><tr><td>缓存写入</td><td>$2.50</td><td>$5</td></tr><tr><td>输入 token</td><td>$2</td><td>$4</td></tr><tr><td>输出 token</td><td>$10</td><td>$20</td></tr></tbody></table>
+<p>Sonnet 5.5 每个任务所需的 token 比 Sonnet 5 少，所以运行起来更便宜。它生成输出的速度也快 30% 以上，而且它的效率立刻就能感觉到：</p>
+<p>提示词：</p>
+<p>用一个 HTML 文件做出 400 只椋鸟的群飞</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>提示词：</p>
+<p>用一个 HTML 文件表现风塑造沙丘</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>提示词：</p>
+<p>用一个 HTML 文件做一个由 24 只小钟组成的钟</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>调整 <a href="https://academy.claude.com/tutorials/choosing-the-right-effort-level-in-claude-code">effort 档位</a>可以让你在成本、速度与整体质量之间做平衡。在 Claude Code 和我们的应用里，默认 effort 设为 Medium，而 Claude Platform 默认是 High。在较低的设置下，Claude 回答更快、用的 token 更少，这适合常规工作。在较高的设置下，Claude 推理更久、检查自己的工作更彻底。</p>
+<h2>安全</h2>
+<h3>对齐</h3>
+<p>Sonnet 5.5 并没有推进我们模型能力的边界，所以我们的对齐评估聚焦在一组适用于任何能力层级模型的针对性风险上，包括违背用户利益行事、误导用户，以及配合高风险的滥用行为。</p>
+<p>在我们的自动化行为审计（在约 1,850 个场景下测试 Claude）中，Sonnet 5.5 在对齐、抗滥用与诚实的多数指标上优于或持平 Sonnet 5。在我们更新的 containment 评测中，Sonnet 5.5 尝试逃出沙盒的频率之低接近 Opus 5.5——那是我们测过的最好的模型——而它探测自己容器边界的倾向是我们所有模型里最低的。就整场审计而言，Opus 5.5 总体仍略好一点，但我们没有发现 Sonnet 5.5 追求与用户意图相冲突的目标的证据。</p>
+<p>正如我们在<a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">最近的对齐评估</a>中所说，没有任何一套评测能可靠地抓住每一次失效，Sonnet 5.5 也可能带着我们尚未发现的倾向，这正是我们把自身的对齐工作与下面所述防护配套使用的原因。</p>
+<h3>防护</h3>
+<p><strong>网络安全。</strong> Sonnet 5.5 的网络能力比 Sonnet 5 有大步提升，所以我们为它部署了与 Opus 5.5 类似的防护。用户仍然可以在常规软件开发中发现并修复自己代码里的 bug，但更高风险的网络安全任务会明显回退到 Sonnet 5。很快，网络安全防御者可以申请加入我们扩容后的 <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a>，为 Sonnet 5.5、Opus 5.5 和 Claude Mythos 模型分级获取更高级的能力。</p>
+<p><strong>生物学。</strong> Sonnet 5.5 使用与 Sonnet 5 相同的一套生物学防护。这些防护针对有害请求；多数研究、教育与临床工作不受影响，尽管某些微生物学与病毒学的请求可能被误判拦截。机构可以申请加入我们的 <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>，获得为生物学相关工作全部范围所设计的防护。</p>
+<p><strong>蒸馏。</strong> 蒸馏攻击指攻击者用数千个虚假账号以工业规模抽取一个模型的能力，让不良行为者能在缺少我们为 Claude 内建那些防护的情况下造出高能力模型。由于 Sonnet 5.5 比它的前代能力强得多，它是第一个带着阻止推理抽取的安全分类器上线的 Sonnet 模型。Sonnet 5.5 还扩展了 <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking</a>，因此 Claude 的思考无法与创建它的账号解绑。多数开发者不会察觉变化。如果你在账号之间搬移对话，包括在 Claude Code 里中途切换账号，我们的<a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">文档文章</a>解释了这一变化。</p>
+<h2>开始使用</h2>
+<p>与 Opus 5.5 和 Sonnet 5 一样，Claude Sonnet 5.5 可以零数据保留地提供服务。</p>
+<p>Claude Sonnet 5.5 现已在所有平台可用，包括 Amazon Web Services、Google Cloud 和 Microsoft Azure。开发者可以在 Claude Platform 上用 <code>claude-sonnet-5-5</code> 开始。如果你以 thinking 关闭的方式运行 Sonnet，需要先切换到新的 <code>between_tools</code> 设置——它会让前置思考保持关闭——然后再迁到 Sonnet 5.5。细节见我们的<a href="https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide#turn-thinking-off">迁移指南</a>。</p>
+<h2>脚注</h2>
+<p>1 Terminal-Bench 4.0 报告的是 Claude Opus 5.5 在 Xhigh effort 档位下的结果，那代表该模型的最高分。</p>
+<p>2 Sonnet 5.5 在 Max effort 下的得分低于 Xhigh。FrontierCode 评估的是一处代码改动能否在无人工编辑的情况下被合并。它会惩罚超出范围的改动，即使这些改动质量很高或有帮助。在 Max effort 下，Sonnet 5.5 更常运行 Claude Code 的 code-review skill，这个 skill 会把评审拆分给许多 subagent；在 Cognition 检查的两个案例中，这导致了超时，或者产生了超出任务范围的额外编辑，因而得分更低。</p>
+<p>3 Artificial Analysis 是在 Claude Platform 上一个 Sonnet 5.5 的预发布部署上运行 GDPval-AA 和 AA-Briefcase 的，我们后来发现该部署有一个 bug，可能让使用结构化输出的请求的响应质量下降。我们预计这对 Sonnet 5.5 得分的影响（如果有的话）很小，而且是低估了它的表现。那个 bug 此后已经被修复。</p>
+<p>4 OpenAI 最近修复了一个会让 GPT-6 Sol 的图像理解变差的 bug。Artificial Analysis 给出的官方 AA-Briefcase v1.1 与 GDPval-AA v2.1 分数，以及 Surge AI 给出的 Chartography 分数，可能尚未更新以反映该模型的最新版本。Artificial Analysis 不认为 AA-Briefcase v1.1 与 GDPval-AA v2.1 会受到重大影响。针对 Chartography 的内部测试表明它的分数未受影响。</p>]]></content:encoded>
     </item>
     <item>
       <title>Claude Tag 现已支持频道中的个人连接器</title>
@@ -1812,60 +1818,6 @@ return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
 <p>这份蓝图今天即可获取。<a href="https://claude.com/contact-sales">联系我们的销售团队</a>了解更多、安排一场演示，或讨论如何为你的组织实施。</p>
 <ul><li>在 <a href="https://github.com/anthropics/commerce-agents">github.com/anthropics/commerce-agents</a> 分叉仓库。</li><li>在 <a href="http://claude.com/blog/the-anatomy-of-effective-commerce-agents">claude.com/blog/the-anatomy-of-effective-commerce-agents</a> 阅读工程深度剖析。</li><li>在 <a href="https://claude.com/solutions/commerce">claude.com/solutions/commerce</a> 查看垂直领域演示并申请一场工作研讨会。</li></ul>
 <p>注册我们的<a href="http://anthropic.com/webinars/building-claude-commerce-agents">网络研讨会</a>，观看这场深度剖析，我们将分享现场讲解、演示，并讲述商务构建者如何从 Claude 中获得最大价值。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>与客户共同打造企业级前沿保障</title>
-      <link>https://www.anthropic.com/news/enterprise-frontier-safeguards</link>
-      <guid isPermaLink="true">https://www.anthropic.com/news/enterprise-frontier-safeguards</guid>
-      <pubDate>Tue, 01 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Developing Enterprise Frontier Safeguards with our customers \ Anthropic</description>
-      <content:encoded><![CDATA[<h1>与客户共同开发企业级前沿防护</h1>
-<p>2026 年 9 月 1 日</p>
-<p>今天我们宣布企业级前沿防护（Enterprise Frontier Safeguards，EFS）——一个把零数据保留（ZDR）的隐私性与检测滥用的最先进防护结合起来的方案。EFS 的运作方式是把数据存储在由客户而非 Anthropic 控制的云基础设施里。EFS 将分阶段向客户推出，今年晚些时候开始。为了让过渡平滑，在 EFS 就绪之前，符合条件的客户将在 Fable 5 和 Fable 5.1 上获得 ZDR。</p>
-<p>我们与金融服务、医疗、制造、电信、法律、零售和公共部门等行业超过 100 家客户、以及我们在亚马逊云科技、Google Cloud 和 Microsoft Azure 的云伙伴密切合作，开发了 EFS。</p>
-<p>EFS 将在 Claude Code、Claude Enterprise、Claude Platform、Amazon Bedrock、AWS 上的 Claude Platform、Google 的 Agent Platform 和 Microsoft Foundry 上得到支持。</p>
-<h2>解决前沿安全的两难</h2>
-<p>Mythos 级的模型，如 <a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">Claude Fable 5.1</a>，代表了智能和 agentic 能力的一次重大跃升。然而，随着这种提升而来的，既有滥用的可能，也有自主失当行为的可能。</p>
-<p>过去几个月，我们看到了试图滥用 AI 模型的大量证据。这些从欺诈这类典型滥用，到复杂的网络攻击——后者可能包含 agent 自主地从事破坏性行为。其中一些案例涉及对企业客户凭证的窃取或盗用，而若没有监控流量、检测异常行为的能力，这些很难被发现。</p>
-<p>此外，因为<a href="https://www.anthropic.com/news/disrupting-AI-espionage">最老练的滥用</a>可能涉及分散在多个会话和账户上的许多任务，仅对每次交互单独跑自动化分析、然后即刻丢弃数据是不够的。有效的检测需要把数据存储一段有意义的时间，以便能跨时间和账户做关联。</p>
-<p>出于这个原因，我们从 Fable 5 起引入了 30 天数据保留。这一政策的动机并非想要用企业数据做训练：Anthropic 从未在未经明确许可的情况下用企业数据训练，也永远不会。</p>
-<p>与我们合作的企业普遍理解数据保留在安全和安保上的价值，但许多——尤其是受监管行业里的——发现很难使用带数据保留的模型。于是我们与客户坐下来，设计一个能兼得两全其美的方案：既有 ZDR 的隐私性，又有跨时间和账户监控所能带来的安全性。</p>
-<h2>与客户共同设计</h2>
-<p>我们带着将每天使用它的那些专家——安全、产品、合规和交付团队——的反馈，构建了企业级前沿防护。我们合作的团体之一是系统性风险分析与韧性中心（ARC），其成员包括美国最大银行的首席信息安全官，如高盛、摩根士丹利、花旗、美国银行和富国银行。</p>
-<p>我们还与康卡斯特（Comcast）、毕马威（KPMG）、Visa 等公司的领导者合作，以确保该设计能跨行业站得住。我们的对话覆盖了财富 100 强的四分之一、每一家美国全球系统重要性银行、以及几乎每一个受监管行业。</p>
-<p>以下是我们从这一广泛客户群处听到的，以及我们为应对这些共同关切而构建进 EFS 的东西：</p>
-<h3>关于监控</h3>
-<p>企业长久以来一直把监控用于内部人员风险，如今希望在为 agent 升级监控上得到帮助。他们的关切是关于 Anthropic 的自动化监控系统能否满足他们的监管标准。</p>
-<p><strong>在 EFS 中，客户控制数据如何被审阅。</strong> 当监控检测到一个需要注意的模式时，那些信号会被直接发给客户，让他们能审阅自动化系统检测到了什么。</p>
-<h3>关于数据存储</h3>
-<p>对企业而言，增加另一家「受信任的数据供应商」是件麻烦事，原因有很多。他们必须通知自己所有客户这些供应商是谁、并更新合同。鉴于数据极高的敏感性，他们也有安全存储和审计数据的要求。出于这些关切，我们把 EFS 架构设计成客户能在其现有云基础设施上存储数据。</p>
-<p><strong>在 EFS 中，客户能控制他们的数据存储与管理。</strong> 客户希望有能力让数据栖身于他们自己控制的基础设施里，在他们自己的加密密钥、访问策略和审计日志之下。用于监控的活动数据可以存储在客户自己的云账户里（如 Amazon S3、Azure Blob Storage 或 Google Cloud Storage）。</p>
-<h3>关于自动化与人工审阅</h3>
-<p>即便自动化审阅越来越有效，一个人去查看一条标记，仍能通过确认真正的滥用、清除误报来增添价值。但我们从许多客户——尤其是受监管行业里的——那里听到的是，做那项审阅的人必须是他们自己的人。许多团队在严格规定谁可以查看某些信息的规则下运作——特权的法律材料、非公开信息、药物安全报告。他们的团队已经为此项工作受过培训、获过审批。</p>
-<p><strong>EFS 有自动化的安全监控，无需 Anthropic 的人工审阅。</strong> 客户想要对网络攻击的防护，并理解若攻击在多个会话和账户上展开，会很难检测。在 EFS 中，自动化系统分析一个滚动的流量窗口，寻找严重滥用的信号，包括试图开发攻击性网络或生物能力的企图，以及凭证被盗或泄漏的迹象。那些标记直接发给客户，由他们的人接手处理——无需 Anthropic 员工的人工审阅。</p>
-<blockquote>AI 控制的设计必须能保护敏感信息，而模型防护是这一过程中的重要组成部分。Anthropic 在开发企业级前沿防护时征询了我们，以确保与我们的要求和标准对齐。</blockquote>
-<blockquote>企业级前沿防护给了我们恰恰所要求的：我们的日志留在一个由 Wells 管理的环境里、在 Wells 管理的密钥之下。我们在 Anthropic 运作检测的同时保管我们数据的主导权。正是这种分工，让我们的团队能安全地让前沿模型工作，并履行我们对客户、员工和监管方的义务。我们的行业需要这些防护，所以我们帮助塑造了它们。</blockquote>
-<blockquote>作为一家运营关键基础设施的公司，模型的能力很重要。同样重要的是那些让我们能把数据留在自己账户里的方案，而企业级前沿防护解决了这一点。</blockquote>
-<blockquote>我们的八位成员与 Anthropic 合作，定义了在一个系统重要性银行内部运行最强前沿模型需要什么：谁持有数据、谁持有密钥、自动化审阅能看到和不能看到什么、以及在什么条件下才允许人类去查看。这次协作正在促成改进的防护与标准的开发和交付，它们能在我们行业内外规模化。</blockquote>
-<blockquote>防护架构的一个关键信条，是我们能保留数据、并把它置于模型本身之外、在我们环境内受保护地保管。公司里、以及客户工作里的一些领域是受监管、高度敏感的。那些防护实际上让我们能把 AI 应用到我们此前无法涉足的业务部分。——服务伙伴</blockquote>
-<blockquote>二十多年来客户一直把他们的数据托付给我们。正是这份经验，让我们想帮 Anthropic 一起把这件事想透，而不是在场外等待。我们得以在架构层面——而不仅仅是政策层面——协作打造新的安全与隐私能力。</blockquote>
-<blockquote>我们的客户想让前沿模型工作，而他们安全团队希望数据留在他们控制的基础设施里。Anthropic 与一百多家企业一起构建企业级前沿防护，正是为此。——服务伙伴</blockquote>
-<blockquote>随着 AI 模型承担更多受监管、敏感的工作负载，负责任地扩展也归结到架构，而不仅是政策承诺。对数据环境的直接掌控，配上基于模式的自动化安全监控，给了企业真正监督、问责和信心地部署所需的具体、结构性能力。——服务伙伴</blockquote>
-<blockquote>防护及其设计——显然，你们听到了我们的反馈。他们让我们坐上驾驶座。日志由我们掌控；除非我们愿意，它们哪儿都不去。它让我们掌控数据、掌控信息，并掌控在某个可能超出防护的东西被检测到之后该怎么做。</blockquote>
-<blockquote>随着 AI 更深地嵌入企业各处，安全和信任正是让组织从实验走向规模化部署的东西。企业级前沿防护从一开始就把这些内建进去：监控数据留在客户控制的基础设施里，由他们自己的团队决定谁能访问它。——服务伙伴</blockquote>
-<blockquote>让客户数据保密是 Snowflake 对每一位客户做出的承诺。我们一直飞速地把前沿模型送到他们手中。难的是在最严格的数据保证下安全地做到。我们与 Anthropic 合作设计企业级前沿防护，好让我们两者兼得：数据留在客户的环境里、在他们掌控的密钥之下，从第一天起就跑 Anthropic 最强的模型。这就是当以平台为念构建时，负责任的前沿 AI 应有的样子。</blockquote>
-<blockquote>在 Stripe，保护客户数据是我们运作方式的根基。Anthropic 的企业级前沿防护将让我们能使用覆盖的前沿模型、同时把会话日志保留在 Stripe 的 AWS 环境里，其访问和审阅由 Stripe 的安全控制治理。</blockquote>
-<blockquote>Rogo 的客户期望获得可得的最好智能，但绝不在其数据的安全和护栏之外付出代价。企业级前沿防护会把最强的模型带给金融机构，同时满足它们所要求的机构级数据要求。前沿智能与企业级控制的这种结合，对在整个金融服务领域部署 AI 至关重要。</blockquote>
-<blockquote>FIS 支撑着资金如何流转、金融机构如何运作背后的基础设施，因此我们部署的任何 AI 防护都必须达到那种规模和信任标准。我们与 Anthropic 的合作已包含通过 Project Glasswing 用我们自己的系统测试他们最前沿的模型。Claude 企业级前沿防护扩展了这项工作，把保留的数据留在我们自己的账户里、并把标记直接路由给我们的安全团队。</blockquote>
-<blockquote>企业把真实的生产工作交给 Cognition 的自主工程师，而这份信任取决于他们的工作保持私密。有了企业级前沿防护，客户数据和身份从不出我们这一侧。它将让我们把前沿 AI 带入生产工作，无需隐私上的权衡。</blockquote>
-<blockquote>我们客户的代码和数据是他们最有价值的知识产权的一些。保护那些信息是我们在 Factory 构建方式的根基。我们与 Anthropic 一起，让客户能在把专有数据掌控权留在自己手中的同时，使用 Claude 最强的模型。企业级前沿防护给企业提供了前沿智能的访问，同时具备他们安全团队所要求的数据保护。</blockquote>
-<blockquote>我们一直保持对客户机密性和安全坚定不移的承诺。我们所服务的顶尖法律和专业团队视这些原则为不可谈判，我们也以同样的标准要求自己。企业级前沿防护映照了这份承诺，让有着最严苛保密要求的客户能访问前沿模型，而模型提供方不保留他们的数据。</blockquote>
-<h2>EFS 如何运作</h2>
-<p>这些控制被设计成，无论你从 Anthropic 直接访问 Claude、还是通过云伙伴访问，都以同样的方式运作。在亚马逊云科技、Google Cloud 和 Microsoft Azure 上的客户会得到同等的控制，把他们的活动数据存储在云账户里、在他们已经信任的环境中。我们也在努力支持那些服务符合企业级前沿防护资格客户的第三方产品。</p>
-<p>客户自有存储、客户管理的加密密钥，以及完全自动化审阅，各自都是选择启用的，所以你启用你组织所需的那些。它们都不改变模型行为、API 价格或速率限制。</p>
-<p>Anthropic 不向企业级前沿防护收费。如果客户选择把数据存储在他们的云账户里，其云提供商会像对任何其他资源那样，就存储以及读取、写入和数据出站费用向他们计费。</p>
-<h2>如何开始</h2>
-<p>企业级前沿防护将分阶段向客户推出，目标是在今年晚些时候广泛可用。要申请企业级前沿防护的访问权，请填写这份<a href="https://claude.com/form/enterprise-frontier-safeguards">表单</a>。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

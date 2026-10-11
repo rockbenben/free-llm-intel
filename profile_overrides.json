@@ -131,6 +131,39 @@
       "short": "开户立得 $100，6 个月内最高合计 $200 抵扣金（需信用卡）"
     }
   },
+  "baidu_qianfan": {
+    "_evidence": [
+      {
+        "quote": "2025年10月24日0点起，访问千帆大模型平台，阅读并同意用户协议后，系统将自动开通千帆大模型平台并发放新用户免费Tokens额度。",
+        "url": "https://cloud.baidu.com/doc/qianfan/s/Imi2rpirg"
+      },
+      {
+        "quote": "新用户免费额度仅支持抵扣预置模型服务在线推理（调用）消耗的Tokens，不支持抵扣批量推理（调用）消耗的Tokens。",
+        "url": "https://cloud.baidu.com/doc/qianfan/s/Imi2rpirg"
+      },
+      {
+        "quote": "首次开通千帆大模型时，平台将自动发放指定模型的免费使用额度，赠送服务范围、Tokens量以及有限期如下表所示：",
+        "url": "https://cloud.baidu.com/doc/qianfan/s/Imi2rpirg"
+      }
+    ],
+    "_summary": "纠正 17 个免费模型的具体清单（实为 ERNIE 4.5 系列、DeepSeek、Kimi-K2、Qwen3 等，非 ERNIE 5.0/5.1），并补充仅支持在线推理、不支持批量推理的限制条件。",
+    "_updated": "2026-10-11 10:21:01",
+    "free_models": [
+      "**17 个指定预置模型**（含 `ERNIE-4.5-Turbo` 系列、`ERNIE-X1-Turbo-32K`、`DeepSeek-R1/V3/V3.1`、`Kimi-K2-Instruct`、`Qwen3/Qwen3-Coder`、`bge-large` 等） —— 首次开通自动发放，**每个模型赠送 100 万 tokens，有效期 3 个月**（仅限在线推理，不支持批量推理）",
+      "旧 ERNIE-Speed/Lite/Tiny 永久免费模型**已下架**，平台当前无永久免费模型"
+    ],
+    "openai_compat": {
+      "api_key_label": "控制台申请",
+      "api_key_url": "https://console.bce.baidu.com/qianfan/overview",
+      "base_url": "https://qianfan.baidubce.com/v2",
+      "models": "`ERNIE-4.5-Turbo-128K`, `DeepSeek-V3.1-250821`, `Qwen3-Coder-30B-A3B-Instruct`",
+      "summary": "17 个模型各 100 万 / 3 个月"
+    },
+    "tier_caveats": [
+      "**17 个模型各 100 万 tokens / 3 个月**，额度按模型独立计算；仅支持抵扣预置模型服务在线推理，不支持批量推理",
+      "旧 ERNIE-Speed / Lite / Tiny **永久免费模型已下架**，平台当前无永久免费层，额度用尽需开通付费"
+    ]
+  },
   "china_telecom_tianyi": {
     "_evidence": [
       {
@@ -192,6 +225,42 @@
       "kimi-k2.6/k2.7-code、glm-5.2/5.3/5.3-flash、deepseek-v4-flash-0731/v4-pro-0813 等前沿模型**要求付费计费方式，不在免费层内**；其余 Text Generation 模型默认限速 300 请求/分钟，而这些付费模型仅 20 请求/分钟（Workers Paid）或 50 请求/分钟（预付 AI Gateway credits）",
       "免费层主要面向 Workers 平台内调用；Neurons 换算随模型不同"
     ]
+  },
+  "comate": {
+    "_evidence": [
+      {
+        "quote": "赠7天有效期5000积分（首次）",
+        "url": "https://cloud.baidu.com/doc/COMATE/s/rlnvnio4a"
+      },
+      {
+        "quote": "同时，个人及企业用户支持单独购买积分/模型额度增量包。",
+        "url": "https://cloud.baidu.com/doc/COMATE/s/rlnvnio4a"
+      },
+      {
+        "quote": "当个人版订阅周期内所包含的积分额度用完后，您可以按照上述会员福利，免费继续Auto-Free模式，如需使用高级模型可直接购买独立积分包（立即生效，有效期一个月：次月同一时刻失效）",
+        "url": "https://cloud.baidu.com/doc/COMATE/s/rlnvnio4a"
+      }
+    ],
+    "_summary": "个人标准版首次赠送额度由「¥10 智能体请求券」调整为「7 天有效期 5000 积分」",
+    "_updated": "2026-10-11 10:21:01",
+    "free_models": [
+      "智能补全 —— 个人标准版免费不限次",
+      "模型额度 —— 首次赠 5000 积分（7天有效期）；Auto-Free 模式在额度用尽后兜底（限付费档）"
+    ],
+    "free_quota": "**个人标准版单价免费**：官方定价文档原文「智能补全 免费」+ 模型额度「赠7天有效期5000积分（首次）」；付费档额度耗尽后可自动切换「免费Auto-Free模式」（专业版 150k tokens/h、旗舰版 500k tokens/h）",
+    "guide_meta": {
+      "scenarios": [
+        "code"
+      ],
+      "short": "个人标准版长期免费：智能补全免费 + 首次赠 5000 积分（7天有效）",
+      "signup": "email",
+      "tiers": [
+        "permanent",
+        "onetime"
+      ],
+      "tip": "首次赠送的 5000 积分仅 7 天有效；个人版额度体系已由代金券调整为积分制"
+    },
+    "validity": "智能补全长期免费；首次赠送的 5000 积分有效期为 7 天"
   },
   "deepseek": {
     "_evidence": [
@@ -330,6 +399,67 @@
       "**无免费模型层**：Nebius Token Factory（原 AI Studio，studio.nebius.ai 已 301 跳转 tokenfactory.nebius.com）模型目录以后台为准，需账户余额；GPU 云按需 B300 $7.85/h、B200 $7.15/h、H200 $4.50/h 等，官方价目表另列 2026-10-01 生效价（B300 $9.50、B200 $8.50、H200 $5.40）"
     ]
   },
+  "qoder": {
+    "_evidence": [
+      {
+        "quote": "The Qwen3.8-Flash free promotion started on September 18, 2026 at 10:00 and has been extended beyond September 30. Its end date will be announced on the [Qwen3.8-Flash: Free for a Limited Time](/events/flashoffer) page. During the promotion, calls to this model consume no Credits and do not deduct from the rewards claimed through this promotion.",
+        "url": "https://docs.qoder.com/events/100credits.md"
+      }
+    ],
+    "_summary": "Qwen3.8-Flash 限免活动已延长超过 9 月 30 日，具体截止日期改为待公布",
+    "_updated": "2026-10-11 10:21:01",
+    "free_models": [
+      "基础模型 —— Free 方案长期可用，消息条数受限（Free 列还含有限补全/NES 与 BYOK）",
+      "高级（premium）模型 —— 每日领 100 Credits（2026-09-18 起，官方未公布截止）+ Pro 试用 300 Credits 抵扣",
+      "限时免费活动 —— `Qwen3.8-Flash` 限免已延长（结束时间待公布，调用不扣 Credits）、SOTA 模型限时免费体验（按轮领取、未用过轮作废）、「经济(Efficient)」档位对付费用户限免（官方 Events 页）"
+    ]
+  },
+  "tencent_hunyuan": {
+    "_evidence": [
+      {
+        "quote": "共100万 tokens，共享消耗。资源包有效期为1年，自开通服务之日起1年内若免费资源包未使用完，则过期作废。",
+        "url": "https://cloud.tencent.com/document/product/1729/97731"
+      },
+      {
+        "quote": "100万 tokens。资源包有效期为1年，自开通服务之日起1年内若免费资源包未使用完，则过期作废。",
+        "url": "https://cloud.tencent.com/document/product/1729/97731"
+      },
+      {
+        "quote": "默认情况下，免费资源包耗尽或到期后不会自动转入后付费，如果您未主动开通后付费，将出现计费异常提示。",
+        "url": "https://cloud.tencent.com/document/product/1729/97731"
+      },
+      {
+        "quote": "混元生文 hunyuan 接口默认限制为5个并发，限额由主子账号共享。",
+        "url": "https://cloud.tencent.com/document/product/1729/111007"
+      }
+    ],
+    "_summary": "免费额度范围不仅限于 Hunyuan-a13b，而是包含 Hunyuan-a13b、Hunyuan-role-latest、多模态视觉与翻译等 8 款模型共享 100 万 tokens，且嵌入模型独享 100 万 tokens；接口默认 5 并发且耗尽不自动转后付费。",
+    "_updated": "2026-10-11 10:21:01",
+    "free_models": [
+      "`Hunyuan-a13b` / `Hunyuan-role-latest` / `Hunyuan-translation` / `Hunyuan-translation-lite` / `Tencent HY Vision 1.5 Instruct` / `Hunyuan-turbos-vision` / `Hunyuan-t1-vision` / `Hunyuan-turbos-vision-video` —— 首次开通赠送 **共 100 万 tokens，共享消耗，有效期 1 年**；接口默认限制 **5 并发**",
+      "`Hunyuan-embedding` —— 赠送 **100 万 tokens，有效期 1 年**",
+      "旗舰/其他模型：`Hy4 preview`、`Hy3` 等或额度耗尽后按 token 后付费"
+    ],
+    "free_quota": "首次开通免费赠送生文/多模态 **共 100 万 tokens**（8 款模型共享消耗）+ 文本嵌入模型 **100 万 tokens**，有效期均 **1 年**；默认资源包耗尽后不自动转入后付费",
+    "guide_meta": {
+      "scenarios": [
+        "embed",
+        "image"
+      ],
+      "short": "8款模型共享 100万 tokens + Embedding 100万",
+      "signup": "card",
+      "tiers": [
+        "onetime"
+      ],
+      "tip": "默认耗尽不自动转后付费，如需后付费需手动在控制台开启"
+    },
+    "notes": "赠送额度包含 a13b、角色扮演、翻译和视觉等多款模型（共享 100 万）以及 embedding（独立 100 万）；默认不自动转后付费。",
+    "tier_caveats": [
+      "免费额度分两类：8 款生文/视觉/翻译模型**合并共享** 100 万 tokens，以及 `Hunyuan-embedding` 独立 100 万 tokens，有效期均为 1 年",
+      "默认情况下，免费资源包耗尽或到期后**不会自动转入后付费**，未主动开通后付费将报错中断",
+      "混元生文接口默认限制 **5 个并发**，由主子账号共享"
+    ]
+  },
   "together_ai": {
     "_evidence": [
       {
@@ -438,5 +568,21 @@
       "short": "豆包模型分别送 50 万 tokens；Managed Agents 送 30 小时",
       "tip": "在控制台开启「安心体验模式」，超限即停，避免自动扣费。"
     }
+  },
+  "zed": {
+    "_evidence": [
+      {
+        "quote": "We offer a 14-day free trial of Pro with $5 of GPT-6 Luna usage and unlimited accepted edit predictions.",
+        "url": "https://zed.dev/pricing"
+      },
+      {
+        "quote": "GPT-6 Luna is the only hosted model available during the free trial.",
+        "url": "https://zed.dev/pricing"
+      }
+    ],
+    "_summary": "Pro 14 天免费试用包含的托管模型由 GPT-5.6 Luna 调整为 GPT-6 Luna",
+    "_updated": "2026-10-11 10:21:01",
+    "notes": "「Free forever」指标题档定价长期 $0，非全部 AI 功能免费；试用条款里的 GPT-6 Luna 为当前托管模型名",
+    "validity": "免费档不限时；Pro 试用为 14 天或 $5 GPT-6 Luna 用量耗尽即止（“The trial ends when you use the $5 balance or 14 days pass”）"
   }
 }

@@ -3,6 +3,31 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-10-11
+### Qoder（`qoder`）
+- 摘要：Qwen3.8-Flash 限免活动已延长超过 9 月 30 日，具体截止日期改为待公布
+- `free_models`：基础模型 —— Free 方案长期可用，消息条数受限（Free 列还含有限补全/NES 与 BYOK）、高级（premium）模型 —— 每日领 100 Credits（2026-09-18 起，官方未公布截止）+ Pro 试用 300 Credits 抵扣、限时免费活动 —— `Qwen3.8-Flash` 限免*… → 基础模型 —— Free 方案长期可用，消息条数受限（Free 列还含有限补全/NES 与 BYOK）、高级（premium）模型 —— 每日领 100 Credits（2026-09-18 起，官方未公布截止）+ Pro 试用 300 Credits 抵扣、限时免费活动 —— `Qwen3.8-Flash` 限免已…
+### 文心快码 Comate（`comate`）
+- 摘要：个人标准版首次赠送额度由「¥10 智能体请求券」调整为「7 天有效期 5000 积分」
+- `free_quota`：**个人标准版单价免费**：官方定价文档原文「智能补全 免费」+ 模型额度「赠智能体请求券¥10（首次）」；付费档额度耗尽后可自动切换「免费Auto-Free模式」（专业版 150k tokens/h、旗舰版 500k tokens/h） → **个人标准版单价免费**：官方定价文档原文「智能补全 免费」+ 模型额度「赠7天有效期5000积分（首次）」；付费档额度耗尽后可自动切换「免费Auto-Free模式」（专业版 150k tokens/h、旗舰版 500k tokens/h）
+- `validity`：智能补全长期免费；¥10 智能体请求券为首次赠送，按订阅周期刷新、不可提前预支 → 智能补全长期免费；首次赠送的 5000 积分有效期为 7 天
+- `free_models`：智能补全 —— 个人标准版免费不限次、智能体请求 —— 首次赠 ¥10 请求券；Auto-Free 模式在额度用尽后兜底（限付费档） → 智能补全 —— 个人标准版免费不限次、模型额度 —— 首次赠 5000 积分（7天有效期）；Auto-Free 模式在额度用尽后兜底（限付费档）
+### Zed（`zed`）
+- 摘要：Pro 14 天免费试用包含的托管模型由 GPT-5.6 Luna 调整为 GPT-6 Luna
+- `validity`：免费档不限时；Pro 试用为 14 天或 $5 GPT-5.6 Luna 用量耗尽即止（“The trial ends when you use the $5 balance or 14 days pass”） → 免费档不限时；Pro 试用为 14 天或 $5 GPT-6 Luna 用量耗尽即止（“The trial ends when you use the $5 balance or 14 days pass”）
+- `notes`：「Free forever」指标题档定价长期 $0，非全部 AI 功能免费；试用条款里的 GPT-5.6 Luna 为当前托管模型名 → 「Free forever」指标题档定价长期 $0，非全部 AI 功能免费；试用条款里的 GPT-6 Luna 为当前托管模型名
+### 百度智能云千帆（`baidu_qianfan`）
+- 摘要：纠正 17 个免费模型的具体清单（实为 ERNIE 4.5 系列、DeepSeek、Kimi-K2、Qwen3 等，非 ERNIE 5.0/5.1），并补充仅支持在线推理、不支持批量推理的限制条件。
+- `free_models`：**17 个模型**（含 `ERNIE 5.1`、`ERNIE 5.0`、`ERNIE X1.1`、`ERNIE 4.5-Turbo` 等）—— 新用户**每个模型赠送 100 万 tokens，有效期 3 个月**、旧 ERNIE-Speed/Lite/Tiny 永久免费模型**已下架**，平台当前无永久免费模型 → **17 个指定预置模型**（含 `ERNIE-4.5-Turbo` 系列、`ERNIE-X1-Turbo-32K`、`DeepSeek-R1/V3/V3.1`、`Kimi-K2-Instruct`、`Qwen3/Qwen3-Coder`、`bge-large` 等） —— 首次开通自动发放，**每个模型赠送 100…
+- `tier_caveats`：**17 个模型各 100 万 tokens / 3 个月**，额度按模型独立计算；另送的 20 元代金券只有 **1 个月**有效期、旧 ERNIE-Speed / Lite / Tiny **永久免费模型已下架**，平台当前无永久免费层，额度用尽需开通付费 → **17 个模型各 100 万 tokens / 3 个月**，额度按模型独立计算；仅支持抵扣预置模型服务在线推理，不支持批量推理、旧 ERNIE-Speed / Lite / Tiny **永久免费模型已下架**，平台当前无永久免费层，额度用尽需开通付费
+- `openai_compat`：{"summary": "17 个模型各 100 万 / 3 个月", "api_key_label": "控制台申请", "api_key_url": "https://console.bce.baidu.com/qianfan/overview", "base_url": "https://qianfan.bai… → {"summary": "17 个模型各 100 万 / 3 个月", "api_key_label": "控制台申请", "api_key_url": "https://console.bce.baidu.com/qianfan/overview", "base_url": "https://qianfan.bai…
+### 腾讯混元（`tencent_hunyuan`）
+- 摘要：免费额度范围不仅限于 Hunyuan-a13b，而是包含 Hunyuan-a13b、Hunyuan-role-latest、多模态视觉与翻译等 8 款模型共享 100 万 tokens，且嵌入模型独享 100 万 tokens；接口默认 5 并发且耗尽不自动转后付费。
+- `free_quota`：**无额外注册赠金**；免费资源即左栏两款模型的 tokens（官方免费额度文档 /document/product/1729/97731） → 首次开通免费赠送生文/多模态 **共 100 万 tokens**（8 款模型共享消耗）+ 文本嵌入模型 **100 万 tokens**，有效期均 **1 年**；默认资源包耗尽后不自动转入后付费
+- `free_models`：`Hunyuan-a13b`（共享版）—— 首次开通赠送 **100 万 tokens，有效期 1 年**、文本嵌入模型 —— 赠送 **100 万 tokens，有效期 1 年**、付费旗舰：混元 `Hy4` 预览版（2026-08-28 发布）、`Hy-MT2-Pro`（翻译）、`Hy-Role-Latest`（… → `Hunyuan-a13b` / `Hunyuan-role-latest` / `Hunyuan-translation` / `Hunyuan-translation-lite` / `Tencent HY Vision 1.5 Instruct` / `Hunyuan-turbos-vision` / `Hun…
+- `tier_caveats`：**只有两款模型免费**：Hunyuan-a13b 共享版、文本嵌入模型各 100 万 tokens、有效期 1 年；旗舰 Hy4、Hy-Image、角色扮演等按 token 后付费、旧 Hunyuan-Lite / Standard 已下线——流传的「Hunyuan-lite 完全免费」已失效 → 免费额度分两类：8 款生文/视觉/翻译模型**合并共享** 100 万 tokens，以及 `Hunyuan-embedding` 独立 100 万 tokens，有效期均为 1 年、默认情况下，免费资源包耗尽或到期后**不会自动转入后付费**，未主动开通后付费将报错中断、混元生文接口默认限制 **5 个并发**，由…
+- `notes`：免费额度限 a13b 共享版与嵌入模型；旗舰 Hy4 等按 token 后付费。 → 赠送额度包含 a13b、角色扮演、翻译和视觉等多款模型（共享 100 万）以及 embedding（独立 100 万）；默认不自动转后付费。
+
 ## 2026-10-10
 ### Anthropic Claude（`anthropic`）
 - 摘要：Claude Max 订阅新增每月 $100 至 $200 API 额度，Team 订阅新增最高 $500/月共享 API 额度。

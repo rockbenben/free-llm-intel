@@ -1,6 +1,6 @@
 # xAI Grok 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-09**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-11**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：xAI Grok（`xai_grok`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -10,7 +10,7 @@
 ## 全部文章（共 111 篇，按日期倒序；无日期条目列于最后）
 
 1. [团队机器人：共享人工智能队友，边工作边学习](https://x.ai/news/team-bots)（2026-09-28） <!--orig:Team Bots: shared AI teammates that learn as they work-->
-2. [SpaceXAI 如何使用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22） <!--orig:How SpaceXAI is using Grok Bot to scale customer support-->
+2. [SpaceXAI 如何使用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22） <!--orig:How SpaceXSI is using Grok Bot to scale customer support-->
 3. [推出 Grok 4.7](https://x.ai/news/grok-4-7)（2026-09-21） <!--orig:IntroducingGrok 4.7-->
 4. [推出 Grok Voice Transcribe 2.0](https://x.ai/news/grok-voice-transcribe-2)（2026-09-18） <!--orig:Introducing Grok Voice Transcribe 2.0-->
 5. [Grok 语音转录 2.0 简介](https://x.ai/news#d-2026-09-18-2)（2026-09-18）

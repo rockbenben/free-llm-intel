@@ -122,177 +122,6 @@
 <p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
     </item>
     <item>
-      <title>Introducing Claude Sonnet 5.5</title>
-      <link>https://www.anthropic.com/claude-sonnet-5-5</link>
-      <guid isPermaLink="true">https://www.anthropic.com/claude-sonnet-5-5?li=1</guid>
-      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Claude Sonnet 5.5</h1>
-<p>September 28, 2026</p>
-<p>Introducing Claude Sonnet 5.5, the second model in the Claude 5.5 family. It’s a clear upgrade over Claude Sonnet 5, runs 30%+ faster, and costs up to 30% less for most work.</p>
-<p>Sonnet 5.5 is a faster, lower-cost complement to Claude Opus 5.5. Where Opus 5.5 is built for complex work requiring careful judgment, Sonnet 5.5 is strongest at well-scoped everyday tasks, fixing bugs, and creating polished documents, slides, and spreadsheets. It’s also got a sharp eye for design. Claude Haiku 5.5, built for high-volume and cost-sensitive applications, will join the Claude 5.5 family in the coming weeks.</p>
-<p>Sonnet 5.5 improves over Sonnet 5 on:</p>
-<p><strong>Performance.</strong> Sonnet 5.5 scores 70.6% on Terminal-Bench 4.0, an agentic coding evaluation, compared to Sonnet 5’s 10.3%. It scores two points below Opus 5.5 on GDPval-AA, a test of real-world work across a variety of occupations. And it’s strong on long-horizon work and image understanding—it’s the first Sonnet model to beat <em>Pokémon Red</em> working only from screenshots.</p>
-<p><strong>Collaboration.</strong> Like Opus 5.5, Sonnet 5.5 writes more clearly than our previous generation of models; early testers described it as a better partner for collaboration than Sonnet 5. Its speed also makes it well suited to fast iteration on less complex tasks.</p>
-<p><strong>Cost.</strong> Sonnet 5.5 is priced the same as Sonnet 5 at $2 per million input tokens, $10 per million output tokens, and $0.20 per million tokens for cache reads, but it typically needs far fewer tokens to do the same work. In our testing, it costs up to 30% less per task than its predecessor.</p>
-<p><strong>Speed.</strong> Sonnet 5.5 generates outputs 30%+ faster than Sonnet 5, making it our fastest Sonnet model to date.</p>
-<p><strong>Alignment and safety.</strong> On our automated behavioral audit, Sonnet 5.5 improves on or matches Sonnet 5 on most measures of alignment. Because its cybersecurity capabilities are comparable to Opus 5’s, it’s the first Sonnet model to launch with cyber safeguards and fallbacks like those we’ve developed for our most capable models. Its biology safeguards are the same as Sonnet 5’s. Both safeguards target a narrow set of high-risk requests; routine software development and most life sciences work are unaffected.</p>
-<h2>Performance</h2>
-<p>Sonnet 5.5 improves on Sonnet 5 across domains—in some cases dramatically. On several evaluations, Sonnet 5.5 at Max effort even performs comparably to Opus 5.5. However, benchmark scores capture only one facet of a model’s capabilities; in our own testing, and in that of external testers, Opus 5.5 remains clearly stronger at complex, open-ended work requiring sustained judgment.</p>
-<table><thead><tr><th></th><th>Sonnet 5.5</th><th>Sonnet 5</th><th>Opus 5.5</th><th>GPT-6 Sol</th></tr></thead><tbody><tr><td>Agentic codingTerminal-Bench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingTerminal-Bench 4.0</td><td>70.6%</td><td>10.3%</td><td>66.4%¹</td><td>—</td></tr><tr><td>Agentic codingFrontierCode 1.1 (Main)</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingFrontierCode 1.1 (Main)</td><td>46.2%Max²</td><td>42.4%</td><td>54.4%</td><td>49.3%</td></tr><tr><td>52.1%Xhigh</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingCursorBench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingCursorBench 4.0</td><td>55.5%</td><td>34.1%</td><td>57.8%</td><td>—</td></tr><tr><td>Knowledge workGDPval-AA v2.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>Knowledge workGDPval-AA v2.1³</td><td>1844</td><td>1449</td><td>1846</td><td>1487⁴</td></tr><tr><td>Knowledge workAA-Briefcase v1.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>Knowledge workAA-Briefcase v1.1³</td><td>1811</td><td>1359</td><td>1822</td><td>1483⁴</td></tr><tr><td>Multidisciplinary reasoningHumanity’s Last Exam</td><td></td><td></td><td></td><td></td></tr><tr><td>Multidisciplinary reasoningHumanity’s Last Exam</td><td>64.5%with tools</td><td>54.9%with tools</td><td>67.7%with tools</td><td>—</td></tr><tr><td>Computer useOSWorld 2.1</td><td></td><td></td><td></td><td></td></tr><tr><td>Computer useOSWorld 2.1</td><td>80.1%partial</td><td>57.0%partial</td><td>81.8%partial</td><td>—</td></tr><tr><td>Visual chart recognitionChartography</td><td></td><td></td><td></td><td></td></tr><tr><td>Visual chart recognitionChartography</td><td>61.6%no tools</td><td>15.6%no tools</td><td>64.4%no tools</td><td>53.6%⁴no tools</td></tr></tbody></table>
-<p>For details on how we run our evaluations, see the <a href="https://www.anthropic.com/claude-sonnet-5-5-system-card">Sonnet 5.5 System Card</a>.</p>
-<p>The charts below plot each model’s score against its cost per task at every effort level. As effort goes up, models typically work for longer, leading to a higher cost per task but generally also a higher score. The closer a point is to the top left of the chart, the more capability it delivers per dollar.</p>
-<p>On several benchmarks, Sonnet 5.5 at Low or Medium effort beats Sonnet 5’s best score for about a tenth of the cost per task. It complements Opus 5.5 best when running at lower effort settings, where it costs less per task. At higher settings, it can perform comparably at a similar cost.</p>
-<p>Agentic terminal coding</p>
-<p>Agentic coding: FrontierCode</p>
-<p>Agentic coding: CursorBench</p>
-<p>Knowledge work: AA-Briefcase</p>
-<p>Terminal-Bench 4.0</p>
-<p>Accuracy vs. cost</p>
-<p>Terminal-Bench 4.0 measures how well a model can complete complex, multi-step professional tasks within a command-line interface. At Medium effort, the default in the Claude apps, Sonnet 5.5 far exceeds Sonnet 5’s best score for less than a tenth of the cost per task.</p>
-<p>Terminal-Bench and OpenAI did not report GPT-6 Sol performance publicly, so we report GPT-5.6 Sol here.</p>
-<p>FrontierCode v1.1, main set</p>
-<p>Accuracy vs. cost</p>
-<p>FrontierCode measures whether an agent’s code changes would be merged. At High effort, the default on the Claude Platform, Sonnet 5.5 matches GPT-6 Sol’s best score for about a fifth of the cost per task.²</p>
-<p>CursorBench 4.0</p>
-<p>Accuracy vs. cost</p>
-<p>CursorBench evaluates coding agents on ambiguous, multi-file tasks taken from real Cursor sessions. Sonnet 5.5 at Low effort exceeds Sonnet 5’s best score for less than a tenth of the cost per task.</p>
-<p>CursorBench 4.0 does not report GPT-6 Sol performance publicly, so we report GPT-5.6 Sol here.</p>
-<p>AA-Briefcase v1.1</p>
-<p>Accuracy vs. cost</p>
-<p>On AA-Briefcase, a new benchmark of long-horizon knowledge work, Sonnet 5.5 at Medium effort bests Sonnet 5’s best score for about one ninth of the cost per task.³</p>
-<h2>Coding</h2>
-<p>Sonnet 5.5’s jump in performance is particularly noticeable in coding. At High effort on FrontierCode, it scores 10 points higher than Sonnet 5 at the same setting, at about one fifteenth of the cost per task. On CursorBench, which tests models on tasks from real Cursor coding sessions, its best score is within about two points of Opus 5.5.</p>
-<p>Early testers appreciated how quickly Sonnet 5.5 can understand a codebase. They were also struck by its efficiency: in head-to-head runs, it batched tool calls together more than Sonnet 5, leading to fewer steps and lower costs.</p>
-<p>Epic Games</p>
-<p>Every</p>
-<p>CodeRabbit</p>
-<p>SpaceXAI</p>
-<p>Base44</p>
-<p>Unity</p>
-<p>Creator</p>
-<p>Quote</p>
-<blockquote>“In Epic’s early testing, Claude Sonnet 5.5 cleared the same quality bar you’d expect from a higher-tier model, holding up on a system design audit and a data flow review. The new model managed tens of thousands of lines of code for gameplay system architecture, kept responses snappy, handled multi-hour tasks, and delivered with less prescriptive prompting.”</blockquote>
-<p>Company</p>
-<p>Epic Games</p>
-<p>Author</p>
-<p>Daniel Vogel, Chief Operating Officer</p>
-<p>Quote</p>
-<blockquote>“Claude Sonnet 5.5 cooks. Fast at coding and can be steered quickly in iterative workflows. But it can still work long if it needs to. It’s got some of Opus 5.5’s natural writing upgrades, which makes it more fun to work with.”</blockquote>
-<p>Company</p>
-<p>Every</p>
-<p>Author</p>
-<p>Tyler Nishida, Designer</p>
-<p>Quote</p>
-<blockquote>“Claude Sonnet 5.5 shows better judgment than Sonnet 5 across different levels of complexity, while spending significantly fewer output tokens. Sonnet 5’s tendency to reach for web search too often and its high token use are both gone in this new model. We plan to move simple and moderate reviews over now, and more in the coming weeks.”</blockquote>
-<p>Company</p>
-<p>CodeRabbit</p>
-<p>Author</p>
-<p>David Loker, VP of AI</p>
-<p>Quote</p>
-<blockquote>“Claude Sonnet 5.5 delivers frontier-level performance on CursorBench 4.0 at 55.5%, second only to Opus 5.5. We think it will be a hit with developers looking to balance performance with cost.”</blockquote>
-<p>Company</p>
-<p>SpaceXAI</p>
-<p>Author</p>
-<p>Sualeh Asif, Director of ML</p>
-<p>Quote</p>
-<blockquote>“Across 118 real app builds, Claude Sonnet 5.5 produced apps that scored level with Opus 5. It got there in 3.6 iterations per build on average, where Opus 5 took 7.7. It had the fewest failed tool calls of any model we compared. It also rarely stopped mid-build to ask the user a question, so fewer builds stall waiting on someone to answer.”</blockquote>
-<p>Company</p>
-<p>Base44</p>
-<p>Author</p>
-<p>Gabriel Grinberg, AI Engineering Lead</p>
-<p>Quote</p>
-<blockquote>“At Unity, we have a high bar for task completion. Projects are reopened and results are checked at runtime, so a task only counts when the change works, not when the model says it’s done. The majority of Claude Sonnet 5.5’s work passed that check. It also completed 90% of tasks in our multi-step Unity Editor and coding benchmark, beating similar models.”</blockquote>
-<p>Company</p>
-<p>Unity</p>
-<p>Author</p>
-<p>Sam Zhang, Creative Technologist</p>
-<p>Quote</p>
-<blockquote>“When Claude Opus 5.5 sets the architecture and general framework for a game, I would feel confident in letting Sonnet 5.5 implement it. I’m impressed with Sonnet 5.5’s handling of long-running, complex tasks.”</blockquote>
-<p>Company</p>
-<p>Creator</p>
-<p>Author</p>
-<p>Kevin Ngo, Creative Coder</p>
-<h2>Knowledge work</h2>
-<p>Sonnet 5.5 shows gains in multiple areas of knowledge work. On GDPval-AA, which tests models on real-world tasks across 44 occupations and nine major industries, Sonnet 5.5 scores nearly level with Opus 5.5 and about 400 points above Sonnet 5. It’s close to Opus 5.5 in computer use and chart recognition, and clearly outperforms Sonnet 5 and GPT-6 Sol on long-horizon knowledge work.</p>
-<p>Early testers highlighted less quantifiable improvements. They found it to be a more natural conversational partner and remarked on its knack for design, noting that it adds polish to user interfaces and can follow slide templates to create decks that require minimal editing. In one internal test, we gave it a public company’s quarterly earnings materials and call transcripts, along with a slide template, and asked for a 10-slide operating review. Two experts judged its first draft to be ready to send as is.</p>
-<p>Slack</p>
-<p>Zendesk</p>
-<p>Balyasny Asset Management</p>
-<p>Box</p>
-<p>Lovable</p>
-<p>Atlassian</p>
-<p>Quote</p>
-<blockquote>“Without changing any of our prompts, Claude Sonnet 5.5 did better than Sonnet 5 on almost all of our offline Slackbot evals, in fewer steps and with about 14% fewer output tokens. When someone gives Slackbot a task, quality and speed are what matter most, and Sonnet 5.5 allows Slackbot to deliver better outcomes for users, faster.”</blockquote>
-<p>Company</p>
-<p>Slack</p>
-<p>Author</p>
-<p>Curtis Allen, Principal Engineer</p>
-<p>Quote</p>
-<blockquote>“We fed Claude Sonnet 5.5 hundreds of real support use cases across replies and escalation requests. It made fewer wrong decisions and resolved tickets faster than the Claude models we use in production today. Tickets were processed 20% faster, getting our customers the help they need without the wait.”</blockquote>
-<p>Company</p>
-<p>Zendesk</p>
-<p>Author</p>
-<p>Abhinay Kathuria, Director of AI</p>
-<p>Quote</p>
-<blockquote>“On our private suite of 2,441 finance tasks covering Q&amp;A, extraction, analysis, and forecasting, Claude Sonnet 5.5 scored ahead of Sonnet 5 and used about 121k tokens per answer, where Sonnet 5 used 497k. On our analyst search and retrieval work, it was better than Sonnet 5 in almost every way. For high-volume workflows, it had the best quality-to-cost tradeoff of the seven models we ran.”</blockquote>
-<p>Company</p>
-<p>Balyasny Asset Management</p>
-<p>Author</p>
-<p>Joe Poirier, Senior AI Engineer</p>
-<p>Quote</p>
-<blockquote>“Claude Sonnet 5.5 will give our customers in financial services and healthcare the confidence to use it for their most sensitive work. Sonnet 5.5 rechecks data in source documents, catching errors that Sonnet 5 failed to spot. Compared to the last model, Sonnet 5.5 was more accurate, 2.4x faster, and used 12% fewer total tokens.”</blockquote>
-<p>Company</p>
-<p>Box</p>
-<p>Author</p>
-<p>Yashodha Bhavnani, VP of AI Products</p>
-<p>Quote</p>
-<blockquote>“Claude Sonnet 5.5 thinks in fewer, more robust steps, so builders wait less to see progress. Our coding evals showed a third fewer tool calls and roughly half the shell runs to finish a task. For everyday coding and higher-effort conversations, that means faster iteration and a smoother build loop.”</blockquote>
-<p>Company</p>
-<p>Lovable</p>
-<p>Author</p>
-<p>Fabian Hedin, Co-founder and CTO</p>
-<p>Quote</p>
-<blockquote>“With millions of Rovo-assisted actions powering our customers’ workflows each month, execution speed is critical. Claude Sonnet 5.5 will allow teams to run their Rovo Agents up to 30% faster than they could with Sonnet 5. I am excited to offer customers this choice.”</blockquote>
-<p>Company</p>
-<p>Atlassian</p>
-<p>Author</p>
-<p>Jamil Valliani, Head of Product, AI</p>
-<h2>Cost and speed</h2>
-<p>Pricing</p>
-<table><thead><tr><th>Price per 1M tokens</th><th><strong>Claude Sonnet 5.5</strong></th><th>Claude Opus 5.5</th></tr></thead><tbody><tr><td>Cache reads</td><td>$0.20</td><td>$0.20</td></tr><tr><td>Cache writes</td><td>$2.50</td><td>$5</td></tr><tr><td>Input tokens</td><td>$2</td><td>$4</td></tr><tr><td>Output tokens</td><td>$10</td><td>$20</td></tr></tbody></table>
-<p>Sonnet 5.5 requires fewer tokens per task than Sonnet 5, so it’s less expensive to run. It also generates output 30%+ faster, and its efficiency is immediately noticeable:</p>
-<p>Prompt:</p>
-<p>A murmuration of 400 starlings in one HTML file</p>
-<p>Claude Sonnet 5</p>
-<p>Claude Sonnet 5.5</p>
-<p>Prompt:</p>
-<p>Wind shaping sand dunes in one HTML file</p>
-<p>Claude Sonnet 5</p>
-<p>Claude Sonnet 5.5</p>
-<p>Prompt:</p>
-<p>A clock made of 24 small clocks in one HTML file</p>
-<p>Claude Sonnet 5</p>
-<p>Claude Sonnet 5.5</p>
-<p>Adjusting the <a href="https://academy.claude.com/tutorials/choosing-the-right-effort-level-in-claude-code">effort level</a> lets you balance cost and speed against overall quality. In Claude Code and our apps, the default effort is set to Medium, while the Claude Platform defaults to High. At lower settings, Claude answers faster and uses fewer tokens, which suits routine work. At higher settings, Claude reasons for longer and checks its work more thoroughly.</p>
-<h2>Safety</h2>
-<h3>Alignment</h3>
-<p>Sonnet 5.5 doesn’t advance the frontier of our models’ capabilities, so our alignment assessment focused on a targeted set of risks that apply to models of any capability level, including acting against users’ interests, misleading users, and cooperating with high-stakes misuse.</p>
-<p>On our automated behavioral audit, which tests Claude across roughly 1,850 scenarios, Sonnet 5.5 improves on or matches Sonnet 5 on most measures of alignment, resistance to misuse, and honesty. On our newer containment evaluations, Sonnet 5.5 comes close to Opus 5.5, the best model we tested, in how rarely it tries to escape its sandbox, and it’s the least likely of any of our models to probe the limits of its containers. Across the full audit, Opus 5.5 still performs slightly better overall, but we found no evidence that Sonnet 5.5 pursues goals that conflict with the user’s intention.</p>
-<p>As we described in our <a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">recent alignment assessment</a>, no set of evaluations reliably catches every failure, and Sonnet 5.5 may have tendencies we haven’t found, which is why we pair our own alignment work with the safeguards described below.</p>
-<h3>Safeguards</h3>
-<p><strong>Cybersecurity.</strong> Sonnet 5.5’s cyber capabilities are a large improvement over Sonnet 5’s, so we’re deploying it with safeguards similar to those on Opus 5.5. Users can still find and fix bugs in their code as part of routine software development, but higher-risk cybersecurity tasks will visibly fall back to Sonnet 5. Soon, cyberdefenders will be able to apply to our expanded <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a> for tiered access to more advanced capabilities on Sonnet 5.5, Opus 5.5, and Claude Mythos models.</p>
-<p><strong>Biology.</strong> Sonnet 5.5 uses the same set of biology safeguards as Sonnet 5. These target harmful requests; most research, education, and clinical work is unaffected, though some microbiology and virology requests may be flagged in error. Organizations can apply to our <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a> for access to safeguards designed for the full breadth of biology-related work.</p>
-<p><strong>Distillation.</strong> Distillation attacks, in which attackers use thousands of fake accounts to extract a model’s capabilities at industrial scale, allow bad actors to create highly capable models without the safeguards we build into Claude. Because Sonnet 5.5 is far more capable than its predecessor, it’s the first Sonnet model to launch with safety classifiers that prevent reasoning extraction. Sonnet 5.5 also expands <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking</a>, so Claude’s thinking cannot be decoupled from the account that created it. Most developers won’t notice a change. If you move conversations between accounts, including switching accounts mid-session in Claude Code, our <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">docs article</a> explains the change.</p>
-<h2>Getting started</h2>
-<p>As with Opus 5.5 and Sonnet 5, Claude Sonnet 5.5 is available with zero data retention.</p>
-<p>Claude Sonnet 5.5 is now available on all platforms, including Amazon Web Services, Google Cloud, and Microsoft Azure. Developers can get started on the Claude Platform with <code>claude-sonnet-5-5</code>. If you run Sonnet with thinking off, you’ll need to switch to the new <code>between_tools</code> setting, which keeps up-front thinking off, before moving to Sonnet 5.5. See our <a href="https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide#turn-thinking-off">migration guide</a> for details.</p>
-<h2>Footnotes</h2>
-<p>1 Terminal-Bench 4.0 results are reported for Claude Opus 5.5 at Xhigh effort which represents the model’s highest score.</p>
-<p>2 Sonnet 5.5 scores lower at Max effort than at Xhigh. FrontierCode evaluates whether a code change could be merged without human edits. It penalizes out-of-scope changes, even if they are high-quality or helpful. At Max effort, Sonnet 5.5 more often ran Claude Code’s code-review skill, which splits the review across many subagents, and in two cases Cognition examined, this led to a timeout or to extra edits beyond the task’s scope, and therefore to a lower score.</p>
-<p>3 Artificial Analysis ran GDPval-AA and AA-Briefcase on a pre-release deployment of Sonnet 5.5 on the Claude Platform, which we found to have a bug that could degrade responses to requests that use structured outputs. We expect the effect on Sonnet 5.5’s scores, if any, to be small and to understate its performance. That bug has since been fixed.</p>
-<p>4 OpenAI recently fixed a bug that degraded image understanding in GPT-6 Sol. Official AA-Briefcase v1.1 and GDPval-AA v2.1 scores from Artificial Analysis, and Chartography scores from Surge AI, may not have been updated yet to reflect the latest version of the model. Artificial Analysis does not expect major impacts to AA-Briefcase v1.1 and GDPval-AA v2.1. Internal testing of Chartography suggests its score was not impacted.</p>]]></content:encoded>
-    </item>
-    <item>
       <title>How Comcast and Booz Allen use Claude Mythos to find exploit…</title>
       <link>https://claude.com/resources/articles/how-comcast-booz-allen-use-claude-mythos-to-secure-their-codebases</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/how-comcast-booz-allen-use-claude-mythos-to-secure-their-codebases?li=1</guid>
@@ -503,6 +332,12 @@
 <p>We’re launching the Anthropic Cyber Mission, a long-term commitment to securing the systems everyone depends on.</p>]]></content:encoded>
     </item>
     <item>
+      <title>Introducing Claude Haiku 5.5</title>
+      <link>https://www.anthropic.com/claude-haiku-5-5</link>
+      <guid isPermaLink="true">https://www.anthropic.com/claude-haiku-5-5?li=1</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
       <title>How Cresta turned CX expertise into an agent builder on the…</title>
       <link>https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk?li=1</guid>
@@ -551,6 +386,177 @@
 <h3>Get the developer newsletter</h3>
 <p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
 <p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Introducing Claude Sonnet 5.5</title>
+      <link>https://www.anthropic.com/claude-sonnet-5-5</link>
+      <guid isPermaLink="true">https://www.anthropic.com/claude-sonnet-5-5?li=1</guid>
+      <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Claude Sonnet 5.5</h1>
+<p>September 28, 2026</p>
+<p>Introducing Claude Sonnet 5.5, the second model in the Claude 5.5 family. It’s a clear upgrade over Claude Sonnet 5, runs 30%+ faster, and costs up to 30% less for most work.</p>
+<p>Sonnet 5.5 is a faster, lower-cost complement to Claude Opus 5.5. Where Opus 5.5 is built for complex work requiring careful judgment, Sonnet 5.5 is strongest at well-scoped everyday tasks, fixing bugs, and creating polished documents, slides, and spreadsheets. It’s also got a sharp eye for design. Claude Haiku 5.5, built for high-volume and cost-sensitive applications, will join the Claude 5.5 family in the coming weeks.</p>
+<p>Sonnet 5.5 improves over Sonnet 5 on:</p>
+<p><strong>Performance.</strong> Sonnet 5.5 scores 70.6% on Terminal-Bench 4.0, an agentic coding evaluation, compared to Sonnet 5’s 10.3%. It scores two points below Opus 5.5 on GDPval-AA, a test of real-world work across a variety of occupations. And it’s strong on long-horizon work and image understanding—it’s the first Sonnet model to beat <em>Pokémon Red</em> working only from screenshots.</p>
+<p><strong>Collaboration.</strong> Like Opus 5.5, Sonnet 5.5 writes more clearly than our previous generation of models; early testers described it as a better partner for collaboration than Sonnet 5. Its speed also makes it well suited to fast iteration on less complex tasks.</p>
+<p><strong>Cost.</strong> Sonnet 5.5 is priced the same as Sonnet 5 at $2 per million input tokens, $10 per million output tokens, and $0.20 per million tokens for cache reads, but it typically needs far fewer tokens to do the same work. In our testing, it costs up to 30% less per task than its predecessor.</p>
+<p><strong>Speed.</strong> Sonnet 5.5 generates outputs 30%+ faster than Sonnet 5, making it our fastest Sonnet model to date.</p>
+<p><strong>Alignment and safety.</strong> On our automated behavioral audit, Sonnet 5.5 improves on or matches Sonnet 5 on most measures of alignment. Because its cybersecurity capabilities are comparable to Opus 5’s, it’s the first Sonnet model to launch with cyber safeguards and fallbacks like those we’ve developed for our most capable models. Its biology safeguards are the same as Sonnet 5’s. Both safeguards target a narrow set of high-risk requests; routine software development and most life sciences work are unaffected.</p>
+<h2>Performance</h2>
+<p>Sonnet 5.5 improves on Sonnet 5 across domains—in some cases dramatically. On several evaluations, Sonnet 5.5 at Max effort even performs comparably to Opus 5.5. However, benchmark scores capture only one facet of a model’s capabilities; in our own testing, and in that of external testers, Opus 5.5 remains clearly stronger at complex, open-ended work requiring sustained judgment.</p>
+<table><thead><tr><th></th><th>Sonnet 5.5</th><th>Sonnet 5</th><th>Opus 5.5</th><th>GPT-6 Sol</th></tr></thead><tbody><tr><td>Agentic codingTerminal-Bench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingTerminal-Bench 4.0</td><td>70.6%</td><td>10.3%</td><td>66.4%¹</td><td>—</td></tr><tr><td>Agentic codingFrontierCode 1.1 (Main)</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingFrontierCode 1.1 (Main)</td><td>46.2%Max²</td><td>42.4%</td><td>54.4%</td><td>49.3%</td></tr><tr><td>52.1%Xhigh</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingCursorBench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic codingCursorBench 4.0</td><td>55.5%</td><td>34.1%</td><td>57.8%</td><td>—</td></tr><tr><td>Knowledge workGDPval-AA v2.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>Knowledge workGDPval-AA v2.1³</td><td>1844</td><td>1449</td><td>1846</td><td>1487⁴</td></tr><tr><td>Knowledge workAA-Briefcase v1.1³</td><td></td><td></td><td></td><td></td></tr><tr><td>Knowledge workAA-Briefcase v1.1³</td><td>1811</td><td>1359</td><td>1822</td><td>1483⁴</td></tr><tr><td>Multidisciplinary reasoningHumanity’s Last Exam</td><td></td><td></td><td></td><td></td></tr><tr><td>Multidisciplinary reasoningHumanity’s Last Exam</td><td>64.5%with tools</td><td>54.9%with tools</td><td>67.7%with tools</td><td>—</td></tr><tr><td>Computer useOSWorld 2.1</td><td></td><td></td><td></td><td></td></tr><tr><td>Computer useOSWorld 2.1</td><td>80.1%partial</td><td>57.0%partial</td><td>81.8%partial</td><td>—</td></tr><tr><td>Visual chart recognitionChartography</td><td></td><td></td><td></td><td></td></tr><tr><td>Visual chart recognitionChartography</td><td>61.6%no tools</td><td>15.6%no tools</td><td>64.4%no tools</td><td>53.6%⁴no tools</td></tr></tbody></table>
+<p>For details on how we run our evaluations, see the <a href="https://www.anthropic.com/claude-sonnet-5-5-system-card">Sonnet 5.5 System Card</a>.</p>
+<p>The charts below plot each model’s score against its cost per task at every effort level. As effort goes up, models typically work for longer, leading to a higher cost per task but generally also a higher score. The closer a point is to the top left of the chart, the more capability it delivers per dollar.</p>
+<p>On several benchmarks, Sonnet 5.5 at Low or Medium effort beats Sonnet 5’s best score for about a tenth of the cost per task. It complements Opus 5.5 best when running at lower effort settings, where it costs less per task. At higher settings, it can perform comparably at a similar cost.</p>
+<p>Agentic terminal coding</p>
+<p>Agentic coding: FrontierCode</p>
+<p>Agentic coding: CursorBench</p>
+<p>Knowledge work: AA-Briefcase</p>
+<p>Terminal-Bench 4.0</p>
+<p>Accuracy vs. cost</p>
+<p>Terminal-Bench 4.0 measures how well a model can complete complex, multi-step professional tasks within a command-line interface. At Medium effort, the default in the Claude apps, Sonnet 5.5 far exceeds Sonnet 5’s best score for less than a tenth of the cost per task.</p>
+<p>Terminal-Bench and OpenAI did not report GPT-6 Sol performance publicly, so we report GPT-5.6 Sol here.</p>
+<p>FrontierCode v1.1, main set</p>
+<p>Accuracy vs. cost</p>
+<p>FrontierCode measures whether an agent’s code changes would be merged. At High effort, the default on the Claude Platform, Sonnet 5.5 matches GPT-6 Sol’s best score for about a fifth of the cost per task.²</p>
+<p>CursorBench 4.0</p>
+<p>Accuracy vs. cost</p>
+<p>CursorBench evaluates coding agents on ambiguous, multi-file tasks taken from real Cursor sessions. Sonnet 5.5 at Low effort exceeds Sonnet 5’s best score for less than a tenth of the cost per task.</p>
+<p>CursorBench 4.0 does not report GPT-6 Sol performance publicly, so we report GPT-5.6 Sol here.</p>
+<p>AA-Briefcase v1.1</p>
+<p>Accuracy vs. cost</p>
+<p>On AA-Briefcase, a new benchmark of long-horizon knowledge work, Sonnet 5.5 at Medium effort bests Sonnet 5’s best score for about one ninth of the cost per task.³</p>
+<h2>Coding</h2>
+<p>Sonnet 5.5’s jump in performance is particularly noticeable in coding. At High effort on FrontierCode, it scores 10 points higher than Sonnet 5 at the same setting, at about one fifteenth of the cost per task. On CursorBench, which tests models on tasks from real Cursor coding sessions, its best score is within about two points of Opus 5.5.</p>
+<p>Early testers appreciated how quickly Sonnet 5.5 can understand a codebase. They were also struck by its efficiency: in head-to-head runs, it batched tool calls together more than Sonnet 5, leading to fewer steps and lower costs.</p>
+<p>Epic Games</p>
+<p>Every</p>
+<p>CodeRabbit</p>
+<p>SpaceXAI</p>
+<p>Base44</p>
+<p>Unity</p>
+<p>Creator</p>
+<p>Quote</p>
+<blockquote>“In Epic’s early testing, Claude Sonnet 5.5 cleared the same quality bar you’d expect from a higher-tier model, holding up on a system design audit and a data flow review. The new model managed tens of thousands of lines of code for gameplay system architecture, kept responses snappy, handled multi-hour tasks, and delivered with less prescriptive prompting.”</blockquote>
+<p>Company</p>
+<p>Epic Games</p>
+<p>Author</p>
+<p>Daniel Vogel, Chief Operating Officer</p>
+<p>Quote</p>
+<blockquote>“Claude Sonnet 5.5 cooks. Fast at coding and can be steered quickly in iterative workflows. But it can still work long if it needs to. It’s got some of Opus 5.5’s natural writing upgrades, which makes it more fun to work with.”</blockquote>
+<p>Company</p>
+<p>Every</p>
+<p>Author</p>
+<p>Tyler Nishida, Designer</p>
+<p>Quote</p>
+<blockquote>“Claude Sonnet 5.5 shows better judgment than Sonnet 5 across different levels of complexity, while spending significantly fewer output tokens. Sonnet 5’s tendency to reach for web search too often and its high token use are both gone in this new model. We plan to move simple and moderate reviews over now, and more in the coming weeks.”</blockquote>
+<p>Company</p>
+<p>CodeRabbit</p>
+<p>Author</p>
+<p>David Loker, VP of AI</p>
+<p>Quote</p>
+<blockquote>“Claude Sonnet 5.5 delivers frontier-level performance on CursorBench 4.0 at 55.5%, second only to Opus 5.5. We think it will be a hit with developers looking to balance performance with cost.”</blockquote>
+<p>Company</p>
+<p>SpaceXAI</p>
+<p>Author</p>
+<p>Sualeh Asif, Director of ML</p>
+<p>Quote</p>
+<blockquote>“Across 118 real app builds, Claude Sonnet 5.5 produced apps that scored level with Opus 5. It got there in 3.6 iterations per build on average, where Opus 5 took 7.7. It had the fewest failed tool calls of any model we compared. It also rarely stopped mid-build to ask the user a question, so fewer builds stall waiting on someone to answer.”</blockquote>
+<p>Company</p>
+<p>Base44</p>
+<p>Author</p>
+<p>Gabriel Grinberg, AI Engineering Lead</p>
+<p>Quote</p>
+<blockquote>“At Unity, we have a high bar for task completion. Projects are reopened and results are checked at runtime, so a task only counts when the change works, not when the model says it’s done. The majority of Claude Sonnet 5.5’s work passed that check. It also completed 90% of tasks in our multi-step Unity Editor and coding benchmark, beating similar models.”</blockquote>
+<p>Company</p>
+<p>Unity</p>
+<p>Author</p>
+<p>Sam Zhang, Creative Technologist</p>
+<p>Quote</p>
+<blockquote>“When Claude Opus 5.5 sets the architecture and general framework for a game, I would feel confident in letting Sonnet 5.5 implement it. I’m impressed with Sonnet 5.5’s handling of long-running, complex tasks.”</blockquote>
+<p>Company</p>
+<p>Creator</p>
+<p>Author</p>
+<p>Kevin Ngo, Creative Coder</p>
+<h2>Knowledge work</h2>
+<p>Sonnet 5.5 shows gains in multiple areas of knowledge work. On GDPval-AA, which tests models on real-world tasks across 44 occupations and nine major industries, Sonnet 5.5 scores nearly level with Opus 5.5 and about 400 points above Sonnet 5. It’s close to Opus 5.5 in computer use and chart recognition, and clearly outperforms Sonnet 5 and GPT-6 Sol on long-horizon knowledge work.</p>
+<p>Early testers highlighted less quantifiable improvements. They found it to be a more natural conversational partner and remarked on its knack for design, noting that it adds polish to user interfaces and can follow slide templates to create decks that require minimal editing. In one internal test, we gave it a public company’s quarterly earnings materials and call transcripts, along with a slide template, and asked for a 10-slide operating review. Two experts judged its first draft to be ready to send as is.</p>
+<p>Slack</p>
+<p>Zendesk</p>
+<p>Balyasny Asset Management</p>
+<p>Box</p>
+<p>Lovable</p>
+<p>Atlassian</p>
+<p>Quote</p>
+<blockquote>“Without changing any of our prompts, Claude Sonnet 5.5 did better than Sonnet 5 on almost all of our offline Slackbot evals, in fewer steps and with about 14% fewer output tokens. When someone gives Slackbot a task, quality and speed are what matter most, and Sonnet 5.5 allows Slackbot to deliver better outcomes for users, faster.”</blockquote>
+<p>Company</p>
+<p>Slack</p>
+<p>Author</p>
+<p>Curtis Allen, Principal Engineer</p>
+<p>Quote</p>
+<blockquote>“We fed Claude Sonnet 5.5 hundreds of real support use cases across replies and escalation requests. It made fewer wrong decisions and resolved tickets faster than the Claude models we use in production today. Tickets were processed 20% faster, getting our customers the help they need without the wait.”</blockquote>
+<p>Company</p>
+<p>Zendesk</p>
+<p>Author</p>
+<p>Abhinay Kathuria, Director of AI</p>
+<p>Quote</p>
+<blockquote>“On our private suite of 2,441 finance tasks covering Q&amp;A, extraction, analysis, and forecasting, Claude Sonnet 5.5 scored ahead of Sonnet 5 and used about 121k tokens per answer, where Sonnet 5 used 497k. On our analyst search and retrieval work, it was better than Sonnet 5 in almost every way. For high-volume workflows, it had the best quality-to-cost tradeoff of the seven models we ran.”</blockquote>
+<p>Company</p>
+<p>Balyasny Asset Management</p>
+<p>Author</p>
+<p>Joe Poirier, Senior AI Engineer</p>
+<p>Quote</p>
+<blockquote>“Claude Sonnet 5.5 will give our customers in financial services and healthcare the confidence to use it for their most sensitive work. Sonnet 5.5 rechecks data in source documents, catching errors that Sonnet 5 failed to spot. Compared to the last model, Sonnet 5.5 was more accurate, 2.4x faster, and used 12% fewer total tokens.”</blockquote>
+<p>Company</p>
+<p>Box</p>
+<p>Author</p>
+<p>Yashodha Bhavnani, VP of AI Products</p>
+<p>Quote</p>
+<blockquote>“Claude Sonnet 5.5 thinks in fewer, more robust steps, so builders wait less to see progress. Our coding evals showed a third fewer tool calls and roughly half the shell runs to finish a task. For everyday coding and higher-effort conversations, that means faster iteration and a smoother build loop.”</blockquote>
+<p>Company</p>
+<p>Lovable</p>
+<p>Author</p>
+<p>Fabian Hedin, Co-founder and CTO</p>
+<p>Quote</p>
+<blockquote>“With millions of Rovo-assisted actions powering our customers’ workflows each month, execution speed is critical. Claude Sonnet 5.5 will allow teams to run their Rovo Agents up to 30% faster than they could with Sonnet 5. I am excited to offer customers this choice.”</blockquote>
+<p>Company</p>
+<p>Atlassian</p>
+<p>Author</p>
+<p>Jamil Valliani, Head of Product, AI</p>
+<h2>Cost and speed</h2>
+<p>Pricing</p>
+<table><thead><tr><th>Price per 1M tokens</th><th><strong>Claude Sonnet 5.5</strong></th><th>Claude Opus 5.5</th></tr></thead><tbody><tr><td>Cache reads</td><td>$0.20</td><td>$0.20</td></tr><tr><td>Cache writes</td><td>$2.50</td><td>$5</td></tr><tr><td>Input tokens</td><td>$2</td><td>$4</td></tr><tr><td>Output tokens</td><td>$10</td><td>$20</td></tr></tbody></table>
+<p>Sonnet 5.5 requires fewer tokens per task than Sonnet 5, so it’s less expensive to run. It also generates output 30%+ faster, and its efficiency is immediately noticeable:</p>
+<p>Prompt:</p>
+<p>A murmuration of 400 starlings in one HTML file</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>Prompt:</p>
+<p>Wind shaping sand dunes in one HTML file</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>Prompt:</p>
+<p>A clock made of 24 small clocks in one HTML file</p>
+<p>Claude Sonnet 5</p>
+<p>Claude Sonnet 5.5</p>
+<p>Adjusting the <a href="https://academy.claude.com/tutorials/choosing-the-right-effort-level-in-claude-code">effort level</a> lets you balance cost and speed against overall quality. In Claude Code and our apps, the default effort is set to Medium, while the Claude Platform defaults to High. At lower settings, Claude answers faster and uses fewer tokens, which suits routine work. At higher settings, Claude reasons for longer and checks its work more thoroughly.</p>
+<h2>Safety</h2>
+<h3>Alignment</h3>
+<p>Sonnet 5.5 doesn’t advance the frontier of our models’ capabilities, so our alignment assessment focused on a targeted set of risks that apply to models of any capability level, including acting against users’ interests, misleading users, and cooperating with high-stakes misuse.</p>
+<p>On our automated behavioral audit, which tests Claude across roughly 1,850 scenarios, Sonnet 5.5 improves on or matches Sonnet 5 on most measures of alignment, resistance to misuse, and honesty. On our newer containment evaluations, Sonnet 5.5 comes close to Opus 5.5, the best model we tested, in how rarely it tries to escape its sandbox, and it’s the least likely of any of our models to probe the limits of its containers. Across the full audit, Opus 5.5 still performs slightly better overall, but we found no evidence that Sonnet 5.5 pursues goals that conflict with the user’s intention.</p>
+<p>As we described in our <a href="https://www.anthropic.com/research/alignment-assessment-cybersecurity-incidents">recent alignment assessment</a>, no set of evaluations reliably catches every failure, and Sonnet 5.5 may have tendencies we haven’t found, which is why we pair our own alignment work with the safeguards described below.</p>
+<h3>Safeguards</h3>
+<p><strong>Cybersecurity.</strong> Sonnet 5.5’s cyber capabilities are a large improvement over Sonnet 5’s, so we’re deploying it with safeguards similar to those on Opus 5.5. Users can still find and fix bugs in their code as part of routine software development, but higher-risk cybersecurity tasks will visibly fall back to Sonnet 5. Soon, cyberdefenders will be able to apply to our expanded <a href="https://support.claude.com/en/articles/14604842-real-time-cyber-safeguards-on-claude-opus-and-sonnet">Cyber Verification Program</a> for tiered access to more advanced capabilities on Sonnet 5.5, Opus 5.5, and Claude Mythos models.</p>
+<p><strong>Biology.</strong> Sonnet 5.5 uses the same set of biology safeguards as Sonnet 5. These target harmful requests; most research, education, and clinical work is unaffected, though some microbiology and virology requests may be flagged in error. Organizations can apply to our <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a> for access to safeguards designed for the full breadth of biology-related work.</p>
+<p><strong>Distillation.</strong> Distillation attacks, in which attackers use thousands of fake accounts to extract a model’s capabilities at industrial scale, allow bad actors to create highly capable models without the safeguards we build into Claude. Because Sonnet 5.5 is far more capable than its predecessor, it’s the first Sonnet model to launch with safety classifiers that prevent reasoning extraction. Sonnet 5.5 also expands <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">preserved thinking</a>, so Claude’s thinking cannot be decoupled from the account that created it. Most developers won’t notice a change. If you move conversations between accounts, including switching accounts mid-session in Claude Code, our <a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">docs article</a> explains the change.</p>
+<h2>Getting started</h2>
+<p>As with Opus 5.5 and Sonnet 5, Claude Sonnet 5.5 is available with zero data retention.</p>
+<p>Claude Sonnet 5.5 is now available on all platforms, including Amazon Web Services, Google Cloud, and Microsoft Azure. Developers can get started on the Claude Platform with <code>claude-sonnet-5-5</code>. If you run Sonnet with thinking off, you’ll need to switch to the new <code>between_tools</code> setting, which keeps up-front thinking off, before moving to Sonnet 5.5. See our <a href="https://platform.claude.com/docs/en/models/sonnet-5-5/migration-guide#turn-thinking-off">migration guide</a> for details.</p>
+<h2>Footnotes</h2>
+<p>1 Terminal-Bench 4.0 results are reported for Claude Opus 5.5 at Xhigh effort which represents the model’s highest score.</p>
+<p>2 Sonnet 5.5 scores lower at Max effort than at Xhigh. FrontierCode evaluates whether a code change could be merged without human edits. It penalizes out-of-scope changes, even if they are high-quality or helpful. At Max effort, Sonnet 5.5 more often ran Claude Code’s code-review skill, which splits the review across many subagents, and in two cases Cognition examined, this led to a timeout or to extra edits beyond the task’s scope, and therefore to a lower score.</p>
+<p>3 Artificial Analysis ran GDPval-AA and AA-Briefcase on a pre-release deployment of Sonnet 5.5 on the Claude Platform, which we found to have a bug that could degrade responses to requests that use structured outputs. We expect the effect on Sonnet 5.5’s scores, if any, to be small and to understate its performance. That bug has since been fixed.</p>
+<p>4 OpenAI recently fixed a bug that degraded image understanding in GPT-6 Sol. Official AA-Briefcase v1.1 and GDPval-AA v2.1 scores from Artificial Analysis, and Chartography scores from Surge AI, may not have been updated yet to reflect the latest version of the model. Artificial Analysis does not expect major impacts to AA-Briefcase v1.1 and GDPval-AA v2.1. Internal testing of Chartography suggests its score was not impacted.</p>]]></content:encoded>
     </item>
     <item>
       <title>Claude Tag now supports personal connectors in channels</title>
@@ -2652,69 +2658,6 @@ return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
 <p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
 <p>Thank you! You’re subscribed.</p>
 <p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Developing Enterprise Frontier Safeguards with our customers…</title>
-      <link>https://www.anthropic.com/news/enterprise-frontier-safeguards</link>
-      <guid isPermaLink="true">https://www.anthropic.com/news/enterprise-frontier-safeguards?li=1</guid>
-      <pubDate>Tue, 01 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Developing Enterprise Frontier Safeguards with our customers \ Anthropic</description>
-      <content:encoded><![CDATA[<h1>Developing Enterprise Frontier Safeguards with our customers</h1>
-<p>Sep 1, 2026</p>
-<p>Today we’re announcing Enterprise Frontier Safeguards (EFS), a solution that combines the privacy of zero data retention (ZDR) with state-of-the-art safeguards for detecting misuse. EFS works by storing data in cloud infrastructure controlled by the customer, not Anthropic. EFS will be rolling out to customers in phases, starting later this fall. To make the transition smooth, eligible customers will receive ZDR on Fable 5 and Fable 5.1 until EFS is ready.</p>
-<p>We developed EFS in close collaboration with more than 100 customers in industries like financial services, healthcare, manufacturing, telecom, law, retail, and the public sector, and with our cloud partners at Amazon Web Services, Google Cloud, and Microsoft Azure.</p>
-<p>EFS will be supported on Claude Code, Claude Enterprise, the Claude Platform, Amazon Bedrock, Claude Platform on AWS, Google’s Agent Platform, and Microsoft Foundry.</p>
-<h2>Solving the dilemma of frontier security</h2>
-<p>Mythos-class models, like <a href="https://www.anthropic.com/claude-fable-and-mythos-5-1">Claude Fable 5.1</a>, represent a major increase in intelligence and agentic capabilities. However, with that increase comes the potential for both misuse and autonomous misbehavior.</p>
-<p>Over the last few months, we’ve seen substantial evidence of attempted misuse of AI models. These range from typical forms of abuse, such as fraud, to sophisticated cyberattacks, which can include agents autonomously engaging in destructive behavior. Some of these instances involve theft or misappropriation of enterprise customers’ credentials, which are difficult to detect without the ability to monitor traffic and detect abnormal behavior.</p>
-<p>Furthermore, because the <a href="https://www.anthropic.com/news/disrupting-AI-espionage">most sophisticated misuse</a> can involve many tasks spread across multiple sessions and accounts, it is not sufficient to run automated analysis on each interaction separately and then instantaneously discard the data. Effective detection requires storing data for a meaningful period of time so that it can be correlated across time and accounts.</p>
-<p>For this reason, we introduced 30-day data retention starting with Fable 5. This policy was not motivated by a desire to train on enterprise data: Anthropic has never trained on enterprise data without explicit permission, and never will.</p>
-<p>The enterprises we worked with generally understood the safety and security value of data retention, but many–especially in regulated industries–found it difficult to use models with data retention. We therefore sat down with customers to design a solution that could provide the best of both worlds: the privacy of ZDR and the safety allowed by monitoring across time and accounts.</p>
-<h2>Designed with our customers</h2>
-<p>We built Enterprise Frontier Safeguards with feedback from the experts who will use it every day: security, product, compliance, and delivery teams. One of the groups we worked with was the Analysis and Resilience Center for Systemic Risk (ARC), whose members include the chief information security officers of the largest US banks, including Goldman Sachs, Morgan Stanley, Citi, Bank of America, and Wells Fargo.</p>
-<p>We also worked with leaders at companies such as Comcast, KPMG, Mastercard, Salesforce, and Visa, to make sure the design held up across industries. Our conversations spanned a quarter of the Fortune 100, every US global systemically important bank, and virtually every regulated industry.</p>
-<p>Here is what we heard from this wide range of customers, and what we built into EFS to address these common concerns:</p>
-<h3>On monitoring</h3>
-<p>Enterprises have long applied monitoring for insider risk, and now want help upleveling monitoring for agents. Their concerns were about Anthropic’s automated monitoring systems meeting their regulatory standards.</p>
-<p><strong>With EFS, customers control how data gets reviewed. </strong>When monitoring detects a pattern that needs attention, those signals are sent directly to customers so they can review what the automated systems detected.</p>
-<h3>On data storage</h3>
-<p>It’s a lot of work for enterprises to add another “trusted data vendor” for a number of reasons. They need to notify all of their customers who these vendors are and update contracts. They also have internal requirements for safely storing and auditing data, given its high level of sensitivity. Because of these concerns, we architected EFS so that customers have the ability to store data on their existing cloud infrastructure.</p>
-<p><strong>In EFS, customers can control their data storage and management.</strong> Customers want the ability to have their data live in infrastructure they control, under their own encryption keys, access policies, and audit logging. Activity data used for monitoring can be stored in the customer’s own cloud account (such as Amazon S3, Azure Blob Storage, or Google Cloud Storage).</p>
-<h3>On automated and human review</h3>
-<p>Even as automated review is becoming more effective, a person looking at a flag still adds value by confirming real misuse and clearing false positives. But what we heard from many customers, especially those in regulated industries, is that the person doing that review needs to be one of their own. Many operate under rules that tightly govern who may see certain information—privileged legal material, non-public information, drug-safety reports. Their teams are already trained and cleared for that work.</p>
-<p><strong>EFS has automated safety monitoring, no Anthropic human review required.</strong> Customers want protection against cyberattacks, and appreciate that these can be difficult to detect if they unfold across many sessions and accounts. With EFS, automated systems analyze a rolling window of traffic for signals of serious misuse, including attempts to develop offensive cyber or biological capabilities and signs of stolen or leaked credentials. Those flags go directly to the customer and their people take it from there – no human review by Anthropic employees is required.</p>
-<blockquote>AI controls need to be designed to protect sensitive information, and model safeguards are an important part of that process. Anthropic engaged us as they developed Enterprise Frontier Safeguards to ensure alignment with our requirements and standards.</blockquote>
-<blockquote>Enterprise Frontier Safeguards gives us exactly what we asked for: our logs stay in a Wells-managed environment under Wells-managed keys. We keep custody of our data while Anthropic operates the detection. That split is what lets our teams put frontier models to work safely and meet our obligations to customers, employees, and regulators. We helped shape these safeguards because our industry needs them.</blockquote>
-<blockquote>As a company that runs critical infrastructure, the capability of models is important. Just as important are solutions that allow us to keep our data in our own account, and Enterprise Frontier Safeguards settled it.</blockquote>
-<blockquote>Eight of our members worked with Anthropic to define what it would take to run the most capable frontier models inside a systemically important bank: who holds the data, who holds the keys, what automated review can and cannot see, and under what conditions a human is ever permitted to look. This collaboration is leading to the development and delivery of improved safeguards and standards that could scale across our industry and beyond.</blockquote>
-<blockquote>One of the key tenets of the safeguards architecture is the ability for us to retain data and have it held outside the model itself, protected within our environment. There are areas of the firm, and of our clients' work, that are regulated and highly sensitive. Those safeguards actually allow us to apply AI in parts of the business that we wouldn't have been able to before.Service Partner</blockquote>
-<blockquote>Our customers have trusted us with their data for more than two decades. That experience is exactly why we wanted to help think this through with Anthropic, rather than wait on the sidelines. We were able to work together on new security and privacy capabilities at the architecture level, not just the policy level.</blockquote>
-<blockquote>Our clients want to put frontier models to work, and their security teams want the data to stay in infrastructure they control. Anthropic built Enterprise Frontier Safeguards with more than a hundred enterprises to do exactly that.Service Partner</blockquote>
-<blockquote>As AI models take on more regulated, sensitive workloads, scaling responsibly also comes down to architecture, not just policy commitments. Direct control over the data environment, paired with pattern-based automated safety monitoring, gives enterprises the concrete, structural capabilities they need to deploy with real oversight, accountability, and confidence.Service Partner</blockquote>
-<blockquote>The safeguards and the design of them—clearly, you heard our feedback. They put us in the driver's seat. The logs are under our control; they don't go anywhere else unless we want them to. It gives us control of the data, control of the information, and control of what's done after something that might exceed a safeguard is detected.</blockquote>
-<blockquote>As AI becomes more embedded across the enterprise, security and trust are what move organizations from experimentation to deployment at scale. Enterprise Frontier Safeguards will build those in from the start: monitoring data stays in infrastructure the customer controls, and their own team decides who can access it.Service Partner</blockquote>
-<blockquote>Keeping customer data confidential is a promise Snowflake makes to every customer. We've always moved fast getting frontier models into their hands. The hard part was doing that safely under the strictest data guarantees. We partnered with Anthropic to design Enterprise Frontier Safeguards so we can do both: data stays in the customer's environment, under keys they control, running Anthropic's most capable models from day one. This is what responsible frontier AI looks like when it's built with platforms in mind.</blockquote>
-<blockquote>At Stripe, protecting customer data is foundational to how we operate. Anthropic’s Enterprise Frontier Safeguards will enable us to use covered frontier models while retaining conversation logs in Stripe’s AWS environment, with access and review governed by Stripe’s security controls.</blockquote>
-<blockquote>Rogo’s customers expect access to the best intelligence available, but never at the expense of security and guardrails around their data. Enterprise Frontier Safeguards will bring the most capable models to financial institutions while meeting the institutional-grade data requirements they demand. That combination of frontier intelligence and enterprise-grade controls is critical to deploying AI across financial services.</blockquote>
-<blockquote>FIS powers the infrastructure behind how money moves and how financial institutions operate, so any AI safeguard we deploy has to meet that scale and standard of trust. Our partnership with Anthropic already includes testing their most advanced frontier models against our own systems through Project Glasswing. Claude Enterprise Frontier Safeguards expands that work, keeping retained data in our own account and routing flags directly to our security team.</blockquote>
-<blockquote>Companies trust Cognition's autonomous engineers with real production work, and that trust depends on their work staying private. With Enterprise Frontier Safeguards, customer data and identities never leave our side. It will let us bring frontier AI to production work, no privacy tradeoff required.</blockquote>
-<blockquote>Our customers' code and data are some of their most valuable intellectual property. Protecting that information is foundational to how we build at Factory. Together with Anthropic, we're enabling customers to use Claude's most capable models while keeping control of proprietary data in their hands. Enterprise Frontier Safeguards gives enterprises access to frontier intelligence with the data protections their security teams require.</blockquote>
-<blockquote>We have always maintained an unwavering commitment to client confidentiality and security. The leading legal and professional teams we serve view these principles as nonnegotiable, and we hold ourselves to the same standard. Enterprise Frontier Safeguards reflects this commitment, enabling customers with the most rigorous confidentiality requirements access to frontier models without the model provider retaining their data.</blockquote>
-<p>01</p>
-<p>17</p>
-<h2>How EFS works</h2>
-<p>These controls are designed to work the same way whether you access Claude directly from Anthropic or through a cloud partner. Customers on Amazon Web Services, Google Cloud, and Microsoft Azure will get equivalent controls, with their activity data stored in their own cloud account, in the environment they already trust. We’re also working to support third-party offerings that serve customers that are eligible for Enterprise Frontier Safeguards.</p>
-<p>Customer-owned storage, Customer-Managed Encryption Keys, and fully automated review are each opt-in, so you enable the ones your organization needs. None of them change model behavior, API pricing, or rate limits.</p>
-<p>Anthropic doesn’t charge for Enterprise Frontier Safeguards. If customers elect to store their data in their cloud account, their cloud provider bills them for that storage, as well as reads, writes, and data egress fees, the same way it bills any other resource.</p>
-<h2>Getting started</h2>
-<p>Enterprise Frontier Safeguards will roll out to customers in phases, with the goal of making it broadly available later this fall. To request access to Enterprise Frontier Safeguards, please complete this <a href="https://claude.com/form/enterprise-frontier-safeguards">form</a>.</p>
-<h2>Related content</h2>
-<h3>Anthropic invests $100 million to train 10,000 engineers and tackle the enterprise AI talent gap</h3>
-<p>Anthropic is investing $100 million in Claude Frontier Academy to train 10,000 Frontier Deployed Engineers by the end of 2027, with cohorts from Accenture, Bain, CBA, Deloitte, McKinsey, Morgan Stanley and Novo Nordisk already underway.</p>
-<h3>Barclays scales Claude to upgrade operations and improve client experience</h3>
-<p>Barclays, the British universal bank, is expanding its strategic collaboration with Anthropic to integrate secure, enterprise-grade AI systems across its global operations.</p>
-<h3>Claude discovers a novel enzyme system with CRISPR-like repeats</h3>
-<p>We’re announcing a new life sciences research group and laboratory at Anthropic. This post introduces the team behind this work and shares early results in which Claude discovered a novel enzyme system with properties reminiscent of CRISPR, with only high-level direction from our scientists.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

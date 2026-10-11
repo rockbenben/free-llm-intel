@@ -3,16 +3,100 @@
   <channel>
     <title>DeepInfra 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>DeepInfra 官方博客 / 更新日志归档（最近 30 条，共 28 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>DeepInfra 官方博客 / 更新日志归档（最近 30 条，共 29 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 10 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Best Qwen3.8-27B Inference Providers (2026)</title>
+      <link>https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers</guid>
+      <pubDate>Sat, 10 Oct 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Qwen3.8-27B: Frontier-Level Vision-Language AI</title>
       <link>https://deepinfra.com/blog/qwen3-8-27b</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/qwen3-8-27b</guid>
       <pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Qwen3.8-27B：前沿级视觉语言AI</h1>
+<p>DeepInfra 发布于 2026.10.09</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/qwen3.8-27b-vision-language.png" alt="Qwen3.8-27B：前沿级视觉语言AI"></p>
+<p>Qwen3.8-27B 是一个拥有 270 亿个参数的密集视觉语言模型，旨在缩小紧凑部署和前沿性能之间的差距。它专为复杂的多步骤任务而设计，包括编码、专业研究和长期代理工作流程。</p>
+<p>该模型将原生视觉编码器与 262,144 个令牌上下文窗口配对，可扩展至 1,000,000 个令牌。它可以读取文本和视觉数据，从 STEM 图表到小时尺度的视频。它适合构建自主代理或文档智能工具的团队，这些工具可以在同一请求中对图像和长文档进行推理。</p>
+<h2><strong>最新进展和架构</strong></h2>
+<p>Qwen3.8-27B 建立在 <a href="https://deepinfra.com/qwen">Qwen3.5 系列</a> 的架构基础上，并对其前身 Qwen3.6-27B 进行了一些更改。</p>
+<p>在底层，它是一个带有视觉编码器的 64 层因果语言模型，隐藏维度为 5,120。该布局将线性注意力（Gated DeltaNet）块与全注意力（Gated Attention）块混合在一起，并训练多令牌预测以加快生成速度。</p>
+<h3><strong>灵活的思维控制</strong></h3>
+<p>Qwen3.8 最重要的新增功能之一是灵活的思维控制，它使开发人员能够对模型的推理过程进行精细控制。思考模式默认处于开启状态，可以根据请求禁用，或者进行调整而不是完全关闭：</p>
+<ul><li><strong>推理深度：</strong>使用reasoning_effort参数使计算资源与任务复杂性保持一致。</li><li><strong>思考持久性：</strong>preserve_thinking 参数保留早期消息的推理上下文，从而提高长期运行的代理工作流程的连续性。</li></ul>
+<h3><strong>原生多模式智能</strong></h3>
+<p>Qwen3.8-27B 不依赖外部视觉插件，而是对图像和视频理解提供原生支持。它在其 262,144 个令牌的本机上下文窗口中处理复杂的文档和视觉数据。</p>
+<h2><strong>性能基准和比较分析</strong></h2>
+<p>Qwen3.8-27B 在大多数文本和多模式评估中优于 Qwen3.6-27B 和 Muse Glimmer-30B，并在多个代理和编码基准测试中击败了更大的 Opus4.6 Max。</p>
+<h3><strong>文本和推理表现</strong></h3>
+<table><thead><tr><th><strong>基准</strong></th><th><strong>Qwen3.8-27B</strong></th><th><strong>Qwen3.6-27B</strong></th><th><strong>Muse Glimmer-30B</strong></th><th><strong>Opus4.6 Max</strong></th></tr></thead><tbody><tr><td><strong>GPQA 钻石（科学推理）</strong></td><td>89.2</td><td>89.2 87.8</td><td>83.5</td><td>83.5 91.3</td><td>91.3</td></tr><tr><td><strong>SWE-bench Pro（代理编码）</strong></td><td>61.7</td><td>61.7 53.5</td><td>53.5 51.2</td><td>51.2 53.4</td><td>53.4</td></tr><tr><td><strong>LiveCodeBench v6（竞争性编码）</strong></td><td>90.3</td><td>90.3 83.9</td><td>83.9不适用</td><td>88.8</td></tr><tr><td><strong>IFBench（指令如下）</strong></td><td>79.5</td><td>79.5 69.1</td><td>69.1 77.0</td><td>77.0 62.5</td><td>62.5</td></tr><tr><td><strong>CoWorkBench（长视野办公）</strong></td><td>70.7</td><td>70.7 61.0</td><td>61.0不适用</td><td>68.2</td><td>68.2</td></tr></tbody></table>
+<h3><strong>视觉语言表现</strong></h3>
+<table><thead><tr><th><strong>基准</strong></th><th><strong>Qwen3.8-27B</strong></th><th><strong>Qwen3.6-27B</strong></th><th><strong>Muse Glimmer-30B</strong></th><th><strong>Opus4.6 Max</strong></th></tr></thead><tbody><tr><td><strong>OSWorld 验证（计算机使用）</strong></td><td>84.3</td><td>84.3 63.9</td><td>63.9 65.9</td><td>65.9 72.7</td><td>72.7</td></tr><tr><td><strong>MathVision，带有推理（视觉数学）</strong></td><td>94.6</td><td>94.6 85.1</td><td>85.1不适用</td><td>65.5</td><td>65.5</td></tr><tr><td><strong>OmniDocBench 1.5（文档智能）</strong></td><td>91.1</td><td>91.1 89.4</td><td>89.4不适用</td><td>86.6</td><td>86.6</td></tr><tr><td><strong>RealWorldQA（感知）</strong></td><td>85.9</td><td>85.9 84.1</td><td>84.1不适用</td><td>73.9</td><td>73.9</td></tr></tbody></table>
+<h3><strong>主要亮点</strong></h3>
+<ul><li><strong>代理执行：</strong>该模型在 UI 导航方面领先 OSWorld 验证，得分为 84.3。它还在多模式工具使用方面取得了最强的结果，ClawEval-MM 上的 Pass@3 为 57.4。</li><li><strong>软件工程：</strong>内部 QwenSWEBench 的得分为 79.0，是其比较集中最好的，远远领先于 Qwen3.6-27B 的 49.3 分和 Opus4.6 Max 的 63.8 分。它标志着处理复杂的多文件代码库的巨大飞跃。</li><li><strong>效率：</strong>多令牌预测被训练到架构中，通常通过每次前向传递生成多个令牌来提高推理速度。</li></ul>
+<h2><strong>API 入门</strong></h2>
+<p>[DeepInfra](https://deepinfra.com/models?type=text- Generation) 提供了兼容 OpenAI 的 API，可将 Qwen3.8-27B 集成到您的应用程序中。</p>
+<h3><strong>身份验证</strong></h3>
+<p>要与 API 交互，请在 HTTP 标头中使用您的 DeepInfra API 密钥：</p>
+<pre><code>Authorization: Bearer &lt;YOUR_DEEPINFRA_API_KEY&gt;
+Content-Type: application/jsoncopy</code></pre>
+<h3><strong>API端点基础知识</strong></h3>
+<ul><li><strong>端点：</strong>https://api.deepinfra.com/v1/openai/chat/completions</li><li><strong>型号标识符：</strong>Qwen/Qwen3.8-27B</li></ul>
+<p>完整的参数参考（包括流式传输）位于 <a href="https://deepinfra.com/Qwen/Qwen3.8-27B/api">Qwen3.8-27B API 页面</a>。</p>
+<h3><strong>使用 cURL</strong></h3>
+<pre><code>curl https://api.deepinfra.com/v1/openai/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer $DEEPINFRA_API_KEY&quot; \
+  -d '{
+    &quot;model&quot;: &quot;Qwen/Qwen3.8-27B&quot;,
+    &quot;messages&quot;: [
+      {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: &quot;Write a Python function to check if a number is prime.&quot;
+      }
+    ]
+  }'copy</code></pre>
+<p><strong>使用Python</strong></p>
+<pre><code>import requests
+import os
+
+API_KEY = os.getenv(&quot;DEEPINFRA_API_KEY&quot;)
+url = &quot;https://api.deepinfra.com/v1/openai/chat/completions&quot;
+
+headers = {
+    &quot;Authorization&quot;: f&quot;Bearer {API_KEY}&quot;,
+    &quot;Content-Type&quot;: &quot;application/json&quot;
+}
+
+payload = {
+    &quot;model&quot;: &quot;Qwen/Qwen3.8-27B&quot;,
+    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain the benefits of the Qwen3.8 architecture.&quot;}]
+}
+
+response = requests.post(url, headers=headers, json=payload)
+print(response.json())copy</code></pre>
+<h2><strong>高级配置参数</strong></h2>
+<p>使用 JSON 负载中的以下参数自定义模型的行为：</p>
+<table><thead><tr><th><strong>参数</strong></th><th><strong>类型</strong></th><th><strong>描述</strong></th></tr></thead><tbody><tr><td><strong>型号</strong></td><td>字符串</td><td>必需的。设置为 Qwen/Qwen3.8-27B。</td></tr><tr><td><strong>消息</strong></td><td>数组</td><td>必需的。支持文本、图像和视频输入。</td></tr><tr><td><strong>推理_努力</strong></td><td>字符串/浮点数</td><td>当思维模式处于活动状态时调整推理深度。</td></tr><tr><td><strong>保留思维</strong></td><td>布尔</td><td>保留多轮对话中的推理上下文。</td></tr><tr><td><strong>响应格式</strong></td><td>对象</td><td>使用 {“type”: “json_object”} 进行结构化 JSON 输出。</td></tr><tr><td><strong>流</strong></td><td>布尔</td><td>设置为 true 以接收令牌流形式的响应。</td></tr></tbody></table>
+<h2><strong>定价和成本优化</strong></h2>
+<p>DeepInfra 为每个代币 Qwen3.8-27B 定价，目前标准层有 25% 的促销折扣，并且进一步打破了缓存输入。缓存输入的运行速度比标价的标准输入速率低 75%，这对于重复提示（例如重用的系统消息或工具模式）很重要。</p>
+<table><thead><tr><th><strong>等级</strong></th><th><strong>输入</strong></th><th><strong>输出</strong></th><th><strong>缓存输入</strong></th></tr></thead><tbody><tr><td><strong>标准（列表）</strong></td><td>0.20 美元</td><td>2.50 美元</td><td>0.05 美元</td></tr><tr><td><strong>标准（当前，25% 折扣）</strong></td><td>0.15 美元</td><td>1.875 美元</td><td>0.038 美元</td></tr><tr><td><strong>优先级 (1.5x)</strong></td><td>0.225 美元</td><td>$2.8125</td><td>$2.8125 0.0563 美元</td></tr><tr><td><strong>弯曲 (0.8x)</strong></td><td>0.12 美元</td><td>1.50 美元</td><td>0.03 美元</td></tr></tbody></table>
+<p>Priority 的运行速度是标准速率的 1.5 倍，可实现更低的延迟；Flex 的运行速度是标准速率的 0.8 倍，可承受较慢的响应时间。所有级别均按 100 万个代币显示。如需批量折扣或专用端点，请查看<a href="https://deepinfra.com/pricing">定价页面</a> 或您的<a href="https://deepinfra.com/dash">DeepInfra 仪表板</a>。</p>
+<h2><strong>结论</strong></h2>
+<p>Qwen3.8-27B 在 27B 密集模型中结合了 1M 令牌可扩展上下文窗口、灵活的思维控制和强大的多模态推理。对于要求较高的代理和文档繁重的工作负载来说，它是一个强大的选择。需要更多空间的团队还可以考虑更大的 <a href="https://deepinfra.com/Qwen/Qwen3.8-2.4T-A95B">Qwen3.8-2.4T-A95B</a>，这是 Qwen3.8-Max 的稀疏专家混合变体。</p>
+<h3><strong>后续步骤</strong></h3>
+<ul><li><strong>探索多模式输入：</strong>在消息数组中传递图像或视频帧以进行视觉分析。</li><li><strong>私有部署：</strong>对于专用资源和隔离环境，<a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=Qwen%2FQwen3.8-27B">部署私有端点</a>。</li><li><strong>保持更新：</strong>访问 <a href="https://docs.deepinfra.com">DeepInfra 文档</a> 以获取最新的 SDK 和集成指南。</li></ul>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/open-source-vs-lined-source-ai-models-price-gap"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/open-vs-lated-source-1024x683.png" alt="开源与闭源人工智能模型：差距值得吗？"></a><a href="https://deepinfra.com/blog/open-source-vs-close-source-ai-models-price-gap">开源与闭源 AI 模型：差距值得吗？</a>&lt;p&gt;人工分析智能指数的上限为 57。三个前沿模型 - Claude Opus 4.7、Gemini 3.1 Pro Preview 和 GPT-5.5 - 都落在该范围内。与此同时，2026 年 2 月至 4 月期间发布的四个开放权重模型目前在同一指数上得分为 50 或以上。一年前，最好的公开重量 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/best-mimo-v2-5-api-providers"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/07/mimo-api-ranked.png" alt="最佳 MiMo-V2.5 API 提供商排名"></a><a href="https://deepinfra.com/blog/best-mimo-v2-5-api-providers">最佳 MiMo-V2.5 API 提供商排名</a>&lt;p&gt;执行摘要：为小米 MiMo-V2.5 选择正确的 API 提供商对于优化生产工作流程至关重要。根据基准研究，DeepInfra 是原始速度和低延迟（130+ 代币/秒）的最佳提供商，而小米的第一方 API 是最具成本效益的，提供无与伦比的即时缓存折扣。本指南详细介绍了模型的 MoE 架构 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/kimi-k2-6-model-overview"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/kimi-2.6-overview.webp" alt="Kimi K2.6 模型概述：架构、特性和功能"></a><a href="https://deepinfra.com/blog/kimi-k2-6-model-overview">Kimi K2.6 模型概述：架构、特性和功能功能</a>&lt;p&gt;Kimi K2.6 是 Moonshot AI 的最新旗舰开源模型，于 2026 年 4 月 20 日根据修改后的 MIT 许可证发布。它是一个建立在 1 万亿参数混合专家 (MoE) 架构之上的原生多模式代理模型，每个代币激活 320 亿个参数。该模型专为长期编码、自主执行和多代理编排而设计，并且 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Qwen3.8-27B API Provider Benchmarks: Speed &amp; Cost</title>
