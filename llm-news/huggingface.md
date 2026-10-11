@@ -22,7 +22,7 @@
 10. [开放 TTS 排行榜：多语言文本转语音和语音克隆的可扩展评估](https://huggingface.co/blog/open-tts-leaderboard)（2026-09-30） <!--orig:Open TTS Leaderboard: Scalable Evaluation for Multilingual Text-to-Speech and Voice Cloning-->
 11. [获取正确的源代码，而不仅仅是事实：MCP 代理的源感知验证](https://huggingface.co/blog/MultiverseComputingCAI/getting-the-source-right-not-just-the-fact-source)（2026-09-29） <!--orig:Getting the Source Right, Not Just the Fact: Source-Aware Verification for MCP Agents-->
 12. [Holo4：驱动通用 computer-use agent](https://huggingface.co/blog/Hcompany/holo4)（2026-09-28） <!--orig:Holo4: powering generalist computer-use agents-->
-13. [欢迎 RL 环境来到中心](https://huggingface.co/blog/rl-environments)（2026-09-28） <!--orig:Welcome RL Environments to the hub-->
+13. [欢迎 RL 环境（RL Environments）入驻 Hub](https://huggingface.co/blog/rl-environments)（2026-09-28） <!--orig:Welcome RL Environments to the hub-->
 14. [英国 AISI 和 EvalEval 如何使基准结果可重复](https://huggingface.co/blog/evaleval-aisi)（2026-09-22） <!--orig:How UK AISI and EvalEval Are Making Benchmark Results Reproducible-->
 15. [Transformers 现在运行 llama.cpp Quants](https://huggingface.co/blog/transformers-llama-cpp-quants)（2026-09-22） <!--orig:Transformers now runs llama.cpp quants-->
 16. [oMLX 创建者和维护者 Jun Kim 加入 Hugging Face 以支持 MLX 社区](https://huggingface.co/blog/omlx)（2026-09-22） <!--orig:Jun Kim, oMLX creator and maintainer, joins Hugging Face to support the MLX community-->
@@ -352,8 +352,8 @@
 340. [FastRTC：面向 Python 的实时通信库](https://huggingface.co/blog/fastrtc)（2025-02-25） <!--orig:FastRTC: The Real-Time Communication Library for Python-->
 341. [用 Inference Endpoints 解码的远程 VAE 🤗](https://huggingface.co/blog/remote_vae)（2025-02-24） <!--orig:Remote VAEs for decoding with Inference Endpoints 🤗-->
 342. [SigLIP 2：更优的多语言视觉语言编码器](https://huggingface.co/blog/siglip2)（2025-02-21） <!--orig:SigLIP 2: A better multilingual vision language encoder-->
-343. [SmolVLM2：让视频理解走进每台设备](https://huggingface.co/blog/smolvlm2)（2025-02-20） <!--orig:SmolVLM2: Bringing Video Understanding to Every Device-->
-344. [PaliGemma 2 Mix - Google 全新指令视觉语言模型](https://huggingface.co/blog/paligemma2mix)（2025-02-19） <!--orig:PaliGemma 2 Mix - New Instruction Vision Language Models by Google-->
+343. [SmolVLM：小而强悍的视觉语言模型](https://huggingface.co/blog/smolvlm2)（2025-02-20） <!--orig:SmolVLM2: Bringing Video Understanding to Every Device-->
+344. [PaliGemma 2 Mix - Google 全新的指令型视觉语言模型](https://huggingface.co/blog/paligemma2mix)（2025-02-19） <!--orig:PaliGemma 2 Mix - New Instruction Vision Language Models by Google-->
 345. [推出三家全新无服务器推理提供商：Hyperbolic、Nebius AI Studio 和 Novita 🔥](https://huggingface.co/blog/inference-providers-nebius-novita-hyperbolic)（2025-02-18） <!--orig:Introducing Three New Serverless Inference Providers: Hyperbolic, Nebius AI Studio, and Novita 🔥-->
 346. [欢迎 Fireworks.ai 加入 Hub 🎆](https://huggingface.co/blog/fireworks-ai)（2025-02-14） <!--orig:Welcome Fireworks.ai on the Hub 🎆-->
 347. [用 Math-Verify 修复 Open LLM 排行榜](https://huggingface.co/blog/math_verify_leaderboard)（2025-02-14） <!--orig:Fixing Open LLM Leaderboard with Math-Verify-->
@@ -416,7 +416,7 @@
 404. [深入解读 Aya Expanse：推进多语言前沿](https://huggingface.co/blog/aya-expanse)（2024-10-24） <!--orig:A Deepdive into Aya Expanse: Advancing the Frontier of Multilinguality-->
 405. [介绍 SynthID Text](https://huggingface.co/blog/synthid-text)（2024-10-23） <!--orig:Introducing SynthID Text-->
 406. [介绍 HUGS](https://huggingface.co/blog/hugs)（2024-10-23） <!--orig:Introducing HUGS - Scale your AI with Open Models-->
-407. [CinePile 2.0 - 用对抗性优化打造更强大的数据集](https://huggingface.co/blog/cinepile2)（2024-10-23） <!--orig:CinePile 2.0 - making stronger datasets with adversarial refinement-->
+407. [CinePile 2.0——用对抗式精炼打造更强的数据集](https://huggingface.co/blog/cinepile2)（2024-10-23） <!--orig:CinePile 2.0 - making stronger datasets with adversarial refinement-->
 408. [Hugging Face 携手 Protect AI：提升 ML 社区的模型安全性](https://huggingface.co/blog/protectai)（2024-10-22） <!--orig:Hugging Face Teams Up with Protect AI: Enhancing Model Security for the ML Community-->
 409. [Transformers.js v3：WebGPU 支持、新模型与任务，以及更多…](https://huggingface.co/blog/transformersjs-v3)（2024-10-22） <!--orig:Transformers.js v3: WebGPU Support, New Models & Tasks, and More…-->
 410. [Diffusers 迎来 Stable Diffusion 3.5 Large](https://huggingface.co/blog/sd3-5)（2024-10-22） <!--orig:Diffusers welcomes Stable Diffusion 3.5 Large-->

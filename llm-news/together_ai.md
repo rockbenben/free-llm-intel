@@ -10,7 +10,7 @@
 ## 全部文章（共 83 篇，按日期倒序；无日期条目列于最后）
 
 1. [利用 IBM Cloud 和 NVIDIA 扩展我们的企业推理能力](https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia)（2026-10-06） <!--orig:Expanding our enterprise inference capacity with IBM Cloud and NVIDIA-->
-2. [Together Link：打开您已使用的线束中的模型。今天从一个命令开始。](https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use)（2026-10-05） <!--orig:Together Link: open models in the harness you already use. Start with one command today.-->
+2. [Together Link：在你已在用的 harness 中用上前沿品质的开放模型](https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use)（2026-10-05） <!--orig:Together Link: open models in the harness you already use. Start with one command today.-->
 3. [如何用 17 美元训练你自己的 Jev](https://www.together.ai/blog/how-to-train-your-own-jev)（2026-09-23） <!--orig:How to train your own Jev for $17-->
 4. [金丝雀部署：无需停机即可升级生产中的模型](https://www.together.ai/blog/canary-rollouts-upgrade-models-in-production-without-downtime)（2026-09-22） <!--orig:Canary rollouts: upgrade models in production without downtime-->
 5. [一家全球金融科技公司如何用专用模型推理扩展编码智能体流量](https://www.together.ai/blog/global-fintech-scales-coding-agent-traffic-with-dedicated-model-inference)（2026-09-18） <!--orig:How a global fintech scaled coding agent traffic with Dedicated Model Inference-->

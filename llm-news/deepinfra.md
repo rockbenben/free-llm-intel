@@ -14,7 +14,7 @@
 3. [Qwen3.8-27B API 提供商基准测试：速度与成本](https://deepinfra.com/blog/qwen3-8-27b-api-provider-benchmarks)（2026-10-07） <!--orig:Qwen3.8-27B API Provider Benchmarks: Speed & Cost-->
 4. [2026 年最佳 GLM-5.3 API 提供商](https://deepinfra.com/blog/best-glm-5-3-api-providers)（2026-10-06） <!--orig:Best GLM-5.3 API Providers in 2026-->
 5. [Qwen3.8-27B 定价：DeepInfra 对比 Alibaba API](https://deepinfra.com/blog/qwen3-8-27b-pricing-deepinfra-vs-alibaba)（2026-10-06） <!--orig:Qwen3.8-27B Pricing: DeepInfra vs Alibaba API-->
-6. [GLM-5.3 模型概述和集成指南](https://deepinfra.com/blog/glm-5-3-model-integration-guide)（2026-10-05） <!--orig:GLM-5.3 Model Overview & Integration Guide-->
+6. [GLM-5.3 模型概览与集成指南](https://deepinfra.com/blog/glm-5-3-model-integration-guide)（2026-10-05） <!--orig:GLM-5.3 Model Overview & Integration Guide-->
 7. [Qwen3.8-27B 现已在 DeepInfra 提供](https://deepinfra.com/blog/qwen3-8-27b-deepinfra)（2026-10-05） <!--orig:Qwen3.8-27B Is Now Available on DeepInfra-->
 8. [GLM-5.3 提供商定价指南：成本比较](https://deepinfra.com/blog/glm-5-3-provider-pricing-guide)（2026-10-03） <!--orig:GLM-5.3 Provider Pricing Guide: Costs Compared-->
 9. [GLM-5.3 现已在 DeepInfra 上提供](https://deepinfra.com/blog/glm-5-3-deepinfra)（2026-10-03） <!--orig:GLM-5.3 Is Now Available on DeepInfra-->

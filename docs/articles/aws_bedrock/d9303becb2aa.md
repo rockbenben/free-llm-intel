@@ -1,8 +1,8 @@
 ---
 vendor: aws_bedrock
 title: 在 Amazon Bedrock 上推出 GLM 5.3
-original_title:  Introducing GLM 5.3 on Amazon Bedrock
-url:  https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock
+original_title: Introducing GLM 5.3 on Amazon Bedrock
+url: https://aws.amazon.com/blogs/machine-learning/introducing-glm-5-3-on-amazon-bedrock
 date: 2026-10-05
 lang: zh
 captured: 2026-10-06
