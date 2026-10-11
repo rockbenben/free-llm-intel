@@ -1,6 +1,6 @@
 ---
 vendor: deepinfra
-title: DeepSeek-V4.1-Flash 开发者定价指南
+title: 面向开发者的 DeepSeek-V4.1-Flash 定价指南
 original_title: DeepSeek-V4.1-Flash Pricing Guide for Developers
 url: https://deepinfra.com/blog/deepseek-v4-1-flash-pricing-guide
 date: 2026-09-29

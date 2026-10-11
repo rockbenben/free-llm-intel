@@ -1,7 +1,7 @@
 ---
 vendor: ai21_labs
-title: Karpathy 用来约束 AI Agent 的那根"牵绳"
-original_title: "Karpathy's Leash for Constraining AI Agents"
+title: Karpathy 的牵引绳
+original_title: Karpathy’s Leash
 url: https://www.ai21.com/blog/karpathys-leash
 date: 2025-07-23
 lang: zh

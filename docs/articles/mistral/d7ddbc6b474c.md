@@ -1,7 +1,7 @@
 ---
 vendor: mistral
-title: Le Chat 正式发布
-original_title: Le Chat
+title: Le Chat
+original_title: 
 url: https://mistral.ai/news/le-chat-mistral
 date: 2024-02-26
 lang: zh

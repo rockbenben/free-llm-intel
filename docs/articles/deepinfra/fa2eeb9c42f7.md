@@ -1,7 +1,7 @@
 ---
 vendor: deepinfra
-title: Qwen3.8-27B API Provider Benchmarks: Speed & Cost
-original_title: 
+title: Qwen3.8-27B API 提供商基准测试：速度与成本
+original_title: Qwen3.8-27B API Provider Benchmarks: Speed & Cost
 url: https://deepinfra.com/blog/qwen3-8-27b-api-provider-benchmarks
 date: 2026-10-07
 lang: zh
@@ -263,4 +263,3 @@ MiMo-V2.5 提供商定价和部署指南
 2026 年 DeepSeek V4 最佳 API 提供商
 
 <p>DeepSeek V4 可在一系列托管 API 提供商处使用，每个提供商都有不同的定价、性能和部署权衡。该模型有两个变体：V4 Pro，一个 1.6 万亿总参数的 Mixture-of-Experts 模型，具有 490 亿个活动参数和 1M 令牌上下文窗口，以及 V4 Flash，一个更轻的 284B 总参数变体 [...]</p>
-

@@ -35,7 +35,7 @@
 24. [Grok 4.6 简介](https://x.ai/news#d-2026-08-14-14)（2026-08-14）
 25. [推出 Grok Bot](https://x.ai/news/introducing-grok-bot)（2026-08-12） <!--orig:Introducing Grok Bot-->
 26. [Grok 机器人简介](https://x.ai/news#d-2026-08-12-15)（2026-08-12）
-27. [Imagine Image 2.0](https://x.ai/news/grok-imagine-image-2)（2026-08-11）
+27. [Imagine 图像 2.0](https://x.ai/news/grok-imagine-image-2)（2026-08-11） <!--orig:Imagine Image 2.0-->
 28. [Imagine Video 1.5 支持参考素材](https://x.ai/news/grok-imagine-video-1-5-references)（2026-08-07） <!--orig:Imagine Video 1.5 with References-->
 29. [Imagine Video 1.5 及参考资料](https://x.ai/news#d-2026-08-07-17)（2026-08-07）
 30. [推出 Grok Voice Think Fast 2.0](https://x.ai/news/grok-voice-think-fast-2)（2026-07-31） <!--orig:Introducing Grok Voice Think Fast 2.0-->
@@ -61,7 +61,7 @@
 50. [Databricks 上的 Grok](https://x.ai/news/grok-databricks)（2026-06-22） <!--orig:Grok on Databricks-->
 51. [适用于 Word 的 Grok 加载项](https://x.ai/news/introducing-word-addin)（2026-06-18） <!--orig:Introducing Grok for Word-->
 52. [Amazon Bedrock 上的 Grok](https://x.ai/news/grok-amazon-bedrock)（2026-06-18） <!--orig:Grok on Amazon Bedrock-->
-53. [Grok Imagine Video 1.5](https://x.ai/news/grok-imagine-video-1-5)（2026-06-17）
+53. [Grok Imagine 视频 1.5](https://x.ai/news/grok-imagine-video-1-5)（2026-06-17） <!--orig:Grok Imagine Video 1.5-->
 54. [PowerPoint 版 Grok](https://x.ai/news/introducing-powerpoint-addin)（2026-06-16） <!--orig:Introducing Grok for PowerPoint-->
 55. [Grok Build 中的智能体仪表板](https://x.ai/news/agent-dashboard)（2026-06-16） <!--orig:Agent Dashboard in Grok Build-->
 56. [在 Warp 中使用 Grok](https://x.ai/news/grok-warp)（2026-06-15） <!--orig:Use Grok in Warp-->

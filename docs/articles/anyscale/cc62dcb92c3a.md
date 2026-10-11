@@ -1,6 +1,6 @@
 ---
 vendor: anyscale
-title: 在 Anyscale 上将大型 AI 模型的自动扩缩容提速至多 5.1 倍
+title: 在 Anyscale 上自动扩缩大型 AI 模型，速度最高提升 5.1 倍
 original_title: Autoscaling Large AI Models up to 5.1x Faster on Anyscale
 url: https://anyscale.com/blog/autoscale-large-ai-models-faster
 date: 2024-10-01

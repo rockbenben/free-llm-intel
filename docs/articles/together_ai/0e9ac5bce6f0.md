@@ -1,7 +1,7 @@
 ---
 vendor: together_ai
-title: Kimi K3：完整开发者指南
-original_title: "Kimi K3: the complete developer guide"
+title: Kimi K3 完整开发者指南
+original_title: Kimi K3: the complete developer guide
 url: https://www.together.ai/blog/kimi-k3-guide
 date: 2026-08-01
 lang: zh

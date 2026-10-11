@@ -1,6 +1,6 @@
 ---
 vendor: aws_bedrock
-title: Trane 如何用 Amazon Bedrock AgentCore 把楼宇洞察提速 60 倍
+title: Trane 借助 Amazon Bedrock AgentCore 将楼宇洞察提速 60 倍
 original_title: How Trane gets building insights 60x faster with Amazon Bedrock AgentCore
 url: https://aws.amazon.com/blogs/machine-learning/how-trane-gets-building-insights-60x-faster-with-amazon-bedrock-agentcore
 date: 2026-09-22

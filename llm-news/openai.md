@@ -12,7 +12,7 @@
 ## 全部文章（共 1286 篇，按日期倒序；无日期条目列于最后）
 
 1. [Sophos 借助 OpenAI Daybreak 将威胁调查时间缩短了 96%](https://openai.com/index/sophos)（2026-10-09） <!--orig:Sophos cuts threat investigation time by 96% with OpenAI Daybreak-->
-2. [Asana cuts model costs 76x in browser tests with GPT-6.1 Sol](https://openai.com/index/asana-browser-agent)（2026-10-09）
+2. [Asana 用 GPT-6.1 Sol 在浏览器测试中将模型成本降低 76 倍](https://openai.com/index/asana-browser-agent)（2026-10-09） <!--orig:Asana cuts model costs 76x in browser tests with GPT-6.1 Sol-->
 3. [Oracle 如何利用 ChatGPT 和 Codex 将几天的工作变成几分钟](https://openai.com/index/oracle)（2026-10-08） <!--orig:How Oracle turns days of work into minutes with ChatGPT and Codex-->
 4. [Pollo AI 通过 OpenAI 将创意转化为活动](https://openai.com/index/pollo-ai)（2026-10-08） <!--orig:Pollo AI turns creative ideas into campaigns with OpenAI-->
 5. [LegalOn 在保持开发速度的同时将 Codex 成本减半](https://openai.com/index/legalon-halves-codex-costs)（2026-10-08） <!--orig:LegalOn halves Codex costs while maintaining development speed-->
@@ -33,21 +33,21 @@
 20. [通过 ChatGPT Work，The Den 每周可以腾出 10-15 个小时来发展](https://openai.com/index/the-den-family-social)（2026-10-01） <!--orig:The Den frees up 10-15 hours a week to grow with ChatGPT Work-->
 21. [破坏协调的模型蒸馏活动](https://openai.com/index/disrupting-a-coordinated-model-distillation-campaign)（2026-09-30） <!--orig:Disrupting a coordinated model-distillation campaign-->
 22. [帮助小型企业将人工智能发挥作用](https://openai.com/index/helping-small-businesses-put-ai-to-work)（2026-09-30） <!--orig:Helping small businesses put AI to work-->
-23. [DevDay 2026 Recap](https://openai.com/index/devday-2026-recap)（2026-09-29）
+23. [DevDay 2026 回顾](https://openai.com/index/devday-2026-recap)（2026-09-29） <!--orig:DevDay 2026 Recap-->
 24. [GPT-6.1 Sol 发布](https://openai.com/index/introducing-gpt-6-1-sol)（2026-09-29） <!--orig:Introducing GPT-6.1 Sol-->
 25. [介绍点](https://openai.com/index/introducing-dots)（2026-09-29） <!--orig:Introducing dots-->
 26. [我们如何为澳大利亚做得更好](https://openai.com/index/how-we-will-do-better-for-australia)（2026-09-28） <!--orig:How we will do better for Australia-->
 27. [前沿人工智能训练的安全案例](https://openai.com/index/towards-safety-cases-for-frontier-ai-training)（2026-09-28） <!--orig:Towards safety cases for frontier AI training-->
 28. [Lenfest 研究所通过扩大 OpenAI 支持发展具有里程碑意义的项目](https://openai.com/index/lenfest-ai-collaborative-expansion)（2026-09-28） <!--orig:The Lenfest Institute grows landmark program with expanded OpenAI support-->
 29. [您是 Codex 原版吗？](https://openai.com/form/codex-originals)（2026-09-28） <!--orig:Are you a Codex Original?-->
-30. [Basis completes a tax workbook 2x faster with GPT-6 Astra](https://openai.com/index/basis-tax-workbook-with-astra)（2026-09-28）
+30. [Basis 用 GPT-6 Astra 将税务工作簿的完成速度提升 2 倍](https://openai.com/index/basis-tax-workbook-with-astra)（2026-09-28） <!--orig:Basis completes a tax workbook 2x faster with GPT-6 Astra-->
 31. [Proaction 通过 Codex 将销售额提高了 60% 并节省了 75 多个小时](https://openai.com/index/proaction)（2026-09-25） <!--orig:Proaction boosts sales 60% and saves 75+ hours with Codex-->
 32. [Lowe's 让项目专业知识触手可及](https://openai.com/index/lowes)（2026-09-25） <!--orig:Lowe’s answers millions of home improvement questions with OpenAI-->
 33. [Wayfair 借助 OpenAI 提升目录准确性与支持速度](https://openai.com/index/wayfair)（2026-09-25） <!--orig:Wayfair boosts catalog accuracy and support speed with OpenAI-->
 34. [OpenAI 学院两年](https://openai.com/index/two-years-of-openai-academy)（2026-09-23） <!--orig:Two years of OpenAI Academy-->
 35. [OpenAI 将网络访问扩展到乌克兰用于民防](https://openai.com/index/openai-extends-cyber-access-to-ukraine-for-civilian-defense)（2026-09-23） <!--orig:OpenAI extends cyber access to Ukraine for civilian defense-->
 36. [Ringg 的 AI 代理通过 OpenAI 解决了高达 65% 的客户呼叫](https://openai.com/index/ringg)（2026-09-23） <!--orig:Ringg’s AI agents resolve up to 65% of customer calls with OpenAI-->
-37. [How invideo improves color grading 3x with GPT‑6 Astra](https://openai.com/index/invideo-builds-with-gpt-6-astra)（2026-09-23）
+37. [invideo 用 GPT‑6 Astra 将调色提升 3 倍](https://openai.com/index/invideo-builds-with-gpt-6-astra)（2026-09-23） <!--orig:How invideo improves color grading 3x with GPT‑6 Astra-->
 38. [Harvey 通过 GPT-6 Astra 将法律背景转化为更强大的草案](https://openai.com/index/harvey-from-context-to-confidence-with-astra)（2026-09-23） <!--orig:Harvey turns legal context into stronger drafts with GPT-6 Astra-->
 39. [萨姆·奥尔特曼在联合国安理会的讲话](https://openai.com/index/sam-altman-un-security-council-remarks)（2026-09-23） <!--orig:Sam Altman’s remarks at the United Nations Security Council-->
 40. [心理健康基准简介](https://openai.com/index/introducing-mentalhealthbench)（2026-09-23） <!--orig:Introducing MentalHealthBench-->
@@ -62,7 +62,7 @@
 49. [Higgsfield AI 在 GPT-6 Astra 的一天内发布了新的视频功能](https://openai.com/index/higgsfield-from-prompt-to-production-with-astra)（2026-09-21） <!--orig:Higgsfield AI ships new video features in a day with GPT-6 Astra-->
 50. [为人工智能下一阶段制定标准](https://openai.com/index/building-standards-next-phase-ai)（2026-09-21） <!--orig:Building standards for the next phase of AI-->
 51. [通过新的学习路径扩展 OpenAI Academy](https://openai.com/index/expanding-openai-academy-with-new-learning-paths)（2026-09-21） <!--orig:Expanding OpenAI Academy with new learning paths-->
-52. [V7 cuts costs 78% while boosting accuracy with GPT-5.6 Luna](https://openai.com/index/v7)（2026-09-21）
+52. [V7 用 GPT-5.6 Luna 将成本降低 78% 的同时提升准确率](https://openai.com/index/v7)（2026-09-21） <!--orig:V7 cuts costs 78% while boosting accuracy with GPT-5.6 Luna-->
 53. [澳大利亚青少年安全蓝图简介](https://openai.com/index/australian-youth-safety-blueprint)（2026-09-18） <!--orig:Introducing the Australian Youth Safety Blueprint-->
 54. [Cooley 如何利用 ChatGPT 加速 IPO 工作](https://openai.com/index/cooley-gopublic)（2026-09-17） <!--orig:How Cooley is accelerating IPO work with ChatGPT-->
 55. [推出面向法律行业的 Astra](https://openai.com/index/astra-for-law)（2026-09-17） <!--orig:Introducing Astra for Law-->
@@ -471,7 +471,7 @@
 458. [各国如何化解能力过剩局面](https://openai.com/index/how-countries-can-end-the-capability-overhang)（2026-01-21） <!--orig:How countries can end the capability overhang-->
 459. [推出面向各国的 Edu](https://openai.com/index/edu-for-countries)（2026-01-21） <!--orig:Introducing Edu for Countries-->
 460. [Horizon 1000：推进初级医疗保健 AI](https://openai.com/index/horizon-1000)（2026-01-20） <!--orig:Horizon 1000: Advancing AI for primary healthcare-->
-461. [Stargate Community](https://openai.com/index/stargate-community)（2026-01-20）
+461. [Stargate 社区](https://openai.com/index/stargate-community)（2026-01-20） <!--orig:Stargate Community-->
 462. [ServiceNow 借助 OpenAI 赋能可操作的企业 AI](https://openai.com/index/servicenow-powers-actionable-enterprise-ai-with-openai)（2026-01-20） <!--orig:ServiceNow powers actionable enterprise AI with OpenAI-->
 463. [我们如何进行年龄预测](https://openai.com/index/our-approach-to-age-prediction)（2026-01-20） <!--orig:Our approach to age prediction-->
 464. [一家随智能价值增长而扩张的企业](https://openai.com/index/a-business-that-scales-with-the-value-of-intelligence)（2026-01-18） <!--orig:A business that scales with the value of intelligence-->
@@ -739,9 +739,9 @@
 726. [人工智能驱动 Expedia 营销演进](https://openai.com/index/expedia-jochen-koedijk)（2025-05-14） <!--orig:AI powers Expedia’s marketing evolution-->
 727. [介绍 HealthBench](https://openai.com/index/healthbench)（2025-05-12） <!--orig:Introducing HealthBench-->
 728. [使用自定义指令个性化 ChatGPT](https://openai.com/business/learn/personalize-chatgpt-with-custom-instructions)（2025-05-12） <!--orig:Personalize ChatGPT with custom instructions-->
-729. [Collaborate and write with GPT-4o](https://openai.com/business/learn/collaborate-and-write-with-gpt-4o)（2025-05-08）
+729. [用 GPT-4o 协作与写作](https://openai.com/business/learn/collaborate-and-write-with-gpt-4o)（2025-05-08） <!--orig:Collaborate and write with GPT-4o-->
 730. [通过图像生成创建品牌视觉效果](https://openai.com/business/learn/create-on-brand-visuals-with-image-generation)（2025-05-08） <!--orig:Create on-brand visuals with image generation-->
-731. [Automate complex workflows with OpenAI o3](https://openai.com/business/learn/automate-complex-workflows-with-openai-o3)（2025-05-08）
+731. [用 OpenAI o3 自动化复杂工作流](https://openai.com/business/learn/automate-complex-workflows-with-openai-o3)（2025-05-08） <!--orig:Automate complex workflows with OpenAI o3-->
 732. [连接 Google 云端硬盘的内部知识](https://openai.com/business/learn/connect-internal-knowledge-from-google-drive)（2025-05-08） <!--orig:Connect internal knowledge from Google Drive-->
 733. [OpenAI 任命 Fidji Simo，壮大领导团队](https://openai.com/index/leadership-expansion-with-fidji-simo)（2025-05-07） <!--orig:OpenAI Expands Leadership with Fidji Simo-->
 734. [OpenAI 对美国能源部关于人工智能基础设施的回应](https://openai.com/global-affairs/response-to-department-of-energy)（2025-05-07） <!--orig:OpenAI’s response to the Department of Energy on AI infrastructure-->
@@ -865,7 +865,7 @@
 852. [打造高性能客户支持](https://openai.com/index/decagon)（2024-10-29） <!--orig:Delivering high-performance customer support-->
 853. [简化、稳定并扩展连续时间一致性模型](https://openai.com/index/simplifying-stabilizing-and-scaling-continuous-time-consistency-models)（2024-10-23） <!--orig:Simplifying, stabilizing, and scaling continuous-time consistency models-->
 854. [OpenAI 与 Lenfest Institute 的 AI 合作与奖学金计划](https://openai.com/index/lenfest-institute)（2024-10-22） <!--orig:OpenAI and the Lenfest Institute AI Collaborative and Fellowship program-->
-855. [Solving complex problems with OpenAI o1 models](https://openai.com/business/solving-complex-problems-with-openai-o1-models)（2024-10-17）
+855. [用 OpenAI o1 系列模型解决复杂问题](https://openai.com/business/solving-complex-problems-with-openai-o1-models)（2024-10-17） <!--orig:Solving complex problems with OpenAI o1 models-->
 856. [评估 ChatGPT 的公平性](https://openai.com/index/evaluating-fairness-in-chatgpt)（2024-10-15） <!--orig:Evaluating fairness in ChatGPT-->
 857. [MLE-bench：评估机器学习智能体的机器学习工程能力](https://openai.com/index/mle-bench)（2024-10-10） <!--orig:MLE-bench: Evaluating Machine Learning Agents on Machine Learning Engineering-->
 858. [OpenAI 与 Hearst 的内容合作伙伴关系](https://openai.com/index/hearst)（2024-10-08） <!--orig:OpenAI and Hearst Content Partnership-->
@@ -907,7 +907,7 @@
 894. [让人工智能发挥作用：数百次成功部署的经验教训](https://openai.com/business/put-ai-to-work-lessons-from-hundreds-of-successful-deployments)（2024-09-10） <!--orig:Put AI to work: Lessons from hundreds of successful deployments-->
 895. [用 GPT-4 树立客户服务新标准](https://openai.com/index/ada)（2024-09-05） <!--orig:Using GPT-4 to deliver a new customer service standard-->
 896. [用 ChatGPT 实现个性化教育](https://openai.com/index/asu)（2024-08-26） <!--orig:Personalizing education with ChatGPT-->
-897. [Fine-tuning GPT-4o webinar](https://openai.com/business/fine-tuning-gpt-4o-webinar)（2024-08-26）
+897. [GPT-4o 微调网络研讨会](https://openai.com/business/fine-tuning-gpt-4o-webinar)（2024-08-26） <!--orig:Fine-tuning GPT-4o webinar-->
 898. [OpenAI 与 Condé Nast 达成合作](https://openai.com/index/conde-nast)（2024-08-20） <!--orig:OpenAI partners with Condé Nast-->
 899. [让 AI 在 Upwork 投入工作](https://openai.com/index/upwork)（2024-08-20） <!--orig:Putting AI to work at Upwork-->
 900. [GPT-4o 现已支持微调](https://openai.com/index/gpt-4o-fine-tuning)（2024-08-20） <!--orig:Fine-tuning now available for GPT-4o-->

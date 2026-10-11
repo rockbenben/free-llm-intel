@@ -14,7 +14,7 @@
 2. [为什么数据中心是 Meta 人工智能方法的重要组成部分](https://about.fb.com/news/2026/10/meta-data-centers-ai-approach/)（2026-10-07） <!--orig:Why Data Centers Are Such a Big Part of Meta’s AI Approach-->
 3. [未来属于每个人：小型企业的缪斯](https://about.fb.com/news/2026/09/introducing-muse-small-business/)（2026-09-29） <!--orig:The Future Is for Everyone: Muse for Small Business-->
 4. [推出 Meta 企业平台](https://about.fb.com/news/2026/09/launching-meta-enterprise-platform/)（2026-09-28） <!--orig:Launching Meta Enterprise Platform-->
-5. [The Biggest News From Connect 2026](https://about.fb.com/news/2026/09/the-biggest-news-from-connect-2026/)（2026-09-24）
+5. [Connect 2026 上最重要的新闻](https://about.fb.com/news/2026/09/the-biggest-news-from-connect-2026)（2026-09-24） <!--orig:The Biggest News From Connect 2026-->
 6. [Meta Ray-Ban 显示器的新功能](https://about.fb.com/news/2026/09/new-features-for-meta-ray-ban-display-navigation-hologram/)（2026-09-23） <!--orig:New Features for Meta Ray-Ban Display-->
 7. [推出 Meta VR 眼镜：仅 100 克的电影院、场边座位和工作区](https://about.fb.com/news/2026/09/introducing-meta-vr-glasses-3d-movies-immersive-live-sports-100-grams/)（2026-09-23） <!--orig:Introducing Meta VR Glasses: A Cinema, Courtside Seat, and Workspace in Just 100 Grams-->
 8. [介绍 Ray-Ban Meta Audio 及更多 AI 眼镜款式](https://about.fb.com/news/2026/09/introducing-ray-ban-meta-audio-glasses-new-styles-plus-muse/)（2026-09-23） <!--orig:Introducing Ray-Ban Meta Audio and More AI Glasses Styles-->

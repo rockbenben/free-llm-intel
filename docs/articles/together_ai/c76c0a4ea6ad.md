@@ -1,7 +1,7 @@
 ---
 vendor: together_ai
 title: 宣布完成 8 亿美元 C 轮融资，加速向开源 AI 的转变
-original_title: "Announcing our $800M Series C to accelerate the shift to open-source AI"
+original_title: Announcing our $800M Series C to accelerate the shift to open-source AI
 url: https://www.together.ai/blog/announcing-our-series-c
 date: 2026-07-01
 lang: zh

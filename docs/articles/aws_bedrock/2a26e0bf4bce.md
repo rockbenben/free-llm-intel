@@ -1,6 +1,6 @@
 ---
 vendor: aws_bedrock
-title: 在 Amazon SageMaker AI 上部署实时个性化语音（Qwen3-TTS）
+title: 在 Amazon SageMaker AI 上用 Qwen3-TTS 部署实时个性化语音
 original_title: Deploying real-time personalized speech with Qwen3-TTS on Amazon SageMaker AI
 url: https://aws.amazon.com/blogs/machine-learning/deploying-real-time-personalized-speech-with-qwen3-tts-on-amazon-sagemaker-ai
 date: 2026-09-25

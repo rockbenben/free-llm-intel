@@ -1,7 +1,7 @@
 ---
 vendor: groq
-title: Python SDK v1.2.0 and TypeScript SDK v1.1.2
-original_title: 
+title: Python SDK v1.2.0 与 TypeScript SDK v1.1.2
+original_title: Python SDK v1.2.0 and TypeScript SDK v1.1.2
 url: https://console.groq.com/docs/changelog.md#python-sdk-v120-and-typescript-sdk-v112
 date: 2026-04-18
 lang: zh

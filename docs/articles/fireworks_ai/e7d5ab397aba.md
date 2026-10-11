@@ -1,6 +1,6 @@
 ---
 vendor: fireworks_ai
-title: DeepSeek V4 Pro 正在重新定义安全智能体的经济性
+title: DeepSeek V4 Pro 正在重新定义安全 Agent 的经济性
 original_title: DeepSeek V4 Pro is Redefining Security Agent Economics
 url: https://fireworks.ai/blog/DeepSeek-V4-Pro-Security
 date: 8/26/2026

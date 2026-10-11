@@ -1,7 +1,7 @@
 ---
 vendor: ai21_labs
-title: 面向企业 AI 部署的最佳私有 LLM
-original_title: "The Best Private LLM for Enterprise AI Deployment"
+title: AI21 Jamba 1.6：面向企业私有化部署的最佳开放模型
+original_title: AI21’s Jamba 1.6: The Best Open Model for Private Enterprise Deployment
 url: https://www.ai21.com/blog/introducing-jamba-1-6
 date: 2025-03-06
 lang: zh

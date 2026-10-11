@@ -27,9 +27,9 @@
 16. [Cerebras 上的 Gemma 4——最快的推理现已支持多模态](https://www.cerebras.ai/blog/gemma-4-on-cerebras-the-fastest-inference-is-now-multimodal) <!--orig:Gemma 4 on Cerebras—The Fastest Inference is Now Multimodal-->
 17. [没有验证器，就别跑循环](https://www.cerebras.ai/blog/never-loop-without-verifiers) <!--orig:Never Loop Without Verifiers-->
 18. [人工智能推理的经济学](https://www.cerebras.ai/blog/the-economics-of-ai-reasoning) <!--orig:The Economics of AI Reasoning-->
-19. [Which is faster: Kimi K2.6 on Cerebras or Gemini Flash?](https://www.cerebras.ai/blog/which-is-faster-gemini-3-5-flash-or-kimi-k2-6-on-cerebras)
+19. [哪个更快：Cerebras 上的 Kimi K2.6 还是 Gemini Flash？](https://www.cerebras.ai/blog/which-is-faster-gemini-3-5-flash-or-kimi-k2-6-on-cerebras) <!--orig:Which is faster: Kimi K2.6 on Cerebras or Gemini Flash?-->
 20. [什么是主权 AI——Cerebras 如何帮助各国](https://www.cerebras.ai/blog/what-is-sovereign-ai-and-how-cerebras-helps-nations) <!--orig:What Is Sovereign AI—and How Cerebras Helps Nations-->
-21. [Cerebras Brings Trillion Parameter Inference to Enterprises with Kimi K2.6](https://www.cerebras.ai/blog/cerebras-kimi-k2-Enterprise)
+21. [Cerebras 借 Kimi K2.6 为企业带来万亿参数推理](https://www.cerebras.ai/blog/cerebras-kimi-k2-Enterprise) <!--orig:Cerebras Brings Trillion Parameter Inference to Enterprises with Kimi K2.6-->
 22. [生成漂亮的 UI](https://www.cerebras.ai/blog/generating-beautiful-uis) <!--orig:Generating Beautiful UIs-->
 23. [在 Cerebras 推理中引入 Multi-LoRA](https://www.cerebras.ai/blog/introducing-multi-lora-on-cerebras-inference) <!--orig:Introducing Multi-LoRA on Cerebras Inference-->
 24. [案例研究 - Cognition x Cerebras](https://www.cerebras.ai/blog/case-study-cognition-x-cerebras) <!--orig:Case Study - Cognition x Cerebras-->
@@ -49,7 +49,7 @@
 38. [延迟债务之年（以及大型科技公司如何偿还债务）](https://www.cerebras.ai/blog/latency-debt) <!--orig:The Year of Latency Debt (And How Big Tech Is Paying It Down)-->
 39. [StackAI × Cerebras：为企业 AI 智能体提供最快推理](https://www.cerebras.ai/blog/stackai-cerebras-enabling-the-fastest-inference-for-enterprise-ai-agents) <!--orig:StackAI × Cerebras: enabling the fastest inference for enterprise AI agents-->
 40. [OpenAI 与 Cerebras 合作将高速推理带入主流](https://www.cerebras.ai/blog/openai-partners-with-cerebras-to-bring-high-speed-inference-to-the-mainstream) <!--orig:OpenAI Partners with Cerebras to Bring High-Speed Inference to the Mainstream-->
-41. [This new model is smarter than Sonnet 4.5…and 20X faster?](https://www.cerebras.ai/blog/glm-4-7-migration-guide)
+41. [这款新模型比 Sonnet 4.5 更聪明……还快 20 倍？](https://www.cerebras.ai/blog/glm-4-7-migration-guide) <!--orig:This new model is smarter than Sonnet 4.5…and 20X faster?-->
 42. [GLM-4.7：创纪录速度的前沿智能——现已上线 Cerebras](https://www.cerebras.ai/blog/glm-4-7) <!--orig:GLM-4.7: Frontier intelligence at record speed — now available on Cerebras-->
 43. [2026：快速推理渐入佳境](https://www.cerebras.ai/blog/2026Insights) <!--orig:2026: Fast Inference Finds its Groove-->
 44. [框内思考：用于高效状态跟踪的隐式链 Transformer](https://www.cerebras.ai/blog/thinking-inside-the-box-the-implicit-chain-transformer-for-efficient-state-tracking) <!--orig:Thinking Inside the Box: The Implicit Chain Transformer for Efficient State Tracking-->
@@ -59,4 +59,4 @@
 48. [用 Docker 化执行环境规模化 SWE 智能体的数据采集](https://www.cerebras.ai/blog/scaling-swe-agent-data-collection-with-dockerized-environments-for-execution) <!--orig:Scaling SWE Agent Data Collection with Dockerized Environments for Execution-->
 49. [用强化学习规模化代码修复智能体：把 OpenHands 扩展到真实仓库](https://www.cerebras.ai/blog/scaling-code-repair-agents-with-reinforcement-learning-extending-openhands-for-real-world) <!--orig:Scaling Code-Repair Agents with Reinforcement Learning: Extending OpenHands for Real-World Repositories-->
 50. [世界上最快的 GLM-4.6 现已上线 Cerebras](https://www.cerebras.ai/blog/glm) <!--orig:The world’s fastest GLM-4.6 – now available on Cerebras-->
-51. [OpenAI GPT-OSS 120B Benchmarked – NVIDIA Blackwell vs. Cerebras](https://www.cerebras.ai/blog/blackwell-vs-cerebras)
+51. [OpenAI GPT-OSS 120B 基准测试：NVIDIA Blackwell 对比 Cerebras](https://www.cerebras.ai/blog/blackwell-vs-cerebras) <!--orig:OpenAI GPT-OSS 120B Benchmarked – NVIDIA Blackwell vs. Cerebras-->

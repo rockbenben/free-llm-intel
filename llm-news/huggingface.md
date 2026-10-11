@@ -12,7 +12,7 @@
 
 1. [GPU 集群的有效调度](https://huggingface.co/blog/allenai/impactful-scheduling)（2026-10-09） <!--orig:Impactful scheduling for GPU clusters-->
 2. [模型不存在，所以你自己制作了](https://huggingface.co/blog/building-with-ml-intern)（2026-10-08） <!--orig:The model that didn't exist, so you made it yourself-->
-3. [Multimodal open d1 decision models for the edge](https://huggingface.co/blog/LiquidAI/open-d1)（2026-10-07）
+3. [面向边缘端的 open d1 多模态决策模型](https://huggingface.co/blog/LiquidAI/open-d1)（2026-10-07） <!--orig:Multimodal open d1 decision models for the edge-->
 4. [Falcon ASR 简介](https://huggingface.co/blog/tiiuae/falcon-asr)（2026-10-07） <!--orig:Introducing Falcon ASR-->
 5. [一个模型系列，两项黄金级成果：针对 IOI 和 IMO 微调 Nemotron](https://huggingface.co/blog/nvidia/nemotron-ioi-and-imo-2026)（2026-10-07） <!--orig:One Model Family, Two Gold-Level Results: Fine-Tuning Nemotron for IOI and IMO-->
 6. [Falcon-Emirati：当 LLM 学会方言、文化与微妙之处](https://huggingface.co/blog/tiiuae/falcon-emirati)（2026-10-06） <!--orig:Falcon-Emirati: When an LLM Learns the Dialect, the Culture, and the Nuance-->
@@ -21,12 +21,12 @@
 9. [Olmo-core 3 简介：面向大型 MoE 的开放、可扩展的培训基础设施](https://huggingface.co/blog/allenai/olmocore3)（2026-10-01） <!--orig:Introducing Olmo-core 3: Open, scalable training infrastructure for large MoEs-->
 10. [开放 TTS 排行榜：多语言文本转语音和语音克隆的可扩展评估](https://huggingface.co/blog/open-tts-leaderboard)（2026-09-30） <!--orig:Open TTS Leaderboard: Scalable Evaluation for Multilingual Text-to-Speech and Voice Cloning-->
 11. [获取正确的源代码，而不仅仅是事实：MCP 代理的源感知验证](https://huggingface.co/blog/MultiverseComputingCAI/getting-the-source-right-not-just-the-fact-source)（2026-09-29） <!--orig:Getting the Source Right, Not Just the Fact: Source-Aware Verification for MCP Agents-->
-12. [Holo4: powering generalist computer-use agents](https://huggingface.co/blog/Hcompany/holo4)（2026-09-28）
+12. [Holo4：驱动通用 computer-use agent](https://huggingface.co/blog/Hcompany/holo4)（2026-09-28） <!--orig:Holo4: powering generalist computer-use agents-->
 13. [欢迎 RL 环境来到中心](https://huggingface.co/blog/rl-environments)（2026-09-28） <!--orig:Welcome RL Environments to the hub-->
 14. [英国 AISI 和 EvalEval 如何使基准结果可重复](https://huggingface.co/blog/evaleval-aisi)（2026-09-22） <!--orig:How UK AISI and EvalEval Are Making Benchmark Results Reproducible-->
 15. [Transformers 现在运行 llama.cpp Quants](https://huggingface.co/blog/transformers-llama-cpp-quants)（2026-09-22） <!--orig:Transformers now runs llama.cpp quants-->
 16. [oMLX 创建者和维护者 Jun Kim 加入 Hugging Face 以支持 MLX 社区](https://huggingface.co/blog/omlx)（2026-09-22） <!--orig:Jun Kim, oMLX creator and maintainer, joins Hugging Face to support the MLX community-->
-17. [tokenizers v1: encode, decode and scaling, measured](https://huggingface.co/blog/tokenizers-v1)（2026-09-21）
+17. [tokenizers v1：编码、解码与扩展性的实测](https://huggingface.co/blog/tokenizers-v1)（2026-09-21） <!--orig:tokenizers v1: encode, decode and scaling, measured-->
 18. [你的智能体出色完成了任务，还能再现吗？](https://huggingface.co/blog/ibm-research/altk-evolve-consistency)（2026-09-15） <!--orig:Your Agent Aced the Task. Will It Do It Again?-->
 19. [跨 HF Jobs 用 LoRA 的异步 GRPO：一个存储桶、一个代理、没有 NCCL](https://huggingface.co/blog/asyncgrpo-lora-hfjobs)（2026-09-10） <!--orig:Async GRPO with LoRA across HF Jobs: a bucket, a proxy, and no NCCL-->
 20. [用 Gradio 工作流重建 AUTOMATIC1111](https://huggingface.co/blog/gradio-workflow-1111)（2026-09-10） <!--orig:Rebuilding AUTOMATIC1111 with Gradio Workflow-->

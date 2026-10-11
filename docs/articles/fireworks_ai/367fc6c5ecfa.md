@@ -1,6 +1,6 @@
 ---
 vendor: fireworks_ai
-title: 开源模型能在开口之前携带可读的「静默信号」吗？在 Kimi K3 与 Qwen3.5-9B 上复现 J-Lens 读数
+title: 开源模型在开口前能否携带可读的静默信号？在 Kimi K3 与 Qwen3.5-9B 上复现 J-Lens 读数
 original_title: Can open models carry readable silent signals before they speak? Reproducing J-Lens Readouts on Kimi K3 & Qwen3.5-9B
 url: https://fireworks.ai/blog/J-Lens-Kimi-K3-Qwen
 date: 8/12/2026

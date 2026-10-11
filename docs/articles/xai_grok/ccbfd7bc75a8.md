@@ -1,6 +1,6 @@
 ---
 vendor: xai_grok
-title: Imagine Image 2.0
+title: Imagine 图像 2.0
 original_title: Imagine Image 2.0
 url: https://x.ai/news/grok-imagine-image-2
 date: 2026-08-07

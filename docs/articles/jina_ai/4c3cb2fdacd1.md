@@ -1,7 +1,7 @@
 ---
 vendor: jina_ai
-title: 6 minutes readJina Code Embeddings: SOTA Code Retrieval at 0.5B and 1.5BCode generation LLMs → code embeddings: 0.5B/1.5B models achieve SOTA performance across 25 code retrieval benchmarks.
-original_title: 
+title: Jina Code Embeddings：0.5B 与 1.5B 的代码检索 SOTA：代码生成 LLM → 代码嵌入，0.5B/1.5B 模型在 25 个代码检索基准测试上取得 SOTA 表现
+original_title: 6 minutes readJina Code Embeddings: SOTA Code Retrieval at 0.5B and 1.5BCode generation LLMs → code embeddings: 0.5B/1.5B models achieve SOTA performance across 25 code retrieval benchmarks.
 url: https://jina.ai/news/jina-code-embeddings-sota-code-retrieval-at-0-5b-and-1-5b
 date: 2025-09-04
 lang: zh

@@ -24,12 +24,12 @@
 12. [Cresta 如何将 CX 专业知识转变为 Claude Agent SDK 上的代理构建器](https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk)（2026-10-05） <!--orig:How Cresta turned CX expertise into an agent builder on the Claude Agent SDK-->
 13. [Claude政府现已普遍可用](https://claude.com/blog#d-2026-10-01-19)（2026-10-01） <!--orig:Claude for Government is now generally available-->
 14. [Claude政府现已普遍可用](https://claude.com/resources/articles#d-2026-09-30-4)（2026-09-30） <!--orig:Claude for Government is now generally available-->
-15. [Introducing Claude Sonnet 5.5](https://www.anthropic.com/claude-sonnet-5-5)（2026-09-28）
+15. [推出 Claude Sonnet 5.5](https://www.anthropic.com/claude-sonnet-5-5)（2026-09-28） <!--orig:Introducing Claude Sonnet 5.5-->
 16. [Claude Tag 现已支持频道中的个人连接器](https://claude.com/blog/claude-tag-now-supports-personal-connectors-in-channels)（2026-09-24） <!--orig:Claude Tag now supports personal connectors in channels-->
 17. [Claude Marketplace：发现合作伙伴插件、智能体与服务的一站式入口](https://claude.com/blog#d-2026-09-23-23)（2026-09-23） <!--orig:Claude Marketplace: one place to discover plugins, agents, and services from our partners-->
 18. [Claude Marketplace：从我们的合作伙伴那里发现插件、智能体和服务的地方](https://claude.com/blog#d-2026-09-23-21)（2026-09-23）
 19. [Claude Marketplace：插件与连接器、产品与智能体、服务伙伴](https://claude.com/blog/claude-marketplace)（2026-09-23） <!--orig:Claude Marketplace: plugins and connectors, products and agents, and service partners-->
-20. [Introducing Claude Opus 5.5](https://www.anthropic.com/claude-opus-5-5)（2026-09-22）
+20. [推出 Claude Opus 5.5](https://www.anthropic.com/claude-opus-5-5)（2026-09-22） <!--orig:Introducing Claude Opus 5.5-->
 21. [情况报告](https://www.anthropic.com/features/ebola-response)（2026-09-22） <!--orig:The Situation Report-->
 22. [与 Accenture 合作开展嵌入式评估](https://www.anthropic.com/news/accenture-embedded-evaluation)（2026-09-18） <!--orig:Partnering with Accenture on embedded evaluation \ Anthropic-->
 23. [推出生命科学验证计划](https://www.anthropic.com/news/life-sciences-verification-program)（2026-09-17） <!--orig:Introducing the Life Sciences Verification Program \ Anthropic-->

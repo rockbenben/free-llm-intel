@@ -10,7 +10,7 @@
 
 ## 全部文章（共 89 篇，按日期倒序；无日期条目列于最后）
 
-1. [Introducing Mistral Large 4](https://mistral.ai/news/mistral-large-4/)（2026-10-06）
+1. [推出 Mistral Large 4](https://mistral.ai/news/mistral-large-4)（2026-10-06） <!--orig:Introducing Mistral Large 4-->
 2. [你好，德国！](https://mistral.ai/news/hallo-deutschland/)（2026-09-28） <!--orig:Hallo, Deutschland!-->
 3. [Mistral x Mozilla：私密、多语言的 AI 浏览](https://mistral.ai/news/mistral-x-mozilla/)（2026-09-16） <!--orig:Mistral and Mozilla are bringing open, private and multilingual AI to your web browser-->
 4. [Cloudera 与 Mistral 合作打造主权企业 AI](https://mistral.ai/news/mistral-x-cloudera/)（2026-09-10） <!--orig:Cloudera and Mistral Partner to Bring Specialized, Sovereign Intelligence to Enterprise Data-->

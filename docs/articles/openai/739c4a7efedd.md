@@ -12,7 +12,6 @@ status: translated
 body_sha: 4281a970f84d
 ---
 
-
 2023年3月14日
 
 # Stripe

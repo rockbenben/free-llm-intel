@@ -17,36 +17,36 @@
 6. [与 Together 一起从闭源模型迁移到开源模型](https://www.together.ai/blog/migrating-from-closed-to-open-source-models)（2026-09-16） <!--orig:Migrating from closed to open source models, Together-->
 7. [Together AI 通过更多模型、实时指标和更精细的控制来扩展微调服务](https://www.together.ai/blog/together-ai-expands-fine-tuning-service-with-more-models-live-metrics-and-finer-controls)（2026-09-11） <!--orig:Together AI expands fine-tuning service with more models, live metrics, and finer controls-->
 8. [引入抢占式计算：相同的计算，一半的价格](https://www.together.ai/blog/introducing-preemptible-compute-the-same-compute-half-the-price)（2026-09-10） <!--orig:Introducing preemptible compute: the same compute, half the price-->
-9. [To Infinity and Beyond: ThunderKittens Now on NVIDIA Vera Rubin NVL72!](https://www.together.ai/blog/to-infinity-and-beyond-thunderkittens-now-on-nvidia-vera-rubin-nvl72)（2026-09-10）
+9. [驶向无限与更远方：ThunderKittens 现已登陆 NVIDIA Vera Rubin NVL72！](https://www.together.ai/blog/to-infinity-and-beyond-thunderkittens-now-on-nvidia-vera-rubin-nvl72)（2026-09-10） <!--orig:To Infinity and Beyond: ThunderKittens Now on NVIDIA Vera Rubin NVL72!-->
 10. [开源人工智能堆栈](https://www.together.ai/blog/the-open-source-ai-stack)（2026-09-09） <!--orig:The Open Source AI Stack-->
 11. [DeepSWE 上的 GLM-5.3 与 GPT-5.6 Sol：成本、编码和路由](https://www.together.ai/blog/glm-5-3-vs-gpt-5-6-sol-on-deepswe-cost-coding-and-routing)（2026-08-21） <!--orig:GLM-5.3 vs. GPT-5.6 Sol on DeepSWE: Cost, Coding, and Routing-->
 12. [DeepSWE 上的 GLM-5.3 与 Claude Fable 5：成本、编码和路由](https://www.together.ai/blog/glm-5-3-vs-claude-fable-5-on-deepswe-cost-coding-and-routing)（2026-08-21） <!--orig:GLM-5.3 vs. Claude Fable 5 on DeepSWE: Cost, Coding, and Routing-->
-13. [DeepSeek V4 Pro 0813 vs Claude Fable 5 on DeepSWE: Cost, Coding, and Routing](https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing)（2026-08-17）
+13. [DeepSeek V4 Pro 0813 对比 Claude Fable 5 在 DeepSWE 上的表现：成本、编码与路由](https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing)（2026-08-17） <!--orig:DeepSeek V4 Pro 0813 vs Claude Fable 5 on DeepSWE: Cost, Coding, and Routing-->
 14. [在生产环境对模型做 A/B 测试](https://www.together.ai/blog/a-b-test-models-in-production)（2026-08-17） <!--orig:A/B test models in production-->
-15. [Kimi K3: the complete developer guide](https://www.together.ai/blog/kimi-k3-guide)（2026-08-01）
+15. [Kimi K3 完整开发者指南](https://www.together.ai/blog/kimi-k3-guide)（2026-08-01） <!--orig:Kimi K3: the complete developer guide-->
 16. [Together AI 宣布与 Moonshot AI 建立战略合作伙伴关系，为 Kimi 模型提供原生服务](https://www.together.ai/blog/together-ai-announces-strategic-partnership-with-moonshot-ai-to-natively-serve-kimi-models)（2026-07-29） <!--orig:Together AI announces strategic partnership with Moonshot AI to natively serve Kimi models-->
-17. [ThunderAgent: 2x Faster Agentic Inference for Synthetic Data Generation at Scale](https://www.together.ai/blog/thunderagent)（2026-07-29）
+17. [ThunderAgent：面向大规模合成数据生成的 Agent 推理提速 2 倍](https://www.together.ai/blog/thunderagent)（2026-07-29） <!--orig:ThunderAgent: 2x Faster Agentic Inference for Synthetic Data Generation at Scale-->
 18. [开放权重人工智能推理的生产平台](https://www.together.ai/blog/the-production-platform-for-open-weight-ai-inference)（2026-07-23） <!--orig:The production platform for open-weight AI inference-->
 19. [Together AI 和 Y Combinator 携手合作，为 YC 社区推出第一个专用 GPU 集群](https://www.together.ai/blog/together-yc-gpu-cluster)（2026-07-20） <!--orig:Together AI and Y Combinator partner to launch the first dedicated GPU cluster for the YC community-->
 20. [99.9% 的正常运行时间对于推理意味着什么？](https://www.together.ai/blog/99-9-uptime-for-inference)（2026-07-16） <!--orig:What does 99.9% uptime mean for inference?-->
 21. [Together AI 首日上线 Thinking Machines Lab 新模型 Inkling](https://www.together.ai/blog/together-ai-brings-thinking-machines-labs-new-model-inkling-on-day-0)（2026-07-15） <!--orig:Together AI brings Thinking Machines Lab’s new model Inkling on day 0-->
 22. [Together GPU 集群的新增功能：生产 GPU 集群的可靠性和控制](https://www.together.ai/blog/new-in-together-gpu-clusters-reliability-and-control-for-production-gpu-clusters)（2026-07-15） <!--orig:New in Together GPU Clusters: Reliability and control for production GPU clusters-->
-23. [Announcing our $800M Series C to accelerate the shift to open-source AI](https://www.together.ai/blog/announcing-our-series-c)（2026-07-01）
+23. [宣布完成 8 亿美元 C 轮融资，加速向开源 AI 的转变](https://www.together.ai/blog/announcing-our-series-c)（2026-07-01） <!--orig:Announcing our $800M Series C to accelerate the shift to open-source AI-->
 24. [ICML 2026 上的 Together AI：全栈前沿研究](https://www.together.ai/blog/icml-2026)（2026-06-30） <!--orig:Together AI at ICML 2026: frontier research across the full stack-->
 25. [ParallelKernelBench：前沿 LLM 还无法编写快速的多 GPU 内核](https://www.together.ai/blog/parallelkernelbench)（2026-06-23） <!--orig:ParallelKernelBench: Frontier LLMs can't write fast multi-GPU kernels (yet)-->
-26. [Kimi K2.7 Code vs Claude Fable 5: Landing pages that cost 94% less](https://www.together.ai/blog/kimi-k2-7-code-vs-claude-fable-5)（2026-06-17）
+26. [Kimi K2.7 Code 对比 Claude Fable 5：落地页成本低 94%](https://www.together.ai/blog/kimi-k2-7-code-vs-claude-fable-5)（2026-06-17） <!--orig:Kimi K2.7 Code vs Claude Fable 5: Landing pages that cost 94% less-->
 27. [建立对企业 AI 的信任：Together AI 获得 ISO 27001:2022 认证](https://www.together.ai/blog/iso-27001-2022-certification)（2026-06-10） <!--orig:Building trust in enterprise AI: Together AI earns ISO 27001:2022 certification-->
-28. [Serving MiniMax-M3 for efficient inference: Unlocking 1M-Token Context and Multimodality Without Regrets](https://www.together.ai/blog/serving-minimax-m3-for-efficient-inference-unlocking-1m-token-context-and-multimodality-without-regrets)（2026-06-02）
+28. [服务 MiniMax-M3 实现高效推理：无憾解锁 1M token 上下文与多模态](https://www.together.ai/blog/serving-minimax-m3-for-efficient-inference-unlocking-1m-token-context-and-multimodality-without-regrets)（2026-06-02） <!--orig:Serving MiniMax-M3 for efficient inference: Unlocking 1M-Token Context and Multimodality Without Regrets-->
 29. [Together AI 如何构建世界上最快的语音到文本堆栈](https://www.together.ai/blog/how-together-ai-built-the-worlds-fastest-speech-to-text-stack)（2026-05-29） <!--orig:How Together AI built the world’s fastest speech-to-text stack-->
 30. [大规模推理基准测试：编码智能体](https://www.together.ai/blog/coding-agent-benchmarks)（2026-05-19） <!--orig:Benchmarking inference at scale: coding agents-->
 31. [Together AI 与 Pearl Research Labs 联手降低 AI 推理成本](https://www.together.ai/blog/together-ai-partners-with-pearl-research-labs)（2026-05-15） <!--orig:Together AI and Pearl Research Labs Team Up to Reduce the Cost of AI Inference-->
 32. [Violin：打破语言障碍的开源视频翻译技能](https://www.together.ai/blog/violin-open-source-translation-skill)（2026-05-14） <!--orig:Violin: An open-source video translation skill that breaks language barriers-->
-33. [Serving DeepSeek-V4: why million-token context is an inference systems problem](https://www.together.ai/blog/serving-deepseek-v4-why-million-token-context-is-an-inference-systems-problem)（2026-05-11）
+33. [服务 DeepSeek-V4：百万 token 上下文为何是推理系统问题](https://www.together.ai/blog/serving-deepseek-v4-why-million-token-context-is-an-inference-systems-problem)（2026-05-11） <!--orig:Serving DeepSeek-V4: why million-token context is an inference systems problem-->
 34. [部署并推理来自 HuggingFace 的任意模型](https://www.together.ai/blog/deploy-and-inference-any-model-from-huggingface)（2026-05-08） <!--orig:Deploy and inference any model from HuggingFace-->
 35. [基础研究推动大规模高效推理](https://www.together.ai/blog/foundational-research-powering-efficient-inference-at-scale)（2026-05-04） <!--orig:Foundational research powering efficient inference at scale-->
 36. [从 732 字节到无疾而终：在生产环境封堵 Copy Fail](https://www.together.ai/blog/shutting-down-copy-fail-in-production)（2026-04-30） <!--orig:From 732 bytes to nowhere: shutting down Copy Fail in production-->
 37. [宣布 Together AI 和 Adaption 合作伙伴关系](https://www.together.ai/blog/announcing-together-ai-and-adaption-partnership)（2026-04-30） <!--orig:Announcing Together AI and Adaption Partnership-->
-38. [DeepSeek-V4 Pro now available on Together AI](https://www.together.ai/blog/deepseek-v4-pro-now-available-on-together-ai)（2026-04-29）
+38. [DeepSeek-V4 Pro 现已上线 Together AI](https://www.together.ai/blog/deepseek-v4-pro-now-available-on-together-ai)（2026-04-29） <!--orig:DeepSeek-V4 Pro now available on Together AI-->
 39. [Together AI 首日即为开发者提供 NVIDIA Nemotron 3 Nano Omni](https://www.together.ai/blog/together-ai-brings-nvidia-nemotron-3-nano-omni-to-developers-on-day-0)（2026-04-28） <!--orig:Together AI Brings NVIDIA Nemotron 3 Nano Omni to Developers on Day 0-->
 40. [分布感知推测解码：RL rollout 提速最高 50%](https://www.together.ai/blog/distribution-aware-speculative-decoding)（2026-04-24） <!--orig:Accelerate RL rollouts by up to 50% with distribution-aware speculative decoding-->
 41. [无冲突的容量：AI 原生团队的多租户 GPU 集群设计指南](https://www.together.ai/blog/multi-tenant-gpu-cluster-design-for-ai-native-teams)（2026-04-21） <!--orig:Capacity without conflict: A guide to multi-tenant GPU cluster design for AI-native teams-->
@@ -68,8 +68,8 @@
 57. [缓存感知的预填充-解码分离（CPD）：长上下文 LLM 服务最快提速 40%](https://www.together.ai/blog/cache-aware-disaggregated-inference)（2026-03-04） <!--orig:Cache-aware prefill–decode disaggregation (CPD) for up to 40% faster long-context LLM serving-->
 58. [介绍 Together AI 的新面貌](https://www.together.ai/blog/introducing-together-ai-new-look)（2026-03-02） <!--orig:Introducing Together AI’s new look-->
 59. [语音模型为何在最关键处出错，又该如何应对](https://www.together.ai/blog/how-speech-models-fail)（2026-02-23） <!--orig:How speech models fail where it matters the most and what to do about it-->
-60. [Consistency diffusion language models: Up to 14x faster inference without sacrificing quality](https://www.together.ai/blog/consistency-diffusion-language-models)（2026-02-19）
-61. [Introducing Dedicated Container Inference: Delivering 2.6x faster inference for custom AI models](https://www.together.ai/blog/dedicated-container-inference)（2026-02-12）
+60. [一致性扩散语言模型：推理最高提速 14 倍且不牺牲质量](https://www.together.ai/blog/consistency-diffusion-language-models)（2026-02-19） <!--orig:Consistency diffusion language models: Up to 14x faster inference without sacrificing quality-->
+61. [推出专用容器推理：自定义 AI 模型的推理提速 2.6 倍](https://www.together.ai/blog/dedicated-container-inference)（2026-02-12） <!--orig:Introducing Dedicated Container Inference: Delivering 2.6x faster inference for custom AI models-->
 62. [不告诉 LLM 该想什么时，它们会想什么？](https://www.together.ai/blog/what-llms-think)（2026-02-06） <!--orig:What do LLMs think when you don't tell them what to think about?-->
 63. [Together AI 欢迎 Alon Gavrielov 担任基础设施战略副总裁](https://www.together.ai/blog/alon-gavrielov-as-vp-of-infrastructure-strategy)（2026-02-03） <!--orig:Together AI welcomes Alon Gavrielov as VP of Infrastructure Strategy-->
 64. [Together Evaluations 现已支持对比顶级商业 API 与开源模型](https://www.together.ai/blog/together-evaluations-v2)（2026-02-02） <!--orig:Together Evaluations now supports comparing top commercial APIs vs. open source models-->
@@ -80,7 +80,7 @@
 69. [如何为生产环境选择合适的开放模型](https://www.together.ai/blog/how-to-choose-the-right-open-model-for-production)（2026-01-08） <!--orig:How to choose the right open model for production-->
 70. [研究视角：没错，AGI 可以实现（计算角度）](https://www.together.ai/blog/research-pov-yes-agi-can-happen)（2025-12-17） <!--orig:Research POV: Yes, AGI Can Happen – A Computational Perspective-->
 71. [宣布 NVIDIA 最新推理模型 NVIDIA Nemotron 3 Nano 原生可用](https://www.together.ai/blog/nemotron-3-nano-now-available-on-together-ai)（2025-12-15） <!--orig:Announcing native availability of NVIDIA Nemotron 3 Nano, NVIDIA’s latest reasoning model-->
-72. [Announcing Together Python SDK v2.0](https://www.together.ai/blog/together-python-sdk-2-0)（2025-12-12）
+72. [发布 Together Python SDK v2.0](https://www.together.ai/blog/together-python-sdk-2-0)（2025-12-12） <!--orig:Announcing Together Python SDK v2.0-->
 73. [Together AI 和 Meta 携手合作，将 PyTorch 强化学习引入 AI 原生云](https://www.together.ai/blog/together-ai-and-meta-partner-to-bring-pytorch-reinforcement-learning-to-the-ai-native-cloud)（2025-12-03） <!--orig:Together AI and Meta partner to bring PyTorch Reinforcement Learning to the AI Native Cloud-->
 74. [如何在 Together AI 原生云中运行 TorchForge 强化学习管道](https://www.together.ai/blog/torchforge-reinforcement-learning-pipelines)（2025-12-03） <!--orig:How to run TorchForge reinforcement learning pipelines in the Together AI Native Cloud-->
 75. [AutoJudge 简介：以自动化数据集整理简化推理加速](https://www.together.ai/blog/introducing-autojudge-streamlined-inference-acceleration-via-automated-dataset-curation)（2025-12-03） <!--orig:Introducing AutoJudge: Streamlined inference acceleration via automated dataset curation-->

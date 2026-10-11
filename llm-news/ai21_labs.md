@@ -10,7 +10,7 @@
 ## 全部文章（共 68 篇，按日期倒序；无日期条目列于最后）
 
 1. [代理设计的可验证性试金石](https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/)（2026-10-06） <!--orig:The verifiability litmus test for agent design-->
-2. [From manual negotiation to automated scheduling: How AI21 manages its GPU fleet with Kueue](https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/)（2026-10-04）
+2. [从人工协商到自动调度：AI21 如何用 Kueue 管理其 GPU 集群](https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue)（2026-10-04） <!--orig:From manual negotiation to automated scheduling: How AI21 manages its GPU fleet with Kueue-->
 3. [你要的不是前沿模型，而是一个验证器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19） <!--orig:You don’t need a frontier model. You need a verifier.-->
 4. [又好又省：开放模型探路，前沿模型收尾](https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/)（2026-07-15） <!--orig:Better and cheaper together: Open models explore, frontier models patch-->
 5. [面向 SWE 智能体的预算感知执行，把 Best-of-N 做得更好](https://www.ai21.com/blog/improving-best-of-n-with-budget-aware-execution-for-swe-agents/)（2026-07-07） <!--orig:Improving Best-of-N with Budget-Aware Execution for SWE Agents-->
@@ -33,38 +33,38 @@
 22. [睡个懒觉反而省钱：让数据「打盹」来做高效在线强化学习](https://www.ai21.com/blog/dynamic-data-snoozing/)（2026-01-22） <!--orig:When sleeping in saves you money: dynamic data snoozing for efficient online RL-->
 23. [补上解析这道缺口：借 LTR 能力做出 SOTA 级 RTL 解析](https://www.ai21.com/blog/rtl-pdf-parsing/)（2026-01-22） <!--orig:Closing the parsing gap: reaching SOTA RTL parsing by leveraging LTR capabilities-->
 24. [「无聊」并不容易](https://www.ai21.com/blog/boring-isnt-easy/)（2026-01-15） <!--orig:Boring isn’t easy-->
-25. [Introducing Jamba2: The open source model family for enterprise reliability and efficiency](https://www.ai21.com/blog/introducing-jamba2/)（2026-01-08）
+25. [推出 Jamba2：面向企业可靠性与效率的开源模型家族](https://www.ai21.com/blog/introducing-jamba2)（2026-01-08） <!--orig:Introducing Jamba2: The open source model family for enterprise reliability and efficiency-->
 26. [智能体评测怎么扩：20 万次 SWE-bench 运行换来的经验](https://www.ai21.com/blog/scaling-agentic-evaluation-swe-bench/)（2026-01-08） <!--orig:How to scale agentic evaluation: lessons from 200,000 SWE-bench runs-->
 27. [共享状态、不出乱子：用 MCP workspace 扩展会改状态的智能体](https://www.ai21.com/blog/stateful-agent-workspaces-mcp/)（2026-01-07） <!--orig:Shared state, no drama: scaling state-modifying agents with MCP workspaces-->
 28. [用编排式 Test-Time Compute 提升长程智能体任务](https://www.ai21.com/blog/test-time-compute-swe-bench/)（2026-01-07） <!--orig:Elevating long-horizon agentic tasks with orchestrated Test-Time Compute-->
 29. [炒作退潮之后的企业 AI](https://www.ai21.com/blog/enterprise-ai-after-hype/)（2025-12-31） <!--orig:Enterprise AI after the hype curve-->
 30. [让企业更容易用上开源 AI：我们与 Together AI 的合作](https://www.ai21.com/blog/ai21-together-ai-partnership/)（2025-11-26） <!--orig:Expanding enterprise access to open-source AI: Our partnership with Together AI-->
-31. [AI21 Labs recognized as an Emerging Visionary in two Gartner® Emerging Market Quadrants for Generative AI](https://www.ai21.com/blog/ai21-emerging-visionary-gartner/)（2025-11-18）
-32. [AI21 Maestro’s accuracy fix for RAG’s blind spots](https://www.ai21.com/blog/structured-rag-enterprise-accuracy/)（2025-11-12）
-33. [The latency test: Jamba 3B vs Qwen3 4B 2507](https://www.ai21.com/blog/jamba-3b-vs-qwen3-4b/)（2025-11-11）
-34. [Build AI agents you can trust, audit, and deploy with AI21 Maestro](https://www.ai21.com/blog/ai21-maestro-reliable-ai-agent/)（2025-11-09）
+31. [AI21 Labs 在 Gartner® 生成式 AI 新兴市场的两个象限中获评 Emerging Visionary](https://www.ai21.com/blog/ai21-emerging-visionary-gartner)（2025-11-18） <!--orig:AI21 Labs recognized as an Emerging Visionary in two Gartner® Emerging Market Quadrants for Generative AI-->
+32. [AI21 Maestro 针对 RAG 盲区的准确率修复](https://www.ai21.com/blog/structured-rag-enterprise-accuracy)（2025-11-12） <!--orig:AI21 Maestro’s accuracy fix for RAG’s blind spots-->
+33. [延迟测试：Jamba 3B 对比 Qwen3 4B 2507](https://www.ai21.com/blog/jamba-3b-vs-qwen3-4b)（2025-11-11） <!--orig:The latency test: Jamba 3B vs Qwen3 4B 2507-->
+34. [用 AI21 Maestro 构建可信任、可审计、可部署的 AI agent](https://www.ai21.com/blog/ai21-maestro-reliable-ai-agent)（2025-11-09） <!--orig:Build AI agents you can trust, audit, and deploy with AI21 Maestro-->
 35. [五分钟五问：Avi Tsur 医生谈 AI 与医疗](https://www.ai21.com/blog/five-in-five-healthcare/)（2025-10-22） <!--orig:Five questions in five Minutes: Dr. Avi Tsur on AI in healthcare-->
-36. [Introducing Jamba Reasoning 3B: Tiny Model, Huge Possibilities](https://www.ai21.com/blog/introducing-jamba-reasoning-3b/)（2025-10-08）
+36. [推出 Jamba Reasoning 3B：小模型，大可能](https://www.ai21.com/blog/introducing-jamba-reasoning-3b)（2025-10-08） <!--orig:Introducing Jamba Reasoning 3B: Tiny Model, Huge Possibilities-->
 37. [金融领域的 AI：进展、障碍与下一步](https://www.ai21.com/blog/ai-in-finance/)（2025-09-02） <!--orig:AI in finance: Progress, barriers, and the road ahead-->
 38. [面向企业的知识智能体：从检索走向真正干活](https://www.ai21.com/blog/knowledge-agents-for-the-enterprise/)（2025-08-25） <!--orig:Knowledge Agents for the Enterprise: From Retrieval to Real Work-->
 39. [注意力从来不够：追踪混合架构 LLM 的兴起](https://www.ai21.com/blog/rise-of-hybrid-llms/)（2025-08-05） <!--orig:Attention was never enough: Tracing the rise of hybrid LLMs-->
 40. [「让 AI 把活全干了」：Ori Goshen 在 RAISE Summit 的主题演讲](https://www.ai21.com/blog/ai-all-the-work/)（2025-07-30） <!--orig:“AI all the work”: Inside Ori Goshen’s RAISE Summit keynote-->
 41. [为什么 grounding 仍然是企业 AI 的基石](https://www.ai21.com/blog/grounding-bedrock-enterprise-ai/)（2025-07-30） <!--orig:Why Grounding is (Still) the Bedrock of Enterprise AI-->
-42. [Karpathy’s Leash](https://www.ai21.com/blog/karpathys-leash/)（2025-07-23）
+42. [Karpathy 的牵引绳](https://www.ai21.com/blog/karpathys-leash)（2025-07-23） <!--orig:Karpathy’s Leash-->
 43. [实时生成商品描述：还清内容债，赢下购物车](https://www.ai21.com/blog/product-description-automation/)（2025-07-22） <!--orig:Automating Product Descriptions in Real Time: Clear the Content Debt, Win the Cart-->
 44. [实时合规监控：风险更低，反应更快](https://www.ai21.com/blog/ai-compliance-monitoring/)（2025-07-21） <!--orig:Monitoring Compliance in Real Time: Reduce Risk, React Faster-->
 45. [AI 的真正威力，是让知识开始干活](https://www.ai21.com/blog/maestro-putting-knowledge-to-work/)（2025-07-08） <!--orig:The Power of AI Is Putting Knowledge to Work-->
-46. [AI21 Maestro: AI Built for Enterprise Knowledge Work](https://www.ai21.com/blog/maestro-ai-enterprise-knowledge-work/)（2025-07-08）
+46. [AI21 Maestro：为企业知识工作而生的 AI](https://www.ai21.com/blog/maestro-ai-enterprise-knowledge-work)（2025-07-08） <!--orig:AI21 Maestro: AI Built for Enterprise Knowledge Work-->
 47. [企业知识智能体方案该怎么选](https://www.ai21.com/blog/rag-agent-solutions/)（2025-06-15） <!--orig:Knowledge Agent Solutions for Enterprises: How to Choose One-->
 48. [董事会如何塑造 AI 战略](https://www.ai21.com/blog/how-boards-can-shape-ai-strategy/)（2025-06-12） <!--orig:How Boards Can Shape AI Strategy-->
 49. [LLM 评审模型：你不知道自己需要的 AI 批评者](https://www.ai21.com/blog/llm-judge-models/)（2025-05-05） <!--orig:LLM Judge Models: The AI Critics You Never Knew You Needed-->
 50. [RAG 评测：你一直做错了](https://www.ai21.com/blog/rag-evaluation-youre-doing-it-wrong/)（2025-04-07） <!--orig:RAG Evaluation: You’re Doing It Wrong-->
-51. [AI21 Joins NVIDIA Inception for Enterprise AI](https://www.ai21.com/blog/ai21-joins-nvidia-inception/)（2025-03-27）
-52. [AI21 + NVIDIA: A Smarter Path to Self-Hosted AI](https://www.ai21.com/blog/nvidia-maestro/)（2025-03-26）
+51. [AI21 加入 NVIDIA Inception，面向企业级 AI](https://www.ai21.com/blog/ai21-joins-nvidia-inception)（2025-03-27） <!--orig:AI21 Joins NVIDIA Inception for Enterprise AI-->
+52. [AI21 + NVIDIA：自托管 AI 的更优路径](https://www.ai21.com/blog/nvidia-maestro)（2025-03-26） <!--orig:AI21 + NVIDIA: A Smarter Path to Self-Hosted AI-->
 53. [认识 Maestro：把数据密集型的企业任务交给 AI 自动化](https://www.ai21.com/blog/maestro-ai-planning-orchestration/)（2025-03-10） <!--orig:Meet Maestro: The AI System for Automating Data-Intensive Enterprise Tasks-->
 54. [规划动作，而不是预测 token](https://www.ai21.com/blog/ai-reasoning-planning-vs-predicting/)（2025-03-10） <!--orig:Planning Actions, Not Predicting Tokens-->
 55. [Maestro：把复杂任务变简单](https://www.ai21.com/blog/maestro-technical-overview/)（2025-03-10） <!--orig:Maestro: Making Complex Tasks Simple-->
-56. [AI21’s Jamba 1.6: The Best Open Model for Private Enterprise Deployment](https://www.ai21.com/blog/introducing-jamba-1-6/)（2025-03-06）
+56. [AI21 Jamba 1.6：面向企业私有化部署的最佳开放模型](https://www.ai21.com/blog/introducing-jamba-1-6)（2025-03-06） <!--orig:AI21’s Jamba 1.6: The Best Open Model for Private Enterprise Deployment-->
 57. [别再「提示完就祈祷」：去搭完整的 AI 系统](https://www.ai21.com/blog/stop-prompting-and-praying/)（2025-02-27） <!--orig:Stop Prompting and Praying: Start Building Complete AI Systems-->
 58. [AI 智能体的热度不假——但很多只是包装过的 if-else](https://www.ai21.com/blog/ai-agent/)（2025-02-25） <!--orig:The AI Agent Hype Is Real – But Many Are Still Just Glorified If-Else Statements-->
 59. [把准确率也做上规模](https://www.ai21.com/blog/accuracy-at-scale/)（2025-02-24） <!--orig:Accuracy at Scale-->
@@ -72,7 +72,7 @@
 61. [生成式 AI 配得上这些期待吗？三年一线的观察](https://www.ai21.com/blog/is-genai-living-up-to-its-expectations-insights-from-3-years-in-the-trenches/)（2025-01-21） <!--orig:Is GenAI Living Up to Its Expectations? Insights from 3 Years in the Trenches-->
 62. [用 Jamba 做长上下文 AI 应用：给 AI 智能体的未来供能](https://www.ai21.com/blog/build-long-context-ai-apps-with-jamba-powering-the-future-of-ai-agents/)（2025-01-13） <!--orig:Build Long-Context AI Apps with Jamba: Powering the Future of AI Agents-->
 63. [2025 年企业 AI 预测](https://www.ai21.com/blog/2025-predictions-for-enterprise-ai/)（2025-01-02） <!--orig:2025 Predictions for Enterprise AI-->
-64. [From Vision to Value: AI21 at AWS re:Invent](https://www.ai21.com/blog/aws-reinvent-2024/)（2024-11-26）
+64. [从愿景到价值：AI21 在 AWS re:Invent](https://www.ai21.com/blog/aws-reinvent-2024)（2024-11-26） <!--orig:From Vision to Value: AI21 at AWS re:Invent-->
 65. [一年一度的 SOC 2 报告，把安全做成常态](https://www.ai21.com/blog/annual-soc-2-report/)（2024-11-11） <!--orig:Continuous Security Excellence with Annual SOC 2 Report-->
 66. [ISO 42001：AI 开发信任的新标准](https://www.ai21.com/blog/iso-42001-ai-development/)（2024-11-11） <!--orig:ISO 42001: A New Standard of Trust in AI Development-->
 67. [开放投保季来了：怎么给自己和家人选对健康保险](https://www.ai21.com/blog/jamba-care/)（2024-11-05） <!--orig:Open Enrollment is Here! Choosing the Right Health Insurance Plan for You and Your Family-->

@@ -1,7 +1,7 @@
 ---
 vendor: together_ai
-title: DeepSeek V4 Pro 0813 对阵 Claude Fable 5：DeepSWE 上的成本、编码能力与路由
-original_title: "DeepSeek V4 Pro 0813 vs Claude Fable 5 on DeepSWE: Cost, Coding, and Routing"
+title: DeepSeek V4 Pro 0813 对比 Claude Fable 5 在 DeepSWE 上的表现：成本、编码与路由
+original_title: DeepSeek V4 Pro 0813 vs Claude Fable 5 on DeepSWE: Cost, Coding, and Routing
 url: https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing
 date: 2026-08-17
 lang: zh

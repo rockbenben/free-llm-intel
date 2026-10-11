@@ -1,7 +1,7 @@
 ---
 vendor: jina_ai
-title: jina-embeddings-v5-omni：面向文本、图像、音频与视频的 embedding
-original_title: 
+title: jina-embeddings-v5-omni：文本、图像、音频与视频嵌入：一个模型覆盖四种模态（文本、图像、音频、视频），1.6B 与 0.9B 均为同类最优的全模态嵌入
+original_title: jina-embeddings-v5-omni: Embeddings for Text, Image, Audio and VideoOne model, four modalities: text, image, audio, video. Best-in-class omni embeddings in 1.6B and 0.9B.
 url: https://jina.ai/news/jina-embeddings-v5-omni-multimodal-embeddings-for-text-image-audio-and-video
 date: 2026-05-12
 lang: zh

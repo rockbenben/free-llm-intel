@@ -1,7 +1,7 @@
 ---
 vendor: ai21_labs
-title: "AI21 Maestro：为企业知识工作而造的 AI"
-original_title: "AI21 Maestro: AI Built for Enterprise Knowledge Work"
+title: AI21 Maestro：为企业知识工作而生的 AI
+original_title: AI21 Maestro: AI Built for Enterprise Knowledge Work
 url: https://www.ai21.com/blog/maestro-ai-enterprise-knowledge-work
 date: 2025-07-08
 lang: zh
