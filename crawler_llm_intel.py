@@ -248,16 +248,22 @@ REPO_URL = "https://github.com/rockbenben/free-llm-intel"
 RSS_TITLE_MAX = 60      # 标题超过该长度则截断，完整文本移入 description
 #: 合并流最多收录条数；0 = 不限制。策略：feed **保留全文 `<content:encoded>`，
 #: 靠「条目数」而非「摘要化」控体积——订阅者要的是全文，砍摘要不如砍数量。
-#: 定这条线是量出来的：实测大陆到 GitHub Pages ~14 KB/s、阅读器 45s 超时 → 预算
-#: ≈ 630 KB；合并流全文单条平均 ~18 KB。30 条 ≈ 540 KB（GitHub Pages 未压缩实测 ~35s
-#: 勉强订得动）；**50 条 ≈ 900 KB 需靠 gzip（→~320 KB，2–3s）或 EdgeOne 大陆/边缘加速**
-#: 才稳。够覆盖约一周巡检新增。想拉更多：CLI `--rss-limit N`，或订对应单厂商源
-#: （完整归档始终在 `docs/articles/**`，浏览页 reader 也读全文）。
-#: 历史：200（2026-10-05 全文进 feed 后定的）→ 40 → 30 → 50（2026-10-06，配合 EdgeOne/gzip 放宽）。
-RSS_MERGED_LIMIT = 50
-#: 单厂商流最多收录条数；0 = 全量归档。30 条够回看一个季度、体积可控。
+#: 上限由体积预算倒推：实测大陆到 GitHub Pages ~14 KB/s、阅读器 45s 超时 → 未压缩
+#: 预算 ≈ 630 KB；全文条目实测均值 ~12 KB（中位 ~6 KB、最长单条 ~130 KB），
+#: gzip 后约 1/3，配合 EdgeOne 大陆加速才放得开这条线。
+#: 2026-10-12 实测：按日期取最近 100 条 ≈ 1.15 MB（gzip 前），仍低于
+#: `RSS_SOFT_CAP`，但余量只剩 ~40%——再往上调要先看那条兜底会不会被触发
+#: （触发即整源降级成摘要，用户明确要全文，不该走到那一步）。
+#: 想临时拉更多：CLI `--rss-limit N`；完整归档始终在 `docs/articles/**`，
+#: 浏览页 reader 也读全文。
+#: 历史：200（2026-10-05 全文进 feed 后定）→ 40 → 30 → 50（2026-10-06，配合
+#: EdgeOne/gzip 放宽）→ 100（2026-10-12，用户要求合并流放宽）。
+RSS_MERGED_LIMIT = 100
+#: 单厂商流最多收录条数；0 = 全量归档。够回看一个季度以上。
+#: 实测最长的几家全文页（aliyun_qwen / huggingface / openrouter 这类）条目均值
+#: ~20–27 KB，按该均值取到这个数约 1.0–1.4 MB，还在 `RSS_SOFT_CAP` 之下。
 #: CLI 覆盖：`--rss-limit N` / `--rss-vendor-limit N`。
-RSS_VENDOR_LIMIT = 30
+RSS_VENDOR_LIMIT = 50
 #: 英文 feed 的 guid 后缀查询串，让中/英条目 guid 不同、阅读器不 dedup；
 #: `<link>` 保持原 URL 干净。中文 feed guid 无后缀（向后兼容旧订阅者）。
 RSS_EN_GUID_SUFFIX = "?li=1"

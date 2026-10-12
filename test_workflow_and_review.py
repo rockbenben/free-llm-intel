@@ -3066,36 +3066,53 @@ class TestNewsTitleQuality(unittest.TestCase):
 
 
 class TestFeedLimitedPageFull(unittest.TestCase):
-    """合并流默认 **50 条**（2026-10-06 定）；页面仍读全量 articles.json 索引。
+    """订阅流默认「收数量、保全文」；页面仍读全量 articles.json 索引。
 
-    历史：200（全文进 feed 后定）→ 30 → 50。全文单条 ~18 KB，200 条 ≈ 3.3 MB 实测
-    大陆 ~14 KB/s × 45s 订不动。策略「保全文、砍数量」而非「摘要化」（用户要全文）。
-    50 条 ≈ 900 KB 未压缩，靠 gzip（→~320 KB）或 EdgeOne 边缘加速订得动；30 条是
-    GitHub Pages 未压缩下的保守值。想拉更多：`--rss-limit N` 或订单厂商源；
+    具体上限是 `RSS_MERGED_LIMIT` / `RSS_VENDOR_LIMIT`（改数字不必改本类），这里钉三件事：
+    默认非零、**真的按默认截了**、范围文案跟着上限走。
+    背景：全文单条实测均值 ~12 KB（最长 ~130 KB），200 条 ≈ 3.3 MB 在大陆 ~14 KB/s × 45s
+    超时下订不动，所以策略是「保全文、砍数量」而不是「摘要化」（用户明确要全文）。
+    体积兜底见 `RSS_SOFT_CAP`：触发即整源降级成摘要，那是最后一道保险，不是常规路径。
+    想拉更多：`--rss-limit N` / `--rss-vendor-limit N`，或订单厂商源；
     页面读不受限的索引，reader 读全文 .md。见 rss-redesign spec §3.1。
     """
 
     def _intel(self, n):
         v = crawler_llm_intel.VendorIntel(vendor_id="v", brand="V", homepage="", products=[])
+        # 日期按天偏移生成：夹具要能喂任意条数（写死 `2026-01-{i:02d}` 在 n>31 时
+        # 造出 2026-01-32 这种假日期，截断谁在前就不可控了）
+        base = date(2026, 1, 1)
         v.all_news_articles = [
             crawler_llm_intel.Article(title=f"标题{i}", url=f"https://v.example/news/{i}",
-                                      date=f"2026-01-{i:02d}")
+                                      date=(base + timedelta(days=i)).isoformat())
             for i in range(1, n + 1)
         ]
         return v
 
-    def test_merged_feed_default_limit_is_50(self):
-        """默认（RSS_MERGED_LIMIT = 50）截到最近 50 条。"""
-        self.assertEqual(crawler_llm_intel.RSS_MERGED_LIMIT, 50,
-                         "合并流默认 50 条；要放开请显式传 merged_limit=0")
+    def test_default_limits_actually_apply(self):
+        """两个默认上限都真的截了；数字跟着常量走，不在这里钉死。
+
+        钉死数字会让「放宽上限」变成一次改测试的仪式。真正要防的是上限被静默设成
+        0（=无限）或范围文案与实际值脱钩；体积扛不扛由 `RSS_SOFT_CAP` 那条兜底
+        和常量注释里的实测预算负责。
+        """
+        merged_n = crawler_llm_intel.RSS_MERGED_LIMIT
+        vendor_n = crawler_llm_intel.RSS_VENDOR_LIMIT
+        self.assertGreater(merged_n, 0, "合并流默认要收数量；放开要显式 merged_limit=0")
+        self.assertGreater(vendor_n, 0, "单厂商默认要收数量；放开要显式 vendor_limit=0")
         with tempfile.TemporaryDirectory() as tmp:
             out = Path(tmp) / "feeds"
-            crawler_llm_intel.write_rss_feeds(out, [self._intel(80)])
+            crawler_llm_intel.write_rss_feeds(out, [self._intel(max(merged_n, vendor_n) + 30)])
             merged = (out / "llm-news-all.xml").read_text(encoding="utf-8")
-            self.assertEqual(merged.count("<item>"), 50, "默认 50 条上限应生效")
-            self.assertIn("最近 50 条",
-                          crawler_llm_intel.merged_scope_text(
-                              crawler_llm_intel.RSS_MERGED_LIMIT))
+            self.assertEqual(merged.count("<item>"), merged_n, "合并流默认上限应生效")
+            self.assertIn("最近 %d 条" % merged_n,
+                          crawler_llm_intel.merged_scope_text(merged_n))
+            vfeed = out / "llm-news-v.xml"
+            self.assertTrue(vfeed.exists(), "单厂商源要出")
+            self.assertEqual(vfeed.read_text(encoding="utf-8").count("<item>"), vendor_n,
+                             "单厂商默认上限应生效")
+            self.assertIn("最近 %d 条" % vendor_n,
+                          crawler_llm_intel.vendor_scope_text(vendor_n))
 
     def test_merged_limit_zero_still_unlimited(self):
         """显式 merged_limit=0 走"不限制"分支（`--rss-limit 0` 逃生阀仍有效）。"""
