@@ -3,22 +3,72 @@
   <channel>
     <title>DeepInfra 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>DeepInfra 官方博客 / 更新日志归档（最近 30 条，共 29 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>DeepInfra 官方博客 / 更新日志归档（最近 50 条，共 29 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Sat, 10 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Best Qwen3.8-27B Inference Providers (2026)</title>
+      <title>最佳 Qwen3.8-27B 推理提供商（2026）</title>
       <link>https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers</guid>
       <pubDate>Sat, 10 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Best Qwen3.8-27B Inference Providers (2026)</description>
+      <content:encoded><![CDATA[<h1>Best Qwen3.8-27B Inference Providers (2026)</h1>
+<p>发布于 2026.10.10，作者 DeepInfra</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/qwen3.8-27b-best-providers.png" alt="Best Qwen3.8-27B Inference Providers (2026)"></p>
+<p>Qwen3.8-27B 改变了开放权重模型的格局。它在参数量与推理能力之间取得了出色的平衡：一个 270 亿参数的模型，能力很强却足够紧凑。4-bit 量化下它能在单张 24GB 卡上运行，全精度下单张 80GB 卡也够用。而为它找到合适的承载、扩展或通过 API 访问的基础设施，仍然是一个实打实的决策点。延迟、吞吐与成本足以决定一个生产环境里的 AI 应用成败，对 agentic 工作流或大批量推理更是如此。</p>
+<p>本指南拆解 Qwen3.8-27B 最好的 SaaS 工具、API 提供商与托管方案。无论你需要的超低延迟推理、超大上下文窗口，还是高性价比的自托管，下面的梳理覆盖了整个生态，帮你选对基础设施。</p>
+<h2><strong>小结：按用例选最佳提供商</strong></h2>
+<table><thead><tr><th><strong>用例</strong></th><th><strong>最佳提供商</strong></th></tr></thead><tbody><tr><td><strong>综合最佳 API 访问</strong></td><td>DeepInfra，成本效率与生产可靠性</td></tr><tr><td><strong>超大上下文与企业</strong></td><td>Alibaba Cloud，官方第一方，1M-token 上下文窗口</td></tr><tr><td><strong>超低延迟</strong></td><td>Cerebras，晶圆级硬件，大约每秒 1,500 tokens</td></tr><tr><td><strong>吞吐与快速首字响应</strong></td><td>Multiverse Computing，传统 API 提供商里最快的一档</td></tr><tr><td><strong>API 聚合与路由</strong></td><td>OpenRouter，在 17 家提供商之间路由并自动故障转移</td></tr><tr><td><strong>大批量自托管</strong></td><td>Akash Network，去中心化裸金属 GPU</td></tr><tr><td><strong>Serverless 部署</strong></td><td>RunPod，可缩零到 0 的端点</td></tr><tr><td><strong>托管编排</strong></td><td>Northflank，自带云（BYOC）+ 托管 Kubernetes</td></tr><tr><td><strong>预算敏感的开发</strong></td><td>Novita AI，有竞争力的定价与很陡的缓存折扣</td></tr></tbody></table>
+<h2><strong>最佳 Qwen3.8-27B 提供商（深入）</strong></h2>
+<h3><strong>DeepInfra</strong></h3>
+<p><a href="https://deepinfra.com/Qwen/Qwen3.8-27B">DeepInfra</a> 是访问 Qwen3.8-27B 的综合最佳方案：一个有竞争力、可伸缩的 API，能接入生产环境而不必承担管理硬件的开销。</p>
+<ul><li><strong>输入： </strong>每 1M tokens $0.15（当前促销价；标价 $0.20）</li><li><strong>输出： </strong>每 1M tokens $1.875（当前价；标价 $2.50）</li><li><strong>缓存输入： </strong>每 1M tokens $0.038</li><li><strong>混合单价： </strong>每 1M tokens $0.24（按 7:2:1 的缓存/输入/输出比例），在 Artificial Analysis 为该模型收录的 8 家提供商中排第二便宜</li><li><strong>上下文窗口： </strong>原生 262,144 tokens，经 YaRN 可扩展到 1M</li><li><strong>特性： </strong>Function calling、JSON mode、多模态（图像与视频）输入、prompt caching</li></ul>
+<p>DeepInfra 适合想要可靠、可伸缩地用 API 访问 Qwen3.8-27B 而不打算自托管的团队，其混合单价在收录的提供商里属于最低一档。完整的当前费率见<a href="https://deepinfra.com/pricing">定价页</a>，<a href="https://deepinfra.com/Qwen/Qwen3.8-27B/api">API 参考</a>覆盖了所有可用参数。</p>
+<h3><strong>Alibaba Cloud</strong></h3>
+<p>作为 Qwen 模型家族的官方创造者与第一方提供商，Alibaba Cloud 提供一项为原生处理超长上下文而构建的托管 API 服务，对需要吞下海量文档或超长聊天历史的企业应用很有用。</p>
+<ul><li><strong>输入： </strong>每 1M tokens $0.42 至 $0.50，取决于档位</li><li><strong>输出： </strong>每 1M tokens $3.00</li><li><strong>上下文窗口： </strong>默认最高 1M tokens</li><li><strong>Token Plan： </strong>Alibaba 更宽泛的 Model Studio 订阅从 $6/月起（早鸟价）。它按额度打包覆盖整个模型阵容（包括 Qwen3.8-Max），而不是针对 Qwen3.8-27B 逐 token 计费</li></ul>
+<p>Alibaba Cloud 适合想要官方第一方访问、以及完整 1M-token 上下文窗口的企业开发者——部分第三方托管会把这个窗口压得更低。</p>
+<h3><strong>Cerebras</strong></h3>
+<p>当延迟是第一优先级时，Cerebras 自成一档。它用的是晶圆级硬件而非传统 GPU，以其他提供商跟不上的速度服务 Qwen3.8-27B。它适合实时语音 agent 或多步推理循环——这些地方每一秒等待都会累积放大。</p>
+<ul><li><strong>速度： </strong>约每秒 1,500 输出 tokens，取自 Cerebras 自己公布的数据</li><li><strong>定价： </strong>每 1M tokens 输入 $0.99、输出 $1.49</li><li><strong>上下文窗口： </strong>付费开发者档 128K tokens（免费试用 64K）</li><li><strong>API： </strong>OpenAI 兼容，支持 tool calling 与结构化输出</li></ul>
+<p>Cerebras 在 2026 年 9 月把 Qwen3.8-27B 加入其公开目录，与它原有的小型、按 token 计费模型阵容并列。它为延迟敏感的应用与需要快速生成 token 的 agentic 工作流而生，不主打模型选择广度或自托管灵活性。</p>
+<h3><strong>Multiverse Computing</strong></h3>
+<p>Multiverse Computing 是收录的 Qwen3.8-27B 传统 API 提供商里最快的一档。对于首 token 时间影响用户体验的交互式应用，它给出了业内最低的延迟之一。</p>
+<ul><li><strong>输入： </strong>每 1M tokens $0.40</li><li><strong>输出： </strong>每 1M tokens $2.00</li><li><strong>输出速度： </strong>Artificial Analysis 基准下约每秒 190 tokens，为该模型收录中最快的一档</li><li><strong>延迟： </strong>首 token 0.66 秒，是 Artificial Analysis 为该模型记录的最低值</li><li><strong>特性： </strong>原生支持 JSON mode 与 function calling</li></ul>
+<p>Multiverse Computing 适合吞吐密集、需要快速首字响应的交互式应用，又不依赖 Cerebras 那种专用硬件。</p>
+<h3><strong>OpenRouter</strong></h3>
+<p>OpenRouter 是一个统一 API 聚合器，把管理多家提供商端点的复杂度抽象掉。它在自己的托管网络中路由 Qwen3.8-27B 请求，以平衡价格、速度与可用性。</p>
+<ul><li><strong>提供商： </strong>按 OpenRouter 自己的列表，在 17 个提供 Qwen3.8-27B 的后端之间路由</li><li><strong>定价： </strong>随路由到的后端变化。OpenRouter 自己的默认列表显示每 1M tokens 输入 $0.0248、输出 $4.35，请求也可能被路由到更便宜的后端，例如 DeepInfra</li><li><strong>可靠性： </strong>内置跨后端的故障转移与负载均衡</li><li><strong>API： </strong>OpenAI 兼容，可直接替换</li></ul>
+<p>OpenRouter 适合想要广模型访问、自动故障转移与动态路由能力的开发者，代价是没有单一可预期的价格点。</p>
+<h3><strong>Akash Network</strong></h3>
+<p>对规模化运行的团队来说，按 token 计费最终会成为瓶颈。Akash Network 运营一个去中心化 GPU 市场，开发者在其中竞价裸金属容量来自托管 Qwen3.8-27B，价格常常远低于传统云。</p>
+<ul><li><strong>A100（80GB）： </strong>在 Akash 市场上约每小时 $1.07 起</li><li><strong>H100（80GB）： </strong>通常在每小时 $1.30 至 $2 区间；不过 Akash 跑的是反向拍卖市场，费率随提供商出价与需求波动</li><li><strong>经济性： </strong>固定小时成本，在大批量下可以压低按 token 计费</li><li><strong>控制权： </strong>对数据驻留与隐私的完全控制，因为推理跑在你直接租用的硬件上</li></ul>
+<p>Akash Network 适合想自托管 Qwen3.8-27B 以消除按 token 成本、并把数据留在自己掌控基础设施上的大批量用户。</p>
+<h3><strong>RunPod</strong></h3>
+<p>RunPod 用 serverless GPU 端点，在托管 API 与裸金属托管之间搭起桥梁。由于 Qwen3.8-27B 足够紧凑，在较低精度下能塞进消费级卡，RunPod 让你经济地部署它，并且只为活跃的计算时间付费。</p>
+<ul><li><strong>硬件： </strong>支持 24GB worker 切片，例如 RTX 3090、4090 与 6000 Ada</li><li><strong>冷启动： </strong>FlashBoot 内存快照降低冷启动延迟</li><li><strong>计费： </strong>按秒计费活跃执行，空闲时缩零</li></ul>
+<p>RunPod 适合把 Qwen3.8-27B 部署到 serverless 基础设施上、想压低空闲成本又不想自己维护集群的团队。</p>
+<h3><strong>Northflank</strong></h3>
+<p>Northflank 是面向生产团队的云平台，让他们能把 Qwen3.8-27B 与既有微服务一起自托管。它接管 Kubernetes 与 GPU 编排，你专注应用本身。</p>
+<ul><li><strong>部署： </strong>用 SGLang 或 vLLM 把 Qwen3.8-27B 作为 GPU 支撑的服务运行</li><li><strong>BYOC： </strong>面向企业环境的自带云（Bring Your Own Cloud）支持</li><li><strong>范围： </strong>在同一套栈里托管 Kubernetes、GPU 基础设施，以及应用服务与数据库</li></ul>
+<p>Northflank 适合想安全地自托管、但不愿自己承担 Kubernetes 或 GPU 运维负担的生产团队。</p>
+<h3><strong>Novita AI</strong></h3>
+<p>Novita AI 的着力点是压低推理成本。对于 prompt 高度重复的应用，比如 RAG 管线或文档分析，它的缓存折扣是收录提供商中最陡的之一。</p>
+<ul><li><strong>输入： </strong>每 1M tokens $0.42</li><li><strong>输出： </strong>每 1M tokens $3.00</li><li><strong>缓存输入： </strong>每 1M tokens $0.085</li><li><strong>API： </strong>完全 OpenAI 兼容</li></ul>
+<p>Novita AI 是预算敏感开发者的强选项，想要可靠、便宜的 Qwen3.8-27B API 访问，尤其是 prompt caching 能生效的场景。</p>
+<h2><strong>结论与建议</strong></h2>
+<p>为 Qwen3.8-27B 选对基础设施，取决于工作负载要求、预算与工程资源。</p>
+<ul><li><strong>企业与超大上下文： </strong>Alibaba Cloud 是官方支持与完整 1M-token 上下文窗口下的明确选择。</li><li><strong>速度与 agentic 工作流： </strong>Cerebras 提供最快的原始 token 生成，Multiverse Computing 在传统 API 提供商里延迟最低。</li><li><strong>自托管与大批量： </strong>Akash Network 提供最便宜的裸金属算力，RunPod 给出可缩零的 serverless 灵活性，Northflank 适合需要托管 Kubernetes 编排的团队。</li><li><strong>预算与灵活性： </strong>Novita AI 通过 prompt caching 带来显著成本节省，OpenRouter 提供跨多家提供商的动态路由。</li></ul>
+<p>若要看一个均衡、可直接上生产的默认选择，DeepInfra 把收录提供商中最低一档的混合单价，与开箱即用的 function calling、JSON mode 和多模态支持配在了一起。可以先浏览完整的<a href="https://deepinfra.com/models?type=text-generation">模型目录</a>或更宽的 <a href="https://deepinfra.com/qwen">Qwen 模型家族</a>比较选项，再决定提供商；需要独享容量就<a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=Qwen%2FQwen3.8-27B">部署一个私有端点</a>。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Qwen3.8-27B: Frontier-Level Vision-Language AI</title>
+      <title>Qwen3.8-27B：前沿级视觉语言 AI</title>
       <link>https://deepinfra.com/blog/qwen3-8-27b</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/qwen3-8-27b</guid>
       <pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Qwen3.8-27B: Frontier-Level Vision-Language AI</description>
       <content:encoded><![CDATA[<h1>Qwen3.8-27B：前沿级视觉语言AI</h1>
 <p>DeepInfra 发布于 2026.10.09</p>
 <p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/qwen3.8-27b-vision-language.png" alt="Qwen3.8-27B：前沿级视觉语言AI"></p>
@@ -99,10 +149,11 @@ print(response.json())copy</code></pre>
 <p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>Qwen3.8-27B API Provider Benchmarks: Speed &amp; Cost</title>
+      <title>Qwen3.8-27B API 提供商基准测试：速度与成本</title>
       <link>https://deepinfra.com/blog/qwen3-8-27b-api-provider-benchmarks</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/qwen3-8-27b-api-provider-benchmarks</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Qwen3.8-27B API Provider Benchmarks: Speed &amp; Cost</description>
       <content:encoded><![CDATA[<h1>Qwen3.8-27B API 提供商基准：速度和成本</h1>
 <p>DeepInfra 发布于 2026.10.07</p>
 <h2><strong>Qwen3.8 27B (xhigh) API 审核摘要</strong></h2>
@@ -268,10 +319,11 @@ print(response.json())copy</code></pre>
 <p>&lt;p&gt;原型成功了。演示落地。然后出现安全调查问卷，问题 41 询问可以强制哪个法律实体提供提示内容。这一问题比延迟或准确性更阻碍了人工智能的推出。在医院、银行、律师事务所和国防分包商内部，数据主权人工智能要求[...]&lt;/p&gt;</p>]]></content:encoded>
     </item>
     <item>
-      <title>Qwen3.8-27B Pricing: DeepInfra vs Alibaba API</title>
+      <title>Qwen3.8-27B 定价：DeepInfra 对比 Alibaba API</title>
       <link>https://deepinfra.com/blog/qwen3-8-27b-pricing-deepinfra-vs-alibaba</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/qwen3-8-27b-pricing-deepinfra-vs-alibaba</guid>
       <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Qwen3.8-27B Pricing: DeepInfra vs Alibaba API</description>
       <content:encoded><![CDATA[<p>Qwen3.8-27B 定价：DeepInfra 对比 Alibaba API</p>
 <p>发布于 2026.10.06，作者 DeepInfra</p>
 <p><a href="https://deepinfra.com/Qwen/Qwen3.8-27B">Qwen3.8-27B</a> 是 Alibaba 的 27B 开放权重推理模型，于 2026 年 8 月 14 日依据 Apache 2.0 发布。它配备了大上下文窗口、多模态输入，并可在八家服务商上通过 API 调用。价格因托管方差异极大：对于同样的权重，Alibaba 第一方的费率是 DeepInfra 的三倍以上。</p>
@@ -336,7 +388,7 @@ print(response.json())copy</code></pre>
 <p>当 agent 从模型调用延伸到 tools、API 和执行环境时，运行时就成了架构的一部分。DeepInfra Sandboxes 与 Hosted Agents 如何把边界保持在 agent 之外、NVIDIA OpenShell 在何处契合，以及我们为何围绕 NVIDIA Vera 做规划。</p>]]></content:encoded>
     </item>
     <item>
-      <title>GLM-5.3 模型概述和集成指南</title>
+      <title>GLM-5.3 模型概览与集成指南</title>
       <link>https://deepinfra.com/blog/glm-5-3-model-integration-guide</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-model-integration-guide</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
@@ -407,10 +459,11 @@ print(response.json())copy</code></pre>
 <ul><li><strong>优化成本</strong>：使用 Flex 服务档位，推理开销最多省下 25%。</li><li><strong>构建 Agent</strong>：用原生 function calling 支撑复杂的多步工作流。</li><li><strong>私有部署</strong>：访问 <a href="https://deepinfra.com/zai-org/GLM-5.3">DeepInfra 控制台</a>获得专属性能与自定义部署。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>Qwen3.8-27B Is Now Available on DeepInfra</title>
+      <title>Qwen3.8-27B 现已在 DeepInfra 提供</title>
       <link>https://deepinfra.com/blog/qwen3-8-27b-deepinfra</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/qwen3-8-27b-deepinfra</guid>
       <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Qwen3.8-27B Is Now Available on DeepInfra</description>
       <content:encoded><![CDATA[<h1>Qwen3.8-27B 现已上线 DeepInfra</h1>
 <p>Qwen 团队最新的开放权重发布 Qwen3.8-27B 是一个 270 亿参数的视觉-语言模型。它在大多数模型容易栽跟头的任务上深入发力：多步骤智能体工作流、软件工程，以及跨图像、文档与视频的多模态推理。在 SWE-bench Pro 上，它得到 61.7 分，超过 Opus4.6 Max 的 53.4。在 QwenSWEBench 上，它从上代的 49.3 跳到 79.0——这样的差距很难被解读为渐进式进步。</p>
 <p>对生产使用而言，Qwen3.8-27B 特别有意思的地方在于它的混合架构：64 层，将 Gated DeltaNet 线性注意力与标准门控注意力混合。它搭配了 262,144 token 的原生上下文窗口，通过 YaRN RoPE 缩放可扩展至一百万 token。Thinking 模式默认开启，但可按请求完全控制，并通过 reasoning_effort 调节推理深度。你可以在不换模型的情况下，用深度思考换取快速响应。视觉-语言基准也体现了同样的趋势：OSWorld-Verified 达到 84.3，领先于 Qwen3.6-27B 的 63.9 和 Qwen3.7-Plus 的 73.3。</p>
@@ -472,7 +525,7 @@ curl &quot;https://api.deepinfra.com/v1/openai/chat/completions&quot; \
 <p>这让 Qwen3.8-27B 成为自主编码智能体、基于文档的流水线与 GUI 自动化系统的合理起点——这些场景此前需要闭源的更大规模模型。如果这与你在构建的东西契合，Qwen3.8-27B demo 是快速感受这个模型的方式。更广泛的 <a href="https://deepinfra.com/qwen">Qwen 模型家族</a>值得在生产工作负载中探索。</p>]]></content:encoded>
     </item>
     <item>
-      <title>GLM-5.3 提供商定价指南：成本比较</title>
+      <title>GLM-5.3 提供方定价指南：成本对比</title>
       <link>https://deepinfra.com/blog/glm-5-3-provider-pricing-guide</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-provider-pricing-guide</guid>
       <pubDate>Sat, 03 Oct 2026 00:00:00 +0000</pubDate>
@@ -548,7 +601,7 @@ curl &quot;https://api.deepinfra.com/v1/openai/chat/completions&quot; \
 <p>研究清楚地表明 GLM-5.3 对其瞄准的工作负载是一款有能力的模型。不那么直观、要算过才知道的是：提供方的选择能在多大程度上移动最终账单。从 DeepInfra 起步，把你的真实 prompt 组合分别跑在 Flex 与 Standard 档上，让真实 token 数字来做决定。</p>]]></content:encoded>
     </item>
     <item>
-      <title>GLM-5.3 现已在 DeepInfra 上提供</title>
+      <title>GLM-5.3 现已在 DeepInfra 上线</title>
       <link>https://deepinfra.com/blog/glm-5-3-deepinfra</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-deepinfra</guid>
       <pubDate>Sat, 03 Oct 2026 00:00:00 +0000</pubDate>
@@ -641,7 +694,7 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>运行长周期智能体、自动化安全工具或复杂软件流水线的团队，应该拿自己的评测对着目前使用的模型跑一遍。DeepInfra 上的 Llama 和 Nemotron 家族为 agent 循环中的简单步骤提供了更便宜的选项。符合条件的初创公司可以申请 <a href="https://deepinfra.com/deepstart">DeepStart</a>，最高获得 10 亿免费 token。</p>]]></content:encoded>
     </item>
     <item>
-      <title>GLM-5.3 API 提供商：速度、延迟和成本</title>
+      <title>GLM-5.3 API 提供方：速度、延迟与成本</title>
       <link>https://deepinfra.com/blog/glm-5-3-api-provider-benchmarks</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-api-provider-benchmarks</guid>
       <pubDate>Fri, 02 Oct 2026 00:00:00 +0000</pubDate>
@@ -686,10 +739,11 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>成本敏感的生产部署，DeepInfra 提供最低的混合定价 $0.72/M token；需要最大吞吐的实时应用，Inco (FAST) 交付 409.5 t/s，较基线提升 546%；延迟关键的企业工作负载，Databricks 取得第三方最低的 9.38 秒 TTFT。需要官方支持与基准测试的团队，应先用 Z AI 原生 API 起步，再经由第三方提供方优化。对于需要保证容量而非共享池服务的工作负载，<a href="https://deepinfra.com/gpu-instances">专用 GPU 实例</a>会彻底改变成本模型，在高用量下值得与按 token 费率互相核算。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Best DeepSeek-V4.1-Flash API Providers in 2026</title>
+      <title>2026 年最佳 DeepSeek-V4.1-Flash API 提供商</title>
       <link>https://deepinfra.com/blog/best-deepseek-v4-1-flash-api-providers</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/best-deepseek-v4-1-flash-api-providers</guid>
       <pubDate>Fri, 02 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Best DeepSeek-V4.1-Flash API Providers in 2026</description>
       <content:encoded><![CDATA[<h1>2026 年最佳 DeepSeek-V4.1-Flash API 提供方</h1>
 <p>随着 LLM 架构日益精密，部署 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash</a> 这样的前沿模型，远不是套一层基础 API 封装就够了。对工程团队来说，挑战在于平衡首 token 时间（TTFT）、吞吐量、上下文缓存与企业级合规。DeepSeek-V4.1-Flash 提供了卓越的能力——包括超过 1M token 的巨量上下文窗口和 Engram 条件记忆——但能否释放其全部潜力，很大程度上取决于你的基础设施选择。</p>
 <p>本指南将带你了解用于部署、路由和测试 DeepSeek-V4.1-Flash 的主要 API 提供方与平台。无论你是在优化海量上下文缓存、寻求零数据保留（zero-data-retention）合规，还是构建高吞吐的智能体工作流，这份梳理都能帮你为生产环境选到合适的工具。</p>
@@ -778,10 +832,11 @@ console.log(response.choices[0].message.content);</code></pre>
 <ul><li><strong>上下文密集型工作负载：</strong> 如果你要传入海量文档或整个代码库，<strong>DeepSeek 官方 API</strong> 无可匹敌——90% 的缓存命中折扣加上对 Engram 条件记忆的原生支持。</li><li><strong>受监管的企业：</strong> 医疗或金融行业组织应考虑 <strong>Atlas Cloud</strong> 或 <strong>Canopy Wave</strong>，获得严格的 SOC 2 Type II、HIPAA 对齐与零数据保留保障。</li><li><strong>高速智能体工作负载：</strong> 构建实时聊天或自主智能体的团队应借助 <strong>Fireworks AI</strong> 或 <strong>Novita AI</strong>，把输出 token 生成速度拉满。</li><li><strong>测试与路由：</strong> 用 <strong>Apidog</strong> 在进入生产前验证模型输出；考虑 <strong>OpenRouter</strong> 或 <strong>EvoLink.AI</strong> 来确保高可用与动态工作负载路由。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>DeepSeek-V4.1-Flash: Model Overview &amp; Integration</title>
+      <title>DeepSeek-V4.1-Flash：模型概览与集成</title>
       <link>https://deepinfra.com/blog/deepseek-v4-1-flash-model-overview-integration</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/deepseek-v4-1-flash-model-overview-integration</guid>
       <pubDate>Thu, 01 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：DeepSeek-V4.1-Flash: Model Overview &amp; Integration</description>
       <content:encoded><![CDATA[<h1>DeepSeek-V4.1-Flash：模型概览与集成</h1>
 <p><a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash</a> 是一款多模态 Mixture-of-Experts 模型，骨干参数 552B，上下文窗口 1,048,576 token。它接受文本与图像输入，以自回归方式生成文本。</p>
 <p>DeepInfra 以 fp8 精度服务该模型，并提供完整的 1,048,576 token 上下文，使服务端窗口与模型原生窗口一致。该架构瞄准输入密集型的智能体工作负载：Causal Encoder-Decoder 设计在 prefill 阶段每 token 激活 8B 参数、decode 阶段激活 16B，从而在长 prompt 上压住成本。</p>
@@ -868,10 +923,11 @@ console.log(response.choices[0].message.content);</code></pre>
 <ul><li><strong>启用 Prompt 缓存：</strong> 用 prompt_cache_key 降低重复长上下文 prompt 的成本。</li><li><strong>探索多模态：</strong> 在 messages 数组中传入图像 URL 即可集成图像分析。</li><li><strong>微调推理档位：</strong> 试验 reasoning_effort 参数，为你的具体用例找到最佳平衡点。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>DeepSeek V4.1 Flash API: Speed, Latency &amp; Cost</title>
+      <title>DeepSeek V4.1 Flash API：速度、延迟与成本</title>
       <link>https://deepinfra.com/blog/deepseek-v4-1-flash-api-benchmarks</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/deepseek-v4-1-flash-api-benchmarks</guid>
       <pubDate>Wed, 30 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：DeepSeek V4.1 Flash API: Speed, Latency &amp; Cost</description>
       <content:encoded><![CDATA[<h1>DeepSeek V4.1 Flash API：速度、延迟与成本</h1>
 <h2><strong>DeepSeek V4.1 Flash（Reasoning, Max Effort）API 评测摘要</strong></h2>
 <table><thead><tr><th>指标</th><th>数值</th><th>背景</th></tr></thead><tbody><tr><td>智能</td><td>40（Artificial Analysis Intelligence Index）</td><td>远高于同规模开放权重模型中位数（18）</td></tr><tr><td>速度</td><td>211.5–545.6 输出 tokens/秒</td><td>明显很快；中位数：68.9 t/s</td></tr><tr><td>延迟（TTFT）</td><td>1.19s–5.28s（因提供方而异）</td><td>有竞争力；中位数：2.32s</td></tr><tr><td>价格（DeepSeek API）</td><td>峰值输入 $0.30/1M、输出 $1.20/1M</td><td>缓存折扣：98%</td></tr><tr><td>每个 Intelligence Index 任务的成本</td><td>$0.27</td><td></td></tr><tr><td>冗长度</td><td>评测期间输出 2.5 亿 token</td><td>偏高；中位数：1.4 亿</td></tr><tr><td>上下文窗口</td><td>1M tokens</td><td>约 1,500 页 A4</td></tr><tr><td>模态</td><td>文本 + 图像输入；文本输出</td><td></td></tr><tr><td>开放权重 / 许可证</td><td>开放权重，MIT 许可证</td><td>允许商用</td></tr><tr><td>模型规模</td><td>总参数 552B，激活 8–16B（MoE）</td><td></td></tr><tr><td>发布</td><td>2026 年 9 月 10 日</td><td></td></tr><tr><td>跑完 Intelligence Index 评测的总成本</td><td>$476.89</td><td></td></tr></tbody></table>
@@ -989,7 +1045,7 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>它速度很快，但确实非常啰嗦。模型倾向于提供全面、详细的回复。做预算时请按更高的输出 token 消耗来规划。</p>]]></content:encoded>
     </item>
     <item>
-      <title>GLM-5.3-Flash 文档和集成指南</title>
+      <title>GLM-5.3-Flash 文档与集成指南</title>
       <link>https://deepinfra.com/blog/glm-5-3-flash-documentation-integration-guide</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-flash-documentation-integration-guide</guid>
       <pubDate>Wed, 30 Sep 2026 00:00:00 +0000</pubDate>
@@ -1045,10 +1101,11 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>GLM-5.3-Flash 把 1M token 上下文窗口与效率导向的 MoE 架构结合，让开发者以典型成本的一小部分获得前沿级的编码、智能体与多模态推理能力。无论你是在构建自主软件智能体、分析视觉文档，还是处理大规模数据集，它现已在 <a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">DeepInfra</a> 上架，配 OpenAI 兼容 API。另见：<a href="https://claude.ai/code/artifact/95638f2c-4a96-4482-a060-7c6f901533f1">GLM-5.3-Flash Is Now on DeepInfra</a> 与<a href="https://claude.ai/code/artifact/7a858d25-3ffa-469c-96c5-1d83de448eeb">定价与成本分析</a>。</p>]]></content:encoded>
     </item>
     <item>
-      <title>DeepSeek-V4.1-Flash Pricing Guide for Developers</title>
+      <title>面向开发者的 DeepSeek-V4.1-Flash 定价指南</title>
       <link>https://deepinfra.com/blog/deepseek-v4-1-flash-pricing-guide</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/deepseek-v4-1-flash-pricing-guide</guid>
       <pubDate>Tue, 29 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：DeepSeek-V4.1-Flash Pricing Guide for Developers</description>
       <content:encoded><![CDATA[<h1>DeepSeek-V4.1-Flash 开发者定价指南</h1>
 <p>如果你在 2026 年末评估长上下文推理模型，<a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash</a> 很难被忽视：定价激进、权重开放，围绕它的提供方市场已经足够竞争。这是那种罕见地同时出现在&quot;压成本&quot;采购对话和严肃智能体工作负载中的模型：部分提供方的公开 API 定价低至每百万输入 token $0.15、每百万输出 token $0.60，而 DeepInfra 的标准定价为输入 $0.20、输出 $0.60，并对更抠成本的团队提供更低价的 Flex 档。</p>
 <p>DeepSeek-V4.1-Flash 是 DeepSeek 于 2026 年 9 月 10 日发布的多模态 Mixture-of-Experts 模型。它属于 V4.1 家族，骨干参数 552B，输入时激活 8B、输出时激活 16B，支持文本加图像输入、文本输出，带 1M token 上下文窗口。它同时以 MIT 许可开放权重——如果你想要单一托管 API 之外的选择权，这一点很重要。在研究资料中，它既作为通用公共 API 模型被建档，也作为最大推理强度的 reasoning 变体被建档——后者正是许多基准与定价比较的语境。</p>
@@ -1128,7 +1185,7 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>如果你已经准备跑这个模型，DeepInfra 上的 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash API 页面</a>是最快的起点——你可以在 demo 里直接试、查看端点详情，然后进入生产集成，全程不需要先和任何人谈话。</p>]]></content:encoded>
     </item>
     <item>
-      <title>2026 年的 GLM-5.3-Flash API 供应商怎么选</title>
+      <title>2026 年最佳 GLM-5.3-Flash API 提供方</title>
       <link>https://deepinfra.com/blog/best-glm-5-3-flash-api-providers</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/best-glm-5-3-flash-api-providers</guid>
       <pubDate>Tue, 29 Sep 2026 00:00:00 +0000</pubDate>
@@ -1196,7 +1253,7 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>对大多数构建智能体工作流的开发者，<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">DeepInfra</a> 仍是强有力的默认选择：成本效率、吞吐量与生产级可靠性之间可取的平衡。另可参见该模型的<a href="https://claude.ai/code/artifact/7a858d25-3ffa-469c-96c5-1d83de448eeb">定价与成本分析</a>、<a href="https://claude.ai/code/artifact/1b67dc5b-bd49-4062-bd18-0b2cedf3eb51">模型文档</a>与 <a href="https://claude.ai/code/artifact/ceee9f03-be9b-454f-8d11-ebc8bfc9ea0e">API 提供方技术分析</a>。</p>]]></content:encoded>
     </item>
     <item>
-      <title>GLM-5.3-Flash API 供应商：速度与成本</title>
+      <title>GLM-5.3-Flash API 提供方：速度与成本</title>
       <link>https://deepinfra.com/blog/glm-5-3-flash-api-providers-speed-latency-cost</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-flash-api-providers-speed-latency-cost</guid>
       <pubDate>Tue, 29 Sep 2026 00:00:00 +0000</pubDate>
@@ -1252,10 +1309,11 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>GLM-5.3-Flash 是多模态、高效率变体，定价每百万 token $0.15/$0.50。旗舰 <a href="https://artificialanalysis.ai/models/glm-5-3">GLM-5.3</a> 是纯文本、聚焦编码与网络安全的模型，定价约输入 $1.40/输出 $4.40 每百万——贵了约十倍。对多数非编码工作负载（对话、抽取、视觉、摘要），GLM-5.3-Flash 是更实际的选择。</p>]]></content:encoded>
     </item>
     <item>
-      <title>DeepSeek-V4.1-Flash Is Now on DeepInfra</title>
+      <title>DeepSeek-V4.1-Flash 现已上线 DeepInfra</title>
       <link>https://deepinfra.com/blog/deepseek-v4-1-flash-deepinfra</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/deepseek-v4-1-flash-deepinfra</guid>
       <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：DeepSeek-V4.1-Flash Is Now on DeepInfra</description>
       <content:encoded><![CDATA[<h1>DeepSeek-V4.1-Flash 现已上线 DeepInfra</h1>
 <p><a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek 的新作 V4.1-Flash</a> 在 5,520 亿参数的骨干中，处理输入时只激活 80 亿参数，却仍在 DeepSeek 公布的所有智能体基准上击败了规模大得多的 DeepSeek-V4-Pro。它于 2026 年 9 月发布，围绕 Causal Encoder-Decoder 设计构建，正是这一设计让总参数与激活参数之间的巨大差距成为可能。对运行输入密集型或长上下文工作负载的开发者来说，实际效果是每个 prefill token 成本更低，而智能体能力不降。</p>
 <p>它<a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">现已在 DeepInfra 上线</a>。</p>
@@ -1317,7 +1375,7 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>领一个 API key，跑一遍上面的 curl 调用，在你自己的工作负载上与目前使用的模型对比，而不是只看基准表。基于 DeepInfra 构建的早期团队还可以申请 DeepStart 计划获取免费推理额度。</p>]]></content:encoded>
     </item>
     <item>
-      <title>GLM-5.3-Flash API 已上线 DeepInfra</title>
+      <title>GLM-5.3-Flash API 现已登陆 DeepInfra</title>
       <link>https://deepinfra.com/blog/glm-5-3-flash-deepinfra</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-flash-deepinfra</guid>
       <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
@@ -1397,7 +1455,7 @@ console.log(response.choices[0].message.content);</code></pre>
 <p>这个组合打开了一整类智能体的空间（带完整仓库上下文的代码助手、GUI 自动化流水线、文档密集的工作流），它们在过去常常贵到无法可靠地构建。如果你想在投入之前看看它如何处理你的工作负载，<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">在线 demo</a>是合理的起点；需要保证容量的团队可以搭建<a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=zai-org%2FGLM-5.3-Flash">私有端点</a>。为智能体工作负载做预算时，可以读读我们关于<a href="https://deepinfra.com/blog/token-verbosity">为什么单任务成本比单 token 成本更重要</a>的观点，以及<a href="https://deepinfra.com/blog/two-tier-agent-two-models">双层智能体如何把前沿模型与更便宜的模型配对</a>。也欢迎浏览我们的其余<a href="https://deepinfra.com/models/text-generation">文本生成模型</a>。</p>]]></content:encoded>
     </item>
     <item>
-      <title>小参数开放权重模型的隐性成本优势</title>
+      <title>小型开放权重模型：隐藏的成本优势</title>
       <link>https://deepinfra.com/blog/small-open-weight-models-cost</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/small-open-weight-models-cost</guid>
       <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
@@ -1554,7 +1612,7 @@ def solve(messages, passes):
 <p>把整个规模区间跑在同一个 OpenAI 兼容端点后面，正是让这件事可测量的原因，因为比较两级只值一个字符串的改动。从 <a href="https://deepinfra.com/Qwen/Qwen3.8-27B">Qwen3.8-27B 模型页</a>起步看实时定价，或浏览<a href="https://deepinfra.com/models">开放权重目录</a>看清整架梯子。欢迎到 <a href="mailto:feedback@deepinfra.com">feedback@deepinfra.com</a>、<a href="https://discord.gg/deepinfra">Discord</a> 或 @DeepInfra 告诉我们你的升级率长什么样。</p>]]></content:encoded>
     </item>
     <item>
-      <title>智能体需要运行时边界，而不只是护栏</title>
+      <title>智能体需要的是运行时边界，而不只是护栏</title>
       <link>https://deepinfra.com/blog/agent-runtime-boundaries</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/agent-runtime-boundaries</guid>
       <pubDate>Mon, 28 Sep 2026 00:00:00 +0000</pubDate>
@@ -1590,7 +1648,7 @@ def solve(messages, passes):
 <p>对于智能体，护栏固然重要。<strong>但边界终究要靠基础设施来强制执行。</strong></p>]]></content:encoded>
     </item>
     <item>
-      <title>AI 模型校准：无人优化的基准</title>
+      <title>AI 模型校准：那个没人优化的基准评测</title>
       <link>https://deepinfra.com/blog/ai-model-calibration-benchmark</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/ai-model-calibration-benchmark</guid>
       <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate>
@@ -1640,7 +1698,7 @@ def solve(messages, passes):
 <p>浏览全部模型：<a href="https://deepinfra.com/models">deepinfra.com/models</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>token 冗长才是新的定价战</title>
+      <title>Token 冗长度是新的定价之战</title>
       <link>https://deepinfra.com/blog/token-verbosity</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/token-verbosity</guid>
       <pubDate>Fri, 25 Sep 2026 00:00:00 +0000</pubDate>
@@ -1704,7 +1762,7 @@ def solve(messages, passes):
 <p><a href="https://deepinfra.com/models">探索 DeepInfra 的模型</a>，比较定价、token 用量与推理性能，为你的工作负载挑选在成本、推理深度与性能之间取得正确平衡的模型。</p>]]></content:encoded>
     </item>
     <item>
-      <title>GLM-5.3-Flash 定价、供应商与成本</title>
+      <title>GLM-5.3-Flash 定价、提供方与成本</title>
       <link>https://deepinfra.com/blog/glm-5-3-flash-pricing-providers-cost</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/glm-5-3-flash-pricing-providers-cost</guid>
       <pubDate>Thu, 24 Sep 2026 00:00:00 +0000</pubDate>
@@ -1778,7 +1836,7 @@ def solve(messages, passes):
 <p>对大多数认真评估这个模型的开发者，DeepInfra 是一个扎实起点：折扣公开价是研究资料里明确标注的最低一档，端点支持多模态输入、JSON 输出和 function calling，<a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">交互式 demo</a>让你在不写一行集成代码之前先试模型。<a href="https://docs.deepinfra.com">API 文档</a>覆盖生产调用所需的一切；如果 GLM-5.3-Flash 不合适，DeepInfra 的<a href="https://deepinfra.com/models/text-generation">完整模型目录</a>让你在同一基础设施层上直接对比其他选项。拿你的真实 token 构成跑一遍这些数字，核对你的缓存命中假设，一小时内你就该知道这个&quot;模型 + 提供方&quot;的组合对你的项目是否成立。</p>]]></content:encoded>
     </item>
     <item>
-      <title>模型弃用：构建持久的 LLM 应用程序</title>
+      <title>模型退役：构建经得起时间的 LLM 应用</title>
       <link>https://deepinfra.com/blog/model-deprecation-llm-apps</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/model-deprecation-llm-apps</guid>
       <pubDate>Thu, 24 Sep 2026 00:00:00 +0000</pubDate>
@@ -2176,7 +2234,7 @@ Below the hero, [components: N cards / a chart / a photo grid].
 <p>用 AI 设计网站，从来不是敲一句&quot;给我做个网站&quot;然后祈祷，而是写出一份精确到模型只能画出一件东西的简报——那件你心里早就有的东西。把提示词写对，空白画布就不再是项目卡住的地方，而成了它们开始的地方。</p>]]></content:encoded>
     </item>
     <item>
-      <title>两层 AI 智能体架构：为什么需要两种模型</title>
+      <title>双层 AI 智能体：为什么你需要两个模型</title>
       <link>https://deepinfra.com/blog/two-tier-agent-two-models</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/two-tier-agent-two-models</guid>
       <pubDate>Tue, 22 Sep 2026 00:00:00 +0000</pubDate>
@@ -2228,10 +2286,11 @@ Below the hero, [components: N cards / a chart / a photo grid].
 <p>单价在跌、账单在涨，这中间的落差几乎全可以用智能体工作流对 token 消耗的乘数效应来解释。双层架构是缩小这一落差的最直接可用的杠杆——不是削减智能体做的事，而是把它做的大部分事情，跑在与任务实际体量相称的基础设施上。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Is Kimi K3 Production Ready? Real-World Analysis</title>
+      <title>Kimi K3 可以投入生产了吗？真实场景分析</title>
       <link>https://deepinfra.com/blog/kimi-k3-production-ready</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/kimi-k3-production-ready</guid>
       <pubDate>Thu, 17 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Is Kimi K3 Production Ready? Real-World Analysis</description>
       <content:encoded><![CDATA[<h1>Kimi K3 准备好上生产了吗？真实世界分析</h1>
 <p><a href="https://deepinfra.com/moonshotai/Kimi-K3">Kimi K3</a> 于 2026 年 7 月发布后，迅速成为 AI 圈讨论度最高的模型之一。它一路爬到 <a href="https://artificialanalysis.ai/models/kimi-k3">Artificial Analysis Intelligence Index</a> 的榜首，跑赢了好几个运行成本高得多的闭源模型。对一个<a href="https://deepinfra.com/blog/open-vs-closed-source-ai-models">开放权重</a>模型——尤其还是一个 2.8 万亿参数这么大的模型——这是重要里程碑。开发者们自然开始问：多久能把它放进生产？</p>
 <p>这份关注是正当的。K3 的基准成绩是真实的，有独立测试背书，让它成为当今最强的开放权重模型之一。但强劲的基准表现并不自动意味着它适合每一种生产工作负载。重要的是它在你的具体用例、基础设施、延迟要求和预算下表现如何。</p>

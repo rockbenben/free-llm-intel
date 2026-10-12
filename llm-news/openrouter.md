@@ -1,6 +1,6 @@
 # OpenRouter (模型统一网关) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-08**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-12**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：OpenRouter (模型统一网关)（`openrouter`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -38,7 +38,7 @@
 27. [Jev vs LLM：何时使用决策模型而不是生成文本](https://openrouter.ai/blog/tutorials/jev-vs-llm-when-to-use-each/)（2026-09-19） <!--orig:Jev vs LLM: When to Use a Decision Model Instead of Generating Text-->
 28. [图像生成模型比较：成本、编辑、质量](https://openrouter.ai/blog/insights/image-generation-models-compared/)（2026-09-18） <!--orig:Image Generation Models Compared: Cost, Edit, Quality-->
 29. [在 OpenRouter 上构建可靠的工具调用智能体循环](https://openrouter.ai/blog/tutorials/build-tool-calling-agent-loop/)（2026-09-17） <!--orig:Build a Reliable Tool-Calling Agent Loop on OpenRouter-->
-30. [DeepSeek V4 具备视觉能力吗？](https://openrouter.ai/blog/insights/deepseek-v4-vision)（2026-09-16） <!--orig:Does DeepSeek V4 Have Vision?-->
+30. [DeepSeek V4 具备视觉能力吗？](https://openrouter.ai/blog/insights/deepseek-v4-vision/)（2026-09-16） <!--orig:Does DeepSeek V4 Have Vision?-->
 31. [案例研究：Descript 如何把新模型评测移出工程排期](https://openrouter.ai/blog/case-studies/descript-case-study/)（2026-09-15） <!--orig:Case Study: How Descript Took New Models Off the Engineering Queue-->
 32. [LLM 裁判：自动为 AI 智能体的输出打分](https://openrouter.ai/blog/tutorials/llm-as-a-judge-evaluate-ai-agents/)（2026-09-14） <!--orig:LLM-as-a-Judge: Score AI Agent Outputs Automatically-->
 33. [OpenRouter 文本转语音：5 分钟 API 教程](https://openrouter.ai/blog/tutorials/text-to-speech/)（2026-09-11） <!--orig:OpenRouter Text-to-Speech: API Tutorial in 5 Minutes-->
@@ -74,7 +74,7 @@
 63. [OpenRouter 的全新形象](https://openrouter.ai/blog/announcements/brand-refresh/)（2026-07-13） <!--orig:A New Look for OpenRouter-->
 64. [为什么要用 OpenRouter 接入 DeepSeek](https://openrouter.ai/blog/insights/why-openrouter-for-deepseek/)（2026-07-13） <!--orig:Why Use OpenRouter for DeepSeek-->
 65. [为 LLM 选择最优的图像输入 detail 级别](https://openrouter.ai/blog/insights/image-detail-low-cost/)（2026-07-07） <!--orig:Choosing the Optimal Image Input Detail Level in LLMs-->
-66. [DeepSeek V4 正在赢得 agent token 份额](https://openrouter.ai/blog/insights/deepseek-v4-adoption)（2026-06-30） <!--orig:DeepSeek V4 Is Earning Agentic Token Share-->
+66. [DeepSeek V4 正在赢得 agent token 份额](https://openrouter.ai/blog/insights/deepseek-v4-adoption/)（2026-06-30） <!--orig:DeepSeek V4 Is Earning Agentic Token Share-->
 67. [值得关注的开放权重模型：2026 年 6 月](https://openrouter.ai/blog/insights/the-open-weight-models-that-matter-june-2026/)（2026-06-27） <!--orig:The Open Weight Models that Matter: June 2026-->
 68. [OpenRouter MCP 服务器](https://openrouter.ai/blog/announcements/openrouter-mcp-server/)（2026-06-25） <!--orig:The OpenRouter MCP Server-->
 69. [统一图像 API 发布](https://openrouter.ai/blog/announcements/image-api/)（2026-06-23） <!--orig:Introducing the Unified Image API-->
@@ -105,7 +105,7 @@
 94. [机器人朝你冲过来：你想让它跑在 Claude 还是 Grok 上？](https://openrouter.ai/blog/insights/royale-last-agent-standing/)（2026-06-04） <!--orig:A Robot is Sprinting Towards You: Do You Want it Running on Claude or Grok?-->
 95. [五月版本聚焦](https://openrouter.ai/blog/announcements/may-release-spotlight/)（2026-06-01） <!--orig:May Release Spotlight-->
 96. [Guardrails：保护你的 Agent、数据和成本](https://openrouter.ai/blog/announcements/guardrails/)（2026-05-29） <!--orig:Guardrails: Protect your Agents, Data, and Costs-->
-97. [OpenRouter 完成 1.13 亿美元 B 轮融资](https://openrouter.ai/blog/announcements/series-b)（2026-05-28） <!--orig:OpenRouter Raises $113M Series B-->
+97. [OpenRouter 完成 1.13 亿美元 B 轮融资](https://openrouter.ai/blog/announcements/series-b/)（2026-05-28） <!--orig:OpenRouter Raises $113M Series B-->
 98. [Agent SDK 的 Human-in-the-Loop 工具](https://openrouter.ai/blog/tutorials/human-in-the-loop-tools/)（2026-05-08） <!--orig:Human-in-the-Loop Tools for the Agent SDK-->
 99. [所有模型一致的 Web 搜索与抓取](https://openrouter.ai/blog/announcements/agentic-web-tools/)（2026-05-07） <!--orig:Consistent Web Search and Fetch Across Every Model-->
 100. [GPT-5.5 涨价：实际成本几何](https://openrouter.ai/blog/insights/gpt55-cost-analysis/)（2026-05-04） <!--orig:GPT-5.5 Price Increase: What It Actually Costs-->
@@ -134,7 +134,7 @@
 123. [Apps 支持音频输入与 PDF 链接](https://openrouter.ai/blog/announcements/audio-inputs-and-pdf-urls-for-apps/)（2025-08-04） <!--orig:Audio Inputs and PDF URLs for Apps-->
 124. [Presets：如何跨应用无缝迁移模型配置](https://openrouter.ai/blog/tutorials/presets-how-to-seamlessly-transfer-model-configurations-across-apps/)（2025-07-29） <!--orig:Presets: How To Seamlessly Transfer Model Configurations Across Apps-->
 125. [新隐私优先服务商上线：Venice](https://openrouter.ai/blog/announcements/new-privacy-focused-provider-drop-venice/)（2025-07-15） <!--orig:New Privacy-Focused Provider Drop: Venice-->
-126. [在 Cursor 中使用 OpenRouter 模型：用 Moonshot AI 的 Kimi K2 试一试](https://openrouter.ai/blog/tutorials/use-openrouter-models-in-cursor-try-it-with-moonshot-ais-kimi-k2)（2025-07-14） <!--orig:Use OpenRouter Models in Cursor: Try it with Moonshot AI's Kimi K2-->
+126. [在 Cursor 中使用 OpenRouter 模型：用 Moonshot AI 的 Kimi K2 试一试](https://openrouter.ai/blog/tutorials/use-openrouter-models-in-cursor-try-it-with-moonshot-ais-kimi-k2/)（2025-07-14） <!--orig:Use OpenRouter Models in Cursor: Try it with Moonshot AI's Kimi K2-->
 127. [免费层更新：为每个人维系触手可及的 AI](https://openrouter.ai/blog/announcements/updates-to-our-free-tier-sustaining-accessible-ai-for-everyone/)（2025-07-10） <!--orig:Updates to Our Free Tier: Sustaining Accessible AI for Everyone-->
 128. [新隐身模型：“Cypher Alpha”](https://openrouter.ai/blog/announcements/new-stealth-model-cypher-alpha/)（2025-07-01） <!--orig:New Stealth Model: "Cypher Alpha"-->
 129. [推出 Presets：在你的仪表盘管理 LLM 配置！](https://openrouter.ai/blog/announcements/introducing-presets-manage-llm-configs-from-your-dashboard/)（2025-06-26） <!--orig:Introducing Presets: Manage LLM Configs from Your Dashboard!-->
@@ -163,5 +163,5 @@
 152. [自带 API 密钥（BYOK）](https://openrouter.ai/blog/announcements/bring-your-own-api-keys/)（2024-12-20） <!--orig:Bring Your Own API Keys-->
 153. [加密货币支付 API](https://openrouter.ai/blog/announcements/crypto-payments-api/)（2024-12-20） <!--orig:Crypto Payments API-->
 154. [结构化输出与免费 Gemini Flash 2.0](https://openrouter.ai/blog/announcements/structured-outputs-and-free-gemini-flash-20/)（2024-12-12） <!--orig:Structured Outputs & Free Gemini Flash 2.0-->
-155. [降价与 Llama 3.3 70b](https://openrouter.ai/blog/announcements/price-drops-and-llama-33-70b)（2024-12-06） <!--orig:Price Drops and Llama 3.3 70b-->
+155. [降价与 Llama 3.3 70b](https://openrouter.ai/blog/announcements/price-drops-and-llama-33-70b/)（2024-12-06） <!--orig:Price Drops and Llama 3.3 70b-->
 156. [作者页面与 Amazon Nova](https://openrouter.ai/blog/announcements/author-pages-and-amazon-nova/)（2024-12-05） <!--orig:Author Pages & Amazon Nova-->

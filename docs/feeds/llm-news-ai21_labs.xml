@@ -3,13 +3,13 @@
   <channel>
     <title>AI21 Labs 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>AI21 Labs 官方博客 / 更新日志归档（最近 30 条，共 30 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>AI21 Labs 官方博客 / 更新日志归档（最近 50 条，共 50 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 06 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>代理设计的可验证性试金石</title>
+      <title>智能体设计的可验证性试金石</title>
       <link>https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/</guid>
       <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
@@ -69,11 +69,11 @@
 <p><strong>本博客基于 Adi Elbaz、Eran Goldstein、Tamar Levy Loboda、Niv Granot、Assaf Gerner、Eli Lepkifker、Oded Avraham、Guy Rephaeli、Guy Freund、Alan Arazi、Ido Weiss 和 Roee Hendel 的研究。非常感谢 Joanna Kramer 的编辑。</strong></p>]]></content:encoded>
     </item>
     <item>
-      <title>From manual negotiation to automated scheduling: How AI21 ma…</title>
+      <title>从人工协商到自动调度：AI21 如何用 Kueue 管理其 GPU 集群</title>
       <link>https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/</guid>
       <pubDate>Sun, 04 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：From manual negotiation to automated scheduling: How AI21 manages its GPU fleet with Kueue</description>
+      <description>原文标题：From manual negotiation to automated scheduling: How AI21 manages its GPU fleet with Kueue</description>
       <content:encoded><![CDATA[<p>Google Cloud 最近发布了 <a href="https://cloud.google.com/blog/products/containers-kubernetes/ai21-trains-its-models-on-ai-hypercomputer">AI21 在 AI Hypercomputer 上的故事</a>，其中提到高优先级工作负载的启动等待时间（time-to-start）缩短了 83%。以下是我们如何在 GKE 上用 Kueue 达成这一结果的完整技术拆解。</p>
 <h2>简要概述</h2>
 <p>在 Kubernetes 上运行 AI 训练工作负载的人都清楚一个反复出现的难题：多支团队共享一个大型 GPU 机群。本文中，我们分享一个真实案例——来自我们一个共享 GKE 集群，规模约为 10,000 块 GPU、跨多支团队使用——讲述我们如何从内部消息频道里的人工协调，迁移到 Kueue：一个开源、Kubernetes 原生的作业排队系统，能自动准入（admit）、排定优先级并抢占（preempt）工作负载。故事始于采用 Kueue，最终演变为我们与 Google 背后 Kueue 团队的紧密协作——我们真实生产环境的需求直接反哺进 Kueue 的路线图。我们将回顾我们尝试过什么、成效如何——人工干预率和关键作业「饥饿」时长等指标大幅下降——以及在生产环境运行它总结出的经验如何反哺 Kueue 本身，包括新功能 Admission Fair Sharing（AFS），现已向所有用户提供。</p>
@@ -155,7 +155,7 @@
 <p>只有当我们转向用 Kueue 为团队的单一共享集群处理准入、优先级与抢占之后，容量才真正做到自动分配：跨团队公平、按业务优先级排序、无需人工干预即可回收。</p>]]></content:encoded>
     </item>
     <item>
-      <title>你要的不是前沿模型，而是一个验证器</title>
+      <title>你不需要前沿模型，你需要一个校验器</title>
       <link>https://www.ai21.com/blog/you-need-a-verifier/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/you-need-a-verifier/</guid>
       <pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate>
@@ -202,7 +202,7 @@
 <p><em>注意事项：两个 benchmark 都只在 100 问样本上评估；训练标签继承了自动评分器的噪声；两个 SFT 阶段都是从闭源模型蒸馏；验证增加一轮延迟。最后一点是有界的：验证轨迹比生成 rollout 短得多——后者要把检索到的文档拖过整个上下文——且各循环之间不共享状态，所以十六次验证的墙钟时间等于一次。</em></p>]]></content:encoded>
     </item>
     <item>
-      <title>又好又省：开放模型探路，前沿模型收尾</title>
+      <title>更强也更省：开源模型探索，前沿模型收尾</title>
       <link>https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/</guid>
       <pubDate>Wed, 15 Jul 2026 00:00:00 +0000</pubDate>
@@ -237,7 +237,7 @@
 <p>这是我们通过在不同模型间组合正确的执行策略来优化 agent 性能的更大努力中的一环。下一步是训练源代码上下文提取步骤，以达到更高的覆盖率。</p>]]></content:encoded>
     </item>
     <item>
-      <title>面向 SWE 智能体的预算感知执行，把 Best-of-N 做得更好</title>
+      <title>用预算感知的执行策略改进 SWE Agent 的 Best-of-N</title>
       <link>https://www.ai21.com/blog/improving-best-of-n-with-budget-aware-execution-for-swe-agents/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/improving-best-of-n-with-budget-aware-execution-for-swe-agents/</guid>
       <pubDate>Tue, 07 Jul 2026 00:00:00 +0000</pubDate>
@@ -292,7 +292,7 @@
 <p>对构建者来说，这意味着你不必再死守僵化的一刀切执行预算——在保持卓越 agent 质量的同时，获得按成本或速度优化的更大自由度。</p>]]></content:encoded>
     </item>
     <item>
-      <title>token 开销降不下来？光靠简单路由管不住它</title>
+      <title>支出并没有下降。那现在怎么办？</title>
       <link>https://www.ai21.com/lp/blog/token-spend-isnt-going-down-you-need-more-than-naive-routing-to-manage-it-gated/</link>
       <guid isPermaLink="true">https://www.ai21.com/lp/blog/token-spend-isnt-going-down-you-need-more-than-naive-routing-to-manage-it-gated/</guid>
       <pubDate>Tue, 30 Jun 2026 00:00:00 +0000</pubDate>
@@ -301,7 +301,7 @@
 <p>这意味着 AI 领域的领导者们要应对的是不同的问题。在我们自己的对话里也注意到了这一点。我们已经听不到&quot;<em>我的 agent 足够好吗？</em>&quot;这样的话，现在的问题是：&quot;<em>我们付得起把它规模化运行起来的成本吗？</em>&quot;</p>]]></content:encoded>
     </item>
     <item>
-      <title>扭转天平：把弱智能体合并成一个最先进的深度研究智能体</title>
+      <title>以小博大：把弱 agent 合并成最先进的 deep researcher</title>
       <link>https://www.ai21.com/blog/merging-weak-agents-into-a-state-of-the-art-deep-researcher/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/merging-weak-agents-into-a-state-of-the-art-deep-researcher/</guid>
       <pubDate>Wed, 24 Jun 2026 00:00:00 +0000</pubDate>
@@ -346,7 +346,7 @@
 <p><strong>答案是：远比其中任何一个单独交付的要多。</strong>当成功意味着覆盖事实，而事实散布在独立尝试之间时，我们证明了合并 agent 胜过锤炼单个 agent——甚至不需要你自己拥有任何前沿模型。<strong>你合并的尝试数量是一个旋钮</strong>：我们从榜上最便宜、最旧的报告起步就拿到了第一，若从更强的 agent 出发，也许两份就够。</p>]]></content:encoded>
     </item>
     <item>
-      <title>先扩规模，再做增强：正确的执行策略如何让我们拿下 SWE-rebench 的最先进水平</title>
+      <title>先扩展、后富化：正确的执行策略如何帮助我们在 SWE-rebench 上达到最先进水平</title>
       <link>https://www.ai21.com/blog/first-scale-then-enrich-how-the-right-execution-strategy-helped-us-reach-state-of-the-art-on-swe-rebench/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/first-scale-then-enrich-how-the-right-execution-strategy-helped-us-reach-state-of-the-art-on-swe-rebench/</guid>
       <pubDate>Thu, 04 Jun 2026 00:00:00 +0000</pubDate>
@@ -438,7 +438,7 @@ Same format: one command per line, no numbering, no explanations. Only commands 
 <p><em>感谢 Assaf Gerner 和 Guy Rephaeli 的贡献。</em></p>]]></content:encoded>
     </item>
     <item>
-      <title>复现方差：智能体 LLM 流水线里的缓存</title>
+      <title>复现方差：Agentic LLM 管道中的缓存</title>
       <link>https://www.ai21.com/blog/caching-in-agentic-llm-pipelines/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/caching-in-agentic-llm-pipelines/</guid>
       <pubDate>Wed, 13 May 2026 00:00:00 +0000</pubDate>
@@ -549,7 +549,7 @@ experiment_v3::fix_0(val_0(gen_0))</code></pre>
 <p>缓存是让我们让 agentic 工作流变得快速、可复现、迭代便宜的最强大工具之一。但 LLM 的非确定性本质打破了传统缓存赖以成立的假设，所以弥合这一缺口靠的绝不是一个简单的 key-value 存储。它需要的是一种刻意的、尊重这些系统核心处非确定性的设计。</p>]]></content:encoded>
     </item>
     <item>
-      <title>不掏空预算也能做到 SOTA</title>
+      <title>AI21 如何借助 Maestro 在深度研究基准上达到 SOTA 而不超预算</title>
       <link>https://www.ai21.com/blog/maestro-deep-research-agents/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/maestro-deep-research-agents/</guid>
       <pubDate>Tue, 28 Apr 2026 00:00:00 +0000</pubDate>
@@ -637,7 +637,7 @@ experiment_v3::fix_0(val_0(gen_0))</code></pre>
 <p><em>想了解更多？体验 </em><a href="https://studio.ai21.com/dr"><em>AI21 Maestro 上的 Deep Research Preview</em></a><em> →</em></p>]]></content:encoded>
     </item>
     <item>
-      <title>发光的未必是金子：编码智能体基准上，「像 gold」的答案如何掩盖功能缺陷</title>
+      <title>「金样」答案暴露了编码基准中 LLM 评审的偏差</title>
       <link>https://www.ai21.com/blog/gold-like-answers-benchmarks/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/gold-like-answers-benchmarks/</guid>
       <pubDate>Tue, 14 Apr 2026 00:00:00 +0000</pubDate>
@@ -906,7 +906,7 @@ COMPARISON TIPS:
 <p>具体到 SWE agent，这个实验强调：仅度量功能正确性可能提供的信息还不够。展望未来，我们或许需要增加新的指标来度量最小性、清晰度等非功能品质。</p>]]></content:encoded>
     </item>
     <item>
-      <title>给潜意识做工程设计：为什么只用 Claude Code 造不出 AI 系统</title>
+      <title>Claude Code 不足以构建 AI 系统：工程化&quot;潜意识&quot;</title>
       <link>https://www.ai21.com/blog/ai-system-requirements/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/ai-system-requirements/</guid>
       <pubDate>Sun, 05 Apr 2026 00:00:00 +0000</pubDate>
@@ -970,7 +970,7 @@ COMPARISON TIPS:
 <p>瓶颈不再是代码，而是清晰度。而清晰度不来自口述——它来自一套严谨的拷问、挑战与打磨的过程，直到系统如实反映出产品背后的真实意图。</p>]]></content:encoded>
     </item>
     <item>
-      <title>步长与偏见：一个 32 位溢出如何写坏 CUDA 内核，还藏了好几周</title>
+      <title>一次 32 位溢出如何腐蚀了 vLLM 的 CUDA kernel</title>
       <link>https://www.ai21.com/blog/vllm-cuda-integer-overflow/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/vllm-cuda-integer-overflow/</guid>
       <pubDate>Wed, 25 Mar 2026 00:00:00 +0000</pubDate>
@@ -1028,7 +1028,7 @@ COMPARISON TIPS:
 <p><em><strong>致谢</strong></em> <em>本工作由</em> Asaf Gardin 和 Amir Koblyansky <em>贡献。</em></p>]]></content:encoded>
     </item>
     <item>
-      <title>小心那道缝隙：演示智能体与生产系统差在哪</title>
+      <title>注意差距：区分 demo agent 与生产系统</title>
       <link>https://www.ai21.com/blog/mind-the-gap/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/mind-the-gap/</guid>
       <pubDate>Tue, 17 Mar 2026 00:00:00 +0000</pubDate>
@@ -1080,7 +1080,7 @@ COMPARISON TIPS:
 <p><em><code>下面是与 Barak 的完整对谈。</code></em></p>]]></content:encoded>
     </item>
     <item>
-      <title>企业 AI 落地真正卡住的地方</title>
+      <title>企业 AI 部署到底卡在哪里</title>
       <link>https://www.ai21.com/blog/enterprise-ai-deployments/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/enterprise-ai-deployments/</guid>
       <pubDate>Tue, 10 Mar 2026 00:00:00 +0000</pubDate>
@@ -1136,7 +1136,7 @@ COMPARISON TIPS:
 <p>理解这道落差，通常就是弥合它的第一步。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Modular智能：一种类人的智能体编排模型</title>
+      <title>Modular智能：一种面向 agent 编排的类人模型</title>
       <link>https://www.ai21.com/blog/modular-intelligence-agent-orchestration/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/modular-intelligence-agent-orchestration/</guid>
       <pubDate>Thu, 26 Feb 2026 00:00:00 +0000</pubDate>
@@ -1170,7 +1170,7 @@ COMPARISON TIPS:
 <p>把这些原则应用于 agentic AI，产出的是更可审计、更可诊断、更便于有原则地改进的系统。在这一语境下值得追求类人之处，不是表面的流畅，而是结构上的透明：系统的推理可被检视、失败可被定位、输出可以用&quot;系统实际做了什么&quot;而非仅仅&quot;产出了什么&quot;来解释。</p>]]></content:encoded>
     </item>
     <item>
-      <title>用与模型无关的 padding 最小化，减少 LLM 训练浪费</title>
+      <title>与模型无关的 padding 最小化：减少 LLM 训练浪费</title>
       <link>https://www.ai21.com/blog/padding-minimization-efficiency/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/padding-minimization-efficiency/</guid>
       <pubDate>Wed, 11 Feb 2026 00:00:00 +0000</pubDate>
@@ -1243,7 +1243,7 @@ COMPARISON TIPS:
 <p>更广泛的教训并不是这些具体修改放之四海皆准，也不是 kernel 级或模型级的优化不重要。恰恰相反：在承诺做更高风险的内部改动之前——尤其是在以 transformer为中心的训练栈内训练非 transformer 架构时——往往值得先寻找消除无用功的模型无关修复。</p>]]></content:encoded>
     </item>
     <item>
-      <title>要么扩，要么 OOM：vLLM 扩容的艺术</title>
+      <title>要么扩容，要么 OOM：vLLM 扩展的艺术</title>
       <link>https://www.ai21.com/blog/scaling-vllm-without-oom/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/scaling-vllm-without-oom/</guid>
       <pubDate>Thu, 05 Feb 2026 00:00:00 +0000</pubDate>
@@ -1356,7 +1356,7 @@ COMPARISON TIPS:
 <ul><li><strong>选对自动扩缩指标</strong>：像 <code>vllm:num_requests_waiting</code> 或 <code>vllm:request_queue_time_seconds</code> 这样反映客户端感知负载的队列指标，可以很好地指示实例过载。</li><li><strong>考虑缓慢的启动</strong>：vLLM 实例初始化要几分钟。把自动扩缩阈值设得足够高，以容忍新实例启动期间的排队。</li><li><strong>缩容要保守</strong>：使用较长的稳定窗口，避免抖动和反复支付启动成本。</li><li><strong>让客户端超时与扩缩延迟对齐：</strong> 考虑扩容延迟；使用指数退避避免放大负载。</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>一个 token 坏所有：一次 vLLM 排障记</title>
+      <title>一个 token 腐化全部：一段 vLLM 调试往事</title>
       <link>https://www.ai21.com/blog/vllm-debugging-mamba-bug/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/vllm-debugging-mamba-bug/</guid>
       <pubDate>Thu, 29 Jan 2026 00:00:00 +0000</pubDate>
@@ -1682,7 +1682,7 @@ def reorder_batch_to_split_decodes_and_prefills(...):
 <p>完整修复已合入：<a href="https://github.com/vllm-project/vllm/pull/32118">https://github.com/vllm-project/vllm/pull/32118</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>分块大小要看查询：一个简单多尺度的 RAG 检索方案</title>
+      <title>查询相关的 RAG 切块：chunk size 因查询而异</title>
       <link>https://www.ai21.com/blog/query-dependent-chunking/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/query-dependent-chunking/</guid>
       <pubDate>Thu, 29 Jan 2026 00:00:00 +0000</pubDate>
@@ -1785,7 +1785,7 @@ def reorder_batch_to_split_decodes_and_prefills(...):
 <p><em>本工作由 Alan Arazi、Ido Weiss、Roee Hendel 和 Niv Granot 完成。</em></p>]]></content:encoded>
     </item>
     <item>
-      <title>睡个懒觉反而省钱：让数据「打盹」来做高效在线强化学习</title>
+      <title>动态&quot;数据小睡&quot;：高效的在线 RL</title>
       <link>https://www.ai21.com/blog/dynamic-data-snoozing/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/dynamic-data-snoozing/</guid>
       <pubDate>Thu, 22 Jan 2026 00:00:00 +0000</pubDate>
@@ -1855,7 +1855,7 @@ def reorder_batch_to_split_decodes_and_prefills(...):
 <ul><li>注意，我们假设多个任务在同一个 batch 内同时学习。也存在其他多任务学习设置，如顺序/持续学习，或并行学习后合并模型权重。这些方法各有优点，但我们发现，把任务放在一起学习对达到最优表现是必要的。 <a href="https://www.ai21.com/blog/dynamic-data-snoozing/#ce3be59b-6ec4-4f5f-a3b5-621731f9ed48-link">↩︎</a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>补上解析这道缺口：借 LTR 能力做出 SOTA 级 RTL 解析</title>
+      <title>借助 LTR 能力达成 RTL 解析的 SOTA</title>
       <link>https://www.ai21.com/blog/rtl-pdf-parsing/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/rtl-pdf-parsing/</guid>
       <pubDate>Thu, 22 Jan 2026 00:00:00 +0000</pubDate>
@@ -1960,11 +1960,11 @@ def reorder_batch_to_split_decodes_and_prefills(...):
 <p>&quot;无聊&quot;，是可靠性从外部看到的样子。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Introducing Jamba2: The open source model family for enterpr…</title>
+      <title>推出 Jamba2：面向企业可靠性与效率的开源模型家族</title>
       <link>https://www.ai21.com/blog/introducing-jamba2/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/introducing-jamba2/</guid>
       <pubDate>Thu, 08 Jan 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Introducing Jamba2: The open source model family for enterprise reliability and efficiency</description>
+      <description>原文标题：Introducing Jamba2: The open source model family for enterprise reliability and efficiency</description>
       <content:encoded><![CDATA[<p>今天，我们发布 Jamba2——一个为极致企业级可靠性与可引导性而打造的开源语言模型家族。</p>
 <p><a href="https://arxiv.org/pdf/2403.19887">基于我们创新的 SSM-Transformer 架构</a>打造，并在 grounding 与指令遵循 benchmark 上居于类别领先，Jamba2 为任何生产 agent 技术栈提供了一个紧凑、省内存的补充，能够驱动不需要推理模型那种繁重&quot;thinking token&quot;开销的精确问答工作流。</p>
 <p>Jamba2 提供两种模型尺寸：3B 和 Mini（MoE；激活 12B、总参数 52B）。我们很自豪地以 <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 许可证</a>发布两者，这也是我们持续致力于让优质模型获取平民化的一部分。尤其让我们兴奋的是，这次发布包含一个 3B 模型，让世界各地的开发者都能在自己的设备上直接下载并运行这项技术——包括 iPhone、Android、Mac 和 PC。</p>
@@ -1991,7 +1991,7 @@ def reorder_batch_to_split_decodes_and_prefills(...):
 <p>研究人员和 AI 爱好者都可以在 <a href="https://huggingface.co/collections/ai21labs/jamba2">Hugging Face</a> 下载，或直接在 <a href="https://studio.ai21.com/v2/">AI21 Studio</a> 上使用，尽情试验 Jamba2 并推动它支持新的用例——我们迫不及待想看到你们构建出什么！</p>]]></content:encoded>
     </item>
     <item>
-      <title>智能体评测怎么扩：20 万次 SWE-bench 运行换来的经验</title>
+      <title>Agentic 评估：20 万次 SWE-bench 运行的经验教训</title>
       <link>https://www.ai21.com/blog/scaling-agentic-evaluation-swe-bench/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/scaling-agentic-evaluation-swe-bench/</guid>
       <pubDate>Thu, 08 Jan 2026 00:00:00 +0000</pubDate>
@@ -2039,7 +2039,7 @@ def reorder_batch_to_split_decodes_and_prefills(...):
 <p>当你能在一天内跑 35,000 次隔离评估而不用启动 100,000 个容器，你就能像我们迭代模型那样迭代 agent：用数据、高速、且胸有成竹。</p>]]></content:encoded>
     </item>
     <item>
-      <title>共享状态、不出乱子：用 MCP workspace 扩展会改状态的智能体</title>
+      <title>用 MCP Workspaces 扩展会修改状态的 AI Agent</title>
       <link>https://www.ai21.com/blog/stateful-agent-workspaces-mcp/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/stateful-agent-workspaces-mcp/</guid>
       <pubDate>Wed, 07 Jan 2026 00:00:00 +0000</pubDate>
@@ -2085,7 +2085,7 @@ def reorder_batch_to_split_decodes_and_prefills(...):
 <p>如果你正在构建会触碰状态的 agent（代码、数据库、文档、基础设施），请考虑为你的领域实现工作区原语。隔离的模式是普适的，隔离的机制由你来选。</p>]]></content:encoded>
     </item>
     <item>
-      <title>用编排式 Test-Time Compute 提升长程智能体任务</title>
+      <title>用 AI21 Maestro 为 SWE-bench 做测试时算力编排</title>
       <link>https://www.ai21.com/blog/test-time-compute-swe-bench/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/test-time-compute-swe-bench/</guid>
       <pubDate>Wed, 07 Jan 2026 00:00:00 +0000</pubDate>
@@ -2146,7 +2146,7 @@ This workflows should be done step-by-step so that you can iterate on your chang
 <p>AI21 Maestro 是一个编排框架，提供对长程 agentic 流程自动化、细粒度的优化。它是通用型的、普适的，但为了展示威力，我们演示了它如何提升 SWE-bench 上的表现。我们还描述了 Maestro 中支撑这些表现的一些要素：水平扩展与自动智能并行、基于 Python 的结构化计划，以及用决策论优化技术探索庞大动作空间。</p>]]></content:encoded>
     </item>
     <item>
-      <title>炒作退潮之后的企业 AI</title>
+      <title>炒作曲线之后的企业 AI</title>
       <link>https://www.ai21.com/blog/enterprise-ai-after-hype/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/enterprise-ai-after-hype/</guid>
       <pubDate>Wed, 31 Dec 2025 00:00:00 +0000</pubDate>
@@ -2209,11 +2209,11 @@ This workflows should be done step-by-step so that you can iterate on your chang
 <p>这才是真正的模型选择该有的样子。如今，它已通过 AI21 Maestro 与 Together AI 原生可用。</p>]]></content:encoded>
     </item>
     <item>
-      <title>AI21 Labs recognized as an Emerging Visionary in two Gartner…</title>
+      <title>AI21 Labs 在 Gartner® 生成式 AI 新兴市场的两个象限中获评 Emerging Visionary</title>
       <link>https://www.ai21.com/blog/ai21-emerging-visionary-gartner/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/ai21-emerging-visionary-gartner/</guid>
       <pubDate>Tue, 18 Nov 2025 00:00:00 +0000</pubDate>
-      <description>完整标题：AI21 Labs recognized as an Emerging Visionary in two Gartner® Emerging Market Quadrants for Generative AI</description>
+      <description>原文标题：AI21 Labs recognized as an Emerging Visionary in two Gartner® Emerging Market Quadrants for Generative AI</description>
       <content:encoded><![CDATA[<p>AI21 Labs 已被<strong>定位为新兴愿景者（Emerging Visionary）</strong>，同时入选 <strong>Gartner 生成式 AI 工程新兴市场象限（EMQ）</strong>和<strong>生成式 AI 模型提供商新兴市场象限</strong>。</p>
 <h2>AI21 Labs 独特的企业 AI 路径</h2>
 <p>在我们看来，Gartner 的新兴市场象限（EMQ）为快速演进领域中的生成式 AI 厂商提供了直观的可视化呈现。该象限根据厂商当前的未来潜力（Future Potential）与功能特性（Features）对其进行定位。</p>
@@ -2242,6 +2242,744 @@ This workflows should be done step-by-step so that you can iterate on your chang
 <p>我们相信，这份 Gartner 的认可强化了自己的使命：<strong>构建可信的 AI 系统，驱动企业迈向超生产力（superproductivity）。</strong></p>
 <p><strong>获取报告：</strong> 生成式 AI 模型提供商创新指南：<a href="https://www.gartner.com/en/documents/7183830">这里</a> 生成式 AI 工程创新指南：<a href="https://www.gartner.com/en/documents/7183630">这里</a>。</p>
 <p><em>Gartner 并不背书其出版物中所描述的任何公司、供应商、产品或服务，也不建议技术用户仅选择评分最高的供应商或获得其他称号的厂商。Gartner 出版物由 Gartner 的商业与技术洞察组织发布，不应被解读为事实陈述。Gartner 对本出版物不承担任何明示或暗示的保证，包括对适销性或特定用途适用性的任何保证。 Gartner 是 Gartner, Inc. 及其关联公司的商标。</em></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>AI21 Maestro 针对 RAG 盲区的准确率修复</title>
+      <link>https://www.ai21.com/blog/structured-rag-enterprise-accuracy/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/structured-rag-enterprise-accuracy/</guid>
+      <pubDate>Wed, 12 Nov 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：AI21 Maestro’s accuracy fix for RAG’s blind spots</description>
+      <content:encoded><![CDATA[<p><em><strong>太长不看</strong></em></p>
+<ul><li>***传统 RAG* 在复杂企业查询上力不从心，导致答案残缺或不可靠。**</li><li><em><strong>Structured RAG（S-RAG）</strong> 把非结构化文档转化为结构化、查询感知的表示，实现精确、可审计的推理。</em></li><li><em><strong>AI21 Maestro 的混合架构</strong> 融合结构化检索与 embedding 检索，将准确性提升至多 60%，召回率近乎完美。</em></li><li><em><strong>为企业规模定制：</strong> 自动推断或由用户定义 schema，以完全的透明与控制处理数百万文档。</em></li><li><em><strong>结果：</strong> 在合规、报告和关键任务工作流中，你能信任的可靠、可解释的答案。</em></li></ul>
+<p>多年来，我们一直与企业合作，试图把他们的数据变成可用的东西。每个团队都怀着同样的期望：<em>RAG 终于能让他们的知识规模化发挥作用</em>。但等我们介入时，现实已经给了他们一击。答案是流畅的，没错，但并不总是可靠。</p>
+<p>假设你问的是业绩趋势或供应商比较，基于 LLM 的系统只给你一半图景。它可能浮出几段相关摘录，却漏掉关键数据点；或泛泛总结一些弱相关信息，并不直接回答问题。在金融和合规领域，这些缺口不是无害的——它们是重大风险。</p>
+<p>我们知道 RAG 没有彻底坏掉，但要让它可靠到能给企业使用，还需要加把力。于是我们构建了 Structured RAG（S-RAG）：一种为检索带来结构与推理的增强，实现精确、可审计的答案。它内建于 AI21 Maestro——我们驱动关键任务企业 agent 的 AI 编排系统。</p>
+<p>想要更技术向？<a href="https://arxiv.org/abs/2511.08505v1">深入阅读我们的 Structured RAG 研究论文</a>。</p>
+<p>与检索文本块、然后指望 LLM 基于有限上下文答对的传统 RAG 不同，S-RAG 在离线阶段把信息从非结构化文档抽取进一个关系数据库。在运行时，它使用 SQL 查询在这份结构化数据上检索和推理。这意味着需要聚合、比较或过滤的分析性问题——企业赖以生存的那类问题——终于能被准确、透明地回答。</p>
+<p><strong>示例：</strong> 面对一个多数 RAG 系统答不对的简单财务问题，Maestro 的 S-RAG 直接从结构化数据中检索精确值，而不是基于文本邻近度去猜。</p>
+<p><strong>幕后发生的事情如下：</strong></p>
+<pre><code>SELECT 
+    “current_liabilities” / 1000000 AS current_liabilities_millions
+FROM 
+    “SEC_Report”
+WHERE 
+    LOWER(“company_name”) = 'netflix' 
+    AND “fiscal_year” = 2017</code></pre>
+<h2>Embedding 式 RAG 的短板</h2>
+<p>Embedding 式 RAG——第一代知识智能体的基石——标志着检索增强生成演进中的一个重要里程碑。它把查询和文档嵌入高维向量，意在检索语义&quot;接近&quot;的文本片段，喂给 LLM 做推理。</p>
+<p>但对企业来说，这一方法在三种关键情形下力有不逮。</p>
+<h3>1. 回答聚合类问题</h3>
+<p>我们见过客户——尤其是金融和合规领域——在看似简单的分析查询上撞墙：</p>
+<ul><li>&quot;去年所有子公司中资本开支的最大值是多少？&quot;</li><li>&quot;按准时交付率排名前五的供应商是谁？&quot;</li><li>&quot;安全事故逐季度呈什么趋势？&quot;</li></ul>
+<p>这些不是&quot;大海捞针&quot;式查询——答案并不藏在几段文本里。要正确回答这些分析查询，系统必须跨可能多达数十或数百条记录进行过滤、比较和聚合。</p>
+<p>Embedding 式 RAG 没有执行这些操作的通用方法。它检索固定数量的文本块交给 LLM，而 LLM 必须在有限的上下文窗口内、用非常有限的算术能力尝试推理。</p>
+<h3>2. 需要穷尽覆盖的问题</h3>
+<p>企业团队常问要求完整、穷尽清单的问题：</p>
+<ul><li>&quot;列出所有 2025 年前到期且违约金超过 100 万美元的合同。&quot;</li><li>&quot;哪些员工的认证今年会过期？&quot;</li><li>&quot;展示所有监管变化影响报告要求的市场。&quot;</li></ul>
+<p>漏掉哪怕一项都不是小麻烦，而是合规风险。而基于 embedding 的检索本质上是概率性的，其优化目标是找到最匹配的单个文本块，而不是全部相关证据。由于它只按相似度打分取回一个子集，永远无法保证<em>全量</em>检索。这在财务报告或监管合规等领域不可接受——在那里，穷尽覆盖与正确性同等重要。</p>
+<h3>3. 稠密或无区分度的语料</h3>
+<p>最后，想想技术文档或监管备案这类语料。它们稠密、重复、以属性为驱动。文档之间可能只差几个数字或条款，查询则可能聚焦于条款编号或型号 ID 这样的精确属性。在这些场景下，embedding 相似度坍缩了。检索变得嘈杂，因为 embedding 模型并未学会这些术语背后的语义，于是无关但&quot;相近&quot;的段落常常挤掉真正的答案。</p>
+<p>例如在财务分析查询中，多数报告看起来几乎一模一样、术语雷同——&quot;total liabilities&quot;&quot;shareholder equity&quot;&quot;net income&quot;。对 embedding 模型而言，它们全都相关。结果是语义检索常常浮出一堆上下文中接近、实则不回答问题的无关文档。</p>
+<p><strong>Structured RAG 登场。</strong></p>
+<h2>用 AI21 Maestro 增强 RAG</h2>
+<p>AI21 Maestro 以 Structured RAG 解决这些问题，扩展了 RAG 系统在企业环境中能准确处理的查询范围。</p>
+<p>AI21 Maestro 不把文档仅当作非结构化文本，而是在摄取阶段利用结构，弥补 embedding 检索的缺陷。它分析文档以检测重复出现的模式。例如：</p>
+<ul><li><strong>在财务备案中</strong>，每份报告都描述收入、运营开支、资本开支等属性。</li><li><strong>在 HR 简历中</strong>，每条记录都包含教育背景、工作年限和证书。</li><li><strong>在合同中</strong>，条款遵循标准章节，如终止、违约金和适用法律。</li></ul>
+<p>但由于文档是各自独立撰写的，同一个值可能以多种格式出现——比如 &quot;1,000,000&quot;、&quot;1M&quot;，或干脆一个 &quot;1&quot;。没有标准化，跨这类文档做推理几乎不可能。</p>
+<p>AI21 Maestro 自动推断出捕捉这些属性的 schema。借助 Structured RAG，每份文档被转换为对齐该 schema 的结构化记录，具有一致的格式、术语和校验。用户可以在摄取前审查、编辑和调整自动生成的 schema 以满足自身需求。整个语料变成一个结构化数据库，并保留与原文的链接，做到透明可控。</p>
+<p>在推理时，当用户提出的相关问题对应到某个可用 schema，AI21 Maestro 把自然语言问题翻译为对这个结构化数据库的正式 SQL 查询。</p>
+<p>这使得传统 RAG 无法执行的精确分析操作成为可能——最大/最小值计算、趋势分析、复杂过滤——同时保持可追溯性。</p>
+<ul><li>&quot;各子公司中最高的 ARR 是多少？&quot;</li><li>&quot;展示按年度的平均员工数增长。&quot;</li><li>&quot;2020 年之后签署的合同里哪些包含仲裁条款？&quot;</li></ul>
+<p>执行 SQL 后，Maestro 把结果交还 LLM，生成流畅、可直接用于业务的回答。</p>
+<h2>性能与混合检索</h2>
+<p>这一方法在<a href="https://huggingface.co/datasets/ai21labs/aggregative_questions">聚合类查询</a>上比 embedding 式系统带来最高 60% 的更高准确率，并在穷尽覆盖类问题上实现近乎完美的召回（前提是 schema 正确）。</p>
+<p><em>在聚合问题 benchmark 上，对 embedding 式 RAG（生成模型为 gpt-o3）、OpenAI Responses API 与 Structured RAG 的比较。</em></p>
+<p>但并非所有信息都能规整地装进 schema。有些属性罕见，或问题需要对叙事文本推理。在这些情况下，AI21 Maestro 先用 Structured RAG 收窄数据集，再在缩小后的集合上应用 embedding 检索。</p>
+<p>这种混合检索在穷尽覆盖与灵活性之间取得平衡，确保不漏掉相关信息，同时仍能支持细腻的、重文本的问题。它还通过先按精确属性查询，绕开了稠密语料的失效模式。</p>
+<p>下图所示，Maestro 的混合方法在真实世界 benchmark 上明显胜过纯 embedding RAG 和同类 RAG 系统。</p>
+<h2>从答案到决策</h2>
+<p>对企业领导者来说，意义很明确。</p>
+<ul><li><strong>信任答案：</strong>结构化推理交付准确、可审计、在高风险场景下站得住的输出。AI21 Maestro 的动态混合架构结合结构化检索与 embedding 检索，兼得两者之长，在提升结果的同时保留经典管道作为可靠兜底。</li><li><strong>无惧扩展：</strong>AI21 Maestro 处理数百万文档、稠密技术语料和不断演进的监管要求。S-RAG 适配你的具体查询——基于查询上下文自动推断 schema，或让你亲手定义以获得完全控制。</li></ul>
+<p>由于 Structured RAG 运行在 AI21 Maestro 的动态混合管道内，你得到的每个答案都比已依赖的基线 RAG 结果更准确。</p>
+<p>通过弥补基于 embedding 方法的盲区，AI21 Maestro 把非结构化企业数据变成一台结构化的决策引擎。对企业而言，这意味着可据以行动的答案、可自动化的工作流、可缓释的风险。</p>
+<p><em><strong>听听 RAG 为何尚未被解决的真相——以及 Structured RAG 如何改变这一点。</strong></em></p>
+<p>🎧 <a href="https://www.ai21.com/yaap/rag-is-not-solved/"><em>YAAP 播客：&quot;RAG 还没被解决——只是你的评估太烂&quot;（RAG Is Not Solved – Your Evaluation Just Sucks）</em></a></p>
+<p>🎥 <a href="https://youtube.com/watch?si=Luem6QD8FoqDaNT5&amp;v=Ywl4LsvHKzU&amp;feature=youtu.be"><em>AI Engineer World's Fair：</em>构建可靠检索系统的深度分享</a>。</p>
+<p><em>Structured RAG 现已成为 AI21 Maestro 的一部分。</em><a href="https://www.ai21.com/contact-sales/"><em>联系我们</em></a><em>，了解它如何检索出你可信任的更好答案。</em></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>延迟测试：Jamba 3B 对比 Qwen3 4B 2507</title>
+      <link>https://www.ai21.com/blog/jamba-3b-vs-qwen3-4b/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/jamba-3b-vs-qwen3-4b/</guid>
+      <pubDate>Tue, 11 Nov 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：The latency test: Jamba 3B vs Qwen3 4B 2507</description>
+      <content:encoded><![CDATA[<p>大多数模型一旦被推入真正的长上下文区域就会慢下来。我们想直接验证这一点——于是我们给 <a href="https://huggingface.co/ai21labs/AI21-Jamba-Reasoning-3B">Jamba Reasoning 3B</a> 和 Qwen3 4B 2507 布置了完全相同的问答任务，材料是 60,000 token 的密集技术内容（约 100 页）。</p>
+<p>结果很简单。</p>
+<p><strong>一个模型在 3.5 分钟内完成。另一个花了将近 10 分钟。</strong></p>
+<p>这个并排演示展示了当模型的架构真正为长输入而生时会发生什么。<a href="https://www.ai21.com/blog/introducing-jamba-reasoning-3b/">Jamba Reasoning 3B 的混合 SSM-Transformer</a>设计不只是能读更多——它能在深层上下文中<em>移动</em>得更快，且性能不打折。</p>
+<p>如果你处理大体量文档、多步推理，或延迟会层层累积的工作负载，这个差别就不是表面文章。它是&quot;交互式系统&quot;与&quot;干等游戏&quot;之间的差别。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>用 AI21 Maestro 构建可信任、可审计、可部署的 AI agent</title>
+      <link>https://www.ai21.com/blog/ai21-maestro-reliable-ai-agent/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/ai21-maestro-reliable-ai-agent/</guid>
+      <pubDate>Sun, 09 Nov 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Build AI agents you can trust, audit, and deploy with AI21 Maestro</description>
+      <content:encoded><![CDATA[<p>如今大多数 AI agent 会<em>说话</em>，但并不总能让人放心。它们会产生幻觉、跳过指令、遗漏上下文。在合规、报告或风险评估这类关键任务工作流中，这是不可接受的。构建可靠的 AI agent 通常意味着数月的研发、反复试错和专门的工程投入——而且常常以失败告终。</p>
+<p><a href="https://www.ai21.com/maestro/">AI21 Maestro</a>改变了这一局面。它开箱即用地提供生产级可靠性，把创建 agent 变成人人都能跑通的引导式流程。从概念到可用的 agent，只需几天，而不是几个月。</p>
+<p>它的工作原理，一步一步来看。</p>
+<h2>第 1 步：接入你的世界</h2>
+<p>首先接入你公司的数据、工具和模型。AI21 Maestro 支持结构化与非结构化来源——内部文档、API、网页搜索或外部系统——全部通过单一界面完成。</p>
+<p>碎片化的数据是 AI agent 无法给出准确答案的最大原因之一。AI21 Maestro 用高级数据检索解决这一问题：精细的解析、索引和搜索，确保每个答案都扎根于正确的上下文。你不需要数据工程师，也不需要复杂的数据管道。只需几次点击，你的 agent 就能访问并理解它所需的知识。</p>
+<h2>第 2 步：设定你的规则</h2>
+<p>接下来，定义 agent 必须遵守的输出要求、政策和成功标准。添加准确度阈值、格式规则或合规指令。例如：&quot;引用每一个来源&quot;&quot;遵循内部政策 XYZ&quot;&quot;解释你的推理过程&quot;。</p>
+<p>这正是 AI21 Maestro 的指令遵循强制执行机制在发挥作用。它确保 agent 不只是生成看起来合理的答案，而是交付符合你的特定标准的响应。AI21 Maestro 会按照你的规则校验输出，并自动修正任何不达标的结果。其成果是：第一次就准确、合规、可供审阅的输出。</p>
+<h2>第 3 步：在算力与成本之间取得平衡</h2>
+<p>使用 AI21 Maestro 的计算预算滑块，为每个任务选择投入多少推理算力——快速查询用低档，复杂分析用高档。在幕后，AI21 Maestro 应用推理时算力扩展（inference-time compute scaling），自动并行运行多条推理路径，并在你的成本和延迟限制内选出最准确的结果。</p>
+<p>这为你带来可预测的性能，以及运营成本的完全掌控——没有隐藏的调参，也不需要人工优化。</p>
+<h2>第 4 步：运行并观察它工作</h2>
+<p>点击 Run，其余的一切交给 AI21 Maestro 编排。它自动分析任务、规划多步推理、选择最佳的模型和工具，并按顺序执行。这一过程被称为动态规划与编排（dynamic planning and orchestration）。</p>
+<p>每一个决策都通过可视化执行图清晰可见，你可以确切地看到 agent 如何检索数据、如何评估答案、如何解决冲突。过去需要数周设计和协调的事情，如今自动运行，并具备你可以信赖的透明度。</p>
+<h2>第 5 步：审阅并信任输出</h2>
+<p>运行完成后，AI21 Maestro 会呈现一份详细的校验报告，展示每项要求是如何被满足的，并附带一个性能评分。内建校验在执行过程中持续检查每一个步骤，在错误累积之前就予以纠正，确保即便跨越多步推理链条也能保持一致的准确性。</p>
+<p>你最终得到的输出不仅正确，而且可解释、可审计——这正是企业在受监管或高风险运营中所需要的标准。</p>
+<h2>从原型到生产——没有研发的拖累</h2>
+<p>你已经接入了数据、执行了规则、智能地扩展了算力，并看着一个 agent 自主规划并校验自己的工作——全程没有数月的研发工作。无需人工编排，无止境的 prompt 调优，也没有黑箱行为。</p>
+<p>有了 AI21 Maestro，你终于可以部署真正达到可靠性标准的 AI agent——持续准确、可验证、扎根于你自己的数据。</p>
+<p>想了解更多？</p>
+<p><a href="https://www.ai21.com/contact-sales/">立即预约演示 →</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>五分钟五问：Avi Tsur 医生谈医疗 AI</title>
+      <link>https://www.ai21.com/blog/five-in-five-healthcare/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/five-in-five-healthcare/</guid>
+      <pubDate>Wed, 22 Oct 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Five questions in five Minutes: Dr. Avi Tsur on AI in healthcare</description>
+      <content:encoded><![CDATA[<p><strong>AI 能否预测不可预测之事、变革医学诊断，同时仍守护疗愈的艺术？</strong>听 Sheba 医疗中心高危妊娠单元主任 Avi Tsur 医生探讨 AI 如何重塑医学的未来。在这场快节奏问答中，Tsur 医生深入剖析人工智能在医疗领域的突破、挑战与真实世界影响——揭示技术在临床中的潜力与边界。</p>
+<h2>1. 如今医生和医疗从业者如何使用 AI？</h2>
+<p>&quot;令人惊叹的是，我们其实已经在多大程度上使用 AI 了。拿我的一位孕妇患者来说：我们从孕早期提供更好的预测开始，希望很快也能提供更精准的判断。这意味着预测我们担心的并发症，比如子痫前期、胎儿生长受限或早产。</p>
+<p>整个孕期中，我们会多次使用 AI。例如，有些患者住进我们科室，我们会借助 AI 工具帮她们更好地与电子健康记录互动。然后，到分娩时，我们再次使用 AI 来改进对产程和分娩并发症的预测，帮助我们做出更好的分娩方式决策——顺产还是剖宫产。</p>
+<p>产后，我们用 AI 预测产后并发症；希望不久之后，我们还能利用它预测与妊娠并发症相关的长期健康结局。&quot;</p>
+<h2>2. AI 未来可能解决哪些医学难题？</h2>
+<p>&quot;我认为真正会发生剧变的是临床推理。</p>
+<p>目前，我们期望一名优秀的医学生或住院医师聚焦于最重要的两三件事——关键风险因素、主诉和体格检查所见——然后给出诊断和治疗方案。这就是一个优秀、专注的医生的样子。</p>
+<p>未来，医学将演进到整合数百个风险因素、每位患者主诉的细微差别，以及来自使用视频和其他 AI 工具的高级体格检查的数据。从诊断到治疗，整个流程都将发生巨变。&quot;</p>
+<h2>3. AI 将对医疗产生什么重大影响？</h2>
+<p>&quot;在 AI 驱动的未来，AI 会从我们手中接走许多工作。它会处理运营性工作、协助手术、支持临床决策。但我认为，AI 要在共情上取代我们——在告知患者病情及其种种微妙之处方面取代我们——还需要很长时间。&quot;</p>
+<h2>4. 是什么瓶颈拖住了医疗 AI 的后腿？</h2>
+<p>&quot;我们的体系存在若干局限。新技术很难整合进我们的电子健康记录和工作流。</p>
+<p>但还有一个对 AI 更特有的问题：它缺乏透明度。它很难为其生成的信息提供参考文献，而这与医生的思维方式背道而驰。一个好医生想看到推荐背后的表格或数据。哪怕经验稍浅的医生，也想看到教科书或专业学会的出处。</p>
+<p>AI 只是<em>写</em>出一些内容。而当你问'你的参考依据是什么？'——这里不点名具体产品——它常常答不上来。在我看来，参考文献的准确性正是 AI 幻觉最严重的地方。&quot;</p>
+<h2>5. 医疗中哪种人类能力是 AI 永远无法替代的？</h2>
+<p>&quot;AI 会从我们手中拿走很多东西，但共情会需要更久才能被拿走。能够告诉患者如果处在他们的境地你会怎么做、分享你过去的经验，或者在宣布坏消息时给出一个拥抱——这是我们最大的力量。</p>
+<p>我们工作中纯技术的部分终将被替代。那些深深属于人类的部分，会久得多——甚至永远不会。&quot;</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>推出 Jamba Reasoning 3B：小模型，大可能</title>
+      <link>https://www.ai21.com/blog/introducing-jamba-reasoning-3b/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/introducing-jamba-reasoning-3b/</guid>
+      <pubDate>Wed, 08 Oct 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Jamba Reasoning 3B: Tiny Model, Huge Possibilities</description>
+      <content:encoded><![CDATA[<p>今天，我们发布 Jamba Reasoning 3B——一个紧凑的开源推理模型，重新定义了端侧可能的边界，也标志着 Jamba 模型家族一系列新成员的第一位。<a href="https://arxiv.org/pdf/2403.19887">基于我们创新的 SSM-Transformer 架构</a>，上下文窗口长度 256K token、最高可处理 100 万 token，Jamba Reasoning 3B 相比 DeepSeek、Google、Llama 和 Microsoft 的同类产品带来 2-5 倍的效率提升，同时在智能 benchmark 上处于领先。</p>
+<p>我们自豪地以 <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 许可证</a>发布这个模型，这是我们让优质模型获取平民化承诺的一部分；尤其让我们兴奋的是，得益于这个模型轻量的内存足迹，世界各地的开发者都能在自己的设备上直接下载并运行这项技术——包括 iPhone、Android、Mac 和 PC。</p>
+<p><strong>立即试用 Jamba Reasoning 3B：</strong></p>
+<p>Hugging Face</p>
+<p>Kaggle</p>
+<p>LM Studio</p>
+<p>Jamba Reasoning 3B 的发布印证了 <a href="https://arxiv.org/pdf/2506.02153">NVIDIA 近期&quot;小语言模型是 agentic AI 的未来&quot;的宣言</a>。通过成功利用比&quot;原版&quot;Transformer 架构小 8 倍的 KV cache，Jamba Reasoning 3B 的混合 SSM-Transformer 架构让内存占用在上下文增长时依然保持低位。它能在 M3 MacBook Pro 上以 32K token 上下文长度产出 40 token/秒——是高级 agentic 应用中一个精瘦的组件。</p>
+<h2>模型速览</h2>
+<ul><li>许可证：<a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a></li><li>参数量：3B</li><li>上下文窗口长度：256K</li><li>获取方式：下载：3B 模型及量化版本，经由 <a href="https://huggingface.co/ai21labs/AI21-Jamba-Reasoning-3B">Hugging Face</a> 和 <a href="https://www.kaggle.com/models/ai21labs/ai21-jamba-reasoning-3b">Kaggle</a>；本地推理：3B 模型及量化版本，经由 <a href="https://lmstudio.ai/models/ai21labs/jamba-reasoning-3b">LM Studio</a> 和 <a href="https://huggingface.co/ai21labs/AI21-Jamba-Reasoning-3B-GGUF">llama.cpp</a></li></ul>
+<h2>端侧智能的新纪元</h2>
+<p>把领先的智能分数、低延迟和长上下文装进一个紧凑的推理模型，Jamba Reasoning 3B 为端侧实验与部署开启了新的前沿——而这一切只是可能的开始。</p>
+<p>在 AI21 Labs，我们期待继续利用我们创新的混合模型架构，发布性能日益强劲的 Jamba 模型，让企业能够在重负载上压低内存足迹而不牺牲质量。我们相信，这些进步蕴含着一个更去中心化、更民主的未来：端侧计算让整个生态中 AI 部署的经济可行性变得更强。</p>
+<h2>小模型，大可能</h2>
+<p>我们期待社区如何使用 Jamba Reasoning 3B——从企业应用（如对法律或医疗文档进行快速本地处理和实体抽取，或让公用事业公司的外勤技师通过 PC 随时访问手册），到个人端侧应用（如生产力追踪器，以及基于你自己的文件数据库安全调优的对话与写作助手）。</p>
+<p>以下是 Jamba Reasoning 3B 大放异彩的几个场景： <strong>不拖慢的智能</strong>：得益于混合 SSM-Transformer 架构，Jamba Reasoning 3B 比纯 Transformer 模型工作得更高效。多数基于 Transformer 的模型在上下文超过 32K token 后性能显著退化，而 Jamba Reasoning 3B 能处理长得多的上下文——最高达 100 万 token——适合用在高级 agentic AI 系统或多模态应用中，即长上下文理解对输出质量至关重要的地方。</p>
+<p><strong>领先的智能</strong>：Jamba Reasoning 3B 胜过 DeepSeek、Google、Meta 和 Microsoft 的其他端侧模型。它在指令遵循任务（IFBench）和通识（MMLU-Pro 与 Humanity's Last Exam）上尤为出色，使 Jamba Reasoning 3B 成为高级 agentic 工作流或端侧 RAG 应用中既高效<em>又</em>智能的模型。这些成绩来自一条强健的后训练流水线：我们将 RLVR、SFT、DPO、GRPO 等对齐训练技术与自研专有方法组合应用，以确保卓越的模型质量。</p>
+<p><strong>为安全的端侧使用而生</strong>：以 Apache 2.0 授权，这个模型可以直接下载到你的电脑或手机，并用你自己的文件在端侧定制——即使断网，完全安全的应用也能照常运行。</p>
+<h2>端侧模型对企业 AI 的重要性</h2>
+<p>随着企业把 AI 整合进运营，云端大语言模型（LLM）暴露出经济上的低效——高额折旧成本超过了收入。研究表明，通过智能路由，40-70% 的 AI 任务可以由小语言模型（SLM）处理，成本低 10-30 倍。像 Jamba Reasoning 3B 这样的端侧 SLM 实现了高性价比的异构算力分配——简单任务在本地处理，把云端资源留给复杂推理。在 agentic 工作流中，这些 SLM 可以充当端侧控制器：只在需要时激活云端 LLM 或外部工具，编排操作以获得最优效率。这为制造和医疗的实时应用带来低延迟，为偏远作业带来离线韧性，并通过把敏感信息留在端侧强化数据隐私。这种架构开启了一个去中心化 AI 的时代，堪比 1980 年代从大型机到个人电脑的变迁——既赋能本地计算，又无缝整合云端能力以获得更大的可扩展性。Jamba Reasoning 3B 这样的端侧模型是企业 agentic 应用的关键解锁：确保经济可行、降低延迟、强化安全。</p>
+<h2>开始使用 Jamba Reasoning 3B</h2>
+<p>模型已开放下载并支持本地推理，渠道包括 <a href="https://huggingface.co/ai21labs/AI21-Jamba-Reasoning-3B">Hugging Face</a>、<a href="https://www.kaggle.com/models/ai21labs/ai21-jamba-reasoning-3B">Kaggle</a>、<a href="https://lmstudio.ai/models/ai21labs/jamba-reasoning-3b">LM Studio</a> 和 <a href="https://huggingface.co/ai21labs/AI21-Jamba-Reasoning-3B-GGUF">llama.cpp</a>，研究人员和 AI 爱好者都可以尽情试验 Jamba Reasoning 3B 并推动它支持新的用例——我们迫不及待想看到你们构建出什么！</p>
+<p>Hugging Face</p>
+<p>Kaggle</p>
+<p>LM Studio</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>金融领域的 AI：进展、障碍与前路</title>
+      <link>https://www.ai21.com/blog/ai-in-finance/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/ai-in-finance/</guid>
+      <pubDate>Tue, 02 Sep 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：AI in finance: Progress, barriers, and the road ahead</description>
+      <content:encoded><![CDATA[<p>周五下午将近 5 点。你的合规团队正面对一千多条 AML（反洗钱）告警，每一条都需要排查放行。每个人都知道其中大多数最终会被证明是误报，但每一条都必须审查。而在走廊另一头，一位客户开户经理正在向一位潜在存款人解释，为什么一项本该简单的 KYC（了解你的客户）核查已经拖进了第三周。</p>
+<p>这些不是理论上的抱怨，而是金融服务业的日常现实——在这里，开箱即用的 AI 工具往往在监管审查、碎片化数据和对精确度的要求面前溃不成军。</p>
+<p>本文将清醒地审视金融业 AI 采用的真实处境、众多项目止步不前的原因，以及从试点走向生产需要些什么。</p>
+<h2>从试点到生产</h2>
+<p>采用是广泛的。<a href="https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/2025/the-state-of-ai-how-organizations-are-rewiring-to-capture-value_final.pdf">McKinsey</a> 报告称，71% 的金融服务公司至少在一个职能中使用了生成式 AI。但成熟度则是另一回事。<a href="https://www.bcg.com/publications/2025/for-banks-the-ai-reckoning-has-arrived">BCG</a> 发现，75% 的公司仍困在试点或概念验证阶段，多数投资流向了&quot;基础&quot;AI 活动而非变革性活动（BCG 2025）。</p>
+<p>这种张力——热情对抗执行力——正是今天许多银行、保险公司和资本市场机构的处境。模型在演示中可能令人印象深刻，但一旦面对生产负载和监管审视，它们常常失速：数据碎片化、逻辑不透明、治理薄弱。</p>
+<p>然而势头不可否认。<a href="https://evidentinsights.com/bankingbrief/exclusive-ai-use-cases-surge/">Evident Insights</a> 报告，2025 年 1 月至 6 月间银行宣布了 117 个新的 AI 用例——是此前六个月的两倍多。其中大多数是内部应用——欺诈检测、合规监控、开户提效——在这些场景里风险可控，而价值可以得到验证。</p>
+<p>领先者展示了规模化的样子。<a href="https://newsroom.bankofamerica.com/content/newsroom/press-releases/2025/08/a-decade-of-ai-innovation--bofa-s-virtual-assistant-erica-surpas.html">美国银行（Bank of America）</a>投入多年才见到回报。如今，其虚拟助手 Erica 每月处理超过 5,800 万次交互，超过 90% 的员工依赖它完成日常任务。该行还向 17,000 名开发者部署了 AI 编码工具，削减了成本并加速了交付。这些成果表明，经过领域调优、深度嵌入的 AI 能在客户体验和员工体验两方面交付可衡量的影响。</p>
+<p>模式很清晰：采用增长很快，但只有当 AI 为透明、可控和生产力而设计时，真正的 ROI 才会到来。</p>
+<h2>信任：决定性的障碍</h2>
+<p><a href="https://www.deloitte.com/us/en/about/press-room/trust-main-barrier-to-agentic-ai-adoption-in-finance-and-accounting.html">Deloitte</a> 将&quot;对 AI 缺乏信任&quot;认定为金融业工作流采用的关键障碍。我们在潜在客户身上看到同样的模式：围绕数据质量、验证和监督的顾虑让有前景的项目停滞不前。</p>
+<p>对于受 Basel III、SR 11-7、欧盟 AI 法案或 SEC 监管的机构而言，能够证明数据血缘、支持人在回路的控制、生成可审计的输出，这些都是不容谈判的。信任不是软性议题。没有信任，项目很少能走出试点阶段。</p>
+<p>信任缺口之所以存在，是因为人们对 AI 的期望与其实际能力常常错位。金融领域的领导者听到的是自动化和效率的承诺，但实践中发现模型只在狭窄、定义清晰的场景中强大，在其他地方都不堪一击。要取得进展，就必须清醒地认清：AI 今天在哪里创造价值，在哪里仍然需要人工监督、治理和支撑系统。</p>
+<h3>AI 能做什么、不能做什么</h3>
+<p>AI 当下就能创造价值的地方：</p>
+<ul><li>自动化重复性知识工作，并浮现出可加速决策的洞见</li><li>通过副驾驶（copilot）支持合规审查、理赔起草和客户服务</li><li>用检索增强生成（RAG）、上下文工程以及关联可信来源的推理，扩展企业数据的价值</li></ul>
+<p>AI 单打独斗做不好的地方：</p>
+<ul><li>解决碎片化、孤岛化或敏感的数据</li><li>在没有验证的情况下保证准确性——当错误会带来合规或声誉风险时，这至关重要</li><li>无缝嵌入必须承受监管工作负载的生产流程</li><li>替代治理、安全或可审计性要求</li></ul>
+<p>教训很明确。只有当 AI 与可信数据绑定、嵌入工作流、并受强有力控制治理时，它才能创造价值。</p>
+<h2>跨越鸿沟</h2>
+<p>从试点走向生产，光有模型不够。它需要编排能力、领域专业知识和治理。</p>
+<p>这正是与伙伴共建往往能带来差别的原因。联合方式用经过验证的组件和集成模式加速交付，确保治理与验证从一开始就内建其中，并提供私有化部署选项以及向你的团队进行结构化知识转移。对于目标是在多个工作流上实现生产级自动化的机构来说，这是最快也是最可靠的前进路径。</p>
+<p>我们的方式正契合于此。借助 <strong><a href="https://www.ai21.com/maestro/">Maestro</a></strong>，我们帮助金融机构设计在受监管工作流中能够可靠地规划、验证并执行的安全 AI 系统。借助 <strong><a href="https://www.ai21.com/jamba/">Jamba</a></strong>，我们提供长上下文模型，能够处理复杂的检索与推理，而不会在数据碎片化面前崩溃。而且因为我们在受监管行业实施 AI 已有多年，我们理解运营的现实——如何让系统适配复杂工作流、如何保护敏感数据、如何让治理切实可行而不成为负担。</p>
+<p>Maestro 与 Jamba 共同构成一个基础：为你的领域定制、在每一步都经过验证、并可部署在你的环境中，让敏感数据始终处于你的掌控之下。</p>
+<p>对金融机构而言，AI 的下一波关键在于赢得信任的同时交付可衡量的价值。那些做对的公司不仅会清空今天的积压工作，更会最先兑现 AI 真正的 ROI。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>面向企业的知识智能体：从检索到真正干活</title>
+      <link>https://www.ai21.com/blog/knowledge-agents-for-the-enterprise/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/knowledge-agents-for-the-enterprise/</guid>
+      <pubDate>Mon, 25 Aug 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Knowledge Agents for the Enterprise: From Retrieval to Real Work</description>
+      <content:encoded><![CDATA[<p>到现在为止，你大概已经见过上百张&quot;agent 版图&quot;了，但大多数都失之宽泛。要处理复杂工作流，企业需要构建知识智能体（knowledge agents）。而今天大多数所谓的&quot;知识智能体&quot;其实根本算不上 agent。它们只是检索增强的聊天机器人，对问答有点用，却远非企业真正所需。</p>
+<p>知识工作是不一样的。它是多步骤的、高风险的、受上下文约束的。它需要判断力、综合能力和执行力。AI 的下一个前沿，是不只会回答、而是真正把事情做完的 agent。</p>
+<p>企业面临一个取舍。自建 AI 技术栈能带来治理和控制，但资源消耗巨大；采购现成方案能加速采用，却常常把你锁死在僵化的工作流里。制胜的路径将是混合式的：掌握架构主干，集成同类最佳的组件，并让关键数据紧贴业务。</p>
+<p>上面这张版图凸显了正在塑造这一新兴技术栈的玩家，从评估与编排，到推理模型、检索层和成品 agent。AI21 Labs 正处在这套架构的中心，提供超越通用 RAG 的高级推理模型与编排能力。我们的技术为那些需要可靠性、适应性、可审计性和实际成果——而不只是答案——的企业而设计。问题不在于谁在版图上占据的位置最显眼，而在于谁能帮助企业把知识规模化地转化为行动。</p>
+<p>AI 的下一波将由能够&quot;干活&quot;的团队定义：关闭工单、对账、起草提案——全都交由能处理这些复杂流程的可靠知识智能体完成。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>注意力机制从来不够：追溯混合 LLM 的崛起</title>
+      <link>https://www.ai21.com/blog/rise-of-hybrid-llms/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/rise-of-hybrid-llms/</guid>
+      <pubDate>Tue, 05 Aug 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Attention was never enough: Tracing the rise of hybrid LLMs</description>
+      <content:encoded><![CDATA[<p>Transformer 一直是大语言模型的标准架构，但自注意力机制带来了二次方复杂度——让推理计算昂贵。随着上下文长度增长，KV cache 也在膨胀，压垮 GPU 显存。而且由于注意力在固定上下文上运作，模型常常把握不住全局信息，迫使人们用切块和检索之类的变通方案。</p>
+<p>2023 年 12 月，Albert Gu 和 Tri Dao 提出了 Mamba——一种选择性状态空间模型，旨在不依赖注意力的情况下提升吞吐与效率。凭借输入依赖的参数和内容感知的计算，Mamba 为可扩展序列建模提供了新框架。</p>
+<p>本文追溯塑造混合 LLM 崛起的架构变迁。每一条记录都是远离 Transformer 默认选项的一步——也是迈向下一代架构的一步。</p>
+<h2>Mamba（Gu &amp; Dao，2023 年 12 月）</h2>
+<p><a href="https://arxiv.org/abs/2312.00752">论文 </a><strong>作者：</strong>Albert Gu, Tri Dao</p>
+<p>最初的 Mamba 论文提出了一种选择性状态空间模型（SSM），实现了线性时间推理和相对 Transformer 5 倍的吞吐提升。通过让核心参数依赖输入，模型得以对序列做选择性的、内容感知的处理——无需依赖注意力或 MLP 模块。这一架构兼顾效率与泛化，在语言、音频和基因组学上都表现出强劲结果。它为一类新的模型打开了大门——简单、快速、表达力强——足以支撑 Transformer 时代之后的基础模型。</p>
+<h2>Jamba（AI21 Labs，2024 年 3 月）</h2>
+<p><a href="https://arxiv.org/abs/2403.19887">论文 </a><strong>作者：</strong>Opher Lieber, Barak Lenz</p>
+<p>Jamba 提出了第一个大规模混合 Transformer–Mamba–MoE 语言模型。其架构按 1:7 的比例交错排列注意力层和 Mamba 层，每两个 block 添加 MoE 层——在长上下文推理与高效计算之间取得平衡。模型支持长达 256K token 的上下文，同时保持紧凑的内存足迹和高吞吐。团队证明，混合设计的种种选择——细至层顺序和 MoE 稀疏度——都直接影响模型质量与可部署性。Jamba 为&quot;为生而规模化打造的混合模型&quot;立下先例，并以 Apache 2.0 开放了权重和架构。</p>
+<h2>MambaVision（NVIDIA，2024 年 7 月）</h2>
+<p><a href="https://arxiv.org/abs/2407.08083">论文 </a><strong>作者：</strong>Ali Hatamizadeh, Jan Kautz</p>
+<p>MambaVision 为计算机视觉重新构想了 Mamba，将其与 Transformer block 以层次化布局结合。早期层使用卷积 block 做高效特征提取；后段加入自注意力以恢复长程空间依赖。结果是帕累托最优的 backbone，在 ImageNet-1K 上取得最先进的准确率与图像吞吐。团队表明，Mamba 的序列优势可以补强 ViT 风格的架构而不引入延迟成本。MambaVision 以其架构上的务实脱颖而出——让递归为大规模空间推理所用。</p>
+<h2>Codestral Mamba（Mistral，2024 年 7 月）</h2>
+<p><a href="https://mistral.ai/news/codestral-mamba">博客 </a><strong>作者：</strong>Mistral AI 团队</p>
+<p>Codestral Mamba 是 Mistral 第一个纯 Mamba2 的代码模型，训练时得到 Mamba 原作者的指导。与 Transformer 不同，Mamba 提供线性时间推理和理论上无限长序列的建模能力——这些能力契合大上下文代码工作流。这个 7.3B 参数的模型支持最多 256K 上下文 token，并为检索和代码推理做了优化。</p>
+<h2>Jamba 1.5（AI21 Labs，2024 年 8 月）</h2>
+<p><a href="https://arxiv.org/abs/2408.12570">论文</a> <strong>作者</strong>：Barak Lenz 和 Opher Lieber</p>
+<p>AI21 Labs 将其混合 Mamba–Transformer 架构扩展到总共 398B 参数、激活 94B——标志着此类模型的首次大规模部署。Jamba 1.5 在 72 层中交错排列 Mamba 层与注意力层，使用分组查询注意力、低秩适配和 16 个 MoE 专家实现高效路由。它支持 256K token 上下文，并在长上下文 benchmark 上取得最高分，包括在 <a href="https://github.com/NVIDIA/RULER">NVIDIA 的 RULER</a>上的最先进表现。为真实世界企业应用而设计，<a href="https://www.ai21.com/blog/announcing-jamba-model-family/">Jamba 1.5</a> 在计算效率与泛化之间取得平衡，证明混合架构可以扩展而不牺牲推理速度或准确性。</p>
+<h2>Mamba-Llama（Together AI，2024 年 8 月）</h2>
+<p><a href="https://arxiv.org/abs/2408.15237">论文 </a><strong>作者：</strong>Dmitriy Boylov, Ansh Radhakrishnan, Constantine Caramanis, Alexander M. Rush, Tri Dao</p>
+<p>Together AI 把 LLaMA-3-8B-Instruct 蒸馏进一个混合模型：将其 75% 的注意力层替换为 Mamba block。所得架构将推理延迟最多降低 5 倍，同时在人类评估和 MMLU/ARC benchmark 上保住了对话表现。团队使用精确权重映射以保留指令微调，并采用迭代蒸馏在架构修改后恢复质量。模型支持 128K 上下文，以 Apache 2.0 开源。这项工作的主要贡献是证明：Transformer 模型可以用相对很少的计算被&quot;转换&quot;成更高效的 Mamba 变体。</p>
+<h2>Falcon Mamba（Technology Innovation Institute，2025 年 7 月）</h2>
+<p><a href="https://arxiv.org/abs/2410.05355">论文 </a>作者: Jingwei Zuo, Maksim Velikanov, Dhia Eddine Rhaiem, Ilyas Chahed, Younes Belkada, Guillaume Kunsch, Hakim Hacid</p>
+<p>Falcon Mamba 7B 是一个纯 Mamba 语言模型，用 5.8 万亿 token 训练，参数 7.27B。它使用完全不含注意力层的状态空间模型架构，推理时支持任意序列长度。在 MMLU、GSM8K、ARC 和 MuSR 等 benchmark 上，它超越 LLaMA3.1-8B、Mistral 7B、Falcon2-11B 以及若干混合模型，并在长序列上保持恒定的内存与吞吐。</p>
+<h2>Nemotron-H（NVIDIA，2025 年 4 月）</h2>
+<p><a href="https://arxiv.org/abs/2504.03624">论文 </a><strong>作者</strong>：NVIDIA 团队</p>
+<p>NVIDIA 推出 Nemotron-H——一个混合 Mamba–Transformer 模型家族（8B、47B 和 56B），为推理时扩展与速度而优化。通过把 92% 的注意力层替换为 Mamba2 block，Nemotron-H 模型相比 LLaMA-3.1、Qwen-2.5 等同等规模的 Transformer 提供最高 3 倍的吞吐，同时在 MMLU、GSM8K、HumanEval 和 MATH 上达到或超过其准确率。56B 模型采用基于 FP8 的训练配方，并经由 NVIDIA 新的蒸馏框架 MiniPuzzle 压缩为 47B。全部权重通过 Hugging Face 和 NeMo 开源。Nemotron-H 佐证了：混合架构可以在规模上胜过传统 Transformer——且不牺牲推理表现。</p>
+<h2>Bamba（IBM，2025 年 4 月）</h2>
+<p><a href="https://research.ibm.com/blog/bamba-ssm-transformer-model">博客 </a>作者: IBM Research（负责人：Raghu Ganti）</p>
+<p>IBM 发布 Bamba-9B，一个开源混合模型，兼得 Transformer 的表达力与状态空间模型（SSM）的效率。Bamba 基于 Mamba2 构建并为推理性能优化，通过削减 KV cache 内存开销取得了比同类 Transformer 模型 2 倍的吞吐。它在 3 万亿 token 上训练，经量化从 18GB 压缩至 9GB，用少 7 倍的数据达到了与 LLaMA-3.1-8B 相当的准确率。模型原生集成 vLLM，支持 32K token 推理——定位为长上下文负载的高性能基座。</p>
+<h2>Hunyuan TurboS（腾讯，2025 年 5 月）</h2>
+<p><a href="https://arxiv.org/abs/2505.15431">论文 </a><strong>作者</strong>：腾讯混元团队</p>
+<p>Hunyuan-TurboS 是一个混合 Transformer–Mamba2–MoE 语言模型，总参数 560B、推理时激活 56B。架构在 128 层中遵循&quot;注意力-Mamba-前馈&quot;交错模式，结合分组查询注意力、线性时间 Mamba2 block 和 32 专家的 MoE 配置（每个 token 激活 2+1 个专家）。它支持 256K token 上下文，在 16 万亿 token 上预训练。优化措施包括在 kernel 层为 Mamba 状态采用 fp32 精度，改善长上下文生成质量。思维链融合机制可在长短推理策略之间动态选择。</p>
+<h2>Phi-4-mini-flash-reasoning（Microsoft，2025 年 7 月）</h2>
+<p><a href="https://azure.microsoft.com/en-us/blog/reasoning-reimagined-introducing-phi-4-mini-flash-reasoning/">博客 </a>作者: Weizhu Chen, Jianfeng Gao, Liliang Ren</p>
+<p>Microsoft 发布 Phi-4-mini-flash-reasoning——一个 3.8B 参数的开放模型，为算力受限环境中的低延迟推理而生。它引入 decoder-hybrid-decoder 架构——代号 SambaY——在交错层中组合 Mamba（SSM）、滑动窗口注意力和门控记忆单元（GMU）。该架构保持了线性 prefill 复杂度，同时实现比前代高至 10 倍的吞吐和低至 2-3 倍的延迟。支持 64K 上下文并在合成数学 benchmark 上微调后，Phi-4-mini-flash-reasoning 瞄准边缘设备上的教育与实时 agent 用例。</p>
+<h2>结语</h2>
+<p>始于学术研究的东西，如今正在影响基础模型的构建方式。从 Mamba 到 Jamba 再到 Bamba，我们看到有结构的替代方案正在挑战纯 Transformer 的统治——不仅是在 benchmark 上，也是在真实部署中。未来两年，混合与状态空间架构可能成为新的默认。我们很自豪能为 AI 模型设计的下一章贡献力量。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>「让 AI 把活全干了」：Ori Goshen 在 RAISE Summit 的主题演讲</title>
+      <link>https://www.ai21.com/blog/ai-all-the-work/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/ai-all-the-work/</guid>
+      <pubDate>Wed, 30 Jul 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：“AI all the work”: Inside Ori Goshen’s RAISE Summit keynote</description>
+      <content:encoded><![CDATA[<h2>太长不看：</h2>
+<p>在 RAISE Summit 2025 的主题演讲中，AI21 Labs 联合创始人兼联席 CEO Ori Goshen 解释了&quot;AI all the work&quot;（用 AI 包揽全部工作）意味着什么。他剖析了为什么真正的工作依赖于多步骤任务——以及为什么仅靠 LLM 对于企业用途来说一致性不够。这正是 AI21 的 Maestro 大显身手之处：一个以透明和可信的方式规划、执行并校验复杂工作流的系统。</p>
+<p>他的完整演讲见下文。</p>
+<p>在这次于巴黎举行的 <a href="https://www.raisesummit.com/">RAISE Summit</a> 的演讲中，Ori 勾勒出了一条实现&quot;AI all the work&quot;的清晰路径。他说，工作无非是六十亿个等待被理解、被拆解为步骤并被正确执行的任务。虽然大语言模型通常能把单个步骤做对——大约有 90% 的成功率——但现实世界的任务需要多个步骤。而当你把步骤串联起来时，那些小错误会不断累积放大。这就是为什么仅靠提示工程对企业来说远远不够。我们需要的是既像提示一样灵活、又像手工编排的工作流一样稳健的东西。</p>
+<p>这正是 <a href="https://www.ai21.com/blog/maestro-technical-overview/">Maestro</a> 背后的理念。它帮助开发者构建企业级的<a href="https://www.ai21.com/blog/maestro-putting-knowledge-to-work/">知识智能体（knowledge agents）</a>，通过生成多个计划、选择最优方案并校验每一个步骤来解决任务。它与具体模型无关（model-agnostic），允许对预算和需求进行控制，并会连同成绩单（report card）和执行图（execution graph）一起返回输出，展示 agent 做了什么以及为什么这么做。我们构建 Maestro，是为了超越单轮推理，给企业一个可以放心托付的系统，让它来……</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>为什么 Grounding 依然是企业 AI 的基石</title>
+      <link>https://www.ai21.com/blog/grounding-bedrock-enterprise-ai/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/grounding-bedrock-enterprise-ai/</guid>
+      <pubDate>Wed, 30 Jul 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Why Grounding is (Still) the Bedrock of Enterprise AI</description>
+      <content:encoded><![CDATA[<p>如今的企业领导者早已越过&quot;生成式 AI 在实验室里能干什么&quot;的初始炒作，转而追问这项技术如何在风险受控的生产环境中驱动可度量的业务价值。然而，即便过去一年的 AI 模型取得了非凡进步，部署它们的企业仍然把幻觉<a href="https://cdn.prod.website-files.com/65d0d38fc4ec8ce8a8921654/685ac42fd2ed80e09b44e889_ICONIQ%20Analytics_Insights_The_AI_Builders_Playbook_2025.pdf">列为</a>头号挑战。</p>
+<p>在 AI 这样快节奏的行业里，grounding（事实扎根）或许是个&quot;老&quot;话题，但它仍是那层信心保障——把生成式 AI 从一个投机性的研发项目变成<a href="https://www.ai21.com/blog/how-boards-can-shape-ai-strategy/">董事会级的战略投资</a>。它确保 AI 系统运作的依据不是公共互联网上庞大而通用的信息，而是你的组织那具体、及时、权威的现实。对负责规模化部署 AI 的领导者来说，理解 grounding 是一项战略必需——它直接关联风险缓释、全组织信任和投资回报。</p>
+<p>本文将定义 grounding、探讨为什么忠实（faithful）的 LLM 对企业 ROI 至关重要、检视当前 LLM grounding 的挑战，并分享挑选更擅长 grounding 的 LLM 的一些建议。</p>
+<h2>定义 grounding：从通用知识到企业智能</h2>
+<p>从根本上说，LLM 是一台精密的推理引擎，而不是数据仓库。它的知识是静态的——冻结于训练完成的那一刻——也是通用的——对单个组织的私有数据和独特上下文毫无察觉。LLM 可以写一首关于供应链管理的十四行诗，但它对你的供应链一无所知。</p>
+<p>阻碍企业 AI 广泛采用的最大单一障碍，是 LLM 倾向于生成&quot;看似合理却完全错误&quot;的回答。幻觉是 LLM 工作原理的副产品：生成最可能的词序列，却没有内在的&quot;真&quot;的概念。对企业而言，基于幻觉行事的后果，轻则损害品牌声誉，重则带来重大法律与财务责任。</p>
+<p>一个擅长 grounding 的 LLM，能把模型的语言能力桥接到具体企业的实际上下文上，同时化解幻觉风险。一个良好扎根的系统用具体的外部信息约束 LLM，指示它完全基于所提供的上下文作答，而非其训练数据。换句话说，它对自己的上下文保持忠实。</p>
+<p>最主流的技术是检索增强生成（RAG）。在 RAG 管道里，用户的查询先触发一个检索系统，去组织的可信数据源——CRM、内部 wiki 或数据库——搜索相关信息。这份检索到的、最新的信息连同原始查询一起发给 LLM。模型随后生成一个完全扎根于这些被浮现信息之上的最终答案。这确保输出经过验证、最新，并符合企业的运营现实。</p>
+<p>一个 RAG 驱动的聊天机器人的流程大致如下：</p>
+<p>至关重要的是，这一流程还引入了一层可审计性。一个良好扎根的 AI 系统能对其响应提供来源标注，引用所用的具体文档或段落。这让用户能即刻核验 AI 的主张、追溯其推理，把 LLM 从一个不可预测的黑箱变成透明、可信赖的伙伴。这种可验证性，才是从根本上为 AI 投资去风险的要素。</p>
+<p>有了 grounding，当 LLM 收到外部数据（通过 RAG 或文件上传），它知道如何紧贴这些外部数据。话虽如此，不同模型对检索答案的忠实程度仍有高低。一个忠实的 LLM——一个善于保持扎根的 LLM——让企业可以放心地从自己的 AI 系统获得可靠的响应：既事实正确，又与组织独特的术语、用例和领域对齐。</p>
+<h2>建立信任，解锁企业 ROI</h2>
+<p>不被使用的技术，价值为零。对内部 AI 工具，采用由信任驱动。如果员工认为一个 AI 工具不可靠，他们就不会把它纳入自己的工作流，承诺的生产力增益也就无从兑现。Grounding 正是这份信任赖以铺设的基石。当员工与一个良好扎根的 AI 系统交互，他们得到的答案自带证据基础，形成一个信心的正反馈循环。</p>
+<p>这种信任具有连锁效应，带来可度量的生产力提升和可量化的 ROI。下表总结了 grounding 为何对企业的 AI 领导者重要：</p>
+<table><thead><tr><th><strong>业务驱动力</strong></th><th><strong>实证</strong></th></tr></thead><tbody><tr><td>⬇️ 降低声誉与法律风险</td><td>Google 母公司 Alphabet 在其 Bard 聊天机器人首场 demo 中闹出事实错误后，<a href="https://www.npr.org/2023-02-09/1155650909/google-chatbot--error-bard-shares">蒸发了</a>1,000 亿美元市值。</td></tr><tr><td>⬆️ 提高员工对 AI 工具的内部采用率</td><td>50% 的美国员工<a href="https://www.mckinsey.com/capabilities/mckinsey-digital/our-insights/superagency-in-the-workplace-empowering-people-to-unlock-ais-full-potential-at-work">把</a>不准确列为对生成式 AI 的顾虑——仅次于网络安全（51%）的第二大顾虑。</td></tr><tr><td>⬆️ 提升组织生产力</td><td>LinkedIn 为其客服团队部署了 RAG 系统，约六个月后，<a href="https://arxiv.org/pdf/2404.17723">单问题处理时长中位数</a>下降了 28.6%。</td></tr></tbody></table>
+<p>这些例子揭示一个清晰的模式：可靠扎根的 AI，交付可度量、具有战略意义的回报。</p>
+<h2>直面 grounding 的挑战</h2>
+<p>Grounding 极其有用，但在生产中有效实施它会暴露一连串复杂挑战。从概念验证走向一个稳健、可扩展、可信的 grounded AI 系统，需要在评估、检索和模型行为的复杂权衡中穿行。</p>
+<p>一个基础挑战是客观度量 grounding 的困难。虽然<a href="https://www.ai21.com/blog/rag-evaluation-youre-doing-it-wrong/">没有单一指标能完美刻画总体质量</a>，但一个值得关注的公开 benchmark 是 Google DeepMind 与 Google Research 的 <a href="https://www.kaggle.com/benchmarks/google/facts-grounding">FACTS Grounding</a>。FACTS 评估 LLM&quot;在所提供的长篇文档基础上生成事实准确的响应&quot;的能力，涵盖多种领域。</p>
+<p>FACTS 支持最多 32,000 token，采用两阶段评估：一个响应同时按有用性、以及对照文档的事实准确性来评判。这防止模型用&quot;短小、安全、毫无价值&quot;的答案来刷分。像 FACTS 这样的标准化 benchmark 的建立，其重要性可以说丝毫不亚于技术本身。它确立了一套关于事实性的通用客观语言，给领导者一个量化工具来比较模型、做出有底气的投资决策。</p>
+<p>除度量之外，要构建真正生产就绪的 LLM grounding 系统，还必须应对若干其他挑战：</p>
+<ul><li>精确率 vs. 召回率：RAG 系统的心脏——检索器——面临一个经典权衡。召回率是找齐所有相关信息的能力，精确率是只返回相关信息的能力。为一个调优常常牺牲另一个。取得正确平衡需要高级技术，如结合向量与关键词方法的混合检索，以及用重排过滤噪声。</li><li>创造力 vs. 拒答：LLM 的价值在于综合信息和生成流畅文本。有效的 grounding 需要驯服这种创造力——它同时也是幻觉的源头——把模型限制在可验证的上下文内，同时不扼杀它有效表达的能力。在医疗或金融这类高风险应用中，一个错误答案远比没有答案更具破坏性。这要求超越 LLM 的默认行为（它们被训练成&quot;永远有用&quot;），实现弃权能力（Abstention Ability）——识别信息不足并优雅拒答的能力。</li><li>最新信息 vs. 参数化记忆：当来自 RAG 系统的新信息与 LLM 训练中沉淀的内部旧知识冲突时，就会发生知识冲突。这种情况下，模型可能无视提供的上下文、退回到自己的记忆。缓解之道是选择更善于忠实遵循指令、优先采信来源事实的 LLM。</li></ul>
+<h2>在事实性、效率与成本之间平衡</h2>
+<p>成功穿越这些挑战，需要一个为企业及其生产就绪工作流刻意打造的 LLM。最优秀的忠实 LLM 在事实准确性和上下文连贯性上拿到高分，同时保持低延迟与低成本。三者的平衡确保一个 LLM 真正可规模化使用：既被干系人信任，又契合预算要求。</p>
+<p>一个三者兼备的忠实 LLM，尤其适合需要领域专属可信回答、快速周转、或一次处理海量文档的用例，例如：</p>
+<ul><li>智能企业助手：让员工用自然语言提问，即刻获得基于上下文的准确回答，来源涵盖广泛的可信数据——内部文档、公开记录或网络内容。例如，一位产品经理可以快速检索散落在几十份文档中的过往 PRD、用户反馈和 A/B 测试结果，了解某个功能的完整历史。</li><li>尽职调查与合同审查：查询交易文件或历史合同记录中的具体条款与条件，辅助起草和谈判。例如，公司法务可以在紧迫期限内快速搜索数千页的历史合同、财务报表和公开记录，为其建议提供依据。</li><li>技术手册问答：查询机器文档语料（如用户手册、维修指南、过往事故报告和传感器日志）。例如，在发生故障时，工程师可以即刻排障并解决问题。</li></ul>
+<p>在高度受监管行业运营的组织——满足严格的数据隐私要求是入场券——需要一个可以私有化部署的忠实 LLM：虚拟私有云（VPC）、本地部署，甚至物理隔离（air-gapped）环境。这确保与模型共享的组织信息完全留在组织边界之内，把意外数据泄露的风险降到最低。</p>
+<h2>一个为 Grounding 而造的 LLM</h2>
+<p>在 AI21 Labs，我们构建 Jamba 开放模型家族时，把事实性、效率和成本放在最前面。</p>
+<p>持续、可度量的改进见证了我们提供企业级模型的承诺。最新发布 <a href="https://docs.ai21.com/changelog#introducing-jamba-1-7">Jamba 1.7</a> 专门增强了 grounding——以 FACTS benchmark 度量——它是我们持续专注于构建&quot;对企业给定上下文保持忠实&quot;的 LLM 的缩影。</p>
+<p>Jamba 还拥有 256K token 的上下文窗口，是开放模型中最大的之一，从根本上提升 RAG 的质量。开发者不必检索细碎、割裂的文本&quot;chunk&quot;再祈祷找对片段，而是可以把整份文档或大块连贯章节喂给 Jamba。这极大提高了捕获全部相关信息的概率，让 LLM 能产出细腻、准确得多的答案——尤其对于需要跨多文档综合信息的复杂查询。</p>
+<p>最后，是 Jamba 的核心创新：它的<a href="https://www.ai21.com/blog/announcing-jamba/#h-jamba-offers-the-best-of-both-worlds-nbsp">创新混合架构</a>，将 Transformer 与状态空间模型（SSM）——具体是 <a href="https://www.ai21.com/research/jamba-a-hybrid-transformer-mamba-language-model/">Mamba</a>——结合。这一融合兼得两界之长：Transformer 的高性能与 SSM 处理长信息序列的高效率。</p>
+<h2>把未来建在信任的地基上</h2>
+<p>生成式 AI 对企业的承诺，只有凭借可证明可信、可靠、安全的技术才能兑现。卓越的 grounding 是交付这份信任地基的核心技术学科——它穿越复杂挑战，造就一个从架构起就为企业部署现实而打造的 LLM。</p>
+<p>从一个有前景的 AI 试点走向生产级能力，既需要合适的技术，也需要合适的专长。我们邀请你与我们专家团队交流。一起探索 Jamba 业界领先的 grounding 表现如何为你的 AI 计划去风险、建立持久的信任地基，并释放生成式 AI 在你企业中的全部潜力。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Karpathy 的牵引绳</title>
+      <link>https://www.ai21.com/blog/karpathys-leash/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/karpathys-leash/</guid>
+      <pubDate>Wed, 23 Jul 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Karpathy’s Leash</description>
+      <content:encoded><![CDATA[<p>Andrej Karpathy 近日提醒道，我们对完全自主的 AI agent&quot;兴奋过头了&quot;——并敦促开发者&quot;把 AI 拴在绳子上&quot;。<a href="https://www.ai21.com/blog/karpathys-leash/#d3c1bdbe-2c5d-4883-a520-559005551989">1</a>他的观点直白而真实：先进 AI 的挑战不在于让它行动，而在于确保它可靠地、在边界内行动。</p>
+<h2>复利式的问题</h2>
+<p>如今的大语言模型前一秒还显得超越人类，后一秒就犯下&quot;人类绝不会犯&quot;的错误。<a href="https://www.ai21.com/blog/karpathys-leash/#be075f60-a5fe-4113-a329-2e43e1a5fc49">2</a>但可靠性问题远比单个模型的错误更深。在企业环境中，AI 系统必须在庞大而陌生的动作空间中穿行——由多个工具、数据库和决策点组成的复杂工作流并不在其训练之内。当你把多个 AI 操作串联起来时，错误会以指数级累积。第一步的一个小幻觉，到第五步就成了大事故。</p>
+<p>这正是传统的&quot;prompt-and-pray&quot;做法——把复杂请求丢进 AI 模型然后祈祷好运——在现实应用中失灵的原因。步骤越多，出错的概率越大。对于处理财务分析、尽职调查或研究综合等多步流程的企业来说，这种不可预测性是一票否决项。如果我们不能信任 AI 在复杂工作流中保持专注，就不能把它用于业务关键工作。</p>
+<p>关键在于——正如 Karpathy 所主张的——约束 AI 的行为，本质上就是给我们的 AI agent 系上一条由逻辑、监督和护栏编成的牵绳。</p>
+<h2>超越黑箱 AI：论&quot;受约束的自主&quot;</h2>
+<p>解法在于从根本上重新思考 AI 系统的架构方式。与其依赖单体语言模型端到端地处理复杂任务，我们需要混合架构：把神经推理的灵活性与符号控制系统的可靠性结合起来。</p>
+<p>考虑一种神经-符号（neuro-symbolic）方法：概率性语言模型负责单个步骤内的推理任务，而符号逻辑统辖整个系统——强制执行结构、对照显式要求校验输出，并就资源分配和执行路径做出有原则的决策。这种架构不是限制智能——而是疏导智能。</p>
+<p>这类系统处理复杂任务的起点，是生成把工作量拆解为可管理步骤的结构化执行计划。它们分析任务要求和可用资源，然后构建逻辑工作流，决定执行哪些操作、按什么顺序、投入多少算力。在每个阶段，多种方案会被并行评估，权衡成功可能性与成本。</p>
+<p>校验在多个层面持续发生。不只是检查最终输出，每项要求都被单独校验——既用语言模型做上下文理解，也用确定性代码检查结构性约束。当输出不满足要求时，系统会在继续之前自动纠正。如果生成了多个解，就选择满足全部要求中得分最高的那个。</p>
+<p>其成果是多步 AI 工作流中空前的可靠性与准确性。传统 AI 系统如黑箱般运行，而受约束的架构通过结构化执行计划交付完全的透明——每个决策点都可审计、可调试。用户能完全看到 agent 选择做什么、为什么这么做；同时系统在每一步校验输出，确保整个工作流始终准确，而不是在最后祈祷好运。</p>
+<p>这种全面的方法转化为企业真正需要的务实控制力。用户可以指定离散的要求——无论是内容风格、输出结构、安全护栏还是领域特定约束——系统会独立校验每项要求，在预算内自动尝试纠正，并就该要求成功与否给出详细报告。同时，显式的算力预算限制和延迟约束在选择执行路径时会被遵守，在彻底性与效率之间动态权衡。这些系统不只是产出答案，它们交付完整的履行报告，精确展示每项要求是如何被满足的，并对整个过程以及途中所做的任何纠正保持完全透明。</p>
+<h2>企业的当务之急</h2>
+<p>这种方法重塑了组织用 AI 处理复杂高风险任务的方式。以财务尽调为例——一个可能需要分析数百份文档、提取特定事实、交叉验证数字并以精确格式呈现发现的过程。传统 AI 模型可能生成一份令人信服、却包含捏造事实或遗漏关键细节的报告。</p>
+<p>有了受约束的 AI 架构，我们可以放心地自动化这样的工作流。系统规划每一步（检索文档、识别关键事实、编制结构化报告），对照显式要求校验每一条内容，并附带一条完整的审计轨迹交付结果——精确记录每项要求是如何达成的。</p>
+<p>企业不再需要赌一个可能脱轨的聪明 AI。它们可以部署通过透明、经校验的执行赢得信任的受约束 AI agent——既拓展可能的边界，又牢牢处于掌控之中。</p>
+<h2>把理论付诸实践</h2>
+<p>这些不只是理论概念。在 AI21，我们已经把这一理念实现在 <a href="https://www.ai21.com/maestro/">AI21 Maestro</a> 中——我们用于构建可靠知识智能体的企业系统。这个平台证明：受约束的自主不是限制——而是解放。用正确的架构约束绑定 AI，反而让它在企业环境中得以成就更多。</p>
+<p>Karpathy 的牵绳，最终关乎的是可问责性，而非束缚。这正是 AI 成为业务关键工作中可靠伙伴所需要的。未来不属于无边界的 AI，而属于在边界内可靠行动的 AI。</p>
+<ul><li><a href="https://www.businessinsider.com/openai-cofounder-andrej-karpathy-keep-ai-on-the-leash-2025-6#:~:text=Andrej%20Karpathy%20thinks%20we%27re%20getting,agents%20that%20act%20without%20supervision">https://www.businessinsider.com/openai-cofounder-andrej-karpathy-keep-ai-on-the-leash-2025-6</a> <a href="https://www.ai21.com/blog/karpathys-leash/#d3c1bdbe-2c5d-4883-a520-559005551989-link">↩︎</a></li><li>ibid <a href="https://www.ai21.com/blog/karpathys-leash/#be075f60-a5fe-4113-a329-2e43e1a5fc49-link">↩︎</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>实时自动化产品描述：清除内容负债，赢得购物车</title>
+      <link>https://www.ai21.com/blog/product-description-automation/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/product-description-automation/</guid>
+      <pubDate>Tue, 22 Jul 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Automating Product Descriptions in Real Time: Clear the Content Debt, Win the Cart</description>
+      <content:encoded><![CDATA[<p>顾客永远看不到你的库存烦恼。他们只看到一个商品页面，然后决定——点击还是关掉。<strong>然而潜藏在页面背后的供应商数据源迷宫、赶工修改和半清洗的数据，太容易泄漏到屏幕上。</strong><a href="https://www.accenture.com/in-en/insights/consulting/consumer-goods-cutting-through-noise?utm_source=chatgpt.com">埃森哲 2024 消费者脉搏调研</a>发现，74% 的购物者因为感到被轰炸、应接不暇和困惑而放弃了线上购物车。</p>
+<p>当标题含糊、规格冲突或卖点冗长时，信任烟消云散，标签页也就关掉了。本文规划了一条更稳妥的规模化路径：用基于规划的 AI 管道，把产品内容的混沌变成一台受治理、ROI 为正的引擎。</p>
+<h2>产品内容负债的真实代价</h2>
+<p>每个季节都带来新 SKU，文案团队规模却原地不动。未撰写或过时的页面像代码中的技术债一样堆积。结果是一条引不来任何自然流量、还要靠加价投放才能维持可见度的长尾商品目录。难怪 <a href="https://blogs.nvidia.com/blog/ai-in-retail-cpg-survey-2025/?utm_source=chatgpt.com"><strong>60% 的零售商</strong></a>如今把 AI 生成内容列为生成式 AI 的首要用例。</p>
+<h2>错配的惩罚</h2>
+<p>当一次退货源于&quot;面料手感不同&quot;或&quot;规格有误&quot;，购物者会记住这件事。复购概率下降，评价趋向负面，客服成本攀升。缩短&quot;读到的&quot;与&quot;收到的&quot;之间的差距，是同时提升转化与客户终身价值最快的方式。对一家中型零售商而言，仅仅把描述错误减半，就能消掉数百万的运费和翻新成本。</p>
+<h3>治理是新的增长杠杆</h3>
+<p>即将生效的 <a href="https://data.europa.eu/en/news-events/news/eus-digital-product-passport-advancing-transparency-and-sustainability#:~:text=Starting%20in%202024%2C%20the%20European,that%20emphasise%20transparency%20and%20accessibility.">EU 数字产品护照规则</a>将要求品牌为每一个属性——从原产地到可回收性——提供精确到单个 SKU 的证明。越过已核实数据边界的文案不只是偏离品牌调性，它是合规风险。企业的应对是构建护栏栈：将检索增强生成（RAG）与政策引擎和自动证据记录配对。目标很简单：绝不发布一句无法追溯到事实来源的话。</p>
+<p>来看一家正在为黑五准备上架 7,000 款第三方电子产品的中型电商平台。供应商数据源以碎片化格式抵达。一些 SKU 根本没有描述；另一些规格过时、类目标签不一致，或图片命名为&quot;final-final.jpg&quot;。</p>
+<p>文案急着补缺口，法务追着电池安全免责声明，商品运营一边等待符合字数限制和语气规范的要点，一边催着活动上线。</p>
+<p>等到列表真正上线时，四个更深的问题已经生根：</p>
+<ul><li><strong>内容负债滚雪球。</strong>数百个 SKU 仍未发布或未优化，抽走长尾 SEO 价值，逼迫更多预算流向付费流量。</li><li><strong>错配引发退货。</strong>页面承诺 USB-C，盒子里装的却是 Micro-USB。顾客上当，差评来袭，复购消失。</li><li><strong>治理崩盘。</strong>免责声明缺失，属性无法追溯到来源，合规团队暂停列表或在活动中途下架。</li><li><strong>时间流逝。</strong>本该是发布周的事，变成了冲刺补救，只为达到最低可用质量。</li></ul>
+<p>财务团队看得更清这是什么——在旺季利率下不断复利的产品内容负债。</p>
+<h2>别只是接个聊天机器人</h2>
+<p>把供应商规格贴进聊天机器人、对生成的文采惊叹一番——这种诱惑很常见。而在生产环境中，裂缝很快显现：段落塞不进 PIM 字段，一个出格的同义词让品牌声音跑偏，一条漏掉的安全免责声明让列表被下架。没有结构、校验或审计轨迹，它们把内容麻烦变成合规风险。</p>
+<ul><li><strong>没有结构</strong> – 段落倾泻而出，但 PIM 系统需要的是离散字段。</li><li><strong>幻觉出来的事实</strong> – 模型可能凭空捏造不存在的规格或认证，让你暴露于退款、下架或监管处罚之下。</li><li><strong>不可预测的声音</strong> – 这里一个逗号、那里一个同义词，语气就漂离了品牌。</li><li><strong>看不见的缺口</strong> – 关于受限词或安全警告的平台规则未经检查就溜过去了。</li><li><strong>零审计轨迹</strong> – 法务无从追溯哪条 prompt 生成了哪个宣称。</li></ul>
+<p>简言之，prompt-and-pray 式工具<strong>生成文本，但不管理流程</strong>。对企业来说，这就是业务风险。</p>
+<h2>更好的方法：基于规划的产品内容自动化</h2>
+<p>有远见的零售商把列表质量当作<strong>多步骤工作流</strong>，而不是一次性的文本爆发。这条管道像一张资深编辑的办公桌——但实时运行：</p>
+<ul><li><strong>摄取与规范化</strong> – 长上下文模型读完整个供应商数据源，统一单位，把属性映射到共同 schema，并标记矛盾（&quot;vegan leather&quot;+&quot;100 % cowhide&quot;）。</li><li><strong>资格审查与诊断</strong> – 为每个 SKU 就完整性、政策合规和语气一致性打分。低于阈值的进入生成环节；干净的 SKU 直接跳过。</li><li><strong>定向生成文案</strong> – 只填补空缺——标题、要点、长描述——使用以 SEO 关键词为种子的品类模板。商业语气保持不变。</li><li><strong>校验与解释</strong> – 规则引擎对照平台指南、安全法规和品牌风格检查每个字段；置信分数和平白语言的理由说明，让法务只需五分钟就能签核。</li><li><strong>发布与学习</strong> – 输出流入 PIM、CMS 和平台 API，引擎记录每个决策。发布后的信号——滚动深度、加购、退货——在每个迭代中微调模型。</li></ul>
+<p>这套编排持续地把混沌输入转化为一致、可购买的列表。</p>
+<h2>企业获得了什么</h2>
+<p><strong>更快的上架时间。</strong>自动化校验清空积压，让新 SKU 早上线数天——有时数周。 <strong>一致的品牌声音。</strong>每个标题、要点和免责声明都遵循同一份风格指南，无论供应商来源。 <strong>更高的转化、更低的退货风险。</strong>清晰完整的描述增强买家信心，减少结账时的期望错配。 <strong>运营效率。</strong>团队把人才从逐行编辑重新配置到策略性商品运营，而无需扩充编制。</p>
+<h2>它靠什么运转</h2>
+<ul><li><strong>长上下文处理</strong>，摄取完整经销商数据源而不切碎上下文。</li><li><strong>智能规划</strong>，决定何时解析、何时重写、何时上报——在成本、时间和准确性之间优化。</li><li><strong>内建可观测性</strong>，让品牌、法务、运营等每个角色都能追溯每个决策并在必要处介入。</li><li><strong>安全的部署选项</strong>（VPC 或本地），把未发布的 SKU 和供应商合同留在企业高墙之内。</li></ul>
+<p>这些支柱合起来，把内容负债变成一项复利资产。在下方视频中，你可以看到我们如何为零售和电商客户自动化产品列表：</p>
+<h2>内容是持续运行的系统——不是季度性消防演习</h2>
+<p>真正拉开差距的零售商，会是那些把产品文案<strong>运营化</strong>的——就像别人自动化定价或库存那样：作为一个始终在线的系统，随商品组合复杂度扩展、随渠道变化适应，并通过透明赢得信任。</p>
+<p><em><strong>你的下一次发布不该从重写开始。</strong> <a href="https://www.ai21.com/contact-sales/">申请演示</a>，了解基于规划的 AI 如何规模化地自动化 SKU 内容——而不牺牲质量、合规或品牌声音。</em></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>实时监控合规：降低风险、快速响应</title>
+      <link>https://www.ai21.com/blog/ai-compliance-monitoring/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/ai-compliance-monitoring/</guid>
+      <pubDate>Mon, 21 Jul 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Monitoring Compliance in Real Time: Reduce Risk, React Faster</description>
+      <content:encoded><![CDATA[<p>在强监管行业中，合规已不再是季度性的检查清单——它是一场与复杂性、碎片化和速度进行的持续战斗。每一项新的法规、指南或公告，都迫使企业重新评估数百份（乃至数千份）既有合同、内部政策和第三方协议。</p>
+<p>然而对许多组织来说，这意味着事后审计、人工审查，以及政策变化与行动之间漫长的延迟。</p>
+<p>根据 <a href="https://www.cbi.org.uk/media-centre/articles/cbi-president-calls-for-urgent-regulatory-overhaul-to-boost-uk-competitiveness/">CBI 报告</a>，近年来 38% 的英国企业经历了监管工作量的急剧增加，某些情况下年度合规成本高达 <strong>5,000 万英镑</strong>。与此同时，<a href="https://www.infosecurity-magazine.com/news/gdpr-fines-total-2024/">2024 年 GDPR 罚款总额达 12 亿欧元</a>，单笔罚没金额最高达 3.1 亿欧元——凸显出整个欧盟对数据处理实践的监管压力。</p>
+<p>本文探讨企业级 AI 系统如何让合规从滞后的审计转向实时的对齐——通过持续监控内部政策和合同，将其与不断演进的法规进行映射，并以完全透明的方式呈现可执行的变更。</p>
+<h2>合规滞后的代价</h2>
+<p>让我们通过一个典型的场景来落地说明。</p>
+<p>一家大型航空航天制造商收到监管机构的一份新公告——安全认证指南中有 47 处条款更新。法务和合规团队手忙脚乱地交叉比对几十年的供应商合同和工程文档。这项任务紧迫、高风险，而且完全依赖人工。</p>
+<p>挑战不仅在于数量，还在于：</p>
+<ul><li><strong>信息分散</strong>——法规、政策和合同存在于不同的系统、语言和格式中。</li><li><strong>工作重复且易错</strong>——逐条审查枯燥、昂贵，且高度依赖专家直觉。</li><li><strong>风险可见性有限</strong>——无法实时了解哪些文档存在偏差、需要哪些更新。</li><li><strong>行动迟缓</strong>——大多数公司按审计周期运作，而非持续监控——让其在两次审查之间处于暴露状态。</li></ul>
+<p>随着监管机构加快更新节奏、利益相关方要求提供合规证明，企业已经不能再依赖人工流程或黑箱式的聊天机器人工具。它们需要能够解析、映射、推理和行动的系统。</p>
+<h2>为什么传统 AI 力不从心</h2>
+<p>尽管许多组织尝试过基于 LLM 的聊天机器人或文档检索工具，但这些系统很少能真正用于高风险的合规生产工作。</p>
+<p>为什么？因为通用 AI 工具：</p>
+<ul><li><strong>预测文本——而非规划行动。</strong> 它们生成听起来合理的答案，却没有结构化推理或可追溯的步骤。</li><li><strong>缺乏透明度。</strong> 输出往往无法解释，无从审计某个条款为何被标记——或为何被遗漏。</li><li><strong>难以处理冗长且相互关联的文档。</strong> 面对数百页的政策体系或历史法规修订，多数模型会崩溃。</li><li><strong>孤立运行。</strong> 它们不与企业记录系统集成，也无法适应公司特定的格式和政策。</li></ul>
+<p>在一条遗漏的条款就可能导致数百万罚款或项目延期的环境中，这不仅是技术缺陷——更是业务风险。</p>
+<h2>更好的方法：基于规划的合规监控</h2>
+<p>为了克服这些局限，有远见的企业正在采用一种不同的思路——把合规监控当作一个结构化的多步骤流程，而非一次性的生成任务。</p>
+<p>这种方法的核心是一个<strong>基于规划的 AI 系统</strong>：它不把合规视为提示-响应问题，而是视为一系列动作的序列。系统理解任务，为每一步选择最佳的工具和数据源，并在过程中持续校验结果。</p>
+<p>实际运作方式如下：</p>
+<ul><li><strong>解析法规。</strong> 新规则发布时，系统借助大容量长上下文处理能力摄取整份文档——而不仅是摘要或标题——并提取出相关条款的结构化表示。</li><li><strong>将条款映射到内部文档。</strong> 合同、政策和第三方协议被索引，并通过检索算法与符号匹配两种方式与相关法规进行对应。</li><li><strong>为合规缺口打分。</strong> 每个匹配项都由校验器评估：检查一致性、标记歧义、揭示风险——全部带有相应的置信分数和理由说明。</li><li><strong>提出具体的红线修订或更新。</strong> 系统不是发出模糊的告警，而是推荐精确到条款级别的编辑——并附上来源引用和影响说明。</li><li><strong>追踪、记录并解释每一个决策。</strong> 从法规解析到建议输出的完整工作流轨迹都会被记录，使合规团队能够审计流程、监管机构能够审查理由。</li></ul>
+<p>其成果是一个持续扫描、比对并提出建议的&quot;活&quot;系统——内建可观测性和人在回路（human-in-the-loop）控制。</p>
+<h2>真实世界的影响：企业获得了什么</h2>
+<p>回到航空航天的例子。</p>
+<p>面对一次 47 条条款的监管更新，合规团队部署了一个基于规划的 AI 系统，把一场高风险的人工混战变成了精确、可审计的工作流——而且只用了原计划的一小部分时间。</p>
+<p>他们获得了以下能力：</p>
+<h3>更快理解新法规</h3>
+<p>AI 一次处理就摄取了整份公告——保留每一个条款、子条款和脚注。这意味着能更快理解 GDPR 更新或新的 SEC 规则等复杂变化，将响应时间从数周缩短到数小时。</p>
+<h3>大规模的定向文档审查</h3>
+<p>超过 1,500 份合同和政策被自动交叉比对，但只有相关的那些被标记出来——避免了&quot;煮沸大海&quot;式的全面审查，让法务只聚焦于真正重要的内容。</p>
+<h3>带有风险洞察的条款级对齐</h3>
+<p>偏差按严重程度排序，并附红线修订和理由——减少了歧义和决策疲劳，使法务团队能够立即对高风险条款采取行动。</p>
+<h3>人工工作量减少 85%</h3>
+<p>检索、映射和条款评估的自动化把法律专家释放到高判断力的场景中——精简团队能够以更少的人力做更多的事，在不扩充编制的情况下扩展合规能力。</p>
+<h3>数小时内而非数周内拿到可审计的追溯</h3>
+<p>每一步都被记录和可视化——从解析到建议——确保不再有最后一刻的慌乱，并让监管机构全面了解做了什么、怎么做的以及为什么。</p>
+<p>这种从被动审查到主动保障的转变，为公司赢得了三周的监管响应提前量——保住了一笔数十亿美元的飞机订单，避免了认证延期。</p>
+<h2>是什么让这一切成为可能</h2>
+<p>三大技术支柱支撑了这种面向合规的系统级 AI：</p>
+<ul><li><strong>长上下文处理。</strong> 能够处理整份法规更新、历史合同和多文档映射，而无需把它们切成丢失含义的碎片。</li><li><strong>智能规划。</strong> 从检索什么到如何校验，每一步都基于成本、时间和成功概率来选择，确保效率和可控性。</li><li><strong>内建的可观测性与人为控制。</strong> 所有决策都是透明、可追溯、可审计的——用户可以随时介入、审查并调整计划。</li></ul>
+<p>至关重要的是，这些系统还具备<strong>部署灵活性</strong>。企业可以在虚拟私有云（VPC）或本地环境中运行它们，确保敏感的法律和政策数据永不离开其安全边界——这是金融、医疗、国防等领域企业日益增长的要求。</p>
+<p>看看我们如何实现合规自动化：</p>
+<h2>合规是持续运行的系统——而不是周期性审计</h2>
+<p>随着监管压力加剧，最终胜出的组织不会是法务部门最大的那些，而是把合规运营化的那些——将其视为一个始终在线的系统：随复杂度扩展、随变化适应，并通过透明赢得信任。</p>
+<p>有了合适的 AI 架构作为支撑，这一转变如今已触手可及。</p>
+<p><strong>打算自动化你的合规运营？ </strong>了解 AI21 的解决方案如何自动化你的监管环境。<em><a href="https://www.ai21.com/contact-sales/">获取演示</a></em>。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>AI 的力量，在于把知识变成工作成果</title>
+      <link>https://www.ai21.com/blog/maestro-putting-knowledge-to-work/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/maestro-putting-knowledge-to-work/</guid>
+      <pubDate>Tue, 08 Jul 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：The Power of AI Is Putting Knowledge to Work</description>
+      <content:encoded><![CDATA[<p>企业领导者早已被&quot;自主 AI agent 将革命性改变商业&quot;的炒作淹没了。各大厂商都在兜售所谓只需极少人工投入就能处理复杂任务的&quot;agentic AI&quot;系统。然而在实际层面，企业对 AI agent 的真正采用正在停滞。事实上，Gartner 预测<a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027"><strong>到 2027 年超过 40% 的 AI agent 项目将被取消</strong></a>，原因是成本飙升与价值不清<a href="https://www.ai21.com/blog/maestro-putting-knowledge-to-work/#243774bf-30a2-4abd-bab8-2ebb8937309a">1</a>。尽管投入不断上升，多数部署仍停留在试点模式，几乎没有真正的 ROI。现实始终没能兑现承诺。</p>
+<p>为什么这么多企业 AI agent 计划步履蹒跚？不是因为理念有错，而是当前的打法瞄错了靶心。大量精力被耗在建 agent 框架、工具集成或灵活管道上——却没有想清楚真正的价值在哪里。</p>
+<h2>真正的价值所在：知识工作——而不只是知识检索</h2>
+<p>&quot;agent&quot;（智能体）这个词本身已暗示其工作是认知性的。但太多时候，被造出来的不过是高级版检索壳——基本的 RAG 聊天机器人，从文档里翻出片段来回答问题。这类系统可能有用，但它们做的不是<em>知识工作</em>，它们做的是<strong>知识查询</strong>。</p>
+<p>这正是我们必须分辨得更清楚的差别。</p>
+<p>真正的机会，不在于帮客服代表从政策文档里调出一段引文，而在于<strong>自动化那种今天只有受过训练、理解上下文的人类知识工作者才能完成的工作</strong>——从多个来源检索信息、在含糊不清中推理、做出判断、综合证据，最终产出高价值的结构化成果：一份报告、一份摘要或一条建议。</p>
+<p>Peter Drucker 在 1950 年代创造了&quot;知识工作&quot;（knowledge work）一词来描述这类工作：核心任务是用信息来思考、分析和产出。1950 年代，只有约 15% 的劳动者属于这一类；今天，在现代经济体中这一比例高达 70% 以上。然而我们看到的大多数自动化——无论是否基于 AI——仍围绕体力任务或例行行政流程。</p>
+<p>AI agent 要成为企业运营的核心，就必须为企业规模的知识工作而构建。这意味着处理高风险的多步任务——比如产出并购尽调摘要、战略供应商评估报告或合规风险报告——而不只是回答 FAQ 或查询数据库。</p>
+<p>这正是生成式 AI 该大放异彩之处——不仅因为它理解语言，更因为它能生成和评估想法、执行推理，并流畅地对接知识工作所依赖的工具与格式。尽管承诺满满，这场变革在实践中仍未发生。</p>
+<h2>为什么还没发生？</h2>
+<h3>1. 错误随每一步成倍放大</h3>
+<p>第一道障碍是跨多个推理步骤的可靠性。知识工作不是一锤子买卖——它是一串动作，往往有依赖关系和不断演化的指令。但今天的 agent 仍然依赖在长链条上会失去连贯性的概率模型。早期一个误解或幻觉，就可能滚成残缺不全或彻底错误的答案。</p>
+<p>研究中对此早有记载：LLM 的表现随任务长度衰减，而现有大多数框架在运行时自我纠错方面给不了什么。简言之，试图&quot;边跑边想&quot;的 agent 常常跑偏。</p>
+<h3>2. 它们缺少正确的上下文——也没有使用它的能力</h3>
+<p>更具限制性的，是企业特有上下文的缺失。在商业环境中执行高价值知识工作，需要知道去哪里找信息、如何在流程中穿行、什么与任务相关、如何在多种可行方案之间抉择。</p>
+<p>这类上下文不是开箱即用的 LLM 天然&quot;知道&quot;的，也不是简单塞进 prompt 就行的。</p>
+<p>拿一个筹备大客户提案的团队举例。人类分析师知道过往提案放在哪里、哪些与当前项目相似、这位客户看重哪些成功指标、如何根据内部定价政策或以往的赢单/输单分析来调整话术。他们还携带着组织记忆——了解类似交易过去如何演化、哪些说辞在以往谈判中引起共鸣、公司已放弃哪些做法及其原因。今天的 agent 对这些一无所知，除非有人把它显式地——通常还是手工地——编码进 prompt 或代码。它们缺乏这种机构知识，也缺乏从经验中学习的能力。它们不知道该看哪里，不知道为什么某些输入比其他更重要，也不知道如何把输出调整得符合组织规范。</p>
+<p>这就是当前的天花板：agent 能检索事实，但还不能带着判断、综合与规划，用鲜活的专有企业知识执行工作流。</p>
+<h2>真正的机会：为复杂知识工作提供可信的 Agent</h2>
+<p>想象一下，如果我们能信任 AI agent 端到端地完成高风险知识工作，会有怎样的可能。</p>
+<h3>示例 1：端到端的并购尽调</h3>
+<p>一个企业发展团队需要评估一个收购标的。流程包括通读合同、NDA、董事会材料、财务模型、股权结构表和监管备案。它要求提取关键条款、识别不一致之处、生成资料请求清单、进行财务比率分析、总结风险。</p>
+<p>如今，这需要一支分析师团队和数天的手工工作。有了合适的 agent，整条管道都可以自主完成——从文档摄取与信息提取，到综合与报告生成。过去要花一周的事，可以在一小时内完成，且每一步都可完全审计、可追溯。</p>
+<h3>示例 2：起草一份 AI 监管合规备忘录</h3>
+<p>法务团队被要求评估一个新的内部 AI 系统是否符合最新的 EU AI Act 条款。这需要审阅该系统能力的文档、与法律义务交叉比对、识别潜在不合规之处，并起草一份总结发现和缓解建议的备忘录。</p>
+<p>一个为此任务而建的知识智能体会先定位并提取系统的相关细节、检索最新的监管指南、进行对比分析，并产出一份结构化的、法律上准确的建议备忘录——让法务团队腾出手来聚焦边缘情形，而非打地基的活。</p>
+<p>在这两个例子里，价值都不在于检索到正确的片段，而在于把工作做完：驾驭流程、评估信息，并交付一份有结构、有理据、贴合需求的产品。这才是我们要抵达的前沿。</p>
+<h2>前行之路——AI21 Maestro</h2>
+<p>在 AI21，我们过去一年聚焦于一个问题：要构建真正能托付企业级知识工作的 agent，需要什么？</p>
+<p>今天，我们自豪地推出 <strong>AI21 Maestro</strong>，正式面向企业客户开放。</p>
+<p>Maestro 是一个构建和部署<strong>知识智能体（knowledge agents）</strong>的系统——专为在公司专有数据上执行多步推理与综合而打造的 AI 系统。它的设计不是像典型 agent 那样猜测下一步，而是有条不紊地规划和执行复杂工作流：选择正确的检索策略、校验中间结果、产出结构化且准确的输出。</p>
+<p>与把规划交给运气、或需要数月硬编码逻辑的通用 agent 框架不同，<strong>Maestro 为每个任务动态规划</strong>，在成本与延迟等权衡之间取得平衡，并在工作过程中自我纠错——产出清晰、透明、可追溯、可信任的输出。</p>
+<p>与简单的 RAG 管道不同，Maestro 不停留在检索。它走完知识工作的完整弧线：拆解目标、确定需要什么信息、检索、解读，并组装成连贯而有价值的结果——无论那是一份尽调备忘录、一份合规摘要，还是一份多页的研究文档。</p>
+<p>我们相信，这才是 agent 一直以来的使命：不是模糊的聊天界面，而是能够在企业环境中<strong>真正干活</strong>的系统——干那些需要精度、结构和推理的工作。</p>
+<p>有了 AI21 Maestro，这个未来不再只是理论。</p>
+<p><strong>了解更多，并<a href="https://www.ai21.com/contact-sales/">预约 AI21 Maestro 演示</a>。</strong></p>
+<ul><li><a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027">https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027</a></li></ul>
+<p><a href="https://www.ai21.com/blog/maestro-putting-knowledge-to-work/#243774bf-30a2-4abd-bab8-2ebb8937309a-link">↩︎</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>AI21 Maestro：为企业知识工作而生的 AI</title>
+      <link>https://www.ai21.com/blog/maestro-ai-enterprise-knowledge-work/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/maestro-ai-enterprise-knowledge-work/</guid>
+      <pubDate>Tue, 08 Jul 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：AI21 Maestro: AI Built for Enterprise Knowledge Work</description>
+      <content:encoded><![CDATA[<p>今年早些时候，我们<a href="https://www.ai21.com/blog/maestro-ai-planning-orchestration/">发布了 Maestro</a>：一种全新的 agentic AI 系统，旨在以精准方式应对复杂、数据密集型的任务。自那以来，我们见证了企业各团队——从法务到财务——日益增长的兴趣，他们准备超越原型聊天机器人，迈入真正的自动化。</p>
+<p>今天，我们向企业客户开放 Maestro。</p>
+<p>企业 AI 的采用陷入僵局。尽管 LLM 和 agent 框架炒作火热，真实世界的部署却一直滞后——尤其是在自动化财务分析、回复 RFP、监管合规审查这类高价值、数据密集的业务任务时。原因很简单：今天的多数&quot;agent&quot;要么不可靠——依赖 LLM 在无护栏的情况下做运行时决策；要么耗工——要求团队把工作流的每一步都硬编码出来。</p>
+<p>我们正在改变这一点。</p>
+<h2>Agentic AI 的新标准</h2>
+<p>Maestro 不是又一个框架。它是一个构建可靠知识智能体的系统。它理解企业上下文、实时适应，并以准确性、透明和速度执行任务。它动态地把复杂任务拆解为可执行的步骤，选择最优的工具和模型，遵守你的成本与延迟约束，并对照你的要求校验每一步。</p>
+<p>这就是 AI21 Maestro 与众不同之处——也是企业选择它来规模化自动化知识工作的原因。</p>
+<h2>为什么大多数 Agent 在起跑线上就熄火</h2>
+<p>尽管 AI agent 令人兴奋，现实是大多数进不了真实使用场景。它们产生幻觉、忘记上下文、脆弱不堪，而且没有针对你的用例和数据做定制。</p>
+<p>问题不在愿景有缺陷，而在执行有缺陷。传统 agent 要么遵循僵化而费工的硬编码路径，要么把太多东西交给运气——把推理甩给 LLM——没有结构、没有监督，在复杂多步任务中累积错误的风险不断攀升。</p>
+<p>更糟的是，它们常常与公司真实数据脱节——所以它们不知道什么重要、为什么重要。而让它们对齐你的数据环境、用例和工作流，可能要花上数月研发才能起步。</p>
+<p>结果？信任流失。影响为零。没有自动化——只有永不上线的无尽试点。</p>
+<h2>精度靠设计，而不仅靠提示</h2>
+<p>AI21 Maestro 不是框架，也不是工具箱。它是一个内建智能、理解真实企业工作结构的 AI 系统。</p>
+<p><strong>AI21 Maestro 的核心是一种新型的 agent 智能，其设计目标是：</strong></p>
+<ul><li><strong>交付高质量结果</strong>——运用高级检索、推理和自校验技术——在每一步选择最佳工具（文件搜索、网页搜索、LLM），校验中间结果，必要时并行运行流程。</li><li><strong>加速部署时间</strong>——为每个任务自动生成独一无二的动态计划——基于输入、目标和延迟或成本等约束实时适应。</li><li><strong>让你对结果有完全的可见性</strong>——通过可视化执行图和置信分数——你可以追溯每个决策是如何做出的。</li><li><strong>针对你的数据和用例定制性能</strong>——通过离线仿真优化准确性、速度和资源效率——在生产环境运行任何东西之前完成。</li></ul>
+<p>这一切都自主发生，无需数月的研发工作——不必手工硬编码决策逻辑或错误处理流程。</p>
+<h2>你能用 Maestro 做什么</h2>
+<p>AI21 Maestro 专为企业级知识工作打造——那种需要跨多数据源检索、分析和综合数据的任务，从金融研究、合同分析到 RFP 应答。</p>
+<h3>在监管变化影响你之前追踪它</h3>
+<p>合规团队可以把新法规、历史备案文件和内部政策文档的混合体交给 Maestro。Maestro 会浮现出变化所在，将其与你现有的治理框架对齐，并标记需要更新之处——自动生成符合你要求的合规影响摘要。</p>
+<h3>无需随时待命的分析师，加速客户洞察报告</h3>
+<p>市场团队可以问 Maestro：&quot;第二季度欧洲客户最关注的问题是什么？&quot;它从 CRM 笔记、支持工单和反馈表中提取信息——然后把最高频的问题、区域模式和产品缺口提炼为一份结构化的管理层摘要。不需要仪表盘，不需要打标规则，不需要等待。</p>
+<p>这只是两个例子。只要你的团队深陷混乱、多源、数据密集的工作流——Maestro 就能进场。在下方视频中，你可以看到 Maestro 在一个合规用例中的应用。</p>
+<h2>为什么 Maestro 能在别人失手处交付</h2>
+<p>Maestro 给你一个真正可用的端到端系统。</p>
+<p>它：</p>
+<ul><li><strong>准确</strong>：校验每一步和每个输出——让你可以放心信任结果。</li><li><strong>自主</strong>：没有僵化流程。Maestro 实时规划、适应并自我纠错。</li><li><strong>适应</strong>：它学习你的数据环境，并为你的用例定制性能。</li><li><strong>透明</strong>：你看到它做了什么、为什么——细到每一步。</li></ul>
+<h3>为构建者而生，被业务信赖</h3>
+<p>如果你是开发者，Maestro 让你定义目标、输入和约束——其余交给它。你掌控模型、工具和规则，Maestro 端到端执行工作流。</p>
+<p>如果你是业务领导者，Maestro 让你的团队自动化高价值、数据密集的工作流——不需要通常要求的大量研发、编排或技术专长。它快速交付你的业务可以信赖的可靠结果。</p>
+<h2>开工吧</h2>
+<p>Maestro 现已向准备好跨过试点、进入生产环境的企业团队开放。</p>
+<p><a href="https://www.ai21.com/maestro/">预约定制演示</a>，看看 Maestro 能以怎样的准确性、透明和速度处理你最复杂的工作流。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>企业知识智能体解决方案：如何选择</title>
+      <link>https://www.ai21.com/blog/rag-agent-solutions/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/rag-agent-solutions/</guid>
+      <pubDate>Sun, 15 Jun 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Knowledge Agent Solutions for Enterprises: How to Choose One</description>
+      <content:encoded><![CDATA[<p>随着<a href="https://www.ai21.com/glossary/retrieval-augmented-generation-rag/">检索增强生成（RAG）</a>的采用不断加速——<a href="https://www.forrester.com/blogs/predictions-2025-cloud/">Forrester</a>预测 2025 年每一家主要超大规模云厂商都将推出原生 RAG agent 解决方案——相关各方正面临选择正确 agent 平台的巨大压力。在评估 agentic RAG 解决方案时，企业决策者必须在性能、治理和运营复杂度之间权衡取舍。</p>
+<p>本指南带你梳理稳健 RAG agent 系统的核心支柱——准确性（Accuracy）、可观测性（Observability）、适应性（Adaptability）、价值实现时间（Time-to-Value）与企业就绪度（Enterprise-Readiness）——指导你向供应商提出正确的问题，确保成功、可扩展的部署。</p>
+<h2>1. 准确性：确保可信的输出</h2>
+<h3>为什么重要</h3>
+<p>在财务分析或合同审查这类高风险场景中，哪怕一点<a href="https://www.ai21.com/knowledge/ai-hallucinations/">幻觉</a>都可能导致代价高昂的错误或合规风险。在多步检索与推理场景中，<a href="https://www.ai21.com/glossary/large-language-models-llms/">LLM</a>和信息检索工具产生的错误会跨步骤累积，使高准确率变得难以企及。</p>
+<h3>该问的关键问题</h3>
+<ul><li><strong>自我校验：</strong>Agent 在继续推进前是否会验证中间结果？</li><li><strong>置信指标：</strong>结果是否带有清晰的置信分数或不确定性估计？</li><li><strong>领域定制：</strong>用你自己的专有数据和用例做<a href="https://www.ai21.com/glossary/fine-tuning/">微调</a>或仿真系统有多简便？</li></ul>
+<h3>实操建议</h3>
+<ul><li>要求供应商演示一个多步骤任务，展示系统如何发现并纠正自身错误。</li><li>坚持查看不同查询类型下的置信分布样例，判断哪些地方仍需人工复核。</li></ul>
+<h2>2. 可观测性：从黑箱到玻璃箱</h2>
+<h3>为什么重要</h3>
+<p>在受监管的领域，&quot;相信我&quot;行不通。透明是强制要求，每个响应都必须随时可审计——记录所查询的来源、检索顺序，以及导向结论的每一个推理步骤。</p>
+<h3>该问的关键问题</h3>
+<ul><li><strong>执行轨迹：</strong>能否访问每次检索和推理步骤的详细日志？</li><li><strong>可视化工作流：</strong>是否有图形界面展示 agent 的决策树或执行图？</li><li><strong>告警与监控：</strong>失败或低置信输出如何被标记，以便你的应用妥善处理？</li></ul>
+<h3>实操建议</h3>
+<ul><li>评估供应商是否提供可视化工具来观察 agent 的工作并审查中间结果。</li><li>检查解决方案能否为它产生的每个输出报告 grounding 和指令遵循的成功或失败。</li></ul>
+<h2>3. 适应性：处理独特的数据与用例</h2>
+<h3>为什么重要</h3>
+<p>每个用例都是独特的，你组织的数据无疑不同于通用语言模型训练时所见的东西。如果没有内建的自动适应能力，把一个 RAG agent 定制到你的独特需求和数据上可能耗时数月。</p>
+<h3>该问的关键问题</h3>
+<ul><li><strong>自动化训练：</strong>解决方案是否自动生成训练样例并运行仿真，以 bootstrap 领域专业能力？</li><li><strong>动态规划：</strong>当新信息出现时，agent 能否即时调整其检索和推理策略？</li><li><strong>成本-性能权衡：</strong>系统如何实时平衡模型复杂度、推理成本和延迟？</li></ul>
+<h3>实操建议</h3>
+<ul><li>用你最不规整文档的一个子集来测试——例如扫描件 PDF、内嵌文字的图片——确认检索引擎的健壮性。</li><li>寻找能让你&quot;把玩&quot;预算和延迟旋钮、实时看到性能变化的平台。</li></ul>
+<h2>4. 价值实现时间：从试点到生产</h2>
+<h3>为什么重要</h3>
+<p>拖上数月的试点会耗尽预算、消磨干系人的热情，让关键用例悬在半空。一个在数天内——而不是数个季度——就展现可衡量价值的 RAG agent，会更早赢得高管支持、加速后续拨款，并解放工程团队去聚焦更高影响的工作。</p>
+<h3>该问的关键问题</h3>
+<ul><li><strong>低代码集成：</strong>连接你的数据源需要多少行自定义代码？</li><li><strong>预置连接器：</strong>供应商是否为常见存储库（如 Drive、S3、SharePoint）提供开箱即用的支持？</li><li><strong>模板库：</strong>是否有可复用的 agent 配置，用于 RFP 应答或合同分析等任务？</li></ul>
+<h3>实操建议</h3>
+<ul><li>给接入过程计时——从&quot;点击连接&quot;到&quot;首次成功运行&quot;，应该按小时计，而不是按天。</li><li>要求一个沙箱环境，让你能在承诺更大 PoC 之前用真实数据测试概念验证。</li></ul>
+<h2>5. 企业就绪度</h2>
+<h3>为什么重要</h3>
+<p>宕机伤害营收，延迟惹恼用户，一次合规泄露就可能触发七位数罚款。企业 IT 期望 24/7 可用、峰值负载下的可预测性能，以及铁板般的数据处理保证。如果 RAG agent 达不到这些基线，它永远过不了安全评审——更别提上生产。</p>
+<h3>该问的关键问题</h3>
+<ul><li><strong>SLA 承诺：</strong>供应商提供怎样的可用性、延迟和吞吐保证？</li><li><strong>部署灵活性：</strong>能否在本地或纯 VPC 环境运行以获得最大安全性？</li><li><strong>安全与合规：</strong>解决方案是否满足 SOC-2、GDPR、HIPAA 或其他相关标准？</li></ul>
+<h3>实操建议</h3>
+<ul><li>核实审计日志不可篡改且带时间戳，可用于事后分析。</li><li>确保平台支持在你的企业环境中交钥匙式部署。</li></ul>
+<h2>融会贯通</h2>
+<p>聚焦这五大支柱，你就拥有了评估任何 RAG agent 解决方案的清晰框架：</p>
+<ul><li><strong>准确性</strong>：可信、经自我校验的输出</li><li><strong>可观测性</strong>：透明、可追溯的工作流</li><li><strong>适应性</strong>：灵活应对现实世界的复杂性，自动定制</li><li><strong>价值实现时间</strong>：快速原型与部署</li><li><strong>企业就绪度</strong>：企业级 SLA 与安全</li></ul>
+<h2>聚焦 AI21 Maestro</h2>
+<p>套用这个框架后，有一个解决方案在每项上都能打勾：<a href="https://www.ai21.com/maestro/"><strong>AI21 Maestro</strong></a>。它专为解决金融、医药、科技、法律和制造领域的高价值检索与推理用例而设计。</p>
+<p>有了 Maestro 你可以：</p>
+<ul><li><strong>自动化多步检索与推理任务</strong>，带自我校验和置信打分。</li><li><strong>审视每一个决策</strong>，通过可视化执行图和详细运行日志。</li><li><strong>自动适应</strong>，通过自动训练仿真和动态计划优化。</li><li><strong>数小时内部署</strong>，配置简单、样例引导的接入。</li><li><strong>可靠地扩展</strong>，跨 SaaS 或本地环境，具备企业级 SLA 与安全。</li></ul>
+<p><a href="https://www.ai21.com/blog/maestro-ai-planning-orchestration/"><strong>了解更多</strong></a>或<a href="https://www.ai21.com/contact-sales/"><strong>预约演示</strong></a>，观看 AI21 Maestro 的实机表现。</p>
+<h2>结语</h2>
+<p>RAG agent 只有在跨过五支柱门槛时才有回报：审计级的准确性、玻璃箱式的可见性、领域的敏捷性、当日的 ROI，以及你的 CISO 敢签字的安全性。让每家供应商都过一遍这道炼阵，要求拿出证据，无视 PPT 空谈。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>董事会如何塑造 AI 战略</title>
+      <link>https://www.ai21.com/blog/how-boards-can-shape-ai-strategy/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/how-boards-can-shape-ai-strategy/</guid>
+      <pubDate>Thu, 12 Jun 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：How Boards Can Shape AI Strategy</description>
+      <content:encoded><![CDATA[<p>AI 已经毫无争议地成为董事会层面的关键议题。展望下半年，AI 对市场格局、运营效率和战略方向的影响之深远，已让董事会无法忽视。AI 发展的速度，要求企业领导层投入全新级别的参与。</p>
+<p>然而，许多董事会会议室被技术黑话和炒作淹没，遮蔽了真正决定 AI 带来的是价值还是风险的杠杆。事实上，Deloitte 的一份董事会治理调查<a href="https://corpgov.law.harvard.edu/2025-05-27/governance-of-ai-a-critical-imperative-for-todays-boards-2/">发现</a>，66% 的受访者表示其董事会对 AI 仍然&quot;知之甚少或毫无经验&quot;，40% 表示 AI 促使他们重新思考董事会的人员构成，33% 对董事会花在讨论 AI 上的时间&quot;不满意&quot;或&quot;担忧&quot;。</p>
+<p>对董事和高管而言，在今年余下时间里驾驭 AI，靠的不是精通最新的模型架构、跟踪各种 benchmark，或解读最新研究。你的重心必须放在：理解 AI 潜在的业务影响、建立强健的监督机制、确保组织具备负责任且有效地运用 AI 能力的准备度。这是治理一家 AI 驱动的企业，而不是成为 AI 技术员。</p>
+<h2>董事会为什么必须现在就行动</h2>
+<p>鉴于 AI 正在深刻重塑市场与运营、改变企业竞争和创造价值的方式，有效的公司治理如今从根本上涵盖了公司的 AI 战略。全球企业利用 AI 进行各类自动化、增强客户体验、改进决策并在整个组织内创新，使其成为几乎所有行业——而不仅是科技行业——商业战略的基石。</p>
+<p>不整合 AI 可能导致市场份额流失、品牌相关性下降、无法吸引人才，甚至更糟：缓慢下滑，然后突然跌落至无足轻重。<em>不</em>使用 AI、或采用过慢的风险至关重要，可能影响长期生存能力乃至受托责任。此外，股东对 AI 监督的审视只会有增无减——没人愿意持有一家完全无视、或盲目跟风最新技术的公司的股份。</p>
+<p>AI 市场正在经历全球性的非凡增长，技术突破频发，企业在整个组织范围内扩展 AI 计划。这种加速意味着建立前瞻性 AI 战略与治理的窗口正在关闭，而竞争优势将不只来自获取 AI，而来自其战略性整合、稳健治理，以及对核心业务问题的独特应用。</p>
+<p>所有这些领域都需要董事会的监督，尤其当全球监管机构日益把目光投向 AI。虽然 AI 投资的回调不可避免，全面转向（退出）似乎越来越不可能——这意味着今天不参与的董事会，明天将面临被迫追赶的局面。</p>
+<h2>董事会应聚焦的四个维度</h2>
+<p>要有效驾驭 AI，董事会应围绕四个维度组织监督：影响（Impact）、风险（Risk）、治理（Governance）和 ROI。</p>
+<h3>1. 影响：AI 在哪里能显著推动指标？</h3>
+<p>董事会必须引导管理层聚焦能产生切实成果的 AI 应用，如成本削减、效率提升、卓越客户体验和新收入来源。各类 AI 技术的真正威力，往往在于解锁新的增长战略和商业模式，而不仅是优化既有流程——包括加速产品创新、赋能数据驱动的战略转型。可持续的影响来自增强人类能力并转型劳动力队伍，这需要技能升级和人机协作的文化。董事会必须推动组织把 AI 嵌入核心流程、把成功的计划扩展到全公司，走出&quot;试点炼狱&quot;。</p>
+<h3>2. 风险：驾驭 AI 特有的威胁</h3>
+<p>AI 部署引入了复杂的风险。数据隐私、安全和 IP 泄露是重大关切：AI 系统常使用海量数据集，一旦训练数据被滥用，就暴露于 PII 泄露、网络攻击和知识产权侵权。算法偏见是另一个关键风险——AI 模型会延续训练数据中的社会偏见，导致歧视性结果和声誉损害。生成式 AI 模型确实会产生幻觉，输出错误信息，若管理不当会酿成糟糕决策。缓解手段包括高质量数据、grounding 技术和人工监督。不断演进的监管格局与&quot;AI 洗白（AI washing）&quot;风险同样需要关注，监管机构正在审视相关披露。这些风险彼此关联，因此整体性战略至关重要。最后，某些 AI 模型的&quot;黑箱&quot;特性挑战了问责制，使可解释 AI 技术成为治理的当务之急。</p>
+<h3>3. 治理：建立清晰的归属与控制</h3>
+<p>有效的 AI 治理需要清晰的结构与职责。董事会必须决定监督结构：全体董事会、现有委员会，还是新的技术/AI 委员会。一份与业务目标和风险偏好对齐的正式 AI 战略规划必不可少。采用 NIST 的 <a href="https://www.nist.gov/itl/ai-risk-management-framework">AI 风险管理框架</a>和 <a href="https://www.iso.org/standard/81230.html">ISO/IEC 42001</a>等框架可以提供结构，同时内嵌公平、透明和问责等伦理原则对建立信任至关重要。鉴于 AI 技术演进迅速、法规虽不那么快但也总在变化，治理必须敏捷且能适应。</p>
+<h3>4. ROI：衡量超越实验的价值</h3>
+<p>AI 计划必须展示清晰的 ROI 才能证明持续投入的合理性。组织需要有结构的方法来评估财务收益（成本节约与收入增长）和定性收益（客户满意度与生产力）。定义与业务目标对齐的可度量 KPI 至关重要，覆盖财务指标、效率增益、客户体验和 AI 采用率。全面的 ROI 分析必须包含总拥有成本（TCO），涵盖软件、硬件、数据、开发、集成、维护和人才。董事会需要关于 AI 表现的定期、透明汇报。把价值归因于 AI 在更大转型中的赋能作用、捕获长期战略收益是一个挑战，但对 AI 价值实现的整体视角大有助益。缺乏清晰的 ROI 框架可能导致财务黑洞，让无法交付成果的 AI 项目侵蚀人们的信心。</p>
+<h2>AI 错配的危险信号</h2>
+<p>对早期预警信号保持警觉至关重要，包括影子 AI 项目、过度受供应商炒作左右，以及碎片化的技术栈。</p>
+<p>&quot;影子 AI（Shadow AI）&quot;指员工使用未经 IT 团队和领导层批准的 AI 工具。风险包括数据暴露（比如把专有代码粘贴进 ChatGPT 或 Claude）、保密性丧失、依赖错误信息、不合规和安全漏洞。缓解方式包括清晰的政策、员工参与、提供经过审核的工具和稳健的治理。如果你在自己的组织里发现了影子 AI，它多半说明存在未被满足的业务需求，或官方流程过于迟缓。</p>
+<p>另一个常见陷阱是基于社交媒体炒作或错失恐惧（而非业务契合度）来做 AI 投资。这可能把资源浪费在错配的技术上，且当供应商缺乏透明度时还会引入数据安全风险。要应对这类危险信号，需对供应商进行严格的尽职调查，聚焦可证明的业务价值。</p>
+<p>即使你成功避开了影子 AI、基于业务契合度做投资，仍可能落得无法扩展的碎片化技术栈。散布在各部门、彼此割裂的 AI 工具拼凑体，会带来复杂性、冗余、低效和集成难题。统一的 AI 技术栈和一个 <a href="https://a21.ai/coe/">AI 卓越中心（AI Center of Excellence）</a>可以标准化方法、确保对齐。</p>
+<h2>每位董事都该问的问题</h2>
+<p>董事会层面 AI 知识不足，可能导致糟糕的战略决策和不充分的风险监督。为董事们优先安排持续的 AI 教育、必要时为 AI 专长调整董事会构成、聘请外部顾问，是关键举措。</p>
+<p>当董事会具备了恰当的知识，董事们就应提出切中要害的问题，例如：</p>
+<ul><li>我们的全公司 AI 战略是什么？它如何与我们的核心业务目标对齐？谁对其执行和结果明确负责？</li><li>我们如何确保 AI 系统的质量、可靠性和伦理完整性，包括健全的数据治理、偏见检测与缓解机制，以及适当的可解释水平——特别是对用于高影响决策的 AI 系统？</li><li>董事会批准的 AI 计划风险偏好是什么？我们如何主动识别、评估和缓解关键的 AI 相关风险？</li><li>我们是在战略性地把 AI 能力构建进核心业务流程，还是主要停留在边缘试点项目？</li><li>我们通向全公司采用的既定路径是什么？</li><li>我们衡量和汇报 AI 投资 ROI 的框架是什么？</li><li>为了成功转型为 AI 驱动的企业，组织所需的关键人才、技能与文化变革，我们如何应对？</li><li>我们的 AI 技能升级与再培训的整体战略是什么？</li></ul>
+<p>这些问题推动董事会从被动接收转向对 AI 战略、风险与价值的主动拷问，确保 AI 采用的意图性和目的性。</p>
+<h2>结语</h2>
+<p>2025 年 6 月，Gartner <a href="https://www.gartner.com/en/documents/6579402">更新</a>了其 AI 技术成熟度曲线（Hype Cycle），指出虽然 AI 投资依然强劲，焦点正从生成式 AI 的炒作转向基础性创新：AI-ready 数据、AI agents、AI 工程和 ModelOps。换句话说，AI 领导者关心的是能驱动 ROI 的强劲用例，并回避那些无法证明自身价值的 AI 计划。</p>
+<p>你的董事会不必由 AI 技术专家组成，但必须培养治理 AI 驱动企业的能力——从持续学习和问对问题开始。当组织部署<a href="https://www.ai21.com/blog/enterprise-ai-definition-challenges-and-solutions/">企业级生成式 AI</a>——从私有 LLM、安全基础设施到持续模型调优和领域定制落地——与经验丰富的专家合作是关键。</p>
+<p>AI21 Labs 帮助企业把 AI 潜力转化为切实、可持续的商业价值，负责任且行之有效。我们的目标是培育一种文化：战略性 AI 采用与稳健治理是赋能而非扼杀负责任的创新——这需要董事会、管理层和专家顾问之间的紧密协作。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>LLM 评审模型：你此前不知道自己需要的 AI 评论家</title>
+      <link>https://www.ai21.com/blog/llm-judge-models/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/llm-judge-models/</guid>
+      <pubDate>Mon, 05 May 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：LLM Judge Models: The AI Critics You Never Knew You Needed</description>
+      <content:encoded><![CDATA[<p>你一直在优化 prompt、微调模型、部署 AI 解决方案。但你有没有停下来问过：<em>这些模型由谁来评估？</em></p>
+<p>有请 LLM judge 模型（评审模型）——专为评估和改进其他 AI 系统而设计的 AI 评论家。它们不只是给回答打分，还会打磨、优化，把 AI 逼到极限。无论你在开发前沿助手，还是在提升生产环境中 AI 的可靠性，这些模型都在改变游戏规则。</p>
+<h2>认识评审员：Reward 模型 vs. Critic 模型</h2>
+<p>在最近一期 YAAP 播客中，我（Yuval Belfer）与 AI21 Labs 算法开发者 Noam Gat 对谈，探讨了两类关键的 LLM 评审模型：</p>
+<h3>1. Reward 模型：埋头算数的评估者</h3>
+<p>这类模型给 AI 的回答打一个单独的分数——没有解释，只有一个数。它们被广泛用于基于人类反馈的强化学习（RLHF），以随时间优化 AI 行为。</p>
+<h3>2. Critic 模型：细致的审阅者</h3>
+<p>与 reward 模型不同，critic 会解释自己的理由。如果 AI 犯了事实错误，critic 模型不只是降低它的分数——还提供可执行的反馈：</p>
+<blockquote>&quot;助手犯了一个数学错误，因此这个回答不准确。&quot;</blockquote>
+<p>两类模型都毫不留情。区别在于？一个给你一个指标；另一个给你真正用得上的洞见。</p>
+<h2>评审模型为何重要（提示：你的对手已经在用了）</h2>
+<p>AI 评审模型已经在塑造最先进的 AI 系统。以下是它们发挥影响的方式：</p>
+<h3>训练更聪明的 AI</h3>
+<p>评审模型通过以下方式提升训练效率：</p>
+<ul><li>为每个 prompt 生成多个回答</li><li>用 reward 模型给它们打分</li><li>优化 AI，使其偏向得分最高的回答</li></ul>
+<p>这在规模化上自动化了模型选择，显著提升质量。但领域演进飞快——DeepSeek 的 R1 正以&quot;可验证 RL&quot;（verifiable RL）挑战传统 RLHF，可能让训练进一步简化。</p>
+<h3>提升生产环境中 AI 的可靠性</h3>
+<p>对于交付 AI 产品的开发者，评审模型提供了关键的工程优势：</p>
+<ul><li><strong>Best-of-N 方法：</strong>生成多个回答，自动选出最好的一个交付给用户——用更多算力换取更高质量。</li><li><strong>修订循环：</strong>用 critic 的反馈在 AI 输出触达客户之前反复打磨。</li><li><strong>数据过滤：</strong>Noam 的团队仅仅通过过滤掉低质量训练数据就看到显著提升。<em>&quot;即使误删了一些好数据，整体质量也会提高。&quot;</em></li></ul>
+<h2>为什么光靠 benchmark 不够</h2>
+<p>人人都在追逐排行榜分数，例如：</p>
+<ul><li><strong>RewardBench：</strong>行业标准，NVIDIA 的 Nitron 在这里炫耀 90%+ 的准确率。</li><li><strong>PPE（LMArena）：</strong>更宽的 benchmark，加入了客观评估任务。</li></ul>
+<p>但 Noam 的团队发现了一个关键缺陷——高分并不总等于现实世界的可靠性。例如，NVIDIA 的 Nemotron-4-340B-Reward 在 RewardBench 上表现出色，却在细腻请求和细粒度判断上挣扎。这就像一个能抓语法错误却漏掉逻辑 bug 的 linter。</p>
+<h2>没人谈论的分数问题</h2>
+<p>Noam 强调的一个问题：有些评审模型输出的分数极不一致——比如&quot;-80 到 3&quot;这样的范围。为什么？</p>
+<ul><li>许多评审模型是被训练来比较回答的，而不是给出绝对分数。常用于训练 reward 模型的 Bradley-Terry loss 会鼓励被选回答与被拒回答之间的最大化分离，从而助长分数发散。</li><li>这使得分数在相对排序之外毫无意义。</li><li>Noam 的团队用范围正则化解决了这个问题，对分数做归一化以提升可解释性。</li></ul>
+<p>对 AI 开发者来说，这是一个至关重要的启示：一个好的评审模型不仅要准确——还要一致、可解释。</p>
+<h2>AI 评审模型的下一步？</h2>
+<p>评审模型正在快速演进，重大改进近在眼前：</p>
+<ul><li><strong>分数校准</strong></li></ul>
+<p>面向生产使用、更一致、更可解释的打分。</p>
+<ul><li><strong>自定义约束</strong></li></ul>
+<p>能强制执行特定业务要求（如符合品牌调性的输出）的 AI 评审。</p>
+<ul><li><strong>可验证 RL</strong></li></ul>
+<p>减少对大量监督微调需求的新训练方法。</p>
+<p>Noam 预计，这些进展会让 critic 模型更容易构建和部署，同时全面提升 AI 表现。</p>
+<h2>如何把评审模型集成进你的 AI 技术栈</h2>
+<p>在采用评审模型之前，是 Noam 的专业建议：</p>
+<ul><li><strong>读许可证</strong>。我是认真的，读。有些评审模型带有可能影响你部署的限制条款。</li><li><strong>别看排行榜就下结论</strong>。在你自己的具体用例上测试，或者创建你自己的 benchmark。</li><li><strong>清楚你在优化什么</strong>。你追求的是全局质量提升还是特定约束？据此选择正确的评估方法。</li></ul>
+<h2>结语：AI 需要评审——你也需要</h2>
+<p>评审模型代表着 AI 开发的一次强力转向。它们不只评估 AI——它们让 AI 变得更好。无论你是在微调模型、优化回答还是过滤训练数据，评审模型如今已是 AI 工程师的核心能力。</p>
+<p>或者用 Noam 的话说：</p>
+<blockquote>&quot;理解你想用模型达成什么。为你的目标优化你的数据、你的架构和你的 benchmark。&quot;</blockquote>
+<p>现在，出发吧，明智地评审。</p>
+<p><em>好奇评审模型如何塑造 AI 的未来？观看与 Noam Gat 的 </em><a href="https://www.youtube.com/watch?v=OFw0YxavyzM&amp;t=2279s"><em>YAAP 完整一期</em></a><em>，获取更深的洞见。</em></p>
+<h3>推荐阅读：</h3>
+<p>Helpsteer2 by NVIDIA – <a href="https://arxiv.org/abs/2406.08673">https://arxiv.org/abs/2406.08673</a> Direct Judge Preference Optimization by Salesforce – <a href="https://arxiv.org/abs/2409.14664">https://arxiv.org/abs/2409.14664</a> Helpsteer2-Preference by NVIDIA – <a href="https://arxiv.org/abs/2410.01257v2">https://arxiv.org/abs/2410.01257v2</a> DeepSeekMath by DeepSeek（GRPO 的提出者）– <a href="https://arxiv.org/abs/2402.03300">https://arxiv.org/abs/2402.03300</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>RAG 评估：你做得不对</title>
+      <link>https://www.ai21.com/blog/rag-evaluation-youre-doing-it-wrong/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/rag-evaluation-youre-doing-it-wrong/</guid>
+      <pubDate>Mon, 07 Apr 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：RAG Evaluation: You’re Doing It Wrong</description>
+      <content:encoded><![CDATA[<p>让我猜猜——你刚搭好你的第一个 RAG 系统。你把文档切了块，选了一个花哨的 embedding 模型，现在你在所有 benchmark 上大杀四方。岁月静好，对吧？</p>
+<p>嗯，先别急。</p>
+<p>在我们最近一期 YAAP 播客中，我（Yuval Belfer）与 Niv Granot 对谈。他领导着 AI21 Labs 的工具团队，负责检索、网页搜索等知识密集型工具。关于 RAG 评估，他所揭示的真相可能让你夜不能寐。</p>
+<h2>关于 RAG 评估那个令人不适的真相</h2>
+<p>事情是这样的：我们都在玩一个规则与现实不符的游戏。当前的 RAG 评估就像用短跑来备战马拉松——没错，你是在跑，但你错过了全局。</p>
+<h2>问题 #1：切块的死结</h2>
+<p>想象你在写一本关于二战的历史书。你是让每一章覆盖一个宽泛主题，还是把一切拆成细小的章节？这基本就是 RAG 中切块（chunking）的两难。</p>
+<p>当前的 benchmark 就像拿到一本已经被分好章节的书，然后被告知&quot;祝你好运！&quot;。但现实世界里？是你自己在做那些如何拆分内容的艰难决定。</p>
+<p>死结在于：</p>
+<ul><li>大块？你得到了全局，却丢了细节</li><li>小块？你掌握了全部事实，却丢了故事</li></ul>
+<p>这就像想通过只看预告片来理解一部电影，或者死盯着单个画面帧。两种方式都讲不出完整的故事。</p>
+<h2>问题 #2：&quot;答案全在一处&quot;的神话</h2>
+<p>大多数 RAG benchmark 假设信息是大海捞针——存在一个完美位置，你的答案就住在那里。整齐、干净，而且完全不真实。</p>
+<p>现实世界的信息更像解拼图。碎片散落在不同文档里，有时你需要先理解全貌，才知道自己到底在找什么。</p>
+<h2>《宋飞正传》测试</h2>
+<p>Niv 给了一个绝佳的例子：随便问一位《宋飞正传》（Seinfeld）粉丝 George 最常用的化名是什么，他们会脱口而出&quot;Art Vandelay&quot;。但问同一个问题给一个 RAG 系统试试，看它摔得多惨——哪怕给它全部剧集的文字稿。</p>
+<p>为什么？因为 George 从来没有哪一刻说过&quot;我最爱的化名是 Art Vandelay&quot;。这是一个贯穿多集的笑话梗。你需要理解上下文、出现的频率和这个角色本身，才知道为什么&quot;Art Vandelay&quot;压倒了&quot;T-Bone&quot;等其他化名。</p>
+<p>这正是当前 benchmark 连尝试都没有尝试去评估的那类细腻检索。</p>
+<h2>摆脱 benchmark 陷阱</h2>
+<p>眼下，我们被困在一个恶性循环里：</p>
+<ul><li>为有缺陷的 benchmark 构建 RAG 系统</li><li>庆祝我们漂亮的 benchmark 分数</li><li>眼看真实用户挣扎</li><li>造出带着同样毛病的新 benchmark</li><li>清洗、重复</li></ul>
+<p>正如 Niv 在 AI21 的团队所发现的，你可以整天围着 benchmark 做优化，但这未必能换来满意的用户。诸如 Microsoft 的 <a href="https://github.com/microsoft/graphrag">GraphRAG</a> 这类近期方法，正开始通过跳出简单文本切块的思维来打破这一循环，但前路依然漫长。</p>
+<h2>那么接下来怎么办？</h2>
+<p>如果我们想要真正在现实世界工作的 RAG 系统，就得开始用不同的方式评估它们。这意味着：</p>
+<ul><li>测试它们处理文档拆分的能力</li><li>检查它们能否把散落的信息拼合起来</li><li>观察它们是否理解文档之间的关系</li><li>确保它们看到大局，而不仅是细节</li></ul>
+<h2>结论</h2>
+<p>残酷的真相是？我们大多数人都在错误地做 RAG 评估。我们在为人工设定的场景做优化，却错过了信息实际运作方式那更混乱、更复杂的现实。</p>
+<p>不过，认识到问题已是解决的第一步。既然你知道了 RAG 评估哪里不对，就可以开始思考怎样把它做对。</p>
+<p>**想听更多有关 RAG 系统及 AI21 知识密集型工具思路的洞见？请在你的播客平台收听 <em><a href="https://www.youtube.com/watch?v=RsSkwpTmn8o"></em>YAAP 完整一期<em></a></em>。**</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>AI21 加入 NVIDIA Inception，面向企业级 AI</title>
+      <link>https://www.ai21.com/blog/ai21-joins-nvidia-inception/</link>
+      <guid isPermaLink="true">https://www.ai21.com/blog/ai21-joins-nvidia-inception/</guid>
+      <pubDate>Thu, 27 Mar 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：AI21 Joins NVIDIA Inception for Enterprise AI</description>
+      <content:encoded><![CDATA[<p>企业对采用 AI 热情高涨，但规模化部署伴随着种种挑战——安全、合规和性能瓶颈。AI21 正在正面攻克这些障碍。通过加入 NVIDIA Inception，我们正在强化交付更快、更安全、更易于集成的企业级 AI 的能力。</p>
+<h2>为什么这对企业 AI 至关重要</h2>
+<p>AI 已不再是一个面向未来的概念——它是商业效率与创新的关键驱动力。然而对许多企业来说，通往 AI 采用的道路遍布障碍：模型必须既强大又具成本效益，既智能又可控，既可扩展又安全。这正是 AI21 与 NVIDIA Inception 发挥作用的领域。</p>
+<p>NVIDIA Inception 为 AI 初创公司提供加速创新所需的工具、专业知识和基础设施。对 AI21 的客户而言，这一伙伴关系意味着：</p>
+<ul><li><strong>更强的 AI 性能</strong></li></ul>
+<p>AI21 可以借助 NVIDIA 尖端硬件与软件，提升模型的速度、响应能力和效率。</p>
+<ul><li><strong>企业级安全</strong></li></ul>
+<p>更多的自托管 AI 部署选项，让数据始终处于你的掌控之下，并确保符合行业法规。</p>
+<ul><li><strong>无缝集成</strong></li></ul>
+<p>AI21 的 AI 模型针对 NVIDIA 的 NIM 微服务和 NeMo Guardrails 进行了优化，简化企业部署并加强 AI 治理。</p>
+<p>此次协作强化了 AI21 为企业提供不仅强大、而且实用的 AI 解决方案的能力——弥合研究突破与真实应用之间的鸿沟。</p>
+<h2>NVIDIA Inception 会员的专属权益</h2>
+<p>作为我们让 AI 对企业更易得、更可规模化承诺的一部分，AI21 为同为 NVIDIA Inception 会员的伙伴提供特别权益：</p>
+<ul><li><strong>私有 AI 部署九折（10% off）</strong></li></ul>
+<p>在你自己的基础设施内安全部署 AI21 的模型，保持对敏感数据的控制。</p>
+<ul><li><strong>价值 1,000 美元的 AI21 Studio 额度</strong></li></ul>
+<p>零前期成本地体验前沿语言模型、优化 AI 应用并测试新用例。</p>
+<p>这些专属权益帮助企业加速其 AI 之旅，同时降低采用 AI 的资金与技术门槛。</p>
+<h2>AI21：为商业而造的 AI</h2>
+<p>AI21 不是又一家普通的 AI 供应商——我们专注于交付满足企业严苛要求的 AI。我们的模型的设计目标是：</p>
+<ul><li><strong>可靠且高效</strong></li></ul>
+<p>我们针对性能对模型进行了精调，确保它们在保持成本效益的同时交付高质量输出。</p>
+<ul><li><strong>安全与合规优先</strong></li></ul>
+<p>AI21 提供自托管 AI 解决方案，让企业在遵守严格行业法规的同时，对自己的数据保持完全控制。</p>
+<ul><li><strong>部署灵活</strong></li></ul>
+<p>企业可以用多种配置部署 AI21 的模型，包括：<strong>本地部署（On-premises）</strong> 在内部基础设施上运行 AI，全面掌控数据安全。<strong>虚拟私有云（VPC）</strong> 在贴合企业需求定制的安全云端环境中部署 AI。<strong>混合云（Hybrid cloud）</strong> 将 AI 与现有云基础设施无缝集成，获得最大灵活性。</p>
+<p>凭借这些能力，AI21 使企业能够落地不仅强大、而且与其运营及安全需求高度契合的 AI 解决方案。</p>
+<h2>什么是 NVIDIA Inception？</h2>
+<p>NVIDIA Inception 是一个全球性计划，旨在通过提供关键资源加速 AI 初创公司的成长，包括：</p>
+<ul><li><strong>技术培训与支持</strong></li></ul>
+<p>可访问 NVIDIA 深度学习研究所（NVIDIA Deep Learning Institute），获得实操性的 AI 开发培训。</p>
+<ul><li><strong>折扣 NVIDIA 硬件与软件</strong></li></ul>
+<p>以高性价比获取最新 GPU 和 AI 基础设施工具。</p>
+<ul><li><strong>云额度</strong></li></ul>
+<p>使用 NVIDIA 支持的云资源测试并打磨 AI 应用。</p>
+<ul><li><strong>人脉与融资机会</strong></li></ul>
+<p>在 NVIDIA 生态系统内与行业领袖、投资者和 AI 创新者建立联系。</p>
+<p>随着 AI21 加入这一充满活力的计划，企业可以结合 NVIDIA 与 AI21 的双重优势，释放新的 AI 能力，实现前所未有的效率与可扩展性。</p>
+<h2>开始使用 AI21 + NVIDIA Inception</h2>
+<p>AI 格局正在快速演变，企业需要既面向未来、又在今天切实可行的解决方案。将 AI21 灵活、安全的 AI 模型与 NVIDIA 强大的 AI 基础设施相结合，企业既能推动真正的创新，又能保持对数据和运营的控制。</p>
+<p>如果你是 NVIDIA Inception 会员，不要错过用我们的专属优惠提升 AI 能力的机会。</p>
+<p><a href="https://www.ai21.com/lp/nvidia-inception/"><strong>立即注册</strong></a><strong>，领取你的 AI21 权益。</strong></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

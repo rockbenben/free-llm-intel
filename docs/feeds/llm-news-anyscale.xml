@@ -3,16 +3,118 @@
   <channel>
     <title>Anyscale 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>Anyscale 官方博客 / 更新日志归档（最近 30 条，共 30 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>Anyscale 官方博客 / 更新日志归档（最近 50 条，共 50 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Scaling the Science of Robot Decisions with Ray on Anyscale</title>
+      <title>在 Anyscale 上用 Ray 扩展机器人决策研究的规模</title>
       <link>https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale</link>
       <guid isPermaLink="true">https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale</guid>
       <pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Scaling the Science of Robot Decisions with Ray on Anyscale</description>
+      <content:encoded><![CDATA[<h1>Scaling the Science of Robot Decisions with Ray on Anyscale</h1>
+<p>作者 <a href="https://www.anyscale.com/blog?author=ian-jordan-phd">Ian Jordan, PhD</a> | 2026 年 10 月 9 日</p>
+<p>在 Ray 上对机器人基础模型做闭环评测，已经是一个被解决的模式：一个 policy 服务，把仿真器作为 Ray task，一个脚本跑一百次 rollout。我们已经在 <a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale">Scale Robot Policy Evaluation with Ray</a> 里写过它。这篇讲的是——当评测便宜到这个份上，你还能从中知道什么。</p>
+<p>我们取一个冻结的真实数据 vision-language-action（VLA）策略——LeRobot 的 pi0.5 叠衣服 checkpoint——把它跑进它所训练的那台机器人的物理孪生体里。然后把这个孪生体当作测量仪器使用：做快速、受控的实验，每次只改动一处，测量冻结策略的决策如何变化。这同时回答两个问题。微调后的策略到底在看什么？而一个仿真器、或一条数据采集／合成数据管线，必须把哪些东西做对，才能让这个策略继续工作？</p>
+<p>为了演示，这里的机制很简单但有效。我们取策略在孪生体里看到的一个观测，把它三张图像中的一张换成真实任务同一阶段的真实帧，其余全部保持一致，然后数一数策略在计划什么。这把策略的「抬起还是松开」决策定位到了腕部相机画面里夹爪尖端那几百个像素上。它告诉我们孪生体的抓取得长成什么样。它还让我们第一次看到冻结的 VLA 在仿真中零样本叠折一件布质 T 恤——没有真实像素，也没有微调。整项研究是一个 Ray 程序，我们的 notebook 在四张 L4 上六分钟就能复现它的核心。</p>
+<h2><strong>问题</strong></h2>
+<p>你有一个在真实装置上能工作的 VLA。你把相机挪个位置，或者把它放进仿真器，它就不工作了，而没人能告诉你哪些像素重要。用更多数据微调是通常的答案，而且是个盲目的答案——因为你根本不知道该采什么数据。像 LIBERO-Plus 这样的 benchmark 展示了失效（视角或初始状态的变化让成功率从 95% 掉到 30% 以下），但没给出原因（<a href="https://arxiv.org/abs/2510.13626">Fu et al., 2025</a>）。</p>
+<p>过去十八个月里，这个领域的做法是用两种方式之一打开这个黑盒。激活层面的工作给你一个 2,000 维空间里的方向；仿真器里的行为层面工作给你一个成功率。两者都没法让硬件工程师决定相机该装在哪里，也没回答仿真器工程师最先问的那个问题：「场景里必须改什么，一个冻结的策略才能继续干它的活儿？」这需要一个受控实验——一个用同一状态、同一批图像、并且能只改一处然后分析策略动作的实验。真实机器人给不了你这些，因为没有两次复位是一样的。能做到的是一个物理孪生体。至于「决策在网络里的哪个位置」是另一个问题，那是孪生体存在之后的下一步（见延伸阅读中的引用）。</p>
+<p>视频孪生体和 splat 孪生体无法为布料提供这种反事实，因为「捏合」没有物理。而且，也没有任何东西告诉你当手抬起时，两瓣夹爪之间那块布会怎么样。而叠衣服正是刚体评测失效的地方：这件衬衫有 25,000 个自由度，每一次抓取都会改变它的形状。所以我们从数据集的帧出发，为这个策略自己的装置建了一个物理孪生体。</p>
+<h2><strong>设置：一个冻结的 pi0.5 与它自己装置的孪生体</strong></h2>
+<p>策略是 <a href="https://huggingface.co/lerobot/folding_latest">lerobot/folding_latest</a>，由 LeRobot 在真实双臂 OpenArm 叠 T 恤数据上微调的 pi0.5。它是一个 30 亿参数的 PaliGemma VLM，加一个 3 亿参数的 flow-matching action expert。它看到三路相机（一路 640 x 480 的头戴相机和两路 1280 x 720 的腕部相机）、一个 16 维关节状态，以及指令 <em>&quot;Fold the T-shirt properly&quot;</em>。我们从不修改或微调它。每一次调用都是公开的 bf16 checkpoint。</p>
+<p>孪生体是 Isaac Lab 3.0 配 Newton 物理后端。两条 OpenArm 从臂是取自厂商 URDF 的 MJWarp 关节体。LeRobot 打印的夹爪和外壳来自他们公开的零件。数据集的三路相机是通过把它们的重投影与帧内手读的像素位置做拟合而定位的。桌子是他们的，衬衫是一个 25,610 节点的 Newton VBD 布料。策略以 30 Hz 闭环运行在孪生体渲染出的图像和关节状态上。任何一次 rollout 消费的观测里，都不会被放进一个真实像素。</p>
+<p>有一个替身做法，而且它很重要：抓取。对这个厚度的仿真布料做摩擦捏合是夹不住的，所有公开发表的仿真叠衣结果都用和我们一样的方式绕开它。夹爪闭合时，两瓣之间的布料节点被绑定到夹爪坐标系上并被带着走。我们多加了一个<em>捏合折叠</em>：横躺在张开夹爪上的布会被折进两瓣之间的一团里，因为那就是腕部相机必须看到的东西（后面会讲为什么）。被钉住的抓取永远夹得住，所以这个孪生体验证的是伸手、折叠策略与视觉运动控制，而不是夹持鲁棒性。这句话就写在 notebook 里引入这个替身的地方。</p>
+<h2><strong>架构：一个策略服务、三个孪生体、一个 notebook</strong></h2>
+<p>下面所有内容都在一个集群上的一个 notebook 里。一个 GPU 上的策略服务，三个 GPU 上的三个孪生体，探针则作为同一个服务的并发客户端。架构就是 <a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale">Scale Robot Policy Evaluation with Ray</a> 里那套，它更详细地解释了为什么仿真器和策略不能共享一个进程或一张 GPU。这里简要复述：</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5n9ZHd5aDjx6WG5dhl1UFm/b079bb4131aff76d54cce383f47a6b96/A_policy_service_on_one_GPU__three_twins_across_three_GPUs__and_the_probes_as_concurrent_clients_of_the_same_service.png" alt="A policy service on one GPU, three twins across three GPUs, and the probes as concurrent clients of the same service."></p>
+<p>一个 GPU 上的策略服务、三个 GPU 上的三个孪生体，探针作为同一个服务的并发客户端。</p>
+<p><strong>策略即服务。</strong> 这里的 replica 对每个请求返回完整的 30 步 action chunk，并且不保存任何按客户端的状态：</p>
+<pre><code>@serve.deployment(ray_actor_options={&quot;num_gpus&quot;: 1}, max_ongoing_requests=64)
+@serve.ingress(app)
+class PI05PolicyServer:
+    def __init__(self):
+        self.policy = Pi05Twin(ckpt)                     # lerobot's PI05Policy, bf16, frozen
+
+    @serve.batch(max_batch_size=8, batch_wait_timeout_s=0.05)
+    async def _batched(self, obs_list):                  # concurrent requests -&gt; one forward pass
+        ...
+        return [chunk_i for chunk_i in chunks]           # each (30, 16): absolute joint targets, degrees
+
+    @app.post(&quot;/predict&quot;)
+    async def predict(self, request):                    # npz in: base, left_wrist, right_wrist, state16, task
+        return await self._batched(decode(await request.body()))</code></pre>
+<p>无状态的 chunk 正是许多客户端能共享一个 replica 的原因。每个客户端自己执行部署节奏（取 chunk 的第 3 到 18 步执行，然后重新查询——与进程内循环做的完全一致）。并发调用——无论来自三个仿真器，还是来自一次发出八十调的探针——都会被批进一次前向。若没有共享的 replica，三个仿真器就得各自在一张 GPU 上加载 30 亿参数，而一张 24 GB 的 L4 装不下 Isaac Sim、布料解算器和策略三者。</p>
+<p><strong>孪生体作为 task。</strong> 每个孪生体是一个持有一张 GPU 的 Ray task。孪生体本身以子进程运行，因为 Isaac Sim 的 Kit 事件循环不能待在 Ray worker 里：</p>
+<pre><code>@ray.remote(num_gpus=1, num_cpus=4, max_retries=0)
+def run_twin(name, policy_url, start_from, seconds):
+    cmd = [sys.executable, &quot;-u&quot;, &quot;twin/rollout.py&quot;, &quot;--policy-url&quot;, policy_url,
+           &quot;--start-from&quot;, start_from, &quot;--seconds&quot;, str(seconds), &quot;--out&quot;, f&quot;{RUNS}/{name}&quot;]
+    return subprocess.run(cmd, ...)                      # the repo is already here: runtime_env working_dir
+
+refs = [run_twin.remote(hold, POLICY_URL, f&quot;data/start_states/{hold}.npz&quot;, 12) for hold in HOLDS]</code></pre>
+<p><code>ray.init(runtime_env={&quot;working_dir&quot;: &quot;.&quot;})</code> 会把整个仓库送到每个 worker，内置的孪生体、它的资产和保存的夹持快照都包含在内。<code>max_retries=0</code> 是刻意的：一个被静默重试的孪生体会从头再跑，同时覆盖它自己的帧。</p>
+<p><strong>保存的夹持快照。</strong> 一次孪生体启动要一到三分钟（Kit、USD 场景、布料构建、RTX 预热）。一件沉降稳定的衬衫还要两百个仿真步，而这件布料的一个控制步在 A100 上大约要一秒物理时间。因此 notebook 里的孪生体从保存的夹持快照起步，布料的节点位置、臂状态、被钉住的节点和夹爪迟滞都被精确还原。</p>
+<p>这些快照的入选条件是双手都被钉住——也就是替身机制已把布料节点绑到了每个夹爪上——并且腕部视角看上去是对的。后来补上一个更严的检验：夹爪闭合时，夹爪是不是真的在布料上方。在随附的状态里只有左侧通过。右手的钉合把几厘米之外的节点绑了上来，替身允许这么做，真夹爪不行。这就是钉合替身的已知失效，也正是这些片段用来验证还原路径和共享 replica、而不能作为双手抓取证据的原因。</p>
+<pre><code>python twin/rollout.py --policy-url http://head:8000 --seconds 60 --seed 9 --save-state-at 600,750,...,1800
+python tools/pick_holds.py runs/holds_fwsafe_s9 --out holds_sheet.png        # the numbers, and the frames to look at</code></pre>
+<p>同一个脚本也能重放一段记录下来的动作序列（<code>--replay-from actions.npy</code>）。这就是这项研究的物理变体循环：一次孪生体改动，用八分钟对着录制的轨迹重测，而不是三十分钟的策略 rollout。重放并不是这些夹持快照的产生方式。面对 25,000 节点的布料，开环重放几秒内就会偏离闭环运行，第一次尝试就出现了被钉节点落在夹爪后方 17 到 46 厘米的情况，被「夹爪必须在布上」这条规则拒掉。</p>
+<p><strong>探针。</strong> 在一个被保存的时刻，我们手上有策略在孪生体里看到的精确输入。我们把其中一张图像换成真实任务同一阶段（episode 0 的 17.5 到 20 秒，双手都在夹持）的真实帧，状态和另外两张图像保持原样，然后多次查询服务。说清楚这里「真实」意味着什么：真实帧与孪生体那一刻的姿态、衬衫形状并不相同。相同的是那一刻之外的其他一切，所以这次替换就是两种条件之间唯一的差别，而计数吸收了采样器的随机性。这个不匹配是一项局限，也正是下一步把替换收窄到夹爪尖端那几百个像素的原因：</p>
+<pre><code>conditions = {&quot;ALL_SIM&quot;:     dict(base=sim.base, left_wrist=sim.lw, right_wrist=sim.rw),
+              &quot;base=real&quot;:   dict(base=real.base, left_wrist=sim.lw, right_wrist=sim.rw),
+              &quot;wrists=real&quot;: dict(base=sim.base, left_wrist=real.lw, right_wrist=real.rw),
+              &quot;lw=real&quot;:     dict(base=sim.base, left_wrist=real.lw, right_wrist=sim.rw),
+              &quot;rw=real&quot;:     dict(base=sim.base, left_wrist=sim.lw, right_wrist=real.rw)}
+rows = probe_grid(client, moments, conditions, repeats=4)     # 4 moments x 5 conditions x 4 = 80 calls, concurrent</code></pre>
+<p>每个返回的 chunk 由两个计数打分。<em>松开</em>指 chunk 中任意位置夹爪被命令到 -20 度以下。<em>计划中的抬升</em>指 chunk 结束时某只手的正向运动学高度比桌面至少高 20 厘米、且没有松开。第二条说的是策略的计划——它命令手抬起、两只夹爪都保持闭合——而不是布料的情况。一个 chunk 无法告诉你衬衫会不会真的被提起来。只有下面的闭环孪生体能量到那个。用计数，绝不用单次调用。pi0.5 的一个 chunk 是一次 flow-matching 采样，而 notebook 的第一个实验对同一时刻问四次，画出四条不同的手轨迹，有时相差几十厘米。这项研究的规矩是：任何关于策略的结论落笔之前，每个条件至少要有 12 个样本。</p>
+<h2><strong>结果：策略读的是夹爪尖端</strong></h2>
+<p>这是折叠构型下四个夹持快照上的网格（双手都被钉住，带上面关于右手的说明），每个条件 16 个样本，取自 notebook 为本文跑的那次：</p>
+<pre><code>condition           n  plans lift  release  rel L  rel R
+ALL_SIM            16           0       14     11     13
+base=real          16           0       16      8     16
+wrists=real        16          13        0      0      0
+lw=real            16           0       16      0     16
+rw=real            16           0       16     16      7</code></pre>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3ynZIEVNYMwNQhXM7tuyUN/2ec7d761386679e03f7feb86fd2f2d95/What_the_policy_was_shown_the_twin-s_wrist_views__as_the_policy_saw_them__and_the_real_frames_swapped_in_for_them.png" alt="What the policy was shown: the twin's wrist views (as the policy saw them) and the real frames swapped in for them."></p>
+<p>策略所看到的输入：孪生体的腕部视角（策略所见的那样），以及换进它们位置的真实帧。</p>
+<p>逐行读。用孪生体自己的图像时，策略会松手（16 次里 14 次松开，0 次计划抬升）。换进真实的头戴相机帧，什么都没变。把两路真实腕部帧都换进来，得到 16 次里 13 次计划抬升、零次松开。只换真实的<em>左</em>腕帧，左手就再也不松（16 次里 0 次），右手照旧松（16 次里 16 次）。只换右腕，模式镜像（左手 16 次里 16 次，右手 16 次里 7 次）。<strong>左手自己的视野决定左手的松开。</strong> 研究中在更多时刻上的数字与此一致：用孪生体腕部图像时，计划抬升 16 次里 0 次、松开 16 次里 8 到 16 次；用真实腕部图像时，计划抬升 16 次里 11 到 16 次、松开 0 到 3 次。真实帧与孪生体帧的差别不止那一团，所以这张网格只把决策定位到腕部相机。下一个实验才分离出画面里的具体是什么。</p>
+<p>腕部画面里的什么？夹持时刻的真实帧显示，两瓣夹爪尖端之间有一团被捏合的<em>布料团</em>。孪生体的帧显示的是一条薄薄的窄边。拿真实帧、只把布团去掉（<code>gap</code>），计划抬升就消失了（notebook 那次 16 次里 0 次，研究中 8 次里 0 次）。反过来，只在孪生体帧里保留真实夹爪尖端那一小块补丁（<code>realjaw</code>，几百个像素），它就会像完整真实帧那样计划抬升（16 次里 11 次对 16 次里 12 次；研究中 8 次里 6 次对 8 次里 5 次）。三十种渲染变体（光照、材质、相机、模糊、对比度）让编码器距离只动了不到 0.03（0.167 到 0.198，而真实帧是 0.073）；而我们按抬升计数打分的 18 种图像级变体（色彩、锐度、镜头畸变、取景、夹爪轮廓、画上去的缝隙和布团、布束形状）每次 12 个样本里计划 0 到 3 次抬升，未编辑的孪生体帧是 0 到 1 次。被灰化、压暗、模糊或压平的真实布团仍然在 12 个样本里计划 9 到 12 次。线索是几何，不是纹理。决策住在夹爪尖端那块补丁里，按手分别如此，而线索就是两瓣之间的那一团布。</p>
+<p>策略自己的编码器确定性地印证了这一点。把夹爪尖端的裁剪图用 pi0.5 内部的 SigLIP 视觉塔嵌入、做均值池化，再取到真实夹持帧的余弦距离。研究中的真实夹持帧落在 0.073，其他真实时刻在 0.09 到 0.15，我们的渲染在 0.15 到 0.22。notebook 里的左腕裁剪读作：孪生体 0.166，真实 0.086，夹爪尖端补丁 0.089，去掉布团 0.166。在 65 个腕部图像变体（每个至少 8 个样本）上，这个距离对各变体抬升率的排序 Spearman 相关为 -0.82。一个能预测随机计数的确定性数字，正是把「扫描」变成「搜索」的东西。notebook 通过同一个 replica 的 <code>/embed</code> 路由算出它。</p>
+<p>从这张网格可以带走两件事。一个几何线索的决定力超过了三十个渲染变体，所以在为「逼真」付费之前先测测策略在读什么。而且策略自己的编码器给出一个能排序变体的确定性距离，于是搜索可以在不跑 rollout 的情况下进行。</p>
+<h2><strong>从发现到折叠：孪生体改了什么</strong></h2>
+<p>这个发现同时是一条硬件事实和一条孪生体事实。夹爪处的捏合折叠就是因为它而存在：横躺在张开夹爪上的布料在夹爪闭合时被折进两瓣之间的一团，于是腕部相机看到的就是真实相机看到的东西。另外两处改动来自「看」而不是「探测」。布料不能自己动。一件仿真衬衫可以在附近没有机械臂的情况下抖动。它的 25,000 个节点挂在刚性弹簧上，由一个迭代次数封顶的迭代解算器推进，每个子步都会留下残差误差。弹簧足够硬时，这个残差不衰减，而是在网格自身的共振频率上振铃；消除它靠的是数值阻尼和 rest-sleep 钩子。有一组刚度改动让袖子和领口以 12 到 15 mm/s 波动，就恰好因为这个理由被拒。随附配置的节点速度中位数是 0.0 mm/s，而且每次运行都记录它，所以这条说法是量出来的，不是看出来的。桌子的几何与布局来自他们的影像，而不是来自工作台照片。</p>
+<p>在这个配置下，一个策略、一种孪生体、42 个种子（120 或 150 秒），41 个有效。41 次运行里（除机械臂穿过桌子的那次——这是每次运行都要过的闸门，唯一那次失败落在 2 个「出桌」种子里）双手都被钉住、完成压平与对齐。21 次出现叠折时刻（投影面积降到平铺衬衫的 0.70 或以下）。10 次在结束时仍保持折叠。2 次衬衫被拖下桌子近侧边缘。notebook 用随附的每次运行汇总重算这张表，并把判定规则印在旁边。只看指标的规则给出 22、11 和 2，而研究中靠人眼判断把一次最终状态算作揉皱。最好的一次在 100 到 119 秒之间把衬衫对折，而失效模式也得到了同等的展示篇幅。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1IYkxZVopB1kRelmL2Mt2d/597d0532115da62f84c670fe255060a0/The_best_of_42_seeds__fwsafe_s9__as_five_head-camera_frames_from_0_to_120_s._The_right_hand_folds_the_shirt_in_half_between_.png" alt="The best of 42 seeds (fwsafe s9) as five head-camera frames from 0 to 120 s. "><em>The best of 42 seeds (fwsafe_s9) as five head-camera frames from 0 to 120 s. The right hand folds the shirt in half between 100 and 119 s.</em></p>
+<p>42 个种子中最好的一次（fwsafe s9）：0 到 120 秒的五帧头戴相机画面。</p>
+<p>关于「抬升」是什么，说一句。在布料堆实验里，手抬起了 30 到 50 厘米，而被钉住的布料留在桌面上。手的高度不等于提起了东西。notebook 里每一张图都把手的高度与布料自身的提起比例、投影面积叠在一起画，而「策略抬起来了」这句话只用来描述布料。</p>
+<h2><strong>回报：一次多日的研究就是一个 Ray 程序</strong></h2>
+<p>这是本文的骨架，所以把账算清楚。支撑这些数字的那次多日研究，就是一个程序跑在一台 8 GPU 节点上。每一次 rollout、每一次替换扫描、每一个指标，都是从同一个 shell 用 <code>working_dir</code> 打包发出的 Ray task。这让我们一夜之间跑完 42 个种子和几十种孪生体变体，而重放动作序列把物理变体循环从三十分钟压到八分钟。notebook 就是同样这三块原语的教学尺寸版本：一个 Ray Serve replica 在一张 L4 上装下策略；三个 Isaac Lab 孪生体在另外三张 L4 上作为 task 运行，通过 HTTP 查询它；替换探针是同一个 replica 的并发客户端；每个阶段一结束就释放对应的 GPU。评测那篇跑的是一个策略的一百次 rollout。这里同一类服务回答几百条反事实查询，并按需拉起孪生体，在开发机上同样六分钟。</p>
+<p>实测自我们的示例 notebook 代码（8 x A100 开发机，预算按 4 x L4 也能跑）：</p>
+<pre><code>cell                                             wall s
+3 serve.run (returns at once)                       4.4     (deployment thread; the replica loads for 156 s in the background)
+4 fan out the twins (returns at once)               0.0     (three Kit boots start on three GPUs)
+5 wait for the replica + the stochastic chunk     162.0     (the wait: the twins boot and restore their holds meanwhile)
+6 substitution probe (80 calls)                    13.8     (21 batches of ~4 on the replica, 667 ms per batch)
+7 bunch vs sliver + encoder distance               11.3
+8 collect the live rollouts (3 twins, 5 s each)   157.8     (335 s after fan-out; 0.9 steps/s per twin, ~600 ms per shared inference)
+9 twin changes + 42-seed table                      0.4
+10 shutdown                                         2.4
+TOTAL (sum of cells)                              353.0     = 5.9 min on 8 x A100-40G (three GPUs for twins, one for the policy)</code></pre>
+<p>两个基础设施细节撑住了这份预算。replica 会把并发请求批处理，所以八十次探针调用花的是秒而不是分钟——八十次顺序采样一个 30 亿参数模型可就是分钟。而孪生体在服务能回答 <code>/stats</code> 之前不会迈步，于是权重加载、三次 Kit 启动和探针全都重叠在一起。</p>
+<h2><strong>这对你自己的策略意味着什么</strong></h2>
+<p>夹爪尖端这个发现是针对这个 checkpoint、这套装置的。但我们得到它的方式不是，这才是重点。在你采更多数据、建一个仿真器、或为微调生成合成帧之前，你可以问策略它到底在读什么——对一个已部署的 replica 发几百条廉价查询，让计数说话。这样做之后得到四条通用经验，而 Ray 让它很容易。</p>
+<p>在为逼真度花钱之前，先测策略在关注什么。三十个渲染变体什么都没改变，一个几何线索改变了一切。逐通道的替换会告诉你是哪些输入承载了这个大决策，而策略自己的编码器给你一个可搜索的确定性距离——在你为一个照片级场景或再一周遥操作数据付费之前。</p>
+<p>让发现去设定仿真器的优先级，也设定数据管线的优先级。策略在读什么，就是孪生体必须做对什么、仿真增强或合成数据必须包含什么。对这个策略，那是腕部相机在夹爪尖端看到的画面。对你的策略，可能是另一个相机、另一块区域，或一个状态通道。同样风格的探测能找到它。</p>
+<p>清楚你的孪生体能认证什么。我们的能认证伸手、抓取与压平，还不能认证从布料堆里提起，因为布料解算器无法带着堆上的布料走。每个孪生体都有这样一条线，而探针加上闭环运行会告诉你线在哪里，于是你知道哪些失效在仿真里可信、哪些要搬到真实装置上。</p>
+<p>在微调之前先量基线。一个配置上的种子统计，把判定规则印在旁边，就是微调必须超过的数字。没有它们，「现在更好用了」只是一则轶事。</p>
+<p>这些都不需要我们已经找到的那个具体答案。它需要的是一个藏在服务后面的冻结策略、一个能作为 task 启动的仿真器，以及一条便宜到能跑一夜的循环。</p>
+<h2><strong>在 Anyscale 上运行</strong></h2>
+<p>随本博客一起发布的还有一个可运行的 notebook、内置的孪生体及其资产、保存的夹持快照、观测转储、作为任意 LeRobot 策略可复用工具的探针框架、42 种子的表，以及视频。<code>SETUP.md</code> 给出了 Anyscale 的计算配置，在四张 A100 上约六分钟跑完。同一个 notebook 在八张 A100 上也能跑——改配置，不改代码。checkpoint 是公开的。你需要自己的 Hugging Face token 来获取带访问限制的 PaliGemma tokenizer。</p>
+<p>夹爪尖端这个发现和叠衣视频，就是这个工作负载变得可以廉价迭代之后你拿到的东西：一个 30 亿参数的冻结策略被查询了几万次，一个按需启动的布料仿真器，一条快到能跑一夜的科学循环——全都在一个集群上，作为一个程序。</p>
+<h2><strong>延伸阅读</strong></h2>
+<ul><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale">Scale Robot Policy Evaluation with Ray</a>，本文所基于的架构。</li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale">Vision-Language-Action Pipelines on Ray</a>。</li><li>LeRobot 的叠衣项目 <a href="https://huggingface.co/spaces/lerobot/robot-folding">huggingface.co/spaces/lerobot/robot-folding</a>，以及 checkpoint <a href="https://huggingface.co/lerobot/folding_latest">lerobot/folding_latest</a>。</li><li>同行评审。<a href="https://proceedings.mlr.press/v305/haon25a.html">Häon et al., CoRL 2025</a>（通过稀疏激活方向操控 pi0 与 OpenVLA）。<a href="https://arxiv.org/abs/2605.00321">Zhang et al., ICML 2026</a>（干预式视觉-动作归因）。<a href="https://arxiv.org/abs/2405.05941">Li et al., SIMPLER, CoRL 2024</a>（real-to-sim 评测）。</li><li>预印本，按预印本引用。Buurmeijer et al. 2026。Shi et al. (VLA-Trace) 2026。Kim and Park (IMPACT-VLA) 2026。Jin et al. 2026。Bhardwaj et al. 2026。<a href="https://arxiv.org/abs/2607.03372">Liao and Cao 2026</a>（关于冻结的 VLA）。Fu et al. (LIBERO-Plus) 2025。Zhang et al. 2025（软体的 splat 孪生体）。Abou-Chakra et al. 2025（Real-is-Sim）。</li><li>产业信号。<a href="https://usa.honda-ri.com/-/research-scientist-multimodal-learning-for-embodied-intelligence">Honda Research Institute 的具身智能研究岗位</a>（期望的专业方向里包含机制可解释性）。<a href="https://www.goodfire.com/silico">Goodfire Silico for robotics and vision</a>。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>将编码代理成本降低 90%：在 Anyscale 上使用 Ray + vLLM 提供安全的 LLM 服务</title>
@@ -264,7 +366,7 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <p>与专家交谈</p>]]></content:encoded>
     </item>
     <item>
-      <title>Ray Summit 2026：物理 AI、RL 与支撑这一切的基础设施</title>
+      <title>Ray Summit 2026：物理 AI、RL，以及承载它们的一切基础设施</title>
       <link>https://anyscale.com/blog/ray-summit-2026-recap</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-summit-2026-recap</guid>
       <pubDate>Tue, 08 Sep 2026 00:00:00 +0000</pubDate>
@@ -321,10 +423,11 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <ul><li>Fully Connected，旧金山（9 月 29 日 - 10 月 1 日）</li><li>Long Horizon，旧金山（10 月 20 - 21 日）</li><li>PyTorch Conference，圣何塞（10 月 20 - 21 日）</li><li>AI in Drug Discovery &amp; Development Summit（10 月 27 - 29 日）</li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>Scaling Ray for AI workloads to 10k node clusters</title>
+      <title>将 Ray 的 AI 工作负载扩展至 10k 节点集群</title>
       <link>https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</link>
       <guid isPermaLink="true">https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Scaling Ray for AI workloads to 10k node clusters</description>
       <content:encoded><![CDATA[<h1>将 Ray 的 AI 负载扩展到 1 万节点集群</h1>
 <p>作者：Yicheng Lu | 2026 年 8 月 25 日</p>
 <p><em><strong>感谢以下人士对本工作的贡献、基准测试与评审：Edward Oakes、Mengjin Yan、Kartica Modi、Dhyey Shah、Josh Lee、Zac Policzer、Steve Alexander、Andrew Sy Kim（Google）、Mao Yancan（ByteDance）</strong></em></p>
@@ -404,7 +507,7 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <p>本文描述的每一项修复今天都已进入 Ray nightly。我们持续投入 actor 与 driver 的可扩展性，包括上文提到的两项改进。如果你正把 Ray 推向任一极限，我们很想知道它在哪里弯折！可以在 <a href="https://github.com/ray-project/ray">GitHub</a> 或 <a href="https://www.ray.io/join-slack?utm_source=github&amp;utm_medium=ray_readme&amp;utm_campaign=getting_involved">Ray Slack</a> 找到我们。</p>]]></content:encoded>
     </item>
     <item>
-      <title>优化 LLM 服务效率：用 Ray Serve LLM 从 KV 缓存复用走向 token 负载感知</title>
+      <title>优化 LLM 服务效率：用 Ray Serve LLM 从 KV Cache 复用走向 Token 负载感知</title>
       <link>https://anyscale.com/blog/llm-kv-token-aware-routing</link>
       <guid isPermaLink="true">https://anyscale.com/blog/llm-kv-token-aware-routing</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
@@ -511,7 +614,7 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <p>基准<a href="https://github.com/ray-project/ray/pull/65665">代码</a>。</p>]]></content:encoded>
     </item>
     <item>
-      <title>推出 Ray History Server：Kubernetes 上 Ray 的事后可观测性</title>
+      <title>推出 Ray History Server：Ray on Kubernetes 的事后可观测性</title>
       <link>https://anyscale.com/blog/ray-history-server</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-history-server</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
@@ -593,7 +696,7 @@ cluster-history/
 <p>有疑问或需要帮助？欢迎在 <a href="https://github.com/ray-project/kuberay">GitHub 仓库</a>开 issue。我们欢迎反馈、功能请求与贡献！也可以<a href="https://www.ray.io/join-slack">加入 Ray Slack</a>，在 <code>#ray-history-server</code> 频道提问。</p>]]></content:encoded>
     </item>
     <item>
-      <title>学习循环：把智能掌握在自己手中</title>
+      <title>学习闭环：拥有你自己的智能之路</title>
       <link>https://anyscale.com/blog/learning-loops</link>
       <guid isPermaLink="true">https://anyscale.com/blog/learning-loops</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
@@ -633,11 +736,11 @@ cluster-history/
 <p>更多信息见<a href="https://www.anyscale.com/tryfree">这里</a>。</p>]]></content:encoded>
     </item>
     <item>
-      <title>FP8 Reinforcement Learning in SkyRL: Preserving Policy Consi…</title>
+      <title>SkyRL 中的 FP8 强化学习：保持训练与 rollout 之间的策略一致性</title>
       <link>https://anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl</link>
       <guid isPermaLink="true">https://anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：FP8 Reinforcement Learning in SkyRL: Preserving Policy Consistency Across Training and Rollout</description>
+      <description>原文标题：FP8 Reinforcement Learning in SkyRL: Preserving Policy Consistency Across Training and Rollout</description>
       <content:encoded><![CDATA[<h1>SkyRL 中的 FP8 强化学习：保持训练与 Rollout 间的策略一致性</h1>
 <p>作者：Jinghan Yao、Eric Tang、Sumanth Hegde 和 Kourosh Hakhamaneshi | 2026 年 8 月 25 日</p>
 <p><em>SkyRL 现已支持 FP8 加速的训练与 rollout，并配备 on-policy 权重同步。在长程 RL 实验中，FP8 配置的收敛轨迹紧密跟随 BF16，同时把端到端 step 时间最多降低 23%。</em></p>
@@ -805,7 +908,7 @@ ds.groupby(&quot;band_id&quot;).count()</code></pre>
 <p>我们很高兴继续投入这一方向，为你的 AI 数据负载带来最佳的数据处理性能。Ray Data GPU shuffle 目前处于实验阶段，随 Ray 2.58 提供。试用后欢迎给我们反馈！</p>]]></content:encoded>
     </item>
     <item>
-      <title>推出 Anyscale GPU 健康可观测性：从应用到硬件</title>
+      <title>推出 Anyscale GPU 健康可观测性：从应用一直看到硬件</title>
       <link>https://anyscale.com/blog/anyscale-gpu-health-observability</link>
       <guid isPermaLink="true">https://anyscale.com/blog/anyscale-gpu-health-observability</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
@@ -847,7 +950,7 @@ ds.groupby(&quot;band_id&quot;).count()</code></pre>
 <p><a href="https://www.anyscale.com/asset/gpu-health-observability-private-preview-form"><strong>注册私有预览 →</strong></a></p>]]></content:encoded>
     </item>
     <item>
-      <title>推出 Ray 原生沙箱</title>
+      <title>宣布 Ray 原生沙箱能力</title>
       <link>https://anyscale.com/blog/announcing-native-sandboxing-in-ray</link>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-native-sandboxing-in-ray</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
@@ -1023,10 +1126,11 @@ harbor run --dataset terminal-bench@2.0 \
 <p>我们的目标是让沙箱化环境用起来就像 Ray 中任何其他分布式原语：易于创建、易于扩缩、易于与 agentic 负载的其余部分组合。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Introducing KubeRay v1.6 and v1.7</title>
+      <title>推出 KubeRay v1.6 与 v1.7</title>
       <link>https://anyscale.com/blog/kuberay-v1-7</link>
       <guid isPermaLink="true">https://anyscale.com/blog/kuberay-v1-7</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing KubeRay v1.6 and v1.7</description>
       <content:encoded><![CDATA[<h1>KubeRay v1.6 与 v1.7 发布</h1>
 <p>作者：KubeRay Team | 2026 年 8 月 25 日</p>
 <p>特别感谢以下 KubeRay 贡献者：Anyscale（Jui-An Huang、Nai-Juei Yeh、Jun-Hao Wan）、Google Cloud（Andrew Sy Kim、Ryan O'Leary、Aaron Liang、Richa Banker）、Hark（Kai-Hsun Chen）、阿里云（Kun Wu）、Microsoft（Alima Azamat、Mark Rossetti）、Red Hat（Pat O'Connor、Laura Fitzgerald、Bryan Keane）、opensource4you（Han-Ju Chen、Jia-Wei Jiang、Jie-Kai Chang、Che-Yu Wu、Fu-Sheng Chen、Chih-Ting Yeh）</p>
@@ -1285,7 +1389,7 @@ helm repo update
 helm install kuberay-operator kuberay/kuberay-operator --version 1.7.0</code></pre>]]></content:encoded>
     </item>
     <item>
-      <title>推出 Anyscale KubeRay Connect：加码 Kubernetes</title>
+      <title>推出 Anyscale KubeRay Connect：全力押注 Kubernetes</title>
       <link>https://anyscale.com/blog/announcing-anyscale-connect-for-kuberay</link>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-anyscale-connect-for-kuberay</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
@@ -1333,11 +1437,11 @@ helm install kuberay-operator kuberay/kuberay-operator --version 1.7.0</code></p
 <ul><li><a href="https://www.anyscale.com/asset/kuberay-connect-private-preview-form"><strong>申请私有预览 →</strong></a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>Shuffle V2 in Ray Data: Faster, Fault-Tolerant Joins and Agg…</title>
+      <title>Ray Data 中的 Shuffle V2：更快且容错的 Join 与聚合</title>
       <link>https://anyscale.com/blog/ray-data-shuffle-v2</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-data-shuffle-v2</guid>
       <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Shuffle V2 in Ray Data: Faster, Fault-Tolerant Joins and Aggregations</description>
+      <description>原文标题：Shuffle V2 in Ray Data: Faster, Fault-Tolerant Joins and Aggregations</description>
       <content:encoded><![CDATA[<h1>Ray Data 中的 Shuffle V2：更快、容错的 Join 与聚合</h1>
 <p>作者：You-Cheng Lin 和 Yuanzhuo Yang | 2026 年 8 月 25 日</p>
 <p>无论产出是训练语料、一批模型预测还是一份评估报告，同样的操作总是反复出现：对数十亿条记录去重、跨数据源 join 特征/模态/模型输出、计算分组统计以便过滤、采样与打分。而这些操作每一个都是 shuffle。</p>
@@ -1421,7 +1525,7 @@ DataContext.get_current().shuffle_strategy = ShuffleStrategy.HASH_SHUFFLE_V2</co
 <p>如果你的流水线在真实规模上做 groupby、join 或按键 repartition，V2 今天就值得打开。敬请关注，并参阅<a href="https://docs.ray.io/en/releases-2.58.0/data/data-internals.html#shuffle-v2">指南与内部机制文档</a>了解更多！</p>]]></content:encoded>
     </item>
     <item>
-      <title>CVE-2025-62593 和 CISA KEV 列表：Ray 用户需要了解的内容</title>
+      <title>CVE-2025-62593 与 CISA KEV 收录：Ray 用户需要知道的事</title>
       <link>https://anyscale.com/blog/ray-cve-2025-62593-kev-what-you-need-to-know</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-cve-2025-62593-kev-what-you-need-to-know</guid>
       <pubDate>Wed, 19 Aug 2026 00:00:00 +0000</pubDate>
@@ -1451,7 +1555,7 @@ DataContext.get_current().shuffle_strategy = ShuffleStrategy.HASH_SHUFFLE_V2</co
 <p>如果你在 Ray 中发现安全问题，请通过<a href="https://github.com/ray-project/ray/security/policy">项目安全政策</a>报告，而不是开公开 issue。我们宁愿尽早听到。</p>]]></content:encoded>
     </item>
     <item>
-      <title>异步推理实践：Ray Serve 上的视频索引服务</title>
+      <title>异步推理实战：基于 Ray Serve 的视频索引服务</title>
       <link>https://anyscale.com/blog/ray-serve-async-inf-in-practice</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-serve-async-inf-in-practice</guid>
       <pubDate>Tue, 18 Aug 2026 00:00:00 +0000</pubDate>
@@ -1535,7 +1639,7 @@ class VideoIndexConsumer:
 <p><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-deploy-feature-matrix.html">SageMaker supported-features matrix</a> —— 异步推理是单容器的，这正是对比采用单一融合 deployment 的原因。</p>]]></content:encoded>
     </item>
     <item>
-      <title>使用 Ray Direct Transport 在强化学习中快速轻松地进行权重同步（第 2 部分）</title>
+      <title>用 Ray Direct Transport 实现快速简易的强化学习权重同步（下篇）</title>
       <link>https://anyscale.com/blog/rdt-ray-direct-transport-fast-easy-weight-syncing-for-rl-reinforcement-learning</link>
       <guid isPermaLink="true">https://anyscale.com/blog/rdt-ray-direct-transport-fast-easy-weight-syncing-for-rl-reinforcement-learning</guid>
       <pubDate>Tue, 18 Aug 2026 00:00:00 +0000</pubDate>
@@ -1727,11 +1831,11 @@ class Trainer:
 <p>与此同时，我们也在积极解决 RDT 的剩余性能问题，包括<a href="https://github.com/ray-project/ray/issues/65475">优化小张量的 O(N) 开销</a>、缩短 <a href="https://github.com/ray-project/ray/issues/65490">Python 对象数据的传输时间</a>、把内存池扩展到<a href="https://github.com/ray-project/ray/issues/64713">接收侧张量</a>。从<a href="https://docs.ray.io/en/latest/ray-core/direct-transport/direct-transport.html">文档</a>开始体验 RDT，告诉我们你的想法！</p>]]></content:encoded>
     </item>
     <item>
-      <title>Maximizing the Power of NVIDIA GB300 NVL72: NVLink Domain-Aw…</title>
+      <title>充分发挥 NVIDIA GB300 NVL72 性能：Ray 中的 NVLink 域感知 Placement Group</title>
       <link>https://anyscale.com/blog/nvidia-gb300-nvlink-domain-aware-placement-groups-ray</link>
       <guid isPermaLink="true">https://anyscale.com/blog/nvidia-gb300-nvlink-domain-aware-placement-groups-ray</guid>
       <pubDate>Thu, 13 Aug 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Maximizing the Power of NVIDIA GB300 NVL72: NVLink Domain-Aware Placement Groups in Ray</description>
+      <description>原文标题：Maximizing the Power of NVIDIA GB300 NVL72: NVLink Domain-Aware Placement Groups in Ray</description>
       <content:encoded><![CDATA[<h1>释放 NVIDIA GB300 NVL72 的最大威力：Ray 中的 NVLink Domain 感知 Placement Group</h1>
 <p>作者：Joshua Lee、Mengjin Yan、Aaron Li、Edward Oakes、Mathew Wicks 和 Connor Pedersen | 2026 年 8 月 13 日</p>
 <h2>摘要</h2>
@@ -1786,7 +1890,7 @@ class Trainer:
 <p><em>1 关于 SHARP 的详情见 <a href="https://networking-docs.nvidia.com/sharpum/3150/introduction">https://networking-docs.nvidia.com/sharpum/3150/introduction</a></em></p>]]></content:encoded>
     </item>
     <item>
-      <title>Anyscale 签署加入 Nscale 的最终协议</title>
+      <title>Anyscale 签署最终协议，加入 Nscale</title>
       <link>https://anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale</link>
       <guid isPermaLink="true">https://anyscale.com/blog/anyscale-signs-definitive-agreement-to-join-nscale</guid>
       <pubDate>Thu, 30 Jul 2026 00:00:00 +0000</pubDate>
@@ -1816,7 +1920,7 @@ class Trainer:
 <p>今年 8 月，我们在旧金山的 <a href="https://www.anyscale.com/ray-summit/2026">Ray Summit</a> 上会分享更多。交易完成后，合并团队也将开放<a href="https://www.anyscale.com/careers">招聘</a>！</p>]]></content:encoded>
     </item>
     <item>
-      <title>介绍 Anyscale 物理 AI 技能</title>
+      <title>推出 Anyscale Physical AI Skill</title>
       <link>https://anyscale.com/blog/introducing-the-anyscale-physical-ai-skill</link>
       <guid isPermaLink="true">https://anyscale.com/blog/introducing-the-anyscale-physical-ai-skill</guid>
       <pubDate>Thu, 23 Jul 2026 00:00:00 +0000</pubDate>
@@ -1963,7 +2067,7 @@ assert return_code == 0</code></pre>
 <p><strong>在 Anyscale 上运行：</strong> <a href="https://www.anyscale.com/">免费开始</a> 或与专家交流。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Ray Data 2.56：提高人工智能数据管道的可靠性</title>
+      <title>Ray Data 2.56：提升 AI 数据流水线的可靠性</title>
       <link>https://anyscale.com/blog/ray-data-256-updates</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-data-256-updates</guid>
       <pubDate>Tue, 30 Jun 2026 00:00:00 +0000</pubDate>
@@ -2215,7 +2319,7 @@ print(requests.get(f&quot;{POLICY_URL}/stats&quot;).json())</code></pre>
 <p>免费开始</p>]]></content:encoded>
     </item>
     <item>
-      <title>介绍 Anyscale 代理技能：更快地构建、更智能地调试并优化 Ray 上运行的 AI 工作负载</title>
+      <title>推出 Anyscale Agent Skills：更快构建、更聪明调试、优化运行在 Ray 上的 AI 工作负载</title>
       <link>https://anyscale.com/blog/announcing-anyscale-agent-skills-ray</link>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-anyscale-agent-skills-ray</guid>
       <pubDate>Wed, 22 Apr 2026 00:00:00 +0000</pubDate>
@@ -2313,11 +2417,11 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
 <table><thead><tr><th><strong>技能组</strong></th><th><strong>功能</strong></th><th><strong>可用性</strong></th></tr></thead><tbody><tr><td><a href="https://docs.anyscale.com/agent-skills#workload-skills"><strong>Workload Skills</strong></a></td><td>为 LLM 服务、分布式训练、批量推理和嵌入生成代码与配置</td><td>GA – Anyscale CLI</td></tr><tr><td><a href="https://docs.anyscale.com/agent-skills#platform-skills"><strong>Platform Skills</strong></a></td><td>面向运行中 Ray 工作负载的完整调试-修复-部署闭环——查日志、补代码、一次会话内重新部署</td><td>GA – Anyscale CLI</td></tr><tr><td><a href="https://docs.anyscale.com/agent-skills#infra-skills"><strong>Infra Skills</strong></a></td><td>在 Kubernetes（EKS、GKE、AKS）或云虚拟机上引导式端到端部署 Anyscale</td><td>GA – Anyscale CLI</td></tr><tr><td><strong>优化服务计划</strong></td><td>从成本、吞吐量与生产就绪度角度分析工作负载——减少 GPU 浪费、修复瓶颈</td><td><a href="https://www.anyscale.com/asset/anyscale-agent-skills-optimization-services-program">申请访问</a></td></tr></tbody></table>]]></content:encoded>
     </item>
     <item>
-      <title>Major upgrades to Ray Serve: Online Inference with 88% lower…</title>
+      <title>Ray Serve 重大升级：在线推理延迟降低 88%、吞吐量提升 11.1 倍</title>
       <link>https://anyscale.com/blog/ray-serve-inference-lower-latency-higher-throughput-haproxy</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-serve-inference-lower-latency-higher-throughput-haproxy</guid>
       <pubDate>Tue, 24 Mar 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Major upgrades to Ray Serve: Online Inference with 88% lower latency and 11.1x higher throughput</description>
+      <description>原文标题：Major upgrades to Ray Serve: Online Inference with 88% lower latency and 11.1x higher throughput</description>
       <content:encoded><![CDATA[<h1>Ray Serve 重大升级：在线推理延迟降低 88%、吞吐提升 11.1 倍</h1>
 <p>作者：Seiji Eicher、Abrar Sheikh、Alex Yang、Akshay Malik、Kourosh Hakhamaneshi 和 Spencer Peterson（Google）| 2026 年 3 月 24 日</p>
 <h2>引言</h2>
@@ -2408,7 +2512,7 @@ The PDF files are located in s3://anyscale-rag-application/100-docs/.</code></pr
 <p>Anyscale 与 Google 合作确认了对此改进的需求。我们亲眼见证 Ray Serve 的延迟瓶颈如何限制了它在低延迟推理负载上的扩展能力。随着 HAProxy ingress 与数据面原生 gRPC，这一缺口将被补上。我们很高兴帮助用户用 Ray Serve 从开发一路走到生产规模。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Ray Serve 的新 Grafana 仪表板：以前不可能进行的调试</title>
+      <title>Ray Serve 全新 Grafana 仪表盘：实现前所未有的调试能力</title>
       <link>https://anyscale.com/blog/ray-serve-observability-grafana-dashboard-anyscale</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-serve-observability-grafana-dashboard-anyscale</guid>
       <pubDate>Mon, 16 Feb 2026 00:00:00 +0000</pubDate>
@@ -2796,7 +2900,7 @@ def train_loop_per_worker(config: dict):
 <p>与专家沟通</p>]]></content:encoded>
     </item>
     <item>
-      <title>AI 工作负载中的 GPU 效率（低）</title>
+      <title>AI 负载中的 GPU（低）效率问题</title>
       <link>https://anyscale.com/blog/gpu-in-efficiency-in-ai-workloads</link>
       <guid isPermaLink="true">https://anyscale.com/blog/gpu-in-efficiency-in-ai-workloads</guid>
       <pubDate>Wed, 21 Jan 2026 00:00:00 +0000</pubDate>
@@ -2859,7 +2963,7 @@ def train_loop_per_worker(config: dict):
 <p>Anyscale 正在解决 AI 的计算低效问题，其计算平台让组织能够跨团队、跨负载、跨集群地高效扩展 AI 工作负载。想试用，可<a href="https://console.anyscale.com/register/v2">在此</a>免费访问 Anyscale。</p>]]></content:encoded>
     </item>
     <item>
-      <title>利用射线和分解混合并行性将多模式 AI 训练速度提高 30%</title>
+      <title>Ray 与分离式混合并行，多模态 AI 训练提速 30%</title>
       <link>https://anyscale.com/blog/30-faster-multimodal-ai-training-with-ray-and-disaggregated-hybrid</link>
       <guid isPermaLink="true">https://anyscale.com/blog/30-faster-multimodal-ai-training-with-ray-and-disaggregated-hybrid</guid>
       <pubDate>Tue, 09 Dec 2025 00:00:00 +0000</pubDate>
@@ -2953,6 +3057,1388 @@ def train_loop_per_worker(config: dict):
 <h2>参考文献</h2>
 <p>[1] Sam Ade Jacobs, Masahiro Tanaka, Chengming Zhang, Minjia Zhang, Reza Yazdani Aminabadi, Shuaiwen Leon Song, Samyam Rajbhandari, Yuxiong He. &quot;DeepSpeed Ulysses: System Optimizations for Enabling Training of Extreme Long Sequence Transformer Models.&quot; arXiv:2309.14509, 2023. <a href="https://arxiv.org/abs/2309.14509">https://arxiv.org/abs/2309.14509</a></p>
 <p>[2] Hao Liu, Matei Zaharia, Pieter Abbeel, &quot;Ring Attention with Blockwise Transformers for Near-Infinite Context&quot;, arXiv:2310.01889, 2023. <a href="https://arxiv.org/abs/2310.01889">https://arxiv.org/abs/2310.01889</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Ray Serve：以异步推理、自定义请求路由与自定义扩缩推进灵活性</title>
+      <link>https://anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing</guid>
+      <pubDate>Tue, 11 Nov 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Ray Serve: Advancing Flexibility with Async Inference, Custom Request Routing, and Custom Autoscaling</description>
+      <content:encoded><![CDATA[<h1>Ray Serve：以异步推理、自定义请求路由与自定义扩缩推进灵活性</h1>
+<p>作者：Abrar Sheikh、Harshit Agarwal 和 Akshay Malik | 2025 年 11 月 11 日</p>
+<p>过去一年，<strong>Ray Serve</strong> 已成为团队把多模态 AI 负载——从 LLM 到语音分析、视频流水线——送上生产的首选。</p>
+<p><em>ray serve 更新</em></p>
+<p>我们引入四项新能力，大幅扩展 Serve 在现代推理负载上的灵活性与可扩展性：</p>
+<ul><li><strong>Async Inference（异步推理）</strong> —— 安全高效地处理长时运行或可恢复的负载</li><li><strong>Custom Request Routing（自定义请求路由）</strong> —— 精确控制请求在各 deployment 副本间的分发</li><li><strong>Custom Autoscaling（自定义自动扩缩）</strong> —— 用领域指标驱动你自己打造的扩缩逻辑</li><li><strong>External Scaling（外部扩缩）</strong> —— 从外部系统对 serve 应用扩缩</li></ul>
+<p>这些特性合力让构建复杂的、延迟敏感的或多阶段的生产 AI 系统更容易。</p>
+<h2><strong>为什么灵活性重要</strong></h2>
+<p>AI 负载日益<strong>异构</strong>。一条流水线可能组合：</p>
+<ul><li>ASR → 说话人核验 → LLM 摘要 → 分析</li><li>推荐器 → 重排器 → 嵌入模型</li><li>视频分块 → 解码 → 推理 → 后处理</li></ul>
+<p>每个阶段都可能有迥异的运行时行为、资源需求与延迟约束。 Ray Serve 在这些阶段上提供<strong>统一控制</strong>，处理路由、自动扩缩、批处理与可观测性——让团队迭代模型而非基础设施。</p>
+<h2><strong>异步推理：安全处理长时负载</strong></h2>
+<p>异步负载在 AI 系统中很常见——批量摘要、转写、视频处理、多步 agent 工作流。这类需求往往用 Celery、Kafka 或自研作业调度器等独立队列系统实现。</p>
+<p>有了 <strong>Async Inference</strong>，Ray Serve 把异步处理直接集成进与在线推理同一个 serving 层。团队可以处理准实时与长时请求而不触发客户端超时、安全跟踪进度或恢复任务，并在单一运行时内同时管理同步与异步负载——无需引入额外基础设施。</p>
+<p>用 Ray Serve 做异步负载的关键优势：</p>
+<ul><li><strong>更简单的架构：</strong> Serve 与 Redis、SQS 等消息代理集成完成排队与重试，同时在同一运行时内管理任务提交与处理。</li><li><strong>异构负载的统一运行时：</strong> 在同一应用中混合 GPU 密集推理与更长的 CPU/I/O 密集处理。</li><li><strong>共享扩缩与可观测：</strong> 异步 worker 使用与标准 Ray Serve deployment 相同的 autoscaler 与指标管道。</li><li><strong>一致的 Python API：</strong> 在线、异步、流式负载之间复用逻辑与依赖。</li><li><strong>至少一次（at least once）处理保证：</strong> 在副本故障与服务滚动发布期间也能安全执行任务。</li></ul>
+<p><strong>真实案例：</strong></p>
+<p>Fano AI——一家服务多语种联络中心的香港语言 AI 公司——在 Ray Serve + Kubernetes（经 KubeRay）上运行重型音频流水线（ASR、说话人核验与 LLM 分析）。</p>
+<blockquote>&quot;异步推理对我们必不可少：处理数小时的音频上传与通话后分析，请求才不会超时。进度可跟踪，我们可以安全重试或恢复而不阻塞在线流量。&quot; —— Sam Broughton，Fano AI</blockquote>
+<p><strong>工作原理：</strong></p>
+<p>在 Ray Serve 启用异步推理有两个核心组件：</p>
+<ol><li>设置任务处理配置——包括消息代理（如 Redis、SQS 等）与 DLQ 行为的配置。</li></ol>
+<pre><code>1from ray.serve.schema import TaskProcessorConfig, CeleryAdapterConfig
+2
+3processor_config = TaskProcessorConfig(
+4    queue_name=&quot;my_queue&quot;,
+5    # Optional: Override default adapter string (default is Celery)
+6    adapter_config=CeleryAdapterConfig(
+7        broker_url=&quot;redis://localhost:6379/0&quot;,
+8        backend_url=&quot;redis://localhost:6379/1&quot;,
+9    ),
+10    max_retries=5,
+11    failed_task_queue_name=&quot;failed_tasks&quot;,
+12)</code></pre>
+<ol><li>定义你的任务处理逻辑——在这里编写业务逻辑，也可组合动态推理图。</li></ol>
+<pre><code>1from ray import serve
+2from ray.serve.task_consumer import task_consumer
+3
+4@serve.deployment
+5@task_consumer(task_processor_config=processor_config)
+6class SimpleConsumer:
+7    @task_handler(name=&quot;process_request&quot;)
+8    def process_request(self, data): 
+9        return f&quot;processed: {data}&quot;</code></pre>
+<ol><li>定义一个 ingress deployment 用于提交任务与获取状态</li></ol>
+<pre><code>1from fastapi import FastAPI
+2from ray import serve
+3from ray.serve.task_consumer import instantiate_adapter_from_config
+4
+5app = FastAPI()
+6
+7@serve.deployment
+8@serve.ingress(app)
+9class API:
+10  def __init__(self, consumer_handle, task_processor_config):
+11    self.adapter = instantiate_adapter_from_config(task_processor_config)
+12    # for creating the deployment graph
+13    self.consumer = consumer_handle
+14
+15  @app.post(&quot;/submit&quot;)
+16  def submit(self, request):
+17    task = self.adapter.enqueue_task_sync()
+18    return {&quot;task_id&quot;: task.id}
+19
+20  @app.get(&quot;/status/{task_id}&quot;)
+21  def status(self, request):
+22    return self.adapter,get_task_status_sync(task_id)</code></pre>
+<p>这会搭起两个 deployment——一个负责入队请求并响应状态查询，另一个负责轮询消息队列并执行你的处理逻辑。</p>
+<p><em>Ray Serve - 路由</em></p>
+<p><em><strong>文档：</strong></em><a href="https://docs.ray.io/en/master/serve/asynchronous-inference.html">Ray Serve 中的异步推理</a></p>
+<h2><strong>自定义请求路由：可编程的流量控制</strong></h2>
+<p>Ray Serve 的默认路由算法基于各副本的请求数。但有些应用的路由决策需要依赖请求内容、各副本的模型版本或负载状态。</p>
+<p>借助新的 <strong>Custom Request Router</strong> API，Serve 让路由完全用 Python 可编程。这一特性让你把领域智能直接嵌入 Serve 的路由层。</p>
+<p><strong>真实案例</strong>：服务多轮对话聊天机器人时，LLM 可以利用 <a href="https://docs.vllm.ai/en/latest/features/automatic_prefix_caching.html">prefix cache</a>——它保存此前请求注意力计算得到的 KV 向量。多个请求若共享同一段起始文本（&quot;前缀&quot;），系统就能复用早先的计算（命中热前缀缓存），降低延迟、减少 GPU 周期浪费。基于请求内容路由的策略能显著改善系统吞吐/延迟表现。更多细节见我们<a href="https://www.anyscale.com/blog/ray-serve-faster-first-token-custom-routing">用自定义路由把 LLM 推理延迟降低最多 60% 的博客</a>。</p>
+<p>自定义路由常见用途：</p>
+<ul><li>缓存亲和 —— 把请求路由到已持有相关数据或模型权重的副本。Ray Serve 的模型多路复用（multiplexing）就是一个内建路由器的例子。</li><li>延迟感知 —— 偏向近期响应时间更短的副本。</li><li>有状态副本 —— 无需外部协调地维持按会话/按用户的亲和。</li><li>动态优先级 —— 基于运行时指标或请求类型偏向某些副本。</li></ul>
+<p><strong>工作原理：</strong></p>
+<p>1.（可选）从你的 serve deployment 上报自定义路由统计</p>
+<pre><code>1from ray import serve
+2
+3@serve.deployment
+4class MyDeployment:
+5    def record_routing_stats(self) -&gt; Dict[str, float]:
+6        return {&quot;throughput&quot;: 100}</code></pre>
+<ol><li>实现你自己的 RequestRouter 子类并重写 choose_replicas()。</li></ol>
+<pre><code>1from ray.serve.request_router import (
+2    PendingRequest,
+3    RequestRouter,
+4    RunningReplica,
+5)
+6
+7class UniformRequestRouter(RequestRouter):
+8    async def choose_replicas(
+9       self,
+10       candidate_replicas: List[RunningReplica],
+11       pending_request: Optional[PendingRequest] = None
+12    ) -&gt; List[List[RunningReplica]]:
+13        import random
+14        index = random.randint(0, len(candidate_replicas)-1)
+15        return [[candidate_replicas[index]]]
+16
+17    def on_request_routed(...):
+18        print(&quot;on_request_routed callback is called!!&quot;)</code></pre>
+<ol><li>把自定义路由器挂到你的 Serve deployment 上</li></ol>
+<pre><code>1from ray import serve
+2from ray.serve.config import RequestRouterConfig
+3
+4@serve.deployment(
+5  request_router_config=RequestRouterConfig(
+6    request_router_class=&quot;custom_request_router:UniformRequestRouter&quot;
+7  ),
+8  num_replicas=10
+9)
+10class MyApp:</code></pre>
+<p><em>Ray Serve - 自定义路由</em></p>
+<p><em>文档：</em><a href="https://docs.ray.io/en/master/serve/advanced-guides/custom-request-router.html">Custom Request Router 指南</a></p>
+<h2><strong>自定义自动扩缩：扩你在意的</strong></h2>
+<p>Ray Serve 的自动扩缩通常基于请求计数，但对复杂流水线可能不够。在 Ray 2.51 中，我们发布了自定义扩缩策略支持，让你完全掌控 Ray Serve 应用的扩缩。现在开发者可以：</p>
+<ul><li>从副本向 controller 上报<strong>自定义指标</strong></li><li>定义基于自定义上报指标或外部指标/触发的<strong>策略逻辑</strong></li><li>把扩缩策略的作用范围限定到某个 deployment 或整个应用</li></ul>
+<p>有了自定义自动扩缩，你可以按<strong>自己对性能的定义</strong>扩缩，也可以定义复合策略，协调应用内多个 deployment 的扩缩。把扩缩循环开放给用户定义的指标与逻辑后，Serve 提供了更细粒度的控制——让自动扩缩成为在吞吐、成本与延迟之间平衡的实用工具。</p>
+<p><strong>真实案例</strong>：Huawei 在多阶段 LLM 流水线（预处理 → 模型 → 后处理）上用自定义自动扩缩，基于<strong>端到端延迟 SLA</strong> 而非单阶段负载对各级联合扩缩。这带来了更智能的资源利用与可变负载下更可预测的延迟。</p>
+<p>其他常见扩缩模式：</p>
+<ul><li><strong>基于队列深度的扩缩</strong>：对无 HTTP 请求的异步推理负载，可按队列深度扩缩消费者。</li><li><strong>定时扩缩：</strong> 按计划增删副本。</li><li><strong>基于利用率的扩缩：</strong> 用 GPU 使用指标（如显存或 SM 占用）驱动扩缩决策，优化昂贵算力。</li><li><strong>跨 deployment 协调：</strong> 让预处理与后处理阶段与模型副本同步扩缩，避免流水线瓶颈。</li></ul>
+<p>Ray Serve 的自定义自动扩缩支持是与 Huawei 合作开发的。我们特别致谢 <a href="https://github.com/arcyleung">Arthur Leung</a> 与 <a href="https://github.com/Kishanthan">Kishanthan Thangarajah</a> 的贡献。</p>
+<p><strong>工作原理</strong></p>
+<p>1.（可选）定义从 Serve Deployment 副本上报自定义指标</p>
+<pre><code>1from ray import serve
+2
+3@serve.deployment
+4class MyDeployment:
+5    def record_autoscaling_stats(self) -&gt; Dict[str, float]:
+6        return {&quot;custom_metric&quot;: 100}</code></pre>
+<ol><li>用来自 deployment、Prometheus 指标或外部来源的数据编写你的自定义扩缩策略</li></ol>
+<pre><code>1from ray.serve.config import AutoscalingContext
+2from ray.serve._private.common import DeploymentID
+3
+4def application_level_autoscaling_policy(
+5    ctxs: Dict[DeploymentId, AutoscalingContext]
+6) -&gt; Tuple[Dict[DeploymentId, int], Dict]:
+7    pass</code></pre>
+<ol><li>把自定义策略加入 serve YAML</li></ol>
+<pre><code>1applications:
+2  - name: MyApp
+3    import_path: app:api
+4    autoscaling_policy:
+5      policy_function: policy:application_level_autoscaling_policy
+6    deployments: ...
+7</code></pre>
+<p>如果你愿意贡献普遍适用的自定义路由或扩缩策略，请到 Slack 或 GitHub 上联系我们。</p>
+<p><em>Ray Serve - 自定义自动扩缩</em></p>
+<p>📘 <em>文档：</em><a href="https://docs.ray.io/en/master/serve/advanced-guides/advanced-autoscaling.html#custom-autoscaling-policies">Custom Autoscaling Policies</a></p>
+<h2>外部扩缩：自带你的逻辑</h2>
+<p>虽然 Ray Serve 的内建自动扩缩与自定义策略提供了灵活的指标驱动扩缩，但在某些场景你想完全掌控——基于外部数据源与系统扩缩。这正是 External Scaling 的用武之地。该功能将在 Ray 2.52（alpha）引入：External Scaling API 让你以编程方式调整 Serve 应用中任意 deployment 的副本数。与运行在 Serve 控制循环内的自动扩缩不同，外部扩缩由你自己的脚本或服务驱动——非常适合预测式或事件触发的扩缩。</p>
+<p><em>Ray Serve - 外部扩缩</em></p>
+<p><strong>工作原理</strong></p>
+<p><strong>1. 启用外部扩缩：</strong> 在 Serve YAML 中设置 <code>external_scaler_enabled: true</code>，告诉 Ray Serve 扩缩决策将来自外部控制器</p>
+<pre><code>1applications:
+2  - name: my-app
+3    import_path: external_scaler_predictive:app
+4    external_scaler_enabled: true
+5    deployments:
+6      - name: TextProcessor
+7        num_replicas: 1</code></pre>
+<p><strong>2. 构建你的外部扩缩器。</strong> 你可以写一个简单的 Python 客户端，按任何你选定的逻辑为 deployment 扩缩。例如，下面是一个预测式扩缩器：工作时段增副本、下班后缩容：</p>
+<pre><code>1target = 10 if 9 &lt;= hour &lt; 17 else 3
+2requests.post(
+3    f&quot;{SERVE_ENDPOINT}/api/v1/applications/{app_name}/deployments/{deployment_name}/scale&quot;,
+4    json={&quot;target_num_replicas&quot;: target},
+5)</code></pre>
+<p>这段逻辑可以放在独立脚本、cron 任务，甚至一个定时检查指标并触发扩缩事件的云函数里。</p>
+<p>把扩缩暴露为 API 后，Ray Serve 让你能把扩缩决策融入更广的运维生态——从业务工作流到 MLOps 流水线。这是让扩缩从&quot;负载驱动&quot;迈向&quot;意图驱动&quot;的有力一步。</p>
+<h2><strong>组合起来</strong></h2>
+<p>异步推理、自定义请求路由与自定义自动扩缩，都建立在 Serve 既有的多模型与流水线服务基础之上。这些新增让 Serve 更<strong>可编程、更可适配</strong>，给开发者更深的应用行为控制。</p>
+<p>借助这些特性，团队可以：</p>
+<ul><li>更安全地处理长时或异步负载</li><li>按应用特定逻辑或模型行为路由请求</li><li>用反映真实性能需求的指标扩缩副本</li></ul>
+<p>Serve 持续弥合模型开发与生产之间的鸿沟，坚持让系统保持 Pythonic、可组合，并默认具备可扩展性。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>发布 Ray Direct Transport：Ray Core 支持 RDMA（上篇）</title>
+      <link>https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core</guid>
+      <pubDate>Mon, 03 Nov 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Announcing Ray Direct Transport: RDMA Support in Ray Core (Part 1)</description>
+      <content:encoded><![CDATA[<h1>发布 Ray Direct Transport：Ray Core 支持 RDMA（上篇）</h1>
+<p>作者：Stephanie Wang、Qiaolin Yu、Dhyey Shah、Ricardo Decal 和 Richard Liaw | 2025 年 11 月 3 日</p>
+<p><em>Tl;dr：Ray Direct Transport 通过 RDMA 支撑的传输层，让 Ray 中的 GPU 传输快速而直接。学习如何用这个 API 为 LLM 强化学习等用例构建分布式系统。</em></p>
+<p>由于需要<strong>灵活编排分布式 GPU</strong>，Ray 在 LLM 强化学习（RL）领域迎来了大规模采用。Ray 提供分布式编排 API，让 RL 基础设施构建者可以组合训练与推理引擎、实现不同的放置与调度策略，并在不同框架和工具之间传输 rollout 数据与权重。</p>
+<p>Ray 的 API 简化了编排，但许多 RL 负载需要在 <strong>GPU 之间高效处理和传输大张量</strong>，而这并不能被 Ray 基于 CPU 的对象存储很好支持。Ray 对象存储对驻留 CPU 内存的对象提供高带宽共享读取，却无法利用 Infiniband、NVLink 这类 GPU 到 GPU 直传的高性能通道。</p>
+<p>今天我们推出 <strong>Ray Direct Transport（RDT）</strong>——Ray Core 的新特性，让用户能轻松利用 NVLink 或基于 Infiniband 的 RDMA（远程直接内存访问）等高带宽 GPU 间通信机制。使用 RDT，只需改动几行代码，GPU-GPU 传输就能比 Ray 原生对象存储<strong>快最多 1000 倍</strong>。</p>
+<p><em>Ray Direct Transport - 图 1</em></p>
+<p>为说明其工作方式，我们先介绍 LLM 强化学习的系统需求，然后演示如何用 RDT API 写一个能塞进单块 GPU 的简单 RL 训练脚本。我们用 RDT 管理 worker 间的数据传输，并展示如何在 <a href="https://developer.nvidia.com/nccl">NCCL</a> 与 <a href="https://github.com/ai-dynamo/nixl/blob/main/README.md">NIXL</a> 等库之间切换通信后端。</p>
+<p>现在就可以用 <a href="https://github.com/ray-project/ray/releases/tag/ray-2.51.1">Ray 2.51.1</a> 试用 RDT，从<a href="https://docs.ray.io/en/latest/ray-core/direct-transport.html">文档</a>开始。</p>
+<h2>LLM 强化学习的系统需求</h2>
+<p>与其他负载相比，LLM 强化学习有一套独特的系统需求。</p>
+<p><em>Ray Direct Transport - 图 2</em></p>
+<p>具体而言，RL 训练循环内有两个通信密集的步骤：</p>
+<ul><li><em>权重同步</em>：从训练框架到推理框架。每个训练 step 产生新的模型权重，框架需要把更新后的权重发给每个推理引擎副本。对大模型与集群，这可能是数百 GB 乃至 TB 级的数据传输。</li><li><em>Rollout 数据传输</em>：从推理到训练。纯文本模型产生的数据相对小，但对多模态模型这可能成为性能问题。</li></ul>
+<p>我们构建 RDT，以支持<strong>通过专用数据传输层高效传输大对象</strong>——尤其是那些用 RDMA 削减软件开销的传输：</p>
+<ul><li><em>大对象：</em> 随着模型增大，每个训练 step 所需的数据传输量急剧上升。因此减少不必要的数据拷贝、序列化等软件开销至关重要。</li><li><em>专用数据通道：</em> 现代 GPU 常配备 NVIDIA NVLink 这类高带宽互联，能大幅加速数据传输。同时，最快的传输方式因集群而异。用户应当能轻松选择并高效利用每个节点上可用的传输。</li></ul>
+<p>RDT 支持这些用例的方式是：让你用标准 Ray API 声明 actor 任务之间的数据依赖，但由你选择数据传输用哪种通道。当前 RDT 支持 <a href="https://github.com/pytorch/gloo">Gloo</a> 与 NVIDIA 的 <a href="https://developer.nvidia.com/nccl">NCCL</a>、<a href="https://github.com/ai-dynamo/nixl/blob/main/README.md">NIXL</a> 库；未来版本将支持 CUDA IPC 等其他通道，并把传输层做成可插拔，允许自带 transport。</p>
+<h2>深入 Ray Direct Transport</h2>
+<p>先了解 API 如何工作。我们基于 <a href="https://docs.ray.io/en/latest/ray-core/key-concepts.html">Ray Core API</a>，为 RDT 对象添加注解。</p>
+<p><em>图：Ray Direct Transport 架构图。Actor 任务可以返回与加载 GPU 张量。Actor 绕过 Ray 对象存储，用第三方 RDMA 通道（如 NVIDIA NCCL）直接交换数据。Driver 持有 RDT 对象元数据并协调传输。</em></p>
+<p><em>Ray Direct Transport - 图 3</em></p>
+<p><strong>注：</strong> 截至 Ray v2.50，RDT 仅对 Ray actor 可用，且只有 <code>torch.Tensor</code> 数据会经 RDT 通道传输。如果 <code>torch.Tensor</code> 嵌套在其他 Ray 对象里（例如 actor 返回一个 <code>torch.Tensor</code> 列表），非 <code>torch.Tensor</code> 数据仍会经 Ray 对象存储传输。</p>
+<p>开始：定义一个 actor 类与一个返回 <code>torch.Tensor</code> 的任务：</p>
+<pre><code>1import torch
+2import ray
+3
+4@ray.remote
+5class MyActor:
+6    def random_tensor(self):
+7        return torch.randn(1000, 1000)</code></pre>
+<p>接着，用 <code>@ray.method(tensor_transport=transport_mode)</code> 装饰该 actor 任务，transport mode 可以是 &quot;nccl&quot;、&quot;nixl&quot;、&quot;gloo&quot; 或 &quot;object_store&quot;。这个例子我们用 <a href="https://github.com/ai-dynamo/nixl">NIXL</a>，它支持 GPU-GPU 与 CPU-CPU 传输。</p>
+<pre><code>1@ray.remote
+2class MyActor:
+3    @ray.method(tensor_transport=&quot;nixl&quot;)
+4    def random_tensor(self):
+5        return torch.randn(1000, 1000)</code></pre>
+<p>这个装饰器可以加在任何返回 <code>torch.Tensor</code>、或返回嵌套在其他 Python 对象中的 <code>torch.Tensor</code> 的 actor 任务上。加上这个装饰器后，Ray 的行为会发生如下变化：</p>
+<ul><li>返回张量时，Ray 存的是张量的<em>引用</em>，而不是把它拷贝进基于 CPU 的 Ray 对象存储。</li><li>当 <code>ray.ObjectRef</code> 被传给另一个任务时，Ray 会用 NIXL 把张量传给目标任务。</li></ul>
+<p>注意，要让第（2）点生效，<a href="https://docs.ray.io/en/latest/ray-core/api/doc/ray.method.html#ray.method"><code>@ray.method(tensor_transport)</code></a> 装饰器只需加在<em>返回</em>张量的 actor 任务上；不要把它加在<em>消费</em>张量的 actor 任务上（除非那些任务也返回张量）。本例还假设张量的生产方与消费方都装了 NIXL。<code>pip install nixl</code> 是最简单的安装方式；要最佳性能，请查看<a href="http://github.com/ai-dynamo/nixl/tree/main/contrib">NIXL 源码构建说明</a>。</p>
+<p>现在就可以创建 RDT 对象并在 actor 之间传递。完整示例：</p>
+<pre><code>1import torch
+2import ray
+3
+4@ray.remote
+5class MyActor:
+6    @ray.method(tensor_transport=&quot;nixl&quot;)
+7    def random_tensor(self):
+8        return torch.randn(1000, 1000)
+9
+10    def sum(self, tensor: torch.Tensor):
+11        return torch.sum(tensor)
+12
+13sender, receiver = MyActor.remote(), MyActor.remote()
+14
+15# The tensor will be stored by the `sender` actor instead of in Ray's object
+16# store.
+17tensor = sender.random_tensor.remote()
+18result = receiver.sum.remote(tensor)
+19print(ray.get(result))</code></pre>
+<p>当 <code>ray.ObjectRef</code> 被传给另一个任务时，Ray 会用 Gloo 把张量从源 actor 直接传给目标 actor，而不是走默认对象存储。注意 <a href="https://docs.ray.io/en/latest/ray-core/api/doc/ray.method.html#ray.method"><code>@ray.method(tensor_transport)</code></a> 装饰器只加在<em>返回</em>张量的任务上；一旦加上该提示，接收方的 actor 任务 <code>receiver.sum</code> 会自动用 Gloo 接收张量。本例中，由于 <code>MyActor.sum</code> 没有 <a href="https://docs.ray.io/en/latest/ray-core/api/doc/ray.method.html#ray.method"><code>@ray.method(tensor_transport)</code></a> 装饰器，它返回 torch.sum(tensor) 时会走默认 Ray 对象存储通道。</p>
+<p>更多示例（包括如何使用 <code>ray.put</code> 与基于集合通信的传输）见<a href="https://docs.ray.io/en/latest/ray-core/direct-transport.html">文档</a>。</p>
+<p><em>图：使用 <code>ray.put</code> 时，调用方代替 driver 的位置，同时持有 RDT 对象的数据与元数据。</em></p>
+<p><em>Ray Direct Transport - 图 4</em></p>
+<h2>性能</h2>
+<p>RDT 能显著加速 Ray actor 之间的对象传输。下面是不同 GPU 张量传输通道随对象大小变化的基准性能。基准在某个 actor 上创建 CUDA 张量，发给同节点另一块 GPU 上的第二个 actor；第二个 actor 把张量之和返回 driver。我们测量在两个 actor 上提交并完成任务的端到端时间，使用 2 块 NVIDIA H100 GPU。</p>
+<p><em>Ray Direct Transport - 图 5</em></p>
+<p>如预期，Ray 对象存储因 CPU 与 GPU 之间的拷贝而随对象大小扩展性很差；RDT 则利用 GPU 间高速链路把传输显著加速。</p>
+<h2>RL 示例</h2>
+<p>接下来演示如何用 RDT 在一个极简 RL 示例中加速权重同步。后续博客中，我们会把示例扩展至 RDT 用于 rollout 数据传输，并支持多 GPU LLM。</p>
+<p>我们的极简 RL 示例仿照用 RL 训练 LLM 的数据流。具体地，我们用 Group Relative Policy Optimization（GRPO）算法解一个玩具问题：我们的&quot;环境&quot;随机生成一个二维方向向量，模型必须预测八个罗盘方向中哪个与该向量最接近：</p>
+<p><em>Ray Direct Transport - 图 6</em></p>
+<p>GRPO 是训练 LLM 中流行起来的 RL 算法。它对每个输入生成一个<em>组</em>输出，并计算每个输出相对其组内平均奖励的<em>优势</em>。算法限制当前策略模型的预测不能与同模型此前版本差异过大，以稳定训练、避免对过往经验的&quot;灾难性遗忘&quot;。</p>
+<p>下图展示本例涉及的各个 Ray actor 及每个 actor 所需资源。</p>
+<p><em>Ray Direct Transport - 图 7</em></p>
+<p>每条箭头把一个张量从一个 actor 移到另一个。RDT 可以应用于其中任何数据传输，本例我们只把它用在 Learner → Generator 的传输上，因为那里需要 GPU 到 GPU 拷贝。</p>
+<p>应用的详细步骤：</p>
+<ul><li>[CPU] &quot;环境&quot;生成随机二维向量。</li><li>[GPU] <em>Generator</em> 策略预测哪个输入向量最接近 8 个罗盘方向之一：W、NW、N、NE、E、SE、S 或 SW。</li><li>[CPU] <em>Scorer</em> 用余弦相似度解析地计算奖励。</li><li>[CPU] 打过分的样本被加入 <em>ReplayBuffer</em>。ReplayBuffer 让模型能从过往经验学习。</li><li>[GPU] <em>Learner</em> 模型从 replay buffer 采样，用 GRPO 算法更新权重。</li><li>[GPU] <em>Learner</em> 把更新后的权重发给 <em>Generator</em>，完成一个训练 step。</li></ul>
+<p>为简洁，本文只展示训练脚本的关键部分。完整训练代码见<a href="https://github.com/ray-project/ray/blob/c4f0c24210f26df9700daddf1f02a7302ae82488/doc/source/ray-core/examples/rdt/grpo_contextual_bandits.py">这里</a>。</p>
+<p>每个训练 step，环境随机采样一批二维单位向量。这些状态向量是 Generator actor 的输入。策略模型以这些二维状态为输入，输出八个可能动作上的 logits。</p>
+<pre><code>1# The number of actions to sample for each state.
+2GROUP_SIZE = 10
+3
+4@ray.remote(num_gpus=1)
+5class Generator:
+6    def __init__(self, scorer): ...
+7
+8    def generate(self, states: torch.Tensor):
+9        # states are randomly sampled unit vectors.
+10        logits = self.model(states.cuda())
+11        dist = Categorical(logits=logits)
+12        actions = dist.sample((GROUP_SIZE,))
+13        logps = dist.log_prob(actions)
+14        # Move tensors to CPU and send to the Scorer.
+15        slice_batch = {
+16            &quot;policy_version&quot;: self.policy_version,
+17            &quot;state&quot;: states.detach().cpu(),
+18            &quot;actions&quot;: actions.transpose(0, 1).contiguous().detach().cpu(),
+19            &quot;old_logps&quot;: logps.transpose(0, 1).contiguous().detach().cpu(),
+20            }
+21        self.scorer.enqueue_trajectory_batch.remote(slice_batch)
+22
+23    def update_weights(self, cuda_weights):
+24        # Recieve CUDA tensors from the Learner and update the model.
+25        self.model.load_state_dict(cuda_weights).eval()
+26        self.policy_version += 1</code></pre>
+<p>Scorer actor 收到 Generator 发来的 CPU 张量字典，用动作与原始状态向量的点积计算奖励。随后 Scorer 把打过分的轨迹发给 ReplayBuffer actor（使用默认 Ray 对象存储）。</p>
+<pre><code>1@ray.remote(num_gpus=1)
+2class Scorer:
+3    def __init__(self, replay_buffer):
+4        self.replay_buffer = replay_buffer
+5
+6    def enqueue_trajectory_batch(self, batched_slices: dict):
+7        rewards = ...  # Score trajectories and send to ReplayBuffer.
+8        self.replay_buffer.put.remote(dict(policy_version=policy_version,
+9                state=batched_slices[&quot;state&quot;],
+10                actions=batched_slices[&quot;actions&quot;],
+11                old_logps=batched_slices[&quot;old_logps&quot;],
+12                rewards=rewards
+13        ))
+14</code></pre>
+<p>ReplayBuffer actor 把打过分的样本存进自己的本地堆内存，并暴露另一个方法供 Learner 从缓冲区采样。</p>
+<pre><code>1@ray.remote
+2class ReplayBuffer:
+3    def __init__(self): 
+4        self.storage = []
+5
+6    def put(self, slice: dict[str, torch.Tensor]):
+7        self.storage.append(slice)
+8
+9    def sample_from(self, n: int) -&gt; list[dict[str, torch.Tensor]]: ...
+10</code></pre>
+<p>Learner actor 从 ReplayBuffer 与当前策略采样，做 GRPO 式权重更新：</p>
+<pre><code>1@ray.remote(num_gpus=1)
+2class Learner:
+3    def __init__(self, replay_buffer): ...
+4    def step(self):
+5        # Sample from ReplayBuffer
+6        slices: list[TrajectorySlice] = ray.get(
+7          self.replay_buffer.sample_from.remote(BATCH_SIZE)
+8        )
+9        # Perform GRPO update.
+10        ...
+11</code></pre>
+<p>最后，我们在 Learner 上暴露一个获取当前模型权重的方法，用来与 Generator 同步权重。</p>
+<pre><code>1@ray.remote(num_gpus=1)
+2class Learner:
+3    @ray.method(tensor_transport=&quot;nixl&quot;)
+4    def get_weights(self):
+5        return self.model.state_dict()</code></pre>
+<p>注意这里我们加了 <code>@ray.method(tensor_transport=&quot;nixl&quot;)</code> 装饰器，让权重传输走 RDT。底层上，这通过 <a href="https://openucx.org/">UCX 库</a>做单边 RDMA 读，绕过 CPU 内存。没有这个装饰器，Ray 会把权重经 Ray 对象存储传输。</p>
+<p>现在把一切组合起来：实现一个 Ray driver 程序，执行&quot;one step off policy&quot;的异步训练循环——在当前权重上并行启动生成与下一个 Learner step。每次 Learner 更新后，我们把权重同步回 Generator，确保生成至多落后一个策略版本。</p>
+<pre><code>1# Instantiate one instance of each actor.
+2replay_buf = ReplayBuffer.remote()
+3learner = Learner.remote(replay_buf)
+4scorer = Scorer.remote(replay_buf)
+5generator = Generator.remote(scorer)
+6
+7# Initialize the generator and replay buffer.
+8generator.update_weights.remote(learner.get_weights.remote()
+9generator.generate.remote(sample_unit_vector(BATCH_SIZE))
+10# Training loop.
+11for i in range(total_steps):
+12    states = sample_unit_vector(batch_size=BATCH_SIZE)
+13    generator.generate.remote(states)
+14    # Launch the next learner step in parallel with generation.
+15    learner.step.remote()
+16    # Update the generator with new weights.
+17    ray.get(generator.update_weights.remote(learner.get_weights.remote()))
+18</code></pre>
+<p>这里我们依赖 Ray 的 <a href="https://docs.ray.io/en/latest/ray-core/actors/task-orders.html">actor 任务顺序保证</a>，让 generator 在权重更新与生成之间正确交替。为简单起见，我们用 <code>ray.get</code> 阻塞在 Generator.update_weights 任务上，确保 Generator 在 Learner 开始下一个 step 前已收到完整权重；否则 Generator 可能收到部分更新的权重。避免 driver 阻塞调用的替代方法见完整训练代码<a href="https://github.com/ray-project/ray/blob/c4f0c24210f26df9700daddf1f02a7302ae82488/doc/source/ray-core/examples/rdt/grpo_contextual_bandits.py">这里</a>。</p>
+<p>在 NVIDIA B200 节点上，用默认 Ray 对象存储完成权重传输时每个 step 约 188ms。加上 <code>@ray.method(tensor_transport=&quot;nixl&quot;)</code> 装饰器后，每个 step 的运行时间降到 81ms——<strong>改一行代码，提速 2.3 倍</strong>！</p>
+<h2>下一步</h2>
+<p>RDT 处于 alpha 阶段，我们积极寻求反馈！进行中的特性包括性能增强、对 CUDA IPC 等替代张量传输的支持，以及自带 transport 的支持。我们的目标是达到与 Ray Core API 几乎同等的覆盖面，但当前有几个需要知晓的关键限制：</p>
+<ul><li>仅支持 Ray actor，不支持非 actor 的 Ray 任务。</li><li>尚未兼容 <a href="https://docs.python.org/3/library/asyncio.html">asyncio</a>。进展请关注<a href="https://github.com/ray-project/ray/issues/56398">跟踪 issue</a>。</li><li>RDT 对象是<em>可变的</em>。这意味着 Ray 只持有张量的引用，在请求传输前不会拷贝其值。如果用户代码在传输发生前写入张量，接收方可能看到部分更新。这与 Ray 对象存储不同——后者总是按值拷贝数据以确保不可变。</li></ul>
+<p>更多用法见<a href="https://docs.ray.io/en/latest/ray-core/direct-transport.html">文档</a>，bug 报告或反馈请<a href="https://github.com/ray-project/ray/issues">提 issue</a>，并在 <a href="https://www.anyscale.com/ray-summit/2025">Ray Summit</a> 与我们见面！本系列的第二篇将扩展示例，演示 RDT 用于 rollout 数据传输以及多 GPU LLM 的 RL 训练。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>阿里云上的 Ray：构建机器学习平台</title>
+      <link>https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform</guid>
+      <pubDate>Thu, 12 Jun 2025 00:00:00 +0000</pubDate>
+      <description>原文标题：Ray on Alibaba Cloud: Building an ML Platform</description>
+      <content:encoded><![CDATA[<p>博客详细信息</p>
+<h1>阿里云上的 Ray：构建 ML 平台</h1>
+<p>由</p>
+<p>吴坤（阿里云）</p>
+<p>|</p>
+<p>2025 年 6 月 12 日</p>
+<p>人工智能的发展速度比以往任何时候都快。不同的用例需要不同的技术和基础设施。例如，批量推理需要异构计算资源（用于 I/O 的 CPU 节点和用于推理的 GPU 节点）以最大限度地提高性能。此外，RLHF 通常涉及集成 LLM 推理和训练框架。因此，灵活的机器学习 (ML) 基础设施对于在生产中可靠地部署 AI 工作负载至关重要。</p>
+<p>Ray 是一种流行的 AI 计算引擎，为世界各地公司的 ML 基础设施提供支持。 <a href="https://www.alibabacloud.com/en/product/kubernetes?_p_lc=1">阿里云 Kubernetes 容器服务</a> (ACK) 以一等公民的身份支持 Ray，帮助用户加速 Ray 从概念验证到生产的旅程。 Ray 在阿里云上被 <a href="https://www.alibabacloud.com/blog/kimi-large-model-based-massive-data-preprocessing-practice-of-moonshot-ai_602119">Moonshot AI</a> 等公司广泛用于大规模数据处理和其他计算密集型 AI 工作负载。</p>
+<p>本博客将简要介绍 Ray 和 KubeRay，以及在 ACK 上支持 Ray 的相关工作。</p>
+<h4>链接<strong>雷</strong></h4>
+<p>Ray是一个开源分布式计算引擎。它可以为任何规模的任何加速器上的任何分布式工作负载精确编排基础设施。 Ray 的架构由三层组成：Ray Core、Ray AI Libraries 和 Ray Deployment。</p>
+<p>图片1</p>
+<h4>链接<strong>雷核心</strong></h4>
+<p>Ray Core 是一个强大的分布式计算引擎，提供一小组用于构建和扩展分布式应用程序的基本原语（<strong>任务、参与者和对象</strong>）。 Ray 任务、参与者和对象与函数、类和变量（这些是编程的基本组成部分）具有一对一的映射关系，因此用户可以使用 Ray Core API 编写分布式应用程序，就像在笔记本电脑上编程一样。下面是 Ray Core API 的示例：</p>
+<pre><code>1import ray
+2import numpy as np
+3
+4# Define a task that sums the values in a matrix.
+5@ray.remote
+6def sum_matrix(matrix):
+7    return np.sum(matrix)
+8
+9# Call the task with a literal argument value.
+10print(ray.get(sum_matrix.remote(np.ones((100, 100)))))
+11# -&gt; 10000.0
+12
+13# Put a large array into the object store.
+14matrix_ref = ray.put(np.ones((1000, 1000)))
+15
+16# Call the task with the object reference as an argument.
+17print(ray.get(sum_matrix.remote(matrix_ref)))
+18# -&gt; 1000000.0</code></pre>
+<p>此示例定义了一个 Ray 任务 <strong>sum_matrix</strong>，用于对 NumPy 矩阵中的值求和。在第一个示例中，使用文字数组调用任务。在第二种情况下，首先使用 <strong>ray.put</strong> 将数组存储在 Ray 的对象存储中，然后使用对象引用调用任务。借助 Ray Core，用户可以进行编程，而无需担心哪些节点托管 Ray 任务、参与者和对象，或者它们如何相互交互。</p>
+<h4>链接<strong>Ray AI 库</strong></h4>
+<p>Ray 生态系统包括 Ray Data、Ray Train、Ray Tune、Ray Serve 和 RLlib 等 AI 库，涵盖从数据处理到训练、调优到服务的机器学习生命周期。这些库构建在 Ray Core 之上，使开发人员能够有效利用 Ray 的分布式执行功能。</p>
+<h4>链接<strong>Ray 部署</strong></h4>
+<p>Ray 支持虚拟机和 Kubernetes 作为底层容器编排器。下一节将讨论官方 Ray on Kubernetes 解决方案 KubeRay。</p>
+<h2>链接<strong>KubeRay</strong></h2>
+<p>KubeRay 是 Ray Kubernetes 运算符，可简化 Kubernetes 上 Ray 集群和相关应用程序的生命周期管理。 KubeRay 使<strong>数据科学家和机器学习科学家</strong>能够专注于他们的机器学习逻辑，而<strong>基础设施工程师</strong>则专注于 Kubernetes。</p>
+<p>库伯雷</p>
+<p>也就是说，数据科学家可以专注于开发 Python 脚本，而不必担心 Kubernetes 的工作原理，而基础设施工程师可以专注于将 KubeRay 与 Kubernetes 生态系统工具集成，以实现可观察性、流量管理和安全性。</p>
+<p>KubeRay 针对不同的使用模式提供了三个 API，即自定义资源定义 (CRD)：RayCluster、RayJob 和 RayService。</p>
+<ul><li><strong>RayCluster</strong>：KubeRay 完全管理 RayCluster 的生命周期，包括集群创建、删除、自动缩放和容错。</li><li><strong>RayJob：</strong>KubeRay 自动创建 RayCluster，并在集群准备就绪时提交作业。您还可以将 RayJob 配置为在作业完成后自动删除 RayCluster。</li><li><strong>RayService：</strong>RayService 由两部分组成：RayCluster 和一个或多个 Ray Serve 应用程序。 RayService 为 RayCluster 和高可用性提供零停机升级。</li></ul>
+<pre><code>1helm repo add kuberay https://ray-project.github.io/kuberay-helm/
+2helm repo update
+3
+4# Deploy KubeRay operator
+5helm install kuberay-operator kuberay/kuberay-operator
+6# Deploy a RayCluster
+7helm install raycluster kuberay/ray-cluster</code></pre>
+<p>该示例演示了如何在运行的 Kubernetes 集群中使用 KubeRay 的 RayCluster CRD 轻松启动 Ray 集群，只需几个命令。有关更多详细信息，请参阅“<a href="https://docs.ray.io/en/latest/cluster/kubernetes/getting-started/raycluster-quick-start.html">RayCluster 快速入门</a>”文档。</p>
+<h2>链接<strong>Ray on ACK</strong></h2>
+<h4>链接<strong>概述</strong></h4>
+<p><a href="https://www.alibabacloud.com/en/product/kubernetes?_p_lc=1">阿里云 Kubernetes 容器服务</a> (ACK) 支持 KubeRay 作为托管组件，具有以下优势，可帮助用户将 AI 工作负载从概念验证快速转移到生产。</p>
+<ul><li><strong>ACK 中的弹性计算：</strong> ACK 支持多种计算类型，以满足跨用例的不同工作负载要求。</li><li><strong>可观察性：</strong>ACK 简化了持久日志和指标，并支持使用 Ray History Server 进行事后分析，以便用户可以轻松了解 Ray 集群和应用程序的状态。</li><li><strong>安全性：</strong> ACK 团队基于专门的基础映像构建 KubeRay 映像，以最大程度地减少攻击面。</li><li><strong>零运维：</strong>ACK为KubeRay算子配置自动Vertical Pod Autoscaling（VPA），确保资源扩展以减少故障。 ACK还处理组件升级和错误修复，使用户能够专注于应用程序开发。</li><li><strong>高可用性部署：</strong> ACK 确保 KubeRay 操作员分布在至少两个可用区域中，从而提供针对区域级故障的恢复能力。</li></ul>
+<p>##链接<strong>ACK中的弹性计算</strong></p>
+<p>确认</p>
+<p>ACK集群支持通过节点池进行节点管理，支持在不同场景下使用多种计算类型：智能计算的灵君节点、按量付费或订阅的弹性计算服务（ECS）实例、按秒计费的容器计算服务（ACS）实例以实现可扩展性。这可确保 ACK 集群满足跨用例的不同工作负载要求。</p>
+<h2>链接<strong>可观察性</strong></h2>
+<h4>链接<strong>日志记录</strong></h4>
+<p><strong>KubeRay 日志：</strong>ACK 集群自动从控制平面的 KubeRay 操作员收集日志。用户可以通过控制平面组件日志检查这些日志，以验证操作员的状态。</p>
+<p>KubeRay 日志</p>
+<p><strong>Ray日志：</strong>通过资源标签，用户可以将数据平面RayCluster中的日志收集到<a href="https://www.alibabacloud.com/help/en/sls/">简单日志服务（SLS）</a>。与自管理日志存储解决方案相比，SLS提供结构化日志查询和分析，无需基础设施维护，总体拥有成本（TCO）降低50%，SLA可用性高达99.99%，保证高可靠性。</p>
+<p>射线日志</p>
+<h4>链接<strong>指标</strong></h4>
+<p>默认情况下，ACK 集群与 Prometheus 监控功能集成。用户只需提交PodMonitor和ServiceMonitor配置即可实现ACK集群内数据面RayCluster监控数据的采集。然后可以通过统一的 Prometheus 界面查看所有 RayCluster 指标。</p>
+<p>指标</p>
+<h4>链接<strong>射线历史服务器：事后分析</strong></h4>
+<p>本机 Ray 仪表板仅在 Ray 集群运行时可用。一旦集群终止，用户将无法访问历史日志和监控数据。为了解决此限制，ACK 提供了 <strong>Ray History Server</strong>，它允许访问活动和终止的 RayCluster 自定义资源的仪表板。 History Server 仪表板提供与本机 Ray 仪表板一致的功能。它还提供与[应用程序实时监控服务（ARMS）]（https://www.alibabacloud.com/help/en/arms/product-overview/what-is-arms）自动集成的指标监控，无需手动部署Prometheus和Grafana。下图显示了如何访问和使用 History Server 仪表板。</p>
+<p>下图显示用户可以访问 Ray 历史记录服务器中活动和终止的 RayCluster 自定义资源的 Ray 仪表板。</p>
+<p>雷历史</p>
+<p>下图显示了 Ray 仪表板的镜像页面，如 Ray head Pod 上所示</p>
+<p>列表</p>
+<h2>链接<strong>生产案例研究</strong></h2>
+<p>本节使用实际用例来演示 Ray on ACK 的高级功能。在此用例中，客户面临三个核心挑战：</p>
+<ul><li>多个 RayJobs 的配额限制和优先级。</li><li>资源预留以处理突发工作负载（特别是 RayService 工作负载）。</li><li>RayJob 终止后 Ray 仪表板持久性。</li></ul>
+<p>通过利用 <a href="https://github.com/kube-queue/kube-queue">kube-queue</a> 集成进行排队和基于优先级的调度，以及 Ray 历史服务器，客户成功地在生产中操作了 Ray 工作负载，同时有效地利用了资源。有关更多详细信息，请参阅以下部分。</p>
+<h4>链接<strong>使用 ResourcePolicy API 进行智能计算编排</strong></h4>
+<p>正如前面<strong>“ACK 中的弹性计算”</strong>中提到的，阿里云提供了多种计算类型，这些类型在定价、可靠性、可用性、性能和计费模型方面有所不同。有效利用这些不同的计算资源需要复杂的调度方法。</p>
+<p>阿里云提供了ResourcePolicy API，通过定义Pod喜欢的节点类型的优先级来实现计算资源类型的编排。以下面的YAML为例，优先使用订阅型ECS实例，当ECS资源不足时，切换到按量付费的ACS实例。当与 Kubernetes Pod 自动缩放器（例如 Ray Autoscaler 和 Horizo​​ntal Pod Autoscaler）结合使用时，此方法非常适合处理流量峰值。</p>
+<pre><code>1apiVersion: scheduling.alibabacloud.com/v1alpha1
+2kind: ResourcePolicy
+3metadata: 
+4  name: resourcepolicy-example
+5  namespace: default
+6spec:
+7  selector:
+8    key1: value1
+9  units:
+10  - resource: ecs
+11  - resource: acs</code></pre>
+<p>客户部署基于 cron 的数据处理 RayJob 自定义资源和长期运行的 RayService ML 推理工作负载。 RayJobs 优先使用基于订阅的 ECS 实例，在短缺期间回退到使用 ACS 实例作为补充计算。对于 RayService 工作负载，客户专门使用订阅 ECS 实例，保留额外容量来支持快速 RayCluster 自动缩放，以处理突发流量。更多详情请参见下图。</p>
+<p>智能计算</p>
+<p>####链接<strong>使用kube-queue支持多租户资源管理</strong></p>
+<p>ACK 通过 kube-queue 支持任务排队和配额。通过配额和队列，用户可以为特定团队或服务定义有保证的资源配额，并设置上限以防止过度使用，确保公平性和可扩展性。</p>
+<p>客户创建了一个配额树，如下图所示，以在不同团队和不同类型的工作负载之间高效共享资源。</p>
+<ul><li>每个团队都有自己的最小和最大资源配额，以确保最小可用性和最大过度使用资源。</li><li>每个配额都有自己的队列，并且在创建期间定义的更高优先级的 RayJobs 将根据每个队列内的优先级执行。</li></ul>
+<p>最后一张图片</p>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#kuberay">KubeRay</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#ray-on-ack">Ray 上的 ACK</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#elastic-compute-in-ack">ACK中的弹性计算</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#observability">可观测性</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#product-case-study">生产案例研究</a></li></ul>
+<p>####分享</p>
+<p>####标签</p>
+<p>法学硕士</p>
+<h4>注册产品更新</h4>
+<p>####推荐内容</p>
+<h4>将编码代理成本降低 90%：在 Anyscale 上使用 Ray + vLLM 提供安全的 LLM 服务</h4>
+<h4>Azure 上的 Anyscale 全面可用：使企业能够拥有完整的 AI 循环，而不仅仅是推理</h4>
+<h4>Ray Summit 2026：物理 AI、RL 以及运行它们的基础设施</h4>
+<h2>立即探索 Anyscale</h2>
+<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
+<p>免费开始</p>
+<p>与专家交谈</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Ray Compiled Graphs：原生 GPU 通信加持的 AI 负载优化</title>
+      <link>https://anyscale.com/blog/announcing-compiled-graphs</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/announcing-compiled-graphs</guid>
+      <pubDate>Mon, 07 Oct 2024 00:00:00 +0000</pubDate>
+      <description>原文标题：Ray Compiled Graphs: Optimized AI Workloads with Native GPU Communication</description>
+      <content:encoded><![CDATA[<h1>Ray Compiled Graphs：原生 GPU 通信加持的 AI 负载优化</h1>
+<p>作者：Sang Cho、Sam Chan 和 Stephanie Wang | 2024 年 10 月 7 日</p>
+<h2>引言</h2>
+<p>随着 AI 模型的复杂度与规模持续攀升，围绕这些模型的工作负载与应用对底层软件基础设施和原语提出了新要求。不同于传统的 CPU 负载，训练和推理这类大型 AI 模型负载绝大部分是 GPU 密集型的，往往需要在数十乃至数百块加速器之间进行分布式计算与协调。</p>
+<p>Compiled Graphs 将任务提交开销降到极低（约 50 微秒），而 Ray 标准任务提交开销为 1~2 毫秒。对于以吞吐为主的长时间运行负载（如数据处理或批处理），默认开销可以忽略；但对于亚秒级负载（如自回归 token 生成）则不可接受。</p>
+<p>Compiled Graphs 还支持原生 GPU 到 GPU 传输，同时自动解决死锁、让通信与计算重叠。没有 Compiled Graphs 时，用户必须借助 NCCL 等带外通信原语才能实现低延迟 GPU 传输。</p>
+<p>这些改进为 Ray 程序开启了令人兴奋的新机会：</p>
+<ul><li>Ray Compiled Graphs 可以在 actor 之间以<strong>毫秒级延迟</strong>传输大型张量</li><li>使用 Compiled Graphs，你可以用<strong>不到 70 行代码</strong>表达复杂的流水线调度算法，同时在 4×A100 GPU 上运行 Llama 7B 模型时达到与 Deepspeed 等最先进库相当的性能</li><li>基于 Compiled Graphs、采用异构并行与 GPU 的多模态训练负载，<strong>相比 PyTorch 标准 FSDP 实现取得了 43% 的 token-per-dollar 效率提升</strong></li></ul>
+<h2>Ray 中的 Compiled Graphs 介绍</h2>
+<p>Compiled Graphs 是 Ray 的新特性，提供类似经典 Ray Core 的 API，具备三大优势：</p>
+<ul><li>降低重复任务图的系统开销</li><li>通过 NVIDIA NCCL 原生支持 GPU-GPU 通信</li><li>优化调度以避免死锁，并充分利用计算与通信资源</li></ul>
+<p>与标准 Ray API 相比，Compiled Graphs 以<em>静态计算图</em>的形式表达。</p>
+<p>利用程序的静态特性，Ray 可以提前为任务分配资源并在后续调用中复用。此外，Ray 可以预先正确分配内存，以利用要求收发双方对称的 NCCL 等优化通信原语。如下所示，Ray Compiled Graphs 可将简单 GPU 张量传输的延迟最多改善 140 倍，CPU 数据传输改善 17 倍。</p>
+<p><strong>让我们深入了解机器学习负载中的一个常见模式：scatter-gather。</strong></p>
+<p>首先安装 compiled graphs：</p>
+<pre><code>1pip install -U &quot;ray[adag]&quot;</code></pre>
+<p>scatter-gather 是机器学习负载中常见的分布式计算模式：把相同输入发给多个 worker（Ray Actors），再收集所有 worker 的结果。例如张量并行推理中，程序把相同的 CPU 数据发给所有 actor，actor 将 CPU 数据搬到 GPU 并运行只加载了分片权重的 torch 模型。我们用 Compiled Graphs 来表达这个程序。</p>
+<p>先创建普通的 Ray actor，这里是 3 个：</p>
+<pre><code>1import ray
+2from time import perf_counter
+3
+4@ray.remote
+5class TensorProcessor:
+6  def fwd(self, tensor: str) -&gt; str:
+7    # some_gpu_ops(tensor.to(torch.device()))
+8    # In a typical application, this actor will move the 
+9    # tensor to GPU and run a torch module. 
+10    # We instead do nothing and return the string input immediately for simplicity.
+11    return tensor
+12
+13N = 3
+14actors = [TensorProcessor.remote() for _ in range(N)]</code></pre>
+<p>首先看看如何用普通 Ray 程序表达。</p>
+<pre><code>1# warmup actors
+2for _ in range(10):
+3    ray.get([actor.fwd.remote(&quot;hello&quot;) for actor in actors])
+4
+5s = perf_counter()
+6result = ray.get([actor.fwd.remote(&quot;hello&quot;) for actor in actors])
+7print(&quot;Normal ray programs took&quot;, (perf_counter() - s) * 1000, &quot;ms&quot;)
+8print(result)</code></pre>
+<p>然后，我们定义并编译一个把同一个输入占位符传给所有 actor 的 compiled graph。这里使用 Ray 的 DAG API，它以静态方式构建捕获计算图的中间表示。当输出节点多于一个时，需要使用 <a href="https://docs.ray.io/en/latest/ray-core/ray-dag.html#ray-dag-with-multiple-multioutputnode">MultiOutputNode</a> 语法包装输出。</p>
+<pre><code>1import ray.dag
+2
+3# Define a DAG for lazy execution.
+4with ray.dag.InputNode() as inp:
+5    # Bind each actor task to the same input placeholder.
+6    outputs = [actor.fwd.bind(inp) for actor in actors]
+7    dag = ray.dag.MultiOutputNode(outputs)</code></pre>
+<p>这会生成如下 Ray DAG：</p>
+<p>现在要使用 Compiled Graphs，只需调用 <code>experimental_compile</code> 命令。Ray 会预先分配运行该图所需的全部资源，相比标准动态运行时执行速度快得多：</p>
+<pre><code>1compiled_graph = dag.experimental_compile()
+2
+3# warmup actors
+4for _ in range(10):
+5    ray.get(compiled_graph.execute(&quot;hello&quot;))
+6
+7# Execute the DAG with different arguments:
+8s = perf_counter()
+9result = ray.get(compiled_graph.execute(&quot;hello&quot;))
+10print(&quot;Compiled Graphs took&quot;, (perf_counter() - s) * 1000, &quot;ms&quot;)
+11print(result)
+12# [&quot;hello&quot;, &quot;hello&quot;, &quot;hello&quot;]</code></pre>
+<p>就这样！你可以用同一个程序扩展负载规模。这些 API 在多节点场景下同样有效。</p>
+<p>底层机制上，资源被预先分配以降低执行期开销：</p>
+<ul><li>新的 Compiled Graphs 后端在编译时<strong>静态</strong>地为每个 actor 任务分配输入与输出缓冲区，而不再每次执行 DAG 时动态分配。这些缓冲区在<strong>执行</strong>时<strong>复用</strong>，actor 始终将结果直接<strong>推送</strong>给需要它的进程。</li><li>同一 Ray 节点上的所有 actor 共享同一块物理输入缓冲区，由 Ray Compiled Graphs 后端负责同步。这减少了任务参数序列化、为参数分配内存以及调用任务带来的单任务开销。</li><li>后端还会预先分配 actor 的执行循环。每个 actor 不再等待执行下一个任务的 RPC，而是在循环中等待通过已分配缓冲区传入的下一个 <code>echo</code> 任务的参数。</li></ul>
+<p>那么，如果想在不同 actor 任务之间流水线化执行呢？一个例子是<a href="https://docs.vllm.ai/en/latest/serving/distributed_serving.html">流水线并行推理</a>：把一个 actor 的中间输出经共享内存传给下一个 actor，数据传输应与计算任务流水线化。我们可以在取回输出之前多次执行同一个 DAG，从而在不同 actor 间流水线化执行：</p>
+<pre><code>1# Teardown the previous dag.
+2compiled_graph.teardown()
+3with ray.dag.InputNode() as inp:
+4  for actor in actors:
+5    # Pass each actor task output as input to the next actor task.
+6    inp = actor.fwd.bind(inp)
+7  dag = inp</code></pre>
+<p>这会生成如下有向无环图（DAG）：</p>
+<p>我们可以这样编译并执行：</p>
+<pre><code>1compiled_graph = dag.experimental_compile()
+2# Call dag.execute() several times. The executions will be pipelined across the different actors.
+3refs = [compiled_graph.execute(f&quot;hello{i}&quot;) for i in range(N)]
+4# Get the results, flushing the pipeline.
+5for ref in refs:
+6  print(ray.get(ref))
+7# &quot;hello0&quot;
+8# &quot;hello1&quot;
+9# &quot;hello2&quot;</code></pre>
+<p>要演示 GPU-GPU 通信，可以构造一个向另一个 actor 发送张量的 actor。运行该示例请确保集群中至少有 2 块 GPU。</p>
+<pre><code>1import ray
+2import ray.dag
+3
+4import torch
+5
+6assert ray.cluster_resources().get(&quot;GPU&quot;) &gt;= 2, (&quot;Insufficient number of GPUs available in the cluster.&quot;)
+7
+8@ray.remote(num_gpus=1)
+9class GPUSender:
+10  def send(self, shape):
+11    return torch.zeros(shape, device=&quot;cuda&quot;)
+12
+13@ray.remote(num_gpus=1)
+14class GPUReceiver:
+15  def recv(self, tensor: torch.Tensor):
+16    assert tensor.device.type == &quot;cuda&quot;
+17    return tensor.shape
+18
+19sender = GPUSender.remote()
+20receiver = GPUReceiver.remote()</code></pre>
+<p>接下来，定义并编译一个把 CUDA 张量从一个 actor 传给另一个 actor 的 compiled graph。借助下面的 <code>TorchTensorType</code> 类型提示，Ray 会在底层使用 NCCL，通过两块 GPU 之间的 GPU RDMA 传输张量。</p>
+<pre><code>1from ray.experimental.channel.torch_tensor_type import TorchTensorType
+2with ray.dag.InputNode() as inp:
+3  dag = sender.send.bind(inp)
+4  # You have to specify transport=&quot;nccl&quot;, otherwise, it uses shared memory to transfer GPU tensors.
+5  dag = dag.with_type_hint(TorchTensorType(transport=&quot;nccl&quot;))
+6  dag = receiver.recv.bind(dag)
+7
+8compiled_graph = dag.experimental_compile()
+9# Execute the DAG. Ray aDAG will orchestrate any NCCL ops.
+10assert ray.get(compiled_graph.execute((10, ))) == (10, )</code></pre>
+<p>更多细节请查看<a href="https://docs.google.com/document/d/1xDs-yIBFLXuqUDLou-_KELERkzWrmGWri6p_xG18SH4/edit#heading=h.kzrrbhon06yz">开发者指南</a>。</p>
+<h2>基准测试</h2>
+<p>我们在多种通信模式上比较了 Ray Core（图中标注为 &quot;Ray Standard Runtime&quot;）与 Ray Compiled Graphs。</p>
+<ul><li>Round Trip：构造一个 actor 反复向接收 actor 发送数据。</li><li>Scatter-Gather：driver 向所有 actor 发送数据，并收集各 actor 的结果。</li><li>Chain of tasks：构造一条 actor 流水线，每个 actor 从上一个 actor 接收数据并发送给下一个。</li></ul>
+<p>首先，为测量系统开销，我们在单节点与多节点上用 1 字节 CPU 数据运行上述计算模式的基准。以下基准运行在有 64 个 CPU 的 m5.16xlarge 实例上。</p>
+<p>从下图可见，单节点上的 round trip 通信最快可提速 17 倍，多节点上可提速 2.7 倍。</p>
+<p>对于更复杂的负载，如 scatter-gather 或任务链，<strong>我们看到 Ray Compiled Graphs 可将延迟最多改善 20 倍。</strong></p>
+<p>我们还比较了 Ray Core 与 Ray Compiled Graph 的 GPU 到 GPU 传输。我们在带 NVLink（A100）与不带 NVLink（A10G）的机器上，用 40MB CUDA 张量运行简单 round trip 基准，将张量传输 10 次并测量端到端延迟。</p>
+<p>默认情况下，Ray Core 既没有对 torch 张量的原生零拷贝序列化支持，也不使用 NCCL 通信。</p>
+<p>而 Ray Compiled Graph 在底层使用 NCCL 进行 GPU 到 GPU 传输以优化性能。在没有 NVLink 的 2 块 A10G 机器上，Ray Compiled Graphs 的张量传输延迟比 Ray Core 好 19 倍。<strong>在带 NVLink 的 A100 上，延迟可降低近 140 倍。</strong></p>
+<p>这些基准表明 compiled graphs 是强大的原语，能够打开一整类新兴 AI 应用。</p>
+<h2>使用场景</h2>
+<h3>更快的模型并行推理</h3>
+<p>我们已把<a href="https://github.com/vllm-project/vllm/issues/6556">compiled graphs 集成进 vLLM</a>——这个流行的开源 LLM 推理项目，使其可以用 Ray 实现张量并行与流水线并行推理。在流水线并行下，相比默认 NCCL 后端我们观察到 10-15% 的吞吐/延迟改善。</p>
+<h3>最先进的分布式训练</h3>
+<p>在分布式训练实验中，我们利用 Compiled Graphs 实现更复杂高效的训练策略。例如，通过使用异构设备与并行技术，我们显著提升了 CLIP 等多模态对比模型的训练吞吐。用原版 PyTorch 表达这样的程序要困难得多。</p>
+<p>具体而言，通过对文本编码器与视觉编码器施加不同的并行方法，并把较小的文本编码器放到性价比更高的 GPU 上，相比 PyTorch 标准 FSDP 实现，我们观察到<strong>训练吞吐提升 20%，token-per-dollar 效率提升 43%</strong>。</p>
+<p>我们还原型实现了多种流水线并行调度算法，如 afab、1f1b 和 zero bubble（<a href="https://arxiv.org/pdf/2401.10241">https://arxiv.org/pdf/2401.10241</a>）。用<strong>不到 70 行代码</strong>即可表达复杂的流水线调度算法，同时在 4×A100 GPU 上的 Llama 7B 模型达到与 Deepspeed 等最先进库相当的性能。我们计划用更大规模负载进一步提升流水线并行训练性能。</p>
+<p>我们计划针对这些用例撰写后续博文，敬请期待！</p>
+<h2>结语</h2>
+<p>请立即在最新版 Ray 上试用 Ray Compiled Graphs：<code>pip install “ray[adag]”</code>。该特性目前处于 alpha 阶段，仍在积极开发中。未来我们将分享更多关于如何使用 Ray Compiled Graphs 实现分布式推理与训练的内容。我们期待听到更多用例，也欢迎贡献！</p>
+<p>参与方式：</p>
+<ul><li>加入 <a href="https://www.ray.io/join-slack">ray.slack.com</a> 的 #ray-accelerated-dag 频道</li><li>在 <a href="https://github.com/ray-project/ray/issues?q=is%3Aissue+is%3Aopen+label%3Aaccelerated-dag">Github</a> 上查看我们的进行中的工作。</li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>在 Anyscale 上自动扩缩大型 AI 模型，速度最高提升 5.1 倍</title>
+      <link>https://anyscale.com/blog/autoscale-large-ai-models-faster</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/autoscale-large-ai-models-faster</guid>
+      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
+      <description>原文标题：Autoscaling Large AI Models up to 5.1x Faster on Anyscale</description>
+      <content:encoded><![CDATA[<h1>在 Anyscale 上将大型 AI 模型的自动扩缩容提速至多 5.1 倍</h1>
+<p>作者：Christopher Chou、Austin Kuo、Richard Liaw、Edward Oakes 和 Chris Sivanich | 2024 年 10 月 1 日</p>
+<p>最先进的 AI 模型体积逐月增大，GPU 依然贵得离谱，而 AI 从业者的时间又十分稀缺。把这几个因素放在一起看，结论很清楚：效率是 AI 应用的关键，无论处于开发阶段还是生产阶段。</p>
+<p>不幸的是，AI 从业者的常见经历是花大量时间干等：等实例启动、等容器镜像拉取、等模型加载。下文会讲到，在 Kubernetes 上用典型的 Ray Serve 配置为 <a href="https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct">Meta-Llama-3-70B-Instruct</a> 置备一个推理副本可能需要长达 10-12 分钟。</p>
+<p>在 Anyscale，我们对整个技术栈的扩容速度做了优化，使得 <strong>Meta-Llama-3-70B-Instruct 的自动扩缩容（autoscaling）在 Anyscale 平台上最快可比使用 KubeRay 在 Amazon Elastic Kubernetes Service（EKS）上运行同一应用快 5.1 倍</strong>。</p>
+<p>更快的扩容速度，是使用 Anyscale 平台的 AI 工程师和研究者的力量倍增器：他们在开发中可以快速迭代、避免空等，在生产中可以按照工作负载需求自动扩缩、避免资源闲置。</p>
+<h2>问题：大容量容器、大模型与昂贵的 GPU</h2>
+<p>以在 Kubernetes 上用 <a href="https://github.com/vllm-project/vllm">vLLM</a> 运行流行的开源大语言模型（LLM）<a href="https://huggingface.co/meta-llama/Meta-Llama-3-70B-Instruct">Meta-Llama-3-70B-Instruct</a> 为例。典型的启动流程大致如下：</p>
+<ul><li>创建 Pod，Kubernetes 集群自动扩缩器新增一个带 GPU 的节点：<strong>1-1.5 分钟</strong></li><li>从容器镜像仓库拉取容器镜像（约 12 GB，含 CUDA 与 vLLM 依赖）：<strong>4-5 分钟</strong></li><li>容器启动，vLLM 从云存储加载模型（FP16 下约 140 GB）：<strong>4-5 分钟</strong></li></ul>
+<p>累计下来，这意味着要等上<strong>最多 10-12 分钟</strong>才能让一份模型副本上线。当然，有多级缓存可以在同一硬件上加速后续启动，但 GPU 价格高企，不用的时候必须及时释放 GPU 机器。</p>
+<p>在开发中，这种等待会消耗 AI 从业者的生产力——他们发现自己一直在等实例拉起、等容器拉取、等模型下载。</p>
+<p>在生产中，扩容速度慢会导致过度置备。通常，自动扩缩策略是为了应对波动的入站流量模式而配置的：流量增大时扩起更多服务副本，流量减小时再缩下去。但如果响应流量增长而扩容耗时过长，现有副本就可能过载，导致响应延迟升高甚至失败。</p>
+<p>对此一个简单而常见的解法是：在稳态下多备一些副本以承接更高负载，同时在新副本上线的等待期内，随流量增加更激进地扩容。但当每个模型副本都需要昂贵的 GPU 才能运行时，这种做法很快就会代价高昂。</p>
+<p>理想情况下，在线服务系统能够快速扩容、对入站流量做出更敏捷的响应，同时避免 GPU 资源闲置。</p>
+<h2>Anyscale 自动扩缩容：全栈优化</h2>
+<p><a href="https://www.anyscale.com/platform">Anyscale Platform</a> 是一个全托管的 Ray 解决方案。基础设施的每一个部分都经过量身定制，以在使用 Ray 运行 AI 应用时提供最佳用户体验、高性能与成本效益。就扩容速度而言，这体现为几项关键优势：</p>
+<ul><li>Anyscale 控制平面与 Ray autoscaler 直接集成，能够快速响应资源请求并做出智能的自动扩缩决策。</li><li>机器镜像与启动流程经过调优，以优化实例启动时间。</li><li>拉取容器镜像时，Anyscale 使用自定义的容器镜像格式和客户端来缩短镜像拉取时间。</li><li>Anyscale 提供了一个快速模型加载库，可将张量从云存储直接流式传输到 GPU。</li></ul>
+<p>为展示这些优化的效果，我们运行了一个实验，测量在 AWS 上使用 <a href="https://github.com/vllm-project/vllm">vLLM</a> 把单个 <a href="https://www.anyscale.com/library/ray-serve">Ray Serve</a> 副本扩容至可托管 LLM 推理模型所需的时间。我们针对两个代表性模型重复了该实验：</p>
+<ul><li>Mistral-7B-Instruct-v0.1，运行在单张 NVIDIA A10G GPU 上（1x AWS g5.8xlarge 实例）。模型权重在 FP16 下约 14 GB。</li><li>Meta-Llama-70B-Instruct，使用张量并行运行在四张 NVIDIA L40S GPU 上（1x AWS g6e.12xlarge 实例）。模型权重在 FP16 下约 140 GB。</li></ul>
+<p>在 Anyscale 上，应用以 <a href="https://docs.anyscale.com/platform/services/">Service</a> 形式运行；在 KubeRay 上，则以 <a href="https://docs.ray.io/en/latest/serve/production-guide/kubernetes.html">RayService</a> 形式运行。两种情况下都不涉及本地缓存：都需要启动新实例、从镜像仓库拉取容器、从远端云存储加载模型权重。</p>
+<p>Anyscale 能够端到端地在仅 <strong>75 秒内为 Mistral-7B-Instruct-v0.1</strong>、<strong>107 秒内为 Meta-Llama-70B-Instruct</strong> 扩容出一个新副本。相较于在同一工作负载上运行于 Amazon EKS 的 KubeRay，这分别带来了 <strong>4.3 倍</strong>和 <strong>5.1 倍</strong>的提升。</p>
+<h3>自定义容器格式与客户端</h3>
+<p>实现这一加速的关键差异之一，是 Anyscale 的自定义容器镜像格式与运行时。客户在 Anyscale 平台上首次使用某个新容器镜像时，该镜像会被转换并以优化格式存储，使同一镜像在同一 region 内的后续运行快如闪电。</p>
+<p>为单独展示这种优化格式的收益，我们运行了一个实验，测试在一台刚启动的 g5.8xlarge 实例上，于 Amazon EKS 和 Anyscale 平台上拉取容器镜像并启动容器所需的时间。</p>
+<ul><li>使用的两个镜像：ray:2.34.0 默认镜像（约 6.2 GB），以及以 ray:2.34.0 为基底、安装了 vLLM 及其所需依赖的自定义镜像（约 12.8 GB）。</li><li>在 Anyscale 和 EKS 上，实例均运行在 us-west-2 region，源容器镜像托管在同一 region、同一 AWS 账号下的 Amazon Elastic Container Registry 中。</li><li>Amazon EKS 节点组配置为使用预置 3,000 IOPs 的 GP3 EBS 卷。</li></ul>
+<p>在该实验中，对于 6GB 的镜像，Anyscale 拉取容器镜像的速度比 AWS EKS 最快高 <strong>30 倍</strong>；对于 13GB 的镜像最快高 <strong>14 倍</strong>。</p>
+<h3>优化的直传 GPU 加载</h3>
+<p>Anyscale 还提供了一个优化客户端，可将 <a href="https://github.com/huggingface/safetensors">safetensors</a> 格式的模型权重从远端存储直接加载到 GPU。该技术利用流水线并行，避免了先把全部模型权重同步拷贝到磁盘、再加载到 CPU 内存、最后载入 GPU 内存的流程；取而代之的是把模型权重按 chunk 从远端存储流式传输到 CPU 内存再到 GPU 内存。技术细节可阅读这篇<a href="https://www.anyscale.com/blog/loading-llama-2-70b-20x-faster-with-anyscale-endpoints">先前的博客文章</a>，最新文档见<a href="https://docs.anyscale.com/platform/services/fast-loading">这里</a>。</p>
+<p>为单独展示这种更快模型加载技术的收益，我们测量了 vLLM 启动并加载一个推理模型所需的时间。所用模型与硬件同上文端到端实验一致：</p>
+<ul><li>Mistral-7B-Instruct-v0.1，运行在单张 NVIDIA A10G GPU 上（1x AWS g5.8xlarge 实例）。模型权重在 FP16 下约 14 GB。</li><li>Meta-Llama-70B-Instruct，使用张量并行运行在四张 NVIDIA L40S GPU 上（1x AWS g6e.12xlarge 实例）。模型权重在 FP16 下约 140 GB。</li></ul>
+<p>与典型工作流（用 AWS S3 CLI 下载到本地磁盘——配置项已设为最大化吞吐——再用 <a href="https://github.com/huggingface/safetensors">safetensors</a> 库从本地磁盘加载到 GPU）相比，Anyscale 将 vLLM 的启动与模型加载时间对 <strong>Mistral-7B-Instruct-v0.1 最快提升 2 倍</strong>，对 <strong>Meta-Llama-70B-Instruct 最快提升 4.8 倍</strong>。</p>
+<h2>结论</h2>
+<p><a href="https://www.anyscale.com/platform">Anyscale Platform</a> 实现了全栈优化，带来极速的自动扩缩容。对 Meta-Llama-3-70B-Instruct 而言，与使用 KubeRay 在 Amazon EKS 上运行同一应用相比，这带来了<strong>最快 5.1 倍的自动扩缩提速</strong>。</p>
+<p>这些优化让 AI 从业者更高效，也让推理服务的运营成本更低。</p>
+<p>今天就免费上手 Anyscale 平台：<a href="https://www.anyscale.com/">https://www.anyscale.com/</a>。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>发布 Anyscale Runtime：由 Ray 驱动，让 AI 更快、更便宜、更具弹性</title>
+      <link>https://anyscale.com/blog/announcing-anyscale-rayturbo</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/announcing-anyscale-rayturbo</guid>
+      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
+      <description>原文标题：Announcing RayTurbo</description>
+      <content:encoded><![CDATA[<h1>发布 Anyscale Runtime：由 Ray 驱动，让 AI 更快、更便宜、更具弹性</h1>
+<p>作者：Richard Liaw 和 Philip Wang | 2025 年 11 月 4 日</p>
+<p>现代 AI 工作负载——从多模态数据处理到分布式训练和高吞吐推理——正在把基础设施推向极限。这些负载处理日益复杂的数据集（文本、视频、图像），依赖更大的、以 GPU 为主的先进模型，同时仍然依赖 CPU 完成解码、文件缩放等预处理任务。要大规模运行它们，需要在异构算力上的高效编排、高性能执行，以及硬件故障后的快速恢复。</p>
+<p>开源分布式计算框架 Ray 提供了把 AI 与 Python 应用从单机扩展到数千台机器的必要基础——在异构（CPU + GPU）集群上进行任务并行与基于 actor 的计算。随着 AI 工作负载的规模与多样性持续增长，团队往往需要更强的可靠性保证，以及针对吞吐量、延迟、成本等具体负载需求调优的更高性能——若无分布式系统或云基础设施的深厚专长，这些挑战很难解决。</p>
+<p><strong>Anyscale Runtime</strong> 解决了全部这些问题。该 runtime <strong>完全兼容 Ray API</strong>，你可以直接带入现有应用——无需重写代码，没有锁定——同时获得：</p>
+<ul><li><strong>更高的故障韧性</strong>，减少算力浪费、提升大规模流水线的稳定性。支撑特性包括作业检查点（暂停/恢复批量推理处理）、epoch 中途恢复（暂停/恢复训练作业中的分布式数据加载）以及动态内存管理，可减少训练与推理负载的溢出和 OOM 错误。</li><li><strong>相比运行开源 Ray 更快的性能与更低的计算成本</strong>，覆盖大量目标负载——包括图像批量推理、特征处理、强化学习等。</li></ul>
+<p>与 <a href="https://www.anyscale.com/product/platform">Anyscale platform</a> 的其他组件组合使用，团队能更快、更经济地构建和部署 AI 工作负载。Geotab——一个用于分析驾驶行为、提升道路安全的 AI 驱动远程信息处理平台——在在线（低延迟）视频处理上取得了 43 倍吞吐量提升与 4 倍 GPU 利用率改善。同样，AI 行程规划领域的领先者 TripAdvisor 借助 Anyscale 为其批量嵌入处理流水线节省了 70% 的成本。</p>
+<p>想亲自验证 Anyscale Runtime 的能力，请查看我们的 <a href="https://github.com/anyscale/rayturbo-benchmarks/tree/main/">GitHub 仓库</a>，探索并复现基准测试负载——我们将持续更新新数据集与配方。</p>
+<h2><strong>Anyscale Runtime 提供为生产级 AI 优化的韧性与恢复能力</strong></h2>
+<p>想象一下——你在十块高端 GPU 上跑了 19 个小时的长训练，然后崩溃了。数万美元的算力——没了。你被迫从零重启，钱和时间都在燃烧。除成本之外，这类故障延误进度、推迟交付日期，侵蚀你的 AI 投资回报。如果因此丧失竞争优势，这种低效的代价更为高昂。</p>
+<p>Anyscale Runtime 引入了若干为规模化的韧性与快速恢复而设计的特性，让团队专注于推进模型，而不是重做工作：</p>
+<ul><li><strong>Ray Data 中的动态内存管理</strong> —— 自动调整内存用量，减少训练与推理过程中的溢出与 OOM 错误。</li><li><strong>作业检查点（Job Checkpointing）</strong> —— 让长时间运行的推理负载可以暂停并恢复而不丢失进度。</li><li><strong>Epoch 中途恢复（Mid-Epoch Resume）</strong> —— 当使用 Ray Data 加载数据时，允许大规模训练作业从保存状态中途重启，避免时间和算力的浪费。</li></ul>
+<h2><strong>Anyscale Runtime 带来更快性能与更低的单次运行成本</strong></h2>
+<p>Anyscale Runtime 跨多种负载优化执行：更快更便宜的数据处理作业、更可靠的训练运行、更高吞吐的服务。我们的可复现基准显示：</p>
+<ul><li>图像批量推理快 2 倍、成本效率提升 6 倍</li><li>特征处理（编码、归一化等）快 10 倍</li><li>结构化数据处理快 2.5 倍</li><li>强化学习可扩展性提升 8 倍</li><li>高吞吐服务的 QPS 提升 7 倍</li><li>在线推理应用中的视频处理快 40%</li></ul>
+<p>以下是各负载的简要总结。想直接查看代码与数据配方、检验基准，请访问我们的 <a href="https://github.com/anyscale/runtime-benchmarks/tree/main/">GitHub 仓库</a>。</p>
+<h3><strong>图像批量推理</strong></h3>
+<p>流水线读取 JSONL——用 CPU 解码并变换图像批次，然后在 GPU 上用视觉 Transformer 模型推理，最后再用 CPU 将结果写回 JSONL。使用的数据集约 10TB。</p>
+<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/image-batch-inference">GitHub</a></p>
+<p><strong>性能：</strong> 固定集群规模下，开源 Ray 用时 772 秒，Anyscale Runtime 用时 431 秒<strong>（约快 2 倍）</strong></p>
+<p><strong>成本：</strong> 固定集群下 $63 对 $170（便宜 2.7 倍）；自动扩缩容运行下 $23 对 $142<strong>（便宜 6 倍）</strong></p>
+<h3><strong>特征预处理</strong></h3>
+<p>特征预处理——如编码和归一化——是 ML 中最反复迭代的环节之一。通常从小数据集实验开始，但在生产中迅速扩展到成百上千倍的数据。为评估这种增长模式下的性能，我们在 <strong>OrdinalEncoder</strong> 负载上以 <strong>1GB 到 1TB 的数据集规模</strong>对比了 Anyscale Runtime 与开源 Ray。</p>
+<p>可复现基准配方及按数据集规模的性能：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/preprocessors">GitHub</a></p>
+<p><strong>性能：</strong> 随着负载规模增大，Anyscale Runtime 始终取得 10 倍或更好的性能，同时保持执行稳定。</p>
+<h3><strong>结构化数据处理</strong></h3>
+<p>尽管文本、视频、图像等非结构化数据日益重要，结构化数据处理仍是现代数据与 AI 流水线的关键部分。涉及 join、聚合与过滤的负载常因序列化开销与大量 shuffle 而遇到性能瓶颈——使用 Python UDF 时尤甚。为评估这些常见条件下的性能，我们运行了 <strong>TPC-H Q1 基准</strong>。</p>
+<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/tpch">GitHub</a></p>
+<p><strong>性能：</strong> 在 Scale Factor（SF）1000、128 个 CPU 的基准下，Anyscale Runtime 以 99.1 秒完成任务，Ray 约需 913 秒（10 倍加速）</p>
+<h3><strong>高吞吐服务</strong></h3>
+<p>高吞吐服务对推荐引擎、欺诈与异常检测等实时系统至关重要。这类负载必须应对突发流量——每秒数千查询（QPS）——同时保持低延迟与一致性能，还不能过度配置资源。</p>
+<p>Ray 可跨副本和节点动态扩缩，在负载下维持吞吐。Anyscale Runtime 在此基础上扩展了直接入口（direct ingress），精简请求到推理的路径，使服务更快更高效。为测试 QPS 扩展能力，我们基准测试了一个推荐模型，包含两个 Ray Serve 部署：一个负责请求处理与候选生成的 Ingress 服务，一个在 GPU 上运行深度学习推荐模型的 Ranker 服务。</p>
+<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/serve-throughput">GitHub</a></p>
+<p><strong>性能：</strong> 使用 locust 模拟用户请求，在最大的运行（4 个 GPU 副本——Ranker 与 Ingress 部署副本保持 1:2 比例）中，Anyscale Runtime 支持 6300 req/s，Ray 为 900 req/s（提升 7 倍）</p>
+<h3><strong>在线（延迟敏感）视频处理</strong></h3>
+<p>实时视频处理极具挑战，因为它把需要大量计算的大型数据集与严苛的延迟约束结合在一起——而从目标检测到自主系统这类&quot;能看&quot;的多模态应用日益需要它。这些负载运行横跨 CPU 与 GPU 阶段的复杂异构流水线——流程类似：视频输入 → 分块 → 抽帧 → 目标检测 → 结果。</p>
+<p>可复现基准配方：<a href="https://github.com/anyscale/runtime-benchmarks/tree/main/serve-video-perf">GitHub</a></p>
+<p><strong>性能：</strong> 实现了两种推理场景：<em>分块推理</em>（每个 chunk 独立处理）与<em>合并推理</em>（对需要合并整段视频的应用把所有帧一起处理）。两种场景下，Anyscale Runtime 相比开源 Ray 均有<strong>约 40% 的提升</strong>。</p>
+<h2>下一步</h2>
+<p>从多模态数据预处理到大规模训练和高吞吐服务，这些基准展示了 Anyscale Runtime 如何为任意 AI 负载拓展性能、可靠性与效率的极限。</p>
+<p>而我们才刚刚开始——路线图上还有众多关键负载等待覆盖，我们的目标是让 Anyscale Runtime 成为任何 AI 负载的最佳计算引擎。</p>
+<h2>资源</h2>
+<ul><li>通过 <a href="https://github.com/anyscale/rayturbo-benchmarks/tree/main/">GitHub</a>上的配方探索 Anyscale Runtime</li><li><a href="https://www.anyscale.com/contact-sales?utm_source=anyscaleruntime">联系我们</a>，帮你优化工作负载</li><li>查看 Ray Summit 2025 的<a href="https://anyscale.com/blog/ray-summit-2025-anyscale-product-updates">其他公告</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>Anyscale 上的批量 LLM 推理可将 AWS Bedrock 成本最多降低 6 倍</title>
+      <link>https://anyscale.com/blog/batch-llm-inference-announcement</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/batch-llm-inference-announcement</guid>
+      <pubDate>Tue, 01 Oct 2024 00:00:00 +0000</pubDate>
+      <description>原文标题：Batch LLM Inference on Anyscale slashes AWS Bedrock costs by up to 6x</description>
+      <content:encoded><![CDATA[<h1>Anyscale 批量 LLM 推理将 AWS Bedrock 成本最多降低 6 倍</h1>
+<p>作者：Cody Yu、Scott Lee、Ricky Xu、William Lin、Praveen Gorthy 和 Richard Liaw | 2024 年 10 月 1 日</p>
+<h2>引言</h2>
+<p>LLM 席卷了整个科技行业。由于 GPU 价格居高不下，大量优化工作聚焦在推理成本上。但这些努力大多集中在面向延迟敏感、7×24 全天候负载的在线推理。</p>
+<p><a href="https://www.anyscale.com/use-case/llm-online-inference">在线推理</a>提供低延迟的实时响应，而 <a href="https://www.anyscale.com/use-case/llm-batch-inference">LLM 批量推理</a>通过优化 GPU 资源利用率，提供更高吞吐与更优成本效益。因此，对无需即时交互的任务，离线推理能更高效、更经济地使用 LLM。</p>
+<p>在某些场景下，通过将批量推理面向吞吐量与成本（而非延迟与可用性）做优化，Anyscale 相比 AWS Bedrock、OpenAI 等在线推理服务商可降低成本至多 <strong>2.9 倍，在共享前缀场景下最多可达 6 倍</strong>。</p>
+<h2>在线推理与批量推理的核心区别是什么？</h2>
+<p>把在线方案改造用于离线批量负载十分常见。但两类用例存在关键差异。</p>
+<p>在线推理通常配置为优化低延迟，而批量推理的配置则优化整体 token 吞吐量。</p>
+<p>因此，两者的配置空间相当不同：</p>
+<ul><li>在线部署常用投机解码（speculative decoding）和高度张量并行等技术，用吞吐换延迟；批量推理则用流水线并行、KV cache 卸载等技术最大化吞吐。</li><li>在线推理为满足 SLA 常部署在高端硬件（H100、A100）上，而批量推理优先考虑每美元吞吐（throughput-per-dollar），可用更经济易得的 GPU（A10G、L4、L40S）实现。</li><li>在线部署还带有 HTTP 与请求处理相关开销，这些在批量场景中可以去除。</li></ul>
+<h2>为什么在 Ray 与 Anyscale 上做 LLM 批量推理？</h2>
+<p>对自托管推理，在优化批量 LLM 推理方面，Ray 与 Anyscale 具有独特优势。Anyscale 上的 LLM 批量推理将使用我们技术栈的关键组件：自研推理引擎、Ray Data、Ray Core 与 <a href="https://www.anyscale.com/platform">Anyscale Platform</a>。</p>
+<p>推理方面，我们使用自研推理引擎实现优化的 LLM 推理。</p>
+<ul><li>该推理引擎基于流行的开源 LLM 推理引擎 vLLM。</li><li>作为开源基础设施的坚定支持者，我们的许多性能改进已回馈给 vLLM 开源项目，如 FP8 支持、chunked prefill 和投机解码。</li></ul>
+<p>Ray Core 与 Ray Data 为数据密集型 AI 负载而生，与其他批处理系统相比提供了一组独特能力。</p>
+<ul><li>Ray Core 灵活的分布式原语（任务、actor）让 Ray 用户可以表达嵌套并行，使不同分布式库易于组合——在本例中就是 vLLM 与 Ray Data。</li><li>Ray Data 支持 Python 异步原语做请求流水线化，从而实现高 GPU 利用率。</li><li>Ray Data 还利用 Ray Core 内建的容错能力，得以有效使用高性价比的 spot 实例。</li></ul>
+<p><a href="https://www.anyscale.com/platform">Anyscale Platform</a> 是完全托管的 Ray 解决方案，专注于为使用 Ray 运行 AI 应用提供出色体验与高性价比。</p>
+<ul><li>Anyscale 的 Smart Instance Manager 支持跨可用区实例搜索与灵活的计算配置，带来经济的硬件利用。</li><li>Anyscale 提供一个加速模型加载的库，让大模型副本快速启动，这对自动扩缩容和应对不稳定计算环境至关重要。</li></ul>
+<p>我们还创建了新的库 RayLLM-Batch，目标就是针对 LLM 批量推理负载优化这套栈。</p>
+<h2>RayLLM-Batch 介绍</h2>
+<p><a href="https://docs.anyscale.com/llms/batching/intro/">RayLLM-Batch</a> 是一个利用 Ray 与 Anyscale 组件、规模化优化 LLM 批量推理的库：</p>
+<ul><li><strong>简化 API</strong>：抽象底层栈的复杂性，让用户在工作负载可以便捷地表达并在批量推理集群上执行。</li><li><strong>优化推理引擎</strong>：融入自研性能特性，同时与开源仓库保持紧密对齐。</li><li><strong>容错</strong>：引入作业级检查点与恢复，提升大规模推理作业的可靠性。</li><li><strong>批量 LLM 推理优化器</strong>：根据负载特征与可用硬件调优和配置底层栈，以降低成本。</li></ul>
+<p>通过结合这些要素，RayLLM-Batch 为大规模批量 LLM 推理提供了强大而经济的解决方案，回应批处理负载独特的挑战与机会。</p>
+<p>RayLLM-Batch 文档见<a href="https://docs.anyscale.com/canary/llms/batching/intro/">这里</a>。</p>
+<h2>用 LLaMA 做基准测试</h2>
+<p>在下面的<a href="https://github.com/anyscale/batch-llm-inference-reproductions/tree/main">实验</a>中，我们在 Anyscale 上以 Llama 3.1 8b Instruct 评估 RayLLM-Batch，并与常见替代方案对比：Bedrock、带批量定价的 Bedrock，以及带批量定价的 OpenAI GPT-4o mini。所有 Anyscale 实验均使用 AWS 上常见可按需供应的 GPU，如 L4 和 L40S。</p>
+<p>我们用 2000 输入 token、100 输出 token、无共享前缀的数据集评估各方案——这是摘要类任务的典型请求形态。我们在 1000 个请求上评估性能，并按请求吞吐计算每 token 价格。对 Anyscale，我们同时评估原始 BF16 模型和 FP8 版本模型；后者在 Open LLM Leaderboard 评测分数上恢复了原 Llama 3.1 8b Instruct 的 99.28%，通常可替代原始 BF16 模型使用。</p>
+<p>我们看到，在这一特定负载上，Anyscale FP8 部署比 OpenAI GPT-4o mini 的批量定价便宜 2.2 倍，比 Amazon Bedrock 便宜 2.9 倍。¹</p>
+<p>在许多离线负载中，请求之间存在共享提示/前缀很常见。这种情况下成本差距可以大得多，因为 Anyscale 能利用前缀缓存（prefix caching），而 OpenAI 和 Bedrock 不能。在同一负载（2000/100，Llama 3.1 8b）、请求间 80% 共享前缀时，Anyscale 方案<strong>比批量定价的 AWS Bedrock 便宜 6.1 倍</strong>，比批量定价的 OpenAI GPT-4o mini 便宜 4.78 倍。</p>
+<p>在下面的实验中，我们在 Anyscale 上以 Llama 3.1 70b Instruct 评估 RayLLM-Batch，并与 Amazon Bedrock 对 Llama 3.1 70b Instruct 模型的定价对比。评估数据集的请求为 2000 输入、100 输出 token，无共享前缀。</p>
+<p>对 Anyscale，我们既评估原始 BF16 模型，也给出 FP8 版本的结果；后者在 Open LLM Leaderboard 评测分数上恢复了原 Llama 3.1 70b Instruct 的 99.88%，通常可替代原始 BF16 模型使用。</p>
+<p>我们看到，在该负载上，Anyscale FP8 批量推理方案比 Amazon Bedrock 方案便宜 22%。</p>
+<p>在请求间 80% 共享前缀时，Anyscale 方案比批量定价的 AWS Bedrock 方案便宜 1.8 倍。</p>
+<p>显然，对所选负载，无论小模型还是大模型场景，Anyscale 都能在性价比上超越其他常见方案。注意，虽然我们尽量选择代表性负载，但用户实际性能会因其负载的具体细节而异。</p>
+<h2>结语</h2>
+<p>通过我们新发布的 <a href="https://console.anyscale.com/v2/template-preview/batch-llm">RayLLM-Batch 模板</a>，你现在就可以在 Anyscale 上开始使用批量推理方案。RayLLM-Batch 文档可<a href="https://docs.anyscale.com/canary/llms/batching/intro/">在此找到</a>。</p>
+<p>欢迎了解 Anyscale 加速其他 AI 负载：<a href="https://www.anyscale.com/">https://www.anyscale.com/</a></p>
+<p><em>如需复现我们的基准，请参考我们的 </em><a href="https://github.com/anyscale/batch-llm-inference-reproductions/tree/main"><em>Github 仓库</em></a><em>。</em></p>
+<p>¹ Anyscale 定价基于自托管计算模型，按 2024 年 9 月的 EC2 列表价计算。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>用 Anyscale Replica Compaction 部署 Ray Serve，节点数最多省 50%</title>
+      <link>https://anyscale.com/blog/new-feature-replica-compaction</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/new-feature-replica-compaction</guid>
+      <pubDate>Mon, 15 Jul 2024 00:00:00 +0000</pubDate>
+      <description>原文标题：Deploy Ray Serve with up to 50% fewer nodes using Anyscale Replica Compaction</description>
+      <content:encoded><![CDATA[<h1>用 Anyscale Replica Compaction 部署 Ray Serve，节点数最多省 50%</h1>
+<p>作者：Matt Connor、Akshay Malik 和 Cindy Zhang | 2024 年 7 月 15 日</p>
+<p>拥抱 AI 的公司日益面临资源利用与成本管理的问题。模型服务与推理尤其需要随流量起伏而伸缩。Ray Serve 是构建在 Ray 上的可扩展模型服务库，正好应对这种动态。不过，尽管 Ray Serve 这样的开源系统能帮助管理流量增长，即便是精密的系统，在流量回落后也难以缩<em>容</em>。这类资源碎片化必然导致资源闲置、成本上升。</p>
+<p>Anyscale 的新特性 Replica Compaction（副本压实）通过优化在线推理与模型服务的资源使用，帮助解决资源碎片化。下面看看这个特性如何工作、你在实践中如何使用它。</p>
+<h2>背景：什么是 Ray Serve？</h2>
+<p>Ray Serve 有几个核心概念：</p>
+<ul><li><strong>Deployment（部署）</strong>：一个 deployment 包含处理进来请求的业务逻辑或 ML 模型。</li><li><strong>Replica（副本）</strong>：replica 是 deployment 的一个可处理请求的实例，用 Ray Actor 实现。replica 数量可以扩缩（甚至自动扩缩）以匹配进来的请求负载。</li><li><strong>Application（应用）</strong>：application 是 Ray Serve 集群中的升级单元，由一个或多个 deployment 组成。</li><li><strong>Service（服务）</strong>：Service 是一个 Ray Serve 集群，可以由一个或多个 application 组成。</li></ul>
+<p>各 deployment 独立处理进来的请求，在多数情况下可实现并行处理与高效资源利用。例如，Ray Serve 可以在同一个 Service 上为 Llama-3-8B 与 Llama-3-70B 创建 deployment，并设置不同资源需求（每副本分别为 1 GPU 和 4 GPU）。这两个 deployment 会随各自的流量独立伸缩。</p>
+<h2>资源碎片化问题</h2>
+<p>资源碎片化发生在伸缩活动导致各节点资源利用不均的时候。随着 replica 增加，autoscaler 会启动新节点来承担增长的 deployment 负载。但当流量下降、模型缩容时，当初为高峰负载开的那些节点就变得利用率低下。这是成本升高、集群性能下降最常见的原因之一。</p>
+<p>本质上，当伸缩某个特定 deployment 或模型（比如模型 A）时，Ray Serve 只考虑这一个 deployment 的流量与资源需求，其他 deployment（比如模型 B 和 C）的状态、replica 和流量都不在伸缩过程的考虑之内。由于伸缩一次只看单个 deployment，随着流量起伏、集群扩扩缩缩，资源碎片化不可避免。</p>
+<h2>用 Anyscale Replica Compaction 解决资源碎片化</h2>
+<p>我们很高兴推出 Replica Compaction 来应对资源碎片化。有了它，Anyscale 会自动把 replica 迁移到更少的节点上，以优化资源使用、降低成本。Replica Compaction 特性有三大组件：</p>
+<ul><li><strong>Replica Migration（副本迁移）：</strong> Compaction 持续监视集群，寻找迁移 replica 的机会。若某个节点使用率很低，Anyscale 的 Replica Compaction 会自动把 replica 迁移到容量充足的其他节点。集群中每个节点都会被检查，replica 更少、可被释放的节点优先处理。</li><li><strong>零停机：</strong> 迁移毫不费力。Anyscale Services 会无缝拉起新 replica、监控其健康、切换流量，再移除旧 replica。</li><li><strong>Autoscaler 集成：</strong> Anyscale Autoscaler 在迁移后持续搜寻空闲节点并按需关停，减少节点数——也就是成本。</li></ul>
+<p>再看上面同一个例子，这次加上 Anyscale 的 Replica Compaction。有了 Replica Compaction，Anyscale 能检测到模型 A 缩容，并自动把多余的模型 C replica 迁移进单个节点。</p>
+<p><em>Anyscale Replica Compaction 示例：Replica Compaction 发现资源碎片化正造成不必要的资源占用，随后果断地把 replica 自动转移（不打断生产流量）到单个节点，降低成本、提升利用率。</em></p>
+<h2>Replica Compaction 实战：真实结果</h2>
+<p>为测试新的 Replica Compaction 特性，Anyscale 在一个真实生产负载上运行了数月。看看我们跑了什么——以及 Replica Compaction 如何降本增效。</p>
+<p><strong>案例研究：</strong></p>
+<p>Anyscale 提供调用 LLM 的 serverless API，模型包括 Mistral、Mixtral、Llama3 等。这些模型作为 replica 部署在一个 Anyscale Service 上。该服务已运行数月，以差异巨大的流量模式为大规模用户服务 10 个以上模型。</p>
+<p>发布 Anyscale Replica Compaction 之后，我们从<strong>每 GPU 每秒 token 数</strong>（tokens per GPU second）看到了显著的节省与效率提升。在其他条件不变（不改变张量并行、所服务模型或所用硬件）的情况下，Replica Compaction 之后的整体效率平均提升<strong>约 10%</strong>。启用次日，实例秒数下降 <strong>3.7%</strong>，而同一时期以 token 数计量的流量<strong>增长了 11.2%</strong>。由于我们用 A100、H100 等高端 GPU 服务模型，这转化为可观的成本优势。</p>
+<p>Replica Compaction 的效果与节省幅度，取决于流量分布、deployment 数量与底层实例类型，差异很大。在负载较分散的场景（如上面的示例），成本可降低 50% 甚至更多！</p>
+<h2>Replica Compaction 的下一步</h2>
+<p>团队持续改进 Replica Compaction 算法，包括把节点成本与资源类型纳入考量，以更优化使用与总体成本。未来几个月会有更多精彩更新，敬请期待。</p>
+<h2>开始使用 Anyscale</h2>
+<p>Anyscale 的新 Replica Compaction 特性通过治理资源碎片化，显著改善了分布式集群的资源管理，为 Ray Serve 部署确保高效、经济的基础设施，且持续的增强将带来更智能的资源管理。在 Anyscale Platform 上部署 Ray Serve 应用时，Anyscale Replica Compaction 默认启用。</p>
+<p><a href="https://console.anyscale.com/register/ha?utm_source=blog&amp;utm_content=replica-compaction">立即开始！</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Ray 聚焦：我们如何做到每周发布 Ray</title>
+      <link>https://anyscale.com/blog/ray-spotlight-delivering-weekly-releases</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-spotlight-delivering-weekly-releases</guid>
+      <pubDate>Tue, 25 Jun 2024 00:00:00 +0000</pubDate>
+      <description>原文标题：Ray Spotlight: How we delivered Ray weekly releases</description>
+      <content:encoded><![CDATA[<h1>Ray 聚焦：我们如何做到每周发布 Ray</h1>
+<p>作者：Sam Chan | 2024 年 6 月 25 日</p>
+<h2><strong>引言</strong></h2>
+<p>新模型、新加速器、新技术推动的 AI 创新正以惊人的速度演进。为跟上节奏，Anyscale 的 Ray 团队近期改为每周发布，确保修复与增强能更快抵达不断壮大的 Ray 社区。</p>
+<p>本文探讨这次转型中的挑战与成果。</p>
+<h2><strong>变革的必要性</strong></h2>
+<p>在实施每周发布之前，Ray 遵循六周一轮的发布周期。三个主要痛点：</p>
+<ul><li><strong>不稳定测试（flaky tests）：</strong> Ray 的 CI（即合并前后测试）与发布测试常以难以复现的方式失败，给判定那些本应由这些测试捕捉的根本稳定性与可靠性问题引入了噪音。</li><li><strong>发布负担沉重：</strong> 发布频率低导致每次都要赶着合并 PR，造成压力并可能产生疏漏。</li><li><strong>用户挫败感：</strong> 用户要等下一个发布周期才能用上新功能或 bug 修复，或者依赖 nightly 构建。</li></ul>
+<p>为解决这些问题，团队下决心提高发布频率。</p>
+<h2><strong>克服不稳定</strong></h2>
+<p>为此，团队首先要处理 Ray 代码库内部的 instability。包括：</p>
+<ul><li><strong>整治测试失败：</strong> 去年，Ray 团队每周面临约 50-70 个失败测试。其中很多是非确定性、不稳定的，需要一次彻底清理。</li><li><strong>系统性更新：</strong> 团队实施了基础性更新以减少新问题的引入，同时对既有测试失败进行了一次严格的彻底清理。</li><li><strong>文化转变：</strong> 转向每周发布节奏需要公司文化的转变——鼓励更频繁、可控的更新，而不是周期性的高压发布期。</li></ul>
+<p><em>把每周发布的阻塞项压到 0 并维持住。</em></p>
+<h2><strong>结果与影响</strong></h2>
+<p>过去两个月，我们成功地向 Ray 社区交付了每周发布。</p>
+<p>此外，转向每周发布还带来了：</p>
+<ul><li><strong>稳定性增强：</strong> Ray 团队修复了约 <a href="https://github.com/issues?q=is%3Aissue+archived%3Afalse+label%3Aray-test-bot+label%3Astability+is%3Aclosed">350+ 个问题与不稳定测试</a>，使每次周发布的测试通过率显著可靠起来。</li></ul>
+<p>一些重点改进领域：</p>
+<ul><li>修复与主要云和加速器供应商集成点的测试（例如确保 Ray 在 AWS/GCP 上可靠启动，并支持 AMD 等替代加速器厂商）。</li><li>确保大规模批量推理被测试覆盖且可靠，尤其是 GPU 加速场景。</li><li>修复测试基础设施及 Ray Core 基础组件本身的代码，如对象引用计数、内存管理、autoscaler 与调度器。</li><li>修复压测 Ray Data 大规模数据 shuffle 可靠性的测试。</li><li>清理并修复 Windows 平台上的不稳定与失败测试。</li></ul>
+<p>完整分析与已关闭 issue 见：<a href="https://docs.google.com/spreadsheets/d/1w-3QkK07XI8q2baZ2-5dIj_Ow0NMPR1oQP5Er3_3g2c/edit#gid=0">ray-test-bot-stability.csv</a></p>
+<ul><li><strong>发布流程顺畅：</strong> 每周发布已成例行公事，干扰极小。得益于改进的测试基础设施，团队能及早发现性能回退、最大限度减少延误。</li><li><strong>生产力提升：</strong> 压力降低与规律发布节奏营造了更健康的工作环境，让工程师专注于持续改进。</li></ul>
+<p><em>发布间隔天数（我们现在稳定在约 7 天的周发布）。</em></p>
+<h2><strong>挑战与未来计划</strong></h2>
+<p>尽管收益明显，转向每周发布也带来一些挑战：</p>
+<ul><li><strong>升级频繁：</strong> 用户需要更频繁升级才能保持最新，这可能构成运维负担。对 Anyscale 托管 Ray 平台的用户，我们确保新版本经过测试、无缝集成，从而简化了这一过程。</li><li><strong>API 稳定性：</strong> 随着 Ray 走向成熟，团队专注于增强 API 稳定性与文档，让用户更容易适应变更。</li></ul>
+<p>为应对这些挑战，Ray 团队正在探索长期支持（LTS）版本的想法，为偏好更低更新频率的用户提供稳定基座，同时提供托管升级服务以实现平滑过渡。</p>
+<p>向每周发布的转型是 Ray 与 Anyscale 的一个重要里程碑，彰显我们对规模化稳定与可靠的承诺，同时保持与行业分布式机器学习前沿并驾齐驱的增强与创新节奏。</p>
+<p>随着 Ray 演进，我们对健壮测试、精简流程与以用户为中心的功能的坚持，将保持其在分布式计算技术领域的领先地位。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Ray Spotlight 系列：用 Runtime Env 即容器构建多租户 Serve 应用</title>
+      <link>https://anyscale.com/blog/ray-spotlight-series-multitenant-serve-applications-with-runtime-envs-as-containers</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-spotlight-series-multitenant-serve-applications-with-runtime-envs-as-containers</guid>
+      <pubDate>Thu, 13 Jun 2024 00:00:00 +0000</pubDate>
+      <description>原文标题：Ray Spotlight Series: Multitenant Serve Applications with Runtime Envs as Containers</description>
+      <content:encoded><![CDATA[<h1>Ray Spotlight 系列：用 Runtime Env 即容器构建多租户 Serve 应用</h1>
+<p>作者：Sam Chan 和 Cindy Zhang | 2024 年 6 月 13 日</p>
+<p>访谈人：</p>
+<p>Sam Chan，技术项目经理</p>
+<h2><strong>概览 ⚡</strong></h2>
+<p>在这场富有启发性的对话中，Sam Chan 与 Cindy Zhang 深入探讨依赖各不相同的多应用 serve 集群的进展与挑战。继续读下去，了解如今如何把不同容器部署到同一个服务集群上。</p>
+<h2><strong>基础概念 🔎</strong></h2>
+<p><strong>Sam Chan：</strong> 能否先大致解释一下什么是多应用支持、为什么它重要？</p>
+<p><strong>Cindy Zhang：</strong> 当然。简单来说，多应用支持让不同的应用运行在同一集群上，每个应用把 runtime environment 当容器用。多应用支持有助于更高效地管理资源，并降低运维复杂度——因为不同应用可以独立升级。</p>
+<p><strong>S：</strong> 我们此前是如何支持同一集群上的多个应用的？有什么缺点吗？</p>
+<p><strong>C：</strong> 去年夏天我们在 Ray Serve 上推出了多应用支持，让你在单个 Ray 集群上服务多个<em>相互独立</em>的应用。然而，许多不愿在运行时用 Ray runtime environments 安装依赖的用户，仍然必须把所有模型依赖打包进一个大 Docker 镜像。一些客户告诉我们这很痛苦，尤其是当他们有许多各自独立的应用想一起跑在同一 Ray 集群上时。</p>
+<p><strong>S：</strong> 用一个大镜像的痛点是什么？</p>
+<p><strong>C：</strong> 它导致镜像膨胀得离谱，所有依赖混在一起，维护起来相当头疼。例如我们的一位客户有许多不同的研究团队各自开发模型，他们希望把每个团队的代码部署进各自干净的小镜像（更好维护、迭代更快等）。</p>
+<p>最重要的是，支持独立镜像能让团队解决不同 Serve 应用依赖互相冲突的情况。</p>
+<p><strong>S：</strong> 我们构建多应用支持时只支持单一容器，是有什么原因吗？我们考虑过不同场景吗？</p>
+<p><strong>C：</strong> 历史上，对多容器的需求并不普遍，训练负载尤其如此。但随着应用变得更动态，我们看到了对这一特性更大的需求。</p>
+<h2><strong>Runtime Env 即容器 🧑‍💻</strong></h2>
+<p><strong>S：</strong> 这个新的&quot;runtime envs as containers&quot;特性如何提供帮助？</p>
+<p><strong>C：</strong> 有了它，现在可以为每个团队的应用指定不同的 Docker 镜像！当 Ray 需要为某应用启动一个 replica 时，它会直接用该应用的镜像起一个容器，在里面运行 worker 进程。应用之间的隔离非常干净。</p>
+<p><strong>S：</strong> 除隔离之外还有什么好处？它如何支撑多个 Serve 应用的多租户？</p>
+<p><strong>C：</strong> 当然有，它真正释放了 Ray 多租户能力的威力。由于应用各自在独立容器中、但仍运行在同一集群上，它们能以高得多的效率共享资源。</p>
+<p>例如，你可以把 8 个应用塞进一台带 8 块 GPU 的大 VM，并把每个 Ray Serve 应用配置为各用一块 GPU。</p>
+<p>这让用户能更细粒度、更精准地利用 GPU 容量，单台 VM 上不留闲置资源。</p>
+<p>运维复杂度也降低了，因为你只需要管理一个 Ray 集群；你现在可以在更多场景使用 Ray Serve 的<a href="https://docs.anyscale.com/preview/platform/services/update-a-service/#:~:text=To%20performance%20an%20in%2Dplace,to%20match%20the%20new%20configuration.&amp;text=You%20can't%20update%20the,using%20an%20in%2Dplace%20update.">原地更新（in-place updates）</a>。</p>
+<h2><strong>技术细节与挑战 ‼️</strong></h2>
+<p><strong>S：</strong> 能讲讲底层发生了什么吗？</p>
+<p><strong>C：</strong> 其实相当直接！我们把 Ray 与 Podman 集成，用于拉取镜像并启动容器。现在，当需要启动新的 Ray Worker 时，Ray 会调用 Podman 来编排相关镜像的拉取与容器的启动。随后 Ray 编排的是在那个容器内运行 Ray Worker 代码，而不是直接在宿主机上运行。为了让 Ray Serve 的生命周期事件正确挂接，我们下了不少功夫。</p>
+<p><strong>S：</strong> 这些好处与增强听起来很棒，但在单个 Ray 集群上使用多个 Docker 镜像有缺点吗？</p>
+<p><strong>C：</strong> 首先提醒一句：该特性很新，仍处于实验阶段。最大的一点是首次拉取镜像时会有启动延迟。我们也还没在超大规模下测试过。</p>
+<p>另一点是，至少目前，container runtime env 不支持其他 runtime env 字段，例如 Python 环境或工作目录。一切都必须在容器内声明好。</p>
+<h2><strong>展望未来 ⏩</strong></h2>
+<p><strong>S：</strong> 接下来这一特性将如何演进？</p>
+<p><strong>C：</strong> 好问题。短期内我们想把容器与其他 runtime env 字段组合的使用体验理顺，例如你希望为每个应用单独解释的特定环境变量。</p>
+<p>我们仍在收集用户反馈，弄清哪些字段该纳入、哪些不该。随着大家开始试用，我们也计划增加更多可扩展性测试，并整体性地收敛用户反馈。</p>
+<h2><strong>开始使用 ✅</strong></h2>
+<p>立即通过 Anyscale 使用多个 Ray Serve 应用与<em>runtime envs</em> 容器：<a href="https://docs.ray.io/en/latest/serve/advanced-guides/multi-app-container.html">Get started</a>。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>用 Ray、NVIDIA Triton Inference Server 与 TensorRT-LLM 实现低延迟生成式…</title>
+      <link>https://anyscale.com/blog/low-latency-generative-ai-model-serving-with-ray-nvidia</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/low-latency-generative-ai-model-serving-with-ray-nvidia</guid>
+      <pubDate>Wed, 13 Mar 2024 00:00:00 +0000</pubDate>
+      <description>完整标题：用 Ray、NVIDIA Triton Inference Server 与 TensorRT-LLM 实现低延迟生成式 AI 模型服务 | 原文标题：Low-latency Generative AI Model Serving with Ray, NVIDIA Triton Inference Server, and NVIDIA TensorRT-LLM</description>
+      <content:encoded><![CDATA[<h1>用 Ray、NVIDIA Triton Inference Server 与 TensorRT-LLM 实现低延迟生成式 AI 模型服务</h1>
+<p>作者：Neelay Shah 和 Akshay Malik | 2024 年 3 月 13 日</p>
+<p>在之前的<a href="https://www.anyscale.com/blog/tackling-the-cost-and-complexity-of-serving-ai-in-production-ray-serve">博客</a>中，我们讲了 <a href="https://docs.ray.io/en/latest/serve/index.html">Ray Serve</a> 的灵活、可扩展与简洁如何帮助你提升硬件利用率、更快把 AI 应用送上生产。随着 AI 模型越来越大、越来越复杂，市场已经认同：优化模型推理以降低 GPU 成本至关重要。现在，Anyscale 与 NVIDIA 联手，把 Ray Serve 与 RayLLM 的开发者生产力，同 <a href="https://www.nvidia.com/en-us/ai-data-science/products/triton-inference-server/">NVIDIA Triton Inference Server</a> 软件与 <a href="https://github.com/NVIDIA/TensorRT-LLM">NVIDIA TensorRT-LLM 库</a>的前沿优化结合起来。</p>
+<h2><strong>用 Ray Serve 与 RayLLM 做模型服务</strong></h2>
+<p>Ray Serve 是构建于 Ray 之上、用于搭建端到端 AI 应用的可扩展模型服务库。它提供简单的 Python API，从 PyTorch 等框架搭建的深度学习神经网络，到任意业务逻辑，都能服务化。Ray Serve 尤其适合<a href="https://docs.ray.io/en/latest/serve/model_composition.html#serve-model-composition">模型组合</a>与多模型服务：你可以构建由多个 ML 模型组成的复杂推理服务，各部分独立自动扩缩，获得最优硬件利用。2023 年，Anyscale 在用户体验与性价比上大力投入，服务着 LinkedIn、<a href="https://raysummit.anyscale.com/agenda/sessions/233">Samsara</a>、<a href="https://raysummit.anyscale.com/agenda/sessions/146">DoorDash</a> 这样的 Ray Serve 用户（<a href="https://youtu.be/JqpefcQS1a4?feature=shared">LinkedIn 演讲</a>）。开发者们注意到了这一点——去年采用量增长 10 倍，无论初创还是大企业都在寻找更快更省地服务 AI 模型的方式。</p>
+<p><a href="https://github.com/ray-project/ray-llm">RayLLM</a> 是构建在 Ray Serve 上的 LLM 服务方案，让部署与管理各种开源 LLM 变得轻松。它提供大量经过优化、开箱即用的预配置开源 LLM，也支持自带模型。它还提供完全兼容 OpenAI 的 API，让你可以轻松迁移并接入 LangChain、LlamaIndex 等现有 LLM 工具链。由于构建在 Ray Serve 之上，自动扩缩、多 GPU 支持与多节点推理一应俱全。</p>
+<h2><strong>用 NVIDIA Triton Inference Server 与 TensorRT-LLM 部署 AI</strong></h2>
+<p>Triton Inference Server 是 NVIDIA 开发的开源软件平台，用于在生产环境中部署和服务 AI 模型。它帮助企业降低模型服务基础设施的复杂度、缩短新 AI 模型上生产的时间、扩大 AI 推理与预测容量。Triton Inference Server 支持 TensorFlow、PyTorch、ONNX 等多种深度学习框架，提供加速 GPU 与 CPU 推理的优化，被 <a href="https://resources.nvidia.com/en-us-inference-customer-story/nvidia-amazon-custom">Amazon</a>、<a href="https://resources.nvidia.com/en-us-inference-customer-story/ai-for-dev-solution">Microsoft</a>、<a href="https://blogs.nvidia.com/blog/ai-inference-oci-triton/">Oracle</a>、<a href="https://resources.nvidia.com/en-us-inference-customer-story/Amazon-accelerates-customer">Siemens</a>、<a href="https://resources.nvidia.com/en-us-inference-customer-story/american-express-prevents-fraud">American Express</a> 等大量企业用于规模化部署高效的深度学习模型。</p>
+<p><a href="https://github.com/NVIDIA/TensorRT-LLM">TensorRT-LLM</a> 是一个用于定义、优化并执行 LLM 推理的开源库。它保留了 FasterTransformer 的核心功能，配合 TensorRT 深度学习编译器，并以开源 Python API 快速支持新模型与定制。量化、in-flight batching、注意力优化等特性都收纳在简化的 Python API 之后，用以优化 LLM 的延迟与吞吐。</p>
+<h2><strong>发挥最大潜力：Ray Serve 与 RayLLM 结合 Triton Inference Server 和 TensorRT-LLM</strong></h2>
+<p><em>Ray Serve 与 NVIDIA Triton Inference Server。</em></p>
+<p>在 23.12 版本中，Triton Inference Server 提供了 <a href="https://github.com/triton-inference-server/tutorials/tree/main/Triton_Inference_Server_Python_API">Python API</a>，让开发者可以把 Triton Inference Server 的优化无缝嵌入运行在 Ray Serve 上的 Python 应用。对 Ray Serve 用户，这意味着 ML 模型性能的提升——下文的基准就是证明；也意味着能用上 NVIDIA Triton Inference Server 的高级推理服务能力，例如 <a href="https://github.com/triton-inference-server/model_analyzer">Model Analyzer</a>——它根据指定的应用 SLA 推荐最优模型配置。Ray Serve 用户还受益于 Triton Inference Server 的高可靠性——在 <a href="https://www.nvidia.com/en-us/case-studies/machine-learning-models-and-inference/">WealthSimple</a> 等客户处达到 99.999% 的可用性。Triton Inference Server 用户现在也可以用 Ray Serve 构建包含业务逻辑、多模型且自动扩缩的复杂应用，用 Python 简化 AI 开发。</p>
+<p><em>NVIDIA 吞吐与延迟对比。</em></p>
+<p>RayLLM v0.5 同时支持 TensorRT-LLM 与 vLLM，让开发者为 LLM 部署选择最优后端。</p>
+<p>请查阅<a href="https://docs.ray.io/en/master/serve/tutorials/triton-server-integration.html">这份指南</a>在 Ray Serve 上试用 Triton Inference Server。从<a href="https://github.com/ray-project/ray-llm">这里</a>开始使用 Ray LLM，部署经 TensorRT-LLM 优化的模型。</p>
+<p><strong>作者：</strong> <a href="https://www.linkedin.com/in/neelay-shah-75b5781/">Neelay Shah</a>，NVIDIA <a href="https://www.linkedin.com/in/akshay-malik-a47a1416/">Akshay Malik</a>，Anyscale</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>大规模 RAG：用 Anyscale 和 Pinecone 将 Embedding 计算成本降低 10 倍</title>
+      <link>https://anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone</guid>
+      <pubDate>Tue, 16 Jan 2024 00:00:00 +0000</pubDate>
+      <description>原文标题：RAG at Scale: 10x Cheaper Embedding Computations with Anyscale and Pinecone</description>
+      <content:encoded><![CDATA[<h1>规模化 RAG：用 Anyscale 与 Pinecone 把嵌入计算成本降到 1/10</h1>
+<p>作者：Scott Lee、Kyle Huang、Cheng Su 和 Hao Chen | 2024 年 1 月 16 日</p>
+<h3>欢迎阅读我们更新后的 RAG 博客</h3>
+<p>想了解用 Ray 跑最佳 RAG 流水线的最新内容，请<a href="https://www.anyscale.com/blog/rag-pipelines-how-to">阅读我们更新后的博客</a>。</p>
+<p><em>此前我们展示过 Ray Data 在批量推理上相比其他方案的高效（详见<a href="https://www.anyscale.com/blog/offline-batch-inference-comparing-ray-apache-spark-and-sagemaker"></em>博客<em></a>）。本文在一个与 Pinecone 合作的真实大规模生产负载上验证这一点。</em></p>
+<p>构建<a href="https://www.anyscale.com/blog/a-comprehensive-guide-for-building-rag-based-llm-applications-part-1">检索增强生成（RAG）</a>应用的第一步，是为数据创建嵌入（embedding）——向量数据库用于搜索与检索的意义和上下文的表示。创建嵌入面临若干挑战：</p>
+<ul><li><strong>规模：</strong> TB 级数据集很常见，且负载内存密集。规模伴随成本。</li><li><strong>异构计算：</strong> 嵌入计算涉及数据摄取、预处理、切块与推理，需要 CPU 与 GPU 计算混搭。更具挑战的是，可能还需要混合多种 GPU 型号。</li><li><strong>多模态数据：</strong> RAG 应用要处理文档、图像以及越来越多的数据模态。</li></ul>
+<p>我们很高兴宣布：借助 <a href="https://www.anyscale.com/">Anyscale</a> 与 <a href="https://www.pinecone.io/">Pinecone</a>，用户现在能以其他流行方案 10% 的成本，为分布式向量数据库生成嵌入！</p>
+<h2><strong>突破性向量数据库，成本最多省 50 倍</strong></h2>
+<p>随着这次发布，Pinecone 通过彻底重构向量数据库，进一步巩固其技术与市场领导地位。这一开创性的 serverless 向量数据库让企业以前所未有的 2% 成本为 GenAI 应用添加无限知识。用 Pinecone serverless，你可以存储数十亿向量，只为搜索的部分付费。</p>
+<p>带来成本节省与高性能的关键创新包括：</p>
+<ul><li>读、写与存储的分离，为各种类型和规模的负载显著降低成本。</li><li>首创架构：在 blob 存储之上做向量聚类，以低成本对几乎无限的数据规模提供低延迟、始终新鲜的向量搜索。</li><li>新型索引与检索算法，让向量搜索能在 blob 存储上快速、内存高效地进行，而不牺牲检索质量。</li><li>多租户计算层，为上千用户提供按需的强效检索。这成就了 serverless 体验：开发者无需配置、管理甚至考虑基础设施；按用量计费让公司只为自己使用的部分付费。</li></ul>
+<h2><strong>与其他嵌入计算方案对比</strong></h2>
+<p>计算嵌入时，常见的做法有这么几种：</p>
+<ul><li><strong>OpenAI：</strong> OpenAI 这类 API 服务商能处理嵌入计算，但数据摄取与预处理需要另外的可扩展方案，模型选择的灵活性也有限。</li><li><strong>Spark：</strong> Spark 这类分布式框架能扩展数据摄取与预处理，但高效的嵌入计算需要另外的方案。</li><li><strong>Vertex AI：</strong> Google Cloud 能处理数据摄取与预处理，Vertex AI 能处理嵌入计算。与 OpenAI 类似，模型选择灵活性有限。</li></ul>
+<p>上述方案都不是能同时规模化处理数据摄取与嵌入计算、又在预处理步骤与嵌入模型上保留灵活性的全家桶方案。</p>
+<p><strong>RAG 整体技术栈</strong></p>
+<p><em>Pinecone Partners Launch</em></p>
+<p>往大了看，嵌入计算只是图景的一部分。构建 RAG 应用需要很多拼图：</p>
+<ul><li>一个高性能分布式向量数据库（如 <a href="https://www.pinecone.io/">Pinecone</a>）必不可少，用以支持基于所算嵌入的高效插入与查询。</li><li><a href="https://huggingface.co/">Hugging Face</a> 与 <a href="https://www.langchain.com/">LangChain</a> 提供用于计算嵌入的开源模型与工具。</li><li>最后，一个分布式计算引擎（如 <a href="https://github.com/ray-project/ray/">Ray</a>）把所有这些元素粘合起来，无缝管理端到端工作流。</li></ul>
+<h2><strong>使用 Ray Data 与 Pinecone API</strong></h2>
+<p>以下示例演示如何用 Ray Data 与 Pinecone API 计算嵌入并 upsert 到 Pinecone：</p>
+<pre><code>1import ray
+2from pinecone import Pinecone
+3
+4from langchain.text_splitter import RecursiveCharacterTextSplitter
+5import numpy as np
+6from transformers import AutoTokenizer, AutoModel
+7import uuid
+8
+9def chunk_row(row):
+10      # Chunk each input row
+11      splitter = RecursiveCharacterTextSplitter(...)
+12      chunks = splitter.split_text(row[&quot;text&quot;])
+13      return [
+14             {
+15                    &quot;id&quot;: str(uuid.uuid4()),
+16                    &quot;text&quot;: chunk,
+17             } for chunk in chunks
+18      ]
+19
+20class ComputeEmbeddings:
+21      def __init__(self, model_name=&quot;thenlper/gte-large&quot;):
+22            # To use a different embedding model, update the default name 
+23            # above, or pass the new model name in the map_batches() call:
+24            # chunked_ds.map_batches(
+25            # 	ComputeEmbeddings, fn_constructor_args=(new_model_name,)
+26            # )
+27            self.model = AutoModel.from_pretrained(model_name)
+28            self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+29
+30      def __call__(self, batch):
+31            batch_text = batch[&quot;text&quot;]
+32            tokenize_results = self.tokenizer(batch_text)
+33            model_input = {
+34                    &quot;input_ids&quot;: tokenize_results[&quot;input_ids&quot;],
+35                    &quot;token_type_ids&quot;: tokenize_results[&quot;token_type_ids&quot;],
+36                    &quot;attention_mask&quot;: tokenize_results[&quot;attention_mask&quot;],
+37            }
+38
+39            embeddings = self.model(**model_input)
+40            embeddings = self._average_pool(outputs.last_hidden_state, model_input['attention_mask'])
+41            embeddings = F.normalize(embeddings)
+42
+43            batch[&quot;values&quot;] = embeddings.numpy().astype(np.float32)
+44            return batch
+45
+46      def _average_pool(self, last_hidden_states, attention_mask):
+47              last_hidden = last_hidden_states.masked_fill(~attention_mask[..., None].bool(), 0.0)
+48              return last_hidden.sum(dim=1) / attention_mask.sum(dim=1)[..., None]
+49
+50def pinecone_upsert(batch):
+51      client = Pinecone(api_key=...)
+52      index = client.Index(index_name)
+53      result = index.upsert(vectors=batch)
+54      return {&quot;num_success&quot;: np.array([result.upserted_count])}
+55
+56# replace with read API corresponding to your input file type
+57ds = ray.data.read_parquet(&quot;s3://bucket-raw-text&quot;)
+58
+59# chunk the input text
+60chunked_ds = ds.flat_map(chunk_row)
+61
+62# compute embeddings with a class that calls the embeddings model
+63embeddings_ds = chunked_ds.map_batches(ComputeEmbeddings)
+64
+65# replace with write API corresponding to your desired output file type
+66embeddings_ds.write_parquet(&quot;s3://output-embeddings&quot;)
+67
+68# upsert embeddings to Pinecone with the Pinecone API
+69upsert_results = embeddings_ds.map_batches(pinecone_upsert).materialize()
+70</code></pre>
+<p>关于如何最佳利用 Ray Data API 的更多细节与示例，请参阅 <a href="https://docs.ray.io/en/latest/data/data.html">Ray Data 文档</a>。</p>
+<h2><strong>成本对比</strong></h2>
+<p>为对比 Anyscale 与其他方案的性价比，我们在 AWS EC2 的 <a href="https://aws.amazon.com/ec2/instance-types/g5/">g5.xlarge</a> 机器上为 <a href="https://huggingface.co/datasets/tiiuae/falcon-refinedweb">falcon-refinedweb 数据集</a>（超过 6,000 亿 token）生成嵌入，预处理在纯 CPU 机器上完成。下表比较 Anyscale 与几个流行方案生成 10 亿个嵌入的成本估计（价格为 2024 年 1 月）：</p>
+<table><thead><tr><th></th><th>生成嵌入的总成本</th></tr></thead><tbody><tr><td>OpenAI</td><td>$60,000（<a href="https://openai.com/pricing">$0.0001 / 千 token</a>）</td></tr><tr><td>Vertex AI</td><td>$48,000（<a href="https://cloud.google.com/vertex-ai/pricing#generative_ai_models">$0.00002 / 千字符</a>）</td></tr><tr><td>Anyscale</td><td>$6,000</td></tr></tbody></table>
+<p>注意：这里列出的替代方案，其成本不含数据摄取与预处理费用——所以 Anyscale 的成本效率比上表显示的还要高！</p>
+<h2><strong>结语</strong></h2>
+<p>生成嵌入是打造成功 RAG 应用的关键任务，而 Anyscale 是这一工作流成本效率最高的方案。要充分享受 Anyscale 带来的规模，请<a href="https://www.pinecone.io/">了解 Pinecone 的分布式向量数据库服务</a>，并试用 <a href="https://www.anyscale.com/get-started?utm_source=anyscale&amp;utm_content=rag10xpinecone">Anyscale Platform</a>。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>开源 LLM：可用于生产，还是低质量玩具？</title>
+      <link>https://anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy</guid>
+      <pubDate>Mon, 20 Nov 2023 00:00:00 +0000</pubDate>
+      <description>原文标题：Open Source LLMs: Viable for Production or a Low-Quality Toy?</description>
+      <content:encoded><![CDATA[<h1>开源 LLM：可用于生产，还是低质量玩具？</h1>
+<p>作者：Anyscale Ray Team | 2023 年 11 月 20 日</p>
+<p><em>本文是 Ray Summit 2023 精彩回顾系列的一部分，我们总结了近期这场 LLM 开发者大会中最激动人心的演讲。</em></p>
+<p><em>免责声明：摘要由 AI 根据视频转录生成，并经过人工编辑。</em></p>
+<h2>核心要点</h2>
+<ul><li>LLaMA 等开源大语言模型（LLM）可以胜任生产用例。Anyscale、Hugging Face 等公司提供开源 LLM 的托管服务，让它们用起来很轻松。</li><li>开源 LLM 可以比 GPT-3 这类专有模型便宜得多（例如便宜 30 倍），同时对许多应用提供足够好的性能。这一成本差距让一些产品/用例成为可能——若用专有模型则根本不可行。</li><li>微调后的开源 LLM 有时甚至能胜过 GPT-4 这类最大的专有通用 LLM。但微调不是万能药——它对语言格式的塑造比对事实信息的注入更有效。</li><li>开源 LLM 目前在某些方面落后于专有模型：输出质量、精确遵循指令、函数模板（function templates）支持、大上下文窗口。但许多差距正在被积极攻克。</li><li>开源与专有 LLM 混合使用可以取得不错的成本/性能折衷。演讲者举了一个例子：5% 的查询发给 GPT-4，95% 发给一个开源 LLM。</li></ul>
+<p>开源语言模型（LLM）正日益成为生产可用之选，挑战着&quot;它们是低质量玩具&quot;的旧观念。本文探讨开源 LLM 与 GPT-4 这类专有模型相比的强项与短板，深入模型质量、指令遵循、函数模板、上下文窗口大小等因素，凸显开源 LLM 的成本效益与在各种应用中的可行潜力。</p>
+<h2>开源 LLM：可用于生产，还是低质量玩具？</h2>
+<p>近年来，语言模型的版图发生巨变，开源模型赢得关注，挑战了它们只是低质量玩具的看法。这引出了问题：开源 LLM 真的能胜任生产应用吗？为回答它，我们拆解近期题为《Open Source LLMs: Viable for Production or a Low-Quality Toy?》演讲中的洞见，比较开源 LLM 与专有模型的强弱。</p>
+<h2>质量很重要</h2>
+<p>演讲先直面房间里的大象：模型质量。历史上，GPT-4 这类专有 LLM 被视为高质量输出的金标准：它们在类比推理、规划和生成精炼回答方面表现出色。但演讲者带来一个转折——Llama 70b 等开源 LLM 绝不可轻视。虽然 GPT-4 可能在某些任务上领先，开源 LLM 已能与专有对手抗衡，在摘要与微调等任务上尤其如此。</p>
+<h2>指令遵循：对齐与灵活</h2>
+<p>一个出人意料的发现是：专有 LLM 得益于 RLHF（基于人类反馈的强化学习），在被明确指令时表现出更好的服从性。开源 LLM 则可能还需要额外一步微调，才能确保精确遵循指令。不过演讲者提出一个变通之道：用会&quot;指挥&quot;其他 LLM 的任务专用 LLM，取得更好的性能与成本效益。</p>
+<h2>函数模板：锁定输出格式</h2>
+<p>专有 LLM 带来一个便利特性——函数模板。它让用户锁定期望的输出格式，免去后处理纠错。最初缺乏这一特性的开源 LLM 正在追赶。虽然并非所有开源模型都已提供函数模板，从进行中的项目看，这一差距有望很快弥合。</p>
+<h2>上下文窗口：越大越好</h2>
+<p>上下文窗口大小对处理信息至关重要，专有 LLM 一直凭借更大的窗口保持领先。Llama 70b 等开源模型在这方面可能落后，但一些有前景的项目正着手解决这一限制。随着技术演进，人们寄望开源 LLM 很快追平乃至超过专有模型的上下文窗口。</p>
+<h2>成本效益：开源 LLM 的优势</h2>
+<p>开源 LLM 最令人信服的论点之一是成本效益。演讲强调，开源模型不是便宜一点点，而是能便宜得夸张。这一成本优势打开了无限可能，让某些应用在专有模型下财务上不可行的情况下变得经济可行。</p>
+<h2>前路：挑战与机遇</h2>
+<p>尽管开源 LLM 已取得长足进步，挑战犹存。质量提升、上下文窗口扩展、函数模板集成，都是开源社区持续的努力方向。然而开源 LLM 的潜力毋庸置疑：它们在多种任务上挑战专有模型的能力，加上成本优势，使其成为开发者与企业的强劲选项。</p>
+<h2>结语：为合适的活选合适的工具</h2>
+<p>总之，关于开源 LLM 是生产可用还是只是玩具的争论，正在倒向&quot;可用&quot;一边。演讲提供了细致的视角，提醒我们按需选择合适的工具。开源 LLM 不是万能方案，但它们带来的成本优势与能力，可以在特定场景中被有效利用。</p>
+<p>随着开源社区持续创新、补齐当前短板，开源 LLM 的前景光明。开发者与企业都应密切关注这一快速演进的版图，随时拥抱这些日益强大且高性价比的语言模型带来的机会。</p>
+<p>立即注册 <a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">Anyscale endpoints</a>快速上手，或<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">联系销售</a>获取 Anyscale 平台的全面介绍。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Spotify 如何打造稳健且开发者体验无阻的 Ray 平台</title>
+      <link>https://anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer</guid>
+      <pubDate>Thu, 09 Nov 2023 00:00:00 +0000</pubDate>
+      <description>原文标题：How Spotify Built a Robust Ray Platform with a Frictionless Developer Experience</description>
+      <content:encoded><![CDATA[<h1>Spotify 如何打造稳健且开发者体验无阻的 Ray 平台</h1>
+<p>作者：Anyscale Ray Team | 2023 年 11 月 9 日</p>
+<p>2024 年 6 月更新：Anyscale Endpoints（Anyscale 的 LLM API 服务）与 Private Endpoints（自托管 LLM）现已作为 Anyscale Platform 的一部分提供。点击<a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">这里</a>在 Anyscale 平台上开始使用。</p>
+<p><em>本文是 Ray Summit 2023 精彩回顾系列的一部分，我们总结了近期这场 LLM 开发者大会中最激动人心的演讲。</em></p>
+<p><em>免责声明：摘要由 AI 根据视频转录生成，并经过人工编辑。</em></p>
+<h2>核心要点</h2>
+<p>Spotify 打造稳健 Ray 平台、实现无摩擦开发者体验的历程，是一个关于创新与精简机器学习开发流程的励志故事。本文深入介绍他们的做法：面临的挑战、实施的解法，以及经验教训。了解 Spotify 如何利用 Kubernetes、Ray 与自定义 SDK，打造友好的云端开发环境（CDE），为 ML 工程师、研究员与数据科学家简化开发工作流。</p>
+<ul><li>Spotify 用 Ray 驱动机器学习应用：个性化内容推荐、搜索排序、内容发现等。</li><li>Spotify 在 Ray 之上构建了名为 Hendrix 的内部 ML 平台，部署在 Google Kubernetes Engine 上，为工程师提供把 ML 应用快速产品化的工具与环境。</li><li>新平台 Hendrix 的 SDK 内置 Ray 与 PyTorch 库，把常见 ML 任务标准化；同时利用 Hydra、DeepSpeed 等开源库。</li><li>Spotify 构建了云端开发环境（CDE）方案，统一开发环境、规避本地配置的种种问题。它提供配备 GPU、工具自动配置好的远程云环境。</li><li>CDE 通过消除环境问题提升生产力，提供更充裕的算力，并让背景各异的用户都能无摩擦上手。</li><li>关键经验：保障可用性、性能与安全；允许定制与扩展；使用 Kubernetes 并发挥其特性。</li><li>Spotify 把 PyTorch 与 Ray 集成，用于可扩展训练、超参数调优等。Ray 生态在 Spotify 持续催生更多 ML 创新。</li></ul>
+<h2>Spotify 如何打造稳健且开发者体验无阻的 Ray 平台</h2>
+<p>全球音频流媒体领军者 Spotify 长期与前沿技术相伴。公司横跨 184 个市场、拥有超过 5.15 亿用户与 2.1 亿订阅者，依靠先进的机器学习应用提升用户体验、驱动创新。为此，他们踏上了一条构建稳健 Ray 平台、并使其与无摩擦开发者体验无缝融合的旅程。</p>
+<p>本文深入剖析 Spotify 如何达成这一成就，拆解其策略的关键要素与一路积累的洞见。读完你会全面理解 Spotify 如何改造其 ML 开发流程，并可以借鉴到自己的项目里。</p>
+<h2>背景</h2>
+<p>Spotify 的机器学习平台在公司运营中扮演枢纽角色，支撑个性化内容推荐、搜索结果优化、内容发现等诸多应用。为支持这些 ML 计划，Spotify 的 ML 平台团队打造了名为 Hendrix 的集中式机器学习平台。</p>
+<p>Hendrix 的关键组件之一是强大的分布式计算框架 Ray。要高效利用 Ray，Spotify 需要创建一个用户友好的云端开发环境（CDE）。挑战在于：为从 ML 工程师到数据科学家等不同背景的用户，提供统一而直白的界面。</p>
+<h2>愿景</h2>
+<p>Spotify 的目标很明确：简化机器学习开发流程。为此，他们构想了能为不同用户理顺工作流的 CDE。无论用户角色或背景如何，CDE 都以灵活高效的方式访问被托管的 Ray 基础设施。</p>
+<p>本质上，愿景是创造无摩擦的开发者体验，让用户专注于自己的 ML 任务，不被搭建与配置的复杂事务拖住。</p>
+<h2>技术方案</h2>
+<p>Spotify 为这种无摩擦开发者体验给出的技术方案，是深思熟虑的技术组合加自研开发。关键组件如下：</p>
+<h3>Kubernetes 上的 Ray 集群</h3>
+<p>Spotify 的机器学习平台基于 Kubernetes，GPU 节点通过 Google Kubernetes Engine（GKE）接入。他们用名为 Kubeflow 的开源 Kubernetes operator 做编排。把 Ray 集群部署在 Kubernetes 上，获得了可扩展、可维护的基础设施。</p>
+<h3>集成 Ray 与 PyTorch 的 Python SDK</h3>
+<p>为用户提供无缝体验，Spotify 构建了包含 Ray 与 PyTorch 库的自定义 Python SDK。该 SDK 简化了访问 Ray 基础设施的流程，加速 ML 应用开发，满足不同背景与需求的用户。</p>
+<h3>云端开发环境</h3>
+<p>Spotify 创建了云端开发环境（CDE），让用户在云上无缝工作。CDE 基于 Kubernetes，具备快速启动、低延迟、任意设备可用的特点。用户可以瞬间搭好配置完备的开发环境，不必再排查本地机器上的坏配置。</p>
+<h3>定制的 VS Code 扩展</h3>
+<p>Spotify 认识到用户对开发环境的偏好各不相同。为此他们开发了定制的 VS Code 扩展，与 Spotify 生态的其他部分集成：用户可以查询内部数据端点、运行自定义 SQL 引擎等。</p>
+<h3>生态支持</h3>
+<p>Spotify 也充分利用 Ray 更大的生态，集成 Hugging Face、DeepSpeed、PyG 等流行 ML 库，确保用户能获取大量工具与方案来应对各种 ML 问题。</p>
+<h2>经验教训</h2>
+<p>Spotify 构建无摩擦开发者体验的历程揭示了若干关键经验：</p>
+<h3>可用性与性能</h3>
+<p>对任何开发环境而言，高可用与快速启动时间至关重要。Spotify 强调需要一个快速、高可用的反向代理来优化用户体验。</p>
+<h3>定制与扩展</h3>
+<p>在个人级与仓库级配置上提供高度可定制能力很重要。用户应当能按自己的偏好个性化其环境。</p>
+<h3>安全与遥测</h3>
+<p>设计时必须考虑安全。实现访问控制、授权与遥测等功能，提供安全且可观察的平台。</p>
+<h3>效率与成本节约</h3>
+<p>精简平台以最大化效率、降低成本。实现空闲自动关停（idle shutdown）等功能，节约资源、减少开销。</p>
+<h3>与现有工具集成</h3>
+<p>考虑新平台如何与组织内现有工具和工作流集成。无缝集成能显著改善用户体验。</p>
+<h2>未来</h2>
+<p>Spotify 的无摩擦开发者体验之旅没有止步于此。他们对未来有雄心计划，包括完成在 Ray 上的 PyTorch 开发、优化 ML 计算加速器的分配、进一步把开发环境平台化，以提供更好的可访问性、可靠性与可观察性。</p>
+<h2>结语</h2>
+<p>Spotify 成功改造其 ML 开发流程，证明了创新与深思熟虑规划的力量。通过组合 Ray、Kubernetes 与自定义 SDK 等技术，他们打造了满足 ML 工程师、研究员与数据科学家需求的友好云端开发环境。</p>
+<p>他们的历程得出的要点，适用于任何想精简开发工作流的人：</p>
+<p><strong>简化开发流程</strong>：尽力消除开发流程中的复杂度，让用户专注于自己的任务。</p>
+<p><strong>选对技术</strong>：选择与你的愿景和需求契合的技术与工具。</p>
+<p><strong>定制与扩展</strong>：提供选项，让用户按偏好定制环境。</p>
+<p><strong>安全与遥测</strong>：优先保障安全与监控，营造安全、可观察的环境。</p>
+<p><strong>集成与扩展性</strong>：确保平台与现有工具无缝集成，并能随组织成长而扩展。</p>
+<p>Spotify 的历程展示了组织精简机器学习开发的潜力，途中积累的洞见对任何踏上类似转型的人都很宝贵。</p>
+<p>从 Spotify 的故事中汲取灵感，你也能让自己的开发者体验更少摩擦、更高效、更友好，最终为你的项目与产品注入创新动力。</p>
+<p>立即注册 <a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">Anyscale endpoints</a>快速上手，或<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">联系销售</a>获取 Anyscale 平台的全面介绍。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>LinkedIn 基于 Ray Serve 的推理图（Inference Graphs）</title>
+      <link>https://anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve</guid>
+      <pubDate>Thu, 09 Nov 2023 00:00:00 +0000</pubDate>
+      <description>原文标题：Inference Graphs at LinkedIn Using Ray-Serve</description>
+      <content:encoded><![CDATA[<h1>LinkedIn 基于 Ray Serve 的推理图（Inference Graphs）</h1>
+<p>作者：Anyscale Ray Team | 2023 年 11 月 9 日</p>
+<p>2024 年 11 月更新：Anyscale Private Endpoints 已退役。要获得同样效果，请使用 Anyscale Services 上的 Ray Serve。点击<a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">这里</a>在 Anyscale 平台上开始使用。</p>
+<p><em>本文是 Ray Summit 2023 精彩回顾系列的一部分，我们总结了近期这场 LLM 开发者大会中最激动人心的演讲。</em></p>
+<p><em>免责声明：摘要由 AI 根据视频转录生成，并经过人工编辑。</em></p>
+<h2>核心要点</h2>
+<p>LinkedIn 的 AI 平台正在经历一场转型，借助 Ray 与推理图（Inference Graphs）的力量简化复杂的 AI 工作流。本文回顾 LinkedIn 的 Ali 与 Sasha 近期演讲的要点：他们面临的挑战、实施的解法，以及如何用 Ray 精简 AI 部署。看 Ray 如何帮助 LinkedIn 的 AI 平台实现更好的集成、资源利用，以及在在线与离线推理之间的无缝切换。</p>
+<h2>LinkedIn 基于 Ray Serve 的推理图</h2>
+<p>全球职业社交网络 LinkedIn 一直走在利用技术与 AI 提升用户体验的前沿。随着对 AI 服务与工具的需求持续增长，LinkedIn 迈出大胆一步，优化其 AI 基础设施，确保在 CPU 与 GPU 上都能更快、更经济地开发 AI 与 ML 应用。本文探讨 LinkedIn 如何在 Ray 与推理图的帮助下彻底改造其 AI 基础设施。</p>
+<h2>AI 基础设施的挑战</h2>
+<p>在 LinkedIn AI 平台团队 Ali 与 Sasha 的近期演讲中，他们讨论了遇到的挑战与应对方式。这些挑战覆盖面很广：从管理复杂 AI 工作流、集成多种编程语言，到处理多样化用例。</p>
+<p>他们强调的关键挑战之一，是要适应不断演进的 AI 版图。原来的自研技术栈让他们难以快速采纳新趋势与新技术。LinkedIn 需要一套更敏捷的基础设施，跟上飞速变化的 AI 领域。</p>
+<p>另一个挑战是从同构基础设施转向异构基础设施。随着 GPU 越来越重要，LinkedIn 希望构建能无缝适配多样 GPU 配置的基础设施，而不是把同一套多租户方案反复复制。</p>
+<p>自动扩缩容与资源利用也在他们的视野内。他们需要按需求高效伸缩资源、同时把浪费降到最低的方案。此外，他们还想简化从离线推理到在线推理的迁移——这通常需要大量重写代码。</p>
+<h2>引入 Ray 与推理图</h2>
+<p>LinkedIn 对这些挑战的解法是采纳 Ray 并提出推理图的概念。开源分布式计算框架 Ray 是构建和部署 AI 应用的强大工具，专为让 AI 负载在多个 CPU 与 GPU 上高效扩展而设计。</p>
+<p>在 LinkedIn 的 AI 平台语境下，推理图指 AI 工作流的图形化表示。这些图封装了从数据预处理、模型推理到后处理的完整过程。通过这一方式，LinkedIn 意在简化 AI 工作流，让 AI 工程师专注于高层的编排与部署，不被底层细节拖住。</p>
+<h2>基于 Ray 的推理运行时</h2>
+<p>LinkedIn 基于 Ray 的推理运行时提供异构基础设施，每个推理图作为独立单元运作。这些图可以按不同副本数复制以满足特定需求，从而为 A/B 实验等用例实现可扩展的控制。</p>
+<p>为让离线与在线推理无缝切换，LinkedIn 把 Ray 集成进了自己的实验框架。这一集成确保 AI 工程师能把模型顺利推向生产，而不被高门槛拦住。</p>
+<p>推理图中的节点被拆分到多个图上，每个图还可以进一步划分为多个节点。节点类型取决于负载走 CPU 还是 GPU 计算。这种布局把数据密集型负载隔离到 CPU，同时把推理任务卸载到 GPU，实现最优资源利用。</p>
+<p>LinkedIn 还把这套基础设施与负载均衡等关键组件集成，确保 AI 部署稳健可靠。</p>
+<h2>推理图的高层编排</h2>
+<p>为简化推理图的编写，LinkedIn 开发了名为 Proxima 的内部平台。该平台让 AI 工程师可以独立完成推理图的编写、部署与运行。Proxima 与 CI/CD 流水线、实验系统、特征基础设施深度集成，实现无缝协作与部署。</p>
+<p>Proxima 平台使用 Python 进行直观的图配置。AI 工程师通过组合代表模型、预处理、后处理、特征获取等步骤的对象来创建图。这种高层编排方式让 AI 工程师高效工作，无需深入底层实现细节。</p>
+<h2>对 AI 负载的影响</h2>
+<p>引入 Ray 与推理图后，LinkedIn 处理 AI 负载的方式发生了显著变化。对 LLN（Low Latency Network，低延迟网络）用例，新基础设施的开销极小，通常以毫秒计。这些用例的重点是 GPU 上的模型推理，基础设施并未引入明显开销。</p>
+<p>在对延迟至关重要的个性化模型场景，LinkedIn 优化基础设施以最小化序列化/反序列化成本：削减调用路径中的 Python 组件，引入基于 Java 的运行时。就特征获取而言，Python 与 Java 的性能差距相当可观。</p>
+<p>LinkedIn 还在积极探索进一步降低序列化/反序列化开销的方案，目标即便是高性能要求的模型，也让 AI 负载效率最大化。</p>
+<h2>在线与离线推理</h2>
+<p>LinkedIn 基于 Ray 的基础设施一项亮眼成就，是同一张推理图可同时用于在线与离线推理。虽然两者的扩缩配置不同，推理图本身保持一致。这意味着 AI 工程师只需创建一张图，就能在两种环境中运行，大幅简化开发与部署流程。</p>
+<p>离线推理方面，LinkedIn 用 Ray datasets 高效横向扩展负载，轻松应对大规模批处理。通过 actor 就近部署（co-location）与对象放置优化，他们尽量降低数据经网络传输的成本。</p>
+<h2>LinkedIn AI 基础设施的未来</h2>
+<p>LinkedIn 用 Ray 与推理图优化 AI 基础设施的旅程还在继续。他们正积极解决挑战、提升 AI 负载性能，包括探索 Java 运行时、Native C++，以及精细调优对象就近放置，进一步压缩序列化成本。</p>
+<p>他们打造的平台不仅精简了 AI 模型的部署，也让 AI 更容易融入以 Java 为主的 LinkedIn 现有生态。平台为 AI 工程师提供了高效工作所需的高层编排工具，让他们不必为底层实现细节操心。</p>
+<h2>结语</h2>
+<p>LinkedIn 用 Ray 与推理图革新 AI 基础设施，是 AI 与 ML 领域的一项激动人心的进展。这次转型回应了 LinkedIn AI 平台的挑战，为 AI 工程师提供了更敏捷、更经济、更性能导向的方案。</p>
+<p>Ray 的分布式计算框架在这场转型中证明了自身价值，帮助 LinkedIn 无缝扩展 AI 负载、优化资源利用，并简化在线与离线推理的切换。随着 LinkedIn 持续调优基础设施、探索更多优化，我们可以期待 AI 部署效率的更大提升。</p>
+<p>这次转型彰显了 LinkedIn 对创新与技术的投入，也为组织如何利用前沿技术增强 AI 能力、最终为用户提供更好的服务，提供了一个有说服力的范例。</p>
+<p>立即注册 <a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">Anyscale endpoints</a>快速上手，或<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">联系销售</a>获取 Anyscale 平台的全面介绍。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>基础模型的进展——技术、社会与应用</title>
+      <link>https://anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications</guid>
+      <pubDate>Fri, 03 Nov 2023 00:00:00 +0000</pubDate>
+      <description>原文标题：Advances in Foundation Models</description>
+      <content:encoded><![CDATA[<h1>基础模型的进展——技术、社会与应用</h1>
+<p>作者：Anyscale Ray Team | 2023 年 11 月 3 日</p>
+<p>2024 年 6 月更新：Anyscale Endpoints（Anyscale 的 LLM API 服务）与 Private Endpoints（自托管 LLM）现已作为 Anyscale Platform 的一部分提供。点击<a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">这里</a>在 Anyscale 平台上开始使用。</p>
+<p><em>本文是 Ray Summit 2023 精彩回顾系列的一部分，我们总结了近期这场 LLM 开发者大会中最激动人心的演讲。</em></p>
+<p><em>免责声明：摘要由 AI 根据视频转录生成，并经过人工编辑。</em></p>
+<h2>核心要点</h2>
+<p>在本文中，我们深入探讨 Percy Liang 对 AI 与 ML 领域最新进展、社会影响以及实际应用的洞察。从技术创新到其在法律、医疗和机器人领域的角色，本文梳理了基础模型带来的挑战与机遇。</p>
+<ul><li>基础模型是在广泛数据集上训练的 AI 模型，随后可以被适配到许多不同的下游任务。各公司正投入海量资源训练这些模型。</li><li>学术界在负责任地研究基础模型方面扮演重要角色。Stanford 成立了一个中心，将计算机科学家与法律、伦理等领域的专家结合，采取整体性的社会-技术进路。</li><li>他们主要在三个维度上推进基础模型：技术进步、应用（法律、医疗、机器人）与社会责任（隐私、公平等）。</li><li>他们开发了改进数据选择、模型架构、优化与对齐的新技术，显著加速了模型训练。</li><li>他们在准确率之外的众多指标上全面评估基础模型能力，包括鲁棒性、公平性和效率。</li><li>除了模型本身，他们还希望评估整个组织在透明度的相关实践。</li><li>总体而言，学术视角使他们能够开展更中立的研究，负责任地推进技术。</li></ul>
+<h2>基础模型的进展——技术、社会与应用</h2>
+<p>人工智能（AI）与机器学习（ML）领域正以惊人速度演进，让当下成为这个行业无比激动人心的时代。基础模型的发展有潜力变革社会的各个领域，而这一进程必须以负责任、透明和合乎伦理的方式进行。</p>
+<h2>理解基础模型</h2>
+<p>在深入演讲细节之前，先明确什么是基础模型。这些模型是 AI 与 ML 应用的骨干，为文本生成、图像处理、视频生成等多种任务提供基座。它们在海量数据集上训练，因而能够适配广泛的下游任务。基础模型就像 AI 世界的瑞士军刀，其能力只会不断增长。</p>
+<h2>整体性方法</h2>
+<p>Liang 提出了一种理解基础模型的整体性社会-技术方法。与传统只关注技术进步的路线不同，该方法将计算机科学家的专业能力与法律、经济、哲学、教育、人文等多元领域专家结合起来。这种全局视角旨在应对基础模型对社会的更广泛影响。</p>
+<h2>技术进展</h2>
+<p>演讲围绕三个关键维度展开：技术进步、应用与社会责任。我们先来了解技术进展。</p>
+<h3>数据选择：Doremi 方法</h3>
+<p>数据是 AI 模型的生命线，选对数据至关重要。与 Google 合作开发的 Doremi 方法提供了一种统计学上有原则依据的数据选择方式：它先在小模型上优化各领域数据的权重，再迁移到大模型训练中使用，使训练过程快 2.6 倍。</p>
+<h3>模型架构：超越 Transformers</h3>
+<p>尽管 Transformers 近年一直占据主导地位，但对能够处理长序列（如 DNA 序列或法律文档）的模型的需求日益增长。演讲介绍了一种受控制理论中状态空间模型启发的长卷积新方法，在处理长序列时取得了显著加速。</p>
+<h3>优化：Sophia 优化</h3>
+<p>AI 模型的优化通常只使用一阶信息（如梯度），这限制了对优化曲面曲率的理解。Sophia 优化引入了带裁剪的 Hessian 对角近似，为优化 AI 模型提供了有效手段。与传统优化技术相比，该方法带来 2 倍加速。</p>
+<h3>对齐：直接偏好优化</h3>
+<p>AI 模型的对齐过程通常需要用成对偏好数据进行训练。Liang 介绍了一种更简单的方法——直接偏好优化（Direct Preference Optimization），它无需复杂的奖励模型和补全采样，简化了对齐流程，为模型对齐提供了高效途径。</p>
+<p>这些技术进展不仅提升了 AI 模型开发的效率与速度，也增强了基础模型整体的鲁棒性。</p>
+<h2>基础模型的应用</h2>
+<p>基础模型正在各个领域落地，演讲重点介绍了三个方向：法律、医疗与机器人。</p>
+<h3>法律</h3>
+<p>在法律领域，弥合法律服务缺口（尤其面向服务不足的群体）存在巨大机会。基础模型可以被用来高效地提供法律服务。但挑战在于法律推理、处理超长法律文本以及确保可靠与可信。演讲介绍了 Pile of Law 和 Legal Bench 等数据集，以及面向法律推理的模型研发。这些工作旨在让法律服务更易得、更可靠。</p>
+<h3>医疗</h3>
+<p>医疗行业占 GDP 的相当大比重，是基础模型可以产生重大影响又一个领域。隐私、信任与临床专业知识是该领域的关键关切。在 PubMed 论文上训练的 Biomed LM，以及用于生成医学影像的文本-图像模型 Renkin，都展示了 AI 在医疗领域的潜力。演讲讨论了用基础模型增强现有分类器、强化数据增强，以及作为医学教学工具的用法。</p>
+<h3>机器人</h3>
+<p>基础模型有潜力革新机器人领域，让家务清洁等任务变得更可及。但机器人学带来独特挑战：需要物理具身、数据有限、序贯决策，以及对安全与可靠性的高要求。演讲介绍了数据采集工作与面向家庭机器人的模型开发。这些努力旨在让家用机器人成为现实，改善我们的日常生活。</p>
+<h3>社会责任与政策影响</h3>
+<p>基础模型的社会影响不容低估，演讲讨论了它们在应对版权、隐私与水印等关键问题上的角色。</p>
+<h3>版权</h3>
+<p>一个紧迫议题是使用受版权保护的数据训练基础模型。演讲强调了围绕&quot;用版权数据训练模型是否构成合理使用&quot;的持续法律争议，并讨论了数据过滤、人类反馈强化（ROHF）、来源追踪等技术缓解手段，以应对 AI 版权问题的复杂局面。</p>
+<h3>隐私</h3>
+<p>隐私是 AI 模型的头等关切。演讲探讨了将差分隐私应用于语言模型这类高维数据的挑战。在保护私有数据的同时仍能进行训练的技术开发，是关键的一步进展。</p>
+<h3>水印</h3>
+<p>随着对 AI 生成文本被滥用的担忧加剧，水印变得必不可少。文本水印很有挑战，因为它不应损害文本的可用性。演讲介绍了一种无损水印技术，在保留语言模型能力的同时，能够轻松检测 AI 生成内容。</p>
+<h2>评估与透明度</h2>
+<p>为确保基础模型的负责任使用，评估组织的相关实践（尤其是透明度）至关重要。演讲强调组织需要对其数据集、模型评估与实践保持透明。这种透明度有助于引导政策决策，确保负责任的 AI 开发。</p>
+<h2>结语</h2>
+<p>基础模型已成为 AI 与 ML 行业的驱动力量。其技术进展正在革新我们训练和使用 AI 模型的方式，使其更高效、更可靠。它们在法律、医疗与机器人领域的应用，蕴含着变革这些行业的希望。然而，能力越大，责任越大——演讲着重强调必须以合乎伦理、负责任的方式使用基础模型。</p>
+<p>在基础模型领域继续前进的过程中，必须考虑更广泛的社会影响。版权、隐私与水印只是需要审慎对待的若干问题。此外，参与 AI 开发的组织必须有透明与负责任的实践。</p>
+<p>这场演讲是理解基础模型演进格局的一份全面指南，揭示了它们带来的挑战与机遇。当社会拥抱 AI 与 ML 时，理解并应对这些技术的影响比以往任何时候都更重要。凭借负责任的开发与深思熟虑的政策决策，基础模型有潜力在诸多方面造福人类，塑造更智能、更高效的未来。</p>
+<p>总之，基础模型的旅程令人兴奋，其潜力才刚刚揭开一角。随着我们继续在该领域前进，必须考虑更广泛的社会影响。版权、隐私与水印只是需要审慎对待的若干问题。此外，参与 AI 开发的组织必须有透明与负责任的实践。</p>
+<p>立即注册<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">Anyscale endpoints</a>快速上手，或<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">联系销售</a>获取 Anyscale 平台的全面介绍。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Airbnb 的下一代 ML 平台如何优化 LLM 训练</title>
+      <link>https://anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform</guid>
+      <pubDate>Mon, 30 Oct 2023 00:00:00 +0000</pubDate>
+      <description>原文标题：Optimizing LLM Training with Airbnb&apos;s Next-Gen ML Platform</description>
+      <content:encoded><![CDATA[<h1>Airbnb 的下一代 ML 平台如何优化 LLM 训练</h1>
+<p>作者：Anyscale Ray Team | 2023 年 10 月 30 日</p>
+<p>2024 年 6 月更新：Anyscale Endpoints（Anyscale 的 LLM API 服务）与 Private Endpoints（自托管 LLM）现已作为 Anyscale Platform 的一部分提供。点击<a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">这里</a>在 Anyscale 平台上开始使用。</p>
+<p><em>本文是 Ray Summit 2023 精彩回顾系列的一部分，我们总结了近期这场 LLM 开发者大会中最激动人心的演讲。</em></p>
+<p><em>免责声明：摘要由 AI 根据视频转录生成，并经过人工编辑。</em></p>
+<h2>核心要点</h2>
+<p>用下一代 ML 平台持续优化机器学习（ML）训练平台，对跟上快速演进的 AI 与 ML 技术版图至关重要。本文梳理 Airbnb 演讲中的洞见：他们把先进 ML 技术集成进自身基础设施的历程。我们将探讨优化 ML 平台的重要性、Kubernetes、Ray 及其他工具的角色，以及在 ML 训练中实现成本效率、可扩展性与性能的挑战和解法。</p>
+<ul><li>Airbnb 已有基于 Kubernetes 的 ML 基础设施，但发现 K8s 在支撑 ML 负载上有缺口：不支持分数 GPU、运行指标暴露、开发者可用性、大模型扩展等问题。</li><li>他们采纳 Ray 来补齐缺口。Ray 的好处包括：本地轻松做原型、远程执行并动态控制运行时、支持 PyTorch 等最新 ML 框架与 DeepSpeed 等优化库。</li><li>成本效率方面，他们在 AWS 上用 auto-scaling groups、Kubernetes cluster auto-scaler 与 KubeRay 搭建了完全弹性的 Ray 集群，把资源碎片化降到最低。</li><li>训练效率方面，他们使用 AWS EFA 与 RDMA 让 worker 之间拥有高吞吐网络——这对分布式训练很重要。</li><li>借助 Ray，他们能在 8× A100 GPU 上训练最高 12B 参数的模型，基准测试达到每块 A100 150 TFLOPS。</li><li>展望未来，他们计划研究 30B+ 参数模型的模型并行、集成 Aviary 以降低服务成本、并整合训练引擎。</li></ul>
+<h2>ML 的快速演进</h2>
+<p>在谈优化策略之前，先理解为何必须持续增强 ML 平台。ML 领域以不断创新为特征：新算法、新框架、新硬件架构层出不穷。跟上这些发展，是确保 ML 模型保持竞争力与有效性的前提。</p>
+<p>Airbnb 的历程是这一现象的绝佳案例。他们引入 Ray 等先进 ML 平台以有效应对变化的版图。这种适应力至关重要——在 ML 领域保持前沿，就必须善用最新的工具与技术。</p>
+<h2>Kubernetes 的角色</h2>
+<p>Kubernetes 是现代 ML 基础设施的基本构件，为部署和管理 ML 应用提供可扩展、灵活的环境。Airbnb 把 Kubernetes 集成进 ML 基础设施，正体现了它的地位。</p>
+<p>Kubernetes 让 ML 从业者把应用封装为 K8s 原生资源，从而简化管理、改善资源利用，并支持扩缩与服务发现。最终得到的是流程顺畅、高效的 ML 开发过程。</p>
+<h2>用 Ray 服务 ML</h2>
+<p>开源分布式计算框架 Ray 在 Airbnb 的 ML 基础设施中扮演关键角色。Ray 支撑分布式 ML 训练，让 ML 从业者高效驾驭多块 GPU。</p>
+<p>Ray 最重要的优势之一是能无缝扩展 ML 负载。无论是训练数十亿参数的模型，还是做复杂计算，Ray 都提供所需的弹性。这份可扩展性确保即使模型规模与复杂度增长，ML 模型仍能快而有效地训练。</p>
+<h2>ML 训练的成本效率</h2>
+<p>成本效率是 ML 训练的头号关切。ML 模型——尤其是大型深度学习模型——资源密集、训练昂贵。在维持或提升模型性能的同时优化成本，是关键挑战。</p>
+<p>Airbnb 的成本效率策略包括几项：</p>
+<ol><li><strong>临时集群（Ephemeral Clusters）</strong>：按需创建临时集群，把闲置资源降到最低。这些集群可为 ML 负载的特定需求量身定制，确保资源利用经济高效。</li></ol>
+<ol><li><strong>资源管理</strong>：实施资源管理系统，控制资源分配与使用，防止过度配置和不必要开销。</li></ol>
+<ol><li><strong>自动扩缩容</strong>：利用自动扩缩特性，按负载需求动态调整资源，既避免闲置也避免过载。</li></ol>
+<h2>扩展 ML 负载</h2>
+<p>随着 ML 模型越来越复杂，可扩展性的需求愈发迫切。Airbnb 对 3D 模型并行的探索是典型例子。这一方案瞄准超过 300 亿参数的模型：节点间用流水线并行、节点内 worker 用张量并行。</p>
+<p>这种程度的扩展让 ML 从业者有底气挑战最难的问题——例如训练超大规模语言模型——因为他们确信能有效驾驭分布式计算资源。</p>
+<h2>集成新技术</h2>
+<p>ML 领域持续演进，新技术与新方法不断涌现。把这些进展集成进现有基础设施既有挑战又不可或缺——这是保持竞争力的条件。</p>
+<p>Airbnb 对用 Aviary 做在线服务的探索，是其拥抱新技术决心的写照。这一集成旨在通过连续批处理（continuous batching）等特性降低服务成本。接纳 Aviary 这类创新，能显著影响 ML 部署的成本效益。</p>
+<h2>快节奏开源社区的挑战</h2>
+<p>ML 社区的创新速度既是恩赐也是挑战。它让你能触及最尖端工具与技术，也要求不断适应与学习。Airbnb 的经验表明：必须积极与开源社区互动，才能掌握信息、有效利用最新进展。</p>
+<h2>结语</h2>
+<p>用下一代 ML 平台优化 ML 训练平台，不只是跟进最新技术的问题，更关乎让 ML 基础设施能高效释放这些技术的威力。Kubernetes、Ray 及其他工具正是达成这份效率的关键。</p>
+<p>成本效率、可扩展性与适应力是 ML 平台优化的核心考量。Airbnb 的历程是一份宝贵的案例研究，展示了组织如何在不断演进的 ML 技术版图中航行。</p>
+<p>总之，企业必须把 ML 平台优化视为长期过程。通过接纳新工具、新策略与新技术，他们不仅能跟上 ML 领域的快速演进，还能保持领先，交付更强大、更经济的 ML 解决方案。</p>
+<p>随着 ML 社区持续创新，组织必须保持敏捷、善变通、坚持优化，才能释放机器学习的全部潜力。</p>
+<p>立即注册 <a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">Anyscale endpoints</a>快速上手，或<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">联系销售</a>获取 Anyscale 平台的全面介绍。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>用 Ray Serve 构建生产级 AI 应用</title>
+      <link>https://anyscale.com/blog/building-production-ai-applications-with-ray-serve</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/building-production-ai-applications-with-ray-serve</guid>
+      <pubDate>Tue, 24 Oct 2023 00:00:00 +0000</pubDate>
+      <description>原文标题：Building Production AI Applications with Ray Serve</description>
+      <content:encoded><![CDATA[<h1>用 Ray Serve 构建生产级 AI 应用</h1>
+<p>作者：Anyscale Ray Team | 2023 年 10 月 24 日</p>
+<p>2024 年 6 月更新：Anyscale Endpoints（Anyscale 的 LLM API 服务）与 Private Endpoints（自托管 LLM）现已作为 Anyscale Platform 的一部分提供。点击<a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">这里</a>在 Anyscale 平台上开始使用。</p>
+<p><em>本文是 Ray Summit 2023 精彩回顾系列的一部分，我们总结了近期这场 LLM 开发者大会中最激动人心的演讲。</em></p>
+<p><em>免责声明：摘要由 AI 根据视频转录生成，并经过人工编辑。</em></p>
+<h2>核心要点</h2>
+<p>Ray Serve 是面向在线推理的灵活高效计算系统，正在革新 AI 应用的构建与部署方式。在本文中，我们探讨 Ray Serve 如何应对 AI 应用部署中的常见挑战——模型微服务、大语言模型的兴起以及不断上涨的硬件成本。我们还将讨论 Ray Serve 的可观测性、spot 实例支持与自动扩缩容特性，这些让它成为构建生产 AI 应用的强大工具。</p>
+<ul><li>Ray Serve 通过提供一个 Python 原生框架，帮助解决在线 AI 应用服务化中的常见问题：包含多个模型的复杂应用可以在单个 Python 程序中表达，从而便于快速迭代与部署。</li><li>Ray Serve 正在回应的 2023 年趋势：</li></ul>
+<ul><li>大语言模型（LLM）兴起——Ray Serve 增加了 <a href="https://github.com/ray-project/ray-llm">RayLLM</a> 子项目等优化，以高效服务 LLM。</li><li>硬件成本上升——Ray Serve 增加了模型多路复用（model multiplexing）等优化，最大化硬件利用率。</li></ul>
+<ul><li>迈向生产：Ray Serve 聚焦生产就绪性，包括稳定性、混沌测试、Ray dashboard 等可观测性功能，以及 Anyscale 等托管服务。</li><li>演示亮点：</li></ul>
+<ul><li>用于可视化 Ray Serve 部署的 Anyscale 服务 UI</li><li>用于请求追踪的 CloudWatch 集成</li><li>用于指标与分析的 Grafana 仪表盘</li><li>支持 spot 实例以降低成本</li><li>根据负载动态伸缩资源的自动扩缩容</li></ul>
+<ul><li>经过 2023 年生产环境的更多采用与锤炼，Ray Serve 已在 Ray 2.7 中正式 GA。</li></ul>
+<h2>用 Ray Serve 构建生产级 AI 应用</h2>
+<p>人工智能（AI）与机器学习（ML）已成为各行各业的有机组成部分，驱动创新与效率。然而，为生产构建和部署 AI 应用可能是复杂且耗费资源的工作。强大的 AI 服务系统 Ray Serve 正为此而生。在本文中，我们将深入 Ray Serve 的世界，看它如何改变生产 AI 应用的格局。</p>
+<h2>构建生产级 AI 应用的挑战</h2>
+<p>要理解 Ray Serve 的意义，必须先认清 AI 开发者与组织在构建生产 AI 应用时面临的挑战：</p>
+<ul><li><strong>模型微服务</strong>：传统 AI 应用常采用模型微服务架构——每个模型作为独立服务运行，各有自己的 Docker 配置与 Kubernetes 部署。这种方式复杂且耗资源，让多个模型之间高效创新与共享资源变得困难。</li><li><strong>大语言模型（LLM）的兴起</strong>：GPT-3 及其变体等大语言模型的出现标志着 AI 的重大趋势。要释放 LLM 的潜力，AI 开发者需要灵活且可扩展的基础设施。</li><li><strong>硬件成本上升</strong>：随着 AI 模型复杂度增长，硬件尤其是 GPU 的成本大幅上涨。高效利用和管理这些资源是成本控制的重中之重。</li></ul>
+<h2>Ray Serve 介绍</h2>
+<p>Ray Serve 是 AI 应用部署领域的变革者，为构建生产 AI 应用提供灵活、可扩展且高效的方式。看它如何回应上述挑战：</p>
+<ul><li><strong>化繁为简的模型微服务：</strong> Ray Serve 让开发者把复杂应用表达为单个 Python 程序。这意味着你可以把业务逻辑与多个模型混合在一起，从本地测试到生产部署快速迭代。Ray Serve 的 Python 原生特性简化了应用架构，降低了为每个模型维护独立微服务的复杂度。</li><li><strong>拥抱大语言模型：</strong> 针对 LLM 的兴起，Ray Serve 引入了专门服务 LLM 的基础设施。这套优化后的基础设施可与 VLLM、NVIDIA TensorRT 等最先进方案集成，确保 AI 应用高效利用 LLM。</li><li><strong>应对硬件成本：</strong> Ray Serve 提供高级特性优化资源分配与伸缩。它支持模型多路复用，让大量模型在同一硬件上并发运行。在 GPU 日益紧俏、硬件成本攀升的环境下，这一能力尤为关键。此外，Ray Serve 支持 spot 实例，让你在不牺牲服务可用性的前提下利用高性价比的云资源。</li></ul>
+<h2>节省与成功案例</h2>
+<p>真实案例彰显了 Ray Serve 应对这些挑战的成效。Ray Serve 用户 Samsara 将 AI 平台迁移到 Ray Serve 后，年度推理成本降低了 50%。多家金融机构正借助 Ray Serve 运行大规模 GPU 集群，以远低于竞品方案的成本提供最先进的模型。</p>
+<h2>紧跟趋势</h2>
+<p>AI 领域瞬息万变，新模型与新技术不断涌现。组织必须快速适应才能保持竞争力。Ray Serve 的灵活性与开发者效率使它跟得上这些趋势：它陆续推出了流式响应、连续批处理（continuous batching）和张量并行等特性，与领域最新进展保持同步，确保企业能迅速集成 AI 新发展的成果并从中获益。</p>
+<h2>生产就绪性</h2>
+<p>2023 年是 AI 的变革之年，许多公司正从构想阶段走向 ML 的生产应用。要完成这一转变，稳健的部署与可观测性系统不可或缺。Ray Serve 着力提升生产就绪性，引入了 Ray dashboard 上的 Serve 页签、改进的指标与日志等可观测性功能。持续的混沌与规模测试保障了稳定性，在问题影响用户之前就把它们揪出来。</p>
+<h2>Ray Serve 实战——拍照计算器应用</h2>
+<p>演示以一个拍照计算器应用展示 Ray Serve：它体现了各 deployment 独立扩缩、应对流量突发，以及依据不同硬件需求优化资源使用的能力。</p>
+<h2>可观测性带来深入洞察</h2>
+<p>Ray Serve 的可观测性功能让你看清请求如何在应用中流转、每个 deployment 的延迟以及关键组件的健康状况。这种程度的可见性让管理者做出明智决策并高效排障。</p>
+<h2>Spot 实例实现成本效率</h2>
+<p>Ray Serve 引入对 spot 实例的支持，让用户利用高性价比云资源。当 spot 实例被回收时，Ray Serve 会将流量平稳切换到按需节点，待 spot 实例可用时再自动切回。这一省钱策略确保 AI 应用保持成本高效。</p>
+<h2>自动扩缩容应对流量洪峰</h2>
+<p>流量模式会波动，应用必须随之适应。Ray Serve 的自动扩缩容能力可以根据用户需求动态调整副本数与节点数。正如演示所见，在流量洪峰期间，这带来了吞吐上升与延迟下降。</p>
+<h2>结语</h2>
+<p>构建生产级 AI 应用可能困难重重，但 Ray Serve 以灵活高效的基础设施简化了这一过程。它回应了模型微服务、大语言模型兴起和硬件成本上涨带来的挑战。凭借可观测性、spot 实例支持与自动扩缩容，Ray Serve 让组织既能交付成本高效的 AI 方案，也能跟上不断变化的 AI 趋势。随着 AI 版图持续演进，对于要在生产环境中释放 AI 潜力的组织，Ray Serve 始终是强大工具。</p>
+<p>欢迎了解 <a href="https://ray.io/serve">Ray Serve</a>，立即注册 <a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">Anyscale endpoints</a>快速上手，或<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">联系销售</a>获取 Anyscale 平台的全面介绍。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Netflix 基于 Ray 的异构训练集群</title>
+      <link>https://anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix</guid>
+      <pubDate>Fri, 20 Oct 2023 00:00:00 +0000</pubDate>
+      <description>原文标题：Heterogeneous Training Cluster with Ray at Netflix</description>
+      <content:encoded><![CDATA[<h1>Netflix 基于 Ray 的异构训练集群</h1>
+<p>作者：Anyscale Ray Team | 2023 年 10 月 20 日</p>
+<p>2024 年 6 月更新：Anyscale Endpoints（Anyscale 的 LLM API 服务）与 Private Endpoints（自托管 LLM）现已作为 Anyscale Platform 的一部分提供。点击<a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">这里</a>在 Anyscale 平台上开始使用。</p>
+<p><em>本文是 Ray Summit 2023 精彩回顾系列的一部分，我们总结了近期这场 LLM 开发者大会中最激动人心的演讲。</em></p>
+<p><em>免责声明：摘要由 AI 根据视频转录生成，并经过人工编辑。</em></p>
+<h2>核心要点</h2>
+<p>Netflix 的机器学习平台利用异构训练集群支撑其推荐与内容个性化系统。在本文中，我们深入了解 Netflix 如何借助 Ray 与 GPU 集群实现高效的模型训练、通信与数据管理，也探讨他们面临的挑战以及在资源分配和 GPU 利用上的策略。</p>
+<ul><li>Netflix 在首页使用个性化推荐帮助用户找到相关内容，涉及排序算法、定制化封面艺术图等。</li><li>他们为推荐与计算机视觉任务使用多种 ML 模型。负载包括推荐、媒体理解与大语言模型。</li><li>为优化计算，他们使用自定义算子、引入 ML 框架的最新算子，并对算子序列做融合。</li><li>通信方面，稠密梯度使用 NCCL，但稀疏 embedding/表梯度需要定制方案。</li><li>I/O 方面，他们使用本地 SSD、S3 流式读取以及从 S3 到 FSx 的缓存，为 GPU 提供高吞吐。</li><li>借助 TF data service 与 Ray，他们把数据加载卸载到远端 CPU，与 GPU 训练解耦。</li><li>每个团队拥有可自动扩缩的持久异构集群，作业只需声明所需 GPU 数量。</li><li>数据存放在 S3，同步到 FSx 以获得高速训练访问，日志/checkpoint 写入 EFS。</li><li>他们正在构建中心化调度器，探索批量推理，并转向完全调度化的作业提交。</li></ul>
+<h2>Netflix 基于 Ray 的异构训练集群</h2>
+<p>全球流媒体巨头 Netflix 以其数据驱动的内容个性化著称。为此，他们依赖一个以 GPU 集群支撑模型训练与推荐系统的强健机器学习平台。本文探讨 Netflix 的异构训练集群，聚焦其对 Ray 与 GPU 的使用。</p>
+<h2>理解异构训练集群</h2>
+<p>异构训练集群是 Netflix 机器学习基础设施的重要组成部分。这类集群汇集 CPU、GPU 等不同类型硬件，服务广泛的机器学习负载。借此，Netflix 能高效支撑从推荐系统到大语言模型的各种用例。</p>
+<h2>个性化在 Netflix 中的角色</h2>
+<p>Netflix 成功的核心在于为用户个性化内容推荐。平台首页为每个 profile 深度定制，首页上的一切都由推荐驱动。这些推荐来自分析用户观看历史与偏好的复杂机器学习模型。</p>
+<h2>机器学习负载</h2>
+<p>Netflix 的机器学习负载可分为三大类：</p>
+<ol><li>推荐用例：涉及稠密特征模型，与稀疏特征拼接，使用多个 MLP（多路 MLP）。特点是数据集庞大，需在多 GPU 上分布式训练。</li></ol>
+<ol><li>多模态用例：Netflix 的研究者处理多样数据源，包括文本、图像、音频、视频等。这些数据集可能极其庞大，因而需要分布式数据并行。</li></ol>
+<ol><li>大语言模型：这一新兴用例以较小的数据集训练超大规模语言模型。由于基于 Transformer 的架构，计算强度非常高。</li></ol>
+<h2>高效计算与 GPU 利用</h2>
+<p>为充分利用 GPU 集群，Netflix 采用了一系列策略：</p>
+<ol><li>自定义算子：使用自定义算子提升计算效率，降低组合复杂运算时的开销。</li></ol>
+<ol><li>最先进算子：Netflix 利用 TensorFlow 与 PyTorch 的最先进算子，改善内存使用与整体模型性能。</li></ol>
+<ol><li>GPU 通信：Netflix 优化 GPU 通信，兼顾不同模型规模与 batch 大小。他们探索 TensorFlow 原生方案与 embedding 表等稀疏权重处理，为负载找到最合适的方式。</li></ol>
+<h2>数据存储与管理</h2>
+<p>高效的数据存储与管理对机器学习工作流至关重要。Netflix 的策略包括：</p>
+<ol><li>本地 SSD 磁盘：用于高速数据访问，但扩展性有限。</li></ol>
+<ol><li>S3 流式读取：提供云端存储方案，但存在性能瓶颈。</li></ol>
+<ol><li>FSx for Lustre：这一高吞吐文件系统帮助高效读取大数据集，并与 GPU 集群集成。</li></ol>
+<ol><li>数据加载优化：为优化数据加载、缓解 CPU 瓶颈，他们用 Ray 把数据加载卸载到远端 CPU。</li></ol>
+<h2>资源分配与调度</h2>
+<p>Netflix 通过资源分配与调度策略确保异构训练集群被高效使用。他们采用资源池（resource pools）概念，按机器能力分组，让需要 GPU 资源的研究者更简单地申请资源。</p>
+<h2>挑战与未来方向</h2>
+<p>尽管基础设施相当成熟，Netflix 仍承认存在挑战：要容纳多样化负载、跟进新兴 GPU 技术。他们还在构建中心化的作业调度器与队列系统，以最大化资源利用率、减少团队间争抢。</p>
+<h2>结语</h2>
+<p>Netflix 用 Ray 与 GPU 技术构建异构训练集群，印证了 AI 与 ML 在娱乐产业的威力，也凸显了高效数据管理、计算与资源分配对打造个性化流媒体体验的重要性。随着机器学习与 GPU 技术持续演进，Netflix 将如何演进其基础设施、继续为全球数百万观众提供优质内容推荐，令人期待。</p>
+<p>立即注册 <a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">Anyscale endpoints</a>快速上手，或<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">联系销售</a>获取 Anyscale 平台的全面介绍。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>构建生产级 LLM 应用的实用数据考量</title>
+      <link>https://anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications</guid>
+      <pubDate>Thu, 19 Oct 2023 00:00:00 +0000</pubDate>
+      <description>原文标题：Practical Data Considerations for Building Production-Ready LLM Applications</description>
+      <content:encoded><![CDATA[<h1>构建生产级 LLM 应用的实用数据考量</h1>
+<p>作者：Anyscale Ray Team | 2023 年 10 月 19 日</p>
+<p>2024 年 6 月更新：Anyscale Endpoints（Anyscale 的 LLM API 服务）与 Private Endpoints（自托管 LLM）现已作为 Anyscale Platform 的一部分提供。点击<a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">这里</a>在 Anyscale 平台上开始使用。</p>
+<p><em>本文是 Ray Summit 2023 精彩回顾系列的一部分，我们总结了近期这场 LLM 开发者大会中最激动人心的演讲。</em></p>
+<p><em>免责声明：摘要由 AI 根据视频转录生成，并经过人工编辑。</em></p>
+<h2>核心要点</h2>
+<p>构建生产就绪的 LLM（大语言模型）应用涉及会显著影响性能的实用数据考量。本文梳理近期一场演讲中讨论的关键数据议题：元数据集成、层级化检索、微调与优化。</p>
+<ul><li>检索增强生成（RAG）用大语言模型检索并总结相关信息来生成文本。但朴素的实现可能因检索质量差而输出糟糕的回答。</li><li>常见的检索问题有：精度低（检回无关块）、召回低（漏掉关键上下文）、数据过期/冗余。非质量类问题则包括可扩展性与文档更新的处理。</li><li>改进检索的技术：</li><li>按句子级嵌入、检索句子，再为语言模型扩展成上下文窗口</li><li>嵌入&quot;引用&quot;而非原始文本块（摘要、元数据等）</li><li>添加元数据（页码、摘要等）辅助检索与综合</li><li>层级化检索（顶层摘要 -&gt; 下层块）</li><li>对嵌入对象（表格、图形等）做递归检索</li><li>评估检索：用 GPT-4 从文档生成&quot;问题-文本块&quot;对作为 ground truth，测量 MRR 等检索排序指标。</li><li>应对可扩展性：用 Ray 做并行化，加速数据摄取、嵌入等。</li></ul>
+<h2>构建生产级 LLM 应用的实用数据考量</h2>
+<p>大语言模型（LLM）革新了自然语言处理的方方面面，让聊天机器人、内容生成、问答系统等应用成为可能。然而，从一个简单原型到生产就绪的 LLM 应用，中间隔着不少实用数据课题。本文深入&quot;构建生产级 LLM 应用的实用数据考量&quot;这场演讲的洞见，探讨元数据集成、层级化检索、微调与优化等关键主题。</p>
+<h2>数据在 LLM 应用中的重要性</h2>
+<p>GPT-4 这类 LLM 理解和生成拟人文本的能力令人惊叹。但其输出质量在很大程度上取决于提供给它的数据。务实的数据考量，是提升 LLM 在真实应用中性能与相关性的重要手段。</p>
+<h2>元数据集成：增强上下文</h2>
+<p>演讲讨论的第一项考量就是元数据集成。元数据指关于文本的附加信息，例如页码、文档标题，甚至表格、图形这类结构化数据。把元数据集成进 LLM 应用有几个好处：</p>
+<ol><li><strong>改善检索</strong>：元数据可以同时帮助检索与综合。在搜索中加入元数据过滤条件，能检回更相关的内容。例如查找特定时间段的信息时，元数据标签可以缩小搜索结果。</li></ol>
+<ol><li><strong>增强上下文</strong>：元数据丰富了提供给 LLM 的上下文，帮助模型更好地理解内容，生成更连贯、更相关的回答。例如把页码作为元数据加入后，LLM 就能给出文内引用，提高所生成信息的可靠性。</li></ol>
+<p>元数据集成是构建生产级 LLM 应用的宝贵资产，但必须把握平衡，防止过多元数据淹没系统。</p>
+<h2>层级化检索：应对上下文窗口限制</h2>
+<p>LLM 在单个上下文窗口内能处理的 token 数往往有限。处理长文档、或需要跨多个章节访问信息时，这成了难题。为突破限制，演讲引入层级化检索。</p>
+<p><strong>层级化检索（Hierarchical Retrieval）</strong>：把文档及其内容按层级组织。例如先在更高层级对文档做摘要，再逐层深入到具体章节或段落。这一方法能有效缓解上下文窗口的限制。</p>
+<p><strong>递归检索（Recursive Retrieval）</strong>：某些文档内嵌表格或图形等对象。可以把这些对象表示为独立实体，从而支持递归检索。LLM 可以从概览开始，检回相关对象，再深入访问对象内部的具体信息。这种层级+递归的检索过程，提供了访问和呈现信息的更高效手段，处理复杂文档时尤其如此。</p>
+<h2>面向具体应用的微调</h2>
+<p>微调是使 LLM 适配具体应用的关键一步。演讲强调了微调的重要性，尤其是对 GPT-4 这类有潜力生成高质量文本的模型。微调能显著提升表现，但需要专业知识和审慎考量。</p>
+<p><strong>定制训练数据</strong>：微调就是让 LLM 在按应用需求定制的数据集上继续训练。这个过程可能很耗资源——收集、清洗、标注大量数据。但成果通常对得起投入。</p>
+<p><strong>提升相关性</strong>：微调可以调整 LLM 的行为，确保它生成上下文相关的回答。例如在医疗聊天机器人应用中，微调能让模型给出医学信息、回应用户提问时更准确。</p>
+<p><strong>监控与迭代</strong>：微调不是一锤子买卖。它需要持续监控与迭代来维持模型性能，定期用新数据更新微调后的模型，帮助其适应变化的语境与演进的用户需求。</p>
+<h2>面向可扩展性的优化策略</h2>
+<p>可扩展性是把 LLM 应用推向生产的关键因素。能否处理海量数据并高效交付结果，决定成败。演讲列出了若干确保可扩展性的优化策略：</p>
+<p><strong>并行化</strong>：处理海量数据很耗时。利用并行化技术——例如用 Ray 把数据处理任务分发到多个资源——可以显著加快数据摄取、解析与嵌入。</p>
+<p><strong>缓存</strong>：缓存高频访问的数据，减少重复检索与处理，带来更快的响应。实现一套高效的缓存系统是很有价值的优化。</p>
+<p><strong>分布式数据存储</strong>：把数据存放在向量数据库等分布式系统中，可改善检索性能，支持对相关信息的高效查询与检回，提升整体用户体验。</p>
+<h2>结语</h2>
+<p>构建生产级 LLM 应用是一个多面的过程，需要对实用数据层面深思熟虑。元数据集成、层级化检索、微调与优化，在确保 LLM 给出准确、相关、高效回答方面扮演枢纽角色。</p>
+<p>随着 LLM 技术持续进步，驾驭这些实用数据考量的能力将愈发关键。落实这些策略，开发者就能打造出在医疗、金融、教育、客服等诸多领域都表现出色的 LLM 应用。</p>
+<p>在瞬息万变的自然语言处理版图中，掌握以 RAG 技术处理实用数据考量的艺术，正是构建能在生产环境真正发光的 LLM 应用的关键。</p>
+<p>立即注册 <a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">Anyscale endpoints</a>快速上手，或<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog">联系销售</a>获取 Anyscale 平台的全面介绍。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

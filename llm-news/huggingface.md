@@ -1,6 +1,6 @@
 # Hugging Face (Inference Providers) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-10**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-12**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Hugging Face (Inference Providers)（`huggingface`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -178,7 +178,7 @@
 166. [推出 Falcon-H1-Arabic：以混合架构拓展阿拉伯语 AI 的边界](https://huggingface.co/blog/tiiuae/falcon-h1-arabic)（2026-01-05） <!--orig:Introducing Falcon-H1-Arabic: Pushing the Boundaries of Arabic Language AI with Hybrid Architecture-->
 167. [NVIDIA 用 DGX Spark 与 Reachy Mini 让 agent 活起来](https://huggingface.co/blog/nvidia-reachy-mini)（2026-01-05） <!--orig:NVIDIA brings agents to life with DGX Spark and Reachy Mini-->
 168. [AprielGuard：现代 LLM 系统中面向安全与对抗鲁棒性的护栏](https://huggingface.co/blog/ServiceNow-AI/aprielguard)（2025-12-23） <!--orig:AprielGuard: A Guardrail for Safety and Adversarial Robustness in Modern LLM Systems-->
-169. [Transformers v5 中的分词：更简单、更清晰、更模块化](https://huggingface.co/blog/tokenizers)（2025-12-18） <!--orig:Tokenization in Transformers v5: Simpler, Clearer, and More Modular-->
+169. [Transformers v5 中的分词：更简单、更清晰、更Modular](https://huggingface.co/blog/tokenizers)（2025-12-18） <!--orig:Tokenization in Transformers v5: Simpler, Clearer, and More Modular-->
 170. [开放评估标准：用 NeMo Evaluator 为 NVIDIA Nemotron 3 Nano 做基准测试](https://huggingface.co/blog/nvidia/nemotron-3-nano-evaluation-recipe)（2025-12-17） <!--orig:The Open Evaluation Standard: Benchmarking NVIDIA Nemotron 3 Nano with NeMo Evaluator-->
 171. [CUGA 登陆 Hugging Face：让可配置 AI Agent 走向大众](https://huggingface.co/blog/ibm-research/cuga-on-hugging-face)（2025-12-15） <!--orig:CUGA on Hugging Face: Democratizing Configurable AI Agents-->
 172. [llama.cpp 新特性：模型管理](https://huggingface.co/blog/ggml-org/model-management-in-llamacpp)（2025-12-11） <!--orig:New in llama.cpp: Model Management-->
@@ -222,7 +222,7 @@
 210. [介绍 RTEB：检索评估新标准](https://huggingface.co/blog/rteb)（2025-10-01） <!--orig:Introducing RTEB: A New Standard for Retrieval Evaluation-->
 211. [借助深度剪枝草稿模型加速 Intel® Core™ Ultra 上的 Qwen3-8B Agent](https://huggingface.co/blog/intel-qwen3-agent)（2025-09-29） <!--orig:Accelerating Qwen3-8B Agent on Intel® Core™ Ultra with Depth-Pruned Draft Models-->
 212. [VibeGame：探索 Vibe 编码游戏](https://huggingface.co/blog/vibegame)（2025-09-29） <!--orig:VibeGame: Exploring Vibe Coding Games-->
-213. [Nemotron-Personas-Japan: ソブリン AI のための合成データセット](https://huggingface.co/blog/nvidia/nemotron-personas-japan-ja)（2025-09-26） <!--orig:Nemotron-Personas-Japan: ソブリン AI のための合成データセット-->
+213. [Nemotron-Personas-Japan：主权人工智能的综合数据集](https://huggingface.co/blog/nvidia/nemotron-personas-japan-ja)（2025-09-26） <!--orig:Nemotron-Personas-Japan: ソブリン AI のための合成データセット-->
 214. [Swift Transformers 达到 1.0 并展望未来](https://huggingface.co/blog/swift-transformers)（2025-09-26） <!--orig:Swift Transformers Reaches 1.0 – and Looks to the Future-->
 215. [Smol2Operator：面向计算机操作的后训练 GUI 智能体](https://huggingface.co/blog/smol2operator)（2025-09-23） <!--orig:Smol2Operator: Post-Training GUI Agents for Computer Use-->
 216. [SyGra：为 LLM 和 SLM 构建数据的一站式框架](https://huggingface.co/blog/ServiceNow-AI/sygra-data-gen-framework)（2025-09-22） <!--orig:SyGra: The One-Stop Framework for Building Data for LLMs and SLMs-->

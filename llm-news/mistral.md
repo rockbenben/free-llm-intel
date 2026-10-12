@@ -1,6 +1,6 @@
 # Mistral AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-10**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-12**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Mistral AI（`mistral`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -10,7 +10,7 @@
 
 ## 全部文章（共 89 篇，按日期倒序；无日期条目列于最后）
 
-1. [推出 Mistral Large 4](https://mistral.ai/news/mistral-large-4)（2026-10-06） <!--orig:Introducing Mistral Large 4-->
+1. [推出 Mistral Large 4](https://mistral.ai/news/mistral-large-4/)（2026-10-06） <!--orig:Introducing Mistral Large 4-->
 2. [你好，德国！](https://mistral.ai/news/hallo-deutschland/)（2026-09-28） <!--orig:Hallo, Deutschland!-->
 3. [Mistral 与 Mozilla 把开放、私密、多语言的 AI 带进你的浏览器](https://mistral.ai/news/mistral-x-mozilla/)（2026-09-16） <!--orig:Mistral and Mozilla are bringing open, private and multilingual AI to your web browser-->
 4. [Cloudera 与 Mistral 合作，为企业数据带来专业化、主权的智能](https://mistral.ai/news/mistral-x-cloudera/)（2026-09-10） <!--orig:Cloudera and Mistral Partner to Bring Specialized, Sovereign Intelligence to Enterprise Data-->

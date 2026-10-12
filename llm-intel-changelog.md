@@ -3,6 +3,16 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-10-12
+### SiliconFlow 硅基流动（`siliconflow`）
+- 摘要：定价页新增 0 元对话模型 Xing4.0-29B 与 bge-large 系列向量模型，并明确语音仅 ASR/GSR 与 SenseVoiceSmall 免费（TTS 合成收费）
+- `free_models`：文本 `PaddleOCR-VL-1.5`、`Hunyuan-MT-7B` —— 定价页标注「免费」，**0 元调用**（限速以官方文档为准）、向量 `bge-m3`、重排 `bge-reranker-v2-m3` —— **0 元免费**、图像 `Kolors`、语音 ASR/TTS 系列 —— **0 元免费**… → 对话 `Xing4.0-29B`、`PaddleOCR-VL-1.5`、`Hunyuan-MT-7B` —— 定价页标注「免费」，**0 元调用**、向量 `bge-m3`、`bge-large-zh-v1.5`、`bge-large-en-v1.5` 与重排 `bge-reranker-v2-m3` —— **0 …
+- `tier_caveats`：**0 元只覆盖小模型 / 向量 / 重排 / 画图 / 语音**（PaddleOCR-VL、Hunyuan-MT、bge、Kolors 等）；DeepSeek-V4、GLM-5.x、Kimi-K2.7 等旗舰全部按量计费，只能用 14 元代金券抵扣、免费模型清单随定价页「免费」标签调整，接入前以 pricing 页… → **0 元只覆盖指定开源模型 / 向量 / 重排 / 画图 / 识别语音**（Xing4.0-29B、PaddleOCR-VL、Hunyuan-MT、bge 系列、Kolors、SenseVoice 等）；DeepSeek-V4、GLM-5.x、Kimi-K2.7 等旗舰全部按量计费，需使用 14 元代金券抵扣、免费…
+- `openai_compat`：{"summary": "众多 0 元模型 + 注册送 14 元券", "api_key_label": "控制台申请", "api_key_url": "https://cloud.siliconflow.cn/account/ak", "base_url": "https://api.siliconflow.cn… → {"summary": "众多 0 元模型 + 注册送 14 元券", "api_key_label": "控制台申请", "api_key_url": "https://cloud.siliconflow.cn/account/ak", "base_url": "https://api.siliconflow.cn…
+### Nebius（`nebius`）
+- 摘要：官网移除了旧按需单价及 2026 年远期生效价标注，GPU 云按需价格调整为 B300 $9.50/h、B200 $8.50/h、H200 $5.40/h 等
+- `free_models`：**无免费模型层**：Nebius Token Factory（原 AI Studio，studio.nebius.ai 已 301 跳转 tokenfactory.nebius.com）模型目录以后台为准，需账户余额；GPU 云按需 B300 $7.85/h、B200 $7.15/h、H200 $4.50/h 等，… → **无免费模型层**：Nebius Token Factory（原 AI Studio，studio.nebius.ai 已 301 跳转 tokenfactory.nebius.com）模型目录以后台为准，需账户余额；GPU 云按需 B300 $9.50/h、B200 $8.50/h、H200 $5.40/h、H1…
+
 ## 2026-10-11
 ### Qoder（`qoder`）
 - 摘要：Qwen3.8-Flash 限免活动已延长超过 9 月 30 日，具体截止日期改为待公布
