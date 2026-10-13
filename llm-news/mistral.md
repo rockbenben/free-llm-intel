@@ -1,6 +1,6 @@
 # Mistral AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-12**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-13**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Mistral AI（`mistral`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -38,7 +38,7 @@
 26. [说到 Voxtral：Voxtral TTS](https://mistral.ai/news/voxtral-tts/)（2026-03-23） <!--orig:Speaking of Voxtral-->
 27. [发布 Forge](https://mistral.ai/news/forge/)（2026-03-17） <!--orig:Introducing Forge-->
 28. [Mistral Small 4 发布](https://mistral.ai/news/mistral-small-4/)（2026-03-16） <!--orig:Introducing Mistral Small 4-->
-29. [Mistral AI 与 NVIDIA 合作加速开放前沿模型](https://mistral.ai/news/mistral-ai-and-nvidia-partner-to-accelerate-open-frontier-models/)（2026-03-16） <!--orig:Mistral AI partners with NVIDIA to accelerate open frontier models-->
+29. [Mistral AI 与 NVIDIA 合作加速开放前沿模型](https://mistral.ai/news/mistral-ai-and-nvidia-partner-to-accelerate-open-frontier-models/)（2026-03-16） <!--orig:Mistral partners with NVIDIA to accelerate open frontier models-->
 30. [Leanstral：可信 vibe-coding 的开源基石](https://mistral.ai/news/leanstral/)（2026-03-16） <!--orig:Leanstral: Open-Source foundation for trustworthy vibe-coding-->
 31. [自动导航中的 Rails 测试：构建一个写"开发者不愿写的测试"的 Agent](https://mistral.ai/news/rails-testing-on-autopilot-building-an-agent-that-writes-what-developers-wont/)（2026-03-11） <!--orig:Rails testing on autopilot: Building an agent that writes what developers won't-->
 32. [Voxtral 以光速转写](https://mistral.ai/news/voxtral-transcribe-2/)（2026-02-04） <!--orig:Voxtral transcribes at the speed of sound.-->
@@ -47,9 +47,9 @@
 35. [Mistral OCR 3 发布](https://mistral.ai/news/mistral-ocr-3/)（2025-12-17） <!--orig:Introducing Mistral OCR 3-->
 36. [Devstral 2 与 Mistral Vibe CLI 发布](https://mistral.ai/news/devstral-2-vibe-cli/)（2025-12-09） <!--orig:Introducing: Devstral 2 and Mistral Vibe CLI.-->
 37. [发布 Mistral 3](https://mistral.ai/news/mistral-3/)（2025-12-02） <!--orig:Introducing Mistral 3-->
-38. [Mistral AI——为德国而建的 AI](https://mistral.ai/news/ki-fur-deutschland/)（2025-11-19） <!--orig:Mistral AI - KI für Deutschland-->
-39. [Mistral AI Studio 发布](https://mistral.ai/news/ai-studio/)（2025-10-24） <!--orig:Introducing Mistral AI Studio.-->
-40. [Mistral AI 融资 17 亿欧元，以 AI 加速技术进步](https://mistral.ai/news/mistral-ai-raises-1-7-b-to-accelerate-technological-progress-with-ai/)（2025-09-09） <!--orig:Mistral AI raises 1.7B€ to accelerate technological progress with AI-->
+38. [Mistral AI——为德国而建的 AI](https://mistral.ai/news/ki-fur-deutschland/)（2025-11-19） <!--orig:Mistral - KI für Deutschland-->
+39. [Mistral AI Studio 发布](https://mistral.ai/news/ai-studio/)（2025-10-24） <!--orig:Introducing Mistral Studio.-->
+40. [Mistral AI 融资 17 亿欧元，以 AI 加速技术进步](https://mistral.ai/news/mistral-ai-raises-1-7-b-to-accelerate-technological-progress-with-ai/)（2025-09-09） <!--orig:Mistral raises 1.7B€ to accelerate technological progress with AI-->
 41. [让记忆为你所用](https://mistral.ai/news/memory/)（2025-09-02） <!--orig:Make Memory work for you.-->
 42. [Le Chat。自定义 MCP 连接器。记忆。](https://mistral.ai/news/le-chat-mcp-connectors-memories/)（2025-09-02） <!--orig:Le Chat. Custom MCP connectors. Memories.-->
 43. [通过微调释放视觉语言模型在卫星影像上的潜力](https://mistral.ai/news/unlocking-potential-vision-language-models-satellite-imagery-fine-tuning/)（2025-08-01） <!--orig:Unlocking the potential of vision language models on satellite imagery through fine-tuning-->
@@ -89,9 +89,9 @@
 77. [MathΣtral](https://mistral.ai/news/mathstral/)（2024-07-16）
 78. [Codestral Mamba](https://mistral.ai/news/codestral-mamba/)（2024-07-16）
 79. [我的裁缝是 Mistral](https://mistral.ai/news/customization/)（2024-06-05） <!--orig:My Tailor is Mistral-->
-80. [Mistral AI 微调黑客松](https://mistral.ai/news/2024-ft-hackathon/)（2024-06-05） <!--orig:Mistral AI Fine-tuning Hackathon-->
+80. [Mistral AI 微调黑客松](https://mistral.ai/news/2024-ft-hackathon/)（2024-06-05） <!--orig:Mistral Fine-tuning Hackathon-->
 81. [Codestral](https://mistral.ai/news/codestral/)（2024-05-29）
-82. [Mistral AI 非生产许可证](https://mistral.ai/news/mistral-ai-non-production-license-mnpl/)（2024-05-29） <!--orig:The Mistral AI Non-Production License-->
+82. [Mistral AI 非生产许可证](https://mistral.ai/news/mistral-ai-non-production-license-mnpl/)（2024-05-29） <!--orig:The Mistral Non-Production License-->
 83. [更便宜、更好、更快、更强](https://mistral.ai/news/mixtral-8x22b/)（2024-04-17） <!--orig:Cheaper, Better, Faster, Stronger-->
 84. [Mistral Large 登场](https://mistral.ai/news/mistral-large/)（2024-02-26） <!--orig:Au Large-->
 85. [Le Chat](https://mistral.ai/news/le-chat-mistral/)（2024-02-26）

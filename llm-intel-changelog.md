@@ -3,6 +3,17 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-10-13
+### Cursor（`cursor_ide`）
+- 摘要：定价体系全面调整，免费层包含有限智能体与 Grok 聊天/Imagine 用量且额度每周重置，付费档改为 Plus ($8/月) 至 Ultra ($200/月)
+- `free_quota`：**Hobby 档长期免费**：官方定价页原文 “Free … ✓ No credit card required ✓ Limited Agent requests ✓ Access to Composer”——免信用卡、Agent 请求受限、可用 Composer；**具体条数定价页未公布** → **免费层长期免费**：官方定价显示 $0/月，包含有限 AI 用量（智能体请求次数有限、聊天请求次数有限；Grok 聊天、图像生成 Imagine 与 Grok 构建有限）；用量池额度每周重置
+- `validity`：免费档不限时；Pro $20/月 起为「Extended limits on Agent」的付费升级 → 免费档不限时，用量每周重置；付费升级档位调整为 Plus ($8/月)、高级版 ($30/月)、Super ($100/月)、Ultra ($200/月)
+- `free_models`：Agent —— Hobby 档限量请求（Limited Agent requests）、Composer —— 免费档即可访问 → Cursor 智能体 —— 免费档请求次数有限、Grok 聊天 —— 免费档请求次数有限、Grok 图像生成 (Imagine) —— 免费档用量有限、Grok 构建 —— 免费档用量有限
+- `promotions`：Pro / Pro+ / Ultra 分档；Grok 等模型按档解锁 → 套餐重构为 Plus ($8/月)、高级版 ($30/月)、Super ($100/月)、Ultra ($200/月)；高级版及以上方提供云端智能体与按 API 标价的第三方模型
+### DMXAPI（`dmxapi`）
+- 摘要：价格表显示小米 MiMO 系列 3 款 TTS 及音色模型当前限时免费（固定价格 ￥0/次），另有万相/Tripo 等异步结果获取接口免费，其余 500+ 模型仍为按量计费。
+- `free_models`：**无公开免费模型层**：第三方聚合转发，模型清单随上游更新，当前文档列出 GPT-5.x、Claude 4.5、Gemini 3、DeepSeek 等系列（以文档站模型列表为准） → `mimo-v2.5-tts` —— 小米精品音色 TTS，限时免费（固定价格 ￥0 / 次，上下文 8k）、`mimo-v2.5-tts-voiceclone` —— 小米音色克隆，限时免费（固定价格 ￥0 / 次，上下文 8k）、`mimo-v2.5-tts-voicedesign` —— 小米音色设计，限时免费…
+
 ## 2026-10-12
 ### SiliconFlow 硅基流动（`siliconflow`）
 - 摘要：定价页新增 0 元对话模型 Xing4.0-29B 与 bge-large 系列向量模型，并明确语音仅 ASR/GSR 与 SenseVoiceSmall 免费（TTS 合成收费）
