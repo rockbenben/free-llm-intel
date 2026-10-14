@@ -5,40 +5,33 @@ original_title:
 url: https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform
 date: 2025-06-12
 lang: zh
-captured: 2026-10-09
+captured: 2026-10-14
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: 7a64334f6be4
+body_sha: 0294d812a5c3
 ---
 
-博客详细信息
+# 阿里云上的 Ray：构建机器学习平台
 
-# 阿里云上的 Ray：构建 ML 平台
+作者：Kun Wu（阿里云） | 2025 年 6 月 12 日
 
-由
+人工智能（AI）的推进速度前所未有。不同的用例需要不同的技术与基础设施。举例来说，批量推理需要异构的算力资源——用 CPU 节点做 I/O、用 GPU 节点做推理——才能把性能发挥到最大。此外，RLHF 通常要把 LLM 推理框架和训练框架集成到一起。因此，灵活的机器学习（ML）基础设施，对于在生产环境中可靠地部署 AI 负载至关重要。
 
-吴坤（阿里云）
+Ray 是广受欢迎的 AI 计算引擎，支撑着世界各地公司的 ML 基础设施。[阿里云容器服务 Kubernetes 版](https://www.alibabacloud.com/en/product/kubernetes?_p_lc=1)（ACK）把 Ray 作为一等公民来支持，帮助用户加速从概念验证走向生产的 Ray 之路。许多公司都在阿里云上广泛使用 Ray，比如 [Moonshot AI](https://www.alibabacloud.com/blog/kimi-large-model-based-massive-data-preprocessing-practice-of-moonshot-ai_602119) 就把它用于大规模数据处理以及其他算力密集的 AI 负载。
 
-|
+本文简要介绍 Ray 与 KubeRay，以及在 ACK 上支持 Ray 的相关工作。
 
-2025 年 6 月 12 日
+#### **Ray**
 
-人工智能的发展速度比以往任何时候都快。不同的用例需要不同的技术和基础设施。例如，批量推理需要异构计算资源（用于 I/O 的 CPU 节点和用于推理的 GPU 节点）以最大限度地提高性能。此外，RLHF 通常涉及集成 LLM 推理和训练框架。因此，灵活的机器学习 (ML) 基础设施对于在生产中可靠地部署 AI 工作负载至关重要。
+Ray 是一个开源的分布式计算引擎，能为任意规模的分布式负载、在任意加速硬件上精确地编排基础设施。Ray 的架构分为三层：Ray Core、Ray AI Libraries 和 Ray Deployment。
 
-Ray 是一种流行的 AI 计算引擎，为世界各地公司的 ML 基础设施提供支持。 [阿里云 Kubernetes 容器服务](https://www.alibabacloud.com/en/product/kubernetes?_p_lc=1) (ACK) 以一等公民的身份支持 Ray，帮助用户加速 Ray 从概念验证到生产的旅程。 Ray 在阿里云上被 [Moonshot AI](https://www.alibabacloud.com/blog/kimi-large-model-based-massive-data-preprocessing-practice-of-moonshot-ai_602119) 等公司广泛用于大规模数据处理和其他计算密集型 AI 工作负载。
+图 1
 
-本博客将简要介绍 Ray 和 KubeRay，以及在 ACK 上支持 Ray 的相关工作。
+#### **Ray Core**
 
-#### 链接**雷**
+Ray Core 是一个强大的分布式计算引擎，它只提供一小组必备的原语（**task、actor 和 object**），用来构建和扩展分布式应用。Ray 的 task、actor 和 object，与编程中最基础的函数、类和变量一一对应，因此用户用 Ray Core API 编写分布式应用，就像在笔记本上编程一样。下面是 Ray Core API 的一个示例：
 
-Ray是一个开源分布式计算引擎。它可以为任何规模的任何加速器上的任何分布式工作负载精确编排基础设施。 Ray 的架构由三层组成：Ray Core、Ray AI Libraries 和 Ray Deployment。
-
-图片1
-
-#### 链接**雷核心**
-
-Ray Core 是一个强大的分布式计算引擎，提供一小组用于构建和扩展分布式应用程序的基本原语（**任务、参与者和对象**）。 Ray 任务、参与者和对象与函数、类和变量（这些是编程的基本组成部分）具有一对一的映射关系，因此用户可以使用 Ray Core API 编写分布式应用程序，就像在笔记本电脑上编程一样。下面是 Ray Core API 的示例：
 ```
 1import ray
 2import numpy as np
@@ -59,29 +52,31 @@ Ray Core 是一个强大的分布式计算引擎，提供一小组用于构建�
 17print(ray.get(sum_matrix.remote(matrix_ref)))
 18# -> 1000000.0
 ```
-此示例定义了一个 Ray 任务 **sum_matrix**，用于对 NumPy 矩阵中的值求和。在第一个示例中，使用文字数组调用任务。在第二种情况下，首先使用 **ray.put** 将数组存储在 Ray 的对象存储中，然后使用对象引用调用任务。借助 Ray Core，用户可以进行编程，而无需担心哪些节点托管 Ray 任务、参与者和对象，或者它们如何相互交互。
 
-#### 链接**Ray AI 库**
+这个示例定义了一个 Ray task **sum_matrix**，用来对一个 NumPy 矩阵里的值求和。第一个调用传入的是字面量数组；第二个调用则先用 **ray.put** 把数组存进 Ray 的对象存储，再把对象引用传给 task。有了 Ray Core，用户写代码时不必关心 Ray 的 task、actor 和 object 分别落在哪些节点上，也不必关心它们之间如何交互。
 
-Ray 生态系统包括 Ray Data、Ray Train、Ray Tune、Ray Serve 和 RLlib 等 AI 库，涵盖从数据处理到训练、调优到服务的机器学习生命周期。这些库构建在 Ray Core 之上，使开发人员能够有效利用 Ray 的分布式执行功能。
+#### **Ray AI Libraries**
 
-#### 链接**Ray 部署**
+Ray 生态包含 Ray Data、Ray Train、Ray Tune、Ray Serve 和 RLlib 等 AI 库，覆盖从数据处理、训练、调参到服务的整个 ML 生命周期。这些库都构建在 Ray Core 之上，让开发者能够高效地用上 Ray 的分布式执行能力。
 
-Ray 支持虚拟机和 Kubernetes 作为底层容器编排器。下一节将讨论官方 Ray on Kubernetes 解决方案 KubeRay。
+#### **Ray Deployment**
 
-## 链接**KubeRay**
+Ray 支持以虚拟机和 Kubernetes 作为底层的容器编排层。下一节将讨论官方的 Ray on Kubernetes 方案 KubeRay。
 
-KubeRay 是 Ray Kubernetes 运算符，可简化 Kubernetes 上 Ray 集群和相关应用程序的生命周期管理。 KubeRay 使**数据科学家和机器学习科学家**能够专注于他们的机器学习逻辑，而**基础设施工程师**则专注于 Kubernetes。
+## **KubeRay**
 
-库伯雷
+KubeRay 是 Ray 的 Kubernetes operator，用来简化 Kubernetes 上 Ray 集群及其相关应用的生命周期管理。有了 KubeRay，**数据科学家和 ML 科学家**可以专注于自己的机器学习逻辑，**基础设施工程师**则专注于 Kubernetes。
 
-也就是说，数据科学家可以专注于开发 Python 脚本，而不必担心 Kubernetes 的工作原理，而基础设施工程师可以专注于将 KubeRay 与 Kubernetes 生态系统工具集成，以实现可观察性、流量管理和安全性。
+KubeRay 架构示意
 
-KubeRay 针对不同的使用模式提供了三个 API，即自定义资源定义 (CRD)：RayCluster、RayJob 和 RayService。
+也就是说，数据科学家可以专心开发自己的 Python 脚本，不必关心 Kubernetes 是怎么运转的；基础设施工程师则可以专心把 KubeRay 与 Kubernetes 生态的工具集成起来，用于可观测性、流量管理和安全。
 
-- **RayCluster**：KubeRay 完全管理 RayCluster 的生命周期，包括集群创建、删除、自动缩放和容错。
-- **RayJob：**KubeRay 自动创建 RayCluster，并在集群准备就绪时提交作业。您还可以将 RayJob 配置为在作业完成后自动删除 RayCluster。
-- **RayService：**RayService 由两部分组成：RayCluster 和一个或多个 Ray Serve 应用程序。 RayService 为 RayCluster 和高可用性提供零停机升级。
+KubeRay 针对不同使用方式提供了三个 API，也就是三种自定义资源定义（CRD）：RayCluster、RayJob 和 RayService。
+
+- **RayCluster**：KubeRay 全面管理 RayCluster 的生命周期，包括集群的创建、删除、自动扩缩和容错。
+- **RayJob**：KubeRay 会自动创建一个 RayCluster，并在集群就绪后提交作业。你也可以配置 RayJob，让它在作业结束后自动删除这个 RayCluster。
+- **RayService**：RayService 由两部分组成：一个 RayCluster，以及一个或多个 Ray Serve 应用。RayService 为 RayCluster 提供零停机升级和高可用。
+
 ```
 1helm repo add kuberay https://ray-project.github.io/kuberay-helm/
 2helm repo update
@@ -91,71 +86,73 @@ KubeRay 针对不同的使用模式提供了三个 API，即自定义资源定�
 6# Deploy a RayCluster
 7helm install raycluster kuberay/ray-cluster
 ```
-该示例演示了如何在运行的 Kubernetes 集群中使用 KubeRay 的 RayCluster CRD 轻松启动 Ray 集群，只需几个命令。有关更多详细信息，请参阅“[RayCluster 快速入门](https://docs.ray.io/en/latest/cluster/kubernetes/getting-started/raycluster-quick-start.html)”文档。
 
-## 链接**Ray on ACK**
+这个示例演示了在一个已经运行起来的 Kubernetes 集群里，如何只用几条命令、借助 KubeRay 的 RayCluster CRD 轻松拉起一个 Ray 集群。更多细节见「[RayCluster Quickstart](https://docs.ray.io/en/latest/cluster/kubernetes/getting-started/raycluster-quick-start.html)」文档。
 
-#### 链接**概述**
+## **Ray on ACK**
 
-[阿里云 Kubernetes 容器服务](https://www.alibabacloud.com/en/product/kubernetes?_p_lc=1) (ACK) 支持 KubeRay 作为托管组件，具有以下优势，可帮助用户将 AI 工作负载从概念验证快速转移到生产。
+#### **Overview**
 
-- **ACK 中的弹性计算：** ACK 支持多种计算类型，以满足跨用例的不同工作负载要求。
-- **可观察性：**ACK 简化了持久日志和指标，并支持使用 Ray History Server 进行事后分析，以便用户可以轻松了解 Ray 集群和应用程序的状态。
-- **安全性：** ACK 团队基于专门的基础映像构建 KubeRay 映像，以最大程度地减少攻击面。
-- **零运维：**ACK为KubeRay算子配置自动Vertical Pod Autoscaling（VPA），确保资源扩展以减少故障。 ACK还处理组件升级和错误修复，使用户能够专注于应用程序开发。
-- **高可用性部署：** ACK 确保 KubeRay 操作员分布在至少两个可用区域中，从而提供针对区域级故障的恢复能力。
+[阿里云容器服务 Kubernetes 版](https://www.alibabacloud.com/en/product/kubernetes?_p_lc=1)（ACK）支持以托管组件的形式启用 KubeRay，具备以下优势，可以帮助用户把 AI 负载以极快的速度从概念验证推向生产。
 
-##链接**ACK中的弹性计算**
+- **ACK 中的弹性计算**：ACK 支持多种计算类型，以满足不同用例下各异的负载需求。
+- **可观测性**：ACK 简化了日志与指标的持久化，并通过 Ray History Server 支持事后分析，让用户能轻松掌握 Ray 集群和应用的状态。
+- **安全性**：ACK 团队基于专用的基础镜像构建 KubeRay 镜像，以尽量缩小攻击面。
+- **免运维**：ACK 为 KubeRay operator 自动配置了 Vertical Pod Autoscaling（VPA），保证资源得到扩缩，从而减少故障。ACK 还负责组件升级和缺陷修复，让用户专注于应用开发。
+- **高可用部署**：ACK 确保 KubeRay operator 分布在至少两个可用区，具备抵御可用区级故障的能力。
 
-确认
+## **ACK 中的弹性计算**
 
-ACK集群支持通过节点池进行节点管理，支持在不同场景下使用多种计算类型：智能计算的灵君节点、按量付费或订阅的弹性计算服务（ECS）实例、按秒计费的容器计算服务（ACS）实例以实现可扩展性。这可确保 ACK 集群满足跨用例的不同工作负载要求。
+ACK 节点池
 
-## 链接**可观察性**
+ACK 集群支持通过节点池来管理节点，从而能在不同场景下使用多种计算类型：用于智能计算的灵骏（Lingjun）节点，按量付费或包年包月的 Elastic Compute Service（ECS）实例，以及按秒计费、便于弹性的 Container Compute Service（ACS）实例。这保证了 ACK 集群能够满足不同用例下各异的负载需求。
 
-#### 链接**日志记录**
+## **可观测性**
 
-**KubeRay 日志：**ACK 集群自动从控制平面的 KubeRay 操作员收集日志。用户可以通过控制平面组件日志检查这些日志，以验证操作员的状态。
+#### **日志**
+
+**KubeRay 日志**：ACK 集群会自动采集控制面 KubeRay operator 的日志。用户可以通过控制面组件日志查看这些日志，确认 operator 的状态。
 
 KubeRay 日志
 
-**Ray日志：**通过资源标签，用户可以将数据平面RayCluster中的日志收集到[简单日志服务（SLS）](https://www.alibabacloud.com/help/en/sls/)。与自管理日志存储解决方案相比，SLS提供结构化日志查询和分析，无需基础设施维护，总体拥有成本（TCO）降低50%，SLA可用性高达99.99%，保证高可靠性。
+**Ray 日志**：借助资源标签，用户可以把数据面 RayCluster 的日志采集到 [Simple Log Service（SLS）](https://www.alibabacloud.com/help/en/sls/)。与自建的日志存储方案相比，SLS 提供结构化的日志查询与分析；因为不再需要维护基础设施，总体拥有成本（TCO）降低 50%；同时具备 99.99% 的 SLA 可用性，可靠性有保障。
 
-射线日志
+Ray 日志
 
-#### 链接**指标**
+#### **指标**
 
-默认情况下，ACK 集群与 Prometheus 监控功能集成。用户只需提交PodMonitor和ServiceMonitor配置即可实现ACK集群内数据面RayCluster监控数据的采集。然后可以通过统一的 Prometheus 界面查看所有 RayCluster 指标。
+ACK 集群默认集成了 Prometheus 监控能力。用户只需提交 PodMonitor 和 ServiceMonitor 配置，就能开启对 ACK 集群内数据面 RayCluster 监控数据的采集，随后所有 RayCluster 指标都可以通过统一的 Prometheus 接口查看。
 
 指标
 
-#### 链接**射线历史服务器：事后分析**
+#### **Ray History Server：事后分析**
 
-本机 Ray 仪表板仅在 Ray 集群运行时可用。一旦集群终止，用户将无法访问历史日志和监控数据。为了解决此限制，ACK 提供了 **Ray History Server**，它允许访问活动和终止的 RayCluster 自定义资源的仪表板。 History Server 仪表板提供与本机 Ray 仪表板一致的功能。它还提供与[应用程序实时监控服务（ARMS）]（https://www.alibabacloud.com/help/en/arms/product-overview/what-is-arms）自动集成的指标监控，无需手动部署Prometheus和Grafana。下图显示了如何访问和使用 History Server 仪表板。
+原生的 Ray Dashboard 只在 Ray 集群运行期间可用。集群一旦终止，用户就再也看不到历史日志和监控数据。为了解决这个限制，ACK 提供了 **Ray History Server**，可以访问处于活跃状态和已终止的 RayCluster 自定义资源的看板。History Server 看板提供的功能与原生 Ray Dashboard 保持一致，同时还把指标监控自动接入了 [Application Real-Time Monitoring Service（ARMS）](https://www.alibabacloud.com/help/en/arms/product-overview/what-is-arms)，无需手动部署 Prometheus 和 Grafana。下面的图示展示了如何访问和使用 History Server 看板。
 
-下图显示用户可以访问 Ray 历史记录服务器中活动和终止的 RayCluster 自定义资源的 Ray 仪表板。
+下图展示的是，用户在 Ray History Server 中可以访问活跃和已终止两种状态的 RayCluster 自定义资源的 Ray Dashboard。
 
-雷历史
+Ray 历史记录
 
-下图显示了 Ray 仪表板的镜像页面，如 Ray head Pod 上所示
+下图展示的是与 Ray Dashboard 一致的页面，也就是在 Ray head Pod 上看到的内容
 
 列表
 
-## 链接**生产案例研究**
+## **生产实践案例**
 
-本节使用实际用例来演示 Ray on ACK 的高级功能。在此用例中，客户面临三个核心挑战：
+本节用一个真实用例来展示 Ray on ACK 的进阶能力。在这个用例中，客户面临三个核心挑战：
 
-- 多个 RayJobs 的配额限制和优先级。
-- 资源预留以处理突发工作负载（特别是 RayService 工作负载）。
-- RayJob 终止后 Ray 仪表板持久性。
+- 多个 RayJob 之间的配额限制与优先级排序。
+- 为应对突发负载做资源预留（尤其是 RayService 负载）。
+- RayJob 终止之后 Ray Dashboard 的留存。
 
-通过利用 [kube-queue](https://github.com/kube-queue/kube-queue) 集成进行排队和基于优先级的调度，以及 Ray 历史服务器，客户成功地在生产中操作了 Ray 工作负载，同时有效地利用了资源。有关更多详细信息，请参阅以下部分。
+通过集成 [kube-queue](https://github.com/kube-queue/kube-queue) 实现排队与基于优先级的调度，再配合 Ray History Server，这位客户成功地把 Ray 负载在生产环境跑了起来，同时把资源用得很充分。更多细节见下文。
 
-#### 链接**使用 ResourcePolicy API 进行智能计算编排**
+#### **用 ResourcePolicy API 实现智能计算编排**
 
-正如前面**“ACK 中的弹性计算”**中提到的，阿里云提供了多种计算类型，这些类型在定价、可靠性、可用性、性能和计费模型方面有所不同。有效利用这些不同的计算资源需要复杂的调度方法。
+如前文「**ACK 中的弹性计算**」所述，阿里云提供了多种计算类型，它们在价格、可靠性、可用性、性能和计费模式上各有不同。要把这些各异的算力资源用好，需要成熟的调度方案。
 
-阿里云提供了ResourcePolicy API，通过定义Pod喜欢的节点类型的优先级来实现计算资源类型的编排。以下面的YAML为例，优先使用订阅型ECS实例，当ECS资源不足时，切换到按量付费的ACS实例。当与 Kubernetes Pod 自动缩放器（例如 Ray Autoscaler 和 Horizo​​ntal Pod Autoscaler）结合使用时，此方法非常适合处理流量峰值。
+阿里云提供了 ResourcePolicy API，通过定义 Pod 偏好哪类节点的优先级，来实现计算资源类型的编排。以下面这段 YAML 为例，它优先使用包年包月的 ECS 实例，当 ECS 资源不足时切换到按量付费的 ACS 实例。把这一做法与 Kubernetes 的 Pod 自动扩缩组件（如 Ray Autoscaler 和 Horizontal Pod Autoscaler）结合起来，非常适合应对流量洪峰。
+
 ```
 1apiVersion: scheduling.alibabacloud.com/v1alpha1
 2kind: ResourcePolicy
@@ -169,52 +166,51 @@ KubeRay 日志
 10  - resource: ecs
 11  - resource: acs
 ```
-客户部署基于 cron 的数据处理 RayJob 自定义资源和长期运行的 RayService ML 推理工作负载。 RayJobs 优先使用基于订阅的 ECS 实例，在短缺期间回退到使用 ACS 实例作为补充计算。对于 RayService 工作负载，客户专门使用订阅 ECS 实例，保留额外容量来支持快速 RayCluster 自动缩放，以处理突发流量。更多详情请参见下图。
 
-智能计算
+该客户同时部署了基于 cron 的数据处理 RayJob 自定义资源，以及长期运行的 RayService ML 推理负载。RayJob 优先消费包年包月的 ECS 实例，资源紧张时退回到用 ACS 实例做补充算力。对于 RayService 负载，客户只使用包年包月的 ECS 实例，并预留额外容量，以支撑 RayCluster 快速扩缩来应对突发流量。更多细节见下图。
 
-####链接**使用kube-queue支持多租户资源管理**
+智能计算编排
 
-ACK 通过 kube-queue 支持任务排队和配额。通过配额和队列，用户可以为特定团队或服务定义有保证的资源配额，并设置上限以防止过度使用，确保公平性和可扩展性。
+#### **用 kube-queue 支持多租户资源管理**
 
-客户创建了一个配额树，如下图所示，以在不同团队和不同类型的工作负载之间高效共享资源。
+ACK 通过 kube-queue 支持任务排队与配额。有了配额和队列，用户可以为特定团队或服务定义保障性的资源配额，并设置上限防止超额使用，从而同时保证公平性和可扩展性。
 
-- 每个团队都有自己的最小和最大资源配额，以确保最小可用性和最大过度使用资源。
-- 每个配额都有自己的队列，并且在创建期间定义的更高优先级的 RayJobs 将根据每个队列内的优先级执行。
+客户创建了一棵配额树，如下图所示，以便在不同团队和不同类型的负载之间高效共享资源。
 
-最后一张图片
+- 每个团队都有自己的资源配额上下限，既保证最低可用量，也允许最大程度的超卖。
+- 每个配额都有自己的队列，创建时定义的优先级更高的 RayJob 会在各自队列中按优先级被执行。
+
+最后一张图
 
 #### 目录
 
 - [KubeRay](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#kuberay)
-- [Ray 上的 ACK](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#ray-on-ack)
-- [ACK中的弹性计算](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#elastic-compute-in-ack)
+- [Ray on ACK](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#ray-on-ack)
+- [ACK 中的弹性计算](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#elastic-compute-in-ack)
 - [可观测性](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#observability)
-- [生产案例研究](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#product-case-study)
+- [生产实践案例](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#production-case-study)
 
-####分享
+#### 分享
 
-####标签
+#### 标签
 
-法学硕士
+LLM
 
-#### 注册产品更新
+#### 订阅产品更新
 
-####推荐内容
+#### 推荐内容
 
-#### 将编码代理成本降低 90%：在 Anyscale 上使用 Ray + vLLM 提供安全的 LLM 服务
-
-
-#### Azure 上的 Anyscale 全面可用：使企业能够拥有完整的 AI 循环，而不仅仅是推理
+#### 编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务
 
 
-#### Ray Summit 2026：物理 AI、RL 以及运行它们的基础设施
+#### Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理
 
 
-## 立即探索 Anyscale
+#### Ray Summit 2026：Physical AI、RL，以及承载它们的全部基础设施
 
-使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。
+
+## 即刻探索 Anyscale
+
+用为生产级 AI 打造的多云平台，在 Ray 上构建、运行并扩展任意 AI 负载。
 
 免费开始
-
-与专家交谈

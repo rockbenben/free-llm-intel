@@ -19,7 +19,7 @@
 6. [阻断借助 AI 的“虚假掩护”行动](https://openai.com/index/disrupting-ai-enabled-false-front-operations)（2026-10-08） <!--orig:Disrupting AI-enabled “false front” operations-->
 7. [帮助青少年开展学习、规划未来，并参与塑造 AI 的未来](https://openai.com/index/teens-learn-and-plan)（2026-10-07） <!--orig:Helping teens learn, plan, and shape the future of AI-->
 8. [丽笙酒店集团将酒店探索体验带入 ChatGPT](https://openai.com/index/radisson)（2026-10-07） <!--orig:Radisson Hotel Group brings hotel discovery into ChatGPT-->
-9. [GPT-6 和适合所有人的智能 UI](https://openai.com/index/gpt-6-for-everyone)（2026-10-07） <!--orig:GPT-6 and Intelligent UI for everyone-->
+9. [面向所有人的 GPT-6 与 Intelligent UI](https://openai.com/index/gpt-6-for-everyone)（2026-10-07） <!--orig:GPT-6 and Intelligent UI for everyone-->
 10. [Jump Trading 如何借助 ChatGPT 扩大量化研究规模](https://openai.com/index/jump-trading)（2026-10-06） <!--orig:How Jump Trading is scaling quant research with ChatGPT-->
 11. [分享 AI 在数学领域的进展](https://openai.com/index/sharing-ai-progress-in-mathematics)（2026-10-06） <!--orig:Sharing AI progress in mathematics-->
 12. [携手 Ironclad，提升计算机使用能力](https://openai.com/index/advancing-computer-use-with-ironclad)（2026-10-06） <!--orig:Advancing computer use with Ironclad-->

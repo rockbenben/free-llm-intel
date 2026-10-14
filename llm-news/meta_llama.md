@@ -10,7 +10,7 @@
 
 ## 全部文章（共 24 篇，按日期倒序；无日期条目列于最后）
 
-1. [隆重推出 Muse Wonder 和 Muse Wonder Full：面向代理商的前沿模型](https://about.fb.com/news/2026/10/introducing-muse-wonder-models/)（2026-10-12） <!--orig:Introducing Muse Wonder and Muse Wonder Full: Frontier Models for Agents-->
+1. [隆重推出 Muse Wonder 和 Muse Wonder Full：面向智能体的前沿模型](https://about.fb.com/news/2026/10/introducing-muse-wonder-models/)（2026-10-12） <!--orig:Introducing Muse Wonder and Muse Wonder Full: Frontier Models for Agents-->
 2. [辟谣：关于数据中心的最大迷思](https://about.fb.com/news/2026/10/debunking-the-biggest-data-center-myths/)（2026-10-08） <!--orig:Debunking the Biggest Data Center Myths-->
 3. [为什么数据中心是 Meta AI 战略的重要一环](https://about.fb.com/news/2026/10/meta-data-centers-ai-approach/)（2026-10-07） <!--orig:Why Data Centers Are Such a Big Part of Meta’s AI Approach-->
 4. [未来属于每个人：面向小企业的 Muse](https://about.fb.com/news/2026/09/introducing-muse-small-business/)（2026-09-29） <!--orig:The Future Is for Everyone: Muse for Small Business-->

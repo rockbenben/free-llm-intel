@@ -13,7 +13,7 @@
 1. [面向高影响力的 GPU 集群调度](https://huggingface.co/blog/allenai/impactful-scheduling)（2026-10-09） <!--orig:Impactful scheduling for GPU clusters-->
 2. [那个并不存在的模型，于是你自己把它造了出来](https://huggingface.co/blog/building-with-ml-intern)（2026-10-08） <!--orig:The model that didn't exist, so you made it yourself-->
 3. [面向边缘端的 open d1 多模态决策模型](https://huggingface.co/blog/LiquidAI/open-d1)（2026-10-07） <!--orig:Multimodal open d1 decision models for the edge-->
-4. [Falcon ASR 简介](https://huggingface.co/blog/tiiuae/falcon-asr)（2026-10-07） <!--orig:Introducing Falcon ASR-->
+4. [推出 Falcon ASR](https://huggingface.co/blog/tiiuae/falcon-asr)（2026-10-07） <!--orig:Introducing Falcon ASR-->
 5. [同一个模型家族，两枚金牌级成绩：为 IOI 与 IMO 微调 Nemotron](https://huggingface.co/blog/nvidia/nemotron-ioi-and-imo-2026)（2026-10-07） <!--orig:One Model Family, Two Gold-Level Results: Fine-Tuning Nemotron for IOI and IMO-->
 6. [Falcon-Emirati：当 LLM 学会方言、文化与微妙之处](https://huggingface.co/blog/tiiuae/falcon-emirati)（2026-10-06） <!--orig:Falcon-Emirati: When an LLM Learns the Dialect, the Culture, and the Nuance-->
 7. [Agent 说它做完了，数据库却不同意](https://huggingface.co/blog/microsoft/thinkingbox)（2026-10-03） <!--orig:The Agent Said It Was Done. The Database Disagreed.-->

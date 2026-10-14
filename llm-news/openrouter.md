@@ -9,8 +9,8 @@
 
 ## 全部文章（共 156 篇，按日期倒序；无日期条目列于最后）
 
-1. [ElevenLabs 现已在 OpenRouter 上运行](https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/)（2026-10-07） <!--orig:ElevenLabs is now on OpenRouter-->
-2. [AI 销售代理如何每月为我们的销售团队节省 600 个小时](https://openrouter.ai/blog/case-studies/how-an-ai-sales-agent-saved-our-sales-team-600-hours-a-month/)（2026-10-07） <!--orig:How an AI Sales Agent Saved Our Sales Team 600 Hours a Month-->
+1. [ElevenLabs 现已上线 OpenRouter](https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/)（2026-10-07） <!--orig:ElevenLabs is now on OpenRouter-->
+2. [AI 销售智能体如何帮我们的销售团队每月省下 600 小时](https://openrouter.ai/blog/case-studies/how-an-ai-sales-agent-saved-our-sales-team-600-hours-a-month/)（2026-10-07） <!--orig:How an AI Sales Agent Saved Our Sales Team 600 Hours a Month-->
 3. [AI 代理的服务器端代码执行工具比较](https://openrouter.ai/blog/insights/server-side-code-execution-tools-for-ai-agents-compared/)（2026-10-05） <!--orig:Server-Side Code Execution Tools for AI Agents, Compared-->
 4. [Agent 框架对比：Tool-Calling Schema 的处理](https://openrouter.ai/blog/insights/agent-frameworks-compared-tool-calling-schema-handling/)（2026-10-02） <!--orig:Agent Frameworks Compared: Tool-Calling Schema Handling-->
 5. [LangChain 对比 CrewAI：编排层与 OpenRouter 原生路由之争](https://openrouter.ai/blog/insights/langchain-vs-crewai-orchestration-compared-to-openrouter-native-routing/)（2026-10-02） <!--orig:LangChain vs CrewAI: Orchestration Compared to OpenRouter-Native Routing-->
