@@ -10,7 +10,7 @@
 
 ## 全部文章（共 881 篇，按日期倒序；无日期条目列于最后）
 
-1. [Run fast, private agents on-device with LFM2.5-24B-A2B](https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b)（2026-10-13）
+1. [用 LFM2.5-24B-A2B 在端侧运行快速、私密的智能体](https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b)（2026-10-13） <!--orig:Run fast, private agents on-device with LFM2.5-24B-A2B-->
 2. [面向高影响力的 GPU 集群调度](https://huggingface.co/blog/allenai/impactful-scheduling)（2026-10-09） <!--orig:Impactful scheduling for GPU clusters-->
 3. [那个并不存在的模型，于是你自己把它造了出来](https://huggingface.co/blog/building-with-ml-intern)（2026-10-08） <!--orig:The model that didn't exist, so you made it yourself-->
 4. [推出 Falcon ASR](https://huggingface.co/blog/tiiuae/falcon-asr)（2026-10-07） <!--orig:Introducing Falcon ASR-->

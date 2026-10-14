@@ -10,7 +10,7 @@
 
 ## 全部文章（共 93 篇，按日期倒序；无日期条目列于最后）
 
-1. [Uber's CISO on building an insider threat program for AI](https://claude.com/resources/articles/uber-s-ciso-on-building-an-insider-threat-program-for-ai)（2026-10-13）
+1. [Uber 的 CISO 谈如何为 AI 搭建内部威胁防控体系](https://claude.com/resources/articles/uber-s-ciso-on-building-an-insider-threat-program-for-ai)（2026-10-13） <!--orig:Uber's CISO on building an insider threat program for AI-->
 2. [用 Claude 搭建实时 dashboard 与动画讲解](https://claude.com/resources/articles/dashboards-and-motion)（2026-10-08） <!--orig:Build live dashboards and animate explainers with Claude-->
 3. [构建有效的代理自动化](https://claude.com/resources/articles#d-2026-10-08-1)（2026-10-08） <!--orig:Building effective agent automations-->
 4. [Block 如何跨数千个 pull request 编排 Claude Fable](https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests)（2026-10-08） <!--orig:How Block orchestrates Claude Fable across thousands of pull requests-->

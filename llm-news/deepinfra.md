@@ -9,7 +9,7 @@
 
 ## 全部文章（共 30 篇，按日期倒序；无日期条目列于最后）
 
-1. [Decision Models: The Fast Layer for AI Agents](https://deepinfra.com/blog/decision-models-ai-agent-infrastructure)（2026-10-13）
+1. [决策模型：AI 智能体的快速层](https://deepinfra.com/blog/decision-models-ai-agent-infrastructure)（2026-10-13） <!--orig:Decision Models: The Fast Layer for AI Agents-->
 2. [最佳 Qwen3.8-27B 推理提供商（2026）](https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers)（2026-10-10） <!--orig:Best Qwen3.8-27B Inference Providers (2026)-->
 3. [Qwen3.8-27B：前沿级视觉语言 AI](https://deepinfra.com/blog/qwen3-8-27b)（2026-10-09） <!--orig:Qwen3.8-27B: Frontier-Level Vision-Language AI-->
 4. [Qwen3.8-27B API 提供商基准测试：速度与成本](https://deepinfra.com/blog/qwen3-8-27b-api-provider-benchmarks)（2026-10-07） <!--orig:Qwen3.8-27B API Provider Benchmarks: Speed & Cost-->

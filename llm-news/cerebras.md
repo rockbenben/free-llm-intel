@@ -10,8 +10,8 @@
 ## 全部文章（共 54 篇，按日期倒序；无日期条目列于最后）
 
 1. [发布 Cerebras CS-4：最快的 AI 再次提速](https://www.cerebras.ai/blog/introducing-cerebras-cs-4) <!--orig:Introducing Cerebras CS-4: The Fastest AI Just Got Faster-->
-2. [MoE at Scale: Making Sparse Models Fast on Real Hardware](https://www.cerebras.ai/blog/moe-guide-scale)
-3. [MoE Math Demystified: What Does 8x7B Actually Mean?](https://www.cerebras.ai/blog/moe-guide-calculator)
+2. [MoE 规模化：让稀疏模型在真实硬件上跑得快](https://www.cerebras.ai/blog/moe-guide-scale) <!--orig:MoE at Scale: Making Sparse Models Fast on Real Hardware-->
+3. [MoE 数学揭秘：8x7B 到底是什么意思？](https://www.cerebras.ai/blog/moe-guide-calculator) <!--orig:MoE Math Demystified: What Does 8x7B Actually Mean?-->
 4. [从头开始的分类推理](https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up) <!--orig:Disaggregated Inference From The Ground Up-->
 5. [AlphaSense 如何用快速推理让 Agentic 研究变得可交互](https://www.cerebras.ai/blog/how-alphasense-uses-fast-inference-to-make-agentic-research-interactive) <!--orig:How AlphaSense Uses Fast Inference to Make Agentic Research Interactive-->
 6. [为什么网络防御需要更快的推理](https://www.cerebras.ai/blog/why-cyber-defense-needs-faster-inference) <!--orig:Why Cyber Defense Needs Faster Inference-->
@@ -20,7 +20,7 @@
 9. [Cerebras 如何以最高 750 tokens/秒 服务 GPT-5.6 Sol](https://www.cerebras.ai/blog/how-cerebras-serves-gpt-5-6-sol-at-up-to-750-tokens-per-second) <!--orig:How Cerebras serves GPT-5.6 Sol at up to 750 tokens per second-->
 10. [超快前沿推理：Cerebras 在 Hot Chips 2026 的深度解读](https://www.cerebras.ai/blog/ultrafast-frontier-inference-cerebras-deep-dive-at-hot-chips-2026) <!--orig:Ultrafast Frontier Inference: Cerebras Deep Dive at Hot Chips 2026-->
 11. [为 GPT-5.6 Sol 注入 Ultrafast 极速](https://www.cerebras.ai/blog/accelerating-gpt-5-6-sol-ultrafast-with-openai) <!--orig:Accelerating GPT-5.6 Sol Ultrafast-->
-12. [Debugging Dead MoE Models: A Step-by-Step Guide](https://www.cerebras.ai/blog/moe-guide-debug)
+12. [排查「死掉的 MoE 模型」：一份分步指南](https://www.cerebras.ai/blog/moe-guide-debug) <!--orig:Debugging Dead MoE Models: A Step-by-Step Guide-->
 13. [用好 GPT-5.6：Sol、Terra 与 Luna](https://www.cerebras.ai/blog/getting-the-most-out-of-gpt-5-6-sol-terra-and-luna) <!--orig:Getting the most out of GPT-5.6: Sol, Terra, and Luna-->
 14. [更快的推理如何为网络安全公司赢得优势](https://www.cerebras.ai/blog/ai-inference-cybersecurity) <!--orig:How Faster Inference Gives Cybersecurity Companies an Edge-->
 15. [我们是如何构建内部知识库的](https://www.cerebras.ai/blog/how-we-built-our-knowledge-base) <!--orig:How We Built Our Knowledge Base-->

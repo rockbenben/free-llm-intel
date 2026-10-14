@@ -11,7 +11,7 @@
 
 ## 全部文章（共 1287 篇，按日期倒序；无日期条目列于最后）
 
-1. [Higgsfield takes AI video from 1 minute to over 10](https://openai.com/index/higgsfield-longer-videos-voice)（2026-10-13）
+1. [Higgsfield 把 AI 视频从 1 分钟做到 10 分钟以上](https://openai.com/index/higgsfield-longer-videos-voice)（2026-10-13） <!--orig:Higgsfield takes AI video from 1 minute to over 10-->
 2. [Sophos 借助 OpenAI Daybreak 将威胁调查时间缩短 96%](https://openai.com/index/sophos)（2026-10-09） <!--orig:Sophos cuts threat investigation time by 96% with OpenAI Daybreak-->
 3. [Asana 用 GPT-6.1 Sol 在浏览器测试中将模型成本降低 76 倍](https://openai.com/index/asana-browser-agent)（2026-10-09） <!--orig:Asana cuts model costs 76x in browser tests with GPT-6.1 Sol-->
 4. [Oracle 如何借助 ChatGPT 和 Codex 将数天的工作缩短至几分钟](https://openai.com/index/oracle)（2026-10-08） <!--orig:How Oracle turns days of work into minutes with ChatGPT and Codex-->
