@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 5dd4a8809497
 ---
 
 # Fetch 借助 Hugging Face on AWS 整合 AI 工具并节省 30% 开发时间

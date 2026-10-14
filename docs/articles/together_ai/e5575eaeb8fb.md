@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 331f7148be8b
 ---
 
 如果你最近访问过我们的网站或体验过我们的产品，今天你可能会注意到一些新东西。我们为 Together AI 推出了焕新的形象——一个更能体现我们使命与方法的面貌。今天，我们很高兴分享这次演变背后的故事。

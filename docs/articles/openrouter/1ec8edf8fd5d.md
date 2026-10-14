@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 07faf1d368d8
 ---
 
 选择文本模型时我们有海量 LLM 基准可用，而选择图像模型却往往全凭感觉。展示的样张多是精心挑选的“眼缘货”，而 LLM-as-a-judge 评测目前也抓不住人类一眼就能注意到的细节。Arena 分数虽有参考价值，但它评的是人们更喜欢哪些输出，而不是模型实际能做什么。

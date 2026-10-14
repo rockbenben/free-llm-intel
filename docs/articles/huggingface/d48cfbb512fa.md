@@ -9,6 +9,7 @@ captured: 2026-10-06
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: aec4dbd3ac1c
 ---
 
 # 用 LoRA 高效微调 Stable Diffusion

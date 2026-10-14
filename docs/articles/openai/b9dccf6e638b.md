@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: bd2a5e313def
 ---
 
 # SweetSpecter：中国关联的网络活动

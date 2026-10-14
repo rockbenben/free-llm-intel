@@ -9,6 +9,7 @@ captured: 2026-10-06
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: d467823d2f34
 ---
 
 # 新 agent 技能：为你的 coding agent 提供 Amazon SageMaker 优化的生成式 AI 推理

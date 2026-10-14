@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: a6923dac3a2f
 ---
 
 # 定义并评估 LLM 中的政治偏见

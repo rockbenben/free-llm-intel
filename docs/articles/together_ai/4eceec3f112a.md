@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 83c608f430bc
 ---
 
 # 推理的 99.9% 正常运行时间意味着什么？

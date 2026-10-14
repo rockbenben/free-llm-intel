@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: fb5c1bfcc202
+body_sha: 537ffb075a74
 ---
 
 # 用 ONNX Runtime 和 Olive 加速 SD Turbo 与 SDXL Turbo 推理

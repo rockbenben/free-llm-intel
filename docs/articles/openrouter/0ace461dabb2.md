@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 3b8f4a7c6a8d
 ---
 
 # 看懂你的 AI 用量：每个 agent、模型与请求

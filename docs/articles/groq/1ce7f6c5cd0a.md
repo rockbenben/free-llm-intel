@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 65bb14371e1e
 ---
 
 **你知道 Groq 擅长运行小模型。但你知道我们运行包括 MoE 在内的大模型也独具优势吗？原因如下。**

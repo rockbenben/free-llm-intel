@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: d3495ea51be7
 ---
 
 # 用 Mistral Agents API 构建 AI Agent

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: a257b3fd4410
 ---
 
 # DeepSeek V4 Pro 0813 对阵 Claude Fable 5：DeepSWE 上的成本、编码能力与路由

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 113f608880c1
 ---
 
 2 月 17 日和 19 日，OpenRouter 发生了两起相关联的宕机，根因是一个第三方缓存依赖的故障。部分用户在 2 月 17 日 UTC 5:27 起的 38 分钟内、以及 2 月 19 日 UTC 7:36 起的 35 分钟内，在所有 API 端点上看到 500 或 401 错误。这些时段内 chatroom 也出现降级。

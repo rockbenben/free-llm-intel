@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 348967299caf
 ---
 
 # Grok Bot 现已打通 X

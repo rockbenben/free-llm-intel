@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 22e7fac21436
 ---
 
 ## 一种解析从右向左（RTL）书写的 PDF 文档及低资源语言的新技术

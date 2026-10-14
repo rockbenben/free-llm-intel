@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 71ae588e4a35
 ---
 
 [Amazon Quick Sight](https://aws.amazon.com/quicksight/) 是一个完全托管、云原生的商业智能（BI）能力，用于构建并发布交互式仪表盘。你可以从任何设备访问这些仪表盘，并把它们嵌入到你的应用、门户和网站中。在构建仪表盘时，作者添加过滤器，让读者能把数据收窄到他们想分析的内容。但作者必须取得平衡：他们既需要足够的选项让读者自由探索数据，又不要把界面弄得杂乱或需要太多步骤才能应用过滤器。

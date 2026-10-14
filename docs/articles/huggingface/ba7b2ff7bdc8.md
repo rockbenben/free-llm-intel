@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: e8d98e10ee57
+body_sha: 63b9f14f5f50
 ---
 
 # 使用 DeepSpeed 和 Accelerate 实现极速 BLOOM 推理

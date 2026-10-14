@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: d0195784e3ff
 ---
 
 今年夏天，SandboxAQ 发布了 **Structurally Augmented IC50 Repository（结构增强型 IC50 库，**[**SAIR**](https://huggingface.co/datasets/SandboxAQ/SAIR)**）**——最大的「蛋白质-配体 3D 共折叠结构 + 实验测得 IC₅₀ 标签」配对数据集，把分子结构直接链接到药物效力，克服了训练数据长期稀缺的问题。这个数据集现已在 Hugging Face 上发布。研究者第一次可以开放访问超过 **500 万**个由 AI 生成、高精度的蛋白质-配体 3D 结构，每一个都配有经过验证的实测结合效力数据。

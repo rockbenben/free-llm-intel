@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 278e39929930
 ---
 
 **注意：Le Chat 现已升级为 Vibe**

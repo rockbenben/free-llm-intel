@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: ee11d219cb31
+body_sha: 44ecec0ce0ab
 ---
 
 # Transformers.js v3：WebGPU 支持、新模型与任务，以及更多…

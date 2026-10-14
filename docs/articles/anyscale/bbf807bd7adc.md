@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 05c37aeceb0a
 ---
 
 # 深潜：第三代 ML 架构中的数据摄取

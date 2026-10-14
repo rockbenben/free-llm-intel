@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: a6473a75dfcf
 ---
 
 # LangChain 对比 CrewAI：编排层与 OpenRouter 原生路由之争

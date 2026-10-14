@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: aa0f4382fdf8
 ---
 
 # 高通完成对 Modular 的收购

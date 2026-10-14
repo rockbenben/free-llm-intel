@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 1bdffe0d7e62
 ---
 
 # 案例研究：用 Hugging Face Infinity 与现代 CPU 实现毫秒级延迟

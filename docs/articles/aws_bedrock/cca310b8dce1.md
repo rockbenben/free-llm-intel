@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 6d2860ae3e00
 ---
 
 企业越来越希望 AI 智能体能对分散在多个 AWS 账户中的数据推理，而无需复制或集中它。每个团队把数据留在自己的账户里自有其充分理由：清晰的归属、范围隔离和独立的部署生命周期。但一个只看到一个账户数据的智能体价值有限，而把它连接到分散的数据源通常意味着复制数据或理清跨账户的 [AWS Identity and Access Management (IAM)](https://aws.amazon.com/iam/)。目标是让数据留在它原本所在的地方——在每个业务线（LOB）账户里。只有在查询时才流出某个请求所需的特定数据，因此底层数据集不会离开它们所属的账户。

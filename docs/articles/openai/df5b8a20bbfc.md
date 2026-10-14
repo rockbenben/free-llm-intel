@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 73ec2823013f
 ---
 
 # 《华盛顿邮报》与 OpenAI 就搜索内容达成合作

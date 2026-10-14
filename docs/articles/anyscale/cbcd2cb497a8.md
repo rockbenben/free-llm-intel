@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 12fe49561dbc
 ---
 
 # 基础模型的进展——技术、社会与应用

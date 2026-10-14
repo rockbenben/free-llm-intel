@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 88e4868c76b5
 ---
 
 # Open LLM Leaderboard：DROP 深度剖析

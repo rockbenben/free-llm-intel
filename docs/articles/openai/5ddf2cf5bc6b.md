@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 66e787fde38c
 ---
 
 # Spinning Up in Deep RL：工作坊回顾

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 6773c887fe4d
 ---
 
 # Modular 突破矩阵的赌注（AI 计算民主化第十篇）

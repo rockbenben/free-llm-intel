@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 8476232c6311
 ---
 
 # jina-embeddings-v5-omni：面向文本、图像、音频与视频的 embedding

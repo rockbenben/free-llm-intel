@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 89af3c636a0d
 ---
 
 # Blackwell 上的矩阵乘法（二）：用硬件特性优化 Matmul

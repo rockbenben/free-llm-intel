@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: d1a00d242473
 ---
 
 开源模型是否在开口之前就在默默推理？最近，Anthropic 的研究人员提出了 [Jacobian Lens](https://www.anthropic.com/research/global-workspace)，即 J-Lens。它是一个训练出来的探针（probe），读取模型在某一层的隐藏状态，告诉你模型在写出第一个 token 之前已经倾向哪些词。换句话说，它让你能在模型「思考」到一半时窥视内部，看到一个概念在落到纸面之前正在成形。我们把 J-Lens 应用到两个开源模型：Kimi K3 和 Qwen3.5-9B。我们把由此得到的观察称为**静默信号（silent signals）**：由拟合出的 Lens 恢复出来的、与最终输出相关联的草稿中期词表。

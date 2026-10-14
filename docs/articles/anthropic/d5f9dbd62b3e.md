@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 16d0d85f37c4
 ---
 
 Anthropic 工程实践

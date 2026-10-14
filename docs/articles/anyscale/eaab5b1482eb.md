@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 689de6e1ead8
 ---
 
 # Spotify 如何打造稳健且开发者体验无阻的 Ray 平台

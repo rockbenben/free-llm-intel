@@ -9,6 +9,7 @@ captured: 2026-10-06
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 120608a5e679
 ---
 
 # 在 Anyscale 上将大型 AI 模型的自动扩缩容提速至多 5.1 倍

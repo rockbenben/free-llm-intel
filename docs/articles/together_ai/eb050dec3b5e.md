@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: fd31548ff564
 ---
 
 # 缓存感知的 prefill–decode 分离（CPD）：长上下文 LLM 服务提速最高 40%

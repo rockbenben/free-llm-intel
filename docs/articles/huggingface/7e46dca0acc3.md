@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: ed1bdd5e465f
+body_sha: c61c2b9d1893
 ---
 
 # 嵌入入门

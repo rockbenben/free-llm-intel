@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 50e9d47e5237
 ---
 
 # DeepSeek-V4.1-Flash 开发者定价指南

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 21cfa311e097
 ---
 
 今天，我们发布 Mistral Vibe 2.0——对我们终端原生的编码 agent 的一次重大升级，由最先进的 Devstral 2 模型家族驱动。构建自定义子 agent，先澄清再执行，用斜杠命令加载技能（skills），并配置属于你自己的工作流来契合你的工作方式。

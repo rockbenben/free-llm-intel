@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 72289f8e8980
 ---
 
 # Granite 4.0 Nano：模型究竟能做多小？

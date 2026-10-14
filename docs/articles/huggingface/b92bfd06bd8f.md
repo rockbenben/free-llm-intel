@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 1d13741153f6
 ---
 
 # Safetensors 加入 PyTorch Foundation

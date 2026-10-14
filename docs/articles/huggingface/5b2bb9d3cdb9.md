@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: f5930d3c6eaa
 ---
 
 因为 LLM 微调慢得让人抓狂？本文介绍一个由社区开发的轻量工具，让 LLM 微调快到飞起！

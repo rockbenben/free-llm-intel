@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 1167e6f3051d
 ---
 
 实时应用正从试验阶段走向生产环境，推动全球对高性能 AI 推理的需求不断加速。随着这一转变落地，能够提供**可预期性能、低延迟与高效扩展**的基础设施正变得愈发关键。

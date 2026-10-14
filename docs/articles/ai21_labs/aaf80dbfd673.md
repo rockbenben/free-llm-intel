@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: b7c688bcdac3
 ---
 
 **AI 能否预测不可预测之事、变革医学诊断，同时仍守护疗愈的艺术？**听 Sheba 医疗中心高危妊娠单元主任 Avi Tsur 医生探讨 AI 如何重塑医学的未来。在这场快节奏问答中，Tsur 医生深入剖析人工智能在医疗领域的突破、挑战与真实世界影响——揭示技术在临床中的潜力与边界。

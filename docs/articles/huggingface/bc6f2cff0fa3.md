@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: b3a2f9e28116
+body_sha: f2fc1cdaac5e
 ---
 
 # BLOOM 训练背后的技术

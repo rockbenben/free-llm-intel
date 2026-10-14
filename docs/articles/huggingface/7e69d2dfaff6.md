@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: cacee3e70f93
 ---
 
 # 用 Hugging Face Inference Endpoints 实现强力 ASR + 说话人分离 + 推测解码

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: ed734d6ae295
 ---
 
 ### [CHANGELOG.md](https://github.com/groq/groq-changelog/commit/3e0d86955b531ee3a8076d0f3a1bc63260daaf72#diff-06572a96a58dc510037d5efa622f9bec8519bc1beab13c9f251e97e657a9d4ed)

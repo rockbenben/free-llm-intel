@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 2470e3e6c31b
 ---
 
 # 支持 Distill 创刊

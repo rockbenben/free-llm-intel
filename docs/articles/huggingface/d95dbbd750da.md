@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 64dcc657015f
+body_sha: 581fc730b825
 ---
 
 # 在 Hugging Face Spaces 上用 Gradio 免费运行 ComfyUI 工作流

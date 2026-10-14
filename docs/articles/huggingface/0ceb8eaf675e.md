@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: d96a08aac7e1
+body_sha: cc0379d0b7c9
 ---
 
 # Hugging Face 与 TruffleHog 合作扫描密钥

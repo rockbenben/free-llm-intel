@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: a8b7c4529a7e
 ---
 
 # 我在 Google Cloud 上部署 serverless transformers pipeline 之旅

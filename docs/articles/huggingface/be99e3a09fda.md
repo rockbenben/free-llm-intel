@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 2d34d34551b7
+body_sha: 2d0552212795
 ---
 
 # **用 Amazon SageMaker 轻松部署 Hugging Face 模型 🏎**

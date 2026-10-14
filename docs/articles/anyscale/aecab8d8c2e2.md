@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 4ba2b4d6a021
 ---
 
 # 宣布 Ray 原生沙箱能力

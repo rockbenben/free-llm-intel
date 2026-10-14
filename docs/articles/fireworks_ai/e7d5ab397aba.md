@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 6511acf7726f
 ---
 
 **TLDR；** DeepSeek V4 Pro 0813 在 840 道对抗性安全任务中实现了零拒绝，并且每次成功求解的成本仅为我们所测最高分模型的一半。同一测试中的两个闭源模型恰恰是「每成功一次花费美元数」最差的两个。

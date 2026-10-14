@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 961b05c60f8c
 ---
 
 # T. Rowe Price 把更多 Claude 引入其投资流程

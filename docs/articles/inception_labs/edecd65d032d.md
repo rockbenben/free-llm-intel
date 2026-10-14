@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 032048d55860
 ---
 
 ## 最快的推理 LLM，由 diffusion 驱动

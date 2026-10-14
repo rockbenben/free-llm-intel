@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 4e508b4e83d4
 ---
 
 # OpenAI 非营利组织共创日

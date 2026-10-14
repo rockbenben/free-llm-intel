@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: cdeff3d39f36
 ---
 
 # PyTorch 实现策略梯度

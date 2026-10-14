@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 7482cc908060
+body_sha: f4c090402595
 ---
 
 # OpenAI gpt-oss 的技巧：你 🫵 可以在 transformers 中使用

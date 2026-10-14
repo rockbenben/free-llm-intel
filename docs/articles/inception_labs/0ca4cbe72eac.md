@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: f5907dc69bf3
 ---
 
 过去几个月里，数千名开发者开始用 Mercury 构建实时语音应用、搜索与检索流水线以及 AI 编程 subagent。在我们扩充容量的同时，也持续在改进模型本身。

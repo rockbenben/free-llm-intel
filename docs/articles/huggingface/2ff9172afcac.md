@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 095ead981d3e
+body_sha: 090c5b9c848b
 ---
 
 # FastRTC：面向 Python 的实时通信库

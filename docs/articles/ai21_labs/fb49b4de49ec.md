@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: a577592c6763
 ---
 
 今天，我们发布 Jamba 1.6——市场上最适合企业部署的开放模型家族，带来：

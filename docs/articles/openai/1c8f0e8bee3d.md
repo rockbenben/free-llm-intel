@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: c5ec07ebc525
 ---
 
 # “Trolling Stone”行动：与俄罗斯关联的影响活动

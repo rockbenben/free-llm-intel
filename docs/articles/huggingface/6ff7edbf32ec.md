@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 4ef6453f04bd
 ---
 
 # Docmatix——面向文档视觉问答的超大规模数据集

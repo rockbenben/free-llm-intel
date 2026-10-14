@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 6fe239ff1236
+body_sha: c9339f7cc6a2
 ---
 
 # 开放阿拉伯语 LLM 排行榜 2

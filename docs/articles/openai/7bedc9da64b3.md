@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: a08ffc994aac
 ---
 
 # “Helgoland Bite” 行动：德语影响活动

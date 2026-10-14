@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: fd01c2c58376
 ---
 
 # Choco 用 AI agent 自动化食品配送

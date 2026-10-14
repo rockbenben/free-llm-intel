@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: e5ff80b2c6c5
 ---
 
 # 检测并减少 AI 模型中的阴谋行为

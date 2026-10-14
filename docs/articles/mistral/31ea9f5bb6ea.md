@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 920a5eaa38f3
 ---
 
 ![Nvidia Mistral Logos Dark](https://mistral.ai/_astro/41e7df62-110d-4925-8315-b77a4c10e179_1nEsXz.webp?dpl=6abbd11780b53c00082eea6f)在 Mistral AI，我们相信人工智能的未来是开放、协作、为每个人而建的。今天，我们骄傲地宣布作为创始成员加入 [NVIDIA Nemotron 联盟](https://nvidianews.nvidia.com/news/nvidia-launches-nemotron-coalition-of-leading-global-ai-labs-to-advance-open-frontier-models)——一项开创性的全球计划，汇聚领先 AI 实验室共同推进开放的前沿级基础模型。作为这一战略合作的一部分，Mistral AI 与 NVIDIA 计划共同开发前沿开源 AI 模型，将 Mistral AI 的专门模型架构与全栈 AI 平台，同 NVIDIA 的算力资源、模型开发工具和合成数据生成管道结合起来。作为 NVIDIA Nemotron 联盟的创始成员，Mistral AI 将贡献其专有训练技术、多模态能力和企业级微调工具——同时借助 NVIDIA 的算力、工具与技术来扩展训练和优化。这建立在此前与 NVIDIA 的科学合作之上，包括共同开发 [Mistral Nemo](https://mistral.ai/news/mistral-nemo) 模型。

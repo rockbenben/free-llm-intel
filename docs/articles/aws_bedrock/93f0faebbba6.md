@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: a73273cb335d
 ---
 
 Trane Technologies 在全球管理着数以百万计的联网暖通空调（HVAC）资产，但要得到一个单一的运营答案，可能意味着交叉比对多个仪表盘、在菜单里钻取 20 分钟甚至更久。对在这样规模上运营的组织而言，这类摩擦会拖慢运营、推迟纠正措施，并在整个企业造成实质性的业务影响。

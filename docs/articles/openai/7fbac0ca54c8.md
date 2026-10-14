@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: b4f7df8f20d1
 ---
 
 # 欢迎 Pieter 和 Shivon！

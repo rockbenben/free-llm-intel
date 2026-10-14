@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 24abce819c0b
 ---
 
 # Modular 26.1：迈向更可编程、更可移植 AI 基础设施的一大步

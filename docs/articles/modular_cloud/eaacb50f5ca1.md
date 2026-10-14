@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: a71b2a3edd23
 ---
 
 # Modverse #49：Modular 平台 25.4、Modular 🤝 AMD 与 Modular Hack Weekend

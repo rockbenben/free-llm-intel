@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 24100cd15171
 ---
 
 # 块稀疏 GPU 核函数

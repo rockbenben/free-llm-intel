@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 7ceb00aeb0c4
+body_sha: 43b2bc1334e7
 ---
 
 # 用提前编译让您的 ZeroGPU Spaces 更加快速

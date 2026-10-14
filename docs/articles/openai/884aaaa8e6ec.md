@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: cd0df5824d99
 ---
 
 # 用 ChatGPT 做研究

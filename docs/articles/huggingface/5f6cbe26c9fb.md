@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 25a92401a855
 ---
 
 # Apriel-H1：蒸馏高效推理模型的那个出人意料的关键

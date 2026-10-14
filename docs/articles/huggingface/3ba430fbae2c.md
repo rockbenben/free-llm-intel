@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: bc54f2db60b5
 ---
 
 # 搭建一个 AI 网络电视台

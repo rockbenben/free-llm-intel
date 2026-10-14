@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: b438b13da632
 ---
 
 # MosaicLeaks：你的研究代理能守住秘密吗？

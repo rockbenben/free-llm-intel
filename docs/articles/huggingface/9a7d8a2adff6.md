@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: b1cf8206e9a9
+body_sha: ae99484f05cf
 ---
 
 本文亦有[简体中文](https://huggingface.co/blog/zh/setfit-absa)版本。

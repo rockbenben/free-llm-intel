@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 95b6a92e4fea
 ---
 
 # Agentic 编码正在给 CI 施压。这是我们如何在 Anthropic 扩展测试影响分析

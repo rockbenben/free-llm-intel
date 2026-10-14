@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: e422236ea3d4
 ---
 
 新年快乐！为开启 2025，我们对 [Auto Router](https://openrouter.ai/openrouter/auto) 做了一次升级：

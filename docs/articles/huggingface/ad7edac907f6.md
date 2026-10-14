@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: b37f155aa7c4
 ---
 
 # Gradio MCP Server 的五项重大改进

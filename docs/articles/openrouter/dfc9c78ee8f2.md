@@ -8,7 +8,7 @@ lang: zh
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 5a14fe6952bb
+body_sha: 90e85ca63881
 translator: agent
 ---
 

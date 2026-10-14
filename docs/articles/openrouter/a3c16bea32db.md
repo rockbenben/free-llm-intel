@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 71289d0f8788
 ---
 
 我们很高兴推出 **Presets**——一项让你把 LLM 配置与代码分离的强大新功能！

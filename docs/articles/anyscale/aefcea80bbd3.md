@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 2398cf7f4fc9
 ---
 
 # Ray Data 2.56：提升 AI 数据流水线的可靠性

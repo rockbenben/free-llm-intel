@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 9b61905e9db8
 ---
 
 # GLM-5.3 API 提供方：速度、延迟与成本

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: d01d7f09ab39
 ---
 
 # AI 负载中的 GPU（低）效率问题

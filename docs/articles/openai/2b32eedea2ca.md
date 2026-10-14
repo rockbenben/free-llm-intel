@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: bf9486c42eea
 ---
 
 # 在 ChatGPT 中处理文件

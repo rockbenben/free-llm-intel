@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: db5c6157578e
 ---
 
 # GLM-5.3-Flash API 提供方：速度与成本

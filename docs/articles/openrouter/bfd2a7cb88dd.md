@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 9421b92661ae
 ---
 
 # Provider 差异：推出 Exacto

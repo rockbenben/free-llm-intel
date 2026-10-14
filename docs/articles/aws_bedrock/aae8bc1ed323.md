@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 4406a8fc8c44
 ---
 
 今天，我们很高兴地宣布 Claude Sonnet 5.5 在 [Amazon Bedrock](https://aws.amazon.com/bedrock/) 和 [Claude Platform on AWS](https://staging.prod.website.marketing.aws.dev/blogs/machine-learning/introducing-claude-platform-on-aws-anthropics-native-platform-through-your-aws-account/) 上可用。Claude Sonnet 5.5 是一个更聪明、更高效的 Sonnet 模型，适用于聚焦的编码和知识工作——对多数工作以更快的速度带来更低每任务成本。

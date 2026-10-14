@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 7f94f3cfcb46
 ---
 
 今年早些时候，我们[发布了 Maestro](https://www.ai21.com/blog/maestro-ai-planning-orchestration/)：一种全新的 agentic AI 系统，旨在以精准方式应对复杂、数据密集型的任务。自那以来，我们见证了企业各团队——从法务到财务——日益增长的兴趣，他们准备超越原型聊天机器人，迈入真正的自动化。

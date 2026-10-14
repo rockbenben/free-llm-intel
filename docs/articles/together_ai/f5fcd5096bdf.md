@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 59f5f8b5cb4c
 ---
 
 # GLM-5.3 对阵 Claude Fable 5：DeepSWE 上的成本、编码能力与路由

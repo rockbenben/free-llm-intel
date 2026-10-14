@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 3cd70483a991
 ---
 
 # Agentic Search：让你的 AI 系统获得更准确、更高效的检索结果

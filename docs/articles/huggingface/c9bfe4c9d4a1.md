@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: da50c95401ef
+body_sha: bfa7700d2ef9
 ---
 
 # Open R1：第二次更新

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: e864511bb4e3
 ---
 
 摘要（TL;DR）

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 28c13cdef6c4
 ---
 
 在 Mistral AI，我们持续推动开放模型（[Mistral Small](https://mistral.ai/news/mistral-small-3-1)、Mistral Large、Pixtral 等等）和企业模型（[Mistral OCR](https://mistral.ai/news/mistral-ocr)、Mistral Saba、Ministral 3B / 8B 等）的前沿。从 [Mistral 7B](https://mistral.ai/news/announcing-mistral-7b) 开始，我们的模型一贯展现出远超更高权重、更昂贵模型的性能。今天，我们很高兴宣布 **Mistral Medium 3**，把语言模型的效率与可用性再推一个新高度。

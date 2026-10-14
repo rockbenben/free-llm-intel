@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 5e6f11769bcd
 ---
 
 # 企业 AI 的下一阶段

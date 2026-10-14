@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 0c89f1d59745
 ---
 
 我们正在积极扩充 Claude 4 和 Gemini 2.5 的容量——与此同时，多项呼声很高的功能现已可用：

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 07d321bbfa1e
 ---
 
 # Anyscale 签署最终协议，加入 Nscale

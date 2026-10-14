@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: ead3ee1e2f4f
 ---
 
 # AutoScout24 用 AI 驱动的工作流扩展工程能力

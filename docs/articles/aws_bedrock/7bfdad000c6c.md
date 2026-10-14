@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 8877e680b9bb
 ---
 
 公共部门机构处理大量非结构化证据，如随身摄像机画面、监控视频和扫描文档，这些都需要先提取洞察，任何人才能对其采取行动。本文演示如何把 [Amazon Bedrock Data Automation](https://aws.amazon.com/bedrock/bda/) 与 Model Context Protocol (MCP) 结合，把非结构化数据转成结构化洞察。然后你可以在一个 AI 智能体（如 [Salesforce Agentforce](https://www.salesforce.com/agentforce/)）中通过自然语言查询暴露这些洞察。

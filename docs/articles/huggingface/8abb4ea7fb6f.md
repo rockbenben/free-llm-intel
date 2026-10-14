@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: d7874a607b31
+body_sha: be9103683057
 ---
 
 # 更快的训练与推理：Habana Gaudi®2 对比 Nvidia A100 80GB

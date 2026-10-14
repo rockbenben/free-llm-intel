@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 70cacc3c4507
 ---
 
 # 走向理解与预防未对齐泛化

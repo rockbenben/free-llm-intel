@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: cde06900ffe3
 ---
 
 # 面向代码合成大语言模型的危害分析框架

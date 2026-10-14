@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 4ed5e16c77a2
 ---
 
 ### [.github/workflows/stale.yaml](https://github.com/groq/groq-changelog/commit/b64680cebef49c1392ea94580fd5c99b0ff33271#diff-8ed8226600411f044974fddc34a67113e5f1a72e726ffad86676cf8c05186bec)

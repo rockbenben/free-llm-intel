@@ -433,7 +433,7 @@
 421. [改进 Hugging Face Hub 上的 Parquet 去重](https://huggingface.co/blog/improve_parquet_dedupe)（2024-10-05） <!--orig:Improving Parquet Dedupe on Hugging Face Hub-->
 422. [介绍开放 FinLLM 排行榜](https://huggingface.co/blog/leaderboard-finbench)（2024-10-04） <!--orig:Introducing the Open FinLLM Leaderboard-->
 423. [中国 AI 出海简史](https://huggingface.co/blog/chinese-ai-expansion)（2024-10-03） <!--orig:A Short Summary of Chinese AI Global Expansion-->
-424. [BenCzechMark](https://huggingface.co/blog/benczechmark)（2024-10-01） <!--orig:🇨🇿 BenCzechMark - Can your LLM Understand Czech?-->
+424. [🇨🇿 BenCzechMark——你的 LLM 懂捷克语吗？](https://huggingface.co/blog/benczechmark)（2024-10-01） <!--orig:🇨🇿 BenCzechMark - Can your LLM Understand Czech?-->
 425. [将顶点着色网格转换为纹理网格](https://huggingface.co/blog/vertex-colored-to-textured-mesh)（2024-09-30） <!--orig:Converting Vertex-Colored Meshes to Textured Meshes-->
 426. [Llama 现在能看图，也能在你的设备上运行——欢迎 Llama 3.2](https://huggingface.co/blog/llama32)（2024-09-25） <!--orig:Llama can now see and run on your device - welcome Llama 3.2-->
 427. [FineVideo：幕后花絮](https://huggingface.co/blog/fine-video)（2024-09-23） <!--orig:FineVideo: behind the scenes-->

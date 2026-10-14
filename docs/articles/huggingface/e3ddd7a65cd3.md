@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 3e9930fdc6fe
 ---
 
 # 度量语音识别中的基准优化

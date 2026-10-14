@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 261c6980f953
 ---
 
 # 网页、iOS 与 Android 上的 Skills

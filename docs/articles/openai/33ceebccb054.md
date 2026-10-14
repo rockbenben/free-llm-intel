@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 4b65ab32abfb
 ---
 
 # 人工智能信任建立措施：研讨会论文集

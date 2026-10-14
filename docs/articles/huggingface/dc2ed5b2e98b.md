@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: d8b05ddc2a86
+body_sha: b8aa1cb1ea53
 ---
 
 # Gradio 不只是另一个 UI 库的 17 个理由

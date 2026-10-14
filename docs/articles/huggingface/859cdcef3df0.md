@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 56317cbc3d42
 ---
 
 ## 下一个真正的约束是利用率，而不是智能。

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 6765890d7f55
 ---
 
 # 用 RiskRubric.ai 让 AI 安全普惠化

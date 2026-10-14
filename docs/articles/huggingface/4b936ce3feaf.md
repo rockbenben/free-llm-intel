@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: f3b8aeb25cf1
 ---
 
 本文另有 [简体中文](https://huggingface.co/blog/zh/sd_distillation) 版本。

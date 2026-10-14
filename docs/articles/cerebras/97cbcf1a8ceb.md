@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: db4f3d8bc781
 ---
 
 Jul 22 2026

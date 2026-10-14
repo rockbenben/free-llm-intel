@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 872756665c6b
 ---
 
 # AI 模型校准：那个没人优化的基准评测

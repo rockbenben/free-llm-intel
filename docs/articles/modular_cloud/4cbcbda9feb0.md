@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 3b024794fabd
 ---
 
 # Structured Mojo Kernels 第 1 篇——峰值性能，一半代码

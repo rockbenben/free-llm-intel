@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 6c743b9de5f7
 ---
 
 今天，恰是我们上线 GroqCloud 一周年的这一周，我们正在庆祝如今在 GroqCloud 上的 100 万开发者！仅仅一年，这个由建造者、创客和创新者组成的社区就交付了令人惊叹的应用，参加并赢得了黑客松，把创新产品化，甚至创立了公司。我们还持续迎来了 Dev Tier 的数千名付费客户，以及用我们基于 LPU 的系统构建 AI 方案的企业。

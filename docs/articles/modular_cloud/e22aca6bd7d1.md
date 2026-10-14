@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 159c483bef81
 ---
 
 # CUDA 是如何成功的？（AI 算力普惠化，第 3 部分）

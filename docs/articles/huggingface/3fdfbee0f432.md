@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 5b8ea3a0e193
 ---
 
 # Granite 4.1 LLM：它们是如何构建的

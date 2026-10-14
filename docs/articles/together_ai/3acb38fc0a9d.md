@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 6b60f3b8e31a
 ---
 
 一份从闭源模型迁移到开源模型的实战五阶段手册：发现、评估、适配、决策、投产。

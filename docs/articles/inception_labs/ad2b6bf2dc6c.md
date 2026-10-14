@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 7fe671b2850c
 ---
 
 过去两年，每个前沿实验室都在用同一种方式向智能爬坡：**让模型思考更长时间**。推理模型如今在开口之前要烧掉数以千计的"思考"token（吹嘘、苦思、磨洋工）。在占主导地位的自回归解码范式下，这些 token 中的每一个都是串行生成的，每一个都需要一次完整的前向传播。在和语音 agent 通话时，这些生成（解码）时间累积到让人宁愿直接挂电话。

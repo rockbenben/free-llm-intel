@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: dd6a0d3d4bac
 ---
 
 # Hub 推出存储区域（Storage Regions）功能

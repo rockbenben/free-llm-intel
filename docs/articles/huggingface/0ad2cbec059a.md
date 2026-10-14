@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 29d9aac7e8d9
+body_sha: 042470aae756
 ---
 
 # Hugging Face Text Generation Inference 现已支持 AWS Inferentia2

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: b369581c3a9f
 ---
 
 如果你看看 2024 年的 LinkedIn 帖子和主题演讲标题，你可能会以为那是 AI agent 的*元*年。社交网络上充斥着各种 agent 处理复杂任务的视频，从点披萨到写生产级代码。概念上的飞跃出现在 Anthropic 于 10 月发布"[Computer use](https://www.anthropic.com/news/3-5-models-and-computer-use)"之后，紧接着 OpenAI 的"[Operator](https://openai.com/index/introducing-operator/)"更进一步——agent 连接到计算机，获得键盘和鼠标的访问权限，就像真正的人类一样。尽管这些仍是早期技术，但它们被如此自然地呈现出来这一事实本身，既令人兴奋又令人不安。

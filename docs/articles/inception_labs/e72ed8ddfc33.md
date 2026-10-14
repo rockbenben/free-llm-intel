@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 66f5054fa714
 ---
 
 过去两年，"搜索"的含义已从一列排好序的链接，变成一个 agentic 流水线：分类、改写、扇出、重排序、综合。每次搜索查询要调用 LLM 五十到一百次，且几乎全部是串行的。

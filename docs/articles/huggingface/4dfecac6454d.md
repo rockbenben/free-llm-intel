@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: af5909a778ad
 ---
 
 本文另有 [简体中文](https://huggingface.co/blog/zh/sd3) 版本。

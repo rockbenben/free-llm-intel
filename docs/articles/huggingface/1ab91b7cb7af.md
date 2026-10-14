@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: d2eaeb5f2773
+body_sha: ddfcd4b6a2aa
 ---
 
 # Swift Transformers 达到 1.0 并展望未来

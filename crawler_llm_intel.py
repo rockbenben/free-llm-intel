@@ -3918,6 +3918,39 @@ def parse_archived_articles(arch_path: Path) -> list[Article]:
     return articles
 
 
+def find_title_drift(root: Path) -> list:
+    """归档可见标题一个汉字都没有，而台账里同一 URL 的标题有汉字 → 中文被挡在展示层之外。
+
+    为什么必须反向查：`orig == 可见标题` 在 `parse_archived_articles` 里等于「看过原文、
+    判定该留英文」，此后永久不再翻译——可同一个形态也可能是**标题残骸**：抓取或横扫时
+    只留下品牌名/锚文本，副标题整段丢了（实测 `BenCzechMark` 丢了 `- Can your LLM
+    Understand Czech?`，groq 18 行显示英文锚文本而台账里早有 agent 中文标题）。
+    只看归档分不出这两种，只能拿台账对。返回违规描述列表（空=合规）。
+    """
+    ledger = root / "docs/feeds/bodies.json"
+    if not ledger.exists():
+        return []
+    try:
+        bodies = json.loads(ledger.read_text(encoding="utf-8")).get("bodies", {})
+    except (ValueError, OSError):
+        return []
+    by_key = {}
+    for key, e in bodies.items():
+        vendor, _, url = key.partition("\t")
+        by_key[(vendor, url.rstrip("/"))] = e.get("title", "")
+    drift = []
+    for arch in sorted((root / "llm-news").glob("*.md")):
+        for line in arch.read_text(encoding="utf-8").splitlines():
+            m = _ARCHIVE_ARTICLE_RE.match(line.strip())
+            if not m:
+                continue
+            disp, url = m.group(1), m.group(2).rstrip("/")
+            led = by_key.get((arch.stem, url), "")
+            if led and _CJK_CHAR_RE.search(led) and not _CJK_CHAR_RE.search(disp):
+                drift.append(f"{arch.stem}: 归档 {disp[:40]!r} 挡住了台账中文 {led[:40]!r}")
+    return drift
+
+
 # ---------------------------------------------------------------------------
 # 归档日期回填（维护模式 --backfill-dates，不参与日常巡检）
 # ---------------------------------------------------------------------------
@@ -6521,6 +6554,10 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--mark-translated", metavar="KEY", default="",
                         help="把 --zh-file 指定的中文正文登记为 key 的译文（agent 回充译道，只改 ledger）")
     parser.add_argument("--zh-file", default="", help="配合 --mark-translated：中文正文 Markdown 文件路径")
+    parser.add_argument("--repair-body-sha", action="store_true",
+                        help="维护模式（不巡检、不联网）：把每个 .md/.en.md 的 frontmatter "
+                             "`body_sha` 修成与磁盘正文一致（缺则补、错则改）。只动这一行，"
+                             "正文与其他字段逐字保全；幂等。台账那份 body_sha 跟英文侧，不回写。")
     parser.add_argument("--ai-bodies", action="store_true",
                         help="维护模式（不巡检）：把 bodies.json 里「英文已抓到、中文待译」的条目"
                              "走 --ai-titles 同源 LLM 通道译成中文，写 docs/articles/<vendor>/<urlhash>.md"
@@ -6567,6 +6604,20 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  [fulltext-guard] {e}", file=sys.stderr)
         print(f"  [mark-translated] 已记译文：{key}")
         return 1 if errs else 0
+
+    if args.repair_body_sha:
+        import fulltext
+        bodies = fulltext.load_bodies(root / "docs/feeds/bodies.json")
+        stats = fulltext.repair_body_sha(root, bodies)
+        left = fulltext.corpus_body_sha_mismatches(root, bodies)
+        print(f"  [repair-body-sha] 查过 {stats['checked']} 个文件："
+              f"补 {stats['added']} 个、纠正 {stats['fixed']} 个、残留对不上 {len(left)} 个")
+        for e in left[:8]:
+            print(f"  [fulltext-guard] {e}", file=sys.stderr)
+        errs = fulltext.validate_bodies(root, bodies)
+        for e in errs[:8]:
+            print(f"  [fulltext-guard] {e}", file=sys.stderr)
+        return 1 if (left or errs) else 0
 
     if args.fetch_bodies:
         import fulltext

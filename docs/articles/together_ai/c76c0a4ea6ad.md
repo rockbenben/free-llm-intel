@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 9178517177ff
 ---
 
 四年前，我和联合创始人创立 Together AI，是因为我们看到了生成式 AI 是人类进步的转折点。我们相信，这项一代人一遇的技术应当是开放的、随处可得的，而不是被少数几家公司掌控。

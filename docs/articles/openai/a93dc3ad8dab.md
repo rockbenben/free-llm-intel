@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 5a2986ff9769
 ---
 
 # 用人与 AI 推进红队测试

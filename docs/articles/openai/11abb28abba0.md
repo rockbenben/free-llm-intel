@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: ab54a6e15db6
 ---
 
 # OpenAI 与 Hearst 的内容合作

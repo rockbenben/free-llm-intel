@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: bac3d6a0e80d
 ---
 
 # 打击 AI 的恶意使用：2025 年 6 月

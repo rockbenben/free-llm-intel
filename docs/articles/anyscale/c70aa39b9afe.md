@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: e45fcd61c191
 ---
 
 # Ray Serve：以异步推理、自定义请求路由与自定义扩缩推进灵活性

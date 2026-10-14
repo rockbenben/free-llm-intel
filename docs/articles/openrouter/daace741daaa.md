@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: d14dd403f4a2
 ---
 
 # Agentic AI 治理：你的 API Key 就是一道护栏

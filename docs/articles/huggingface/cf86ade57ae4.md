@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: b6626af1bbbf
+body_sha: db64b2d1e721
 ---
 
 # 图解基于人类反馈的强化学习（RLHF）

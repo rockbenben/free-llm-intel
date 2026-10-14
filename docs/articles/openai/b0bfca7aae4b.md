@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: d253a3f208a3
 ---
 
 # 携手德国电信，把强大 AI 带给欧洲数百万人

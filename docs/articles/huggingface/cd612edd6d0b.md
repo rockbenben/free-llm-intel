@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 8d7149898cf9
+body_sha: 03e688419f15
 ---
 
 # ScreenEnv：部署你的全栈桌面智能体

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 158b11641e92
 ---
 
 # OpenAI 结构的演进

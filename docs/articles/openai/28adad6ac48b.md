@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: ddffe7925c94
 ---
 
 # Point-E：从复杂提示词生成 3D 点云的系统

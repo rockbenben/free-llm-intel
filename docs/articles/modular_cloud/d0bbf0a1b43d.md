@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 43f83b36ef3f
 ---
 
 # Modular 开设爱丁堡与旧金山办公室

@@ -9,6 +9,7 @@ captured: 2026-10-06
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: b686332ddbb7
 ---
 
 # 使用 Hugging Face Transformers 和 AWS Inferentia 加速 BERT 推理

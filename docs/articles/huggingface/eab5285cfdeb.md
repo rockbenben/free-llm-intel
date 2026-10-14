@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: c81c39624292
 ---
 
 今天，我们为 LFM2.5 家族的三个模型发布 **DSpark 草稿模型（draft model）checkpoints**：LFM2.5-1.2B-Instruct、LFM2.5-2.6B 和 LFM2.5-8B-A1B。它们新增了一条 speculative decoding（投机解码）路径，用极小的内存增加换取大幅的解码加速，且不改变输出质量：

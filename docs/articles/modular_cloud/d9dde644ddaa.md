@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 445e5d08f49c
 ---
 
 # 结构化 Mojo 内核（三）：组合实战

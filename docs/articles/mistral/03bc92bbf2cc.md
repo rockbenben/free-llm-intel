@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 24512fbd9d33
 ---
 
 今天，我们发布 Workflows 的公开预览。Workflows 是企业 AI 的编排层。它带来把 AI 驱动的流程从概念验证可靠地推向生产所需的持久性、可观测性与容错能力。**ASML、ABANCA、CMA-CGM、France Travail、La Banque Postale、Moeve** 等组织已经在用 Workflows 自动化关键流程。

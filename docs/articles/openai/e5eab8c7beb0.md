@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 79c0504fca47
 ---
 
 # OpenAI 与康泰纳仕达成合作

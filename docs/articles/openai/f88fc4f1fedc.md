@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 42980963acb4
 ---
 
 # Vixen 与 Keyhole Panda：中国关联的网络行动

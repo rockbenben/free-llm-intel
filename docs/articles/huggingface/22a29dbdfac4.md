@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 71fbe43992a8
+body_sha: 2f4d68088a1d
 ---
 
 # Hugging Face 中的 Patch Time Series Transformer——入门

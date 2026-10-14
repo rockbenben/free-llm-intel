@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: ae8c19eeb2d5
+body_sha: 782c1d8f2adc
 ---
 
 # 将 Hub 从 Git LFS 迁移到 Xet

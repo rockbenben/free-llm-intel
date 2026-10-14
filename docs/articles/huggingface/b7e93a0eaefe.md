@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: fe39149aa7b6
 ---
 
 # Artificial Analysis 文生图排行榜与 Arena 上线

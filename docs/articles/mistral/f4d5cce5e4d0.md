@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: ad252828dfcc
 ---
 
 今天我们推出 Devstral，我们面向软件工程任务的 agentic LLM。Devstral 由 Mistral AI 与 [All Hands AI](https://www.all-hands.dev/) 合作打造 🙌，在 SWE-Bench Verified 上以大幅优势超越所有开源模型。我们以 Apache 2.0 许可证发布 Devstral。

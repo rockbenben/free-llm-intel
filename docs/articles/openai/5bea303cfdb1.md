@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 794370baf179
 ---
 
 # GPT‑5.1 全新上线：更智能、更具对话感的 ChatGPT

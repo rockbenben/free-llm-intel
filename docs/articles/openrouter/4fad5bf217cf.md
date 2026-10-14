@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 3a9872a40a37
 ---
 
 介绍 `openrouter:web_search` 和 `openrouter:web_fetch`——两个任何模型都能在请求期间调用的新工具。当模型决定使用其一，OpenRouter 会在服务端执行并把结果返回给模型，无需任何客户端实现。

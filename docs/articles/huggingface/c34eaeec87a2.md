@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: f53080832827
 ---
 
 # Hugging Face 与 VirusTotal 合作加强 AI 安全

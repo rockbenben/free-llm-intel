@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 6927b466d00b
 ---
 
 # 用 ChatGPT Work 处理日常工作

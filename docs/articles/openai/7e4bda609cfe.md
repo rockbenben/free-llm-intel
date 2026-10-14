@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: bdc9b5494362
 ---
 
 # Dota 2 更多详情

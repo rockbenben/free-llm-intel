@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 012aabf9e419
 ---
 
 # Triton 与 Python eDSL 怎么样？（AI 算力民主化，第 7 篇）

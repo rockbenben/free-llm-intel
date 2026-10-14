@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: f70783875331
 ---
 
 # 探索 Hugging Face 上的 Daily Papers 页面

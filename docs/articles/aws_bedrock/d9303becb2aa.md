@@ -9,6 +9,7 @@ captured: 2026-10-06
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: d83ff29f4d86
 ---
 
 编码与智能体（agentic）工作负载对 AI 模型的要求前所未有：重构一个横跨数百个文件的代码仓库、在不丢失上下文的情况下维持一个持续数小时的智能体工作流，以及在每一步都借助工具调用来推理复杂的系统问题。而要用开放权重（open-weight）模型满足这些需求，历来意味着自行预置并运维你自己的推理基础设施。

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: b20843cfe6e9
 ---
 
 # 用时间分段模型进行预测与控制

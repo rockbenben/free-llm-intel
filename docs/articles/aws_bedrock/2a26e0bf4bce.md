@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: be7cb9bcc9d2
 ---
 
 借助语音克隆（voice cloning），你可以从一段简短的参考录音生成目标说话人声音的新语音，而无需重新训练模型。你现在可以[从 Amazon SageMaker JumpStart](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-jumpstart.html) 部署公开可用的 [Qwen3-TTS-12Hz-1.7B-Base](https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-Base) 文本转语音模型，到一个完全托管的实时推理端点。

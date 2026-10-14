@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 8f0e9642b783
 ---
 
 # Canva 用 AI 释放创造力

@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 06f5b7d3f612
 ---
 
 我们期望自己的 API 达到 99.999% 的可用性，也绝不会容忍一个 2% 时间会失败的支付处理器。那么，为什么我们能容忍 LLM 在结构化输出请求中动不动就破坏 JSON 语法？

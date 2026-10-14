@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 3e93a0039ba5
 ---
 
 # 工作的未来之争有一个证据问题

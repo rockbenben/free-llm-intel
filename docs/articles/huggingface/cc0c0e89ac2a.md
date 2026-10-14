@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 2d68b89d7bbb
 ---
 
 # Swift 🧨Diffusers：为 Mac 打造的快速 Stable Diffusion

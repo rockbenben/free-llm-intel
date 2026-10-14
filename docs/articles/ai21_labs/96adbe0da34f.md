@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 47064e898963
 ---
 
 Andrej Karpathy 近日提醒道，我们对完全自主的 AI agent"兴奋过头了"——并敦促开发者"把 AI 拴在绳子上"。[1](https://www.ai21.com/blog/karpathys-leash/#d3c1bdbe-2c5d-4883-a520-559005551989)他的观点直白而真实：先进 AI 的挑战不在于让它行动，而在于确保它可靠地、在边界内行动。

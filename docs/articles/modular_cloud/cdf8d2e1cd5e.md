@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: d9a08c641c1a
 ---
 
 # Modular 26.3：Mojo 1.0 Beta、MAX 视频生成等

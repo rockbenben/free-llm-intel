@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: ec3522b61045
 ---
 
 # Day Zero 首发：Gemma 4 在 NVIDIA 与 AMD 上的最快性能

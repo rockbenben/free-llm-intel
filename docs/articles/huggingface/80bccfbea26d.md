@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 1b24a25c91f1
+body_sha: 0da399350266
 ---
 
 # 异步机器人推理：解耦动作预测与执行

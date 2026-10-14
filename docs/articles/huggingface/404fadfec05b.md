@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: 35bf0a83c312
+body_sha: 6470b3f12a58
 ---
 
 # 在 Transformers 中用对比搜索生成媲美人类的文本 🤗

@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 9b90a212f77f
+body_sha: fd8bf759455e
 ---
 
 # Scout24 如何用 AI 打造下一代房地产搜索

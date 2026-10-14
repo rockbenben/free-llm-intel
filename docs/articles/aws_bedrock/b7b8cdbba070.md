@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: cadceecb1d29
 ---
 
 大规模处理文档的团队都熟悉这套例行流程：文件落到存储里，有人注意到、逐个打开、决定它需要什么，并路由去审阅。监控告警以同样的方式排队，等着人来处理。浪费在人工分类上的时间，正是环境智能体（ambient agents）要解决的运营问题。想象一个文件落到你的 Amazon Simple Storage Service (Amazon S3) 桶里，几秒之内你的 Jobs 页面上就出现一个待运行（如果你那样配置了，可能已经在运行）的作业。智能体分析该文件、呈现发现，并在采取下一步之前征求你的批准。事件本身就是 prompt。这就是一个环境智能体：它响应事件流，在需要时通过单个 `ask_human` 工具暂停以等待人工输入，并在人回答后从它停下的地方恢复。

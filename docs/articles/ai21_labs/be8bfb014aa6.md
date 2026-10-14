@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: f359b6c42a18
 ---
 
 *以下是 Yoav 为 Google Cloud《AI 的未来：创业公司视角 2025》（'Future of AI: Perspectives for Startups 2025'）报告撰稿内容的节选。*

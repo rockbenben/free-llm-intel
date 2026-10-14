@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 9c20e424225b
 ---
 
 # HuggingFace 与 IISc 合作，为印度多元语言的模型构建加速

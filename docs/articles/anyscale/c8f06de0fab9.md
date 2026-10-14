@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 04ed70223792
 ---
 
 # 用 Ray Serve 构建生产级 AI 应用

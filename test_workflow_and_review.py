@@ -8899,6 +8899,112 @@ class TestFulltextCiInvariants(unittest.TestCase):
         self.assertEqual(errs, [], f"已提交语料违反 §3.4/§6 schema：{errs[:5]}")
 
 
+    # -- 守卫 6（实产物）：台账已是中文的标题，归档行不许显示成英文 ----------------
+    def test_committed_archive_titles_keep_ledger_chinese(self):
+        """归档可见标题没汉字、而台账同一 URL 有汉字 = 中文被挡在展示层之外。
+
+        `orig == 可见标题` 会被 `parse_archived_articles` 当成「故意留英文」永久冻住，
+        不再有任何回访路径；但同一形态也可能是标题残骸（实测 huggingface 的
+        `BenCzechMark` 掉了整段副标题、groq 18 行显示英文锚文本而台账里早有 agent
+        中文标题）。只看归档分不出这两种，所以这道闸拿台账反向对。
+        """
+        repo = Path(crawler_llm_intel.__file__).resolve().parent
+        if not (repo / "docs/feeds/bodies.json").exists():
+            self.skipTest("仓库无 bodies.json，跳过实产物校验")
+        drift = crawler_llm_intel.find_title_drift(repo)
+        self.assertEqual(drift, [], f"归档挡住了台账里已有的中文标题：{drift[:5]}")
+
+    def test_title_drift_guard_bites_and_spares_legit_shapes(self):
+        """证人要因对的理由变红：先咬一次漂移，再确认「台账也留英文」不算漂移。"""
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "llm-news").mkdir(parents=True)
+            (root / "docs/feeds").mkdir(parents=True)
+            a, bb = "https://x.com/a", "https://x.com/b"
+            (root / "llm-news/v.md").write_text(
+                f"1. [Widget]({a})（2026-01-01） <!--orig:Widget-->\n"
+                f"2. [部件]({bb})（2026-01-02） <!--orig:Widget two-->\n",
+                encoding="utf-8")
+            bodies = {"v\t" + a: {"title": "部件"}, "v\t" + bb: {"title": "部件二"}}
+
+            def write():
+                (root / "docs/feeds/bodies.json").write_text(
+                    json.dumps({"count": len(bodies), "bodies": bodies}, ensure_ascii=False),
+                    encoding="utf-8")
+            write()
+            drift = crawler_llm_intel.find_title_drift(root)
+            self.assertEqual(len(drift), 1, f"漂移应恰好抓到第 1 行：{drift}")
+            self.assertTrue(drift[0].startswith("v: "), f"报警要指得出厂商文件：{drift[0]}")
+            self.assertIn("'Widget'", drift[0], f"要披露被显示的英文标题：{drift[0]}")
+            self.assertIn("部件", drift[0], "要披露台账里被挡住的那份中文")
+            # 合法形态：台账同样留英文（真·产品名）→ 不是漂移
+            bodies["v\t" + a]["title"] = "Widget"
+            write()
+            self.assertEqual(crawler_llm_intel.find_title_drift(root), [],
+                             "台账也留英文时不该报警")
+            # 无台账行的英文标题（单页锚点等）同样不归它管
+            (root / "llm-news/v.md").write_text(f"3. [Solo]({a})\n", encoding="utf-8")
+            self.assertEqual(crawler_llm_intel.find_title_drift(root), [])
+
+
+    # -- 守卫 7（实产物）：body_sha 必须与磁盘正文对得上 ----------------------
+    def test_committed_corpus_body_sha_matches_body(self):
+        """语料文件 frontmatter 的 `body_sha` 缺行或指向旧正文，都在这里拦下。
+
+        为什么单独一道：`validate_bodies` 管的是「有没有编造正文」，而 sha 假账不会
+        让产物说谎——它只会让「洗稿后重算 sha」这条规矩悄悄失效（实测 bootstrap 落库
+        的 1649 个文件根本没写这行，另有 452 个的 sha 对不上现存正文）。
+        """
+        repo = Path(crawler_llm_intel.__file__).resolve().parent
+        ledger = repo / "docs/feeds/bodies.json"
+        if not ledger.exists():
+            self.skipTest("仓库无 bodies.json，跳过实产物校验")
+        bodies = ft.load_bodies(ledger)
+        errs = ft.corpus_body_sha_mismatches(repo, bodies)
+        self.assertEqual(errs, [], f"body_sha 与磁盘正文对不上：{errs[:5]}")
+        # 形状证人：扫描器确实在逐个数文件，不是靠空集蒙绿
+        n = sum(1 for e in bodies.values()
+                for rel in (e.get("zh_path"), e.get("en_path"))
+                if rel and (repo / rel).exists())
+        self.assertGreater(n, 3000, f"实产物扫描没覆盖到语料规模（只看了 {n} 个文件）")
+
+    def test_repair_body_sha_adds_fixes_and_the_guard_bites(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            key = "openai\thttps://openai.com/x"
+            bodies = {key: {"slug": "abc123", "en_status": "ok", "zh_status": "translated",
+                            "translator": "agent",
+                            "en_path": "docs/articles/openai/abc123.en.md",
+                            "zh_path": "docs/articles/openai/abc123.md"}}
+            body = "# 标题\n\n正文。"
+            want = ft.body_sha_of(body)
+            # 三种形态：缺行 / sha 是旧版本的 / 已经对
+            ft.write_body_doc(root / "docs/articles/openai/abc123.md",
+                              {"vendor": "openai", "title": "标题", "lang": "zh",
+                               "translator": "agent", "status": "translated"}, body)
+            ft.write_body_doc(root / "docs/articles/openai/abc123.en.md",
+                              {"vendor": "openai", "title": "Title", "lang": "en",
+                               "status": "ok", "body_sha": "deadbeefcafe"}, body)
+            self.assertEqual(len(ft.corpus_body_sha_mismatches(root, bodies)), 2)
+            stats = ft.repair_body_sha(root, bodies)
+            self.assertEqual((stats["added"], stats["fixed"], stats["checked"]), (1, 1, 2), stats)
+            self.assertEqual(ft.corpus_body_sha_mismatches(root, bodies), [])
+            # 幂等：第二次不动任何文件
+            self.assertEqual(ft.repair_body_sha(root, bodies), {"added": 0, "fixed": 0, "checked": 2})
+            # 修完必须是「正文逐字未动 + sha 落在闭块之前」
+            fm, kept = ft.read_body_doc(root / "docs/articles/openai/abc123.md")
+            self.assertEqual(kept, body, "回填不许动正文")
+            self.assertEqual(fm["body_sha"], want)
+            self.assertEqual(fm["translator"], "agent", "其他字段逐字保全")
+            # 诱饵：正文被改掉而 sha 没跟上，这道闸必须变红（不是静默放行）
+            p = root / "docs/articles/openai/abc123.md"
+            p.write_text(p.read_text(encoding="utf-8").replace("正文。", "正文被改了。"),
+                         encoding="utf-8", newline="\n")
+            errs = ft.corpus_body_sha_mismatches(root, bodies)
+            self.assertEqual(len(errs), 1, f"篡改正文必须被拦下：{errs}")
+            self.assertIn("abc123.md", errs[0])
+
+
 class TestTranslateBodyMt(unittest.TestCase):
     """正文机器翻译：按块处理、代码块原样保留、失败块留原文、结构不塌。"""
 

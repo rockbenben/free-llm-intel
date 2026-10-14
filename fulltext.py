@@ -1605,6 +1605,69 @@ def validate_bodies(root: Path, bodies: dict) -> list:
     return errs
 
 
+def body_sha_of(body: str) -> str:
+    """正文的 sha —— 与各个落盘写入口算的那份是同一个口径（`read_body_doc` 去过首尾空行）。"""
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()[:12]
+
+
+def _fm_close(lines: list) -> int:
+    """frontmatter 闭块 `---` 的下标。`read_body_doc` 已保证首行是 `---`。"""
+    return lines.index("---", 1)
+
+
+def corpus_body_sha_mismatches(root: Path, bodies: dict) -> list:
+    """每个 `.md` / `.en.md` 的 frontmatter `body_sha` 必须等于磁盘正文的 sha。
+
+    为什么单独一道而不是塞进 `validate_bodies`：那边管的是「抓取/翻译有没有编造」，
+    缺 sha 或 sha 是旧版本的不会让产物说谎；而这条不变量一旦没人守，
+    「洗稿后重算 sha」就退化成只覆盖新写入的文件（实测 bootstrap 落库的 1649 个
+    文件根本没写这一行，另有 452 个的 sha 对不上现存正文）。
+    台账那份 `body_sha` 跟的是英文侧，本函数**不碰**它（见 AGENTS.md）。
+    """
+    errs = []
+    for key, e in bodies.items():
+        for rel in (e.get("zh_path"), e.get("en_path")):
+            if not rel or not (root / rel).exists():
+                continue
+            fm, body = read_body_doc(root / rel)
+            want = body_sha_of(body)
+            if "body_sha" not in fm:
+                errs.append(f"{rel}: 缺 frontmatter body_sha（应为 {want}）")
+            elif fm["body_sha"] != want:
+                errs.append(f"{rel}: body_sha={fm['body_sha']} 与正文对不上（应为 {want}）")
+    return errs
+
+
+def repair_body_sha(root: Path, bodies: dict) -> dict:
+    """把语料文件 frontmatter 的 `body_sha` 修成与磁盘正文一致：缺则补、错则改。
+
+    只动这一行，正文与其他字段逐字保全；幂等（第二次跑 `added == fixed == 0`）。
+    补上的行插在闭块之前，与 `mark_translated` 等写入口的字段顺序一致（`body_sha` 最后）。
+    """
+    added = fixed = checked = 0
+    for e in bodies.values():
+        for rel in (e.get("zh_path"), e.get("en_path")):
+            if not rel or not (root / rel).exists():
+                continue
+            p = root / rel
+            fm, body = read_body_doc(p)
+            checked += 1
+            want = body_sha_of(body)
+            if fm.get("body_sha") == want:
+                continue
+            lines = p.read_text(encoding="utf-8").split("\n")
+            close = _fm_close(lines)
+            at = [i for i in range(close) if lines[i].startswith("body_sha:")]
+            if at:
+                lines[at[0]] = f"body_sha: {want}"
+                fixed += 1
+            else:
+                lines.insert(close, f"body_sha: {want}")
+                added += 1
+            p.write_text("\n".join(lines), encoding="utf-8", newline="\n")
+    return {"added": added, "fixed": fixed, "checked": checked}
+
+
 def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                  today: str, only_missing: bool = True, retry_unreadable: bool = False,
                  save: Callable[[dict], None] | None = None, flush_every: int = 20,

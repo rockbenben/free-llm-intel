@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 856848ad4719
 ---
 
 *我们的 Kernels 副总裁 Dan Fu 发布了一篇新文章，反驳"AI 正撞上硬件墙"的说法。他主张我们严重低估了当前芯片的利用率，而更好的软硬件协同设计将解锁下一个数量级的性能。*

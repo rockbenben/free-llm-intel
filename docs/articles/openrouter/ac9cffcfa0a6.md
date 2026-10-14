@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 33e728e496a2
 ---
 
 OpenAI 在 7 月 27 日至 8 月 14 日为其新的 Terra 和 Luna 模型提供了大幅折扣。这些折扣对 token 用量、总支出和竞争格局产生了什么影响？

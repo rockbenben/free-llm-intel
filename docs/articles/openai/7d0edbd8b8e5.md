@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: 9105df28cca1
 ---
 
 # OpenAI Scholars 2018：结业项目

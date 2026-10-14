@@ -9,6 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
+body_sha: ecf0d26193fa
 ---
 
 今天，我们宣布 Sentence Transformers 正从 Iryna Gurevych 领导的达姆施塔特工业大学[通用知识处理（UKP）实验室](https://www.informatik.tu-darmstadt.de/ukp/ukp_home/index.en.jsp)移交至 Hugging Face。Hugging Face 的 [Tom Aarsen](https://huggingface.co/tomaarsen) 自 2023 年底起就已在维护该库，并将继续领导这个项目。在新的归属地，Sentence Transformers 将受益于 Hugging Face 稳健的基础设施——包括持续集成与测试——确保它紧跟信息检索与自然语言处理的最新进展。
