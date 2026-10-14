@@ -7,7 +7,13 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 13 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Run fast, private agents on-device with LFM2.5-24B-A2B</title>
+      <link>https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b?li=1</guid>
+      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>Impactful scheduling for GPU clusters</title>
       <link>https://huggingface.co/blog/allenai/impactful-scheduling</link>
@@ -180,127 +186,6 @@
 <h2>Models mentioned in this article 10</h2>
 <h2>Datasets mentioned in this article 7</h2>
 <h2>Spaces mentioned in this article 8</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Multimodal open d1 decision models for the edge</title>
-      <link>https://huggingface.co/blog/LiquidAI/open-d1</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/open-d1?li=1</guid>
-      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Multimodal open d1 decision models for the edge</h1>
-<p>Team</p>
-<p>Article</p>
-<p>October 7, 2026</p>
-<p>29</p>
-<ul><li><a href="https://huggingface.co/tuliren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67084eb99ae661eabe5c4dd9/j9IN851gG47eEg1HtGCaC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/FlameF0X"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp" alt=""></a></li><li><a href="https://huggingface.co/Aurelien-Lac"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a8f24b4adaa29ed09b8632/yvzQ7iDcUBwtg2rnkZ1e2.png" alt=""></a></li></ul>
-<p>Aurelien Lac</p>
-<p>Aurelien-Lac</p>
-<p>LiquidAI</p>
-<p>Fernando Fernandes Neto</p>
-<p>fernandofernandes</p>
-<p>LiquidAI</p>
-<p>Edoardo Mosca</p>
-<p>EdoardoMosca</p>
-<p>LiquidAI</p>
-<p>Maxime Labonne</p>
-<p>mlabonne</p>
-<p>LiquidAI</p>
-<p>Leonie Monigatti</p>
-<p>iamleonie</p>
-<p>LiquidAI</p>
-<p>Today, we release two open decision models in our <a href="https://www.liquid.ai/blog/d1-decision-model">d1 decision model family</a>: <a href="https://huggingface.co/LiquidAI/d1-3b">d1-3B</a> and <a href="https://huggingface.co/LiquidAI/d1-omni-600M">d1-omni-600M</a> (experimental).</p>
-<ul><li><strong>Best decision model under 10B on the Decision Index 0.2.1:</strong> d1-3B scores 48.57, ahead of every 4B and 9B model and of Decider 35B-A3B (47.11).</li><li><strong>Multimodal:</strong> d1-3B supports text and images, while d1-omni-600M supports text and images or text and audio</li><li><strong>Fast:</strong> d1-3B answers a question in 16 ms on an NVIDIA Jetson AGX Thor, 26 ms on a Jetson AGX Orin, and 50ms on a Jetson Orin Nano</li></ul>
-<h2>How we built decision models for the edge</h2>
-<p>These open d1 decision models are built on our Liquid Foundation Models (LFMs). Unlike our generative models, decision models don’t produce tokens but answer in a single forward pass.</p>
-<p>d1-3B and d1-omni-600M are trained from two very different backbones:</p>
-<ul><li><strong>d1-3B</strong> is trained from <a href="https://huggingface.co/LiquidAI/LFM2.5-VL-3B">LFM2.5-VL-3B</a>, our latest VLM, which is decoder-only. It accepts text and images as inputs.</li><li><strong>d1-omni-600M</strong> is trained from <a href="https://huggingface.co/LiquidAI/LFM2.5-Encoder-350M">LFM2.5-Encoder-350M</a>, a bidirectional encoder. It adds vision and audio encoders to handle all three modalities. It accepts either text and image, or text and audio as inputs. This model is currently in an early research release and is undergoing further development.</li></ul>
-<h2>Benchmark results</h2>
-<p>We benchmarked d1-3B and d1-omni-600M on seven public datasets spanning reading comprehension, toxicity detection, intent classification, medical QA, and cross-lingual understanding. d1-3B achieves a mean score of 82.9, the highest in the table and above Decider 4B. d1-omni-600M scores 78.4, surpassing Decider 2B (77.1) with only a quarter of the parameters.</p>
-<table><thead><tr><th>Benchmark</th><th>d1-omni-600M</th><th>d1-3B</th><th>Decider 2B</th><th>Decider 4B</th></tr></thead><tbody><tr><td>SQuAD 2.0</td><td>74.0</td><td><strong>83.3</strong></td><td>67.7</td><td>76.0</td></tr><tr><td>Civil Comments</td><td><strong>95.8</strong></td><td>93.3</td><td>93.6</td><td>92.8</td></tr><tr><td>MASSIVE intent</td><td>86.1</td><td>86.9</td><td>81.1</td><td><strong>88.3</strong></td></tr><tr><td>PubMedQA</td><td>61.3</td><td><strong>68.3</strong></td><td>65.7</td><td>63.3</td></tr><tr><td>BoolQ</td><td>77.7</td><td>86.3</td><td>87.3</td><td><strong>89.0</strong></td></tr><tr><td>XNLI</td><td>74.7</td><td>85.6</td><td>85.0</td><td><strong>88.6</strong></td></tr><tr><td>PAWS-X</td><td><strong>79.5</strong></td><td><strong>76.4</strong></td><td>59.5</td><td>69.8</td></tr><tr><td><strong>Mean</strong></td><td>78.4</td><td><strong>82.9</strong></td><td>77.1</td><td>81.1</td></tr></tbody></table>
-<p>We validated that d1-3B retains the vision capabilities of its LFM2.5-VL-3B backbone on standard vision benchmarks, and that d1-omni-600M handles all three modalities. We do not report any vision or audio benchmarks, as the Decision Index v0.3 includes only a private vision split and audio decision benchmarks are currently an open problem.</p>
-<h2>Speed</h2>
-<p>In collaboration with NVIDIA, we evaluated d1-3B on the NVIDIA stack across NVIDIA GeForce RTX 4090, NVIDIA Jetson AGX Thor, Jetson AGX Orin 64 GB, and Jetson Orin Nano. Since d1-omni-600M is an early research release, we don’t report any speed numbers for it in this release.</p>
-<p><strong>Edge inference.</strong> d1-3B answers a single question in under 50 ms on every measured device. Three questions take only 1.3x the time of one, with the AGX Thor going from 16 ms to 20 ms.</p>
-<table><thead><tr><th></th><th>One question</th><th>3 questions</th><th>3.4K-token state</th><th>384px image</th><th>64 states, packed</th></tr></thead><tbody><tr><td>Apple M5 Pro</td><td>30 ms</td><td>41 ms</td><td>640 ms</td><td>62 ms</td><td>78 / s</td></tr><tr><td>Jetson AGX Thor</td><td>16 ms</td><td>20 ms</td><td>220 ms</td><td>35 ms</td><td>262 / s</td></tr><tr><td>Jetson AGX Orin 64 GB</td><td>26 ms</td><td>35 ms</td><td>560 ms</td><td>83 ms</td><td>110 / s</td></tr><tr><td>Jetson Orin Nano</td><td>50 ms</td><td>73 ms</td><td>1,640 ms</td><td>202 ms</td><td>38 / s</td></tr></tbody></table>
-<p><strong>GPU inference.</strong> On GPU, d1-3B answers a question in under 10 ms and processes a 384px image in under 18 ms on both platforms.</p>
-<table><thead><tr><th></th><th>One question</th><th>3 questions</th><th>3.4K-token state</th><th>384px image</th><th>64 states, packed</th></tr></thead><tbody><tr><td>NVIDIA RTX 4090</td><td>8 ms</td><td>21 ms</td><td>102 ms</td><td>17 ms</td><td>475 / s</td></tr><tr><td>AMD MI325X</td><td>9 ms</td><td>14 ms</td><td>44 ms</td><td>18 ms</td><td>1,106 / s</td></tr></tbody></table>
-<h2>How to use open d1 decision models</h2>
-<p>Reach for d1 decision models when you need fast, structured decisions, including multimodal inputs. d1-3B delivers the highest decision quality at its size, while d1-omni-600M fits where footprint matters.</p>
-<p>Install the dependencies (requires <code>transformers&gt;=5.14</code>):</p>
-<pre><code>pip install &quot;transformers&gt;=5.14&quot; torch torchvision pillow</code></pre>
-<p>These model ship their own code, so load it with <code>trust_remote_code=True</code>:</p>
-<pre><code>import io
-import urllib.request
-
-import torch
-from PIL import Image
-from transformers import AutoModel
-
-device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;mps&quot; if torch.backends.mps.is_available() else &quot;cpu&quot;
-model = AutoModel.from_pretrained(&quot;LiquidAI/d1-3B&quot;, trust_remote_code=True,
-                                  dtype=torch.float32 if device == &quot;cpu&quot; else torch.bfloat16).to(device)
-
-# Several named questions over one text state, answered in one pass
-questions = {
-    &quot;refund&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Is the customer asking for a refund?&quot;},
-    &quot;team&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;Which team should handle this?&quot;,
-             &quot;criteria&quot;: {&quot;billing&quot;: &quot;Charges, refunds, invoices&quot;, &quot;technical&quot;: &quot;App or site faults&quot;,
-                          &quot;fraud&quot;: &quot;Suspected unauthorised use&quot;}},
-    &quot;urgency&quot;: {&quot;type&quot;: &quot;score&quot;, &quot;instructions&quot;: &quot;How urgent is this?&quot;,
-                &quot;criteria&quot;: [&quot;Can wait&quot;, &quot;Today&quot;, &quot;Blocking the customer now&quot;]},
-}
-print(model.system_one(&quot;I was charged twice this month, please refund one of them.&quot;, questions))
-
-# An image as the whole state
-url = &quot;http://images.cocodataset.org/val2017/000000039769.jpg&quot;  # two cats on a sofa
-photo = Image.open(io.BytesIO(urllib.request.urlopen(url).read()))
-print(model.system_one(None, {&quot;cats&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;How many cats are there?&quot;,
-                                       &quot;criteria&quot;: {&quot;one&quot;: &quot;One&quot;, &quot;two&quot;: &quot;Two&quot;, &quot;more&quot;: &quot;Three or more&quot;}}},
-                       images=[photo]))
-
-# Many requests, packed together with no padding
-tickets = [&quot;Where is my parcel? It was due Monday.&quot;, &quot;The app crashes when I open settings.&quot;]
-print(model.system_one_batch([(t, {&quot;team&quot;: questions[&quot;team&quot;]}) for t in tickets]))</code></pre>
-<p>For brevity, we only include the example for d1-3B. See the <a href="https://huggingface.co/LiquidAI/d1-omni-600M">d1-omni-600M model card</a> for instructions on how to run it.</p>
-<h2>Get Started with open d1 decision models</h2>
-<p>Both decision models are open-weight and available on Hugging Face today:</p>
-<ul><li><strong>Download:</strong> <a href="https://huggingface.co/LiquidAI/d1-3b">d1-3B</a> and <a href="https://huggingface.co/LiquidAI/d1-omni-600M">d1-omni-600M</a> on Hugging Face.</li><li><strong>Try:</strong> run the demos in our <a href="https://huggingface.co/spaces/LiquidAI/system-one-arcade">System One Arcade</a> Hugging Face Space.</li></ul>
-<p>We can't wait to see what you build.</p>
-<h2>Citation</h2>
-<p>If you use this work, please cite the release blog:</p>
-<pre><code>@article{liquidAI2026opend1,
-  author  = {Liquid AI},
-  title   = {Open d1: Edge decision models for text, vision, and audio},
-  journal = {Liquid AI Blog},
-  year    = {2026},
-  note    = {www.liquid.ai/blog/open-d1},
-}</code></pre>
-<h2>Models mentioned in this article 3</h2>
-<h2>Spaces mentioned in this article 1</h2>
-<p>More from this author</p>
-<h2>Accelerating vision-language models with LFM2.5-VL-DSpark</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
-<p>51</p>
-<p>September 24, 2026</p>
-<h2>Up to 3.2x Faster Inference with LFM2.5-DSpark</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
-<p>58</p>
-<p>August 20, 2026</p>
-<h3>Community</h3>
-<p>liamanderson85</p>
-<p>2 days ago</p>
-<p>Intresting work</p>
-<p>liamanderson85</p>
-<p>2 days ago</p>
-<p>This comment has been hidden (marked as Spam)</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FLiquidAI%2Fopen-d1">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2FLiquidAI%2Fopen-d1">log in</a> to comment</p>
-<p>29</p>
-<ul><li><a href="https://huggingface.co/tuliren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67084eb99ae661eabe5c4dd9/j9IN851gG47eEg1HtGCaC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/FlameF0X"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp" alt=""></a></li><li><a href="https://huggingface.co/Aurelien-Lac"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a8f24b4adaa29ed09b8632/yvzQ7iDcUBwtg2rnkZ1e2.png" alt=""></a></li><li><a href="https://huggingface.co/ykhrustalev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e303b880f10dbf1b896f30/d2TAaTRy9WN9i8t1s0HY6.png" alt=""></a></li><li><a href="https://huggingface.co/adityatadimeti"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/662b14788e855c7c010c03c9/UWRzvG0YwSj5o7NxiYC6G.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tilgasergey"><img src="https://huggingface.co/avatars/3975dca73d0941898f637d16e3115872.svg" alt=""></a></li><li><a href="https://huggingface.co/EdoardoMosca"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63f389fda096536aeaae0a66/RaY_JmWJTXtDPq5IsPDM-.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Arzenic"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6720246671d10b163beec025/GBOo_8OfSMZ2lfh-h6OMy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Ishikava11"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/6FCBvZ76GjYBFpWaY178M.png" alt=""></a></li></ul>
-<h2>Models mentioned in this article 3</h2>
-<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>Introducing Falcon ASR</title>
@@ -498,6 +383,127 @@ print(model.system_one_batch([(t, {&quot;team&quot;: questions[&quot;team&quot;]
 <ul><li><a href="https://huggingface.co/stefan-it"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1584020801691-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/Lord-Kinburg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QZUCtnUduwETYAKYdKZ4k.png" alt=""></a></li><li><a href="https://huggingface.co/Nekodimos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/699afccd584d08e09c0108c7/WYdoOTolDS7sFJDs_WmqS.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sadeghasgarilou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/K4jIazK1mAx5VNdySMF7-.png" alt=""></a></li><li><a href="https://huggingface.co/zakariarafi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/9S21lFJeatwLLH_7_dKus.png" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jayshah5696"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6410e376a8d20679261db5b5/GcO-95nv5fJwXpdIXTvwf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hiepnh"><img src="https://huggingface.co/avatars/15720cf8cd69a7fecfc749f5524c2500.svg" alt=""></a></li><li><a href="https://huggingface.co/robertsganj"><img src="https://huggingface.co/avatars/88cf8627b6f773bfd266b71167f459c3.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>
 <h2>Models mentioned in this article 1</h2>
 <h2>Collections mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Multimodal open d1 decision models for the edge</title>
+      <link>https://huggingface.co/blog/LiquidAI/open-d1</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/open-d1?li=1</guid>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Multimodal open d1 decision models for the edge</h1>
+<p>Team</p>
+<p>Article</p>
+<p>October 7, 2026</p>
+<p>29</p>
+<ul><li><a href="https://huggingface.co/tuliren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67084eb99ae661eabe5c4dd9/j9IN851gG47eEg1HtGCaC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/FlameF0X"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp" alt=""></a></li><li><a href="https://huggingface.co/Aurelien-Lac"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a8f24b4adaa29ed09b8632/yvzQ7iDcUBwtg2rnkZ1e2.png" alt=""></a></li></ul>
+<p>Aurelien Lac</p>
+<p>Aurelien-Lac</p>
+<p>LiquidAI</p>
+<p>Fernando Fernandes Neto</p>
+<p>fernandofernandes</p>
+<p>LiquidAI</p>
+<p>Edoardo Mosca</p>
+<p>EdoardoMosca</p>
+<p>LiquidAI</p>
+<p>Maxime Labonne</p>
+<p>mlabonne</p>
+<p>LiquidAI</p>
+<p>Leonie Monigatti</p>
+<p>iamleonie</p>
+<p>LiquidAI</p>
+<p>Today, we release two open decision models in our <a href="https://www.liquid.ai/blog/d1-decision-model">d1 decision model family</a>: <a href="https://huggingface.co/LiquidAI/d1-3b">d1-3B</a> and <a href="https://huggingface.co/LiquidAI/d1-omni-600M">d1-omni-600M</a> (experimental).</p>
+<ul><li><strong>Best decision model under 10B on the Decision Index 0.2.1:</strong> d1-3B scores 48.57, ahead of every 4B and 9B model and of Decider 35B-A3B (47.11).</li><li><strong>Multimodal:</strong> d1-3B supports text and images, while d1-omni-600M supports text and images or text and audio</li><li><strong>Fast:</strong> d1-3B answers a question in 16 ms on an NVIDIA Jetson AGX Thor, 26 ms on a Jetson AGX Orin, and 50ms on a Jetson Orin Nano</li></ul>
+<h2>How we built decision models for the edge</h2>
+<p>These open d1 decision models are built on our Liquid Foundation Models (LFMs). Unlike our generative models, decision models don’t produce tokens but answer in a single forward pass.</p>
+<p>d1-3B and d1-omni-600M are trained from two very different backbones:</p>
+<ul><li><strong>d1-3B</strong> is trained from <a href="https://huggingface.co/LiquidAI/LFM2.5-VL-3B">LFM2.5-VL-3B</a>, our latest VLM, which is decoder-only. It accepts text and images as inputs.</li><li><strong>d1-omni-600M</strong> is trained from <a href="https://huggingface.co/LiquidAI/LFM2.5-Encoder-350M">LFM2.5-Encoder-350M</a>, a bidirectional encoder. It adds vision and audio encoders to handle all three modalities. It accepts either text and image, or text and audio as inputs. This model is currently in an early research release and is undergoing further development.</li></ul>
+<h2>Benchmark results</h2>
+<p>We benchmarked d1-3B and d1-omni-600M on seven public datasets spanning reading comprehension, toxicity detection, intent classification, medical QA, and cross-lingual understanding. d1-3B achieves a mean score of 82.9, the highest in the table and above Decider 4B. d1-omni-600M scores 78.4, surpassing Decider 2B (77.1) with only a quarter of the parameters.</p>
+<table><thead><tr><th>Benchmark</th><th>d1-omni-600M</th><th>d1-3B</th><th>Decider 2B</th><th>Decider 4B</th></tr></thead><tbody><tr><td>SQuAD 2.0</td><td>74.0</td><td><strong>83.3</strong></td><td>67.7</td><td>76.0</td></tr><tr><td>Civil Comments</td><td><strong>95.8</strong></td><td>93.3</td><td>93.6</td><td>92.8</td></tr><tr><td>MASSIVE intent</td><td>86.1</td><td>86.9</td><td>81.1</td><td><strong>88.3</strong></td></tr><tr><td>PubMedQA</td><td>61.3</td><td><strong>68.3</strong></td><td>65.7</td><td>63.3</td></tr><tr><td>BoolQ</td><td>77.7</td><td>86.3</td><td>87.3</td><td><strong>89.0</strong></td></tr><tr><td>XNLI</td><td>74.7</td><td>85.6</td><td>85.0</td><td><strong>88.6</strong></td></tr><tr><td>PAWS-X</td><td><strong>79.5</strong></td><td><strong>76.4</strong></td><td>59.5</td><td>69.8</td></tr><tr><td><strong>Mean</strong></td><td>78.4</td><td><strong>82.9</strong></td><td>77.1</td><td>81.1</td></tr></tbody></table>
+<p>We validated that d1-3B retains the vision capabilities of its LFM2.5-VL-3B backbone on standard vision benchmarks, and that d1-omni-600M handles all three modalities. We do not report any vision or audio benchmarks, as the Decision Index v0.3 includes only a private vision split and audio decision benchmarks are currently an open problem.</p>
+<h2>Speed</h2>
+<p>In collaboration with NVIDIA, we evaluated d1-3B on the NVIDIA stack across NVIDIA GeForce RTX 4090, NVIDIA Jetson AGX Thor, Jetson AGX Orin 64 GB, and Jetson Orin Nano. Since d1-omni-600M is an early research release, we don’t report any speed numbers for it in this release.</p>
+<p><strong>Edge inference.</strong> d1-3B answers a single question in under 50 ms on every measured device. Three questions take only 1.3x the time of one, with the AGX Thor going from 16 ms to 20 ms.</p>
+<table><thead><tr><th></th><th>One question</th><th>3 questions</th><th>3.4K-token state</th><th>384px image</th><th>64 states, packed</th></tr></thead><tbody><tr><td>Apple M5 Pro</td><td>30 ms</td><td>41 ms</td><td>640 ms</td><td>62 ms</td><td>78 / s</td></tr><tr><td>Jetson AGX Thor</td><td>16 ms</td><td>20 ms</td><td>220 ms</td><td>35 ms</td><td>262 / s</td></tr><tr><td>Jetson AGX Orin 64 GB</td><td>26 ms</td><td>35 ms</td><td>560 ms</td><td>83 ms</td><td>110 / s</td></tr><tr><td>Jetson Orin Nano</td><td>50 ms</td><td>73 ms</td><td>1,640 ms</td><td>202 ms</td><td>38 / s</td></tr></tbody></table>
+<p><strong>GPU inference.</strong> On GPU, d1-3B answers a question in under 10 ms and processes a 384px image in under 18 ms on both platforms.</p>
+<table><thead><tr><th></th><th>One question</th><th>3 questions</th><th>3.4K-token state</th><th>384px image</th><th>64 states, packed</th></tr></thead><tbody><tr><td>NVIDIA RTX 4090</td><td>8 ms</td><td>21 ms</td><td>102 ms</td><td>17 ms</td><td>475 / s</td></tr><tr><td>AMD MI325X</td><td>9 ms</td><td>14 ms</td><td>44 ms</td><td>18 ms</td><td>1,106 / s</td></tr></tbody></table>
+<h2>How to use open d1 decision models</h2>
+<p>Reach for d1 decision models when you need fast, structured decisions, including multimodal inputs. d1-3B delivers the highest decision quality at its size, while d1-omni-600M fits where footprint matters.</p>
+<p>Install the dependencies (requires <code>transformers&gt;=5.14</code>):</p>
+<pre><code>pip install &quot;transformers&gt;=5.14&quot; torch torchvision pillow</code></pre>
+<p>These model ship their own code, so load it with <code>trust_remote_code=True</code>:</p>
+<pre><code>import io
+import urllib.request
+
+import torch
+from PIL import Image
+from transformers import AutoModel
+
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;mps&quot; if torch.backends.mps.is_available() else &quot;cpu&quot;
+model = AutoModel.from_pretrained(&quot;LiquidAI/d1-3B&quot;, trust_remote_code=True,
+                                  dtype=torch.float32 if device == &quot;cpu&quot; else torch.bfloat16).to(device)
+
+# Several named questions over one text state, answered in one pass
+questions = {
+    &quot;refund&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Is the customer asking for a refund?&quot;},
+    &quot;team&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;Which team should handle this?&quot;,
+             &quot;criteria&quot;: {&quot;billing&quot;: &quot;Charges, refunds, invoices&quot;, &quot;technical&quot;: &quot;App or site faults&quot;,
+                          &quot;fraud&quot;: &quot;Suspected unauthorised use&quot;}},
+    &quot;urgency&quot;: {&quot;type&quot;: &quot;score&quot;, &quot;instructions&quot;: &quot;How urgent is this?&quot;,
+                &quot;criteria&quot;: [&quot;Can wait&quot;, &quot;Today&quot;, &quot;Blocking the customer now&quot;]},
+}
+print(model.system_one(&quot;I was charged twice this month, please refund one of them.&quot;, questions))
+
+# An image as the whole state
+url = &quot;http://images.cocodataset.org/val2017/000000039769.jpg&quot;  # two cats on a sofa
+photo = Image.open(io.BytesIO(urllib.request.urlopen(url).read()))
+print(model.system_one(None, {&quot;cats&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;How many cats are there?&quot;,
+                                       &quot;criteria&quot;: {&quot;one&quot;: &quot;One&quot;, &quot;two&quot;: &quot;Two&quot;, &quot;more&quot;: &quot;Three or more&quot;}}},
+                       images=[photo]))
+
+# Many requests, packed together with no padding
+tickets = [&quot;Where is my parcel? It was due Monday.&quot;, &quot;The app crashes when I open settings.&quot;]
+print(model.system_one_batch([(t, {&quot;team&quot;: questions[&quot;team&quot;]}) for t in tickets]))</code></pre>
+<p>For brevity, we only include the example for d1-3B. See the <a href="https://huggingface.co/LiquidAI/d1-omni-600M">d1-omni-600M model card</a> for instructions on how to run it.</p>
+<h2>Get Started with open d1 decision models</h2>
+<p>Both decision models are open-weight and available on Hugging Face today:</p>
+<ul><li><strong>Download:</strong> <a href="https://huggingface.co/LiquidAI/d1-3b">d1-3B</a> and <a href="https://huggingface.co/LiquidAI/d1-omni-600M">d1-omni-600M</a> on Hugging Face.</li><li><strong>Try:</strong> run the demos in our <a href="https://huggingface.co/spaces/LiquidAI/system-one-arcade">System One Arcade</a> Hugging Face Space.</li></ul>
+<p>We can't wait to see what you build.</p>
+<h2>Citation</h2>
+<p>If you use this work, please cite the release blog:</p>
+<pre><code>@article{liquidAI2026opend1,
+  author  = {Liquid AI},
+  title   = {Open d1: Edge decision models for text, vision, and audio},
+  journal = {Liquid AI Blog},
+  year    = {2026},
+  note    = {www.liquid.ai/blog/open-d1},
+}</code></pre>
+<h2>Models mentioned in this article 3</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2>Accelerating vision-language models with LFM2.5-VL-DSpark</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
+<p>51</p>
+<p>September 24, 2026</p>
+<h2>Up to 3.2x Faster Inference with LFM2.5-DSpark</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
+<p>58</p>
+<p>August 20, 2026</p>
+<h3>Community</h3>
+<p>liamanderson85</p>
+<p>2 days ago</p>
+<p>Intresting work</p>
+<p>liamanderson85</p>
+<p>2 days ago</p>
+<p>This comment has been hidden (marked as Spam)</p>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
+<p>clicking here</p>
+<p>.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FLiquidAI%2Fopen-d1">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2FLiquidAI%2Fopen-d1">log in</a> to comment</p>
+<p>29</p>
+<ul><li><a href="https://huggingface.co/tuliren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67084eb99ae661eabe5c4dd9/j9IN851gG47eEg1HtGCaC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/FlameF0X"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp" alt=""></a></li><li><a href="https://huggingface.co/Aurelien-Lac"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a8f24b4adaa29ed09b8632/yvzQ7iDcUBwtg2rnkZ1e2.png" alt=""></a></li><li><a href="https://huggingface.co/ykhrustalev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e303b880f10dbf1b896f30/d2TAaTRy9WN9i8t1s0HY6.png" alt=""></a></li><li><a href="https://huggingface.co/adityatadimeti"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/662b14788e855c7c010c03c9/UWRzvG0YwSj5o7NxiYC6G.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tilgasergey"><img src="https://huggingface.co/avatars/3975dca73d0941898f637d16e3115872.svg" alt=""></a></li><li><a href="https://huggingface.co/EdoardoMosca"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63f389fda096536aeaae0a66/RaY_JmWJTXtDPq5IsPDM-.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Arzenic"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6720246671d10b163beec025/GBOo_8OfSMZ2lfh-h6OMy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Ishikava11"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/6FCBvZ76GjYBFpWaY178M.png" alt=""></a></li></ul>
+<h2>Models mentioned in this article 3</h2>
+<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>Falcon-Emirati: When an LLM Learns the Dialect, the Culture,…</title>
@@ -7753,109 +7759,6 @@ console.log(chatCompletion.choices[0].message);</code></pre>
 <ul><li><a href="https://huggingface.co/rozsival"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/xLHXNrgOEg-64hSxTMjJs.png" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/506583318c7aa57f91ddfaa554e5a377.svg" alt=""></a></li><li><a href="https://huggingface.co/arthuropa"><img src="https://huggingface.co/avatars/5c9bf94e2b2ea1fda83d64b43018b1b1.svg" alt=""></a></li><li><a href="https://huggingface.co/lucas-treuke"><img src="https://huggingface.co/avatars/0d795d47a124f73d85eee01d02e85358.svg" alt=""></a></li><li><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Braias42"><img src="https://huggingface.co/avatars/3c59b4ac64e53e352d32917ce3f431a0.svg" alt=""></a></li><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/0074277b4edc91617019d5b43211f8cb.svg" alt=""></a></li><li><a href="https://huggingface.co/pedrovicente"><img src="https://huggingface.co/avatars/e6eec37270b0ebd970987a09aea7800d.svg" alt=""></a></li><li><a href="https://huggingface.co/phranzia"><img src="https://huggingface.co/avatars/2b2e9cb108e048c7574304808270784a.svg" alt=""></a></li><li><a href="https://huggingface.co/Mikeleton"><img src="https://huggingface.co/avatars/31cf43fab2e1aaa5c4a6aa2310c8e193.svg" alt=""></a></li><li><a href="https://huggingface.co/gustavolucchetti"><img src="https://huggingface.co/avatars/307ec618976a34fd01ec52fd3739bf37.svg" alt=""></a></li><li><a href="https://huggingface.co/robertofrjunior"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/rMfzd48rDttyGDxgjkbI0.png" alt=""></a></li></ul>
 <h2>Models mentioned in this article 1</h2>
 <h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>NVIDIA Cosmos-H-Dreams: Bringing Real-Time Generative Simula…</title>
-      <link>https://huggingface.co/blog/nvidia/cosmos-h-dreams</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/cosmos-h-dreams?li=1</guid>
-      <pubDate>Mon, 27 Jul 2026 00:00:00 +0000</pubDate>
-      <description>Full title: NVIDIA Cosmos-H-Dreams: Bringing Real-Time Generative Simulation to Surgical Robotics</description>
-      <content:encoded><![CDATA[<h1>NVIDIA Cosmos-H-Dreams: Bringing Real-Time Generative Simulation to Surgical Robotics</h1>
-<p>Enterprise</p>
-<p>+</p>
-<p>Article</p>
-<p>July 27, 2026</p>
-<p>77</p>
-<ul><li><a href="https://huggingface.co/Pavan949"><img src="https://huggingface.co/avatars/812a3d15712384eb56c085dc819687a8.svg" alt=""></a></li><li><a href="https://huggingface.co/Soham308"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69972fd22bff5891cb3b57ac/4reLJvXWu2cIOfCZj_z0G.jpeg" alt=""></a></li><li><a href="https://huggingface.co/shuver"><img src="https://huggingface.co/avatars/d116ee7bef2ca4f33d68a7883ddcdbbf.svg" alt=""></a></li><li><a href="https://huggingface.co/IFMedTechdemo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66cc7669dcb9e1cf059b8dc3/Ec6_e_eEbqJulsiu5P1rd.webp" alt=""></a></li><li><a href="https://huggingface.co/agustg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69e77007544c5db91aee100c/oQJ7xjh5-kGdZWS-hg5wP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/vauth"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63f08acc6309c84d5f480a28/0azj-Zpp5iwhM1wJ3oXUe.jpeg" alt=""></a></li></ul>
-<p>Lukas Zbinden</p>
-<p>lzbinden</p>
-<p>nvidia</p>
-<p>Javier Gamazo</p>
-<p>javirk1</p>
-<p>nvidia</p>
-<p>Mostafa Toloui</p>
-<p>mtoloui</p>
-<p>nvidia</p>
-<p>Sean Huver</p>
-<p>shuver</p>
-<p>nvidia</p>
-<p>Surgical robotics is moving quickly from teleoperation toward increasingly capable vision-language-action policies. But evaluating and training these systems remains difficult. Physical robotic platforms are expensive to operate, experiments are slow to reproduce, and failures can damage instruments or biological material. Conventional simulators provide a safer alternative, but surgical scenes are exceptionally difficult to model: deformable tissue, fine instrument interactions, specular surfaces, sutures, needles, smoke, and occlusions all matter.</p>
-<p>World foundation models offer a different path. Instead of manually authoring every object and physical interaction, they learn visual dynamics directly from synchronized video and robot kinematics. NVIDIA's <a href="https://huggingface.co/nvidia/Cosmos-H-Surgical-Simulator">Cosmos-H-Surgical-Simulator</a> demonstrated this approach by generating future surgical video from an initial scene and a sequence of robot actions. It enabled faster-than-physical evaluation and synthetic data generation across the <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Open-H-Embodiment">Open-H-Embodiment</a> ecosystem.</p>
-<p>Today, we are introducing the next step: <a href="https://github.com/isaac-for-healthcare/Cosmos-H-Dreams">Cosmos-H-Dreams</a>, a real-time, action-conditioned generative simulator for surgical robotics. Cosmos-H-Dreams distills the capabilities of Cosmos-H-Surgical-Simulator into a causal, few-step student model and serves it through <a href="https://github.com/NVIDIA/flashdreams">FlashDreams</a>, NVIDIA's accelerated streaming-inference library. Running on a single NVIDIA RTX PRO 6000 GPU, the result is an interactive environment that a person or a learned policy can control in a closed loop.</p>
-<h2>1. From Surgical World Model to Interactive Simulator</h2>
-<p><a href="https://huggingface.co/nvidia/Cosmos-H-Surgical-Simulator">Cosmos-H-Surgical-Simulator</a> is an action-conditioned world foundation model built on NVIDIA <a href="https://huggingface.co/nvidia/Cosmos-Predict2.5-2B">Cosmos-Predict2.5-2B</a> and post-trained on the <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Open-H-Embodiment">Open-H-Embodiment</a> dataset. Given a surgical context frame and a future robot trajectory, it generates video showing the likely visual consequences of those actions. This makes it useful for offline policy evaluation and synthetic data generation. A recorded or policy-generated trajectory can be sent to the model, the corresponding rollout can be generated, and the result can be inspected or scored without repeatedly executing the motion on a physical robot.</p>
-<p>Cosmos-H-Dreams moves the model into the real-time regime. Starting from the multi-embodiment surgical priors learned by Cosmos-H-Surgical-Simulator, we specialize the model for da Vinci Research Kit (dVRK) tabletop suturing and distill it into a causal student that generates the scene autoregressively. The released model receives an initial RGB frame and a live stream of robot kinematics, then produces the next chunk of frames before continuing with the following action block.</p>
-<p>We have also demonstrated the versatility of Cosmos-H-Dreams by collaborating with CMR Surgical and Cambridge Consultants to integrate it with the Versius surgeon controller, enabling real-time operation on the Versius platform.</p>
-<h2>2. Distilling Cosmos-H-Surgical-Simulator for Real Time</h2>
-<p>The key challenge is preserving useful surgical dynamics while reducing the cost of generation. Cosmos-H-Dreams uses a teacher-to-student training pipeline designed for long, autoregressive rollouts.</p>
-<h3>2.1. A Surgical Teacher</h3>
-<p>The bidirectional teacher begins from the Cosmos-H-Surgical-Simulator Open-H checkpoint, which uses a unified 44-dimensional action representation. For the released dVRK tabletop model, the dual-arm dVRK action content, consisting of relative end-effector translation, rotation, and gripper state, is mapped into this common representation.</p>
-<p>The teacher is then fine-tuned on the JHU dVRK tabletop mixture, including successful demonstrations as well as failure and out-of-distribution episodes such as needle drops, missed throws, and unsuccessful knot ties. These failures are important: a simulator intended to evaluate policies must reproduce the consequences of poor actions, not only ideal demonstrations.</p>
-<p>To improve stability during long rollouts, the training process progressively increases the teacher's temporal horizon. We start training on a 12-frame horizon and progressively increase this number until 72 frames. At each horizon bump, we initialize the warmed-up model with pretrained weights.</p>
-<h3>2.2. Causal Warmup</h3>
-<p>The teacher's denoising trajectories are first precomputed and cached. A causal student is initialized from the teacher and trained to imitate these cached trajectories. This warmup stage teaches the student to operate with causal attention and a streaming key/value cache before it begins learning from its own generated history.</p>
-<h3>2.3. Self-Forcing Distillation</h3>
-<p>Autoregressive models face a familiar problem: during training they may see clean, ground-truth context, while during deployment they must condition on their own imperfect outputs. Small errors can therefore compound over time.</p>
-<p>Cosmos-H-Dreams addresses this mismatch with <a href="https://arxiv.org/abs/2506.08009"><strong>self-forcing distillation</strong></a>. During training, the student rolls forward using its own generated context. Distribution-matching supervision from the frozen teacher then guides those self-generated rollouts toward realistic surgical video. This prepares the student for the same conditions it will encounter during interactive inference.</p>
-<p>The resulting model supports few-step diffusion, with as few as two denoising steps per latent frame, rather than the many-step process used by the full teacher. It combines the teacher's surgical priors with the causal structure needed for streaming.</p>
-<h2>3. FlashDreams: The Real-Time Inference Engine</h2>
-<p>Model distillation is only part of the real-time story. Cosmos-H-Dreams is served through <a href="https://github.com/NVIDIA/flashdreams">FlashDreams</a>, an accelerated inference library for autoregressive world and video models.</p>
-<p>FlashDreams turns the distilled student into a low-latency streaming system through several complementary optimizations, such as streaming KV cache, CUDA Graph capturing, or model compilation.</p>
-<p>Together, these techniques bring the distilled surgical world model fine-tune from the roughly ten-frames-per-second regime of standard Cosmos-H-Surgical-Simulator inference to interactive operation (~160 frames per second) on a single <strong>NVIDIA RTX PRO 6000</strong>.</p>
-<p>Cosmos-H-Dreams also provides the human-machine interfaces that turn generation into interaction. A browser client can send keyboard commands and receive generated frames over WebRTC. A Meta Quest client can map tracked controller motion into robot actions and display the synthesized scene through WebXR. The same model can also be connected to a learned surgical policy, with generated observations and predicted actions exchanged inside a closed loop.</p>
-<h2>4. Adapting to Your Own Data</h2>
-<p>While Cosmos-H-Dreams includes a pre-trained checkpoint for tabletop suturing, the system is designed to be extensible to your specific embodiment. To train a real-time student model for your own dataset, we provide a complete recipe for teacher fine-tuning and self-forcing distillation in our <a href="https://github.com/NVIDIA-Medtech/Cosmos-H-Surgical-Simulator/blob/main/docs/tutorial_teacher_training_and_self_forcing.md">step-by-step guide</a>.</p>
-<h2>5. What Is Next: Toward Closed-Loop Surgical Physical AI</h2>
-<p>Cosmos-H-Dreams opens a new frontier for surgical simulation: environments learned from real robot data that are responsive enough to be inhabited.</p>
-<p>The immediate next step is to evaluate more than visual quality. A useful surgical simulator must respond correctly to actions, preserve instrument and scene structure over long rollouts, and support conclusions that transfer to the physical robot. This motivates a new family of closed-loop benchmarks: tool-tip reach and pose accuracy, gripper-cycle fidelity, idle stability, counterfactual action diversity, long-horizon drift, and agreement between simulated and real policy outcomes.</p>
-<p>Real-time world models can also become active partners in surgical policy development. They can generate rare failures on demand, provide scalable environments for reinforcement or imitation learning, and enable rapid evaluation of new policies without tying every experiment to scarce robotic hardware.</p>
-<p>Further ahead, real-time simulation enables a series of downstream applications such as latency-aware telesurgery, where the world model helps maintain a more stable display; or interactive surgical rehearsal, procedure planning, and intraoperative decision support. Cosmos-H-Dreams is a research and development platform, not a diagnostic system, a replacement for intraoperative imaging, or a controller for a physical surgical robot. Yet it provides a foundation for exploring these possibilities safely.</p>
-<p>As model fidelity, temporal stability, and hardware efficiency continue to improve, real-time generative simulation can help connect surgeon education, synthetic data generation, policy training, and policy evaluation within one shared Physical AI environment.</p>
-<h2>6. Get Started Today</h2>
-<p>Explore the models, data, and runtime behind Cosmos-H-Dreams:</p>
-<ul><li><strong>Cosmos-H-Dreams code and examples:</strong> <a href="https://github.com/isaac-for-healthcare/Cosmos-H-Dreams">GitHub repository</a></li><li><strong>Cosmos-H-Dreams model:</strong> <a href="https://huggingface.co/nvidia/Cosmos-H-Dreams">Hugging Face checkpoint</a></li><li><strong>Cosmos-H-Surgical-Simulator:</strong> <a href="https://huggingface.co/nvidia/Cosmos-H-Surgical-Simulator">Hugging Face model</a> and <a href="https://github.com/NVIDIA-Medtech/Cosmos-H-Surgical-Simulator">GitHub repository</a></li><li><strong>Adapt to your own data:</strong> <a href="https://github.com/NVIDIA-Medtech/Cosmos-H-Surgical-Simulator/blob/main/docs/tutorial_teacher_training_and_self_forcing.md">Step-by-step recipe for teacher fine-tuning and self-forcing distillation</a></li><li><strong>Open-H-Embodiment:</strong> <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Open-H-Embodiment">Hugging Face dataset</a></li><li><strong>FlashDreams:</strong> <a href="https://github.com/NVIDIA/flashdreams">GitHub repository</a></li><li><strong>NVIDIA Cosmos-Predict2.5:</strong> <a href="https://github.com/nvidia-cosmos/cosmos-predict2.5">GitHub repository</a></li><li><strong>Cosmos-Surg-dVRK:</strong> World Foundation Model-based Automated Online Evaluation of Surgical Robot Policy Learning (<a href="https://arxiv.org/abs/2510.16240">arXiv paper</a>)</li></ul>
-<p>Cosmos-H-Dreams brings action-conditioned surgical world modeling into the real-time loop, creating a new environment for people and policies to practice, explore, generate data, and evaluate what happens next.</p>
-<h2>Models mentioned in this article 3</h2>
-<h2>Datasets mentioned in this article 1</h2>
-<p>More from this author</p>
-<h2>NVIDIA Kumo Tabular Sets a New Accuracy-Efficiency Frontier for Tabular Prediction</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>75</p>
-<p>September 29, 2026</p>
-<h2>How to Use NVIDIA Warp and MjWarp to Accelerate Robotics Simulation and Learning Workflows</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>54</p>
-<p>September 23, 2026</p>
-<h3>Community</h3>
-<p>UnifiedMentorTeam</p>
-<p>Jul 27</p>
-<p>GREAT ARTICLE!</p>
-<p>deleted</p>
-<p>Jul 27</p>
-<p>This comment has been hidden</p>
-<p>skjlkjs</p>
-<p>Jul 28</p>
-<p>This is a fascinating leap for surgical robotics. Real-time generative simulation could greatly reduce risks in training and planning. The concept of distilling a large model into a causal student model is clever. If you're also exploring video generation from images, check out the <a href="https://www.seedance2ai.io/">Seedance 2.5 image-to-video tool</a> for creative applications.</p>
-<p>eltonwilliams</p>
-<p>Jul 28</p>
-<p>edited Jul 28</p>
-<blockquote>Assessing more than just visual quality is the immediate next step. A practical surgical simulator must enable findings that translate to the real robot, maintain instrument and scene organization during extended rollouts, and react appropriately to actions. Tool-tip reach and pose accuracy, gripper-cycle fidelity, idle stability, counterfactual action variety, long-horizon drift, and agreement between simulated and actual policy outcomes are some of the new closed-loop benchmarks that are motivated by this.</blockquote>
-<p>The progress in surgical robotics is genuinely exciting! 🏥🤖 Being able to train and test advanced vision-language-action systems in realistic simulations without risking expensive equipment or delicate procedures could make development much faster and safer. The level of detail needed for tissues, instruments, smoke, and lighting really shows how challenging this field is. 👏</p>
-<p>It’s impressive to see technology moving beyond simple teleoperation and towards smarter, more capable robotic assistance. 🚀 Better simulation environments can help researchers refine these systems before they ever reach an operating room, which is a win for both surgeons and patients. 😊📱</p>
-<p>Looking forward to seeing how projects like NVIDIA Cosmos-H-Dreams shape the future of healthcare. 🌍💙 If these simulations continue becoming more realistic, they could play a huge role in improving surgical training, reducing costs, and ultimately delivering better patient outcomes. Amazing work and an exciting glimpse into what's ahead! 🙌✨</p>
-<p>kdb6df</p>
-<p>Jul 28</p>
-<p>includes a pre-trained checkpoint for tabletop suturing</p>
-<p>Awesome article. Was clearly in the works over the past 12 months as evident from the NeurIPS collab with Axel Krieger and others along with the Open-H dataset release earlier this year. The tricky part is how one collects their own dataset of the right size for the complexity of the task. More complex tasks will require larger datasets. Training stability and patterns need to be figured out.</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fcosmos-h-dreams">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fcosmos-h-dreams">log in</a> to comment</p>
-<p>77</p>
-<ul><li><a href="https://huggingface.co/Pavan949"><img src="https://huggingface.co/avatars/812a3d15712384eb56c085dc819687a8.svg" alt=""></a></li><li><a href="https://huggingface.co/Soham308"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69972fd22bff5891cb3b57ac/4reLJvXWu2cIOfCZj_z0G.jpeg" alt=""></a></li><li><a href="https://huggingface.co/shuver"><img src="https://huggingface.co/avatars/d116ee7bef2ca4f33d68a7883ddcdbbf.svg" alt=""></a></li><li><a href="https://huggingface.co/IFMedTechdemo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66cc7669dcb9e1cf059b8dc3/Ec6_e_eEbqJulsiu5P1rd.webp" alt=""></a></li><li><a href="https://huggingface.co/agustg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69e77007544c5db91aee100c/oQJ7xjh5-kGdZWS-hg5wP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/vauth"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63f08acc6309c84d5f480a28/0azj-Zpp5iwhM1wJ3oXUe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Algorithems"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68ab3b3d560017427f66be92/hqehY4yeWERMVVc6sXZAw.jpeg" alt=""></a></li><li><a href="https://huggingface.co/shiyul"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/iYrolKr9bvtnsbtR0BPSA.png" alt=""></a></li><li><a href="https://huggingface.co/mohamedmady"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/687ccb98afeb465c99c41cb9/DFfanx4hdl91-80hblTGz.png" alt=""></a></li><li><a href="https://huggingface.co/rodrigoramosrs"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/wKCiHPBK4sIEaU-Hf2t5F.png" alt=""></a></li><li><a href="https://huggingface.co/MArioSP2025"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/8t4nTPn5iG4Z-oM7ooETF.png" alt=""></a></li><li><a href="https://huggingface.co/xlotih7"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ls8httoTxjZOgq46TiH52.png" alt=""></a></li></ul>
-<h2>Models mentioned in this article 3</h2>
-<h2>Datasets mentioned in this article 1</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

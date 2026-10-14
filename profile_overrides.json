@@ -359,6 +359,66 @@
       "**主流对话与多模态大模型** —— 无公开永久免费层，平台启用 531 个模型，涵盖 DeepSeek、阿里云 Qwen、小米 MiMO、Kimi 等，均按量计费"
     ]
   },
+  "fireworks_ai": {
+    "_evidence": [
+      {
+        "quote": "Pay per token with pre-paid, usage-based billing. Simply add a payment method to buy credits, and usage is then deducted from your balance.",
+        "url": "https://fireworks.ai/pricing"
+      },
+      {
+        "quote": "Muse Glimmer 30B SFT is free via UI and Serverless Training API until 10/31 ✨ No credit card required. Start a job",
+        "url": "https://fireworks.ai/pricing"
+      },
+      {
+        "quote": "Batch inference is billed at 50% of serverless pricing on both input and output. See Batch inference.",
+        "url": "https://docs.fireworks.ai/serverless/pricing"
+      }
+    ],
+    "_summary": "官方页面移除了新账号 $1 免费额度并转为预付费充值模式，同时新增 Muse Glimmer 30B SFT 限时免信用卡免费训练活动",
+    "_updated": "2026-10-14 09:05:53",
+    "free_models": [
+      "`Muse Glimmer 30B` —— SFT 监督微调限时免费，支持 UI 与 Serverless Training API（至 10/31 截止，无需信用卡）"
+    ],
+    "free_quota": "官方已下线新号 $1 免费额度表述，全面转向预付费充值（需绑定支付方式购买点数）；当前仅存限时免费项目：Muse Glimmer 30B SFT 微调截至 10/31 完全免费且免绑定信用卡",
+    "guide_meta": {
+      "scenarios": [
+        "deploy"
+      ],
+      "short": "Muse Glimmer 30B SFT 限时免费训练（新号 $1 额度已下线）",
+      "signup": "email",
+      "tiers": [
+        "onetime"
+      ],
+      "tip": "常规推理已转为预付费模式需绑卡充值，仅 Muse Glimmer 30B SFT 微调活动至 10/31 免信用卡"
+    },
+    "preconditions": "参与限时微调无需信用卡（No credit card required）；常规推理需要绑定支付方式购买积分",
+    "promotions": "Muse Glimmer 30B SFT 限时免费（至 10/31，免信用卡）；Batch 批处理推理按 Serverless 定价的 5 折计费（50% of serverless pricing）。",
+    "tier_caveats": [
+      "原新用户 $1 试用额度已取消，常规 Serverless 推理需添加支付方式充值购买积分（pre-paid）后方可调用",
+      "免费微调活动仅限 Muse Glimmer 30B SFT，且截至 10/31"
+    ],
+    "validity": "限时活动至 10/31 截止"
+  },
+  "google_gemini": {
+    "_evidence": [
+      {
+        "quote": "注意： Gemini 4 Argon 不适用于免费层级或 Google AI Pro 方案。",
+        "url": "https://ai.google.dev/gemini-api/docs/pricing?hl=zh-cn"
+      }
+    ],
+    "_summary": "Google 上线新旗舰推理模型 Gemini 4 Argon，官方明确注明其不适用于免费层级",
+    "_updated": "2026-10-14 09:05:53",
+    "free_models": [
+      "`Gemini 3.8 / 3.7 / 3.6 Flash`、Gemini 3.5 Flash/Flash-Lite、Gemini 3.1 Flash-Lite、Gemini 3 Flash Preview、`Gemini 2.5 Pro/Flash/Flash-Lite`、`Gemma 4`、Gemini Embedding 系列 —— **免费层可用**，按速率限额滚动（RPD 太平洋时间午夜重置；官方文档已不再公开各模型具体免费层数字，以 AI Studio 内 Rate Limit 页为准）",
+      "`Gemini 4 Argon`、`Gemini 3.1 Pro Preview` 与 Nano Banana 图像系列 —— **无免费层**"
+    ],
+    "tier_caveats": [
+      "**不是所有模型都有免费层**：3.x Flash / Gemma 4 / Embedding 系列可用；`Gemini 4 Argon`、`Gemini 3.1 Pro Preview`、Nano Banana 图像系列**无免费层**，调错模型会直接付费",
+      "**隐私代价**：免费层输入/输出数据可能被用于改进 Google 产品；敏感数据不要走免费层",
+      "免费层限速官方已不再公开固定数值，以 AI Studio 内 Rate Limit 页为准；RPD 按太平洋时间午夜重置",
+      "$300 Google Cloud 试用金**不能**用于 Gemini API / AI Studio（2026 年 3 月起）；付费层需关联结算账户并预付最低 $5"
+    ]
+  },
   "inception_labs": {
     "_evidence": [
       {
@@ -406,11 +466,38 @@
       {
         "quote": "可用模型覆盖 MiniMax 全系模型（M3 / M2.7 / 图像 / 语音），少量特殊模型（MiniMax H3、音色设计、快速复刻等）暂不支持。",
         "url": "https://platform.minimax.cn/docs/guides/pricing-token-plan"
+      },
+      {
+        "quote": "MiniMax M2.5、M2.7 系列模型下线通知，点击查看详情",
+        "url": "https://www.minimax.cn/m-plan"
+      },
+      {
+        "quote": "通过 API Key 将 M Plan 接入 Claude Code、Codex、Workbuddy、Cursor、OpenCode 等你熟悉的 AI 工具。",
+        "url": "https://www.minimax.cn/m-plan"
+      },
+      {
+        "quote": "三个档位都包含 M3.1 Flash Preview 文本模型，以及图像与音频生成、网络搜索和多模态理解能力；Explore 和 Build 还包含 H3 视频模型，Go 不包含视频模型。",
+        "url": "https://www.minimax.cn/m-plan"
+      },
+      {
+        "quote": "积分包自购买之日起 1 年内有效，不会因套餐额度窗口刷新而重置有效期。",
+        "url": "https://www.minimax.cn/m-plan"
       }
     ],
-    "_summary": "更新 Token Plan 积分包规格与档位（现为 ¥30/¥150/¥500 固定档位，替代原 1000 积分/¥7 描述），Max/Ultra 明确包含 Hailuo2.3 视频生成权益",
-    "_updated": "2026-09-21 09:21:02",
-    "promotions": "**Token Plan 订阅**（官方定价文档）：Plus ¥49/月、Max ¥119/月、Ultra ¥469/月，覆盖 M3/M2.7/图像/语音（Max/Ultra 支持 Hailuo2.3 视频生成，H3 视频、音色设计等特殊模型除外）；预付积分包固定为入门版 ¥30（4,489 积分）、进阶版 ¥150（22,460 积分）、高级版 ¥500（74,900 积分），有效期 365 天。"
+    "_summary": "订阅体系由 Token Plan 更新为 M Plan（Go/Explore/Build 档位）；上线 M3.1 Flash Preview 文本模型并发布 M2.5/M2.7 系列模型下线通知；Free 档不支持 API Key 接入，无免费 API 额度。",
+    "_updated": "2026-10-14 09:05:53",
+    "free_models": [
+      "**无免费 API 模型层**：Free 档不支持 API Key 接入（仅限 MiniMax Code 客户端与网页端有限可用 `M3.1 Flash Preview` 及图像声音模型）",
+      "**API 付费与下线动态**：API 调用需订阅 M Plan（Go/Explore/Build）或购买积分包，支持文本模型 `M3.1 Flash Preview`、视频模型 `H3` 等；官方已发布 `MiniMax M2.5`、`M2.7` 系列模型下线通知"
+    ],
+    "openai_compat": {
+      "api_key_label": "控制台申请",
+      "api_key_url": "https://platform.minimax.cn/console/access?tab=api-keys",
+      "base_url": "https://api.minimax.chat/v1",
+      "models": "`M3.1 Flash Preview`, `MiniMax-M3`",
+      "summary": "M Plan 订阅或积分包通过 API Key 接入"
+    },
+    "promotions": "**M Plan 订阅**：个人 AI 订阅方案，提供 Go（年付 ¥490/年）、Explore（Go 的 3 倍用量，年付 ¥1,190/年）、Build（Go 的 12 倍用量，年付 ¥4,690/年），支持通过 API Key 接入编程与 Agent 工具；**积分包**：入门版 ¥30（4,489 积分）、进阶版 ¥150（22,460 积分）、高级版 ¥500（74,900 积分），购买之日起 1 年内有效。"
   },
   "mistral": {
     "_evidence": [

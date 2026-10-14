@@ -7,7 +7,13 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 13 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Run fast, private agents on-device with LFM2.5-24B-A2B</title>
+      <link>https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b</guid>
+      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>面向高影响力的 GPU 集群调度</title>
       <link>https://huggingface.co/blog/allenai/impactful-scheduling</link>
@@ -180,6 +186,203 @@
 <h2>本文提及的 Space 8</h2>]]></content:encoded>
     </item>
     <item>
+      <title>推出 Falcon ASR</title>
+      <link>https://huggingface.co/blog/tiiuae/falcon-asr</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/tiiuae/falcon-asr</guid>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Falcon ASR</description>
+      <content:encoded><![CDATA[<h1>推出 Falcon ASR</h1>
+<p>团队</p>
+<p>文章</p>
+<p>2026 年 10 月 7 日</p>
+<p>1</p>
+<ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
+<p>Abdul Muneer</p>
+<p>abdulmuneertii</p>
+<p>tiiuae</p>
+<p>Rishabh Saraf</p>
+<p>rishabh-saraf</p>
+<p>tiiuae</p>
+<p>Ramesh Gundluru</p>
+<p>gundlururamesh</p>
+<p>tiiuae</p>
+<p>Shamsa Hamad</p>
+<p>shamsaH</p>
+<p>tiiuae</p>
+<p>Lepauloux</p>
+<p>Ludovick</p>
+<p>tiiuae</p>
+<p>Hakim Hacid</p>
+<p>HakimHacid</p>
+<p>tiiuae</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/KlCZJ9xrl4-O7A0RdA0vA.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/KlCZJ9xrl4-O7A0RdA0vA.png" alt="Falcon ASR：阿拉伯语与英语语音识别"></a></p>
+<p><a href="https://huggingface.co/blog/tiiuae/falcon-asr#introducing-falcon-asr">英文</a> · <a href="https://huggingface.co/blog/tiiuae/falcon-asr#arabic">阿拉伯文</a></p>
+<p><strong>阿拉伯语 WER：20.92% · 参数规模：1.6B · 阿联酋方言 WER（TII 评测）：22.73%</strong></p>
+<p>我们推出 Falcon-ASR，这是我们面向阿拉伯语的 16 亿参数语音识别模型，尤其侧重阿联酋方言。它由阿布扎比的 Technology Innovation Institute（TII）研发，同时也支持英语、法语、西班牙语和葡萄牙语。</p>
+<p>在我们的评测中，Falcon-ASR 在六个阿拉伯语测试集上的平均词错误率为 20.92%，而我们所用的那份排行榜快照中，最好的公开结果是 23.17%。在内部的阿联酋方言评测中，在我们对比的这套系统里，它的词错误率和字符错误率都是最低的。</p>
+<p>我们还支持转写的词级时间戳，把每个转写出来的词对应到它在音频中的位置。</p>
+<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">试用 Falcon ASR →</a></p>
+<h2>识别口语阿拉伯语</h2>
+<p>阿拉伯语口语会因地区、说话人和场景而不同。一个能应付正式新闻播报的模型，面对一段阿联酋方言的对话，或者电话线路里录下的语音，仍然可能做不好。方言阿拉伯语的转写资源也比现代标准阿拉伯语（MSA）少，这让训练和评测都更困难。</p>
+<p>我们用阿联酋方言、MSA、其他海湾及阿拉伯语方言，以及英语训练了 Falcon-ASR。我们的目标是把人们在日常说话中实际使用的词转写下来，包括方言形式，以及在几种语言之间的来回切换。</p>
+<h2>阿拉伯语基准测试结果</h2>
+<p><a href="https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard">Open Universal Arabic ASR Leaderboard</a>由 ELM Research Center 维护，按六个测试集上等权平均的 WER 给各系统排名，同时也报告字符错误率（CER）。两项指标都是数值越低越好。我们对 Falcon-ASR 的评测遵循这一套协议。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/NYwM1xdaK1aiCwnEGz4q5.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/NYwM1xdaK1aiCwnEGz4q5.png" alt="falcon-asr-arabic"></a></p>
+<p><em>WER = Word Error Rate（词错误率）；CER = Character Error Rate（字符错误率）。数值越低，性能越好。</em></p>
+<p>我们在同样的六个基准上评测 Falcon-ASR，使用排行榜锁定的 manifest。竞品数字是排行榜上已公布、并在 2026 年 9 月 30 日核对过的平均值。与该快照中最好的公开结果相比，Falcon-ASR 的平均 WER 好 2.25 个百分点。</p>
+<h2>评估阿联酋方言语音</h2>
+<p>公开评测数据里已经包含阿联酋方言：<a href="https://huggingface.co/datasets/UBC-NLP/Casablanca">Casablanca</a>就有一个阿联酋子集。我们在这份覆盖之外补充了一次内部评测，用留出的录音和经过人工校验的转写稿，考察公开阿联酋子集之外的阿联酋与海湾语音的转写准确率。</p>
+<p>在内部的阿联酋方言评测中，Falcon-ASR 取得 22.73% 的 WER 和 10.19% 的 CER：</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/Un8dfcA_GCcu2orNpkTA4.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/Un8dfcA_GCcu2orNpkTA4.png" alt="falcon-asr-emirati"></a></p>
+<p>在这里对比的系统中，Falcon-ASR 的 WER 和 CER 都最低。它的 WER 比次好的 Qwen3-Omni 低 4.07 个百分点。这份结果显示，无论词级还是字符级，转写准确率都有提升。</p>
+<h2>面向不同录音条件的训练</h2>
+<p>我们加入了背景噪声、交叠的语音、音乐、房间混响和电话信道效应，也加入了语速与音高的变化。对阿联酋方言的录音做了同样的处理，让模型见到会议、通话以及其他日常录音里可能碰上的各种条件。</p>
+<h2>英语及其他语言</h2>
+<p>Falcon-ASR 用同一套模型权重也能转写英语。在 Hugging Face Open ASR Leaderboard 所用的七个公开英语测试集上，我们的评测得到 5.74% 的平均 WER。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/jYVEru5FjM_UeCsJtRE9E.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/jYVEru5FjM_UeCsJtRE9E.png" alt="falcon-asr-english"></a></p>
+<p>该模型还支持法语、西班牙语和葡萄牙语。五种语言共用同一套权重，不需要传入语言标识。输出就是所说语言的转写文本。</p>
+<h2>模型基础</h2>
+<p>Falcon-ASR 建立在我们的 Falcon3-Audio 工作之上。Falcon3-Audio 的架构和训练方法在 <a href="https://arxiv.org/abs/2509.07526">Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data</a>中作了说明。</p>
+<h2>试用 Falcon ASR</h2>
+<p>我们的 <a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">Hugging Face Demo Space</a>可以让你上手 Falcon-ASR，探索它的转写能力。API 访问和原生应用也在计划之中。欢迎拿自己的录音来试试这个 Demo。</p>
+<h2>致谢</h2>
+<p>感谢 Falcon-Emirati 模型背后的团队，他们在阿拉伯语基础模型上给了我们支持。他们的最新工作见 <a href="https://huggingface.co/blog/tiiuae/falcon-emirati">Falcon-Emirati 博客文章</a>。</p>
+<p>我们也要诚挚感谢 Mikhail Lubinets，他在算力基础设施上给予了持续的支持。</p>
+<h1>推出 Falcon ASR</h1>
+<p>我们推出 Falcon-ASR，这是我们面向阿拉伯语的语音识别模型，参数规模 16 亿，特别关注阿联酋方言。我们在阿布扎比的 Technology Innovation Institute（TII）开发了这款模型，它同时也支持英语、法语、西班牙语和葡萄牙语。</p>
+<p>在我们的评测中，Falcon-ASR 在六个阿拉伯语测试集上的平均词错误率达到 20.92%，而我们所用的那份排行榜快照中最好的公开结果是 23.17%。在内部的阿联酋方言评测中，它在我们对比的这套系统里取得了最低的词错误率和字符错误率。</p>
+<p>我们也支持转写中的词级时间戳，让每一个转写出来的词都对应到它在音频中的位置。</p>
+<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">试用 Falcon ASR ←</a></p>
+<h2>识别口语阿拉伯语</h2>
+<p>阿拉伯语口语会因地区、说话人和录音条件而不同。一个模型可能转写好一份正式的新闻播报，却在一段阿联酋方言的对话，或者一通电话里录下的语音上遇到困难。方言阿拉伯语已完成转写的资源也比现代标准阿拉伯语（MSA）少，这让训练和评测都更难。</p>
+<p>我们在阿联酋方言、现代标准阿拉伯语、其他海湾及阿拉伯语方言以及英语上训练了 Falcon-ASR，目标是转写人们在日常话语中实际使用的词，其中包括方言形式，以及在几种语言之间的切换。</p>
+<h2>阿拉伯语基准测试结果</h2>
+<p>由 ELM Research Center 维护的 <a href="https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard">Open Universal Arabic ASR Leaderboard</a>，按六个测试集上等权平均的词错误率给各系统排名，同时也给出字符错误率（CER）。两项指标都是数值越低，表现越好。我们对这款模型的评测遵循这一协议。</p>
+<p><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/zIJA_4__yW9U9oaqZV4iy.png" alt="阿拉伯语测试中词错误率与字符错误率的对比"></p>
+<p><strong>WER 是词错误率，CER 是字符错误率。数值越低，表现越好。</strong></p>
+<p>我们在同样的六个测试集上评测了 Falcon-ASR，使用排行榜锁定的样本清单。竞品模型的数字是排行榜上已公布、并于 2026 年 9 月 30 日核实过的平均值。与该快照中最好的公开结果相比，这款模型的平均词错误率好 2.25 个百分点。</p>
+<h2>评估阿联酋方言语音</h2>
+<p>公开的评价数据中已经有阿联酋方言，<a href="https://huggingface.co/datasets/UBC-NLP/Casablanca">Casablanca</a>就包含一个阿联酋分区。我们在这份覆盖之外补充了一次内部评测，涵盖更多阿联酋与海湾语音，使用留出的录音和经过人工校对的转写稿，在公开的阿联酋数据之外评估转写准确率。</p>
+<p>在我们的阿联酋方言内部评测中，Falcon-ASR 的词错误率为 22.73%，字符错误率为 10.19%：</p>
+<p><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/SsRywyTDmpuHVmEzjVBg7.png" alt="阿联酋方言评测中词错误率与字符错误率的对比"></p>
+<p>在这里对比的系统中，Falcon-ASR 的词错误率和字符错误率都最低，比拿到次好结果的 Qwen3-Omni 低 4.07 个百分点。结果显示，在这份评测中，词级与字符级的转写准确率都有提升。</p>
+<h2>面向不同录音条件的训练</h2>
+<p>我们在训练数据里加入了背景噪声、交叠的语音、音乐、回声以及电话信道的效应，也加入了语速和音调的变化。对阿联酋方言的录音采用了同样的处理，让模型能够应对会议、通话和其他日常录音中可能遇到的各种条件。</p>
+<h2>英语及其他语言</h2>
+<p>Falcon-ASR 使用同一套模型权重来转写英语。在 Hugging Face Open ASR Leaderboard 所用的七个公开英语测试集上，我们的评测中平均词错误率为 5.74%。</p>
+<p><img src="https://cdn-uploads.huggingface.co/production/uploads/671a3e44cf97dc64441e170a/qTv7t7PxdzgYHMYXQxMQH.png" alt="英语测试集上的词错误率"></p>
+<p>该模型还支持法语、西班牙语和葡萄牙语。这五种语言使用同一套权重，无需预先指定语言，输出即为所说语言的转写文本。</p>
+<h2>模型基础</h2>
+<p>Falcon-ASR 建立我们在 Falcon3-Audio 上的工作。<a href="https://arxiv.org/abs/2509.07526">Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data</a>介绍了 Falcon3-Audio 的结构与训练方法。</p>
+<h2>试用 Falcon ASR</h2>
+<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">我们在 Hugging Face 上的 Demo Space</a>可以让你试用 Falcon-ASR，探索它在语音转写上的能力。通过 API 访问以及原生应用都在计划之中。我们邀请你用自己的录音来试用这个 Demo。</p>
+<h2>致谢</h2>
+<p>我们要向 Falcon-Emirati 模型背后的团队致以诚挚感谢，感谢他们在阿拉伯语基础模型上给予的支持。他们最新的工作可以在 <a href="https://huggingface.co/blog/tiiuae/falcon-emirati">Falcon-Emirati 博客文章</a>中读到。</p>
+<p>我们同样向 Mikhail Lubinets 致以诚挚感谢，感谢他对算力基础设施的持续支持。</p>
+<h2>本文提及的 1 个数据集</h2>
+<h2>本文提及的 2 个 Spaces</h2>
+<p>更多来自该作者</p>
+<h2>Falcon-Emirati：当 LLM 学会方言、文化与细微之处</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg" alt=""></li></ul>
+<p>20</p>
+<p>2026 年 10 月 6 日</p>
+<h2>Falcon OCR Arabic：2.7 亿参数的阿拉伯语 OCR 最先进水平</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg" alt=""></li></ul>
+<p>16</p>
+<p>2026 年 10 月 6 日</p>
+<h3>社区</h3>
+<p>把图片、音频和视频拖进文本输入框、粘贴，或者</p>
+<p>点击此处</p>
+<p>。</p>
+<p>在此轻点或粘贴以上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftiiuae%2Ffalcon-asr">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Ftiiuae%2Ffalcon-asr">登录</a>即可评论</p>
+<p>1</p>
+<ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
+<h2>本文提及的 1 个数据集</h2>
+<h2>本文提及的 2 个 Spaces</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>同一个模型家族，两枚金牌级成绩：为 IOI 与 IMO 微调 Nemotron</title>
+      <link>https://huggingface.co/blog/nvidia/nemotron-ioi-and-imo-2026</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/nemotron-ioi-and-imo-2026</guid>
+      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：One Model Family, Two Gold-Level Results: Fine-Tuning Nemotron for IOI and IMO</description>
+      <content:encoded><![CDATA[<h1>同一个模型家族，两枚金牌级成绩：为 IOI 与 IMO 微调 Nemotron</h1>
+<p>企业</p>
+<p>+</p>
+<p>文章</p>
+<p>发布于</p>
+<p>2026 年 10 月 7 日</p>
+<ul><li><a href="https://huggingface.co/stefan-it"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1584020801691-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/Lord-Kinburg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QZUCtnUduwETYAKYdKZ4k.png" alt=""></a></li><li><a href="https://huggingface.co/Nekodimos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/699afccd584d08e09c0108c7/WYdoOTolDS7sFJDs_WmqS.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sadeghasgarilou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/K4jIazK1mAx5VNdySMF7-.png" alt=""></a></li><li><a href="https://huggingface.co/zakariarafi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/9S21lFJeatwLLH_7_dKus.png" alt=""></a></li></ul>
+<p>Aleksander</p>
+<p>aficek</p>
+<p>nvidia</p>
+<p>Igor Gitman</p>
+<p>igitman</p>
+<p>nvidia</p>
+<p>Sean Narenthiran</p>
+<p>SeanNaren</p>
+<p>nvidia</p>
+<p>Mehrzad Samadi</p>
+<p>mehrzads</p>
+<p>nvidia</p>
+<p>Somshubra Majumdar</p>
+<p>smajumdar94</p>
+<p>nvidia</p>
+<p>国际信息学奥林匹克（IOI）与国际数学奥林匹克（IMO）考察的是不同的能力。IOI 要求算法和能在严格时间与提交限制下通过隐藏测试的代码；IMO 则要求严谨的自然语言证明。在任何一项赛事中取胜都很困难，两项都取胜指向的是某种更宽泛的东西。</p>
+<p>我们最新的成绩表明，Nemotron 是构建世界级专门模型的一个强有力且可适配的基座。从 Nemotron 3 出发，我们的团队用监督微调（SFT）、强化学习（RL）以及反馈驱动的 inference，做出了在 <a href="https://arxiv.org/abs/2609.10712">IMO 2026</a> 和 <a href="https://arxiv.org/abs/2609.02849">IOI 2026</a> 两项赛事中都达到金牌级水平的系统。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/LqM9etFUGTjJT116M7Hq8.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/LqM9etFUGTjJT116M7Hq8.png" alt="fig_ioi_imo_gold_results_headline"></a></p>
+<table><thead><tr><th>赛事</th><th>Nemotron 专门化方案</th><th>结果</th></tr></thead><tbody><tr><td>IOI 2026</td><td>Nemotron-3-Ultra-CC，配合 SFT 与 GenCorrect</td><td>535.4/600，高于 361.12 的金牌线，也高于人类最高分 498.27</td></tr><tr><td>IMO 2026</td><td>Nemotron 3 Ultra 通用版、SFT 与 RL checkpoints，组成 generate-verify-refine 系统</td><td>30/42，高于官方金牌线 29</td></tr></tbody></table>
+<p>IOI 的成绩来自一次实时的、前瞻性的运行，所用的时间、互联网访问与提交限制与人类选手完全一致。它属于一次非官方、无监考的基准测试，没有被纳入 IOI 的正式排名。IMO 系统提交的证明则由 IMO 官方评分员评定。</p>
+<h2>一套可复用的专门化配方</h2>
+<p>「容易微调」不应该只是意味着某个 checkpoint 可以被训练。它应当意味着一个有能力的 foundation model，能够用一套清晰、可复用的配方被适配到一个高要求领域。</p>
+<p>在这两个项目中，这套配方包含四个部分：</p>
+<ul><li>从一个强的 Nemotron 基座模型出发。</li><li>策展领域题目与高质量推理轨迹（reasoning traces）。</li><li>应用标准的 post-training 方法，例如 SFT，以及在有用处的地方加上 RL。</li><li>把专门模型与一个能生成、评估并改进候选答案的 inference 循环配对。</li></ul>
+<p>训练与 inference 的规模都不小，但底层做法是大家熟悉且可复现的。我们不需要为每一个挑战重新造一个 foundation model。我们是把 Nemotron 针对任务做了专门化。</p>
+<h2>从通用编码能力到 IOI 金牌</h2>
+<p>在竞赛编程上，我们策展了 22,000 道题目，并生成合成推理轨迹来训练两个专门模型。Nemotron-3-Nano-CC 总参数 300 亿、激活参数 30 亿，同时接受了 SFT 与 RL。Nemotron-3-Ultra-CC 总参数 5,500 亿、激活参数 550 亿，接受的是 SFT。</p>
+<p>在 IOI 2025 上的递进让专门化的价值一目了然。Nano 从 post-training 之前的 130 分，提升到 SFT 后的 280 分，再到 RL 后的 291 分。配合 GenCorrect——我们的迭代式 generate-evaluate-refine 策略——它达到 468 分，越过了 438.3 的金牌线。Ultra-CC 用同样的 test-time 策略达到 502 分。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/GptKxXbYlSsm2ksIJqZzE.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/GptKxXbYlSsm2ksIJqZzE.png" alt="fig_main_capability_progression_previous_style"></a></p>
+<p>这些实验还表明，适配在不同规模上不必是同一种样子。SFT 贡献了 Nano 的大部分增益，RL 带来的是较小但一致的额外提升。而对更强的 Ultra 模型，一个 SFT epoch 就足以在 IOI、ICPC 与 LiveCodeBench Pro 上超过完成了完整 post-training 的 Nano 模型。这一发现指导了为 IOI 2026 准备的赛事专用 Ultra-CC 系统，该系统拿下 600 分中的 535.4 分。</p>
+<h2>教会 Nemotron 证明、检查与修正</h2>
+<p>IMO 项目把同样的思路用在奥林匹克数学上。我们从 Nemotron 3 Ultra 出发，用 SFT 训练了一个专门模型，用 RL 训练了另一个。</p>
+<p>SFT 语料包含 414,890 条经过质量筛选的样例，覆盖 15,818 道唯一证明题。它教会的不只是最终答案：这些数据涵盖证明生成、证明细化、验证与元验证，因此模型学会了构造论证、找出缺口、回应批评，以及判断一个证明是否完整。RL 模型在 9,597 道证明题上训练，这些题目选取在模型能力边界附近。</p>
+<p>在开发实验中，两个 post-trained checkpoint 都优于公开发布版模型。SFT checkpoint 在第一轮搜索中最强，而 RL checkpoint 取得了单个 checkpoint 的最佳整体结果。它们的优势互补，因此最终系统把两个专门模型与通用模型一起使用。</p>
+<p>对每道 IMO 题目，模型生成候选证明、为其打分、产出批评意见，并细化最有希望的几次尝试。一个独立的高算力阶段负责挑选最终提交。整个系统都在自然语言中工作，没有形式化证明器、外部工具或互联网访问。它拿下 42 分中的 30 分，其中六道题里有四道获得满分，并超过了官方金牌分数线。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/Wo0kpoA9qTLPaxWv48DnL.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/Wo0kpoA9qTLPaxWv48DnL.png" alt="image"></a></p>
+<h2>Fine-tuning 与 test-time compute 是协同的</h2>
+<p>我们早先的 <a href="https://huggingface.co/blog/nvidia/ioi-gold-medal-with-open-weight">IOI 2025 Hugging Face 帖子</a>展示了 test-time compute 如何把 open-weight 模型推到金牌级表现。这次的新结果补上了一块重要的拼图：更好的专门化能给 inference 系统带来更好的候选、更好的批评者和更好的细化。</p>
+<p>在 IOI 上，GenCorrect 把微调带来的增益在多轮反馈中转化为更大的改进。在 IMO 上，使用互补的 SFT 与 RL checkpoint，比单纯从单个 checkpoint 多抽一些样本更有价值。两种情况下，最好的结果都来自把一个有能力的专门模型同一个能搜索、验证与改进的系统结合起来。</p>
+<p>这个区分很重要。这些奖牌不是单靠 fine-tuning 拿到的，也不是单靠暴力采样拿到的。它们来自对模型、数据与 inference 循环的共同设计。</p>
+<h2>开源的模型、数据与配方都在 Hugging Face 上</h2>
+<p>我们希望这些结果在赛事之外同样有用。<a href="https://huggingface.co/collections/nvidia/nemotron-labs-imo-2026">Nemotron Labs IMO 2026 合集</a>把 SFT 与 RL checkpoint、两份训练数据集，以及一个新基准 Nemotron-IMO-Bench（200 道奥赛级题目）收在一起。<a href="https://arxiv.org/abs/2609.10712">IMO 论文</a>描述了训练方法与 generate-verify-refine 系统，而 <a href="https://github.com/NVIDIA-NeMo/Skills/tree/main/recipes/nemotron-imo-tts">NeMo-Skills 仓库</a>收录了 IMO 的 inference 流水线、prompts、提交的证明，以及一份可复现的快速上手指南。竞赛编程方面，<a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-3-Competitive-Coding-550B-A55B-NVFP4">Nemotron-3-Ultra-CC 模型</a>已在 Hugging Face 上提供，<a href="https://arxiv.org/abs/2609.02849">IOI 论文</a>给出了训练配方与 GenCorrect 方法论。IOI 的评测与 inference 流水线同样可在 <a href="https://github.com/NVIDIA-NeMo/Skills">NeMo-Skills</a> 中找到。</p>
+<p>IMO 与 IOI 合在一起，为一个朴素的观点提供了极为严苛的证据：Nemotron 可以被 fine-tune 成世界级的领域专门模型，再与透明的 inference 工作流组合起来，去解决人类竞赛前沿上的问题。</p>
+<p>我们很期待看到 Hugging Face 社区接下来做出什么。</p>
+<h2>本文中提到的模型 1</h2>
+<h2>本文中提到的合集 1</h2>
+<p>这位作者的其他文章</p>
+<h2>NVIDIA Kumo Tabular 为表格预测树立新的精度-效率前沿</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>86</p>
+<p>2026 年 9 月 29 日</p>
+<h2>如何使用 NVIDIA Warp 与 MjWarp 加速机器人仿真与学习工作流</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>56</p>
+<p>2026 年 9 月 23 日</p>
+<h3>社区</h3>
+<p>nev8r</p>
+<p>1 天前</p>
+<p>nano-cc 在哪里</p>
+<p>把图片、音频和视频拖进文本输入框、粘贴，或者</p>
+<p>点击这里</p>
+<p>。</p>
+<p>在此轻点或粘贴以上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fnemotron-ioi-and-imo-2026">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fnemotron-ioi-and-imo-2026">登录</a> 即可评论</p>
+<ul><li><a href="https://huggingface.co/stefan-it"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1584020801691-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/Lord-Kinburg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QZUCtnUduwETYAKYdKZ4k.png" alt=""></a></li><li><a href="https://huggingface.co/Nekodimos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/699afccd584d08e09c0108c7/WYdoOTolDS7sFJDs_WmqS.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sadeghasgarilou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/K4jIazK1mAx5VNdySMF7-.png" alt=""></a></li><li><a href="https://huggingface.co/zakariarafi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/9S21lFJeatwLLH_7_dKus.png" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jayshah5696"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6410e376a8d20679261db5b5/GcO-95nv5fJwXpdIXTvwf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hiepnh"><img src="https://huggingface.co/avatars/15720cf8cd69a7fecfc749f5524c2500.svg" alt=""></a></li><li><a href="https://huggingface.co/robertsganj"><img src="https://huggingface.co/avatars/88cf8627b6f773bfd266b71167f459c3.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>
+<h2>本文中提到的模型 1</h2>
+<h2>本文中提到的合集 1</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>面向边缘端的 open d1 多模态决策模型</title>
       <link>https://huggingface.co/blog/LiquidAI/open-d1</link>
       <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/open-d1</guid>
@@ -299,201 +502,6 @@ print(model.system_one_batch([(t, {&quot;team&quot;: questions[&quot;team&quot;]
 <ul><li><a href="https://huggingface.co/tuliren"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67084eb99ae661eabe5c4dd9/j9IN851gG47eEg1HtGCaC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/FlameF0X"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp" alt=""></a></li><li><a href="https://huggingface.co/Aurelien-Lac"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a8f24b4adaa29ed09b8632/yvzQ7iDcUBwtg2rnkZ1e2.png" alt=""></a></li><li><a href="https://huggingface.co/ykhrustalev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e303b880f10dbf1b896f30/d2TAaTRy9WN9i8t1s0HY6.png" alt=""></a></li><li><a href="https://huggingface.co/adityatadimeti"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/662b14788e855c7c010c03c9/UWRzvG0YwSj5o7NxiYC6G.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tilgasergey"><img src="https://huggingface.co/avatars/3975dca73d0941898f637d16e3115872.svg" alt=""></a></li><li><a href="https://huggingface.co/EdoardoMosca"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63f389fda096536aeaae0a66/RaY_JmWJTXtDPq5IsPDM-.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Arzenic"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6720246671d10b163beec025/GBOo_8OfSMZ2lfh-h6OMy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Ishikava11"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/6FCBvZ76GjYBFpWaY178M.png" alt=""></a></li></ul>
 <h2>本文中提到的模型 3</h2>
 <h2>本文中提到的 Spaces 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Falcon ASR 简介</title>
-      <link>https://huggingface.co/blog/tiiuae/falcon-asr</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/tiiuae/falcon-asr</guid>
-      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Falcon ASR</description>
-      <content:encoded><![CDATA[<h1>猎鹰 ASR 简介</h1>
-<p>团队</p>
-<p>文章</p>
-<p>已发表 2026 年 10 月 7 日</p>
-<ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
-<p>阿卜杜勒·穆尼尔</p>
-<p>阿卜杜勒穆尼耶尔提</p>
-<p>蒂尤阿埃</p>
-<p>里沙卜·萨拉夫</p>
-<p>里沙卜萨拉夫</p>
-<p>蒂尤阿埃</p>
-<p>拉梅什·冈德鲁鲁</p>
-<p>贡德鲁拉梅什</p>
-<p>蒂尤阿埃</p>
-<p>沙姆萨·哈马德</p>
-<p>沙姆萨</p>
-<p>蒂尤阿埃</p>
-<p>勒波卢</p>
-<p>卢多维克</p>
-<p>蒂尤阿埃</p>
-<p>哈基姆·哈西德</p>
-<p>哈基姆·哈西德</p>
-<p>蒂尤阿埃</p>
-<p>[![Falcon ASR：阿拉伯语和英语语音识别](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/KlCZJ9xrl4-O7A0RdA0v A.png)](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/KlCZJ9xrl4-O7A0RdA0vA.png)</p>
-<p><a href="https://huggingface.co/blog/tiiuae/falcon-asr#introducing-falcon-asr">英语</a> · <a href="https://huggingface.co/blog/tiiuae/falcon-asr#arabic">阿拉伯语</a></p>
-<p><strong>阿拉伯语 WER：20.92% · 参数：1.6B · 阿联酋语 WER（TII 评估）：22.73%</strong></p>
-<p>我们正在推出 Falcon-ASR，这是我们的 16 亿参数阿拉伯语语音识别模型，特别关注阿联酋方言。它由阿布扎比技术创新研究所 (TII) 开发，还支持英语、法语、西班牙语和葡萄牙语。</p>
-<p>在我们的评估中，Falcon-ASR 在六个阿拉伯语测试集上的平均单词错误率为 20.92%，而我们使用的排行榜快照中的最佳公布结果为 23.17%。在我们的阿联酋内部评估中，它在我们比较的系统中记录了最低的单词和字符错误率。</p>
-<p>我们还支持转录的单词级时间戳，将每个转录的单词与其在音频中的位置链接起来。</p>
-<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">尝试 Falcon ASR →</a></p>
-<h2>识别阿拉伯语口语</h2>
-<p>阿拉伯语语音因地区、说话者和环境而异。处理正式新闻广播的模型可能仍然难以处理阿联酋语对话或通过电话线录制的语音。阿拉伯语方言的转录资源也比现代标准阿拉伯语 (MSA) 少，这使得培训和评估更加困难。</p>
-<p>我们用阿联酋语、MSA、其他海湾和阿拉伯方言以及英语对 Falcon-ASR 进行了培训。我们的目标是转录人们在日常言语中使用的单词，包括方言形式和语言之间的变化。</p>
-<h2>阿拉伯语基准测试结果</h2>
-<p><a href="https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard">开放通用阿拉伯语 ASR 排行榜</a> 由 ELM 研究中心维护，根据六个测试集的等权平均 WER 对系统进行排名。它还报告字符错误率 (CER)。这两个指标的值越低越好。我们的 Falcon-ASR 评估遵循此协议。</p>
-<p>[![falcon-asr-arabic](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/NYwM1xdaK1aiCwnE gz4q5.png)](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/NYwM1xdaK1aiCwnEGz4q5.png)</p>
-<p><em>WER = 字错误率； CER = 字符错误率。值越低表示性能越好。</em></p>
-<p>我们使用排行榜的固定清单在相同的六个基准上评估了 Falcon-ASR。竞争对手的数据是 2026 年 9 月 30 日公布的排行榜平均值。Falcon-ASR 的平均 WER 比该快照中公布的最佳结果高 2.25 个百分点。</p>
-<h2>评估阿联酋演讲</h2>
-<p>公共评估数据已包括阿联酋：<a href="https://huggingface.co/datasets/UBC-NLP/Casablanca">卡萨布兰卡</a> 有阿联酋子集。我们通过对其他阿联酋和海湾地区语音的内部评估来补充该报道，使用保留的录音和人工验证的转录本来评估阿联酋公共子集之外的转录准确性。</p>
-<p>在我们的阿联酋内部评估中，Falcon-ASR 实现了 22.73% WER 和 10.19% CER：</p>
-<p>[![falcon-asr-emirati](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/Un8dfcA_GCcu2or NpkTA4.png)](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/Un8dfcA_GCcu2orNpkTA4.png)</p>
-<p>在此处比较的系统中，Falcon-ASR 的 WER 和 CER 最低。它的 WER 比第二好的 Qwen3-Omni 低 4.07 个百分点。结果表明，本次评估在单词和字符级别的转录准确性均有所提高。</p>
-<h2>不同录音条件的训练</h2>
-<p>我们包括背景噪音、重叠语音、音乐、房间混响和电话效果，以及速度和音高的变化。我们对阿联酋录音进行了同样的处理，将模型暴露在会议、通话和其他日常录音中可能遇到的一系列条件下。</p>
-<h2>英语和其他语言</h2>
-<p>Falcon-ASR 还可以使用相同的模型权重来转录英语。在我们对 Hugging Face Open ASR Leaderboard 使用的 7 个公共英语测试集的评估中，它的平均 WER 为 5.74%。</p>
-<p>[![falcon-asr-english](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/jYVEru5FjM_UeCs JtRE9E.png)](https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/jYVEru5FjM_UeCsJtRE9E.png)</p>
-<p>该模型还支持法语、西班牙语和葡萄牙语。所有五种语言都使用相同的权重，不需要语言标志。输出是所讲语言的文字记录。</p>
-<h2>模型基础</h2>
-<p>Falcon-ASR 建立在我们的 Falcon3-Audio 工作之上。 Falcon3-Audio 的架构和训练方法在 <a href="https://arxiv.org/abs/2509.07526">Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data</a> 中描述。</p>
-<h2>尝试猎鹰 ASR</h2>
-<p>我们的 <a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">Hugging Face 演示空间</a> 可让您尝试 Falcon-ASR 并探索其转录功能。 API 访问和本机应用程序已规划。我们邀请您使用自己的录音来尝试演示。</p>
-<h2>致谢</h2>
-<p>我们感谢 Falcon-Emirati 模型背后的团队对阿拉伯基金会模型的支持。请在 <a href="https://huggingface.co/blog/tiiuae/falcon-emirati">Falcon-Emirati 博客文章</a> 中了解他们的最新作品。</p>
-<p>我们还衷心感谢 Mikhail Lubinets 对计算基础设施的持续支持。</p>
-<h1>猎鹰 ASR</h1>
-<p>Falcon-ASR 版本 1.6 版本 1.6 版本答案是肯定的。 সেরা সের কের সের সের কের কেরেরের (TII) নেরেরের নেের নের নের নের নেরের和巴巴尼和巴巴尼。</p>
-<p>Falcon-ASR 20.92% 20.92% 20.92% 20.92%平均价格为 23.17%。巴尼亚??????????????????????????????????????????????????????????????????</p>
-<p>我们还支持文字记录中的单词级时间戳，以便每个单词与其在录音中的位置相关联。</p>
-<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">尝试 Falcon ASR ←</a></p>
-<h2>识别阿拉伯语口语</h2>
-<p>阿拉伯语语音因地区、说话者和录音条件而异。模型可能会成功转录官方新闻公告，然后发现很难转录阿联酋方言的对话或电话录音。此外，阿拉伯方言的转录语音资源比标准阿拉伯语的可用语音资源少，这使得培训和评估更加困难。</p>
-<p>除了英语之外，我们还用阿联酋方言、古典阿拉伯语以及其他海湾和阿拉伯方言训练 Falcon-ASR。我们的目标是解开人们在日常言语中使用的单词，包括方言形式和语言之间的转换。</p>
-<h2>阿拉伯语测试结果</h2>
-<p>由 ELM 研究中心管理的阿拉伯语语音识别开放综合排行榜 (https://huggingface.co/spaces/elmresearchcenter/open_universal_arabic_asr_leaderboard) 根据六个测试组的平均单词错误率对系统进行排名，每个组的权重相等。它还显示字符错误率 (CER)。任一度量的值越低，性能就越好。我们对模型的评估遵循此协议。</p>
-<p><a href="https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/zIJA_4__yW9U9oaqZV4iy.png">阿拉伯语测试中单词和字母的错误率比较</a></p>
-<p><strong>WER是单词错误率； CER 是字符错误率。值越低表示性能越好。</strong></p>
-<p>我们使用固定在排行榜上的样本列表在相同的六个测试套件上评估了 Falcon-ASR。竞争模型的数字是小组中发布的平均值，并于 2026 年 9 月 30 日进行验证。该模型的平均单词错误比该版本中发布的最佳结果高 2.25 个百分点。</p>
-<h2>阿联酋方言评价</h2>
-<p>用于评估阿联酋方言的公共数据已经可用，因为 <a href="https://huggingface.co/datasets/UBC-NLP/Casablanca">卡萨布兰卡</a> 集合包含专门针对阿联酋的部分。我们通过对阿联酋和海湾地区语音的额外录音进行内部评估来补充此报道，使用专门的测试录音和人工审核的参考文本，以评估额外材料和一般阿联酋数据的转录准确性。</p>
-<p>在我们的阿联酋内部评估中，Falcon-ASR 的单词错误率为 22.73%，字符错误率为 10.19%：</p>
-<p>【阿联酋评估中单词和字母的错误率比较】(https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/SsRywyTDmpuHVmEzjVBg7.png)</p>
-<p>在此处比较的系统中，Falcon-ASR 的单词和字符错误率最低。单词错误率比排名第二的Qwen3-Omni低4.07个百分点。结果显示，在此评估中，单词和字母级别的转录准确性有所提高。</p>
-<h2>不同录音条件下的训练</h2>
-<p>训练数据包括背景噪声、重叠语音、音乐、回声和电话效果，以及语音速度和音调的变化。我们对阿联酋录音进行了相同的处理，以使模型能够处理在会议、通话和其他日常录音中可能遇到的不同条件。</p>
-<h2>英语和其他语言</h2>
-<p>Falcon-ASR 使用相同的模型权重转录英语语音。在我们对 Hugging Face 开放式语音识别面板中使用的 7 个通用英语测试套件的评估中，平均单词错误率为 5.74%。</p>
-<p><a href="https://cdn-uploads.huggingface.co/product/uploads/671a3e44cf97dc64441e170a/qTv7t7PxdzgYHMYXQxMQH.png">英语测试组的单词错误率</a></p>
-<p>该模型还支持法语、西班牙语和葡萄牙语。所有五种语言都使用相同的权重，无需事先指定语言。输出是口语的转录。</p>
-<p>##模型基础</p>
-<p>Falcon-ASR 基于我们在 Falcon3-Audio 的工作。论文 <a href="https://arxiv.org/abs/2509.07526">Competitive Audio-Language Models with Data-Efficient Single-Stage Training on Public Data</a> 介绍了 Falcon3-Audio 的架构和训练方法。</p>
-<h2>猎鹰 ASR 体验</h2>
-<p><a href="https://huggingface.co/spaces/tiiuae/falcon-asr-demo">我们在 Hugging Face 上的演示</a> 允许您尝试 Falcon-ASR 并探索其语音转录功能。计划通过 API 和本机应用程序进行访问。我们邀请您用您的录音尝试该模型。</p>
-<h2>感谢和赞赏</h2>
-<p>我们衷心感谢 Falcon-Emirati 模型开发团队在阿拉伯语基础模型领域的支持。该团队的最新工作可以在<a href="https://huggingface.co/blog/tiiuae/falcon-emirati">已发表的有关 Falcon-Emirati 的文章</a> 中找到。</p>
-<p>我们还对 Mikhail Lubinets 对计算基础设施的持续支持表示诚挚的感谢和赞赏。</p>
-<h2>本文提到的数据集1</h2>
-<h2>本文提到的空格2</h2>
-<p>该作者的更多内容</p>
-<h2>Falcon-Emirati：当法学硕士学习方言、文化和细微差别时</h2>
-<p>-<img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg" alt=""></p>
-<p>20</p>
-<p>2026 年 10 月 6 日</p>
-<h2>Falcon OCR 阿拉伯语：270M 参数最先进的阿拉伯语 OCR</h2>
-<p>-<img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a8d1aac664736898ffc84f/AT6cAB5ZNwCcqFMal71WD.jpeg" alt=""></p>
-<p>16</p>
-<p>2026 年 10 月 6 日</p>
-<h3>社区</h3>
-<p>通过拖入文本输入、粘贴或上传图像、音频和视频</p>
-<p>点击这里</p>
-<p>。</p>
-<p>点击或粘贴此处上传图像</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftiiuae%2Ffalcon-asr">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Ftiiuae%2Ffalcon-asr">登录</a> 发表评论</p>
-<ul><li><a href="https://huggingface.co/brishisharma"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/kld9iQ1r7v8wzHmAKe4BZ.png" alt=""></a></li></ul>
-<h2>本文提到的数据集1</h2>
-<h2>本文提到的空格2</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>同一个模型家族，两枚金牌级成绩：为 IOI 与 IMO 微调 Nemotron</title>
-      <link>https://huggingface.co/blog/nvidia/nemotron-ioi-and-imo-2026</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/nemotron-ioi-and-imo-2026</guid>
-      <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：One Model Family, Two Gold-Level Results: Fine-Tuning Nemotron for IOI and IMO</description>
-      <content:encoded><![CDATA[<h1>同一个模型家族，两枚金牌级成绩：为 IOI 与 IMO 微调 Nemotron</h1>
-<p>企业</p>
-<p>+</p>
-<p>文章</p>
-<p>发布于</p>
-<p>2026 年 10 月 7 日</p>
-<ul><li><a href="https://huggingface.co/stefan-it"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1584020801691-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/Lord-Kinburg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QZUCtnUduwETYAKYdKZ4k.png" alt=""></a></li><li><a href="https://huggingface.co/Nekodimos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/699afccd584d08e09c0108c7/WYdoOTolDS7sFJDs_WmqS.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sadeghasgarilou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/K4jIazK1mAx5VNdySMF7-.png" alt=""></a></li><li><a href="https://huggingface.co/zakariarafi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/9S21lFJeatwLLH_7_dKus.png" alt=""></a></li></ul>
-<p>Aleksander</p>
-<p>aficek</p>
-<p>nvidia</p>
-<p>Igor Gitman</p>
-<p>igitman</p>
-<p>nvidia</p>
-<p>Sean Narenthiran</p>
-<p>SeanNaren</p>
-<p>nvidia</p>
-<p>Mehrzad Samadi</p>
-<p>mehrzads</p>
-<p>nvidia</p>
-<p>Somshubra Majumdar</p>
-<p>smajumdar94</p>
-<p>nvidia</p>
-<p>国际信息学奥林匹克（IOI）与国际数学奥林匹克（IMO）考察的是不同的能力。IOI 要求算法和能在严格时间与提交限制下通过隐藏测试的代码；IMO 则要求严谨的自然语言证明。在任何一项赛事中取胜都很困难，两项都取胜指向的是某种更宽泛的东西。</p>
-<p>我们最新的成绩表明，Nemotron 是构建世界级专门模型的一个强有力且可适配的基座。从 Nemotron 3 出发，我们的团队用监督微调（SFT）、强化学习（RL）以及反馈驱动的 inference，做出了在 <a href="https://arxiv.org/abs/2609.10712">IMO 2026</a> 和 <a href="https://arxiv.org/abs/2609.02849">IOI 2026</a> 两项赛事中都达到金牌级水平的系统。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/LqM9etFUGTjJT116M7Hq8.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/LqM9etFUGTjJT116M7Hq8.png" alt="fig_ioi_imo_gold_results_headline"></a></p>
-<table><thead><tr><th>赛事</th><th>Nemotron 专门化方案</th><th>结果</th></tr></thead><tbody><tr><td>IOI 2026</td><td>Nemotron-3-Ultra-CC，配合 SFT 与 GenCorrect</td><td>535.4/600，高于 361.12 的金牌线，也高于人类最高分 498.27</td></tr><tr><td>IMO 2026</td><td>Nemotron 3 Ultra 通用版、SFT 与 RL checkpoints，组成 generate-verify-refine 系统</td><td>30/42，高于官方金牌线 29</td></tr></tbody></table>
-<p>IOI 的成绩来自一次实时的、前瞻性的运行，所用的时间、互联网访问与提交限制与人类选手完全一致。它属于一次非官方、无监考的基准测试，没有被纳入 IOI 的正式排名。IMO 系统提交的证明则由 IMO 官方评分员评定。</p>
-<h2>一套可复用的专门化配方</h2>
-<p>「容易微调」不应该只是意味着某个 checkpoint 可以被训练。它应当意味着一个有能力的 foundation model，能够用一套清晰、可复用的配方被适配到一个高要求领域。</p>
-<p>在这两个项目中，这套配方包含四个部分：</p>
-<ul><li>从一个强的 Nemotron 基座模型出发。</li><li>策展领域题目与高质量推理轨迹（reasoning traces）。</li><li>应用标准的 post-training 方法，例如 SFT，以及在有用处的地方加上 RL。</li><li>把专门模型与一个能生成、评估并改进候选答案的 inference 循环配对。</li></ul>
-<p>训练与 inference 的规模都不小，但底层做法是大家熟悉且可复现的。我们不需要为每一个挑战重新造一个 foundation model。我们是把 Nemotron 针对任务做了专门化。</p>
-<h2>从通用编码能力到 IOI 金牌</h2>
-<p>在竞赛编程上，我们策展了 22,000 道题目，并生成合成推理轨迹来训练两个专门模型。Nemotron-3-Nano-CC 总参数 300 亿、激活参数 30 亿，同时接受了 SFT 与 RL。Nemotron-3-Ultra-CC 总参数 5,500 亿、激活参数 550 亿，接受的是 SFT。</p>
-<p>在 IOI 2025 上的递进让专门化的价值一目了然。Nano 从 post-training 之前的 130 分，提升到 SFT 后的 280 分，再到 RL 后的 291 分。配合 GenCorrect——我们的迭代式 generate-evaluate-refine 策略——它达到 468 分，越过了 438.3 的金牌线。Ultra-CC 用同样的 test-time 策略达到 502 分。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/GptKxXbYlSsm2ksIJqZzE.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/GptKxXbYlSsm2ksIJqZzE.png" alt="fig_main_capability_progression_previous_style"></a></p>
-<p>这些实验还表明，适配在不同规模上不必是同一种样子。SFT 贡献了 Nano 的大部分增益，RL 带来的是较小但一致的额外提升。而对更强的 Ultra 模型，一个 SFT epoch 就足以在 IOI、ICPC 与 LiveCodeBench Pro 上超过完成了完整 post-training 的 Nano 模型。这一发现指导了为 IOI 2026 准备的赛事专用 Ultra-CC 系统，该系统拿下 600 分中的 535.4 分。</p>
-<h2>教会 Nemotron 证明、检查与修正</h2>
-<p>IMO 项目把同样的思路用在奥林匹克数学上。我们从 Nemotron 3 Ultra 出发，用 SFT 训练了一个专门模型，用 RL 训练了另一个。</p>
-<p>SFT 语料包含 414,890 条经过质量筛选的样例，覆盖 15,818 道唯一证明题。它教会的不只是最终答案：这些数据涵盖证明生成、证明细化、验证与元验证，因此模型学会了构造论证、找出缺口、回应批评，以及判断一个证明是否完整。RL 模型在 9,597 道证明题上训练，这些题目选取在模型能力边界附近。</p>
-<p>在开发实验中，两个 post-trained checkpoint 都优于公开发布版模型。SFT checkpoint 在第一轮搜索中最强，而 RL checkpoint 取得了单个 checkpoint 的最佳整体结果。它们的优势互补，因此最终系统把两个专门模型与通用模型一起使用。</p>
-<p>对每道 IMO 题目，模型生成候选证明、为其打分、产出批评意见，并细化最有希望的几次尝试。一个独立的高算力阶段负责挑选最终提交。整个系统都在自然语言中工作，没有形式化证明器、外部工具或互联网访问。它拿下 42 分中的 30 分，其中六道题里有四道获得满分，并超过了官方金牌分数线。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/Wo0kpoA9qTLPaxWv48DnL.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/67b8b0096c3182e96bf6cea1/Wo0kpoA9qTLPaxWv48DnL.png" alt="image"></a></p>
-<h2>Fine-tuning 与 test-time compute 是协同的</h2>
-<p>我们早先的 <a href="https://huggingface.co/blog/nvidia/ioi-gold-medal-with-open-weight">IOI 2025 Hugging Face 帖子</a>展示了 test-time compute 如何把 open-weight 模型推到金牌级表现。这次的新结果补上了一块重要的拼图：更好的专门化能给 inference 系统带来更好的候选、更好的批评者和更好的细化。</p>
-<p>在 IOI 上，GenCorrect 把微调带来的增益在多轮反馈中转化为更大的改进。在 IMO 上，使用互补的 SFT 与 RL checkpoint，比单纯从单个 checkpoint 多抽一些样本更有价值。两种情况下，最好的结果都来自把一个有能力的专门模型同一个能搜索、验证与改进的系统结合起来。</p>
-<p>这个区分很重要。这些奖牌不是单靠 fine-tuning 拿到的，也不是单靠暴力采样拿到的。它们来自对模型、数据与 inference 循环的共同设计。</p>
-<h2>开源的模型、数据与配方都在 Hugging Face 上</h2>
-<p>我们希望这些结果在赛事之外同样有用。<a href="https://huggingface.co/collections/nvidia/nemotron-labs-imo-2026">Nemotron Labs IMO 2026 合集</a>把 SFT 与 RL checkpoint、两份训练数据集，以及一个新基准 Nemotron-IMO-Bench（200 道奥赛级题目）收在一起。<a href="https://arxiv.org/abs/2609.10712">IMO 论文</a>描述了训练方法与 generate-verify-refine 系统，而 <a href="https://github.com/NVIDIA-NeMo/Skills/tree/main/recipes/nemotron-imo-tts">NeMo-Skills 仓库</a>收录了 IMO 的 inference 流水线、prompts、提交的证明，以及一份可复现的快速上手指南。竞赛编程方面，<a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-3-Competitive-Coding-550B-A55B-NVFP4">Nemotron-3-Ultra-CC 模型</a>已在 Hugging Face 上提供，<a href="https://arxiv.org/abs/2609.02849">IOI 论文</a>给出了训练配方与 GenCorrect 方法论。IOI 的评测与 inference 流水线同样可在 <a href="https://github.com/NVIDIA-NeMo/Skills">NeMo-Skills</a> 中找到。</p>
-<p>IMO 与 IOI 合在一起，为一个朴素的观点提供了极为严苛的证据：Nemotron 可以被 fine-tune 成世界级的领域专门模型，再与透明的 inference 工作流组合起来，去解决人类竞赛前沿上的问题。</p>
-<p>我们很期待看到 Hugging Face 社区接下来做出什么。</p>
-<h2>本文中提到的模型 1</h2>
-<h2>本文中提到的合集 1</h2>
-<p>这位作者的其他文章</p>
-<h2>NVIDIA Kumo Tabular 为表格预测树立新的精度-效率前沿</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>86</p>
-<p>2026 年 9 月 29 日</p>
-<h2>如何使用 NVIDIA Warp 与 MjWarp 加速机器人仿真与学习工作流</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
-<p>56</p>
-<p>2026 年 9 月 23 日</p>
-<h3>社区</h3>
-<p>nev8r</p>
-<p>1 天前</p>
-<p>nano-cc 在哪里</p>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者</p>
-<p>点击这里</p>
-<p>。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fnemotron-ioi-and-imo-2026">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fnemotron-ioi-and-imo-2026">登录</a> 即可评论</p>
-<ul><li><a href="https://huggingface.co/stefan-it"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1584020801691-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/Lord-Kinburg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/QZUCtnUduwETYAKYdKZ4k.png" alt=""></a></li><li><a href="https://huggingface.co/Nekodimos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/699afccd584d08e09c0108c7/WYdoOTolDS7sFJDs_WmqS.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sadeghasgarilou"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/K4jIazK1mAx5VNdySMF7-.png" alt=""></a></li><li><a href="https://huggingface.co/zakariarafi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/9S21lFJeatwLLH_7_dKus.png" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/2BfKCuVIeiPAodz13DXNn.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jayshah5696"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6410e376a8d20679261db5b5/GcO-95nv5fJwXpdIXTvwf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hiepnh"><img src="https://huggingface.co/avatars/15720cf8cd69a7fecfc749f5524c2500.svg" alt=""></a></li><li><a href="https://huggingface.co/robertsganj"><img src="https://huggingface.co/avatars/88cf8627b6f773bfd266b71167f459c3.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>
-<h2>本文中提到的模型 1</h2>
-<h2>本文中提到的合集 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>Falcon-Emirati：当 LLM 学会方言、文化与微妙之处</title>
@@ -6096,49 +6104,6 @@ console.log(chatCompletion.choices[0].message);</code></pre>
 <ul><li><a href="https://huggingface.co/blog/Dharma-AI/newer-models-same-advantages">Newer Models, Same Advantage</a> — 尽管有新架构，DharmaOCR 凭借领域专业化和针对性训练，在巴西葡萄牙语上超越了 Mistral OCR4 和 Unlimited-OCR。本文给出这一优势的证据与背后的机制。</li><li><a href="https://huggingface.co/blog/Dharma-AI/why-specialization-is-inevitable">Why Specialization Is Inevitable</a> — 专业化论证的结构与理论基础。优化理论、演化生物学、竞争市场和机器学习都收敛到同一个预测：在有限资源和选择压力下，适配胜过广度。</li><li><a href="https://huggingface.co/blog/Dharma-AI/specialization-beats-scale">Specialization Beats Scale: A Strategic Variable Most AI Procurement Decisions Overlook</a> — 本文的经验与战略补充。No Free Lunch 定理建立了为什么专业化是结构上可预测的，而这篇文章考察它在实践中胜出——以及为什么它在多数 AI 采购决策中被低估。</li><li><a href="https://huggingface.co/blog/Dharma-AI/text-degeneration-a-production-failure-mode">Text Degeneration: A Production Failure Mode That Most Benchmarks Do Not Track</a> — 一个有记录的失败模式：当语言模型在其有效域边界之外运作时就会出现。</li><li><a href="https://huggingface.co/blog/Dharma-AI/direct-preference-optimization-beyond-chatbots">Direct Preference Optimization Beyond Chatbots</a> — 偏好优化技术如何延伸到对话式 AI 之外的专门领域——本文论证领域聚焦策略是结构上被预测的，而这就是一次具体的实现。</li></ul>
 <p>---</p>
 <p><em>探索 <a href="https://huggingface.co/Dharma-AI"></em>Hugging Face 上的 Dharma AI<em></a>，<a href="https://huggingface.co/spaces/Dharma-AI/DharmaOCR-demo"></em>试用我们的交互式 demo<em></a>，<a href="https://huggingface.co/Dharma-AI/Dharma-OCR-LITE"></em>下载我们的开源模型<em></a>，了解专业化 AI 系统如何在真实企业应用中超越通用模型。</em></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>NVIDIA Cosmos-H-Dreams：为手术机器人带来实时生成式仿真</title>
-      <link>https://huggingface.co/blog/nvidia/cosmos-h-dreams</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/cosmos-h-dreams</guid>
-      <pubDate>Mon, 27 Jul 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：NVIDIA Cosmos-H-Dreams: Bringing Real-Time Generative Simulation to Surgical Robotics</description>
-      <content:encoded><![CDATA[<p>手术机器人正快速从遥操作迈向能力越来越强的视觉-语言-动作（vision-language-action）策略。但评估和训练这些系统仍然很困难。实体机器人平台运行成本高、实验复现缓慢，失败还可能损坏器械或生物组织。传统仿真器提供了更安全的替代方案，但手术场景极其难以建模：可形变组织、精细的器械交互、镜面高光表面、缝合线、缝合针、烟雾和遮挡，样样都是难题。</p>
-<p>世界基础模型（world foundation model）提供了另一条路径。它们不必手工编写每个物体和物理交互，而是直接从同步的视频与机器人运动学数据中学习视觉动力学。NVIDIA 的 <a href="https://huggingface.co/nvidia/Cosmos-H-Surgical-Simulator">Cosmos-H-Surgical-Simulator</a> 已经证明了这条路可行：从初始场景和一段机器人动作序列生成未来的手术视频。它在 <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Open-H-Embodiment">Open-H-Embodiment</a> 生态中实现了快于真实物理速度的评估和合成数据生成。</p>
-<p>今天，我们介绍下一步：<a href="https://github.com/isaac-for-healthcare/Cosmos-H-Dreams">Cosmos-H-Dreams</a>——一个面向手术机器人的实时、动作条件化生成式仿真器。Cosmos-H-Dreams 把 Cosmos-H-Surgical-Simulator 的能力蒸馏进一个因果式、少步数的学生模型，并通过 <a href="https://github.com/NVIDIA/flashdreams">FlashDreams</a>（NVIDIA 的加速流式推理库）提供服务。在单块 NVIDIA RTX PRO 6000 GPU 上运行，得到的是一个可以由人或学习型策略在闭环中实时控制的交互环境。</p>
-<h2>1. 从手术世界模型到交互式仿真器</h2>
-<p><a href="https://huggingface.co/nvidia/Cosmos-H-Surgical-Simulator">Cosmos-H-Surgical-Simulator</a> 是一个动作条件化的世界基础模型，基于 NVIDIA <a href="https://huggingface.co/nvidia/Cosmos-Predict2.5-2B">Cosmos-Predict2.5-2B</a> 构建，并在 <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Open-H-Embodiment">Open-H-Embodiment</a> 数据集上做了后训练。给定一张手术上下文帧和一段未来的机器人轨迹，它生成展示这些动作可能带来的视觉后果的视频。这使它适用于离线策略评估和合成数据生成：可以把录制或策略生成的轨迹发给模型，生成对应的 rollout，然后在物理机器人上不必反复执行动作的情况下检查结果或打分。</p>
-<p>Cosmos-H-Dreams 把模型带入实时领域。从 Cosmos-H-Surgical-Simulator 学到的多本体（multi-embodiment）手术先验出发，我们针对 da Vinci Research Kit（dVRK）桌面缝合场景对模型做特化，并将其蒸馏成一个自回归生成场景的因果学生模型。发布的模型接收一帧初始 RGB 图像和实时的机器人运动学流，然后先产出下一段帧块，再继续处理下一个动作块。</p>
-<p>我们还与 CMR Surgical 和 Cambridge Consultants 合作，把 Cosmos-H-Dreams 集成到 Versius 外科控制器中，在 Versius 平台上实现了实时运行，展示了它的通用性。</p>
-<h2>2. 为实时而蒸馏 Cosmos-H-Surgical-Simulator</h2>
-<p>关键挑战在于：在保住有价值的手术动力学的同时，把生成成本降下来。Cosmos-H-Dreams 使用一条为长自回归 rollout 设计的教师-学生训练管线。</p>
-<h3>2.1. 手术教师模型</h3>
-<p>双向教师模型从 Cosmos-H-Surgical-Simulator 的 Open-H 检查点出发，该检查点使用统一的 44 维动作表示。对于发布的 dVRK 桌面模型，双臂 dVRK 的动作内容（由末端执行器的相对平移、旋转和夹爪状态组成）被映射进这一统一表示。</p>
-<p>随后在 JHU dVRK 桌面数据混合集上对教师做微调，其中包括成功演示，也有失败和分布外片段——如掉针、投针未接、打结失败等。这些失败很重要：一个用于评估策略的仿真器必须能复现糟糕动作的后果，而不只是理想演示。</p>
-<p>为提高长 rollout 的稳定性，训练过程逐步延长教师的时间视野。我们从 12 帧的视野开始训练，逐步增加到 72 帧。每次提升视野长度时，都用预训练权重重新初始化当前已热身的模型。</p>
-<h3>2.2. 因果预热</h3>
-<p>先把教师模型的去噪轨迹预先计算并缓存。学生模型从教师初始化，并被训练以模仿这些缓存轨迹。这个预热阶段让学生先学会使用因果注意力和流式键值缓存（KV cache），之后才开始从自身生成的历史中学习。</p>
-<h3>2.3. 自强制蒸馏</h3>
-<p>自回归模型有一个经典问题：训练时它们看到的是干净的、真实上下文的上下文，而部署时必须以自身不完美的输出为条件。于是小误差会随时间不断累积。</p>
-<p>Cosmos-H-Dreams 用 <a href="https://arxiv.org/abs/2506.08009"><strong>自强制蒸馏（self-forcing distillation）</strong></a>来应对这种失配。训练时，学生使用自己生成的上下文向前 rollout；冻结教师提供的分布匹配监督把这些自生成的 rollout 引向真实的手术视频。这让学生提前适应交互式推理时将遇到的同样条件。</p>
-<p>得到的模型支持少步扩散——每个潜帧最少只需两步去噪，而不像完整教师那样需要多步过程。它把教师的先验手术知识与流式所需的因果结构结合在了一起。</p>
-<h2>3. FlashDreams：实时推理引擎</h2>
-<p>模型蒸馏只是实时故事的一部分。Cosmos-H-Dreams 通过 <a href="https://github.com/NVIDIA/flashdreams">FlashDreams</a> 提供服务——这是一个面向自回归世界模型与视频模型的加速推理库。</p>
-<p>FlashDreams 通过多项互补优化把蒸馏后的学生变成低延迟流式系统，例如流式 KV cache、CUDA Graph 捕获和模型编译。</p>
-<p>这些技术合力把蒸馏后的手术世界模型微调版，从 Cosmos-H-Surgical-Simulator 标准推理约每秒十帧的水平，提升到在单块 <strong>NVIDIA RTX PRO 6000</strong> 上的交互式运行水平（约每秒 160 帧）。</p>
-<p>Cosmos-H-Dreams 还提供了把&quot;生成&quot;变成&quot;交互&quot;的人机接口。浏览器客户端可以通过 WebRTC 发送键盘指令并接收生成的帧。Meta Quest 客户端可以把头显控制器的追踪动作映射为机器人动作，并通过 WebXR 显示合成场景。同一个模型也可以接入一个学习型手术策略，在闭环中交换生成的观察和预测的动作。</p>
-<h2>4. 适配你自己的数据</h2>
-<p>虽然 Cosmos-H-Dreams 包含一个桌面缝合的预训练检查点，但系统设计上可扩展到你自己的本体（embodiment）。要为你自己的数据集训练一个实时学生模型，我们在<a href="https://github.com/NVIDIA-Medtech/Cosmos-H-Surgical-Simulator/blob/main/docs/tutorial_teacher_training_and_self_forcing.md">分步指南</a>中提供了教师微调和自强制蒸馏的完整配方。</p>
-<h2>5. 下一步：走向闭环的手术 Physical AI</h2>
-<p>Cosmos-H-Dreams 为手术仿真开辟了新疆界：从真实机器人数据中学习、响应快到足以让人&quot;身处其中&quot;的环境。</p>
-<p>眼前的下一步是评估超越视觉质量的内容。一个有用的手术仿真器必须对动作做出正确响应、在长 rollout 中保持器械和场景结构，并支持能迁移到实体机器人的结论。这催生了一系列新的闭环基准：器械尖端到达与位姿精度、夹爪循环保真度、空闲稳定性、反事实动作多样性、长程漂移，以及仿真与真实策略结果的一致性。</p>
-<p>实时世界模型还可以成为手术策略研发的积极伙伴。它们可以按需生成罕见失败案例、为强化学习或模仿学习提供可扩展环境，并实现新策略的快速评估——而不必把每个实验都绑在稀缺的机器人硬件上。</p>
-<p>更远的将来，实时仿真将解锁一系列下游应用，例如延迟感知的远程手术——世界模型有助于维持更稳定的显示；或是交互式手术预演、术式规划和术中决策支持。Cosmos-H-Dreams 是一个研发平台，不是诊断系统，不是术中影像的替代品，也不是实体手术机器人的控制器。但它为安全地探索这些可能性提供了基础。</p>
-<p>随着模型保真度、时间稳定性和硬件效率持续提升，实时生成式仿真可以帮助把外科医生教育、合成数据生成、策略训练和策略评估连接在同一个共享的 Physical AI 环境中。</p>
-<h2>6. 立即开始</h2>
-<p>探索 Cosmos-H-Dreams 背后的模型、数据和运行时：</p>
-<ul><li><strong>Cosmos-H-Dreams 代码与示例：</strong> <a href="https://github.com/isaac-for-healthcare/Cosmos-H-Dreams">GitHub 仓库</a></li><li><strong>Cosmos-H-Dreams 模型：</strong> <a href="https://huggingface.co/nvidia/Cosmos-H-Dreams">Hugging Face 检查点</a></li><li><strong>Cosmos-H-Surgical-Simulator：</strong> <a href="https://huggingface.co/nvidia/Cosmos-H-Surgical-Simulator">Hugging Face 模型</a>和 <a href="https://github.com/NVIDIA-Medtech/Cosmos-H-Surgical-Simulator">GitHub 仓库</a></li><li><strong>适配你自己的数据：</strong> <a href="https://github.com/NVIDIA-Medtech/Cosmos-H-Surgical-Simulator/blob/main/docs/tutorial_teacher_training_and_self_forcing.md">教师微调与自强制蒸馏分步配方</a></li><li><strong>Open-H-Embodiment：</strong> <a href="https://huggingface.co/datasets/nvidia/PhysicalAI-Robotics-Open-H-Embodiment">Hugging Face 数据集</a></li><li><strong>FlashDreams：</strong> <a href="https://github.com/NVIDIA/flashdreams">GitHub 仓库</a></li><li><strong>NVIDIA Cosmos-Predict2.5：</strong> <a href="https://github.com/nvidia-cosmos/cosmos-predict2.5">GitHub 仓库</a></li><li><strong>Cosmos-Surg-dVRK：</strong> 基于世界基础模型的手术机器人策略学习自动在线评估（<a href="https://arxiv.org/abs/2510.16240">arXiv 论文</a>）</li></ul>
-<p>Cosmos-H-Dreams 将动作条件化的手术世界建模带入实时回路，为人与策略创造了一个练习、探索、生成数据并评估&quot;接下来会发生什么&quot;的全新环境。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

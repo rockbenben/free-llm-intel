@@ -62,6 +62,16 @@
 <p>联系我们开始使用</p>]]></content:encoded>
     </item>
     <item>
+      <title>MoE at Scale: Making Sparse Models Fast on Real Hardware</title>
+      <link>https://www.cerebras.ai/blog/moe-guide-scale</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/moe-guide-scale</guid>
+    </item>
+    <item>
+      <title>MoE Math Demystified: What Does 8x7B Actually Mean?</title>
+      <link>https://www.cerebras.ai/blog/moe-guide-calculator</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/moe-guide-calculator</guid>
+    </item>
+    <item>
       <title>从头开始的分类推理</title>
       <link>https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up</guid>
@@ -415,6 +425,11 @@
 <p>Cerebras 用一种逆向思路消除这种低效的数据搬运：我们在每片晶圆大小的芯片上集成 44 GB 的 SRAM。权重留在片上，token 在跨晶圆流水化的模型层之间无中断地流动。这一技术路线随模型规模平滑扩展，为未来前沿模型持续保持速度优势铺平了道路。</p>
 <h3><strong>Ultrafast：现已开启限量预览</strong></h3>
 <p><a href="https://openai.com/index/previewing-ultrafast/">GPT-5.6 Sol</a> 的 Ultrafast 模式今天面向一小部分精选客户开启限量预览。随着容量增长，访问范围将持续扩大。<a href="https://www.cerebras.ai/openai-ultrafast-signup">订阅获取最新动态。</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Debugging Dead MoE Models: A Step-by-Step Guide</title>
+      <link>https://www.cerebras.ai/blog/moe-guide-debug</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/moe-guide-debug</guid>
     </item>
     <item>
       <title>用好 GPT-5.6：Sol、Terra 与 Luna</title>
@@ -2353,134 +2368,6 @@
 <p>用驱动 Rox agentic 工作流的同一套基础设施，体验实时 AI 性能。</p>
 <p>Cerebras Inference 现已作为全托管服务在 AWS Marketplace 上线。</p>
 <p>👉 <a href="https://aws.amazon.com/marketplace/pp/prodview-ph4bdvplhhz3o?sr=0-1&amp;ref_=beagle&amp;applicationId=AWSMPContessa"><strong>在 AWS Marketplace 上探索 Cerebras Inference →</strong></a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>用 Docker 化执行环境扩展 SWE Agent 数据收集</title>
-      <link>https://www.cerebras.ai/blog/scaling-swe-agent-data-collection-with-dockerized-environments-for-execution</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/scaling-swe-agent-data-collection-with-dockerized-environments-for-execution</guid>
-      <description>原文标题：Scaling SWE Agent Data Collection with Dockerized Environments for Execution</description>
-      <content:encoded><![CDATA[<p>Nov 24 2025</p>
-<h1>用 Docker 化执行环境扩展 SWE Agent 数据收集</h1>
-<p>Vijay Srinivas</p>
-<p>作者：<a href="https://www.linkedin.com/in/gune-s-54892643/">Gune S</a>、<a href="https://www.linkedin.com/in/sahil-lathiya-5255741a9/">Sahil Lathiya</a>、<a href="https://www.linkedin.com/in/apoorv-pandey-a13692116/">APOORV PANDEY</a>、<a href="https://www.linkedin.com/in/mritunjai-chandra/">Mritunjai Chandra</a>、<a href="https://www.linkedin.com/in/vijay-srinivas-h/">Vijay Srinivas</a>、<a href="https://www.linkedin.com/in/ganesh-venkatesh/">Ganesh Venkatesh</a></p>
-<h3>引言</h3>
-<p>我们专注于构建高质量 agentic 流程训练平台，包括对强化学习（RL）、数据集和 ML 配方（recipes）的支持。几周前我们发布了 RL 平台，而这个项目代表我们的数据集基础设施计划。</p>
-<h3>为什么这很重要</h3>
-<p><strong>挑战</strong>：训练面向软件工程的有效 AI agent 需要：</p>
-<ul><li><strong>高质量数据集</strong>：多样化的优质语料，包含 PR 标题/描述、issue 标题/描述、base commit、补丁、单元测试文件，以及 GitHub 提供的其他元数据</li><li><strong>可复现环境</strong>：跨不同仓库一致的执行环境</li><li><strong>高质量信号</strong>：用于学习的清晰通过/失败信号（FAIL_TO_PASS 测试）</li><li><strong>规模</strong>：数千个多样化的真实软件工程任务</li><li><strong>验证</strong>：通过正规测试确证过的测试结论</li></ul>
-<p><strong>我们的方案</strong>：我们的数据策展流水线加仓库沙箱生成器提供：</p>
-<ul><li><strong>数据策展流水线</strong>：内建对仓库的查询能力，提取其结构、依赖，以及训练 SWE agent 所需的各类字段</li><li><strong>自动化代码执行基础设施</strong>：处理复杂的依赖解析与环境搭建</li><li><strong>丰富元数据</strong>：内嵌用于训练信号的测试分类</li><li><strong>可移植性</strong>：处处可运行的自包含 Docker 镜像</li></ul>
-<h3>对 Agentic AI 开发的影响</h3>
-<p>这套基础设施使得以下成为可能：</p>
-<ul><li><strong>监督学习</strong>：在带清晰前后状态的、经过验证的 bug 修复上训练模型</li><li><strong>强化学习</strong>：提供带奖励信号（测试结果）的可执行环境</li><li><strong>评估</strong>：衡量 agent 表现的标准化基准</li><li><strong>研究</strong>：跨不同方法的可复现实验</li></ul>
-<h3>规模化愿景</h3>
-<p>我们的方法论被设计为可<strong>数量级</strong>扩展：</p>
-<ul><li><strong>当前能力</strong>：全自动化处理 1000+ 实例</li></ul>
-<p>我们正在为面向软件工程 AI agent 的最大规模高质量数据集打地基。</p>
-<h3>数据集收集方法论</h3>
-<p>为构建高质量、多样化的真实软件项目语料，我们从三条互补的流水线获取仓库：PyPI 关联项目、高影响力 GitHub 仓库，以及多模态代码库。每条流水线都设定了严格的质量与活跃度阈值，确保只纳入成熟、协作开发的项目。</p>
-<ul><li><strong>基于 PyPI 的仓库实例。</strong>我们从与 PyPI 包关联的仓库入手，聚焦社区参与度高的项目。要求仓库以 Python 为主（≥60% 代码量）并展现有意义的开发活跃度：至少 100 个 pull request 或 issue、100 个 fork。应用这些过滤并再做一次去污染（decontamination）后，这条流贡献了约 <strong>107,000 个精选仓库实例</strong>。</li><li><strong>基于 GitHub Star 的仓库实例。</strong>为捕捉广泛采用、有影响力的项目，我们另行按 GitHub 热度收集仓库。只考虑至少 10,000 star、且有明确活跃维护证据（至少 100 个 PR 或 issue、100 个 fork）的仓库。套用同样的 ≥60% Python 要求与去污染，再得 <strong>50,000 个高质量实例</strong>。</li><li><strong>多模态仓库实例。</strong>最后，为把数据集扩展到纯 Python 项目之外，我们纳入了将 Python 与其他语言或数据模态结合的多模态仓库。使用同样的活跃度标准（≥100 PR/issue 且 ≥100 fork）与 ≥60% Python 阈值，我们从一个精选的 <strong>700 个多模态仓库</strong>集合中提取了 <strong>3,500 个实例</strong>。</li></ul>
-<p>这些流水线一起确保了跨包生态、热门开源项目和丰富多模态代码库的广泛覆盖，产出适合下游分析与模型训练的、均衡且过滤严格的数据集。</p>
-<h3>数据集统计</h3>
-<p>下面是每个数据集实例所捕获关键字段的速览。</p>
-<h3>数据集对比与基准</h3>
-<h3>代码执行环境的架构</h3>
-<p><strong>代码执行平台总览</strong></p>
-<p>该代码执行平台对 Python 仓库进行端到端的差分测试自动化：搭建隔离工作区，分析仓库结构与依赖，生成优化过的 dockerfile，构建环境并用自动的 LLM 修复处理构建失败。随后以迭代自动纠错的方式做稳健的测试发现，在隔离的 docker 运行中分别执行基线测试与打补丁后的测试，比对结果，把测试分类为 FAIL_TO_PASS 或 PASS_TO_PASS。一个&quot;反转&quot;阶段通过撤销主补丁重新校验分类，确保准确。最终，系统产出完整工件，包括日志、docker 文件、摘要，以及捕获整个构建、测试与差分分析生命周期的详细 JSON 结果。</p>
-<p><strong>对技术细节感兴趣？</strong>欢迎联系我们，探讨在 agentic 代码生成与面向软件工程的沙箱执行上的合作机会。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>用强化学习扩展代码修复 Agent：为真实仓库扩展 OpenHands</title>
-      <link>https://www.cerebras.ai/blog/scaling-code-repair-agents-with-reinforcement-learning-extending-openhands-for-real-world</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/scaling-code-repair-agents-with-reinforcement-learning-extending-openhands-for-real-world</guid>
-      <description>原文标题：Scaling Code-Repair Agents with Reinforcement Learning: Extending OpenHands for Real-World Repositories</description>
-      <content:encoded><![CDATA[<p>Nov 24 2025</p>
-<h1>用强化学习扩展代码修复 Agent：为真实仓库扩展 OpenHands</h1>
-<p>Gokul Ramakrishnan</p>
-<p>作者：<a href="https://www.linkedin.com/in/harshguptashnd/">Harsh Gupta</a>、<a href="https://www.linkedin.com/in/nishit-n-b198101b5/">Nishit Neema</a>、<a href="https://www.linkedin.com/in/shivashish-naithani-36a9517a/">Shivashish Naithani</a>、<a href="https://www.linkedin.com/in/srinjoy-mukherjee/">Srinjoy Mukherjee</a>、<a href="https://www.linkedin.com/in/sapanhshah/">Sapan Shah</a>、<a href="https://www.linkedin.com/in/davidlbick/">David Bick</a>、<a href="https://www.linkedin.com/in/gramakri/">Gokul Ramakrishnan</a>、<a href="https://www.linkedin.com/in/ganesh-venkatesh/">Ganesh Venkatesh</a></p>
-<h3>引言</h3>
-<p>训练有效的代码修复 agent 需要的不只是大语言模型——它还需要一套稳健的基础设施，能够高效、大规模地与实际代码库交互。在构建了一个以 Docker 镜像打包的真实&quot;issue-解决&quot;实例全景数据集之后，我们面临一个关键挑战：像 OpenHands 这样的现有 agentic 框架与基准特有的假设深度耦合，无法用于大规模强化学习（RL）训练循环。</p>
-<p>本文详细记录我们的技术旅程：把 OpenHands 从一个 SWE-Bench 评估工具，改造成一个能处理数千个多样化 Python 仓库的通用 RL 训练平台。</p>
-<h3>挑战：挣脱基准的束缚</h3>
-<p>OpenHands 通过其 CodeActAgent 提供了精致的 agentic 脚手架，但它的评估流水线是专门为 SWE-Bench Verified 架构的。这种紧耦合体现在多个方面：</p>
-<ul><li><strong>硬编码的仓库假设</strong>：固定的目录结构和预定义元数据 schema</li><li><strong>静态的环境期望</strong>：依赖 SWE-Bench 的 harness 工具</li><li><strong>不灵活的评估流程</strong>：不支持任意 Docker 镜像或自定义测试配置</li></ul>
-<p>我们的数据集涵盖从 PyPI 和 GitHub 抓取数千个 Python 仓库，提出了根本不同的需求。每个仓库都自带：</p>
-<ul><li>独特的项目结构与构建系统</li><li>自定义测试框架与配置</li><li>各异的依赖管理方式</li><li>仓库特定的元数据格式</li></ul>
-<h3>架构重设计：通用化评估流水线</h3>
-<h3>动态元数据加载</h3>
-<p>我们彻底重构了评估工作流，以消除对 SWE-Bench Verified 特定假设的依赖。新架构：</p>
-<ul><li><strong>动态加载任意 Docker 镜像</strong>作为问题实例</li><li><strong>运行时解析元数据</strong>，包括：</li></ul>
-<ul><li>基线 commit SHA</li><li>失败测试的标识</li><li>通过测试套件的规格</li><li>测试运行器配置（pytest 等）</li><li>仓库特定的环境变量</li></ul>
-<ol><li><strong>在完全隔离的容器化环境中执行测试</strong></li></ol>
-<ol><li><strong>报告与 RL 奖励信号兼容的结构化通过/失败结果</strong></li></ol>
-<p>这一转变实际上把 OpenHands 变成了代码修复任务的<strong>通用评估引擎</strong>，只需极少配置即可在任何仓库上运行。</p>
-<h3>优化：统一的 Rollout 架构</h3>
-<h3>容器重复加载问题</h3>
-<p>最初的 OpenHands 设计把补丁生成与评估分离成独立的工作流。每一步都会：</p>
-<ul><li>从磁盘加载 Docker 镜像（典型大小约 8GB）</li><li>初始化新的容器运行时</li><li>设置仓库环境</li><li>执行操作</li><li>拆除容器</li></ul>
-<p>对中等大小的 Docker 镜像，这种重复每个实例引入约 <strong>3 分钟开销</strong>——对每次训练迭代要生成数千条 rollout 的大规模 RL 训练来说完全不可行。</p>
-<h3>单上下文 Rollout 系统</h3>
-<p>我们的方案实现了一个<strong>统一工作流</strong>，在整个 agent 轨迹期间维持一个持久运行时上下文：</p>
-<p><strong>关键架构改动：</strong></p>
-<ul><li><strong>单次镜像加载</strong>：Docker 镜像在 rollout 初始化时只加载一次</li><li><strong>持久容器</strong>：单个容器贯穿 agent 的全部动作</li><li><strong>有状态环境</strong>：仓库状态在编辑与评估之间保留</li><li><strong>多轮交互支持</strong>：agent 可以迭代地</li></ul>
-<ul><li>生成代码编辑</li><li>增量应用补丁</li><li>运行测试验证改动</li><li>无需环境重新初始化即可获得反馈</li></ul>
-<h3>性能影响</h3>
-<p>这一架构改动带来戏剧性的效率提升：</p>
-<ul><li><strong>延迟下降</strong>：容器运行时只有一次性成本</li><li><strong>可扩展性与资源效率</strong>：支持在计算集群上并行生成 rollout</li></ul>
-<h3>使能多步强化学习</h3>
-<p>我们扩展后的 OpenHands fork 现在为通过 RL 训练代码修复 agent 提供了所有必需组件：</p>
-<h3>1. 多轮交互支持</h3>
-<p>Agent 可以参与长时间调试会话，进行多次编辑并在每一步获得反馈——这是学会复杂修复策略的关键。</p>
-<h3>2. 快速 Rollout 生成</h3>
-<p>更短的 rollout 时间支持训练中的快速迭代，兼容以下技术：</p>
-<ul><li>GRPO</li><li>CORPO</li></ul>
-<h3>3. 稀疏奖励评估</h3>
-<p>来自测试套件的非过即败二值信号提供清晰的学习目标，同时避免奖励塑形带来的偏差。</p>
-<h3>4. 完整的轨迹日志</h3>
-<p>详细的执行轨迹记录：</p>
-<ul><li>Agent 的推理步骤</li><li>代码编辑及其影响</li><li>测试结果</li><li>错误信息与堆栈跟踪</li></ul>
-<p>这些丰富数据支持离线分析、课程学习和奖励模型训练。</p>
-<h3>结果与未来方向</h3>
-<p>把我们精心构建的真实 issue 数据集与这套扩展后的 OpenHands 基础设施结合，我们已经建立了一条完整的大规模代码修复 agent 训练流水线。当前实验聚焦于：</p>
-<ul><li>在多样化 Python 仓库上用 RL 对 <strong>Qwen3 coder-30B 做后训练</strong></li><li>逐步提升问题难度的<strong>课程学习策略</strong></li><li>测试跨代码库迁移能力的<strong>多仓库泛化</strong></li><li>在 SWE-Bench 等成熟基准上的<strong>榜单评估</strong></li></ul>
-<p>早期结果表明，在多步修复任务上，RL 训练出的模型显著胜过监督微调基线——尤其在那些需要迭代调试和测试驱动打磨的问题上。</p>
-<h3>技术贡献总结</h3>
-<p>我们的工作交付了三项关键技术贡献：</p>
-<ul><li><strong>通用评估引擎</strong>：移除基准特有约束，支持任意仓库</li><li><strong>统一 rollout 架构</strong>：消除容器重复加载，开销降低约 95%</li><li><strong>RL-ready 基础设施</strong>：提供干净的 API，可与现代 RL 框架集成</li></ul>
-<p>这些进展把 OpenHands 从一个专用基准工具，转变为在真实软件工程任务上训练下一代代码修复 agent 的可扩展平台。</p>
-<h3>致谢</h3>
-<p>这项工作建立在 <a href="https://www.linkedin.com/company/openhands-ai/">OpenHands</a> 团队提供的优秀地基之上。我们的修改旨在补充并扩展他们的框架，同时保持与原始代码库的兼容。</p>
-<p><strong>对技术细节感兴趣？</strong>欢迎联系我们，探讨在 agentic 代码生成与面向软件工程的强化学习上的合作机会。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>全球最快的 GLM-4.6——现已登陆 Cerebras</title>
-      <link>https://www.cerebras.ai/blog/glm</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/glm</guid>
-      <description>原文标题：The world’s fastest GLM-4.6 – now available on Cerebras</description>
-      <content:encoded><![CDATA[<p>Nov 18 2025</p>
-<h1>全球最快的 GLM-4.6——现已登陆 Cerebras</h1>
-<p>James Wang</p>
-<p>今天，Cerebras 上线 GLM-4.6——我们在 Cerebras Inference API 上迄今最强的模型。GLM-4.6 在推理、工具使用和编码方面全面升级，把卓越的智能与 Cerebras 上无人能敌的 1,000 tokens/秒 速度结合在一起。对许多任务，GLM-4.6 的输出可与 Sonnet 4.5 媲美，而在 Cerebras 上快 17 倍、便宜 25%。GLM-4.6 今天即可用：按量付费的开发者档位起步价 $10，或 Cerebras Code 套餐起步价每月 $50。</p>
-<h3>GLM-4.6</h3>
-<p>GLM-4.6 被广泛认为是全球顶尖的开放编码模型之一。GLM-4.5 是 <a href="https://gorilla.cs.berkeley.edu/leaderboard.html">Berkeley Function Calling Leaderboard</a>（BFCL）上工具调用排名第一的模型，领先于 Opus 4.1。基于数千张用户投票，GLM-4.6 在 LM Arena 的网页开发<a href="https://lmarena.ai/leaderboard">排行榜</a>上与 Sonnet 4.5 表现相当。</p>
-<p>在真实使用中，开发者总结出四大核心优势：</p>
-<ul><li>工具调用的可靠性——精准执行多步工具链，干净地传递结构化参数，跨调用维持状态，避免早期开放模型常见的循环或 JSON 格式错误。</li><li>网页开发的流畅度——生成全栈、可直接运行的应用——从 React + Tailwind 前端到 Node 和 Flask 后端——文件结构整洁、几乎不需要语法修补，跨文件的上下文连贯性强。</li><li>Token 效率——在 zAI 的 CC-Bench 套件中，GLM-4.6 比 Kimi K2-0905 少用 26% 的 token，比 DeepSeek V3.1 Terminus 少用 31%，是效率最高的开放模型之一。</li><li>代码编辑准确率——根据头部 agentic IDE Cline 的实时遥测数据，GLM-4.6 在编辑既有代码上达到 94.5% 准确率——逼近 Sonnet 4.5 的 96.2%。</li></ul>
-<p>简而言之，GLM-4.6 是一次里程碑式的开放权重发布，收窄了领先开放与闭源编码模型在推理、工具使用和编码上的差距。</p>
-<h3><strong>Cerebras 上的 GLM-4.6——1,000 TPS 的编码</strong></h3>
-<p>GLM-4.6 延续了 Cerebras 作为全球最快推理服务商的记录。上图展示了领先的开放与闭源编码模型，每个都使用其最快的服务商。Cerebras 运行 GLM-4.6 超过 1,000 tokens/秒——比最快的 Kimi K2 服务商快 3 倍以上，比 Sonnet 4.5 快近 20 倍。过去要花两三分钟的代码编辑，现在在 Cerebras 上几秒完成。开发者表示，Cerebras 上的快速代码生成让他们不必一边等模型一边分心切换任务，开发变得更有吸引力、更愉悦。</p>
-<p><a href="https://x.com/simonfarshid/status/1987777400214843670">https://x.com/simonfarshid/status/1987777400214843670</a></p>
-<h3><strong>最佳性价比</strong></h3>
-<p>对于高端产品，用户常常为适度的性能提升支付不成比例的高价。例如，Ferrari 的 0-60 加速大约比 Camry 快 3 倍，价格却是 10 倍。Cerebras 比 GPU 服务商快 20 倍——但你付得起吗？</p>
-<p>尽管做出了跨越式领先的推理产品，我们的定价相对其他服务商只有合理的溢价。因此在性价比上，Cerebras 依然更划算。例如：</p>
-<ul><li>与 GPT-5 相比：Cerebras 贵 1.8 倍，但快 6 倍</li><li>与 Sonnet 4.5 相比：Cerebras 快 17 倍且便宜 25%</li></ul>
-<p>Cerebras 不只是快；相比更慢或更便宜的编码模型，它性价比更高，也更珍惜开发者的时间。</p>
-<h3><strong>今天即可以用，$10 起步</strong></h3>
-<p>GLM-4.6 今天起在我们所有产品线上可用，包括起步价仅 $10 的按量付费开发者档位。我们的开发者档位包含与 Anthropic、OpenAI 相当的宽松速率限制，并得到 Cline、VS Code、OpenCode、RooCode 等工具的支持。</p>
-<p>GLM-4.6 同样上线 Cerebras Code——我们为每天使用编码模型的开发者推出的热门月度订阅套餐。根据用户反馈，我们自上线以来已大幅提升 token 限额，让这些套餐成为爱好者与职业 coder 的最优选择：</p>
-<ul><li>Code Pro——每月 $50：100 万 TPM，每日 2400 万 tokens</li><li>Code Max——每月 $200：150 万 TPM，每日 1.2 亿 tokens</li></ul>
-<p>这些套餐比按量付费节省显著，让 Cerebras 成为全职、高用量开发的务实之选。</p>
-<p>Cerebras 上的 GLM-4.6 兼具接近前沿的智能、世界级的工具调用和无与匹敌的速度。它不是在所有任务上取代 Sonnet 4.5，而是与之互补，让开发者灵活地选对模型干对活。有了 Cline、OpenCode 这类让模型切换无缝的平台，开发者可以把 GLM-4.6 用于 80% 的编码任务，剩下的交给深度推理模型——既省时间又省钱。</p>
-<p>今天就试试 Cerebras 上的 <a href="https://cloud.cerebras.ai/">GLM-4.6</a>。一如既往，欢迎在 <a href="https://discord.com/invite/q6bZcMWJVu">Discord</a> 或 <a href="https://x.com/cerebras">X</a> 上给我们反馈。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -61,6 +61,16 @@
 <p>Contact us to get started</p>]]></content:encoded>
     </item>
     <item>
+      <title>MoE at Scale: Making Sparse Models Fast on Real Hardware</title>
+      <link>https://www.cerebras.ai/blog/moe-guide-scale</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/moe-guide-scale?li=1</guid>
+    </item>
+    <item>
+      <title>MoE Math Demystified: What Does 8x7B Actually Mean?</title>
+      <link>https://www.cerebras.ai/blog/moe-guide-calculator</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/moe-guide-calculator?li=1</guid>
+    </item>
+    <item>
       <title>Disaggregated Inference From The Ground Up</title>
       <link>https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up?li=1</guid>
@@ -410,6 +420,11 @@
 <p>Cerebras takes a contrarian approach to eliminating this inefficient data movement: we pack 44 GB of SRAM on each wafer-sized chip. Weights stay on-chip, and tokens flow uninterrupted through model layers pipelined across wafers. This technical approach scales smoothly with model size, paving the way for a continued speed advantage on future frontier models.</p>
 <h3><strong>Ultrafast: Now in Limited Preview</strong></h3>
 <p><a href="https://openai.com/index/previewing-ultrafast/">GPT-5.6 Sol </a>on Ultrafast mode is available in a limited preview today to a select group of customers. Access will expand as capacity grows. <a href="https://www.cerebras.ai/openai-ultrafast-signup">Sign up for updates.</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Debugging Dead MoE Models: A Step-by-Step Guide</title>
+      <link>https://www.cerebras.ai/blog/moe-guide-debug</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/moe-guide-debug?li=1</guid>
     </item>
     <item>
       <title>Getting the most out of GPT-5.6: Sol, Terra, and Luna</title>
@@ -2324,133 +2339,6 @@
 <p>Experience real-time AI performance with the same infrastructure that powers Rox’s agentic workflows.</p>
 <p>Cerebras Inference is available today as a fully managed service through AWS Marketplace.</p>
 <p>👉 <a href="https://aws.amazon.com/marketplace/pp/prodview-ph4bdvplhhz3o?sr=0-1&amp;ref_=beagle&amp;applicationId=AWSMPContessa"><strong>Explore Cerebras Inference on AWS Marketplace →</strong></a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Scaling SWE Agent Data Collection with Dockerized Environmen…</title>
-      <link>https://www.cerebras.ai/blog/scaling-swe-agent-data-collection-with-dockerized-environments-for-execution</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/scaling-swe-agent-data-collection-with-dockerized-environments-for-execution?li=1</guid>
-      <description>Full title: Scaling SWE Agent Data Collection with Dockerized Environments for Execution</description>
-      <content:encoded><![CDATA[<p>Nov 24 2025</p>
-<h1>Scaling SWE Agent Data Collection with Dockerized Environments for Execution</h1>
-<p>Vijay Srinivas</p>
-<p>By :<a href="https://www.linkedin.com/in/gune-s-54892643/">Gune S</a>,<a href="https://www.linkedin.com/in/sahil-lathiya-5255741a9/">Sahil Lathiya</a>,<a href="https://www.linkedin.com/in/apoorv-pandey-a13692116/">APOORV PANDEY</a>,<a href="https://www.linkedin.com/in/mritunjai-chandra/">Mritunjai Chandra</a>,<a href="https://www.linkedin.com/in/vijay-srinivas-h/">Vijay Srinivas</a>,<a href="https://www.linkedin.com/in/ganesh-venkatesh/">Ganesh Venkatesh</a></p>
-<h3>Introduction</h3>
-<p>We are focused on building a high-quality platform for agentic flow training, including support for Reinforcement Learning (RL), datasets, and ML recipes. We announced our RL platform a few weeks ago, and this project represents our dataset infrastructure initiative.</p>
-<h3>Why This Matters</h3>
-<p><strong>Challenge</strong>: Training effective AI agents for software engineering requires:</p>
-<ul><li><strong>High Quality Datasets</strong>: Diverse Corpus of high quality data which consist of PR title/description, issue title/description, base commit, patches, unit test files and other metadata provided by github</li><li><strong>Reproducible Environments</strong>: Consistent execution environments across different repositories</li><li><strong>High-Quality Signals</strong>: Clear pass/fail signals for learning (FAIL_TO_PASS tests)</li><li><strong>Scale</strong>: Thousands of diverse, real-world software engineering tasks</li><li><strong>Validation</strong>: Verified test outcomes with proper testing</li></ul>
-<p><strong>Our Solution</strong>: Our Data curation pipeline with the repository sandbox generator provides:</p>
-<ul><li><strong>Data Curation Pipeline</strong>: Built in support for querying repositories to extract their structure, dependencies and various fields required for training SWE agents</li><li><strong>Automated code execution Infrastructure</strong>: Handles complex dependency resolution and environment setup</li><li><strong>Rich Metadata</strong>: Embedded test classifications for training signals</li><li><strong>Portability</strong>: Self-contained Docker images that work anywhere</li></ul>
-<h3>Impact on Agentic AI Development</h3>
-<p>This infrastructure enables:</p>
-<ul><li><strong>Supervised Learning</strong>: Train models on verified bug fixes with clear before/after states</li><li><strong>Reinforcement Learning</strong>: Provide executable environments with reward signals (test outcomes)</li><li><strong>Evaluation</strong>: Standardized benchmarks for measuring agent performance</li><li><strong>Research</strong>: Reproducible experiments across different approaches</li></ul>
-<h3>Scalability Vision</h3>
-<p>Our methodology is designed to scale by<strong>orders of magnitude</strong>:</p>
-<ul><li><strong>Current Capability</strong>: Process 1000+ instances with full automation</li></ul>
-<p>We are building the foundation for the largest high-quality dataset for software engineering AI agents.</p>
-<h3>Dataset Collection Methodology</h3>
-<p>To construct a high-quality, diverse corpus of real-world software projects, we sourced repositories from three complementary pipelines: PyPI-linked projects, high-impact GitHub repositories, and multimodal codebases. Each pipeline was designed with strict quality and activity thresholds to ensure that only mature, collaboratively developed projects were included</p>
-<ul><li><strong>PyPI-Based Repository Instances.</strong>We began by identifying repositories associated with PyPI packages, focusing on projects with substantial community engagement. Repositories were required to be predominantly Python (≥60% of their codebase) and show meaningful development activity, with minimum thresholds of 100 pull requests or issues and 100 forks. After applying these filters and a subsequent decontamination pass, this stream contributed approximately<strong>107,000 curated repository instances</strong>.</li><li><strong>GitHub Star-Based Repository Instances.</strong>To capture widely adopted and influential projects, we separately collected repositories selected on the basis of GitHub popularity. Only repositories with at least 10,000 stars and clear evidence of active maintenance, at least 100 pull requests or issues and 100 forks were considered. Applying the same ≥60% Python requirement and decontamination produced an additional<strong>50,000 high-quality instances</strong>.</li><li><strong>Multimodal Repository Instances.</strong>Finally, to broaden the dataset beyond pure Python projects, we incorporated multimodal repositories that combine Python with other languages or data modalities. Using the same activity criteria (≥100 PRs/issues and ≥100 forks) and a ≥60% Python threshold, we extracted<strong>3,500 instances</strong>from a curated set of<strong>700 multimodal repositories</strong>.</li></ul>
-<p>Together, these pipelines ensure broad coverage across package ecosystems, popular open-source projects, and rich multimodal codebases, resulting in a balanced and rigorously filtered dataset suitable for downstream analysis and model training.</p>
-<h3>Dataset Statistics</h3>
-<p>Below is a quick reference to the key fields captured for each dataset instance.</p>
-<h3>Dataset Comparison &amp; Benchmarks</h3>
-<h3>Architecture of Code Execution Environment</h3>
-<p><strong>Code Execution Platform Overivew</strong></p>
-<p>This code execution platform automates end-to-end differential testing of Python repositories by setting up an isolated workspace, analyzing repository structure and dependencies, generating an optimized dockerfile, and building the environment with automatic LLM-based fixes for build failures. It then performs robust test discovery with iterative auto correction, executes baseline and patched tests in isolated docker runs, and compares results to classify tests as FAIL_TO_PASS or PASS_TO_PASS. A reversal phase rechecks classifications by undoing the main patch, ensuring accuracy. Finally, the system produces comprehensive artifacts which includes logs, docker files, summaries, and detailed JSON results capturing the full build, test, and differential-analysis lifecycle.</p>
-<p><strong>Interested in the technical details?</strong>Reach out to discuss collaboration opportunities in agentic code generation and sandboxed execution for software engineering.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Scaling Code-Repair Agents with Reinforcement Learning: Exte…</title>
-      <link>https://www.cerebras.ai/blog/scaling-code-repair-agents-with-reinforcement-learning-extending-openhands-for-real-world</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/scaling-code-repair-agents-with-reinforcement-learning-extending-openhands-for-real-world?li=1</guid>
-      <description>Full title: Scaling Code-Repair Agents with Reinforcement Learning: Extending OpenHands for Real-World Repositories</description>
-      <content:encoded><![CDATA[<p>Nov 24 2025</p>
-<h1>Scaling Code-Repair Agents with Reinforcement Learning: Extending OpenHands for Real-World Repositories</h1>
-<p>Gokul Ramakrishnan</p>
-<p>By: <a href="https://www.linkedin.com/in/harshguptashnd/">Harsh Gupta</a>,<a href="https://www.linkedin.com/in/nishit-n-b198101b5/">Nishit Neema</a>,<a href="https://www.linkedin.com/in/shivashish-naithani-36a9517a/">Shivashish Naithani</a>,<a href="https://www.linkedin.com/in/srinjoy-mukherjee/">Srinjoy Mukherjee</a>,<a href="https://www.linkedin.com/in/sapanhshah/">Sapan Shah</a>,<a href="https://www.linkedin.com/in/davidlbick/">David Bick</a>,<a href="https://www.linkedin.com/in/gramakri/">Gokul Ramakrishnan</a>,<a href="https://www.linkedin.com/in/ganesh-venkatesh/">Ganesh Venkatesh</a></p>
-<h3>Introduction</h3>
-<p>Training effective code-repair agents requires more than just large language models—it demands a robust infrastructure that can efficiently interact with real-world codebases at scale. After building a comprehensive dataset of real-world issue-resolution instances packaged as Docker images, we faced a critical challenge: existing agentic frameworks like OpenHands were tightly coupled to benchmark-specific assumptions that prevented their use in large-scale reinforcement learning (RL) training loops.</p>
-<p>This post details our technical journey in transforming OpenHands from a SWE-Bench evaluation tool into a general-purpose RL training platform capable of handling thousands of diverse Python repositories.</p>
-<h3>The Challenge: Breaking Free from Benchmark Constraints</h3>
-<p>OpenHands provides a sophisticated agentic scaffold through its CodeActAgent, but its evaluation pipeline was architected specifically for SWE-Bench Verified. This tight coupling manifested in several ways:</p>
-<ul><li><strong>Hard-coded repository assumptions</strong>: Fixed directory structures and predefined metadata schemas</li><li><strong>Static environment expectations</strong>: Dependency on SWE-Bench harness utilities</li><li><strong>Inflexible evaluation flow</strong>: No support for arbitrary Docker images or custom test configurations</li></ul>
-<p>Our dataset, spanning thousands of Python repositories scraped from PyPI and GitHub, presented fundamentally different requirements. Each repository brought its own:</p>
-<ul><li>Unique project structure and build systems</li><li>Custom test frameworks and configurations</li><li>Varying dependency management approaches</li><li>Repository-specific metadata formats</li></ul>
-<h3>Architecture Redesign: Generalized Evaluation Pipeline</h3>
-<h3>Dynamic Metadata Loading</h3>
-<p>We completely refactored the evaluation workflow to eliminate dependency on SWE-Bench Verified specific assumptions. The new architecture:</p>
-<ul><li><strong>Dynamically loads arbitrary Docker images</strong>representing problem instances</li><li><strong>Parses metadata at runtime</strong>including:</li></ul>
-<ul><li>Base commit SHA</li><li>Failing test identifiers</li><li>Passing test suite specifications</li><li>Test runner configuration (pytest etc.)</li><li>Repository-specific environment variables</li></ul>
-<ol><li><strong>Executes tests in containerized environments with full isolation</strong></li></ol>
-<ol><li><strong>Reports structured pass/fail outcomes compatible with RL reward signals</strong></li></ol>
-<p>This transformation effectively converts OpenHands into a<strong>general-purpose evaluation engine</strong>for code-repair tasks, capable of operating on any repository with minimal configuration</p>
-<h3>Optimization: Unified Rollout Architecture</h3>
-<h3>The Container Duplication Problem</h3>
-<p>The original OpenHands design separated patch generation and evaluation into independent workflows. Each step would:</p>
-<ul><li>Load the Docker image from disk (~8GB typical size)</li><li>Initialize a new container runtime</li><li>Set up the repository environment</li><li>Execute the operation</li><li>Tear down the container</li></ul>
-<p>For moderately-sized Docker images, this duplication introduced approximately<strong>3 minutes of overhead per instance</strong>—completely untenable for large-scale RL training where we need to generate thousands of rollouts per training iteration.</p>
-<h3>Single-Context Rollout System</h3>
-<p>Our solution implements a<strong>unified workflow</strong>that maintains a persistent runtime context throughout the entire agent trajectory:</p>
-<p><strong>Key architectural changes:</strong></p>
-<ul><li><strong>Single image load</strong>: Docker image loaded once at rollout initialization</li><li><strong>Persistent container</strong>: Single container maintained across all agent actions</li><li><strong>Stateful environment</strong>: Repository state preserved between edits and evaluations</li><li><strong>Multi-turn interaction support</strong>: Agent can iteratively</li></ul>
-<ul><li>Generate code edits</li><li>Apply patches incrementally</li><li>Run tests to validate changes</li><li>Receive feedback without environment reinitialization</li></ul>
-<h3>Performance Impact</h3>
-<p>This architectural change delivers dramatic efficiency improvements:</p>
-<ul><li><strong>Latency reduction</strong>: One time cost for container runtime</li><li><strong>Scalability and resource efficiency</strong>: Enables parallel rollout generation across compute cluster</li></ul>
-<h3>Enabling Multi-Step Reinforcement Learning</h3>
-<p>Our extended OpenHands fork now provides all essential components for training code-repair agents via RL:</p>
-<h3>1. Multi-Turn Interaction Support</h3>
-<p>Agents can engage in extended debugging sessions, making multiple edits and receiving feedback at each step—critical for learning complex repair strategies.</p>
-<h3>2. Fast Rollout Generation</h3>
-<p>Quicker rollout times enable rapid iteration during training, supporting techniques like:</p>
-<ul><li>GRPO</li><li>CORPO</li></ul>
-<h3>3. Sparse Reward Evaluation</h3>
-<p>Binary pass/fail signals from test suites provide clear learning objectives while avoiding reward shaping biases.</p>
-<h3>4. Comprehensive Trajectory Logging</h3>
-<p>Detailed execution traces capture:</p>
-<ul><li>Agent reasoning steps</li><li>Code edits and their impacts</li><li>Test execution results</li><li>Error messages and stack traces</li></ul>
-<p>This rich data supports offline analysis, curriculum learning, and reward model training.</p>
-<h3>Results and Future Directions</h3>
-<p>By combining our curated dataset of real-world issues with this extended OpenHands infrastructure, we've established a complete pipeline for training code-repair agents at scale. Current experiments focus on:</p>
-<ul><li><strong>Post-training Qwen3 coder-30B</strong>via RL on diverse Python repositories</li><li><strong>Curriculum learning strategies</strong>that gradually increase problem difficulty</li><li><strong>Multi-repository generalization</strong>testing transfer across codebases</li><li><strong>Leaderboard evaluation</strong>on established benchmarks like SWE-Bench</li></ul>
-<p>Early results indicate that RL-trained models significantly outperform supervised fine-tuning baselines on multi-step repair tasks, particularly on issues requiring iterative debugging and test-driven refinement.</p>
-<h3>Technical Contributions Summary</h3>
-<p>Our work delivers three key technical contributions:</p>
-<ul><li><strong>Generalized evaluation engine</strong>: Removes benchmark-specific constraints, enabling arbitrary repository support</li><li><strong>Unified rollout architecture</strong>: Eliminates container duplication, reducing overhead by ~95%</li><li><strong>RL-ready infrastructure</strong>: Provides clean APIs for integration with modern RL frameworks</li></ul>
-<p>These advances transform OpenHands from a specialized benchmark tool into a scalable platform for training next-generation code-repair agents on real-world software engineering tasks.</p>
-<h3>Acknowledgments</h3>
-<p>This work builds on the excellent foundation provided by the<a href="https://www.linkedin.com/company/openhands-ai/">OpenHands</a>team. Our modifications are designed to complement and extend their framework while maintaining compatibility with the original codebase.</p>
-<p><strong>Interested in the technical details?</strong>Reach out to discuss collaboration opportunities in agentic code generation and reinforcement learning for software engineering.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>The world’s fastest GLM-4.6 – now available on Cerebras</title>
-      <link>https://www.cerebras.ai/blog/glm</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/glm?li=1</guid>
-      <content:encoded><![CDATA[<p>Nov 18 2025</p>
-<h1>The world’s fastest GLM-4.6 – now available on Cerebras</h1>
-<p>James Wang</p>
-<p>Today, Cerebras is releasing GLM-4.6 — our most capable model yet on the Cerebras Inference API. GLM-4.6 brings major upgrades across reasoning, tool use, and coding, combining exceptional intelligence with an unmatched speed of 1,000 tokens per second on Cerebras. For many tasks, GLM-4.6 is comparable to Sonnet 4.5 in output while running 17x faster and 25% cheaper on Cerebras. GLM-4.6 is available today with our pay-as-you-go developer tier starting at $10 or our Cerebras Code plan starting at $50/month.</p>
-<h3>GLM-4.6</h3>
-<p>GLM-4.6 is widely regarded as one of the world’s top open coding models. GLM-4.5 is ranked #1 model for tool calling on the <a href="https://gorilla.cs.berkeley.edu/leaderboard.html">Berkeley Function Calling Leaderboard</a> (BFCL), ahead of Opus 4.1. GLM-4.6 performs on par with Sonnet 4.5 on LM Arena’s web-development <a href="https://lmarena.ai/leaderboard">leaderboard</a>, based on thousands of user votes.</p>
-<p>Across real-world usage, developers highlight four defining strengths:</p>
-<ul><li>Tool-calling reliability — Executes multi-step tool chains with precision, passing structured arguments cleanly, maintaining state across calls, and avoiding the looping or malformed-JSON errors common in earlier open models.</li><li>Web-development fluency — Generates full-stack, ready-to-run applications — from React + Tailwind front-ends to Node and Flask back-ends — with clean file structures, minimal syntax fixes, and strong contextual continuity across files.</li><li>Token efficiency — In zAI’s CC-Bench suite, GLM-4.6 used 26% fewer tokens than Kimi K2-0905 and 31% fewer than DeepSeek V3.1 Terminus, making it one of the most efficient open models available.</li><li>Code-editing accuracy — Based on live telemetry from Cline, a leading agentic IDE, GLM-4.6 achieved 94.5 % accuracy in editing existing code — approaching Sonnet 4.5’s 96.2 %.</li></ul>
-<p>In short, GLM-4.6 is a landmark open weight release, closing the gap between leading open and closed coding models for reasoning, tool use, and coding.</p>
-<h3><strong>GLM-4.6 on Cerebras – Coding at 1,000 TPS</strong></h3>
-<p>GLM-4.6 continues Cerebras’s track record of being the world’s fastest inference provider. The above chart shows leading open and closed coding models, using the fastest provider for each. Cerebras runs GLM-4.6 at over 1,000 tokens per second – more than 3× faster than the leading Kimi K2 provider, and nearly 20× faster than Sonnet 4.5. Code edits that previously took two or three minutes now complete in seconds on Cerebras. Developers say that fast code generation on Cerebras eliminates the need to multi-task while waiting for the model, making development more engaging and enjoyable.</p>
-<p><a href="https://x.com/simonfarshid/status/1987777400214843670">https://x.com/simonfarshid/status/1987777400214843670</a></p>
-<h3><strong>Best Price-Performance</strong></h3>
-<p>With high-end products, users often pay a disproportionate premium for a moderate performance improvement. For example, a Ferrari is roughly three times faster than a Camry in 0-60 acceleration but costs ten times as much. Cerebras is 20x faster than GPU-based providers, but can you afford it?</p>
-<p>Despite building a leapfrog inference product, we are priced at a reasonable premium to other providers. The result is that on a price-performance basis, Cerebras is still better value. For example:</p>
-<ul><li>Compared to GPT-5, Cerebras is 1.8x more expensive but 6x faster</li><li>Compared to Sonnet 4.5, Cerebras is 17× faster and 25% cheaper</li></ul>
-<p>Cerebras is not just fast, it’s better value and a better use of developers’ time than slower or cheaper coding models.</p>
-<h3>Available Today Starting at $10</h3>
-<p>GLM-4.6 is available today on all our offerings, including our pay-as-you-go developer tier starting at just $10. Our dev tier includes generous rate limits comparable to Anthropic and OpenAI and is supported in Cline, VS Code, OpenCode, RooCode, and others.</p>
-<p>GLM-4.6 is also available on Cerebras Code, our popular monthly subscription plans for developers who use coding models every day. Based on user feedback, we’ve significantly increased token limits since launch, making these the best options for enthusiasts and professional coders alike:</p>
-<ul><li>Code Pro — $50/month: 1 million TPM with 24M tokens per day</li><li>Code Max — $200/month: 1.5 million TPM with 120 million tokens per day</li></ul>
-<p>These plans deliver major savings over pay-as-you-go and make Cerebras a practical choice for full-time, high-volume development.</p>
-<p>GLM-4.6 on Cerebras combines near frontier intelligence, world class tool-calling, and unmatched speed. It doesn’t replace Sonnet 4.5 for every task but complements it, giving developers the flexibility to choose the right model for the job. With platforms like Cline and OpenCode making model-switching seamless, developers can use GLM-4.6 for 80% of coding tasks and turn to deeper-reasoning models for the rest — saving both time and money.</p>
-<p>Try <a href="https://cloud.cerebras.ai/">GLM-4.6</a> on Cerebras today. As always, we welcome your feedback on <a href="https://discord.com/invite/q6bZcMWJVu">Discord</a> or <a href="https://x.com/cerebras">X</a>.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

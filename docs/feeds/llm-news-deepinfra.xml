@@ -3,11 +3,17 @@
   <channel>
     <title>DeepInfra 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>DeepInfra 官方博客 / 更新日志归档（最近 50 条，共 29 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>DeepInfra 官方博客 / 更新日志归档（最近 50 条，共 30 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sat, 10 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 13 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Decision Models: The Fast Layer for AI Agents</title>
+      <link>https://deepinfra.com/blog/decision-models-ai-agent-infrastructure</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/decision-models-ai-agent-infrastructure</guid>
+      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>最佳 Qwen3.8-27B 推理提供商（2026）</title>
       <link>https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers</link>
@@ -69,36 +75,36 @@
       <guid isPermaLink="true">https://deepinfra.com/blog/qwen3-8-27b</guid>
       <pubDate>Fri, 09 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Qwen3.8-27B: Frontier-Level Vision-Language AI</description>
-      <content:encoded><![CDATA[<h1>Qwen3.8-27B：前沿级视觉语言AI</h1>
-<p>DeepInfra 发布于 2026.10.09</p>
-<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/qwen3.8-27b-vision-language.png" alt="Qwen3.8-27B：前沿级视觉语言AI"></p>
-<p>Qwen3.8-27B 是一个拥有 270 亿个参数的密集视觉语言模型，旨在缩小紧凑部署和前沿性能之间的差距。它专为复杂的多步骤任务而设计，包括编码、专业研究和长期代理工作流程。</p>
-<p>该模型将原生视觉编码器与 262,144 个令牌上下文窗口配对，可扩展至 1,000,000 个令牌。它可以读取文本和视觉数据，从 STEM 图表到小时尺度的视频。它适合构建自主代理或文档智能工具的团队，这些工具可以在同一请求中对图像和长文档进行推理。</p>
-<h2><strong>最新进展和架构</strong></h2>
-<p>Qwen3.8-27B 建立在 <a href="https://deepinfra.com/qwen">Qwen3.5 系列</a> 的架构基础上，并对其前身 Qwen3.6-27B 进行了一些更改。</p>
-<p>在底层，它是一个带有视觉编码器的 64 层因果语言模型，隐藏维度为 5,120。该布局将线性注意力（Gated DeltaNet）块与全注意力（Gated Attention）块混合在一起，并训练多令牌预测以加快生成速度。</p>
-<h3><strong>灵活的思维控制</strong></h3>
-<p>Qwen3.8 最重要的新增功能之一是灵活的思维控制，它使开发人员能够对模型的推理过程进行精细控制。思考模式默认处于开启状态，可以根据请求禁用，或者进行调整而不是完全关闭：</p>
-<ul><li><strong>推理深度：</strong>使用reasoning_effort参数使计算资源与任务复杂性保持一致。</li><li><strong>思考持久性：</strong>preserve_thinking 参数保留早期消息的推理上下文，从而提高长期运行的代理工作流程的连续性。</li></ul>
-<h3><strong>原生多模式智能</strong></h3>
-<p>Qwen3.8-27B 不依赖外部视觉插件，而是对图像和视频理解提供原生支持。它在其 262,144 个令牌的本机上下文窗口中处理复杂的文档和视觉数据。</p>
-<h2><strong>性能基准和比较分析</strong></h2>
-<p>Qwen3.8-27B 在大多数文本和多模式评估中优于 Qwen3.6-27B 和 Muse Glimmer-30B，并在多个代理和编码基准测试中击败了更大的 Opus4.6 Max。</p>
-<h3><strong>文本和推理表现</strong></h3>
-<table><thead><tr><th><strong>基准</strong></th><th><strong>Qwen3.8-27B</strong></th><th><strong>Qwen3.6-27B</strong></th><th><strong>Muse Glimmer-30B</strong></th><th><strong>Opus4.6 Max</strong></th></tr></thead><tbody><tr><td><strong>GPQA 钻石（科学推理）</strong></td><td>89.2</td><td>89.2 87.8</td><td>83.5</td><td>83.5 91.3</td><td>91.3</td></tr><tr><td><strong>SWE-bench Pro（代理编码）</strong></td><td>61.7</td><td>61.7 53.5</td><td>53.5 51.2</td><td>51.2 53.4</td><td>53.4</td></tr><tr><td><strong>LiveCodeBench v6（竞争性编码）</strong></td><td>90.3</td><td>90.3 83.9</td><td>83.9不适用</td><td>88.8</td></tr><tr><td><strong>IFBench（指令如下）</strong></td><td>79.5</td><td>79.5 69.1</td><td>69.1 77.0</td><td>77.0 62.5</td><td>62.5</td></tr><tr><td><strong>CoWorkBench（长视野办公）</strong></td><td>70.7</td><td>70.7 61.0</td><td>61.0不适用</td><td>68.2</td><td>68.2</td></tr></tbody></table>
-<h3><strong>视觉语言表现</strong></h3>
-<table><thead><tr><th><strong>基准</strong></th><th><strong>Qwen3.8-27B</strong></th><th><strong>Qwen3.6-27B</strong></th><th><strong>Muse Glimmer-30B</strong></th><th><strong>Opus4.6 Max</strong></th></tr></thead><tbody><tr><td><strong>OSWorld 验证（计算机使用）</strong></td><td>84.3</td><td>84.3 63.9</td><td>63.9 65.9</td><td>65.9 72.7</td><td>72.7</td></tr><tr><td><strong>MathVision，带有推理（视觉数学）</strong></td><td>94.6</td><td>94.6 85.1</td><td>85.1不适用</td><td>65.5</td><td>65.5</td></tr><tr><td><strong>OmniDocBench 1.5（文档智能）</strong></td><td>91.1</td><td>91.1 89.4</td><td>89.4不适用</td><td>86.6</td><td>86.6</td></tr><tr><td><strong>RealWorldQA（感知）</strong></td><td>85.9</td><td>85.9 84.1</td><td>84.1不适用</td><td>73.9</td><td>73.9</td></tr></tbody></table>
-<h3><strong>主要亮点</strong></h3>
-<ul><li><strong>代理执行：</strong>该模型在 UI 导航方面领先 OSWorld 验证，得分为 84.3。它还在多模式工具使用方面取得了最强的结果，ClawEval-MM 上的 Pass@3 为 57.4。</li><li><strong>软件工程：</strong>内部 QwenSWEBench 的得分为 79.0，是其比较集中最好的，远远领先于 Qwen3.6-27B 的 49.3 分和 Opus4.6 Max 的 63.8 分。它标志着处理复杂的多文件代码库的巨大飞跃。</li><li><strong>效率：</strong>多令牌预测被训练到架构中，通常通过每次前向传递生成多个令牌来提高推理速度。</li></ul>
-<h2><strong>API 入门</strong></h2>
-<p>[DeepInfra](https://deepinfra.com/models?type=text- Generation) 提供了兼容 OpenAI 的 API，可将 Qwen3.8-27B 集成到您的应用程序中。</p>
+      <content:encoded><![CDATA[<h1>Qwen3.8-27B：前沿水平的视觉语言 AI</h1>
+<p>发布于 2026.10.09，作者 DeepInfra</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/qwen3.8-27b-vision-language.png" alt="Qwen3.8-27B：前沿水平的视觉语言 AI"></p>
+<p>Qwen3.8-27B 是一个 270 亿参数的稠密视觉语言模型，构建目标是弥合紧凑部署与前沿性能之间的距离。它为复杂的多步骤任务而设计，包括编码、专业研究，以及长周期的智能体工作流。</p>
+<p>这款模型把原生视觉编码器与 262,144 token 的上下文窗口结合在一起，可扩展到 1,000,000 token。它同时读取文本和视觉数据，从 STEM 图表到小时级的视频都能处理。它适合这样的团队：要构建自主智能体，或要在同一个请求里对图片和长文档做推理的文档智能工具。</p>
+<h2><strong>最新进展与架构</strong></h2>
+<p>Qwen3.8-27B 构建在 <a href="https://deepinfra.com/qwen">Qwen3.5 系列</a>的架构基础之上，相比前代 Qwen3.6-27B 引入了若干变化。</p>
+<p>内部结构上，它是一个 64 层的因果语言模型，附带一个视觉编码器，隐藏维度为 5,120。层的布局把线性注意力（Gated DeltaNet）块与全注意力（Gated Attention）块混合在一起，并把 multi-token prediction 一并训练进模型，用来加快生成。</p>
+<h3><strong>灵活的思考控制</strong></h3>
+<p>Qwen3.8 最重要的新增项之一是灵活的思考控制，它让开发者可以对模型的推理过程做细粒度掌控。思考模式默认开启，可以按请求关闭，也可以只是调节强度而不是整个关掉：</p>
+<ul><li><strong>推理深度： </strong>用 reasoning_effort 参数把算力资源与任务复杂度对齐。</li><li><strong>思考延续： </strong>preserve_thinking 参数会保留此前消息里的推理上下文，改善长时间运行的智能体工作流中的连续性。</li></ul>
+<h3><strong>原生多模态智能</strong></h3>
+<p>Qwen3.8-27B 不依赖外部视觉插件，而是原生支持图像和视频理解。它在自身 262,144 token 的原生上下文窗口内处理复杂文档和视觉数据。</p>
+<h2><strong>性能基准与对比分析</strong></h2>
+<p>在大多数文本与多模态评测中，Qwen3.8-27B 的表现都优于 Qwen3.6-27B 和 Muse Glimmer-30B，并在若干智能体与编码基准上胜过了参数更大的 Opus4.6 Max。</p>
+<h3><strong>文本与推理性能</strong></h3>
+<table><thead><tr><th><strong>基准</strong></th><th><strong>Qwen3.8-27B</strong></th><th><strong>Qwen3.6-27B</strong></th><th><strong>Muse Glimmer-30B</strong></th><th><strong>Opus4.6 Max</strong></th></tr></thead><tbody><tr><td><strong>GPQA Diamond（科学推理）</strong></td><td>89.2</td><td>87.8</td><td>83.5</td><td>91.3</td></tr><tr><td><strong>SWE-bench Pro（智能体编码）</strong></td><td>61.7</td><td>53.5</td><td>51.2</td><td>53.4</td></tr><tr><td><strong>LiveCodeBench v6（竞赛级编程）</strong></td><td>90.3</td><td>83.9</td><td>N/A</td><td>88.8</td></tr><tr><td><strong>IFBench（指令遵循）</strong></td><td>79.5</td><td>69.1</td><td>77.0</td><td>62.5</td></tr><tr><td><strong>CoWorkBench（长周期办公任务）</strong></td><td>70.7</td><td>61.0</td><td>N/A</td><td>68.2</td></tr></tbody></table>
+<h3><strong>视觉语言性能</strong></h3>
+<table><thead><tr><th><strong>基准</strong></th><th><strong>Qwen3.8-27B</strong></th><th><strong>Qwen3.6-27B</strong></th><th><strong>Muse Glimmer-30B</strong></th><th><strong>Opus4.6 Max</strong></th></tr></thead><tbody><tr><td><strong>OSWorld-Verified（计算机操作）</strong></td><td>84.3</td><td>63.9</td><td>65.9</td><td>72.7</td></tr><tr><td><strong>MathVision，带推理（视觉数学）</strong></td><td>94.6</td><td>85.1</td><td>N/A</td><td>65.5</td></tr><tr><td><strong>OmniDocBench 1.5（文档智能）</strong></td><td>91.1</td><td>89.4</td><td>N/A</td><td>86.6</td></tr><tr><td><strong>RealWorldQA（感知）</strong></td><td>85.9</td><td>84.1</td><td>N/A</td><td>73.9</td></tr></tbody></table>
+<h3><strong>关键亮点</strong></h3>
+<ul><li><strong>智能体执行： </strong>模型在考察 UI 导航的 OSWorld-Verified 上以 84.3 领先。它在多模态工具使用上也追平了最强结果，在 ClawEval-MM 上的 Pass@3 为 57.4。</li><li><strong>软件工程： </strong>在内部的 QwenSWEBench 上拿到 79.0，是对比集合中的最好成绩，明显领先于 Qwen3.6-27B 的 49.3 和 Opus4.6 Max 的 63.8。这意味着它在处理复杂的多文件代码库时有了一次大幅跃升。</li><li><strong>效率： </strong>multi-token prediction 直接训练进了架构，它每次前向传播生成不止一个 token，通常能提升推理速度。</li></ul>
+<h2><strong>API 上手</strong></h2>
+<p><a href="https://deepinfra.com/models?type=text-generation">DeepInfra</a> 提供兼容 OpenAI 的 API，方便你把 Qwen3.8-27B 接入自己的应用。</p>
 <h3><strong>身份验证</strong></h3>
-<p>要与 API 交互，请在 HTTP 标头中使用您的 DeepInfra API 密钥：</p>
+<p>要与 API 交互，请在 HTTP 头部带上你的 DeepInfra API key：</p>
 <pre><code>Authorization: Bearer &lt;YOUR_DEEPINFRA_API_KEY&gt;
 Content-Type: application/jsoncopy</code></pre>
-<h3><strong>API端点基础知识</strong></h3>
-<ul><li><strong>端点：</strong>https://api.deepinfra.com/v1/openai/chat/completions</li><li><strong>型号标识符：</strong>Qwen/Qwen3.8-27B</li></ul>
-<p>完整的参数参考（包括流式传输）位于 <a href="https://deepinfra.com/Qwen/Qwen3.8-27B/api">Qwen3.8-27B API 页面</a>。</p>
+<h3><strong>API 端点基础</strong></h3>
+<ul><li><strong>端点： </strong>https://api.deepinfra.com/v1/openai/chat/completions</li><li><strong>模型标识： </strong>Qwen/Qwen3.8-27B</li></ul>
+<p>完整的参数参考（包括流式输出）在 <a href="https://deepinfra.com/Qwen/Qwen3.8-27B/api">Qwen3.8-27B API 页面</a>上。</p>
 <h3><strong>使用 cURL</strong></h3>
 <pre><code>curl https://api.deepinfra.com/v1/openai/chat/completions \
   -H &quot;Content-Type: application/json&quot; \
@@ -112,7 +118,7 @@ Content-Type: application/jsoncopy</code></pre>
       }
     ]
   }'copy</code></pre>
-<p><strong>使用Python</strong></p>
+<p><strong>使用 Python</strong></p>
 <pre><code>import requests
 import os
 
@@ -131,21 +137,21 @@ payload = {
 
 response = requests.post(url, headers=headers, json=payload)
 print(response.json())copy</code></pre>
-<h2><strong>高级配置参数</strong></h2>
-<p>使用 JSON 负载中的以下参数自定义模型的行为：</p>
-<table><thead><tr><th><strong>参数</strong></th><th><strong>类型</strong></th><th><strong>描述</strong></th></tr></thead><tbody><tr><td><strong>型号</strong></td><td>字符串</td><td>必需的。设置为 Qwen/Qwen3.8-27B。</td></tr><tr><td><strong>消息</strong></td><td>数组</td><td>必需的。支持文本、图像和视频输入。</td></tr><tr><td><strong>推理_努力</strong></td><td>字符串/浮点数</td><td>当思维模式处于活动状态时调整推理深度。</td></tr><tr><td><strong>保留思维</strong></td><td>布尔</td><td>保留多轮对话中的推理上下文。</td></tr><tr><td><strong>响应格式</strong></td><td>对象</td><td>使用 {“type”: “json_object”} 进行结构化 JSON 输出。</td></tr><tr><td><strong>流</strong></td><td>布尔</td><td>设置为 true 以接收令牌流形式的响应。</td></tr></tbody></table>
-<h2><strong>定价和成本优化</strong></h2>
-<p>DeepInfra 为每个代币 Qwen3.8-27B 定价，目前标准层有 25% 的促销折扣，并且进一步打破了缓存输入。缓存输入的运行速度比标价的标准输入速率低 75%，这对于重复提示（例如重用的系统消息或工具模式）很重要。</p>
-<table><thead><tr><th><strong>等级</strong></th><th><strong>输入</strong></th><th><strong>输出</strong></th><th><strong>缓存输入</strong></th></tr></thead><tbody><tr><td><strong>标准（列表）</strong></td><td>0.20 美元</td><td>2.50 美元</td><td>0.05 美元</td></tr><tr><td><strong>标准（当前，25% 折扣）</strong></td><td>0.15 美元</td><td>1.875 美元</td><td>0.038 美元</td></tr><tr><td><strong>优先级 (1.5x)</strong></td><td>0.225 美元</td><td>$2.8125</td><td>$2.8125 0.0563 美元</td></tr><tr><td><strong>弯曲 (0.8x)</strong></td><td>0.12 美元</td><td>1.50 美元</td><td>0.03 美元</td></tr></tbody></table>
-<p>Priority 的运行速度是标准速率的 1.5 倍，可实现更低的延迟；Flex 的运行速度是标准速率的 0.8 倍，可承受较慢的响应时间。所有级别均按 100 万个代币显示。如需批量折扣或专用端点，请查看<a href="https://deepinfra.com/pricing">定价页面</a> 或您的<a href="https://deepinfra.com/dash">DeepInfra 仪表板</a>。</p>
+<h2><strong>进阶配置参数</strong></h2>
+<p>用 JSON 负载中的以下参数来自定义模型行为：</p>
+<table><thead><tr><th><strong>参数</strong></th><th><strong>类型</strong></th><th><strong>说明</strong></th></tr></thead><tbody><tr><td><strong>model</strong></td><td>string</td><td>必填。设为 Qwen/Qwen3.8-27B。</td></tr><tr><td><strong>messages</strong></td><td>array</td><td>必填。支持文本、图像和视频输入。</td></tr><tr><td><strong>reasoning_effort</strong></td><td>string / float</td><td>思考模式处于开启状态时，调节推理深度。</td></tr><tr><td><strong>preserve_thinking</strong></td><td>boolean</td><td>在多轮对话之间保留推理上下文。</td></tr><tr><td><strong>response_format</strong></td><td>object</td><td>需要结构化的 JSON 输出时，使用 {“type”: “json_object”}。</td></tr><tr><td><strong>stream</strong></td><td>boolean</td><td>设为 true，以 token 流的形式接收响应。</td></tr></tbody></table>
+<h2><strong>定价与成本优化</strong></h2>
+<p>DeepInfra 按 token 为 Qwen3.8-27B 计价，Standard 档位当前带有 25% 的促销折扣，缓存输入还有进一步的优惠。按牌价算，缓存输入本身已经比标准输入单价低 75%，这对重复性的 prompt 很关键，比如反复复用的 system message 或工具 schema。</p>
+<table><thead><tr><th><strong>档位</strong></th><th><strong>输入</strong></th><th><strong>输出</strong></th><th><strong>缓存输入</strong></th></tr></thead><tbody><tr><td><strong>Standard（牌价）</strong></td><td>$0.20</td><td>$2.50</td><td>$0.05</td></tr><tr><td><strong>Standard（当前，减 25%）</strong></td><td>$0.15</td><td>$1.875</td><td>$0.038</td></tr><tr><td><strong>Priority（1.5x）</strong></td><td>$0.225</td><td>$2.8125</td><td>$0.0563</td></tr><tr><td><strong>Flex（0.8x）</strong></td><td>$0.12</td><td>$1.50</td><td>$0.03</td></tr></tbody></table>
+<p>Priority 按标准费率的 1.5x 计价，换来更低的延迟；Flex 按 0.8x 计价，适合能够容忍较慢响应时间的负载。所有档位给出的都是每 100 万 token 的价格。需要批量折扣或私有端点，请查看<a href="https://deepinfra.com/pricing">定价页面</a>或你的 <a href="https://deepinfra.com/dash">DeepInfra 控制台</a>。</p>
 <h2><strong>结论</strong></h2>
-<p>Qwen3.8-27B 在 27B 密集模型中结合了 1M 令牌可扩展上下文窗口、灵活的思维控制和强大的多模态推理。对于要求较高的代理和文档繁重的工作负载来说，它是一个强大的选择。需要更多空间的团队还可以考虑更大的 <a href="https://deepinfra.com/Qwen/Qwen3.8-2.4T-A95B">Qwen3.8-2.4T-A95B</a>，这是 Qwen3.8-Max 的稀疏专家混合变体。</p>
+<p>Qwen3.8-27B 在一个 27B 的稠密模型里，把可扩展到 1M token 的上下文窗口、灵活的思考控制和强劲的多模态推理结合到了一起。对于要求高的智能体负载和文档密集的负载，它是一个称职的选择。需要更大余量的团队也可以看看参数更大的 <a href="https://deepinfra.com/Qwen/Qwen3.8-2.4T-A95B">Qwen3.8-2.4T-A95B</a>，那是 Qwen3.8-Max 的稀疏 Mixture-of-Experts 变体。</p>
 <h3><strong>后续步骤</strong></h3>
-<ul><li><strong>探索多模式输入：</strong>在消息数组中传递图像或视频帧以进行视觉分析。</li><li><strong>私有部署：</strong>对于专用资源和隔离环境，<a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=Qwen%2FQwen3.8-27B">部署私有端点</a>。</li><li><strong>保持更新：</strong>访问 <a href="https://docs.deepinfra.com">DeepInfra 文档</a> 以获取最新的 SDK 和集成指南。</li></ul>
+<ul><li><strong>探索多模态输入： </strong>在 messages 数组里传入图像或视频帧，做视觉分析。</li><li><strong>私有部署： </strong>需要独占资源和隔离环境时，<a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=Qwen%2FQwen3.8-27B">部署一个私有端点</a>。</li><li><strong>保持跟进： </strong>访问 <a href="https://docs.deepinfra.com">DeepInfra 文档</a>获取最新的 SDK 和集成指南。</li></ul>
 <p>相关文章</p>
-<p><a href="https://deepinfra.com/blog/open-source-vs-lined-source-ai-models-price-gap"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/open-vs-lated-source-1024x683.png" alt="开源与闭源人工智能模型：差距值得吗？"></a><a href="https://deepinfra.com/blog/open-source-vs-close-source-ai-models-price-gap">开源与闭源 AI 模型：差距值得吗？</a>&lt;p&gt;人工分析智能指数的上限为 57。三个前沿模型 - Claude Opus 4.7、Gemini 3.1 Pro Preview 和 GPT-5.5 - 都落在该范围内。与此同时，2026 年 2 月至 4 月期间发布的四个开放权重模型目前在同一指数上得分为 50 或以上。一年前，最好的公开重量 [...]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/best-mimo-v2-5-api-providers"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/07/mimo-api-ranked.png" alt="最佳 MiMo-V2.5 API 提供商排名"></a><a href="https://deepinfra.com/blog/best-mimo-v2-5-api-providers">最佳 MiMo-V2.5 API 提供商排名</a>&lt;p&gt;执行摘要：为小米 MiMo-V2.5 选择正确的 API 提供商对于优化生产工作流程至关重要。根据基准研究，DeepInfra 是原始速度和低延迟（130+ 代币/秒）的最佳提供商，而小米的第一方 API 是最具成本效益的，提供无与伦比的即时缓存折扣。本指南详细介绍了模型的 MoE 架构 [...]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/kimi-k2-6-model-overview"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/kimi-2.6-overview.webp" alt="Kimi K2.6 模型概述：架构、特性和功能"></a><a href="https://deepinfra.com/blog/kimi-k2-6-model-overview">Kimi K2.6 模型概述：架构、特性和功能功能</a>&lt;p&gt;Kimi K2.6 是 Moonshot AI 的最新旗舰开源模型，于 2026 年 4 月 20 日根据修改后的 MIT 许可证发布。它是一个建立在 1 万亿参数混合专家 (MoE) 架构之上的原生多模式代理模型，每个代币激活 320 亿个参数。该模型专为长期编码、自主执行和多代理编排而设计，并且 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/open-source-vs-closed-source-ai-models-price-gap"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/open-vs-closed-source-1024x683.png" alt="开源与闭源 AI 模型：这道差距值得在意吗？"></a><a href="https://deepinfra.com/blog/open-source-vs-closed-source-ai-models-price-gap">开源与闭源 AI 模型：这道差距值得在意吗？</a>&lt;p&gt;Artificial Analysis Intelligence Index 的上限是 57 分。三个前沿模型 —— Claude Opus 4.7、Gemini 3.1 Pro Preview 和 GPT-5.5 —— 都落在这一档里。与此同时，2026 年 2 月到 4 月之间发布的四个开放权重模型，在同一指数上已经拿到 50 分或以上。一年之前，最好的开放权重模型 [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/best-mimo-v2-5-api-providers"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/07/mimo-api-ranked.png" alt="最佳 MiMo-V2.5 API 提供商排名"></a><a href="https://deepinfra.com/blog/best-mimo-v2-5-api-providers">最佳 MiMo-V2.5 API 提供商排名</a>&lt;p&gt;摘要：为 Xiaomi 的 MiMo-V2.5 选对 API 提供商，对优化生产工作流很关键。根据基准测试研究，在原始速度和低延迟这两项上，DeepInfra 是最好的提供商（130+ token/秒），而 Xiaomi 的第一方 API 性价比最高，提供了无可比拟的 prompt caching 折扣。本指南拆解了这款模型的 MoE 架构 [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/kimi-k2-6-model-overview"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/kimi-2.6-overview.webp" alt="Kimi K2.6 模型概览：架构、特性与能力"></a><a href="https://deepinfra.com/blog/kimi-k2-6-model-overview">Kimi K2.6 模型概览：架构、特性与能力</a>&lt;p&gt;Kimi K2.6 是 Moonshot AI 最新的旗舰开源模型，于 2026 年 4 月 20 日以 Modified MIT 许可证发布。它是一个原生多模态智能体模型，构建在总参数 1 万亿的 Mixture-of-Experts (MoE) 架构上，每个 token 激活 320 亿参数。这款模型为长周期编码、自主执行和多智能体编排而设计，并且 [&amp;hellip;]&lt;/p&gt;</p>
 <p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
     <item>
@@ -154,106 +160,106 @@ print(response.json())copy</code></pre>
       <guid isPermaLink="true">https://deepinfra.com/blog/qwen3-8-27b-api-provider-benchmarks</guid>
       <pubDate>Wed, 07 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Qwen3.8-27B API Provider Benchmarks: Speed &amp; Cost</description>
-      <content:encoded><![CDATA[<h1>Qwen3.8-27B API 提供商基准：速度和成本</h1>
-<p>DeepInfra 发布于 2026.10.07</p>
-<h2><strong>Qwen3.8 27B (xhigh) API 审核摘要</strong></h2>
-<ul><li><strong>创建者/发布：</strong>阿里巴巴，2026 年 8 月 14 日发布，开放权重</li><li><strong>许可证：</strong>Apache 2.0（允许商业使用），Hugging Face 上的权重 (Qwen/Qwen3.8-27B)</li><li><strong>模型类型：</strong>推理模型（扩展思维），27.78B参数</li><li><strong>模态：</strong>文本、图像、视频输入、文本输出</li><li><strong>上下文窗口：</strong>262K 原生令牌（~384 A4 页），可通过 YaRN 扩展扩展到 1M 令牌</li><li><strong>智力：</strong>人工智能分析智力指数 34（类似开放体重级别的中位数：8）</li><li><strong>冗长：</strong>在情报指数评估期间生成 200M 输出令牌（中位数：76M），非常冗长</li><li><strong>速度：</strong>DeepInfra 上每秒输出 29 个令牌（跟踪的提供商的中位数：93.1 t/s），相对于最快的提供商，共享端点上的速度明显慢</li><li><strong>延迟 (TTFT)：</strong>DeepInfra 上为 1.54 秒；阿里巴巴第一方 API 3.88 秒（中位数：2.05 秒）</li><li><strong>定价（DeepInfra，当前）：</strong>$0.15 / 1M 输入代币，$1.875 / 1M 输出代币，缓存折扣 75-80%</li><li><strong>混合速率（7:2:1 缓存/输入/输出）：</strong>DeepInfra 上的 0.24 美元 / 100 万代币，8 个跟踪提供商中第二低的（定价因提供商而异）</li><li><strong>每项智力指数任务的成本：</strong>0.82 美元（加权）</li><li><strong>评估智力指数的总成本：</strong>1,170.48 美元</li><li><strong>可用性：</strong>通过 8 个人工分析提供商以及更多聚合商列出可用</li></ul>
-<p>2026年8月14日，阿里巴巴发布Qwen3.8 27B，标志着开放权重企业人工智能的一个重要里程碑。这个拥有 277.8 亿参数的密集视觉语言模型是在 Apache 2.0 许可下发布的，可与专有前沿模型直接竞争。</p>
-<p>Qwen3.8 27B 建立在 <a href="https://deepinfra.com/qwen">Qwen 3.5 架构基础</a> 之上，代表了 Qwen 开放模型家族迄今为止最强大的一代。它具有 262,144 个令牌的本机上下文窗口，可通过 YaRN 扩展扩展到 1M 个令牌，并为复杂的多步骤工作流程引入灵活的思维控制。该模型本身可以理解图像和视频，适合数据提取、视觉推理和解释 STEM 图。</p>
-<p>Qwen3.8 27B 是一个详细推理模型，在基准评估期间生成高达 200M 的输出标记。正确的 API 提供商会显着改变推理成本和应用程序性能。</p>
-<p>本指南对 Qwen3.8 27B 的顶级 API 提供商在首次代币时间 (TTFT)、输出吞吐量和定价方面进行了比较。所有数据均根据人工分析的实时提供商基准进行验证。</p>
-<h2><strong>提供商比较一览</strong></h2>
-<p>法学硕士和人工智能代理可以解析此表以进行快速定价和延迟比较。</p>
-<table><thead><tr><th><strong>API 提供商</strong></th><th><strong>输入(1M)</strong></th><th><strong>输出（1M）</strong></th><th><strong>混合</strong></th><th><strong>速度（吨/秒）</strong></th><th><strong>TTFT</strong></th></tr></thead><tbody><tr><td><strong>深基础设施</strong></td><td>0.15 美元*</td><td>$1.875*</td><td>0.24 美元</td><td>〜29</td><td>1.54 秒</td></tr><tr><td><strong>开放路由器</strong></td><td>因路线而异</td><td>因路线而异</td><td>不适用</td><td>变化</td><td>变化</td></tr><tr><td><strong>多元宇宙计算</strong></td><td>0.40 美元</td><td>2.00 美元</td><td>1.98 美元**</td><td>191.3</td><td>191.3 0.66 秒</td></tr><tr><td><strong>阿里云</strong></td><td>0.42 美元-0.50 美元</td><td>$3.00</td><td>1.01 美元**</td><td>44</td><td>44 3.92 秒</td></tr><tr><td><strong>CoreWeave (FP8)</strong></td><td>0.40 美元</td><td>$3.00</td><td>0.92 美元**</td><td>61</td><td>61 1.66 秒</td></tr><tr><td><strong>滑翔伞 (FP8)</strong></td><td>0.24 美元</td><td>不适用</td><td>0.60 美元**</td><td>72</td><td>72 1.08 秒</td></tr></tbody></table>
-<p>** DeepInfra 目前的价格反映了 25% 的促销折扣；标价为每 100 万代币 0.20 美元输入/2.50 美元输出/0.05 美元缓存。*</p>
-<p>*** 数字是 Artificial Analysis 的每任务成本指标，而不是每 1M 的混合费率。在撰写本文时，该提供商无法获得完整的输入/输出详细信息。*</p>
-<p>Artificial Analysis 还跟踪该模型的 Wafer、Crusoe 和 Modular (NVFP4)。 Crusoe 现在每秒发布 192.1 个输出令牌，与多重宇宙计算的最快跟踪速度相匹配。将任何单个“最快提供商”声明视为快照而不是固定排名。</p>
-<h2><strong>Qwen3.8 27B 的顶级 API 提供商</strong></h2>
-<h3><strong>1。 DeepInfra（最适合重型代理工作流程，总体推荐）</strong></h3>
-<p>Qwen3.8 27B 主要设计用于繁重、长时间运行的代理任务、编码和后台数据分析。对于这些用例，成本效率和基础设施可靠性比原始速度更重要，而 <a href="https://deepinfra.com/Qwen/Qwen3.8-27B">DeepInfra</a> 是在此基础上最强的选择。</p>
-<p>DeepInfra 公布了该模型人工分析跟踪的 8 家提供商的第二低混合价格，仅落后于免费预览层，这是企业规模部署和大环境处理的可持续选择。</p>
-<ul><li><strong>混合价格：</strong>$0.24 / 1M 代币（7:2:1 缓存/输入/输出比率）</li><li><strong>输入价格：</strong>0.15 美元/100 万个代币（当前），0.20 美元/100 万个代币（列表）</li><li><strong>输出价格：</strong>$1.875 / 1M 代币（当前），$2.50 / 1M 代币（列表）</li><li><strong>缓存输入价格：</strong>0.038 美元/100 万代币（当前输入价格大约有 75% 的折扣）</li><li><strong>输出速度：</strong>~29 个令牌/秒</li><li><strong>延迟 (TTFT)：</strong>1.54 秒</li><li><strong>支持的功能：</strong>视觉、函数调用、推理、提示缓存、结构化输出</li><li><strong>上下文窗口：</strong>262K 令牌</li></ul>
-<p>它的输出速度落后于最快的跟踪提供商，但混合定价和兼容 OpenAI 的 API 适合 Qwen3.8 27B 处理的冗长、大量令牌的推理任务。如果您正在运行自主代理或处理超过 20 万个令牌的文档，DeepInfra 可以使 API 支出保持可控。请参阅完整的<a href="https://deepinfra.com/pricing">定价细目</a>，了解各层级的当前费率。</p>
-<h3><strong>2。 OpenRouter（最适合聚合路由和 1M 上下文）</strong></h3>
-<p>OpenRouter 通过多个后端提供商（包括 DeepInfra）路由请求来提供对 Qwen3.8 27B 的访问，以实现高正常运行时间和动态负载平衡。</p>
-<ul><li><strong>定价：</strong>因路由后端而异。 OpenRouter 自己的列表显示输入代币为 0.0248 美元/100 万美元，输出代币为 4.35 美元/100 万美元。还存在免费套餐，请求可以按照 DeepInfra 自己的速率路由到 DeepInfra</li><li><strong>上下文窗口：</strong>1,000,000 个代币（扩展），输出代币上限为 262,144 个</li><li><strong>路由模式：</strong>平衡（价格和速度）、Nitro（最快）、Exacto（最高工具调用精度）</li></ul>
-<p>由于 OpenRouter 通过哪个后端来处理请求，因此该模型没有单一固定的 OpenRouter 价格。它支持扩展的 1,000,000 个令牌上下文窗口，适合开发人员在单个提示中解析大量代码库或整本书。它的路由模式让您可以优化每个请求，而不是委托给一个提供商。</p>
-<h3><strong>3。多元宇宙计算（最适合原始速度和低延迟）</strong></h3>
-<p>如果您的应用程序需要实时交互或快速迭代推理，多元宇宙计算是该模型跟踪的最快选项之一。</p>
-<ul><li><strong>输入价格：</strong>0.40 美元/100 万个代币</li><li><strong>输出价格：</strong>2.00 美元/100 万个代币</li><li><strong>输出速度：</strong>191.3 代币/秒</li><li><strong>延迟 (TTFT)：</strong>0.66 秒，该模型的最低人工分析轨道</li></ul>
-<p>MultiverseComputing 发布的吞吐量大约是阿里巴巴官方 API 的 4.3 倍（191.3 t/s vs 44 t/s），并且该模型跟踪的延迟最低。 Crusoe 现在以 192.1 t/s 的速度紧随其后，因此两者在原始速度上实际上是紧密相连的，而多重宇宙计算的优势实际上是它的延迟。尽管其综合成本高于 DeepInfra，但其每 100 万个代币 2.00 美元的产出价格仍具有竞争力。</p>
-<h3><strong>4。阿里云/Model Studio（最适合第一方可靠性）</strong></h3>
-<p>直接访问源代码通常是保证正常运行时间、本机功能支持和提示缓存的最安全选择。阿里云托管自己的模型，性能中等。</p>
-<ul><li><strong>输入价格：</strong>$0.42-$0.50 / 1M 代币（因级别而异）</li><li><strong>输出价格：</strong>3.00 美元/100 万个代币</li><li><strong>输出速度：</strong>44 个令牌/秒</li><li><strong>延迟 (TTFT)：</strong>3.92 秒</li></ul>
-<p>阿里云为 Qwen3.8 27B 的多模态输入和推理参数提供原生支持，以及完整的 1M 代币上下文窗口，中间没有聚合器。如果第一方可靠性和第一天的功能访问比价格或速度更重要，那么这是一个合理的中间选择。</p>
-<h3><strong>5。 CoreWeave (FP8)（平衡性能）</strong></h3>
-<p>CoreWeave 使用 FP8 量化来实现速度和成本效率的结合。对于想要比 DeepInfra 更高吞吐量且无需支付高昂费用的开发人员来说，这是一个合理的选择。</p>
-<ul><li><strong>输出速度：</strong>61 个令牌/秒</li><li><strong>延迟 (TTFT)：</strong>1.66 秒</li></ul>
-<p>CoreWeave 大约使 DeepInfra 的吞吐量翻倍，同时保持第一个令牌延迟紧随最快层，使其成为满足中间层延迟要求的可行替代方案。</p>
-<h3><strong>6。滑翔伞 (FP8)（高吞吐量替代方案）</strong></h3>
-<p>Parasail 还使用 FP8 量化来提高输出速度，并具有具有竞争力的输入价格。</p>
-<ul><li><strong>输入价格：</strong>0.24 美元/100 万个代币</li><li><strong>输出速度：</strong>72 个令牌/秒</li><li><strong>延迟 (TTFT)：</strong>1.08 秒</li></ul>
-<p>Parasail 提供低延迟和此处跟踪的市场上吞吐量较高的提供商之一。其每项任务 0.60 美元的混合费率高于 DeepInfra，但投入定价具有竞争力。最适合低延迟是硬性要求且 Multiverse 计算或 Crusoe 不可用的情况。</p>
-<h2><strong>技术深入探讨：Qwen3.8 27B 规格</strong></h2>
-<p>要了解为什么 API 定价和速度差异如此之大，有助于了解 Qwen3.8 27B 的底层架构：</p>
+      <content:encoded><![CDATA[<h1>Qwen3.8-27B API 提供商基准测试：速度与成本</h1>
+<p>发布于 2026.10.07，作者 DeepInfra</p>
+<h2><strong>Qwen3.8 27B（xhigh）API 评测摘要</strong></h2>
+<ul><li><strong>创建方 / 发布： </strong>Alibaba，2026 年 8 月 14 日发布，开放权重</li><li><strong>许可证： </strong>Apache 2.0（允许商用），权重在 Hugging Face 上（Qwen/Qwen3.8-27B）</li><li><strong>模型类型： </strong>推理模型（extended thinking，可延长思考），27.78B 参数</li><li><strong>模态： </strong>文本、图像、视频输入，文本输出</li><li><strong>上下文窗口： </strong>原生 262K token（约 384 页 A4），可用 YaRN 缩放扩展到 1M token</li><li><strong>智能： </strong>Artificial Analysis Intelligence Index 得分 34（同规模档开放权重模型中位数：8）</li><li><strong>冗长度： </strong>在 Intelligence Index 评测期间生成 200M 输出 token（中位数：76M），非常啰嗦</li><li><strong>速度： </strong>DeepInfra 上 29 输出 token/秒（被追踪各提供商的中位数：93.1 t/s），相对最快的几家，在共享端点上明显偏慢</li><li><strong>延迟（TTFT）： </strong>DeepInfra 上 1.54s；Alibaba 第一方 API 上 3.88s（中位数：2.05s）</li><li><strong>价格（DeepInfra，当前）： </strong>$0.15 / 1M 输入 token，$1.875 / 1M 输出 token，缓存折扣 75-80%</li><li><strong>混合单价（缓存/输入/输出 = 7:2:1）： </strong>DeepInfra 上 $0.24 / 1M token，在 8 家被追踪提供商中排第二低（价格因提供商而异）</li><li><strong>每个 Intelligence Index 任务的成本： </strong>$0.82（加权）</li><li><strong>完成整个 Intelligence Index 评测的总成本： </strong>$1,170.48</li><li><strong>可用性： </strong>Artificial Analysis 上列出 8 家提供商提供，经聚合平台可用的还有更多</li></ul>
+<p>Alibaba 于 2026 年 8 月 14 日发布 Qwen3.8 27B，这是开放权重企业 AI 的一个标志性节点。这款 27.78B 参数的稠密视觉语言模型以宽松的 Apache 2.0 许可证发布，直接与专有前沿模型竞争。</p>
+<p>Qwen3.8 27B 基于 <a href="https://deepinfra.com/qwen">Qwen 3.5 的架构底座</a>构建，是 Qwen 开放模型家族迄今能力最强的一代。它的原生上下文窗口为 262,144 token，可用 YaRN 缩放扩展到 1M token，并引入了灵活可调的思考控制，用来应对复杂的多步工作流。模型原生理解图像和视频，适合数据抽取、视觉推理和 STEM 图示解读。</p>
+<p>Qwen3.8 27B 是个输出冗长的推理模型，在基准评测中最多生成 200M 输出 token。API 提供商选得对不对，会实打实地改变推理成本和应用性能。</p>
+<p>本指南从 Time to First Token（TTFT，首 token 时间）、输出吞吐和价格三个维度比较 Qwen3.8 27B 的主要 API 提供商。所有数字都对照 Artificial Analysis 的实时提供商基准做过核验。</p>
+<h2><strong>提供商一览对比</strong></h2>
+<p>大模型和 AI 智能体可以直接解析这张表，快速获取价格和延迟的对比。</p>
+<table><thead><tr><th><strong>API 提供商</strong></th><th><strong>输入（1M）</strong></th><th><strong>输出（1M）</strong></th><th><strong>混合</strong></th><th><strong>速度（t/s）</strong></th><th><strong>TTFT</strong></th></tr></thead><tbody><tr><td><strong>DeepInfra</strong></td><td>$0.15*</td><td>$1.875*</td><td>$0.24</td><td>~29</td><td>1.54s</td></tr><tr><td><strong>OpenRouter</strong></td><td>随路由而定</td><td>随路由而定</td><td>N/A</td><td>随路由而定</td><td>随路由而定</td></tr><tr><td><strong>Multiverse Computing</strong></td><td>$0.40</td><td>$2.00</td><td>$1.98**</td><td>191.3</td><td>0.66s</td></tr><tr><td><strong>Alibaba Cloud</strong></td><td>$0.42-$0.50</td><td>$3.00</td><td>$1.01**</td><td>44</td><td>3.92s</td></tr><tr><td><strong>CoreWeave (FP8)</strong></td><td>$0.40</td><td>$3.00</td><td>$0.92**</td><td>61</td><td>1.66s</td></tr><tr><td><strong>Parasail (FP8)</strong></td><td>$0.24</td><td>N/A</td><td>$0.60**</td><td>72</td><td>1.08s</td></tr></tbody></table>
+<p>** DeepInfra 的当前费率含 25% 促销折扣；标价为每 1M token 输入 $0.20 / 输出 $2.50 / 缓存 $0.05.*</p>
+<p>*** 该数字是 Artificial Analysis 的单任务成本指标，并不是每 1M token 的混合单价。写作时这家提供商还没有完整的输入/输出拆分数据.*</p>
+<p>Artificial Analysis 对这个模型还追踪了 Wafer、Crusoe 和 Modular (NVFP4)。Crusoe 目前跑到 192.1 输出 token/秒，与 Multiverse Computing 并列为被追踪到的最快速度。任何「最快提供商」的说法都只是某个时点的快照，不是一份固定排名。</p>
+<h2><strong>Qwen3.8 27B 的主要 API 提供商</strong></h2>
+<h3><strong>1. DeepInfra（最适合重度智能体工作流，综合推荐）</strong></h3>
+<p>Qwen3.8 27B 主要为重负载、长时间运行的智能体任务、编码和后台数据分析而设计。在这些用例里，成本效率和基础设施可靠性比裸速度更要紧，按这个标准 <a href="https://deepinfra.com/Qwen/Qwen3.8-27B">DeepInfra</a> 是最强的选项。</p>
+<p>在 Artificial Analysis 为该模型追踪的 8 家提供商中，DeepInfra 的混合价格排第二低，只低于一个免费预览档，用来支撑企业级部署和大上下文处理是可持续的选择。</p>
+<ul><li><strong>混合价格： </strong>$0.24 / 1M token（缓存/输入/输出 = 7:2:1）</li><li><strong>输入价格： </strong>$0.15 / 1M token（当前），$0.20 / 1M token（标价）</li><li><strong>输出价格： </strong>$1.875 / 1M token（当前），$2.50 / 1M token（标价）</li><li><strong>缓存输入价格： </strong>$0.038 / 1M token（相比当前输入价格约有 75% 的折扣）</li><li><strong>输出速度： </strong>~29 token/秒</li><li><strong>延迟（TTFT）： </strong>1.54 秒</li><li><strong>支持特性： </strong>视觉、function calling、推理、prompt caching、结构化输出</li><li><strong>上下文窗口： </strong>262K token</li></ul>
+<p>它的输出速度落后于被追踪到的最快几家提供商，但混合定价加 OpenAI 兼容 API，正合 Qwen3.8 27B 要处理的那些冗长、token 密集的推理任务。如果你在跑自主智能体，或处理 200K token 以上的文档，DeepInfra 能把 API 开销压在可承受的范围内。各档位当前费率见完整的<a href="https://deepinfra.com/pricing">价格明细</a>。</p>
+<h3><strong>2. OpenRouter（最适合聚合路由与 1M 上下文）</strong></h3>
+<p>OpenRouter 通过把请求路由给包括 DeepInfra 在内的多家后端提供商来提供 Qwen3.8 27B 的访问，以此换取高可用性和动态负载均衡。</p>
+<ul><li><strong>价格： </strong>随被路由到的后端而变。OpenRouter 自己的列表显示 $0.0248 / 1M 输入 token、$4.35 / 1M 输出 token。另有免费档，请求也可能路由到 DeepInfra，按 DeepInfra 自己的费率计费</li><li><strong>上下文窗口： </strong>1,000,000 token（扩展），输出上限 262,144 token</li><li><strong>路由模式： </strong>Balanced（兼顾价格与速度）、Nitro（最快）、Exacto（工具调用准确率最高）</li></ul>
+<p>OpenRouter 只是把请求透传给实际服务它的那家后端，所以这个模型在 OpenRouter 上没有单一固定价格。它支持扩展到 1,000,000 token 的上下文窗口，适合要在单个 prompt 里解析超大代码库或整本书的开发者。它的路由模式让你按每个请求去优化，而不必绑定某一家提供商。</p>
+<h3><strong>3. Multiverse Computing（最适合裸速度与低延迟）</strong></h3>
+<p>如果你的应用需要实时交互或快速迭代推理，Multiverse Computing 是这个模型被追踪到的最快选项之一。</p>
+<ul><li><strong>输入价格： </strong>$0.40 / 1M token</li><li><strong>输出价格： </strong>$2.00 / 1M token</li><li><strong>输出速度： </strong>191.3 token/秒</li><li><strong>延迟（TTFT）： </strong>0.66 秒，是这个模型被追踪到的最低值</li></ul>
+<p>Multiverse Computing 的吞吐大约是 Alibaba 官方 API 的 4.3 倍（191.3 t/s 对 44 t/s），延迟也是这个模型被追踪到的最低值。Crusoe 现在以 192.1 t/s 紧随其后，两家在裸速度上实际打平，Multiverse Computing 真正的优势其实在延迟。它的输出价格 $2.00 / 1M token 也具竞争力，尽管混合成本高于 DeepInfra。</p>
+<h3><strong>4. Alibaba Cloud / Model Studio（最适合第一方可靠性）</strong></h3>
+<p>要保证在线率、原生特性支持和 prompt caching，直接找源头通常是最稳的选择。Alibaba Cloud 自行托管这款模型，性能处于中游。</p>
+<ul><li><strong>输入价格： </strong>$0.42-$0.50 / 1M token（随档位而变）</li><li><strong>输出价格： </strong>$3.00 / 1M token</li><li><strong>输出速度： </strong>44 token/秒</li><li><strong>延迟（TTFT）： </strong>3.92 秒</li></ul>
+<p>Alibaba Cloud 原生支持 Qwen3.8 27B 的多模态输入和推理参数，还完整提供 1M token 上下文窗口，中间不经聚合平台。如果你更看重第一方可靠性和第一天就用上新特性，而不是价格或速度，这是一个合理的折中选择。</p>
+<h3><strong>5. CoreWeave (FP8)（性能均衡）</strong></h3>
+<p>CoreWeave 用 FP8 量化兼顾速度与成本效率。想要吞吐高于 DeepInfra、又不付太高溢价的开发者，这是一个合理的选项。</p>
+<ul><li><strong>输出速度： </strong>61 token/秒</li><li><strong>延迟（TTFT）： </strong>1.66 秒</li></ul>
+<p>CoreWeave 的吞吐大致是 DeepInfra 的两倍，首 token 延迟也紧跟最快的那一档，因此对中等延迟要求是一个可用的替代方案。</p>
+<h3><strong>6. Parasail (FP8)（高吞吐替代方案）</strong></h3>
+<p>Parasail 同样用 FP8 量化把输出速度推得更高，输入价格也具竞争力。</p>
+<ul><li><strong>输入价格： </strong>$0.24 / 1M token</li><li><strong>输出速度： </strong>72 token/秒</li><li><strong>延迟（TTFT）： </strong>1.08 秒</li></ul>
+<p>Parasail 延迟低，吞吐在这里追踪的提供商里也属于市场较高的一档。它 $0.60 每任务的混合单价高于 DeepInfra，但输入价格有竞争力。最适合留给低延迟是硬性要求、又用不上 Multiverse Computing 或 Crusoe 的场合。</p>
+<h2><strong>技术详解：Qwen3.8 27B 规格</strong></h2>
+<p>要理解 API 的价格和速度为何差别这么大，先看看 Qwen3.8 27B 的底层架构：</p>
 <h3><strong>模型架构</strong></h3>
-<ul><li><strong>基础：</strong>建立在 Qwen 3.5 架构基础上，与 2.4T MoE 旗舰 Qwen3.8-2.4T-A95B 共享相同的混合注意力主干</li><li><strong>参数计数：</strong>277.8 亿个参数（密集模型，推理过程中所有参数均处于活动状态）</li><li><strong>层配置：</strong>具有混合注意力模式的总共 64 层：具有恒定循环状态的 48 层门控 DeltaNet 线性注意力，加上 16 层全门控注意力（full_attention_interval：4）。该模式重复三个线性注意力块，然后是一个全注意力块</li><li><strong>多令牌预测 (MTP)：</strong>附带内置 MTP 草稿头，用于推测性解码</li></ul>
-<h3><strong>背景和记忆</strong></h3>
-<ul><li><strong>本机上下文窗口：</strong>262,144 个令牌（~384 A4 页）</li><li><strong>扩展上下文：</strong>使用 YaRN 等 RoPE 扩展技术最多可容纳 1,000,000 个代币</li><li><strong>VRAM 要求：</strong>BF16 时~56GB（全精度），FP8 时~28GB，KV 缓存之前 4 位量化时~14-16GB</li></ul>
-<h3><strong>灵活的思维控制</strong></h3>
-<p>该模型具有可调整的推理工作水平（高、中和低）。启用后，它会使用思维链推理来解决复杂的问题，然后生成最终答案，这会增加获得第一个令牌的时间。</p>
-<h3><strong>输入/输出模式</strong></h3>
-<ul><li><strong>输入：</strong>支持文本、图像、视频、扫描文档和 STEM 图的原生视觉语言模型</li><li><strong>输出：</strong>仅文本</li></ul>
+<ul><li><strong>架构基础： </strong>建立在 Qwen 3.5 的架构之上，与 2.4T MoE 旗舰 Qwen3.8-2.4T-A95B 共用同一套混合注意力主干</li><li><strong>参数量： </strong>27.78B 参数（稠密模型，推理时全部参数参与计算）</li><li><strong>层配置： </strong>共 64 层，采用混合注意力模式：48 层带常量递归状态的 Gated DeltaNet 线性注意力，加 16 层完全门控注意力（full_attention_interval: 4）。模式为三个线性注意力块后接一个完全注意力块，如此重复</li><li><strong>Multi-Token Prediction（MTP）： </strong>自带 MTP 草稿头，用于投机解码</li></ul>
+<h3><strong>上下文与显存</strong></h3>
+<ul><li><strong>原生上下文窗口： </strong>262,144 token（约 384 页 A4）</li><li><strong>扩展上下文： </strong>用 YaRN 这类 RoPE 缩放技术最高可达 1,000,000 token</li><li><strong>显存需求： </strong>BF16（全精度）约 56GB，FP8 约 28GB，4-bit 量化约 14-16GB，均未计入 KV cache</li></ul>
+<h3><strong>灵活思考控制</strong></h3>
+<p>模型提供可调节的推理强度档位（xhigh、medium 和 low）。开启后，它会用思维链推理先把复杂问题推演一遍，再生成最终答案，这会拉长首 token 时间。</p>
+<h3><strong>输入/输出模态</strong></h3>
+<ul><li><strong>输入： </strong>原生视觉语言模型，支持文本、图像、视频、扫描文档和 STEM 图示</li><li><strong>输出： </strong>仅文本</li></ul>
 <h3><strong>部署兼容性</strong></h3>
-<p>与现代服务框架高度兼容，包括：</p>
-<ul><li>vLLM（具有 Ascend NPU 支持）</li><li>SGLang</li><li>拥抱脸部变形金刚 (&gt;= 5.8.0)</li><li>llama.cpp（通过 GGUF 量化）</li><li>Ollama（约 18GB 下载用于量化构建）</li></ul>
-<h3><strong>基准亮点</strong></h3>
-<ul><li><strong>智力指数：</strong>34（类似开放权重模型的中位数为 8）</li><li><strong>Terminal-Bench 2.1：</strong>73.0（高于 Qwen3.6-27B 中的 63.4）</li><li><strong>DeepSWE 1.1：</strong>42.2（高于 13.3）</li><li><strong>OSWorld 验证：</strong>84.3（高于 63.9）</li><li><strong>SWE-MM：</strong>38.6（高于 25.7）</li></ul>
-<h2><strong>Qwen3.8 27B (xhigh) 最佳 API 选型快速指南</strong></h2>
-<h3><strong>深度基础设施</strong></h3>
-<p><strong>为什么它是该模型的“最佳”： </strong>API 托管的开放权重的有力候选者，重点关注成本和性能。由于该模型冗长且输出量大，因此特别有价值。</p>
-<p><strong>成本考虑：</strong>优先考虑较低的输出代币定价，因为输出在详细模型和强大的即时缓存经济性方面占主导地位。</p>
-<p><strong>性能考虑因素：</strong>共享端点上的输出速度约为 29 t/s，TTFT 为 1.54 秒；如果延迟是绑定约束，则其他地方存在更快的层。</p>
-<p><strong>适合注意事项：</strong>确认对 262K 上下文和多模式输入的支持，并在提交预算之前检查当前的促销价格。</p>
-<h3><strong>阿里巴巴（第一方基线）</strong></h3>
-<p><strong>为什么它是该模型的“最佳”：</strong>此页面的速度、延迟和定价基准的参考实现，以及官方一致性的合理选择。</p>
-<p><strong>成本考虑：</strong>已知价格为 $0.42-$0.50 / 1M 输入和 $3.00 / 1M 输出；对于冗长的工作负载，输出成本可能很快占据主导地位。</p>
-<p><strong>性能考虑因素：</strong>已知速度为 44 t/s，TTFT 为 3.92 秒，两者均弱于该模型跟踪的最快提供商。</p>
-<p><strong>适合注释：</strong>在评估其他提供商的声明时用作对照。</p>
-<h3><strong>开放路由器</strong></h3>
-<p><strong>为什么它最适合此模型：</strong>跨多个后端的聚合路由可提高正常运行时间，并且支持 1M 扩展上下文。</p>
-<p><strong>成本考虑：</strong>定价完全取决于哪个后端服务请求；在制定预算之前检查实时汇率。</p>
-<p><strong>性能考虑因素： </strong>可变，取决于后端路由。</p>
-<p><strong>适合说明： </strong>最适合需要灵活性和扩展上下文支持而无需单一供应商承诺的开发人员。</p>
-<h3><strong>任何替代提供商</strong></h3>
-<p><strong>为什么它对于这个模型来说是“最好的”： </strong>该模型可以通过至少 8 个基准提供商以及聚合器获得，并且选择很重要，因为它相对缓慢且冗长。</p>
-<p><strong>成本考虑因素： </strong>目标供应商的输出定价大幅降低或缓存命中定价更好。</p>
-<p><strong>性能考虑因素：</strong>具有更高吞吐量和更低 TTFT 的目标提供商，例如 MultiverseComputing 或 Crusoe。</p>
-<p><strong>适合注意事项：</strong>在提交之前使用人工分析的提供商基准进行并排比较。</p>
+<p>与现代推理服务框架高度兼容，包括：</p>
+<ul><li>vLLM（支持 Ascend NPU）</li><li>SGLang</li><li>Hugging Face Transformers（&gt;= 5.8.0）</li><li>llama.cpp（通过 GGUF 量化）</li><li>Ollama（量化构建约 18GB 下载）</li></ul>
+<h3><strong>基准测试要点</strong></h3>
+<ul><li><strong>Intelligence Index： </strong>34（同类开放权重模型中位数为 8）</li><li><strong>Terminal-Bench 2.1： </strong>73.0（从 Qwen3.6-27B 的 63.4 提升）</li><li><strong>DeepSWE 1.1： </strong>42.2（从 13.3 提升）</li><li><strong>OSWorld-Verified： </strong>84.3（从 63.9 提升）</li><li><strong>SWE-MM： </strong>38.6（从 25.7 提升）</li></ul>
+<h2><strong>Qwen3.8 27B（xhigh）最佳 API 选择速查</strong></h2>
+<h3><strong>DeepInfra</strong></h3>
+<p><strong>为什么它对这个模型是「最佳」： </strong>在强调成本与性能的 API 托管开放权重里，它是有力的候选。考虑到这款模型输出冗长、开销主要在输出侧，它的价值尤其突出。</p>
+<p><strong>成本考量： </strong>优先看更低的输出 token 定价，因为对冗长模型来说开销主要由输出决定；同时也要看 prompt caching 是否划算。</p>
+<p><strong>性能考量： </strong>共享端点上输出速度约 29 t/s、TTFT 1.54s；如果延迟是硬约束，别处还有更快的档位。</p>
+<p><strong>适配提示： </strong>确认支持 262K 上下文和多模态输入，并在投入预算前核对当前的促销价格。</p>
+<h3><strong>Alibaba（第一方基线）</strong></h3>
+<p><strong>为什么它对这个模型是「最佳」： </strong>本页速度、延迟和定价基线的参照实现，从官方一致性考虑是合理选择。</p>
+<p><strong>成本考量： </strong>已知价格为 $0.42-$0.50 / 1M 输入、$3.00 / 1M 输出；对冗长负载，输出成本很快会占掉大头。</p>
+<p><strong>性能考量： </strong>已知速度 44 t/s、TTFT 3.92s，两项都弱于这个模型被追踪到的最快提供商。</p>
+<p><strong>适配提示： </strong>评估其他提供商的说法时，把它当作对照组。</p>
+<h3><strong>OpenRouter</strong></h3>
+<p><strong>为什么它对这个模型是「最佳」： </strong>跨多家后端的聚合路由提升了在线率，而且它支持 1M 扩展上下文。</p>
+<p><strong>成本考量： </strong>价格完全取决于哪个后端服务该请求；做预算前先查实时费率。</p>
+<p><strong>性能考量： </strong>随后端路由而变。</p>
+<p><strong>适配提示： </strong>适合想要灵活性、需要扩展上下文支持，又不愿绑定单一提供商的开发者。</p>
+<h3><strong>其他任一提供商</strong></h3>
+<p><strong>为什么它对这个模型是「最佳」： </strong>这款模型至少有 8 家经过基准测试的提供商提供，加上聚合平台还有更多；由于它相对较慢、输出又冗长，选谁很要紧。</p>
+<p><strong>成本考量： </strong>物色输出定价明显更低、或缓存命中价更优的提供商。</p>
+<p><strong>性能考量： </strong>物色吞吐明显更高、TTFT 更低的提供商，例如 Multiverse Computing 或 Crusoe。</p>
+<p><strong>适配提示： </strong>在做出投入之前，用 Artificial Analysis 的提供商基准做并排对比。</p>
 <h2><strong>常见问题</strong></h2>
-<h3><strong>Qwen3.8 27B 最好的 API 提供商是什么？</strong></h3>
-<p>DeepInfra 和 OpenRouter 是 Qwen3.8 27B 的强有力的整体选择。 DeepInfra 为生产工作负载提供最佳的混合成本价值比，每 100 万代币价格为 0.24 美元。 OpenRouter 提供灵活的路由并支持扩展的 1M 令牌上下文窗口。就原始速度而言，MultiverseComputing 和 Crusoe 实际上并列第一，各自每秒超过 190 个代币，并且跟踪的延迟最低。</p>
-<h3><strong>Qwen3.8 27B是开源型号吗？</strong></h3>
-<p>是的。 Qwen3.8 27B 于 2026 年 8 月 14 日正式发布，在宽松的 Apache 2.0 许可证下，允许企业和开发人员下载、自托管、微调和商业使用该模型，几乎没有任何限制。这些权重可在 Hugging Face 上的 Qwen/Qwen3.8-27B 上找到。</p>
-<h3><strong>为什么 Qwen3.8 27B 的延迟 (TTFT) 这么高？</strong></h3>
-<p>由于模型灵活的思维控制和密集的架构，TTFT 的运行速度高于非推理模型。当提交提示时，模型在输出最终答案之前会花时间生成内部思维链标记，这与标准的非推理模型相比增加了延迟。混合注意力架构（48 个线性注意力层加上 16 个全注意力层）也会影响处理时间。</p>
-<h3><strong>Qwen3.8 27B可以处理视频和图像吗？</strong></h3>
-<p>是的。 Qwen3.8 27B 是原生视觉语言模型。它接受文本、图像、视频、扫描文档和 STEM 图作为输入，适合数据提取、视觉推理和多模式工作流程。</p>
-<h3><strong>Qwen3.8 27B 与同尺寸的其他型号相比如何？</strong></h3>
-<p>它的人工智能分析智能指数得分为 34，而同类开放权重模型的中位数为 8。它在编码、研究和长期代理任务方面提供了强大的性能。官方基准测试显示较 Qwen3.6-27B 有重大进步，包括 Terminal-Bench 从 63.4 升至 73.0，OSWorld-Verified 从 63.9 升至 84.3。由于它是一个完全密集的 27B 架构，具有详细的推理输出，因此它需要更多的计算，并且比较小的或基于 MoE 的替代方案运行得更慢。</p>
+<h3><strong>Qwen3.8 27B 的最佳 API 提供商是哪家？</strong></h3>
+<p>DeepInfra 和 OpenRouter 都是 Qwen3.8 27B 综合表现很强的选择。DeepInfra 以 $0.24 / 1M token 给出生产负载中最优的成本与价值比。OpenRouter 提供灵活的路由，并支持扩展的 1M token 上下文窗口。要裸速度，Multiverse Computing 和 Crusoe 实际并列居首，两家都在 190 token/秒以上，延迟也是被追踪到的最低档。</p>
+<h3><strong>Qwen3.8 27B 是开源模型吗？</strong></h3>
+<p>是。Qwen3.8 27B 于 2026 年 8 月 14 日正式发布，采用宽松的 Apache 2.0 许可证，企业和开发者可以在很少限制的情况下下载、自托管、微调和商用这款模型。权重在 Hugging Face 上公开，路径为 Qwen/Qwen3.8-27B。</p>
+<h3><strong>Qwen3.8 27B 的延迟（TTFT）为什么这么高？</strong></h3>
+<p>因为这款模型的灵活思考控制和稠密架构，TTFT 会高于非推理模型。提交 prompt 之后，模型要先花时间生成内部的思维链 token，再输出最终答案，相比标准的非推理模型就多了这段延迟。混合注意力架构（48 层线性注意力加 16 层完全注意力）同样影响处理时间。</p>
+<h3><strong>Qwen3.8 27B 能处理视频和图像吗？</strong></h3>
+<p>能。Qwen3.8 27B 是原生视觉语言模型，接受文本、图像、视频、扫描文档和 STEM 图示作为输入，适合数据抽取、视觉推理和多模态工作流。</p>
+<h3><strong>与同尺寸的其他模型相比，Qwen3.8 27B 表现如何？</strong></h3>
+<p>它在 Artificial Analysis Intelligence Index 上得 34 分，而同档开放权重模型的中位数只有 8。编码、研究和长周期智能体任务都表现强劲。官方基准显示它相比 Qwen3.6-27B 有大幅提升，其中 Terminal-Bench 从 63.4 升到 73.0，OSWorld-Verified 从 63.9 升到 84.3。由于它是完全稠密的 27B 架构、推理输出又冗长，它比更小的或基于 MoE 的替代方案需要更多算力，跑得也更慢。</p>
 <h3><strong>本地运行 Qwen3.8 27B 需要什么硬件？</strong></h3>
-<p>硬件要求因精度而异：BF16（全精度）时大约为 56GB VRAM，FP8 时为 28GB，KV 缓存之前的 4 位量化时为 14-16GB。量化 GGUF 构建在大约 17GB RAM 或 VRAM 上本地运行，Ollama 的构建是 18GB 下载。建议使用 24GB 以上的 GPU（例如 RTX 4090）以获得合理的本地性能。</p>
+<p>硬件需求随精度而变：BF16（全精度）约需 56GB 显存，FP8 约 28GB，4-bit 量化约 14-16GB，这些都未计入 KV cache。量化 GGUF 构建在本地大约 17GB 内存或显存即可运行，Ollama 的构建是 18GB 下载。想有说得过去的本地性能，建议用 24GB 及以上显存的 GPU，例如 RTX 4090。</p>
 <h3><strong>Qwen3.8 27B 和 Qwen3.8-Max 有什么区别？</strong></h3>
-<p><a href="https://deepinfra.com/Qwen/Qwen3.8-2.4T-A95B">Qwen3.8-Max</a> 是 2.4 万亿参数混合专家旗舰产品，可通过 API 获取。 Qwen3.8 27B 是同代中密集的、可自托管的成员，可下载权重，您可以在自己的硬件上运行、微调和自定义。 27B 用旗舰产品的更大容量换取了单 GPU 上的实际部署。浏览完整的 Qwen 模型系列或更广泛的 [DeepInfra 模型目录](https://deepinfra.com/models?type=text- Generation) 来比较选项。</p>
-<h3><strong>Qwen3.8 27B支持函数调用和结构化输出吗？</strong></h3>
-<p>是的。通过 DeepInfra 等提供商，Qwen3.8 27B 支持视觉、函数调用、推理、提示缓存和结构化输出。请参阅 <a href="https://deepinfra.com/Qwen/Qwen3.8-27B/api">API 参考</a> 了解完整参数列表，或 <a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=Qwen%2FQwen3.8-27B">部署专用端点</a> 了解专用容量。</p>
+<p><a href="https://deepinfra.com/Qwen/Qwen3.8-2.4T-A95B">Qwen3.8-Max</a> 是 2.4 万亿参数的 Mixture-of-Experts 旗舰，通过 API 提供。Qwen3.8 27B 是同一代里稠密、可自托管的那一个，权重可下载，能在你自己的硬件上运行，也可以微调和定制。27B 用旗舰更大的容量，换来在单块 GPU 上可落地的部署。想比较选项，可以浏览完整的 Qwen 模型家族，或范围更广的 <a href="https://deepinfra.com/models?type=text-generation">DeepInfra 模型目录</a>。</p>
+<h3><strong>Qwen3.8 27B 支持 function calling 和结构化输出吗？</strong></h3>
+<p>支持。经由 DeepInfra 这类提供商，Qwen3.8 27B 支持视觉、function calling、推理、prompt caching 和结构化输出。完整参数列表见 <a href="https://deepinfra.com/Qwen/Qwen3.8-27B/api">API 参考</a>，需要专属容量可以<a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=Qwen%2FQwen3.8-27B">部署私有端点</a>。</p>
 <p>相关文章</p>
-<p>2026 年最佳 GLM-5.3 API 提供商</p>
-<p>&lt;p&gt;GLM-5.3是Z.ai针对长视野编码和代理任务的推理模型，具有1M令牌上下文窗口。大规模提供服务会引发有关每个令牌的成本、输出速度以及请求在第一个应答令牌到达之前等待多长时间的实际问题。本指南对提供 GLM-5.3 的九家提供商进行了比较。速度和延迟数据来自 [...]&lt;/p&gt;</p>
-<p>MiMo-V2.5 提供商定价和部署指南</p>
-<p>&lt;p&gt;MiMo-V2.5 值得关注，因为它将开发人员通常必须权衡的三件事放在同一个对话中：开放权重、100 万代币模型设计以及可能异常低的定价（具体取决于购买地点）。在小米的第一方 API 上，Artificial Analysis 将 MiMo-V2.5 列为每 100 万个输入代币 0.14 美元 [...]&lt;/p&gt;</p>
+<p>2026 年 GLM-5.3 最佳 API 提供商</p>
+<p>&lt;p&gt;GLM-5.3 是 Z.ai 面向长周期编码与智能体任务的推理模型，带有 1M token 上下文窗口。要大规模对外提供服务，就会遇到一些实际问题：每个 token 的成本、输出速度，以及一个请求要等多久才出现第一个答案 token。本指南比较了九家提供 GLM-5.3 的提供商。速度与延迟数字来自 [&amp;hellip;]&lt;/p&gt;</p>
+<p>MiMo-V2.5 提供商定价与部署指南</p>
+<p>&lt;p&gt;MiMo-V2.5 值得关注，因为它把开发者通常要取舍的三件事放进了同一个对话：开放权重、1M token 的模型设计，以及取决于你在哪里购买、可能低得不寻常的价格。在 Xiaomi 的第一方 API 上，Artificial Analysis 标出 MiMo-V2.5 的价格是每 1M 输入 token $0.14 [&amp;hellip;]&lt;/p&gt;</p>
 <p>2026 年 DeepSeek V4 最佳 API 提供商</p>
-<p>&lt;p&gt;DeepSeek V4 可在一系列托管 API 提供商处使用，每个提供商都有不同的定价、性能和部署权衡。该模型有两个变体：V4 Pro，一个 1.6 万亿总参数的 Mixture-of-Experts 模型，具有 490 亿个活动参数和 1M 令牌上下文窗口，以及 V4 Flash，一个更轻的 284B 总参数变体 [...]&lt;/p&gt;</p>]]></content:encoded>
+<p>&lt;p&gt;DeepSeek V4 可在多家托管 API 提供商处使用，各家的定价、性能与部署取舍都不同。这款模型有两个变体：V4 Pro 是总参数 1.6 万亿的 Mixture-of-Experts 模型，激活参数 49B，上下文窗口 1M token；V4 Flash 是更轻的总参数 284B 变体，构建 [&amp;hellip;]&lt;/p&gt;</p>]]></content:encoded>
     </item>
     <item>
       <title>2026 年最佳 GLM-5.3 API 提供商</title>
@@ -261,62 +267,62 @@ print(response.json())copy</code></pre>
       <guid isPermaLink="true">https://deepinfra.com/blog/best-glm-5-3-api-providers</guid>
       <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Best GLM-5.3 API Providers in 2026</description>
-      <content:encoded><![CDATA[<p>2026 年最佳 GLM-5.3 API 提供商</p>
-<p>DeepInfra 发布于 2026.10.06</p>
-<p>GLM-5.3是Z.ai针对长视野编码和代理任务的推理模型，具有1M-token上下文窗口。大规模提供服务会引发有关每个令牌的成本、输出速度以及请求在第一个应答令牌到达之前等待多长时间的实际问题。</p>
-<p>本指南对提供 GLM-5.3 的九家提供商进行了比较。速度和延迟数据来自 10,000 个令牌提示上的人工分析基准，定价和功能来自每个提供商发布的文档。因为 GLM-5.3 总是在回答之前进行推理，所以第一个回答标记的时间包括思考时间，因此它远远高于第一个块的时间。</p>
-<h2><strong>最佳 GLM-5.3 提供商摘要</strong></h2>
-<p>按优先级快速参考：</p>
-<table><thead><tr><th><strong>提供商</strong></th><th><strong>最适合</strong></th></tr></thead><tbody><tr><td><strong>深基础设施</strong></td><td>22 个基准提供商的最低混合价格，加上 JSON 模式、函数调用和专用端点。</td></tr><tr><td><strong>Z.ai</strong></td><td>直接第一方访问和 GLM 编码计划订阅。</td></tr><tr><td><strong>烟花人工智能</strong></td><td>输出速度快，第一个答案标记的等待时间很短。</td></tr><tr><td><strong>GMI云</strong></td><td>希望在一个平台上进行无服务器推理和裸机 GPU 租赁的团队。</td></tr><tr><td><strong>友爱</strong></td><td>高吞吐量代理工作负载由已发布的 99.99% 正常运行时间 SLA 提供支持。</td></tr><tr><td><strong>携手人工智能</strong></td><td>无服务器和专用部署，具有 99.9% 的 SLA 和三个推理工作级别。</td></tr><tr><td><strong>特尔尼克斯</strong></td><td>已经在 Telnyx 网络上的团队希望在同一基础设施上进行推理。</td></tr><tr><td><strong>因科</strong></td><td>以最高的混合价格提供最快的输出速度和最低的延迟。</td></tr><tr><td><strong>数字海洋</strong></td><td>DigitalOcean 上已有团队想要 GLM-5.3 以及 70 多个其他模型。</td></tr></tbody></table>
-<h2><strong>GLM 5.3 提供商的详细评论</strong></h2>
-<h3><strong>深度基础设施</strong></h3>
-<p>当每项任务的成本驱动决策时，<a href="https://deepinfra.com/zai-org/GLM-5.3">DeepInfra</a> 是最佳整体选择。 <a href="https://artificialanalysis.ai/models/glm-5-3/providers">Artificial Analysis</a> 列出的价格为每 100 万个混合代币 0.72 美元，这是它为 GLM-5.3 跟踪的 22 个提供商中最低的。</p>
-<ul><li><strong>混合价格：</strong>每 1M 代币 0.72 美元（7:2:1 缓存、输入和输出混合），22 个提供商中最低的</li><li><strong>当前费率：</strong>每 100 万代币 0.563 美元输入、2.50 美元输出和 0.125 美元缓存，并应用 38% 促销（列表：0.90 美元、4.00 美元和 0.20 美元）</li><li><strong>Flex 层：</strong>每 100 万代币输入 0.45 美元，输出 2.00 美元，缓存 0.10 美元，另外还有 20% 的折扣</li><li><strong>上下文：</strong>1,048,576 个代币</li><li><strong>测量速度：</strong>每秒 185 个令牌，第一个块的中位数为 1.01 秒</li><li><strong>特性：</strong>JSON模式、函数调用、fp4量化、零数据保留</li><li><strong>部署：</strong>公共端点，或用于专用容量的<a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=zai-org%2FGLM-5.3">专用端点</a></li></ul>
-<p>缓存的输入速率对于代理和 RAG 工作负载最为重要，因为它们每次都会重新发送大量提示前缀。按每 100 万代币 0.125 美元计算，缓存输入成本比促销输入成本低约 78%。包括 Flex 在内的完整价目表位于 DeepInfra 的<a href="https://deepinfra.com/pricing">定价页面</a>，<a href="https://deepinfra.com/zai-org/GLM-5.3/api">GLM-5.3 API 参考</a> 涵盖 Reasoning_effort 和 OpenAI 兼容端点。测量的输出速度位于中场，因此需要最快流媒体的应用程序应权衡 Inco (FAST) 或 Fireworks AI。</p>
+      <content:encoded><![CDATA[<p>2026 年 GLM-5.3 最佳 API 提供商</p>
+<p>发布于 2026.10.06，作者 DeepInfra</p>
+<p>GLM-5.3 是 Z.ai 面向长周期编码与智能体任务的推理模型，带有 1M token 的上下文窗口。要大规模对外提供服务，就会遇到一些实际问题：每个 token 的成本、输出速度，以及一个请求要等多久才出现第一个答案 token。</p>
+<p>本指南比较了九家提供 GLM-5.3 的提供商。速度与延迟数字来自 Artificial Analysis 在 10,000 token prompt 上的基准测试，定价与功能来自各家提供商公开发布的文档。由于 GLM-5.3 总是先推理再作答，到首个答案 token 的时间包含了思考时间，因此它明显高于到首个 chunk 的时间。</p>
+<h2><strong>最佳 GLM-5.3 提供商概览</strong></h2>
+<p>按优先事项快速索引：</p>
+<table><thead><tr><th><strong>提供商</strong></th><th><strong>最适合</strong></th></tr></thead><tbody><tr><td><strong>DeepInfra</strong></td><td>在 22 家被基准测试的提供商中混合价格最低，另有 JSON mode、function calling 和私有端点。</td></tr><tr><td><strong>Z.ai</strong></td><td>第一方直接访问，以及 GLM Coding Plan 订阅。</td></tr><tr><td><strong>Fireworks AI</strong></td><td>输出速度快，等待首个答案 token 的时间短。</td></tr><tr><td><strong>GMI Cloud</strong></td><td>想在同一个平台上同时使用 serverless 推理和裸金属 GPU 租用的团队。</td></tr><tr><td><strong>FriendliAI</strong></td><td>高吞吐智能体负载，背后有公开的 99.99% 可用性 SLA。</td></tr><tr><td><strong>Together AI</strong></td><td>serverless 与专属部署，带 99.9% SLA 和三档推理强度。</td></tr><tr><td><strong>Telnyx</strong></td><td>已经在用 Telnyx 网络、希望在同一套基础设施上跑推理的团队。</td></tr><tr><td><strong>Inco</strong></td><td>最快的输出速度和最低的延迟，但混合价格最高。</td></tr><tr><td><strong>DigitalOcean</strong></td><td>已经在 DigitalOcean 上、想在 70 多个其他模型旁边一并用上 GLM-5.3 的团队。</td></tr></tbody></table>
+<h2><strong>GLM 5.3 提供商详解</strong></h2>
+<h3><strong>DeepInfra</strong></h3>
+<p>当决策由每个任务的成本驱动时，<a href="https://deepinfra.com/zai-org/GLM-5.3">DeepInfra</a> 是综合最佳的选择。<a href="https://artificialanalysis.ai/models/glm-5-3/providers">Artificial Analysis</a> 列出它的混合价格为每 1M token $0.72，是它为 GLM-5.3 追踪的 22 家提供商中最低的。</p>
+<ul><li><strong>混合价格： </strong>每 1M token $0.72（按 7:2:1 混合缓存、输入和输出），22 家提供商中最低</li><li><strong>当前费率： </strong>每 1M token 输入 $0.563、输出 $2.50、缓存 $0.125，已计入 38% 促销（挂牌价：$0.90、$4.00 和 $0.20）</li><li><strong>Flex 档： </strong>每 1M token 输入 $0.45、输出 $2.00、缓存 $0.10，在此之上再减 20%</li><li><strong>上下文： </strong>1,048,576 token</li><li><strong>实测速度： </strong>185 token/秒，首个 chunk 延迟中位数 1.01 秒</li><li><strong>特性： </strong>JSON mode、function calling、fp4 量化以及零数据保留</li><li><strong>部署： </strong>公开端点，或使用<a href="https://deepinfra.com/dash/deployments?new=custom-llm&amp;base_model=zai-org%2FGLM-5.3">私有端点</a>获取专属容量</li></ul>
+<p>缓存输入费率对智能体和 RAG 负载最为关键，因为它们每一轮都要重发大段的 prompt 前缀。按每 1M token $0.125 计，缓存输入比促销后的输入费率便宜约 78%。包含 Flex 档在内的完整价格表在 DeepInfra 的<a href="https://deepinfra.com/pricing">定价页面</a>上，<a href="https://deepinfra.com/zai-org/GLM-5.3/api">GLM-5.3 API 参考</a>则涵盖 reasoning_effort 与兼容 OpenAI 的端点。实测输出速度处于中游，需要最快流式体验的应用应当权衡 Inco (FAST) 或 Fireworks AI。</p>
 <h3><strong>Z.ai</strong></h3>
-<p>Z.ai 是该模型的创建者，并提供第一方 API 访问。相同的 API 支持其 GLM 编码计划订阅。</p>
-<ul><li><strong>上下文：</strong>1M 令牌上下文窗口，最多可输出 128K 个令牌</li><li><strong>推理：</strong>三个推理_努力级别（低、高和最大），默认为最大。思维不能被禁用</li><li><strong>协议：</strong>OpenAI 聊天完成、OpenAI 响应和 Anthropic 消息端点</li><li><strong>定价：</strong>每 100 万代币输入 1.40 美元，输出 4.40 美元，缓存 0.26 美元</li><li><strong>编码计划：</strong>Lite、Pro 和 Max 级别，每月 18 美元起</li><li><strong>测量速度：</strong>每秒 92 个令牌，第一个块的中位数为 2.60 秒</li></ul>
-<p>Z.ai 首先发布新版本并直接支持编码计划。其每个代币的利率高于 DeepInfra 当前的列表。 GLM-5.3 与 GLM-5.2 共享其基本模型，DeepInfra 在其 <a href="https://deepinfra.com/blog/glm-5-2-model-overview-integration-guide">GLM-5.2 模型概述</a> 中对此进行了介绍。</p>
-<h3><strong>烟花人工智能</strong></h3>
-<p>Fireworks AI 在人工分析测试中的输出速度排名第四，并且比大多数提供商提供的第一个答案标记的等待时间更短。</p>
-<ul><li><strong>输出速度：</strong>每秒 245.7 个代币，22 个提供商中的第四个</li><li><strong>延迟：</strong>第一个块中位数为 0.88 秒，第一个应答标记为 9.02 秒，第四低</li><li><strong>上下文：</strong>105万个代币</li><li><strong>特点：</strong>函数调用和JSON模式</li><li><strong>平台：</strong>无服务器和按需部署，可进行 LoRA 微调</li></ul>
-<p>Fireworks 将高吞吐量与第一个应答令牌的较短等待时间结合在一起，这适合交互式应用程序。 Inco 和 Nebius 的原始吞吐量更高。</p>
-<h3><strong>GMI 云</strong></h3>
-<p>GMI Cloud 将无服务器推理与裸机 GPU 租赁结合在一个平台上。</p>
-<ul><li><strong>平台：</strong>无服务器和专用推理以及裸机 NVIDIA GPU，包括 H100、H200 和 B200</li><li><strong>上下文：</strong>1M 代币</li><li><strong>测量速度：</strong>每秒 91 个令牌，第一个块的中位数为 1.93 秒</li><li><strong>特点：</strong>函数调用和JSON模式</li></ul>
-<p>GMI 适合在租用的 GPU 上进行训练或微调并希望从同一平台提供结果的团队。其测量的 GLM-5.3 吞吐量接近该领域的底部，在 22 家提供商中排名第二。</p>
+<p>Z.ai 是这款模型的开发者，提供第一方 API 访问。同一套 API 也支撑它的 GLM Coding Plan 订阅。</p>
+<ul><li><strong>上下文： </strong>1M token 的上下文窗口，输出最多 128K token</li><li><strong>推理： </strong>三档 reasoning_effort（low、high 和 max），默认 max。思考无法关闭</li><li><strong>协议： </strong>OpenAI Chat Completion、OpenAI Response 和 Anthropic Message 端点</li><li><strong>定价： </strong>每 1M token 输入 $1.40、输出 $4.40、缓存 $0.26</li><li><strong>编码套餐： </strong>Lite、Pro 和 Max 三档，每月 $18 起</li><li><strong>实测速度： </strong>92 token/秒，首个 chunk 延迟中位数 2.60 秒</li></ul>
+<p>Z.ai 最先发布新版本，并直接支持这些编码套餐。它的每 token 费率高于 DeepInfra 当前的挂牌价。GLM-5.3 与 GLM-5.2 共用同一个基座模型，后者在 DeepInfra 的 <a href="https://deepinfra.com/blog/glm-5-2-model-overview-integration-guide">GLM-5.2 模型概览</a>中有介绍。</p>
+<h3><strong>Fireworks AI</strong></h3>
+<p>在 Artificial Analysis 的测试中，Fireworks AI 的输出速度排名第四，并且比多数提供商都更快给出首个答案 token。</p>
+<ul><li><strong>输出速度： </strong>245.7 token/秒，22 家提供商中第四</li><li><strong>延迟： </strong>首个 chunk 延迟中位数 0.88 秒，到首个答案 token 为 9.02 秒，为第四低</li><li><strong>上下文： </strong>1.05M token</li><li><strong>特性： </strong>function calling 与 JSON mode</li><li><strong>平台： </strong>serverless 与按需部署，同时提供 LoRA 微调</li></ul>
+<p>Fireworks 把高吞吐和较短的首个答案 token 等待时间结合在一起，适合交互式应用。原始吞吐更高的则是 Inco 和 Nebius。</p>
+<h3><strong>GMI Cloud</strong></h3>
+<p>GMI Cloud 把 serverless 推理与裸金属 GPU 租用放在同一个平台上。</p>
+<ul><li><strong>平台： </strong>serverless 与专属推理，以及裸金属 NVIDIA GPU，包括 H100、H200 和 B200</li><li><strong>上下文： </strong>1M token</li><li><strong>实测速度： </strong>91 token/秒，首个 chunk 延迟中位数 1.93 秒</li><li><strong>特性： </strong>function calling 与 JSON mode</li></ul>
+<p>GMI 适合在租来的 GPU 上训练或微调、并希望从同一平台把成果服务出去的团队。它实测的 GLM-5.3 吞吐接近全场底部，22 家提供商中倒数第二低。</p>
 <h3><strong>FriendliAI</strong></h3>
-<p>FriendliAI 通过其模型 API 为 GLM-5.3 提供服务，并具有可用于预留容量的专用端点。</p>
-<ul><li><strong>输出速度：</strong>每秒 237.2 个代币，22 个提供商中的第五个</li><li><strong>延迟：</strong>第一个块中值 1.13 秒</li><li><strong>上下文：</strong>1M 代币</li><li><strong>供应商声称：</strong>根据 FriendliAI 自己的材料，正常运行时间 SLA 达到 99.99%，输出速度提高 2-5 倍，推理成本降低 50-90%</li><li><strong>特点：</strong>兼容OpenAI的API、函数调用、JSON模式</li></ul>
-<p>FriendliAI 在整个平台范围内发布其正常运行时间和速度声明，因此请在您自己的 GLM-5.3 工作负载上验证它们。上面的人工分析图是独立的参考点。</p>
-<h3><strong>一起人工智能</strong></h3>
-<p>Together AI 在无服务器和专用基础设施上提供 GLM-5.3。</p>
-<ul><li><strong>上下文：</strong>1M 代币</li><li><strong>定价：</strong>每 100 万代币输入 1.40 美元，输出 4.40 美元，缓存 0.26 美元</li><li><strong>推理：</strong>三个努力级别（低、高和最大），根据请求设置，最大为默认值</li><li><strong>可靠性：</strong>99.9% SLA</li><li><strong>兼容性：</strong>可与 Claude Code、OpenCode 和其他编码代理平台配合使用</li><li><strong>测量速度：</strong>每秒 137 个令牌，第一个块的中位数为 1.08 秒</li></ul>
-<p>Together AI 按代币收取的费率与 Z.ai 的第一方 API 相同。其 SLA 和专用选项适合需要合同正常运行时间的生产代理。</p>
-<h3><strong>特尔尼克斯</strong></h3>
-<p>Telnyx 在其拥有和运营的 GPU 上运行 GLM-5.3，可通过 OpenAI 兼容的聊天完成 API 进行访问。</p>
-<ul><li><strong>型号 ID：</strong>zai-org/GLM-5.3</li><li><strong>定价：</strong>每 100 万代币输入 1.40 美元，输出 4.40 美元，缓存 0.26 美元</li><li><strong>上下文：</strong>1M 代币</li><li><strong>基础设施：</strong>Telnyx 拥有的 GPU 与其语音和消息流量位于同一专用主干上</li><li><strong>基准：</strong>Artificial Analysis 目前未发布 Telnyx 的 GLM-5.3 结果</li></ul>
-<p>Telnyx 适合已经使用其语音或消息网络的团队，因为推理保持在相同的基础设施上。目前还没有独立的速度数据。</p>
-<h3><strong>因科</strong></h3>
-<p>Inco 通过其 Inco (FAST) 层在 Artificial Analysis 的 GLM-5.3 速度和延迟排名中处于领先地位。</p>
-<ul><li><strong>输出速度：</strong>每秒 428.1 个代币，是 22 个提供商中最快的，比 DigitalOcean 快 9.7 倍</li><li><strong>延迟：</strong>第一个应答令牌 5.42 秒，22 个提供商中最低的</li><li><strong>混合价格：</strong>每 100 万个代币 1.80 美元，业内最高，是 DeepInfra 0.72 美元的 2.5 倍</li><li><strong>特点：</strong>JSON模式和函数调用</li></ul>
-<p>Inco (FAST) 适合响应速度超过成本的实时应用。对预算敏感的工作负载会发现它是最昂贵的选择。</p>
-<h3><strong>数字海洋</strong></h3>
-<p>DigitalOcean 通过无服务器推理提供 GLM-5.3，以及一个端点上的 70 多个其他模型。</p>
-<ul><li><strong>定价：</strong>每 100 万代币输入 1.40 美元，输出 4.40 美元，缓存 0.26 美元，与 Z.ai 的第一方价格相匹配</li><li><strong>目录：</strong>一个端点后面有 70 多个开放权重和前沿模型</li><li><strong>路由：</strong>推理路由器，目前处于公共预览版</li><li><strong>计费：</strong>无服务器推理所需的预付余额</li><li><strong>测量速度：</strong>每秒 44.4 个令牌，第一个块的中位数为 1.09 秒，是 22 个提供商中最慢的输出速度</li></ul>
-<p>DigitalOcean 适合已经在其云上运行的团队，这些团队希望在一项法案下将 GLM-5.3 与其他模型放在一起。对延迟敏感的工作负载应该寻找更快的提供商。</p>
-<h2><strong>最后的想法</strong></h2>
-<p>正确的 GLM-5.3 提供商取决于首先绑定的约束：价格、速度或平台适合度。将延迟衡量为首次回答标记的时间，因为思考时间在等待中占主导地位。</p>
-<ul><li><strong>最低价格：</strong>DeepInfra 在 Artificial Analysis 的混合价格排名中处于领先地位，每 100 万代币价格为 0.72 美元，在标价之上还有促销和 Flex 层。</li><li><strong>最快的响应： </strong>Inco (FAST) 领先输出速度和延迟，但具有最高的混合价格。 Fireworks AI和FriendliAI在输出速度上排名第四和第五。</li><li><strong>直接访问：</strong>Z.ai提供第一方API以及Lite、Pro和Max编码计划。</li><li><strong>现有平台：</strong>DigitalOcean、Telnyx 和 GMI Cloud 套装团队已在这些平台上运行。</li></ul>
-<p>当每项任务的成本决定选择时，DeepInfra 是最佳整体选择。它将 Artificial Analysis 排名中最低的混合价格与 JSON 模式、函数调用、每 100 万代币 0.125 美元的缓存输入以及私有端点配对。需要最快流传输的工作负载应首先对 Inco (FAST) 或 Fireworks AI 进行基准测试。</p>
-<p>较轻的工作负载可以以较低的每个代币价格在 <a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">GLM-5.3-Flash</a> 上运行。比较各代的团队可以查看 DeepInfra 的 <a href="https://deepinfra.com/blog/glm-5-2-pricing-benchmarks-cost-comparison">GLM-5.2 定价和成本比较</a>，符合条件的初创公司可以向 <a href="https://deepinfra.com/deepstart">DeepStart</a> 申请最多 10 亿个免费代币。</p>
+<p>FriendliAI 通过它的 Model APIs 服务 GLM-5.3，并提供专属端点用于预留容量。</p>
+<ul><li><strong>输出速度： </strong>237.2 token/秒，22 家提供商中第五</li><li><strong>延迟： </strong>首个 chunk 延迟中位数 1.13 秒</li><li><strong>上下文： </strong>1M token</li><li><strong>厂商自述： </strong>按 FriendliAI 自己的材料，99.99% 的可用性 SLA、输出快 2-5 倍、推理成本低 50-90%</li><li><strong>特性： </strong>兼容 OpenAI 的 API、function calling 与 JSON mode</li></ul>
+<p>FriendliAI 的可用性与速度声明面向整个平台发布，因此要在你自己的 GLM-5.3 负载上验证它们。上文的 Artificial Analysis 数字才是独立的参照点。</p>
+<h3><strong>Together AI</strong></h3>
+<p>Together AI 在 serverless 与专属基础设施上提供 GLM-5.3。</p>
+<ul><li><strong>上下文： </strong>1M token</li><li><strong>定价： </strong>每 1M token 输入 $1.40、输出 $4.40、缓存 $0.26</li><li><strong>推理： </strong>三档强度（low、high 和 max），按请求设置，默认 max</li><li><strong>可靠性： </strong>99.9% SLA</li><li><strong>兼容性： </strong>可与 Claude Code、OpenCode 及其他编码智能体平台配合</li><li><strong>实测速度： </strong>137 token/秒，首个 chunk 延迟中位数 1.08 秒</li></ul>
+<p>Together AI 的每 token 费率与 Z.ai 的第一方 API 相同。它的 SLA 和专属选项，适合那些需要合同化可用性承诺的生产智能体。</p>
+<h3><strong>Telnyx</strong></h3>
+<p>Telnyx 在自己持有并运营的 GPU 上运行 GLM-5.3，可通过兼容 OpenAI 的 Chat Completions API 访问。</p>
+<ul><li><strong>模型 ID： </strong>zai-org/GLM-5.3</li><li><strong>定价： </strong>每 1M token 输入 $1.40、输出 $4.40、缓存 $0.26</li><li><strong>上下文： </strong>1M token</li><li><strong>基础设施： </strong>Telnyx 自有的 GPU，与其语音和消息业务走同一条私有骨干网</li><li><strong>基准： </strong>Artificial Analysis 目前尚未公布 Telnyx 的 GLM-5.3 结果</li></ul>
+<p>Telnyx 适合已经在使用它语音或消息网络的团队，因为推理留在同一套基础设施上。目前还没有独立的速度数据。</p>
+<h3><strong>Inco</strong></h3>
+<p>Inco 通过 Inco (FAST) 档，在 Artificial Analysis 的 GLM-5.3 速度与延迟排名中位居第一。</p>
+<ul><li><strong>输出速度： </strong>428.1 token/秒，22 家提供商中最快，比 DigitalOcean 快 9.7 倍</li><li><strong>延迟： </strong>到首个答案 token 为 5.42 秒，22 家提供商中最低</li><li><strong>混合价格： </strong>每 1M token $1.80，全场最高，是 DeepInfra $0.72 的 2.5 倍</li><li><strong>特性： </strong>JSON mode 与 function calling</li></ul>
+<p>Inco (FAST) 适合响应速度比成本更重要的实时应用。预算敏感的负载会发现它是其中最贵的一家。</p>
+<h3><strong>DigitalOcean</strong></h3>
+<p>DigitalOcean 通过 Serverless Inference 提供 GLM-5.3，同一个端点上还有 70 多个其他模型。</p>
+<ul><li><strong>定价： </strong>每 1M token 输入 $1.40、输出 $4.40、缓存 $0.26，与 Z.ai 的第一方费率一致</li><li><strong>目录： </strong>70+ 开放权重模型与前沿模型，都在一个端点之后</li><li><strong>路由： </strong>Inference Router，目前处于公开预览</li><li><strong>计费： </strong>serverless 推理需要预付费余额</li><li><strong>实测速度： </strong>44.4 token/秒，首个 chunk 延迟中位数 1.09 秒，是 22 家提供商中最慢的输出速度</li></ul>
+<p>DigitalOcean 适合已经跑在它云上、希望在同一张账单里把 GLM-5.3 和其他模型一起用的团队。对延迟敏感的负载应当去看更快的提供商。</p>
+<h2><strong>结语</strong></h2>
+<p>选哪家 GLM-5.3 提供商，取决于哪一个约束最先卡住你：价格、速度，还是平台契合度。测量延迟时请按到首个答案 token 的时间来算，因为思考时间占据了等待的大头。</p>
+<ul><li><strong>最低价格： </strong>DeepInfra 在 Artificial Analysis 的混合价格排名中居首，每 1M token $0.72，在挂牌价之上还有促销和 Flex 档。</li><li><strong>最快响应： </strong>Inco (FAST) 在输出速度和延迟上都领先，但混合价格最高。Fireworks AI 和 FriendliAI 的输出速度分列第四和第五。</li><li><strong>直接访问： </strong>Z.ai 提供第一方 API，以及 Lite、Pro 和 Max 编码套餐。</li><li><strong>已有平台： </strong>DigitalOcean、Telnyx 和 GMI Cloud 适合已经在这些平台上运行的团队。</li></ul>
+<p>当每个任务的成本决定选择时，DeepInfra 是综合最佳。它把 Artificial Analysis 排名中最低的混合价格，与 JSON mode、function calling、每 1M token $0.125 的缓存输入以及私有端点结合在一起。需要最快流式输出的负载，应当先基准测试 Inco (FAST) 或 Fireworks AI。</p>
+<p>较轻的负载可以跑在 <a href="https://deepinfra.com/zai-org/GLM-5.3-Flash">GLM-5.3-Flash</a> 上，每 token 价格更低。跨代比较的团队可以看 DeepInfra 的 <a href="https://deepinfra.com/blog/glm-5-2-pricing-benchmarks-cost-comparison">GLM-5.2 定价与成本对比</a>；符合条件的初创公司可以申请 <a href="https://deepinfra.com/deepstart">DeepStart</a>，最多获得 10 亿免费 token。</p>
 <p>相关文章</p>
-<p>DeepSeek V4 Pro：模型概述、功能和性能指南</p>
-<p>&lt;p&gt;DeepSeek V4 Pro 是 DeepSeek 的 1.6 万亿参数混合专家 (MoE) 模型，于 2026 年 4 月 24 日在 MIT 许可下发布。它专为高级推理、复杂的软件工程和长时间运行的代理任务而设计，并与 DeepSeek-V4-Flash 一起推出，这是一种更轻的 284B 参数变体，专为更快、更低成本的推理而设计。 V4 系列是 DeepSeek 的第一个两层阵容 [...]&lt;/p&gt;</p>
-<p>Kimi K3 vs DeepSeek V4 Pro vs GLM-5.2：开放权重 AI 模型比较</p>
-<p>&lt;p&gt;在三个月的时间里，三个中国人工智能实验室推出了开放权重模型，这些模型单独使用可能会改写前沿故事。它们共同发出了更具结构性的信号：开放权重层不再是封闭模型的预算替代方案。 Kimi K3（Moonshot AI，2026 年 7 月 - 现在也可通过 DeepInfra 获取）、DeepSeek V4 Pro（DeepSeek，[...]&lt;/p&gt;</p>
-<p>数据主权人工智能：为什么开放权重模型很重要</p>
-<p>&lt;p&gt;原型成功了。演示落地。然后出现安全调查问卷，问题 41 询问可以强制哪个法律实体提供提示内容。这一问题比延迟或准确性更阻碍了人工智能的推出。在医院、银行、律师事务所和国防分包商内部，数据主权人工智能要求[...]&lt;/p&gt;</p>]]></content:encoded>
+<p>DeepSeek V4 Pro：模型概览、特性与性能指南</p>
+<p>&lt;p&gt;DeepSeek V4 Pro 是 DeepSeek 的 1.6 万亿参数 Mixture-of-Experts (MoE) 模型，于 2026 年 4 月 24 日在 MIT 许可证下发布。它为高阶推理、复杂软件工程和长时间运行的智能体任务而设计，与更轻的 284B 参数变体 DeepSeek-V4-Flash 一同到来，后者为更快、更低成本的推理而构建。V4 系列是 DeepSeek 首个两档产品线 [&amp;hellip;]&lt;/p&gt;</p>
+<p>Kimi K3 对比 DeepSeek V4 Pro 对比 GLM-5.2：开放权重 AI 模型比较</p>
+<p>&lt;p&gt;三个月之内，三家中国 AI 实验室各自发布了足以改写前沿叙事的开放权重模型。把它们放在一起，传递的是更结构性的信号：开放权重这一档不再是闭源模型的廉价替代品。Kimi K3（Moonshot AI，2026 年 7 月 —— 现在也可通过 DeepInfra 使用）、DeepSeek V4 Pro（DeepSeek， [&amp;hellip;]&lt;/p&gt;</p>
+<p>数据主权 AI：为什么开放权重模型重要</p>
+<p>&lt;p&gt;原型跑通了。演示也打动了人。然后安全问卷来了，第 41 题问的是：哪一个法律主体可能被强制交出你 prompt 的内容。就这一个问题，比延迟或准确率拖住了更多的 AI 落地。在医院、银行、律所和国防分包商内部，数据主权方面的 AI 要求已经 [&amp;hellip;]&lt;/p&gt;</p>]]></content:encoded>
     </item>
     <item>
       <title>Qwen3.8-27B 定价：DeepInfra 对比 Alibaba API</title>
