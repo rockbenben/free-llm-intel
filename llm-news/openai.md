@@ -830,7 +830,7 @@
 817. [欺诈性就业计划：AI 辅助的招聘欺诈](https://openai.com/index/disrupting-malicious-uses-of-ai-deceptive-employment-scheme)（2025-02-01） <!--orig:Deceptive Employment Scheme: AI-assisted hiring deception-->
 818. [隐秘影响力行动：加纳大选活动](https://openai.com/index/disrupting-malicious-uses-of-ai-ghana-election)（2025-02-01） <!--orig:Covert influence operation: Ghana election activity-->
 819. [OpenAI o3-mini 系统卡](https://openai.com/index/o3-mini-system-card)（2025-01-31） <!--orig:OpenAI o3-mini System Card-->
-820. [OpenAI o3-mini](https://openai.com/index/openai-o3-mini)（2025-01-31）
+820. [OpenAI o3-mini](https://openai.com/index/openai-o3-mini)（2025-01-31） <!--orig:OpenAI o3-mini-->
 821. [借助美国国家实验室巩固美国的 AI 领导地位](https://openai.com/index/strengthening-americas-ai-leadership-with-the-us-national-laboratories)（2025-01-30） <!--orig:Strengthening America’s AI leadership with the U.S. National Laboratories-->
 822. [Operator 简介](https://openai.com/index/introducing-operator)（2025-01-23） <!--orig:Introducing Operator-->
 823. [Operator System Card（系统卡）](https://openai.com/index/operator-system-card)（2025-01-23） <!--orig:Operator System Card-->
@@ -899,7 +899,7 @@
 886. [我们安全与安保实践的最新进展](https://openai.com/index/update-on-safety-and-security-practices)（2024-09-16） <!--orig:An update on our safety & security practices-->
 887. [隆重推出 OpenAI o1‑preview](https://openai.com/index/introducing-openai-o1-preview)（2024-09-12） <!--orig:Introducing OpenAI o1-->
 888. [学习利用 LLM 进行推理](https://openai.com/index/learning-to-reason-with-llms)（2024-09-12） <!--orig:Learning to reason with LLMs-->
-889. [OpenAI o1-mini](https://openai.com/index/openai-o1-mini-advancing-cost-efficient-reasoning)（2024-09-12）
+889. [OpenAI o1-mini](https://openai.com/index/openai-o1-mini-advancing-cost-efficient-reasoning)（2024-09-12） <!--orig:OpenAI o1-mini-->
 890. [对 OpenAI o1 的贡献](https://openai.com/openai-o1-contributions)（2024-09-12） <!--orig:OpenAI o1 Contributions-->
 891. [Tyler Cowen：OpenAI o1 与经济学](https://openai.com/index/o1-economics)（2024-09-12） <!--orig:Economics and reasoning with OpenAI o1-->
 892. [Scott Wu：OpenAI o1 与编码](https://openai.com/index/o1-coding)（2024-09-12） <!--orig:Coding with OpenAI o1-->
@@ -1062,8 +1062,8 @@
 1049. [GPT 就是 GPT：大型语言模型对劳动力市场影响潜力的初探](https://openai.com/index/gpts-are-gpts)（2023-03-17） <!--orig:GPTs are GPTs: An early look at the labor market impact potential of large language models-->
 1050. [为课堂虚拟教育赋能](https://openai.com/index/khan-academy)（2023-03-14） <!--orig:Powering virtual education for the classroom-->
 1051. [变革视觉无障碍](https://openai.com/index/be-my-eyes)（2023-03-14） <!--orig:Transforming visual accessibility-->
-1052. [Stripe](https://openai.com/index/stripe)（2023-03-14）
-1053. [GPT-4](https://openai.com/index/gpt-4)（2023-03-14）
+1052. [Stripe](https://openai.com/index/stripe)（2023-03-14） <!--orig:Stripe-->
+1053. [GPT-4](https://openai.com/index/gpt-4)（2023-03-14） <!--orig:GPT-4-->
 1054. [为未来守护语言](https://openai.com/index/government-of-iceland)（2023-03-14） <!--orig:Preserving languages for the future-->
 1055. [填补关键的语言学习空白](https://openai.com/index/duolingo)（2023-03-14） <!--orig:Filling crucial language learning gaps-->
 1056. [为 AGI 及更远的未来做规划](https://openai.com/index/planning-for-agi-and-beyond)（2023-02-24） <!--orig:Planning for AGI and beyond-->
@@ -1120,7 +1120,7 @@
 1107. [用人类反馈摘要整本书](https://openai.com/index/summarizing-books)（2021-09-23） <!--orig:Summarizing books with human feedback-->
 1108. [TruthfulQA：衡量模型如何模仿人类的虚假说法](https://openai.com/index/truthfulqa)（2021-09-08） <!--orig:TruthfulQA: Measuring how models mimic human falsehoods-->
 1109. [Helen Toner 加入 OpenAI 董事会](https://openai.com/index/helen-toner-joins)（2021-09-08） <!--orig:Helen Toner joins OpenAI’s board of directors-->
-1110. [OpenAI Codex](https://openai.com/index/openai-codex)（2021-08-10）
+1110. [OpenAI Codex](https://openai.com/index/openai-codex)（2021-08-10） <!--orig:OpenAI Codex-->
 1111. [推出 Triton：面向神经网络的开源 GPU 编程](https://openai.com/index/triton)（2021-07-28） <!--orig:Introducing Triton: Open-source GPU programming for neural networks-->
 1112. [评估在代码上训练的大语言模型](https://openai.com/index/evaluating-large-language-models-trained-on-code)（2021-07-07） <!--orig:Evaluating large language models trained on code-->
 1113. [通过在精选数据集上训练改善语言模型行为](https://openai.com/index/improving-language-model-behavior)（2021-06-10） <!--orig:Improving language model behavior by training on a curated dataset-->
@@ -1243,7 +1243,7 @@
 1230. [具备对手学习意识的学习](https://openai.com/index/learning-with-opponent-learning-awareness)（2017-09-13） <!--orig:Learning with opponent-learning awareness-->
 1231. [OpenAI Baselines：ACKTR 与 A2C](https://openai.com/index/openai-baselines-acktr-a2c)（2017-08-18） <!--orig:OpenAI Baselines: ACKTR & A2C-->
 1232. [Dota 2 更多详情](https://openai.com/index/more-on-dota-2)（2017-08-16） <!--orig:More on Dota 2-->
-1233. [Dota 2](https://openai.com/index/dota-2)（2017-08-11）
+1233. [Dota 2](https://openai.com/index/dota-2)（2017-08-11） <!--orig:Dota 2-->
 1234. [收集人类反馈](https://openai.com/index/gathering-human-feedback)（2017-08-03） <!--orig:Gathering human feedback-->
 1235. [用参数噪声实现更好的探索](https://openai.com/index/better-exploration-with-parameter-noise)（2017-07-27） <!--orig:Better exploration with parameter noise-->
 1236. [近端策略优化（PPO）](https://openai.com/index/openai-baselines-ppo)（2017-07-20） <!--orig:Proximal Policy Optimization-->

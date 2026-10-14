@@ -56,28 +56,28 @@
 44. [发布 Codestral 25.08 与面向企业的 Mistral 完整编码技术栈](https://mistral.ai/news/codestral-25-08/)（2025-07-30） <!--orig:Announcing Codestral 25.08 and the Complete Mistral Coding Stack for Enterprise-->
 45. [我们对 AI 全球环境标准的贡献](https://mistral.ai/news/our-contribution-to-a-global-environmental-standard-for-ai/)（2025-07-22） <!--orig:Our contribution to a global environmental standard for AI-->
 46. [Le Chat 深度进阶](https://mistral.ai/news/le-chat-dives-deep/)（2025-07-17） <!--orig:Le Chat dives deep.-->
-47. [Voxtral](https://mistral.ai/news/voxtral/)（2025-07-15）
+47. [Voxtral](https://mistral.ai/news/voxtral/)（2025-07-15） <!--orig:Voxtral-->
 48. [用全新 Devstral 模型升级 agentic 编码能力](https://mistral.ai/news/devstral-2507/)（2025-07-10） <!--orig:Upgrading agentic coding capabilities with the new Devstral models-->
 49. [AI for Citizens 计划发布](https://mistral.ai/news/ai-for-citizens/)（2025-07-03） <!--orig:Announcing AI for Citizens-->
-50. [Mistral Compute](https://mistral.ai/news/mistral-compute/)（2025-06-11）
-51. [Magistral](https://mistral.ai/news/magistral/)（2025-06-10）
+50. [Mistral Compute](https://mistral.ai/news/mistral-compute/)（2025-06-11） <!--orig:Mistral Compute-->
+51. [Magistral](https://mistral.ai/news/magistral/)（2025-06-10） <!--orig:Magistral-->
 52. [Mistral Code 发布](https://mistral.ai/news/mistral-code/)（2025-06-04） <!--orig:Introducing Mistral Code-->
-53. [Codestral Embed](https://mistral.ai/news/codestral-embed/)（2025-05-28）
+53. [Codestral Embed](https://mistral.ai/news/codestral-embed/)（2025-05-28） <!--orig:Codestral Embed-->
 54. [用 Mistral Agents API 构建 AI Agent](https://mistral.ai/news/agents-api/)（2025-05-27） <!--orig:Build AI agents with the Mistral Agents API-->
-55. [Devstral](https://mistral.ai/news/devstral/)（2025-05-21）
+55. [Devstral](https://mistral.ai/news/devstral/)（2025-05-21） <!--orig:Devstral-->
 56. [Le Chat Enterprise 发布](https://mistral.ai/news/le-chat-enterprise/)（2025-05-07） <!--orig:Introducing Le Chat Enterprise-->
 57. [Medium 就是新的 Large](https://mistral.ai/news/mistral-medium-3/)（2025-05-07） <!--orig:Medium is the new large.-->
 58. [用 LLM as a Judge 评估 RAG](https://mistral.ai/news/llm-as-rag-judge/)（2025-04-09） <!--orig:Evaluating RAG with LLM as a Judge-->
-59. [Mistral Small 3.1](https://mistral.ai/news/mistral-small-3-1/)（2025-03-17）
-60. [Mistral OCR](https://mistral.ai/news/mistral-ocr/)（2025-03-06）
+59. [Mistral Small 3.1](https://mistral.ai/news/mistral-small-3-1/)（2025-03-17） <!--orig:Mistral Small 3.1-->
+60. [Mistral OCR](https://mistral.ai/news/mistral-ocr/)（2025-03-06） <!--orig:Mistral OCR-->
 61. [用 agentic 工作流赋能产品开发](https://mistral.ai/news/agentic-workflows-from-meetings-to-dev-tickets/)（2025-03-04） <!--orig:Empowering product development with an agentic workflow-->
-62. [Mistral Saba](https://mistral.ai/news/mistral-saba/)（2025-02-17）
+62. [Mistral Saba](https://mistral.ai/news/mistral-saba/)（2025-02-17） <!--orig:Mistral Saba-->
 63. [全新 le Chat：覆盖生活与工作的 AI 助手](https://mistral.ai/news/all-new-le-chat/)（2025-02-06） <!--orig:The all new le Chat: Your AI assistant for life and work-->
-64. [Mistral Small 3](https://mistral.ai/news/mistral-small-3/)（2025-01-30）
+64. [Mistral Small 3](https://mistral.ai/news/mistral-small-3/)（2025-01-30） <!--orig:Mistral Small 3-->
 65. [消息灵通，"喵"不可言](https://mistral.ai/news/mistral-afp/)（2025-01-16） <!--orig:Purr-fectly informed-->
-66. [Codestral 25.01](https://mistral.ai/news/codestral-2501/)（2025-01-13）
+66. [Codestral 25.01](https://mistral.ai/news/codestral-2501/)（2025-01-13） <!--orig:Codestral 25.01-->
 67. [Mistral 加入了聊天](https://mistral.ai/news/mistral-chat/)（2024-11-18） <!--orig:Mistral has entered the chat-->
-68. [Pixtral Large](https://mistral.ai/news/pixtral-large/)（2024-11-18）
+68. [Pixtral Large](https://mistral.ai/news/pixtral-large/)（2024-11-18） <!--orig:Pixtral Large-->
 69. [Mistral 批量 API](https://mistral.ai/news/batch-api/)（2024-11-07） <!--orig:Mistral Batch API-->
 70. [Mistral 内容审核 API](https://mistral.ai/news/mistral-moderation/)（2024-11-07） <!--orig:Mistral Moderation API-->
 71. [一个 Ministral，一群 Ministraux](https://mistral.ai/news/ministraux/)（2024-10-16） <!--orig:Un Ministral, des Ministraux-->
@@ -85,17 +85,17 @@
 73. [发布 Pixtral 12B](https://mistral.ai/news/pixtral-12b/)（2024-09-17） <!--orig:Announcing Pixtral 12B-->
 74. [构建、调优、迭代](https://mistral.ai/news/build-tweak-repeat/)（2024-08-07） <!--orig:Build, tweak, repeat-->
 75. [够大即好](https://mistral.ai/news/mistral-large-2407/)（2024-07-24） <!--orig:Large Enough-->
-76. [Mistral NeMo](https://mistral.ai/news/mistral-nemo/)（2024-07-18）
-77. [MathΣtral](https://mistral.ai/news/mathstral/)（2024-07-16）
-78. [Codestral Mamba](https://mistral.ai/news/codestral-mamba/)（2024-07-16）
+76. [Mistral NeMo](https://mistral.ai/news/mistral-nemo/)（2024-07-18） <!--orig:Mistral NeMo-->
+77. [MathΣtral](https://mistral.ai/news/mathstral/)（2024-07-16） <!--orig:MathΣtral-->
+78. [Codestral Mamba](https://mistral.ai/news/codestral-mamba/)（2024-07-16） <!--orig:Codestral Mamba-->
 79. [我的裁缝是 Mistral](https://mistral.ai/news/customization/)（2024-06-05） <!--orig:My Tailor is Mistral-->
 80. [Mistral AI 微调黑客松](https://mistral.ai/news/2024-ft-hackathon/)（2024-06-05） <!--orig:Mistral Fine-tuning Hackathon-->
-81. [Codestral](https://mistral.ai/news/codestral/)（2024-05-29）
+81. [Codestral](https://mistral.ai/news/codestral/)（2024-05-29） <!--orig:Codestral-->
 82. [Mistral AI 非生产许可证](https://mistral.ai/news/mistral-ai-non-production-license-mnpl/)（2024-05-29） <!--orig:The Mistral Non-Production License-->
 83. [更便宜、更好、更快、更强](https://mistral.ai/news/mixtral-8x22b/)（2024-04-17） <!--orig:Cheaper, Better, Faster, Stronger-->
 84. [Mistral Large 登场](https://mistral.ai/news/mistral-large/)（2024-02-26） <!--orig:Au Large-->
-85. [Le Chat](https://mistral.ai/news/le-chat-mistral/)（2024-02-26）
+85. [Le Chat](https://mistral.ai/news/le-chat-mistral/)（2024-02-26） <!--orig:Le Chat-->
 86. [专家混合模型 Mixtral](https://mistral.ai/news/mixtral-of-experts/)（2023-12-11） <!--orig:Mixtral of experts-->
 87. [La Plateforme 平台](https://mistral.ai/news/la-plateforme/)（2023-12-11） <!--orig:La Plateforme-->
-88. [Mistral 7B](https://mistral.ai/news/announcing-mistral-7b/)（2023-09-27）
+88. [Mistral 7B](https://mistral.ai/news/announcing-mistral-7b/)（2023-09-27） <!--orig:Mistral 7B-->
 89. [把开放 AI 模型带到前沿](https://mistral.ai/news/about-mistral-ai/)（2023-09-27） <!--orig:Bringing open AI models to the frontier-->

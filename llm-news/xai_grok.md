@@ -96,7 +96,7 @@
 85. [xAI 和萨尔瓦多开创了世界上第一个全国性人工智能教育计划](https://x.ai/news#d-2025-12-17-62)（2025-12-17）
 86. [Grok 4.1 Fast 与 Agent Tools API](https://x.ai/news/grok-4-1-fast)（2025-12-11） <!--orig:Grok 4.1 Fast and Agent Tools API-->
 87. [Grok 携手沙特走向全球](https://x.ai/news/grok-goes-global)（2025-11-19） <!--orig:Grok goes Global with KSA-->
-88. [Grok 4.1](https://x.ai/news/grok-4-1)（2025-11-19）
+88. [Grok 4.1](https://x.ai/news/grok-4-1)（2025-11-19） <!--orig:Grok 4.1-->
 89. [借助 GSA OneGov 扩展 xAI for Government](https://x.ai/news/onegov)（2025-11-17） <!--orig:Expanding xAI for Government with GSA OneGov-->
 90. [借助 GSA OneGov 扩展政府 xAI](https://x.ai/news#d-2025-11-17-66)（2025-11-17）
 91. [Grok 4 Fast 推动高性价比智能的前沿](https://x.ai/news/grok-4-fast)（2025-09-25） <!--orig:Grok 4 Fast-->

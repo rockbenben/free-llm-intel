@@ -14,13 +14,13 @@
 2. [用 Claude 搭建实时 dashboard 与动画讲解](https://claude.com/resources/articles/dashboards-and-motion)（2026-10-08） <!--orig:Build live dashboards and animate explainers with Claude-->
 3. [构建有效的代理自动化](https://claude.com/resources/articles#d-2026-10-08-1)（2026-10-08） <!--orig:Building effective agent automations-->
 4. [Block 如何跨数千个 pull request 编排 Claude Fable](https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests)（2026-10-08） <!--orig:How Block orchestrates Claude Fable across thousands of pull requests-->
-5. [Claude Haiku 5.5](https://claude.com/resources/articles#d-2026-10-07-3)（2026-10-07）
-6. [Automating eval design and hillclimbing with Claude](https://claude.com/resources/articles#d-2026-10-07-5)（2026-10-07）
+5. [Claude Haiku 5.5](https://claude.com/resources/articles#d-2026-10-07-3)（2026-10-07） <!--orig:Claude Haiku 5.5-->
+6. [用 Claude 自动化评测设计与 hillclimbing](https://claude.com/resources/articles#d-2026-10-07-5)（2026-10-07） <!--orig:Automating eval design and hillclimbing with Claude-->
 7. [Comcast 和 Booz Allen 如何用 Claude Mythos 发现漏洞利用链并保护他们的代码库](https://claude.com/resources/articles/how-comcast-booz-allen-use-claude-mythos-to-secure-their-codebases)（2026-10-06） <!--orig:How Comcast and Booz Allen use Claude Mythos to find exploit chains and secure their codebases-->
 8. [Claude 现已支持 Google Docs、Sheets 和 Slides](https://claude.com/resources/articles/claude-now-works-in-google-docs-sheets-and-slides)（2026-10-06） <!--orig:Claude now works with Google Docs, Sheets, and Slides-->
 9. [我们扩展 Claude Startups 计划，帮助创始人构建](https://claude.com/resources/articles/were-expanding-the-claude-startups-program-to-help-founders-build)（2026-10-06） <!--orig:We’re expanding the Claude Startups program to help founders build-->
 10. [扩展 Cyber Verification Program](https://www.anthropic.com/news/cyber-verification-program)（2026-10-06） <!--orig:Expanding the Cyber Verification Program-->
-11. [Claude Code in the cloud: a field guide to cloud sessions](https://claude.com/resources/articles#d-2026-10-06-10)（2026-10-06）
+11. [云端 Claude Code：cloud sessions 实操指南](https://claude.com/resources/articles#d-2026-10-06-10)（2026-10-06） <!--orig:Claude Code in the cloud: a field guide to cloud sessions-->
 12. [推出 Claude Haiku 5.5](https://www.anthropic.com/claude-haiku-5-5)（2026-10-06） <!--orig:Introducing Claude Haiku 5.5-->
 13. [Cresta 如何将 CX 专业知识转变为 Claude Agent SDK 上的代理构建器](https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk)（2026-10-05） <!--orig:How Cresta turned CX expertise into an agent builder on the Claude Agent SDK-->
 14. [Claude政府现已普遍可用](https://claude.com/blog#d-2026-10-01-19)（2026-10-01） <!--orig:Claude for Government is now generally available-->

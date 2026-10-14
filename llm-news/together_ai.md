@@ -55,10 +55,10 @@
 44. [什么是 AI Native Cloud？](https://www.together.ai/blog/what-is-an-ai-native-cloud)（2026-04-07） <!--orig:What is an AI Native Cloud?-->
 45. [AI for Systems：用 LLM 优化数据库查询执行](https://www.together.ai/blog/using-llms-to-optimize-database-query-execution)（2026-04-03） <!--orig:AI for Systems: Using LLMs to Optimize Database Query Execution-->
 46. [走进 Together AI kernels 团队](https://www.together.ai/blog/inside-the-together-ai-kernels-team)（2026-04-01） <!--orig:Inside the Together AI kernels team-->
-47. [Aurora](https://www.together.ai/blog/aurora)（2026-03-31）
+47. [Aurora](https://www.together.ai/blog/aurora)（2026-03-31） <!--orig:Aurora-->
 48. [规划、分而治之：弱模型如何在长上下文任务上表现出色](https://www.together.ai/blog/plan-divide-conquer)（2026-03-26） <!--orig:Plan, divide, and conquer: How weak models excel at long context tasks-->
 49. [Together AI 微调服务扩展：支持工具调用、推理与视觉](https://www.together.ai/blog/fine-tuning-update)（2026-03-18） <!--orig:Together AI expands fine-tuning service with tool calling, reasoning, and vision support-->
-50. [Mamba-3](https://www.together.ai/blog/mamba-3)（2026-03-17）
+50. [Mamba-3](https://www.together.ai/blog/mamba-3)（2026-03-17） <!--orig:Mamba-3-->
 51. [Together AI 在 NVIDIA GTC 2026：探索研究产品两端的最新创新](https://www.together.ai/blog/together-ai-at-nvidia-gtc-2026)（2026-03-16） <!--orig:Together AI at NVIDIA GTC 2026: Explore our latest innovations across research and products-->
 52. [在 Together AI 上构建实时语音 Agent](https://www.together.ai/blog/build-real-time-voice-agents-on-together-ai)（2026-03-12） <!--orig:Build real-time voice agents on Together AI-->
 53. [Together AI Day 0 为开发者带来 NVIDIA Nemotron 3](https://www.together.ai/blog/nvidia-nemotron-3-super)（2026-03-11） <!--orig:Together AI Brings NVIDIA Nemotron 3 to Developers on Day 0-->
