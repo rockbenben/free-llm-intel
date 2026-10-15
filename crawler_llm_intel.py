@@ -5356,7 +5356,10 @@ def write_rss_feeds(out_dir: Path, intel_list: list[VendorIntel], base_url: str 
 
     英文 feed 判定见 `_english_eligible`。
 
-    返回 (源文件数, 中文条目数, 实际改写文件数, 因未来日期被排除的条目数)。
+    返回 (源文件数, 中文条目数, 实际改写文件数, 没进订阅流的条数)。最后一项是
+    `_rss_articles` 的全部剔除：晚于今天的日期、canonical-only 厂商的合成 `#锚点`
+    行、同标题影子折叠都算在里面，**不等于「未来日期条数」**（调用方要单列日期问题
+    就自己按 `a.date > today` 数一遍，`render_outputs` 就是这么分的）。
     """
     out_dir.mkdir(parents=True, exist_ok=True)
     base = base_url.rstrip("/")
@@ -6704,9 +6707,20 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
         vendor_limit=rss_vendor_limit)
     print(f"      {feeds_dir_label} 自建 RSS {n_rss} 个源、{n_rss_items} 条"
           f"（本次实际改写 {n_rss_changed} 个文件）")
-    if n_rss_skipped:
-        print(f"      [warn] {n_rss_skipped} 条因发布日期晚于今天被排除在订阅流之外"
+    # 「没进订阅流」有三类成因，只有第一类值得人去查：晚于今天的日期（源页面把已发布的
+    # 文章印成未来某日）、canonical-only 厂商的合成 `#锚点` 行、同标题影子折叠。后两类是
+    # 判据本身要的，混进同一个数里喊「日期提取有误，建议核查」会把每轮巡检的人（和 agent）
+    # 派去查一个不存在的队列 —— 2026-10-15 实测那 77 条里未来日期是 0 条。
+    feed_today = datetime.now().strftime("%Y-%m-%d")
+    n_future_excluded = sum(1 for it in intel_list
+                            for a in it.all_news_articles if a.date > feed_today)
+    n_other_excluded = n_rss_skipped - n_future_excluded
+    if n_future_excluded:
+        print(f"      [warn] {n_future_excluded} 条因发布日期晚于今天被排除在订阅流之外"
               "（归档 .md 中仍保留）——多为源页面日期提取有误，建议核查。")
+    elif n_other_excluded:
+        print(f"      {n_other_excluded} 条按判据本身不进订阅流（canonical-only 厂商的合成"
+              " #锚点 条目、同标题影子折叠），归档 .md 中仍全量保留，无需核查。")
     # 模型发布雷达：同一份「归档合并后」全量列表的免费衍生（确定性、无时间戳）
     releases = extract_model_releases(intel_list)
     wrote_rel = write_model_releases(feeds_dir / "model-releases.json", releases)
@@ -6744,7 +6758,9 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
 
     return {"news_md_changed": bool(news_changed), "rss_files": n_rss,
             "rss_items": n_rss_items, "rss_changed": n_rss_changed,
-            "rss_future_excluded": n_rss_skipped, "releases": len(releases),
+            "rss_future_excluded": n_future_excluded,
+            "rss_other_excluded": n_other_excluded,
+            "releases": len(releases),
             "releases_changed": bool(wrote_rel), "changes": n_changes,
             "opml_feeds": n_feeds, "quotas_count": quotas["count"],
             "quotas_changed": bool(wrote_q)}

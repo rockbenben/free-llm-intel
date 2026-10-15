@@ -10,6 +10,12 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-15-render-layer-design.md`
 
+> **勘误（2026-10-15，任务已全部执行完毕）**：Task 4 的代码片段里那句
+> `[warn] {n_rss_skipped} 条因发布日期晚于今天被排除…建议核查` 和返回键
+> `rss_future_excluded = n_rss_skipped` 都是假账——`n_rss_skipped` 混合了合成锚点剔除与
+> 同标题折叠，实测当日真未来日期为 0。现已按 `rss_future_excluded` / `rss_other_excluded`
+> 分开计数，只有日期问题才提示核查。照本计划重跑的人请以 `main` 上的实现为准。
+
 ## Global Constraints
 
 - 测试框架是仓库自带的 `test_workflow_and_review.py`（`unittest`，512 条基线），门禁命令固定为 `python test_workflow_and_review.py`，全绿才算完成。

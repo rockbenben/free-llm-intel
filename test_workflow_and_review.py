@@ -9651,7 +9651,8 @@ class TestRenderOutputs(unittest.TestCase):
         out = self._render()
         self.assertIsInstance(out, dict)
         for k in ("news_md_changed", "rss_files", "rss_items", "rss_changed",
-                  "rss_future_excluded", "releases", "releases_changed",
+                  "rss_future_excluded", "rss_other_excluded", "releases",
+                  "releases_changed",
                   "changes", "opml_feeds", "quotas_count", "quotas_changed"):
             self.assertIn(k, out, f"返回契约缺键 {k}")
         self.assertTrue((self.root / "docs" / "feeds" / "articles.json").exists())
@@ -9717,6 +9718,71 @@ class TestRenderOutputs(unittest.TestCase):
                     rc = crawler_llm_intel.main(["--render-only"] + extra)
                 self.assertEqual(rc, 2, f"--render-only 应与 {extra} 互斥")
 
+
+
+class TestRssExclusionAccounting(unittest.TestCase):
+    """订阅流「没进 feed」的账要按原因分开记。
+
+    2026-10-15 实测：那条 warn 天天喊「N 条因发布日期晚于今天被排除…建议核查」，
+    而当时全库晚于今天的日期是 0 条 —— 77 条其实是 63 条合成 `#锚点` 剔除
+    （canonical-only 厂商）加 14 条同标题折叠，两类都是判据本身要的。
+    一个骗人的数字每轮都会把人（和 agent）派去查不存在的队列。
+    """
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp_dir.name)
+        (self.root / "llm-news").mkdir()
+        (self.root / "docs" / "feeds").mkdir(parents=True)
+        (self.root / "docs" / "articles").mkdir()
+        (self.root / "docs" / "feeds" / "bodies.json").write_text(
+            json.dumps({"count": 0, "bodies": {}}, ensure_ascii=False),
+            encoding="utf-8")
+        self.addCleanup(self.temp_dir.cleanup)
+
+    def _render(self, arts, vendor_id="deepseek"):
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id=vendor_id, brand="DeepSeek", homepage="https://d.com",
+            products=[], all_news_articles=arts)
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf), \
+                contextlib.redirect_stderr(io.StringIO()):
+            out = crawler_llm_intel.render_outputs(
+                self.root, [intel], feeds_base="https://x.test/feeds",
+                all_vendors=[{"id": vendor_id, "brand": "DeepSeek"}], reviews={})
+        return out, buf.getvalue()
+
+    def test_anchor_only_drop_is_not_counted_as_future_date(self):
+        """canonical-only 厂商的合成锚点行不得再冒名「未来日期」。"""
+        self.assertIn("deepseek", crawler_llm_intel.NEWS_CANONICAL_ONLY_VENDORS,
+                      "夹具前提：deepseek 走 canonical-only，锚点行必被剔")
+        arts = [
+            crawler_llm_intel.Article(
+                title="Anchored", url="https://d.com/updates#%E9%94%9A",
+                date="2025-05-28"),
+            crawler_llm_intel.Article(
+                title="Direct", url="https://d.com/updates", date="2025-05-27"),
+        ]
+        out, text = self._render(arts)
+        self.assertEqual(out["rss_future_excluded"], 0,
+                         "没有任何晚于今天的日期，这个数必须是 0")
+        self.assertEqual(out["rss_other_excluded"], 1,
+                         "合成锚点/同标题折叠的剔除要单列，不能凭空消失")
+        self.assertNotIn("晚于今天", text, "零未来日期时不该出现这句话")
+        self.assertNotIn("建议核查", text, "没有真日期问题就别派活")
+
+    def test_real_future_date_still_warns(self):
+        """反面对照：真有一个未来日期时告警必须响，别把修文案变成静音。"""
+        arts = [
+            crawler_llm_intel.Article(
+                title="日期写错", url="https://d.com/future", date="2099-12-10"),
+            crawler_llm_intel.Article(
+                title="正常", url="https://d.com/ok", date="2025-05-27"),
+        ]
+        out, text = self._render(arts)
+        self.assertEqual(out["rss_future_excluded"], 1)
+        self.assertIn("晚于今天", text)
+        self.assertIn("建议核查", text)
 
 
 class TestIndexMatchesArchives(unittest.TestCase):
