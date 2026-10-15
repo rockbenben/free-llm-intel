@@ -9633,6 +9633,30 @@ class TestRenderOutputs(unittest.TestCase):
                  for p in self.root.rglob("*") if p.is_file()}
         self.assertEqual(before, after, "G5 幂等：第二次渲染不得改写任何文件")
 
+    def test_render_only_flag_is_wired(self):
+        """旗标本身：存在、独立于 --rebuild-only（不在测试里真跑，避免重写真仓库产物）。"""
+        args = crawler_llm_intel.build_arg_parser().parse_args(["--render-only"])
+        self.assertTrue(args.render_only)
+        self.assertFalse(args.rebuild_only, "两个旗标各自独立，不得互相隐含")
+        args2 = crawler_llm_intel.build_arg_parser().parse_args(["--rebuild-only"])
+        self.assertTrue(args2.rebuild_only)
+        self.assertFalse(args2.render_only)
+
+    def test_render_only_is_mutually_exclusive_with_crawl_flags(self):
+        """render 不联网：与 --only / --no-news / 核查导包互斥。
+
+        `main()` 在这些校验里是先打印 fatal 再 `return 2`，走不到任何写盘分支，
+        所以这条测试无副作用（真跑一次不动源留给手工核验）。
+        """
+        for extra in (["--only", "openai"], ["--no-news"],
+                      ["--review-export"], ["--review-apply"]):
+            with self.subTest(extra=extra):
+                with contextlib.redirect_stdout(io.StringIO()), \
+                        contextlib.redirect_stderr(io.StringIO()):
+                    rc = crawler_llm_intel.main(["--render-only"] + extra)
+                self.assertEqual(rc, 2, f"--render-only 应与 {extra} 互斥")
+
+
 
 if __name__ == "__main__":
     unittest.main()

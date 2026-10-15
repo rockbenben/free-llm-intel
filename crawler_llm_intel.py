@@ -6491,6 +6491,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--only", action="append", default=[],
                         help="只巡检指定 vendor_id（可多次使用，调试用；不覆盖全局 README 与新闻总表）")
     parser.add_argument("--no-news", action="store_true", help="跳过博客 / RSS 发现")
+    parser.add_argument("--render-only", action="store_true",
+                        help="维护模式（不联网）：只重排**产出层**——docs/feeds/*.xml、"
+                             "articles.json、vendors.json、model-releases.json、"
+                             "intel-changes.json、quotas.json、llm-news-feeds.md/.opml。"
+                             "与 --rebuild-only 的差别是**绝不写归档与语料**，因此改完源随时可安全重跑。")
     parser.add_argument("--rebuild-only", action="store_true",
                         help="不做页面抓取，从磁盘产物（llm-news/*.md 归档 + llm-news-feeds.md）"
                              "重建动态类产物：归档、llm-news-feeds.md、OPML、docs/feeds/*.xml 与索引 JSON。"
@@ -6665,9 +6670,13 @@ def main(argv: list[str] | None = None) -> int:
 
     parser = build_arg_parser()
     args = parser.parse_args(argv)
+    # 两种「不联网、从磁盘源重建」的模式：rebuild 连归档一起重排，render 只重排视图。
+    # 12 处 `args.rebuild_only` 判据统一走这个变量，免得以后加模式时漏改其中几处
+    # （漏一处就是「render 也会写快照/README」那类越界）。
+    disk_only = args.rebuild_only or args.render_only
 
     root = _repo_root()
-    if not args.rebuild_only:
+    if not disk_only:
         (root / ".ai-changed").unlink(missing_ok=True)
 
     # 维护模式（正文语料层，不巡检）：先于爬虫分派，读现有 articles.json 逐篇抓正文。
@@ -6878,32 +6887,33 @@ def main(argv: list[str] | None = None) -> int:
         if missing:
             print(f"[warn] --only 指定的 vendor_id 不存在: {sorted(missing)}", file=sys.stderr)
 
-    if args.rebuild_only and (args.only or args.no_news):
-        print("[fatal] --rebuild-only 与 --only / --no-news 互斥（重建本身就是全局动态产物）",
+    if disk_only and (args.only or args.no_news):
+        print("[fatal] --rebuild-only / --render-only 与 --only / --no-news 互斥"
+              "（两者重排的都是全局动态产物）",
               file=sys.stderr)
         return 2
     if args.review_export and args.review_apply:
         print("[fatal] --review-export 与 --review-apply 互斥（先导出后应用）",
               file=sys.stderr)
         return 2
-    if args.rebuild_only and args.review_export:
+    if disk_only and args.review_export:
         print("[fatal] --review-export 需要实抓组卷（导出的是当次页面构成的核查语料），"
-              "与 --rebuild-only 互斥", file=sys.stderr)
+              "与 --rebuild-only / --render-only 互斥", file=sys.stderr)
         return 2
-    if args.rebuild_only and args.review_apply:
+    if disk_only and args.review_apply:
         print("[fatal] --review-apply 需要与导包时的页面快照比对（指纹一致走快进，"
-              "否则实抓重验），与 --rebuild-only 互斥", file=sys.stderr)
+              "否则实抓重验），与 --rebuild-only / --render-only 互斥", file=sys.stderr)
         return 2
 
     session = build_session()
     timeout = (8.0, args.timeout)
     use_browser = not args.no_browser
-    if use_browser and not HAS_PLAYWRIGHT and not args.rebuild_only:
+    if use_browser and not HAS_PLAYWRIGHT and not disk_only:
         print("[info] 未安装 playwright，禁用浏览器兜底（JS/403 页面将仅标注）。"
               "安装后可自动用真实浏览器渲染：pip install playwright")
     intel_list: list[VendorIntel] = []
     snapshots = SnapshotState(root)
-    if snapshots.baseline and not args.rebuild_only:
+    if snapshots.baseline and not disk_only:
         print("[info] 快照状态文件不存在：本次为基线建档，只记录页面哈希，不触发 AI 核查。")
     started = time.time()
 
@@ -6913,15 +6923,16 @@ def main(argv: list[str] | None = None) -> int:
     # ---- 本地核查快进：任一指纹不符即回退完整巡检（详见 try_packet_fast_replay docstring）。----
     fast_applied = False
     fast_vids: set[str] = set()
-    if (args.review_apply and not args.rebuild_only and not args.only
+    if (args.review_apply and not disk_only and not args.only
             and not snapshots.baseline):
         intel_list, fast_applied, fast_vids = try_packet_fast_replay(
             root, snapshots, vendors, grouped, news_md_path, feeds_dir)
 
     if fast_applied:
         pass
-    elif args.rebuild_only:
-        print("[2/4] --rebuild-only：跳过抓取，从磁盘产物重建 ...")
+    elif disk_only:
+        print(f"[2/4] {'--rebuild-only' if args.rebuild_only else '--render-only'}："
+              "跳过抓取，从磁盘产物重建 ...")
         news_text = news_md_path.read_text(encoding="utf-8") if news_md_path.exists() else ""
         intel_list = rebuild_intel_from_disk(
             vendors, grouped, _parse_news_md_page_states(news_text),
@@ -7004,7 +7015,7 @@ def main(argv: list[str] | None = None) -> int:
     # 天然选不出候选，无需额外开关。
     forced_review: set[str] = set()
     if ((args.ai_review or args.review_export or args.review_apply)
-            and not args.rebuild_only and not snapshots.baseline
+            and not disk_only and not snapshots.baseline
             and args.stale_review_days > 0):
         candidates = [v.vendor_id for v in intel_list
                       if v.vendor_id not in changed_map
@@ -7156,7 +7167,7 @@ def main(argv: list[str] | None = None) -> int:
         # 兜底提交本轮已 stage 的厂商；重复调用幂等（无变化厂商 commit 不产生内容差异）
         for intel in intel_list:
             snapshots.commit_vendor(intel.vendor_id)
-    if not args.rebuild_only:
+    if not disk_only:
         state_changed = snapshots.save({v.vendor_id for v in intel_list},
                                        full_run=not args.only,
                                        crawl_scope=fast_vids if fast_applied else None)
@@ -7166,8 +7177,8 @@ def main(argv: list[str] | None = None) -> int:
     # 自建 RSS 的对外前缀：README 与博客总表都要引用订阅地址，必须在渲染之前解析
     # （CI 里由 GITHUB_REPOSITORY 推导 Pages 地址）。feeds_dir 已在 [2/4] 前算好。
     feeds_base = args.feeds_base.strip() or default_feeds_base()
-    if args.rebuild_only:
-        print("      [info] --rebuild-only：跳过 README 渲染与快照落盘（情报区需要实抓页面）。")
+    if disk_only:
+        print("      [info] 磁盘重建模式：跳过 README 渲染与快照落盘（情报区需要实抓页面）。")
     elif fast_applied:
         # 快进重放与 --rebuild-only 同源：intel_list 由磁盘重建、只有动态页与空壳，
         # 没有实抓的情报页正文。此时渲染 README 会把厂商档案区写成空白，冲掉上一轮
@@ -7217,10 +7228,14 @@ def main(argv: list[str] | None = None) -> int:
         # 因此它必须排在 render_outputs 之前：否则总表用的是合并前计数，会比归档文件少
         # （归档保留了页面已不再链接的历史文章，总表计数取自合并后字段，故必须后置）。
         news_dir = news_md_path.parent / "llm-news"
-        n_arch, n_arch_arts, n_arch_changed = write_news_archives(
-            news_dir, intel_list, clean_removed=True, title_polish=title_polish)
-        print(f"      llm-news/ 归档 {n_arch} 个厂商文件、共 {n_arch_arts} 篇文章"
-              f"（本次实际改写 {n_arch_changed} 个文件）")
+        # --render-only 到此为止不写源：归档是源层，重排视图不需要（也不允许）改它。
+        # 少了这道护栏，「重排产物」就会顺带折叠影子行（实测 deepseek 46→42），
+        # 每次本地渲染都得人工判断那几行 diff 是折叠还是丢数据。
+        if not args.render_only:
+            n_arch, n_arch_arts, n_arch_changed = write_news_archives(
+                news_dir, intel_list, clean_removed=True, title_polish=title_polish)
+            print(f"      llm-news/ 归档 {n_arch} 个厂商文件、共 {n_arch_arts} 篇文章"
+                  f"（本次实际改写 {n_arch_changed} 个文件）")
         render_outputs(root, intel_list, feeds_base=feeds_base,
                        all_vendors=all_vendors, reviews=snapshots.reviews,
                        news_md_path=news_md_path, opml_path=opml_path,
@@ -7242,7 +7257,7 @@ def main(argv: list[str] | None = None) -> int:
     # （total 为 0 或磁盘重建），--only 是小样本调试轮，三者都不该被比例阈值拦截。
     # 触发时以非零码退出：CI 抓取步骤随即失败，后面的 Verify / Commit 都不执行，
     # 宁可不提交当天产物，也不拿大面积「解析失败」的 README 覆盖上一轮健康产物。
-    if (not args.rebuild_only and not fast_applied and not args.only
+    if (not disk_only and not fast_applied and not args.only
             and intel_failure_abort(total, ok)):
         print(f"::error::情报页 {fail}/{total} 抓取失败（≥{INTEL_FAIL_ABORT_RATIO:.0%}），"
               "疑似系统性故障（runner 出口被墙 / 源站整体改版），本次以失败退出、"
