@@ -5791,8 +5791,44 @@ class TestReviewChannelHardening(unittest.TestCase):
             self.root, {vid: []}, intel_by_id, snaps)
         self.assertIn(vid, out, "已有 .applied 残留时二次采纳必须成功")
 
+    def test_state_with_utf8_bom_is_read_not_treated_as_corrupt(self):
+        """带 BOM 的 state 必须照常读出来，不能判损坏。
+
+        磁盘模式遇到损坏 state 会 exit 2 卡住当天巡检，所以「什么算损坏」要收紧：
+        BOM 不是损坏，是编码前缀。实测本仓库 Windows PowerShell 5.1 的
+        `Set-Content -Encoding UTF8` 默认就写 BOM（审计时踩到过），手改/坏合并也常见。
+        读用 `utf-8-sig`：带不带 BOM 是同一份 JSON，两边都收。
+
+        夹具先让 `save()` 落一份**规范格式**的 state（BOM 那个 bug 发生在规范文件被
+        人重新写了一遍之后，不是随手拼个 JSON），再补上 BOM 前缀。
+        """
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            st0 = crawler_llm_intel.SnapshotState(root)
+            st0.entries = {"v|https://x|1": {"hash": "abc"}}
+            st0.reviews = {"v": "2026-10-01"}
+            st0.save(set(), full_run=False)
+            path = root / crawler_llm_intel.SNAPSHOT_STATE
+            path.write_bytes(b"\xef\xbb\xbf" + path.read_bytes())
+
+            st = crawler_llm_intel.SnapshotState(root)
+            self.assertFalse(st.corrupt, "BOM 是编码前缀，不是损坏")
+            self.assertFalse(st.baseline, "有 state 就不该按基线建档")
+            self.assertEqual(st.entries, {"v|https://x|1": {"hash": "abc"}}, "条目必须原样读出")
+            self.assertEqual(st.reviews, {"v": "2026-10-01"})
+            # 内容没变时不得改写（否则每轮都无意义刷一次 diff，且 BOM 会一直传下去）
+            self.assertFalse(st.save(set(), full_run=False), "内容相同不该改写 state")
+            self.assertFalse([p for p in root.iterdir() if ".corrupt" in p.name],
+                             "读得动就不该产生存档")
+
     def test_corrupt_state_backs_up_and_rebaselines(self):
-        """损坏的 state 不得静默清空成「全厂商变化」：备份 + 按基线重建。"""
+        """损坏的 state 不得静默清空成「全厂商变化」：备份 + 按基线重建。
+
+        存档与重建必须**成对**。过去改名发生在 `__init__`，而 `--render-only` /
+        `--rebuild-only` 根本不调 `save()` —— 只改名不写新文件等于把源文件删掉：实测
+        那条路径 exit 0、state 被改名后永不重建、`quotas.json` 的核查日期被抹成 0/70，
+        CI 照常提交。所以构造期只读不写，留证归 `save()`。
+        """
         path = self.root / crawler_llm_intel.SNAPSHOT_STATE
         path.write_text('{"sources": {{{ 半截 JSON', encoding="utf-8")
         err = io.StringIO()
@@ -5800,9 +5836,16 @@ class TestReviewChannelHardening(unittest.TestCase):
             snaps = crawler_llm_intel.SnapshotState(self.root)
         self.assertTrue(snaps.baseline, "损坏后必须按基线建档，不报变化")
         self.assertEqual(snaps.entries, {})
-        backups = list(self.root.glob("*.corrupt-*"))
-        self.assertEqual(len(backups), 1, "损坏文件必须存档留证")
         self.assertIn("基线", err.getvalue())
+        self.assertTrue(path.exists(), "构造期只读：损坏的原件不许在这一步就消失")
+        self.assertEqual(list(self.root.glob("*.corrupt-*")), [],
+                         "构造期不许改名（这一模式可能根本不落盘）")
+        # 真落盘时才留证，且必须紧跟一份可用的新 state
+        snaps.save(set(), full_run=False)
+        backups = list(self.root.glob("*.corrupt-*"))
+        self.assertEqual(len(backups), 1, "落盘时损坏文件必须存档留证")
+        self.assertTrue(path.exists(), "存档与重建成对：改名后必须写回新 state")
+        json.loads(path.read_text(encoding="utf-8"))
 
     def test_digest_ignores_backoff_bookkeeping(self):
         """ai_attempts 等退避字段不进指纹：bump 一次不得被误判「页面又变」。"""
@@ -9248,6 +9291,44 @@ class TestFulltextCiInvariants(unittest.TestCase):
             (root / "llm-news/v.md").write_text(f"3. [Solo]({a})\n", encoding="utf-8")
             self.assertEqual(crawler_llm_intel.find_title_drift(root), [])
 
+    def test_title_drift_guard_follows_identity_not_visible_link(self):
+        """带 `<!--url:-->` 的行必须按**身份**查台账，可见链接被截断不算数。
+
+        过去这道闸拿 group(2)（可见链接）当 join 键，而 `parse_archived_articles` 与
+        `fetch_bodies` 都以 group(5) 为身份：实测已提交归档里 54 行 ident≠可见链接、
+        其中 47 行在台账里查不到 —— 全是单页变更日志的切片行，可见链接被截到 `…`、
+        身份带完整锚点，闸对它们整片失明。这格照抄那个形态。
+        """
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "llm-news").mkdir(parents=True)
+            (root / "docs/feeds").mkdir(parents=True)
+            ident = "https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#gemini-4-argon"
+            shown = "https://ai.google.dev/gemini-api/docs/changelog?hl=z..."
+            (root / "llm-news/google_gemini.md").write_text(
+                f"1. [Gemini 4 Argon 正式]({shown})（2026-10-01） "
+                f"<!--url:{ident}-->\n", encoding="utf-8")
+            (root / "docs/feeds/bodies.json").write_text(
+                json.dumps({"count": 1, "bodies": {
+                    "google_gemini\t" + ident: {"title": "Gemini 4 Argon 正式发布说明"}}},
+                    ensure_ascii=False), encoding="utf-8")
+
+            # 正例：归档显示英文锚文本、台账身份行有中文 → 必须报警
+            (root / "llm-news/google_gemini.md").write_text(
+                f"1. [Gemini 4 Argon]({shown})（2026-10-01） <!--url:{ident}-->\n",
+                encoding="utf-8")
+            drift = crawler_llm_intel.find_title_drift(root)
+            self.assertEqual(len(drift), 1, f"按身份查台账才抓得到：{drift}")
+            self.assertIn("Gemini 4 Argon 正式发布说明", drift[0])
+
+            # 反例：台账那边也是英文 → 合规
+            (root / "docs/feeds/bodies.json").write_text(
+                json.dumps({"count": 1, "bodies": {
+                    "google_gemini\t" + ident: {"title": "Gemini 4 Argon"}}},
+                    ensure_ascii=False), encoding="utf-8")
+            self.assertEqual(crawler_llm_intel.find_title_drift(root), [],
+                             "台账那边同样留英文时不算漂移")
+
 
     # -- 守卫 7（实产物）：body_sha 必须与磁盘正文对得上 ----------------------
     def test_committed_corpus_body_sha_matches_body(self):
@@ -9841,6 +9922,11 @@ class TestRenderOutputs(unittest.TestCase):
         产出层允许读源、不允许写源。今天 `--rebuild-only` 实测把 deepseek 归档从
         46 行折到 42 行（影子折叠属抓取路径的判据），于是「重排一次产物」也得人工
         判断那几行 diff 是折叠还是丢数据 —— 本闸就是防止 render 这条路径重新长出写源能力。
+
+        集合必须含 `llm-intel-state.json` 与 `README.md`：`render_outputs` 的契约注释
+        把这两个路径也列进了「一律不碰」，只钉归档与 bodies.json 时契约是空喊的
+        （state 文件被改名/清空就是这么漏过去的）。缺失文件记 `None`，于是「凭空出现」
+        与「凭空消失」同样判红。
         """
         self._fixture_tree()
 
@@ -9849,14 +9935,56 @@ class TestRenderOutputs(unittest.TestCase):
                    hashlib.sha256(p.read_bytes()).hexdigest()
                    for d in ("llm-news", "docs/articles")
                    for p in (self.root / d).rglob("*") if p.is_file()}
-            ledger = self.root / "docs" / "feeds" / "bodies.json"
-            out["docs/feeds/bodies.json"] = hashlib.sha256(ledger.read_bytes()).hexdigest()
+            for rel in ("docs/feeds/bodies.json", "llm-intel-state.json", "README.md"):
+                p = self.root / rel
+                out[rel] = hashlib.sha256(p.read_bytes()).hexdigest() if p.exists() else None
             return out
 
         before = snapshot()
         self.assertGreater(len(before), 3, "夹具必须有源文件，否则本闸是空转")
         self._render()
         self.assertEqual(snapshot(), before, "render_outputs 写了源层文件")
+
+    def test_render_only_on_corrupt_state_refuses_instead_of_wiping_quotas(self):
+        """state 损坏 + `--render-only`：必须非零退出，且**不动**源文件、不重排产物。
+
+        这条是被真实事故钉出来的：`SnapshotState.__init__` 过去在构造期就把损坏的
+        `llm-intel-state.json` 改名成 `.corrupt-<date>`，而 `--render-only` 根本不调
+        `save()` —— 源文件于是被删掉且永不重建；同时 `reviews` 读成空表，
+        `quotas.json` 被「已刷新」成全部厂商核查日期为空（实测 56/70 → 0/70），CI 照常
+        exit 0 提交，第二天变化检测整片失效。
+
+        本闸钉四件事：退出码为 2、`llm-intel-state.json` 原地未动（既没被改名也没消失）、
+        `quotas.json` 一字未改、不产生 `.corrupt` 备份。少任何一件都说明「源层坏了就停下
+        来」没做到。走 `main()` 而不是直接调 `render_outputs()`：事故发生在 `main()` 的
+        装配顺序里（构造 SnapshotState 在 disk_only 分支之前），只测 `render_outputs()`
+        根本碰不到 —— 上一版 G6 就是这么漏过去的。
+        """
+        self._fixture_tree()
+        real_root = crawler_llm_intel._repo_root()
+        shutil.copy(real_root / "llm-intel.yaml", self.root / "llm-intel.yaml")
+        state = self.root / "llm-intel-state.json"
+        state.write_text("{ this is not json", encoding="utf-8", newline="\n")
+        quotas = self.root / "docs" / "feeds" / "quotas.json"
+        good_quotas = json.dumps({"count": 1, "vendors": [
+            {"id": "vendor_a", "brand": "Vendor A", "reviewed": "2026-10-01"}]},
+            ensure_ascii=False, indent=2)
+        quotas.write_text(good_quotas, encoding="utf-8", newline="\n")
+        state_before = state.read_bytes()
+
+        with mock.patch.object(crawler_llm_intel, "_repo_root", return_value=self.root), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()):
+            rc = crawler_llm_intel.main(["--render-only"])
+
+        self.assertEqual(rc, 2, "源层损坏时 --render-only 必须以 2 退出，不许 exit 0 提交垃圾")
+        self.assertTrue(state.exists(), "损坏的 state 原地保留，不许被改名/删除")
+        self.assertEqual(state.read_bytes(), state_before, "损坏的 state 内容不许被改动")
+        self.assertEqual(quotas.read_text(encoding="utf-8"), good_quotas,
+                         "退出前不许拿空 reviews 重排 quotas.json")
+        self.assertFalse(any(p.name.startswith("llm-intel-state.json.corrupt")
+                             for p in self.root.iterdir()),
+                         "不落盘的模式不许产生 .corrupt 备份（存档与重建成对）")
 
     def test_render_only_flag_is_wired(self):
         """旗标本身：存在、独立于 --rebuild-only（不在测试里真跑，避免重写真仓库产物）。"""
@@ -10039,8 +10167,24 @@ class TestFeedCarriesTranslatedBodies(unittest.TestCase):
             json.dumps({"count": len(bodies), "bodies": bodies}, ensure_ascii=False),
             encoding="utf-8", newline="\n")
 
-    def _item(self, url, body=""):
-        return (f"<item><title>第一篇</title><link>{url}</link>{body}</item>")
+    def _item(self, url, body="", guid=None):
+        guid_xml = f"<guid isPermaLink=\"true\">{guid}</guid>" if guid else ""
+        return (f"<item><title>第一篇</title><link>{url}</link>{guid_xml}{body}</item>")
+
+    def test_translation_registered_under_guid_only_still_flags(self):
+        """台账按 `art.url`（= `<guid>`）建键，`<link>` 取 `art.link` —— 两者不同时也要查得到。
+
+        `_rss_item` 的 `<link>` 是 `art.link or art.url`，`--backfill-links` 那批条目
+        两者不同（实测已提交产物里 58 个 item guid≠link、48 个涉及已译条目）。只认
+        `<link>` 时本闸拿的是另一把钥匙，对这些条目整片失明。
+        """
+        self._write(self._item("https://a.com/one", guid="https://a.com/real#frag")
+                    + self._item("https://a.com/other",
+                                 "<content:encoded><![CDATA[<p>正文</p>]]></content:encoded>"),
+                    translated_url="https://a.com/real#frag")
+        errs = crawler_llm_intel.verify_feed_bodies(self.root)
+        self.assertEqual(len(errs), 1, f"按 guid 也必须查到缺全文的那条：{errs}")
+        self.assertIn("content:encoded", errs[0])
 
     def test_item_with_translation_must_carry_full_text(self):
         """真事故形态：同源的别的条目有全文，只有新那条缺 —— 必须报警。

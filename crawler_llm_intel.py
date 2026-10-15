@@ -3949,7 +3949,14 @@ def find_title_drift(root: Path) -> list:
             m = _ARCHIVE_ARTICLE_RE.match(line.strip())
             if not m:
                 continue
-            disp, url = m.group(1), m.group(2).rstrip("/")
+            disp = m.group(1) or ""
+            # join 键必须与 `parse_archived_articles` / `fetch_bodies` **同源**：带
+            # `<!--url:-->` 的行里身份是 group(5)，可见链接只是给人点的那个。拿 group(2)
+            # 去查台账，实测 54 行 ident≠可见链接、其中 47 行在台账里查不到 —— 全是单页
+            # 变更日志的切片行（可见链接被截到 `…`、身份带完整锚点），恰恰是本函数最该
+            # 盯的那批，于是这道闸对它们整片失明。
+            url = (html_mod.unescape((m.group(5) or "").strip())
+                   or (m.group(2) or "").rstrip("/"))
             led = by_key.get((arch.stem, url), "")
             if led and _CJK_CHAR_RE.search(led) and not _CJK_CHAR_RE.search(disp):
                 drift.append(f"{arch.stem}: 归档 {disp[:40]!r} 挡住了台账中文 {led[:40]!r}")
@@ -4030,17 +4037,22 @@ def verify_feed_bodies(root: Path) -> list:
         if not items:
             continue
         if not any("<content:encoded>" in it for it in items):
-            continue                       # 整源摘要化（RSS_SOFT_CAP 兜底）
+            continue                       # 整个源一条正文都没有（RSS_SOFT_CAP 兜底摘要化）
         for it in items:
             if "<content:encoded>" in it:
                 continue
+            # 台账是按 `art.url`（= `<guid>`）建的键，而 `_rss_item` 的 `<link>` 取
+            # `art.link or art.url` —— `--backfill-links` 那批两者不同。实测已提交产物
+            # 里 58 个 item 的 guid≠link、48 个涉及已译条目。只认 `<link>` 时，这些条目
+            # 查的是另一把钥匙，本闸对它们失明（今天还没真漏判，但闸不能靠运气）。
             m = re.search(r"<link>([^<]+)</link>", it)
-            if not m:
-                continue
-            url = m.group(1).strip()
-            if _article_key(url) in translated:
+            g = re.search(r"<guid[^>]*>([^<]+)</guid>", it)
+            keys = {_article_key(x) for x in ((m.group(1) if m else ""),
+                                              (g.group(1) if g else "")) if x.strip()}
+            hit = keys & translated
+            if hit:
                 errs.append(f"{xml.name}: 台账已有中文正文，item 却缺 "
-                            f"<content:encoded>（{url}）")
+                            f"<content:encoded>（{sorted(hit)[0]}）")
     return errs
 
 
@@ -6077,8 +6089,18 @@ class SnapshotState:
     def __init__(self, root: Path):
         self.path = root / SNAPSHOT_STATE
         self.baseline = not self.path.exists()
+        # 损坏的 state 在**构造期绝不动磁盘**，只把内存态按基线重建。存档改名是破坏性
+        # 的，而 `--render-only` / `--rebuild-only` 根本不调 `save()` —— 在这里就改名，
+        # 等于让「只重排视图」的维护模式把源文件删掉：实测构造期改名 + 不落盘 = state
+        # 被改名后永远不再重建，CI 照常 exit 0 提交。改名与重建必须成对，都归 `save()`。
+        self.corrupt = False
         try:
-            data = (json.loads(self.path.read_text(encoding="utf-8"))
+            # `utf-8-sig`：BOM 前缀在 UTF-8 下合法解码但会让 `json.loads` 直接抛
+            # "Unexpected UTF-8 BOM"。这不是理论——Windows PowerShell 5.1 的
+            # `Set-Content -Encoding UTF8` 默认就写 BOM（本仓库实测踩到过），手改
+            # state 或坏合并也常见。带不带 BOM 的内容是同一份 JSON，用 sig 读两边都收，
+            # 省得为一个编码前缀把当天巡检卡在 exit 2 上。写出一律无 BOM（普通 utf-8）。
+            data = (json.loads(self.path.read_text(encoding="utf-8-sig"))
                     if self.path.exists() else {})
             self.entries: dict[str, dict] = data.get("sources", {}) or {}
             self.reviews: dict[str, str] = data.get("reviews", {}) or {}
@@ -6087,13 +6109,9 @@ class SnapshotState:
             # 损坏的 state 绝不能静默清空：空表 + 非基线会让全部厂商误判「变化」，
             # 一夜灌爆核查队列 / AI 免费额度。备份留证后按基线重建（只建档不报变化）。
             if self.path.exists():
-                print(f"    [warn] {SNAPSHOT_STATE} 解析失败（{exc}），"
-                      "已存档 .corrupt 备份并按基线重建", file=sys.stderr)
-                try:
-                    self.path.replace(self.path.with_name(
-                        f"{SNAPSHOT_STATE}.corrupt-{date.today().isoformat()}"))
-                except OSError:
-                    pass
+                print(f"    [warn] {SNAPSHOT_STATE} 解析失败（{exc}），按基线重建"
+                      "（原文件将在落盘时存档为 .corrupt 备份）", file=sys.stderr)
+                self.corrupt = True
                 self.baseline = True
             self.entries = {}
             self.reviews = {}
@@ -6257,9 +6275,17 @@ class SnapshotState:
         payload = json.dumps({"sources": self.entries, "reviews": self.reviews,
                               "failures": self.failures},
                              ensure_ascii=False, indent=2, sort_keys=True) + "\n"
-        old = self.path.read_text(encoding="utf-8") if self.path.exists() else ""
+        old = self.path.read_text(encoding="utf-8-sig") if self.path.exists() else ""
         if payload == old:
             return False
+        # 损坏的旧 state 留证后再覆盖。存档与重建成对：只改名不写新文件等于删源。
+        if self.corrupt and self.path.exists():
+            try:
+                self.path.replace(self.path.with_name(
+                    f"{SNAPSHOT_STATE}.corrupt-{date.today().isoformat()}"))
+            except OSError:
+                pass
+            self.corrupt = False
         _atomic_write_text(self.path, payload)
         return True
 
@@ -7019,6 +7045,16 @@ def main(argv: list[str] | None = None) -> int:
     snapshots = SnapshotState(root)
     if snapshots.baseline and not disk_only:
         print("[info] 快照状态文件不存在：本次为基线建档，只记录页面哈希，不触发 AI 核查。")
+    if disk_only and snapshots.corrupt:
+        # 损坏的 state 在磁盘重建模式下**修不好**：本模式不落盘快照，`reviews` 只能读到
+        # 空表。继续下去会把 quotas.json 里全部厂商的核查日期抹成空并「已刷新」，而 CI 的
+        # 重排步骤照常 exit 0、照常提交 —— 一夜之间把 70 家的复查节奏清零（实测 56/70 → 0/70）。
+        # 源层坏了就停下来报，不要拿空态重排视图。
+        print(f"    [error] {SNAPSHOT_STATE} 解析失败，而本模式不会重建它"
+              "（--render-only / --rebuild-only 不落盘快照）。继续会用空 reviews 重排"
+              "产物，把 quotas.json 的核查日期全清空。请先修复或删除该文件后重跑。",
+              file=sys.stderr)
+        return 2
     started = time.time()
 
     news_md_path = (root / args.news_md) if not Path(args.news_md).is_absolute() else Path(args.news_md)
