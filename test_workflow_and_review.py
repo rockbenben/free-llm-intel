@@ -9802,5 +9802,85 @@ class TestFeedCarriesTranslatedBodies(unittest.TestCase):
         self.assertGreater(len(xmls), 20, "实产物扫描没覆盖到 feed 规模，形状证人失败")
 
 
+class TestIndexCoverageIndependent(unittest.TestCase):
+    """G3：归档里没进索引的每一行，都必须能用**已记录的成因**解释。
+
+    判据在测试里独立实现，不调产出层代码 —— 用实现验证实现等于没验证。
+    成因清单来自 2026-10-15 的一次实测：归档 3831 行、索引 3750 行，缺的 77 行
+    逐条归类后是 63 条 `NEWS_CANONICAL_ONLY_VENDORS` 的合成锚点 + 14 条同标题折叠，
+    **零条无解释**。所以本闸断言的是「无解释的缺失必须为 0」，而不是去复算收录条数上限
+    （复算上限会把截窗规则抄第二遍，两边一起错就查不出来）。
+    """
+
+    def _missing_without_explanation(self, repo):
+        idx = repo / "docs/feeds/articles.json"
+        data = json.loads(idx.read_text(encoding="utf-8"))
+        fields = data["fields"]
+        i_u, i_t = fields.index("url"), fields.index("title")
+        have = {crawler_llm_intel._article_key(r[i_u]) for r in data["articles"]}
+        rows = []
+        for arch in sorted((repo / "llm-news").glob("*.md")):
+            for art in crawler_llm_intel.parse_archived_articles(arch):
+                rows.append((arch.stem, art.url, art.zh_title or art.title, art.title))
+        # 已索引行的「显示标题」与「英文原文」两个别名集合：产出层按标题折叠时
+        # 两个别名任一命中即同一篇（见 _dedup_same_title 与 _rss_articles 的说明）。
+        indexed_disp = {(vid, disp) for vid, _u, disp, _en in rows if
+                        crawler_llm_intel._article_key(_u) in have}
+        indexed_en = {(vid, en) for vid, _u, _disp, en in rows
+                      if en and crawler_llm_intel._article_key(_u) in have}
+        bad = []
+        for vid, url, disp, en in rows:
+            if crawler_llm_intel._article_key(url) in have:
+                continue
+            if "#" in url and vid in crawler_llm_intel.NEWS_CANONICAL_ONLY_VENDORS:
+                continue                      # 这几家只收规范直链（源码里明写的口径）
+            if (vid, disp) in indexed_disp or (vid, en) in indexed_en:
+                # 同标题（或同英文原文）的那条已在索引里 = 产出层的「两份真实来源」折叠。
+                # 成因 (c) 是 2026-10-15 实测补的：ai21 的 `spend-isnt-going-down-what-now/`
+                # 与 `…-gated/` 英文原文逐字相同，前一条因此不进索引——那是既定折叠，
+                # 不是漏收。判据只认「索引里真有同一别名」，不放宽成「看起来像重复」。
+                continue
+            bad.append(f"{vid}: {disp[:36]!r} 既非合成锚点、索引里也没有同名或同原文的条目")
+        return bad, len(data["articles"]), len(rows)
+
+    def test_committed_index_has_no_unexplained_gap(self):
+        repo = Path(crawler_llm_intel.__file__).resolve().parent
+        if not (repo / "docs/feeds/articles.json").exists():
+            self.skipTest("仓库无 articles.json，跳过实产物校验")
+        bad, n_index, n_arch = self._missing_without_explanation(repo)
+        self.assertEqual(bad, [], f"{len(bad)} 条归档行无成因地消失在索引里：{bad[:5]}")
+        self.assertGreater(n_arch, n_index,
+                           "形状证人：归档必须比索引多，否则本闸是空转")
+        self.assertGreater(n_index, 3000, "形状证人：索引必须真有规模")
+
+    def test_bites_when_a_legit_row_disappears_from_index(self):
+        """破坏验证：把一条无锚点、标题唯一的归档行从索引里删掉，必须报出来。"""
+        repo = Path(crawler_llm_intel.__file__).resolve().parent
+        if not (repo / "docs/feeds/articles.json").exists():
+            self.skipTest("仓库无 articles.json")
+        data = json.loads((repo / "docs/feeds/articles.json").read_text(encoding="utf-8"))
+        fields = data["fields"]
+        i_u = fields.index("url")
+        legit = [r for r in data["articles"]
+                 if "#" not in r[i_u] and r[i_u].startswith("https://openai.com/")]
+        self.assertTrue(legit, "夹具需要一条 openai 的无锚点行")
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "llm-news").mkdir(parents=True)
+            (root / "docs" / "feeds").mkdir(parents=True)
+            for p in (repo / "llm-news").glob("*.md"):
+                (root / "llm-news" / p.name).write_text(
+                    p.read_text(encoding="utf-8"), encoding="utf-8")
+            victim = legit[0]
+            victim_disp = victim[fields.index("title")]
+            data["articles"] = [r for r in data["articles"] if r is not victim]
+            (root / "docs" / "feeds" / "articles.json").write_text(
+                json.dumps(data, ensure_ascii=False), encoding="utf-8")
+            bad, _, _ = self._missing_without_explanation(root)
+        self.assertTrue(bad, "删掉一条合法行后必须报出缺失，否则这条闸是空转")
+        self.assertTrue(any(victim_disp[:12] in b for b in bad),
+                        f"报告必须指名被删的那条（{victim_disp[:20]!r}）：{bad[:3]}")
+
+
 if __name__ == "__main__":
     unittest.main()
