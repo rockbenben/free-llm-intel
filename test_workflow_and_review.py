@@ -9658,5 +9658,69 @@ class TestRenderOutputs(unittest.TestCase):
 
 
 
+class TestIndexMatchesArchives(unittest.TestCase):
+    """G1/G2：docs/feeds/articles.json 是归档的视图，标题与日期不得滞后。
+
+    这条闸抓的是 2026-10-15 那次事故：34 条已在归档里冻成中文的标题，索引里还是英文，
+    页面与 feed 因此显示旧文案，而当天门禁 512 全绿 —— 没有任何检查能发现「产物比源旧」。
+    """
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp_dir.name)
+        (self.root / "llm-news").mkdir(parents=True)
+        (self.root / "docs" / "feeds").mkdir(parents=True)
+        self.addCleanup(self.temp_dir.cleanup)
+
+    def _write(self, arch_title, idx_title, date="2026-10-14"):
+        (self.root / "llm-news" / "vendor_a.md").write_text(
+            "## 全部文章（共 1 篇）\n\n"
+            f"1. [{arch_title}](https://a.com/one)（{date}） <!--orig:First post-->\n",
+            encoding="utf-8", newline="\n")
+        (self.root / "docs" / "feeds" / "articles.json").write_text(json.dumps({
+            "fields": ["title", "url", "vendor", "date", "original_title",
+                       "slug", "readable", "langs", "link"],
+            "articles": [[idx_title, "https://a.com/one", "vendor_a", date,
+                          "First post", "aaa111", "1", "both", ""]],
+        }, ensure_ascii=False), encoding="utf-8", newline="\n")
+
+    def test_matches_when_in_sync(self):
+        self._write("第一篇中文标题", "第一篇中文标题")
+        self.assertEqual(crawler_llm_intel.verify_index_matches_archives(self.root), [])
+
+    def test_stale_title_is_caught(self):
+        self._write("第一篇中文标题", "First post")
+        errs = crawler_llm_intel.verify_index_matches_archives(self.root)
+        self.assertEqual(len(errs), 1, errs)
+        self.assertIn("First post", errs[0])
+
+    def test_stale_date_is_caught(self):
+        self._write("第一篇中文标题", "第一篇中文标题", date="2026-10-14")
+        p = self.root / "docs" / "feeds" / "articles.json"
+        d = json.loads(p.read_text(encoding="utf-8"))
+        d["articles"][0][3] = "2026-10-01"
+        p.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8", newline="\n")
+        errs = crawler_llm_intel.verify_index_matches_archives(self.root)
+        self.assertEqual(len(errs), 1, errs)
+        self.assertIn("date", errs[0])
+
+    def test_row_absent_from_index_is_left_to_coverage_guard(self):
+        """只比对两边都有的行：收录口径归 G3，别在这里重复实现一遍互相掩盖。"""
+        self._write("第一篇中文标题", "第一篇中文标题")
+        p = self.root / "docs" / "feeds" / "articles.json"
+        d = json.loads(p.read_text(encoding="utf-8"))
+        d["articles"] = []
+        p.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8", newline="\n")
+        self.assertEqual(crawler_llm_intel.verify_index_matches_archives(self.root), [])
+
+    def test_committed_index_matches_committed_archives(self):
+        repo = Path(crawler_llm_intel.__file__).resolve().parent
+        if not (repo / "docs/feeds/articles.json").exists():
+            self.skipTest("仓库无 articles.json，跳过实产物校验")
+        errs = crawler_llm_intel.verify_index_matches_archives(repo)
+        self.assertEqual(errs, [], f"索引与归档不同步（忘了 --render-only？）：{errs[:5]}")
+        rows = json.loads((repo / "docs/feeds/articles.json")
+                          .read_text(encoding="utf-8"))["articles"]
+        self.assertGreater(len(rows), 3000, "实产物扫描没覆盖到语料规模，形状证人失败")
 if __name__ == "__main__":
     unittest.main()

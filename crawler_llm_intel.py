@@ -3956,6 +3956,49 @@ def find_title_drift(root: Path) -> list:
     return drift
 
 
+def verify_index_matches_archives(root: Path) -> list:
+    """G1/G2：`docs/feeds/articles.json` 的 title / date 必须等于归档行的显示标题与日期。
+
+    索引与 feed 都是归档的**视图**。视图滞后不会让任何 schema 校验变红——实测 34 条
+    已在归档里冻成中文的标题，页面上仍显示英文，当天门禁 512 全绿——所以要用
+    「源 → 视图」逐条对账来钉。
+
+    只比对**归档有、索引也有**的行：收录口径（合并流截窗、canonical-only 厂商、
+    同标题折叠）归 G3 单独管。在这里再实现一遍口径，等于两条闸互相掩盖。
+    返回违规描述列表（空=合规）。
+    """
+    idx_path = root / "docs" / "feeds" / "articles.json"
+    if not idx_path.exists():
+        return []
+    try:
+        data = json.loads(idx_path.read_text(encoding="utf-8"))
+    except (ValueError, OSError) as exc:
+        return [f"articles.json 读不回：{type(exc).__name__}: {exc}"]
+    fields = data.get("fields", [])
+    if "url" not in fields or "title" not in fields:
+        return ["articles.json 缺 url/title 列"]
+    i_url, i_title = fields.index("url"), fields.index("title")
+    i_date = fields.index("date") if "date" in fields else None
+    index = {}
+    for row in data.get("articles", []):
+        if len(row) > i_url:
+            index[_article_key(row[i_url])] = row
+    errs = []
+    for arch in sorted((root / "llm-news").glob("*.md")):
+        for art in parse_archived_articles(arch):
+            row = index.get(_article_key(art.url))
+            if row is None:
+                continue                      # 没进索引由 G3 判，这里不重复实现口径
+            want = art.zh_title or art.title
+            if row[i_title] != want:
+                errs.append(f"{arch.stem}: 索引标题 {row[i_title]!r} != "
+                            f"归档 {want!r}（{art.url}）")
+            if i_date is not None and art.date and row[i_date] != art.date:
+                errs.append(f"{arch.stem}: 索引 date {row[i_date]!r} != "
+                            f"归档 {art.date!r}（{art.url}）")
+    return errs
+
+
 # ---------------------------------------------------------------------------
 # 归档日期回填（维护模式 --backfill-dates，不参与日常巡检）
 # ---------------------------------------------------------------------------
