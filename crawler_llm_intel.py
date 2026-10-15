@@ -3462,9 +3462,14 @@ def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
     未来时，文档会给出一个并不存在的订阅地址（死链），而两边各自看都「对」。
 
     标题折叠是**浏览页去重**：即便去掉了合成锚点，同厂商仍可能有两份真实来源（RSS 与
-    页面直链）给出同一句话。折叠只在**产出层**（feed / articles.json 索引）生效，归档
-    `.md` 仍逐条全量留档，不违反「归档只增不减」。折叠时保留规范直链、其次最新日期那条
-    （见 _prefer_article）。
+    页面直链）给出同一句话。折叠时保留规范直链、其次最新日期那条（见 _prefer_article）。
+
+    ⚠ 「归档 `.md` 逐条全量留档」这句**只对了一半**：`write_news_archives` 的增量合并
+    同样调 `_dedup_same_title`（见那里的「2) 折叠同一篇的两个入口」），所以**影子行在归档
+    里也会被折叠掉**，归档并非绝对只增不减。实测代价：deepseek 4 条 `news260424#d-<日期>-N`
+    影子行（标题取自页面 H1、日期取自侧栏）被折叠，其中 3 条的日期由同日期规范行保留、
+    1 条（2024-07-25）是该日期唯一记录。判定与边界由
+    `TestArchiveShadowFold` 钉住，别把这里当"只增不减"的凭据引用。
     """
     drop_frag = intel.vendor_id in NEWS_CANONICAL_ONLY_VENDORS
     kept: dict[str, Article] = {}

@@ -62,14 +62,206 @@
 <p>联系我们开始使用</p>]]></content:encoded>
     </item>
     <item>
-      <title>MoE at Scale: Making Sparse Models Fast on Real Hardware</title>
+      <title>MoE 规模化：让稀疏模型在真实硬件上跑得快</title>
       <link>https://www.cerebras.ai/blog/moe-guide-scale</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/moe-guide-scale</guid>
+      <description>原文标题：MoE at Scale: Making Sparse Models Fast on Real Hardware</description>
+      <content:encoded><![CDATA[<p>Oct 06 2026</p>
+<h1>MoE 规模化：让稀疏模型在真实硬件上跑得快</h1>
+<p><a href="https://www.cerebras.ai/author/dariasoboleva">Daria Soboleva</a><a href="https://www.cerebras.ai/author/quentin-anthony">Quentin Anthony</a></p>
+<p><a href="https://www.cerebras.ai/blog/moe-guide-why-moe">MoE 基础</a> | <a href="https://www.cerebras.ai/blog/moe-guide-router">Router 之争</a> | <a href="https://www.cerebras.ai/blog/moe-guide-debug">调试死掉的 MoE 模型</a> | <a href="https://www.cerebras.ai/blog/moe-guide-scale">MoE 大规模化 </a>| <a href="https://www.cerebras.ai/blog/moe-guide-calculator">MoE 数学解密</a></p>
+<p>在本视频中，我们讨论如何在现代硬件上扩展 MoE 模型的规模，并应对几个关键的优化难题。如果打不开上面显示的视频，请用这个链接到 YouTube 上观看：<a href="https://youtu.be/MXo9LEYzwkg">https://youtu.be/MXo9LEYzwkg</a></p>
+<p>Mixture-of-Experts（MoE）模型让你在计算量不成比例增长的前提下提高总参数量，从而高效地训练更大、更好的模型（Soboleva, 2025a）。你也许会问，要把 MoE 模型的理论收益真正榨出来，是否需要大量工程工作。毕竟，你在第 3 篇里的那个实现（Soboleva and Tiwari, 2025）在一个小规模加速节点上（甚至在你自己的笔记本上）训练得毫无问题。这里的要点是，你只用了 4 个 expert 和 124M 的 backbone 参数，而 DeepSeek-V3、Qwen3-30B-A3B 这类生产系统用的是数百个 expert 和体量巨大的 backbone。试着用我们之前那版实现在 GPU 上扩展到它们的规模，你很快就会撞上设备的内存上限。</p>
+<p>我们来弄清这是为什么。还记得第 3 篇里我们在图 1 展示的那段代码吗？当时我们就提醒过，那段代码并不高效，只是用于教学。为什么？从图 1 可以看到，那里对所有 expert 做了串行循环，而我们其实只需要给定 token 被选中的那些 expert。你可能会问，为什么这么浪费？你已经知道，业界通行的 routing 并不是确定性的（Soboleva, 2025b），因此无法提前预测给定 token 会激活哪个 expert。这就意味着我们不得不把所有 expert 都载入内存，以防后面要用到它们（在内存带宽与延迟的限制下，为每个 token 实时把 expert 权重搬进 GPU 内存会太慢）。因此，随着你增加 expert 数量，内存需求线性增长，很快就无法在单张 GPU 上训练（用我们之前那版实现，十几个 expert 都装不下）。</p>
+<p>本指南余下的部分介绍应对这一规模化难题的方案。首先我们讨论 GPU 方案及其局限，其次介绍 Cerebras Wafer Scale Engine（WSE）如何解决这个问题，最后说明如何把两者结合以最大化收益。</p>
+<p>图 1：面向批处理的 expert 混合（见 train <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/train_gpt_moe.py##L208-L225">train_gpt moe.pyL208-L225</a>）。</p>
+<h3>GPU 方案及其问题</h3>
+<p>当你的 MoE 模型超出单张 GPU 的内存容量时，最流行的解法是采用某种模型并行，expert parallelism 就是其中一个例子，简称 EP（Lepikhin et al., 2020; DeepSeek-AI et al., 2024）。用 EP 时，我们通常给每张 GPU 分配数量相同的 expert，而其余所有层（attention、router 等）在每台设备上都存一份副本。在这个流程里，router 先预测哪些 token 该被路由到哪些 expert，随后一次 all-to-all 通信操作按 router 的分配把 token 交换到正确的设备上，并行执行每个 expert，再把结果交换回 token 原来的设备，完成 expert 混合。</p>
+<p>要让 EP 高效，网络中所有层的 expert 都必须做到负载均衡。这在模型质量与基础设施效率之间制造了张力。追求最佳模型质量的 ML 研究者往往更偏爱能让 expert 高度专业化的 routing 策略（Soboleva, 2025b），即使这会造成负载失衡。与此同时，基础设施团队需要可预测、均衡的负载，才能达到最优的硬件利用率并把训练成本压到最低。两个目标都至关重要，方向却彼此拉扯。激进的负载均衡会把 token 推给并不合适的 expert，从而损害模型质量（我们在 hash routing 上就见过这种情况）。而负载失衡的 expert 又会造成昂贵的基础设施瓶颈：一些 GPU 空转，另一些被压满，整体硬件利用率大幅下降。</p>
+<p>此外，EP 还会引入通信开销，并且随着 expert 数量增加而恶化。为了更高的计算效率，现代 MoE 架构会为每个 token 激活许多较小的 expert，而不是数量少但体积大的 expert（Krajewski et al., 2024）。可在这套配置下，要用 EP 做并行就必须依赖强力的负载均衡，而这会影响模型质量。如果你无法用质量换速度（即激进的负载均衡），EP 的通信/计算比就会恶化：大部分时间都花在搬运 token 上，而不是 expert 在它们上面执行有用的运算。总的来说，在 GPU 上训练 MoE 模型依然棘手，因为单靠 EP 通常不足以产生足够的并行度。</p>
+<h3>Cerebras WSE 与 GPU（架构差异）</h3>
+<p>在 GPU 上跑大型 MoE 模型，除了 expert parallelism 通常还需要叠加多种并行策略。例如 DeepSeek-V3 就组合使用了流水线并行、expert parallelism 与数据并行（DeepSeek-AI et al., 2024）。这带来一套复杂的 3D 并行实现，你必须仔细调优，而且模型或集群任一发生变化时都得重新调。用 Cerebras WSE 则不需要分布式计算。我们只用数据并行来训练和扩展模型。是什么让这成为可能？我们的片上内存（SRAM）比最新的单张 GPU 多约 900 倍，因此可以把大得多的模型直接存放在芯片上。向更大模型扩展时，我们采用一种叫 weight streaming 的技术（Hall et al., 2023），把 WSE 上的内存与计算解耦。用 weight streaming 时，我们把模型参数（那些沉重的张量）彻底移出晶圆，它们改存放在外部内存单元里，训练时再流式送入晶圆来计算梯度；晶圆又把梯度流式送回内存单元去更新权重。这项技术让我们仅用一台设备就能训练如今的万亿参数 MoE 模型（Kimi Team, 2025）。</p>
+<h3>内存问题解决了，接着是计算</h3>
+<p>我们已经说明，Cerebras WSE 凭借 weight streaming 可以把大型 MoE 模型直接放进芯片，无需任何模型并行。但你能训练万亿参数的 MoE，并不意味着它高效。随着模型变得更稀疏（expert 更多、<em>top_k</em> 更低），我们撞上的是另一个问题：计算利用率。还记得本系列第 1 篇里承诺的、用 32 个 expert 带来的 62% FLOPs（Floating Point Operations，浮点运算次数）下降吗？当时我们指出，这会让 MoE 模型达到同样 loss 的训练速度比 dense 基线快 3 倍。可实践中看到的并不是这样。实际情况是，我们没能把这些 FLOP 的节省转化为真实的 wall-clock 加速，大规模训练 MoE 模型变得低效。</p>
+<p>这为什么会发生？在稀疏的 MoE 模型里，routing 会把 batch size 切分到许多 expert 上，结果是大多数 expert 只看到原始 batch 的一小部分。batch 一小，就意味着多数 expert 在空转，没有执行有用的运算。你加载了大型 expert 网络的矩阵，却几乎没用上它们（在这些层里你会变成 I/O bound）。与此同时，attention 层又处理不了更大的 batch，因为它们受激活内存（activation memory）限制（Anthony et al., 2023; Korthikanti et al., 2022）。这意味着它们必须存放庞大的中间张量，例如 attention scores，其规模随序列长度呈二次增长 [1]。于是 expert 层与 attention 层之间存在一道持续的利用率鸿沟：expert 网络在挨饿，等着更多数据进来供它们处理；而 attention 层又难以高效处理更大批量的 token，使我们没办法把数据更快地送进 expert 网络。</p>
+<h3>Batch Tiling on Attention</h3>
+<p>为解决这个问题，在 Cerebras WSE 上我们把 attention 与 expert 网络对 batch size 的需求解耦。这项技术我们称为 Batch Tiling on Attention（BTA）。用 BTA 时，我们把 attention 的输入 batch size 切成 G 个大小为 B 的 tile，每个 tile 独立处理，再把结果拼接回去，得到 G × B 的大 batch 送进 expert 网络（图 2）。</p>
+<p>图 2：Batch Tiling on Attention（BTA）架构。输入 batch 被切成 G 个 tile，每个 tile 以小 batch size B 通过 attention；输出被拼接成 G × B 的大 batch 供 expert 处理，从而解耦 attention 层与 expert 层对 batch size 的约束。</p>
+<p>与 FlashAttention（Dao et al., 2022）沿序列维度切 tile 以降低内存占用的思路类似，BTA 沿 batch 维度切 tile，用来改善 expert 网络与 attention 网络之间失衡的利用率。BTA 的双 batch 策略直接对准 MoE 的计算需求：我们在 attention 层使用更小的 batch 以减少其激活内存，在 expert 网络使用更大的 batch 以提升其计算利用率。</p>
+<p>我们来给 BTA 做一次压力测试：在单台 CS-3 机器上运行近期一个名为 Qwen3-30B-A3B、含 3B 激活参数的 MoE 模型（Yang et al., 2025）。该模型原本使用 learned routing，共 128 个 expert，每个 token 激活 <em>top_k</em> = 8 个。我们将改变 <em>top_k</em> 和 expert 数量，从而改变模型的稀疏度，并观察在有无 BTA 两种情况下稀疏度对吞吐量的影响。</p>
+<p>首先，我们把 <em>top_k</em> 固定在 8，让 expert 数量从 16 变到 128，测量相比激活参数量相同的 dense 模型，吞吐量退化到什么程度。图 3a 显示，「red」线（不用 BTA 的传统 batching）退化严重，在 128 个 expert 时最高达到 53%（相当于慢 2 倍）。「blue」线（使用 BTA，并把 G 值调到能取得最快速度）显示吞吐量始终保持高位、接近 dense 模型，在所有 expert 数量下都是如此。第二个实验里，我们把 expert 数量固定为 128，让被激活的 expert 数量 <em>top_k</em> 从 1 变到 8。这个实验中，我们还通过相应调整 expert 网络的规模来维持固定的激活参数量。图 3b 显示，随着我们提高网络的稀疏程度（更低的 <em>top_k</em>），传统 batching 的吞吐量退化甚至更大，最坏时比我们的 dense 模型慢 86%（相当于慢 7 倍）。而 BTA 无论我们取哪个 <em>top_k</em>，都维持高吞吐量。</p>
+<p>图 3：BTA 阻止吞吐量随 MoE 模型变得更稀疏而退化。传统 batching（「red」线）出现严重的吞吐量下降（expert 增多时最高 53%，<em>top_k</em> 变小时最高 86%），而 BTA（「blue」线）在所有配置下都保持稳定且高位的吞吐量，与 dense 模型相当。</p>
+<h3>把数学摆出来</h3>
+<p>在上面的章节里，我们主张 GPU 上的 EP 会造成通信瓶颈，而在 Cerebras WSE 上我们面对的是计算利用率挑战。随后我们看到 BTA 如何解决 WSE 上的利用率问题。</p>
+<p>现在我们再深入一层：建立一套数学模型，用模型把这些主张形式化，并从中推导出效率预测。我们的工作建立在（Anthony et al.; Korthikanti et al., 2022）所确立的计算框架之上，把它们的分析扩展到我们的 MoE 场景。若无特别说明，我们假设使用混合精度训练（低精度参数副本用 fp16/bf16，高精度参数副本与优化器状态用 fp32）。以下公式中我们略去 bias 项，因为它们可以忽略。下面是本次分析需要的符号记法：</p>
+<ul><li>: 序列长度</li><li>: batch size</li><li>: hidden size</li><li>: attention 中 query head 的数量</li><li>: tile 的数量（在 BTA 中指对 batch 切 tile）</li><li>: 每个 token 被激活的 expert 数量</li><li>: FFN multiplier（在 MoE 层中为 filter size / hidden size）</li><li>: 层数</li><li>: expert 数量</li><li>: 每个模型参数的存储需求（以字节计）</li></ul>
+<h3>GPU</h3>
+<p>我们在上面实验部分用到的 Qwen3-30B-A3B 模型（, , , , ,  带 SwiGLU 非线性）上做分析。首先要弄清楚的是，这个模型能不能装进单张 GPU。假设我们有一张 80GB 内存的 H100 GPU。我们来算一算，仅单个 MoE 层的权重需要多少存储：</p>
+<p>在混合精度下，每个参数需要  字节存储。把模型权重及其梯度计入所有  层，就需要大约 116GB 的内存，这还只是最低限度。因此我们无法把这个模型装进单张 H100 GPU，必须启用某种形式的模型并行。虽然存在好几种并行方案，我们的分析聚焦在 EP 上。</p>
+<p>在 GPU 上训练 MoE 模型时，某一层所需的内存包括权重、梯度、优化器状态和激活值。权重、梯度与优化器状态合计，每个权重需要  字节存储。把网络里所有 MoE 层都算上，得到需要 464GB 存储。按 Korthikanti et al. (2022)，每个 MoE 层的激活内存量可以这样计算：</p>
+<p>对我们这个 batch size 为  、使用  字节存储的 Qwen3-30B-A3B 配置，所有层  加总得到约 8GB 激活内存，于是内存需求升到约 472GB。现在可以看出，训练这个模型我们至少需要 8 张 H100 GPU，并且用 EP 可以在每张 GPU 上放  个 expert。其余所有层，例如 attention 层（K、Q、V 矩阵）、router 以及其他非 MoE 组件，都在每张 GPU 上各存一份副本。</p>
+<p>在上面的章节里我们主张 EP 受通信开销拖累。我们来量化一下，在我们这套配置下它到底有多糟。为此，我们计算 MoE 层中计算时间与通信时间之比，看谁占主导。</p>
+<p>8 张 H100 GPU，每张提供约 800 peak TFLOPs/s（Bekman, 2023-2024）。假设在 expert MLP 的 GEMM 期间每张 GPU 达到约 500 TFLOPs/s（我们认为这能代表当下常见 MoE 模型中真实的 GEMM 形态），expert 网络会在 <strong>0.08 ms</strong> 内处理完数据。通信成本方面，我们计入 2 个阶段的 all-to-all 操作调用：</p>
+<p>按 NVLink 的 350GB/s 带宽（测量细节见附录），并假设每个 token 占用 2 字节存储，这些数据搬运约耗时 <strong>0.77 ms</strong>。换个说法，通信吃掉了 MoE 层总处理时间的 91%。随着我们增加被激活的 expert 数量（带来额外的通信开销）、同时把每个 expert 做得更小（削弱有用的计算并行度），情况还会更糟。</p>
+<h3>Cerebras WSE</h3>
+<p>在 Cerebras WSE 上，我们从不把模型权重直接存放在芯片上。因此，增加 expert 总数并不需要动用 EP 或任何其他形式的模型并行。</p>
+<p>但我们撞上的是另一个问题。前面已经表明，随着网络引入更多稀疏性，MoE 模型的吞吐量会退化。这是因为稀疏 MoE 模型把 batch size 切分，使每个 expert 上的有效计算变少，而权重仍要全部载入内存。为了量化这一效应，我们来计算 Qwen3-30B-A3B 模型在不同稀疏度下的算术强度（arithmetic intensity，AI）：</p>
+<p>算术强度衡量我们每搬运一字节内存能换来多少次浮点运算。算术强度越低，计算单元就有越多时间在空等内存传输。</p>
+<p>把 Qwen3-30B-A3B 的模型配置代入并化简，我们得到 。每个 expert 都会切分 batch size，平均处理  条序列。当引入最低程度的稀疏性（ ，相当于 dense 网络的计算）时，每个 expert 处理的 batch size 同样是 ，其中  是网络其余部分使用的 batch size。然而，当使用最高程度的稀疏性（ ，即每个给定 token 只激活 1 个 expert）时，每个 expert 平均只处理  条序列，仅是原始 batch 的一小部分。在以  条序列这样一个合理的 batch size 下，最高稀疏度相比最低稀疏度会让算术强度几乎低 <strong>88%</strong>。这意味着更稀疏的 MoE 网络变得更受 I/O 制约，严重浪费分配给它们的资源。这就解释了为什么在 Cerebras 硬件上训练时，MoE 模型相比 dense 网络会出现如此大的吞吐量退化（图 3 中的「red」曲线）。BTA 修好了这个问题。我们只需把 expert 的 batch size 做成 expert 数量的函数： 。考虑我们最稀疏的情形 ，在那里观察到算术强度退化最严重。原先每个 expert 只处理  条序列，现在每个 expert 处理  条序列。在  且  的情况下，每个 expert 会处理整个 batch ，这就把 MoE 层的算术强度完全恢复到与最低稀疏度相当的水平。</p>
+<p>对不同稀疏度，我们都能找到最合适的  ，确保稀疏性对算术强度、进而对 MoE 层与整个网络的吞吐量影响最小。不过还有一项考量值得讨论。如果我们为了让稀疏 MoE 层受益就持续把 batch size 乘以 G，会给那些受激活内存限制的 attention 层带来麻烦 [2]。按 Korthikanti et al. (2022)，每个 attention 层的激活内存可以这样计算：</p>
+<p>其中的二次项  [3] 意味着，把 batch size 乘以  会很快耗尽可用内存。用 BTA，这一点我们也一并处理了。当我们扩大 expert 网络的 batch size 以提升其算术强度时，同时也把 attention 网络的 batch size 按  个分组切 tile。attention 在这  个分组上从不同时产生激活内存，因此降低了它们的存储需求，让它们不那么受激活内存约束。</p>
+<p>总结一下，我们的分析正好印证了前面的主张。GPU 上的 EP 造成严重的通信开销，把实际计算比了下去。在 Cerebras WSE 上我们完全绕开了模型并行，但面对另一类挑战：随着稀疏度上升，expert 拿到的 batch size 被切分，导致资源严重利用不足，变成 I/O bound。用 BTA，我们在 Cerebras WSE 上通过解耦 expert 层与 attention 层各自的 batch size 需求解决了这个问题，命中它们各自独特的计算瓶颈。正如图 3（「blue」曲线）所示，BTA 让我们能在 Cerebras 硬件上以 dense 网络的速度训练 MoE 模型。</p>
+<h3>把一切串起来</h3>
+<p>MoE 模型很难高效训练，尤其当我们走向更高的稀疏度时。高度稀疏的 MoE 模型参数量比 dense 模型多得多。只要几十个 expert，它们就能撞上 GPU 的内存上限（考虑到如今生产级 MoE 模型用的都是数百个 expert，这其实是个很小的数字）。expert 数量更大时，GPU 就需要实现某些模型并行技术才能把所有 expert 载入内存。你必须动用 expert parallelism，把 expert 网络分布到多台设备上，并确保各个 expert 保持负载均衡。</p>
+<p>鉴于内存约束在 Cerebras 硬件上不那么致命，我们转而审视更稀疏网络所遇到的计算低效。我们讨论了 BTA 这类技术如何被采用，显著提升 MoE 模型在晶圆上的计算利用率。需要说明的是，BTA 并非银弹，它只是更大优化工具箱里的一项优化技术。我们为 GPU 集群讨论的 expert parallelism，同样可以很好地用在 Cerebras 硬件上：你可以把 expert 分布到多台 WSE 设备上，同时在每台设备上使用 BTA 来维持高计算利用率。</p>
+<p>讲到这里就结束了。你现在已经掌握大规模 MoE 训练的完整图景。你理解第 1 篇的基础概念，知道如何从第 2 篇里挑对 routing 方法，能用第 3 篇排查 MoE 训练问题，也看到了如何在现代硬件上解决内存管理与计算利用率问题（无论是在 GPU 上用 EP，还是在 Cerebras WSE 上用 BTA）。在下一篇 <a href="https://www.cerebras.ai/blog/moe-guide-calculator">MoE 数学解密：8x7B 到底意味着什么？</a> 里，我们把重心从训练转向部署，为你提供实用工具，帮你依据自身约束判断该部署一个 MoE 模型还是继续用 dense 架构。</p>
+<h3>引用</h3>
+<p>有问题？可以在这里找到我：<a href="https://soboleva-daria.github.io/">https://soboleva-daria.github.io/</a></p>
+<h3>脚注</h3>
+<p>[1] 在 Cerebras 硬件上，我们不使用 FlashAttention，而是在激活张量不再被用到时把它们卸载到内存单元。</p>
+<p>[2] 通常网络中所有层都使用  的 batch size，只有 MoE 层会把它切分。</p>
+<p>[3] Qwen3-30B-A3B 使用 grouped-query attention（GQA），在多组 query head 之间共享 key 与 value 投影。为简便起见，公式 (6) 保留 multi-head 形式，因为 GQA 并不改变我们在分析中所用的、对  的二次依赖。</p>
+<h3>参考文献</h3>
+<p>Anthony, Q., Biderman, S., &amp; Schoelkopf, H. (2023). Transformer Math 101. <em>Eleuther AI Blog</em>. <a href="https://blog.eleuther.ai/transformer-math/">https://blog.eleuther.ai/transformer-math/</a></p>
+<p>Bekman, S. (2023-2024). Machine Learning Engineering Open Book. GitHub repository. <a href="https://github.com/stas00/ml-engineering">https://github.com/stas00/ml-engineering</a></p>
+<p>Cerebras Systems (2023). Training giant neural networks using weight streaming. <em>White Paper</em>. <a href="https://www.cerebras.ai/">https://www.cerebras.ai</a></p>
+<p>Dao, T., Fu, D. Y., Ermon, S., Rudra, A., &amp; Ré, C. (2022). FlashAttention: Fast and memory-efficient exact attention with IO-awareness. <em>arXiv preprint arXiv:2205.14135</em>. <a href="https://doi.org/10.48550/arXiv.2205.14135">https://doi.org/10.48550/arXiv.2205.14135</a></p>
+<p>DeepSeek-AI (2024). DeepSeek-V3 technical report. <em>arXiv preprint arXiv:2412.19437</em>. <a href="https://doi.org/10.48550/arXiv.2412.19437">https://doi.org/10.48550/arXiv.2412.19437</a></p>
+<p>Kimi Team (2025). Kimi K2: Open agentic intelligence. <em>arXiv preprint arXiv:2507.20534</em>. <a href="https://doi.org/10.48550/arXiv.2507.20534">https://doi.org/10.48550/arXiv.2507.20534</a></p>
+<p>Korthikanti, V., Casper, J., Lym, S., McAfee, L., Andersch, M., Shoeybi, M., &amp; Catanzaro, B. (2022). Reducing activation recomputation in large transformer models. <em>arXiv preprint arXiv:2205.05198</em>. <a href="https://doi.org/10.48550/arXiv.2205.05198">https://doi.org/10.48550/arXiv.2205.05198</a></p>
+<p>Krajewski, J., Ludziejewski, J., Adamczewski, K., et al. (2024). Scaling laws for fine-grained mixture of experts. <em>arXiv preprint arXiv:2402.07871</em>. <a href="https://doi.org/10.48550/arXiv.2402.07871">https://doi.org/10.48550/arXiv.2402.07871</a></p>
+<p>Lepikhin, D., Lee, H., Xu, Y., Chen, D., Firat, O., Huang, Y., Krikun, M., Shazeer, N., &amp; Chen, Z. (2020). GShard: Scaling giant models with conditional computation and automatic sharding. <em>arXiv preprint arXiv:2006.16668</em>. <a href="https://doi.org/10.48550/arXiv.2006.16668">https://doi.org/10.48550/arXiv.2006.16668</a></p>
+<p>Qwen Team (2025). Qwen3-30B-A3B technical report. <em>arXiv preprint arXiv:2505.09388</em>. <a href="https://doi.org/10.48550/arXiv.2505.09388">https://doi.org/10.48550/arXiv.2505.09388</a></p>
+<p>Soboleva, D. (2025). Debugging dead MoE models: A step-by-step guide. <em>Cerebras Blog</em>. <a href="https://www.cerebras.ai/blog/moe-guide-debug">https://www.cerebras.ai/blog/moe-guide-debug</a></p>
+<p>Soboleva, D. (2025). MoE fundamentals: Sparse models are the future. <em>Cerebras Blog</em>. <a href="https://www.cerebras.ai/blog/moe-guide-why-moe">https://www.cerebras.ai/blog/moe-guide-why-moe</a></p>
+<p>Soboleva, D. (2025). Router wars: Which MoE routing strategy actually works. <em>Cerebras Blog</em>. <a href="https://www.cerebras.ai/blog/moe-guide-router">https://www.cerebras.ai/blog/moe-guide-router</a></p>
+<h3>附录</h3>
+<p>表 1：8×H100 SXM5 节点上的 NCCL all-to-all 总线带宽结果。结果显示带宽在较大消息尺寸下收敛到 350 GB/s。软件环境使用 <a href="https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes/rel-24-10.html">nvcr.io/nvidia/pytorch:24.10-py3</a> docker 容器，被测基准是 nccl-tests 的 all-to-all 带宽。</p>
+<h3>MoE 101 指南</h3>
+<p>页面</p>
+<h3>MoE 基础：稀疏模型才是未来</h3>
+<p>博客</p>
+<h3>Router 之争：哪种 MoE routing 策略真正管用</h3>
+<p>博客</p>
+<h3>调试死掉的 MoE 模型：分步指南</h3>
+<p>博客</p>
+<h3>MoE 数学解密：8x7B 到底意味着什么？</h3>
+<p>博客</p>]]></content:encoded>
     </item>
     <item>
-      <title>MoE Math Demystified: What Does 8x7B Actually Mean?</title>
+      <title>MoE 数学揭秘：8x7B 到底是什么意思？</title>
       <link>https://www.cerebras.ai/blog/moe-guide-calculator</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/moe-guide-calculator</guid>
+      <description>原文标题：MoE Math Demystified: What Does 8x7B Actually Mean?</description>
+      <content:encoded><![CDATA[<p>Oct 06 2026</p>
+<h1>MoE 数学揭秘：8x7B 到底是什么意思？</h1>
+<p><a href="https://www.cerebras.ai/author/dariasoboleva">Daria Soboleva</a><a href="https://www.cerebras.ai/author/etienne-goffinet">Etienne Goffinet</a></p>
+<p><a href="https://www.cerebras.ai/blog/moe-guide-why-moe">MoE 基础</a> | <a href="https://www.cerebras.ai/blog/moe-guide-router">Router 之战</a> | <a href="https://www.cerebras.ai/blog/moe-guide-debug">调试失效的 MoE 模型</a> | <a href="https://www.cerebras.ai/blog/moe-guide-scale">规模化 MoE </a>| <a href="https://www.cerebras.ai/blog/moe-guide-calculator">MoE 数学揭秘</a></p>
+<p>这段视频拆解了 MoE 推理的算术，以及不同硬件配置下的部署瓶颈。如果上面显示的视频打不开，请用这个链接在 YouTube 上打开：<a href="https://youtu.be/gHpDBoyCOrE">https://youtu.be/gHpDBoyCOrE</a></p>
+<p>8x7B 到底是什么意思？你大概以为它是 8 个 expert、每个 token 激活 7B 参数。我们也是这么想的。结果它实际激活的是 13B 参数。可等等，13B 是从哪来的？这正是本文要澄清的困惑（<a href="https://www.cerebras.ai/blog/moe-guide-calculator#calc">直接跳到答案</a>）。</p>
+<p>我们会通过回答几个问题来解释这些数字对推理意味着什么：需要多少内存、需要多少 GPU、生产部署里最常撞上的瓶颈是什么。我们会看到：单 GPU 部署是 memory-bound（内存带宽受限），多 GPU 配置是 communication-bound（通信受限），而 Cerebras WSE 这类专用硬件则是 compute-bound（算力受限）。</p>
+<p>起初我们只想写一篇关于 MoE 算术的短文，然后一路往下挖，越挖越深。原本的基础运算，最后变成了对推理瓶颈、硬件架构和部署策略的完整讲解。欢迎来到 MoE 推理 101。标题没变，范围变了。</p>
+<p>到这里为止，Mixture-of-Experts（MoE）这一系列讲的都是训练：第 3 篇里你自己训练了一个 MoE 模型，第 4 篇把它扩展到生产规模。然后呢？我们转向推理。推理时模型权重是冻结的，没有梯度，也没有优化器状态。跟训练模式相比，这听起来简单得多。但是！MoE 推理做的活儿更少，挑战却自成一套。</p>
+<p>有意思的是：训练模型的人很少考虑推理成本，反过来也一样。本文作者也不例外，但我们正在努力改好。所以，如果你要部署 MoE 模型，或者你已经训练好一个 MoE 模型、想知道自己的设计选择带来了什么，又或者你只是想搞明白怎么高效跑 MoE 推理，那就继续往下读。</p>
+<h3>我需要多少内存？</h3>
+<p>想避开推理部署时撞上 OOM 错误？我们来看占据内存空间的两大部分：模型权重和 kv-cache。为了简化计算，我们采用标准的现代 transformer 配置：RoPE 位置编码（Su et al., 2023）、SwiGLU 非线性（Shazeer, 2020; Dauphin et al., 2016）、layer norm、多头注意力（multi-head attention）、不共享权重的 embedding（untied embeddings），以及业界标准的可学习路由（learned routing）（Soboleva, 2025a）。</p>
+<h3>模型权重</h3>
+<p>我们来把数学走一遍。先算单个 decoder block 的内存需求，再算上所有层 ，最后加上 decoder block 之外的其余网络参数（自底向上）。下面的公式都省略了 bias 项，因为它们可以忽略（与模型规模无关）。我们的 MoE 模型由一个 embedding 层、其后  个 decoder block、以及一个 unembedding 层组成。每个 decoder block 包含两个 layer norm、一个 attention 层、一个 router，以及一个含 expert 网络的 MoE 层（图 1）。</p>
+<p>图 1：MoE 模型 decoder 架构的可视化拆解。该 MoE 模型由一个 embedding 层、其后  个 decoder block 和一个 unembedding 层组成；每个 decoder block 包含两个 layer norm、一个 attention 层、一个 router，以及一个含 expert 网络的 MoE 层。</p>
+<p>先从 embedding 权重开始：</p>
+<p>embedding 层由一个尺寸为  的输入 embedding 矩阵构成。紧跟 embedding 层之后是 layer norm：</p>
+<p>可以看到这里有一个  倍乘系数。这是因为每个 decoder block 有两个 layer norm，而每个 layer norm 存储的 gain 和 bias 尺寸同样是 。接下来算 attention 层：</p>
+<p>在 attention 中，我们要计入四个权重矩阵（query、key、value 和 output），每个的尺寸都是 。很好，现在轮到第一个 MoE 组件——router：</p>
+<p>在可学习路由的情况下，我们需要存储一个尺寸为  的权重矩阵，里面是 router 的可学习权重。最后要计入的是 MoE 层的权重：</p>
+<p>每个 expert 网络都使用 SwiGLU 非线性，因此需要三个线性变换（gated linear unit、up-projection 和 down-projection）。有了动态路由，我们无法预测哪些 expert 会被激活，所以必须预留足够的设备内存来存下全部  个 expert。因此，与激活参数相当的 dense 网络相比，MoE 模型需要更大的内存容量。最后，我们用的是 untied embedding，所以还要额外计入一个 unembedding 矩阵的内存，其尺寸为 ：</p>
+<p>把 decoder block 中的所有权重合起来，得到：</p>
+<p>算上网络中的  个 decoder block，再加上 embedding 与 unembedding 权重，就得到存放模型权重所需的总内存字节数：</p>
+<p>接下来回答推理需要多少算力这个问题。</p>
+<h3>我需要多少算力？</h3>
+<p>就像前面估算了跑 MoE 推理所需的内存，这里我们重点估算 FLOPs（Floating Point Operations，浮点运算次数）的数量。之后会把 FLOPs 换算成吞吐量和延迟指标，用它们来回答 MoE 模型能跑多快。</p>
+<p>推理有两个关键阶段。第一个叫 prefill（预填充），模型一次性处理整个 prompt。第二个阶段我们开始生成答案：自回归 transformer 一次只能生成一个 token，每个新 token 都依赖此前生成的 token。我们把第二个阶段叫 decode（解码）。先算 prefill 阶段花掉的 FLOPs，之后再对 decode 做单独分析。</p>
+<p>transformer 里的运算大多是 matrix-vector、matrix-matrix 和 Hadamard 计算，所以先确定这几种基础运算各需要多少 FLOPs。</p>
+<h3>Prefill</h3>
+<p>好，现在可以进入实际计算了。注意我们会忽略 embedding 层：它通常以查表（lookup table）实现，不需要算术运算。先从 layer norm 开始：</p>
+<p>计算 layer norm 的 FLOPs 时，每个元素需要 7 个 FLOPs（序列含  个 token，hidden dimension 为 ）。这些开销来自沿 embedding 维度计算均值和方差，然后做归一化和缩放。欢迎自己动手算一遍，验证我们的数字。这里的  倍系数对应两个 layer norm。接着看 attention 的 FLOPs：</p>
+<p>这里要计入尺寸为  的输入矩阵与 query、key、value 三个投影矩阵（每个尺寸为 ）之间的乘法。attention 计算完成后，再把 attention 的输出与 output 投影矩阵（尺寸同样是 ）相乘。这四次矩阵乘法给出公式  的第一项。</p>
+<p>第二项算的是 attention 计算本身的 FLOPs。我们先算 attention logits（把尺寸为  的 query 与 key 投影向量相乘），需要  FLOPs；再把结果与 value 投影向量相乘。于是这两次 matrix-matrix 运算合计  FLOPs（第二项）。</p>
+<p>最后一项对应 softmax 运算，每个元素大约需要  FLOPs（求指数、归一化、缩放）。由于我们对  个 attention head 各自的  个元素分别做 softmax，这一项贡献了 （第三项）。接下来计入 RoPE 位置编码：</p>
+<p>有了 RoPE，attention 层多出一次 matrix-matrix 乘法：尺寸为  的 query 投影向量乘以尺寸为  的旋转矩阵。由于旋转矩阵是稀疏的，这个点积可分解为两个尺寸为  的矩阵之间的 Hadamard 乘积之和（Su et al., 2021），即  FLOPs。按照 Black et al. (2022)，我们只对 embedding 向量维度中的  做旋转，于是总共得到  FLOPs。接下来是 router 网络消耗的 FLOPs：</p>
+<p>按业界标准的可学习路由，要把尺寸为  的输入矩阵乘以尺寸为  的矩阵，这就是公式 (12) 的第一项。第二项对应 softmax 的 FLOPs：序列中每个 token 都要在  个元素上、对全部 expert  各做一次。接下来要计入 FLOPs 的是 MoE 层：</p>
+<p>在 MoE 层里，每个 expert 包含两个连续的前馈层（up-projection 和 down-projection）。带 SwiGLU 的 up-projection 做两次 matrix-matrix 运算，把尺寸为  的输入矩阵乘以尺寸为  的权重矩阵，需要  FLOPs。down-projection 做一次 matrix-matrix 运算，把尺寸为  的中间结果乘以尺寸为  的权重矩阵，需要  FLOPs。这样公式 13 的第一项就算出来了。SwiGLU 非线性还要对两个尺寸为  的矩阵做一次 Hadamard 乘积，需要  FLOPs；Swish 函数每个激活值需要 5 个 FLOPs（取负、求指数、加法、除法、乘法），因此还剩  FLOPs（第二项）。注意我们每个 token 只激活  个 expert（总共  个），所以在总参数量相同的情况下，MoE 模型所需的 FLOPs 远低于 dense 网络。算力需求下降意味着训练和推理都更快。最后要计入的是 unembedding 层：</p>
+<p>它把 token 的 hidden 表示变回词表空间（尺寸为  的输入向量乘以尺寸为  的矩阵）。</p>
+<p>总体来看，prefill 阶段每个序列需要消耗的 FLOPs 总数为：</p>
+<h3>Decode</h3>
+<p>decode 阶段是在逐个 token 的层面运作，而不是整段序列。这意味着 prefill 阶段的所有计算量都要缩小  倍——attention 除外，这里就有麻烦了。attention 需要维持窗口内所有历史 token 的上下文，所以即使只处理一个 token，仍要计算它与前面所有 token 的两两关系。很快就会失控（上下文长度增加时是  的增长速率）。去看公式 (10)，那正是单个 token 就要花掉的 FLOPs。这显然撑不住。</p>
+<p>为了避免这一点，我们拿内存换算力，引入 kv-cache。有了 kv-cache，就把序列中所有历史 token 的  向量和  向量缓存起来，从此不必重算。此时 attention 的计算量变成这样：</p>
+<p>注意发生了什么。二次项  消失了。attention 需要的历史 token-token 关系全被缓存，我们只计算新 token 与序列中已有 token 的关系。计算量随  线性增长，好多了。于是 decode 阶段每个 token 的总 FLOPs 为：</p>
+<p>对 MoE 模型来说，kv-cache 的内存需求与 dense 网络完全相同。按照 Chen (2022) 的分析，需要额外预留的内存可估算为：</p>
+<p>这里计入的是 2 个向量（ 和 ），它们在  层上各存一份、覆盖完整序列 ，并且  个 attention head 每个都有自己的向量，每个向量的维度为 。</p>
+<h3>为什么我的 GPU 不 brrr？</h3>
+<p>第 2 节算出了需要多少内存，第 3 节算出了模型需要多少 FLOPs。理论看起来很扎实，但做过实验的人都知道，这套数字在实践中常常对不上，非常令人抓狂。那我们就一起验证一遍，弄清楚 GPU 为什么常常闲着、不 brrr。我们把 Qwen3-30B-A3B（一个激活参数 3B、总参数 30B 的 MoE 模型）（Yang et al., 2025）加载到一张 H100 GPU 上[1]，测量它在 decode 阶段生成 token 的速度：</p>
+<p>图 2：测量 Qwen3-30B-A3B 在 H100 GPU 上 decode 阶段生成 token 的速度。</p>
+<p>跑一下，得到大约 3 ms。这算好还是算差？我们来判断。把第 3 节的 decode 公式拿来，代入 Qwen3-30B-A3B 的参数（），得到每个 token 大约 5.9 GFLOPs 的计算量。你的 H100 峰值是 800 TFLOPs/s Bekman (2023-2024)，按此应当 7.4 s 就能处理一个 token。相对于实测的 3 ms，这只是一小截。剩下的时间都去哪儿了？</p>
+<p>推理时两件事并行发生：一边把权重从 HBM 内存流式读入 GPU 的片上 SRAM，一边在这些权重上执行计算。哪个更慢，哪个就成为瓶颈。我们来估算搬运权重的时间：把 Qwen3-30B-A3B 的数字代入第 2 节的内存公式，算出每个 token 激活多少参数（在 MoE 层权重的计算里，把  换成  这个倍乘系数就行），因为我们只需要加载真正用到的那些 expert。在 bf16 精度（）下，每个 token 大约要搬运 6 GB 权重。按 H100 实际可达的 2.8 TB/s 内存带宽，加载这些权重约需 2.1 ms。也就是说，我们 99.5% 以上的时间都在搬运权重，真正用于计算的不到 0.5%。这很糟。</p>
+<p>那为什么我的 GPU 不 brrr？因为眼下我们是 memory-bound。在 memory-bound 区间，大部分时间耗在数据搬运上，GPU 利用率始终很低，算力和 $$$ 都被浪费。我们想待的区间叫 compute-bound：计算占主导，GPU 利用率很高。那怎么从 memory-bound 转到 compute-bound？我们接着看。不过先介绍几个对分析有用的指标。</p>
+<h3>我量的东西对吗？</h3>
+<p>从 memory-bound 切到 compute-bound 的信号，就是你的 GPU 真的 brrr 了。但这个效果怎么量化？我们需要一个指标。这个指标叫吞吐量（throughput）。吞吐量衡量每秒生成的 token 数：吞吐低意味着 GPU 闲坐，吞吐高意味着 GPU 忙着做有用的工作。</p>
+<p>上一节我们测出生成 token 大约需要 3 ms。于是在 batch size 为 1 的这套配置下，你的吞吐量约为 333 tokens/秒。理论上也能得到同一个数字：正如上一节所见，batch size 为 1 时我们处于 memory-bound 区间，加载模型权重占据了总耗时的绝大部分，因此吞吐量可以这样定义：</p>
+<p>其中 Bandwidth 是你在具体设备上可达的内存带宽（H100 取 2.8 TB/s），Model Weights 是处理单个 token 需要搬运的字节数（我们实测 Qwen3-30B-A3B 这个 MoE 模型的激活权重是 6 GB）。因此预期吞吐量应在 466 tokens/秒左右，而我们实测的 333 tokens/秒已经接近它的 70%，又一次印证了 memory-bound。等切换到 compute-bound 区间，大部分时间将花在有效计算上，吞吐量的公式也就变成：</p>
+<p>其中 Peak 是你的设备可达的峰值 FLOPs/s（H100 取 800 TFLOPs/s），Decode 是单个 decode 步需要的算法 FLOPs 数（上一节我们算出 5.9 GFLOPs 的计算量）。可以看到，我们有很大的潜力从 333 tokens/秒冲到 135,000 tokens/秒。</p>
+<p>我们知道你大概已经迫不及待想知道该做什么才能让 Qwen3-30B-A3B 在 H100 上跑满潜力。不过，吞吐量只讲了故事的一半。我们还要跟踪 token 间延迟（inter-token latency），它衡量每个用户在相邻两个 token 之间等待的时间（这件事与用户满意度直接相关）：</p>
+<p>这正是上一节测到的量（在  时）。你可能会问：既然一个指标能推出另一个，为什么两个都要跟踪？问得好。在 memory-bound 区间，随着 batch size 增大，权重加载被摊到更多 token 上，吞吐量随之上升；延迟保持平稳，因为生成每个 token 的耗时仍由权重加载主导。但到了很大的 batch size，你会撞上 compute-bound 区间：此时吞吐量在你的 GPU 峰值 FLOPs/s 上进入平台（能榨的都榨干了），延迟却开始线性攀升，因为处理整个大批次成了总时间的主导。往 batch 里多加一个 token，所有人的等待时间都会直接变长。指标备齐了，我们来回答进入 compute-bound 区间需要什么条件。</p>
+<h3>怎么切到 compute-bound 区间？</h3>
+<p>从 memory-bound 转到 compute-bound 的一条路，是在内存搬运量不变的前提下增加计算量。把多条 prompt 打包成一个 batch 就能做到。实际上，生产级推理就是这么运作的：同时服务多个用户（比如把用户请求打包成  条序列的 batch）。这样一来，同一份模型权重就能在 batch 内的全部  条序列上复用。很好，那是不是把 batch size 直接拉到很大就行？也不全是。我们对 Qwen3-30B-A3B 扫一遍不同的 batch size，同时测量第 5 节定义的延迟和吞吐量，目标是找到那个能让吞吐量最大化、而延迟增长不过分的 batch size。扫完之后，你应该会看到与图 3 相近的结果。</p>
+<p>图 3：Qwen3-30B-A3B 在 prompt 为 4 个 token、生成 12 个新 token 时，延迟与吞吐量随 batch size 的变化。结果为 20 次运行的平均值。要复现这张图，请自备一张 H100 GPU 并运行 <a href="https://colab.research.google.com/drive/16FqyTB7n1WOehZmUZRXPGPS57pkXMgjK?usp=sharing">plot.ipynb</a></p>
+<p>在 batch size 低于约 256 时，可以看到延迟平稳地保持在 29 ms 以下——你还在等权重。但吞吐量线性增长。在这一阶段继续加大 batch size，那 25.2 ms 的权重加载成本就更接近被摊到多条序列上（我们的例子中 decode 阶段生成 12 个 token，每个 token 加载模型权重需要 2.1 ms）。到 batch size 256 左右，区间发生切换：延迟开始线性攀升，吞吐量的增长在约 6000 tokens/秒处慢下来。算力已经被你用满，再加序列已无法明显改善吞吐量，只是让每条序列（每个用户）等得更久。这个 256 就是你的交叉点：低于它你处于 memory-bound，高于它就是 compute-bound。我们相当于用实验分析找到了 Qwen3-30B-A3B 推理的最佳 batch size。这件事也能解析地做，我们来验证一下数学对不对得上。</p>
+<p>考虑我们在 attention 层里做的一次矩阵乘法，权重为 。处理  条序列的 batch 需要  秒的计算时间，加载则需要  秒。当  时我们处于 compute-bound。于是解  这个方程，你可以得到：</p>
+<p>可以看到，最佳 batch size 相当通用，并不依赖具体的模型架构，只取决于你使用的精度和硬件。代入 H100 的 800 TFLOPs/s 峰值、2.8 TB/s 带宽，并按 bf16 精度取每参数  字节，得到  条序列。与图 3 中我们的 256 相当接近——理论和实践对上了。</p>
+<p>这个公式适用于网络里的每一次矩阵乘法（它们是主导运算）。不同运算的交叉点略有差别，而系统层面看得见的整体交叉，发生在足够多的运算都已转入 compute-bound 之时。值得指出的是，MoE 层特别成问题：它会把 batch 拆分到各个 expert 上，导致很难为整个网络找到一个普遍合适的 。即使其他层已经 compute-bound，MoE 层仍可能停留在 memory-bound。这就是为什么吞吐量虽然从 333 tokens/秒提升到了 6,000 tokens/秒，我们却离 135,000 tokens/秒的峰值吞吐量还很远。要继续提高吞吐量，就得加更多 GPU。</p>
+<h3>多加 GPU 会怎样？</h3>
+<p>上一节我们为单张 GPU 找到了最佳点：batch size 为 256 时从 memory-bound 转入 compute-bound。现在来考虑多张 GPU 的情况。把模型切分到多张 GPU 上，就需要某种模型并行。对 MoE 来说，我们用 expert 并行（Expert Parallelism，EP）。有了 EP，Qwen3-30B-A3B 的 128 个 expert 被分片到多张 GPU 上，每个 MoE 层都要做一次开销很大的 all-to-all 交换：把 token 分发到各个 expert 网络，计算结束后再把结果收回来（见图 4）。</p>
+<p>图 4：含 6 个 expert 的 MoE 模型，以 expert 并行部署在 2 张 GPU 上。expert 均匀分配到各加速设备；其余参数（attention、layer norm、router 等）在每个设备上复制一份，用数据并行训练。</p>
+<p>我们在 MoE 101 系列第 4 篇（Soboleva, 2025b）中展示过，这种 all-to-all 通信会成为 MoE 模型的瓶颈，在那里你没法简单地靠加大 batch 绕开它。与单 GPU 情况不同，增大 batch size 会让通信和计算同比例增长。于是我们撞到了两堵墙：MoE 模型在单张 GPU 上是 memory-bound，在多 GPU 配置下是 communication-bound。两者源自同一个架构约束——计算与内存彼此分离，靠带宽受限的连线相连。但如果你的硬件从一开始就是 compute-bound 呢？我们来看看在 Cerebras 硬件上跑推理会发生什么。</p>
+<h3>用 Cerebras WSE 从一开始就 compute-bound 会怎样？</h3>
+<p>在 Cerebras WSE 上跑推理，可以把整个模型以流水线方式铺在晶圆上（图 5）。每一层映射到一块物理区域，其权重和 kv-cache 就近存放在片上 SRAM。各区域相邻布置，层与层之间的 token 流动几乎没有延迟开销，因为它们都在同一块芯片上。最后一层的输出会绕回去，用于生成下一个 token。</p>
+<p>图 5：含 6 个 expert 的 MoE 模型在 Cerebras WSE 设备上的布局。每一层（包括 expert）映射到晶圆上的一块物理区域，权重就近存放。token 沿流水线在各区域之间流动。</p>
+<p>还记得单 GPU 分析（第 4 节）里，我们把 99.5% 的总时间花在从 HBM 加载 Qwen3-30B-A3B 的权重上。而在 Cerebras WSE 上，模型权重不像 GPU 那样存在片外 HBM，整个模型都住在片上 SRAM 里。这样模型权重永远不需要进出芯片，你也永远不会 memory-bound——MoE 也不例外。batch size 为 1 时就已经是 compute-bound，第 6 节针对单 GPU 做的那批实验可以直接跳过。</p>
+<p>至于多 GPU 的情况（第 7 节），我们说明过 expert 并行会引入通信瓶颈：每次前向传播都需要开销很大的 all-to-all 操作，把 token 路由到位于不同 GPU 上的正确 expert。用 Cerebras WSE 就没有这个通信瓶颈。所有 expert 都在同一块芯片上，权重就近分布在各 PE 中，不需要 all-to-all 操作。</p>
+<p>我们就写到这里。虽然写得很开心，但这篇博客已经远超我们预期的长度，先来总结一下你已经学到的内容。</p>
+<h3>到这里你学到了什么</h3>
+<p>回头看，MoE 一开始似乎复杂得没法下手，对吧？万亿参数的模型好像只有大实验室才碰得起。但你已经把它一块一块解开了：你理解了 MoE 为什么有效，打下了基础；选对了路由策略，也看清了其中的取舍；从零开始调试了一个坏掉的 MoE，修掉了让大多数实现翻车的梯度流 bug；在 GPU 和 Cerebras WSE 上都把规模推到了生产级；还攻克了推理算术与瓶颈。你从理论走到了生产。</p>
+<p>更重要的是，你学到了方法论：怎样问对问题。用哪种路由策略，为什么？router 塌缩时到底坏在哪里？怎样在不撞瓶颈的情况下扩展规模？假设驱动的调试、量对指标，这些才是真正的关键。</p>
+<p>好了，去造点有意思的东西吧。</p>
+<h3>计算器</h3>
+<p>我们找不到一个能同时估算 MoE 模型算力和内存需求的好用工具，于是做了这个简单的计算器，两样都能算。你可以拿任意模型配置来试，这里用它回答开头那个问题：8x7B 到底是什么意思？指南开头我们以为它是 8 个 expert、每个 token 激活 7B 参数，现在来验证这一点。把 <a href="https://huggingface.co/mistralai/Mixtral-8x7B-v0.1">Mixtral-8x7B</a> 的配置代入计算器，你会看到 decode 阶段约 0.03 TFLOPs/token。再代入 <a href="https://huggingface.co/mistralai/Mistral-7B-v0.1">Mistral-7B</a> 的配置（一个 7B 的 dense 网络），结果大约只有它的一半。所以 Mixtral-8x7B 每个 token 激活的并不是 7B 参数，而是更多。要弄清确切数字，把 <a href="https://huggingface.co/meta-llama/Llama-2-13b">Llama-2-13b</a>（一个 13B 的 dense 网络）代进去，你会得到约 0.03 TFLOPs/token，与 Mixtral-8x7B 完全一致。于是我们看到：Mixtral-8x7B 实际每个 token 激活 13B 参数，而不是 7B。MoE 的算术到此讲清楚了。</p>
+<h3>脚注</h3>
+<p>[1] Qwen3-30B-A3B 使用分组查询注意力（grouped-query attention，GQA），key 与 value 投影在若干 query head 组成的组内共享。上面的公式为了简化假设的是多头注意力；GQA 让推理更高效，但不改变我们的结论。我们的计算器同时支持 MHA 和 GQA。</p>
+<h3>致谢</h3>
+<p>收尾之前，我想说声感谢。MoE 101 这一系列是一段很长的旅程，我一个人走不下来。</p>
+<p>特别感谢我的共同作者 Aman Tiwari、Quentin Anthony 和 Etienne Goffinet 的合作与专业投入。</p>
+<p>感谢我们的审稿人 Rob Schreiber、Mostafa Elhoushi、Golara Azar、Filipp Nikitin、Aaron Gokaslan、Dylan Finch、Vijay Thiruvengadam、Connor Anderson、Landon Noll、Sangamesh Ragate、Gavia Gray、Eric Sather、Engin Tekin、Cynthia Liu、Esha Singh 和 Mikhail Yurochkin。谢谢你们不断逼我们把事情讲得更清楚。</p>
+<p>感谢我们的市场团队 Tin Hoang、Sneha Khanvilkar、Chris Kim、Daniel Kim、Pearl Hulbert、Isaac Tai 和 Sarah Chieng，谢谢你们帮助这些文章抵达社区。</p>
+<p>也感谢一路跟随、阅读、提问的每个人。你们的参与让这段旅程真的很有乐趣。谢谢。</p>
+<h3>引用</h3>
+<p>有问题？可以在这里找到我：<a href="https://soboleva-daria.github.io/">https://soboleva-daria.github.io/</a></p>
+<h3>参考文献</h3>
+<p>Bekman, S. (2023-2024). Machine Learning Engineering Open Book. GitHub repository. <a href="https://github.com/stas00/ml-engineering">https://github.com/stas00/ml-engineering</a>Black, S., Biderman, S.,</p>
+<p>Hallahan, E., et al. (2022). GPT-NeoX-20B: An open-source autoregressive language model. <em>arXiv preprint arXiv:2204.06745</em>. <a href="https://doi.org/10.48550/arXiv.2204.06745">https://doi.org/10.48550/arXiv.2204.06745</a></p>
+<p>Chen, C. (2022). Transformer inference arithmetic. <a href="https://kipp.ly/blog/transformer-inference-arithmetic/">https://kipp.ly/blog/transformer-inference-arithmetic/</a></p>
+<p>Dauphin, Y. N., Fan, A., Auli, M., et al. (2017). Language modeling with gated convolutional networks. <em>arXiv preprint arXiv:1612.08083</em>. <a href="https://doi.org/10.48550/arXiv.1612.08083">https://doi.org/10.48550/arXiv.1612.08083</a></p>
+<p>Shazeer, N. (2020). GLU variants improve transformer. <em>arXiv preprint arXiv:2002.05202</em>. <a href="https://doi.org/10.48550/arXiv.2002.05202">https://doi.org/10.48550/arXiv.2002.05202</a></p>
+<p>Soboleva, D. (2025). Router wars: Which MoE routing strategy actually works. <em>Cerebras Blog</em>. <a href="https://www.cerebras.ai/blog/moe-guide-router">https://www.cerebras.ai/blog/moe-guide-router</a></p>
+<p>Soboleva, D., &amp; Anthony, Q. (2025). MoE at scale: Making sparse models fast on real hardware. <em>Cerebras Blog</em>. <a href="https://www.cerebras.ai/blog/moe-guide-scale">https://www.cerebras.ai/blog/moe-guide-scale</a></p>
+<p>Su, J., Lu, Y., Pan, S., et al. (2023). RoFormer: Enhanced transformer with rotary position embedding. <em>arXiv preprint arXiv:2104.09864</em>. <a href="https://doi.org/10.48550/arXiv.2104.09864">https://doi.org/10.48550/arXiv.2104.09864</a></p>
+<p>Yang, A., Li, A., Yang, B., et al. (2025). Qwen3 technical report. <em>arXiv preprint arXiv:2505.09388</em>. <a href="https://doi.org/10.48550/arXiv.2505.09388">https://doi.org/10.48550/arXiv.2505.09388</a></p>
+<h3>MoE 101 指南</h3>
+<p>页面</p>
+<h3>MoE 基础：稀疏模型才是未来</h3>
+<p>博客</p>
+<h3>Router 之战：哪种 MoE 路由策略真正有效</h3>
+<p>博客</p>
+<h3>调试失效的 MoE 模型：分步指南</h3>
+<p>博客</p>]]></content:encoded>
     </item>
     <item>
       <title>从头开始的分类推理</title>
@@ -427,9 +619,81 @@
 <p><a href="https://openai.com/index/previewing-ultrafast/">GPT-5.6 Sol</a> 的 Ultrafast 模式今天面向一小部分精选客户开启限量预览。随着容量增长，访问范围将持续扩大。<a href="https://www.cerebras.ai/openai-ultrafast-signup">订阅获取最新动态。</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>Debugging Dead MoE Models: A Step-by-Step Guide</title>
+      <title>排查「死掉的 MoE 模型」：一份分步指南</title>
       <link>https://www.cerebras.ai/blog/moe-guide-debug</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/moe-guide-debug</guid>
+      <description>原文标题：Debugging Dead MoE Models: A Step-by-Step Guide</description>
+      <content:encoded><![CDATA[<p>Jul 28 2026</p>
+<h1>排查「死掉的 MoE 模型」：一份分步指南</h1>
+<p><a href="https://www.cerebras.ai/author/dariasoboleva">Daria Soboleva</a><a href="https://www.cerebras.ai/author/aman-tiwari">Aman Tiwari</a></p>
+<p><a href="https://www.cerebras.ai/blog/moe-guide-why-moe">MoE 基础</a> | <a href="https://www.cerebras.ai/blog/moe-guide-router">Router 之争</a> | <a href="https://www.cerebras.ai/blog/moe-guide-debug">排查死掉的 MoE 模型</a> | <a href="https://www.cerebras.ai/blog/moe-guide-scale">规模化 MoE </a>| <a href="https://www.cerebras.ai/blog/moe-guide-calculator">MoE 数学详解</a></p>
+<p>这段视频完整演示了如何训练一个小型 MoE 模型，以及怎么排查 router 的问题。如果你打不开上面显示的视频，可以用这个链接在 YouTube 上打开：<a href="https://youtu.be/phXUzFt7hrs?si=6FAHkA00Tvpjz4LR">https://youtu.be/phXUzFt7hrs?si=6FAHkA00Tvpjz4LR</a></p>
+<h3>读到最后你会看到什么</h3>
+<p>我猜你一听到 Mixture-of-Experts（MoE），立刻就会想「这又是只有 Google 才训得起的东西」，对吧？这正是我们今天要打破的迷思。没错，那些有名的 MoE 模型确实很大——是万亿参数的量级（Kimi Team, 2025）。但这就好比因为存在 GPT-4 就干脆不碰神经网络。从零搭一个感知机网络，不到 20 行代码就够了。</p>
+<p>遗憾的是，「训练 MoE 模型对大多数人来说高不可攀」是个相当普遍的误解。事实上，我们写这篇博客的时候，Aman 提出的第一个问题就是它：做这件事难道不需要一大集群算力吗？但有一个反直觉的事实——MoE 关键不只在规模，它是一种你可以把规模缩小、照样能看到同样好处的技术。</p>
+<p>读完这篇博客，你会学会训练一个小型 MoE 模型，并在 GPT-2 这个规模上击败稠密（dense）模型。至于算力——你只需要自己的笔记本（好吧，也许再加一台小型加速节点，但绝不是数据中心）。下面就开始。</p>
+<h3>前置要求</h3>
+<p>如果你还不熟悉稠密的 GPT-2 风格模型，我们强烈建议先看 Andrej Karpathy 的 <a href="https://www.youtube.com/watch?v=l8pRSuU81PU">Let’s reproduce GPT-2 (124M)</a>，然后再回到这篇博客——我们在它的基础上继续搭建，专门聚焦 MoE。</p>
+<h3>环境准备</h3>
+<p>让我们为大规模训练 run 做好准备。我们基于 <a href="https://github.com/cat-state/modded-nanogpt-moe/tree/blogpost-version">modded-nanogpt</a> 代码库（Jordan et al., 2024a）来搭建，它提供了一个扎实的 124M、GPT-2 同类的基线，在 FineWeb 数据集上训练（Penedo et al., 2024）。我们的模型是一个 decoder-only transformer，使用了  (So et al., 2022)、RoPE (Su et al., 2023)、RMSNorm (Zhang and Sennrich, 2019) 和 QK-Norm (Henry et al., 2020)，用 Muon 优化器（Jordan et al., 2024b）训练。它基本上就是一个现代化版的 GPT-2，11 分钟就能训完。如果你有 Cerebras 硬件可用，可以在上面跟着做；没有的话，在 GPU 上也一样跑得通。要开始的话，先下载 NanoGPT 的 MoE 分支：</p>
+<p>上面的步骤下载好 FineWeb 训练文件之后，用你顺手的编辑器或 IDE 打开 <em>train_gpt_moe.py</em>（想直接跑实验的话，这个文件里有我们完整的 MoE 实现）。或者，如果你更想跟着一行行写、把 MoE 的各个组件一步步实现出来，那就打开 <em>train_gpt.py</em>。另外，一切都是可以缩小的（模型规模也一样），我们鼓励你随便折腾——把这篇博客当成起点。去把东西弄坏，去试奇怪的设置，看看会发生什么。</p>
+<h3>expert 网络放在哪里</h3>
+<p>好了，你已经把 modded-nanogpt 代码库拉到本地，正盯着代码看。激动人心的部分来了——把 (Soboleva, 2025a) 里提出的那个 MoE 概念变成你真能训练出来的东西。第一步相当直接：把单个前馈网络（FFN）换成多个 expert 网络。</p>
+<p>图 1：每个 expert 其实就是 GPT-2 的 FFN。expert 类的定义见 <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/train_gpt_moe.py##L184-L196">train_gpt_moe.py#L184-L196</a>，实例化逻辑见 <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/train_gpt_moe.py##L263">train_gpt_moe.py#L263</a>。</p>
+<p>从图 1 可以看到，每个 expert 就是 GPT-2 的 FFN 原样复制粘贴过来的（两层线性层，中间隔着一个非线性）。那这些 expert 网络该怎么用？图 2 展示的是我们在处理 token 批次时如何组合各个 expert 的输出，它把 (Soboleva, 2025a) 中的单 token 做法扩展到了批量。注意，这个实现并不快，还会浪费计算，但对教学很有用。</p>
+<p>图 2：批量处理时的 expert 混合（见 train <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/train_gpt_moe.py##L208-L225">train_gpt_moe.py#L208-L225)</a>。</p>
+<p>正如本系列第 2 部分所说，MoE 的 routing 很棘手，它可能把这些模型理论上带来的好处彻底抵消掉。接下来的小节里，我们保持 expert 架构和混合逻辑不变，只摆弄 routing，观察它如何改变模型的质量。先说好：我们会先把事情弄糟、会犯错，就像真实生活里实际发生的那样。</p>
+<h3>学习型 routing</h3>
+<p>学习型 routing（learned routing）是业界标准，Google、OpenAI、Anthropic 等发布的那些出色 MoE 模型用的都是它。现在轮到你亲手搭一遍了。理论部分在第 2 部分已经讲过，这里我们只关注它的实际实现。图 3 显示，学习型 routing 有两个目标：一是通过可学习的权重为每个 token 找到最合适的 expert，二是通过负载均衡让所有 expert 都被用上。这组双重目标通常正是我们给自己挖坑的地方，那我们来看看把这个训练 run 启动之后会发生什么。把辅助损失（auxiliary loss）接进模型，在所有层上求和，再以 0.01 的权重加到交叉熵损失上。</p>
+<p>图 3：学习型 routing 的实现：（上）决定 token-expert 分配的 router 逻辑，（下）用于负载均衡的辅助损失。router 的定义在 <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/train_gpt_moe.py##L228-L240">train_gpt_moe.py#L228-L240</a>，负载均衡逻辑在 <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/train_gpt_moe.py##L242-L250">train_gpt_moe.py#L242-L250</a>。</p>
+<p>该来看损失曲线了。图 4 显示我们的 MoE 已经打败了稠密 GPT-2 基线。恭喜，你实现了第一个能工作的 MoE 模型。不过等等——我们说过会给自己挖坑，可一切都很顺利，那这份指南为什么还存在？你可能已经注意到，在 MoE 101 系列第 2 部分里我们承诺过：4 个 expert 配学习型 routing，相对稠密 GPT-2 基线大约有 2% 的提升。现在我们只拿到这一半收益，另外 1% 去哪儿了？这就是大多数研究者都经历过的时刻：照着别人的论文实现，结果并没有论文里承诺的效果。在这份指南里我们要把它修好，一起正经地排查一遍。</p>
+<p>图 4：4 个 expert 配学习型 routing 的 MoE 优于稠密 GPT-2 模型。损失的领先幅度随着训练不断拉大，到我们目标的 2.4B token 时为 1%。要复现这张图，请运行 <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/plots/plot.ipynb">plot.ipynb</a>。</p>
+<p>记住，我们的 router 有两个目标：为每个 token 找到最合适的 expert，以及让所有 expert 都被用上。第二个目标很容易验证，直接看 expert 利用率统计就知道做得怎么样。图 5 显示每一层几乎完美均衡。双重目标里的负载均衡这一部分看起来运转良好——问题不在这里。</p>
+<p>图 5：expert 利用率（跨层平均）很快收敛到接近 25%；总共 4 个 expert，这是完全均衡的情形。要复现这张图，请运行 <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/plots/plot.ipynb">plot.ipynb</a>。</p>
+<p>回到「为每个 token 找到最合适的 expert」这个嫌疑对象上。要排查 router 到底在学什么，可以看梯度范数。问题出在图 6 上：router 从损失的交叉熵部分拿到的梯度几乎为零！也就是说，你的 router 只直接学会了负载均衡。而它本该学会「哪个 expert 对每个 token 最好」的那部分呢？那个信号根本没有传到 router。先别往下翻看答案，回头看看图 3 里的代码。你能找出那个让我们的 router 拿不到交叉熵梯度的 bug 吗？给个小提示：特别考虑一下 <em>top_k = 1</em> 的情况。</p>
+<p>图 6：<em>top_k=1 </em> 的学习型 router 从交叉熵损失拿到的梯度为零，梯度只来自目标中的负载均衡部分。要复现这张图，请运行 <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/plots/plot.ipynb">plot.ipynb.</a></p>
+<h3>修复学习型 routing</h3>
+<p>我们刚学到的这一点很重要：即使负载均衡完美无缺，学习型 routing 也可能完全没用。router 确实在学东西，但它真正学会的只有负载均衡，而不是如何 routing 出专业化的 expert（也就是改善交叉熵）。遗憾的是，许多 MoE 论文从不提这个问题，大多只盯着负载均衡的毛病，于是白白丢掉了可观的性能……</p>
+<p>好，我们来诊断这个 bug，你可以对照一下自己猜得对不对。当 <em>top_k = 1</em> 时，有 <em>gate.sum(dim=-1, keepdim=True) = gate</em>，于是我们的归一化 <em>gate = gate / gate.sum(...)</em> 变成 <em>gate = gate / gate = 1</em>。这意味着交叉熵梯度永远到不了 router 权重，学习信号就此中断。注意这专门是 <em>top_k = 1</em> 才有的问题。而在 <em>top_k = 2</em> 时，从图 7 可以看到梯度流看起来是正常的。为什么？两个 expert 同时激活时，gate 在归一化过程中保留了它们之间的相对差异，router 仍然在学哪个 expert 该拿到更大的权重。这就像只问「你有兴趣申请数学学位吗？」，没有其他选项可供比较，就很难做出有把握的选择。但如果你问的是：「数学学位和物理学位你更感兴趣哪个？」，那么你对数学学位 0.9 的置信、对物理学位 0.1 的置信，立刻就让决定容易得多。</p>
+<p>图 7：<em>top_k=2</em> 的学习型 router 从交叉熵损失拿到了相当可观的梯度，与 <em>top_k=1</em> 那种梯度为零的情况不同。要复现这张图，请运行 <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/plots/plot.ipynb">plot.ipynb</a>。</p>
+<p>这也就提示了我们的修法。针对 <em>top_k = 1</em>，我们引入一个「空 expert」（null expert）——一个永远不会被激活的幽灵 expert，但它给了 router 一个可用来对比预测的选项。与 shared experts 做法会同时推高参数量和计算量不同，我们的幽灵 expert 不带来任何计算开销，也不增加任何参数。思路和 Bachlechner et al., 2020 处理神经网络深层梯度消失问题的做法类似：我们要增强流入 router 的梯度。图 8 展示了可以怎么实现。</p>
+<p>图 8：加入一个「空 expert」，让 router 有可供对比的对象，从而带来更好的梯度流。</p>
+<p><em>null_expert_bias</em> 是一个可调参数，我们几乎没做调优，在实验里把它设为 10。现在 router 必须证明：选择一个真实 expert 为什么比选那个幽灵选项更好，这正是我们想要的对比。来看看它是否真能改善梯度流。图 9 显示，我们终于从双重目标的交叉熵部分收到了可观的梯度，而且和图 7 中 <em>top_k = 2</em> 观察到的行为吻合。「学习」这才真正开始。结果是图 10 所示：我们的 MoE 模型现在比稠密基线好 2%。一行修复换来的是相当大的收益（而且按我们的经验，规模越大它越明显）。</p>
+<p>图 9：在 <em>top_k=1</em> 的情况下使用「空 expert」，抬升了来自双重目标交叉熵部分、流向 router 的梯度。要复现这张图，请运行 <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/plots/plot.ipynb">plot.ipynb</a>。</p>
+<p>花点时间想想刚才发生了什么。你手上是一个坏得很隐蔽的 MoE 模型，学习信号完全中断了。你查到根因、做了针对性修复，然后——信号又流起来了。我们相对稠密 GPT-2 基线拿到的收益几乎翻了一倍。注意，你不必增加参数量或计算量，连超参扫描都不需要。你只是修好了 MoE 网络里一个很小的部件：router，而它极大地改变了模型的质量。</p>
+<p>图 10：带「空 expert」的学习型 routing、4 个 expert 的 MoE，在目标的 2.4B token 处比 GPT-2 模型好 2%。「空 expert」的存在让相对稠密基线的收益几乎翻倍。要复现这张图，请运行 <a href="https://github.com/cat-state/modded-nanogpt-moe/blob/blogpost-version/plots/plot.ipynb">plot.ipynb</a>。</p>
+<h3>我们做到了什么</h3>
+<p>还记得开头吗？你大概也曾认定 MoE 不过是又一项「只有 Google 量级才玩得起」的技术。我们就是来把它证伪的。我们拿了一个很小的 124M 参数 GPT-2 模型——那种用最少算力预算就能训起来的模型——让它跑出了效果。学习型 routing 一开始并没有在「学习」，一个小修复就让它活了过来。我们观察到，仅仅调整 router 带来的收益就非常可观。我们没有调超参，也没有把算力花在 batch size 扫描上，只是诊断出真正坏掉的地方，做了针对性修复，然后把它解决了。</p>
+<p>MoE 棘手，因为它们会以很隐蔽的方式失败。这是个不太讨好的观点：完美的负载均衡并不意味着 router 在「学习」。现在你也知道了。但 MoE 也是实打实的，一旦你修好了真正坏掉的部分，收益立刻就来，而且相当显著。</p>
+<p>我们的排查方法（由假设驱动的追查、测量正确的指标、理解失败模式）远不止适用于 MoE。当你的模型死掉时（一定会发生的），你会知道怎样把它们救回来，而这件事并不需要一座数据中心。</p>
+<p>好，你已经能训练一个 4 个 expert 的 MoE 模型了，但试着把它扩到 64 个 expert，就会撞上 OOM 错误。在 <a href="https://www.cerebras.ai/blog/moe-guide-scale">规模化 MoE：让稀疏模型在真实硬件上跑得快</a> 里，我们会排查这背后的原因并把它修好。</p>
+<h3>引用</h3>
+<p>有问题？你可以在这里找到 Daria：<a href="https://soboleva-daria.github.io/">https://soboleva-daria.github.io/</a></p>
+<p><a href="https://share.hsforms.com/1j83wM4sJRuGvT4UWOAFozw5c85x">订阅下一篇发布通知</a></p>
+<h3>参考文献</h3>
+<p>Bachlechner, T., Majumder, B. P., Mao, H. H., et al. (2020). ReZero is all you need: Fast convergence at large depth. <em>arXiv preprint arXiv:2003.04887</em>. <a href="https://doi.org/10.48550/arXiv.2003.04887">https://doi.org/10.48550/arXiv.2003.04887</a></p>
+<p>Henry, A., Dachapally, P. R., Pawar, S., et al. (2020). Query-key normalization for transformers. <em>arXiv preprint arXiv:2010.04245</em>. <a href="https://doi.org/10.48550/arXiv.2010.04245">https://doi.org/10.48550/arXiv.2010.04245</a></p>
+<p>Jordan, K., Bernstein, J., Rappazzo, B., et al. (2024). modded-nanogpt: Speedrunning the NanoGPT baseline. <em>GitHub Repository</em>. <a href="https://github.com/KellerJordan/modded-nanogpt">https://github.com/KellerJordan/modded-nanogpt</a></p>
+<p>Jordan, K., Jin, Y., Boza, V., et al. (2024). Muon: An optimizer for hidden layers in neural networks. <em>Blog Post</em>. <a href="https://kellerjordan.github.io/posts/muon/">https://kellerjordan.github.io/posts/muon/</a></p>
+<p>Kimi Team (2025). Kimi K2: Open agentic intelligence. <em>arXiv preprint arXiv:2507.20534</em>. <a href="https://doi.org/10.48550/arXiv.2507.20534">https://doi.org/10.48550/arXiv.2507.20534</a></p>
+<p>Penedo, G., Kydličák, H., Ben Allal, L., et al. (2024). The FineWeb datasets: Decanting the web for the finest text data at scale. In <em>Proceedings of the Thirty-Eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track</em>. <a href="https://openreview.net/forum?id=n6SCkn2QaG">https://openreview.net/forum?id=n6SCkn2QaG</a></p>
+<p>Radford, A., Wu, J., Child, R., et al. (2019). Language models are unsupervised multitask learners. <em>OpenAI Technical Report</em>. <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf</a></p>
+<p>So, D. R., Mańke, W., Liu, H., et al. (2021). Primer: Searching for efficient transformers for language modeling. <em>arXiv preprint arXiv:2109.08668</em>. <a href="https://doi.org/10.48550/arXiv.2109.08668">https://doi.org/10.48550/arXiv.2109.08668</a></p>
+<p>Soboleva, D. (2025). MoE fundamentals: Sparse models are the future. <em>Cerebras Blog</em>. <a href="https://www.cerebras.ai/blog/moe-guide-why-moe">https://www.cerebras.ai/blog/moe-guide-why-moe</a></p>
+<p>Soboleva, D. (2025). Router wars: Which MoE routing strategy actually works. <em>Cerebras Blog</em>. <a href="https://www.cerebras.ai/blog/moe-guide-router">https://www.cerebras.ai/blog/moe-guide-router</a></p>
+<p>Su, J., Lu, Y., Pan, S., et al. (2021). RoFormer: Enhanced transformer with rotary position embedding. <em>arXiv preprint arXiv:2104.09864</em>. <a href="https://doi.org/10.48550/arXiv.2104.09864">https://doi.org/10.48550/arXiv.2104.09864</a></p>
+<p>Zhang, B., &amp; Sennrich, R. (2019). Root mean square layer normalization. <em>arXiv preprint arXiv:1910.07467</em>. <a href="https://doi.org/10.48550/arXiv.1910.07467">https://doi.org/10.48550/arXiv.1910.07467</a></p>
+<h3>讨论</h3>
+<p>做这篇博客的过程中，我们还发现了一些别的零散现象：</p>
+<ul><li>只把归一化 <em>(gate = gate / gate.sum(...))</em> 去掉并没有帮助（至少 <em>top_k = 1</em> 的情况没有）。虽然确实有来自交叉熵损失的梯度在流动，但「学习」信号仍然极弱，效果比稠密 GPT-2 基线更差。</li><li>因为我们是在 modded-nanogpt 上搭的，所以用了 Muon 优化器。我们也在 EleutherAI/nanoGPT-mup 之上跑了一些实验，它用的是 Adam，transformer 架构也稍旧一点。我们发现，用 Adam 时，如果梯度信号只来自负载均衡损失（也就是带着归一化 bug 的那种情形），学习型 routing 超不过稠密 GPT-2 基线；而用 Muon 时它确实能超过。也许 Muon 能帮助 expert 网络在 router 监督较少的情况下学起来，不过我们没有深入研究这一现象。</li><li>我们试过把 hash routing 跑通——就是 (Soboleva, 2025b) 里介绍的那个版本。出人意料的是，无论用 Adam 还是 Muon 优化器，hash routing 都没能超过稠密 GPT-2 基线（除非把 GPT-2 风格的网络只堆到 4 层）。我们没有花时间去弄清 hash 实现坏在哪里，所以如果你去试并且找到了 bug，请告诉我们。</li></ul>
+<h3>MoE 101 指南</h3>
+<p>页面</p>
+<h3>MoE 基础：稀疏模型才是未来</h3>
+<p>博客</p>
+<h3>Router 之争：哪种 MoE routing 策略真正有效</h3>
+<p>博客</p>
+<h3>规模化 MoE：让稀疏模型在真实硬件上跑得飞快</h3>
+<p>博客</p>]]></content:encoded>
     </item>
     <item>
       <title>用好 GPT-5.6：Sol、Terra 与 Luna</title>

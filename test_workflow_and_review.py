@@ -910,6 +910,72 @@ class TestArchiveTitleRetention(unittest.TestCase):
         self.assertIn("旧英文标题", arch_path.read_text(encoding="utf-8"))
 
 
+class TestArchiveShadowFold(unittest.TestCase):
+    """归档增量合并里「影子折叠」的真实边界。
+
+    `_rss_articles` 的旧注释写「折叠只在产出层生效，归档 `.md` 仍逐条全量留档」——
+    实测不成立：`write_news_archives` 的合并同样调 `_dedup_same_title`（本地
+    `--rebuild-only` 把 deepseek 4 条 `news260424#d-<日期>-N` 影子行折掉了，46 → 42）。
+    两边都可能跑偏，所以这里把边界钉死：
+    - 不许有人拿「归档只增不减」当口号把折叠关掉（提取期的 junk 影子会复活）；
+    - 更不许把折叠放宽到吃掉合法历史（单页变更日志全靠锚点当身份）。
+    """
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.news_dir = Path(self.temp_dir.name) / "llm-news"
+        self.news_dir.mkdir(parents=True)
+        self.addCleanup(self.temp_dir.cleanup)
+
+    def _roundtrip(self, arch_text, vendor_id="vendor_a"):
+        """把归档原文喂回收档写出路径（等价 `--rebuild-only`），返回留下的 URL 集合。"""
+        arch_path = self.news_dir / f"{vendor_id}.md"
+        arch_path.write_text(arch_text, encoding="utf-8")
+        arts = crawler_llm_intel.parse_archived_articles(arch_path)
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id=vendor_id, brand="Vendor A", homepage="https://a.com",
+            products=[], all_news_articles=list(arts))
+        crawler_llm_intel.write_news_archives(self.news_dir, [intel], clean_removed=False)
+        return {a.url for a in crawler_llm_intel.parse_archived_articles(arch_path)}, arch_path
+
+    def test_shadow_anchor_folds_into_canonical_link(self):
+        """同标题、一条锚点卡一条详情页直链 → 折成直链那条（这是规则本意）。"""
+        urls, _ = self._roundtrip(
+            "## 全部文章（共 2 篇）\n\n"
+            "1. [深度求索 V4 预览版](https://a.com/news/v4)（2026-04-24）\n"
+            "2. [深度求索 V4 预览版](https://a.com/news/v4#d-2024-11-20-0)（2024-11-20）\n")
+        self.assertEqual(urls, {"https://a.com/news/v4"},
+                         "影子行该折进规范直链，不然读者点进去还是同一篇文章")
+
+    def test_canonical_only_history_is_never_folded(self):
+        """两条都是详情页直链、日期不同 = 真重名文章，一条都不许丢。
+
+        实测 openai 跨年三篇「团队近况」就是这种；折叠一旦只看标题就会吃掉两篇真文章。
+        """
+        urls, _ = self._roundtrip(
+            "## 全部文章（共 3 篇）\n\n"
+            "1. [团队近况更新](https://a.com/team-2024)（2024-03-01）\n"
+            "2. [团队近况更新](https://a.com/team-2025)（2025-06-01）\n"
+            "3. [团队近况更新](https://a.com/team-2026)（2026-09-01）\n")
+        self.assertEqual(len(urls), 3, "同标题的不同直链条目必须全留")
+
+    def test_anchor_only_changelog_keeps_every_entry(self):
+        """单页变更日志：身份就是 `#锚点`，且标题各不相同 → 一条都不许塌。
+
+        这类厂商（minimax / gemini / 阿里云百炼…）整页只有一个 URL，锚点被折掉
+        等于历史条目凭空消失，比 deepseek 那 4 条 junk 严重得多。
+        """
+        urls, arch_path = self._roundtrip(
+            "## 全部文章（共 3 篇）\n\n"
+            "1. [新增语音合成档位](https://a.com/docs/changelog#voices)（2026-10-01）\n"
+            "2. [下调批量推理价格](https://a.com/docs/changelog#price)（2026-09-11）\n"
+            "3. [上线远程工具调用](https://a.com/docs/changelog#tools)（2026-08-02）\n")
+        self.assertEqual(len(urls), 3, f"锚点即身份的行不能被折掉：{sorted(urls)}")
+        # 幂等：再跑一轮不该少行（`--rebuild-only` 反复跑要稳定）
+        again, _ = self._roundtrip(arch_path.read_text(encoding="utf-8"))
+        self.assertEqual(again, urls, "第二次重建不得继续减少条目")
+
+
 class TestAiTitlePolish(unittest.TestCase):
     """--ai-titles：本轮新增标题交给 LLM 润色一次，失败回落 Google 机翻。"""
 

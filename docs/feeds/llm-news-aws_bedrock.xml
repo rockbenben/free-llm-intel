@@ -9,44 +9,526 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 13 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Building agents that transact with Anchor Browser and AgentC…</title>
+      <title>用 Anchor Browser 与 AgentCore payments 构建能完成交易的智能体</title>
       <link>https://aws.amazon.com/blogs/machine-learning/building-agents-that-transact-with-anchor-browser-and-agentcore-payments/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/building-agents-that-transact-with-anchor-browser-and-agentcore-payments/</guid>
       <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Building agents that transact with Anchor Browser and AgentCore payments</description>
+      <description>原文标题：Building agents that transact with Anchor Browser and AgentCore payments</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>用 Anchor Browser 与 AgentCore payments 构建能完成交易的智能体</h1>
+<p>AI 智能体越来越需要访问按请求计价的 web 资源。例如，付费数据集按查询次数收费，研究类 API 按调用计量，设有付费墙的出版商把内容挡在支付之后。当 AI 智能体遇到这类资源时，服务器返回 HTTP 402 Payment Required。智能体没有内置的支付机制，会话上没有绑定预算，也没有任何以编程方式满足这个请求的办法。任务因此停滞，需要人工介入。</p>
+<p><a href="https://aws.amazon.com/marketplace/pp/prodview-ujbrqwp274l6g">支持智能体支付的 Anchor Browser</a>代表智能体处理机器对机器的支付工作流。它与 <a href="https://aws.amazon.com/blogs/awsmarketplace/aws-genaiic-partner-agent-factory-new-ai-agents-now-in-aws-marketplace/">AWS Generative AI Innovation Center 的 Partner Agent Factory</a>合作开发，现已上架 <a href="https://aws.amazon.com/marketplace/">AWS Marketplace</a>。本文介绍 <a href="https://anchorbrowser.io/">Anchor Browser</a>如何与 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/payments.html">Amazon Bedrock AgentCore payments</a>集成，让 AI 智能体能够自主为受 x402 保护的页面和 API 付费。x402 协议是一项基于 HTTP 的机器对机器支付开放标准。服务器以 402 Payment Required 响应，同时给出金额、可接受的支付方式，以及智能体用来完成交易所需的支付地址。</p>
+<p>Anchor Browser 是为 AI 智能体专门打造的云端浏览器自动化方案。每个智能体会话都运行在一个托管浏览器环境内，该环境维护认证状态、处理导航、捕获网络请求，并提供页面交互的实时视图。</p>
+<p>Amazon Bedrock AgentCore 提供规模化构建、连接和优化智能体所需的能力。Amazon Bedrock AgentCore payments 是 AgentCore 中的一项完全托管能力，AI 智能体可以用它自主发现、访问 API、Model Context Protocol（MCP）服务器和 web 内容并为之付费。AgentCore payments 管理钱包连接，在基础设施层强制执行可配置的支出上限，并通过 x402 协议处理支付。它还通过 Amazon CloudWatch 提供对支付尝试、批准、拒绝和结算的可观测性。</p>
+<p>当运行在 Anchor Browser 中的智能体遇到 402 响应时，AgentCore payments 会在配置好的预算内授权并完成交易。工作流不中断地继续下去。</p>
+<h2>挑战</h2>
+<p>自主智能体遇到受 x402 保护的资源时，工作流会停滞。智能体发出一个请求，比如获取一份付费研究报告，或调用一个付费数据增强 API，服务器返回 HTTP 402 Payment Required。没有可支付的机制，本来应当自主运行的任务就转而需要人工介入。</p>
+<p>如今开发者必须自己搭建整套支付栈。这部分工作量横跨四类复杂性：</p>
+<p><strong>支付协议处理</strong></p>
+<ul><li>从 HTTP 响应中检出并解析 402 支付挑战，把需要支付的响应与其他 4xx 错误区分开。</li><li>按商户期望的确切格式，构造出携带密码学证明的正确支付头。</li><li>支持多种<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/payments-process-payment.html">支付方案</a>（exact、upto 以及各种协议变体），而不把厂商专属逻辑硬编码进智能体。</li><li>在不同 x402 商户实现之间保持兼容，它们的挑战格式、支持的稳定币、结算时点都可能不一样。</li></ul>
+<p><strong>安全与密钥管理</strong></p>
+<ul><li>保存用于给支付签名的私钥，就得在一个会接触不可信输入的环境里做到安全的密钥存储。</li><li>管理钱包的生命周期操作，包括密钥轮换、凭证刷新和提供商故障切换。</li></ul>
+<p><strong>运行韧性</strong></p>
+<ul><li>带着支付头重新提交原始请求，同时保住会话状态、cookie 和请求上下文。</li><li>提供幂等性，这对钱包操作必不可少。</li><li>强制执行按会话、按交易的支出上限，并在并发的智能体执行之间做实时预算跟踪。</li></ul>
+<p><strong>可观测性与合规</strong></p>
+<ul><li>把每一次支付尝试、批准、拒绝和结算都记进审计日志，用于合规和对账。</li></ul>
+<p>没有托管的支付服务，智能体就得把整套支付栈内化。每一次访问受 x402 保护的资源，只要返回 402，智能体都要在内部编排完整的支付流程，包括：</p>
+<ul><li>签署证明。</li><li>附上正确的头。</li><li>重试请求。</li><li>结算交易。</li><li>记录结果。</li></ul>
+<p>这些步骤中的每一步都需要开发者自己编写、加固并维护的自定义代码。图 1 展示了这种架构。智能体内含八个紧耦合的组件（钱包、私钥、预算控制、签署证明、附加头、重试逻辑、结算支付和日志）。智能体连接到一个 x402 API，回流的是 402 挑战，发出的是重试请求。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21771-1-1.png" alt="嵌入了八个组件的智能体支付栈连接到一个 x402 API，图中显示返回的 402 挑战与向前发出的重试请求"></p>
+<p>图 1：智能体支付栈</p>
+<p>安全方面的顾虑还不止于工程工作量本身。</p>
+<p><strong>支出失控。</strong> 如果基础设施层没有强制的硬性支出上限，一个 bug、一个重试循环、一次提示注入或一次意外访问都可能触发计划外的支付。一个反复重试某个付费端点的智能体会不断授权支付，直到有人工介入为止。</p>
+<p><strong>密钥暴露。</strong> 私钥存放在智能体运行时内部时，它就和不可信网页、第三方工具、外部依赖共享同一个执行环境。这些途径都可能无意间泄露那些控制真实资金的凭证。</p>
+<p><strong>签名链路暴露。</strong> 如果运行时能够访问签名基础设施，攻击者就可能试图取得密钥，或把支付重定向到不受授权控制的地址。真正有效的缓解措施，是从一开始就不让密钥进入运行时。</p>
+<p>基于浏览器的智能体还多出一条约束：支付必须发生在同一个浏览器会话内。否则会话录制和实时视图就不再与实际执行的内容相符。</p>
+<h2>方案</h2>
+<p>Anchor Browser 和 AgentCore payments 的做法是把整套支付栈搬进托管基础设施，从而消化这些复杂性。</p>
+<p>与无状态的工具调用不同，Anchor Browser 提供的是一个真正的云端浏览器：身份持久、工作流可重复且确定，并且具备可靠地完成登录、导航和把任务做完所需的会话上下文。认证、导航、网络请求、录制和实时视图都发生在同一个浏览器会话内。需要支付时，交易也在那个会话内完成。录制会捕获从请求到 402、从支付到内容交付的完整过程。Anchor 智能体内置一个 x402 工具，在浏览器上下文中原生处理付费 API 调用。这个内置工具不需要改动现有的 Playwright、Puppeteer 或基于 Chrome DevTools Protocol 的工作流。</p>
+<p>AgentCore payments 充当支付层。这项服务的中心是 Payment Manager，它是协调该 AWS 账户支付操作的顶层资源。创建 Payment Manager 需要指定一种 authorizer 类型和一个 IAM 角色，随后 AgentCore 会在 Amazon Bedrock AgentCore Identity 中配置一个对应的工作负载身份。</p>
+<p>其余组件把 Payment Manager 连接到外部钱包基础设施：</p>
+<ul><li><strong>PaymentConnector</strong> 把 Payment Manager 与外部钱包提供商集成，可以是 Coinbase Developer Platform（Coinbase CDP）或 Stripe Privy。</li><li><strong>PaymentCredentialProvider</strong> 把钱包提供商的凭证安全地存放在 AgentCore Identity 中。</li><li><strong>PaymentInstrument</strong> 指明实际扣款的具体钱包地址。</li></ul>
+<p>Anchor Browser 通过 AgentCore payments、使用受支持的钱包提供商来设置钱包，而不把钱包机密或私钥放进智能体运行时。钱包操作由 AgentCore payments 通过配置好的提供商处理。在端点发现方面，AgentCore 通过 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/payments-connect-bazaar.html">Amazon Bedrock AgentCore Gateway 提供经过筛选的 Coinbase x402 Bazaar MCP 服务器</a>，因此智能体可以用编程方式发现可用的按次付费 x402 端点。</p>
+<p>AgentCore payments 重构了支付架构。敏感操作从智能体运行时移出，进入托管服务层。Anchor Agent 只保留两个与支付相关的组件：一个预算会话和 x402 工具。基础设施，包括认证、钱包机密、支付限额、可观测性和支付证明签名，都留在 AgentCore payments 层。图 2 展示了 Anchor Agent 连向 AgentCore payments 托管层，由该层负责与 Coinbase CDP 或 Stripe Privy 的钱包提供商集成。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21771-2-1.png" alt="Anchor Agent 连向 AgentCore payments 托管层，该层与 Coinbase CDP 或 Stripe Privy 钱包提供商集成"></p>
+<p>图 2：Anchor Browser 与 AgentCore payments 集成</p>
+<h3>支付流程如何运转</h3>
+<p>下面这些步骤描述端到端发生的事情，从浏览器会话遇到受 x402 保护的资源那一刻，到智能体收到响应、继续任务那一刻。</p>
+<ul><li><strong>Anchor Browser 为浏览器会话创建一个专属的 AgentCore PaymentSession。</strong> 会话在开启 x402 的情况下启动时，Anchor Browser 会通过 AgentCore payments 建立一个 PaymentSession，把浏览器会话与配置好的支付工具和预算关联起来。</li><li><strong>浏览器收到 HTTP 402 Payment Required 响应。</strong> 智能体导航到某个 URL，或发出 fetch 或 XMLHttpRequest（XHR）请求。商户返回一个 402 挑战，指明金额、可接受的支付方式和支付地址。</li><li><strong>浏览器选出一种兼容的支付方式。</strong> Anchor Browser 读取 402 挑战的载荷，把所要求的支付方式与 PaymentSession 关联的支付工具做匹配。</li><li><strong>AgentCore 校验会话预算并生成密码学支付证明。</strong> AgentCore payments 先验证支付金额落在会话支出上限之内。随后该服务用配置好的钱包提供商（Coinbase CDP 或 Stripe Privy）为交易签名，并返回密码学证明。任何密钥材料都不会进入浏览器或智能体运行时。</li><li><strong>浏览器带着支付头重试原始请求。</strong> 浏览器把签好的证明作为 x402 v2 的 <code>PAYMENT-SIGNATURE</code> 或 x402 v1 的 <code>X-PAYMENT</code> 附加上去，然后对原始请求恰好重试一次。</li><li><strong>商户验证并结算支付，然后返回受保护的资源。</strong> 商户校验密码学证明，在链上结算交易，并提供内容。智能体继续任务。</li></ul>
+<p>在整个流程中，钱包凭证始终留在 AgentCore 和配置好的钱包提供商那里。</p>
+<h2>前提条件</h2>
+<p>开始之前，先确认你有一个有效的 Anchor Browser API key（<code>ANCHOR_API_KEY</code>）。要创建它，参见 Anchor Browser 的<a href="https://docs.anchorbrowser.io/quickstart/use-via-api">快速上手</a>指南。</p>
+<h2>配置自动 x402 支付</h2>
+<p>为 Anchor Browser 配置智能体支付只需要一个会话属性：把 <code>session.x402</code> 设为 <code>true</code>。该属性默认为 <code>false</code>。开启后，浏览器会话就能自动访问受 x402 保护的网站，支付由 AgentCore payments 签名，并在同一个浏览器会话内重试。开启 <code>session.x402</code> 等于授权浏览器用配置好的支付工具进行真实支付。</p>
+<p>下面的示例展示如何用 cURL 和 JavaScript 为 Anchor Browser 创建一个可支付的会话：</p>
+<p><strong>cURL</strong></p>
+<pre><code>curl --request POST
+--url https://api.anchorbrowser.io/v1/sessions
+--header &quot;anchor-api-key: $ANCHOR_API_KEY&quot;
+--header &quot;content-type: application/json&quot;
+--data '{&quot;session&quot;:{&quot;x402&quot;:true}}'</code></pre>
+<p><strong>JavaScript</strong></p>
+<pre><code>const response = await fetch('https://api.anchorbrowser.io/v1/sessions', {
+  method: 'POST',
+  headers: {
+    'anchor-api-key': process.env.ANCHOR_API_KEY,
+    'content-type': 'application/json',
+  },
+  body: JSON.stringify({ session: { x402: true } }),
+});
+const { data: session } = await response.json();
+console.log(session.cdp_url);</code></pre>
+<p>通过 Chrome DevTools Protocol 连上之后，智能体照常导航即可。你的自动化代码里不需要放钱包密钥或支付头。对于文档导航、fetch 和 XHR 请求，浏览器会透明地处理 402 挑战、支付签名和重试。</p>
+<h2>支付会话的限制与行为</h2>
+<p>通过 AgentCore payments 集成，Anchor Browser 在会话层面强制下面这些护栏。每个具备支付能力的浏览器会话都在配置好的支出和时间约束内运行。具体限额参见 <a href="https://docs.anchorbrowser.io/advanced/automatic-x402-payments">Anchor Browser 技术文档</a>。</p>
+<p>如果商户响应格式不对、没有提供兼容的网络、预算已经耗尽，或者 AgentCore payments 拒绝了这笔支付，浏览器会把原始的 402 响应原样返回给页面。你的自动化代码随后可以把这个 402 当作标准 HTTP 错误来处理。</p>
+<p>x402 会话属性只控制对第三方资源的支付。该属性不会取代 Anchor credits，也不用于支付浏览器会话本身的费用。</p>
+<h2>Anchor Browser 的自动化代码</h2>
+<p>你为 Anchor Browser 写的自动化代码保持不变。下面的示例说明并不需要任何支付专用的代码：</p>
+<pre><code>const { chromium } = require('playwright');
+// Connect to the x402-enabled session via CDP
+const browser = await chromium.connectOverCDP(session.cdp_url);
+const page = await browser.newPage();
+// Navigate to an x402-protected resource exactly as with a free page
+await page.goto('https://premium-research.example.com/market-report');
+// The page loaded, the payment was handled automatically
+// Extract content as normal
+const content = await page.textContent('article');</code></pre>
+<p>没有钱包逻辑，没有支付头构造，也没有重试代码。智能体导航到那个 URL。如果服务器返回 402，Anchor Browser 会与 AgentCore payments 协同签署支付证明，带上合适的支付头重试请求，并把内容交付给页面。你的自动化代码收到的就是最终渲染好的页面，看不出发生过一次支付。</p>
+<p>这一模式统一适用于付费墙新闻、授权金融数据、受限访问的 API 文档、按量计费的研究数据库，以及其他把内容挡在 402 挑战之后的资源。</p>
+<h2>用内置的 x402 工具调用 API</h2>
+<p>付费资源不限于网页。很多付费资源是 API，它们期望的是 POST、PUT 或其他 HTTP 方法。常见例子包括数据增强服务、高级推理端点和授权内容 API。针对这些用例，Anchor Browser 的智能体内置了一个 x402 工具，你可以像调用标准 HTTPS API 那样在浏览器上下文里调用它。</p>
+<p>你的智能体通过 fetch 或 XHR 发起 API 调用。如果服务器返回 402 挑战，浏览器会通过 AgentCore payments 协调支付签名，并带上签好的支付头重试请求。你的代码收到的响应，就好像那个端点是免费的一样。这个工具不绑定特定厂商、模型或框架。支付是位于你现有工具之下的一种会话级能力，不需要对智能体代码做任何改动。</p>
+<pre><code>// Fetch call to a paid API endpoint within the x402-enabled session
+const response = await page.evaluate(async () =&gt; {
+  const res = await fetch('https://data-enrichment.example.com/api/v1/enrich', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ company_domain: 'example.com' }),
+  });
+  return res.json();
+});
+// If the API returned 402, AgentCore handled payment automatically
+// The response contains the enriched data
+console.log(response);</code></pre>
+<p>你的自动化代码不会拿到钱包凭证。自动支付只在 <code>session.x402</code> 设为 <code>true</code> 时可用，并且始终受上一节所述的支出上限和有效期限制约束。</p>
+<h2>主要收益</h2>
+<p>这套集成把支付从应用代码移到了基础设施层：</p>
+<p><strong>没有支付基础设施要自建。</strong> 没有钱包 SDK 要集成，没有 402 响应解析器要写，没有重试循环要实现，没有头构造逻辑要维护，也没有自定义审计日志要搭建。整套支付栈由 AgentCore payments 管理。</p>
+<p><strong>现有工具无需改动。</strong> Playwright 脚本、Puppeteer 自动化、Chrome DevTools Protocol 命令，以及 Anchor Browser 里的智能体流程，都照旧运行。支付是挂在浏览器上的一种会话能力，而不是对智能体逻辑、prompt 或工具定义的修改。</p>
+<p><strong>私钥不进入运行时。</strong> 签名和结算都发生在 AgentCore payments 内部。该服务通过 AgentCore Identity 中的安全凭证存储与 Coinbase CDP 或 Stripe Privy 通信。智能体运行时接触不到任何能调动资金的密钥材料。</p>
+<p><strong>预算在基础设施层强制执行。</strong> 每个会话都在设定好的支出上限内运行，AgentCore 在授权支付之前先做校验。Amazon Bedrock AgentCore Observability 通过 Amazon CloudWatch 提供完整的支付审计轨迹。会话达到支出上限时，AgentCore payments 会拒绝这笔支付。</p>
+<p><strong>付费任务能顺利完成。</strong> 付费的 GET 页面能加载，付费的 API 调用能返回响应。智能体走完整条工作流，而不是停在一个 402 响应上等待人工介入。</p>
+<p><strong>账单合并。</strong> Anchor Browser 用 credits 结算第三方 x402 费用，和浏览器会话时长开在同一张账单上。没有需要单独管理的加密货币托管，没有需要盯的 USDC 余额，也没有需要财务团队去对账的链上结算。</p>
+<h2>结语</h2>
+<p>Anchor Browser 与 AgentCore payments 集成后，AI 智能体就能自主处理 x402 支付挑战，无论是付费墙网页还是付费 API 端点。钱包凭证不会进入智能体代码，也不需要自建支付基础设施。</p>
+<p>随着越来越多的 web 资源转向按请求计价，缺少支付机制的智能体无法完成涉及付费资源的任务。这套集成补上了这个缺口：智能体端到端跑完付费工作流，在设定好的预算内运行，通过 AgentCore Observability 获得完整的可观测性，而运行时里没有密码学密钥材料。</p>
+<p>起步可以先看下面这些资源：</p>
+<ul><li><a href="https://docs.anchorbrowser.io/advanced/automatic-x402-payments">Anchor Browser 的自动 x402 支付</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/payments.html">AgentCore payments 开发者指南</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/payments-browser.html">与浏览器集成的 AgentCore payments</a></li><li><a href="https://aws.amazon.com/marketplace/pp/prodview-ujbrqwp274l6g?sr=0-2&amp;ref_=beagle&amp;applicationId=AWSMPContessa">AWS Marketplace 上的 Anchor Browser</a></li></ul>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Manage private pricing offers for Amazon Bedrock with manage…</title>
+      <title>用 managed entitlements 管理 Amazon Bedrock 的 private pricing o…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/manage-private-pricing-offers-for-amazon-bedrock-with-managed-entitlements/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/manage-private-pricing-offers-for-amazon-bedrock-with-managed-entitlements/</guid>
       <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Manage private pricing offers for Amazon Bedrock with managed entitlements</description>
+      <description>完整标题：用 managed entitlements 管理 Amazon Bedrock 的 private pricing offer | 原文标题：Manage private pricing offers for Amazon Bedrock with managed entitlements</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>用 managed entitlements 管理 Amazon Bedrock 的 private pricing offer</h1>
+<p>在数十乃至数百个 AWS 账户中管理 AI 模型访问，如果每个工作负载账户都必须单独订阅并接受 AWS Marketplace Private Pricing Offer（MPPO），就会产生运维摩擦。<a href="https://aws.amazon.com/blogs/machine-learning/simplify-multi-account-access-to-amazon-bedrock-models-with-managed-entitlements/">Amazon Bedrock with managed entitlements</a> 简化了第三方 AI 模型的跨账户访问：你只需在中心账户订阅一次，即可把访问权限分发到整个组织。</p>
+<p>本文介绍两种在 AWS License Manager 中激活 AWS Marketplace Private Pricing Offer（MPPO）entitlement 的方式。如果你已经信任收到的许可证，只想做一次性的、无需搭建基础设施的处理，就用轻量脚本；如果你想要持续的事件驱动处理——校验卖方、创建并激活分布式 grant——就使用 CDK 自动化方案。</p>
+<h2>为什么要自动化 grant 激活</h2>
+<p>通过 AWS Marketplace Private Pricing Offer，你可以为 Amazon Bedrock 上的第三方模型协商专属价格。符合条件的 private offer 被接受后，AWS Marketplace 会在 AWS License Manager 中创建一份许可证。在启用了所有功能的 AWS Organizations 中，组织级 grant 会被自动接受，但状态一直保持 Disabled，直到你激活它们。</p>
+<p>很多团队的做法是查看 AWS License Manager 控制台、手动激活 grant。人工检查可行，但增加了工作量，也容易遗漏。在有人激活 grant 之前，协商好的 pricing 不会生效。团队每接入新模型或续约一次，同样的工作量就会再现。</p>
+<h2>方案概览</h2>
+<p>示例代码仓库提供两条路径：</p>
+<ul><li><strong>路径 1——轻量路径</strong>：一个独立脚本，列出收到的许可证并打印 dry-run 计划。只有当你用 <code>--apply --confirm-account-id</code> 重新运行时，它才会创建并激活覆盖整个组织的 grant。它没有卖方 allow-list，因此只有在管理账户中所有收到的许可证都值得信赖时才使用它。</li><li><strong>路径 2——事件驱动路径</strong>：使用 AWS Cloud Development Kit（AWS CDK）在你的 AWS 管理账户中部署持续运行的自动化。</li></ul>
+<p>请从以下两条实现路径中选择其一。不想用 CDK、只做一次性激活，就用路径 1；需要持续的事件驱动自动化，就用路径 2。</p>
+<h3>路径 1：轻量脚本（一次性激活）</h3>
+<p>当你需要不部署 CDK 的一次性激活时，使用此路径。脚本会列出管理账户中所有收到的许可证，因此请把 dry run 当作应用变更前的审查关卡。</p>
+<ul><li>将示例仓库克隆到本地并进入项目目录。  <code>git clone https://github.com/aws-samples/sample-bedrock-managed-entitlements.git cd sample-bedrock-managed-entitlements</code></li><li>以 dry-run 模式运行轻量脚本。  <code>python3 lightweight/distribute_licenses.py</code></li><li>逐条审查列出的许可证，确认 ISV Partner 发行方和账户范围与你预期的 private offer 一致。</li><li>在同一个 AWS Organizations 管理账户中应用已审查的计划。  <code>python3 lightweight/distribute_licenses.py --apply --confirm-account-id ACCOUNT_ID</code></li><li>grant 生效之后，在生产环境依赖该 private offer 之前，先验证计费链路。AWS Cost Explorer 中的账单数据可能有延迟，应在费用出现后用它来对比受覆盖的 Amazon Bedrock 用量的实际计费金额。要做可复现的检查，可改造示例 <a href="https://github.com/aws-samples/sample-bedrock-managed-entitlements/blob/main/scripts/bedrock_discount_check.py">scripts/bedrock_discount_check.py</a> 工具，匹配你的 ISV Partner 发行方，确认预期的折扣链路。</li></ul>
+<h3>路径 2：CDK 自动化（持续激活）</h3>
+<p>当你希望新的 private pricing 协议被自动处理时，使用此路径。CDK stack 会监听符合条件的 AWS Marketplace 协议事件，检查你的卖方 allowlist，创建分布式 grant，并在 License Manager 需要更多时间时重试激活。该方案包含三个组件：</p>
+<ul><li><strong>Amazon EventBridge 规则</strong>：stack 在 <code>us-east-1</code> 的默认事件总线上监听 AWS Marketplace 协议事件。规则匹配 source <code>aws.agreement-marketplace</code> 与 detail type <code>Purchase Agreement Created - Acceptor</code>，然后调用 AWS Lambda 函数。</li><li><strong>AWS Lambda 函数</strong>：该函数接收 AWS Marketplace 协议事件，校验卖方 allow-list，发现许可证，创建分布式 grant，并通过 <code>CreateGrantVersion(Status=ACTIVE)</code> 请求激活。函数会把执行结果记录到 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html">Amazon CloudWatch Logs</a>，以便审计。</li><li><strong>AWS License Manager entitlements</strong>：grant 的目标可以是你的组织、选定的组织单元（OU）或特定账户。只有在 grant 被激活并达到 <code>ACTIVE</code> 或 <code>WORKFLOW_COMPLETED</code> 状态后，协商的 pricing 才会生效。</li></ul>
+<p>下图展示了事件驱动流程。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/21638-1.png" alt="时序图：AWS Marketplace 向 Amazon EventBridge 发送 Purchase Agreement Created - Acceptor 事件，EventBridge 进而调用一个 AWS Lambda 函数。该函数校验卖方、发现收到的许可证、创建分布式 grant、通过 CreateGrantVersion(Status=ACTIVE) 请求激活，并将结果写入 Amazon CloudWatch Logs。"></p>
+<p>图 1：时序图，展示 AWS Marketplace 向 Amazon EventBridge 发送 Purchase Agreement Created – Acceptor 事件，EventBridge 进而调用一个 AWS Lambda 函数。该函数校验卖方、发现收到的许可证、创建分布式 grant、通过 CreateGrantVersion(Status=ACTIVE) 请求激活，并将结果写入 Amazon CloudWatch Logs。</p>
+<p>这种方式的主要收益：</p>
+<ul><li><strong>更快用上协商 pricing。</strong>分布式 grant 达到 <code>ACTIVE</code> 或 <code>WORKFLOW_COMPLETED</code> 后，协商费率即生效，无需等待人工到控制台检查。</li><li><strong>跨账户处理一致。</strong>同一个 AWS Lambda 函数与 Amazon EventBridge 规则的部署模式，可为每个接收第三方模型 grant 的组织重复部署，激活逻辑不会因操作人员而异。</li><li><strong>内建审计轨迹。</strong>每次激活尝试或跳过决策都会记录到 CloudWatch Logs，留下每个 grant 何时被激活、延迟或忽略的记录。</li></ul>
+<h4>前提条件</h4>
+<p>部署此路径前，确认以下前提条件：</p>
+<ul><li>使用 <code>us-east-1</code> 的 AWS Organizations 管理账户，并已配置 Python 3.12+、AWS Command Line Interface（AWS CLI）和 AWS CDK v2。</li><li>确认 AWS Organizations 启用了所有功能，且该 private offer 针对的是由 License Manager 支持的 Bedrock 模型。Software as a service（SaaS）产品不在本自动化范围内。</li></ul>
+<h4>实施步骤</h4>
+<ul><li>将示例仓库克隆到本地并进入项目目录。  <code>git clone https://github.com/aws-samples/sample-bedrock-managed-entitlements.git cd sample-bedrock-managed-entitlements</code></li><li>验证或启用组织前提条件。  <code>python3 scripts/bootstrap_prereqs.py --check --region us-east-1</code>  在做出任何变更前，先检查所有标记为 <code>APPLY</code> 或 <code>MANUAL</code> 的条目。bootstrap 脚本可以启用 License Manager 组织集成、License Manager 受信访问、AWS Marketplace 许可证管理受信访问，以及所需的服务关联角色。  <code>python3 scripts/bootstrap_prereqs.py --apply --region us-east-1 --confirm-account-id ACCOUNT_ID</code></li><li>配置部署输入。  <code>python3 scripts/setup_config.py</code>  检查 <code>config/sellers.json</code>，配置你的 Organization ID、卖方 allow-list、通知，以及可选的 grant 目标。默认情况下，grant 面向整个组织；可用 <code>grantTargets</code> 把 grant 的范围限定到选定的 OU 或 AWS 账户。</li><li>部署 CDK stack。  <code>cd cdk pip install -r requirements.txt cdk bootstrap aws://ACCOUNT_ID/us-east-1 cdk deploy</code></li><li>用 <code>config/sellers.json</code> 为 Amazon DynamoDB 中的卖方 allow-list 灌入初始数据。  <code>cd .. python scripts/seed_sellers.py --config config/sellers.json</code>  把卖方 allow-list 当作一条安全边界。在向表中写入数据之前，对照你已接受的 AWS Marketplace private offer 或收到的 License Manager 许可证，逐一核验每个卖方账户 ID。不要添加范围过宽或未经验证的卖方条目，因为匹配上的卖方会在你配置的所有 grant 目标上触发 grant 的创建与激活。完成部署和卖方数据灌入后，stack 即可处理符合条件的 AWS Marketplace 协议事件。只有 allowlist 中经过验证的卖方才会触发 grant 的创建和激活，且激活可能被推迟，直到 License Manager 完成 grant 工作流的处理。</li><li>验证已部署的自动化。  <code>python scripts/e2e_validate.py --org-id o-xxxxxxxxxx --seller-account SELLER_ACCOUNT_ID --simulate</code></li><li>在符合条件的 AWS Marketplace 协议事件发生后，验证 grant 是否已激活。  <code>aws logs tail /aws/lambda/mppo-grants-handler --follow --region us-east-1 python scripts/bedrock_discount_check.py --issuer &quot;ISV Partner&quot;</code>  激活和账单可见都可能需要数小时甚至数天。事件驱动工作流接受并激活 grant 后，先在 AWS License Manager 中确认 grant 状态，再待账单数据出现后，在 AWS Cost Explorer 中验证受覆盖的 Amazon Bedrock 用量。要做可复现的检查，可改造示例 <a href="https://github.com/aws-samples/sample-bedrock-managed-entitlements/blob/main/scripts/bedrock_discount_check.py">scripts/bedrock_discount_check.py</a> 工具，匹配你的 ISV Partner 发行方和目标关联账户。</li></ul>
+<h2>清理</h2>
+<p>如果你只是为了测试部署了这个 stack，请将其删除，以免产生 Lambda 和 Amazon EventBridge 的少量持续费用：</p>
+<pre><code>cdk destroy</code></pre>
+<h2>客户之声</h2>
+<blockquote>「作为一家每周支撑数百万次临床问诊的 AI Care Partner，Heidi Health 对第三方基础模型的依赖达到了真正的规模。AWS Marketplace 上的 private pricing 为我们提供了一种高性价比、高效的方式来管理这种增长：我们可以在 AWS 账户和组织单元之间细粒度地归因用量与 pricing，并在接入新模型时自动化 grant 管理。这让我们的平台团队无需增加人工工作，就能把成本治理同步扩展。」<br>        ——Marcus Lau，Heidi Health 平台工程负责人</blockquote>
+<h2>总结</h2>
+<p>本文介绍了两种为 Amazon Bedrock private pricing offer 激活 managed entitlements 的方式：对已确认信任的、收到的许可证做一次性激活，用轻量脚本即可；需要针对新的 AWS Marketplace 协议做持续的事件驱动处理，则部署 CDK 自动化。两种方式都能减少人工投入，帮助协商 pricing 在分布式 grant 激活后生效。</p>
+<p>要开始使用，请在你的 AWS 管理账户中试用<a href="https://github.com/aws-samples/sample-bedrock-managed-entitlements">示例代码</a>，让模型订阅自动化。</p>
+<h2>资源</h2>
+<ul><li><a href="https://github.com/aws-samples/sample-bedrock-managed-entitlements">示例代码：Amazon Bedrock with managed entitlements（GitHub）</a></li><li><a href="https://docs.aws.amazon.com/license-manager/latest/userguide/what-is-license-manager.html">AWS License Manager 用户指南</a></li><li><a href="https://docs.aws.amazon.com/license-manager/latest/APIReference/API_CreateGrantVersion.html">AWS License Manager API 参考：CreateGrantVersion</a></li><li><a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/what-is-amazon-eventbridge.html">Amazon EventBridge 用户指南</a></li><li><a href="https://docs.aws.amazon.com/cdk/v2/guide/home.html">AWS CDK 开发者指南</a></li></ul>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Natural language security queries at Orca Security using Ama…</title>
+      <title>Orca Security 用 Amazon Bedrock 实现自然语言安全查询</title>
       <link>https://aws.amazon.com/blogs/machine-learning/natural-language-security-queries-at-orca-security-using-amazon-bedrock/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/natural-language-security-queries-at-orca-security-using-amazon-bedrock/</guid>
       <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Natural language security queries at Orca Security using Amazon Bedrock</description>
+      <description>原文标题：Natural language security queries at Orca Security using Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Orca Security 用 Amazon Bedrock 实现自然语言安全查询</h1>
+<p>安全分析师需要快速得到关于自家云基础设施的答案，而不必对特定领域的查询语言了如指掌。<a href="https://orca.security/">Orca Security</a> 的工具覆盖 900 多种云模型（即 Sonar 跟踪的资源类型，例如 Amazon Elastic Compute Cloud (Amazon EC2) 实例或 Amazon Simple Storage Service (Amazon S3) 存储桶）。要查询这些数据，就得给出精确的模型名称、沿嵌套关系逐层导航，并从 18 种运算符中挑选（即用于筛选结果的比较函数，如「等于」或「包含」）。</p>
+<p>为解决这个问题，Orca Security 与 AWS 合作，在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上构建了 Discovery AI——一个自然语言查询智能体。Orca 为云、代码和 AI 提供上下文感知的安全能力，Sonar 则是它专有的领域查询系统，用户可在整张数据图上搜索、筛选和探查。</p>
+<p>本文中，我们会分享 Discovery AI 的架构与成果：它把一个自然语言问题转换成一条 Sonar 查询。相比最初的基线，Orca 将查询成本降低了 90%，输入 token 降低了 93%，延迟降低了 75%。</p>
+<h2>打通自然语言与结构化查询</h2>
+<p>Orca Security 的 Sonar 查询系统支持 900 多种云基础设施与应用模型，这些模型之间的关系错综复杂。要查询这些数据，用户得构造 JSON 对象：指定精确的模型名称、从 18 种运算符中挑选、再跨云服务商沿父子层级逐层导航。想把这件事做对，必须对 Sonar schema 非常熟悉。</p>
+<p>为了建立这种能力，Orca 团队着手打造一层自然语言接口，让它能从纯文本生成有效的 Sonar 查询。</p>
+<p>他们最初的可行性验证，是把完整的 Sonar schema 塞进一个可用的最大模型的单个提示词里。这包含 900 多个模型定义、每一种关系类型，以及一大批示例查询。输出质量不错（设计合作伙伴和内部用户都给了正面反馈），但在生产规模下暴露出三个明显短板。</p>
+<p>token 消耗很不经济，每个工作负载约要 200 万输入 token，把成本推高。延迟也很高，每个工作负载的端到端响应时间约 60 秒。复杂的多模型查询准确率有限，因为嵌套关系和多条件查询往往还需要额外打磨。</p>
+<p>Orca 团队已经验证这套思路可行。下一个挑战，是让它既划算、又够快、够准，能上生产。为此，Orca 团队设计并部署了一套方案：基于 Amazon Bedrock，每天处理数千条查询，响应时间 15 秒。</p>
+<h2>方案概览</h2>
+<p>Orca 把 Discovery AI 设计成 Amazon Bedrock 上的一套混合方案，将检索增强生成（RAG）与 schema 感知的查询构造结合起来。系统通过一条多阶段流水线，把自然语言问题转换成有效的 Discovery 过滤器，每个阶段都配上最合适的 Amazon Bedrock 模型。</p>
+<p>Orca 选择 Amazon Bedrock，是因为它通过单个 API 提供多模型访问，让团队能给流水线的各个阶段分配不同的基础模型，而不必单独维护一套套集成。Amazon Bedrock 还能借助 AWS Identity and Access Management (IAM)、虚拟专有云 (VPC) 端点和 AWS CloudTrail 继承 AWS 的治理控制，满足 Orca 的安全要求。这种与模型无关的架构，意味着团队可以随新版本发布就替换进更新的模型，而不必重构流水线。</p>
+<p>下图展示了这条九阶段流水线的架构。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/05/ML-21130-1.png" alt="Amazon Bedrock 上的九阶段 Discovery AI 流水线，从自然语言输入到经过校验的 Discovery 过滤器"></p>
+<p>图 1：多阶段 Discovery AI 流水线架构，展示在 Amazon Bedrock 上用基础模型把自然语言输入转换为经过校验的 Discovery 过滤器查询的流程</p>
+<p>Discovery AI 流水线经过九个步骤，把一条自然语言请求转换成经过校验的 Discovery 过滤器。</p>
+<ul><li>请求入口与上下文准备：流水线先把用户的自然语言请求与相关上下文合并，这些上下文包括用户所在的组织、已连接的云服务商以及请求元数据。这些上下文帮助流水线准确理解请求，并生成一个贴合客户环境的 Discovery 过滤器。</li><li>快速确定性匹配器（Quick Matcher）：快速匹配器识别 IP 地址、Common Vulnerabilities and Exposures (CVE)、ARN、文件哈希、Amazon Machine Image ID、Oracle Cloud Identifier、EC2 ID、URL 和告警 ID 等结构化输入。它用正则和基于规则的匹配来检测高置信度的模式。一旦命中，流水线可以走一条快速路径，直接返回一个预先定义的 Discovery 过滤器，无需动用大语言模型（LLM）推理。若未命中，请求继续进入下一步。</li><li>LLM Guardrail 筛查：Guardrail 组件检查请求是否安全、相关、属于技术范畴且在支持范围内。它在提示词注入攻击、跑题请求和不受支持的输入抵达流水线其余部分之前就把它们拦下。未通过 Guardrail 检查的请求会被拒绝，并返回相应的错误信息。通过检查的请求继续进入示例检索。</li><li>基于嵌入的语义候选召回：流水线用 Amazon Titan Text Embeddings 检索以往经过校验的相关查询示例。它根据语义相似度从向量库中取回最近的 20 个示例。这些候选为流水线提供了参考——看看类似的自然语言请求此前是如何被转换成 Discovery 过滤器的。</li><li>神经相关性重排：取回的候选用 Amazon Bedrock 上的 Cohere Rerank 3.5 重新排序。它找出与当前请求最相关的示例，选出信号最强的 5 个。当找到精确匹配或高置信度匹配时，流水线可以直接复用已验证有效的过滤器。否则，重排后的示例会被交给生成阶段。</li><li>由 LLM 驱动的相关模型选择：模型选择把 900 多个 Sonar 模型收窄到与请求相关的少数几个。选模型时，它会综合考虑用户的请求、已连接的云服务商和检索到的示例。选中的模型按合适的 schema 粒度提供给生成器，粒度从紧凑的 micro schema 到更详尽的 mini schema 不等。这样减少了不必要的上下文，让生成更高效。</li><li>工具增强的智能体式过滤器生成：生成器用一个工具增强的智能体来构造最终的 Discovery 过滤器。它围绕所选模型的 schema、检索到的示例、用户上下文和可用工具进行推理。这个智能体可以在逼近用户请求的有效表示时，反复打磨过滤器。</li><li>静态校验与 API 校验：生成的过滤器要接受语法和语义正确性检查。流水线先做静态校验，再拿过滤器去对照 Orca 的 Sonar API 验证。校验失败时，错误会返回给生成器，让智能体修正过滤器再试一次。若达到最大重试次数仍未得到有效的过滤器，流水线就返回一个「过滤器无效」的响应。生成器被约束在重排后的示例和选中的 schema 之内。静态校验会把每一个模型、字段和运算符都回溯到那些 schema 定义。每一次校验错误都会回到智能体手里，并指出出错的具体元素，因此重试是重新基于事实作答，而不是重新猜测。</li><li>后处理与响应：在产出有效过滤器之后——无论来自快速匹配器、复用已验证有效的示例，还是智能体式生成——流水线着手准备最终响应。团队根据各阶段的需求，在 Amazon Bedrock 上为不同组件分配了不同的基础模型。<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-4-5.html">Anthropic Claude Haiku 4.5</a> 支撑模型选择器和生成器，这两个组件需要很强的推理能力来准确构造查询。<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-amazon-nova-2-lite.html">Amazon Nova 2 Lite</a> 负责 Guardrail 和校验器，这里优先考虑的是低成本下的快速推理。Amazon Titan 为示例检索组件提供语义搜索所用的嵌入。Cohere Rerank 3.5 对检索到的候选重新排序，以最大化相关性。各 AWS Region 的模型可用性，请参考<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">按模型划分的区域可用性</a>。</li></ul>
+<h2>在示例检索中把相关性和多样性拉满</h2>
+<p>示例检索最终成了整条流水线里对准确率影响最大的一个杠杆。好的示例能比单靠 schema 更高效地教会生成器如何把问题翻译成 Sonar 查询，所以 Orca 团队在 Amazon Bedrock 上给几种检索策略做了基准对比。每种策略都在相关性、多样性或速度之间做了不同的取舍，把它们直接摆在一起比，就能看出哪种组合最好。</p>
+<p>纯 top-K 语义检索基于 Amazon Titan 嵌入，跑起来很快，但它倾向于返回近乎重复的示例，让生成器缺少多样性。最大边际相关性 (MMR) 改善了多样性，但当排第一的候选本来就是正确答案时，它却牺牲了相关性。先检索更大的候选集再重排，能拉进一个更大的池子，并用重排器挑出最相关的子集——这已经指向了最终的取胜方案。</p>
+<p>胜出方案是用 Amazon Titan 嵌入做 top-20 最近邻检索。随后 Orca 用 Cohere Rerank 3.5 把这些结果重排到前 5 个。这种做法给生成器提供的是一组规模小、多样、高度相关的示例，而不必在检索时牺牲覆盖度或精度。</p>
+<h2>把 900 多个模型装进上下文</h2>
+<p>一条核心约束决定了这套架构的走向。把 900 多个 Sonar 模型的 schema 塞进每一个提示词并不现实。即使用长上下文模型，这么做也会同时拖高成本、拉低准确率。</p>
+<p>模型选择器解决了这个问题。它跑在 Anthropic Claude Haiku 4.5 上，针对每个模型的紧凑而语义丰富的表示（名称、用途、关键字段和关键关系）工作。拿到用户的问题后，它只返回生成器真正需要的模型。于是生成器只对被选中的那些模型，再加上把它们连接起来的关系，才拿到完整的 schema 细节。</p>
+<h2>评估方法</h2>
+<p>为了能有底气地迭代，Orca 团队在项目早期就搭起了一套持续评估的框架。这套框架把一份精心整理的数据集、一层自动化打分，以及一种按切片度量的方法结合在一起，让团队在每次改动上线前都能信任它。这几样合在一起，把评估变成了例行步骤，而不是事后补的作业。</p>
+<p>这份整理好的评估数据集涵盖了生产中会遇到的各类问题、模型家族和复杂度层级，因而能反映真实用法。一层 LLM 作为评判（LLM-as-judge）的打分机制，从正确性、完整性，以及与参考查询的语义等价性三方面给生成的查询打分，为团队提供一致的质量信号。度量方法再把差异按切片拆开，让团队能精确定位退化发生在哪里、该修什么。</p>
+<p>每一次对提示词、模型、检索参数或示例的改动，上线到生产之前都要先过一遍这套框架。</p>
+<h2>领域专家在环的标注体系，支撑持续改进</h2>
+<p>要在客户环境不断演变、新问题模式不断涌现的情况下守住准确率，光有一个扎实的首发部署还不够。Orca 团队为产品经理、支持工程师和安全研究员做了一个内部标注工具。用它，他们可以标记查询、修正输出，并在一步之内把修正推进示例库。此外，系统会自动收集那些匹配示例置信度偏低的生产查询，把它们路由给对应的领域专家做每日标注。下一次流水线运行时，Cohere Rerank 3.5 就会检索到这条新示例，那一类问题的准确率当场就提升，无需重新部署。</p>
+<blockquote>「标注界面是我们为长期质量做的最重要的一笔投入。它把 Discovery AI 从一个静态部署，变成一套活的系统——让我们的领域专家在日常工作流里持续打磨它。」<br>        — Or Gabay，Orca Security AI 总监</blockquote>
+<p>再加上覆盖整条流水线的端到端可观测性，以及横跨产品、工程和面向客户团队的共享看板，正是这套反馈闭环让 Discovery AI 在首发之后仍能持续进步。</p>
+<h2>结果</h2>
+<p>Discovery AI 部署到生产后，在成本、延迟和准确率上都超过了最初的基线。输入 token 用量下降 93%，在可比较的工作负载上从约 200 万 token 降到 14 万。总体成本下降 90%，一方面靠的是 token 消耗降低，另一方面靠的是在 Amazon Bedrock 上按阶段分配模型。</p>
+<p>延迟也改善了，端到端响应时间下降 75%，从约 60 秒降到 15 秒。复杂多模型查询的准确率同样提升，并通过团队的评估框架持续度量。</p>
+<p>自 2026 年 3 月起，Discovery AI 已在生产环境中每天处理数千条查询，由内部领域专家和客户反馈共同验证质量。</p>
+<h2>结论</h2>
+<p>本文中，我们分享了 Orca Security 如何在 Amazon Bedrock 上构建 Discovery AI。相比最初的基线，这套方案将查询成本降低了 90%、输入 token 用量降低了 93%、延迟降低了 75%。方案结合了多项关键技术：用 Cohere Rerank 3.5 做基于 RAG 的示例检索、在 Anthropic Claude Haiku 4.5 和 Amazon Nova 2 Lite 之间按阶段分配模型、由 Amazon Titan 驱动的语义搜索。此外，一套持续的人在环（human-in-the-loop）标注体系提供源源不断的改进。这套组合让 Orca 把一个能跑的原型，变成了一套既更省钱又更准确的生产级方案。</p>
+<p>想动手搭建类似的方案，可以了解一下 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a>（用于基础模型（FM）访问）、<a href="https://aws.amazon.com/bedrock/cohere/">Amazon Bedrock 上的 Cohere Rerank</a>（用于检索优化），以及 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-models.html">Amazon Titan</a>（用于嵌入）。想进一步了解 Orca Security 的云安全工具，请访问 <a href="https://orca.security/">orca.security</a>。</p>
+<p>想了解更多 Orca Security 如何在其框架中全面运用 AI，请看 <a href="https://orca.security/platform/orca-ai/">Orca 如何以 AI 驱动安全成效</a>和 <a href="https://orca.security/platform/secure-ai/">Orca 如何为 AI 落地保驾护航（含 Amazon Bedrock）</a>。</p>
+<p>想进一步了解本文用到的技术，可以阅读 <a href="https://aws.amazon.com/blogs/machine-learning/">AWS Machine Learning Blog</a> 上的<a href="https://aws.amazon.com/blogs/machine-learning/text-to-sql-solution-powered-by-amazon-bedrock/">相关文章</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>How ShipStation Global built an AI IT help desk on Amazon Be…</title>
+      <title>ShipStation Global 如何在 Amazon Bedrock AgentCore 上搭建 AI IT 服务…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/how-shipstation-global-built-an-ai-it-help-desk-on-amazon-bedrock-agentcore/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-shipstation-global-built-an-ai-it-help-desk-on-amazon-bedrock-agentcore/</guid>
       <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：How ShipStation Global built an AI IT help desk on Amazon Bedrock AgentCore</description>
+      <description>完整标题：ShipStation Global 如何在 Amazon Bedrock AgentCore 上搭建 AI IT 服务台 | 原文标题：How ShipStation Global built an AI IT help desk on Amazon Bedrock AgentCore</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>ShipStation Global 如何在 Amazon Bedrock AgentCore 上搭建 AI IT 服务台</h1>
+<p><em>本文由 ShipStation Global 的 Kenneth Salmon、Edward Boswell、Jack Armstrong、Robert Bahn 与 Nick Ciubotariu 共同撰写。</em></p>
+<p>回答反复出现的同类 IT 问题、清理例行工单，会消耗掉 IT 团队本可用于别处的时间。为了把这段时间夺回来，ShipStation Global 工程团队在 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 上构建了 <em>Deckhand</em>，一个在 Slack 里运行的 AI 驱动 IT 服务台智能体。</p>
+<p><a href="https://www.shipstationglobal.com/">ShipStation Global</a> 是面向中小发货商的领先智能运输与物流平台，它信奉一个朴素的道理：团队效率越高，给客户的交付就越好。Deckhand 把这一信念落到了实处。它基于一个精心整理的知识库回答常见的 IT 与公司相关问题，能读懂报错信息的截图，并创建和更新 Jira Service Management 工单。</p>
+<p>在本文中，我们会介绍 ShipStation 如何设计 Deckhand 的架构，这套设计最终解决了 97.5% 的入站频道提问，并获得员工 96% 的好评（图 1）。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21795-1.png" alt="图表显示 Deckhand 在三个月内达到 97.5% 的频道覆盖率与 96% 的好评率"></p>
+<p>图 1：三个月的频道覆盖率与好评率</p>
+<h2>业务挑战</h2>
+<p>Deckhand 要解决的，是每个 IT 团队都会认出的问题：同样的问题被反复提出，报错信息在下班后被贴出来，而所需信息得从不同团队那里收集。在 ShipStation Global，这些对话都发生在一个繁忙的 IT 服务台 Slack 频道里，员工提问、IT 回答，一次一个线程。答案其实通常早就存在——在 Confluence 的一篇操作指南文章里，在公司内网的某个页面上，或者八个月前的某条线程里。难的是把它们找出来。</p>
+<p>频道的数据让这一规模变得具体。在上线前的 12 个月里：</p>
+<ul><li>员工发出了超过 1,500 条线程，而且数量还在持续增长。</li><li>员工分布在美国、英国、西班牙、波兰、澳大利亚和菲律宾，超过五分之一的提问出现在美国工作时间之外。</li><li>答案散落在不同地方：Confluence 文章、内网页面和 PDF、IT 维护的指南，以及频道自身的历史。</li><li>重复性问题占用了本可以由结构化的自助步骤处理掉的时间。</li></ul>
+<blockquote>「寻求帮助本该像在 Slack 里问一句话那样简单，而不是去琢磨一张工单表单，或者把一封邮件扔进无人应答的虚空。我们相信工单是运营中存在摩擦的信号，而不是生产力的体现。Deckhand 当场解决常见问题；解决不了时，它一键把这段对话转成一张上下文完整的工单，既改善了员工体验，也让我们的团队不必再没完没了地重复那句话：『请先提一张工单。』」<br>        — Chris Collins, Senior Director IT at ShipStation Global</blockquote>
+<h2>方案概览</h2>
+<p>Deckhand 在 Slack 里就像一位同事那样工作——加入频道、阅读对话、从 Slack 个人资料中汲取上下文，就地回答 IT 问题。我们把它运行在 Amazon Bedrock AgentCore 上，这是一个以任意框架、任意模型大规模构建、连接并优化智能体的平台。AgentCore runtime 是 Amazon Bedrock AgentCore 的一项能力，它在隔离的会话中托管智能体，因此我们不必运行任何服务器或容器。</p>
+<p>整套方案有四个主要组件，见图 2：</p>
+<ul><li><strong>Slack 服务：</strong> 一个 FastAPI 与 Slack Bolt 应用，托管在 <a href="https://docs.aws.amazon.com/apprunner/latest/dg/what-is-apprunner.html">AWS App Runner</a> 上。它接收 Slack 事件，判断机器人是否应当回复，并从提问者的 Slack 个人资料构建用户上下文载荷，包括姓名、邮箱、时区和经理。</li><li><strong>智能体服务：</strong> 一个 Strands 智能体，以容器形式部署在 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html">Amazon Bedrock AgentCore runtime</a> 上，使用 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html">Amazon Bedrock</a> 中的 Anthropic Claude 管理多轮的工具调用智能体循环。</li><li><strong>工具与知识：</strong> 单个 <a href="https://docs.aws.amazon.com/lambda/latest/dg/welcome.html">AWS Lambda</a> 函数，通过 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>（Amazon Bedrock AgentCore 的一项能力）以 Model Context Protocol（MCP）工具的形式对外暴露，负责给请求分类、创建和更新 Jira 工单、分析图像。一个 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock 知识库</a> 索引来自 Confluence、公司内网、Slack 和市场页面的内容，并把它们存入 <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html">Amazon Simple Storage Service (Amazon S3)</a>。</li><li><strong>运维与反馈。</strong> <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html">Amazon DynamoDB</a> 存储反馈，<a href="https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html">AWS X-Ray</a> 借助 OpenTelemetry 追踪请求路径，各服务把日志写入 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html">Amazon CloudWatch</a>。</li></ul>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21795-2.png" alt="Deckhand 基于 Amazon Bedrock AgentCore 的架构图，展示 Slack 服务、智能体 runtime、知识库、经 Gateway 暴露的 Lambda 工具、Jira Service Management 与 DynamoDB 反馈"></p>
+<p>图 2：架构图。Slack 事件进入 Slack 服务与 Amazon Bedrock AgentCore runtime，另有分别通向 Amazon Bedrock 知识库、经 AgentCore Gateway 暴露的 Lambda 工具、Jira Service Management 与 DynamoDB 反馈的路径。</p>
+<p>当员工在 Deckhand 所在的频道发帖时，Slack 服务会汇总完整的线程历史和用户上下文，随后通过 AgentCore runtime API 调用智能体。智能体检索知识库并按需调用工具。找到答案时，它返回最终回复（图 3）；找不到时，它提出一个澄清问题，或主动提出创建工单（图 4）。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21795-3.png" alt="Slack 截图：Deckhand 回复带编号的自助步骤"></p>
+<p>图 3：Deckhand 给出自助服务步骤</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21795-4.jpg" alt="Slack 截图：Deckhand 提供一个 Create Ticket 按钮"></p>
+<p>图 4：Deckhand 主动提出创建工单</p>
+<h2>Deckhand 工作流</h2>
+<p>本节逐步介绍 Deckhand 的实现方式，从前置条件到可用的部署。</p>
+<h3>前置条件</h3>
+<p>要实现这一模式，你需要以下内容：</p>
+<ul><li>一个 AWS 账户，可访问 Amazon Bedrock、AgentCore runtime 和 AgentCore Gateway。</li><li>一个 Slack 应用，具备事件订阅、签名密钥（signing secret），以及按你的用例划定权限范围的 bot token。</li><li>一个容器镜像仓库，例如 Amazon Elastic Container Registry (Amazon ECR)。</li><li>一个 Amazon S3 桶和一个 Amazon Bedrock 知识库。</li><li>为每个 runtime 和工具分别限定范围的 AWS Identity and Access Management (IAM) 角色，以及用于存放第三方凭据的 AWS Secrets Manager 条目。</li></ul>
+<h3>用 Strands Agents 与 AgentCore 构建智能体</h3>
+<p>这个智能体刻意保持轻量。借助开源的 <a href="https://aws.amazon.com/blogs/opensource/introducing-strands-agents-an-open-source-ai-agents-sdk/">Strands Agents SDK</a>，一个智能体由模型、一组工具和一段系统提示词构成。SDK 负责管理推理循环，让模型挑选工具、处理结果并反复迭代，直到给出答案。Deckhand 的智能体服务用几行 Python 就实现了。</p>
+<pre><code>from strands import Agent
+from strands.models import BedrockModel
+from strands.tools.mcp import MCPClient
+from strands_tools import retrieve
+from mcp.client.streamable_http import streamablehttp_client
+
+model = BedrockModel(
+    model_id=MODEL_ID,
+    max_tokens=2048,
+    temperature=0.3,
+)
+
+gateway = MCPClient(lambda: streamablehttp_client(url=GATEWAY_URL))
+
+agent = Agent(
+    model=model,
+    tools=[gateway, retrieve],
+    system_prompt=SYSTEM_PROMPT,
+)</code></pre>
+<p>模型 ID 通过环境变量设置，因此切换模型无需修改应用代码。</p>
+<p>工具以两种方式接入智能体。Amazon Bedrock Knowledge Bases 检索是 Strands 的一个原生工具，只需一次 import 就能支持知识库搜索。其余功能——包括分类、工单管理、用户信息解析和图像分析——由注册在 AgentCore Gateway 上的一个 Lambda 函数承担。Gateway 把这些功能以 MCP 工具暴露出来，Lambda 再按工具名路由每一次调用。这种分离让工具逻辑可以独立更新，智能体能直接从 Gateway 获得新工具，无需重新构建。</p>
+<p>AgentCore runtime 以容器形式托管智能体，从而不必做服务器或会话管理。Slack 服务对每条消息同步调用智能体，把线程对话记录和用户上下文一并提供，然后发布最终回复。由于上下文（包括员工的个人资料）随每个请求一并传入，智能体能够自动补全工单细节。</p>
+<h3>知识库设计与答案路由</h3>
+<p>Deckhand 从一个 Amazon Bedrock 知识库作答，该知识库包含以下以 S3 为底层存储的核心数据源：</p>
+<ul><li>从 Confluence 同步的文章。</li><li>从公司内网同步的内部页面、PDF 和活动。</li><li>从 Slack 中挖掘出的已解决支持线程（下一节会展开）。</li></ul>
+<p>每份文档都带有元数据，例如标题、来源 URL、内容类型和活动日期。这让智能体能够过滤内容，比如用户询问即将举办的活动，或奥斯汀办公室的每周午餐菜单。</p>
+<h3>用 Recursive Language Models（RLMs）挖掘 Slack 历史</h3>
+<p>最有价值的数据源是已解决支持线程的归档。在 Deckhand 出现之前，Slack 正是问题被解决的地方：多年来员工描述问题、IT 带着他们一步步完成修复。这段历史是一座有机的知识库，而且经过了最好的审阅者验证——问题被解决的那个人。它同时也很嘈杂：原始导出里混着玩笑寒暄、自动告警，以及那些其实从未解决的线程。把一条未经验证的修复方法或一份残缺的摘要索引进来，知识库就会以同样的自信给出错误答案，所以提取必须精确。</p>
+<p>挖掘流程遵循一条三阶段流水线（图 5）：</p>
+<ul><li>一个脚本通过 Slack API 导出频道的完整历史，为每个线程取回完整回复，并写出一份结构化转储，其中包含线程标记、时间戳和回复数量。</li><li>DSPy 的 Recursive Language Model（RLM）在 Amazon Bedrock 上运行 Claude，把那份导出当作一个可导航的内存空间来对待，置于沙箱化的 Python read-eval-print loop（REPL）之中，而不是当成单个提示词。它在这份数据上迭代作业，把每个线程判定为已解决、未解决或已升级，并过滤掉公告类内容与非提问内容。严格的判定标准保证质量：只有当完整且可执行的修复方案在线程本身里清晰可见时，这个线程才算已解决。</li><li>对每个已解决的线程，RLM 编排递归的 sub-LLM（large language model）调用来抽取结构化字段，每个字段都用 Pydantic 模型校验。这些字段包括问题摘要、原始提问和处理结果，还记录该修复属于自助解决还是需要建工单、自助步骤、涉及的应用与系统、错误信息以及标签。当某次 sub-LLM 调用返回的内容不符合 schema，RLM 基于代码的循环会在解释器里捕获校验错误并重试。结果被写成一份按问题组织的 markdown 文档，流水线把它上传到 Amazon S3，供知识库索引。</li></ul>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21795-5.png" alt="三阶段流水线图：导出 Slack 频道历史、把线程判定为已解决或未解决、抽取结构化字段"></p>
+<p>图 5：Slack 会话的导出、判定与抽取工作流</p>
+<p>我们选择 <a href="https://dspy.ai/diving-deeper/rlm">RLM</a>，是因为它把整个 Slack 历史保存在一个持久的沙箱变量空间里，既能对导出内容做迭代式推理，又能保证输出结构一致。带来的结果是：当员工遇到的问题曾被同事解决过，Deckhand 就能给出那个经过验证的方案，而且常常是可直接执行的编号步骤。</p>
+<h3>知道什么时候不该作答</h3>
+<p>在共享频道里，AI 机器人往往先在社交层面失败，才在技术层面失败。Deckhand 最精细的一块逻辑，就是决定什么时候保持沉默：</p>
+<ul><li>智能体对每条消息做的第一个判断，是它属于公告、社交消息，还是人与人之间的对话。若是，就输出「SKIP」，Slack 服务随即不发出回复。</li><li>在线程里，它只回复最初发帖的人。</li><li>如果最后一条回复来自另一位人类助手，它就保持沉默，因为已经有人接手了。</li><li>如果一条回复以 @ 提及某个人的方式开头，那这条消息就不是发给机器人的。</li></ul>
+<h3>收集反馈</h3>
+<p>每条回答都带反馈按钮。点赞会直接记录，点踩则提示填写一段简短的「哪里出了问题」。评分连同原始提问和机器人的回复一起存入 DynamoDB。</p>
+<p>负面反馈是一份很有价值的数据集，用来改进系统提示词和智能体行为，并更新知识库里错误的信息。</p>
+<h3>安全与校验</h3>
+<p>提示词规则能强化行为，但不能取代访问控制。强制约束由代码和基础设施来落实：</p>
+<ul><li>创建工单需要显式确认。当 Deckhand 提出创建工单时，Slack 服务会加一个 <strong>Create Ticket</strong> 按钮，选择它即通过智能体发出确认。更新工单只接受符合帮助台项目模式的合法工单号，并拒绝空评论。</li><li>分类在生效前先经过校验。请求分类作为一次独立的 <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html">Amazon Bedrock Converse API</a> 调用执行，返回结构化的工单字段，在任何东西进入 Jira 之前先用 Pydantic 校验。</li><li>图像工具被限制为只能从 Slack 的文件主机下载。它用 bot token 认证，每次请求限制为最多 5 张图、单张不超过 5 MB，并通过 Converse API 把文件发给视觉模型。</li><li>凭据不落在代码里。Slack token、签名密钥和 Jira 凭据都存放在 <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html">AWS Secrets Manager</a> 中，每个服务和工具都在各自限定范围的 IAM 角色下运行。</li><li>提示词强制行为层面的防护：绝不索取密码或多因素认证（MFA）验证码，绝不在工单评论里写凭据，绝不暴露用于填充工单字段的个人资料元数据。</li></ul>
+<h2>成果</h2>
+<p>Deckhand 于 2026 年 4 月上线。起初每天约 30 条消息，到初夏最多时达到 100 条。前三个月它处理了 1,935 条消息，发起了 1,221 次智能体对话，开出 409 张 Jira 工单。它对 97.5% 的消息作出了回复。三分之一的提问出现在下班时间，那时 IT 团队无人值班，而 Deckhand 回答了其中 94%。本来要等到第二天早上才有答复的人，当晚就拿到了答案。</p>
+<p>随着团队持续打磨，反馈也在变好。好评率从 4 月的 82% 升到 6 月的 96%，此前他们修订了系统提示词和知识库，针对大家抱怨的问题逐一修正。</p>
+<p>最明显的收益是工单拦截。一次智能体对话，对应的是一个原本会变成 Jira 工单的问题。在 1,221 次对话中，只有 409 次最终变成工单，其余 812 次都在对话里处理掉了。提交一张工单、再推进并关闭它大约要花 30 分钟。这 812 次对话三个月累计约 406 小时，一年约 1,600 小时。员工把这段时间留给了自己的工作，IT 也不必再把它花在工单受理上。</p>
+<h2>总结</h2>
+<p>Deckhand 把重复的 IT 提问从人们的日程上摘了下来，把时间还给员工和 IT 团队。它之所以行得通，是因为技术栈里每一块只承担一件事，并且都以托管服务形式运行：AgentCore runtime 托管智能体，AgentCore Gateway 把一个 Lambda 函数变成智能体可调用的 MCP 工具，Amazon Bedrock Knowledge Bases 负责检索。团队上线它时没有自建服务器，也不用维护编排代码。</p>
+<p>要构建类似的方案，请从一处维护良好的知识来源和一个定义清晰的动作开始。智能体开发参见 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html">Amazon Bedrock AgentCore 文档</a> 和 <a href="https://aws.amazon.com/blogs/opensource/introducing-strands-agents-an-open-source-ai-agents-sdk/">Strands Agents SDK</a>，内容源接入参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Knowledge Bases 文档</a>。</p>
+<p>如果你想讨论适合你组织的 agentic AI 用例，请联系你的 AWS 客户经理团队。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Build long-horizon agents with Grok 4.7 on Amazon Bedrock</title>
+      <title>用 Amazon Bedrock 上的 Grok 4.7 构建长程任务智能体</title>
       <link>https://aws.amazon.com/blogs/machine-learning/build-long-horizon-agents-with-grok-4-7-on-amazon-bedrock/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-long-horizon-agents-with-grok-4-7-on-amazon-bedrock/</guid>
       <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Build long-horizon agents with Grok 4.7 on Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>用 Amazon Bedrock 上的 Grok 4.7 构建长程任务智能体</h1>
+<p>SpaceXAI 的 Grok 4.7 现已在 Amazon Bedrock 上可用，Amazon Bedrock 提供来自多家提供商的基础模型（FM）供选择。据 SpaceXAI 介绍，Grok 4.7 经过训练，能在更难的任务上工作更长时间，并且知道什么时候该检查自己的工作。这一点对智能体最为关键：智能体要把一个任务一步步推进到底，还必须沿途验证自己找到的东西。</p>
+<p>这样工作的智能体要做的远不止查资料。它得先形成一个候选答案，拿已经掌握的信息去核对，再不断修正直到对得上。Grok 4.7 提供了一个推理强度（reasoning effort）设置，控制每次生成回答前投入多少斟酌；对智能体负载来说，一个实际的问题是要跑哪一档。</p>
+<p>在本文里，我们基于 Grok 4.7 构建了一个工具调用（tool-calling）智能体，并在三个需要搜索而非查找的任务上评估它。这三个任务是：从告警中诊断一次涉及两个服务的故障、在相互牵连的约束下排定维护计划、在预算内选出一组最优迁移。每个任务有且只有一个正确答案，并用穷举法验证过。我们在每一档推理强度下都跑了这三个任务，每个任务各跑六次，合计 72 次智能体运行。</p>
+<p>72 次运行里智能体答对了 67 次。<code>xhigh</code> 档 18 次全对；<code>low</code> 档 18 次里对了 15 次，输出 token 只用了 <code>xhigh</code> 的大约八分之一。这中间有一条清晰的取舍线，你可以按请求逐个调整。本文会说明怎么在自己的任务上测量这条线，以及怎么在生产环境监控它。</p>
+<p>全文都用 token 数而不是金额来报告。token 单价会变，而你自己的成本正是从用量数推算出来的，所以以 token 表述的度量结果不会过期。</p>
+<h2>SpaceXAI 公布的 Grok 4.7 信息</h2>
+<p>据 SpaceXAI 介绍，Grok 4.7 的基础模型比 Grok 4.6 更大，训练时在一批更难的任务组合上做了更长的强化学习。这批任务组合偏向那些需要好几个小时才能完成的问题。SpaceXAI 称，该模型在核查自身工作和管理更长上下文两方面都更强。</p>
+<p>SpaceXAI 公布的基准测试结果与这一侧重相符。相对 Grok 4.6 提升幅度最大的，正是衡量持续工作能力而非单轮作答的那些类别。</p>
+<table><thead><tr><th><strong>基准</strong></th><th><strong>类别</strong></th><th><strong>Grok 4.6</strong></th><th><strong>Grok 4.7</strong></th></tr></thead><tbody><tr><td><strong>Terminal-Bench 4.0</strong></td><td>多小时终端工作</td><td>20.3%</td><td>37.6%</td></tr><tr><td><strong>EEBench</strong></td><td>电气工程</td><td>53.0%</td><td>64.0%</td></tr><tr><td><strong>Harvey Legal Agent Benchmark</strong></td><td>法律工作</td><td>15.8%</td><td>19.6%</td></tr><tr><td><strong>CursorBench 4.0</strong></td><td>耗时更长的编码</td><td>40.4%</td><td>46.3%</td></tr><tr><td><strong>HealthBench Professional</strong></td><td>临床推理</td><td>48.5%</td><td>56.7%</td></tr><tr><td><strong>AA Briefcase v1.1</strong></td><td>多小时办公工作</td><td>1,546</td><td>1,657</td></tr></tbody></table>
+<p>来源：SpaceXAI，《Introducing Grok 4.7》（<a href="https://x.ai/news/grok-4-7">https://x.ai/news/grok-4-7</a>）。分数为 SpaceXAI 在该模型发布时公布的数值。</p>
+<p>基准测试显示的是模型在标准任务上的表现。对你自己的工作负载，有用的下一步是在同你的任务形状相近的任务上做测量，这正是本文后半部分要一步步走一遍的内容。</p>
+<p>SpaceXAI 给出的 Grok 4.7 上下文窗口是 500K token，输入支持文本和图像，输出为文本。在 Amazon Bedrock 上，该模型支持可配置的推理强度、工具调用和结构化输出。</p>
+<h2>如何在 Amazon Bedrock 上访问 Grok 4.7</h2>
+<p>Grok 4.7 运行在 <code>bedrock-runtime</code> 端点上，通过<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">跨区域推理</a>配置文件（profile）访问。可用的配置文件有两个：</p>
+<table><thead><tr><th><strong>推理配置文件</strong></th><th><strong>路由范围</strong></th><th><strong>适用场景</strong></th></tr></thead><tbody><tr><td><strong>us.xai.grok-4.7</strong></td><td>在美国地理范围内</td><td>你有美国的数据驻留要求</td></tr><tr><td><strong>global.xai.grok-4.7</strong></td><td>商用 AWS 区域</td><td>你没有驻留限制，想要最大的容量</td></tr></tbody></table>
+<p>跨区域推理会把请求路由到多个 AWS 区域，因此你不必逐个区域管理容量就能拿到更高吞吐。请求里填写的是推理配置文件，而不是裸的模型 ID。</p>
+<p>该模型支持兼容 OpenAI 的 Chat Completions 与 Responses API，也支持 Amazon Bedrock Converse API。在 Converse 上，推理内容以 <code>reasoningContent</code> 块返回，与 <code>text</code> 块并列。<code>inferenceConfig</code> 里只设 <code>maxTokens</code>，模型专属参数（比如推理强度）放进 <code>additionalModelRequestFields</code>。</p>
+<p>至于当前支持的区域、服务层级和 token 单价，请参见 Amazon Bedrock 用户指南中的 Grok 4.7 模型卡，以及 Amazon Bedrock 定价页（<a href="https://aws.amazon.com/bedrock/pricing/">https://aws.amazon.com/bedrock/pricing/</a>）。</p>
+<h2>前提条件</h2>
+<ul><li>一个可访问 Amazon Bedrock 的 AWS 账户，并已为 Grok 4.7 开通模型访问。</li><li>Python 3.9 或更高版本，并安装了 <code>openai</code>、<code>boto3</code> 和 <code>aws-bedrock-token-generator</code>。</li><li>环境中已配置好 AWS 凭证。</li></ul>
+<p>你的 AWS Identity and Access Management（IAM）身份需要同时对你所用的推理配置文件和你账户的默认 project 拥有 <code>bedrock:InvokeModel</code> 权限：</p>
+<ul><li><code>arn:aws:bedrock:{region}::inference-profile/us.xai.grok-4.7</code>，或对应的 <code>global.</code> 版本。</li><li><code>arn:aws:bedrock:{region}:{account-id}:project/default</code>。</li></ul>
+<p>这两项资源都要写进策略语句里。除推理配置文件之外，默认 project 的权限同样是必需的。</p>
+<h2>连接模型</h2>
+<p>生产环境中，我们建议用现有的 AWS 凭证生成短期 bearer token，这样认证始终绑定在你的 IAM 身份上，也不必存放任何长期机密：</p>
+<pre><code>from aws_bedrock_token_generator import provide_token
+from openai import OpenAI
+
+REGION = &quot;us-west-2&quot;
+MODEL_ID = &quot;us.xai.grok-4.7&quot;
+
+client = OpenAI(
+    api_key=provide_token(region=REGION),
+    base_url=f&quot;https://bedrock-runtime.{REGION}.amazonaws.com/openai/v1&quot;,
+    timeout=360,
+    max_retries=0,  # retries are handled explicitly, see &quot;Build in retries&quot; below
+)</code></pre>
+<p>推理 token 计入输出 token，会在答案文本生成之前就把 <code>max_completion_tokens</code> 消耗掉，所以设上限时要给两部分都留出空间。如果推理阶段就把上限用完，返回的响应里就没有答案文本，因此要在智能体代码里检查内容为空的情况，一旦发现就调高上限。我们的运行把上限设为 32,768 个 token，在每一档推理强度下都留有余量。</p>
+<p>Grok 4.7 支持四档强度：<code>low</code>、<code>medium</code>、<code>high</code> 和 <code>xhigh</code>。不同模型版本之间强度档位可能变化，所以值得向服务端确认，而不是把清单写死在代码里：</p>
+<pre><code>def supported_effort_levels(candidates=(&quot;none&quot;, &quot;low&quot;, &quot;medium&quot;, &quot;high&quot;, &quot;xhigh&quot;, &quot;max&quot;)):
+    supported = []
+    for level in candidates:
+        try:
+            client.responses.create(model=MODEL_ID, input=&quot;Say OK.&quot;,
+                reasoning={&quot;effort&quot;: level}, max_output_tokens=2048)
+            supported.append(level)
+        except Exception as exc:
+            if &quot;unsupported_value&quot; not in str(exc) and &quot;invalid_value&quot; not in str(exc):
+                raise
+    return supported
+
+
+print(supported_effort_levels())  # ['low', 'medium', 'high', 'xhigh']</code></pre>
+<h2>设计需要推理的任务</h2>
+<p>许多智能体评测考的是细致程度：读一条记录、筛选、求和。这类任务自有价值，但要看出推理强度带来了什么，任务就必须需要搜索：答案不能直接从数据里读出来，得先提出来、再加以验证。</p>
+<p>我们搭建了一个包含 20 个服务的合成环境，通过七个工具暴露出来，并在它之上设计了三个任务。每个任务有且只有一个正确答案，而且每个任务的设计都保证靠快捷启发式方法找不到答案。</p>
+<table><thead><tr><th><strong>任务</strong></th><th><strong>智能体要做什么</strong></th><th><strong>为什么算推理任务</strong></th></tr></thead><tbody><tr><td><strong>two_fault_diagnosis</strong></td><td>两个服务在 03:00 静默失败，另有 12 个服务发出告警。找出失败的那两个</td><td>失败的服务不发出告警，所以答案不在告警的服务里。可能的配对有 190 对，只有一对能恰好解释观察到的全部告警</td></tr><tr><td><strong>maintenance_schedule</strong></td><td>四个夜里给八个服务打补丁，每晚两个，受十条约束，另有一条规则：同一团队的两个服务绝不能排在同一夜</td><td>可能的排法有 2,520 种，合法的只有一种。团队规则依赖智能体必须去查的数据</td></tr><tr><td><strong>migration_budget</strong></td><td>在预算内挑选要迁移的候选，使风险削减最大化，其中包含传递性的前置依赖</td><td>可行集合有 53 个，最优的只有一个。先挑单项比例最优的那些，得到的集合比最优解少 9 分</td></tr></tbody></table>
+<p>有四条做法能让这样的度量站得住脚，它们同样适用于大多数智能体评测。</p>
+<p><strong>评分器依赖的规则要全部写明。</strong> 如果 prompt 留下边界情况没有交代，一个合理的回答就可能被判错，评测最后量出来的就成了规格说明而不是模型。例如诊断任务的 prompt 就明确写出：失败的服务不会发出属于自己的告警。</p>
+<p><strong>证明每个任务只有一个答案。</strong> 每个环境都小到可以穷举，因此在正式运行之前我们把所有候选答案都核对了一遍。就排期任务而言，只需几行：</p>
+<pre><code>import itertools
+
+ALL_SLOTS = sorted(set(itertools.permutations([1, 1, 2, 2, 3, 3, 4, 4])))
+
+def valid_schedules(services, constraints):
+    return [s for slots in ALL_SLOTS
+        if satisfies(s := dict(zip(services, slots)), constraints)]
+
+assert len(valid_schedules(SERVICES, CONSTRAINTS)) == 1  # exactly one answer
+assert len(valid_schedules(SERVICES, CONSTRAINTS_WITHOUT_TEAM_RULE)) &gt; 1  # the rule matters</code></pre>
+<p><strong>只评那一行必须给出的最终答案，不评整段回答。</strong> 每个 prompt 都要求智能体以 <code>FINAL: auth, checkout</code> 这样的行收尾。评分器只读这一行，于是即便回答在陈述推理过程时讨论了其他候选，评的仍然是它给出的结论：</p>
+<pre><code>def final_line(answer):
+    lines = [l for l in (answer or &quot;&quot;).splitlines() if &quot;FINAL&quot; in l.upper()]
+    return lines[-1] if lines else None</code></pre>
+<p><strong>格式与正确性分开统计。</strong> 最终答案行缺失和最终答案写错是两种不同的信号。在我们的运行里，72 次回答全部包含可评分的最终答案行。</p>
+<p>在合法取值已知时，用 <code>enum</code> 约束工具参数，这样每次工具调用针对的都是真实存在的资源：</p>
+<pre><code>TOOLS = [
+    {&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {
+        &quot;name&quot;: &quot;get_dependencies&quot;,
+        &quot;description&quot;: &quot;Services that one service directly depends on.&quot;,
+        &quot;parameters&quot;: {
+            &quot;type&quot;: &quot;object&quot;,
+            &quot;properties&quot;: {&quot;service&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: SERVICE_NAMES}},
+            &quot;required&quot;: [&quot;service&quot;],
+        }}},
+    # The remaining six tools follow the same shape.
+]</code></pre>
+<p>system prompt 刻意写得很短，只要求智能体在给出答案前先检查一遍自己的答案：</p>
+<pre><code>AGENT_SYSTEM = (
+    &quot;You are an infrastructure analyst agent. Use the tools to gather facts and never guess &quot;
+    &quot;a value you can look up. Before answering, check your answer against every rule in the &quot;
+    &quot;task. End with the FINAL line exactly as the task specifies.&quot;
+)</code></pre>
+<p>智能体循环就是标准的工具调用循环：带着设置好的 <code>reasoning_effort</code> 调用模型，执行返回的每一个工具调用，把结果按 <code>tool_call_id</code> 追加回去，如此重复直到模型不再请求工具。在整个循环里累计 <code>prompt_tokens</code> 和 <code>completion_tokens</code>，就得到下一节报告的 token 数。</p>
+<h2>结果</h2>
+<p>每档强度下每个任务跑六次，合计 72 次运行。智能体答对了 67 次。</p>
+<table><thead><tr><th><strong>任务</strong></th><th><strong>low</strong></th><th><strong>medium</strong></th><th><strong>high</strong></th><th><strong>xhigh</strong></th></tr></thead><tbody><tr><td><strong>two_fault_diagnosis</strong></td><td>6 次中 5 次</td><td>6 次中 6 次</td><td>6 次中 6 次</td><td>6 次中 6 次</td></tr><tr><td><strong>maintenance_schedule</strong></td><td>6 次中 5 次</td><td>6 次中 5 次</td><td>6 次中 5 次</td><td>6 次中 6 次</td></tr><tr><td><strong>migration_budget</strong></td><td>6 次中 5 次</td><td>6 次中 6 次</td><td>6 次中 6 次</td><td>6 次中 6 次</td></tr><tr><td><strong>三项任务合计</strong></td><td><strong>18 次中 15 次</strong></td><td><strong>18 次中 17 次</strong></td><td><strong>18 次中 17 次</strong></td><td><strong>18 次中 18 次</strong></td></tr></tbody></table>
+<table><thead><tr><th><strong>单次运行</strong></th><th><strong>low</strong></th><th><strong>medium</strong></th><th><strong>high</strong></th><th><strong>xhigh</strong></th></tr></thead><tbody><tr><td><strong>平均输出 token</strong></td><td>1,184</td><td>6,430</td><td>6,778</td><td>9,147</td></tr><tr><td><strong>输出 token 相对 low 的倍数</strong></td><td>1.0x</td><td>5.4x</td><td>5.7x</td><td>7.7x</td></tr><tr><td><strong>平均工具调用次数</strong></td><td>17.2</td><td>18.7</td><td>17.8</td><td>18.1</td></tr><tr><td><strong>耗时中位数</strong></td><td>18 秒</td><td>98 秒</td><td>89 秒</td><td>106 秒</td></tr></tbody></table>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22076-1-1.png" alt="柱状图，展示 low、medium、high、xhigh 四档推理强度下的答对率和单次运行平均输出 token 数"></p>
+<p>图 1：每一档推理强度下答对的运行占比（左），以及单次运行平均输出 token 数，并叠加了单次运行耗时中位数（右）</p>
+<p>三点观察。</p>
+<p><strong><code>xhigh</code> 每次运行都答对。</strong> 三个任务的 18 次运行在 <code>xhigh</code> 下全部正确，<code>medium</code> 和 <code>high</code> 各自 18 次里对了 17 次。每个任务每档只有六次运行，档位之间的差距只能算方向性参考，还称不上统计定论；不过这个方向在三个任务上是一致的。</p>
+<p><strong>强度改变的是智能体推理多少，而不是探索多少。</strong> 工具调用次数基本持平，每一档都在每次 17.2 到 18.7 之间。不管哪档强度，智能体收集到的事实都一样，变化的是它在这些事实上投入多少推理：输出 token 从 <code>low</code> 档的 1,184 涨到 <code>xhigh</code> 档的 9,147。</p>
+<p><strong><code>low</code> 的性价比很高。</strong> 在 <code>low</code> 档，智能体 18 次里答对 15 次，输出 token 只有 <code>xhigh</code> 的大约八分之一，单次运行耗时中位数 18 秒。如果可以接受略低一点的完成率，或者答案在下游还会被复核，<code>low</code> 是一个高效的选择。如果要求每个答案一次就对，更高的档位是更稳妥的默认值。</p>
+<h2>强度档位如何塑造答案</h2>
+<p>这些任务各自围绕一类特定的难度设计，观察各档强度如何处理它们，就能看清额外的推理什么时候值得。</p>
+<p><strong>最优化。</strong> 迁移任务奖励的是考察组合，而不是逐个给候选排序。只挑单项比例最优的那些候选，会得到一个看起来合理、但比最优解少 9 分的答案。<code>medium</code> 及以上，智能体在 18 次运行里全部找到了最优集合。</p>
+<p><strong>假设检验。</strong> 诊断任务要求双向核对一组候选：每一条告警都要能被解释，每一个保持静默的服务也都要与答案相符。<code>medium</code> 及以上，智能体在 18 次运行里全部识别出了正确的那一对。</p>
+<p><strong>约束满足。</strong> 排期任务把列出的十条约束和一条团队规则叠在一起，而团队规则依赖需要查出来的归属数据。<code>xhigh</code> 在每次运行里都产出了合法排期，这也是最高档带来差别最明显的任务。</p>
+<p>三个任务合起来的规律是：当智能体必须把几个候选答案放在一起相互权衡，而不是沿单一路径走到结果时，额外的推理强度最有价值。</p>
+<h2>在生产环境监控推理</h2>
+<p>生产环境里没有已知答案可供评分，但你知道每次运行用了多少输出 token、调了多少次工具。这些数字能给出有用的运维信号。</p>
+<p>各档答对的运行，推理量都保持在一条明确的底线之上。<code>medium</code> 及以上每一次答对的运行至少用了 1,739 个输出 token，典型运行是几千个。一次运行如果完全没有工具调用，或者输出量明显低于该档的正常水平，就值得标记出来复核：</p>
+<pre><code>def flag_for_review(run, baseline):
+    &quot;&quot;&quot;baseline: output tokens of graded, correct runs at the same effort level.&quot;&quot;&quot;
+    reasons = []
+    if run[&quot;tool_calls&quot;] == 0:
+        reasons.append(&quot;made no tool calls&quot;)
+    if run[&quot;output_tokens&quot;] &lt; 0.2 * min(baseline):
+        reasons.append(f&quot;used {run['output_tokens']} output tokens, &quot;
+            f&quot;under a fifth of the lowest correct run ({min(baseline)})&quot;)
+    return reasons</code></pre>
+<p>基线要从你已经评过分的运行里标定，按任务、按强度档位分别计算，再套用到没评过分的运行上。一次运行被标记，就等于提示你去检查或者重跑。<code>low</code> 档每次运行都很短，输出量的信号意义更弱，所以要配合抽查使用。</p>
+<p>在 system prompt 里要求智能体核查自己的答案，这个做法值得保留，因为复核一次运行时，它的推理更容易跟着走一遍。凡是存在已知答案的地方，都把它和自动评分配合起来，这样质量的度量就独立于运行记录本身。</p>
+<h2>如何选择推理强度</h2>
+<p>这些结果可以归纳出几条实用规则。</p>
+<p><strong>按任务类型配强度。</strong> 涉及搜索、最优化或假设检验的任务，从 <code>medium</code> 及以上获益最大。沿单一路径完成、或答案在下游会被复核的任务，用 <code>low</code> 就能高效跑完。</p>
+<p><strong>按请求设强度，而不是按智能体设。</strong> 强度是请求级参数，所以同一个智能体可以在规划和验证步骤上用更高的档位，在机械步骤（比如给工具结果排版）上用 <code>low</code>。这样既拿到高档位的大部分可靠性，又压低了 token 成本。</p>
+<p><strong>在自己的任务上量，并且重复。</strong> 每种配置只跑一次，就只有一个观测点。每种配置重复跑几次，才能看出它有多一致。</p>
+<p><strong>监控推理量。</strong> 按强度档位分别追踪每次运行的输出 token 和工具调用次数，能在结果被使用之前给你一个复核信号。</p>
+<h2>这次度量的局限</h2>
+<p><strong>每个任务、每档强度只有六次运行。</strong> 这足够在三个任务上显示出一致的方向，但不足以给出置信区间。档位之间的差距只能当方向性参考。</p>
+<p><strong>合成环境。</strong> 工具读的是代码生成的数据，正因如此才能证明每个任务有且只有一个答案，并实现自动评分。真实工具会带来延迟、部分结果和错误，这些这里都没有测。</p>
+<p><strong>是分钟，不是小时。</strong> 单次运行耗时中位数从 <code>low</code> 档的 18 秒到 <code>xhigh</code> 档的 106 秒。这是长程任务缩小后的替身。方法可以照搬，绝对数字不行。</p>
+<p><strong>一个模型版本、一个区域、每个任务一种 prompt。</strong> 同一个任务换个说法，结果可能就变，这也是为什么把每条规则都写明确很重要。</p>
+<p><strong>是 token 数，不是成本。</strong> 要换算成金额，请按 Amazon Bedrock 定价页上你所用推理配置文件和服务层级的当前费率计算。Global 与美国 Geo 的配置文件定价不同，Flex 和 Priority 服务层级还会乘上相应倍率。</p>
+<h2>智能体负载的运维控制</h2>
+<p><strong>把重试做进设计。</strong> 调用量大的智能体应当把重试视为设计的一部分。设好请求超时，只对可重试的错误重试，采用带抖动的指数退避，并在响应带回 <code>Retry-After</code> 头时遵守它：</p>
+<pre><code>import random, time
+
+RETRYABLE = {408, 429, 500, 502, 503, 504}
+
+def call_with_backoff(fn, attempts=7, base=4.0, cap=180.0):
+    for attempt in range(1, attempts + 1):
+        try:
+            return fn()
+        except Exception as exc:
+            status = getattr(exc, &quot;status_code&quot;, None)
+            retryable = status in RETRYABLE or &quot;timed out&quot; in str(exc).lower()
+            if not retryable or attempt == attempts:
+                raise
+            time.sleep(random.uniform(base, min(cap, base * 2 ** attempt)))</code></pre>
+<p>按需吞吐是随时间逐步扩上去的，所以新上线的高调用量负载要慢慢加压，不要一上来就按全速发。</p>
+<p><strong>运行审计。</strong> 模型调用日志会把请求和响应数据写入 Amazon Simple Storage Service（Amazon S3）或 Amazon CloudWatch Logs。这样你就能拿到某次运行完整的记录，供事后复核。</p>
+<p><strong>规模化监控推理量。</strong> Amazon CloudWatch 指标提供 token 用量的汇总视图，前面说的按档位标定的基线在这里就能变成可告警的东西。</p>
+<p><strong>把开销归属到各个智能体。</strong> AWS Cost Explorer 的成本明细和 AWS Cost and Usage Report 能按模型拆分用量，再配上按任务统计的 token 数，单位经济性和总账单一并都能看清。</p>
+<p><strong>让成本对上紧迫程度。</strong> 服务层级是按请求设定的，所以同一个部署可以把夜间的分析任务走 Flex 层级，把交互式请求走 Priority。对于跑在更高强度档位的负载，层级选择是又一根成本杠杆。</p>
+<p><strong>选择路由配置文件。</strong> 跨区域推理拓宽了一次长运行可取用的容量池。Global 配置文件从商用的 AWS 区域中按需取用提供服务，每个 token 的价格通常低于按地理范围路由。US 配置文件把处理留在美国境内。选择时既要考虑你的数据驻留要求，也要考虑成本。</p>
+<h2>清理</h2>
+<p>本文的示例除按请求产生的 token 用量之外，不会创建任何计费的 AWS 资源。如果你生成了长期 Amazon Bedrock API key，用完请到 Amazon Bedrock 控制台把它删除，因为它在被撤销之前一直有效。由 IAM 凭证生成的短期 token 会自行过期。</p>
+<p>如果测试时开启过向 Amazon S3 写模型调用日志，请检查那个存储桶并移除不再需要的对象。</p>
+<h2>结语</h2>
+<p>SpaceXAI 把 Grok 4.7 训练成能在更难的任务上工作更久，并且知道什么时候该核查自己的工作。在这三个需要搜索而非查找的任务上，智能体 72 次运行答对了 67 次，而 <code>xhigh</code> 档每次都答对。由于推理强度是按请求设定的，你可以自己决定智能体的每一步落在「彻底程度」与 token 成本这条取舍线的哪个位置。</p>
+<p>有三件事值得带进你自己的评测里。设计只有一个可证明答案的任务，并把评分器依赖的每条规则都写明。重复运行，这样你能看出每种配置有多一致。按强度档位监控输出 token 和工具调用次数，让你在质量度量之外还有一条运维信号。</p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://aws.amazon.com/blogs/machine-learning/introducing-grok-on-amazon-bedrock/">Grok 登陆 Amazon Bedrock</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/grok-4-7-is-now-available-on-amazon-bedrock/">Grok 4.7 现已在 Amazon Bedrock 上可用</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">用跨区域推理把模型推理请求路由到多个 AWS 区域</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html">Amazon Bedrock 入门</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-chat-completions.html">Chat Completions API</a></li><li><a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a></li><li><a href="https://x.ai/news/grok-4-7">Introducing Grok 4.7</a>（SpaceXAI）</li></ul>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Mixture-of-Experts kernel engineering on Amazon SageMaker AI</title>
+      <title>Amazon SageMaker AI 上的 Mixture-of-Experts kernel 工程</title>
       <link>https://aws.amazon.com/blogs/machine-learning/mixture-of-experts-kernel-engineering-on-amazon-sagemaker-ai/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/mixture-of-experts-kernel-engineering-on-amazon-sagemaker-ai/</guid>
       <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Mixture-of-Experts kernel engineering on Amazon SageMaker AI</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Amazon SageMaker AI 上的 Mixture-of-Experts kernel 工程</h1>
+<p>Mixture-of-Experts（MoE）是一种稀疏激活架构，它能在把每 token 计算量保持很低的同时，扩展大语言模型（LLM）的容量。由于 MoE 相关运算在总计算时间中占比很高，这部分一旦低效，就会直接抬高请求延迟和成本。因此，通过 kernel 工程优化 MoE 运算，是性能收益最大的一条路。</p>
+<p>Fused MoE 是 MoE 架构的一项关键优化技术。fused MoE 系统把 token 路由、数据 shuffle 与专用网络的计算合并成 GPU 上的一个批量操作，不再把路由和各 expert 的计算当作彼此分离、顺序执行的循环来跑。这样做在延迟上有好处，但也让 kernel 实现和调试能力变得更复杂。要让这种架构跑上高 GPU 利用率，必须做针对硬件的优化。</p>
+<p>本文介绍我们为 fused MoE 模型实现的各项 kernel 优化，并说明你能如何从中受益。我们选用一个有代表性的 MoE 模型作为主要示例。</p>
+<h2>用 Swap-AB 提升 WGMMA 利用率</h2>
+<p>要把张量处理的吞吐量拉到最高，NVIDIA Hopper 架构依赖 Warp Group Matrix Multiply Accumulate（WGMMA）指令协议，它由一个 128 线程协作的 warpgroup 集体执行。这种操作数不对称本质上是指令集架构（ISA）层面的属性。在底层的 <code>wgmma.mma_async</code> 汇编定义中，硬件把矩阵的行维度 (M) 固定为 64 这一恒定规模，以此确定并行的线程映射拓扑；列维度 (N) 则可以高度变化。操作数 A 严格映射在这个固定的 M 维度上（使用寄存器或共享内存），操作数 B 映射在可变的 N 维度上（通过共享内存描述符）。因此这些操作数槽位在结构上不可互换。也正因如此，硬件 tile 利用率的上限由这些刚性的形状编码决定：M 维度必须等于或大于 64，否则计算执行通道会空转。</p>
+<p>这种结构偏好源自 Hopper Tensor Core 划分内存块的方式。硬件对第一个操作数的主维度强制规定了一个最小布局形状，把块高锁死为 64（M=64）。当矩阵在这个主槽位上拥有较大且连续的主维度时，Hopper 内部的硬件调度器就能把数据干净地映射并铺展到物理计算网格上。</p>
+<p>到了 MoE 网络的 decode 阶段，这种结构不对称会变成严重的性能瓶颈。在标准 MoE 层里，支配 expert 计算的线性代数用传统矩阵记法写成：</p>
+<p>A[M,K] x B[K,N] —&gt; C[M,N]</p>
+<p>其中 (M) 表示 token 行数（也就是 batch size），(K) 表示 hidden 特征维度，(N) 表示很大的 expert 输出维度。</p>
+<p>在 decode 阶段，系统每次只处理每条用户序列的一个 token。于是 batch 空间、也就是 token 行数极薄，常常落到 (M &lt; 64) 的形状，很多时候只剩一行 (M = 1)。在这种标准结构布局下：</p>
+<p>矩阵 (A) 退化成一个又薄又碎的横向向量（例如 1 x 4096）。</p>
+<p>矩阵 (B)（也就是 expert 权重本体）仍然保持为一个大而密集的纵向块（例如 4096 x 8192）。</p>
+<p>由于行数 (M) 极小，矩阵 (A) 在物理上填不满硬件为操作数 A 预设的 (64) 行布局槽位。WGMMA 指令按这种布局执行时，会有很大一部分 Tensor Core 的物理算力处于饥饿状态：芯片把时钟周期花在处理空位上，硬件利用率因此很低。</p>
+<p>在标准 dense LLM 层里，权重矩阵是静态、统一、完全连续的。而在 MoE 层里，负载被拆散到一大批相互独立的子网络（expert）上。这带来了特有的内存与布局瓶颈，使它对 Hopper GPU 的 WGMMA 约束异常敏感。标准 dense 层的矩阵乘法是一个 token 向量乘以一个层权重矩阵，输出维度 (N) 就是模型的 hidden size（例如 4096）。</p>
+<p>在 fused MoE kernel 里，GPU 不只是与一个 expert 做乘法：它把所有被激活的 expert 的运算分组、同时执行，以免为每个 expert 单独启动 kernel。标准 dense 层的 N 是 hidden size（4,096）；fused MoE 层的 N 是被选中的 expert 数量乘以 expert 的中间层尺寸。对一个走 <code>topk=8</code> 流程的模型来说，fused kernel 内部的有效 N 维度会膨胀到几万甚至几十万参数。跟极小的 decode token 规模 (M=1) 相比，N 维度大得不成比例，布局不对称因此被推到极端。把矩阵转置后，这个合并起来的巨大 MoE 维度就移进了主槽位，从而释放出标准 dense 层无法企及的硬件预取规模。</p>
+<p>为了在不改变模型底层数学含义的前提下解决这一硬件错配，我们利用矩阵转置的代数性质：</p>
+<p>BT[N,K] x AT[K,M] —&gt; CT[N,M]</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-22058-1.png" alt="Swap-AB 转置把较大的 expert 维度提升到 WGMMA 操作数 A 槽位，让 Tensor Core 满载"></p>
+<p>图 1：用 Swap-AB 提升 WGMMA 利用率</p>
+<p>在矩阵乘法抵达 PTX 汇编层之前，我们在程序层面把它翻转过来，让软件重新对齐 Hopper 硅片的实际布局。这次转置在 GPU 上带来两项直接的架构优势。第一，它把物理布局填满：较大的 expert 维度 (N = 8192) 被提升到第一个操作数的位置 (BT)，由于 (N) 很大，轻松越过硬件强制的 (64) 行下限，Tensor Core 于是以最高局部密度运行，没有浪费的执行周期。第二，它启动了异步预取：Hopper 专用的硬件拷贝引擎可以在数学执行块启动之前，异步地把内存地址从共享内存直接预取进寄存器。把连续的大块权重 (BT) 放在主维度槽位，这些引擎就能顺着数据布局平滑推进，无需 CPU 介入便让计算流水线保持满载。在 H200 上的大规模 MoE 模型中，这带来了 2–4% 的端到端输出吞吐提升。我们把这项优化上游合入了 vLLM，0.24.0 及之后的版本可用。</p>
+<h2>FP8 张量量化的后端路由</h2>
+<p>除了 kernel 内部实现，由哪个后端来执行 MoE 计算也极大影响性能。vLLM 的 MoE oracle 会把不同量化方案路由到 Triton、FlashInfer+CUTLASS 或其他后端。Profiling 显示，对 Hopper 上的 FP8 张量量化模型，Triton 后端始终快过默认的 <code>FLASHINFER_CUTLASS</code> 路径。</p>
+<p>在低并发的 MoE 负载下，Triton 后端胜过 CUTLASS，主要是它用自定义的算子级寄存器融合取代了僵硬的框架级矩阵运算配置。CUTLASS 依赖标准的 C++ 模板结构，把 FP8 张量缩放、矩阵乘法、expert 结果聚合当成彼此离散的数学操作。Triton 后端则把这整条流水线合并成一次硬件遍历：数据只从全局高带宽内存（HBM）取一次，全部在 GPU 极快的片上 SRAM 寄存器与计算执行单元里处理完，再流式写回最终的目标矩阵。这就消掉了那些拖累 CUTLASS 的全局 VRAM 往返读写——当它被迫一步步走过中间张量的缩放环节时，这些开销尤其明显。</p>
+<p>此外，这种寄存器级融合还专门配合了围绕可变 token 分桶设计的动态调度布局，补上了传统编译模板里一个严重的结构缺陷。CUTLASS 原生是为稠密、巨大、可预测的矩阵维度优化的。一旦遇到线上 decode 生成阶段那种流动、极薄的 batch 形状（M &lt; 64 或 M = 1），它默认的 block tiling 与线程映射结构就会极度低效，结果要么是 warp 大面积利用不足，要么付出昂贵的内存 padding 开销。反过来，Triton 的 MoE 后端擅长把这些细碎的小 token 数组动态映射到激活 expert 权重的物理边界上，即使在 batch size 很低、负载极不稳定的情况下，也能让硬件内部的预取流和 Tensor Core 流水线保持满载。</p>
+<p>更新路由策略是纯配置改动，没有修改任何 kernel 代码，但仍然让 H200 上 FP8 量化的 fused MoE 模型拿到 <strong>10% 的端到端吞吐提升</strong>。这一改进在 AWS Large Model Inference（LMI）v28 容器中可用。</p>
+<h2>消除 Triton 的 JIT 重编译</h2>
+<p>GPU 推理中最伤性能的问题之一，恰恰也最不明显：不必要的 kernel 重编译。Triton 是 vLLM 许多自定义 kernel 底层的编译框架，它默认会对整数实参做特化。只要有一次 kernel 调用用到了某个特化参数此前没出现过的取值，Triton 就触发一次新的即时编译（JIT）。在序列长度和 batch size 持续变化的服务负载里，这会源源不断产生编译开销，把延迟抬高，尤其是首 token 时间（Time to First Token，TTFT）。</p>
+<p>在 MoE 模型服务中，<code>_fused_inv_rope_fp8_quant_per_head</code> kernel（负责融合旋转位置编码与 FP8 量化）每遇到一个新的 <code>num_tokens</code> 取值就要重编译一次。给这些长度可变的参数加上 <code>do_not_specialize</code> 标注后，这些重编译被彻底消除：在 H200、8 路 tensor parallelism 下，TTFT 改善了 <strong>9%</strong>（PR #42849）。</p>
+<p>在多 GPU 集群里，8 张 GPU 的 kernel 必须以微秒级精度严格同步执行。只要有一张 GPU 因为本地的 token batch 计数变化而停下来重编译它本地的 <code>_fused_inv_rope_fp8_quant_per_head</code> kernel，其余七张就得空着等它。通过在整个集群上消除重编译，我们抹平了多 GPU 的协调开销，为用户的初始响应延迟带来 9% 的加速。这里的思路是把编译器当作一等的优化对象：弄清 Triton 如何做语义特化、识别哪些参数是死的或可变的，就能用极小的代码改动换到延迟改善。</p>
+<p>我们把这项优化上游合入了 vLLM，0.22.0 及之后的版本可用。</p>
+<h2>结论</h2>
+<p>借助与 vLLM 社区的合作，我们实现并开源了多项 fused MoE 模型的 kernel 优化，并在 Amazon SageMaker AI 的 LMI Deep Learning Container 中应用了这些优化。综合起来，它们带来了最高 10% 的吞吐提升与最高 9% 的 TTFT 加速。要开始自定义模型托管，请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html">Amazon SageMaker AI 托管文档</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>在泰国、马来西亚、新加坡、印度尼西亚和台湾，用全球跨区域推理访问 Amazon Bedrock 上的 OpenAI GP…</title>
