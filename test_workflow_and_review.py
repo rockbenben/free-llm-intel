@@ -9722,5 +9722,85 @@ class TestIndexMatchesArchives(unittest.TestCase):
         rows = json.loads((repo / "docs/feeds/articles.json")
                           .read_text(encoding="utf-8"))["articles"]
         self.assertGreater(len(rows), 3000, "实产物扫描没覆盖到语料规模，形状证人失败")
+class TestFeedCarriesTranslatedBodies(unittest.TestCase):
+    """G4：台账说「已有中文正文」的条目，出现在中文 feed 里就必须带全文。
+
+    2026-10-15 的实测反例：Higgsfield 那条在合并流里只有 title/link/guid（456 字节），
+    因为 RSS 由 crawler 生成、而中文正文在它之后两步才落盘。CI 把 render 挪到正文
+    步骤之后 + 这条闸，「正文晚一天」才不会再静默发生。
+    """
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp_dir.name)
+        (self.root / "docs" / "feeds").mkdir(parents=True)
+        self.addCleanup(self.temp_dir.cleanup)
+
+    def _write(self, items_xml, translated_url="https://a.com/one"):
+        (self.root / "docs" / "feeds" / "llm-news-vendor_a.xml").write_text(
+            '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>'
+            + items_xml + '</channel></rss>', encoding="utf-8", newline="\n")
+        bodies = {"vendor_a\t" + translated_url: {
+            "slug": "aaa111", "en_path": "", "zh_path": "docs/articles/vendor_a/one.md",
+            "en_status": "", "zh_status": "translated", "translator": "agent",
+            "title": "第一篇", "date": "2026-10-14", "captured": "2026-10-15",
+            "body_sha": "", "src_lang": "zh"}}
+        (self.root / "docs" / "feeds" / "bodies.json").write_text(
+            json.dumps({"count": len(bodies), "bodies": bodies}, ensure_ascii=False),
+            encoding="utf-8", newline="\n")
+
+    def _item(self, url, body=""):
+        return (f"<item><title>第一篇</title><link>{url}</link>{body}</item>")
+
+    def test_item_with_translation_must_carry_full_text(self):
+        """真事故形态：同源的别的条目有全文，只有新那条缺 —— 必须报警。
+
+        故意带上带全文的对照条目：整源一条全文都没有时按 `RSS_SOFT_CAP` 降级豁免，
+        单 item 夹具会落进那个豁免里，测不到本闸要测的东西。
+        """
+        self._write(self._item("https://a.com/one")
+                    + self._item("https://a.com/other",
+                                 "<content:encoded><![CDATA[<p>有全文</p>]]></content:encoded>"))
+        errs = crawler_llm_intel.verify_feed_bodies(self.root)
+        self.assertEqual(len(errs), 1, errs)
+        self.assertIn("content:encoded", errs[0])
+        self.assertIn("https://a.com/one", errs[0])
+
+    def test_item_with_content_passes(self):
+        self._write(self._item("https://a.com/one",
+                               "<content:encoded><![CDATA[<p>正文</p>]]></content:encoded>"))
+        self.assertEqual(crawler_llm_intel.verify_feed_bodies(self.root), [])
+
+    def test_untranslated_item_is_not_required_to_have_body(self):
+        """只等中文正文的行（台账没有 / 未 translated）不该报警，否则闸门会挡住巡检。"""
+        self._write(self._item("https://a.com/two"))
+        self.assertEqual(crawler_llm_intel.verify_feed_bodies(self.root), [])
+
+    def test_whole_source_degraded_to_summary_is_exempt(self):
+        """整源摘要化是 RSS_SOFT_CAP 的既有兜底，不该被当成缺正文。"""
+        self._write(self._item("https://a.com/one")
+                    + self._item("https://a.com/two"))
+        self.assertEqual(crawler_llm_intel.verify_feed_bodies(self.root), [])
+
+    def test_english_mirror_is_out_of_scope_here(self):
+        """英文镜像的全文来自 `en_path`，是另一条判据；本闸只管中文版。"""
+        (self.root / "docs" / "feeds" / "llm-news-vendor_a.en.xml").write_text(
+            '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel>'
+            + self._item("https://a.com/one") + '</channel></rss>',
+            encoding="utf-8", newline="\n")
+        self._write(self._item("https://a.com/one",
+                               "<content:encoded><![CDATA[x]]></content:encoded>"))
+        self.assertEqual(crawler_llm_intel.verify_feed_bodies(self.root), [])
+
+    def test_committed_feeds_carry_translated_bodies(self):
+        repo = Path(crawler_llm_intel.__file__).resolve().parent
+        if not (repo / "docs/feeds/bodies.json").exists():
+            self.skipTest("仓库无语料台账，跳过实产物校验")
+        errs = crawler_llm_intel.verify_feed_bodies(repo)
+        self.assertEqual(errs, [], f"feed 缺全文（正文步骤之后没重排？）：{errs[:5]}")
+        xmls = list((repo / "docs/feeds").glob("llm-news-*.xml"))
+        self.assertGreater(len(xmls), 20, "实产物扫描没覆盖到 feed 规模，形状证人失败")
+
+
 if __name__ == "__main__":
     unittest.main()

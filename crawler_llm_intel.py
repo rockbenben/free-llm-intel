@@ -3999,6 +3999,51 @@ def verify_index_matches_archives(root: Path) -> list:
     return errs
 
 
+def verify_feed_bodies(root: Path) -> list:
+    """G4：台账里 `zh_status=translated` 的条目，出现在中文 feed 里就必须带全文。
+
+    两个刻意的例外，都是为了不让闸挡巡检而不是掩盖真问题：
+    - **整源摘要化**：`write_rss_feeds` 在单源超过 `RSS_SOFT_CAP` 时把整个源重建成
+      「首段摘要 + 回源链接」，此时该文件所有 item 都没有 `<content:encoded>`。
+      判据取「整源零全文」而不是逐条放行，避免把真滞后一起豁免掉。
+      代价：只有 1~2 条且全都缺全文的小源会被当成降级放过 —— 实测事故形态都是
+      「部分条目缺全文」（新条目缺、老条目有），那才是本闸要抓的形状。
+    - **英文镜像**（`*.en.xml`）：它的全文来自 `en_path`，是另一条判据，不在 G4 范围。
+      这里显式跳过 —— 早先的版本靠「文件名带 .en 查不到厂商」意外绕开，
+      那种隐式豁免下次改名就失效。
+    """
+    import fulltext as _ft
+    ledger = root / "docs" / "feeds" / "bodies.json"
+    if not ledger.exists():
+        return []
+    bodies = _ft.load_bodies(ledger)
+    translated: set[str] = set()
+    for key, e in bodies.items():
+        if e.get("zh_status") == "translated" and e.get("zh_path"):
+            translated.add(_article_key(key.partition("\t")[2]))
+    errs = []
+    for xml in sorted((root / "docs" / "feeds").glob("llm-news-*.xml")):
+        if xml.name.endswith(".en.xml") or xml.name == "llm-news-all.en.xml":
+            continue
+        text = xml.read_text(encoding="utf-8", errors="replace")
+        items = re.findall(r"<item>[\s\S]*?</item>", text)
+        if not items:
+            continue
+        if not any("<content:encoded>" in it for it in items):
+            continue                       # 整源摘要化（RSS_SOFT_CAP 兜底）
+        for it in items:
+            if "<content:encoded>" in it:
+                continue
+            m = re.search(r"<link>([^<]+)</link>", it)
+            if not m:
+                continue
+            url = m.group(1).strip()
+            if _article_key(url) in translated:
+                errs.append(f"{xml.name}: 台账已有中文正文，item 却缺 "
+                            f"<content:encoded>（{url}）")
+    return errs
+
+
 # ---------------------------------------------------------------------------
 # 归档日期回填（维护模式 --backfill-dates，不参与日常巡检）
 # ---------------------------------------------------------------------------
