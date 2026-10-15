@@ -170,13 +170,27 @@ jobs:
       # 用 gtx（无 key、无 LLM 免费层 RPD 额度墙），按块译、代码块原样保留，长文也能覆盖。
       # 产物标 translator=mt —— 是糙覆盖，术语/品牌可能翻坏，重点篇之后本地 agent 重译升级。
       # --mt-bodies-limit 封顶单日请求量（未设 var 时默认 80，日常新增远小于此）。
-      # 滞后边界：今天新文章的正文今天进 reader（.md 已落盘），但 RSS 的 content:encoded
-      # 由 crawler 早于本步生成，要到**次日**那次巡检重排 feed 时才带上全文。
+      # 正文今天落 `.md`，产出层由下面这一步的 --render-only 在同一天重排，
+      # 所以当天的 feed 就带得上 `content:encoded`（曾经的滞后要靠次日巡检才补上，
+      # 已由 Render outputs 步骤消除；`TestWorkflowYaml` 有断言钉着，注释不许留假账）。
       - name: Translate new bodies (machine)
         continue-on-error: true
         env:
           PYTHONIOENCODING: utf-8
         run: python crawler_llm_intel.py --mt-bodies --mt-bodies-limit "${{ vars.MT_BODIES_LIMIT || 80 }}"
+
+      # 产出层重排：RSS 与各类索引都是归档 + 语料的视图，正文步骤之后必须再渲染一次，
+      # 否则当天新译的正文进不了 feed（实测合并流里新条目只有 title/link/guid、456 字节）。
+      # --render-only 只写视图、绝不写归档与语料（`TestRenderOutputs.test_render_never_writes_sources`
+      # 钉住），因此这一步可以安全重跑。
+      # 刻意**不加 continue-on-error**：这一步挂了当天就不提交，与 INTEL_FAIL_ABORT_RATIO
+      # 「宁可不提交，也不提交不一致的产物」同一取向；上面两个正文步骤是 continue-on-error，
+      # 因为它们是增强层，挂了不该挡掉当天巡检——两种角色别照抄。
+      - name: Render outputs
+        env:
+          PYTHONIOENCODING: utf-8
+          FEEDS_BASE: ${{ vars.FEEDS_BASE }}
+        run: python crawler_llm_intel.py --render-only --feeds-base "$FEEDS_BASE"
 
       # 产物与不变量校验：跑**全部**用例。
       # 测试集由 test_workflow_and_review.ci_suite() 按「全部 − 白名单」推导：

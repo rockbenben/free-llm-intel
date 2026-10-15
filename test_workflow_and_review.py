@@ -75,6 +75,44 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertEqual(concurrency.get("group"), "refresh-intel")
         self.assertFalse(concurrency.get("cancel-in-progress", True))
 
+    def test_render_step_sits_after_bodies_and_before_verify(self):
+        """正文步骤之后必须再渲染一次产出层，否则新译文的 content:encoded 又要等一天。
+
+        实测过的滞后：RSS 由 crawler 生成，而 `.md` 正文在它之后两步才落盘，
+        所以当天的合并流条目只有标题没有全文（Higgsfield 那条 456 字节）。
+        这一步刻意**不加 continue-on-error**：render 挂了当天就不提交，
+        与 INTEL_FAIL_ABORT_RATIO「宁可不提交，也不提交不一致的产物」同一取向；
+        而它前面的 fetch-bodies / mt-bodies 是 continue-on-error（增强层挂了
+        不该挡掉当天巡检），两者角色不同，别照抄。
+        """
+        with open(self.workflow_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        steps = data["jobs"]["crawl"]["steps"]
+        names = [s.get("name", "") for s in steps]
+        need = ("Run intel crawler", "Fetch article bodies (incremental)",
+                "Translate new bodies (machine)", "Render outputs",
+                "Verify generated artifacts and invariants")
+        for n in need:
+            self.assertIn(n, names, f"缺步骤 {n}")
+        self.assertLess(names.index("Translate new bodies (machine)"),
+                        names.index("Render outputs"),
+                        "render 必须排在正文步骤之后，否则读不到当天新落的 .md")
+        self.assertLess(names.index("Render outputs"),
+                        names.index("Verify generated artifacts and invariants"),
+                        "render 必须排在 Verify 之前，否则守卫校验的是旧产物")
+        step = steps[names.index("Render outputs")]
+        self.assertNotIn("continue-on-error", step,
+                         "render 失败要能挡住当天提交，不许 continue-on-error")
+        self.assertIn("--render-only", step["run"])
+        self.assertIn("FEEDS_BASE", step.get("env", {}),
+                      "render 必须用与 crawler 同一个订阅前缀，否则 rel=self 会退回推导值")
+
+    def test_workflow_does_not_claim_next_day_body_lag_anymore(self):
+        """注释不许替已经不存在的实现说话：改了时序就要同批改掉「次日才带上全文」那句。"""
+        text = self.workflow_path.read_text(encoding="utf-8")
+        self.assertNotIn("次日**那次巡检重排 feed 时才带上全文", text,
+                         "render 步骤已消除这个滞后，注释还留着就是假账")
+
     def test_workflow_steps_structure(self):
         with open(self.workflow_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
