@@ -1,6 +1,6 @@
 # Google Gemini (Google AI Studio) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-14**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-15**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Google Gemini (Google AI Studio)（`google_gemini`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -23,7 +23,7 @@
 12. [Lyria 3.5 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-03-2026)（2026-09-03） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-03-2026-1-->
 13. [Gemini 3.8 Flash 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-02-2026)（2026-09-02） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-02-2026-1-->
 14. [Agentic 视频理解](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-01-2026)（2026-09-01） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#09-01-2026-1-->
-15. [Gemini Omni Flash 正式发布 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#08-27-2026)（2026-08-27） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#08-27-2026-1-->
+15. [Gemini Omni Flash 正式发布 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#08-27-2026)（2026-08-27） <!--orig:Gemini Omni Flash 正式版 (GA)--> <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#08-27-2026-1-->
 16. [插值（第一帧 + 最后一帧）](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#08-27-2026)（2026-08-27） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#08-27-2026-2-->
 17. [分辨率控制](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#08-27-2026)（2026-08-27） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#08-27-2026-3-->
 18. [Gemini 3.5 Transcribe 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#08-26-2026)（2026-08-26） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#08-26-2026-1-->
@@ -34,7 +34,7 @@
 23. [Gemini 3.6 Flash 和 Gemini 3.5 Flash-Lite 正式版 (GA)](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026)（2026-07-21） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026-1-->
 24. [Gemini 3.5 Flash-Lite](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026)（2026-07-21） <!--orig:Gemini 3.5 Flash-Lite--> <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026-2-->
 25. [已弃用的参数](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026)（2026-07-21） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#07-21-2026-3-->
-26. [Gemini Omni Flash（公开预览版）](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-30-2026)（2026-06-30） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-30-2026-1-->
+26. [Gemini Omni Flash（公开预览版）](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-30-2026)（2026-06-30） <!--orig:Gemini Omni Flash 公开预览版--> <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-30-2026-1-->
 27. [电脑使用](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-24-2026)（2026-06-24） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-24-2026-1-->
 28. [支持流式语音生成](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-17-2026)（2026-06-17） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-17-2026-1-->
 29. [弃用公告](https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-15-2026)（2026-06-15） <!--url:https://ai.google.dev/gemini-api/docs/changelog?hl=zh-cn#06-15-2026-7-->

@@ -7,7 +7,114 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Running Ray at scale on Kubernetes with KubeRay</title>
+      <link>https://anyscale.com/blog/kuberay</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/kuberay?li=1</guid>
+      <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Running Ray at scale on Kubernetes with KubeRay</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=nai-jui-yeh">Nai-Jui Yeh</a>, <a href="https://www.anyscale.com/blog?author=chun-hao-wan">Chun-Hao Wan</a> and <a href="https://www.anyscale.com/blog?author=philip-wang">Philip Wang</a> | October 15, 2026</p>
+<h2>LinkWhat is KubeRay</h2>
+<p>Ray is an open-source framework for scaling Python and AI workloads across many machines. It handles everything from distributed training to online serving through a single Python API, so users can write code once and run it on a laptop or a thousand-node cluster.</p>
+<p>Kubernetes, on the other hand, is where most organizations already run their infrastructure. GPUs, quotas, access control, networking, and monitoring are all managed there. Teams that adopt Ray rarely want a second cluster manager alongside Kubernetes. They want Ray to run on the Kubernetes they already have.</p>
+<p>The challenge is that Kubernetes only understands its own native resources like Pods, Services, and Jobs. It has no concept of a Ray cluster, a Ray job, or a Ray Serve application. Running Ray directly on Kubernetes therefore means writing your own glue: Deployments for the head and workers, a Service for the head, scripts to submit jobs and wait for them, and custom logic to scale workers or recover from failures. Every team ends up rebuilding the same plumbing.</p>
+<p>KubeRay closes this gap. It is an open-source Kubernetes operator that brings Ray into the Kubernetes ecosystem, providing Kubernetes-native lifecycle management, autoscaling, scheduling, reliability, and observability for Ray workloads. KubeRay is the standard way to run Ray on Kubernetes today, and is the foundation of the managed Ray offerings from major cloud providers.</p>
+<p>KubeRay introduces three custom resources: RayCluster for a long-running Ray cluster, RayJob for a single job with its own ephemeral cluster, and RayService for Ray Serve applications. We describe how these resources work in the Architecture section below.</p>
+<h3>LinkBefore and after KubeRay</h3>
+<p>While generic Kubernetes may initially handle the infrastructure Ray needs to run on, it struggles to understand Ray itself including, so every platform team ends up hand-writing the same deployments, services, submission scripts, and recovery logic to fill that missing gap. KubeRay replaces that manual work with a Kubernetes-native resource for each of the following tasks.</p>
+<table><thead><tr><th><strong>Task</strong></th><th><strong>Generic Kubernetes</strong></th><th><strong>KubeRay</strong></th></tr></thead><tbody><tr><td>Start a Ray cluster</td><td>Hand-write Deployments for the head and workers and a Service for the head, and keep them in sync yourself</td><td>Define a RayCluster. The operator creates and manages the head Pod, head Service, and worker Pods</td></tr><tr><td>Run a batch job</td><td>Write scripts to submit the job, poll for completion, and tear down the cluster afterward</td><td>Define a RayJob. KubeRay creates a dedicated RayCluster, submits the job, and cleans it up when the job finishes</td></tr><tr><td>Serve a model</td><td>Hand-roll a Deployment and Service for Ray Serve, plus your own health checks and rollout logic</td><td>Define a RayService. KubeRay keeps Serve applications available through cluster and head-node failures and supports zero-downtime upgrades</td></tr><tr><td>Scale with demand</td><td>Rely on the Kubernetes Horizontal Pod Autoscaler, which has no visibility into Ray tasks, actors, or placement groups</td><td>Ray-aware autoscaling that scales worker groups based on pending tasks, actors, and placement groups</td></tr><tr><td>Recover from a head-node failure</td><td>Write custom logic to detect the failure and rebuild cluster state</td><td>Global Control Service (GCS) fault tolerance recovers cluster metadata automatically while keeping Ray Serve applications running</td></tr><tr><td>Monitor and operate</td><td>Build your own tooling to surface Ray-specific status</td><td>Kubernetes-native status and Events, plus kubectl ray for a familiar CLI experience</td></tr></tbody></table>
+<h2>LinkWhere KubeRay fits between Ray and Kubernetes</h2>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/7BB6IXXE9fqX6LXzQ5w2E/d639008de4b753381dd4d3eb1baeae7f/Where_KubeRay_fits_between_Ray_and_Kubernetes.png" alt="Where KubeRay fits between Ray and Kubernetes"></p>
+<p>Where KubeRay fits between Ray and Kubernetes</p>
+<p>KubeRay sits between Kubernetes and Ray, and it does not replace either scheduler. Kubernetes schedules Pods onto nodes while Ray schedules tasks and actors onto the CPUs and GPUs inside those Pods. KubeRay bridges the two: it turns a RayCluster spec into Pods, and reports Ray's state back to Kubernetes as status fields and events.</p>
+<p>This layering also splits responsibilities cleanly between two roles. Platform teams work at the Kubernetes and operator layers: they install KubeRay once, then manage node pools, quotas, access control, and monitoring with the tools they already use. Ray users, such as ML engineers and data scientists, work at the Ray and application layers: they write Ray code and execute the code on top of the custom resource (RayCluster, RayJob or RayService) KubeRay creates.</p>
+<h2>LinkWhat KubeRay provides</h2>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6v5XJKikUHPH5BmAOabtMt/3fc665ee2890d82934c123e7b5a77b14/KubeRay_Operator.png" alt="KubeRay Operator"></p>
+<p>KubeRay Operator</p>
+<p>KubeRay is a Kubernetes operator with one controller per custom resource. RayCluster is the building block: the operator turns it into a head Pod, a head Service, and worker Pods. RayJob and RayService each own a RayCluster and add what their workload needs: a submitter for RayJob, and Serve applications plus a Serve Service for RayService.</p>
+<h3>LinkKey features</h3>
+<h4>LinkRayCluster</h4>
+<ul><li><strong>Ray-aware autoscaling.</strong> Automatically scale worker groups based on workload demand, including pending tasks, actors, and placement groups.</li><li><strong>Global Control Service (GCS) fault tolerance.</strong> Recover Ray cluster metadata after a head-node failure while keeping Ray Serve applications running.</li><li><strong>Heterogeneous compute.</strong> Run worker groups with different CPU and accelerator configurations in the same RayCluster.</li></ul>
+<h4>LinkRayJob</h4>
+<ul><li><strong>Ephemeral clusters:</strong> Create a dedicated RayCluster for each job and clean it up when the job finishes.</li><li><strong>Multiple submission modes:</strong> Submit jobs through Kubernetes Jobs, HTTP, sidecars, or interactive mode.</li><li><strong>Lifecycle management:</strong> Configure retries, deadlines, and cleanup policies based on job outcomes.</li></ul>
+<h4>LinkRayService</h4>
+<ul><li><strong>Kubernetes-native Ray Serve:</strong> Define and manage Ray Serve applications as part of your Kubernetes workload.</li><li><strong>High availability:</strong> Keep Ray Serve applications available through cluster and head-node failures.</li><li><strong>Zero-downtime upgrades:</strong> Upgrade Ray applications and clusters without interrupting serving traffic, with support for blue-green and incremental upgrades.</li></ul>
+<h4>LinkKubernetes Scheduling</h4>
+<ul><li><strong>Kueue and MultiKueue:</strong> Integrate Ray workloads with Kubernetes resource quotas and multi-cluster scheduling.</li><li><strong>Gang scheduling:</strong> Support gang scheduling with Kubernetes Workload API, Volcano, YuniKorn, scheduler-plugins, and NVIDIA KAI Scheduler.</li><li><strong>Resource and label-aware scheduling:</strong> Expose Kubernetes resources and labels to Ray for resource- and label-based scheduling.</li></ul>
+<h4>LinkSecurity</h4>
+<ul><li><strong>Ray token authentication:</strong> Secure Ray clusters with token-based authentication.</li><li><strong>Kubernetes RBAC authentication:</strong> Use existing Kubernetes RBAC policies to control access to Ray clusters.</li><li><strong>mTLS and NetworkPolicy:</strong> Encrypt Ray Pod-to-Pod traffic and isolate Ray clusters with Kubernetes NetworkPolicies.</li></ul>
+<h4>LinkObservability</h4>
+<ul><li><strong>Metrics and dashboards:</strong> Monitor Ray workloads and KubeRay with Prometheus and Grafana.</li><li><strong>Kubernetes-native status and events:</strong> Track workload lifecycle and troubleshoot Ray resources through Kubernetes status and Events.</li><li><strong>History Server:</strong> Preserve Ray events and logs in object storage and inspect them after a cluster has been deleted.</li></ul>
+<h4>LinkTooling</h4>
+<ul><li><strong>kubectl ray:</strong> Simplify managing Ray clusters on Kubernetes with a familiar command-line experience.</li><li><strong>KubeRay API Server:</strong> Provide simplified APIs for platforms and user interfaces to manage KubeRay resources.</li></ul>
+<h2>LinkHow to deploy KubeRay</h2>
+<p>KubeRay works with any Kubernetes cluster. Get started by installing the KubeRay operator, then create a Ray workload using Kubernetes-native resources.</p>
+<p><strong>1. Install KubeRay</strong></p>
+<p>Follow the <a href="https://docs.ray.io/en/latest/cluster/kubernetes/getting-started.html">Getting Started with KubeRay</a> guide to install the operator onto your Kubernetes cluster. KubeRay has been tested on managed Kubernetes services including <strong>Amazon EKS, Google Kubernetes Engine (GKE), and Azure Kubernetes Service (AKS)</strong>.</p>
+<p><strong>2. Choose your workload</strong></p>
+<p>KubeRay provides these custom resources for running Ray workloads:</p>
+<ul><li><strong>RayCluster:</strong> Run a Ray cluster for development and prototyping.</li><li><strong>RayJob:</strong> Run batch workloads with a dedicated RayCluster, with automatic cluster creation and cleanup.</li><li><strong>RayService:</strong> Deploy and manage Ray Serve applications with high availability and zero-downtime upgrades.</li><li><strong>RayCronJob: </strong>Run RayJobs on a recurring schedule using a cron expression.</li></ul>
+<p><strong>3. Deploy with Kubernetes</strong></p>
+<p>Deploying a Ray workload with KubeRay is as simple as applying a Kubernetes custom resource.</p>
+<p>For example, a <code>RayJob</code> runs a batch training workload and manages the Ray cluster used by the job. KubeRay creates the RayCluster, waits for it to become ready, submits the training job, and can clean up the cluster when the job finishes.</p>
+<p>Here's an example of training a PyTorch model on the Fashion MNIST dataset with CPUs on Kubernetes, showing KubeRay creating the RayCluster, running the training workload, tracking its completion, and managing the cluster lifecycle.</p>
+<p>The training code uses <a href="https://docs.ray.io/en/latest/train/train.html">Ray Train</a>, while KubeRay uses a <code>RayJob</code> to run and manage it on Kubernetes.</p>
+<pre><code>kubectl apply -f https://raw.githubusercontent.com/ray-project/kuberay/v1.7.0/ray-operator/config/samples/pytorch-mnist/ray-job.pytorch-mnist.yaml</code></pre>
+<p>After applying the RayJob, KubeRay creates the RayCluster and its Pods. Check the RayJob and verify that the RayCluster Pods are running:</p>
+<pre><code>kubectl get rayjob
+NAME                   JOB STATUS   DEPLOYMENT STATUS   RAY CLUSTER NAME             START TIME             END TIME   AGE
+rayjob-pytorch-mnist   PENDING      Running             rayjob-pytorch-mnist-9s4p2   2026-09-30T02:40:15Z              37s
+
+kubectl get pod
+NAME                                                  READY   STATUS    RESTARTS   AGE
+kuberay-operator-799d594664-h5czx                     1/1     Running   0          19m
+rayjob-pytorch-mnist-9s4p2-head-b6q6z                 1/1     Running   0          39s
+rayjob-pytorch-mnist-9s4p2-small-group-worker-k6786   1/1     Running   0          39s
+rayjob-pytorch-mnist-9s4p2-small-group-worker-thhgx   1/1     Running   0          39s
+rayjob-pytorch-mnist-v4dvt                            1/1     Running   0          11s</code></pre>
+<p>The RayJob then submits the training workload to the newly created RayCluster. After the training finishes, the RayJob reaches <code>SUCCEEDED</code>:</p>
+<pre><code>kubectl get rayjob
+NAME                   JOB STATUS   DEPLOYMENT STATUS   RAY CLUSTER NAME             START TIME             END TIME               AGE
+rayjob-pytorch-mnist   SUCCEEDED    Complete            rayjob-pytorch-mnist-9s4p2   2026-09-30T02:40:15Z   2026-09-30T02:48:33Z   8m47s</code></pre>
+<p>You can inspect the training results from the submitter Pod:</p>
+<pre><code>kubectl logs rayjob-pytorch-mnist-v4dvt
+
+2026-09-29 19:40:48,610 INFO cli.py:41 -- Job submission server address: http://rayjob-pytorch-mnist-9s4p2-head-svc.default.svc.cluster.local:8265
+2026-09-29 19:40:49,584 SUCC cli.py:65 -- -------------------------------------------------------
+2026-09-29 19:40:49,584 SUCC cli.py:66 -- Job 'rayjob-pytorch-mnist-5s4p4' submitted successfully
+2026-09-29 19:40:49,584 SUCC cli.py:67 -- -------------------------------------------------------
+...
+(RayTrainWorker pid=975, ip=10.244.0.12) 
+Train Epoch 0:  77%|███████▋  | 1436/1875 [00:15&lt;00:04, 91.08it/s] [repeated 92x across cluster]
+(RayTrainWorker pid=975, ip=10.244.0.12) 
+Train Epoch 0:  92%|█████████▏| 1719/1875 [00:18&lt;00:01, 88.59it/s]
+...
+(RayTrainWorker pid=975, ip=10.244.0.12) Reporting training result 10: TrainingReport(checkpoint=None, metrics={'loss': 0.3702628721599095, 'accuracy': 0.8646}, validation_spec=None)
+2026-09-29 19:48:30,801 SUCC cli.py:65 -- ------------------------------------------
+2026-09-29 19:48:30,801 SUCC cli.py:66 -- Job 'rayjob-pytorch-mnist-5s4p4' succeeded
+2026-09-29 19:48:30,801 SUCC cli.py:67 -- ------------------------------------------</code></pre>
+<p>For more ready-to-use examples, see the<a href="https://github.com/ray-project/kuberay/tree/master/ray-operator/config/samples"> KubeRay sample configurations</a> for RayCluster, RayJob, RayService, and RayCronJob. Enjoy running Ray on Kubernetes with KubeRay!</p>
+<h2>LinkJoin the Ray community</h2>
+<p>KubeRay is built in the open. Connect with the community, share feedback, and contribute:</p>
+<ul><li><strong>Ask questions</strong> in the #kuberay channel on the<a href="https://www.ray.io/join-slack"> Ray Slack workspace</a>.</li><li><strong>Meet the community </strong>at the bi-weekly KubeRay community meeting. You can find the schedule on the<a href="https://zoom-lfx.platform.linuxfoundation.org/meetings/ray?view=month"> Ray/KubeRay LFX calendar</a>.</li><li><strong>Help shape the roadmap</strong> by sharing your feature requests and feedback on<a href="https://github.com/ray-project/kuberay/issues/2999"> kuberay#2999</a>.</li></ul>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/kuberay#what-is-kuberay">What is KubeRay</a></li><li><a href="https://www.anyscale.com/blog/kuberay#before-and-after-kuberay">Before and after KubeRay</a></li><li><a href="https://www.anyscale.com/blog/kuberay#where-kuberay-fits-between-ray-and-kubernetes">Where KubeRay fits between Ray and Kubernetes</a></li><li><a href="https://www.anyscale.com/blog/kuberay#what-kuberay-provides">What KubeRay provides</a></li><li><a href="https://www.anyscale.com/blog/kuberay#key-features">Key features</a></li><li><a href="https://www.anyscale.com/blog/kuberay#how-to-deploy-kuberay">How to deploy KubeRay</a></li><li><a href="https://www.anyscale.com/blog/kuberay#join-the-ray-community">Join the Ray community</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="Science of Robot Decisions"></p>
+<h4>Scaling the Science of Robot Decisions with Ray on Anyscale</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/12RnheyyoRcbiqT3JkFsEU/10457e67286ef0dd8c471c7ff0574fd9/High-Performance_LLM_Serving_for_Coding_Agents.png?w=140" alt="High-Performance LLM Serving for Coding Agents"></p>
+<h4>Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5AYtztHohlsfydESbYyul8/5e0c143c1eef57f387cfe4671fa011e6/Anyscale_on_Azure_is_Generally_Available_-_Enabling_Enterprises_to_Own_the_Full_AI_Loop__Not_Just_Inference.png?w=140" alt="Anyscale on Azure is Generally Available - Enabling Enterprises to Own the Full AI Loop, Not Just Inference"></p>
+<h4>Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Scaling the Science of Robot Decisions with Ray on Anyscale</title>
       <link>https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale</link>
@@ -5398,66 +5505,6 @@ def train_loop_per_worker(config: dict):
 <p>Sign up now for<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> Anyscale endpoints</a> and get started fast or<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> contact sales</a> if you are looking for a comprehensive overview of the Anyscale platform.</p>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#key-takeaways">Key Takeaways</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#heterogeneous-training-cluster-with-ray-at-netflix">Heterogeneous Training Cluster with Ray at Netflix</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#understanding-heterogeneous-training-clusters">Understanding Heterogeneous Training Clusters</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#the-role-of-personalization-in-netflix">The Role of Personalization in Netflix</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#machine-learning-workloads">Machine Learning Workloads</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#efficient-computation-and-gpu-utilization">Efficient Computation and GPU Utilization</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#data-storage-and-management">Data Storage and Management</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#resource-allocation-and-scheduling">Resource Allocation and Scheduling</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#challenges-and-future-directions">Challenges and Future Directions</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#conclusion">Conclusion</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Practical Data Considerations for Building Production-Ready…</title>
-      <link>https://anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications?li=1</guid>
-      <pubDate>Thu, 19 Oct 2023 00:00:00 +0000</pubDate>
-      <description>Full title: Practical Data Considerations for Building Production-Ready LLM Applications</description>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>Practical Data Considerations for Building Production-Ready LLM Applications</h1>
-<p>By</p>
-<p>Anyscale Ray Team</p>
-<p>|</p>
-<p>October 19, 2023</p>
-<p>Update June 2024: Anyscale Endpoints (Anyscale's LLM API Offering) and Private Endpoints (self-hosted LLMs) are now available as part of the Anyscale Platform. Click <a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">here</a> to get started on the Anyscale platform.</p>
-<p><em>This blog post is part of the Ray Summit 2023 highlights series where we provide a summary of the most exciting talk from our recent LLM developer conference.</em></p>
-<p><em>Disclaimer: Summary was AI generated with human edits from video transcript.</em></p>
-<h2>LinkKey Takeaways</h2>
-<p>Building production-ready LLM (Large Language Model) applications involves practical data considerations that can significantly impact performance. This blog post explores key data-related aspects discussed in a recent presentation, including metadata integration, hierarchical retrieval, fine-tuning, and optimization.</p>
-<ul><li>Retrieval augmented generation (RAG) uses large language models (LLMs) to generate text by retrieving and summarizing relevant information. However, naive implementations can result in poor quality responses due to bad retrieval.</li><li>Some common retrieval issues are: low precision (irrelevant chunks retrieved), low recall (missing key context), outdated/redundant data. Non-quality issues include scalability and handling document updates.</li><li>Techniques to improve retrieval:Embed at sentence-level, retrieve sentences, expand to context window for LMEmbed &quot;references&quot; instead of raw text chunks (summaries, metadata, etc)Add metadata (page numbers, summaries, etc) to aid retrieval and synthesisHierarchical retrieval (top-level summary -&gt; lower chunks)Recursive retrieval for embedded objects (tables, graphs, etc)</li><li>Evaluating retrieval: Use GPT-4 to generate question-chunk pairs from documents as ground truth. Measure retrieval ranking metrics like MRR.</li><li>Addressing scalability: Use parallelization with Ray to speed up data ingestion, embedding, etc.</li></ul>
-<h2>LinkPractical Data Considerations for Building Production-Ready LLM Applications</h2>
-<p>Large Language Models (LLMs) have revolutionized various aspects of natural language processing, enabling applications like chatbots, content generation, and question-answering systems. However, the journey from building a simple prototype to creating a production-ready LLM application involves several practical data considerations. In this blog post, we will delve into the insights shared in a recent presentation on &quot;Practical Data Considerations for Building Production-Ready LLM Applications.&quot; We will explore key topics, including metadata integration, hierarchical retrieval, fine-tuning, and optimization.</p>
-<h2>LinkThe Importance of Data in LLM Applications</h2>
-<p>LLMs like GPT-4 have an impressive capacity to understand and generate human-like text. However, the quality of their output depends significantly on the data provided to them. Practical data considerations are essential for enhancing an LLM's performance and relevance in real-world applications.</p>
-<h2>LinkMetadata Integration: Enhancing Context</h2>
-<p>One of the first considerations discussed in the presentation is metadata integration. Metadata refers to additional information about the text, such as page numbers, document titles, and even structured data like tables or graphs. Integrating metadata into your LLM application has several advantages:</p>
-<ol><li><strong>Improved Retrieval</strong>: Metadata can aid in both retrieval and synthesis. By including metadata filters in your search, you can retrieve more relevant content. For example, if you're looking for information within a specific time frame, metadata tags can help narrow down your search results.</li></ol>
-<ol><li><strong>Context Enhancement</strong>: Metadata enriches the context provided to the LLM. It helps the model understand the content better, enabling it to generate more coherent and relevant responses. For example, if you add page numbers as metadata, your LLM can provide in-text citations, enhancing the credibility of the information it generates.</li></ol>
-<p>Metadata integration can be a valuable asset in building production-ready LLM applications, but it's crucial to strike a balance to prevent overwhelming the system with excessive metadata.</p>
-<h2>LinkHierarchical Retrieval: Navigating Context Window Limitations</h2>
-<p>LLMs often have limitations on the number of tokens they can handle in a single context window. This limitation can be a challenge when dealing with lengthy documents or when needing to access information across multiple sections. To overcome these limitations, hierarchical retrieval is introduced.</p>
-<p><strong>Hierarchical Retrieval</strong>: This approach involves organizing documents and their content hierarchically. For example, documents can be summarized at a higher level before drilling down to specific sections or paragraphs. This approach can be effective in addressing the context window limitation.</p>
-<p><strong>Recursive Retrieval</strong>: In some cases, documents may contain embedded objects such as tables or graphs. These objects can be represented as separate entities, allowing for recursive retrieval. The LLM can start with an overview, retrieve relevant objects, and then dive deeper to access specific information within those objects. This hierarchical and recursive retrieval process provides a more efficient means of accessing and presenting information, especially when dealing with complex documents.</p>
-<h2>LinkFine-Tuning for Specific Applications</h2>
-<p>Fine-tuning LLMs is a critical step in making them suitable for specific applications. The presentation highlighted the importance of fine-tuning, particularly for models like GPT-4 that have the potential to generate high-quality text. While fine-tuning can significantly improve performance, it requires expertise and careful consideration.</p>
-<p><strong>Customized Training Data</strong>: Fine-tuning involves training the LLM on a specific dataset tailored to the application's requirements. This process can be resource-intensive, as it may involve collecting, cleaning, and annotating a substantial amount of data. However, the results often justify the effort.</p>
-<p><strong>Enhancing Relevance</strong>: Fine-tuning allows you to adjust the LLM's behavior to ensure that it generates contextually relevant responses. For example, in a medical chatbot application, fine-tuning can make the model more accurate in providing medical information and responding to user queries.</p>
-<p><strong>Monitoring and Iteration</strong>: Fine-tuning is not a one-time process. It requires ongoing monitoring and iteration to maintain the model's performance. Regularly updating the fine-tuned model with new data helps it adapt to changing contexts and evolving user needs.</p>
-<h2>LinkOptimization Strategies for Scalability</h2>
-<p>Scalability is a crucial factor in deploying production-ready LLM applications. The ability to handle large volumes of data and deliver results efficiently is essential for success. The presentation outlined several optimization strategies to ensure scalability:</p>
-<p><strong>Parallelization</strong>: Processing large volumes of data can be time-consuming. Utilizing parallelization techniques, such as distributing data processing tasks across multiple resources using Ray, can significantly speed up data ingestion, parsing, and embedding.</p>
-<p><strong>Caching</strong>: Caching frequently accessed data can reduce the need for repeated retrieval and processing, leading to faster response times. Implementing an efficient caching system can be a valuable optimization step.</p>
-<p><strong>Distributed Data Storage</strong>: Storing data in distributed systems, such as vector databases, can improve retrieval performance. It allows for efficient querying and retrieval of relevant information, enhancing the overall user experience.</p>
-<h2>LinkConclusion</h2>
-<p>Building production-ready LLM applications is a multi-faceted process that requires careful consideration of practical data aspects. Metadata integration, hierarchical retrieval, fine-tuning, and optimization play pivotal roles in ensuring that LLMs provide accurate, relevant, and efficient responses.</p>
-<p>As LLM technology continues to advance, the ability to harness these practical data considerations becomes even more critical. By implementing these strategies, developers can create LLM applications that excel in a wide range of domains, from healthcare and finance to education and customer support.</p>
-<p>In the ever-evolving landscape of natural language processing, mastering the art of practical data considerations using RAG techniques is the key to building LLM applications that truly shine in production environments.</p>
-<p>Sign up now for<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> Anyscale endpoints</a> and get started fast or<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> contact sales</a> if you are looking for a comprehensive overview of the Anyscale platform.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications#key-takeaways">Key Takeaways</a></li><li><a href="https://www.anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications#practical-data-considerations-for-building-production-ready-llm-applications">Practical Data Considerations for Building Production-Ready LLM Applications</a></li><li><a href="https://www.anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications#the-importance-of-data-in-llm-applications">The Importance of Data in LLM Applications</a></li><li><a href="https://www.anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications#metadata-integration:-enhancing-context">Metadata Integration: Enhancing Context</a></li><li><a href="https://www.anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications#hierarchical-retrieval:-navigating-context-window-limitations">Hierarchical Retrieval: Navigating Context Window Limitations</a></li><li><a href="https://www.anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications#fine-tuning-for-specific-applications">Fine-Tuning for Specific Applications</a></li><li><a href="https://www.anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications#optimization-strategies-for-scalability">Optimization Strategies for Scalability</a></li><li><a href="https://www.anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications#conclusion">Conclusion</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>

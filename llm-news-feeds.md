@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-15 09:18:47**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-15 23:52:40**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,12 +26,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [Uber 的 CISO 谈如何为 AI 搭建内部威胁防控体系](https://claude.com/resources/articles/uber-s-ciso-on-building-an-insider-threat-program-for-ai)（2026-10-13）
-  2. [用 Claude 搭建实时 dashboard 与动画讲解](https://claude.com/resources/articles/dashboards-and-motion)（2026-10-08）
-  3. [构建有效的代理自动化](https://claude.com/resources/articles#d-2026-10-08-1)（2026-10-08）
-  4. [Block 如何跨数千个 pull request 编排 Claude Fable](https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests)（2026-10-08）
-  5. [Claude Haiku 5.5](https://claude.com/resources/articles#d-2026-10-07-3)（2026-10-07）
-  - 📄 完整文章归档（共 93 篇）：[anthropic.md](llm-news/anthropic.md)
+  1. [Code Review is now generally available](https://claude.com/resources/articles/code-review-is-now-generally-available)（2026-10-15）
+  2. [Agent observability on the Claude Platform](https://claude.com/resources/articles/agent-observability-on-the-claude-platform)（2026-10-14）
+  3. [Uber 的 CISO 谈如何为 AI 搭建内部威胁防控体系](https://claude.com/resources/articles/uber-s-ciso-on-building-an-insider-threat-program-for-ai)（2026-10-13）
+  4. [用 Claude 搭建实时 dashboard 与动画讲解](https://claude.com/resources/articles/dashboards-and-motion)（2026-10-08）
+  5. [构建有效的代理自动化](https://claude.com/resources/articles#d-2026-10-08-1)（2026-10-08）
+  - 📄 完整文章归档（共 95 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### OpenAI (openai)
 - 页面：[官方博客](https://openai.com/blog)
@@ -40,12 +40,12 @@
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [RSS/Atom 订阅源](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [Higgsfield 把 AI 视频从 1 分钟做到 10 分钟以上](https://openai.com/index/higgsfield-longer-videos-voice)（2026-10-13）
-  2. [Sophos 借助 OpenAI Daybreak 将威胁调查时间缩短 96%](https://openai.com/index/sophos)（2026-10-09）
-  3. [Asana 用 GPT-6.1 Sol 在浏览器测试中将模型成本降低 76 倍](https://openai.com/index/asana-browser-agent)（2026-10-09）
-  4. [Oracle 如何借助 ChatGPT 和 Codex 将数天的工作缩短至几分钟](https://openai.com/index/oracle)（2026-10-08）
-  5. [Pollo AI 借助 OpenAI 将创意转化为广告](https://openai.com/index/pollo-ai)（2026-10-08）
-  - 📄 完整文章归档（共 1287 篇）：[openai.md](llm-news/openai.md)
+  1. [Bringing GPT-Rosalind to academic research labs](https://openai.com/index/introducing-the-rosalind-academic-plan)（2026-10-15）
+  2. [Teaching students to think and learn through questions](https://openai.com/index/teaching-students-to-think-and-learn-through-questions)（2026-10-15）
+  3. [Amp puts AI agents to work beyond code with OpenAI models](https://openai.com/index/amp-beyond-coding)（2026-10-14）
+  4. [SentinelOne cuts malware analysis from weeks to hours](https://openai.com/index/sentinelone)（2026-10-14）
+  5. [How Third Moment Research runs 10,000 agents for 36+ hours](https://openai.com/index/third-moment-research)（2026-10-14）
+  - 📄 完整文章归档（共 1294 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (Google AI Studio) (google_gemini)
 - 页面：[变更日志](https://ai.google.dev/gemini-api/docs/changelog)
@@ -71,7 +71,7 @@
   3. [DeepSeek-V4-Flash-Vision-Exp 发布](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-21)（2026-08-21）
   4. [V4-Flash-Vision-Exp 上线，开启多模态 API 服务](https://api-docs.deepseek.com/zh-cn/news/news260821)（2026-08-21）
   5. [DeepSeek-V4-Pro 更新](https://api-docs.deepseek.com/zh-cn/updates/#%E6%97%B6%E9%97%B4-2026-08-13)（2026-08-13）
-  - 📄 完整文章归档（共 42 篇）：[deepseek.md](llm-news/deepseek.md)
+  - 📄 完整文章归档（共 46 篇）：[deepseek.md](llm-news/deepseek.md)
 
 ### 通义千问 (阿里云) (aliyun_qwen)
 - 页面：[研究页](https://qwen.ai/research)
@@ -114,12 +114,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xai_grok.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [X 订阅简介](https://x.ai/news/x-subscription)（2026-10-12）
-  2. [团队机器人：共享人工智能队友，边工作边学习](https://x.ai/news/team-bots)（2026-09-28）
-  3. [SpaceXAI 如何用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22）
-  4. [介绍 Grok 4.7](https://x.ai/news/grok-4-7)（2026-09-21）
-  5. [介绍 Grok Voice Transcribe 2.0](https://x.ai/news/grok-voice-transcribe-2)（2026-09-18）
-  - 📄 完整文章归档（共 112 篇）：[xai_grok.md](llm-news/xai_grok.md)
+  1. [Introducing Grok Voice 3.0](https://x.ai/news/grok-voice-3)（2026-10-14）
+  2. [X 订阅简介](https://x.ai/news/x-subscription)（2026-10-12）
+  3. [团队机器人：共享人工智能队友，边工作边学习](https://x.ai/news/team-bots)（2026-09-28）
+  4. [SpaceXAI 如何用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22）
+  5. [介绍 Grok 4.7](https://x.ai/news/grok-4-7)（2026-09-21）
+  - 📄 完整文章归档（共 113 篇）：[xai_grok.md](llm-news/xai_grok.md)
 
 ### MiniMax (稀宇科技) (minimax)
 - 页面：[更新日志](https://platform.minimax.cn/docs/release-notes/models)
@@ -142,12 +142,12 @@
   - 📡 RSS/Atom：https://mistral.ai/news/rss
 - 📡 [RSS/Atom 订阅源](https://mistral.ai/news/rss)：`https://mistral.ai/news/rss`
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [推出 Mistral Large 4](https://mistral.ai/news/mistral-large-4/)（2026-10-06）
-  2. [你好，德国！](https://mistral.ai/news/hallo-deutschland/)（2026-09-28）
-  3. [Mistral 与 Mozilla 把开放、私密、多语言的 AI 带进你的浏览器](https://mistral.ai/news/mistral-x-mozilla/)（2026-09-16）
-  4. [Cloudera 与 Mistral 合作，为企业数据带来专业化、主权的智能](https://mistral.ai/news/mistral-x-cloudera/)（2026-09-10）
-  5. [用 AI Agent 现代化复杂遗留代码](https://mistral.ai/news/legacy-code-modernization/)（2026-09-09）
-  - 📄 完整文章归档（共 89 篇）：[mistral.md](llm-news/mistral.md)
+  1. [Introducing Timestral](https://mistral.ai/news/timestral/)（2026-10-15）
+  2. [推出 Mistral Large 4](https://mistral.ai/news/mistral-large-4/)（2026-10-06）
+  3. [你好，德国！](https://mistral.ai/news/hallo-deutschland/)（2026-09-28）
+  4. [Mistral 与 Mozilla 把开放、私密、多语言的 AI 带进你的浏览器](https://mistral.ai/news/mistral-x-mozilla/)（2026-09-16）
+  5. [Cloudera 与 Mistral 合作，为企业数据带来专业化、主权的智能](https://mistral.ai/news/mistral-x-cloudera/)（2026-09-10）
+  - 📄 完整文章归档（共 90 篇）：[mistral.md](llm-news/mistral.md)
 
 ### Groq Cloud (LPU 推理) (groq)
 - 页面：[变更日志](https://console.groq.com/docs/changelog.md)
@@ -171,11 +171,11 @@
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xiaomi_mimo.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xiaomi_mimo.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
   1. [2026-09-22 MiMo-V2.6 系列发布](https://mimo.mi.com/docs/zh-CN/updates/model#2026-09-22-mimo-v26-%E7%B3%BB%E5%88%97%E5%8F%91%E5%B8%83)（2026-09-22）
-  2. [2026-9-22 批量推理（Batch API）功能上线](https://mimo.mi.com/docs/zh-CN/updates/feature/platform#2026-9-22--%E6%89%B9%E9%87%8F%E6%8E%A8%E7%90%86batch-api%E5%8A%9F%E8%83%BD%E4%B8%8A%E7%BA%BF)（2026-09-22）
-  3. [2026-9-15 新增站内信功能](https://mimo.mi.com/docs/zh-CN/updates/feature/platform#2026-9-15--%E6%96%B0%E5%A2%9E%E7%AB%99%E5%86%85%E4%BF%A1%E5%8A%9F%E8%83%BD)（2026-09-15）
-  4. [2026-6-23 支持 OpenAI Responses API](https://mimo.mi.com/docs/zh-CN/updates/feature/platform#2026-6-23-%E6%94%AF%E6%8C%81-openai-responses-api)（2026-06-23）
-  5. [2026-6-11 邀请有礼活动升级](https://mimo.mi.com/docs/zh-CN/updates/feature/platform#2026-6-11-%E9%82%80%E8%AF%B7%E6%9C%89%E7%A4%BC%E6%B4%BB%E5%8A%A8%E5%8D%87%E7%BA%A7)（2026-06-11）
-  - 📄 完整文章归档（共 38 篇）：[xiaomi_mimo.md](llm-news/xiaomi_mimo.md)
+  2. [2026-9-22 批量推理（Batch API） & 团队版 TokenPlan 功能上线](https://mimo.mi.com/docs/zh-CN/updates/feature/platform#2026-9-22--%E6%89%B9%E9%87%8F%E6%8E%A8%E7%90%86batch-api--%E5%9B%A2%E9%98%9F%E7%89%88-tokenplan-%E5%8A%9F%E8%83%BD%E4%B8%8A%E7%BA%BF)（2026-09-22）
+  3. [2026-9-22 批量推理（Batch API）功能上线](https://mimo.mi.com/docs/zh-CN/updates/feature/platform#2026-9-22--%E6%89%B9%E9%87%8F%E6%8E%A8%E7%90%86batch-api%E5%8A%9F%E8%83%BD%E4%B8%8A%E7%BA%BF)（2026-09-22）
+  4. [2026-9-15 新增站内信功能](https://mimo.mi.com/docs/zh-CN/updates/feature/platform#2026-9-15--%E6%96%B0%E5%A2%9E%E7%AB%99%E5%86%85%E4%BF%A1%E5%8A%9F%E8%83%BD)（2026-09-15）
+  5. [2026-6-23 支持 OpenAI Responses API](https://mimo.mi.com/docs/zh-CN/updates/feature/platform#2026-6-23-%E6%94%AF%E6%8C%81-openai-responses-api)（2026-06-23）
+  - 📄 完整文章归档（共 39 篇）：[xiaomi_mimo.md](llm-news/xiaomi_mimo.md)
 
 ### 腾讯云混元 (TokenHub) (tencent_hunyuan)
 - 页面：[更新日志](https://cloud.tencent.com/document/product/1729/97765)
@@ -194,22 +194,22 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [用 LFM2.5-24B-A2B 在端侧运行快速、私密的智能体](https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b)（2026-10-13）
-  2. [面向高影响力的 GPU 集群调度](https://huggingface.co/blog/allenai/impactful-scheduling)（2026-10-09）
-  3. [那个并不存在的模型，于是你自己把它造了出来](https://huggingface.co/blog/building-with-ml-intern)（2026-10-08）
-  4. [推出 Falcon ASR](https://huggingface.co/blog/tiiuae/falcon-asr)（2026-10-07）
-  5. [同一个模型家族，两枚金牌级成绩：为 IOI 与 IMO 微调 Nemotron](https://huggingface.co/blog/nvidia/nemotron-ioi-and-imo-2026)（2026-10-07）
-  - 📄 完整文章归档（共 881 篇）：[huggingface.md](llm-news/huggingface.md)
+  1. [Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint](https://huggingface.co/blog/ibm-granite/granite-switch-4-1)（2026-10-15）
+  2. [Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta](https://huggingface.co/blog/meta-muse-spark-open)（2026-10-15）
+  3. [Welcome FLUX.3 Image Klein in Diffusers](https://huggingface.co/blog/flux-3)（2026-10-15）
+  4. [HiRO-ACEv2: Simulating extreme weather at 3 km resolution for a fraction of the cost](https://huggingface.co/blog/allenai/hiro-acev2)（2026-10-14）
+  5. [用 LFM2.5-24B-A2B 在端侧运行快速、私密的智能体](https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b)（2026-10-13）
+  - 📄 完整文章归档（共 885 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### OpenRouter (模型统一网关) (openrouter)
 - 📡 [RSS/Atom 订阅源](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [ElevenLabs 现已上线 OpenRouter](https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/)（2026-10-07）
-  2. [AI 销售智能体如何帮我们的销售团队每月省下 600 小时](https://openrouter.ai/blog/case-studies/how-an-ai-sales-agent-saved-our-sales-team-600-hours-a-month/)（2026-10-07）
-  3. [AI 代理的服务器端代码执行工具比较](https://openrouter.ai/blog/insights/server-side-code-execution-tools-for-ai-agents-compared/)（2026-10-05）
-  4. [Agent 框架对比：Tool-Calling Schema 的处理](https://openrouter.ai/blog/insights/agent-frameworks-compared-tool-calling-schema-handling/)（2026-10-02）
-  5. [LangChain 对比 CrewAI：编排层与 OpenRouter 原生路由之争](https://openrouter.ai/blog/insights/langchain-vs-crewai-orchestration-compared-to-openrouter-native-routing/)（2026-10-02）
-  - 📄 完整文章归档（共 156 篇）：[openrouter.md](llm-news/openrouter.md)
+  1. [Private Endpoints: Bring Your Fine-Tuned Models and Capacity to OpenRouter](https://openrouter.ai/blog/announcements/private-endpoints/)（2026-10-14）
+  2. [ElevenLabs 现已上线 OpenRouter](https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/)（2026-10-07）
+  3. [AI 销售智能体如何帮我们的销售团队每月省下 600 小时](https://openrouter.ai/blog/case-studies/how-an-ai-sales-agent-saved-our-sales-team-600-hours-a-month/)（2026-10-07）
+  4. [AI 代理的服务器端代码执行工具比较](https://openrouter.ai/blog/insights/server-side-code-execution-tools-for-ai-agents-compared/)（2026-10-05）
+  5. [Agent 框架对比：Tool-Calling Schema 的处理](https://openrouter.ai/blog/insights/agent-frameworks-compared-tool-calling-schema-handling/)（2026-10-02）
+  - 📄 完整文章归档（共 157 篇）：[openrouter.md](llm-news/openrouter.md)
 
 ### Cloudflare Workers AI (cloudflare_workers_ai)
 - 📡 [RSS/Atom 订阅源](https://developers.cloudflare.com/workers-ai/changelog/index.xml)：`https://developers.cloudflare.com/workers-ai/changelog/index.xml`
@@ -226,12 +226,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-cohere.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [Embed 与 Rerank 该用共享推理还是专属推理](https://cohere.com/blog/shared-or-dedicated-inference-for-embed-rerank)（2026-10-09）
-  2. [Cohere 与 PwC 达成合作，加速安全的企业级 AI 落地](https://cohere.com/blog/cohere-and-pwc-partner-to-accelerate-secure-enterprise-ai-adoption)（2026-10-05）
-  3. [推出 Embed 5——新一代前沿 embedding 模型家族](https://cohere.com/blog/embed-5)（2026-09-30）
-  4. [RCP-nDCG@10：一种更完整的衡量检索相关性的方法](https://cohere.com/blog/rcp-ndcg)（2026-09-30）
-  5. [Compass 即将登陆云端](https://cohere.com/blog/compass-cloud-beta)（2026-09-25）
-  - 📄 完整文章归档（共 38 篇）：[cohere.md](llm-news/cohere.md)
+  1. [Cohere to acquire AISLE to advance cyber-resilient sovereign AI](https://cohere.com/blog/cohere-and-aisle-sign-letter-of-intent-to-advance-cyber-resilient-sovereign-ai)（2026-10-15）
+  2. [AI for utilities requires capability and control](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)（2026-10-15）
+  3. [Agent sprawl: How to manage agent proliferation in the enterprise](https://cohere.com/blog/agent-sprawl)（2026-10-15）
+  4. [AI ROI: How enterprises can measure the return on AI investments](https://cohere.com/blog/ai-roi)（2026-10-15）
+  5. [Lessons from scaling teams of coding agents: reach the frontier at 30% of the cost](https://cohere.com/blog/lessons-from-scaling-teams-of-frontier-coding-agents)（2026-10-14）
+  - 📄 完整文章归档（共 44 篇）：[cohere.md](llm-news/cohere.md)
 
 ### 商汤 日日新 (SenseNova) (sensetime_sensenova)
 - 页面：[更新日志](https://www.sensecore.cn/help/docs/model-as-a-service/nova/release)
@@ -298,22 +298,22 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-dataeye.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-dataeye.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [数眼智能完成数千万元天使轮融资，加速企业级大模型部署能力建设](https://www.shuyanai.com/blogs/31)（2026-09-21）
-  2. [数眼智能AI漫剧教程：从脚本、AI生图到Seedance 2.5生视频](https://www.shuyanai.com/blogs/30)（2026-09-17）
-  3. [数眼智能 AI 视频生成教程：如何用智能体生成第一条视频？](https://www.shuyanai.com/blogs/29)（2026-09-16）
-  4. [数眼智能在海南数据谷OPC社区揭牌现场｜把 Token 级算力，送到每一个 AI 超级个体手里](https://www.shuyanai.com/blogs/28)（2026-09-16）
-  5. [以知识产权为纽带，推动技术与场景高效衔接](https://www.shuyanai.com/blogs/26)（2026-09-15）
-  - 📄 完整文章归档（共 16 篇）：[dataeye.md](llm-news/dataeye.md)
+  1. [从开发验证到核心生产：数眼智能如何以 ≧99.95% 可用率与多级 SLA 通道护航企业 AI 业务？](https://www.shuyanai.com/blogs/32)（2026-10-15）
+  2. [数眼智能完成数千万元天使轮融资，加速企业级大模型部署能力建设](https://www.shuyanai.com/blogs/31)（2026-09-21）
+  3. [数眼智能AI漫剧教程：从脚本、AI生图到Seedance 2.5生视频](https://www.shuyanai.com/blogs/30)（2026-09-17）
+  4. [数眼智能 AI 视频生成教程：如何用智能体生成第一条视频？](https://www.shuyanai.com/blogs/29)（2026-09-16）
+  5. [数眼智能在海南数据谷OPC社区揭牌现场｜把 Token 级算力，送到每一个 AI 超级个体手里](https://www.shuyanai.com/blogs/28)（2026-09-16）
+  - 📄 完整文章归档（共 17 篇）：[dataeye.md](llm-news/dataeye.md)
 
 ### Amazon Bedrock (AWS Free Tier) (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [用 Anchor Browser 与 AgentCore payments 构建能完成交易的智能体](https://aws.amazon.com/blogs/machine-learning/building-agents-that-transact-with-anchor-browser-and-agentcore-payments/)（2026-10-13）
-  2. [用 managed entitlements 管理 Amazon Bedrock 的 private pricing offer](https://aws.amazon.com/blogs/machine-learning/manage-private-pricing-offers-for-amazon-bedrock-with-managed-entitlements/)（2026-10-13）
-  3. [Orca Security 用 Amazon Bedrock 实现自然语言安全查询](https://aws.amazon.com/blogs/machine-learning/natural-language-security-queries-at-orca-security-using-amazon-bedrock/)（2026-10-13）
-  4. [ShipStation Global 如何在 Amazon Bedrock AgentCore 上搭建 AI IT 服务台](https://aws.amazon.com/blogs/machine-learning/how-shipstation-global-built-an-ai-it-help-desk-on-amazon-bedrock-agentcore/)（2026-10-13）
-  5. [用 Amazon Bedrock 上的 Grok 4.7 构建长程任务智能体](https://aws.amazon.com/blogs/machine-learning/build-long-horizon-agents-with-grok-4-7-on-amazon-bedrock/)（2026-10-13）
-  - 📄 完整文章归档（共 78 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
+  1. [Meta’s Muse Spark Open now available in Amazon SageMaker JumpStart](https://aws.amazon.com/blogs/machine-learning/metas-muse-spark-open-now-available-in-amazon-sagemaker-jumpstart/)（2026-10-15）
+  2. [Trust in Depth: Giving agents more autonomy without losing control](https://aws.amazon.com/blogs/machine-learning/trust-in-depth-giving-agents-more-autonomy-without-losing-control/)（2026-10-15）
+  3. [Build self-improving document processing using Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/build-self-improving-document-processing-using-amazon-bedrock-agentcore/)（2026-10-14）
+  4. [Generate presentations with Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/generate-presentations-with-amazon-bedrock-agentcore/)（2026-10-14）
+  5. [How Tamnoon built AI-powered cloud security remediation with Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/how-tamnoon-built-ai-powered-cloud-security-remediation-with-amazon-bedrock/)（2026-10-14）
+  - 📄 完整文章归档（共 84 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (晶圆级推理) (cerebras)
 - 页面：[官方博客](https://www.cerebras.ai/blog)
@@ -330,12 +330,12 @@
 ### Together AI (together_ai)
 - 📡 [RSS/Atom 订阅源](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [与 IBM Cloud 和 NVIDIA 合作，扩展我们的企业推理容量](https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia)（2026-10-06）
-  2. [Together Link：在你已在用的 harness 中用上前沿品质的开放模型](https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use)（2026-10-05）
-  3. [花 17 美元训练你自己的 Jev](https://www.together.ai/blog/how-to-train-your-own-jev)（2026-09-23）
-  4. [金丝雀发布：在生产环境中零停机升级模型](https://www.together.ai/blog/canary-rollouts-upgrade-models-in-production-without-downtime)（2026-09-22）
-  5. [一家全球金融科技公司如何用 Dedicated Model Inference 扩展编码 Agent 流量](https://www.together.ai/blog/global-fintech-scales-coding-agent-traffic-with-dedicated-model-inference)（2026-09-18）
-  - 📄 完整文章归档（共 83 篇）：[together_ai.md](llm-news/together_ai.md)
+  1. [Meta Muse Spark Open is live on Together AI](https://www.together.ai/blog/meta-muse-spark-open)（2026-10-15）
+  2. [与 IBM Cloud 和 NVIDIA 合作，扩展我们的企业推理容量](https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia)（2026-10-06）
+  3. [Together Link：在你已在用的 harness 中用上前沿品质的开放模型](https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use)（2026-10-05）
+  4. [花 17 美元训练你自己的 Jev](https://www.together.ai/blog/how-to-train-your-own-jev)（2026-09-23）
+  5. [金丝雀发布：在生产环境中零停机升级模型](https://www.together.ai/blog/canary-rollouts-upgrade-models-in-production-without-downtime)（2026-09-22）
+  - 📄 完整文章归档（共 84 篇）：[together_ai.md](llm-news/together_ai.md)
 
 ### Fireworks AI (fireworks_ai)
 - 页面：[官方博客](https://fireworks.ai/blog)
@@ -354,12 +354,12 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [决策模型：AI 智能体的快速层](https://deepinfra.com/blog/decision-models-ai-agent-infrastructure)（2026-10-13）
-  2. [最佳 Qwen3.8-27B 推理提供商（2026）](https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers)（2026-10-10）
-  3. [Qwen3.8-27B：前沿级视觉语言 AI](https://deepinfra.com/blog/qwen3-8-27b)（2026-10-09）
-  4. [Qwen3.8-27B API 提供商基准测试：速度与成本](https://deepinfra.com/blog/qwen3-8-27b-api-provider-benchmarks)（2026-10-07）
-  5. [2026 年最佳 GLM-5.3 API 提供商](https://deepinfra.com/blog/best-glm-5-3-api-providers)（2026-10-06）
-  - 📄 完整文章归档（共 30 篇）：[deepinfra.md](llm-news/deepinfra.md)
+  1. [TypeSafe Jev Review: Testing 5 Jobs on a Non-Chat Model](https://deepinfra.com/blog/typesafe-jev-review)（2026-10-15）
+  2. [AI Spend Audit: How to Reduce Costs With Open Models](https://deepinfra.com/blog/ai-spend-audit-open-models)（2026-10-15）
+  3. [From Screenshots to Tool Calls: NVIDIA Nemotron 3.5 Super VL on DeepInfra](https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release)（2026-10-15）
+  4. [Western Open-Weight Models: Beam and Le Chonk](https://deepinfra.com/blog/western-open-weight-models-beam-le-chonk)（2026-10-14）
+  5. [决策模型：AI 智能体的快速层](https://deepinfra.com/blog/decision-models-ai-agent-infrastructure)（2026-10-13）
+  - 📄 完整文章归档（共 34 篇）：[deepinfra.md](llm-news/deepinfra.md)
 
 ### Modular (原 BentoCloud/BentoML) (modular_cloud)
 - 📡 [RSS/Atom 订阅源](https://www.modular.com/blog/rss.xml)：`https://www.modular.com/blog/rss.xml`
@@ -376,12 +376,12 @@
   - 🔌 官方未提供 RSS/Atom 订阅源，条目取自官方数据接口
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-ai21_labs.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [智能体设计的可验证性试金石](https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/)（2026-10-06）
-  2. [从人工协商到自动调度：AI21 如何用 Kueue 管理其 GPU 集群](https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/)（2026-10-04）
-  3. [你不需要前沿模型，你需要一个校验器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19）
-  4. [更强也更省：开源模型探索，前沿模型收尾](https://www.ai21.com/blog/better-and-cheaper-together-open-models-explore-frontier-models-patch/)（2026-07-15）
-  5. [用预算感知的执行策略改进 SWE Agent 的 Best-of-N](https://www.ai21.com/blog/improving-best-of-n-with-budget-aware-execution-for-swe-agents/)（2026-07-07）
-  - 📄 完整文章归档（共 68 篇）：[ai21_labs.md](llm-news/ai21_labs.md)
+  1. [AI21 Partners with Gong, Deel and Alice to Post-Train Specialized Models on NVIDIA Nemotron 3.5 Super VL](https://www.ai21.com/blog/ai21-post-trains-nvidia-nemotron-35-super-vl/)（2026-10-15）
+  2. [The hidden mismatch: Evaluating coding agents on the work developers actually do](https://www.ai21.com/blog/evaluating-coding-agents-on-the-work-developers-actually-do/)（2026-10-14）
+  3. [智能体设计的可验证性试金石](https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/)（2026-10-06）
+  4. [从人工协商到自动调度：AI21 如何用 Kueue 管理其 GPU 集群](https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/)（2026-10-04）
+  5. [你不需要前沿模型，你需要一个校验器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19）
+  - 📄 完整文章归档（共 70 篇）：[ai21_labs.md](llm-news/ai21_labs.md)
 
 ### Jina AI (Reader / Embeddings / Reranker) (jina_ai)
 - 页面：[官方博客](https://jina.ai/news/)
@@ -409,24 +409,24 @@
 ### Anyscale (anyscale)
 - 📡 [RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [在 Anyscale 上用 Ray 扩展机器人决策研究的规模](https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale)（2026-10-09）
-  2. [编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08）
-  3. [Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理](https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai)（2026-10-07）
-  4. [Ray Summit 2026：物理 AI、RL，以及承载它们的一切基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
-  5. [将 Ray 的 AI 工作负载扩展至 10k 节点集群](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25）
-  - 📄 完整文章归档（共 77 篇）：[anyscale.md](llm-news/anyscale.md)
+  1. [Running Ray at scale on Kubernetes with KubeRay](https://anyscale.com/blog/kuberay)（2026-10-15）
+  2. [在 Anyscale 上用 Ray 扩展机器人决策研究的规模](https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale)（2026-10-09）
+  3. [编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08）
+  4. [Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理](https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai)（2026-10-07）
+  5. [Ray Summit 2026：物理 AI、RL，以及承载它们的一切基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
+  - 📄 完整文章归档（共 78 篇）：[anyscale.md](llm-news/anyscale.md)
 
 ### InceptionLabs (inception_labs)
 - 页面：[官方博客](https://www.inceptionlabs.ai/blog)
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-inception_labs.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-inception_labs.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-15，标题自动汉化）：
-  1. [Mercury Voice 发布](https://www.inceptionlabs.ai/blog/introducing-mercury-voice)（2026-10-01）
-  2. [Mercury 2.5 简介](https://www.inceptionlabs.ai/blog/introducing-mercury-2-5)（2026-09-24）
-  3. [Mercury 2 用于搜索：快到一次查询可以跑上百次](https://www.inceptionlabs.ai/blog/mercury-2-for-search)
-  4. [更多开发者。更高吞吐。更好的 Mercury 2。](https://www.inceptionlabs.ai/blog/mercury-2-10x-free-tokens)
-  5. ['Mercury 2：第一个快到能接起电话的推理模型'](https://www.inceptionlabs.ai/blog/mercury-2-the-first-reasoning-model-fast-enough-to-pick-up-the-phone)
-  - 📄 完整文章归档（共 13 篇）：[inception_labs.md](llm-news/inception_labs.md)
+  1. [Mercury 2 Named to TIME’s Best Inventions of 2026|Read the story](https://www.inceptionlabs.ai/blog/mercury-2-named-to-time-s-best-inventions-of-2026)（2026-10-15）
+  2. [Mercury Voice 发布](https://www.inceptionlabs.ai/blog/introducing-mercury-voice)（2026-10-01）
+  3. [Mercury 2.5 简介](https://www.inceptionlabs.ai/blog/introducing-mercury-2-5)（2026-09-24）
+  4. [Mercury 2 用于搜索：快到一次查询可以跑上百次](https://www.inceptionlabs.ai/blog/mercury-2-for-search)
+  5. [更多开发者。更高吞吐。更好的 Mercury 2。](https://www.inceptionlabs.ai/blog/mercury-2-10x-free-tokens)
+  - 📄 完整文章归档（共 14 篇）：[inception_labs.md](llm-news/inception_labs.md)
 
 ### Inference.net (inference_net)
 - 页面：[官方博客](https://inference.net/blog/)

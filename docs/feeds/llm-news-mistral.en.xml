@@ -7,7 +7,69 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-mistral.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Tue, 06 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Introducing Timestral</title>
+      <link>https://mistral.ai/news/timestral/</link>
+      <guid isPermaLink="true">https://mistral.ai/news/timestral/?li=1</guid>
+      <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Introducing Timestral</h1>
+<p>October 15, 2026</p>
+<p>By Mistral</p>
+<p>7 min read</p>
+<p>Copy url to clipboardCopied</p>
+<p>Thinking</p>
+<p>Summary</p>
+<p>Timestral, Mistral’s first family of time-series foundation models, delivers state-of-the-art probabilistic, multivariate forecasts with just 209M parameters, outperforming larger models on key benchmarks while supporting past and future covariates. Available in four sizes (5M to 209M parameters), it balances accuracy and efficiency, running efficiently on CPUs and excelling in zero-shot forecasting for diverse domains. The model combines synthetic pre-training, covariate-aware attention, and long-context learning, with fine-tuning options for domain adaptation via Mistral Forge.</p>
+<p>Today, we’re releasing Timestral, our first family of time-series foundation models. Our largest model, at just 209M parameters, ranks first on all three of the field's main public benchmarks, GIFT-Eval, TIME, and fev-bench, outperforming the previous state of the art with only two-thirds of the model parameters.</p>
+<p>Timestral delivers probabilistic, multivariate forecasts and supports past-only and known-future covariates. Our family of models sits on the Pareto front of forecasting accuracy versus model size, delivering leading performance at each size. Results have been submitted to the GIFT-Eval and TIME leaderboards.</p>
+<h2>Time Series Foundation Models (TSFM)</h2>
+<p>Time series is one of the most common data types in enterprise, from sensor telemetry to observability metrics. Forecasts built on it drive decisions in capacity planning, energy, supply chains, risk and maintenance.</p>
+<p>Industrial plants forecast process sensors against the production schedule, catch equipment drift before it fails, and plan capacity and spare parts across thousands of assets. Finance teams forecast flows, volumes, and volatility to inform positions, hedging, and treasury across thousands of accounts.</p>
+<p>Classical models such as ARIMA and linear regression remain well-established tools for forecasting time series. These models are usually fitted to a single series and learn only from that series' history.</p>
+<p>Deep learning models such as PatchTST add the capacity to learn nonlinear patterns across many related series, but they are still typically trained from scratch on each dataset, so what they learn doesn't carry over to new domains.</p>
+<p>Time series foundation models bring the pre-training approach to time series. Trained on a large and diverse corpus, our model learns patterns that transfer across series, forecasting zero-shot on data it has never seen, even in domains where data is scarce.</p>
+<h2>Benchmark Results</h2>
+<p>We evaluated Timestral on the three main public forecasting benchmarks: GIFT-Eval, TIME and fev-bench. Among pre-trained, zero-shot models, it ranks first across all five metrics. These results come from a single checkpoint, without ensembling.</p>
+<p><em>GIFT-Eval, top ten of 83 comparable pretrained and zero-shot entries. Lower is better.</em></p>
+<p><em>TIME, top ten of the 35 leaderboard entries. Lower is better on both metrics.</em></p>
+<p><img src="https://mistral.ai/_astro/SQL%20skill%20score_23fQVS.webp?dpl=6ad0e5b5d7cab4f179ee3d92" alt="None"></p>
+<p><em>fev-bench, top ten of the 37 leaderboard entries, by SQL skill score. Higher is better.</em></p>
+<h2>Family of models optimised for every specification</h2>
+<p>Timestral has been optimised as a family of four models: 5M, 28M, 123M and 209M parameters. The larger models improve forecast performance, while the smaller ones are faster and cheaper. All four share the same architecture and training recipe. Every size sits on the Pareto front of accuracy versus model size: for each model size, no public model forecasts better.</p>
+<p><em>Score vs model size on GIFT-Eval, TIME and fev-bench (shown as 1 − skill score). Lower is better. Our 28M model beats Chronos-2, about four times larger, on GIFT-Eval and TIME. Our 209M model beats TimesFM-3 and Falcon-2.0 with fewer parameters.</em></p>
+<p>Timestral does not need a GPU at inference. On a standard server CPU with 8 threads, forecasting one day ahead from three weeks of 15-minute history takes 10 ms with the 5M model and 140 ms with the 209M model. Smaller models trade some accuracy for speed: the 28M model is five times faster than the 209M model, and the 123M model comes within 0.2% of the 209M score at three quarters of its latency.</p>
+<h2>An industrial example</h2>
+<p>Consider an industrial plant with thousands of sensors across its equipment. Timestral can improve the forecasts on that data in several ways.</p>
+<p><strong>Multivariate forecasting.</strong> A pump's vibration, temperature and pressure don't move independently. A rise in one often explains or causes a change in another. Timestral models related series jointly, so it can use those dependencies instead of forecasting each sensor in isolation.</p>
+<p><strong>Probabilistic forecasting.</strong> A single predicted value may not show the full picture. Timestral predicts a full set of quantiles, so teams can see how wide the uncertainty is, set alert thresholds that reflect it, and plan maintenance around risk rather than a single number.</p>
+<p><strong>Categorical covariates.</strong> Some covariates take values from a set of categories rather than continuous numbers, such as the day of the week, or a machine's state (running, idle, under maintenance). Encoding these as numbers would impose an order or scale they don't have. Timestral takes them as categorical inputs directly to improve forecasts.</p>
+<p><strong>Known-future covariates.</strong> Some drivers of sensor behaviour are known in advance, such as production schedules, planned shutdowns, weather forecasts. Timestral can condition on them to improve forecast quality, so a scheduled load increase is expected rather than flagged as a surprise.</p>
+<p><strong>From Model to System</strong></p>
+<p>Timestral is a numerical model that can run inside existing monitoring pipelines, or be paired with our language models in multi-modal agentic workflows.</p>
+<p>In the plant, that could look like this:</p>
+<ul><li>Timestral running continuously on the plant's sensor streams, detecting anomalies as they occur.</li><li>When it flags an anomaly on a pump, an agent embeds the signals and compares against embeddings of past sensor data to find similar historical failures.</li><li>The agent then starts sub-agents to run a root cause analysis, drawing on context from that plant, such as maintenance records, shift logs and operator notes, equipment manuals, past work orders, and readings from related equipment.</li><li>The agent drafts a suggested diagnosis based on the findings, with supporting evidence and possible next steps.</li></ul>
+<p>The plant manager gets a diagnosis and a plan backed by the sensor data, rather than just an alert.</p>
+<h2>Key technical contributions</h2>
+<p>Several ideas have been combined to produce these results. Each will be described in detail in the technical report.</p>
+<ul><li><strong>Decoupled Horizon Forecasting.</strong> Causal decoders trained with contiguous patch masking, as in Toto 2.0 and TimesFM-3, mask out the values to be forecast, so they look like missing values and are also lost as context for later forecasts. Our approach, DHF, separates the two: the full history stays in the sequence, and learned forecast tokens read the history before them. Every observed value thus serves as both target and context, true gaps stay flagged as missing, and training horizon lengths and missing-data augmentation can be tuned independently of each other.</li><li><strong>Covariate-aware attention.</strong> Each input series is assigned a role: target variate, past-only covariate or known-future covariate. Known-future covariates are visible across the whole window while targets stay causal, and information flows only from covariates to targets. Timestral can therefore use a holiday calendar or a weather forecast without leaking a target's own future into its forecast.</li><li><strong>Synthetic-first data.</strong> The majority of the training data was synthetic. We first generated univariate processes with coherent temporal dynamics, including trends, seasonality and diverse noise patterns. We then used a multivariate synthesizer to construct multivariate series by introducing nonlinear dependencies between these processes.</li><li><strong>Two-stage training.</strong> Timestral is first pre-trained at scale on purely synthetic data with context size 8192, then post-trained on a mix of real and synthetic data with a 4x longer context. The objective is a pinball loss over 21 quantiles, a discrete approximation of CRPS.</li></ul>
+<p><img src="https://mistral.ai/_astro/01-timestral-overview_1dIJcN.webp?dpl=6ad0e5b5d7cab4f179ee3d92" alt="None"></p>
+<h2>A model that can be adapted</h2>
+<p>Public benchmarks measure general performance, but production data can be significantly different in behavior and structure. It may also shift over time as markets change regime, equipment degrades and demand patterns move. The lasting value lies in being able to adapt a model to in-domain data and keep retraining it as the distribution moves.</p>
+<p>For organisations that want to go further, Timestral is available through <a href="https://mistral.ai/products/forge/">Mistral Forge</a>, the same training pipeline we use for our language models. It supports:</p>
+<ul><li><strong>Zero-shot inference</strong> out of the box.</li><li><strong>Architectural extensions</strong>, such as domain-specific covariates.</li><li><strong>Fine-tuning on proprietary data</strong>, specialising to a domain while preserving general performance.</li><li><strong>Control over the training data</strong>, including adjusting the training mix, replaying pre-training data, and generating synthetic data samples to reflect the target domain. Full control over the data ensures that nothing we backtest was seen during pre-training.</li></ul>
+<p>The full pipeline can be deployed on our clients’ hardware, including air-gapped environments.</p>
+<h2>What’s next</h2>
+<p>We have published a <a href="https://github.com/mistralai/timestral">GitHub repository</a> so you can run Timestral on your own data. A technical report with the full results will follow. For more specialised forecasting problems, or to collaborate on research, please reach out to us.</p>
+<table><thead><tr><th>Timestral</th><th></th></tr></thead><tbody><tr><td>Type</td><td>Time-series foundation model (TSFM)</td></tr><tr><td>Parameters</td><td>5M, 28M, 123M and 209M</td></tr><tr><td>Context length</td><td>32,768 time steps</td></tr><tr><td>Output</td><td>Probabilistic forecasts, 21 quantiles</td></tr><tr><td>Inputs</td><td>Multivariate targets, past-only and known-future covariates</td></tr><tr><td>Deployment</td><td>On-prem, VPC or air-gapped</td></tr><tr><td>Licence</td><td>Modified MIT</td></tr></tbody></table>
+<p><img src="https://mistral.ai/cms-media/api/media/file/timestral-icon-model.svg" alt="None"></p>
+<p>Timestral</p>
+<p>New</p>
+<p>Mistral's time-series foundation models. State-of-the-art probabilistic forecasts, 5M–209M params, runs on CPU.</p>
+<p>Probabilistic forecasts</p>
+<p>Discover</p>
+<p>0%</p>]]></content:encoded>
+    </item>
     <item>
       <title>Introducing Mistral Large 4</title>
       <link>https://mistral.ai/news/mistral-large-4/</link>
@@ -2861,36 +2923,6 @@ Interested in more custom work with the Mistral AI team? Contact us for solution
 <p>Mistral AI is already working closely with countries to help deliver on these possibilities, supporting sovereign AI strategies that respect local languages, laws, and cultural values. Our work is rooted in the belief that AI should strengthen national institutions rather than make governments dependent on, and beholden to, foreign AI giants. We want to enable governments to become self-reliant with the most powerful technology of our time, delivering better services, responding to citizen needs, and preserving their unique heritage for future generations. By investing in local expertise, secure deployments, and long-term partnerships, we aim to help nations build resilient, future-ready public systems that advance research, improve education, and protect cultural continuity in an increasingly digital world.</p>
 <h3>Get started</h3>
 <p>If you're looking for a partner to help you in your AI journey, we'd love to talk with you. Simply fill out this <a href="https://mistral.ai/solutions/ai-for-citizens#contact-us">form</a> to get started. For more information, visit <a href="https://mistral.ai/solutions/ai-for-citizens">mistral.ai/solutions/ai-for-citizens.</a></p>
-<p>0%</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Mistral Compute</title>
-      <link>https://mistral.ai/news/mistral-compute/</link>
-      <guid isPermaLink="true">https://mistral.ai/news/mistral-compute/?li=1</guid>
-      <pubDate>Wed, 11 Jun 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Company</p>
-<h1>Mistral Compute</h1>
-<p>June 11, 2025</p>
-<p>By Mistral AI</p>
-<p>4 min read</p>
-<p>Frontier AI. In Your Hands. This was the founding north star of Mistral AI and continues to guide our mission two years on. It has helped us evolve from a research lab to the world’s leading independent AI company, rooted in open science.</p>
-<p>Through this journey, however, we have realized that to truly democratize AI, it will require us to not just build open models and frontier AI products, but to provide everyone across the world the tools and environments to do so themselves, from infrastructure up.</p>
-<p>In particular, we believe that the buildout and ownership of AI infrastructure should not be restricted to two or three powerful companies, but rather, be independent and self-determined.</p>
-<p>Frontier AI should be in your hands. And in service of that mission, we are proud to announce the latest addition to our Mistral AI’s portfolio of offerings—Mistral Compute.</p>
-<h2>Frontier AI infrastructure for everyone.</h2>
-<p>Mistral Compute is a new AI infrastructure offering that will provide customers a private, integrated stack—GPUs, orchestration, APIs, products, and services in whatever form factor they need, from bare-metal servers to fully-managed PaaS. It is an unprecedented AI infrastructure undertaking in Europe, and a strategic initiative that will ensure that all nation states, enterprises, and research labs globally remain at the forefront of AI innovation.</p>
-<p>The genesis of Mistral Compute was organic. At Mistral AI, we faced our fair share of challenges training models and building state-of-the-art AI products. GPU hardware is expensive and scarce, tooling is patchy, and securing critical workloads is difficult. We learned hard lessons along the way, but eventually managed to build a robust AI platform on which we trained many state of the art models that today serve millions of users. And now, we’re unleashing its power for anyone to build on.</p>
-<p>Mistral Compute empowers sovereigns, companies, and research institutions to completely reimagine the way they build their AI stack. What used to be a choice between a few third party cloud providers is now the right to build your AI environment to your spec, and own it top to bottom. The offering will include Mistral AI’s training suite that can accelerate region and domain-specific AI efforts across <a href="https://www.htx.gov.sg/whats-happening/all-news---events/all-news/2025/media-release-htx-inks-contract-with-mistral-ai-and-microsoft-to-boost-ai-model-development-for-home-team">nation</a> and <a href="https://www.cmacgm-group.com/en/news-media/cma-cgm-group-adopts-custom-designed-ai-solutions-mistral-ai">industry</a>-wide endeavors such as defense technology, pharmaceutical discovery, financial markets, and more.</p>
-<p><img src="https://mistral.ai/_astro/8303b765-01b3-4cae-85d0-ea41047e08f3_1YPo4x.webp?dpl=6abbd11780b53c00082eea6f" alt="Image (3)"></p>
-<h2>Purpose-built, built with purpose.</h2>
-<p>Customers can use Mistral Compute to train and serve any AI workload they imagine. It is being developed and managed by a team with decades of experience building state of the art AI and high-performance compute (HPC) infrastructure, and training and serving the world’s best AI models.</p>
-<p>As a premier NVIDIA partner, Mistral Compute will offer the latest NVIDIA reference architectures, with availability of tens of thousands of GPUs, and rapid expansion in the coming years.</p>
-<p>Critically, Mistral Compute aims to provide a competitive edge to entire industries and countries in Europe, the Middle East, Asia, and the entire Southern Hemisphere that have been waiting for an alternative to US or China-based cloud and AI providers. This applies equally to the global entities of US or Chinese companies that want to serve international customers, particularly in Europe, with AI that is operating and running regionally.</p>
-<p>With a strong emphasis on sustainability and data sovereignty, Mistral Compute is built to meet the stringent requirements of European regulations while minimizing environmental impact through the use of decarbonized energy.</p>
-<h2>Join us today.</h2>
-<p>We would like to thank our launch partners Black Forest Labs, BNP Paribas, Kyutai, Mirakl, Orange, Schneider Electric, SLB Groupe, SNCF, Thales, and Veolia for their support for Mistral Compute. If you would like to join them, please send us a note using the form.</p>
-<p>Along with Mistral Compute, we will continue to make the Mistral AI suite of models, products, and solutions available on-premises and on all global cloud leaders through our partners.</p>
-<p>Join us on our mission to place frontier AI in everyone’s hands.</p>
 <p>0%</p>]]></content:encoded>
     </item>
   </channel>
