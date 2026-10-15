@@ -2456,10 +2456,6 @@ def extract_articles_from_page(page: PageResult, max_items: int = 8) -> list[Art
 # 表格表头、已废弃源前缀），那些是事实判断，与编辑口味无关。
 
 
-#: **结构化发布记录**形状的动态源：条目本身就是一条变更（模型名 / 功能名），不是一篇
-#: 有标题、有导语的文章。归档合并按它决定标题策略（见下方沿用分支）。
-STRUCTURED_NEWS_TYPES = {'updates', 'changelog'}
-
 
 # 已废弃的新闻源：这些 URL 前缀下的条目**不再保留**（含历史归档）。
 # 归档是「增量合并、只增不减」的 —— 从 yaml 删掉一个源之后，它的历史条目会一直留在
@@ -4513,6 +4509,16 @@ def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
             # articles.json 的 original_title 列里。重建时把中文落成 zh_title、原文回填
             # 到 art.title，与正常抓取路径的不变量一致（title=原文、zh_title=译文），
             # 于是 _rss_item 的「原文标题」与索引的 original_title 列都能逐字节复现。
+            #
+            # **已经是冻结译文的行不许覆盖**。`parse_archived_articles` 对带
+            # `<!--orig:-->` 的新式行给出 `title=原文 / zh_title=显示译文`；此时
+            # `_CJK_CHAR_RE.search(a.title)` 常为真（日文标题里也有汉字），下面那行会把
+            # 好不容易冻住的译文用 `a.title`（原文）盖掉 —— 归档仍是译文、索引变成原文，
+            # G1/G2 当场对不上（实测 huggingface `Nemotron-Personas-Japan`：归档
+            # `…主权人工智能的综合数据集`，索引 `…ソブリン AI のための合成データセット`，
+            # CI 直接红）。自愈只该发生在**旧式行**（title 与 zh_title 同为冻结中文）上。
+            if a.zh_title and a.zh_title != a.title:
+                continue                      # 新式行：已有译文，原样带过
             if _CJK_CHAR_RE.search(a.title):
                 orig = orig_by_key.get((vid, a.url))
                 # 同沿用分支：冻结的坏译文借英文原文自愈（没有原文可对时不动）
@@ -4614,20 +4620,31 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
                 fresh.date = old_art.date
             frozen_zh = (old_art.zh_title
                          or (old_art.title if _CJK_CHAR_RE.search(old_art.title) else ""))
-            # 结构化发布记录（changelog / updates）的条目名**按页面原样显示，不经机翻**。
+            # 归档里已有人工/AI 汉化过的中文标题 → 沿用，**包括 changelog / updates
+            # 这类结构化发布记录**（2026-10-16 改）。
             #
-            # 这类条目的名字就是模型名 / 功能名，Google 机翻只会把它翻坏：实测
-            # `Antigravity Agent 09-2026` 过一趟机翻变成 `Antigravity09-2026`（Agent 被吞）。
+            # 这里原先对 `STRUCTURED_NEWS_TYPES` 有一条无条件豁免，理由是「条目名就是
+            # 模型名，机翻会翻坏（实测 `Antigravity Agent 09-2026` → `Antigravity09-2026`）」。
+            # 那条理由只成立于「让机翻去翻标题」：沿用冻结译文时标题根本不再过一次机翻，
+            # 而 `_restore_brand_names` 正是拿当次英文原文把冻结译文里的音译复原。
             #
-            # 而沿用归档里的旧标题也不行：冻结住的是**过去某一版页面措辞的机翻结果**，
-            # 源站改口后两者就对不上（实测冻结的 `电脑使用` vs 今天的 `计算机使用`、
-            # `Antigravity 09-2026` vs `Antigravity Agent 09-2026`），结果是既让读者看到
-            # 不是官方现在的说法，又因为正文切片拿标题当闸门而永远配不上正文。
+            # 豁免的真实代价在另一头：本地精译过的中文标题**每轮巡检都被退回英文**
+            # （实测 groq changelog 18 条跑一次 `--only groq` 全部变回源站英文），台账
+            # 因为 ok 行不重抓仍记着中文，于是 `find_title_drift` 当场炸红 —— 页面显示不出
+            # 中文，恰恰是精译要解决的问题。
             #
-            # 博客文章那边不动：那里冻结防的正是「AI 精译过的中文标题隔天被机翻冲掉」。
-            if (fresh.stype or "") in STRUCTURED_NEWS_TYPES and not fresh.zh_title:
+            # 所以豁免收窄成「**没有中文冻结译文可沿用时**」才生效：那种行按原样显示并把
+            # `zh_title` 设成 title，归档行因此带上 `<!--orig:…-->` 注释，parse 回来仍判成
+            # 「有意留英文」，不会隔天又被机翻盯上。少了这一步，实测 17 行
+            # `OpenAI GPT-OSS-Safeguard 20B` 这类纯型号行会丢掉注释、重新变成待翻译状态
+            # —— 那正是原豁免要防的事。
+            #
+            # 「没有中文可沿用」有两种形态：`frozen_zh` 为空（归档里从没译过），以及
+            # `frozen_zh == fresh.title`（归档里显示的就是原文，即已判过「有意留英文」）。
+            # 只判前者会在后一种上丢掉注释，故两种都要覆盖。
+            if (not fresh.zh_title and (fresh.stype or "") in STRUCTURED_NEWS_TYPES
+                    and (not frozen_zh or frozen_zh == fresh.title)):
                 fresh.zh_title = fresh.title
-                frozen_zh = ""
             if not fresh.zh_title and frozen_zh and frozen_zh != fresh.title:
                 # 归档里已有人工/AI 汉化过的中文标题 → 沿用，别让每日重抓把它退回
                 # Google 机翻（CI 端 .translate_cache.json 不随仓库走，实测
@@ -6075,6 +6092,12 @@ def _snapshot_fact_text(text: str) -> str:
                 and not _SNAPSHOT_NOISE_RE.search(line):
             kept.append(line)
     return "\n".join(kept)[:SNAPSHOT_TEXT_LIMIT]
+
+
+
+#: **结构化发布记录**形状的动态源：条目本身就是一条变更（模型名 / 功能名），不是一篇
+#: 有标题、有导语的文章。没有冻结译文可沿用时按页面原样显示（见归档合并的沿用分支）。
+STRUCTURED_NEWS_TYPES = {'updates', 'changelog'}
 
 
 def _snapshot_hash(text: str) -> str:

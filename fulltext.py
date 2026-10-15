@@ -1866,8 +1866,14 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
             # `date` 传给切片器：条目是「日期分节下的列表项」时（Gemini 版本说明）靠它
             # 圈分节。取自 ledger 的 date，**不解析锚点** —— 锚点里的序号会随厂商往分节
             # 里插条目而整体位移，按序号取会把别的条目正文挂到这条标题上。
+            #
+            # 闸门用**原文标题**（`original_title`），不是显示标题：整页正文是英文的，
+            # 而归档里的显示标题可能是冻结的中文（changelog 条目从 2026-10-16 起也沿用
+            # 译文），拿中文去英文正文里找小节必然找不到，只能退回整页 → 同页多条共用
+            # 一份正文。锚点对不上时的标题兜底（`_slice_dated_bullets`）同理。
+            slice_title = r.get("original_title") or r.get("title") or ""
             sliced = _slice_anchor_section(
-                ex["markdown"], frag, r.get("title") or "",
+                ex["markdown"], frag, slice_title,
                 siblings_by_base.get((vendor, url.split("#", 1)[0]), ()),
                 r.get("date") or "")
             if len(sliced) < len(ex["markdown"]):

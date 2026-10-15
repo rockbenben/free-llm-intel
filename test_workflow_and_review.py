@@ -898,6 +898,60 @@ class TestArchiveTitleRetention(unittest.TestCase):
                       "归档冻结的中文标题必须原样写回")
         self.assertNotIn("贴片", content)
 
+    def test_changelog_row_keeps_its_frozen_chinese_title(self):
+        """changelog 条目的冻结中文标题不许被每日巡检退回英文。
+
+        2026-10-16 的一次 CI 红：本地精译过的 18 条 groq changelog 中文标题，跑一次
+        巡检全部退回源站英文（当时 `STRUCTURED_NEWS_TYPES` 有一条无条件豁免）。页面
+        显示不出中文，正是精译要解决的问题；而台账因 ok 行不重抓仍记着中文，
+        `find_title_drift` 当场炸红。
+
+        「条目名是模型名、机翻会翻坏」只成立于让机翻去翻标题；沿用冻结译文时标题不再
+        过机翻，且 `_restore_brand_names` 会借当次英文原文把音译复原。
+        """
+        arch_path = self.news_dir / "vendor_a.md"
+        arch_path.write_text(
+            "## 全部文章（共 1 篇）\n\n"
+            "1. [MiniMax M2.5 与 Qwen3-VL 32B Instruct（企业版）]"
+            "(https://a.com/changelog.md#minimax)（2026-04-18） "
+            "<!--orig:MiniMax M2.5 and Qwen3-VL 32B Instruct (Enterprise)-->\n",
+            encoding="utf-8")
+        fresh = crawler_llm_intel.Article(
+            title="MiniMax M2.5 and Qwen3-VL 32B Instruct (Enterprise)",
+            url="https://a.com/changelog.md#minimax", date="2026-04-18",
+            stype="changelog")
+        intel = self._intel([fresh])
+        crawler_llm_intel.write_news_archives(self.news_dir, [intel],
+                                              clean_removed=False)
+        content = arch_path.read_text(encoding="utf-8")
+        self.assertIn("MiniMax M2.5 与 Qwen3-VL 32B Instruct（企业版）", content,
+                      "changelog 条目的冻结中文标题必须保住")
+        self.assertIn("<!--orig:MiniMax M2.5 and Qwen3-VL 32B Instruct (Enterprise)-->",
+                      content, "英文原文仍要留在注释里")
+
+    def test_changelog_row_without_translation_keeps_its_orig_marker(self):
+        """没有中文可沿用的 changelog 行：按原样显示，但**必须**留 `<!--orig:-->` 注释。
+
+        丢了注释，`parse_archived_articles` 就判不出「有意留英文」，该行隔天重新变成
+        待翻译状态，正是原豁免要防的事（实测 17 行纯型号行会掉注释）。
+        """
+        arch_path = self.news_dir / "vendor_a.md"
+        arch_path.write_text(
+            "## 全部文章（共 1 篇）\n\n"
+            "1. [OpenAI GPT-OSS-Safeguard 20B](https://a.com/changelog.md#oss)"
+            "（2025-10-29） <!--orig:OpenAI GPT-OSS-Safeguard 20B-->\n",
+            encoding="utf-8")
+        fresh = crawler_llm_intel.Article(
+            title="OpenAI GPT-OSS-Safeguard 20B",
+            url="https://a.com/changelog.md#oss", date="2025-10-29",
+            stype="changelog")
+        intel = self._intel([fresh])
+        crawler_llm_intel.write_news_archives(self.news_dir, [intel],
+                                              clean_removed=False)
+        content = arch_path.read_text(encoding="utf-8")
+        self.assertIn("<!--orig:OpenAI GPT-OSS-Safeguard 20B-->", content,
+                      "有意留英文的标记（orig 注释）必须留在归档行里")
+
     def test_no_cjk_title_ever_reaches_the_translator(self):
         """不变量：翻译器只该收到非中文标题——含汉字的输入一律是回炉。"""
         arch_path = self.news_dir / "vendor_a.md"
@@ -1743,6 +1797,67 @@ sources:
         art = intel_list[0].all_news_articles[0]
         self.assertEqual(art.zh_title, "甲文章标题")
         self.assertEqual(art.title, "Original English Headline")
+
+    def test_rebuild_keeps_frozen_translation_on_new_style_rows(self):
+        """带 `<!--orig:-->` 的行：冻结译文必须原样带过，不许被原文覆盖。
+
+        这条是被一次 CI 红钉出来的：huggingface 的 `Nemotron-Personas-Japan` 归档显示
+        `…主权人工智能的综合数据集`，而索引被重建成了原文 `…ソブリン AI のための合成データセット`。
+        原因是重建那步见 `a.title` 含汉字（日文里也有汉字）就用它盖掉 `zh_title`，把
+        好不容易冻住的译文换了回去 —— 归档是源、索引是视图，视图一漂 G1/G2 当场对不上。
+        自愈只该发生在旧式行（title 与 zh_title 同为冻结中文）上。
+        """
+        arch = self.root / "llm-news" / "vendor_a.md"
+        arch.write_text(
+            "# Vendor A 文章归档\n\n"
+            "## 全部文章（共 1 篇）\n\n"
+            "1. [主权 AI 综合数据集](https://a.com/ja)（2025-09-26） "
+            "<!--orig:Nemotron のための合成データセット-->\n", encoding="utf-8")
+        feeds = self.root / "docs" / "feeds"
+        feeds.mkdir(parents=True)
+        (feeds / "articles.json").write_text(json.dumps({
+            "fields": ["title", "url", "vendor", "date", "original_title"],
+            "count": 1,
+            "articles": [["主权 AI のための合成データセット", "https://a.com/ja",
+                          "vendor_a", "2025-09-26", "主权 AI のための合成データセット"]],
+        }, ensure_ascii=False), encoding="utf-8")
+        vendors, sources = crawler_llm_intel.parse_yaml(self.root / "intel.yaml")
+        grouped = crawler_llm_intel.group_sources_by_vendor(sources)
+        states = crawler_llm_intel._parse_news_md_page_states(self.NEWS_MD)
+        orig = crawler_llm_intel.load_original_titles(feeds / "articles.json")
+        art = crawler_llm_intel.rebuild_intel_from_disk(
+            vendors, grouped, states, self.root / "llm-news", orig
+        )[0].all_news_articles[0]
+        self.assertEqual(art.zh_title, "主权 AI 综合数据集",
+                         "已冻结的译文不许在重建时被原文覆盖")
+        self.assertEqual(art.title, "Nemotron のための合成データセット")
+
+    def test_rebuild_still_self_heals_legacy_rows(self):
+        """旧式行（无 orig 注释、title 与 zh_title 同为冻结中文）仍要借原文自愈。"""
+        arch = self.root / "llm-news" / "vendor_a.md"
+        arch.write_text(
+            "# Vendor A 文章归档\n\n"
+            "## 全部文章（共 1 篇）\n\n"
+            "1. [克劳德的提示缓存全面升级](https://a.com/legacy)（2026-09-02）\n",
+            encoding="utf-8")
+        feeds = self.root / "docs" / "feeds"
+        feeds.mkdir(parents=True)
+        (feeds / "articles.json").write_text(json.dumps({
+            "fields": ["title", "url", "vendor", "date", "original_title"],
+            "count": 1,
+            "articles": [["克劳德的提示缓存全面升级", "https://a.com/legacy", "vendor_a",
+                          "2026-09-02", "Claude prompt caching upgrade"]],
+        }, ensure_ascii=False), encoding="utf-8")
+        vendors, sources = crawler_llm_intel.parse_yaml(self.root / "intel.yaml")
+        grouped = crawler_llm_intel.group_sources_by_vendor(sources)
+        states = crawler_llm_intel._parse_news_md_page_states(self.NEWS_MD)
+        orig = crawler_llm_intel.load_original_titles(feeds / "articles.json")
+        art = crawler_llm_intel.rebuild_intel_from_disk(
+            vendors, grouped, states, self.root / "llm-news", orig
+        )[0].all_news_articles[0]
+        self.assertEqual(art.zh_title, "Claude的提示缓存全面升级",
+                         "旧式行的音译仍要借英文原文自愈")
+        self.assertEqual(art.title, "Claude prompt caching upgrade")
 
     def test_snapshot_original_titles_are_decoded_before_reuse(self):
         """上一版 articles.json 里的 HTML 实体要先还原，否则每轮自我复制。
