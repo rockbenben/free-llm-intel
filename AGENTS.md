@@ -84,3 +84,11 @@ reconcile 后必查 `pending_translation_keys` 归零、并对每篇新 `.md` �
 - 抓取/翻译**绝不编造**：抓不到记 `fetch_failed`、正文留空；目录页/链接列表记
   `index_page`——二者都**不进翻译队列**（`pending_translation_keys` 只放行 `en_status==ok`）。
 - 改文案/产物要跑门禁：`python test_workflow_and_review.py`（含 CI 实产物 schema 兜底守卫）。
+- **改了 `llm-news/` 归档或 `docs/articles/` 语料，必须同轮跑 `python crawler_llm_intel.py --render-only`
+  并把产物一起提交**：展示层（`docs/feeds/articles.json`、各 RSS、OPML、`llm-news-feeds.md`）是归档
+  与语料的**视图**，不重排就停在旧快照上（实测 34 条已冻成中文的标题在页面上仍显示英文、
+  新译正文在合并流里干脆没有 `content:encoded`）。`--render-only` 只写视图、**绝不写源**
+  （守卫 `test_render_never_writes_sources` 钉着），同一份源连跑两次必须零改写（幂等），
+  所以任何时候都可以安全重跑。忘了重排会由守卫 G1/G2/G4 拦下（标题/日期对账、有译文必须带全文）。
+  需要连归档一起重排（改排序/折叠本身）才用 `--rebuild-only` —— 它会写归档，
+  因此实测会折掉同标题的影子行（deepseek 46→42），那种 diff 要逐条判断而不是默认接受。

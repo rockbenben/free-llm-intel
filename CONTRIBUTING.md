@@ -183,10 +183,19 @@ README 项目介绍之后的「白嫖攻略」**不是手写 Markdown**，由爬
 改完归档想**本地立即刷新产物**（不等 CI、不跑全量抓取）：
 
 ```bash
-python crawler_llm_intel.py --rebuild-only --feeds-base "https://free-llm-intel.aishort.top/feeds"
+python crawler_llm_intel.py --render-only
 ```
 
-`--rebuild-only` 从 归档 `.md`（中文标题 + 文章）+ `llm-news-feeds.md`（原生 feed 状态）+ `articles.json`（英文原文）重建全部动态类产物，零网络请求；README 情报区与快照需要实抓，不触碰。个别历史上「只改了 XML 没同步归档」的条目会被拉齐成归档现状——这正是下次 CI 的产出，属修正而非漂移。
+`--render-only` 只重排**视图**（`docs/feeds/*.xml` 与各类 JSON、`llm-news-feeds.md`、OPML），
+**不写归档、不写语料、不写台账、不写快照、不渲染 README**，零网络请求，且幂等（同一份源
+连跑第二次零改写），所以任何时候都可以安全重跑。订阅前缀 `feeds_base` 默认从 `docs/CNAME`
+推导（自定义域名就是它），需要覆盖时再传 `--feeds-base`。
+
+要连**归档本身**一起重排（改了排序、标题折叠、汉化沿用这类抓取路径逻辑）才用
+`--rebuild-only`：它同样零网络请求，但会按抓取路径的规则重写 `llm-news/*.md`——其中包括
+按「同标题 + 一条锚点一条直链」折掉影子行（实测 deepseek 归档 46→42）。这类 diff 要逐条
+判断是不是预期的折叠，不要默认接受。个别历史上「只改了 XML 没同步归档」的条目会被拉齐成
+归档现状——那正是下次 CI 的产出，属修正而非漂移。
 
 归档条目若缺发布日期（源页面把日期放在 JS 里、或文章已滚出列表页），跑维护命令 `python crawler_llm_intel.py --backfill-dates`：它只访问**缺日期**条目对应的文章页，从 JSON-LD `datePublished` / `article:published_time` / `<time datetime>` 元数据回填（分批礼貌抓取，单次访问数有上限，见 `DATE_BACKFETCH_LIMIT`；解不出就保留空白，绝不猜日期）。日期决定归档排序与是否进合并流，回填后同样用 `--rebuild-only` 刷新产物。
 
