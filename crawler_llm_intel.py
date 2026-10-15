@@ -6578,6 +6578,85 @@ def build_arg_parser() -> argparse.ArgumentParser:
                         help="本次最多机翻多少篇正文（0=不限；CI 用它控单日请求量）")
     return parser
 
+def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str,
+                   all_vendors: list[dict], reviews: dict,
+                   news_md_path: Path | None = None, opml_path: Path | None = None,
+                   feeds_dir: Path | None = None, changelog_path: Path | None = None,
+                   rss_limit: int = 0, rss_vendor_limit: int = 0,
+                   feeds_dir_label: str = "docs/feeds") -> dict:
+    """产出层：从 `intel_list` 重排全部**视图**文件。
+
+    契约（见 docs/superpowers/specs/2026-10-15-render-layer-design.md §3）：
+    **只写视图，绝不写源** —— `llm-news/*.md`、`docs/articles/**`、
+    `docs/feeds/bodies.json`、`llm-intel-state.json`、`README.md` 一律不碰。
+    G6 守卫按调用前后的源层哈希集合钉住这条；G5 要求同一份源连跑两次零改写。
+
+    `intel_list` 的来源不限：完整巡检的实抓结果，或 `rebuild_intel_from_disk`
+    从归档重建的结果 —— 对产出层是同一个输入契约。
+    """
+    news_md_path = news_md_path or (root / "llm-news-feeds.md")
+    opml_path = opml_path or (root / "llm-news-feeds.opml")
+    feeds_dir = feeds_dir or (root / "docs" / "feeds")
+
+
+    news_changed = update_news_md(
+        news_md_path,
+        render_news_section(intel_list, feeds_base, merged_limit=rss_limit,
+                            vendor_limit=rss_vendor_limit))
+    print(f"      {news_md_path.name} {'已刷新' if news_changed else '无内容变化，未改写'}")
+    # 前置条件（调用方负责）：`intel_list` 必须已经过 `write_news_archives` 的合并 ——
+    # RSS 要用的正是那份「新抓取 + 历史归档」合并后、按日期排序的全量列表。
+    n_rss, n_rss_items, n_rss_changed, n_rss_skipped = write_rss_feeds(
+        feeds_dir, intel_list, feeds_base, merged_limit=rss_limit,
+        vendor_limit=rss_vendor_limit)
+    print(f"      {feeds_dir_label} 自建 RSS {n_rss} 个源、{n_rss_items} 条"
+          f"（本次实际改写 {n_rss_changed} 个文件）")
+    if n_rss_skipped:
+        print(f"      [warn] {n_rss_skipped} 条因发布日期晚于今天被排除在订阅流之外"
+              "（归档 .md 中仍保留）——多为源页面日期提取有误，建议核查。")
+    # 模型发布雷达：同一份「归档合并后」全量列表的免费衍生（确定性、无时间戳）
+    releases = extract_model_releases(intel_list)
+    wrote_rel = write_model_releases(feeds_dir / "model-releases.json", releases)
+    print(f"      模型发布雷达 {len(releases)} 个事件"
+          f"（{('已刷新 ' + 'model-releases.json') if wrote_rel else '无内容变化，未改写'}）")
+    # 额度/活动变化流：只收变更日志（AI 采纳记录）里的额度/活动变化；日志文件在
+    # 首次采纳前不存在是常态（含 --rebuild-only，本仓库根可能还没有它），此时不产出。
+    # 模型发布雷达全量已存 model-releases.json，不再混进这条流。
+    # 额度变化条目直接链到 README 里该厂商的档案锚点，阅读器一点即达。
+    changelog_text = ""
+    cl_path = changelog_path or (root / CHANGELOG_MD)
+    if cl_path.exists():
+        changelog_text = cl_path.read_text(encoding="utf-8")
+    # 一览与档案锚点都按 yaml 全集出（序号 = 全量巡检写出的 README 章节号）
+    quotas = build_quotas_payload(all_vendors, reviews)
+    anchors = {row["id"]: row["anchor"] for row in quotas["vendors"]}
+    n_changes = write_intel_changes_feed(
+        feeds_dir, changelog_text, feeds_base, anchors)
+    if n_changes:
+        print(f"      额度/活动变化流 {n_changes} 条（{INTEL_CHANGES_FEED} + intel-changes.json）")
+    # OPML 放在变化流之后：清单里的「情报变化」组必须指向**真实存在**的文件
+    # （两类事件都没有时该流不产出，新 fork 首轮列出就是 404）。
+    # 「本轮产出 or 磁盘已有」：旧文件已随 Pages 发布时，本轮零事件不该把
+    # 一个还能订的源从清单里摘掉。
+    n_feeds = write_opml(opml_path, intel_list, feeds_base,
+                         merged_limit=rss_limit,
+                         changes_feed=bool(n_changes)
+                         or (feeds_dir / INTEL_CHANGES_FEED).exists(),
+                         feeds_dir=feeds_dir)
+    print(f"      {opml_path.name}（{n_feeds} 个订阅源"
+          f"{'：官方原生 + 自建源 + 聚合流 + 英文镜像 + 英文聚合流' if feeds_base else '（仅官方原生源，未推导出 Pages 前缀）'}）")
+    wrote_q = _write_json(feeds_dir / "quotas.json", quotas)
+    print(f"      额度快照 quotas.json {quotas['count']} 家"
+        f"（{'已刷新' if wrote_q else '无内容变化，未改写'}）")
+
+    return {"news_md_changed": bool(news_changed), "rss_files": n_rss,
+            "rss_items": n_rss_items, "rss_changed": n_rss_changed,
+            "rss_future_excluded": n_rss_skipped, "releases": len(releases),
+            "releases_changed": bool(wrote_rel), "changes": n_changes,
+            "opml_feeds": n_feeds, "quotas_count": quotas["count"],
+            "quotas_changed": bool(wrote_q)}
+
+
 def main(argv: list[str] | None = None) -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8")  # Windows 控制台中文输出
@@ -7135,61 +7214,20 @@ def main(argv: list[str] | None = None) -> int:
     else:
         # write_news_archives 会把「新抓取 + 历史归档」的合并结果写回 intel.all_news_articles
         # 与 intel.news_articles，而总表的「共 N 篇」和「最新 5 篇」都取自这两个字段 ——
-        # 因此它必须排在 update_news_md 之前：否则总表用的是合并前计数，会比归档文件少
+        # 因此它必须排在 render_outputs 之前：否则总表用的是合并前计数，会比归档文件少
         # （归档保留了页面已不再链接的历史文章，总表计数取自合并后字段，故必须后置）。
         news_dir = news_md_path.parent / "llm-news"
         n_arch, n_arch_arts, n_arch_changed = write_news_archives(
             news_dir, intel_list, clean_removed=True, title_polish=title_polish)
-        news_changed = update_news_md(
-            news_md_path,
-            render_news_section(intel_list, feeds_base, merged_limit=args.rss_limit,
-                                vendor_limit=args.rss_vendor_limit))
-        print(f"      {news_md_path.name} {'已刷新' if news_changed else '无内容变化，未改写'}")
         print(f"      llm-news/ 归档 {n_arch} 个厂商文件、共 {n_arch_arts} 篇文章"
               f"（本次实际改写 {n_arch_changed} 个文件）")
-        # 同样必须在 write_news_archives 之后：RSS 要用的正是这份全量、已排序的列表。
-        n_rss, n_rss_items, n_rss_changed, n_rss_skipped = write_rss_feeds(
-            feeds_dir, intel_list, feeds_base, merged_limit=args.rss_limit,
-            vendor_limit=args.rss_vendor_limit)
-        print(f"      {args.feeds_dir} 自建 RSS {n_rss} 个源、{n_rss_items} 条"
-              f"（本次实际改写 {n_rss_changed} 个文件）")
-        if n_rss_skipped:
-            print(f"      [warn] {n_rss_skipped} 条因发布日期晚于今天被排除在订阅流之外"
-                  "（归档 .md 中仍保留）——多为源页面日期提取有误，建议核查。")
-        # 模型发布雷达：同一份「归档合并后」全量列表的免费衍生（确定性、无时间戳）
-        releases = extract_model_releases(intel_list)
-        wrote_rel = write_model_releases(feeds_dir / "model-releases.json", releases)
-        print(f"      模型发布雷达 {len(releases)} 个事件"
-              f"（{('已刷新 ' + 'model-releases.json') if wrote_rel else '无内容变化，未改写'}）")
-        # 额度/活动变化流：只收变更日志（AI 采纳记录）里的额度/活动变化；日志文件在
-        # 首次采纳前不存在是常态（含 --rebuild-only，本仓库根可能还没有它），此时不产出。
-        # 模型发布雷达全量已存 model-releases.json，不再混进这条流。
-        # 额度变化条目直接链到 README 里该厂商的档案锚点，阅读器一点即达。
-        changelog_text = ""
-        cl_path = root / CHANGELOG_MD
-        if cl_path.exists():
-            changelog_text = cl_path.read_text(encoding="utf-8")
-        # 一览与档案锚点都按 yaml 全集出（序号 = 全量巡检写出的 README 章节号）
-        quotas = build_quotas_payload(all_vendors, snapshots.reviews)
-        anchors = {row["id"]: row["anchor"] for row in quotas["vendors"]}
-        n_changes = write_intel_changes_feed(
-            feeds_dir, changelog_text, feeds_base, anchors)
-        if n_changes:
-            print(f"      额度/活动变化流 {n_changes} 条（{INTEL_CHANGES_FEED} + intel-changes.json）")
-        # OPML 放在变化流之后：清单里的「情报变化」组必须指向**真实存在**的文件
-        # （两类事件都没有时该流不产出，新 fork 首轮列出就是 404）。
-        # 「本轮产出 or 磁盘已有」：旧文件已随 Pages 发布时，本轮零事件不该把
-        # 一个还能订的源从清单里摘掉。
-        n_feeds = write_opml(opml_path, intel_list, feeds_base,
-                             merged_limit=args.rss_limit,
-                             changes_feed=bool(n_changes)
-                             or (feeds_dir / INTEL_CHANGES_FEED).exists(),
-                             feeds_dir=feeds_dir)
-        print(f"      {opml_path.name}（{n_feeds} 个订阅源"
-              f"{'：官方原生 + 自建源 + 聚合流 + 英文镜像 + 英文聚合流' if feeds_base else '（仅官方原生源，未推导出 Pages 前缀）'}）")
-        wrote_q = _write_json(feeds_dir / "quotas.json", quotas)
-        print(f"      额度快照 quotas.json {quotas['count']} 家"
-            f"（{'已刷新' if wrote_q else '无内容变化，未改写'}）")
+        render_outputs(root, intel_list, feeds_base=feeds_base,
+                       all_vendors=all_vendors, reviews=snapshots.reviews,
+                       news_md_path=news_md_path, opml_path=opml_path,
+                       feeds_dir=feeds_dir, changelog_path=root / CHANGELOG_MD,
+                       rss_limit=args.rss_limit,
+                       rss_vendor_limit=args.rss_vendor_limit,
+                       feeds_dir_label=args.feeds_dir)
 
     total = sum(len(v.intel_pages) for v in intel_list)
     ok = sum(1 for v in intel_list for p in v.intel_pages if p.ok)

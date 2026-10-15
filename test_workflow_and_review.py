@@ -5,6 +5,7 @@ test_workflow_and_review.py —— 自动化工作流与核心模块单测
 
 import ast
 import contextlib
+import hashlib
 import io
 import json
 import os
@@ -1917,23 +1918,57 @@ class TestNewsSectionCountConsistency(unittest.TestCase):
                       "总表计数必须与归档文件一致（先合并归档、再渲染总表）")
 
     def test_main_merges_archives_before_rendering_section(self):
-        """main() 里 write_news_archives 必须排在 render_news_section 之前。
+        """归档合并必须排在总表渲染之前 —— 跨 `main` 与 `render_outputs` 两个函数成立。
 
-        用 AST 取调用行号，而不是匹配源码文本 —— 文本匹配会因为一次格式化（把调用拆成
-        多行）就误报，而那次改动与它要守的顺序毫无关系（实测踩过）。
+        用 AST 取调用行号，而不是匹配源码文本 —— 文本匹配会因为一次格式化（把调用
+        折成多行）就误报，而那次改动与它要守的顺序毫无关系（实测踩过）。
+
+        产出层抽进 `render_outputs` 之后，`render_news_section` 不再出现在 main 里；
+        不变量本身没变（总表计数只能取合并后的列表），所以要断言三件事：
+        ① main 先调 `write_news_archives` 再调 `render_outputs`；
+        ② 真正渲染总表的 `render_news_section` 在 `render_outputs` 内部被调用；
+        ③ 它确实是以实参身份喂给 `update_news_md` 的（嵌套关系，不是行号先后 ——
+          按行号断言会得出反的结论，`update_news_md` 的调用节点行号比它的实参更靠前）。
         """
         tree = ast.parse(Path(crawler_llm_intel.__file__).read_text(encoding="utf-8"))
-        main_fn = next(n for n in tree.body
-                       if isinstance(n, ast.FunctionDef) and n.name == "main")
-        calls = [(n.lineno, n.func.id) for n in ast.walk(main_fn)
-                 if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)]
-        write_lines = [ln for ln, name in calls if name == "write_news_archives"]
-        render_lines = [ln for ln, name in calls if name == "render_news_section"]
+
+        def call_names(fn_name):
+            fn = next(n for n in tree.body
+                      if isinstance(n, ast.FunctionDef) and n.name == fn_name)
+            out = []
+            for node in ast.walk(fn):
+                if isinstance(node, ast.Call):
+                    f = node.func
+                    out.append((node.lineno, f.id if isinstance(f, ast.Name)
+                                else getattr(f, "attr", "")))
+            return out
+
+        main_calls = call_names("main")
+        render_calls = call_names("render_outputs")
+        write_lines = [ln for ln, name in main_calls if name == "write_news_archives"]
+        render_out = [ln for ln, name in main_calls if name == "render_outputs"]
         self.assertTrue(write_lines, "main 必须调用 write_news_archives")
-        self.assertTrue(render_lines, "main 必须调用 render_news_section")
-        self.assertLess(max(write_lines), min(render_lines),
-                        "write_news_archives 必须排在 render_news_section 之前，"
+        self.assertTrue(render_out, "main 必须调用 render_outputs")
+        self.assertLess(max(write_lines), min(render_out),
+                        "write_news_archives 必须排在 render_outputs 之前，"
                         "否则总表「共 N 篇」会用合并前计数、比归档少")
+        section = [ln for ln, name in render_calls if name == "render_news_section"]
+        md = [ln for ln, name in render_calls if name == "update_news_md"]
+        self.assertTrue(section, "总表渲染应在 render_outputs 里（产出层唯一入口）")
+        self.assertTrue(md, "render_outputs 必须写 llm-news-feeds.md")
+        # 结构判据：render_news_section 必须出现在某个 update_news_md 调用的实参里
+        md_nodes = [n for n in ast.walk(
+                        next(f for f in tree.body if isinstance(f, ast.FunctionDef)
+                             and f.name == "render_outputs"))
+                    if isinstance(n, ast.Call) and isinstance(n.func, ast.Name)
+                    and n.func.id == "update_news_md"]
+        self.assertTrue(md_nodes, "render_outputs 里要有 update_news_md 调用")
+        nested = any(isinstance(a, ast.Call) and isinstance(a.func, ast.Name)
+                     and a.func.id == "render_news_section"
+                     for c in md_nodes for a in c.args)
+        self.assertTrue(nested,
+                        "render_news_section 必须作为 update_news_md 的实参（先算内容再写盘）")
+
 
     def test_committed_news_md_counts_match_archives(self):
         """守卫已提交的产物：总表每个「共 N 篇」都必须等于对应归档文件里的篇数。
@@ -9515,6 +9550,88 @@ class TestPageFurnitureStrip(unittest.TestCase):
         self.assertNotIn("了解更多\n", out + "\n", "整行 CTA 该删")
         self.assertIn("我们建议了解更多细节后再决定接入方式。", out, "句子里出现同一个词不许删")
         self.assertNotIn("Upvote", out)
+
+
+class TestRenderOutputs(unittest.TestCase):
+    """产出层：render_outputs 只写视图、可重复跑、不碰源（spec §3/§6）。"""
+
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.root = Path(self.temp_dir.name)
+        (self.root / "llm-news").mkdir(parents=True)
+        (self.root / "docs" / "feeds").mkdir(parents=True)
+        (self.root / "docs" / "articles" / "vendor_a").mkdir(parents=True)
+        self.addCleanup(self.temp_dir.cleanup)
+
+    def _fixture_tree(self):
+        """1 厂商 3 条归档：1 条有中文译文、1 条只英文、1 条无日期。"""
+        (self.root / "llm-news" / "vendor_a.md").write_text(
+            "# Vendor A 文章归档\n\n"
+            "> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-15**。\n\n"
+            "## 全部文章（共 3 篇，按日期倒序；无日期条目列于最后）\n\n"
+            "1. [第一篇中文标题](https://a.com/one)（2026-10-14） <!--orig:First post-->\n"
+            "2. [Second post](https://a.com/two)（2026-10-13）\n"
+            "3. [无日期条目](https://a.com/three)\n",
+            encoding="utf-8")
+        zh = ("---\nvendor: vendor_a\ntitle: 第一篇中文标题\noriginal_title: First post\n"
+              "url: https://a.com/one\ndate: 2026-10-14\nlang: zh\ncaptured: 2026-10-15\n"
+              "extractor: readability-v1\ntranslator: agent\nstatus: translated\n"
+              "body_sha: 000000000000\n---\n\n# 第一篇中文标题\n\n这是中文正文，够长以便断言。\n")
+        (self.root / "docs" / "articles" / "vendor_a" / "one.md").write_text(
+            zh, encoding="utf-8", newline="\n")
+        en = ("---\nvendor: vendor_a\ntitle: First post\noriginal_title: First post\n"
+              "url: https://a.com/one\ndate: 2026-10-14\nlang: en\ncaptured: 2026-10-15\n"
+              "extractor: readability-v1\nstatus: ok\nbody_sha: 111111111111\n---\n\n"
+              "# First post\n\nEnglish body text here.\n")
+        (self.root / "docs" / "articles" / "vendor_a" / "one.en.md").write_text(
+            en, encoding="utf-8", newline="\n")
+        bodies = {"vendor_a\thttps://a.com/one": {
+            "slug": "aaa111", "en_path": "docs/articles/vendor_a/one.en.md",
+            "zh_path": "docs/articles/vendor_a/one.md", "en_status": "ok",
+            "zh_status": "translated", "translator": "agent", "title": "第一篇中文标题",
+            "date": "2026-10-14", "captured": "2026-10-15", "body_sha": "111111111111",
+            "src_lang": "en"}}
+        (self.root / "docs" / "feeds" / "bodies.json").write_text(
+            json.dumps({"count": 1, "bodies": bodies}, ensure_ascii=False, indent=2),
+            encoding="utf-8", newline="\n")
+
+    def _intel(self):
+        arts = crawler_llm_intel.parse_archived_articles(
+            self.root / "llm-news" / "vendor_a.md")
+        intel = crawler_llm_intel.VendorIntel(
+            vendor_id="vendor_a", brand="Vendor A", homepage="https://a.com",
+            products=[], all_news_articles=arts)
+        return [intel]
+
+    def _render(self):
+        return crawler_llm_intel.render_outputs(
+            self.root, self._intel(), feeds_base="https://x.test/feeds",
+            all_vendors=[{"id": "vendor_a", "brand": "Vendor A"}], reviews={})
+
+    def test_writes_views_and_returns_counts(self):
+        self._fixture_tree()
+        out = self._render()
+        self.assertIsInstance(out, dict)
+        for k in ("news_md_changed", "rss_files", "rss_items", "rss_changed",
+                  "rss_future_excluded", "releases", "releases_changed",
+                  "changes", "opml_feeds", "quotas_count", "quotas_changed"):
+            self.assertIn(k, out, f"返回契约缺键 {k}")
+        self.assertTrue((self.root / "docs" / "feeds" / "articles.json").exists())
+        self.assertTrue((self.root / "llm-news-feeds.opml").exists())
+        self.assertGreater(out["rss_items"], 0,
+                           "夹具应产出条目，否则后面的断言都是空集蒙绿")
+
+    def test_idempotent_second_run_changes_nothing(self):
+        self._fixture_tree()
+        self._render()
+        before = {p.relative_to(self.root).as_posix():
+                  hashlib.sha256(p.read_bytes()).hexdigest()
+                  for p in self.root.rglob("*") if p.is_file()}
+        self._render()
+        after = {p.relative_to(self.root).as_posix():
+                 hashlib.sha256(p.read_bytes()).hexdigest()
+                 for p in self.root.rglob("*") if p.is_file()}
+        self.assertEqual(before, after, "G5 幂等：第二次渲染不得改写任何文件")
 
 
 if __name__ == "__main__":
