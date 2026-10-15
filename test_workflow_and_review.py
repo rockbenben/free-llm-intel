@@ -7920,6 +7920,47 @@ class TestFulltextExtractor(unittest.TestCase):
             _fm, stored = ft.read_body_doc(root / bodies[key]["en_path"])
             self.assertIn("paragraph number 39", stored, "存进去的必须是前台那份长文")
 
+    def test_body_sha_matches_disk_when_body_has_surrounding_newlines(self):
+        """指纹与落盘必须出自同一份字符串：正文带首/尾换行也算。
+
+        这条是被两轮 CI 红钉出来的（实测 2 条 → 4 条）：写入端直接
+        `sha256(body)`，`write_body_doc` 落盘的却是 `rstrip("\\n")`，`read_body_doc`
+        读回又是 `strip("\\n")`。三处口径不一致，正文只要带换行就永远对不上；
+        `en_status=ok` 的行永不重抓，错指纹**永久**留在语料里。
+        实测 32 个真实页面里 2 个的正文首尾带换行（about.fb.com / anthropic.com）。
+
+        这里钉住往返不变量：无论正文带几层首尾换行，写出去再读回来，指纹必须仍然
+        等于读回来的那份正文。
+        """
+        for body in ("正文一行", "\n正文一行", "正文一行\n", "\n正文一行\n\n",
+                     "\n\n正文一行\n\n\n"):
+            with self.subTest(body=repr(body)):
+                with tempfile.TemporaryDirectory() as d:
+                    p = Path(d) / "x.en.md"
+                    ft.write_body_doc(p, {"body_sha": ft.body_sha_of(body)}, body)
+                    fm, disk = ft.read_body_doc(p)
+                    self.assertEqual(fm["body_sha"], ft.body_sha_of(disk),
+                                     "frontmatter 指纹与落盘正文对不上")
+                    self.assertEqual(ft.body_sha_of(body), ft.body_sha_of(disk))
+
+    def test_guard_itself_accepts_a_newline_padded_body(self):
+        """守卫函数本身对新写入的正文必须零告警（否则就是在给自己刷红）。"""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "docs/articles/vendor_a").mkdir(parents=True)
+            rel = "docs/articles/vendor_a/aaa111111111.en.md"
+            body = "\n# 标题\n\n正文段落。\n\n"
+            ft.write_body_doc(root / rel,
+                              {"vendor": "vendor_a", "title": "标题", "original_title": "T",
+                               "url": "https://a.com/1", "date": "2026-10-01", "lang": "en",
+                               "captured": "2026-10-16", "extractor": "readability-v1",
+                               "status": "ok", "body_sha": ft.body_sha_of(body)}, body)
+            bodies = {ft.bodies_key("vendor_a", "https://a.com/1"): {
+                "slug": "aaa111111111", "en_path": rel, "en_status": "ok",
+                "zh_status": "", "translator": "", "title": "标题", "date": "2026-10-01",
+                "captured": "2026-10-16", "body_sha": ft.body_sha_of(body), "src_lang": "en"}}
+            self.assertEqual(ft.corpus_body_sha_mismatches(root, bodies), [])
+
     def test_gate_cta_alone_is_not_a_paywall_verdict(self):
         """CTA 不是付费墙的证据：只有它 + 一段短残段，也不得判 paywall。
 

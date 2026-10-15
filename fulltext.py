@@ -118,7 +118,12 @@ def bodies_key(vendor_id: str, url: str) -> str:
 # ---------------------------------------------------------------------------
 
 def write_body_doc(path: Path, fm: dict, body: str) -> None:
-    """原子写「--- frontmatter --- 正文」。值原样存（允许含冒号），键顺序即传入顺序。"""
+    """原子写「--- frontmatter --- 正文」。值原样存（允许含冒号），键顺序即传入顺序。
+
+    正文里的换行由 `read_body_doc` 的 `strip("\\n")` 在读回时归一，所以 frontmatter
+    的 `body_sha` 要用 `body_sha_of()` 算（它按同一条规则归一）——写入点别自己
+    `sha256(body)`，那是 2026-10-16 之前每轮 CI 都红的那一处。
+    """
     path.parent.mkdir(parents=True, exist_ok=True)
     lines = ["---"]
     for k, v in fm.items():
@@ -1691,8 +1696,19 @@ def validate_bodies(root: Path, bodies: dict) -> list:
 
 
 def body_sha_of(body: str) -> str:
-    """正文的 sha —— 与各个落盘写入口算的那份是同一个口径（`read_body_doc` 去过首尾空行）。"""
-    return hashlib.sha256(body.encode("utf-8")).hexdigest()[:12]
+    """语料正文的 sha —— **落盘与校验共用的唯一口径**。
+
+    必须与 `write_body_doc` 写出的那份逐字一致：两端都 `strip("\\n")`
+    （`read_body_doc` 读回时同样 `strip("\\n")`）。写入端过去直接 `sha256(body)`，
+    正文只要带首/尾换行就与文件对不上 —— 实测 32 个真实页面里 2 个的正文在
+    `strip_page_furniture` 之后带换行（about.fb.com 带首尾、anthropic.com 也带首尾），
+    记下的指纹永远不可能等于文件里的那份；`en_status=ok` 的行又不重抓，错指纹**永久**
+    留在语料里，实产物守卫于是每轮 CI 都红，且报的条数随当天新抓的页面数量浮动
+    （实测 2 条 → 4 条）。
+
+    所以别在写入点直接 `hashlib.sha256(...)`：指纹和落盘必须出自同一份字符串。
+    """
+    return hashlib.sha256((body or "").strip("\n").encode("utf-8")).hexdigest()[:12]
 
 
 def _fm_close(lines: list) -> int:
@@ -1908,7 +1924,9 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
         # 后移）会让两个标题同时落到同一切片，两份逐字相同的正文都被写进语料，而
         # `validate_bodies` 查不出来。这正是本组守卫要根除的缺陷。
         if en_status == "ok" and len(ex["markdown"]) >= 200:
-            _sha = hashlib.sha256(ex["markdown"].encode("utf-8")).hexdigest()[:12]
+            # 用与落盘相同的口径（`body_sha_of`）：它比的是台账里已记的 `body_sha`，
+            # 两边口径不一致会让带尾部换行的行对不上，这道去重就对它们失明。
+            _sha = body_sha_of(ex["markdown"])
             if any(o.get("body_sha") == _sha and (o.get("en_path") or o.get("zh_path"))
                    for kk, o in bodies.items()
                    if kk != key and kk.split("\t", 1)[0] == vendor):
@@ -1943,7 +1961,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                   "original_title": "", "url": norm, "date": ex["date"] or r.get("date", ""),
                   "lang": "zh", "captured": cap, "extractor": "readability-v1",
                   "translator": "native", "status": "translated",
-                  "body_sha": hashlib.sha256(zh_md.encode("utf-8")).hexdigest()[:12]}
+                  "body_sha": body_sha_of(zh_md)}
             write_body_doc(root / zh_rel, fm, zh_md)
             stale_en = f"docs/articles/{vendor}/{slug}.en.md"
             if prev.get("en_path") and (root / prev["en_path"]).exists():
@@ -1967,7 +1985,7 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
               "original_title": r.get("original_title", ""), "url": norm,
               "date": ex["date"] or r.get("date", ""), "lang": "en", "captured": cap,
               "extractor": "readability-v1", "status": en_status,
-              "body_sha": hashlib.sha256(body.encode("utf-8")).hexdigest()[:12]}
+              "body_sha": body_sha_of(body)}
         write_body_doc(root / en_rel, fm, body)
         bodies[key] = {"slug": slug, "en_path": en_rel, "en_status": en_status,
                        "zh_path": prev.get("zh_path", ""), "zh_status": prev.get("zh_status", ""),
@@ -1994,7 +2012,7 @@ def reclassify_bodies(root: Path, bodies: dict) -> int:
         if detect_index_page(body):
             # 链接目录页：清空正文、标 index_page、退出待译
             nfm = dict(fm); nfm["status"] = "index_page"
-            nfm["body_sha"] = hashlib.sha256(b"").hexdigest()[:12]
+            nfm["body_sha"] = body_sha_of("")
             write_body_doc(enp, nfm, "")
             e.update({"en_status": "index_page", "src_lang": ""})
             changed += 1
@@ -2012,7 +2030,7 @@ def reclassify_bodies(root: Path, bodies: dict) -> int:
                "url": fm.get("url", ""), "date": fm.get("date", ""), "lang": "zh",
                "captured": fm.get("captured", ""), "extractor": fm.get("extractor", "readability-v1"),
                "translator": "native", "status": "translated",
-               "body_sha": hashlib.sha256(body.encode("utf-8")).hexdigest()[:12]}
+               "body_sha": body_sha_of(body)}
         write_body_doc(root / zh_rel, nfm, body)
         enp.unlink()
         e.update({"en_path": "", "en_status": "", "zh_path": zh_rel,
@@ -2066,7 +2084,7 @@ def mark_translated(root: Path, bodies: dict, *, key: str, zh_body_md: str,
     fm = {"vendor": vendor, "title": e.get("title", ""), "original_title": e.get("original_title", ""),
           "url": key.split("\t", 1)[1], "date": e.get("date", ""), "lang": "zh", "captured": today,
           "extractor": "readability-v1", "translator": translator, "status": "translated",
-          "body_sha": hashlib.sha256(zh_body_md.encode("utf-8")).hexdigest()[:12]}
+          "body_sha": body_sha_of(zh_body_md)}
     write_body_doc(root / rel, fm, zh_body_md)
     e["zh_path"] = rel
     e["zh_status"] = "translated"
