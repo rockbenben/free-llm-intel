@@ -720,11 +720,18 @@ class TestArchiveTitleRetention(unittest.TestCase):
             products=[], all_news_articles=articles)
 
     def test_kept_english_title_is_not_retranslated(self):
-        """`<!--orig:X-->` 与可见标题相同 = 有意保留英文，必须原样留在归档里。
+        """`<!--orig:X-->` 与可见标题相同 = 冻结「这条不再送机翻」，必须原样留在归档里。
 
-        机翻失败留下的英文行**不写注释**，所以「相同」是唯一的有意保留信号；
+        机翻失败留下的英文行**不写注释**，所以「相同」是唯一的冻结信号；
         少了这层冻结，产品名标题每轮都会被改写成译名（实测 `Grok Imagine API`
         → 「Grok 想象 API」、`Grok Voice Agent API` → 「Grok 语音代理 API」）。
+
+        ⚠ 冻结 ≠ 有人做过决定。有两批是抽取 artifact 而非人工判断：
+        `llm-news/minimax.md` 的 `width` / `fast_pretreatment` / `last_frame_image`
+        （单页 changelog 把列表项里的参数名当成了标题，同锚点另有一行带正常中文）
+        和 `llm-news/deepseek.md` 的 `deepseek-chat` / `-reasoner` / `-coder`
+        （那是它自己 API changelog 给日期段起的名字）。行为照旧冻结是对的——
+        放开就会被机翻成「宽度」写回归档 —— 但别把它们当成「有人看过并判定留英文」。
         """
         arch_path = self.news_dir / "vendor_a.md"
         arch_path.write_text(
