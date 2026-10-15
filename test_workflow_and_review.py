@@ -9633,6 +9633,29 @@ class TestRenderOutputs(unittest.TestCase):
                  for p in self.root.rglob("*") if p.is_file()}
         self.assertEqual(before, after, "G5 幂等：第二次渲染不得改写任何文件")
 
+    def test_render_never_writes_sources(self):
+        """G6：渲染前后源层文件的哈希集合必须完全一致。
+
+        产出层允许读源、不允许写源。今天 `--rebuild-only` 实测把 deepseek 归档从
+        46 行折到 42 行（影子折叠属抓取路径的判据），于是「重排一次产物」也得人工
+        判断那几行 diff 是折叠还是丢数据 —— 本闸就是防止 render 这条路径重新长出写源能力。
+        """
+        self._fixture_tree()
+
+        def snapshot():
+            out = {p.relative_to(self.root).as_posix():
+                   hashlib.sha256(p.read_bytes()).hexdigest()
+                   for d in ("llm-news", "docs/articles")
+                   for p in (self.root / d).rglob("*") if p.is_file()}
+            ledger = self.root / "docs" / "feeds" / "bodies.json"
+            out["docs/feeds/bodies.json"] = hashlib.sha256(ledger.read_bytes()).hexdigest()
+            return out
+
+        before = snapshot()
+        self.assertGreater(len(before), 3, "夹具必须有源文件，否则本闸是空转")
+        self._render()
+        self.assertEqual(snapshot(), before, "render_outputs 写了源层文件")
+
     def test_render_only_flag_is_wired(self):
         """旗标本身：存在、独立于 --rebuild-only（不在测试里真跑，避免重写真仓库产物）。"""
         args = crawler_llm_intel.build_arg_parser().parse_args(["--render-only"])
