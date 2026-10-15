@@ -298,7 +298,26 @@
       <pubDate>Tue, 30 Jun 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Token spend isn’t going down. You need more than naive routing to manage it</description>
       <content:encoded><![CDATA[<p>到这里，token 支出问题已经被大量记录在案。而且它不会消失：<a href="https://www.goldmansachs.com/insights/articles/ai-agents-forecast-to-boost-tech-cash-flow-as-usage-soars">Goldman Sachs 预计 token 用量到 2030 年将增长约 24 倍</a>。</p>
-<p>这意味着 AI 领域的领导者们要应对的是不同的问题。在我们自己的对话里也注意到了这一点。我们已经听不到&quot;<em>我的 agent 足够好吗？</em>&quot;这样的话，现在的问题是：&quot;<em>我们付得起把它规模化运行起来的成本吗？</em>&quot;</p>]]></content:encoded>
+<p>这意味着 AI 领域的领导者们要应对的是不同的问题。在我们自己的对话里也注意到了这一点。我们已经听不到“<em>我的 agent 足够好吗？</em>”这样的话，现在的问题是：“<em>我们付得起把它规模化运行起来的成本吗？</em>”</p>
+<p>这一转变带来了新的技术挑战。团队需要自动化系统，能在不损害 agent 质量的前提下削减浪费掉的 token —— 并且随着模型、价格和工作流的变化，持续改进这些削减。</p>
+<p>我们帮助企业在不牺牲质量的前提下降低 token 支出。<a href="https://www.ai21.com/apply-for-access/">在这里申请抢先体验</a></p>
+<h2>不只是新闻标题</h2>
+<p>我们采访了某家企业级 AI 编程公司的一位 CTO，他用一句话精准概括了当下：<em>“我理解你在 token 上花了 $1M，但影响是什么？没人答得上来。”</em></p>
+<p>团队知道自己需要削减成本。但有两个挑战挡在前面。在与数十家已在生产环境跑 agent 的团队的私下交流中，我们听到的是这些：</p>
+<ul><li><strong>手工调 agent 又慢又脆： </strong>新的优化方法每周都在发布，而且不是每个招数都管用。某家 S&amp;P 500 软件公司的 AI 副总裁告诉我们，他们那些把流量切给更便宜模型的 routing 规则最终反而让成本<em>上升</em>，因为更弱的模型产生的轨迹长得多。为每个用例找到正确的逻辑，可能要花上几周实验。</li><li><strong>模型一变就归零： </strong>agent 优化不附带终身保证。某家 AI 编程独角兽公司的 CEO 分享说，每当底层模型发布更新，他们的定价和性能假设就会被推翻。新增一个模型、工具，或者调整 harness，也是同样的事：地面在移动，精心调好的 agent 或 routing 规则就过时了。</li></ul>
+<p>我们从一线得到的图景是：agent 优化 —— 在不损害质量的前提下削减成本 —— 至今仍是手工编写、且对每个用例都不精确；要绕过这些障碍，需要的资源、时间和专业能力，是许多公司不具备的。</p>
+<p>那么在这期间，团队们都在做什么？</p>
+<h2>团队正在收敛到 routing</h2>
+<p>你可以在技术栈的各个位置挤成本，但我们听得最多的是 <strong>routing</strong>：把每次调用发给能处理它的那个最便宜的模型。routing 无处不在：</p>
+<ul><li>来自行业领袖：就在过去一个月里，<a href="https://youtu.be/jJRAvZNGUvI?si=SSY3LOp65ndhMYrh&amp;t=3636">Salesforce CEO Marc Benioff</a>、<a href="https://www.youtube.com/watch?v=NpZbum0lmlI">Harvey 联合创始人 Gabe Pereyra</a>、<a href="https://www.linkedin.com/posts/boxaaron_over-the-coming-weeks-and-months-youre-going-activity-7472664573737689088-9zmv">Box CEO Aaron Levie</a> 都在为 routing 现身说法。</li><li>来自生产数据：<a href="https://vercel.com/blog/ai-gateway-production-index">Vercel 的新报告发现</a>，规模化运行的团队<strong>平均把 35 个模型</strong>当作一张 routing 图来跑。这已经是生产环境的最佳实践。</li><li>在我们自己的实验室也一样：过去几周我们花时间研究多样化模型与 agent 集成的好处，最终拿下了 <a href="https://www.ai21.com/blog/maestro-deep-research-agents/">BrowseComp-Plus 第一名</a> 和 <a href="https://www.ai21.com/blog/merging-weak-agents-into-a-state-of-the-art-deep-researcher/">DeepResearch Bench II</a>。</li></ul>
+<p>难点在于把 routing 变成自动的，用一套逻辑去学习对每个 agent、每个领域各自最优的调用。它还得考虑 provider 的特殊性、KV caching、query 差异等等。</p>
+<h2>我们如何自动化 agent 优化</h2>
+<p><strong>我们从构建一个智能路由器开始，</strong>这是一个即插即用的层，你把 agent 端点指向它，就能在运行时找出并削减浪费。在基础层，它识别 token 泄漏的常见来源（例如冗余上下文、重复指令、无关工具），并以 cache-aware 且一致的方式把它们裁掉。在这一层之上，它做出更高级的 routing 决策，并随着流量积累持续改进。</p>
+<p><img src="https://www.ai21.com/wp-content/uploads/2026/06/Figure-1-2-1024x483.png" alt=""></p>
+<p>它已经见效：把一个流行的 code review agent 这样 routing 起来，相对公开基线把每个 PR 的成本降低了 68%。<strong>这在生产流量上意味着仅一个 agent 每年大约 $560K。</strong>（这项研究很快会有更多进展。）</p>
+<p>我们不会止步于此。过去 6 个月里，<a href="https://www.ai21.com/blog/">我们在 4 个不同 benchmark 上展示了新的 SOTA 与成本效率</a>，方法是应用超越 routing 和裁剪浪费的、针对具体 agent 的优化方法。</p>
+<p>无论我们是在 routing 点上做优化，还是深挖 agent 架构，本能是一样的：削减成本，别弄坏已经能用的东西，并且持续学习。把这个循环自动化之后，我们帮更多团队有底气回答那个问题：<em>我们付得起把它规模化运行起来的成本吗？</em></p>
+<p>如果这正是你团队正在面对的问题，欢迎聊聊。<strong><a href="https://www.ai21.com/apply-for-access/">申请抢先体验我们的智能路由器 → </a></strong></p>]]></content:encoded>
     </item>
     <item>
       <title>以小博大：把弱 agent 合并成最先进的 deep researcher</title>

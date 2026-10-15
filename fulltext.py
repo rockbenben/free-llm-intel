@@ -509,6 +509,21 @@ _DROP_TAGS = {"script", "style", "nav", "header", "footer", "aside", "form",
 _BLOCK_TAGS = {"p", "li", "h1", "h2", "h3", "h4", "h5", "h6", "pre", "blockquote"}
 _INLINE_MARK = {"strong", "b", "em", "i", "code", "a", "img", "br"}
 _MIN_BODY_CHARS = 200
+# 「前台只剩残段」的判据：付费墙闸门与备用源触发共用这一个数。**不要为了多兜住某
+# 一页而把它抬高** —— 2026-10-15 曾把它从 400 抬到 1500 去兜 ai21 那个引导页，事后
+# 证明那一页根本不是付费墙（见 `_wprest_markdown` 注释），抬闸门只剩下副作用：把
+# 149 篇 `[400,1500)` 的正常短文挪进风险区（实测 mistral 一篇活抽 1506 字符，离
+# 新闸门只差 6 个字符），而判据搜的是**整页 HTML**（含 nav/footer），站点框架里挂
+# 一句 `Subscribe to read` 就能把该站所有短文一次性判成付费墙并丢掉正文。
+_STUB_BODY_CHARS = 400
+# 「这页只给了残段」的补判上限：正文短于此才值得再找一次备用源。
+# 与 `_STUB_BODY_CHARS` 分开是有意的 —— 那个是**定罪**闸门（判付费墙/壳），放宽它会
+# 误伤 149 篇 `[400,1500)` 的正常短文；这个只是**多读一次**的触发上限，最坏后果是白花
+# 一次请求，不采纳就不会动语料。**CTA 分支不设上限才是真隐患**：判据搜的是整页 HTML
+# （含 nav/footer），站点框架里挂一句 `Sign in to read`，该站每一篇长文都会去试 REST，
+# 而 REST 抽出来只要更长就被采纳 —— 一次 `--refresh` 就能把整个 WordPress 语料的
+# `body_sha` 全换一遍。1500 的来历：真例（ai21 引导页）473 字符，离它还有 3 倍空隙。
+_TEASER_CEILING_CHARS = 1500
 _HEADINGS = {"h1": "#", "h2": "##", "h3": "###", "h4": "####", "h5": "#####", "h6": "######"}
 
 
@@ -846,7 +861,9 @@ def extract_article_markdown(html: str, base_url: str) -> dict:
     # 硬失败判定（抓不到不猜）：反爬 > 付费墙 > SPA 壳 > 正文过短
     if _BLOCKED_RE.search(html):
         return _fail("blocked")
-    if _PAYWALL_RE.search(html) and len(markdown) < 400:
+    # 付费墙指纹要「措辞 + 短正文」一起看：光有措辞会吃掉正文里正常提到订阅/登录的句子。
+    # 闸门保持 `_STUB_BODY_CHARS`（400），不为单页调高 —— 理由见该常量注释。
+    if _PAYWALL_RE.search(html) and len(markdown) < _STUB_BODY_CHARS:
         return _fail("paywall")
     if len(markdown) < _MIN_BODY_CHARS:
         if _SPA_SHELL_RE.search(html):
@@ -861,6 +878,74 @@ def status_for_reason(reason: str) -> str:
     if reason == "paywall":
         return "paywall"
     return "fetch_failed"
+
+
+_LINK_TAG_RE = re.compile(r"(?is)<link\b[^>]*>")
+_ATTR_RE = re.compile(r"""([\w:.-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))""")
+# 「这页还有全文在别处」的 CTA。**只用来触发去找备用源，绝不据此给页面定罪。**
+# 2026-10-15 把 `read the full article` 加进 `_PAYWALL_RE` 是个误判：那句话出现的
+# ai21 落地页全文就摆在自家 REST 端点上。措辞现在只决定「要不要多读一次」，不决定
+# 「算不算付费墙」——找得到全文就写全文，找不到仍走 400 闸门的旧判据，页面的分类
+# 不会因为这句话变差。
+_GATED_CTA_RE = re.compile(
+    r"(read the full (?:article|story)|subscribe to (?:read|continue)|members[\s-]?only"
+    r"|sign in to read|log in to read)", re.I)
+
+
+def alternate_json_urls(html: str, base_url: str) -> list:
+    """页面自报的 `rel="alternate" type="application/json"` 里属于 WordPress REST 的那些。
+
+    前台完全可以只放残段、把全文留在自家 API 上。实测 2026-10-15 那个 ai21 落地页
+    （`gated-content__form-wrap` + HubSpot 留资表单，原始 HTML 里 form 数为 0）正文
+    只有 473 字符引导文案加一句 "Read the full article"，同一篇文章在
+    `https://www.ai21.com/wp-json/wp/v2/posts/30488` 无鉴权就返回完整正文
+    （7170 字符 HTML / 4455 字符纯文本，标题与前台一致，后半段前台根本没有）。它**不是
+    付费墙**：前台要的是留资不是钱，服务器自己就把全文端出来了。所以「残段」的正确
+    反应是换个源再读一次，而不是贴一个每天重抓都翻不回来的标签。
+    """
+    out: list = []
+    for m in _LINK_TAG_RE.finditer(html or ""):
+        attrs: dict = {}
+        for a in _ATTR_RE.finditer(m.group(0)):
+            attrs[a.group(1).lower()] = a.group(2) or a.group(3) or a.group(4) or ""
+        if "alternate" not in (attrs.get("rel") or "").lower():
+            continue
+        if (attrs.get("type") or "").lower() != "application/json":
+            continue
+        href = urljoin(base_url, (attrs.get("href") or "").strip())
+        if "/wp-json/" in href and href not in out:
+            out.append(href)
+    return out
+
+
+def _wprest_markdown(api_json: str, base_url: str) -> str:
+    """把 WordPress REST 的 `content.rendered`（正文 HTML）过同一套抽取，返回 markdown。
+
+    走的是同一个 `extract_article_markdown`，所以 `_DROP_TAGS`、公式收行、站件判据
+    一视同仁：备用源不是「另一套清洗」，只是另一份输入。抽不出来就返回空串，调用方
+    保留原判据的结果。
+
+    相对地址按**文章永久链接**（REST 的 `link` 字段）解析，不是按 API 端点：正文里
+    出现 `href="2026/06/foo"` 这类相对路径时，拿 `/wp-json/wp/v2/posts/30488` 当基准
+    会拼出 `…/wp-json/wp/v2/posts/2026/06/foo`。实测那篇文章 11 个链接全是绝对地址，
+    这是防患而不是修已观测到的错。`link` 缺失时退回调用方给的基准。
+    """
+    try:
+        data = json.loads(api_json)
+    except Exception:
+        return ""
+    if not isinstance(data, dict):
+        return ""
+    content = data.get("content")
+    rendered = content.get("rendered") if isinstance(content, dict) else content
+    if not isinstance(rendered, str) or not rendered.strip():
+        return ""
+    link = data.get("link")
+    base = link if isinstance(link, str) and link.strip() else base_url
+    wrapped = ("<html><body><article class=\"entry-content\">"
+               + rendered + "</article></body></html>")
+    ex = extract_article_markdown(wrapped, base)
+    return "" if ex["reason"] else ex["markdown"]
 
 
 # ---------------------------------------------------------------------------
@@ -1745,6 +1830,30 @@ def fetch_bodies(root: Path, rows: list, bodies: dict, *, fetch: Callable,
                 ex2 = extract_article_markdown(h2 or "", f2 or url)
                 if not ex2["reason"] and len(ex2["markdown"]) > len(ex["markdown"]):
                     ex, ok, final = ex2, ok2, f2
+        # 前台只剩残段、或页面摆着「读全文」CTA 时，去页面自报的备用源再读一次
+        # （依据见 `alternate_json_urls` 注释）。三重把关保证它不会变成常态开销：
+        # ① 只有 `alternate_json_urls()` 非空才考虑，而那要求页面自报 WP REST 端点，
+        #    非 WordPress 站（openai/huggingface…）恒为空；② 每次最多试 2 个端点；
+        # ③ 只有抽出来的 markdown 比手上这份更长才采纳，短了/等长/抽不出就原样保留，
+        #    页面分类不受影响。`blocked` 是反爬而不是缺正文，不去加倍请求。
+        #
+        # 三个触发条件是「或」，但**CTA 那一支必须同时短于
+        # `_TEASER_CEILING_CHARS`**：CTA 搜的是整页 HTML，站点框架里一句
+        # `Sign in to read` 就会命中每一篇长文，不设上限等于让整个 WordPress 语料
+        # 每次重抓都被 REST 版本换一遍正文（实测 REST 抽出的正文常常比前台长几个字符，
+        # 「更长就采纳」这条守不住）。缺正文（`reason` 非空）与真残段（< 400）不设限。
+        if ok and ex["reason"] != "blocked":
+            _alts = alternate_json_urls(html or "", final or url)
+            _stub = len(ex["markdown"]) < _STUB_BODY_CHARS
+            _short = len(ex["markdown"]) < _TEASER_CEILING_CHARS
+            if _alts and (ex["reason"] or _stub
+                          or (_short and _GATED_CTA_RE.search(html or ""))):
+                for _alt in _alts[:2]:
+                    a_body, a_ok, _as, _au = fetch(_alt)
+                    md = _wprest_markdown(a_body or "", _alt) if a_ok else ""
+                    if len(md) > len(ex["markdown"]):
+                        ex = dict(ex, markdown=md, reason="")
+                        break
         en_status = "ok" if ex["reason"] == "" and ok else status_for_reason(ex["reason"] or "empty")
         # 单页变更日志（MiniMax 发布说明、Kimi 发布记录）：抓回来的永远是**整页**，
         # 按 fragment 切成「这一条」的段落。顺序不能换 —— 必须先切片再判目录页：

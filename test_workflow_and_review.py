@@ -7706,6 +7706,162 @@ class TestFulltextExtractor(unittest.TestCase):
         html = "<html><body>We noticed something unusual. You have been blocked.</body></html>"
         self.assertEqual(ft.extract_article_markdown(html, "https://x/y")["reason"], "blocked")
 
+    # ai21 `-gated` 落地页那份夹具：2026-10-15 真抓到的残段，473 字符 + 一句 CTA。
+    _AI21_TEASER = (
+        '<html><head><link rel="alternate" type="application/json" '
+        'href="https://www.ai21.com/wp-json/wp/v2/posts/30488"></head>'
+        '<body><main><h1>Spend isn’t going down. What now?</h1>'
+        '<p>By now, the token spend problem is well documented. And it’s not going away: '
+        '<a href="https://www.goldmansachs.com/insights/articles/ai-agents-forecast-to-boost-tech-cash-flow-as-usage-soars">Goldman Sachs expects token usage to grow ~24x by 2030</a>.</p>'
+        '<p>That means AI leaders are tackling different questions. We’ve noticed this in our '
+        'own conversations. We no longer hear, “<em>Is my agent good enough?</em>” Now, the '
+        'question is: “<em>Can we afford to run it at scale?</em>”</p>'
+        '<a>Read the full article</a></main></body></html>')
+    _AI21_URL = "https://www.ai21.com/lp/blog/token-spend-gated"
+
+    def test_long_wp_article_with_site_cta_does_not_hit_alternate(self):
+        """长文 + 站点框架级 CTA **不许**触发备用源，否则整个 WP 语料会被 REST 版本换一遍。
+
+        这是提交 1fa79af9 自带的漏洞：CTA 那一支原先不看长度，而 CTA 搜的是整页
+        HTML（含 nav/footer），站点框架里挂一句 `Sign in to read` 就命中每一篇长文。
+        采纳条件又只是「REST 抽出来更长」，而实测 REST 正文常比前台多几个字符 ——
+        一次 `--refresh` 就能把所有 WordPress 文章的 `body_sha` 全换一遍。
+        """
+        api = "https://vendor.example/wp-json/wp/v2/posts/777"
+        body = "".join("<p>Real substantive paragraph number %d about token routing.</p>" % i
+                       for i in range(40))
+        # CTA 挂在 footer 里（框架级措辞），正文本身是正常长文。
+        page = ('<html><head><link rel="alternate" type="application/json" href="%s"></head>'
+                '<body><article><h1>Full post</h1>' % api + body +
+                '</article><footer><a href="/subscribe">Sign in to read more</a></footer>'
+                '</body></html>')
+        self.assertTrue(ft._GATED_CTA_RE.search(page), "夹具前提：页面带着 CTA 措辞")
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "docs/articles/vendor").mkdir(parents=True)
+            calls = []
+
+            def fetch(url):
+                calls.append(url)
+                return (page, True, 200, url)
+
+            bodies = {}
+            rows = [{"vendor": "vendor", "url": "https://vendor.example/post",
+                     "title": "Full post", "date": "2026-06-30", "original_title": "Full post"}]
+            ft.fetch_bodies(root, rows, bodies, fetch=fetch, today="2026-10-15")
+            self.assertEqual(calls, ["https://vendor.example/post"],
+                             "长文不许为框架级 CTA 多发那次请求")
+            key = ft.bodies_key("vendor", "https://vendor.example/post")
+            _fm, stored = ft.read_body_doc(root / bodies[key]["en_path"])
+            self.assertIn("paragraph number 39", stored, "存进去的必须是前台那份长文")
+
+    def test_gate_cta_alone_is_not_a_paywall_verdict(self):
+        """CTA 不是付费墙的证据：只有它 + 一段短残段，也不得判 paywall。
+
+        夹具特意短在 400 闸门**之内**（实测那页是 473 字符，天然被闸门挡住，量到的
+        是长度而不是措辞 —— 拿它当守卫会绿得毫无意义）。落在 `_MIN_BODY_CHARS` 之上、
+        `_STUB_BODY_CHARS` 之下，`empty` 也不会兜住，于是这一格只能靠「CTA 没进
+        `_PAYWALL_RE`」才绿：谁把 read the full article 放回付费墙表，红的就是它。
+
+        那一页当初被判成 `paywall` 是误判：同一篇文章在 `wp-json/wp/v2/posts/30488`
+        无鉴权就返回完整正文（7170 字符 HTML / 4455 字符纯文本），服务器自己把全文端
+        出来了；前台要的是 HubSpot 留资，不是钱。而 `paywall` 与 `fetch_failed` 同列
+        每日重试集，可每天重抓拿到的永远是同一个前台残段 —— 判一次就再也翻不回来，
+        中文精译也跟着被删。
+
+        代价要说清：备用源找不到时残段仍按改动前的行为存下，那是对「还没找到全文」的
+        如实记账，好过编一个再也翻不回来的终态标签。
+        """
+        stub = ("<html><body><article><h1>Spend isn’t going down</h1><p>"
+                + "By now, the token spend problem is well documented and it is not going away. " * 4
+                + "</p><p>Read the full article</p></article></body></html>")
+        r = ft.extract_article_markdown(stub, self._AI21_URL)
+        self.assertTrue(ft._GATED_CTA_RE.search(stub), "夹具得带着那句 CTA")
+        self.assertLess(len(r["markdown"]), ft._STUB_BODY_CHARS,
+                        "夹具前提：短到闸门拦得住，量到的才是措辞而不是长度")
+        self.assertGreaterEqual(len(r["markdown"]), ft._MIN_BODY_CHARS,
+                                "夹具前提：够长，`empty` 不许替措辞兜底")
+        self.assertNotEqual(r["reason"], "paywall",
+                            "CTA 不是付费墙的证据：全文就摆在页面自报的 REST 端点上")
+        self.assertEqual(ft.status_for_reason("paywall"), "paywall", "映射本身不变")
+
+    def test_wprest_alternate_recovers_full_body_behind_gate_page(self):
+        """前台残段 + 页面自报 WP REST 端点 → 落盘的必须是全文，不是那句 CTA。"""
+        api = "https://www.ai21.com/wp-json/wp/v2/posts/30488"
+        rendered = ("<p>Full first paragraph the front end never showed at all.</p>"
+                    + "".join("<p>Body paragraph number %d with real substance.</p>" % i
+                              for i in range(12)))
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "docs/articles/ai21_labs").mkdir(parents=True)
+            calls = []
+
+            def fetch(url):
+                calls.append(url)
+                if url == api:
+                    return (json.dumps({"content": {"rendered": rendered}}), True, 200, url)
+                return (self._AI21_TEASER, True, 200, url)
+
+            bodies = {}
+            rows = [{"vendor": "ai21_labs", "url": self._AI21_URL, "title": "Gate",
+                     "date": "2026-06-30", "original_title": "Gate"}]
+            n = ft.fetch_bodies(root, rows, bodies, fetch=fetch, today="2026-10-15")
+            key = ft.bodies_key("ai21_labs", self._AI21_URL)
+            self.assertEqual(n, 1)
+            self.assertEqual(bodies[key]["en_status"], "ok",
+                             "找得到全文就不该是 paywall / fetch_failed")
+            self.assertEqual(calls, [self._AI21_URL, api],
+                             "只为这一页多发那一次备用源请求，不许成常态开销")
+            _fm, body = ft.read_body_doc(root / bodies[key]["en_path"])
+            self.assertIn("Full first paragraph", body)
+            self.assertNotIn("Read the full article", body, "残段 CTA 不该混进正文")
+            self.assertGreater(len(body), 400, "存进去的必须是全文量级")
+
+    def test_no_wprest_alternate_means_no_extra_request(self):
+        """非 WordPress 站恒不自报 WP 端点 → 不许多发那一次请求，分类也不变。
+
+        残段长度对齐真页面那一档（`_MIN_BODY_CHARS` 之上、400 之下），也就是 0962d1e6
+        之前 ai21 那行真实的状态：`ok` + 一段冒充全文的引导文案。这格钉的是「备用源
+        缺席时不许顺手改写分类」——机制只负责多找一次，找不到就照旧。
+        """
+        filler = "Body text that stays under the stub threshold but above the minimum. " * 5
+        # 故意挂一个 `application/json` 但**非** WP 端点的 alternate：闸门要是只认
+        # rel/type 不认 `/wp-json/`，这格就会多出第二次请求而变红（别家 JSON 元数据
+        # 不是正文，拿它当备用源只会抓回一堆 JSON 串）。
+        teaser = ("<html><head><link rel=\"alternate\" type=\"application/json\" "
+                  "href=\"https://api.example.com/post/note.json\"></head>"
+                  "<body><article><h1>Short note</h1><p>" + filler +
+                  "</p><p>Read the full article</p></article></body></html>")
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "docs/articles/openai").mkdir(parents=True)
+            calls = []
+
+            def fetch(url):
+                calls.append(url)
+                return (teaser, True, 200, url)
+
+            bodies = {}
+            rows = [{"vendor": "openai", "url": "https://openai.com/index/note",
+                     "title": "Note", "date": "2026-06-30", "original_title": "Note"}]
+            ft.fetch_bodies(root, rows, bodies, fetch=fetch, today="2026-10-15")
+            key = ft.bodies_key("openai", "https://openai.com/index/note")
+            self.assertEqual(calls, ["https://openai.com/index/note"],
+                             "没有 WP 端点就只能抓这一次")
+            self.assertEqual(bodies[key]["en_status"], "ok",
+                             "备用源缺席时不得改写页面的原有分类")
+
+    def test_long_article_naming_read_full_article_is_not_paywall(self):
+        """判据宁少删不吃内容：正文够长时，句中出现 read the full article 不得误判。"""
+        paras = "".join("<p>" + "word " * 40 + "</p>" for _ in range(20))
+        html = ("<html><body><main><h1>Real post</h1>" + paras +
+                "<p>Then read the full article for the benchmark tables.</p>"
+                "</main></body></html>")
+        r = ft.extract_article_markdown(html, "https://openai.com/index/real-post")
+        self.assertEqual(r["reason"], "", "长文里提到该措辞必须照样判 ok")
+        self.assertGreater(len(r["markdown"]), 400,
+                           "夹具前提：这份语料本就长（判据靠长度闸门兜住）")
+
     def test_status_for_reason_mapping(self):
         self.assertEqual(ft.status_for_reason(""), "ok")
         self.assertEqual(ft.status_for_reason("paywall"), "paywall")
