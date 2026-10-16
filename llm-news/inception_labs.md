@@ -1,6 +1,6 @@
 # InceptionLabs 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-15**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-16**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：InceptionLabs（`inception_labs`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,7 +9,7 @@
 
 ## 全部文章（共 14 篇，按日期倒序；无日期条目列于最后）
 
-1. [Mercury 2 入选 TIME 2026 年度最佳发明](https://www.inceptionlabs.ai/blog/mercury-2-named-to-time-s-best-inventions-of-2026)（2026-10-15） <!--orig:Mercury 2 Named to TIME's Best Inventions of 2026-->
+1. [Mercury 2 入选 TIME 2026 年度最佳发明](https://www.inceptionlabs.ai/blog/mercury-2-named-to-time-s-best-inventions-of-2026)（2026-10-15） <!--orig:Mercury 2 Named to TIME’s Best Inventions of 2026|Read the story-->
 2. [Mercury Voice 发布](https://www.inceptionlabs.ai/blog/introducing-mercury-voice)（2026-10-01） <!--orig:Introducing Mercury VoiceRead story-->
 3. [Mercury 2.5 简介](https://www.inceptionlabs.ai/blog/introducing-mercury-2-5)（2026-09-24） <!--orig:Introducing Mercury 2.5Read story-->
 4. [Mercury 2 用于搜索：快到一次查询可以跑上百次](https://www.inceptionlabs.ai/blog/mercury-2-for-search) <!--orig:Mercury 2 for Search: Fast enough to run a hundred times per queryRead story-->

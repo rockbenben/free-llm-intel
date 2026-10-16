@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-16 11:17:48**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-16 08:31:21**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -42,10 +42,10 @@
 - 📰 **最新文章**（官方源抓取于 2026-10-16，标题自动汉化）：
   1. [把 GPT‑Rosalind 带进学术研究实验室](https://openai.com/index/introducing-the-rosalind-academic-plan)（2026-10-15）
   2. [通过提问教学生思考与学习](https://openai.com/index/teaching-students-to-think-and-learn-through-questions)（2026-10-15）
-  3. [Amp 借助 OpenAI 模型，让 AI 智能体承担编程之外的工作](https://openai.com/index/amp-beyond-coding)（2026-10-14）
-  4. [SentinelOne 将恶意软件分析时间从数周缩短至数小时](https://openai.com/index/sentinelone)（2026-10-14）
-  5. [Third Moment Research 如何让 10,000 个智能体持续运行 36 小时以上](https://openai.com/index/third-moment-research)（2026-10-14）
-  - 📄 完整文章归档（共 1294 篇）：[openai.md](llm-news/openai.md)
+  3. [沙利文克伦威尔将法律专业知识纳入协议审查](https://openai.com/index/sullivan-cromwell)（2026-10-15）
+  4. [Amp 借助 OpenAI 模型，让 AI 智能体承担编程之外的工作](https://openai.com/index/amp-beyond-coding)（2026-10-14）
+  5. [SentinelOne 将恶意软件分析时间从数周缩短至数小时](https://openai.com/index/sentinelone)（2026-10-14）
+  - 📄 完整文章归档（共 1295 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (Google AI Studio) (google_gemini)
 - 页面：[变更日志](https://ai.google.dev/gemini-api/docs/changelog)
@@ -194,12 +194,12 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-16，标题自动汉化）：
-  1. [Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音](https://huggingface.co/blog/ibm-granite/granite-switch-4-1)（2026-10-15）
-  2. [欢迎 Muse Spark Open：来自 Meta 的开放权重前沿多模态混合专家模型](https://huggingface.co/blog/meta-muse-spark-open)（2026-10-15）
-  3. [Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型](https://huggingface.co/blog/flux-3)（2026-10-15）
-  4. [HiRO-ACEv2：以一小部分成本用 3 km 分辨率模拟极端天气](https://huggingface.co/blog/allenai/hiro-acev2)（2026-10-14）
-  5. [用 LFM2.5-24B-A2B 在端侧运行快速、私密的智能体](https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b)（2026-10-13）
-  - 📄 完整文章归档（共 885 篇）：[huggingface.md](llm-news/huggingface.md)
+  1. [扩展 Indic 预训练：2.8 万亿代币和开放数据生成管道](https://huggingface.co/blog/nvidia/scaling-indic-pretraining)（2026-10-16）
+  2. [Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音](https://huggingface.co/blog/ibm-granite/granite-switch-4-1)（2026-10-15）
+  3. [欢迎 Muse Spark Open：来自 Meta 的开放权重前沿多模态混合专家模型](https://huggingface.co/blog/meta-muse-spark-open)（2026-10-15）
+  4. [Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型](https://huggingface.co/blog/flux-3)（2026-10-15）
+  5. [HiRO-ACEv2：以一小部分成本用 3 km 分辨率模拟极端天气](https://huggingface.co/blog/allenai/hiro-acev2)（2026-10-14）
+  - 📄 完整文章归档（共 886 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### OpenRouter (模型统一网关) (openrouter)
 - 📡 [RSS/Atom 订阅源](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
@@ -414,7 +414,7 @@
   3. [编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08）
   4. [Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理](https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai)（2026-10-07）
   5. [Ray Summit 2026：物理 AI、RL，以及承载它们的一切基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08）
-  - 📄 完整文章归档（共 78 篇）：[anyscale.md](llm-news/anyscale.md)
+  - 📄 完整文章归档（共 80 篇）：[anyscale.md](llm-news/anyscale.md)
 
 ### InceptionLabs (inception_labs)
 - 页面：[官方博客](https://www.inceptionlabs.ai/blog)

@@ -1,22 +1,22 @@
 # Anyscale 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-15**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-16**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anyscale（`anyscale`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
 - 📡 RSS/Atom：[RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)
 
-## 全部文章（共 78 篇，按日期倒序；无日期条目列于最后）
+## 全部文章（共 80 篇，按日期倒序；无日期条目列于最后）
 
 1. [用 KubeRay 在 Kubernetes 上大规模运行 Ray](https://anyscale.com/blog/kuberay)（2026-10-15） <!--orig:Running Ray at scale on Kubernetes with KubeRay-->
 2. [在 Anyscale 上用 Ray 扩展机器人决策研究的规模](https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale)（2026-10-09） <!--orig:Scaling the Science of Robot Decisions with Ray on Anyscale-->
 3. [编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08） <!--orig:Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale-->
 4. [Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理](https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai)（2026-10-07） <!--orig:Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference-->
 5. [Ray Summit 2026：物理 AI、RL，以及承载它们的一切基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08） <!--orig:Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all-->
-6. [将 Ray 的 AI 工作负载扩展至 10k 节点集群](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25） <!--orig:Scaling Ray for AI workloads to 10k node clusters-->
-7. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV Cache 复用走向 Token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
-8. [推出 Ray History Server：Ray on Kubernetes 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
+6. [推出 Ray History Server：Ray on Kubernetes 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
+7. [将 Ray 的 AI 工作负载扩展至 10k 节点集群](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25） <!--orig:Scaling Ray for AI workloads to 10k node clusters-->
+8. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV Cache 复用走向 Token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
 9. [学习闭环：拥有你自己的智能之路](https://anyscale.com/blog/learning-loops)（2026-08-25） <!--orig:Learning Loops: The Path to Owning Your Intelligence-->
 10. [SkyRL 中的 FP8 强化学习：保持训练与 rollout 之间的策略一致性](https://anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl)（2026-08-25） <!--orig:FP8 Reinforcement Learning in SkyRL: Preserving Policy Consistency Across Training and Rollout-->
 11. [Ray Data 中的 GPU 原生算子](https://anyscale.com/blog/gpu-native-operators-in-ray-data)（2026-08-25） <!--orig:GPU-Native Operators in Ray Data-->
@@ -42,48 +42,50 @@
 31. [Ray 与分离式混合并行，多模态 AI 训练提速 30%](https://anyscale.com/blog/30-faster-multimodal-ai-training-with-ray-and-disaggregated-hybrid)（2025-12-09） <!--orig:30% Faster Multimodal AI Training with Ray and Disaggregated Hybrid Parallelism-->
 32. [Ray Serve：以异步推理、自定义请求路由与自定义扩缩推进灵活性](https://anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing)（2025-11-11） <!--orig:Ray Serve: Advancing Flexibility with Async Inference, Custom Request Routing, and Custom Autoscaling-->
 33. [发布 Ray Direct Transport：Ray Core 支持 RDMA（上篇）](https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core)（2025-11-03） <!--orig:Announcing Ray Direct Transport: RDMA Support in Ray Core (Part 1)-->
-34. [阿里云上的 Ray：构建机器学习平台](https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform)（2025-06-12） <!--orig:Ray on Alibaba Cloud: Building an ML Platform-->
-35. [Ray Compiled Graphs：原生 GPU 通信加持的 AI 负载优化](https://anyscale.com/blog/announcing-compiled-graphs)（2024-10-07） <!--orig:Ray Compiled Graphs: Optimized AI Workloads with Native GPU Communication-->
-36. [在 Anyscale 上自动扩缩大型 AI 模型，速度最高提升 5.1 倍](https://anyscale.com/blog/autoscale-large-ai-models-faster)（2024-10-01） <!--orig:Autoscaling Large AI Models up to 5.1x Faster on Anyscale-->
-37. [发布 Anyscale Runtime：由 Ray 驱动，让 AI 更快、更便宜、更具弹性](https://anyscale.com/blog/announcing-anyscale-rayturbo)（2024-10-01） <!--orig:Announcing RayTurbo-->
-38. [Anyscale 上的批量 LLM 推理可将 AWS Bedrock 成本最多降低 6 倍](https://anyscale.com/blog/batch-llm-inference-announcement)（2024-10-01） <!--orig:Batch LLM Inference on Anyscale slashes AWS Bedrock costs by up to 6x-->
-39. [用 Anyscale Replica Compaction 部署 Ray Serve，节点数最多省 50%](https://anyscale.com/blog/new-feature-replica-compaction)（2024-07-15） <!--orig:Deploy Ray Serve with up to 50% fewer nodes using Anyscale Replica Compaction-->
-40. [Ray 聚焦：我们如何做到每周发布 Ray](https://anyscale.com/blog/ray-spotlight-delivering-weekly-releases)（2024-06-25） <!--orig:Ray Spotlight: How we delivered Ray weekly releases-->
-41. [Ray Spotlight 系列：用 Runtime Env 即容器构建多租户 Serve 应用](https://anyscale.com/blog/ray-spotlight-series-multitenant-serve-applications-with-runtime-envs-as-containers)（2024-06-13） <!--orig:Ray Spotlight Series: Multitenant Serve Applications with Runtime Envs as Containers-->
-42. [用 Ray、NVIDIA Triton Inference Server 与 TensorRT-LLM 实现低延迟生成式 AI 模型服务](https://anyscale.com/blog/low-latency-generative-ai-model-serving-with-ray-nvidia)（2024-03-13） <!--orig:Low-latency Generative AI Model Serving with Ray, NVIDIA Triton Inference Server, and NVIDIA TensorRT-LLM-->
-43. [大规模 RAG：用 Anyscale 和 Pinecone 将 Embedding 计算成本降低 10 倍](https://anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone)（2024-01-16） <!--orig:RAG at Scale: 10x Cheaper Embedding Computations with Anyscale and Pinecone-->
-44. [开源 LLM：可用于生产，还是低质量玩具？](https://anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy)（2023-11-20） <!--orig:Open Source LLMs: Viable for Production or a Low-Quality Toy?-->
-45. [Spotify 如何打造稳健且开发者体验无阻的 Ray 平台](https://anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer)（2023-11-09） <!--orig:How Spotify Built a Robust Ray Platform with a Frictionless Developer Experience-->
-46. [LinkedIn 基于 Ray Serve 的推理图（Inference Graphs）](https://anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve)（2023-11-09） <!--orig:Inference Graphs at LinkedIn Using Ray-Serve-->
-47. [基础模型的进展——技术、社会与应用](https://anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications)（2023-11-03） <!--orig:Advances in Foundation Models-->
-48. [Airbnb 的下一代 ML 平台如何优化 LLM 训练](https://anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform)（2023-10-30） <!--orig:Optimizing LLM Training with Airbnb's Next-Gen ML Platform-->
-49. [用 Ray Serve 构建生产级 AI 应用](https://anyscale.com/blog/building-production-ai-applications-with-ray-serve)（2023-10-24） <!--orig:Building Production AI Applications with Ray Serve-->
-50. [Netflix 基于 Ray 的异构训练集群](https://anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix)（2023-10-20） <!--orig:Heterogeneous Training Cluster with Ray at Netflix-->
-51. [构建生产级 LLM 应用的实用数据考量](https://anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications)（2023-10-19） <!--orig:Practical Data Considerations for Building Production-Ready LLM Applications-->
-52. [用 LangChain 与 LangSmith 构建上下文感知的推理应用](https://anyscale.com/blog/building-context-aware-reasoning-applications-with-langchain-and-langsmith)（2023-10-18） <!--orig:Building Context-Aware Reasoning Applications with LangChain and LangSmith-->
-53. [Llama——在开放生态中扩展 LLM](https://anyscale.com/blog/llama-scaling-up-llms-in-an-open-ecosystem)（2023-10-16） <!--orig:Llama, Scaling Up LLMs in an Open Ecosystem-->
-54. [Ray Serve：应对生产环境 AI 服务的成本与复杂性](https://anyscale.com/blog/tackling-the-cost-and-complexity-of-serving-ai-in-production-ray-serve)（2023-09-25） <!--orig:Ray Serve: Tackling the cost and complexity of serving AI in production-->
-55. [用 Ray Data 为 ML 训练提供快速、灵活、可扩展的数据加载](https://anyscale.com/blog/fast-flexible-scalable-data-loading-for-ml-training-with-ray-data)（2023-09-15） <!--orig:Fast, flexible, and scalable data loading for ML training with Ray Data-->
-56. [连续批处理如何让 LLM 推理吞吐量提升 23 倍并降低 p50 延迟](https://anyscale.com/blog/continuous-batching-llm-inference)（2023-06-22） <!--orig:How continuous batching enables 23x throughput in LLM inference while reducing p50 latency-->
-57. [跨 CPU 与 GPU 的流式分布式执行](https://anyscale.com/blog/streaming-distributed-execution-across-cpus-and-gpus)（2023-05-11） <!--orig:Streaming distributed execution across CPUs and GPUs-->
-58. [离线批量推理：Ray、Apache Spark 与 SageMaker 对比](https://anyscale.com/blog/offline-batch-inference-comparing-ray-apache-spark-and-sagemaker)（2023-05-04） <!--orig:Offline Batch Inference: Comparing Ray, Apache Spark, and SageMaker-->
-59. [Ray 如何解决生成式 AI 基础设施的常见生产挑战](https://anyscale.com/blog/ray-common-production-challenges-for-generative-ai-infrastructure)（2023-03-20） <!--orig:How Ray solves common production challenges for generative AI infrastructure-->
-60. [Ray Summit 系列——扩展并行 Python 作业](https://anyscale.com/blog/ray-summit-series-scaling-parallel-python-jobs)（2023-03-16） <!--orig:How companies are scaling parallel python jobs for many models training, simulation or hyperparameter tuning.-->
-61. [Ray Summit 2022 故事集——ML 平台](https://anyscale.com/blog/ray-summit-2022-stories-ml-platforms)（2023-03-03） <!--orig:How companies are scaling their ML workloads and driving efficiency and productivity-->
-62. [Ray Summit 2022 故事集——大语言模型](https://anyscale.com/blog/ray-summit-2022-stories-large-language-models)（2023-02-16） <!--orig:Ray Summit 2022 Stories-->
-63. [用 Ray 以创纪录时间训练一百万个机器学习模型](https://anyscale.com/blog/training-one-million-machine-learning-models-in-record-time-with-ray)（2022-12-17） <!--orig:Training One Million Machine Learning Models in Record Time with Ray-->
-64. [Ray 中的模型批量推理：Actor、ActorPool 与 Dataset](https://anyscale.com/blog/model-batch-inference-in-ray-actors-actorpool-and-datasets)（2022-11-03） <!--orig:Model Batch Inference in Ray: Actors, ActorPool, and Datasets-->
-65. [Ray 2.0 正式发布](https://anyscale.com/blog/announcing-ray-2-0)（2022-08-23） <!--orig:Announcing Ray 2.0-->
-66. [Ray 1.13：改进 TB 级及更大数据集的 Shuffle 支持](https://anyscale.com/blog/ray-1-13-large-scale-dataset-shuffle-ray-serve-deployment-graph-api-kuberay)（2022-06-09） <!--orig:Ray 1.13: Improving support for shuffling terabyte-scale and larger datasets-->
-67. [Ray Datasets：大规模机器学习数据摄取与打分](https://anyscale.com/blog/ray-datasets-for-machine-learning-training-and-scoring)（2022-02-14） <!--orig:Ray Datasets for large-scale machine learning ingest and scoring-->
-68. [深潜：第三代 ML 架构中的数据摄取](https://anyscale.com/blog/deep-dive-data-ingest-in-a-third-generation-ml-architecture)（2021-11-30） <!--orig:Deep Dive: Data Ingest in a Third Generation ML Architecture-->
-69. [在 Ant Group 基于 Ray 构建高可用、可扩展的在线应用](https://anyscale.com/blog/building-highly-available-and-scalable-online-applications-on-ray-at-ant)（2021-09-08） <!--orig:Building Highly Available and Scalable Online Applications on Ray at Ant Group-->
-70. [Anastasia 如何用 Ray 和 Anyscale 将 ML 流程加速 9 倍](https://anyscale.com/blog/how-anastasia-implements-ray-and-anyscale-to-speed-up-ml-processes-9x)（2021-08-31） <!--orig:How Anastasia accelerated their ML processes 9x with Ray and Anyscale-->
-71. [解析 Dask-on-Ray 的内存管理与性能](https://anyscale.com/blog/analyzing-memory-management-and-performance-in-dask-on-ray)（2021-06-29） <!--orig:Analyzing memory management and performance in Dask-on-Ray-->
-72. [Ray 分布式库集成模式](https://anyscale.com/blog/ray-distributed-library-patterns)（2021-06-14） <!--orig:Ray Distributed Library Patterns-->
-73. [Ant Group 基于 Ray 的在线资源分配](https://anyscale.com/blog/online-resource-allocation-with-ray-at-ant-group)（2021-03-30） <!--orig:Online Resource Allocation with Ray at Ant Group-->
-74. [不用 MapReduce 系统执行分布式 Shuffle](https://anyscale.com/blog/executing-a-distributed-shuffle-without-a-mapreduce-system)（2021-03-22） <!--orig:Executing a distributed shuffle without a MapReduce system-->
-75. [Ray 中的数据处理支持](https://anyscale.com/blog/data-processing-support-in-ray)（2021-02-16） <!--orig:Data Processing Support in Ray-->
-76. [用 Hydra + Ray 配置并扩展机器学习](https://anyscale.com/blog/configuring-and-scaling-ml-with-hydra-ray)（2021-01-26） <!--orig:Configuring and Scaling ML with Hydra + Ray-->
-77. [通用 Serverless 平台的理想底座](https://anyscale.com/blog/the-ideal-foundation-for-a-general-purpose-serverless-platform)（2020-11-05） <!--orig:The Ideal Foundation for a General Purpose Serverless Platform-->
-78. [Ray 1.0 发布](https://anyscale.com/blog/announcing-ray-1-0)（2020-09-30） <!--orig:Announcing Ray 1.0-->
+34. [引入标签选择器：提高 Ray 中的调度灵活性](https://anyscale.com/blog/introducing-label-selectors-scheduling-ray)（2025-10-30） <!--orig:Introducing Label Selectors: Improved Scheduling Flexibility in Ray-->
+35. [Ray Task Monitoring at Scale: Announcing Persistence for +10k Tasks on Anyscale](https://anyscale.com/blog/ray-task-monitoring-persistent-logs)（2025-09-12）
+36. [阿里云上的 Ray：构建机器学习平台](https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform)（2025-06-12） <!--orig:Ray on Alibaba Cloud: Building an ML Platform-->
+37. [Ray Compiled Graphs：原生 GPU 通信加持的 AI 负载优化](https://anyscale.com/blog/announcing-compiled-graphs)（2024-10-07） <!--orig:Ray Compiled Graphs: Optimized AI Workloads with Native GPU Communication-->
+38. [在 Anyscale 上自动扩缩大型 AI 模型，速度最高提升 5.1 倍](https://anyscale.com/blog/autoscale-large-ai-models-faster)（2024-10-01） <!--orig:Autoscaling Large AI Models up to 5.1x Faster on Anyscale-->
+39. [发布 Anyscale Runtime：由 Ray 驱动，让 AI 更快、更便宜、更具弹性](https://anyscale.com/blog/announcing-anyscale-rayturbo)（2024-10-01） <!--orig:Announcing RayTurbo-->
+40. [Anyscale 上的批量 LLM 推理可将 AWS Bedrock 成本最多降低 6 倍](https://anyscale.com/blog/batch-llm-inference-announcement)（2024-10-01） <!--orig:Batch LLM Inference on Anyscale slashes AWS Bedrock costs by up to 6x-->
+41. [用 Anyscale Replica Compaction 部署 Ray Serve，节点数最多省 50%](https://anyscale.com/blog/new-feature-replica-compaction)（2024-07-15） <!--orig:Deploy Ray Serve with up to 50% fewer nodes using Anyscale Replica Compaction-->
+42. [Ray 聚焦：我们如何做到每周发布 Ray](https://anyscale.com/blog/ray-spotlight-delivering-weekly-releases)（2024-06-25） <!--orig:Ray Spotlight: How we delivered Ray weekly releases-->
+43. [Ray Spotlight 系列：用 Runtime Env 即容器构建多租户 Serve 应用](https://anyscale.com/blog/ray-spotlight-series-multitenant-serve-applications-with-runtime-envs-as-containers)（2024-06-13） <!--orig:Ray Spotlight Series: Multitenant Serve Applications with Runtime Envs as Containers-->
+44. [用 Ray、NVIDIA Triton Inference Server 与 TensorRT-LLM 实现低延迟生成式 AI 模型服务](https://anyscale.com/blog/low-latency-generative-ai-model-serving-with-ray-nvidia)（2024-03-13） <!--orig:Low-latency Generative AI Model Serving with Ray, NVIDIA Triton Inference Server, and NVIDIA TensorRT-LLM-->
+45. [大规模 RAG：用 Anyscale 和 Pinecone 将 Embedding 计算成本降低 10 倍](https://anyscale.com/blog/rag-at-scale-10x-cheaper-embedding-computations-with-anyscale-and-pinecone)（2024-01-16） <!--orig:RAG at Scale: 10x Cheaper Embedding Computations with Anyscale and Pinecone-->
+46. [开源 LLM：可用于生产，还是低质量玩具？](https://anyscale.com/blog/open-source-llms-viable-for-production-or-a-low-quality-toy)（2023-11-20） <!--orig:Open Source LLMs: Viable for Production or a Low-Quality Toy?-->
+47. [Spotify 如何打造稳健且开发者体验无阻的 Ray 平台](https://anyscale.com/blog/how-spotify-built-a-robust-ray-platform-with-a-frictionless-developer)（2023-11-09） <!--orig:How Spotify Built a Robust Ray Platform with a Frictionless Developer Experience-->
+48. [LinkedIn 基于 Ray Serve 的推理图（Inference Graphs）](https://anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve)（2023-11-09） <!--orig:Inference Graphs at LinkedIn Using Ray-Serve-->
+49. [基础模型的进展——技术、社会与应用](https://anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications)（2023-11-03） <!--orig:Advances in Foundation Models-->
+50. [Airbnb 的下一代 ML 平台如何优化 LLM 训练](https://anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform)（2023-10-30） <!--orig:Optimizing LLM Training with Airbnb's Next-Gen ML Platform-->
+51. [用 Ray Serve 构建生产级 AI 应用](https://anyscale.com/blog/building-production-ai-applications-with-ray-serve)（2023-10-24） <!--orig:Building Production AI Applications with Ray Serve-->
+52. [Netflix 基于 Ray 的异构训练集群](https://anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix)（2023-10-20） <!--orig:Heterogeneous Training Cluster with Ray at Netflix-->
+53. [构建生产级 LLM 应用的实用数据考量](https://anyscale.com/blog/practical-data-considerations-for-building-production-ready-llm-applications)（2023-10-19） <!--orig:Practical Data Considerations for Building Production-Ready LLM Applications-->
+54. [用 LangChain 与 LangSmith 构建上下文感知的推理应用](https://anyscale.com/blog/building-context-aware-reasoning-applications-with-langchain-and-langsmith)（2023-10-18） <!--orig:Building Context-Aware Reasoning Applications with LangChain and LangSmith-->
+55. [Llama——在开放生态中扩展 LLM](https://anyscale.com/blog/llama-scaling-up-llms-in-an-open-ecosystem)（2023-10-16） <!--orig:Llama, Scaling Up LLMs in an Open Ecosystem-->
+56. [Ray Serve：应对生产环境 AI 服务的成本与复杂性](https://anyscale.com/blog/tackling-the-cost-and-complexity-of-serving-ai-in-production-ray-serve)（2023-09-25） <!--orig:Ray Serve: Tackling the cost and complexity of serving AI in production-->
+57. [用 Ray Data 为 ML 训练提供快速、灵活、可扩展的数据加载](https://anyscale.com/blog/fast-flexible-scalable-data-loading-for-ml-training-with-ray-data)（2023-09-15） <!--orig:Fast, flexible, and scalable data loading for ML training with Ray Data-->
+58. [连续批处理如何让 LLM 推理吞吐量提升 23 倍并降低 p50 延迟](https://anyscale.com/blog/continuous-batching-llm-inference)（2023-06-22） <!--orig:How continuous batching enables 23x throughput in LLM inference while reducing p50 latency-->
+59. [跨 CPU 与 GPU 的流式分布式执行](https://anyscale.com/blog/streaming-distributed-execution-across-cpus-and-gpus)（2023-05-11） <!--orig:Streaming distributed execution across CPUs and GPUs-->
+60. [离线批量推理：Ray、Apache Spark 与 SageMaker 对比](https://anyscale.com/blog/offline-batch-inference-comparing-ray-apache-spark-and-sagemaker)（2023-05-04） <!--orig:Offline Batch Inference: Comparing Ray, Apache Spark, and SageMaker-->
+61. [Ray 如何解决生成式 AI 基础设施的常见生产挑战](https://anyscale.com/blog/ray-common-production-challenges-for-generative-ai-infrastructure)（2023-03-20） <!--orig:How Ray solves common production challenges for generative AI infrastructure-->
+62. [Ray Summit 系列——扩展并行 Python 作业](https://anyscale.com/blog/ray-summit-series-scaling-parallel-python-jobs)（2023-03-16） <!--orig:How companies are scaling parallel python jobs for many models training, simulation or hyperparameter tuning.-->
+63. [Ray Summit 2022 故事集——ML 平台](https://anyscale.com/blog/ray-summit-2022-stories-ml-platforms)（2023-03-03） <!--orig:How companies are scaling their ML workloads and driving efficiency and productivity-->
+64. [Ray Summit 2022 故事集——大语言模型](https://anyscale.com/blog/ray-summit-2022-stories-large-language-models)（2023-02-16） <!--orig:Ray Summit 2022 Stories-->
+65. [用 Ray 以创纪录时间训练一百万个机器学习模型](https://anyscale.com/blog/training-one-million-machine-learning-models-in-record-time-with-ray)（2022-12-17） <!--orig:Training One Million Machine Learning Models in Record Time with Ray-->
+66. [Ray 中的模型批量推理：Actor、ActorPool 与 Dataset](https://anyscale.com/blog/model-batch-inference-in-ray-actors-actorpool-and-datasets)（2022-11-03） <!--orig:Model Batch Inference in Ray: Actors, ActorPool, and Datasets-->
+67. [Ray 2.0 正式发布](https://anyscale.com/blog/announcing-ray-2-0)（2022-08-23） <!--orig:Announcing Ray 2.0-->
+68. [Ray 1.13：改进 TB 级及更大数据集的 Shuffle 支持](https://anyscale.com/blog/ray-1-13-large-scale-dataset-shuffle-ray-serve-deployment-graph-api-kuberay)（2022-06-09） <!--orig:Ray 1.13: Improving support for shuffling terabyte-scale and larger datasets-->
+69. [Ray Datasets：大规模机器学习数据摄取与打分](https://anyscale.com/blog/ray-datasets-for-machine-learning-training-and-scoring)（2022-02-14） <!--orig:Ray Datasets for large-scale machine learning ingest and scoring-->
+70. [深潜：第三代 ML 架构中的数据摄取](https://anyscale.com/blog/deep-dive-data-ingest-in-a-third-generation-ml-architecture)（2021-11-30） <!--orig:Deep Dive: Data Ingest in a Third Generation ML Architecture-->
+71. [在 Ant Group 基于 Ray 构建高可用、可扩展的在线应用](https://anyscale.com/blog/building-highly-available-and-scalable-online-applications-on-ray-at-ant)（2021-09-08） <!--orig:Building Highly Available and Scalable Online Applications on Ray at Ant Group-->
+72. [Anastasia 如何用 Ray 和 Anyscale 将 ML 流程加速 9 倍](https://anyscale.com/blog/how-anastasia-implements-ray-and-anyscale-to-speed-up-ml-processes-9x)（2021-08-31） <!--orig:How Anastasia accelerated their ML processes 9x with Ray and Anyscale-->
+73. [解析 Dask-on-Ray 的内存管理与性能](https://anyscale.com/blog/analyzing-memory-management-and-performance-in-dask-on-ray)（2021-06-29） <!--orig:Analyzing memory management and performance in Dask-on-Ray-->
+74. [Ray 分布式库集成模式](https://anyscale.com/blog/ray-distributed-library-patterns)（2021-06-14） <!--orig:Ray Distributed Library Patterns-->
+75. [Ant Group 基于 Ray 的在线资源分配](https://anyscale.com/blog/online-resource-allocation-with-ray-at-ant-group)（2021-03-30） <!--orig:Online Resource Allocation with Ray at Ant Group-->
+76. [不用 MapReduce 系统执行分布式 Shuffle](https://anyscale.com/blog/executing-a-distributed-shuffle-without-a-mapreduce-system)（2021-03-22） <!--orig:Executing a distributed shuffle without a MapReduce system-->
+77. [Ray 中的数据处理支持](https://anyscale.com/blog/data-processing-support-in-ray)（2021-02-16） <!--orig:Data Processing Support in Ray-->
+78. [用 Hydra + Ray 配置并扩展机器学习](https://anyscale.com/blog/configuring-and-scaling-ml-with-hydra-ray)（2021-01-26） <!--orig:Configuring and Scaling ML with Hydra + Ray-->
+79. [通用 Serverless 平台的理想底座](https://anyscale.com/blog/the-ideal-foundation-for-a-general-purpose-serverless-platform)（2020-11-05） <!--orig:The Ideal Foundation for a General Purpose Serverless Platform-->
+80. [Ray 1.0 发布](https://anyscale.com/blog/announcing-ray-1-0)（2020-09-30） <!--orig:Announcing Ray 1.0-->

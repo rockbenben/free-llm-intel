@@ -1,6 +1,6 @@
 # AI21 Labs 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-15**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-16**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：AI21 Labs（`ai21_labs`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,8 +9,8 @@
 
 ## 全部文章（共 70 篇，按日期倒序；无日期条目列于最后）
 
-1. [与 NVIDIA、Gong、Deel 和 Alice 合作，后训练 Nemotron 3.5 Super](https://www.ai21.com/blog/ai21-post-trains-nvidia-nemotron-35-super-vl/)（2026-10-15） <!--orig:Partnering with NVIDIA, Gong, Deel and Alice to Post-Train Nemotron 3.5 Super-->
-2. [隐藏的错配：在开发者真正做的工作上评估 coding agent](https://www.ai21.com/blog/evaluating-coding-agents-on-the-work-developers-actually-do/)（2026-10-14） <!--orig:The hidden mismatch: Evaluating coding agents on the work developers actually do | AI21-->
+1. [与 NVIDIA、Gong、Deel 和 Alice 合作，后训练 Nemotron 3.5 Super](https://www.ai21.com/blog/ai21-post-trains-nvidia-nemotron-35-super-vl/)（2026-10-15） <!--orig:AI21 Partners with Gong, Deel and Alice to Post-Train Specialized Models on NVIDIA Nemotron 3.5 Super VL-->
+2. [隐藏的错配：在开发者真正做的工作上评估 coding agent](https://www.ai21.com/blog/evaluating-coding-agents-on-the-work-developers-actually-do/)（2026-10-14） <!--orig:The hidden mismatch: Evaluating coding agents on the work developers actually do-->
 3. [智能体设计的可验证性试金石](https://www.ai21.com/blog/the-verifiability-litmus-test-for-agent-design/)（2026-10-06） <!--orig:The verifiability litmus test for agent design-->
 4. [从人工协商到自动调度：AI21 如何用 Kueue 管理其 GPU 集群](https://www.ai21.com/blog/how-ai21-manages-its-gpu-fleet-with-kueue/)（2026-10-04） <!--orig:From manual negotiation to automated scheduling: How AI21 manages its GPU fleet with Kueue-->
 5. [你不需要前沿模型，你需要一个校验器](https://www.ai21.com/blog/you-need-a-verifier/)（2026-08-19） <!--orig:You don’t need a frontier model. You need a verifier.-->

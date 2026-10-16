@@ -573,6 +573,121 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
+      <title>Introducing Ray History Server: Post-Mortem Observability fo…</title>
+      <link>https://anyscale.com/blog/ray-history-server</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-history-server?li=1</guid>
+      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</description>
+      <content:encoded><![CDATA[<p>Blog Detail</p>
+<h1>Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</h1>
+<p>By</p>
+<p>Andrew Sy Kim (Google)</p>
+<p>,</p>
+<p>Aaron Liang (Google)</p>
+<p>,</p>
+<p>Han-Ju Chen</p>
+<p>,</p>
+<p>Jia-wei Jiang</p>
+<p>,</p>
+<p>Kun Wu (Alibaba Cloud)</p>
+<p>,</p>
+<p>Jui-An Huang</p>
+<p>,</p>
+<p>Mengjin Yan</p>
+<p>,</p>
+<p>Nai-Jui Yeh</p>
+<p>and</p>
+<p>Chun-Hao Wan</p>
+<p>|</p>
+<p>August 25, 2026</p>
+<h2>LinkRay History Server</h2>
+<p>It is becoming increasingly common for Ray users to utilize Ray clusters as ephemeral units of compute, created for a single job and torn down once the job completes. This pattern improves cost efficiency and resource sharing, especially in capacity-constrained environments where hardware accelerators are scarce.</p>
+<p>The trade-off for this approach is, unlike long-lived clusters, session logs, in-memory states, and Ray Dashboard disappear along with the cluster. Users can export logs and metrics to external observability systems, but debugging a failed job means correlating task and actor states, per-node logs, and error traces. The Ray Dashboard is the one place that ties them all together, and without it post-mortem debugging is almost impossible.</p>
+<p>With the latest Kuberay v1.7 release, History server is now promoted to beta and available for use, enabling access to Ray cluster data even after termination.</p>
+<p>The Ray History Server closes the observability gap by reconstructing the necessary Ray related endpoints after cluster termination.</p>
+<h3>LinkCluster Selection Page</h3>
+<p>Before we do a deep dive into history server, let's see what it can do. The history server provides a built-in cluster selection page, which acts as a centralized page for post-mortem observability, dynamically discovering, and cataloging all historical runs stored by the object storage as well as current live clusters.</p>
+<p>Ray History Server</p>
+<p>Users can search and filter past or current runs by cluster name, namespace, and owner resource. Each session entry will indicate whether a session is live or terminated. And with a single click on any historical or live session, users will be redirected to the corresponding Ray Dashboard interface.</p>
+<p>For terminated sessions, the history server reconstructs the Dashboard from telemetry collected in object storage. For live sessions, it proxies requests to the cluster's running Ray Dashboard, including automatic authentication token injection for clusters with Ray auth enabled, so users get a single entry point regardless of whether a cluster is still running.</p>
+<p>Once a session is selected, the history server serves the standard Ray Dashboard frontend backed by a Dashboard-compatible REST API. Whether a cluster is live or has been terminated for hours or days, users navigate the exact same Dashboard interface they already know and get all the post-mortem context they need without keeping idle clusters around just to preserve access.</p>
+<p>Jobs Tab 1 - Ray Core Overview</p>
+<p>Jobs Tab 2 - Logs</p>
+<h3>LinkArchitecture Overview</h3>
+<p>So what exactly goes into the History server? There are two main components that reflect the fundamental difference between the two stages required to reanimate the Ray cluster: recording the data, and replaying the data. The component that is responsible for recording the data is the collector. And the other component, responsible for replaying the data, is the history server itself.</p>
+<p>Ray Pod Boundary</p>
+<h4>LinkCollector Deep Dive</h4>
+<p>Let’s start with the collector. The collector is a sidecar that is attached to all of the Ray head and worker pods. And its job, as mentioned above, is to collect data from the corresponding Ray container. Within the collector, there are two main flows or subsystems, one that is in charge of logs, and another that is responsible for Ray events.</p>
+<p>The event collector subsystem aims to capture high-velocity telemetry from Ray workloads without consuming too much cluster memory by implementing a disk-first collection approach. With the event export api enabled, Ray containers continually export structured runtime events ranging from driver job lifecycles to node specific events. Rather than buffering millions of events in-memory, the event collector subsystem immediately streams incoming payloads directly to local disk. These files are then automatically rotated based on a configurable time interval or file size thresholds. Files could also be compressed right before being uploaded to cloud object storage to minimize upload and download time. To ensure stability of the collector container as well as the pod, the collector also incorporates a configurable total disk limit with a disk-pressure watermark that will reject incoming event requests with 503 errors in the event of a transient outage or network issue.</p>
+<p>While the event collector subsystem tracks structured events, the log collector subsystem, as its name implies, handles the Ray logs and cluster metadata. Its main job is to ensure session logs are uploaded to object storage. Uploads occur at three distinct lifecycle events:</p>
+<ul><li>On pod termination: when a RayJob finishes or Kubernetes begins tearing down the pod</li><li>On startup &amp; crash recovery: residual logs from previous session will be uploaded</li><li>On session transitions: when Ray rotates or starts a new session while still running</li></ul>
+<p>Beyond uploading logs to object storage, the log collector also acts as the cluster metadata harvester. On the head pod only, it captures cluster metadata such as Ray version and timezone once at startup, and periodically snapshots Dashboard endpoints that are not reconstructed from events (such as Ray Data datasets and placement groups), so their last-known state remains available after termination.</p>
+<h4>LinkHistory Server Deep Dive</h4>
+<p>The history server is the read path of the system: it replays the data the collector wrote. It acts as an on-demand, stateless reconstruction engine for post-mortem debugging. It turns raw, compressed files in object storage back into the native Ray Dashboard experience.</p>
+<p>Processing hundreds of event and log files on every request would strain resources, yet maintaining a persistent, pre-processed archive is often expensive and mostly idle. To optimize performance while ensuring stability, the history server utilizes a lazy-loading strategy complemented by an LRU cache.</p>
+<ul><li>Lazy Loading: Minimizes requests to object storage and infrastructure overhead by deferring event file retrieval and decompression until a user selects a specific session. This avoids unnecessary reads and eliminates the dependency on a managed database. Concurrent requests for the same cold session are coalesced to prevent thundering-herd reads against object storage, and a configurable timeout guards against indefinite hangs.</li><li>LRU Cache: Bounds memory usage with both an entry-count limit and a byte-size budget. Because Ray sessions fluctuate significantly in size—ranging from 2 MB to over 500 MB—these size-based budgets are essential to keeping the history server consistently within its defined pod memory limits.</li></ul>
+<p>Thanks to this design, a single history server deployment can serve post-mortem dashboards for many clusters.</p>
+<p>Single Shared History Server</p>
+<h4>LinkObject store</h4>
+<p>The history server is storage-agnostic by design, built on a single storage interface. This allows organizations to plug in their existing object storage without vendor lock-in. Out of the box, it has native support for the following:</p>
+<ul><li>Google Cloud Storage: Native GCS integration supporting GKE workload identity for keyless authentication</li><li>AWS S3 &amp; MinIO: Amazon S3 and any S3-compatible object storage, authenticating via IAM Roles for Service Accounts or static credentials</li><li>Alibaba Cloud OSS: Aliyun Object Storage Service with RAM Roles for Service accounts</li><li>Azure Blob Storage: integrates via Azure Workload Identity or a connection string</li></ul>
+<p>The storage layout is deterministic, so any session can be located with a simple prefix lookup, even in multi-tenant environments. Data is organized by resource ownership. Including higher-level resource owners such as <code>RayJob</code> and <code>RayService</code> in the path enables more granular filtering and establishes clear workload provenance. The object storage is broken down into two subtrees.</p>
+<ul><li><code>cluster-metadata</code>: A lightweight index of empty files whose paths encode the namespace, owner, cluster, and session</li><li><code>cluster-history</code>: The session telemetry – raw logs, event files, and endpoint snapshots</li></ul>
+<pre><code>cluster-metadata/
+│   ├── raycluster/
+│   │   └── &lt;namespace&gt;_&lt;cluster_name&gt;/
+│   │       └── &lt;session_name&gt;                # Empty marker file
+│   └── &lt;rayjob|rayservice&gt;/
+│       └── &lt;namespace&gt;_&lt;owner_name&gt;_&lt;cluster_name&gt;/
+│           └── &lt;session_name&gt;
+cluster-history/
+├── raycluster/
+│   └── &lt;namespace&gt;/
+│       └── &lt;cluster_name&gt;/
+│           └── &lt;session_name&gt;/
+│               ├── fetched_endpoints/   # Dashboard endpoint snapshots
+│               │   ├── restful__api__v0__nodes__summary
+│               │   └── ...
+│               └── &lt;node_id&gt;/
+│                   ├── logs/
+│                   │   ├── dashboard_agent.log
+│                   │   ├── raylet.out
+│                   │   └── ...
+│                   ├── node_events/
+│                   │   └── &lt;node_id&gt;-&lt;date_hour&gt;   # Node event logs
+│                   └── job_events/
+│                       └── &lt;job_id&gt;/
+│                           └── &lt;node_id&gt;-&lt;date_hour&gt; # Job event logs
+└── &lt;rayjob|rayservice&gt;/
+    └── &lt;namespace&gt;/
+        └── &lt;owner_name&gt;/
+            └── &lt;cluster_name&gt;/
+                └── &lt;session_name&gt;/     # Same node layout as above</code></pre>
+<h3>LinkPerformance &amp; Sizing Benchmarks</h3>
+<p>We benchmarked the history server data path across sessions ranging from 1k to 50k tasks to verify that it scales linearly. Two tunings were applied: giving the history server at least 1.5 CPU cores, and enabling gzip compression in the collector. Compression cuts storage overhead by ~91%, while the additional CPU speeds up session cold loads by ~2.4x and increases the maximum openable session size by 2.5x.</p>
+<table><thead><tr><th><strong>Metric</strong></th><th><strong>Baseline (gzip off, 0.5 CPU cores)</strong></th><th><strong>Tuned (gzip on, 1.5 CPU cores)</strong></th><th><strong>Impact</strong></th></tr></thead><tbody><tr><td>Event storage per task</td><td>~3.75 KiB (4.3 events at 895 B)</td><td>~355 B (10.85:1 compression)</td><td>91% smaller</td></tr><tr><td>Storage for a 100k-task session</td><td>~385 MiB</td><td>~35.5 MiB</td><td>~349.5 MiB saved per session</td></tr><tr><td>Cold load time per task</td><td>~0.2 ms (CPU-throttled)</td><td>~0.084 ms (unthrottled)</td><td>~2.4x faster</td></tr><tr><td>Max openable session size</td><td>~20k tasks (larger sessions exceed ~5s UI budget)</td><td>~50k tasks (opens in 4.21s)</td><td>2.5x larger</td></tr></tbody></table>
+<p>Performance plateaus at 1.2 cores. Allocating more CPU showed no measurable improvement, so 1.5 to 2 cores is a safe initial sizing recommendation for the history server. Full benchmark details are available in the <a href="https://github.com/Future-Outlier/historyserver-benchmark">history server benchmark repository</a>.</p>
+<h3>LinkFuture Roadmap &amp; Looking Ahead</h3>
+<p>While the current history server is in beta and provides a robust post-mortem debugging service, there are still enhancements designed to further simplify operations and expand observability.</p>
+<ul><li>Automated collector sidecar injection - to make adoption easier, future versions will introduce stable, automated collector injection within the KubeRay operator. Users will be able to enable telemetry collection declaratively within the <code>RayCluster</code> spec. An early version is already available behind the <code>RayClusterHistoryServer</code> feature gate via <a href="https://github.com/ray-project/kuberay/blob/bf50aa1353295188ae9335bc0e9911dbe0754535/ray-operator/apis/ray/v1/raycluster_types.go#L274"><code>HistoryServerOptions</code></a>.</li><li>Expand metrics and metrics replay - Post mortem debugging often requires inspecting system metrics along tasks, and we aim to include native support for historical metrics timelines by capturing GPU/CPU utilization, memory pressure, and actor throughput.</li></ul>
+<h3>LinkTry it Today</h3>
+<p>Ready to bring post-mortem observability to your Ray workloads on Kubernetes? Check out the <a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/kuberay-history-server.html">Ray History Server documentation</a> to set up the collector and history server in your Kubernetes cluster!</p>
+<p>Have any questions or need assistance? Feel free to open an issue on the <a href="https://github.com/ray-project/kuberay">GitHub Repository</a>. We welcome your feedback, feature requests, and contributions! You can also <a href="https://www.ray.io/join-slack">join the Ray Slack</a> and ask questions in the <code>#ray-history-server</code> channel.</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/ray-history-server#ray-history-server">Ray History Server</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#cluster-selection-page">Cluster Selection Page</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#architecture-overview">Architecture Overview</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#performance-&amp;-sizing-benchmarks">Performance &amp; Sizing Benchmarks</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#future-roadmap-&amp;-looking-ahead">Future Roadmap &amp; Looking Ahead</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#try-it-today">Try it Today</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
+<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
+<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p>Start for Free</p>
+<p>Talk to an expert</p>]]></content:encoded>
+    </item>
+    <item>
       <title>Scaling Ray for AI workloads to 10k node clusters</title>
       <link>https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters</link>
       <guid isPermaLink="true">https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters?li=1</guid>
@@ -831,121 +946,6 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
 <h4>Scaling Ray for AI workloads to 10k node clusters</h4>
 <h4>Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Introducing Ray History Server: Post-Mortem Observability fo…</title>
-      <link>https://anyscale.com/blog/ray-history-server</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/ray-history-server?li=1</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</description>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes</h1>
-<p>By</p>
-<p>Andrew Sy Kim (Google)</p>
-<p>,</p>
-<p>Aaron Liang (Google)</p>
-<p>,</p>
-<p>Han-Ju Chen</p>
-<p>,</p>
-<p>Jia-wei Jiang</p>
-<p>,</p>
-<p>Kun Wu (Alibaba Cloud)</p>
-<p>,</p>
-<p>Jui-An Huang</p>
-<p>,</p>
-<p>Mengjin Yan</p>
-<p>,</p>
-<p>Nai-Jui Yeh</p>
-<p>and</p>
-<p>Chun-Hao Wan</p>
-<p>|</p>
-<p>August 25, 2026</p>
-<h2>LinkRay History Server</h2>
-<p>It is becoming increasingly common for Ray users to utilize Ray clusters as ephemeral units of compute, created for a single job and torn down once the job completes. This pattern improves cost efficiency and resource sharing, especially in capacity-constrained environments where hardware accelerators are scarce.</p>
-<p>The trade-off for this approach is, unlike long-lived clusters, session logs, in-memory states, and Ray Dashboard disappear along with the cluster. Users can export logs and metrics to external observability systems, but debugging a failed job means correlating task and actor states, per-node logs, and error traces. The Ray Dashboard is the one place that ties them all together, and without it post-mortem debugging is almost impossible.</p>
-<p>With the latest Kuberay v1.7 release, History server is now promoted to beta and available for use, enabling access to Ray cluster data even after termination.</p>
-<p>The Ray History Server closes the observability gap by reconstructing the necessary Ray related endpoints after cluster termination.</p>
-<h3>LinkCluster Selection Page</h3>
-<p>Before we do a deep dive into history server, let's see what it can do. The history server provides a built-in cluster selection page, which acts as a centralized page for post-mortem observability, dynamically discovering, and cataloging all historical runs stored by the object storage as well as current live clusters.</p>
-<p>Ray History Server</p>
-<p>Users can search and filter past or current runs by cluster name, namespace, and owner resource. Each session entry will indicate whether a session is live or terminated. And with a single click on any historical or live session, users will be redirected to the corresponding Ray Dashboard interface.</p>
-<p>For terminated sessions, the history server reconstructs the Dashboard from telemetry collected in object storage. For live sessions, it proxies requests to the cluster's running Ray Dashboard, including automatic authentication token injection for clusters with Ray auth enabled, so users get a single entry point regardless of whether a cluster is still running.</p>
-<p>Once a session is selected, the history server serves the standard Ray Dashboard frontend backed by a Dashboard-compatible REST API. Whether a cluster is live or has been terminated for hours or days, users navigate the exact same Dashboard interface they already know and get all the post-mortem context they need without keeping idle clusters around just to preserve access.</p>
-<p>Jobs Tab 1 - Ray Core Overview</p>
-<p>Jobs Tab 2 - Logs</p>
-<h3>LinkArchitecture Overview</h3>
-<p>So what exactly goes into the History server? There are two main components that reflect the fundamental difference between the two stages required to reanimate the Ray cluster: recording the data, and replaying the data. The component that is responsible for recording the data is the collector. And the other component, responsible for replaying the data, is the history server itself.</p>
-<p>Ray Pod Boundary</p>
-<h4>LinkCollector Deep Dive</h4>
-<p>Let’s start with the collector. The collector is a sidecar that is attached to all of the Ray head and worker pods. And its job, as mentioned above, is to collect data from the corresponding Ray container. Within the collector, there are two main flows or subsystems, one that is in charge of logs, and another that is responsible for Ray events.</p>
-<p>The event collector subsystem aims to capture high-velocity telemetry from Ray workloads without consuming too much cluster memory by implementing a disk-first collection approach. With the event export api enabled, Ray containers continually export structured runtime events ranging from driver job lifecycles to node specific events. Rather than buffering millions of events in-memory, the event collector subsystem immediately streams incoming payloads directly to local disk. These files are then automatically rotated based on a configurable time interval or file size thresholds. Files could also be compressed right before being uploaded to cloud object storage to minimize upload and download time. To ensure stability of the collector container as well as the pod, the collector also incorporates a configurable total disk limit with a disk-pressure watermark that will reject incoming event requests with 503 errors in the event of a transient outage or network issue.</p>
-<p>While the event collector subsystem tracks structured events, the log collector subsystem, as its name implies, handles the Ray logs and cluster metadata. Its main job is to ensure session logs are uploaded to object storage. Uploads occur at three distinct lifecycle events:</p>
-<ul><li>On pod termination: when a RayJob finishes or Kubernetes begins tearing down the pod</li><li>On startup &amp; crash recovery: residual logs from previous session will be uploaded</li><li>On session transitions: when Ray rotates or starts a new session while still running</li></ul>
-<p>Beyond uploading logs to object storage, the log collector also acts as the cluster metadata harvester. On the head pod only, it captures cluster metadata such as Ray version and timezone once at startup, and periodically snapshots Dashboard endpoints that are not reconstructed from events (such as Ray Data datasets and placement groups), so their last-known state remains available after termination.</p>
-<h4>LinkHistory Server Deep Dive</h4>
-<p>The history server is the read path of the system: it replays the data the collector wrote. It acts as an on-demand, stateless reconstruction engine for post-mortem debugging. It turns raw, compressed files in object storage back into the native Ray Dashboard experience.</p>
-<p>Processing hundreds of event and log files on every request would strain resources, yet maintaining a persistent, pre-processed archive is often expensive and mostly idle. To optimize performance while ensuring stability, the history server utilizes a lazy-loading strategy complemented by an LRU cache.</p>
-<ul><li>Lazy Loading: Minimizes requests to object storage and infrastructure overhead by deferring event file retrieval and decompression until a user selects a specific session. This avoids unnecessary reads and eliminates the dependency on a managed database. Concurrent requests for the same cold session are coalesced to prevent thundering-herd reads against object storage, and a configurable timeout guards against indefinite hangs.</li><li>LRU Cache: Bounds memory usage with both an entry-count limit and a byte-size budget. Because Ray sessions fluctuate significantly in size—ranging from 2 MB to over 500 MB—these size-based budgets are essential to keeping the history server consistently within its defined pod memory limits.</li></ul>
-<p>Thanks to this design, a single history server deployment can serve post-mortem dashboards for many clusters.</p>
-<p>Single Shared History Server</p>
-<h4>LinkObject store</h4>
-<p>The history server is storage-agnostic by design, built on a single storage interface. This allows organizations to plug in their existing object storage without vendor lock-in. Out of the box, it has native support for the following:</p>
-<ul><li>Google Cloud Storage: Native GCS integration supporting GKE workload identity for keyless authentication</li><li>AWS S3 &amp; MinIO: Amazon S3 and any S3-compatible object storage, authenticating via IAM Roles for Service Accounts or static credentials</li><li>Alibaba Cloud OSS: Aliyun Object Storage Service with RAM Roles for Service accounts</li><li>Azure Blob Storage: integrates via Azure Workload Identity or a connection string</li></ul>
-<p>The storage layout is deterministic, so any session can be located with a simple prefix lookup, even in multi-tenant environments. Data is organized by resource ownership. Including higher-level resource owners such as <code>RayJob</code> and <code>RayService</code> in the path enables more granular filtering and establishes clear workload provenance. The object storage is broken down into two subtrees.</p>
-<ul><li><code>cluster-metadata</code>: A lightweight index of empty files whose paths encode the namespace, owner, cluster, and session</li><li><code>cluster-history</code>: The session telemetry – raw logs, event files, and endpoint snapshots</li></ul>
-<pre><code>cluster-metadata/
-│   ├── raycluster/
-│   │   └── &lt;namespace&gt;_&lt;cluster_name&gt;/
-│   │       └── &lt;session_name&gt;                # Empty marker file
-│   └── &lt;rayjob|rayservice&gt;/
-│       └── &lt;namespace&gt;_&lt;owner_name&gt;_&lt;cluster_name&gt;/
-│           └── &lt;session_name&gt;
-cluster-history/
-├── raycluster/
-│   └── &lt;namespace&gt;/
-│       └── &lt;cluster_name&gt;/
-│           └── &lt;session_name&gt;/
-│               ├── fetched_endpoints/   # Dashboard endpoint snapshots
-│               │   ├── restful__api__v0__nodes__summary
-│               │   └── ...
-│               └── &lt;node_id&gt;/
-│                   ├── logs/
-│                   │   ├── dashboard_agent.log
-│                   │   ├── raylet.out
-│                   │   └── ...
-│                   ├── node_events/
-│                   │   └── &lt;node_id&gt;-&lt;date_hour&gt;   # Node event logs
-│                   └── job_events/
-│                       └── &lt;job_id&gt;/
-│                           └── &lt;node_id&gt;-&lt;date_hour&gt; # Job event logs
-└── &lt;rayjob|rayservice&gt;/
-    └── &lt;namespace&gt;/
-        └── &lt;owner_name&gt;/
-            └── &lt;cluster_name&gt;/
-                └── &lt;session_name&gt;/     # Same node layout as above</code></pre>
-<h3>LinkPerformance &amp; Sizing Benchmarks</h3>
-<p>We benchmarked the history server data path across sessions ranging from 1k to 50k tasks to verify that it scales linearly. Two tunings were applied: giving the history server at least 1.5 CPU cores, and enabling gzip compression in the collector. Compression cuts storage overhead by ~91%, while the additional CPU speeds up session cold loads by ~2.4x and increases the maximum openable session size by 2.5x.</p>
-<table><thead><tr><th><strong>Metric</strong></th><th><strong>Baseline (gzip off, 0.5 CPU cores)</strong></th><th><strong>Tuned (gzip on, 1.5 CPU cores)</strong></th><th><strong>Impact</strong></th></tr></thead><tbody><tr><td>Event storage per task</td><td>~3.75 KiB (4.3 events at 895 B)</td><td>~355 B (10.85:1 compression)</td><td>91% smaller</td></tr><tr><td>Storage for a 100k-task session</td><td>~385 MiB</td><td>~35.5 MiB</td><td>~349.5 MiB saved per session</td></tr><tr><td>Cold load time per task</td><td>~0.2 ms (CPU-throttled)</td><td>~0.084 ms (unthrottled)</td><td>~2.4x faster</td></tr><tr><td>Max openable session size</td><td>~20k tasks (larger sessions exceed ~5s UI budget)</td><td>~50k tasks (opens in 4.21s)</td><td>2.5x larger</td></tr></tbody></table>
-<p>Performance plateaus at 1.2 cores. Allocating more CPU showed no measurable improvement, so 1.5 to 2 cores is a safe initial sizing recommendation for the history server. Full benchmark details are available in the <a href="https://github.com/Future-Outlier/historyserver-benchmark">history server benchmark repository</a>.</p>
-<h3>LinkFuture Roadmap &amp; Looking Ahead</h3>
-<p>While the current history server is in beta and provides a robust post-mortem debugging service, there are still enhancements designed to further simplify operations and expand observability.</p>
-<ul><li>Automated collector sidecar injection - to make adoption easier, future versions will introduce stable, automated collector injection within the KubeRay operator. Users will be able to enable telemetry collection declaratively within the <code>RayCluster</code> spec. An early version is already available behind the <code>RayClusterHistoryServer</code> feature gate via <a href="https://github.com/ray-project/kuberay/blob/bf50aa1353295188ae9335bc0e9911dbe0754535/ray-operator/apis/ray/v1/raycluster_types.go#L274"><code>HistoryServerOptions</code></a>.</li><li>Expand metrics and metrics replay - Post mortem debugging often requires inspecting system metrics along tasks, and we aim to include native support for historical metrics timelines by capturing GPU/CPU utilization, memory pressure, and actor throughput.</li></ul>
-<h3>LinkTry it Today</h3>
-<p>Ready to bring post-mortem observability to your Ray workloads on Kubernetes? Check out the <a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/kuberay-history-server.html">Ray History Server documentation</a> to set up the collector and history server in your Kubernetes cluster!</p>
-<p>Have any questions or need assistance? Feel free to open an issue on the <a href="https://github.com/ray-project/kuberay">GitHub Repository</a>. We welcome your feedback, feature requests, and contributions! You can also <a href="https://www.ray.io/join-slack">join the Ray Slack</a> and ask questions in the <code>#ray-history-server</code> channel.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/ray-history-server#ray-history-server">Ray History Server</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#cluster-selection-page">Cluster Selection Page</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#architecture-overview">Architecture Overview</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#performance-&amp;-sizing-benchmarks">Performance &amp; Sizing Benchmarks</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#future-roadmap-&amp;-looking-ahead">Future Roadmap &amp; Looking Ahead</a></li><li><a href="https://www.anyscale.com/blog/ray-history-server#try-it-today">Try it Today</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
 <h2>Explore Anyscale today</h2>
 <p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
 <p>Start for Free</p>
@@ -4214,6 +4214,176 @@ def train_loop_per_worker(config: dict):
 <p>Talk to an expert</p>]]></content:encoded>
     </item>
     <item>
+      <title>Introducing Label Selectors: Improved Scheduling Flexibility…</title>
+      <link>https://anyscale.com/blog/introducing-label-selectors-scheduling-ray</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/introducing-label-selectors-scheduling-ray?li=1</guid>
+      <pubDate>Thu, 30 Oct 2025 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing Label Selectors: Improved Scheduling Flexibility in Ray</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Introducing Label Selectors: Improved Scheduling Flexibility in Ray</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a> and <a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> | October 30, 2025</p>
+<p><em>Thanks everyone else who contributed to the project, including: Edward Oakes, Janet Li, Bruce Zhang, Alan Guo, Douglas Strodtman, Jui-An Huang, Han-Ju Chen — from Anyscale — and Andrew Sy Kim — from Google, GKE team.</em></p>
+<p>Today, in partnership with the Google Kubernetes Engine team, we’re introducing label selectors to Ray – a more straightforward way to place workloads on the right nodes. The API and UI ship in Ray 2.49 and are available across Ray Dashboard, KubeRay and <a href="https://www.anyscale.com/product/platform">Anyscale</a>, the AI compute platform built on Ray.</p>
+<p>With the new Label Selector API, Ray now directly helps developers accomplish things like:</p>
+<ul><li>Assign labels to nodes in your Ray cluster (e.g. <code>cpu-family=intel</code>, <code>market-type=spot</code>, <code>region=us-west-1</code>)</li><li>When launching tasks, actors or placement groups declare things like <em>“Run this ONLY on intel chip nodes”</em></li></ul>
+<p>With this new API, teams get a better development experience with the ability to more easily describe scheduling intent with labels, not hacks (more details on this below) and more easily debug placement with UI and API support from day one.</p>
+<h2>LinkThe old workaround</h2>
+<p>When Ray developers want to only schedule some of their tasks on the spot nodes in their Ray cluster, they often fake a “spot” custom resource when starting a Ray node, and then request a tiny fraction (0.01) per task – hoping no more than 100 tasks co-locate on a node at the same time to run out of the “spot” resource.</p>
+<pre><code>1ray start --resources '{&quot;CPU&quot;: 8, &quot;spot&quot;: 1}'</code></pre>
+<pre><code>1@ray.remote(resources={&quot;spot&quot;: 0.01})
+2def func():
+3    pass</code></pre>
+<p>The above workaround highlights one class of scheduling limitations: non-resource constraints (spot vs. on-demand) being faked as “resources”. This conflates resource quantities (CPU/GPU/RAM) with placement constraints (region/zone, spot vs. on-demand) and forces non-resource needs to be modeled as resources.</p>
+<p>A second and equally common limitation is exact-match only: many Ray developers need any-of or negative matches – e.g., “not on a GPU node” or “in us-west1-a or us-west1-b” – that prior APIs can’t express.</p>
+<p>With label selectors, Ray developers are able to address both limitations. They let you flexibly express the scheduling requirements for tasks, actors, and placement group bundles using node labels defined at RayCluster creation time or auto-detected by Ray (e.g. accelerator type).</p>
+<p>Ray label selectors draw inspiration from Kubernetes <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/">labels and selectors</a>, enhancing scheduling interoperability between the two systems by using familiar APIs and semantics. This is one of many on-going initiatives where Ray and Kubernetes work in concert to unlock more advanced use cases.</p>
+<p>What you can do with labels:</p>
+<ul><li>Pin to a specific node (by node id)</li><li>Run on/avoid the head node or a worker group</li><li>CPU-only placement</li><li>Target a specific accelerator or set</li><li>Choose node market type (spot or on-demand)</li><li>Keep work in/out of regions or zones</li><li>Select by CPU family (or other host trait)</li><li>Target TPU pod slices</li></ul>
+<p>See the <a href="https://docs.anyscale.com/configuration/compute/advanced#labels">Anyscale</a> and <a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Ray guides</a> for usage instructions and full API details.</p>
+<h2>LinkLabel Selector API</h2>
+<h3>LinkLabel selectors in user code</h3>
+<p>Label selectors let you express where work should run by matching against node labels.</p>
+<p>You can add a label selector to:</p>
+<ul><li>Tasks/actors: <code>label_selector</code> in <code>@ray.remote(...)</code></li><li>Placement groups: <code>bundle_label_selector=[...] </code>at creation time</li></ul>
+<p>Supported semantics: match, not match, any-of, not-any-of</p>
+<p>Going back to the examples above, below are how you’d express those requirements:</p>
+<pre><code>1import ray
+2from ray.util.placement_group import placement_group
+3
+4# Schedule a task on spot instances only
+5@ray.remote(label_selector={&quot;ray.io/market-type&quot;: &quot;spot&quot;})
+6def func():
+7    pass
+8
+9# Placement group: avoid GPU worker group and run in us-west-1 or us-west-2
+10pg = placement_group(
+11    [{“CPU”: 1}] * 2, 
+12    bundle_label_selector=[
+13        {
+14            &quot;ray.io/node-group&quot;: &quot;!gpu-node-group&quot;, 
+15            &quot;ray.io/region&quot;: &quot;in(us-west-1,us-west-2)&quot;
+16        }
+17    ] * 2,
+18)
+19</code></pre>
+<p>The same code can run portably across open source Ray, on Kubernetes, or hosted providers like Anyscale.</p>
+<h3>LinkNode Labels</h3>
+<p>Node labels annotate nodes with properties used for scheduling (e.g., cpu-family, accelerator-type, market-type for spot/on-demand, region/zone). You can:</p>
+<ul><li>Define labels when creating the cluster (Anyscale UI/SDK, KubeRay RayCluster CR, or <code>ray start</code>).</li></ul>
+<pre><code>1# KubeRay RayCluster CR: Label nodes in a worker group with AMD CPU
+2spec:
+3 workerGroupSpecs:
+4  - replicas: 1
+5    labels:
+6      cpu-family: amd
+7</code></pre>
+<pre><code>1# ray start: Label a node with AMD CPU
+2ray start --labels=&quot;cpu-family=amd&quot;</code></pre>
+<ul><li>On Anyscale UI: Label nodes in a worker group with AMD CPU</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4uxHUzbYm3IdlIdYQnWxdK/7834bad992b8066a36691d6d0bc5517d/image_26.png" alt="label selector - image 1"></p>
+<p>label selector - image 1</p>
+<p>Rely on auto-detected labels that Ray and Anyscale provide (e.g., accelerator type). On Anyscale, additional default labels (market type, region/zone) are populated to enable more flexible placement. <a href="https://docs.anyscale.com/configuration/compute/advanced#head-node">See docs to learn more about the default labels</a>. The list of the default labels:</p>
+<table><thead><tr><th><strong>Label Name</strong></th><th><strong>Description</strong></th><th><strong>Supported in Anyscale</strong></th><th><strong>Supported in OSS</strong></th></tr></thead><tbody><tr><td><code>ray.io/node-id</code></td><td>A unique ID generated for the node.</td><td>Yes</td><td>Yes</td></tr><tr><td><code>ray.io/accelerator-type</code></td><td>The accelerator type of the node, for example L4.</td><td>Yes</td><td>Yes</td></tr><tr><td><code>ray.io/market-type</code></td><td>Indicates whether the node uses spot instances or on-demand instances.</td><td>Yes</td><td>No*</td></tr><tr><td><code>ray.io/node-group</code></td><td>The name of the node worker group or head for the head node.</td><td>Yes</td><td>No*</td></tr><tr><td><code>ray.io/region</code></td><td>The cloud region of the node.</td><td>Yes</td><td>No*</td></tr><tr><td><code>ray.io/availability-zone</code></td><td>The available zone of the node.</td><td>Yes</td><td>No*</td></tr></tbody></table>
+<p>Note: * The default labels won’t be populated by default. But you can still use the labels if they are specified in the ray start parameters or the top-level <code>labels</code> field in KubeRay CR.</p>
+<h3>LinkAutoscaling cluster</h3>
+<p>Label selectors work with both static and autoscaling clusters.</p>
+<p>On Anyscale, the autoscaler considers both resource shape and label selectors, scaling the appropriate worker groups so it brings up nodes with the required labels. Autoscaling support for label selectors in open source Ray will be released in Ray 2.51.</p>
+<h2>LinkHow does it work?</h2>
+<p>When you submit a task or create an actor or placement-group, Ray attaches the corresponding label selector (label_selector/bundle_label_selector) to the request. Each node’s Raylet holds the nodes’ labels (user-defined at RayCluster creation or auto-detected, e.g., accelerator family) along with other node metadata from all nodes. The scheduler in the Raylet uses both the selector and the node-label information to make the placement decision: it checks both the label match and performs normal resource fit. The request is deemed schedulable to a node only when both checks pass.</p>
+<p>In autoscaling clusters, the Ray global control store (GCS) aggregates and sends the unsatisfied demand with both the label selector as well as the resource requirements to the autoscaler. The autoscaler uses the information to scale the appropriate worker groups so it brings up nodes with the required labels.</p>
+<h2>LinkFuture work</h2>
+<p>The current label selector is a good starting point, but we have more plans to make it better.</p>
+<ul><li><strong>Fallback label selectors (ordered preferences)</strong>: today, each request carries a single label selector. We plan to support ordered fallback per task/actor/placement group bundles so you can express ordered intent, e.g. prefer accelerator=H100, else accelerator in {A100,H100}.</li><li><strong>Library support:</strong> Extend label selector support into the Ray libraries (e.g., Ray Data, Ray Serve, Ray Train) so common scheduling patterns will be handled automatically.</li><li><strong>Improved interoperability with Kubernetes: </strong>We want to make it as easy as possible to inherit labels from Kubernetes pods and influence pod scheduling in a Kubernetes-native way.</li></ul>
+<h2>LinkTry it Today</h2>
+<ul><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Ray OSS guide</a></li><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Anyscale guide</a></li><li><a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/label-based-scheduling.html">KubeRay end-to-end example</a></li></ul>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#the-old-workaround">The old workaround</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#label-selector-api">Label Selector API</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#label-selectors-in-user-code">Label selectors in user code</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#node-labels">Node Labels</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#autoscaling-cluster">Autoscaling cluster</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#how-does-it-work?">How does it work?</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#future-work-">Future work </a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#try-it-today">Try it Today</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="Running Ray at scale on Kubernetes with KubeRay"></p>
+<h4>Running Ray at scale on Kubernetes with KubeRay</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="Science of Robot Decisions"></p>
+<h4>Scaling the Science of Robot Decisions with Ray on Anyscale</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/12RnheyyoRcbiqT3JkFsEU/10457e67286ef0dd8c471c7ff0574fd9/High-Performance_LLM_Serving_for_Coding_Agents.png?w=140" alt="High-Performance LLM Serving for Coding Agents"></p>
+<h4>Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Ray Task Monitoring at Scale: Announcing Persistence for +10…</title>
+      <link>https://anyscale.com/blog/ray-task-monitoring-persistent-logs</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/ray-task-monitoring-persistent-logs?li=1</guid>
+      <pubDate>Fri, 12 Sep 2025 00:00:00 +0000</pubDate>
+      <description>Full title: Ray Task Monitoring at Scale: Announcing Persistence for +10k Tasks on Anyscale</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Ray Task Monitoring at Scale: Announcing Persistence for +10k Tasks on Anyscale</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=nikita-vemuri">Nikita Vemuri</a>, <a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a>, <a href="https://www.anyscale.com/blog?author=alan-guo">Alan Guo</a> and <a href="https://www.anyscale.com/blog?author=julian-forero">Julian Forero</a> | September 12, 2025</p>
+<p>Today we’re excited to announce the persistent <a href="https://docs.anyscale.com/monitoring/task-dashboard/">Ray Task Dashboard</a> on Anyscale, which enables scalable monitoring and debugging of Ray workloads with visibility that persists beyond cluster shutdown. The fully managed dashboard on Anyscale leverages the new Ray Event Export framework that is available starting with <strong>Ray 2.49.</strong></p>
+<p><a href="https://docs.ray.io/en/latest/ray-core/key-concepts.html#tasks">Tasks</a>, functions executed remotely and in parallel, are the foundation of distributed computation in Ray. Without clear observability into tasks, diagnosing bottlenecks, debugging failures, or tuning performance quickly becomes guesswork that slows iteration and drives up costs.</p>
+<p>The existing Ray Dashboard task view has been a popular tool for developers, but it comes with two critical limitations:</p>
+<ul><li><strong>10k task limit.</strong> Task data is stored in Ray’s Global Control Service (GCS) in memory. To avoid overloading the system, only the most recent 10k tasks are shown, which is far below what large data and AI workloads demand. GCS constraints also limit event reporting frequency, meaning some observability data may be dropped.</li><li><strong>Not persistent.</strong> The dashboard is served from the head node and disappears once the node is terminated. Keeping the head node alive after jobs finish is the only workaround today, but this is not cost-effective.</li></ul>
+<p>With task persistence on Anyscale, built on Ray's Event Export framework, developers now have a scalable, cost-efficient way to capture and analyze task events via managed dashboards.</p>
+<p>See the <a href="https://docs.anyscale.com/monitoring/task-dashboard#enable-system-cluster">documentation</a> for instructions on enabling the dashboard.</p>
+<h2>LinkAnyscale Task Dashboard</h2>
+<h3>LinkFeature Overview</h3>
+<p>The Anyscale task dashboard is particularly useful for <a href="https://docs.ray.io/en/latest/ray-core/walkthrough.html#what-s-ray-core">Ray Core</a> users, so let's take the example of a Core workload where tasks do some amount of work, configured by their inputs. The dashboard updates in near real-time, allowing users to monitor job progress as it runs or analyze results after the job completes.</p>
+<p><strong>High Level Overview:</strong> The first section of the dashboard gives users a quick overview of how their job is progressing. The summary panel at the top gives a high level summary of task counts by state (e.g. finished, failed, running etc).</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1ktTgGeePhIIJTsSFS3AU7/a7fa833e779a587f34e20c690157f4f9/image_1.png" alt="Task Dashboard - Fig 1">Figure 1: Task summary view in Anyscale Dashboard</p>
+<p>Task Dashboard - Fig 1</p>
+<p><strong>Aggregated views: </strong>Following that are a number of aggregate view panels that group tasks by function name, error type, and Ray job ID. Alongside task state counts, these panels include duration distributions to help identify outliers.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6HGRPxr6axsEWEk95j9qHA/c612ef10b6d37598b6d97a2c68394c1a/image_2.png" alt="Task Dashboard - Figure 2">Figure 2: Task aggregated views in Anyscale Dashboard</p>
+<p>Task Dashboard - Figure 2</p>
+<p><strong>Individual Task Analysis:</strong> The task table at the bottom of the dashboard provides detailed information on individual tasks for further analysis.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5kOdSeSfsZOGOji7ivpkWb/6aba4189c3cb5704eea1b951f0cc3b88/image_12.png" alt="Task Dashboard - Fig 3">Figure 3: Detailed task table view in Anyscale Dashboard</p>
+<p>Task Dashboard - Fig 3</p>
+<ul><li>All of the aggregate views above include clickable counts that filter the task table accordingly.</li><li>Each row includes full task metadata, such as node and worker IDs, which can also be used to filter metrics in the Grafana dashboards.</li><li>Stack traces, function names, and various IDs can be queried directly through the search bar.</li></ul>
+<p><strong>Contextualized Information:</strong> Because this dashboard is built into the Anyscale managed platform, we can contextualize Ray workload data with additional relevant information from the Anyscale infrastructure. For example, when a task is stuck in the Pending schedule state, the dashboard can surface related Anyscale Cloud autoscaler logs to help diagnose potential scheduling delays.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5sGMeBoYyxVrMa0sVkzsK3/db5f9e48c2c57026bbf5621e58ea9fc8/image_6.png" alt="Task Dashboard - Fig 4">Figure 4: Anyscale Cloud autoscaler logs view to provide contextualized information about task state</p>
+<p>Task Dashboard - Fig 4</p>
+<h3>LinkArchitecture</h3>
+<p>When building a persisted dashboard on the Anyscale managed platform, maintaining data privacy is a key design consideration. To be truly useful, the dashboard must include detailed information such as stack traces and function names, which may contain sensitive user data. To balance the requirement of keeping customer data within their own cloud account while still delivering a responsive and scalable user experience, we built a dedicated system cluster to power the Anyscale task dashboard.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1Wz8xlbRUE3UkurOieyipS/d071aa112199b00e5d16572b12cf9722/image_4.png" alt="Ray Task Dashboard - Fig 5">Figure 5: Architecture of Anyscale task dashboard that keeps customer data in their own cloud account</p>
+<p>Ray Task Dashboard - Fig 5</p>
+<p>The system cluster is a <strong>single ephemeral instance per Anyscale cloud</strong> that runs in the customer’s account and remains active while the task dashboard UI is being viewed. This approach provides several key benefits:</p>
+<ul><li><strong>Scalable backend:</strong> The system cluster allows us to choose the best tools to ensure the task dashboard backend scales effectively with user workloads. As a result, we’ve tested the dashboard to handle millions of tasks smoothly.</li><li><strong>Data privacy maintained:</strong> Customer data powering the task dashboard is neither stored nor streamed through the Anyscale control plane because the UI directly queries from the customer cloud.</li><li><strong>Cost efficiency:</strong> Additional costs remain minimal due to an auto-terminate policy that automatically shuts down the system cluster when the task dashboard is idle.</li></ul>
+<h2>LinkRay Event Export Framework</h2>
+<p><strong>Where does the data for the task dashboard come from?</strong></p>
+<p>Ray has always emitted metrics and logs that users could collect and persist using external systems. While useful, these data sources aren't sufficient to support all the detailed views shown in the task dashboard. Logs often lack structured information, which makes them hard to transform and query. On the other hand, metrics are better suited for aggregate insights, but adding high-cardinality labels, like task IDs, can impact query performance. Because of these limitations, Ray’s metrics don’t offer the level of granularity needed for individual task level visibility in the dashboard.</p>
+<p>To solve this, we’re introducing <strong>Event Export</strong>, a new open source system which emits structured events that describe progress of the Ray workload. Currently it supports task events, and we plan to expand coverage to Ray entities in the near future.</p>
+<p>To avoid overloading GCS with task event traffic, we updated Ray’s event emission architecture, building on the existing task event framework. Rather than having each core worker send task events directly to GCS, we introduced a per-node aggregator agent. This agent collects events from all core workers on its node and forwards them to user-specified HTTP endpoints. In the case of Anyscale, these events are pushed to a receiver that writes them to the object store, which enables the task dashboard.</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/KD6pJEXnGrsAUSsNiB93Z/cc6bf5a836ec54ec821d0cec6832c9b5/image_5.png" alt="Ray Task Dashboard - Fig 6">Figure 6: Architecture of Ray's Event Export which introduces an aggregator agent per node</p>
+<p>Ray Task Dashboard - Fig 6</p>
+<p>Open source users can also take advantage of the Event Export framework by setting up consumers to stream this data to any destination they choose. Each task event emitted includes all the metadata and state transitions required to recreate the task view shown in the dashboard, so any Ray user can build a custom, persistent dashboard tailored to their needs.</p>
+<p>The Event Export framework is available in Ray 2.49 and later. For setup instructions and examples, check out the official <a href="https://docs.ray.io/en/master/ray-observability/user-guides/ray-event-export.html">documentation</a>.</p>
+<h2>LinkFuture Plans</h2>
+<p>The Event Export framework and the system cluster architecture serve as a foundation to build a fully persisted Ray dashboard on the Anyscale platform, which will enhance how users monitor, debug, and optimize Ray workloads. Eventually this data can also enable automated issue detection and workload optimization.</p>
+<p>We are actively working on adding events from other Ray Core resources and library components to the Event Export framework, and plan to roll out additional persisted dashboards on Anyscale. The Ray Train and Data dashboards were also recently released (<a href="https://www.anyscale.com/blog/ray-train-data-dashboard">see blog post</a>), and we’re planning to enhance them with links to persisted, detailed task data for each Ray Data operator or Train worker.</p>
+<h2>LinkTry it Today</h2>
+<p>Experience a more scalable, cost-efficient and fully persisted task dashboard out of the box on the Anyscale platform.</p>
+<ul><li>Try today: <a href="https://console.anyscale.com/register/ha?utm_source=anyscale&amp;utm_medium=website&amp;utm_campaign=blog">Get started on Anyscale with $100 free credits</a></li><li><a href="https://docs.anyscale.com/monitoring/task-dashboard">Anyscale Task dashboard documentation</a></li><li><a href="https://docs.ray.io/en/master/ray-observability/user-guides/ray-event-export.html">Ray Event Export documentation</a></li><li>Share Anyscale feedback by <a href="https://docs.anyscale.com/get-started/what-is-anyscale#support">submitting a ticket through the Anyscale Console</a></li><li>Share feedback or help contribute to the <a href="https://github.com/ray-project/ray/issues/56057">Ray Event Export project</a></li></ul>
+<p><strong>Join us Ray Summit 2025</strong></p>
+<p>See real-world examples and see Ray and Anyscale product announcements on 2-day, community-led conference that brings together the best engineers and researchers working on top of open source technologies to advance AI.</p>
+<p><strong>San Francisco | Nov 3-5, 2025. </strong><a href="https://www.anyscale.com/ray-summit/2025">Learn More</a>.</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#anyscale-task-dashboard">Anyscale Task Dashboard</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#feature-overview">Feature Overview</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#architecture">Architecture</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#ray-event-export-framework">Ray Event Export Framework</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#future-plans">Future Plans</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#try-it-today">Try it Today</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4zrfTN35E4x2hwwNf1TkWv/ff9fc254b61cebff483a9db4a254e1c9/Tile_image_Op_10__1_.png?w=140" alt="Observability blog header image"></p>
+<h4>New: Ray Data &amp; Ray Train Dashboards</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/46kLynqjB0NI7BH7FHtrF/639e6aa1698d45b029f2afe2d40bf7fa/stack_blog_thumbnail.png?w=140" alt="opensource stack blog thumbnail"></p>
+<h4>OSS AI: Kubernetes + Ray + PyTorch + vLLM</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/68bOkIigo4YK0ogfHkcOR9/119e42a8629331f4385de76fc7c0eeec/Webinar_73025_1500x1000_2x.png?w=140" alt="Webinar 73025 1500x1000 2x"></p>
+<h4>On-Demand: Intro to Anyscale</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
+    <item>
       <title>Ray on Alibaba Cloud: Building an ML Platform</title>
       <link>https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform?li=1</guid>
@@ -5385,126 +5555,6 @@ def train_loop_per_worker(config: dict):
 <p>Sign up now for<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> Anyscale endpoints</a> and get started fast or<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> contact sales</a> if you are looking for a comprehensive overview of the Anyscale platform.</p>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#key-takeaways">Key takeaways</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#the-rapid-evolution-of-ml">The Rapid Evolution of ML</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#the-role-of-kubernetes">The Role of Kubernetes</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#leveraging-ray-for-ml">Leveraging Ray for ML</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#cost-efficiency-in-ml-training">Cost Efficiency in ML Training</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#scaling-ml-workloads">Scaling ML Workloads</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#the-integration-of-new-technologies">The Integration of New Technologies</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#challenges-in-the-fast-paced-open-source-community">Challenges in the Fast-Paced Open Source Community</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#conclusion">Conclusion</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Building Production AI Applications with Ray Serve</title>
-      <link>https://anyscale.com/blog/building-production-ai-applications-with-ray-serve</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/building-production-ai-applications-with-ray-serve?li=1</guid>
-      <pubDate>Tue, 24 Oct 2023 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>Building Production AI Applications with Ray Serve</h1>
-<p>By</p>
-<p>Anyscale Ray Team</p>
-<p>|</p>
-<p>October 24, 2023</p>
-<p>Update June 2024: Anyscale Endpoints (Anyscale's LLM API Offering) and Private Endpoints (self-hosted LLMs) are now available as part of the Anyscale Platform. Click <a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">here</a> to get started on the Anyscale platform.</p>
-<p><em>This blog post is part of the Ray Summit 2023 highlights series where we provide a summary of the most exciting talk from our recent LLM developer conference.</em></p>
-<p><em>Disclaimer: Summary was AI generated with human edits from video transcript.</em></p>
-<h2>LinkKey Takeaways</h2>
-<p>Ray Serve, a flexible and efficient compute system for online inference, is revolutionizing the way AI applications are built and deployed. In this blog post, we explore how Ray Serve addresses common challenges in AI application deployment, such as model microservices, the rise of large language models, and the increasing cost of hardware. We also discuss Ray Serve's observability, spot instance support, and auto-scaling features, which make it a powerful tool for building production AI applications.</p>
-<ul><li>Ray Serve helps address common problems in serving online AI applications by providing a python native framework that allows complex applications with multiple models to be expressed in a single Python program. This makes it easy to iterate and deploy quickly.</li><li>Some 2023 trends Ray Serve is addressing:</li></ul>
-<ul><li>Rise of large language models (LLMs) - Ray Serve added optimizations like the <a href="https://github.com/ray-project/ray-llm">RayLLM</a> subproject to serve LLMs efficiently.</li><li>Increasing cost of hardware - Ray Serve added optimizations like model multiplexing to maximize hardware usage.</li></ul>
-<ul><li>Going to production: Ray Serve focused on production readiness with stability, chaos testing, observability features like the Ray dashboard, and managed offerings like Anyscale.</li><li>Demo highlights:</li></ul>
-<ul><li>Anyscale service UI for visualizing Ray Serve deployments</li><li>CloudWatch integration for request tracing</li><li>Grafana dashboards for metrics and analytics</li><li>Support for spot instances to reduce costs</li><li>Auto-scaling to dynamically scale resources based on load</li></ul>
-<ul><li>Ray Serve is now generally available in Ray 2.7 after increased adoption and hardening in production environments in 2023.</li></ul>
-<h2>LinkBuilding Production AI Applications with Ray Serve</h2>
-<p>Artificial Intelligence (AI) and Machine Learning (ML) have become integral to various industries, driving innovation and efficiency. However, building and deploying AI applications for production can be a complex and resource-intensive task. This is where Ray Serve, a powerful AI serving system, comes into play. In this blog post, we will delve into the world of Ray Serve and how it is transforming the landscape of building production AI applications.</p>
-<h2>LinkChallenges in Building Production AI Applications</h2>
-<p>To understand the significance of Ray Serve, we must first recognize the challenges that AI developers and organizations face when building production AI applications:</p>
-<ul><li><strong>Model Microservices</strong>: Traditional AI applications often follow a model microservices architecture, where each model runs as a separate service with its own Docker configuration and Kubernetes deployment. This approach is complex and resource-intensive, making it challenging to efficiently innovate and share resources among multiple models.</li><li><strong>Rise of Large Language Models (LLMs)</strong>: The emergence of Large Language Models like GPT-3 and its variants has marked a significant trend in AI. To harness the potential of LLMs, AI developers need a flexible and scalable infrastructure.</li><li><strong>Increasing Hardware Costs</strong>: As AI models grow in complexity, the cost of hardware, especially Graphics Processing Units (GPUs), has risen substantially. Efficiently utilizing and managing these resources is paramount for cost-effectiveness.</li></ul>
-<h2>LinkIntroducing Ray Serve</h2>
-<p>Ray Serve is a game-changer in the realm of AI application deployment. It offers a flexible, scalable, and efficient approach to building production AI applications. Let's explore how Ray Serve addresses the challenges mentioned above:</p>
-<ul><li><strong>Model Microservices Simplified: </strong>Ray Serve allows developers to express complex applications as a single Python program. This means that you can mix business logic with multiple models and iterate quickly, from local testing to production deployment. The Python-native nature of Ray Serve simplifies application architecture, reducing the complexity associated with maintaining separate microservices for each model.</li><li><strong>Embracing Large Language Models: </strong>In response to the rise of Large Language Models (LLMs), Ray Serve has introduced specialized infrastructure for serving LLMs. This optimized infrastructure integrates with state-of-the-art solutions like VLLM and NVIDIA's TensorRT, ensuring that AI applications can leverage LLMs efficiently.</li><li><strong>Addressing Hardware Costs: </strong>Ray Serve provides advanced features to optimize resource allocation and scaling. It supports model multiplexing, enabling the concurrent operation of numerous models on the same hardware. This capability is vital in a landscape where GPU availability is dwindling and hardware costs are escalating. Moreover, Ray Serve offers support for spot instances, allowing you to take advantage of cost-effective cloud resources without compromising service availability.</li></ul>
-<h2>LinkSavings and Success Stories</h2>
-<p>Real-world examples highlight the effectiveness of Ray Serve in addressing these challenges. Samsara, a user of Ray Serve, migrated its AI platform to Ray Serve, resulting in a 50% reduction in annual inference costs. Financial institutions like any scale are running significant GPU clusters on Ray Serve, offering state-of-the-art models at a fraction of the cost of competing solutions.</p>
-<h2>LinkKeeping Up with Trends</h2>
-<p>The AI landscape is dynamic, with new models and techniques emerging regularly. To stay competitive, organizations need to adapt quickly. Ray Serve's flexibility and developer productivity have allowed it to keep pace with these trends. It has introduced features such as streaming responses, continuous batching, and tensor parallelism, aligning with the latest advancements in the field. This ensures that businesses can quickly integrate and drive value from emerging developments in AI.</p>
-<h2>LinkProduction Readiness</h2>
-<p>2023 has been a transformative year for AI, with many companies transitioning from ideation to production use of ML. For this transition, having a robust deployment and observability system is vital. Ray Serve has focused on enhancing production readiness, introducing observability features such as the Serv tab on the Ray dashboard, improved metrics, and logging. Continuous chaos and scale testing ensure stability and catch issues before they affect users.</p>
-<h2>LinkRay Serve in Action - A Photographic Calculator App</h2>
-<p>Ray Serve is demonstrated through a Photographic Calculator app. This app showcases Ray Serve's capabilities, including its ability to independently scale deployments, adapt to traffic bursts, and optimize resource usage based on varying hardware requirements.</p>
-<h2>LinkObservability for In-Depth Insights</h2>
-<p>Ray Serve's observability features provide insights into how requests flow through the application, the latency at each deployment, and the health of critical components. This level of visibility empowers administrators to make informed decisions and troubleshoot effectively.</p>
-<h2>LinkSpot Instances for Cost Efficiency</h2>
-<p>Ray Serve introduces support for spot instances, allowing users to leverage cost-effective cloud resources. When spot instances are preempted, Ray Serve gracefully shifts traffic to on-demand nodes and automatically reverts to spot instances when they become available. This cost-saving strategy ensures that AI applications remain cost-efficient.</p>
-<h2>LinkAuto-Scaling for Handling Traffic Bursts</h2>
-<p>Traffic patterns can fluctuate, and applications need to adapt to these changes. Ray Serve's auto-scaling capabilities allow it to dynamically adjust the number of replicas and nodes in response to user demand. As seen in the demo, this results in an increase in throughput and a reduction in latency during traffic bursts.</p>
-<h2>LinkConclusion</h2>
-<p>Building production AI applications can be a challenging endeavor, but Ray Serve simplifies the process by providing a flexible and efficient infrastructure. It addresses the challenges posed by model microservices, the rise of Large Language Models, and the increasing cost of hardware. With observability, spot instance support, and auto-scaling, Ray Serve empowers organizations to deliver AI solutions that are not only cost-effective but also capable of adapting to changing AI trends. As the AI landscape continues to evolve, Ray Serve remains a powerful tool for organizations seeking to harness the potential of AI in a production environment.</p>
-<p>Check out <a href="https://ray.io/serve">Ray Serve</a>, sign up now for<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> Anyscale endpoints</a> and get started fast or<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> contact sales</a> if you are looking for a comprehensive overview of the Anyscale platform.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#key-takeaways">Key Takeaways</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#building-production-ai-applications-with-ray-serve">Building Production AI Applications with Ray Serve</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#challenges-in-building-production-ai-applications">Challenges in Building Production AI Applications</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#introducing-ray-serve">Introducing Ray Serve</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#savings-and-success-stories">Savings and Success Stories</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#keeping-up-with-trends">Keeping Up with Trends</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#production-readiness">Production Readiness</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#ray-serve-in-action---a-photographic-calculator-app">Ray Serve in Action - A Photographic Calculator App</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#observability-for-in-depth-insights">Observability for In-Depth Insights</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#spot-instances-for-cost-efficiency">Spot Instances for Cost Efficiency</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#auto-scaling-for-handling-traffic-bursts">Auto-Scaling for Handling Traffic Bursts</a></li><li><a href="https://www.anyscale.com/blog/building-production-ai-applications-with-ray-serve#conclusion">Conclusion</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Heterogeneous Training Cluster with Ray at Netflix</title>
-      <link>https://anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix?li=1</guid>
-      <pubDate>Fri, 20 Oct 2023 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>Heterogeneous Training Cluster with Ray at Netflix</h1>
-<p>By</p>
-<p>Anyscale Ray Team</p>
-<p>|</p>
-<p>October 20, 2023</p>
-<p>Update June 2024: Anyscale Endpoints (Anyscale's LLM API Offering) and Private Endpoints (self-hosted LLMs) are now available as part of the Anyscale Platform. Click <a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">here</a> to get started on the Anyscale platform.</p>
-<p><em>This blog post is part of the Ray Summit 2023 highlights series where we provide a summary of the most exciting talk from our recent LLM developer conference.</em></p>
-<p><em>Disclaimer: Summary was AI generated with human edits from video transcript.</em></p>
-<h2>LinkKey Takeaways</h2>
-<p>Netflix's machine learning platform utilizes heterogeneous training clusters to power its recommendation and content personalization systems. In this blog post, we delve into the details of how Netflix leverages Ray and GPU clusters for efficient model training, communication, and data management. We'll also explore the challenges they face and their strategies for resource allocation and GPU utilization.</p>
-<ul><li>Netflix uses personalized recommendations on its homepage to help users find relevant content. This involves ranking algorithms, customized artwork, etc.</li><li>They use various ML models for recommendations and computer vision tasks. Workloads include recommendation, media understanding, and large language models.</li><li>To optimize computation, they use custom operators, integrate latest ops from ML frameworks, and fuse sequences of ops.</li><li>For communication, they use NCCL for dense gradients but need custom solutions for sparse embedding/table gradients.</li><li>For I/O, they use local SSDs, S3 streaming, and FSx caching from S3 to get high throughput to GPUs.</li><li>They offload data loading to remote CPUs with TF data service and Ray to decouple it from GPU training.</li><li>They use durable heterogeneous clusters per team with autoscaling. Jobs specify only the number of GPUs needed.</li><li>They store data in S3, sync it to FSX for high-speed training access, and write logs/checkpoints to EFS.</li><li>They are working on a centralized scheduler, exploring batch inference, and moving to fully scheduled job submission.</li></ul>
-<h2>LinkHeterogeneous Training Cluster with Ray at Netflix</h2>
-<p>Netflix, a global streaming giant, is known for its data-driven approach to content personalization. To achieve this, they employ a robust machine learning platform that relies heavily on GPU clusters for model training and recommendation systems. In this blog post, we'll explore heterogeneous training clusters at Netflix, focusing on their use of Ray and GPUs.</p>
-<h2>LinkUnderstanding Heterogeneous Training Clusters</h2>
-<p>Heterogeneous training clusters are an essential component of Netflix's machine learning infrastructure. These clusters bring together different types of hardware, including both CPUs and GPUs, to address a range of machine learning workloads. By doing so, Netflix can efficiently support a variety of use cases, from recommendation systems to large language models.</p>
-<h2>LinkThe Role of Personalization in Netflix</h2>
-<p>At the heart of Netflix's success is its ability to personalize content recommendations for its users. The platform's homepage is highly personalized for each profile, and everything on the homepage revolves around recommendations. These recommendations are generated through complex machine learning models that analyze a user's viewing history and preferences.</p>
-<h2>LinkMachine Learning Workloads</h2>
-<p>Netflix's machine learning workloads can be categorized into three main types:</p>
-<ol><li>Recommendation Use Case: This involves models with dense features, concatenating with sparse features, and using multiple prescription MLP. It's characterized by large datasets and distributed training across multiple GPUs.</li></ol>
-<ol><li>Multimodal Use Case: Netflix's researchers work with diverse data sources, including text, images, audios, videos, and more. These datasets can be extremely large, leading to the need for distributed data parallelism.</li></ol>
-<ol><li>Large Language Models: This emerging use case involves training massive language models with small datasets. It's computationally intensive due to Transformer-based architectures.</li></ol>
-<h2>LinkEfficient Computation and GPU Utilization</h2>
-<p>To make the most of GPU clusters, Netflix employs a range of strategies:</p>
-<ol><li>Custom Operators: They use custom operators to improve computation efficiency, reducing the overhead associated with composing complex operations.</li></ol>
-<ol><li>State-of-the-Art Operators: Netflix leverages state-of-the-art operators from TensorFlow and PyTorch to enhance memory usage and overall model performance.</li></ol>
-<ol><li>GPU Communication: Netflix optimizes GPU communication, with considerations for different model sizes and batch sizes. They explore native TensorFlow and sparse weight like embedding tables to find the best fit for their workloads.</li></ol>
-<h2>LinkData Storage and Management</h2>
-<p>Effective data storage and management are crucial for machine learning workflows. Netflix employs a variety of strategies:</p>
-<ol><li>Local SSD Disk: They use local SSD disks for high-speed data access but acknowledge limitations in scalability.</li></ol>
-<ol><li>S3 Streaming: S3 streaming provides a cloud-based storage solution but comes with performance limitations.</li></ol>
-<ol><li>FSx for Lustre: This high-throughput file system helps in reading large datasets efficiently and integrates with the GPU clusters.</li></ol>
-<ol><li>Data Loading Optimization: To optimize data loading and alleviate CPU bottlenecks, they offload data loading to remote CPUs using Ray.</li></ol>
-<h2>LinkResource Allocation and Scheduling</h2>
-<p>Netflix employs resource allocation and scheduling strategies to ensure efficient use of their heterogeneous training clusters. They use the concept of resource pools, where they group machines according to their capabilities. This simplifies resource allocation for researchers who need GPU resources.</p>
-<h2>LinkChallenges and Future Directions</h2>
-<p>Despite Netflix's sophisticated infrastructure, they acknowledge challenges, including the need to accommodate diverse workloads and explore emerging GPU technologies. They are also working on a centralized job scheduler and queue system to maximize resource utilization and reduce contention between teams.</p>
-<h2>LinkConclusion</h2>
-<p>Netflix's use of heterogeneous training clusters with Ray and GPU technology is a testament to the power of AI and ML in the entertainment industry. It underlines the significance of efficient data management, computation, and resource allocation in delivering a personalized streaming experience. As machine learning and GPU technologies continue to advance, it will be exciting to see how Netflix evolves its infrastructure to keep providing top-notch content recommendations to its millions of viewers worldwide.</p>
-<p>Sign up now for<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> Anyscale endpoints</a> and get started fast or<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> contact sales</a> if you are looking for a comprehensive overview of the Anyscale platform.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#key-takeaways">Key Takeaways</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#heterogeneous-training-cluster-with-ray-at-netflix">Heterogeneous Training Cluster with Ray at Netflix</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#understanding-heterogeneous-training-clusters">Understanding Heterogeneous Training Clusters</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#the-role-of-personalization-in-netflix">The Role of Personalization in Netflix</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#machine-learning-workloads">Machine Learning Workloads</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#efficient-computation-and-gpu-utilization">Efficient Computation and GPU Utilization</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#data-storage-and-management">Data Storage and Management</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#resource-allocation-and-scheduling">Resource Allocation and Scheduling</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#challenges-and-future-directions">Challenges and Future Directions</a></li><li><a href="https://www.anyscale.com/blog/heterogeneous-training-cluster-with-ray-at-netflix#conclusion">Conclusion</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>

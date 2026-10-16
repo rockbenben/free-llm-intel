@@ -7,7 +7,141 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 16 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>扩展 Indic 预训练：2.8 万亿代币和开放数据生成管道</title>
+      <link>https://huggingface.co/blog/nvidia/scaling-indic-pretraining</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/scaling-indic-pretraining</guid>
+      <pubDate>Fri, 16 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>扩展 Indic 预训练：2.8 万亿代币和开放数据生成管道</h1>
+<p>企业+文章</p>
+<p>发布于 2026 年 10 月 16 日</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/BawiLewu"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/EZ8NWzEv3llbD7YTXH_se.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nihalpj"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/fvPC2tH2Zb_q38zsMNwee.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rthethy"><img src="https://huggingface.co/avatars/993fe5429e4889beaab2b273c8f7fe2e.svg" alt=""></a></li><li><a href="https://huggingface.co/jakob30"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/WIvhim3FkD0ctdIMcbUja.png" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/ryomikaichi"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/XE0INv8XwQiugtuRQbnfh.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/WillJenningsDC"><img src="https://huggingface.co/avatars/87e34ec78b0b360f57915e6564213793.svg" alt="威尔·詹宁斯的头像"></a></p>
+<p>威尔·詹宁斯</p>
+<p>威尔·詹宁斯 DC</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/kipraveen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/trphxBPc2HmbldGIyVITr.png" alt="Kiran Praveen 的头像"></a></p>
+<p>基兰·普拉文</p>
+<p>基普拉文</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/sniverty"><img src="https://huggingface.co/avatars/0a3b26a399ec606074fa7cf792ccebc4.svg" alt="Sriharsha Niverty 的头像"></a></p>
+<p>斯里哈沙·尼维尔蒂</p>
+<p>斯尼韦尔蒂</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/ravirajoshi"><img src="https://huggingface.co/avatars/657a4633e28a852106c6e417ec1961c1.svg" alt="Raviraj Joshi 的头像"></a></p>
+<p>拉维拉吉·乔希</p>
+<p>拉维拉乔希</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/mkliegl-nv"><img src="https://huggingface.co/avatars/977b6773a8e5372523f6cac02a6418fa.svg" alt="Markus Kliegl 的头像"></a></p>
+<p>马库斯·克利格尔</p>
+<p>姆克利格尔-NV</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/nv-3mei"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/NCK3br1uL-gfkVWmd_VRQ.png" alt="Yev Meyer 的头像"></a></p>
+<p>叶夫·迈耶</p>
+<p>女三美</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/uvaidya"><img src="https://huggingface.co/avatars/f4d0aa69c4850431bf099661d3659346.svg" alt="Utkarsh Vaidya 的头像"></a></p>
+<p>乌特卡什·维迪亚</p>
+<p>乌韦迪亚</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/niketagarwal"><img src="https://huggingface.co/avatars/40ed1f24e7acf517eeccfd3d96e33785.svg" alt="Niket Agarwal 的头像"></a></p>
+<p>尼基特·阿加瓦尔</p>
+<p>尼基塔加瓦尔</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><em>22 种语言的本机脚本数据、12 种语言的罗马化数据，以及用于翻译、质量评估和修复的可重用 GPU 加速管道。</em></p>
+<p><strong>作者：</strong> AI4Bharat — Mohammed Safi Ur Rahman Khan、Mitesh Khapra、Anoop Kunchukuttan。 NVIDIA — Niket Agarwal、Raviraj Joshi、Anusha Kamath、Markus Kliegl、Yev Meyer、Sriharsha Niverty、Kiran Praveen、Utkarsh Vaidya。</p>
+<p>我们很高兴推出 <strong>Nemotron-pretraining-Indic-v1</strong> 大约 <strong>2.8 万亿个代币，涵盖 22 种印度语言</strong>，很快就会与用于创建它的 <strong>开放、GPU 加速的数据生成管道</strong> 一起发布。这些是印度宪法中列出的 22 种语言：2011 年人口普查中 97% 的印度人（即近 12 亿印度公民）的第一语言。此版本由 NVIDIA 与印度首屈一指的工程学院 <a href="https://www.iitm.ac.in/">IIT Madras</a> 及其 <a href="https://ai4bharat.iitm.ac.in/">AI4Bharat</a> 实验室共同开发，为模型构建者提供了用于印度语预训练的大量新资源。该管道捕获完整的生成方案，包括提示、LLM 工作流程和质量检查，因此开发人员可以根据自己的源材料进行调整，并根据自己的需求生成更多数据。</p>
+<p>AI4Bharat 是印度理工学院马德拉斯分校的印度语言研究实验室，为印度语言构建开源数据集和模型。其资源，例如 <a href="https://huggingface.co/datasets/ai4bharat/sangraha">Sangraha</a>（22 种印度语言的开放预训练语料库），为开放印度语言模型研究奠定了基础。我们的联合开源版本代表了将向社区提供的开放合成印度训练数据的大幅扩展。它将各种精心策划的英语材料（包括数学、代码和问答内容）融入印度语言，为团队提供了更多培训材料，用于构建可以解释技术概念、解决问题并用这些语言回答问题的模型。每条记录都可以追溯到精选的源文档，并且每个输出都会根据其输入进行检查，因此合成文本始终以真实信息为基础。</p>
+<p>AI4Bharat 的负责人、<a href="https://time.com/collections/time100-ai-2025/7305866/mitesh-khapra/">2025 年 TIME100 AI 榜单</a> 的 Mitesh Khapra 指出了核心问题：印度语言技术落后于英语，因为“我们没有足够的印度语言数据”。我们正在用更多数据以及生成更多数据的开放方法来响应这一号召。</p>
+<p>该语料库还解释了人们的写作方式。它包括所有 22 种语言的本机脚本数据和 12 种语言的罗马化文本，涵盖 34 种语言脚本配置。我们的工作流程结合了文档级翻译、质量评估和有针对性的修复，以及保留方程、表格和代码等内容的检查。这些数据补充了自然创作的印度文本，这对于当地知识和文化背景仍然至关重要。</p>
+<p>我们正在分享<a href="https://github.com/NVIDIA-NeMo/DataDesignerPlugins/tree/main/plugins/data-designer-nemotron-bharat-translation">开放生成配方</a>，因此社区不仅可以重现数据，还可以进一步开展这项工作。团队可以直接使用语料库，调整提示和质量检查，或将自己的源文档引入工作流程。通过开放数据和流程，我们的目标是使大规模印度语数据生成变得更容易，并使更多开发人员能够为跨印度语言的更强大的模型做出贡献。</p>
+<p><a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4">Nemotron 3.5 Super VL</a> 的持续预训练添加了 100 亿个印度语标记，这些标记来自该语料库的 12 种语言子集和自然印度语文本。我们关于该模型的技术报告涵盖了整个故事。我们计划在未来的 Nemotron 模型中建立这个语料库。</p>
+<h2>语料库中有什么？</h2>
+<p>[![由本机脚本和罗马化标记组成的语料库计数。](https://cdn-uploads.huggingface.co/product/uploads/68d2fec8856b85d927e44d32/VmVFMKjOsoNkEKfQ7cRnh。 png)](https://cdn-uploads.huggingface.co/product/uploads/68d2fec8856b85d927e44d32/VmVFMKjOsoNkEKfQ7cRnh.png) <em>图 1. 语料库包含 26,010 亿个本机脚本标记和 2,246 亿个罗马化标记。计数使用 Gemma-4 分词器。文档记录包括共享源的翻译和脚本变体；它们不是独特英文文档的计数。</em></p>
+<p>语料库有两组语言配置：</p>
+<ul><li><strong>母语和罗马化数据：</strong> 孟加拉语、古吉拉特语、印地语、卡纳达语、马拉雅拉姆语、马拉地语、尼泊尔语、奥迪亚语、旁遮普语、泰米尔语、泰卢固语和乌尔都语。</li><li><strong>本机文字数据：</strong> 阿萨姆语、博多语、多格里语、克什米尔语、孔卡尼语、迈蒂利语、曼尼普里语、梵语、桑塔利语和信德语。</li></ul>
+<p>这里，<em>native-script</em> 描述了书写系统：文本仍然是从英语翻译而来的。 <em>罗马化</em> 是指用拉丁字母书写的印度语言文本，而不是英文翻译。对于十二种双文字语言中的每一种，罗马化涵盖了可接受的母语文字翻译的子集。</p>
+<p>在构建训练混合物时，这种区别很重要。本机记录和罗马化记录提供不同的脚本暴露，但可以表达相同的底层内容。令牌计数描述了保留的语料库，包括接受的重写，而不是训练运行的令牌预算。计数还取决于所使用的标记生成器，因此应单独读取语料库库存和训练标记计数。</p>
+<h2>从英文源文档到印度语训练数据</h2>
+<p>为了构建这个语料库，我们从 15 个 <a href="https://huggingface.co/datasets/nvidia/Nemotron-CC-v2">Nemotron-CC-v2</a> 子集的文档开始，涵盖网络文本、问答材料、数学、代码和其他专业内容。我们使用 NVIDIA 的开源框架 <a href="https://docs.nvidia.com/nemo/datadesigner/">NeMo Data Designer</a> 来生成合成数据、运行翻译、质量检查和有针对性的修复。在整个工作流程中，我们保留每个源标识符，以便开发人员可以将输出追溯到其原始文档。像这样清晰的来源是开放数据可用于审计和构建的一部分。图 2 显示了 12 种语言的工作流程。</p>
+<p>[![由本机脚本和罗马化标记组成的语料库计数。](https://cdn-uploads.huggingface.co/product/uploads/68d2fec8856b85d927e44d32/PCtm5uAGrdrp8kgHXb6y3。 png)](https://cdn-uploads.huggingface.co/product/uploads/68d2fec8856b85d927e44d32/PCtm5uAGrdrp8kgHXb6y3.png) <em>图 2. 适用于 12 种语言的四阶段印度语合成数据管道，使用 NeMo Data Designer 和 Gemma-4-31B-it 实现。我们翻译英语文档，评估翻译质量，修复低分输出，并将部分接受的翻译转换为拉丁文字。其他十种语言使用如下所述的单独印度语翻译工作流程。</em></p>
+<h3>十二种语言的工作流程</h3>
+<p>对于这十二种语言，我们完整翻译文档，以便模型可以跨段落、表格和方程使用上下文。我们通过比较完整文档的模型、检查翻译质量和技术内容的保存来选择 <a href="https://huggingface.co/google/gemma-4-31B-it">Gemma-4-31B-it</a>。我们的提示将要翻译的散文与要保留的内容区分开来，包括代码、方程式、URL 和格式。</p>
+<p>翻译后，我们使用相同的模型根据其英文源来评估每个输出。该标题的灵感来自于<a href="https://themqm.org/">多维质量指标</a> (MQM)，这是一个按类型和严重性对翻译错误进行分类的开放框架，涵盖了含义、流畅性、术语、风格和格式。我们只保留得分至少为 75 分（满分 100 分）的输出（评分标准，而不是准确率）。对于得分较低的输出，我们使用评估反馈来指导修复，然后根据相同的阈值重新评估它们。此过程在本机脚本和罗马化数据中恢复了 <strong>4384 亿个标记</strong>，这些标记已包含在语料库总数中。人工审查和测试样本以及故意引入的错误有助于识别遗漏和残留的英语，从而为我们的提示和检查提供改进。</p>
+<p>接受的本机脚本翻译还提供罗马化数据的起点。我们将一个子集转换为拉丁脚本，并根据其本机脚本输入检查每个结果。这将翻译与脚本转换分开。在我们最初的人类比较中，与直接从英语生成罗马化文本相比，这种两步方法产生的幻觉添加和残留英语更少。</p>
+<h3>十种语言工作流程</h3>
+<p>对于其他十种语言，我们调整工作流程以解决在比较中观察到的长文档质量和脚本稳定性问题。我们使用 <a href="https://huggingface.co/bodhan-ai/indic-translate">Indic Translate</a> 进行翻译，这是一种来自 <a href="https://bodhan.ai/">Bodhan AI</a> 的英语和 22 种印度语言的文档级翻译模型，Bodhan AI 是 IIT 马德拉斯孵化的非营利性人工智能教育中心。 Gemma-4-31B-it 然后根据其英文源评估每个翻译。对于八种语言，我们保留整个文档的方法。对于较长的 Santali 文档，我们会平移重叠窗口并重建文档；对于曼尼普里语，我们先翻译为孟加拉语文字，然后再转换为其母语 Meitei Mayek。这些工作流程保留得分至少为 75 分（满分 100 分）的输出，并且仅生成本机脚本数据，而不进行基于反馈的重写。</p>
+<h2>Indic 继续预训练后发生了什么变化？</h2>
+<p>Nemotron 3.5 Super VL 技术报告将 Indic 持续预训练 (CPT) 之前的检查点与该阶段之后的检查点进行了比较。配置的预算为 1000 亿个训练代币，其中 10%（100 亿代币）分配给合成和自然印度文本的混合。其余 90% 保持之前训练混合物的相对比例。</p>
+<p>所有五个报告的印度语知识和推理基准测试的分数均有所增加：MILU、Indic MMLU-Pro、Indic ARC-Challenge、Indic ARC-Easy 和 Indic GSM8K。</p>
+<p>[![figure3-cpt-before-after@2x](https://cdn-uploads.huggingface.co/product/uploads/68d2fec8856b85d927e44d32/ZPR2A2wDoNW 6OVb4-GX63.png)](https://cdn-uploads.huggingface.co/product/uploads/68d2fec8856b85d927e44d32/ZPR2A2wDoNW6OVb4-GX63.png) <em>图 3. 印度 CPT 阶段之前和之后的 Nemotron 3.5 Super VL。涨幅范围为 4.98 至 9.82 个百分点。该比较报告了整个训练阶段的变化，该阶段结合了合成和自然印度语数据，而不是孤立合成语料库的贡献。语言覆盖范围因基准而异；这些是阶段级检查点，而不是最终模型版本的比较。</em></p>
+<p><em>来源：Nemotron 3.5 Super VL 技术报告，表 2。GSM8K 排除 Odia，因为评估超出了服务上下文限制。</em></p>
+<p>这些成果支持合成和天然印度 CPT 配方的结合，同时为其他模型和语言留下混合物的选择以供进一步研究。</p>
+<p>配套的印度语报告使用 12 种语言组的首轮接受数据检查了源混合物、合成数据池大小和脚本覆盖率。评估完整的语料库，包括恢复的重写和其他十种语言，仍然是这些对照研究的下一步。</p>
+<h3>Nemotron 3.5 Super VL 中更广泛的印度语功能</h3>
+<p>除了 CPT 阶段的结果之外，发布的模型与上一代相比如何？图 4 对 Nemotron 3.5 Super VL 与 <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-BF16">Nemotron 3 Super</a> 在印度语任务性能和语言质量方面进行了比较。这些结果反映了已发布模型的完整训练流程，包括 Indic CPT 和后期训练。</p>
+<p>Nemotron 3.5 Super VL 在所示的六项任务基准中的五项上得分较高，涵盖知识、推理、数学、代码和翻译。 IFEval 1.5 上的指令下降了 2.04 点。它还改进了所有四个 <a href="https://huggingface.co/datasets/sarvamai/indivibe">IndiVibe</a> 维度：实用性、流畅性、语言和脚本保真度以及适当的冗长性。 IndiVibe 是 Sarvam AI 的印度语言助理式提示的开放基准。这些评估共同考察了该模型的功能以及它在印度语言中的沟通效果。</p>
+<p>[![figure4-super- Generations-HD](https://cdn-uploads.huggingface.co/product/uploads/68d2fec8856b85d927e44d32/YQO_-yZWrh hQgueXuxzuM.png)](https://cdn-uploads.huggingface.co/product/uploads/68d2fec8856b85d927e44d32/YQO_-yZWrhhQgueXuxzuM.png) <em>图 4. Nemotron Super 世代的印度语任务表现和语言质量。左：六个任务基准。右图：初步 IndiVibe 条件偏好分数，而非直接的面对面胜率。标签显示百分比变化，但 WMT24++ 除外，它使用 chrF 点。有关基准和评估详细信息，请参阅随附的 Indic 技术报告。</em></p>
+<h2>开始构建</h2>
+<h3>加载语料库</h3>
+<p>从模型所需的语言和脚本开始，检查样本，并在训练前查看数据集卡和许可证。配置使用语言、脚本和区域标签：例如，“hi-Deva-IN”表示梵文印地语，而“hi-Latn-IN”表示罗马化印地语。</p>
+<p>下面的示例从数据集卡中请求存储库 ID，然后发现可用的拆分并流式传输样本。</p>
+<pre><code>from datasets import get_dataset_split_names, load_dataset
+
+dataset_id = input(&quot;Repository ID from the dataset card: &quot;).strip()
+config = &quot;hi-Deva-IN&quot;
+
+splits = get_dataset_split_names(dataset_id, config_name=config)
+print(&quot;Available splits:&quot;, splits)
+
+data = load_dataset(
+    dataset_id, name=config, split=splits[0], streaming=True
+)
+print(next(iter(data)))</code></pre>
+<p><a href="https://huggingface.co/docs/datasets/stream">Hugging Face Datasets</a> supports streaming so readers can inspect records without downloading the entire corpus.一旦版本可用，请固定数据集修订版以进行可重复的实验。</p>
+<p><strong>对于第一个训练研究</strong>，以固定的代币预算比较混合物并记录天然/合成和本地/罗马化的份额。跟踪每种语言的结果以及英语能力保留和语言/脚本质量。创建保留拆分时，请考虑跨语言和脚本从同一源派生的记录。</p>
+<p>To build a fuller recipe, pair the corpus with Nemotron post-training data, such as the <a href="https://huggingface.co/collections/nvidia/nemotron-chat-and-instruction-following">Chat &amp; Instruction</a> or <a href="https://huggingface.co/collections/nvidia/nemotron-post-training-v3">Post-Training Blends</a> collections. For India-specific synthetic data, seed NeMo Data Designer with <a href="https://huggingface.co/datasets/nvidia/Nemotron-Personas-India">Nemotron-Personas-India</a>, synthetic personas in English and Hindi grounded in real-world distributions for India.</p>
+<h3>调整生成配方</h3>
+<p>NeMo Data Designer 的开源 <a href="https://github.com/NVIDIA-NeMo/DataDesignerPlugins/tree/main/plugins/data-designer-nemotron-bharat-translation">Nemotron Bharat 翻译插件</a> 提供翻译和评估提示、可选的基于反馈的重写、文档窗口和脚本重新映射支持。使用其<a href="https://github.com/NVIDIA-NeMo/DataDesignerPlugins/blob/main/plugins/data-designer-nemotron-bharat-translation/docs/index.md">配置参考</a>来选择模型和语言，根据您的领域调整提示，并设置重写参数。随附的<a href="https://github.com/NVIDIA-NeMo/DataDesigner/pull/959">开发人员说明</a> 解释了工作流程和工程选择。</p>
+<p>从您自己的源文档的一个小样本开始。检查翻译质量以及代码、数学和格式的保存，然后完善提示并在扩大规模之前与母语审阅者进行检查。将生成和语料库接受视为单独的步骤：插件返回候选者和分数，而您的过滤策略确定哪些记录进入训练语料库。</p>
+<h2>范围和限制</h2>
+<p>翻译拓宽了对源材料的获取范围，但并不能取代最初用印度语言编写的文本，也不能保证覆盖当地知识和文化。我们建议将此语料库与适当来源的自然印度文本相结合，并针对预期用例评估生成的混合物。</p>
+<p>质量评估主要是自动化的，辅之以抽样的人工审核，其覆盖范围因语言而异。对于十二种语言的工作流程（图2），译者同时也充当了评判者的角色。保留的文本仍然可能包含错误，并且十种语言的工作流程需要更广泛的母语验证。源 ID 检查删除处理重复项；它们不是相似内容的语义重复删除。</p>
+<p>除了该语料库之外，IIT Madras 的 AI4Bharat 在 NVIDIA 的支持下正在构建 Indic-LLM-Eval-Suite，这是一个开放且不断发展的印度模型功能基准集合。它可以帮助模型构建者评估任务绩效和语言质量。请参阅配套博客 <a href="https://ai4bharat.github.io/indic-llm-eval-suite-blog/"><em>更好的模型需要更好的基准：Indic-LLM-Eval-Suite 简介</em></a>。</p>
+<p>探索语言配置、测试训练混合物或将开放配方调整到新领域。共享每种语言的结果和对生成工作流程的改进可以帮助社区在这项工作的基础上继续发展。</p>
+<h2>Further reading and acknowledgments</h2>
+<p>配套报告，<a href="[印度法学硕士的扩展综合预训练数据和评估LLMs.pdf](https://huggingface.co/datasets/nvidia/nemotron-indic-pretraining-report/resolve/main/Scaling%20Synthetic%20Pre-training%20Data%20and%20Evaluation%20for%20Indic%20LLMs.pdf"><em>印度法学硕士的扩展综合预训练数据和评估</em></a> 和 <a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3.5-Super-and-Lightning-Technical-Report.pdf"><em>Nemotron 3.5 Super VL 和闪电技术报告</em></a>，提供语料库核算、生成方法、实验和评估详细信息。评估是这项工作的另一半，请参阅 AI4Bharat 和 NVIDIA 的配套博客，<a href="https://ai4bharat.github.io/indic-llm-eval-suite-blog/"><em>更好的模型需要更好的基准：介绍。 Indic-LLM-Eval-Suite</em></a>。</p>
+<p>这项工作汇集了 NVIDIA、IIT Madras、AI4Bharat 和 Bodhan AI。我们还感谢管道中使用的模型和工具的贡献：Google 的 Gemma、Bodhan AI 的印度语翻译和 NeMo Data Designer。 <a href="https://huggingface.co/collections/nvidia/nemotron-pre-training-datasets">Nemotron 预训练数据集集合</a> 中提供了其他 NVIDIA 数据资源。</p>
+<h2>本文提到的型号4</h2>
+<h2>本文提到的数据集5</h2>
+<h2>本文2中提到的集合</h2>
+<p>该作者的更多内容</p>
+<h2>使用 NVIDIA 语音代理技能针对您的领域微调 ASR</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>11</p>
+<p>2026 年 10 月 13 日</p>
+<h2>一个模型系列，两个黄金级结果：针对 IOI 和 IMO 微调 Nemotron</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>24</p>
+<p>2026 年 10 月 7 日</p>
+<h3>社区</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/EZ8NWzEv3llbD7YTXH_se.jpeg" alt=""></p>
+<p>巴维勒乌</p>
+<p>大约 6 小时前</p>
+<p>sepertinya menarik, aku Pasti akan mencobanya</p>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fscaling-indic-pretraining">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fscaling-indic-pretraining">登录</a> 发表评论</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/BawiLewu"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/EZ8NWzEv3llbD7YTXH_se.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nihalpj"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/fvPC2tH2Zb_q38zsMNwee.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rthethy"><img src="https://huggingface.co/avatars/993fe5429e4889beaab2b273c8f7fe2e.svg" alt=""></a></li><li><a href="https://huggingface.co/jakob30"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/WIvhim3FkD0ctdIMcbUja.png" alt=""></a></li><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/ryomikaichi"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/XE0INv8XwQiugtuRQbnfh.png" alt=""></a></li><li><a href="https://huggingface.co/waltersu"><img src="https://huggingface.co/avatars/e52d01d308966760704c61dc008f7477.svg" alt=""></a></li></ul>
+<h2>本文提到的型号4</h2>
+<h2>本文提到的数据集5</h2>
+<h2>本文2中提到的集合</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音</title>
       <link>https://huggingface.co/blog/ibm-granite/granite-switch-4-1</link>
@@ -631,7 +765,7 @@ trainer.train()</code></pre>
       <link>https://huggingface.co/blog/flux-3</link>
       <guid isPermaLink="true">https://huggingface.co/blog/flux-3</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型 | 原文标题：Welcome FLUX.3 Image Klein in Diffusers: The latest open image generation model from Black Forest Labs</description>
+      <description>完整标题：Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型 | 原文标题：Welcome FLUX.3 Image Klein in Diffusers</description>
       <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章列表</a></p>
 <h1>Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型</h1>
 <p>发布于 2026 年 10 月 15 日</p>
@@ -6603,81 +6737,6 @@ prediction = clf.predict(X).reshape(H, W)</code></pre>
 <table><thead><tr><th>难度</th><th>基线</th><th>ACE</th><th>ALTK-Evolve</th></tr></thead><tbody><tr><td>Easy</td><td>66.7</td><td>84.2</td><td>82.5</td></tr><tr><td>Medium</td><td>35.4</td><td>60.4</td><td>56.2</td></tr><tr><td>Hard</td><td>19.1</td><td>23.8</td><td><strong>31.8</strong></td></tr><tr><td>总计</td><td>39.9</td><td>54.8</td><td><strong>56.0</strong></td></tr></tbody></table>
 <p><strong>DeepSeek-V3.2 — 按难度（基线 → +记忆）：</strong> 由于上述提示模板的差异，两个系统的无记忆基线本来就不同（总 TGC 79.8 vs 72.0）。</p>
 <table><thead><tr><th>档位</th><th>ALTK TGC</th><th>ALTK SGC</th><th>ACE TGC</th><th>ACE SGC</th></tr></thead><tbody><tr><td>Overall</td><td>79.8 → 89.3</td><td>64.3 → 80.4</td><td>72.0 → 80.4</td><td>57.1 → 73.2</td></tr><tr><td>Easy</td><td>93.0 → 94.7</td><td>84.2 → 84.2</td><td>78.9 → 84.2</td><td>63.2 → 78.9</td></tr><tr><td>Medium</td><td>81.2 → 97.9</td><td>62.5 → 93.8</td><td>85.4 → 100.0</td><td>75.0 → 100.0</td></tr><tr><td>Hard</td><td>66.7 → 77.8</td><td>47.6 → 66.7</td><td>55.6 → 61.9</td><td>38.1 → 47.6</td></tr></tbody></table>]]></content:encoded>
-    </item>
-    <item>
-      <title>构建低延迟多语言语音 Agent：用 NVIDIA Magpie TTS 获得开放权重与完整部署掌控</title>
-      <link>https://huggingface.co/blog/nvidia/magpie-tts-multilingual-voice-agents</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/magpie-tts-multilingual-voice-agents</guid>
-      <pubDate>Mon, 10 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Build Low-Latency Multilingual Voice Agents: Open Weights &amp; Full Deployment Control with NVIDIA Magpie TTS</description>
-      <content:encoded><![CDATA[<p><a href="https://cdn-uploads.huggingface.co/production/uploads/68127936de624fb6f57d9989/6ORCRF3ze_mI5BYb6hh9u.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/68127936de624fb6f57d9989/6ORCRF3ze_mI5BYb6hh9u.png" alt="newsletter-speech-ai-customer-600x600 (4)"></a></p>
-<p>每次语音交互都有一份延迟预算。</p>
-<p>等用户听到你的应用回应时，你已经花掉了宝贵的毫秒：采集音频、转录语音、运行 LLM、检索上下文、生成回答。文本转语音（TTS）是最后一步——也是用户感知最强的一步。如果语音生成慢，整个体验都会显得慢。</p>
-<p>流水线里你能自己运行和调优的部分越多，能拿回的延迟预算就越多。</p>
-<p>语音 AI 正在飞速发展。一体化语音模型胜在简单——一次 API 调用，音频进、音频出——但代价是无法针对你的领域微调每个组件、无法随新模型发布随时替换、无法保证数据驻留，也无法弄清延迟究竟出在哪里。想要更多控制权，可以采用级联架构——为各自目的构建的 ASR、TTS 与 LLM 组件协同运行——每一层都可独立调优，并可部署在你自己拥有的基础设施上。</p>
-<p><a href="https://huggingface.co/nvidia/magpie_tts_multilingual_357m">NVIDIA Magpie Multilingual TTS</a> 正是为此而生。开放权重、<a href="https://build.nvidia.com/nvidia/magpie-tts-multilingual">生产就绪的 NVIDIA NIM</a>、支持 12 种语言——你可以在自己的基础设施内部署多语言语音，为你的工作负载优化延迟，为你的领域定制模型——端到端，全在自己的环境里。</p>
-<p>最新版本把多语言覆盖扩展到现代标准阿拉伯语、韩语和巴西葡萄牙语，同时通过更新的训练数据与模型改进提升了众多已有语言的质量。</p>
-<p>无论你构建的是客服 agent、医疗助手、企业副驾、翻译系统还是对话式 AI 应用，Magpie 都为生产级语音 AI 提供了一个开放底座。</p>
-<h2>语音 AI 正默认走向多语言</h2>
-<p>今天的语音应用服务的不止一种语言。</p>
-<p>全球客服、企业助手、医疗文书、零售自动化和翻译工作流，越来越需要跨多种语言的自然对话——同时保持低延迟。</p>
-<p>支持更多语言只是挑战的一部分。开发者还需要能够：</p>
-<ul><li>在数据所在之处部署</li><li>满足企业隐私要求</li><li>定制发音与音色</li><li>在生产负载下预测延迟</li><li>在自己的基础设施上扩展</li></ul>
-<p><strong>开放模型改变了以上每一项的可能性。</strong></p>
-<h2>一个开放模型，十二种语言</h2>
-<p>Magpie TTS Multilingual 是一个 364M 参数的开放权重模型，支持：</p>
-<p>英语 · 西班牙语 · 法语 · 德语 · 意大利语 · 越南语 · 普通话 · 印地语 · 日语 · 现代标准阿拉伯语（新）· 韩语（新）· 巴西葡萄牙语（新）</p>
-<p>每种语言通过共享的多语言说话人表征提供男女两种音色。</p>
-<p>本次发布还扩展了印地语与日语的语码转换（code-switching）支持，提升多语言灵活性——依托 IPA 字素-音素转换与自定义发音词典——让名字、技术术语和混合语言内容更容易被准确发音。</p>
-<p>开发者不必为不同地区维护各自的 TTS 模型，可以在同一个开放底座上构建多语言应用。</p>
-<h2>用户真正感知到的延迟</h2>
-<p>在对话式 AI 中，文本转语音是用户听到回应前的最后一环。这让首个音频时间（TTFA，Time to First Audio）——从开始生成语音到第一段音频抵达用户的延迟——成为语音流水线中最重要的延迟指标之一。</p>
-<p>由于 Magpie TTS 可以部署在你自己的环境内，你测到的延迟就是你能实际控制的服务端延迟，不含托管服务的网络往返。</p>
-<table><thead><tr><th>GPU</th><th>1-stream TTFA</th><th>1-stream RTFX</th><th>64-stream TTFA</th><th>64-stream RTFX</th></tr></thead><tbody><tr><td>B200</td><td>32 ms</td><td>12.1×</td><td>239 ms</td><td>319.81×</td></tr><tr><td>H100</td><td>47ms</td><td>14.7×</td><td>275 ms</td><td>290.79×</td></tr><tr><td>DGX Spark</td><td>53 ms</td><td>9.8×</td><td>962 ms</td><td>75.88×</td></tr><tr><td>A100</td><td>79 ms</td><td>12.2×</td><td>395 ms</td><td>197×</td></tr></tbody></table>
-<p><em>来源：<a href="https://docs.nvidia.com/nim/speech/26.07.0/reference/performances/tts/performance.html">NVIDIA TTS NIM 性能文档</a>（v26.07），本地部署，三次试验的平均值。</em> <em>TTFA = 首个音频延迟；RTFX = 相对实时的吞吐倍数。</em></p>
-<p>在 B200 上的 32ms，Magpie 的 TTFA 把延迟预算的其余部分留给 ASR 与 LLM 处理——让端到端总延迟保持在自然对话所需的 200ms 以内。在各种 NVIDIA GPU 上，Magpie 单流的首个音频延迟为 32–79ms。在 64 路并发下，B200 的 TTFA 达 239ms，同时吞吐达到实时的 320 倍——即使在并发负载下，生成音频的速度也是播放速度的 300 多倍。</p>
-<p>上表是 Magpie 以 NVIDIA NIM 形式在本地部署（在你自己的 GPU 上运行优化容器）的测得结果。开放的 Hugging Face checkpoint 是同一个模型，是你做研究与微调的路径；NIM 则是产出这些生产级延迟的调优服务栈。两者都运行在你可控的硬件上。</p>
-<p>因为模型跑在你自己的基础设施上，你可以直接基准测试性能、为你的部署做调优、按你的负载做扩展。对实时语音 agent 来说，这就是「对话跟手」与「对话发顿」之间的分别。</p>
-<h2>为实时语音生成而优化</h2>
-<p>低延迟不是偶然。Magpie 引入两项互补的架构改进，在保证语音质量的同时缩短推理时间。</p>
-<p><strong>帧堆叠（Frame stacking）。</strong> 解码器每个解码步预测两帧音频而非一帧。这把解码迭代次数减半，缩短生成时间、提升吞吐。</p>
-<p><strong>局部 Transformer。</strong> 只做帧堆叠会因同时生成的 codebook token 之间引入依赖而降低音质。局部 Transformer 对这些依赖建模并细化生成的音频，找回帧堆叠本会牺牲的质量。</p>
-<p>两项技术合起来，既带来更快的生成，也保证自然的语音合成。架构细节见 <a href="https://arxiv.org/abs/2509.19592">Frame-Stacked Local Transformers for Efficient Multi-Codebook Speech Generation</a>（ICASSP 2026）。</p>
-<h2>不自然，快也没意义</h2>
-<p>这次发布不只新增语言——许多已有语言的合成质量也得到提升。与上一版相比，Magpie 在若干语言上字符错误率（CER）下降、说话人相似度（SSIM）提升，其中以法语和西班牙语收益最明显：</p>
-<table><thead><tr><th>Language</th><th>CER (prev)</th><th>CER (this release)</th><th>SSIM (prev)</th><th>SSIM (this release)</th></tr></thead><tbody><tr><td>French</td><td>2.70%</td><td>1.54%</td><td>0.703</td><td>0.747</td></tr><tr><td>Spanish</td><td>1.14%</td><td>0.60%</td><td>0.715</td><td>0.793</td></tr><tr><td>German</td><td>0.66%</td><td>0.80%</td><td>0.626</td><td>0.742</td></tr></tbody></table>
-<p><em>来源：<a href="https://huggingface.co/nvidia/magpie_tts_multilingual_357m">Magpie TTS Multilingual 模型卡</a>。CER 越低越好；SSIM 越高越好。</em></p>
-<p>新加的阿拉伯语（CER 1.62%）、韩语（2.69%）、巴西葡萄牙语（2.91%）为后续改进确立了基线质量。</p>
-<p>客观指标有助于衡量进步，但语音质量最终是感知问题。你可以在 <a href="https://build.nvidia.com/nvidia/magpie-tts-multilingual">NVIDIA Build</a> 或 <a href="https://huggingface.co/spaces/nvidia/magpie_tts_multilingual_demo">Hugging Face demo</a> 亲自听出差别。</p>
-<h2>开放权重为何重要</h2>
-<p>能测到的延迟很有用，能控制的延迟更好。</p>
-<p>开放权重给开发者的能力来自对部署的拥有。用 Magpie 你可以：</p>
-<ul><li><strong>在你控制的基础设施上部署</strong>——完全运行在你自己的环境内，包括私有或物理隔离环境。</li><li><strong>掌握自己的延迟预算</strong>——没有托管服务的往返，直接针对你的硬件与负载做优化。</li><li><strong>定制发音与音色</strong>——用 NeMo 为你的品牌、领域词汇或说话人数据做微调。</li><li><strong>按自己的节奏扩展</strong>——为你的基础设施与负载优化服务栈。</li><li><strong>保持企业级掌控</strong>——让敏感对话与客户数据留在你的环境内。</li></ul>
-<p>对构建生产级语音 AI 的企业来说，这种对部署、性能与定制化的控制往往才是最重要的。</p>
-<h2>构建完整的语音 Agent——而不只是更好的语音</h2>
-<p>生产环境的语音 AI 是一个模型系统，而非单个模型。Magpie TTS 是 <a href="https://build.nvidia.com/nvidia/nemotron-voice-agent">NVIDIA Nemotron Voice Agent 开发者示例</a>的一部分——一个参考实现，展示专门构建的语音、语言与推理模型如何作为协同系统一起工作——让你能构建全天候在线的语音 agent，而不只是更好听的语音。</p>
-<p>开发者可以组合：</p>
-<ul><li>Nemotron Speech：流式语音识别</li><li>Magpie TTS：自然的多语言语音合成</li><li>Nemotron 语言与多模态模型：推理、工具调用与多模态理解</li><li>NVIDIA NIM：GPU 优化、生产就绪的推理微服务</li><li>NeMo：定制与微调</li></ul>
-<p>Nemotron Voice Agent 开发者示例提供了一个端到端参考实现，开发者可以在几小时内克隆、定制并部署。它包含以下生产模式：</p>
-<ul><li>可实时打断（barge-in）的对话</li><li>带视觉理解的多模态语音 agent</li><li>多 agent 编排与工具调用</li><li>多语言语音交互</li><li>用 NVIDIA NIM 实现亚秒级端到端延迟</li></ul>
-<p>开发者不必从零组装各个组件，而可以从一个完整的参考架构出发，再适配到自己的应用。</p>
-<h2>开始使用</h2>
-<p><strong>试用模型</strong></p>
-<ul><li><a href="https://build.nvidia.com/nvidia/magpie-tts-multilingual">NVIDIA Build</a></li><li><a href="https://huggingface.co/spaces/nvidia/magpie_tts_multilingual_demo">Hugging Face demo</a></li></ul>
-<p><strong>部署到生产</strong></p>
-<ul><li><a href="https://build.nvidia.com/nvidia/magpie-tts-multilingual">NVIDIA Magpie Multilingual TTS NIM</a> —— 优化的推理容器</li></ul>
-<p><strong>为你的领域定制</strong></p>
-<ul><li><a href="https://github.com/NVIDIA-NeMo/Speech">NVIDIA NeMo Speech</a> —— 微调与训练</li></ul>
-<p><strong>构建完整语音 agent</strong></p>
-<ul><li><a href="https://github.com/NVIDIA-AI-Blueprints/nemotron-voice-agent">NVIDIA voice-agent-examples</a></li></ul>
-<p><strong>开放权重与许可证</strong></p>
-<ul><li><a href="https://huggingface.co/nvidia/magpie_tts_multilingual_357m">Hugging Face 上的模型卡</a> —— 依据 NVIDIA Open Model License 开放权重。</li></ul>
-<p>推荐推理配置：</p>
-<pre><code>cfg_scale = 2.5          # classifier-free guidance — raise for tighter text adherence
-temperature = 0.6
-top_k = 80
-apply_attention_prior = True
-prior_epsilon = 0.1</code></pre>]]></content:encoded>
     </item>
   </channel>
 </rss>
