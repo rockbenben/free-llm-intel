@@ -10,8 +10,8 @@
 
 ## 全部文章（共 95 篇，按日期倒序；无日期条目列于最后）
 
-1. [Code Review is now generally available](https://claude.com/resources/articles/code-review-is-now-generally-available)（2026-10-15）
-2. [Agent observability on the Claude Platform](https://claude.com/resources/articles/agent-observability-on-the-claude-platform)（2026-10-14）
+1. [Code Review 现已正式可用](https://claude.com/resources/articles/code-review-is-now-generally-available)（2026-10-15） <!--orig:Code Review is now generally available | Claude by Anthropic-->
+2. [在 Claude Platform 上用 OpenTelemetry 追踪 agent](https://claude.com/resources/articles/agent-observability-on-the-claude-platform)（2026-10-14） <!--orig:Trace agents with OpenTelemetry on the Claude Platform | Claude by Anthropic-->
 3. [Uber 的 CISO 谈如何为 AI 搭建内部威胁防控体系](https://claude.com/resources/articles/uber-s-ciso-on-building-an-insider-threat-program-for-ai)（2026-10-13） <!--orig:Uber's CISO on building an insider threat program for AI-->
 4. [用 Claude 搭建实时 dashboard 与动画讲解](https://claude.com/resources/articles/dashboards-and-motion)（2026-10-08） <!--orig:Build live dashboards and animate explainers with Claude-->
 5. [构建有效的代理自动化](https://claude.com/resources/articles#d-2026-10-08-1)（2026-10-08） <!--orig:Building effective agent automations-->

@@ -11,13 +11,13 @@
 
 ## 全部文章（共 1294 篇，按日期倒序；无日期条目列于最后）
 
-1. [Bringing GPT-Rosalind to academic research labs](https://openai.com/index/introducing-the-rosalind-academic-plan)（2026-10-15）
-2. [Teaching students to think and learn through questions](https://openai.com/index/teaching-students-to-think-and-learn-through-questions)（2026-10-15）
-3. [Amp puts AI agents to work beyond code with OpenAI models](https://openai.com/index/amp-beyond-coding)（2026-10-14）
-4. [SentinelOne cuts malware analysis from weeks to hours](https://openai.com/index/sentinelone)（2026-10-14）
-5. [How Third Moment Research runs 10,000 agents for 36+ hours](https://openai.com/index/third-moment-research)（2026-10-14）
-6. [How Block is building AI-powered security with OpenAI technology](https://openai.com/index/block-ai-powered-security)（2026-10-14）
-7. [The EU’s next chapter in AI is agentic](https://openai.com/index/the-eus-next-chapter-in-ai-is-agentic)（2026-10-14）
+1. [把 GPT‑Rosalind 带进学术研究实验室](https://openai.com/index/introducing-the-rosalind-academic-plan)（2026-10-15） <!--orig:Bringing GPT‑Rosalind to academic research labs-->
+2. [通过提问教学生思考与学习](https://openai.com/index/teaching-students-to-think-and-learn-through-questions)（2026-10-15） <!--orig:Teaching students to think and learn through questions-->
+3. [Amp 借助 OpenAI 模型，让 AI 智能体承担编程之外的工作](https://openai.com/index/amp-beyond-coding)（2026-10-14） <!--orig:Amp puts AI agents to work beyond code with OpenAI models-->
+4. [SentinelOne 将恶意软件分析时间从数周缩短至数小时](https://openai.com/index/sentinelone)（2026-10-14） <!--orig:SentinelOne cuts malware analysis from weeks to hours-->
+5. [Third Moment Research 如何让 10,000 个智能体持续运行 36 小时以上](https://openai.com/index/third-moment-research)（2026-10-14） <!--orig:How Third Moment Research runs 10,000 agents for 36+ hours-->
+6. [Block 如何用 OpenAI 技术构建 AI 驱动的安全](https://openai.com/index/block-ai-powered-security)（2026-10-14） <!--orig:How Block is building AI-powered security with OpenAI technology-->
+7. [欧盟 AI 的下一篇章是智能体](https://openai.com/index/the-eus-next-chapter-in-ai-is-agentic)（2026-10-14） <!--orig:The EU’s next chapter in AI is agentic-->
 8. [Higgsfield 把 AI 视频从 1 分钟做到 10 分钟以上](https://openai.com/index/higgsfield-longer-videos-voice)（2026-10-13） <!--orig:Higgsfield takes AI video from 1 minute to over 10-->
 9. [Sophos 借助 OpenAI Daybreak 将威胁调查时间缩短 96%](https://openai.com/index/sophos)（2026-10-09） <!--orig:Sophos cuts threat investigation time by 96% with OpenAI Daybreak-->
 10. [Asana 用 GPT-6.1 Sol 在浏览器测试中将模型成本降低 76 倍](https://openai.com/index/asana-browser-agent)（2026-10-09） <!--orig:Asana cuts model costs 76x in browser tests with GPT-6.1 Sol-->

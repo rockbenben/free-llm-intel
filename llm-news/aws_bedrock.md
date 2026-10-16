@@ -9,12 +9,12 @@
 
 ## 全部文章（共 84 篇，按日期倒序；无日期条目列于最后）
 
-1. [Meta’s Muse Spark Open now available in Amazon SageMaker JumpStart](https://aws.amazon.com/blogs/machine-learning/metas-muse-spark-open-now-available-in-amazon-sagemaker-jumpstart/)（2026-10-15）
-2. [Trust in Depth: Giving agents more autonomy without losing control](https://aws.amazon.com/blogs/machine-learning/trust-in-depth-giving-agents-more-autonomy-without-losing-control/)（2026-10-15）
-3. [Build self-improving document processing using Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/build-self-improving-document-processing-using-amazon-bedrock-agentcore/)（2026-10-14）
-4. [Generate presentations with Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/generate-presentations-with-amazon-bedrock-agentcore/)（2026-10-14）
-5. [How Tamnoon built AI-powered cloud security remediation with Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/how-tamnoon-built-ai-powered-cloud-security-remediation-with-amazon-bedrock/)（2026-10-14）
-6. [Deploy and evaluate models with Amazon SageMaker JumpStart](https://aws.amazon.com/blogs/machine-learning/deploy-and-evaluate-models-with-amazon-sagemaker-jumpstart/)（2026-10-14）
+1. [Meta 的 Muse Spark Open 现已在 Amazon SageMaker JumpStart 上线](https://aws.amazon.com/blogs/machine-learning/metas-muse-spark-open-now-available-in-amazon-sagemaker-jumpstart/)（2026-10-15） <!--orig:Meta’s Muse Spark Open now available in Amazon SageMaker JumpStart-->
+2. [纵深信任：给 agent 更多自主权，同时不失去控制](https://aws.amazon.com/blogs/machine-learning/trust-in-depth-giving-agents-more-autonomy-without-losing-control/)（2026-10-15） <!--orig:Trust in Depth: Giving agents more autonomy without losing control-->
+3. [使用 Amazon Bedrock AgentCore 构建自我改进的文档处理](https://aws.amazon.com/blogs/machine-learning/build-self-improving-document-processing-using-amazon-bedrock-agentcore/)（2026-10-14） <!--orig:Build self-improving document processing using Amazon Bedrock AgentCore-->
+4. [用 Amazon Bedrock AgentCore 生成演示文稿](https://aws.amazon.com/blogs/machine-learning/generate-presentations-with-amazon-bedrock-agentcore/)（2026-10-14） <!--orig:Generate presentations with Amazon Bedrock AgentCore-->
+5. [Tamnoon 如何基于 Amazon Bedrock 构建 AI 驱动的云安全修复](https://aws.amazon.com/blogs/machine-learning/how-tamnoon-built-ai-powered-cloud-security-remediation-with-amazon-bedrock/)（2026-10-14） <!--orig:How Tamnoon built AI-powered cloud security remediation with Amazon Bedrock-->
+6. [用 Amazon SageMaker JumpStart 部署并评估模型](https://aws.amazon.com/blogs/machine-learning/deploy-and-evaluate-models-with-amazon-sagemaker-jumpstart/)（2026-10-14） <!--orig:Deploy and evaluate models with Amazon SageMaker JumpStart-->
 7. [用 Anchor Browser 与 AgentCore payments 构建能完成交易的智能体](https://aws.amazon.com/blogs/machine-learning/building-agents-that-transact-with-anchor-browser-and-agentcore-payments/)（2026-10-13） <!--orig:Building agents that transact with Anchor Browser and AgentCore payments-->
 8. [用 managed entitlements 管理 Amazon Bedrock 的 private pricing offer](https://aws.amazon.com/blogs/machine-learning/manage-private-pricing-offers-for-amazon-bedrock-with-managed-entitlements/)（2026-10-13） <!--orig:Manage private pricing offers for Amazon Bedrock with managed entitlements-->
 9. [Orca Security 用 Amazon Bedrock 实现自然语言安全查询](https://aws.amazon.com/blogs/machine-learning/natural-language-security-queries-at-orca-security-using-amazon-bedrock/)（2026-10-13） <!--orig:Natural language security queries at Orca Security using Amazon Bedrock-->

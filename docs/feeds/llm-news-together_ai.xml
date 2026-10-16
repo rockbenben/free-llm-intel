@@ -9,10 +9,44 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Meta Muse Spark Open is live on Together AI</title>
+      <title>Meta Muse Spark Open 已在 Together AI 上线</title>
       <link>https://www.together.ai/blog/meta-muse-spark-open</link>
       <guid isPermaLink="true">https://www.together.ai/blog/meta-muse-spark-open</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Meta Muse Spark Open is live on Together AI</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>模型库</p>
+<p>发布于 10/15/2026</p>
+<h1>Meta Muse Spark Open 已在 Together AI 上线</h1>
+<p>Muse Spark Open，Meta 面向 agentic coding 的开放权重模型，已在 Together AI 上线，在 serverless 与专属基础设施上提供 1M token 上下文窗口。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6ad12692ffa1dba2fed09d76_TAI_Meta_1200x408.png" alt=""></p>
+<ul><li>目录<a href="https://www.together.ai/blog/meta-muse-spark-open">为生产环境挑选的 40+ 个模型……为生产环境挑选的 40+ 个模型……为生产环境挑选的 40+ 个模型……</a></li><li>本文中的链接<a href="https://research.meta.ai/blog/muse-spark-open">Meta 的研究博客</a></li></ul>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6ad12692ffa1dba2fed09d76_TAI_Meta_1200x408.png" alt=""></p>
+<p>Meta 的 Muse Spark Open 今天起可在 Together AI 上使用。我们是这款迄今最强的美国开放权重模型的 Day 0 发布合作伙伴，它为长时间运行的 agentic coding 工作流而构建，能把整个代码库留在上下文里。</p>
+<p>Muse Spark Open 在 agentic 软件工程、computer use 与网页自动化，以及把文档、图像、音频和视频放在一起理解这几方面都是一次进步。通过我们的早期访问计划，我们在发布前把它提供给了少数选定客户。他们对它做了评估，准备在 day 0 就把它提供给自己的客户，并与 Meta 分享了真实世界的使用反馈。</p>
+<p><a href="https://research.meta.ai/blog/muse-spark-open">阅读 Meta 的公告</a>。</p>
+<h3><strong>关于 Muse Spark Open</strong></h3>
+<p>Muse Spark Open 是在真实的开发者工作上训练的：跨多文件重构、调试会话以及长时间运行的任务。带来的结果是更高的首次尝试准确率、可靠的 tool calling，以及在开发者真正工作的那些代码仓库上的深入代码库理解。</p>
+<p>最突出的地方：</p>
+<ul><li><strong>1M token 上下文窗口。</strong> 它能装下整个项目，包括复杂的依赖关系、遗留代码和成千上万个文件，而不必把工作拆成碎片。</li><li><strong>长时程自主性。</strong> 它能在很长的时程上规划、行动、观察并自我纠正，并为可以拆分的工作协调 subagent。</li><li><strong>Computer use 与浏览。</strong> 它把 computer-use 能力用在桌面、移动端和浏览器上，并用多模态浏览的方式上网。</li><li><strong>多模态输入。</strong> 它接受文本、图像、音频以及音视频输入。</li><li><strong>意图说明。</strong> 它在行动前先说明自己在做什么、为什么这么做，这让长时间运行的任务更容易审计。</li></ul>
+<h3><strong>早期访问客户怎么说</strong></h3>
+<p>Factory 和 Ollama 是两家获得早期访问的客户。两家都在发布前用过 Muse Spark Open，两家也都从 day 0 起把它提供给自己的用户。</p>
+<blockquote>“企业选择 Factory，是因为他们想让自己的 Droid 跑在该任务最好的模型上。在我们的 agentic 工程工作流里，Muse Spark Open 始终能选对工具、并保持回答简洁，这正是生产环境 agent 需要的果断。通过 Together AI 拿到的早期访问让我们得以在发布前对它做压力测试，所以我们的客户从 day 0 起就能用上它。”Zimu Li，Member of technical staff，Factory</blockquote>
+<blockquote>“全球有数百万开发者依赖 Ollama，把它当作上手开源模型的去处。我们很高兴能与 Together AI 合作提供 Muse Spark Open。这款模型在 tool calling 和长上下文上表现尤其出色，包括多步与并行调用，并给出干净的结构化输出。与 Together AI 的早期访问合作让我们有充分的时间评估并优化这款模型，从而开发者从它发布的那一刻起就体验到一款支持完善、可用于生产的模型。”Dong Chen，Senior AI Engineer，Ollama</blockquote>
+<h3><strong>在 Together AI 上运行它</strong></h3>
+<p><strong>Serverless。</strong> 用 Together API 调用 Muse Spark Open：</p>
+<pre><code>from together import Together
+
+client = Together()
+
+response = client.chat.completions.create(
+    model=&quot;meta-models/Muse-Spark-Open-816B-A42B&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Refactor this module to remove the circular import.&quot;}],
+)
+print(response.choices[0].message.content)</code></pre>
+<p>定价为每 1M 输入 token $1.25、每 1M 输出 token $4.25、每 1M 缓存输入 token $0.15。你也可以在 playground 里试用。</p>
+<p><a href="https://api.together.ai/"><strong>开始使用</strong></a> 或 <a href="https://api.together.ai/"><strong>‍</strong></a><a href="https://www.together.ai/contact-sales"><strong>与工程师聊聊</strong></a></p>
+<h2>相关文章</h2>]]></content:encoded>
     </item>
     <item>
       <title>与 IBM Cloud 和 NVIDIA 合作，扩展我们的企业推理容量</title>

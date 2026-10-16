@@ -9,44 +9,712 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Meta’s Muse Spark Open now available in Amazon SageMaker Jum…</title>
+      <title>Meta 的 Muse Spark Open 现已在 Amazon SageMaker JumpStart 上线</title>
       <link>https://aws.amazon.com/blogs/machine-learning/metas-muse-spark-open-now-available-in-amazon-sagemaker-jumpstart/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/metas-muse-spark-open-now-available-in-amazon-sagemaker-jumpstart/</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Meta’s Muse Spark Open now available in Amazon SageMaker JumpStart</description>
+      <description>原文标题：Meta’s Muse Spark Open now available in Amazon SageMaker JumpStart</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Meta 的 Muse Spark Open 现已在 Amazon SageMaker JumpStart 上线</h1>
+<p>Meta 针对编码优化的开放权重模型 Muse Spark Open，现已在 <a href="https://aws.amazon.com/sagemaker/ai/jumpstart/">Amazon SageMaker JumpStart</a> 上线，它是 <a href="https://aws.amazon.com/sagemaker/ai/">Amazon SageMaker AI</a> 的机器学习（ML）中心。该模型基于真实的开发者工作流训练，例如多文件重构和漫长的调试会话，并支持 100 万 tokens 的上下文窗口。只需几个步骤，你就能把它部署到自己 AWS 账户里的一个 SageMaker AI endpoint 上，而不必自己管理 serving 基础设施。SageMaker JumpStart 提供两种变体：BF16（<code>Muse-Spark-Open-816B-A42B</code>）和 NVFP4 量化（<code>Muse-Spark-Open-816B-A42B-NVFP4</code>）。</p>
+<p>在这篇文章中，我们介绍 Muse Spark Open，并演示如何用 <a href="https://aws.amazon.com/sagemaker/ai/studio/">Amazon SageMaker Studio</a> 和 <a href="https://sagemaker.readthedocs.io/en/stable/">SageMaker Python SDK</a> 部署该模型、向它发送第一个推理请求，以及完成清理。</p>
+<h2>Muse Spark Open 概览</h2>
+<p>Meta 把 Muse Spark Open 描述为一个针对编码优化的模型，为 agentic 编码工作流而训练，重点放在首次尝试准确率、tool calling 以及对大型代码库的理解上。它是一个推理模型，输入接受文本、图像、文档、音频和音视频，返回文本。</p>
+<p>Muse Spark Open 采用 mixture-of-experts (MoE) 架构，总参数量 8160 亿，其中每个 token 激活 420 亿。该模型承载着一个极大网络的容量，而它在每个 token 上花费的计算量更接近一个小得多的 dense 模型。Meta 以 Muse Model License 发布权重，该许可证包含 Muse Spark Usage Policy。</p>
+<p>下表总结了该模型。</p>
+<table><thead><tr><th><strong>属性</strong></th><th><strong>Muse Spark Open</strong></th></tr></thead><tbody><tr><td>提供方</td><td>Meta</td></tr><tr><td>架构</td><td>Mixture of experts (MoE)，推理模型</td></tr><tr><td>参数</td><td>总计 816B，激活 42B</td></tr><tr><td>上下文长度</td><td>1M tokens</td></tr><tr><td>输入模态</td><td>文本、图像、文档、音频、音视频</td></tr><tr><td>输出模态</td><td>文本</td></tr><tr><td>SageMaker JumpStart 中的变体</td><td>BF16 和 NVFP4</td></tr><tr><td>许可证</td><td>Muse Model License，包含 Muse Spark Usage Policy</td></tr></tbody></table>
+<h2>为长时间运行的编码 agent 而建</h2>
+<p>Meta 按开发者在真实仓库里的工作方式来训练 Muse Spark Open：代码生成、调试、多文件重构，以及运行很久才结束的任务。借助 100 万 tokens 的上下文窗口，该模型可以吞下整个项目，包括它的依赖、遗留代码和成千上万个文件。你不需要把一个任务拆成更小的块去迁就上下文。</p>
+<p>Meta 从一开始就把 Muse Spark Open 设计成一个 agentic 模型。Meta 表示，该模型会在很长的跨度上规划、行动、观察结果并自我纠正，而不是发起单次 tool call。作为推理模型，它在行动前先把任务推演清楚，而 SageMaker AI endpoint 会把这段推理和答案一起返回，于是你能跟进一个 agent 正在做什么、以及为什么这么做。Meta 训练该模型浏览网页、为可拆分的工作协调 subagents，并在桌面、移动和浏览器环境中操作计算机。这些是模型自身的能力。在 SageMaker AI 上，由你的应用或 agent 框架来提供模型所调用的工具、浏览器和 computer-use 环境。除代码之外，Meta 还称 Muse Spark Open 能够跨图像、文档、音频和视频进行推理。</p>
+<p>模型的两个特性决定了它该怎么被服务。第一，稀疏激活让每个 token 的计算量保持很低，但服务时仍需要足够的 GPU 显存来容纳全部 8160 亿参数，所以实例选择最终取决于显存容量。第二，NVFP4 变体用 NVIDIA 的 4-bit 浮点格式存储权重，所需显存大约只有 BF16 权重的四分之一。在 SageMaker AI 上，这个差别决定了实例：NVFP4 变体运行在 <code>ml.p5e.48xlarge</code> 上，BF16 变体运行在 <code>ml.p6-b300.48xlarge</code> 上。因此当你按成本来定规模时，NVFP4 是应当先试的变体。在你自己的工作负载上评估它，以确认质量符合你的用例。</p>
+<p>在 SageMaker AI 上拿到开放权重，也意味着部署由你掌控。endpoint 运行在你的 AWS 账户内，所以你的源代码和 prompts 是在由你配置、由你控制的基础设施上处理的。你可以把 endpoint 接入你自己的 <a href="https://aws.amazon.com/vpc/">Amazon Virtual Private Cloud (Amazon VPC)</a>，用来自 <a href="https://aws.amazon.com/kms/">AWS Key Management Service (AWS KMS)</a> 的密钥加密它的存储卷，并为容器开启网络隔离。实例类型和扩缩上限也由你选，你还可以锁定模型版本，于是模型只在你重新部署时才改变。</p>
+<h2>用例</h2>
+<p>你可以把 Muse Spark Open 用于广泛应用场景。Meta 对编码与 agentic 工作流的聚焦，使它适合下列用例：</p>
+<ul><li><strong>面向私有仓库的编码助手</strong>：在把整个项目都放进上下文的情况下回答关于大型代码库的问题、重构它们并调试它们，而代码是在你账户内的 endpoint 上处理的。</li><li><strong>长时间运行的编码 agent</strong>：运行这样的 agent——它规划一次改动、跨多个文件编辑、在你自己的沙箱里执行测试，并依据结果纠正方向。</li><li><strong>多模态工程工作流</strong>：把截图、设计文档，或一段带音频和视频的缺陷录屏，变成一份复现方案或一版修复草稿。</li></ul>
+<h2>开始使用 SageMaker JumpStart</h2>
+<p>你可以从 SageMaker Studio 部署 Muse Spark Open，也可以用 SageMaker Python SDK。两条路径都会在你的账户里创建一个实时的 SageMaker AI endpoint。</p>
+<h3>前置条件</h3>
+<p>开始之前，请确认你已经具备以下条件：</p>
+<ul><li>一个 AWS 账户，并拥有创建 SageMaker AI 模型与 endpoint 的权限。</li><li>一个供 SageMaker AI 使用的 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 执行角色。就本次演练而言，<code>AmazonSageMakerFullAccess</code> 托管策略已经足够。用于生产时，请把角色限定到你的部署所需要的操作和资源。细节参见<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html">如何使用 SageMaker AI 执行角色</a>。</li><li>一个可访问 SageMaker Studio 的 SageMaker AI domain，用于 Studio 路径。搭建步骤参见<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/onboard-quick-start.html">使用快速设置上手 Amazon SageMaker AI</a>。</li><li>endpoint 实例类型的服务配额：NVFP4 变体对应 <strong>ml.p5e.48xlarge for endpoint usage</strong>，BF16 变体对应 <strong>ml.p6-b300.48xlarge for endpoint usage</strong>。要提升配额，参见<a href="https://docs.aws.amazon.com/servicequotas/latest/userguide/request-quota-increase.html">请求提升配额</a>。</li><li>对于 SDK 路径：Python 3.10 或更高版本，以及 SageMaker Python SDK v3（<code>pip install --upgrade sagemaker</code>）。</li><li>一个 Muse Spark Open 在 SageMaker JumpStart 中可用的 AWS Region。上线时，Muse Spark Open 可在 US East (N. Virginia) 和 US East (Ohio) 使用。要查看其他 Region 的可用性，请在你的 Region 打开 SageMaker JumpStart。</li></ul>
+<p>承载 Muse Spark Open 的是多 GPU 实例，只要 endpoint 在运行你就需要付费，无论它是否在处理请求。用完后请删除 endpoint，做法见本文的清理章节。费率参见 <a href="https://aws.amazon.com/sagemaker/ai/pricing/">Amazon SageMaker AI 定价</a>。</p>
+<h3>使用 SageMaker Studio 部署</h3>
+<p>SageMaker Studio 路径适合做第一次评估：你找到模型、查看它的许可证，并在同一张模型详情卡片上把它部署起来。</p>
+<p><strong>要在 SageMaker JumpStart 中找到 Muse Spark Open</strong></p>
+<ul><li>打开 SageMaker Studio。</li><li>在导航窗格中选择 <strong>JumpStart</strong>。</li><li>在搜索框中输入 Muse Spark Open。</li><li>选择 <strong>Muse-Spark-Open-816B-A42B</strong>（BF16 变体）或 <strong>Muse-Spark-Open-816B-A42B-NVFP4</strong>（NVFP4 变体），打开它的模型详情卡片。</li></ul>
+<p>图 1 展示了这张模型详情卡片，其中列有模型描述、许可证以及 <strong>Deploy</strong> 选项。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/ML-22194-1.jpg" alt="SageMaker JumpStart 中带 Deploy 选项的 Muse Spark Open 模型详情卡片"></p>
+<p>图 1：SageMaker JumpStart 中的 Muse Spark Open 模型详情卡片</p>
+<p><strong>要部署该模型</strong></p>
+<ul><li>在模型详情卡片上选择 <strong>Deploy</strong>。</li><li>Muse Spark Open 是一个 gated 模型，因此 SageMaker Studio 会展示其最终用户许可协议（EULA）。请审阅并接受该协议以继续。</li><li>对于 <strong>Endpoint name</strong>，保留自动生成的名称，或输入你自己的。</li><li>对于 <strong>Instance type</strong>，NVFP4 选择 <strong>ml.p5e.48xlarge</strong>，BF16 选择 <strong>ml.p6-b300.48xlarge</strong>。SageMaker Studio 只列出该模型支持的实例类型。</li><li>对于 <strong>Initial instance count</strong>，输入 1。</li><li>（可选）在 <strong>Advanced options</strong> 下，选择一个 VPC 和一个 AWS KMS 密钥，或开启网络隔离。</li><li>选择 <strong>Deploy</strong>。</li></ul>
+<p>图 2 展示了 NVFP4 变体的部署设置。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/ML-22194-2.jpg" alt="SageMaker JumpStart 中 Muse Spark Open NVFP4 变体的部署设置"></p>
+<p>图 2：Muse Spark Open 的部署设置</p>
+<p>部署通常需要 15–20 分钟，这段时间 SageMaker AI 在置备实例并加载权重。当 endpoint 状态变为 <strong>InService</strong>，该 endpoint 即可接收请求，如图 3 所示。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/ML-22194-3.png" alt="SageMaker AI 控制台中状态为 InService 的 Muse Spark Open endpoint"></p>
+<p>图 3：处于服务中的 Muse Spark Open endpoint</p>
+<h3>使用 SageMaker Python SDK 部署</h3>
+<p>SageMaker JumpStart 用模型 ID 标识每个变体：</p>
+<ul><li>BF16：<code>meta-vlm-muse-spark-open-816b-a42b</code>。</li><li>NVFP4：<code>meta-vlm-muse-spark-open-816b-a42b-nvfp4</code>。</li></ul>
+<p>下面的代码使用 SageMaker Python SDK v3 部署 NVFP4 变体。你可以在 SageMaker Studio 的 notebook 里运行它，它会使用你所在 domain 的执行角色。在任何其他已配置 AWS 凭证的 Python 环境中，请用 <code>role_arn</code> 参数传入你的 SageMaker AI 执行角色。Muse Spark Open 是 gated 模型，因此你必须设置 <code>accept_eula=True</code> 才能部署它。要锁定特定的模型版本，请把 <code>model_version</code> 加入 <code>JumpStartConfig</code>。</p>
+<pre><code>from sagemaker.core.jumpstart.configs import JumpStartConfig
+from sagemaker.serve import ModelBuilder
+from sagemaker.train.configs import Compute
+
+# NVFP4 variant; for BF16, use &quot;meta-vlm-muse-spark-open-816b-a42b&quot; with ml.p6-b300.48xlarge
+model_id = &quot;meta-vlm-muse-spark-open-816b-a42b-nvfp4&quot;
+
+jumpstart_config = JumpStartConfig(
+    model_id=model_id,
+    accept_eula=True,  # Confirms that you accept Meta's license terms
+)
+
+model_builder = ModelBuilder.from_jumpstart_config(
+    jumpstart_config=jumpstart_config,
+    compute=Compute(instance_type=&quot;ml.p5e.48xlarge&quot;),
+    # role_arn=&quot;&lt;your-sagemaker-execution-role-arn&gt;&quot;,  # Required outside SageMaker Studio
+)
+
+model = model_builder.build(model_name=&quot;muse-spark-open-nvfp4&quot;)
+endpoint = model_builder.deploy(endpoint_name=&quot;muse-spark-open-nvfp4&quot;)</code></pre>
+<h3>运行推理</h3>
+<p>endpoint 处于服务状态后，用 <code>invoke</code> 方法向它发送请求。该 endpoint 接受一个 OpenAI 兼容的 chat 请求体，其中带有 <code>messages</code> 列表，并返回一个 chat completion。最终答案在 <code>message.content</code> 中，模型的推理过程在 <code>message.reasoning_content</code> 中，而 <code>usage.reasoning_tokens</code> 报告这段推理用掉了多少 tokens。由于 Muse Spark Open 是推理模型，请在 <code>max_tokens</code> 里为它的推理和最终答案留出足够余量。</p>
+<pre><code>import json
+
+payload = {
+    &quot;messages&quot;: [
+        {
+            &quot;role&quot;: &quot;user&quot;,
+            &quot;content&quot;: &quot;Write a Python function that validates ISO 8601 dates, and add pytest unit tests for it.&quot;,
+        }
+    ],
+    &quot;max_tokens&quot;: 4096,
+}
+
+response = endpoint.invoke(
+    body=json.dumps(payload),
+    content_type=&quot;application/json&quot;,
+)
+
+result = json.loads(response.body.read().decode(&quot;utf-8&quot;))
+message = result[&quot;choices&quot;][0][&quot;message&quot;]
+print(&quot;Reasoning:&quot;, message.get(&quot;reasoning_content&quot;))
+print(&quot;Answer:&quot;, message[&quot;content&quot;])</code></pre>
+<p>该 endpoint 还支持流式传输。要在 tokens 生成的同时接收它们，请在请求体中加上 <code>&quot;stream&quot;: true</code>，并改为调用 <code>endpoint.invoke_with_response_stream</code> 而不是 <code>invoke</code>。</p>
+<h2>清理</h2>
+<p>要停止继续产生费用，请在不再需要时删除 endpoint。如果你是用 SDK 部署的，请删除模型、endpoint 以及 endpoint 配置：</p>
+<pre><code>from sagemaker.core.resources import EndpointConfig
+
+endpoint_config = EndpointConfig.get(endpoint_config_name=endpoint.endpoint_name)
+model.delete()
+endpoint.delete()
+endpoint_config.delete()</code></pre>
+<p>如果你是从 SageMaker Studio 部署的，请在 SageMaker AI 控制台中删除 endpoint：选择 <strong>Inference</strong>，然后选择 <strong>Endpoints</strong>，选中该 endpoint，再选择 <strong>Actions</strong>、<strong>Delete</strong>。</p>
+<h2>结论</h2>
+<p>在本文中，我们演示了如何把 Meta 针对编码优化的开放权重模型 Muse Spark Open，从 SageMaker JumpStart 部署到你自己的 AWS 账户里的 endpoint。你使用了 SageMaker Studio 或 SageMaker Python SDK，并向模型发送了第一个推理请求。在为生产环境选择实例之前，请先在你自己的仓库上对两个变体做基准测试。</p>
+<p>要开始使用，请在 SageMaker Studio 的 SageMaker JumpStart 中搜索 Muse Spark Open。如需更多部署选项，例如 inference components 和优化过的部署配置，参见 Amazon SageMaker AI 开发者指南中的<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models-use.html">如何使用 JumpStart 基础模型</a>。部署之前，请审阅 Muse Model License，SageMaker JumpStart 会在你部署模型时展示它。如需帮助规划生产部署，请<a href="https://aws.amazon.com/contact-us/">联系 AWS</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Trust in Depth: Giving agents more autonomy without losing c…</title>
+      <title>纵深信任：给 agent 更多自主权，同时不失去控制</title>
       <link>https://aws.amazon.com/blogs/machine-learning/trust-in-depth-giving-agents-more-autonomy-without-losing-control/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/trust-in-depth-giving-agents-more-autonomy-without-losing-control/</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Trust in Depth: Giving agents more autonomy without losing control</description>
+      <description>原文标题：Trust in Depth: Giving agents more autonomy without losing control</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>纵深信任：给 agent 更多自主权，同时不失去控制</h1>
+<p>我和企业领导者的每一次交谈，听到的都是同一句话。他们希望 agent 做得更多，但又不信任它每次都能做对。</p>
+<p>这很合理。让 agent 有用的正是那份创造力和自主性，而让它们难以信任的也正是它。交给 agent 一个任务，它会自己找到完成任务的路径，挑选工具、编排步骤，而这些都不是开发者写死的。同一个任务跑两遍，它每次可能走不同的路线。今天通过的测试，几乎告诉不了你明天这个 agent 会做什么。</p>
+<p>常见的答案是人在回路中，审批 agent 做的每一件事。小规模时这行得通，但随着 agent 承担更多工作，人工审批不断堆积，复核疲劳随之而来。被要求检查一切的人，会开始漏掉真正要紧的东西。谨慎变成了瓶颈，而那些本来能做得多得多的 agent，就闲置在最能发挥影响的有价值工作上。</p>
+<p>解决办法是：当 agent 的行动可以被验证时，就让它自行行动；把人的判断留给确实需要判断的决策。随着 agent 承担风险更高的工作，比如金融交易，一次错误行动的危害会越来越大。组织需要有信心把重要工作交给一个 AI agent，相信它会待在被设定的界限之内——即使没有任何人在看着。这份信心必须被建立起来。</p>
+<p>内容过滤、测试和监控各自都承担重要用途，但单靠其中任何一项能力，都无法承诺 agent 下一次运行的行为是正确的。信任来自相互强化的独立分层——也就是这个行业已经实践了二十年、称为 Defense in Depth 的那套分层纪律，被转向了一个新的用途。Defense in Depth 限制的是可能出错的范围，而这一套扩展的是你可以安全放开的范围。AWS 称之为 <strong>Trust in Depth。</strong></p>
+<h2><strong>Trust in Depth：你能够验证的信任</strong></h2>
+<p>你通过在 agent 生命周期的不同时刻回答一组问题来建立信任：</p>
+<ul><li><strong>Scope，运行之前：</strong> 这个 agent 是为了什么，工作需要哪些能力，它绝不能做什么？</li><li><strong>Know，部署之时：</strong> 是谁授权了它，它携带什么身份，你能否对每一个代表你行事的 agent 逐一说明？</li><li><strong>Bound，运行期间：</strong> 它的行动是否待在你设定的界限之内，它还能不能完成工作？</li><li><strong>Observe，每次运行之后：</strong> 你能否重建 agent 做了什么、为什么这么做，并从中学习？</li></ul>
+<p>在这些问题上，有些要求可以表达为精确的规则，另一些则需要靠判断。一家公司可能要求只有经理才能批准访问，或者员工的邮箱在被共享之前必须先屏蔽其登录。而另一些期望，比如保持友好的语气、或恰当地处理敏感情形，取决于上下文和人的判断。</p>
+<p>对于精确定义的规则，测试能显示控制措施在你预料到的情形里是否有效，但 agent 会走你没预料到的路径。走得更远的技术是 automated reasoning，即用数学逻辑检查一条规则是否在所有可能情形下都成立。它可以证明一条规则在“对该系统及其假设的精确描述”所覆盖的每一条路径上都成立，或者找出它失效的确切情形。这个结果是一个证明，而它只和背后的规则与假设一样可靠，这也是最难的功课要放在 agent 运行之前的原因。</p>
+<p>AWS 已经在生产环境中<a href="https://www.amazon.science/blog/a-decade-of-mathematical-certainty-reflections-on-the-automated-reasoning-group">运行 automated reasoning 超过十年</a>，从每秒超过 21 亿次请求的 Identity and Access Management (IAM)，到 AWS Nitro Hypervisor、Amazon S3 Block Public Access、VPC Reachability Analyzer 这样的关键系统。现在我们把它带到 agent 上。只要 agent 的规则能够被精确表述，automated reasoning 就能检查它们。</p>
+<p>然而，并非每条规则都能被精确表述。“只有经理才能批准访问”可以被证明。“保持友好的语气”不能。在证明用不上的地方，就限制 agent 的访问与行动、评估它的行为，并把真正含糊的情形交给人来运用判断。当你确认相关规则得到执行、agent 在该任务上表现可靠、失败能够被发现和处理时，就给予更多自主权。</p>
+<p>以下是 Trust in Depth 每一层对你的要求，以及 AWS 如何帮你回答它。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/trust-in-depth-hero-image-v2.png" alt=""></p>
+<h3>界定你的 agent，只覆盖工作真正需要的部分</h3>
+<p>信任始于 agent 运行之前，而这里正是最该投入精力的地方。在这里发现的问题修起来最便宜。界定范围意味着决定 agent 负责哪些工作、它可以触达哪些工具、数据和服务、它必须遵守哪些规则，以及哪些决策留在人手里。</p>
+<p>“解决客户的问题”说的是要达成什么，而不是 agent 可以采取哪些行动去达成。agent 仍然需要界限：它能看到什么、能做什么、什么时候必须停下来询问。只给它的工作所需的访问权，一点不多。留意那些没有人有意授予的能力，那些随某个工具或某个角色打包而来的能力。为一个任务授予管理员角色，agent 就可能继承你整个环境范围内的权限。</p>
+<p>界定范围始于构建阶段，始于你如何定义 agent。agentic 编码系统 <a href="https://kiro.dev/">Kiro</a> 为 agent 的构建阶段带来严谨性和成熟的工程实践。它把高层意图转化为结构化、规格驱动的需求，并使用 automated reasoning 在写下任何代码之前暴露矛盾、歧义和缺口。Kiro 还会推导出基于属性的测试，在很宽的输入范围上拿这些需求校验实现，从而抓住那些难以检测的缺陷。<a href="https://strandsagents.com/">Strands</a> 提供一套开源工具包，用于定义 agent 的模型、指令和工具，并提供一个托管运行时来运行它。无论你选择哪个框架，定义 agent 的工作及其边界这份责任都是一样的。</p>
+<p>下一步是把这些边界变成你可以用来约束 agent 的规则。<a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 提供治理控制，让 agent 能安全地规模化，并管住 agent 做了什么。使用 Bedrock AgentCore 中的 Policies，你用自然语言描述 agent 可以触达哪些工具、API 和数据，automated reasoning 会在策略生效之前检查策略的缺口，比如抓出一条授予了过多访问权的规则，并检查那些让规则永远无法被满足的矛盾。</p>
+<p>为 agent 界定范围是困难的部分，因为把人的意图变成持久、可执行的策略需要精确和完备。但它同时也是回报最高的部分。后面的一切都建立在你此处设定什么之上，而策略越精确，你的 agent 就能越安全地自主做越多事。</p>
+<h3>了解每一个代表你行事的 agent，以及它受谁的授权</h3>
+<p>你无法治理你看不见的东西。团队创建 agent 的速度比任何人能跟踪的速度都快，而一个没人知道的 agent 就是一个没人控制的 agent。每个 agent 都需要自己的身份，并在它每次行动时都被校验。不应有任何行动成为无主之举。当出问题的时候，你要能说出是哪个 agent 做了什么、谁授权了它。</p>
+<p><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html">AWS Agent Registry</a> 提供一份托管的、经过审批的目录，覆盖你整个组织的 agent、Model Context Protocol (MCP) 服务器、工具和技能。管理员使用审批工作流来把关什么才可被发现，并移除不再满足安全、合规与质量标准的东西。人和 agent 都能找到并复用已经存在的资产，而不必重新构建。但目录只告诉你存在什么。一旦 agent 被知晓，AgentCore 会为每个 agent 签发自己的身份，并在每一次请求上校验它，于是每个行动都能追溯到一个在已知授权下运行的具体 agent。这就是你如何了解每一个代表你行事的 agent。</p>
+<h3>约束你的 agent 所言所行，使其待在你设定的界限之内</h3>
+<p>设定界限之所以重要，是因为 agent 可以走出 10 步你都批准了的行动，最终仍抵达一个没人想要的结果。它可能暴露敏感数据、偏离主题，或者以你策略禁止的方式组合被允许的行动。界限会在两个方向上失效。太松，agent 就会做它不该做的事；太紧，它就完全无法完成工作。所以，让 agent 自己选择如何推进任务，但绝不要指望它来执行自己的界限。这些界限定义了 agent 的边界，属于 agent 周围的环境，应当以确定性方式强制执行，并在整个行动序列上评估，而不是一步一步地看。</p>
+<p>这一步正是你在 Scope 中定义的策略开始生效的地方。<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html">AgentCore 中的 Policy</a> 会在每一个经由 <a href="https://aws.amazon.com/blogs/machine-learning/introducing-amazon-bedrock-agentcore-gateway-transforming-enterprise-ai-agent-tool-development/">AgentCore Gateway</a>（面向 agent、工具和模型的安全入口）路由的工具调用上执行它。因为执行位于 agent 的推理之外，即使 agent 存在缺陷、被操纵、或遭到 prompt injection，同样的检查依然成立：它关不掉一个不由它运行的控制。权限也不必一直固定不变。由于任务的风险会随着推进而改变，<a href="https://aws.amazon.com/blogs/machine-learning/securing-ai-agents-with-temporal-policies-in-amazon-bedrock-agentcore/">temporal policies</a> 会权衡会话中已经发生了什么，并在工作继续的过程中调整权限。<a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 管住 agent 说什么、以及它被告知什么。它过滤有害或离题的内容，并对敏感数据做脱敏。<a href="https://www.youtube.com/watch?v=0uprEe_uCgc">Automated Reasoning checks</a> 走得更远，它们证明一次回应与你设定的策略一致，而不是与模型对该策略的解读一致。</p>
+<p>界限还管住 agent 一开始能够触达什么：它能碰哪些文件、能调用哪些服务、能使用哪些凭证。开源沙箱 <a href="https://strandsagents.com/blog/strands-box-the-big-picture/">Strands Box</a> 从 agent 指令之外的位置强制执行这些界限，于是 agent 可以带着真实的工具和数据工作，却只能触达你允许的部分。同样的界限从开发者第一次本地会话一直成立到生产环境，因此 agent 在生产环境里做不了它在开发环境里做不到的事。</p>
+<h3>观察你的 agent 做了什么，然后改进它</h3>
+<p>即使界定范围、身份和界限都已就位，agent 仍可能在毫秒内给出回应、没有任何错误、每个仪表盘都一片绿灯，却做了错事。它可能检索了错误的信息、选错了工具，或者走了一条没人预料到的路径。系统健康并不等于任务成功。要分辨二者，你必须重建 agent 实际做了什么：它收到的上下文、它调用的工具、所适用的策略判定以及结果。部署前的测试依然必不可少。生产环境补充的是关于真实条件下行为的证据，并给运维人员提供调查、干预和改进所需的东西。</p>
+<p><a href="https://aws.amazon.com/cloudwatch/omni/">Amazon CloudWatch Omni</a> 为持续观察而生。它捕获每一条 trace，并把 agent 走过的每一步——从模型调用到工具调用——铺陈在一条团队可以调查的时间线上。其内置的评估器会为 agent 的回应打分，评估那些标准监控漏掉的品质，例如正确性、忠实度，以及 agent 是否选对了工具。而 agent 出错的那些 trace 会变成你用来验证修复方案的数据集，于是运维一个 agent 与改进一个 agent 依赖的是同一份证据。</p>
+<h2><strong>Trust in Depth 在实践中是什么样子</strong></h2>
+<p>一位经理请 help desk agent 为 Sam 办理离职，Sam 是一位即将离开公司的客户经理。agent 需要移除 Sam 的访问权限、把他的邮箱转交给继任者，并释放公司不再需要的 license。但 Sam 的邮件里也可能包含客户纠纷所需的证据。错误的顺序可能让 Sam 在离职后仍保有访问权限，或者让那份证据陷入风险。安全、消息系统、法务和财务各自都有 agent 必须遵守的要求，尽管没有人把完整的工作流写成脚本。</p>
+<p>两条规则管辖着执行顺序。Sam 的登录必须先被屏蔽，他的邮箱才能被转换并与继任者共享。在更改他的邮件 license 之前，agent 必须检查是否存在 legal hold——为纠纷而保留记录的要求——并确认这次更改会让那些记录继续受到保护。</p>
+<p><strong>Scope</strong>。在 agent 运行之前，团队把这些规则写成 AgentCore 中的策略。每条策略都要求：Sam 账户上的前置步骤已经成功，下一步才能执行。agent 恰好拿到六个工具：屏蔽登录、检查 legal holds、施加 hold、转换邮箱、授予继任者访问权、更改 license。它没有拿到任何删除账户的工具，因为共享邮箱需要这个账户继续存在。</p>
+<p><strong>Know</strong>。agent 携带自己的身份，因此对 Sam 账户的每一项改动都能追溯到它。</p>
+<p><strong>Bound</strong>。agent 尝试把 Sam 的邮箱转换成共享邮箱，交给继任者 Priya。在 AgentCore Gateway 上执行的 AgentCore Policy 拦下了这次调用：Sam 仍然可以登录，而转换邮箱不会更改他的密码，所以他旧的凭证照样能打开它。agent 于是屏蔽了 Sam 的登录，然后转换邮箱并授予 Priya 访问权。接下来它转向经理真正的请求——释放 license，但网关也把它拦下了，因为还没人检查过法务的 hold 清单。agent 检查后发现，法务要求为一起客户纠纷保留 Sam 的邮件。它施加了 hold，确认其已生效，然后把 Sam 的 license 改为支持这种保护的那一档。公司因此可以收回那个更大的 license，同时让证据保持完整。</p>
+<p><strong>Observe</strong>。每一步都被记录下来：agent 试图做什么、规则如何裁定、那个 hold，以及结果。</p>
+<p>agent 完成了任务，而没有让人审批每一个步骤。它的权限限制了它能改动什么，它的身份让那些改动可追溯，而策略在必要的保护措施就位之前阻止它行动。记录的步骤让团队得以验证 Sam 的访问已被屏蔽、他的继任者可以使用该邮箱，而所需的证据仍处于受保护状态。</p>
+<h2><strong>当 agent 值得信任时，什么变得可能</strong></h2>
+<p>AWS 把这些层聚合在一起，让你能够把一个 agent 界定到它的职责、知道哪些 agent 正在代表你行事、约束它们做什么和说什么、看见它们做了什么并随时间改进，并在规则可以被精确表述的地方证明它们成立。没有任何单独一层能凭自己赢得这份信任。合在一起，它们就是 Trust in Depth，也正是它们把一个有能力的 agent 变成值得信任、可以去做重要工作的 agent。</p>
+<p>线由你来画：agent 可以独自做什么、什么需要人批准、它什么时候必须停下。这就把你的人解放出来，去做只有人能做的事：权衡艰难的取舍、化解灰色地带、承担你选择留在人手里的决策。随着 agent 待在这些线内的证据不断累积，你可以扩大或收窄它的职责。</p>
+<p>在 AWS，我们相信每一个部署 agent 的组织，无论使用哪个平台，都应当能用证据回答这四个问题，并在适用的地方用证明来回答。这就是 AWS 为我们的客户搭建的标杆，也是我们邀请整个行业用以自我要求的标准。Defense in Depth 让系统安全地接入世界，Trust in Depth 则让 agent 安全地在其中自主行动。</p>
+<p>从一个 agent、一个工作流、一条你能证明的界限开始。然后随着信任被赢得，再向外扩展。</p>
+<p>若要开始实现可执行的规则，可以了解 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/policy.html">Amazon Bedrock AgentCore 中的 Policy</a> 与 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-automated-reasoning-checks.html">Amazon Bedrock Guardrails 中的 Automated Reasoning checks</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Build self-improving document processing using Amazon Bedroc…</title>
+      <title>使用 Amazon Bedrock AgentCore 构建自我改进的文档处理</title>
       <link>https://aws.amazon.com/blogs/machine-learning/build-self-improving-document-processing-using-amazon-bedrock-agentcore/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-self-improving-document-processing-using-amazon-bedrock-agentcore/</guid>
       <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Build self-improving document processing using Amazon Bedrock AgentCore</description>
+      <description>原文标题：Build self-improving document processing using Amazon Bedrock AgentCore</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>使用 Amazon Bedrock AgentCore 构建自我改进的文档处理</h1>
+<p><a href="https://warekennis.nl/wp-content/uploads/2013/11/bridging-the-information-worker-productivity-gap.pdf">IDC 的研究</a>显示，文档相关的难题每年给组织带来每名信息工作者（information worker）19,732 美元的成本，并让生产力下降 21.3%。要从数百家供应商接收发票的组织，常常面对因开票方而异、而且说变就变、事先不打招呼的版式。在这个规模上，基于模板的系统需要持续维护。员工可能把多达 30% 的时间花在文档相关任务上，而人工数据录入的错误率在 <a href="https://askelie.io/manual-document-processing-costs/">1–4%</a> 之间。传统的智能文档处理（IDP）方案能减轻一部分负担，但它们对每一种文档格式都需要大量预先配置，并且在版式因供应商而异时会崩掉。</p>
+<p>在这篇文章里，你会学到如何用 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 构建一个 agentic 的 IDP 系统，它在极少人工干预下对业务文档进行分类、抽取、校验并从中学习。Amazon Bedrock AgentCore 是一个可用任意框架或模型大规模构建、连接并优化 agent 的平台。你的 agent 会自动处理新的文档格式，例如供应商发票、采购订单、保险理赔和贷款申请。读完这篇文章，你可以：</p>
+<ul><li>部署一套多 agent 的 IDP 系统，通常在 20 分钟之内。</li><li>处理新的文档类型而无需人工配置模板。</li><li>让 agent 在每一种新的文档格式上自我训练并复用它们学到的东西，于是同类型的后续文档直接进入抽取、无需重新训练。</li></ul>
+<h2>基于规则的文档处理带来的挑战</h2>
+<p>许多 IDP 管线要求你为每一种文档格式预先定义模板、抽取规则和校验逻辑。当一家新供应商发来版式不同的采购订单时，管线就断了。这带来三个核心挑战：</p>
+<ul><li><strong>模板僵化：</strong>每一种新的文档格式都需要人工配置，而哪怕细微的版式变化也会导致抽取失败。</li><li><strong>没有学习：</strong>同样的抽取错误会在相似文档上反复出现，因为系统不会从先前的纠正中保留知识。</li><li><strong>扩展负担：</strong>每新增一个供应商或文档变体都会让维护工作量成倍增长，处理来自数百个来源文档的组织要面对持续的运营成本。</li></ul>
+<p>agentic 的方法应对了这些挑战。AI agent 不再依赖静态模板，而是分析每一份文档、生成抽取指令、校验结果，并自动从纠正中学习。随着时间推移，你的系统会积累出一个文档格式知识库，于是你在处理相似文档时只需极少的额外配置。</p>
+<h2>方案总览</h2>
+<p>在这个方案里，八个专用 agent 协作跨两条运行于 Amazon Bedrock AgentCore 之上的基于图（graph-based）的工作流。</p>
+<p>下图展示了使用 <a href="https://strandsagents.com">Strands Agents</a>（一个用于构建 AI agent 的开源 SDK）构建的多 agent 工作流图。</p>
+<p>图 1：多 agent 编排工作流图</p>
+<ul><li><strong>识别工作流</strong>：Analyzer agent 用 <a href="https://aws.amazon.com/textract/">Amazon Textract</a> 抽取文本，并识别文档类型和发送方。Matcher agent 用 <a href="https://aws.amazon.com/s3/features/vectors/">Amazon S3 Vectors</a>（Amazon Simple Storage Service（Amazon S3）的一项能力）中的向量相似度来搜索相似文档。</li><li><strong>训练工作流</strong>（新的文档类型）：当没有找到匹配项时，Instructions agent 生成抽取用的 prompt，Extractor agent 抽取结构化数据，Validator agent 依据 <a href="https://aws.amazon.com/rds/aurora/dsql/">Amazon Aurora DSQL</a> 中的 schema 和业务规则校验结果。如果校验失败，Instructions Fixer agent 会改进 prompt 并重试。成功时，Save Instructions agent 把指令持久化以便复用。</li><li><strong>自动化工作流</strong>（已知的文档类型）：当找到匹配项时，Extractor agent 使用已有的指令。如果校验失败，Troubleshooter agent 直接修正抽取到的数据，而不改动指令。</li></ul>
+<h3>它是如何工作的</h3>
+<p>下图展示了该方案的基础设施架构。</p>
+<p>图 2：AWS 上的 agentic IDP 基础设施架构</p>
+<ul><li>业务文档通过 <a href="https://aws.amazon.com/ses/">Amazon Simple Email Service</a>（Amazon SES）到达，或直接上传到 Amazon S3。</li><li><a href="https://aws.amazon.com/eventbridge/">Amazon EventBridge</a> 触发一个 <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> 函数，该函数在 <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a> 中创建一条跟踪作业，并调用 AgentCore runtime（Amazon Bedrock AgentCore 的一项能力）。</li><li>AgentCore runtime 通过 Strands Agents 编排文档处理。</li><li>你的 agent 通过由 AgentCore Identity（Amazon Bedrock AgentCore 的一项能力）和 <a href="https://aws.amazon.com/cognito/">Amazon Cognito</a> 管理的机器对机器凭证，安全地访问 AWS 资源。</li><li>你的 Lambda 函数通过 AgentCore Gateway（Amazon Bedrock AgentCore 的一项能力）的 Model Context Protocol（MCP）接口，成为与 agent 兼容的工具。</li><li>Agent 用 Amazon Textract 抽取文本，用 S3 Vectors 中的向量 embedding 对文档做分类，并依据 Aurora DSQL 中的业务规则校验数据。</li><li>Agent 通过 MCP server 访问企业数据，以对照业务规则校验抽取到的内容。</li><li>你通过托管在 <a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Service</a>（Amazon ECS）上的、带聊天能力的 dashboard 来监控状态和排查问题。</li><li>你通过 AgentCore Observability（Amazon Bedrock AgentCore 的一项能力）和 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 遥测数据，获得对 agent 表现的可见性。</li></ul>
+<h2>部署方案</h2>
+<p>按以下步骤把方案的基础设施和 Web UI 部署到你的 AWS 账户。</p>
+<h3>前提条件</h3>
+<p>要部署这个方案，你必须具备：</p>
+<ul><li>一个 <a href="https://portal.aws.amazon.com/gp/aws/developer/registration/index.html">AWS 账户</a>。</li><li>对 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 的访问权限，并启用了 Amazon Nova 和 Anthropic (Claude) 模型。有关各 AWS Region 的模型可用性，参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock 按 AWS Region 划分的受支持模型</a>。</li><li>对 Amazon Bedrock AgentCore（Runtime、Gateway、Identity）、S3 Vectors 和 Amazon Aurora DSQL 的访问权限，且需位于<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-regions.html">受支持的 Region</a> 之内。</li><li>已安装 <a href="https://aws.amazon.com/cdk/">AWS Cloud Development Kit</a>（AWS CDK）v2。</li><li>已安装并正在运行 <a href="https://docs.docker.com/get-docker/">Docker</a>（构建和部署容器镜像所需）。</li><li>Python 3.11+ 和 Node.js 18+。</li><li>用于创建 S3 桶、Lambda 函数、DynamoDB 表、Cognito 用户池、Amazon Elastic Container Registry（Amazon ECR）仓库和 Amazon ECS 服务的 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management</a>（IAM）权限。</li></ul>
+<ul><li>克隆 <a href="https://github.com/aws-samples/aws-ai-intelligent-document-processing/tree/main/guidance/agentic-orchestration">仓库</a> 并搭建环境：  <code>git clone https://github.com/aws-samples/agenticidp-guidance.git cd agenticidp-guidance uv venv source .venv/bin/activate uv pip install -r requirements.txt cd ui/orchestrator npm install cd ../..</code></li><li>部署各个 stack：  <code>uv run deploy.py --admin-email your-email@example.com</code></li></ul>
+<p>这会部署六个 <a href="https://aws.amazon.com/cloudformation/">AWS CloudFormation</a> stack：Core（S3、Cognito、DynamoDB）、Gateway（Lambda 工具、AgentCore Gateway）、Aurora（Amazon Aurora DSQL）、Agent（AgentCore runtime、容器）、UI Orchestrator（API 端点）以及 Modern UI（跑在 <a href="https://aws.amazon.com/cloudfront/">Amazon CloudFront</a> 上的 React 应用）。部署大约需要 15–20 分钟。</p>
+<ul><li>验证部署：检查每个 stack 在 CloudFormation 控制台中都显示 <code>CREATE_COMPLETE</code>。</li></ul>
+<h2>处理文件并查看结果</h2>
+<p>部署完成后，你会收到一封邮件，里面有 CloudFront URL、用户名和临时密码。</p>
+<h3>处理一份文档</h3>
+<ul><li>登录 Web UI 并选择 <strong>Process Document</strong>。</li><li>从 <code>infrastructure/sample_data/purchase_orders/training/</code> 上传一份示例采购订单。</li><li>文档进入 agent 工作流：  Analyzer agent 抽取文本并识别发送方和文档类型。Matcher agent 在向量存储中搜索相似文档。对于新的文档类型，训练工作流会生成抽取指令、抽取数据、校验它，并保存指令供日后使用。对于已知的文档类型，自动化工作流使用已有的指令抽取数据并校验它。</li><li>在 <strong>Review Jobs and Instructions</strong> 标签页中查看结果，核对抽取到的数据、校验结果和生成的指令。</li></ul>
+<h3>示例：一种新的文档类型（训练工作流）</h3>
+<p>假设你上传了来自一家新零售商 Two Wheel Store 的第一份采购订单。Matcher agent 在向量存储中搜索，找不到相似文档，于是把这个作业路由给训练工作流。</p>
+<p>Analyzer agent 用 Amazon Textract 抽取原始文档文本：</p>
+<pre><code># PURCHASE ORDER
+FROM: Two Wheel Store
+Order #: PO-2026-0102-2584
+Date: 2026-01-02
+
+## Items Ordered
+AC-021  Advanced Computer     Qty: 1   $75.61
+        Colors: cr4321        @ $75.61
+...
+SB-004  Folding Classic       Qty: 8   $9634.32
+        Colors: cb8901 I Sizes: S     @ $1204.29
+
+TOTAL: $14931.54</code></pre>
+<p>Instructions agent 依据 schema 生成抽取用的 prompt，Extractor agent 产出结构化的 JSON：</p>
+<pre><code>{
+  &quot;po_number&quot;: &quot;PO-2026-0102-2584&quot;,
+  &quot;retailer_name&quot;: &quot;Two Wheel Store&quot;,
+  &quot;order_date&quot;: &quot;2026-01-02T00:00:00Z&quot;,
+  &quot;line_items&quot;: [
+    { &quot;sku&quot;: &quot;AC-021&quot;, &quot;product_name&quot;: &quot;Advanced Computer&quot;, &quot;quantity&quot;: 1, &quot;unit_price&quot;: 75.61, &quot;line_total&quot;: 75.61 },
+    { &quot;sku&quot;: &quot;SB-004&quot;, &quot;product_name&quot;: &quot;Folding Classic&quot;,   &quot;quantity&quot;: 8, &quot;unit_price&quot;: 1204.29, &quot;line_total&quot;: 9634.32 }
+  ],
+  &quot;order_total&quot;: 14931.54
+}</code></pre>
+<p>Validator agent 对照 schema 检查结果，并判定<strong>失败</strong>：</p>
+<pre><code>validation_status: INVALID
+error: 'SB-004' does not match '^AB-[A-Z]{2}-\d{3}$'</code></pre>
+<p>供应商的 SKU 格式（<code>SB-004</code>）与 Acme Bikes 的内部格式（<code>AB-SB-004</code>）不匹配。Instructions Fixer agent 诊断出这个不匹配，并在抽取 prompt 里加了一条明确的 SKU 转换规则：给供应商的 SKU 加上 <code>AB-</code> 前缀。第二趟，七个行项目全部校验通过，Save Instructions agent 把改进后的 prompt 持久化到向量存储。这次首趟运行的端到端耗时：3 分 49 秒。</p>
+<h3>示例：一种已知的文档类型（自动化工作流）</h3>
+<p>当来自 Two Wheel Store 的第二份采购订单到达时，Matcher agent 找到了首趟运行存下的指令，置信度得分为 3.946（阈值：3.7），并把这个作业路由给自动化工作流：</p>
+<ul><li>Extractor agent 直接应用存下的指令，因此编排器跳过了 prompt 生成。训练期间学到的那条 SKU 转换规则自动生效（<code>EL-002</code> → <code>AB-EL-002</code>、<code>HB-071</code> → <code>AB-HB-071</code>、<code>PD-002</code> → <code>AB-PD-002</code>）。</li><li>三个行项目在第一趟就校验通过，订单总额为 $5,979.19。</li><li>端到端处理在 1 分 30 秒内完成，低于首趟运行的 3 分 49 秒。</li></ul>
+<h3>使用交互式聊天</h3>
+<p>dashboard 里包含一个用于排查问题的聊天界面：</p>
+<ul><li>问 <code>what tools do you have</code> 可以看到可用的 agent 能力。</li><li>问 <code>list instructions</code> 可查看存下的抽取指令。</li><li>问 <code>what is the status of job XXXX</code> 来检查处理进度。</li><li>问 <code>what went wrong with job XXXX, how can we update the instructions?</code> 来诊断失败。</li></ul>
+<h3>理解准确率如何随时间提升</h3>
+<p>系统通过两条反馈闭环随时间改进：</p>
+<ul><li><strong>训练闭环</strong>：当 Instructions Fixer agent 在校验失败之后改进了抽取 prompt，改进后的指令会被保存并在相似文档上复用。</li><li><strong>处理闭环</strong>：当 Troubleshooter agent 修正抽取错误时，它会给出详尽的分析，帮助识别文档格式变化中的规律。</li></ul>
+<p>更换模型时，用 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">AgentCore Evaluations</a>（Amazon Bedrock AgentCore 的一项能力）来确认抽取质量仍然可以接受。这个方案已经用上了 AgentCore Observability，因此它具备所需的埋点。</p>
+<h2>预估成本</h2>
+<p>你只为实际使用的部分付费，因为这个方案跑在 serverless 与按需资源上，没有闲置成本。在 US East (N. Virginia)，一个每月 10 份训练文档、1,000 份处理文档的工作量，预估成本约为每月 $58。通过 Amazon Bedrock 的基础模型（FM）推理约占总成本的 85%，大约每份文档 $0.055。实际成本在很大程度上取决于分配给每个 agent 的模型。模型选择集中在 <code>agents/orchestratorgraph/utils/config.py</code> 里，因此你可以对更简单的任务用成本更低的模型，在需要的地方用更强的模型。详细定价参见 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a>页面。</p>
+<h2>为你的用例定制方案</h2>
+<p>你拿到的是一个采购订单处理用例，配一份合成自行车公司的数据集、一个预建的 JSON schema，以及一个校验用的 Lambda 函数——它把抽取到的数据与一个模拟 ERP 数据库里的产品和供应商记录做比对。要处理你自己的文档，你必须把随附的 schema 和校验逻辑换成你自己的。</p>
+<h3>定义你的文档 schema</h3>
+<p>创建一个 JSON schema，为每一种文档类型定义你想抽取的字段。<code>agents/orchestratorgraph/doc_schema/purchase_order_schema.json</code> 里的示例采购订单 schema 可以用作参考。你的 schema 应当指明字段名、数据类型，以及每个字段是在文档中被明确写出的、还是从上下文推断出来的。</p>
+<h3>构建你的校验流程</h3>
+<p>随附的 validator 会把采购订单数据与 Aurora DSQL 中合成的供应商表和产品表做比对。你的生产实现需要一个按你的业务规则定制的校验流程。例如：</p>
+<ul><li>发票 validator 可能对照你的应付账款系统核验供应商 ID，并验证行项目合计与发票总额相符。</li><li>合同 validator 可能验证文档包含必需的条款，并且日期与当事方名称和你的记录一致。</li><li>理赔 validator 可能对照你的保单管理系统检查保单号、承保限额和理赔人信息。</li></ul>
+<p>要新增一个 validator，创建一个接受抽取到的 JSON、并返回带详细错误信息的通过/失败结果的 Lambda 函数，然后把它注册为 AgentCore Gateway 中的一个工具。实现模式参见 <code>gateway/tools/po_validator_tool/</code>。</p>
+<h3>更新 agent 的 prompt</h3>
+<p><code>agents/orchestratorgraph/prompts/</code> 里的 agent prompt 引用了采购订单的术语。请更新这些 prompt 以反映你的文档类型和抽取需求。Orchestrator agent、Validator agent 和 Instructions agent 各自都包含与特定文档类型相关的表述，你应当加以调整。</p>
+<h2>最佳实践</h2>
+<p>在训练和运营你的 agentic IDP 系统时，请记住这些建议。</p>
+<ul><li><strong>从有代表性的样本开始</strong>：训练期间每种类型上传 5–10 份文档，包括带格式变化的边缘用例，以建立可靠的抽取指令。</li><li><strong>使用业务规则校验</strong>：在 Aurora DSQL 中把 validator 连到你的参考数据（供应商列表、产品目录），以尽早发现抽取错误。</li><li><strong>监控 agent 表现</strong>：用 AgentCore Observability 和 CloudWatch 跟踪执行路径、识别瓶颈，并衡量抽取准确率随时间的变化。</li><li><strong>增量地添加文档类型</strong>：为每一种新的文档类型创建一个 JSON schema 和对应的校验 Lambda 函数。剩下的交给 agent。</li><li><strong>为生产环境加护栏</strong>：应用 Amazon Bedrock Guardrails，对 agent 的输出施加内容过滤和 grounding 检查。在处理保险理赔或贷款申请这类敏感的文档类型时，这一点尤其重要。</li><li><strong>查看 OWASP Top 10 for LLMs</strong>：在构建使用大语言模型（LLM）的应用时，查阅 <a href="https://genai.owasp.org/llm-top-10/">OWASP Top 10 for LLMs and Generative AI Apps</a> 了解安全方面的考量。</li></ul>
+<h2>清理</h2>
+<p><strong>重要：</strong>在运行清理之前，先导出你想保留的数据。<code>destroy.py</code> 脚本会永久删除已处理的文档（S3）、作业历史（DynamoDB）、校验数据（Aurora DSQL）以及学到的抽取指令（向量存储）。</p>
+<p>要避免持续产生费用，删除已部署的资源：</p>
+<pre><code>uv run destroy.py</code></pre>
+<p>在控制台确认这六个 CloudFormation stack 已被删除：AgenticIDP-Core-Dev、AgenticIDP-Gateway-Dev、AgenticIDP-Aurora-Dev、AgenticIDP-Agent-Dev、AgenticIDP-UIOrchestr-Dev 和 AgenticIDP-ModernUI-Dev。</p>
+<h2>结论</h2>
+<p>在这篇文章里，你学到了如何用 Amazon Bedrock AgentCore 构建一个自我改进的文档处理系统——在其中，专用的 AI agent 协作完成对业务文档的分类、抽取、校验和学习。这种 agentic 方法会自动适应新的文档格式，并通过反馈闭环随时间提升准确率，用自主学习取代人工模板配置。</p>
+<p>作为下一步：</p>
+<ul><li>部署<a href="https://github.com/aws-samples/aws-ai-intelligent-document-processing/tree/main/guidance/agentic-orchestration">示例方案</a>，并用随附的采购订单样本进行测试。</li><li>通过创建 JSON schema 和校验规则来添加你自己的文档类型。</li><li>探索如何把抽取到的数据与 ERP、CRM 或内容管理工具这类下游系统集成。</li></ul>
+<p>要了解更多关于本文所用服务与模式的信息，参见以下资源：</p>
+<ul><li>要深入了解本方案所用的 agent 框架，参见 <a href="https://aws.amazon.com/blogs/machine-learning/strands-agents-sdk-a-technical-deep-dive-into-agent-architectures-and-observability/">Strands Agents SDK：agent 架构与可观测性的技术详解</a>。</li><li>要理解 AgentCore Gateway 如何把 API 变成与 agent 兼容的工具，参见 <a href="https://aws.amazon.com/blogs/machine-learning/introducing-amazon-bedrock-agentcore-gateway-transforming-enterprise-ai-agent-tool-development/">介绍 Amazon Bedrock AgentCore Gateway：变革企业 AI agent 工具开发</a>。</li><li>关于 Model Context Protocol 以及它如何与 AWS 服务集成的背景，参见 <a href="https://aws.amazon.com/blogs/machine-learning/unlocking-the-power-of-model-context-protocol-mcp-on-aws/">在 AWS 上释放 Model Context Protocol（MCP）的力量</a>。</li><li>要了解 agent 如何跨会话保留上下文，参见 <a href="https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-agentcore-memory-building-context-aware-agents/">Amazon Bedrock AgentCore Memory：构建具备上下文感知能力的 agent</a>。</li><li>关于 Amazon Bedrock AgentCore 能力的细节，参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/agentcore.html">Amazon Bedrock AgentCore 文档</a>。</li></ul>
+<p>要在构建文档处理方案上获得专家指导，<a href="https://aws.amazon.com/professional-services/">AWS Professional Services</a> 和 <a href="https://aws.amazon.com/partners/">AWS Partners</a> 可以提供帮助。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Generate presentations with Amazon Bedrock AgentCore</title>
+      <title>用 Amazon Bedrock AgentCore 生成演示文稿</title>
       <link>https://aws.amazon.com/blogs/machine-learning/generate-presentations-with-amazon-bedrock-agentcore/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/generate-presentations-with-amazon-bedrock-agentcore/</guid>
       <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Generate presentations with Amazon Bedrock AgentCore</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>用 Amazon Bedrock AgentCore 生成演示文稿</h1>
+<p>一个金融服务团队每周都要花大量时间，手工把季报、合规文件和市场分析做成给客户的 PowerPoint 演示文稿。每份演示文稿都要读几百页材料、抽取关键数据点、组织幻灯片结构，并生成配套的视觉素材。本文带你一步步搭建一个使用 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 的 AI agent 系统，把这套工作流自动化——在我们的内部测试中，它在 90 秒内完成。这个方法把生成内容牢牢锚定在源文档上的同时，缩短了演示文稿的制作时间。该方案把 supervisor agent 部署在 AgentCore runtime（Amazon Bedrock AgentCore 的一项能力）上，使用 <a href="https://strandsagents.com/">Strands Agents</a> 框架来编排文档生成与摘要两类工具。Anthropic Claude Sonnet 4.6（可在 Amazon Bedrock 上使用）负责内容创作，Amazon Titan Text Embeddings v2 支撑向量检索，Stability AI Stable Image Inpaint（可在 Amazon Bedrock 上使用）生成幻灯片图片。本文附带一个公开仓库，里面是代码资产。</p>
+<h2>方案概览</h2>
+<p>该方案在 Amazon Bedrock AgentCore runtime 上部署单个 supervisor agent，由它根据用户请求在文档生成和摘要工具之间选择。一条检索增强生成（RAG）pipeline 使用 Amazon OpenSearch Serverless 来做多模态内容的向量存储与语义检索。</p>
+<p>该方案包含一个用 .NET 8 minimal APIs 构建的 REST API，因此你可以通过标准 HTTP 调用把它集成进现有企业应用。AWS Lambda 提供无服务器计算，包括用于 PowerPoint 生成的容器化函数。该方案用 <a href="https://docs.aws.amazon.com/vpc/">Amazon Virtual Private Cloud (Amazon VPC)</a> 做隔离、用 <a href="https://docs.aws.amazon.com/kms/">AWS Key Management Service (AWS KMS)</a> 做加密、用 <a href="https://docs.aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 做最小权限访问控制来加固整个实现。</p>
+<h2>关键概念</h2>
+<p>本节讲与本方案相关的 AgentCore runtime、RAG 和内容安全护栏。</p>
+<h3>用 Amazon Bedrock AgentCore 做 agent 编排</h3>
+<p>一个要从大型知识库生成文档的 AI agent，必须检索内容、组织大纲、生成文本、创建图片并拼装文件。该方案没有把这些彼此冲突的职责实现成一个单体函数，而是采用基于工具的架构：由一个 supervisor agent 把请求路由给专门的工具。</p>
+<p>Amazon Bedrock AgentCore runtime 提供一个平台，用来以任意框架或任意模型大规模地构建、连接和优化 agent。agent 代码运行在一个隔离容器里，自带会话管理、内置身份和可观测性。该方案使用 Strands Agents 框架（一个用于构建 AI agent 的开源 SDK）来实现 supervisor 逻辑。</p>
+<p>这个 supervisor agent 暴露两个工具：</p>
+<ul><li><strong>generate_pptx：</strong> 调用 PPTX Generator Lambda 函数来创建 PowerPoint 演示文稿；该函数从知识库检索内容、生成幻灯片大纲、创建 AI 图片，并拼装出最终文档。</li><li><strong>generate_summary：</strong> 使用 RAG 从知识库中抽取并综合信息，给出准确、有依据的回答。</li></ul>
+<p>agent 判断一个请求需要的是文档生成、内容摘要，还是两者都要，然后调用相应的工具。你只要在自己的代码里定义新的工具，就能加入新的能力，而不必改动已有的工具。</p>
+<h3>面向企业知识的检索增强生成（RAG）</h3>
+<p>RAG 解决的是 AI 系统里一个根本性挑战：给出准确、最新、且锚定在企业数据上的信息，而不是只依赖模型的训练数据。该实现使用 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Knowledge Bases</a>，它把向量检索与大语言模型（LLM）结合起来，在生成回答之前先检索相关上下文。</p>
+<p>RAG pipeline 按如下方式工作：</p>
+<ul><li>你把企业文档上传到 <a href="https://docs.aws.amazon.com/s3/">Amazon Simple Storage Service (Amazon S3)</a>。</li><li>系统对文档做切分和解析，并对包括表格、图表和图片在内的多模态内容应用专门处理。</li><li>Amazon Titan Text Embeddings v2 把每个分块转换成捕捉语义的高维向量。</li><li><a href="https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless.html">Amazon OpenSearch Serverless</a> 存储这些向量，形成一个可检索的向量数据库。</li><li>查询时，系统把用户请求转换成一个 embedding，并执行相似度检索来取回相关的文档分块。</li><li>取回的分块为语言模型提供上下文，由它生成锚定在原始材料上的回答。</li></ul>
+<p>这一方法的设计目标，是让生成的文档锚定在企业知识库中的源信息，从而帮助减少幻觉内容。</p>
+<p><strong>注意：</strong> Amazon OpenSearch Serverless collection 的数据平面必须保持公开可访问，因为 Amazon Bedrock Knowledge Bases 是从 AWS 托管的基础设施去访问 Amazon OpenSearch Serverless，而不是通过客户的 VPC 端点。IAM 数据访问策略保护这个 collection，而如果只允许 VPC 内访问，Amazon OpenSearch Serverless 的 dashboard 就会受限。</p>
+<h3>用 Amazon Bedrock Guardrails 保障内容安全</h3>
+<p>企业级 AI 应用需要内容审核来满足组织标准和合规要求。<a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 提供内建的内容过滤与安全机制，并贯穿整条文档生成 pipeline 集成。</p>
+<p>Guardrails 在多个阶段运行：</p>
+<ul><li><strong>输入处理：</strong> 过滤用户请求，帮助防止注入问题和不适宜内容。</li><li><strong>输出生成：</strong> 监控模型输出，确认其符合内容政策。</li><li><strong>个人身份信息（PII）处理：</strong> 检测 PII 并做匿名化或拦截。</li></ul>
+<p>该实现通过 <a href="https://docs.aws.amazon.com/cdk/v2/guide/cli.html">AWS Cloud Development Kit (AWS CDK)</a> 创建自定义 guardrails，并按照企业文档创作的具体需要配置相应策略。agent 在模型调用这一层应用 guardrails，从而提供一致的内容安全，而不必为每次部署做手工配置。</p>
+<h2>方案架构</h2>
+<p>下图说明了这套基于 agent 的文档生成系统。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-19250-1.png" alt="Amazon Bedrock AgentCore 演示文稿生成系统的架构图，展示请求在 VPC 内经由 Amazon API Gateway 和 AWS Lambda 流向 supervisor agent、知识库与存储"></p>
+<p>图 1：Amazon Bedrock AgentCore RAG 演示文稿生成系统的架构</p>
+<p>数据流始于用户请求经 <a href="https://docs.aws.amazon.com/apigateway/">Amazon API Gateway</a> 到达，网关把它们路由到运行在 <a href="https://docs.aws.amazon.com/lambda/">AWS Lambda</a> 上、基于 .NET 的 Chat API。该 API 在 <a href="https://docs.aws.amazon.com/dynamodb/">Amazon DynamoDB</a> 中维护会话状态。随后它调用托管在 Amazon Bedrock AgentCore runtime 上的 supervisor agent。</p>
+<p>supervisor agent 分析请求并选择合适的工具。要做文档生成时，它调用 PPTX Generator Lambda（一个容器化的 Python 函数）。要做摘要时，supervisor 调用 Summary Generator Lambda，后者通过 <code>retrieve_and_generate</code> API 查询知识库。</p>
+<p>系统对存放在 Amazon S3 的文档做处理与切分，并用 Amazon Titan Text Embeddings v2 生成 embedding。Amazon OpenSearch Serverless 为这些 embedding 建索引以支持快速语义检索。当工具查询知识库时，由 Amazon OpenSearch Serverless 取回相关分块，随后这些分块作为上下文提供给 Anthropic Claude Sonnet 4.6（在 Amazon Bedrock 上），用于生成有依据的回答。</p>
+<p>系统把生成的文档存放在 Amazon S3，并返回 presigned URL 供安全下载。安全措施包括：</p>
+<ul><li><a href="https://docs.aws.amazon.com/waf/">AWS WAF</a>，在 Amazon API Gateway 上启用托管规则集和基于 IP 的速率限制。</li><li><a href="https://docs.aws.amazon.com/cognito/">Amazon Cognito</a>，使用 Plus 功能套餐和高级安全模式做威胁防护。</li><li>通过 AWS CDK 开通的 Amazon Bedrock Guardrails，用于一致的内容过滤。</li><li>Amazon DynamoDB 启用时间点恢复、删除保护，以及客户自管的 AWS KMS 加密。</li><li>Amazon S3 桶启用版本控制、服务器访问日志，并阻断公开访问。</li><li><a href="https://docs.aws.amazon.com/xray/">AWS X-Ray</a> 对 Lambda 函数做追踪，用于分布式调试。</li><li>输入校验，用基于正则的 tenant ID 与 session ID 核验。</li><li>租户隔离，按租户通过 <a href="https://docs.aws.amazon.com/STS/latest/APIReference/Welcome.html">AWS Security Token Service (AWS STS)</a> 假定角色。</li></ul>
+<h2>前置条件</h2>
+<p>部署前，你的环境中需要配置好以下工具和访问权限：</p>
+<ul><li><strong>AWS 环境：</strong>  一个处于活跃状态、具备部署基础设施权限的 AWS 账户。配置好凭证的 AWS Command Line Interface (AWS CLI)。带有相应服务访问策略的 IAM 角色。</li><li><strong>开发工具：</strong>  <a href="https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8/overview">.NET SDK 8</a>，并全局安装 Amazon.Lambda.Tools。<a href="https://docs.python.org/3/">Python 3.12 或更高版本</a>，用于 AWS CDK 和 Lambda 函数。<a href="https://nodejs.org/docs/latest/api/">Node.js</a> 和 <a href="https://docs.aws.amazon.com/cdk/v2/guide/cli.html">AWS CDK CLI</a>，用于部署基础设施。<a href="https://docs.docker.com/">Docker</a> 或 <a href="https://runfinch.com/">Finch</a>，用于构建容器镜像（需要支持 ARM64）。</li><li><strong>AWS 服务访问权限：</strong>  Amazon Bedrock，并开通对 Anthropic Claude Sonnet 4.6、Amazon Titan Text Embeddings v2 以及 Stability AI Stable Image Inpaint（均可通过 Amazon Bedrock 获取）的模型访问权限。各区域的模型可用性见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock 中按 AWS 区域划分的受支持模型</a>。在你的账户中启用 Amazon Bedrock AgentCore 访问权限。把 Amazon API Gateway Regional REST API 的集成超时配置为至少 300 秒，默认值是 29 秒。更多信息见 <a href="https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-execution-service-limits-table.html">API Gateway 配额</a>。一个已有私有子网的 Amazon VPC。一个用于部署产物的 Amazon S3 桶。</li></ul>
+<h2>设置该方案</h2>
+<p>设置过程包括配置部署参数和初始化 AWS CDK 环境。</p>
+<ul><li><strong>克隆仓库</strong>并进入项目目录：  <code>git clone https://github.com/aws-samples/sample-generating-powerpoint-presentations-with-amazon-bedrock.git</code></li><li><strong>在仓库根目录创建配置文件</strong> <code>pipeline-params.ini</code>：  <code>environment=dev awscliprofile= ContainerRegistry=lambda-pptx-gen AgentContainerRegistry=agentcore-supervisor BucketDev=&lt;amzn-s3-demo-bucket&gt; VpcId=&lt;your-vpc-id&gt; ParsingInferenceProfileId=us.anthropic.claude-haiku-4-5-20251001-v1:0 AgentInferenceProfileId=us.anthropic.claude-sonnet-4-6 EmbeddingModelId=amazon.titan-embed-text-v2:0 ImageGenerationModelId=stability.stable-image-inpaint-v1:0 PPTXGenImageTag=latest AgentImageTag=latest</code>  把 <code>awscliprofile</code> 设为你的 AWS CLI profile 名称，或留空以使用环境变量凭证。</li><li><strong>Bootstrap AWS CDK</strong>（每个账户和区域只需一次）：  <code>cdk bootstrap</code>  这会创建 AWS CDK 部署所需的 <a href="https://docs.aws.amazon.com/cloudformation/">AWS CloudFormation</a> CDKToolkit stack。</li><li><strong>让构建脚本可执行：</strong>  <code>chmod +x ./pipeline-build.sh chmod +x ./pipeline-deploy.sh chmod +x ./deploy-agentcore.sh</code></li></ul>
+<h2>构建与部署</h2>
+<p>部署分三个阶段：构建产物、部署基础设施、部署 AgentCore runtime 上的 agent。</p>
+<h3>构建阶段</h3>
+<p>构建阶段编译应用代码并打包部署产物。运行构建脚本：</p>
+<pre><code>./pipeline-build.sh</code></pre>
+<p>这会编译 .NET 项目（Chat API）并把它们打包成 Lambda 部署包。它用 Docker 或 Finch 构建 PPTX Generator 容器镜像，并与 <a href="https://docs.aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a> 完成认证。随后推送容器镜像，并把构建产物存放在 <code>asset-output</code> 目录里。</p>
+<h3>基础设施部署阶段</h3>
+<p>基础设施部署会创建 AWS 资源并配置服务集成。运行部署脚本：</p>
+<pre><code>./pipeline-deploy.sh</code></pre>
+<p>部署按依赖顺序创建四个 AWS CloudFormation stack：</p>
+<ul><li><strong>VPCEndpointsStack：</strong> 为包括 Amazon Bedrock AgentCore 在内的 AWS 服务配置 Amazon VPC 端点。</li><li><strong>OpensearchStack：</strong> 开通用于向量存储的 Amazon OpenSearch Serverless collection。</li><li><strong>AgentCoreStack：</strong> 创建 guardrails、Lambda 函数、IAM 角色，并把配置存入 <a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html">AWS Systems Manager Parameter Store</a>。</li><li><strong>ChatApiStack：</strong> 部署 Amazon API Gateway 和 Chat API Lambda。</li></ul>
+<h3>AgentCore runtime 部署</h3>
+<p>基础设施 stack 部署完成后，把 supervisor agent 部署到 AgentCore runtime：</p>
+<pre><code>./deploy-agentcore.sh</code></pre>
+<p>这个脚本构建 supervisor agent 容器（ARM64）、把它推送到 Amazon ECR、创建 AgentCore runtime 和 endpoint，并用该 endpoint 的 Amazon Resource Name (ARN) 更新 Systems Manager 参数。Chat API 引用这个 endpoint ARN，把请求路由给 agent。</p>
+<p>部署完成后，AWS CloudFormation 的输出里会包含 Amazon API Gateway 的 endpoint URL 和各资源标识符。</p>
+<h2>配置</h2>
+<p>该方案提供了若干配置点：</p>
+<h3>agent 指令</h3>
+<p>编辑 <code>agent/app.py</code> 可以修改 supervisor agent 的 system prompt 和行为。该 agent 使用 Strands Agents，两个工具定义在 <code>agent/tools.py</code> 里：</p>
+<ul><li><strong>generate_pptx：</strong> 调用 PPTX Generator Lambda 做文档创建。</li><li><strong>generate_summary：</strong> 调用 Summary Generator Lambda 查询知识库。</li></ul>
+<h3>模型选择</h3>
+<p>在 <code>pipeline-params.ini</code> 中调整模型标识符：</p>
+<ul><li><code>ParsingInferenceProfileId</code>：用于知识库文档解析的模型（出于成本效率推荐 Anthropic Claude Haiku 4.5）。</li><li><code>AgentInferenceProfileId</code>：用于 agent 推理的模型（推荐 Anthropic Claude Sonnet 4.6）。</li><li><code>EmbeddingModelId</code>：用于向量检索的 embedding 模型（Amazon Titan Text Embeddings v2）。</li><li><code>ImageGenerationModelId</code>：用于生成幻灯片图片的模型（Stability AI Stable Image Inpaint）。</li></ul>
+<p>使用 inference profile 而不是直接使用模型 ID，请求会取自一个更大的多区域容量池，这会提升吞吐，并有助于在负载下保持稳定的性能。</p>
+<h3>Lambda 配置</h3>
+<p>在 stack 文件里调整计算资源：</p>
+<ul><li><strong>Chat API：</strong> 128 MB 内存、29 秒超时、100 的保留并发（在 <code>api.py</code> 中）。</li><li><strong>PPTX Generator：</strong> 900 MB 内存、300 秒超时、50 的保留并发（在 <code>pptx_gen.py</code> 中）。</li><li><strong>Summary Generator：</strong> 512 MB 内存、300 秒超时、50 的保留并发（在 <code>sum_gen.py</code> 中）。</li></ul>
+<h2>结果</h2>
+<p>在我们的内部测试中，用一份 90 页的 <a href="https://ir.aboutamazon.com/annual-reports-proxies-and-shareholder-letters/default.aspx">Amazon 2024 年年报</a> PDF，该方案产出以下性能指标：</p>
+<ul><li><strong>演示文稿生成时间：</strong> 端到端 70–90 秒（包括知识库检索、内容生成、图片创建和文件拼装）。</li><li><strong>幻灯片数量：</strong> 六页，含标题、要点、图片+文字、纯图片和要点总结几种版式。</li><li><strong>图片生成：</strong> 每份演示文稿两张由 Stability AI Stable Image Inpaint 生成的 AI 图片。</li><li><strong>每次生成的成本：</strong> 截至撰写时在 us-east-1 约 $0.04 的模型调用成本（文本与图片生成，其中图片生成占成本大头）。</li><li><strong>知识库摄取：</strong> 单个 1.3 MB 的 PDF 文档不到 2 分钟。</li></ul>
+<h3>PowerPoint 演示文稿</h3>
+<p>下面几张图展示了生成演示文稿中的示例幻灯片。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-19250-2.png" alt="生成的标题页，上面写着 “Amazon: From Startup to Empire”"></p>
+<p>图 2：生成的标题页，支持自定义品牌</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-19250-3.png" alt="生成的要点幻灯片，标题为 “1997: The Rocket Ship Launches”，含早期增长指标"></p>
+<p>图 3：生成的要点内容页</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-19250-4.png" alt="生成的幻灯片，标题为 “2024: A Diversified Revenue Engine”，把营收文字与一张 AI 生成图片配对"></p>
+<p>图 4：生成的一页，文字与 AI 生成图片结合</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-19250-5.png" alt="生成的要点幻灯片，标题为 “Profitability Takes Center Stage”，含盈利能力指标"></p>
+<p>图 5：生成的一页，汇总盈利能力指标</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-19250-6.png" alt="生成的纯图片幻灯片，是一幅 AI 生成的配送货车与包裹插画"></p>
+<p>图 6：生成的纯图片页，配一张 AI 生成的视觉图</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-19250-7.png" alt="生成的要点总结页，标题为 “Important Takeaways”，含四栏总结"></p>
+<p>图 7：生成的 takeaways 页</p>
+<p>生成的演示文稿包含：</p>
+<ul><li>支持自定义品牌的标题页。</li><li>带要点和结构化文字的内容页。</li><li>用 Stability AI Stable Image Inpaint（在 Amazon Bedrock 上）生成视觉素材的图片页。</li><li>含演示指引的演讲者备注。</li><li>基于企业模板的一致排版。</li></ul>
+<h3>摘要</h3>
+<p>提供给知识库的摘要输出包含：</p>
+<ul><li>对知识库内容的精炼综合。</li><li>到源文档的引用追踪。</li><li>结构化排版并突出要点。</li></ul>
+<h3>API 响应</h3>
+<p>Chat API 返回：</p>
+<ul><li>用于给用户实时反馈的流式响应。由于内部测试显示生成一份演示文稿要 70–90 秒（超过 Amazon API Gateway 默认的 29 秒集成超时），Chat API 采用异步调用模式。请用流式或轮询来获取最终结果，而不是等待一个同步的 REST 调用。</li><li>跨多轮维持的会话上下文。</li><li>用于文档下载的 Amazon S3 presigned URL（5 分钟有效期）。</li></ul>
+<p>生成的内容在交付前会经过 Amazon Bedrock Guardrails 校验，以确认符合内容政策。</p>
+<h2>清理</h2>
+<p>为避免持续产生费用，请删除已部署的资源：</p>
+<ul><li><strong>删除 AgentCore runtime</strong> 和 endpoint：  <code>aws bedrock-agentcore-control delete-agent-runtime-endpoint \ --agent-runtime-id &lt;runtime-id&gt; \ --agent-runtime-endpoint-id &lt;endpoint-id&gt; aws bedrock-agentcore-control delete-agent-runtime \ --agent-runtime-id &lt;runtime-id&gt;</code></li><li><strong>关闭 Amazon DynamoDB 删除保护</strong>（删除 stack 前必须先做）：  <code>aws dynamodb update-table --table-name chat-sessions-dev --no-deletion-protection-enabled aws dynamodb update-table --table-name tenant-table-dev --no-deletion-protection-enabled</code></li><li><strong>按依赖逆序删除 AWS CloudFormation stack</strong>：  <code>aws cloudformation delete-stack --stack-name ChatApiStack aws cloudformation delete-stack --stack-name AgentCoreStack aws cloudformation delete-stack --stack-name OpensearchStack aws cloudformation delete-stack --stack-name VPCEndpointsStack</code></li><li><strong>删除前清空 Amazon S3 桶</strong>（AWS CloudFormation 无法删除非空桶）：  <code>aws s3 rm s3://amzn-s3-demo-bucket --recursive</code></li><li><strong>删除存放容器镜像的 Amazon ECR repository</strong>：  <code>aws ecr delete-repository --repository-name lambda-pptx-gen --force aws ecr delete-repository --repository-name agentcore-supervisor --force</code></li><li><strong>删除租户知识库子 stack</strong>（由 tenant provisioner 创建）：  <code>aws cloudformation delete-stack --stack-name bedrock-kb-&lt;tenant-id&gt;</code></li></ul>
+<h2>安全考量</h2>
+<p>该方案用 Lambda 环境变量存放模型 ID、Amazon S3 桶名、guardrail ID 这类配置值。它们是资源标识符，不是密钥。对于生产部署，请用 AWS Secrets Manager 存放 API 密钥、数据库凭证这类敏感配置值。</p>
+<p>AgentCore runtime 上的 agent 运行在隔离容器里，并具备会话级隔离。每个用户会话都在自己的专属环境中运行，有助于避免跨会话的数据污染。</p>
+<h2>结论</h2>
+<p>在本文里，你用 Amazon Bedrock AgentCore 搭建了一个把企业文档生成自动化的 AI agent 系统。部署在 AgentCore runtime 上的 supervisor agent 把请求路由给专门负责文档创建和摘要的工具，在一次内部测试中把演示文稿的制作压缩到约 90 秒。</p>
+<p>RAG pipeline 让生成内容锚定在源文档上，Amazon Bedrock Guardrails 则校验内容合规。你可以把这套架构改造用于金融服务的自动化报告生成、工程团队的技术文档，或销售组织的方案建议书创作。</p>
+<p>要开始上手，请克隆 <a href="https://github.com/aws-samples/sample-generating-powerpoint-presentations-with-amazon-bedrock">GitHub 仓库</a> 并按设置说明操作。关于本文所用服务的更多信息，请参阅 <a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore 文档</a>、<a href="https://strandsagents.com/">Strands Agents SDK</a> 和 <a href="https://docs.aws.amazon.com/cdk/">AWS CDK 开发者指南</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>How Tamnoon built AI-powered cloud security remediation with…</title>
+      <title>Tamnoon 如何基于 Amazon Bedrock 构建 AI 驱动的云安全修复</title>
       <link>https://aws.amazon.com/blogs/machine-learning/how-tamnoon-built-ai-powered-cloud-security-remediation-with-amazon-bedrock/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-tamnoon-built-ai-powered-cloud-security-remediation-with-amazon-bedrock/</guid>
       <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：How Tamnoon built AI-powered cloud security remediation with Amazon Bedrock</description>
+      <description>原文标题：How Tamnoon built AI-powered cloud security remediation with Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Tamnoon 如何基于 Amazon Bedrock 构建 AI 驱动的云安全修复</h1>
+<p>关键的云暴露（exposure）堆积得比安全团队能关闭它们的速度更快。云原生应用保护平台（CNAPP）、云服务商以及安全态势扫描器产生的发现项（finding），数量超出任何团队所能分诊的上限，而风险就积累在「已检出」与「已修复」之间的那道缝隙里。绝大多数发现项无人问津，并不是因为它们难以修复。得有人去调查上下文、找出资源负责人、确认这个修复不会把生产环境搞挂，然后还要以超出人力规模的数量把它们做完。</p>
+<p>在这篇文章里，我们会分享 <a href="https://www.tamnoon.io/">Tamnoon</a> 如何在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 之上构建 Tami——一个 agentic 的云修复编排器——来弥合这道缝隙。Tami 会自主调查从 CNAPP 和云原生来源摄入的发现项，并评估修复是否安全。随后，在变更触及客户云的地方，它会带着护栏与治理来生成并编排这个修复。这一做法<a href="https://tamnoon.io/blog/how-tamnoon-rebuilt-cloud-remediation/">把关键云暴露降低了 90% 以上</a>，用时 90 天，且零生产事故。</p>
+<h2>关于 Tamnoon</h2>
+<p>Tamnoon 是一个 AI 驱动的云安全修复平台，与 CNAPP 协同工作。它的 AI 助手 Tami 帮助人类云安全专家在客户环境——AWS、Azure、Google Cloud 以及其他云服务商——中调查、排出优先级，并安全地修复错误配置和问题。</p>
+<p>Tamnoon 与团队已经在用的 CNAPP 和云原生工具集成，并把它们的发现项转化为经过校验、生产安全的修复。包括调查、优先级排序和修复规划在内的大部分工作，都发生在任何东西触达线上环境之前，这正是自动化修复能在规模化前提下值得信赖的原因。</p>
+<h2>云安全修复的挑战</h2>
+<p>一名安全工程师可能花上几个小时来调查一个发现项。而很多时候，它和另外几十个告警追溯到的其实是同一个根因。</p>
+<ul><li>告警数量压过人力：CNAPP 和扫描器会产生数千条发现项。团队无法把它们全部分诊，于是关键暴露悬而未决，风险持续累积数月。</li><li>调查靠人工且高度重复：每一条发现项都需要收集上下文——谁拥有这个资源、什么依赖它、修复是否安全。这会消耗资深工程师数小时，并且要对积压队列里的每一项重复一遍。</li><li>对生产影响的恐惧阻碍了自动化：团队不敢把修复自动化，因为他们拿不起「把生产环境搞挂」这个风险。没有「这个修复是安全的」这种信心，任何事情都不会推进。</li><li>被动式的优先级排序：没有办法把相关发现项聚类、也没有办法给修复置信度打分，团队只能线性地一条条处理告警，而不是去解决那个能一次消解很多问题的根因。</li></ul>
+<p>Tamnoon 的方案覆盖从发现项摄入到经过校验的修复这整条管线。平台把这些挑战视为相互关联的问题，而不是彼此孤立的问题。</p>
+<h2>方案总览</h2>
+<p>Tamnoon 带你从最初的发现项一路走到执行修复。平台从 CNAPP、云安全态势管理（CSPM）服务商和其他安全工具摄入发现项，把它们归一化成统一的 schema。接着用资产和暴露上下文对它们做富化，并排出优先级。此后由 agentic 层接管，使用一组各司其职的专用 AI agent，每个 agent 都运行在 AWS 上事件驱动、serverless 的架构中，因此每个阶段都能独立扩缩、并且安全地失败。</p>
+<h3>Amazon Bedrock 上的 agentic 架构</h3>
+<p>平台把工作分派给四个专用 agent，每个 agent 负责修复管线中一个独立的阶段：</p>
+<ul><li>调查 agent 借助从数百万真实客户云环境中学到的训练来确定上下文，并通过一层大语言模型（LLM）as-a-judge 的校验层来过滤这些上下文。它会就修复目标、运维范围以及云服务商特定的验证方式进行推理，产出只读的调查步骤和一份完整的调查计划。</li><li>安全评分 agent 为每个资产构建一条证据链，把自动化验证结果和分析师的结论结合起来。它会把每条发现项的修复归类为 SAFE、RISKY 或 AWAITING DATA，并带有刻意保守的倾向。拿不准时，它就降级。</li><li>修复 agent 只对安全 agent 判定为安全的发现项启动。它会对顺序、依赖关系和条件进行推理，然后产出一份修复计划，其中每一步都遵循「备份、修复、验证」的结构，并包含回滚指引。</li><li>代码生成 agent 把计划步骤转化为可执行的修复动作，但前提是输入护栏先筛查过相关性与 prompt injection。每一件产物都要过一个自动化的生成—复核循环，其中必须由另一个独立的 reviewer agent 批准输出。</li></ul>
+<h3>为什么选择 Amazon Bedrock</h3>
+<p>当 Tamnoon 团队着手构建 Tami 时，基础模型（FM）平台的选择会决定之后的一切。Tamnoon 的修复 agent 做的并不是同一类工作。有些要做深度调查推理，以理解一条安全发现项的根因；另一些处理高吞吐量的校验，快速而廉价地检查待执行的修复；还有一些要审阅生成的代码，在每一项任务上权衡质量与成本。把这些工作各自匹配到合适的模型，同时不为每一个模型单独拼一套集成——这是一条核心要求。</p>
+<p>正是这条要求让 Amazon Bedrock 成为自然之选。通过单一 API，每个 agent 都能调用最适合其任务的基础模型。能力最强的模型承担最难的推理；更经济的模型接手重复性高、吞吐量大的工作；面向复核的模型则优化输出质量与成本之间的取舍。因为是一套集成而不是很多套，模型可以随技术版图演进而替换或升级，不必每次都重新铺设架构。</p>
+<p>规模化之下的运维开销是决策中的另一个因素。随着请求量增长，Tamnoon 希望避免自己构建并维护一套在区域容量之间分配流量的逻辑。Amazon Bedrock 跨区域推理（Cross-Region inference）自动处理了这件事。它会把推理请求自动路由到所定义的地理边界内的最优 AWS Region，在无需任何自定义路由代码运行的情况下维持吞吐量。</p>
+<p>安全性是最后一条考量，而对一家云安全公司来说它没有商量余地。用 Bedrock 时，推理运行在 Tamnoon 自己的 AWS 环境之内，受 AWS Identity and Access Management（IAM）范围化权限的约束。敏感客户数据从不离开信任边界。这让团队有底气相信，支撑 Tami 的这套平台达到了 Tamnoon 对自己服务所要求的同一标准。</p>
+<h3>Tamnoon 如何与 CNAPP 和云安全工具集成</h3>
+<p>Tamnoon 位于安全团队已经在运行的检测工具的下游。Wiz、CrowdStrike、Palo Alto Cortex、Upwind、SentinelOne、Orca、Cyera 这样的 CNAPP，以及 AWS Security Hub、Amazon GuardDuty 这样的云原生服务，才是「环境里哪里有问题」的事实来源。Tamnoon 通过基于 API 的集成连接它们，并把发现项归一化成统一的格式，于是一处错误配置不管来自 Wiz 还是 GuardDuty 看起来都一样。检测工具仍然是地基，Tamnoon 交付的是紧随其后的端到端修复。</p>
+<p>对每一条它处理的发现项，Tami 都会给出一个修复置信度指标（Remediation Confidence Indicator，RCI）：SAFE、RISKY 或 AWAITING DATA。这个评级告诉团队哪些可以自动执行、哪些需要先由人工复核。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-21356-1-1.png" alt="Tamnoon 的 Tami 界面为云安全发现项标注修复置信度指标评级"></p>
+<p>图 1：Tamnoon 的实际运行效果</p>
+<h3>Tamnoon 的 AWS 架构</h3>
+<p>Tamnoon 完全运行在它自己的 AWS 账户内，按环境相互隔离。用户通过构建在 Amazon API Gateway 之上的单一安全入口访问平台，加密由 AWS Certificate Manager 管理，登录由 Amazon Cognito 处理。入口之后的一切都在横跨多个可用区（Availability Zone）的私有网络中运行，因此核心平台从不直接暴露到公网上。</p>
+<p>在这套环境内部，Tamnoon 结合了两种计算形态。Amazon Elastic Kubernetes Service（Amazon EKS）运行 dashboard 背后的常驻服务，而 AWS Lambda 承担收集发现项、分析发现项、执行修复这些事件驱动的工作。一组 AWS 消息与工作流服务，包括 Amazon EventBridge、Amazon Simple Queue Service（Amazon SQS）和 AWS Step Functions，把这些步骤协调起来，从而可靠地并行处理大量发现项，不会让某一条坏记录把其余的都卡住。</p>
+<p>AI 层运行在 Amazon Bedrock 上。<a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>——一个可用任意框架或模型大规模构建、连接并优化 agent 的平台——给 Tamnoon 的 agent 提供了一种受治理的方式来采取行动，而不是开放式的访问权限。随后 Amazon Bedrock Guardrails 会在任何东西向前推进之前，同时审查请求和生成的代码。支撑服务处理平台的其余部分：托管数据库与缓存负责状态，Amazon Simple Storage Service（Amazon S3）存放 playbook 与产物，AWS Secrets Manager 存放凭证，因此敏感的 key 从不驻留在应用代码里。</p>
+<p>在客户这一侧，AWS Cloud 边界左边的一切，都是客户接入 Tamnoon 的东西。他们可以关联自己的 AWS、Azure 和 Google Cloud 账户，插上他们的发现项所来自的安全工具，并连上他们希望交付结果的目的地，例如 Slack、Jira、ServiceNow 和 GitHub。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-21356-2-1.png" alt="Tamnoon 的 AWS 架构，包含客户连接、一个 Amazon API Gateway 入口、Amazon EKS 与 AWS Lambda 计算、消息服务，以及 Amazon Bedrock AI 层"></p>
+<p>图 2：Tamnoon 的 AWS 架构</p>
+<h3>Tamnoon 如何做到零生产事故</h3>
+<p>零生产事故对 Tamnoon 的客户来说是现实，而且这不是偶然。在 Tamnoon，自主性被安置在一套纵深防御（defense-in-depth）的安全架构之内，其中每一层都假设它前面那一层可能漏掉些什么。</p>
+<p>这一切在任何修复被起草之前就开始了。在一道独立的、聚焦于范围并刻意偏向谨慎的安全评估得出「这个改动可以安全地进行」的结论之前，不会写任何修复。此后，平台在「读」与「写」之间划出一条硬线。调查步骤会被校验为严格只读，因此「理解一个问题」这件事永远不会改动这个问题。只有修复路径被允许更改任何东西，而它做出的每一处更改都自带备份、验证和回滚步骤。</p>
+<p>这种纪律由持续的自我批判来加固。每一个生成步骤都配一个反思步骤，检查输出并把自己的批评反馈回再生成，因此系统始终在复核自己的工作，而不是直接相信它。这些建议也被牢牢锚在现实之上。agent 的输出会对照自动化执行结果、用户反馈，以及从真实已修复告警中提炼的训练数据来校验；当模型自己无法得出准确结果时，就把人拉进这个闭环。</p>
+<p>最后一道防线在执行的那一刻。AI 从不持有云凭证。相反，执行是由短时效、按租户范围限定的凭证居间代理的，这些凭证处于客户控制的信任之下，并运行在与规划这些工作的 agent 相互隔离、独立分开的隔离环境中。包裹这一切的是人类治理：修复走一条带完整审计轨迹的审批流程，而每一项 AI 能力在触达客户之前都在内部被验证过。</p>
+<h2>数据安全与合规</h2>
+<p>Tami 会对敏感的客户数据做推理：告警 payload、资源标识符、错误配置以及修复上下文。这些数据必须留在 AWS 信任边界之内、以最小权限运行、并保持可审计。统一到 Amazon Bedrock 上让这件事成为可能。</p>
+<h3>敏感内容留在 AWS 内部</h3>
+<p>每一个 Tami 工作负载都通过 <code>ChatBedrockConverse</code> 接口在 Amazon Bedrock 上调用 Anthropic Claude，而不是调用第三方的 LLM 端点。这一个选择就把整条 AI 供应链放进了单个 AWS 原生服务之下，这对客户数据的处理方式有实实在在的影响。推理完全运行在 Tamnoon 自己位于美国商用 Region 的 AWS 账户内，因此数据从不离开 AWS。有关各 Region 模型可用性的信息，参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock 按 AWS Region 划分的受支持模型</a>。因为 Bedrock 不会保留 prompt 或补全内容、也不用它们做训练，客户数据从一开始就不会到达任何外部供应商。</p>
+<p>即便工作负载扩容，这道边界依然成立。Bedrock 的跨区域推理会自动把请求路由到美国地理边界内的各个 Region，提升应用可用的吞吐量。它背后的计算同样保持私有。每个服务都作为挂到虚拟私有云（VPC）上的 AWS Lambda 函数运行，位于私有子网中，配有明确的安全组、没有公网入站、出站受到严格控制。</p>
+<h3>守住进入模型的内容</h3>
+<p>payload 可能携带敏感细节，因此 Tami 对每一个请求和响应都施加 Amazon Bedrock Guardrails。这套策略在 Bedrock 层强制执行，意味着它统一覆盖全部三个服务，而任何一个函数自己的 prompt 逻辑都无法绕过它。这单一的强制点同时做好几件事。</p>
+<p>首先，它保护敏感数据。PII 和类似 secret 的内容在被持久化或被呈现出来之前就会被遮蔽，因此没有敏感信息会滞留在不该在的地方。它同时防范 prompt injection——这很重要，因为 Tami 推理的对象是不可信的发现项，未经授权的用户有可能对它施加影响。在护栏层做过滤，能阻止一个精心构造的 payload 劫持模型或外泄上下文。最后，denied topics 与内容过滤器把模型的输出限定在安全修复这一件事上，其他一概不做。每一次干预都会与 AWS CloudTrail 一并记录，给企业客户提供一条清晰的治理证据链。</p>
+<h3>最小权限访问</h3>
+<p>整个平台的访问都经由一个每服务专属的 IAM 执行角色，因此每个函数只能触达它需要的东西，多一点都不行。这一原则在 Tami 触碰 Amazon Bedrock 的方式上最容易看清。它唯一的 Bedrock 权限是 <code>bedrock:InvokeModel</code>，范围限定到具体的 inference-profile 和基础模型 ARN。它没有任何管理、训练或导出模型的能力。</p>
+<p>同样的纪律延伸到每一个其他依赖。对 AWS Secrets Manager 的访问仅限于某个函数实际使用的那两个 secret，SQS 访问被限制在它自己的输入队列，Amazon CloudWatch 写入按命名空间受限。整个设计里没有任何宽泛的、包打天下的角色。函数只挂载受管策略 <code>AWSLambdaBasicExecutionRole</code> 和 <code>AWSLambdaVPCAccessExecutionRole</code>，绝不比这更宽。</p>
+<h3>多租户隔离与治理</h3>
+<p>把租户彼此分开是一项基础性要求，它从第一次调用起就被强制执行。服务之间的调用使用经由 Cognito 的 OAuth2 client credentials，按应用限定范围，并且工作是一次一条 SQS 消息地处理，消息上带着它的租户上下文。结果就是，一次调用永远只触达一个租户的数据。</p>
+<p>这种保证有很大一部分来自把整个平台当作代码来对待。IAM 策略、网络位置、模型 ID 和告警都存在于带版本管理的 AWS CloudFormation 和 SAM 模板里，因此每一项权限和模型版本都能在源代码管理中被审阅，没有会漂移出同步状态的手工控制台改动。模型版本尤其被钉死到带日期的标识符上，例如 <code>claude-sonnet-4-5-20250929</code>，这意味着换模型永远是一次显式、经过审阅的代码改动，而不是一次悄无声息的升级。</p>
+<p>这种透明度一直贯穿到运行时。每一次推理调用都落在 AWS CloudTrail 里，可归因到发起调用的角色；而把 temperature 设为零的确定性解码，让打分和规划在一次运行与下一次运行之间保持一致。失败处理以同样的严苛被治理。每个服务都有一条带 redrive 的输入队列、一个错误处理函数、一条死信队列，以及针对超时和 DLQ 深度并连到 on-call 的 CloudWatch 告警。故障是被收敛且可观测的，绝不会悄无声息地被丢弃。</p>
+<h2>成果与影响</h2>
+<p>Tami 已经在 Tamnoon 的客户群里分析过 1400 多万条云告警，这个数字记录在 Tamnoon 的 <a href="https://tamnoon.io/state-of-cloud-remediation/">2026 云修复状况报告</a>中。Tami 做出的决策反映的是从这些真实世界环境中习得的模式。</p>
+<p>对一个典型客户而言，结果出现得很快，通常在 90 天之内。</p>
+<table><thead><tr><th><strong>指标</strong></th><th><strong>之前</strong></th><th><strong>之后</strong></th></tr></thead><tbody><tr><td>关键云暴露</td><td>告警增速超过人力，风险累积数月</td><td>90 天内最高降低 90%（<a href="https://tamnoon.io/blog/how-tamnoon-rebuilt-cloud-remediation/">来源</a>）</td></tr><tr><td>修复效率</td><td>数千条原始告警，没有清晰的优先级排序</td><td>通过根因聚类获得最高 100 倍效率（<a href="https://tamnoon.io/blog/how-tamnoon-rebuilt-cloud-remediation/">来源</a>）</td></tr><tr><td>生产事故</td><td>团队因为风险而回避自动化</td><td>在数百万工作负载上零生产事故</td></tr><tr><td>工程师时间</td><td>每条发现项数小时，并在积压队列上反复</td><td>整个客户群每周省下 13,000+ 小时（<a href="https://tamnoon.io/blog/how-tamnoon-rebuilt-cloud-remediation/">来源</a>）</td></tr></tbody></table>
+<p>压缩幅度与零事故这两个数字出自 Tamnoon 的研究。规律是一致的：未解决的暴露更少、人工工作大幅减少、修复本身没有造成任何停机。</p>
+<h2>结论</h2>
+<p>构建一个能对云发现项进行推理的 agent，是直截了当的那部分。构建一个你敢让它对生产环境采取行动的 agent，才是难的那部分。Amazon Bedrock 是一项完全托管的服务，它提供对高性能基础模型的访问，以及构建 agentic 应用所需的工具：编排、工具使用和护栏，全部通过单一 API。这个组合在这里之所以重要，有一个很具体的原因：对生产云基础设施采取行动，同时需要强推理和硬的安全边界。</p>
+<p>有四件事让这成为可能：</p>
+<ul><li>你的暴露真的被关闭：Tamnoon 作用在真实运行的云基础设施上，不是作用在工单或工作流自动化上。积压队列是在往下走，而不是往旁边挪。</li><li>自主性扩容而不带来生产风险：每一个待执行的动作都带着一个置信度评级。SAFE 的动作可以自动执行，而 AWAITING DATA 或 RISKY 的动作会引入 Tamnoon 内置的云工程师。</li><li>跑在你已经买下的技术栈上：Tamnoon 构建在主流 CNAPP 和云安全工具之上。你已经在付钱的每一个检测工具都开始回本，因为它们的发现项终于被关闭了。</li><li>团队产能扩张而不用扩人：快速、安全地采用前沿 AI，意味着每位分析师能关闭更多暴露，不需要新增人手。</li></ul>
+<h2>下一步</h2>
+<p>要以类似的架构起步，可以考虑以下几点：</p>
+<ul><li>探索 <a href="https://aws.amazon.com/bedrock">Amazon Bedrock</a> 以及通过它可用的模型。</li><li>查阅 <a href="https://docs.aws.amazon.com/bedrock/">Amazon Bedrock 文档</a> 来规划你的架构。</li><li>与 Tamnoon <a href="https://tamnoon.io/demo/">预约一次演示</a>，看看你的关键云暴露中未来 90 天内能关闭多少。</li></ul>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Deploy and evaluate models with Amazon SageMaker JumpStart</title>
+      <title>用 Amazon SageMaker JumpStart 部署并评估模型</title>
       <link>https://aws.amazon.com/blogs/machine-learning/deploy-and-evaluate-models-with-amazon-sagemaker-jumpstart/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/deploy-and-evaluate-models-with-amazon-sagemaker-jumpstart/</guid>
       <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Deploy and evaluate models with Amazon SageMaker JumpStart</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>用 Amazon SageMaker JumpStart 部署并评估模型</h1>
+<p>为某个具体应用选对模型，需要一种务实的办法，用有代表性的输入去测试它。Amazon SageMaker JumpStart 提供了一个庞大目录的访问能力，其中的模型都已完成预训练。在本文里，我们演示如何部署一个 SageMaker JumpStart 中可用的模型，如何用 SageMaker Python SDK 跑一次轻量且可重复的性能测试，以及测试结束后如何删除 endpoint。就受支持的模型与可用容量而言，这个工作流提供了一条可重复的评估路径，尽管部署耗时会随模型、实例类型、配额和 AWS Region 而变化。</p>
+<p>2026 年，SageMaker JumpStart 引入了两项简化模型发现与部署的改进。在 Amazon SageMaker AI 控制台的 Model Hub 区块，你可以浏览 SageMaker JumpStart 目录、查看示例 notebook，并直接在 SageMaker Studio 中打开它们。预先配置好的 endpoint 部署选项提供了一批具名配置，针对低成本、低延迟或通用工作负载这类优先级做过优化，覆盖多种生成式 AI 模型，其中也包括 Neuron 优化配置。此外，借助新的 deep link 集成，你现在可以一键从 Hugging Face 的模型发现走到 SageMaker AI 的部署。</p>
+<h2>方案概览</h2>
+<p>我们的做法使用一个可复用的 Python 脚本，它执行三个步骤：</p>
+<ul><li>从 SageMaker JumpStart 发现并部署一个模型。</li><li>运行模型专属的示例 prompt，并测量延迟、近似输出长度与单请求生成速率。</li><li>清理 endpoint。</li></ul>
+<p>这个模式适用于许多兼容的 SageMaker JumpStart 模型，不过 payload 格式、所需实例类型、最终用户许可协议（EULA）要求以及响应 schema 可能需要按具体模型做调整。</p>
+<h2>前置条件</h2>
+<ul><li>一个具备 SageMaker AI 权限的 AWS 账户。</li><li>Python 3+，并且安装了 SageMaker Python SDK v3（<code>pip install &quot;sagemaker&gt;=3,&lt;4&quot;</code>）。</li><li>为你想要测试的模型预留足够的 GPU 实例配额，或者<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/studio-updated-launch.html#studio-updated-launch-quotas">申请提高配额</a>。</li></ul>
+<h2>步骤 1.a：发现可用的模型</h2>
+<p>在 SageMaker JumpStart 中查找模型的 UI 路径：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22153-1.png" alt="SageMaker Studio 的 JumpStart Models 页面，展示带有 spotlight 与文本生成模型及筛选器的模型目录"></p>
+<p>图 1：在 SageMaker Studio 的 SageMaker JumpStart Models 页面浏览模型目录</p>
+<p>使用 SageMaker Python SDK 的代码路径：</p>
+<pre><code>from sagemaker.core.jumpstart.notebook_utils import (
+    list_jumpstart_models,
+)
+
+REGION = &quot;us-east-1&quot;
+
+models = list_jumpstart_models(
+    filter=&quot;task == textgeneration&quot;,
+    region=REGION,
+    list_versions=True,
+)
+
+print(f&quot;Found {len(models)} text generation models&quot;)
+
+for model_id, model_version in models[:10]:
+    print(
+        f&quot; - {model_id} &quot;
+        f&quot;(version {model_version})&quot;
+    )</code></pre>
+<p>或者按模型名称搜索：</p>
+<pre><code>from sagemaker.core.jumpstart.notebook_utils import list_jumpstart_models
+
+ids = list_jumpstart_models(
+    filter=&quot;model_id contains qwen&quot;,
+    region=REGION,
+    list_versions=True,
+)
+
+print(f&quot;{len(ids)} models matched in {REGION}\n&quot;)
+
+for model_id, version in ids:
+    print(f&quot;{model_id:&lt;55} v{version}&quot;)</code></pre>
+<h2>步骤 1.b：部署模型</h2>
+<p>从 SageMaker JumpStart 部署模型的 UI 路径：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22153-2.png" alt="Qwen3.8 27B 的 JumpStart 模型详情页，高亮显示 Deploy 按钮并列出模型能力"></p>
+<p>图 2：在 SageMaker Studio 中从模型的 SageMaker JumpStart 详情页部署模型</p>
+<p>使用 SageMaker Python SDK 的代码路径：</p>
+<pre><code>import time
+
+from sagemaker.core.jumpstart.accessors import JumpStartModelsAccessor
+from sagemaker.core.jumpstart.configs import JumpStartConfig
+from sagemaker.core.training.configs import Compute
+from sagemaker.serve import ModelBuilder
+
+MODEL_ID = &quot;huggingface-vlm-qwen3-5-27b&quot;
+MODEL_VERSION = &quot;1.13.0&quot;
+REGION = &quot;us-east-1&quot;
+ACCEPT_EULA = False  # Set True only after reviewing the model terms
+
+def get_field(value, name, default=None):
+    if isinstance(value, dict):
+        return value.get(name, default)
+    return getattr(value, name, default)
+
+# Resolve the JumpStart-recommended deployment configuration.
+specs = JumpStartModelsAccessor().get_model_specs(
+    region=REGION,
+    model_id=MODEL_ID,
+    version=MODEL_VERSION,
+)
+
+if isinstance(specs, list):
+    if not specs:
+        raise ValueError(
+            f&quot;No JumpStart specification found for {MODEL_ID}&quot;
+        )
+    specs = specs[0]
+
+recommended_instance_type = get_field(
+    specs,
+    &quot;default_inference_instance_type&quot;,
+)
+
+if not recommended_instance_type:
+    raise ValueError(
+        f&quot;No recommended instance type found for {MODEL_ID}&quot;
+    )
+
+print(f&quot;Model: {MODEL_ID}&quot;)
+print(f&quot;Region: {REGION}&quot;)
+print(f&quot;Recommended instance: {recommended_instance_type}&quot;)
+
+start = time.time()
+
+jumpstart_config = JumpStartConfig(
+    model_id=MODEL_ID,
+    model_version=MODEL_VERSION,
+    accept_eula=ACCEPT_EULA,
+)
+
+model_builder = ModelBuilder.from_jumpstart_config(
+    jumpstart_config=jumpstart_config,
+    compute=Compute(
+        instance_type=recommended_instance_type,
+        instance_count=1,
+    ),
+)
+
+model = model_builder.build()
+endpoint = model_builder.deploy()
+deploy_time = time.time() - start
+
+print(f&quot;Deployed in {deploy_time:.1f} seconds&quot;)
+print(f&quot;Endpoint: {endpoint.endpoint_name}&quot;)</code></pre>
+<h2>步骤 2：运行示例 prompt 并测量性能</h2>
+<pre><code>from sagemaker.core.payloads import retrieve_all_examples
+import json
+import time
+
+MODEL_ID = &quot;huggingface-vlm-qwen3-5-27b&quot;
+MODEL_VERSION = &quot;1.13.0&quot;
+REGION = &quot;us-east-1&quot;
+
+example_payloads = retrieve_all_examples(
+    region=REGION,
+    model_id=MODEL_ID,
+    model_version=MODEL_VERSION,
+    serialize=True,
+)
+
+#you can re-create the endpoint pointer using the endpoint name:
+#from sagemaker.core.resources import Endpoint
+#endpoint = Endpoint.get(endpoint_name=&quot;&lt;your_endpoint_name&gt;&quot;,region=REGION)
+
+def read_response_body(result):
+    body = result.body
+    if hasattr(body, &quot;read&quot;):
+        body = body.read()
+    if isinstance(body, bytes):
+        body = body.decode(&quot;utf-8&quot;)
+    if isinstance(body, str):
+        try:
+            return json.loads(body)
+        except json.JSONDecodeError:
+            return body
+    return body
+
+def extract_output(response):
+    &quot;&quot;&quot;Handle common JumpStart text-generation response formats.&quot;&quot;&quot;
+    if isinstance(response, list):
+        response = response[0] if response else &quot;&quot;
+    if isinstance(response, dict):
+        choices = response.get(&quot;choices&quot;)
+        if choices:
+            choice = choices[0]
+            message = choice.get(&quot;message&quot;)
+            if isinstance(message, dict):
+                return message.get(&quot;content&quot;, &quot;&quot;)
+            return choice.get(&quot;text&quot;, &quot;&quot;)
+        for field in (
+            &quot;generated_text&quot;,
+            &quot;output_text&quot;,
+            &quot;text&quot;,
+        ):
+            if field in response:
+                return response[field]
+    return response
+
+results = []
+
+for payload in example_payloads or []:
+    start = time.perf_counter()
+    result = endpoint.invoke(
+        body=payload.body,
+        content_type=payload.content_type,
+        accept=payload.accept,
+    )
+    latency = time.perf_counter() - start
+    response = read_response_body(result)
+    output = extract_output(response)
+    if not isinstance(output, str):
+        output = json.dumps(output, indent=2)
+    # This is an estimate based on whitespace-separated words.
+    output_words = len(output.split())
+    results.append(
+        {
+            &quot;request_preview&quot;: payload.body[:50],
+            &quot;latency_s&quot;: round(latency, 2),
+            &quot;estimated_output_words&quot;: output_words,
+            &quot;words_per_second&quot;: round(
+                output_words / latency,
+                1,
+            ) if latency &gt; 0 else 0,
+        }
+    )
+    print(&quot;Input:\n&quot;, payload.body, end=&quot;\n\n&quot;)
+    print(&quot;Output:\n&quot;, output, end=&quot;\n\n&quot;)
+    print(
+        f&quot;Latency: {latency:.2f} seconds\n&quot;
+        f&quot;Estimated output words: {output_words}\n&quot;
+        f&quot;Estimated single-request output generation rate: &quot;
+        f&quot;{output_words / latency:.1f} words/second\n&quot;
+    )
+    print(&quot;-&quot; * 80)
+
+print(&quot;\nSummary:&quot;)
+for result in results:
+    print(result)</code></pre>
+<p>结果：</p>
+<pre><code>Input:
+{&quot;max_tokens&quot;: 256, &quot;messages&quot;: [{&quot;content&quot;: &quot;What is deep learning?&quot;, &quot;role&quot;: &quot;user&quot;}], &quot;model&quot;: &quot;/opt/ml/model&quot;}
+Output:
+Here's a thinking process that leads to the explanation of deep learning:
+1. **Deconstruct the Request:**
+* **Question:** &quot;What is deep learning?&quot;
+* **Intent:** The user wants a clear, comprehensive, yet accessible definition and overview of deep learning.
+* **Target Audience:** Likely someone looking for a general understanding, possibly a student, tech
+enthusiast, or professional exploring the field. The tone should be informative, structured, and
+not overly jargon-heavy (though key terms need explanation).
+2. **Initial Brainstorming &amp; Key Concepts:**
+* What is it? A subset of machine learning, which is a subset of AI.
+* Core mechanism: Artificial Neural Networks (ANNs).
+* &quot;Deep&quot; means many layers (hidden layers).
+* How does it work? Learning representations from data (feature learning).
+* Key applications: Image recognition, NLP, speech, self-driving cars.
+* Why is it popular now? Big data, GPU power, better algorithms.
+* Pros/Cons: High accuracy vs. black box, data hunger.
+3. **Structuring the Answer:**
+Latency: 9.07 seconds
+Estimated output words: 153
+Estimated single-request output generation rate: 16.9 words/second
+--------------------------------------------------------------------------------
+Summary:
+{'request_preview': '{&quot;max_tokens&quot;: 256, &quot;messages&quot;: {&quot;content&quot;: &quot;What', 'latency_s': 9.07, 'estimated_output_words': 153, 'words_per_second': 16.9}</code></pre>
+<h2>步骤 3：清理</h2>
+<pre><code>print(f&quot;Deleting endpoint: {endpoint.endpoint_name}&quot;)
+endpoint.delete()
+endpoint.wait_for_delete()
+print(&quot;Endpoint deleted&quot;)</code></pre>
+<h2>结论</h2>
+<p>这个模式适用于许多可用的 SageMaker JumpStart 模型，但 payload 格式、所需实例类型、EULA 以及响应解析可能需要按具体模型做调整。通过使用一致的测试 prompt，并在各模型之间测量延迟、吞吐量与输出质量，你可以比较各个选项，为你的工作负载选出合适的方案。</p>
+<p>拿 Amazon SageMaker JumpStart 里的不同模型试试这个方法，为你的应用找到质量、速度与成本之间的合适平衡。</p>
+<h2>参考资料</h2>
+<ul><li><a href="https://sagemaker.readthedocs.io/en/stable/overview.html">SageMaker Python SDK 文档</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/benchmark-and-optimize-endpoint-deployment-in-amazon-sagemaker-jumpstart/">对 SageMaker JumpStart 部署做基准测试与优化（博客文章）</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/from-hugging-face-to-amazon-sagemaker-studio-in-one-click-2/">一键从 Hugging Face 到 SageMaker Studio（博客文章）</a></li><li><a href="https://aws.amazon.com/sagemaker/ai/jumpstart/">Amazon SageMaker JumpStart</a></li></ul>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>用 Anchor Browser 与 AgentCore payments 构建能完成交易的智能体</title>

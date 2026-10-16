@@ -9,11 +9,46 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Wed, 14 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Private Endpoints: Bring Your Fine-Tuned Models and Capacity…</title>
+      <title>Private Endpoints：把你的微调模型与算力接入 OpenRouter</title>
       <link>https://openrouter.ai/blog/announcements/private-endpoints/</link>
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/private-endpoints/</guid>
       <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Private Endpoints: Bring Your Fine-Tuned Models and Capacity to OpenRouter</description>
+      <description>原文标题：Private Endpoints: Bring Your Fine-Tuned Models and Capacity to OpenRouter</description>
+      <content:encoded><![CDATA[<h1>Private Endpoints：把你的微调模型与算力接入 OpenRouter</h1>
+<p>Brian Thomas ·10/14/2026</p>
+<p><img src="https://openrouter.ai/blog/images/private-endpoints.png" alt="Private Endpoints：把你的微调模型与算力接入 OpenRouter"></p>
+<p>今天我们发布 Private Endpoints。OpenRouter 已经把你团队在用的公开模型收在一个 API 之后。现在它也能服务只有你团队才有的那些部署。如果你运行着一个微调模型、一个公开模型的专属部署，或者你在某个提供商那里预留的算力，你可以把它和目录里的其他一切一起通过 OpenRouter 路由。你的团队继续沿用今天的 API、模型 slug 和路由偏好。私有 endpoint 只在你自己的组织内可见。</p>
+<p>Private Endpoints 是 Enterprise 套餐的附加组件。请让你的客户经理为你的组织启用它，或者<a href="https://openrouter.ai/enterprise/form">和团队聊聊</a>。</p>
+<h2>你能用它做什么</h2>
+<p>微调模型和预留算力，以前意味着在 OpenRouter 旁边再做一套集成。现在你把该部署注册为一个私有 endpoint，就能用你已经在用的 API 调用它，并且可以在它宕机或触达速率限制时把公开提供商作为可选备份。只有你批准的组织看得到它，而且它绝不会出现在公开的模型列表、排名、搜索、图表或基准里。</p>
+<p>比如，如果你的组织有一个 <a href="https://openrouter.ai/deepseek/deepseek-v4-pro">DeepSeek V4 Pro</a> 的 Azure 专属部署，你可以把它注册为 <code>deepseek/deepseek-v4-pro</code> 的私有 endpoint，你的应用继续调用那个 slug。对你的组织而言，它默认会被挪到提供商列表的最前面，而 <a href="https://openrouter.ai/docs/guides/routing/model-fallbacks">Model Fallbacks</a>、<a href="https://openrouter.ai/docs/guides/routing/provider-selection">Provider Selection</a> 以及路由的其余部分，都像对任何提供商那样照常工作。OpenRouter 通过 <a href="https://openrouter.ai/docs/guides/overview/auth/byok">BYOK</a> 用你的 Azure key 访问它，所以由 Azure 直接向你计费。</p>
+<p>预留算力也享受同样待遇。把一个私有 endpoint 指向它，你组织的流量默认就优先走那里。当它被限流或不可用时，OpenRouter 可以把溢出的请求发给公开提供商，并且始终在你设定的提供商偏好与 BYOK 回退设置之内。</p>
+<h2>设置一个 endpoint</h2>
+<p>Private Endpoints 启用后，组织管理员在你账户的 <a href="https://openrouter.ai/settings/private-endpoints">Private Endpoints</a> 页面注册该部署。该部署必须由我们为 <a href="https://openrouter.ai/docs/guides/overview/auth/byok">BYOK</a> 支持的提供商托管，因为 OpenRouter 是用你自己的 key 去访问它的。它还必须服务一个已经在 OpenRouter 目录里的模型，因为它会继承那个模型的 slug 与能力。你可以附上自己的定价，好让这个 endpoint 在成本报表里准确显示；你还要声明该部署是否保留 prompt。</p>
+<p><img src="https://openrouter.ai/blog/images/private-endpoints-wizard.png" alt="「Add private endpoint」向导处于 Blueprint 步骤，后面还有 Connect、Test 和 Activate 三步。目录模型设为 Anthropic: Claude Haiku 5.5，BYOK 提供商列表处于展开状态。"></p>
+<p>在任何流量路由到新 endpoint 之前，OpenRouter 会通过你在某个 workspace 中保存的提供商 key 发出一次真实请求。这次请求用来证明 key 被接受、该部署说 OpenAI 兼容格式、流式可用、usage 能返回以用于计费，并且 model ID 与你注册的相一致。一旦通过，你就激活该 endpoint，你组织内的各个 workspace 便能用模型 slug 调用它。在此之前它保持隐藏，也无法被调用。</p>
+<h2>用代码管理 endpoint</h2>
+<p>如果你运行的 endpoint 不止一小把，或者你把基础设施写在代码里，那可以跳过设置页面。<a href="https://openrouter.ai/docs/api/api-reference/private-endpoints/list-private-endpoints">Private Endpoints API</a> 覆盖整个生命周期，从注册一个草稿、跑测试校验，一直到激活、更新定价、暂停和删除。它用组织的 <a href="https://openrouter.ai/docs/guides/overview/auth/management-api-keys">Management API key</a> 鉴权，而一次 create 调用就能完成 endpoint 的注册、测试与激活。</p>
+<pre><code>curl https://openrouter.ai/api/v1/private-endpoints \
+  -H &quot;Authorization: Bearer $OPENROUTER_MANAGEMENT_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Idempotency-Key: gpt-4o-prod&quot; \
+  -d '{
+    &quot;model_permaslug&quot;: &quot;openai/gpt-4o-2024-08-06&quot;,
+    &quot;provider_slug&quot;: &quot;openai&quot;,
+    &quot;base_url&quot;: &quot;https://api.openai.com/v1&quot;,
+    &quot;upstream_model_id&quot;: &quot;gpt-4o-2024-08-06&quot;,
+    &quot;pricing&quot;: { &quot;prompt&quot;: &quot;0.0000025&quot;, &quot;completion&quot;: &quot;0.00001&quot; },
+    &quot;activate&quot;: { &quot;workspace_id&quot;: &quot;&lt;workspace-id&gt;&quot; }
+  }'</code></pre>
+<p>如果测试校验失败，草稿会被保留，并连同失败的校验项一起返回，这样你可以修补它再试一次。<code>Idempotency-Key</code> 请求头让重试变得安全（重复的 key 会返回第一次请求创建的那个 endpoint）。<a href="https://openrouter.ai/docs/guides/overview/terraform">OpenRouter Terraform provider</a> 把这一切封装成一个 <code>openrouter_private_endpoint</code> 资源，于是 <code>terraform apply</code> 会注册、测试并激活该 endpoint，而 <code>terraform destroy</code> 会把它移除。</p>
+<h2>值得知道</h2>
+<ul><li>把 endpoint 标记为私有，并不会让它成为一个 <a href="https://openrouter.ai/docs/guides/features/zdr">Zero Data Retention</a> endpoint。你的提供商处理 prompt 的方式和以前完全一样，而 OpenRouter 会记录你在注册该部署时声明的数据策略。</li><li>如果 OpenRouter 能从其地址判断出区域，或者你在设置时声明了一个区域，私有 endpoint 就可以使用 <a href="https://openrouter.ai/blog/announcements/us-in-region-routing/">In-Region Routing</a>。发往 <code>us.openrouter.ai</code> 或 <code>eu.openrouter.ai</code> 的请求随后会被路由到该区域内你的部署。<a href="https://openrouter.ai/docs/guides/features/in-region-routing#byok-with-in-region-routing">In-Region Routing 指南</a>列出了受支持的提供商。</li><li>每个调用该 endpoint 的 workspace 都必须把你的提供商 key 保存在 BYOK 下，设置期间的测试请求同样需要它在那里。</li><li>每个组织默认最多可有 10 个私有 endpoint，仍在设置中的 endpoint 也计入这个上限。</li></ul>
+<p><img src="https://openrouter.ai/blog/images/private-endpoints-blueprint.png" alt="Blueprint 步骤的数据区域与 Zero Data Retention 选项，已选中 United States (us.openrouter.ai) 和 zero data retention，其下方是可选的 prompt 价格字段。"></p>
+<h2>开始使用</h2>
+<p>Private Endpoints 是 Enterprise 套餐的附加组件。请让你的客户经理为你的组织启用它，或者<a href="https://openrouter.ai/enterprise/form">和团队聊聊</a>。</p>
+<p>启用之后，组织管理员可以在你账户的 <a href="https://openrouter.ai/settings/private-endpoints">Private Endpoints</a> 页面添加你们的第一个 endpoint，也可以用 Management API key 通过 <a href="https://openrouter.ai/docs/api/api-reference/private-endpoints/list-private-endpoints">Private Endpoints API</a> 来添加。</p>
+<p><a href="https://openrouter.ai/docs/guides/routing/private-models">阅读文档了解更多信息</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>ElevenLabs 现已上线 OpenRouter</title>

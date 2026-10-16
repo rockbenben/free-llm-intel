@@ -9,10 +9,10 @@
 
 ## 全部文章（共 34 篇，按日期倒序；无日期条目列于最后）
 
-1. [TypeSafe Jev Review: Testing 5 Jobs on a Non-Chat Model](https://deepinfra.com/blog/typesafe-jev-review)（2026-10-15）
-2. [AI Spend Audit: How to Reduce Costs With Open Models](https://deepinfra.com/blog/ai-spend-audit-open-models)（2026-10-15）
-3. [From Screenshots to Tool Calls: NVIDIA Nemotron 3.5 Super VL on DeepInfra](https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release)（2026-10-15）
-4. [Western Open-Weight Models: Beam and Le Chonk](https://deepinfra.com/blog/western-open-weight-models-beam-le-chonk)（2026-10-14）
+1. [TypeSafe Jev 评测：在一个非聊天模型上测试 5 项任务](https://deepinfra.com/blog/typesafe-jev-review)（2026-10-15） <!--orig:TypeSafe Jev Review: Testing 5 Jobs on a Non-Chat Model-->
+2. [AI 支出审计：如何用开放模型削减成本](https://deepinfra.com/blog/ai-spend-audit-open-models)（2026-10-15） <!--orig:AI Spend Audit: How to Reduce Costs With Open Models-->
+3. [从截图到 tool call：DeepInfra 上的 NVIDIA Nemotron 3.5 Super VL](https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release)（2026-10-15） <!--orig:From Screenshots to Tool Calls: NVIDIA Nemotron 3.5 Super VL on DeepInfra-->
+4. [西方开放权重模型：Beam 与 Le Chonk](https://deepinfra.com/blog/western-open-weight-models-beam-le-chonk)（2026-10-14） <!--orig:Western Open-Weight Models: Beam and Le Chonk-->
 5. [决策模型：AI 智能体的快速层](https://deepinfra.com/blog/decision-models-ai-agent-infrastructure)（2026-10-13） <!--orig:Decision Models: The Fast Layer for AI Agents-->
 6. [最佳 Qwen3.8-27B 推理提供商（2026）](https://deepinfra.com/blog/best-qwen3-8-27b-inference-providers)（2026-10-10） <!--orig:Best Qwen3.8-27B Inference Providers (2026)-->
 7. [Qwen3.8-27B：前沿级视觉语言 AI](https://deepinfra.com/blog/qwen3-8-27b)（2026-10-09） <!--orig:Qwen3.8-27B: Frontier-Level Vision-Language AI-->

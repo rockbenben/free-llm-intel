@@ -9,7 +9,7 @@
 
 ## 全部文章（共 78 篇，按日期倒序；无日期条目列于最后）
 
-1. [Running Ray at scale on Kubernetes with KubeRay](https://anyscale.com/blog/kuberay)（2026-10-15）
+1. [用 KubeRay 在 Kubernetes 上大规模运行 Ray](https://anyscale.com/blog/kuberay)（2026-10-15） <!--orig:Running Ray at scale on Kubernetes with KubeRay-->
 2. [在 Anyscale 上用 Ray 扩展机器人决策研究的规模](https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale)（2026-10-09） <!--orig:Scaling the Science of Robot Decisions with Ray on Anyscale-->
 3. [编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08） <!--orig:Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale-->
 4. [Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理](https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai)（2026-10-07） <!--orig:Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference-->

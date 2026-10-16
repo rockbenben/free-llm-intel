@@ -9,7 +9,7 @@
 
 ## 全部文章（共 84 篇，按日期倒序；无日期条目列于最后）
 
-1. [Meta Muse Spark Open is live on Together AI](https://www.together.ai/blog/meta-muse-spark-open)（2026-10-15）
+1. [Meta Muse Spark Open 已在 Together AI 上线](https://www.together.ai/blog/meta-muse-spark-open)（2026-10-15） <!--orig:Meta Muse Spark Open is live on Together AI-->
 2. [与 IBM Cloud 和 NVIDIA 合作，扩展我们的企业推理容量](https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia)（2026-10-06） <!--orig:Expanding our enterprise inference capacity with IBM Cloud and NVIDIA-->
 3. [Together Link：在你已在用的 harness 中用上前沿品质的开放模型](https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use)（2026-10-05） <!--orig:Together Link: open models in the harness you already use. Start with one command today.-->
 4. [花 17 美元训练你自己的 Jev](https://www.together.ai/blog/how-to-train-your-own-jev)（2026-09-23） <!--orig:How to train your own Jev for $17-->

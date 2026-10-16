@@ -9,13 +9,13 @@
 
 ## 全部文章（共 44 篇，按日期倒序；无日期条目列于最后）
 
-1. [Cohere to acquire AISLE to advance cyber-resilient sovereign AI](https://cohere.com/blog/cohere-and-aisle-sign-letter-of-intent-to-advance-cyber-resilient-sovereign-ai)（2026-10-15）
-2. [AI for utilities requires capability and control](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)（2026-10-15）
-3. [Agent sprawl: How to manage agent proliferation in the enterprise](https://cohere.com/blog/agent-sprawl)（2026-10-15）
-4. [AI ROI: How enterprises can measure the return on AI investments](https://cohere.com/blog/ai-roi)（2026-10-15）
-5. [Lessons from scaling teams of coding agents: reach the frontier at 30% of the cost](https://cohere.com/blog/lessons-from-scaling-teams-of-frontier-coding-agents)（2026-10-14）
+1. [Cohere 将收购 AISLE 以推进抗网络攻击的主权 AI](https://cohere.com/blog/cohere-and-aisle-sign-letter-of-intent-to-advance-cyber-resilient-sovereign-ai)（2026-10-15） <!--orig:Cohere to acquire AISLE to advance cyber-resilient sovereign AI-->
+2. [公用事业的 AI 需要能力，也需要控制](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)（2026-10-15） <!--orig:AI for utilities requires capability and control-->
+3. [Agent 蔓延：如何在企业里管理 agent 的激增](https://cohere.com/blog/agent-sprawl)（2026-10-15） <!--orig:Agent sprawl: How to manage agent proliferation in the enterprise-->
+4. [AI ROI：企业如何衡量 AI 投资的回报](https://cohere.com/blog/ai-roi)（2026-10-15） <!--orig:AI ROI: How enterprises can measure the return on AI investments-->
+5. [扩展 coding agent 团队的经验教训：用 30% 的成本触达前沿水平](https://cohere.com/blog/lessons-from-scaling-teams-of-frontier-coding-agents)（2026-10-14） <!--orig:Lessons from scaling teams of coding agents: reach the frontier at 30% of the cost-->
 6. [Embed 与 Rerank 该用共享推理还是专属推理](https://cohere.com/blog/shared-or-dedicated-inference-for-embed-rerank)（2026-10-09） <!--orig:Shared or dedicated inference for Embed & Rerank-->
-7. [Multilingual Bridges: How Data Mixing Unlocks In-Language Reasoning](https://cohere.com/blog/building-multilingual-bridges)（2026-10-06）
+7. [多语言之桥：数据混合如何解锁语言内推理](https://cohere.com/blog/building-multilingual-bridges)（2026-10-06） <!--orig:Multilingual Bridges: How Data Mixing Unlocks In-Language Reasoning-->
 8. [North 2：不妥协的企业级 AI](https://cohere.com/blog/introducing-north-2)（2026-10-05） <!--orig:North 2: Enterprise AI without compromises-->
 9. [Cohere 与 PwC 达成合作，加速安全的企业级 AI 落地](https://cohere.com/blog/cohere-and-pwc-partner-to-accelerate-secure-enterprise-ai-adoption)（2026-10-05） <!--orig:Cohere and PwC partner to accelerate secure enterprise AI adoption-->
 10. [推出 Embed 5——新一代前沿 embedding 模型家族](https://cohere.com/blog/embed-5)（2026-09-30） <!--orig:Introducing Embed 5—A new family of frontier embedding models-->

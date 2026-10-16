@@ -10,10 +10,10 @@
 
 ## 全部文章（共 885 篇，按日期倒序；无日期条目列于最后）
 
-1. [Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint](https://huggingface.co/blog/ibm-granite/granite-switch-4-1)（2026-10-15）
-2. [Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta](https://huggingface.co/blog/meta-muse-spark-open)（2026-10-15）
-3. [Welcome FLUX.3 Image Klein in Diffusers](https://huggingface.co/blog/flux-3)（2026-10-15）
-4. [HiRO-ACEv2: Simulating extreme weather at 3 km resolution for a fraction of the cost](https://huggingface.co/blog/allenai/hiro-acev2)（2026-10-14）
+1. [Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音](https://huggingface.co/blog/ibm-granite/granite-switch-4-1)（2026-10-15） <!--orig:Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint-->
+2. [欢迎 Muse Spark Open：来自 Meta 的开放权重前沿多模态混合专家模型](https://huggingface.co/blog/meta-muse-spark-open)（2026-10-15） <!--orig:Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta-->
+3. [Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型](https://huggingface.co/blog/flux-3)（2026-10-15） <!--orig:Welcome FLUX.3 Image Klein in Diffusers: The latest open image generation model from Black Forest Labs-->
+4. [HiRO-ACEv2：以一小部分成本用 3 km 分辨率模拟极端天气](https://huggingface.co/blog/allenai/hiro-acev2)（2026-10-14） <!--orig:HiRO-ACEv2: Simulating extreme weather at 3 km resolution for a fraction of the cost-->
 5. [用 LFM2.5-24B-A2B 在端侧运行快速、私密的智能体](https://huggingface.co/blog/LiquidAI/lfm25-24b-a2b)（2026-10-13） <!--orig:Run fast, private agents on-device with LFM2.5-24B-A2B-->
 6. [面向高影响力的 GPU 集群调度](https://huggingface.co/blog/allenai/impactful-scheduling)（2026-10-09） <!--orig:Impactful scheduling for GPU clusters-->
 7. [那个并不存在的模型，于是你自己把它造了出来](https://huggingface.co/blog/building-with-ml-intern)（2026-10-08） <!--orig:The model that didn't exist, so you made it yourself-->

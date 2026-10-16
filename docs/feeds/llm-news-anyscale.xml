@@ -9,10 +9,112 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Running Ray at scale on Kubernetes with KubeRay</title>
+      <title>用 KubeRay 在 Kubernetes 上大规模运行 Ray</title>
       <link>https://anyscale.com/blog/kuberay</link>
       <guid isPermaLink="true">https://anyscale.com/blog/kuberay</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Running Ray at scale on Kubernetes with KubeRay</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">首页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
+<h1>用 KubeRay 在 Kubernetes 上大规模运行 Ray</h1>
+<p>作者 <a href="https://www.anyscale.com/blog?author=nai-jui-yeh">Nai-Jui Yeh</a>、<a href="https://www.anyscale.com/blog?author=chun-hao-wan">Chun-Hao Wan</a> 和 <a href="https://www.anyscale.com/blog?author=philip-wang">Philip Wang</a> | 2026 年 10 月 15 日</p>
+<h2>Link什么是 KubeRay</h2>
+<p>Ray 是一个开源框架，用于把 Python 和 AI 工作负载扩展到许多台机器上。从分布式训练到在线服务，它都通过同一个 Python API 来处理，所以用户可以把代码写一次，然后跑在笔记本上，或者跑在一个一千节点的集群上。</p>
+<p>而 Kubernetes 是大多数组织已经在运行其基础设施的地方。GPU、配额、访问控制、网络和监控都在那里管理。采用 Ray 的团队，很少希望 Kubernetes 之外再多一个集群管理器。他们希望 Ray 跑在自己已有的 Kubernetes 上。</p>
+<p>难点在于 Kubernetes 只理解它自己的原生资源，比如 Pods、Services 和 Jobs。它没有 Ray 集群、Ray job 或 Ray Serve 应用的概念。因此直接在 Kubernetes 上运行 Ray，就意味着要自己写胶水：为 head 和 workers 写 Deployments、为 head 写一个 Service、写提交 jobs 并等待它们的脚本，以及自己写逻辑来扩缩 workers 或从故障中恢复。每个团队最后都在重搭同一套管道。</p>
+<p>KubeRay 补上了这个缺口。它是一个开源的 Kubernetes operator，把 Ray 带入 Kubernetes 生态，为 Ray 工作负载提供 Kubernetes 原生的生命周期管理、自动扩缩容、调度、可靠性和可观测性。KubeRay 是今天在 Kubernetes 上运行 Ray 的标准方式，也是主要云厂商托管 Ray 产品的底座。</p>
+<p>KubeRay 引入了三种自定义资源：RayCluster 用于长期运行的 Ray 集群，RayJob 用于自带临时集群的单个 job，RayService 用于 Ray Serve 应用。我们在下文的架构章节中说明这些资源如何工作。</p>
+<h3>LinkKubeRay 之前与之后</h3>
+<p>通用 Kubernetes 起初或许能承载 Ray 运行所需的基础设施，却难以理解 Ray 本身，包括，于是每个平台团队都不得不一遍遍手写同样的 deployments、services、提交脚本和恢复逻辑去填补那个缺口。KubeRay 针对下列每一项任务，用一个 Kubernetes 原生资源取代了那些手工工作。</p>
+<table><thead><tr><th><strong>任务</strong></th><th><strong>通用 Kubernetes</strong></th><th><strong>KubeRay</strong></th></tr></thead><tbody><tr><td>启动一个 Ray 集群</td><td>自己为 head 和 workers 手写 Deployments、为 head 写一个 Service，并亲自让它们保持同步</td><td>定义一个 RayCluster。operator 会创建并管理 head Pod、head Service 和 worker Pods</td></tr><tr><td>运行批处理 job</td><td>写脚本来提交 job、轮询完成状态，并在事后拆掉集群</td><td>定义一个 RayJob。KubeRay 创建一个专用的 RayCluster、提交 job，并在 job 结束时清理掉它</td></tr><tr><td>服务一个模型</td><td>为 Ray Serve 手工搭 Deployment 和 Service，再加上你自己的健康检查与发布逻辑</td><td>定义一个 RayService。KubeRay 让 Serve 应用在集群和 head 节点故障时保持可用，并支持零停机升级</td></tr><tr><td>随需求扩缩容</td><td>依赖 Kubernetes Horizontal Pod Autoscaler，而它看不到 Ray 的 tasks、actors 或 placement groups</td><td>具备 Ray 感知的自动扩缩容，依据待处理 tasks、actors 和 placement groups 来扩缩 worker groups</td></tr><tr><td>从 head 节点故障中恢复</td><td>自己写检测故障并重建集群状态的逻辑</td><td>Global Control Service (GCS) 容错在 Ray Serve 应用继续运行的同时自动恢复集群元数据</td></tr><tr><td>监控与运维</td><td>自建工具来呈现 Ray 特有的状态</td><td>Kubernetes 原生的 status 与 Events，再加上 kubectl ray 带来熟悉的 CLI 体验</td></tr></tbody></table>
+<h2>LinkKubeRay 在 Ray 与 Kubernetes 之间处于什么位置</h2>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/7BB6IXXE9fqX6LXzQ5w2E/d639008de4b753381dd4d3eb1baeae7f/Where_KubeRay_fits_between_Ray_and_Kubernetes.png" alt="KubeRay 在 Ray 与 Kubernetes 之间处于什么位置"></p>
+<p>KubeRay 在 Ray 与 Kubernetes 之间处于什么位置</p>
+<p>KubeRay 位于 Kubernetes 与 Ray 之间，而且它不取代其中任何一个调度器。Kubernetes 把 Pods 调度到节点上，Ray 则把 tasks 和 actors 调度到这些 Pods 内部的 CPU 和 GPU 上。KubeRay 把两边桥接起来：它把一个 RayCluster spec 变成 Pods，并把 Ray 的状态作为 status 字段和 events 回报给 Kubernetes。</p>
+<p>这套分层也把两个角色的职责干净地切开了。平台团队工作在 Kubernetes 层和 operator 层：他们安装一次 KubeRay，然后用自己已在使用的工具管理节点池、配额、访问控制和监控。Ray 用户，例如 ML 工程师和数据科学家，工作在 Ray 层和应用层：他们编写 Ray 代码，并在 KubeRay 创建的自定义资源（RayCluster、RayJob 或 RayService）之上执行这些代码。</p>
+<h2>LinkKubeRay 提供什么</h2>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6v5XJKikUHPH5BmAOabtMt/3fc665ee2890d82934c123e7b5a77b14/KubeRay_Operator.png" alt="KubeRay Operator"></p>
+<p>KubeRay Operator</p>
+<p>KubeRay 是一个 Kubernetes operator，每种自定义资源对应一个 controller。RayCluster 是基本构件：operator 把它变成一个 head Pod、一个 head Service 和若干 worker Pods。RayJob 和 RayService 各自拥有一个 RayCluster，并补上各自工作负载需要的东西：RayJob 加的是一个 submitter，RayService 加的是 Serve 应用和一个 Serve Service。</p>
+<h3>Link核心特性</h3>
+<h4>LinkRayCluster</h4>
+<ul><li><strong>具备 Ray 感知的自动扩缩容。</strong> 依据工作负载需求自动扩缩 worker groups，包括待处理 tasks、actors 和 placement groups。</li><li><strong>Global Control Service (GCS) 容错。</strong> 在 head 节点故障后恢复 Ray 集群元数据，同时让 Ray Serve 应用继续运行。</li><li><strong>异构计算。</strong> 在同一个 RayCluster 里运行具有不同 CPU 与加速器配置的 worker groups。</li></ul>
+<h4>LinkRayJob</h4>
+<ul><li><strong>临时集群：</strong> 为每个 job 创建一个专用 RayCluster，并在 job 结束后清理掉它。</li><li><strong>多种提交方式：</strong> 通过 Kubernetes Jobs、HTTP、sidecars 或交互式模式提交 jobs。</li><li><strong>生命周期管理：</strong> 依据 job 的结果配置重试、截止时间和清理策略。</li></ul>
+<h4>LinkRayService</h4>
+<ul><li><strong>Kubernetes 原生的 Ray Serve：</strong> 把 Ray Serve 应用作为你 Kubernetes 工作负载的一部分来定义和管理。</li><li><strong>高可用：</strong> 让 Ray Serve 应用在集群和 head 节点故障期间保持可用。</li><li><strong>零停机升级：</strong> 在不打断服务流量的情况下升级 Ray 应用与集群，支持蓝绿升级和增量升级。</li></ul>
+<h4>LinkKubernetes 调度</h4>
+<ul><li><strong>Kueue 与 MultiKueue：</strong> 把 Ray 工作负载接入 Kubernetes 资源配额与多集群调度。</li><li><strong>Gang 调度：</strong> 支持借助 Kubernetes Workload API、Volcano、YuniKorn、scheduler-plugins 和 NVIDIA KAI Scheduler 实现 gang 调度。</li><li><strong>资源与标签感知的调度：</strong> 把 Kubernetes 资源和标签暴露给 Ray，用于基于资源和标签的调度。</li></ul>
+<h4>Link安全</h4>
+<ul><li><strong>Ray token 认证：</strong> 用基于 token 的认证来保护 Ray 集群。</li><li><strong>Kubernetes RBAC 认证：</strong> 使用已有的 Kubernetes RBAC 策略来控制对 Ray 集群的访问。</li><li><strong>mTLS 与 NetworkPolicy：</strong> 加密 Ray 的 Pod-to-Pod 流量，并用 Kubernetes NetworkPolicies 隔离 Ray 集群。</li></ul>
+<h4>Link可观测性</h4>
+<ul><li><strong>指标与仪表盘：</strong> 用 Prometheus 和 Grafana 监控 Ray 工作负载与 KubeRay。</li><li><strong>Kubernetes 原生的 status 与 events：</strong> 通过 Kubernetes 的 status 和 Events 跟踪工作负载生命周期、排查 Ray 资源问题。</li><li><strong>History Server：</strong> 把 Ray 的事件与日志保存在对象存储中，并在集群已被删除之后仍然可以查看它们。</li></ul>
+<h4>Link工具链</h4>
+<ul><li><strong>kubectl ray：</strong> 用熟悉的命令行体验，简化管理 Kubernetes 上的 Ray 集群。</li><li><strong>KubeRay API Server：</strong> 为平台和用户界面提供简化的 API 来管理 KubeRay 资源。</li></ul>
+<h2>Link如何部署 KubeRay</h2>
+<p>KubeRay 可在任何 Kubernetes 集群上工作。先安装 KubeRay operator，然后用 Kubernetes 原生资源创建一个 Ray 工作负载。</p>
+<p><strong>1. 安装 KubeRay</strong></p>
+<p>按照 <a href="https://docs.ray.io/en/latest/cluster/kubernetes/getting-started.html">KubeRay 入门指南</a> 把该 operator 安装到你的 Kubernetes 集群上。KubeRay 已在多个托管 Kubernetes 服务上通过测试，包括 <strong>Amazon EKS、Google Kubernetes Engine (GKE) 和 Azure Kubernetes Service (AKS)</strong>。</p>
+<p><strong>2. 选择你的工作负载</strong></p>
+<p>KubeRay 为运行 Ray 工作负载提供这些自定义资源：</p>
+<ul><li><strong>RayCluster：</strong> 为开发与原型验证运行一个 Ray 集群。</li><li><strong>RayJob：</strong> 用专用 RayCluster 运行批处理工作负载，集群的创建与清理自动完成。</li><li><strong>RayService：</strong> 部署并管理 Ray Serve 应用，具备高可用与零停机升级。</li><li><strong>RayCronJob：</strong> 使用 cron 表达式按周期重复运行 RayJob。</li></ul>
+<p><strong>3. 用 Kubernetes 部署</strong></p>
+<p>用 KubeRay 部署一个 Ray 工作负载，就像 apply 一个 Kubernetes 自定义资源那样简单。</p>
+<p>例如，一个 <code>RayJob</code> 会运行批处理训练工作负载，并管理该 job 所使用的 Ray 集群。KubeRay 创建 RayCluster、等待它就绪、提交训练 job，并可以在 job 结束时清理集群。</p>
+<p>下面是一个在 Kubernetes 上用 CPU 对 Fashion MNIST 数据集训练 PyTorch 模型的例子，展示 KubeRay 创建 RayCluster、运行训练工作负载、跟踪其完成，以及管理集群生命周期。</p>
+<p>训练代码使用 <a href="https://docs.ray.io/en/latest/train/train.html">Ray Train</a>，而 KubeRay 用一个 <code>RayJob</code> 在 Kubernetes 上运行并管理它。</p>
+<pre><code>kubectl apply -f https://raw.githubusercontent.com/ray-project/kuberay/v1.7.0/ray-operator/config/samples/pytorch-mnist/ray-job.pytorch-mnist.yaml</code></pre>
+<p>应用这个 RayJob 之后，KubeRay 会创建 RayCluster 及其 Pods。查看 RayJob，并确认 RayCluster 的 Pods 正在运行：</p>
+<pre><code>kubectl get rayjob
+NAME                   JOB STATUS   DEPLOYMENT STATUS   RAY CLUSTER NAME             START TIME             END TIME   AGE
+rayjob-pytorch-mnist   PENDING      Running             rayjob-pytorch-mnist-9s4p2   2026-09-30T02:40:15Z              37s
+
+kubectl get pod
+NAME                                                  READY   STATUS    RESTARTS   AGE
+kuberay-operator-799d594664-h5czx                     1/1     Running   0          19m
+rayjob-pytorch-mnist-9s4p2-head-b6q6z                 1/1     Running   0          39s
+rayjob-pytorch-mnist-9s4p2-small-group-worker-k6786   1/1     Running   0          39s
+rayjob-pytorch-mnist-9s4p2-small-group-worker-thhgx   1/1     Running   0          39s
+rayjob-pytorch-mnist-v4dvt                            1/1     Running   0          11s</code></pre>
+<p>随后 RayJob 把训练工作负载提交给刚创建的 RayCluster。训练结束后，RayJob 达到 <code>SUCCEEDED</code>：</p>
+<pre><code>kubectl get rayjob
+NAME                   JOB STATUS   DEPLOYMENT STATUS   RAY CLUSTER NAME             START TIME             END TIME               AGE
+rayjob-pytorch-mnist   SUCCEEDED    Complete            rayjob-pytorch-mnist-9s4p2   2026-09-30T02:40:15Z   2026-09-30T02:48:33Z   8m47s</code></pre>
+<p>你可以从 submitter Pod 查看训练结果：</p>
+<pre><code>kubectl logs rayjob-pytorch-mnist-v4dvt
+
+2026-09-29 19:40:48,610 INFO cli.py:41 -- Job submission server address: http://rayjob-pytorch-mnist-9s4p2-head-svc.default.svc.cluster.local:8265
+2026-09-29 19:40:49,584 SUCC cli.py:65 -- -------------------------------------------------------
+2026-09-29 19:40:49,584 SUCC cli.py:66 -- Job 'rayjob-pytorch-mnist-5s4p4' submitted successfully
+2026-09-29 19:40:49,584 SUCC cli.py:67 -- -------------------------------------------------------
+...
+(RayTrainWorker pid=975, ip=10.244.0.12) 
+Train Epoch 0:  77%|███████▋  | 1436/1875 [00:15&lt;00:04, 91.08it/s] [repeated 92x across cluster]
+(RayTrainWorker pid=975, ip=10.244.0.12) 
+Train Epoch 0:  92%|█████████▏| 1719/1875 [00:18&lt;00:01, 88.59it/s]
+...
+(RayTrainWorker pid=975, ip=10.244.0.12) Reporting training result 10: TrainingReport(checkpoint=None, metrics={'loss': 0.3702628721599095, 'accuracy': 0.8646}, validation_spec=None)
+2026-09-29 19:48:30,801 SUCC cli.py:65 -- ------------------------------------------
+2026-09-29 19:48:30,801 SUCC cli.py:66 -- Job 'rayjob-pytorch-mnist-5s4p4' succeeded
+2026-09-29 19:48:30,801 SUCC cli.py:67 -- ------------------------------------------</code></pre>
+<p>更多可直接使用的示例，参见覆盖 RayCluster、RayJob、RayService 和 RayCronJob 的 <a href="https://github.com/ray-project/kuberay/tree/master/ray-operator/config/samples">KubeRay 示例配置</a>。祝你在 Kubernetes 上用 KubeRay 运行 Ray 愉快！</p>
+<h2>Link加入 Ray 社区</h2>
+<p>KubeRay 是在公开环境下构建的。联系社区、分享反馈并参与贡献：</p>
+<ul><li><strong>提出问题</strong>：在 <a href="https://www.ray.io/join-slack">Ray Slack 工作区</a> 的 #kuberay 频道里。</li><li><strong>结识社区</strong>：每两周一次的 KubeRay 社区会议。日程可在 <a href="https://zoom-lfx.platform.linuxfoundation.org/meetings/ray?view=month">Ray/KubeRay LFX 日历</a> 上找到。</li><li><strong>参与塑造路线图</strong>：在 <a href="https://github.com/ray-project/kuberay/issues/2999">kuberay#2999</a> 上分享你的功能请求与反馈。</li></ul>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/kuberay#what-is-kuberay">什么是 KubeRay</a></li><li><a href="https://www.anyscale.com/blog/kuberay#before-and-after-kuberay">KubeRay 之前与之后</a></li><li><a href="https://www.anyscale.com/blog/kuberay#where-kuberay-fits-between-ray-and-kubernetes">KubeRay 在 Ray 与 Kubernetes 之间处于什么位置</a></li><li><a href="https://www.anyscale.com/blog/kuberay#what-kuberay-provides">KubeRay 提供什么</a></li><li><a href="https://www.anyscale.com/blog/kuberay#key-features">核心特性</a></li><li><a href="https://www.anyscale.com/blog/kuberay#how-to-deploy-kuberay">如何部署 KubeRay</a></li><li><a href="https://www.anyscale.com/blog/kuberay#join-the-ray-community">加入 Ray 社区</a></li></ul>
+<h4>分享</h4>
+<h4>标签</h4>
+<h4>订阅产品更新</h4>
+<h4>推荐内容</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策的科学"></p>
+<h4>用 Anyscale 上的 Ray 扩展机器人决策科学的规模</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/12RnheyyoRcbiqT3JkFsEU/10457e67286ef0dd8c471c7ff0574fd9/High-Performance_LLM_Serving_for_Coding_Agents.png?w=140" alt="面向编码 agent 的高性能 LLM Serving"></p>
+<h4>把编码 agent 的成本降低 90%：在 Anyscale 上用 Ray + vLLM 做安全的 LLM serving</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5AYtztHohlsfydESbYyul8/5e0c143c1eef57f387cfe4671fa011e6/Anyscale_on_Azure_is_Generally_Available_-_Enabling_Enterprises_to_Own_the_Full_AI_Loop__Not_Just_Inference.png?w=140" alt="Anyscale on Azure 正式可用 - 让企业掌握完整的 AI 闭环，而不只是推理"></p>
+<h4>Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理</h4>
+<h2>即刻探索 Anyscale</h2>
+<p>在一个为 production AI 打造的多云平台上，于 Ray 之上构建、运行并扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交流</a></p>]]></content:encoded>
     </item>
     <item>
       <title>在 Anyscale 上用 Ray 扩展机器人决策研究的规模</title>

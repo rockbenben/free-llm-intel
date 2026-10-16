@@ -9,7 +9,7 @@
 
 ## 全部文章（共 157 篇，按日期倒序；无日期条目列于最后）
 
-1. [Private Endpoints: Bring Your Fine-Tuned Models and Capacity to OpenRouter](https://openrouter.ai/blog/announcements/private-endpoints/)（2026-10-14）
+1. [Private Endpoints：把你的微调模型与算力接入 OpenRouter](https://openrouter.ai/blog/announcements/private-endpoints/)（2026-10-14） <!--orig:Private Endpoints: Bring Your Fine-Tuned Models and Capacity to OpenRouter-->
 2. [ElevenLabs 现已上线 OpenRouter](https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/)（2026-10-07） <!--orig:ElevenLabs is now on OpenRouter-->
 3. [AI 销售智能体如何帮我们的销售团队每月省下 600 小时](https://openrouter.ai/blog/case-studies/how-an-ai-sales-agent-saved-our-sales-team-600-hours-a-month/)（2026-10-07） <!--orig:How an AI Sales Agent Saved Our Sales Team 600 Hours a Month-->
 4. [AI 代理的服务器端代码执行工具比较](https://openrouter.ai/blog/insights/server-side-code-execution-tools-for-ai-agents-compared/)（2026-10-05） <!--orig:Server-Side Code Execution Tools for AI Agents, Compared-->

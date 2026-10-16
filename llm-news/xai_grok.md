@@ -9,7 +9,7 @@
 
 ## 全部文章（共 113 篇，按日期倒序；无日期条目列于最后）
 
-1. [Introducing Grok Voice 3.0](https://x.ai/news/grok-voice-3)（2026-10-14）
+1. [推出 Grok Voice 3.0](https://x.ai/news/grok-voice-3)（2026-10-14） <!--orig:Introducing Grok Voice 3.0-->
 2. [X 订阅简介](https://x.ai/news/x-subscription)（2026-10-12） <!--orig:Introducing The X Subscription-->
 3. [团队机器人：共享人工智能队友，边工作边学习](https://x.ai/news/team-bots)（2026-09-28） <!--orig:Team Bots: shared AI teammates that learn as they work-->
 4. [SpaceXAI 如何用 Grok Bot 扩展客户支持](https://x.ai/news/grok-bot-customer-support)（2026-09-22） <!--orig:How SpaceXSI is using Grok Bot to scale customer support-->

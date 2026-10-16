@@ -9,31 +9,1030 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Granite Switch 4.1: Chat, Decisions, and Speech from One End…</title>
+      <title>Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音</title>
       <link>https://huggingface.co/blog/ibm-granite/granite-switch-4-1</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ibm-granite/granite-switch-4-1</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint</description>
+      <description>原文标题：Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音</h1>
+<p>企业  文章</p>
+<p>发布于 2026 年 10 月 15 日</p>
+<p>8</p>
+<ul><li><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/0c302d25cdd0e4ac2e84c5ca197b28a7.svg" alt=""></a></li><li><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt=""></a></li><li><a href="https://huggingface.co/IRENEKO"><img src="https://huggingface.co/avatars/f6a0ce5761e97dd44008d01c98f11ca9.svg" alt=""></a></li><li><a href="https://huggingface.co/nasrimfaume"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/r2HHnBRbZuc0ix0eNgyiH.png" alt=""></a></li><li><a href="https://huggingface.co/cosmojg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669946101720-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/1c1b540117a4580bdb169c9dbe9ffd01.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/1c1b540117a4580bdb169c9dbe9ffd01.svg" alt="Kate Soule's avatar"></a></p>
+<p>Kate Soule</p>
+<p>katesoule</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt="Subhajit Chaudhury's avatar"></a></p>
+<p>Subhajit Chaudhury</p>
+<p>subhajit1412</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/hen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1642069891298-60f58f250e0bc7f10bb020ad.jpeg" alt="Hendrik Strobelt's avatar"></a></p>
+<p>Hendrik Strobelt</p>
+<p>hen</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/0c302d25cdd0e4ac2e84c5ca197b28a7.svg" alt="Luis A Lastras's avatar"></a></p>
+<p>Luis A Lastras</p>
+<p>GrizleeBer</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p>去年春天推出的 <a href="https://github.com/generative-computing/granite-switch">Granite Switch</a> 项目让模型开发可以采用模块化的做法。如今 <strong>Granite Switch 4.1</strong> 模型配备了一个 Decision adapter 和 OpenASR leaderboard 上最快的 ASR 模型，可以在自然语言应答、通用与专门决策、以及语音转文本任务之间高效切换——全部来自一个托管的 endpoint。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/662836b742709fe826510597/LHBbw-MVVQgnYcpDK_DWC.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/662836b742709fe826510597/LHBbw-MVVQgnYcpDK_DWC.png" alt="granite_switch_adapter_swap"></a></p>
+<p>具体而言，<a href="https://huggingface.co/ibm-granite/granite-switch-4.1-8b">Granite-Switch-4.1-8B</a> 和 <a href="https://huggingface.co/ibm-granite/granite-switch-4.1-30b">-30B</a> 模型的配置包含：</p>
+<ul><li>一个用于通用决策的全新 <a href="https://huggingface.co/ibm-granite/granitelib-core-r1.0/blob/main/decision/README.md">Decision aLoRA</a>（例如 v1/systemone），</li><li>一个专门的 <a href="https://huggingface.co/ibm-granite/granitelib-guardian-r1.0/blob/main/guardian-core/README.md">Guardian aLoRA</a>，在与安全相关的决策任务上平均表现优于 Jev 1.13、Microsoft-Decision-1、GPT-Luna-Decisions 和 Clef-Flash，以及</li><li><a href="https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc">Granite-Speech-5.0-Turbo-CTC</a>，<a href="https://huggingface.co/spaces/hf-audio/open_asr_leaderboard">OpenASR Leaderboard</a> 上最快的 ASR 模型，为转写任务而内嵌。</li></ul>
+<p>这三项技术（连同底层的基座模型）被组合进同一个模型，它在 GPU 上占用的 VRAM 与基座模型单独存在时大致相同。这意味着用更少的 GPU 得到更多能力。</p>
+<p>而且由于 Switch adapters 是以缓存友好的 <a href="https://research.ibm.com/blog/inference-friendly-aloras-lora">Activated LoRAs</a> 形式构建的，由基座模型一次生成所产生的 KV cache 可以被其后任何基于 adapter 的决策复用。再叠加我们团队为加速低秩 adapter 推理而做的 <a href="https://github.com/generative-computing/granite-switch/blob/main/docs/SWITCH_KERNELS.md">近期 vLLM 贡献</a>，以及一个同址部署的 ASR encoder，Granite Switch 4.1 模型可以在一个聊天请求、一个决策请求和一个语音请求之间<em>切换</em>，速度快得惊人。</p>
+<p><em>来看看我们的 <a href="https://huggingface.co/spaces/ibm-granite/speech-to-decisions">Speech-to-Decisions HF space</a>，granite-switch-4.1-8b 在其中转写音频、生成摘要、筛查有害内容，并检测另外 15 个用户自定义的标记——全部在单个 endpoint 上实时运行。</em></p>
+<h2>Granite Libraries：初代（OG）决策模型</h2>
+<p>决策模型并不新鲜。我们先前发布的 <a href="https://huggingface.co/collections/ibm-granite/granite-libraries">Granite Libraries</a> 就是一个专门“决策模型”adapter 及其他专门任务 adapter 的仓库，它们可以被组合成自定义的 Granite Switch 模型。而且当 Jev 等闭源决策模型专注于通用性时，我们发现许多专门的 granitelib adapters 在专门分类任务上能够胜过通才模型。</p>
+<p><em><a href="https://huggingface.co/spaces/ibm-granite/granitelib-evals">把 granitelib adapters</a> 与通才决策模型在专门分类任务的评估中做对比。</em></p>
+<p>因为 adapters 共享基座模型的 KV cache，在通才决策 adapter 旁边再添加几个专才几乎不花成本。你既得到通才带来的广泛覆盖，又在你关心的任务上得到专才更高的准确率。</p>
+<p><em>在一场“竞速”中，Granite-Switch-4.1-30B（冻结的基座 Granite + 4 个专门 aLoRA）对阵 Jev-27B（冻结的基座 Qwen 模型 + 1 个通用决策 LoRA），Granite-Switch-4.1-30B 完成一个真实的 5 步 RAG 工作流比对手快得多。</em></p>
+<h2>组合并扩展你自己的 Granite Switch 模型</h2>
+<p>Granite-Switch-4.1-8B 和 -30B 是以“batteries included”（自带全套）方式发布的。它们是我们用一组预先定义好的实用 adapters 编译出来的 Granite Switch 模型。但你不必使用我们的版本。任何人都可以<a href="https://generative-computing.github.io/granite-switch/adapter_catalog.html">组合自己的 Granite Switch 模型</a>，把 Granite Libraries 里的 adapters 混合搭配，以最好地满足自己的需求。</p>
+<p>往前看，我们认为社区用自定义和第三方 adapters 来组合、扩展 Granite Switch 模型存在巨大机会。我们计划发布一个 Adapter SDK，用于在 <a href="https://docs.mellea.ai/advanced/lora-and-alora-adapters">Mellea</a> 中训练 adapters，并与其他教程以及 Granite Switch 支持一同提供。这些 adapters 可以是增强决策型工作流的专门分类 adapter，也可以是面向专门语言任务的 adapter。你甚至可以用自定义 adapter 教一个 3B 参数版本的 Granite 去玩经典游戏 Doom。</p>
+<p><em>与 Jev 类似，我们自定义的 3B 参数 Granite Switch 模型做出毫秒之间的决策来在 Doom 游戏中导航，但它能做到 <strong>每秒 60 - 100 次决策，</strong> 而 Jev 报告的数字是每秒 10 次决策。</em><a href="https://huggingface.co/blog/ibm-granite/granite-switch-4-1#footnote-1">1</a> <em>与 Jev 不同的是，这个 Granite Switch 模型在游玩的同时还能解说并回应你的提问。</em></p>
+<p>我们期待在未来几周发布更多关于 Granite Switch 的细节与数据，但在那之前，我们鼓励你试试我们最新的 Switch 模型，以及下面这些其他有助于入门的资源。</p>
+<h2>入门资源</h2>
+<ul><li><a href="https://huggingface.co/collections/ibm-granite/granite-switch">Granite Switch 4.1 模型卡</a></li><li><a href="https://huggingface.co/spaces/ibm-granite/speech-to-decisions">Speech-to-Decisions 演示</a></li><li><a href="https://github.com/generative-computing/granite-switch">Granite Switch GitHub 仓库</a></li><li><a href="https://research.ibm.com/blog/granite-libraries-project-switch">最初的 Granite Switch 与 Granite Libraries 发布博客</a></li><li>在 <a href="https://colab.research.google.com/github/generative-computing/granite-switch/blob/main/tutorials/notebooks/alora_vs_lora_race.ipynb">Colab</a> 上创建你自己的 aLoRA v LoRA 竞速。</li></ul>
+<p><strong>脚注</strong></p>
+<p>1 <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev">https://typesafe.ai/blog/introducing-system-one-models-and-jev</a></p>
+<h2>本文提到的模型 5</h2>
+<h2>本文提到的 Spaces 3</h2>
+<h2>本文提到的 Collections 2</h2>
+<p>这位作者的其他文章</p>
+<h2>Granite 4.2 LLM：它们是如何构建的</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
+<p>127</p>
+<p>2026 年 8 月 25 日</p>
+<h2>用 Granite Speech 5.0 Turbo CTC 实现极快且准确的转写</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
+<p>37</p>
+<p>2026 年 8 月 25 日</p>
+<h3>社区</h3>
+<p>把图片、音频和视频拖进文本输入框、粘贴，或点击此处即可上传。</p>
+<p>轻触或粘贴此处以上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-switch-4-1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-switch-4-1">登录</a> 以发表评论</p>
+<p>8</p>
+<ul><li><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/0c302d25cdd0e4ac2e84c5ca197b28a7.svg" alt=""></a></li><li><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt=""></a></li><li><a href="https://huggingface.co/IRENEKO"><img src="https://huggingface.co/avatars/f6a0ce5761e97dd44008d01c98f11ca9.svg" alt=""></a></li><li><a href="https://huggingface.co/nasrimfaume"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/r2HHnBRbZuc0ix0eNgyiH.png" alt=""></a></li><li><a href="https://huggingface.co/cosmojg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669946101720-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/1c1b540117a4580bdb169c9dbe9ffd01.svg" alt=""></a></li><li><a href="https://huggingface.co/leonardlin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63a7422854f1d0225b075bfc/XGYAcDPZG5ZEsNBWG6guw.jpeg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<h2>本文提到的模型 5</h2>
+<h2>本文提到的 Spaces 3</h2>
+<h2>本文提到的 Collections 2</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Welcome Muse Spark Open: open-weight frontier multimodal mix…</title>
+      <title>欢迎 Muse Spark Open：来自 Meta 的开放权重前沿多模态混合专家模型</title>
       <link>https://huggingface.co/blog/meta-muse-spark-open</link>
       <guid isPermaLink="true">https://huggingface.co/blog/meta-muse-spark-open</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta</description>
+      <description>原文标题：Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章列表</a></p>
+<h1>欢迎 Muse Spark Open：来自 Meta 的开放权重前沿多模态混合专家模型</h1>
+<p>发布于 2026 年 10 月 15 日</p>
+<p>在 GitHub 上更新</p>
+<p>24</p>
+<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alvarobartt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/BrigitteTousi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63691c3eda9b693c2730b2a2/hBtKpgo3_9003MWCGkw5d.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt="Pedro Cuenca 的头像"></a></p>
+<p>Pedro Cuenca</p>
+<p>pcuenq</p>
+<p><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt="merve 的头像"></a></p>
+<p>merve</p>
+<p>merve</p>
+<p><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt="ben burtenshaw 的头像"></a></p>
+<p>ben burtenshaw</p>
+<p>burtenshaw</p>
+<p><a href="https://huggingface.co/guarin"><img src="https://huggingface.co/avatars/2824048a7f93b5e8d51e8e45e8ca19b2.svg" alt="Guarin Flück 的头像"></a></p>
+<p>Guarin Flück</p>
+<p>guarin</p>
+<p><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt="Quentin Gallouédec 的头像"></a></p>
+<p>Quentin Gallouédec</p>
+<p>qgallouedec</p>
+<p><a href="https://huggingface.co/alvarobartt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt="Alvaro Bartolome 的头像"></a></p>
+<p>Alvaro Bartolome</p>
+<p>alvarobartt</p>
+<p><a href="https://huggingface.co/Serveurperso"><img src="https://huggingface.co/avatars/d13b97717cd4e629054a4caf7e95e2c9.svg" alt="Serveurperso 的头像"></a></p>
+<p>Serveurperso</p>
+<p>Serveurperso</p>
+<p><a href="https://huggingface.co/Jundot"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/P4AE_DXqeRdnfzXp-shec.jpeg" alt="Jun Kim 的头像"></a></p>
+<p>Jun Kim</p>
+<p>Jundot</p>
+<p>Muse Spark Open 是 Meta 推出的开放权重模型。这个混合专家（mixture of experts）模型把文本、图像、音频和视频汇聚进同一个模型，参数量约 8160 亿，每个 token 激活约 420 亿参数，上下文窗口最高可达 100 万 token。它输出文本，为开发者提供了一个统一的接口，用来针对各种不同类型的输入提问。</p>
+<p>在 Muse Glimmer 之后，Muse Spark Open 把混合专家架构带到一个大得多的规模上，是迄今为止能力最强的美国开放权重模型。</p>
+<p>Meta 面向智能体编程（agentic coding）训练了 Muse Spark Open：读懂代码库、编写和调试代码、调用工具。它同时接受图像、音频和视频作为输入，因此同一个模型可以在处理你的代码时读懂截图、听一段语音留言、看一段屏幕录制。本文会展示如何运行它、如何微调它，以及我们用它做出了什么。所有模型可在<a href="https://huggingface.co/collections/meta-models/muse-spark-open">这里</a>找到。</p>
+<h2>整体能力与架构</h2>
+<p>Meta 把 Muse Spark Open 描述为一个针对编程优化的模型，它在真实开发者工作流上训练过，例如多文件重构和长时间的调试会话。Muse Spark Open 是一个以智能体为重心的模型，会在长任务中规划、行动、观察并自我纠错，其中包括带着图像浏览网页。</p>
+<table><thead><tr><th>功能</th><th>Muse Spark Open</th></tr></thead><tbody><tr><td>模型规模</td><td>总参数约 816B；每 token 激活约 42B</td></tr><tr><td>专家路由</td><td>每个 MoE 层 256 个专家；每 token 选出 8 个</td></tr><tr><td>输入</td><td>文本、图像、音频和视频</td></tr><tr><td>输出</td><td>文本</td></tr><tr><td>上下文窗口</td><td>最高 1M token</td></tr><tr><td>checkpoint 格式</td><td>BF16 和 NVFP4</td></tr></tbody></table>
+<p>checkpoint 仓库是 Muse-Spark-Open-816B-A42B 和 Muse-Spark-Open-816B-A42B-NVFP4。</p>
+<p><a href="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/model.png"><img src="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/model.png" alt="模型示意图"></a></p>
+<p>Muse Spark Open 是 Muse 系列模型中的完整尺寸模型。Meta 在 8 月发布的 Muse Glimmer 是同系列里的小型稠密模型，适合在本地运行。两个模型使用同一个 tokenizer 和同一份词表。chat template 沿用 Muse Glimmer 模板，并为新增的模态做了扩展。在 Muse Spark Open 中，输入嵌入和输出层是两个彼此独立的矩阵，各自约 1.66B 参数。</p>
+<h3>混合专家（Mixture of Experts）</h3>
+<p>语言模型有 62 层，隐藏维度为 8192。每一层有 128 个 query head 和 16 个 key-value head（分组查询注意力，grouped-query attention）。每个 head 的维度是 64。注意力块带有一个输出门（output gate）和一个输出归一化层。模型还对 query 和 key 施加归一化（QK-norm）。每个块通过一个学习到的残差门来组合它的输入与输出，而不是简单地相加。</p>
+<p>Muse Glimmer 在每一层使用一个稠密前馈网络。Muse Spark Open 把这个稠密网络替换成 Mixture-of-Experts（MoE，混合专家）块。每个 MoE 块有 256 个专家，路由器为每个 token 选出 8 个专家。每个专家都是一个前馈网络，把维度从 8192 投影到 4096 再投影回 8192，然后对自己的输出施加独立的归一化。这些专家承载了模型总参数的约 97%。</p>
+<p>每个 token 只运行 8 个专家，所以模型是以约 42B 参数量来完成每个 token 的计算。但全部 256 个专家都常驻内存，因此部署时需要相当于一个 816B 参数模型的内存，跑起来却是 42B 模型那快得多的速度。BF16 checkpoint 采用 safetensors 格式，约 1.5 TB。NVFP4 checkpoint 以 4-bit 精度存储参数，精度损失可以忽略，专门为 NVIDIA Blackwell GPU 准备。在 transformers 里，BF16 checkpoint 可以用张量并行（TP=32）跑在 4 个节点、每节点 8 张 H200 GPU 上，而 NVFP4 可以跑在单个 B200 节点上。如果你想部署 Muse Spark Open，请看看下面的 <code>llama.cpp</code>、vLLM 和 SGLang 方案。</p>
+<h3>Perception Encoder</h3>
+<p>感知编码器（perception encoder）把图像和视频帧转换成语言模型使用的 token，这一点与 Muse Glimmer 相同。该编码器有 1.8B 参数、50 层、隐藏维度 1536、16 个注意力头。它把每张图像切成 14×14 的 patch，产出 4096 维特征。位置信息来自学习到的绝对嵌入（absolute embeddings）和 2D RoPE。每层的前馈网络使用 LayerNorm 和 GELU。每隔四层的那一层以及最后一层使用全注意力，其余层使用稀疏注意力。</p>
+<p><a href="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/image_pipeline.png"><img src="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/image_pipeline.png" alt="图像流水线示意图"></a></p>
+<p>Muse Glimmer 30B 使用架构相同的编码器。其设计沿用 Meta 的 <a href="https://huggingface.co/papers/2504.13181">Perception Encoder</a> 工作。视频输入和图像走同一个编码器。</p>
+<h3>音频编码器</h3>
+<p><a href="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/audio_encoder.png"><img src="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/audio_encoder.png" alt="音频示意图"></a></p>
+<p>Muse Spark Open 通过它的音频编码器接受音频作为输入。音频 tokenizer 把音频转换成 token，chat template 则用 <code>&lt;|audio|&gt;</code> token 标记音频所在的位置。编码器每 80 毫秒输出一个音频 token，也就是每秒 12.5 个 token。举例来说，如果你有一段 10 秒的音频，输入音频 token 的数量就是 125 个。编码器本身是一个卷积金字塔，每个 stage 由一个采用不同 patch 尺寸的 patch embedder 和 2 个卷积块组成，卷积核是尺寸 7、步长为 1 的一维核。这些 stage 针对 patch 尺寸 [16, 6, 5, 4] 依次重复。在最后一个 stage 末尾，时间帧被送入由 RMSNorm → 线性投影 → RMSNorm 组成的收尾模块。</p>
+<h3>长上下文</h3>
+<p>推理时上下文窗口为 1M token。配置里把 <code>max_position_embeddings</code> 设为 1,048,576。图像、视频和音频 token 与文本共享同一个窗口，都算在这 1M 里。</p>
+<p>分组查询注意力（grouped-query attention）让这一规模的模型能把 KV cache 保持得很小。每个 token 向缓存新增 2 × 16 heads × 64 dimensions × 62 layers = 126,976 个数值。以 BF16 计算，大约是每 token 250 KB，撑满 1M token 的上下文则约为 266 GB。</p>
+<h2>推理支持</h2>
+<h3>Transformers</h3>
+<p>Muse Spark Open 的实现提供了 <code>MuseSparkForConditionalGeneration</code>，用于从多模态输入生成文本；以及 <code>MuseSparkProcessor</code>，用于准备对话。该 processor 把 tokenizer、图像与视频处理器、音频特征提取器和 chat template 组合在一起。</p>
+<p>使用 <code>DistributedConfig</code> 来配置并行设置。<code>tp_size</code> 是稠密层被切分到的设备数量，<code>ep_size</code> 是专家被分发到的设备数量。</p>
+<p>你可以按下面这样初始化模型和 processor。</p>
+<pre><code>import os
+
+from transformers import AutoModelForMultimodalLM, AutoTokenizer, DistributedConfig
+
+distributed_config = DistributedConfig(
+    tp_size=int(os.environ[&quot;WORLD_SIZE&quot;]),
+    ep_size=int(os.environ[&quot;WORLD_SIZE&quot;]),
+)
+
+tokenizer = AutoTokenizer.from_pretrained(&quot;meta-models/Muse-Spark-Open-816B-A42B
+&quot;)
+model = AutoModelForMultimodalLM.from_pretrained(
+    &quot;meta-models/Muse-Spark-Open-816B-A42B&quot;,
+    distributed_config=distributed_config,
+)
+
+messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain in one sentence why the sky is usually blue.&quot;},
+]
+inputs = tokenizer.apply_chat_template(
+    messages,
+    reasoning_effort=&quot;medium&quot;,  # default: xhigh, options: low/medium/high/xhigh
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+).to(model.device).to(model.dtype)
+
+input_len = inputs[&quot;input_ids&quot;].shape[-1]
+
+outputs = model.generate(**inputs, max_new_tokens=2000)</code></pre>
+<h4>纯文本推理</h4>
+<p>先准备好对话，然后把 messages 传给 <code>processor.apply_chat_template</code>，并启用 <code>add_generation_prompt=True</code>、<code>tokenize=True</code>、<code>return_dict=True</code> 和 <code>return_tensors=&quot;pt&quot;</code>。再把 processor 的输出传给 <code>model.generate</code>，只对新生成的 token 解码，排除输入前缀。processor 上有一个调节推理强度的档位，它把符号化档位（low/medium/high/xhigh）映射到模型本身接受的整数（16、64、256、512）。注意 Muse Spark Open 无法关闭推理，所以如果你想在更简单的任务上少消耗一些 token，就把模型推理保持在 “low”。你也可以在 system prompt 里加上一行 <code>Reasoning strength: 1</code> 这样的文字来设定数值化的强度。</p>
+<pre><code>messages = [
+    {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You should only answer with a number.&quot;},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is 17 * 23?&quot;},
+]
+
+inputs = processor.apply_chat_template(
+    messages,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+    reasoning_effort=&quot;high&quot;, # options:low/medium/high/xhigh
+).to(model.device).to(model.dtype)
+
+output = model.generate(**inputs, max_new_tokens=2000)
+generated_tokens = output[0][inputs[&quot;input_ids&quot;].shape[1] :]
+print(processor.decode(generated_tokens, skip_special_tokens=False))</code></pre>
+<h4>图像与文本</h4>
+<p>Muse Spark Open 的 processor 会把每个图像标记展开成处理后图像所需的 patch token 数量，并在两侧加上图像边界 token。这样的展开能让文本位置与传给模型的视觉特征保持对齐。processor 还支持在单个 prompt 中处理多张图像。</p>
+<pre><code>image_url = (
+    &quot;https://huggingface.co/datasets/merve/vl-test-suite/&quot;
+    &quot;resolve/main/pills.jpg&quot;
+)
+messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;image&quot;,
+                &quot;image&quot;: image_url,
+            },
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Do any of the components in this supplement interact?&quot;,
+            },
+        ],
+    },
+]
+
+inputs = processor.apply_chat_template(
+    messages,
+    tokenize=True,
+    add_generation_prompt=True,
+    reasoning_effort=&quot;medium&quot;,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+).to(model.device).to(model.dtype)
+input_len = inputs[&quot;input_ids&quot;].shape[-1]
+
+outputs = model.generate(**inputs, max_new_tokens=2000)
+response = processor.decode(outputs[0][input_len:], skip_special_tokens=False)
+
+processor.parse_response(response)</code></pre>
+<h4>视频推理</h4>
+<p>视频 prompt 既包含视觉内容，也包含帧的时间信息。processor 能够处理自带音频的视频（多亏了音频编码器，这是相对 Muse Glimmer 的一项升级）。processor 会对视频帧和音频做降采样，把帧对齐到一起。默认情况下视频按 2 FPS 采样，上限 96 帧。你可以通过设置 video processor 的 fps 来修改这一点：</p>
+<pre><code>processor.video_processor.fps = 4.0</code></pre>
+<p>一般经验是，视频就是按时间顺序排列的帧，降采样越厉害，特定事件之间丢掉的帧就越多，所以想要更准确的生成结果就得保持较高的 fps。但这里有取舍：你会需要更多内存，prefill 的延迟也会上升。帧会与标注时间戳的文本输入交错排列（例如 “Time: 3.5s”）。要启用带音频的视频输入，请给 <code>apply_chat_template</code> 传入 <code>load_audio_from_video=True</code>。</p>
+<p>用 <code>return_metadata=True</code> 准备输入时请保留视频的元数据，这样 processor 才能指定正确的帧率。</p>
+<pre><code>import torch
+
+messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: (
+                    &quot;Describe what happens in this video. &quot;
+                    &quot;Use timestamps and include relevant speech or sounds.&quot;
+                ),
+            },
+            {
+                &quot;type&quot;: &quot;video&quot;,
+                &quot;url&quot;: &quot;https://huggingface.co/datasets/merve/vlm_test_images/resolve/main/ramen.mp4&quot;
+            },
+        ],
+    }
+]
+
+inputs = processor.apply_chat_template(
+    messages,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+    load_audio_from_video=True,
+    return_metadata=True,
+).to(model.device).to(model.dtype)
+
+with torch.inference_mode():
+    output_ids = model.generate(
+        **inputs,
+        max_new_tokens=256,
+        do_sample=False,
+    )
+
+generated_ids = output_ids[:, inputs[&quot;input_ids&quot;].shape[1] :]
+response = processor.batch_decode(
+    generated_ids,
+    skip_special_tokens=True,
+)[0]
+
+print(response)</code></pre>
+<h3>音频推理</h3>
+<p>Muse Spark Open 的 audio tower 接收原始波形。processor 期望 24 kHz 的单声道音频，并把波形补齐到 1,920 个采样点的整数倍，对应每 80 毫秒一个音频 embedding。如果你以其他采样率把音频直接提供给 processor，必须先做重采样。可以用 transformers 的 <code>load_audio</code> 工具来完成这件事。<code>load_audio</code> 使用 torchcodec、librosa 或 torchaudio 后端，所以在运行推理之前请确保本地已安装其中之一。</p>
+<p>不过，如果你只是想用 <code>apply_chat_template</code> 搭配 messages，这些细节都已在底层替你处理好了：</p>
+<pre><code>import torch
+from transformers import AutoProcessor, AutoModelForMultimodalLM
+
+model_id = &quot;meta-models/Muse-Spark-Open-816B-A42B&quot;
+processor = AutoProcessor.from_pretrained(model_id)
+
+model = AutoModelForMultimodalLM.from_pretrained(model_id).eval()
+
+messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;audio&quot;,
+                &quot;url&quot;: &quot;https://huggingface.co/buckets/huggingface/audio-samples/resolve/bbaudio_question_39.mp3&quot;,
+            },
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;Answer the question.&quot;,
+            },
+        ],
+    }
+]
+
+# Downloads the audio, decodes it as mono, resamples it to 24 kHz, pads it, creates input_values_mask, and expands the audio placeholders.
+inputs = processor.apply_chat_template(
+    messages,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+    load_audio_backend=&quot;auto&quot;,
+).to(model.device).to(model.dtype)
+
+with torch.inference_mode():
+    output_ids = model.generate(
+        **inputs,
+        max_new_tokens=128,
+        do_sample=False,
+    )
+
+# Decode only newly generated tokens
+prompt_length = inputs[&quot;input_ids&quot;].shape[1]
+generated_text = processor.batch_decode(
+    output_ids[:, prompt_length:],
+    skip_special_tokens=True,
+)
+
+print(generated_text[0])</code></pre>
+<p>processor 会在音频边界标记之间插入数量相匹配的音频 token。它同时返回一个标识真实采样点的掩码，使模型能够排除用于补齐的音频 embedding。</p>
+<h4>工具调用</h4>
+<p>Muse Spark Open 支持纯文本和多模态的工具调用。你可以按下面这样让模型调用工具。</p>
+<pre><code>from transformers import AutoProcessor, AutoModelForMultimodalLM
+
+MODEL_ID = &quot;meta-models/Muse-Spark-Open-816B-A42B&quot;
+
+# Load model
+processor = AutoProcessor.from_pretrained(MODEL_ID)
+model = AutoModelForMultimodalLM.from_pretrained(
+    MODEL_ID,
+    dtype=&quot;auto&quot;,
+    device_map=&quot;auto&quot;
+)
+
+tools = [
+    {
+        &quot;type&quot;: &quot;function&quot;,
+        &quot;function&quot;: {
+            &quot;name&quot;: &quot;weather.get&quot;,
+            &quot;description&quot;: &quot;Get the current weather for a city.&quot;,
+            &quot;parameters&quot;: {
+                &quot;type&quot;: &quot;object&quot;,
+                &quot;properties&quot;: {
+                    &quot;city&quot;: {&quot;type&quot;: &quot;string&quot;},
+                },
+                &quot;required&quot;: [&quot;city&quot;],
+            },
+        },
+    }
+]
+
+
+messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;image&quot;, &quot;image&quot;: &quot;https://huggingface.co/datasets/merve/vl-test-suite/resolve/main/SF.png&quot;},
+            {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;I'm going to the city in this picture. What clothes should I wear?&quot;},
+        ],
+    },
+]
+
+inputs = processor.apply_chat_template(
+    messages,
+    tools=tools,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+    add_generation_prompt=True,
+    reasoning_strength=&quot;high&quot;
+).to(model.device).to(model.dtype)
+
+input_len = inputs[&quot;input_ids&quot;].shape[-1]
+outputs = model.generate(**inputs)
+response = processor.parse_response(
+      completion,
+      prefix=inputs[&quot;input_ids&quot;][0],
+      tools=tools,
+  )
+print(response)</code></pre>
+<p>Muse Spark Open 使用基于通道（channel）的 chat template（Harmony，最早由 gpt-oss 引入）。注意你不必了解它的内部实现，但如果输出质量不高，检查模型把内容路由到了哪些通道会很有用。在下面的输入消息中：</p>
+<pre><code>&lt;|begin_of_text|&gt;
+  &lt;|start|&gt;system&lt;|message|&gt;
+  You are a helpful AI assistant.
+  Knowledge cutoff: 2026-01-04.
+  Current date: ...
+  ...
+  &lt;|eot|&gt;
+  &lt;|start|&gt;user&lt;|message|&gt;...
+  &lt;|eot|&gt;
+  &lt;|start|&gt;assistant</code></pre>
+<p><code>&lt;|start|&gt;assistant</code> 是故意留空的，由模型自己用 <code>to=</code> 来选择接收方。模型有不同的接收方，例如 <code>self</code> 是让模型进行推理，</p>
+<pre><code>to=self&lt;|message|&gt;the model reasons here&lt;|eom|&gt; # reasoning
+&lt;|start|&gt;assistant to=user&lt;|message|&gt;final answer&lt;|eot|&gt; # final answer</code></pre>
+<p><code>self</code> 用于推理，<code>commentary</code> 是工具调用之前与之间、对最终用户可见的说明文字，<code>user</code> 是最终回复。 工具调用的路由按下面这样解析（前提是你已把 <code>tools</code> 传给 <code>apply_chat_template</code>：</p>
+<pre><code>&lt;|start|&gt;assistant to=weather.get&lt;|message|&gt;
+  &lt;atem:function_calls&gt;
+  &lt;atem:invoke name=&quot;weather.get&quot;&gt;
+  &lt;atem:parameter name=&quot;city&quot;&gt;San Francisco&lt;/atem:parameter&gt;
+  &lt;/atem:invoke&gt;
+  &lt;/atem:function_calls&gt;
+  &lt;|eot|&gt;</code></pre>
+<h3>Llama.cpp</h3>
+<p>在 Llama Server 上运行的 Muse Spark 2-bit</p>
+<p>Muse Spark Open 已集成进 llama.cpp，并包含在预编译二进制里。你可以用下面的命令安装：</p>
+<pre><code>curl -LsSf https://llama.app/install.sh | sh</code></pre>
+<p>你可以按下面这样启动服务器，在模型 ID 后面附上量化后缀：</p>
+<pre><code>llama serve -hf ggml-org/Muse-Spark-Open-816B-A42B-GGUF:Q2_K</code></pre>
+<p>包含量化版本的仓库在<a href="https://huggingface.co/ggml-orgf/Muse-Spark-Open-816B-A42B-GGUF">这里</a>。服务器启动后，你可以前往 localhost:9931，用内置的 WebUI 与它对话。在这个 web UI 里你可以添加音频和图像来做推理，也可以调节推理档位。 注意 Muse Spark Open 无法关闭推理，所以如果你想在更简单的任务上少消耗一些 token，就把模型推理保持在 “low”。 我们在 Mac M3 Ultra（512GB）上测试了各档量化。经过 imatrix 校准的 2-bit 量化能以 18 tokens/s 运行，同时给 KV cache 留出充裕的空间（模型本身占用 304 GB）。</p>
+<p>你也可以按下面这样查询服务器。关于多模态、工具调用等更多内容，欢迎查阅 <a href="https://llama.app/docs/serve">API 参考文档</a>。</p>
+<pre><code>## Text-only inference
+curl http://localhost:8080/v1/chat/completions \
+    -H &quot;Content-Type: application/json&quot; \
+    -d '{
+        &quot;messages&quot;: [
+            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Write a limerick about python exceptions&quot;}
+        ]
+    }'
+
+## Image-text inference
+curl -s http://127.0.0.1:8080/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; -H &quot;Authorization: Bearer &lt;your-key&gt;&quot; \
+  -d '{&quot;model&quot;:&quot;muse-spark-open&quot;,&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:[
+        {&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;What is in this image?&quot;},
+        {&quot;type&quot;:&quot;image_url&quot;,&quot;image_url&quot;:{&quot;url&quot;:&quot;data:image/png;base64,...&quot;}}
+      ]}],&quot;temperature&quot;:0}'
+
+## Audio-text inference
+curl -s http://127.0.0.1:8080/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; -H &quot;Authorization: Bearer &lt;your-key&gt;&quot; \
+  -d '{&quot;model&quot;:&quot;muse-spark-open&quot;,&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:[
+        {&quot;type&quot;:&quot;text&quot;,&quot;text&quot;:&quot;Transcribe this audio.&quot;},
+        {&quot;type&quot;:&quot;input_audio&quot;,&quot;input_audio&quot;:{&quot;data&quot;:&quot;data:audio/wav;base64,...&quot;}}
+      ]}],&quot;temperature&quot;:0}'</code></pre>
+<p>llama.cpp 团队提供了不同的量化版本。我们在 Apple Silicon 芯片上测试过 Q2_K、Q4_K_S 和 Q_8。把量化标识作为后缀加上去就能运行对应的量化版本，<code>llama serve -hf ggml-org/Muse-Spark-Open-816B-A42B:Q2_K</code>。</p>
+<h3>SGLang</h3>
+<p>SGLang 的 Muse Spark Open 集成支持文本、图像、音频和视频输入。NVFP4 参考配置在四张 GB300 GPU 上运行。</p>
+<p>在 SGLang 集成环境里，从 Hugging Face Hub 下载 checkpoint 并启动服务器：</p>
+<pre><code>export MODEL_ID=meta-models/Muse-Spark-Open-816B-A42B-NVFP4
+export CKPT=&quot;$(hf download &quot;$MODEL_ID&quot;)&quot;
+
+SGLANG_FLASHINFER_NVFP4_PER_TOKEN_ACTIVATION=1 \
+uv run sglang_meta serve \
+  --model-path &quot;$CKPT&quot; \
+  --served-model-name &quot;$MODEL_ID&quot; \
+  --quantization modelopt_fp4 \
+  --moe-runner-backend flashinfer_trtllm \
+  --tp-size 4 \
+  --ep-size 4 \
+  --port 30000</code></pre>
+<p>checkpoint 里包含 chat template，我们把它显式传入。启动器会配置好 Muse 的推理解析器和工具调用解析器。</p>
+<p>通过 OpenAI 兼容 API 发送一个请求：</p>
+<pre><code>curl http://localhost:30000/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;model&quot;: &quot;meta-models/Muse-Spark-Open-816B-A42B-NVFP4&quot;,
+    &quot;messages&quot;: [{
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;Explain how a mixture-of-experts model works.&quot;
+    }],
+    &quot;max_tokens&quot;: 2048
+  }'</code></pre>
+<p>响应会把 <code>reasoning_content</code> 里的推理轨迹与 <code>content</code> 里的最终答案分开。</p>
+<h3>vLLM</h3>
+<p>vLLM 的 Muse Spark Open 参考集成支持文本和图像输入，使用 NVFP4 checkpoint，需要 Blackwell 系列 GPU。</p>
+<p>安装好参考插件及其依赖后，从 Hugging Face Hub 下载 checkpoint 并启动服务器：</p>
+<pre><code>export MODEL_ID=meta-models/Muse-Spark-Open-816B-A42B-NVFP4
+export CKPT=&quot;$(hf download &quot;$MODEL_ID&quot;)&quot;
+
+VLLM_ALLOW_LONG_MAX_MODEL_LEN=1 \
+VLLM_PLUGINS=musespark1x_models,ptq_nvfp4 \
+vllm serve &quot;$CKPT&quot; \
+  --served-model-name &quot;$MODEL_ID&quot; \
+  --tokenizer-mode musespark1x \
+  --config-format auto \
+  --load-format internal_safetensor \
+  --tensor-parallel-size 4 \
+  --enable-expert-parallel \
+  --max-model-len 131072 \
+  --gpu-memory-utilization 0.92 \
+  --reasoning-parser musespark1x \
+  --tool-call-parser musespark1x \
+  --enable-auto-tool-choice \
+  --port 8000</code></pre>
+<p>这份配置设定了 128K token 的服务上下文。插件提供模型实现、checkpoint 加载器，以及推理与工具调用解析器。</p>
+<p>用同一个 Hub 模型 ID 发送请求：</p>
+<pre><code>curl http://localhost:8000/v1/chat/completions \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;model&quot;: &quot;meta-models/Muse-Spark-Open-816B-A42B-NVFP4&quot;,
+    &quot;messages&quot;: [{
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;Explain how a mixture-of-experts model works.&quot;
+    }],
+    &quot;max_tokens&quot;: 2048
+  }'</code></pre>
+<h2>MLX</h2>
+<p>Muse Spark Open 如今已可在 <a href="https://github.com/jundot/omlx">oMLX</a> 和 <a href="https://github.com/ml-explore/mlx-lm">mlx-lm</a> 中使用。为 oMLX 优化的 oQ 量化已提供 <a href="https://huggingface.co/mlx-community/Muse-Spark-Open-816B-A42B-oQ3e">3-bit</a> 和 <a href="https://huggingface.co/mlx-community/Muse-Spark-Open-816B-A42B-oQ4e">4-bit</a> 版本，开箱即用。</p>
+<p>我们在 M3 Ultra（512 GB）上测试了 oQ3e 量化。模型占用约 344 GB，给 KV cache 留出了空间；在 1024 token 的 prompt、生成 128 个 token 的设置下，prefill 约 225 tok/s，生成约 21 tok/s。</p>
+<p>通过 oMLX 界面下载模型后，你就能在内置的聊天 UI 里与它对话。在这个聊天 UI 中你可以添加图像，并随时调节推理强度，从 low 到 xhigh。模型的推理以一个可折叠的思考区块呈现，与最终答案分开。</p>
+<p>注意推理是无法关闭的，而默认值（Auto）用的是 xhigh。如果你想在更简单的任务上少用一些 token，请把它设为 “low”。<a href="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/omlx_muse_spark_open_reasoning_screenshot.png"><img src="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/omlx_muse_spark_open_reasoning_screenshot.png" alt="omlx"></a></p>
+<p>语言模型同样已经出现在官方 mlx-lm 仓库的<a href="https://github.com/ml-explore/mlx-lm/pull/1975">这个 PR</a> 中。你可以按下面这样在同样高质量的 oQ3e 量化上运行它：</p>
+<pre><code>mlx_lm.generate --model mlx-community/Muse-Spark-Open-816B-A42B-oQ3e \
+  --prompt &quot;Explain convolutional networks like I am 5&quot; \
+  --max-tokens 5000</code></pre>
+<p>这是一个很大的模型，正如上面所说，即使 3-bit 量化也需要 256 GB 以上的内存。你也可以跨多台计算机运行分布式推理，具体细节请参考文档。</p>
+<h2>用 Inference Endpoints 部署 Muse Spark Open</h2>
+<p>你可以在 Inference Endpoints 上部署 Muse Spark Open，使用针对 NVFP4 变体预先验证过的 SGLang 方案：它既可以在 8 × NVIDIA RTX Pro 6000 98 GB 上运行、上下文长度 131072，如果你想要 1048576 的上下文长度，也可以在 8 x NVIDIA H200 141GB 上运行。</p>
+<p>部署时，用 Hugging Face CLI 执行一条命令即可：</p>
+<pre><code>hf endpoints catalog deploy --repo meta-models/Muse-Spark-Open-816B-A42B-NVFP4 --name muse-spark</code></pre>
+<p>或者打开 <a href="https://endpoints.huggingface.co/new/meta-models/Muse-Spark-Open-816B-A42B-NVFP4">endpoints.huggingface.co/new/meta-models/Muse-Spark-Open-816B-A42B-NVFP4</a> 并选择 Create Endpoint。</p>
+<p>该 endpoint 提供 OpenAI 兼容 API，既在 <code>/v1/chat/completions</code> 提供 Chat Completions API，也在 <code>/v1/responses</code> 提供 Responses API。</p>
+<pre><code>curl &quot;https://&lt;your-endpoint&gt;.endpoints.huggingface.cloud/v1/chat/completions&quot; \
+  -H &quot;Authorization: Bearer $HF_TOKEN&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -d '{
+    &quot;model&quot;: &quot;meta-models/Muse-Spark-Open-816B-A42B-NVFP4&quot;,
+    &quot;messages&quot;: [{
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: [
+        {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: &quot;https://huggingface.co/datasets/merve/vl-test-suite/resolve/main/pills.jpg&quot;}},
+        {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Do any of the components in this supplement interact?&quot;}
+      ]
+    }],
+    &quot;chat_template_kwargs&quot;: {&quot;enable_thinking&quot;: false}
+  }'</code></pre>
+<p>任何 OpenAI 兼容客户端都能使用同一个 URL，并以你的 Hugging Face token 作为 API key。</p>
+<h2>用 TRL 微调</h2>
+<p>你可以用 TRL 的 <code>SFTTrainer</code> 微调 816B checkpoint。本节展示我们如何在 8 个节点、每节点 8 张 H100 GPU 上用 TRL 完成微调。该方案在注意力层上训练 LoRA adapter，专家保持冻结。完整脚本在 <a href="https://github.com/huggingface/trl/tree/main/examples/sft_muse_spark_open">TRL examples</a> 中。</p>
+<p>首先，我们需要把模型切分到 64 个 GPU 设备上。鉴于模型体量巨大，必须在多个维度上并行。我们用 FSDP 对模型分片，并把专家分散到各 GPU 上，靠的是 <code>DistributedConfig</code>，它告诉 <code>transformers</code> 在加载模型时如何切分：</p>
+<pre><code>from transformers.distributed import DistributedConfig
+
+distributed_config = DistributedConfig(fsdp_size=64, ep_size=8)</code></pre>
+<p>上面的片段中，<code>fsdp_size=64</code> 用 FSDP2 把模型分片到全部 64 张 GPU 上，<code>ep_size=8</code> 把每一层的 256 个专家分成 8 组。Transformers 会把每个 token 发送到持有其专家的 GPU 上，因此每张 GPU 都在自己那一份 batch 切片上训练。</p>
+<p>接下来为这次训练配置 <code>SFTConfig</code>。这里我们只做了一个简单任务，在一个开源数据集上适配模型的 chat template，但你可以把它套用到自己的场景。</p>
+<pre><code>import torch
+from datasets import load_dataset
+from peft import LoraConfig
+from transformers.distributed import DistributedConfig
+from trl import SFTConfig, SFTTrainer
+
+train_dataset = load_dataset(&quot;allenai/tulu-3-sft-mixture&quot;, split=&quot;train[:500000]&quot;)
+
+training_args = SFTConfig(
+    output_dir=&quot;muse-spark-lora-sft&quot;,
+    model_init_kwargs={&quot;dtype&quot;: torch.bfloat16, &quot;distributed_config&quot;: DistributedConfig(fsdp_size=64, ep_size=8)},
+    per_device_train_batch_size=1,
+    max_steps=500,
+    max_length=2048,
+    packing=True,
+    save_only_model=True,
+    logging_steps=1,
+    report_to=&quot;trackio&quot;,
+)
+
+trainer = SFTTrainer(
+    model=&quot;meta-models/Muse-Spark-Open-816B-A42B&quot;,
+    args=training_args,
+    train_dataset=train_dataset,
+    peft_config=LoraConfig(r=16, lora_alpha=32, target_modules=[&quot;q_proj&quot;, &quot;k_proj&quot;, &quot;v_proj&quot;, &quot;o_proj&quot;]),
+)
+trainer.train()</code></pre>
+<p>这里的核心是 <code>packing=True</code>，它把样本拼接成 2048 token 的序列而不做补齐，并用块对角掩码让各样本彼此隔离。<code>save_only_model=True</code> 只保存 adapter、不保存优化器状态，因为 trainer 无法恢复一个在加载时被分片的模型。<code>LoraConfig</code> 指向四个注意力投影矩阵，每一层的 256 个专家保持冻结。</p>
+<p>然后我们可以在每个节点上运行这条命令：</p>
+<pre><code>torchrun --nnodes 8 --nproc_per_node 8 --rdzv_backend c10d --rdzv_endpoint &quot;$MASTER_IP:29700&quot; sft_muse_spark_open.py</code></pre>
+<p>我们训练了 500 步，在 64 张 H100 上耗时约 2 小时，速度约为每秒 8,000 token。平均 token 准确率从 72% 升到 84%，loss 从 1.26 降到 0.57，说明这是一次不错的微调。</p>
+<p><a href="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/training_loss.png"><img src="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/training_loss.png" alt="Loss"></a></p>
+<p><a href="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/token_acc.png"><img src="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/token_acc.png" alt="Acc"></a></p>
+<h2>演示</h2>
+<p>Muse Spark Open 是一个编程与智能体模型。我们想亲自验证这一点，于是尝试了一系列多模态与智能体任务，都用到了模型的图像和音频输入。下面每一项你都可以直接运行或 fork。</p>
+<h3>3D 资产生成器</h3>
+<p>我们把 2-bit 量化的 Muse Spark Open（由 llama.cpp 提供服务）与 Pi 编程 agent 结合起来，用来在 <a href="http://Three.js">Three.js</a> 中生成 3D 资产并迭代改进。prompt 可以在<a href="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/pi-3d-prompt.txt">这里</a>找到；由于模型经过了量化，它需要稍多一些的引导。在 Mac Ultra 上用 llama.cpp 我们能得到 18 TPS。</p>
+<p><a href="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/pi-demo.png"><img src="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/pi-demo.png" alt="Pi demo"></a></p>
+<p>我们先描述想要的资产，Pi 用模型生成该资产的 Three.js 代码，在浏览器里渲染出结果，并从多个角度截图。随后它把这些图像送回 llama server 上的同一个模型获取视觉反馈。Pi 依据那份反馈修改代码，然后重复整个过程。</p>
+<h3>用 OpenEnv 与 Hugging Face Sandbox 进行浏览器交互</h3>
+<p>我们在 computer use 任务上测试了 Spark，被它的表现惊艳到了，因此做了一个精简的 demo，它同时也能教你理解 computer use agent 是如何工作的。你还可以按自己的需求进一步定制它。它既是一个教学示例，也是几行代码就能跑起来的东西。可以<a href="https://huggingface.co/docs/openenv/main/en/environments/helium_browser">在这里</a>找到它。</p>
+<p>配合 OpenEnv 与 HF Sandboxes 的 Muse Spark NVFP4 浏览器 Agent</p>
+<p><a href="https://huggingface.co/docs/huggingface_hub/en/guides/sandbox">Hugging Face Sandboxes</a> 是构建在 Hugging Face Jobs 之上、用于便捷执行代码的沙箱。这个 demo 由三个组件构成：</p>
+<ul><li>通过 Inference Endpoints 提供服务的 Muse Spark Open，</li><li>用 helium 和 selenium 包装 web driver 动作（点击、输入、滚动等）、定义浏览器环境的 reset、step、observation、termination 接口的 OpenEnv，</li><li>Chromium 网页浏览器</li></ul>
+<p>其中远程沙箱包含环境与浏览器，如下图所示。</p>
+<p><a href="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/browser_server.png"><img src="https://huggingface.co/datasets/merve/meta-muse-spark-open-assets/resolve/main/browser_server.png" alt="Diagram"></a></p>
+<p>照着示例里的说明，几个步骤就能轻松试用：用 Muse Spark Open 启动 Inference Endpoint（NVFP4 也很好用！），把你的 endpoint URL 加为环境变量，在 Spaces 里发布你的 OpenEnv server 并把它也提供进去，然后你就能运行 agent 循环。Muse Spark Open 看到的是此前的动作、system prompt、url 和浏览器截图，据此采取行动，仅此而已（没有 DOM，没有 HTML 代码，什么都没有），所以这是一个真正意义上的多模态浏览器 demo。</p>
+<h3>调用你的浏览器</h3>
+<p>最后，我们想把 Spark 的智能体多模态能力推到极限，于是搭了<a href="https://huggingface.co/spaces/burtenshaw/muse-spark-call-your-browser">这个 space</a>，把模型的音频、图像与智能体特性组合成一个浏览器 agent。我们给模型一段关于所需之物的笼统描述，它就与内置的浏览器交互，在 Amazon 上找出候选选项。</p>
+<p>Muse Spark Open 接收语音输入，推理出符合描述的商品类型，在 Amazon 上搜索它，并依据条件挑出最合适的那个。</p>
+<h2>小结</h2>
+<p>Muse Spark Open 是 Muse 系列中的完整尺寸开放权重模型。可以从 <a href="https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B">BF16</a> 或 <a href="https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4">NVFP4</a> checkpoint 开始，或者试试出色的 <code>llama.cpp quants</code> 之一。如果你用 Muse Spark Open 做出了什么东西，欢迎分享出来，并在<a href="https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B/discussions">仓库的 discussions</a> 里告诉我们。</p>
+<h2>本文提到的模型 4</h2>
+<h2>本文提到的数据集 1</h2>
+<h2>本文提到的论文 1</h2>
+<h2>本文提到的合集 1</h2>
+<p>来自我们博客的更多文章</p>
+<p>mlxopen-sourcecommunity</p>
+<h2>Jun Kim（oMLX 的作者与维护者）加入 Hugging Face，支持 MLX 社区</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></li><li>+1</li></ul>
+<p>95</p>
+<p>2026 年 9 月 22 日</p>
+<p>llmmoelong-context</p>
+<h2>DeepSeek-V4：智能体真正用得上的百万 token 上下文</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li></ul>
+<p>62</p>
+<p>2026 年 4 月 24 日</p>
+<h3>社区</h3>
+<p>把图片、音频和视频拖进文本输入框、粘贴，或者点击这里即可上传。</p>
+<p>在此轻点或粘贴以上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fmeta-muse-spark-open">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fmeta-muse-spark-open">登录</a> 即可评论</p>
+<p>24</p>
+<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alvarobartt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></a></li><li><a href="https://huggingface.co/clem"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583857146757-5e67bdd61009063689407479.jpeg" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/BrigitteTousi"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63691c3eda9b693c2730b2a2/hBtKpgo3_9003MWCGkw5d.png" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/phranzia"><img src="https://huggingface.co/avatars/2b2e9cb108e048c7574304808270784a.svg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/eminbayramli"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ad1234a41868177761f0ba5/Kd2xVqNhbmJvO6ZVvTZ6W.png" alt=""></a></li><li><a href="https://huggingface.co/AdinaY"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63a369d98c0c89dcae3b8329/AiH2zjy1cnt9OADAAZMLD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mtowalski"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tDbq23c5_BDSKyD-8A5Mu.png" alt=""></a></li></ul>
+<h2>本文提到的模型 4</h2>
+<h2>本文提到的数据集 1</h2>
+<h2>本文提到的论文 1</h2>
+<h2>本文提到的合集 1</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Welcome FLUX.3 Image Klein in Diffusers</title>
+      <title>Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像…</title>
       <link>https://huggingface.co/blog/flux-3</link>
       <guid isPermaLink="true">https://huggingface.co/blog/flux-3</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型 | 原文标题：Welcome FLUX.3 Image Klein in Diffusers: The latest open image generation model from Black Forest Labs</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章列表</a></p>
+<h1>Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型</h1>
+<p>发布于 2026 年 10 月 15 日</p>
+<p>在 GitHub 上更新</p>
+<p>23</p>
+<ul><li><a href="https://huggingface.co/sayakpaul"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Steveeeeeeen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/linoyts"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/638f308fc4444c6ca870b60a/Q11NK-8-JbiilJ-vk2LAR.png" alt=""></a></li><li><a href="https://huggingface.co/suvadityamuk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62449192f555de1927aa7d00/gGiMTU3YVwk0M1ltXdVfV.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt="Aritra Roy Gosthipaty 的头像"></a></p>
+<p>Aritra Roy Gosthipaty</p>
+<p>ariG23498</p>
+<p><a href="https://huggingface.co/sayakpaul"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt="Sayak Paul 的头像"></a></p>
+<p>Sayak Paul</p>
+<p>sayakpaul</p>
+<p><a href="https://huggingface.co/linoyts"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/638f308fc4444c6ca870b60a/Q11NK-8-JbiilJ-vk2LAR.png" alt="Linoy Tsaban 的头像"></a></p>
+<p>Linoy Tsaban</p>
+<p>linoyts</p>
+<p><a href="https://huggingface.co/black-forest-labs">Black Forest Labs</a> 的 FLUX.3 Image Klein 来了，而且从第一天起就能跑在 Diffusers 里。一个模型同时做文生图和多参考图生图，还带来了一点新东西：<strong>布局控制</strong>。你把边界框写进 prompt，就能说明图像的每一部分该放在哪里，或者参考图中的哪几部分要被移动。</p>
+<p>两个开源 checkpoint 都在 <a href="https://huggingface.co/collections/black-forest-labs/flux-3-image-klein">FLUX.3 Image Klein collection</a> 里：</p>
+<table><thead><tr><th>Checkpoint</th><th>是什么</th><th>默认设置</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/black-forest-labs/flux-3-image-klein"><code>black-forest-labs/flux-3-image-klein</code></a></td><td>时间步蒸馏版，用于快速推理</td><td>16 步，无 CFG</td></tr><tr><td><a href="https://huggingface.co/black-forest-labs/flux-3-image-klein-base"><code>black-forest-labs/flux-3-image-klein-base</code></a></td><td>基础模型</td><td>50 步，CFG</td></tr></tbody></table>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/hero.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/hero.png" alt="雪地森林里的红狐（文生图），由那张图重新渲染出的同一只狐狸（图生图），一个黑色点画的奔跑剪影画在 chartreuse 背景上、画在它带标签的边界框内，以及一张针织骑士从 &quot;from&quot; 框被移到 &quot;to&quot; 框、旁边是一条针织龙（布局编辑）"></a></p>
+<p>你可以现在就前往 <a href="https://huggingface.co/spaces/black-forest-labs/flux-3-image-klein">Hugging Face space</a> 生成一些图像！</p>
+<h2>TL;DR</h2>
+<ul><li>一个模型覆盖文生图、多参考图生图，以及边界框布局控制。</li><li>蒸馏版 checkpoint 在 H100 上生成一张 1024 × 1024 的图像大约需要 <strong>2 秒</strong>。</li><li>NVFP4 和 FP8 权重可以用 <code>from_single_file</code> 加载，适合更小的 GPU。</li><li>文生图和图像编辑两种任务都提供 LoRA 训练脚本。</li><li>以 <a href="https://huggingface.co/blog/flux-3#modular-diffusers">Modular Diffusers</a> 管线的形式发布，所以你可以把某些 block 拆出来，或者加上你自己的。</li></ul>
+<h2>目录</h2>
+<ul><li><a href="https://huggingface.co/blog/flux-3#getting-started">开始使用</a></li><li><a href="https://huggingface.co/blog/flux-3#what-flux3-can-do">FLUX.3 能做什么</a></li><li><a href="https://huggingface.co/blog/flux-3#base-model-and-quantized-variants">基础模型与量化变体</a></li><li><a href="https://huggingface.co/blog/flux-3#lora-finetuning">LoRA 微调</a></li><li><a href="https://huggingface.co/blog/flux-3#what-it-costs-to-run">运行成本</a></li><li><a href="https://huggingface.co/blog/flux-3#the-architecture">架构</a></li><li><a href="https://huggingface.co/blog/flux-3#modular-diffusers">Modular Diffusers</a></li><li><a href="https://huggingface.co/blog/flux-3#try-it">上手试试</a></li></ul>
+<h2>开始使用</h2>
+<p>安装最新的 <code>diffusers</code> 和 <code>transformers</code>（为了 Qwen3-VL 文本编码器）：</p>
+<pre><code>pip install -U diffusers transformers</code></pre>
+<p>加载蒸馏版 checkpoint 并生成一张图像：</p>
+<pre><code>import torch
+from diffusers import ModularPipeline
+
+pipe = ModularPipeline.from_pretrained(&quot;black-forest-labs/flux-3-image-klein&quot;)
+pipe.load_components(dtype=torch.bfloat16)
+pipe.to(&quot;cuda&quot;)
+
+pipe(prompt=&quot;a red fox&quot;, output=&quot;images&quot;)[0].save(&quot;fox.png&quot;)</code></pre>
+<h2>FLUX.3 能做什么</h2>
+<h3>文生图</h3>
+<p>FLUX.3 对完整的场景描述响应最好：主体、环境、光线、构图和风格都写清楚。Black Forest Labs 的<a href="https://docs.bfl.ai/guides/prompting_summary">官方 prompting 指南</a>里还有更多技巧。蒸馏版 checkpoint 默认用 <code>16</code> 步生成一张 <code>1024 × 1024</code> 的图像。传入 <code>height</code>、<code>width</code> 或 <code>num_inference_steps</code> 就能改变这些值。</p>
+<pre><code>prompt = (
+    &quot;A wide-angle wildlife photograph of a red fox standing alert in a snow-covered forest clearing at golden hour. &quot;
+    &quot;The fox is centered in the frame, its thick orange winter coat contrasting with the fresh white snow, breath &quot;
+    &quot;visible in the cold air. Snow-laden pine trees fill the softly blurred background, and low warm sunlight rakes &quot;
+    &quot;across the scene from the left, casting long blue shadows.&quot;
+)
+
+fox = pipe(
+    prompt=prompt,
+    generator=torch.Generator().manual_seed(0),
+    output=&quot;images&quot;
+)[0]
+fox.save(&quot;fox.png&quot;)</code></pre>
+<table><thead><tr><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/t2i.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/t2i.png" alt="一只红狐警觉地站在覆雪的林间空地上，被左侧斜射而来的低角度金色阳光照亮"></a></th></tr></thead><tbody><tr><td>文生图</td></tr></tbody></table>
+<h3>图生图</h3>
+<p>用 <code>image</code> 参数传入一张参考图（或者更多）。把 prompt 写成你<em>想要</em>的那张图的描述文字，并把要做的改动包含在里面。</p>
+<pre><code>prompt = (
+    &quot;The same red fox in the same snow-covered forest clearing, now at night under a full moon: cool blue &quot;
+    &quot;moonlight, deep shadows, stars visible through the pine branches, the fox's eyes catching the light.&quot;
+)
+night = pipe(
+    prompt=prompt,
+    image=fox, # from the previous text to image example
+    generator=torch.Generator().manual_seed(0),
+    output=&quot;images&quot;,
+)[0]
+night.save(&quot;night.png&quot;)</code></pre>
+<table><thead><tr><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/i2i.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/i2i.png" alt="上一张图里的那只狐狸，改以冷蓝色光线重新打光"></a></th></tr></thead><tbody><tr><td>图生图</td></tr></tbody></table>
+<p>有多张参考图时，在 prompt 里用 <code>&lt;ref_image_0&gt;</code>、<code>&lt;ref_image_1&gt;</code>……按它们被传给 <code>image</code> 的顺序来指代它们：</p>
+<pre><code>red_fox = pipe(prompt=&quot;a red fox&quot;, generator=torch.Generator().manual_seed(0), output=&quot;images&quot;)[0]
+bench = pipe(prompt=&quot;a wooden bench&quot;, generator=torch.Generator().manual_seed(0), output=&quot;images&quot;)[0]
+
+combined = pipe(
+    prompt=&quot;The fox from &lt;ref_image_0&gt; sitting on the wooden bench from &lt;ref_image_1&gt; in a snowy setting.&quot;,
+    image=[red_fox, bench],
+    output=&quot;images&quot;,
+)[0]
+
+combined.save(&quot;combined.png&quot;)</code></pre>
+<table><thead><tr><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/i2i_fox.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/i2i_fox.png" alt="一只红狐坐在枯草地上"></a></th><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/i2i_bench.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/i2i_bench.png" alt="一条板条木质长椅靠在一面素净的灰墙前"></a></th><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/combined.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/combined.png" alt="同一只狐狸坐在同一条长椅上，地上有雪"></a></th></tr></thead><tbody><tr><td><code>&lt;ref_image_0&gt;</code>：一只红狐</td><td><code>&lt;ref_image_1&gt;</code>：一条木质长椅</td><td>长椅上的狐狸</td></tr></tbody></table>
+<h3>布局控制</h3>
+<p>在描述文字之后加上一份区域的 JSON 列表。每个区域有一个 <code>id</code>、一个 <code>bbox</code> 和一个 <code>desc</code>，描述文字里用 <code>&lt;id&gt;</code> 提到它。</p>
+<blockquote>框写作 [y_min, x_min, y_max, x_max]，y 在前，按 0–1000 的刻度。因为刻度是归一化的，同一个框适用于任意图像尺寸。</blockquote>
+<h4>在新图像里放置区域</h4>
+<pre><code>layout_prompt = (
+    &quot;Minimalist graphic illustration featuring a black silhouette of a person &lt;silhouette_1&gt; centered against a &quot;
+    &quot;solid, vibrant chartreuse background &lt;background_1&gt;. The figure is captured in a dynamic, mid-stride running &quot;
+    &quot;pose, facing toward the left side of the frame. &quot;
+    '[{&quot;id&quot;: &quot;background_1&quot;, &quot;bbox&quot;: [0, 0, 1000, 1000], &quot;desc&quot;: &quot;A flat field of neon yellow-green with a subtle '
+    'paper texture and fine, organic grain.&quot;}, {&quot;id&quot;: &quot;silhouette_1&quot;, &quot;bbox&quot;: [150, 150, 850, 850], &quot;desc&quot;: &quot;A '
+    &quot;black silhouette of a person in motion, made of dense stippled ink. The leading edges are solid; the trailing &quot;
+    'arm and leg dissolve into coarse square pixels and scattered dots.&quot;}]'
+)
+
+runner = pipe(prompt=layout_prompt, generator=torch.Generator().manual_seed(0), output=&quot;images&quot;)[0]</code></pre>
+<table><thead><tr><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/bbox-layout.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/bbox-layout.png" alt="示意图：左侧是描述文字和两段区域描述，中间是 0–1000 网格上的两个框，右侧是生成的图像，黑色点画的奔跑者填满了 chartreuse 背景上的剪影框"></a></th></tr></thead><tbody><tr><td>每个区域的 <code>desc</code> 都画在它自己的 <code>bbox</code> 之内</td></tr></tbody></table>
+<h4>在参考图内移动区域</h4>
+<p>做编辑时，每个区域要说明它的内容<strong>来自</strong>哪里（参考图里的 <code>src_bbox</code>）、要落到哪里（输出里的 <code>tgt_bbox</code>）。两个框一致的区域就留在原地。</p>
+<p>这个例子把针织骑士往上、往左移动，同时钉住背景、悬崖、针、龙和火焰：</p>
+<pre><code>from diffusers.utils import load_image
+
+knight_image = load_image(&quot;knight_orig.png&quot;)
+edit_prompt = (
+    &quot;In &lt;ref_image_0&gt;, move the miniature grey amigurumi knight figure &lt;knight_1&gt; upwards and to the left along the &quot;
+    &quot;yarn cliff &lt;cliff_1&gt;. Keep the rest of the image completely unchanged, preserving the blurred yarn backdrop &quot;
+    &quot;&lt;backdrop_1&gt;, the large knitted dragon &lt;dragon_1&gt;, and the fiery orange thread &lt;fire_1&gt;. &quot;
+    '[{&quot;id&quot;: &quot;knight_1&quot;, &quot;from&quot;: &quot;ref_image_0&quot;, &quot;src_bbox&quot;: [500, 150, 850, 350], &quot;tgt_bbox&quot;: [194, 55, 544, 255], '
+    '&quot;desc&quot;: &quot;A miniature amigurumi knight crocheted from thick grey woolen yarn.&quot;}, '
+    '{&quot;id&quot;: &quot;backdrop_1&quot;, &quot;from&quot;: &quot;ref_image_0&quot;, &quot;src_bbox&quot;: [0, 0, 1000, 1000], &quot;tgt_bbox&quot;: [0, 0, 1000, 1000], '
+    '&quot;desc&quot;: &quot;A soft, out-of-focus backdrop of cream and indigo knitted yarn.&quot;}, '
+    '{&quot;id&quot;: &quot;cliff_1&quot;, &quot;from&quot;: &quot;ref_image_0&quot;, &quot;src_bbox&quot;: [300, 0, 1000, 450], &quot;tgt_bbox&quot;: [300, 0, 1000, 450], '
+    '&quot;desc&quot;: &quot;A steep cliff of stacked yarn skeins in mustard, terracotta, and indigo.&quot;}, '
+    '{&quot;id&quot;: &quot;needle_1&quot;, &quot;from&quot;: &quot;ref_image_0&quot;, &quot;src_bbox&quot;: [420, 250, 550, 450], &quot;tgt_bbox&quot;: [420, 250, 550, 450], '
+    '&quot;desc&quot;: &quot;An oversized polished steel tapestry needle.&quot;}, '
+    '{&quot;id&quot;: &quot;dragon_1&quot;, &quot;from&quot;: &quot;ref_image_0&quot;, &quot;src_bbox&quot;: [100, 600, 950, 1000], &quot;tgt_bbox&quot;: [100, 600, 950, 1000], '
+    '&quot;desc&quot;: &quot;A large, fluffy knitted dragon in terracotta and mustard yarn.&quot;}, '
+    '{&quot;id&quot;: &quot;fire_1&quot;, &quot;from&quot;: &quot;ref_image_0&quot;, &quot;src_bbox&quot;: [350, 400, 650, 650], &quot;tgt_bbox&quot;: [350, 400, 650, 650], '
+    '&quot;desc&quot;: &quot;Curled puffs of fiery orange angora thread suspended in mid-air.&quot;}]'
+)
+
+moved = pipe(prompt=edit_prompt, image=knight_image, generator=torch.Generator().manual_seed(0), output=&quot;images&quot;)[0]</code></pre>
+<table><thead><tr><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/knight.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/knight.png" alt="左：带着骑士源框的参考图。右：输出，有一条从源框指向目标框的箭头；被钉住的区域用白色描边"></a></th></tr></thead><tbody><tr><td>骑士从它的 <code>src_bbox</code> 移到 <code>tgt_bbox</code>，场景其余部分纹丝不动</td></tr></tbody></table>
+<h2>基础模型与量化变体</h2>
+<h3>基础模型</h3>
+<p>上面的所有内容用的都是蒸馏版 checkpoint。base checkpoint 带 classifier-free guidance 跑 50 步，也是拿来做微调的那个（见 <a href="https://huggingface.co/blog/flux-3#lora-finetuning">LoRA 微调</a>）。</p>
+<pre><code>pipe = ModularPipeline.from_pretrained(&quot;black-forest-labs/flux-3-image-klein-base&quot;)
+pipe.load_components(dtype={&quot;vae&quot;: torch.float32, &quot;default&quot;: torch.bfloat16})
+pipe.to(&quot;cuda&quot;)
+
+pipe.guider = pipe.guider.new(guidance_scale=5.0)  # optional
+image = pipe(prompt=prompt, output=&quot;images&quot;)[0]</code></pre>
+<h3>单文件格式 checkpoint</h3>
+<p>Black Forest Labs 也把 transformer 以单个文件发布，有 <code>bf16</code>，也有两种量化格式：<code>fp8r</code>（按行 FP8）和 <code>nvfp4</code>。用 <code>from_single_file</code> 加载其中任意一个，然后按名称加载其余组件，这样就不会顺带把 bf16 的 transformer 也下载下来。</p>
+<pre><code>from diffusers import BFLQuantizationConfig, Flux3Transformer2DModel, ModularPipeline
+
+model_id = &quot;black-forest-labs/flux-3-image-klein-base&quot;
+variant = &quot;fp8r&quot;  # or &quot;nvfp4&quot;
+
+transformer = Flux3Transformer2DModel.from_single_file(
+    f&quot;https://huggingface.co/{model_id}/blob/main/variants/{variant}/model.safetensors&quot;,
+    config=model_id,
+    subfolder=&quot;transformer&quot;,
+    quantization_config=BFLQuantizationConfig(compute_dtype=torch.bfloat16),
+    dtype=torch.bfloat16,
+)
+
+pipe = ModularPipeline.from_pretrained(model_id)
+pipe.load_components(dtype=torch.bfloat16)
+pipe.update_components(transformer=transformer)
+pipe.to(&quot;cuda&quot;)</code></pre>
+<p>至于未量化的单文件，改用 <code>https://huggingface.co/{model_id}/blob/main/model.safetensors</code>，并去掉 <code>quantization_config</code>。</p>
+<table><thead><tr><th>变体</th><th>有快速 kernel 的平台</th><th>其他 GPU</th></tr></thead><tbody><tr><td><code>fp8r</code></td><td>计算能力 8.9 及以上（Ada、Hopper、Blackwell）</td><td>每一步都对权重做反量化：显存更省，但没有加速</td></tr><tr><td><code>nvfp4</code></td><td>Blackwell，需要版本一致的 <code>flashinfer-python</code> 和 <code>flashinfer-cubin</code></td><td>同上</td></tr></tbody></table>
+<h2>LoRA 微调</h2>
+<p>FLUX.3 同时支持文生图和图生图，这让它成为定制 LoRA 的绝佳底座。<code>diffusers</code> 为这两种任务都提供了 DreamBooth LoRA 训练脚本（你也可以用 <a href="https://github.com/ostris/ai-toolkit">Ostris' AI Toolkit</a> 训练）。</p>
+<p>下面是一个文生图的例子，从 <a href="https://huggingface.co/datasets/multimodalart/1920-raider-waite-tarot-public-domain"><code>multimodalart/1920-raider-waite-tarot-public-domain</code></a> 数据集学习塔罗牌风格，用 <code>trtcrd</code> 触发：</p>
+<pre><code>accelerate launch train_dreambooth_lora_flux3_klein.py \
+  --pretrained_model_name_or_path=&quot;black-forest-labs/flux-3-image-klein-base&quot; \
+  --dataset_name=&quot;multimodalart/1920-raider-waite-tarot-public-domain&quot; \
+  --caption_column=&quot;caption&quot; \
+  --instance_prompt=&quot;trtcrd&quot; \
+  --output_dir=&quot;trained-flux3-tarot-lora&quot; \
+  --mixed_precision=&quot;bf16&quot; \
+  --resolution=1024 \
+  --use_aspect_ratio_buckets \
+  --train_batch_size=1 \
+  --rank=16 \
+  --lora_alpha=16 \
+  --learning_rate=1e-4 \
+  --lr_scheduler=&quot;constant&quot; \
+  --max_train_steps=1500 \
+  --validation_prompt=&quot;a trtcrd of a cat, tarot style&quot; \
+  --validation_epochs=25 \
+  --seed=0 \
+  --push_to_hub</code></pre>
+<blockquote>要降低显存占用，可以加上几个优化 flag：<br>  --gradient_checkpointing \<br>  --cache_latents \<br>  --use_8bit_adam<br>--gradient_checkpointing 在反向传播时重算激活值（显存更低、稍慢一些），--cache_latents 预先编码图像并释放 VAE，--use_8bit_adam 把优化器状态保持在 8-bit。</blockquote>
+<p>有几个旋钮值得动手试验。下面的图组用不同的 LoRA rank 和优化器训练同一种塔罗风格；这些 adapter 都在 Hub 上的 <a href="https://huggingface.co/diffusers-modular/flux3-tarot-lora"><code>diffusers-modular/flux3-tarot-lora</code></a>。更多训练特性与配置记录在 <a href="https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/README_flux3_klein.md">DreamBooth FLUX.3 README</a> 里。</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/tarot-lora-sweep.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/tarot-lora-sweep.png" alt="FLUX.3 塔罗风格 LoRA 在不同 rank 与优化器下的表现：不加 LoRA 的 base 模型，然后是 rank 16、rank 8 和 rank 32（AdamW，lr 1e-4）以及一次 Prodigy 训练，用两条留出的 prompt 生成"></a></p>
+<p>至于基于指令的编辑，图生图脚本（<code>train_dreambooth_lora_flux3_klein_img2img.py</code>）用（参考图、目标图、指令）三元组训练，其中参考图在 prompt 里以 <code>&lt;ref_image_0&gt;</code> 来指代。</p>
+<p>全部选项和完整的图生图例子见 <a href="https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/README_flux3_klein.md">DreamBooth FLUX.3 README</a>。</p>
+<h2>运行成本</h2>
+<p>这一节我们谈谈这些模型的显存消耗和生成速度。</p>
+<h3>显存</h3>
+<table><thead><tr><th>名称</th><th>峰值已分配（加载后）GiBs</th><th>峰值已分配（推理后）GiBs</th></tr></thead><tbody><tr><td>nvfp4 (RTX6000)</td><td>13.4</td><td>15.3</td></tr><tr><td>fp8r (H100)</td><td>14.35</td><td>16.27</td></tr><tr><td>bf16 (H100)</td><td>18.80</td><td>20.72</td></tr></tbody></table>
+<p>如果你的显存更少：</p>
+<ul><li>加载一个<a href="https://huggingface.co/blog/flux-3#base-model-and-quantized-variants">量化 transformer</a>。</li><li>单独运行文本编码器再把它释放掉。每张图片它只在去噪之前运行一次（见<a href="https://huggingface.co/blog/flux-3#encode-once-generate-many">编码一次，生成多张</a>）。</li><li>打开自动 CPU offloading，它只在某个组件运行时才把它搬到 GPU 上（这一点我们没有做基准测试）</li></ul>
+<pre><code>from diffusers import ComponentsManager, ModularPipeline
+
+manager = ComponentsManager()
+manager.enable_auto_cpu_offload(device=&quot;cuda&quot;)
+
+pipe = ModularPipeline.from_pretrained(&quot;black-forest-labs/flux-3-image-klein&quot;, components_manager=manager)
+pipe.load_components(dtype={&quot;vae&quot;: torch.float32, &quot;default&quot;: torch.bfloat16})
+# no pipe.to(&quot;cuda&quot;): the manager handles device placement</code></pre>
+<h3>速度</h3>
+<p>蒸馏版 checkpoint（16 步）的端到端耗时，warmup 之后取三次运行的平均值：</p>
+<table><thead><tr><th>工作流</th><th>输出尺寸</th><th>耗时</th><th>峰值显存</th></tr></thead><tbody><tr><td>文生图</td><td>1024 × 1024</td><td>1.93 s</td><td>23.8 GiB</td></tr><tr><td>图生图，一张 1024 × 1024 的参考图</td><td>1024 × 1024</td><td>3.87 s</td><td>23.8 GiB</td></tr><tr><td>布局编辑（那个骑士），一张 1360 × 768 的参考图</td><td>1360 × 768</td><td>4.10 s</td><td>23.8 GiB</td></tr></tbody></table>
+<blockquote>单张 NVIDIA H100 80GB，不做 offloading，使用默认 attention backend。</blockquote>
+<p>一张参考图大致会让耗时翻倍。参考 token 与文本、正在生成的图像进入同一个序列，所以一张 1024 × 1024 的参考图会给每次 transformer 调用加上 4,096 个 token</p>
+<table><thead><tr><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/tokens-per-workflow.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/tokens-per-workflow.png" alt="每次 transformer 调用 token 数的堆叠柱状图：文生图 4,256 个 token；图生图 8,272；布局文生图 4,336；布局图生图 8,800"></a></th></tr></thead><tbody><tr><td>每次 transformer 调用 token 数的堆叠柱状图：文生图 4,256 个 token；图生图 8,272；布局文生图 4,336；布局图生图 8,800</td></tr></tbody></table>
+<h2>架构</h2>
+<p>我们把模型打开来看，一块一块来。模型接收三类 token：</p>
+<ul><li><strong>文本</strong></li><li>正在生成的<strong>带噪图像</strong></li><li>以及可选的<strong>参考图像</strong></li></ul>
+<h3>从像素到 token</h3>
+<p>FLUX.3 是一个用于图像生成的 latent-space flow 模型。也就是说，去噪器以 latents 为输入，也以 latents 为输出。我们用 VAE 把 latents 解码回像素。FLUX.3 用的是与 Flux.2 相同的 VAE 架构。</p>
+<p>FLUX.2 的 VAE 在每个方向上把图像压缩 8 倍，得到 32 个通道；随后这份 latent 的每个 2 × 2 patch 被打包成一个 128 通道的 token。</p>
+<p>所以<strong>一个 token 覆盖 16 × 16 像素的 patch</strong>，一张 1024 × 1024 的图像变成由 4,096 个 token 组成的 64 × 64 网格。带噪图像一开始就是形状完全一致的随机噪声。参考图走同一套 VAE 编码和打包流程，并保留它自己的尺寸。</p>
+<h3>从 prompt 到 token</h3>
+<p>文本编码器是 Qwen3-VL，一个视觉-语言模型。FLUX.3 不只取它的最后一层。它会读取该模型 36 层中<strong>八</strong>层的 hidden states（第 4、8、…、32 层）并把它们堆叠起来，于是每个文本 token 先变成一个 8 × 2560 = 20,480 维的向量，再由一个线性层把它投影到 transformer 的 3072 宽度。</p>
+<p>这让 transformer 拿到语言模型好几个深度的特征，而不只是最后一层。prompt 会被 pad 到 80 个 token 的整数倍，而 transformer 也会 attend 到这些 padding，这就是管线每次调用只接收一条 prompt 的原因。</p>
+<h3>两个阶段</h3>
+<p>transformer 分两个阶段处理这些 token：</p>
+<ul><li><strong>阶段 1：按模态分开的 blocks。</strong> 每条流各自经过 5 个拥有独立权重的 block。文本有自己的 blocks，带噪图像有自己的，参考图像也有自己的。</li><li><strong>阶段 2：joint blocks。</strong> 几条流被拼接成一个序列 <code>[text | image | reference]</code>，随后经过 28 个共享同一组权重的 block。</li></ul>
+<p>两个阶段的差别在于<em>谁能 attend 到谁</em>。</p>
+<p>在阶段 1，每条流只 attend 到自己，所以每类 token 先按自己的那套方式各自打磨。在阶段 2，一切都 attend 到一切，图像在这里从文本和参考图里学习。作为对比，FLUX.2 的 double-stream blocks 同样给文本和图像各自独立的权重，但从一开始就允许它们互相 attend。FLUX.3 是先把几条流彻底分开，再合并它们。</p>
+<p>到最后，文本和参考 token 直接丢掉。只有图像 token 经过输出层，由它预测该把这些 token 朝干净图像推进哪一步。</p>
+<h3>一个 block 的内部</h3>
+<p>无论在哪个阶段，每个 block 的形状都一样。Attention 和 MLP 在同一个归一化后的输入上<strong>并行</strong>运行，两者之和被加回到 residual stream 上。</p>
+<p>每个 block 都从一个自身不带可学习 scale 或 shift 的 LayerNorm 开始。scale、shift 和 gate 改由 timestep embedding 提供（这叫做 <em>modulation</em>）。在 attention 内部，query 和 key 会做 RMS 归一化，并加上旋转位置编码（RoPE），我们下面会看它。</p>
+<p>在 joint block 里，所有 token 共享同一套权重，但文本、图像和参考 token 各自拿到自己的 scale、shift 和 gate。</p>
+<pre><code>def block(x, shift, scale, gate):      # shift, scale, gate come from the token's timestep embedding
+    h = layer_norm(x)                  # no learned scale or shift
+    h = (1 + scale) * h + shift
+    q, k, v = to_q(h), to_k(h), to_v(h)
+    q, k = rope(rms_norm(q)), rope(rms_norm(k))
+    out = attention(q, k, v) + mlp(h)  # parallel, MLP is SwiGLU
+    return x + gate * out</code></pre>
+<h3>每个 token 都有自己的 timestep</h3>
+<p>在 FLUX.1 和 FLUX.2 里，一个 timestep embedding 调制所有 token。在 FLUX.3 里，调制取决于 token 是哪一类。</p>
+<p>带噪图像的 token 由当前 timestep <code>t</code> 调制。文本和参考 token 始终由 timestep <strong>0</strong> 调制，意思是“干净，这里没有要去噪的东西”。所以哪怕一张参考图看起来和输出几乎一样，它也被标记成给定的上下文，而不是要生成的东西。</p>
+<p>蒸馏版 checkpoint 是一个 <em>flow map</em>。它还会被告知其每一步跳到的 timestep。这第二个 timestep 有自己的 embedding，并被加到每个 token 的调制上，所以它的 16 步里每一步都能迈出更大的跨度。</p>
+<h3>四个维度上的位置</h3>
+<p>attention 自己并不知道一个 token 在哪里（这种现象叫 permutation equivariance）。RoPE 通过按 token 的位置旋转每个 query 和 key 来修正这一点。FLUX.3 使用四个位置轴 <code>(t, h, w, l)</code>（timestep、高度、宽度、序列长度），并给每个轴分配每个 128 维 attention head 的四分之一（32 个维度）：</p>
+<table><thead><tr><th>Token</th><th>t: timestep</th><th>h: 高度</th><th>w: 宽度</th><th>l: 序列长度</th></tr></thead><tbody><tr><td>文本 token <em>i</em></td><td>0</td><td>0</td><td>0</td><td><em>i</em></td></tr><tr><td>位于 (row, col) 的图像 token</td><td>0</td><td>row / 2</td><td>col / 2</td><td>0</td></tr><tr><td>位于 (row, col) 的参考图 <em>k</em></td><td>0</td><td>row / 2</td><td>col / 2</td><td>−(<em>k</em> + 1)</td></tr></tbody></table>
+<p>文本 token 沿 <code>l</code> 排开，就像句子里的单词。图像和参考图是 <code>(h, w)</code> 上的二维网格，沿 <code>l</code> 彼此分开。因为一张参考图用的是和输出相同的 <code>(h, w)</code> 坐标，“参考图里的同一个位置”对模型来说有确切的含义，这正是 <code>src_bbox</code> / <code>tgt_bbox</code> 编辑所依赖的东西。</p>
+<h3>去噪循环</h3>
+<p>FLUX.3 是一个 flow-matching 模型。生成从纯噪声开始，在 50 步中的每一步，transformer 预测一个 <em>velocity</em>。这就是从噪声指向干净图像的方向。scheduler 沿它走一步。</p>
+<p>在每一步，你还能读出模型当前对最终图像的猜测。在若干步上把这份猜测解码出来，就能看到图像是如何成形的：</p>
+<table><thead><tr><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step01.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step01.png" alt="step01"></a></th><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step05.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step05.png" alt="step05"></a></th><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step10.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step10.png" alt="step10"></a></th><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step15.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step15.png" alt="step15"></a></th><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step25.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step25.png" alt="step25"></a></th><th><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step50.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/flux3/traj_step50.png" alt="step50"></a></th></tr></thead><tbody><tr><td>第 1 步</td><td>第 5 步</td><td>第 10 步</td><td>第 15 步</td><td>第 25 步</td><td>第 50 步</td></tr></tbody></table>
+<p>到第 10 步时，狐狸、它的姿态和光照就已经到位了，而噪声水平仍是 0.97。压雪的枝条和毛发的纹理在最后几步才出现。FLUX.3 的 scheduler 用一个很大的 time shift（6.93），这让噪声水平在绝大部分过程中保持高位：50 步里有 44 步发生在 σ = 0.5 之上。我们做出这张图，靠的是给管线加了一个小 block，这就说到 Modular Diffusers 了。</p>
+<blockquote>如果你刚接触 flow matching，我们准备了一篇新手友好的教程和一个视频，帮你理解它是怎么工作的。</blockquote>
+<h2>Modular Diffusers</h2>
+<p>FLUX.3 以 <a href="https://huggingface.co/docs/diffusers/main/en/modular_diffusers/overview">Modular Diffusers</a> 管线的形式发布。</p>
+<h3>查看 workflows</h3>
+<p>你可以列出各个 workflow，并打印出每个 workflow 具体的 blocks，而不加载任何权重。</p>
+<pre><code>from diffusers import Flux3AutoBlocks
+
+blocks = Flux3AutoBlocks()
+print(blocks.available_workflows)
+# ['text2image', 'image_conditioned']
+
+print(list(blocks.get_workflow(&quot;text2image&quot;).sub_blocks))
+# ['text_encoder', 'denoise.input', 'denoise.prepare_latents', 'denoise.set_timesteps',
+#  'denoise.prepare_rope_inputs', 'denoise.denoise', 'denoise.after_denoise', 'decode']</code></pre>
+<p><code>get_workflow()</code> 会解析掉 auto 分支，把实际将要运行的那串平铺步骤交给你。<code>print(blocks.get_workflow(&quot;image_conditioned&quot;).doc)</code> 会打印该 workflow 的组件、输入、默认值和输出。</p>
+<h3>编码一次，生成多张</h3>
+<p>把文本编码器拆出来，把 prompt 编码一次，释放它，然后从缓存的 embeddings 生成图像。</p>
+<pre><code>import torch
+from diffusers import ModularPipeline
+
+model_id = &quot;black-forest-labs/flux-3-image-klein-base&quot;
+
+blocks = ModularPipeline.from_pretrained(model_id).blocks
+text_blocks = blocks.sub_blocks.pop(&quot;text_encoder&quot;)  # `blocks` now starts at the VAE encoder
+
+text_pipe = text_blocks.init_pipeline(model_id)
+text_pipe.load_components(dtype=torch.bfloat16)
+text_pipe.to(&quot;cuda&quot;)
+
+state = text_pipe(prompt=prompt, negative_prompt=&quot;&quot;)  # no guider here, so ask for the negative embeddings
+
+prompt_embeds = state.get(&quot;prompt_embeds&quot;)
+negative_prompt_embeds = state.get(&quot;negative_prompt_embeds&quot;)
+
+del text_pipe
+torch.cuda.empty_cache()
+
+image_pipe = blocks.init_pipeline(model_id)  # no text encoder to load
+image_pipe.load_components(dtype={&quot;vae&quot;: torch.float32, &quot;default&quot;: torch.bfloat16})
+image_pipe.to(&quot;cuda&quot;)
+
+for seed in range(3):
+    image = image_pipe(
+        prompt_embeds=prompt_embeds,
+        negative_prompt_embeds=negative_prompt_embeds,
+        generator=torch.Generator().manual_seed(seed),
+        output=&quot;images&quot;,
+    )[0]
+    image.save(f&quot;{seed}.png&quot;)</code></pre>
+<h3>在循环里加一步</h3>
+<p>上面那张去噪图就来自一个额外的 block，它记录模型在每一步对干净图像的猜测：</p>
+<pre><code>from diffusers.modular_pipelines import Flux3AutoBlocks, InputParam, ModularPipelineBlocks, OutputParam
+
+
+class Flux3PreviewStep(ModularPipelineBlocks):
+    model_name = &quot;flux3&quot;
+
+    @property
+    def inputs(self):
+        return [InputParam(&quot;latents&quot;), InputParam(&quot;noise_pred&quot;)]
+
+    @property
+    def intermediate_outputs(self):
+        return [OutputParam(&quot;x0_previews&quot;, type_hint=list)]
+
+    @torch.no_grad()
+    def __call__(self, components, block_state, i, t):
+        if i == 0:
+            block_state.x0_previews = []
+        sigma = t / 1000  # timesteps are sigmas scaled to [0, 1000]
+        block_state.x0_previews.append(block_state.latents - sigma * block_state.noise_pred)  # x0 = x_t - sigma * v
+        return components, block_state
+
+
+blocks = Flux3AutoBlocks()
+denoise_loop = blocks.sub_blocks[&quot;denoise&quot;].sub_blocks[&quot;text2image&quot;].sub_blocks[&quot;denoise&quot;]
+denoise_loop.sub_blocks.insert(&quot;preview&quot;, Flux3PreviewStep(), 1)  # between &quot;denoiser&quot; and &quot;after_denoiser&quot;
+
+pipe = blocks.init_pipeline(model_id)
+pipe.load_components(dtype={&quot;vae&quot;: torch.float32, &quot;default&quot;: torch.bfloat16})
+pipe.to(&quot;cuda&quot;)
+
+out = pipe(prompt=prompt, generator=torch.Generator().manual_seed(0), output=[&quot;x0_previews&quot;, &quot;images&quot;])</code></pre>
+<h2>上手试试</h2>
+<ul><li><strong>模型：</strong> <a href="https://huggingface.co/collections/black-forest-labs/flux-3-image-klein">FLUX.3 Image Klein collection</a></li><li><strong>文档：</strong> <a href="https://huggingface.co/docs/diffusers/main/en/api/pipelines/flux3">Diffusers 中的 FLUX.3</a></li><li><strong>微调：</strong> <a href="https://github.com/huggingface/diffusers/blob/main/examples/dreambooth/README_flux3_klein.md">DreamBooth LoRA 脚本</a></li><li><strong>Prompting：</strong> <a href="https://docs.bfl.ai/guides/prompting_summary">Black Forest Labs prompting 指南</a></li></ul>
+<p>用 FLUX.3 做了什么？把你的 LoRA 和管线分享到 Hub 上吧，我们很想看到！😎</p>
+<h2>本文提到的模型 3</h2>
+<h2>本文提到的数据集 1</h2>
+<h2>本文提到的 Spaces 2</h2>
+<h2>本文提到的合集 1</h2>
+<p>我们博客的更多文章</p>
+<p>diffusersfluxquantization</p>
+<h2>Diffusers 迎来 FLUX-2</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677857909367-624ef9ba9d608e459387b34e.jpeg" alt=""></li><li><img src="https://huggingface.co/avatars/35e7257e357064e77cfdcae384afe36f.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63df091910678851bb0cd0e0/FUXFt0C-rUFSppIAu5ZDN.png" alt=""></li><li>+4</li></ul>
+<p>191</p>
+<p>2025 年 11 月 25 日</p>
+<p>guidediffusersquantization</p>
+<h2>在消费级硬件上微调 FLUX.1-dev（LoRA）</h2>
+<ul><li><img src="https://huggingface.co/avatars/e5b8331c9a96cd96b679f38afd30422e.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63ce875d199b36f7552d4f07/bpUrvhXDagzRqZ3vxTcSF.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li>+1</li></ul>
+<p>108</p>
+<p>2025 年 6 月 19 日</p>
+<h3>社区</h3>
+<p>把图片、音频和视频拖进文本输入框、粘贴，或者点击这里即可上传。</p>
+<p>在此轻点或粘贴以上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fflux-3">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fflux-3">登录</a> 即可评论</p>
+<p>23</p>
+<ul><li><a href="https://huggingface.co/sayakpaul"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Steveeeeeeen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/654bcb6fae75d15300d48205/T4L1RZUgCZgdik4ZhEWCq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/linoyts"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/638f308fc4444c6ca870b60a/Q11NK-8-JbiilJ-vk2LAR.png" alt=""></a></li><li><a href="https://huggingface.co/suvadityamuk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62449192f555de1927aa7d00/gGiMTU3YVwk0M1ltXdVfV.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sergiopaniego"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></a></li><li><a href="https://huggingface.co/OzzyGT"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63df091910678851bb0cd0e0/FUXFt0C-rUFSppIAu5ZDN.png" alt=""></a></li><li><a href="https://huggingface.co/YiYiXu"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677857909367-624ef9ba9d608e459387b34e.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/Manni1000"><img src="https://huggingface.co/avatars/1fa19f49ebd000ad588b7c6a1b353a7a.svg" alt=""></a></li><li><a href="https://huggingface.co/lhoestq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e9ecfc04957053f60648a3e/UY4H1oMtmXVo1p-HnKV6l.png" alt=""></a></li></ul>
+<h2>本文提到的模型 3</h2>
+<h2>本文提到的数据集 1</h2>
+<h2>本文提到的 Spaces 2</h2>
+<h2>本文提到的合集 1</h2>]]></content:encoded>
     </item>
     <item>
-      <title>HiRO-ACEv2: Simulating extreme weather at 3 km resolution fo…</title>
+      <title>HiRO-ACEv2：以一小部分成本用 3 km 分辨率模拟极端天气</title>
       <link>https://huggingface.co/blog/allenai/hiro-acev2</link>
       <guid isPermaLink="true">https://huggingface.co/blog/allenai/hiro-acev2</guid>
       <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：HiRO-ACEv2: Simulating extreme weather at 3 km resolution for a fraction of the cost</description>
+      <description>原文标题：HiRO-ACEv2: Simulating extreme weather at 3 km resolution for a fraction of the cost</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
+<h1>HiRO-ACEv2：以一小部分的成本模拟 3 km 分辨率的极端天气</h1>
+<p>Enterprise  文章</p>
+<p>发布于 2026 年 10 月 14 日</p>
+<p>11</p>
+<ul><li><a href="https://huggingface.co/visnetwork"><img src="https://huggingface.co/avatars/2f206f8fc0597a05366ea6333036282d.svg" alt=""></a></li><li><a href="https://huggingface.co/victios7models"><img src="https://huggingface.co/avatars/44c6b7763bdec7924146144f33c9f4e7.svg" alt=""></a></li><li><a href="https://huggingface.co/varyumin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/l3Lh3_OC1Fe1yskNz-0wR.png" alt=""></a></li><li><a href="https://huggingface.co/johnsutor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64bd7f0b94c0e3be4aeea623/aea0SNoglPmh2kAfgLBAG.png" alt=""></a></li><li><a href="https://huggingface.co/Gohan1B"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jem48SZISN2Kh0VN4cMwb.png" alt=""></a></li><li><a href="https://huggingface.co/korubilliram"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/cdheUDLO-Hk5kfdtaW0dD.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/fee5cceec7536851d7c6712760716a71.svg" alt="Kyle Wiggers 的头像"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>🤗 <a href="https://huggingface.co/allenai/HiRO-ACEv2">模型</a> | 📄 <a href="http://arxiv.org/abs/2610.17693">论文</a> | 📓 <a href="https://ai2cm.github.io/ace/">教程 notebook</a> | 🌎 <a href="http://ace.allen.ai">演示</a></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/Y8t8GnfI2lUa40iX4_sxA.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/638e39b249de7ae552d977b5/Y8t8GnfI2lUa40iX4_sxA.png" alt="HiRO-ACEv2：把粗分辨率的全球气候输出降尺度成精细的天气细节。"></a></p>
+<p>我们推出 <a href="https://huggingface.co/allenai/HiRO-ACEv2"><strong>HiRO-ACEv2</strong></a>，这是我们 High Resolution Output Ai2 Climate Emulator（HiRO-ACE）系统的最新一次更新。HiROv2 能以很高的准确率复现甚至极为罕见的降雨、风和气压事件，而整套系统生成全球 3 km 气候数据的成本，大约只有 X-SHiELD 的 1/300——X-SHiELD 是一个高分辨率全球大气模型，会显式模拟风暴及其他小尺度天气。</p>
+<p>HiRO-ACE 于 <a href="https://allenai.org/blog/hiro-ace">2026 年更早的时候推出</a>，由两部分组成：ACE，一个在更粗的 100 km 分辨率上运行的 AI 模型；以及 HiRO，一个把那些粗分辨率输出锐化成 3 km 精细细节的模型。HiRO-ACEv2 最大的变化是新的降尺度模型 HiROv2，它现在 1) 可以同时预测多个高分辨率场而不只是降雨，因此能捕捉到范围大得多的极端天气，2) 在预测极端事件上的技巧有所提升。</p>
+<p>我们在 HiRO-ACEv2 上的主要关注点是把极端事件模拟好。训练 HiROv2 方式的改动提升了它复现最强降雨、风和气压数值的能力。当输入被粗化的 X-SHiELD 数据时，它能把目标模拟的高分辨率统计量匹配到 3% 以内，即便是那些一百万个数据点里才出现一次的事件。它还能准确估计热带气旋的总能量，包括训练中从未见过的风暴，并生成带有逼真风眼和雨带的飓风，只不过风眼附近的风和气压仍比 X-SHiELD 里更不对称一些。此外，HiROv2 能逼真地生成沿山坡冲下来的强风。</p>
+<p>我们也为这套系统训练了一个更新版的 ACE。在一段 10 年的模拟里，它生成的飓风、平均气候格局，以及降雨、风和气压的总体分布都与 X-SHiELD 对齐得很好。这告诉我们，ACE 的粗分辨率模拟是产出长期高分辨率气候数据的坚实底座。</p>
+<p>把 HiROv2 和 ACE 组合起来，我们生成了一整年的全球 3 km 数据。它的统计量与 X-SHiELD 高度吻合，尽管 HiRO 依据的是 ACE 独自跑出的一次模拟，而不是真实的 X-SHiELD 数据。在一段 10 年的运行里，HiRO-ACEv2 生成的飓风能量与 X-SHiELD 同期相当，而那次运行的快照还显示出与 X-SHiELD 中相似的其他多种极端事件。</p>
+<p><a href="https://www.datocms-assets.com/64837/1791928654-hiro-acev2-blog-draft-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791928654-hiro-acev2-blog-draft-google-docs-image-2.png?fit=max&amp;h=810&amp;w=1550" alt="10 年 HiRO-ACEv2 模拟期间生成的北大西洋一场强飓风的示例。"></a></p>
+<p><em>10 年 HiRO-ACEv2 模拟期间生成的北大西洋一场强飓风的示例。</em></p>
+<p>总体而言，HiRO-ACEv2 为研究者提供了一种灵活而廉价的办法，用来生成 10 年乃至更长时间内极端事件的多版本高分辨率降雨、风和气压数据。用它产全球高分辨率数据，成本大约比运行 X-SHiELD 低 300 倍。如果只需要某一个区域，节省可以再多上百倍，具体取决于区域大小。我们还在做一个精简版的 HiROv2，它可能让它再快十倍以上。</p>
+<p>我们面前仍有后续工作：因为 HiRO 是从 X-SHiELD 学来的，它只能与那个为匹配 X-SHiELD 而调好的 ACE 版本一起工作。这意味着它还不能为其他气候产高分辨率数据，比如更暖的未来，或者 ERA5 这类数据集里的历史记录。接下来，我们计划在新的 X-SHiELD 数据集上训练，其中包括一个模拟世界变暖 4°C 的数据集，好让这套系统能应对不同的气候。我们也计划增加近地表温度、雪和冰这类输出，那会让更多用途成为可能，例如积雪预测。</p>
+<h2>可视化并使用 HiRO 的输出</h2>
+<p><a href="https://www.datocms-assets.com/64837/1791928757-hiro-acev2-blog-draft-google-docs-image-3.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791928757-hiro-acev2-blog-draft-google-docs-image-3.png?fit=max&amp;h=810&amp;w=1550" alt="ACE 数据可视化器中下加利福尼亚上空的模拟 10 m 风速：主图是 100 km 分辨率的 ACE2，插图是 3 km 的 HiRO-ACEv2。"></a></p>
+<p><em>ACE 数据可视化器中下加利福尼亚上空的模拟 10 m 风速：主图是 100 km 分辨率的 ACE2，插图是 3 km 的 HiRO-ACEv2。</em></p>
+<p><a href="https://www.datocms-assets.com/64837/1791928822-hiro-acev2-blog-draft-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550"><img src="https://www.datocms-assets.com/64837/1791928822-hiro-acev2-blog-draft-google-docs-image-4.png?fit=max&amp;h=810&amp;w=1550" alt="ACE 数据可视化器中东北太平洋上空一场模拟的风暴。主图显示 100 km 分辨率的 10 m 风速；3 km 的 HiRO-ACEv2 插图显示风暴内部更精细的结构。"></a></p>
+<p><em>ACE 数据可视化器中东北太平洋上空一场模拟的风暴。主图显示 100 km 分辨率的 10 m 风速；3 km 的 HiRO-ACEv2 插图显示风暴内部更精细的结构。</em></p>
+<p>为了让人不必运行任何推理就能方便地看到 HiRO 产出什么，我们搭建了一个 <a href="http://ace.allen.ai">web demo</a>，把 HiROv1 与 HiROv2 预先生成的降水、风和海平面气压输出，同它们训练时所依据的模拟 X-SHiELD 并排展示。这个 demo 与我们技术报告里的定量比较互为补充：它提供对输出长相的快速目视检查，也让用户能缩放到自己关心的区域去判断那里的表现。</p>
+<p>若要做更深入的分析，这些模型都可以<a href="https://huggingface.co/allenai/HiRO-ACEv2">下载</a>，而我们的<a href="https://ai2cm.github.io/ace/">教程 notebook</a> 会逐步讲解如何运行它们。</p>
+<h2>本文中提到的模型 1</h2>
+<p>这位作者的其他文章</p>
+<h2>GPU 集群中卓有成效的调度</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>52</p>
+<p>2026 年 10 月 9 日</p>
+<h2>开源 AstaBrief：Asta 中快速的报告生成模型</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>28</p>
+<p>2026 年 10 月 2 日</p>
+<h3>社区</h3>
+<p>把图片、音频和视频拖进文本输入框、粘贴，或者点击这里即可上传。</p>
+<p>在此轻点或粘贴以上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fhiro-acev2">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fhiro-acev2">登录</a> 即可评论</p>
+<p>11</p>
+<ul><li><a href="https://huggingface.co/visnetwork"><img src="https://huggingface.co/avatars/2f206f8fc0597a05366ea6333036282d.svg" alt=""></a></li><li><a href="https://huggingface.co/victios7models"><img src="https://huggingface.co/avatars/44c6b7763bdec7924146144f33c9f4e7.svg" alt=""></a></li><li><a href="https://huggingface.co/varyumin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/l3Lh3_OC1Fe1yskNz-0wR.png" alt=""></a></li><li><a href="https://huggingface.co/johnsutor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64bd7f0b94c0e3be4aeea623/aea0SNoglPmh2kAfgLBAG.png" alt=""></a></li><li><a href="https://huggingface.co/Gohan1B"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jem48SZISN2Kh0VN4cMwb.png" alt=""></a></li><li><a href="https://huggingface.co/korubilliram"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/cdheUDLO-Hk5kfdtaW0dD.png" alt=""></a></li><li><a href="https://huggingface.co/Jekhy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/Ti4ZzeT_9uMHcN-OzBdVf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Malicious7"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/hLFYbqkn2KsWNFCRLPpJS.png" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Sentinel7"><img src="https://huggingface.co/avatars/183456c0fa0d5e21c27813ce48d3bad2.svg" alt=""></a></li></ul>
+<h2>本文中提到的模型 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>用 LFM2.5-24B-A2B 在端侧运行快速、私密的智能体</title>

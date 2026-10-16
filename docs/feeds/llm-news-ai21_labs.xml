@@ -9,18 +9,111 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>AI21 Partners with Gong, Deel and Alice to Post-Train Specia…</title>
+      <title>与 NVIDIA、Gong、Deel 和 Alice 合作，后训练 Nemotron 3.5 Super</title>
       <link>https://www.ai21.com/blog/ai21-post-trains-nvidia-nemotron-35-super-vl/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/ai21-post-trains-nvidia-nemotron-35-super-vl/</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：AI21 Partners with Gong, Deel and Alice to Post-Train Specialized Models on NVIDIA Nemotron 3.5 Super VL</description>
+      <description>原文标题：Partnering with NVIDIA, Gong, Deel and Alice to Post-Train Nemotron 3.5 Super</description>
+      <content:encoded><![CDATA[<p><img src="https://www.ai21.com/wp-content/uploads/2026/10/Hero-Bar-Chart_Oct-14-1024x689.png" alt=""></p>
+<p>过去三周里，我们的 Forward-Deployed Researchers（FDR，前置部署研究员）团队与 Gong、Deel 和 Alice 合作，对近期发布的 <a href="https://blogs.nvidia.com/blog/nemotron-3-5-super-vl/">NVIDIA Nemotron 3.5 Super VL</a> 做了后训练，交付出一批在各自定义的用例上超越或匹敌前沿质量的专用模型——而成本只占一小部分。</p>
+<p>随着企业越来越想拥有专用智能、而不是租用通用模型，AI21 的 Lab-as-a-Service 服务与自研的 Harness and Model 训练平台，让公司能在几周、而不是几个季度内完成这一转变。</p>
+<p>「不再租用、开始拥有」智能的动机在各家公司并不相同。对有些公司来说是成本；对另一些公司来说，是对自身数据的掌控或差异化优势。作为训练伙伴，我们的 FDR 会围绕客户目标精心搭建后训练配方与定制评估。</p>
+<p>本文深入探讨后训练自主专用智能所带来的业务影响与差异化能力，以及我们的 FDR 用来达成它的各种方法。</p>
+<h2>专用智能的开放底座</h2>
+<p><a href="https://blogs.nvidia.com/blog/nemotron-3-5-super-vl/">NVIDIA Nemotron 3.5 Super VL</a> 是一个开放的多模态模型，面向需要观察、推理与行动的长时运行 agent。它为高精度 agentic 执行而工程化，设计初衷就是用组织自己的数据、工具和策略来做后训练。</p>
+<h2>专用模型 #1：以一小部分成本，在 Gong 的 Data Extractor 上匹敌前沿质量</h2>
+<p><strong>后训练目标</strong>：在不损害质量的前提下降低成本</p>
+<p><img src="https://www.ai21.com/wp-content/uploads/2026/10/Gong_Oct14-1024x698.png" alt=""></p>
+<p><strong>用例概述</strong></p>
+<p>领先的收入 AI 公司 <a href="https://www.gong.io/">Gong</a> 开发了一个名为 Gong Data Extractor 的 agent，用于审阅客户交互——例如通话、邮件和线上会议——从而识别对收入团队至关重要的关键交易与客户账户信息。它把这些信息存成字段，随新信息进来自动更新，并可同步到客户的 CRM 记录：从交易阶段到健康度评分，无所不包。</p>
+<p>前沿模型能把交易总结得很好。但在 Gong 所处的规模上——每月处理数千万次交互——成本会迅速累积。到目前为止，还没有更便宜的模型能在这个用例上匹敌前沿质量，而拿客户记录的质量去换成本是不可谈判的。</p>
+<p><strong>方法</strong></p>
+<p>AI21 的 FDR 团队与 Gong 协作，对 Nemotron 3.5 Super 做后训练，以匹配这样高风险用例所要求的质量，同时享有一个高效开放模型带来的全部成本优势。仅用两周，双方便构建出一份独有的训练数据集，实现了 SFT 与 DPO 训练技术的混合使用，并搭起了必要的评价基础设施来对 CRM 编辑做质量门禁，对高风险指标还额外叠加了评价层。</p>
+<p><strong>结果</strong></p>
+<p>在对 NVIDIA 的 Nemotron 3.5 Super 完成后训练后，Gong 自家的评估发现，这个专用模型在速度和准确率上都匹敌 Claude Opus 5.5 这类 SOTA 模型，而成本只占很小一部分。</p>
+<h2>专用模型 #2：把 Deel 的 Payroll QA Model 的准确率提升到比前沿高 8%，同时成本低至 1/33</h2>
+<p><strong>后训练目标</strong>：巩固前沿模型打不过的自有优势</p>
+<p><img src="https://www.ai21.com/wp-content/uploads/2026/10/Deel_Oct14-1024x698.png" alt=""></p>
+<p><strong>用例概述</strong></p>
+<p>全球 HR 与薪酬平台 <a href="https://www.deel.com/">Deel</a> 服务 150 多个国家的 40,000 多家公司，要回答跨越多个国家与司法辖区的薪酬问题。什么才算正确答案，取决于当地税法、雇佣合同和公司政策——而这三者都在经常变化。 前沿模型各自都了解其中大部分规则，却常常把答案的一部分漏掉。而在薪酬领域，部分完整的回答就是错误的回答。Deel 想要一个开放模型，以只占前沿成本一小部分的代价，不用追问就给出完整答案。</p>
+<p><strong>方法</strong></p>
+<p>在这项工作中，AI21 的 FDR 团队依赖 Emet by Deel 提供的、经专家核验的训练数据与基准——Emet 是 Deel 旗下的一家前沿 AI 评估实验室，专门构建基准和由专家生成的训练数据。在这一基础上，AI21 的 FDR 团队先通过初步测试确认 Nemotron 3.5 Super 已具备回答大多数问题所需的知识，并且能从调整模型行为以匹配预期的详细程度与风格中获益。为了把期望的行为烙进模型权重，FDR 团队遵循了一套两步训练配方：先在对生成 rollout 做剪枝后的数据上做 SFT，随后是 SDPO（self distillation policy optimization，自蒸馏策略优化），其中 teacher 通过以「期望行为的详细指令」作为条件来获得后见之明。</p>
+<p><strong>结果</strong></p>
+<p>由于 AI21 在 Nemotron 3.5 Super VL 上的后训练工作，回答准确率在 Emet 的 8 国薪酬基准评估上升到 72%，比 Claude Opus 5.5 高出 8 个百分点，每次查询的成本低 33 倍。</p>
+<h2>专用模型 #3：用 Alice 的 RL 环境训练 Nemotron 3.5 Super，把攻击抗性提升 41 分</h2>
+<p><strong>后训练目标</strong>：保持对企业数据的严格控制</p>
+<p><img src="https://www.ai21.com/wp-content/uploads/2026/10/Alice_Oct14-1024x698.png" alt=""></p>
+<p><strong>用例概述</strong></p>
+<p><a href="https://alice.io/">Alice</a> 是一家 AI 安全与安保公司，构建 RL 训练场（RL gym），客户可以在其中训练生产环境 agent，以应对它们所工作的真实软件平台上的安全威胁。RL Environments 的客户既能受益于 Alice 的 &quot;Rabbit Hole&quot; 数据集——其来源是关于威胁行为者行为的真实情报，以及 150 多名内部安全研究员和专家网络成员的输入——现在还拿到一个经过后训练、已准备好在 Slack 和 Github 中检测间接提示注入攻击的模型。</p>
+<p><strong>方法</strong></p>
+<p>与 Alice 紧密协作，我们的 FDR 团队先在他们的 RL 训练场上评估 Nemotron 3.5 Super。为了改善模型的初始结果并提高其答案的多样性，FDR 团队先应用了 SFT 和 DPO 训练方法。此后，当训练好的模型已经具备足够好的初始表现与多样性时，团队引入 GRPO（Online RL）训练来进一步提升结果</p>
+<p><strong>结果</strong></p>
+<p>AI21 与 Alice 一起，在不损害整体任务表现的前提下把 Nemotron 3.5 Super 的攻击抗性提升了 41 分，超过了 GPT-6.1 Sol 这样的前沿模型。关于这次合作的更多内容，请阅读 Alice 的 [blog]。</p>
+<h2>铺就通往 AI 自主的路</h2>
+<p>上文描述的三项任务覆盖了很宽范围的企业工作，从摘要到知识密集型检索再到攻击抗性。这些任务的共同点在于：每月多达数百万次查询的重复性负载，以及对&quot;正确&quot;长什么样、听起来是什么样子的严苛标准——而这些是前沿模型并不总能把握的。</p>
+<p>在我们的 Harness and Model 训练平台上——由我们的 FDR 团队主导——对 Nemotron 3.5 Super 做后训练，把这三项任务都在三周内从所评估的基线带到了专用智能，既降低了成本，又建立了竞争对手租不到的优势，以及对 agent 行为的完全掌控。</p>
+<p>如果你已准备好在通往 AI 自主的路上向前一步，请<a href="https://www.ai21.com/contact-sales/">联系我们</a>。</p>]]></content:encoded>
     </item>
     <item>
-      <title>The hidden mismatch: Evaluating coding agents on the work de…</title>
+      <title>隐藏的错配：在开发者真正做的工作上评估 coding agent</title>
       <link>https://www.ai21.com/blog/evaluating-coding-agents-on-the-work-developers-actually-do/</link>
       <guid isPermaLink="true">https://www.ai21.com/blog/evaluating-coding-agents-on-the-work-developers-actually-do/</guid>
       <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：The hidden mismatch: Evaluating coding agents on the work developers actually do</description>
+      <description>原文标题：The hidden mismatch: Evaluating coding agents on the work developers actually do | AI21</description>
+      <content:encoded><![CDATA[<h2>简要说明</h2>
+<p>我们都听过这种说法：你的 AI 系统——无论是一个 agent、一个 harness 还是一个路由层——只和你的评估一样好。</p>
+<p>我们也听过：公开 benchmark 是真实开发者流量的糟糕替身。就它们要求什么、怎么措辞、任务难度、以及轨迹在会话中如何展开而言。</p>
+<p>我们在调研内部开发者流量时近距离看到了这种落差。结果挑战了我们关于 agentic coding 任务的既有假设，我们把这些经验用来构建一个稳健的 benchmark，在我们智能 Gateway 的真实编码任务上保住质量。本文讲的就是这段历程。</p>
+<h2><strong>开发者工作的真实分布</strong></h2>
+<p>幸运的是，要理解公开 benchmark 与真实使用之间的落差，我们有内部开发者团队真实线上数据这个优势。为了弄懂这些流量，我们开发了一个内部编码任务分类器，并把连续七周的真实开发者流量跑了进去。</p>
+<p>当我们查看由此得到的任务分布时，看到的东西彻底挑战了我们对 agentic coding 习惯的直觉：</p>
+<p><img src="https://www.ai21.com/wp-content/uploads/2026/10/Fig1_Task-Distribution-Pie-Chart-1024x538.png" alt=""></p>
+<p><em>图 1. 顶层类别由数据推导而来，子类别则在每个类别内部推导。共 15 个类别、84 个子类别、4,211 个 turn。 </em></p>
+<p>如果你去看 SWE-bench 这类标准 benchmark 所测量的任务，看起来开发者主要用 agent 做纯代码生成、并从干净起点修 bug。但我们的分类器揭示了一个完全不同的现实。</p>
+<h3><strong>从七周真实开发者流量学到的经验</strong></h3>
+<p><strong>开发者把 agent 当作思考伙伴，而不只是代码生成器。</strong> 在我们的流量里，只有约 11% 的真实开发者 turn 要求 agent 写代码。绝大多数时候，开发者是在问澄清性问题、粘贴上下文、做分析，或者请求评审。我们看到的最常见的单条消息就是一个澄清性问题。</p>
+<p><strong>交互式工作流 vs. 单轮任务。</strong> 数据显示开发者与 agent 之间的交互高度对话化。开发者并不是把一份 1,000 词的 GitHub issue 丢进聊天框然后走开。他们在会话中途敲出 80 字符的短消息，逐步调试、粘贴控制台日志，并对 agent 的输出反复迭代。</p>
+<h3><strong>真实开发者流量与公开 benchmark 分歧在哪里</strong></h3>
+<h4><strong>任务类型</strong></h4>
+<p>我们把若干公开 benchmark（包括 SWE-bench、HumanEval 和 Spider）跑过同一个分类器，用来搭建我们的对比。它们与我们内部数据的错配非常刺眼。这些公开 benchmark 几乎全都聚焦于从零写代码，或者修好一个 bug 让测试通过。</p>
+<p><img src="https://www.ai21.com/wp-content/uploads/2026/10/Fig2_Benchmarks-vs-real-usage-1024x1007.png" alt=""></p>
+<p><em>图 2. 同一套类别分别应用于真实使用和 23 个 benchmark。格子里的数字反映其占某数据集消息的百分比。确认、转向指令、git 命令与粘贴上下文约占真实用户 turn 的 40%，却不出现在任何编码 benchmark 中。 </em> 尽管确认、转向指令、git 命令和粘贴上下文约占真实开发者 turn 的 40%，这些交互式特性与上下文共享行为几乎不出现在任何公开编码 benchmark 中。</p>
+<p><strong>任务难度</strong></p>
+<p>除了没有覆盖真实的编码工作<em>类型</em>，公开 benchmark 也没能准确反映任务<em>难度</em>。标准评估集常常考查对代码库内部深处的架构性知识。但在真实世界里？开发者更可能问一个快速的、务实的问题，比如，“我为什么在 git status 里看不到我的改动？”</p>
+<p>因为 benchmark 过度聚焦这些高度复杂、跨多文件的架构问题，它们让我们对模型实际需要做什么产生扭曲的认知，也因此可能让小一些或便宜一些的模型看起来无力处理日常流量。你在下面的对比中可以看到这一点：真实开发者会话中任务的中位 turn 数，与一个 frontier 模型在我们 benchmark 上测试时的表现：</p>
+<p><img src="https://www.ai21.com/wp-content/uploads/2026/10/Fig3_Median-turn-count-by-task-type-1024x485.png" alt=""></p>
+<p><em>图 3. 各任务类别的中位 turn 数，比较真实开发者会话与在我们的 benchmark 上运行 Claude Opus 5.5 生成的数据。</em></p>
+<p><strong>任务上下文</strong></p>
+<p>我们发现真实世界流量与公开 benchmark 之间还有另一个重大差异：上下文。一个典型的 benchmark 任务呈现为一份写得很好的、1,000 字符的 GitHub issue，跑在一个干净的代码检出上。</p>
+<p>但真实的开发者消息是凌乱的。它们平均约 80 字符，正好出现在一个活跃会话的中途，叠加在大量对话历史、工具输出和半成品文件改动之上。我们内部超过 60% 的会话包含不止一个独立任务。如果你只凭 agent 如何处理一个从干净起点出发、范围清晰的单个提示来评估它，你是在无视会话中途切换上下文的现实。</p>
+<h3><strong>构建一个真实世界的 benchmark</strong></h3>
+<h4><strong>定义目标</strong></h4>
+<p>证明公开 benchmark 与真实开发者流量之间存在落差，是容易的部分。接下来，我们必须构建一个能弥合这道落差的新 benchmark。</p>
+<p>理想的评估会直接使用我们自己开发者的真实工作流。但要构建出自然的任务分布，就会立刻在三个相互冲突的属性之间被拉扯：取自真实工作、上下文丰富、能够自动评分。</p>
+<p>真实开发者会话满足前两条，但几乎无法自动评分。当一个开发者问“我的数据库连接为什么在第 42 行断开？”时，并没有预先写好的测试套件或评分细则。意图完全存在于开发者的脑子里，如果不做人工评审，就很难衡量 agent 是否成功。反过来，公开 benchmark 完全可运行、也容易自动评分，但正如我们前面看到的，它们缺少与真实世界上下文的相关性。</p>
+<p>我们的目标是压平这个权衡：把公开 benchmark 任务的自动可评分性与真实流量的凌乱现实结合起来。我们构建了一个新 benchmark，遵循四条原则：</p>
+<p><strong>1. 让真实流量决定配额。</strong> 我们没有随机抽取公开任务，而是用内部分类器得到的洞察来设定配额。如果我们真实流量里有 40% 是澄清性问题和代码库分析，那我们的 benchmark 就需要有 40% 恰好考查这些。</p>
+<p><strong>2. 把公开任务与内部代码混合。</strong> 公开任务覆盖不到你的内部库、自定义环境或公司约定。为了让 benchmark 贴近现实，我们从自己的内部仓库里挖掘那些已经被解决并合并的任务。我们验证了这些内部任务可以由我们自己的测试套件评分，然后把它们与公开任务一起加入任务池。这个过程大致如下：</p>
+<p><img src="https://www.ai21.com/wp-content/uploads/2026/10/Fig4_filling-the-coverage-gap-1024x579.png" alt=""></p>
+<p><em>图 4. 从 GitHub 和公开 benchmark 任务中挖掘，构造一个能覆盖预期真实编码习惯的完整 benchmark。</em></p>
+<p>从 trace 中合成，指的是分析真实的用户交互日志与会话录制，以重建逼真的开发者任务和多轮场景。</p>
+<p><strong>3. 像开发者一样写。</strong> 一份 1,000 词、格式完美的 bug 报告，考查不出 agent 理解我们开发者实际敲出的那种 80 字符、常常含义模糊的短消息的能力。我们换了外层包装，但底层的代码环境和自动测试保持完全一致。</p>
+<p><strong>4. 从中间开始</strong><strong>。</strong> 最后，因为开发者很少从干净起点索要代码，评估最终必须把历史算进来。我们搭建了内部回放基础设施，可以在一条真实开发者会话轨迹的任意时点把它恢复出来，连同累积的上下文和被修改的文件。通过在一个凌乱会话的中途模拟开发者的下一步动作，我们得到 agent 在真实环境里实际表现的最真实度量。</p>
+<p>通过仔细挑选匹配我们真实类别构成的任务、把提示重写得像真实开发者的口吻、并混入我们自己的代码库，我们做出了一个 613 个任务、镜像现实的 benchmark。</p>
+<p>然后我们把 benchmark 投到最后一次考验：衡量流经我们智能 Gateway 的流量质量。</p>
+<h4><strong>扛得住吗？对我们真实世界编码 benchmark 的压力测试</strong></h4>
+<p>为了测试我们的 benchmark 相较公开 benchmark 在捕捉真实编码任务自然分布上的好坏，我们想看一个流行的 frontier 模型在真实用户会话中与在这两个 benchmark 各自上的表现。为了这个测试，我们借助智能 Gateway 里由 frontier 模型驱动的路由器——它位于我们的开发者与基础模型之间，并且为 agentic coding 流量训练过。每当开发者发出一条消息，Gateway 的路由器就给任务难度打分，做出一瞬间的决定：这个请求需不需要我们最贵、能力最强的 premium 模型，还是一个更便宜、更快的模型就够用？</p>
+<p>这个路由器可以被调成把预期百分比的流量路由给 premium 模型，让我们能在成本与质量之间做权衡。我们的推理是：如果 Gateway 路由请求的形状在真实用户会话与我们的 benchmark 之间保持一致，那就说明我们成功构建了一个真正有代表性的 benchmark。</p>
+<p>我们用 premium 路由阈值来看这个形状：也就是 Gateway 发给 premium 模型的任务百分比。我们把那个目标值设为 25%，并比较路由百分比在真实开发者流量与不同 benchmark 之间的相关性：</p>
+<p><strong>测试 #1：用公开 benchmark 衡量我们 Gateway 的线上流量（绿线）</strong>。部署到真实入站流量上时，Gateway 误判了流量，最终把接近 50% 的请求发给 premium 模型，超出目标预算 23 个百分点。</p>
+<p><strong>测试 #2：用我们的 benchmark 衡量我们 Gateway 的线上流量</strong><strong>。</strong> 与我们自然的编码数据呈现出显著相关性，Gateway 落在距目标预算仅 0.5 个百分点处。这说明我们不仅匹配上了真实用户会话的任务分布，Gateway 在两种情况下也以相同比例把难任务路由给了 premium 模型。</p>
+<p><img src="https://www.ai21.com/wp-content/uploads/2026/10/Fig5_approximating-success-1024x531.png" alt=""></p>
+<p><em>图 5. Gateway 路由器的阈值先在它自己的数据上设定，以把目标份额的任务发给 premium 模型（x 轴），然后不加改动地应用到我们 Gateway 的 1,905 条真实开发者消息（y 轴）。 </em></p>
+<p>因为路由器终于是在一个与实际编码习惯相符的分布上被评估，它不只是省了钱：它证明自己能够正确识别何时该靠一个更便宜的模型处理一个简单的 git 问题，何时该为一个复杂的功能请求请出主力重型模型。</p>
+<h3><strong>这对你的团队意味着什么</strong></h3>
+<p>归根结底，无论你是在构建路由器、调 prompt，还是为你的组织选模型，你的结论最多只有你的评估那么准。你想知道一个 coding agent 在真实环境里会怎么表现，那就必须在那里衡量它。</p>
+<p>以下是任何评估 coding agent 的团队的核心要点：</p>
+<ul><li><strong>先测量流量，再选 benchmark</strong><strong>。</strong> 如果你团队 90% 的请求是代码库提问和 bug 分诊，那么用一个完全由代码生成任务组成的 benchmark 去测你的 agent，只会把你带偏。</li><li><strong>匹配构成、难度和语言</strong><strong>。</strong> 只重写 prompt 或只重新给任务加权重，不足以迁移到真实生活。你必须把它们组合起来，理想情况下还要引入从你自己私有代码库挖掘出的任务。</li><li><strong>按会话定价，不按单个任务定价</strong><strong>。</strong> 因为开发者是对话式工作，会话内部的模型切换会消耗真金白银和上下文 token。只有会话级评估才能看到这个真实成本。</li><li><strong>测试决策，而不只是分数。</strong> 一个 benchmark 分数在真空里没有意义。只有当模型选择、路由策略或预算阈值在这些评估上定下来之后，在真实、线上的流量上确实站得住，这个评估才可信</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>智能体设计的可验证性试金石</title>

@@ -9,10 +9,67 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-mistral.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Introducing Timestral</title>
+      <title>推出 Timestral</title>
       <link>https://mistral.ai/news/timestral/</link>
       <guid isPermaLink="true">https://mistral.ai/news/timestral/</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Timestral</description>
+      <content:encoded><![CDATA[<h1>推出 Timestral</h1>
+<p>2026 年 10 月 15 日</p>
+<p>作者：Mistral</p>
+<p>7 分钟阅读</p>
+<p>复制 url 到剪贴板已复制</p>
+<p>思考</p>
+<p>摘要</p>
+<p>Timestral 是 Mistral 首个时序基础模型家族，仅用 209M 参数就给出了最先进的概率性、多变量预测，在关键基准上胜过更大的模型，同时支持历史与未来的协变量。它提供四种尺寸（5M 到 209M 参数），在准确率与效率之间取得平衡，能在 CPU 上高效运行，并在多个领域的 zero-shot 预测中表现出色。该模型把合成数据预训练、协变量感知的注意力以及长上下文学习结合在一起，并可通过 Mistral Forge 提供面向领域适配的 fine-tuning 选项。</p>
+<p>今天，我们发布 Timestral，我们首个时序基础模型家族。我们最大的模型只有 209M 参数，却在 GIFT-Eval、TIME 和 fev-bench 这三个该领域主要公开基准上全部排名第一，只用了此前最先进水平三分之二的模型参数就超过了它们。</p>
+<p>Timestral 给出概率性的多变量预测，并支持「仅过去」与「已知未来」两类协变量。我们的模型家族处在「预测准确率 vs. 模型规模」的 Pareto 前沿上，在每一个尺寸上都提供领先的表现。结果已提交给 GIFT-Eval 与 TIME 排行榜。</p>
+<h2>时序基础模型（TSFM）</h2>
+<p>时序数据是企业里最常见的数据类型之一，从传感器遥测到可观测性指标都是。基于它做出的预测，驱动着容量规划、能源、供应链、风险与维护方面的决策。</p>
+<p>工厂会对照生产排程来预测工艺传感器，在设备失效之前捕捉到它的漂移，并在数以千计的资产之间规划产能与备件。财务团队则预测资金流、交易量与波动率，为数以千计账户的持仓、对冲与资金管理提供依据。</p>
+<p>ARIMA 与线性回归这类经典模型仍然是预测时序数据的成熟工具。这类模型通常只对单个序列拟合，只从该序列自己的历史中学习。</p>
+<p>PatchTST 这类深度学习模型增加了跨许多相关序列学习非线性模式的能力，但它们通常仍然是在每个数据集上从零开始训练，因此学到的东西无法延续到新的领域。</p>
+<p>时序基础模型把预训练这套做法带进了时序领域。我们的模型在大规模且多样的语料上训练，学到能够跨序列迁移的模式，从而在它从未见过的数据上做 zero-shot 预测，即使是在数据稀缺的领域。</p>
+<h2>基准结果</h2>
+<p>我们在三个主要的公开预测基准上评估了 Timestral：GIFT-Eval、TIME 与 fev-bench。在预训练的 zero-shot 模型中，它在全部五项指标上都排名第一。这些结果来自单一 checkpoint，没有做集成。</p>
+<p><em>GIFT-Eval，在 83 个可比的预训练 zero-shot 条目中位列前十。数值越低越好。</em></p>
+<p><em>TIME，在 35 个排行榜条目中位列前十。两项指标都是越低越好。</em></p>
+<p><img src="https://mistral.ai/_astro/SQL%20skill%20score_23fQVS.webp?dpl=6ad0e5b5d7cab4f179ee3d92" alt="None"></p>
+<p><em>fev-bench，按 SQL skill score 在 37 个排行榜条目中位列前十。数值越高越好。</em></p>
+<h2>为每一种规格优化的模型家族</h2>
+<p>Timestral 是作为一个由四个模型组成的家族来优化的：5M、28M、123M 和 209M 参数。较大的模型预测表现更好，较小的模型则更快也更便宜。四个模型共享同一套架构与训练配方。每个尺寸都位于「准确率 vs. 模型规模」的 Pareto 前沿上：在每一个模型规模上，都没有公开模型预测得更准。</p>
+<p><em>GIFT-Eval、TIME 与 fev-bench 上的得分 vs. 模型规模（以 1 − skill score 表示）。数值越低越好。我们的 28M 模型在 GIFT-Eval 与 TIME 上胜过大它约四倍的 Chronos-2。我们的 209M 模型以更少的参数胜过 TimesFM-3 与 Falcon-2.0。</em></p>
+<p>Timestral 在推理时不需要 GPU。在一台 8 线程的标准服务器 CPU 上，用三周 15 分钟粒度的历史来预测未来一天，5M 模型耗时 10 ms，209M 模型耗时 140 ms。较小的模型用一些准确率换速度：28M 模型比 209M 模型快五倍，而 123M 模型在四分之三的延迟下，得分与 209M 相差不到 0.2%。</p>
+<h2>一个工业场景的例子</h2>
+<p>设想一座工厂，其设备上分布着数以千计的传感器。Timestral 能在几个方面改善这些数据的预测。</p>
+<p><strong>多变量预测。</strong> 一台泵的振动、温度和压力并不是各自独立变化的。一个量的上升往往能解释或导致另一个量的变化。Timestral 对相关序列联合建模，因此它能利用这些依赖关系，而不是把每个传感器孤立起来做预测。</p>
+<p><strong>概率性预测。</strong> 单个预测值可能反映不出全貌。Timestral 预测一整套分位数，于是团队能看到不确定性有多宽、据此设置告警阈值，并围绕风险而不是围绕单个数字来安排维护。</p>
+<p><strong>类别型协变量。</strong> 有些协变量取值于一组类别而不是连续数字，比如星期几，或者一台机器的状态（运行、空闲、维护中）。把它们编码成数字会强加它们本不具备的顺序或量纲。Timestral 直接把这类变量作为类别输入来使用，以改善预测。</p>
+<p><strong>已知未来协变量。</strong> 传感器行为的某些驱动因素是提前可知的，比如生产排程、计划停机、天气预报。Timestral 能以它们为条件来提升预测质量，于是一次排定的负载上升是被预期到的，而不是被当作意外标出。</p>
+<p><strong>从模型到系统</strong></p>
+<p>Timestral 是一个数值模型，可以运行在既有的监控管线之内，也可以在多模态 agentic 工作流中与我们的语言模型配对使用。</p>
+<p>在工厂里，这可能看起来是这样：</p>
+<ul><li>Timestral 持续运行在工厂的传感器数据流上，在异常出现时就把它们检测出来。</li><li>当它在某台泵上标记出一处异常，一个 agent 会把这些信号 embed，并与历史传感器数据的 embedding 比对，找出相似的历史故障。</li><li>随后这个 agent 启动若干 sub-agent 来做根因分析，调用来自该工厂的上下文，例如维护记录、班次日志与操作员笔记、设备手册、过往工单，以及相关设备的读数。</li><li>这个 agent 基于这些发现起草一份诊断建议，附上支撑证据与可能的下一步动作。</li></ul>
+<p>工厂负责人拿到的是有传感器数据支撑的诊断和处置计划，而不只是一条告警。</p>
+<h2>关键技术贡献</h2>
+<p>这些成果由若干想法组合而成。每一项都会在技术报告里详细描述。</p>
+<ul><li><strong>解耦跨度的预测（Decoupled Horizon Forecasting）。</strong> 用连续 patch masking 训练的因果解码器，例如 Toto 2.0 和 TimesFM-3，会把待预测的那些值 mask 掉，于是它们看起来像缺失值，并且也作为后续预测的上下文一并丢失。我们的做法 DHF 把这两件事分开：完整历史留在序列里，而学到的 forecast token 读取它们之前的历史。这样每个观测到的值同时充当目标与上下文，真正的空缺仍被标记为缺失，而训练跨度长度与缺失数据增强也能彼此独立地调优。</li><li><strong>协变量感知的注意力。</strong> 每个输入序列被指派一个角色：目标变量、仅过去协变量或已知未来协变量。已知未来协变量在整个窗口内都可见，而目标保持因果，信息只从协变量流向目标。因此 Timestral 可以使用节假日日历或天气预报，而不会把目标自身的未来泄漏进它的预测。</li><li><strong>合成优先的数据。</strong> 训练数据的绝大部分是合成的。我们先产生具有自洽时间动态的单变量过程，包括趋势、季节性与多样的噪声模式。随后用一个多变量合成器，通过在这些过程之间引入非线性依赖来构造多变量序列。</li><li><strong>两阶段训练。</strong> Timestral 先在纯合成数据上以 8192 的上下文长度做大规模预训练，然后在真实与合成数据混合、上下文长 4 倍的数据上做 post-training。目标是 21 个分位数上的 pinball loss，即 CRPS 的离散近似。</li></ul>
+<p><img src="https://mistral.ai/_astro/01-timestral-overview_1dIJcN.webp?dpl=6ad0e5b5d7cab4f179ee3d92" alt="None"></p>
+<h2>一个可以被适配的模型</h2>
+<p>公开基准衡量的是通用表现，而生产数据在行为与结构上可能差别很大。随着市场切换状态、设备老化、需求模式移动，它也会随时间漂移。长久的价值在于能把模型适配到领域内的数据，并在分布移动时持续重训。</p>
+<p>对于想走得更远的组织，Timestral 可以通过 <a href="https://mistral.ai/products/forge/">Mistral Forge</a> 获得，用的正是我们训练语言模型的同一条管线。它支持：</p>
+<ul><li><strong>zero-shot 推理</strong>，开箱即用。</li><li><strong>架构扩展</strong>，例如领域专用的协变量。</li><li><strong>在专有数据上 fine-tuning</strong>，在向某个领域专门化的同时保住通用表现。</li><li><strong>对训练数据的掌控</strong>，包括调整训练配比、回放预训练数据，以及生成合成数据样本来反映目标领域。对数据的完全掌控，确保我们回测用到的东西在预训练阶段都没有被看过。</li></ul>
+<p>整条管线可以部署在我们客户的硬件上，包括完全物理隔离的环境。</p>
+<h2>下一步</h2>
+<p>我们已经发布了一个 <a href="https://github.com/mistralai/timestral">GitHub 仓库</a>，你可以用它在自己的数据上运行 Timestral。带完整结果的技术报告随后推出。若有更专业的预测问题，或想在研究上合作，请联系我们。</p>
+<table><thead><tr><th>Timestral</th><th></th></tr></thead><tbody><tr><td>类型</td><td>时序基础模型（TSFM）</td></tr><tr><td>参数量</td><td>5M、28M、123M 和 209M</td></tr><tr><td>上下文长度</td><td>32,768 个时间步</td></tr><tr><td>输出</td><td>概率性预测，21 个分位数</td></tr><tr><td>输入</td><td>多变量目标，仅过去协变量与已知未来协变量</td></tr><tr><td>部署</td><td>本地、VPC 或完全物理隔离</td></tr><tr><td>许可证</td><td>修改版 MIT</td></tr></tbody></table>
+<p><img src="https://mistral.ai/cms-media/api/media/file/timestral-icon-model.svg" alt="None"></p>
+<p>Timestral</p>
+<p>新品</p>
+<p>Mistral 的时序基础模型。最先进的概率性预测，5M–209M 参数，可在 CPU 上运行。</p>
+<p>概率性预测</p>
+<p>去了解</p>
+<p>0%</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Mistral Large 4</title>
