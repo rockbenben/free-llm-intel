@@ -10,7 +10,7 @@
 
 ## 全部文章（共 886 篇，按日期倒序；无日期条目列于最后）
 
-1. [扩展 Indic 预训练：2.8 万亿代币和开放数据生成管道](https://huggingface.co/blog/nvidia/scaling-indic-pretraining)（2026-10-16） <!--orig:Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline-->
+1. [Indic 预训练规模化：2.8 万亿 token 与开放的数据生成流水线](https://huggingface.co/blog/nvidia/scaling-indic-pretraining)（2026-10-16） <!--orig:Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline-->
 2. [Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音](https://huggingface.co/blog/ibm-granite/granite-switch-4-1)（2026-10-15） <!--orig:Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint-->
 3. [欢迎 Muse Spark Open：来自 Meta 的开放权重前沿多模态混合专家模型](https://huggingface.co/blog/meta-muse-spark-open)（2026-10-15） <!--orig:Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta-->
 4. [Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型](https://huggingface.co/blog/flux-3)（2026-10-15） <!--orig:Welcome FLUX.3 Image Klein in Diffusers-->

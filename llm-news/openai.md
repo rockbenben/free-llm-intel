@@ -13,7 +13,7 @@
 
 1. [把 GPT‑Rosalind 带进学术研究实验室](https://openai.com/index/introducing-the-rosalind-academic-plan)（2026-10-15） <!--orig:Bringing GPT-Rosalind to academic research labs-->
 2. [通过提问教学生思考与学习](https://openai.com/index/teaching-students-to-think-and-learn-through-questions)（2026-10-15） <!--orig:Teaching students to think and learn through questions-->
-3. [沙利文克伦威尔将法律专业知识纳入协议审查](https://openai.com/index/sullivan-cromwell)（2026-10-15） <!--orig:Sullivan & Cromwell brings legal expertise into agreement review-->
+3. [Sullivan & Cromwell 把本所的专业能力带进协议审查](https://openai.com/index/sullivan-cromwell)（2026-10-15） <!--orig:Sullivan & Cromwell brings legal expertise into agreement review-->
 4. [Amp 借助 OpenAI 模型，让 AI 智能体承担编程之外的工作](https://openai.com/index/amp-beyond-coding)（2026-10-14） <!--orig:Amp puts AI agents to work beyond code with OpenAI models-->
 5. [SentinelOne 将恶意软件分析时间从数周缩短至数小时](https://openai.com/index/sentinelone)（2026-10-14） <!--orig:SentinelOne cuts malware analysis from weeks to hours-->
 6. [Third Moment Research 如何让 10,000 个智能体持续运行 36 小时以上](https://openai.com/index/third-moment-research)（2026-10-14） <!--orig:How Third Moment Research runs 10,000 agents for 36+ hours-->

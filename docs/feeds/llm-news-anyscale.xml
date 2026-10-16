@@ -3516,39 +3516,39 @@ def train_loop_per_worker(config: dict):
 <p>更多用法见<a href="https://docs.ray.io/en/latest/ray-core/direct-transport.html">文档</a>，bug 报告或反馈请<a href="https://github.com/ray-project/ray/issues">提 issue</a>，并在 <a href="https://www.anyscale.com/ray-summit/2025">Ray Summit</a> 与我们见面！本系列的第二篇将扩展示例，演示 RDT 用于 rollout 数据传输以及多 GPU LLM 的 RL 训练。</p>]]></content:encoded>
     </item>
     <item>
-      <title>引入标签选择器：提高 Ray 中的调度灵活性</title>
+      <title>Ray 引入 label selector：调度灵活性更强</title>
       <link>https://anyscale.com/blog/introducing-label-selectors-scheduling-ray</link>
       <guid isPermaLink="true">https://anyscale.com/blog/introducing-label-selectors-scheduling-ray</guid>
       <pubDate>Thu, 30 Oct 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Label Selectors: Improved Scheduling Flexibility in Ray</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
-<h1>引入标签选择器：提高 Ray 中的调度灵活性</h1>
+      <description>原文标题：Introducing Label Selectors: Improved Scheduling  Flexibility in Ray</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
+<h1>Ray 引入 label selector：调度灵活性更强</h1>
 <p>作者：<a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a> 和 <a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> | 2025 年 10 月 30 日</p>
-<p><em>感谢所有为该项目做出贡献的人，包括：来自 Anyscale 的 Edward Oakes、Janet Li、Bruce Zhang、AlanGuo、Douglas Strodtman、Jui-An Huang、Han-Ju Chen，以及来自 Google、GKE 团队的 Andrew Sy Kim。</em></p>
-<p>今天，我们与 Google Kubernetes Engine 团队合作，向 Ray 引入标签选择器，这是一种将工作负载放置在正确节点上的更直接的方法。 API 和 UI 在 Ray 2.49 中提供，可在 Ray Dashboard、KubeRay 和 <a href="https://www.anyscale.com/product/platform">Anyscale</a>（基于 Ray 构建的 AI 计算平台）上使用。</p>
-<p>借助新的标签选择器 API，Ray 现在可以直接帮助开发人员完成以下任务：</p>
-<ul><li>为 Ray 集群中的节点分配标签（例如 <code>cpu-family=intel</code>、<code>market-type=spot</code>、<code>region=us-west-1</code>）</li><li>启动任务时，参与者或安置组声明诸如<em>“仅在英特尔芯片节点上运行”</em>之类的内容</li></ul>
-<p>借助这个新的 API，团队能够获得更好的开发体验，能够更轻松地使用标签描述调度意图，而不是黑客攻击（更多详细信息见下文），并且从第一天起就可以通过 UI 和 API 支持更轻松地调试布局。</p>
-<h2>Link旧的解决方法</h2>
-<p>当 Ray 开发人员只想在 Ray 集群中的点节点上调度一些任务时，他们通常会在启动 Ray 节点时伪造一个“点”自定义资源，然后为每个任务请求一小部分 (0.01) – 希望不超过 100 个任务同时位于一个节点上，从而耗尽“点”资源。</p>
+<p><em>感谢其他所有为这个项目做出贡献的人：来自 Anyscale 的 Edward Oakes、Janet Li、Bruce Zhang、Alan Guo、Douglas Strodtman、Jui-An Huang、Han-Ju Chen，以及来自 Google GKE 团队的 Andrew Sy Kim。</em></p>
+<p>今天，我们联合 Google Kubernetes Engine 团队一起，为 Ray 引入 label selector——一种把工作负载放到合适节点上的更直接的做法。相关 API 和 UI 随 Ray 2.49 发布，并在 Ray Dashboard、KubeRay 以及基于 Ray 构建的 AI 计算平台 <a href="https://www.anyscale.com/product/platform">Anyscale</a> 上可用。</p>
+<p>有了全新的 Label Selector API，Ray 现在可以直接帮开发者做到这些事：</p>
+<ul><li>为 Ray 集群中的节点打上标签（例如 <code>cpu-family=intel</code>、<code>market-type=spot</code>、<code>region=us-west-1</code>）</li><li>启动任务、actor 或 placement group 时，直接声明诸如<em>“只在 intel 芯片的节点上运行”</em>这样的要求</li></ul>
+<p>借助这个新 API，团队能获得更好的开发体验：更容易用标签而不是各种 hack 来表达调度意图（详情见下文），也从第一天起就能依靠 UI 和 API 支持更轻松地排查放置问题。</p>
+<h2>以往的变通做法</h2>
+<p>当 Ray 开发者只想把部分任务调度到 Ray 集群里的 spot 节点上时，他们往往会在启动 Ray 节点时伪造一个 “spot” 自定义资源，然后每个任务只申请极小的一份（0.01）——寄希望于同一时刻挤在同一个节点上的任务不超过 100 个，从而不会把这份 “spot” 资源用光。</p>
 <pre><code>1ray start --resources '{&quot;CPU&quot;: 8, &quot;spot&quot;: 1}'</code></pre>
 <pre><code>1@ray.remote(resources={&quot;spot&quot;: 0.01})
 2def func():
 3    pass</code></pre>
-<p>上述解决方法突出了一类调度限制：非资源约束（现货与按需）被伪造为“资源”。这将资源数量（CPU/GPU/RAM）与放置约束（区域/区域、现货与按需）混为一谈，并强制将非资源需求建模为资源。</p>
-<p>第二个同样常见的限制是仅精确匹配：许多 Ray 开发人员需要任意或否定匹配 - 例如，“不在 GPU 节点上”或“在 us-west1-a 或 us-west1-b 中” - 以前的 API 无法表达。</p>
-<p>借助标签选择器，Ray 开发人员能够解决这两个限制。它们使您可以使用在 RayCluster 创建时定义的或由 Ray 自动检测的节点标签（例如加速器类型）灵活地表达任务、参与者和置放组捆绑包的调度要求。</p>
-<p>Ray 标签选择器从 Kubernetes <a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/">标签和选择器</a> 中汲取灵感，通过使用熟悉的 API 和语义来增强两个系统之间的调度互操作性。这是 Ray 和 Kubernetes 共同努力解锁更高级用例的众多持续举措之一。</p>
-<p>您可以使用标签做什么：</p>
-<ul><li>固定到特定节点（通过节点 ID）</li><li>在头节点或工作组上运行/避开</li><li>仅 CPU 放置</li><li>针对特定加速器或组</li><li>选择节点市场类型（现货或按需）</li><li>将工作保留在地区或区域内/外</li><li>按 CPU 系列（或其他主机特征）选择</li><li>目标 TPU 豆荚切片</li></ul>
-<p>请参阅 <a href="https://docs.anyscale.com/configuration/compute/advanced#labels">Anyscale</a> 和 <a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Ray 指南</a> 了解使用说明和完整的 API 详细信息。</p>
-<h2>LinkLabel 选择器 API</h2>
-<h3>用户代码中的 LinkLabel 选择器</h3>
-<p>标签选择器使您可以通过与节点标签匹配来表达工作应该在哪里运行。</p>
-<p>您可以将标签选择器添加到：</p>
-<ul><li>任务/参与者：“@ray.remote(...)”中的“label_selector”</li><li>归置组：<code>bundle_label_selector=[...]</code>在创建时</li></ul>
-<p>支持的语义：匹配、不匹配、任意、非任意</p>
-<p>回到上面的示例，下面是表达这些要求的方式：</p>
+<p>上面的变通做法暴露出一类调度限制：非资源约束（spot 与 on-demand）被伪装成了 “资源”。这把资源数量（CPU/GPU/RAM）和放置约束（region/zone、spot 与 on-demand）混为一谈，迫使非资源类的需求只能用资源来建模。</p>
+<p>第二个同样常见的限制是只支持精确匹配：许多 Ray 开发者需要 any-of 或反向匹配——例如 “不在 GPU 节点上” 或 “在 us-west1-a 或 us-west1-b 之中”——而此前的 API 无法表达这类诉求。</p>
+<p>有了 label selector，Ray 开发者就能同时解决这两个限制。它让你可以用节点标签灵活表达任务、actor 以及 placement group 中 bundle 的调度要求；这些标签可以在创建 RayCluster 时定义，也可以由 Ray 自动探测（例如加速器类型）。</p>
+<p>Ray 的 label selector 从 Kubernetes 的<a href="https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/">标签和选择器</a>借鉴了思路，用大家熟悉的 API 与语义增强了两个系统之间的调度互操作性。这是 Ray 与 Kubernetes 协同解锁更高级用例的众多在进行中的工作之一。</p>
+<p>用标签你可以做到：</p>
+<ul><li>固定在某个具体节点上（按 node id）</li><li>指定跑在或避开 head 节点、某个 worker group</li><li>只放到 CPU 节点</li><li>指定某个加速器或某一组加速器</li><li>选择节点的市场类型（spot 或 on-demand）</li><li>把负载留在某些 region/zone 之内或排除在外</li><li>按 CPU family（或其他主机特性）筛选</li><li>指定 TPU pod slice</li></ul>
+<p>用法说明和完整 API 细节见 <a href="https://docs.anyscale.com/configuration/compute/advanced#labels">Anyscale</a> 和 <a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Ray 文档</a>。</p>
+<h2>Label Selector API</h2>
+<h3>用户代码中的 label selector</h3>
+<p>label selector 通过与节点标签做匹配，来表达某部分工作应该在哪里运行。</p>
+<p>你可以给以下对象加上 label selector：</p>
+<ul><li>任务/actor：在 <code>@ray.remote(...)</code> 里使用 <code>label_selector</code></li><li>placement group：创建时使用 <code>bundle_label_selector=[...] </code></li></ul>
+<p>支持的语义：match、not match、any-of、not-any-of</p>
+<p>回到上面的例子，这些需求现在可以这样表达：</p>
 <pre><code>1import ray
 2from ray.util.placement_group import placement_group
 3
@@ -3568,10 +3568,10 @@ def train_loop_per_worker(config: dict):
 17    ] * 2,
 18)
 19</code></pre>
-<p>相同的代码可以在开源 Ray、Kubernetes 或 Anyscale 等托管提供商上可移植地运行。</p>
-<h3>链接节点标签</h3>
-<p>节点标签使用用于调度的属性来注释节点（例如，CPU 系列、加速器类型、现货/点播的市场类型、区域/区域）。您可以：</p>
-<ul><li>创建集群时定义标签（Anyscale UI/SDK、KubeRay RayCluster CR 或“ray start”）。</li></ul>
+<p>同一份代码可以在开源 Ray、Kubernetes，以及 Anyscale 这类托管服务上可移植地运行。</p>
+<h3>节点标签</h3>
+<p>节点标签是给节点附加的、供调度使用的属性（例如 cpu-family、accelerator-type，用于 spot/on-demand 的 market-type，以及 region/zone）。你可以：</p>
+<ul><li>在创建集群时定义标签（Anyscale UI/SDK、KubeRay RayCluster CR，或 <code>ray start</code>）。</li></ul>
 <pre><code>1# KubeRay RayCluster CR: Label nodes in a worker group with AMD CPU
 2spec:
 3 workerGroupSpecs:
@@ -3581,109 +3581,109 @@ def train_loop_per_worker(config: dict):
 7</code></pre>
 <pre><code>1# ray start: Label a node with AMD CPU
 2ray start --labels=&quot;cpu-family=amd&quot;</code></pre>
-<ul><li>在 Anyscale UI 上：使用 AMD CPU 标记工作组中的节点</li></ul>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/4uxHUzbYm3IdlIdYQnWxdK/7834bad992b8066a36691d6d0bc5517d/image_26.png" alt="标签选择器 - 图片 1"></p>
-<p>标签选择器 - 图片 1</p>
-<p>依赖 Ray 和 Anyscale 提供的自动检测标签（例如加速器类型）。在 Anyscale 上，会填充其他默认标签（市场类型、地区/区域）以实现更灵活的放置。 <a href="https://docs.anyscale.com/configuration/compute/advanced#head-node">请参阅文档以了解有关默认标签的更多信息</a>。默认标签列表：</p>
-<table><thead><tr><th><strong>标签名称</strong></th><th><strong>描述</strong></th><th><strong>支持 Anyscale</strong></th><th><strong>OSS 支持</strong></th></tr></thead><tbody><tr><td><code>ray.io/node-id</code></td><td>为节点生成的唯一 ID。</td><td>是的</td><td>是的</td></tr><tr><td><code>ray.io/加速器类型</code></td><td>节点的加速器类型，例如L4。</td><td>是的</td><td>是的</td></tr><tr><td><code>ray.io/market-type</code></td><td>指示节点是使用现货实例还是按需实例。</td><td>是的</td><td>否*</td></tr><tr><td><code>ray.io/node-group</code></td><td>节点工作组的名称或头节点的头。</td><td>是的</td><td>否*</td></tr><tr><td><code>ray.io/region</code></td><td>节点的云区域。</td><td>是的</td><td>否*</td></tr><tr><td><code>ray.io/可用区</code></td><td>节点的可用区域。</td><td>是的</td><td>否*</td></tr></tbody></table>
-<p>注意：* 默认情况下不会填充默认标签。但是，如果在光线启动参数或 KubeRay CR 中的顶级“labels”字段中指定了标签，您仍然可以使用这些标签。</p>
-<h3>LinkAutoscaling集群</h3>
-<p>标签选择器适用于静态和自动缩放集群。</p>
-<p>在 Anyscale 上，自动缩放器会考虑资源形状和标签选择器，缩放适当的工作组，以便调出具有所需标签的节点。开源 Ray 中标签选择器的自动缩放支持将在 Ray 2.51 中发布。</p>
-<h2>链接它是如何工作的？</h2>
-<p>当您提交任务或创建参与者或放置组时，Ray 会将相应的标签选择器 (label_selector/bundle_label_selector) 附加到请求。每个节点的 Raylet 保存节点的标签（用户在 RayCluster 创建时定义或自动检测，例如加速器系列）以及来自所有节点的其他节点元数据。 Raylet 中的调度程序使用选择器和节点标签信息来做出放置决策：它检查标签匹配并执行正常的资源适配。仅当两项检查都通过时，该请求才被视为可调度到节点。</p>
-<p>在自动缩放集群中，Ray 全局控制存储 (GCS) 聚合标签选择器未满足的需求以及资源需求，并将其发送到自动缩放器。自动缩放器使用这些信息来缩放适当的工作组，以便它显示具有所需标签的节点。</p>
-<h2>LinkFuture 工作</h2>
-<p>当前的标签选择器是一个很好的起点，但我们有更多计划来使其变得更好。</p>
-<ul><li><strong>后备标签选择器（有序首选项）</strong>：如今，每个请求都带有一个标签选择器。我们计划支持每个任务/参与者/置放组捆绑包的有序回退，以便您可以表达有序意图，例如首选加速器=H100，否则加速器位于{A100，H100}。</li><li><strong>库支持：</strong> 将标签选择器支持扩展到 Ray 库（例如 Ray Data、Ray Serve、Ray Train），以便自动处理常见的调度模式。</li><li><strong>改进与 Kubernetes 的互操作性：</strong>我们希望尽可能轻松地从 Kubernetes Pod 继承标签并以 Kubernetes 原生方式影响 Pod 调度。</li></ul>
-<h2>链接立即尝试</h2>
-<ul><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Ray OSS 指南</a></li><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">任何规模指南</a></li><li><a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/label-based-scheduling.html">KubeRay 端到端示例</a></li></ul>
+<ul><li>在 Anyscale UI 上：为某个 worker group 的节点打上 AMD CPU 标签</li></ul>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4uxHUzbYm3IdlIdYQnWxdK/7834bad992b8066a36691d6d0bc5517d/image_26.png" alt="label selector - 图 1"></p>
+<p>label selector - 图 1</p>
+<p>也可以依赖 Ray 和 Anyscale 提供的自动探测标签（例如加速器类型）。在 Anyscale 上，还会额外填充一批默认标签（market type、region/zone），以便实现更灵活的放置。<a href="https://docs.anyscale.com/configuration/compute/advanced#head-node">查看文档，了解更多默认标签</a>。默认标签列表如下：</p>
+<table><thead><tr><th><strong>标签名称</strong></th><th><strong>说明</strong></th><th><strong>Anyscale 支持</strong></th><th><strong>OSS 支持</strong></th></tr></thead><tbody><tr><td><code>ray.io/node-id</code></td><td>为该节点生成的唯一 ID。</td><td>是</td><td>是</td></tr><tr><td><code>ray.io/accelerator-type</code></td><td>节点的加速器类型，例如 L4。</td><td>是</td><td>是</td></tr><tr><td><code>ray.io/market-type</code></td><td>标明该节点用的是 spot 实例还是 on-demand 实例。</td><td>是</td><td>否*</td></tr><tr><td><code>ray.io/node-group</code></td><td>该节点所属 worker group 的名称；头节点则为 head。</td><td>是</td><td>否*</td></tr><tr><td><code>ray.io/region</code></td><td>节点所在的云 region。</td><td>是</td><td>否*</td></tr><tr><td><code>ray.io/availability-zone</code></td><td>节点所在的可用区。</td><td>是</td><td>否*</td></tr></tbody></table>
+<p>注：* 这些默认标签不会被自动填充。但只要它们在 <code>ray start</code> 参数中，或在 KubeRay CR 顶层的 <code>labels</code> 字段里被显式指定，你依然可以使用这些标签。</p>
+<h3>autoscaling 集群</h3>
+<p>label selector 对静态集群和 autoscaling 集群都适用。</p>
+<p>在 Anyscale 上，autoscaler 会同时考虑资源形状和 label selector，扩容合适的 worker group，从而拉起带有所需标签的节点。开源 Ray 中对 label selector 的 autoscaling 支持将在 Ray 2.51 发布。</p>
+<h2>它是怎么工作的？</h2>
+<p>当你提交任务，或创建 actor、placement group 时，Ray 会把对应的 label selector（<code>label_selector</code>/<code>bundle_label_selector</code>）附加到请求上。每个节点的 Raylet 都持有该节点的标签（在创建 RayCluster 时由用户定义，或由 Ray 自动探测，例如加速器系列），以及其他所有节点的元数据。Raylet 中的调度器会同时利用 selector 和节点标签信息来做放置决策：它既检查标签是否匹配，也照常做资源适配检查。只有两项检查都通过，这个请求才被判定为可以调度到该节点。</p>
+<p>在 autoscaling 集群中，Ray 的 global control store（GCS）会聚合未被满足的需求，并把 label selector 连同资源要求一起发给 autoscaler。autoscaler 利用这些信息扩容合适的 worker group，从而拉起带有所需标签的节点。</p>
+<h2>后续工作</h2>
+<p>当前的 label selector 是一个很好的起点，但我们还计划把它做得更好。</p>
+<ul><li><strong>回退 label selector（有序偏好）</strong>：目前每个请求只携带一个 label selector。我们计划为任务/actor/placement group 的 bundle 支持按顺序回退，这样你可以表达带优先级的意图，例如优先 accelerator=H100，否则接受 accelerator in {A100,H100}。</li><li><strong>库层面支持：</strong>把 label selector 的支持扩展到 Ray 的各库（例如 Ray Data、Ray Serve、Ray Train），让常见的调度模式被自动处理。</li><li><strong>与 Kubernetes 更好的互操作性： </strong>我们希望在继承 Kubernetes Pod 标签、并以 Kubernetes 原生方式影响 Pod 调度这两件事上，做到尽可能简单。</li></ul>
+<h2>立即试用</h2>
+<ul><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Ray 开源文档</a></li><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Anyscale 文档</a></li><li><a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/label-based-scheduling.html">KubeRay 端到端示例</a></li></ul>
 <h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#the-old-workaround">旧的解决方法</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#label-selector-api">标签选择器 API</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#label-selectors-in-user-code">用户代码中的标签选择器</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#node-labels">节点标签</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#autoscaling-cluster">自动缩放集群</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#how-does-it-work?">它是如何工作的？</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#future-work-">未来的工作</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#try-it-today">立即尝试</a></li></ul>
-<p>####分享</p>
-<p>####标签</p>
-<h4>注册产品更新</h4>
-<p>####推荐内容</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
-<h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策科学"></p>
-<h4>使用 Ray 在任意尺度上扩展机器人决策科学</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/12RnheyyoRcbiqT3JkFsEU/10457e67286ef0dd8c471c7ff0574fd9/High-Performance_LLM_Serving_for_Coding_Agents.png?w=140" alt="高性能 LLM 服务于编码代理"></p>
-<h4>将编码代理成本降低 90%：在 Anyscale 上使用 Ray + vLLM 提供安全的 LLM 服务</h4>
+<ul><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#the-old-workaround">以往的变通做法</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#label-selector-api">Label Selector API</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#label-selectors-in-user-code">用户代码中的 label selector</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#node-labels">节点标签</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#autoscaling-cluster">autoscaling 集群</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#how-does-it-work?">它是怎么工作的？</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#future-work-">后续工作</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#try-it-today">立即试用</a></li></ul>
+<h4>分享</h4>
+<h4>标签</h4>
+<h4>订阅产品更新</h4>
+<h4>推荐内容</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
+<h4>用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策的科学"></p>
+<h4>在 Anyscale 上用 Ray 扩展机器人决策的科学</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/12RnheyyoRcbiqT3JkFsEU/10457e67286ef0dd8c471c7ff0574fd9/High-Performance_LLM_Serving_for_Coding_Agents.png?w=140" alt="面向 coding agent 的高性能 LLM 服务"></p>
+<h4>把 coding agent 成本降低 90%：在 Anyscale 上用 Ray + vLLM 做安全的 LLM 服务</h4>
 <h2>立即探索 Anyscale</h2>
-<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
+<p>在为生产 AI 打造的多云平台上，用 Ray 构建、运行并扩展任意 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">联系专家</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>Ray Task Monitoring at Scale: Announcing Persistence for +10…</title>
+      <title>大规模 Ray 任务监控：Anyscale 现已支持 1 万个以上任务的持久化</title>
       <link>https://anyscale.com/blog/ray-task-monitoring-persistent-logs</link>
       <guid isPermaLink="true">https://anyscale.com/blog/ray-task-monitoring-persistent-logs</guid>
       <pubDate>Fri, 12 Sep 2025 00:00:00 +0000</pubDate>
-      <description>完整标题：Ray Task Monitoring at Scale: Announcing Persistence for +10k Tasks on Anyscale</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
-<h1>大规模 Ray 任务监控：宣布在任意规模上持久化超过 10k 个任务</h1>
-<p>作者：<a href="https://www.anyscale.com/blog?author=nikita-vemuri">Nikita Vemuri</a>、<a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a>、<a href="https://www.anyscale.com/blog?author=alan-guo">AlanGuo</a> 和 <a href="https://www.anyscale.com/blog?author=julian-forero">Julian Forero</a> | 2025 年 9 月 12 日</p>
-<p>今天，我们很高兴地宣布在 Anyscale 上推出持久性 <a href="https://docs.anyscale.com/monitoring/task-dashboard/">Ray 任务仪表板</a>，它可以对 Ray 工作负载进行可扩展的监控和调试，并且在集群关闭后仍能保持可见性。 Anyscale 上的完全托管仪表板利用新的 Ray Event Export 框架，该框架从 <strong>Ray 2.49 开始提供。</strong></p>
-<p><a href="https://docs.ray.io/en/latest/ray-core/key-concepts.html#tasks">任务</a>，远程并行执行的函数，是 Ray 中分布式计算的基础。如果无法清晰地观察任务，诊断瓶颈、调试故障或调整性能很快就会变成猜测，从而减慢迭代速度并增加成本。</p>
-<p>现有的 Ray Dashboard 任务视图一直是开发人员流行的工具，但它有两个关键限制：</p>
-<ul><li><strong>10k 任务限制。</strong> 任务数据存储在 Ray 的全局控制服务 (GCS) 内存中。为了避免系统过载，仅显示最近的 10k 任务，这远远低于大数据和 AI 工作负载的需求。 GCS 约束还限制了事件报告频率，这意味着一些可观测性数据可能会被丢弃。</li><li><strong>不持久。</strong> 仪表板由头节点提供服务，并在节点终止后消失。在作业完成后保持头节点处于活动状态是当今唯一的解决方法，但这并不具有成本效益。</li></ul>
-<p>借助基于 Ray 的事件导出框架构建的 Anyscale 上的任务持久性，开发人员现在可以通过托管仪表板以可扩展、经济高效的方式捕获和分析任务事件。</p>
-<p>有关启用仪表板的说明，请参阅<a href="https://docs.anyscale.com/monitoring/task-dashboard#enable-system-cluster">文档</a>。</p>
-<h2>LinkAnyscale 任务仪表板</h2>
-<h3>LinkFeature 概述</h3>
-<p>Anyscale 任务仪表板对于 <a href="https://docs.ray.io/en/latest/ray-core/walkthrough.html#what-s-ray-core">Ray Core</a> 用户特别有用，因此让我们以 Core 工作负载为例，其中任务执行一些工作量，并根据其输入进行配置。仪表板近乎实时更新，允许用户在作业运行时监控作业进度或在作业完成后分析结果。</p>
-<p><strong>高级概述：</strong> 仪表板的第一部分为用户提供了其工作进展情况的快速概述。顶部的摘要面板按状态（例如已完成、失败、正在运行等）提供任务计数的高级摘要。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/1ktTgGeePhIIJTsSFS3AU7/a7fa833e779a587f34e20c690157f4f9/image_1.png" alt="任务仪表板 - 图 1">图 1：Anyscale 仪表板中的任务摘要视图</p>
-<p>任务仪表板 - 图 1</p>
-<p><strong>聚合视图：</strong>接下来是许多聚合视图面板，它们按函数名称、错误类型和 Ray 作业 ID 对任务进行分组。除了任务状态计数之外，这些面板还包括持续时间分布，以帮助识别异常值。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6HGRPxr6axsEWEk95j9qHA/c612ef10b6d37598b6d97a2c68394c1a/image_2.png" alt="任务仪表板 - 图 2">图 2：Anyscale 仪表板中的任务聚合视图</p>
-<p>任务仪表板 - 图 2</p>
-<p><strong>单个任务分析：</strong> 仪表板底部的任务表提供了单个任务的详细信息，以供进一步分析。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5kOdSeSfsZOGOji7ivpkWb/6aba4189c3cb5704eea1b951f0cc3b88/image_12.png" alt="任务仪表板 - 图 3">图 3：Anyscale 仪表板中的详细任务表视图</p>
-<p>任务仪表板 - 图 3</p>
-<ul><li>上面的所有聚合视图都包含可相应过滤任务表的可点击计数。</li><li>每行包含完整的任务元数据，例如节点和工作线程 ID，这些元数据也可用于过滤 Grafana 仪表板中的指标。</li><li>堆栈跟踪、函数名称和各种ID可以直接通过搜索栏查询。</li></ul>
-<p><strong>情境化信息：</strong> 由于此仪表板内置于 Anyscale 托管平台中，因此我们可以将 Ray 工作负载数据与来自 Anyscale 基础设施的其他相关信息进行情境化。例如，当任务陷入待定计划状态时，仪表板可以显示相关的 Anyscale Cloud 自动缩放器日志，以帮助诊断潜在的计划延迟。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5sGMeBoYyxVrMa0sVkzsK3/db5f9e48c2c57026bbf5621e58ea9fc8/image_6.png" alt="任务仪表板 - 图 4">图 4：Anyscale Cloud 自动缩放程序日志视图提供有关任务状态的上下文信息</p>
-<p>任务仪表板 - 图 4</p>
-<h3>链接架构</h3>
-<p>在 Anyscale 托管平台上构建持久仪表板时，维护数据隐私是一个关键的设计考虑因素。为了真正有用，仪表板必须包含详细信息，例如堆栈跟踪和函数名称，其中可能包含敏感的用户数据。为了平衡将客户数据保存在自己的云帐户中的要求，同时仍然提供响应迅速且可扩展的用户体验，我们构建了一个专用系统集群来为 Anyscale 任务仪表板提供支持。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/1Wz8xlbRUE3UkurOieyipS/d071aa112199b00e5d16572b12cf9722/image_4.png" alt="Ray 任务仪表板 - 图 5">图 5：将客户数据保存在自己的云帐户中的 Anyscale 任务仪表板的架构</p>
-<p>Ray 任务仪表板 - 图 5</p>
-<p>系统集群是<strong>每个 Anyscale 云的单个临时实例</strong>，在客户的帐户中运行，并在查看任务仪表板 UI 时保持活动状态。这种方法具有几个主要优点：</p>
-<ul><li><strong>可扩展的后端：</strong> 系统集群允许我们选择最好的工具，以确保任务仪表板后端根据用户工作负载有效扩展。因此，我们测试了仪表板能否顺利处理数百万个任务。</li><li><strong>维护数据隐私：</strong> 为任务仪表板提供支持的客户数据既不存储也不通过 Anyscale 控制平面进行流式传输，因为 UI 直接从客户云查询。</li><li><strong>成本效率：</strong> 由于自动终止策略会在任务仪表板空闲时自动关闭系统集群，因此额外成本保持在最低限度。</li></ul>
-<h2>LinkRay 事件导出框架</h2>
-<p><strong>任务仪表板的数据来自哪里？</strong></p>
-<p>Ray 始终发出用户可以使用外部系统收集和保存的指标和日志。这些数据源虽然有用，但不足以支持任务仪表板中显示的所有详细视图。日志通常缺乏结构化信息，这使得它们难以转换和查询。另一方面，指标更适合聚合洞察，但添加高基数标签（例如任务 ID）可能会影响查询性能。由于这些限制，Ray 的指标无法提供仪表板中单个任务级别可见性所需的粒度级别。</p>
-<p>为了解决这个问题，我们引入了 <strong>Event Export</strong>，这是一个新的开源系统，它会发出描述 Ray 工作负载进度的结构化事件。目前它支持任务事件，我们计划在不久的将来将覆盖范围扩大到 Ray 实体。</p>
-<p>为了避免任务事件流量使 GCS 过载，我们在现有任务事件框架的基础上更新了 Ray 的事件发射架构。我们引入了每节点聚合器代理，而不是让每个核心工作人员直接将任务事件发送到 GCS。该代理从其节点上的所有核心工作人员收集事件并将它们转发到用户指定的 HTTP 端点。对于 Anyscale，这些事件被推送到接收器，接收器将它们写入对象存储，从而启用任务仪表板。</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/KD6pJEXnGrsAUSsNiB93Z/cc6bf5a836ec54ec821d0cec6832c9b5/image_5.png" alt="Ray 任务仪表板 - 图 6">图 6：Ray 事件导出的架构，每个节点引入一个聚合器代理</p>
-<p>Ray 任务仪表板 - 图 6</p>
-<p>开源用户还可以通过设置消费者将此数据流式传输到他们选择的任何目的地来利用事件导出框架。发出的每个任务事件都包含重新创建仪表板中显示的任务视图所需的所有元数据和状态转换，因此任何 Ray 用户都可以根据自己的需求构建自定义的持久仪表板。</p>
-<p>Ray 2.49 及更高版本中提供了事件导出框架。有关设置说明和示例，请查看官方<a href="https://docs.ray.io/en/master/ray-observability/user-guides/ray-event-export.html">文档</a>。</p>
-<h2>LinkFuture 计划</h2>
-<p>事件导出框架和系统集群架构是在 Anyscale 平台上构建完全持久的 Ray 仪表板的基础，这将增强用户监控、调试和优化 Ray 工作负载的方式。最终，这些数据还可以实现自动问题检测和工作负载优化。</p>
-<p>我们正在积极致力于将来自其他 Ray Core 资源和库组件的事件添加到事件导出框架，并计划在 Anyscale 上推出其他持久仪表板。 Ray Train 和 Data 仪表板最近也发布了（<a href="https://www.anyscale.com/blog/ray-train-data-dashboard">参见博客文章</a>），我们计划通过指向每个 Ray Data 操作员或 Train 工作人员的持久、详细任务数据的链接来增强它们。</p>
-<h2>链接立即尝试</h2>
-<p>在 Anyscale 平台上体验开箱即用、更具可扩展性、更具成本效益且完全持久的任务仪表板。</p>
-<ul><li>立即尝试：<a href="https://console.anyscale.com/register/ha?utm_source=anyscale&amp;utm_medium=website&amp;utm_campaign=blog">使用 100 美元免费积分开始使用 Anyscale</a></li><li><a href="https://docs.anyscale.com/monitoring/task-dashboard">Anyscale 任务仪表板文档</a></li><li><a href="https://docs.ray.io/en/master/ray-observability/user-guides/ray-event-export.html">Ray 事件导出文档</a></li><li>通过 <a href="https://docs.anyscale.com/get-started/what-is-anyscale#support">通过 Anyscale 控制台提交票证</a> 分享 Anyscale 反馈</li><li>分享反馈或帮助为 <a href="https://github.com/ray-project/ray/issues/56057">Ray Event Export 项目</a> 做出贡献</li></ul>
-<p><strong>加入我们 2025 年 Ray 峰会</strong></p>
-<p>在为期 2 天的社区主导的会议上查看真实世界的示例并查看 Ray 和 Anyscale 产品公告，该会议汇集了致力于开源技术以推进人工智能发展的最优秀的工程师和研究人员。</p>
-<p><strong>旧金山 | 2025 年 11 月 3 日至 5 日。 </strong><a href="https://www.anyscale.com/ray-summit/2025">了解更多</a>。</p>
-<p>＃＃＃＃ 目录</p>
-<ul><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#anyscale-task-dashboard">Anyscale 任务仪表板</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#feature-overview">功能概述</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#architecture">架构</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#ray-event-export-framework">Ray 事件导出框架</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#future-plans">未来计划</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#try-it-today">立即尝试</a></li></ul>
-<p>####分享</p>
-<p>####标签</p>
-<h4>注册产品更新</h4>
-<p>####推荐内容</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/4zrfTN35E4x2hwwNf1TkWv/ff9fc254b61cebff483a9db4a254e1c9/Tile_image_Op_10__1_.png?w=140" alt="可观测性博客标题图片"></p>
-<h4>新：Ray 数据和 Ray Train 仪表板</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/46kLynqjB0NI7BH7FHtrF/639e6aa1698d45b029f2afe2d40bf7fa/stack_blog_thumbnail.png?w=140" alt="开源堆栈博客缩略图"></p>
+      <description>原文标题：Ray Task Monitoring at Scale: Announcing Persistence for +10k Tasks on Anyscale</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
+<h1>大规模 Ray 任务监控：Anyscale 现已支持 1 万个以上任务的持久化</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=nikita-vemuri">Nikita Vemuri</a>、<a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a>、<a href="https://www.anyscale.com/blog?author=alan-guo">Alan Guo</a> 和 <a href="https://www.anyscale.com/blog?author=julian-forero">Julian Forero</a> | 2025 年 9 月 12 日</p>
+<p>今天我们很高兴地宣布，Anyscale 上推出了支持持久化的 <a href="https://docs.anyscale.com/monitoring/task-dashboard/">Ray Task Dashboard</a>，它可以对 Ray 工作负载做可扩展的监控与调试，并且在集群关停之后依然保留这些数据。Anyscale 上这个全托管的 dashboard 借助了全新的 Ray Event Export 框架，该框架自 <strong>Ray 2.49</strong> 起提供。</p>
+<p><a href="https://docs.ray.io/en/latest/ray-core/key-concepts.html#tasks">任务</a>是远程并行执行的函数，也是 Ray 中分布式计算的基础。如果看不清任务内部发生了什么，定位瓶颈、调试故障或调优性能很快就会变成靠猜，既拖慢迭代速度，又推高成本。</p>
+<p>现有的 Ray Dashboard 任务视图一直是开发者常用的工具，但它有两个关键限制：</p>
+<ul><li><strong>只有 1 万个任务的容量。</strong>任务数据保存在 Ray Global Control Service（GCS）的内存里。为了避免系统过载，界面只显示最近 1 万个任务，这远低于大规模数据与 AI 工作负载的需求。GCS 的限制还会压低事件上报的频率，这意味着部分可观测性数据可能丢失。</li><li><strong>不持久。</strong> dashboard 由头节点对外提供服务，节点一被终止它就随之消失。目前唯一的变通做法是作业跑完之后继续保留头节点，但这并不划算。</li></ul>
+<p>借助 Anyscale 上的任务持久化能力——它构建在 Ray 的 Event Export 框架之上——开发者现在可以通过托管 dashboard，以可扩展且成本高效的方式采集并分析任务事件。</p>
+<p>开启 dashboard 的步骤见<a href="https://docs.anyscale.com/monitoring/task-dashboard#enable-system-cluster">文档</a>。</p>
+<h2>Anyscale Task Dashboard</h2>
+<h3>功能概览</h3>
+<p>Anyscale 的 task dashboard 对 <a href="https://docs.ray.io/en/latest/ray-core/walkthrough.html#what-s-ray-core">Ray Core</a> 用户尤其有用，所以我们就拿一个 Core 工作负载当例子：其中的任务各自做一定量的工作，工作量由输入决定。 dashboard 近乎实时地更新，用户既能在作业运行时跟踪进度，也能在作业结束后分析结果。</p>
+<p><strong>整体概览：</strong> dashboard 的第一部分让用户快速了解作业进展如何。顶部的汇总面板按状态（例如 finished、failed、running 等）给出任务数量的总体概览。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1ktTgGeePhIIJTsSFS3AU7/a7fa833e779a587f34e20c690157f4f9/image_1.png" alt="Task Dashboard - 图 1">图 1：Anyscale Dashboard 中的任务汇总视图</p>
+<p>Task Dashboard - 图 1</p>
+<p><strong>聚合视图： </strong>接下来是若干聚合视图面板，分别按函数名、错误类型和 Ray job ID 对任务分组。除了各状态的任务数量，这些面板还包含耗时分布，帮助识别离群值。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6HGRPxr6axsEWEk95j9qHA/c612ef10b6d37598b6d97a2c68394c1a/image_2.png" alt="Task Dashboard - 图 2">图 2：Anyscale Dashboard 中的任务聚合视图</p>
+<p>Task Dashboard - 图 2</p>
+<p><strong>单个任务分析：</strong> dashboard 底部的任务表格给出单个任务的详细信息，便于进一步分析。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5kOdSeSfsZOGOji7ivpkWb/6aba4189c3cb5704eea1b951f0cc3b88/image_12.png" alt="Task Dashboard - 图 3">图 3：Anyscale Dashboard 中的详细任务表格视图</p>
+<p>Task Dashboard - 图 3</p>
+<ul><li>上述所有聚合视图里的数量都可以点击，并据此筛选任务表格。</li><li>每一行都包含完整的任务元数据，例如 node 和 worker 的 ID，它们同样可以用来在 Grafana dashboard 中筛选指标。</li><li>堆栈跟踪、函数名以及各种 ID 都可以直接在搜索框中查询。</li></ul>
+<p><strong>带上上下文的信息：</strong> 由于这个 dashboard 内置在 Anyscale 托管平台里，我们可以用 Anyscale 基础设施提供的其他相关信息，为 Ray 工作负载数据补充上下文。例如，当某个任务卡在 Pending schedule 状态时， dashboard 会展示相关的 Anyscale Cloud autoscaler 日志，帮助判断可能存在的调度延迟。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5sGMeBoYyxVrMa0sVkzsK3/db5f9e48c2c57026bbf5621e58ea9fc8/image_6.png" alt="Task Dashboard - 图 4">图 4：Anyscale Cloud autoscaler 日志视图，为任务状态提供上下文信息</p>
+<p>Task Dashboard - 图 4</p>
+<h3>架构</h3>
+<p>在 Anyscale 托管平台上做持久化 dashboard 时，数据隐私是关键的设计考量。要真正有用， dashboard 必须包含堆栈跟踪、函数名这类细节信息，而它们有可能带有用户的敏感数据。为了既把客户数据留在客户自己的云账号里，又给出响应快、可扩展的用户体验，我们专门搭建了一个 system cluster 来支撑 Anyscale 的 task dashboard。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/1Wz8xlbRUE3UkurOieyipS/d071aa112199b00e5d16572b12cf9722/image_4.png" alt="Ray Task Dashboard - 图 5">图 5：Anyscale task dashboard 的架构，客户数据始终留在其自己的云账号中</p>
+<p>Ray Task Dashboard - 图 5</p>
+<p>这个 system cluster 是<strong>每个 Anyscale cloud 一个的临时实例</strong>，运行在客户账号中，并且在有人查看 task dashboard UI 期间保持活跃。这种做法带来几个关键好处：</p>
+<ul><li><strong>可扩展的后端：</strong> system cluster 让我们能为 task dashboard 后端挑选最合适的工具，确保它随用户负载有效扩展。据此我们已经验证过， dashboard 能够平滑处理数百万个任务。</li><li><strong>数据隐私有保障：</strong> 支撑 task dashboard 的客户数据既不存储也不流经 Anyscale 控制面，因为 UI 直接向客户云端查询。</li><li><strong>成本可控：</strong> 由于配置了自动终止策略，system cluster 会在 task dashboard 空闲时自动关停，额外开销保持在极低水平。</li></ul>
+<h2>Ray Event Export 框架</h2>
+<p><strong>task dashboard 的数据从哪里来？</strong></p>
+<p>Ray 一直在输出指标和日志，用户可以用外部系统把它们收集并持久化。这些数据源虽然有用，却不足以支撑 task dashboard 展示的那些细节视图。日志通常缺少结构化信息，难以转换和查询；指标更适合做聚合洞察，但加上任务 ID 这类高基数标签会影响查询性能。受这些限制所约，Ray 的指标提供不了 dashboard 中单个任务级可见性所需的粒度。</p>
+<p>为了解决这个问题，我们推出了 <strong>Event Export</strong>，这是一套全新的开源系统，会输出描述 Ray 工作负载进展的结构化事件。目前它支持任务事件，我们计划在不久之后把覆盖范围扩展到更多 Ray 实体。</p>
+<p>为了避免任务事件流量压垮 GCS，我们在现有任务事件框架的基础上更新了 Ray 的事件发射架构。我们不再让每个 core worker 直接把任务事件发给 GCS，而是引入了每节点一个的聚合 agent。这个 agent 收集所在节点上所有 core worker 的事件，并把它们转发到用户指定的 HTTP 端点。在 Anyscale 上，这些事件会被推送给一个接收器，由接收器写入对象存储，从而支撑起 task dashboard。</p>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/KD6pJEXnGrsAUSsNiB93Z/cc6bf5a836ec54ec821d0cec6832c9b5/image_5.png" alt="Ray Task Dashboard - 图 6">图 6：Ray Event Export 的架构，为每个节点引入一个聚合 agent</p>
+<p>Ray Task Dashboard - 图 6</p>
+<p>开源用户同样可以用起 Event Export 框架：搭建自己的消费者，把这些数据流式传输到任意选择的目的地即可。每条发出的任务事件都包含重建 dashboard 中那个任务视图所需的全部元数据与状态流转，所以任何 Ray 用户都能按自己的需求搭一个自定义的持久化 dashboard。</p>
+<p>Event Export 框架在 Ray 2.49 及之后的版本中可用。配置说明与示例见官方<a href="https://docs.ray.io/en/master/ray-observability/user-guides/ray-event-export.html">文档</a>。</p>
+<h2>后续计划</h2>
+<p>Event Export 框架与 system cluster 架构共同构成底座，用于在 Anyscale 平台上打造完全持久化的 Ray dashboard，这会改变用户监控、调试和优化 Ray 工作负载的方式。这些数据最终还能支撑自动化的问题检测与工作负载优化。</p>
+<p>我们正在积极把其他 Ray Core 资源和库组件的事件也接入 Event Export 框架，并计划在 Anyscale 上推出更多持久化 dashboard。Ray Train 和 Data 的 dashboard 也在近期发布了（<a href="https://www.anyscale.com/blog/ray-train-data-dashboard">见博客文章</a>），我们计划增强它们，为每个 Ray Data operator 或 Train worker 关联到持久化的详细任务数据。</p>
+<h2>立即试用</h2>
+<p>在 Anyscale 平台上，开箱即用就能体验更可扩展、更省成本且完全持久化的 task dashboard。</p>
+<ul><li>立即试用：<a href="https://console.anyscale.com/register/ha?utm_source=anyscale&amp;utm_medium=website&amp;utm_campaign=blog">在 Anyscale 开始，领取 100 美元免费额度</a></li><li><a href="https://docs.anyscale.com/monitoring/task-dashboard">Anyscale Task dashboard 文档</a></li><li><a href="https://docs.ray.io/en/master/ray-observability/user-guides/ray-event-export.html">Ray Event Export 文档</a></li><li>想反馈 Anyscale 的使用体验，可以<a href="https://docs.anyscale.com/get-started/what-is-anyscale#support">通过 Anyscale Console 提交工单</a></li><li>分享反馈，或参与贡献 <a href="https://github.com/ray-project/ray/issues/56057">Ray Event Export 项目</a></li></ul>
+<p><strong>来参加 Ray Summit 2025</strong></p>
+<p>在这场为期两天、由社区主导的大会上，你既能看到真实案例，也能看到 Ray 和 Anyscale 的产品发布——大会汇聚了那些基于开源技术推进 AI 的最优秀的工程师和研究人员。</p>
+<p><strong>旧金山 | 2025 年 11 月 3-5 日。 </strong><a href="https://www.anyscale.com/ray-summit/2025">了解更多</a>。</p>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#anyscale-task-dashboard">Anyscale Task Dashboard</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#feature-overview">功能概览</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#architecture">架构</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#ray-event-export-framework">Ray Event Export 框架</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#future-plans">后续计划</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#try-it-today">立即试用</a></li></ul>
+<h4>分享</h4>
+<h4>标签</h4>
+<h4>订阅产品更新</h4>
+<h4>推荐内容</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/4zrfTN35E4x2hwwNf1TkWv/ff9fc254b61cebff483a9db4a254e1c9/Tile_image_Op_10__1_.png?w=140" alt="可观测性博客头图"></p>
+<h4>新品：Ray Data 与 Ray Train Dashboard</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/46kLynqjB0NI7BH7FHtrF/639e6aa1698d45b029f2afe2d40bf7fa/stack_blog_thumbnail.png?w=140" alt="开源技术栈博客缩略图"></p>
 <h4>OSS AI：Kubernetes + Ray + PyTorch + vLLM</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/68bOkIigo4YK0ogfHkcOR9/119e42a8629331f4385de76fc7c0eeec/Webinar_73025_1500x1000_2x.png?w=140" alt="网络研讨会 73025 1500x1000 2x"></p>
-<h4>点播：Anyscale 简介</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/68bOkIigo4YK0ogfHkcOR9/119e42a8629331f4385de76fc7c0eeec/Webinar_73025_1500x1000_2x.png?w=140" alt="Webinar 73025 1500x1000 2x"></p>
+<h4>点播：Anyscale 入门</h4>
 <h2>立即探索 Anyscale</h2>
-<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
+<p>在为生产 AI 打造的多云平台上，用 Ray 构建、运行并扩展任意 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">联系专家</a></p>]]></content:encoded>
     </item>
     <item>
       <title>阿里云上的 Ray：构建机器学习平台</title>

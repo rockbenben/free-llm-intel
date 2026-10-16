@@ -42,8 +42,8 @@
 31. [Ray 与分离式混合并行，多模态 AI 训练提速 30%](https://anyscale.com/blog/30-faster-multimodal-ai-training-with-ray-and-disaggregated-hybrid)（2025-12-09） <!--orig:30% Faster Multimodal AI Training with Ray and Disaggregated Hybrid Parallelism-->
 32. [Ray Serve：以异步推理、自定义请求路由与自定义扩缩推进灵活性](https://anyscale.com/blog/ray-serve-autoscaling-async-inference-custom-routing)（2025-11-11） <!--orig:Ray Serve: Advancing Flexibility with Async Inference, Custom Request Routing, and Custom Autoscaling-->
 33. [发布 Ray Direct Transport：Ray Core 支持 RDMA（上篇）](https://anyscale.com/blog/ray-direct-transport-rdma-support-in-ray-core)（2025-11-03） <!--orig:Announcing Ray Direct Transport: RDMA Support in Ray Core (Part 1)-->
-34. [引入标签选择器：提高 Ray 中的调度灵活性](https://anyscale.com/blog/introducing-label-selectors-scheduling-ray)（2025-10-30） <!--orig:Introducing Label Selectors: Improved Scheduling Flexibility in Ray-->
-35. [Ray Task Monitoring at Scale: Announcing Persistence for +10k Tasks on Anyscale](https://anyscale.com/blog/ray-task-monitoring-persistent-logs)（2025-09-12）
+34. [Ray 引入 label selector：调度灵活性更强](https://anyscale.com/blog/introducing-label-selectors-scheduling-ray)（2025-10-30） <!--orig:Introducing Label Selectors: Improved Scheduling  Flexibility in Ray-->
+35. [大规模 Ray 任务监控：Anyscale 现已支持 1 万个以上任务的持久化](https://anyscale.com/blog/ray-task-monitoring-persistent-logs)（2025-09-12） <!--orig:Ray Task Monitoring at Scale: Announcing Persistence for +10k Tasks on Anyscale-->
 36. [阿里云上的 Ray：构建机器学习平台](https://anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform)（2025-06-12） <!--orig:Ray on Alibaba Cloud: Building an ML Platform-->
 37. [Ray Compiled Graphs：原生 GPU 通信加持的 AI 负载优化](https://anyscale.com/blog/announcing-compiled-graphs)（2024-10-07） <!--orig:Ray Compiled Graphs: Optimized AI Workloads with Native GPU Communication-->
 38. [在 Anyscale 上自动扩缩大型 AI 模型，速度最高提升 5.1 倍](https://anyscale.com/blog/autoscale-large-ai-models-faster)（2024-10-01） <!--orig:Autoscaling Large AI Models up to 5.1x Faster on Anyscale-->
