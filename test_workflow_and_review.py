@@ -75,6 +75,28 @@ class TestWorkflowYaml(unittest.TestCase):
         self.assertEqual(concurrency.get("group"), "refresh-intel")
         self.assertFalse(concurrency.get("cancel-in-progress", True))
 
+    def test_beijing_tz_anchor_and_morning_slot(self):
+        """爬取必须跑在「北京今天」的时钟上，槽位定为北京 06:19（2026-10-17 定）。
+
+        `_rss_articles` 拿 `a.date > today` **无容差**剔除晚于「今天」的文章：job 没设
+        TZ 而调度落在北京 00:00–08:00（= UTC 前一天 16:00–24:00）时，runner 的 UTC 日期
+        比北京早一天，当天国内厂商的文章会从 RSS / 合并流 / articles.json 里整条消失。
+        G3（`TestIndexCoverageIndependent`）确实会在产物层拦住那种提交，但报错要等爬完
+        十几分钟才浮出来 —— 时区是配置项，就在配置项上钉住，别靠下游闸兜。
+        旧注释把这条约束记在 `_drop_future_date()` 名下（它有 +1 天容差，实际拦不住），
+        本闸连同文件头一起把出处改对。
+        """
+        with open(self.workflow_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        crawl = data["jobs"]["crawl"]
+        self.assertEqual((crawl.get("env") or {}).get("TZ"), "Asia/Shanghai",
+                         "job 级 TZ 缺了就会让「今天」退回 UTC 日期，见文件头第 1 条；"
+                         "必须是 job 级——只设某个 step 会跟 Verify 的「今天」差一天")
+        on_trigger = data.get("on") or data.get(True, {})
+        crons = [s.get("cron") for s in on_trigger.get("schedule", [])]
+        self.assertEqual(crons, ["19 22 * * *"],
+                         "槽位 = 北京 06:19；动它要把文件头的海外滞后取舍一起改掉")
+
     def test_render_step_sits_after_bodies_and_before_verify(self):
         """正文步骤之后必须再渲染一次产出层，否则新译文的 content:encoded 又要等一天。
 
