@@ -10,7 +10,7 @@
 
 ## 全部文章（共 97 篇，按日期倒序；无日期条目列于最后）
 
-1. [How an Anthropic Japan BDR runs his day with a fleet of Claude agents](https://claude.com/resources/articles/how-an-anthropic-japan-business-development-representative-runs-his-day)（2026-10-16）
+1. [Anthropic 日本的一位 BDR，如何带着一队 Claude 智能体过一天](https://claude.com/resources/articles/how-an-anthropic-japan-business-development-representative-runs-his-day)（2026-10-16） <!--orig:How an Anthropic Japan BDR runs his day with a fleet of Claude agents-->
 2. [How the Claude Code team does code review](https://claude.com/resources/articles#d-2026-10-16-2)（2026-10-16）
 3. [Code Review 现已正式可用](https://claude.com/resources/articles/code-review-is-now-generally-available)（2026-10-15） <!--orig:Code Review is now generally available-->
 4. [在 Claude Platform 上用 OpenTelemetry 追踪 agent](https://claude.com/resources/articles/agent-observability-on-the-claude-platform)（2026-10-14） <!--orig:Agent observability on the Claude Platform-->

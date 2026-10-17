@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-17 11:14:27**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-17 20:53:55**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,8 +26,8 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-17，标题自动汉化）：
-  1. [How an Anthropic Japan BDR runs his day with a fleet of Claude agents](https://claude.com/resources/articles/how-an-anthropic-japan-business-development-representative-runs-his-day)（2026-10-16）
-  2. [How the Claude Code team does code review](https://claude.com/resources/articles#d-2026-10-16-2)（2026-10-16）
+  1. [Anthropic 日本的一位 BDR，如何带着一队 Claude 智能体过一天](https://claude.com/resources/articles/how-an-anthropic-japan-business-development-representative-runs-his-day)（2026-10-16）
+  2. [Claude Code 团队如何进行代码审查](https://claude.com/resources/articles#d-2026-10-16-2)（2026-10-16）
   3. [Code Review 现已正式可用](https://claude.com/resources/articles/code-review-is-now-generally-available)（2026-10-15）
   4. [在 Claude Platform 上用 OpenTelemetry 追踪 agent](https://claude.com/resources/articles/agent-observability-on-the-claude-platform)（2026-10-14）
   5. [Uber 的 CISO 谈如何为 AI 搭建内部威胁防控体系](https://claude.com/resources/articles/uber-s-ciso-on-building-an-insider-threat-program-for-ai)（2026-10-13）
@@ -40,8 +40,8 @@
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [RSS/Atom 订阅源](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-17，标题自动汉化）：
-  1. [How Itaú is building generative AI for its entire customer base](https://openai.com/index/itau-generative-ai)（2026-10-16）
-  2. [Stack Overflow for Agents triples signups with ChatGPT plugin](https://openai.com/index/stack-overflow-chatgpt-plugin)（2026-10-16）
+  1. [Itaú 如何为全部客户打造生成式 AI](https://openai.com/index/itau-generative-ai)（2026-10-16）
+  2. [Stack Overflow for Agents 靠 ChatGPT plugin 让注册量增至三倍](https://openai.com/index/stack-overflow-chatgpt-plugin)（2026-10-16）
   3. [把 GPT‑Rosalind 带进学术研究实验室](https://openai.com/index/introducing-the-rosalind-academic-plan)（2026-10-15）
   4. [通过提问教学生思考与学习](https://openai.com/index/teaching-students-to-think-and-learn-through-questions)（2026-10-15）
   5. [Sullivan & Cromwell 把本所的专业能力带进协议审查](https://openai.com/index/sullivan-cromwell)（2026-10-15）
@@ -195,7 +195,7 @@
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-17，标题自动汉化）：
   1. [Indic 预训练规模化：2.8 万亿 token 与开放的数据生成流水线](https://huggingface.co/blog/nvidia/scaling-indic-pretraining)（2026-10-16）
-  2. [Welcome Beam: a 501B open model you can own, customize, and scale](https://huggingface.co/blog/reflection-beam)（2026-10-16）
+  2. [欢迎 Beam：一个你可以拥有、定制并规模化的 501B 开放模型](https://huggingface.co/blog/reflection-beam)（2026-10-16）
   3. [Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音](https://huggingface.co/blog/ibm-granite/granite-switch-4-1)（2026-10-15）
   4. [欢迎 Muse Spark Open：来自 Meta 的开放权重前沿多模态混合专家模型](https://huggingface.co/blog/meta-muse-spark-open)（2026-10-15）
   5. [Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型](https://huggingface.co/blog/flux-3)（2026-10-15）
@@ -308,8 +308,8 @@
 ### Amazon Bedrock (AWS Free Tier) (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-10-17，标题自动汉化）：
-  1. [Building trust in AI agents: A production-ready evaluation framework with Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/building-trust-in-ai-agents-a-production-ready-evaluation-framework-with-amazon-bedrock-agentcore/)（2026-10-16）
-  2. [Introducing Reflection Beam: an open-weight model for agentic coding on AWS](https://aws.amazon.com/blogs/machine-learning/introducing-reflection-beam-an-open-weight-model-for-agentic-coding-on-aws/)（2026-10-16）
+  1. [建立对 AI 智能体的信任：基于 Amazon Bedrock AgentCore 的生产级评测框架](https://aws.amazon.com/blogs/machine-learning/building-trust-in-ai-agents-a-production-ready-evaluation-framework-with-amazon-bedrock-agentcore/)（2026-10-16）
+  2. [Reflection Beam 发布：面向 AWS 上智能体编码的开放权重模型](https://aws.amazon.com/blogs/machine-learning/introducing-reflection-beam-an-open-weight-model-for-agentic-coding-on-aws/)（2026-10-16）
   3. [Meta 的 Muse Spark Open 现已在 Amazon SageMaker JumpStart 上线](https://aws.amazon.com/blogs/machine-learning/metas-muse-spark-open-now-available-in-amazon-sagemaker-jumpstart/)（2026-10-15）
   4. [纵深信任：给 agent 更多自主权，同时不失去控制](https://aws.amazon.com/blogs/machine-learning/trust-in-depth-giving-agents-more-autonomy-without-losing-control/)（2026-10-15）
   5. [使用 Amazon Bedrock AgentCore 构建自我改进的文档处理](https://aws.amazon.com/blogs/machine-learning/build-self-improving-document-processing-using-amazon-bedrock-agentcore/)（2026-10-14）
@@ -354,7 +354,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-17，标题自动汉化）：
-  1. [Open-Weight Model Licenses: What to Check Before You Ship](https://deepinfra.com/blog/open-weight-model-licenses)（2026-10-16）
+  1. [开放权重模型的许可证：上线前该查哪些条款](https://deepinfra.com/blog/open-weight-model-licenses)（2026-10-16）
   2. [TypeSafe Jev 评测：在一个非聊天模型上测试 5 项任务](https://deepinfra.com/blog/typesafe-jev-review)（2026-10-15）
   3. [AI 支出审计：如何用开放模型削减成本](https://deepinfra.com/blog/ai-spend-audit-open-models)（2026-10-15）
   4. [从截图到 tool call：DeepInfra 上的 NVIDIA Nemotron 3.5 Super VL](https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release)（2026-10-15）

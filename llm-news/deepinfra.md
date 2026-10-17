@@ -9,7 +9,7 @@
 
 ## 全部文章（共 35 篇，按日期倒序；无日期条目列于最后）
 
-1. [Open-Weight Model Licenses: What to Check Before You Ship](https://deepinfra.com/blog/open-weight-model-licenses)（2026-10-16）
+1. [开放权重模型的许可证：上线前该查哪些条款](https://deepinfra.com/blog/open-weight-model-licenses)（2026-10-16） <!--orig:Open-Weight Model Licenses: What to Check Before You Ship-->
 2. [TypeSafe Jev 评测：在一个非聊天模型上测试 5 项任务](https://deepinfra.com/blog/typesafe-jev-review)（2026-10-15） <!--orig:TypeSafe Jev Review: Testing 5 Jobs on a Non-Chat Model-->
 3. [AI 支出审计：如何用开放模型削减成本](https://deepinfra.com/blog/ai-spend-audit-open-models)（2026-10-15） <!--orig:AI Spend Audit: How to Reduce Costs With Open Models-->
 4. [从截图到 tool call：DeepInfra 上的 NVIDIA Nemotron 3.5 Super VL](https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release)（2026-10-15） <!--orig:From Screenshots to Tool Calls: NVIDIA Nemotron 3.5 Super VL on DeepInfra-->

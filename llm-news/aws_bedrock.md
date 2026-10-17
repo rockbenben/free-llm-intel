@@ -9,8 +9,8 @@
 
 ## 全部文章（共 86 篇，按日期倒序；无日期条目列于最后）
 
-1. [Building trust in AI agents: A production-ready evaluation framework with Amazon Bedrock AgentCore](https://aws.amazon.com/blogs/machine-learning/building-trust-in-ai-agents-a-production-ready-evaluation-framework-with-amazon-bedrock-agentcore/)（2026-10-16）
-2. [Introducing Reflection Beam: an open-weight model for agentic coding on AWS](https://aws.amazon.com/blogs/machine-learning/introducing-reflection-beam-an-open-weight-model-for-agentic-coding-on-aws/)（2026-10-16）
+1. [建立对 AI 智能体的信任：基于 Amazon Bedrock AgentCore 的生产级评测框架](https://aws.amazon.com/blogs/machine-learning/building-trust-in-ai-agents-a-production-ready-evaluation-framework-with-amazon-bedrock-agentcore/)（2026-10-16） <!--orig:Building trust in AI agents: A production-ready evaluation framework with Amazon Bedrock AgentCore-->
+2. [Reflection Beam 发布：面向 AWS 上智能体编码的开放权重模型](https://aws.amazon.com/blogs/machine-learning/introducing-reflection-beam-an-open-weight-model-for-agentic-coding-on-aws/)（2026-10-16） <!--orig:Introducing Reflection Beam: an open-weight model for agentic coding on AWS-->
 3. [Meta 的 Muse Spark Open 现已在 Amazon SageMaker JumpStart 上线](https://aws.amazon.com/blogs/machine-learning/metas-muse-spark-open-now-available-in-amazon-sagemaker-jumpstart/)（2026-10-15） <!--orig:Meta’s Muse Spark Open now available in Amazon SageMaker JumpStart-->
 4. [纵深信任：给 agent 更多自主权，同时不失去控制](https://aws.amazon.com/blogs/machine-learning/trust-in-depth-giving-agents-more-autonomy-without-losing-control/)（2026-10-15） <!--orig:Trust in Depth: Giving agents more autonomy without losing control-->
 5. [使用 Amazon Bedrock AgentCore 构建自我改进的文档处理](https://aws.amazon.com/blogs/machine-learning/build-self-improving-document-processing-using-amazon-bedrock-agentcore/)（2026-10-14） <!--orig:Build self-improving document processing using Amazon Bedrock AgentCore-->

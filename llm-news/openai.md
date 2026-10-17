@@ -11,8 +11,8 @@
 
 ## 全部文章（共 1297 篇，按日期倒序；无日期条目列于最后）
 
-1. [How Itaú is building generative AI for its entire customer base](https://openai.com/index/itau-generative-ai)（2026-10-16）
-2. [Stack Overflow for Agents triples signups with ChatGPT plugin](https://openai.com/index/stack-overflow-chatgpt-plugin)（2026-10-16）
+1. [Itaú 如何为全部客户打造生成式 AI](https://openai.com/index/itau-generative-ai)（2026-10-16） <!--orig:How Itaú is building generative AI for its entire customer base-->
+2. [Stack Overflow for Agents 靠 ChatGPT plugin 让注册量增至三倍](https://openai.com/index/stack-overflow-chatgpt-plugin)（2026-10-16） <!--orig:Stack Overflow for Agents triples signups with ChatGPT plugin-->
 3. [把 GPT‑Rosalind 带进学术研究实验室](https://openai.com/index/introducing-the-rosalind-academic-plan)（2026-10-15） <!--orig:Bringing GPT-Rosalind to academic research labs-->
 4. [通过提问教学生思考与学习](https://openai.com/index/teaching-students-to-think-and-learn-through-questions)（2026-10-15） <!--orig:Teaching students to think and learn through questions-->
 5. [Sullivan & Cromwell 把本所的专业能力带进协议审查](https://openai.com/index/sullivan-cromwell)（2026-10-15） <!--orig:Sullivan & Cromwell brings legal expertise into agreement review-->
