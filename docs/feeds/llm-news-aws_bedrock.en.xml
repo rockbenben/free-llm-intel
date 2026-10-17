@@ -7,7 +7,218 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 16 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Building trust in AI agents: A production-ready evaluation f…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/building-trust-in-ai-agents-a-production-ready-evaluation-framework-with-amazon-bedrock-agentcore/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/building-trust-in-ai-agents-a-production-ready-evaluation-framework-with-amazon-bedrock-agentcore/?li=1</guid>
+      <pubDate>Fri, 16 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Building trust in AI agents: A production-ready evaluation framework with Amazon Bedrock AgentCore</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Building trust in AI agents: A production-ready evaluation framework with Amazon Bedrock AgentCore</h1>
+<h2>The North Star</h2>
+<p>Every organization racing to deploy AI agents faces the same reckoning: an agent that demos beautifully can quietly degrade in production, and by the time a human notices, the trust is already broken. Where traditional software fails loudly, agents fail softly. They return an answer that looks confident, reads fluently, and is wrong. When that answer drives a real business decision, the cost is not a broken feature. It’s a broken relationship with the user.</p>
+<p>That’s the quality problem at its core. The challenge is therefore not building agents that work once, but proving they keep working, at scale, across every sub-agent, every workflow, and every release. The teams that win the agent era will be the ones who treat quality not as a final QA step but as the operating system of the agent itself: continuously measured, automatically defended, and improved with every interaction. In this post, we show how we built a continuous quality loop for production-ready agentic solutions at scale using Amazon Bedrock AgentCore.</p>
+<h3>Business problem</h3>
+<p>The solution uses Amazon Bedrock AgentCore and other AWS services for internal use, so sellers and sales leaders can ask business questions in plain English from Amazon Quick. Behind that single experience, several specialized sub-agents work together: the Performance Insights Agent for territory-scoped revenue and performance, the Customer Insights Agent for customer intelligence, the Data Insights Agent for text-to-SQL over foundational datasets, and direct dashboard access. Answers are scoped to each user’s territory and role-level security. Field teams use these answers to assist in planning account strategy, prepare for customer meetings, so the numbers must be right. The most damaging failure is not a crash. It’s a fluent, confident answer that is quietly wrong. Before launch, when we evaluated the Customer Insights Agent, we found exactly that:</p>
+<ul><li>It reported $410.08 of a customer’s three-month revenue on a service as “$410.08 Million.”</li><li>It reported Sales Revenue labeled as Sales Revenue excluding Adjustments.</li><li>It offered an Annual Recurring Revenue estimate that appeared nowhere in the data.</li><li>It presented its own calculations as sourced facts.</li></ul>
+<p>Through the different runs, monitoring stayed green. It told us the system had responded, not whether the answer was right.</p>
+<p>Had these errors shipped uncaught, the field would have paid for them. A seller who repeats an inflated figure can lose credibility with the customer. This is exactly why we caught it before launch. The risk doesn’t end at launch: it grows with every new agent and every change to data, prompts, code, or models. It also grows without any release, because upstream pipelines refresh the data every week. Coordinated releases introduce a related risk: when a data change, a tool change, and a paired prompt update are meant to ship together but land apart, the system runs mismatched until all changes catch up. In one pre-production test, that mismatch window by itself dropped the pass rate from 78 percent to 38 percent. To catch failures like these, before every release and continuously in production, we need a framework that can show whether answers are grounded and correct, and trace each failure back to its root cause in the data, the prompt, or the agent’s code.</p>
+<p>At AWS, the Sales, Marketing, and Global Services (SMGS) Operations team developed a production multi-agent system serving AWS Field Sales worldwide. It serves two distinct audiences. For field sales teams, it replaces hours of manual data analysis with on-demand, conversational intelligence, helping sellers understand the health of their business, surface risks and opportunities, and take action faster. For leadership, it powers business management cadences including Weekly Business Reviews (WBRs), surfacing the signals that matter across the portfolio without requiring manual report preparation. The same agentic system serves both the seller on the front line and the leader reviewing performance at scale.</p>
+<p>The agentic system orchestrates a growing portfolio of specialized sub-agents, each owning a distinct capability domain. Among them: the <a href="https://aws.amazon.com/blogs/machine-learning/how-aws-smgs-uses-an-ai-powered-conversational-assistant-to-transform-business-management-with-amazon-bedrock-agentcore/">Performance Insights Agent</a> generates natural-language business intelligence narratives from complex sales data, turning raw metrics into actionable seller insights. The <a href="https://aws.amazon.com/blogs/machine-learning/build-unified-intelligence-with-amazon-bedrock-agentcore/">Customer Insights Agent</a> assembles a 360-degree view of each customer by synthesizing signals across product usage, support history, contract status, and engagement data, helping sellers understand where a customer is in their journey and what they need next. The <a href="https://aws.amazon.com/blogs/machine-learning/text-to-sql-solution-powered-by-amazon-bedrock/">Data Insights Agent</a> is a text-to-SQL agent that account teams use to query structured analytics data in plain English without writing a single line of SQL. These three agents are the ones referenced throughout the rest of this post.</p>
+<p>Coordinating these agents reliably at scale made one thing clear: agentic quality wasn’t an operational concern to manage later. It was the prerequisite for operating. A single degraded sub-agent can silently corrupt every response downstream, and traditional monitoring won’t catch it. That reality made a full lifecycle evaluation framework not optional but necessary. AgentCore Evaluations, a capability of Amazon Bedrock AgentCore, is the connective tissue powering it, alongside Amazon Bedrock Guardrails (safety), Amazon CloudWatch (metrics, alarms, tracing), Amazon Simple Storage Service (Amazon S3) and Amazon Redshift (evaluation persistence), Amazon Quick (dashboards), and AWS Lambda (custom evaluators).</p>
+<p>In this post, we share how we tackled the hardest operational challenges in running AI agents at enterprise scale, and how Amazon Bedrock AgentCore Evaluations became the backbone of agent quality. Specifically, we cover:</p>
+<ul><li><strong>Agents play by different rules </strong>– Why agents demand a different operational discipline, and why traditional monitoring (latency, error rates, uptime) leaves you blind to the failures that matter most.</li><li><strong>A map for the whole journey </strong>– The nine-stage evaluation framework we built on AgentCore Evaluations, covering every phase of the agent development lifecycle from first commit to production.</li><li><strong>From theory to practice </strong>– Concrete patterns (continuous integration and continuous delivery (CI/CD) regression gates, canary scoring, drift detection, and automated feedback loops) and exactly how AgentCore Evaluations powers each one.</li><li><strong>Metrics that actually matter </strong>– The measurable impact on deployment confidence, regression prevention, and iteration speed across our agent portfolio.</li></ul>
+<h2>Why agents need a structured evaluation framework</h2>
+<p>Traditional software is deterministic: the same input produces the same output. Machine learning (ML) models introduced probabilistic outputs, and MLOps emerged to manage their training, versioning, monitoring, and re-training. AI agents add a third layer of operational complexity: autonomous, multi-step reasoning, where the question shifts from “did something break?” to “is the agent making sound decisions across its entire reasoning chain?”</p>
+<p>Agents inherit the hard problems of both predecessors, and introduce some new ones. They’re non-deterministic, following different reasoning paths for identical inputs. They make cascading decisions across routing, tool selection, and synthesis, where a single step can fail quietly and corrupt everything downstream. Most critically, they degrade silently: latency stays low, error rates stay flat, yet the quality of agent response erodes, because the agent is still <em>responding</em>. It is just responding <em>wrong</em>.</p>
+<p>Agent evaluation is the practice of catching exactly that. It spans five dimensions: <strong>safety</strong> (is it behaving within defined boundaries?), <strong>quality</strong> (is the agent producing correct, coherent, grounded responses?), <strong>performance</strong> (is it fast and reliable enough?), <strong>cost</strong> (is it running efficiently at scale?), and <strong>operational control</strong> (can we detect, diagnose, and remediate issues quickly?). A mature evaluation practice addresses five continuously, throughout the full agent lifecycle.</p>
+<p>In this post, we share how we operationalize five evaluation dimensions across a production multi-agent system. Safety and security is our first priority. No agent ships, and no agent keeps running, if it can’t meet its safety bar. Quality gets the most space in this post because it’s the hardest of the five to get right and benefits most from a dedicated framework, but it doesn’t outrank safety. Performance, cost, and operational control are woven into every stage of the lifecycle alongside both. Critically, this framework applies at every level of the agent hierarchy. At the <strong>tool level</strong>, each capability (a customer disambiguation tool, graph retrieval tool) has its own evaluation contract. At the <strong>agent level</strong>, each sub-agent is evaluated end-to-end. At the <strong>multi-agent level</strong>, orchestration paths are evaluated for coherence, correct routing, and synthesis accuracy across agent boundaries.</p>
+<p>The nine stages apply at three levels simultaneously, and this hierarchy is not specific to this product. It’s the right mental model when we build or integrate new production agents. Most teams start by evaluating at the agent level and stop there. But agent-level quality is only as good as the tools it relies on, and multi-agent systems introduce a third failure surface that neither level can see alone. A robust evaluation practice covers three, with each level running its own golden set, its own evaluators, and its own promotion criteria through the nine stages.</p>
+<h2>The agent evaluation framework: nine stages, one closed loop</h2>
+<p>These nine stages trace the agent lifecycle from first commit to live production, and each one answers a question teams face as their agents mature.</p>
+<h3>The agent lifecycle and the nine common questions</h3>
+<p>Every team building production agents encounters the following questions as their agent matures:</p>
+<p><strong>Stage 1: The Foundation:</strong> <em>“What does good look like?”</em></p>
+<p><strong>Stage 2: The Experiment:</strong> <em>“Which version is better?”</em></p>
+<p><strong>Stage 3: The Merge (CI):</strong> <em>“Did I break something?”</em></p>
+<p><strong>Stage 4: The Gate (CD):</strong> <em>“Is it safe for production?”</em></p>
+<p><strong>Stage 5: The Canary:</strong> <em>“Did something silently break?”</em></p>
+<p><strong>Stage 6: The Adversary:</strong> <em>“What if someone tries to break it?”</em></p>
+<p><strong>Stage 7: The Drift:</strong> <em>“Is quality drifting in live?”</em></p>
+<p><strong>Stage 8: The Pulse:</strong> <em>“How do we know it’s working right now?”</em></p>
+<p><strong>Stage 9: The Feedback Loop:</strong> <em>“How does it get better automatically?”</em></p>
+<p><strong>We build one framework for every stage of the agent lifecycle using AgentCore Evaluations.</strong> The nine stages are not separate tools stitched together after the fact. They’re nine points on a single, continuous evaluation surface, powered by AgentCore Evaluations from first commit to production response, as shown in <strong>Figure 1</strong>.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/16/AgentCore-Evaluation-Journey.png" alt="Figure 1 Workflow diagram showing 9-stage AgentCore evaluation journey from Define to Improve"></p>
+<p>Figure 1: The nine-stage AgentCore Evaluations journey, from Define through Improve</p>
+<p>Here’s how we tackle each one: the pattern that works, the AgentCore services behind it, and what it looks like running in production, shown in system design in Figure 2.</p>
+<p>Figure 2: System design of the AgentCore evaluation framework</p>
+<h3>Stage 1: The Foundation. Define quality</h3>
+<p>The foundation of evaluating an agent isn’t about choosing the right tools. It’s about asking the right question: what does success look like for this agent, and how do we know when it is failing? The answer must come from the customer, not from the model. This is an iterative process. Our definition of success has sharpened as we observe what the agent actually does in production. Everything defined here (failure thresholds, evaluator stack, golden set, safety rules, latency budgets, and cost targets) is the contract every subsequent stage enforces. If Stage 1 is vague, every downstream gate is guessing.</p>
+<p><strong>Stage 1.1: Define your business metrics first.</strong> Start by asking what the agent exists to deliver. The two end user personas define success differently:</p>
+<ul><li>For sellers, success means walking into a customer conversation with accurate, current intelligence at the right detail level and at the right time.</li><li>For leadership, success means reliable weekly and cross-business review inputs without lengthy manual preparation. These are business outcomes, not model properties.</li></ul>
+<p><strong>Stage 1.2: Translate those business metrics into evaluation metrics.</strong> For each outcome, identify the signal that confirms the agent delivered it. Each signal becomes a tracked metric with an explicit threshold and an alarm condition. Accurate account intelligence maps to entity resolution accuracy and grounding rate. Seller trust maps to faithfulness and hallucination rate. Seller action maps to helpfulness and scope adherence. Leadership review reliability maps to accuracy pass rate and response coverage. This translation must cover five dimensions: alongside quality thresholds, define safety guardrail policies, set p50, p90, and p99 latency targets per tool and per agent, establish cost-per-query budgets, and define the service level agreements (SLAs) that determine when an alarm fires and which runbook it triggers.</p>
+<p>For accuracy specifically, because the solution directly informs revenue decisions, renewal strategies, and executive reviews, the bar is high. A confidently wrong answer does not only waste a seller’s time. It leads to a wrong decision in a real business moment. We define six failure types derived from real production errors, any one of which marks a response as inaccurate:</p>
+<ul><li><strong>Metric swap:</strong> correct customer and period, wrong metric returned. Tracked as occurrences per 100 responses.</li><li><strong>Wrong period:</strong> data from one time window is labeled as another, for example a year-over-year (YoY) figure presented to the seller as month-over-month (MoM), or the reverse. Tracked as % citing the correct window.</li><li><strong>Wrong entity:</strong> conflated account names or subsidiaries. Tracked as entity resolution accuracy %.</li><li><strong>Pure hallucination:</strong> ungrounded figures with no traceable source. Tracked as grounding rate %.</li><li><strong>Wrong symbols:</strong> correct metric, wrong currency or unit symbol. Tracked as scope adherence rate %.</li><li><strong>Unauthorized calculation:</strong> unsanctioned derived figures not present in the source data. Tracked as occurrences per 100 responses.</li></ul>
+<p>The overall accuracy pass rate is the headline metric. Per-dimension tracking is what makes it actionable. Beyond accuracy, we also track <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/prompt-templates-builtin.html#response-relevance">Response relevance</a>, <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/prompt-templates-builtin.html#faithfulness">Faithfulness</a>, <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/prompt-templates-builtin.html#helpfulness">Helpfulness</a>, <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/prompt-templates-builtin.html#instruction-following">Instruction Following</a>,<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/prompt-templates-builtin.html#tool-selection-accuracy">Tool Selection Accuracy</a>. A correct answer buried in three paragraphs, or arriving too late, has also failed the seller.</p>
+<p><strong>Stage 1.3: Build an evaluator stack that reflects those metrics.</strong> No single evaluator type covers the various failure modes possible. We combine four types:</p>
+<ul><li><strong>AgentCore built-in evaluators</strong> for broad baseline coverage. Relevance, faithfulness, and helpfulness map directly to evaluation templates available natively in <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">AgentCore Evaluations</a>.</li><li><strong>Customized evaluators</strong>, one per failure type in our taxonomy: a metric swap evaluator, a wrong period evaluator, a wrong customer evaluator, a pure hallucination evaluator, a wrong symbols evaluator, and an unauthorized calculation evaluator. None of the six are covered by native templates. They’re domain-specific signals we built on top of the AgentCore framework. Knowing upfront which metrics a native template already covers, and which require a customized evaluator, is itself part of the design decision.</li><li><strong>Third-party evaluators,</strong> we deployed the managed evaluators from third-party open source libraries DeepEval and AutoEval.</li><li><strong>Deterministic evaluators</strong> for ground truth checks where the correct answer is known exactly, such as revenue, renewal date, and contract status.</li></ul>
+<p>Where reasoning quality and helpfulness have no single correct answer, we use LLM-as-judge rubrics instead, with built-in rubrics for relevance, faithfulness, and helpfulness plus support for fully custom rubrics. AgentCore Evaluations provides both ground truth and LLM-as-judge evaluation natively, which is what let us stand up both evaluation paths without building either scoring engine ourselves. Deterministic gives precision on facts. LLM-as-judge gives breadth on reasoning.</p>
+<p><strong>Stage 1.4: Build a golden set to exercise your evaluation metrics.</strong> At the <strong>tool level</strong>, each critical tool has its own deterministic ground truth pairs: customer identification must resolve to the exact canonical entity or fail. At the <strong>agent level</strong>, topic analysis on real user queries produces a dataset across four question types (comprehensive, reporting, reasoning, and ambiguous), each requiring a different evaluation strategy, revisited monthly. At the <strong>multi-agent level</strong>, end-to-end orchestration scenarios catch errors that only emerge when agents interact. The golden set is not only a quality dataset. It also includes safety test cases, latency benchmark cases, and cost reference cases, so Stages 3 and 4 can check five dimensions against the same curated dataset.</p>
+<p>The golden set is a living document, built from three sources. Production-derived cases are sampled from real seller and leadership queries, including the low-scoring live sessions promoted in Stage 7. Failure-derived cases come from every regression caught in staging or production, including the sentinel cases promoted in Stage 3 and the permanent regression guards promoted in Stage 9. Synthetic edge cases are deliberately constructed to guarantee coverage of scenarios we know matter but can’t wait to encounter in the wild, such as the four question types above and the parent-subsidiary and ticker-symbol disambiguation cases in Stage 4. The set is version-controlled, reviewed, and continuously extended across three sources.</p>
+<h3>Stage 2: The Experiment. Know which version wins</h3>
+<p>Every change (a prompt update, a new tool, a model upgrade, a dataset refresh) raises the same question: <em>is this version actually better?</em> In a system serving the AWS field at global scale, intuition isn’t an acceptable answer.</p>
+<p>Before a change merges, we run an <em>AgentCore On-Demand Evaluation</em>, scored against the same golden set with the same evaluator suite. The development team uses the quality, latency, cost metrics, and context token, to curate downstream comparisons which is evaluated across five dimensions simultaneously, as shown side by side in <strong>Figure 3</strong>. A model that improves accuracy by 5 percent but doubles latency and triples cost doesn’t automatically win.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/ML-21894-3.png" alt="Figure 3. Side-by-side comparison of two candidate agent responses in an AgentCore On-Demand Evaluation, scored across quality, latency, and cost. The numbers and values in the figure are illustrative."></p>
+<p>Figure 3: Side-by-side comparison of two candidate agent responses in an AgentCore On-Demand Evaluation across quality, latency, and cost. The numbers and values in the figure are illustrative.</p>
+<p><strong>We track quality as a comprehensive scorecard, not one single number.</strong> A pass rate alone doesn’t tell you enough. Each eval run produces a full breakdown across every failure category in our taxonomy: not just whether quality improved, but where and why, as captured in the scorecard in Figure 4. Every evaluation is also fully recorded: inputs, outputs, retrieved context, scores and evaluation reasons are stored in S3 and our data lake, giving us a persistent observability layer to trace failure back to its root cause: what the agent saw, what it generated, and why it went wrong. Over three months of targeted iteration, this scorecard drove pass rate from 93 percent to a stable 96 percent: pure hallucinations dropped from 138 to under 52 per 10,000 responses, unauthorized calculations fell from 59 to under 44, confirming that retrieval was sound and the gains came from generation fixes. Without the per-category breakdown and the detailed trace data behind it, we would have been iterating blind.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/ML-21894-4.png" alt="Figure 4. Evaluation scorecard showing per-category failure breakdown and pass rate trend. The numbers and values in the figure are illustrative."></p>
+<p>Figure 4: Evaluation scorecard with per-category failure breakdown and pass-rate trend. The numbers and values in the figure are illustrative.</p>
+<h3>Stage 3: The Merge (CI). Prevent regression at merge time</h3>
+<p>Stage 3 is a pre-production gate. It runs in the staging environment, triggered by code and configuration changes, and its job is to block a bad change before it ever reaches production. If Stage 3 catches a regression, nothing ships.</p>
+<p>Engineers or scientists change the system in many ways: the prompt, the underlying data, the tools, or the model. The change looks clean locally, tests pass, but a prompt that improves responses for technology accounts could silently degrade responses for financial services accounts. Without an automated gate, this ships.</p>
+<p>Our CI evaluation is triggered automatically on every staging deployment using AgentCore On-Demand Evaluation. Engineers do not need to remember to run an evaluation. No deployment can silently skip the gate. The run completes in minutes because it evaluates only the sentinel set, not the full golden set. Speed is intentional: the sentinel is narrow enough to run on every deployment but representative enough to catch the failures that matter most.</p>
+<p>The sentinel set is a curated selection of the highest-risk scenarios across five dimensions. Quality regressions beyond tolerance block the deployment. A safety boundary violation blocks just as hard. A change that doubles p90 latency does not proceed without a deliberate decision. Token cost spikes are flagged before they compound at scale. Every sentinel run publishes its scores to CloudWatch as custom metrics alongside quality scores, latency, cost per query, and safety pass rate are all emitted after every run, and CloudWatch alarms are configured to fire if any metric breaches its Stage 1 threshold. Every run is also logged and stored, feeding the audit trail Stage 8 and Stage 9 rely on. We maintain a separate sentinel at each level: tool, agent, and multi-agent. A change that improves agent-level quality but degrades a critical tool still blocks. The sentinel is reviewed monthly, and a regression that slips through to production is immediately promoted into a permanent case so it doesn’t reach users twice.</p>
+<p><strong>One example of what this catches.</strong> After a data normalization update, a disambiguation tool started returning unresolved entities for a subset of account name formats. The agent, receiving an unresolved entity, responded with a best-guess match, returning real data for the wrong customer. Our tool-level sentinel includes exactly this class of edge case: the entity resolution ground truth check failed for the affected account name formats, and the deployment was blocked automatically. The change never reached production.</p>
+<h3>Stage 4: The Gate (CD). Ship with quantitative confidence</h3>
+<p>The sentinel covers 15 cases. Production covers tens of thousands of query patterns across hundreds of account types, geographies, and seller segments. Clearing the sentinel is necessary. It is not sufficient.</p>
+<p>Before a candidate ships, we run an AgentCore On-Demand Evaluation against the full golden set across the evaluator dimensions. We call this the <em>Quality Gate. </em>It replaces “it seems fine” with a quantitative shipping decision.</p>
+<p><strong>Sandboxed execution and tool mocking.</strong> Think of it as a replay, not a live call. Ahead of time, we freeze a known, versioned dataset of correct tool behavior. Every tool call the candidate makes during the gate is intercepted and answered from that frozen dataset instead of a real system. We build that frozen dataset in two steps. First, we test each tool on its own: we send it a held-out set of inputs from our golden set where the correct answer is already known, and score what it actually returns against that known answer. This tells us whether the tool itself works (entity resolution, retrieval, SQL generation) before the agent is even involved. Second, after a tool’s responses are confirmed correct, we freeze those same validated answers into the replay dataset the agent sees during gate evaluation. That means the agent is tested purely on its own reasoning, not on live tool speed or availability, and because every candidate replays from the same frozen dataset, any score difference head-to-head is about the agent, not tool variance.</p>
+<p><strong>Aggregated end-to-end scoring.</strong> The gate also runs a holistic pass: the full candidate agent answers 200 held-out questions end-to-end, scored by an LLM-as-judge rubric across all evaluator dimensions. Any one of three conditions shuts the gate automatically: the aggregate score regresses against the candidate’s own prior run, it fails to beat the current production baseline, or more than a defined percentage of the 200 questions falls below the per-question threshold. A candidate must clear all three, which catches what a simple average can hide: a model that improves the mean while quietly failing a larger share of individual questions doesn’t pass.</p>
+<p><strong>One example of what this catches.</strong> This is where mocking tests the agent’s own reasoning, not just the tools underneath it. Our golden set includes a hierarchy mismatch case: the Customer Insights Agent and Data Insights Agent return different, individually correct revenue figures for the same customer, one scoped to the parent account, the other to a subsidiary. Neither number is wrong. The case tests whether the agent infers the right scope from the query’s semantics and the requester’s persona (a seller likely wants the subsidiary, whereas a leadership query likely wants the parent rollup), rather than defaulting, averaging, or asking the seller to disambiguate. The candidate failed, returning the parent-level figure for a subsidiary-scoped question. The golden set’s ground truth for this case specifies which scope the question expects, so the Quality Gate flagged the mismatch immediately: not a wrong number, but the right number for the wrong scope.</p>
+<h3>Stage 5: The Canary. Catch silent post-deploy failures</h3>
+<p>Stage 5 is a post-production monitor. It runs continuously in the production environment against live traffic and synthetic evaluation cases, and its job is to catch issues that no code change triggered and that Stage 3 therefore didn’t see. Stage 3 guards against what engineers change. Stage 5 guards against everything else like upstream data shifts, evolving model behavior, changes in third-party dependencies, or other conditions such as increased latency or shifting traffic patterns that only manifest under real-world load.</p>
+<p>The product operates against a data estate fed by thousands of upstream schemas and data pipelines. On a given day, dozens of those pipelines refresh without triggering a deployment or CI gate. The agent code is unchanged, the model is unchanged, but the data it reasons over has changed, and quality can degrade silently as a result. We learned this the hard way: an upstream pipeline refreshed with a schema change, the agent started citing data from the wrong time window, and the first signal came through a seller inquiry rather than an automated alert. Stage 5 is how we catch this in the first 30-minute evaluation window instead.</p>
+<p>We run AgentCore Batch Evaluation on two complementary schedules, and the choice of cadence was deliberate.</p>
+<p>We settled on 30-minute cycles after learning from both directions: 15 minutes generated too many false alarms; 60 minutes let two hours pass before a real degradation registered. We call each 30-minute cycle an evaluation window. Thirty minutes catches a real trend within 90 minutes (three consecutive windows) while filtering out single-query noise. Each window scores a round-robin selection across the golden set, giving full coverage in 24 hours.</p>
+<p>Thresholds are deliberately lower than CI/CD gates. A single window failure is an ops signal, not an incident. We only page oncall after three consecutive windows breach threshold. We learned this rule the hard way: the first month we used a single-window threshold, oncall stopped trusting the system entirely. Once per day, the full golden set runs at gate thresholds as the authoritative daily scorecard. The 30-minute windows surface the trend. The daily run confirms it and cuts a ticket.</p>
+<p>Every run publishes to CloudWatch (accuracy, hallucination rates, grounding rate, latency, and cost), with alarm logic that distinguishes between the two cadences. The canary runs at three levels: tool-level scores surface a degraded retrieval tool before it corrupts agent-level responses.</p>
+<p><strong>Another example of what this catches.</strong> After an upstream index refresh, a retrieval tool began returning loosely relevant chunks instead of the precise context needed to answer the query. Latency was nominal. Error rate was zero. The agent kept producing fluent, confident responses by reasoning over weakly grounded context, producing answers that looked correct but cited the wrong figures. No infra alarm fired. The canary caught it in the first 30-minute window: grounding rate and retrieval precision dropped across the tool-level sentinel, triggering a CloudWatch alarm before sellers acted on the degraded answers. The low evaluator score flagged the exact trace responsible. From there, the on-call engineer opened that trace in AgentCore and traced the degraded context back to the retrieval tool in minutes.</p>
+<h3>Stage 6: The Adversary. Protect against misuse</h3>
+<p>Not every bad output comes from a degraded model. Queries crafted to extract unauthorized account data, and prompt injections embedded in retrieved documents, are predictable patterns in a system serving thousands of users on sensitive business data.</p>
+<p>Safety isn’t a stage. It runs through all nine stages. We apply Amazon Bedrock Guardrails at two points in every interaction. At input, we validate query scope and screen for prompt injection. At output, we verify that no sensitive data is surfaced to unauthorized users and that the agent has not been manipulated into a policy violation. These checks run on 100 percent of traffic, synchronously, before a response reaches the user.</p>
+<p>We configure two guardrail layers, each covering a distinct threat class:</p>
+<p><strong>Content filters</strong> detect and block harmful or inappropriate content in both inputs and outputs. We enforce filters across categories including <code>VIOLENCE</code>, <code>HATE</code>, <code>SEXUAL</code>, <code>MISCONDUCT</code>, and <code>INSULTS</code>. A request or response that triggers these filters is blocked before it reaches the seller or is surfaced to the user.</p>
+<p><strong>Prompt security filters</strong> protect the agent from adversarial manipulation under a single <code>PROMPT_ATTACK</code> guardrail category, covering three sub-types: <code>JAILBREAK</code> (attempts to override the agent’s system instructions or bypass its operational boundaries), <code>PROMPT_INJECTION</code> (unintended instructions embedded in retrieved documents, tool outputs, or user queries), and <code>PROMPT_LEAKAGE</code> (attempts to extract the system prompt or internal configuration). In a multi-agent system that uses Retrieval Augmented Generation (RAG), prompt injection through retrieved content is a real risk. An unintended document in a seller’s account data could attempt to redirect the agent’s behavior mid-reasoning.</p>
+<p>Safety rules are defined at Stage 1, checked for regressions at Stages 3 and 4, and enforced continuously in production.</p>
+<h3>Stage 7: The Drift. Sustain quality and validate with live traffic</h3>
+<p>Quality degrades from multiple directions: upstream data changes without triggering a deployment, models grow stale, and users push boundaries with queries no golden set fully anticipates. Stage 7 detects it before sellers do, and validates candidates against real user traffic before full rollout.</p>
+<p><strong>Drift detection.</strong> Using AgentCore Online Evaluation, we sample 10 percent of live traffic continuously through the different evaluators defined at Stage 1, so the drift is immediately visible as a deviation from the baselines established offline. Scores feed into a Quality-State Calculator monitoring quality, latency, and cost in the same window.</p>
+<p>One production example. Our golden set for customer identification was built from synthetic edge cases: name variations, subsidiary lookups, abbreviations. It performed well offline. But in live traffic, sellers queried with stock ticker symbols (“what’s going on with AMZN?”), shorthand names, and typos the synthetic cases did not exercise. The Quality-State Calculator surfaced the drift across three consecutive 30-minute windows: 98 percent at 1:30am, 81 percent at 2:00am, 80 percent at 2:30am. CloudWatch paged oncall when the rolling threshold was crossed. The on-call engineer queried the agent: <em>“What happened to customer identification accuracy between 1am and 3am?”</em> and received a trend summary pinpointing ticker symbol lookups and shorthand names as the failure driver. The agent’s trace made the root cause immediately visible. The fix: expand the golden set with the low-scoring live sessions, and update the disambiguation tool to normalize input formats before resolution. Accuracy recovered to baseline within the next evaluation cycle.</p>
+<p>Live traffic feeds two continuous improvement loops: low-scoring sessions are promoted into the golden set as new edge cases, and clusters of low-scoring traces inform prompt revisions, tool updates, and routing adjustments.</p>
+<p><strong>A/B testing:</strong> After a candidate clears a quality gate, AgentCore Gateway, a capability of Amazon Bedrock AgentCore, routes a slice of real traffic between current and candidate agents. On-demand confirms no regression on known cases. Online confirms it holds up against the long-tail inputs and novel phrasings only real users produce. A candidate must win or draw across all evaluator dimensions before full rollout.</p>
+<h3>Stage 8: The Pulse. Real-time quality visibility</h3>
+<p>A single call to the agent might touch three sub-agents, five tools, and two retrieval paths. When a quality alarm fires, “something in the agent pipeline” is not a runbook. Stage 8 is where signals from Stages 5, 6, and 7 converge into an observability layer with enough resolution to act.</p>
+<p>AgentCore Observability, a capability of Amazon Bedrock AgentCore, is the foundation. For agents hosted on the AgentCore runtime, a capability of Amazon Bedrock AgentCore, every execution is instrumented automatically through OpenTelemetry, emitting structured telemetry for every reasoning step: tools called, order, inputs and outputs, latency, and token consumption, published directly to CloudWatch as custom metrics and logs, after CloudWatch Transaction Search is enabled (a one-time setup step). Evaluator scores are a separate pipeline: they come from evaluation configs, not from execution instrumentation, and land in their own CloudWatch log group. Every evaluation run also persists its full outputs to S3 and our data lake, feeding two dashboards:</p>
+<ul><li>A conversational dashboard to query evaluation and observability results.</li><li>An Amazon Quick dashboard for trend analysis, scorecard tracking, and cross-agent comparisons across the full history.</li></ul>
+<p>Role-appropriate views sit on top. Oncall engineers get a trace-first view: one click from a CloudWatch alarm to the AgentCore Observability trace that triggered it. The trace shows every tool called, in what order, with latency per step, token consumption, cost, and the full reasoning context: everything needed to go from “alarm fired” to “root cause identified” without opening a second tool, as shown in Figure 5.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/ML-21894-5.png" alt="Figure 5. AgentCore execution trace for the Customer Insights Agent. The left panel shows the full span tree across tool calls (illustrated through example tool names) and the invoke_agent Strands Agents step, with per-step latencies. The trajectory diagram shows the reasoning graph from invocation through tool dispatch. The right panel shows span-level metrics: model, latency (22.73s), token consumption (19,266 input / 2,164 output), and total cost ($0.033). The numbers and values in the figure are illustrative."></p>
+<p>Figure 5: AgentCore execution trace for the Customer Insights Agent, showing the span tree, trajectory, and span-level metrics. The numbers and values in the figure are illustrative.</p>
+<p>Product managers get Amazon Quick trend dashboards: quality scores by sub-agent and feature, release-over-release. Leadership gets a single-page health summary aligned to weekly and cross-business reviews across all five dimensions, a one-minute spot check that answers “how are our agents performing?”</p>
+<p>Figure 6 shows the top-line view of our weekly evaluation dashboard: one combined pass rate drawn from both custom evaluators and AgentCore built-in evaluators, alongside latency, for the week’s run. The numbers and values in the figure are illustrative.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/ML-21894-6.png" alt="Dashboard screenshot showing agent evaluation metrics with 97.3% pass rate across 183 questions. Displays KPIs for latency, grounding rate, and error types. Includes custom evaluators tracking hallucinations, wrong customer/period errors, and support"></p>
+<p>Figure 6: Top-line weekly evaluation dashboard with combined pass rate and latency. The numbers and values in the figure are illustrative.</p>
+<p>Figure 7 drills into that same run at the custom-evaluator, failure-category level, breaking down exactly which error types (metric swaps, hallucinations, customer ID misses, and others) are driving the gap and how many questions each one affects. The numbers and values in the figure are illustrative.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/ML-21894-7.png" alt="Error reporting dashboard showing 183 evaluated questions with 97.3% pass rate. Bar chart displays error categories: Metric Swap 8 instances, Symbol Hallucination 5, Unauthorized Calc 5, and others. Includes week-over-week comparison with green"></p>
+<p>Figure 7: Weekly error-reporting dashboard breaking down failures by category. The numbers and values in the figure are illustrative.</p>
+<p>Before Stage 8, mean time to detect (MTTD) was days to weeks. After Stage 8, it is under four hours, and the first signal is a CloudWatch alarm with an AgentCore trace attached.</p>
+<h3>Stage 9: The Feedback Loop. Continuous improvement</h3>
+<p>This stage turns observations into actions. The system compounds quality over time. We use AgentCore optimization, a capability of Amazon Bedrock AgentCore, to close the loop.</p>
+<ul><li><strong>System prompt recommendation:</strong> Analyzes agent traces and generates a data driven optimized system prompt that improves performance on the target evaluator. The solution uses failure patterns and adds specific behavioral instructions.</li><li><strong>Tool description recommendation:</strong> Analyzes agent traces and generates sharpened tool descriptions that reduce tool selection confusion. Particularly when an agent selects the wrong tool for ambiguous requests.</li></ul>
+<p>Let’s look at an example:</p>
+<blockquote>AgentCore optimization in action<br>        What to improve on: Target evaluator: hallucination: model reproducing hardcoded values from few-shot examples verbatim in unrelated contexts.<br>        Why this happened: Few-shot examples contain real dollar amounts and customer names (for example, “$4.2M”, “Acme Corp”) that the model memorizes and leaks into unrelated queries.<br>        How to fix: Replace hardcoded values in few-shot examples with generic placeholders (for example, $[AMOUNT], [CUSTOMER_NAME]) so the model learns response structure without memorizing specific data points.<br>        Impact and result: Fix applied. Pure hallucination occurrences dropped from 138 to under 52 per 10,000 responses, and overall grounding rate improved from 93 percent to 96 percent.</blockquote>
+<p>AgentCore optimization uses recommendations to produce data driven system prompt and tool descriptions changes based on real agent traces and a target evaluator. AgentCore optimization builds on <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">AgentCore Evaluations</a> . Low-scoring traces are promoted into the golden set as permanent regression guards so each failure does not reach users twice.</p>
+<h2>Agent evaluation key metrics at a glance</h2>
+<p>The evaluation metrics are defined at Stage 1, enforced across the nine stages, and monitored continuously in production. This set is not static. As we learn from the agent in production, new failure patterns surface, new dimensions become measurable, and the metrics evolve accordingly. What follows is where we started and what we track today.</p>
+<table><thead><tr><th><strong>Level</strong></th><th><strong>Metric</strong></th><th><strong>What it measures</strong></th><th><strong>Tracked as</strong></th></tr></thead><tbody><tr><td>Quality: Agent</td><td>Overall accuracy pass rate</td><td>% of responses with zero taxonomy failures</td><td>Headline scorecard metric</td></tr><tr><td>Quality: Agent</td><td>Metric swap rate</td><td>Correct customer and period, wrong metric returned</td><td>Occurrences per 100 responses</td></tr><tr><td>Quality: Agent</td><td>Wrong period rate</td><td>Data from the wrong time window</td><td>% citing the correct time window</td></tr><tr><td>Quality: Agent</td><td>Wrong customer rate</td><td>Conflated account names or subsidiaries</td><td>Entity resolution accuracy %</td></tr><tr><td>Quality: Agent</td><td>Grounding rate</td><td>Figures traceable to a retrieved source</td><td>% of reported figures grounded</td></tr><tr><td>Quality: Agent</td><td>Scope adherence rate</td><td>Responses that address the question asked</td><td>% on-topic responses</td></tr><tr><td>Quality: Agent</td><td>Unauthorized calculation rate</td><td>Unsanctioned derived figures</td><td>Occurrences per 100 responses</td></tr><tr><td>Quality: Agent</td><td>Relevance / Faithfulness / Helpfulness</td><td>Response quality across AgentCore built-in dimensions</td><td>AgentCore built-in evaluator score (0–1)</td></tr><tr><td>Quality: Tool</td><td>Customer identification accuracy</td><td>Tool resolves to the exact canonical entity</td><td>% correct resolutions (deterministic)</td></tr><tr><td>Quality: Tool</td><td>Tool selection accuracy</td><td>Agent selects the correct tool for the query</td><td>AgentCore built-in evaluator score (0–1)</td></tr><tr><td>Quality: Tool</td><td>Retrieval precision</td><td>Retrieved context contains the information needed</td><td>% retrievals with relevant context</td></tr><tr><td>Quality: Tool</td><td>SQL generation accuracy</td><td>Data Insights Agent generates correct SQL</td><td>% correct result sets (deterministic)</td></tr><tr><td>Quality: Tool</td><td>Tool pass rate</td><td>% of tool calls returning a valid response</td><td>% success per tool</td></tr><tr><td>Quality: Multi-agent</td><td>End-to-end accuracy pass rate</td><td>Full orchestration path produces a correct response</td><td>% of scenarios passing all evaluators</td></tr><tr><td>Quality: Multi-agent</td><td>Routing accuracy</td><td>Orchestrator routes to the correct sub-agent(s)</td><td>% correct routing (deterministic)</td></tr><tr><td>Quality: Multi-agent</td><td>Synthesis faithfulness</td><td>Sub-agent outputs combined without distortion</td><td>LLM-as-judge score across agent boundaries</td></tr><tr><td>Quality: Multi-agent</td><td>Context propagation accuracy</td><td>Context passed between agents is correct and complete</td><td>% traces with no context loss</td></tr><tr><td>Safety</td><td>Guardrail block rate</td><td>% of requests blocked at input or output</td><td>Per 1,000 requests</td></tr><tr><td>Safety</td><td>Input / Output violation rate</td><td>% of queries or responses flagged as policy-violating</td><td>% of total requests / responses</td></tr><tr><td>Safety</td><td>Guardrail latency</td><td>Latency overhead added by guardrail checks</td><td>p99 (target: under 50ms)</td></tr><tr><td>Performance</td><td>End-to-end latency</td><td>Query received to response delivered</td><td>p50, p90, p99</td></tr><tr><td>Performance</td><td>Per sub-agent / tool latency</td><td>Per sub-agent and per tool execution</td><td>p50, p90, p99 independently</td></tr><tr><td>Performance</td><td>Latency regression rate</td><td>CI runs that breach the Stage 1 latency threshold</td><td>% of CI runs</td></tr><tr><td>Cost</td><td>Cost per query</td><td>Total token cost per end-to-end user request</td><td>Input + output tokens × price</td></tr><tr><td>Cost</td><td>Cost per successful response</td><td>Cost per query divided by pass rate</td><td>Penalizes costly failures</td></tr><tr><td>Cost</td><td>Avg tool calls per query</td><td>Reasoning efficiency. Rising calls signal degradation</td><td>Average per query</td></tr><tr><td>Ops control</td><td>MTTD / MTTR</td><td>Time to detect and remediate, per failure class</td><td>Hours (MTTD target: under 4h)</td></tr><tr><td>Ops control</td><td>Automation detection rate</td><td>Incidents detected by evaluation compared to user complaints</td><td>% (target: above 95%)</td></tr><tr><td>Ops control</td><td>Alarm false positive rate</td><td>Alarms not corresponding to real degradation</td><td>% of total alarms</td></tr></tbody></table>
+<h2>Conclusion</h2>
+<p>The impact of the nine-stage agent evaluation framework was concrete and measurable. Quality regressions that previously took days or weeks to surface, and usually arrived through a seller complaint, are now caught in under four hours by automated evaluation. Deployment decisions that once relied on subjective judgment now require every evaluator to pass a quantitative threshold. Prompt iteration cycles fell from days to minutes. Safety moved from periodic audits to 100 percent guardrail coverage on every request. Latency regressions are caught at the CI gate before they reach production. Cost surprises that once appeared weeks later in billing are now evaluated at Stage two and enforced by the quality gate before a change ships. And “something in the agent pipeline” became one click from a CloudWatch alarm to a full agent execution trace with every reasoning step visible.</p>
+<p>The broader lesson is one the industry has learned before. DevOps taught us that shipping code without automated testing is reckless. MLOps taught us that deploying models without monitoring is dangerous. AgentOps teaches us the same thing about AI agents: operating them without continuous, multi-level evaluation is flying blind.</p>
+<p>The nine-stage framework described here is not specific to sales intelligence agents. Team deploying multi-agent systems that reason, call sub-agents, tools, and synthesize responses will face these same questions across the same lifecycle. Your failure taxonomy will look different. Your golden set will reflect your domain. Your evaluator stack will be tuned to your users. What stays constant is the principle: evaluation is not a final QA step. It is the operating system of the agent itself, continuously measured, automatically defended, and improved with every interaction.</p>
+<p>If you are building production agents and want to bring this kind of evaluation discipline to your system, Amazon Bedrock AgentCore Evaluations gives you the platform to do it: on-demand evaluation for experiments, batch evaluation for continuous monitoring, online evaluation for live traffic, built-in and customized evaluators, dataset evaluation(in public preview), CloudWatch integration, and the AgentCore optimization features recommendations and A/B tests to close the feedback loop. Start with Stage one, define what good looks like for your agent, and let the framework do the rest.</p>
+<p><strong>Ready to start?</strong> See <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">Evaluate agent performance</a> in the Amazon Bedrock AgentCore documentation. And if you’re building production agents and want to talk through how to apply this framework to your system, we’re happy to help. Reach out to us directly or through your AWS account team.</p>
+<p>To learn more about Amazon Bedrock AgentCore Evaluations, see <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html">Evaluate agent performance</a> in the AWS documentation. For a technical introduction, read <a href="https://aws.amazon.com/blogs/machine-learning/build-reliable-ai-agents-with-amazon-bedrock-agentcore-evaluations/">Build reliable AI agents with AgentCore Evaluations</a>. To see how we built the Performance Insights Agent, read <a href="https://aws.amazon.com/blogs/machine-learning/how-aws-smgs-uses-an-ai-powered-conversational-assistant-to-transform-business-management-with-amazon-bedrock-agentcore/">How AWS SMGS uses an AI-powered conversational assistant to transform business management with Amazon Bedrock AgentCore</a>. To learn about AgentCore recommendation and optimization, read <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/optimization.html">AgentCore optimization: Improve agent quality loop with recommendations and A/B tests</a>​</p>
+<h3>Acknowledgement</h3>
+<p>We extend our sincere gratitude to our executive sponsors and mentors whose vision and guidance made this initiative possible: <a href="https://www.linkedin.com/in/dforthomme/">Damien Forthomme</a>, Manager III, Applied Science; <a href="https://www.linkedin.com/in/akhand17/">Akhand Singh</a>, Head of Data Engineering; <a href="https://www.linkedin.com/in/sujit-narapareddy/?isSelfProfile=false">Sujit Narapareddy</a>, Director AWS Insights; <a href="https://www.linkedin.com/in/monicajain27/?isSelfProfile=false">Monica Jain</a>, Sr. Product Manager – Tech and <a href="https://www.linkedin.com/in/normanbraddock/?isSelfProfile=false">Norman Braddock</a>, Senior Manager of AI Product Management at AWS; <a href="https://www.linkedin.com/in/m-umar-javed-65085374/?isSelfProfile=false">Muhammad Umar Javed</a>, Applied Scientist III, L6.</p>
+<h2>About the authors</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Introducing Reflection Beam: an open-weight model for agenti…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/introducing-reflection-beam-an-open-weight-model-for-agentic-coding-on-aws/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/introducing-reflection-beam-an-open-weight-model-for-agentic-coding-on-aws/?li=1</guid>
+      <pubDate>Fri, 16 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing Reflection Beam: an open-weight model for agentic coding on AWS</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Introducing Reflection Beam: an open-weight model for agentic coding on AWS</h1>
+<p><a href="https://reflection.ai/">Reflection AI</a> introduced Beam, an open-weight model for agentic coding and long-horizon tasks such as maintaining code, using tools, interpreting results, and completing multi-step workflows. The open-weight release gives developers and researchers control over the runtime, deployment environment, and customization process.</p>
+<p>In this post, we explain Reflection’s vision and show how you can deploy Beam on AWS. Start with an Amazon SageMaker JumpStart real-time endpoint for a fully managed path. When you need Kubernetes-native control over distributed GPU infrastructure, use <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment.html">Amazon SageMaker HyperPod Inference</a> with JumpStart, SGLang, or vLLM. We also explain how Beam’s 501 billion total parameters shape checkpoint storage, weight memory, sharding, and parallelism, while its 23 billion active parameters influence per-token compute.</p>
+<p>At launch, Beam is available in Amazon SageMaker JumpStart in US East (N. Virginia) and US East (Ohio).</p>
+<h2>Reflection’s vision for open intelligence</h2>
+<p>Reflection’s mission is to <a href="https://reflection.ai/about">make intelligence open and accessible to all</a> through open model weights, published research, and open source software. Its <a href="https://reflection.ai/solutions">full AI stack</a> spans models, core software, production infrastructure, and applications. Beam brings this approach to developers building software engineering and agentic systems.</p>
+<h2>About Reflection Beam</h2>
+<p>Beam is a sparse mixture-of-experts model for resolving software issues, modifying code, calling tools, and acting on intermediate results. It has 501 billion total parameters and 23 billion active parameters, and Reflection reports an effective context length of 1 million tokens.</p>
+<p>Reflection releases Beam’s weights through Hugging Face under the Apache 2.0 license. Beam 1.0 is available in BF16, FP8, and NVFP4 checkpoint variants. These formats provide different memory footprints and hardware compatibility. You can deploy the model with the AWS managed JumpStart container configuration or inspect and customize the model with SGLang or vLLM in your AWS environment.</p>
+<h2>Understand the deployment architecture</h2>
+<p>Choose the serving path that meets your control and scaling requirements.</p>
+<ul><li>Start with a <strong>SageMaker JumpStart real-time endpoint</strong> when you want an AWS managed model package, endpoint, and invocation API without operating Kubernetes.</li><li>Use <strong>JumpStart on HyperPod Inference</strong> when you want the AWS managed container and model configuration on a HyperPod cluster orchestrated by Amazon Elastic Kubernetes Service (Amazon EKS).</li><li>Use <strong>SGLang or vLLM on HyperPod Inference</strong> when you need to control the serving image, runtime arguments, quantization, or distributed execution.</li><li>Size the deployment for checkpoint storage, weight memory, KV cache, context length, batching, runtime overhead, and the supported parallelism.</li><li>Define the expected concurrency and latency targets, then configure replicas, caching, routing, and autoscaling from measured workload behavior.</li></ul>
+<p>The JumpStart real-time path packages the model, container, and endpoint behind a managed deployment workflow. The HyperPod path exposes the cluster and serving runtime so that you can control distributed execution, caching, routing, and scaling.</p>
+<p>The following diagram shows the components used by the HyperPod path. Beam can be sourced through SageMaker JumpStart, Hugging Face Hub, or an optional Amazon Simple Storage Service (Amazon S3) mirror. The distributed workers use the AWS managed JumpStart container or a custom SGLang or vLLM runtime.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/ML-22133-1-1.png" alt="Architecture diagram showing Beam sourced from SageMaker JumpStart, Hugging Face Hub, or an optional Amazon S3 mirror into Amazon SageMaker HyperPod Inference, with the Inference Operator managing local model and image caching and the Inference Gateway and Endpoint Picker routing requests to distributed JumpStart, SGLang, or vLLM workers monitored by Amazon CloudWatch."></p>
+<p>Figure 1: Distributed Beam deployment with Amazon SageMaker HyperPod Inference</p>
+<h2>Prerequisites</h2>
+<p>You need:</p>
+<ul><li>An AWS account with permissions for your selected SageMaker deployment path and its supporting AWS Identity and Access Management (IAM), networking, and storage resources.</li><li>Access to Beam through SageMaker JumpStart or one of the Beam 1.0 checkpoint repositories on Hugging Face.</li><li>Acceptance of the model terms, the AWS Command Line Interface (AWS CLI), and Python 3.11 or later.</li><li>GPU quota and capacity for a supported Beam configuration.</li></ul>
+<h2>Plan and obtain GPU capacity</h2>
+<p>Beam’s 501 billion total parameters require a multi-GPU deployment. BF16 has the largest weight-memory requirement, so plan a multi-node configuration with enough aggregate GPU memory for the weights and runtime overhead. For FP8, use <code>ml.p5.48xlarge</code> with NVIDIA H100 GPUs or <code>ml.p5e.48xlarge</code> and <code>ml.p5en.48xlarge</code> with H200 GPUs. For NVFP4, use <code>ml.p6-b200.48xlarge</code> with NVIDIA B200 GPUs. Confirm that the released checkpoint, runtime, and parallel layout support the selected instance type.</p>
+<ul><li>Calculate memory for weights, KV cache, and runtime overhead for one replica, then confirm the estimate with a load test.</li><li>Choose an AWS Region that supports the required accelerated instance.</li><li>Check the service quota and available capacity for the selected instance type. Use on-demand capacity when available, or use a <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/reserve-capacity-with-training-plans.html">SageMaker training plan</a> as a short-term reservation for scheduled work.</li><li>Allow time for image transfer, weight download, shard loading, and runtime initialization.</li></ul>
+<h2>Path 1: Get started with a SageMaker JumpStart real-time endpoint</h2>
+<p>Use a JumpStart real-time endpoint first when you want the shortest path from the model catalog to a managed HTTPS endpoint. The sample supports the BF16, FP8, and NVFP4 model IDs through one variant-aware command. Its README and Python file are the source of truth for supported instance types, request schema, deployment command, and cleanup command.</p>
+<ul><li>Clone the sample repository.  <code>git clone https://github.com/aws-samples/sagemaker-genai-hosting-examples.git</code></li><li>Enter the SageMaker JumpStart deployment sample directory.  <code>cd sagemaker-genai-hosting-examples/01-models/ReflectionAI/Beam-1.0-501B-A23B-NVFP4/</code></li><li>Create and activate a Python virtual environment.  <code>python3 -m venv .venv source .venv/bin/activate</code></li><li>Install the sample dependency.  <code>python -m pip install -r requirements.txt</code></li><li>Run the bounded deployment, invocation, and cleanup lifecycle for FP8.  <code>python jumpstart_real_time.py \ --variant fp8 \ --endpoint-name reflection-beam-fp8-smoke</code>  The command deploys the FP8 endpoint, sends a short request, prints the response, and cleans up the endpoint. Use <code>bf16</code> or <code>nvfp4</code> to select another checkpoint variant; NVFP4 is the default when you omit <code>--variant</code>. Use the Python functions in the README when you need to keep an endpoint running.</li></ul>
+<h2>Path 2: Deploy with SageMaker HyperPod Inference</h2>
+<p>Use HyperPod Inference when you need Kubernetes-native control over distributed GPU infrastructure. You can use the AWS managed JumpStart container configuration or deploy Beam with SGLang or vLLM. The <a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/tree/main/SageMakerHyperpod/reflection-beam">HyperPod Inference deployment sample README</a> and its configuration files are the source of truth for released manifests, model and image identifiers, supported runtime versions, and commands.</p>
+<p>Before you begin, configure <code>kubectl</code> access to an EKS-orchestrated HyperPod cluster with the HyperPod Inference Operator and required add-ons. You also need the cluster virtual private cloud (VPC), subnets, security groups, access to the selected Beam and runtime artifacts, and local NVMe capacity if you enable model caching. Use an isolated Hugging Face access token if the selected repository requires authentication.</p>
+<p>Deploy a pinned Beam revision from Hugging Face Hub for development and experimentation. For production deployments and model caching, copy the checkpoint to Amazon S3 or Amazon FSx. <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment-model-caching.html">HyperPod model and image caching</a> can preload weights onto node-local NVMe storage and pre-pull the serving image.</p>
+<p>The <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment-inference-gateway.html">HyperPod Inference Gateway</a> provides an OpenAI-compatible interface and routes requests across replicas. HyperPod Inference also supports <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment-caching-routing.html">managed tiered KV caching and intelligent routing</a>. These are among the <a href="https://aws.amazon.com/blogs/machine-learning/amazon-sagemaker-inference-2026-year-to-date-launches-in-review/">Amazon SageMaker Inference capabilities introduced in 2026</a>.</p>
+<p>The next diagram expands the model preparation and runtime request flow. When model caching is enabled, the Inference Operator warms eligible nodes with the selected weights and serving image. At runtime, the Inference Gateway and Endpoint Picker can direct each request to a suitable JumpStart-managed, SGLang, or vLLM replica.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/15/ML-22133-2-1.png" alt="Detailed HyperPod flow showing the Inference Gateway, Endpoint Picker, routing signals, Inference Operator, host-local model cache, and JumpStart-managed, SGLang, or vLLM replicas."></p>
+<p>Figure 2: HyperPod model caching and request routing</p>
+<h3>Prepare deployment artifacts</h3>
+<p>Use immutable inputs so that you can reproduce deployment and performance results.</p>
+<ul><li>Use the JumpStart model release recorded in the deployment sample.</li><li>Choose the BF16, FP8, or NVFP4 checkpoint for a custom runtime.</li><li>For a custom runtime, keep the public Beam commit SHA and image digest in the sample release configuration.</li><li>Mirror the released image into a private Amazon Elastic Container Registry (Amazon ECR) repository only when your cluster cannot pull the upstream image or your organization requires an approved registry.</li><li>Keep tokens, generated secrets, private model IDs, registry credentials, and unpublished results out of the repository.</li></ul>
+<h3>Choose a serving path</h3>
+<p>Start with SageMaker JumpStart unless your workload requires a specific inference runtime or configuration.</p>
+<table><thead><tr><th><strong>Serving path</strong></th><th><strong>Use it when</strong></th><th><strong>What you manage</strong></th></tr></thead><tbody><tr><td>SageMaker JumpStart</td><td>You want an AWS-managed container and model configuration with less runtime maintenance.</td><td>Select the Beam model version, supported instance type, endpoint configuration, and scaling policy.</td></tr><tr><td>SGLang or vLLM</td><td>You need a specific inference runtime or configuration, such as custom runtime arguments, parsers, quantization, or parallelism.</td><td>Pin the supported runtime image, model revision, parser configuration, and distributed execution settings.</td></tr></tbody></table>
+<h3>Deploy with SageMaker JumpStart</h3>
+<p>SageMaker JumpStart reduces container integration work while HyperPod retains control over cluster capacity, scaling, and observability.</p>
+<ul><li>In SageMaker Studio, open the <strong>JumpStart model catalog</strong>.</li><li>Under <strong>All public models</strong>, choose <strong>Beam</strong>.</li><li>Choose <strong>SageMaker HyperPod</strong> as the deployment target.</li><li>Select the cluster and Kubernetes namespace.</li><li>Enter an endpoint name, and choose <strong>Deploy</strong>.</li><li>Confirm the deployment status before invoking the endpoint with the released JumpStart request schema.</li></ul>
+<p>For an infrastructure-as-code workflow, use the released JumpStart configuration in the HyperPod sample. You can inspect the <a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/blob/main/SageMakerHyperpod/reflection-beam/reflection-beam-jumpstart.yaml">reflection-beam-jumpstart.yaml manifest template</a> before configuring the deployment.</p>
+<ul><li>Clone the sample repository, and enter the HyperPod Beam directory.  <code>git clone https://github.com/aws-samples/sagemaker-genai-hosting-examples.git cd sagemaker-genai-hosting-examples/SageMakerHyperpod/reflection-beam/</code></li><li>Create the local configuration files described in the README.  <code>cp config/deployment.env.example config/deployment.env cp config/release.env.example config/release.env</code></li><li>Validate the JumpStart configuration before changing the cluster.  <code>python hyperpod_tool.py \ --config config/deployment.env \ --config config/release.env \ validate jumpstart</code></li><li>Deploy the JumpStart configuration.  <code>python hyperpod_tool.py \ --config config/deployment.env \ --config config/release.env \ deploy jumpstart \ --timeout-seconds 1800</code></li></ul>
+<p>The helper renders and applies the released <code>JumpStartModel</code> resource without writing populated release values to disk.</p>
+<h3>Deploy with SGLang or vLLM</h3>
+<p>Choose SGLang or vLLM when you need direct control over the serving runtime. Before configuring the deployment, inspect the <a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/blob/main/SageMakerHyperpod/reflection-beam/reflection-beam-sglang.yaml">reflection-beam-sglang.yaml manifest template</a> or the <a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/blob/main/SageMakerHyperpod/reflection-beam/reflection-beam-vllm.yaml">reflection-beam-vllm.yaml manifest template</a>. The sample README remains the source of truth for released values and commands.</p>
+<ul><li>Clone the sample repository.  <code>git clone https://github.com/aws-samples/sagemaker-genai-hosting-examples.git</code></li><li>Enter the HyperPod Beam directory.  <code>cd sagemaker-genai-hosting-examples/SageMakerHyperpod/reflection-beam/</code></li><li>Create the local configuration files described in the README.  <code>cp config/deployment.env.example config/deployment.env cp config/release.env.example config/release.env</code></li><li>Validate the selected configuration before changing the cluster.  <code>python hyperpod_tool.py \ --config config/deployment.env \ --config config/release.env \ validate sglang</code></li><li>Deploy Beam, and wait for a terminal deployment state.  <code>python hyperpod_tool.py \ --config config/deployment.env \ --config config/release.env \ deploy sglang \ --timeout-seconds 1800</code>  Replace <code>sglang</code> with <code>vllm</code> to use vLLM. The helper validates the selected settings, applies the rendered manifest without writing release values to disk, waits with a fixed timeout, and prints diagnostics if deployment fails.</li></ul>
+<h2>Invoke Beam</h2>
+<p>Invoke JumpStart endpoints with the released model request schema. For SGLang or vLLM, use the bounded smoke test included in the HyperPod sample.</p>
+<h3>Invoke the deployed endpoint</h3>
+<ul><li>Install the sample client dependency.  <code>python3 -m venv .venv source .venv/bin/activate python -m pip install -r requirements.txt</code></li><li>Run a private health check and short request with the recommended starting sampling settings.  <code>python hyperpod_tool.py \ --config config/deployment.env \ smoke sglang \ --prompt &quot;List three checks for a healthy model deployment.&quot; \ --temperature 1.0 \ --top-p 0.7</code>  Replace <code>sglang</code> with <code>vllm</code> for a vLLM deployment. The helper selects a ready worker, opens a temporary port-forward, checks endpoint health, sends the request, and closes the port-forward.</li></ul>
+<p>The response resembles the following:</p>
+<pre><code>1. Confirm that the endpoint reports ready.
+2. Send a short inference request.
+3. Review the service logs for startup errors.</code></pre>
+<p>For an authenticated Inference Gateway, use the bearer-token procedure in the HyperPod sample README. Keep credentials out of source code, manifests, and command history.</p>
+<h2>Measure and tune performance</h2>
+<ul><li>Test each serving path with repeated, representative coding and tool-use requests at the expected concurrency.</li><li>Record the Beam model version, image digest, instance type, precision, context length, parallelism, serving arguments, cache state, and test repetitions.</li><li>Measure request success rate, p50 and p95 time to first token, time per output token, end-to-end latency, and aggregate output tokens per second.</li><li>Tune batch size, KV cache allocation, replica count, autoscaling, and model and image caching from those results.</li><li>Recheck output quality after changing precision or quantization.</li></ul>
+<h2>Clean up</h2>
+<p>Delete resources when you finish testing to avoid ongoing charges.</p>
+<ul><li>For a SageMaker JumpStart real-time endpoint, follow the cleanup instructions in the SageMaker JumpStart deployment sample README.</li><li>For JumpStart, SGLang, or vLLM on Amazon SageMaker HyperPod Inference, follow the cleanup instructions in the HyperPod Inference deployment sample README.</li><li>Delete a dedicated HyperPod or Amazon EKS cluster created for the walkthrough.</li><li>Delete unused cached weights, mirrored artifacts, load balancers, log groups, temporary IAM roles, and captured inference data.</li></ul>
+<h2>Conclusion</h2>
+<p>Reflection Beam gives developers an open-weight model designed for agentic coding and multi-step tasks. Start with a SageMaker JumpStart real-time endpoint for a fully managed deployment. Use SageMaker HyperPod Inference with JumpStart when you need Kubernetes-native infrastructure control without managing the serving container, or choose SGLang or vLLM when you need a custom runtime.</p>
+<p>Use the <a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/tree/main/01-models/ReflectionAI/Beam-1.0-501B-A23B">SageMaker JumpStart deployment sample</a> or the <a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/tree/main/SageMakerHyperpod/reflection-beam">HyperPod Inference deployment sample</a>, then follow the instructions.</p>
+<p>To learn more about Reflection AI and its vision for open intelligence, visit <a href="https://reflection.ai/about">Reflection AI</a> and read <a href="https://reflection.ai/blog/introducing-beam">Introducing Beam</a>.</p>
+<h2>Resources</h2>
+<ul><li>Reflection Beam checkpoint variants: <a href="https://huggingface.co/reflection/Beam-1.0-501B-A23B">BF16</a>, <a href="https://huggingface.co/reflection/Beam-1.0-501B-A23B-FP8">FP8</a>, and <a href="https://huggingface.co/reflection/Beam-1.0-501B-A23B-NVFP4">NVFP4</a></li><li><a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/tree/main/01-models/ReflectionAI/Beam-1.0-501B-A23B">SageMaker JumpStart deployment sample</a></li><li><a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/tree/main/SageMakerHyperpod/reflection-beam">HyperPod Inference deployment samples with JumpStart, vLLM, and SGLang</a></li><li><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-model-deployment-deploy.html">Deploy foundation models from SageMaker JumpStart to HyperPod Inference</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/amazon-sagemaker-inference-2026-year-to-date-launches-in-review/">Amazon SageMaker Inference 2026 year-to-date launches in review</a></li></ul>
+<h2>About the authors</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Meta’s Muse Spark Open now available in Amazon SageMaker Jum…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/metas-muse-spark-open-now-available-in-amazon-sagemaker-jumpstart/</link>
@@ -5994,480 +6205,6 @@ cdk destroy --all</code></pre>
 <h2>Conclusion</h2>
 <p>In this post, we showed how the hierarchy filter helps Amazon Quick Sight authors turn a set of independent controls into a single, guided drill-down. Readers get short, relevant lists, avoid contradictory selections, and explore related dimensions more efficiently, without writing code or changing the underlying data.</p>
 <p>To try the hierarchy filter, open the <a href="https://quicksight.aws.amazon.com/">Amazon Quick Sight console</a> and add a filter to one of your analyses. To learn more about filtering, see <a href="https://docs.aws.amazon.com/quicksight/latest/user/adding-a-filter-data-prep.html">Filtering data in Amazon Quick Sight</a> in the Amazon Quick Sight User Guide. Have a question, or want to share how you use hierarchy filters? Let us know in the comments.</p>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>How uniopen customized Amazon Nova to their retail moderatio…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/how-uniopen-customized-amazon-nova-to-their-retail-moderation-policies-for-production-deployment/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-uniopen-customized-amazon-nova-to-their-retail-moderation-policies-for-production-deployment/?li=1</guid>
-      <pubDate>Thu, 01 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: How uniopen customized Amazon Nova to their retail moderation policies for production deployment</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>How uniopen customized Amazon Nova to their retail moderation policies for production deployment</h1>
-<p>uniopen is a digital communication and membership platform launched by Taiwan’s Uni-President Enterprises Group, connecting customers to ecommerce, membership benefits, and other retail experiences across web, tablet, and mobile channels.</p>
-<p>Across those channels, uniopen applies a moderation policy that classifies each interaction along two axes. The first is what behavior occurred (nine categories), and the second is what subject the behavior refers to (brand, other, or forbidden). Both must be correct for a moderation decision to be useful, and both are specific to uniopen’s business rather than something a general-purpose model can be expected to learn out of the box.</p>
-<p>In this post, we show how the team adapted Amazon Nova 2 Lite to these business-specific moderation policies through supervised fine-tuning in <a href="https://aws.amazon.com/sagemaker/ai/?trk=047fc009-5bd4-4337-800d-8b880665cece&amp;sc_channel=ps&amp;ef_id=CjwKCAjwtp7VBhBjEiwAJfpV-yKW4t89QXsCc4cxWZWS3f52xxMc7gfEMw4qDvmIjc-OHKOh4W_n9BoCpCwQAvD_BwE:G:s&amp;gads_camp=23532472972&amp;gads_ag=194311071804&amp;gads_ad=795877020716&amp;gads_kw=amazon%20sagemaker%20ai&amp;gads_matchtype=e&amp;gads_network=g&amp;gads_device=c&amp;gads_geo=9033313&amp;gad_campaignid=23532472972&amp;gbraid=0AAAAADjHtp-agjlPsqkVJj2uJ3Wve5A88&amp;gclid=CjwKCAjwtp7VBhBjEiwAJfpV-yKW4t89QXsCc4cxWZWS3f52xxMc7gfEMw4qDvmIjc-OHKOh4W_n9BoCpCwQAvD_BwE">Amazon SageMaker AI</a> and a final prompt-level output optimization. The AWS approach kept correction data, managed training, evaluation, and deployment controls in one repeatable workflow. Model availability varies by AWS Region. See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Supported models by AWS Region in Amazon Bedrock</a>.</p>
-<p>Figure 1 shows the web, tablet, and mobile experiences covered by this moderation policy.</p>
-<p>Figure 1: uniopen digital experience across web, tablet, and mobile channels</p>
-<p>Across these channels, the same moderation taxonomy and release criteria help the team make consistent decisions as interaction formats and topics change.</p>
-<h2>Solution overview</h2>
-<p>The architecture separates the production moderation path from correction, training, evaluation, and deployment. Amazon Nova 2 Lite handles the primary moderation requests. Amazon Nova 2 Pro supports candidate correction generation for reported errors, but a human reviewer must verify each correction before it can enter the training set. With this separation, the team can improve domain-specific behavior without treating generated labels as ground truth.</p>
-<p>Amazon Simple Storage Service (<a href="https://aws.amazon.com/pm/serv-s3/?trk=50b671a1-06f5-4224-9505-fa45ee881c08&amp;sc_channel=ps&amp;ef_id=CjwKCAjwtp7VBhBjEiwAJfpV-6sSqSunigcJyF6o4HVXXir812ZZIQiG3oH06bR1SiUWMf_3dndhlBoCeeUQAvD_BwE:G:s&amp;gads_camp=23522747487&amp;gads_ag=196433733807&amp;gads_ad=795876995201&amp;gads_kw=amazon%20s3&amp;gads_matchtype=e&amp;gads_network=g&amp;gads_device=c&amp;gads_geo=9033313&amp;gad_campaignid=23522747487&amp;gbraid=0AAAAADjHtp_tfnZvG7Euh-sunGteX1eiS&amp;gclid=CjwKCAjwtp7VBhBjEiwAJfpV-6sSqSunigcJyF6o4HVXXir812ZZIQiG3oH06bR1SiUWMf_3dndhlBoCeeUQAvD_BwE">Amazon S3</a>) stores the verified correction set and training data. <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a> tracks active and candidate model configurations. Argo Workflows on <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (Amazon EKS)</a> orchestrates prompt optimization, evaluation, and deployment, and Argo CD applies approved configurations to production. <a href="https://aws.amazon.com/sns/">Amazon Simple Notification Service (Amazon SNS)</a> and <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> notify operators when a hard gate fails or a candidate needs attention. These managed AWS components keep data, training, configuration state, and operational controls in a governed workflow.</p>
-<p>Responsible AI controls complement model customization. Human review remains mandatory for ambiguous cases and for corrections reused as training data. Fixed test sets and regression checks prevent automatic promotion when quality declines. Teams can also apply <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-content-filters.html">Amazon Bedrock Guardrails content filters</a> to inputs and outputs, monitor errors across behavior and subject categories, minimize retained customer data, and revalidate thresholds as moderation policies change.</p>
-<p>Figure 2 shows how a reported error becomes a human-verified correction, enters the Amazon S3 correction set, and triggers the evaluation and deployment workflow.</p>
-<p>Figure 2: Human-verified feedback loop for continuously improving retail content moderation</p>
-<p>The user first queries the active Amazon Nova 2 Lite configuration. When the user reports an error, the correction workflow creates a candidate label, obtains human verification, and writes the approved example to Amazon S3. The orchestration workflow reads the correction set, creates a candidate prompt or customized model, evaluates it, and updates DynamoDB only after the candidate passes the required gates.</p>
-<p>Figure 3 expands the hard- and soft-gate decision path that controls whether a candidate stops, waits for human approval, or moves into production.</p>
-<p>Figure 3: Hard and soft gate evaluation flow used to control model and prompt promotion</p>
-<p>Two kinds of checks control promotion: hard gates and soft gates. <em>Hard gates</em> are must-pass regression tests. <em>Soft gates</em> are warning signals such as low confidence or a drop in performance for a specific class.</p>
-<p>A hard-gate failure stops the workflow and sends an alert. Candidates that pass the hard gate are then checked for soft-gate indicators. If no warning is detected, the candidate can be promoted automatically. If a soft-gate warning is triggered, the candidate remains pending and requires administrator review and approval before deployment.</p>
-<h2>Evaluation approach</h2>
-<p>A conversation window is a bounded segment of a customer conversation that is treated as one training or evaluation example. All three configurations were evaluated on the same held-out test set of 737 conversation windows. The fine-tuning dataset contained 3,391 training windows. The team compared the baseline model, the fine-tuned model, and the prompt-optimized fine-tuned model on this consistent test set.</p>
-<p>Per Behavior Macro F1 measures how consistently the model classifies the nine moderation behaviors as a group. Each behavior contributes equally to the score, so strong performance on common or easier categories can’t hide weak performance on harder categories. For uniopen, this matters because the moderation system needs to work across the full policy set, not only the most frequent behavior.</p>
-<p>Subject Type Macro F1 measures how consistently the model identifies the type of subject involved: brand, other, or forbidden. Each subject type contributes equally to the score. This matters because a moderation decision is more useful when the system not only detects a policy-relevant behavior but also correctly understands what entity the behavior refers to. Together, the two metrics show policy detection and subject understanding on the same 0-1 scale.</p>
-<h2>Baseline performance</h2>
-<p>The base model established a useful baseline, but it still showed a significant gap in learning uniopen’s specific moderation taxonomy. Without fine-tuning, Amazon Nova 2 Lite achieved a Per Behavior Macro F1 of 0.5852 and a Subject Type Macro F1 of 0.4162. These scores show that the model had not yet learned uniopen’s specific moderation taxonomy well enough for production use.</p>
-<h2>Amazon SageMaker AI customization</h2>
-<p>The team then customized Amazon Nova 2 Lite using supervised fine-tuning with Low-Rank Adaptation (LoRA) in Amazon SageMaker AI. Fine-tuning allowed the model to learn from task-specific examples instead of relying only on prompt instructions. Figure 4 shows the completed Amazon SageMaker AI training job and the recorded configuration used for the customization run.</p>
-<p>Figure 4: Amazon SageMaker AI supervised fine-tuning job for Amazon Nova 2 Lite</p>
-<p>The training-job record captures the base model, customization technique, training-data location, run time, and progress for audit and repeatability. Fine-tuning delivered the largest performance gain. Per Behavior Macro F1 increased from 0.5852 to 0.8364, while Subject Type Macro F1 increased from 0.4162 to 0.8302. The subject-type metric exceeded its production target, while behavior classification moved close to its target.</p>
-<h2>Prompt optimization</h2>
-<p>After fine-tuning, the team made a prompt-level change to simplify the model output from JSON to a line-based format and clarify how multiple behaviors should be returned. This change required no additional model training.</p>
-<p>The prompt optimization increased Per Behavior Macro F1 from 0.8364 to 0.8550 and Subject Type Macro F1 from 0.8302 to 0.8491. With this final step, both metrics exceeded their production targets of 0.8500 and 0.8200, respectively.</p>
-<h2>Results</h2>
-<p>Table 1 summarizes performance for the Amazon Nova 2 Lite baseline, the Amazon SageMaker AI fine-tuned model, and the prompt-optimized fine-tuned model.</p>
-<p><em>Table 1: Classification performance across optimization stages</em></p>
-<p>Metric</p>
-<p>Baseline</p>
-<p>Fine-tuned (JSON)</p>
-<p>Prompt-optimized (LF)</p>
-<p>Production target</p>
-<p>Per Behavior Macro F1</p>
-<p>0.5852</p>
-<p>0.8364</p>
-<p>0.8550</p>
-<p>≥ 0.8500</p>
-<p>Subject Type Macro F1</p>
-<p>0.4162</p>
-<p>0.8302</p>
-<p>0.8491</p>
-<p>≥ 0.8200</p>
-<p>The two metrics exposed different weaknesses at each stage. The baseline needed improvement in both behavior detection and subject understanding. Amazon SageMaker AI fine-tuning produced the largest gain, especially in Subject Type Macro F1, showing the value of domain-specific examples for uniopen’s taxonomy. Prompt optimization then moved both metrics above their production targets without another training run. Using both metrics as release gates prevented an improvement in one dimension from hiding a regression in the other.</p>
-<p>After both metrics cleared their release targets, uniopen could direct routine moderation to the customized path and keep human review focused on ambiguous cases. This operating model reduces unnecessary escalation while preserving a human decision point for uncertain or policy-sensitive content.</p>
-<h2>Next steps</h2>
-<p>The team will continue using Per Behavior Macro F1 and Subject Type Macro F1 as production gates. It will collect new boundary cases from real traffic and use those cases to decide whether the next improvement should be a prompt change or another targeted fine-tuning cycle. The same evaluation pattern can extend to additional retail moderation scenarios while human reviewers remain focused on ambiguous cases.</p>
-<h2>Conclusion</h2>
-<p>uniopen’s results show how business-relevant evaluation can identify where a foundation model needs adaptation. Supervised fine-tuning addressed domain-specific classification gaps, and prompt optimization captured additional gains without another training run. The repeatable pattern is to measure, identify the weaker dimension, apply the targeted change, and promote only when every release gate passes.</p>
-<p>To explore the services and techniques in this post, visit the <a href="https://aws.amazon.com/sagemaker-ai/">Amazon SageMaker AI service page</a>, read the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/nova-fine-tuning-training-job.html">Amazon Nova fine-tuning documentation</a>, and review <a href="https://aws.amazon.com/blogs/machine-learning/prompting-amazon-nova-2-for-content-moderation/">Prompting Amazon Nova 2 for content moderation</a>. For production safeguards, see the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html">Amazon Bedrock Guardrails documentation</a>.</p>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Query claims in natural language with Amazon Bedrock Knowled…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/query-claims-in-natural-language-with-amazon-bedrock-knowledge-bases/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/query-claims-in-natural-language-with-amazon-bedrock-knowledge-bases/?li=1</guid>
-      <pubDate>Wed, 30 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Query claims in natural language with Amazon Bedrock Knowledge Bases</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Query claims in natural language with Amazon Bedrock Knowledge Bases</h1>
-<p>Claim answers are scattered across adjuster diary entries, repair estimates, police reports, payment ledgers, and scanned attachments rather than one searchable field. A policyholder might ask whether a claim was approved, while an adjuster might need every open auto claim over $10,000 from last month. Both tasks require finding and combining evidence quickly and accurately.</p>
-<p>Retrieval Augmented Generation (RAG) uses retrieved documents to ground model responses. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Knowledge Bases</a> is the fully managed RAG capability for documents. Amazon Bedrock handles parsing, chunking, embeddings, and vector storage, so you can build a conversational interface that returns cited answers from claim files.</p>
-<p>This technical how-to uses synthetic claim records and doesn’t describe a production customer deployment. You build a claims assistant that answers natural-language questions with citations by completing these steps:</p>
-<ul><li>Ingest claim documents and their metadata from Amazon Simple Storage Service (Amazon S3).</li><li>Query them in plain language with the <code>AgenticRetrieveStream</code> API.</li><li>Ask multi-turn follow-up questions.</li><li>Scope retrieval with metadata filters on attributes such as claim ID and claim type.</li><li>Add a contextual grounding guardrail to keep answers tied to the records.</li></ul>
-<h2>The claims lookup challenge</h2>
-<p>Policyholders, contact center agents, and adjusters ask different questions:</p>
-<ul><li>Policyholders ask for a plain-language status update: “Has the estimate for claim CLM-100482 been approved, and when will the check be issued?”</li><li>Contact center agents need a fast, accurate answer while the customer waits, without transferring the call.</li><li>Adjusters ask multi-part questions across claims, such as which open auto claims over $10,000 were filed last month and what work remains on each.</li></ul>
-<p>Answers are stored in PDF adjuster reports, Word correspondence, and text notes rather than consistent database fields.</p>
-<p>Records can conflict or supersede earlier versions. A revised estimate can replace an earlier one, or a provisional payment can be reversed later. The assistant must identify which estimate, payment, or status controls.</p>
-<p>Because claims are regulated, every answer must be grounded in source documents and include citations. Contact center agents can verify a source before repeating an answer, and supervisors can audit how the assistant reached it.</p>
-<h2>Solution overview</h2>
-<p>The solution uses <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Knowledge Bases</a> to index claim documents from Amazon S3 for retrieval.</p>
-<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-agentic-retrieve.html">Agentic retrieval</a> through <code>AgenticRetrieveStream</code> plans an answer, breaks a multi-part question into sub-queries, and runs one or more retrieval passes. It checks whether the evidence is sufficient before generating a response.</p>
-<p>The API streams trace events, answer text, and citations. Trace events expose the retrieval plan, and each citation maps part of the answer to a source claim document.</p>
-<p>The following diagram shows both paths. The ingestion lane loads claim documents and metadata into a knowledge base. The retrieval lane sends each question through <code>AgenticRetrieveStream</code> and an Amazon Bedrock Guardrails grounding check before returning a cited answer.</p>
-<p>Figure 1: Conversational claims assistant with Amazon Bedrock Knowledge Bases</p>
-<p>The ingestion lane runs as documents arrive:</p>
-<ul><li>Claim documents in PDF, Word, or text format land in Amazon S3 with matching metadata sidecars.</li><li>An ingestion job synchronizes the S3 data source with the knowledge base as documents change.</li><li>The knowledge base parses, chunks, embeds, and indexes the documents and their metadata in managed vector storage.</li></ul>
-<p>The retrieval lane runs for each question:</p>
-<ul><li>The application calls <code>AgenticRetrieveStream</code> with the question, conversation history, and optional metadata filters that scope the search.</li><li>A foundation model creates sub-queries and repeats retrieval until it has enough evidence, up to maxAgentIteration rounds.</li><li>A contextual grounding check blocks answers that are unsupported by the retrieved records.</li><li>Amazon Bedrock streams the answer, trace events, and citations, so the application can display output as it arrives.</li></ul>
-<h2>Prerequisites</h2>
-<p>Before you begin, verify that you have the following:</p>
-<ul><li>An AWS account with AWS Identity and Access Management (IAM) permissions for Amazon Bedrock and Amazon S3.</li><li>Access to a foundation model (FM) enabled through <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html">Amazon Bedrock model access</a>.</li><li>An AWS Region that supports the selected foundation model and Amazon Bedrock Knowledge Bases. This walkthrough uses US West (Oregon), us-west-2. Check <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Supported models by AWS Region in Amazon Bedrock</a> before deployment.</li><li>The <a href="https://aws.amazon.com/sdk-for-python/">AWS SDK for Python (Boto3)</a>, configured with credentials and a version that supports the APIs used here.</li><li>An S3 bucket for the synthetic claim documents and metadata.</li><li>Familiarity with Python and with basic RAG concepts.</li></ul>
-<h2>Prepare the claims documents and metadata</h2>
-<p>Store one document per claim in Amazon S3. The knowledge base reads PDF adjuster reports, Word correspondence, and text notes directly, so you can keep documents in their native format.</p>
-<p>Figure 2 shows a synthetic claim record. Current exposure is the estimated total claim cost. Its evidence index identifies a superseded fax draft, meaning a record replaced by a newer version. The metadata sidecar repeats fields that the assistant can filter.</p>
-<p>Figure 2: A synthetic claim record with its file-control fields and evidence index</p>
-<p>For filtering, add an accompanying metadata file with the same name plus <code>.metadata.json</code>. For <code>CLM-100482.pdf</code>, use <code>CLM-100482.pdf.metadata.json</code>. Subrogation is an insurer’s effort to recover costs from a responsible third party. The following example describes one auto claim:</p>
-<pre><code>{
-    &quot;metadataAttributes&quot;: {
-        &quot;claim_id&quot;: &quot;CLM-100482&quot;,
-        &quot;claim_type&quot;: &quot;auto&quot;,
-        &quot;status&quot;: &quot;open&quot;,
-        &quot;date_filed&quot;: 20260709,
-        &quot;amount&quot;: 14250,
-        &quot;region&quot;: &quot;us-west&quot;,
-        &quot;adjuster&quot;: &quot;Martha Rivera&quot;,
-        &quot;policyholder&quot;: &quot;Mary Major&quot;,
-        &quot;policy_number&quot;: &quot;POL-AUTO-78432&quot;,
-        &quot;customer_id&quot;: &quot;CUST-MM-1042&quot;,
-        &quot;household_id&quot;: &quot;HHD-MM-1042&quot;,
-        &quot;document_type&quot;: &quot;adjuster_report&quot;,
-        &quot;carrier&quot;: &quot;Example Insurance&quot;,
-        &quot;has_subrogation&quot;: true,
-        &quot;has_litigation&quot;: false,
-        &quot;complexity_tier&quot;: &quot;high&quot;
-    }
-}</code></pre>
-<p>The sidecar contains scalar string, number, and Boolean values. Value types determine available filters. The following table lists fields used later in the queries.</p>
-<p>This post uses synthetic data. Don’t place real personally identifiable information (PII) or protected health information in these resources without the required controls and approvals.</p>
-<p>Attribute</p>
-<p>Type</p>
-<p>Example</p>
-<p>Filter use</p>
-<p>claim_id</p>
-<p>String</p>
-<p>CLM-100482</p>
-<p>equals</p>
-<p>for a single-claim lookup</p>
-<p>claim_type</p>
-<p>String</p>
-<p>auto</p>
-<p>equals</p>
-<p>or</p>
-<p>in</p>
-<p>for a line of business</p>
-<p>status</p>
-<p>String</p>
-<p>open</p>
-<p>in</p>
-<p>for active work queues</p>
-<p>amount</p>
-<p>Number</p>
-<p>14250</p>
-<p>numeric range comparisons</p>
-<p>date_filed</p>
-<p>Number</p>
-<p>20260709</p>
-<p>date ranges as</p>
-<p>YYYYMMDD</p>
-<p>integers</p>
-<p>region</p>
-<p>String</p>
-<p>us-west</p>
-<p>tenant scoping from the session</p>
-<p>customer_id</p>
-<p>String</p>
-<p>CUST-MM-1042</p>
-<p>customer scoping from the session</p>
-<p>has_subrogation</p>
-<p>Boolean</p>
-<p>true</p>
-<p>equals</p>
-<p>for recovery work</p>
-<p>Store dates as <code>YYYYMMDD</code> integers because metadata filters compare numbers rather than date strings. This format supports ranges such as “filed last month.”</p>
-<p>Store only one comparable monetary value in <code>amount</code>. A reserve is money set aside for the estimated claim cost, while a hold is temporarily withheld. Keep reserves, payments, and holds in document text so their labels remain clear.</p>
-<p>Sidecar files are limited to 10 KB. See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/s3-data-source-connector.html">Connect to Amazon S3 for your knowledge base</a> for the complete format.</p>
-<p>The S3 layout pairs each claim document with its metadata file:</p>
-<pre><code>s3://amzn-s3-demo-insurance-claims/claims/CLM-100482.pdf
-s3://amzn-s3-demo-insurance-claims/claims/CLM-100482.pdf.metadata.json
-s3://amzn-s3-demo-insurance-claims/claims/CLM-100517.docx
-s3://amzn-s3-demo-insurance-claims/claims/CLM-100517.docx.metadata.json
-s3://amzn-s3-demo-insurance-claims/claims/CLM-100533.txt
-s3://amzn-s3-demo-insurance-claims/claims/CLM-100533.txt.metadata.json</code></pre>
-<h2>Create the managed knowledge base and ingest the claims</h2>
-<p>Create the knowledge base with the bedrock-agent client. Set knowledgeBaseConfiguration.type and embeddingModelType to MANAGED.</p>
-<p>Amazon Bedrock selects and operates the embedding model. No vector store configuration is required. See <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_CreateKnowledgeBase.html">CreateKnowledgeBase</a> for all parameters. The following code creates the knowledge base:</p>
-<pre><code>import boto3
-
-bedrock_agent = boto3.client(&quot;bedrock-agent&quot;, region_name=&quot;us-west-2&quot;)
-
-kb = bedrock_agent.create_knowledge_base(
-    name=&quot;insurance-claims-kb&quot;,
-    description=&quot;Synthetic insurance claims for the claims assistant&quot;,
-    roleArn=&quot;arn:aws:iam::111122223333:role/InsuranceClaimsKnowledgeBaseRole&quot;,
-    knowledgeBaseConfiguration={
-        &quot;type&quot;: &quot;MANAGED&quot;,
-        &quot;managedKnowledgeBaseConfiguration&quot;: {
-            &quot;embeddingModelType&quot;: &quot;MANAGED&quot;
-        },
-    },
-)
-kb_id = kb[&quot;knowledgeBase&quot;][&quot;knowledgeBaseId&quot;]</code></pre>
-<p>The roleArn service role grants the knowledge base permission to read the S3 bucket and use the managed embedding model. See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-permissions.html">Create a service role for Amazon Bedrock Knowledge Bases</a>. To encrypt managed vector storage with a customer managed <a href="https://docs.aws.amazon.com/kms/latest/developerguide/overview.html">AWS Key Management Service (AWS KMS)</a> key, pass its ARN in serverSideEncryptionConfiguration.</p>
-<p>Next, connect the S3 bucket as a data source. The inclusionPrefixes setting limits ingestion to claims/:</p>
-<pre><code>data_source = bedrock_agent.create_data_source(
-    knowledgeBaseId=kb_id,
-    name=&quot;claims-s3&quot;,
-    dataSourceConfiguration={
-        &quot;type&quot;: &quot;S3&quot;,
-        &quot;s3Configuration&quot;: {
-            &quot;bucketArn&quot;: &quot;arn:aws:s3:::amzn-s3-demo-insurance-claims&quot;,
-            &quot;inclusionPrefixes&quot;: [&quot;claims/&quot;],
-        },
-    },
-)
-data_source_id = data_source[&quot;dataSource&quot;][&quot;dataSourceId&quot;]</code></pre>
-<p>Start an ingestion job to parse, chunk, embed, and index the documents. Run it again whenever claim documents are added or updated so the index stays synchronized:</p>
-<pre><code>bedrock_agent.start_ingestion_job(
-    knowledgeBaseId=kb_id,
-    dataSourceId=data_source_id,
-)</code></pre>
-<p>Check status with get_ingestion_job or the Amazon Bedrock console. When the job completes, the claims are searchable. See <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent_StartIngestionJob.html">StartIngestionJob</a> for details.</p>
-<h2>Query claims with the AgenticRetrieveStream API</h2>
-<p>With the claims ingested, call <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_agent-runtime_AgenticRetrieveStream.html">AgenticRetrieveStream</a> with the bedrock-agent-runtime client. See the API reference for complete request and response syntax. The request has three parts:</p>
-<ul><li>messages: Conversation turns. Each message has a user or assistant role and a content.text value.</li><li>retrievers: Up to five knowledge bases. Each includes a knowledge base ID and can specify a metadata filter and maxNumberOfResults (1–100). Increase the limit for questions that span many claims.</li><li>agenticRetrieveConfiguration: Planning model and iteration limit. Use MANAGED for the service model. To use a specific model, use CUSTOM with a model ARN. maxAgentIteration caps the number of planning and retrieval rounds.</li></ul>
-<p>This request asks for one claim’s status. Setting generateResponse to True returns a natural-language answer:</p>
-<pre><code>bedrock_agent_runtime = boto3.client(&quot;bedrock-agent-runtime&quot;, region_name=&quot;us-west-2&quot;)
-
-response = bedrock_agent_runtime.agentic_retrieve_stream(
-    messages=[
-        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: {&quot;text&quot;: &quot;What is the status of claim CLM-100482?&quot;}}
-    ],
-    retrievers=[
-        {
-            &quot;configuration&quot;: {&quot;knowledgeBase&quot;: {&quot;knowledgeBaseId&quot;: kb_id}},
-            &quot;description&quot;: &quot;Synthetic insurance claim records&quot;,
-        }
-    ],
-    agenticRetrieveConfiguration={
-        &quot;foundationModelType&quot;: &quot;MANAGED&quot;,
-        &quot;maxAgentIteration&quot;: 5,
-    },
-    generateResponse=True,
-)</code></pre>
-<p>Iterate over response[“stream”] and handle these three event types:</p>
-<ul><li>traceEvent: Reports planning, retrieval, full-document expansion, guardrail actions, status, and generated sub-queries for each step.</li><li>responseEvent: Provides incremental answer text that you can stream to the user.</li><li>result: Contains deduplicated retrieval results and, when generateResponse is True, the complete generated answer and its citations.</li></ul>
-<p>The following loop streams answer chunks as they arrive and retains the final result for citation rendering:</p>
-<pre><code>answer = &quot;&quot;
-final_result = None
-
-for event in response[&quot;stream&quot;]:
-    if &quot;traceEvent&quot; in event:
-        attributes = event[&quot;traceEvent&quot;][&quot;attributes&quot;]
-        print(f&quot;[trace] {attributes.get('step')}: {attributes.get('status')}&quot;)
-    elif &quot;responseEvent&quot; in event:
-        chunk = event[&quot;responseEvent&quot;][&quot;text&quot;]
-        answer += chunk
-        print(chunk, end=&quot;&quot;, flush=True)
-    elif &quot;result&quot; in event:
-        final_result = event[&quot;result&quot;]</code></pre>
-<h3>Read the trace to see the plan</h3>
-<p>The basic loop prints each step and status. This helper also prints sub-queries, full-document fetches, and guardrail actions:</p>
-<pre><code>def report_trace(trace_event):
-    attributes = trace_event.get(&quot;attributes&quot;, {})
-    print(f&quot;[trace] {attributes.get('step')}: {attributes.get('status')}&quot;)
-
-    for action in attributes.get(&quot;actions&quot;, []):
-        if &quot;retrieve&quot; in action:
-            sub_query = action[&quot;retrieve&quot;].get(&quot;inputQuery&quot;, {}).get(&quot;text&quot;, &quot;&quot;)
-            print(f&quot;    sub-query: {sub_query}&quot;)
-        elif &quot;fullDocumentExpansion&quot; in action:
-            document = action[&quot;fullDocumentExpansion&quot;].get(&quot;documentId&quot;, &quot;&quot;)
-            print(f&quot;    full document: {document}&quot;)
-
-    for warning in attributes.get(&quot;warnings&quot;, []):
-        if &quot;guardrail&quot; in warning:
-            print(f&quot;    guardrail: {warning['guardrail'].get('action')}&quot;)</code></pre>
-<p>Figure 3 shows the agentic loop. The service plans a strategy, creates sub-queries, retrieves evidence, and checks whether it has enough. If needed, it runs another pass before generating a cited answer.</p>
-<p>Figure 3: The agentic retrieval loop from question to cited answer</p>
-<h3>Render citations</h3>
-<p>Each citation identifies a character span in the answer and references supporting entries in the result event’s results array. The application uses the indexes to associate the displayed text with its source documents.</p>
-<p>The following code prints each cited span beside the built-in x-amz-bedrock-kb-source-uri value for its source document:</p>
-<pre><code>generated = final_result[&quot;generatedResponse&quot;]
-results = final_result[&quot;results&quot;]
-
-for citation in generated.get(&quot;citations&quot;, []):
-    span = generated[&quot;answer&quot;][citation[&quot;startIndex&quot;]:citation[&quot;endIndex&quot;]]
-    for reference in citation[&quot;references&quot;]:
-        source = results[reference[&quot;resultIndex&quot;]]
-        source_uri = source.get(&quot;metadata&quot;, {}).get(&quot;x-amz-bedrock-kb-source-uri&quot;)
-        print(f'&quot;{span}&quot;\n  -&gt; {source_uri}')</code></pre>
-<h2>Ask follow-up questions in a multi-turn conversation</h2>
-<p>Follow-up questions depend on prior turns. After a status answer, a policyholder might ask, “Who is the adjuster assigned to it?” The word <em>it</em> is resolved from the conversation history passed in messages.</p>
-<p>Keep the conversation in the application. After each turn, append the user’s question and the assistant’s answer, then send the complete list on the next call:</p>
-<pre><code>messages = [
-    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: {&quot;text&quot;: &quot;What is the status of claim CLM-100482?&quot;}},
-    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: {&quot;text&quot;: answer}},
-    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: {&quot;text&quot;: &quot;Who is the adjuster assigned to it?&quot;}},
-]
-
-response = bedrock_agent_runtime.agentic_retrieve_stream(
-    messages=messages,
-    retrievers=[
-        {&quot;configuration&quot;: {&quot;knowledgeBase&quot;: {&quot;knowledgeBaseId&quot;: kb_id}}}
-    ],
-    agenticRetrieveConfiguration={&quot;foundationModelType&quot;: &quot;MANAGED&quot;},
-    generateResponse=True,
-)</code></pre>
-<p>The service uses earlier turns to resolve it to claim <code>CLM-100482</code> and retrieves that claim’s adjuster. Process the response stream as before.</p>
-<h2>Scope retrieval with metadata filters</h2>
-<p>Metadata filters restrict documents before semantic search. Add them under the retriever’s retrievalOverrides. Use query filters for relevance, and derive authorization filters from the authenticated session on the server.</p>
-<p>For a direct lookup by claim ID, use an equals filter:</p>
-<pre><code>retrievers = [
-    {
-        &quot;configuration&quot;: {
-            &quot;knowledgeBase&quot;: {
-                &quot;knowledgeBaseId&quot;: kb_id,
-                &quot;retrievalOverrides&quot;: {
-                    &quot;filter&quot;: {&quot;equals&quot;: {&quot;key&quot;: &quot;claim_id&quot;, &quot;value&quot;: &quot;CLM-100482&quot;}}
-                },
-            }
-        }
-    }
-]</code></pre>
-<p>For open auto claims over $10,000 filed in July 2026, combine claim type, status, amount, and date conditions with andAll:</p>
-<pre><code>claims_filter = {
-    &quot;andAll&quot;: [
-        {&quot;equals&quot;: {&quot;key&quot;: &quot;claim_type&quot;, &quot;value&quot;: &quot;auto&quot;}},
-        {&quot;equals&quot;: {&quot;key&quot;: &quot;status&quot;, &quot;value&quot;: &quot;open&quot;}},
-        {&quot;greaterThan&quot;: {&quot;key&quot;: &quot;amount&quot;, &quot;value&quot;: 10000}},
-        {&quot;greaterThanOrEquals&quot;: {&quot;key&quot;: &quot;date_filed&quot;, &quot;value&quot;: 20260701}},
-        {&quot;lessThanOrEquals&quot;: {&quot;key&quot;: &quot;date_filed&quot;, &quot;value&quot;: 20260731}},
-    ]
-}
-
-response = bedrock_agent_runtime.agentic_retrieve_stream(
-    messages=[
-        {
-            &quot;role&quot;: &quot;user&quot;,
-            &quot;content&quot;: {
-                &quot;text&quot;: &quot;Summarize the outstanding items on the open auto &quot;
-                        &quot;claims over $10,000 filed in July.&quot;
-            },
-        }
-    ],
-    retrievers=[
-        {
-            &quot;configuration&quot;: {
-                &quot;knowledgeBase&quot;: {
-                    &quot;knowledgeBaseId&quot;: kb_id,
-                    &quot;retrievalOverrides&quot;: {
-                        &quot;filter&quot;: claims_filter,
-                        &quot;maxNumberOfResults&quot;: 50,
-                    },
-                }
-            }
-        }
-    ],
-    agenticRetrieveConfiguration={&quot;foundationModelType&quot;: &quot;MANAGED&quot;},
-    generateResponse=True,
-)</code></pre>
-<p>This query can match many claims, so maxNumberOfResults is 50. A smaller limit could omit matching claims from the summary.</p>
-<p>Supported operators include equals, notEquals, numeric comparisons, in, notIn, stringContains, listContains, and logical andAll/orAll. startsWith is limited to Amazon OpenSearch Serverless vector stores. See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-metadata.html">Metadata and filtering</a> and confirm operator support.</p>
-<p>If a filter returns no documents, check for an empty result and return a clear message such as “No claims match those criteria” instead of generating an answer.</p>
-<h2>What we measured</h2>
-<p>We measured this 30-document synthetic corpus with Retrieve and RetrieveAndGenerate, not AgenticRetrieveStream. Treat the results as a baseline for the corpus and metadata schema, not an agentic retrieval benchmark.</p>
-<p>The 40-question suite includes direct lookups, comparisons, aliases, superseded records, reversed payments, and instruction-like document text. Automated foundation-model grading makes the fact-level results directional.</p>
-<p>Expected-source retrieval recall measures required documents found. Citation recall measures required documents cited. Both average per question at document level and do not measure chunk precision.</p>
-<p>The following table shows the overall results.</p>
-<p>Metric</p>
-<p>Result</p>
-<p>Questions answered</p>
-<p>40 of 40</p>
-<p>Answers carrying citations</p>
-<p>40 of 40</p>
-<p>Mean citations per answer</p>
-<p>3.9</p>
-<p>Expected-source retrieval recall</p>
-<p>90.5%</p>
-<p>Expected-source citation recall</p>
-<p>81.2%</p>
-<p>Chunks contradicting the requested filter</p>
-<p>0</p>
-<p>Source: the 40-question evaluation suite and foundation-model grader described here.</p>
-<p>On 20 adversarial questions, retrieval recall was 96.7 percent and citation recall was 90.2 percent. The model kept similarly named companies separate, preserved an allegation as an allegation, and ignored instruction-like text inside an attachment.</p>
-<p>Figure 4 compares expected-source retrieval and citation recall for the full suite and adversarial subset. These measurements use Retrieve and RetrieveAndGenerate.</p>
-<p>Figure 4: Expected-source retrieval and citation recall, full suite versus adversarial subset</p>
-<p>Narrow claim-specific questions performed best. Broad unfiltered inventory questions produced the three weakest results.</p>
-<p>Citation coverage doesn’t guarantee answer completeness, so measure completeness separately when it matters.</p>
-<p>These results use synthetic documents and automated grading. Run human review on your own corpus before exposing an assistant to policyholders.</p>
-<h2>Add security and governance</h2>
-<p>A claims assistant needs access controls and grounded responses.</p>
-<h3>Scope filters to the authenticated user</h3>
-<p>Treat metadata filters as an access boundary. Derive <code>region</code> or <code>customer_id</code> from the authenticated session, combine it with query filters using andAll, and never accept the boundary from user text. The userContext field also supports access-control filtering.</p>
-<h3>IAM permissions</h3>
-<p>Grant only the permissions needed for agentic retrieval, knowledge-base access, model streaming, and guardrail actions:</p>
-<pre><code>{
-    &quot;Version&quot;: &quot;2012-10-17&quot;,
-    &quot;Statement&quot;: [
-        {
-            &quot;Effect&quot;: &quot;Allow&quot;,
-            &quot;Action&quot;: &quot;bedrock:AgenticRetrieveStream&quot;,
-            &quot;Resource&quot;: &quot;*&quot;
-        },
-        {
-            &quot;Effect&quot;: &quot;Allow&quot;,
-            &quot;Action&quot;: [
-                &quot;bedrock:Retrieve&quot;,
-                &quot;bedrock:GetDocumentContent&quot;
-            ],
-            &quot;Resource&quot;: &quot;arn:aws:bedrock:us-west-2:111122223333:knowledge-base/*&quot;
-        },
-        {
-            &quot;Effect&quot;: &quot;Allow&quot;,
-            &quot;Action&quot;: &quot;bedrock:InvokeModelWithResponseStream&quot;,
-            &quot;Resource&quot;: &quot;*&quot;
-        },
-        {
-            &quot;Effect&quot;: &quot;Allow&quot;,
-            &quot;Action&quot;: [
-                &quot;bedrock:GetGuardrail&quot;,
-                &quot;bedrock:ApplyGuardrail&quot;
-            ],
-            &quot;Resource&quot;: &quot;*&quot;
-        }
-    ]
-}</code></pre>
-<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/logging-using-cloudtrail.html">AWS CloudTrail</a> records calls to Amazon Bedrock for auditing.</p>
-<h3>Encryption</h3>
-<p>Amazon S3 encrypts objects at rest by default. See <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/default-bucket-encryption.html">Configuring default encryption</a>. You can use customer managed AWS KMS keys for the bucket and managed vector storage. API traffic uses Transport Layer Security (TLS).</p>
-<h3>Contextual grounding with Amazon Bedrock Guardrails</h3>
-<p>Add an Amazon Bedrock Guardrails <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails-contextual-grounding-check.html">contextual grounding check</a> to block responses below configured grounding or relevance thresholds:</p>
-<ul><li>Grounding: Consistency with retrieved claim documents.</li><li>Relevance: Alignment with the user’s question.</li></ul>
-<p>Create a guardrail with the bedrock client. See <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_CreateGuardrail.html">CreateGuardrail</a> for all policy types, and choose a high grounding threshold for claims:</p>
-<pre><code>bedrock = boto3.client(&quot;bedrock&quot;, region_name=&quot;us-west-2&quot;)
-
-guardrail = bedrock.create_guardrail(
-    name=&quot;claims-assistant-guardrail&quot;,
-    description=&quot;Contextual grounding for the claims assistant&quot;,
-    contextualGroundingPolicyConfig={
-        &quot;filtersConfig&quot;: [
-            {&quot;type&quot;: &quot;GROUNDING&quot;, &quot;threshold&quot;: 0.85},
-            {&quot;type&quot;: &quot;RELEVANCE&quot;, &quot;threshold&quot;: 0.75},
-        ]
-    },
-    blockedInputMessaging=&quot;I can't help with that request.&quot;,
-    blockedOutputsMessaging=&quot;I can only answer questions using the claim records.&quot;,
-)
-guardrail_id = guardrail[&quot;guardrailId&quot;]
-guardrail_version = bedrock.create_guardrail_version(
-    guardrailIdentifier=guardrail_id
-)[&quot;version&quot;]</code></pre>
-<p>Higher thresholds block more responses. In claims workflows, declining to answer is safer than generating unsupported content. Pass the guardrail ID and version in policyConfiguration:</p>
-<pre><code>response = bedrock_agent_runtime.agentic_retrieve_stream(
-    messages=[
-        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: {&quot;text&quot;: &quot;What is the status of claim CLM-100482?&quot;}}
-    ],
-    retrievers=[
-        {&quot;configuration&quot;: {&quot;knowledgeBase&quot;: {&quot;knowledgeBaseId&quot;: kb_id}}}
-    ],
-    agenticRetrieveConfiguration={&quot;foundationModelType&quot;: &quot;MANAGED&quot;},
-    policyConfiguration={
-        &quot;bedrockGuardrailConfiguration&quot;: {
-            &quot;guardrailId&quot;: guardrail_id,
-            &quot;guardrailVersion&quot;: guardrail_version,
-        }
-    },
-    generateResponse=True,
-)</code></pre>
-<p>Agentic retrieval supports the BLOCK action. A failed grounding check blocks the response, and trace events record the intervention.</p>
-<p>Keep a person in the loop to review cited evidence and make the final claim decision.</p>
-<h2>Clean up</h2>
-<p>Delete the resources when finished to avoid future charges:</p>
-<ul><li>Delete the knowledge base. This also removes the managed vector storage:  <code>bedrock_agent.delete_knowledge_base(knowledgeBaseId=kb_id)</code></li><li>Delete the guardrail:  <code>bedrock.delete_guardrail(guardrailIdentifier=guardrail_id)</code></li><li>Empty and delete the S3 bucket.</li><li>Delete the knowledge-base IAM role and policy.</li></ul>
-<h2>Conclusion</h2>
-<p>You built a claims assistant with Amazon Bedrock Knowledge Bases and synthetic documents in Amazon S3.</p>
-<p><code>AgenticRetrieveStream</code> handles multi-part questions, conversation history, metadata filters, grounding checks, streamed answers, and citations.</p>
-<p>The same pattern applies to underwriting and policy-service documents. Learn more in <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Knowledge Bases</a> and <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/kb-test-agentic-retrieve.html">Use agentic retrieval to query a knowledge base</a>.</p>
 <h2>About the authors</h2>]]></content:encoded>
     </item>
   </channel>

@@ -1,5 +1,5 @@
 {
-  "count": 29,
+  "count": 34,
   "fields": [
     "date",
     "kind",
@@ -10,6 +10,51 @@
     "url"
   ],
   "items": [
+    [
+      "2026-10-17",
+      "quota",
+      "xai_grok",
+      "xAI Grok",
+      "额度变化 · xAI Grok：新增最新旗舰模型 grok-4.7 及 grok-build-0.1，API 全线模型依然需充值使用，无免费层",
+      "free_models：**API 无免费模型层**：`grok-4.6`（编码模型 Grok Build）、grok-4.5、grok-4.3、grok-4.20 系列（reasoning / non-reasoning / multi-agent，上下文最高 1M）均需充值；旧 `grok-2`/`grok-beta` 已退役 → **API 无免费模型层**：最新旗舰 `grok-4.7`（支持 Grok Build 智能体编码）、`grok-build-0.1`、`grok-4.6`、`grok-4.5`、`grok-4.3`、`grok-4.20` 系列（上下文最高 1M）均按 Token 计费需充值；旧 `grok-2`/`grok-b…",
+      "https://github.com/rockbenben/free-llm-intel#26-xai-grok"
+    ],
+    [
+      "2026-10-17",
+      "quota",
+      "deepseek",
+      "DeepSeek",
+      "额度变化 · DeepSeek：新增网页搜索与抓取（Search & Fetch）API 定价，并上线 Claude Code 与 Codex 网页搜索两周限时免费活动",
+      "promotions：实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲时段半价）：deepseek-flash 输出 8.0（高峰）/4.0（空闲），缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5，缓存命中 0.30/0.15。 → 实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲时段半价）：deepseek-flash 输出 8.0（高峰）/4.0（空闲），缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5，缓存命中 0.30/0.15。**限时活…",
+      "https://github.com/rockbenben/free-llm-intel#1-deepseek-深度求索"
+    ],
+    [
+      "2026-10-17",
+      "quota",
+      "huggingface",
+      "Hugging Face",
+      "额度变化 · Hugging Face：Hugging Face 取消了免费用户每月 $0.10 的 Inference Providers 免费额度，免费用户需充值或升级 PRO 才能使用 API。",
+      "free_quota：Inference Providers 免费用户**每月 $0.10** 额度（官方定价文档原文，标注 “subject to change”），注册生成 Access Token 即可、免信用卡；PRO 会员 **$9/月**含每月 **$2** 通用推理额度 → 免费用户**无免费额度**（已取消原每月 $0.10 免费试用额度），需购买额度或升级为 PRO 用户；PRO 会员 **$9/月**含每月 **$2** 通用推理额度\nvalidity：免费额度**按月发放** → PRO 会员额度**按月发放**；免费用户无额度\nfree_models：经 18 家 provider（Cerebras/Together/Fireworks/Groq/Novita 等）路由的开源模型：`openai/gpt-oss-120b`、`deepseek-ai/DeepSeek-V3/R1`、`FLUX.1-dev` 等 —— 共享免费用户 **$0.10/月** 额度（原 … → 无免费模型 —— 官方已取消 Free Users 的每月免费额度，调用 Inference Providers 需充值或开通 PRO\ntier_caveats：免费用户每月仅 **$0.10** 推理额度（官方标注 “subject to change”），只够极低频测试，不是长期主力额度、原 Serverless 社区免费集群 2025 年 7 月起已改为 hf-inference provider 且主要提供 CPU 推理；PRO $9/月也只含 $2 额度 → 官方已正式取消免费用户的每月 $0.10 额度，未付费免费账号无法免费调用 Inference Providers API、PRO 用户每月含 $2 通用额度，可用于 Inference Providers、Inference Endpoints、Spaces 硬件等",
+      "https://github.com/rockbenben/free-llm-intel#29-hugging-face-inference-providers"
+    ],
+    [
+      "2026-10-17",
+      "quota",
+      "openrouter",
+      "OpenRouter",
+      "额度变化 · OpenRouter：官方定价 FAQ 明确免费模型数量为 25+ 款（4 家供应商），并补充失败请求同样计入每日额度上限、账户负余额会阻断免费模型调用等规则。",
+      "free_models：**`:free` 后缀模型**（实时目录约 16 个）—— **限速 20 RPM**；每日请求上限 **50 次**（累计购买不足 10 credits）或 **1,000 次**（购满 10 credits），官方 limits 文档常量 FREE_MODEL_RATE_LIMIT_RPM=20 / FREE_… → **`:free` 后缀模型**（官方标称 25+ 款免费模型，4 家免费提供商）—— **限速 20 RPM**；每日请求上限 **50 次**（未购满 $10）或 **1,000 次**（账户累计购买至少 $10 credits），失败请求同样计入每日上限、当前 :free 实例：`google/gemma-4-…\ntier_caveats：**只有带 `:free` 后缀的模型免费**，同名付费模型照常扣费；免费实例约 16 个且随上游厂商变动（旧 llama-3.3-70b / gemma-2 / deepseek-r1 等 :free ID 已下架）、限速 20 RPM；每日 50 次（累计充值不足 $10）或 1,000 次（购满 $10 cre… → **只有带 `:free` 后缀的模型免费**，同名付费模型照常扣费；官方提供 25+ 款免费模型，随上游变动、限速 20 RPM；每日 50 次（未购满 $10）或 1,000 次（购满 $10 credits 后），**失败请求同样计入每日上限**、若账户存在负余额（negative balance），将封锁免费…",
+      "https://github.com/rockbenben/free-llm-intel#30-openrouter-模型统一网关"
+    ],
+    [
+      "2026-10-17",
+      "quota",
+      "fireworks_ai",
+      "Fireworks AI",
+      "额度变化 · Fireworks AI：Muse Glimmer 30B SFT 限时免费微调活动的截止日期从 10/31 延长至 11/30。",
+      "free_quota：官方已下线新号 $1 免费额度表述，全面转向预付费充值（需绑定支付方式购买点数）；当前仅存限时免费项目：Muse Glimmer 30B SFT 微调截至 10/31 完全免费且免绑定信用卡 → 官方已下线新号 $1 免费额度表述，全面转向预付费充值（需绑定支付方式购买点数）；当前仅存限时免费项目：Muse Glimmer 30B SFT 微调截至 11/30 完全免费且免绑定信用卡\nvalidity：限时活动至 10/31 截止 → 限时活动至 11/30 截止\nfree_models：`Muse Glimmer 30B` —— SFT 监督微调限时免费，支持 UI 与 Serverless Training API（至 10/31 截止，无需信用卡） → `Muse Glimmer 30B` —— SFT 监督微调限时免费，支持 UI 与 Serverless Training API（至 11/30 截止，无需信用卡）\ntier_caveats：原新用户 $1 试用额度已取消，常规 Serverless 推理需添加支付方式充值购买积分（pre-paid）后方可调用、免费微调活动仅限 Muse Glimmer 30B SFT，且截至 10/31 → 原新用户 $1 试用额度已取消，常规 Serverless 推理需添加支付方式充值购买积分（pre-paid）后方可调用、免费微调活动仅限 Muse Glimmer 30B SFT，且截至 11/30\npromotions：Muse Glimmer 30B SFT 限时免费（至 10/31，免信用卡）；Batch 批处理推理按 Serverless 定价的 5 折计费（50% of serverless pricing）。 → Muse Glimmer 30B SFT 限时免费（至 11/30，免信用卡）；Batch 批处理推理按 Serverless 定价的 5 折计费（50% of serverless pricing）。",
+      "https://github.com/rockbenben/free-llm-intel#37-fireworks-ai"
+    ],
     [
       "2026-10-14",
       "quota",

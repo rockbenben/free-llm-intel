@@ -1,6 +1,6 @@
 # OpenRouter (模型统一网关) 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-15**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-17**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：OpenRouter (模型统一网关)（`openrouter`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -23,7 +23,7 @@
 12. [提示词或模型变更后如何做 AI 智能体回归测试](https://openrouter.ai/blog/tutorials/ai-agent-regression-testing-after-a-prompt-or-model-change/)（2026-09-30） <!--orig:AI Agent Regression Testing After a Prompt or Model Change-->
 13. [用生产流量构建金标准评测数据集](https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/)（2026-09-30） <!--orig:Building a Golden Eval Dataset from Production Traffic-->
 14. [如何测试 AI 智能体的工具调用准确率](https://openrouter.ai/blog/tutorials/how-to-test-tool-calling-accuracy-in-ai-agents/)（2026-09-30） <!--orig:How to Test Tool-Calling Accuracy in AI Agents-->
-15. [图生视频 AI 模型对比：成本、分辨率与控制力](https://openrouter.ai/blog/insights/image-to-video-models-compared/)（2026-09-29） <!--orig:Image-to-Video AI Models Compared: Cost, Resolution, and Control-->
+15. [图生视频 AI 模型对比：成本、分辨率与控制力](https://openrouter.ai/blog/insights/image-to-video-models-compared/)（2026-09-29） <!--orig:Best Image-to-Video AI Models in 2026: Cost, Resolution, and Control-->
 16. [用全新 Security Center 管理你的 API key 并降低风险](https://openrouter.ai/blog/announcements/security-center/)（2026-09-28） <!--orig:Manage and de-risk your API keys with new Security Center-->
 17. [Qwen 3.8 是什么](https://openrouter.ai/blog/insights/qwen-3-8)（2026-09-28） <!--orig:What Is Qwen 3.8-->
 18. [Seedance 是开源的吗？权重、许可证与调用方式](https://openrouter.ai/blog/insights/seedance-2-5-open-source/)（2026-09-25） <!--orig:Is Seedance Open Source? Weights, License, and How to Call It-->
@@ -48,7 +48,7 @@
 37. [如何使用 OpenRouter 预设：配置即代码指南](https://openrouter.ai/blog/tutorials/presets/)（2026-09-10） <!--orig:How to Use OpenRouter Presets: Config-as-Code Guide-->
 38. [Nano Banana API：在代码中使用 Gemini 编辑图像](https://openrouter.ai/blog/tutorials/nano-banana/)（2026-09-09） <!--orig:Nano Banana API: Edit Images with Gemini in Code-->
 39. [Seedance 2.5 评测：它最擅长什么、何时使用](https://openrouter.ai/blog/insights/seedance-2-5-review/)（2026-09-09） <!--orig:Seedance 2.5 Review: What It's Best At and When to Use It-->
-40. [In-Region Routing：让你的数据留在美国或欧盟](https://openrouter.ai/blog/announcements/us-in-region-routing/)（2026-09-09） <!--orig:In-Region Routing: Keep your data in the US or EU-->
+40. [In-Region Routing：让你的数据留在美国或欧盟](https://openrouter.ai/blog/announcements/us-in-region-routing/)（2026-09-09） <!--orig:In-Region Routing: Route inference in the US or EU-->
 41. [给任意模型配上终端和文件](https://openrouter.ai/blog/announcements/shell-tool/)（2026-09-08） <!--orig:Give any model a terminal and files-->
 42. [如何在编辑器里实时选择最佳 AI 模型](https://openrouter.ai/blog/tutorials/choose-best-ai-model/)（2026-08-25） <!--orig:How to Choose the Best AI Model (Live, in Your Editor)-->
 43. [GPT 5.6 折扣与杰文斯悖论](https://openrouter.ai/blog/insights/gpt-5-6-discounts-jevons-paradox/)（2026-08-25） <!--orig:GPT 5.6 Discounts & Jevons Paradox-->

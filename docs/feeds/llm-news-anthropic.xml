@@ -7,7 +7,14 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 16 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>How an Anthropic Japan BDR runs his day with a fleet of Clau…</title>
+      <link>https://claude.com/resources/articles/how-an-anthropic-japan-business-development-representative-runs-his-day</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/how-an-anthropic-japan-business-development-representative-runs-his-day</guid>
+      <pubDate>Fri, 16 Oct 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：How an Anthropic Japan BDR runs his day with a fleet of Claude agents</description>
+    </item>
     <item>
       <title>Code Review 现已正式可用</title>
       <link>https://claude.com/resources/articles/code-review-is-now-generally-available</link>
@@ -343,6 +350,79 @@
 <p>如果你想订阅我们每月的 developer 通讯，请提供你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
+      <title>推出 Claude Haiku 5.5</title>
+      <link>https://www.anthropic.com/claude-haiku-5-5</link>
+      <guid isPermaLink="true">https://www.anthropic.com/claude-haiku-5-5</guid>
+      <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Claude Haiku 5.5</description>
+      <content:encoded><![CDATA[<p>October 7, 2026</p>
+<h1>Claude Haiku 5.5</h1>
+<p>推出 Claude Haiku 5.5：这是我们迄今发布的最小尺寸模型里最便宜、最快、能力最强的一款。</p>
+<p>Claude Haiku 5.5 为大批量、成本敏感的任务而设计。它能可靠地处理快速且重复的工作负载（比如摘要、压缩、数据库查询和分类请求）。在编码工作中，它作为 subagent 与 Opus 5.5、Sonnet 5.5 搭配使用很合适。而且，由于它也是我们迄今最快的模型，对于实时客服、浏览器操作这类对速度敏感的任务尤其好用。¹</p>
+<p>Haiku 5.5 的定价比 Haiku 4.5 低得多。平均下来，运行成本现在大约便宜 75%。²</p>
+<p>伴随这次发布，我们也在提升整个模型档位的性价比。我们把 Claude Sonnet 5.5 的缓存读取价格下调一半，这意味着 Sonnet 5.5 在大多数 agentic 任务上现在大约便宜 20%。同时，我们为 Claude Max 和 Team 订阅用户推出一项新的每月 API 额度，用来支持用户构建运行在 Claude Platform 上的新 agent 与应用。</p>
+<h2>性能</h2>
+<p>以下是 Claude Haiku 5.5 在一系列 benchmark 上的表现：</p>
+<table><thead><tr><th></th><th>Haiku 5.5</th><th>Haiku 4.5</th><th>GPT-6 Luna</th><th></th><th>Sonnet 5.5供参考</th></tr></thead><tbody><tr><td>知识工作GDPval-AA v2.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作GDPval-AA v2.1</td><td>1620</td><td>735</td><td>1437</td><td></td><td>1840</td></tr><tr><td>知识工作AA-Briefcase v1.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作AA-Briefcase v1.1</td><td>1578</td><td>614</td><td>1336</td><td></td><td>1824</td></tr><tr><td>计算机操作OSWorld 2.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>计算机操作OSWorld 2.1</td><td>72.4%离线子集</td><td>15.7%离线子集</td><td>48.9%离线子集</td><td></td><td>83.9%离线子集</td></tr><tr><td>多学科推理Humanity’s Last Exam</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>多学科推理Humanity’s Last Exam</td><td>45.9%无工具</td><td>10.2%无工具</td><td>—</td><td></td><td>56.9%无工具</td></tr><tr><td>57.4%有工具</td><td>18.7%有工具</td><td>—</td><td></td><td>64.5%有工具</td><td></td></tr><tr><td>Agentic 编码Terminal-Bench 4.0</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic 编码Terminal-Bench 4.0</td><td>39.2%</td><td>0.0%</td><td>16.4%</td><td></td><td>70.6%</td></tr><tr><td>Agentic 编码FrontierCode 1.1 (Main)</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic 编码FrontierCode 1.1 (Main)</td><td>46.4%</td><td>—</td><td>42.4%</td><td></td><td>52.1%Xhigh</td></tr><tr><td>视觉推理Chartography</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>视觉推理Chartography</td><td>46.4%无工具</td><td>6.4%无工具</td><td>29.1%无工具</td><td></td><td>61.6%无工具</td></tr></tbody></table>
+<p>关于我们如何运行评测，参见 <a href="https://www.anthropic.com/claude-haiku-5-5-system-card">Haiku 5.5 System Card</a>。</p>
+<p>Haiku 5.5 是我们第一个带可调 effort 档位的 Haiku 级模型。也就是说，和其他模型一样，用户可以自己决定是偏向成本还是偏向智能。下面几张图展示 Haiku 5.5 在每个 effort 档位上三项 benchmark 的表现：</p>
+<p>计算机操作：OSWorld知识工作：GDPval-AA多学科推理：Humanity’s Last Exam</p>
+<p>OSWorld 2.1（离线子集）准确率 vs. 成本</p>
+<p>OSWorld 2.1 衡量 agent 在真实计算机上完成冗长、多步骤任务的能力。</p>
+<p>GDPval-AA v2.1准确率 vs. 成本</p>
+<p>Artificial Analysis 的 GDPval-AA v2.1 在 44 种真实职业的专业工作上评测 agent。</p>
+<p>Humanity’s Last Exam（无工具）准确率 vs. 成本</p>
+<p>Humanity’s Last Exam（HLE）考察专家级的学术知识与推理能力。</p>
+<p>在早期测试中，我们的客户反馈的结果与上面展示的性能和成本提升一致。以下是他们对我们说起的新模型评价：</p>
+<p>AsanaHubSpotAlphaSenseBoxRogoCognition</p>
+<p>Quote</p>
+<blockquote>“我们对 Claude Haiku 5.5 印象非常深刻，尤其是它的速度。我们把它跑了一遍 AI Teammates（我们的 AI agent 产品）的评测套件，覆盖分诊 bug、搭建项目，以及检索大型项目组合以找出高风险或逾期工作这类用例。与我们现在用的模型相比，任务完成的延迟降低了 30% 以上，每个 agent turn 的推理快达 2.5 倍。体验上明显更利落。”</blockquote>
+<p>公司Asana</p>
+<p>作者Aaron Vinh, Staff Software Engineer</p>
+<p>Quote</p>
+<blockquote>“在 HubSpot，我们用模拟门户来评测新模型在 CRM 任务上的表现，比如对 deals 做报表。我们主要测试更小、更高效的模型，而 Claude Haiku 5.5 拿到了我们在这套套件上见过的最高分，三次运行平均 92.8%。其中一项 CRM 审计任务要求模型识别出陈旧但表述含糊的记录。在我们测过的所有模型里，Haiku 5.5 完成任务最快，命中率最高，误报率最低。”</blockquote>
+<p>公司HubSpot</p>
+<p>作者Ze’ev Klapow, Distinguished Software Engineer</p>
+<p>Quote</p>
+<blockquote>“Ask in Document 是我们的主要开销来源之一，生产环境每周大约 800 万次调用。它在一篇或几篇文档之上回答非常具体的问题。我们跑了 400 条查询，Claude Haiku 5.5 相对 Haiku 4.5 是统计显著的改进：0.84 对 0.76。”</blockquote>
+<p>公司AlphaSense</p>
+<p>作者Daniel Campos, Distinguished Engineer</p>
+<p>Quote</p>
+<blockquote>“我们的客户在海量企业内容上使用 Box AI。使用面广，就意味着要管理效率和成本，要找到最适合当前任务的模型。早期测试中，Claude Haiku 5.5 的得分比 Haiku 4.5 高 11 分，延迟只有大约一半。我们会把它用在规模化运行的分析型工作上，从成本报表到财务摘要，再到每周例行复盘。”</blockquote>
+<p>公司Box</p>
+<p>作者Yashodha Bhavnani, VP of AI Products</p>
+<p>Quote</p>
+<blockquote>“短小、大批量的工作正是 Claude Haiku 5.5 适合我们的位置，比如快速查检、subagent 和摘要。当一个大模型在做 deck 时，一个 Haiku 5.5 的 subagent 会钻进 10-K 里，把 deck 需要的那行分部营收取出来。它的准确度让我们敢在这个位置信任它，而它足够快、足够便宜，我们可以大量地跑。”</blockquote>
+<p>公司Rogo</p>
+<p>作者Alex Wang, Applied AI</p>
+<p>Quote</p>
+<blockquote>“Claude Haiku 5.5 加入 Devin Fusion 的 sidekick 阵容，是一个很出色的选择。用 Haiku 5.5 做 sidekick 时，Fusion 保持了一流的 FrontierCode 得分 66.2，同时压低了成本和延迟。你现在就可以在 Devin CLI 里试，搭配 Opus 5.5 作为 lead。”</blockquote>
+<p>公司Cognition</p>
+<p>作者Walden Yan, Co-Founder &amp; CPO</p>
+<h2>定价</h2>
+<p>下表展示 Claude Haiku 5.5 的定价与我们其他模型的对比。当任务的 prompt 在 100,000 tokens 以内时，Haiku 5.5 尤其划算——这类请求占我们上一代 Haiku 模型大约 90%。</p>
+<table><thead><tr><th>每 100 万 tokens 价格</th><th><strong>Haiku 5.5</strong> prompt 100k 以内 / 以上</th><th><strong>Haiku 4.5</strong></th><th><strong>Sonnet 5.5</strong></th></tr></thead><tbody><tr><td>缓存读取</td><td>$0.01 / $0.05</td><td>$0.10</td><td>$0.10</td></tr><tr><td>缓存写入</td><td>$0.125 / $0.625</td><td>$1.25</td><td>$2.50</td></tr><tr><td>输入 tokens</td><td>$0.10 / $0.50</td><td>$1.00</td><td>$2.00</td></tr><tr><td>输出 tokens</td><td>$0.50 / $2.50</td><td>$5.00</td><td>$10.00</td></tr></tbody></table>
+<h2>安全性</h2>
+<p><strong>对齐。</strong> 相对 Haiku 4.5，Claude Haiku 5.5 在我们几乎全部对齐评测上都有明显改进。具体而言，我们发现的失准行为实例少得多，配合滥用的意愿也更低。该模型的 <a href="https://www.anthropic.com/claude-haiku-5-5-system-card">system card</a> 更详细地说明了我们的评测过程与结果。</p>
+<p><strong>防护栏。</strong> 与其能力相称，Haiku 5.5 的网络安全防护栏比 Haiku 4.5 更严格，但比我们施加给其他近期模型的略宽松一些。在网络安全方面，它允许的防御性任务范围比 Sonnet 5.5 的防护栏更宽，但仍然会拦截渗透测试及其他更可能被攻击者使用的技术。</p>
+<p>Haiku 5.5 的生物学防护栏与 Sonnet 5、Sonnet 5.5、Opus 5 相同：允许研究性的生物学问题，但会限制我们判断为可能造成伤害的请求。从事范围更广的生物学与网络安全活动的机构，可以申请加入我们的 <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a> 和 <a href="https://www.anthropic.com/news/cyber-verification-program">Cyber Verification Program</a>。</p>
+<h2>可用性</h2>
+<p>Claude Haiku 5.5 现已在所有平台上线，包括 Amazon Web Services、Google Cloud 和 Microsoft Azure。在 Claude Platform 上，开发者可以用 <code>claude-haiku-5-5</code> 开始使用。</p>
+<p>详情见我们的<a href="https://platform.claude.com/docs/en/models/haiku-5-5/migration-guide">迁移指南</a>。</p>
+<h2>其他更新</h2>
+<p>随着 Claude Haiku 5.5 的新定价，我们还在进一步改进模型与产品的性价比。</p>
+<p>第一，从今天起，我们<strong>下调 Claude Sonnet 5.5 的缓存读取价格</strong>。缓存读取现在便宜 50%：每百万 tokens $0.10，而非 $0.20。由于缓存读取在模型的 token 消耗中占比很大，这把 Sonnet 5.5 在多数 agentic 任务上的成本降低了约 20%。</p>
+<p>举例来说，下面是这次降价对 Sonnet 5.5 在 Terminal-Bench 4.0 上「性能相对成本」的影响：</p>
+<p>Terminal-Bench 4.0准确率 vs. 成本</p>
+<p>Terminal-Bench 4.0 衡量模型在命令行界面中完成复杂、多步骤专业任务的能力。</p>
+<p>这张图说明了 Haiku 5.5 与我们更大模型之间的一个重要差别。对于 Terminal-Bench 4.0 所衡量的那类复杂 agentic 编码任务，Sonnet 5.5 和 Opus 5.5 仍是更好的选择。相比之下，Haiku 5.5 最适合范围更窄的任务——那些在旧版 Claude 上会因成本过高而做不起的活儿，比如压缩、摘要，或 subagent 工作。</p>
+<p>第二，本周我们会向<strong>所有 Max 和 Team 订阅用户发放一项新的每月 API 额度，可用于 Claude Platform</strong>。Max 5x 用户每月获得 $100 额度，Max 20x 用户获得 $200，Team 订阅用户最多可获得 $500，在其成员之间共享。这些额度的设计目的，是让我们的用户能够试用自己的点子，构建调用我们 API 的工具、应用与 agent。它们可以用在我们的任何模型上。更多信息<a href="https://support.claude.com/en/articles/17154008">见我们的 Help Center 文章</a>。</p>
+<p>对于开发者，我们还在<strong>更新 Claude 的 Python 和 TypeScript SDK，加入 beta 阶段的 computer use 与 browser use 支持</strong>。鉴于 Haiku 5.5 在速度、能力与价格上的组合，它特别适合这类任务。你可以<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/browser-use-sdk">在我们的 Claude Platform 文档</a>中了解更多。</p>
+<h2>脚注</h2>
+<p>1 Claude Haiku 5.5 是我们迄今最快的模型（按各模型的标准速度比较），不过在 Fast Mode 下它不如 Opus 系列模型快。</p>
+<p>2 Claude Haiku 5.5 相对 Claude Haiku 4.5，在 100,000 tokens 以内的请求上定价低 90%，在超过 100,000 tokens 的请求上低 50%。在 Haiku 4.5 上，90% 的请求属于前者。这项计算还考虑了 Haiku 4.5 与 Haiku 5.5 在完成同一件工作时所用 token 数的变化：Haiku 5.5 使用了更新过的 tokenizer（与 Sonnet 5.5、Opus 5.5 相同），这意味着它每项任务用的 tokens 略多。</p>]]></content:encoded>
+    </item>
+    <item>
       <title>Claude 现已支持 Google Docs、Sheets 和 Slides</title>
       <link>https://claude.com/resources/articles/claude-now-works-in-google-docs-sheets-and-slides</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-now-works-in-google-docs-sheets-and-slides</guid>
@@ -445,79 +525,6 @@
 <h3>订阅 developer 通讯</h3>
 <p>产品更新、操作指南、社区聚焦等等，每月送达你的收件箱。</p>
 <p>如果你想订阅我们每月的 developer 通讯，请提供你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>推出 Claude Haiku 5.5</title>
-      <link>https://www.anthropic.com/claude-haiku-5-5</link>
-      <guid isPermaLink="true">https://www.anthropic.com/claude-haiku-5-5</guid>
-      <pubDate>Tue, 06 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing Claude Haiku 5.5</description>
-      <content:encoded><![CDATA[<p>October 7, 2026</p>
-<h1>Claude Haiku 5.5</h1>
-<p>推出 Claude Haiku 5.5：这是我们迄今发布的最小尺寸模型里最便宜、最快、能力最强的一款。</p>
-<p>Claude Haiku 5.5 为大批量、成本敏感的任务而设计。它能可靠地处理快速且重复的工作负载（比如摘要、压缩、数据库查询和分类请求）。在编码工作中，它作为 subagent 与 Opus 5.5、Sonnet 5.5 搭配使用很合适。而且，由于它也是我们迄今最快的模型，对于实时客服、浏览器操作这类对速度敏感的任务尤其好用。¹</p>
-<p>Haiku 5.5 的定价比 Haiku 4.5 低得多。平均下来，运行成本现在大约便宜 75%。²</p>
-<p>伴随这次发布，我们也在提升整个模型档位的性价比。我们把 Claude Sonnet 5.5 的缓存读取价格下调一半，这意味着 Sonnet 5.5 在大多数 agentic 任务上现在大约便宜 20%。同时，我们为 Claude Max 和 Team 订阅用户推出一项新的每月 API 额度，用来支持用户构建运行在 Claude Platform 上的新 agent 与应用。</p>
-<h2>性能</h2>
-<p>以下是 Claude Haiku 5.5 在一系列 benchmark 上的表现：</p>
-<table><thead><tr><th></th><th>Haiku 5.5</th><th>Haiku 4.5</th><th>GPT-6 Luna</th><th></th><th>Sonnet 5.5供参考</th></tr></thead><tbody><tr><td>知识工作GDPval-AA v2.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作GDPval-AA v2.1</td><td>1620</td><td>735</td><td>1437</td><td></td><td>1840</td></tr><tr><td>知识工作AA-Briefcase v1.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作AA-Briefcase v1.1</td><td>1578</td><td>614</td><td>1336</td><td></td><td>1824</td></tr><tr><td>计算机操作OSWorld 2.1</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>计算机操作OSWorld 2.1</td><td>72.4%离线子集</td><td>15.7%离线子集</td><td>48.9%离线子集</td><td></td><td>83.9%离线子集</td></tr><tr><td>多学科推理Humanity’s Last Exam</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>多学科推理Humanity’s Last Exam</td><td>45.9%无工具</td><td>10.2%无工具</td><td>—</td><td></td><td>56.9%无工具</td></tr><tr><td>57.4%有工具</td><td>18.7%有工具</td><td>—</td><td></td><td>64.5%有工具</td><td></td></tr><tr><td>Agentic 编码Terminal-Bench 4.0</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic 编码Terminal-Bench 4.0</td><td>39.2%</td><td>0.0%</td><td>16.4%</td><td></td><td>70.6%</td></tr><tr><td>Agentic 编码FrontierCode 1.1 (Main)</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>Agentic 编码FrontierCode 1.1 (Main)</td><td>46.4%</td><td>—</td><td>42.4%</td><td></td><td>52.1%Xhigh</td></tr><tr><td>视觉推理Chartography</td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>视觉推理Chartography</td><td>46.4%无工具</td><td>6.4%无工具</td><td>29.1%无工具</td><td></td><td>61.6%无工具</td></tr></tbody></table>
-<p>关于我们如何运行评测，参见 <a href="https://www.anthropic.com/claude-haiku-5-5-system-card">Haiku 5.5 System Card</a>。</p>
-<p>Haiku 5.5 是我们第一个带可调 effort 档位的 Haiku 级模型。也就是说，和其他模型一样，用户可以自己决定是偏向成本还是偏向智能。下面几张图展示 Haiku 5.5 在每个 effort 档位上三项 benchmark 的表现：</p>
-<p>计算机操作：OSWorld知识工作：GDPval-AA多学科推理：Humanity’s Last Exam</p>
-<p>OSWorld 2.1（离线子集）准确率 vs. 成本</p>
-<p>OSWorld 2.1 衡量 agent 在真实计算机上完成冗长、多步骤任务的能力。</p>
-<p>GDPval-AA v2.1准确率 vs. 成本</p>
-<p>Artificial Analysis 的 GDPval-AA v2.1 在 44 种真实职业的专业工作上评测 agent。</p>
-<p>Humanity’s Last Exam（无工具）准确率 vs. 成本</p>
-<p>Humanity’s Last Exam（HLE）考察专家级的学术知识与推理能力。</p>
-<p>在早期测试中，我们的客户反馈的结果与上面展示的性能和成本提升一致。以下是他们对我们说起的新模型评价：</p>
-<p>AsanaHubSpotAlphaSenseBoxRogoCognition</p>
-<p>Quote</p>
-<blockquote>“我们对 Claude Haiku 5.5 印象非常深刻，尤其是它的速度。我们把它跑了一遍 AI Teammates（我们的 AI agent 产品）的评测套件，覆盖分诊 bug、搭建项目，以及检索大型项目组合以找出高风险或逾期工作这类用例。与我们现在用的模型相比，任务完成的延迟降低了 30% 以上，每个 agent turn 的推理快达 2.5 倍。体验上明显更利落。”</blockquote>
-<p>公司Asana</p>
-<p>作者Aaron Vinh, Staff Software Engineer</p>
-<p>Quote</p>
-<blockquote>“在 HubSpot，我们用模拟门户来评测新模型在 CRM 任务上的表现，比如对 deals 做报表。我们主要测试更小、更高效的模型，而 Claude Haiku 5.5 拿到了我们在这套套件上见过的最高分，三次运行平均 92.8%。其中一项 CRM 审计任务要求模型识别出陈旧但表述含糊的记录。在我们测过的所有模型里，Haiku 5.5 完成任务最快，命中率最高，误报率最低。”</blockquote>
-<p>公司HubSpot</p>
-<p>作者Ze’ev Klapow, Distinguished Software Engineer</p>
-<p>Quote</p>
-<blockquote>“Ask in Document 是我们的主要开销来源之一，生产环境每周大约 800 万次调用。它在一篇或几篇文档之上回答非常具体的问题。我们跑了 400 条查询，Claude Haiku 5.5 相对 Haiku 4.5 是统计显著的改进：0.84 对 0.76。”</blockquote>
-<p>公司AlphaSense</p>
-<p>作者Daniel Campos, Distinguished Engineer</p>
-<p>Quote</p>
-<blockquote>“我们的客户在海量企业内容上使用 Box AI。使用面广，就意味着要管理效率和成本，要找到最适合当前任务的模型。早期测试中，Claude Haiku 5.5 的得分比 Haiku 4.5 高 11 分，延迟只有大约一半。我们会把它用在规模化运行的分析型工作上，从成本报表到财务摘要，再到每周例行复盘。”</blockquote>
-<p>公司Box</p>
-<p>作者Yashodha Bhavnani, VP of AI Products</p>
-<p>Quote</p>
-<blockquote>“短小、大批量的工作正是 Claude Haiku 5.5 适合我们的位置，比如快速查检、subagent 和摘要。当一个大模型在做 deck 时，一个 Haiku 5.5 的 subagent 会钻进 10-K 里，把 deck 需要的那行分部营收取出来。它的准确度让我们敢在这个位置信任它，而它足够快、足够便宜，我们可以大量地跑。”</blockquote>
-<p>公司Rogo</p>
-<p>作者Alex Wang, Applied AI</p>
-<p>Quote</p>
-<blockquote>“Claude Haiku 5.5 加入 Devin Fusion 的 sidekick 阵容，是一个很出色的选择。用 Haiku 5.5 做 sidekick 时，Fusion 保持了一流的 FrontierCode 得分 66.2，同时压低了成本和延迟。你现在就可以在 Devin CLI 里试，搭配 Opus 5.5 作为 lead。”</blockquote>
-<p>公司Cognition</p>
-<p>作者Walden Yan, Co-Founder &amp; CPO</p>
-<h2>定价</h2>
-<p>下表展示 Claude Haiku 5.5 的定价与我们其他模型的对比。当任务的 prompt 在 100,000 tokens 以内时，Haiku 5.5 尤其划算——这类请求占我们上一代 Haiku 模型大约 90%。</p>
-<table><thead><tr><th>每 100 万 tokens 价格</th><th><strong>Haiku 5.5</strong> prompt 100k 以内 / 以上</th><th><strong>Haiku 4.5</strong></th><th><strong>Sonnet 5.5</strong></th></tr></thead><tbody><tr><td>缓存读取</td><td>$0.01 / $0.05</td><td>$0.10</td><td>$0.10</td></tr><tr><td>缓存写入</td><td>$0.125 / $0.625</td><td>$1.25</td><td>$2.50</td></tr><tr><td>输入 tokens</td><td>$0.10 / $0.50</td><td>$1.00</td><td>$2.00</td></tr><tr><td>输出 tokens</td><td>$0.50 / $2.50</td><td>$5.00</td><td>$10.00</td></tr></tbody></table>
-<h2>安全性</h2>
-<p><strong>对齐。</strong> 相对 Haiku 4.5，Claude Haiku 5.5 在我们几乎全部对齐评测上都有明显改进。具体而言，我们发现的失准行为实例少得多，配合滥用的意愿也更低。该模型的 <a href="https://www.anthropic.com/claude-haiku-5-5-system-card">system card</a> 更详细地说明了我们的评测过程与结果。</p>
-<p><strong>防护栏。</strong> 与其能力相称，Haiku 5.5 的网络安全防护栏比 Haiku 4.5 更严格，但比我们施加给其他近期模型的略宽松一些。在网络安全方面，它允许的防御性任务范围比 Sonnet 5.5 的防护栏更宽，但仍然会拦截渗透测试及其他更可能被攻击者使用的技术。</p>
-<p>Haiku 5.5 的生物学防护栏与 Sonnet 5、Sonnet 5.5、Opus 5 相同：允许研究性的生物学问题，但会限制我们判断为可能造成伤害的请求。从事范围更广的生物学与网络安全活动的机构，可以申请加入我们的 <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a> 和 <a href="https://www.anthropic.com/news/cyber-verification-program">Cyber Verification Program</a>。</p>
-<h2>可用性</h2>
-<p>Claude Haiku 5.5 现已在所有平台上线，包括 Amazon Web Services、Google Cloud 和 Microsoft Azure。在 Claude Platform 上，开发者可以用 <code>claude-haiku-5-5</code> 开始使用。</p>
-<p>详情见我们的<a href="https://platform.claude.com/docs/en/models/haiku-5-5/migration-guide">迁移指南</a>。</p>
-<h2>其他更新</h2>
-<p>随着 Claude Haiku 5.5 的新定价，我们还在进一步改进模型与产品的性价比。</p>
-<p>第一，从今天起，我们<strong>下调 Claude Sonnet 5.5 的缓存读取价格</strong>。缓存读取现在便宜 50%：每百万 tokens $0.10，而非 $0.20。由于缓存读取在模型的 token 消耗中占比很大，这把 Sonnet 5.5 在多数 agentic 任务上的成本降低了约 20%。</p>
-<p>举例来说，下面是这次降价对 Sonnet 5.5 在 Terminal-Bench 4.0 上「性能相对成本」的影响：</p>
-<p>Terminal-Bench 4.0准确率 vs. 成本</p>
-<p>Terminal-Bench 4.0 衡量模型在命令行界面中完成复杂、多步骤专业任务的能力。</p>
-<p>这张图说明了 Haiku 5.5 与我们更大模型之间的一个重要差别。对于 Terminal-Bench 4.0 所衡量的那类复杂 agentic 编码任务，Sonnet 5.5 和 Opus 5.5 仍是更好的选择。相比之下，Haiku 5.5 最适合范围更窄的任务——那些在旧版 Claude 上会因成本过高而做不起的活儿，比如压缩、摘要，或 subagent 工作。</p>
-<p>第二，本周我们会向<strong>所有 Max 和 Team 订阅用户发放一项新的每月 API 额度，可用于 Claude Platform</strong>。Max 5x 用户每月获得 $100 额度，Max 20x 用户获得 $200，Team 订阅用户最多可获得 $500，在其成员之间共享。这些额度的设计目的，是让我们的用户能够试用自己的点子，构建调用我们 API 的工具、应用与 agent。它们可以用在我们的任何模型上。更多信息<a href="https://support.claude.com/en/articles/17154008">见我们的 Help Center 文章</a>。</p>
-<p>对于开发者，我们还在<strong>更新 Claude 的 Python 和 TypeScript SDK，加入 beta 阶段的 computer use 与 browser use 支持</strong>。鉴于 Haiku 5.5 在速度、能力与价格上的组合，它特别适合这类任务。你可以<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/browser-use-sdk">在我们的 Claude Platform 文档</a>中了解更多。</p>
-<h2>脚注</h2>
-<p>1 Claude Haiku 5.5 是我们迄今最快的模型（按各模型的标准速度比较），不过在 Fast Mode 下它不如 Opus 系列模型快。</p>
-<p>2 Claude Haiku 5.5 相对 Claude Haiku 4.5，在 100,000 tokens 以内的请求上定价低 90%，在超过 100,000 tokens 的请求上低 50%。在 Haiku 4.5 上，90% 的请求属于前者。这项计算还考虑了 Haiku 4.5 与 Haiku 5.5 在完成同一件工作时所用 token 数的变化：Haiku 5.5 使用了更新过的 tokenizer（与 Sonnet 5.5、Opus 5.5 相同），这意味着它每项任务用的 tokens 略多。</p>]]></content:encoded>
     </item>
     <item>
       <title>扩展 Cyber Verification Program</title>
@@ -3325,45 +3332,6 @@ tiers:
 <p>我们相信 Claude 能成为一位出色的学习伙伴，也有宏大计划把这一愿景在 Claude Academy 内完全实现，但前面仍有大量工作要做。随着 Claude 变得更有能力，我们预期会有新的个性化、交互式学习机会涌现，我们很高兴与用户合作，共同塑造 Claude Academy 的未来。</p>
 <p>我们欢迎你就「什么样的学习对你最有效」提供反馈。每一门课程、每一个教程和用例，都给你机会分享对你管用的东西、以及我们如何能改进。</p>
 <p>今天就到 Claude Academy <a href="http://academy.claude.com">开始学习</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>monday.com 如何把平台改造成人与 agent 协作的 agent 优先产品</title>
-      <link>https://claude.com/blog/how-monday-com-transformed-its-platform-into-an-agent-first-product-where-humans-and-agents-collaborate</link>
-      <guid isPermaLink="true">https://claude.com/blog/how-monday-com-transformed-its-platform-into-an-agent-first-product-where-humans-and-agents-collaborate</guid>
-      <pubDate>Thu, 20 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：How monday.com transformed its platform into an agent-first product where humans and agents collaborate</description>
-      <content:encoded><![CDATA[<h1>monday.com 如何把平台改造成人与 agent 协作的 agent 优先产品</h1>
-<p><em>在附加式 AI 功能上撞墙之后，monday 围绕 Claude 重建了它的平台。两个月、五百万次 agent 交互之后，其团队分享了这次向 agent 优先产品转型的五条教训。</em></p>
-<ul><li>类别：<a href="https://claude.com/blog/category/agents">Agents</a></li><li>产品：<a href="https://claude.com/solutions/enterprise">Claude Enterprise</a></li><li>日期：2026 年 8 月 20 日</li><li>阅读时长：5 分钟</li><li>分享：<a href="https://claude.com/blog/how-monday-com-transformed-its-platform-into-an-agent-first-product-where-humans-and-agents-collaborate#">复制链接</a>https://claude.com/blog/how-monday-com-transformed-its-platform-into-an-agent-first-product-where-humans-and-agents-collaborate</li><li>作者：Aleksandra Todorova</li></ul>
-<p>超过 250,000 家公司，从中小企业到财富 500 强组织，都在用 <a href="http://monday.com">monday.com</a> 管理它们的工作。十多年前公司刚成立时，其核心产品是一个帮助团队自动化工作流和管理项目的可视化界面。如今，它已从底层重新架构其产品，围绕一种人机协作模式，把 AI 编织进各个层面的工作中。以 Claude 为核心，monday 的新平台承担技术复杂性，让客户能在他们已经熟悉的工作流内部，站在 AI 前沿工作。</p>
-<p>monday.com 首席产品与技术官 Daniel Lereya 表示：「向 agent 优先产品的转变，是我们作为公司所做的最重要的决定之一。它意味着从根本上重新设想平台应该做什么，而不仅仅是在现有工作流上加装 AI。我们的愿景是让 monday 成为人与 AI agent 无缝协作的地方，而 Anthropic 和 Claude 一直是帮助我们实现这一愿景的可信伙伴。」</p>
-<h2>撞上「AI 尘埃」的天花板</h2>
-<p>monday 的重建分三个阶段展开。第一阶段，随着前沿 LLM 技术成熟、客户热情高涨，monday 各团队致力于把 AI 能力嵌入其原有平台。这一努力在 2025 年 5 月达到高潮，公司内部办了「AI 月」，用四周时间在全公司范围交付 AI 功能或产品。</p>
-<p>采用强劲并引发了热情，但很快团队就撞了墙。monday.com AI Works Platform 产品副总裁 Orly Stern Izhaki 说：「我们在做『AI 尘埃』——把自动化撒到现有工作流上，却没有把它们嵌入产品之内、也没有改变产品的根本价值主张。我们的功能帮助用户总结文本、归类信息，但它们并没有创造持续的使用模式。」</p>
-<p>公司需要把重心从「给产品功能添加 AI」转向「把 AI 原生地构建进平台」。Izhaki 说：「采用 AI 功能，并不等于成为一家 AI 公司。一旦我们理解了这一点，一切都变了。」</p>
-<p>就这样，Izhaki 的团队着手彻底重新想象 monday：从一个工作管理工具，变成一个人与 agent 共同完成工作的地方。虽然转型产品的指令来自高层，但把那颗北极星翻译成具体的产品决策、并构建他们自己的 agent，则落在每个团队、每位员工身上。</p>
-<p>经过数月的高强度工作，公司宣布了其历史上最重大的变革——围绕人与 agent 协同工作重建整个产品体验，利用已经内建的上下文、工作流、看板、权限和治理。自 2026 年 5 月发布以来，monday 的客户已在其平台上与 agent 产生了超过 500 万次交互。</p>
-<h2><strong>把 agent 当队友</strong></h2>
-<p>除了访问权限和限制，monday 的每个 agent 都被赋予一个名字和一个头像，同事们可以在 monday 平台里通过触发器和 @-提及把工作安排给 agent。</p>
-<p>这一设计是刻意为之，针对的是 monday 在其客户群中注意到的一个模式：许多企业想让 AI 干活，却常常停滞在一个与它们实际工作场所平行运行的 AI 聊天框上。把 agent 直接嵌入工作流、让人们像与同事一样与它们互动，把 agentic AI 从一个抽象概念变成了一个具体、可执行的东西。</p>
-<p>monday 为 agent 规划的工作，范围从 IT 工单分类和知识库维护，到候选人寻源和面试排期、面向销售和市场的竞争情报简报，以及诸如会议准备、把决策转化为可跟踪任务的「幕僚长」式工作。</p>
-<table><thead><tr><th>用例</th><th>工作内容</th></tr></thead><tbody><tr><td>IT——从工单到解决</td><td><strong>接收与分类 Agent</strong>——分类工单、自动解决常见请求、带完整上下文升级 <strong>知识 Agent</strong>——检测知识缺口、起草新的 KB 文章 <strong>事故 Agent</strong>——检测事故、开设作战室、触发事后复盘</td></tr><tr><td>HR——从岗位发布到录用</td><td><strong>简历筛选器</strong>——为申请打分、挑出顶尖候选人、发送拒信 <strong>面试排期器</strong>——处理全部排期与确认 <strong>招聘协调员</strong>——在整个流程中让所有相关方保持信息同步，确保始终有人类在环 <strong>反馈管理器</strong>——自动收集结构化的面试官反馈</td></tr><tr><td>市场——竞争情报</td><td><strong>竞争情报 Agent</strong>——监控竞争对手、检测并归类信号、发送告警和每周简报 <strong>战斗卡 Agent</strong>——根据获批信号更新战斗卡、立即通知销售</td></tr><tr><td>高管办公室——作为服务的幕僚长</td><td><strong>运营者 Agent</strong>——预订会议、准备简报、把决策转化为可跟踪任务、监控优先级 <strong>组织健康 Agent</strong>——扫描营收风险、成本流失和失败中的举措 <strong>战略顾问 Agent</strong>——识别增长机会、生成行动计划</td></tr></tbody></table>
-<p><em>四个常见工作流中的 agent 团队及其工作内容。</em></p>
-<h2><strong>在 monday 中运行 Claude 的四种方式</strong></h2>
-<p>客户通过四种能力在 monday 平台内部使用 Claude：</p>
-<p>借助 <strong>monday Agents</strong>，团队可以用 prompt 构建自定义 agent，并选择 Claude 作为其模型。平台会给 agent 一个名字、一张脸，以及看板上一块人人都能给它派活的位置。</p>
-<p><strong>自带 agent（Bring Your Own Agent，BYOA）</strong> 让 Claude Managed Agents 能够加入平台。一旦进入 monday 平台，一个人构建的 agent 就能成为整个团队都能 @-提及、都能派活的队友。</p>
-<p><strong>预置 Agent（Pre-built Agents）</strong> 在 monday Agents Store 中提供，把 Claude 插件变成专门的队友：法务团队可以在自己的工作流内部作为一个 agent 运行一个法务插件，财务团队也能对各自的插件照此办理。</p>
-<p><strong>Claude Coding 集成</strong> 让团队在 monday 控制面板里连接 Claude，然后规划并把任务指派给 agent。Claude Managed Agents 在客户自己的环境中执行，结果和更新在任务移交给下一个 agent 或移交给人类审阅之前，落回到工单上。工作从业务需求一直跑到可用的代码，再回到业务用户手中。</p>
-<h2><strong>不离开看板，从简报做到落地页</strong></h2>
-<p>一个端到端的例子：一个市场团队在单个看板条目内运营一条活动生产线。市场人员和内容负责人在该条目上打磨简报，就目标、受众、关键信息和渠道达成一致。一个用 monday Agents 构建的策略师 Agent 把这份原始输入转成一份结构化简报，涵盖活动目标、信息支柱、渠道拆解和成功指标。</p>
-<p>随后，一个落地页构建器接手。它作为 Claude Managed Agents 运行在公司自己的环境中，拉取获批的简报，生成一份现有落地页的新变体，其文案、结构和信息都适配该活动。输出自动落回 monday 条目上。在页面进入审批之前，一个品牌审阅者——一个 Claude Managed Agent——对照品牌指南和法律标准检查它，并标记任何需要注意力的地方。市场经理随后只需做一个决定：发布还是打磨。</p>
-<h2><strong>一家站在 AI 前沿的家族企业</strong></h2>
-<p><a href="https://cookeseafood.com/">Cooke</a> 是一家 1985 年创立于新不伦瑞克省布莱克斯港的家族海产企业，它已从一个只有 5,000 条三文鱼的单一养殖场，成长为全球最大家族拥有的海产公司，在 16 个国家运营。如今，Cooke 在 Claude 和 monday 之上共同运行项目交付、资源管理和合同管理。产品经理用 Claude 把获批的章程和需求转成初步项目计划、生成状态报告、并暴露会直接馈入其 monday RAID 日志的风险和问题，覆盖约 200 个进行中和拟议中的项目。Claude 自动化了那些维系跨 130 份合同全生命周期工作流准确性的报告和数据处理——这些是过去繁琐的手工维护工作。</p>
-<p>Cooke 战略总监 Patti Stevens 表示：「monday 和 Claude 一起，帮助我们读懂团队产能、做出更聪明的分配决策。monday 过去是一个我们不得不去更新的平台。如今我们从中开展运营。」</p>
-<h2><strong>monday.com 学到了什么</strong></h2>
-<p>对于计划类似重建的公司，monday 团队分享了它们把平台改造成 AI 优先产品时学到的五条教训：</p>
-<ul><li><strong>心智模式比技术更难改变。</strong> 人们天然想保护质量、持续改进已经管用的东西。让团队从「我们如何负责任地改进当前产品」转向「我们如何为一个不同的未来负责任地重建它」，比技术工作花了更长时间。</li><li><strong>当一切都同时变化时，小团队走得更快。</strong> 方向、UX、技术、定价、信任模型，以及公司对「好」自身的定义，全都同时处于变动之中。层层利益相关者会丢失那么多细节，但拥有清晰归属和快速决策权的小团队能紧贴这些细节。</li><li><strong>采用与否，取决于信任，一如取决于能力。</strong> 产品-市场契合取决于用户的信心，以及让 agent 进入工作实际完成方式的意愿。治理、权限、透明度和可靠性，决定了 agent 是止步于试点项目，还是迈入生产。</li><li><strong>能力需要匹配的基础设施。</strong> 当 agent 扎根于实时项目数据、团队历史和结构化工作流时，它们的表现会处于另一个层级；而在企业规模下，后端必须撑得住。在 agent 层之外，monday 还投资于 monday DB，让数据基础设施能够支撑跨组织运行的 agent 的数量、速度和复杂性。</li><li><strong>建立在已经管用的东西之上。</strong> monday 一直把自己描述为「人们组队推动业务成果的地方」，而 agent 优先的重建把这一承诺延伸给了新一类团队成员。人们仍然来到 monday 实现目标，不同的是，与他们并肩工作的某些成员如今是 agent。</li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

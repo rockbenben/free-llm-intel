@@ -143,6 +143,317 @@ print(next(iter(data)))</code></pre>
 <h2>Collections mentioned in this article 2</h2>]]></content:encoded>
     </item>
     <item>
+      <title>Welcome Beam: a 501B open model you can own, customize, and…</title>
+      <link>https://huggingface.co/blog/reflection-beam</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/reflection-beam?li=1</guid>
+      <pubDate>Fri, 16 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Welcome Beam: a 501B open model you can own, customize, and scale</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Welcome Beam: a 501B open model you can own, customize, and scale</h1>
+<p>Published October 16, 2026</p>
+<p>Update on GitHub</p>
+<p>14</p>
+<ul><li><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/stefan-it"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1584020801691-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/alvarobartt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Gflorent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620a77b7dbba8fc1fbb8bdb4/ZRW2pH9Iawj700OyLpJl8.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt="ben burtenshaw's avatar"></a></p>
+<p>ben burtenshaw</p>
+<p>burtenshaw</p>
+<p><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt="merve's avatar"></a></p>
+<p>merve</p>
+<p>merve</p>
+<p><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt="Pedro Cuenca's avatar"></a></p>
+<p>Pedro Cuenca</p>
+<p>pcuenq</p>
+<p>Beam by Reflection is out on Hugging Face! It is the first model from the new US lab, Reflection, and it’s open! It's a mixture-of-experts (MoEs) model with 501B parameters (23B active per token), supports text as input, has a <strong>context window of 1M tokens</strong>, and is released under the Apache 2.0 license.</p>
+<p>Beam is focused on <em>coding</em> and <em>agentic</em> use cases. It is for teams that want a frontier-scale model on their own hardware, infrastructure, or cloud, and want to customize it to their own use cases. Beam ships with its own dedicated open source Rust based harness that delivers the best performance from the model.</p>
+<p>Beam has a native transformers implementation, as well as downstream libraries like vLLM and SGLang. We’ve worked with the Reflection team to bring you inference, SFT (supervised fine tuning), and RL (reinforcement learning) recipes for you to build with this model for your needs. On top of day-0 support in transformers, SGLang and vLLM, this post shows you how to run it, how to post-train it, and what we built with it.</p>
+<p><strong>TL;DR</strong></p>
+<blockquote>501B-parameter MoEs LLM with 23B active per token. 52 layers, 256 experts per MoE layer, 8 routed per token.<br>Text in, text out with context window of 1M tokens.<br>Checkpoint formats: BF16, FP8, and NVFP4<br>Reasoning that can stay in context across turns (preserve_thinking), tool calling with a dedicated grammar. The model supports five reasoning values: &quot;low&quot;, &quot;medium&quot; (default), &quot;high&quot;, &quot;xhigh&quot;, and &quot;max&quot;.<br>Response template in the tokenizer.<br>Speculative decoding drafter model with DFlash2<br>Day-0 libraries: transformers, SGLang, vLLM. Full-parameter RL with Miles.<br>Ships with a Rust-based custom harness.<br>Apache 2.0.</blockquote>
+<h2>Build with Beam</h2>
+<p>Reflection is going to give out $10,000 Hub credits to the best projects that use Beam. All you have to do is make a thing, and share it on the Hub:</p>
+<ul><li>You could make a demo that uses the Beam model on Spaces</li><li>You could quantize it for your favorite hardware</li><li>You could generate a synthetic dataset for your favorite problem</li><li>You could build an RL environment with or for Beam</li><li>You could benchmark Beam and share the results.</li><li>You could surprise us!</li></ul>
+<p>If you build something with Beam, then share it on the Hub for a chance to win $10,000. All you have to do is build the space, model, or dataset repo and share it on the <a href="https://huggingface.co/reflection/Beam-1.0-501B-A23B/discussions/5">model’s repo page</a>. We’ll collect all the links, select the best, and send out the credits to your Hub accounts.</p>
+<h2>What is Beam?</h2>
+<p>Beam is a text-only model built for long-context (1M context length) reasoning and agentic work. It is a sparse MoE model, where each token is computed by a small fraction of the network, so it runs at the speed of a much smaller model while keeping the capacity of a large one.</p>
+<h3>Attention</h3>
+<p>The decoder has 52 layers with a hidden size of 5,120. Most layers use sliding-window attention over the previous 512 tokens; every sixth layer, and the last one, attend to the full context. That gives 43 sliding-window layers and 9 global ones.</p>
+<p><em>Inside the attention block (both layer types)</em></p>
+<p>The two kinds of layers handle position differently. Sliding-window layers use RoPE, since relative position matters most within a short window. <strong>Global layers use no positional encoding</strong>. Instead, each query is multiplied by a scaler that grows slowly with the number of visible tokens, <code>(1 + (pos + 1) / 2048) ** 0.1</code>. It acts as a temperature: the softmax keeps its precision as the context lengthens instead of flattening out. The implementation calls this scalable-softmax query scaling.</p>
+<p>Attention uses grouped-query attention with 48 query heads and 8 key-value heads, with RMSNorm on queries and keys. A learned sigmoid gate, computed from the layer input, scales every channel of every head before the output projection.</p>
+<h3>Mixture of Experts</h3>
+<p>The first 3 layers use a dense SwiGLU MLP. The other 49 replace it with a Mixture-of-Experts block of 256 experts, each a SwiGLU MLP with an intermediate size of 2,560, or about 39M parameters. The experts hold 98.4% of the model's parameters.</p>
+<p>The router follows DeepSeek-V3's group-limited scheme. It scores all 256 experts with a sigmoid, splits them into 8 groups of 32, keeps the 4 best groups (ranked by the sum of each group's top two scores), then picks the top 8 experts inside them. Beam uses the same group sizes as DeepSeek-V3 but no shared expert. Expert outputs are combined with normalized router weights and scaled by 2.5.</p>
+<p>Only 8 experts run per token, so the model computes each token with about 23B parameters. All 256 experts stay in memory, so deployment needs the memory of a 501B model but runs at the speed of a 23B one. The BF16 checkpoint is about 1 TB in safetensors format. The NVFP4 checkpoint stores most parameters in 4-bit precision for NVIDIA Blackwell GPUs, some parameters are kept in BF16 for accuracy. There are also FP8 checkpoints on the hub which are ideal for Hopper and Ampere series chips.</p>
+<p>If you want to deploy Beam yourself, check out the vLLM or SGLang recipes below.</p>
+<h3>Residual Stream</h3>
+<p>The residual connections are the most distinctive part. A standard transformer adds each sublayer output to the stream with weight 1, so the stream grows with depth.</p>
+<p>Beam counts the input embedding as step 1. At step <code>k</code> it adds the sublayer output with weight <code>1/sqrt(k)</code> and keeps the existing stream with weight <code>sqrt((k-1)/k)</code>. The squares of the two weights sum to one, so the stream stays at a constant scale from the first layer to the last. After all 104 additions, every sublayer output and the input embedding carry the same weight in the final hidden state.</p>
+<p>Every sublayer is also normalized before and after, and the final logits pass through a tanh softcap at ±30, computed in FP32. The implementation fixes where it computes in FP32: the router, the SwiGLU product, the norms, RoPE, the query scaling and the softcap.</p>
+<h3>Long Context</h3>
+<p>Hybrid attention works well for long contexts. Each layer caches 2 x 8 KV heads x 128 dims = 2,048 values per token. If all 52 layers kept every token, the cache would grow by 208 KiB per token. Only the 9 global layers keep the whole sequence. The 43 sliding-window layers hold a fixed 512-token window each and stop growing. So the cache grows by 36 KiB per token, roughly a sixth of the naive rate.</p>
+<table><thead><tr><th>Context</th><th>If all 52 layers were global</th><th>Beam</th></tr></thead><tbody><tr><td>32K tokens</td><td>6.5 GiB</td><td>1.2 GiB</td></tr><tr><td>128K tokens</td><td>26 GiB</td><td>4.6 GiB</td></tr><tr><td>Full context (1M)</td><td>208 GiB</td><td><strong>36.08 GiB</strong></td></tr></tbody></table>
+<p>These numbers are per sequence, in BF16, with the transformers dynamic cache.</p>
+<h2>Benchmark Results</h2>
+<p>Here are the benchmark results across different precision levels, as provided by the Reflection team.</p>
+<table><thead><tr><th></th><th><em>Beam (BF16)</em></th><th><em>Beam (FP8)</em></th><th><em>Beam (NVFP4)</em></th></tr></thead><tbody><tr><td><strong>Agentic Coding / Terminal</strong></td><td></td><td></td><td></td></tr><tr><td>DeepSWE v1.1</td><td>43.3%</td><td>43.0%</td><td>42.7%</td></tr><tr><td>SWE Bench Pro v2-Hard</td><td>76.5%</td><td>78.4%</td><td>78.6%</td></tr><tr><td>SWE Bench Pro v1</td><td>66.1%</td><td>65.9%</td><td>65.6%</td></tr><tr><td>Terminal Bench v2.1</td><td>80.1%</td><td>78.9%</td><td>78.2%</td></tr><tr><td>SWE Atlas Codebase QnA</td><td>31.8%</td><td>32.2%</td><td>31.4%</td></tr><tr><td>SWEBench Multilingual</td><td>78.3%</td><td>78.1%</td><td>77.5%</td></tr><tr><td>SWEBench Verified</td><td>81.6%</td><td>80.2%</td><td>80.7%</td></tr><tr><td><strong>Reasoning</strong></td><td></td><td></td><td></td></tr><tr><td>AIME 2026</td><td>97.7%</td><td>98.0%</td><td>97.5%</td></tr><tr><td>HLE (no tools)</td><td>36.0%</td><td>36.0%</td><td>34.8%</td></tr><tr><td>HLE (with tools)</td><td>51.1%</td><td>51.1%</td><td>51.1%</td></tr><tr><td>SciCode</td><td>49.2%</td><td>48.3%</td><td>46.9%</td></tr><tr><td>CriPT AA</td><td>16.3%</td><td>17.4%</td><td>15.4%</td></tr><tr><td>GPQA Diamond</td><td>90.6%</td><td>90.3%</td><td>89.3%</td></tr><tr><td>LiveCodeBench</td><td>88.3%</td><td>88.1%</td><td>87.4%</td></tr><tr><td><strong>Tool Calling / Search</strong></td><td></td><td></td><td></td></tr><tr><td>AutomationBench - public split only</td><td>39.3</td><td>38.2</td><td>39.8%</td></tr><tr><td>MCP Atlas</td><td>80.8%</td><td>81.5%</td><td>80.5%</td></tr><tr><td>Tau3 Banking</td><td>36.1%</td><td>36.8%</td><td>35.4%</td></tr><tr><td>BrowseComp w/ context management</td><td>76.8%</td><td>76.7%</td><td>75.6%</td></tr><tr><td>DeepSearchQA w/ context management</td><td>80.5%</td><td>79.6%</td><td>81.1%</td></tr><tr><td><strong>General Capabilities</strong></td><td></td><td></td><td></td></tr><tr><td>AA-LCR</td><td>78.2%</td><td>79.4%</td><td>78.7%</td></tr><tr><td>LongBench v2</td><td>67.5%</td><td>67.6%</td><td>67.2%</td></tr><tr><td>IFBench</td><td>79.6%</td><td>80.7%</td><td>79.2%</td></tr><tr><td>AA Omniscience (index) - public split only</td><td>10.8</td><td>8.8</td><td>9.8</td></tr></tbody></table>
+<h2>Hardware Requirements</h2>
+<p>The most practical way to serve the model is serving the NVFP4 checkpoint, which retains most of the quality of the bf16 checkpoint. NVFP4 stores some weights in 4 bits, and this way, it shrinks the 501B parameters in BF16 from 1 TB to ~280 GB. Blackwell GPUs run NVFP4 natively but GPUs older than Blackwell like the H200 can't. The FP8 checkpoints are suitable for GPUs older than Blackwell.</p>
+<p>A B200 has 180 GB of HBM3e, so two of them (360 GB) can hold the Beam weights, with little room left for activations and the KV cache. Plan for four B200s (720 GB), which leaves plenty of room for long contexts and concurrent requests. You can also serve it on a full 8xB200 node, or on two B300s at 288 GB each, or even 8xRTX Pro 6000. If you don't have Blackwell hardware, use Inference Providers (serverless) to test Reflection.</p>
+<h2>Inference Support</h2>
+<p>Beam comes with day-0 support in transformers, SGLang and vLLM.</p>
+<h3>Transformers</h3>
+<p>Install the latest version of transformers.</p>
+<pre><code>pip install -U &quot;transformers&gt;=5.20.1&quot;</code></pre>
+<p>The easiest way to run Beam is the text-generation pipeline:</p>
+<pre><code>from transformers import pipeline
+
+pipe = pipeline(
+    &quot;text-generation&quot;, model=&quot;reflection/Beam-1.0-501B-A23B&quot;, device_map=&quot;auto&quot;
+)
+
+messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Write a limerick about Python exceptions.&quot;}
+]
+output = pipe(messages, max_new_tokens=2000)
+output[0][&quot;generated_text&quot;][-1]</code></pre>
+<p>The pipeline returns the whole chat. The last message is Beam's reply, already parsed by the response template.</p>
+<p>Going one level lower, use <code>AutoModelForCausalLM</code> and <code>AutoTokenizer</code>.</p>
+<pre><code>from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model_id = &quot;reflection/Beam-1.0-501B-A23B&quot;
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+
+model = AutoModelForCausalLM.from_pretrained(
+    model_id, dtype=&quot;auto&quot;, device_map=&quot;auto&quot;
+)</code></pre>
+<h4>Chat</h4>
+<pre><code>messages = [
+    {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You should only answer with a number.&quot;},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is 17 * 23?&quot;},
+]
+
+inputs = tokenizer.apply_chat_template(
+    messages,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+    reasoning_effort=&quot;medium&quot; # by default
+).to(model.device)
+
+input_len = inputs[&quot;input_ids&quot;].shape[-1]
+
+outputs = model.generate(**inputs, max_new_tokens=2000)
+
+tokenizer.parse_response(
+    outputs[0][input_len:], prefix=inputs[&quot;input_ids&quot;][0]
+)</code></pre>
+<p>Beam's tokenizer carries a response template. <code>parse_response</code> reads it and turns the raw output into a message dict, with the reasoning, the answer, and any tool calls in separate fields. This avoids the usual regex for splitting reasoning from answers from tool calls. And the rules ship with the tokenizer, so the parsed structure matches what Beam was trained to produce. The chat template can pre-write part of the assistant turn, which the parser needs to see.</p>
+<h4>Tool calling</h4>
+<p>Complete tool-calling example</p>
+<pre><code>def get_weather(city: str, unit: str = &quot;celsius&quot;):
+    &quot;&quot;&quot;
+    Get the current weather for a city.
+
+    Args:
+        city: The city to look up.
+        unit: Temperature unit, &quot;celsius&quot; or &quot;fahrenheit&quot;.
+    &quot;&quot;&quot;
+    ...
+
+tools = [get_weather]
+messages = [
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;I land in Paris tonight. Do I need a coat?&quot;}
+]
+
+inputs = tokenizer.apply_chat_template(
+    messages,
+    tools=tools,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+).to(model.device)
+
+input_len = inputs[&quot;input_ids&quot;].shape[-1]
+outputs = model.generate(**inputs, max_new_tokens=1000)
+
+message = tokenizer.parse_response(
+    outputs[0][input_len:], prefix=inputs[&quot;input_ids&quot;][0], tools=tools
+)
+message.get(&quot;tool_calls&quot;)</code></pre>
+<p>Pass <code>tools</code> to <code>parse_response</code> as well. Beam writes tool-call arguments inline, in its own XML-style grammar, so a bare <code>7</code> could be a number or a string. With the tool schemas, the parser casts each argument to its declared type.</p>
+<h4>Multi-GPU and multi-node</h4>
+<p>Beam's config defines an expert-parallel plan. Expert parallelism puts each expert on one device. Attention, the dense layers, the embeddings and the LM head are replicated on every device. That is 8B parameters, or 16 GB in BF16. Load the model with a <code>DistributedConfig</code>:</p>
+<pre><code>import os
+
+from transformers import AutoModelForCausalLM
+from transformers.distributed import DistributedConfig
+
+model = AutoModelForCausalLM.from_pretrained(
+    &quot;reflection/Beam-1.0-501B-A23B&quot;,
+    distributed_config=DistributedConfig(
+        tp_size=int(os.environ[&quot;WORLD_SIZE&quot;]), ep_size=int(os.environ[&quot;WORLD_SIZE&quot;]), tp_plan={}
+    ),
+)</code></pre>
+<p>Launch the script with <code>torchrun</code> across 16 H200 GPUs. Each one then holds 78 GB of weights. With 8 GPUs each would hold 139 GB, which leaves no room on a 141 GB H200. The number of devices must divide the number of experts, 256.</p>
+<h3>vLLM</h3>
+<p>Beam has day-0 support in vLLM. The command below serves the BF16 checkpoint with tensor parallelism across 16 GPUs (two 8x H200 nodes) and exposes an OpenAI-compatible API:</p>
+<pre><code>vllm serve reflection/Beam-1.0-501B-A23B --tensor-parallel-size 16 --served-model-name beam</code></pre>
+<p>For faster generation, add DFlash2 speculative decoding. A small drafter model proposes up to 15 tokens ahead, and Beam checks them all in one forward pass, so each step can accept several tokens. The cost is a little extra memory for the drafter:</p>
+<pre><code>vllm serve reflection/Beam-1.0-501B-A23B \
+  --tensor-parallel-size 16 \
+  --speculative-config '{ &quot;method&quot;: &quot;dflash&quot;, &quot;model&quot;: &quot;reflection/dflash2-drafter-preview&quot;, &quot;num_speculative_tokens&quot;: 15 }'</code></pre>
+<p>Both commands start an OpenAI-compatible server, so you can point any OpenAI client at <code>http://localhost:8000/v1</code>. For additional serving configurations, see the <a href="https://github.com/vllm-project/recipes/pull/1132">proposed Beam recipe for vLLM</a>.</p>
+<h3>SGLang</h3>
+<p>Beam also has day-0 support in SGLang. We recommend serving it with DFlash2 speculative decoding, which both commands below turn on. On Blackwell, the NVFP4 checkpoint fits on 4 B300s:</p>
+<pre><code>python -m sglang.launch_server \
+--model-path reflection/Beam-1.0-501B-A23B-NVFP4 \
+--served-model-name beam \
+--tp 4 \
+--attention-backend trtllm_mha \
+--page-size 64 \
+--context-length 1048576 \
+--mem-fraction-static 0.85 \
+--enable-unified-memory \
+--speculative-algorithm DFLASH \
+--speculative-draft-model-path reflection/Beam-1.0-501B-A23B-DFlash2 \
+--speculative-dflash-block-size 8 \
+--tool-call-parser beam --reasoning-parser beam \
+--host 0.0.0.0 --port 30000</code></pre>
+<p>On Hopper GPUs, use the FP8 checkpoint on 8 H200s instead. Only three flags change: the checkpoint, the tensor-parallel size (8 instead of 4), and the attention backend (fa3 instead of trtllm_mha, which needs Blackwell):</p>
+<pre><code>python -m sglang.launch_server \
+--model-path reflection/Beam-1.0-501B-A23B-FP8 \
+--served-model-name beam \
+--tp 8 \
+--attention-backend fa3 \
+--page-size 64 \
+--context-length 1048576 \
+--mem-fraction-static 0.85 \
+--enable-unified-memory \
+--speculative-algorithm DFLASH \
+--speculative-draft-model-path reflection/Beam-1.0-501B-A23B-DFlash2 \
+--speculative-dflash-block-size 8 \
+--tool-call-parser beam --reasoning-parser beam \
+--host 0.0.0.0 --port 30000</code></pre>
+<h3>Inference Providers</h3>
+<p>Beam is available on Hugging Face Inference Providers, powered by Baseten, Fireworks, and Together, with more to follow soon.</p>
+<pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(
+    base_url=&quot;https://router.huggingface.co/v1&quot;,
+    api_key=os.environ[&quot;HF_TOKEN&quot;],
+)
+
+completion = client.chat.completions.create(
+    model=&quot;reflection/Beam-1.0-501B-A23B:auto&quot;,
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is the capital of France?&quot;}],
+)
+
+print(completion.choices[0].message)</code></pre>
+<h3>Inference Endpoints</h3>
+<p>We’ve set up a Beam recipe for you to one click deploy in Inference Endpoints from the catalog in <a href="https://endpoints.huggingface.co/new/reflection/Beam-1.0-501B-A23B-FP8">FP8</a> or <a href="https://endpoints.huggingface.co/new/reflection/Beam-1.0-501B-A23B-NVFP4">NVFP4</a>, or install with the <code>hf</code> cli like so:</p>
+<pre><code>hf endpoints catalog deploy --repo reflection/Beam-1.0-501B-A23B --name beam</code></pre>
+<h2>What we tested</h2>
+<p>We are sharing some vibe evals of Reflection Beam-501B-A23B on five tasks, once each at low and high reasoning effort through the Reflection platform. These are vibe evals, not benchmarks. If you’re planning on using Beam, this is a great way to kick the tires and see how it behaves on specific use cases, and importantly, where it wins and loses.</p>
+<p>Below is an overview of the prompts we ran and the output traces from the hub. The complete inputs, outputs, API usage, task fixtures, graders and conversation traces are in <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12">this public Hugging Face bucket</a>.</p>
+<table><thead><tr><th>Category</th><th>Prompt Description</th><th>Low reasoning (tokens)</th><th>High reasoning (tokens)</th></tr></thead><tbody><tr><td>Multi-step tool calling</td><td>Fulfill ORD-742: compare stock, reservations, surcharges and arrival dates; reserve the cheapest eligible warehouse.</td><td>✅ <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12/tree/traces/multi_step_tools-low.jsonl">544</a></td><td>✅ <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12/tree/traces/multi_step_tools-high.jsonl">811</a></td></tr><tr><td>Long-context retrieval over a code base</td><td>Derive Click command configuration and two invocation results from three complete source files; cite six implementation symbols.</td><td>🔴 <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12/tree/traces/long_context-low.jsonl">1,613</a> *</td><td>✅ <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12/tree/traces/long_context-high.jsonl">5,007</a></td></tr><tr><td>Terminal task in a sandbox</td><td>Inspect and repair a CSV ledger CLI; fix all bugs, preserve tests, run tests and a CLI check.</td><td>✅ <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12/tree/traces/terminal-low.jsonl">582</a></td><td>✅ <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12/tree/traces/terminal-high.jsonl">1,548</a></td></tr><tr><td>Math reasoning (AIME-style)</td><td>How many eight-element subsets of {1, …, 16} have a sum divisible by 17? Give a justification.</td><td>🟠 <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12/tree/traces/math-low.jsonl">829</a> †</td><td>✅ <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12/tree/traces/math-high.jsonl">2,809</a></td></tr><tr><td>Structured output</td><td>Convert an out-of-order revision log into strict JSON: merge patches, cancellations, nulls, dates, currencies and totals.</td><td>✅ <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12/tree/traces/structured_output-low.jsonl">1,040</a></td><td>✅ <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12/tree/traces/structured_output-high.jsonl">2,088</a></td></tr></tbody></table>
+<p>** Low's long-context response got all code behavior and all six source citations correct. However, the response did not correspond to the parsers format, so this is partly prompt ambiguity.*</p>
+<p>† Low returned the correct answer, but omitted the requested justification. High supplied a correct roots-of-unity proof, independently reviewed.</p>
+<p>Don’t take our word for it. Dig into the <a href="https://huggingface.co/buckets/burtenshaw/beam-vibe-evals-2026-10-12">bucket</a>, rewrite for your use case or project and push Beam to the limit.</p>
+<h2>Post-training Beam</h2>
+<p>You can fine tune Beam for your own use cases. Here, we share some examples in TRL and Miles to get you started on supervised fine-tuning and reinforcement learning.</p>
+<h3>SFT with TRL</h3>
+<p>The quickest way to adapt Beam to your own data is supervised fine-tuning with TRL's SFTTrainer. To keep memory manageable, we train LoRA adapters with PEFT rather than updating all 501B parameters: We used TRL’s <code>SFTTrainer</code> to adapt Beam to a simple goal: keep its reasoning in the language requested by the user. We fine-tuned on <a href="https://huggingface.co/datasets/HuggingFaceH4/Multilingual-Thinking">Multilingual-Thinking</a> with LoRA, which trains a small set of adapter weights while keeping the base model frozen.</p>
+<p>The setup combines model sharding at load time, expert parallelism, FlashAttention 4 and sequence packing. LoRA SFT fits on a single node with 8 B300 GPUs, reaching around 19,000 tokens per second. The corresponding H100 setup uses four nodes.</p>
+<p>After one epoch of Multilingual-Thinking, Beam reasoned in the requested language on 16 out of 16 held-out prompts, compared with 3 out of 16 for the base model. This small evaluation measures language adherence, rather than the correctness of the reasoning itself.</p>
+<p><em>Training loss (left) and mean token accuracy (right) during a separate 500-step run on a reasoning subset of open-r1/Mixture-of-Thought, using one 8-GPU B300 node. These training metrics are from the official <a href="https://github.com/huggingface/trl/pull/7629">TRL example PR</a>.</em></p>
+<h3>GRPO with Miles</h3>
+<p>Reflection and RadixArk built a recipe that trains the model with GRPO in Miles, in BF16. You can update the full model or use LoRA to train adapters while keeping the base weights frozen. Megatron trains, SGLang generates the rollouts, and Miles publishes the new weights to the rollout engines after each update. We reviewed the recipe.</p>
+<table><thead><tr><th>Workload</th><th>Reference configuration</th></tr></thead><tbody><tr><td>Inference / eval, BF16</td><td>16x H200 per engine</td></tr><tr><td>Full-parameter GRPO, BF16 (Miles)</td><td>96x H200: 64 train, 32 rollout. Or 64x H200 colocated.</td></tr><tr><td>LoRA GRPO, BF16 (Miles)</td><td>32x H200: 16 train, 16 rollout.</td></tr><tr><td>Full-parameter GRPO, BF16, 128-token context (Miles)</td><td>48x H200: 32 train, 16 rollout. The setup Reflection and RadixArk first validated on the real checkpoint.</td></tr></tbody></table>
+<p>The recipe runs GRPO on DAPO-Math-17K and evaluates on AIME25. Build the image, download the data, and submit the job to a Ray cluster of twelve 8x H200 nodes:</p>
+<pre><code>docker build -f docker/Dockerfile.beam -t miles-beam .
+
+python scripts/run_beam.py prepare \
+  --model-id reflection/Beam-1.0-501B-A23B \
+  --model-dir /root/models/Beam \
+  --data-dir /data/datasets
+
+export MASTER_ADDR=10.0.0.1
+export RAY_ADDRESS=http://${MASTER_ADDR}:8265
+
+python scripts/run_beam.py execute \
+  --model-dir /root/models/Beam \
+  --data-dir /data/datasets \
+  --output-dir /root/shared_data/beam-run \
+  --num-rollout 100</code></pre>
+<p>What happens in a rollout:</p>
+<p><strong>Sample:</strong> 32 prompts are passed to the model with 8 responses each. Two SGLang engines serve the rollouts on 16 GPUs each.</p>
+<p><strong>Score:</strong> the boxed answer is checked against the label, with a soft penalty for responses near the length limit.</p>
+<p><strong>Update:</strong> one optimizer step on all 256 samples. Group-relative advantages with truncated importance sampling, no KL or entropy penalty.</p>
+<p><strong>Train in parallel:</strong> tensor parallelism 8, expert parallelism 8, data parallelism 8, with sequence parallelism and full recompute.</p>
+<p><strong>Optimizer:</strong> Adam at a constant 1e-6. Gradients in BF16, master weights in FP32, moments in BF16. The optimizer state streams through node-local NVMe, so each trainer node needs 2 TB of scratch.</p>
+<p><strong>Evaluate:</strong> AIME25 every five rollouts, eight samples per problem. A checkpoint is saved every twenty.</p>
+<p>The next rollout is generated while the current one trains, so responses are one update behind. Add <code>--resume</code> to continue from the last checkpoint. <code>execute-colocate</code> runs the same recipe on eight nodes, with every GPU training and serving in turn.</p>
+<h3>Train with LoRA</h3>
+<p>You can also run GRPO with LoRA on four 8× H200 nodes: 16 GPUs for training and 16 for rollouts. The recipe trains rank-16 adapters on Beam’s attention, dense MLP, and expert layers while keeping the base weights frozen. Only adapter weights are synchronized with SGLang, and the optimizer state stays in GPU memory, removing the need for NVMe optimizer offloading.</p>
+<pre><code>python scripts/run_beam_lora.py execute \
+  --model-dir /root/models/Beam \
+  --data-dir /data/datasets \
+  --output-dir /root/shared_data/beam-run \
+  --num-rollout 100</code></pre>
+<h2>Build with Beam: Demos</h2>
+<p>If you build something with Beam, then share it on the Hub for a chance to win $10,000. All you have to do is build a space, model, or dataset repo and share it on the <a href="https://huggingface.co/reflection/Beam-1.0-501B-A23B/discussions/5">model’s repo page</a>. To inspire you, here are a few things we built.</p>
+<h3>Hey Beam, build a native local MacOS application!</h3>
+<p>At Hugging Face we love open and local models that run native to their hardware, but building native apps on Mac can be hard! Let’s see if Beam can help us out.</p>
+<p>We asked Beam to build a native MacOS application that turns speech to text, and conveniently drops it at your cursor. We want to use MLX to get the most out of our Mac Metal and the Parakeet Model for great speech-to-text.</p>
+<pre><code>Build BeamSpeak, a native macOS menu bar dictation app with a compact recording pill and no main window or account.
+
+Use ⌘⇧Space to start and stop microphone recording, showing elapsed time, microphone level, and transcription status. Run speech recognition entirely locally using a Hugging Face model, preferably Parakeet v3 through MLX, and keep the model loaded between recordings. Paste the transcript into the original app if it remains focused and Accessibility permission is granted; otherwise copy it to the clipboard, preserving newer clipboard changes and never pressing Enter. Handle permissions, cancellation, silence, errors, a two-minute recording limit, and temporary audio cleanup. Deliver source code, a runnable BeamSpeak.app, setup instructions, and verification of offline transcription, the physical shortcut, microphone capture, and text delivery.</code></pre>
+<p>We used Beam with the Pi coding harness to build the initial native macOS menu bar app, running Parakeet with MLX. The saved run includes follow-up prompts; the final source also includes later Codex repairs. The prompt above is a condensed version of the build requirements.</p>
+<p>You can check out the agent trace of how Beam built this in pi in <a href="https://huggingface.co/buckets/burtenshaw/beamspeak-demo/tree/trace/beam-build.sanitized.jsonl">this trace</a>. If you want to try the demo out, download the <a href="https://huggingface.co/buckets/burtenshaw/beamspeak-demo/resolve/beamspeak-source.zip">source code</a> or read the <a href="https://huggingface.co/buckets/burtenshaw/beamspeak-demo/resolve/RUNNING.md">setup instructions</a>.</p>
+<h3>Hey Beam, how do you scale on multiple agents?</h3>
+<p>We wanted to see whether Beam could make faster progress by splitting a programming task across agents. We paired Beam with the open-source Pi coding agent and compared three setups: 1. one agent working alone, 2. five persistent peers collaborating through a shared Git repository, and 3. a lead agent delegating work to asynchronous subagents. The harness ran on Hugging Face jobs with inference through Reflection’s platform API.</p>
+<p>For the tasks, we used ProgramBench: agents must recreate a program from its compiled executable and documentation, without seeing its source code or the evaluator’s tests. Each setup had the same 8M API-token ceiling and two-hour solver limit per task, shared across its agents. We saved implementation snapshots and evaluated them against fixed hidden-test suites from the <a href="https://huggingface.co/datasets/programbench/ProgramBench-Tests">ProgramBench-Tests dataset</a>.</p>
+<p>Our <a href="https://burtenshaw-beam-pi-programbench.hf.space/study">score-versus-latency plot</a> shows the average fraction of tests passed. The time axis uses fixed reference rates for model tokens plus measured tool time, rather than elapsed wall time. We initially ran five tasks. The current figure shows a post-hoc subset of jq, xsv, FIGlet, and hexyl; ripgrep was excluded across all three setups because grading its saved artifacts was too slow. The published results retain all 15 original episodes.</p>
+<p>You can inspect the runs in the <a href="https://burtenshaw-beam-pi-programbench.hf.space/?project=beam-pi-programbench-20261009">Trackio dashboard</a>, explore the <a href="https://huggingface.co/spaces/burtenshaw/beam-pi-programbench/tree/main/results/beam-pi-programbench-20261009">published result data</a>, and reuse the <a href="https://huggingface.co/spaces/burtenshaw/beam-pi-programbench/tree/main/source">study harness</a>.</p>
+<h3>Hey Beam, finetune a decision model for my code base!</h3>
+<p>Decision models are all the rage at the moment because they’re super fast and practical for many use cases. We started with Beam in Pi after Beam’s quota ran out to train and evaluate a custom decision model for developer incident triage.</p>
+<p>We wanted to see whether a coding agent could turn an incident-triage policy into a small, fast decision model. The task was to read a developer incident and choose the responsible team, its severity, and whether someone should be pinged immediately. Using Unsloth, we fine-tuned Qwen3.5-0.8B to score these choices directly.</p>
+<p>First, the workflow built a synthetic dataset containing 2.3k incidents split by incident cluster for training, calibration, and testing. We trained a LoRA adapter and decision head for three epochs, with a 4-bit backbone, on one H100 80GB on the Science Slurm cluster.</p>
+<p>For a baseline, we prompted the unadapted model with the full triage policy and ticket, without examples, and asked it to generate the three decisions as JSON. On the same 320 synthetic test tickets, the fine-tuned decision model got all three answers correct on 76.25%, versus 4.69% for prompted zero-shot. Mean ticket latency fell from 1,218.06 ms to 102.58 ms, an 11.9× speedup.</p>
+<p>If you want to try out this experiment for yourself, check out the <a href="https://huggingface.co/buckets/burtenshaw/qwen35-incident-triage-reproduction">artifact bucket</a> which contains the data, code, checkpoints and results.</p>
+<h2>Wrapping Up</h2>
+<p>Beam is a 501B open model that you can run on your own hardware and change. Start with the <a href="https://huggingface.co/reflection/Beam-1.0-501B-A23B"><strong>BF16</strong></a> checkpoint, or try one of the quants <a href="https://huggingface.co/reflection/Beam-1.0-501B-A23B-FP8"><strong>FP8</strong></a><strong>,</strong> <a href="https://huggingface.co/reflection/Beam-1.0-501B-A23B-NVFP4"><strong>NVFP4</strong></a>. If you build something with Beam, share it in the <a href="https://huggingface.co/reflection/Beam-1.0-501B-A23B/discussions">discussions tab</a>.</p>
+<h2>Models mentioned in this article 3</h2>
+<h2>Datasets mentioned in this article 2</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<p>More Articles from our Blog</p>
+<p>llmrltrl</p>
+<h2>Async GRPO with LoRA across HF Jobs: a bucket, a proxy, and no NCCL</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
+<p>53</p>
+<p>September 10, 2026</p>
+<p>llmrltrl</p>
+<h2>Shipping a Trillion Parameters With a Hub Bucket: Delta Weight Sync in TRL</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594651707950-noauth.jpeg" alt=""></li><li>+4</li></ul>
+<p>50</p>
+<p>May 27, 2026</p>
+<h3>Community</h3>
+<p><img src="https://huggingface.co/avatars/1eb4ad0105ad152c175a8f01be57819d.svg" alt=""></p>
+<p>openroomxyz</p>
+<p>about 9 hours ago</p>
+<p>Well why don't you build something that can run on cunsumer GPU like Qwen 3.8 Flash Next for example using strata ?</p>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Freflection-beam">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Freflection-beam">log in</a> to comment</p>
+<p>14</p>
+<ul><li><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/stefan-it"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1584020801691-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/alvarobartt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Gflorent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620a77b7dbba8fc1fbb8bdb4/ZRW2pH9Iawj700OyLpJl8.png" alt=""></a></li><li><a href="https://huggingface.co/yonigozlan"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/SUHH6vlLZdQogCB6kIgrN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/spisupat"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/633c4fb100732349209f2aad/CjcKdqDmsdOkpT-Z-lWPs.jpeg" alt=""></a></li><li><a href="https://huggingface.co/illtakecash"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/8JtxwoBQnQDq0pZd2vMch.jpeg" alt=""></a></li><li><a href="https://huggingface.co/daedalus2027"><img src="https://huggingface.co/avatars/c6b7cec309634ab44f30ee1ab16597ea.svg" alt=""></a></li><li><a href="https://huggingface.co/keyoumao"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/K9E1T6hPSg6h29Ix_6lqn.png" alt=""></a></li><li><a href="https://huggingface.co/fabos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/hqS42AW0Y9YtvRsd0riJZ.png" alt=""></a></li></ul>
+<h2>Models mentioned in this article 3</h2>
+<h2>Datasets mentioned in this article 2</h2>
+<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
       <title>Granite Switch 4.1: Chat, Decisions, and Speech from One End…</title>
       <link>https://huggingface.co/blog/ibm-granite/granite-switch-4-1</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ibm-granite/granite-switch-4-1?li=1</guid>
@@ -8061,102 +8372,6 @@ prediction = clf.predict(X).reshape(H, W)</code></pre>
 <p>19</p>
 <ul><li><a href="https://huggingface.co/raunoryys"><img src="https://huggingface.co/avatars/93af16a11c456644bc5dd3a8504a0237.svg" alt=""></a></li><li><a href="https://huggingface.co/VAKEROKONOR"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69177fe98bb52a356201b079/0FWKW_sy6my3VLeiYTEyg.png" alt=""></a></li><li><a href="https://huggingface.co/cmwilhelm"><img src="https://huggingface.co/avatars/75aa4e89ea19a971300a57a208c686a6.svg" alt=""></a></li><li><a href="https://huggingface.co/B-DogAI"><img src="https://huggingface.co/avatars/8a220d6d0af97eb993381883785427b1.svg" alt=""></a></li><li><a href="https://huggingface.co/RamzanPUCIT"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jz0lSosl8W5-V63gat9O8.png" alt=""></a></li><li><a href="https://huggingface.co/dewakratos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a7cdf7da389ac45b6bcddee/j5HE8cC9whPC_zUVKeS40.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Jokkyy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/k9MSxWthMHJlAT3ChYHUF.png" alt=""></a></li><li><a href="https://huggingface.co/alB3rt0"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/3VN80pXYRJZlCGSEU2teI.png" alt=""></a></li><li><a href="https://huggingface.co/Imoji12"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/YLNb-GCLoA4N1rrIxNEkL.png" alt=""></a></li><li><a href="https://huggingface.co/mkomigor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/J-OaLafwVztbp6MUTfqXn.png" alt=""></a></li><li><a href="https://huggingface.co/oxfrug"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68108a1e4892cb3a157d6cf3/rnKvAtcudF7UYZBRDXPxO.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jorgemunozl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5217cde48625c1b7a58fb/YZZ1kwdnUqiRJDLb2a6L5.png" alt=""></a></li></ul>
 <h2>Collections mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Thinking of ACE? We Can Do It with Fewer Tokens</title>
-      <link>https://huggingface.co/blog/ibm-research/altk-evolve-sldd</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/altk-evolve-sldd?li=1</guid>
-      <pubDate>Tue, 11 Aug 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Thinking of ACE? We Can Do It with Fewer Tokens</h1>
-<p>Enterprise</p>
-<p>Article</p>
-<p>August 11, 2026</p>
-<p>33</p>
-<ul><li><a href="https://huggingface.co/gaodan-fang"><img src="https://huggingface.co/avatars/18f132b7a7dabcdf5fb933edb554ea68.svg" alt=""></a></li><li><a href="https://huggingface.co/laredoj"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6487da02c4b44322c124f39f/a59vwxS7l3iylkGXzN6R3.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kirankate06"><img src="https://huggingface.co/avatars/fbde74cb6bf95cd51412962f0eafa824.svg" alt=""></a></li><li><a href="https://huggingface.co/kurhula"><img src="https://huggingface.co/avatars/e5d389d43251a250039959645a8a76a6.svg" alt=""></a></li></ul>
-<p>Vatche Isahagian</p>
-<p>Vatche</p>
-<p>ibm-research</p>
-<p>Jayaram Radhakrishnan</p>
-<p>jayaramkr</p>
-<p>ibm-research</p>
-<p>Vinod Muthusamy</p>
-<p>vinodmut</p>
-<p>ibm-research</p>
-<p>Gaodan Fang</p>
-<p>gaodan-fang</p>
-<p>ibm-research</p>
-<p>Punleuk Oum</p>
-<p>illeatmyhat</p>
-<p>ibm-research</p>
-<p>G Thomas</p>
-<p>gsthomasx</p>
-<p>ibm-research</p>
-<p>Ashwath Vaithinathan Aravindan</p>
-<p>ashwath-vaithina</p>
-<p>ibm-research</p>
-<p>Evelyn Duesterwald</p>
-<p>evduester</p>
-<p>ibm-research</p>
-<p>Merve Unuvar</p>
-<p>mrvnvr</p>
-<p>ibm-research</p>
-<p><em>ALTK-Evolve and ACE both let an agent learn from its own trajectories. The difference is what they do with what they learn — and that decides the token bill.</em></p>
-<p>Give an LLM agent a realistic multi-step task — split a bill, find a song, reconcile an order across nine simulated apps — and when it fails, it usually isn't for lack of knowledge. It mis-paginates an API, resolves the wrong person, or returns a value when none was asked for. The model knows the APIs; what it hasn't internalized is <em>how to use them reliably</em>. That's learnable from the agent's own history.</p>
-<p>Two recent systems do exactly this, on the same kind of agent: <a href="https://arxiv.org/abs/2510.04618"><strong>ACE</strong></a> (Agentic Context Engineering) and our <strong>ALTK-Evolve</strong> (<a href="https://huggingface.co/blog/ibm-research/altk-evolve">introduced here</a>). Both are a form of <strong>agentic memory</strong> — turning an agent's past trajectories into reusable <strong>lessons</strong> and feeding them back at inference time, no weight updates, no human labels. They even agree on the hard part. Where they part ways is <em>delivery</em>.</p>
-<p>A note on words, because the two systems name things differently: we'll call the raw thing an agent learns a <strong>lesson</strong>. ACE organizes its lessons into one comprehensive, evolving <strong>playbook</strong>; we consolidate ours into individually retrievable <strong>guidelines</strong>. Same lessons, two containers.</p>
-<h2>What we agree on</h2>
-<p>Both systems refuse to compress.</p>
-<p>ACE names the failure modes precisely: <strong>brevity bias</strong> — optimization collapsing toward short, generic instructions — and <strong>context collapse</strong> — a model asked to rewrite its whole context each step summarizing the detail away. Its answer is to keep a rich, itemized playbook, with a helpful/harmful counter on every bullet, and let the model distill relevance at read time.</p>
-<p>We reach the same conclusion from the other direction. Every distinct guideline keeps a <strong>support count</strong> — how many independent episodes produced it — and we never summarize the store down to a handful of rules. A lesson five different tasks discovered is a different object from one that appeared once, and both are worth keeping.</p>
-<p>So on the core question — <em>should you compress an agent's hard-won lessons into a tidy summary?</em> — ACE and ALTK-Evolve give the same answer: <strong>no. Count them, don't collapse them.</strong> ACE's per-bullet counters and our support counts are two spellings of the same idea.</p>
-<h2>Where we differ</h2>
-<p>Two places: how the memory is <strong>built</strong>, and how it's <strong>delivered</strong> — and it's the delivery difference that shows up in the token bill.</p>
-<p><strong>Consolidation (how the store is built).</strong> ACE grows one playbook through a <strong>Generator → Reflector → Curator</strong> loop, applying incremental delta updates and de-duplicating by embedding. We cluster near-duplicate lessons and merge <em>within</em> a cluster, <strong>support-conserving</strong> — when several lessons merge, the survivor inherits their combined count, so the store shrinks without losing the record of how much experience backs each guideline. We also extract <em>typed</em> guidelines — strategy, recovery, and optimization — with causal attribution and provenance back to the source trajectory, and at subtask granularity, so a lesson learned on one app can transfer to another.</p>
-<p><strong>Delivery (what reaches the model at inference).</strong> This is the one that drives the numbers. ACE injects the <strong>comprehensive playbook</strong> on every step, the same way regardless of model or task. We treat delivery as a dial, not a constant: a small fixed core of high-support guidelines, extended per task with a handful selected for the task at hand (cosine or LLM-guided, priority-weighted) — or, when a model has the headroom to use it, the full consolidated set. The same lessons are <em>available</em> to both agents; the difference is that ACE always sends all of them, and we send however many a given model can actually use.</p>
-<h2>Why it matters</h2>
-<p>On AppWorld, with the <em>same</em> base ReAct agent, running both systems in-house:</p>
-<table><thead><tr><th>Model</th><th></th><th>TGC / SGC</th><th>Tokens/task</th></tr></thead><tbody><tr><td><strong>DeepSeek-V3.2</strong></td><td>ACE</td><td>80.4 / 73.2</td><td>634K</td></tr><tr><td></td><td><strong>ALTK-Evolve</strong></td><td><strong>89.3 / 80.4</strong></td><td><strong>263K</strong></td></tr><tr><td><strong>gpt-oss-120b</strong></td><td>ACE</td><td>54.8 / 35.7</td><td>777K</td></tr><tr><td></td><td><strong>ALTK-Evolve</strong></td><td><strong>56.0 / 37.5</strong></td><td><strong>116K</strong></td></tr></tbody></table>
-<p>On the strong model we're better on both metrics at <strong>~40% of ACE's inference cost</strong>. On the weak model we edge ACE 56.0 to 54.8 — close enough that we call it a <strong>tie on accuracy</strong> (a repeat run of ours landed at 54.8, matching ACE almost exactly, which is within this benchmark's run-to-run noise) — at <strong>about one-seventh</strong> the cost.</p>
-<p>A fair word on cost: ACE's own efficiency story is about <em>building</em> its context cheaply. Ours is on a different axis — <em>serving</em> it. Retrieving a few guidelines per task instead of injecting the whole playbook on every step is where the tokens go, and it's the direct consequence of the delivery difference above.</p>
-<p>Where does the accuracy come from? The by-difficulty breakdown tells two different stories:</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/RlNmW6Vps10XLGW4DuJQh.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/RlNmW6Vps10XLGW4DuJQh.png" alt="image"></a></p>
-<p><em>Figure 1. Post-memory Task Goal Completion by difficulty, ours vs. ACE. On DeepSeek-V3.2 (right) we win Easy, Hard, and Overall; ACE only edges Medium. On gpt-oss-120b (left) ACE leads easy and medium, but per-task selection wins the hard tasks — and the aggregate. Each system improves from its own no-memory baseline (see the by-difficulty reference tables under Method notes below).</em></p>
-<p>The two models tell different stories. On gpt-oss-120b, ACE's full playbook has the edge on Easy and Medium — there's enough of the task solved by generic instruction-following that a comprehensive prompt helps more than it distracts. But on Hard tasks, where the model has to pick the <em>right</em> lesson rather than wade through all of them, curated retrieval pulls ahead — and that's the tier that decides the aggregate. On DeepSeek-V3.2 the story flips: the stronger model absorbs ACE's full playbook well enough to edge us on Medium, but we lead Easy, Hard, and Overall — with more capacity to spare, more lessons (delivered our way) keep helping instead of crowding each other out.</p>
-<p>We give each model its <strong>best configuration</strong> — the full consolidated set for the strong model, selective retrieval for the weaker one, because a large context overwhelms a weaker model rather than helping it. (Exactly <em>how much</em> to inject, and how it scales across the capability spectrum, is the focus of our <a href="https://huggingface.co/blog/ibm-research/altk-evolve-hmm/"><strong>follow-up post</strong></a>.)</p>
-<h2>Same lessons, different delivery</h2>
-<p>Both systems refuse to compress an agent's hard-won experience into a tidy summary — that part, we agree on. The difference is whether delivery is fixed or calibrated: ACE sends the whole playbook every step no matter what; we send however much of the guideline set a given model can actually use. That calibration is what bought the numbers above — same-or-better accuracy at a fraction of ACE's inference cost — and on the weaker model, it was the difference between guidance that helped and guidance that got in the way.</p>
-<blockquote>Try the ALTK-Evolve library — which includes the extraction, consolidation, and retrieval pipeline used here — or read the full technical report for the complete method and ablations.</blockquote>
-<h2>Linked artifacts / references</h2>
-<ul><li><strong>Earlier post:</strong> ALTK-Evolve introduction — <a href="https://huggingface.co/blog/ibm-research/altk-evolve">link</a></li><li><strong>ACE</strong> (Agentic Context Engineering) — <a href="https://arxiv.org/abs/2510.04618">link</a></li><li><strong>AppWorld</strong> benchmark — <a href="https://appworld.dev/appworld">link</a></li><li><strong>ALTK-Evolve</strong> — <a href="https://github.com/AgentToolkit/altk-evolve">link</a></li><li><strong>Full technical report</strong> — <a href="https://arxiv.org/abs/2603.10600">link</a></li></ul>
-<h2>Method notes</h2>
-<p>AppWorld <code>test_normal</code>, 168 tasks. A ReAct code agent (each step writes Python; the environment returns the output). <strong>TGC</strong> = Task Goal Completion; <strong>SGC</strong> = Scenario Goal Completion, which requires <em>every</em> variant of a scenario to pass. Memory is mined from <strong>train/dev only</strong>; results are single runs (pass@1), as is standard on this benchmark.</p>
-<p>The ACE numbers are our own runs of the ACE agent, evaluated in-house on the same AppWorld splits and the same base models as ALTK-Evolve (DeepSeek-V3.2 and gpt-oss-120b). The ACE paper reports on a different base model (DeepSeek-V3.1), so running it ourselves keeps the comparison controlled for model and harness. Both systems are the <em>same</em> ReAct agent and differ only in the prompt template — which is why the two no-memory baselines differ (72.0 vs 79.8 TGC); we don't rest the comparison on that baseline gap, only on the claims a prompt tweak can't touch: same-or-better accuracy at a fraction of the tokens.</p>
-<h3>Reference tables</h3>
-<p><strong>DeepSeek-V3.2 — <code>test_normal</code> (168 tasks):</strong></p>
-<table><thead><tr><th>System</th><th>Guidelines</th><th>TGC</th><th>SGC</th><th>Tokens/task</th></tr></thead><tbody><tr><td>ReAct, no memory</td><td>0</td><td>79.8</td><td>64.3</td><td>148K</td></tr><tr><td>ReAct + ACE</td><td>106</td><td>80.4</td><td>73.2</td><td>634K</td></tr><tr><td>ReAct + ALTK-Evolve</td><td>191</td><td>89.3</td><td>80.4</td><td>263K</td></tr></tbody></table>
-<p><strong>gpt-oss-120b — <code>test_normal</code>:</strong></p>
-<table><thead><tr><th>System</th><th>Guidelines</th><th>TGC</th><th>SGC</th><th>Tokens/task</th></tr></thead><tbody><tr><td>ReAct, no memory</td><td>0</td><td>39.9</td><td>21.4</td><td>110K</td></tr><tr><td>ReAct + ACE</td><td>full</td><td>54.8</td><td>35.7</td><td>777K</td></tr><tr><td>ReAct + ALTK-Evolve (selected)</td><td>~29</td><td>56.0</td><td>37.5</td><td>116K</td></tr></tbody></table>
-<p><strong>gpt-oss-120b — by difficulty (TGC):</strong></p>
-<table><thead><tr><th>Difficulty</th><th>Baseline</th><th>ACE</th><th>ALTK-Evolve</th></tr></thead><tbody><tr><td>Easy</td><td>66.7</td><td>84.2</td><td>82.5</td></tr><tr><td>Medium</td><td>35.4</td><td>60.4</td><td>56.2</td></tr><tr><td>Hard</td><td>19.1</td><td>23.8</td><td><strong>31.8</strong></td></tr><tr><td>Aggregate</td><td>39.9</td><td>54.8</td><td><strong>56.0</strong></td></tr></tbody></table>
-<p><strong>DeepSeek-V3.2 — by difficulty (baseline → +memory):</strong> the two systems start from different no-memory baselines (79.8 vs 72.0 TGC overall) because of the prompt-template difference above.</p>
-<table><thead><tr><th>Tier</th><th>ALTK TGC</th><th>ALTK SGC</th><th>ACE TGC</th><th>ACE SGC</th></tr></thead><tbody><tr><td>Overall</td><td>79.8 → 89.3</td><td>64.3 → 80.4</td><td>72.0 → 80.4</td><td>57.1 → 73.2</td></tr><tr><td>Easy</td><td>93.0 → 94.7</td><td>84.2 → 84.2</td><td>78.9 → 84.2</td><td>63.2 → 78.9</td></tr><tr><td>Medium</td><td>81.2 → 97.9</td><td>62.5 → 93.8</td><td>85.4 → 100.0</td><td>75.0 → 100.0</td></tr><tr><td>Hard</td><td>66.7 → 77.8</td><td>47.6 → 66.7</td><td>55.6 → 61.9</td><td>38.1 → 47.6</td></tr></tbody></table>
-<p>More from this author</p>
-<h2>Your Agent Aced the Task. Will It Do It Again?</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>119</p>
-<p>September 15, 2026</p>
-<h2>IBM releases SOTA Granite Time Series PatchTST-FM-r2 model with commercial-friendly license</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>60</p>
-<p>September 9, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Faltk-evolve-sldd">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Faltk-evolve-sldd">log in</a> to comment</p>
-<p>33</p>
-<ul><li><a href="https://huggingface.co/gaodan-fang"><img src="https://huggingface.co/avatars/18f132b7a7dabcdf5fb933edb554ea68.svg" alt=""></a></li><li><a href="https://huggingface.co/laredoj"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6487da02c4b44322c124f39f/a59vwxS7l3iylkGXzN6R3.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/kirankate06"><img src="https://huggingface.co/avatars/fbde74cb6bf95cd51412962f0eafa824.svg" alt=""></a></li><li><a href="https://huggingface.co/kurhula"><img src="https://huggingface.co/avatars/e5d389d43251a250039959645a8a76a6.svg" alt=""></a></li><li><a href="https://huggingface.co/gsthomasx"><img src="https://huggingface.co/avatars/7567e1a8588c0bee6293c3cb88c11c8d.svg" alt=""></a></li><li><a href="https://huggingface.co/yarizk"><img src="https://huggingface.co/avatars/dc237f871dc180a8ab2fcb20e7d08d48.svg" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/jorgemunozl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5217cde48625c1b7a58fb/YZZ1kwdnUqiRJDLb2a6L5.png" alt=""></a></li><li><a href="https://huggingface.co/jayaramkr"><img src="https://huggingface.co/avatars/981da7aa42bc31072a5f6e04ce8e6c3a.svg" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

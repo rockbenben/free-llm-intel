@@ -1,6 +1,6 @@
 # Anyscale 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-16**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-17**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anyscale（`anyscale`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -14,9 +14,9 @@
 3. [编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08） <!--orig:Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale-->
 4. [Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理](https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai)（2026-10-07） <!--orig:Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference-->
 5. [Ray Summit 2026：物理 AI、RL，以及承载它们的一切基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08） <!--orig:Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all-->
-6. [推出 Ray History Server：Ray on Kubernetes 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
-7. [将 Ray 的 AI 工作负载扩展至 10k 节点集群](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25） <!--orig:Scaling Ray for AI workloads to 10k node clusters-->
-8. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV Cache 复用走向 Token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
+6. [将 Ray 的 AI 工作负载扩展至 10k 节点集群](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25） <!--orig:Scaling Ray for AI workloads to 10k node clusters-->
+7. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV Cache 复用走向 Token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
+8. [推出 Ray History Server：Ray on Kubernetes 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
 9. [学习闭环：拥有你自己的智能之路](https://anyscale.com/blog/learning-loops)（2026-08-25） <!--orig:Learning Loops: The Path to Owning Your Intelligence-->
 10. [SkyRL 中的 FP8 强化学习：保持训练与 rollout 之间的策略一致性](https://anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl)（2026-08-25） <!--orig:FP8 Reinforcement Learning in SkyRL: Preserving Policy Consistency Across Training and Rollout-->
 11. [Ray Data 中的 GPU 原生算子](https://anyscale.com/blog/gpu-native-operators-in-ray-data)（2026-08-25） <!--orig:GPU-Native Operators in Ray Data-->
