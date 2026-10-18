@@ -7,7 +7,122 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 16 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sat, 17 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>[DeepInfra] IBM Granite 4.2 8B Now Available on DeepInfra</title>
+      <link>https://deepinfra.com/blog/imb-granite-4-2</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/imb-granite-4-2?li=1</guid>
+      <pubDate>Sat, 17 Oct 2026 00:00:00 +0000</pubDate>
+      <category>DeepInfra</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.en.xml">DeepInfra</source>
+      <content:encoded><![CDATA[<h1>IBM Granite 4.2 8B Now Available on DeepInfra</h1>
+<p>Published on 2026.10.17 by DeepInfra</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/IBM-Granite-4.2-8B-Tech-Banner.png" alt="IBM Granite 4.2 8B Now Available on DeepInfra"></p>
+<p><a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">Granite 4.2 8B</a> ships with three selectable reasoning modes: full chain-of-thought via <em>&lt;think&gt;…&lt;/think&gt;</em> tags, a low-effort shortcut, and a direct-answer mode that skips reasoning entirely.</p>
+<p>This lets you trade compute for latency on a per-query basis without swapping model weights.</p>
+<p>It is the mid-size member of IBM’s Granite 4.2 dense reasoning family, built for general-purpose enterprise workloads.</p>
+<p>On AIME 2025 the 8B scores 86.67, and it hits 47.67 on SWE-Bench Verified. The latter tends to be a more honest signal for agentic coding capability than synthetic evals.</p>
+<p>The reasoning capability comes from a three-stage training pipeline: supervised fine-tuning on permissive and synthetic data, then multi-environment reinforcement learning via GRPO.</p>
+<p>The GRPO stage spans math, code, tool use, and <a href="https://deepinfra.com/blog/json-mode">structured output</a>.</p>
+<p>A preference-alignment phase for helpfulness and safety follows. <a href="https://deepinfra.com/blog/deepinfra-function-calling-guide">Tool calling</a> is reasoning-augmented, so the model thinks through which tool to invoke before calling it, using OpenAI’s function definition schema.</p>
+<p>It ships under Apache 2.0 with full transparency disclosures and supports a native 128K context window. The model became available on IBM’s GitHub and Hugging Face on August 25, 2026.</p>
+<p>Granite 4.2 8B is available on DeepInfra as a public API endpoint.</p>
+<h2><strong>What Makes This Model Different</strong></h2>
+<p>Granite 4.2 8B is a decoder-only dense transformer built on the GraniteForCausalLM architecture, post-trained from Granite 4.1 8B Base through a three-stage pipeline.</p>
+<p>This pipeline runs large-scale pre-training, then supervised fine-tuning on a mix of permissive public datasets, synthetic data, agentic traces, and curated human data.</p>
+<p>It finishes with multi-phase reinforcement learning using Group Relative Policy Optimization across math, code, science, tool use, and instruction following.</p>
+<p>A preference-alignment phase for safety and conversational quality follows that.</p>
+<p>The architecture uses grouped query attention with 32 attention heads and 8 KV heads, SwiGLU activations, RMSNorm, and RoPE with a base frequency of 10M.</p>
+<p>This setup balances throughput with long-context stability.</p>
+<h3><strong>Selectable Reasoning Modes</strong></h3>
+<p>Selectable reasoning per query is one of the more practical design decisions here. Rather than committing to always-on chain-of-thought, the model exposes three modes:</p>
+<ul><li><strong>Thinking (enable_thinking=True):</strong> full <em>&lt;think&gt;…&lt;/think&gt;</em> chain-of-thought before answering</li><li><strong>Non-thinking (enable_thinking=False):</strong> direct answer, no reasoning overhead</li><li><strong>Low-effort (enable_thinking=True, low_effort=True):</strong> brief reasoning for simpler queries</li></ul>
+<p>This lets you tune inference cost and latency to query complexity without maintaining separate model checkpoints, which matters at scale and simplifies deployment.</p>
+<p>If you want to run the model locally, <em>ibm/granite4.2:8b-q3_K_M</em> is available on Ollama as a quantized build.</p>
+<p>The model is also accessible directly through HuggingChat for quick experimentation without any infrastructure setup.</p>
+<h3><strong>Long Context and Benchmarks</strong></h3>
+<p>The model natively supports a 128K context window (sequence length of 131,072 tokens), with a 512K long-context extension available. On the RULER long-context benchmark, the 8B scores 80.99 at 64K and 71.41 at 128K, solid retention for a model this size.</p>
+<p>On benchmarks, the 8B holds up well across reasoning and coding tasks:</p>
+<table><thead><tr><th><strong>Benchmark</strong></th><th><strong>Score</strong></th></tr></thead><tbody><tr><td>AIME 2025</td><td>86.67</td></tr><tr><td>GPQA</td><td>64.14</td></tr><tr><td>LiveCodeBench v6</td><td>73.24</td></tr><tr><td>SWE-Bench Verified</td><td>47.67</td></tr><tr><td>MMLU-Pro</td><td>74.04</td></tr><tr><td>τ³-bench (AVG)</td><td>58.06</td></tr><tr><td>Arena-Hard-V2</td><td>65.19</td></tr></tbody></table>
+<p>IBM’s benchmarks are self-reported, so treat these numbers as directional rather than definitive until independent evaluations catch up.</p>
+<h3><strong>Tool Use and Deployment</strong></h3>
+<p>Tool calling is reasoning-augmented: the model reasons through tool selection before invoking, using OpenAI’s function definition schema. It has been validated with agentic coding environments including OpenCode, Pi, and OpenHands, and is optimized for deployment via vLLM (v0.20+). Multilingual support covers 12 languages: English, German, Spanish, French, Japanese, Portuguese, Arabic, Czech, Italian, Korean, Dutch, and Chinese.</p>
+<h2><strong>Getting Started on DeepInfra</strong></h2>
+<p>Granite 4.2 8B is available on DeepInfra as a public API endpoint. <a href="https://deepinfra.com/blog/pricing-101-token-math-cost-per-completion">Pricing</a> is usage-based: $0.06 per 1M input tokens, $0.25 per 1M output tokens, and $0.015 per 1M cached tokens.</p>
+<p>The context window on DeepInfra is 131,072 tokens, and the model runs in bfloat16 precision. JSON output and function calling are both supported out of the box.</p>
+<p>DeepInfra exposes Granite 4.2 8B through an OpenAI-compatible API, so there is no SDK to learn and no infrastructure to manage. Swap your base URL and model name, and you are running.</p>
+<p>DeepInfra operates with a zero data retention policy and is SOC 2 and ISO 27001 certified. The <a href="https://deepinfra.com/ibm-granite/granite-4.2-8b/api">API reference</a> has the full breakdown of supported parameters and request formats.</p>
+<h3><strong>Quickstart</strong></h3>
+<p>cURL:</p>
+<pre><code>curl https://api.deepinfra.com/v1/openai/chat/completions \
+
+  -H &quot;Authorization: Bearer $DEEPINFRA_TOKEN&quot; \
+
+  -H &quot;Content-Type: application/json&quot; \
+
+  -d '{
+
+    &quot;model&quot;: &quot;ibm-granite/granite-4.2-8b&quot;,
+
+    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain GRPO in two sentences.&quot;}]
+
+  }'copy</code></pre>
+<p>Python:</p>
+<pre><code>from openai import OpenAI
+
+client = OpenAI(
+
+    api_key=&quot;$DEEPINFRA_TOKEN&quot;,
+
+    base_url=&quot;https://api.deepinfra.com/v1/openai&quot;,
+
+)
+
+response = client.chat.completions.create(
+
+    model=&quot;ibm-granite/granite-4.2-8b&quot;,
+
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain GRPO in two sentences.&quot;}],
+
+)
+
+print(response.choices[0].message.content)
+
+JavaScript:
+
+import OpenAI from &quot;openai&quot;;
+
+const client = new OpenAI({
+
+  apiKey: &quot;$DEEPINFRA_TOKEN&quot;,
+
+  baseURL: &quot;https://api.deepinfra.com/v1/openai&quot;,
+
+});
+
+const response = await client.chat.completions.create({
+
+  model: &quot;ibm-granite/granite-4.2-8b&quot;,
+
+  messages: [{ role: &quot;user&quot;, content: &quot;Explain GRPO in two sentences.&quot; }],
+
+});
+
+console.log(response.choices[0].message.content);copy</code></pre>
+<p>The only things you need to change from an existing OpenAI integration are the base URL, your API key, and the model name. The official OpenAI Python and Node.js libraries work without modification.</p>
+<p>Head to the <a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">Granite 4.2 8B model page</a> on DeepInfra to explore the API playground, review live request examples, and start building.</p>
+<h2><strong>Conclusion</strong></h2>
+<p>Granite 4.2 8B is a well-engineered 8B model with a few design decisions that actually matter in production. Per-query reasoning control is a meaningful operational lever for teams running mixed workloads where latency and cost vary by task type.</p>
+<p>Apache 2.0 licensing, a 128K native context window, and <a href="https://deepinfra.com/blog/function-calling-feature">reasoning-augmented tool calling</a> make it a credible foundation for agentic pipelines.</p>
+<p>If you are building coding assistants, multi-step reasoning agents, or enterprise workflow automation, it is a compact, auditable option.</p>
+<p>It does not require over-provisioning just to get coherent tool use.</p>
+<p>Run your first call in the playground, or drop Granite 4.2 8B into an existing OpenAI-compatible integration.</p>
+<p>Related articles</p>
+<p><a href="https://deepinfra.com/blog/text-generation-inference"><img src="https://deepinfra.com/blog/tgi-fork.webp" alt="Fork of Text Generation Inference."></a><a href="https://deepinfra.com/blog/text-generation-inference">Fork of Text Generation Inference.</a>The text generation inference open source project by huggingface looked like a promising framework for serving large language models (LLM). However, huggingface announced that they will change the license of code with version v1.0.0. While the previous license Apache 2.0 was permissive, the new on...</p>
+<p><a href="https://deepinfra.com/blog/build-streaming-chat-backend-10-minutes"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/02/streaming-backend_sized.jpg" alt="Build a Streaming Chat Backend in 10 Minutes"></a><a href="https://deepinfra.com/blog/build-streaming-chat-backend-10-minutes">Build a Streaming Chat Backend in 10 Minutes</a>&lt;p&gt;When large language models move from demos into real systems, expectations change. The goal is no longer to produce clever text, but to deliver predictable latency, responsive behavior, and reliable infrastructure characteristics. In chat-based systems, especially, how fast a response starts often matters more than how fast it finishes. This is where token streaming becomes [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/deepseek-v4-pro-model-overview"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/deepseek-v4-pro.png" alt="DeepSeek V4 Pro: Model Overview, Features &amp; Performance Guide"></a><a href="https://deepinfra.com/blog/deepseek-v4-pro-model-overview">DeepSeek V4 Pro: Model Overview, Features &amp; Performance Guide</a>&lt;p&gt;DeepSeek V4 Pro is a 1.6-trillion parameter Mixture-of-Experts (MoE) model from DeepSeek, released on April 24, 2026 under the MIT license. It is designed for advanced reasoning, complex software engineering, and long-running agentic tasks, and arrives alongside DeepSeek-V4-Flash, a lighter 284B-parameter variant built for faster, lower-cost inference. The V4 series is DeepSeek&amp;#8217;s first two-tier lineup [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">View all</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>[Anthropic Claude] How an Anthropic Japan BDR runs his day with a fleet of Clau…</title>
       <link>https://claude.com/resources/articles/how-an-anthropic-japan-business-development-representative-runs-his-day</link>
@@ -9378,224 +9493,6 @@ rules:
 <p>Learn more in PwC’s <a href="https://www.pwc.com/ca/en/media/release/pwc-cohere-enterprise-ai-alliance.html">press release</a>.</p>
 <h2>Read this next</h2>
 <ul><li><a href="https://cohere.com/blog/tag/enterprise-ai">Enterprise AI</a><a href="https://cohere.com/blog/tag/technology">Technology</a><a href="https://cohere.com/blog/shared-or-dedicated-inference-for-embed-rerank">Shared or dedicated inference for Embed &amp; RerankOct 09, 20267 min read</a></li><li><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office"><img src="https://storage.ghost.io/c/81/47/8147eb50-617d-4929-b563-3922b88421fd/content/images/2026/10/260902_OfficeAnnouncement_Ottawa_Blog.png" alt="Cohere Expands Canadian Footprint with New Ottawa Office"></a><a href="https://cohere.com/blog/tag/company-news">Company News</a><a href="https://cohere.com/blog/cohere-expands-canadian-footprint-with-new-ottawa-office">Cohere Expands Canadian Footprint with New Ottawa OfficeOct 08, 20262 min read</a></li><li><a href="https://cohere.com/blog/building-multilingual-bridges"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b416a7d67e66515c45c29ca7b0664a6491ee9d5a-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/research">Research</a><a href="https://cohere.com/blog/building-multilingual-bridges">Multilingual Bridges: How Data Mixing Unlocks In-Language ReasoningOct 06, 20269 min read</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>[OpenRouter] Server-Side Code Execution Tools for AI Agents, Compared</title>
-      <link>https://openrouter.ai/blog/insights/server-side-code-execution-tools-for-ai-agents-compared/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/insights/server-side-code-execution-tools-for-ai-agents-compared/?li=1</guid>
-      <pubDate>Mon, 05 Oct 2026 00:00:00 +0000</pubDate>
-      <category>OpenRouter</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.en.xml">OpenRouter</source>
-      <content:encoded><![CDATA[<h1>Server-Side Code Execution Tools for AI Agents, Compared</h1>
-<p>OpenRouter ·10/5/2026</p>
-<p>Say you’re building an agent that answers questions about a CSV a customer uploaded. The model needs to run Python to get the answer. Where does that code run?</p>
-<p>One option is to run it yourself. That means a sandbox platform such as <a href="https://e2b.dev/">E2B</a> or <a href="https://modal.com/">Modal</a>, or your own container on Docker, plus the work of keeping it away from your database and the internet, capping its runtime, and patching the image.</p>
-<p>A server-side code execution tool is the other option. You add the tool to your API request, the model decides when it needs to run something, and the provider runs the commands in its own sandbox and returns the output to the model inside the same request. A sandbox here means an isolated Linux container with its own filesystem, a time limit, and no network access by default.</p>
-<p>This article covers four providers that offer server-side code execution today, what each sandbox can and can’t do, what it costs in latency and money, and the jobs that still need a sandbox you operate yourself.</p>
-<h2>Tl;dr</h2>
-<ul><li>A server-side code execution tool runs the model’s commands in the provider’s sandbox during your API request. You don’t provision, patch, or secure a container.</li><li>OpenAI, Anthropic, and Google each run code for their own models. Our <a href="https://openrouter.ai/docs/guides/features/server-tools/shell">openrouter:shell</a> tool runs commands for any model on the Responses and Messages APIs, and our <a href="https://openrouter.ai/docs/guides/features/server-tools/bash">openrouter:bash</a> tool does the same on the Messages API only. Both tools are in beta.</li><li>Our sandbox is an isolated container scoped to your account and workspace, with outbound network access off by default and per-command limits on runtime and output size. Sandbox time is billed at $0.0001 per second with a 30-second minimum for a new or sleeping container.</li><li>A sandbox platform you operate yourself is still the right choice for a custom base image, GPU work, or a session that runs for hours.</li></ul>
-<h2>What server-side code execution means</h2>
-<p>A model never runs anything itself. When it calls a tool, it emits a request naming the tool and the arguments, and something has to carry that out. With a client-side tool, that something is your application code or the agent framework you build on. Your application receives the call, runs it, and sends the result back in a follow-up request. With a server-side tool, the provider runs the call on its own infrastructure and returns the result to the model in the same request, so your application has no handler for it. Server-side code execution is the second kind.</p>
-<p>You may already use tools that work this way. <a href="https://openrouter.ai/docs/guides/features/server-tools/web-search">Web search</a> lets a model look something up on the live web, and <a href="https://openrouter.ai/docs/guides/features/server-tools/web-fetch">web fetch</a> lets it read the contents of a URL. In both cases you add one entry to the request and the provider does the rest. Code execution applies the same pattern to running commands.</p>
-<h3>How a tool call becomes a command that runs</h3>
-<p>These steps apply to any server-side code execution tool. Where a field name appears, it’s the one our shell tool uses.</p>
-<ul><li>You include the tool in the request’s <code>tools</code> array.</li><li>The model decides it needs to run something and emits a call carrying one or more shell commands.</li><li>The provider runs those commands in order inside a sandboxed container.</li><li>Each command’s standard output, standard error, and outcome go back to the model. The outcome is either an exit code or a timeout.</li><li>The model reads the results and either answers you or runs more commands in the same request.</li></ul>
-<p>Steps two through five repeat until the model answers. The model runs something, reads the output, decides whether it needs another command, and goes again. That loop is where a code execution tool earns its place, because the model can check its work against real output instead of guessing.</p>
-<p>We cap that loop. The <code>max_tool_calls</code> field sets how many server-tool steps one request may take. Our <a href="https://openrouter.ai/docs/guides/features/server-tools#tool-call-limits">server tools reference</a> puts both the default and the maximum at 30.</p>
-<h3>How a hosted sandbox differs from one you run yourself</h3>
-<p>Running your own sandbox means owning the parts the provider would otherwise own. You pick a base image, provision the compute, wire in an SDK to start runs and read output, and manage each run’s lifecycle. You also own the security boundary.</p>
-<p>A hosted tool trades that control for one entry in a JSON array. You don’t size the container, patch it, or operate it. We built openrouter:shell for the case where the work is a handful of short commands per request.</p>
-<p><a href="https://openrouter.ai/blog/images/hosted-tool-call-vs-self-managed-sandbox.png"><img src="https://openrouter.ai/blog/images/hosted-tool-call-vs-self-managed-sandbox.png" alt="Diagram comparing where a command runs in two setups. In the hosted tool call row, your app sends a request with tools to the model, the model emits a shell call, OpenRouter runs it in a sandbox, the sandbox returns stdout and the exit code to the model, and the model returns the answer to your app. In the self-managed sandbox row, the same request goes to the model, the model returns the tool call to your orchestration code, your code runs it in a sandbox built from your image, the sandbox returns the output to your code, your code sends a follow-up request with the output to the model, and the model returns the answer to your app."></a></p>
-<h2>Who offers hosted code execution today</h2>
-<p>This article covers OpenAI, Anthropic, Google, and OpenRouter. Agent SDKs and dedicated sandbox platforms are separate categories, and both come later in the article. What separates the four providers is which models each one runs code for.</p>
-<h3>OpenAI runs a hosted shell for OpenAI models</h3>
-<p>OpenAI’s <a href="https://developers.openai.com/api/docs/guides/tools-shell">shell tool</a> runs commands in a container OpenAI manages, on the Responses API. OpenAI documents the hosted runtime as Debian 12 with a default working directory of <code>/mnt/data</code>. Commands run without <code>sudo</code>, and interactive TTY sessions aren’t supported. Preinstalled languages listed in the documentation include Python 3.11, Node.js 22.16, Java 17, PHP 8.2, Ruby 3.1, and Go 1.23.</p>
-<p>Hosted containers have no outbound network access by default. To enable it, an organization admin configures an allowlist in the OpenAI dashboard and you set <code>network_policy</code> on the container environment in the request. A container can be reused across requests by passing its id in a <code>container_reference</code> environment, and its expiry is set when the container is created. OpenAI also has a separate <a href="https://developers.openai.com/api/docs/guides/tools-code-interpreter">code interpreter tool</a> for Python.</p>
-<h3>Anthropic runs Python and Bash for Claude models</h3>
-<p>Anthropic’s <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool">code execution tool</a> runs Python and Bash in a sandbox Anthropic manages, on the Messages API. The documented environment is a Linux x86_64 container with Python 3.11, 5 GiB of RAM, 5 GiB of workspace storage, and one CPU. Internet access is disabled and no outbound connections are permitted, so Claude works with the preinstalled libraries and can’t install a package during a run.</p>
-<p>Three <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool#tool-versions">tool versions</a> exist, and every supported model accepts all three. <code>code_execution_20250825</code> supports Bash commands and file operations. <code>code_execution_20260120</code> adds Python interpreter state that persists between requests, which depends on Anthropic’s programmatic tool calling and isn’t available on Claude Haiku 4.5. Containers expire 30 days after creation. After about 5 minutes of inactivity a container is checkpointed, and a request with its id inside the 30-day window restores it.</p>
-<h3>Google runs Python for Gemini models</h3>
-<p>Google’s <a href="https://ai.google.dev/gemini-api/docs/code-execution">code execution tool</a> runs Python in a sandbox Google manages, enabled with a <code>code_execution</code> entry in the request’s tools. The documentation states that the model can only generate and execute Python, that the code environment has a maximum runtime of 30 seconds, and that you can’t install your own libraries. Google publishes the list of libraries the environment includes.</p>
-<h3>We run a hosted shell for any model</h3>
-<p>The three tools above each work with one company’s models. Ours works with any model on the Responses and Messages APIs, because we run the sandbox at the routing layer rather than inside one model provider.</p>
-<p>We ship two code execution tools. <a href="https://openrouter.ai/docs/guides/features/server-tools/shell">openrouter:shell</a> mirrors the shape of OpenAI’s hosted shell tool and works on both the <a href="https://openrouter.ai/docs/api_reference/responses/overview">Responses API</a> and the Messages API. <a href="https://openrouter.ai/docs/guides/features/server-tools/bash">openrouter:bash</a> mirrors the shape of Anthropic’s bash tool and works on the Messages API only.</p>
-<p>Both tools are in beta, so the API may change. Sandboxed execution runs on the global <code>openrouter.ai</code> endpoint only. The <a href="https://openrouter.ai/docs/guides/features/in-region-routing#feature-availability">in-region endpoints</a> don’t offer the shell tool, and Chat Completions rejects both tools with a 400 that names the APIs that do support them.</p>
-<p>Set <code>engine</code> to <code>openrouter</code> on either tool and the commands run in our sandbox. The default <code>engine</code> is <code>auto</code>. For openrouter:shell, <code>auto</code> keeps a provider’s native hosted shell where one exists and routes to our sandbox otherwise. For openrouter:bash, <code>auto</code> returns the tool call to your application to run client-side, and nothing executes on our servers.</p>
-<h3>Run a command in our sandbox</h3>
-<p>Here is a complete request that runs two commands and reads the results back.</p>
-<pre><code>import os
-import requests
-
-response = requests.post(
-    &quot;https://openrouter.ai/api/v1/responses&quot;,
-    headers={&quot;Authorization&quot;: f&quot;Bearer {os.environ['OPENROUTER_API_KEY']}&quot;},
-    json={
-        &quot;model&quot;: &quot;anthropic/claude-sonnet-4.5&quot;,
-        &quot;input&quot;: &quot;Run `cat /etc/os-release` and `python3 --version`, then tell me the OS and Python version in one sentence.&quot;,
-        &quot;tools&quot;: [
-            {&quot;type&quot;: &quot;openrouter:shell&quot;, &quot;parameters&quot;: {&quot;engine&quot;: &quot;openrouter&quot;}}
-        ],
-    },
-)
-
-for item in response.json()[&quot;output&quot;]:
-    if item[&quot;type&quot;] == &quot;openrouter:shell&quot;:
-        print(item[&quot;container_id&quot;], item[&quot;action&quot;][&quot;commands&quot;])
-        for result in item[&quot;output&quot;]:
-            print(result[&quot;stdout&quot;], result[&quot;outcome&quot;])</code></pre>
-<p>We ran this request on September 22, 2026. The model sent both commands in one shell call, and each command came back with its own outcome. The full <code>os-release</code> output runs to several lines and is trimmed to its first two here.</p>
-<pre><code>{
-  &quot;type&quot;: &quot;openrouter:shell&quot;,
-  &quot;container_id&quot;: &quot;sess_art10-418b8597e044&quot;,
-  &quot;action&quot;: { &quot;commands&quot;: [&quot;cat /etc/os-release&quot;, &quot;python3 --version&quot;] },
-  &quot;output&quot;: [
-    {
-      &quot;stdout&quot;: &quot;PRETTY_NAME=\&quot;Ubuntu 22.04.5 LTS\&quot;\nNAME=\&quot;Ubuntu\&quot;\n&quot;,
-      &quot;stderr&quot;: &quot;&quot;,
-      &quot;outcome&quot;: { &quot;type&quot;: &quot;exit&quot;, &quot;exit_code&quot;: 0 }
-    },
-    {
-      &quot;stdout&quot;: &quot;Python 3.11.14&quot;,
-      &quot;stderr&quot;: &quot;&quot;,
-      &quot;outcome&quot;: { &quot;type&quot;: &quot;exit&quot;, &quot;exit_code&quot;: 0 }
-    }
-  ]
-}</code></pre>
-<p>The sandbox reported Ubuntu 22.04.5 LTS with Python 3.11.14 on that date. The runtime image can change, so read the version from the container rather than hard-coding it. The <a href="https://openrouter.ai/docs/guides/features/server-tools">server tools reference</a> covers the remaining parameters.</p>
-<h3>Agent SDKs that wrap a sandbox for you</h3>
-<p>If you build on an agent SDK rather than calling an API directly, some SDKs wrap one of these tools.</p>
-<p>The <a href="https://openai.github.io/openai-agents-python/tools/">OpenAI Agents SDK</a> ships <code>CodeInterpreterTool</code>, which runs code in OpenAI’s sandbox, and <code>ShellTool</code>, which runs either in your local runtime or in an OpenAI-hosted container depending on how you configure its environment. Check which mode you configured before assuming a command ran remotely. On our side, openrouter:shell is an entry in the <code>tools</code> array like any other, so it goes into an <a href="https://openrouter.ai/docs/agent-sdk/overview">OpenRouter Agent SDK</a> loop the same way it goes into a raw request.</p>
-<h3>What still needs a sandbox of your own</h3>
-<p>A hosted tool fits short, bounded work such as running a script, transforming a file, or checking a result. Anything that needs a specific base image or a GPU falls outside all four hosted tools and needs a sandbox platform you operate.</p>
-<h2>Comparison</h2>
-<p>Every hosted-tool cell comes from the vendor’s own documentation linked above, except the OpenRouter runtime cell, which is what the sandbox reported when we ran the request above. The self-managed column describes a sandbox you run yourself rather than any one platform.</p>
-<p>OpenAI</p>
-<p>Anthropic</p>
-<p>Google</p>
-<p>Self-managed</p>
-<p>Who runs it</p>
-<p>We do</p>
-<p>OpenAI</p>
-<p>Anthropic</p>
-<p>Google</p>
-<p>You do</p>
-<p>Models</p>
-<p>Any model on the Responses and Messages APIs</p>
-<p>OpenAI models</p>
-<p>Claude models</p>
-<p>Gemini models</p>
-<p>Any model</p>
-<p>APIs</p>
-<p>Responses and Messages. openrouter:bash is Messages only</p>
-<p>Responses</p>
-<p>Messages</p>
-<p>Gemini API</p>
-<p>Any</p>
-<p>Languages</p>
-<p>Any shell command. Ubuntu 22.04.5 with Python 3.11.14 reported on September 22, 2026</p>
-<p>Shell commands on Debian 12. Python, Node.js, Java, PHP, Ruby, and Go preinstalled</p>
-<p>Python and Bash</p>
-<p>Python only</p>
-<p>Whatever you build</p>
-<p>Filesystem</p>
-<p>Own container filesystem, scoped to your account and workspace. Files under the home directory are saved after every command</p>
-<p>Own container filesystem with a default working directory of</p>
-<p>/mnt/data</p>
-<p>. Data is deleted when the container expires</p>
-<p>Isolated container with 5 GiB of workspace storage. Containers expire 30 days after creation</p>
-<p>Not documented</p>
-<p>Whatever your image and mounts define</p>
-<p>Outbound network</p>
-<p>Off by default. Allowlist of up to 50 hostnames on ports 80 and 443</p>
-<p>Off by default. Organization allowlist plus a per-request</p>
-<p>network_policy</p>
-<p>Disabled</p>
-<p>Not documented</p>
-<p>Yours to configure</p>
-<p>Install packages at runtime</p>
-<p>Yes, with the package hosts in the allowlist</p>
-<p>Yes, with the package hosts in the allowlist</p>
-<p>No</p>
-<p>No</p>
-<p>Yes</p>
-<p>Session persistence</p>
-<p>Container keyed by container id. Sleeps after 5 minutes idle. Saved files kept for 30 days after last use</p>
-<p>Container reused by id through</p>
-<p>container_reference</p>
-<p>. Expiry set on the container</p>
-<p>Container restored by id within 30 days of creation. Interpreter state persists on</p>
-<p>code_execution_20260120</p>
-<p>and later with programmatic tool calling</p>
-<p>30-second maximum runtime per execution. State persistence between requests not documented</p>
-<p>Up to each platform’s cap</p>
-<p>Cost model</p>
-<p>Inference tokens plus sandbox time at $0.0001 per second, with a 30-second minimum for a new or sleeping container</p>
-<p>Not stated in the shell tool documentation</p>
-<p>1,550 free hours per organization per month, then $0.05 per hour per container, with a 5-minute minimum per execution</p>
-<p>No added charge. Generated code and output billed as tokens</p>
-<p>Compute time while the sandbox runs</p>
-<h2>What our sandbox enforces</h2>
-<p>The point of a sandbox is that you don’t have to trust the model. A command you never intended can’t reach the network or anyone else’s container, and it stops at a hard limit on how long it runs and how much it prints. Everything in this section describes our sandbox. The table above shows where the other three differ.</p>
-<h3>The limits that apply to every command</h3>
-<p>We run each command in an isolated container, separate from the infrastructure serving your request and from your machine, and scoped to your account and workspace. You set your own ceilings with <code>timeout_ms</code> for how long a command may run and <a href="https://openrouter.ai/docs/guides/features/server-tools/shell#call-arguments">max_output_length</a> for how much it may print. <code>timeout_ms</code> defaults to 120,000 ms and can’t exceed 300,000 ms. <code>max_output_length</code> defaults to 16,384 characters per stream and can’t exceed 65,536. A shell call with more than 100 commands is rejected.</p>
-<p>Outbound network access is off unless you turn it on. We checked this on September 22, 2026 by sending a request with no <code>network_policy</code> and asking the model to fetch <code>https://example.com</code> with <code>curl</code>, printing only the HTTP status code and giving up after 5 seconds. The command printed <code>000</code>, which is what <code>curl</code> prints when no response arrives, and exited with code 28, a <code>curl</code> timeout.</p>
-<pre><code>{ &quot;stdout&quot;: &quot;000&quot;, &quot;stderr&quot;: &quot;curl: (28) Failed to connect to example.com port 443 after 5206 ms: Connection timed out&quot;, &quot;outcome&quot;: { &quot;type&quot;: &quot;exit&quot;, &quot;exit_code&quot;: 28 } }</code></pre>
-<p>To open the network, set a <code>network_policy</code> allowlist of up to 50 hostnames or glob patterns. Only ports 80 and 443 are reachable, and the policy is fixed when the container starts. <code>pip install</code> needs both <code>pypi.org</code> and <code>files.pythonhosted.org</code> in the allowlist.</p>
-<h3>Prompt injection and what the sandbox limits</h3>
-<p>Giving a model a shell exposes you to <a href="https://genai.owasp.org/llmrisk/llm01-prompt-injection/">prompt injection</a>. If your agent reads a web page, a support ticket, or a file someone uploaded, an attacker can hide instructions in that text telling the model to ignore your prompt and run something else.</p>
-<p>The limits above apply whether the model is following your prompt or an attacker’s. A command run under an injected instruction can’t reach any host outside the <code>network_policy</code> you configured, and has no network access at all when you leave the policy off. It can’t reach another tenant’s container, and it stops at the same timeout. An allowlist widens what an injected command can reach, and <code>allowed_domains: [&quot;*&quot;]</code> permits unrestricted egress, so keep the allowlist to the hosts the job needs.</p>
-<p>You can also detect an attempt that arrives in the request itself. <a href="https://openrouter.ai/docs/guides/features/guardrails/prompt-injection">Prompt-injection detection</a> in a <a href="https://openrouter.ai/docs/guides/features/guardrails">workspace guardrail</a> checks the user-supplied message content of each incoming request against regex patterns for common injection techniques, before we forward the request to the model. It doesn’t inspect what a server tool fetches after that point, so a page, file, or command output the model reads through a tool needs a control of your own, such as reviewing the sandbox output your application receives. A match does one of three things, depending on the action you configure.</p>
-<ul><li>Flag records the detection and forwards the request unchanged.</li><li>Redact replaces the matched span with <code>[PROMPT_INJECTION]</code> and forwards the sanitized request.</li><li>Block rejects the request with a 403 before it reaches the model.</li></ul>
-<p>Where more than one guardrail applies, the strictest action wins, in the order block, redact, flag. The detection isn’t exhaustive and can produce false positives, so measure the match rate against your own traffic in flag mode before you enforce redact or block. You can report a false positive from the Logs page.</p>
-<h2>What a hosted sandbox costs you in seconds and dollars</h2>
-<p>A hosted sandbox adds seconds to a request and leaves you with no infrastructure to run. It also gives you a container you can return to.</p>
-<h3>Files survive between requests</h3>
-<p>Commands run in <code>/workspace/home</code>, and we save the changed files under that directory after every command. Send a stable <code>session_id</code>, or set a container id in the tool’s <a href="https://openrouter.ai/docs/guides/features/containers#container-ids">environment</a> configuration, and every request with that id reaches the same container and the same files. A <code>session_id</code> must use only letters, digits, <code>_</code>, and <code>-</code>. An id with any other character is ignored, and we pick the container as if you sent no <code>session_id</code>, which means the most recent <code>container_id</code> in the replayed conversation if there is one, and otherwise a new container for that request. When a <code>session_id</code> is longer than 20 characters, we use only the last 20, so two long ids that end the same way share a container. A <code>container_reference</code> id can be 1 to 40 characters from the same set and isn’t truncated, so use it when you need the id to be exact. We confirmed this on September 22, 2026 by writing a file in one request and reading it back in a second request that shared the same <code>session_id</code>.</p>
-<p>A container sleeps after 5 minutes idle, and the idle time isn’t configurable. Sleep doesn’t delete the files. When a request with the same id arrives later, a new sandbox starts and loads the saved files first. Open processes, environment variables, and installed system state aren’t restored, so treat a woken container as a fresh machine that has your files on it. Saved files are kept for 30 days after the container was last used. To pull an artifact out, <code>GET /api/v1/containers/{container_id}/files</code> lists what a container produced, and the <a href="https://openrouter.ai/docs/guides/features/containers#save-a-container-file-to-your-workspace">promote endpoint</a> copies a file into your workspace documents, where it doesn’t expire.</p>
-<h3>What you can review afterward</h3>
-<p>Each shell tool result in the response carries the commands the model ran and each command’s stdout, stderr, and outcome, so your application can log them the same way it logs the rest of the response. <a href="https://openrouter.ai/docs/guides/features/input-output-logging">Input &amp; Output Logging</a> stores your prompts and completions on OpenRouter for review on the Logs page, and guardrail detections appear there too. For production monitoring, <a href="https://openrouter.ai/docs/guides/features/broadcast">Broadcast</a> streams traces to an external observability platform as requests complete.</p>
-<p>If you route <a href="https://openrouter.ai/docs/guides/features/in-region-routing#feature-availability">in-region</a>, the shell tool isn’t available and Input &amp; Output Logging is skipped, even when it’s enabled. Broadcast supports in-region routing, and each destination is configured with the data regions it receives traces from.</p>
-<h3>What the round trip costs you</h3>
-<p>A request that runs a sandboxed command takes longer than the same request without one. In a set of single requests we sent on September 22, 2026, a request with no shell tool returned in about 2 seconds, and requests that made one shell call returned in 8 to 21 seconds depending on the model. Those are single samples from one session, not a benchmark. Budget for several seconds of overhead per shell call.</p>
-<p>Sandbox time is billed at $0.0001 per second. The clock starts when a request first runs a sandbox command and stops when the response completes. A request that starts a new or sleeping container is billed a minimum of 30 seconds, and later requests that reuse the same warm container pay only their metered time. The request above started a new container, and its usage object reported a <code>server_tool_cost</code> of 0.003, which is the 30-second minimum. A container that is idle between requests isn’t billed.</p>
-<h2>Change the model without touching your tool code</h2>
-<p>Swap the model and your tool definition stays the same.</p>
-<p>We sent one request body six times on September 22, 2026, changing only the <code>model</code> field, and asked each model to run <code>python3 -c &quot;print(sum(range(1, 101)))&quot;</code> in the sandbox. Each model made one shell call and returned 5050.</p>
-<p>Model</p>
-<p>Result</p>
-<p>openai/gpt-5.4-mini</p>
-<p>5050</p>
-<p>google/gemini-3.5-flash</p>
-<p>5050</p>
-<p>anthropic/claude-haiku-4.5</p>
-<p>5050</p>
-<p>deepseek/deepseek-v3.2</p>
-<p>5050</p>
-<p>moonshotai/kimi-k2.6</p>
-<p>5050</p>
-<p>qwen/qwen3-coder</p>
-<p>5050</p>
-<p>All six ran in the same sandbox with the same tool definition, whatever their own provider offers natively, because the sandbox belongs to us and not to the model’s provider. Test the model you plan to use before you build on it, because tool-calling reliability differs between models. Our <a href="https://openrouter.ai/docs/guides/features/tool-calling">tool calling guide</a> covers how server tools and your own function tools share one <code>tools</code> array.</p>
-<h3>When you want a sandbox platform of your own</h3>
-<p>Choose a dedicated sandbox platform when you need something a hosted tool doesn’t give you. <a href="https://modal.com/docs/guide/sandbox">Modal</a> documents sandboxes built from custom images with a configurable lifetime of up to 24 hours and GPU resources. <a href="https://www.daytona.io/docs/en/sandboxes/">Daytona</a> documents sandboxes created from a public container image, including GPU sandboxes. <a href="https://e2b.dev/docs/sandbox">E2B</a> documents sandboxes that run for up to 24 hours on its Pro plan and 1 hour on its base plan, with pause and resume for longer workloads.</p>
-<h2>Conclusion</h2>
-<p>For short, bounded commands inside a model request, use a hosted tool. You add one entry to the <code>tools</code> array and get an isolated container with outbound network access off, and you pay for inference plus the seconds the sandbox runs. Budget several seconds of overhead per shell call and reuse a container where you can.</p>
-<p>Move to a sandbox platform you operate when a job needs a custom base image, a GPU, a session that runs for hours, or ownership of the security boundary itself. In either case, check the provider’s current documentation before you commit, because our two tools are in beta and the other three providers’ tools change too.</p>
-<h2>Frequently asked questions</h2>
-<h3>Is there a hosted sandboxed shell tool that models can call directly during a request?</h3>
-<p>Yes. Our openrouter:shell server tool gives a model a sandboxed Linux shell that runs on our infrastructure during the request, on both the Responses API and the Messages API. Set <code>engine</code> to <code>openrouter</code> and the commands run in an isolated container, with each command’s stdout, stderr, and exit or timeout outcome returned to the model. OpenAI, Anthropic, and Google each offer a hosted code execution tool for their own models.</p>
-<h3>Can I give a model a sandboxed shell it can run commands in?</h3>
-<p>Yes. Add <code>{&quot;type&quot;: &quot;openrouter:shell&quot;, &quot;parameters&quot;: {&quot;engine&quot;: &quot;openrouter&quot;}}</code> to the <code>tools</code> array of a Responses or Messages API request. The model can then emit shell calls, and we run the commands in an isolated container and return each command’s output to the model. The container has no outbound network access unless you configure a <code>network_policy</code> allowlist.</p>
-<h3>What SDKs or platforms provide server-side code execution out of the box?</h3>
-<p>Our openrouter:shell server tool runs commands for any model on the Responses and Messages APIs, and our openrouter:bash server tool does the same on the Messages API only. OpenAI, Anthropic, and Google each run code for their own models through the Responses API shell tool, the code execution tool, and the Gemini API code execution tool. The OpenAI Agents SDK wraps OpenAI’s hosted tools as <code>CodeInterpreterTool</code> and <code>ShellTool</code>. E2B, Modal, and Daytona are sandbox platforms you integrate and operate yourself rather than tools a provider runs inside the API call.</p>
-<h3>Which sandbox is best for AI agents?</h3>
-<p>It depends on how long the work runs and how much control you need over the runtime. For short commands inside a request, a hosted tool such as openrouter:shell means you run no infrastructure. For a custom base image, GPU access, or a session that runs for hours, a sandbox platform you operate, such as Modal or Daytona, gives you those controls.</p>
-<h3>How do you sandbox an AI agent?</h3>
-<p>You run the agent’s commands in an environment isolated from your own systems and limit what that environment can reach. With a hosted tool the provider does this. On OpenRouter, containers are isolated from our infrastructure and from your machine, scoped to your account and workspace, outbound network access is off by default, each command is bounded by <code>timeout_ms</code>, and output is capped by <code>max_output_length</code>. Workspace guardrails add prompt-injection detection in front of the model.</p>
-<h3>What is a sandboxed AI tool?</h3>
-<p>It’s a tool whose side effects are confined to an isolated environment rather than your production systems. For code execution, the model’s commands run in a container with its own filesystem, restricted network access, and a time limit, and only the command output travels back to the model. Our shell and bash server tools work this way.</p>
-<h2>References</h2>
-<ul><li><a href="https://openrouter.ai/docs/guides/features/server-tools">Server tools reference</a></li><li><a href="https://openrouter.ai/docs/guides/features/server-tools/shell">Shell server tool</a></li><li><a href="https://openrouter.ai/docs/guides/features/server-tools/bash">Bash server tool</a></li><li><a href="https://openrouter.ai/docs/guides/features/containers">Containers</a></li><li><a href="https://openrouter.ai/docs/guides/features/guardrails">Guardrails</a> and <a href="https://openrouter.ai/docs/guides/features/guardrails/prompt-injection">prompt-injection detection</a></li><li><a href="https://openrouter.ai/docs/guides/features/input-output-logging">Input &amp; Output Logging</a></li><li><a href="https://openrouter.ai/docs/guides/features/tool-calling">Tool calling guide</a></li><li><a href="https://openrouter.ai/docs/api_reference/responses/tool-calling">Responses API tool calling</a></li><li><a href="https://openrouter.ai/models">Model catalog</a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

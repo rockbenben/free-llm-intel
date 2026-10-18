@@ -3,6 +3,16 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-10-18
+### DeepSeek（`deepseek`）
+- 摘要：deepseek-flash 底层版本更新为 DeepSeek-V4.1-Flash-1017；DeepSeek Harness/Claude Code/Codex 中访问 Search/Fetch 接口目前未计费，明确将于 2026 年 11 月 1 日起开始收费
+- `free_models`：**无免费模型层**，全量模型按量计费：`deepseek-flash`（DeepSeek-V4.1-Flash，支持图像理解与思考模式）、`deepseek-v4-pro`（DeepSeek-V4-Pro-0813）；上下文 1M（最大输出 384K）、峰谷定价（元/百万 tokens，高峰为工作日 9:00–12… → **无免费模型层**，全量模型按量计费：`deepseek-flash`（DeepSeek-V4.1-Flash-1017，支持图像理解与思考模式）、`deepseek-v4-pro`（DeepSeek-V4-Pro-0813）；上下文 1M（最大输出 384K）、峰谷定价（元/百万 tokens，高峰为工作日 9:…
+- `promotions`：实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲时段半价）：deepseek-flash 输出 8.0（高峰）/4.0（空闲），缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5，缓存命中 0.30/0.15。**限时活… → 实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲时段半价）：deepseek-flash 输出 8.0（高峰）/4.0（空闲），缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5，缓存命中 0.30/0.15。**限时免…
+### Together AI（`together_ai`）
+- 摘要：官方定价页新增 Muse Spark Open 限时免费活动（输入/输出均为 $0.00，有效期至 2026 年 10 月 18 日），但调用仍受平台最低 $15 充值门槛约束。
+- `free_models`：**无免费试用，但存在 $0 / 输出免费定价模型**：官方价目表中 Ternary Bonsai 27B 输入/输出均为 $0.00/1M tokens；Tev1 4B Experimental 输出免费（Free），输入收取 $0.04/1M tokens。调用前平台访问仍需首次最低 $15 充值；其余模型均需充… → `Ternary Bonsai 27B` —— 输入与输出均定价为 **$0.00/1M tokens**（需充值门槛）、`Muse Spark Open (Free for limited time)` —— **限时免费活动**，输入与输出均定价为 **$0.00**（活动有效期至 2026/10/18；需充值门…
+- `promotions`：Serverless 按量计费 + 专用 GPU 集群；支持 OpenAI SDK 兼容调用。 → 限时活动：Muse Spark Open (Free for limited time) 提供 $0.00 输入/输出优惠，有效期至 2026 年 10 月 18 日（Promotion valid until 10/18/2026）。
+
 ## 2026-10-17
 ### xAI Grok（`xai_grok`）
 - 摘要：新增最新旗舰模型 grok-4.7 及 grok-build-0.1，API 全线模型依然需充值使用，无免费层

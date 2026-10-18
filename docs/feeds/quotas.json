@@ -14,13 +14,13 @@
       "free_quota": "**无公开赠送政策**：现行官方定价页与更新日志均无新用户赠送 token 政策（历史“500 万 tokens/30 天”无法复核，不予采信）；账户扣费顺序中存在“赠送余额”项，实际以注册后账户到账为准",
       "validity": "以账户内余额标注为准",
       "free_models": [
-        "**无免费模型层**，全量模型按量计费：`deepseek-flash`（DeepSeek-V4.1-Flash，支持图像理解与思考模式）、`deepseek-v4-pro`（DeepSeek-V4-Pro-0813）；上下文 1M（最大输出 384K）",
+        "**无免费模型层**，全量模型按量计费：`deepseek-flash`（DeepSeek-V4.1-Flash-1017，支持图像理解与思考模式）、`deepseek-v4-pro`（DeepSeek-V4-Pro-0813）；上下文 1M（最大输出 384K）",
         "峰谷定价（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲半价）：deepseek-flash 输出 8 高峰/4 空闲、缓存命中输入 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5、缓存命中输入 0.30/0.15",
-        "旧模型名 `deepseek-v4-flash`、`deepseek-v4-flash-vision-exp` 对应模型已下线，调用自动由 DeepSeek-V4.1-Flash 提供服务并按 Flash 计费"
+        "旧模型名 `deepseek-v4-flash`、`deepseek-v4-flash-vision-exp` 对应模型已下线，调用自动由 DeepSeek-V4.1-Flash-1017 提供服务并按 Flash 计费"
       ],
       "tier_caveats": [],
       "preconditions": "注册平台账号；按量计费，并发限制随账户充值等级（Tier）提升",
-      "promotions": "实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲时段半价）：deepseek-flash 输出 8.0（高峰）/4.0（空闲），缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5，缓存命中 0.30/0.15。**限时活动**：通过 Claude Code 的 Web Search 工具或 Codex 的 web_search 功能发起的搜索请求，在 Search API 上线后的前两周内免收 Search API 请求费用（标准计费为每 1,000 次成功请求 5 元）。",
+      "promotions": "实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲时段半价）：deepseek-flash 输出 8.0（高峰）/4.0（空闲），缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5，缓存命中 0.30/0.15。**限时免费活动**：用户在 DeepSeek Harness/Claude Code/Codex 中使用 DeepSeek API 时通过 Server 端工具调用访问的 Search/Fetch 接口目前未计费，将于北京时间 2026 年 11 月 1 日 00:00 起按次收取调用费用（标准价格均为每 1,000 次成功请求 5 元）。",
       "openai_compat": null,
       "links": [
         [
@@ -40,7 +40,7 @@
           "https://platform.deepseek.com/"
         ]
       ],
-      "reviewed": "2026-10-17"
+      "reviewed": "2026-10-18"
     },
     {
       "rank": 2,
@@ -823,7 +823,7 @@
           "https://www.teleai.com.cn/docOverview"
         ]
       ],
-      "reviewed": "2026-10-10"
+      "reviewed": "2026-10-18"
     },
     {
       "rank": 19,
@@ -889,7 +889,7 @@
           "https://ai.360.com/docs"
         ]
       ],
-      "reviewed": "2026-10-12"
+      "reviewed": "2026-10-18"
     },
     {
       "rank": 21,
@@ -1571,11 +1571,14 @@
       "free_quota": "**无免费试用 / 无赠送**：官方计费文档原文 “Together AI does not currently offer free trials. Access to the Together platform requires a minimum $15 credit purchase.”——首次充值最低额为 $15（后续充值最低 $5），而非赠送；预付余额无过期时间（官方原文 “prepaid balance credits in your Together.ai account do not currently have an expiration date”）",
       "validity": "预付余额不过期；无免费额度",
       "free_models": [
-        "**无免费试用，但存在 $0 / 输出免费定价模型**：官方价目表中 Ternary Bonsai 27B 输入/输出均为 $0.00/1M tokens；Tev1 4B Experimental 输出免费（Free），输入收取 $0.04/1M tokens。调用前平台访问仍需首次最低 $15 充值；其余模型均需充值后按量付费"
+        "`Ternary Bonsai 27B` —— 输入与输出均定价为 **$0.00/1M tokens**（需充值门槛）",
+        "`Muse Spark Open (Free for limited time)` —— **限时免费活动**，输入与输出均定价为 **$0.00**（活动有效期至 2026/10/18；需充值门槛）",
+        "`Tev1 4B Experimental` —— 输出免费（Free），输入收取 **$0.04/1M tokens**（需充值门槛）",
+        "**平台调用限制**：官方计费文档明确平台不提供免费试用，使用前组织必须完成最低 $15 充值，且需保持正余额才能调用 API。"
       ],
       "tier_caveats": [],
       "preconditions": "注册账号并完成组织首次最低 $15 充值（后续充值最低 $5）",
-      "promotions": "Serverless 按量计费 + 专用 GPU 集群；支持 OpenAI SDK 兼容调用。",
+      "promotions": "限时活动：Muse Spark Open (Free for limited time) 提供 $0.00 输入/输出优惠，有效期至 2026 年 10 月 18 日（Promotion valid until 10/18/2026）。",
       "openai_compat": null,
       "links": [
         [
@@ -1595,7 +1598,7 @@
           "https://www.together.ai/pricing"
         ]
       ],
-      "reviewed": "2026-10-14"
+      "reviewed": "2026-10-18"
     },
     {
       "rank": 37,
@@ -1678,7 +1681,7 @@
           "https://docs.deepinfra.com/"
         ]
       ],
-      "reviewed": "2026-10-10"
+      "reviewed": "2026-10-18"
     },
     {
       "rank": 39,
@@ -2075,7 +2078,7 @@
           "https://www.inceptionlabs.ai/"
         ]
       ],
-      "reviewed": "2026-10-10"
+      "reviewed": "2026-10-18"
     },
     {
       "rank": 49,
@@ -2361,7 +2364,7 @@
           "https://www.oracle.com/cloud/pricing/"
         ]
       ],
-      "reviewed": "2026-10-13"
+      "reviewed": "2026-10-18"
     },
     {
       "rank": 57,
@@ -2438,7 +2441,7 @@
           "https://baseten.co/"
         ]
       ],
-      "reviewed": "2026-10-11"
+      "reviewed": "2026-10-18"
     },
     {
       "rank": 59,
@@ -2478,7 +2481,7 @@
           "https://modal.com/"
         ]
       ],
-      "reviewed": "2026-10-10"
+      "reviewed": "2026-10-18"
     },
     {
       "rank": 60,
@@ -2601,7 +2604,7 @@
           "https://qoder.com/"
         ]
       ],
-      "reviewed": "2026-10-11"
+      "reviewed": "2026-10-18"
     },
     {
       "rank": 63,

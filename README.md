@@ -98,16 +98,16 @@
 
 ### 5. 限时 / 易变信息（最容易过期，看到请先核对官方页）
 
-- [DeepSeek](#1-deepseek-深度求索)：限时活动：通过 Claude Code 的 Web Search 工具或 Codex 的 web_search 功能发起的搜索请求…
+- [DeepSeek](#1-deepseek-深度求索)：限时免费活动：用户在 DeepSeek Harness/Claude Code/Codex 中使用 DeepSeek API 时通过 Server 端工具调用访问的 Search/Fetch 接口目前未计费…
 - [小米 MiMo](#7-小米-mimo)：另有 MiMo Claw 限时特惠 ¥14.9 / 月
 - [云知声 Token Hub](#15-云知声-token-hub)：官方页首横幅标注 U2 Flash 全新上线并限时免费无限量调用（2026.09.30-2026.10.31）
 - [摩尔线程 MUSA Coding Plan](#16-摩尔线程-musa-coding-plan)：Free Trial 即左栏 30 天免费试用（每日限量 100 名），无独立注册赠金
 - [中国电信](#18-中国电信-天翼云-息壤智算)：另有编程 Token Plan 3000/10000/25000/50000/100000 积分套餐（29–699 元/月，均为付费限时特惠）
 - [DMXAPI](#22-dmxapi-大模型聚合转发)：mimo-v2.5-tts —— 小米精品音色 TTS，限时免费（固定价格 ￥0 / 次，上下文 8k）
 - [Mistral AI](#27-mistral-ai)：Leanstral（Labs，labs-leanstral-2603，限时开放收集反馈）—— 免费端点
+- [Together AI](#36-together-ai)：限时活动：Muse Spark Open (Free for limited time) 提供 $0.00 输入/输出优惠，有效期至 2026 年 10 月 18 日（Promotion valid until 10/18/2026）
 - [Fireworks AI](#37-fireworks-ai)：Muse Glimmer 30B SFT 限时免费（至 11/30，免信用卡）
 - [Poolside](#45-poolside)：已从申请制转为开放注册，官方标注 “Free to use for a limited time”（限时免费，截止时间未公布，以官方后续公告为准）
-- [Qoder](#62-qoder-agentic-coding-platform-国际版)：限时免费活动 —— Qwen3.8-Flash 限免已延长（结束时间待公布，调用不扣 Credits）、SOTA 模型限时免费体验（按轮领取、未用过轮作废）、「经济(Efficient)」档位对付费用户限免（官方 Events 页）
 
 ### 6. 免费额度用完之后
 
@@ -162,9 +162,9 @@ python -m unittest discover
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-10-17 11:13:55**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-10-18 08:25:07**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
-> 💡 **核心特性**：覆盖 **70 家厂商**（深度抓取 **133 个情报页 + 46 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
+> 💡 **核心特性**：覆盖 **70 家厂商**（深度抓取 **135 个情报页 + 46 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 35 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
 > 📡 **自建 RSS**（官方没有原生订阅源的厂商也能订）：[网页浏览 / 一键订阅](https://free-llm-intel.aishort.top/) ｜ [中文合并流](https://free-llm-intel.aishort.top/feeds/llm-news-all.xml) ｜ [英文合并流](https://free-llm-intel.aishort.top/feeds/llm-news-all.en.xml) ｜ 单厂商源 `https://free-llm-intel.aishort.top/feeds/llm-news-{vendor_id}.xml`（英文加 `.en.xml`）。合并流与单厂商都带 `<content:encoded>` 全文（正文来自 `docs/articles/`），阅读器里就地读完；浏览页每条也带「读全文」抽屉，点开即就地读双语正文（`?read=` 深链可分享）；中英两版按语言偏好**二选一**订阅（同订会看到重复条目，`guid` 已用 `?li=1` 区分）。
 > 🛰 **额度变化订阅**（新活动 / 额度调整，前值 → 后值）：[llm-intel-changes.xml](https://free-llm-intel.aishort.top/feeds/llm-intel-changes.xml)
@@ -182,12 +182,12 @@ python -m unittest discover
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [DeepSeek (深度求索)](https://www.deepseek.com/) |
-| **免费模型与额度** | • **无免费模型层**，全量模型按量计费：`deepseek-flash`（DeepSeek-V4.1-Flash，支持图像理解与思考模式）、`deepseek-v4-pro`（DeepSeek-V4-Pro-0813）；上下文 1M（最大输出 384K）<br>• 峰谷定价（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲半价）：deepseek-flash 输出 8 高峰/4 空闲、缓存命中输入 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5、缓存命中输入 0.30/0.15<br>• 旧模型名 `deepseek-v4-flash`、`deepseek-v4-flash-vision-exp` 对应模型已下线，调用自动由 DeepSeek-V4.1-Flash 提供服务并按 Flash 计费 |
+| **免费模型与额度** | • **无免费模型层**，全量模型按量计费：`deepseek-flash`（DeepSeek-V4.1-Flash-1017，支持图像理解与思考模式）、`deepseek-v4-pro`（DeepSeek-V4-Pro-0813）；上下文 1M（最大输出 384K）<br>• 峰谷定价（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲半价）：deepseek-flash 输出 8 高峰/4 空闲、缓存命中输入 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5、缓存命中输入 0.30/0.15<br>• 旧模型名 `deepseek-v4-flash`、`deepseek-v4-flash-vision-exp` 对应模型已下线，调用自动由 DeepSeek-V4.1-Flash-1017 提供服务并按 Flash 计费 |
 | **注册福利 / 账户赠送** | **无公开赠送政策**：现行官方定价页与更新日志均无新用户赠送 token 政策（历史“500 万 tokens/30 天”无法复核，不予采信）；账户扣费顺序中存在“赠送余额”项，实际以注册后账户到账为准 |
 | **额度有效期** | 以账户内余额标注为准 |
 | **前置条件 / 限制** | 注册平台账号；按量计费，并发限制随账户充值等级（Tier）提升 |
-| **邀请 / 特惠活动** | 实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲时段半价）：deepseek-flash 输出 8.0（高峰）/4.0（空闲），缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5，缓存命中 0.30/0.15。**限时活动**：通过 Claude Code 的 Web Search 工具或 Codex 的 web_search 功能发起的搜索请求，在 Search API 上线后的前两周内免收 Search API 请求费用（标准计费为每 1,000 次成功请求 5 元）。 |
-| **实时巡检证据** | • Claude Code 和 Codex 中的网页搜索：通过 Claude Code 的 Web Search 工具或 Codex 的 web_search 功能发起的搜索请求，在 Search API 上线后的前两周内免收 Searc…<br>• 当充值余额与赠送余额同时存在时，优先扣减赠送余额。<br>• (3) 更多并发限制细节，请参考限速与隔离。 |
+| **邀请 / 特惠活动** | 实行**峰谷定价**（元/百万 tokens，高峰为工作日 9:00–12:00、14:00–18:00，空闲时段半价）：deepseek-flash 输出 8.0（高峰）/4.0（空闲），缓存命中 0.04/0.02；deepseek-v4-pro 输出 27.0/13.5，缓存命中 0.30/0.15。**限时免费活动**：用户在 DeepSeek Harness/Claude Code/Codex 中使用 DeepSeek API 时通过 Server 端工具调用访问的 Search/Fetch 接口目前未计费，将于北京时间 2026 年 11 月 1 日 00:00 起按次收取调用费用（标准价格均为每 1,000 次成功请求 5 元）。 |
+| **实时巡检证据** | • 当充值余额与赠送余额同时存在时，优先扣减赠送余额。<br>• (3) 更多并发限制细节，请参考限速与隔离。 |
 | **官方直达** | [定价文档（人民币峰谷价）](https://api-docs.deepseek.com/zh-cn/quick_start/pricing) ｜ [API Key 管理](https://platform.deepseek.com/api_keys) ｜ [更新日志](https://api-docs.deepseek.com/zh-cn/updates/) ｜ [API 平台](https://platform.deepseek.com/) |
 | **特别说明** | V3/R1 时代价格（缓存 0.5 元、输出 8 元）已作废；官方无 RSS，更新见 updates 页。 |
 
@@ -342,7 +342,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 讯飞开放平台注册并实名认证 |
 | **免费层限制 / 注意事项** | • 免费的只有**星火 Lite 一个模型**，且额度**必须先到星火产品页手动领取**（不是注册自动到账）；QPS / 限速以领取页规则为准<br>• 进阶版本（Pro/Max/4.0 Ultra 等）无公开免费额度 |
 | **邀请 / 特惠活动** | 面向教育、政企与开发者提供专项适配；支持语音/多模态混合调用。 |
-| **实时巡检证据** | • 输入1.60元/百万tokens<br>• 限时免费 |
+| **实时巡检证据** | • 具有更高的响应速度，支持免费使用<br>• 讯飞绘文为新媒体内容运营提供一站式创作平台。基于大模型与RPA技术，提供从选题推荐、图文生成，一键发布到数据回溯的全流程服务，为你打造最全面的内容创作与运营助手<br>• 美图基于讯飞星火大模型推出的“美图设计室”，提供AI海报、AI生图、AI文案等功能，助力小微企业降本增效。搭载讯飞星火技术的开拍APP，可一键生成爆款标题和脚本，提升内容创作效率 |
 | **官方直达** | [星火 API 产品页（免费额度领取）](https://xinghuo.xfyun.cn/sparkapi) ｜ [HTTP 调用文档（模型版本说明）](https://www.xfyun.cn/doc/spark/HTTP%E8%B0%83%E7%94%A8%E6%96%87%E6%A1%A3.html) ｜ [控制台](https://console.xfyun.cn/) |
 | **特别说明** | 旧档案“Lite 1–3 QPS”“X2-VL”“V2.0/V3.5”等名称/数字在现行文档中无记载（V3.5 即 Max 的 model 参数 generalv3.5）。 |
 
@@ -709,11 +709,11 @@ python -m unittest discover
 | 字段 | 详情 |
 |------|------|
 | **平台名称** | [Together AI](https://www.together.ai/) |
-| **免费模型与额度** | • **无免费试用，但存在 $0 / 输出免费定价模型**：官方价目表中 Ternary Bonsai 27B 输入/输出均为 $0.00/1M tokens；Tev1 4B Experimental 输出免费（Free），输入收取 $0.04/1M tokens。调用前平台访问仍需首次最低 $15 充值；其余模型均需充值后按量付费 |
+| **免费模型与额度** | • `Ternary Bonsai 27B` —— 输入与输出均定价为 **$0.00/1M tokens**（需充值门槛）<br>• `Muse Spark Open (Free for limited time)` —— **限时免费活动**，输入与输出均定价为 **$0.00**（活动有效期至 2026/10/18；需充值门槛）<br>• `Tev1 4B Experimental` —— 输出免费（Free），输入收取 **$0.04/1M tokens**（需充值门槛）<br>• **平台调用限制**：官方计费文档明确平台不提供免费试用，使用前组织必须完成最低 $15 充值，且需保持正余额才能调用 API。 |
 | **注册福利 / 账户赠送** | **无免费试用 / 无赠送**：官方计费文档原文 “Together AI does not currently offer free trials. Access to the Together platform requires a minimum $15 credit purchase.”——首次充值最低额为 $15（后续充值最低 $5），而非赠送；预付余额无过期时间（官方原文 “prepaid balance credits in your Together.ai account do not currently have an expiration date”） |
 | **额度有效期** | 预付余额不过期；无免费额度 |
 | **前置条件 / 限制** | 注册账号并完成组织首次最低 $15 充值（后续充值最低 $5） |
-| **邀请 / 特惠活动** | Serverless 按量计费 + 专用 GPU 集群；支持 OpenAI SDK 兼容调用。 |
+| **邀请 / 特惠活动** | 限时活动：Muse Spark Open (Free for limited time) 提供 $0.00 输入/输出优惠，有效期至 2026 年 10 月 18 日（Promotion valid until 10/18/2026）。 |
 | **实时巡检证据** | • 如果您遇到余额为正的访问问题，请检查您的积分是免费积分还是购买的积分。平台访问需要至少 15 美元的信用额度……<br>• Together AI 目前不提供免费试用。访问 Together 平台需要至少购买 15 美元的积分。 |
 | **官方直达** | [API Key 设置直达](https://api.together.ai/settings/api-keys) ｜ [官方主页](https://www.together.ai/) ｜ [计费文档](https://docs.together.ai/docs/billing-credits) ｜ [定价页面](https://www.together.ai/pricing) |
 | **特别说明** | 旧“注册送 $5（3 个月）”说法与官方计费文档矛盾。 |
@@ -1231,6 +1231,7 @@ python -m unittest discover
 | **特别说明** | 「Free forever」指标题档定价长期 $0，非全部 AI 功能免费；试用条款里的 GPT-6 Luna 为当前托管模型名 |
 
 <!-- LLM-INTEL:END -->
+
 
 
 
