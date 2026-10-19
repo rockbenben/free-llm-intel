@@ -9,8 +9,8 @@
 
 ## 全部文章（共 37 篇，按日期倒序；无日期条目列于最后）
 
-1. [Granite-4.2-8B Pricing Guide: Provider Comparison](https://deepinfra.com/blog/granite-4-2-8b)（2026-10-18）
-2. [IBM Granite 4.2 8B Now Available on DeepInfra](https://deepinfra.com/blog/imb-granite-4-2)（2026-10-17）
+1. [Granite-4.2-8B 定价指南：各家服务商对比](https://deepinfra.com/blog/granite-4-2-8b)（2026-10-18） <!--orig:Granite-4.2-8B Pricing Guide: Provider Comparison-->
+2. [IBM Granite 4.2 8B 现已上线 DeepInfra](https://deepinfra.com/blog/imb-granite-4-2)（2026-10-17） <!--orig:IBM Granite 4.2 8B Now Available on DeepInfra-->
 3. [开放权重模型的许可证：上线前该查哪些条款](https://deepinfra.com/blog/open-weight-model-licenses)（2026-10-16） <!--orig:Open-Weight Model Licenses: What to Check Before You Ship-->
 4. [TypeSafe Jev 评测：在一个非聊天模型上测试 5 项任务](https://deepinfra.com/blog/typesafe-jev-review)（2026-10-15） <!--orig:TypeSafe Jev Review: Testing 5 Jobs on a Non-Chat Model-->
 5. [AI 支出审计：如何用开放模型削减成本](https://deepinfra.com/blog/ai-spend-audit-open-models)（2026-10-15） <!--orig:AI Spend Audit: How to Reduce Costs With Open Models-->

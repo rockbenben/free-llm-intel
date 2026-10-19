@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-19 08:31:42**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-19 21:54:01**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -354,8 +354,8 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-19，标题自动汉化）：
-  1. [Granite-4.2-8B Pricing Guide: Provider Comparison](https://deepinfra.com/blog/granite-4-2-8b)（2026-10-18）
-  2. [IBM Granite 4.2 8B Now Available on DeepInfra](https://deepinfra.com/blog/imb-granite-4-2)（2026-10-17）
+  1. [Granite-4.2-8B 定价指南：各家服务商对比](https://deepinfra.com/blog/granite-4-2-8b)（2026-10-18）
+  2. [IBM Granite 4.2 8B 现已上线 DeepInfra](https://deepinfra.com/blog/imb-granite-4-2)（2026-10-17）
   3. [开放权重模型的许可证：上线前该查哪些条款](https://deepinfra.com/blog/open-weight-model-licenses)（2026-10-16）
   4. [TypeSafe Jev 评测：在一个非聊天模型上测试 5 项任务](https://deepinfra.com/blog/typesafe-jev-review)（2026-10-15）
   5. [AI 支出审计：如何用开放模型削减成本](https://deepinfra.com/blog/ai-spend-audit-open-models)（2026-10-15）

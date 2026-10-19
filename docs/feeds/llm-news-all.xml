@@ -9,12 +9,105 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-all.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Sun, 18 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>[DeepInfra] Granite-4.2-8B Pricing Guide: Provider Comparison</title>
+      <title>[DeepInfra] Granite-4.2-8B 定价指南：各家服务商对比</title>
       <link>https://deepinfra.com/blog/granite-4-2-8b</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/granite-4-2-8b</guid>
       <pubDate>Sun, 18 Oct 2026 00:00:00 +0000</pubDate>
       <category>DeepInfra</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml">DeepInfra</source>
+      <description>原文标题：Granite-4.2-8B Pricing Guide: Provider Comparison</description>
+      <content:encoded><![CDATA[<h1>Granite-4.2-8B 定价指南：各家服务商对比</h1>
+<p>DeepInfra 发布于 2026.10.18</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/Granite-4.2-8B-Pricing-Comparison.png" alt="Granite-4.2-8B 定价指南：各家服务商对比"></p>
+<p>如果你想找一个体量小的开放权重推理模型，<a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">Granite-4.2-8b</a> 是个务实的选择。它在 DeepInfra 上是每 100 万输入 token $0.06、每 100 万输出 token $0.25。在小型（4B 到 40B）开放权重模型这一档里，它在 Artificial Analysis Intelligence Index 上拿到 11 分。</p>
+<p>它的输入价低于同类模型 $0.12 的中位数，输出价与 $0.25 的中位数持平。你可以直连，也可以通过多家服务商的路由层访问。</p>
+<p>Granite-4.2-8b 是 IBM 的 Granite 家族里的一个 80 亿参数推理模型，2026 年 8 月底发布，由 Granite-4.1-8B-Base 后训练而来。它是一个 decoder-only 的稠密 transformer，文本进文本出，Apache 2.0 许可，权重在 Hugging Face 上公开。</p>
+<p>开发者能拿到 131,072 token 的上下文窗口、工具调用、结构化 JSON 输出，以及三种推理模式：完整思考、低投入、非思考。你选哪种模式，就决定了愿意为“多想一会儿”付多少钱。想在本机试，Ollama 上的量化版 Granite 4.2 8B 是个方便的起点。</p>
+<p>这个模型的吸引力来自它取舍的形状。它把开放权重、商用友好的许可和长上下文凑在一起，Intelligence Index 得分 11，在 141 个模型里排第 35。Artificial Analysis 还说它有点啰嗦——这一点要紧，因为输出量大的推理模型可能输入看着便宜、实际用起来贵。</p>
+<p>速度上，首 token 延迟 0.85 秒，对照 1.17 秒的中位数是有竞争力的。各家服务商的吞吐量差别不小，所以选哪家本身就是定价决定的一部分。</p>
+<p>评估 Granite-4.2-8b 最后落在一个很实际的问题上：它的成本结构、131K 上下文窗口和可选服务商，配不配得上你的生产约束。这篇指南覆盖 DeepInfra、CoreWeave，以及 OpenRouter 的路由层。</p>
+<h2><strong>Granite-4.2-8b 要点摘要</strong></h2>
+<p>Granite-4.2-8b 的定价是为在意成本的生产用途准备的。在 <a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">DeepInfra</a> 上是输入 $0.06/M、输出 $0.25/M、缓存 $0.015/M。OpenRouter 在它那条 DeepInfra 路由上标的是同样的价格，CoreWeave 给的是输入 $0.10/M、输出 $0.15/M、缓存 $0.05/M。</p>
+<p>它适合想要一个 Apache 2.0 许可、带长上下文、工具调用和灵活部署的推理模型的团队。低成本直连这一项上 DeepInfra 是最强选择，CoreWeave 和 OpenRouter 是主要的替代项。</p>
+<table><thead><tr><th><strong>适合什么</strong></th><th><strong>推荐的服务商</strong></th><th><strong>原因</strong></th></tr></thead><tbody><tr><td>最低价格与成本敏感型负载</td><td>DeepInfra</td><td>DeepInfra 标的是输入 $0.06/M、输出 $0.25/M、缓存 $0.015/M，在本篇覆盖的服务商里输入价和缓存价都是最低的。</td></tr><tr><td>带 API 特性的直连生产部署</td><td>DeepInfra</td><td>它提供公开 API 访问、零数据留存、JSON 输出、function calling、私有端点，以及完整的 131,072 token 上下文窗口。</td></tr><tr><td>最省事的接入、最快打出第一个请求</td><td>OpenRouter</td><td>OpenRouter 兼容 OpenAI，还额外提供自动故障切换，以及 Balanced、Nitro、Floor、Exacto 四种路由模式，集成和运维的摩擦更小。</td></tr><tr><td>RAG、文档密集或高吞吐的用途</td><td>DeepInfra</td><td>Artificial Analysis 在 DeepInfra 上测到每秒 120 个输出 token，CoreWeave 是 89，而且 DeepInfra 的输入价更低。</td></tr><tr><td>带可靠性保障的托管模型访问</td><td>OpenRouter</td><td>OpenRouter 标称过去 24 小时可用性 99.98%，而没有路由时是 99.03%。</td></tr><tr><td>工具调用负载</td><td>DeepInfra，或 OpenRouter 的 Exacto 模式</td><td>DeepInfra 列出 JSON 输出和 function calling，而 OpenRouter 的 Exacto 模式按最高的工具调用准确率来路由。</td></tr></tbody></table>
+<h2><strong>token 是什么，你怎么被计费</strong></h2>
+<p><a href="https://deepinfra.com/blog/pricing-101-token-math-cost-per-completion">token 计价</a>看起来简单，直到一个推理模型写得比你预期的多。Granite-4.2-8b 输入便宜、输出也算合理，但 Artificial Analysis 给它的评级是有点啰嗦。把这点算进预算，定价就很顺；只看输入价那个醒目的数字，账单可能给你一惊。</p>
+<p>一个 token 是一段文本，可能比一个词短，也可能比它长。短词可能就是一个 token。更长的词、标点、代码和 JSON 结构全都计入。</p>
+<p>通常是分开计费的：</p>
+<ul><li>你发给模型的 token</li><li>模型生成回来的 token</li><li>缓存的 prompt token，当服务商对重复的 prompt 前缀打折时</li></ul>
+<table><thead><tr><th><strong>token 类型</strong></th><th><strong>是什么</strong></th><th><strong>为什么要紧</strong></th></tr></thead><tbody><tr><td>输入 token</td><td>你的 prompt、system message、工具 schema、聊天历史和检索到的上下文里的 token</td><td>Granite-4.2-8b 在 DeepInfra 上是 $0.06/M。这对 RAG、长指令和多轮智能体状态很有帮助。</td></tr><tr><td>输出 token</td><td>模型在回复里生成的 token，包括重推理或结构化的响应</td><td>成本就是在这里悄悄涨上去的。Granite-4.2-8b 在 DeepInfra 上输出是 $0.25/M，而 Artificial Analysis 说它有点啰嗦。</td></tr><tr><td>缓存 token</td><td>被复用的 prompt token，服务商从缓存里按折扣价提供</td><td>当你反复发送大块 system prompt、工具定义或重复上下文时有用。DeepInfra 标 $0.015/M，相对基础输入价是 75% 的折扣。</td></tr></tbody></table>
+<p>对 Granite-4.2-8b 来说，实际的计费形状是这样：</p>
+<ul><li>长 prompt 相对便宜。</li><li>长回答的影响更大。</li><li>被复用的 prompt 前缀是缓存真正省钱的地方。</li></ul>
+<p>Artificial Analysis 报出一个每 100 万 token $0.05 的混合价，用的是 7:2:1 的缓存命中、输入、输出配比。只有你的流量真按这个配比走，这个混合价才适用。</p>
+<ul><li>如果你的应用产出长篇推理轨迹、啰嗦的工具参数或笨重的 JSON，你的真实成本会往输出价那边偏。</li><li>如果你的应用反复发送同一套 system prompt、工具 schema 和文档样板，缓存折扣是真能干活事的。</li></ul>
+<h2><strong>Granite-4.2-8b 在各家服务商上的 token 成本取舍</strong></h2>
+<p>选哪家，会改变你账单的形状。DeepInfra 在输入和缓存上更便宜，CoreWeave 在输出上更便宜。</p>
+<table><thead><tr><th><strong>服务商</strong></th><th><strong>输入</strong></th><th><strong>输出</strong></th><th><strong>缓存</strong></th><th><strong>token 成本上的优势</strong></th><th><strong>token 成本上的劣势</strong></th></tr></thead><tbody><tr><td>DeepInfra</td><td>$0.06/M</td><td>$0.25/M</td><td>$0.015/M</td><td>最适合 prompt 密集的负载、RAG、长上下文和可复用的 prompt 前缀</td><td>输出价更高，所以啰嗦的生成可能把输入便宜这点优势抵掉</td></tr><tr><td>经 DeepInfra 路由的 OpenRouter</td><td>$0.06/M</td><td>$0.25/M</td><td>$0.015/M</td><td>与 DeepInfra 相同的 token 经济性，外加路由带来的省事</td><td>输出成本结构与 DeepInfra 相同</td></tr><tr><td>经 OpenRouter 的 CoreWeave</td><td>$0.10/M</td><td>$0.15/M</td><td>$0.05/M</td><td>更适合输出密集的负载，尤其当模型长时间推理时</td><td>输入和缓存更贵，所以大 prompt 和重复上下文会累积起来</td></tr><tr><td>OpenRouter 自动路由</td><td>$0.06 到 $0.10/M</td><td>$0.15 到 $0.25/M</td><td>$0.015 到 $0.05/M</td><td>故障切换和多种路由模式，包括挑最便宜服务商的 Floor</td><td>成本取决于每个请求由哪家服务商承接</td></tr></tbody></table>
+<p>实际的分工是这样：</p>
+<ul><li>如果你的应用往模型里送大量 token，选 DeepInfra。</li><li>如果你的应用从模型里拿回大量 token，选 CoreWeave。</li><li>如果你要运维上的弹性、又能接受每个请求价格浮动，选 OpenRouter 的路由。</li></ul>
+<p>速度是第二个因子。Artificial Analysis 测到 DeepInfra 每秒 120 个输出 token，CoreWeave 每秒 89 个。一个 500 token 的回复在 DeepInfra 上花 21.69 秒，在 CoreWeave 上花 28.72 秒。首个数据块的时间差不多，分别是 0.77 秒和 0.74 秒。</p>
+<p>被测出来的啰嗦程度让<a href="https://deepinfra.com/blog/inference-economics-ai-costs-at-scale">输出成本</a>变成一个预算问题。Artificial Analysis 在它的 Intelligence Index 跑测里产出过 130M 输出 token，而同类模型的中位数是 82M。给这个模型定价时别只算输入成本。</p>
+<p>几个具体的形态：</p>
+<ul><li><strong>长文档上的 RAG：</strong> DeepInfra 通常成本结构更干净，因为输入和缓存都便宜。</li><li><strong>短答案的结构化抽取：</strong> DeepInfra 往往仍然是赢家，因为输出是有界的。</li><li><strong>长回复的推理助手：</strong> CoreWeave 整体可能更便宜，尽管它的输入价更高——不过它测出来的输出速度也更慢。</li><li><strong>重复工具 schema 和稳定 system prompt 的智能体流程：</strong> DeepInfra 从低缓存价里获益更多。</li><li><strong>基于路由器的部署：</strong> OpenRouter 可能把流量发给任何一家，所以盯住实际的厂商配比，别只信上面那行标价。</li></ul>
+<p>估算 Granite-4.2-8b 成本最稳的办法，是分别建模三个数：</p>
+<ul><li>每个请求的平均输入 token 数</li><li>每个请求的平均输出 token 数</li><li>重复 prompt 前缀上的缓存命中率</li></ul>
+<p>省掉输出那一项估算，模型可能给你意外。不管缓存行为，你很可能把重复型 agent 负载的价算偏一大截。</p>
+<h2><strong>DeepInfra：最适合 prompt 密集的负载</strong></h2>
+<p><a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">DeepInfra</a> 是在生产规模上跑 Granite-4.2-8b 最便宜的一档。该公司说它的服务是从底层建起来的，从 GPU 硬件到 API 层都自己来做。这种自持让它能掌控成本、性能和可靠性。</p>
+<p>配这个模型，DeepInfra 把低 token 价格和实用的部署特性放在一起：公开 API 访问、零数据留存、JSON 输出、function calling 和私有端点。</p>
+<table><thead><tr><th><strong>模型名</strong></th><th><strong>最佳用途</strong></th><th><strong>上下文窗口</strong></th><th><strong>输入（每 100 万）</strong></th><th><strong>输出（每 100 万）</strong></th></tr></thead><tbody><tr><td>Granite-4.2-8b</td><td>高性价比的推理、工具使用和长上下文 API 负载</td><td>131,072 token</td><td>$0.06</td><td>$0.25</td></tr></tbody></table>
+<p>DeepInfra 把 Granite-4.2-8b 标为每 100 万输入 token $0.06、每 100 万输出 token $0.25。这让它成为在优化 token 开销的团队眼里的一个高效选项，尤其是 prompt 密集和重复上下文的负载。DeepInfra 还提供每 100 万缓存 token $0.015。</p>
+<p>如果你预期有可观的量，Granite-4.2-8b 上第一个该进候选名单的服务商就是 DeepInfra。</p>
+<h2><strong>开发者的真实成本场景</strong></h2>
+<p>下面每个场景都在 DeepInfra 上跑 Granite-4.2-8b，并按 CoreWeave 的标价做对比。当负载是 prompt 密集、上下文密集或吃得到缓存时，DeepInfra 最强。</p>
+<h3><strong>场景 1：大内部文档上的 RAG 支持助手</strong></h3>
+<p>你在做一个面向开发者的支持机器人，回答之前会先检索内部 runbook、SDK 文档、事故记录和架构页。每个请求都带一个装着检索上下文的大 prompt，而答案规模适中。RAG 负载在输入上的花费高于输出，所以低输入价最要紧。</p>
+<table><thead><tr><th><strong>量</strong></th><th><strong>模型</strong></th><th><strong>服务商</strong></th><th><strong>输入 token</strong></th><th><strong>输出 token</strong></th><th><strong>月度成本</strong></th></tr></thead><tbody><tr><td>每月 10M token</td><td>Granite-4.2-8b</td><td>DeepInfra</td><td>8M</td><td>2M</td><td>$0.98</td></tr></tbody></table>
+<p>成本核算：</p>
+<ul><li>输入：8M × $0.06/M = $0.48</li><li>输出：2M × $0.25/M = $0.50</li><li>合计：每月 $0.98</li></ul>
+<p>同一负载在 CoreWeave 上是每月 $1.10，所以 DeepInfra 便宜 $0.12。</p>
+<h3><strong>场景 2：重复工具 schema 与缓存 system prompt 的智能体流程</strong></h3>
+<p>你要上线一个内部编码或运维 agent，每次调用都发送同样的 system prompt、<a href="https://deepinfra.com/blog/deepinfra-function-calling-guide">工具定义</a>和响应 schema。DeepInfra 的 $0.015/M 缓存价让这些重复前缀比常规输入 token 便宜得多。</p>
+<p>IBM 说 Granite 4.2 系列模型在调用工具之前会先想清楚要调哪个、以及为什么。这个行为很配骨架稳定的智能体流程。</p>
+<table><thead><tr><th><strong>量</strong></th><th><strong>模型</strong></th><th><strong>服务商</strong></th><th><strong>输入 token</strong></th><th><strong>输出 token</strong></th><th><strong>月度成本</strong></th></tr></thead><tbody><tr><td>每月 10M token</td><td>Granite-4.2-8b</td><td>DeepInfra</td><td>2M 输入 + 7M 缓存</td><td>1M</td><td>$0.48</td></tr></tbody></table>
+<p>成本核算：</p>
+<ul><li>输入：2M × $0.06/M = $0.12</li><li>缓存：7M × $0.015/M = $0.105</li><li>输出：1M × $0.25/M = $0.25</li><li>合计：$0.475，取整为每月 $0.48</li></ul>
+<p>同样的 token 配比在 CoreWeave 上是每月 $0.70（输入 $0.20、缓存 $0.35、输出 $0.15），所以 DeepInfra 便宜约 $0.23。</p>
+<h3><strong>场景 3：长上下文文档分诊，输出是简短的结构化结果</strong></h3>
+<p>假设你要处理产品规格、合同、工单或合规文档。你让 Granite-4.2-8b 返回紧凑的 JSON，比如分类、抽取字段、风险标记或摘要。模型读得多、写得少。你拿到它的长上下文窗口和<a href="https://deepinfra.com/blog/json-mode">结构化输出支持</a>，又不必为发送大输入付溢价。</p>
+<table><thead><tr><th><strong>量</strong></th><th><strong>模型</strong></th><th><strong>服务商</strong></th><th><strong>输入 token</strong></th><th><strong>输出 token</strong></th><th><strong>月度成本</strong></th></tr></thead><tbody><tr><td>每月 50M token</td><td>Granite-4.2-8b</td><td>DeepInfra</td><td>45M</td><td>5M</td><td>$3.95</td></tr></tbody></table>
+<p>成本核算：</p>
+<ul><li>输入：45M × $0.06/M = $2.70</li><li>输出：5M × $0.25/M = $1.25</li><li>合计：每月 $3.95</li></ul>
+<p>同一负载在 CoreWeave 上是每月 $5.25，所以 DeepInfra 便宜 $1.30。</p>
+<h3><strong>场景 4：带持久会话状态的多轮应用</strong></h3>
+<p>你在做一个多语言助手，每一轮都带上此前的会话状态、策略指令和检索到的片段。Granite-4.2-8b 支持 12 种语言，而低输入价让重复的上下文负担得起。当回答保持简短、而 prompt 随时间变长时，这种组合最合适。</p>
+<table><thead><tr><th><strong>量</strong></th><th><strong>模型</strong></th><th><strong>服务商</strong></th><th><strong>输入 token</strong></th><th><strong>输出 token</strong></th><th><strong>月度成本</strong></th></tr></thead><tbody><tr><td>每月 20M token</td><td>Granite-4.2-8b</td><td>DeepInfra</td><td>16M</td><td>4M</td><td>$1.96</td></tr></tbody></table>
+<p>成本核算：</p>
+<ul><li>输入：16M × $0.06/M = $0.96</li><li>输出：4M × $0.25/M = $1.00</li><li>合计：每月 $1.96</li></ul>
+<p>同一负载在 CoreWeave 上是每月 $2.20，所以 DeepInfra 便宜 $0.24。</p>
+<h3><strong>场景 5：转私有部署之前的廉价试验</strong></h3>
+<p>很多开发者是从原型开始的，而不是从量开始。DeepInfra 上的 Granite-4.2-8b 让你通过公开 API 试工具调用、JSON 输出和长 prompt，之后可以转到带零数据留存的私有端点。一小笔 token 预算就够跑有意义的实验。</p>
+<table><thead><tr><th><strong>量</strong></th><th><strong>模型</strong></th><th><strong>服务商</strong></th><th><strong>输入 token</strong></th><th><strong>输出 token</strong></th><th><strong>月度成本</strong></th></tr></thead><tbody><tr><td>每月 5M token</td><td>Granite-4.2-8b</td><td>DeepInfra</td><td>4M</td><td>1M</td><td>$0.49</td></tr></tbody></table>
+<p>成本核算：</p>
+<ul><li>输入：4M × $0.06/M = $0.24</li><li>输出：1M × $0.25/M = $0.25</li><li>合计：每月 $0.49</li></ul>
+<p>同一负载在 CoreWeave 上是每月 $0.55，所以 DeepInfra 便宜 $0.06。</p>
+<h2><strong>这些场景说明了什么</strong></h2>
+<p>五个场景里同一个模式都成立：</p>
+<ul><li>当 Granite-4.2-8b 读得比写得多的时候，DeepInfra 最合适。</li><li>当你能复用 prompt 前缀、吃到 $0.015/M 的缓存 token 时，它更好。</li><li>它对这几类尤其有吸引力： RAG 抽取流水线 多轮助手 工具 schema 稳定的智能体 后续可能需要私有部署的早期原型</li></ul>
+<p>如果你的负载由大 prompt、重复上下文和被控制住的输出长度主导，那在本篇覆盖的服务商里，DeepInfra 给出的成本结构最干净。</p>
+<h2><strong>结论</strong></h2>
+<p>给 Granite-4.2-8b 选服务商，最后取决于你的 token 开销落在哪一头。这个模型喂起来便宜，输出处定价也算合理。而它被测出来的啰嗦程度，让账单里输出那一侧比输入标价看起来更要紧。</p>
+<p>这个比例算错，纸面上最便宜的那家在实际上可能花得更多。</p>
+<p>prompt 密集、吃得到缓存的负载最配 DeepInfra 的 $0.06/M 输入和 $0.015/M 缓存价。例子包括 RAG 流水线、schema 稳定的工具调用智能体，以及文档抽取。</p>
+<p>如果你的负载输出密集、模型又会长时间推理，那就拿 CoreWeave 更低的 $0.15/M 输出价去对你真实的 token 比例建模。它测出来的输出速度较低这点也要一起权衡。如果你在意运维弹性，OpenRouter 的路由层带来故障切换和更高的标称可用性。</p>
+<p>实操清单很短：估你的平均输入长度、估你的平均输出长度、再判断可复用的 prompt 前缀能不能换来缓存折扣。这三个数对月度成本的预测力，比任何混合基准价都强。</p>
+<p>Granite-4.2-8b 的 Apache 2.0 许可和公开权重让你不必绑死在任一服务商上。先用托管 API 起步、以后再迁移，是一条真实可走的路。Granite 4.2 8B 的 <a href="https://deepinfra.com/ibm-granite/granite-4.2-8b/api">chat completions API 参考</a>覆盖了集成细节。</p>
+<p>拿几个有代表性的请求跑一遍 DeepInfra 的 API，量出你实际的 token 比例，再从那里往下建。起步成本足够低，这个实验很便宜。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/nvidia-nemotron-3-nano-omni-release"><img src="https://deepinfra.com/blog/nvidia-nemotron-3-nano-omni-release.png" alt="NVIDIA Nemotron 3 Nano Omni 上线 DeepInfra"></a><a href="https://deepinfra.com/blog/nvidia-nemotron-3-nano-omni-release">NVIDIA Nemotron 3 Nano Omni 上线 DeepInfra</a>DeepInfra 是 NVIDIA Nemotron 3 Nano Omni 的官方发布伙伴，这是 Nemotron 3 家族里第一个多模态模型——一个开放权重模型，在一次统一的推理过程里理解图像、视频、音频、文档和文本。</p>
+<p><a href="https://deepinfra.com/blog/claude-code-alternative"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/07/claude-code-alternative.png" alt="OpenCode：开源的 Claude Code 替代品"></a><a href="https://deepinfra.com/blog/claude-code-alternative">OpenCode：开源的 Claude Code 替代品</a>&lt;p&gt;高强度用了一个月 agent 之后打开云账单，那个数字就不再抽象了。团队报告的编码助手成本是每位开发者几百美元，有些团队现在像当年配给云计算资源那样给 token 定预算。然后 2026 年 6 月，美国政府禁止非美国籍人士使用 Anthropic 的 Fable 5， [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/priority-service-tier"><img src="https://deepinfra.com/blog/priority-service-tier.jpg" alt="推出 Priority Service Tier：关键时刻的排队首位推理"></a><a href="https://deepinfra.com/blog/priority-service-tier">推出 Priority Service Tier：关键时刻的排队首位推理</a>为优先调度和受保护容量支付实时价格的 1.5 倍。</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
     <item>
       <title>[SiliconFlow 硅基流动] 【模型服务调整】ERNIE-Image-Turbo 模型将下线</title>
@@ -29,51 +122,52 @@
 <p>若您正在使用上述模型，建议您尽快切换到其他模型，以免服务受到影响。如需查看完整的可用模型列表，请访问<a href="https://cloud.siliconflow.cn/models">模型广场</a>。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[DeepInfra] IBM Granite 4.2 8B Now Available on DeepInfra</title>
+      <title>[DeepInfra] IBM Granite 4.2 8B 现已上线 DeepInfra</title>
       <link>https://deepinfra.com/blog/imb-granite-4-2</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/imb-granite-4-2</guid>
       <pubDate>Sat, 17 Oct 2026 00:00:00 +0000</pubDate>
       <category>DeepInfra</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml">DeepInfra</source>
-      <content:encoded><![CDATA[<h1>IBM Granite 4.2 8B 现已在 DeepInfra 上提供</h1>
+      <description>原文标题：IBM Granite 4.2 8B Now Available on DeepInfra</description>
+      <content:encoded><![CDATA[<h1>IBM Granite 4.2 8B 现已上线 DeepInfra</h1>
 <p>DeepInfra 发布于 2026.10.17</p>
-<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/IBM-Granite-4.2-8B-Tech-Banner.png" alt="IBM Granite 4.2 8B 现已在 DeepInfra 上推出"></p>
-<p><a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">Granite 4.2 8B</a> 附带三种可选推理模式：通过 <em>&lt;think&gt;...&lt;/think&gt;</em> 标签的完整思维链、省力快捷方式以及完全跳过推理的直接回答模式。</p>
-<p>这使您可以在每个查询的基础上用计算来换取延迟，而无需交换模型权重。</p>
-<p>它是 IBM Granite 4.2 密集推理系列的中型成员，专为通用企业工作负载而构建。</p>
-<p>在 AIME 2025 上，8B 得分为 86.67，在 SWE-Bench Verified 上得分为 47.67。与综合评估相比，后者往往是代理编码能力更诚实的信号。</p>
-<p>推理能力来自三阶段训练流程：对许可数据和合成数据进行监督微调，然后通过 GRPO 进行多环境强化学习。</p>
-<p>GRPO 阶段涵盖数学、代码、工具使用和<a href="https://deepinfra.com/blog/json-mode">结构化输出</a>。</p>
-<p>接下来是帮助性和安全性的偏好调整阶段。 <a href="https://deepinfra.com/blog/deepinfra-function-calling-guide">工具调用</a> 是推理增强型的，因此模型会使用 OpenAI 的函数定义模式在调用之前思考要调用哪个工具。</p>
-<p>它在 Apache 2.0 下发布，具有完全透明的披露，并支持本机 128K 上下文窗口。该模型于 2026 年 8 月 25 日在 IBM 的 GitHub 和 Hugging Face 上发布。</p>
-<p>Granite 4.2 8B 可在 DeepInfra 上作为公共 API 端点使用。</p>
-<h2><strong>这个模型有何不同</strong></h2>
-<p>Granite 4.2 8B 是一个基于 GraniteForCausalLM 架构的仅解码器密集变压器，通过三级管道从 Granite 4.1 8B Base 进行后训练。</p>
-<p>该管道运行大规模预训练，然后对许可的公共数据集、合成数据、代理跟踪和精选的人类数据的组合进行监督微调。</p>
-<p>它使用跨数学、代码、科学、工具使用和指令遵循的组相对策略优化进行多阶段强化学习。</p>
-<p>接下来是安全和对话质量的偏好调整阶段。</p>
-<p>该架构使用具有 32 个注意力头和 8 个 KV 头的分组查询注意力、SwiGLU 激活、RMSNorm 和基频为 10M 的 RoPE。</p>
-<p>此设置平衡了吞吐量和长上下文稳定性。</p>
-<h3><strong>可选择的推理模式</strong></h3>
-<p>每个查询的可选推理是这里更实用的设计决策之一。该模型没有致力于始终在线的思想链，而是公开了三种模式：</p>
-<ul><li><strong>思考 (enable_thinking=True):</strong> 完整的 <em>&lt;think&gt;...&lt;/think&gt;</em> 回答之前的思考链</li><li><strong>非思考（enable_thinking=False）：</strong>直接回答，没有推理开销</li><li><strong>低努力（enable_thinking=True，low_effort=True）：</strong>简单查询的简要推理</li></ul>
-<p>这使您可以根据查询复杂性调整推理成本和延迟，而无需维护单独的模型检查点，这在规模上很重要并简化了部署。</p>
-<p>如果您想在本地运行模型，<em>ibm/granite4.2:8b-q3_K_M</em> 可在 Ollama 上作为量化构建使用。</p>
-<p>该模型还可以直接通过 HuggingChat 访问，以便快速进行实验，无需任何基础设施设置。</p>
-<h3><strong>长上下文和基准</strong></h3>
-<p>该模型原生支持 128K 上下文窗口（序列长度为 131,072 个标记），并提供 512K 长上下文扩展。在 RULER 长上下文基准测试中，8B 在 64K 时得分为 80.99，在 128K 时得分为 71.41，对于这种尺寸的型号来说，保持力很不错。</p>
-<p>在基准测试中，8B 在推理和编码任务中表现良好：</p>
-<table><thead><tr><th><strong>基准</strong></th><th><strong>分数</strong></th></tr></thead><tbody><tr><td>AIME 2025</td><td>86.67</td></tr><tr><td>GPQA</td><td>64.14</td></tr><tr><td>LiveCodeBench v6</td><td>73.24</td><td>73.24</td></tr><tr><td>SWE-Bench 验证</td><td>47.67</td><td>47.67</td></tr><tr><td>MMLU-专业版</td><td>74.04</td></tr><tr><td>τ3-长凳 (AVG)</td><td>58.06</td><td>58.06</td></tr><tr><td>Arena-Hard-V2</td><td>65.19</td><td>65.19</td></tr></tbody></table>
-<p>IBM 的基准是自我报告的，因此在独立评估赶上之前，请将这些数字视为方向性而非确定性的。</p>
-<h3><strong>工具使用和部署</strong></h3>
-<p>工具调用是推理增强的：模型在调用之前通过工具选择进行推理，使用 OpenAI 的函数定义模式。它已通过包括 OpenCode、Pi 和 OpenHands 在内的代理编码环境进行验证，并针对通过 vLLM (v0.20+) 进行部署进行了优化。多语言支持涵盖 12 种语言：英语、德语、西班牙语、法语、日语、葡萄牙语、阿拉伯语、捷克语、意大利语、韩语、荷兰语和中文。</p>
-<h2><strong>DeepInfra 入门</strong></h2>
-<p>Granite 4.2 8B 可在 DeepInfra 上作为公共 API 端点使用。 <a href="https://deepinfra.com/blog/pricing-101-token-math-cost-per-completion">定价</a> 基于使用情况：每 100 万个输入代币 0.06 美元，每 100 万个输出代币 0.25 美元，每 100 万个缓存代币 0.015 美元。</p>
-<p>DeepInfra 上的上下文窗口有 131,072 个 token，模型以 bfloat16 精度运行。 JSON 输出和函数调用都是开箱即用的。</p>
-<p>DeepInfra 通过 OpenAI 兼容的 API 公开 Granite 4.2 8B，因此无需学习 SDK，也无需管理基础设施。交换你的基本 URL 和模型名称，然后你就可以运行了。</p>
-<p>DeepInfra 采用零数据保留政策，并通过了 SOC 2 和 ISO 27001 认证。 <a href="https://deepinfra.com/ibm-granite/granite-4.2-8b/api">API 参考</a> 包含支持的参数和请求格式的完整细分。</p>
-<h3><strong>快速入门</strong></h3>
-<p>卷曲：</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/IBM-Granite-4.2-8B-Tech-Banner.png" alt="IBM Granite 4.2 8B 现已上线 DeepInfra"></p>
+<p><a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">Granite 4.2 8B</a> 提供三种可选的推理模式：用 <em>&lt;think&gt;…&lt;/think&gt;</em> 标签输出完整思维链、一条低投入的捷径，以及完全跳过推理的直接作答模式。</p>
+<p>这让你可以按单次请求拿算力换延迟，而不用换模型权重。</p>
+<p>它是 IBM 的 Granite 4.2 稠密推理家族里的中号成员，面向通用企业工作负载。</p>
+<p>在 AIME 2025 上这个 8B 拿到 86.67，在 SWE-Bench Verified 上是 47.67。后一项对智能体编码能力往往比合成评测更是个诚实的信号。</p>
+<p>推理能力来自一条三阶段训练管线：先在宽松许可的数据和合成数据上做监督微调，再用 GRPO 做多环境强化学习。</p>
+<p>GRPO 那一段覆盖数学、代码、工具调用和<a href="https://deepinfra.com/blog/json-mode">结构化输出</a>。</p>
+<p>随后是一个面向有用性与安全的偏好对齐阶段。<a href="https://deepinfra.com/blog/deepinfra-function-calling-guide">工具调用</a>是推理增强的，所以模型在真正调用之前会先想清楚该调哪个工具，用的是 OpenAI 的 function definition schema。</p>
+<p>它以 Apache 2.0 许可发布，附带完整的透明度披露，原生支持 128K 上下文窗口。该模型于 2026 年 8 月 25 日在 IBM 的 GitHub 和 Hugging Face 上开放。</p>
+<p>Granite 4.2 8B 已作为公开 API 端点上线 DeepInfra。</p>
+<h2><strong>这款模型哪里不一样</strong></h2>
+<p>Granite 4.2 8B 是一个 decoder-only 的稠密 transformer，基于 GraniteForCausalLM 架构，由 Granite 4.1 8B Base 经一条三阶段管线后训练而来。</p>
+<p>这条管线先做大规模预训练，然后在宽松许可的公开数据集、合成数据、智能体轨迹和人工精挑数据混合上做监督微调。</p>
+<p>最后用 Group Relative Policy Optimization 做多阶段强化学习，覆盖数学、代码、科学、工具调用和指令跟随。</p>
+<p>再往后是一个面向安全和对话质量的偏好对齐阶段。</p>
+<p>架构上用了分组查询注意力，32 个注意力头配 8 个 KV 头，激活函数是 SwiGLU，归一化用 RMSNorm，RoPE 的基础频率是 10M。</p>
+<p>这套配置在吞吐量与长上下文稳定性之间取平衡。</p>
+<h3><strong>可选的推理模式</strong></h3>
+<p>按单次请求选推理档位，是这里比较实用的设计决定之一。模型没有把思维链做成常开，而是暴露三种模式：</p>
+<ul><li><strong>Thinking（enable_thinking=True）：</strong> 作答前输出完整的 <em>&lt;think&gt;…&lt;/think&gt;</em> 思维链</li><li><strong>Non-thinking（enable_thinking=False）：</strong> 直接作答，不付推理开销</li><li><strong>Low-effort（enable_thinking=True, low_effort=True）：</strong> 面对较简单的请求只做简短推理</li></ul>
+<p>这样你可以按请求复杂度调节推理成本和延迟，而不必维护多份模型 checkpoint——在规模化的场景里这很要紧，也让部署更简单。</p>
+<p>如果你想在本机跑这个模型，Ollama 上有量化版本 <em>ibm/granite4.2:8b-q3_K_M</em>。</p>
+<p>也可以通过 HuggingChat 直接用这个模型，做快速试验不必搭任何基础设施。</p>
+<h3><strong>长上下文与基准</strong></h3>
+<p>模型原生支持 128K 上下文窗口（序列长度 131,072 token），另有 512K 的长上下文扩展。在 RULER 长上下文基准上，这个 8B 在 64K 拿到 80.99、128K 拿到 71.41，对这个尺寸的模型来说是相当扎实的保持率。</p>
+<p>基准方面，这个 8B 在推理和编码任务上都顶得住：</p>
+<table><thead><tr><th><strong>基准</strong></th><th><strong>分数</strong></th></tr></thead><tbody><tr><td>AIME 2025</td><td>86.67</td></tr><tr><td>GPQA</td><td>64.14</td></tr><tr><td>LiveCodeBench v6</td><td>73.24</td></tr><tr><td>SWE-Bench Verified</td><td>47.67</td></tr><tr><td>MMLU-Pro</td><td>74.04</td></tr><tr><td>τ³-bench（AVG）</td><td>58.06</td></tr><tr><td>Arena-Hard-V2</td><td>65.19</td></tr></tbody></table>
+<p>IBM 的基准数据是自报的，所以在独立评测跟上之前，这些数字当作方向性参考，别当定论。</p>
+<h3><strong>工具使用与部署</strong></h3>
+<p>工具调用是推理增强的：模型在调用之前先把工具选择推理想清楚，用的是 OpenAI 的 function definition schema。它已在 OpenCode、Pi、OpenHands 等智能体编码环境里验证过，并针对 vLLM（v0.20+）部署做了优化。多语言支持覆盖 12 种语言：英语、德语、西班牙语、法语、日语、葡萄牙语、阿拉伯语、捷克语、意大利语、韩语、荷兰语和中文。</p>
+<h2><strong>在 DeepInfra 上上手</strong></h2>
+<p>Granite 4.2 8B 已作为公开 API 端点上线 DeepInfra。<a href="https://deepinfra.com/blog/pricing-101-token-math-cost-per-completion">计价</a>按用量：每 100 万输入 token $0.06，每 100 万输出 token $0.25，每 100 万缓存 token $0.015。</p>
+<p>DeepInfra 上的上下文窗口是 131,072 token，模型以 bfloat16 精度运行。JSON 输出和 function calling 都开箱支持。</p>
+<p>DeepInfra 通过 OpenAI 兼容的 API 暴露 Granite 4.2 8B，所以没有新 SDK 要学，也没有基础设施要管。换掉 base URL 和模型名就能跑起来。</p>
+<p>DeepInfra 执行零数据留存政策，并已通过 SOC 2 和 ISO 27001 认证。<a href="https://deepinfra.com/ibm-granite/granite-4.2-8b/api">API 参考</a>里有支持的参数和请求格式的完整说明。</p>
+<h3><strong>快速开始</strong></h3>
+<p>cURL:</p>
 <pre><code>curl https://api.deepinfra.com/v1/openai/chat/completions \
 
   -H &quot;Authorization: Bearer $DEEPINFRA_TOKEN&quot; \
@@ -87,7 +181,7 @@
     &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain GRPO in two sentences.&quot;}]
 
   }'copy</code></pre>
-<p>Python：</p>
+<p>Python:</p>
 <pre><code>from openai import OpenAI
 
 client = OpenAI(
@@ -129,18 +223,18 @@ const response = await client.chat.completions.create({
 });
 
 console.log(response.choices[0].message.content);copy</code></pre>
-<p>您需要从现有 OpenAI 集成中更改的唯一内容是基本 URL、API 密钥和模型名称。官方 OpenAI Python 和 Node.js 库无需修改即可运行。</p>
-<p>前往 DeepInfra 上的 <a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">Granite 4.2 8B 模型页面</a> 探索 API 游乐场、查看实时请求示例并开始构建。</p>
+<p>相对已有的 OpenAI 集成，你只需要改 base URL、API key 和模型名这三样。OpenAI 官方的 Python 和 Node.js 库不用改动就能用。</p>
+<p>去 DeepInfra 上的 <a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">Granite 4.2 8B 模型页</a>可以试 API playground、看实时请求示例，然后开始构建。</p>
 <h2><strong>结论</strong></h2>
-<p>Granite 4.2 8B 是一款精心设计的 8B 型号，其中有一些在生产中实际重要的设计决策。对于运行混合工作负载的团队来说，每个查询推理控制是一种有意义的操作杠杆，其中延迟和成本因任务类型而异。</p>
-<p>Apache 2.0 许可、128K 本机上下文窗口和<a href="https://deepinfra.com/blog/function-calling-feature">推理增强工具调用</a> 使其成为代理管道的可靠基础。</p>
-<p>如果您正在构建编码助手、多步骤推理代理或企业工作流程自动化，那么它是一个紧凑的、可审计的选项。</p>
-<p>它不需要为了获得一致的工具使用而进行过度配置。</p>
-<p>在 Playground 中运行您的第一个调用，或者将 Granite 4.2 8B 放入现有的 OpenAI 兼容集成中。</p>
+<p>Granite 4.2 8B 是一个工程做得扎实的 8B 模型，有几个设计决定在生产环境里是真有用的。按请求控制推理，对同时跑混合负载、延迟和成本随任务类型波动的团队来说是一个有分量的运维抓手。</p>
+<p>Apache 2.0 许可、128K 原生上下文窗口和<a href="https://deepinfra.com/blog/function-calling-feature">推理增强的工具调用</a>，让它成为智能体流水线一个靠得住的底座。</p>
+<p>如果你在做编码助手、多步推理智能体或企业工作流自动化，它是一个体积小、可审计的选项。</p>
+<p>不必为了拿到靠得住的工具调用而超配资源。</p>
+<p>在 playground 里打第一次调用，或者把 Granite 4.2 8B 直接接进已有的 OpenAI 兼容集成。</p>
 <p>相关文章</p>
-<p>[<img src="https://deepinfra.com/blog/tgi-fork.webp" alt="文本生成推理的叉子。">](https://deepinfra.com/blog/text- Generation-inference)[文本生成推理的叉子。](https://deepinfra.com/blog/text- Generation-inference)huggingface 的文本生成推理开源项目看起来是一个很有前途的服务大型语言模型 (LLM) 的框架。然而，huggingface 宣布他们将更改 v1.0.0 版本的代码许可证。虽然以前的许可证 Apache 2.0 是宽松的，但新的...</p>
-<p><a href="https://deepinfra.com/blog/build-streaming-chat-backend-10-minutes"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/02/streaming-backend_sized.jpg" alt="在 10 分钟内构建一个流式聊天后端"></a><a href="https://deepinfra.com/blog/build-streaming-chat-backend-10-minutes">在 10 分钟内构建一个流式聊天后端分钟</a>&lt;p&gt;当大型语言模型从演示转移到实际系统时，期望会发生变化。目标不再是生成聪明的文本，而是提供可预测的延迟、响应行为和可靠的基础设施特征。特别是在基于聊天的系统中，响应开始的速度通常比完成的速度更重要。这就是令牌流变得[...]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/deepseek-v4-pro-model-overview"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/deepseek-v4-pro.png" alt="DeepSeek V4 Pro：模型概述、功能和性能指南"></a><a href="https://deepinfra.com/blog/deepseek-v4-pro-model-overview">DeepSeek V4 Pro：模型概述、功能和性能指南</a>&lt;p&gt;DeepSeek V4 Pro 是 DeepSeek 的 1.6 万亿参数 Mixture-of-Experts (MoE) 模型，于 2026 年 4 月 24 日在 MIT 许可下发布。它专为高级推理、复杂的软件工程和长时间运行的代理任务而设计，并与 DeepSeek-V4-Flash 一起推出，这是一种更轻的 284B 参数变体，专为更快、更低成本的推理而设计。 V4 系列是 DeepSeek 的第一个两层阵容 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/text-generation-inference"><img src="https://deepinfra.com/blog/tgi-fork.webp" alt="Text Generation Inference 的 fork。"></a><a href="https://deepinfra.com/blog/text-generation-inference">Text Generation Inference 的 fork。</a>huggingface 那个开源的文本推理生成项目，看起来是个有前景的大语言模型（LLM）服务框架。但 huggingface 宣布要从 v1.0.0 版本起更改代码许可证。此前的 Apache 2.0 是宽松型的，新的 on...</p>
+<p><a href="https://deepinfra.com/blog/build-streaming-chat-backend-10-minutes"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/02/streaming-backend_sized.jpg" alt="10 分钟搭一个流式聊天后端"></a><a href="https://deepinfra.com/blog/build-streaming-chat-backend-10-minutes">10 分钟搭一个流式聊天后端</a>&lt;p&gt;当大语言模型从演示走进真实系统，期待就变了。目标不再是写出漂亮的文字，而是要给出可预期的延迟、跟手的响应和可靠的基础设施特性。尤其在聊天类系统里，一个回复多快开始，往往比它多快说完更要紧。token 流式传输就是在 [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/deepseek-v4-pro-model-overview"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/deepseek-v4-pro.png" alt="DeepSeek V4 Pro：模型总览、特性与性能指南"></a><a href="https://deepinfra.com/blog/deepseek-v4-pro-model-overview">DeepSeek V4 Pro：模型总览、特性与性能指南</a>&lt;p&gt;DeepSeek V4 Pro 是 DeepSeek 出品的一个 1.6 万亿参数 Mixture-of-Experts (MoE) 模型，2026 年 4 月 24 日以 MIT 许可发布。它面向高阶推理、复杂软件工程长时间运行的智能体任务设计，并与 DeepSeek-V4-Flash 同期推出——后者是一个更轻的 284B 参数变体，为更快、更便宜的推理而造。V4 系列是 DeepSeek 第一套两档产品 [&amp;hellip;]&lt;/p&gt;</p>
 <p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
     <item>
@@ -224,38 +318,38 @@ console.log(response.choices[0].message.content);copy</code></pre>
       <description>原文标题：Benefit Street Partners answers questions faster with Codex</description>
       <content:encoded><![CDATA[<p>2026 年 10 月 16 日</p>
 <h1>Benefit Street Partners 通过 Codex 更快地回答问题</h1>
-<p>Anant Kumar 构建了比较贷款估值和分析信贷协议的工具，使用 Codex 进行代码审查和更快的跟进。</p>
+<p>Anant Kumar 自己搭出了比对贷款估值、分析信贷协议的工具，代码审查和后续跟进都交给 Codex。</p>
 <p><a href="https://openai.com/contact-sales/">联系销售</a></p>
-<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4hoSVzGnXTL7t0Lc8leJTZ/bc394d73a743bc7c555a0ef89df90c2a/square.png?w=3840&amp;q=90&amp;fm=webp" alt="白色 Benefit Street Partners 徽标和富兰克林邓普顿 (Franklin Templeton) 归属于深古铜色拉丝纹理。"></p>
-<p>公司规模：企业</p>
-<p>地区： 北美</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/4hoSVzGnXTL7t0Lc8leJTZ/bc394d73a743bc7c555a0ef89df90c2a/square.png?w=3840&amp;q=90&amp;fm=webp" alt="深古铜色拉丝纹理上放着白色的 Benefit Street Partners 标识，并注明来自 Franklin Templeton"></p>
+<p>公司规模：企业级</p>
+<p>地区：北美</p>
 <p>行业：金融</p>
-<p>产品：法典</p>
-<p>〜1天</p>
-<p>第一个 BDC 标记跟踪器版本；总开发时间约为 10–12 小时，包括改进。</p>
-<p>约20分钟</p>
-<p>首先进行信用协议分析，然后进行 1 个多小时的人工审核。</p>
-<p>在 Benefit Street Partners，一家专注于信贷的投资经理，回答投资委员会的后续问题过去需要几天或几周的时间。投资组合经理 Anant Kumar 表示，分析师现在可以在一天内向 Codex 提出一轮评论，并经常在会议期间回答问题。菲律宾央行正在使用这些工具在同一时间范围内增加更多的审核能力和承保的严格性，而不是进行更多的交易。</p>
-<blockquote>“我现在已经从一名分析师和投资组合经理变成了一名开发人员。我可以构建东西。”</blockquote>
-<p>—Anant Kumar，Benefit Street Partners 投资组合经理</p>
-<h2>构建自己的仪表板</h2>
-<p>为了创建一个可以与同事共享的仪表板，库马尔过去需要具有软件专业知识的人来构建网站并提取数据。现在，他构建了自己的工具，使用人工智能起草代码并检查错误。</p>
-<p>他的追踪器使用商业开发公司 (BDC) 向美国证券交易委员会 (SEC) 提交的公开文件来比较各公司如何评估同一笔贷款。该团队可以看到其标记与其他持有者的估值进行比较。</p>
-<p>Kumar 构建了跟踪器并使用 Codex 进行代码审查。第一个版本花了一天时间。在接下来的几周内添加功能并完善界面后，他估计总开发时间为 10-12 小时。</p>
-<h2>构建信用协议分析器</h2>
-<p>Kumar 的另一个工具分析信贷协议，这些协议通常有 300 页或更长。投资者需要找到可以将价值从贷方手中转移出去的条款，这项任务以前意味着要求外部顾问逐页完成协议。库马尔汇集了领先律师事务所关于需要注意的条款和风险的备忘录。他将分析仪描述为“我们组织内的第二个大脑”。</p>
-<p>上传的信用协议需要大约 20 分钟才能进行首次分析，然后进行一个小时或更长时间的人工审核。 BSP 使用 GPT‑6 Astra 重构了该工具，目前已在公司托管的门户中上线。</p>
-<p>“人工智能在整理数据、摄取数据、综合分析方面非常有帮助，但最终的投资决策需要由人类做出，”他说。</p>
-<p>承保通常是一个多轮过程。本轮融资包括进一步的尽职调查和针对投资委员会问题的修订备忘录。交易时间从几天到几周不等，因此轮数也各不相同。库马尔说：“我们对自己的决策更有信心，因为我们掌握了更多信息。”</p>
-<blockquote>“我的分析质量变得更好、更快。”</blockquote>
-<p>—Anant Kumar，Benefit Street Partners 投资组合经理</p>
-<h2>结果一目了然</h2>
-<ul><li>一天内构建了第一个 BDC 跟踪器，使用 Codex 进行代码审查；总共大约 10-12 小时，包括后来添加的内容。</li><li>在大约 20 分钟内对信用协议进行初步分析，然后进行一个小时或更长时间的人工审核。</li><li>根据库马尔的说法，通常在会议期间，通过法典更快地回答委员会的后续问题。</li></ul>
-<h2>下一步是什么</h2>
-<p>BSP 正在努力连接跨交易的信息。持续承保是一个长期愿望：团队可以在新闻发生时监控贷款并检查其投资组合的影响，而不是仅在事件发生后重新承保。</p>
-<p>“Codex 开启了我的一天，因为我每天有更多的时间来做更多的高水平工作和更少的日常工作，”Kumar 说。</p>
-<h2>加入工作新时代</h2>
-<p>全球超过 100 万家企业正在利用 OpenAI 取得有意义的成果。</p>
+<p>产品：Codex</p>
+<p>~1 天</p>
+<p>第一版 BDC mark 跟踪器；连同后续加功能和打磨界面，总开发工时约 10–12 小时。</p>
+<p>~20 分钟</p>
+<p>一份信贷协议跑完初轮分析约 20 分钟，之后还有 1 小时以上的人工复核。</p>
+<p>在 Benefit Street Partners 这家专注信贷的投资管理机构，过去回应投资委员会的追问要花几天甚至几周。组合管理人 Anant Kumar 说，现在分析师用 Codex 一天就能把一轮意见消化完，常常还在会上就把问题答了。BSP 用这些工具在同一时间窗口里给承做环节加进更多复核容量和更严格的把关，而不是去做更多交易。</p>
+<blockquote>“我不再只是分析师和组合管理人，现在也算个开发者。我能自己动手把东西做出来。”</blockquote>
+<p>—Anant Kumar，Benefit Street Partners 组合管理人</p>
+<h2>自己搭看板</h2>
+<p>要做一块能分享给同事的看板，Kumar 过去得找懂软件的人帮他建网站、把数据接进来。现在他自己做工具，让 AI 起草代码，再让它审一遍有没有错。</p>
+<p>他做的跟踪器取商业发展公司（BDC）公开的 SEC 申报文件，比对各家机构对同一笔贷款估的价。团队因此能看见自己的 mark 跟其他持有人的估值差在哪。</p>
+<p>跟踪器由 Kumar 搭建，代码审查用 Codex。第一版花了一天。之后几周里不断加功能、打磨界面，他估算总开发时间大约 10–12 小时。</p>
+<h2>做一份信贷协议分析器</h2>
+<p>Kumar 的另一件工具分析信贷协议，这类文件常常 300 页起步。投资人需要找出可能把价值从贷款方那边挪走的条款，而这件事过去意味着请外部律师逐页过一遍整份协议。Kumar 把几家头部律所关于该盯哪些条款和风险备忘录收拢到一起。他形容这个分析器是「我们组织里的第二大脑」。</p>
+<p>上传一份信贷协议，大约 20 分钟出初轮分析，接着还要一小时以上的人工复核。BSP 已经用 GPT‑6 Astra 重构了这件工具，如今在公司自托管的门户里正式上线。</p>
+<p>「AI 在汇总数据、读进来、合成分析这几件事上很有用，但最终的投资决策必须由人来下。」他说。</p>
+<p>承做通常是好几轮的过程。一轮包括进一步尽调，以及一份回应投资委员会提问的修订版备忘录。交易周期从几天到几周不等，所以轮数也不固定。Kumar 说：「因为我们手里能用的信息更多，做决定时更有底气。」</p>
+<blockquote>“我的分析质量好了太多，也快了很多。”</blockquote>
+<p>—Anant Kumar，Benefit Street Partners 组合管理人</p>
+<h2>成果一览</h2>
+<ul><li>一天之内做出第一版 BDC 跟踪器，代码审查交给 Codex；连同后来加的功能，总共约 10–12 小时。</li><li>一份信贷协议约 20 分钟出初轮分析，之后再加一小时以上的人工复核。</li><li>按 Kumar 的说法，有了 Codex，回答委员会的追问快了很多，常常当场在会上就答完。</li></ul>
+<h2>下一步</h2>
+<p>BSP 正在打通跨交易的信息。持续承做是他们更长期的设想：团队可以随新闻发生就盯住手里的贷款、查看单一事件在整个组合上的影响，而不是等事件发生之后才重新做一遍承做。</p>
+<p>「Codex 把我的时间解放出来了，因为一天里我能拿更多小时去做高层次的工作，少做那些例行的活。」Kumar 说。</p>
+<h2>加入新的工作方式时代</h2>
+<p>全球已有超过 100 万家企业用 OpenAI 拿到了实打实的成果。</p>
 <p><a href="https://openai.com/contact-sales/">联系销售</a></p>]]></content:encoded>
     </item>
     <item>
