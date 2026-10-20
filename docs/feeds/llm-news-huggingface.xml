@@ -7,7 +7,255 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 16 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 19 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>TorchNeuron：在 AWS Trainium 上运行 HF 模型比以往更容易</title>
+      <link>https://huggingface.co/blog/hf-torchneuron</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/hf-torchneuron</guid>
+      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：TorchNeuron: running HF models on AWS Trainium is easier than ever</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>TorchNeuron：在 AWS Trainium 上运行 HF 模型比以往更容易</h1>
+<p>发布于 2026 年 10 月 19 日</p>
+<p>GitHub 上更新</p>
+<p>13</p>
+<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt="Régis Pierrard 的头像"></a></p>
+<p>雷吉斯·皮拉德</p>
+<p>雷吉斯</p>
+<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy 的头像"></a></p>
+<p>西蒙·佩吉兹</p>
+<p>页面Zhf</p>
+<p><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt="Michael Benayoun 的头像"></a></p>
+<p>迈克尔·贝纳永</p>
+<p>迈克尔·贝纳永</p>
+<p><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt="黄静雅的头像"></a></p>
+<p>黄静雅</p>
+<p>静雅</p>
+<p><a href="https://huggingface.co/tengomucho"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt="阿尔瓦罗·莫兰的头像"></a></p>
+<p>阿尔瓦罗·莫兰</p>
+<p>天吾无町</p>
+<p><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt="David Corvoysier 的头像"></a></p>
+<p>大卫·科沃西尔</p>
+<p>达科尔沃</p>
+<p><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt="Jeff Boudier 的头像"></a></p>
+<p>杰夫·布迪尔</p>
+<p>杰夫布迪尔</p>
+<p>TorchNeuron 为 AWS Trainium 上的 PyTorch 提供了新的本机后端。 Transformers、Diffusers 和 Kernels 本身就支持它，使得在 Trainium 上运行模型并在 HF 集线器上共享它们比以往任何时候都更容易。</p>
+<h2>火炬神经元</h2>
+<p><a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/frameworks/torch/index.html">TorchNeuron</a> 是一个 PyTorch 插件，为 Trainium 带来了新的后端，支持 eager 模式、“torch.compile”以及本机分布式 API（如 FSDP 和 TP）。阅读 Pytorch <a href="https://pytorch.org/blog/introducing-torchneuron-native-pytorch-backend-for-aws-trainium/">博客</a> 以了解有关 TorchNeuron 的更多信息。</p>
+<p>从 2026 年 10 月 20 日开始，TorchNeuron 将作为公开测试版提供。研究人员和开发人员将能够使用“pip install torch-neuronx”来安装它。</p>
+<h2>新后端，HF 库中的本机接口</h2>
+<p>迄今为止，AWS Trainium 和 Inferentia（分别为经济高效的大规模训练和推理而设计的人工智能芯片）上的 Hugging Face 体验已通过 <a href="https://github.com/huggingface/optimum-neuron">optimum-neuron</a> 提供。该库依赖于 torch-neuronx 包，该包基于 PyTorch XLA。这是当时的自然选择，但这意味着像编译器一样思考：惰性张量而不是急于执行，仅静态形状，每个图形中断都重新编译。 Optimum Neuron 的存在就是为了隐藏这种复杂性，并维护自定义代码（建模类、训练器等）来做到这一点。</p>
+<p>TorchNeuron 改变了这一点。它直接集成到 PyTorch 中，并将“神经元”公开为本机设备，具有急切执行、PyTorch 自己的分布式原语（DTensor、FSDP2）和“torch.compile”。</p>
+<p>对于 Hugging Face 库，Trainium 成为像任何其他设备一样的设备：Transformers、Diffusers、Accelerate、PEFT 和 TRL 直接在其上运行，具有与在任何其他加速器上使用的相同的类和脚本。从现在开始，我们建议 Neuron 用户直接使用这些库，而不是通过 Optimum Neuron。</p>
+<h3>变形金刚</h3>
+<h4>推论</h4>
+<p>Transformers 现在原生支持多种模型的文本生成。 TorchNeuron 可以开箱即用地支持前 100 个最常用文本生成模型架构中的 89%，而 Optimum Neuron v0.4.5 的支持率为 46%。您只需在代码中传递“device_map=neuron”参数，您的模型就会被移动到 Neuron 设备。</p>
+<p>以下是具有张量并行性的文本生成示例，这将使您能够充分受益于您的 Neuron 实例。请注意，它使用静态缓存进行生成，因为强烈建议 Neuron 使用静态缓存，以防止频繁重新编译。</p>
+<pre><code>import os
+
+import torch
+import torch.distributed as dist
+import torch_neuronx  # noqa: F401
+from torch.distributed import DeviceMesh
+from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
+from transformers.distributed import DistributedConfig
+from transformers.generation.configuration_utils import CompileConfig
+
+MODEL_ID = &quot;Qwen/Qwen3.8-27B&quot;
+MAX_SEQ_LEN = 1024
+PREFILL_CHUNK_SIZE = 512
+
+dist.init_process_group(backend=&quot;neuron&quot;)
+world_size = dist.get_world_size()
+
+model = AutoModelForCausalLM.from_pretrained(
+    MODEL_ID,
+    dtype=torch.bfloat16,
+    distributed_config=DistributedConfig(tp_size=world_size),
+    device_mesh=DeviceMesh(&quot;neuron&quot;, list(range(world_size))),
+).eval()
+
+tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+if tokenizer.pad_token is None:
+    tokenizer.pad_token = tokenizer.eos_token
+tokenizer.padding_side = &quot;left&quot;
+
+inputs = tokenizer.apply_chat_template(
+    [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;The future of AI is&quot;}],
+    add_generation_prompt=True,
+    padding=True,
+    tokenizer_kwargs={&quot;pad_to_multiple_of&quot;: PREFILL_CHUNK_SIZE},
+    return_tensors=&quot;pt&quot;,
+)
+
+generation_config = GenerationConfig(
+    max_new_tokens=128,
+    do_sample=False,
+    use_cache=True,
+    pad_token_id=tokenizer.pad_token_id,
+    eos_token_id=tokenizer.eos_token_id,
+    cache_implementation=&quot;static&quot;,
+    max_cache_len=MAX_SEQ_LEN,
+    prefill_chunk_size=PREFILL_CHUNK_SIZE,
+    compile_config=CompileConfig(backend=&quot;neuron&quot;, fullgraph=False, dynamic=False),
+)
+
+with torch.no_grad():
+    output_ids = model.generate(
+        inputs[&quot;input_ids&quot;],
+        attention_mask=inputs[&quot;attention_mask&quot;],
+        generation_config=generation_config,
+    )
+
+if dist.get_rank() == 0:
+    prompt_len = inputs[&quot;input_ids&quot;].shape[1]
+    print(tokenizer.decode(output_ids[0, prompt_len:], skip_special_tokens=True))</code></pre>
+<h4>培训</h4>
+<p>现在 Neuron 是原生 PyTorch 设备，Trainium 上的训练使用与任何其他加速器相同的 Hugging Face 库：Transformers、Accelerate、PEFT 和 TRL。您不再需要专门的培训师或特定于 Neuron 的模型代码分支。标准 TRL 微调脚本在 Trainium 实例上运行，仅具有一些特定于 Neuron 的设置。</p>
+<p>这是一个基于 TRL 的“SFTTrainer”构建的监督微调脚本。如果您之前在 GPU 上使用 TRL 微调过模型，它应该看起来很熟悉。</p>
+<pre><code>import os
+
+import torch
+from datasets import load_dataset
+from transformers.distributed import DistributedConfig
+
+from trl import ModelConfig, ScriptArguments, SFTConfig, SFTTrainer, TrlParser
+
+
+def main(script_args, training_args, model_args):
+    # The Neuron backend can't compile Dynamo's automatic dynamic shapes yet (https://github.com/huggingface/trl/issues/7660)
+    torch._dynamo.config.automatic_dynamic_shapes = False
+
+    training_args.model_init_kwargs = {
+        &quot;revision&quot;: model_args.model_revision,
+        &quot;trust_remote_code&quot;: training_args.trust_remote_code,
+        &quot;attn_implementation&quot;: model_args.attn_implementation,
+        &quot;dtype&quot;: model_args.dtype,
+        &quot;device_map&quot;: None,
+    }
+    if int(os.environ.get(&quot;WORLD_SIZE&quot;, &quot;1&quot;)) &gt; 1:
+        # The model is sharded on the TP x FSDP grid as its weights are loaded
+        training_args.model_init_kwargs[&quot;distributed_config&quot;] = DistributedConfig(
+            tp_size=int(os.environ.get(&quot;TP_SIZE&quot;, &quot;1&quot;)),
+            fsdp_size=int(os.environ.get(&quot;FSDP_SIZE&quot;, &quot;1&quot;)),
+        )
+
+    # Prepare dataset
+    train_dataset = load_dataset(
+        script_args.dataset_name,
+        name=script_args.dataset_config,
+        split=script_args.dataset_train_split,
+    )
+    # UltraChat also has a string `prompt` column, which makes TRL treat it as a prompt-completion dataset.
+    train_dataset = train_dataset.select_columns([&quot;messages&quot;])
+
+    # Training
+    trainer = SFTTrainer(
+        model=model_args.model_name_or_path,
+        args=training_args,
+        train_dataset=train_dataset,
+    )
+
+    trainer.train()
+    trainer.save_model(training_args.output_dir)
+    trainer.end()
+
+
+if __name__ == &quot;__main__&quot;:
+    parser = TrlParser((ScriptArguments, SFTConfig, ModelConfig))
+    script_args, training_args, model_args = parser.parse_args_and_config()
+    main(script_args, training_args, model_args)</code></pre>
+<p>并行性由 Transformers 本地处理。您将具有张量并行 (TP) 和 FSDP 大小的“DistributedConfig”放入“model_init_kwargs”中，“SFTTrainer”将其传递给“from_pretrained”，模型在加载权重时被分片。 Trainer 看到模型已经分发，不会再次包装它。您不需要 <code>--fsdp</code> 标志或 Accelerate FSDP 配置。</p>
+<p>脚本中的任何内容都与 Trainium 无关：相同的代码可以在任何硬件上运行。当您在 Trainium 上运行它时，有一些事情值得了解：</p>
+<ul><li><strong>静态形状。</strong> 该脚本禁用“torch.compile”中的自动动态形状，并使用包装打包来生成最多 2048 个令牌的序列。当 TRL ≥ 1.16 时，Neuron 上的批次将填充为 128 个标记的倍数，从而限制输入形状的数量。编译后的图形可重复用于具有相同形状的后续步骤。</li><li><strong><code>torch.compile</code> 打开。</strong> 只需要传递 <code>--torch_compile true</code> 即可：在 Trainium 实例上，<code>torch.compile</code> 会检测设备并自动选择 Neuron 后端，无需配置任何其他内容。</li><li><strong>异步权重加载关闭。</strong> Neuron 不支持 Transformers 中内置的异步权重加载，因此现在我们使用“HF_DEACTIVATE_ASYNC_LOAD=1”禁用它。</li></ul>
+<p>下面的命令启动使用“torchrun”的训练，它为每个 NeuronCore 启动一个进程。 <code>TP_SIZE</code> 和 <code>FSDP_SIZE</code> 设置并行布局，它们的乘积是进程数：这里 4 x 8 = 32，匹配 <code>--nproc_per_node</code>。 32 个进程形成 4 x 8 网格。张量并行性将每一层划分为 TP 组的 4 个核心，FSDP 将参数、梯度和优化器状态划分为 8 个 TP 组。</p>
+<pre><code>TP_SIZE=4 FSDP_SIZE=8 HF_DEACTIVATE_ASYNC_LOAD=1 uv run torchrun --nproc_per_node=32 sft_neuron_example.py \
+    --model_name_or_path Qwen/Qwen3-8B \
+    --dataset_name HuggingFaceH4/ultrachat_200k \
+    --dataset_train_split train_sft \
+    --output_dir Qwen3-8B-sft-tp4-fsdp8 \
+    --dtype bfloat16 \
+    --max_length 2048 \
+    --packing true \
+    --packing_strategy wrapped \
+    --learning_rate 2e-5 \
+    --warmup_steps 0.03 \
+    --num_train_epochs 1 \
+    --logging_steps 2 \
+    --per_device_train_batch_size 4 \
+    --gradient_accumulation_steps 4 \
+    --save_only_model true \
+    --torch_compile true</code></pre>
+<p>我们在 8 个 Trainium2 芯片（32 个 NeuronCore）上运行它，它是“trn2.48xlarge”实例的一半。</p>
+<p>训练运行至完成，“trainer.save_model”写入标准 Transformers 检查点。其中没有任何内容与 Neuron 相关：您可以将其按原样推送到 Hugging Face Hub 并将其加载到任何其他硬件上。</p>
+<h3>扩散器</h3>
+<h4>推论</h4>
+<p>Diffusers 库中的许多管道在 Eager 和 Compiled 模式下与 TorchNeuron 兼容。 FLUX.1-dev、FLUX.2、Qwen-Image、Qwen-Image-2.1 和 H3 还与张量并行兼容，以充分利用您的 Neuron 设备。以下是展示如何使用 TP 的示例：</p>
+<pre><code>import torch, torch.distributed as dist, torch_neuronx # TP
+from torch.distributed.device_mesh import DeviceMesh # TP
+from diffusers import QwenImage21Pipeline, QwenImage21Transformer2DModel, TensorParallelConfig
+
+# Distributed devices initialization
+dist.init_process_group(backend=&quot;neuron&quot;) # TP
+dev = torch.neuron.current_device()
+mesh = DeviceMesh(&quot;neuron&quot;, list(range(8))) # TP=8
+
+# Pipeline initialization
+model = &quot;Qwen/Qwen-Image-2.1&quot;
+transformer = QwenImage21Transformer2DModel.from_pretrained(
+    model,
+    subfolder=&quot;transformer&quot;,
+    torch_dtype=torch.bfloat16,
+    parallel_config=TensorParallelConfig(mesh=mesh), # TP
+)
+pipe = QwenImage21Pipeline.from_pretrained(
+    model,
+    transformer=transformer,
+    torch_dtype=torch.bfloat16,
+)
+pipe.vae.to(dev)
+pipe.transformer.compile_repeated_blocks(backend=&quot;neuron&quot;, fullgraph=True, dynamic=False)
+
+# Image generation
+emb, mask, _ = pipe.encode_prompt(prompt=&quot;A capybara wearing a wizard hat, oil painting&quot;, device=&quot;cpu&quot;)  # text encoder stays on CPU
+image = pipe(
+    prompt_embeds=emb.to(dev),
+    prompt_embeds_mask=mask.to(dev) if mask is not None else None,
+    height=1024,
+    width=1024,
+    num_inference_steps=40,
+    generator=torch.Generator(&quot;cpu&quot;).manual_seed(0), # same noise on every rank
+).images[0]
+if dist.get_rank() == 0:
+    image.save(&quot;out.png&quot;)</code></pre>
+<p>您可以使用以下命令运行这段代码：“NEURON_LOGICAL_NC_CONFIG=2 torchrun --nproc_per_node=8 run.py”。</p>
+<p>越来越多的管道将兼容TP。如果您不喜欢的管道，您还可以按照<a href="https://huggingface.co/docs/diffusers/main/en/training/distributed_inference#writing-a-tensor-parallelism-plan">本指南</a>添加对其的支持。</p>
+<h3>内核</h3>
+<p>请务必查看 <a href="https://huggingface.co/aws-neuron/kernels">Neuron 团队的内核</a>，因为 Hub 上将提供越来越多的 Neuron 内核来加速您的模型。神经元内核可以使用 <a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/nki/index.html">神经元内核接口</a> (NKI) 编写，它为优化操作提供了较低的控制。这样，用户可以运行自己的自定义操作并在集线器上共享它们。</p>
+<p>例如，您可以使用<a href="https://huggingface.co/kernels/aws-neuron/vit-encoder-neuron-kernels">此内核</a> 来加速您的视觉转换器，在 Trainium 上加速高达 x2.4！</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hf-torchneuron/kernel.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/hf-torchneuron/kernel.png" alt=""></a></p>
+<h2>致谢</h2>
+<p>特别感谢 AWS 团队在 TorchNeuron 上所做的工作以及他们对我们的反馈的反应，以使 HF 集成尽可能好。</p>
+<p>我们博客的更多文章</p>
+<p>torchprofileCUDA</p>
+<h2>PyTorch 中的分析（第 2 部分）：从 nn.Linear 到融合 MLP</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li>+1</li></ul>
+<p>65</p>
+<p>2026 年 6 月 11 日</p>
+<p>torchprofileCUDA</p>
+<h2>PyTorch 中的分析（第 1 部分）：torch.profiler 初学者指南</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li>+1</li></ul>
+<p>183</p>
+<p>2026 年 5 月 29 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fhf-torchneuron">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fhf-torchneuron">登录</a> 发表评论</p>
+<p>13</p>
+<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li><li><a href="https://huggingface.co/gbharada-aws"><img src="https://huggingface.co/avatars/55e629c40983a2b82c0c75012c13e074.svg" alt=""></a></li><li><a href="https://huggingface.co/zwang-amazon"><img src="https://huggingface.co/avatars/c698e2722ba05d640b6f958f142b0082.svg" alt=""></a></li><li><a href="https://huggingface.co/ozardeso-aws"><img src="https://huggingface.co/avatars/9aa3820bf2cf891b3997883155a87e54.svg" alt=""></a></li><li><a href="https://huggingface.co/ericyu0510"><img src="https://huggingface.co/avatars/9d16fc41021585ca0981882d8919b5ee.svg" alt=""></a></li><li><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt=""></a></li><li><a href="https://huggingface.co/3outeille"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/iB42uASF1DoQth23cizSh.png" alt=""></a></li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>Indic 预训练规模化：2.8 万亿 token 与开放的数据生成流水线</title>
       <link>https://huggingface.co/blog/nvidia/scaling-indic-pretraining</link>
@@ -523,6 +771,100 @@ Use ⌘⇧Space to start and stop microphone recording, showing elapsed time, mi
 <h2>本文提到的模型 5</h2>
 <h2>本文提到的 Spaces 3</h2>
 <h2>本文提到的 Collections 2</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Apertus 1.5 Release Notes</title>
+      <link>https://huggingface.co/blog/swiss-ai/apertus-v15-release-notes</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/swiss-ai/apertus-v15-release-notes</guid>
+      <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>Apertus 1.5 发行说明</h1>
+<p>团队文章</p>
+<p>发布于 2026 年 10 月 15 日</p>
+<p>36</p>
+<ul><li><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hannayukhymenko"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/rZDwRiBcqeqlUQ7mThoyU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ymetz"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6425f2e685f26ab94af1ea20/w-GKLWwLMH54-kq8BDBIf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rkreft"><img src="https://huggingface.co/avatars/6f266e3e6d4c7b5f4c47e679501290dc.svg" alt=""></a></li><li><a href="https://huggingface.co/davmel"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65c93ce8567e810c57cf41b3/Pj0CYJBSLAI-g5ias4TPz.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/hannayukhymenko"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/rZDwRiBcqeqlUQ7mThoyU.jpeg" alt="Hanna Yukhymenko 的头像"></a></p>
+<p>汉娜·尤赫门科</p>
+<p>汉纳尤赫门科</p>
+<p><a href="https://huggingface.co/swiss-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/648211d39c44e3422ca7e4f3/gnfixzw9IqBziR6bzA6u8.png" alt="瑞士人工智能倡议的头像"></a> <a href="https://huggingface.co/swiss-ai">瑞士-ai</a></p>
+<p><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt="Oleg Lavrovsky 的头像"></a></p>
+<p>奥列格·拉夫罗夫斯基</p>
+<p>洛勒格</p>
+<p><a href="https://huggingface.co/swiss-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/648211d39c44e3422ca7e4f3/gnfixzw9IqBziR6bzA6u8.png" alt="瑞士人工智能倡议的头像"></a> <a href="https://huggingface.co/swiss-ai">瑞士-ai</a></p>
+<p><a href="https://huggingface.co/ymetz"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6425f2e685f26ab94af1ea20/w-GKLWwLMH54-kq8BDBIf.jpeg" alt="Y Metz 的头像"></a></p>
+<p>Y梅斯</p>
+<p>伊梅茨</p>
+<p><a href="https://huggingface.co/swiss-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/648211d39c44e3422ca7e4f3/gnfixzw9IqBziR6bzA6u8.png" alt="瑞士人工智能倡议的头像"></a> <a href="https://huggingface.co/swiss-ai">瑞士-ai</a></p>
+<p>我们的最新版本 Apertus 1.5 扩展了 8B 和 70B Apertus 1.0 模型，具有图像/音频理解、可选的思维模式、四倍长的上下文窗口、改进的指令遵循和更好的工具使用。更新后的 <a href="https://huggingface.co/collections/swiss-ai/apertus-v15">8B 和 70B 模型权重</a> 已于 2026 年 7 月 24 日根据 Apache 2.0 许可证发布到 Hugging Face。现在可以从项目<a href="https://huggingface.co/papers/2610.15542">技术报告</a>获取更多详细信息，并在此处进行总结。</p>
+<p>Apertus 1.5 是第一代模型的继续预训练：向 8B 模型添加 4 万亿个 token 的文本和多模态训练数据，向 70B 模型添加 2 万亿个 token，总计分别为 19T 和 17T。与每个 Apertus 版本一样，模型是完全开放的：开放<a href="https://huggingface.co/collections/swiss-ai/apertus-v15">权重</a>、开放<a href="https://github.com/swiss-ai/apertus-data-transparency/">数据</a>、开放<a href="https://apertus-ai.org/pages/charter/">值</a>和完整训练<a href="https://apertus-ai.org/pages/research/">详细信息</a>。</p>
+<h2>主要增强功能</h2>
+<ul><li><em>原生多模式理解：</em> Apertus 1.5 接受图像和音频以及文本，将文档、图表和照片带入对话中。这些模型还可以处理口语，尽管这仍处于实验阶段。</li><li><em>思维模式：</em>模型可以切换到思维模式，在回答之前对输入进行推理，从而提高推理问题的性能。</li><li><em>长上下文：</em> 上下文窗口增长到 262,144 个标记，比 Apertus 1.0 增加了 4 倍。</li><li><em>改进的指令遵循：</em> 比 Apertus 1.0 更好的指令遵循性可提供更可预测和准确的响应。</li><li><em>改进工具使用：</em> 这些模型经过培训，可以更好地集成工具，从而更有效地使用外部工具和 API。</li><li><em>开放价值观：</em> 更加严格地遵守 Apertus 宪章，这为模型的价值观和原则带来了透明度。</li></ul>
+<h2>训练过程</h2>
+<p>[！[Apertus 1.5 训练管道，具有四个阶段的持续预训练，然后是 SFT、长上下文 SFT、RLVR、DPO 和SDPO](https://cdn-uploads.huggingface.co/product/uploads/650ed7adf141bc34f91a12ae/Xi58nSrPTd5_ASGNIg60g.pn g)](https://cdn-uploads.huggingface.co/product/uploads/650ed7adf141bc34f91a12ae/Xi58nSrPTd5_ASGNIg60g.png) <em>完整的 Apertus 1.5 培训流程</em></p>
+<h3>通过分词器实现多模态</h3>
+<p>我们以早期融合的方式在 v1.5 模型中引入多模态，其中图像和音频以与文本标记相同的序列作为离散标记进入 Apertus，而不是使用单独的视觉编码器。图像使用 <a href="https://arxiv.org/abs/2510.26583">Emu3.5</a> 标记器进行标记（512×512 图像变为 1,024 个标记），音频使用 <a href="https://arxiv.org/abs/2408.16532">WavTokenizer</a> 进行标记（每秒 40 个标记）。我们只扩展词汇量，因此架构保持不变，并且训练以纯文本速度运行。这些模型理解图像和音频，但仅生成文本。</p>
+<p>[![图片](https://cdn-uploads.huggingface.co/product/uploads/650ed7adf141bc34f91a12ae/D-7BaNY68Nigi5bTw3RH9。 png)](https://cdn-uploads.huggingface.co/product/uploads/650ed7adf141bc34f91a12ae/D-7BaNY68Nigi5bTw3RH9.png)</p>
+<h3>预训练</h3>
+<p>从Apertus 1.0开始，我们继续分四个阶段进行预训练：</p>
+<ul><li><strong>未配对：</strong>文本加上独立的图像和音频，因此模型可以学习新的模式。</li><li><strong>配对：</strong> 图像-标题和音频-转录对，因此它将它们与语言对齐。</li><li><strong>冷却：</strong> 更高质量的数据以及更多的数学和代码。</li><li><strong>长上下文：</strong> 窗口从 8k 到 262k 令牌逐步增长。</li></ul>
+<p>总体而言，超过一半的训练令牌是纯文本的，这保留了 Apertus 1.0 的语言能力。文本数据通过 <a href="https://huggingface.co/datasets/epfml/FineWeb2-HQ-Plus">FineWeb2-HQ+</a>、FinePDFs 和 Nemotron-CC 等来源进行刷新。所有新数据（包括多模式）都符合与以前相同的标准：公开可用、获得许可，并且追溯性地尊重 robots.txt 选择退出。每个来源都列在 <a href="https://github.com/swiss-ai/apertus-data-transparency">apertus-data-transparency</a> 中。</p>
+<h3>训练后</h3>
+<p>训练后分五个阶段运行：<strong>SFT → 长上下文 SFT → RL → DPO → 章程调整 (SDPO)</strong>。</p>
+<ul><li><strong>SFT</strong> 对 370 万文本样本以及图像和语音数据进行处理。添加推理痕迹只是为了提示模型如果没有它们就无法解决。工具使用数据仅限于经过执行验证的轨迹。我们发布了在 Hugging Face 上使用的 <a href="https://huggingface.co/datasets/swiss-ai/Apertus-v1.5-SFT-mix">text SFT mix</a>。</li><li><strong>长上下文 SFT</strong> 在完整 262k 窗口恢复了短上下文 SFT 侵蚀的长上下文能力。</li><li><strong>带有可验证奖励的强化学习 (RLVR)</strong> 涉及约 350k 数学、代码、指令遵循、多语言和视觉提示，断断续续地混合思考。</li><li><strong>DPO</strong> 具有评判评分的偏好对，可提高聊天质量、工具使用和安全性。我们发布了<a href="https://huggingface.co/datasets/swiss-ai/Apertus-v1.5-Preference-Pool">偏好池</a>和<a href="https://huggingface.co/datasets/swiss-ai/Apertus-v1.5-Preference-Data">训练对</a>。</li><li><strong>SD​​PO</strong> 通过法官反馈和自我提炼，使模型与 <a href="https://apertus-ai.org/pages/charter/">Apertus 宪章</a> 保持一致。</li></ul>
+<h2>评估结果</h2>
+<p>除了扩展模型功能之外，我们还显着扩大了评估范围。除了 Apertus 1.0 现有的基于文本的评估之外，我们还添加了多模式评估（图像和音频）以及思维模式评估。</p>
+<p><a href="https://raw.githubusercontent.com/swiss-ai/model-cards-assets/main/apertus_1.5/text_performance_plot.png"><img src="https://raw.githubusercontent.com/swiss-ai/model-cards-assets/main/apertus_1.5/text_performance_plot.png" alt="文本性能图表"></a></p>
+<p>多模态评估是通过<a href="https://github.com/swiss-ai/MLLM-eval-suite">MLLM-eval-suite</a>管道完成的，合并了两个主要的多模态评估框架<a href="https://github.com/swiss-ai/lmms-eval">lmms-eval</a>和<a href="https://github.com/swiss-ai/VLMEvalKit">VLMEvalKit</a>。我们还添加了一系列基于文本的基准测试，以及针对翻译和多语言功能、安全性和工具使用的扩展基准测试。这些可以在我们基于<a href="https://github.com/swiss-ai/lm-evaluation-harness">lm-evaluation-harness fork</a>的训练后<a href="https://github.com/swiss-ai/evals-post-train">评估存储库</a>中找到。</p>
+<p><a href="https://raw.githubusercontent.com/swiss-ai/model-cards-assets/main/apertus_1.5/visual_performance_plot.png"><img src="https://raw.githubusercontent.com/swiss-ai/model-cards-assets/main/apertus_1.5/visual_performance_plot.png" alt="视觉性能图表"></a></p>
+<p>虽然仍落后于前沿开放权重模型，但新版本还显着提高了编码和指令跟踪功能的性能，Apertus 1.5 8B 在 IF 和多语言任务上的性能优于类似大小的开放权重模型。思考进一步提高了 AIME 等具有挑战性的推理密集型基准测试的性能。该模型的多模态性能更接近 <a href="https://deepmind.google/models/gemma/gemma-4/">Gemma 4 12B</a> 和其他当前开放权重模型。 Apertus 1.5 多模态性能在开放权重模型之间的空间理解和开源模型之间的文档/图表理解方面具有竞争力。</p>
+<p>我们还感谢我们的合作者和外部评估者在 Apertus 功能的有效基准测试方面提供的帮助。特别是，Apertus 1.5 在 Swiss Legal 任务上表现出强劲的性能，与领先的开放权重模型相当（<a href="https://github.com/JoelNiklaus/SwissLegalEvals/blob/main/blog/swiss-legal-evals-2026.md">博客</a>，<a href="https://github.com/JoelNiklaus/SwissLegalEvals">代码</a>）。此外，在 Last Translation Benchmark 上，Apertus 1.5 8B 提供的机器翻译功能可与 <a href="https://arxiv.org/abs/2508.10925">GPT-OSS-20B</a> 相匹配，并优于 <a href="https://www.anthropic.com/claude/haiku">Claude Haiku 4.5</a> 或 <a href="https://translate.google.com">Google Translate</a> 等模型（<a href="https://last-translation-benchmark.vilda.net/leaderboard-results">排行榜</a>、<a href="https://huggingface.co/papers/2609.04173">论文</a>)。</p>
+<h3>评估卡：Apertus ❤️ EvalEval</h3>
+<p>Apertus 与 <a href="https://evalevalai.com">EvalEval Coalition</a> 合作，确保完全透明且可重复的基准测试。我们以 <a href="https://github.com/evaleval/every_eval_ever">Every Eval Ever (EEE)</a> 模式发布 Apertus 1.5 结果，这是一种共享格式，不仅记录分数，还记录谁运行评估、如何访问模型、生成设置以及应如何解释每个指标：排行榜中经常缺少的详细信息，通常可以解释为什么看起来相似的分数不同。</p>
+<p>结果显示在下面的评估卡中，该卡将运行数据与基准和模型元数据结合到一个可解释的记录中，也可以通过 <a href="https://huggingface.co/blog/eee-community-evals">Hugging Face 社区评估</a> 获得。这与<a href="https://huggingface.co/blog/evaleval-aisi">英国人工智能安全研究所用来公开发布其评估的基础设施</a>相同。由于我们的文本评估在 lm-evaluation-harness 的公共分支上运行，EEE 通过专用转换器支持该分支，因此任何人都可以重新运行它们，并在相同的设置下将他们的数字与我们的数字进行比较。</p>
+<p>结构化评估报告除了研究之外也很重要。 EvalEval <a href="https://evalevalai.com/infrastruct/2026/09/28/mapping-evaluation-cards-to-ai-governance-requirements/">将评估卡映射到人工智能治理要求</a>，包括欧盟人工智能法案第 55 条和 GPAI 实践守则，并发现 EEE 模式可以代表这些框架要求的 60 个评估报告元素中的 56 个。这符合我们已经发布 Apertus 的方式：除了模型之外，我们还发布了培训内容的 <a href="https://github.com/swiss-ai/apertus-legal/raw/main/apertus_1.5/Apertus_1_5_EU_Public_Summary.pdf">公开摘要</a>，并自愿发布了 <a href="https://raw.githubusercontent.com/swiss-ai/apertus-legal/main/apertus_1.5/Apertus_1_5_EU_Code_of_Practice.pdf">代码实践</a>文档。机器可读的评估记录是自然而然的下一步：让监管者、部署者和研究人员更容易找到、解释和比较模型背后的证据。</p>
+<p>我们致力于通过 Eval Cards 和 EEE 模式促进可重复和透明的评估，并鼓励其他模型开发人员以同样的方式报告他们的结果，以便可以在模型和组织之间比较分数。</p>
+<h2>Apertus 1.5 再现性</h2>
+<p>所有配方、消融和数据混合都记录在<a href="https://arxiv.org/abs/2610.15542">技术报告</a>中。我们的目标是通过公开和访问 v1.5 训练过程来普及开放模型开发。中间检查点托管在我们的 <strong><a href="https://huggingface.co/collections/swiss-ai/apertus-v15">Apertus 1.5 Hugging Face 集合</a></strong> 中，包括基本权重、SFT、RLVR 和 DPO，以及我们在 [Apertus 1.5 数据集中精选的训练数据混合/自定义数据集]集合](https://huggingface.co/collections/swiss-ai/apertus-v15-datasets)。共享它们可以让研究人员研究每个阶段如何改变模型行为。</p>
+<p>该报告涵盖了不同阶段训练后数据效果的大量消融，我们观察到 SFT 期间与文本数据混合的多模态数据有助于改善所有模态。我们还发现，多模态推理轨迹的优势在随后的纯文本强化学习中依然存在：从使用多模态轨迹训练的 SFT 检查点开始，强化学习比从纯文本检查点开始更能提高数学能力，并且推理任务的优势在整个训练过程中持续存在。</p>
+<table><thead><tr><th>型号</th><th>8B</th><th>70B</th><th>70B</th></tr></thead><tbody><tr><td>预训练（长上下文基础）</td><td><a href="https://huggingface.co/swiss-ai/Open-v1.5-8B-base">Open-v1.5-8B-base</a></td><td><a href="https://huggingface.co/swiss-ai/Open-v1.5-70B-base">Open-v1.5-70B-base</a></td></tr><tr><td>监督微调（SFT）</td><td><a href="https://huggingface.co/swiss-ai/Open-v1.5-8B-SFT">Open-v1.5-8B-SFT</a></td><td><a href="https://huggingface.co/swiss-ai/Open-v1.5-70B-SFT">Open-v1.5-70B-SFT</a></td></tr><tr><td>强化学习（RLVR）</td><td><a href="https://huggingface.co/swiss-ai/Open-v1.5-8B-RL">Open-v1.5-8B-RL</a></td><td><a href="https://huggingface.co/swiss-ai/Open-v1.5-70B-RL">Open-v1.5-70B-RL</a></td></tr><tr><td>偏好调整 (DPO)</td><td><a href="https://huggingface.co/swiss-ai/Open-v1.5-8B-DPO">Open-v1.5-8B-DPO</a></td><td><a href="https://huggingface.co/swiss-ai/Open-v1.5-70B"><strong>Open-v1.5-70B</strong></a>（最终）</td></tr><tr><td>章程调整（SDPO）</td><td><a href="https://huggingface.co/swiss-ai/Open-v1.5-8B"><strong>Open-v1.5-8B</strong></a>（最终版）</td><td>–</td></tr></tbody></table>
+<table><thead><tr><th>舞台</th><th>数据</th><th>代码/配方</th></tr></thead><tbody><tr><td><strong>预训练：阶段 1–2</strong>（未配对、配对）</td><td><a href="https://github.com/swiss-ai/apertus-data-transparency">apertus-data-transparency</a> 中具有版本和许可证的所有来源； <a href="https://github.com/swiss-ai/multimodal-data">multimodal-data</a> 中的视觉和音频处理配方</td><td><a href="https://github.com/swiss-ai/Megatron-LM">Megatron-LM</a>，在<a href="https://github.com/swiss-ai/pretrain-code">pretrain-code</a>、<a href="https://github.com/swiss-ai/apertus-omni-tokenizer">apertus-omni-tokenizer</a>中启动脚本， <a href="https://github.com/swiss-ai/benchmark-image-tokenizer">benchmark-image-tokenizer</a>、<a href="https://github.com/swiss-ai/benchmark-audio-tokenizer">benchmark-audio-tokenizer</a>（包括交错语音文本生成器）</td></tr><tr><td><strong>预训练：第 3 阶段</strong>（冷却）</td><td><a href="https://github.com/swiss-ai/apertus-data-transparency">apertus-data-transparency</a>;精选图像数据集 <a href="https://huggingface.co/datasets/swiss-ai/nasa">NASA</a>、<a href="https://huggingface.co/datasets/swiss-ai/owid">我们的数据世界</a>、<a href="https://huggingface.co/datasets/swiss-ai/smithsonian">Smithsonian</a>、 <a href="https://huggingface.co/datasets/swiss-ai/swisstopo">swisstopo</a></td><td><a href="https://github.com/swiss-ai/Megatron-LM">Megatron-LM</a>，在 <a href="https://github.com/swiss-ai/pretrain-code">pretrain-code</a> 中启动脚本</td></tr><tr><td><strong>长上下文扩展</strong></td><td><a href="https://github.com/swiss-ai/apertus-data-transparency">apertus-data-transparency</a>; <a href="https://github.com/swiss-ai/LongContextQA">LongContextQA</a> 中的合成长上下文任务</td><td><a href="https://github.com/swiss-ai/Megatron-LM">Megatron-LM</a>，在 <a href="https://github.com/swiss-ai/pretrain-code">pretrain-code</a> 中启动脚本</td></tr><tr><td><strong>SFT</strong></td><td><a href="https://huggingface.co/datasets/swiss-ai/Apertus-v1.5-SFT-mix">Apertus-v1.5-SFT-mix</a>（报告中列出的多模态 SFT 混合）</td><td><a href="https://github.com/swiss-ai/posttraining-data">posttraining-data</a>、<a href="https://github.com/swiss-ai/Megatron-LM">Megatron-LM</a>（SFT 启动脚本）</td></tr><tr><td><strong>长上下文 SFT</strong></td><td>SFT 组合的子集（在报告中列出），以及 <a href="https://github.com/swiss-ai/LongContextQA">LongContextQA</a> 任务</td><td><a href="https://github.com/swiss-ai/Megatron-LM">Megatron-LM</a></td></tr><tr><td><strong>RL (RLVR)</strong></td><td>报告中列出的混合物</td><td><a href="https://github.com/swiss-ai/verl">verl</a>, <a href="https://github.com/swiss-ai/verl-recipe">verl-recipe</a></td></tr><tr><td><strong>DPO</strong></td><td><a href="https://huggingface.co/datasets/swiss-ai/Apertus-v1.5-Preference-Pool">Apertus-v1.5-Preference-Pool</a>（带注释的补全），<a href="https://huggingface.co/datasets/swiss-ai/Apertus-v1.5-Preference-Data">Apertus-v1.5-Preference-Data</a>（成对）</td><td><a href="https://github.com/swiss-ai/posttraining">训练后</a>, <a href="https://github.com/swiss-ai/verl">verl</a></td></tr><tr><td><strong>SDPO</strong>（章程对齐，仅限 8B）</td><td><a href="https://huggingface.co/datasets/gretelai/gretel-safety-alignment-en-v1">gretelai/gretel-safety-alignment-en-v1</a></td><td><a href="https://github.com/swiss-ai/self-distillation">自蒸馏</a></td></tr></tbody></table>
+<h2>型号可用性</h2>
+<p><a href="https://proton.me/support/apertus-lumo">Proton Lumo</a> 和 <a href="https://www.infomaniak.com/en/support/faq/2924/discover-euria-and-the-apertus-model">Infomaniak Euria</a> 是最近集成了 Apertus 1.5 的两个广泛使用的应用程序。这些部署在 <strong><a href="https://apertus-ai.org/pages/get-showcase/">社区展示</a></strong> 等中链接 - 请参阅此<a href="https://github.com/swiss-ai/www-apertus/discussions/66">讨论主题</a> 以进行预览。</p>
+<p>一系列提供商已宣布以 API 的形式为开发人员提供 Apertus 1.5 的访问权限，其中包括 <a href="https://docs.cloud.swisscom.ch/guide/cloud-services/aip/models/apertus-1_5_70B">Swisscom</a>、<a href="https://www.infomaniak.com/en/hosting/ai-services/open-source-models">Infomaniak</a>、 <a href="https://documentation.kvant.cloud/maas/active-models/">Phoeniqs</a>，以及我们<strong><a href="https://apertus-ai.org/articles/2026-09-apertus-1-5-ga/">通用可用性指南</a></strong>中列出的其他公司。该报告还详细介绍了我们如何与外部评估人员合作来测试和准备模型。</p>
+<p>运行模型的技术说明位于 Hugging Face 上 Apertus 版本的模型卡和我们的<strong><a href="https://apertus-ai.org/docs/quickstart/">快速入门指南</a></strong>中。</p>
+<h2>如何参与</h2>
+<p>感谢您阅读这篇博文并成为我们社区的一部分！我们刚刚庆祝了 Hugging Face 分析 🤗 的下载量达到 500 万次，而且并没有放慢速度。最近在苏黎世举行的 <a href="https://plusx.ai">AI+X 峰会</a> 上，我们的团队宣布了 <strong>Apertus 2.0</strong> 的路线图：稀疏/MoE 架构、约 600B 总参数、扩展训练计划，以代理、数学和编码为优先事项。</p>
+<p>总之：我们邀请您阅读我们的报告、下载模型、探索中间检查点、微调权重并重现我们的评估。 <a href="https://apertus-ai.org/pages/research/">我们的出版物</a> 或<a href="https://apertus-ai.org/docs/faq/">网站常见问题解答</a> 中尚未涵盖的问题始终欢迎提出，我们也很想知道哪些主题对社区未来的深入研究最有用。</p>
+<p>如果您使用 Apertus 进行构建，请填写 <a href="https://apertus-ai.org/showcase/">展示表单</a>，并通过我们的<a href="https://apertus-ai.org/contact/">联系页面</a> 上的选项进行联系。我们期待强调更多的工作，了解您正在构建的内容，并了解如何改进 Apertus！</p>
+<h2>引文</h2>
+<p>Apertus 项目等。 “Apertus 1.5：从开放文本模型到开放多模态推理器。” arXiv：2610.15542。预印本，arXiv，2026 年 10 月 11 日。<a href="https://doi.org/10.48550/arXiv.2610.15542">https://doi.org/10.48550/arXiv.2610.15542</a>。</p>
+<pre><code>@misc{apertus2026apertus15opentext,
+      title={Apertus 1.5: From Open Text Models to Open Multimodal Reasoners}, 
+      author={Project Apertus and Yixuan Xu and Yassine Turki and Vinko Sabolčec and Valentina Pyatkin and Tommy Chu and Sven Najem-Meyer and Sean F. Carroll and Robert Smith and Raphael Kreft and Oscar Alessandro Tazza and Oleg Lavrovsky and Nicola Irmiger and Matteo Santelmo and Marian Schneider and Juan García Giraldo and Hanna Yukhymenko and Eduard Ďurech and Davit Melikidze and Dani Tamayo and Bettina Messmer and Aryan Ahadinia and Anunay Yadav and Allen Huang and Ahmad Fraij and Alessandro Bombarda and Alex Padula and Alexander Hägele and Alexander Sternfeld and Anna Hedström and Anna Kosovskaia and Arthur Wuhrmann and Arundhati Balasubramaniam and Badr Al Mahouri and Barna Pasztor and Bartosz Szostakiewicz and Bich Ngoc Doan and Bryan Schmid and Burak Sezen and Camille Challier and Clément Charmillot and Dana Shayakhmetova and Daniel Perruchoud and David Brüggemann and David Isztl and Elia Palme and Emma Anastassova and Fabian Bösch and Faruk Zahiragić and Fawzi Roberto Mohamed and Fiona Panicali and Florian Kolly and Flynn Guerra and Francesco Monti and Frederike Lübeck and Gennaro Oliva and Haofeng Yang and Haoliang Shang and Helen El Khoury and Henrique Mendonça and Jannis Vamvas and Jérome Landolt and Jessica Lam and Jingchun Xiao and Jonathan Coles and Joshua Oyebanji and Khanh Nguyen and Konstantinos Pitas and Lasse B. Strand and Li Mi and Loïc Deslarzes and Lorenzo Baggi and Lorenzo Noci and Luca Baumann and Luca Sartori and Lukas Drescher and Marco De Negri and Marco Passerini and Mark Klein and Marko Stojanovic and Martin Majsec and Matin Ansaripour and Mattea Busato and Mauro Pellonara and Max Neuwinger and Michael Graber and Michal Tešnar and Michelle Wastl and Miguel Gila and Mikolaj Boronski and Morgane Magnin and Moritz Reihs and Mukhammadali Sayfiddinov and Nathan Ranchin and Nicolas Cuveillier and Oscar Wohlfahrt and Qianqian Zou and Rada Kamysheva and Rita Sevastjanova and Roman Machacek and Sebastian Keller and Simon Matrenok and Simon Pierre and Stefano Schuppli and Suei-Wen Chen and Szabina Horváth-Mikulas and Taliesin Perez and Thilo Spinner and Thomas Kleine Buening and Tim Robinson and Tymoteusz Kwiecinski and Vilém Zouhar and Vinzenz Thoma and Xiaozhe Yao and Yannick Metz and Yuhei Fukuhara and Yusif Askari and Zixuan Chen and Alexander Ilic and Ana Klimovic and Andreas Krause and Andrei Kucharavy and Elliott Ash and Joost VandeVondele and Martin Rajman and Mennatallah El-Assady and Thomas Schulthess and Timo Kehrer and Torsten Hoefler and Antoine Bosselut and Martin Jaggi and Imanol Schlag},
+      year={2026},
+      eprint={2610.15542},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2610.15542}, 
+}</code></pre>
+<h2>本文提到的型号 9</h2>
+<h2>本文提到的数据集 9</h2>
+<h2>本文提到的论文2</h2>
+<h2>本文2中提到的集合</h2>
+<h3>社区</h3>
+<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a832ba5388a81135437cad6/qzMQPesIJEk9PlbU1W8M6.jpeg" alt=""></p>
+<p>艾德丽安·诺克蒂斯</p>
+<p>4 天前</p>
+<p>该评论已被隐藏（标记为低质量）</p>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fswiss-ai%2Fapertus-v15-release-notes">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fswiss-ai%2Fapertus-v15-release-notes">登录</a> 发表评论</p>
+<p>36</p>
+<ul><li><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hannayukhymenko"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/rZDwRiBcqeqlUQ7mThoyU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ymetz"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6425f2e685f26ab94af1ea20/w-GKLWwLMH54-kq8BDBIf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rkreft"><img src="https://huggingface.co/avatars/6f266e3e6d4c7b5f4c47e679501290dc.svg" alt=""></a></li><li><a href="https://huggingface.co/davmel"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65c93ce8567e810c57cf41b3/Pj0CYJBSLAI-g5ias4TPz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ntnq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6486bb3d4c025cf3c41e7767/1I6yYhv06rHX1_1iIOdjP.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/aelvyr"><img src="https://huggingface.co/avatars/6b89808e695a6b9c59cee574d8429982.svg" alt=""></a></li><li><a href="https://huggingface.co/ischlag"><img src="https://huggingface.co/avatars/5bced71b6d507e621ec159ada94480f0.svg" alt=""></a></li><li><a href="https://huggingface.co/Darkness1638"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/696668fd67d6c708720d94bb/Wk81bwYievIzGVKZSPaST.jpeg" alt=""></a></li></ul>
+<h2>本文提到的型号 9</h2>
+<h2>本文提到的数据集 9</h2>
+<h2>本文提到的论文2</h2>
+<h2>本文2中提到的集合</h2>]]></content:encoded>
     </item>
     <item>
       <title>欢迎 Muse Spark Open：来自 Meta 的开放权重前沿多模态混合专家模型</title>
@@ -6872,134 +7214,6 @@ rm -rf /tmp/cube_pick /tmp/cube_pick_ft /tmp/nb5_dataset /tmp/nb5_ft</code></pre
 <ul><li><strong>SmolVLA</strong>：<a href="https://huggingface.co/lerobot/smolvla_base">lerobot/smolvla_base</a></li><li><strong>Pi0</strong>：<a href="https://huggingface.co/lerobot/pi0_base">lerobot/pi0_base</a></li><li><strong>NVIDIA Isaac-GR00T N1.7</strong>：<a href="https://huggingface.co/nvidia/GR00T-N1.7-3B">nvidia/GR00T-N1.7-3B</a></li><li><strong>NVIDIA Cosmos 3 Nano</strong>：<a href="https://huggingface.co/nvidia/Cosmos3-Nano">nvidia/Cosmos3-Nano</a></li><li><strong>MolmoAct2</strong>（为 SO-100/101 训练）：<a href="https://huggingface.co/allenai/MolmoAct2-SO100_101">allenai/MolmoAct2-SO100_101</a> - 经 <code>lerobot_local</code> 加载，需要 <code>molmoact2</code> extra</li></ul>
 <p><strong>背景</strong></p>
 <ul><li><strong>本系列第一篇</strong>：<a href="https://huggingface.co/blog/amazon/strands-lerobot-hub-to-hardware">From the Hugging Face Hub to robot hardware with Strands Agents and LeRobot</a></li><li><strong>本工作流遵循的 physical-AI 数据环</strong>：<a href="https://huggingface.co/spaces/imstevenpmwork/LeRobot_and_HF_Buckets#phase-1-collect-and-ingest">The Physical AI Data Loop</a>，Steven Palma，Hugging Face，2026</li><li><strong>Bucket 吞吐与去重测量</strong>：<a href="https://huggingface.co/spaces/h-m-t/hf-buckets-benchmark">hf-buckets-benchmark</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>复现 ICML 的 2,200 篇论文后我们学到了什么</title>
-      <link>https://huggingface.co/blog/icml-2026-open-reproductions</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/icml-2026-open-reproductions</guid>
-      <pubDate>Thu, 13 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：What We Learned by Reproducing 2,200 papers from ICML</description>
-      <content:encoded><![CDATA[<h1>复现 ICML 的 2,200 篇论文后我们学到了什么</h1>
-<p>Abubakar Abid (abidlabs)</p>
-<p>今年 7 月，我们办了一场<a href="https://huggingface.co/ICML-2026-agent-repro">黑客松</a>：1,200 多名社区成员带着自己的编码智能体，逐条主张（claim by claim）复现 ICML 2026 发表的论文。19 天里，参与者发布了 <a href="https://icml-2026-agent-repro-challenge.static.hf.space/gallery.html">6,816 份 Trackio 日志册</a>，覆盖 2,226 篇论文的复现——约整个会议的三分之一 🤯</p>
-<p>本文分享我们在这场黑客松中所学到的，以及当智能体来做研究实验时，<em>人类将扮演什么角色</em>。</p>
-<h2>论文多到没人审得完</h2>
-<p>&quot;AI 研究到底有多可复现&quot;这个问题比当前这波 AI 还老，但规模让它雪上加霜。ICML 2026 收到 <strong>23,918 篇投稿、录用 6,352 篇</strong>，约是前一年的两倍——延续了指数级趋势，而这一趋势至少部分由 AI 智能体驱动：它们让跑实验和写论文都变快了。</p>
-<p>审稿能力并没有跟着翻倍。多数会议的审稿人是志愿者，可能既没时间也没专长去完整审一篇论文。这是一位审稿人自己对一篇 ICML 2026 录用 spotlight 论文的审稿原话：</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/icml-2026-open-reproductions/reviewer-quote.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/icml-2026-open-reproductions/reviewer-quote.png" alt="An OpenReview reviewer admitting the proofs were not checked carefully"></a></p>
-<blockquote>&quot;我信心分给得低，因为我没有仔细检查所有证明。&quot;</blockquote>
-<p>请注意，<strong>这篇论文拿到高分并入选 spotlight</strong>。记住它——稍后我们会回到这篇论文，以及当我们终于仔细检查证明后发生了什么。</p>
-<p>变化在于：带来投稿洪流的同一项技术，也能帮我们跟上它。Claude Code、Codex、Cursor、Pi 这样的编码智能体现在能读论文、写代码、发起实验并汇报发现。过去认真审一篇论文要耗掉审稿人一个周末；现在智能体一个下午就能尝试，还能成千上万次并行地做。</p>
-<p>所以我们想问的是：<strong>如果我们真的把一个大会议整体重新审视一遍、尝试复现每一篇论文，会发现什么？</strong></p>
-<h2>黑客松（7 月 15 日 – 8 月 2 日）</h2>
-<p>我们没有自己去审计论文，而是向整个社区开放——随之带来的是智能体框架、算力预算和科学品味的多样性。2026 年 7 月 15 日至 8 月 2 日，<a href="https://huggingface.co/spaces/ICML-2026-agent-repro/challenge">ICML 2026 Open Reproductions 挑战</a>的玩法是：</p>
-<ul><li><strong>挑一篇论文。</strong>我们为全部 6,341 篇 ICML 2026 录用论文建立索引（含摘要），并抽取每篇的核心科学主张，让智能体能从一个具体、可核查的目标入手，而不是对着一份 40 页的 PDF。鼓励多人复现同一篇论文。</li><li><strong>自带智能体。</strong>参与者用了 Claude Code、Codex、Cursor、OpenResearch 的 <code>orx</code>，以及介于其间的各种工具。我们提供了简洁的接口，智能体一条命令就能拉取论文、主张和挑战说明。</li><li><strong>复现，然后公开一切。</strong>每次运行产出一份 <a href="https://huggingface.co/docs/trackio">Trackio</a> 日志册：一个静态 Hugging Face Space，包含报告、运行过的代码、产生的工件，以及（可选）作为 Hugging Face 数据集上传的完整智能体执行轨迹。审计过程本身必须可被审计。</li><li><strong>接受评审。</strong>一个自动日志册评审器（运行开放权重模型 GLM-5.2）重读每份日志册，对每条主张给出裁决：<strong>verified</strong>（证实）、<strong>falsified</strong>（证伪）、<strong>toy</strong>（缩小规模的证据）或 <strong>inconclusive</strong>（无法定论）。评审器被明确要求把日志册的自评视为不可信。</li></ul>
-<p>参与者获得 20 美元的 Hugging Face 算力积分，用于在 <a href="https://huggingface.co/docs/hub/jobs">HF Jobs</a> 上跑实验；整个挑战中参与者共启动 2,962 个云端任务。在无法完整复现时——例如论文数据集是专有的、或检查点未公开——参与者会在模仿原始数据特性的合成数据上做 toy 复现。</p>
-<p>一份完成的复现长这样：</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/icml-2026-open-reproductions/anatomy.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/icml-2026-open-reproductions/anatomy.png" alt="Anatomy of a reproduction logbook: logbook pages, agent traces, and artifacts"></a></p>
-<p>从数字上看，这可能是史上规模最大的科学会议复现尝试：</p>
-<ul><li><strong>1,221</strong> 名社区成员加入<a href="https://huggingface.co/ICML-2026-agent-repro">组织</a></li><li><strong>6,816</strong> 份复现日志册发布</li><li><strong>2,226</strong> 篇论文被尝试，<strong>占整个会议的 34%</strong>，许多由多个独立团队分别复现</li><li><strong>35,908</strong> 条主张被裁决，挑战结束时全部裁决冻结进公开数据集</li><li><strong>2,962</strong> 个 HF Jobs 启动；<strong>274</strong> 份完整智能体轨迹数据集发布在 Hugging Face</li></ul>
-<h2>我们发现了什么</h2>
-<p>把主张级裁决按论文汇总：</p>
-<p><strong>51% 被考察的论文（1,103 篇）至少有一条主张被独立证实。</strong>其中 266 篇被完全复现——抽取出的每条主张都得到证实；另有 632 篇部分复现且没有任何主张被证伪。总计 3,978 条独立主张通过真实实验得到确认。</p>
-<p><strong>23% 被考察的论文（496 篇）至少有一条主张被证伪或存在争议。</strong>其中包括 49 篇所有主张都被证伪、无一可证实的论文，还有或许最有意思的：242 篇由独立复现团队对同一批主张得出<em>相反</em>裁决。可复现性不是二值的，它是对抗性的。</p>
-<p>其余处于中间地带：502 篇只有 toy 规模证据，280 篇两头都定不下来（缺失工件是最常见的原因）。</p>
-<h3>做得漂亮的复现</h3>
-<p>有些论文经得起千锤百炼、光彩依旧，社区最出色的日志册本身就值得一读：</p>
-<ul><li><strong><a href="https://huggingface.co/spaces/visv-Bro/repro-flat-minima-and-generalization-insights-from-stochastic-convex-optimization">&quot;Flat Minima and Generalization: Insights from Stochastic Convex Optimization&quot;</a></strong> 被 20 个独立团队复现，其中 12 个证实了全部主张。链接的那份还完整发布并上传了智能体轨迹。</li><li><strong><a href="https://huggingface.co/spaces/gchauhan/repro-a-coin-flip-for-safety-llm-judges-fail-to-reliably-measure-adversarial-robustness">&quot;A Coin Flip for Safety: LLM Judges Fail to Reliably Measure Adversarial Robustness&quot;</a></strong> 的 17 份日志册中 14 份证实了全部主张。一篇讲&quot;LLM 评审不可靠&quot;的论文，经受住了 LLM 智能体的审查 :)</li></ul>
-<h3>证伪，以及当我们去核实证伪时发生了什么</h3>
-<p>35 名参与者正式声称自己证伪了某些东西。我们对每一例声称的证伪做对抗性复核：重读论文、重读日志册、从论文文本重新推导数学或重新实现实验。</p>
-<p>几条确认的证伪（链接到发现它的日志册）：</p>
-<p><strong>引言里提到的那篇 Paging 论文。</strong>那位没仔细查证明的审稿人？论文 &quot;Towards Optimal Robustness in Learning-Augmented Paging&quot; 声称其算法达到鲁棒性 Hk+O(1)H_k + O(1)Hk​+O(1)。<a href="https://huggingface.co/spaces/Auenchanters/repro-towards-optimal-robustness-in-learning-augmented-paging">一位参与者的日志册</a>测得附加项按 0.38ln⁡k0.38 \ln k0.38lnk 增长，并定位到证明中恰好断掉的那一步。我们自己的重新实现把扫描扩展到 k = 1,024，在约九个 sigma 的置信度上确认了增长。真实鲁棒性是 Hk+Θ(log⁡k)H_k + \Theta(\log k)Hk​+Θ(logk)。</p>
-<p><strong>第 224 步之后倒塌的定理。</strong>&quot;Attention's forward pass and Frank-Wolfe&quot; 证明：只要原点位于 token 粒子的凸包内，粒子必然坍缩到原点。三个独立团队找到了反例，违例首次出现在 t = 224、约 3,800 和 6,416 步——这恰好解释了为什么其他人此前都&quot;证实&quot;了该主张：有限时长的检查停得太早。<a href="https://huggingface.co/spaces/SabaPivot/repro-attention-frank-wolfe">最干净的反例</a>用精确有理数算术陈述，没有浮点歧义可躲。作者当天即确认，并在着手修复。</p>
-<p><strong>为一个损失写的理论，用另一个损失跑的结果。</strong>在 &quot;Self-Distillation Enables Continual Learning&quot; 中，论文的中心方程和整个理论部分分析的是反向 KL 散度，但发布代码的默认设置——按作者说法，论文全部结果都由它产生——计算的是前向 KL。<a href="https://huggingface.co/spaces/codemaivanngu/repro-self-distillation-enables-continual-learning">抓到这一点的日志册</a>用作者自己的代码和数据也没能复现论文标榜的 +4pp 结果。作者已向 arXiv 上传了澄清版。</p>
-<p><strong>被 padding 稀释的评估。</strong>在 &quot;Do Transformers Need Three Projections?&quot; 中，<a href="https://huggingface.co/spaces/stresearch-dev/63430">一位参与者发现</a>约 66% 的被评估标签位置是 EOS padding token——它们训练到损失近乎为零，把困惑度拉低约三倍。摘要里&quot;50% 缓存缩减只付 3.1% 质量代价&quot;修正后约为 9.4%。</p>
-<p><strong>🚨 假证伪。</strong>有时我们发现的毛病出在复现本身。一份日志册言之凿凿地声称&quot;论文方法比基线慢 2 倍&quot;，最后查明是<em>复现</em>里的算术错误：把每条轨迹的耗时和 50 条一批的耗时对比了。正确归一化后，这位参与者自己的数据反而证实了论文声称的 8 倍加速。</p>
-<h3>与作者沟通</h3>
-<p>我们已开始给每个确认发现的作者写信，框架很简单：这是我们发现的，这是全部证据，您同意，还是我们的分析错了？早期的回应非常积极：</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/icml-2026-open-reproductions/author-response.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/icml-2026-open-reproductions/author-response.png" alt="An author response confirming the finding and promising an arXiv correction"></a></p>
-<p>迄今作者们已在多篇论文上确认发现，两个 arXiv 更正在路上；还有一例，作者在挑战发现问题的一个月前，就悄悄在 arXiv 新版中修复了错误——我们把它算作独立收敛 🤗</p>
-<h3>人类的角色</h3>
-<p>这场黑客松引出的最有意思的问题是：在论文评审中人类还有角色吗？我们认为是有的，理由有几条：</p>
-<p><strong>纯智能体执行有真实的上限。</strong>智能体会困在局部循环里，误读规模相关行为（paging 论文上多个&quot;证实&quot;裁决来自在 log-k 增长显现之前就停下的检查），偶尔还会在单位不匹配之上搭出一整套证伪。挑战中最可靠的结果，来自有人类掌舵的工作流：给智能体重新指路、质疑一个假设、或者在烧掉一周算力之前判定实验前提本身不对。</p>
-<p><strong>有些评估目前终究需要人。</strong>我们的<a href="https://huggingface.co/spaces/KwabsHug/repro-robuq-pushing-dits-to-w1-58a2-via-robust-activation-quantization">人在回路获奖作品</a>是最清晰的例子。论文声称在极端量化下图像生成仍然稳定。数值指标说&quot;没有崩溃&quot;；但图像到底能不能用，是个感知问题。智能体搭了一个专用审阅 UI，参与者本人逐一审完全部 128 对图像，标注提交进仓库，事后由智能体校验一致性。发布的智能体轨迹记录了整个来回——包括参与者询问审阅工具怎么用，然后回来说&quot;我把每一对都看过了，csv 已放进仓库，请检查。&quot;</p>
-<p>那么作为人类评审，我们的角色是什么？我们认为是<strong>有效地管理智能</strong>。就像教授或 PI 搭建环境让研究生能做出好工作——算力、harness、数据权限，外加关键时刻的针对性反馈——那些把智能体用到极致的参与者，正是搭对好环境、<em>问对问题</em>、然后放手让智能体去跑的人。</p>
-<h2>感谢</h2>
-<p>致加入的 1,221 人、获奖者、以风度回应的作者们，以及我们在 Hugging Face 和 alphaXiv 的组织者：谢谢。挑战产生的每一份日志册、裁决、轨迹和工件全部公开，入口在<a href="https://huggingface.co/spaces/ICML-2026-agent-repro/challenge">挑战 Space</a>。我们认为这是迄今规模最大的、开放的主张级机器学习会议审计——也希望这个纪录不会保持太久。</p>
-<p>期待未来的复现活动。🤗</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>OlmoEarth 嵌入向量发布：从 OlmoEarth Studio 导出自定义嵌入用于下游分析</title>
-      <link>https://huggingface.co/blog/allenai/olmoearth-embeddings</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/allenai/olmoearth-embeddings</guid>
-      <pubDate>Wed, 12 Aug 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Introducing OlmoEarth embeddings: Custom embedding exports from OlmoEarth Studio for downstream analysis</description>
-      <content:encoded><![CDATA[<h1>OlmoEarth 嵌入向量发布：从 OlmoEarth Studio 导出自定义嵌入用于下游分析</h1>
-<p>📄 技术报告：<a href="https://allenai.org/papers/olmoearth">https://allenai.org/papers/olmoearth</a> | 📊 文档：<a href="https://docs.olmoearth.allenai.org/embeddings">https://docs.olmoearth.allenai.org/embeddings</a> | 💻 了解更多 OlmoEarth：<a href="https://allenai.org/olmoearth">https://allenai.org/olmoearth</a></p>
-<p><a href="https://www.datocms-assets.com/64837/1776965297-olmoearth-embeddings-blog-google-docs-image-1.png"><img src="https://www.datocms-assets.com/64837/1776965297-olmoearth-embeddings-blog-google-docs-image-1.png" alt="OlmoEarth embeddings concept illustration: a grid of numeric embedding values connected by lines to points on a globe"></a></p>
-<p>我们用于构建对地观测模型的平台 <a href="https://olmoearth.allenai.org/">OlmoEarth Studio</a> 现在支持计算并导出<strong>嵌入向量（embedding vectors）</strong>——由我们的开源 OlmoEarth 基础模型生成的、对地观测数据的紧凑数值表示。<a href="https://github.com/allenai/olmoearth_pretrain">源码</a>和<a href="https://huggingface.co/collections/allenai/olmoearth">模型权重</a>与<a href="https://allenai.org/papers/olmoearth">研究论文</a>一并对公众开放，社区可以完整检视这些嵌入是如何生成的。</p>
-<p>嵌入向量是借力 OlmoEarth 的一条快速、经济的入口：它们支持广泛的下游任务，从相似度搜索到分割再到无监督探索。地表特征相似的位置会得到相似的向量；差异大的位置则相距很远。OlmoEarth 嵌入在我们自己的基准测试和<a href="https://arxiv.org/abs/2603.02080">独立评估</a>中都表现出色。导出的云优化 GeoTIFF（COG）轻量且易于共享。通过 Studio UI 或 API 选择你的关注区域、时间范围、编码器变体、分辨率和影像源，就能拿到一份可随意使用的 COG。如果你的应用需要更高性能，Studio 还支持<a href="https://docs.olmoearth.allenai.org/model-fine-tuning">监督微调（SFT）</a>。</p>
-<p>自定义计算的嵌入现已向 OlmoEarth Studio 用户开放。有意获取访问权限请<a href="https://allenai.org/olmoearth">联系我们</a>。使用公开可用的 OlmoEarth 模型自行计算嵌入的说明见<a href="https://github.com/allenai/rslearn/blob/master/docs/examples/OlmoEarthEmbeddings.md">这里</a>。</p>
-<h2>在 Studio 中计算嵌入</h2>
-<p><a href="https://www.datocms-assets.com/64837/1776965912-olmoearth-embeddings-blog-google-docs-image-2-1.png"><img src="https://www.datocms-assets.com/64837/1776965912-olmoearth-embeddings-blog-google-docs-image-2-1.png" alt="World map of OlmoEarth embeddings with each land pixel colored by its k-means cluster, revealing coherent biome and land-cover structure across continents"></a></p>
-<p><em>基于季节性 Sentinel-2 影像、覆盖 110 万样本的 OlmoEarth 嵌入全局结构。颜色表示 PCA 降维后嵌入空间中的 15 个 k-means 簇。</em></p>
-<p>计算嵌入遵循 Studio 中任何其它预测相同的流程：先配置模型并运行，然后下载结果。有几个参数可用于定制输出：</p>
-<ul><li><strong>关注区域：</strong> 绘制或上传任意多边形；Studio 负责影像获取和切片。</li><li><strong>时间跨度：</strong> 1-12 个月度周期。</li><li><strong>编码器变体：</strong> Nano（128 维，140 万参数）、Tiny（192 维，620 万参数）或 Base（768 维，8900 万参数）。</li><li><strong>空间分辨率：</strong> 每像素 10 米、20 米、40 米或 80 米。</li><li><strong>影像源：</strong> Sentinel-2 L2A、Sentinel-1 RTC，或两者兼用。</li></ul>
-<p><a href="https://www.datocms-assets.com/64837/1776966011-olmoearth-embeddings-blog-google-docs-image-3.png"><img src="https://www.datocms-assets.com/64837/1776966011-olmoearth-embeddings-blog-google-docs-image-3.png" alt="Four false-color renderings of the same embedding raster side by side, each mapping the embedding bands to color differently"></a></p>
-<p><em>同一嵌入栅格应用不同可视化选项的效果。</em></p>
-<p>Studio 交付的 COG 每个嵌入维度一个波段。向量以<strong>有符号 8 位整数</strong>（int8）存储，取值范围 -127 到 +127，-128 保留为 nodata。要恢复浮点向量，参见 olmoearth_pretrain 中的 <a href="https://github.com/allenai/olmoearth_pretrain/blob/main/olmoearth_pretrain/evals/embedding_transforms.py">dequantize_embeddings</a>。</p>
-<p>由于一切都是按需计算、而非取自预计算的全局存档，你的嵌入恰好反映你关心的条件。你可以生成月度嵌入来捕捉季节性动态，而不只是年度快照。</p>
-<h2>你能用 OlmoEarth 嵌入做什么</h2>
-<p>下面的示例全部使用 40 米分辨率、Sentinel-2 L2A 合成影像（多数示例为年度合成，变化检测为月度）的 OlmoEarth-v1-Tiny（192 维）嵌入。Tiny 是轻量编码器但性能依然很强；在你自己的应用中，可以换成更大的变体，代价是更多的计算和存储。</p>
-<h3>相似度搜索：找到&quot;更像这个&quot;的地方</h3>
-<p>选一个查询像素，抽取它的嵌入，然后与所有其他像素计算余弦相似度。结果是一张热力图，显示整个景观中与查询像素最像和最不像的区域。</p>
-<p><a href="https://www.datocms-assets.com/64837/1776966099-olmoearth-embeddings-blog-google-docs-image-4-2.png"><img src="https://www.datocms-assets.com/64837/1776966099-olmoearth-embeddings-blog-google-docs-image-4-2.png" alt="Sentinel-2 imagery of farmland around Merced, California with the query pixel boxed in blue, beside the matching cosine-similarity heatmap in which the urban core and road corridors glow yellow against dark cropland"></a></p>
-<p>这个查询位于加州 Merced 市中心附近。城市肌理和道路走廊连贯地亮起，而农田地块保持暗色。模型在没有任何标签的情况下区分出了建成地表与耕地。</p>
-<p>把查询换成一个小的农业窗口：我们将查询向量定义为该窗口上嵌入向量的均值，然后拉出相似度最高和最低位置的 Sentinel-2 影像，看看模型认为什么相似、什么不相似。</p>
-<p><a href="https://www.datocms-assets.com/64837/1776966200-olmoearth-embeddings-blog-google-docs-image-5-2.png"><img src="https://www.datocms-assets.com/64837/1776966200-olmoearth-embeddings-blog-google-docs-image-5-2.png" alt="Embedding cosine similarity, query versus highest and lowest: an overview tile and the blue query patch above three high-similarity agricultural patches at 0.91, 0.89, and 0.89, and three low-similarity patches at -0.05 (airport), 0.03 (reservoir), and 0.08 (arid rangeland)"></a></p>
-<p>最相似的区块（0.89 及以上）全是有灌溉农田的地块。最不相似的（接近零）是机场及其周边裸地、水库及其周边旱地，以及干旱牧场。没有训练数据、没有标签，只是嵌入空间里的一次点积。</p>
-<h3>少样本分割：给地表打标签</h3>
-<p>相似度搜索回答的是&quot;哪里像这个？&quot;，但有时你需要在整个区域上得到离散标签。由于表示本身已经足够丰富，一个简单的线性分类器就能用极少量带标签像素生成全覆盖的土地利用图。</p>
-<p>为验证这一点，我们只在越南 Ca Mau（沿海红树林区域）标注了 <em>60 个像素</em>（每类 20 个）。以 <a href="https://esa-worldcover.org/en">ESA WorldCover 2021</a> 作为三个类别（红树林、水体、其他）的标签来源，我们每类随机采样 20 个像素，训练了一个带逐特征标准化的逻辑回归，然后对区域内每个像素做预测。</p>
-<p><a href="https://www.datocms-assets.com/64837/1776966290-olmoearth-embeddings-blog-google-docs-image-6-2.png"><img src="https://www.datocms-assets.com/64837/1776966290-olmoearth-embeddings-blog-google-docs-image-6-2.png" alt="Few-shot classification from 60 labeled pixels over Ca Mau, Vietnam: Sentinel-2 RGB, the ESA WorldCover reference map, and the predicted mangrove/water/other map at F1 0.84"></a></p>
-<p>仅用 60 个标注像素，分类器就产出了一张连贯的地图，<em>加权 F1 = 0.84</em>。红树林、潮汐水道和开阔水面在整个区域都被清晰划分。分类器很快饱和：从 30 个标签增加到 300 个，准确率几乎不变——因为重活是嵌入在干的。</p>
-<p>分析的核心只有几行 Python：</p>
-<pre><code>import rasterio
-import numpy as np
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
-
-# Load the 192-band embedding COG exported from Studio
-with rasterio.open(&quot;embeddings.tif&quot;) as ds:
-    emb = ds.read().astype(np.float32)  # (192, H, W)
-
-C, H, W = emb.shape
-X = emb.reshape(C, -1).T  # (H*W, 192)
-
-# Train on labeled pixels, predict everywhere
-clf = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000))
-clf.fit(X[train_idx], labels[train_idx])
-prediction = clf.predict(X).reshape(H, W)</code></pre>
-<p>这是一个<em>线性探针（linear probe）</em>，是基础模型的标准评估方式。一个在 192 维上的逻辑回归仅凭这么少的标签就能恢复出地表覆盖边界，说明 Tiny 编码器在预训练中已经组织了这些生态学上的区分。更大的变体（Base，768 维）编码的表示更加丰富。</p>
-<p>如果你有地面真值多边形、野外调查点位或一份粗略的现有地图，你可以训练类似的分类器，为你自己的关注区域生成全覆盖地图。</p>
-<h3>变化检测：发现哪里发生了变化</h3>
-<p>由于 Studio 能以任意时间分辨率（月度到年度）生成嵌入，你可以直接对比两个时期，找出地表条件发生变化的位置。下面我们对同一区域分别计算了 2023 年 9 月和 2024 年 9 月的月度 Sentinel-2 嵌入，并测量逐像素余弦距离。加州 Butte County 的 Park Fire（2024 年 7-9 月）过火区立刻显现出来。</p>
-<p><a href="https://www.datocms-assets.com/64837/1776966463-olmoearth-embeddings-blog-google-docs-image-7-1.png"><img src="https://www.datocms-assets.com/64837/1776966463-olmoearth-embeddings-blog-google-docs-image-7-1.png" alt="Wildfire change detection from OlmoEarth embeddings: Sentinel-2 imagery of Butte County, California in September 2023 and September 2024, beside a cosine-distance map where the Park Fire burn scar glows orange and yellow"></a></p>
-<p>无需标签、无需训练——只要两份嵌入 COG 和几行 Python。</p>
-<h3>无监督探索：看看模型眼中的世界</h3>
-<p>有时你既没有查询位置，也没有参考标签，只想理解嵌入中存在什么结构。主成分分析（PCA）是一个干净的做法：降到三维，映射到 R/G/B，显示为假彩色图像。相似的嵌入会自动获得相似的颜色。</p>
-<p><a href="https://www.datocms-assets.com/64837/1776966500-olmoearth-embeddings-blog-google-docs-image-8-2.png"><img src="https://www.datocms-assets.com/64837/1776966500-olmoearth-embeddings-blog-google-docs-image-8-2.png" alt="OlmoEarth embedding structure over Flevoland, the Netherlands: Sentinel-2 RGB beside a PCA false-color image mapping PC1, PC2, and PC3 to red, green, and blue, which reproduces the polder parcel grid"></a></p>
-<p>荷兰的 Flevoland 是一片围垦圩田景观，农业地块呈规则网格状。PCA 假彩色图像高保真地复现了这些边界。不同的作物类型、水体和城市区域各自呈现出分明的色调。嵌入在从未被告知什么是地块、什么是作物的情况下，就把景观结构内化了。</p>
-<p>这种无监督视图是一种快速方式，让你看到模型在你的关注区域上学到了哪些结构。</p>
-<h3>从导出到洞见</h3>
-<p>相似度搜索、少样本分割、变化检测和 PCA 探索都是在标准栅格数据上的简单操作，几秒钟就能跑完。力量来自嵌入本身：学到的表示把对地观测数据压缩成向量，这些向量从众多传感器和数百万训练样本中提炼了关于每个位置的丰富信息。</p>
-<p>自定义嵌入导出现已可用。创建一个项目、配置一个嵌入模型，然后<a href="https://docs.olmoearth.allenai.org/embeddings">计算你的嵌入</a>。导出的 GeoTIFF 适用于任何地理空间工具：QGIS、GDAL、rasterio，或你自己的脚本。要端到端复现本文的示例，参见<a href="https://github.com/allenai/olmoearth_projects/tree/main/tutorials/embeddings">嵌入教程</a>，其中包含<a href="https://github.com/allenai/olmoearth_projects/tree/main/tutorials/embeddings/src/olmoearth_embeddings_tutorial/similarity">相似度搜索</a>、<a href="https://github.com/allenai/olmoearth_projects/tree/main/tutorials/embeddings/src/olmoearth_embeddings_tutorial/segmentation">少样本分割</a>、<a href="https://github.com/allenai/olmoearth_projects/tree/main/tutorials/embeddings/src/olmoearth_embeddings_tutorial/change_detection">变化检测</a>和 <a href="https://github.com/allenai/olmoearth_projects/tree/main/tutorials/embeddings/src/olmoearth_embeddings_tutorial/pca">PCA 可视化</a>的可用代码。想零本地环境上手体验，可以试试 <a href="https://colab.research.google.com/drive/1JnhFn0IfDJEn49S4sKuCS-mv_b4T2tU0?usp=sharing">Colab notebook</a>。</p>
-<h2>更进一步：微调</h2>
-<p>本文的所有示例都使用冻结的嵌入、不做任何任务特定训练。嵌入是借力 OlmoEarth 的绝佳入口：生成结果快速经济、在资源受限环境中表现良好、且易于共享。对于需要更高性能的应用，OlmoEarth Studio 还支持 <a href="https://docs.olmoearth.allenai.org/model-fine-tuning">SFT</a>——在你自己的标签上训练任务专用的模型头，其效果通常优于在冻结特征上做线性探针。</p>
-<h3>局限性</h3>
-<p>虽然我们一直在改进预训练方法，但重要的一点是用上文介绍的某些技术检查嵌入对你具体用例的质量。性能也取决于输入影像的质量——持续云层覆盖、大气伪影，或合成周期内的缺失观测，都会影响最终向量。</p>
-<p><em>Sentinel-2 L2A 影像来自欧洲航天局（ESA），经 Microsoft Planetary Computer 获取。红树林参考数据使用 ESA WorldCover 2021 v200。全局聚类可视化使用 OlmoEarth-v1-Base（768 维）与季节性 Sentinel-2 合成，patch size 为 8，在 110 万预训练样本上得到实例级嵌入。</em></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

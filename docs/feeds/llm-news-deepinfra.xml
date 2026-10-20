@@ -3,11 +3,137 @@
   <channel>
     <title>DeepInfra 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>DeepInfra 官方博客 / 更新日志归档（最近 50 条，共 37 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>DeepInfra 官方博客 / 更新日志归档（最近 50 条，共 39 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sun, 18 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 19 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Granite 4.2 8B API Review: Providers Compared</title>
+      <link>https://deepinfra.com/blog/granite-4-2-8b-api-review</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/granite-4-2-8b-api-review</guid>
+      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Granite 4.2 8B API 审查：提供商比较</h1>
+<p>DeepInfra 发布于 2026.10.19</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/Granite-4.2-8B-API-Review.png" alt="Granite 4.2 8B API 审查：提供商比较"></p>
+<h2><strong>Granite 4.2 8B API 审查摘要</strong></h2>
+<table><thead><tr><th><strong>属性</strong></th><th><strong>详情</strong></th></tr></thead><tbody><tr><td>创建者/类型</td><td>IBM，开放权重模型</td></tr><tr><td>发布日期</td><td>2026 年 8 月 25 日</td></tr><tr><td>推理</td><td>是的，内置思维链的推理模型</td></tr><tr><td>方式</td><td>文本输入，文本输出（非多模式，无图像输入）</td></tr><tr><td>上下文窗口</td><td>131,072 个令牌（约 197 个 A4 页），长上下文扩展至 512K</td></tr><tr><td>尺寸/许可证/重量</td><td>8B 参数、Apache 2.0、Hugging Face 上的权重 (ibm-granite/granite-4.2-8b)</td></tr><tr><td>情报</td><td>人工智能分析智能指数第 11 位，在 141 个模型中排名第 35 位，高于类似尺寸开放重量模型的中位数 8</td></tr><tr><td>成本</td><td>每 1M 个输入令牌 0.06 美元，每 100 万个输出令牌 0.25 美元，75% 缓存折扣，每个智能索引任务约 0.02 美元</td></tr><tr><td>速度</td><td>每秒输出 98.4 个令牌，高于中值约 75</td></tr><tr><td>延迟 (TTFT)</td><td>0.85 秒，优于 1.17 秒中位数</td></tr><tr><td>冗长</td><td>整个情报指数生成了 1.3 亿个输出代币，而中位数为 8200 万个</td></tr><tr><td>可用性</td><td>通过两个 API 提供商 CoreWeave 和 DeepInfra 提供，价格因提供商而异</td></tr></tbody></table>
+<h2><strong>Granite 4.2 8B 简介</strong></h2>
+<p><a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">Granite 4.2 8B</a> 是 IBM Granite 4.2 系列中的中型推理模型。 IBM 将其定位为通用企业应用程序的平衡模型。 <em>&lt;think&gt;…&lt;/think&gt;</em> 标签内的内置思维链推理支持在 AIME 2025 (86.67) 和 LiveCodeBench v6 (73.24) 等推理密集型基准测试中取得出色结果。</p>
+<p>三种思考模式可让您平衡每个查询的深度和延迟：充分思考（默认）、不思考和省力。</p>
+<p>该模型是仅解码器的密集变压器。它使用分组查询注意力（32 个注意力头和 8 个 KV 头）、旋转位置嵌入 (RoPE) 和具有 SwiGLU 激活的 MLP。</p>
+<p>它支持12种语言：英语、德语、西班牙语、法语、日语、葡萄牙语、阿拉伯语、捷克语、意大利语、韩语、荷兰语和中文。</p>
+<h3><strong>关键功能</strong></h3>
+<ul><li><strong>内置推理：</strong> 本机思维链提高了数学、编码和复杂的多步骤问题的性能。</li><li><strong>灵活的思维模式：</strong> 您可以在单个模型中在充分思考、不思考和低努力模式之间切换。</li><li><strong>推理增强工具调用：</strong> 模型在进行调用之前会推理要调用哪个工具以及原因。</li><li><strong>代理工作流程：</strong> 强化学习涵盖真实存储库上的软件工程、多步骤终端任务和多跳网络搜索。</li></ul>
+<h2><strong>API 提供商比较</strong></h2>
+<p>Artificial Analysis 跟踪 Granite 4.2 8B 的两个提供商：DeepInfra 和 CoreWeave。 OpenRouter 在它们之间进行路由，Puter.js 提供免费的开发人员集成。</p>
+<table><thead><tr><th><strong>提供商</strong></th><th><strong>混合价格（每 100 万个代币）</strong></th><th><strong>输出速度</strong></th><th><strong>延迟（第一个块的中值）</strong></th><th><strong>关键区别</strong></th></tr></thead><tbody><tr><td>深基础设施</td><td>0.05 美元</td><td>120 吨/秒</td><td>0.77 秒</td><td>最低的输入和缓存价格（每 1M 0.06 美元和 0.015 美元）以及最高的测量输出速度</td></tr><tr><td>核心编织</td><td>0.07 美元</td><td>89 吨/秒</td><td>0.74 秒</td><td>最低输出价格（每 1M 0.15 美元）和略低的首块延迟</td></tr><tr><td>开放路由器</td><td>DeepInfra 路线上 0.06 美元输入 / 0.25 美元输出</td><td>取决于路由提供商</td><td>取决于路由提供商</td><td>通过一个兼容 OpenAI 的 API 在 DeepInfra 和 CoreWeave 之间自动进行故障转移</td></tr><tr><td>普特.js</td><td>在用户付费模式下对开发者免费</td><td>未发表</td><td>未发表</td><td>免费集成，无需后端或 API 密钥设置</td></tr></tbody></table>
+<p>表中的延迟是到达第一个块的中值时间。推理模型在第一个答案标记之前也会花时间思考。人工分析在 DeepInfra 上测量该时间为 17.78 秒，在 CoreWeave 上测量为 22.65 秒。</p>
+<p>OpenRouter 自己的提供商表显示了相同的吞吐量排序，其中 DeepInfra 领先于 CoreWeave。</p>
+<h2><strong>最佳 API 选项</strong></h2>
+<p>三个选项涵盖了大多数用例：</p>
+<table><thead><tr><th><strong>API 选项</strong></th><th><strong>为什么这是一个强有力的选择</strong></th></tr></thead><tbody><tr><td>DeepInfra（推荐）</td><td><a href="https://deepinfra.com/ibm-granite/granite-4.2-8b">DeepInfra</a> 提供最低的输入和缓存价格、0.05 美元的混合速率以及提供商人工分析跟踪的最高测量输出速度。 Apache 2.0 权重使模型易于托管，从而为您提供托管 API，而无需自托管开销。</td></tr><tr><td>核心编织</td><td>CoreWeave 适合输出量占主导地位的工作负载，每 100 万输出价格为 0.15 美元。其第一块延迟与 DeepInfra 相当。</td></tr><tr><td>开放路由器</td><td>OpenRouter 通过 OpenAI 兼容端点在两个提供商之间提供自动故障转移，从而简化了集成。它报告 72 小时内的可用性为 99.98%。</td></tr></tbody></table>
+<h2><strong>模型的局限性</strong></h2>
+<p>Granite 4.2 8B 在部署之前有几个需要权衡的限制：</p>
+<ul><li><strong>冗长：</strong> 该模型在情报指数中生成了 1.3 亿个输出令牌，而中位数为 8200 万个。较长的输出会增加<a href="https://deepinfra.com/blog/inference-economics-ai-costs-at-scale">输出成本</a>，所以要为它们做好预算。</li><li><strong>推理延迟：</strong> 到达第一个答案标记的时间包括思考时间。无思考和省力模式会减少对延迟敏感的请求的等待。</li><li><strong>内存占用：</strong> bfloat16 中的权重大约需要 16 GB，4 位量化构建将其缩小到大约 4 到 6 GB。 KV 缓存随着上下文长度和并发性而增长，因此为整个 131K 窗口提供服务需要的内存远多于单独的权重。</li><li><strong>多语言差异：</strong> 微调主要依赖于英语指令-响应对，因此多语言对话质量可能会有所不同。 IBM 指出，少量示例可以提供帮助。</li><li><strong>安全和输出质量：</strong> IBM 指出，该模型有时可能会产生不准确、有偏见或不安全的响应，并建议将其与 Granite Guardian 配对。推理标签内的内容为中间思考，并不代表最终结论。</li><li><strong>编码净空：</strong> SWE-Bench Verified 达到 47.67。 SWE-Bench Pro 上的得分为 19.11，Terminal-Bench 2.1 上的得分为 20.56，这表明在更困难的代理编码任务上还有增长的空间。</li><li><strong>仅文本：</strong> 该模型支持文本输入和输出，没有图像处理。</li></ul>
+<h2><strong>用于评估模型的方法</strong></h2>
+<p>本次审查结合了独立的人工分析测量、IBM 发布的结果和提供商数据。</p>
+<h3><strong>智力评估</strong></h3>
+<ul><li>模型根据人工智能分析智能指数进行评分。它是智能体 (30%)、编码 (20%)、科学推理 (20%) 和常识 (30%) 的加权平均值。</li><li>Granite 4.2 8B 得分为 11，高于类似尺寸的开放重量模型的中位数 8。</li></ul>
+<h3><strong>性能指标</strong></h3>
+<ul><li><strong>第一个令牌的时间 (TTFT)：</strong> 发送请求和接收响应的第一个令牌之间的时间。</li><li><strong>输出速度：</strong>第一个令牌到达后每秒接收的平均令牌数。</li><li><a href="https://deepinfra.com/blog/pricing-101-token-math-cost-per-completion"><strong>混合定价：</strong></a> 缓存命中、输入和输出令牌的比例为 7:2:1，接近实际的使用成本。</li></ul>
+<h3><strong>基准数据集</strong></h3>
+<p>IBM 发布的 8B 模型评估（使用基于 NeMo Evaluator SDK 的框架运行）包括：</p>
+<ul><li>用于软件工程的 SWE-Bench Verified (47.67)、SWE-Bench Multilingual (30.78) 和 SWE-Bench Pro (19.11)</li><li>GPQA (64.14) 和 AIME 2025 (86.67) 用于科学和数学推理</li><li>用于工具调用的 Berkeley Function Calling Leaderboard v4 (52.39) 和 τ³-bench (58.06)</li><li>IFBench (79.33) 和 Arena-Hard-V2 (65.19) 用于指令跟踪</li></ul>
+<p>IBM 自己报告这些结果，因此请将它们视为方向性的，直到独立评估赶上。</p>
+<h3><strong>提供商比较</strong></h3>
+<ul><li>人工分析在价格、输出速度和延迟方面对提供商进行基准测试。</li><li>OpenRouter 数据提供路由行为和可用性。</li></ul>
+<h2><strong>分析的关键要点</strong></h2>
+<ul><li><strong>相对于其尺寸而言具有强大的智能：</strong> Granite 4.2 8B 的智能指数得分为 11。这高于同类开放重量型号的中位数 8，并且在 141 款型号中排名第 35 位。</li><li><strong>通过第三方提供商实现成本效率：</strong> DeepInfra 列出每 100 万个输入代币 0.06 美元，每 100 万个输出代币 0.25 美元，每 100 万个缓存代币 0.015 美元。计算得出，混合费率为 0.05 美元，每项智力指数任务约为 0.02 美元。</li><li><strong>Apache 2.0 许可：</strong> 宽松许可证允许商业部署、微调和自托管。</li><li><strong>灵活的推理模式：</strong> 在全面思考、省力和非思考模式之间切换，让您可以针对每个查询的延迟调整深度。</li><li><strong>原生</strong> <a href="https://deepinfra.com/blog/deepinfra-function-calling-guide"><strong>工具调用</strong></a><strong>：</strong> 推理增强工具调用让模型在执行之前权衡使用哪个工具。 IBM 报告 τ3-bench 上的得分为 58.06，BFCL v4 上的得分为 52.39。</li><li><strong>具有冗长输出的竞争速度：</strong> 以每秒 98.4 个输出令牌的速度，模型的运行速度比大约 75 的中位数要快。其冗长仍然影响着总响应时间和成本。</li><li><strong>自托管是可行的：</strong> IBM 发布 FP8、NVFP4、MXFP4 和 GGUF 变体。由于上下文长度有上限，4 位构建适合消费级 GPU。</li></ul>
+<p>＃＃ <strong>结论</strong></p>
+<p>Granite 4.2 8B 在一个紧凑的、许可许可的包中提供了强大的推理能力。它适合需要以下功能的组织：</p>
+<ul><li>企业级推理，模型权重完全透明</li><li>通过有竞争力的第三方 API 提供商进行经济高效的部署</li><li>具有本机工具调用和多步骤推理的代理工作流程支持</li><li>跨 12 种受支持语言的多语言功能</li></ul>
+<p>DeepInfra 是最强大的主要 API 选项，将最低的输入和缓存价格与最高的测量输出速度相结合。当自动故障转移和更高的可用性最重要时，请考虑使用 CoreWeave 来处理输出繁重的工作负载，并考虑使用 OpenRouter。</p>
+<p>该模型适合范围广泛的任务，例如分类、元数据生成、<a href="https://deepinfra.com/blog/json-mode">结构化 API 调用</a>、文档处理和内部助手。人工审核应该成为工作流程的一部分。要求较高的面向客户的分析或尖端软件工程可能需要更大的模型。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/kimi-k3-pricing-providers-cost"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/08/FI-3-1024x683.png" alt="Kimi K3 定价、提供商和实际成本"></a><a href="https://deepinfra.com/blog/kimi-k3-pricing-providers-cost">Kimi K3 定价、提供商和现实世界成本</a>&lt;p&gt;Kimi K3 很重要，因为它将一种不寻常的组合推入同一决策中：开放权重、100 万代币上下文窗口和前沿级基准数字，但定价仍然足够高，足以迫使真正的提供商购买。由 Moonshot AI 于 2026 年 7 月 16 日发布，它是一个 2.8 万亿参数的 Mixture-of-Experts 模型，其中包含 1040 亿个参数 […]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/multi-turn-rl-guide"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/Multi-Turn-RL-Featured-Image-selection-1.png" alt="多轮强化学习：正确进行强化学习的指南"></a><a href="https://deepinfra.com/blog/multi-turn-rl-guide">多轮强化学习：强化学习指南右</a>&lt;p&gt;您启动的第一个多回合 RL 运行将花费其大部分时间来做一些您不会称之为训练的事情。您会看到 GPU 利用率低于一半，一个步骤需要 11 分钟，然后寻找梯度累积中的错误。没有错误。培训师正在等待发布。这是[...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release"><img src="https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release.png" alt="从屏幕截图到工具调用：DeepInfra 上的 NVIDIA Nemotron 3.5 Super VL"></a><a href="https://deepinfra.com/blog/nvidia-nemotron-3-5-super-vl-release">从屏幕截图到工具调用：DeepInfra 上的 NVIDIA Nemotron 3.5 Super VL DeepInfra</a>NVIDIA Nemotron 3.5 Super VL 是 Nemotron 系列中的全新开放式多模态模型，从零开始在 DeepInfra 上提供。它通过 OpenAI 兼容的 API 和按代币付费的定价方式，将视觉理解、推理和工具调用整合到一个模型中。</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>DeepInfra 推出 Wan 3.0</title>
+      <link>https://deepinfra.com/blog/introducing-wan-3-0-on-deepinfra</link>
+      <guid isPermaLink="true">https://deepinfra.com/blog/introducing-wan-3-0-on-deepinfra</guid>
+      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Wan 3.0 on DeepInfra</description>
+      <content:encoded><![CDATA[<h1>在 DeepInfra 上推出 Wan 3.0</h1>
+<p>DeepInfra 发布于 2026.10.19</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/wan-3.0.png" alt="在 DeepInfra 上推出 Wan 3.0"></p>
+<p><a href="https://deepinfra.com/Wan-AI/Wan3.0-Video">Wan3.0</a>是阿里巴巴Wan团队的视频生成模型，它将文本到视频、图像到视频、基于参考的生成、视频编辑和视频扩展结合在一个模型中。您通过请求发送的媒体会选择工作流程，因此一个模型可以处理每种输入类型。</p>
+<p>请求可以将文本提示与最多 20 个参考资源结合起来，包括图像、视频剪辑和音频。它还可以包括文档或公共网页。 Wan3.0 将输入转换为长达 30 秒的带有同步音频的 1080P 视频。</p>
+<p>Artificial Analysis 将 Wan3.0 在其音频文本到视频排行榜上排名第一，Elo 为 1,173。 Wan3.0 在 DeepInfra 上可用，生成视频每秒 0.20 美元。</p>
+<h2><strong>这个模型有何不同</strong></h2>
+<p>Wan3.0最有特色的设计决策是其统一的模型。早期版本将这些任务划分为不同的模型，例如 Wan2.7 参考视频模型和 Wan2.6 文本到视频模型。 Wan3.0 在一个模型标识符后面处理所有这些，因此您可以在用例发生变化时管理单个端点。</p>
+<p>Wan3.0还将最大剪辑长度加倍。阿里巴巴列出Wan2.7每代2到15秒，而Wan3.0则达到30秒一代。前几代仍然可以在 DeepInfra 上使用，包括 <a href="https://deepinfra.com/Wan-AI/Wan2.7-R2V">Wan2.7 视频参考</a> 和 <a href="https://deepinfra.com/Wan-AI/Wan2.6-T2V">Wan2.6 文本到视频</a>，每个价格为每秒 0.10 美元。</p>
+<p>支持的任务类型有：</p>
+<table><thead><tr><th><strong>任务</strong></th><th><strong>输入</strong></th><th><strong>注释</strong></th></tr></thead><tbody><tr><td>文字转视频</td><td>仅提示</td><td>持续时间 2 至 30 秒</td></tr><tr><td>图像到视频</td><td>第一帧，或第一帧和最后一帧</td><td>对提供的一个或多个图像进行动画处理</td></tr><tr><td>参考视频</td><td>图片、视频剪辑、音频、一个文件或一个链接</td><td>每个请求最多 20 个参考资产</td></tr><tr><td>视频编辑</td><td>参考视频和自然语言教学</td><td>更改视觉效果、情节或对话，无需重新生成完整剪辑</td></tr><tr><td>视频延伸</td><td>现有视频和提示</td><td>输入和输出持续时间合计保持在 30 秒以内</td></tr></tbody></table>
+<p>参考系统在一次请求中最多接受 10 个参考图像、5 个视频剪辑和 5 个音频剪辑。请求还可以包括一份文档，例如 PDF、DOCX、PPTX 或 Markdown 文件，或一个公共网页。该模型对其进行解析并将其转换为视频。</p>
+<p>您可以直接在提示中使用位置名称（例如图像 1 或视频 2）引用资源。数字遵循媒体数组的顺序，并且图像和视频单独计数。</p>
+<p>音频默认打开。该模型会在视频旁边生成对话、背景音乐和声音效果。如果单独处理声音，请将音频设置为 false。</p>
+<p>输出最高可达 1080P 和 30 fps，并提供 480P 和 720P 等级。持续时间可以设置为 2 到 30 秒，或者设置为 -1 让模型从提示和媒体中选择长度。</p>
+<p>Prompt_extend 参数默认为 true 并在生成之前重写提示。稀疏提示受益最多，因此除非您需要精确控制措辞，否则请将其保留。</p>
+<h2><strong>DeepInfra 入门</strong></h2>
+<p><a href="https://deepinfra.com/Wan-AI/Wan3.0-Video">Wan3.0-Video</a> 在 DeepInfra 上可用，型号标识符为 Wan-AI/Wan3.0-Video。生成视频的定价为每秒 0.20 美元，因此 10 秒的剪辑成本为 2.00 美元，完整的 30 秒生成成本为 6.00 美元。</p>
+<p>通过适合现有工具的 REST API 根据使用情况进行计费。 DeepInfra 对输入、输出和用户数据运行<a href="https://deepinfra.com/blog/data-sovereignty-ai-open-weight-adoption">零保留政策</a>，并且该平台经过 SOC 2 和 ISO 27001 认证。</p>
+<h3><strong>快速入门</strong></h3>
+<p>在 <a href="https://deepinfra.com/dash/api_keys">DeepInfra 仪表板</a> 中创建密钥，然后提交文本转视频请求。响应包括指向完成的 MP4 的 video_url。</p>
+<pre><code>curl -X POST &quot;https://api.deepinfra.com/v1/inference/Wan-AI/Wan3.0-Video&quot; \
+  -H &quot;Content-Type: application/json&quot; \
+  -H &quot;Authorization: Bearer $DEEPINFRA_TOKEN&quot; \
+  -d '{
+    &quot;prompt&quot;: &quot;A red fox running through a snowy pine forest at dusk, cinematic lighting&quot;,
+    &quot;resolution&quot;: &quot;1080P&quot;,
+    &quot;ratio&quot;: &quot;16:9&quot;,
+    &quot;duration&quot;: 5,
+    &quot;audio&quot;: true,
+    &quot;prompt_extend&quot;: true
+  }'copy</code></pre>
+<pre><code>import os
+import requests
+ 
+response = requests.post(
+    &quot;https://api.deepinfra.com/v1/inference/Wan-AI/Wan3.0-Video&quot;,
+    headers={
+        &quot;Authorization&quot;: f&quot;Bearer {os.environ['DEEPINFRA_TOKEN']}&quot;,
+        &quot;Content-Type&quot;: &quot;application/json&quot;,
+    },
+    json={
+        &quot;prompt&quot;: &quot;A red fox running through a snowy pine forest at dusk, cinematic lighting&quot;,
+        &quot;resolution&quot;: &quot;1080P&quot;,
+        &quot;ratio&quot;: &quot;16:9&quot;,
+        &quot;duration&quot;: 5,
+        &quot;audio&quot;: True,
+        &quot;prompt_extend&quot;: True,
+    },
+)
+ 
+print(response.json()[&quot;video_url&quot;])copy</code></pre>
+<p><strong>关键参数</strong></p>
+<ul><li>持续时间接受 2 到 30 之间的整数，或 -1 让模型从提示和媒体中选择长度。</li><li>比例默认为自适应，它从输入媒体中获取宽高比。这对于图像到视频的工作流程很有帮助。</li><li>音频默认为 true。传递 false 以获得静默输出。</li></ul>
+<p>-prompt_extend 默认为 true 并重写提示以提高输出质量。</p>
+<ul><li>水印默认为 false。将其设置为 true 以添加 AI 生成的水印。</li><li>种子接受 0 到 2,147,483,647 之间的整数以获得可重现的输出。</li><li>参考媒体类型不能与同一请求中的first_frame 或last_frame 组合。</li></ul>
+<p>模型页面还允许您在浏览器中运行第一代并检查完整的参数引用。</p>
+<h2><strong>结论</strong></h2>
+<p>Wan3.0 不再需要为每个视频任务拼接单独的模型。一个端点接受文本、图像、视频剪辑、音频、文档和网页，并在同一通道中生成同步音频。</p>
+<p>该范围适合以前难以自动化的工作流程。示例包括从 URL 构建的产品演示视频、从 PDF 脚本构建的故事驱动剪辑以及具有一致字符的简短内容。</p>
+<p>从一个简短的 480P 或 720P 剪辑开始，检查动作和构图，然后以 1080P 渲染最终版本。</p>
+<p>相关文章</p>
+<p><a href="https://deepinfra.com/blog/qwen3-5-35b-a3b-api-benchmarks"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/qwen3.5-35B_res.webp" alt="Qwen3.5 35B A3B API 基准：延迟、吞吐量和成本"></a><a href="https://deepinfra.com/blog/qwen3-5-35b-a3b-api-benchmarks">Qwen3.5 35B A3B API 基准测试：延迟、吞吐量和成本</a>&lt;p&gt;关于 Qwen3.5 35B A3B Qwen3.5 35B A3B 是阿里云于 2026 年 2 月发布的原生视觉语言模型。它采用将 Gated Delta Networks 与稀疏Mixture-of-Experts模型，实现更高的推理效率。总参数为 350 亿个，每个代币仅通过 256 名专家激活 30 亿个（8 个路由 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/glm-5-2-on-deepinfra"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/07/glm-52.png" alt="在 DeepInfra 上介绍 GLM-5.2"></a><a href="https://deepinfra.com/blog/glm-5-2-on-deepinfra">在 DeepInfra 上介绍 GLM-5.2 DeepInfra</a>&lt;p&gt;GLM-5.2 是 Z-AI 的最新旗舰模型，围绕一个核心功能构建：一个专为长期任务设计的稳定的 1,048,576 个令牌上下文窗口。大多数百万代币的上下文声明都带有实用的星号——检索能力下降、范围内行为不一致。 Z-AI 将此描述为首次为持续、长期工作提供可靠的规模。编码[...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/open-weight-model-licenses"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/open-weight.png" alt="开放权重模型许可证：发货前需要检查的内容"></a><a href="https://deepinfra.com/blog/open-weight-model-licenses">开放权重模型许可证：发货前需要检查的内容Ship</a>&lt;p&gt;企业工作负载是否始终需要最强大的 AI 模型？随着前沿模型成本的增加，并且许多日常任务不需要更先进的功能，越来越多的公司质疑这一假设。  因此，开放权重模型正在超越开发人员实验，成为生产人工智能工作负载的一部分。但是部署开放重量 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Granite-4.2-8B 定价指南：各家服务商对比</title>
       <link>https://deepinfra.com/blog/granite-4-2-8b</link>

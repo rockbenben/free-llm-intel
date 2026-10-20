@@ -7,7 +7,63 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 19 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>培训后一起：前沿级模型塑造，适合您的方式</title>
+      <link>https://www.together.ai/blog/together-post-training</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/together-post-training</guid>
+      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Together Post-Training: frontier-grade model shaping, the way that fits you</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>微调</p>
+<p>发布日期：2026 年 10 月 19 日</p>
+<h1>训练后一起：前沿级模型塑造，适合你的方式</h1>
+<ul><li>作者Ivan Provilkov、Gleb Khaykin、Denis Mazur、Nikita Smetanin、Egor Timofeev、Conner Manuel、Felix 张、Alex Mazitov、Jasmine Li、Gleb Vazhenin、Sergei Vorobyov、Qingyang Wu、Derek Petersen、Arseniy Belorukov、Artem Chumachenko、Aman Singhal、Alpay Ariyak、Jisen Li、Vladimir Malinovskii、Maksim Abraham、Zhongzhu Zhou、Denis Fedorenko、Sonny Khan、David Wang、Jennifer Wu、Max Ryabinin</li><li>目录<a href="https://www.together.ai/blog/together-post-training">40+ 模型选择用于生产...40+ 模型选择用于生产...40+ 模型选择用于生产...</a></li></ul>
+<p>我们正在推出 Together Post-Training，这是一项新服务，用于在我们的平台上构建自定义模型 - 包括通过 RL 的环境奖励和通过 SFT 的监督数据。该服务旨在为您提供灵活高效的模型塑造，而无需承担沉重的基础设施负担。</p>
+<p>Together Post-Training 可以轻松定义训练循环，同时我们共同优化底层系统和基础设施，以提高模型质量和训练速度。现在没有什么可以阻挡您和“独一无二”的最佳模型。</p>
+<h2>定制模型的价值</h2>
+<p>到 2026 年，为 AI 工作负载训练自定义模型不再是一个小众话题。公司正在积极探索它以降低成本并提高特定任务的绩效。许多人工智能原生和人工智能前向组织不是通过上下文或利用工程来修复模型行为并提高其效率，而是培训专业代理，以一小部分成本和运行时间来匹配前沿模型的质量。最重要的是，自己训练模型可以带来更大的所有权和灵活性：生成的检查点可以部署在任何位置，进一步完善，甚至可以在本地使用。</p>
+<p>在 Together，我们希望让每个人工智能开发人员能够尽可能方便地获得适合其任务的最佳模型。训练后一个优秀的模型需要对数据管理、训练算法和评估协议进行多次迭代。最重要的是，强化学习的基础设施变得越来越复杂，“效率优化”和“阻碍运行的无声错误”之间只有一线之隔。对于大型模型来说，可靠且大规模地这样做会带来一系列挑战。</p>
+<p>前沿实验室有整个团队来解决上述每个问题。由于同时应对所有挑战是一项巨大的投资，因此许多可以从后期培训中受益的公司却从未开始，或者开始后就停滞不前。培训后一起处理所有优化和基础设施，而不会妨碍我们，我们的前沿部署团队与客户合作，帮助完成端到端工作流程。这让每个研究人员或领域专家都可以专注于他们最擅长的事情，而我们则负责其余的事情。</p>
+<h2>Together 培训后概览</h2>
+<p>随着后期培训的复杂性不断发展，围绕它的工具也应该不断发展。 Together Post-Training 提供了一组 ML 开发人员熟悉的通用抽象，以及对每个实验使用的资源的控制，同时确保幕后的所有计算快速、经济高效，而且最重要的是正确。</p>
+<p>我们的服务旨在为您的实验提供最高程度的灵活性。您可以运行 LoRA 训练，包括共享相同 GPU 容量的多个 LoRA 适配器，以及针对选定模型的全权重实验。与我们的<a href="https://www.together.ai/fine-tuning">微调服务</a> 相比，Together Post-Training 的整个训练循环由您定义。您可以使用最适合您的设置的任何数据、环境或代理工具，并在整个训练过程中添加您需要的任何步骤（例如日志记录或外部基准测试）。整个工作流程如下：</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6ad63421bade9a234b1c05a1_6ad6340765d98d48127a6d24_post-training-workflow-overview.png" alt=""></p>
+<p><em>使用 Together Post-Training 的高级总结。左：用户端执行的命令，右：Together 端运行的服务组件。</em></p>
+<p>所有实验都在模型资源上运行——完全属于您的 GPU 分配，不会与其他人的优先级请求竞争。每个模型资源可以举办一个或多个培训课程，其中每个培训课程对应于使用相同基础模型（例如，一组 LoRA 适配器）的单个实验。这意味着您可以获得最佳的部署和训练性能，因为您永远不必与在同一硬件上执行的其他用户的请求竞争。同时，专用 GPU 分配意味着您可以运行全权重微调，在适应大型知识密集型任务时超越 LoRA。</p>
+<p>分配模型资源并启动会话后，您可以执行训练循环的每个步骤。每个会话都包含一个负责运行前向/后向步骤并更新权重的 Trainer 实例，以及用于执行策略推出的 Generator 实例。对于每个模型，我们都大力优化训练和部署性能，确保所有操作快速且跨堆栈进行数字对齐。对于SFT，您可以使用0个生成器启动模型资源以节省成本。您决定将训练器参数发送到生成器的点；我们还支持异步 RL，以便始终保持两个组件的高 GPU 利用率，尤其是在长时间代理部署的情况下。</p>
+<p>虽然我们支持许多标准损失（从交叉熵和 GRPO 到 CISPO 和 DPPO），但我们还允许在本地计算自定义训练目标并将其梯度发送到训练器以计算更新。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6ad63420bade9a234b1c0599_6ad63405c21d46af1248bce7_post-training-custom-loss-example.png" alt=""></p>
+<p><em>使用自定义损失进行训练的示例</em><a href="https://docs.together.ai/docs/post-training/custom-loss-functions"><em>Together Post-Training 文档</em></a></p>
+<p>Together Post-Training 推出了一系列领先的开放重量模型，包括 Muse Spark Open、GLM 5.3、Kimi K3 和 Qwen 3.8-27B。我们将在未来几周内扩大选择范围，确保您既可以使用能力最高的前沿法学硕士，也可以使用高效的小型模型。</p>
+<h2>质量、性能和效率</h2>
+<p>授权培训后基础设施的内部可能是一个令人畏惧的决定。我们的团队拥有捕捉复杂机器学习系统中无声错误的第一手经验，从推动强化学习研究的前沿到培训已为数百万用户提供服务的法学硕士。我们知道，<strong>最好的训练堆栈能够为您提供最好的模型</strong>，而构建此类基础设施需要跨所有组件进行仔细的实施和共同设计。</p>
+<p>出于这些原因，我们将输出模型的质量作为服务开发中的北极星。影响 RL 结果的问题的一个臭名昭著的例子是训练和推理引擎之间的一致性：如果相同的模型权重由于数字不匹配而产生略有不同的输出，则整个运行可能会表现不佳甚至崩溃。我们使用 <a href="https://arxiv.org/abs/2510.11370">Rollout Routing Replay</a> 等标准技术以及由我们对训练稳定性的研究驱动的高级优化，消除了训练和推理过程中的众多策略漂移来源。</p>
+<p>除了模型质量之外，我们还努力使每次运行尽可能快速和高效，因为训练后需要多次迭代：运行越早完成，成本越低，您可以测试的想法就越多。强化学习的大部分时间都花在生成部署上，这使我们能够利用 Together 推理产品背后多年的研究和工程经验。我们的推出引擎采用与我们的服务堆栈相同的优化。对于多轮代理，智能缓存和路由可以最大限度地减少冗余计算，同时保持内存成本有限。在训练方面，优化的并行性和序列打包加速了 SFT 和 RL 步骤。</p>
+<p>通过 Together Post-Training，您可以根据需要调整每次实验的规模，而无需支付更多费用。如果您的实验因部署并发性而出现瓶颈，您可以请求确切数量的采样器副本。多个 LoRA 实验可以共享一个模型资源，因此运行扫描并不意味着为每个设置保留更多 GPU。我们按 GPU 分钟对每个模型资源进行计费，但由于我们的专用和多 LoRA 服务堆栈的许多优化，一旦扩大实验规模，训练的总体成本就会低于基于令牌的定价。</p>
+<h2>训练后优化部署</h2>
+<p>训练后实验完成后，并排运行每个结果模型以比较它们的输出可能很重要。我们现在在专用模型推理中支持<a href="https://docs.together.ai/docs/post-training/multi-lora-deployment">多 LoRA 适配器服务</a>：您可以在单个 GPU 部署中方便地交换适配器，而不是为每次运行启动单独的生产部署，从而帮助您降低服务成本。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6ad63420bade9a234b1c059e_6ad63406492c6c1fe7742748_post-training-train-evaluate-serve.png" alt=""></p>
+<p>最后，将模型转换为在生产中以最高吞吐量运行意味着与推出一代相比，它可能以较低的精度、不同的硬件配置和不同的内核执行。通过算法和系统改进的结合，我们确保每个训练检查点保持服务质量，即使在从多 LoRA 采样切换到完全高性能的 <a href="https://docs.together.ai/docs/post-training/prepare-for-fp4-inference">FP4 精度的合并推理</a>之后也是如此。</p>
+<h2>开始使用</h2>
+<p>要开始首次训练后实验，请安装最新的 <a href="https://github.com/togethercomputer/together-py">Together SDK</a> 并<a href="https://docs.together.ai/docs/post-training/overview">阅读文档</a>。我们还提供了一系列食谱，可以帮助您开始使用 Together Post-Training，这些食谱可在 <a href="https://github.com/togethercomputer/post-training-cookbook">github.com/togethercomputer/post-training-cookbook</a> 上找到。这些食谱提供了在标准 GSM8K 基准上使用 GRPO 进行训练、将 DPO 实现为自定义损失或在同一模型资源中训练多个 LoRA 适配器的示例。如果您已经拥有使用 Tinker API 等培训后服务的设置，我们还提供了一种简单的迁移方法。您可以替换脚本中的一行，其他所有内容都可以保持不变：</p>
+<pre><code>-import tinker
++import together.post_training.tinker as tinker</code></pre>
+<p>请阅读我们的 <a href="https://docs.together.ai/docs/post-training/migrate-from-tinker">Tinker 迁移指南</a> 了解更多信息。</p>
+<h2>如今，人工智能原生公司如何使用 Together Post-Training</h2>
+<p>在此发布之前，我们与一组选定的组织合作，推动定制模型的发展。在过去的几个月里，我们允许他们提前使用我们的服务；我们收到的反馈对于开发现在每个人都可以使用的产品非常宝贵。听听团队自己的声音：</p>
+<p>“从第一天起，我们就使用 Together Post-Training 平台获得了很好的体验。高度的控制性和灵活性让我们在几个小时内开始运行真正的 RL 实验。该服务非常高效，允许我们在相同的 GPU 容量上运行最多五个并发 RL 实验。Together Research 团队在整个训练过程中都是出色的合作者，为我们提供有关模型选择、训练技术、奖励函数和训练效率的反馈。”</p>
+<p>– Anthony Li，<a href="https://www.deel.com/">Deel</a> 数据科学副总监</p>
+<p>“在 Jack &amp; Jill，我们构建了两个 AI 代理：Jack 代表专业人士，Jill 代表公司，他们从 Jack 的专业人士网络中招聘并选择被介绍。我们使用 Together Post-Training 来对一个模型进行后训练，该模型可以预测招聘经理想要会见哪些候选人，这是 Jill 搜索的核心步骤。入职很容易，他们的团队帮助设计了我们的实验，他们的前沿部署工程师编写了让我们获得第一个结果的脚本。我们匹配了一个封闭源代码离线评估中模型的质量，使用服务成本低得多的开源模型。”</p>
+<p>– Oliver Normand，<a href="https://www.jackandjill.ai/">Jack &amp; Jill</a> 创始工程师</p>
+<p>“自 4 月份推出 Post-Training 测试版以来，我们一直在与 Together 团队合作。通过最新的迭代，无缝的自助入门可以轻松快速地启动全面的代理 RL 运行。事实证明，Post-Training 服务对于扩展复杂的代理工作负载而言非常直观、灵活且强大。”</p>
+<p>– Adit Jain，研究员，<a href="https://collinear.ai/">Collinear AI</a></p>
+<h2>与训练后一起构建</h2>
+<p>随着 Together Post-Training 的推出，我们正在将前沿级模型定制转变为可靠、灵活和高效的服务。下一步是让您充分利用它。在前八周，我们以 B200 使用量每 GPU 小时 9 美元的折扣价格提供 Together Post-Training。立即了解如何<a href="https://docs.together.ai/docs/post-training/quickstart-rl">开始</a> - 我们很高兴看到您将构建什么。</p>
+<p>但您不必单独完成此操作。对于需要合作伙伴的公司，我们的前沿部署工程师将在整个培训后生命周期中与您的团队一起工作。他们将首先帮助您选择适合您的用例的开放模型和代理工具，在您的数据和培训环境上与您合作，然后帮助评估和交付您自己的优化端点。</p>
+<p>如果您想与 Together 合作为您的组织开发培训模型，请随时<a href="https://www.together.ai/contact-sales">联系我们</a>。</p>
+<h2>相关文章</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Meta Muse Spark Open 已在 Together AI 上线</title>
       <link>https://www.together.ai/blog/meta-muse-spark-open</link>
@@ -3114,49 +3170,6 @@ for chunk in stream:
 <ul><li><strong>更便宜：</strong> 把重活交给更小更便宜的模型（Workers），而不是按旗舰 token 付费。</li><li><strong>更快：</strong> Workers 并行运行。避免用单个串行 pass 处理巨大 128k token 上下文的高延迟。</li><li><strong>好调：</strong> 我们发现，由于噪声曲线的可预测性，只测 5 个随机样本就足以找到最优 chunk size。你不需要对整个数据集做穷尽搜索。框架的另一种灵活性是解耦 worker 和 manager、给它们分配不同的 LLM 后端。</li></ul>
 <h2><strong>需要注意：什么时候该用单次处理而非分而治之</strong></h2>
 <p>这个方法不是银弹。它在跨 chunk 依赖适中的任务上表现最好——如问答、检索和摘要。当<strong>任务噪声主导</strong>时收益结束。如果你的任务要求追踪第 1 页上一个与第 100 页相连的微妙线索（如我们论文里的 &quot;Dialogue Character Inference&quot; 任务），&quot;分&quot; 这一步会破坏必要的上下文。在这些高协同的情况下，&quot;天才&quot; 模型通读整个图书馆仍是唯一去路。更多细节见论文。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Together AI 微调服务扩展：支持工具调用、推理与视觉</title>
-      <link>https://www.together.ai/blog/fine-tuning-update</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/fine-tuning-update</guid>
-      <pubDate>Wed, 18 Mar 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Together AI expands fine-tuning service with tool calling, reasoning, and vision support</description>
-      <content:encoded><![CDATA[<h2>最新动态</h2>
-<ul><li><strong>Tool call 微调：</strong> 通过 OpenAI 兼容 schema 的端到端微调与推理，确保 agent 可靠地执行结构化动作。</li><li><strong>Reasoning 微调：</strong> 专门支持在推理 trace 的&quot;thinking&quot; token 上训练模型，让模型学习复杂逻辑。</li><li><strong>视觉-语言模型微调：</strong> 原生的视觉训练支持，让视觉-语言模型对齐复杂的领域专属视觉数据。<strong>‍</strong></li><li><strong>大模型支持：</strong> 在我们高度优化、易于使用的服务上训练最大 1T 参数的最新模型。</li></ul>
-<p>随着 AI 团队从单轮 prompt 走向先进的多轮工作流，可靠性会在可预测的地方崩坏：与 schema 不匹配的工具调用、长交互中退化的推理、漏掉领域专属视觉信号的模型。修复这些问题通常需要训练后处理，但工作流往往碎片化、迭代慢、难以规划。</p>
-<p>今天，Together AI——AI Native Cloud——扩展 Together Fine-Tuning，原生支持工具调用、推理和视觉-语言模型（VLM）微调。为支撑前沿规模的训练后处理，我们还升级了训练栈以更高效地处理 100B+ 参数的模型，吞吐最高提升 6 倍。此外，我们现已支持最大 100GB 数据集的微调。最后，我们现在提供训练前的任务成本估算和训练中的 ETA，让团队能更好地规划实验。</p>
-<blockquote>&quot;Together AI 之于微调和推理，就像 Vercel 之于 LLM 应用——移除基础设施层，让我们专注产品。我们通过简单的 API 调用微调和部署客户专属模型。这让我们现有团队从周迭代走向日迭代，成本削减 2–3 倍，准确率从 77% 提升到 87%。&quot; —— Lamara De Brouwer，XY.AI Labs 联合创始人兼 CTO</blockquote>
-<h2>Tool Call 微调</h2>
-<p>Tool calling 对许多现代 agentic 用例至关重要。然而开箱即用的模型常常在工具调用上挣扎：参数幻觉、选错函数、或无法跟随多步序列。在工具调用工作流里，哪怕微小的不一致也会级联成下游故障。</p>
-<p>我们的微调服务现在提供端到端的解决方案，覆盖从微调到推理的可靠、生产级工具调用。训练数据可以用 OpenAI 兼容 schema 包含工具调用：函数定义在顶层 tools 数组中，我们的服务会校验每个 tool_calls 条目与已声明的工具匹配，在训练开始前确保结构正确的数据。</p>
-<p>在推理时，我们大幅提升了工具调用的可靠性，确保 tool call 微调的收益转化为生产表现。增强的解析与校验在广泛的真实用例中提升正确性，并由社区贡献与内部研究共同 curated 的推理工具调用数据集支撑。</p>
-<p>Tool-call 微调已对 Qwen、Moonshot AI 和 Z.AI 的模型开放。参见<a href="https://docs.together.ai/docs/fine-tuning-function-calling">工具调用文档</a>开始使用。想看代码中的工具调用示例，请看我们的 <a href="https://github.com/togethercomputer/together-cookbook/blob/main/Finetuning/Function_Calling_Finetuning.ipynb">cookbook</a>。</p>
-<h2>Reasoning 微调</h2>
-<p>推理模型在给出最终答案前生成中间思维 trace，实现逐步推理。然而推理格式在各模型间并不标准，给推理微调流程引入了复杂性。</p>
-<p>Together Fine-tuning 现已支持直接在思维 trace 上微调，通过在 assistant 消息中使用 reasoning 或 reasoning_content 字段。这让你在领域专属的推理模式上训练模型，同时保持 trace 结构化和可复现。与工具调用一样，我们改进了推理侧的服务表现，确保微调出的能力转化为可靠的下游表现。</p>
-<p>Reasoning 微调已对 Qwen 和 Z.AI 的模型开放。支持的模型和细节见<a href="https://docs.together.ai/docs/fine-tuning-reasoning">文档页</a>。想看推理微调的端到端代码演示，<a href="https://github.com/togethercomputer/together-cookbook/blob/main/Finetuning/Reasoning_Finetuning.ipynb">请看我们的 cookbook</a>。</p>
-<h2>视觉-语言模型微调</h2>
-<p>许多 AI 工作流需要能解读图像输入的模型。对医学影像、电商等领域专属任务，视觉-语言模型（VLM）可能需要学习新的视觉模式才能胜任。</p>
-<p>Together Fine-tuning 服务现已支持视觉-语言模型微调。视觉训练数据通过消息 content 数组内联提供，图像用 base64 编码。微调任务支持混合数据集，允许在同一次运行中同时包含图文样本和纯文本样本。</p>
-<p>默认情况下，我们冻结视觉编码器、只更新语言层。设置 train_vision=true 可启用联合训练，同时更新视觉编码器和语言层。</p>
-<p>VLM 微调已对 Qwen、Google 和 Meta 的模型开放。支持列表与用法详见<a href="https://docs.together.ai/docs/fine-tuning-vlm">视觉-语言文档</a>。也可以看我们<a href="https://github.com/togethercomputer/together-cookbook/blob/main/Finetuning/Vision_Language_Finetuning.ipynb">视觉语言微调的 cookbook</a>。</p>
-<h2>大模型微调</h2>
-<p>随着开放模型规模增长、上下文窗口扩大，底层训练设施必须跟上。万亿参数的模型装不进单个节点，需要跨多机精细的通信与内存管理。即便数小时训练运行中的一次硬件故障也会导致进度丢失，而实现全部优化和容错保护是一项巨大投入。</p>
-<p>Together Fine-Tuning 现已支持最新开放权重模型的微调。提交一个训练任务，所有必要优化由我们在底层处理。新开放微调的模型包括：</p>
-<ul><li>Qwen 3.5-397B-A17B</li><li>Qwen 3.5-122B-A10B</li><li>Qwen 3.5-35B-A3B</li><li>Qwen 3.5-35B-A3B-Base</li><li>Kimi K2.5</li><li>Kimi K2（Instruct、Thinking）</li><li>GLM-4.7</li><li>GLM-4.6</li></ul>
-<p>支持的模型完整列表及其上下文长度见<a href="https://docs.together.ai/docs/fine-tuning-models">我们的文档</a>。</p>
-<h2>训练加速</h2>
-<p>本次更新中，我们继续聚焦训练栈中收益最高的优化机会。具体地，我们瞄准 mixture-of-experts 架构——过去一年内最强的模型发布绝大多数都是 MoE。为加速其训练，我们集成了 <a href="https://github.com/Dao-AILab/sonic-moe">SonicMoE</a> 的一个变体——I/O 与 tile 感知的优化 kernel，把内存操作与计算重叠。在我们的训练负载中使用这些 kernel，显著降低了训练期间的激活内存占用，最大限度减少算力浪费。</p>
-<p>我们还为损失计算编写了定制 CUDA kernel，并消除了训练循环中若干导致无谓停顿的 GPU-CPU 同步点，显著提升整体流水线效率。</p>
-<p>结果是，每个模型的吞吐至少提升 2 倍，像 Kimi-K2 这样更大的模型提升超过 6 倍。更快的训练意味着每天更多实验、更短的生产之路。</p>
-<h2>价格与时间估算</h2>
-<p>Together Fine-tuning 现在可在任务执行前通过 UI 或 CLI 估算训练成本。这种价格透明防止预算惊吓。</p>
-<p><strong>成本估算：</strong> 启动前查看任务估价，在费用发生前理解训练成本。</p>
-<p><strong>时间估算：</strong> 跟踪实时进度条和动态更新的预计完成时间。</p>
-<h2>开始使用</h2>
-<p>→ Cookbook 链接：</p>
-<ul><li><a href="https://github.com/togethercomputer/together-cookbook/blob/main/Finetuning/Vision_Language_Finetuning.ipynb">VLM 微调</a></li><li><a href="https://github.com/togethercomputer/together-cookbook/blob/main/Finetuning/Reasoning_Finetuning.ipynb">Reasoning 微调</a></li><li><a href="https://github.com/togethercomputer/together-cookbook/blob/main/Finetuning/Function_Calling_Finetuning.ipynb">Function calling 微调</a></li></ul>
-<p>→ 阅读 Fine-tuning <a href="https://docs.together.ai/docs/fine-tuning-quickstart">文档</a></p>]]></content:encoded>
     </item>
   </channel>
 </rss>
