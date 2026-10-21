@@ -3,6 +3,12 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-10-21
+### Cloudflare Workers AI（`cloudflare_workers_ai`）
+- 摘要：付费前沿模型名单新增 @cf/deepseek-ai/deepseek-v4.1-flash-1017，该模型不享受免费额度，需付费订阅或预付额度才能访问
+- `free_models`：目录内可免费使用的模型共享 **每日 10,000 Neurons 免费额度**（官方定价页原文 “use a total of 10,000 Neurons per day at no charge”），UTC 0 点刷新；代表模型 `@cf/meta/llama-4-scout-17b`、`llama-3.3-7… → 目录内可免费使用的模型共享 **每日 10,000 Neurons 免费额度**（官方定价页原文 “use a total of 10,000 Neurons per day at no charge”），UTC 0 点刷新；代表模型 `@cf/meta/llama-4-scout-17b`、`llama-3.3-7…
+- `tier_caveats`：免费额度是账号级 **每日 10,000 Neurons 共享总额度**（不是每模型各 1 万），所有限额每日 00:00 UTC 重置；超额按 $0.011 / 1,000 Neurons 计费，需开通 Workers Paid、kimi-k2.6/k2.7-code、glm-5.2/5.3/5.3-flash、d… → 免费额度是账号级 **每日 10,000 Neurons 共享总额度**（不是每模型各 1 万），所有限额每日 00:00 UTC 重置；超额按 $0.011 / 1,000 Neurons 计费，需开通 Workers Paid、kimi-k2.6/k2.7-code、glm-5.2/5.3/5.3-flash、d…
+
 ## 2026-10-20
 ### Together AI（`together_ai`）
 - 摘要：Muse Spark Open 限时免费活动已结束，恢复为正常收费模型（输入 $1.25/1M tokens，输出 $4.25/1M tokens）

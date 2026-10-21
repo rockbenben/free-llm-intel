@@ -7,7 +7,211 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 15 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 20 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Announcing the Special Interest Group (SIG) for Ray on Accel…</title>
+      <link>https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu?li=1</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Announcing the Special Interest Group (SIG) for Ray on Accelerators</description>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Announcing the Special Interest Group (SIG) for Ray on Accelerators</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=zhe-zhang">Zhe Zhang</a>, <a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a>, <a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> and <a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a> | October 20, 2026</p>
+<p>Today, we are announcing the Special Interest Group (SIG) for Ray on hardware accelerators.</p>
+<p>When Ray was created in UC Berkeley over 10 years ago, the computing landscape looked very different. At the time, “distributed computing” referred to CPU clusters running frameworks like Apache Hadoop and Apache Spark. GPUs were only just moving from graphics and scientific computing into machine learning.</p>
+<p>Today, <em>accelerated computing</em> is front and center in the development and deployment of AI, and accelerators and their capabilities have become more specialized and diverse. For example:</p>
+<ul><li>NVIDIA’s RTX 6000 Pro supports flexible workloads spanning AI training, inference, graphics, and video</li><li>NVIDIA B200s and AMD MI355X provide substantially greater memory capacity to support larger models, and GB200 NVL72 connects 72 GPUs for communication-intensive, large-scale training and inference.</li><li>Beyond GPUs, Google Ironwood TPUs target massive-scale AI workloads and Groq LPUs specialize in low-latency inference.</li></ul>
+<p>The Ray community has been actively working on keeping up with this shift. Today, Ray <a href="https://docs.ray.io/en/latest/ray-core/scheduling/accelerators.html">supports more than a dozen kinds of hardware accelerators</a>, from NVIDIA and AMD GPUs to TPUs, Trainium, Gaudi and others. We believe now is a crucial time to build on this foundation with a more ambitious, systematic effort across Ray to make accelerators easy to use, efficient at scale, and reliable in production.</p>
+<p>The Accelerator Special Interest Group aims to bring together hardware vendors, Ray contributors, and application developers to define and advance a shared, vendor-neutral roadmap for accelerator support in Ray. This public interest group will be responsible for enabling Ray workloads to continue evolving in an era of fragmented, specialized accelerators.</p>
+<p>Our initial roadmap focuses on 3 core areas: <strong>Development and Testing Infrastructure, Hardware Awareness Capabilities, and Networking/Transport, </strong>outlined in the following sections.</p>
+<h2>LinkDevelopment and Testing Infra</h2>
+<p>Reliable accelerator support requires dependable access to hardware for development, testing, and debugging. Maintainers and contributors need to validate changes on the devices they affect, reproduce failures, and catch regressions before they reach users. As agentic software engineering accelerates development, reliable testing and verification become even more important: both human contributors and coding agents need reproducible feedback from real hardware and representative workloads. We want to make this a routine part of contributing to Ray, with a clear path for hardware vendors and cloud providers to contribute resources and expertise.</p>
+<p>Our initial priorities are:</p>
+<ul><li><strong>Shared hardware access</strong>. Establish a documented process for bringing cloud and vendor-hosted accelerators into Ray’s development and testing infrastructure, including access for contributors to reproduce and debug failures.</li><li><strong>Reproducible development and test environments</strong>. Provide maintained environments with explicit driver, runtime, and dependency versions, so contributors can reproduce CI results and validate changes consistently across providers.</li><li><strong>Broader CI coverage</strong>. Extend existing pipelines with targeted checks for pull requests and broader nightly and release testing. Coverage should include distributed workloads, failure recovery, and performance regressions, alongside basic device functionality.</li><li><strong>Sustainable operation and ownership</strong>. Define responsibilities for maintaining environments, investigating failures, and keeping integrations working across releases. Make test results and infrastructure health visible, and manage capacity and costs so the infrastructure can grow with participation.</li></ul>
+<h2>LinkHardware-aware Scheduling</h2>
+<p>For applications to get the most out of an accelerator, Ray first has to know what hardware each node has and how it is structured. As the accelerator ecosystem evolves, accelerator nodes are no longer just a count of identical devices. Workload performance depends on the interconnectivity of devices, their relationship to CPUs and NICs, and node groupings into larger domains like racks and TPU slices.</p>
+<p>Our goal is to give Ray an accurate and consistent picture of this structure across vendors and platforms. With that picture, Ray’s scheduler can place tasks and actors on the right hardware, and users can see what their cluster is made of and how it is connected.</p>
+<p>Our initial priorities are:</p>
+<ul><li><strong>Common hardware interfaces.</strong> Define vendor-neutral interfaces for labeling hardware, representing its architecture, and describing its specifications, so applications and libraries can target capabilities instead of writing vendor-specific code. This includes a consistent way to identify accelerator SKUs, including new ones at launch. It also includes a documented extension point and checklist for vendors adding a new accelerator.</li><li><strong>Hardened discovery.</strong> Strengthen Ray’s discovery mechanism, with clear ownership for each accelerator’s integration, and back it with the CI coverage described in the previous section. Discovery should capture the topology and architecture of the hardware, not just the type and number of devices.</li><li><strong>Platform and cloud integration.</strong> Work with cloud providers and deployment platforms so that discovery reflects the underlying structure wherever a cluster runs. Some of this information, such as which rack or slice a node belongs to, is only available from the platform, not from the node itself.</li><li><strong>Hardware visibility.</strong> Provide ways to view the accelerators in a cluster and how they are connected, alongside accelerator metrics on the Ray dashboard. This lets users confirm that Ray sees their hardware correctly and understand where their work was placed. It also gives contributors a way to verify new integrations.</li><li><strong>Clear user guides.</strong> Document how Ray discovers and represents hardware, and how to use that information when placing work. Good guides help both application developers and the coding agents that increasingly write Ray code for them.</li></ul>
+<h2>LinkNetworking and I/O Transport</h2>
+<p>Moving data between accelerators is often just as important as running computation on the accelerator itself. Modern AI workloads, like large scale reinforcement learning, require moving large model weight tensors across devices and nodes from training to inference workers. Historically, Ray’s object store was built for CPU data, meaning accelerator tensors had to be copied to host memory, serialized, and sent over standard host networking before reaching another device.</p>
+<p>To avoid that bottleneck, <strong>Ray Direct Transport (RDT)</strong> was introduced to enable actors to pass references to tensors through Ray while transferring the actual data directly between devices and using high performance transports like UCX and RDMA. Our goal is to make high-speed, direct data transfer work reliably across different accelerators, frameworks, and network fabrics, while keeping Ray’s familiar programming model.</p>
+<p>Our initial priorities are:</p>
+<ul><li><strong>Broad transport integrations</strong>. Support a wider range of accelerators, frameworks, and interconnects in RDT so Ray can select the fastest path between Actors, whether over intra-slice TPU ICI, same-node NVLink, or cross-node GPUDirect RDMA.</li><li><strong>Transport lifecycle and recovery</strong>. Ensure each hardware transport cleanly handles initialization, teardown, and error recovery on real devices, so RDT works reliably as actors scale or restart in dynamic workloads like reinforcement learning and disaggregated serving.</li><li><strong>Validated recipes and observability</strong>. Enable cloud and hardware providers to publish validated deployment configurations, benchmark high-throughput workloads, and surface clear diagnostics and transport metrics.</li></ul>
+<h2>LinkScope</h2>
+<p>While core scheduling and placement logic remain in Ray Core, SIG Accelerator is responsible for defining the plug-in interfaces, CI testing, and maturity tiers for accelerators in Ray. Hardware vendors and cloud providers contribute and maintain their own device plugins, transports, and day-zero support for new SKUs, while framework authors and ML practitioners ground our roadmap in real workload needs.</p>
+<h2>LinkGet Involved</h2>
+<p>Whether you are building a new accelerator integration, running large-scale training or inference on Ray, or providing cloud and CI infrastructure, we invite you to get involved!</p>
+<ul><li>Join the conversation on the <a href="https://www.ray.io/join-slack">Ray Slack</a>.</li><li>Attend our community meetings to discuss proposals, review roadmap priorities, and share workload feedback.</li><li>Check out open accelerator related <a href="https://github.com/ray-project/ray/issues">issues</a> and PRs on Github and contribute upstream.</li></ul>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#development-and-testing-infra">Development and Testing Infra</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#hardware-aware-scheduling">Hardware-aware Scheduling</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#networking-and-i/o-transport">Networking and I/O Transport</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#scope">Scope</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#get-involved">Get Involved</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="Announcing Ray support for PyTorch on Google TPUs"></p>
+<h4>Announcing Ray support for PyTorch on Google TPUs</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="Running Ray at scale on Kubernetes with KubeRay"></p>
+<h4>Running Ray at scale on Kubernetes with KubeRay</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="Science of Robot Decisions"></p>
+<h4>Scaling the Science of Robot Decisions with Ray on Anyscale</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Announcing Ray support for PyTorch on Google TPUs</title>
+      <link>https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu</link>
+      <guid isPermaLink="true">https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu?li=1</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">Home</a><a href="https://www.anyscale.com/blog">Blog</a>Blog Detail</p>
+<h1>Announcing Ray support for PyTorch on Google TPUs</h1>
+<p>By <a href="https://www.anyscale.com/blog?author=lehui-liu">Lehui Liu</a>, <a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a>, <a href="https://www.anyscale.com/blog?author=andrew-sy-kim-google">Andrew Sy Kim (Google)</a>, <a href="https://www.anyscale.com/blog?author=nisha-mariam-johnson">Nisha Mariam Johnson</a> and <a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> | October 20, 2026</p>
+<p>Earlier this year at Ray Summit 2026, we covered how the <a href="https://www.oreilly.com/radar/what-is-the-park-stack/">PARK stack</a> (PyTorch, AI models, Ray, and Kubernetes) is emerging as an industry standard for production AI. Ray has long been the ubiquitous distributed runtime for PyTorch workloads on GPUs.</p>
+<p>Today Anyscale and Google Cloud are announcing native Ray support for PyTorch on Google TPUs, the foundational supercomputing infrastructure powering Gemini and large-scale AI workloads on Google Cloud.</p>
+<p>Building on Google's <a href="https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source-run-native-pytorch-on-tpus">TorchTPU project</a> and KubeRay on Google Kubernetes Engine (GKE), this integration brings a native, single-device-per-worker PyTorch experience to Cloud TPUs. Platform and ML teams running on GKE can now schedule, scale, and operate distributed PyTorch training, vLLM inference, and reinforcement learning (RL) workloads across GPUs and TPUs on a single Kubernetes control plane.</p>
+<h2>LinkNative PyTorch on Google TPUs</h2>
+<p>Historically, running TPU workloads on Ray required adapting to a Single-Program, Multiple Data (SPMD) execution model designed primarily for JAX, where a single Ray worker process per host VM managed all of the machine's attached TPU chips. <a href="https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source-run-native-pytorch-on-tpus">TorchTPU</a>, introduced last year as Google's native PyTorch backend for Tensor Processing Units,brings an eager-first, native TPU integration and a <code>torch.distributed</code> extension for running distributed workloads on TPUs.</p>
+<p>Following TorchTPU, we’ve evolved Ray to run one worker per TPU chip, matching the single-device-per-worker model that PyTorch developers are used to on GPUs.</p>
+<p>When scheduling tasks or actors with Ray and TorchTPU, each worker requests a single logical TPU device (<code>resources={&quot;TPU&quot;: 1}</code>) just as a GPU worker requests <code>num_gpus=1</code>:</p>
+<ul><li><strong>Device Isolation:</strong> Just as Ray automatically sets <code>CUDA_VISIBLE_DEVICES</code> for GPU workers, Ray isolates and assigns individual TPU devices to workers using <code>TPU_VISIBLE_CHIPS</code></li><li><strong>Native PyTorch Device &amp; Collectives:</strong> Inside a Ray task or actor, migrating existing PyTorch code from GPUs to TPUs is as simple as changing <code>&quot;cuda&quot;</code> to <code>&quot;tpu&quot;</code> and switching the distributed communications backend from <code>&quot;nccl&quot;</code> to <code>&quot;tpu_dist&quot;</code>.</li><li><strong>Topology-Aware Gang Scheduling:</strong> GKE provisions multi-host TPU slices as node pools connected over high-speed Inter-Chip Interconnects (ICI). To take advantage of this physical layout, Ray’s <a href="https://docs.ray.io/en/latest/ray-core/api/doc/ray.util.tpu.SlicePlacementGroup.html">SlicePlacementGroup</a> API provides a native scheduling implementation that guarantees actors are gang-scheduled together on the same TPU slice.</li></ul>
+<p>Below is an example of a distributed PyTorch <code>all_reduce</code> using Ray actors on TPUs. Aside from the resource request and device/backend strings, the code is identical to a Ray actor running on GPUs:</p>
+<pre><code>import os
+import ray
+import torch
+import torch.distributed as dist
+
+# On GPU: @ray.remote(num_gpus=1)
+@ray.remote(resources={&quot;TPU&quot;: 1})
+class TorchWorker:
+    def __init__(self, rank: int, world_size: int):
+        self.rank = rank
+        self.world_size = world_size
+        # Ray automatically isolates the assigned device via TPU_VISIBLE_CHIPS
+        self.local_rank = os.environ[&quot;TPU_VISIBLE_CHIPS&quot;]
+
+    def run_all_reduce(self, master_addr: str, master_port: int):
+        os.environ[&quot;MASTER_ADDR&quot;] = master_addr
+        os.environ[&quot;MASTER_PORT&quot;] = str(master_port)
+        os.environ[&quot;WORLD_SIZE&quot;] = str(self.world_size)
+        os.environ[&quot;RANK&quot;] = str(self.rank)
+        os.environ[&quot;LOCAL_RANK&quot;] = self.local_rank
+
+        # On GPU: dist.init_process_group(backend=&quot;nccl&quot;)
+        dist.init_process_group(backend=&quot;tpu_dist&quot;)
+
+        # On GPU: device = torch.device(&quot;cuda&quot;)
+        device = torch.device(&quot;tpu&quot;)
+        tensor = torch.ones(2, 2, device=device) * self.rank
+
+        dist.all_reduce(tensor, op=dist.ReduceOp.SUM)
+        return tensor.cpu().numpy()</code></pre>
+<h2>LinkTorchTrainer on TPUs</h2>
+<p>For distributed training and fine-tuning, many teams rely on Ray Train’s <code>TorchTrainer</code> to orchestrate Distributed Data Parallel (DDP), Fully Sharded Data Parallel (FSDPv2), and DTensor workloads without writing manual boilerplate for distributed process groups.</p>
+<p>With native TorchTPU support in Ray Train, you can now run your existing <code>TorchTrainer</code> scripts on single-host and multi-host Cloud TPU slices with zero changes to your PyTorch training loop.</p>
+<p>When you configure <code>TorchTrainer</code> for TPUs via <code>ScalingConfig</code>, Ray Train handles all of the underlying TPU orchestration automatically:</p>
+<ul><li><strong>Atomic TPU Slice Reservation:</strong> By specifying <code>use_tpu=True</code> alongside your target <code>topology</code> (e.g., <code>&quot;4x4&quot;</code>) and <code>accelerator_type</code> (e.g., <code>&quot;TPU-V6E&quot;</code> or <code>&quot;TPU-V7X&quot;</code>), <code>TorchTrainer</code> automatically provisions a <code>SlicePlacementGroup</code> under the hood. This guarantees that all training workers are gang-scheduled onto contiguous physical TPU slices over high-speed ICI, preventing resource fragmentation.</li><li><strong>Automated </strong><code><strong>tpu_dist</strong></code><strong> Bootstrap:</strong> Ray Train spawns one worker per TPU device (<code>resources_per_worker={&quot;TPU&quot;: 1}</code>), automatically configures PyTorch distributed environment variables (<code>RANK</code>, <code>WORLD_SIZE</code>, <code>LOCAL_RANK</code>, <code>MASTER_ADDR</code>, <code>MASTER_PORT</code>) alongside TorchTPU’s slice-builder addresses and mesh topology, and initializes the <code>tpu_dist</code> process group.</li><li><strong>Drop-in Ray Train Utilities:</strong> Standard Ray Train helper functions like <code>ray.train.torch.get_device()</code> and <code>ray.train.torch.prepare_model()</code> automatically detect the TorchTPU runtime, move your model to the assigned <code>tpu</code> device, and wrap it in PyTorch’s DistributedDataParallel class.</li></ul>
+<p>Here is a complete example of scaling a PyTorch training loop across a 16-chip multi-host Trillium (<code>TPU-V6E</code>, <code>4x4</code> topology) slice using <code>TorchTrainer</code>:</p>
+<pre><code>import ray
+from ray import train
+from ray.train import ScalingConfig
+from ray.train.torch import TorchTrainer
+import torch
+from torch import nn, optim
+import torch.distributed as dist
+
+def train_fn_per_worker(config):
+    # Automatically resolves to torch.device(&quot;tpu&quot;) on TPU workers
+    device = ray.train.torch.get_device()
+
+    model = nn.Sequential(
+        nn.Linear(10, 32),
+        nn.ReLU(),
+        nn.Linear(32, 1),
+    ).to(device)
+
+    # Wraps the model in DDP over the &quot;tpu_dist&quot; backend
+    model = ray.train.torch.prepare_model(model)
+
+    criterion = nn.MSELoss()
+    optimizer = optim.SGD(model.parameters(), lr=0.05)
+
+    inputs = torch.randn(128, 10, device=device)
+    targets = inputs.sum(dim=1, keepdim=True)
+
+    for epoch in range(10):
+        optimizer.zero_grad()
+        outputs = model(inputs)
+        loss = criterion(outputs, targets)
+        loss.backward()
+        optimizer.step()
+
+        train.report({&quot;loss&quot;: loss.item(), &quot;epoch&quot;: epoch + 1})
+
+scaling_config = ScalingConfig(
+    num_workers=16,
+    use_tpu=True,
+    topology=&quot;4x4&quot;,
+    accelerator_type=&quot;TPU-V6E&quot;,
+    resources_per_worker={&quot;TPU&quot;: 1},
+)
+
+trainer = TorchTrainer(
+    train_loop_per_worker=train_fn_per_worker,
+    scaling_config=scaling_config,
+)
+
+result = trainer.fit()</code></pre>
+<p>For a complete end-to-end walkthrough on Google Kubernetes Engine (GKE), see <a href="https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/train-models-tpu-ray-torchtpu">Train models on multi-host TPUs with Ray and TorchTPU</a>.</p>
+<h2>LinkvLLM-TorchTPU with Ray Serve</h2>
+<p>For online inference, <a href="https://github.com/vllm-project/vllm-torchtpu">vLLM-TorchTPU</a> registers TorchTPU as a vLLM platform plugin so PyTorch models compile and execute on Cloud TPUs without rewriting model definitions in JAX. Combined with <a href="https://docs.ray.io/en/latest/serve/llm/index.html">Ray Serve LLM</a>, you can deploy OpenAI-compatible vLLM endpoints across single-host and multi-host TPU slices using the same declarative <code>LLMConfig</code> API used on GPUs.</p>
+<p>When <code>accelerator_type</code> and <code>accelerator_config</code> specify a TPU slice, Ray Serve reserves a topology-aware <code>SlicePlacementGroup</code> for each replica and launches vLLM engine workers across the slice:</p>
+<pre><code>from ray.serve.llm import (
+    LLMConfig,
+    LLMServingArgs,
+    ModelLoadingConfig,
+    build_openai_app,
+)
+llm_config = LLMConfig(
+    model_loading_config=ModelLoadingConfig(
+        model_id=&quot;google/gemma-4-26B-A4B-it&quot;,
+    ),
+    # On GPU: accelerator_type=&quot;H100&quot;
+    accelerator_type=&quot;TPU-V6E&quot;,
+    accelerator_config={
+        &quot;kind&quot;: &quot;tpu&quot;,
+        &quot;topology&quot;: &quot;4x4&quot;,
+    },
+    placement_group_config={
+        &quot;bundle_per_worker&quot;: {&quot;TPU&quot;: 1},
+    },
+    engine_kwargs={
+        &quot;tensor_parallel_size&quot;: 16,
+        &quot;enable_expert_parallel&quot;: True,
+        &quot;max_model_len&quot;: 8192,
+    },
+)
+app = build_openai_app(LLMServingArgs(llm_configs=[llm_config]))</code></pre>
+<p>For a complete end-to-end walkthrough on Google Kubernetes Engine (GKE), see <a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">Serve LLMs on multi-host TPUs with Ray and TorchTPU</a>.</p>
+<h2>LinkExtending the PARK stack to TPUs</h2>
+<p>As AI workloads evolve from standalone training jobs to compound systems combining training, high-throughput inference, and reinforcement learning, organizations are standardizing on the open-source PARK stack (PyTorch, AI models, Ray, and Kubernetes). Bringing TorchTPU to Ray and GKE completes this vision on Google Cloud: PyTorch developers keep the eager execution model and Ray APIs they already know, while platform teams get the topology-aware autoscaling, resilience, and multi-accelerator governance of GKE.</p>
+<p>To get started today, explore the end-to-end GKE tutorials for <a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">Serving LLMs</a> or <a href="https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/train-models-tpu-ray-torchtpu">Training models</a> with Ray and TorchTPU, and stay tuned as we expand this foundation to large-scale RL post-training frameworks and next-generation Ironwood (TPU v7x) slices on GKE.</p>
+<h4>Table of contents</h4>
+<ul><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#native-pytorch-on-google-tpus">Native PyTorch on Google TPUs</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#torchtrainer-on-tpus">TorchTrainer on TPUs</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#vllm-torchtpu-with-ray-serve">vLLM-TorchTPU with Ray Serve</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#extending-the-park-stack-to-tpus">Extending the PARK stack to TPUs</a></li></ul>
+<h4>Sharing</h4>
+<h4>Tags</h4>
+<h4>Sign up for product updates</h4>
+<h4>Recommended content</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3Lo0nxFq9UAkSkzJ1h2inn/77202902f1e6fe0fd903047f5517b32e/Announcing_the_Special_Interest_Group__SIG__for_Ray_on_Accelerators.png?w=140" alt="Announcing the Special Interest Group (SIG) for Ray on Accelerators"></p>
+<h4>Announcing the Special Interest Group (SIG) for Ray on Accelerators</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="Running Ray at scale on Kubernetes with KubeRay"></p>
+<h4>Running Ray at scale on Kubernetes with KubeRay</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="Science of Robot Decisions"></p>
+<h4>Scaling the Science of Robot Decisions with Ray on Anyscale</h4>
+<h2>Explore Anyscale today</h2>
+<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Start for Free</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">Talk to an expert</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Running Ray at scale on Kubernetes with KubeRay</title>
       <link>https://anyscale.com/blog/kuberay</link>
@@ -5423,138 +5627,6 @@ def train_loop_per_worker(config: dict):
 <p>Sign up now for<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> Anyscale endpoints</a> and get started fast or<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> contact sales</a> if you are looking for a comprehensive overview of the Anyscale platform.</p>
 <h4>Table of contents</h4>
 <ul><li><a href="https://www.anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve#key-takeaways">Key Takeaways</a></li><li><a href="https://www.anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve#inference-graphs-at-linkedin-using-ray-serve">Inference Graphs at LinkedIn Using Ray-Serve</a></li><li><a href="https://www.anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve#challenges-in-ai-infrastructure">Challenges in AI Infrastructure</a></li><li><a href="https://www.anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve#the-introduction-of-ray-and-inference-graphs">The Introduction of Ray and Inference Graphs</a></li><li><a href="https://www.anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve#the-ray-based-inference-runtime">The Ray-Based Inference Runtime</a></li><li><a href="https://www.anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve#high-level-authoring-of-inference-graphs">High-Level Authoring of Inference Graphs</a></li><li><a href="https://www.anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve#the-impact-on-ai-workloads">The Impact on AI Workloads</a></li><li><a href="https://www.anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve#online-and-offline-inference">Online and Offline Inference</a></li><li><a href="https://www.anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve#the-future-of-linkedin's-ai-infrastructure">The Future of LinkedIn's AI Infrastructure</a></li><li><a href="https://www.anyscale.com/blog/inference-graphs-at-linkedin-using-ray-serve#conclusion">Conclusion</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Advances in Foundation Models</title>
-      <link>https://anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications?li=1</guid>
-      <pubDate>Fri, 03 Nov 2023 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>Advances in Foundation Models — Technology, Society, and Applications</h1>
-<p>By</p>
-<p>Anyscale Ray Team</p>
-<p>|</p>
-<p>November 3, 2023</p>
-<p>Update June 2024: Anyscale Endpoints (Anyscale's LLM API Offering) and Private Endpoints (self-hosted LLMs) are now available as part of the Anyscale Platform. Click <a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">here</a> to get started on the Anyscale platform.</p>
-<p><em>This blog post is part of the Ray Summit 2023 highlights series where we provide a summary of the most exciting talk from our recent LLM developer conference.</em></p>
-<p><em>Disclaimer: Summary was AI generated with human edits from video transcript.</em></p>
-<h2>LinkKey takeaways</h2>
-<p>In this blog post, we dive into Percy Liang’s insights into the latest developments in the field of AI and ML, the societal implications, and real-world applications. From technical innovations to their role in law, healthcare, and robotics, this blog post highlights the challenges and opportunities presented by foundation models.</p>
-<ul><li>Foundation models are AI models that are trained on broad datasets and can then be adapted for many different downstream tasks. Companies are spending huge amounts of resources training these models.</li><li>Academia has an important role to play in researching foundation models responsibly. Stanford founded a center combining computer scientists with experts in law, ethics, etc. to take a holistic socio-technical approach.</li><li>They are working on advancing foundation models in 3 main dimensions: technical advances, applications (law, healthcare, robotics), and social responsibility (privacy, fairness, etc.)</li><li>They have developed new techniques to improve data selection, model architectures, optimization, and alignment. These lead to significant speedups in training the models.</li><li>They are evaluating foundation model capabilities comprehensively across many metrics beyond just accuracy, looking at things like robustness, fairness, and efficiency.</li><li>Moving beyond just models, they want to evaluate entire organizations on their practices around transparency.</li><li>Overall, an academic perspective allows them to do more neutral research to advance the technology responsibly.</li></ul>
-<h2>LinkAdvances in Foundation Models — Technology, Society, and Applications</h2>
-<p>The realm of Artificial Intelligence (AI) and Machine Learning (ML) is evolving at an astonishing pace, making it an incredibly exciting time for the industry. The developments in foundation models hold the potential to transform various sectors of society and it is imperative that it is done responsibly, transparently and ethically.</p>
-<h2>LinkUnderstanding Foundation Models</h2>
-<p>Before delving into the details of the presentation, let's establish what foundation models are. These models serve as the backbone of AI and ML applications, providing a basis for various tasks such as text generation, image processing, and video generation. They are trained on vast datasets, enabling them to adapt to a wide array of downstream tasks. Foundation models are like the Swiss Army knives of the AI world, and their capabilities are only expected to grow.</p>
-<h2>LinkThe Holistic Approach</h2>
-<p>Liang introduces a holistic socio-technical approach to understanding foundation models. Unlike the conventional approach that focuses solely on technical advancements, this approach combines the expertise of computer scientists with professionals from diverse fields such as law, economics, philosophy, education, and humanities. This holistic perspective aims to address the broader implications of foundation models on society.</p>
-<h2>LinkTechnical Advances</h2>
-<p>The presentation delves into three key dimensions: technical advances, applications, and social responsibility. We'll start by exploring the technical advances in the field.</p>
-<h3>LinkData Selection: Doremi Method</h3>
-<p>Data is the lifeblood of AI models, and selecting the right data is crucial. The Doremi method, developed in collaboration with Google, offers a statistically principled approach to data selection. It optimizes domain weights on a small model and transfers them to train large models, resulting in a 2.6 times faster training process.</p>
-<h3>LinkModel Architecture: Beyond Transformers</h3>
-<p>While Transformers have been dominant in recent years, there's a growing demand for models capable of handling long sequences like DNA sequences or legal documents. The presentation introduces a novel approach using long convolutions inspired by state-space models from control theory, offering a remarkable speedup in processing long sequences.</p>
-<h3>LinkOptimization: Sophia Optimization</h3>
-<p>Optimizing AI models is typically done using first-order information, such as gradients, which limits the understanding of curvature in the optimization landscape. Sophia optimization introduces a diagonal approximation of the Hessian with clipping, providing an effective way to optimize AI models. This method offers a 2x speedup compared to conventional optimization techniques.</p>
-<h3>LinkAlignment: Direct Preference Optimization</h3>
-<p>The process of aligning AI models involves training them against pairwise preference data. Liang presents a simpler approach called Direct Preference Optimization, which simplifies the alignment process by eliminating the need for complex reward models and completion sampling. This streamlined approach offers an effective means of aligning models.</p>
-<p>These technical advances not only improve the efficiency and speed of AI model development but also enhance the overall robustness of foundation models.</p>
-<h2>LinkApplications of Foundation Models</h2>
-<p>Foundation models are being applied to various domains, and the presentation highlights their relevance in three specific areas: law, healthcare, and robotics.</p>
-<h3>LinkLaw</h3>
-<p>In the legal domain, there's a significant opportunity to bridge the gap in legal services, particularly for underserved individuals. Foundation models can be used to deliver legal services efficiently. However, addressing legal reasoning, dealing with long legal texts, and ensuring reliability and trustworthiness are key challenges. The presentation introduces datasets like the Pile of Law and the Legal Bench, along with the development of models for legal reasoning. These initiatives aim to make legal services more accessible and reliable.</p>
-<h3>LinkHealthcare</h3>
-<p>Healthcare, which accounts for a substantial portion of the GDP, is another sector where foundation models can make a significant impact. Privacy, trust, and clinical expertise are key concerns in this domain. Models like Biomed LM, trained on PubMed articles, and Renkin, a text and image model for generating medical images, illustrate the potential of AI in healthcare. The presentation discusses the use of foundation models to augment existing classifiers, enhance data augmentation, and serve as teaching tools in the medical field.</p>
-<h3>LinkRobotics</h3>
-<p>Foundation models have the potential to revolutionize the field of robotics, making tasks like household cleaning more accessible. However, robotics presents unique challenges, including the need for physical embodiment, limited data, sequential decision-making, and a strong focus on safety and reliability. The presentation introduces data collection efforts and the development of models for household robotics. These efforts aim to make household robots a reality, with the promise of enhancing our daily lives.</p>
-<h3>LinkSocial Responsibility and Policy Implications</h3>
-<p>The societal implications of foundation models cannot be understated, and the presentation discusses their role in addressing critical issues such as copyright, privacy, and watermarking.</p>
-<h3>LinkCopyright</h3>
-<p>One of the pressing issues is the use of copyrighted data to train foundation models. The presentation highlights the ongoing legal disputes over whether training models on copyrighted data constitutes fair use. It also discusses technical mitigations like data filtering, reinforcement of human feedback (ROHF), and provenance tracking to navigate the complex landscape of copyright in AI.</p>
-<h3>LinkPrivacy</h3>
-<p>Privacy is a paramount concern when it comes to AI models. The presentation explores the challenges of applying differential privacy to high-dimensional data like language models. The development of techniques to protect private data while still enabling training represents a critical step forward.</p>
-<h3>LinkWatermarking</h3>
-<p>With increasing concerns about the misuse of AI-generated text, watermarking becomes essential. Watermarking text is challenging, as it should not distort the text's usefulness. The presentation introduces a distortion-free watermarking technique that preserves the capabilities of language models while enabling easy detection of AI-generated content.</p>
-<h2>LinkEvaluation and Transparency</h2>
-<p>To ensure the responsible use of foundation models, it's crucial to evaluate organizations for their practices, specifically regarding transparency. The presentation highlights the need for organizations to be transparent about their data sets, model evaluations, and practices. This transparency can help guide policy decisions and ensure responsible AI development.</p>
-<h2>LinkConclusion</h2>
-<p>Foundation models have emerged as a driving force in the AI and ML industry. Their technical advances are revolutionizing the way we train and use AI models, making them more efficient and reliable. Their applications in law, healthcare, and robotics hold the promise of transforming these domains. However, with great power comes great responsibility, and the presentation highlights the need for ethical and responsible use of foundation models.</p>
-<p>As we continue to advance in the field of foundation models, it's crucial to consider the broader societal implications. Copyright, privacy, and watermarking are just a few of the issues that require careful consideration. Moreover, transparency and responsible practices are essential for organizations involved in AI development.</p>
-<p>The presentation serves as a comprehensive guide to the evolving landscape of foundation models, shedding light on the challenges and opportunities they present. As society embraces AI and ML, understanding and addressing the implications of these technologies is more critical than ever. With responsible development and thoughtful policy decisions, foundation models have the potential to benefit humanity in numerous ways, shaping a more intelligent and efficient future.</p>
-<p>In conclusion, the journey of foundation models is an exciting one, and we're only scratching the surface of their potential. As we continue to advance in the field of foundation models, it's crucial to consider the broader societal implications. Copyright, privacy, and watermarking are just a few of the issues that require careful consideration. Moreover, transparency and responsible practices are essential for organizations involved in AI development.</p>
-<p>Sign up now for<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> Anyscale endpoints</a> and get started fast or<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> contact sales</a> if you are looking for a comprehensive overview of the Anyscale platform.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#key-takeaways">Key takeaways</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#advances-in-foundation-models-—-technology,-society,-and-applications">Advances in Foundation Models — Technology, Society, and Applications</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#understanding-foundation-models">Understanding Foundation Models</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#the-holistic-approach">The Holistic Approach</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#technical-advances">Technical Advances</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#data-selection:-doremi-method">Data Selection: Doremi Method</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#model-architecture:-beyond-transformers">Model Architecture: Beyond Transformers</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#optimization:-sophia-optimization">Optimization: Sophia Optimization</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#alignment:-direct-preference-optimization">Alignment: Direct Preference Optimization</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#applications-of-foundation-models">Applications of Foundation Models</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#law">Law</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#healthcare">Healthcare</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#robotics">Robotics</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#social-responsibility-and-policy-implications">Social Responsibility and Policy Implications</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#copyright">Copyright</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#privacy">Privacy</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#watermarking">Watermarking</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#evaluation-and-transparency">Evaluation and Transparency</a></li><li><a href="https://www.anyscale.com/blog/advances-in-foundation-models-technology-society-and-applications#conclusion">Conclusion</a></li></ul>
-<h4>Sharing</h4>
-<h4>Tags</h4>
-<h4>Sign up for product updates</h4>
-<h4>Recommended content</h4>
-<h4>Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all</h4>
-<h4>Scaling Ray for AI workloads to 10k node clusters</h4>
-<h4>Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM</h4>
-<h2>Explore Anyscale today</h2>
-<p>Build, run, and scale any AI workload on Ray with a multi-cloud platform built for production AI.</p>
-<p>Start for Free</p>
-<p>Talk to an expert</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Optimizing LLM Training with Airbnb&apos;s Next-Gen ML Platform</title>
-      <link>https://anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform</link>
-      <guid isPermaLink="true">https://anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform?li=1</guid>
-      <pubDate>Mon, 30 Oct 2023 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Blog Detail</p>
-<h1>Optimizing LLM Training with Airbnb's Next-Gen ML Platform</h1>
-<p>By</p>
-<p>Anyscale Ray Team</p>
-<p>|</p>
-<p>October 30, 2023</p>
-<p>Update June 2024: Anyscale Endpoints (Anyscale's LLM API Offering) and Private Endpoints (self-hosted LLMs) are now available as part of the Anyscale Platform. Click <a href="https://console.anyscale.com/?utm_source=anyscale&amp;utm_medium=blog&amp;utm_campaign=blog_callout&amp;utm_content=june2024_product_update_subheading">here</a> to get started on the Anyscale platform.</p>
-<p><em>This blog post is part of the Ray Summit 2023 highlights series where we provide a summary of the most exciting talk from our recent LLM developer conference.</em></p>
-<p><em>Disclaimer: Summary was AI generated with human edits from video transcript.</em></p>
-<h2>LinkKey takeaways</h2>
-<p>Optimizing machine learning (ML) platforms for training with next-generation ML platforms is crucial to keep pace with the rapidly evolving landscape of AI and ML technologies. In this blog post, we'll explore the insights gained from Airbnb’s talk discussing their journey in integrating advanced ML technologies into their infrastructure. We'll delve into the importance of optimizing ML platforms, the role of Kubernetes, Ray, and other tools, and the challenges and solutions in achieving cost efficiency, scalability, and performance in ML training.</p>
-<ul><li>Airbnb had an existing ML infrastructure built on Kubernetes, but found gaps in Kubernetes' ability to support ML workloads. Issues included lack of support for fractional GPUs, exposing runtime metrics, usability for developers, and scaling for large models.</li><li>They adopted Ray to address these gaps. Benefits of Ray included easy prototypes locally, remote execution with dynamic runtime control, and support for latest ML frameworks like PyTorch and optimization libraries like DeepSpeed.</li><li>For cost efficiency, they built a fully elastic Ray cluster on AWS using auto-scaling groups, Kubernetes cluster auto-scaler, and KubeRay. This minimized resource fragmentation.</li><li>For training efficiency, they enabled high throughput networking across workers using AWS EFA and RDMA. This is important for distributed training.</li><li>With Ray they were able to train models up to 12B parameters on 8x A100 GPUs. They achieved 150 TFLOPS per A100 GPU on benchmarks.</li><li>Looking ahead, they plan to investigate model parallelism for 30B+ parameter models, integrate Aviary for serving cost savings, and consolidate training engines.</li></ul>
-<h2>LinkThe Rapid Evolution of ML</h2>
-<p>Before diving into optimization strategies, it's essential to understand why it's critical to continually enhance ML platforms. The field of ML is marked by constant innovation. New algorithms, frameworks, and hardware architectures emerge regularly. Keeping up with these developments is essential to ensure that ML models remain competitive and effective.</p>
-<p>Airbnb's journey serves as an excellent example of this phenomenon. They introduced the use of advanced ML platforms like Ray to adapt to the changing landscape effectively. This adaptability is crucial because staying relevant in the ML field requires harnessing the latest tools and techniques.</p>
-<h2>LinkThe Role of Kubernetes</h2>
-<p>Kubernetes is a fundamental component of modern ML infrastructure. It provides a scalable and flexible environment for deploying and managing ML applications. Airbnb's integration of Kubernetes into its ML infrastructure reflects its importance.</p>
-<p>Kubernetes allows ML practitioners to encapsulate their applications as native Kubernetes resources. This approach simplifies application management, improves resource utilization, and supports scaling and service discovery. The result is a streamlined and efficient ML development process</p>
-<h2>LinkLeveraging Ray for ML</h2>
-<p>Ray, an open-source distributed computing framework, plays a vital role in Airbnb's ML infrastructure. Ray facilitates distributed ML training, allowing ML practitioners to harness the power of multiple GPUs efficiently.</p>
-<p>One of the most significant advantages of Ray is its ability to scale ML workloads seamlessly. Whether you're training models with billions of parameters or performing complex computations, Ray offers the necessary elasticity. This scalability ensures that ML models can be trained quickly and effectively, even as model sizes and complexity increase.</p>
-<h2>LinkCost Efficiency in ML Training</h2>
-<p>Cost efficiency is a paramount concern in ML training. ML models, especially large deep learning models, can be resource-intensive and expensive to train. Optimizing costs while maintaining or improving model performance is a critical challenge.</p>
-<p>Airbnb's approach to cost efficiency involves several key strategies:</p>
-<p>1.<strong> Ephemeral Clusters</strong>: By provisioning ephemeral clusters on-demand, Airbnb minimizes idle resources. These clusters can be tailored to the specific requirements of ML workloads, ensuring cost-efficient resource utilization.</p>
-<ol><li><strong>Resource Management</strong>: Implementing resource management systems helps control resource allocation and utilization, preventing over-provisioning and unnecessary costs.</li></ol>
-<ol><li><strong>Auto Scaling</strong>: Leveraging auto-scaling features ensures that resources are dynamically adjusted based on workload demands. This approach minimizes both underutilization and overutilization of resources.</li></ol>
-<h2>LinkScaling ML Workloads</h2>
-<p>As ML models become more complex, the need for scalability becomes paramount. Airbnb's exploration of 3D model parallelism is a prime example of this. This approach targets models beyond 30 billion parameters, involving pipeline parallelism for internal nodes and tensor parallelism for intra-node workers.</p>
-<p>This level of scaling allows ML practitioners to tackle the most challenging problems, such as training massive language models, with the confidence that they can effectively leverage distributed computing resources.</p>
-<h2>LinkThe Integration of New Technologies</h2>
-<p>The field of ML is continuously evolving, with new technologies and techniques emerging regularly. Integrating these advancements into existing infrastructure can be challenging but is essential for staying competitive.</p>
-<p>Airbnb's exploration of Aviary for online serving is a testament to their commitment to adopting new technologies. This integration aims to reduce serving costs through features like continuous batching. Embracing innovations like Aviary can have a significant impact on the cost-effectiveness of ML deployments.</p>
-<h2>LinkChallenges in the Fast-Paced Open Source Community</h2>
-<p>The rapid pace of innovation in the ML community is both a blessing and a challenge. While it provides access to cutting-edge tools and techniques, it also requires constant adaptation and learning. Airbnb's experience highlights the need to engage actively with the open-source community to stay informed and leverage the latest advancements effectively.</p>
-<h2>LinkConclusion</h2>
-<p>Optimizing ML platforms for training with next-gen ML platforms is not just a matter of staying up-to-date with the latest technologies. It's about ensuring that ML infrastructure can efficiently harness the power of these technologies. Kubernetes, Ray, and other tools are pivotal in achieving this efficiency.</p>
-<p>Cost efficiency, scalability, and adaptability are critical considerations in ML platform optimization. Airbnb's journey serves as a valuable case study, showcasing how organizations can navigate the ever-evolving landscape of ML technologies.</p>
-<p>In conclusion, businesses must view ML platform optimization as an ongoing process. By embracing new tools, strategies, and technologies, they can not only keep pace with the ML field's rapid evolution but also stay ahead of the competition and deliver more powerful and cost-effective ML solutions.</p>
-<p>As the ML community continues to innovate, organizations must remain agile, adaptable, and committed to optimization to unlock the full potential of machine learning.</p>
-<p>Sign up now for<a href="https://www.anyscale.com/endpoints?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> Anyscale endpoints</a> and get started fast or<a href="https://www.anyscale.com/signup?utm_source=anyscale&amp;utm_campaign=ray-highlights-2023-blog"> contact sales</a> if you are looking for a comprehensive overview of the Anyscale platform.</p>
-<h4>Table of contents</h4>
-<ul><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#key-takeaways">Key takeaways</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#the-rapid-evolution-of-ml">The Rapid Evolution of ML</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#the-role-of-kubernetes">The Role of Kubernetes</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#leveraging-ray-for-ml">Leveraging Ray for ML</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#cost-efficiency-in-ml-training">Cost Efficiency in ML Training</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#scaling-ml-workloads">Scaling ML Workloads</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#the-integration-of-new-technologies">The Integration of New Technologies</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#challenges-in-the-fast-paced-open-source-community">Challenges in the Fast-Paced Open Source Community</a></li><li><a href="https://www.anyscale.com/blog/optimizing-llm-training-with-airbnbs-next-gen-ml-platform#conclusion">Conclusion</a></li></ul>
 <h4>Sharing</h4>
 <h4>Tags</h4>
 <h4>Sign up for product updates</h4>

@@ -7,7 +7,42 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 14 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 20 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Using Grok Bot to detect and respond to incidents</title>
+      <link>https://x.ai/news/incident-sweep</link>
+      <guid isPermaLink="true">https://x.ai/news/incident-sweep?li=1</guid>
+      <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://x.ai/news">Back to news</a>Oct 20, 2026</p>
+<h1>Using Grok Bot to detect and respond to incidents</h1>
+<p>By Chris Bowie and Isaac Hopkinson</p>
+<p>IncidentWatch spots ticket spikes before internal alerts fire. IncidentSweep clears the related backlog in an approved batch.</p>
+<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">Download for macOS</a><a href="https://cursor.com/contact-sales?product=grok-bot">Contact sales</a></p>
+<p>When a product incident occurs, the support queue can be one of the first places it shows up. Customers start reporting the same issue, sometimes before engineering alerts fire or anyone has declared an incident.</p>
+<p>Those reports keep coming while the incident unfolds. At first, support may not know what is wrong or have an answer we can confidently provide. By the time the issue is resolved, hundreds or thousands of customers may be waiting for a response. Support has to track those customers through the incident, then make sure each gets the right answer when it is resolved.</p>
+<p>We use Grok Bot to handle both parts of this work. It provides us with AI teammates that take ownership of operational jobs, particularly repetitive workflows that otherwise fall between people and systems. As we shared in a <a href="https://x.ai/news/grok-bot-customer-support">recent blog</a>, the SpaceXSI customer support team uses Support Bot in Grok Bot to handle customer-facing communication.</p>
+<p>Now we’ve added two more AI teammates that we call on specifically for incidents. The first, IncidentWatch, monitors the support queue for spikes in similar tickets and alerts our team when it sees one. The second, IncidentSweep, handles the other end, identifying affected tickets and closing them in an approved batch.</p>
+<p>During one incident on September 18, our Bot, IncidentSweep, cleared 204 tickets in about 10 minutes with a support engineer reviewing and approving the batch. Previously, we would have had to reply to those tickets one by one over the course of hours or use a bulk macro that gave us much less control over who received the message.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/ksh-incidentbot-diagram-31b72f17.png" alt="How SpaceXSI Customer Support uses Grok Bot to detect and respond to incidents: IncidentWatch detects the incident, IncidentSweep drafts the replies, a person on the support team reviews the batch, and Support Bot sends the replies"></p>
+<h2><a href="https://x.ai/news/incident-sweep#detecting-incidents-through-customer-reports">Detecting incidents through customer reports</a></h2>
+<p>Customers often notice problems before our internal alerts fire. When several customers report the same issue at once, those tickets can be an early signal of an incident.</p>
+<p>IncidentWatch is a Grok Bot teammate we built to detect that signal. Every five minutes, it reviews the previous 15 minutes of tickets for spikes around the same problem. If the pattern does not match a known incident, IncidentWatch alerts the support engineer on call with the apparent issue, number of matching tickets, and examples to investigate.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/ksh-incidentwatch-9f4b8172.png" alt="IncidentWatch alerting the on-call engineer about a possible login-failure incident, with example tickets and a count of matching tickets"></p>
+<p>A support engineer decides whether the reports point to an incident and works with engineering to investigate. In the meantime, IncidentWatch holds tickets that clearly match the issue.</p>
+<p>Once the team confirms the incident, we post it to our public status page. Support Bot, our primary customer-facing Bot, returns to the held tickets, checks them against the incident, and responds to customers whose reports match. As the incident progresses, it can return with updates.</p>
+<h2><a href="https://x.ai/news/incident-sweep#clearing-the-incident-backlog">Clearing the incident backlog</a></h2>
+<p>Once an incident is resolved, there may still be hundreds of related tickets in the queue, and each needs a final response. Traditionally, support teams have had two ways to clear them, and both have drawbacks. They can respond to each ticket individually, which can take hours, or use a bulk action, which is fast but leaves little room to catch a ticket that should not receive the message.</p>
+<p>We built IncidentSweep to combine the control of the first approach with the speed of the second.</p>
+<p>A support engineer starts by telling IncidentSweep which tickets to consider, which to exclude, and exactly what message to send. IncidentSweep finds the matching tickets, reviews each one, and sets aside any it cannot confidently connect to the incident.</p>
+<p>Before sending anything, IncidentSweep shows the engineer the proposed batch, the tickets it included, and the exact message they will receive. The engineer can spot-check the tickets and make changes before approving the send.</p>
+<p>IncidentSweep then sends the approved message in small batches and records each action. It never adds tickets after approval, and if anything fails, it stops and reports what happened.</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/ksh-incidentsweep-703c883b.png" alt="IncidentSweep showing a reviewed batch of 204 tickets and the exact reply it will send"></p>
+<h2><a href="https://x.ai/news/incident-sweep#give-bots-jobs-not-tasks">Give Bots jobs, not tasks</a></h2>
+<p>Grok Bot introduces a different way of working with AI. Instead of turning to an AI tool for help with individual tasks, teams can create AI teammates that own jobs and carry entire workflows through to an outcome.</p>
+<p>Customer support has been a natural place for us to put this model to work. IncidentWatch and IncidentSweep take on jobs that used to require someone on the team to watch, sort, and act on hundreds of individual tickets. Across SpaceXSI, we’re looking for more workflows where AI teammates can take on the same kind of ownership.</p>
+<h2>Try Grok Bot today</h2>
+<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">Download for macOS</a><a href="https://cursor.com/contact-sales?product=grok-bot">Contact sales</a></p>]]></content:encoded>
+    </item>
     <item>
       <title>Introducing Grok Voice 3.0</title>
       <link>https://x.ai/news/grok-voice-3</link>
@@ -188,6 +223,65 @@
 <p>We are still learning what this model makes possible. As the role of customer support continues to change, we will keep sharing what we find.</p>
 <h2>Try Grok Bot today</h2>
 <p>Download for macOS</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Introducing Grok Voice Transcribe 2.0</title>
+      <link>https://x.ai/news/grok-voice-transcribe-2</link>
+      <guid isPermaLink="true">https://x.ai/news/grok-voice-transcribe-2?li=1</guid>
+      <pubDate>Mon, 21 Sep 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Back to news</p>
+<p>Sep 18, 2026</p>
+<h1>Introducing Grok Voice Transcribe 2.0</h1>
+<p>Announcing SpaceXAI's newest speech-to-text model, with unparalleled accuracy and cost effectiveness.</p>
+<p>Try It Live</p>
+<p>View Docs</p>
+<p>Today we're releasing Grok Voice Transcribe 2.0, our latest speech-to-text model. Across our real-world evaluations, Grok Voice Transcribe 2.0 is one of the most accurate transcription models available today and twice as accurate as Grok Voice Transcribe 1.0, at the same price.</p>
+<p>Grok Voice Transcribe 2.0 is built on the audio foundation model behind Grok Voice. Grok Voice already powers tens of thousands of customer-support calls a day, transcribes millions of hours of video narration, and runs voice agents in physical products, including the Grok assistant in Tesla vehicles. It is trained on a unique dataset of live, noisy, multilingual audio recorded across a diverse set of environments and refined with post-training.</p>
+<p>The result is one of the most accurate transcription models for speech in real-world settings.</p>
+<h2><a href="https://x.ai/news/grok-voice-transcribe-2#accuracy">Accuracy</a></h2>
+<p>Most transcription models do well on clean, single-speaker audio. Real-world audio is harder: flaky phone lines, competing voices, local accents, and phone numbers or email addresses read aloud. We built Grok Voice Transcribe 2.0 for the hardest audio across conditions and environments.</p>
+<p>On the public Artificial Analysis leaderboard, Grok Voice Transcribe 2.0 ranks first for accuracy among 32 streaming models.</p>
+<h3>Accuracy vs. Price</h3>
+<p>Upper and to the right is better.</p>
+<p>Source:</p>
+<p>Artificial Analysis</p>
+<h3><a href="https://x.ai/news/grok-voice-transcribe-2#internal-evaluations">Internal Evaluations</a></h3>
+<p>In addition to public benchmarks, we measure word error rate on four internal sets drawn from production traffic: telephony audio from customer-support calls, conversations with Grok, spoken credentials such as account codes and email addresses, and short multilingual voice commands. Grok Voice Transcribe 2.0 improves on Grok Voice Transcribe 1.0 across all four, and on telephony it leads every model we tested.</p>
+<h3>Telephony (8 kHz)</h3>
+<p>Customer support calls · English</p>
+<h3>Conversational</h3>
+<p>Conversations with Grok · English</p>
+<h3>Credentials</h3>
+<p>Phone numbers, emails, addresses · English</p>
+<h3>Short Phrases</h3>
+<p>Voice-assistant utterances · 19 languages</p>
+<h2><a href="https://x.ai/news/grok-voice-transcribe-2#multilingual">Multilingual</a></h2>
+<p>Grok Voice Transcribe 2.0 transcribes dozens of languages, detects the language automatically, and follows mid-recording switches in a single pass. Multilingual accuracy is its largest improvement over Grok Voice Transcribe 1.0.</p>
+<h3>Transcription accuracy</h3>
+<p>Word Error Rate (%). Lower is better.</p>
+<p>Grok Voice Transcribe 2.0</p>
+<p>Grok Voice Transcribe 1.0</p>
+<p>ElevenLabs Scribe v2</p>
+<p>Deepgram Nova-3</p>
+<p>Short phrases such as in-car commands give the model little context to identify the language. On our short-phrase set, word error rate drops from 20.6% to 6.8%.</p>
+<h2><a href="https://x.ai/news/grok-voice-transcribe-2#features">Features</a></h2>
+<p>Grok Voice Transcribe 2.0 supports advanced configuration and controls. Existing Speech-to-Text API integrations get the accuracy improvement with no code changes:</p>
+<ul><li><strong>Batch and streaming.</strong> Transcribe recorded files and URLs, or transcribe an audio stream in real time.</li><li><strong>Word-level timestamps.</strong> Each word has precise start/end times and confidence scores.</li><li><strong>Speaker diarization.</strong> Label each speaker in the transcript, at no additional cost.</li><li><strong>Multichannel transcription.</strong> Transcribe up to 8 channels independently.</li><li><strong>Key term biasing.</strong> Pass up to 100 domain terms per request, such as product names or medical vocabulary.</li><li><strong>Text formatting.</strong> Numbers, dates, currencies, phone numbers, and email addresses are returned in written form.</li><li><strong>Filler word removal.</strong> Omit fillers such as &quot;um&quot; and &quot;uh&quot; from the transcript.</li><li><strong>Smart turn detection.</strong> Detect the end of a speaker's turn for voice agents.</li></ul>
+<h2><a href="https://x.ai/news/grok-voice-transcribe-2#grok-voice-powers-atlassian-loom">Grok Voice Powers Atlassian Loom</a></h2>
+<p><a href="https://www.loom.com/">Atlassian Loom</a> is widely used for recording and sharing screen recordings. Atlassian found Grok Voice Transcribe 2.0 more accurate than their existing solution for transcribing Loom videos. Accurate transcripts open up new AI workflows: record an action plan in Loom, pipe the transcript into Cursor, and it makes the code updates directly.</p>
+<blockquote>“We've always believed the best way to move work forward is to capture context once and let it flow everywhere. With Grok powering Loom's speech-to-text and Cursor turning that into code, we're closing the loop from context to code: record what you mean, and the work gets done. It's a glimpse of where AI-assisted development is headed.”</blockquote>
+<p>Sanchan Saxena</p>
+<p>, SVP of Teamwork Collection, Atlassian</p>
+<h2><a href="https://x.ai/news/grok-voice-transcribe-2#price">Price</a></h2>
+<p>Grok Voice Transcribe 2.0 pricing is identical to Grok Voice Transcribe 1.0. Batch transcription remains $0.10 per hour of audio and streaming $0.20 per hour, with diarization, timestamps, and key terms included.</p>
+<h3>Batch</h3>
+<p>USD per hour of audio</p>
+<h3>Streaming</h3>
+<p>USD per hour of audio</p>
+<p>Grok Voice Transcribe 2.0 will soon be the default in the Speech-to-Text API, and Grok Voice Transcribe 1.0 will be deprecated in the coming weeks. To stay on it during the transition, pin <code>grok-voice-transcribe-1.0</code>.</p>
+<h2>Start building with Grok Voice Transcribe</h2>
+<p>Try It Live</p>
+<p>View Docs</p>]]></content:encoded>
     </item>
     <item>
       <title>Introducing Grok 4.7</title>
@@ -459,65 +553,6 @@
 <h2><a href="https://x.ai/news/grok-build-memory#availability">Availability</a></h2>
 <p>Memory is available in Grok Build now. It applies to new sessions: run <code>/new</code> or start a fresh <code>grok</code>, and notes begin after the first completed turn.</p>
 <p>Try Free</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Introducing Grok Voice Transcribe 2.0</title>
-      <link>https://x.ai/news/grok-voice-transcribe-2</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-voice-transcribe-2?li=1</guid>
-      <pubDate>Fri, 18 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Back to news</p>
-<p>Sep 18, 2026</p>
-<h1>Introducing Grok Voice Transcribe 2.0</h1>
-<p>Announcing SpaceXAI's newest speech-to-text model, with unparalleled accuracy and cost effectiveness.</p>
-<p>Try It Live</p>
-<p>View Docs</p>
-<p>Today we're releasing Grok Voice Transcribe 2.0, our latest speech-to-text model. Across our real-world evaluations, Grok Voice Transcribe 2.0 is one of the most accurate transcription models available today and twice as accurate as Grok Voice Transcribe 1.0, at the same price.</p>
-<p>Grok Voice Transcribe 2.0 is built on the audio foundation model behind Grok Voice. Grok Voice already powers tens of thousands of customer-support calls a day, transcribes millions of hours of video narration, and runs voice agents in physical products, including the Grok assistant in Tesla vehicles. It is trained on a unique dataset of live, noisy, multilingual audio recorded across a diverse set of environments and refined with post-training.</p>
-<p>The result is one of the most accurate transcription models for speech in real-world settings.</p>
-<h2><a href="https://x.ai/news/grok-voice-transcribe-2#accuracy">Accuracy</a></h2>
-<p>Most transcription models do well on clean, single-speaker audio. Real-world audio is harder: flaky phone lines, competing voices, local accents, and phone numbers or email addresses read aloud. We built Grok Voice Transcribe 2.0 for the hardest audio across conditions and environments.</p>
-<p>On the public Artificial Analysis leaderboard, Grok Voice Transcribe 2.0 ranks first for accuracy among 32 streaming models.</p>
-<h3>Accuracy vs. Price</h3>
-<p>Upper and to the right is better.</p>
-<p>Source:</p>
-<p>Artificial Analysis</p>
-<h3><a href="https://x.ai/news/grok-voice-transcribe-2#internal-evaluations">Internal Evaluations</a></h3>
-<p>In addition to public benchmarks, we measure word error rate on four internal sets drawn from production traffic: telephony audio from customer-support calls, conversations with Grok, spoken credentials such as account codes and email addresses, and short multilingual voice commands. Grok Voice Transcribe 2.0 improves on Grok Voice Transcribe 1.0 across all four, and on telephony it leads every model we tested.</p>
-<h3>Telephony (8 kHz)</h3>
-<p>Customer support calls · English</p>
-<h3>Conversational</h3>
-<p>Conversations with Grok · English</p>
-<h3>Credentials</h3>
-<p>Phone numbers, emails, addresses · English</p>
-<h3>Short Phrases</h3>
-<p>Voice-assistant utterances · 19 languages</p>
-<h2><a href="https://x.ai/news/grok-voice-transcribe-2#multilingual">Multilingual</a></h2>
-<p>Grok Voice Transcribe 2.0 transcribes dozens of languages, detects the language automatically, and follows mid-recording switches in a single pass. Multilingual accuracy is its largest improvement over Grok Voice Transcribe 1.0.</p>
-<h3>Transcription accuracy</h3>
-<p>Word Error Rate (%). Lower is better.</p>
-<p>Grok Voice Transcribe 2.0</p>
-<p>Grok Voice Transcribe 1.0</p>
-<p>ElevenLabs Scribe v2</p>
-<p>Deepgram Nova-3</p>
-<p>Short phrases such as in-car commands give the model little context to identify the language. On our short-phrase set, word error rate drops from 20.6% to 6.8%.</p>
-<h2><a href="https://x.ai/news/grok-voice-transcribe-2#features">Features</a></h2>
-<p>Grok Voice Transcribe 2.0 supports advanced configuration and controls. Existing Speech-to-Text API integrations get the accuracy improvement with no code changes:</p>
-<ul><li><strong>Batch and streaming.</strong> Transcribe recorded files and URLs, or transcribe an audio stream in real time.</li><li><strong>Word-level timestamps.</strong> Each word has precise start/end times and confidence scores.</li><li><strong>Speaker diarization.</strong> Label each speaker in the transcript, at no additional cost.</li><li><strong>Multichannel transcription.</strong> Transcribe up to 8 channels independently.</li><li><strong>Key term biasing.</strong> Pass up to 100 domain terms per request, such as product names or medical vocabulary.</li><li><strong>Text formatting.</strong> Numbers, dates, currencies, phone numbers, and email addresses are returned in written form.</li><li><strong>Filler word removal.</strong> Omit fillers such as &quot;um&quot; and &quot;uh&quot; from the transcript.</li><li><strong>Smart turn detection.</strong> Detect the end of a speaker's turn for voice agents.</li></ul>
-<h2><a href="https://x.ai/news/grok-voice-transcribe-2#grok-voice-powers-atlassian-loom">Grok Voice Powers Atlassian Loom</a></h2>
-<p><a href="https://www.loom.com/">Atlassian Loom</a> is widely used for recording and sharing screen recordings. Atlassian found Grok Voice Transcribe 2.0 more accurate than their existing solution for transcribing Loom videos. Accurate transcripts open up new AI workflows: record an action plan in Loom, pipe the transcript into Cursor, and it makes the code updates directly.</p>
-<blockquote>“We've always believed the best way to move work forward is to capture context once and let it flow everywhere. With Grok powering Loom's speech-to-text and Cursor turning that into code, we're closing the loop from context to code: record what you mean, and the work gets done. It's a glimpse of where AI-assisted development is headed.”</blockquote>
-<p>Sanchan Saxena</p>
-<p>, SVP of Teamwork Collection, Atlassian</p>
-<h2><a href="https://x.ai/news/grok-voice-transcribe-2#price">Price</a></h2>
-<p>Grok Voice Transcribe 2.0 pricing is identical to Grok Voice Transcribe 1.0. Batch transcription remains $0.10 per hour of audio and streaming $0.20 per hour, with diarization, timestamps, and key terms included.</p>
-<h3>Batch</h3>
-<p>USD per hour of audio</p>
-<h3>Streaming</h3>
-<p>USD per hour of audio</p>
-<p>Grok Voice Transcribe 2.0 will soon be the default in the Speech-to-Text API, and Grok Voice Transcribe 1.0 will be deprecated in the coming weeks. To stay on it during the transition, pin <code>grok-voice-transcribe-1.0</code>.</p>
-<h2>Start building with Grok Voice Transcribe</h2>
-<p>Try It Live</p>
-<p>View Docs</p>]]></content:encoded>
     </item>
     <item>
       <title>Setting Grok Bot loose on procurement</title>
@@ -2800,30 +2835,6 @@ print(response.url)</code></pre>
 <p>SuperGrok and X Premium Plus subscribers can install Grok Build with the command above and start building. If you don't have SuperGrok yet, <a href="https://grok.com/supergrok?referrer=grok-build">upgrade here</a> — we're excited to see what you create.</p>
 <h3>Install Grok Build</h3>
 <p>Upgrade</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Use Grok in OpenCode</title>
-      <link>https://x.ai/news/grok-opencode</link>
-      <guid isPermaLink="true">https://x.ai/news/grok-opencode?li=1</guid>
-      <pubDate>Mon, 25 May 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>Back to news</p>
-<p>May 21, 2026</p>
-<h1>Use Grok in OpenCode</h1>
-<p>Use your SuperGrok or X Premium subscription inside OpenCode.</p>
-<p>After connecting your Grok account, start coding with Grok Build, the same model that powers xAI's <a href="https://x.ai/build">terminal-based coding agent</a>.</p>
-<h2><a href="https://x.ai/news/grok-opencode#setup">Setup</a></h2>
-<p>Install OpenCode:</p>
-<pre><code>curl -fsSL https://opencode.ai/install | bash</code></pre>
-<p>bash</p>
-<p>Launch OpenCode:</p>
-<pre><code>opencode</code></pre>
-<p>bash</p>
-<p>Inside OpenCode, run <code>/connect</code> and pick <strong>xAI</strong>:</p>
-<pre><code>/connect</code></pre>
-<p>txt</p>
-<p>Pick the sign-in method that fits your setup — both use your Grok subscription:</p>
-<ul><li><strong>xAI Grok OAuth (SuperGrok Subscription)</strong> — opens your browser to sign in.</li><li><strong>xAI Grok OAuth (Headless / Remote / VPS)</strong> — prints a code and URL for SSH or remote hosts.</li></ul>
-<p>More open-source agents and integrations are coming soon.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
