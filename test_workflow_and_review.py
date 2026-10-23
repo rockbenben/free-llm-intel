@@ -10494,5 +10494,68 @@ class TestIndexCoverageIndependent(unittest.TestCase):
                         f"报告必须指名被删的那条（{victim_disp[:20]!r}）：{bad[:3]}")
 
 
+class TestEveryArchiveLineParses(unittest.TestCase):
+    """归档里每条文章行都必须能被解析器读回来：读不回 = 这篇文章从所有产物里消失。
+
+    为什么已有对账闸挡不住：`TestIndexCoverageIndependent` 的缺失清单是**从解析结果出发**
+    数行的，一行只要解析器读不出，它就从来没进过 `rows`，那条闸只会看见「归档少了一条」，
+    而不是「归档里有一条没人能读」。批量润色标题的脚本如果在 `<!--orig:…-->` 之后再粘一段
+    裸文本，行的开头形态完全正常，文章却整篇掉出索引与 feed，按解析对账的守卫一片绿。
+    """
+
+    _LINE = re.compile(r"^\d+\.\s+\[.+?\]\((https?://[^)#]+)\)")
+
+    def _unparsable(self, repo):
+        bad = []
+        for arch in sorted((repo / "llm-news").glob("*.md")):
+            parsed = {crawler_llm_intel._article_key(a.url or "")
+                      for a in crawler_llm_intel.parse_archived_articles(arch)}
+            for i, line in enumerate(arch.read_text(encoding="utf-8").splitlines(), 1):
+                s = line.strip()
+                m = self._LINE.match(s)
+                if not m:
+                    continue
+                # 行的身份可以是可见链接，也可以是 `<!--url:…-->` 注释里的那条
+                keys = [crawler_llm_intel._article_key(m.group(1))]
+                ident = re.search(r"<!--\s*url:(.*?)\s*-->", s)
+                if ident:
+                    keys.append(crawler_llm_intel._article_key(ident.group(1).strip()))
+                if not any(k in parsed for k in keys):
+                    bad.append(f"{arch.name}:{i}: {s[:70]}")
+        return bad
+
+    def test_real_archives_are_fully_readable(self):
+        repo = Path(__file__).resolve().parent
+        bad = self._unparsable(repo)
+        self.assertEqual(bad, [], "归档存在解析器读不回的行:\n" + "\n".join(bad[:15]))
+        # 形状证人：扫描范围必须真的覆盖到产物规模，否则「零命中」只是没数过
+        lines = sum(1 for f in (repo / "llm-news").glob("*.md")
+                    for l in f.read_text(encoding="utf-8").splitlines()
+                    if self._LINE.match(l.strip()))
+        self.assertGreater(lines, 3000, f"归档行扫描数量异常（{lines}），形状证人失败")
+
+    def test_guard_fires_on_a_line_the_parser_cannot_read(self):
+        repo = Path(__file__).resolve().parent
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "llm-news").mkdir(parents=True)
+            victim = None
+            for f in sorted((repo / "llm-news").glob("*.md")):
+                lines = f.read_text(encoding="utf-8").splitlines()
+                hit = next((i for i, l in enumerate(lines)
+                            if self._LINE.match(l.strip())
+                            and l.strip().endswith("-->")), None)
+                if hit is None:
+                    continue
+                lines[hit] = lines[hit] + "一段解析器读不到的裸文本"
+                (root / "llm-news" / f.name).write_text("\n".join(lines) + "\n", encoding="utf-8")
+                victim = f"{f.name}:{hit + 1}"
+                break
+            self.assertIsNotNone(victim, "夹具没造出被污染的行，证人无从开枪")
+            bad = self._unparsable(root)
+        self.assertTrue(any(b.startswith(victim) for b in bad),
+                        f"故意写坏一条归档行后守卫必须点名它（{victim}），实际: {bad[:3]}")
+
+
 if __name__ == "__main__":
     unittest.main()
