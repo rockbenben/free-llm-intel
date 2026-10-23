@@ -9,8 +9,8 @@
 
 ## 全部文章（共 115 篇，按日期倒序；无日期条目列于最后）
 
-1. [SpaceX 超级智能合作伙伴网络简介](https://x.ai/news/partnernetworkannouncement)（2026-10-22） <!--orig:Introducing the SpaceX Super Intelligence Partner Network-->
-2. [使用 Grok Bot 检测和响应事件](https://x.ai/news/incident-sweep)（2026-10-20） <!--orig:Using Grok Bot to detect and respond to incidents-->
+1. [SpaceX Super Intelligence 合作伙伴网络正式推出](https://x.ai/news/partnernetworkannouncement)（2026-10-22） <!--orig:Introducing the SpaceX Super Intelligence Partner Network-->
+2. [用 Grok Bot 检测并响应线上事故](https://x.ai/news/incident-sweep)（2026-10-20） <!--orig:Using Grok Bot to detect and respond to incidents-->
 3. [推出 Grok Voice 3.0](https://x.ai/news/grok-voice-3)（2026-10-14） <!--orig:Introducing Grok Voice 3.0-->
 4. [X 订阅简介](https://x.ai/news/x-subscription)（2026-10-12） <!--orig:Introducing The X Subscription-->
 5. [团队机器人：共享人工智能队友，边工作边学习](https://x.ai/news/team-bots)（2026-09-28） <!--orig:Team Bots: shared AI teammates that learn as they work-->

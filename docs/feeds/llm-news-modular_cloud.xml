@@ -9,11 +9,64 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-modular_cloud.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 22 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Modular：MAX 现已提供源码并向所有人开放</title>
+      <title>Modular：MAX 现在源码可用，向所有人开放</title>
       <link>https://www.modular.com/blog/max-license</link>
       <guid isPermaLink="true">https://www.modular.com/blog/max-license</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Modular: MAX is now source available and open to everyone</description>
+      <content:encoded><![CDATA[<h1>Modular：MAX 现在源码可用，向所有人开放</h1>
+<p>Modular 团队</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6ada33a38fa22d25cecfaab5_ProductReleaseBlogPost-Option_9.1.jpeg" alt=""></p>
+<p>今天，我们很高兴地宣布 Modular 的一个重大里程碑：<strong>完整的 MAX 源代码现已公开可用</strong>，同时推出的还有一份被大幅简化的 MAX License。</p>
+<p>开发者现在可以探索、修改并扩展整个 MAX 技术栈。在此前已经开源的 kernel、模型和服务基础设施之上，本次发布进一步开放了支撑 MAX 异构能力的其余核心组件：graph compiler、runtime 和硬件 backend。其中包含对 CPU 和 GPU 的支持。</p>
+<p>根据<a href="https://www.modular.com/legal/max-license">新许可证</a>，你可以用 MAX 构建并分发商业产品，无需支付许可费或版税。我们同时也把 MAX 向社区贡献开放，先从 bug 修复开始，并随着时间推移逐步扩大范围。我们还在积极地把 agentic 基础设施建设注入 MAX，这会提升我们整体的开发方式。</p>
+<p>这一里程碑建立在我们循序渐进开放技术栈的做法之上。我们 2024 年从 Mojo 标准库开始，随后在 2025 年一年里陆续开放了 MAX 的 kernel、模型、服务基础设施和 API。今年八月，我们把整个 Mojo compiler 和工具链完全开源。今天，我们把剩余的 MAX compiler、runtime 和硬件 backend 也做成源码可用，从而补上完整的图景。</p>
+<p>随着 Modular 进入<a href="https://www.modular.com/blog/qualcomm-completes-acquisition-of-modular">在 Qualcomm 内部的新篇章</a>，我们正在加速自己让异构算力大众化的使命。未来几个月里，我们将推出<a href="https://www.modular.com/alliance">一个联盟计划</a>，目标是把开发者和硬件厂商聚集到同一个软件平台周围。开放 MAX 是迈向那个共享生态的第一步。</p>
+<h1><strong>新的 MAX License</strong></h1>
+<p>我们设计<a href="https://www.modular.com/legal/max-license">新的 MAX License</a>时，要平衡两个优先事项：让社区能够以更灵活的方式构建，以及 MAX 与其生态的长期可持续性。</p>
+<p>这首先要给开发者构建的自由。你可以使用、修改、扩展 MAX，并用 MAX 构建商业产品，无需许可费或版税。我们的目标是移除采用上的障碍，让开发者、研究人员和硬件厂商都能在整个技术栈之上自由创新。</p>
+<p>同样重要的，是确保这个生态能够长期繁荣。我们的团队花了几十年时间构建和维护重大的开源项目，我们也<a href="https://www.modular.com/blog/democratizing-ai-compute-part-8-what-about-the-mlir-compiler-infrastructure">见识过它们面临的挑战</a>。碎片化是一个常见的坑，对 MAX 这样的基础基础设施尤其如此。MAX 的核心目标是统一跨硬件的编程模型，而如果每个平台都开发自己互不兼容的版本，这个目标就会难得多。</p>
+<p>我们在设计这份许可证时把这些考量都放了进去。和 Mojo 一样，我们预计自己的做法会随着技术成熟、随着更多听取社区的声音而持续演进。</p>
+<h2><strong>MAX License 覆盖什么</strong></h2>
+<p>许多 MAX 组件已经在 Apache 2.0 下开源。其中包括用 Mojo 写成的 MAX kernel 库、用于给加速器编程的 Mojo 接口、面向服务 CLI 与建模的 Python API、MAX 模型，等等。所有这些组件都会继续留在 Apache 2.0 之下。</p>
+<p>新的 MAX License 涵盖我们今天开放源码的那些 MAX 内部实现，加上我们分发的 MAX 二进制文件。每个源文件都包含一段头部说明，标明适用于它的许可证。</p>
+<p>以下是 MAX License 允许的行为：</p>
+<ul><li><strong>在任何硬件上无限制地使用 MAX，无需许可费</strong>：在任何硬件上用 MAX 构建，完全免费。</li><li><strong>反哺 MAX</strong>：为了向主 MAX 项目回馈贡献而 fork MAX。</li><li><strong>在 MAX 之上构建库和应用程序</strong>：用 MAX 创建项目和库，并按你自己选择的方式给它们授权。MAX 的各个组件，例如 kernel（Apache 2.0）、graph compiler（MAX License）和设备 backend（MAX License），保留各自的许可证，而你可以按自己的意愿为自己的代码授权。</li></ul>
+<p>这里有几条限制：</p>
+<ul><li><strong>借助 AI 重新实现 MAX</strong>：你不能把 MAX 的任何部分作为输入交给 AI 系统，用来产出 MAX 的重新实现。我们想要建立一个社区、把大家聚到一起，而不是充当众多 AI 驱动的 fork 的地基。</li><li><strong>商业托管推理服务：</strong>如果你把 MAX 用于你卖给客户的托管推理或训练服务，你就必须在你的产品上显著展示 “Modular Accelerated” 字样，以承认我们对你的商业产品所做的贡献。</li><li><strong>发布和分发修改后的源代码</strong>：你不能发布或分发经过修改的 MAX 源代码，除非是为了向主项目回馈贡献而 fork MAX。我们知道 AI 赛道上竞争激烈、强手如林，也希望复现 LLVM 的成功——让人们在一个共享的代码库上构建，这个代码库能够满足许多不同公司的需求，比任何一家公司单独为自己构建的都更好。</li></ul>
+<p>我们的意图是鼓励试验和创新，同时确保 MAX 继续作为一个统一的软件基础来演进。开发者可以自由地修改 MAX、用 MAX 做试验，我们也希望把改进贡献回项目这件事变得尽可能容易。这份许可证在分发上的限制，是为了防止 MAX 碎片化成互不兼容的版本，而不是要劝阻单个开发者探索新想法。我们理解，试验那些还没准备好贡献给上游的修改，往往有很多正当的理由；我们会继续与社区合作，确保我们的开发和贡献流程能支撑这种创新。</p>
+<p>MAX 也可能收集使用遥测数据，以帮助我们改进产品。我们依照自己的<a href="https://www.modular.com/legal/privacy">隐私政策</a>处理个人信息，该政策说明了用户在适用数据保护法律下享有的权利，包括 EU 和 UK GDPR 以及加州消费者隐私法。和大多数软件许可证一样，MAX 按现状提供，不附带任何保证。</p>
+<p>想了解更多 MAX License 的细节，请<a href="https://forum.modular.com/t/max-license-faq/3578">查看 FAQ</a>并<a href="https://www.modular.com/legal/max-license">阅读完整许可证</a>。</p>
+<h1><strong>接下来做什么</strong></h1>
+<p>随着完整的 MAX 代码库现在源码可用，我们从今天起同时也把 MAX 向社区贡献开放。起初我们只<a href="https://github.com/modular/modular/blob/main/max/docs/contributing/README.md">接受 bug 修复</a>，并计划随着时间推移扩展到重构和其他改动，沿用我们在 Mojo 标准库和 compiler 上用过的同一套循序渐进的做法。</p>
+<p>我们的下一步，是把 MAX 和 Mojo 带进更广阔的 AI 生态。在 ModCon 上，我们宣布了 <a href="https://www.modular.com/alliance">Modular 联盟计划</a>，把硬件厂商、模型实验室和数据中心运营方聚拢到一个共同的软件基础周围。</p>
+<p>贡献工程资源、算力或早期模型 checkpoint 的合作伙伴，将帮助塑造 MAX 的未来：在治理和一致性标准上有话语权，对路线图有输入，在上游贡献上有优先权，可以提前获得模型 checkpoint，拥有专属的硬件 backend，以及更宽松的许可条款。</p>
+<p>未来几个月我们会分享更多关于该联盟的内容。如果你有兴趣参与，请联系 alliance@modular.com。</p>
+<p>想要进一步了解新的 MAX License，欢迎参加 Modular 联合创始人 Chris Lattner 和 Tim Davis 主持的现场问答，时间是 11 月 10 日上午 10 点（PT）。<a href="https://luma.com/max-license">点此报名</a>。</p>
+<h1><strong>开始使用</strong></h1>
+<ul><li>浏览 <a href="https://github.com/modular/modular/tree/main/max">GitHub 上的 MAX 源码</a></li><li>阅读完整的 <a href="https://www.modular.com/legal/community">MAX License</a></li><li>阅读 <a href="https://forum.modular.com/t/max-license-faq/3578">MAX License FAQ</a></li><li>用 <code>pip install max[all]</code> 安装 MAX</li><li>查看<a href="https://github.com/modular/modular/blob/main/max/docs/contributing/README.md">贡献者指南</a>，提交一个 bug 修复</li><li><a href="https://github.com/modular/modular/blob/main/max/docs/development.md">从源码构建 MAX</a></li><li>在 <a href="https://forum.modular.com/">Modular 论坛</a>或 <a href="https://discord.gg/modular">Discord</a>分享你的反馈</li></ul>
+<p>我们期待看到你用 MAX 构建出什么。如果许可证里还有任何不够清楚的地方，我们想听你说。正是你们的反馈塑造了这次发布，它也会继续指引接下来的步伐。</p>
+<h2>阅读 Modular 的更多内容</h2>
+<p>查看全部博客</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6ada2f7b9f71f84fdcd7ddf1_image.png" alt=""></p>
+<p>Modular 26.7：开放 MAX</p>
+<p>2026 年 10 月 22 日</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a7b1bf1bd5b664c84aac08f_Blog-26.5-sm.jpeg" alt=""></p>
+<p>Modular 26.5：Mojo 1.0 来了！</p>
+<p>2026 年 8 月 11 日</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a341d0fa8e1fd3e2ae53890_264.jpeg" alt=""></p>
+<p>Modular 26.4：SOTA MoE 服务化、通过 Agent Skills 完成模型上线、Mojo 1.0 Beta 2 及更多内容</p>
+<p>2026 年 6 月 18 日</p>
+<p>与 Modular 一起构建 AI 的未来</p>
+<p>立即开始 - 免费</p>
+<p>查看各版本</p>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="金发人士正在使用一台带 Apple 标志的笔记本电脑。">立即注册今天就注册我们的 Cloud Platform，轻松开始使用。<a href="https://docs.modular.com/max/get-started">注册</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="带黑色手柄和圆形透明镜片的放大镜表情符号。">浏览开源模型浏览我们的模型目录，或者部署你自己的自定义模型<a href="https://www.modular.com/models">浏览模型</a></li></ul>
+<h2>订阅我们的新闻通讯</h2>
+<p>把我们的最新消息、公告和更新直接送到你的收件箱。随时可以退订。</p>
+<p>感谢订阅我们的新闻通讯！🚀</p>
+<p>谢谢你，</p>
+<p>Modular 销售团队</p>
+<p>Oops！提交表单时出了问题。</p>]]></content:encoded>
     </item>
     <item>
       <title>Modular：Modular26.7：开放MAX</title>

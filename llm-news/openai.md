@@ -11,19 +11,19 @@
 
 ## 全部文章（共 1314 篇，按日期倒序；无日期条目列于最后）
 
-1. [使用 Decisions API 构建响应速度更快的应用程序](https://openai.com/index/decisions-api)（2026-10-22） <!--orig:Build more responsive apps with the Decisions API-->
-2. [FDE 在 OpenAI 中意味着什么](https://openai.com/index/forward-deployed-engineering-means)（2026-10-22） <!--orig:What FDE means at OpenAI-->
+1. [用 Decisions API 构建响应更快的应用](https://openai.com/index/decisions-api)（2026-10-22） <!--orig:Build more responsive apps with the Decisions API-->
+2. [在 OpenAI，FDE 意味着什么](https://openai.com/index/forward-deployed-engineering-means)（2026-10-22） <!--orig:What FDE means at OpenAI-->
 3. [Uber 通过 OpenAI 为所有员工带来 ChatGPT Work](https://openai.com/index/uber-chatgpt-work-rollout)（2026-10-22） <!--orig:Uber brings ChatGPT Work to all employees with OpenAI-->
-4. [AT&T 如何重新考虑与 OpenAI 合作的内部法律工作](https://openai.com/index/att-legal)（2026-10-21） <!--orig:How AT&T is rethinking in-house legal work with OpenAI-->
+4. [AT&T 正在用 OpenAI 重塑内部法务工作](https://openai.com/index/att-legal)（2026-10-21） <!--orig:How AT&T is rethinking in-house legal work with OpenAI-->
 5. [通过一致的标准实现广泛的访问](https://openai.com/index/broad-access-through-consistent-standards)（2026-10-21） <!--orig:Broad access through consistent standards-->
 6. [OpenAI 模型即将登陆 Google Cloud](https://openai.com/index/openai-models-google-cloud)（2026-10-21） <!--orig:OpenAI models are coming to Google Cloud-->
 7. [修补地球：特工发现关键漏洞时进行全球响应协调](https://openai.com/index/coordinated-disclosure-of-critical-vulnerabilities)（2026-10-21） <!--orig:Patch the Planet: global response coordination as agents uncover critical vulnerabilities-->
 8. [ChatGPT 广告扩展到 26 个新国家/地区，已有超过 100,000 名广告商使用该平台](https://openai.com/index/chatgpt-ads-expands-26-new-countries)（2026-10-21） <!--orig:ChatGPT Ads expands to 26 new countries as over 100,000 advertisers have used the platform-->
-9. [使用数千个人工智能代理来发现生物数据中的新线索](https://openai.com/index/scaling-ai-research-for-complex-biological-data)（2026-10-21） <!--orig:Using thousands of AI agents to uncover new leads in biological data-->
+9. [用数千个 AI agent 从生物数据里挖出新研究线索](https://openai.com/index/scaling-ai-research-for-complex-biological-data)（2026-10-21） <!--orig:Using thousands of AI agents to uncover new leads in biological data-->
 10. [Cloudflare 通过 OpenAI 将漏洞发现与防御联系起来](https://openai.com/index/cloudflare-cyber)（2026-10-21） <!--orig:Cloudflare links vulnerability discovery to defense with OpenAI-->
-11. [我们如何构建 ChatGPT 新颖的广告堆栈来提高用户信任度和相关性](https://openai.com/index/building-chatgpt-ad-stack)（2026-10-21） <!--orig:How we built ChatGPT’s novel ad stack for user trust and relevance-->
+11. [我们如何为 ChatGPT 搭一套全新的广告技术栈，兼顾用户信任与相关性](https://openai.com/index/building-chatgpt-ad-stack)（2026-10-21） <!--orig:How we built ChatGPT’s novel ad stack for user trust and relevance-->
 12. [前沿人工智能的民主治理，第二部分：赋予网络防御者权力](https://openai.com/index/empowering-cyber-defenders)（2026-10-21） <!--orig:Democratic governance of frontier AI, part II: Empowering cyber defenders-->
-13. [特许经营商利用 ChatGPT Work 将现金核对时间缩短 94%](https://openai.com/index/ted-taylor-restaurant)（2026-10-20） <!--orig:Franchisee reconciles cash in 94% less time with ChatGPT Work-->
+13. [一家特许经营商用 ChatGPT Work 把现金对账时间缩短了 94%](https://openai.com/index/ted-taylor-restaurant)（2026-10-20） <!--orig:Franchisee reconciles cash in 94% less time with ChatGPT Work-->
 14. [Terminal X 与 GPT-6.1 的高级投资者判断相符 88.6%](https://openai.com/index/terminal-x)（2026-10-20） <!--orig:Terminal X matches senior investor judgment 88.6% with GPT-6.1-->
 15. [OpenAI 收购 Orchestra Bio](https://openai.com/index/openai-to-acquire-orchestra-bio)（2026-10-20） <!--orig:OpenAI acquires Orchestra Bio-->
 16. [推进低资源编程语言的编码](https://openai.com/index/low-resource-programming-languages)（2026-10-19） <!--orig:Advancing coding in low‑resource programming languages-->

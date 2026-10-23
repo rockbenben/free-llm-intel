@@ -9,18 +9,153 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 22 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>使用 Decisions API 构建响应速度更快的应用程序</title>
+      <title>用 Decisions API 构建响应更快的应用</title>
       <link>https://openai.com/index/decisions-api</link>
       <guid isPermaLink="true">https://openai.com/index/decisions-api</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Build more responsive apps with the Decisions API</description>
+      <content:encoded><![CDATA[<h1>用 Decisions API 构建响应更快的应用</h1>
+<p>为任何应用提供快速、聚焦、低成本的决策。</p>
+<p>应用和 agent 在一整套工作流中会做出许多小决策：如何对输入做分类、把请求路由到哪里、下一步该执行哪个动作。单个来看它们很简单。一旦上了规模，它们的延迟和成本就会累积起来。</p>
+<p>今天，我们宣布 Decisions API 正式全面可用。Decisions API 基于 <a href="https://openai.com/index/introducing-gpt-6-sol-and-luna/">GPT‑6 Luna</a> 构建，它把 Luna 的智能聚焦在答案有界的问题上，帮助应用和 agent 针对文本、图像和结构化输入做出接近实时的决策，比通过 Responses API 使用 GPT‑6 Luna 快至多 10 倍。</p>
+<p>自公开测试版以来，我们新增了原生的 GPT‑Live 集成、用于复用上下文的 prompt caching，以及在美国和 EU 的推理驻留。开发者还可以传入原生 JSON 输入、在问题指令里包含图像，并在单次请求中提出最多 400 个问题，是此前上限的两倍。我们也持续改进延迟，包括在亚洲若干区域补充了算力容量。</p>
+<h2>团队如何使用 Decisions API</h2>
+<p>Decisions 的早期采用情况表明，它能适用于各种各样的用例。</p>
+<p>在 OpenAI 内部，各团队正把 Decisions API 用在产品与业务工作流中。dots 团队用它来缩短响应时间、提升互动性。我们的 Personal Finance 团队用它给交易描述归类；而我们的 Communications 团队用 Decisions 按主题对报道分类，并就它是在强化还是挑战关键叙事给出评分，从而帮助识别哪些内容值得更仔细的复核。</p>
+<p>这些早期的例子说明，快速、结构化的决策能力可以在非常广泛的用例中把进来的信息转化为有用的行动。客户对 Decisions API 的应用同样宽泛，从精准地把 AI 成本归因到实际工作，到让语言学习体验更有互动性。</p>
+<p>第 1 个，共 5 个</p>
+<blockquote>“借助 Box Extract 和 Decisions API，我们对业务文档进行分类，并把它们路由到正确的下一步。在我们的评测中，Decisions API 在 30 个保险凭证用例上把路由选择提速约 5x，准确率与 Responses API 相同——既把例行工作自动化了，又把置信度较低的用例送交给审核人员。”</blockquote>
+<p><em>—Biswaroop Palit，产品管理平台与集成副总裁，Box</em></p>
+<blockquote>“Decisions API 正在帮助我们给 agent 生成的 [rshell 命令] 在执行前评估风险，从而自主地修复问题。与可用的前沿模型相比，它的 p95 快了 40x，准确率却相当——这让我们可以把 Decisions 放进修复动作的热路径里。”</blockquote>
+<p><em>—AJ Stuyvenberg，Staff Engineer，Datadog</em></p>
+<blockquote>“与 GPT‑6 Luna 相比，Decisions API 让我们把 AI 成本归因到实际工作时快了 4x、便宜了 30%，而且没有牺牲准确率。”</blockquote>
+<p><em>—René Sultan，Research Engineer，Ramp</em></p>
+<blockquote>“在 Sierra，我们在实时客户对话的部分编排环节中用 Decisions API 来选择正确的下一步动作。它的 p95 低于 280 ms，比我们之前的做法快约 3×、每次调用成本低 90%，而客户结果没有任何下降。”</blockquote>
+<p><em>—Ajeet Grewal，Engineer，Sierra</em></p>
+<blockquote>“对语言学习者来说，时机很关键。在我们的测试中，GPT‑Live 里的 Decisions API 集成能够把做出下一步动作所需的时间缩短超过 90%，从 1.4s 降到 0.13s，创造出了互动性强得多的学习体验。”</blockquote>
+<p>—Andrew Hsu，CTO，Speak</p>
+<ul><li>Box</li><li>Datadog</li><li>Ramp</li><li>Sierra</li><li>Speak</li></ul>
+<h2>选择你的应用所需要的决策类型</h2>
+<p>使用 Decisions API 很简单：开发者先定义一个问题以及它允许的答案，再以文本、图像或原生 JSON 的形式提供上下文。API 会返回三种受支持的答复类型之一——一个概率、一个选择，或一个评分——应用可以据此决定接下来做什么。答复类型的多样性让 Decisions 能够适用于非常广泛的各种用例。</p>
+<p>Decisions API 支持三种答复类型：</p>
+<table><thead><tr><th>类型</th><th>用它来</th><th>主要结果</th></tr></thead><tbody><tr><td>predicate</td><td>估计某个条件为真的概率，例如产品是否存在可见损伤。</td><td>probability：对该条件为真的 0 到 1 的估计值。</td></tr><tr><td>choice</td><td>从你预先定义的选项中选一个，例如 agent 应该继续、重试，还是请求澄清。</td><td>choice：你所提供的取值之一。响应中还会包含概率和置信度。</td></tr><tr><td>score</td><td>依照评分标准里有序的等级给一个输入评级，例如损伤的严重程度。</td><td>score：各等级索引按概率加权后的平均值。</td></tr></tbody></table>
+<h2>用 Decisions API 和 GPT‑Live 构建实时语音体验</h2>
+<p>借助 <a href="https://openai.com/index/introducing-gpt-live-1-in-the-api/">GPT‑Live</a>，你可以为语音应用带来自然、富有表现力的对话，并由顺畅的打断处理让对话保持连贯。Decisions API 如今已<a href="https://developers.openai.com/api/docs/guides/decisions-voice">原生集成 GPT‑Live</a>，帮助应用在实时对话过程中做出快速、聚焦的决策。客服 agent 可以决定是提出一个澄清问题、路由一个请求，还是升级一个问题。avatar 可以在用户对它说话时调整自己的面部表情，并根据用户说的话以眨眼或微笑回应，营造更有互动感的体验。</p>
+<p>下面的示例用 transcript 更新来选择 avatar 的表情。把这段配置添加到已有 GPT‑Live 会话的 <code>session.triggers</code> 中。</p>
+<h4>JSON</h4>
+<pre><code>1{2  &quot;type&quot;: &quot;decisions&quot;,3  &quot;event_type&quot;: &quot;session.input_transcript.delta&quot;,4  &quot;decisions&quot;: {5    &quot;questions&quot;: [{6      &quot;type&quot;: &quot;choice&quot;,7      &quot;name&quot;: &quot;reaction&quot;,8      &quot;instructions&quot;: &quot;Choose an appropriate reaction for the avatar based on the user's latest message.&quot;,9      &quot;choices&quot;: [10        { &quot;value&quot;: &quot;neutral&quot; },11        { &quot;value&quot;: &quot;happy&quot; },12        { &quot;value&quot;: &quot;sad&quot; },13        { &quot;value&quot;: &quot;concerned&quot; }14      ]15    }]16  }17}</code></pre>
+<p>Live 会发出一个 <code>decision.event</code>；应用读取选中的 <code>reaction</code>，并据此让角色做出相应动画。<a href="https://developers.openai.com/api/docs/guides/decisions-voice">了解更多关于把语音接入 Decisions API 的内容。</a></p>
+<h2>亲自用 GPT‑Live 试试 Decisions</h2>
+<p>麦克风已关闭</p>
+<p><img src="https://openai.com/_next/static/immutable/media/thinking-bulb.1z1_50iiwd5ra.webp" alt=""></p>
+<p>在你开始之前麦克风保持关闭</p>
+<p>正在连接</p>
+<p>会话将在 0:00 后结束</p>
+<p>会话已结束。如果你还想继续聊，请重新开始。</p>
+<p>在你开始之前麦克风保持关闭</p>
+<h2>表情面板</h2>
+<p>点按一张脸即可预览。</p>
+<h2>实时决策</h2>
+<p>观察 Decisions API 如何根据你们各自说的话来选择面部表情。</p>
+<h3>你说的话</h3>
+<p>在你说话时观察它的反应。</p>
+<h3>助手说的话</h3>
+<p>在助手回复时观察它的表情。</p>
+<p>可以试试说</p>
+<p>我正在为我家的猫排练一段试镜。它中途走掉了。</p>
+<p>我有个秘密。你再凑近一点。</p>
+<p>其实，角色被我姐姐拿到了。这是她的第一场演出！</p>
+<p>我对明天有点紧张。你能陪我坐一会儿吗？</p>
+<p>我刚拿到那个角色了！你能和我一起庆祝吗？</p>
+<p>先做出一副惊讶的表情，然后告诉我你看到了什么。</p>
+<p>你能在网上搜一下下一场流星雨吗？</p>
+<p>我正在为我家的猫排练一段试镜。它中途走掉了。</p>
+<p>本演示有时长限制。使用本演示即表示你同意 OpenAI 的<a href="https://openai.com/policies/terms-of-use/">服务条款⁠</a>并确认已知悉我们的<a href="https://openai.com/policies/privacy-policy/">隐私政策⁠</a>。</p>
+<h2>构建并评估你的第一个决策</h2>
+<p>Decisions API 今天起通过专用的 Decisions endpoint 全面可用，使用的模型是 GPT‑6 Luna。当前的费率与缓存详情请参阅<a href="https://developers.openai.com/api/docs/guides/decisions#pricing-and-availability">定价与可用性指南</a>。</p>
+<p>先从你的应用经常反复做出的某一个决策开始。定义这个问题、可能的答案，以及区分这些答案所需的上下文。用能反映真实使用情况的示例来测试它——在 <a href="https://platform.openai.com/decisions">Decisions Playground</a> 里用你自己的文本或图像，或者按照<a href="https://developers.openai.com/api/docs/guides/decisions">开发者指南</a>发出你的第一个请求。</p>
+<p>Decisions API 的费用是每 100 万输入 token $0.10。缓存输入为每 100 万 token $0.01。关于 30 分钟和 12 小时的缓存写入，<a href="https://developers.openai.com/api/docs/pricing?utm_source=chatgpt.com">请阅读我们的定价指南。</a>你只需为输入 token 付费：不收输出 token 的费用。区域化处理在美国和 EU 可用，<a href="https://developers.openai.com/api/docs/guides/your-data">Zero Data Retention</a>面向符合条件的客户提供。详情请查看<a href="https://developers.openai.com/api/docs/guides/decisions#pricing-and-availability">定价与缓存</a>和<a href="https://developers.openai.com/api/docs/guides/your-data">数据控制</a>。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>FDE 在 OpenAI 中意味着什么</title>
+      <title>在 OpenAI，FDE 意味着什么</title>
       <link>https://openai.com/index/forward-deployed-engineering-means</link>
       <guid isPermaLink="true">https://openai.com/index/forward-deployed-engineering-means</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：What FDE means at OpenAI</description>
+      <content:encoded><![CDATA[<h1>在 OpenAI，FDE 意味着什么</h1>
+<p>我们做什么、怎么工作，以及我们如何解决企业最棘手的问题，交付真正的影响力。</p>
+<p>作者：Colin Jarvis，OpenAI Forward Deployed Engineering 负责人</p>
+<p><a href="https://openai.com/business/forward-deployed-engineering/">了解详情</a><a href="https://forum.openai.com/public/events/work-at-the-frontier-forward-deployed-engineering-at-openai-vmimj73oz5">观看直播回放</a></p>
+<p>Codex 刚发布时，团队里有人问我：“如果 Codex 一次就能搞定（one-shot）我们花了几个月搭建的那些用例，那我们做什么？”</p>
+<p>这个问题正好触及了 FDE 在 OpenAI 的核心含义。我们与客户并肩工作，理解他们最难的问题，搭建他们能够依赖的解决方案。我们学到的东西帮助塑造我们的产品，也为 Research 提供具体要解决的问题。</p>
+<p>这就是进步。如果我们每隔几个月就让自己变得“过时”，那说明我们的 FDE 团队做好了本职工作。</p>
+<p>我在 2025 年初创立了这个团队，为了弥合我们所说的<strong> “部署鸿沟”： </strong>模型看起来能做到的事，与人们能可靠地用来完成自己工作的事之间的距离。</p>
+<p>模型能力的推进速度，超过了把它们用起来所需的体系和流程。有时候缺的是一个产品。有时候一个模型在基准测试上表现很好，却在真实世界的变量和约束下做不成事。</p>
+<p>我们聚焦客户最难的问题。在我们的模型今天就能把活干好的地方，我们和 Product 以及客户一起把解决方案做成可复用的；在模型力有不逮的地方，我们与客户和 Research 一起定义差距并做出改进。我们的目标是让每一次合作都留给下一个客户一个更好的起点——如果我们把底线抬到客户下次不需要 FDE 来解决这一类问题的程度，那我们的工作就做到位了。</p>
+<p><a href="https://openai.com/index/john-deere-justin-rose/">John Deere</a> 是一家有 200 年历史的农业企业，它面临的挑战是如何规模化地为农民提供个性化建议。</p>
+<p>一个例子是 See &amp; Spray，它的精准除草技术：用摄像头和机器学习来识别杂草并定点喷洒，而不是整块田都施药，从而把化学品使用量最多降低 70%。</p>
+<p>但要把这些好处真正兑现，取决于农民是否知道如何配置这套技术、如何规划自己的作业季，以及如何在条件变化时调整自己的做法。</p>
+<p>John Deere 部署了 OpenAI 的 API，让这种支持做到个性化、可扩展。</p>
+<p>AI 可以用自然语言回答农民的问题、提供针对性的设置指引和建议、识别设备何时没有发挥出全部潜力，并帮助农民理解他们从这项技术里得到的价值。</p>
+<p>机会不止于某一次单独的交互：而是在整条客户旅程中持续给出相关的指导，帮助农民更好地利用自己的设备，同时提升效率和可持续性。</p>
+<p>这正是 OpenAI 的 FDE 致力于解决的挑战：帮助组织从 AI 能力走向能在复杂真实环境中交付实用价值的系统。</p>
+<p>但这些问题往往完全敞开，可能没有既定的标准答案，也没有现成的打法手册。<strong> 人人都想做出从未存在过的东西，愿意付出到达那一步所需代价的人却更少。</strong></p>
+<p>在寻找有天赋的 FDE 的同时，把“够用”的基线不断往上抬，意味着持续不断的试验和落地。</p>
+<h2>从结果出发</h2>
+<p>每次 FDE 团队会议一开始，我都会放一页幻灯片，上面写着一条核心价值观：“从结果出发，用一切必要的办法把事情做成，然后再谈规模化。”</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7njphD8l73ALH14fSedHFu/372f0ef41969a93a5dbc73f20260f182/forward-deployed-engineering-outcome-clocks.png?w=3840&amp;q=90&amp;fm=webp" alt="从结果出发。用一切必要的办法把事情做成。再谈规模化。Harrison H1（1735）：先让它存在；Harrison H4（1759）：之后让它变好。"></p>
+<p>一个惊艳的演示可以走很远，远到没人问它在真实世界里究竟行不行。</p>
+<p>我们的职责是解决客户的问题，并达到一个我们敢在生产环境里为之背书的标准。</p>
+<p>2025 年年中，我们大约有 15 名 FDE 与一家大型半导体客户合作，覆盖 10 多个用例。我们的雄心是让他们的验证流程变成 AI 原生的，范围包括：</p>
+<ul><li>定向测试生成</li><li>根因分析与调试</li><li>一个架构助手</li></ul>
+<p>在这个行业里，验证可以占到一个项目工作量的约 70%。机会巨大，可以下手的地方也非常多。</p>
+<p>有些 FDE 加入 OpenAI 才几天，此前从未在半导体行业工作过。他们嵌入式地进驻客户的验证团队，利用业余时间学习芯片设计，并和工程师一起搭建 eval，用来检验 AI 能否生成有用的测试、能否正确诊断芯片故障。</p>
+<p>在边学边做的同时，我们为各个具体用例搭建了定制的 harness。最初的 3-6 个月里，这些用例全部上了生产，并拿到了早期用户的采用。回报是看到那些指标：</p>
+<ul><li>基于 AI 的定向测试生成节省了约 48% 的时间。</li><li>通过内核优化带来 22% 的中位性能提升。</li><li>数周的调试被压缩到几小时</li></ul>
+<p>当我们把这一切复盘汇报时，首席硬件官问：“你们来这儿之前做过芯片设计师吗？”</p>
+<p><strong>我们的 FDE 不需要在第一天就懂这个行业，但把它学会是他们的责任。</strong></p>
+<p>随着编程助手让软件更快被构建出来，理解客户的业务变得更加重要。我们组建团队时会把通才和行业专家搭配起来。</p>
+<p>你需要足够的知识来做出可靠判断，还需要<strong>足够的好奇心去质疑关于现状的种种假设。</strong></p>
+<p>比如在生命科学领域，我们 FDE 的科学背景帮助他们赢得研究人员的信任——这些研究人员做的是临床前药物发现的任务，例如靶点验证与优先级排序、基因表达分析、化学合成路线重建。这种专业积累让他们能够就这些工作流如何改进贡献有依据的判断。</p>
+<h2>让成功可复制</h2>
+<p>我们已经证明这些工作流能够创造价值，但每一个仍然需要太多定制集成，才能推广到另一个团队。下一个挑战是保住这些成果，同时让软件更易部署、更易维护。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7jyjwU4F2a487ENCvRMd2C/f0f4017ea37cb8865ad6759dd71c4fe3/forward-deployed-engineering-capability-curve.png?w=3840&amp;q=90&amp;fm=webp" alt="随着技术演进，FDE 把一个困难、未解决的问题变成从零到一的方案，再变成可复用的套件。"></p>
+<p>到那时，Codex 的能力已经成长起来。一名 FDE 尝试围绕它重建自己的应用，随后与团队一起把这些用例迁移到一个以 Codex 为核心的通用 harness 上。</p>
+<p>定制应用变成了构建在 Codex 通用 primitives 之上的 plugin 和 skill。Codex 也成了统一的界面，让我们得以下线此前为各个用例单独写的 terminal UI 和 CLI。</p>
+<p>我们从每个项目里去掉了大约 90% 的定制代码，这改变了我们构建、维护和扩展这些工作流的方式：</p>
+<ul><li>我们可以从 Codex 的集中式改进中获益，减少每个单独用例所需的胶水代码</li><li>关键功能被打包成 skill 和 plugin，让它们更容易在彼此之间共享，也更容易由 AI CoE 集中管控。这意味着从一个团队扩展到下一个团队可以简单到只是换上新的 connectors/MCP servers、搭建新的 eval（这方面我们同样有一个 skill），然后就能跑起来。</li><li>2026 年 8 月的一个例子里，初次部署花了两个月，把方案扩展到第二个团队只用了一天。随着我们规模化，后续团队上线得更快——这一趋势一直在延续：2026 年 8 月的一个用例，初次部署花 2 个月，第二个团队只花 1 天。</li></ul>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5jwUf7D5Ck6ritHsWpfw6L/d43647cf621013e366e1afbd5f8e54a8/forward-deployed-engineering-architecture-diagram.jpg?w=3840&amp;q=90&amp;fm=webp" alt="之前：一个多 agent 架构，包含专用 agent 和定制工具。之后：一个更简单的架构，以 Codex、skill、MCP 和代码仓库为中心。"></p>
+<p>那是一种让自己变得“过时”的方式。我们为了上生产所做的工作，已经确立了什么是重要的。随着底层产品不断改进，我们可以替换掉自己定制实现的很大一部分，同时保留它交付的价值。</p>
+<p><em>这就是顺序为什么重要。LLM 让我们构建得很快。把这份速度用来把有价值的东西交到用户手里，弄清楚在实践中什么站得住脚，然后把跑得通的放大。</em></p>
+<p>同样的原则适用于所有合作。</p>
+<p><a href="https://openai.com/index/introducing-openai-presence/">OpenAI Presence</a>——我们面向企业语音和 chat agent 的产品——就是从真实的客户部署中成长起来的。这项工作始于 <a href="https://github.com/openai/swarm">Swarm</a>，历经 <a href="https://openai.com/index/introducing-the-agents-api/">Agents API</a> 演进，如今已有一个客户用 AI 处理它超过一半的电话量。</p>
+<p>把这些部署推上生产，教会了我们哪些问题需要定制方案、哪些构件可以被其他团队复用。我们把这些构件带进 Presence，让开发者更容易自动化受监管的工作流，而不必重建底层基础设施。每一次部署都帮助塑造了这个产品，也让下一个客户拥有更好的起点。</p>
+<p>在 <a href="https://openai.com/index/building-self-improving-tax-agents-with-codex/">Thrive Holdings</a> 这个项目里，OpenAI 的 FDE 和研究人员与工程师、会计师并肩工作，为 Crete 的会计师事务所打造 Tax AI。在试点期间，Tax AI 处理了 7,000 份报税表，把吞吐量提升了约 50%。</p>
+<p>最难的挑战之一是自动化出租物业的报税表，这需要六周的工程和执业人员复核，才达到 90% 的精确率和召回率。这项工作沉淀出了可复用的模式，让 Tax AI 更容易扩展到其他复杂的税表。</p>
+<p>这些团队现在正把同样的方法应用到记账、审计和 IT 支持上——构建能通过执业人员反馈和真实使用不断自我改进的系统。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1cE5rcRC1Jawy4R1LBhOUE/7e6928b47fc27a7127c38d491f8dcf3e/forward-deployed-engineering-tax-throughput-light-blue.jpg?w=3840&amp;q=90&amp;fm=webp" alt="Tax AI 试点的吞吐量从 100 的基线指数提升到约 150，即在同一产能下提高约 50%。"></p>
+<h2>智能缺口一冒出来就把它补上</h2>
+<p>有时候是更好的产品让我们能简化自己搭出来的东西，但有时候是模型本身还做不成这件事。</p>
+<p>如果我们只构建今天的模型已经能实现的东西，我们就发现不了 Research 接下来需要弥合的那些智能缺口。因此，我们很多重要的合作一开始就顶着这些极限去做，客户、FDE 和 Research 都承诺一起把这些问题啃下来。</p>
+<p>我们此前已经为一家大型电信客户开发了一套客服平台，他们想把它扩展到语音。</p>
+<p>语音占他们客服量的九成左右。这类场景比 chat 更难兜住（contain），而且在把口音、语气以及 latency/准确率做到生产级这方面带来了一连串新的技术挑战。把它做对，会对他们的业务产生实质性的差别。</p>
+<p>在 scope 阶段，我们的模型在我们用来判断它能否上生产的关键 eval 上得分约 60%。我们已经触及了它能力的边界。客服场景里的 function calling 和指令跟随都需要改进。</p>
+<p>我们把这一点讲给了客户，并把 Research 拉进了这项工作。FDE 与客户一起搭建平台、定义模型需要做什么；Research 则着手弥合能力差距，用一版接一版的 model snapshot 让我们对照客户的需求检验进展。</p>
+<p>六个月里，关键 eval 上的表现从约 60% 提升到 80%，再到 90% 以上，达到了生产所需的水平。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5zEGFEt620tc1ydyVfnOnj/b12573df2aa4d14f265fc3bab7dd9cbb/forward-deployed-engineering-audio-reasoning-inline.jpg?w=3840&amp;q=90&amp;fm=webp" alt="Audio Big Bench 的准确率在五个 model snapshots 之间持续上升，从 2024 年 12 月的 65.6% 到 2026 年 5 月的 92.29%。"></p>
+<p>由此得到的语音模型现在支撑着那位客户的部署、其他定制客服部署，以及通过 Presence 交付的托管部署。在一个客户的业务里碰到的问题，帮助确定了能够服务许多其他客户的改进。</p>
+<p>每一环都很关键。客户承诺一起攻克一个模型尚不能解决的问题；FDE 保持足够贴近现场，去界定那个问题、搭建平台，并从头到尾推动这次合作；Research 则提升了底层模型能力。</p>
+<p>这就是让自己变得“过时”的另一种版本：帮助把一个今天的模型无法解决的问题，变成未来模型能够交付的能力。我们工作的回报，超出了我们在任何一个客户身上花费的时间。</p>
+<h2>去找更难的问题</h2>
+<p>我加入 OpenAI，是为了让 AI 在人们的日常工作中真正有用。这一点至今仍在指引着团队。我常跟团队说，在 LLM 开发的多数情况下，Occam's Razor 是适用的——最简单的方案就是最好的。在一家由其前沿研究定义的公司里，在一个被夸大其词浸染的行业里，我们想做的东西是能可靠跑起来、让现场的人可以依靠的。</p>
+<p>目标是让每一次合作都能改进接下来的东西：一个更易部署的产品、一个能处理更难任务的模型，或者让下一个客户少做一些定制工作。</p>
+<p>如果你有一个想要解决的难题，我们很乐意与你合作。如果你想帮助解决这些难题，我们欢迎你的加入。</p>
+<p>那么，当 Codex 能接手我们花几个月搭建的工作时，我们做什么？</p>
+<p>去找更难的问题。</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026</a></li></ul>
+<h2>作者</h2>
+<p>Colin Jarvis</p>]]></content:encoded>
     </item>
     <item>
       <title>Uber 通过 OpenAI 为所有员工带来 ChatGPT Work</title>
@@ -50,11 +185,29 @@
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>AT&amp;T 如何重新考虑与 OpenAI 合作的内部法律工作</title>
+      <title>AT&amp;T 正在用 OpenAI 重塑内部法务工作</title>
       <link>https://openai.com/index/att-legal</link>
       <guid isPermaLink="true">https://openai.com/index/att-legal</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How AT&amp;T is rethinking in-house legal work with OpenAI</description>
+      <content:encoded><![CDATA[<h1>AT&amp;T 正在用 OpenAI 重塑内部法务工作</h1>
+<p>AT&amp;T 正在 LegalEdge 的基础上，探索支持其法务团队的新方式。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1MwtZ6lvHj9Et5r15FI6Lh/f5c7f182a3892a5a8f2773e37f6264ee/att-legal-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="深蓝编织织物正中是白色的 AT&amp;T 标识。"></p>
+<p>公司规模：Enterprise</p>
+<p>地区：全球</p>
+<p>行业：科技</p>
+<p>AT&amp;T 的内部法务部门在全球有数百名律师和法律专业人员。要给业务出主意，他们得先把事实、文档和相关的过往工作拼起来，往往还要用上分散在各个团队里的专长。对 AT&amp;T 高级执行副总裁兼总法律顾问 David McAtee 而言，让这份经验更容易被取用，正是这个部门的工作得以改进的核心。</p>
+<p>AT&amp;T 正与 OpenAI 一起搭建这下一阶段。“我们与 OpenAI 的合作会让我们建起那套管道，为全公司的知识层供能，我们所有人都会从里面取用。”McAtee 说。</p>
+<p>这次合作建立在 LegalEdge 之上。LegalEdge 是 AT&amp;T 的一支队伍，由律师、法律专业人员、技术人员和项目经理组成，专注把 AI 用在重大法律事务上。下一步是把公司积累的更多专长接到摆在律师案头的工作上。</p>
+<p>需求来自整个业务，法务团队要快速响应，又不能漏掉风险。提建议之前，他们得先弄清问题、把相关背景收齐，再决定什么要先处理。这让案件受理成为保护业务的关键一环。AT&amp;T 首席合规官 Bill Ryan 把一项规划中的举措描述成一套受理系统，“有一扇前门，在那里用自然语言受理”。这套系统会给请求分类并排定优先级，把它们与相关先例、研究和过往工作连起来，并给负责的法律专业人员提供历史背景和推荐的第一步动作。</p>
+<p>这样律师就有了一个信息更充分的起点，花在收集评估材料上的时间会更少。Ryan 把机会看成帮这个部门把判断力用到业务更多需求上。</p>
+<p>“最让我对未来兴奋的，是我们能在更大的规模上输出法律判断。”他说。</p>
+<p>在 McAtee 看来，指导这项工作的那个原则依然清楚：“决策永远由律师来做。”这次合作的目标，是把更好的信息放到够得着的地方，好让律师把更多时间用在施展专长上。</p>
+<p>来看 McAtee 和 Ryan 讨论 LegalEdge，以及 AT&amp;T 法务工作与 OpenAI 合作的下一阶段。</p>
+<h2>加入新的工作时代</h2>
+<p>全球超过 100 万家企业正在借助 OpenAI 取得实质性成果。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>]]></content:encoded>
     </item>
     <item>
       <title>通过一致的标准实现广泛的访问</title>
@@ -188,11 +341,42 @@
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>使用数千个人工智能代理来发现生物数据中的新线索</title>
+      <title>用数千个 AI agent 从生物数据里挖出新研究线索</title>
       <link>https://openai.com/index/scaling-ai-research-for-complex-biological-data</link>
       <guid isPermaLink="true">https://openai.com/index/scaling-ai-research-for-complex-biological-data</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Using thousands of AI agents to uncover new leads in biological data</description>
+      <content:encoded><![CDATA[<h1>用数千个 AI agent 从生物数据里挖出新研究线索</h1>
+<p>OpenAI、PerturbAI 与 Scripps Research 如何用分布式 AI agent，帮科学家从上百万个脑细胞的数据里识别有前景的研究线索</p>
+<p><a href="https://www.biorxiv.org/content/10.64898/2026.10.15.759436v1">阅读论文</a></p>
+<p><em>来看 OpenAI、PerturbAI 与 Scripps Research 如何并行部署数千个 AI agent，在来自上百万脑细胞的复杂数据里找出有前景的生物学关联。</em></p>
+<p><em>⁠</em></p>
+<p><em>视频来源：PerturbAI。</em></p>
+<p>如果科学家能在几分钟而不是几个月里发现关于阿尔茨海默病和帕金森病的新线索，会怎样？OpenAI、<a href="http://perturb.ai">PerturbAI</a> 与 <a href="http://scripps.edu">Scripps Research</a> 联手，用<a href="https://www.biorxiv.org/content/10.64898/2026.10.15.759436v1">由 GPT‑Rosalind 驱动的数千个 AI agent</a>，只花 32 分钟就分析并解读了来自<a href="https://huggingface.co/datasets/perturbai/wholebrain_crispr_atlas">数百万小鼠脑细胞</a>的既有实验数据。这些 agent 把基因扰动带来的效应与科学文献里的发现连了起来，找出一些出人意料、能帮助科学家理解疾病并确定新疗法研究方向的生物学关联。这项工作展示了 AI 如何帮研究者去挖掘更多大规模生物实验所揭示的内容。</p>
+<p>现代实验产生的数据，远多于科学家能彻底研究的量。研究者如今能改动数千个基因，并测量它们的效应在数百万个细胞上的表现。但要弄清这些结果对人类疾病意味着什么，就得把复杂的实验发现与几十年来散落的科学知识连到一起。这正是 AI 能帮科学家找出那些本来会被错过的有前景线索的地方。</p>
+<blockquote>“我们构建细胞图谱，是为了让其他科学家能做出我们还想象不到的发现。AI 可以帮助更多研究者探索这些资源，把意外的观察变成待检验的新问题。”</blockquote>
+<p>—Sarah Teichmann 博士，剑桥大学干细胞医学讲席教授、Human Cell Atlas 创始联席主席</p>
+<p>团队把分析分给数千个由 GPT‑Rosalind 驱动的 AI agent，我们把这种做法称为分布式生物学推理。这些 agent 检视了一份<a href="https://www.biorxiv.org/content/10.64898/2026.03.16.711480v1">全脑 CRISPR 图谱</a>，那是一份展示基因扰动如何影响小鼠脑中不同类型细胞的数据集。每个 agent 调查一处基因扰动、分析细胞反应、检索科学文献，并对结果提出解释。它们的报告被汇总成一份推理图谱，把基因、细胞效应、相关论文和可能的生物学机制连在一起。</p>
+<p>研究团队估计，如果人工做同等规模的分析与文献调研，一处扰动一处扰动地过，要花上几个月至一年。这些 agent 复现了人工分析得出的发现，同时挖出了额外的线索。它们对新颖性和科学价值的评估，也与盲评的人类专家判断相一致。这些发现有助于给验证上述生物学机制所需的后续实验排出优先级。</p>
+<p>其中一些洞见指向理解脑部疾病的新线索。这些 agent 发现两个与疾病相关的基因影响脑细胞的方式存在出人意料的差异，还发现胆固醇调控与神经退行性变之间可能存在关联。这些发现可以帮助科学家研究疾病如何发展，以及未来的疗法可以在哪里介入。</p>
+<blockquote>“有时候线索本来就在那里，散落在不同领域——我们只是还没把它们连起来。神经元功能与胆固醇代谢之间可能的联系说明，这些碎片一旦被凑到一起，就能给我们一种思考疾病生物学的新方式。”</blockquote>
+<p>—Tomasz Nowakowski 博士，UCSF 神经外科副教授</p>
+<p>研究者今天就可以开始探索这些发现。这份推理图谱已经<a href="https://github.com/jinlabneurogenomics/distributed_agent">公开可用</a>，科学家可以借此比较相关基因、追查出人意料的反应，并找出值得追下去的有前景线索。新发现常常出现在不同领域的研究者把各自专长凑到一起、用出人意料的方式把熟悉的想法连起来的时候。AI 能把新数据与散落在各学科的知识连起来，从而显著放大这类连接。机会不止是更快分析数据。把 AI 与实验生物学、人类专长和科学文献结合起来，我们就能帮科学家把他们更多的数据变成可检验的想法。</p>
+<h2>大规模实验，出人意料的线索</h2>
+<p>一项实验最有意思的线索，有时在科学家本来要探究的那个故事之外。而在一个覆盖数千处扰动的数据集里，这类线索很容易错过。</p>
+<p>这些 agent 发现了 Tsc1 与 Tsc2 之间一处出人意料的差异——这两个基因协同控制 mTOR，而 mTOR 是细胞生长、代谢与衰老的一个关键调控因子。扰动其中任一基因，在几组神经元上都有相似的效应。但在负责协调运动的小脑里，扰动 Tsc2 改变了数十个参与神经元通讯的基因的活性，而扰动 Tsc1 几乎没有带来变化。</p>
+<p>这一差异可能与人类疾病相关。在结节性硬化症患者身上，小脑的异常与 TSC2 突变强相关。虽然降低 mTOR 活性的药物可以治疗某些脑肿瘤和癫痫发作，但与这种疾病相关的学习困难和行为困难仍然难以处理。这些 agent 锁定了一组值得调查的特定神经元和细胞变化：哪些变化可能被现有药物纠正，哪些又可能指向新的治疗思路？这就给研究者留下了一组更具体、可以拿到实验室里检验的问题。</p>
+<h2>把活拆开，把推理做深</h2>
+<p>如果把整个数据集交给单个 agent，它能做得和数千个并行工作的 agent 一样好吗？我们在固定模型与资源的前提下测了这件事。随着工作量增大，单个 agent 检索的文献越来越少，在最大的工作量下只引用了 11 篇参考文献，而分布式 agent 引用了 700 多篇。人类专家也更偏好分布式 agent 给出的解读。</p>
+<p>科学家的时间有限，往往只盯数据里最强的信号。分布式 agent 能帮助审视更宽范围的反应，包括细微或出人意料的那些，并把它们与相关科学文献连起来。并行运行这些 agent 让大量扰动可以同时被调查。这帮助科学家探索一项实验所含的更多内容，找出那些本来会被错过的有前景线索。</p>
+<p><em>在最大的工作量下，分布式 agent 引用了 700 多篇参考文献，单个 agent 只有 11 篇。</em></p>
+<h2>找到下一个值得做的实验</h2>
+<p>一项发现如果能指向一个值得做的实验，它就更有价值。这些 agent 就在 <em>DCTN1</em> 上找到了这样一条线索——这个基因的突变会导致 Perry 综合征，一种带有帕金森样症状的神经退行性疾病。</p>
+<p>DCTN1 参与神经元内部的货物转运。在这份全脑 CRISPR 图谱里，扰动 Dctn1 提高了参与合成胆固醇的一批基因的表达。这些 agent 把这一观察与研究联系起来——那些研究提示，胆固醇转运出问题可能让细胞制造更多胆固醇。由此引出一个供后续实验检验的问题：DCTN1 被扰动后，会不会改变胆固醇在神经元内部的分布，而这些变化会不会促成神经退行性变？如果是这样，恢复正常的胆固醇分布有没有可能帮助保护神经元？</p>
+<p>人类专家也认为这一假说新颖、有分量、值得跟进。这个例子说明，把一个意外的结果与既有知识连起来，就能把一条线索变成可检验的想法，并可能成为治疗疾病的一个新方向。</p>
+<p>在盲评比较中，人类专家有 75% 的情况更偏好分布式 agent 的报告而非单个 agent 的报告。</p>
+<p>发现的主角仍然是科学家。通过挖出更多有前景的线索，AI 可以帮助研究者决定该追哪些想法、设计实验并解读结果。目标是把生物实验中更多的信息转化为知识，并随着时间帮助指导更好药物的研发。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>Cloudflare 通过 OpenAI 将漏洞发现与防御联系起来</title>
@@ -241,11 +425,83 @@
 <p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>我们如何构建 ChatGPT 新颖的广告堆栈来提高用户信任度和相关性</title>
+      <title>我们如何为 ChatGPT 搭一套全新的广告技术栈，兼顾用户信任与相关性</title>
       <link>https://openai.com/index/building-chatgpt-ad-stack</link>
       <guid isPermaLink="true">https://openai.com/index/building-chatgpt-ad-stack</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：How we built ChatGPT’s novel ad stack for user trust and relevance</description>
+      <content:encoded><![CDATA[<h1>我们如何为 ChatGPT 搭一套全新的广告技术栈，兼顾用户信任与相关性</h1>
+<p>作者：Ritendra Datta 与 Karthik Gopalratnam，Members of Technical Staff</p>
+<p>传统广告系统是为响应用户意图的离散单元而打造的。用户在网上搜索或浏览某样东西，广告系统就把这些查询和页面浏览当作事件接收下来，再基于这些事件去寻找匹配的广告。为 ChatGPT 构建广告技术栈则不同：用户意图是在一次次对话中逐渐成形的，会随着同一场对话的多个轮次不断变化，有时根本不存在合适的广告时机。为了支撑这一新范式，我们打造了一套定制的广告投放系统。这种新型广告技术栈建立一个自研的、post-trained 的 frontier LLM 之上，它通过发起 tool call 来完成 retrieval（找出靠前的候选）、ranking（预测用户互动）、relevance（评估广告有多大用处），并运行 auction 来做最终的广告选择与定价。</p>
+<p>我们的广告系统靠三个关键设计决策来承接用户需求不断演进这件事的细微之处：1）实现有状态的广告会话，也就是信息会跨对话轮次、跨多场对话被记住；2）依赖一个自研的、post-trained 的 LLM，它采用 tool call 架构来理解对话的上下文与背后的意图，进而有效地挑选、排序并投放广告；3）把广告选择过程与 ChatGPT 的答案生成拆分开，放在它自己的服务里运行，以免广告影响答案、并保持 ChatGPT 中立的语气。我们用 post-trained 的 LLM 来编排整条广告流程，依据用户当前这一轮以及历史对话，决定在合适的时机呈现合适的广告。过去，冷启动这样一个能自我改进的广告系统要花上数年，而 ChatGPT Ads 的年化营收 run rate 已达到 10 亿美元，<a href="https://openai.com/index/expanding-access-to-ai-with-chatgpt-ads/">距离上线不到 200 天</a>；如今，自上线以来已有超过 10 万家广告主在 ChatGPT 上投放过广告。</p>
+<h2>在 agentic 对话里，广告应该怎么做？</h2>
+<p>传统的广告请求通常始于一个定义明确的事件。用户提交一条搜索查询或打开一个网页，广告系统就收到一个请求。这类系统相当简单：它检索出潜在的广告候选，对它们排序，运行一次 auction 来给这个机会合理定价，然后把得到的广告展示给用户。ChatGPT 并不会天然产生这样具体的时刻。</p>
+<p>在 ChatGPT 的对话里，人们带着目标而来，而不是一句一问一答式的搜索查询。他们可能在规划一趟旅行、为自己的生意挑选软件、布置一个家，或学习一项新爱好。这些事不会在一轮对话里全部发生。ChatGPT 常常会在过程中帮助用户厘清真正重要的是什么。</p>
+<p>举个例子，我们的工程团队问过 ChatGPT 如何为参加一场比赛做训练：对话以一个关于跑步的泛泛问题开始。几轮之后，他们开始询问有助于训练的运动鞋。随着每一个约束条件出现，这场对话的商业含义随之改变——而且这种个性化上下文会跨多个会话不断演进。一个只根据第一条消息就行动的系统，可能检索到完全错误的意图，从而损害用户体验、给用户添堵。</p>
+<p>构建我们的广告系统，要求我们跳出请求-响应式的广告架构，从零开始搭建一套广告技术栈，在把用户信任与价值放在首位的同时，去寻找潜在的经济机会。</p>
+<h2>记住对话，却不影响 ChatGPT 的答案</h2>
+<p>像传统广告系统那样把每条消息都当成一个独立请求，在我们的聊天场景里会带来几重风险：1）把用户目标过度简化，从而误读它；2）在用户的真实需求尚未清晰之前就过早启动广告流程；3）展示出来的广告不是在支持用户的旅程，而是在打断它；4）每次请求发生变化就低效地把广告流程重跑一遍，制造噪声并浪费成本。我们没有围绕单个事件来构建，而是让广告系统（由 retrieval、ranking 和 delivery 组成）维护一个有状态的会话，也就是广告会话会在一个符合投放资格的轮次期间持续运行，随着信息演进不断记住并更新它。ChatGPT 把初始的请求上下文发送给广告服务器。广告系统跟随并适应正在展开的这场交流，而不是依赖一条被压平的查询。</p>
+<p>广告选择过程与 ChatGPT 的常规回复生成并行运行，以确保广告流程不会影响 ChatGPT 的回复。广告是在一个独立系统里完成筛选和选择的，这个系统消费对话内容，并受自己的 eligibility、质量与 delivery 约束。这条关键的架构边界——用不同的服务，各自使用不同的模型和不同的代码——让 ChatGPT 核心服务器负责生成自然回复；与此同时，广告系统独立判断是否存在合适的广告机会，如果有，就通过一条独立的 serving 流程准备一个标注为 sponsored 的广告位。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3bfD7ZJLF0722p5KBycdFk/8123d88226e58fb25563917cdb5c0dca/advertising-desktop-light.svg?w=3840&amp;q=90" alt="流程图：一场用户对话分成两条路径，一条是 ChatGPT 的回答路径，产出自然回复；另一条是独立的广告资格判断与 serving 路径，产出一个标注清晰的赞助广告位。"></p>
+<p><em>广告投放与 ChatGPT 的回答路径并行运行。</em></p>
+<p>除了保护用户体验，这种隔离还有一些实际后果。ChatGPT 对广告系统没有任何依赖——这些服务以任何方式都没有交织在一起，也不共用一个内容生成模型。所以即使广告投放系统不可用或变慢，ChatGPT 的自然回复照常进行、不受影响。这意味着广告系统不可能拖垮或延迟 ChatGPT 这个产品。这种隔离的另一个好处是，它把有价值广告的门槛保持得非常高。不返回任何广告，是一种平常而成功的结果。只有当某条广告显然对用户和广告主都有益时，系统才会投放它。</p>
+<h2>由 LLM 理解对话并调用工具</h2>
+<p>我们广告技术栈里的另一个关键架构组件，是一个 post-trained 的 LLM，它负责理解对话，并在一个 agentic 循环里跑完整条广告流程——向广告系统的核心功能发起 tool call，从 retrieval 阶段到 ranking、再到 auction，最终到 delivery。我们把这一个 LLM 称为 <em>orchestrator</em>。</p>
+<p>广告流程的第一部分，是理解用户意图并启动 retrieval 过程——retrieval 是一次刻意求宽、追求速度的潜在广告搜集，供后续层层过滤。逐段增量地接收对话，会让 retrieval 问题变得更丰富也更含糊，因为广告系统需要把当前意图与过时的上下文区分开。orchestrator 必须能理解对早前消息的指代，识别用户何时只是在假设性地谈论，并避免把每一次提到某个产品或服务都当成一次购买请求。</p>
+<p>广告 orchestrator 使用可用的对话与用户上下文，反复迭代以找到好的广告，并一次次决定什么时候调用哪个工具，其底层目标是在那场对话与那个上下文里找到最合适的广告（也就是在高用户价值与高广告主价值之间取得平衡的广告）。如果用户选择开启广告个性化，orchestrator 还会利用可获得的、关于用户过往对话的非敏感信息，来寻找最匹配的广告。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5zteskDpk7VeYDOhPLz2HZ/2c87e51276aeb518fb0502918c94409d/orchestrator-desktop-light.svg?w=3840&amp;q=90" alt="架构图：对话上下文与用户画像输入广告 orchestrator，其下挂着 retrieval、相关性估计、事件预测、eligibility、pacing 与预算、auction 与定价等工具，在用户价值与广告主价值之间做平衡。"></p>
+<p>广告 orchestrator 反复调用广告投放工具，以找到有价值的广告。</p>
+<p>随着对话推进、广告 orchestrator 拿到更新的信息，它可以用更新后的上下文重新发起一组 tool call，去找更好的广告并把它们返回给客户端；只要这些新广告及时到达，客户端就能使用它们。</p>
+<p>用户价值</p>
+<p>广告主价值</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2FBQczHif8ZhtqpXflsd1Z/0692ded1f726e6f5943a126ea1b90576/printed-throw-pillow.webp?w=256&amp;q=90&amp;fm=webp" alt=""></p>
+<p>Printed Throw Pillow</p>
+<p>不符合资格的候选</p>
+<p><em>orchestrator 的设计目标是在用户价值与广告主价值之间取得平衡，并且永远把用户放在第一位。</em></p>
+<h2>orchestrator 如何在 agentic 循环里调用广告工具</h2>
+<p>广告系统由一个个独立的工具组成，orchestrator 反复调用这些工具，为一场对话找出最好的广告。从高层看，orchestrator 先把对话转成简短的文本摘要，再把摘要转成语义 embedding（被存储下来的语义，便于广告系统快速筛查），然后用这些语义 embedding 检索广告候选，按 eligibility 过滤这些候选（依据预算、用户设置以及其他前置检查），评估它们的质量与相关性，最后再做一次 ranking，找出可以在聊天回复末尾展示的高价值机会。因此，每条广告都必须在资格和相关性两方面跨过很高的门槛，才有资格被投放。</p>
+<h3>准备能捕捉意图的 retrieval 查询</h3>
+<p>orchestrator LLM 首先准备一条或多条能代表相关商业意图的查询。这一步可能包括改写对话上下文，把商业可能性扩展到 1:1 搜索查询之外，然后创建语义表示——由 orchestrator 把一场多轮对话蒸馏成一个摘要版本交给 retrieval 系统，从而以聚焦的方式从我们的数据库里检索广告。</p>
+<p>如果广告位只在系统深入理解了用户意图时才出现，那么对用户和广告主都会更好。多条查询能够保留意图的不同侧面。例如，一场关于规划旅行的对话，可能同时包含交通、住宿、活动这几类彼此不同的需求。retrieval 系统可以保留这些区分，而不是把整场对话压缩成一条字面字符串。</p>
+<p>举个例子，来看一段可能发生的、关于徒步鞋的对话序列：</p>
+<ul><li>去 Yosemite 玩两天，我需要准备哪些东西？</li><li>下周会冷吗？</li><li>新 [insert brand] 产品线？</li></ul>
+<p>尽管用户并没有把关于鞋品牌的问题和 Yosemite 之行联系起来，这场对话在我们的广告系统里可能被表示成两条查询，例如 <code>[shoes appropriate for hiking trip]</code> 和 <code>[new [brand] product lines good for travel]</code>。这可能只是第一次尝试；orchestrator 的设计就是不断迭代这些表示，直到在我们的库存里找到对用户很有价值的广告。</p>
+<h3>检索可能的广告</h3>
+<p>retrieval 是刻意构建一个宽泛广告候选池的过程。候选可以来自不同的 retrieval 策略，之后在同一条 serving 约束下相互竞争。我们建了多个索引，分别针对不同的系统与产品约束做优化（例如，商品 feed 广告的索引在设计上会感知商品的正面或负面评价，以便抓取出尽可能好的广告；而这对那些没有关联评价的其他广告并不适用）。每个索引都针对某种形式的 approximate-nearest-neighbor（ANN）检索做了优化，使用代表用户意图的 embedding。这种 ANN 检索是在大型语义索引上做 retrieval 的一种近似算法，也就是说广告能被非常快地取出：它追求一个足够好的解，而不是去找“正确”的那个解，同时保留住绝大多数相关候选。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6F3yNWmGw0m9mY9u3BtKT8/c811e3d73a0d72b9deb12fe92ac59f2c/candidate-desktop-light.svg?w=3840&amp;q=90" alt="流程图：改写后的查询被编码为高维语义 embedding，在常规广告、商品广告以及可选策略中检索，随后合并成一个宽泛的候选池。"></p>
+<p>广告系统在检索阶段用改写后的查询生成语义 embedding，产出一个宽泛的广告候选池。</p>
+<h3>过滤掉不符合资格的候选</h3>
+<p>过滤的目标，是把所有在相关性、出价与预算上达不到投放门槛的广告候选从考虑范围中剔除。具体取决于候选与配置，过滤检查可能包括 creative 与 campaign 可用性（campaign 或广告 creative 是否处于激活状态）、campaign 定向（例如该 campaign 被允许在哪些地区投放）、政策限制（关于什么内容可以投广告的合规要求）、预算可用性（campaign 是否还有可花的预算）、pacing（该 campaign 现在该不该花预算，还是应该在一天中的其他时段花）、广告位兼容性（这条广告有资格出现在哪几类对话里），以及广告主级与 campaign 级去重（为每个广告主挑选合适数量的广告，以确保各家企业之间的公平参与）。</p>
+<h3>评估相关性与质量</h3>
+<p>通过 eligibility 检查的候选进入打分阶段，此时 orchestrator 会向各个打分系统发起 tool call——出于 serving 方面的考虑，例如语义相关性（这条广告与用户的目标相关吗？）、预测互动（这条广告有可能被看到、被点击，并转化成广告主期望的结果吗？）、历史表现（这条广告此前展示给用户时表现好吗？）。orchestrator 还会在 auction 之前过滤广告，以确保相关性与安全性。这些系统把范围收窄成一个准备好进入 auction 的更小候选池，但它们仍然不决定最终投放的那条广告。</p>
+<h3>运行广告 auction</h3>
+<p>orchestrator 在这场对话的上下文中评估准备好的候选，挑出哪些广告候选足够合理、可以进入最终的 auction。orchestrator 并不直接决定哪条广告会被投放，也不负责定价。它只是把在上下文上合适的候选提名出来，交给 auction 工具去评估。</p>
+<p>auction 会执行最后的 serving 机制，包括 auction 准入（跨过相关性与价值的最低门槛）、pacing（让广告预算花得更均匀）、出价与 auction 特征计算、质量调整后的 ranking、定价，以及最终选择。</p>
+<h3>最后的资格检查</h3>
+<p>auction 之后，有两种情况会导致广告无法投放，这两点都是 ChatGPT 这种对话式媒介特有的。</p>
+<ul><li><strong>广告在这段对话里可能显得不合适</strong>：尽管对话本身已被 integrity models（决定何时适合投放广告的那些模型）判定为可以投广告，广告本身也被判定为符合政策，但有时广告在某些对话的语境里就是会显得不合适。orchestrator 会阻止这类广告被展示。</li><li><strong>广告请求可能来不及到达</strong>：如果 ChatGPT 模型已经准备好回复，而广告还没准备好可展示，那条广告请求就会超时，广告也就不会被投放。因此广告系统的目标之一就是尽可能快地运行。ChatGPT 模型的响应时间是动态的，我们不会为了等广告加载而推迟聊天回复。</li></ul>
+<p>如果以上检查全部通过，我们就把广告发给前端去渲染。我们把这算作一次服务端广告 <em>delivery</em>，但我们仍然可能不会把广告展示给用户——而这是有意为之。</p>
+<h2>最后一步：把广告展示给用户</h2>
+<p>在 ChatGPT 这样的对话式产品里，把一个广告 creative 在服务端完成 delivery 并不能保证广告一定会被展示；广告还必须及时到达，才能被纳入当前这一轮。广告 creative 包含标题、描述、落地链接，以及可能有的 call to action。此外，广告系统还会返回一段由模型生成的 preamble，也就是一小段中性的引导语，用来说明这条广告与当前对话的关系。把 preamble 与 creative 分开，既保住了广告主想表达的内容，又让 ChatGPT 的语气保持中立。</p>
+<p>ChatGPT 前端把 preamble 与广告 creative 作为一个整体接收。如果它在 ChatGPT 的回复完全生成之前到达，前端就把广告展示在 ChatGPT 回复的下方，并清楚标注为 sponsored。如果到达得太晚，这一轮就不展示该广告。这就是服务端广告 delivery 与面向用户的广告曝光之间的区别。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6vmYf9DmmKLaEK7tpg4fcl/81d90e06c50c558a5196fb4b91fb3cc9/selecting-ads-desktop-light.svg?w=3840&amp;q=90" alt="时序图：serving 系统准备好广告赢家，ChatGPT 做最后检查，在用户体验中展示，并以各种确认回执把选定与成功投放区分开。"></p>
+<p><em>赢家的选定与投放是两个分离的事件。只有当 ChatGPT 批准并展示了这个广告位、并且投放得到确认后，一条被选中的广告才算完成 delivery。</em></p>
+<h2>广告展示之后会发生什么</h2>
+<p>我们的广告技术栈使用传统的日志与数据 pipeline，这带来三个主要好处：广告主能更容易地把他们现有的系统与我们的技术栈对接，广告主能借助报表数据改进自己的策略，我们的团队也能找到系统里可以改进的地方。在这些报表与优化工具之外，我们还部署了一个高质量的模型来评估我们的投放并训练其他广告模型，从而形成一个强有力的自我改进循环。</p>
+<p>对发生了什么做细致拆解，能帮我们独立地理解并改进广告系统的每一部分。日志处理系统还会记录这些细粒度的结果：</p>
+<ul><li>这一轮不具备投放广告的资格。</li><li>一次广告会话开始了，但没有发起 retrieval。</li><li>retrieval 没有返回任何候选。</li><li>检索到了候选，但在 hydration 或 eligibility 上失败。</li><li>一条广告被投放出去，并在之后收到了互动。</li></ul>
+<p>这些细致拆解帮助我们独立地改进广告 serving 系统的每一部分。要改进机会识别，需要的证据不同于改进 retrieval、候选质量、auction 参与度或 delivery 可靠性所需的证据。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1pmJyqwks8d8KQ97APZQ5o/5b7b9af4998894ef42b394adaf19bb90/privacy-desktop-light.svg?w=3840&amp;q=90" alt="流程图：一个具备资格的 ChatGPT 轮次产出商品、serving 与质量三方面结果，这些结果经过受隐私控制的分析，进入聚合度量与允许用于模型改进的数据。"></p>
+<p><em>delivery、serving 与质量系统各自观察生命周期的不同环节。受隐私控制的加工决定了哪些数据可以用于度量和模型改进。</em></p>
+<h3>高能力模型评估并改进整套技术栈</h3>
+<p>基于模型的评估这一思路在于：由我们最强、推理层级最高的模型来观察并评判我们系统的结果，再通过训练让那个 post-trained 的 LLM 表现更好，从而完成改进。举个例子，如果最强的模型负责收集反馈、并把这些小 worker 训练到尽力做好，那么我们在编排或 retrieval 环节就可以用更小、更高效的模型，或推理层级更低的模型。</p>
+<h3>人的反馈把有品位的走向定下来</h3>
+<p>我们会收集并响应用户的反馈（用户的点击与隐藏操作），也会通过我们的 Ads Manager 收集面向用户的调研和来自广告主的直接反馈。在建设过程中，我们还让团队随时接收反馈，直接倾听 ChatGPT 用户与广告主各自想要什么。这一反馈来源比我们模型的观察性反馈更能影响我们的方向，也是我们能够快速迭代、做出正确产品决策的一部分原因。模型也许能理解用户意图、批判性地思考并交付有价值的东西，但品位是由人塑造的。</p>
+<h2>接下来</h2>
+<p>一年前，我们还没有广告系统，只有少数几个人在思考这个问题域。如今我们有了一套稳固的广告系统，支撑起超过 10 亿美元的年化 run rate，并由一个基于 LLM 的 orchestrator 跑完整条广告流程。Codex 是一个根本性的力量放大器，让我们能以空前的速度把自己的系统从零起步推到这一重大的使用量里程碑。从第一天起，我们就把团队和开发工作流设置为用 Codex 快速构建并扩展这套系统。我们为 Codex 建了护栏，让它能可靠且安全地交付代码。与此同时，我们为 Codex 配置了数据基础设施插件，大幅收紧“收集洞察—把改进落到系统上”这个循环，包括新产品功能、质量改进以及更好的系统性能。</p>
+<p>我们系统的边界（以我们的<a href="https://openai.com/index/our-approach-to-advertising-and-expanding-access/">广告原则</a>为根基）与基于 LLM 的 orchestrator 结合在一起，让我们能把广告做得有用，而又不必把每场对话都当成一次广告请求。展望未来，我们会继续尝试更动态的广告形式，以提升用户价值（例如让用户能够通过广告直接与企业对话）和广告主价值。这套技术栈自我改进的架构建立在 OpenAI 模型之上，配合持续的反馈循环，会加速我们随时间不断改善相关性与个性化的能力。</p>
+<h2>作者</h2>
+<p>Ritendra Datta，Karthik Gopalratnam</p>]]></content:encoded>
     </item>
     <item>
       <title>前沿人工智能的民主治理，第二部分：赋予网络防御者权力</title>
@@ -267,11 +523,56 @@
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>特许经营商利用 ChatGPT Work 将现金核对时间缩短 94%</title>
+      <title>一家特许经营商用 ChatGPT Work 把现金对账时间缩短了 94%</title>
       <link>https://openai.com/index/ted-taylor-restaurant</link>
       <guid isPermaLink="true">https://openai.com/index/ted-taylor-restaurant</guid>
       <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Franchisee reconciles cash in 94% less time with ChatGPT Work</description>
+      <content:encoded><![CDATA[<h1>一家特许经营商用 ChatGPT Work 把现金对账时间缩短了 94%</h1>
+<p>一家独立的 Schlotzsky's 与 Cinnabon 特许经营商把重新定价的时间缩短了 95%，并搭起一套能腾出 $100K 现金流的工作流程。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3yz3B9NBTAvhKaqu5cRCwJ/53891263fccaf6007dec3de87733ac70/ted-taylor-restaurant-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="暖陶土色纸纹上的 Schlotzsky's 与 Cinnabon 标识。"></p>
+<p>公司规模：SMB</p>
+<p>地区：北美</p>
+<p>行业：餐饮</p>
+<p>产品：ChatGPT</p>
+<p>95%</p>
+<p>定价分析所需时间的降幅，从 5 天降到 1 - 2 小时</p>
+<p>$100K</p>
+<p>优化用工流程后每年最多可腾出的现金流</p>
+<p>4</p>
+<p>每个发薪周期省下的小时数（手工活）</p>
+<p>94%</p>
+<p>月度现金对账耗时的降幅</p>
+<p>Ted Taylor 在半导体行业干了 25 年后进入餐饮业。如今他是一名独立特许经营商，在新墨西哥州经营三家 Schlotzsky's 与 Cinnabon 合牌餐厅。</p>
+<p>经营快餐餐厅，意味着要在顾客体验和大量顾客看不见的活儿之间找平衡，比如菜单定价、人员排布、设备维护和规章制度。Ted 用 OpenAI 的技术把这些都做得更快。</p>
+<p>用 ChatGPT，Ted 给调研和起草这类耗时任务提速；他用 ChatGPT Work 汇集并分析定价、销售、预测、排班和用工方面的大量数据，并请它给出每家餐厅需要在哪里投入精力的建议，由此把重新定价的时间缩短 95%，每次薪资处理省下 4 小时。</p>
+<blockquote>“ChatGPT Work 的建议好到，先从它开始、再作调整要快得多。”</blockquote>
+<p>—Ted Taylor，独立特许经营商，Schlotzsky's 与 Cinnabon</p>
+<h2>几分钟给三个市场的菜单重新定价</h2>
+<p>菜单重新定价是一年一度的工程，要综合考量配方成本、单品热度、本地竞对定价、份量，以及堂食与外卖订单不同的经济账。Ted 用 ChatGPT Work 把这些因素收到一起，在 1 - 2 小时内拿到定价建议，而不是过去花 5 天。</p>
+<blockquote>“过去我要花几天功夫去分析、给出单品级的定价；而 ChatGPT Work 转眼就吃透了，而且做得更彻底。”</blockquote>
+<p>—Ted Taylor，独立特许经营商，Schlotzsky's 与 Cinnabon</p>
+<p>Ted 先让 ChatGPT Work 依据本地竞对的价格走势、份量和相对的餐品质量做调研，定出定价目标和定价策略。接着他交给 ChatGPT Work 一份分类整理好的菜单项清单，上面有各单品当前的堂食价和外卖价。他会说明每组价格整体希望涨多少、哪些单品该涨得多些或少些，主要依据此前 ChatGPT 给出的分析。</p>
+<p>加上单品级的销售历史和供应商价格后，他还能把分析做得更细。ChatGPT Work 可以用这些输入来估算调价对销售的影响，并围绕货品成本目标优化单品定价。</p>
+<p>ChatGPT Work 返回一张电子表格，给出建议的堂食价和外卖价。它甚至会把这次调价和一套整体定价策略联系起来，而这套策略旨在优化顾客留存、把价格冲击降到最低、以及把加购项放到最佳位置这些经营结果。</p>
+<p>Ted 第一次用 ChatGPT Work 做定价时，同时也手工跑了一遍分析。“ChatGPT Work 做了更深一层的本地比对，帮我避开了一些会让个别单品失去竞争力的涨价，”他说。Ted 当即改成用 ChatGPT 来产出第一批建议。</p>
+<h2>寻找优化用工、腾出现金流的办法</h2>
+<p>Ted 用 ChatGPT Work 从两个方面帮他管理用工成本：复盘三家餐厅的用工走势，以及试一种更好的周排班做法。</p>
+<p>做用工分析时，Ted 给 ChatGPT Work 开了销售与用工数据的只读权限。他每次跑分析，它就把排班工时、预算工时和实际工时，与预测销售和实际销售放在一起比对。它还会复盘过去 12 周，以照顾那些总是高于或低于自己销售预测的门店。生成的报告会标出加班、比计划更长的班次和排班空缺，并指出经理该复核什么。</p>
+<p>在排班试验里，Ted 给 ChatGPT Work 一份员工名册，写明每个人的岗位、培训、可排班时间和薪资，再附上门店在不同销售水平下的人力需求。他和那位经理把 ChatGPT Work 提出的班表与她原本会排的班表做比较，找出了缺失的规则——比如高峰期什么时候该加人——并据此打磨了给 ChatGPT Work 的指令。</p>
+<p>ChatGPT Work 现在能为那家门店产出完整班表。经理通读检查，必要时调整，再录入餐厅的排班系统。Ted 估计，排班做得更好，最终能让三家餐厅的小时工成本下降相当于销售额一到两个百分点，也就是每年多腾出 $50,000 到 $100,000 的自由现金流，可以用来提高薪资、发奖金、投入经营，或增加利润分成。</p>
+<h2>用 ChatGPT Work 加速后台任务</h2>
+<p>Ted 也把 ChatGPT Work 用在日常运营上，从制定人事制度，到现金对账，再到管理物料与维修申请。</p>
+<p>新墨西哥州开始要求餐厅就体液污染事件留有书面处置流程时，Ted 用 ChatGPT 大约 30 秒就写出一份草案。他需要为员工手册配一份社交媒体政策时，ChatGPT 帮他很快起草了指引，后来一家外部人事公司审阅过，一个字都没改。</p>
+<p>Ted 每月用 ChatGPT Work 对他三家餐厅的现金做对账。他上传每家门店的现金交易数据和银行记录，ChatGPT Work 就把逐笔交易和对应的存款相比较。月度对账过去要三个小时，现在只要 5-10 分钟。他还用 ChatGPT Work 汇总薪资输入，从每个薪资周期里砍掉了 4 个小时的手工活。</p>
+<p>为了让餐厅运转更顺，Ted 还用 ChatGPT Work 搭了一个网页门户，员工可以在里面申领物料或报修。门户通过一个专门的邮箱通知他，并跟踪每条申请的进度。</p>
+<h2>有更多时间改进生意，而不只是让它转下去</h2>
+<p>Ted 用 ChatGPT Work 的办法，对任何小企业主都实用。他把自己做决策时会用的数据和准则同样交给 ChatGPT，再把它给出的结果与自己动手会怎么做做个比较。随着对结果越来越有信心，他把用法扩展到业务周围更多的任务上，但每一条都在落地前先复核结果。</p>
+<p>对 Ted 来说，ChatGPT Work 的价值不止于省下的工时。他现在能去做那些本来可能跳过的分析，也能把更多时间花在顾客、员工和把生意做大上。</p>
+<h2>加入新的工作时代</h2>
+<p>全球超过 100 万家企业正在借助 OpenAI 取得实质性成果。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Terminal X 与 GPT-6.1 的高级投资者判断相符 88.6%</title>

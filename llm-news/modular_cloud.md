@@ -9,7 +9,7 @@
 
 ## 全部文章（共 103 篇，按日期倒序；无日期条目列于最后）
 
-1. [Modular：MAX 现已提供源码并向所有人开放](https://www.modular.com/blog/max-license)（2026-10-22） <!--orig:Modular: MAX is now source available and open to everyone-->
+1. [Modular：MAX 现在源码可用，向所有人开放](https://www.modular.com/blog/max-license)（2026-10-22） <!--orig:Modular: MAX is now source available and open to everyone-->
 2. [Modular：Modular26.7：开放MAX](https://www.modular.com/blog/26-7)（2026-10-22） <!--orig:Modular: Modular 26.7: Opening up MAX-->
 3. [培育 Modular 生态：Modular 社区资助计划](https://www.modular.com/blog/nurturing-the-modular-ecosystem-the-modular-community-grant-program)（2026-10-09） <!--orig:Modular: Nurturing the Modular ecosystem: the Modular Community Grant Program-->
 4. [Modular 26.6：开放编译器贡献、音频生成与扩展模型支持](https://www.modular.com/blog/modular-26-6-open-compiler-contributions-audio-generation-and-expanded-model-support)（2026-09-17） <!--orig:Modular: Modular 26.6: Open compiler contributions, audio generation, and expanded model support-->

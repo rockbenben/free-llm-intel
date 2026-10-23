@@ -9,22 +9,157 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-all.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 22 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>[OpenAI] 使用 Decisions API 构建响应速度更快的应用程序</title>
+      <title>[OpenAI] 用 Decisions API 构建响应更快的应用</title>
       <link>https://openai.com/index/decisions-api</link>
       <guid isPermaLink="true">https://openai.com/index/decisions-api</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <category>OpenAI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
       <description>原文标题：Build more responsive apps with the Decisions API</description>
+      <content:encoded><![CDATA[<h1>用 Decisions API 构建响应更快的应用</h1>
+<p>为任何应用提供快速、聚焦、低成本的决策。</p>
+<p>应用和 agent 在一整套工作流中会做出许多小决策：如何对输入做分类、把请求路由到哪里、下一步该执行哪个动作。单个来看它们很简单。一旦上了规模，它们的延迟和成本就会累积起来。</p>
+<p>今天，我们宣布 Decisions API 正式全面可用。Decisions API 基于 <a href="https://openai.com/index/introducing-gpt-6-sol-and-luna/">GPT‑6 Luna</a> 构建，它把 Luna 的智能聚焦在答案有界的问题上，帮助应用和 agent 针对文本、图像和结构化输入做出接近实时的决策，比通过 Responses API 使用 GPT‑6 Luna 快至多 10 倍。</p>
+<p>自公开测试版以来，我们新增了原生的 GPT‑Live 集成、用于复用上下文的 prompt caching，以及在美国和 EU 的推理驻留。开发者还可以传入原生 JSON 输入、在问题指令里包含图像，并在单次请求中提出最多 400 个问题，是此前上限的两倍。我们也持续改进延迟，包括在亚洲若干区域补充了算力容量。</p>
+<h2>团队如何使用 Decisions API</h2>
+<p>Decisions 的早期采用情况表明，它能适用于各种各样的用例。</p>
+<p>在 OpenAI 内部，各团队正把 Decisions API 用在产品与业务工作流中。dots 团队用它来缩短响应时间、提升互动性。我们的 Personal Finance 团队用它给交易描述归类；而我们的 Communications 团队用 Decisions 按主题对报道分类，并就它是在强化还是挑战关键叙事给出评分，从而帮助识别哪些内容值得更仔细的复核。</p>
+<p>这些早期的例子说明，快速、结构化的决策能力可以在非常广泛的用例中把进来的信息转化为有用的行动。客户对 Decisions API 的应用同样宽泛，从精准地把 AI 成本归因到实际工作，到让语言学习体验更有互动性。</p>
+<p>第 1 个，共 5 个</p>
+<blockquote>“借助 Box Extract 和 Decisions API，我们对业务文档进行分类，并把它们路由到正确的下一步。在我们的评测中，Decisions API 在 30 个保险凭证用例上把路由选择提速约 5x，准确率与 Responses API 相同——既把例行工作自动化了，又把置信度较低的用例送交给审核人员。”</blockquote>
+<p><em>—Biswaroop Palit，产品管理平台与集成副总裁，Box</em></p>
+<blockquote>“Decisions API 正在帮助我们给 agent 生成的 [rshell 命令] 在执行前评估风险，从而自主地修复问题。与可用的前沿模型相比，它的 p95 快了 40x，准确率却相当——这让我们可以把 Decisions 放进修复动作的热路径里。”</blockquote>
+<p><em>—AJ Stuyvenberg，Staff Engineer，Datadog</em></p>
+<blockquote>“与 GPT‑6 Luna 相比，Decisions API 让我们把 AI 成本归因到实际工作时快了 4x、便宜了 30%，而且没有牺牲准确率。”</blockquote>
+<p><em>—René Sultan，Research Engineer，Ramp</em></p>
+<blockquote>“在 Sierra，我们在实时客户对话的部分编排环节中用 Decisions API 来选择正确的下一步动作。它的 p95 低于 280 ms，比我们之前的做法快约 3×、每次调用成本低 90%，而客户结果没有任何下降。”</blockquote>
+<p><em>—Ajeet Grewal，Engineer，Sierra</em></p>
+<blockquote>“对语言学习者来说，时机很关键。在我们的测试中，GPT‑Live 里的 Decisions API 集成能够把做出下一步动作所需的时间缩短超过 90%，从 1.4s 降到 0.13s，创造出了互动性强得多的学习体验。”</blockquote>
+<p>—Andrew Hsu，CTO，Speak</p>
+<ul><li>Box</li><li>Datadog</li><li>Ramp</li><li>Sierra</li><li>Speak</li></ul>
+<h2>选择你的应用所需要的决策类型</h2>
+<p>使用 Decisions API 很简单：开发者先定义一个问题以及它允许的答案，再以文本、图像或原生 JSON 的形式提供上下文。API 会返回三种受支持的答复类型之一——一个概率、一个选择，或一个评分——应用可以据此决定接下来做什么。答复类型的多样性让 Decisions 能够适用于非常广泛的各种用例。</p>
+<p>Decisions API 支持三种答复类型：</p>
+<table><thead><tr><th>类型</th><th>用它来</th><th>主要结果</th></tr></thead><tbody><tr><td>predicate</td><td>估计某个条件为真的概率，例如产品是否存在可见损伤。</td><td>probability：对该条件为真的 0 到 1 的估计值。</td></tr><tr><td>choice</td><td>从你预先定义的选项中选一个，例如 agent 应该继续、重试，还是请求澄清。</td><td>choice：你所提供的取值之一。响应中还会包含概率和置信度。</td></tr><tr><td>score</td><td>依照评分标准里有序的等级给一个输入评级，例如损伤的严重程度。</td><td>score：各等级索引按概率加权后的平均值。</td></tr></tbody></table>
+<h2>用 Decisions API 和 GPT‑Live 构建实时语音体验</h2>
+<p>借助 <a href="https://openai.com/index/introducing-gpt-live-1-in-the-api/">GPT‑Live</a>，你可以为语音应用带来自然、富有表现力的对话，并由顺畅的打断处理让对话保持连贯。Decisions API 如今已<a href="https://developers.openai.com/api/docs/guides/decisions-voice">原生集成 GPT‑Live</a>，帮助应用在实时对话过程中做出快速、聚焦的决策。客服 agent 可以决定是提出一个澄清问题、路由一个请求，还是升级一个问题。avatar 可以在用户对它说话时调整自己的面部表情，并根据用户说的话以眨眼或微笑回应，营造更有互动感的体验。</p>
+<p>下面的示例用 transcript 更新来选择 avatar 的表情。把这段配置添加到已有 GPT‑Live 会话的 <code>session.triggers</code> 中。</p>
+<h4>JSON</h4>
+<pre><code>1{2  &quot;type&quot;: &quot;decisions&quot;,3  &quot;event_type&quot;: &quot;session.input_transcript.delta&quot;,4  &quot;decisions&quot;: {5    &quot;questions&quot;: [{6      &quot;type&quot;: &quot;choice&quot;,7      &quot;name&quot;: &quot;reaction&quot;,8      &quot;instructions&quot;: &quot;Choose an appropriate reaction for the avatar based on the user's latest message.&quot;,9      &quot;choices&quot;: [10        { &quot;value&quot;: &quot;neutral&quot; },11        { &quot;value&quot;: &quot;happy&quot; },12        { &quot;value&quot;: &quot;sad&quot; },13        { &quot;value&quot;: &quot;concerned&quot; }14      ]15    }]16  }17}</code></pre>
+<p>Live 会发出一个 <code>decision.event</code>；应用读取选中的 <code>reaction</code>，并据此让角色做出相应动画。<a href="https://developers.openai.com/api/docs/guides/decisions-voice">了解更多关于把语音接入 Decisions API 的内容。</a></p>
+<h2>亲自用 GPT‑Live 试试 Decisions</h2>
+<p>麦克风已关闭</p>
+<p><img src="https://openai.com/_next/static/immutable/media/thinking-bulb.1z1_50iiwd5ra.webp" alt=""></p>
+<p>在你开始之前麦克风保持关闭</p>
+<p>正在连接</p>
+<p>会话将在 0:00 后结束</p>
+<p>会话已结束。如果你还想继续聊，请重新开始。</p>
+<p>在你开始之前麦克风保持关闭</p>
+<h2>表情面板</h2>
+<p>点按一张脸即可预览。</p>
+<h2>实时决策</h2>
+<p>观察 Decisions API 如何根据你们各自说的话来选择面部表情。</p>
+<h3>你说的话</h3>
+<p>在你说话时观察它的反应。</p>
+<h3>助手说的话</h3>
+<p>在助手回复时观察它的表情。</p>
+<p>可以试试说</p>
+<p>我正在为我家的猫排练一段试镜。它中途走掉了。</p>
+<p>我有个秘密。你再凑近一点。</p>
+<p>其实，角色被我姐姐拿到了。这是她的第一场演出！</p>
+<p>我对明天有点紧张。你能陪我坐一会儿吗？</p>
+<p>我刚拿到那个角色了！你能和我一起庆祝吗？</p>
+<p>先做出一副惊讶的表情，然后告诉我你看到了什么。</p>
+<p>你能在网上搜一下下一场流星雨吗？</p>
+<p>我正在为我家的猫排练一段试镜。它中途走掉了。</p>
+<p>本演示有时长限制。使用本演示即表示你同意 OpenAI 的<a href="https://openai.com/policies/terms-of-use/">服务条款⁠</a>并确认已知悉我们的<a href="https://openai.com/policies/privacy-policy/">隐私政策⁠</a>。</p>
+<h2>构建并评估你的第一个决策</h2>
+<p>Decisions API 今天起通过专用的 Decisions endpoint 全面可用，使用的模型是 GPT‑6 Luna。当前的费率与缓存详情请参阅<a href="https://developers.openai.com/api/docs/guides/decisions#pricing-and-availability">定价与可用性指南</a>。</p>
+<p>先从你的应用经常反复做出的某一个决策开始。定义这个问题、可能的答案，以及区分这些答案所需的上下文。用能反映真实使用情况的示例来测试它——在 <a href="https://platform.openai.com/decisions">Decisions Playground</a> 里用你自己的文本或图像，或者按照<a href="https://developers.openai.com/api/docs/guides/decisions">开发者指南</a>发出你的第一个请求。</p>
+<p>Decisions API 的费用是每 100 万输入 token $0.10。缓存输入为每 100 万 token $0.01。关于 30 分钟和 12 小时的缓存写入，<a href="https://developers.openai.com/api/docs/pricing?utm_source=chatgpt.com">请阅读我们的定价指南。</a>你只需为输入 token 付费：不收输出 token 的费用。区域化处理在美国和 EU 可用，<a href="https://developers.openai.com/api/docs/guides/your-data">Zero Data Retention</a>面向符合条件的客户提供。详情请查看<a href="https://developers.openai.com/api/docs/guides/decisions#pricing-and-availability">定价与缓存</a>和<a href="https://developers.openai.com/api/docs/guides/your-data">数据控制</a>。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] FDE 在 OpenAI 中意味着什么</title>
+      <title>[OpenAI] 在 OpenAI，FDE 意味着什么</title>
       <link>https://openai.com/index/forward-deployed-engineering-means</link>
       <guid isPermaLink="true">https://openai.com/index/forward-deployed-engineering-means</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <category>OpenAI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
       <description>原文标题：What FDE means at OpenAI</description>
+      <content:encoded><![CDATA[<h1>在 OpenAI，FDE 意味着什么</h1>
+<p>我们做什么、怎么工作，以及我们如何解决企业最棘手的问题，交付真正的影响力。</p>
+<p>作者：Colin Jarvis，OpenAI Forward Deployed Engineering 负责人</p>
+<p><a href="https://openai.com/business/forward-deployed-engineering/">了解详情</a><a href="https://forum.openai.com/public/events/work-at-the-frontier-forward-deployed-engineering-at-openai-vmimj73oz5">观看直播回放</a></p>
+<p>Codex 刚发布时，团队里有人问我：“如果 Codex 一次就能搞定（one-shot）我们花了几个月搭建的那些用例，那我们做什么？”</p>
+<p>这个问题正好触及了 FDE 在 OpenAI 的核心含义。我们与客户并肩工作，理解他们最难的问题，搭建他们能够依赖的解决方案。我们学到的东西帮助塑造我们的产品，也为 Research 提供具体要解决的问题。</p>
+<p>这就是进步。如果我们每隔几个月就让自己变得“过时”，那说明我们的 FDE 团队做好了本职工作。</p>
+<p>我在 2025 年初创立了这个团队，为了弥合我们所说的<strong> “部署鸿沟”： </strong>模型看起来能做到的事，与人们能可靠地用来完成自己工作的事之间的距离。</p>
+<p>模型能力的推进速度，超过了把它们用起来所需的体系和流程。有时候缺的是一个产品。有时候一个模型在基准测试上表现很好，却在真实世界的变量和约束下做不成事。</p>
+<p>我们聚焦客户最难的问题。在我们的模型今天就能把活干好的地方，我们和 Product 以及客户一起把解决方案做成可复用的；在模型力有不逮的地方，我们与客户和 Research 一起定义差距并做出改进。我们的目标是让每一次合作都留给下一个客户一个更好的起点——如果我们把底线抬到客户下次不需要 FDE 来解决这一类问题的程度，那我们的工作就做到位了。</p>
+<p><a href="https://openai.com/index/john-deere-justin-rose/">John Deere</a> 是一家有 200 年历史的农业企业，它面临的挑战是如何规模化地为农民提供个性化建议。</p>
+<p>一个例子是 See &amp; Spray，它的精准除草技术：用摄像头和机器学习来识别杂草并定点喷洒，而不是整块田都施药，从而把化学品使用量最多降低 70%。</p>
+<p>但要把这些好处真正兑现，取决于农民是否知道如何配置这套技术、如何规划自己的作业季，以及如何在条件变化时调整自己的做法。</p>
+<p>John Deere 部署了 OpenAI 的 API，让这种支持做到个性化、可扩展。</p>
+<p>AI 可以用自然语言回答农民的问题、提供针对性的设置指引和建议、识别设备何时没有发挥出全部潜力，并帮助农民理解他们从这项技术里得到的价值。</p>
+<p>机会不止于某一次单独的交互：而是在整条客户旅程中持续给出相关的指导，帮助农民更好地利用自己的设备，同时提升效率和可持续性。</p>
+<p>这正是 OpenAI 的 FDE 致力于解决的挑战：帮助组织从 AI 能力走向能在复杂真实环境中交付实用价值的系统。</p>
+<p>但这些问题往往完全敞开，可能没有既定的标准答案，也没有现成的打法手册。<strong> 人人都想做出从未存在过的东西，愿意付出到达那一步所需代价的人却更少。</strong></p>
+<p>在寻找有天赋的 FDE 的同时，把“够用”的基线不断往上抬，意味着持续不断的试验和落地。</p>
+<h2>从结果出发</h2>
+<p>每次 FDE 团队会议一开始，我都会放一页幻灯片，上面写着一条核心价值观：“从结果出发，用一切必要的办法把事情做成，然后再谈规模化。”</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7njphD8l73ALH14fSedHFu/372f0ef41969a93a5dbc73f20260f182/forward-deployed-engineering-outcome-clocks.png?w=3840&amp;q=90&amp;fm=webp" alt="从结果出发。用一切必要的办法把事情做成。再谈规模化。Harrison H1（1735）：先让它存在；Harrison H4（1759）：之后让它变好。"></p>
+<p>一个惊艳的演示可以走很远，远到没人问它在真实世界里究竟行不行。</p>
+<p>我们的职责是解决客户的问题，并达到一个我们敢在生产环境里为之背书的标准。</p>
+<p>2025 年年中，我们大约有 15 名 FDE 与一家大型半导体客户合作，覆盖 10 多个用例。我们的雄心是让他们的验证流程变成 AI 原生的，范围包括：</p>
+<ul><li>定向测试生成</li><li>根因分析与调试</li><li>一个架构助手</li></ul>
+<p>在这个行业里，验证可以占到一个项目工作量的约 70%。机会巨大，可以下手的地方也非常多。</p>
+<p>有些 FDE 加入 OpenAI 才几天，此前从未在半导体行业工作过。他们嵌入式地进驻客户的验证团队，利用业余时间学习芯片设计，并和工程师一起搭建 eval，用来检验 AI 能否生成有用的测试、能否正确诊断芯片故障。</p>
+<p>在边学边做的同时，我们为各个具体用例搭建了定制的 harness。最初的 3-6 个月里，这些用例全部上了生产，并拿到了早期用户的采用。回报是看到那些指标：</p>
+<ul><li>基于 AI 的定向测试生成节省了约 48% 的时间。</li><li>通过内核优化带来 22% 的中位性能提升。</li><li>数周的调试被压缩到几小时</li></ul>
+<p>当我们把这一切复盘汇报时，首席硬件官问：“你们来这儿之前做过芯片设计师吗？”</p>
+<p><strong>我们的 FDE 不需要在第一天就懂这个行业，但把它学会是他们的责任。</strong></p>
+<p>随着编程助手让软件更快被构建出来，理解客户的业务变得更加重要。我们组建团队时会把通才和行业专家搭配起来。</p>
+<p>你需要足够的知识来做出可靠判断，还需要<strong>足够的好奇心去质疑关于现状的种种假设。</strong></p>
+<p>比如在生命科学领域，我们 FDE 的科学背景帮助他们赢得研究人员的信任——这些研究人员做的是临床前药物发现的任务，例如靶点验证与优先级排序、基因表达分析、化学合成路线重建。这种专业积累让他们能够就这些工作流如何改进贡献有依据的判断。</p>
+<h2>让成功可复制</h2>
+<p>我们已经证明这些工作流能够创造价值，但每一个仍然需要太多定制集成，才能推广到另一个团队。下一个挑战是保住这些成果，同时让软件更易部署、更易维护。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/7jyjwU4F2a487ENCvRMd2C/f0f4017ea37cb8865ad6759dd71c4fe3/forward-deployed-engineering-capability-curve.png?w=3840&amp;q=90&amp;fm=webp" alt="随着技术演进，FDE 把一个困难、未解决的问题变成从零到一的方案，再变成可复用的套件。"></p>
+<p>到那时，Codex 的能力已经成长起来。一名 FDE 尝试围绕它重建自己的应用，随后与团队一起把这些用例迁移到一个以 Codex 为核心的通用 harness 上。</p>
+<p>定制应用变成了构建在 Codex 通用 primitives 之上的 plugin 和 skill。Codex 也成了统一的界面，让我们得以下线此前为各个用例单独写的 terminal UI 和 CLI。</p>
+<p>我们从每个项目里去掉了大约 90% 的定制代码，这改变了我们构建、维护和扩展这些工作流的方式：</p>
+<ul><li>我们可以从 Codex 的集中式改进中获益，减少每个单独用例所需的胶水代码</li><li>关键功能被打包成 skill 和 plugin，让它们更容易在彼此之间共享，也更容易由 AI CoE 集中管控。这意味着从一个团队扩展到下一个团队可以简单到只是换上新的 connectors/MCP servers、搭建新的 eval（这方面我们同样有一个 skill），然后就能跑起来。</li><li>2026 年 8 月的一个例子里，初次部署花了两个月，把方案扩展到第二个团队只用了一天。随着我们规模化，后续团队上线得更快——这一趋势一直在延续：2026 年 8 月的一个用例，初次部署花 2 个月，第二个团队只花 1 天。</li></ul>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5jwUf7D5Ck6ritHsWpfw6L/d43647cf621013e366e1afbd5f8e54a8/forward-deployed-engineering-architecture-diagram.jpg?w=3840&amp;q=90&amp;fm=webp" alt="之前：一个多 agent 架构，包含专用 agent 和定制工具。之后：一个更简单的架构，以 Codex、skill、MCP 和代码仓库为中心。"></p>
+<p>那是一种让自己变得“过时”的方式。我们为了上生产所做的工作，已经确立了什么是重要的。随着底层产品不断改进，我们可以替换掉自己定制实现的很大一部分，同时保留它交付的价值。</p>
+<p><em>这就是顺序为什么重要。LLM 让我们构建得很快。把这份速度用来把有价值的东西交到用户手里，弄清楚在实践中什么站得住脚，然后把跑得通的放大。</em></p>
+<p>同样的原则适用于所有合作。</p>
+<p><a href="https://openai.com/index/introducing-openai-presence/">OpenAI Presence</a>——我们面向企业语音和 chat agent 的产品——就是从真实的客户部署中成长起来的。这项工作始于 <a href="https://github.com/openai/swarm">Swarm</a>，历经 <a href="https://openai.com/index/introducing-the-agents-api/">Agents API</a> 演进，如今已有一个客户用 AI 处理它超过一半的电话量。</p>
+<p>把这些部署推上生产，教会了我们哪些问题需要定制方案、哪些构件可以被其他团队复用。我们把这些构件带进 Presence，让开发者更容易自动化受监管的工作流，而不必重建底层基础设施。每一次部署都帮助塑造了这个产品，也让下一个客户拥有更好的起点。</p>
+<p>在 <a href="https://openai.com/index/building-self-improving-tax-agents-with-codex/">Thrive Holdings</a> 这个项目里，OpenAI 的 FDE 和研究人员与工程师、会计师并肩工作，为 Crete 的会计师事务所打造 Tax AI。在试点期间，Tax AI 处理了 7,000 份报税表，把吞吐量提升了约 50%。</p>
+<p>最难的挑战之一是自动化出租物业的报税表，这需要六周的工程和执业人员复核，才达到 90% 的精确率和召回率。这项工作沉淀出了可复用的模式，让 Tax AI 更容易扩展到其他复杂的税表。</p>
+<p>这些团队现在正把同样的方法应用到记账、审计和 IT 支持上——构建能通过执业人员反馈和真实使用不断自我改进的系统。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1cE5rcRC1Jawy4R1LBhOUE/7e6928b47fc27a7127c38d491f8dcf3e/forward-deployed-engineering-tax-throughput-light-blue.jpg?w=3840&amp;q=90&amp;fm=webp" alt="Tax AI 试点的吞吐量从 100 的基线指数提升到约 150，即在同一产能下提高约 50%。"></p>
+<h2>智能缺口一冒出来就把它补上</h2>
+<p>有时候是更好的产品让我们能简化自己搭出来的东西，但有时候是模型本身还做不成这件事。</p>
+<p>如果我们只构建今天的模型已经能实现的东西，我们就发现不了 Research 接下来需要弥合的那些智能缺口。因此，我们很多重要的合作一开始就顶着这些极限去做，客户、FDE 和 Research 都承诺一起把这些问题啃下来。</p>
+<p>我们此前已经为一家大型电信客户开发了一套客服平台，他们想把它扩展到语音。</p>
+<p>语音占他们客服量的九成左右。这类场景比 chat 更难兜住（contain），而且在把口音、语气以及 latency/准确率做到生产级这方面带来了一连串新的技术挑战。把它做对，会对他们的业务产生实质性的差别。</p>
+<p>在 scope 阶段，我们的模型在我们用来判断它能否上生产的关键 eval 上得分约 60%。我们已经触及了它能力的边界。客服场景里的 function calling 和指令跟随都需要改进。</p>
+<p>我们把这一点讲给了客户，并把 Research 拉进了这项工作。FDE 与客户一起搭建平台、定义模型需要做什么；Research 则着手弥合能力差距，用一版接一版的 model snapshot 让我们对照客户的需求检验进展。</p>
+<p>六个月里，关键 eval 上的表现从约 60% 提升到 80%，再到 90% 以上，达到了生产所需的水平。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5zEGFEt620tc1ydyVfnOnj/b12573df2aa4d14f265fc3bab7dd9cbb/forward-deployed-engineering-audio-reasoning-inline.jpg?w=3840&amp;q=90&amp;fm=webp" alt="Audio Big Bench 的准确率在五个 model snapshots 之间持续上升，从 2024 年 12 月的 65.6% 到 2026 年 5 月的 92.29%。"></p>
+<p>由此得到的语音模型现在支撑着那位客户的部署、其他定制客服部署，以及通过 Presence 交付的托管部署。在一个客户的业务里碰到的问题，帮助确定了能够服务许多其他客户的改进。</p>
+<p>每一环都很关键。客户承诺一起攻克一个模型尚不能解决的问题；FDE 保持足够贴近现场，去界定那个问题、搭建平台，并从头到尾推动这次合作；Research 则提升了底层模型能力。</p>
+<p>这就是让自己变得“过时”的另一种版本：帮助把一个今天的模型无法解决的问题，变成未来模型能够交付的能力。我们工作的回报，超出了我们在任何一个客户身上花费的时间。</p>
+<h2>去找更难的问题</h2>
+<p>我加入 OpenAI，是为了让 AI 在人们的日常工作中真正有用。这一点至今仍在指引着团队。我常跟团队说，在 LLM 开发的多数情况下，Occam's Razor 是适用的——最简单的方案就是最好的。在一家由其前沿研究定义的公司里，在一个被夸大其词浸染的行业里，我们想做的东西是能可靠跑起来、让现场的人可以依靠的。</p>
+<p>目标是让每一次合作都能改进接下来的东西：一个更易部署的产品、一个能处理更难任务的模型，或者让下一个客户少做一些定制工作。</p>
+<p>如果你有一个想要解决的难题，我们很乐意与你合作。如果你想帮助解决这些难题，我们欢迎你的加入。</p>
+<p>那么，当 Codex 能接手我们花几个月搭建的工作时，我们做什么？</p>
+<p>去找更难的问题。</p>
+<ul><li><a href="https://openai.com/news/?tags=2026">2026</a></li></ul>
+<h2>作者</h2>
+<p>Colin Jarvis</p>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] Uber 通过 OpenAI 为所有员工带来 ChatGPT Work</title>
@@ -256,13 +391,207 @@
 <p>该计划是 Anthropic 正在寻求加大对生命科学和更广泛的科学研究界的投资力度的多项举措之一。希望直接访问我们最强大的公开生物学模型的科学家可以申请加入我们的<a href="https://www.anthropic.com/news/life-sciences-verification-program">生命科学验证计划</a>。我们还继续通过我们的 <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science 计划</a> 为研究人员提供支持，该计划为科学家提供 Claude 学分，以加速他们在科学发现方面的进展。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[xAI Grok] SpaceX 超级智能合作伙伴网络简介</title>
+      <title>[xAI Grok] SpaceX Super Intelligence 合作伙伴网络正式推出</title>
       <link>https://x.ai/news/partnernetworkannouncement</link>
       <guid isPermaLink="true">https://x.ai/news/partnernetworkannouncement</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <category>xAI Grok</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml">xAI Grok</source>
       <description>原文标题：Introducing the SpaceX Super Intelligence Partner Network</description>
+      <content:encoded><![CDATA[<h1>SpaceX Super Intelligence 合作伙伴网络正式推出</h1>
+<p>这是我们面向企业的官方计划，这些企业使用 Grok 为我们的共同潜在客户与客户打造产品、解决方案和服务。</p>
+<p><a href="https://x.ai/partners">了解更多并申请</a></p>
+<p>今天，我们正式推出 SpaceX Super Intelligence Partner Network，这是我们面向企业的官方计划，这些企业使用 Grok 为我们的共同潜在客户与客户打造产品、解决方案和服务。</p>
+<p>这个网络汇聚了两类合作伙伴：</p>
+<ul><li><strong>Transformation Partners</strong> 帮助客户在企业范围内部署 Grok 平台，创造切实的业务价值。</li><li><strong>Marketplace Partners</strong> 打造插件和产品集成，让 Grok 产品套件能够与客户已经在依赖的工具协同工作。</li></ul>
+<p>通过合作伙伴计划，伙伴可以获得他们在与我们共同客户的合作中所需要的培训、工具和支持。</p>
+<h2><a href="https://x.ai/news/partnernetworkannouncement#building-the-partner-network">构建合作伙伴网络</a></h2>
+<p>超过 130 家公司参与了该计划的早期体验阶段。Transformation Partners 正通过我们的 Forward Deployed Engineer 认证项目建设交付能力，已在 30 多家机构培训了工程师。Marketplace Partners 则看到，与 Grok 搭配使用其产品的采用度在不断增长。</p>
+<p>在整个网络中，合作伙伴已经在服务各行各业的客户，这些客户遍布世界各地，从初创公司到 Fortune 20 企业不一而足。</p>
+<p>在 <a href="https://x.ai/partners">x.ai/partners</a> 了解更多并提交申请。</p>
+<h2><a href="https://x.ai/news/partnernetworkannouncement#hear-directly-from-some-of-our-key-launch-partners">直接听听我们部分核心 Launch Partners 的声音</a></h2>
+<h3>Bain &amp; Company</h3>
+<blockquote>“我们正在看到一场从 AI 辅助到 AI 主导的软件开发的根本性转变。这已经不再只是一场工程层面的对话，而是业务领导者的战略要务。机会不只是把代码写得更快，而是重新构想整个软件开发生命周期，让生产力和上市速度出现台阶式的跃升。把 Bain 的转型专业能力与 SpaceXSI 领先的 AI 能力结合起来，我们正在帮助客户加速这一转变，并交付真实的业务成果。”</blockquote>
+<p>Chuck Whitten，Bain 应用技术与 AI 实践全球负责人</p>
+<p><a href="https://x.ai/partners/ecosystem">了解更多</a></p>
+<h3>Databricks</h3>
+<blockquote>“Databricks 是企业把 AI 用到自己的数据上的地方。同样的底座支撑着 Genie，成千上万的组织正依赖 Genie 把业务数据变成可信的答案和行动。企业正在用 AI 快速地构建软件，我们非常高兴能与 SpaceXSI 合作，加速这一转变。我们一起确保企业能够满怀信心地采用并规模化 AI，背后是定义 Databricks 平台的严格治理与无缝工具。”</blockquote>
+<p>Ron Gabrisko，首席营收官</p>
+<p><a href="https://x.ai/partners/ecosystem">了解更多</a></p>
+<h3>NVIDIA</h3>
+<blockquote>“Cursor 在我们的工程环境中被广泛使用，它正在加速我们在 NVIDIA 的构建方式。通过把我们的突破分享给我们的伙伴和客户，NVIDIA 与 SpaceX Super Intelligence 将极大增强企业大规模构建和运行 agentic 开发的方式。”</blockquote>
+<p>Pat Lee，战略企业合作伙伴关系副总裁</p>
+<p><a href="https://x.ai/partners/ecosystem">了解更多</a></p>
+<h3>Snowflake</h3>
+<blockquote>“把 AI coding agent 部署到生产环境的最大障碍不是代码生成，而是安全、权限和运行的完整性。一个 agent 有多可靠，取决于它背后的企业上下文。SpaceX Super Intelligence 提供了自主工作流构建者想要的东西，而 Snowflake 作为企业 AI 平台，确保每一个动作都符合组织逻辑、系统 guardrails 和严格的审计跟踪。这让工程组织能够加快交付节奏，同时让企业标准保持完整无损。”</blockquote>
+<p>Vivek Raghunathan，Snowflake 工程高级副总裁</p>
+<p><a href="https://x.ai/partners/ecosystem">了解更多</a></p>
+<h3>Galatiq</h3>
+<blockquote>“我们是一家由 Grok 驱动的 Forward Deployed Engineering 公司，专为 SpaceXSI 而生，让客户把 Grok 变成业务成果，而不是又一个试点。我们不会丢给客户一份路线图然后走人。我们的工程师进入业务内部，与真正对问题负责的人坐在一起，在几周之内把生产系统交付到他们真实的工作流里。界定工作范围的队伍就是构建它的队伍，而我们衡量自己的标准，是体现在他们 P&amp;L 里的价值。”</blockquote>
+<p>Scott Kamra，Galatiq 联合创始人兼联合 CEO</p>
+<p><a href="https://www.prnewswire.com/news-releases/galatiq-launches-as-the-forward-deployed-engineering-organization-purpose-built-for-spacex-ai-302800390.html">了解 Galatiq 更多信息</a></p>
+<h3>Adapter Group, Inc.</h3>
+<blockquote>“Grok 生来是为了理解宇宙，而 Adapter Mind 生来是为了在任何问题被问出口之前，让你自己世界的那些细微之处保持清晰。配合 Grok Bot 和 Grok Build，如今的每一轮都从容地以你的完整轨迹为起点，而不只依赖工作记忆，从而让 token 用在最重要的地方——你的任务。SpaceXSI 一次又一次冲向不可能，并让它变得触手可及。我们很高兴与这支富有创新的团队一起成为 launch partner。”</blockquote>
+<p>Adam Ghetti，CEO</p>
+<p><a href="https://www.adapter.com/blog/bring-your-world-to-grok-spacexsi-partner-network-launch">了解 Adapter 更多信息</a></p>
+<h3>AHEAD</h3>
+<blockquote>“SpaceXSI 正在重新定义开发者体验，我们看到自己的企业客户正迅速从实验走向真正的生产使用。这一合作让我们能够把 SpaceXSI 的 AI 原生开发平台与 AHEAD 的企业级交付专业能力配对起来，使组织能够扩展 AI 辅助开发，同时不失去其环境所要求的治理、安全和运维严谨性。”</blockquote>
+<p>Scott Blahauvitz，AI 与云服务销售副总裁</p>
+<p><a href="https://www.ahead.com/news/ahead-and-cursor-announce-partnership-to-help-enterprises-reimagine-software-delivery-in-the-ai-era/">了解 AHEAD 更多信息</a></p>
+<h3>Alpha FMC</h3>
+<blockquote>“我们的工作是拿出合适的技术来应对客户最棘手的问题。AI 在金融服务和保险领域推进的速度超过我们见过的任何行业，而与 SpaceXSI 的合作意味着我们能把真正领先的能力带进那些房间——在那里我们本就了解客户、了解运营环境、了解他们正在追求的成果。”</blockquote>
+<p>Ryan Lemoie，Alpha FMC 技术高级合伙人</p>
+<p><a href="https://alphafmc.com/insights/spacexai-alpha-fmc-financial-services-moving-ai-from-experimentation-to-production/">了解 AlphaFMC 更多信息</a></p>
+<h3>Apollo</h3>
+<blockquote>“我们相信要在客户的工作已经发生的地方与他们相遇。把 Apollo 的 GTM Strategist 带到 Grok 里，我们是在给团队一位敏锐的销售 AE 或增长营销人的判断力，背后有 Apollo 的数据支撑，而不必离开他们已经在进行的那场对话。它对策略给出建议，在行动时审慎推进，让团队能够有信心地扩展 pipeline。”</blockquote>
+<p>Scott Singerman，合作伙伴关系副总裁</p>
+<p><a href="https://www.apollo.io/magazine/we-built-a-gtm-strategist-for-grok">了解 Apollo 更多信息</a></p>
+<h3>Atlan</h3>
+<blockquote>“agent 正在从写代码走向在企业内部做真正的工作。决定这条路能否走通的，是 agent 是否理解它所在的那个业务：数据意味着什么、由谁负责、允许触碰什么。<br>这种理解一直存在于人的头脑和分散的系统里。Atlan 的 agent 把它建设出来，团队为它做认证，如今 SpaceXSI 和 Grok Bot 上的每个 agent 都能从它出发。”</blockquote>
+<p>Prukalpa Sankar，Atlan 联合创始人</p>
+<p><a href="https://atlan.com/know/enterprise-context-layer/videos/contact-center-agent-cursor-atlan-mcp/">了解 Atlan 更多信息</a></p>
+<h3>AtScale</h3>
+<blockquote>“从原始数据表里推断业务逻辑的 coding agent 会给出貌似合理的答案。在一个受监管的企业里，那就是一笔负债。把 AtScale 的语义层嵌入 SpaceXSI 之后，agent 查询的是业务已经在用的、经过认证的指标，也就是财务部门定义的那个营收，因此它们不必去猜。这让 AI 辅助开发从一场实验变成一条你可以审计的工作流。”</blockquote>
+<p>Jay Schuren，AtScale 总裁</p>
+<p><a href="https://www.atscale.com/resource/grok-atscale-semantic-layer-demo/">了解 AtScale 更多信息</a></p>
+<h3>Bird</h3>
+<blockquote>“我们打造 Bird，是为了让 agent 能为人和企业完成有用的工作。沟通是其中的核心：迎接一位客户、确认一次预约、打一通电话或跟进一个请求。有了 Cursor 和 Bird，开发者就能借助 Bird 的通信基础设施，把他们构建的软件与这些客户互动连接起来。”</blockquote>
+<p>Robert Vis，CEO</p>
+<p><a href="https://bird.com/ai/cursor">了解 Bird 更多信息</a></p>
+<h3>Booz Allen</h3>
+<blockquote>“Cursor 作为我们 AI 生态中的关键伙伴，让我们能够交付安全、可扩展、模型敏捷的 AI 解决方案，推动业务与使命成果——无论我们是在让遗留系统现代化还是在构建新系统。这一伙伴关系加快了开发周期，让客户获得更高的速度、效率与使命影响。”</blockquote>
+<p>Sahil Sanghvi，Booz Allen AI 工程副总裁</p>
+<p><a href="https://www.boozallen.com/expertise/artificial-intelligence.html?origref=&amp;vURL=/ai">了解 Booz Allen 更多信息</a></p>
+<h3>Clear Measure</h3>
+<blockquote>“SpaceXSI 连同 Grok 和 Cursor，是目前能力最强、最完整的 AI 驱动开发平台。它覆盖了我们客户所有的 AI 场景，确实在赋能一流水平的软件交付成果，并带来出色的投资回报。”</blockquote>
+<p>Jeffrey Palermo，CTO 兼董事长</p>
+<p><a href="https://clearmeasure.com/ai_tooling_support/">了解 Clear Measure 更多信息</a></p>
+<h3>ClickHouse</h3>
+<blockquote>“越来越多的软件由 agent 构建，而开发者需要为他们的 coding agent 提供与自己产品相同的循环：trace、evaluate、improve。在 SpaceXSI 与 Langfuse 协同工作时，Grok Build 的每一个 agent 轮次都会成为一条 Langfuse trace，带上它的工具调用、token 和成本。对这些 trace 做评估，就能看出哪些会话产出了好工作、成本是多少，以及该改进哪些规则、skills 和 prompt。”</blockquote>
+<p>Marc Klingen，Langfuse（ClickHouse 的一部分）联合创始人</p>
+<p><a href="https://clickhouse.com/blog/cursor-agents-with-langfuse">了解 ClickHouse 更多信息</a></p>
+<h3>Coder</h3>
+<blockquote>“Coder 很高兴能与 SpaceXSI 合作。这正是我们的客户一直在向我们要的东西。我们的银行和联邦机构客户喜欢 Cursor 的速度以及它的 agent 的质量，但他们也需要自己的代码和数据留在自己的围墙之内。现在两者兼得。看着 Coder 和 Cursor 一起把这件事变成现实，确实令人振奋，我们认为这会改变企业——尤其是最受监管的那些企业——今后对 AI 编码工具的期待。”</blockquote>
+<p>Josh Epstein，CEO</p>
+<p><a href="https://coder.com/blog/introducing-agent-relay-cloud-hosted-agents-self-hosted-execution">了解 Coder 更多信息</a></p>
+<h3>CodeRabbit</h3>
+<blockquote>“我们的客户希望借助 AI 走得更快，同时相信他们交付的一切都符合自己的标准。SpaceXSI 给开发者用自己选择的模型来构建的自由，CodeRabbit 则把全面、独立的 review 带进那条工作流。我们的 Agentic Change Management 平台帮助团队排定工作优先级、理解代码变更的影响，并在整个软件生命周期中优化质量和安全。我们一起帮助客户规模化 AI 开发，让决策背后有证据、什么东西能上线仍由人掌控。”</blockquote>
+<p>Matthew Mulqueen，CodeRabbit 首席营收官</p>
+<p><a href="https://www.coderabbit.ai/newsroom/coderabbit-joins-spacexai-partner-network">了解 CodeRabbit 更多信息</a></p>
+<h3>CXO.dev</h3>
+<blockquote>“我曾大规模地领导产品与工程团队，但我也清楚一家敏捷的 AI 原生初创公司是什么样子。在我自己的业务里使用 Grok Bot，让我对更大的团队能用它做什么都感到兴奋：把 agent 布置到各个职能上、减少拖慢执行的协调开销、给人们更多构建的空间。在 CXO.dev，我们帮助领导者把这种初创公司的速度带进自己的组织——并改变工作被完成的方式。”</blockquote>
+<p>Claire Vo，CXO.dev 创始人</p>
+<p><a href="https://www.youtube.com/watch?v=QBmgF1kJSK4&amp;t=9s">了解 CXO.dev 更多信息</a></p>
+<h3>Endor Labs</h3>
+<blockquote>“胜出的团队，会把 agentic 开发的速度与从第一天起就为之而建的安全结合起来。SpaceXSI 已经为此打下了基础：一套可扩展的 agent harness，以及把安全直接带进 Grok Build 开发循环的 hooks。SpaceXSI 与 Endor Labs 一起给企业提供一种办法：治理 agent 的动作，保护 agent 所依赖的模型、MCP servers、skills 和 packages，并验证它们产出代码的完整性，而不必把开发者花多年时间想去掉的那些关卡和摩擦重新带回来。”</blockquote>
+<p>Varun Badhwar，Endor Labs 创始人兼 CEO</p>
+<p><a href="https://www.endorlabs.com/learn/endor-labs-spacexai-securing-every-stage-of-agentic-software-delivery">了解 Endor Labs 更多信息</a></p>
+<h3>EPAM</h3>
+<blockquote>“企业需要能够把 AI 原生工程做得可信、可治理、可重复的伙伴。这正是我们交付的：高端架构，配上亲自动手的生产级交付，背后是 EPAM 三十余年沉淀的企业级标准。随着 AI 采用不断演进、SpaceXSI 生态持续增长，这一标准也随之成长。”</blockquote>
+<p>Dimitry Tovpeko，副总裁，AI 工程、SDLC 与现代化全球负责人</p>
+<p><a href="https://www.epam.com/insights/blogs/beyond-the-integrated-development-environment-ide-the-epam-and-spacexai-enterprise-engineering-impact">了解 EPAM 更多信息</a></p>
+<h3>Exadel</h3>
+<blockquote>“买许可证从来不是难的部分。难的是当 agent 进入循环之后，如何改变一支两百名工程师的团队 review、测试和交付代码的方式。SpaceXSI 给开发者一个在真实代码库上值得信任的平台，而我们会留在交付组织内部，直到 AI 原生开发就是他们理所当然的构建方式。”</blockquote>
+<p>Karol Przystalski，首席 AI 官</p>
+<p><a href="https://exadel.com/news/ai-assisted-legacy-systems-modernization-with-cursor">了解 Exadel 更多信息</a></p>
+<h3>Fabric</h3>
+<blockquote>“我们极为兴奋地能与 SpaceXSI 合作，把他们的能力与 Fabric 长期以来的承诺合在一起——追求工程卓越、交付复杂的技术解决方案。这一合作为我们的行业、我们的团队和我们的客户开启了令人兴奋的新篇章，帮助我们加速创新、赋能工程师，并在 AI 改变软件构建方式的过程中交付更大的价值。”</blockquote>
+<p>Laurent Behan，Fabric Group CEO</p>
+<p><a href="https://www.fabricgroup.com.au/blog/spacexai-partnership">了解 Fabric 更多信息</a></p>
+<h3>Liatrio</h3>
+<blockquote>“这一合作把 SpaceXSI 的前沿技术与 Liatrio 由实践者引领的专业能力配对起来，把 AI 变成企业内部真实而持久的改变。把 Grok Bot 嵌入工作流和团队之中，我们帮助组织越过一个个孤立的 AI 小胜，规模化地收获 ROI，建立起一种持久的、覆盖整个组织的软件交付方式。”</blockquote>
+<p>Ryan McClish，首席交付官</p>
+<p><a href="https://www.liatrio.ai/resources/blog/stop-measuring-ai-by-tokens-measure-it-by-outcomes">了解 Liatrio 更多信息</a></p>
+<h3>Metrocom</h3>
+<blockquote>“AI 正在改变企业的运营方式，但对许多组织来说，真正的挑战仍然是知道该从哪里起步。我们与 SpaceXSI 的合作把领先的 AI 技术与 Metrocom 的本地专业能力结合起来，帮助印度尼西亚的企业走得更快、干得更聪明，把 AI 的潜力变成真实的业务成果。”</blockquote>
+<p>Indra S.A. Pattiasina，监事会主席</p>
+<p><a href="https://www.instagram.com/p/DbX53NPEU0O/?img_index=1">了解 Metrocom 更多信息</a></p>
+<h3>Mixpanel</h3>
+<blockquote>“构建、度量、学习，一直是最要紧的那个循环。AI 编码工具把构建这一环变得很快。把 Mixpanel 的 MCP server 放进 Cursor 里，剩下的环节也快了起来，开发者不必离开自己构建的地方，就能拿到度量和学习。”</blockquote>
+<p>Anant Gupta，首席技术官</p>
+<p><a href="https://mixpanel.com/blog/mixpanel-product-intelligence-cursor-integration/">了解 Mixpanel 更多信息</a></p>
+<h3>MongoDB</h3>
+<blockquote>“AI 让构建应用比以往任何时候都更快、更容易。但 agent 把风险等级抬高了。它们需要访问实时数据，而它们对应用提出的要求可能瞬间改变。把 MongoDB 与 Grok Build 一起带进 Cursor，我们帮助开发者从一开始就构建在一个为承担这些要求而设计的数据平台之上，而不拖慢他们。”</blockquote>
+<p>Ben Cefalo，MongoDB 首席产品官</p>
+<p><a href="https://www.mongodb.com/company/blog/technical/build-ai-powered-applications-with-atlas-in-grok-build">了解 MongoDB 更多信息</a></p>
+<h3>Ness Digital</h3>
+<blockquote>“Grok 处于我们构建方式的核心。我们发现，像把规模可观的平台现代化这样的项目，过去要好几年。有了 Grok，我们的客户到达终点的节奏，改变了他们敢于规划的范围。”</blockquote>
+<p>Sandeep Sharma，Ness Digital Engineering 首席 AI 官</p>
+<p><a href="https://www.ness.com/case-studies/ai-powered-cloud-application-modernization-grok/">了解 Ness Digital 更多信息</a></p>
+<h3>NTT DATA</h3>
+<blockquote>“Cursor 让我们围绕 AI 重新构想整个开发流程，而不只是给编码加上 AI。我们的团队始终对意图、决策和质量负责，而 agent 加快了工作被完成的方式。”</blockquote>
+<p>Tammy Soares，Launch by NTT DATA 董事总经理</p>
+<p><a href="https://services.global.ntt/en-us/newsroom/ntt-data-and-cursor-partner-to-accelerate-enterprise-grade-modernization-and-ai-governance">了解 NTT Data 更多信息</a></p>
+<h3>Omni</h3>
+<blockquote>“Cursor 是很多开发者和分析工程师已经在干活的地方。如果一个 agent 要触碰真实的业务指标，它就需要业务已经在依赖的那些仪表板同样的 guardrails。每条查询在运行前都要经过 Omni 的语义模型：指标映射到数据团队商定过的定义，join 解析到已定义的关系，上下文随之传递，访问权限自动生效。所以无论一个人是打开仪表板还是在 Cursor 里问一个 agent，拿到的都是同一组数字。”</blockquote>
+<p>Chris Merrick，Omni 首席技术官</p>
+<p><a href="https://omni.co/blog/building-an-ai-data-product-with-cursor-and-omni">了解 Omni 更多信息</a></p>
+<h3>Opsera</h3>
+<blockquote>“AI 从根本上改变了软件被构建的方式，但只有速度还不够。Forge 与 SpaceXSI 一起，帮助客户把上下文和可问责性直接带进开发者体验。”</blockquote>
+<p>Kumar Chivukula，联合创始人兼 CEO</p>
+<p><a href="https://opsera.ai/blog/opsera-and-cursor-partner-to-transform-the-enterprise-from-sdlc-to-ai-sdlc">了解 Opsera 更多信息</a></p>
+<h3>Orion Innovation</h3>
+<blockquote>“客户希望把 AI 编码融入他们的团队实际构建和交付软件的方式。通过 SpaceXSI Partner Network，我们可以把 Grok Build 与 OI Gantry 以及我们的 forward-deployed 工程师配对起来，针对每个客户的开发环境、测试流程和交付工作流来定制这项工作。”</blockquote>
+<p>David Winter，首席云与战略合作伙伴关系官</p>
+<p><a href="https://www.orioninnovation.com/insights/blogs/grok-build-oi-gantry-for-enterprise-ai-delivery/">了解 Orion Innovation 更多信息</a></p>
+<h3>Revyl</h3>
+<blockquote>“Cursor 和 Revyl 给 AI agent 一个完整的移动端开发循环。Cursor 写代码，Revyl 运行应用并证明改动确实有效，给团队运行时的证据和信心，从想法到合并走得更快。”</blockquote>
+<p>Paul St. John，联合创始人</p>
+<p><a href="https://revyl.com/customers/studocu/">了解 Revyl 更多信息</a></p>
+<h3>SCX.ai</h3>
+<blockquote>“SCX.ai 把主权的、托管在澳大利亚境内的推理能力带进 Cursor。企业和政府团队如今可以运行一个世界级的 AI 编码平台，而代码、prompt 和上下文都不会离开澳大利亚本土：成本更低、没有 Cloud Act 风险敞口、并且模型是针对澳大利亚数据 fine-tuned 的。”</blockquote>
+<p>David Keane，CEO</p>
+<p><a href="https://scx.ai/resources/sovereign-coding-agents-cursor-scx-2026">了解 SCX.ai 更多信息</a></p>
+<h3>Semgrep</h3>
+<blockquote>“我们很自豪能成为 SpaceXSI Partner Network 的一员。AI 正在改变开发者构建软件的方式，安全必须跟上。Semgrep 与 SpaceXSI 把安全带进 agent 工作流，问题可以在代码写下的同时被发现并修复。有了 MCP 和 Hooks，这些安全检查可以自动发生。这就是 Security for Builders and Agents，就在开发发生的地方。”</blockquote>
+<p>Isaac Evans，CEO</p>
+<p><a href="https://semgrep.dev/blog/2026/mcp-vs-hooks-ai-agent-security/">了解 Semgrep 更多信息</a></p>
+<h3>Sentry</h3>
+<blockquote>“客户依靠 Cursor 和 Sentry 来自动化调试流程。Sentry 提供必要的上下文，帮助 Cursor 的 agent 快速高效地修复问题。客户告诉我们，Sentry 对理解他们的应用表现至关重要，而通过使用 Cursor 插件，把那份信息交到 agent 手里、做出更好也更持久的修复，容易得超乎想象。”</blockquote>
+<p>Dave Rosenthal，CTO</p>
+<p><a href="https://blog.sentry.io/smarter-debugging-sentry-mcp-cursor/">了解 Sentry 更多信息</a></p>
+<h3>Sinch</h3>
+<blockquote>“AI 正在改变开发者能构建什么，以及他们多快能把这些应用推向市场。我们与 SpaceXSI 的合作把可信通信直接带进 Cursor 的开发流程，开发者从一开始就能为应用加上消息、语音、验证和邮件，同时在应用从第一个用户走向企业规模的过程中，依靠同一套安全可靠的底层基础设施。SpaceXSI 与 Sinch 一起，帮助缩小 AI 生成的软件与可用于生产的客户通信功能之间的差距。”</blockquote>
+<p>Petter Bengtsson，AI 生态与合作伙伴关系高级副总裁</p>
+<p><a href="https://sinch.com/blog/how-i-built-communications-stack-cursor-sinch-plugin/">了解 Sinch 更多信息</a></p>
+<h3>Sonar</h3>
+<blockquote>“Cursor 和 Sonar 解决的是同一个问题的两半：Cursor 帮助开发者和 agent 以 AI 的速度生成代码，Sonar 在代码交付之前完成验证。通过 SpaceXSI Partner Network，我们把两个工具合进一条工作流，在代码写下之前提供项目专属的上下文，在代码生成时提供实时验证，让团队带着对代码的信心走得更快。有了 Cursor 的 SonarQube 插件和 Sonar Vortex，企业组织就能把零信任、多层的验证直接带进他们的 agentic 开发流程。”</blockquote>
+<p>Harry Wang，Sonar 战略增长与实验室执行副总裁</p>
+<p><a href="https://www.sonarsource.com/developers/blueprints/set-up-the-sonarqube-plugin-for-cursor/">了解 Sonar 更多信息</a></p>
+<h3>Supabase</h3>
+<blockquote>“构建者们早就自行把 SpaceXSI 和 Supabase 搭配起来用，它已成为我们头部社区插件之一。我们很高兴正式加入 SpaceXSI Partner Network。现在，你构建的一切都跑在开源 Postgres 上，从第一天起就可用于生产。”</blockquote>
+<p>Ant Wilson，CTO 兼联合创始人</p>
+<p><a href="https://supabase.com/blog/ship-changes-to-your-supabase-backend-with-grok-bot">了解 Supabase 更多信息</a></p>
+<h3>Synechron</h3>
+<blockquote>“这一合作为我们的客户把两家机构各自最好的东西结合在一起。SpaceXSI 提供 AI 工程底座，Synechron 提供在高度受监管的行业中交付并规模化转型的专业能力。我们一起帮助客户加快 AI 采用，并具备取得可衡量成果所需的治理、执行与业务聚焦。”</blockquote>
+<p>Mihir Shah，总裁</p>
+<p><a href="https://www.synechron.com/insight/in-ai-delivery-context-is-queen">了解 Synechron 更多信息</a></p>
+<h3>Tenex</h3>
+<blockquote>“AI 编码让单个开发者变得更快。下一个挑战是让整个工程组织变得更快。这正是我们与 Cursor 一起构建的东西：一套 AI 原生的软件交付系统，agent 在整个生命周期里干活，最好的工作方式在各团队之间规模化，开发者生产力的提升真正体现在公司交付的速度上。”</blockquote>
+<p>Arman Hezarkhani，Tenex 联合创始人兼联合管理合伙人</p>
+<p><a href="https://www.youtube.com/watch?v=C6eItTdAuNw">了解 Tenex 更多信息</a></p>
+<h3>Token Security</h3>
+<blockquote>“组织希望让开发者享受 AI 辅助开发的好处，同时不给安全团队制造盲区。把 Token 的身份与风险上下文同 Cursor 的开发者工作流结合起来，客户就能了解 agent 在自己的环境中是如何运作的，并把安全发现交到能够采取行动的工程师手上。这帮助安全团队和工程团队在持续拓展用 AI 构建软件的方式的同时，把风险处理到位。”</blockquote>
+<p>Itamar Apelblat，联合创始人兼 CEO</p>
+<p><a href="https://www.token.security/blog/spacexai-token-security-scale-agentic-development-identity-control-and-governance">了解 Token Security 更多信息</a></p>
+<h3>Transcend</h3>
+<blockquote>“我们很高兴与 SpaceXSI 合作，为 agent 部署提供支撑，让企业有信心去构建。企业希望 Grok Build 的 agent 干真实的活，而 CIO 和 CISO 需要确信这些 agent 会守规矩。Transcend Rails 在一个动作运行之前就判定它是否被允许、执行公司策略，并生成审计跟踪。正是这一点把 agent 从 sandbox 搬进了生产。”</blockquote>
+<p>Kate Parker，总裁</p>
+<p><a href="https://transcend.io/blog/rails-cursor-plugin">了解 Transcend 更多信息</a></p>
+<h3>Twilio</h3>
+<blockquote>“Twilio 很高兴以 Marketplace Launch Partner 的身份与 SpaceXSI 合作。现在 agent 可以直接连接相关的 skills，确保它们的 Twilio 能力配置与接入支持快速执行。对构建者来说，这是一次重大解锁。”</blockquote>
+<p>Andy O'Dower，Twilio Field CTO</p>
+<p><a href="https://www.twilio.com/en-us/resource-center/twilio-cursor-integrations">了解 Twilio 更多信息</a></p>
+<h3>Webflow</h3>
+<blockquote>“Cursor 正在改变开发者用 AI 构建的方式。有了 Webflow 插件，开发者不必离开 Cursor 就能在 Webflow 上构建、管理、审计和发布，同时保持企业级治理。我们很高兴成为 SpaceXSI Launch Partner，帮助团队为下一个时代的互联网构建。”</blockquote>
+<p>Ben Haefele，首席产品官</p>
+<p><a href="https://www.youtube.com/watch?v=LKUWRCfSo04">了解 Webflow 更多信息</a></p>
+<h3>Zscaler</h3>
+<blockquote>“AI 辅助开发为开发团队带来速度、自动化和灵活性。通过在各 endpoint 上识别 AI 的使用，Zscaler 帮助组织执行运行时监控和策略强制，并保护 Cursor 在各开发者 endpoint 上的部署。与 SpaceXSI 合作，我们正在赋能组织有信心地、安全地扩大 AI 辅助开发，配合深度的代码库上下文和由开发者意图驱动的策略。”</blockquote>
+<p>Dhawal Sharma，Zscaler AI 与数据安全执行副总裁</p>
+<p><a href="https://www.zscaler.com/blogs/partner/zscaler-cursor-secure-ai-assisted-development-at-endpoint">了解 Zscaler 更多信息</a></p>
+<h2>加入合作伙伴网络</h2>
+<p><a href="https://x.ai/partners">了解更多并申请</a></p>]]></content:encoded>
     </item>
     <item>
       <title>[MiniMax] 插件即应用：MiniMax Code Mini App 正式发布</title>
@@ -1816,13 +2145,66 @@ print(response.json()[&quot;video_url&quot;])copy</code></pre>
 <p><em>感谢 GitLab 团队发布了 Duo Code Review 流程及其基准测试结果，使这项研究成为可能。</em></p>]]></content:encoded>
     </item>
     <item>
-      <title>[Modular (原 BentoCloud/BentoML)] Modular：MAX 现已提供源码并向所有人开放</title>
+      <title>[Modular (原 BentoCloud/BentoML)] Modular：MAX 现在源码可用，向所有人开放</title>
       <link>https://www.modular.com/blog/max-license</link>
       <guid isPermaLink="true">https://www.modular.com/blog/max-license</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <category>Modular (原 BentoCloud/BentoML)</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-modular_cloud.xml">Modular (原 BentoCloud/BentoML)</source>
       <description>原文标题：Modular: MAX is now source available and open to everyone</description>
+      <content:encoded><![CDATA[<h1>Modular：MAX 现在源码可用，向所有人开放</h1>
+<p>Modular 团队</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6ada33a38fa22d25cecfaab5_ProductReleaseBlogPost-Option_9.1.jpeg" alt=""></p>
+<p>今天，我们很高兴地宣布 Modular 的一个重大里程碑：<strong>完整的 MAX 源代码现已公开可用</strong>，同时推出的还有一份被大幅简化的 MAX License。</p>
+<p>开发者现在可以探索、修改并扩展整个 MAX 技术栈。在此前已经开源的 kernel、模型和服务基础设施之上，本次发布进一步开放了支撑 MAX 异构能力的其余核心组件：graph compiler、runtime 和硬件 backend。其中包含对 CPU 和 GPU 的支持。</p>
+<p>根据<a href="https://www.modular.com/legal/max-license">新许可证</a>，你可以用 MAX 构建并分发商业产品，无需支付许可费或版税。我们同时也把 MAX 向社区贡献开放，先从 bug 修复开始，并随着时间推移逐步扩大范围。我们还在积极地把 agentic 基础设施建设注入 MAX，这会提升我们整体的开发方式。</p>
+<p>这一里程碑建立在我们循序渐进开放技术栈的做法之上。我们 2024 年从 Mojo 标准库开始，随后在 2025 年一年里陆续开放了 MAX 的 kernel、模型、服务基础设施和 API。今年八月，我们把整个 Mojo compiler 和工具链完全开源。今天，我们把剩余的 MAX compiler、runtime 和硬件 backend 也做成源码可用，从而补上完整的图景。</p>
+<p>随着 Modular 进入<a href="https://www.modular.com/blog/qualcomm-completes-acquisition-of-modular">在 Qualcomm 内部的新篇章</a>，我们正在加速自己让异构算力大众化的使命。未来几个月里，我们将推出<a href="https://www.modular.com/alliance">一个联盟计划</a>，目标是把开发者和硬件厂商聚集到同一个软件平台周围。开放 MAX 是迈向那个共享生态的第一步。</p>
+<h1><strong>新的 MAX License</strong></h1>
+<p>我们设计<a href="https://www.modular.com/legal/max-license">新的 MAX License</a>时，要平衡两个优先事项：让社区能够以更灵活的方式构建，以及 MAX 与其生态的长期可持续性。</p>
+<p>这首先要给开发者构建的自由。你可以使用、修改、扩展 MAX，并用 MAX 构建商业产品，无需许可费或版税。我们的目标是移除采用上的障碍，让开发者、研究人员和硬件厂商都能在整个技术栈之上自由创新。</p>
+<p>同样重要的，是确保这个生态能够长期繁荣。我们的团队花了几十年时间构建和维护重大的开源项目，我们也<a href="https://www.modular.com/blog/democratizing-ai-compute-part-8-what-about-the-mlir-compiler-infrastructure">见识过它们面临的挑战</a>。碎片化是一个常见的坑，对 MAX 这样的基础基础设施尤其如此。MAX 的核心目标是统一跨硬件的编程模型，而如果每个平台都开发自己互不兼容的版本，这个目标就会难得多。</p>
+<p>我们在设计这份许可证时把这些考量都放了进去。和 Mojo 一样，我们预计自己的做法会随着技术成熟、随着更多听取社区的声音而持续演进。</p>
+<h2><strong>MAX License 覆盖什么</strong></h2>
+<p>许多 MAX 组件已经在 Apache 2.0 下开源。其中包括用 Mojo 写成的 MAX kernel 库、用于给加速器编程的 Mojo 接口、面向服务 CLI 与建模的 Python API、MAX 模型，等等。所有这些组件都会继续留在 Apache 2.0 之下。</p>
+<p>新的 MAX License 涵盖我们今天开放源码的那些 MAX 内部实现，加上我们分发的 MAX 二进制文件。每个源文件都包含一段头部说明，标明适用于它的许可证。</p>
+<p>以下是 MAX License 允许的行为：</p>
+<ul><li><strong>在任何硬件上无限制地使用 MAX，无需许可费</strong>：在任何硬件上用 MAX 构建，完全免费。</li><li><strong>反哺 MAX</strong>：为了向主 MAX 项目回馈贡献而 fork MAX。</li><li><strong>在 MAX 之上构建库和应用程序</strong>：用 MAX 创建项目和库，并按你自己选择的方式给它们授权。MAX 的各个组件，例如 kernel（Apache 2.0）、graph compiler（MAX License）和设备 backend（MAX License），保留各自的许可证，而你可以按自己的意愿为自己的代码授权。</li></ul>
+<p>这里有几条限制：</p>
+<ul><li><strong>借助 AI 重新实现 MAX</strong>：你不能把 MAX 的任何部分作为输入交给 AI 系统，用来产出 MAX 的重新实现。我们想要建立一个社区、把大家聚到一起，而不是充当众多 AI 驱动的 fork 的地基。</li><li><strong>商业托管推理服务：</strong>如果你把 MAX 用于你卖给客户的托管推理或训练服务，你就必须在你的产品上显著展示 “Modular Accelerated” 字样，以承认我们对你的商业产品所做的贡献。</li><li><strong>发布和分发修改后的源代码</strong>：你不能发布或分发经过修改的 MAX 源代码，除非是为了向主项目回馈贡献而 fork MAX。我们知道 AI 赛道上竞争激烈、强手如林，也希望复现 LLVM 的成功——让人们在一个共享的代码库上构建，这个代码库能够满足许多不同公司的需求，比任何一家公司单独为自己构建的都更好。</li></ul>
+<p>我们的意图是鼓励试验和创新，同时确保 MAX 继续作为一个统一的软件基础来演进。开发者可以自由地修改 MAX、用 MAX 做试验，我们也希望把改进贡献回项目这件事变得尽可能容易。这份许可证在分发上的限制，是为了防止 MAX 碎片化成互不兼容的版本，而不是要劝阻单个开发者探索新想法。我们理解，试验那些还没准备好贡献给上游的修改，往往有很多正当的理由；我们会继续与社区合作，确保我们的开发和贡献流程能支撑这种创新。</p>
+<p>MAX 也可能收集使用遥测数据，以帮助我们改进产品。我们依照自己的<a href="https://www.modular.com/legal/privacy">隐私政策</a>处理个人信息，该政策说明了用户在适用数据保护法律下享有的权利，包括 EU 和 UK GDPR 以及加州消费者隐私法。和大多数软件许可证一样，MAX 按现状提供，不附带任何保证。</p>
+<p>想了解更多 MAX License 的细节，请<a href="https://forum.modular.com/t/max-license-faq/3578">查看 FAQ</a>并<a href="https://www.modular.com/legal/max-license">阅读完整许可证</a>。</p>
+<h1><strong>接下来做什么</strong></h1>
+<p>随着完整的 MAX 代码库现在源码可用，我们从今天起同时也把 MAX 向社区贡献开放。起初我们只<a href="https://github.com/modular/modular/blob/main/max/docs/contributing/README.md">接受 bug 修复</a>，并计划随着时间推移扩展到重构和其他改动，沿用我们在 Mojo 标准库和 compiler 上用过的同一套循序渐进的做法。</p>
+<p>我们的下一步，是把 MAX 和 Mojo 带进更广阔的 AI 生态。在 ModCon 上，我们宣布了 <a href="https://www.modular.com/alliance">Modular 联盟计划</a>，把硬件厂商、模型实验室和数据中心运营方聚拢到一个共同的软件基础周围。</p>
+<p>贡献工程资源、算力或早期模型 checkpoint 的合作伙伴，将帮助塑造 MAX 的未来：在治理和一致性标准上有话语权，对路线图有输入，在上游贡献上有优先权，可以提前获得模型 checkpoint，拥有专属的硬件 backend，以及更宽松的许可条款。</p>
+<p>未来几个月我们会分享更多关于该联盟的内容。如果你有兴趣参与，请联系 alliance@modular.com。</p>
+<p>想要进一步了解新的 MAX License，欢迎参加 Modular 联合创始人 Chris Lattner 和 Tim Davis 主持的现场问答，时间是 11 月 10 日上午 10 点（PT）。<a href="https://luma.com/max-license">点此报名</a>。</p>
+<h1><strong>开始使用</strong></h1>
+<ul><li>浏览 <a href="https://github.com/modular/modular/tree/main/max">GitHub 上的 MAX 源码</a></li><li>阅读完整的 <a href="https://www.modular.com/legal/community">MAX License</a></li><li>阅读 <a href="https://forum.modular.com/t/max-license-faq/3578">MAX License FAQ</a></li><li>用 <code>pip install max[all]</code> 安装 MAX</li><li>查看<a href="https://github.com/modular/modular/blob/main/max/docs/contributing/README.md">贡献者指南</a>，提交一个 bug 修复</li><li><a href="https://github.com/modular/modular/blob/main/max/docs/development.md">从源码构建 MAX</a></li><li>在 <a href="https://forum.modular.com/">Modular 论坛</a>或 <a href="https://discord.gg/modular">Discord</a>分享你的反馈</li></ul>
+<p>我们期待看到你用 MAX 构建出什么。如果许可证里还有任何不够清楚的地方，我们想听你说。正是你们的反馈塑造了这次发布，它也会继续指引接下来的步伐。</p>
+<h2>阅读 Modular 的更多内容</h2>
+<p>查看全部博客</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6ada2f7b9f71f84fdcd7ddf1_image.png" alt=""></p>
+<p>Modular 26.7：开放 MAX</p>
+<p>2026 年 10 月 22 日</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a7b1bf1bd5b664c84aac08f_Blog-26.5-sm.jpeg" alt=""></p>
+<p>Modular 26.5：Mojo 1.0 来了！</p>
+<p>2026 年 8 月 11 日</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a341d0fa8e1fd3e2ae53890_264.jpeg" alt=""></p>
+<p>Modular 26.4：SOTA MoE 服务化、通过 Agent Skills 完成模型上线、Mojo 1.0 Beta 2 及更多内容</p>
+<p>2026 年 6 月 18 日</p>
+<p>与 Modular 一起构建 AI 的未来</p>
+<p>立即开始 - 免费</p>
+<p>查看各版本</p>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="金发人士正在使用一台带 Apple 标志的笔记本电脑。">立即注册今天就注册我们的 Cloud Platform，轻松开始使用。<a href="https://docs.modular.com/max/get-started">注册</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="带黑色手柄和圆形透明镜片的放大镜表情符号。">浏览开源模型浏览我们的模型目录，或者部署你自己的自定义模型<a href="https://www.modular.com/models">浏览模型</a></li></ul>
+<h2>订阅我们的新闻通讯</h2>
+<p>把我们的最新消息、公告和更新直接送到你的收件箱。随时可以退订。</p>
+<p>感谢订阅我们的新闻通讯！🚀</p>
+<p>谢谢你，</p>
+<p>Modular 销售团队</p>
+<p>Oops！提交表单时出了问题。</p>]]></content:encoded>
     </item>
     <item>
       <title>[Modular (原 BentoCloud/BentoML)] Modular：Modular26.7：开放MAX</title>
@@ -1928,13 +2310,31 @@ y = model(Tensor.ones([2, 8, 3]))             # same op, now compiled</code></pr
 <p>哎呀！提交表单时出现问题。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] AT&amp;T 如何重新考虑与 OpenAI 合作的内部法律工作</title>
+      <title>[OpenAI] AT&amp;T 正在用 OpenAI 重塑内部法务工作</title>
       <link>https://openai.com/index/att-legal</link>
       <guid isPermaLink="true">https://openai.com/index/att-legal</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
       <category>OpenAI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
       <description>原文标题：How AT&amp;T is rethinking in-house legal work with OpenAI</description>
+      <content:encoded><![CDATA[<h1>AT&amp;T 正在用 OpenAI 重塑内部法务工作</h1>
+<p>AT&amp;T 正在 LegalEdge 的基础上，探索支持其法务团队的新方式。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1MwtZ6lvHj9Et5r15FI6Lh/f5c7f182a3892a5a8f2773e37f6264ee/att-legal-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="深蓝编织织物正中是白色的 AT&amp;T 标识。"></p>
+<p>公司规模：Enterprise</p>
+<p>地区：全球</p>
+<p>行业：科技</p>
+<p>AT&amp;T 的内部法务部门在全球有数百名律师和法律专业人员。要给业务出主意，他们得先把事实、文档和相关的过往工作拼起来，往往还要用上分散在各个团队里的专长。对 AT&amp;T 高级执行副总裁兼总法律顾问 David McAtee 而言，让这份经验更容易被取用，正是这个部门的工作得以改进的核心。</p>
+<p>AT&amp;T 正与 OpenAI 一起搭建这下一阶段。“我们与 OpenAI 的合作会让我们建起那套管道，为全公司的知识层供能，我们所有人都会从里面取用。”McAtee 说。</p>
+<p>这次合作建立在 LegalEdge 之上。LegalEdge 是 AT&amp;T 的一支队伍，由律师、法律专业人员、技术人员和项目经理组成，专注把 AI 用在重大法律事务上。下一步是把公司积累的更多专长接到摆在律师案头的工作上。</p>
+<p>需求来自整个业务，法务团队要快速响应，又不能漏掉风险。提建议之前，他们得先弄清问题、把相关背景收齐，再决定什么要先处理。这让案件受理成为保护业务的关键一环。AT&amp;T 首席合规官 Bill Ryan 把一项规划中的举措描述成一套受理系统，“有一扇前门，在那里用自然语言受理”。这套系统会给请求分类并排定优先级，把它们与相关先例、研究和过往工作连起来，并给负责的法律专业人员提供历史背景和推荐的第一步动作。</p>
+<p>这样律师就有了一个信息更充分的起点，花在收集评估材料上的时间会更少。Ryan 把机会看成帮这个部门把判断力用到业务更多需求上。</p>
+<p>“最让我对未来兴奋的，是我们能在更大的规模上输出法律判断。”他说。</p>
+<p>在 McAtee 看来，指导这项工作的那个原则依然清楚：“决策永远由律师来做。”这次合作的目标，是把更好的信息放到够得着的地方，好让律师把更多时间用在施展专长上。</p>
+<p>来看 McAtee 和 Ryan 讨论 LegalEdge，以及 AT&amp;T 法务工作与 OpenAI 合作的下一阶段。</p>
+<h2>加入新的工作时代</h2>
+<p>全球超过 100 万家企业正在借助 OpenAI 取得实质性成果。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] 通过一致的标准实现广泛的访问</title>
@@ -2076,13 +2476,44 @@ y = model(Tensor.ones([2, 8, 3]))             # same op, now compiled</code></pr
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] 使用数千个人工智能代理来发现生物数据中的新线索</title>
+      <title>[OpenAI] 用数千个 AI agent 从生物数据里挖出新研究线索</title>
       <link>https://openai.com/index/scaling-ai-research-for-complex-biological-data</link>
       <guid isPermaLink="true">https://openai.com/index/scaling-ai-research-for-complex-biological-data</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
       <category>OpenAI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
       <description>原文标题：Using thousands of AI agents to uncover new leads in biological data</description>
+      <content:encoded><![CDATA[<h1>用数千个 AI agent 从生物数据里挖出新研究线索</h1>
+<p>OpenAI、PerturbAI 与 Scripps Research 如何用分布式 AI agent，帮科学家从上百万个脑细胞的数据里识别有前景的研究线索</p>
+<p><a href="https://www.biorxiv.org/content/10.64898/2026.10.15.759436v1">阅读论文</a></p>
+<p><em>来看 OpenAI、PerturbAI 与 Scripps Research 如何并行部署数千个 AI agent，在来自上百万脑细胞的复杂数据里找出有前景的生物学关联。</em></p>
+<p><em>⁠</em></p>
+<p><em>视频来源：PerturbAI。</em></p>
+<p>如果科学家能在几分钟而不是几个月里发现关于阿尔茨海默病和帕金森病的新线索，会怎样？OpenAI、<a href="http://perturb.ai">PerturbAI</a> 与 <a href="http://scripps.edu">Scripps Research</a> 联手，用<a href="https://www.biorxiv.org/content/10.64898/2026.10.15.759436v1">由 GPT‑Rosalind 驱动的数千个 AI agent</a>，只花 32 分钟就分析并解读了来自<a href="https://huggingface.co/datasets/perturbai/wholebrain_crispr_atlas">数百万小鼠脑细胞</a>的既有实验数据。这些 agent 把基因扰动带来的效应与科学文献里的发现连了起来，找出一些出人意料、能帮助科学家理解疾病并确定新疗法研究方向的生物学关联。这项工作展示了 AI 如何帮研究者去挖掘更多大规模生物实验所揭示的内容。</p>
+<p>现代实验产生的数据，远多于科学家能彻底研究的量。研究者如今能改动数千个基因，并测量它们的效应在数百万个细胞上的表现。但要弄清这些结果对人类疾病意味着什么，就得把复杂的实验发现与几十年来散落的科学知识连到一起。这正是 AI 能帮科学家找出那些本来会被错过的有前景线索的地方。</p>
+<blockquote>“我们构建细胞图谱，是为了让其他科学家能做出我们还想象不到的发现。AI 可以帮助更多研究者探索这些资源，把意外的观察变成待检验的新问题。”</blockquote>
+<p>—Sarah Teichmann 博士，剑桥大学干细胞医学讲席教授、Human Cell Atlas 创始联席主席</p>
+<p>团队把分析分给数千个由 GPT‑Rosalind 驱动的 AI agent，我们把这种做法称为分布式生物学推理。这些 agent 检视了一份<a href="https://www.biorxiv.org/content/10.64898/2026.03.16.711480v1">全脑 CRISPR 图谱</a>，那是一份展示基因扰动如何影响小鼠脑中不同类型细胞的数据集。每个 agent 调查一处基因扰动、分析细胞反应、检索科学文献，并对结果提出解释。它们的报告被汇总成一份推理图谱，把基因、细胞效应、相关论文和可能的生物学机制连在一起。</p>
+<p>研究团队估计，如果人工做同等规模的分析与文献调研，一处扰动一处扰动地过，要花上几个月至一年。这些 agent 复现了人工分析得出的发现，同时挖出了额外的线索。它们对新颖性和科学价值的评估，也与盲评的人类专家判断相一致。这些发现有助于给验证上述生物学机制所需的后续实验排出优先级。</p>
+<p>其中一些洞见指向理解脑部疾病的新线索。这些 agent 发现两个与疾病相关的基因影响脑细胞的方式存在出人意料的差异，还发现胆固醇调控与神经退行性变之间可能存在关联。这些发现可以帮助科学家研究疾病如何发展，以及未来的疗法可以在哪里介入。</p>
+<blockquote>“有时候线索本来就在那里，散落在不同领域——我们只是还没把它们连起来。神经元功能与胆固醇代谢之间可能的联系说明，这些碎片一旦被凑到一起，就能给我们一种思考疾病生物学的新方式。”</blockquote>
+<p>—Tomasz Nowakowski 博士，UCSF 神经外科副教授</p>
+<p>研究者今天就可以开始探索这些发现。这份推理图谱已经<a href="https://github.com/jinlabneurogenomics/distributed_agent">公开可用</a>，科学家可以借此比较相关基因、追查出人意料的反应，并找出值得追下去的有前景线索。新发现常常出现在不同领域的研究者把各自专长凑到一起、用出人意料的方式把熟悉的想法连起来的时候。AI 能把新数据与散落在各学科的知识连起来，从而显著放大这类连接。机会不止是更快分析数据。把 AI 与实验生物学、人类专长和科学文献结合起来，我们就能帮科学家把他们更多的数据变成可检验的想法。</p>
+<h2>大规模实验，出人意料的线索</h2>
+<p>一项实验最有意思的线索，有时在科学家本来要探究的那个故事之外。而在一个覆盖数千处扰动的数据集里，这类线索很容易错过。</p>
+<p>这些 agent 发现了 Tsc1 与 Tsc2 之间一处出人意料的差异——这两个基因协同控制 mTOR，而 mTOR 是细胞生长、代谢与衰老的一个关键调控因子。扰动其中任一基因，在几组神经元上都有相似的效应。但在负责协调运动的小脑里，扰动 Tsc2 改变了数十个参与神经元通讯的基因的活性，而扰动 Tsc1 几乎没有带来变化。</p>
+<p>这一差异可能与人类疾病相关。在结节性硬化症患者身上，小脑的异常与 TSC2 突变强相关。虽然降低 mTOR 活性的药物可以治疗某些脑肿瘤和癫痫发作，但与这种疾病相关的学习困难和行为困难仍然难以处理。这些 agent 锁定了一组值得调查的特定神经元和细胞变化：哪些变化可能被现有药物纠正，哪些又可能指向新的治疗思路？这就给研究者留下了一组更具体、可以拿到实验室里检验的问题。</p>
+<h2>把活拆开，把推理做深</h2>
+<p>如果把整个数据集交给单个 agent，它能做得和数千个并行工作的 agent 一样好吗？我们在固定模型与资源的前提下测了这件事。随着工作量增大，单个 agent 检索的文献越来越少，在最大的工作量下只引用了 11 篇参考文献，而分布式 agent 引用了 700 多篇。人类专家也更偏好分布式 agent 给出的解读。</p>
+<p>科学家的时间有限，往往只盯数据里最强的信号。分布式 agent 能帮助审视更宽范围的反应，包括细微或出人意料的那些，并把它们与相关科学文献连起来。并行运行这些 agent 让大量扰动可以同时被调查。这帮助科学家探索一项实验所含的更多内容，找出那些本来会被错过的有前景线索。</p>
+<p><em>在最大的工作量下，分布式 agent 引用了 700 多篇参考文献，单个 agent 只有 11 篇。</em></p>
+<h2>找到下一个值得做的实验</h2>
+<p>一项发现如果能指向一个值得做的实验，它就更有价值。这些 agent 就在 <em>DCTN1</em> 上找到了这样一条线索——这个基因的突变会导致 Perry 综合征，一种带有帕金森样症状的神经退行性疾病。</p>
+<p>DCTN1 参与神经元内部的货物转运。在这份全脑 CRISPR 图谱里，扰动 Dctn1 提高了参与合成胆固醇的一批基因的表达。这些 agent 把这一观察与研究联系起来——那些研究提示，胆固醇转运出问题可能让细胞制造更多胆固醇。由此引出一个供后续实验检验的问题：DCTN1 被扰动后，会不会改变胆固醇在神经元内部的分布，而这些变化会不会促成神经退行性变？如果是这样，恢复正常的胆固醇分布有没有可能帮助保护神经元？</p>
+<p>人类专家也认为这一假说新颖、有分量、值得跟进。这个例子说明，把一个意外的结果与既有知识连起来，就能把一条线索变成可检验的想法，并可能成为治疗疾病的一个新方向。</p>
+<p>在盲评比较中，人类专家有 75% 的情况更偏好分布式 agent 的报告而非单个 agent 的报告。</p>
+<p>发现的主角仍然是科学家。通过挖出更多有前景的线索，AI 可以帮助研究者决定该追哪些想法、设计实验并解读结果。目标是把生物实验中更多的信息转化为知识，并随着时间帮助指导更好药物的研发。</p>
+<h2>作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] Cloudflare 通过 OpenAI 将漏洞发现与防御联系起来</title>
@@ -2133,13 +2564,85 @@ y = model(Tensor.ones([2, 8, 3]))             # same op, now compiled</code></pr
 <p><a href="https://openai.com/zh-Hans-CN/contact-sales/">联系销售团队</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] 我们如何构建 ChatGPT 新颖的广告堆栈来提高用户信任度和相关性</title>
+      <title>[OpenAI] 我们如何为 ChatGPT 搭一套全新的广告技术栈，兼顾用户信任与相关性</title>
       <link>https://openai.com/index/building-chatgpt-ad-stack</link>
       <guid isPermaLink="true">https://openai.com/index/building-chatgpt-ad-stack</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
       <category>OpenAI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
       <description>原文标题：How we built ChatGPT’s novel ad stack for user trust and relevance</description>
+      <content:encoded><![CDATA[<h1>我们如何为 ChatGPT 搭一套全新的广告技术栈，兼顾用户信任与相关性</h1>
+<p>作者：Ritendra Datta 与 Karthik Gopalratnam，Members of Technical Staff</p>
+<p>传统广告系统是为响应用户意图的离散单元而打造的。用户在网上搜索或浏览某样东西，广告系统就把这些查询和页面浏览当作事件接收下来，再基于这些事件去寻找匹配的广告。为 ChatGPT 构建广告技术栈则不同：用户意图是在一次次对话中逐渐成形的，会随着同一场对话的多个轮次不断变化，有时根本不存在合适的广告时机。为了支撑这一新范式，我们打造了一套定制的广告投放系统。这种新型广告技术栈建立一个自研的、post-trained 的 frontier LLM 之上，它通过发起 tool call 来完成 retrieval（找出靠前的候选）、ranking（预测用户互动）、relevance（评估广告有多大用处），并运行 auction 来做最终的广告选择与定价。</p>
+<p>我们的广告系统靠三个关键设计决策来承接用户需求不断演进这件事的细微之处：1）实现有状态的广告会话，也就是信息会跨对话轮次、跨多场对话被记住；2）依赖一个自研的、post-trained 的 LLM，它采用 tool call 架构来理解对话的上下文与背后的意图，进而有效地挑选、排序并投放广告；3）把广告选择过程与 ChatGPT 的答案生成拆分开，放在它自己的服务里运行，以免广告影响答案、并保持 ChatGPT 中立的语气。我们用 post-trained 的 LLM 来编排整条广告流程，依据用户当前这一轮以及历史对话，决定在合适的时机呈现合适的广告。过去，冷启动这样一个能自我改进的广告系统要花上数年，而 ChatGPT Ads 的年化营收 run rate 已达到 10 亿美元，<a href="https://openai.com/index/expanding-access-to-ai-with-chatgpt-ads/">距离上线不到 200 天</a>；如今，自上线以来已有超过 10 万家广告主在 ChatGPT 上投放过广告。</p>
+<h2>在 agentic 对话里，广告应该怎么做？</h2>
+<p>传统的广告请求通常始于一个定义明确的事件。用户提交一条搜索查询或打开一个网页，广告系统就收到一个请求。这类系统相当简单：它检索出潜在的广告候选，对它们排序，运行一次 auction 来给这个机会合理定价，然后把得到的广告展示给用户。ChatGPT 并不会天然产生这样具体的时刻。</p>
+<p>在 ChatGPT 的对话里，人们带着目标而来，而不是一句一问一答式的搜索查询。他们可能在规划一趟旅行、为自己的生意挑选软件、布置一个家，或学习一项新爱好。这些事不会在一轮对话里全部发生。ChatGPT 常常会在过程中帮助用户厘清真正重要的是什么。</p>
+<p>举个例子，我们的工程团队问过 ChatGPT 如何为参加一场比赛做训练：对话以一个关于跑步的泛泛问题开始。几轮之后，他们开始询问有助于训练的运动鞋。随着每一个约束条件出现，这场对话的商业含义随之改变——而且这种个性化上下文会跨多个会话不断演进。一个只根据第一条消息就行动的系统，可能检索到完全错误的意图，从而损害用户体验、给用户添堵。</p>
+<p>构建我们的广告系统，要求我们跳出请求-响应式的广告架构，从零开始搭建一套广告技术栈，在把用户信任与价值放在首位的同时，去寻找潜在的经济机会。</p>
+<h2>记住对话，却不影响 ChatGPT 的答案</h2>
+<p>像传统广告系统那样把每条消息都当成一个独立请求，在我们的聊天场景里会带来几重风险：1）把用户目标过度简化，从而误读它；2）在用户的真实需求尚未清晰之前就过早启动广告流程；3）展示出来的广告不是在支持用户的旅程，而是在打断它；4）每次请求发生变化就低效地把广告流程重跑一遍，制造噪声并浪费成本。我们没有围绕单个事件来构建，而是让广告系统（由 retrieval、ranking 和 delivery 组成）维护一个有状态的会话，也就是广告会话会在一个符合投放资格的轮次期间持续运行，随着信息演进不断记住并更新它。ChatGPT 把初始的请求上下文发送给广告服务器。广告系统跟随并适应正在展开的这场交流，而不是依赖一条被压平的查询。</p>
+<p>广告选择过程与 ChatGPT 的常规回复生成并行运行，以确保广告流程不会影响 ChatGPT 的回复。广告是在一个独立系统里完成筛选和选择的，这个系统消费对话内容，并受自己的 eligibility、质量与 delivery 约束。这条关键的架构边界——用不同的服务，各自使用不同的模型和不同的代码——让 ChatGPT 核心服务器负责生成自然回复；与此同时，广告系统独立判断是否存在合适的广告机会，如果有，就通过一条独立的 serving 流程准备一个标注为 sponsored 的广告位。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3bfD7ZJLF0722p5KBycdFk/8123d88226e58fb25563917cdb5c0dca/advertising-desktop-light.svg?w=3840&amp;q=90" alt="流程图：一场用户对话分成两条路径，一条是 ChatGPT 的回答路径，产出自然回复；另一条是独立的广告资格判断与 serving 路径，产出一个标注清晰的赞助广告位。"></p>
+<p><em>广告投放与 ChatGPT 的回答路径并行运行。</em></p>
+<p>除了保护用户体验，这种隔离还有一些实际后果。ChatGPT 对广告系统没有任何依赖——这些服务以任何方式都没有交织在一起，也不共用一个内容生成模型。所以即使广告投放系统不可用或变慢，ChatGPT 的自然回复照常进行、不受影响。这意味着广告系统不可能拖垮或延迟 ChatGPT 这个产品。这种隔离的另一个好处是，它把有价值广告的门槛保持得非常高。不返回任何广告，是一种平常而成功的结果。只有当某条广告显然对用户和广告主都有益时，系统才会投放它。</p>
+<h2>由 LLM 理解对话并调用工具</h2>
+<p>我们广告技术栈里的另一个关键架构组件，是一个 post-trained 的 LLM，它负责理解对话，并在一个 agentic 循环里跑完整条广告流程——向广告系统的核心功能发起 tool call，从 retrieval 阶段到 ranking、再到 auction，最终到 delivery。我们把这一个 LLM 称为 <em>orchestrator</em>。</p>
+<p>广告流程的第一部分，是理解用户意图并启动 retrieval 过程——retrieval 是一次刻意求宽、追求速度的潜在广告搜集，供后续层层过滤。逐段增量地接收对话，会让 retrieval 问题变得更丰富也更含糊，因为广告系统需要把当前意图与过时的上下文区分开。orchestrator 必须能理解对早前消息的指代，识别用户何时只是在假设性地谈论，并避免把每一次提到某个产品或服务都当成一次购买请求。</p>
+<p>广告 orchestrator 使用可用的对话与用户上下文，反复迭代以找到好的广告，并一次次决定什么时候调用哪个工具，其底层目标是在那场对话与那个上下文里找到最合适的广告（也就是在高用户价值与高广告主价值之间取得平衡的广告）。如果用户选择开启广告个性化，orchestrator 还会利用可获得的、关于用户过往对话的非敏感信息，来寻找最匹配的广告。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/5zteskDpk7VeYDOhPLz2HZ/2c87e51276aeb518fb0502918c94409d/orchestrator-desktop-light.svg?w=3840&amp;q=90" alt="架构图：对话上下文与用户画像输入广告 orchestrator，其下挂着 retrieval、相关性估计、事件预测、eligibility、pacing 与预算、auction 与定价等工具，在用户价值与广告主价值之间做平衡。"></p>
+<p>广告 orchestrator 反复调用广告投放工具，以找到有价值的广告。</p>
+<p>随着对话推进、广告 orchestrator 拿到更新的信息，它可以用更新后的上下文重新发起一组 tool call，去找更好的广告并把它们返回给客户端；只要这些新广告及时到达，客户端就能使用它们。</p>
+<p>用户价值</p>
+<p>广告主价值</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/2FBQczHif8ZhtqpXflsd1Z/0692ded1f726e6f5943a126ea1b90576/printed-throw-pillow.webp?w=256&amp;q=90&amp;fm=webp" alt=""></p>
+<p>Printed Throw Pillow</p>
+<p>不符合资格的候选</p>
+<p><em>orchestrator 的设计目标是在用户价值与广告主价值之间取得平衡，并且永远把用户放在第一位。</em></p>
+<h2>orchestrator 如何在 agentic 循环里调用广告工具</h2>
+<p>广告系统由一个个独立的工具组成，orchestrator 反复调用这些工具，为一场对话找出最好的广告。从高层看，orchestrator 先把对话转成简短的文本摘要，再把摘要转成语义 embedding（被存储下来的语义，便于广告系统快速筛查），然后用这些语义 embedding 检索广告候选，按 eligibility 过滤这些候选（依据预算、用户设置以及其他前置检查），评估它们的质量与相关性，最后再做一次 ranking，找出可以在聊天回复末尾展示的高价值机会。因此，每条广告都必须在资格和相关性两方面跨过很高的门槛，才有资格被投放。</p>
+<h3>准备能捕捉意图的 retrieval 查询</h3>
+<p>orchestrator LLM 首先准备一条或多条能代表相关商业意图的查询。这一步可能包括改写对话上下文，把商业可能性扩展到 1:1 搜索查询之外，然后创建语义表示——由 orchestrator 把一场多轮对话蒸馏成一个摘要版本交给 retrieval 系统，从而以聚焦的方式从我们的数据库里检索广告。</p>
+<p>如果广告位只在系统深入理解了用户意图时才出现，那么对用户和广告主都会更好。多条查询能够保留意图的不同侧面。例如，一场关于规划旅行的对话，可能同时包含交通、住宿、活动这几类彼此不同的需求。retrieval 系统可以保留这些区分，而不是把整场对话压缩成一条字面字符串。</p>
+<p>举个例子，来看一段可能发生的、关于徒步鞋的对话序列：</p>
+<ul><li>去 Yosemite 玩两天，我需要准备哪些东西？</li><li>下周会冷吗？</li><li>新 [insert brand] 产品线？</li></ul>
+<p>尽管用户并没有把关于鞋品牌的问题和 Yosemite 之行联系起来，这场对话在我们的广告系统里可能被表示成两条查询，例如 <code>[shoes appropriate for hiking trip]</code> 和 <code>[new [brand] product lines good for travel]</code>。这可能只是第一次尝试；orchestrator 的设计就是不断迭代这些表示，直到在我们的库存里找到对用户很有价值的广告。</p>
+<h3>检索可能的广告</h3>
+<p>retrieval 是刻意构建一个宽泛广告候选池的过程。候选可以来自不同的 retrieval 策略，之后在同一条 serving 约束下相互竞争。我们建了多个索引，分别针对不同的系统与产品约束做优化（例如，商品 feed 广告的索引在设计上会感知商品的正面或负面评价，以便抓取出尽可能好的广告；而这对那些没有关联评价的其他广告并不适用）。每个索引都针对某种形式的 approximate-nearest-neighbor（ANN）检索做了优化，使用代表用户意图的 embedding。这种 ANN 检索是在大型语义索引上做 retrieval 的一种近似算法，也就是说广告能被非常快地取出：它追求一个足够好的解，而不是去找“正确”的那个解，同时保留住绝大多数相关候选。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6F3yNWmGw0m9mY9u3BtKT8/c811e3d73a0d72b9deb12fe92ac59f2c/candidate-desktop-light.svg?w=3840&amp;q=90" alt="流程图：改写后的查询被编码为高维语义 embedding，在常规广告、商品广告以及可选策略中检索，随后合并成一个宽泛的候选池。"></p>
+<p>广告系统在检索阶段用改写后的查询生成语义 embedding，产出一个宽泛的广告候选池。</p>
+<h3>过滤掉不符合资格的候选</h3>
+<p>过滤的目标，是把所有在相关性、出价与预算上达不到投放门槛的广告候选从考虑范围中剔除。具体取决于候选与配置，过滤检查可能包括 creative 与 campaign 可用性（campaign 或广告 creative 是否处于激活状态）、campaign 定向（例如该 campaign 被允许在哪些地区投放）、政策限制（关于什么内容可以投广告的合规要求）、预算可用性（campaign 是否还有可花的预算）、pacing（该 campaign 现在该不该花预算，还是应该在一天中的其他时段花）、广告位兼容性（这条广告有资格出现在哪几类对话里），以及广告主级与 campaign 级去重（为每个广告主挑选合适数量的广告，以确保各家企业之间的公平参与）。</p>
+<h3>评估相关性与质量</h3>
+<p>通过 eligibility 检查的候选进入打分阶段，此时 orchestrator 会向各个打分系统发起 tool call——出于 serving 方面的考虑，例如语义相关性（这条广告与用户的目标相关吗？）、预测互动（这条广告有可能被看到、被点击，并转化成广告主期望的结果吗？）、历史表现（这条广告此前展示给用户时表现好吗？）。orchestrator 还会在 auction 之前过滤广告，以确保相关性与安全性。这些系统把范围收窄成一个准备好进入 auction 的更小候选池，但它们仍然不决定最终投放的那条广告。</p>
+<h3>运行广告 auction</h3>
+<p>orchestrator 在这场对话的上下文中评估准备好的候选，挑出哪些广告候选足够合理、可以进入最终的 auction。orchestrator 并不直接决定哪条广告会被投放，也不负责定价。它只是把在上下文上合适的候选提名出来，交给 auction 工具去评估。</p>
+<p>auction 会执行最后的 serving 机制，包括 auction 准入（跨过相关性与价值的最低门槛）、pacing（让广告预算花得更均匀）、出价与 auction 特征计算、质量调整后的 ranking、定价，以及最终选择。</p>
+<h3>最后的资格检查</h3>
+<p>auction 之后，有两种情况会导致广告无法投放，这两点都是 ChatGPT 这种对话式媒介特有的。</p>
+<ul><li><strong>广告在这段对话里可能显得不合适</strong>：尽管对话本身已被 integrity models（决定何时适合投放广告的那些模型）判定为可以投广告，广告本身也被判定为符合政策，但有时广告在某些对话的语境里就是会显得不合适。orchestrator 会阻止这类广告被展示。</li><li><strong>广告请求可能来不及到达</strong>：如果 ChatGPT 模型已经准备好回复，而广告还没准备好可展示，那条广告请求就会超时，广告也就不会被投放。因此广告系统的目标之一就是尽可能快地运行。ChatGPT 模型的响应时间是动态的，我们不会为了等广告加载而推迟聊天回复。</li></ul>
+<p>如果以上检查全部通过，我们就把广告发给前端去渲染。我们把这算作一次服务端广告 <em>delivery</em>，但我们仍然可能不会把广告展示给用户——而这是有意为之。</p>
+<h2>最后一步：把广告展示给用户</h2>
+<p>在 ChatGPT 这样的对话式产品里，把一个广告 creative 在服务端完成 delivery 并不能保证广告一定会被展示；广告还必须及时到达，才能被纳入当前这一轮。广告 creative 包含标题、描述、落地链接，以及可能有的 call to action。此外，广告系统还会返回一段由模型生成的 preamble，也就是一小段中性的引导语，用来说明这条广告与当前对话的关系。把 preamble 与 creative 分开，既保住了广告主想表达的内容，又让 ChatGPT 的语气保持中立。</p>
+<p>ChatGPT 前端把 preamble 与广告 creative 作为一个整体接收。如果它在 ChatGPT 的回复完全生成之前到达，前端就把广告展示在 ChatGPT 回复的下方，并清楚标注为 sponsored。如果到达得太晚，这一轮就不展示该广告。这就是服务端广告 delivery 与面向用户的广告曝光之间的区别。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/6vmYf9DmmKLaEK7tpg4fcl/81d90e06c50c558a5196fb4b91fb3cc9/selecting-ads-desktop-light.svg?w=3840&amp;q=90" alt="时序图：serving 系统准备好广告赢家，ChatGPT 做最后检查，在用户体验中展示，并以各种确认回执把选定与成功投放区分开。"></p>
+<p><em>赢家的选定与投放是两个分离的事件。只有当 ChatGPT 批准并展示了这个广告位、并且投放得到确认后，一条被选中的广告才算完成 delivery。</em></p>
+<h2>广告展示之后会发生什么</h2>
+<p>我们的广告技术栈使用传统的日志与数据 pipeline，这带来三个主要好处：广告主能更容易地把他们现有的系统与我们的技术栈对接，广告主能借助报表数据改进自己的策略，我们的团队也能找到系统里可以改进的地方。在这些报表与优化工具之外，我们还部署了一个高质量的模型来评估我们的投放并训练其他广告模型，从而形成一个强有力的自我改进循环。</p>
+<p>对发生了什么做细致拆解，能帮我们独立地理解并改进广告系统的每一部分。日志处理系统还会记录这些细粒度的结果：</p>
+<ul><li>这一轮不具备投放广告的资格。</li><li>一次广告会话开始了，但没有发起 retrieval。</li><li>retrieval 没有返回任何候选。</li><li>检索到了候选，但在 hydration 或 eligibility 上失败。</li><li>一条广告被投放出去，并在之后收到了互动。</li></ul>
+<p>这些细致拆解帮助我们独立地改进广告 serving 系统的每一部分。要改进机会识别，需要的证据不同于改进 retrieval、候选质量、auction 参与度或 delivery 可靠性所需的证据。</p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/1pmJyqwks8d8KQ97APZQ5o/5b7b9af4998894ef42b394adaf19bb90/privacy-desktop-light.svg?w=3840&amp;q=90" alt="流程图：一个具备资格的 ChatGPT 轮次产出商品、serving 与质量三方面结果，这些结果经过受隐私控制的分析，进入聚合度量与允许用于模型改进的数据。"></p>
+<p><em>delivery、serving 与质量系统各自观察生命周期的不同环节。受隐私控制的加工决定了哪些数据可以用于度量和模型改进。</em></p>
+<h3>高能力模型评估并改进整套技术栈</h3>
+<p>基于模型的评估这一思路在于：由我们最强、推理层级最高的模型来观察并评判我们系统的结果，再通过训练让那个 post-trained 的 LLM 表现更好，从而完成改进。举个例子，如果最强的模型负责收集反馈、并把这些小 worker 训练到尽力做好，那么我们在编排或 retrieval 环节就可以用更小、更高效的模型，或推理层级更低的模型。</p>
+<h3>人的反馈把有品位的走向定下来</h3>
+<p>我们会收集并响应用户的反馈（用户的点击与隐藏操作），也会通过我们的 Ads Manager 收集面向用户的调研和来自广告主的直接反馈。在建设过程中，我们还让团队随时接收反馈，直接倾听 ChatGPT 用户与广告主各自想要什么。这一反馈来源比我们模型的观察性反馈更能影响我们的方向，也是我们能够快速迭代、做出正确产品决策的一部分原因。模型也许能理解用户意图、批判性地思考并交付有价值的东西，但品位是由人塑造的。</p>
+<h2>接下来</h2>
+<p>一年前，我们还没有广告系统，只有少数几个人在思考这个问题域。如今我们有了一套稳固的广告系统，支撑起超过 10 亿美元的年化 run rate，并由一个基于 LLM 的 orchestrator 跑完整条广告流程。Codex 是一个根本性的力量放大器，让我们能以空前的速度把自己的系统从零起步推到这一重大的使用量里程碑。从第一天起，我们就把团队和开发工作流设置为用 Codex 快速构建并扩展这套系统。我们为 Codex 建了护栏，让它能可靠且安全地交付代码。与此同时，我们为 Codex 配置了数据基础设施插件，大幅收紧“收集洞察—把改进落到系统上”这个循环，包括新产品功能、质量改进以及更好的系统性能。</p>
+<p>我们系统的边界（以我们的<a href="https://openai.com/index/our-approach-to-advertising-and-expanding-access/">广告原则</a>为根基）与基于 LLM 的 orchestrator 结合在一起，让我们能把广告做得有用，而又不必把每场对话都当成一次广告请求。展望未来，我们会继续尝试更动态的广告形式，以提升用户价值（例如让用户能够通过广告直接与企业对话）和广告主价值。这套技术栈自我改进的架构建立在 OpenAI 模型之上，配合持续的反馈循环，会加速我们随时间不断改善相关性与个性化的能力。</p>
+<h2>作者</h2>
+<p>Ritendra Datta，Karthik Gopalratnam</p>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] 前沿人工智能的民主治理，第二部分：赋予网络防御者权力</title>
@@ -4268,13 +4771,58 @@ copy</code></pre>
 <p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>[OpenAI] 特许经营商利用 ChatGPT Work 将现金核对时间缩短 94%</title>
+      <title>[OpenAI] 一家特许经营商用 ChatGPT Work 把现金对账时间缩短了 94%</title>
       <link>https://openai.com/index/ted-taylor-restaurant</link>
       <guid isPermaLink="true">https://openai.com/index/ted-taylor-restaurant</guid>
       <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
       <category>OpenAI</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-openai.xml">OpenAI</source>
       <description>原文标题：Franchisee reconciles cash in 94% less time with ChatGPT Work</description>
+      <content:encoded><![CDATA[<h1>一家特许经营商用 ChatGPT Work 把现金对账时间缩短了 94%</h1>
+<p>一家独立的 Schlotzsky's 与 Cinnabon 特许经营商把重新定价的时间缩短了 95%，并搭起一套能腾出 $100K 现金流的工作流程。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>
+<p><img src="https://images.ctfassets.net/kftzwdyauwt9/3yz3B9NBTAvhKaqu5cRCwJ/53891263fccaf6007dec3de87733ac70/ted-taylor-restaurant-cover.png?w=3840&amp;q=90&amp;fm=webp" alt="暖陶土色纸纹上的 Schlotzsky's 与 Cinnabon 标识。"></p>
+<p>公司规模：SMB</p>
+<p>地区：北美</p>
+<p>行业：餐饮</p>
+<p>产品：ChatGPT</p>
+<p>95%</p>
+<p>定价分析所需时间的降幅，从 5 天降到 1 - 2 小时</p>
+<p>$100K</p>
+<p>优化用工流程后每年最多可腾出的现金流</p>
+<p>4</p>
+<p>每个发薪周期省下的小时数（手工活）</p>
+<p>94%</p>
+<p>月度现金对账耗时的降幅</p>
+<p>Ted Taylor 在半导体行业干了 25 年后进入餐饮业。如今他是一名独立特许经营商，在新墨西哥州经营三家 Schlotzsky's 与 Cinnabon 合牌餐厅。</p>
+<p>经营快餐餐厅，意味着要在顾客体验和大量顾客看不见的活儿之间找平衡，比如菜单定价、人员排布、设备维护和规章制度。Ted 用 OpenAI 的技术把这些都做得更快。</p>
+<p>用 ChatGPT，Ted 给调研和起草这类耗时任务提速；他用 ChatGPT Work 汇集并分析定价、销售、预测、排班和用工方面的大量数据，并请它给出每家餐厅需要在哪里投入精力的建议，由此把重新定价的时间缩短 95%，每次薪资处理省下 4 小时。</p>
+<blockquote>“ChatGPT Work 的建议好到，先从它开始、再作调整要快得多。”</blockquote>
+<p>—Ted Taylor，独立特许经营商，Schlotzsky's 与 Cinnabon</p>
+<h2>几分钟给三个市场的菜单重新定价</h2>
+<p>菜单重新定价是一年一度的工程，要综合考量配方成本、单品热度、本地竞对定价、份量，以及堂食与外卖订单不同的经济账。Ted 用 ChatGPT Work 把这些因素收到一起，在 1 - 2 小时内拿到定价建议，而不是过去花 5 天。</p>
+<blockquote>“过去我要花几天功夫去分析、给出单品级的定价；而 ChatGPT Work 转眼就吃透了，而且做得更彻底。”</blockquote>
+<p>—Ted Taylor，独立特许经营商，Schlotzsky's 与 Cinnabon</p>
+<p>Ted 先让 ChatGPT Work 依据本地竞对的价格走势、份量和相对的餐品质量做调研，定出定价目标和定价策略。接着他交给 ChatGPT Work 一份分类整理好的菜单项清单，上面有各单品当前的堂食价和外卖价。他会说明每组价格整体希望涨多少、哪些单品该涨得多些或少些，主要依据此前 ChatGPT 给出的分析。</p>
+<p>加上单品级的销售历史和供应商价格后，他还能把分析做得更细。ChatGPT Work 可以用这些输入来估算调价对销售的影响，并围绕货品成本目标优化单品定价。</p>
+<p>ChatGPT Work 返回一张电子表格，给出建议的堂食价和外卖价。它甚至会把这次调价和一套整体定价策略联系起来，而这套策略旨在优化顾客留存、把价格冲击降到最低、以及把加购项放到最佳位置这些经营结果。</p>
+<p>Ted 第一次用 ChatGPT Work 做定价时，同时也手工跑了一遍分析。“ChatGPT Work 做了更深一层的本地比对，帮我避开了一些会让个别单品失去竞争力的涨价，”他说。Ted 当即改成用 ChatGPT 来产出第一批建议。</p>
+<h2>寻找优化用工、腾出现金流的办法</h2>
+<p>Ted 用 ChatGPT Work 从两个方面帮他管理用工成本：复盘三家餐厅的用工走势，以及试一种更好的周排班做法。</p>
+<p>做用工分析时，Ted 给 ChatGPT Work 开了销售与用工数据的只读权限。他每次跑分析，它就把排班工时、预算工时和实际工时，与预测销售和实际销售放在一起比对。它还会复盘过去 12 周，以照顾那些总是高于或低于自己销售预测的门店。生成的报告会标出加班、比计划更长的班次和排班空缺，并指出经理该复核什么。</p>
+<p>在排班试验里，Ted 给 ChatGPT Work 一份员工名册，写明每个人的岗位、培训、可排班时间和薪资，再附上门店在不同销售水平下的人力需求。他和那位经理把 ChatGPT Work 提出的班表与她原本会排的班表做比较，找出了缺失的规则——比如高峰期什么时候该加人——并据此打磨了给 ChatGPT Work 的指令。</p>
+<p>ChatGPT Work 现在能为那家门店产出完整班表。经理通读检查，必要时调整，再录入餐厅的排班系统。Ted 估计，排班做得更好，最终能让三家餐厅的小时工成本下降相当于销售额一到两个百分点，也就是每年多腾出 $50,000 到 $100,000 的自由现金流，可以用来提高薪资、发奖金、投入经营，或增加利润分成。</p>
+<h2>用 ChatGPT Work 加速后台任务</h2>
+<p>Ted 也把 ChatGPT Work 用在日常运营上，从制定人事制度，到现金对账，再到管理物料与维修申请。</p>
+<p>新墨西哥州开始要求餐厅就体液污染事件留有书面处置流程时，Ted 用 ChatGPT 大约 30 秒就写出一份草案。他需要为员工手册配一份社交媒体政策时，ChatGPT 帮他很快起草了指引，后来一家外部人事公司审阅过，一个字都没改。</p>
+<p>Ted 每月用 ChatGPT Work 对他三家餐厅的现金做对账。他上传每家门店的现金交易数据和银行记录，ChatGPT Work 就把逐笔交易和对应的存款相比较。月度对账过去要三个小时，现在只要 5-10 分钟。他还用 ChatGPT Work 汇总薪资输入，从每个薪资周期里砍掉了 4 个小时的手工活。</p>
+<p>为了让餐厅运转更顺，Ted 还用 ChatGPT Work 搭了一个网页门户，员工可以在里面申领物料或报修。门户通过一个专门的邮箱通知他，并跟踪每条申请的进度。</p>
+<h2>有更多时间改进生意，而不只是让它转下去</h2>
+<p>Ted 用 ChatGPT Work 的办法，对任何小企业主都实用。他把自己做决策时会用的数据和准则同样交给 ChatGPT，再把它给出的结果与自己动手会怎么做做个比较。随着对结果越来越有信心，他把用法扩展到业务周围更多的任务上，但每一条都在落地前先复核结果。</p>
+<p>对 Ted 来说，ChatGPT Work 的价值不止于省下的工时。他现在能去做那些本来可能跳过的分析，也能把更多时间花在顾客、员工和把生意做大上。</p>
+<h2>加入新的工作时代</h2>
+<p>全球超过 100 万家企业正在借助 OpenAI 取得实质性成果。</p>
+<p><a href="https://openai.com/contact-sales/">联系销售</a></p>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] Terminal X 与 GPT-6.1 的高级投资者判断相符 88.6%</title>
@@ -4358,13 +4906,41 @@ copy</code></pre>
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>[xAI Grok] 使用 Grok Bot 检测和响应事件</title>
+      <title>[xAI Grok] 用 Grok Bot 检测并响应线上事故</title>
       <link>https://x.ai/news/incident-sweep</link>
       <guid isPermaLink="true">https://x.ai/news/incident-sweep</guid>
       <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
       <category>xAI Grok</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml">xAI Grok</source>
       <description>原文标题：Using Grok Bot to detect and respond to incidents</description>
+      <content:encoded><![CDATA[<h1>用 Grok Bot 检测并响应线上事故</h1>
+<p>作者：Chris Bowie 和 Isaac Hopkinson</p>
+<p>IncidentWatch 在内部告警触发之前就会发现工单激增。IncidentSweep 则把相关积压在一次经批准的批次里清掉。</p>
+<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">下载 macOS 版</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售</a></p>
+<p>产品出事故时，支持队列往往是最先显出苗头的地方之一。顾客开始反馈同一个问题，有时早于工程告警触发，也早于有人把事件定性为事故。</p>
+<p>事故发酵期间，这些反馈源源不断。一开始，支持团队可能并不清楚哪里出了问题，也没有能笃定给出的答复。等问题解决时，可能已有成百上千名顾客在等回复。支持团队要在整个事故过程中跟住这些顾客，再确保问题解决后每个人都拿到正确的答复。</p>
+<p>我们用 Grok Bot 来接手这两部分工作。它给我们提供对运营任务真正负责的 AI 队友，尤其是那些本来卡在人和系统之间的重复工作流。正如我们在<a href="https://x.ai/news/grok-bot-customer-support">最近一篇博客</a>里分享的，SpaceXSI 的客户支持团队用 Grok Bot 里的 Support Bot 处理面向客户的沟通。</p>
+<p>现在我们专门针对事故又加了两名 AI 队友。第一个是 IncidentWatch，它盯支持队列里同类工单的激增，一旦发现就提醒我们团队。第二个是 IncidentSweep，负责另一头：找出受影响的工单，把它们在一次经批准的批次里关闭。</p>
+<p>9 月 18 日的一次事故中，我们的 Bot IncidentSweep 在一位支持工程师复核并批准这批之后，用大约 10 分钟清掉了 204 张工单。换成以前，我们得花上几个小时一张张回复这些工单，或者用批量宏——那样我们对消息发给谁的控制要弱得多。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/ksh-incidentbot-diagram-31b72f17.png" alt="SpaceXSI 客户支持如何用 Grok Bot 检测并响应事故：IncidentWatch 发现事故，IncidentSweep 起草回复，支持团队的一位人员复核这批回复，然后 Support Bot 把回复发出"></p>
+<h2><a href="https://x.ai/news/incident-sweep#detecting-incidents-through-customer-reports">通过顾客反馈发现事故</a></h2>
+<p>顾客往往比我们的内部告警更早发现问题。几位顾客同时反馈同一个问题时，这些工单就是一起事故的早期信号。</p>
+<p>IncidentWatch 是我们为发现这种信号而搭建的一名 Grok Bot 队友。它每 5 分钟回看过去 15 分钟的工单，找围绕同一个问题的激增。如果这种模式对不上已知事故，IncidentWatch 就会提醒值班的支持工程师，给出看起来是什么问题、匹配的工单数量，以及可供排查的示例。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/ksh-incidentwatch-9f4b8172.png" alt="IncidentWatch 就一起可能的登录失败事故提醒值班工程师，附上示例工单和匹配工单的条数"></p>
+<p>由支持工程师判断这些反馈是否指向一起事故，并与工程团队一起排查。在此期间，IncidentWatch 会扣住明显与这个问题匹配的工单。</p>
+<p>团队确认事故后，我们会把它发到公开状态页。Support Bot 是我们主要的面向客户的 Bot，它会回到那些被扣住的工单，拿它们与事故核对，并回复反馈相符的顾客。事故有新进展时，它还能带着更新再次回复。</p>
+<h2><a href="https://x.ai/news/incident-sweep#clearing-the-incident-backlog">清掉事故积压</a></h2>
+<p>事故解决后，队列里可能还留着上百张相关工单，每张都需要一个最终答复。传统上支持团队有两种清法，而且都有短板。他们可以一张张单独回复，可能要花上几个小时；也可以用批量操作，快是快，却几乎没有余地拦下那些本不该收到这条消息的工单。</p>
+<p>我们做 IncidentSweep，就是为了把第一种办法的可控与第二种办法的速度合到一起。</p>
+<p>支持工程师先告诉 IncidentSweep 该考虑哪些工单、该排除哪些，以及具体要发什么消息。IncidentSweep 找出匹配的工单，逐张复核，并把没法确定与这起事故对得上的先放到一边。</p>
+<p>在发出任何东西之前，IncidentSweep 会把拟好的批次、批次包含的工单，以及这些人将收到的确切消息展示给工程师。工程师可以抽查工单，并在批准发送前作出修改。</p>
+<p>随后 IncidentSweep 分小批把批准的消息发出去，并记录每一个动作。批准之后它绝不会追加工单；一旦有失败，它就停下来并报告发生了什么。</p>
+<p><img src="https://media.x.ai/cdn-cgi/image/fit=scale-down,onerror=redirect,f=auto/v1/website/ksh-incidentsweep-703c883b.png" alt="IncidentSweep 展示一批已复核的 204 张工单，以及它将发送的确切回复"></p>
+<h2><a href="https://x.ai/news/incident-sweep#give-bots-jobs-not-tasks">交给 Bot 的是职责，不是任务</a></h2>
+<p>Grok Bot 带来一种与 AI 共事的不同方式。团队不再只是找个 AI 工具帮忙处理一件件任务，而是可以创建对职责负责的 AI 队友，把整条工作流一路做到出结果。</p>
+<p>客户支持对我们来说是套用这套模式最顺理成章的地方。IncidentWatch 和 IncidentSweep 接下的这些活儿，过去得靠团队里某个人盯着、分拣上百张工单并逐张处理。在 SpaceXSI 各处，我们正在寻找更多能让 AI 队友承担同样责任感的工作流。</p>
+<h2>今天就试试 Grok Bot</h2>
+<p><a href="https://api2.cursor.sh/updates/download/stable/darwin-arm64/grok-bot-bd824e1890d8b96f">下载 macOS 版</a><a href="https://cursor.com/contact-sales?product=grok-bot">联系销售</a></p>]]></content:encoded>
     </item>
     <item>
       <title>[Mistral AI] Voxtral 3</title>

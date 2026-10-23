@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-23 09:14:39**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-23 15:23:49**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -40,10 +40,10 @@
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [RSS/Atom 订阅源](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-23，标题自动汉化）：
-  1. [使用 Decisions API 构建响应速度更快的应用程序](https://openai.com/index/decisions-api)（2026-10-22）
-  2. [FDE 在 OpenAI 中意味着什么](https://openai.com/index/forward-deployed-engineering-means)（2026-10-22）
+  1. [用 Decisions API 构建响应更快的应用](https://openai.com/index/decisions-api)（2026-10-22）
+  2. [在 OpenAI，FDE 意味着什么](https://openai.com/index/forward-deployed-engineering-means)（2026-10-22）
   3. [Uber 通过 OpenAI 为所有员工带来 ChatGPT Work](https://openai.com/index/uber-chatgpt-work-rollout)（2026-10-22）
-  4. [AT&T 如何重新考虑与 OpenAI 合作的内部法律工作](https://openai.com/index/att-legal)（2026-10-21）
+  4. [AT&T 正在用 OpenAI 重塑内部法务工作](https://openai.com/index/att-legal)（2026-10-21）
   5. [通过一致的标准实现广泛的访问](https://openai.com/index/broad-access-through-consistent-standards)（2026-10-21）
   - 📄 完整文章归档（共 1314 篇）：[openai.md](llm-news/openai.md)
 
@@ -114,8 +114,8 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xai_grok.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-23，标题自动汉化）：
-  1. [SpaceX 超级智能合作伙伴网络简介](https://x.ai/news/partnernetworkannouncement)（2026-10-22）
-  2. [使用 Grok Bot 检测和响应事件](https://x.ai/news/incident-sweep)（2026-10-20）
+  1. [SpaceX Super Intelligence 合作伙伴网络正式推出](https://x.ai/news/partnernetworkannouncement)（2026-10-22）
+  2. [用 Grok Bot 检测并响应线上事故](https://x.ai/news/incident-sweep)（2026-10-20）
   3. [推出 Grok Voice 3.0](https://x.ai/news/grok-voice-3)（2026-10-14）
   4. [X 订阅简介](https://x.ai/news/x-subscription)（2026-10-12）
   5. [团队机器人：共享人工智能队友，边工作边学习](https://x.ai/news/team-bots)（2026-09-28）
@@ -364,7 +364,7 @@
 ### Modular (原 BentoCloud/BentoML) (modular_cloud)
 - 📡 [RSS/Atom 订阅源](https://www.modular.com/blog/rss.xml)：`https://www.modular.com/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-23，标题自动汉化）：
-  1. [Modular：MAX 现已提供源码并向所有人开放](https://www.modular.com/blog/max-license)（2026-10-22）
+  1. [Modular：MAX 现在源码可用，向所有人开放](https://www.modular.com/blog/max-license)（2026-10-22）
   2. [Modular：Modular26.7：开放MAX](https://www.modular.com/blog/26-7)（2026-10-22）
   3. [培育 Modular 生态：Modular 社区资助计划](https://www.modular.com/blog/nurturing-the-modular-ecosystem-the-modular-community-grant-program)（2026-10-09）
   4. [Modular 26.6：开放编译器贡献、音频生成与扩展模型支持](https://www.modular.com/blog/modular-26-6-open-compiler-contributions-audio-generation-and-expanded-model-support)（2026-09-17）
