@@ -1,6 +1,6 @@
 # Anyscale 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-22**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-23**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anyscale（`anyscale`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,8 +9,8 @@
 
 ## 全部文章（共 82 篇，按日期倒序；无日期条目列于最后）
 
-1. [Announcing Ray support for PyTorch on Google TPUs](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20）
-2. [Announcing the Special Interest Group (SIG) for Ray on Accelerators](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20）
+1. [宣布 Ray 在 Google TPU 上支持 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20） <!--orig:Announcing Ray support for PyTorch on Google TPUs-->
+2. [宣布成立 Ray on Accelerators 特别兴趣小组 (SIG)](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20） <!--orig:Announcing the Special Interest Group (SIG) for Ray on Accelerators-->
 3. [用 KubeRay 在 Kubernetes 上大规模运行 Ray](https://anyscale.com/blog/kuberay)（2026-10-15） <!--orig:Running Ray at scale on Kubernetes with KubeRay-->
 4. [在 Anyscale 上用 Ray 扩展机器人决策研究的规模](https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale)（2026-10-09） <!--orig:Scaling the Science of Robot Decisions with Ray on Anyscale-->
 5. [编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08） <!--orig:Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale-->

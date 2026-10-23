@@ -7,7 +7,196 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 21 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Building agents: When to fold subagents into your main agent…</title>
+      <link>https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop?li=1</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Building agents: When to fold subagents into your main agent loop</description>
+      <content:encoded><![CDATA[<p><em>If you’ve built an agent in Claude Platform that includes multiple subagents, see which may make sense to fold into the main agent loop using our <a href="https://github.com/anthropics/single-agent-loop-kit">migration kit</a>. It runs a guided workflow to identify your patterns, evaluate alternatives, and verify the best approach. It includes a demo that you can try on a mock system before running on your agent.</em></p>
+<p>Subagents – agents with their own context window, tools, and instructions, orchestrated by a coordinator – are a core component of agent design. They are effective at verification, parallel work, and modular permissioning. We use them in many of our own agents that we build using Claude Platform, for example our <a href="https://www.anthropic.com/engineering/multi-agent-research-system">multi-agent research system</a>.</p>
+<p>However, recently the Applied AI team has found a pattern of enterprise agent deployments that have benefited from folding routers, planners, and domain subagents into the main agent loop. In <a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#:~:text=In%20our%20comparisons%20across%20several%20enterprise%20deployments,latency%20per%20task">our comparisons across several enterprise deployments</a>, a single agent with skills frequently outperformed both the one-prompt-for-everything design and the subagent design on quality, and often at a lower cost and latency per task.</p>
+<p>For example, one company found the dozen of specialist subagents within its customer-facing agent made a consistent on-brand experience difficult to maintain and added latency that hurt the user experience.</p>
+<p>We also often see proposed agent designs that follow a familiar progression: an intent classifier, a fixed multi-step reasoning pipeline, user-segment buckets, separate recommendation branches, and a multi-agent orchestrator on top.</p>
+<p>In these cases feedback is often that most of this structure was doing work the model no longer needed done for it, and that one clear system prompt, 4-5 thin data tools, and firm output guardrails would cover most of the use case.</p>
+<p><img src="https://assets.claude.com/a7cb2cf08bfcef461166310c0c55f28b72c33b0d.gif" alt="subagent design"></p>
+<p>To be clear, subagents still have their place, including at the research frontier. Use them when:</p>
+<ul><li>A single agent loop hits measurable performance degradation from context bloat, or</li><li>Multiple tasks need to be tackled in parallel with fresh context windows that can be discarded once the task is done, or</li><li>A single agent struggles to select appropriate tools or there are conflicting instructions in the system prompt.</li></ul>
+<p>But too often we see enterprises give each team or problem type its own subagent, with the agent architecture becoming a copy of their org chart (Conway’s law at work).</p>
+<p>This post explains when to consider folding subagents into your main agent loop with best practices we’ve learned from building agents in large organizations.</p>
+<h2>Agent building failure modes for large organizations</h2>
+<p>Companies often want to build an agent that unites multiple products and capabilities into a single customer interface.</p>
+<p>Typically, each capability is owned by a separate team, so companies start by letting each individual team build their own agent, then a central platform team builds an orchestrator on top. This can take on several structures including orchestrator-subagent or a single agent with specific agents exposed as MCP tools.</p>
+<p>This looks like the simplest solution but introduces immediate complexity around:</p>
+<ul><li><strong>Context management: </strong>You need to decide what context is exchanged between agents and often lose details in the back and forth.</li><li><strong>Subagent sprawl</strong>: Every team ships its own subagent, so companies end up with hundreds of overlapping subagents with no enforced standards and no specific owner.</li><li><strong>The Frankenprompt</strong>: Every team adds a sentence to the system prompt, resulting in conflicting rules and no consistent voice.</li><li><strong>Unvetted, overly localized evals</strong>: Everyone adds their own evals that are overly optimized for their subtask. No one owns or maintains the whole set, and leadership makes decisions based on watered-down, overly localized scores.</li><li><strong>Latency</strong>: Multi-agent architectural complexity adds latency. One customer that evaluated their multi-agent harness against a single agent loop saw a roughly 2x faster runtime with the latter.</li></ul>
+<h2>Using an agent loop with progressive disclosure</h2>
+<p>The orchestrator-subagent design described above is a reasonable approach to coordinating specialists built across teams, but often a more effective approach can be <strong>progressively disclosing context via skills</strong> and <strong>progressively disclosing tools via tool search</strong>. In other words, the agent sees short descriptions of the skills and tools, which are fully loaded only when needed.</p>
+<p>There are three reasons why this approach can make sense:</p>
+<ul><li><strong>Shared context produces better answers:</strong> for longer-running agents, we want the context from several different tasks to sit in the main context window. An agent that has seen the result of each earlier step can connect them, which leads to richer outputs and better insights than a set of summaries handed back by subagents. It also means <a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them">fewer context windows and fewer lossy handoffs</a>.</li><li><strong>Progressive disclosure prevents context bloat: </strong>this technique allows teams to build single agents that can accomplish a wide variety of tasks without requiring all of the context to be immediately loaded into one long system prompt. This removes the main reason teams previously split work across subagents. In fact, we <a href="https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/">reduced Claude Code’s system prompt for more advanced models by over 80%</a> which included cuts related to progressively disclosing skills and tools.</li><li><strong>Models are more capable:</strong> starting with Opus 4.5, models became capable of managing far more in a single loop than most teams expected. You cannot turn off thinking on Opus 5.5, and Fable 5.1, and recent models increasingly narrate their progress and check their work as they go, which makes some harness elements redundant. Each new model lets you move more of the decision-making out of the harness and into the model itself. A simpler loop is also easier to move to the next model; in migrations we have helped customers with, rigid multi-agent structures were often what stopped the new model from doing more of the work.</li></ul>
+<p>The single agent loop design requires discipline: a carefully managed system prompt, skill and tool descriptions that trigger at the right times, and deliberate handling of context windows, memory, and note-taking. This article goes deeper into migration and design considerations in subsequent sections.</p>
+<p>One central team should own end-to-end quality and the system prompt, vetting every new tool and eval before it ships. Keeping that central team small helps iteration move quickly and lowers coordination cost across a large org.</p>
+<p>If you go the multi-agent route, start with the simplest pattern (generator-verifier, orchestrator-subagent, or other) that could work. Decompose boundaries effectively by<strong> dividing by context: give each subagent a piece of work that needs little from the rest of the system and have it hand back a compact result </strong>(good candidates are independent research paths, separate components with clean interfaces, or black-box verification). When agents are split by problem type, they engage in a &quot;telephone game,&quot; passing information back and forth with each handoff degrading fidelity.</p>
+<p><img src="https://assets.claude.com/cd4b9c4417d5ba31776e8aa79e204966c08c6a43.png" alt="subagents split by problem"></p>
+<h2>How to fold subagents into the main agent loop</h2>
+<p>Many teams already have an orchestrator and a set of specialist agents in production. The following is the single loop design we'd suggest working toward:</p>
+<ul><li>One model and one context window running an open-ended tool loop, with limits (turn and cost budgets, write gates) set in the harness.</li><li>Each turn, the model emits a batch of tool calls. The harness runs them in parallel and returns raw results to the same model, which decides the next step: another batch, a question to the user, or an answer.</li><li>The loop stops when the model answers or hits a <a href="https://platform.claude.com/docs/en/build-with-claude/task-budgets">budget</a>. A goal or verifier check can optionally run after the answer.</li><li>The model writes its plan in context on the first turn and revises it as results arrive. This is the main change from the orchestrator and specialist agents setup: the model that writes the plan is also the one carrying it out, so it can change the plan mid-turn.</li><li>Context still gets loaded, and is managed by the agent itself:A code step that rewrites the plan from a catalog of rules is no longer needed, since the model decides each step.Ordering and domain procedure move into <strong>skills.</strong>Hard limits (validation, approval gates) and anything else that comes up mid-conversation (e.g. memory lookup) move into the <strong>tools.</strong>Code can still be used to load anything cheap and almost always relevant (e.g. an entity resolution step), and to handle any mechanical parts (payload construction, stream parsing, resuming a clarification) inside tools the loop calls.</li></ul>
+<p>This single loop design also helps with the end state many teams are working toward (an agent that understands a user's high-level goals and acts on their behalf), since it keeps everything the agent has learned in one context.</p>
+<p>The suggestions below are how a team could get from a multi-agent system to a single agent loop in stages, and how several teams can keep contributing to that agent along the way.</p>
+<h3>Task-completion evals</h3>
+<p>The first step is to create an eval set that can help you determine whether you should fold a subagent into the main agent loop. The eval structure we’ve seen work is one shared end-to-end set owned by a central team with smaller eval sets shipped with each skill by the team that owns it. Even a set of 10 golden examples is enough to start.</p>
+<p>Grading the agent's final message against a rubric is a good starting point for tracking answer quality. While you still have an orchestrator, you should also track routing accuracy (did it pick the right subagent?). Once a subagent is folded in, check instead whether the agent loaded the right skill or called the right tool. Working toward task-completion evals over time is helpful as this matters most when comparing architectures.</p>
+<p>This can be complex in environments where internal systems are difficult to replay and user engagement is difficult to simulate. One approach that has worked for us internally is to record timestamps on important events, so they can be replayed later to run as targeted evals.</p>
+<h3>Reducing subagents over time</h3>
+<p>Evolving toward a single agent loop involves folding the subagents into tools and skills. This can be done by merging domain subagents, calling them as tools, or replacing them with skills and tools.</p>
+<p><img src="https://assets.claude.com/ed6bd97496ffdab88763806d9e14f1ec61ed9255.gif" alt="folding in subagents"></p>
+<h3>Combining domain agents</h3>
+<p>Build a small end-to-end eval before the first merge. Then <strong>fold in by shared context starting with subagents that have the most use.</strong></p>
+<p><a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them">Merge specialists</a> that chain on each other's output, touch the same data, or are often called together. For example, if a significant share of production traffic is one specialist followed by a second, that is a tightly coupled pair, which makes it a candidate to merge into one domain agent.</p>
+<h3>Subagents called as tools</h3>
+<p>When one of the three conditions above applies and you keep a subagent, it can be effective to have the main agent call subagents as tools so it can continue holding the conversation with the user.</p>
+<p>We’d only recommend a full handoff, where the subagent takes over the conversation, when it needs to talk to the user directly. Everything else can be a skill plus tools in the main loop.</p>
+<p>This will allow you to define a shared response schema for subagents, verify the conclusion against real data with the main agent, and trim the input to any final synthesis step. This is a good first step, as you don’t need to<strong> rewrite </strong>the subagents. It also gives you a<strong> baseline</strong> on the task-completion eval before deciding to fold any subagents into the main agent.</p>
+<p>However, some failure modes will remain:</p>
+<ul><li>Each specialist has its own prompt, context, owner team, and evals</li><li>Each call still hands back a lossy summary</li><li>Every call is a nested model loop that adds latency</li></ul>
+<h3>Folding subagents into the main agent via skills and tools</h3>
+<p>Fold subagents into the main agent one at a time by turning each one’s prompts into skills and API calls into MCP tools. Compare eval performance with and without the subagent. Then decide which to keep.</p>
+<p>When you compare, don’t just examine the final score, take a look at which tasks flipped. When we tested this on a sample support agent, folding one subagent into another lowered latency, but also broke a process that had been passing. The main agent was holding the order lookup tool and answering on its own, without asking the shipping specialist for the delivery date.</p>
+<p>Before each change, make sure your eval has a task for every chain of agents that runs together in production and for every rule the agent must not break, and run each task more than once, since a break like this one only showed up in one run out of two.</p>
+<h2>How several teams can contribute to a single agent</h2>
+<p>Domain reasoning can be retrieved from knowledge bases, skills, and MCP tools. Individual teams can shift their ownership from agents to skills and tools, with one small central team keeping ownership of the system prompt and end-to-end quality. This involves vetting new skills, tools, and evals before they ship.</p>
+<h3>MCP tools</h3>
+<p>Tools are the right fit when the agent needs to take an action, read live data from a system, or return a result in a fixed shape. You can also use tools as a way to keep calling subagents while you migrate. We recommend tools grouped by user intent (not one tool per API) because once you exceed 30-50 tool definitions in the system prompt, tool choice tends to degrade.</p>
+<p>Use <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool">tool search</a> with deferred loading, limit hard preconditions, and move any needed ones into the tools. For example, if Y needs X's output, Y's tool checks for it and returns an instruction the model can act on. Per-user permissions work the same way. Each tool checks what the calling user may see or do and returns a plain refusal the model can read, so one loop can serve users with different access without a separate agent per permission level.</p>
+<h3>Skills</h3>
+<p>Skills are the right fit when the agent needs to know how a team does work, like the steps, rules, and judgment calls a specialist subagent's prompt used to hold.</p>
+<p>Our approach to growing skill libraries is to give the maintenance work back to the people writing the skills. Claude can do the heavy lifting with skills that can build, test, and prune other skills.</p>
+<p>To prevent skill sprawl, you can have DRIs per team own their skills and make sure they are well crafted, distinct, and shipped with appropriate evals.</p>
+<ul><li><strong>/skill-creator</strong> allows you to author new skills that start well-formed, and audit existing ones to trim, deduplicate, and restructure them.</li><li><strong>/skill-doctor</strong> allows you to see what each skill in your library costs and how often it’s actually used, and delete dead weight.</li></ul>
+<h3>Knowledge bases</h3>
+<p>Knowledge bases are the right fit for reference material the agent only needs some of the time. Facts and reference material (policies, metric definitions, product specs) can sit behind a search or lookup tool the model calls, or ship as reference files inside a skill. Avoid having <a href="https://claude.com/blog/seeing-like-an-agent">code retrieve and paste this context into prompts</a>.</p>
+<h2>Tools to accelerate this work</h2>
+<p>We recently <a href="https://code.claude.com/docs/en/commands">released</a> a set of Claude API skills that can help with most of the work mentioned above. Our <a href="https://github.com/anthropics/single-agent-loop-kit">migration kit</a> chains these skills together in one guided workflow for assessing and moving multi-agent systems to a single agent loop. It includes a demo you can try before running it on the real thing:</p>
+<ul><li><strong>/claude-api build-eval:</strong> can help create a first end-to-end set owned by the central team or small evals each team ships with its skill</li><li><strong>/claude-api prompt-audit:</strong> can flag instructions written for older models in your prompts, skills, and tool descriptions and propose fixes as a diff. This can be run on your system prompts to find any rules that were added for an earlier model and are now making the agent slower or more rigid. Each team's DRI can also run it on their own skills and tool descriptions.</li><li><strong>/claude-api hillclimb: </strong>can iteratively improve an app against an existing eval. This can be used for the &quot;folded in vs kept&quot; comparison (after folding one subagent into a skill plus tools, let it iterate on the skill and tool descriptions and see if the folded version matches or beats the subagent), as well as your system prompt.</li><li><strong>/claude-api cost-optimize: </strong>profiles where your calls go and proposes savings from options such as prompt caching, trimming unneeded input and output tokens, effort, and model choice, one change at a time. This can help bring cost and latency down on a given design.</li></ul>
+<p>As models evolve, our understanding of how to best use them and guidance around best practice evolve as well. That makes any one architecture less important than the principle behind it: measure, change one thing at a time, and keep what holds up.</p>
+<p>This is one of those cases. As models get more capable and agents get longer running, more of your subagents can be skills and tools. You don’t have to make that move in one step, though. Build a small end-to-end eval, fold in one subagent, and keep it as a subagent only if the folded version scores worse, then rinse and repeat.</p>
+<p>Article</p>
+<p>Oct 19, 2026</p>
+<h3>Redesigning source control at Anthropic</h3>
+<p>As merges to Anthropic's monorepo grew from about 2,500 to more than 30,000 a day, source control became the biggest development bottleneck. Here is how the team built Scion, an in-house version control system designed for always-online agents, and migrated off git in five months.</p>
+<p>Claude Code</p>
+<p>(opens in new tab)</p>
+<p>Article</p>
+<p>Oct 16, 2026</p>
+<h3>How an Anthropic BDR in Japan runs his day with Claude Managed Agents</h3>
+<p>How one business development representative clears his inbound queue and drafts bilingual customer emails with Claude Managed Agents and Claude Tag.</p>
+<p>Claude Managed Agents</p>
+<p>Article</p>
+<p>Oct 16, 2026</p>
+<h3>How the Claude Code team does code review</h3>
+<p>How do you review code at the volume agents produce it? The Claude Code team shares its review process, from Claude verifying its own work to risk-tiered human approval, plus a checklist for adopting it.</p>
+<p>Claude Code</p>
+<p>(opens in new tab)</p>
+<p>Article</p>
+<p>Oct 13, 2026</p>
+<h3>Uber's CISO on building an insider threat program for AI</h3>
+<p>Uber's CISO, Philip Martin, on the importance of monitoring and observability for AI agents, and how Uber's open-source tooling works alongside Enterprise Frontier Safeguards.</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>The full Claude Platform, available on Google Cloud</title>
+      <link>https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed?li=1</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Claude Models on Google Cloud (Anthropic managed) is now generally available, giving Google Cloud customers the full set of Claude Platform features, with Google Cloud IAM credentials, billing, and commitment retirement. Claude also remains available via the Google managed offering, where Google is the data processor.</p>
+<h2>Access the complete Claude Platform on Google Cloud</h2>
+<p>With the Anthropic managed offering, Google Cloud customers now receive the full set of Claude API features, with new features and betas shipping the same day they go live on the native Claude Platform.</p>
+<p>The Anthropic managed offering works with existing Google Cloud IAM credentials, so teams can stay within the tools and permissions they already manage. Billing is through a single Google Cloud invoice and Claude usage draws down your existing Google Cloud commitment.</p>
+<p>Claude Models on Google Cloud (Anthropic managed) is currently available with US and Global endpoints.</p>
+<p><img src="https://assets.claude.com/3000fcaf4ad00ac2cc4096d3f5aa236cc9eb415d.png" alt="Abacus.AI"></p>
+<blockquote>“With the Anthropic managed offering, we get the native Claude API with Google Cloud as the access layer. Accessing new features on day one is important. We build AI agents and assistants for Enterprises, and need to bring new Claude capabilities into our product quickly. Using our existing IAM set-up and knowing usage counts towards our Google Cloud commitment made it an easy decision for our team.”</blockquote>
+<p>Arvind Sundararajan, CTO</p>
+<p><img src="https://assets.claude.com/3720f77d05a852bc6857ae3eca424467270055b6.png" alt="Triple Whale"></p>
+<blockquote>“Moby, our AI harness for ecommerce brands, runs on Claude. With the Anthropic managed offering, we run Moby on Google Cloud on the same Claude API our team already builds on. Prompt caching is central to how we run Moby cost-effectively at scale, and we’ve kept it while running billing and access through Google Cloud.”</blockquote>
+<p>Maksim Gorev, Head of AI Engineering</p>
+<h2>What’s included</h2>
+<p>Google Cloud customers using the Anthropic managed offering get the full set of Claude Platform features, so they can:</p>
+<p><strong>Build and deploy agents with:</strong></p>
+<ul><li><a href="https://platform.claude.com/docs/en/managed-agents/overview">Claude Managed Agents (beta) (opens in new tab)</a> to power long-running agents, without managing infrastructure</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool">Code execution (opens in new tab)</a> to run Python code, create visualizations, and analyze data within an API call</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool">Computer use (opens in new tab)</a> to allow Claude to operate a browser or desktop to complete tasks</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview">Agent skills (opens in new tab)</a> to teach Claude repeatable workflows so it delivers consistent results</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool">Advisor strategy (beta) (opens in new tab)</a> to give agents an intelligence boost by consulting an advisor model</li></ul>
+<p><strong>Connect to systems and knowledge with:</strong></p>
+<ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/files">Files API (opens in new tab)</a> for uploading and referencing documents across conversations</li><li><a href="https://platform.claude.com/docs/en/build-with-claude/citations">Citations (opens in new tab)</a> for grounding responses in source documents</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool">Web search (opens in new tab)</a> and <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-fetch-tool">web fetch (opens in new tab)</a> to augment Claude’s knowledge with current, real-world data from across the web</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/mcp-connector">MCP connector (beta) (opens in new tab)</a> to connect Claude to other tools without writing client code</li></ul>
+<p><strong>Manage cost and performance with:</strong></p>
+<ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">Prompt caching (opens in new tab)</a> for reducing costs and latency on repeated context</li><li><a href="https://platform.claude.com/docs/en/build-with-claude/batch-processing">Batch processing (opens in new tab)</a> for high-volume, asynchronous workloads</li></ul>
+<p>Fast Mode on Claude Opus 5.5 is also generally available for customers using Claude Models on Google Cloud (Anthropic managed). Fast mode prioritizes speed, offering up to 2.5x faster output token generation, for rapid iteration, live debugging, and interactive agents where output speed results in a better user experience. Input and output tokens are $8 and $40 per million.</p>
+<p>See the full list of features available on Claude Models on Google Cloud in our <a href="https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed">documentation (opens in new tab)</a>.</p>
+<p>Customers using the Anthropic managed offering also get access to the Claude Console, Anthropic’s development environment for observing and managing agents with Claude. The Console includes tools to write prompts and configure agents, run them on hosted environments, monitor usage and costs, and manage access and security per workspace.</p>
+<p>Claude Fable 5.1, Opus 5.5, Sonnet 5.5, and Haiku 5.5 are available, with new models shipping on the Anthropic managed offering as they launch.</p>
+<h2>Two paths to build with Claude</h2>
+<p>There are two ways to build with Claude on Google Cloud.</p>
+<p><strong>Claude Models on Google Cloud (Anthropic managed) </strong>is built for customers who want day zero access to all beta and generally available Claude Platform features. It’s best for customers who want full Claude Platform feature parity, accessed through Google Cloud. Anthropic operates the service and acts as the data processor.</p>
+<p><strong>Claude Models on Google Cloud (Google managed)</strong> remains the best choice for customers who need Google Cloud as the data processor, have strict regional data residency requirements, or want native Google Cloud integrations like Model Armor or Agent Engine.</p>
+<h2>Get started</h2>
+<p>The Anthropic managed offering is generally available today. To get started, open <a href="https://console.cloud.google.com/marketplace/product/anthropic/anthropic-managed-claude">Claude Models on Google Cloud (Anthropic managed) (opens in new tab)</a> or explore the <a href="https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed">documentation (opens in new tab)</a>.</p>
+<p>If you have an existing discount, please contact your Anthropic or Google Cloud account executive before getting started with the Anthropic managed offering, to ensure your discounts are applied correctly. Discounts cannot be applied retroactively to usage.</p>
+<p>Article</p>
+<p>Oct 21, 2026</p>
+<h3>HCLTech joins the Claude Partner Network as a Global Premier partner</h3>
+<p>HCLTech will bring Claude into the solutions it provides for banks, hospitals, telecom companies, and manufacturers.</p>
+<p>Article</p>
+<p>Oct 21, 2026</p>
+<h3>Introducing Claude Duet</h3>
+<p>A research preview is available by waitlist today, starting with US Pro and Max subscribers.</p>
+<p>Article</p>
+<p>Oct 21, 2026</p>
+<h3>Claude Security now scans continuously and tracks fixes</h3>
+<p>Claude Security now keeps up with your repositories as code changes, tracks findings until they’re fixed, learns from the context your team adds, and connects to your tools through an API and MCP. Available in public beta for Claude Enterprise customers.</p>
+<p>Claude Security</p>
+<p>Article</p>
+<p>Oct 15, 2026</p>
+<h3>Code Review is now generally available</h3>
+<p>Catch more bugs before they reach production.</p>
+<p>Claude Code</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Donating Agent Skills to the Agentic AI Foundation</title>
+      <link>https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation?li=1</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Today, we’re donating <a href="https://agentskills.io/home">Agent Skills</a>, the open standard that gives AI agents specialized knowledge and workflows, to the Agentic AI Foundation (AAIF). More than 70 agent platforms, including ChatGPT, Cursor, GitHub Copilot, and VS Code, have integrated Agent Skills since we published the standard in December 2025.</p>
+<h3>Agent interoperability through simplicity</h3>
+<p>A skill is a folder containing a SKILL.md file that teaches an agent a specific task or domain, along with any scripts or reference material it needs. We developed skills while working on Claude Code. It handled general knowledge work well, but often lacked the procedural knowledge that real business tasks need. Within weeks of our October 2025 launch, developers published thousands of skills on GitHub and wrote loaders for Codex, Cursor, and OpenCode. We then published Agent Skills as an open standard, under its own GitHub organization and domain, so any agent could use it. So far, 1 million skills have been published and nearly 280 million installed.</p>
+<h3>Donating Agent Skills to AAIF</h3>
+<p>We’re committed to keeping Agent Skills open, community-driven, and vendor-neutral. Today, we are donating the standard to the Agentic AI Foundation (AAIF) under the Linux Foundation, <a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation">which we co-founded</a> with Block and OpenAI last year, and to which we donated the Model Context Protocol (MCP). The AAIF will provide a neutral home to the standard going forward, ensuring the community has a say in where Agent Skills go next.</p>
+<p>We are donating the Agent Skills name and logo, the GitHub organization, and the <a href="https://agentskills.io/home">agentskills.io</a> domain. You can continue to use the standard or contribute to it without joining the AAIF.</p>
+<p>Engineers from Anthropic, Google, OpenAI, and other companies will maintain the standard as individuals, with David Soria Parra and Mahesh Murag as Lead Maintainers.</p>
+<h3>What comes next</h3>
+<p>We’ve proposed starting with a roadmap covering versioned releases, a formal proposal process, and security guidance for people who write and install skills. As with MCP, the project will continue to prioritize community input and transparent decision-making. You can join the project’s <a href="https://discord.gg/MKPE9g8aUy">Discord</a> to give feedback on proposed specification changes.</p>
+<p>Thank you to the developers who built with Agent Skills from the start, and to the teams who brought skills into their products. Read the specification at <a href="https://agentskills.io">agentskills.io</a> and join the discussion on <a href="https://github.com/agentskills/agentskills">GitHub</a>.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Open call for guest investigators in the life sciences</title>
+      <link>https://www.anthropic.com/news/open-call-guest-investigators-life-sciences</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/open-call-guest-investigators-life-sciences?li=1</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Today, we’re inviting members of the life sciences community to apply to work with us on special projects. We’re looking for proposals from principal investigators and their research groups at academic institutions, nonprofits, or government labs who want to use Claude to investigate key questions in causal human biology, structural and computational molecular biology, medicinal chemistry, drug discovery, and clinical science.</p>
+<p>You can submit a <a href="https://www.anthropic.com/guest-investigator-program">proposal for a project here</a>.</p>
+<p>Over 8–12 weeks, guest investigators will work directly with Anthropic researchers on a problem of interest and produce the analyses, artifacts, and tools that will be most helpful for them in their work. Our team will run our models and harnesses at no cost to them.</p>
+<p>We’ll work together to publish these outputs and open-source the accompanying data and code. Guest investigators retain the rights to their data at every step during their project. They will also have the rights to any independent follow-on research that might come out of our collaboration.</p>
+<p>We’re looking for applicants who can clearly explain how they would benefit from direct collaboration with Anthropic’s researchers. Applicants should also make a reasonable case that their outputs (e.g., preliminary discoveries, answers to open questions, open-source datasets, or public resources) can be produced within the 8- to 12-week collaboration period. There may be an option for extension beyond the initial collaboration period for some projects.</p>
+<p>We understand that the results for most open problems of interest will take much longer to validate, but we’re looking for proposals that can produce some preliminary evidence in a relatively short amount of time.</p>
+<p>We aren’t asking for guest investigators to give us their data, either in the application or during the collaboration, and we’re requesting that applicants include only publicly available information in their application materials.</p>
+<p>Applications will be open for approximately 14 days, and we’ll strive to notify selected participants by email approximately 14 days after applications close. We look forward to potentially expanding this effort in the future as we learn more about how we can best support the scientific community.</p>
+<p>This program is one of several initiatives Anthropic is pursuing to invest more heavily in the life sciences and the broader scientific research community. Scientists who would like direct access to our most capable publicly available models for biology can apply to join our <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>. We’ve also continued to support researchers through our <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science initiative</a>, which provides scientists with Claude credits to accelerate their progress toward making scientific discoveries.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Introducing Claude Duet</title>
       <link>https://claude.com/resources/articles/claude-duet</link>
@@ -616,72 +805,6 @@
 <p>The incentives in the industry often cut the other way. Defenses are expensive, and illicit distillers are still paying customers. Against that backdrop, it would be easy for companies to do nothing, or not enough. We’re publishing our methods to show that there’s a workable alternative.</p>]]></content:encoded>
     </item>
     <item>
-      <title>How Block orchestrates Claude Fable across thousands of pull…</title>
-      <link>https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests</link>
-      <guid isPermaLink="true">https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests?li=1</guid>
-      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: How Block orchestrates Claude Fable across thousands of pull requests</description>
-      <content:encoded><![CDATA[<p>Block builds tools that help businesses and individuals participate in the economy, including Square for sellers and Cash App for consumers. Bradley Axen leads AI capabilities at Block, where his team builds end-to-end AI products, including Buzz, an open-source workspace for <a href="https://claude.com/blog/building-effective-human-agent-teams">human-agent teams (opens in new tab)</a>, and partners with the Square and Cash App teams to build customer-facing AI features. Brad spoke with Anthropic about how frontier models like Claude Opus 5 and Claude Fable 5 have transformed what it means to be an engineer, how Block applies agent orchestration patterns with Fable, and the role of safeguards when every employee has access to frontier models.</p>
-<h2><strong>Frontier models have made meaningful progress in 2026. How has this technology impacted how you work?</strong></h2>
-<p>The biggest impact AI has had on our work at Block is how we build things, and you couldn't overstate how impactful that is. We saw the beginning of it in 2025 with tools like Claude Code, which at the time, required a lot more manual intervention. As models become more intelligent, design and engineering work has shifted toward designing the migrations themselves, reviewing agent behavior, and building more customer-facing features, which was always the goal.</p>
-<p>The next phase is to bring these transformative technologies to our customers, through Block’s products. There's just as much value AI can bring to helping a small business handle the back-of-house operations it doesn't want to spend its time on, or to helping a Cash App customer manage their finances. With Claude, we have a whole new lever in technology that can change what people expect software to do for them. Imagine if AI could respond to customer needs and build new interfaces on the fly? Increasingly, I think our products will be built on demand with AI to solve specific problems.</p>
-<h2><strong>As frontier intelligence evolves, what can your team do now that it couldn't do a few months ago?</strong></h2>
-<p>The biggest thing that has changed with Claude’s newer frontier models is the scale at which we can build software. Writing code is still the core component, but now we'll do company-wide migrations with AI. We've all had that dream for a long time, and in 2025 it rarely panned out. Before Claude Fable 5, you had to have a particularly well-shaped problem for frontier models to really shine.</p>
-<p>In 2026, AI is a major part of how we run all large-scale code migrations. For us, a migration might mean hundreds or thousands of individual pull requests across multiple repos and millions of lines of code. In the past, humans had to coordinate that work, and models could take on one or a few PRs at a time. With Fable, we're seeing it orchestrate the work across many sessions. A human engineer steers, and Fable focuses on the higher-level design work: data models, API specs, algorithms. It then directs up to dozens of smaller, more cost-effective models like Opus or Sonnet to do the individual tasks, such as making the actual file edits and running tests.</p>
-<p>The economics work out well. Early results show the orchestrator using frontier tokens for complex, upfront planning before driving a higher percentage of tokens to smaller worker models, without a drop in quality. We run the whole setup on Buzz, our open source collaboration workspace where humans and AI agents work side by side in shared channels and threads. It gives us great visibility into how the team is progressing.</p>
-<p>In any given migration, we might merge a thousand pull requests orchestrated by Fable. That lets engineers focus on the hard design decisions instead of the mechanical work.</p>
-<h2><strong>When do you use Claude Fable models over other options?</strong></h2>
-<p>A lot of models have started to close the gap since, and Opus is very good too, but the moment Fable came out, it was a big step change in how large a problem you could take on at once. Teams at Block gravitated to that and started figuring out what it means to move up another level of abstraction, another level of scale.</p>
-<p>Now, a lot of our conversation is about model efficiency. That's where model orchestration comes in: Fable’s frontier intelligence is most valuable when you're tackling a big problem with it, and then we look to smaller models to fill in a lot of the details on code changes. It's literally the first time I can remember since we started using LLMs for code where the answer wasn't just &quot;use the most frontier model 100% of the time.&quot;</p>
-<p>Model orchestration is a big part of how we build things today, and it means we need new tools. Some tools are very single-conversation focused, and the interface doesn't keep up with you having 45 agents working with you all the time. That's another place Buzz comes in. We have multi-agent workflows in Buzz, and we really think the future is multiple people talking to many agents, with the organization picking the efficient models for routine tasks and frontier models for bigger problems.</p>
-<h2><strong>What's the hardest problem you've thrown at Fable?</strong></h2>
-<p>The first is large-scale migrations: multiple-thousand-PR migrations where Fable orchestrated the whole system that did the work.</p>
-<p>The second is taking a large codebase, something in the neighborhood of a million lines of code, and making sure it's not growing tech debt every day. We are shipping more PRs than ever before. People are shipping a lot more features and a lot more changes, so our systems accumulate tech debt faster than ever, and we've been missing the corresponding thing that speeds up our ability to maintain them. That's finally happening. We have agents that do daily or weekly passes across a whole codebase asking, &quot;How's it going in here? What do we need to clean up and consolidate?&quot;</p>
-<h2><strong>With broad access, how do you drive efficient use of frontier models?</strong></h2>
-<p>We give anyone in a technical role full access to the most frontier models, because a big part of our strategy is to always be working at the edge of what's possible.</p>
-<p>Using Fable to fix a typo in a README is a very bad use of resources. So we needed better systems for suggesting which model to use for given tasks. To accomplish this, we’ve been building an auto-selector that helps employees choose which model to use, when. Our multi-agent systems powered by a mix of larger and smaller frontier models help too.</p>
-<p>A big part of our goal as a company is to operate efficiently by default, and that's the skill we're building now. We've got a lot of great models to choose from. If everyone gets good at picking the right model for the right task, our cost effectiveness goes a lot further without slowing us down.</p>
-<h2><strong>Do you advise specific optimization strategies, like effort levels?</strong></h2>
-<p>Even as someone who works with LLMs all day, I almost feel like a model at xhigh effort is a different model than the same model at medium. I don't think of effort levels as a spectrum you walk along. Fable on low might just be better than another model on xhigh. So I think of it as a bigger grid we need to optimize against. Every single use case we benchmark, we check not just every model but every effort level of every model.</p>
-<p>As someone working centrally on how we do AI, I want recommendations that are really clear, such as: &quot;Use this model on high as the default for this kind of task.&quot; We have to make the tools do that automatically as much as possible, and then let experts explore when they want to.</p>
-<h2><strong>How are you thinking about incorporating safeguards with today's frontier models?</strong></h2>
-<p>Some things are so critical that you need guarantees, and we're not ready to let LLMs loose on our codebase. We always leave merges to main and deploys to production up to people, along with related changes like feature flags. Agents can make code changes, but those changes have to pass our security checks, and then two humans have to approve the deploy. That dual-approval layer makes it impossible for an LLM to push those kinds of changes on its own.</p>
-<p>At a lower level, it's surprising how many things an employee can do on their laptop if they're not paying attention, things you assume humans won't do because they know not to. That pushes us in interesting directions. I think a lot of the future of work is remote workstations, because they're easier to secure (and they help with other problems LLMs have, like filling up disk space). A big part of our security story is building systems that are secure by default: a network allow list instead of a deny list, and things like that, which stop the worst kinds of problems.</p>
-<p>We also try to get as much as possible out of the model loop. A lot of our security guardrails are really cheap, efficient checks that run without the model needing to be involved. We build those into the interfaces people use to do work. Sometimes it's even a regex. Increasingly, smaller classifiers are part of the picture too.</p>
-<p>Then in the day to day, there's a whole class of things you want to enable to make people productive, where blocking isn't worth it. We intentionally let the model open PRs, review code, and query our logging systems and analytical databases, all to help people move faster.</p>
-<p>That's where the model's built-in safeguards are really critical. By that, I mean the way Fable and other frontier models are tuned to not take part in dangerous activities, plus <a href="https://www.anthropic.com/news/claude-fable-5-mythos-5">Anthropic's own safety classifiers (opens in new tab)</a>. In our testing, even if someone asks Claude to &quot;hack around&quot; our dual-approval system, it refuses to try to bypass it. It's something we benchmark, too.</p>
-<h2><strong>Any advice for other engineering teams working with frontier models?</strong></h2>
-<p>We have thousands of people working with AI who are pushing the frontier of what it can do. They're learning what works as individuals, and they're improving the systems around them. I've got a bunch of local skills on my laptop that make it possible for me to work in our Square web front end, for example, even though I’m not a front-end developer by trade. Organizational maturity comes when all of this context and organizational knowledge is remembered at a system level, not an individual level.</p>
-<p>Our goal is to document everything we're learning from people doing the work and put it into a system where everyone benefits, so every time you run an agent, you know it has the best context available to contribute to your work.</p>
-<p><em>Get started with <a href="https://www.anthropic.com/claude/fable">Claude Fable 5.1 (opens in new tab)</a> today.</em></p>
-<p>Article</p>
-<p>Oct 6, 2026</p>
-<h3>How Comcast and Booz Allen use Claude Mythos to find exploit chains and secure their codebases</h3>
-<p>Security teams at Comcast and Booz Allen used Claude Mythos-class models through Project Glasswing to find, validate, and fix vulnerabilities their existing scanners missed.</p>
-<p>Article</p>
-<p>Sep 29, 2026</p>
-<h3>Agents you can coach: how Asana builds human-agent teams with Claude</h3>
-<p>Arnab Bose, Chief Product Officer at Asana, on how Asana runs AI agents as teammates with scoped roles, shared memory, and work that everyone can see. ‍</p>
-<p>Claude Platform</p>
-<p>Article</p>
-<p>Sep 28, 2026</p>
-<h3>Automating eval design and hillclimbing with Claude</h3>
-<p>Principles for designing evals and hillclimbing against them without fooling yourself, and how the claude-api skill's build-eval and hillclimb commands put them to work.</p>
-<p>Claude Platform</p>
-<p>(opens in new tab)</p>
-<p>Article</p>
-<p>Sep 25, 2026</p>
-<h3>Using Claude Code: Spending your effort</h3>
-<p>What effort really is and when to use which level in Claude Code, from my own tests of three builds and a deep dive into Terminal-Bench 3.0 on Opus 5.5 and Fable 5.1.</p>
-<p>Claude Code</p>
-<p>(opens in new tab)</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<h3>Get the developer newsletter</h3>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
-    </item>
-    <item>
       <title>Introducing the Anthropic Cyber Mission</title>
       <link>https://www.anthropic.com/news/anthropic-cyber-mission</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/anthropic-cyber-mission?li=1</guid>
@@ -806,6 +929,72 @@
 <ul><li>Provide Claude, Claude Code, and API credits to several hundred Genesis Mission research projects;</li><li>Partner closely with agencies and national laboratories on the administration’s top science priorities, including fusion energy and quantum computing; and</li><li>Provide training, onboarding, and technical support to scientists on Genesis Mission projects, and help agencies new to the Genesis Mission get their first projects running.</li></ul>
 <h3>Accelerating scientific research</h3>
 <p>This commitment is part of our broader effort to support scientific research. Earlier this year we launched <a href="https://claude.com/product/claude-science">Claude Science</a>, an AI workbench that integrates the tools and packages researchers most commonly use, and <a href="https://www.anthropic.com/news/expanding-support-for-scientists">opened 10,000 free and discounted Claude seats</a> for academic scientists. We also expanded our <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science</a> program, which gives credits to researchers on high-impact projects, and kicked off a research preview of the <a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">Model Hardware Standard</a>, a shared specification for AI agents to safely operate lab instruments. Our commitment to the Genesis Mission is our next step toward helping researchers everywhere.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>How Block orchestrates Claude Fable across thousands of pull…</title>
+      <link>https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests?li=1</guid>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: How Block orchestrates Claude Fable across thousands of pull requests</description>
+      <content:encoded><![CDATA[<p>Block builds tools that help businesses and individuals participate in the economy, including Square for sellers and Cash App for consumers. Bradley Axen leads AI capabilities at Block, where his team builds end-to-end AI products, including Buzz, an open-source workspace for <a href="https://claude.com/blog/building-effective-human-agent-teams">human-agent teams (opens in new tab)</a>, and partners with the Square and Cash App teams to build customer-facing AI features. Brad spoke with Anthropic about how frontier models like Claude Opus 5 and Claude Fable 5 have transformed what it means to be an engineer, how Block applies agent orchestration patterns with Fable, and the role of safeguards when every employee has access to frontier models.</p>
+<h2><strong>Frontier models have made meaningful progress in 2026. How has this technology impacted how you work?</strong></h2>
+<p>The biggest impact AI has had on our work at Block is how we build things, and you couldn't overstate how impactful that is. We saw the beginning of it in 2025 with tools like Claude Code, which at the time, required a lot more manual intervention. As models become more intelligent, design and engineering work has shifted toward designing the migrations themselves, reviewing agent behavior, and building more customer-facing features, which was always the goal.</p>
+<p>The next phase is to bring these transformative technologies to our customers, through Block’s products. There's just as much value AI can bring to helping a small business handle the back-of-house operations it doesn't want to spend its time on, or to helping a Cash App customer manage their finances. With Claude, we have a whole new lever in technology that can change what people expect software to do for them. Imagine if AI could respond to customer needs and build new interfaces on the fly? Increasingly, I think our products will be built on demand with AI to solve specific problems.</p>
+<h2><strong>As frontier intelligence evolves, what can your team do now that it couldn't do a few months ago?</strong></h2>
+<p>The biggest thing that has changed with Claude’s newer frontier models is the scale at which we can build software. Writing code is still the core component, but now we'll do company-wide migrations with AI. We've all had that dream for a long time, and in 2025 it rarely panned out. Before Claude Fable 5, you had to have a particularly well-shaped problem for frontier models to really shine.</p>
+<p>In 2026, AI is a major part of how we run all large-scale code migrations. For us, a migration might mean hundreds or thousands of individual pull requests across multiple repos and millions of lines of code. In the past, humans had to coordinate that work, and models could take on one or a few PRs at a time. With Fable, we're seeing it orchestrate the work across many sessions. A human engineer steers, and Fable focuses on the higher-level design work: data models, API specs, algorithms. It then directs up to dozens of smaller, more cost-effective models like Opus or Sonnet to do the individual tasks, such as making the actual file edits and running tests.</p>
+<p>The economics work out well. Early results show the orchestrator using frontier tokens for complex, upfront planning before driving a higher percentage of tokens to smaller worker models, without a drop in quality. We run the whole setup on Buzz, our open source collaboration workspace where humans and AI agents work side by side in shared channels and threads. It gives us great visibility into how the team is progressing.</p>
+<p>In any given migration, we might merge a thousand pull requests orchestrated by Fable. That lets engineers focus on the hard design decisions instead of the mechanical work.</p>
+<h2><strong>When do you use Claude Fable models over other options?</strong></h2>
+<p>A lot of models have started to close the gap since, and Opus is very good too, but the moment Fable came out, it was a big step change in how large a problem you could take on at once. Teams at Block gravitated to that and started figuring out what it means to move up another level of abstraction, another level of scale.</p>
+<p>Now, a lot of our conversation is about model efficiency. That's where model orchestration comes in: Fable’s frontier intelligence is most valuable when you're tackling a big problem with it, and then we look to smaller models to fill in a lot of the details on code changes. It's literally the first time I can remember since we started using LLMs for code where the answer wasn't just &quot;use the most frontier model 100% of the time.&quot;</p>
+<p>Model orchestration is a big part of how we build things today, and it means we need new tools. Some tools are very single-conversation focused, and the interface doesn't keep up with you having 45 agents working with you all the time. That's another place Buzz comes in. We have multi-agent workflows in Buzz, and we really think the future is multiple people talking to many agents, with the organization picking the efficient models for routine tasks and frontier models for bigger problems.</p>
+<h2><strong>What's the hardest problem you've thrown at Fable?</strong></h2>
+<p>The first is large-scale migrations: multiple-thousand-PR migrations where Fable orchestrated the whole system that did the work.</p>
+<p>The second is taking a large codebase, something in the neighborhood of a million lines of code, and making sure it's not growing tech debt every day. We are shipping more PRs than ever before. People are shipping a lot more features and a lot more changes, so our systems accumulate tech debt faster than ever, and we've been missing the corresponding thing that speeds up our ability to maintain them. That's finally happening. We have agents that do daily or weekly passes across a whole codebase asking, &quot;How's it going in here? What do we need to clean up and consolidate?&quot;</p>
+<h2><strong>With broad access, how do you drive efficient use of frontier models?</strong></h2>
+<p>We give anyone in a technical role full access to the most frontier models, because a big part of our strategy is to always be working at the edge of what's possible.</p>
+<p>Using Fable to fix a typo in a README is a very bad use of resources. So we needed better systems for suggesting which model to use for given tasks. To accomplish this, we’ve been building an auto-selector that helps employees choose which model to use, when. Our multi-agent systems powered by a mix of larger and smaller frontier models help too.</p>
+<p>A big part of our goal as a company is to operate efficiently by default, and that's the skill we're building now. We've got a lot of great models to choose from. If everyone gets good at picking the right model for the right task, our cost effectiveness goes a lot further without slowing us down.</p>
+<h2><strong>Do you advise specific optimization strategies, like effort levels?</strong></h2>
+<p>Even as someone who works with LLMs all day, I almost feel like a model at xhigh effort is a different model than the same model at medium. I don't think of effort levels as a spectrum you walk along. Fable on low might just be better than another model on xhigh. So I think of it as a bigger grid we need to optimize against. Every single use case we benchmark, we check not just every model but every effort level of every model.</p>
+<p>As someone working centrally on how we do AI, I want recommendations that are really clear, such as: &quot;Use this model on high as the default for this kind of task.&quot; We have to make the tools do that automatically as much as possible, and then let experts explore when they want to.</p>
+<h2><strong>How are you thinking about incorporating safeguards with today's frontier models?</strong></h2>
+<p>Some things are so critical that you need guarantees, and we're not ready to let LLMs loose on our codebase. We always leave merges to main and deploys to production up to people, along with related changes like feature flags. Agents can make code changes, but those changes have to pass our security checks, and then two humans have to approve the deploy. That dual-approval layer makes it impossible for an LLM to push those kinds of changes on its own.</p>
+<p>At a lower level, it's surprising how many things an employee can do on their laptop if they're not paying attention, things you assume humans won't do because they know not to. That pushes us in interesting directions. I think a lot of the future of work is remote workstations, because they're easier to secure (and they help with other problems LLMs have, like filling up disk space). A big part of our security story is building systems that are secure by default: a network allow list instead of a deny list, and things like that, which stop the worst kinds of problems.</p>
+<p>We also try to get as much as possible out of the model loop. A lot of our security guardrails are really cheap, efficient checks that run without the model needing to be involved. We build those into the interfaces people use to do work. Sometimes it's even a regex. Increasingly, smaller classifiers are part of the picture too.</p>
+<p>Then in the day to day, there's a whole class of things you want to enable to make people productive, where blocking isn't worth it. We intentionally let the model open PRs, review code, and query our logging systems and analytical databases, all to help people move faster.</p>
+<p>That's where the model's built-in safeguards are really critical. By that, I mean the way Fable and other frontier models are tuned to not take part in dangerous activities, plus <a href="https://www.anthropic.com/news/claude-fable-5-mythos-5">Anthropic's own safety classifiers (opens in new tab)</a>. In our testing, even if someone asks Claude to &quot;hack around&quot; our dual-approval system, it refuses to try to bypass it. It's something we benchmark, too.</p>
+<h2><strong>Any advice for other engineering teams working with frontier models?</strong></h2>
+<p>We have thousands of people working with AI who are pushing the frontier of what it can do. They're learning what works as individuals, and they're improving the systems around them. I've got a bunch of local skills on my laptop that make it possible for me to work in our Square web front end, for example, even though I’m not a front-end developer by trade. Organizational maturity comes when all of this context and organizational knowledge is remembered at a system level, not an individual level.</p>
+<p>Our goal is to document everything we're learning from people doing the work and put it into a system where everyone benefits, so every time you run an agent, you know it has the best context available to contribute to your work.</p>
+<p><em>Get started with <a href="https://www.anthropic.com/claude/fable">Claude Fable 5.1 (opens in new tab)</a> today.</em></p>
+<p>Article</p>
+<p>Oct 6, 2026</p>
+<h3>How Comcast and Booz Allen use Claude Mythos to find exploit chains and secure their codebases</h3>
+<p>Security teams at Comcast and Booz Allen used Claude Mythos-class models through Project Glasswing to find, validate, and fix vulnerabilities their existing scanners missed.</p>
+<p>Article</p>
+<p>Sep 29, 2026</p>
+<h3>Agents you can coach: how Asana builds human-agent teams with Claude</h3>
+<p>Arnab Bose, Chief Product Officer at Asana, on how Asana runs AI agents as teammates with scoped roles, shared memory, and work that everyone can see. ‍</p>
+<p>Claude Platform</p>
+<p>Article</p>
+<p>Sep 28, 2026</p>
+<h3>Automating eval design and hillclimbing with Claude</h3>
+<p>Principles for designing evals and hillclimbing against them without fooling yourself, and how the claude-api skill's build-eval and hillclimb commands put them to work.</p>
+<p>Claude Platform</p>
+<p>(opens in new tab)</p>
+<p>Article</p>
+<p>Sep 25, 2026</p>
+<h3>Using Claude Code: Spending your effort</h3>
+<p>What effort really is and when to use which level in Claude Code, from my own tests of three builds and a deep dive into Terminal-Bench 3.0 on Opus 5.5 and Fable 5.1.</p>
+<p>Claude Code</p>
+<p>(opens in new tab)</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p>See pricing</p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
     </item>
     <item>
       <title>Build live dashboards and animate explainers with Claude</title>
@@ -3265,562 +3454,6 @@ return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
 <p>Enterprise AI</p>
 <p>The AI-native SDLC playbook</p>
 <p>The AI-native SDLC playbook</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<p>See pricing</p>
-<p>Get the developer newsletter</p>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Thank you! You’re subscribed.</p>
-<p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Scenarios for our economic future</title>
-      <link>https://www.anthropic.com/institute/econ-scenarios</link>
-      <guid isPermaLink="true">https://www.anthropic.com/institute/econ-scenarios?li=1</guid>
-      <pubDate>Wed, 09 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>What will our economic future look like?</h1>
-<p>We don’t know yet how AI will reshape the economy. Will it lead to unprecedented growth? Widespread unemployment? Neither, or something else? How can we tell?</p>
-<p>Anthropic’s Economics team built a model of how AI might affect jobs, growth, and unemployment in the US in coming years. Read about possible economic futures and make your own predictions about AI capabilities to see the economy they imply.</p>
-<p><a href="https://www-cdn.anthropic.com/files/4zrzovbb/website/cf58f84d46a4a76bf5a5b039ac695fba6b80041c.pdf">Read technical report</a></p>
-<p>We study how AI is reshaping the economy because we’re committed to ensuring that this transition is beneficial for society, including workers. By providing better visibility into our possible economic future, <a href="https://www-cdn.anthropic.com/files/4zrzovbb/website/9ea607a5dd67c168093829b701f3a0a6d21156d5.pdf">we can take steps</a> to make sure that everyone benefits from it.</p>
-<p>While our <a href="https://www.anthropic.com/economic-index">Economic Index</a> measures how AI is being used across the economy right now, this scenario explorer is about looking ahead. Based on our technical report, <a href="https://www-cdn.anthropic.com/files/4zrzovbb/website/cf58f84d46a4a76bf5a5b039ac695fba6b80041c.pdf">Economic Scenarios for Transformative AI</a> (Korinek et al., 2026), this explorer gives you a chance to find out what the economy might look like as AI continues to get more capable.</p>
-<p>In scenarios ranging from business as usual to an economy where AI increases growth to about twice the normal rate, unemployment stays within the historical range and wages remain flat or rise depending on the industry. But in scenarios where growth is faster than anything in economic history, there are adverse impacts on wages and job prospects for knowledge workers. In those scenarios, society is far wealthier, so the challenge is making sure that the gains are broadly shared.</p>
-<p>As you scroll down, you’ll see an overview of how AI affects the economy. Then, you can plug in your expectations for how capable AI will be, and how extensively it will be used across the economy in the future. The model will show you what the economy in 2030 might look like if your predictions come true—and how your predictions compare to others.</p>
-<p>A nurse’s tasks</p>
-<ul><li>Tasks unchanged by AI</li><li>Tasks augmented</li><li>Tasks automated</li><li>New tasks created by AI</li></ul>
-<h2>The economy is made out of tasks</h2>
-<p>This model represents all the jobs people do in the economy as bundles of tasks. AI can help people do a given task better or faster. It can automate the task. It might not affect the task at all. And it can lead to new tasks.</p>
-<p>Think of a day in the life of a nurse</p>
-<p>You can think of any job as a bundle of tasks that someone does. She does rounds to check on a sick patient. She draws blood. She triages incoming patients, charts patients’ vitals, and orders supplies for the ward. That’s just the start of the list.</p>
-<p>Each of the tasks listed are based on the US Department of Labor’s O*NET taxonomy, listing the tasks for each occupation.</p>
-<p>Jobs change over time</p>
-<p>Tasks leave the bundle (hardly anyone hand-writes paper charts anymore) and new tasks arrive (30 years ago, no one monitored patients remotely). The bundle of tasks isn’t static, and the job changes as tasks change.</p>
-<p>Only humans can do some tasks</p>
-<p>For instance, AI can’t bathe a patient.</p>
-<p>Some tasks will get augmented</p>
-<p>AI helps a human do them better, or faster. AI helps the nurse draft discharge instructions, monitor patients remotely, and plan the shift’s care schedule.</p>
-<p>Some tasks may get fully automated</p>
-<p>For instance, AI may chart a patient’s vitals, or order the ward’s supplies.</p>
-<p>And new tasks will appear</p>
-<p>Historically, new technologies have also created new tasks for workers. For a nurse, that might be checking how well an AI triages patients, or reviewing an AI-proposed care plan.</p>
-<p>The result: the nurse’s job changes</p>
-<p>As the nurse incorporates AI into her job, the nurse is able to oversee and accomplish more. She can spend more time talking with patients and helping them understand diagnoses. Productivity increases.</p>
-<p>Every task happens millions of times every day, across the country</p>
-<p>Nurses are doing their work on every ward and on every shift. As more nurses use AI, AI supports a higher percentage of these millions of instances of each task.</p>
-<p>From tasks to the economy</p>
-<p>Today, if you add up every single instance of tasks performed in the US, by people and by the machines and software they work with, you get the US economy: over $30 trillion of value created over the past year. So how will AI shape the economy of the future?</p>
-<p>The answer depends on how AI affects all the tasks that make up the economy, the new tasks it creates, and how fast AI takes on this work. Will AI lead to more task augmentation or automation? How much more productive will it make us? How quickly will it be adopted by workers and companies? The answers to these questions have direct effects on GDP, the labor market, and the share of the pie taken home by workers.</p>
-<h2>There are many possible futures, but we’re highlighting three scenarios</h2>
-<p>The future will depend on how AI’s capabilities advance, and how industries and workers adopt those capabilities. The three scenarios we share capture distinct kinds of impact.</p>
-<p>In the modest scenario, it’s hard to see the effect of AI in macroeconomic data: its economic impact is something like the internet’s. In the substantial scenario, AI makes a bigger impact than the internet, or the railroad. And in the extreme scenario, AI drives a completely transformed, unprecedented economy, likely driven by <a href="https://www.anthropic.com/institute/recursive-self-improvement">recursively self-improving AI systems</a> and a faster rate of AI adoption.</p>
-<p>Small economic gains</p>
-<p>In the modest scenario, AI has roughly the same kind of impact as the internet did. It drives real economic gains, but they’re within the historical norm for new technologies, and they arrive gradually.</p>
-<p>A revolution in knowledge work</p>
-<p>In the substantial scenario, AI is capable of doing half of all knowledge work by 2030, the majority of it autonomously, but it’s not adopted for all of that work: most knowledge work tasks are still done without AI. The economy grows at twice its normal rate. Wages for knowledge workers don’t rise, but other workers see gains.</p>
-<p>A profound economic transformation</p>
-<p>In the extreme scenario, AI is more productive than humans at the vast majority of knowledge-work tasks. It does nearly all of them autonomously, and it creates essentially no new knowledge tasks for people. This scenario would likely require recursively self-improving AI, adopted quickly for knowledge work.</p>
-<p>As AI diffuses, annual GDP growth rates reach 15% a year, leading the economy to double in size every 4.5 years. As a society, we’re far richer than we’ve ever been, but many fewer workers have jobs in knowledge work, and unemployment has risen beyond typical recessionary levels.</p>
-<h2>How might powerful AI change the economy?</h2>
-<p>How do you think AI development will go over the next few years? And what would that path mean for the economy? We invite you to consider these questions, and explore potential answers with our scenario explorer.</p>
-<h2>People’s expectations about future AI capabilities vary.</h2>
-<p>In August, we surveyed more than 10,000 Americans about their views on present and future AI capabilities, adoption, and the ease of finding new work if they have to change occupations.</p>
-<p>The typical respondent’s answers imply outcomes close to the “substantial change” scenario: GDP is 10% higher by 2030 than it would be without AI, and the overall unemployment rate has risen to around 5%. Around 10% of respondents have views in line with the extreme scenario.</p>
-<p>How people answered the five questions (share of respondents at each answers)</p>
-<ul><li>CapabilitiesWhat tasks can AI do?0%100%</li><li>AdoptionHow much do people use AI?0%100%</li><li>AutonomyHow much does AI do by itself?Almost noneSome of themAbout halfMost of themAlmost all of them</li><li>ProductivityHow much more productive does AI make people?Same1.5×2×4×10×+</li><li>AdjustmentHow long does it take people to find a new job?1–2 months~3 months~6 months~9 monthsA year2 years3+ years or never</li></ul>
-<ul><li>General publicn = 10,980</li><li>Site visitorsn = 32,404</li></ul>
-<h3>You predicted one possible future for the economy. Here’s what that future could look like.</h3>
-<h2>Finding 1: GDP growthAI grows the economy in every scenario, but some more than others</h2>
-<p>AI drives GDP growth in all scenarios, although the scale varies enormously depending on the scenario.</p>
-<p>US GDP in 2030, by scenario (measured in trillions of dollars)*</p>
-<p>Modest scenario</p>
-<p><strong>+1.6%</strong><em>$34.1T GDP</em></p>
-<p>Substantial scenario</p>
-<p><strong>+8.3%</strong><em>$36.3T GDP</em></p>
-<p>Extreme scenario</p>
-<p><strong>+32.4%</strong><em>$44.4T GDP</em></p>
-<p>Task typesTasks augmentedTasks automatedNew tasks created by AIProductivity</p>
-<p>*GDP is calculated at 2025 price levels</p>
-<p>But growth isn’t the only economic dynamic we care about. What would these potential futures mean for how much of this growth workers receive in their paychecks, or how many people have to find new jobs?</p>
-<p>This model isn’t a complete map of reality, but it shows us some interesting findings. The country’s GDP will grow, but a larger share of that prosperity might go to the resources and technology used to create more wealth (capital) compared to workers, even if society as a whole is much wealthier.</p>
-<p>And in most scenarios, job reallocation and unemployment both stay within ranges history has seen before, with one exception. In the extreme scenario, if we see recursive self-improvement and rapid adoption, unemployment could spike to historic levels.</p>
-<h2>Finding 2: Job reallocationIn more transformative scenarios, more workers have to change occupations. That may mean higher unemployment.</h2>
-<p>There is always some churn in the job market—people losing jobs and finding new ones. In normal times, this process can be painful, but works relatively well from a macroeconomic perspective. Most job seekers find new jobs fairly quickly.</p>
-<p>In our substantial and extreme scenarios, knowledge workers may see a lot of automation and displacement. At the individual level, it means coders and call service center agents may have to switch to jobs like electrician and nurse, which are less exposed to AI.</p>
-<p>But changing occupations entirely is hard, and it takes many people a long time to land a new job. The more of this switching a scenario requires, the more people will be between jobs.</p>
-<p>Where workers are in 2030 (percent of all workers)</p>
-<p>Knowledge workersAll other workersDisplaced</p>
-<p>As we progress from 2026 to 2030, the number of jobs available in occupations AI affects (knowledge work) decreases, while the jobs available in occupations AI doesn’t affect increase.</p>
-<p>Switching to a new occupation is difficult for a few reasons: workers may not want to change occupations. They may need to learn new skills. And even when they do, it’s not easy to get a new job. In the extreme scenario, as large swathes of knowledge work are automated more quickly, affected workers may be unemployed for a prolonged period.</p>
-<p>Unemployment in knowledge work rises; in other occupations, it falls</p>
-<p>modest scenario</p>
-<p>substantial scenario</p>
-<p>extreme scenario</p>
-<p>Knowledge workersAll other workersTotal</p>
-<h2>Finding 3: WagesAcross the three scenarios, average wages rise, but this increase is concentrated in occupations outside of knowledge work.</h2>
-<p>That’s because it takes time for workers to switch to occupations where demand is rising. If there’s less demand for human knowledge work, that puts downward pressure on wages. Meanwhile, as AI increases productivity within knowledge work, the demand for manual work that benefits from that productivity will increase. For example, more quickly producing designs and permitting for physical infrastructure could increase the number of construction projects, resulting in rising demand for construction workers, which pushes those wages higher. In the substantial scenario, wages for knowledge workers are essentially flat. In the extreme scenario, they fall by more than 10% by 2030.</p>
-<p>Pay by occupation group, percent above the same economy without AI</p>
-<p>modest scenario</p>
-<p>substantial scenario</p>
-<p>extreme scenario</p>
-<p>Knowledge workersAll other workersAverage</p>
-<h2>Finding 4: Labor vs. capital shareThe pie will grow, but a larger share might go to capital</h2>
-<p>Today, of each dollar the economy produces, about 60¢ goes to workers and 40¢ go to capital. If the economy grows, but AI automates more tasks, more of each dollar might go to capital. This can happen even when wages for all workers rise substantially. If capital becomes more useful for more things, it will be in higher demand, which raises its price. In that world, more of the gains from a growing economy flow to owners of capital.</p>
-<p>We find that the labor share falls noticeably in the substantial and extreme scenarios, and the capital share rises. Average wages rise—non-knowledge workers are paid much more—but wages for knowledge workers stagnate or decline alongside worsening unemployment.</p>
-<p>In the extreme scenario, the gains from a rapidly expanding economy are unevenly distributed. Most knowledge workers face either lower wages or unemployment, and workers overall get a smaller fraction of the larger pie. Total labor income is barely changed by 2030.</p>
-<p>In this scenario, the main challenge is not achieving economic growth, but making sure the benefits are broadly shared and the costs aren’t unequally dispersed.</p>
-<p>How GDP is shared between workers and capital</p>
-<p>Modest scenario</p>
-<p>$34.1T GDP</p>
-<p><strong>59.4%</strong><em>to labor</em><strong>40.6%</strong><em>to capital (up 0.6 points)</em></p>
-<p>Substantial scenario</p>
-<p>$36.3T GDP</p>
-<p><strong>56.1%</strong><em>to labor</em><strong>43.9%</strong><em>to capital (up 3.9 points)</em></p>
-<p>Extreme scenario</p>
-<p>$44.4T GDP</p>
-<p><strong>45.2%</strong><em>to labor</em><strong>54.8%</strong><em>to capital (up 14.8 points)</em></p>
-<p>Task typesTasks augmentedTasks automatedNew tasks created by AIProductivity</p>
-<p>With each scenario, the total economy grows (measured in GDP). But more of the growth goes to capital, compared to the amount people receive in their wages. Some professions see their wages increase significantly, but overall, wages make up a smaller share of the country’s economic growth.</p>
-<p>The future is not predetermined.</p>
-<p>Ultimately, what the economy looks like in 2030 depends on many factors, like what AI can do, and how companies and workers choose to adopt it. It also depends on how the financial benefit of this technology is shared.</p>
-<p>Like any economic model, this one has limits. For example, we did not include scenarios where humanity develops hyper-capable robots. The model draws on our research and external review, and we’ll keep adding to it as the evidence develops.</p>
-<p>This model, alongside our full research portfolio, will inform <a href="https://www.anthropic.com/economic-futures">the research Anthropic funds</a> to identify effective interventions for labor market disruptions. It’ll also inform the <a href="https://www-cdn.anthropic.com/files/4zrzovbb/website/9ea607a5dd67c168093829b701f3a0a6d21156d5.pdf">policy ideas we propose</a>, with the goal of ensuring that the economic benefits of AI are broadly shared across society, both in the US and around the world.</p>
-<p>Disclaimer and thanks to reviewers v1.0 of the Econ Scenario Explorer, September 2026</p>
-<p>The economic scenario explorer is currently Version 1.0. Like every model, it is a stark simplification of a complex reality: it isolates a few key forces and omits many others that may become relevant and important in the coming years. For example, it leaves out policy responses, business cycles, potential aggregate demand or financial market disruptions, and possible catastrophic risks. The scenario explorer is a work in progress, and we expect it to evolve both as we invest more time and as economic research itself develops.</p>
-<p>We are grateful to the economists who read an early draft of the technical report that lays out the framework behind the explorer, <a href="https://www-cdn.anthropic.com/files/4zrzovbb/website/cf58f84d46a4a76bf5a5b039ac695fba6b80041c.pdf">Economic Scenarios for Transformative AI</a>, and gave us detailed comments: Daron Acemoglu, Lukas Althoff, David Autor, Tom Cunningham, Lukas Freund, Joe Hazell, Ben Jones, Pete Klenow, Danial Lashkari, Kurt Mitman, Ben Moll, Emi Nakamura, Pascual Restrepo, David Romer, Jón Steinsson, Chris Tonetti, Ludo Visschers, and David Wiczer. Their feedback was generous and candid, and it has already improved our model. Two examples: several reviewers noted that advances in AI may raise the returns to capital, so that more of the gains flow to the owners of capital; and several noted that the wages of workers in the occupations AI affects most may diverge from those in occupations it barely affects. Both channels are now part of the scenarios. External reviewers were not asked to endorse our conclusions, and any remaining errors are ours.</p>
-<p>Other criticisms are still open, and we plan to address many of them in future versions. Reviewers pointed out that the model does not follow individual workers, so it can only paint a very coarse picture of the costs of job displacement. Some questioned whether occupations exposed to AI will shrink at all rather than grow. Some felt the most extreme scenario is better read as a thought experiment than a scenario, while others felt the most modest one understates what is already visible in the data. Several asked us to be clearer that the model does not include the aggregate demand effects driven by the data center buildout. And more than one reviewer argued that we may be underestimating how much AI could accelerate technological progress itself. We agree that many of these are limitations of the current model. The scenario explorer should be viewed as a tool for thinking about what different technological developments would imply for the economy—actual outcomes may differ materially.</p>
-<p>Anton Korinek, Chad Jones, Szymon Sacher, Tess Cotter, and Peter McCrory developed the economic model and co-authored the companion technical report. Santi Ruiz wrote this piece with them, with editorial support from Sarah Pollack and Adam Farina. Kelsey Nanan designed and built the interactive experience, with visual design and art direction by Nikki Makagiansar and Monika Tuchowska; Kyle Turman and Szymon Sacher built the scenario explorer and led the translation of the model into interactive form; Fayaz Ashraf and Ryan Heller contributed engineering, and Kim Withee and Maria Gonzalez supported production. Szymon Sacher and Tess Cotter designed and fielded the accompanying surveys with Morning Consult, with support from Ben Fowler. Peter McCrory, Anton Korinek, and Charles Yang coordinated the project, and Jack Clark provided direction throughout. Miriam Chaum, Jack Clark, Saffron Huang, Maxim Massenkoff, and Peter McCrory helped originate this effort. Jim Baker, Shan Carter, Johannes Hermle, Zoë Hitzig, and Eva Lyubich provided feedback.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Reducing cost and improving performance with Claude Platform</title>
-      <link>https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform</link>
-      <guid isPermaLink="true">https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform?li=1</guid>
-      <pubDate>Tue, 08 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Reducing cost and improving performance with Claude Platform</h1>
-<p>Tuning prompt caching, instructions, and effort can reduce Claude's cost without sacrificing application performance.</p>
-<ul><li>Category<a href="https://claude.com/blog/category/agents">Agents</a></li><li>Product<a href="https://claude.com/platform/api">Claude Platform</a></li><li>DateSeptember 8, 2026</li><li>Reading time5min</li><li>Share<a href="https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform#">Copy link</a>https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform</li><li>Author(s)Lance Martin</li></ul>
-<p>*<strong>Update: </strong>**This blog article was originally published on September 8, 2026, including benchmarks reflecting the cost and performance of using Opus 5 and Sonnet 5. We’ve since re-run several of these benchmarks to incorporate or highlight Opus 5.5, which launched on September 22, 2026.*</p>
-<p>Performance and cost are often viewed as a trade-off: to spend less, you accept worse results. In practice, we've found that many applications using Claude Platform can cut costs without giving up performance with three fixes: maximize the prompt cache hit rate, remove anti-patterns from your prompts when upgrading to frontier Claude models, and calibrate effort to the task. We've put this guidance into the <a href="https://github.com/anthropics/skills/tree/main/skills/claude-api"><code>claude-api </code>skill</a>. In this article, we show how Claude Code with the <code>claude-api </code>can often find ways to reduce cost while maintaining or improving performance.</p>
-<h2><strong>Prompt cache</strong></h2>
-<p>Before Claude generates a response, it first processes your prompt into an internal working state. This step, called <em>prefill</em>, is the expensive part of handling input. Prompt caching saves that state (the key–value, or KV, cache): when a request starts with the same prefix, Claude reads it back instead of recomputing it. Cache reads are<a href="https://platform.claude.com/docs/en/about-claude/pricing"> billed at a fraction</a> of the full input price.</p>
-<p>There are a few practical considerations to ensure effective use of the prompt cache. First, the prompt cache is pinned to a specific model. Second, prompt cache reads must be <em>byte-exact</em> across the full span of the prompt. Finally, the prompt cache has a <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching#ttl-support">limited time-to-live</a> (TTL).</p>
-<p>With these points in mind, there are a few practical tips:</p>
-<ul><li><strong>Avoid changing effort or thinking settings mid-conversation</strong>. These settings render into the prompt ahead of your content, so they are part of the cached prefix. With Claude Opus 5 and Fable 5.1 specifically, you can <a href="https://platform.claude.com/docs/en/build-with-claude/effort#changing-effort-mid-conversation">update effort mid-conversation</a> without breaking the cache.</li></ul>
-<ul><li><strong>Keep volatile values out of the prefix</strong>. A dynamic timestamp or ID in the system prompt can change across model calls, and break the cache.</li></ul>
-<ul><li><strong>Avoid tool definitions that reorder themselves</strong>. When using the Claude Messages API, the <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching#structuring-your-prompt">prompt is assembled</a> in a fixed order with tool definitions rendered at the top. Any change to the tool definition will break the cache.</li></ul>
-<ul><li><strong>Be careful when forking conversations</strong>. Subagents and branches only share the parent’s cache when the fork’s prefix is byte-identical, on the same model, and using the same effort.</li></ul>
-<ul><li><strong>Avoid synchronous tool calls and subagents that outlive the cache TTL</strong>. If an agent blocks on a long-running tool call or sub-agent, the cache can expire before the results come back. The next turn has to rewrite the cache, at 1.25× the normal input price (2× for a 1-hour cache) instead of the cheap read price.</li></ul>
-<h3>How to fix it</h3>
-<p>We’ve <a href="https://claude.com/blog/lessons-from-building-claude-code-prompt-caching-is-everything">accumulated</a> a few lessons for prompt cache management:</p>
-<ul><li><strong>Monitor your prompt cache hit rate carefully</strong>. <a href="https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics">Claude Console</a> provides prompt cache diagnostics, including reasoning for prompt cache misses (Figure 1). If hits drop unexpectedly, the <a href="https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics">cache diagnostics API </a>tells you exactly where two requests diverged.</li></ul>
-<p>Figure 1. Claude Console can diagnose unexpected prompt cache misses by comparing consecutive requests and identifying exactly where the prompt prefix diverged.</p>
-<ul><li><strong>Defer rarely used tools</strong>. Declare all your tools up front but mark the rarely used ones <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-use-with-prompt-caching#defer-loading-and-cache-preservation">defer_loading</a>: they stay out of the cached prefix and are appended into the conversation only when Claude looks them up with tool search, so the cache is preserved.</li></ul>
-<ul><li><strong>Apply system prompt updates as messages</strong>. <a href="https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages#when-to-use-a-mid-conversation-system-message">Claude Platform</a> lets you add a system instruction as a message mid-conversation instead of editing the system prompt, which preserves the cache.</li></ul>
-<ul><li><strong>Lay out the request out so the stable part stays stable</strong>. Add static context (tool definitions and the system prompt) first and the growing conversation behind them (Figure 2).</li></ul>
-<p>Figure 2. Organize prompts to ensure dynamic content is appended to the end of a stable prefix.</p>
-<ul><li><strong>Make changes to model or effort when the prompt cache will already be broken</strong>. Certain operations, like <a href="https://platform.claude.com/docs/en/build-with-claude/compaction">compaction</a>, already rewrite much of the cache (the conversation). That is a <a href="https://cognition.com/blog/devin-fusion">good moment</a> to switch model or effort, since you are paying for a miss anyway.</li></ul>
-<ul><li><strong>Move the cache breakpoint as the conversation grows</strong>. With Claude Platform, you can set <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching#automatic-caching">automatic caching</a> to automatically apply the cache breakpoint to the last cacheable block.</li></ul>
-<ul><li><strong>Pre-warm the cache</strong>. To reduce latency, send a request with <code>max_tokens: 0</code> and an explicit cache breakpoint. This processes the prompt and writes it to the cache without generating anything. If you run it at session start (for example, while a user is typing), the first real request hits a warm cache.</li></ul>
-<ul><li><strong>Don’t exceed the prompt cache TTL</strong>. The 5-minute cache TTL counts from the start of the request. If an agent blocks on tool calls or sub-agent requests that run longer than 5 minutes, the parent's cache expires before the result comes back. In cases like this, consider <a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">setting a 1-hour TTL</a> on the prefix instead.</li></ul>
-<h2><strong>Instructions</strong></h2>
-<p>Prompts can accumulate instructions that patch model weaknesses. These instructions can drift relative to the capabilities of the <a href="https://x.com/trq212/status/2080710971228918066">latest Claude models</a>. Here are common prompting “anti-patterns” that hobble frontier Claude model and can inadvertently increase costs:</p>
-<ul><li><strong>Verification rituals</strong>. Instructions like &quot;<em>double-check your work</em>” or &quot;<em>verify twice before responding</em>” are often taken literally by frontier models and can waste tokens.</li></ul>
-<ul><li><strong>Thoroughness and emphasis boosters</strong>. &quot;<em>Be maximally thorough</em>,&quot; &quot;<em>CRITICAL: YOU MUST ALWAYS…</em>&quot; can lead to verbosity and extra tool calls when working with frontier models.</li></ul>
-<ul><li><strong>Mandatory procedures and scratchpad scaffolds</strong>. Fixed step processes (e.g., &quot;<em>think step by step in a scratchpad</em>&quot;) or reasoning templates are rituals that frontier models don't need. This scaffolding can stack on top of native reasoning and use unnecessary tokens.</li></ul>
-<ul><li><strong>Stale examples</strong>. Few-shot examples tuned to an older model's failure modes can teach a frontier model to imitate long reasoning chains on requests that don't need them.</li></ul>
-<ul><li><strong>Contradictory rules</strong>. Frontier models are better at instruction following. Contradictory instructions (&quot;always refund within policy&quot; vs. &quot;never issue refunds without escalation&quot;) can be followed more literally by frontier models, resulting in degraded performance.</li></ul>
-<ul><li><strong>Dated configuration</strong>. Settings written for an older Claude generation (e.g., manual thinking budgets) can be rejected by the Claude Platform when upgrading to frontier models.</li></ul>
-<h3><strong>How to fix it </strong></h3>
-<p>We've updated the <code>claude-api </code>skill with a new command that watches out for these anti-patterns. In Claude Code, run <code>/claude-api prompt-audit</code> against your prompts, skills, or tool descriptions. The audit covers anything in your working directory, including application code that calls the Claude API and Claude Code's own configuration (e.g., <a href="http://claude.md">CLAUDE.md</a> or skills).</p>
-<p>For example, we tested a model migration from Opus 4.8 to Opus 5.5 on a customer support benchmark. We started from a clean prompt and planted one anti-pattern at a time (a retired thinking setting, a pair of contradictory refund rules, a manual scratchpad, &quot;verify twice&quot;, &quot;be maximally thorough&quot;, and a mandatory six-step procedure), giving six legacy prompts.</p>
-<p>We ran each on Opus 4.8, on Opus 5.5 with only the model ID changed, and on Opus 5.5 after running <code>/claude-api prompt-audit</code> once per prompt (Figure 3 shows the average across the six).</p>
-<p>Figure 3 | The effect of prompting anti-patterns during model migration from Opus 4.8 to Opus 5.5.</p>
-<p>The migration from Opus 4.8 to Opus 5.5 reduces cost by around 18%. This is because the Opus 5.5 <a href="https://platform.claude.com/docs/en/about-claude/pricing">input tokens and prompt cache reads</a> are cheaper than Opus 4.8.</p>
-<p>With Opus 5, verification rituals (&quot;<em>verify twice</em>&quot;) use unnecessary tokens by duplicating order lookup on every refund. Emphasis boosters (&quot;<em>be maximally thorough</em>&quot;) became dozens of unneeded knowledge-base searches.</p>
-<p>Running <code>/claude-api prompt-audit</code> removed the anti-patterns, decreasing costs by an additional 9%. Cost dropped because extra tool calls and duplicated reasoning were eliminated. Accuracy rose by around 2 percentage points for three reasons. The retired thinking setting made the API reject every routing request outright. The contradictory refund rules led Opus 5.5 to withhold four refunds it owed while it asked the customer to confirm. And the manual scratchpad collided with Opus 5.5's built-in thinking: on three tickets it wrote the tool call inside its reasoning and never executed it.</p>
-<h2><strong>Effort</strong></h2>
-<p><a href="https://platform.claude.com/docs/en/build-with-claude/effort">Effort</a> tells Claude “how hard to work.” At low effort Claude generally reaches conclusions faster. At high effort, Claude deliberates, verifies, and explores alternatives before answering.</p>
-<p>Cost-versus-performance across effort levels on a single model can vary. For example, Claude Fable 5 scores 11.5% at low effort for $5.35 per task on FrontierCode Diamond (the hardest 50 tasks). At max effort, Fable 5 gets 30.9% for $19.00 per task; changing effort raises the score about 2.7x (+19 points) for about 3.5x the cost (Figure 4).</p>
-<p>On Claude Fable 5.1, Humanity's Last Exam (without tools) shows a steep curve with a diminishing last step. It scores about 53% at low effort for about $0.30 per question and about 61% at max effort for about $2.23; the last step up to max adds about half a point for 46% more cost. The gain inside the benchmark's run-to-run noise, so you pay more for no measurable gain.</p>
-<p>Figure 4. Fable 5 performance vs cost across effort levels on FrontierCode Diamond.</p>
-<p>Effort can be miscalibrated in either direction:</p>
-<ul><li><strong>Assuming higher is always better</strong>. High effort can cause <em>over-</em>thinking. Claude spends more time deliberating than the task warrants, which adds cost / latency and can degrade answer quality. Deliberation only helps while there's still evidence to find.</li></ul>
-<ul><li><strong>Biasing to low effort</strong>. Set too low, Claude stops before it has enough evidence. It makes fewer tool calls, so it may answer from the first search result instead of the third. It thinks less on hard steps and skips the check it would normally run on its own. The answer looks finished, but it's built on partial information.</li></ul>
-<h3><strong>How to fix it </strong></h3>
-<p>There are some useful ways to calibrate effort:</p>
-<ul><li><strong>Test stronger models at lower effort</strong>. A stronger model at low effort can be cheaper than a weaker model working hard (high effort). For example, on CursorBench 3.2, Claude Fable 5.1 at low effort <a href="https://www-cdn.anthropic.com/0339e6a7c5c7b87f5c07798616dc32c215d14235/Claude%20Fable%205.1%20&amp;%20Claude%20Mythos%205.1%20System%20Card.pdf">matches the performance</a> of Fable 5 at high effort at a third of the cost (Figure 5). Two things make the newer model cheaper: at low effort it does less work per task, and Fable 5.1's prompt-cache reads are priced at $0.25 per million tokens versus $1.00 for Fable 5. Even at Fable 5's prices, Fable 5.1 at low effort would cost about 40% less.</li></ul>
-<p>Figure 5. Fable 5 vs. Fable 5.1 across effort levels on CursorBench 3.2.</p>
-<ul><li><strong>Understand your task shape. </strong>Measuring application performance across a <a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence#tune-effort">sweep of effort levels</a> is a useful way to understand the cost-performance tradeoff for your particular task. On a non-saturated evaluation, a flat performance-cost curve across effort levels suggests that the task is not bound by thinking compute; increasing effort is not beneficial.</li></ul>
-<p>This calibration often involves running an evaluation across models and effort levels. In Claude Code, <code>/claude-api hillclimb</code> performs this search for you: it splits your evaluation into train and test sets, proposes configuration changes, and reads failing train examples to fix what it finds.</p>
-<p>We ran it on a customer support benchmark, starting from Opus 4.8 at its default (high) effort. The hillclimber first tried Opus 5 at low effort, applying prompt-audit to remove mandatory tool-call rituals, scratchpad steps, and contradictory rules. That cleared the Opus 4.8 baseline at 98.9% train accuracy and cut cost to 2.6 cents per ticket.</p>
-<p>Figure 6. Hillclimbing improves cost and performance by updating model choice, effort, and prompt.</p>
-<p>It then stepped down to Sonnet 5 at low effort, which was cheaper still at 1 cent per ticket, but accuracy fell to 88.9%. Reading the failing train tickets, Claude added routing rules and a refund-cap cross-reference to the prompt, bringing Sonnet 5 back to 98.9% at the same cost.</p>
-<p>On the 14 held-out tickets the search never saw, the final configuration scored 90.5% against the original setup's 78.6%, at about one fifth the cost.</p>
-<h2><strong>Automating cost reduction</strong></h2>
-<p>Prompt caching, instructions, and effort are common levers for reducing cost. Our<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence#cut-spend-without-losing-quality"> documentation</a> covers even more. To run a holistic cost audit of application code that uses the Claude API, we've added <code>/claude-api cost-optimize</code>: it profiles where your spend goes, applies cost reductions, and, if you provide an evaluation, shows how savings trade off with performance.</p>
-<p><code>cost-optimize</code> starts by finding where your tokens go: from your organization's<a href="https://platform.claude.com/docs/en/manage-claude/usage-cost-api"> usage and cost reports</a> if you have a Claude Admin API key, from the usage object on each API response if your application logs it, or, failing both, by reading your request-building code and estimating.</p>
-<p>It then ranks the available savings, starting with prompt caching, trimming what each request carries (including a prompt-audit), bounding output, and<a href="https://platform.claude.com/docs/en/build-with-claude/batch-processing"> batching</a> unattended work. If you supply an evaluation, it goes further and computes cost and performance across effort levels and model choices.</p>
-<p>We ran this on four public benchmarks, starting with Opus 5.5 as a baseline (Figure 7):</p>
-<ul><li><strong>LegalBench</strong> (~67% lower cost): <code>cost-optimize</code> finds an opportunity to cache part of the prompt, sets low effort, and processes tasks via the lower cost <a href="https://platform.claude.com/docs/en/about-claude/pricing">Batch API</a>. Thinking tokens dropped by ~84%, accuracy moved by less than a point, and cost dropped by ~67%.</li></ul>
-<ul><li><strong>tau2-bench retail</strong> (~73% lower cost): <code>cost-optimize</code> found that ~93% of the prompt could be cached, reducing spend by ~73% with no change in the pass rate.</li></ul>
-<ul><li><strong>OfficeQA Pro</strong> (~72% lower cost): <code>cost-optimize</code> applied the <a href="https://platform.claude.com/docs/en/about-claude/pricing">Batch API</a> and trimmed oversized documents to their most relevant sections, reducing cost by ~72% with no significant change in the score.</li></ul>
-<ul><li><strong>SWE-bench Verified</strong> (~24% lower cost): <code>cost-optimize</code> found that prompt caching was already applied, so savings came from setting effort to medium and constraining the agent's output to a few concise sentences. Together, these reduced cost ~24%.</li></ul>
-<p>Figure 7 | Cost and performance change across benchmarks with /claude-api cost-optimize.</p>
-<h2><strong>Getting started</strong></h2>
-<p>Start with <code>/claude-api prompt-audit</code> when you've migrated to a frontier Claude model and want to check your existing prompts against it. It scans the prompts, skills, and tool descriptions in your working directory. This can be application code that calls the Claude API or Claude Code's configuration (CLAUDE.md, skills). It removes common anti-patterns that hobble frontier models.</p>
-<p>Reach for <code>/claude-api cost-optimize</code> when your application uses the Claude API and you want a cost audit. It profiles token spend and then tests different levers: it applies prompt-audit, but also checks for ways to lower cost via prompt caching, batching unattended work, or bounding output. If you provide an evaluation, it measures the effort and model selection trade-offs.</p>
-<p>Finally, use <code>/claude-api hillclimb</code> for an iterative search over cost and performance. Given an evaluation, Claude splits it into train and test sets, then proposes updates to your application that aim to reduce cost while maintaining baseline performance. Claude reads the failing train cases to guide the search, and the final configuration is scored on the held-out test set.</p>
-<p>To learn more:</p>
-<ul><li>See our documentation, <a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence#cut-spend-without-losing-quality">here</a></li><li>See our cookbook, <a href="https://platform.claude.com/cookbook/cost-optimization-cost-optimization#prompt-caching">here</a></li></ul>
-<p>No items found.</p>
-<p>Prev</p>
-<p>0</p>
-<p>5</p>
-<p>Next</p>
-<p>eBook</p>
-<p>FAQ</p>
-<p>No items found.</p>
-<h2>Related posts</h2>
-<p>Explore more product news and best practices for teams building with Claude.</p>
-<p>Aug 26, 2026</p>
-<h3>How Warp builds self-improving agents on Claude</h3>
-<p>Agents</p>
-<p>How Warp builds self-improving agents on Claude</p>
-<p>How Warp builds self-improving agents on Claude</p>
-<p>Sep 29, 2026</p>
-<h3>Agents you can coach: how Asana builds human-agent teams with Claude</h3>
-<p>Agents</p>
-<p>Agents you can coach: how Asana builds human-agent teams with Claude</p>
-<p>Agents you can coach: how Asana builds human-agent teams with Claude</p>
-<p>Sep 28, 2026</p>
-<h3>Giving companies more control over their AI agents, with NVIDIA</h3>
-<p>Agents</p>
-<p>Giving companies more control over their AI agents, with NVIDIA</p>
-<p>Giving companies more control over their AI agents, with NVIDIA</p>
-<p>Sep 2, 2026</p>
-<h3>Building commerce agents with Claude</h3>
-<p>Product announcements</p>
-<p>Building commerce agents with Claude</p>
-<p>Building commerce agents with Claude</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<p>See pricing</p>
-<p>Get the developer newsletter</p>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Thank you! You’re subscribed.</p>
-<p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>A guide to the anatomy of effective commerce agents</title>
-      <link>https://claude.com/blog/the-anatomy-of-effective-commerce-agents</link>
-      <guid isPermaLink="true">https://claude.com/blog/the-anatomy-of-effective-commerce-agents?li=1</guid>
-      <pubDate>Wed, 02 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>A guide to the anatomy of effective commerce agents</h1>
-<p>The architecture, latency &amp; cost techniques, and eval practices for agents that make it easier to buy and sell online.</p>
-<ul><li>Category<a href="https://claude.com/blog/category/agents">Agents</a></li><li>Product<a href="https://claude.com/platform/api">Claude Platform</a></li><li>DateSeptember 2, 2026</li><li>Reading time5min</li><li>Share<a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#">Copy link</a>https://claude.com/blog/the-anatomy-of-effective-commerce-agents</li><li>Author(s)Ali ShazalMatthew Koen</li></ul>
-<p>Over the past year, we've worked with teams across the commerce industry — retailers, marketplaces, travel, entertainment, and telecom providers — to build commerce agents using Claude.</p>
-<p>These agents are in production, and enterprise customers have seen larger carts and more efficient seller operations when using them. They also share a simple architecture: Claude in an agent loop equipped with a set of skills, tools, and a strong eval suite.</p>
-<p>This post is for the engineers and engineering leaders building these (or other consumer facing) agents. Part 1 covers the architecture, which you decide once. Part 2 covers latency and cost. Part 3 covers production: memory, safety, evals, and scaling the work across an organization.</p>
-<p>Reference implementation</p>
-<p>We've also provided a</p>
-<p>blueprint</p>
-<p>to help build commerce agents on Claude. It contains the harnesses, patterns, and guardrails an engineering team needs to get a commerce agent running in days, with reference implementations of a shopping agent and a merchant agent for retail, travel, telecom, and ticketing platforms.</p>
-<p>anthropics/commerce-agents →</p>
-<p>In this guide</p>
-<ul><li><a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#ca-p1">Part 1: The architecture</a>What is a commerce agent?Skills, not subagentsSystem prompt or skill: decide by frequencyEngineering agent toolingThe UI components are tools</li><li><a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#ca-p2">Part 2: Making it fast and affordable</a>Minimizing task completion latencyPerceived latencyPrompt cachingChoosing the model and its configuration</li><li><a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#ca-p3">Part 3: Running it in production</a>Memory that survives the sessionSafety: enforcement lives in the harnessEvals: shipping a non-deterministic systemShipping with a large organization</li><li><a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#ca-p4">Looking ahead</a></li></ul>
-<p>01</p>
-<h2>The architecture</h2>
-<p>One model in a standard agent loop, with skills for the long tail and tools that call the systems you already run. You decide this once.</p>
-<h3><strong>What is a commerce agent?</strong></h3>
-<p>We define a commerce agent as an agent that simplifies buying and selling across an online catalog.</p>
-<p>Some agents face consumers: they search, compare, substitute, and assemble the order. That could be a retail cart, a travel itinerary, a mobile plan change, or seats held for a show. Some agents face the business: they answer questions about sales, run promotions and campaigns, and manage inventory and pricing.</p>
-<p>The core architecture is a model in a <a href="https://www.anthropic.com/engineering/building-effective-agents">standard agent loop</a>: reasoning about a goal, exploring context, taking actions through tools, learning procedures through skills, asking clarifying questions, and observing the results until the goal is accomplished.</p>
-<p>There is no intent router in front of it that segments the conversation and no set of domain specific agents behind it.</p>
-<h3><strong>Engineering context</strong></h3>
-<h4><strong>Skills, not subagents</strong></h4>
-<p>A commerce agent has to cover a wide range of capabilities across many categories and intents, which makes it tempting to create one subagent per domain.</p>
-<p>In practice this proves suboptimal, because a commerce conversation is one tightly coupled session across multiple intents and turns, and requires considerable shared context.</p>
-<p>In a subagent architecture, the orchestrator holds the cart or staged changes, the user's preferences, and the conversation history.</p>
-<p>Every handoff to a subagent is a state-lossy operation, which often impacts the quality of the subagent’s response and, consequently, the overall response. On top of that, each handoff can cost several times the tokens and adds seconds of latency.</p>
-<p>The domains also rarely separate cleanly. A returns flow might need the order history, the current cart, and the product catalog, meaning a subagent-per-domain approach either duplicates that access everywhere or hands off mid-task.</p>
-<p>As models get smarter, they also handle longer context, more skills, and more tools, so the limits behind today's placement rules loosen with each model generation.</p>
-<p>Instead, <a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview">agent skills</a> give you similar per-domain modularity and context control without the handoff tax, because the skill instructions load into the main agent that already holds the entire history.</p>
-<p>In our comparisons across several enterprise deployments, a single agent with skills consistently has outperformed both the one-prompt-for-everything design and the subagent design on quality, and often at a lower cost and latency per task.</p>
-<p>Where subagents do earn their place is when the orchestrator can call them as a tool for a narrow or self-contained task that would benefit from its own dedicated context window.</p>
-<p>A common production example is a deep-research subagent, where the subagent searches and reads documents, writes and runs code, traverses data models, and hits dead ends. All the work happens inside one or more subagents, and only a compact answer comes back to the orchestrator.</p>
-<p>The other exception is a domain that already has its own purpose-built agent. If your pharmacy or financial-services experience runs a dedicated agent with its own compliance surface, the right move can be a hand-off, where that agent takes over the task and works with the user directly through its own loop until the task is done.</p>
-<p>The distinction is ownership of the conversation. A hand-off makes the domain agent the user's counterpart, while delegation keeps the orchestrator, bouncing the domain agent in and out within a single turn and degrading on every exchange.</p>
-<h4><strong>System prompt or skill: decide by frequency</strong></h4>
-<p>The main factor when deciding whether to put a set of instructions within a system prompt or skill is how often the agent will need it. Loading a skill costs a model turn, so anything the agent needs on most turns generally goes in the system prompt.</p>
-<p>This does, however, depend on how your traffic is distributed, and what agent behavior your evals show. A good starting point is that anything relevant to a third or more of your traffic, whether anticipated before launch or observed in production, goes in the system prompt, and the rest goes in skills.</p>
-<p>If a skill is predictable from a signal you already have, such as the page the user arrived from, we recommend injecting it from the harness before the first model call and skipping the extra turn to load the skill.</p>
-<p>Critical instructions, such as safety and legal rules, brand constraints, and key user facts such as allergies, always go in the system prompt.</p>
-<p>For commerce agents, this means product search lives in the prompt, since nearly every session touches it, and skills carry the long tail of features.</p>
-<p>In our <a href="https://github.com/anthropics/commerce-agents">reference implementation</a>, the shopping agent's prompt holds grounding, cart and checkout semantics, and presentation rules, and the following skills cover the rest: search-discovery, purchase-research, planning-goals, customer-care, and memory-personalization.</p>
-<p>The merchant agent splits the same way, with performance-insights, catalog-listings, inventory-operations, pricing-promotions, and marketing-campaigns as its skills, one per operational domain.</p>
-<p>In the prompt</p>
-<p>Shopping agent</p>
-<p>Grounding, cart and checkout semantics, presentation rules, and product search.</p>
-<p>Shopping skills</p>
-<p>The long tail</p>
-<p>search-discovery · purchase-research · planning-goals · customer-care · memory-personalization</p>
-<p>Merchant skills</p>
-<p>One per operational domain</p>
-<p>performance-insights · catalog-listings · inventory-operations · pricing-promotions · marketing-campaigns</p>
-<h3><strong>Engineering agent tooling</strong></h3>
-<p>Our post on<a href="https://www.anthropic.com/engineering/writing-tools-for-agents"> writing effective tools for agents</a> covers tool design in general. Two points have mattered most in commerce:</p>
-<p><strong>Build agent tools on top of your core systems and logic.</strong></p>
-<p>A commerce company already has search and ranking, a cart, a preferences and profile store, an inventory system, promotion and campaign engines, sales analytics, and more, each encoding logic tuned over years and seeing signals the model never will.</p>
-<p>The agent's tools should call those systems, not reimplement them, and the tool boundary is where their logic ends and the model's judgment takes over.</p>
-<p>For example, when the agent calls <code>search_products</code>, the results should arrive already ranked; its job is to decide which results serve the user's goal, how many to show, and how to present them.</p>
-<p><strong>Tool results are context.</strong></p>
-<p>Return the fields the model reasons with and drop the rest. Image URLs on every search row are the usual offender.</p>
-<p>As needed, reshape the raw response inside the tool, including appending a next step when it isn't obvious from the data.</p>
-<p>This is especially relevant for error scenarios, where the model benefits from instructions instead of error codes. For example, add an error instruction &quot;Include a product ID when querying availability,&quot; instead of a generic 403.</p>
-<h4><strong>The UI components are tools</strong></h4>
-<p>Most commerce agent responses are UI components rather than prose, whether a product carousel, an itinerary, a seat map, or a chart. That means the agent has to emit a schema rather than text.</p>
-<p>Teams sometimes start by prompting the model to emit custom tags and parsing them on the client-side. This stops working as the surface grows, because:</p>
-<ul><li>The model isn’t as well trained on your markup as it is on tool calls so reliability drops as nested components get added. Well-formed data is not guaranteed just through prompting.</li><li>The tag definitions live in the system prompt, so every new component bloats context and every edit risks regressions elsewhere in the prompt.</li><li>Past conversations end up stored in a format only your parser can read, so loading history means either parsing raw messages on the client or keeping a second copy in a format that isn't native to the model API.</li></ul>
-<p>The pattern that has held up is to make each UI component a tool. The model calls <code>present_products</code>, <code>present_itinerary</code>, or <code>present_plan_comparison</code> with typed arguments; your server validates and enriches the call and emits an event; and your client renders it.</p>
-<p>As the components are tool calls, they're already in the messages array in native format, so you don’t need to re-parse when you reload an old conversation. An example presentation-tool contract is illustrated below and in the <a href="https://github.com/anthropics/commerce-agents">reference repo.</a></p>
-<p>The tradeoff is streaming granularity. Each top-level argument of a tool call buffers on the server for validation, so the sub-components of a presentation tool arrive in steps even with streaming on. This impacts perceived latency.</p>
-<p>To get a token-level stream, set <code>eager_input_streaming:</code> true on the tool definition, which skips the buffering and with it the server-side schema guarantee.</p>
-<p>In our evals, schema violations are very rare on Claude Sonnet-class models and up, but wrap the call in a retry for the cases where one slips through.</p>
-<p>Presentation tools also give the agent a record of what's on screen. When a customer says &quot;the first hotel&quot; or &quot;the third one down on the left,&quot; the layout is in the messages array, in the arguments of the last presentation call.</p>
-<p>For that to work, the arguments have to reflect the rendered layout, so structure them the way the UI is structured, as ordered rows and carousels rather than a flat list the client rearranges.</p>
-<p>02</p>
-<h2>Making it fast and affordable</h2>
-<p>Attack latency on two fronts, end-to-end and perceived, and let caching carry the cost. None of it should spend intelligence to get there.</p>
-<p>Latency matters in commerce, and consumer surfaces are the least forgiving. However, on agentic surfaces, what we have consistently seen move metrics like retention, engagement, and cart size is the quality of the outcome.</p>
-<p>Whether the answer was relevant and the task actually completed was more critical to those metrics as compared to marginal latency gains.</p>
-<p>So attack latency on two fronts. Minimize end-to-end latency through good engineering, and pair that with dropping perceived latency (since time spent watching an agent work reads as progress).</p>
-<p>Every user has a latency budget, and the techniques below keep the agent inside it without spending intelligence to get there.</p>
-<h3><strong>Minimizing task completion latency</strong></h3>
-<p>Task completion latency is the sum, over model turns, of time to last token plus tool processing. That gives you three levers to work towards: fewer turns, faster tools, and faster tokens. These levers sometimes compete, so the thing to minimize is the sum rather than any one of them.</p>
-<p>Fewer turns</p>
-<p>Load likely context up front, increase model intelligence, and have the model call independent tools in parallel.</p>
-<p>Faster tools</p>
-<p>Optimize the tool's own backend, and dispatch tools eagerly as their arguments complete.</p>
-<p>Faster tokens</p>
-<p>Choose the model and its configuration by sweeping your eval suite.</p>
-<h4><strong>Fewer turns</strong></h4>
-<p>Query complexity adds turns, and is generally out of your control. Model intelligence and relevant context help the agent get to task completion in fewer turns. Some of our key learnings in this area include:</p>
-<ul><li><strong>Load likely context up front.</strong> If the user opened the assistant from a product page, or a merchant opened it from a campaign dashboard, put that page's data in the session context. The conversation is likely about it, and answering from context costs no extra turns.</li><li><strong>Increase model intelligence.</strong> Smarter models can decrease overall turns in the completion of a task as the agent can more efficiently plan and issue its tool calls. That often outweighs their slower tokens. If your queries skew complex, or production shows more than about five turns per task, the faster model is frequently the smarter one. Which one that is depends on your traffic, so choose by sweep, as described under &quot;Choosing the model&quot; below.</li><li><strong>Have the model call independent tools in parallel</strong>. Commerce use cases often require many operations in parallel: be it searching for multiple products, querying many policy docs, or fetching records from many sources of sales data. Parallel tool ensures multiple independent queries don’t burn additional turns. Prompt the model to call many tools within a turn and return the results in one user message as an array of tool results (see the <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use">parallel tool use docs</a>).</li></ul>
-<h4><strong>Faster tools</strong></h4>
-<ul><li><strong>Optimize the tool's own backend.</strong> Sometimes a tool genuinely fans out – a merchant agent with a &quot;get today's snapshot&quot; query reads sales, inventory, and campaign status in three independent calls. But we often see the tool boundary become the place where missing backend logic gets stitched together: an availability check that calls the catalog for the SKU, the inventory service per store, and the fulfillment service for cutoffs, then applies substitution rules and pickup eligibility in the tool's own code before answering. That tool is now overloaded with domain knowledge, hard to keep correct as the rules change, and is carrying logic that should sit in an upstream system. When you find yourself writing that logic in a tool, the fix is one backend endpoint that answers the question, and calling that with an agent tool.</li><li><strong>Dispatch tools eagerly.</strong> Tool arguments stream out of the model like any other tokens, so the harness can execute each tool’s call as its arguments complete and process it while the model is still streaming other, parallel tools or content blocks. We've seen this take multi-second gaps down to a few hundred milliseconds, and the <a href="https://code.claude.com/docs/en/agent-sdk/overview">Claude Agent SDK</a> does it by default. You should prompt the model to emit its slowest call first for maximum latency gains.</li></ul>
-<h3><strong>Perceived latency</strong></h3>
-<p>Perceived latency is the time a user feels until the screen does something. It’s especially critical in consumer-facing use cases where any transaction friction impacts checkout rates and revenue. Two techniques shorten it without touching the model:</p>
-<ul><li><strong>Stream components as they form.</strong> A rendered commerce response is typically 500–700 output tokens, which without streaming is five or more seconds of a spinner. Send each parameter of a presentation tool to the client as it streams and render the page progressively.</li><li><strong>Show the work.</strong> While the agent is gathering context, render a short progress line for each step in plain language (for example, &quot;finding hotels near the water&quot;). You can build it from the tool's existing arguments (such as the query for a product search), or add an additional user_facing_message parameter tool that prompts the model to write the line.</li></ul>
-<p>The two panels above run the same agent with the same tools and prompt; only the harness differs. Total time is about the same, but the time the user sees something is quite different.</p>
-<h3><strong>Prompt caching</strong></h3>
-<p>Prompt caching is your largest cost reduction candidate and commerce traffic is well-suited for it. Cached input token reads cost a tenth of fresh ones, and while cache-writes carry a premium of roughly 1.25x, a cached prefix pays for itself on its second use. In customer facing applications where volume is large, you have a unique opportunity to hit very high cache levels using the cheapest, default 5 minute cache expiration.</p>
-<p>The best commerce deployments we've seen run at 90–99% cache hit rates, and that is the range to design for from the start. Our experience has shown cached token reads are also around 1.5 to 2x faster at ~100k tokens, with relatively linear scaling the more tokens there are.</p>
-<p>Caching is prefix-based. A request reads from cache up to the first byte that differs from a previous request, so what matters is not just what is in the context but the order it is in. Think of a request as three segments, ordered by how often they change:</p>
-<ul><li><strong>Global</strong>: most of the system prompt and tool definitions, identical across every session. This is your warmest cache and, at scale, will likely not expire. Keep it byte-identical across turns and sessions and put a cache breakpoint at its end.</li><li><strong>Session</strong>: per-user context and conversation history, which differ across sessions but stay stable within one. This segment comes after the global one.</li><li><strong>Volatile</strong>: anything that changes within a session, such as the current time or the current page. Put it at the very end of the request, either as a tagged block in the newest user turn or, on models that support <a href="https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages">mid-conversation system messages</a>, as a system-role message appended to the messages array. The most common mistake we see is a timestamp or the current page at the top of the system prompt, which silently breaks the cache on every request.</li></ul>
-<p>There are two implementation details to remember here. First, skills should be loaded as tool results rather than appended to the system prompt. The skill body then lands in the conversation prefix and is cached along with it.</p>
-<p>Second, roll your breakpoints forward in each turn: a request allows a limited number of breakpoints, so move the newest one to the end of each user turn. Each round then reads the accumulated history, including long tool results such as search responses, from cache.</p>
-<h3><strong>Choosing the model and its configuration</strong></h3>
-<p><a href="https://claude.com/blog/claude-model-and-effort-level-in-claude-code">Model size and the effort setting</a> are the same tradeoff – intelligence against latency and cost – and you should choose both by measurement:</p>
-<ul><li><strong>Pick your metric and your floor.</strong> Pick the quality metrics your business runs on (task completion, answer relevance, grounded accuracy), the eval score you won't go below, and your p50 and p99 latency and cost budgets.</li><li><strong>Sweep.</strong> Run your entire eval suite across <em>every</em> model and effort level you'd consider. We recommend starting at Opus for merchant agents, whose tasks are analysis-heavy, and Sonnet for consumer agents, where latency weighs more. If you have production traffic, weigh the results by your real query mix. Then let the numbers decide. Sometimes Opus 5's lift on cart-driving tasks justifies the cost difference over Sonnet, and sometimes it doesn't.<strong>‍</strong></li><li><strong>Read the results carefully.</strong> Two things regularly surprise teams. The first is that a prompt is tuned to a model, so a sweep run with one prompt may underperform other models that it wasn't written for. A smaller model usually needs instructions the current model infers on its own, and a larger one will follow instructions to the letter that the smaller one was ignoring. A few rounds of iteration on each candidate's failing cases is a cheap step before ruling any of them out. The second is that a more intelligent configuration sometimes wins on latency (most commonly on p90 and p99) despite slower tokens, because it plans its tool calls better and needs fewer rounds on the most complex requests.</li></ul>
-<p>Measure cost per completed task rather than per model call, since a cheaper model that needs more turns, or fails more often, is not cheaper. When the result is close, and the cost fits your per-task economics and latency, choose intelligence. Quality is what drives adoption and retention, and allows for room to build for the next 6 months as models become better.</p>
-<p>03</p>
-<h2>Running it in production</h2>
-<p>Memory, safety, evals, and scaling the work across an organization: what gets an agent through production and keeps it there.</p>
-<p>Lastly, we talk about what gets an agent through production: memory, safety, evals, and scaling the work across an organization.</p>
-<h3><strong>Memory that survives the session</strong></h3>
-<p>The relationship and interactions you have with your customers matter. Memory is what lets an agent pick up where the last conversation left off instead of starting from nothing. A shopper who mentioned a nut allergy in March shouldn't have to repeat it in June, and a merchant who checks the same three campaigns every Monday shouldn't have to name them each time. Long-term memory, the facts that should survive across sessions, is a system you build and it has three parts: how facts are stored, how they are written, and how they are read.</p>
-<h4><strong>Storing memories </strong></h4>
-<p>Memory belongs in your systems, not in the model.</p>
-<p>A flat markdown profile works when profiles are small and the agent is the only reader. Most production commerce agents outgrow it, and the practical replacement is the database you already operate. A fact is a small typed record: a key (such as shoe_size, default_store, preferred_report_cadence), a short value, a category, and the session it came from. Some keys you decide up front and every user gets; the rest the extractor discovers. A database stays queryable as the store grows, lets you build deterministic behavior on specific attributes, and joins to the user data you already have.</p>
-<p>For merchant-facing agents, key memory by person rather than by account. Merchant logins are often shared between operators, so each operator needs their own profile, and reads have to respect that operator's permissions: a store manager's agent should not recall a fact a district manager stated.</p>
-<p>In the commerce domain, agent memory holds personal data. The facts worth remembering are often the most regulated ones, and the rules between jurisdictions differ. Treat memory as a data-handling design problem and not just a storage one. In practice that means four things:</p>
-<ul><li><strong>Decide which types of memories you are willing to hold</strong>. Enforce that at the write path, with a validator that every save goes through, rather than in the prompt alone.</li><li><strong>Give users a way to see, correct, and delete what is stored.</strong> Wire deletion into your account-deletion and data-request flows.</li><li><strong>Set a retention period. </strong>A preference from a few years ago is likely to be outdated, so a retention period helps keep memory facts fresh.</li><li><strong>Memory should be a per-deployment switch</strong>. This allows regions that can't take on these obligations to run without it.</li></ul>
-<h4><strong>Writing memory</strong></h4>
-<p>Write memory asynchronously. At the end of each turn, or every few turns in a long session, an agent in a separate thread or process reads the conversation and creates, updates, or deletes facts in the store, keeping its own working context as the session goes on.</p>
-<p>It adds nothing to the conversation's latency, and achieved 13% higher fact recall on our internal commerce memory eval suite.</p>
-<p>The obvious alternative, a tool the agent calls to save a fact, is the wrong one for a latency-sensitive commerce agent. Every save is a tool call inside a user-facing turn, and unless the whole store is in context, a save needs a read first to update or dedupe, which is a round of its own.</p>
-<p>It also puts one more decision in front of the agent on every turn, and in our evals that competition for attention showed up as missed memories.</p>
-<p>Separating the extractor also lets you prompt it precisely. It reads only the user's and the assistant's text, never tool results, so a product description or a review can't become a fact about the user. Its prompt says what counts as a fact — a stated size, a dietary constraint, a fulfillment preference, a merchant’s usual materialized views — and what doesn't, such as anything from a listing or a one-off detail.</p>
-<h4><strong>Reading memory</strong></h4>
-<p>Read memory in three layers.</p>
-<p>Always in context</p>
-<p>A small fixed set of facts goes into context on every turn: the ones nearly every request depends on, such as a shopper's default store and fulfillment preference, or an operator's store and role.</p>
-<p>Pre-fetched per turn</p>
-<p>Facts relevant to the current request are pre-fetched per turn from the same signals that pre-load a skill: a shoe search pulls sizes and brand preferences, a campaign question pulls the operator's usual metrics.</p>
-<p>Behind a lookup tool</p>
-<p>Everything else sits behind a lookup tool.</p>
-<p>Since memory is per-user context, all of it goes in the session segment, below the global cache breakpoint.</p>
-<h3><strong>Safety: enforcement lives in the harness</strong></h3>
-<p>The prompt is where safe behavior starts, but in commerce it can't be where safety is enforced. The failures are financial and often irreversible, and a prompt rule is one injection or one bad sample away from being skipped. Every rule below is enforced in code, on both the consumer and the merchant agent, and defined once so every runtime shares it.</p>
-<h4><strong>The model stages; a person or a policy applies</strong></h4>
-<p>No model tool call moves money or changes the business. Order placement, payments, refunds, price changes, and campaign launches all end in an action the harness controls instead of the model.</p>
-<p>On the consumer side this is structural: the checkout tool renders the cart with a button to place the order, and the backend interface the agent calls has no charge method at all.</p>
-<p>On the merchant side, every write tool produces a staged change with a server-generated ID, and <code>apply_change</code> succeeds only for IDs that have been approved through a real surface: a button in the operator's portal, a confirmation in the CLI, or the platform's own tool-approval prompt when the agent runs on Managed Agents.</p>
-<p>The guardrails are re-checked at apply time against current limits, not the limits in force when the change was staged. Whatever the surface, the shape is the same: the model's most dangerous action is to propose, and the approval routes through the maker-checker flow your business already uses for that kind of change.</p>
-<h4><strong>Writes and renders accept only server-issued IDs</strong></h4>
-<p>The harness keeps a per-session record of every ID the server has handed the model, and that record is the only key any write or render will accept.</p>
-<p>The cart accepts only product IDs the server returned to this session, and the merchant tools accept only listing and campaign IDs the agent has actually read. An ID that arrived any other way — hallucinated, pasted by a user, planted in a review — is refused before the backend sees it.</p>
-<p>The same rule covers the UI. Presentation tools take IDs, and the server fills in the product, order, or change records itself, so a card only renders records the server itself filled in.</p>
-<p>It covers delegates too: the merchant analysis subagent reads data but never adds to the set of IDs the agent may write to.</p>
-<p>For fees, disclosures, and other regulated content, the model chooses which product to disclose and the server supplies every word from approved copy. The same fee fields are on the merchant agent's protected list, so neither side of the counter can change or paraphrase them, and evals check the rendered strings byte for byte.</p>
-<h4><strong>Capped transactions must hold to repeated requests </strong></h4>
-<p>Most commerce surfaces cap how many of an item one user can buy — for ticket allocations, promotional pricing, or fraud control — and an agent will retry, rephrase, and parallelize in ways a human clicking a button never did.</p>
-<p>The cap is therefore enforced on the line as it would be after the write, so a second &quot;add two more&quot; can't stack past it, and cart writes for one session are serialized so parallel tool calls in a single turn can't combine to exceed it.</p>
-<p>Merchant changes are checked the same way against caps on price movement, discount depth, restock size, and campaign budget, plus a list of protected fields no change may touch. The rule generalizes: enforce every limit on the resulting state rather than the request, and serialize writes per session.</p>
-<h4><strong>Third-party content is sanitized</strong></h4>
-<p>In commerce most of the context is written by people who aren't you — sellers, reviewers, competitors — so every backend read is untrusted input and goes through one sanitizer.</p>
-<p>Every tool result authored by a third party, such as listings, reviews, policies, seller messages, and stored memory, is sanitized and wrapped in a fence with a fixed label before the model sees it.</p>
-<p>The sanitizer strips control and bidirectional characters, removes anything that imitates the fence markers, defuses text that imitates a conversation turn or a tool call, and caps the size, which is designed to stop a hostile listing from impersonating the system or filling the context.</p>
-<p>The prompt carries the other half of the contract: fenced text is material to report on, never to act on.</p>
-<h3><strong>Evals: shipping a non-deterministic system</strong></h3>
-<p>Anything from a small prompt change to a new tool can change agent behavior in ways that are hard to predict, and the change you're shipping is often not the one that regresses. Evals are how you find that out before you deploy. Our earlier blog post on <a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents">evals for agents</a> covers the general practice. This section covers specifics for commerce agents.</p>
-<p><strong>Evaluate snapshots, not conversations</strong></p>
-<p>The model’s API is stateless, so what the agent outputs is a function of the system prompt, the tools, and the messages array. This means any state a commerce conversation can reach can be constructed directly. So creating an eval case means constructing the test state, appending the test user message, and letting the agent run from there.</p>
-<p>Then grade the outcome: the final state and the rendered response, including the arguments of the last write. In most cases, we recommend against grading the path the agent took to get there as such test cases are brittle and restricting.</p>
-<p>Simulated-user evals, in which a second model plays the user and a judge grades the whole conversation, are a poor tool for measurement. Two non-deterministic systems interacting need larger samples, cost more per trial, are harder to judge, and produce failures that are hard to attribute. They are useful for finding coverage gaps and for a general vibe check on the agent, so use them to discover cases, then write each case as a snapshot.</p>
-<h4><strong>Evaluate for behaviors in tough conditions</strong></h4>
-<p>Most teams fail to properly test the injected state. A case should encode the preconditions of a failure, not just the task. If a behavior only emerges after a busy first turn with several tool calls, or after a contradiction earlier in the session, a case that starts from a clean state passes on every config and provides no meaningful data.</p>
-<p>We've observed most suites to be heavy on such clean-state cases, so make sure a share of yours starts from long, messy, or contradictory histories.</p>
-<h5><strong>Cover the different types of commerce agent evals</strong></h5>
-<p>Effective evaluation requires testing both desired and undesired behaviors.</p>
-<p>For every positive case, write its negative counterpart: a &quot;should serve&quot; for every &quot;should refuse,&quot; a &quot;should just do it&quot; for every &quot;should ask.&quot; Missing negatives are the most common gap we find in a suite.</p>
-<p>Evaluate for the following:</p>
-<ul><li><strong>Core requests</strong> that make up the bulk of your traffic, since a failure here affects most sessions. These include simple lookups, multi-constraint requests, product and plan questions, and multi-intent messages. For the questions, check that every price, availability, and attribute traces back to returned data, and that the agent says when data is missing rather than inventing it.</li><li><strong>Context-dependent requests</strong>, such as references to what is on screen, constraints carried over from earlier turns, and writes against an existing cart. Evaluating memory falls into this bucket as well. Check that memories were extracted, retrieved, and changed the answer.</li><li><strong>Safety and brand cases</strong>, where a failure costs money or trust. These include attempted injection, attempts to read another user's data, and regulated language, which is checked byte for byte. Split injection into two cases: user-authored injection, where the directive comes from the user's own message, and data-plane injection, where it is planted in product names, reviews, or web snippets that arrive via tool results.</li><li><strong>Interface evaluations</strong>, to ensure the right component is rendered, item caps are respected, and there are no internal identifiers in user-facing text. Test for timeouts and empty results too.</li><li><strong>Requests that belong to multiple capabilities at once.</strong> An operator asks &quot;if I mark this down 15%, do I have enough stock to cover the demand?&quot; That is a pricing question and an inventory question together. The right answer stages the markdown with a stock projection attached; the wrong answers do one and skip the other. Evals written per capability won't catch this, because each grades only its own half. Write cases for the requests that need two neighboring capabilities together, and grade both halves of the answer.</li></ul>
-<h5><strong>Write evals with SMEs and use real incidents</strong></h5>
-<p>Partner with the subject-matter experts who see the failures firsthand, such as team members in Product, Legal, Merchant Ops, Customer Care, and Category Management, to design test cases. Real failures make the best evals, and 50-100 eval cases per user flow is a good starting point.</p>
-<p>Make sure to have a variety of cases, as outlined above. Production transcripts are a great stream for sourcing new cases, especially the tricky ones. Coding agents are good at generating additional cases and adversarial variants. The<a href="https://github.com/anthropics/commerce-agents"> reference repository</a> includes a Claude Code plugin with an eval-authoring skill built with our recommended approach.</p>
-<h4><strong>Shipping with a large organization</strong></h4>
-<p>In a commerce enterprise the agent is built by many engineering teams. Search, checkout, pricing, marketing tech, customer care, and the catalog platform each own systems the agent depends on, each ships on its own cadence, and each will want to add or change a tool, a skill, or a prompt rule.</p>
-<p>Unlike a service, an agent has no strict module boundary protecting the others: a change made by the pricing team shares a context window with checkout.</p>
-<p>The tempting fix is to break the system into many subagents, one per business unit. As discussed in Part 1, we recommend against it for quality reasons. Instead, we outline the process for de-risking multi-team collaboration:</p>
-<ul><li><strong>Ownership follows the systems.</strong> Every skill and tool has a single owner team. For example, pricing owns the promotion tools and the pricing skill, care owns the order and returns tools and the customer-care skill. The shared prompt has a single platform-level owner for the common parts and domain owner for the domain-specific section.</li><li><strong>A change ships with its cases and CI runs a set chosen for it.</strong> A team contributing a skill also contributes its cases, including the negative cases and the boundary cases against neighboring skills. Running the full suite on every pull request is too slow and too expensive to survive, so build a CI set from it instead. That set will consist of a core set of cases with the highest-traffic requests and every safety case. On top of that, run the cases for whatever the change touched. For a skill, that means its own cases and its neighbors' boundary cases. For a tool, it is every case that calls it. For the shared prompt, it is the full eval suite since everything reads the system prompt. We recommend gating the pass rate over a few trials, and on cache hit rate and cost per turn. It is also a good practice to run the full suite nightly and before every release. Cross-team regressions are caught in these runs.</li><li><strong>The agent should also be inside the release calendar.</strong> It's one deployment unit, so a bad change reaches every user at once. Roll prompt and skill changes to a canary cohort first, keep a switch that turns off one skill without a deploy, and freeze the agent ahead of peak periods the same way you freeze other systems.</li></ul>
-<p>For the human side of this arrangement, see <a href="https://claude.com/blog/building-effective-human-agent-teams">Building effective human-agent teams</a>.</p>
-<h2><strong>Looking ahead</strong></h2>
-<p>Most of what this post describes is not about the model. The tools call systems you already run, the skills encode procedures you already follow, the evals are your product requirements doc written as tests, and the harness enforces policy you would enforce for any client. Models will keep improving, and when a better one ships, the architecture we describe adopts it as a config change with an eval sweep. Everything else keeps working.</p>
-<p>It is also important to think about your roadmap for product surfaces. The architecture will outlast the chat panel. The same agent can work over voice, and it can proactively act on a fare drop before the user asks. For a team that already has the evals and the tools, those are presentation-layer projects. Further out, some of the traffic to your storefront will come from agents that shop on behalf of users. The same provenance, staging, and approval rules that keep your own agent in bounds are what will let you open your tools to those agents safely.</p>
-<p>Commerce has always rewarded making the buying process as smooth as possible. Agents make that a lot easier. Check out the <a href="https://github.com/anthropics/commerce-agents">complete reference implementation</a>, with both the consumer and the merchant agent and runnable examples for retail, travel, telecom, and entertainment.</p>
-<h3><strong>Acknowledgements</strong></h3>
-<p><em>Written by Matthew Koen and Ali Shazal. Special thanks to Michael Segner, Rodrigo Olivares, Amandeep Khurana, Aiza Usman, John Lopus and others for their contributions.</em></p>
-<p>No items found.</p>
-<p>Prev</p>
-<p>0</p>
-<p>5</p>
-<p>Next</p>
-<p>eBook</p>
-<p>FAQ</p>
-<p>No items found.</p>
-<h2>Related posts</h2>
-<p>Explore more product news and best practices for teams building with Claude.</p>
-<p>Aug 26, 2026</p>
-<h3>How Warp builds self-improving agents on Claude</h3>
-<p>Agents</p>
-<p>How Warp builds self-improving agents on Claude</p>
-<p>How Warp builds self-improving agents on Claude</p>
-<p>Sep 29, 2026</p>
-<h3>Agents you can coach: how Asana builds human-agent teams with Claude</h3>
-<p>Agents</p>
-<p>Agents you can coach: how Asana builds human-agent teams with Claude</p>
-<p>Agents you can coach: how Asana builds human-agent teams with Claude</p>
-<p>Sep 28, 2026</p>
-<h3>Giving companies more control over their AI agents, with NVIDIA</h3>
-<p>Agents</p>
-<p>Giving companies more control over their AI agents, with NVIDIA</p>
-<p>Giving companies more control over their AI agents, with NVIDIA</p>
-<p>Sep 8, 2026</p>
-<h3>Reducing cost and improving performance with Claude Platform</h3>
-<p>Agents</p>
-<p>Reducing cost and improving performance with Claude Platform</p>
-<p>Reducing cost and improving performance with Claude Platform</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<p>See pricing</p>
-<p>Get the developer newsletter</p>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Thank you! You’re subscribed.</p>
-<p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Building Commerce Agents with Claude</title>
-      <link>https://claude.com/blog/claude-for-commerce-agents</link>
-      <guid isPermaLink="true">https://claude.com/blog/claude-for-commerce-agents?li=1</guid>
-      <pubDate>Wed, 02 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Building commerce agents with Claude</h1>
-<p>Retailers running shopping agents on Claude have seen carts up to 35% larger and shoppers 60% more likely to complete a purchase.</p>
-<ul><li>Category<a href="https://claude.com/blog/category/announcements">Product announcements</a><a href="https://claude.com/blog/category/agents">Agents</a></li><li>Product<a href="https://claude.com/platform/api">Claude Platform</a></li><li>DateSeptember 2, 2026</li><li>Reading time5min</li><li>Share<a href="https://claude.com/blog/claude-for-commerce-agents#">Copy link</a>https://claude.com/blog/claude-for-commerce-agents</li></ul>
-<p>Many of the world’s largest retailers, marketplaces, e-commerce platforms, and travel companies use Claude to build agents that make shopping easier. Enterprise customers like Shopify, Priceline, and others have agents that let consumers use AI to search for what they want in plain language, find it, compare it, and buy it.</p>
-<p>Today, we're launching a blueprint to help build commerce agents on Claude. It contains the harnesses, patterns, and guardrails an engineering team needs to get a commerce agent running in days, with reference implementations of a shopping agent and a merchant agent for retail, travel, telecom, and ticketing platforms. It also includes a Claude Code plugin to get you started.</p>
-<p>The code deploys where you already build with Claude, including the Claude API, Amazon Bedrock, Microsoft Foundry, or Google Cloud Vertex AI. You can also work with our solutions and ecosystem partners such as Accenture, Mastercard, and Visa, who are working with us to enable clients and merchant communities to leverage the blueprints.</p>
-<p>It’s <a href="https://github.com/anthropics/commerce-agents">available today</a>, with <a href="https://claude.com/solutions/commerce">live demos</a> for each vertical and an <a href="http://claude.com/blog/the-anatomy-of-effective-commerce-agents">engineering deep-dive</a> on how it was built, just in time for holiday season planning.</p>
-<p>The shopping agent running in the ACME</p>
-<p>retail example</p>
-<p>.</p>
-<h2>What's in the blueprint</h2>
-<p>The repository contains complete, working implementations of a shopping agent and merchant agent that can be built using the <a href="https://platform.claude.com/docs/en/intro">Messages API</a>, <a href="https://code.claude.com/docs/en/agent-sdk">Agent SDK</a>, or <a href="https://platform.claude.com/docs/en/managed-agents/overview">Claude Managed Agents</a> (beta). You can see them running in a self-guided demo before writing any code, and then work with Claude Code to customize them to your catalogs, policies, brand, and more.</p>
-<h3>The shopping agent</h3>
-<p>The shopping agent lives inside your app or website. The blueprint includes the integration points for catalog, cart, checkout, customer preferences, and order history, and leaves payment to you, whether that is your existing checkout or an agentic payments provider.</p>
-<p>A customer can say “I need a tent, sleeping bag, and stove for a weekend trip with two kids,” and the agent can take it from there. Here’s what it can do:</p>
-<ul><li>Search the catalog and assemble the right set of items, including multi-item requests.</li><li>Remember the customer's preferences and tailor what it suggests.</li><li>Show products, comparisons, and the cart right in the conversation, not just as text.</li><li>Build the cart and hand it to checkout.</li><li>Answer customer service questions in the same conversation, like where an order is, how to return or exchange an item, and what the refund policy says, instead of sending the customer to a support page.</li></ul>
-<p>The agent features guardrails designed to constrain prices and products to actual catalog data, and avoids manipulative upsell patterns. In the repository, these are skills and tools for catalog search, multi-item planning, deep research, personalization, customer care, and in-conversation UI.</p>
-<h3>The merchant agent</h3>
-<p>The merchant agent supports the people running the store. A user can ask “what should we discount to clear last season’s inventory?” and get an answer based on their own data. Here’s what it can do:</p>
-<ul><li>Answer questions about sales performance like what's selling and what isn't.</li><li>Track inventory and proactively flag problems, like an item about to sell out before a promotion starts.</li><li>Recommend pricing and promotions based on the store's own sales history.</li><li>Draft marketing campaigns to move the products that need moving.</li></ul>
-<p>When the agent proactively suggests a change, a person approves it before anything goes live, meaning users get the final say while their agent watches the store. In the repository, these capabilities ship as skills for sales analytics, catalog and inventory management, marketing and promotions, and in-portal UI such as charts and dashboards.</p>
-<h2>Trusted across the industry</h2>
-<p>Companies that serve shoppers, travelers, subscribers, and merchants build and run agents on Claude. Here's what they have to say about building commerce agents with Claude:</p>
-<p>“AI will fundamentally reshape commerce, but trust must remain at the center of every transaction. Merchants are telling us they want more control over how AI engages their customers. Our collaboration with Anthropic on their commerce blueprint helps bring together the intelligence of Claude with the trust, security, and global reach of the Visa network, empowering merchants to deliver better customer experiences while maintaining the relationships that drive their businesses forward.”</p>
-<p>Jack Forestell, Chief Product and Strategy Officer</p>
-<p>“Trust is the currency of commerce, and it is even more critical in the agentic era. With Anthropic's commerce blueprint, we're helping merchants build their own agents with Claude to drive their growth. By combining AI innovation with trusted payments and commerce infrastructure, we're helping connect consumers, merchants and AI agents securely, seamlessly and at scale.”</p>
-<p>Sherri Haymond, Executive Vice President, Global Head of Digital Commercialization</p>
-<p>“Commerce agents are quickly becoming a critical capability for organizations seeking to deliver the personalized, intelligent customer experiences that today’s consumers expect. Our latest research revealed that 85% are now open to collaboration with an AI agent and nearly three in four would trust a personal AI agent more than their best friend to make a purchase on their behalf. This is more than a shift in how people shop. Agentic commerce is rewriting the rules of brand value – fundamentally shaping what gets purchased, when, where and by whom. Anthropic’s commerce agent blueprint provides a proven starting point that can help organizations accelerate deployment and build differentiated experiences that increase customer satisfaction, loyalty, and growth. Combined with Accenture's deep retail and consumer goods expertise, we can help clients move from concept to production and realize value from agentic AI faster.”</p>
-<p>Kath Gramling, Global Consumer Goods, Retail and Travel lead</p>
-<p>“A trip is one of the most complex things a person buys: flights, hotels, cars, and dozens of options to weigh against each other. Penny, our AI assistant, navigates all of that in one conversation and surfaces the best options and best value. We built the latest generation of Penny on Claude because that kind of reasoning is exactly what Claude models are good at.”</p>
-<p>Cobus Kok, Vice President, AI Experiences</p>
-<p>“Millions of consumers, businesses and accountants run their finances on Intuit. Working with partners like Anthropic, we're building highly personalized experiences that provide customers with a clear understanding of what's shifting in their business and why, so they can take action with complete confidence. We are creating a financial system of intelligence by combining frontier AI reasoning, including Claude, with our proprietary data, capabilities, intelligence, and human expertise that powers the next level of prosperity for our customers.”</p>
-<p>Chris Kasten, Intuit’s Chief Architect and SVP of Engineering, Platform and Development Xceleration Group</p>
-<p>“We want our merchants to be everywhere customers are shopping, and increasingly that means a conversation with an agent. We're building on Anthropic's blueprints with a reference storefront implementation that connects them to a merchant's store through Catalog, UCP and Shop Sign-in. Merchants can use Claude to build agents that help customers find products, check out, and answer questions about their orders.”</p>
-<p>Vanessa Lee, VP Product</p>
-<p>“Commerce and stunning customer experiences require personalization, and every brand on Klaviyo sits on more customer data and decisions than any team could act on by hand. Claude closes that gap, turning consumer preferences and performance data into the insights, campaigns and personalization that drive revenue. That's why we keep building with Anthropic: agents do complex analysis, design and decision making, and businesses can focus on delighting customers.”</p>
-<p>Andrew Bialecki, Founder and Co-CEO</p>
-<p>“Wix’s mission has always been to make complex technology simple and accessible for our users. For merchants, that means providing powerful commerce capabilities without adding operational complexity, and agents are a natural next step. Our engineers had a working commerce agent taking prompts within fifteen minutes, and the pilot showed the potential of combining Anthropic’s AI capabilities with Wix’s commerce platform and deep expertise in commerce for SMB.”</p>
-<p>Dror Zalika, Head of Commerce at Wix</p>
-<p>“Our engineers had the blueprint running with no blockers; the setup worked exactly as documented. The practices it bakes in, from tool iteration limits to prompt caching, are the ones we recognized from building Zomato's own agent. Teams standing up their first agent on Claude will skip weeks of trial and error.”</p>
-<p>Akhil Bansal, Senior Engineering Manager</p>
-<p>“Our engineers had both commerce agents from Anthropic's blueprint running locally in well under an hour, with live conversations working on the first attempt. We ran the Claude Code workflow twice and got two different architectures back, each designed to what we'd asked for. For a team starting from scratch, that turns days of agent scaffolding into hours.”</p>
-<p>Ashley Nader, Staff Product Manager</p>
-<p>“Much of what we build at Square is about giving sellers time back, and agents are a big leap in our ability to do that. We're building agentic tools that watch sales, labor, and inventory and come back with real next steps, not just an answer, while keeping sellers in control. Trust is the hardest part of that work, and Claude helps us meet a high standard.”</p>
-<p>Willem Avé, Head of Product</p>
-<p>Prev</p>
-<p>0</p>
-<p>5</p>
-<p>Next</p>
-<p>eBook</p>
-<h2>Getting started</h2>
-<p>The blueprint is available today. <a href="https://claude.com/contact-sales">Contact our sales team</a> to learn more, schedule a demonstration, or discuss how to implement for your organization.</p>
-<ul><li>Fork the repository at <a href="https://github.com/anthropics/commerce-agents">github.com/anthropics/commerce-agents</a>.</li><li>Read the engineering deep-dive at <a href="http://claude.com/blog/the-anatomy-of-effective-commerce-agents">claude.com/blog/the-anatomy-of-effective-commerce-agents.</a></li><li>See the vertical demos and request a working session at <a href="https://claude.com/solutions/commerce">claude.com/solutions/commerce</a>.</li></ul>
-<p>Register for our <a href="http://anthropic.com/webinars/building-claude-commerce-agents">webinar</a> to see the deep dive where we'll share live walkthroughs, demos, and cover how commerce builders can get the most out of Claude.</p>
-<p>FAQ</p>
-<p>No items found.</p>
-<h2>Related posts</h2>
-<p>Explore more product news and best practices for teams building with Claude.</p>
-<p>Oct 1, 2026</p>
-<h3>Customize Claude Code with mods</h3>
-<p>Product announcements</p>
-<p>Customize Claude Code with mods</p>
-<p>Customize Claude Code with mods</p>
-<p>Aug 26, 2026</p>
-<h3>How Warp builds self-improving agents on Claude</h3>
-<p>Agents</p>
-<p>How Warp builds self-improving agents on Claude</p>
-<p>How Warp builds self-improving agents on Claude</p>
-<p>Sep 30, 2026</p>
-<h3>Claude for Government is now generally available</h3>
-<p>Product announcements</p>
-<p>Claude for Government is now generally available</p>
-<p>Claude for Government is now generally available</p>
-<p>Sep 29, 2026</p>
-<h3>Agents you can coach: how Asana builds human-agent teams with Claude</h3>
-<p>Agents</p>
-<p>Agents you can coach: how Asana builds human-agent teams with Claude</p>
-<p>Agents you can coach: how Asana builds human-agent teams with Claude</p>
 <h2>Transform how your organization operates with Claude</h2>
 <p>See pricing</p>
 <p>See pricing</p>

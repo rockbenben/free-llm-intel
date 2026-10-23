@@ -1,6 +1,6 @@
 # Fireworks AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-22**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-23**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Fireworks AI（`fireworks_ai`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -9,8 +9,8 @@
 
 ## 全部文章（共 26 篇，按日期倒序；无日期条目列于最后）
 
-1. [Muse Spark Open on Fireworks: Meta’s open weights wodel, available on US serverless](https://fireworks.ai/blog/meta-muse-spark-open)
-2. [Train Muse Glimmer for free: Our recipe for out-betting Jev](https://fireworks.ai/blog/train-muse-glimmer-for-free)
+1. [Muse Spark Open on Fireworks：Meta 的开放权重 wodel，可在美国无服务器上使用](https://fireworks.ai/blog/meta-muse-spark-open) <!--orig:Muse Spark Open on Fireworks: Meta’s open weights wodel, available on US serverless-->
+2. [免费训练 Muse Glimmer：我们战胜 Jev 的秘诀](https://fireworks.ai/blog/train-muse-glimmer-for-free) <!--orig:Train Muse Glimmer for free: Our recipe for out-betting Jev-->
 3. [强化学习：为什么数值与 MoE 路由的对齐如此重要](https://fireworks.ai/blog/reinforcement-learning-why-alignment-of-numerics-and-MoE-routing-matter) <!--orig:Reinforcement learning: Why alignment of numerics and MoE routing matter-->
 4. [深入 Fireworks 多区域部署：一个部署，全球规模](https://fireworks.ai/blog/multi-region-deployment) <!--orig:Inside Fireworks Multi-region Deployments: One Deployment, Global Scale-->
 5. [每个字节都算数：ARCv3 与跨区域 RL 的必要性](https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl) <!--orig:Every byte counts: ARCv3 and the case for cross-region RL-->

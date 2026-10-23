@@ -7,7 +7,115 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-modular_cloud.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 09 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Modular：MAX 现已提供源码并向所有人开放</title>
+      <link>https://www.modular.com/blog/max-license</link>
+      <guid isPermaLink="true">https://www.modular.com/blog/max-license</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Modular: MAX is now source available and open to everyone</description>
+    </item>
+    <item>
+      <title>Modular：Modular26.7：开放MAX</title>
+      <link>https://www.modular.com/blog/26-7</link>
+      <guid isPermaLink="true">https://www.modular.com/blog/26-7</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Modular: Modular 26.7: Opening up MAX</description>
+      <content:encoded><![CDATA[<p>2026 年 10 月 22 日</p>
+<h1>模块26.7：开放MAX</h1>
+<p>模块化团队</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6ada2f7b9f71f84fdcd7ddf1_image.png" alt=""></p>
+<p>产品展示</p>
+<p>Modular 26.7 的标题是我们长期以来一直想写的标题：此版本<strong>为所有人开放 MAX 图形编译器、MAX 运行时和设备可扩展性挂钩</strong>。这意味着 MAX 现在完全可用源代码，并且可以由硬件创新者、研究人员以及所有喜欢让加速器“brr”使用的其他人构建和修改。此版本还带来了急切模式，让您可以在很短的时间内调试自定义操作、决策模型支持以及 Mojo 发展为系统编程语言的下一步。</p>
+<h2><strong>MAX 现已完全提供源代码</strong></h2>
+<p>在我们的<a href="https://youtu.be/4Hw7PeIsFPo?si=e2hSCEGJQU1kLHrg&amp;t=4806">最近的 ModCon 会议</a> 上，我们承诺开放 MAX，并且我们正在兑现这一承诺。</p>
+<p>MAX 的完整源代码现已提供：硬件后端、图形编译器、运行时等等。我们新的 MAX 许可证是特意允许的：您可以使用 MAX 使用、修改、扩展和构建商业产品，而无需支付许可费或版税。如果您想在自己的加速器上启动 MAX，可以从这里开始，您可以查看 NVIDIA、AMD、Apple Silicon 和 CPU 的现有实现作为参考点。我们计划在未来几个月内发布其他芯片（包括 Qualcomm Dragonfly 和 Google TPU）的 MAX 插件源代码。</p>
+<h3>为什么不是 Apache 2.0？</h3>
+<p>MAX 许可证几乎允许 Apache 2.0 所做的一切：使用、修改、扩展和使用 MAX 构建商业产品，无需任何费用或版税。差异归结为碎片化。我们花了几十年的时间维护主要的开源项目，并且<a href="https://www.modular.com/blog/democratizing-ai-compute-part-8-what-about-the-mlir-compiler-infrastruct">看到了他们面临的挑战</a>。 MAX 的目标是统一跨硬件的编程模型，不兼容的特定平台版本将破坏这一目标。 Modular <a href="https://www.modular.com/alliance">联盟计划</a> 是我们解决此问题的方法，它为硬件供应商和合作伙伴提供了在 MAX 上进行构建的共享路径，而不会破坏生态系统。与 Mojo 一样，我们希望随着技术的成熟以及社区的反馈，我们的方法会不断发展。</p>
+<p>MAX 源代码中包含的内容远远超出我们在此介绍的内容，因此我们撰写了 <a href="https://www.modular.com/blog/max-license">a</a><a href="https://www.modular.com/blog/max-license">单独的帖子</a>，介绍其中包含的内容以及可以使用它构建的内容。</p>
+<h2><strong>MAX 的新功能</strong></h2>
+<h3><strong>Eager 模式可加快开发速度</strong></h3>
+<p>MAX 长期以来一直拥有先进的图形编译器，可以执行自动融合和其他优化以获得最佳性能。但在开发过程中，快速迭代通常比峰值性能更重要。 MAX 现在拥有完整的 eager 模式支持，包括您的自定义操作，并且它与图形编译器共享单个代码路径，因此您在 eager 模式下运行的代码与您编译和发布的代码相同。</p>
+<p>声明一次操作，直接在张量上调用它，然后在编译的模块中不加修改地重用它。这使得开发循环变得更快：在 Gemma 4 31B 的切片上，Eager 模式在大约 30 秒内到达第一个令牌，而编译时间约为 110 秒。</p>
+<p>以下是 eager 模式如何与自定义操作配合使用的示例：</p>
+<p>蟒蛇</p>
+<pre><code>n, w, c = custom.Symbols(&quot;n&quot;, &quot;w&quot;, &quot;c&quot;)
+downsample = custom.declare(
+    &quot;downsample&quot;,
+    inputs={&quot;x&quot;: custom.TemplateType(DType.float32, [n, w, c])},
+    outputs=[custom.TemplateType(DType.float32, [n, w // 2, c])],
+    custom_extensions=[&quot;path/to/kernels&quot;],
+)
+
+# Eager: runs immediately.
+y = downsample(Tensor.ones([2, 8, 3]))        # shape (2, 4, 3)
+
+# Compiled: same op inside a Module.
+class Encoder(Module):
+    def forward(self, x: Tensor) -&gt; Tensor:
+        return downsample(x) * 2.0
+
+model = Encoder().compile(TensorType(DType.float32, [&quot;batch&quot;, 8, 3], device=Encoder().device))
+y = model(Tensor.ones([2, 8, 3]))             # same op, now compiled</code></pre>
+<h3><strong>支持系统一/决策模型、新模式和更多模型</strong></h3>
+<p>最近，人们对系统一/决策模型的新模式感到非常兴奋，因为它们能够以非常便宜的方式实现零样本分类。 MAX 通过新的 v1/decisions 和 v1/systemone API 端点增加了对这些决策模型（包括 Decider 2B）的初步支持。</p>
+<p>MAX 还增加了对 MiMo-V2.6-Flash、GLM-5.3-Flash 和 Muse-Glimmer 的支持，以及 KDA 和稀疏 MLA。</p>
+<p>除了新功能外，我们还继续改进现有的型号系列。过去需要在 CPU 中往返的多个操作现在完全在 GPU 上运行，这为 Qwen 和 GLM 模型提供了 2.6 倍的预填充加速。</p>
+<h2><strong>Mojo 1.2：成长为一种系统语言</strong></h2>
+<p>通过 1.0，Mojo 证明了自己是一种跨异构硬件高性能代码的语言。现在我们正在研究 <a href="https://mojolang.org/docs/roadmap/#phase-2">Mojo 路线图的下一阶段</a>：Mojo 作为一种系统编程语言。</p>
+<h3><strong>模式匹配</strong></h3>
+<p>Mojo 1.2 的旗舰新功能是模式匹配。 “match”语句可让您用清晰、结构化的情况替换一长串条件，并且编译器可以检查您是否已处理其中的每一个条件。</p>
+<p>Python</p>
+<pre><code>def classify_point(p: Tuple[Int, Int]) -&gt; String:
+    match p:
+        case 0, 0:
+            return &quot;origin&quot;
+        case x, 0 if x &lt; 0:
+            return String(&quot;negative x-axis:&quot;, x)
+        case x, 0:
+            return String(&quot;x-axis:&quot;, x)
+        case 0, y:
+            return String(&quot;y-axis:&quot;, y)
+        case x, y:
+            return String(&quot;point:&quot;, x, &quot;,&quot;, y)</code></pre>
+<p>作为奖励，它也可以在编译时运行：</p>
+<p>蟒蛇</p>
+<pre><code>def classify_type[T: AnyType]() -&gt; String:
+    comptime match T:
+        case == Int:
+            return &quot;integer&quot;
+        case == String:
+            return &quot;string&quot;
+        case _:
+            return &quot;other&quot;</code></pre>
+<h3><strong>更具表现力的特征和约束</strong></h3>
+<p>结构现在可以显式选择退出特征一致性（例如，通过声明自己为“不可移动”），并且“where”子句接受“else”分支，以便您可以准确说明约束失败的原因。两者都使通用代码更易于阅读和调试。</p>
+<p>有关 1.2 中更改的完整列表，请参阅 <a href="https://mojolang.org/releases/v1.2.0/">Mojo 变更日志</a>。</p>
+<h2><strong>开始使用</strong></h2>
+<ul><li>使用“pip install --upgrade max”升级</li><li>阅读 <a href="https://www.modular.com/blog/max-license">MAX 许可证博客文章</a> 和 <a href="https://forum.modular.com/t/max-license-faq/3578">常见问题解答</a></li><li>探索完整的 <a href="https://max.modular.com/releases/v26.7/">MAX 26.7 变更日志</a></li><li>查看完整的 <a href="https://mojolang.org/releases/v1.2.0/">Mojo 1.2 变更日志</a></li></ul>
+<p>随着整个堆栈的开放，我们迫不及待地想看看您构建的内容。分享到<a href="https://forum.modular.com/">模块化论坛</a>。</p>
+<h2>阅读《模块化》的更多内容</h2>
+<p>查看所有博客</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6ada33a38fa22d25cecfaab5_ProductReleaseBlogPost-Option_9.1.jpeg" alt=""></p>
+<p>MAX 现已提供源码并向所有人开放</p>
+<p>2026 年 10 月 22 日</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a7b1bf1bd5b664c84aac08f_Blog-26.5-sm.jpeg" alt=""></p>
+<p>模块化 26.5：Mojo 1.0 来了！</p>
+<p>2026 年 8 月 11 日</p>
+<p><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a82c/6a341d0fa8e1fd3e2ae53890_264.jpeg" alt=""></p>
+<p>模块 26.4：SOTA MoE 服务、通过代理技能进行模型启动、Mojo 1.0 Beta 2 等</p>
+<p>2026 年 6 月 18 日</p>
+<p>用模块化构建人工智能的未来</p>
+<p>开始使用 - 免费</p>
+<p>查看版本</p>
+<ul><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733ff9050921bab7782c_emoji-dev.png" alt="金发的人使用带有 Apple 徽标的笔记本电脑。">立即注册立即注册我们的云平台即可轻松开始。<a href="https://docs.modular.com/max/get-started">签名上</a></li><li><img src="https://cdn.prod.website-files.com/68c9c3107effc2ea46e1a81f/68cc733fb111718bbd49ca31_emoji-zoom.png" alt="带有黑色手柄和圆形透明镜片的放大镜表情符号。">浏览打开的模型浏览我们的模型目录，或部署您自己的自定义模型<a href="https://www.modular.com/models">浏览模型</a></li></ul>
+<h2>订阅我们的时事通讯</h2>
+<p>将我们所有的最新新闻、公告和更新直接发送到您的收件箱。随时取消订阅。</p>
+<p>感谢您订阅我们的时事通讯！ 🚀</p>
+<p>谢谢你，</p>
+<p>模块化销售团队</p>
+<p>哎呀！提交表单时出现问题。</p>]]></content:encoded>
+    </item>
     <item>
       <title>培育 Modular 生态：Modular 社区资助计划</title>
       <link>https://www.modular.com/blog/nurturing-the-modular-ecosystem-the-modular-community-grant-program</link>
@@ -3594,191 +3702,6 @@ max_output = compile_model(input)</code></pre>
 <p>这一轮新融资将让 Modular 能在云上原生地激进扩展 Modular 平台、把支持延伸到云和边缘硬件平台，并为世界最先进的 AI 工作负载提供动力——交付任何其他推理公司都无法匹敌的吞吐量、延迟、成本和精度收益。这一切都是为了赋予开发者一个他们可以依托、可以信赖的单一、统一 AI 基础设施。</p>
 <blockquote>&quot;当我们创立 Modular 时，我们相信世界需要一个统一的 AI 平台，而今天，那个愿景比以往任何时候都更重要。这笔融资将使我们能为全球开发者、企业和硬件公司实现这个愿景。&quot;Modular CEO Chris Lattner 说。</blockquote>
 <p>Modular 正在北美和欧洲广泛招聘各类岗位。如果你想塑造 AI 基础设施的未来，并与这个领域最聪明的一些头脑协作，<a href="https://www.modular.com/company/careers">请访问 Modular 的招聘页面</a>。AI 基础设施的前途一片光明！<a href="http://docs.modular.com">下载</a>、<a href="http://www.github.com/modular/modular">贡献</a>，今天就在开放环境中帮助 Modular 为 AI 的未来提供动力。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Modular 25.6：统一 NVIDIA、AMD 与 Apple 的最新 GPU</title>
-      <link>https://www.modular.com/blog/modular-25-6-unifying-the-latest-gpus-from-nvidia-amd-and-apple</link>
-      <guid isPermaLink="true">https://www.modular.com/blog/modular-25-6-unifying-the-latest-gpus-from-nvidia-amd-and-apple</guid>
-      <pubDate>Mon, 22 Sep 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Modular: Modular 25.6: Unifying the latest GPUs from NVIDIA, AMD, and Apple</description>
-      <content:encoded><![CDATA[<h1>Modular 25.6：统一 NVIDIA、AMD 与 Apple 的最新 GPU</h1>
-<h2>介绍 25.6</h2>
-<p>我们很高兴宣布 Modular Platform 25.6——我们&quot;构建 AI 统一计算层&quot;使命中的一座重要里程碑。25.6 交付了迄今为止对我们使命最清晰的证明：<strong>一个从笔记本一直延伸到全球最强大数据中心 GPU 的统一计算层</strong>。该平台现在交付：</p>
-<ul><li><strong>NVIDIA Blackwell (B200) GPU 上的峰值性能</strong>：MAX 取得业界领先的吞吐与延迟收益，用我们公开的基准脚本完全可复现。</li><li><strong>AMD MI355X GPU 上的峰值性能</strong>：Modular 的性能提升在 AMD 最新的 MI355X GPU 上更为显著——早期基准显示 MI355X 上的 MAX 甚至能超过 Blackwell 上的 vLLM——而且我们还没到头！</li><li><strong>面向 Apple、AMD 和 NVIDIA 消费级 GPU 的开发者支持</strong>：开发者现在可以用 Mojo 为 AMD、NVIDIA 以及——呼声极高的——Apple Silicon GPU 等众多消费级 GPU 编程。Mojo 统一的编程模型，让广大学习 GPU 编程的开发者都能受益，而不只是拥有数据中心级加速器的企业。</li></ul>
-<p>除了新硬件，本次发布还构建在仅仅 7 周前 25.5 版之后的无数改进之上：开发者将享有全新的 <code>pip install mojo</code> 支持、增强的 VS Code 支持、Mojo 与 MAX API 的大量改进、更多模型支持，以及 changelog（<a href="https://docs.modular.com/max/changelog/">MAX</a>🧑‍🚀、<a href="https://docs.modular.com/mojo/changelog/">Mojo</a>🔥）里涵盖的许多其他特性。</p>
-<h2><strong>为什么要统一计算？为什么是现在？</strong></h2>
-<p><strong>AI 极度渴望更多算力</strong>！模型更大、prompt 更长、推理更复杂、推理需求爆炸。数据中心建设激增，新的&quot;neo-cloud&quot;不断涌现，各国政府竞相建设主权算力。NVIDIA、AMD 等 GPU 厂商加快产品周期——每年升级更多内存、带宽和新数据类型（FP4、FP6 及更远）。硬件初创公司募集数十亿美元试图切入，而超大规模云商则在自研硅片以保障供应、降低对第三方 GPU 厂商的依赖。</p>
-<p><strong>但仅有硬件并不够。没有合适的软件，即便最强大的硬件也无法兑现其承诺。</strong>开发者一直被困在碎片化、低效的技术栈里，让可移植性与峰值性能难以企及。Anthropic <a href="https://www.anthropic.com/engineering/a-postmortem-of-three-recent-issues">最近揭开了这种痛苦的真相</a>——周旋于 NVIDIA GPU、Google TPU 和 AWS Trainium 之间：<strong>瓶颈不是 FLOPs，而是缺乏能提供抽象、可移植性和端到端性能的全栈软件</strong>。这是一场部署与运维的噩梦！</p>
-<p><strong>业界长期寻求一个简单、可扩展的 AI 根基：</strong>一个能在最先进硬件上交付业界最优性能与可移植性的统一计算层。随着 Modular 25.6 的发布，那个愿景如今已成现实——<strong>一个统一 NVIDIA、AMD 和 Apple 最新 GPU 的统一软件层</strong>。</p>
-<h2><strong>深度解读：性能亮点</strong></h2>
-<h4><strong>NVIDIA B200：在 NVIDIA 最强硬件上取得惊人性能</strong></h4>
-<p><strong>MAX 在 NVIDIA Blackwell 200——NVIDIA 当前的旗舰数据中心 GPU——上交付业界领先性能</strong>。继我们与 Inworld 的合作、为其最先进的文本转语音模型交付 <a href="https://inworld.ai/blog/how-we-made-state-of-the-art-speech-synthesis-scalable-with-modular">2.5 倍吞吐与 3.3 倍延迟</a>（首个音频时间）收益之后，我们如今已针对更多用例在 B200 上优化了 MAX：</p>
-<p><strong>所有结果都完全</strong><a href="https://docs.modular.com/max/get-started"><strong>可复现</strong></a>：你可以在用 MAX 容器或 pip 包部署的 endpoint 上运行我们的公开基准脚本，亲自验证这些数字。为更好地理解我们如何取得这些成果，我们写了一篇 <a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-1-introduction">4 部分深度解读</a>，讲述我们如何通过充分利用 Blackwell 独特的架构来优化矩阵乘法。</p>
-<h4><strong>AMD MI355X：与 Blackwell 正面交锋</strong></h4>
-<p>AMD 发布 MI355X 正是为了与 NVIDIA Blackwell 正面竞争——而且它已被全球主要云服务商部署，包括我们的<a href="https://tensorwave.com/blog/save-up-to-70-with-max-the-fastest-inference-engine-on-amd-compute">合作伙伴 TensorWave</a>。多亏 TensorWave，我们在 9 月 5 日——才两周半前——首次拿到 MI355X 硬件，我们很高兴分享：已经看到了强劲的成果。</p>
-<p>显而易见的问题是：MI355X 能和 Blackwell 抗衡吗？早期迹象表明可以。虽然性能始终取决于工作负载，但 <strong>MI355X 上的 MAX 相对 Blackwell 上的 vLLM 交出明显优势</strong>，把 AMD 既有的价格优势放大成可观的 TCO 机遇：</p>
-<p>Modular 通过把 Modular 的先进软件带到 AMD 的强大硬件上，取得这些性能成果。你可以把 MAX 与 vLLM 直接在 AMD MI355X 上对比，更直观地看到这一点——MAX 大幅超越 vLLM：</p>
-<p>请注意，Modular 接触这一架构时间很短——这些结果反映了我们&quot;生而可移植&quot;的软件给新硬件启用带来的收益，但我们预期随着更多时间投入这一架构，数字还会进一步提升。</p>
-<p>上手很简单：<strong>把我们的 AMD 容器部署到一块 MI355X GPU 上</strong>。你今天就能运行<a href="https://docs.modular.com/max/get-started">我们的基准脚本</a>来复现我们的结果。</p>
-<h2><strong>Mojo🔥 支持 Apple Silicon GPU</strong></h2>
-<p>Modular 的使命是<a href="https://www.modular.com/democratizing-ai-compute">普惠化 AI 算力</a>，我们深知数据中心加速器并非许多开发者触手可及。25.6 中，我们开始打破这层壁垒——启用对 <strong>Apple Silicon GPU 的初步支持</strong>，以及众多 NVIDIA 和 AMD 消费级 GPU。</p>
-<p>Mac 用户第一次可以<strong>用 Mojo 直接调用笔记本或桌面 GPU</strong>，并尝试<a href="https://puzzles.modular.com/introduction.html">前七个 Mojo GPU puzzles</a>。这一步让这些 GPU 算法无需修改即可运行在 Apple Silicon GPU、NVIDIA Blackwell、AMD MI325X、AMD MI355X 上，更不用说 Modular <strong>已经支持</strong>的 Hopper、Ampere、MI300 及其他 GPU。<em>一次编写，随处运行。</em></p>
-<p>Modular 对 Apple Silicon GPU 的支持正在快速演进：我们鼓励开发者使用我们的 <a href="https://docs.modular.com/mojo/manual/install">nightly 发布</a>，它很快会启用端到端的 GenAI 模型执行。</p>
-<h2><strong>pip install mojo 与全新的 Mojo LSP</strong></h2>
-<p>Mojo 开发现在只需一条命令：<code>pip install mojo</code>。</p>
-<p>Mojo 的 PyPI 包第一次把<strong>编译器、语言服务器协议（LSP）服务器和调试器打包在一起</strong>。这意味着用 pip 或 uv 的开发者开箱即得<em>完整</em>的 Mojo 体验——甚至能发布直接依赖 Mojo 的自己的 PyPI 包。</p>
-<p>我们还在推出一个<strong>大幅改进的 Mojo VS Code 扩展</strong>。它从零重建，同时支持 nightly 与 stable 项目，交付更流畅的体验——更快、更灵活，而且<a href="https://github.com/modular/mojo-vscode">完全开源</a>！随着时间推移，它会变得更可定制，改善 Mojo 开发者的生活，无论你用 VS Code、Cursor 还是其他 IDE 编码。</p>
-<p>Mojo 作为一门语言也获得了一些<strong>令人兴奋的新能力</strong>，例如崩溃时的调用栈、trait 的默认方法、对标准库的重大扩展，以及<a href="https://docs.modular.com/mojo/changelog/">远不止这些</a>。</p>
-<h2><strong>立即开始并深入了解细节！</strong></h2>
-<p>准备好一头扎进 Modular 25.6 了吗？用我们的<a href="https://docs.modular.com/max/get-started">快速入门指南</a>部署并对 MAX endpoint 做基准，直接上手。你可以用 MAX 容器在 NVIDIA 或 AMD GPU 上部署各种<a href="https://builds.modular.com/?category=models&amp;sota=true">高性能 LLM</a>。或者你可以 <a href="https://docs.modular.com/mojo/manual/install">pip install Mojo</a>，开始编写由 NVIDIA、AMD 和 Apple Silicon GPU 加速的代码。</p>
-<p>如果你能访问 NVIDIA B200 或 AMD MI355X 硬件，我们鼓励你按照<a href="https://docs.modular.com/max/get-started">快速入门</a>操作——它展示了如何用我们内置的基准脚本，在你自己的工作负载上验证上文所示的性能收益。如果你是突破 Blackwell 和 MI355X 边界的资深企业，请<a href="https://modular.com/company/talk-to-us">在此联系我们</a>。</p>
-<p>想更深入地了解新内容，完整变更列表见 <a href="https://docs.modular.com/max/changelog">MAX</a> 和 <a href="https://docs.modular.com/mojo/changelog">Mojo</a> changelog。一如既往地，你的反馈与贡献塑造着 Modular 平台的未来。加入我们在<a href="https://forum.modular.com/">社区论坛</a>上的讨论——来<a href="https://github.com/modular/modular/">开源社区</a>和我们一起构建！</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Blackwell 上的矩阵乘法：第 4 篇——突破 SOTA</title>
-      <link>https://www.modular.com/blog/matrix-multiplication-on-blackwell-part-4---breaking-sota</link>
-      <guid isPermaLink="true">https://www.modular.com/blog/matrix-multiplication-on-blackwell-part-4---breaking-sota</guid>
-      <pubDate>Fri, 19 Sep 2025 00:00:00 +0000</pubDate>
-      <description>原文标题：Modular: Matrix Multiplication on Blackwell: Part 4 - Breaking SOTA</description>
-      <content:encoded><![CDATA[<h1>Blackwell 上的矩阵乘法：第 4 篇——突破 SOTA</h1>
-<blockquote>🛠️ 本系列提到的所有 kernel 代码均已开源在 GitHub。</blockquote>
-<p>在这篇博文中，我们将继续在 NVIDIA Blackwell 上构建最先进（SOTA）matmul kernel 的旅程，探索 cluster launch control（CLC）优化。文章结尾我们将再提升 15% 性能，达到 1772 TFLOPs，超越当前的 SOTA。</p>
-<h3>Kernel 8：CLC 持久化 kernel</h3>
-<p>在<a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-3-the-optimizations-behind-85-of-sota-performance">第 3 篇</a>中，我们提到 matmul kernel 仍受两大开销困扰：</p>
-<ul><li>共享内存与 barrier 的初始化需要在每个 <em><strong>Wave</strong></em>（波次，其含义下文解释）之间重启。</li><li>对 C 矩阵的写入无法重叠。</li></ul>
-<p>本节讨论如何用持久化 kernel 消除这两个开销。 Kernel 8 的代码在<a href="https://github.com/modular/modular/blob/main/max/kernels/test/gpu/linalg/matmul_blackwell_iterative/8_clc_tmem_ping.mojo">这里</a>。</p>
-<h3><strong>什么是持久化 kernel？</strong></h3>
-<p>要理解持久化 kernel，必须先解释什么是 <strong>wave</strong>。在 GPU 中，一个 wave 指可以一次性分配给所有可用流式多处理器（SM）的一批线程块。kernel 的执行可以看作一系列 wave 依次处理，直到所有工作完成。</p>
-<p>就 matmul 而言——线程块代表整个工作负载，线程块 ID 对应块 tile 坐标——持久化 kernel 意味着由 kernel 作者而非硬件来调度这些块 tile 坐标。</p>
-<p>在 Hopper 架构上，我们可以定义一个像这样工作的<a href="https://github.com/modular/modular/blob/main/max/kernels/src/linalg/matmul_tile_scheduler.mojo">tile 调度器</a>：</p>
-<ul><li>按可用 SM 的数量启动同样多的 Cooperative Thread Arrays（CTA）</li><li>让每个 CTA 计算矩阵乘加（MMA）并存储一个输出 tile</li><li>写出一旦完成，就把下一个待计算 tile 的坐标交给它</li><li>持续 <code>Num_Tiles / Num_SM's</code> 次迭代</li></ul>
-<p>以下代码展示我们如何为当前 CTA 取回下一个工作 tile。</p>
-<p>Mojo</p>
-<p>fn fetch_next_work(mut self) -&gt; WorkInfo: self.idx += num_idle_ctas return self.idx</p>
-<p>Copy</p>
-<p>有了上面这些，我们可以用 tile 调度器展示高层代码结构：</p>
-<p>Mojo</p>
-<h1>every CTA in cluster participates in loads</h1>
-<p>if WarpRole.is_producer(): while work_info.is_valid():</p>
-<h1>load</h1>
-<p>... work_info = scheduler.fetch_next_work()</p>
-<h1>only leader CTAs in cluster participate in MMA</h1>
-<p>if WarpRole.is_consumer(): for work_info.is_valid():</p>
-<h1>MMA</h1>
-<p>... store_C() work_info = scheduler.fetch_next_work()</p>
-<p>Copy</p>
-<p>调度器不断给 CTA 喂新的工作 tile，直到没有更多工作（即 <code>work_info</code> 失效），从而让 CTA 保持驻留。通过让 CTA 常驻 SM，我们消除了启动下一个块的开销时间，调度看起来像这样：</p>
-<p><strong>然而</strong>，静态持久化 kernel 有几个问题：</p>
-<ul><li>它假设 kernel 总是在利用所有 SM。当 GPU 同时启动多个 kernel 时并非如此。</li><li>它不知道哪些 SM 空闲/忙碌。</li></ul>
-<p>如果同一 GPU 上还有其他 kernel 在跑，这些因素会导致次优调度；如果线程块跑在前面几个 wave，还会造成 SM 饥饿。Blackwell 用 Cluster Launch Control（CLC）解决了这两个问题。</p>
-<h3>CLC 调度器深潜</h3>
-<p>NVIDIA Blackwell 架构的一个新事物是芯片上内置的调度器。硬件不再依赖软件管理的分发，而是通过一个优雅的 producer-consumer 模型来编排工作。思路变成：</p>
-<ul><li>按问题形状需要启动尽可能多的线程块。</li><li>调度 warp（集群中第 1 个 CTA 的第 4 个 warp）尝试把工作 tile “<em>取消</em>”，把它们指派给空闲 SM。</li><li>调度 warp 还会把坐标写入集群内所有 CTA 的一块专用共享内存位置，信号化 16 字节数据的到达。</li><li>信号到达后，集群内所有 CTA 从该共享内存位置读取坐标。</li></ul>
-<p>此过程持续到 GPU 处理完所有线程块。</p>
-<p><a href="https://github.com/modular/modular/blob/main/max/kernels/src/linalg/matmul_tile_scheduler_sm100.mojo">tile 调度器</a>在 Mojo 中的高层实现看起来像这样：</p>
-<p>Mojo</p>
-<p>struct TileScheduler[num_pipeline_stages: Int]: @always_inline fn fetch_next_work(self, ...) -&gt; WorkInfo:</p>
-<h1>Wait for the 16 bytes arrival.</h1>
-<p>index, phase = consumer_state.index(), consumer_state.phase() self.full_mbar[index].wait(phase)</p>
-<h1>Read work coordinate from shared memory location.</h1>
-<p>var work_tile = work_info_from_clc_response(self.clc_response[index])</p>
-<h1>Signal scheduler CTA that work coordinate is fetched.</h1>
-<p>self.empty_mbar[index].arrive_cluster(0)</p>
-<p>return work_tile</p>
-<p>@always_inline fn advance_to_next_work(self, ...) -&gt; PipelineState: index, phase = producer_state.index(), producer_state.phase()</p>
-<h1>Wait for work coordinate to be fetched.</h1>
-<p>self.empty_mbar[index].wait(phase())</p>
-<h1>Set a arrival signal of 16 bytes.</h1>
-<p>self.full_mbar[index].arrive_and_expect_bytes()</p>
-<p>if elect_one_sync():</p>
-<h1>Try to cancel thread blocks and write coordinate</h1>
-<h1>to clc_response.</h1>
-<p>clusterlaunchcontrol_try_cancel[multicast=True]( self.clc_response + index, self.full_mbar + index, ) return producer_state.next()</p>
-<p>Copy</p>
-<p>这里我们用 <code>empty_mbar</code> 和 <code>full_mbar</code> 来信号化工作 tile 坐标的到达与取回。仔细看你会发现我们还为 <code>TileScheduler</code> 实现了流水线化。这个设计决策的理由在下一节讨论。</p>
-<p>有了这个实现，我们至少能把下一个 wave 的 Tensor Memory Accelerator（TMA）加载与当前 wave 的 C 写出重叠。但要消除 CLC 调度的开销以及不同 wave 的 MMA 之间的停顿，还有更多工作要做。</p>
-<h3>流水线化 CLC 取回</h3>
-<p>为了消除 CLC 调度开销，我们把它流水线化。思路与之前的 kernel 相同：</p>
-<p>Mojo</p>
-<h1>Assume num_clc_pipeline_stages is 2</h1>
-<p>var clc_response_ptr = (smem_ptr + num_clc_pipeline_stages).bitcast[Int128]()</p>
-<p>var scheduler = TileScheduler() var clc_consumer_state = PipelineState[num_clc_pipeline_stages]() var clc_producer_state = PipelineState[num_clc_pipeline_stages](0, 1, 0)</p>
-<p>if WarpRole.is_main_load(): for work in scheduler(clc_consumer_state):</p>
-<h1>Do TMA load.</h1>
-<p>if WarpRole.is_scheduler() and is_first_cta_in_cluster: for work in scheduler(clc_consumer_state):</p>
-<h1>Pre-fetch next tile while current one processes</h1>
-<p>clc_producer_state = next(scheduler(clc_producer_state))</p>
-<h1>MMA and Epilogue warps.</h1>
-<p>Copy</p>
-<p>上面的代码中，若假设 2 级流水线，我们为每个 CTA 的 CLC 响应预留 2 个共享内存位置。<code>load_warp</code> 始终等待坐标被写入当前流水线状态索引对应的共享内存，而 <code>scheduler_warp</code> 可以抢先一步，把下一个坐标写入下一个共享内存位置。</p>
-<p><code>scheduler_warp</code> 唯一需要等待 <code>load_warp</code> 的情形，是流水线索引已经绕完整个流水线而坐标仍未被 <code>load_warp</code> 取回。</p>
-<p>现在调度看起来好多了。它把调度工作 tile 的开销移到与下一个 wave 的 TMA 加载重叠的位置。</p>
-<h3><strong>TMEM 作为循环缓冲区</strong></h3>
-<p>对累加器使用单一 Tensor Memory（TMEM）地址带来两大缺陷：</p>
-<ul><li><strong>空闲 warp</strong>：当 epilogue warp 把数据从 TMEM → SMEM → GMEM 搬运时，producer 和 consumer warp 无事可做。如果它们去处理下一个 tile，就会覆写 epilogue warp 正在读取的 tensor memory 数据。</li><li><strong>MMA 与输出串行</strong>：输出与下一个 wave 的 MMA 仍是串行执行的。原因在于 MMA warp 与输出 warp 之间经由 TMEM 的数据依赖。</li></ul>
-<p>为解决这一点，我们可以像之前对共享内存中的 A、B 那样，把 TMEM 当作循环缓冲区。假设我们选择 <code>MMA_N == 256</code>，那么当 <code>epilogue</code> warp 写出第 0-255 列结果的同时，<code>mma</code> warp 可以并发地把下一个 tile 的结果累加到第 256-511 列。</p>
-<p>概念上，这是一个顺理成章的优化。我们只需定义 <code>accum_full</code> 和 <code>accum_empty</code> barrier 来信号化 TMEM 缓冲区哪一级是空/满。而且因为它只影响我们的 <code>mma</code> 和 <code>epilogue</code> warp，支持它的代码改动极小：</p>
-<p><strong>MMA warp</strong></p>
-<p>Mojo</p>
-<p>var accum_producer_state = PipelineState[2](0, 1, 0) var accum_consumer_state = PipelineState[2]() var stage_stride_cols = 512 // 2  # = 256 columns per stage</p>
-<p>if WarpRole.is_mma(): for work in scheduler:</p>
-<h1>wait for either half of tmem to be empty</h1>
-<p>accum_index, phase = accum_producer_state.index(), accum_producer_state.phase() accum_empty_mbar[accum_index].wait()</p>
-<h1>compute MMA into specific buffer (0 or 256)</h1>
-<p>var tmem_offset = accum_index * stage_stride_cols consumer_main_loop[...]( tmem_addr | tmem_offset,  # accumulate at col 0 or 256 accum_index=accum_index, ... )</p>
-<h1>signal this half of tmem is now full</h1>
-<h1>to make it both ready for write out, and to ensure</h1>
-<h1>its not over-written until its been emptied</h1>
-<p>accum_full_mbar[accum_index].arrive() accum_producer_state = next(accum_producer_state)</p>
-<p>Copy</p>
-<p><strong>输出 warp</strong></p>
-<p>Mojo</p>
-<p>if WarpRole.is_epilogue(): for work_info in scheduler:</p>
-<h1>wait for accumulation buffer to be full</h1>
-<p>index, phase = accum_consumer_state.index(), accum_consumer_state.phase() accum_full_mbar[index].wait(phase)</p>
-<h1>calculate which buffer to read from (0 or 256)</h1>
-<p>var tmem_offset = index * stage_stride_cols</p>
-<h1>read from tensor memory with offset</h1>
-<p>var stage_tmem_addr = ( (tmem_addr | (warp_id * 32</p>
-<p>&lt;</p>
-<p>&lt;</p>
-<p>16)) +  # row offset of warp</p>
-<ul><li>tmem_offset #256 columns if splitting tmem into halves</li><li>(stage * stageN) # offset of multi-stage optimization in kernel 7</li></ul>
-<p>) store_C[...](stage_tmem_addr, ...)</p>
-<h1>signal this buffer is empty</h1>
-<p>accum_empty_mbar[index].arrive() accum_consumer_state = next(accum_consumer_state)</p>
-<p>Copy</p>
-<p>修复了上述两大开销之后，我们得到了最优调度。</p>
-<p>与我们的 Hopper（H100）matmul 调度相比，可以看到 Blackwell（B200）kernel 的每个阶段都异步执行。这一切都归功于 Blackwell 全新的 tensor memory 和 CLC——它们让 producer-consumer 模型得以调度工作 tile。</p>
-<p>所有优化就位后，我们的 kernel 在 4096x4096x4096 形状上达到 1772.9 TFLOPs，为 cuBLAS 的 100.6%。</p>
-<p>然而，如果看其他形状（如 8192x8192x8192），我们的性能仍是 cuBLAS 的 90%。所以这里还有进一步的优化空间。</p>
-<h3>Kernel 9：线程块 Swizzle</h3>
-<p>既然我们能把工作 tile 调度到 SM，剩下的唯一优化就是提升 L2 缓存命中。我们可以用一个叫 <strong>block swizzling</strong> 的技巧做到。</p>
-<p>要理解它，得先想象 CLC 如何把块 tile 调度到每个 wave。在下面的图中，假设我们启动一个 <code>6x5</code> 的集群——形成 28 个按 cluster 计的工作 tile。</p>
-<p>再假设 GPU 每个 wave 有 9 个可用 SM。分配给每个 wave 的工作 tile 如下所示。</p>
-<p>看 <code>Wave 0</code>：对矩阵 A，我们需要工作 tile ([0, 5], k)；对矩阵 B，我们需要 ([0, 1], k)。也就是矩阵 A 要 6 次加载、矩阵 B 要 2 次从全局内存加载。因为只有矩阵 A 的 ([0, 2], k) 和矩阵 B 的 ([0, 1], k) 可以被多个工作 tile 复用。结果就是，内存 tile 因复用率太低而被挤出 L2。</p>
-<p>Swizzle 模式允许我们沿 N 维移动、形成之字形排布，从而把一批共享同一工作坐标的工作 tile 调度到一起。沿 N 维移动的 tile 数量称为 <code>block_swizzle_size</code>。最优的 <code>block_swizzle_size</code> 取决于问题形状与所启动的按 cluster 计的块 tile 数量。</p>
-<p>现在看一个取 <code>block_swizzle_size</code> 为 2 的例子：我们沿 N 维先移动 2 步，再沿 M 维向下：</p>
-<p>映射回每个 wave，调度到 wave 0 和 1 的工作 tile 现在变成这样：</p>
-<p>可以看到，在 wave 0 中，矩阵 A 需要工作 tile ([0, 4], k)，矩阵 B 需要 ([0, 1], k) 从全局内存加载。相比无 thread block swizzle 的调度，少了一次全局内存加载。</p>
-<h3>汇总</h3>
-<p>本系列博客中，我们讲解了如何利用 Blackwell GPU 的特性实现越来越优化的 matmul kernel。下表回顾了我们的 kernel 实现与优化历程。</p>
-<p>如你在 wave 0 中所见，矩阵 A 需要工作 tile ([0, 4], k)，矩阵 B 需要 ([0, 1], k) 从全局内存加载。相比无 thread block swizzle 的调度，少了一次全局内存加载。</p>
-<p>Kernel Performance Comparison</p>
-<table><thead><tr><th>Kernel name</th><th>TFLOPs</th><th>% of cuBLAS</th></tr></thead><tbody><tr><td>Ultra Naive (no Tensor Cores)</td><td>5.6</td><td>0.3</td></tr><tr><td>Tensor Cores</td><td>155.0</td><td>8.8</td></tr><tr><td>Swizzling</td><td>295.6</td><td>16.8</td></tr><tr><td>TMA + ST_Matrix</td><td>293.6</td><td>16.7</td></tr><tr><td>2SM MMA</td><td>360.2</td><td>20.4</td></tr><tr><td>Pipelining</td><td>1429.6</td><td>81.1</td></tr><tr><td>Double Buffering Output</td><td>1493.0</td><td>84.7</td></tr><tr><td>CLC Persistent</td><td>1772.9</td><td>100.6</td></tr></tbody></table>
-<h3>应用到生产形状</h3>
-<p>到目前为止，为了简化，我们专注于 4096、8192 这类方阵。这对博客演示很好，但这些形状不会出现在生产 LLM 中。实践中，M 维取决于 batch size 与 prompt 长度，范围在 O(10²) 到 O(10³) 量级；N、K 维则取决于模型。下图展示 <a href="https://builds.modular.com/models/gemma-3-it/27B">gemma-3-27B-it</a> 模型的形状。</p>
-<p>针对生产所用形状优化时，关键是选择最优参数——包括 MMA 形状、流水线级数、block swizzle 模式等——以高效编排我们讲过的各项优化。这些参数的选取以最小化每 SM 工作量（等价于最大化所有 SM 的利用率）为准。例如，服务 Gemma 3 涉及形状为 <code>MxNxK = 512x8192x5376</code> 的 matmul。用我们演示过的 2xSM MMA 指令形状 256x256，会产生 <code>512/128 x 8192/256 = 128</code> 个 CTA。而若把指令形状缩小到 256x224，kernel 会创建 148 个 CTA——恰好完美映射到 B200 的 148 个 SM。</p>
-<p>不过，有些形状需要细腻的参数选择，难以凭经验计算，因为流水线级数与输出 tile 之间存在微妙权衡（见<a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-3-the-optimizations-behind-85-of-sota-performance">系列第 3 篇</a>）。好在 Mojo 有一个内建自动调优框架（<a href="https://github.com/modular/modular/blob/main/max/kernels/benchmarks/autotune/README.md"><code>kbench</code></a>），可针对给定问题形状选择最优参数。通过自动调优并使用真实工作负载，MAX 在 NVIDIA Blackwell 系统上运行 Gemma 3 27B 时，相比 SOTA 实现最多匹配或超出 6%。</p>
-<h3>总结</h3>
-<p>本文回顾了 MAX 如何超越最先进的 matmul 实现。一路走来，我们展示了 GPU 硬件已变得多么复杂——众多特性必须协同工作才能达到峰值 TFLOPs。展望未来，GPU 只会更强大、更精密。相应地，达到峰值性能所需的编程模式也必须更加精细，而 Mojo 经得起这一挑战。</p>
-<p>我们演示了如何在 Mojo 中直接编程运用多项 GPU 特性，但这只是冰山一角。后续博客将展示帮助我们编写高性能代码的工具、说明 Mojo 如何在保持强编程易用性的同时达成性能，并讨论你如何运用这些模式让代码跨硬件可移植。敬请期待！</p>
-<p>阅读 “Matrix Multiplication on Blackwell” 系列全部 4 篇：</p>
-<p><a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-1-introduction">Part 1 - Introduction</a></p>
-<p><a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-2-using-hardware-features-to-optimize-matmul">Part 2 - Using Hardware Features to Optimize Matmul</a></p>
-<p><a href="https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-3-the-optimizations-behind-85-of-sota-performance">Part 3 - The Optimizations Behind 85% of SOTA Performance</a></p>
-<p><a href="https://www.modular.com/blog/matrix-multiplication-on-blackwell-part-4---breaking-sota">Part 4 - Breaking SOTA </a></p>
-<p><a href="https://www.modular.com/matrix-multiplication-on-blackwell">All Parts</a></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

@@ -7,38 +7,424 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 21 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Introducing Claude Duet</title>
+      <title>构建代理：何时将子代理折叠到主代理循环中</title>
+      <link>https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Building agents: When to fold subagents into your main agent loop</description>
+      <content:encoded><![CDATA[<p><em>如果您在 Claude Platform 中构建了一个包含多个子代理的代理，请查看使用我们的<a href="https://github.com/anthropics/single-agent-loop-kit">迁移工具包</a>将哪些子代理合并到主代理循环中。它运行引导式工作流程来识别您的模式、评估替代方案并验证最佳方法。它包括一个演示，您可以在代理上运行之前在模拟系统上尝试。</em></p>
+<p>子代理——具有自己的上下文窗口、工具和指令的代理，由协调员精心编排——是代理设计的核心组件。它们在验证、并行工作和模块化许可方面非常有效。我们在使用 Claude Platform 构建的许多自己的代理中使用它们，例如我们的<a href="https://www.anthropic.com/engineering/multi-agent-research-system">多代理研究系统</a>。</p>
+<p>然而，最近应用人工智能团队发现了一种企业代理部署模式，该模式受益于将路由器、规划器和域子代理折叠到主代理循环中。在[我们对多个企业部署的比较](https://claude.com/blog/the-anatomy-of- effective-commerce-agents#:~:text=In%20our%20comparisons%20across%20several%20enterprise%20deployments,latency%20per%20task)中，具有技能的单个代理的性能经常优于一提示所有设计和子代理设计注重质量，并且通常每个任务的成本和延迟都较低。</p>
+<p>例如，一家公司发现其面向客户的代理中有数十个专业子代理，这使得一致的品牌体验难以维持，并且增加了延迟，从而损害了用户体验。</p>
+<p>我们还经常看到提出的代理设计遵循熟悉的流程：意图分类器、固定的多步骤推理管道、用户细分存储桶、单独的推荐分支以及顶部的多代理协调器。</p>
+<p>在这些情况下，反馈通常是该结构的大部分正在执行模型不再需要完成的工作，并且一个清晰的系统提示、4-5 个精简数据工具和牢固的输出护栏将覆盖大部分用例。</p>
+<p><img src="https://assets.claude.com/a7cb2cf08bfcef461166310c0c55f28b72c33b0d.gif" alt="子代理设计"></p>
+<p>需要明确的是，子代理仍然占有一席之地，包括在研究前沿。在以下情况下使用它们：</p>
+<ul><li>单个代理循环会因上下文膨胀而导致可测量的性能下降，或者</li><li>需要使用新的上下文窗口并行处理多个任务，任务完成后可以将其丢弃，或者</li><li>单个代理难以选择合适的工具，或者系统提示中存在冲突的指令。</li></ul>
+<p>但我们经常看到企业为每个团队或问题类型提供自己的子代理，代理架构成为其组织结构图的副本（康威定律在起作用）。</p>
+<p>这篇文章解释了何时考虑将子代理合并到主代理循环中，以及我们从大型组织中构建代理中学到的最佳实践。</p>
+<h2>大型组织的代理构建失败模式</h2>
+<p>公司通常希望建立一个代理，将多种产品和功能整合到一个客户界面中。</p>
+<p>通常，每个功能都由一个单独的团队拥有，因此公司首先让每个单独的团队构建自己的代理，然后中央平台团队在顶部构建一个协调器。这可以采用多种结构，包括协调器子代理或具有作为 MCP 工具公开的特定代理的单个代理。</p>
+<p>这看起来是最简单的解决方案，但会带来直接的复杂性：</p>
+<ul><li><strong>上下文管理：</strong>您需要决定在代理之间交换什么上下文，并且经常会在来回中丢失详细信息。</li><li><strong>子代理蔓延</strong>：每个团队都有自己的子代理，因此公司最终会出现数百个重叠的子代理，没有强制标准，也没有特定的所有者。</li><li><strong>弗兰肯提示</strong>：每个团队都会在系统提示中添加一句话，导致规则相互冲突，声音不一致。</li><li><strong>未经审查、过度本地化的评估</strong>：每个人都添加自己的评估，这些评估针对其子任务过度优化。没有人拥有或维护整个集合，领导层根据淡化的、过于本地化的分数做出决策。</li><li><strong>延迟</strong>：多代理架构的复杂性增加了延迟。一位客户根据单代理循环评估了多代理工具，发现后者的运行时间大约快了 2 倍。</li></ul>
+<h2>使用渐进式披露的代理循环</h2>
+<p>上述协调器-子代理设计是协调跨团队构建的专家的合理方法，但通常更有效的方法可以是<strong>通过技能逐步公开上下文</strong>和<strong>通过工具搜索逐步公开工具</strong>。换句话说，代理会看到技能和工具的简短描述，仅在需要时才完全加载。</p>
+<p>这种方法之所以有意义有以下三个原因：</p>
+<ul><li><strong>共享上下文产生更好的答案：</strong>对于运行时间较长的代理，我们希望来自多个不同任务的上下文位于主上下文窗口中。看到每个早期步骤结果的代理可以将它们连接起来，这比子代理传回的一组摘要会产生更丰富的输出和更好的见解。它还意味着<a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them">更少的上下文窗口和更少的有损切换</a>。</li><li><strong>渐进式披露可防止上下文膨胀：</strong>此技术允许团队构建可以完成各种任务的单个代理，而不需要将所有上下文立即加载到一个长系统提示中。这消除了团队之前在子代理之间分配工作的主要原因。事实上，我们[将 Claude Code 对更高级模型的系统提示减少了 80% 以上](https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5- Generation-models/)，其中包括与逐步公开技能和工具相关的削减。</li><li><strong>模型的能力更强：</strong>从 Opus 4.5 开始，模型能够在单个循环中管理比大多数团队预期的更多内容。你无法停止对 Opus 5.5 和 Fable 5.1 的思考，最近的模型越来越多地叙述他们的进展并检查他们的工作，这使得一些线束元素变得多余。每个新模型都可以让您将更多决策从线束中转移到模型本身中。更简单的循环也更容易移动到下一个模型；在迁移过程中，我们为客户提供了帮助，严格的多代理结构通常会阻止新模型完成更多工作。</li></ul>
+<p>单代理循环设计需要纪律：精心管理的系统提示、在正确时间触发的技能和工具描述，以及对上下文窗口、内存和笔记的精心处理。本文将在后续部分中深入探讨迁移和设计注意事项。</p>
+<p>一个中央团队应该负责端到端的质量和系统提示，在每一个新工具发布之前对其进行审查和评估。保持中心团队规模较小有助于快速迭代并降低大型组织的协调成本。</p>
+<p>如果您采用多代理路线，请从最简单的可行模式（生成器-验证器、协调器-子代理或其他）开始。通过<strong>除以上下文来有效地分解边界：为每个子代理提供一项几乎不需要系统其余部分的工作，并让它返回一个紧凑的结果</strong>（好的候选者是独立的研究路径、具有干净接口的单独组件或黑盒验证）。当座席按问题类型划分时，他们会参与“电话游戏”，在每次切换时来回传递信息，从而降低保真度。</p>
+<p><img src="https://assets.claude.com/cd4b9c4417d5ba31776e8aa79e204966c08c6a43.png" alt="子代理按问题划分"></p>
+<h2>如何将子代理折叠到主代理循环中</h2>
+<p>许多团队已经在生产中拥有一名协调员和一组专业代理。以下是我们建议的单循环设计：</p>
+<ul><li>一个模型和一个上下文窗口运行一个开放式工具循环，并在线束中设置限制（转弯和成本预算、写入门）。</li><li>每回合，模型都会发出一批工具调用。线束并行运行它们并将原始结果返回到同一模型，该模型决定下一步：另一个批次、向用户提出问题或答案。</li><li>当模型回答或达到<a href="https://platform.claude.com/docs/en/build-with-claude/task-budgets">预算</a>时，循环停止。目标或验证者检查可以选择在答案之后运行。</li><li>该模型在第一轮就根据上下文编写其计划，并在结果到达时对其进行修改。这是协调器和专家代理设置的主要变化：编写计划的模型也是执行计划的模型，因此它可以在中间更改计划。</li><li>上下文仍然被加载，并由代理本身管理：不再需要从规则目录重写计划的代码步骤，因为模型决定了每个步骤。排序和域过程移至<strong>技能。</strong>硬限制（验证、批准门）和对话中出现的任何其他内容（例如内存查找）移至<strong>工具。</strong>代码仍然可用于加载任何廉价且几乎总是相关的内容（例如实体解析）步骤），并处理循环调用的工具内的任何机械部分（有效负载构造、流解析、恢复说明）。</li></ul>
+<p>这种单循环设计还有助于实现许多团队正在努力实现的最终状态（一个了解用户的高级目标并代表他们采取行动的代理），因为它将代理所学到的所有内容都保留在一个上下文中。</p>
+<p>下面的建议是团队如何分阶段从多代理系统过渡到单代理循环，以及多个团队如何在此过程中继续为该代理做出贡献。</p>
+<h3>任务完成评估</h3>
+<p>第一步是创建一个评估集，它可以帮助您确定是否应该将子代理折叠到主代理循环中。我们所看到的评估结构是一个共享的端到端集，由一个中心团队拥有，较小的评估集由拥有它的团队随每项技能一起提供。即使一组 10 个黄金示例也足以开始。</p>
+<p>根据评分标准对座席的最终消息进行评分是跟踪答案质量的良好起点。虽然您仍然拥有协调器，但您还应该跟踪路由准确性（它是否选择了正确的子代理？）。一旦子代理被合并，请检查代理是否加载了正确的技能或调用了正确的工具。随着时间的推移，努力评估任务完成情况是有帮助的，因为这在比较架构时最重要。</p>
+<p>在内部系统难以重放且用户参与难以模拟的环境中，这可能会很复杂。在我们内部有效的一种方法是记录重要事件的时间戳，以便稍后可以重播它们以作为目标评估运行。</p>
+<h3>随着时间的推移减少子代理</h3>
+<p>向单代理循环演进涉及将子代理折叠成工具和技能。这可以通过合并域子代理、将它们称为工具或用技能和工具替换它们来完成。</p>
+<p><img src="https://assets.claude.com/ed6bd97496ffdab88763806d9e14f1ec61ed9255.gif" alt="折叠在子代理中"></p>
+<h3>组合域代理</h3>
+<p>在第一次合并之前构建一个小型的端到端评估。然后<strong>从最常用的子代理开始按共享上下文折叠。</strong></p>
+<p><a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them">合并专家</a> 链接彼此的输出，接触相同的数据，或者经常被一起调用。例如，如果生产流量的很大一部分是一位专家，其次是一位专家，那么这就是一对紧密耦合的专家，这使得它成为合并到一个域代理的候选者。</p>
+<h3>子代理被称为工具</h3>
+<p>当上述三个条件之一适用并且您保留子代理时，让主代理将子代理作为工具调用是有效的，以便它可以继续与用户进行对话。</p>
+<p>我们仅建议在需要直接与用户对话时进行完全切换，即子代理接管对话。其他一切都可以是主循环中的技能加工具。</p>
+<p>这将允许您为子代理定义共享响应模式，使用主代理根据真实数据验证结论，并修剪任何最终综合步骤的输入。这是一个很好的第一步，因为您不需要<strong>重写</strong>子代理。在决定将任何子代理合并到主代理之前，它还为您提供了任务完成评估的<strong>基线</strong>。</p>
+<p>然而，一些故障模式仍然存在：</p>
+<ul><li>每个专家都有自己的提示、背景、所有者团队和评估</li><li>每次调用仍然返回有损摘要</li><li>每个调用都是一个嵌套模型循环，会增加延迟</li></ul>
+<h3>通过技能和工具将子代理折叠到主代理中</h3>
+<p>通过将每个子代理的提示转化为技能并将 API 调用转化为 MCP 工具，将子代理一次合并到主代理中。比较使用和不使用子代理的评估性能。然后决定保留哪一个。</p>
+<p>当你进行比较时，不要只检查最终分数，还要看看哪些任务发生了翻转。当我们在示例支持代理上对此进行测试时，将一个子代理折叠到另一个降低的延迟中，但也破坏了已经通过的进程。主代理拿着订单查找工具自行回答，没有向运输专员询问交货日期。</p>
+<p>在每次更改之前，请确保您的评估对在生产中一起运行的每个代理链都有一项任务，并且对于代理不得破坏的每条规则，并多次运行每个任务，因为像这样的破坏只会出现在两次运行中的一次。</p>
+<h2>多个团队如何为单个代理做出贡献</h2>
+<p>领域推理可以从知识库、技能和 MCP 工具中检索。各个团队可以将其所有权从代理转移到技能和工具，由一个小型中央团队保持对系统及时性和端到端质量的所有权。这涉及到在发布新技能、工具和评估之前对其进行审查。</p>
+<h3>MCP 工具</h3>
+<p>当代理需要采取行动、从系统读取实时数据或以固定形式返回结果时，工具是正确的选择。您还可以使用工具在迁移时继续调用子代理。我们建议按用户意图分组工具（不是每个 API 一个工具），因为一旦系统提示中的工具定义超过 30-50 个，工具选择往往会降低。</p>
+<p>使用带有延迟加载的<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool">工具搜索</a>，限制硬性前提条件，并将任何需要的条件移至工具中。例如，如果 Y 需要 X 的输出，Y 的工具会检查它并返回模型可以执行的指令。每用户权限的工作方式相同。每个工具都会检查调用用户可能看到或执行的操作，并返回模型可以读取的简单拒绝，因此一个循环可以为具有不同访问权限的用户提供服务，而无需每个权限级别使用单独的代理。</p>
+<h3>技能</h3>
+<p>当座席需要了解团队如何工作时，技能是正确的选择，例如专家子座席提示所用的步骤、规则和判断呼叫。</p>
+<p>我们发展技能库的方法是将维护工作交还给编写技能的人员。克劳德可以利用可以构建、测试和修剪其他技能的技能来完成繁重的工作。</p>
+<p>为了防止技能蔓延，您可以让每个团队的 DRI 拥有自己的技能，并确保它们精心设计、独特并附带适当的评估。</p>
+<ul><li><strong>/skill-creator</strong> 允许您编写格式良好的新技能，并审核现有技能以修剪、删除重复和重组它们。</li><li><strong>/skill-doctor</strong> 允许您查看库中每项技能的成本以及实际使用的频率，并删除自重。</li></ul>
+<h3>知识库</h3>
+<p>知识库非常适合代理仅在某些时候需要的参考材料。事实和参考材料（政策、指标定义、产品规格）可以位于模型调用的搜索或查找工具后面，或者作为技能内的参考文件提供。避免<a href="https://claude.com/blog/seeing-like-an-agent">代码检索此上下文并将其粘贴到提示中</a>。</p>
+<h2>加速这项工作的工具</h2>
+<p>我们最近<a href="https://code.claude.com/docs/en/commands">发布了</a>一套 Claude API 技能，可以帮助完成上述大部分工作。我们的<a href="https://github.com/anthropics/single-agent-loop-kit">迁移套件</a>将这些技能链接在一个指导工作流程中，用于评估多代理系统并将其移动到单个代理循环。它包含一个演示，您可以在实际运行之前尝试一下：</p>
+<ul><li><strong>/claude-api build-eval:</strong> 可以帮助创建中央团队拥有的第一个端到端集合或每个团队以其技能提供的小型评估</li><li><strong>/claude-api提示审计：</strong>可以在提示、技能和工具描述中标记为旧模型编写的指令，并建议修复作为差异。这可以在您的系统提示上运行，以查找为早期模型添加的任何规则，这些规则现在使代理速度更慢或更严格。每个团队的 DRI 也可以根据自己的技能和工具描述来运行。</li><li><strong>/claude-api hillclimb：</strong>可以根据现有评估迭代改进应用程序。这可用于“折叠与保留”比较（将一个子代理折叠成技能加工具后，让它迭代技能和工具描述，看看折叠版本是否匹配或击败子代理）以及系统提示。</li><li><strong>/claude-api 成本优化：</strong>分析您的调用的去向，并建议通过提示缓存、修剪不需要的输入和输出令牌、工作量和模型选择等选项来节省费用，一次一项更改。这有助于降低给定设计的成本和延迟。</li></ul>
+<p>随着模型的发展，我们对如何最好地使用它们的理解以及最佳实践的指导也在不断发展。这使得任何一种架构都不如其背后的原则重要：衡量、一次改变一件事，并保留坚持的东西。</p>
+<p>这是其中之一。随着模型的能力越来越强，代理的运行时间越来越长，更多的子代理可以成为技能和工具。不过，您不必一步到位。构建一个小型端到端评估，折叠一个子代理，仅当折叠版本得分较差时才将其保留为子代理，然后冲洗并重复。</p>
+<p>文章</p>
+<p>2026 年 10 月 19 日</p>
+<h3>重新设计 Anthropic 的源代码控制</h3>
+<p>随着 Anthropic 的 monorepo 的合并从每天约 2,500 次增长到超过 30,000 次，源代码控制成为最大的开发瓶颈。以下是团队如何构建 Scion，这是一个专为始终在线代理设计的内部版本控制系统，并在五个月内从 git 迁移出来。</p>
+<p>克劳德·科德</p>
+<p>（在新选项卡中打开）</p>
+<p>文章</p>
+<p>2026 年 10 月 16 日</p>
+<h3>日本的一位人性化 BDR 如何与 Claude Managed Agents 一起度过一天</h3>
+<p>一名业务开发代表如何利用 Claude Managed Agents 和 Claude Tag 清理入站队列并起草双语客户电子邮件。</p>
+<p>克劳德管理代理</p>
+<p>文章</p>
+<p>2026 年 10 月 16 日</p>
+<h3>Claude Code 团队如何进行代码审查</h3>
+<p>您如何在批量代理生成代码时对其进行审查？ Claude Code 团队分享了其审核流程，从 Claude 验证自己的工作到风险分级的人工批准，以及采用它的清单。</p>
+<p>克劳德·科德</p>
+<p>（在新选项卡中打开）</p>
+<p>文章</p>
+<p>2026 年 10 月 13 日</p>
+<h3>Uber 的 CISO 构建人工智能内部威胁计划</h3>
+<p>Uber 的首席信息安全官 Philip Martin 讲述了人工智能代理的监控和可观察性的重要性，以及 Uber 的开源工具如何与企业前沿保障措施协同工作。</p>
+<h2>与 Claude 一起改变您的组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
+<h3>获取开发者通讯</h3>
+<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
+<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>完整的 Claude 平台可在 Google Cloud 上使用</title>
+      <link>https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：The full Claude Platform, available on Google Cloud</description>
+      <content:encoded><![CDATA[<p>Google Cloud 上的 Claude Models（Anthropic 托管）现已全面推出，为 Google Cloud 客户提供全套 Claude Platform 功能，包括 Google Cloud IAM 凭证、计费和承诺停用。克劳德仍然可以通过 Google 托管产品进行访问，其中 Google 是数据处理者。</p>
+<h2>访问 Google Cloud 上完整的 Claude 平台</h2>
+<p>借助 Anthropic 托管产品，Google Cloud 客户现在可以获得全套 Claude API 功能，新功能和测试版会在原生 Claude 平台上线的同一天发布。</p>
+<p>Anthropic 托管产品可与现有的 Google Cloud IAM 凭证配合使用，因此团队可以保留他们已管理的工具和权限。通过一张 Google Cloud 发票进行计费，Claude 的使用会减少您现有的 Google Cloud 承诺。</p>
+<p>Google Cloud 上的 Claude Models（Anthropic 托管）目前可在美国和全球端点上使用。</p>
+<p><img src="https://assets.claude.com/3000fcaf4ad00ac2cc4096d3f5aa236cc9eb415d.png" alt="Abacus.AI"></p>
+<blockquote>“通过 Anthropic 托管产品，我们获得了以 Google Cloud 作为访问层的原生 Claude API。第一天访问新功能非常重要。我们为企业构建 AI 代理和助手，需要快速将新的 Claude 功能引入我们的产品。使用我们现有的 IAM 设置和了解使用情况有助于我们的 Google Cloud 承诺，这对我们的团队来说是一个轻松的决定。”</blockquote>
+<p>Arvind Sundararajan，首席技术官</p>
+<p><img src="https://assets.claude.com/3720f77d05a852bc6857ae3eca424467270055b6.png" alt="三鲸"></p>
+<blockquote>“Moby 是我们针对电子商务品牌的 AI 工具，在 Claude 上运行。借助 Anthropic 托管产品，我们可以在 Google Cloud 上运行 Moby，该 API 与我们团队已经构建的 Claude API 相同。即时缓存对于我们如何经济高效地大规模运行 Moby 至关重要，我们在通过 Google Cloud 运行计费和访问时保留了它。”</blockquote>
+<p>Maksim Gorev，人工智能工程主管</p>
+<h2>包含什么</h2>
+<p>使用 Anthropic 托管产品的 Google Cloud 客户可以获得全套 Claude Platform 功能，因此他们可以：</p>
+<p><strong>使用以下方式构建和部署代理：</strong></p>
+<ul><li><a href="https://platform.claude.com/docs/en/managed-agents/overview">Claude Managed Agents（测试版）（在新选项卡中打开）</a> 为长期运行的代理提供支持，无需管理基础设施</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool">代码执行（在新选项卡中打开）</a> 在 API 调用中运行 Python 代码、创建可视化并分析数据</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool">计算机使用（在新选项卡中打开）</a>允许Claude操作浏览器或桌面来完成任务</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview">代理技能（在新选项卡中打开）</a> 教授 Claude 可重复的工作流程，以便提供一致的结果</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool">顾问策略（测试版）（在新选项卡中打开）</a> 通过咨询顾问模型为代理提供情报提升</li></ul>
+<p><strong>通过以下方式连接到系统和知识：</strong></p>
+<ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/files">文件 API（在新选项卡中打开）</a>，用于在对话中上传和引用文档</li><li><a href="https://platform.claude.com/docs/en/build-with-claude/itations">引文（在新选项卡中打开）</a> 用于在源文档中提供基础响应</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool">网络搜索（在新选项卡中打开）</a> 和 <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-fetch-tool">网络获取（在新选项卡中打开）</a> 通过网络上当前的真实数据来增强 Claude 的知识</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/mcp-connector">MCP 连接器（测试版）（在新选项卡中打开）</a> 将 Claude 连接到其他工具，而无需编写客户端代码</li></ul>
+<p><strong>通过以下方式管理成本和性能：</strong></p>
+<ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">提示缓存（在新选项卡中打开）</a> 用于降低重复上下文的成本和延迟</li><li><a href="https://platform.claude.com/docs/en/build-with-claude/batch-processing">批处理（在新选项卡中打开）</a> 适用于大容量、异步工作负载</li></ul>
+<p>Claude Opus 5.5 上的快速模式也适用于在 Google Cloud（人工管理）上使用 Claude Models 的客户。快速模式优先考虑速度，提供高达 2.5 倍的输出令牌生成速度，用于快速迭代、实时调试和交互式代理，其中输出速度可带来更好的用户体验。输入和输出代币分别为每百万 8 美元和 40 美元。</p>
+<p>请参阅我们的<a href="https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-management">文档（在新选项卡中打开）</a>，了解 Google Cloud 上 Claude Models 可用功能的完整列表。</p>
+<p>使用 Anthropic 托管产品的客户还可以访问 Claude Console，这是 Anthropic 的开发环境，用于使用 Claude 观察和管理代理。该控制台包括用于编写提示和配置代理、在托管环境中运行它们、监控使用情况和成本以及管理每个工作区的访问和安全性的工具。</p>
+<p>Claude Fable 5.1、Opus 5.5、Sonnet 5.5 和 Haiku 5.5 现已推出，新型号在推出时将通过 Anthropic 托管产品发货。</p>
+<h2>与 Claude 一起构建的两条路径</h2>
+<p>在 Google Cloud 上使用 Claude 进行构建的方法有两种。</p>
+<p><strong>Google Cloud 上的 Claude Models（Anthropic 托管）</strong> 专为希望零日访问所有测试版和普遍可用的 Claude 平台功能的客户而构建。对于想要通过 Google Cloud 访问的完整 Claude Platform 功能对等的客户来说，这是最好的选择。 Anthropic 运营该服务并充当数据处理器。</p>
+<p><strong>Google Cloud 上的 Claude Models（Google 托管）</strong> 对于需要 Google Cloud 作为数据处理器、有严格的区域数据驻留要求或想要原生 Google Cloud 集成（如 Model Armor 或 Agent Engine）的客户来说，仍然是最佳选择。</p>
+<h2>开始吧</h2>
+<p>Anthropic 托管产品现已全面上市。要开始使用，请打开 <a href="https://console.cloud.google.com/marketplace/product/anthropic/anthropic-management-claude">Google Cloud 上的 Claude Models（Anthropic 托管）（在新选项卡中打开）</a> 或浏览<a href="https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-driven">文档（在新选项卡中打开）</a>。</p>
+<p>如果您已有折扣，请在开始使用 Anthropic 托管产品之前联系您的 Anthropic 或 Google Cloud 客户主管，以确保正确应用您的折扣。折扣不能追溯至使用情况。</p>
+<p>文章</p>
+<p>2026 年 10 月 21 日</p>
+<h3>HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</h3>
+<p>HCLTech 将把 Claude 引入其为银行、医院、电信公司和制造商提供的解决方案中。</p>
+<p>文章</p>
+<p>2026 年 10 月 21 日</p>
+<h3>介绍克劳德二重奏</h3>
+<p>今天，美国 Pro 和 Max 订阅者可以通过候补名单获得研究预览。</p>
+<p>文章</p>
+<p>2026 年 10 月 21 日</p>
+<h3>Claude Security 现在连续扫描并跟踪修复</h3>
+<p>Claude Security 现在可以在代码更改时跟踪您的存储库，跟踪发现的问题直至修复，从您的团队添加的上下文中学习，并通过 API 和 MCP 连接到您的工具。面向 Claude Enterprise 客户提供公开测试版。</p>
+<p>克劳德安全</p>
+<p>文章</p>
+<p>2026 年 10 月 15 日</p>
+<h3>代码审查现已普遍可用</h3>
+<p>在投入生产之前捕获更多错误。</p>
+<p>克劳德·科德</p>
+<h2>与 Claude 一起改变您的组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
+<h3>获取开发者通讯</h3>
+<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
+<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>向 Agentic AI 基金会捐赠 Agent 技能</title>
+      <link>https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Donating Agent Skills to the Agentic AI Foundation</description>
+      <content:encoded><![CDATA[<p>今天，我们向 Agentic AI 基金会 (AAIF) 捐赠 <a href="https://agentskills.io/home">Agent Skills</a>，这是一项为 AI 代理提供专业知识和工作流程的开放标准。自我们于 2025 年 12 月发布该标准以来，包括 ChatGPT、Cursor、GitHub Copilot 和 VS Code 在内的 70 多个代理平台已经集成了代理技能。</p>
+<h3>通过简单实现代理互操作性</h3>
+<p>技能是一个包含 SKILL.md 文件的文件夹，该文件向代理教授特定任务或领域，以及它需要的任何脚本或参考材料。我们在编写 Claude Code 时培养了技能。它可以很好地处理一般知识工作，但通常缺乏实际业务任务所需的程序知识。在 2025 年 10 月发布后的几周内，开发人员在 GitHub 上发布了数千项技能，并为 Codex、Cursor 和 OpenCode 编写了加载器。然后，我们将代理技能作为开放标准发布在自己的 GitHub 组织和域下，以便任何代理都可以使用它。截至目前，已发布技能100万条，安装量近2.8亿条。</p>
+<h3>向 AAIF 捐赠代理技能</h3>
+<p>我们致力于保持代理技能的开放、社区驱动和供应商中立。今天，我们将该标准捐赠给 Linux 基金会下的 Agentic AI 基金会 (AAIF)，我们去年与 Block 和 OpenAI 共同创立了该基金会，并向其捐赠了模型上下文协议 (MCP)。 AAIF 将为未来的标准提供一个中立的家园，确保社区对代理技能的下一步发展有发言权。</p>
+<p>我们将捐赠 Agent Skills 名称和徽标、GitHub 组织以及 <a href="https://agentskills.io/home">agentskills.io</a> 域。您可以继续使用该标准或为其做出贡献，而无需加入 AAIF。</p>
+<p>来自 Anthropic、Google、OpenAI 和其他公司的工程师将以个人身份维护该标准，其中 David Soria Parra 和 Mahesh Murag 担任首席维护人员。</p>
+<h3>接下来会发生什么</h3>
+<p>我们建议从一个涵盖版本发布的路线图、正式的提案流程以及针对编写和安装技能的人员的安全指南开始。与 MCP 一样，该项目将继续优先考虑社区意见和透明决策。您可以加入该项目的 <a href="https://discord.gg/MKPE9g8aUy">Discord</a> 以针对拟议的规范更改提供反馈。</p>
+<p>感谢从一开始就使用代理技能构建的开发人员，以及将技能引入其产品的团队。阅读 <a href="https://agentskills.io">agentskills.io</a> 上的规范并加入 <a href="https://github.com/agentskills/agentskills">GitHub</a> 上的讨论。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>公开招募生命科学客座研究员</title>
+      <link>https://www.anthropic.com/news/open-call-guest-investigators-life-sciences</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/open-call-guest-investigators-life-sciences</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Open call for guest investigators in the life sciences</description>
+      <content:encoded><![CDATA[<p>今天，我们邀请生命科学界的成员申请与我们合作开展特殊项目。我们正在寻找学术机构、非营利组织或政府实验室的主要研究人员及其研究小组的提案，他们希望利用 Claude 来研究人类因果生物学、结构和计算分子生物学、药物化学、药物发现和临床科学中的关键问题。</p>
+<p>您可以在此处提交<a href="https://www.anthropic.com/guest-investigator-program">项目提案</a>。</p>
+<p>在 8-12 周的时间里，客座调查员将直接与人类研究人员合作解决感兴趣的问题，并生成对他们的工作最有帮助的分析、工件和工具。我们的团队将免费运行我们的模型和线束。</p>
+<p>我们将共同努力发布这些输出并开源随附的数据和代码。客座调查员在项目期间的每一步都保留对其数据的权利。他们还将有权进行我们合作中可能产生的任何独立后续研究。</p>
+<p>我们正在寻找能够清楚地解释他们将如何从与 Anthropic 研究人员的直接合作中受益的申请人。申请人还应合理证明其成果（例如初步发现、开放问题的答案、开源数据集或公共资源）可以在 8 至 12 周的合作期内产生。对于某些项目，可能可以选择延长初始合作期。</p>
+<p>我们知道，大多数感兴趣的开放问题的结果将需要更长的时间来验证，但我们正在寻找能够在相对较短的时间内产生一些初步证据的提案。</p>
+<p>我们不会要求客座调查员在申请中或合作期间向我们提供他们的数据，并且我们要求申请人在其申请材料中仅包含公开信息。</p>
+<p>申请开放时间约为 14 天，我们将努力在申请结束后约 14 天通过电子邮件通知选定的参与者。随着我们更多地了解如何最好地支持科学界，我们期待在未来扩大这一努力。</p>
+<p>该计划是 Anthropic 正在寻求加大对生命科学和更广泛的科学研究界的投资力度的多项举措之一。希望直接访问我们最强大的公开生物学模型的科学家可以申请加入我们的<a href="https://www.anthropic.com/news/life-sciences-verification-program">生命科学验证计划</a>。我们还继续通过我们的 <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science 计划</a> 为研究人员提供支持，该计划为科学家提供 Claude 学分，以加速他们在科学发现方面的进展。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Claude二重奏介绍</title>
       <link>https://claude.com/resources/articles/claude-duet</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-duet</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Claude Duet</description>
+      <content:encoded><![CDATA[<p>今天，我们将开放 Claude Duet 的研究预览版，这是一款新应用程序，Claude 在其中充当主动代理。它会向您提供需要您关注的内容，完成您要求它完成的任务，即使您离开后仍会继续工作，并在代表您采取行动之前与您核实。我们为专业人士和小企业主打造了 Claude Duet，他们的工作量超出了他们的能力范围。</p>
+<p>它可以在 iOS 和 Android 以及 claude.ai 上作为独立应用程序使用。对于本研究预览，Claude Duet 包含在 Pro 和 Max 计划中，并使用与 Claude 的其他部分相同的使用限制。要获得访问权限，请<a href="https://claude.com/product/claude-duet">加入候补名单（在新选项卡中打开）</a>。</p>
+<h2>将注意力放在最重要的地方</h2>
+<p>我们将 Claude Duet 设计为您可以信赖的合作伙伴。各类专业人士每天都必须做出许多决定，我们认为他们会发现 Claude Duet 最有用。它可以帮助您优先考虑将时间和精力花在哪里，并为以前感觉不可能或令人畏惧的雄心勃勃的项目留出空间。</p>
+<p>Claude Duet 之所以如此有帮助，是因为它的判断力。我们围绕 <a href="https://www.anthropic.com/claude-opus-5-5">Claude Opus 5.5（在新选项卡中打开）</a> 进行设计，并将其构建为足智多谋，并决定什么需要您、什么可以等待以及何时首先与您联系。</p>
+<p>每天早上，它都会向您发送有关所连接应用程序中最重要项目的简短摘要。一整天，它都会密切关注这些应用程序，并仅在有事情需要您注意时才向您发送消息。您还可以将各种类型的任务交给它，从安排会议的简单管理任务到更复杂的任务，例如使用数十种工具构建仪表板、创建财务或销售预测、原型设计和构建 Web 应用程序。</p>
+<h2>安全性和谨慎性是内置的</h2>
+<p>Claude Duet 借鉴了我们多年来对代理的安全、保障和隐私工作的经验，包括我们自己的代理和用于运行其代理的基础设施企业：</p>
+<ul><li>Claude Duet 利用了我们的<a href="https://www.anthropic.com/research/trustworthy-agents">值得信赖的代理框架（在新选项卡中打开）</a>，该框架还为 Chrome 中的 Claude Code 和 Claude 等代理提供了指导。</li><li>Claude Duet 对凭据的处理遵循我们用于 <a href="https://www.anthropic.com/engineering/managed-agents">Claude Managed Agents（在新选项卡中打开）</a> 的设计，因此它永远不会直接看到您的密码或登录令牌。</li><li>操作由我们的<a href="https://www.anthropic.com/engineering/claude-code-auto-mode">自动模式分类器（在新选项卡中打开）</a> 批准，同样的保护措施可以保护 Claude 和 Claude Code 不采取您不要求的步骤。</li><li>Claude Duet 对隐藏指令和提示注入的防御来自我们的<a href="https://www.anthropic.com/research/prompt-injection-defenses">浏览器使用研究（在新选项卡中打开）</a>，我们的模型和防护措施也更广泛地涵盖了这一点。</li><li>我们对 Claude Duet 的安全基础设施进行对抗性测试。红队和外部公司渗透测试了 Claude Duet，它由我们的公共 <a href="https://hackerone.com/anthropic">bug 赏金计划（在新选项卡中打开）</a> 涵盖。</li></ul>
+<p><strong>Duet 如何处理敏感信息。</strong> 我们还发布了 Claude Duet，其中包含新的专用分类器和安全系统提示，可检查每条消息并防止敏感信息泄露。为您读取电子邮件和发送消息的代理不断地决定信息的去向。这种新的分类器和提示旨在拒绝共享最严格信息层的请求，包括信用卡号码和政府身份证明。其他敏感信息（例如健康或个人财务）仅在您明确指示 Claude Duet 发送时才会发送。</p>
+<p>我们将继续开发和加强这些保护措施，并将在未来几天分享有关 Claude Duet 的安全设计的更多详细信息。</p>
+<h2>测试人员如何使用 Claude Duet</h2>
+<p>Anthropic 的员工一直在利用 Claude Duet 来完成更多任务，同时也为思考和存在留出更多空间。我们的 Claude Code 团队的领导者 Boris Cherny 在散步时与 Claude Duet 讨论他心里的待办事项清单，而不是把工作留在办公桌上。领导我们的模型和产品行为设计团队的切尔西·拉尔森 (Chelsea Larsson) 在离开与孩子们在一起之前，将她的待办事项清单交给了克劳德·杜埃 (Claude Duet)，并将结果保存到晚间报告中。 Claude Duet 背后的团队使用它来构建产品。该团队的领导者卡兰·阿胡贾 (Karan Ahuja) 与该团队合作安排用户访谈、与他合作开发原型，甚至发布代码。</p>
+<p>我们为小企业主和企业家提供了早期使用 Claude Duet 的机会，其中一些人一直在使用它来帮助经营自己的企业。以下是其中一些人的说法：</p>
+<p><img src="https://assets.claude.com/04a24f1e5f837cd4772f819fdf835bf695d545e0.jpg?w=168&amp;q=75&amp;fm=webp&amp;fit=max" alt=""></p>
+<blockquote>Jess 每天早上都会从 Claude Duet 那里得到一份概要。有一天，在没有询问的情况下，它标记了一处房产，显示该房产在她的日历上的日期是错误的。 “[这]正是我希望无需询问就能抓到的事情，”她说。</blockquote>
+<p>Jess Provencher，Pro Homes 经纪人兼业主</p>
+<p><img src="https://assets.claude.com/28f5d3327f8406423e470308445e55db43409b73.jpg?w=168&amp;q=75&amp;fm=webp&amp;fit=max" alt=""></p>
+<blockquote>Amin 在南佛罗里达拥有 Shahs of Kabob，拥有约 110 名员工。他使用 Claude Duet 进行会计、客户支持和营销，并逐家处理他的发票。 “它将所有这些结合在一起，”他说。 “我不需要打开 100 个标签。”</blockquote>
+<p>阿明·易卜拉希米 (Amin Ebrahimi)，Shahs of Kabob 老板</p>
+<p><img src="https://assets.claude.com/f1e82e9c902af913a2d794c587841fdf39cfda50.jpg?w=168&amp;q=75&amp;fm=webp&amp;fit=max" alt=""></p>
+<blockquote>Mya 接到一个电话，介绍一位潜在客户。克劳德·杜埃在她的日历上看到了这一点，并准备了一份简报。它还注意到她的航班即将起飞前接到了电话，并提出将其转移。 “我没有意识到那是在我的航班起飞之前，”她说。 “我喜欢这种主动性。”</blockquote>
+<p>米亚·道尔顿 (Mya Dalton)，品牌策略师</p>
+<h2>克劳德二重唱如何运作</h2>
+<p><strong>Claude 的背景是基础。</strong> Claude Duet 会继承您的 Claude 帐户中的记忆、技能和连接的应用程序，因此设置它只需很少的工作。改变的是你们的合作方式：Claude Duet 首先来找您，您可以在一个正在进行的线程中通过打字或语音向其发送消息，因此快速回复和为期一周的项目都在同一个地方开始。</p>
+<p><strong>当您离开时，工作仍在继续。</strong> Claude Duet 有一个带有自己的浏览器的虚拟机，因此不需要您的笔记本电脑或手机处于打开状态。在短信中描述一项任务，它会计算出要使用哪些应用程序以及在后台执行哪些步骤。当任务完成或需要您审核时，您会收到通知。</p>
+<p><strong>当有需要时收到消息。</strong> Claude Duet 每隔几个小时检查一次您连接的帐户，因为不间断检查会更快地用完您的计划的限额。我们正在继续测试它对何时向您发送消息的判断，并且我们将根据测试人员告诉我们的内容不断调整它。您还可以告诉它您想听什么以及多久听一次。</p>
+<p><strong>重要决定由您决定。</strong> Claude Duet 自行阅读、起草和准备工作。但在它发送消息、付款、签署文档或删除任何内容之前，它会准确地向您显示它将要执行的操作并等待您的批准。即使经过您的批准，有些事情也是禁止的，例如交易证券或在账户之间转移资金。您还可以断开 Claude Duet 有权访问的任何应用程序。</p>
+<p><strong>与您的业务运行所用的工具连接。</strong> Claude Duet 可以使用 <a href="https://claude.com/marketplace/connectors-plugins">Claude Marketplace（在新选项卡中打开）</a> 中的 6,000 多个连接器和插件来：</p>
+<ul><li>查找您错过的 Gmail 和 Slack 消息并帮助您回复。</li><li>检查 Intuit QuickBooks 或 Stripe 是否有未付发票和草稿提醒。</li><li>在 Gusto 中准备和运行工资单，填写工时、奖金和报销。</li><li>起草职位发布，编辑并批准后将其发布到 LinkedIn。</li><li>帮助准备协议并通过 Docusign 发送以供审核和签名。</li><li>使用 HubSpot 中的联系和交易历史记录起草后续电子邮件。</li><li>在 Canva 中将您的产品发布变成一场社交活动。</li><li>设置、设计和管理您的 Shopify 商店。即将推出的更丰富的可视化编辑器将允许您设计店面并在任何内容上线之前预览它。</li></ul>
+<p>您还可以使用 Claude Duet 通过 Stripe 的数字钱包 Link 为您的企业购买物品。 Claude Duet 与您确认该项目，Link 要求您批准支出。然后它会使用虚拟卡进行支付，因此您的真实卡号不会被共享。它还可以使用 Shopify 的 Shop Pay 在在线商店结账。很快，在您的许可下，它将能够使用您在 1Password 中保存的登录信息登录网站。</p>
+<p><img src="https://assets.claude.com/c3618d5ce675bcaa9716a06d180879c2b94161c3.png" alt="与 Claude Duet 配合使用的应用程序徽标"></p>
+<h2>加入研究预览</h2>
+<p>这是 Claude Duet 的早期版本，它仍然可能会误读线程或错误校准紧急事项。我们围绕工作构建了它的核心功能，因此个人事务（例如订票）不太强大，而且它还无法向您显示其浏览器。目前，Claude Duet 运行在自己的应用程序中，与主 Claude 应用程序分开。我们从早期用户那里学到的东西将决定两者如何协同工作。</p>
+<p>在研究预览期间，Claude Duet 与 Claude 的其他人分享您的计划的使用限制，并且它使用这些限制的方式与典型对话的方式不同。它的背景调查会计入这些限制，而更大的任务，比如构建财务模型或套牌，需要更多的模型转变和后台工作。</p>
+<p>我们从今天开始面向美国的 Pro 和 Max 用户。加入<a href="https://claude.com/product/claude-duet">候补名单（在新选项卡中打开）</a>，一旦 Claude Duet 准备好，我们就会向您发送电子邮件。</p>
+<p>文章</p>
+<p>2026 年 10 月 21 日</p>
+<h3>HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</h3>
+<p>HCLTech 将把 Claude 引入其为银行、医院、电信公司和制造商提供的解决方案中。</p>
+<p>文章</p>
+<p>2026 年 10 月 21 日</p>
+<h3>Claude Security 现在连续扫描并跟踪修复</h3>
+<p>Claude Security 现在可以在代码更改时跟踪您的存储库，跟踪发现的问题直至修复，从您的团队添加的上下文中学习，并通过 API 和 MCP 连接到您的工具。面向 Claude Enterprise 客户提供公开测试版。</p>
+<p>克劳德安全</p>
+<p>文章</p>
+<p>2026 年 10 月 15 日</p>
+<h3>代码审查现已普遍可用</h3>
+<p>在投入生产之前捕获更多错误。</p>
+<p>克劳德·科德</p>
+<p>文章</p>
+<p>2026 年 10 月 8 日</p>
+<h3>与 Claude 一起构建实时仪表板和动画解释器</h3>
+<p>Claude Dashboards 和 Claude Motion 目前处于测试阶段。文档、幻灯片和设计都已经过测试版，并且包含在每个 Claude 计划中，包括免费计划。</p>
+<p>克劳德应用程序</p>
+<p>克劳德设计</p>
+<p>还有 2 个</p>
+<p>：克劳德·科沃克和克劳德·代码</p>
+<p>克劳德·科沃克克劳德·代码</p>
+<h2>与 Claude 一起改变您的组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
+<h3>获取开发者通讯</h3>
+<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
+<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>HCLTech joins the Claude Partner Network as a Global Premier…</title>
+      <title>HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</title>
       <link>https://claude.com/resources/articles/hcltech-joins-claude-partner-network</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/hcltech-joins-claude-partner-network</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：HCLTech joins the Claude Partner Network as a Global Premier partner</description>
+      <description>原文标题：HCLTech joins the Claude Partner Network as a Global Premier partner</description>
+      <content:encoded><![CDATA[<p>Anthropic 正在与 <a href="https://www.hcltech.com/">HCLTech（在新选项卡中打开）</a> 合作，这是一家在 60 个国家/地区拥有超过 230,000 名员工的全球科技公司。 HCLTech 将通过专门的人类业务部门和卓越中心为客户构建 Claude 代理解决方案，将 Claude 嵌入 HCLSoftware 产品中，并将 Claude 和 Claude Code 集成到 AI Force（该平台用于为客户运行 IT 服务）中。 HCLTech 成为 Claude 合作伙伴网络中的<a href="https://claude.com/partners">全球首要合作伙伴（在新选项卡中打开）</a>。</p>
+<p>HCLTech 为金融服务、制造、生命科学和医疗保健、技术、半导体、电信和媒体、零售和消费品、以及移动和公共服务提供解决方案。在这些环境中，错误的代价是昂贵的，并且每项更改都需要经过审查、记录和批准。此次合作的目的是让 Claude 参与针对这些环境设计的控件的工作。</p>
+<h2><strong>HCLTech 如何让 Claude 投入工作</strong></h2>
+<p>HCLTech 正在将 Claude 引入其在三个地方的业务，并在每个地方设计护栏和人工审核。</p>
+<ul><li><strong>专门的人类业务部门和卓越中心。</strong> HCLTech 的前沿部署工程师将建立安全的沙箱环境，客户可以在部署之前针对自己的系统和数据测试 Claude。该中心将培训客户员工，帮助工程团队采用人工智能原生实践，并建立组织控制以大规模安全运行代理。</li><li><strong>Claude 在 HCLSoftware 产品中。</strong> HCLSoftware 成为 Anthropic 独立软件供应商 (ISV) 合作伙伴，并将把 Claude 嵌入网络安全、自动化、业务流程应用程序和应用程序开发的精选产品中。第一个是用于端点管理的 HCL BigFix、用于应用程序安全测试的 HCL AppScan 以及用于数据和分析的 Actian AI 分析师。</li><li><strong>AI Force 中的 Claude 和 Claude Code。</strong> AI Force 是 HCLTech 为其服务的企业提供 IT 支持、代码修复和数字员工服务的方式。 Claude 和 Claude Code 进入该平台，提供政策护栏、异常处理和对高影响力变更的人工监督。代理负责处理日常工作，HCLTech 工程师负责审查和批准任何涉及客户生产系统的事情。</li></ul>
+<p>“很少有科技公司能够将全球系统集成商的规模与 ISV 的产品深度结合起来，”HCLTech 首席执行官兼董事总经理 C Vijayakumar 说道。 “这为我们提供了难得的优势，可以安全地大规模设计和部署 Agentic AI，并交付对我们的客户最重要的业务成果。我们与 Anthropic 的合作进一步增强了我们实现这一目标的能力。”</p>
+<p>Anthropic 联合创始人兼总裁 Daniela Amodei 表示：“人工智能只有值得信赖才能发挥作用，我们打造 Claude 是为了让公司有信心将其运用到最敏感和最有价值的工作中。” “HCLTech 为银行、医院、电信公司和制造商管理此类系统，我们很高兴与他们合作，帮助他们集成 Claude 和 Claude Code。这种合作伙伴关系以及我们对共同提高能力和安全性的更广泛承诺，是人工智能将如何改变整个行业的运行方式，使其变得更好。”</p>
+<p>要了解有关与 Anthropic 合作伙伴合作的更多信息，请访问 <a href="https://claude.com/partners">Claude 合作伙伴网络（在新选项卡中打开）</a>。</p>
+<p>文章</p>
+<p>2026 年 10 月 21 日</p>
+<h3>介绍克劳德二重奏</h3>
+<p>今天，美国 Pro 和 Max 订阅者可以通过候补名单获得研究预览。</p>
+<p>文章</p>
+<p>2026 年 10 月 21 日</p>
+<h3>Claude Security 现在连续扫描并跟踪修复</h3>
+<p>Claude Security 现在可以在代码更改时跟踪您的存储库，跟踪发现的问题直至修复，从您的团队添加的上下文中学习，并通过 API 和 MCP 连接到您的工具。面向 Claude Enterprise 客户提供公开测试版。</p>
+<p>克劳德安全</p>
+<p>文章</p>
+<p>2026 年 10 月 15 日</p>
+<h3>代码审查现已普遍可用</h3>
+<p>在投入生产之前捕获更多错误。</p>
+<p>克劳德·科德</p>
+<p>文章</p>
+<p>2026 年 10 月 8 日</p>
+<h3>与 Claude 一起构建实时仪表板和动画解释器</h3>
+<p>Claude Dashboards 和 Claude Motion 目前处于测试阶段。文档、幻灯片和设计都已经过测试版，并且包含在每个 Claude 计划中，包括免费计划。</p>
+<p>克劳德应用程序</p>
+<p>克劳德设计</p>
+<p>还有 2 个</p>
+<p>：克劳德·科沃克和克劳德·代码</p>
+<p>克劳德·科沃克克劳德·代码</p>
+<h2>与 Claude 一起改变您的组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
+<h3>获取开发者通讯</h3>
+<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
+<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Claude Security now scans continuously and tracks fixes</title>
+      <title>Claude Security 现在连续扫描并跟踪修复</title>
       <link>https://claude.com/resources/articles/claude-security-now-scans-continuously-and-tracks-fixes</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-security-now-scans-continuously-and-tracks-fixes</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Claude Security now scans continuously and tracks fixes</description>
+      <content:encoded><![CDATA[<p>自从 <a href="https://claude.com/product/claude-security">Claude Security</a> 四月份进入公开测试版以来，数千个组织已使用它发现了超过一百万个漏洞。</p>
+<p>现在，Claude Security 不再需要等待某人开始扫描，而是可以在代码更改时跟踪您的存储库，跟踪哪些结果已得到修复，并使用您的团队告知的有关您的环境的信息来决定什么是重要的。 Claude Security 由我们全系列的模型（包括 Claude Mythos）提供支持，无需访问网络验证程序。</p>
+<p>最新版本的 Claude Security 现已面向 Claude Enterprise 客户推出公开测试版。组织每月可获得 25,000 美元的免费使用积分，为期两个月。该优惠适用于 2026 年 12 月 31 日之前的使用。您可以在<a href="https://support.claude.com/en/articles/14661296-use-claude-security">帮助中心</a>查看完整条款。</p>
+<h2><strong>持续监控与您的代码保持同步</strong></h2>
+<p>扫描捕捉一瞬间，代码每天都在变化。团队告诉我们，他们希望报道能够保持最新状态，而无需任何人安排。</p>
+<p>创建一个项目，通过 Claude GitHub 应用程序（包括 GitHub Enterprise Server）或使用来自 GitLab 和其他 Git 提供商的访问令牌连接您的存储库，然后为每个存储库选择分支和范围。 Claude 运行深度基线扫描，然后根据风险和复杂性定期扫描更改，以便您的发现列表保持接近代码的当前状态。</p>
+<p>一个项目可以拥有多个存储库，因此 Claude 可以捕获服务之间存在的问题，例如信任客户端应该验证的输入的后端。</p>
+<p><img src="https://assets.claude.com/fe39204ec42e8d48c853bf16bb08bdb19bf99a22.png" alt="克劳德安全用户界面"></p>
+<h2><strong>当修复发布时，调查结果被标记为已修复</strong></h2>
+<p>大多数修复都是在发现问题的工具之外进行的。 Claude Security 会根据已更改的代码检查未解决的问题，并在修复完成后将其标记为已修复，无论您的团队是在 Claude 代码中还是在单独的流程中修复了该问题。如果 Claude Security 稍后再次发现该问题，则会自动重新打开该发现。</p>
+<p><img src="https://assets.claude.com/579a7fb43c95d281cf38ba2dafca75eea40a7058.png" alt="克劳德安全用户界面"></p>
+<h2><strong>您团队的知识塑造扫描</strong></h2>
+<p>每个环境都有扫描器无法仅从代码中看到的控件。团队想要一种方法来告诉 Claude Security 有关这些控制的信息，并查看相互依赖的服务。现在，每个项目都有一个知识库，您可以在其中描述如何部署代码、应用哪些安全策略以及团队中的新安全工程师需要了解的任何内容。</p>
+<p><img src="https://assets.claude.com/440f4c1037a629695ec66eb0a17c218782b51d35.png" alt="克劳德安全用户界面"></p>
+<p>Claude Security 还会根据您的代码生成威胁模型，您的团队可以审查和编辑。后续扫描使用这些威胁模型来决定哪些内容值得标记。添加的上下文还可以帮助 Claude Security 跳过您的环境已处理的风险。</p>
+<h2><strong>每个发现的严重性和利用路径</strong></h2>
+<p>每个发现都带有严重性评级，根据项目的威胁模型进行判断，并解释攻击者如何访问易受攻击的代码，以便团队可以首先修复实际可访问的内容。调查结果可以包括攻击路径图。</p>
+<p><img src="https://assets.claude.com/58c85ec0105dd3b16b367ae71e70c14db55e6d4f.png" alt="克劳德安全用户界面"></p>
+<h2><strong>调查结果到达您的工具，并控制更大规模的部署</strong></h2>
+<p>新的 API 允许您将 Claude Security 集成到现有的工作流程中。您可以列出和阅读项目和发现、解决或重新打开发现以及创建和管理项目及其存储库。用户可以在 Claude Security 设置中创建个人访问令牌，它只能查看和更改用户可以查看和更改的内容。当有新发现时，Webhook 还可以通知您的系统。</p>
+<p>Claude Security 还可作为 <a href="http://claude.ai">Claude.ai</a> 和 Claude Code 中的 MCP 连接器使用。工程师可以调出一个发现，向克劳德询问，开始修复，并在同一会话中将其标记为已解决。</p>
+<p>新的基于角色的访问控制让管理员可以决定谁可以查看项目、对结果进行分类以及创建项目。组织可以向更多拥有代码的团队开放 Claude Security，而无需授予每个人创建项目的权限。</p>
+<h2><strong>入门</strong></h2>
+<p>从今天开始，最新版本的 <a href="http://claude.ai/security">Claude Security</a> 面向 Claude Enterprise 客户提供公开测试版。管理员可以在管理控制台中启用它并设置团队中的哪些人可以访问它。</p>
+<p>使用<a href="https://academy.claude.com/tutorials/getting-started-with-claude-security">入门指南</a>设置您的第一个项目，并访问<a href="https://support.claude.com/en/articles/14661296-use-claude-security">帮助中心</a>了解更多详细信息。</p>
+<p><em>组织每月可获得 25,000 美元的免费使用积分，为期两个月。该优惠适用于 2026 年 12 月 31 日之前的使用。您可以在<a href="https://support.claude.com/en/articles/14661296-use-claude-security">帮助中心</a>查看完整条款。</em></p>
+<blockquote>“Claude Security 发现了同时进行的传统渗透测试遗漏的许多重大问题，其中一些问题如果在野外被利用，将会产生重大影响。”</blockquote>
+<p>Jon Donovan，IonQ 软件工程师</p>
+<blockquote>“Claude Security 扫描了我们的代码一次以设置基线。现在它可以跟上我们代码的变化，我们的团队可以直接在 Claude 中修复问题，而不是切换到其他工具。”</blockquote>
+<p>Jake Meredith，Gusto 产品安全</p>
+<blockquote>“API 和 MCP 的添加改变了游戏规则，并将成为 IonQ 产品安全团队进一步实施 Claude Security 的前进道路。”</blockquote>
+<p>Joe Coniglio，IonQ 安全工程师</p>
+<blockquote>“Claude Security 发现了许多我们其他工具无法发现的逻辑缺陷。一旦我们将自己的风险策略写入威胁模型，重点关注外部用户实际可以到达的内容，结果就会与我们的优先级匹配，而不仅仅是严重性评分”</blockquote>
+<p>Nathan Hunstad，Vanta 安全总监</p>
+<blockquote>“Claude Security 发现了同时进行的传统渗透测试遗漏的许多重大问题，其中一些问题如果在野外被利用，将会产生重大影响。”</blockquote>
+<p>Jon Donovan，IonQ 软件工程师</p>
+<blockquote>“Claude Security 扫描了我们的代码一次以设置基线。现在它可以跟上我们代码的变化，我们的团队可以直接在 Claude 中修复问题，而不是切换到其他工具。”</blockquote>
+<p>Jake Meredith，Gusto 产品安全</p>
+<blockquote>“API 和 MCP 的添加改变了游戏规则，并将成为 IonQ 产品安全团队进一步实施 Claude Security 的前进道路。”</blockquote>
+<p>Joe Coniglio，IonQ 安全工程师</p>
+<blockquote>“Claude Security 发现了许多我们其他工具无法发现的逻辑缺陷。一旦我们将自己的风险策略写入威胁模型，重点关注外部用户实际可以到达的内容，结果就会与我们的优先级匹配，而不仅仅是严重性评分”</blockquote>
+<p>Nathan Hunstad，Vanta 安全总监</p>
+<blockquote>“Claude Security 发现了同时进行的传统渗透测试遗漏的许多重大问题，其中一些问题如果在野外被利用，将会产生重大影响。”</blockquote>
+<p>Jon Donovan，IonQ 软件工程师</p>
+<blockquote>“Claude Security 扫描了我们的代码一次以设置基线。现在它可以跟上我们代码的变化，我们的团队可以直接在 Claude 中修复问题，而不是切换到其他工具。”</blockquote>
+<p>Jake Meredith，Gusto 产品安全</p>
+<p>1/4</p>
+<p>文章</p>
+<p>2026 年 10 月 21 日</p>
+<h3>HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</h3>
+<p>HCLTech 将把 Claude 引入其为银行、医院、电信公司和制造商提供的解决方案中。</p>
+<p>文章</p>
+<p>2026 年 10 月 21 日</p>
+<h3>介绍克劳德二重奏</h3>
+<p>今天，美国 Pro 和 Max 订阅者可以通过候补名单获得研究预览。</p>
+<p>文章</p>
+<p>2026 年 10 月 15 日</p>
+<h3>代码审查现已普遍可用</h3>
+<p>在投入生产之前捕获更多错误。</p>
+<p>克劳德·科德</p>
+<p>文章</p>
+<p>2026 年 10 月 8 日</p>
+<h3>与 Claude 一起构建实时仪表板和动画解释器</h3>
+<p>Claude Dashboards 和 Claude Motion 目前处于测试阶段。文档、幻灯片和设计都已经过测试版，并且包含在每个 Claude 计划中，包括免费计划。</p>
+<p>克劳德应用程序</p>
+<p>克劳德设计</p>
+<p>还有 2 个</p>
+<p>：克劳德·科沃克和克劳德·代码</p>
+<p>克劳德·科沃克克劳德·代码</p>
+<h2>与 Claude 一起改变您的组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
+<h3>获取开发者通讯</h3>
+<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
+<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Physicist Christopher Stubbs joins Anthropic&apos;s Long-Term Ben…</title>
+      <title>物理学家克里斯托弗·斯塔布斯 (Christopher Stubbs) 加入 Anthropic 的长期利益信托基金</title>
       <link>https://www.anthropic.com/news/christopher-stubbs-joins-long-term-benefit-trust</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/christopher-stubbs-joins-long-term-benefit-trust</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Physicist Christopher Stubbs joins Anthropic&apos;s Long-Term Benefit Trust</description>
+      <description>原文标题：Physicist Christopher Stubbs joins Anthropic&apos;s Long-Term Benefit Trust</description>
+      <content:encoded><![CDATA[<p>实验物理学家、哈佛大学前科学院长克里斯托弗·斯塔布斯 (Christopher Stubbs) 博士已加入 Anthropic 的长期利益信托基金。他为信托基金带来了数十年在观测宇宙学和精密测量方面的科学专业知识。他还就国家安全和军备控制向美国政府提供建议。</p>
+<p>Stubbs 表示：“我很荣幸加入 Anthropic 的长期利益信托基金并帮助该公司履行其公益使命。” “我每天在研究中使用人工智能工具，看看它们能带来什么，作为一名教育者，我遇到了它们提出的一些难题。作为祖父，我想帮助确保人工智能的开发和部署是为了人类的长期利益。”</p>
+<p>斯塔布斯是哈佛大学物理学和天文学塞缪尔·C·蒙彻教授，并于 2018 年至 2024 年担任该校理学院院长。1998 年，作为高 Z 超新星搜索团队的成员，他帮助发现了宇宙的加速膨胀，这项工作后来为该团队赢得了基础物理学突破奖。他还是现在的维拉·C·鲁宾天文台的首任项目科学家，该天文台于 6 月开始对南方天空进行为期 10 年的调查。其目标之一是研究他帮助发现的加速扩张。</p>
+<p>最近，他写了一篇关于当模型对同一问题给出不同答案时如何保持人工智能辅助研究的可重复性的文章。他是 JASON 的成员，JASON 是一个独立的科学家团体，自 1960 年以来一直为美国政府提供国防和技术方面的建议。</p>
+<p>Anthropic 联合创始人兼总裁 Daniela Amodei 表示：“当 Chris 发现宇宙正在以意想不到的速度膨胀的证据时，他和他的团队遵循了这些数据，即使这些数据违背了该领域的普遍观点。随着人工智能开始改变科学本身的运作方式，Chris 的学术诚实、严谨和对真理的承诺是我们塑造这项技术未来所希望的价值观，我很感激他将自己深厚的专业知识带到了信托基金。”</p>
+<p>Anthropic 是一家公益公司，这意味着我们的结构旨在平衡商业增长与公益目的。该信托的存在是为了帮助我们长期保持这种平衡。它有权任命 Anthropic 董事会的大多数成员，受托人就关键决策向董事会和我们的领导层提供建议，特别是涉及人工智能风险和社会影响的决策。</p>
+<p>本周，我们发布了第一份<a href="https://www.anthropic.com/public-benefit-charter">公共利益报告</a>，这是一个公共账户，介绍了我们如何努力实现我们的宪章以及我们的不足之处。受托人帮助定义了衡量我们的五个宪章支柱，报告以他们对我们迄今为止取得的进展的评估作为结束。经股东批准，我们还承诺将 Anthropic 的部分股份拨给 <a href="https://www.anthropic.com/news/public-benefit-fund">Anthropic 公共福利基金</a>，这是一个新实体，其结构会随着公司的发展而增加股份。</p>
+<p>长期利益信托基金主席 Neil Buddy Shah 补充道：“帮助世界安全地构建强大的人工智能并确保其有意义地改善人们的生活，既取决于对科学的深刻理解，也取决于诚信的领导。” “Chris 不仅致力于解决科学中一些最困难的问题，而且一直是学术界、政府和国家实验室大型、复杂、协作科学事业的高度诚信的领导者。这对信托基金来说具有巨大的价值，因为我们支持 Anthropic 开发人工智能，以造福人类的长期利益。”</p>
+<p>该信托基金的第一位物理学家斯塔布斯加入了沙阿、国家安全专家理查德·方丹和前美联储主席本·伯南克的行列。受托人独立于公司管理层和投资者。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Investing in the public benefit</title>
+      <title>投资公益</title>
       <link>https://www.anthropic.com/news/public-benefit-fund</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/public-benefit-fund</guid>
       <pubDate>Sun, 18 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Investing in the public benefit</description>
+      <content:encoded><![CDATA[<p>今天，我们将 Anthropic 的部分股份捐赠给 Anthropic 公共福利基金，这是一个新实体，其结构会随着公司的发展而增加股份。经股东批准，今天将承诺认购 5% 的 Anthropic 股份，公司价值每增加 50%，董事会可酌情增持 2%。</p>
+<p>作为一家公益公司，我们追求使命的大部分工作都在公司内部进行：与人工智能安全性和可解释性相关的研究；应用生物医学研究；克劳德为非营利组织和科研机构提供的折扣。这些活动既具有公共利益成分，又具有营利价值，因此我们将它们直接安置在公司内。</p>
+<p>人类公益基金将具有更大的灵活性和规模，使我们能够以新的方式追求我们的使命：例如，我们可能会探索向传统非营利组织提供大量捐款或直接分配给特定人群。</p>
+<p>一个例子是劳动力市场的影响。人工智能可能会产生巨大的经济价值，但也可能给许多工人带来不稳定。 Anthropic 已投入 <a href="https://www.anthropic.com/news/economic-futures-research-fund-agenda">2 亿美元</a> 研究和解决这一问题，但考虑到人工智能的进步步伐，可能需要更大胆的方法。该基金将具有多种能力来实现这些目标。</p>
+<p>我们正在将人类公共福利基金建立为一家全资有限责任公司，而不是 501(c)(3) 或其他形式，以便在不同的捐赠形式之间提供调整。 LLC 持有的 Anthropic 股权不会用于在美国或国外进行游说或政治捐赠。</p>
+<p>由于基金的结构方式，Anthropic 的增长越多，公司可专门用于公共利益的份额就越大。科技公司向高管提供不断升级的薪酬奖励是常见的做法。相反，我们将这种公平用于公共利益。</p>
+<p>这是建立在我们的联合创始人和员工已经做出的承诺的基础上的。 Anthropic成立时，我们的联合创始人承诺捐赠80%的股权，自成立以来我们还运营了一项股权捐赠匹配计划，允许员工质押与Anthropic匹配的股权。我们大约一半的员工参加了该计划。结合今天的公告，大约 20% 的 Anthropic 股票将专门用于公共利益，再加上公司达到特定估值里程碑时可能增加的任何额外百分比。</p>
+<p>在接下来的几个月中，我们将分享更多有关人类公益基金的结构和治理的信息，包括可能增加其股份的估值里程碑。我们还将在即将发布的公益报告中报告迄今为止我们在履行使命方面取得的进展。</p>]]></content:encoded>
     </item>
     <item>
       <title>Anthropic 日本的一位 BDR，如何带着一队 Claude 智能体过一天</title>
@@ -160,10 +546,37 @@
 <p>如果你希望收到我们每月的开发者新闻信，请填写你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
-      <title>An update on independent evaluators</title>
+      <title>独立评估员的最新情况</title>
       <link>https://www.anthropic.com/news/an-update-on-independent-evaluators</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/an-update-on-independent-evaluators</guid>
       <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：An update on independent evaluators</description>
+      <content:encoded><![CDATA[<p>上个月，我们承诺对我们的模型和安全实践进行<a href="https://darioamodei.com/post/we-must-pace-the-frontier">更强有力的独立第三方评估</a>。我们还签署了《超级情报白宫协议》，其中公司承诺与独立的外部审计员或评估员合作。今天，我们宣布，我们已开始为 <a href="https://metr.org/">METR</a> 的团队提供类似员工的访问权限，这是一个评估前沿人工智能模型的非营利组织。</p>
+<p>METR 将公布其风险评估结果。在过去的一年里，我们与 METR 合作<a href="https://metr.org/risk-assessment/">对我们的风险报告进行了多次审查</a>。我们还与 <a href="https://securebio.org/">SecureBio</a> 和 <a href="https://www.anthropic.com/news/accenture-embedded-evaluation">Accenture</a> 作为评估者合作，并与 <a href="https://huggingface.co/">Hugging Face</a> 等其他几个组织进行早期讨论。</p>
+<p>在这里，我们解释了我们与评估人员合作的方法。</p>
+<h2>为什么我们与独立评估员合作</h2>
+<p>随着模型变得越来越强大，它们需要更强大的保障措施和更具挑战性的风险评估。我们希望对我们所做的决定公开负责。但我们无法公开分享与我们安全工作相关的所有信息。其中一些可能对恶意行为者有用，或者具有商业敏感性，例如计算或培训信息。相反，我们让第三方评估者深入访问我们的信息，并让他们分享有关构建模型所涉及风险的证据和合理结论。我们的目标是缩小评估者对前沿人工智能公司系统的理解与公司本身的理解之间的差距。</p>
+<p>为了评估前沿模型，评估者需要以下内容：</p>
+<ul><li>评估前沿模型能力的<em>专业知识</em>，包括了解评估可能出错的方式，例如<a href="https://www.anthropic.com/research/alignment-faking">对齐伪造</a>。</li><li><em>独立</em>：他们不应持有所评估公司的股权，也不应在财务或运营上依赖该公司。</li><li>足够的<em>访问</em>来有意义地评估风险。除了访问最新模型之外，评估人员还需要了解这些模型的训练方式、我们的保障措施如何发挥作用等等。</li><li><em>自由发布</em>模型或过程的观察和评估。</li></ul>
+<p>尽管类比并不准确，但银行监管的运作逻辑类似。银行比外部人士更了解自己的风险状况，因此监管机构指派常驻审查员在最大的银行内部工作。如果银行的风险承担可能威胁公众，第三方就会试图提前发现这一点。</p>
+<p>对于人工智能行业来说，这是迈向<a href="https://www-cdn.anthropic.com/files/4zrzovbb/website/0a58d567024a8b448ff15158ebc3625328dfcc1f.pdf">强大的安全监督</a>的一步。我们正在与多个评估者快速合作，并积极了解什么样的合作伙伴关系有效。我们致力于随时分享最新动态。</p>
+<h2>“类似员工的访问”是什么意思</h2>
+<p>我们已经为六名 METR 员工提供了公司硬件、办公空间以及内部工具和系统的访问权限，这些与我们自己的风险评估团队可以访问的内容大致相同。除了少数明确定义的类别（例如，有关客户的数据、律师-委托人特权信息或有关我们的模型架构的信息）之外，我们鼓励 Anthropic 员工与他们分享信息，就像与处理一致性风险的同事分享信息一样。<a href="https://www.anthropic.com/news/an-update-on-independent-evaluators#footnote-1">1</a></p>
+<p>METR 将发布对我们的风险级别、事件或实践的分析。 Anthropic 不能否决发布，但如果信息属于预定义类别（例如复制机密知识产权），我们可以要求他们编辑信息。 （Anthropic 最终决定哪些信息属于这些类别，哪些信息不属于这些类别，尽管 METR 保留对其所收到的访问级别和信息做出某些声明的权利。）<a href="https://www.anthropic.com/news/an-update-on-independent-evaluators#footnote-2">2</a></p>
+<p>我们与 METR 的合作仅限于根据可执行协议运作的小团队。其他 METR 员工与该团队的工作隔离，包括与我们一起从事其他项目的研究人员。嵌入式评估让一些在 Anthropic 安全标准下工作的合格人员能够近距离了解我们的运营方式。这不是其他组织获取我们或我们的客户和合作伙伴的信息的方式。</p>
+<h2>我们的其他评估合作伙伴</h2>
+<p>我们正在建立其他几个合作伙伴关系。由于这些其他合作伙伴关系仍处于早期阶段，我们为这些评估者提供的信息更加有限，他们的出版权也更加有限。我们这些早期合作的目标是确保我们的合作伙伴保护机密信息并拥有评估我们模型所需的资源和专业知识。随着伙伴关系的进展和我们建立信任，我们希望充分融入更多的独立评估者。</p>
+<p>我们正在为评估者开发三层访问权限。随着时间的推移，我们希望在第三层有几位评估员，每个团队都会发布自己对我们的风险状况和关键决策的分析。</p>
+<p><strong>在第一层，</strong>评估人员进行小范围的风险调查。我们决定向一级评估员提供哪些访问权限，评估员可以在我们批准的情况下发布他们的调查结果。</p>
+<p><strong>在第二层，</strong>评估者可以在未经我们批准的情况下发布，并且他们可以获得更多信息。我们仍然可以要求删除特定类别的信息，尽管评估者可以发表他们对我们的编辑是否合理的看法。</p>
+<p><strong>第三层</strong>是我们与 METR 描述的安排，具有与第二层类似的员工访问权和出版权。</p>
+<p><strong>SecureBio </strong>正在审查我们的 <a href="https://www-cdn.anthropic.com/f61d49fa5596956a5dec75fea0e973bf6a6a8378/Redacted%20Risk%20Report%20August%202026%20.pdf">8 月风险报告</a> 的化学和生物武器章节，完成并<a href="https://securebio.org/resources/anthropic_feb_2026_risk_review.pdf">发布我们之前的风险报告的试点审查</a>。审核完成后，我们将考虑转向访问权限增加的项目。<a href="https://www.anthropic.com/news/an-update-on-independent-evaluators#footnote-3">3</a></p>
+<p><strong>与埃森哲 </strong>和教员一起，我们正在努力<a href="https://www.anthropic.com/news/accenture-embedded-evaluation">建立雄心勃勃的合作伙伴关系</a>，其中包括评估和红队模型、进行一致性评估、测试模型保障措施以及在我们的组织中构建能力。</p>
+<p>我们自愿嵌入评估人员，我们相信每个前沿人工智能公司都应该这样做。</p>
+<h2>脚注</h2>
+<p>01由于这些评估员（如银行审查员）也可能与其他公司合作，因此我们对无意泄露的可能性保持谨慎。有关架构的信息存在无意泄漏的高风险，并且其与风险评估的相关性通常较低。当它高度相关时，我们通常会寻求分享它，尽管这需要明确的内部批准。</p>
+<p>0210 月 16 日更新，澄清 METR 当前与 Anthropic 的项目条款。</p>
+<p>0310 月 15 日更新，澄清 SecureBio 目前与 Anthropic 的项目条款。</p>]]></content:encoded>
     </item>
     <item>
       <title>在 Claude Platform 上用 OpenTelemetry 追踪 agent</title>
@@ -240,17 +653,69 @@
 <p>如果你希望收到我们每月的开发者通讯，请提供你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Preparing for the 2026 US midterms</title>
+      <title>为 2026 年美国中期选举做准备</title>
       <link>https://www.anthropic.com/news/2026-us-midterms</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/2026-us-midterms</guid>
       <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Preparing for the 2026 US midterms</description>
+      <content:encoded><![CDATA[<p>今年早些时候，我们分享了<a href="https://www.anthropic.com/news/election-safeguards-update">选举保障措施的更新</a>，其中描述了我们如何衡量和防止政治偏见、检测滥用以及引导人们获取准确的投票信息。</p>
+<p>下面，我们概述了我们如何在这项工作的基础上继续加强我们在今年美国中期选举之前的选举保障措施。</p>
+<h3>人们如何利用克劳德进行选举和政治</h3>
+<p>我们的目标是让克劳德成为政治对话的有用工具，同时防止与选举相关的滥用行为。首先要了解人们在这些情况下如何实际使用克劳德。为此，我们使用 Anthropic Insights 对最近一周内的 250,000 个对话进行了新的分析。<a href="https://www.anthropic.com/news/2026-us-midterms#footnote-1">1</a></p>
+<p>如今，广泛涉及政治、公共政策或社会问题的对话约占美国消费者应用程序 Claude.ai 上所有对话的 5.75%。这包括人们求助于克劳德来关注新闻、进行公共政策的学术或专业研究、了解候选人以及导航政府服务。大约 0.51% 的对话专门与选举或投票有关。随着选举日的临近，我们预计政治和选举相关查询的比例将会<a href="https://www.anthropic.com/news/elections-ai-2024">增加</a>。</p>
+<p>这个样本表明人们很少问克劳德该投票给谁或什么。此类请求出现在美国克劳德对话中约 0.01% 中。更常见的是，我们观察到人们向克劳德提出问题，这些问题可以帮助他们得出自己的结论，比如候选人在某个特定问题上的立场。违反我们的<a href="https://www.anthropic.com/legal/aup">选举诚信政策</a>的请求甚至更少见，出现在大约 0.002% 的对话中。<a href="https://www.anthropic.com/news/2026-us-midterms#footnote-2">2</a></p>
+<p><strong>美国 Claude.ai 有多少对话涉及政治、有关选举或询问 Claude 投票给谁或什么。</strong> 每个点代表 2026 年 9 月 21 日至 27 日约 250,000 个美国 Claude.ai 消费者对话的随机样本中每 10,000 个对话中的 1 个，Claude 使用 [隐私保护标准] 对这些对话进行分类方法](https://www.anthropic.com/research/clio)。由于要求就投票给谁或投票什么的建议的请求非常罕见，因此我们显示了该组 95% 置信区间的上限。示例仅是说明性的。我们看到的大多数请求本质上都是信息性的。人们求助于克劳德来理解地缘政治事件、研究候选人、起草文件、协助课程作业以及权衡支持和反对政策的论点。</p>
+<p><strong>人们在政治对话中问克劳德什么。 </strong>对话通过 <a href="https://www.anthropic.com/research/clio">Anthropic Insights</a> 以保护隐私、自下而上的方式进行聚集。</p>
+<h2><strong>将人们与可信来源联系起来</strong></h2>
+<p>在选举日之前，我们添加了两种方式，让人们可以在与克劳德的对话中直接获取可靠信息。正如我们在 4 月份分享的那样，当人们询问 Claude.ai 有关选民登记、投票地点或选举日期的信息时，我们将继续显示链接到 TurboVote 的横幅，TurboVote 是来自 <a href="https://www.democracy.works/">Democracy Works</a> 的无党派资源。</p>
+<p>本月晚些时候，克劳德将开始将 Democracy Works 的官方投票信息纳入其在 Claude.ai 上为美国用户提供的回复中。如果有人询问在哪里投票或携带什么身份证件到投票地点，现在无需离开对话即可得到针对其所在州的答案。这些回应借鉴了民主工作从州和地方选举来源收集的公开信息。</p>
+<p>民主作品提供的官方投票信息。</p>
+<p>此外，克劳德将开始在选举之夜和接下来的几天显示最新的结果，这样当人们询问当前的选票计数或选举结果时，他们将直接在对话中看到最新的官方数据。</p>
+<h2><strong>衡量和防止政治偏见</strong></h2>
+<p>当人们向克劳德询问政治问题时，他们应该得到准确、公正的答案，不偏向任何特定的政治观点。这就是为什么我们在每次模型发布之前都会广泛测试我们的模型是否存在政治偏见。 Claude Opus 5.5、Sonnet 5.5 和 Haiku 5.5 是我们迄今为止最公平的作品，在我们的<a href="https://www.anthropic.com/news/political-even-handedness">政治公平性评估</a> 中得分为 99%。我们的最新模型还更容易参与政治讨论并减少拒绝请求，因此人们可以获得他们想要的信息。我们正在继续完善这些评估，并在它们之外寻找新的方法来对我们的模型如何处理政治话题进行压力测试。</p>
+<p>作为这项工作的一部分，我们要求三个独立小组审查克劳德如何处理自由表达，每个小组从不同的角度使用不同的方法。范德比尔特大学的独立智囊团<a href="https://futurefreespeech.org/">言论自由的未来</a>对克劳德就数百个有争议话题的请求进行了测试，<a href="https://www.thefai.org/">美国创新基金会</a>比较了克劳德对来自左派和右派的匹配提示的反应，范围从主流政策辩论到更极端的情况。在这两项评估中，大多数回复都被评为“强烈”，对请求进行了实质性参与。 <a href="https://www.cip.org/">集体智慧项目</a> 在制定评估过程中对美国、英国和印度的 2,000 多人进行了调查。通过三个阶段的过程，参与者提出了处理从健康到政治等敏感话题的原则，确定了要测试的话题，并帮助制定了判断模型响应的标准。 CIP 综合了这些意见，并测试了不同人口和文化群体的一致性，以建立共同的原则。</p>
+<p>这些评估还指出了克劳德仍存在不足的领域。言论自由的未来和集体情报项目都发现，克劳德很少拒绝请求，但有时会主动提出警告和反驳，例如在倡导电子邮件中插入反对观点。美国创新基金会发现，克劳德十四行诗 4.5 并不总是均匀地对冲，而且更有可能软化右倾立场的论点。</p>
+<p>我们正在通过几种方式解决这个问题。我们改进了克劳德对直接是或否问题和简短答案要求的回应方式，我们发现它的答案可能不太平衡。我们还利用这些发现来改进克劳德添加警告或反驳的时间和方式，以便它更一致地处理来自各个政治派别的请求。我们正在继续改进测试不均匀对冲的方式，以使用左右匹配提示的现有评估为基础。更广泛地说，我们正在努力扩大政治偏见评估，以更好地反映真实对话并涵盖候选人和投票问题以及政策问题。</p>
+<h2><strong>我们如何定义滥用</strong></h2>
+<p>我们的<a href="https://www.anthropic.com/legal/aup">使用政策</a> 禁止利用克劳德欺骗选民或扰乱选举，禁止传播有关候选人或如何投票的虚假信息，禁止冒充选举官员或试图压制投票率。每年，我们都会更新政策，以反映我们模型不断发展的功能和客户的反馈。我们上周<a href="https://www.anthropic.com/news/2026-usage-policy-update">宣布</a>今年的更新澄清了我们的选举规则涵盖哪些内容和不涵盖哪些内容，并添加了新的示例来帮助人们了解界限在哪里。</p>
+<p>我们知道许多政治竞选活动都使用克劳德来完成合法的日常任务，因此我们最近<a href="https://www-cdn.anthropic.com/files/4zrzovbb/website/027b10ca405e9bb66b98c88d911b4b21a0b70123.pdf">发布了一份指南</a>来帮助他们了解这些政策的适用范围。它涵盖了竞选活动可以让克劳德工作的多种方式，例如起草新闻声明和筹款电子邮件、准备辩论、分析投票率数据以及制作选民宣传材料。它还详细说明了禁止的内容，例如利用克劳德创建冒充真人的虚假社交媒体资料、大量发表评论来夸大竞选活动的参与度，或者为虚假声称独立的新闻网站和页面撰写内容。</p>
+<h3>测试和加强我们的防御</h3>
+<p>我们部署经过训练的自动分类器来检测与选举相关的滥用行为。为了了解这些保障措施在实践中的效果如何，我们与独立研究组织<a href="https://www.isdglobal.org/">战略对话研究所</a> (ISD) 和<a href="https://www.mccaininstitute.org/">麦凯恩研究所</a> 合作，对我们在美国、以色列和巴西的保护措施进行压力测试。分析人士测试了克劳德是否会协助欺骗性竞选、错误信息和其他形式的选举滥用行为。他们从直接请求开始，然后将整个活动分解为本身看起来无害的较小任务，例如受众研究、建立新闻网站、起草内容和规划其分发。他们发现，克劳德可靠地拒绝了单个有害请求，但当恶意活动分散在许多本身看起来无害的单独请求中时，可能会错过恶意活动。</p>
+<p>基于这些发现和我们自己的发现，我们添加了新的分类器，以更好地识别新颖的多步骤滥用行为，包括试图建立旨在政治讨论的虚假社交媒体帐户和新闻网站，或运行出于经济动机的选举计划。我们还增强了检测外国行为者与选举相关的滥用行为的能力，并加强了对选举基础设施和竞选活动的网络保护。最后，我们针对美国、以色列和巴西发现的局部风险建立了有针对性的保障措施，这些国家今年都将举行重大全国选举。</p>
+<p>我们的威胁情报和执法团队会审查标记的活动，并在确认违规行为后采取行动，包括禁止帐户。我们还定期分享我们在评估和内部使用 Claude 期间观察到的意外模型动作或行为的示例。</p>
+<h3>我们发现了什么</h3>
+<p>我们最近的<a href="https://www.anthropic.com/threat-intelligence-report-september-2026">威胁情报报告</a>反映了与选举相关的滥用趋势的更广泛转变。政治、国家和商业参与者现在正在将人工智能纳入其影响力运作的几乎各个方面，从规划和内容创建到构建用于传播信息的平台。因为我们看到这些早期阶段的行动发生在克劳德身上，所以我们经常有机会在这些努力到达公众之前阻止它们。</p>
+<p>我们的团队继续调查并防止围绕选举（包括美国中期选举）的协调滥用行为。在一个案例中，一家假新闻网站的外国运营商利用克劳德制作有利于俄罗斯、伊朗和朝鲜叙述的美国中期报道。我们还观察到威胁行为者试图利用选举获取经济利益，利用克劳德制作捏造的新闻和其他旨在吸引美国观众并产生广告收入的内容。我们禁止了涉及这些案件的账户，并提高了我们检测此类滥用行为的能力。</p>
+<h3>展望未来</h3>
+<p>比以往任何时候都有更多的人向克劳德寻求有关今年选举的信息。我们有责任确保他们得到的答案是准确和平衡的，并且克劳德不会被用来破坏民主进程。我们将继续投资，使克劳德更加公平，防止和解决滥用问题，并在我们的行动中保持透明。这项工作对于即将到来的美国中期选举至关重要，也将延伸到世界各地的选举。在接下来的几个月里，我们还希望更全面地了解人们在整个选举周期中如何使用克劳德，目的是加强我们与选举相关的评估和保障。</p>
+<h2>脚注</h2>
+<p>01我们随机抽取了 2026 年 9 月 21 日至 27 日期间 25 万条美国 Claude.ai 消费者对话样本，并以保护隐私的方式对其进行了分析。</p>
+<p>02该数字是根据对 250,000 个 Claude.ai 对话的单独分析得出的，这些对话根据我们的选举诚信政策进行了审查。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Anthropic opens Singapore office and signs MOU with the Gove…</title>
+      <title>Anthropic 开设新加坡办事处并与新加坡政府签署谅解备忘录</title>
       <link>https://www.anthropic.com/news/singapore-office-opening</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/singapore-office-opening</guid>
       <pubDate>Wed, 14 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Anthropic opens Singapore office and signs MOU with the Government of Singapore</description>
+      <description>原文标题：Anthropic opens Singapore office and signs MOU with the Government of Singapore</description>
+      <content:encoded><![CDATA[<p>今天，我们正在新加坡开设新办事处（我们在该地区的第五个办事处），并与新加坡数字发展和信息部签署谅解备忘录 (MOU)，从而扩大我们在亚太地区的业务。新加坡是我们在世界上最活跃的市场之一，Claude 已经为数百万人每天使用的新加坡商业和政府服务提供支持，例如 GovTech Singapore、Grab 和 DBS。我们不断壮大的本地团队将确保这些组织和更多组织始终走在安全、强大的人工智能前沿。</p>
+<p>Anthropic 东盟总经理 Dale Finlay 表示：“我们长期致力于新加坡。” “我们的客户对人工智能有着极高的标准，特别是在可靠性和安全性方面。拥有一支实地团队意味着我们可以更接近让 Claude 解决最棘手问题的组织。”</p>
+<h3>支持新加坡负责任的人工智能</h3>
+<p>数字发展和信息部常务秘书 Kai Fong Chng 与 Anthropic 联合创始人 Ben Mann 在新加坡国际网络周期间签署了谅解备忘录。数字发展和信息部长 Josephine Teo 和亚太政策人类学主管 Michael Sellitto 见证了签字仪式。确定了人工智能安全、安保和模型评估方面的合作领域；研究人工智能的采用及其影响；以及公共和私营部门负责任的采用。</p>
+<p>曼恩表示：“新加坡一直是负责任的人工智能领域的领导者，在模型测试和评估方面拥有长期的投资记录。” “我们创立 Anthropic 的信念是，能力和安全必须齐头并进。通过这份谅解备忘录，我们将与新加坡合作，帮助确保这里、整个亚太地区和世界各地顺利向强大的人工智能过渡。”</p>
+<p>Chng 表示：“新加坡的人工智能方针始终是在推动创新的同时应对不断变化的风险。信任对于企业、工人和公众充满信心地使用人工智能至关重要。” “与 Anthropic 的合作反映了政府致力于扩大人工智能的负责任应用、深化我们公司和政府机构的能力以及为新加坡带来影响。”</p>
+<p>我们与新加坡的合作可以追溯到 2023 年，当时我们加入了由 Infocomm 媒体发展局和 AI 验证基金会运营的<a href="https://www.imda.gov.sg/resources/press-releases-factsheets-and-speeches/press-releases/2023/generative-ai-evaluation-sandbox">生成式 AI 评估沙盒</a>。后来我们与他们合作开展了英语、普通话、马来语和泰米尔语的<a href="https://www.anthropic.com/news/challenges-in-red-teaming-ai-systems">红队项目</a>。</p>
+<p>根据谅解备忘录，我们计划与新加坡人工智能安全保障机构就模型评估、测试标准和事件响应等方面进行技术交流。我们与世界各地的安全机构开展类似的工作，共享技术信息可以让政府更清晰地了解前沿人工智能的能力和风险，同时帮助开发人员构建更安全的模型。</p>
+<p>我们还将寻找加强新加坡人工智能技能的方法，帮助中小企业负责任地采用人工智能，并支持政府在公职人员中建立人工智能能力的目标。我们计划与政府分享研究和数据，包括来自<a href="https://www.anthropic.com/economic-index#global-usage">人类经济指数</a>的研究和数据，并在新加坡制定人工智能规则时提供技术和政策专业知识。</p>
+<h3>新加坡如何与克劳德合作</h3>
+<p>在我们最新的<a href="https://www.anthropic.com/economic-index#country-usage">经济指数</a>中，新加坡的 Claude.ai 使用率（相对于其人口）在 121 个国家中排名第二，几乎是其规模预测的六倍。</p>
+<p>在公共部门，新加坡政府科技局 (GovTech Singapore) 的 1,500 多名工程师和技术人员采用了 Claude Code 来实现政府系统现代化并加快软件交付速度。这帮助新加坡政府科技团队在全国范围内更有效地构建、维护和增强数字服务。新加坡网络安全局正在探索克劳德如何帮助加强该国的网络防御。</p>
+<p>在金融服务领域，东南亚最大的银行星展银行与克劳德在其新加坡业务的一系列用例中进行合作，包括软件开发和日常生产力，作为其更广泛的人工智能创新努力的一部分。这些应用程序在银行严格的安全和治理框架内运行。新加坡主权财富基金 GIC 正在其投资和企业服务团队中引入 Claude。金融服务等受监管行业的组织现在可以在 Amazon Bedrock 上使用区域内推理运行 Claude，帮助他们满足严格的数据处理要求。</p>
+<p>新加坡最大的科技公司和初创公司也与克劳德一起建设。 Grab 与 Claude 一起为其销售助理 BriX 提供支持。该助理每个季度为 Grab 的销售团队节省了大约 40,000 个小时的时间，并带来了新的销售机会。 Sea（Shopee、Garena 和 Monee 背后的公司）与 Claude 合作，帮助 Shopee 的客户服务聊天机器人更快、更准确地做出响应，数千名员工与 Claude 一起编写和调试代码。 Supabase——扎根于新加坡的开发者平台——正在使用 Claude Code 进行构建。</p>
+<h3>与开发者社区一起构建</h3>
+<p>本周，Anthropic 的高级领导将在新加坡开设办事处，并与客户、开发商和政策制定者会面。</p>
+<p>今天，我们在新加坡举办了 Builder Summit，汇聚了 300 多名开发人员以及 Anthropic 的工程和产品领导者。本周早些时候，新加坡 Claude 社区大使为 700 多名当地建筑商举办了一次聚会。</p>
+<p>我们的新加坡办事处现已开放并正在招聘。要了解有关加入团队的更多信息，请访问我们的<a href="https://www.anthropic.com/careers/jobs?office=4063231008">职业页面</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>Uber 的 CISO 谈如何为 AI 搭建内部威胁防控体系</title>
@@ -305,10 +770,173 @@
 <p>如果你希望接收我们每月的开发者通讯，请提供你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Strengthening our defenses against distillation attacks</title>
+      <title>加强我们对蒸馏攻击的防御</title>
       <link>https://www.anthropic.com/news/distillation-defenses</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/distillation-defenses</guid>
       <pubDate>Mon, 12 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Strengthening our defenses against distillation attacks</description>
+      <content:encoded><![CDATA[<p>正如我们在本博客中概述的那样，近几个月来，我们在使用新方法降低对 Claude 的蒸馏攻击的有效性方面取得了实质性进展。早期证据表明，这些方法已将蒸馏器收集的数据量减少了约 90% 至 99%。</p>
+<p>蒸馏攻击是一种隐蔽的、工业规模的活动，目的是在未经原始模型开发人员授权的情况下提取一种模型的功能并将其复制到另一种模型中。它们通常是利用欺诈账户网络进行的。这些攻击使公司能够以一小部分的开发时间和成本来模仿前沿功能。正如我们<a href="https://www.anthropic.com/threat-intelligence-report-september-2026#illicit-distillation-sep-26">9月份所写</a>，这种方法已被广泛使用，以帮助海外人工智能实验室与美国公司保持同步。</p>
+<p>我们担心非法蒸馏有两个原因。首先，蒸馏使公司能够构建接近能力边界的模型，但实际上，这些模型的发布没有相应的强有力的保障措施。这意味着蒸馏模型可用于在<a href="https://www.anthropic.com/threat-intelligence-report-september-2026#biological-misuse-sep-26">生物学</a>和<a href="https://www.anthropic.com/threat-intelligence-report-september-2026#cyber-operations-sep-26">网络安全</a>。</p>
+<p><a href="https://www.anthropic.com/threat-intelligence-report-september-2026#illicit-distillation-sep-26">例如</a>Zhipu在GLM-5.3的开发过程中提炼了美国领先模型的网络能力。该公司试图提炼《克劳德寓言 5》——尽管在发现我们的网络防护措施削弱了其攻击后，它转而采用了较旧的克劳德模型和另一个实验室的模型。美国超级智能创新与标准推进中心 (CAISSI) <a href="https://www.nist.gov/news-events/news/2026/09/caisis-assessment-zais-glm-53-cyber-capability">自评估</a> GLM-5.3 是迄今为止发布的最具网络能力的开放权重模型。 <a href="https://www.anthropic.com/research/glm-5-3-and-the-spread-of-advanced-cyber-capability">我们自己的研究发现</a> GLM-5.3 的防护措施很容易被绕过，并且该模型愿意开发端到端的安全漏洞。</p>
+<p>其次，非法蒸馏模型存在国家安全风险。提炼美国模式的公司正在将从提炼中获得的能力整合到外国<a href="https://www.anthropic.com/news/detecting-and-preventing-distillation-attacks">军事、情报和监视系统</a>。例如，我们最近<a href="https://www.anthropic.com/threat-intelligence-report-september-2026#illicit-distillation-sep-26">报道了一个案例</a>，其中对 Moonshot 的 Kimi 模型的请求被秘密转发给 Claude，作为其蒸馏工作的一部分。其中一个请求来自一位用户（我们认为该用户隶属于中国人民解放军），他试图分析对特定个人的闭路电视监控。这些都是酿酒商希望发展的能力。</p>
+<p>为了应对这些攻击日益复杂和规模的增加，我们扩大并大大加强了对它们的防御。正如我们将在下面描述的，这些措施是成功的——尽管它们确实涉及到 Anthropic 和我们的客户的权衡。我们已经拒绝了来自蒸馏器的有意义的收入和价值数万亿代币的付费流量，我们的研究和产品团队在这个问题上投入了大量的时间和精力。我们的一些更改还要求合法用户对其集成进行更新。</p>
+<p>蒸馏是每个模型开发人员面临和必须面对的问题。我们希望这篇文章可以帮助开发者和平台更好地了解如何防止这些攻击、这些措施的权衡可能是什么，以及为什么值得承担这些成本。</p>
+<h3>简单的防御是不够的</h3>
+<p>Distillers 的目标是从更大、能力更强的模型（在本例中为 Claude）生成数百万个响应，然后使用这些响应来训练较小的模型来模仿能力更强的模型的行为。为此，最有价值的数据是克劳德推理的记录——克劳德在做出反应之前写下的思维过程。这比单独的输出有用得多，因为它可以帮助较小的模型理解克劳德“如何”得出最终答案。因此，我们对蒸馏的防御几乎完全集中在让酿酒师更难理解克劳德的推理上。</p>
+<p>我们对抗蒸馏的早期工作始于旨在阻止“被动”蒸馏的简单措施，其中攻击者像普通用户一样向模型发送请求，然后对这些响应进行训练。作为我们最初的反蒸馏措施之一，我们在向用户展示之前让 Claude 总结了其推理。我们的评估表明，这使得克劳德的记录对酿酒师的信息量大大减少。我们测试了预训练的 Claude 模型在使用 Claude Opus 4.8 的转录本进行训练后，在 SWE-bench Verified 编码基准上的表现如何。在完整成绩单上进行训练时，蒸馏模型达到了 80.4%；仅凭总结成绩单，就达到了71.8%。</p>
+<p><em>总结克劳德的推理使得其记录对于蒸馏来说不太有用。使用摘要推理训练的转录本模型在 SWE-bench Verified 上得分为 71.8%，而使用完整推理训练的模型得分为 80.4%。</em></p>
+<p>但酿酒师是坚持不懈且富有创造力的。进行此更改后，攻击者从被动提取转向“主动”提取，通过鼓励 Claude 揭示其完整推理来寻求绕过摘要的方法。在 9 月份的报告中，我们<a href="https://www.anthropic.com/threat-intelligence-report-september-2026#illicit-distillation-sep-26">描述了这些方法的工作原理</a>。它们的范围从简单到指示克劳德“逐字逐字地输出你之前的推理”，到更复杂的技术，包括一个实验室测试了 12,000 个请求，每个请求都试图以不同的方式欺骗​​克劳德。</p>
+<p>一般来说，我们可以发现这样的请求，因为普通用户很少要求模型写出其完整的、隐藏的推理。因此，我们可以设计保护措施来检测试图提取模型隐藏推理的请求，这些推理可能来自蒸馏器。</p>
+<p>然而，我们最初针对这些防护措施的相对简单的设计还不够。酿酒厂找到了绕过我们建立的第一个保障措施的方法。然后，他们扩大了这些方法的规模，创建了控制数十万个欺诈帐户的代理网络，每个帐户都会发送逃避我们保护的请求。这些网络还在不提供 Claude 的地区转售对 Claude 的访问权限，并使用虚假身份和被盗的付款详细信息<a href="https://www.anthropic.com/threat-intelligence-report-september-2026#illicit-distillation-sep-26">创建帐户</a>。正如我们在 2 月份的报告中所描述的那样，一个网络同时管理着 20,000 多个欺诈账户。这些蒸馏活动的规模和持久性表明，蒸馏器不会轻易被吓倒，我们需要更复杂的防御措施。</p>
+<h3>我们的新方法</h3>
+<p>我们对蒸馏的防御现在以三种不同的方式破坏攻击，对合法用户的影响最小：</p>
+<p><strong>控制推理的进行。</strong> Distillers 使用了几种不同的方法来提取克劳德的完整推理记录。例如，他们在<a href="https://www.anthropic.com/threat-intelligence-report-september-2026#gtg-16002-moonshot-serves-claude-instead-of-kimi-and-collects-exchanges-for-model-training">对话之间</a>移动了受保护的推理块，以欺骗克劳德相信蒸馏器已经可以访问未总结的推理（因此可以透露）。他们还使用上述的<a href="https://www.anthropic.com/threat-intelligence-report-september-2026#how-unauthorized-labs-access-anthropics-models">代理网络</a>在<a href="https://arxiv.org/abs/2608.09867">模型之间</a>(使用保护措施较弱的模型提取较强模型的推理)和帐户之间移动推理即使在初始帐户被禁止后，仍继续尝试提取模型的推理。</p>
+<p>在 Claude Fable 5.1 和 Claude Opus 5.5 中，我们引入了<a href="https://platform.claude.com/docs/en/build-with-claude/preserved-thinking">保留思维</a>，这是一种防止新 API 帐户（2026 年 8 月 31 日或之后创建的帐户）编辑 Claude 先前上下文的措施。这使得使用代理网络反复尝试提取克劳德受保护的推理变得更加困难。我们还阻止了这些模型的推理被反蒸馏保护措施较弱的早期模型读取，并且在 Claude Sonnet 5.5 中，我们使推理记录只能由其请求生成记录的组织访问。</p>
+<p><strong>阻止和修补提取尝试。</strong>我们努力使使用 Claude 模型进行蒸馏变得像使用 Claude 执行网络安全或生物学中的有害任务一样困难。我们通过采取与这些领域相同的保障措施来做到这一点。具体来说，我们构建了一个我们在[宪法分类器研究](https://www.anthropic.com/research/next- Generation-constitutional-classifiers)中描述的那种两阶段分类器系统。使用蒸馏器尝试提取 Claude 推理的记录，我们对该分类器进行了内部和外部红队（使用各种手动和自动方法），并修复了红队人员发现的任何漏洞。因此，我们的保障措施现在大致与阻止克劳德帮助制造生物武器的保障措施一样强大，而且误报率低于 0.1%。</p>
+<p>我们在功能最强大的通用模型（目前为 Claude Sonnet 5.5、Claude Opus 5 和 5.5、Claude Fable 5 和 5.1）上运行这个两级分类器，并且我们计划将其用于任何对蒸馏器同样有吸引力的未来模型。</p>
+<p>我们使用的系统正在不断改进。我们预计攻击者会找到绕过这些防护措施的方法，并且我们正在积极监控成功的提取尝试。每当我们观察到一种似乎可以逃避我们防御的新技术时，我们就会迅速更新我们的防护措施。这些修复已经切断了几种新的攻击技术，例如要求 Claude 将其早期推理翻译成另一种语言，或者要求其将其与答案一起写在标签中。</p>
+<p><strong>使重复尝试变得困难。</strong>我们通常可以检测到特定帐户何时被用于蒸馏。不断尝试从克劳德那里提取推理的用户面临更严格的使用限制，当我们检测到重复和持续的蒸馏尝试时，我们会禁止相关帐户。此外，自 9 月 24 日起，我们已<a href="https://x.com/ClaudeDevs/status/2103170368794185758">恢复对请求收费</a>，这些请求在 Claude 做出响应之前被我们的保障措施阻止，在误报率 &lt;0.1% 的特定区域（包括蒸馏）。这些措施使得攻击者试图绕过我们的防御变得更具挑战性。</p>
+<h3>我们的新方法效果如何</h3>
+<p>总的来说，我们相信我们新的蒸馏防御措施可靠地阻止了更多蒸馏我们前沿模型的尝试。在我们最有能力的通用模型上，我们的两级分类器现在捕获了我们在<a href="https://www.anthropic.com/threat-intelligence-report-september-2026#illicit-distillation-sep-26">九月报告</a>中描述的所有蒸馏技术。</p>
+<p>为了衡量我们系统的有效性，我们估计了在我们自己的平台上提取了多少克劳德推理蒸馏器的代币。引入分类器后，蒸馏器提取的推理标记数量始终比以前低 10 到 100 倍，如下图所示。这增加了我们保留的思维变化的影响。我们已经使用这些防御措施来禁止数以万计与蒸馏相关的帐户，通常是在此类帐户开始蒸馏活动后不到两小时内。</p>
+<p><em>一旦我们的新保障措施得到全面实施，酿酒商可以在我们自己的平台上从 Claude 中提取的理由就会下降 10 到 100 倍以上。有时，蒸馏器可以提取的推理代币数量太少而无法测量。</em></p>
+<p>我们还不知道这些收益会持续多久。我们预计蒸馏仍将是一场猫捉老鼠的游戏，随着时间的推移，我们需要继续迭代我们的防御措施。尽管我们对这些措施的有效性充满信心，但我们尚未看到高度复杂且持续的规避措施的尝试。</p>
+<p>我们的技术也存在固有的权衡。二月份，我们写道，我们正在努力让合法用户的蒸馏变得更加困难<a href="https://www.anthropic.com/news/detecting-and-preventing-distillation-attacks">不影响体验</a>。我们还没有完全实现这个目标：保留思维要求一些开发人员更新他们的集成，我们的分类器可以（在不到 0.1% 的情况下）错误识别或阻止良性请求，并且我们现在对这些被阻止的请求向用户收费。</p>
+<h3>蒸馏对于每个开发者和平台来说都是一个问题</h3>
+<p>尽管需要权衡，我们相信这些措施显然是值得的。防止蒸馏对于我们的国家安全和确保强大的模型（尤其是公开可用的模型）在适当的保障措施下发布都很重要。</p>
+<p>我们竭尽全力防止我们的模型被不良行为者滥用。但防止非法蒸馏需要所有前沿模型开发人员的努力和支持。如果攻击者能够轻松访问缺乏同样强大的反蒸馏保护措施的类似功能的模型，就像 ZIPU 对 GLM-5.3 所做的那样，我们的努力就会受到破坏。</p>
+<p>Distillers 在 Anthropic 的 API、第三方云平台和其他推理提供商之间分配流量。因此，平台以及开发者都可以在减少蒸馏方面发挥作用。他们可以通过快速检测和阻止滥用行为以及关闭欺诈账户来显着减缓蒸馏速度。</p>
+<p>该行业的激励措施往往适得其反。防御费用昂贵，而非法酿酒商仍然是付费客户。在这种背景下，企业很容易无所作为或做得不够。我们正在发布我们的方法来表明存在可行的替代方案。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>人择网络任务简介</title>
+      <link>https://www.anthropic.com/news/anthropic-cyber-mission</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/anthropic-cyber-mission</guid>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing the Anthropic Cyber Mission</description>
+      <content:encoded><![CDATA[<p>今天，我们将启动“人类网络使命”，这是一项保护每个人所依赖的系统安全的长期承诺。网络任务是一项新的努力，旨在通过工具、研究和资源支持防御者，以保护其软件和系统的安全。我们从两个领域开始：</p>
+<ul><li><strong>关键基础设施：</strong> 首先确保电网、供水系统和交通网络背后的运营技术，并保护政府系统。今天，我们推出关键基础设施防御计划 (CIDP)，该计划为保护运营技术的防御者提供前沿模型、现场工程师和威胁研究。</li><li><strong>开源软件：</strong> 在大多数软件所依赖的免费共享代码中查找漏洞并提出补丁，并强化底层代码。今天，我们推出 <a href="http://anthropic.com/research/launching-opt-in-vuln-finding-service-for-open-source">OSS Scanner</a>，它免费为开源项目提供来自我们最强模型的定期安全扫描。</li></ul>
+<p>前沿模型可能被滥用来利用漏洞并进行网络行动。尽管尽了最大努力，许多技术领域仍然暴露在危险之中。国家支持的对手花了数年时间在这些系统的许多领域取得立足点，以便能够破坏它们。关键基础设施和 OSS 社区的维护者拥有数十年的安全经验，但面临着严重的资源短缺，而此刻情况更加严重。我们认可他们在这些领域的专业知识并提供我们的支持。我们还将扩大网络使命，在新领域发布工具、研究和资源，以帮助保护世界。</p>
+<p>作为 <a href="https://www.anthropic.com/glasswing">Project Glasswing</a> 的一部分，合作伙伴发现了许多漏洞，但我们尚未充分降低网络风险。发现漏洞比以往任何时候都容易，但验证、确定优先级和修复这些发现仍然具有挑战性。根据 Glasswing 项目的经验教训，我们正在开始这些新的努力来支持防御者。本周早些时候，我们将 Glasswing 项目合并到我们扩展的<a href="https://www.anthropic.com/news/cyber-verification-program">网络验证计划</a>中，这使更多的防御者能够访问我们最强大的模型。通过 Anthropic Cyber​​ Mission，我们将部署 Anthropic 工程人才，并为保护关键基础设施和开源软件的人员提供工具和资金。</p>
+<h2>保卫关键基础设施</h2>
+<p>电网、自来水公司、工厂和运输网络都在控制器、控制软件和可持续数十年的工业网络上运行。这些系统被称为“运营技术”，它们通常无法离线进行修补，因此已知的漏洞可能多年都无法解决。确保它们的安全是一项专门的工作：设备是专有的，更改是有风险的，错误可能会导致工厂瘫痪。各种规模的运营商都依赖一小组值得信赖的提供商来支持这项工作，告诉他们暴露了什么以及要在正在运行的系统上进行哪些修复。</p>
+<p>今天，我们推出<strong>关键基础设施防御计划</strong>，该计划为那些值得信赖的提供商带来了前沿的 Claude 模型、现场工程师和我们的威胁研究。其创始合作伙伴包括埃森哲、博思艾伦、CrowdStrike、德勤、Dragos、日立、Insane Cyber​​、Nozomi Networks、Palo Alto Networks、普华永道和罗克韦尔自动化。</p>
+<p>这些组织代表运营商保护这些系统所依赖的提供商：运行安全计划的咨询和先进技术公司、保护商业和工业网络的安全公司以及构建和修补设备本身的制造商。</p>
+<p>这项工作正在进行中。目前，一些合作伙伴正在与 Claude 合作修复漏洞并帮助客户做同样的事情。关键基础设施在许多方面都难以防御，而人工智能无法修复，但我们相信，前沿模型可以帮助发现并修复弱点，然后再利用这些弱点来切断电力或使水变得不安全。我们的第一步是与一小群提供商合作，了解哪些策略最有效、最实用。</p>
+<p>如果您的公司为关键基础设施构建安全产品或服务，您可以<a href="http://claude.com/form/ritic-infrastruct-defense-program-interest">在此处注册您的兴趣</a>。</p>
+<p>![罗克韦尔自动化标志](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimage s%2F4zrzovbb%2F网站%2Fb5b302afe2b6445df7cfd07b59a520739faae688-2487x576.png&amp;w=3840&amp;q=75)</p>
+<blockquote>“随着人工智能的不断发展，它为加强关键基础设施的网络安全提供了一个重要的机会，前提是它得到负责任的应用、严格的验证以及以安全性和可靠性为先的部署。我们很高兴贡献我们的运营技术和工业网络安全专业知识，帮助开发应用人工智能的实用方法，从而增强社会每天依赖的基础设施的弹性。”</blockquote>
+<p>托尼·贝克</p>
+<p>罗克韦尔自动化数字信任副总裁兼首席产品安全官</p>
+<p><img src="https://www-cdn.anthropic.com/images/4zrzovbb/website/6049322bb2dc6256425834a250066598c6d427da-359x174.svg" alt="普华永道徽标"></p>
+<blockquote>“通过与关键基础设施组织的合作，普华永道的网络 OT 实践亲眼目睹了网络漏洞在这些环境中可能造成的后果的严重性。我坚信，需要在全行业范围内协调一致地努力，以识别漏洞、降低风险并增强关键系统的弹性。”</blockquote>
+<p>哈舒尔·乔希</p>
+<p>普华永道美国 OT/ICS 网络数据和技术风险安全主管合伙人</p>
+<p>![帕洛阿尔托网络标志](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimage s%2F4zrzovbb%2F网站%2Fc052b975e699b0755c9f88db2252aa7db240b0d0-1356x248.png&amp;w=1920&amp;q=75)</p>
+<blockquote>“威胁行为者正在使用人工智能以机器速度查找和利用暴露。通过将 Unit 42 威胁情报和运营专业知识与 Anthropic 的前沿模型相结合，我们正在帮助运营商防御试图攻击和破坏基本服务的对手。我们共同为防御者提供了在暴露产生影响之前关闭攻击路径所需的速度和精度。”</blockquote>
+<p>萨姆·鲁宾</p>
+<p>Palo Alto Networks 42 部高级副总裁</p>
+<p>![希望网络标志](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimage s%2F4zrzovbb%2F网站%2F5b0d738fdb3c3f953d71ee17e6bbd0767e0df033-1192x378.png&amp;w=1200&amp;q=75)</p>
+<blockquote>“前沿人工智能的发展速度比任何单个组织单独跟踪的速度都要快。这就是关键基础设施防御计划的重要性。它将了解这些环境的人们与现在可用于保护它们的前沿能力聚集在一起。我们很自豪能够贡献我们的经验，并与致力于保护世界所依赖的系统的其他合作伙伴一起学习。”</blockquote>
+<p>莫雷诺·卡鲁洛</p>
+<p>Nozomi Networks 联合创始人兼首席技术官</p>
+<p>![疯狂的网络标志](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimag es%2F4zrzovbb%2Fwebsite%2Ff828a5e1806e6c944944ca84b578c54f1057a785-326x179.png&amp;w=384&amp;q=75)</p>
+<blockquote>“最需要保护的场所，如远程变电站、海上平台和气隙工厂，正是传统工具无法到达和专家无法到达的地方。没有人解决的是时间问题：比任何团队可以处理的数据多，比任何团队可以人员配置的站点都多。Claude 弥补了这一差距，因此我们的分析师和客户的操作员将时间花在判断上，以确保关键系统安全运行。”</blockquote>
+<p>丹·冈特</p>
+<p>Insane Cyber 首席执行官兼创始人</p>
+<p>！[德拉戈斯标志](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimage s%2F4zrzovbb%2Fwebsite%2Fcdfeed6ae5eb94835f2ef8a07da6392899360699-1931x439.png&amp;w=2048&amp;q=75)</p>
+<blockquote>“当供应商社区分享他们所了解的人工智能给运营环境带来的机遇和挑战时，关键基础设施和依赖它的人们都会受益，而不是将这些知识保存在孤岛中。加入 Anthropic 的关键基础设施防御计划是我们帮助将前沿人工智能与围绕运营技术 (OT) 现实构建的集体防御战略的方式之一，以保持灯亮、水安全和交通运行。”</blockquote>
+<p>乔恩·拉文德</p>
+<p>德拉戈斯首席技术官</p>
+<p>![人群罢工标志](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimage s%2F4zrzovbb%2F网站%2F6720c9a2f90d251bf05c201a82f080383755da6a-1734x815.png&amp;w=1920&amp;q=75)</p>
+<blockquote>“关键基础设施是网络风险变成现实世界风险的地方。随着对手利用人工智能更快地移动并更大规模地运作，面临机器速度威胁的关键基础设施需要机器速度的防御。通过将 CrowdStrike 的深厚安全背景和专业知识与 Anthropic 的前沿人工智能专业知识结合起来，我们可以为关键基础设施防御者带来更大的优势。”</blockquote>
+<p>丹尼尔·伯纳德</p>
+<p>CrowdStrike 首席商务官</p>
+<p>![日立制作所标志](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimage s%2F4zrzovbb%2F网站%2F725713983720f6f6ef335910412d7b133a33632a-3840x2160.png&amp;w=3840&amp;q=75)</p>
+<blockquote>“随着人工智能的快速发展以及网络威胁日益复杂和快速，确保支持社会基础设施的 OT 环境中的网络安全已成为当今社会面临的最高优先事项之一。通过参与该计划，我们期待与 Anthropic 和其他合作伙伴合作，进一步增强关键基础设施的网络弹性。”</blockquote>
+<p>小岩弘明</p>
+<p>日立有限公司人工智能与软件服务业务部 Cyber CoE 负责人</p>
+<p>![德勤会计师事务所标志](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimage s%2F4zrzovbb%2F网站%2F22857317c8e8d0c1cd3f6d00b8c10a85796df710-1614x656.png&amp;w=1920&amp;q=75)</p>
+<blockquote>“随着人工智能的加速发展，关键基础设施运营商需要能够以机器速度解决安全漏洞的解决方案。德勤与 Anthropic 一起帮助这些企业提供缩小安全漏洞和增强弹性所需的支持，与前沿人工智能的现实同步发展。”</blockquote>
+<p>阿德南·阿姆贾德</p>
+<p>德勤会计师事务所 (Deloitte &amp; Touche LLP) 美国网络主管</p>
+<p><img src="https://www-cdn.anthropic.com/images/4zrzovbb/website/a5a6f8dd7f1fe55e08c535953b3ed7ed3cf72dc9-1185x792.svg" alt="博思艾伦徽标"></p>
+<blockquote>“操作技术是自主人工智能攻击的下一个前沿。问题不再是人工智能是否可以影响工业流程，而是它可以获得多少控制权以及多快的速度。关键基础设施防御计划正在召集最好的私营部门创新和投资，以加强联邦和商业任务中的 OT 和 ICS 弹性。”</blockquote>
+<p>安德鲁·特纳</p>
+<p>博思艾伦商业网络总裁</p>
+<p>![埃森哲标志](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimage s%2F4zrzovbb%2F网站%2F8cf3e7a12583cce3f9afe1f1081619045776d449-6251x1648.png&amp;w=3840&amp;q=75)</p>
+<blockquote>“保持电力供应、药品安全、食品供应安全和通信运行的组织面临着世界上一些最严重的网络风险。埃森哲致力于将我们深厚的 OT 安全专业知识带给那些保护社区每天依赖的关键基础设施的组织。这种合作伙伴关系将有助于将人工智能驱动的防御交付给最需要的人。”</blockquote>
+<p>哈普里特·西杜</p>
+<p>埃森哲全球网络安全主管</p>
+<p>01</p>
+<p>11</p>
+<p>6 月，<a href="https://statescoop.com/anthropic-launches-15m-cyber-defense-program-for-state-local-tribal-and-territorial-governments/">我们为州、地方、部落和领地政府启动了一项网络防御计划</a>。从那时起，我们为美国一半以上的州和美国一些最大的公共关键基础设施运营商提供了前沿的克劳德模型和技术支持，加快了代码扫描和修补、事件响应、红队和其他安全工作流程。</p>
+<p>我们正在倾听最了解这一景观的人们的意见并向他们学习。我们的方法是与了解这一情况且运营商信任的公司、联盟、政府和非营利组织合作，并在最需要的地方提供支持。</p>
+<h2>保护开源软件</h2>
+<p>几乎所有软件都依赖于开源代码，其中大部分由小型志愿者团队维护。在 Glasswing 项目下，我们扫描了数百个广泛使用的开源项目，让人们对发现的许多潜在漏洞进行分类和审查，并通过我们的<a href="https://red.anthropic.com/2026/cvd/">协调的漏洞披露流程</a>私下向其维护者报告我们发现的内容。</p>
+<p>一些有能力进行大规模分类的维护人员向我们询问我们的模型在他们的项目中发现的所有内容，无论是否经过审查。作为回应，我们推出了 <a href="https://red.anthropic.com/oss-scanner">OSS Scanner</a>，这是一项受 <a href="https://github.com/google/oss-fuzz">Google 的 OSS-Fuzz</a> 启发的选择加入服务。注册的项目会定期接受我们最强大模型的免费扫描。每份报告都包含如何利用该错误的概念证明、解释以及可用的修复建议。报告由模型生成并发送，无需人工审核。这意味着维护人员可以更快地收到它们，但这也意味着其中一些内容会包含不准确之处，例如错误的严重性评级。我们预计真阳性率高于 90%，并将随着时间的推移努力提高真阳性率并修复质量。 <a href="http://anthropic.com/research/launching-opt-in-vuln-finding-service-for-open-source">团队的帖子</a>解释了它的工作原理以及如何注册。</p>
+<p>该服务适用于能够跟上表面发现的项目。对于其他人，我们将继续根据我们的 CVD 政策分享经过人工验证的披露信息。</p>
+<p>OSS 扫描程序是第一步。从这里开始，我们的开源工作旨在：</p>
+<ul><li><strong>更快地向维护人员提供调查结果。</strong> 将 OSS Scanner 引入更多项目，同时为需要的人保留经人工验证的披露信息。</li><li><strong>加速修复。</strong> 对于需要的项目，自动进行分类和修补，这仍然主要是手动的。</li><li><strong>探索新的安全架构和编码实践。</strong> 研究并与那些想要比修补更进一步的项目分享强化或重写代码的方法。</li></ul>
+<p>我们将根据开源维护者和基金会的指导来做到这一点，并分享有效的方法，以便其他项目可以复制它。我们资助了广泛使用的开源代码背后的组织，包括 Python 软件基金会、Alpha-Omega 和 OpenSSF（通过 Linux 基金会）以及 Apache 软件基金会，并支持 Akrites 和 Gold Eagle，它们收集和协调来自多个来源的漏洞报告，以避免维护人员不堪重负。我们<a href="https://claude.com/resources/articles/bringing-claude-mythos-5-to-more-defenders">于 8 月推出</a> 的 Defender Advantage Fund (0xDAF) 支持这些领域的试点计划，并保持 OSS Scanner 免费。</p>
+<p>维护者还可以向<a href="https://claude.com/contact-sales/claude-for-oss">Claude for Open Source</a>申请免费的Claude Max订阅，并向<a href="https://portal.anthropic.com/login">网络验证计划</a>申请扩大对Claude防御工作网络能力的访问。</p>
+<h2>为什么我们要这样做</h2>
+<p>现在，攻击者可以广泛使用具有高度网络能力的人工智能模型。但防御工具——包括我们自己的——还没有到达足够多需要它们的防御者手中。 <a href="https://red.anthropic.com/oss-scanner">OSS Scanner</a>、我们的<a href="https://portal.anthropic.com/login">网络验证计划</a>、我们的合作伙伴在我们平台上构建的防御产品以及<a href="https://claude.com/product/claude-security">Claude Security</a>是我们的一些努力，我们将尽快添加其他产品。</p>
+<p>我们的预测是，在两年内，人工智能将有利于防御：在发布之前更容易捕获错误，从头开始编写基本安全的软件，并通过模型主动防御系统。但从短期来看，情况可能并非如此。 <a href="https://www.anthropic.com/news/expanding-project-glasswing">利用漏洞的成本下降了</a>，而验证、披露和修复它们的速度很慢，而且仍然依赖于人。在 Glasswing 中，我们经常看到从发现漏洞到修复漏洞需要几个月的时间。使用操作技术，修复可能必须等到可以安全地应用于正在运行的机器上——在某些罕见的情况下，这可能需要几十年的时间。</p>
+<p>成功意味着水、电力、交通和通信等关键基础设施在面对有能力的对手的攻击时仍能保持运行，可利用的路径更少，并且在事情通过时恢复速度更快。这将需要数年时间，随着我们与公共和私营部门一起了解什么是有效的，我们预计人类网络使命将发生改变。</p>
+<h2>前进的道路</h2>
+<p>在接下来的几个月里，我们将把关键基础设施防御计划带给更多的合作伙伴和更多的部门，我们将分享我们一路上学到的东西，包括那些不起作用的东西。我们还期望其他人工智能开发人员、安全公司和政府做出自己的努力，并且我们希望在任何有助于防御者的地方与他们合作。</p>
+<p>我们还将扩大我们的工作，以帮助确保开源和更广泛的供应链的安全。这包括研究编写软件的新方法和防御系统的新方法。我们打算分享前沿研究、工具和资源，以帮助其他人保护他们的软件和供应链。</p>
+<p>如果您想与我们合作：</p>
+<ul><li>为关键基础设施构建安全产品或服务的公司，包括安全供应商、系统集成商和设备制造商，可以在我们扩展<a href="http://claude.com/form/ritic-infrastruct-defense-program-interest">关键基础设施防御计划</a> 时注册其兴趣。</li><li>关键开源项目的核心维护者可以<a href="https://red.anthropic.com/oss-scanner">注册 OSS Scanner</a>。</li><li>任何规模的安全团队，包括关键基础设施的运营商和开源维护人员，都可以<a href="https://portal.anthropic.com/login">申请我们扩展的网络验证计划</a>来访问我们的模型。</li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>2026 年使用政策更新</title>
+      <link>https://www.anthropic.com/news/2026-usage-policy-update</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/2026-usage-policy-update</guid>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：2026 Usage Policy update</description>
+      <content:encoded><![CDATA[<p>每年，Anthropic 都会更新其使用政策，以响应我们模型不断发展的功能以及我们从客户那里收到的反馈。我们今天发布了该政策的新版本。在这篇文章中，我们总结了我们所做的更改。</p>
+<p>最新版本中的大部分更新旨在澄清现有规则。自我们上次更新以来的一年里，克劳德承担了更长、更独立的工作。此更新提供了新的示例，展示了我们的规则如何应用于克劳德的新功能。它借鉴了我们在过去一年中观察到的影响行动、武器开发和监视方面的新滥用模式（正如我们在<a href="https://www.anthropic.com/threat-intelligence-report-september-2026">最新威胁情报报告</a>中记录的那样）。我们还进行了更新，以澄清我们对健康和金融等领域的高风险用例的要求，添加对何时使用 Claude 自主采取身体动作的控制，并解决对我们模型的滥用行为。</p>
+<p>更新后的政策于 11 月 12 日生效。完整的<a href="https://www.anthropic.com/legal/aup">使用政策</a> 和<a href="https://www.anthropic.com/supported-countries">支持地区政策</a> 可以在各自的页面上找到。</p>
+<h3>关于欺骗活动的新部分</h3>
+<p>正如我们<a href="https://www.anthropic.com/threat-intelligence-report-september-2026">上个月所写</a>，我们看到了国家媒体、政府宣传办公室和商业公司利用克劳德运行虚假账户网络和捏造新闻网站的例子。我们的政策已经禁止这种活动，但限制分散在我们的选举、欺诈、隐私和虚假信息部分。</p>
+<p>我们已将这些规则合并到一个名为“请勿参与欺骗性活动或人为活动”的新部分中，该部分适用于任何类型的欺骗性活动（无论是政治还是商业）。它涵盖了掩盖消息背后的人或通过虚假帐户或帖子放大内容的努力，以及构建用于运行影响力运营活动的工具和基础设施。</p>
+<h3>重新关注我们的选举部分</h3>
+<p>我们在每个版本的使用政策中完善了政治内容限制，以确保我们的模型可以在民主进程中得到适当使用。在此版本中，我们进一步强化了有关选举的部分，特别侧重于禁止利用克劳德欺骗选民或扰乱选举（例如，通过传播有关候选人或如何投票的虚假信息、冒充候选人或选举官员，或试图压制投票率）。我们将其重命名为“不要破坏民主进程”以反映这一范围。</p>
+<p>出于类似的原因，我们还取消了对个性化投票和竞选定位的全面禁止。这项禁令涵盖了合法的公民工作，例如非营利组织利用克劳德用其他语言为选民撰写信息，或者选举官员发送选票处理通知。激发原始规则的行为（例如依赖欺骗或滥用选民个人数据的选民定位）仍然受到我们的欺骗性活动、监视和隐私部分的禁止。</p>
+<h3>澄清我们的武器禁令</h3>
+<p>我们的使用政策一直禁止使用克劳德来开发武器。最近，我们看到人们尝试使用我们的模型来构建武器的制导和控制软件。更新后的部分明确指出，我们的禁令包括使武器发挥作用的软件和组件，以及武装无人机和其他自动驾驶车辆等行为。这些变化反映了我们执行之前政策的方式。</p>
+<h3>关于监视和执法的更准确的语言</h3>
+<p>我们的 9 月份<a href="https://www.anthropic.com/threat-intelligence-report-september-2026">威胁情报报告</a> 记录了人工智能越来越多地用于构建识别和跟踪政治异见人士的监控系统。我们重写了监控和刑事司法部分，以更准确地说明我们禁止的内容。例如，禁止在未经同意的情况下跟踪人们，无论是实时发生还是通过分析先前收集的数据。克劳德不能用于决定或建议在执法或刑事司法程序中调查、逮捕或指控谁。我们还禁止克劳德被用来构建或改进专为监视而设计的工具。</p>
+<p>与之前对武器禁令的更新一样，这次更新并不反映我们在实践中执行的内容的变化：它只是为了使我们的政策更加明确。新部分还详细说明了哪些用途仍然被允许，包括跟踪人们已同意的（例如欺诈监控）、内容审核、新闻和法律研究。</p>
+<h3>高风险用例的更明确要求</h3>
+<p>当我们的产品以可能影响某人的健康、合法权利、财务、生计或获得基本服务的方式使用时，我们要求有一个合格的“知情人”（即有权审查并在必要时更改克劳德建议的人），并要求受影响的个人被告知使用了人工智能。</p>
+<p>这些要求并未随着我们的使用政策的更新版本而改变。然而，用户经常问我们给定的用例是否有这些要求，因此我们重写了高风险用例要求部分以更直接地回答这个问题。现在它列出了哪些类型的建议被涵盖，哪些不被涵盖。</p>
+<p>继我们的<a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">模型硬件标准</a>推出之后，本部分还添加了当我们的模型连接到采取自主物理动作且可能造成伤害的硬件时使用我们的模型的要求。合格的操作员必须能够观察设备并在需要时停止设备；如果 Claude 断开连接，设备还必须能够保持安全状态。</p>
+<h3>解决针对我们模型的虐待行为</h3>
+<p>我们增加了禁止对我们的模特进行持续和不必要的辱骂或残忍行为的禁令。该政策更新仅适用于极端情况，即用户反复对我们的模型采取残酷行为，且没有明显的目的。它不适用于常见版本的用户挫败感、阻力、黑暗创意主题或模型测试和研究。</p>
+<p>这一添加与我们已经采取的步骤一致，允许 Claude 模型在 Claude.ai 和 Claude Code 上<a href="https://www.anthropic.com/research/end-subset-conversations">结束与持续滥用用户的罕见对话</a>。此类滥用行为是本次更新的主要关注点；克劳德结束这些互动的能力仍将是主要的执行机制。</p>
+<h3>澄清我们的支持区域政策</h3>
+<p>去年，我们<a href="https://www.anthropic.com/news/updating-restrictions-of-sales-to-unsupported-regions">更新了支持区域政策</a>，限制总部位于我们不受支持区域的实体控股的公司访问 Claude。我们更新了<a href="https://www.anthropic.com/supported-countries">支持的区域页面</a>，以阐明我们如何执行此政策。我们的政策禁止实际位于不受支持的地区的人员、在该地区注册成立或总部位于该地区的实体以及由这些地区的个人或实体拥有或控制多数股权的实体使用 Claude。</p>
+<h3>展望未来</h3>
+<p>随着克劳德的能力和风险的变化，我们将不断更新我们的使用政策。与本次更新以及之前的更新一样，我们将寻求整个 Anthropic 以及政策制定者、主题专家、民间社会和使用我们产品的人们的意见。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>立足于我们对美国科学发现的承诺</title>
+      <link>https://www.anthropic.com/news/genesis-mission-commitment</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/genesis-mission-commitment</guid>
+      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Building on our commitment to American scientific discovery</description>
+      <content:encoded><![CDATA[<p>Anthropic 正在加深对美国科学研究的支持，承诺在三年内向 <a href="https://www.energy.gov/undersecretaryforscience/genesis-mission/genesis-mission">Genesis Mission</a> 提供 1.5 亿美元，这是一项通过人工智能加速科学和技术发现的联邦倡议。这笔资金将用于让参与该任务的超过 15 个机构能够使用 Claude，其中包括 NASA、美国国立卫生研究院和国家科学基金会。</p>
+<p>我们首先宣布与美国能源部 (DOE) 和 Genesis Mission 建立合作伙伴关系 <a href="https://www.anthropic.com/news/genesis-mission-partnership">去年 12 月</a>。从那时起，我们与美国能源部合作，将克劳德带到国家实验室的科学家们面前。今天，我们在华盛顿特区白宫科学技术政策办公室主办的科学：新黄金时代峰会上宣布了这一新承诺。</p>
+<h3>支持美国科学家</h3>
+<p>我们赞同政府在《科学：新黄金时代》(https://www.whitehouse.gov/science/) 中阐述的观点，即人工智能可以对科学发现产生深远而积极的影响，我们很高兴支持其支持美国科学家的努力。</p>
+<p>联邦机构和国家实验室的研究人员致力于解决世界上一些最困难的科学问题。通过我们的承诺，我们的目标是帮助他们利用 Claude 来有意义地推进他们的工作。未来三年，我们将：</p>
+<ul><li>为数百个 Genesis Mission 研究项目提供 Claude、Claude Code 和 API 学分；</li><li>与机构和国家实验室在政府的首要科学优先事项上密切合作，包括聚变能源和量子计算；和</li><li>为创世纪任务项目的科学家提供培训、入职和技术支持，并帮助新加入创世纪任务的机构启动其第一个项目。</li></ul>
+<h3>加速科学研究</h3>
+<p>这一承诺是我们支持科学研究的更广泛努力的一部分。今年早些时候，我们推出了 <a href="https://claude.com/product/claude-science">Claude Science</a>，这是一个人工智能工作台，集成了研究人员最常用的工具和软件包，并为学术科学家<a href="https://www.anthropic.com/news/expanding-support-for-scientists">开放了 10,000 个免费和打折的 Claude 席位</a>。我们还扩展了 <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science</a> 计划，该计划为高影响力项目的研究人员提供学分，并启动了 <a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">模型硬件标准</a> 的研究预览，这是一个 AI 代理安全操作实验室仪器的共享规范。我们对创世任务的承诺是我们帮助世界各地研究人员的下一步。</p>]]></content:encoded>
     </item>
     <item>
       <title>Block 如何跨数千个 pull request 编排 Claude Fable</title>
@@ -373,24 +1001,6 @@
 <h3>订阅 developer 通讯</h3>
 <p>产品更新、操作指南、社区聚焦等等，每月送达你的收件箱。</p>
 <p>如果你想订阅我们每月的 developer 通讯，请提供你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Introducing the Anthropic Cyber Mission</title>
-      <link>https://www.anthropic.com/news/anthropic-cyber-mission</link>
-      <guid isPermaLink="true">https://www.anthropic.com/news/anthropic-cyber-mission</guid>
-      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>2026 Usage Policy update</title>
-      <link>https://www.anthropic.com/news/2026-usage-policy-update</link>
-      <guid isPermaLink="true">https://www.anthropic.com/news/2026-usage-policy-update</guid>
-      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>Building on our commitment to American scientific discovery</title>
-      <link>https://www.anthropic.com/news/genesis-mission-commitment</link>
-      <guid isPermaLink="true">https://www.anthropic.com/news/genesis-mission-commitment</guid>
-      <pubDate>Thu, 08 Oct 2026 00:00:00 +0000</pubDate>
     </item>
     <item>
       <title>用 Claude 搭建实时 dashboard 与动画讲解</title>
@@ -769,18 +1379,72 @@
 <p>如果你想收取我们每月的开发者通讯，请提供你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Anthropic invests $100 million to train 10,000 engineers and…</title>
+      <title>Anthropic投资1亿美元培训1万名工程师，解决企业AI人才缺口</title>
       <link>https://www.anthropic.com/news/claude-frontier-academy</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/claude-frontier-academy</guid>
       <pubDate>Fri, 02 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Anthropic invests $100 million to train 10,000 engineers and tackle the enterprise AI talent gap</description>
+      <description>原文标题：Anthropic invests $100 million to train 10,000 engineers and tackle the enterprise AI talent gap</description>
+      <content:encoded><![CDATA[<p><em>同类首个学院采用与 Anthropic 自己的工程师相同的技能标准来培训前沿部署工程师，培训对象来自埃森哲、贝恩、凯捷、澳大利亚联邦银行、德勤、麦肯锡、摩根士丹利、诺和诺德等公司。</em></p>
+<p>今天，我们推出克劳德前沿学院来解决人工智能实施中最紧迫的问题之一：人才。在 1 亿美元承诺的支持下，Anthropic 计划到 2027 年底培训 10,000 名前沿部署工程师 (FDE)。来自埃森哲、贝恩、凯捷、澳大利亚联邦银行、德勤、麦肯锡、摩根士丹利和诺和诺德的工程师属于第一批。</p>
+<p>每个企业都在竞相将人工智能引入其组织，但拥有使其在实际业务中发挥作用的技能的人才已成为最难找到的人才。在我们合作的公司内部，一小群技术精湛的人推动了人工智能交付的巨大份额。该学院是第一家来自人工智能公司的此类学院，是根据我们自己的工作而建立的，将克劳德部署在世界上最大的企业和为这些企业提供服务的专业服务组织中。</p>
+<p>“一个由具备适当技能、接触 Claude 并深入了解其业务运营方式的高级人员组成的小团队可以改变整个公司。困难的部分是培养具有最高水平 AI 熟练程度的人才深度人才，他们可以将 Claude 从一个想法转化为生产中的系统，并将其转化为更快的流程以及新产品和服务。没有一家 AI 公司投资于在客户和合作伙伴内部培养这种深度的人才。Claude Frontier Academy 以我们自己的工程师学习的方式培训人员，我们希望毕业生能够为如何在企业内部构建人工智能制定标准。” – Steve Corfield，Anthropic 业务发展和合作伙伴关系全球主管</p>
+<h3>第一个项目培训 10,000 名前沿部署工程师</h3>
+<p>该学院的第一个项目是前沿部署工程师住院医师培训，遵循医学模型来培养专业知识。医生向执业医师学习，根据真实案例进行培训，并在单独执业前接受评估。同样，FDE 驻场工程师向从业者学习，在实际案例中进行实践，并在获得证书之前对其工作进行评估。我们的目标是改变企业运营方式的代理系统，从更快、重新设计的流程到新产品和服务。</p>
+<p>该计划面向具有扎实基础知识、拥有法学硕士构建记录、帮助他人采用人工智能的经验以及解决业务最重要问题的习惯的实践软件工程师。组织提名他们最强大的工程师，每个人回来后都会带着一个名为 Claude 的项目来领导。不需要具备构建人工智能代理的经验。</p>
+<p>工程师首先与人类工程师和持证讲师进行为期多天的面对面课程。他们通过模拟企业部署进行工作，从正确的用例到安全审查再到移交，最后以新场景的分级实践结束。通过考试的人将获得 Claude 驻场工程师徽章，并进入为期 12 周的驻场培训，在 Anthropic 工程师的支持下，他们在自己的组织中领导一个真正的 Claude 用例，并在构建过程中向他们的团队学习。工程师将在 12 周结束时再次接受评估，通过考试的工程师将获得 Claude Frontier 部署工程师徽章，第一枚预计将于 2027 年初获得。</p>
+<h3>第一批现在正在运行</h3>
+<p>队列正在旧金山、纽约和伦敦运行。到 2027 年底，该计划的工程师人数将增至 10,000 名。参与方式为提名；组织可以询问其 Anthropic 客户团队或合作伙伴客户经理是否符合资格。</p>
+<h3>龙头企业和咨询公司处于第一梯队</h3>
+<blockquote>“在埃森哲，前沿部署的工程师将人工智能的野心转化为整个企业的影响力，作为多学科团队的一部分在客户工作流程中工作，将人工智能概念设计成可规模化的、可投入生产的、受管理的解决方案。Anthropic 以我们思考这个角色的方式构建了驻场项目：根据模拟企业部署测试判断力，而不是孤立的技术技能。加入 Claude Frontier Academy 将加深我们工程师的 Claude 专业知识，并加速我们为客户提供的价值。”</blockquote>
+<p>拉姆·拉马林甘</p>
+<p>埃森哲 FDE 和软件与平台工程主管</p>
+<blockquote>“建立深入、实用的人工智能工程能力对于帮助客户从实验转向大规模影响至关重要。前沿部署工程师驻场培训将使我们的工程师有机会直接与 Anthropic 合作，提高他们的专业知识，并将这些经验带入我们与客户的合作中。”</blockquote>
+<p>迈克尔·布莱克</p>
+<p>贝恩合伙人、全球工程主管</p>
+<blockquote>“我从客户那里听到的不是认证数量或培训量；而是直接了解如何解决为客户创造价值的现实问题。通过与 Anthropic 自己的工程师并肩工作，凯捷正在投资并打造客户立即认可的卓越交付服务。”</blockquote>
+<p>杰弗里·帕约特</p>
+<p>凯捷人工智能合作伙伴生态系统全球主管</p>
+<blockquote>“人工智能正在改变我们为客户构建、交付和创新的方式。我们的工程师每天都使用人工智能工具，我们的团队在过去一年中进行了多达 3 倍的代码更改。前沿部署工程师驻场培训使他们能够更深入地了解与前沿同行一起构建、保护和运输的实践经验。我们今天正在建设明天的银行，该计划为我们的团队提供了工具和专业知识，为我们的客户设计最好的产品。”</blockquote>
+<p>罗德里戈·卡斯蒂略</p>
+<p>澳大利亚联邦银行集团首席技术官</p>
+<blockquote>“企业规模的人工智能部署需要熟练的人员，他们能够推动项目从最初的需求到安全审查，再到真正的采用。Claude Frontier Academy 的 FDE 驻场培训使我们能够扩展我们已经在该领域测试过的学科，这就是为什么我们很高兴成为首批团队的一员，尽早让我们的工程师加入进来，以扩展我们的 Claude 就绪人才队伍。”</blockquote>
+<p>法鲁克·穆拉托维奇</p>
+<p>德勤咨询有限公司 负责人</p>
+<blockquote>“麦肯锡和 Anthropic 之间的合作旨在利用前沿人工智能为客户创造卓越的业务成果。我们的技术专家为我们的客户工作带来了前沿人工智能专业知识、行业深度和价值创造思维。该驻场项目为他们如何应用 Claude 服务于客户的业务目标设定了标准，为我们世界一流的人才提供了与 Anthropic 的工程师一起学习前沿技术的经验。Claude Frontier Academy 和 FDE 驻场项目扩展了我们技术人员的工具包，帮助他们亲手解决客户最棘手的问题。”</blockquote>
+<p>丹·廷科夫</p>
+<p>麦肯锡 QuantumBlack 高级合伙人兼全球联席领导人</p>
+<blockquote>“人工智能已经在改变我们在 Novo 发现和开发药物的方式。在我们的研发工作流程中使用 Claude Science，在我们的软件开发中使用 Anthropic 的前沿模型，在药物发现方面进行实验室循环研究，以及 Anthropic 工程师与我们的科学家一起工作，我们已经看到了当前沿人工智能与深厚的科学专业知识相遇时可能发生的事情。我们很高兴加入 Claude Frontier Academy 和 FDE Residency，为我们的工程师提供与 Anthropic 最成功的项目背后相同的培训和专业知识。部署，这样我们就可以更快地将下一代药物带给患者。”</blockquote>
+<p>卢伊克·吉罗</p>
+<p>诺和诺德数据与人工智能副总裁</p>
+<p>01</p>
+<p>07</p>
+<h3>克劳德合作伙伴网络</h3>
+<p>Claude Frontier Academy 建立在 <a href="https://claude.com/blog/four-role-based-claude-certifications">Claude 合作伙伴网络</a> 之上，其中 46,000 家公司的专业人士已获得超过 175,000 个 Claude 认证，近 4,000 人完成了 Basecamp，这是一个沉浸式项目，教授的课程与我们的应用 AI 团队入职时所接受的课程相同。克劳德前沿学院是为领导这项工作的人们而设立的，培训 10,000 名前沿部署工程师只是其中的第一步。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Barclays scales Claude to upgrade operations and improve cli…</title>
+      <title>巴克莱扩大Claude的规模以升级运营并改善客户体验</title>
       <link>https://www.anthropic.com/news/barclays-scales-claude</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/barclays-scales-claude</guid>
       <pubDate>Thu, 01 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Barclays scales Claude to upgrade operations and improve client experience</description>
+      <description>原文标题：Barclays scales Claude to upgrade operations and improve client experience</description>
+      <content:encoded><![CDATA[<p>英国全能银行巴克莱银行 (Barclays) 正在扩大与 Anthropic 的战略合作，以在其全球运营中集成安全的企业级人工智能系统。</p>
+<p>巴克莱正在将 Claude 扩展到整个银行，以加速软件开发、实现遗留系统的现代化并提高运营效率。作为此次部署的一部分，巴克莱预计到 2026 年底，Claude Code 的采用率将达到其开发人员总数的 50%，到 2027 年将上升到大多数软件工程师。</p>
+<h3>巴克莱银行与 Claude 合作，更好地服务客户</h3>
+<p>将人工智能集成到大型、复杂且高度监管的组织中需要强大的技术和严格的治理。扩大与 Anthropic 的合作反映了双方的共同承诺，即以负责任、可靠的方式部署人工智能，并以交付实际成果的方式，例如为客户提供更快的支持。</p>
+<p>巴克莱银行集团联席首席运营官 Anne Marie Darling 表示：“衡量任何技术的真正标准是它对客户、客户和同事的影响及其带来的成果。” “在巴克莱银行扩大 Claude 的使用不仅仅是采用人工智能。它还涉及到改变工作的完成方式：重新构想流程，增强客户和客户体验，并在安全和治理良好的环境中建立更简单、更高效的组织。通过减少日常活动所花费的时间和简化决策，我们可以让同事将他们的专业知识集中在最重要的地方，解决更复杂的问题，加速创新，并为我们的客户、客户和业务提供更好的成果。”</p>
+<p>巴克莱集团联席首席运营官 Craig Bright 表示：“软件工程和网络安全都在被日益强大的人工智能系统重塑。” “我们正在将人工智能作为一种日益代理的能力，嵌入到我们构建、测试、保护和操作技术的方式中。在巴克莱，我们利用 Claude 来帮助实现遗留平台的现代化，提高软件质量，并让我们的技术专家专注于最复杂的挑战。熟练的工程师、网络专家和值得信赖的人工智能能力的结合有可能从根本上改善大型企业的技术开发和管理方式。”</p>
+<h3>Claude 提供知识协助以加快客户服务速度</h3>
+<p>巴克莱银行的同事知识助手就是已经开始实施的合作伙伴关系的一个例子，它可以帮助巴克莱英国员工在为超过 2000 万英国零售客户提供支持时更快地找到信息和答案。</p>
+<p>该功能自 2025 年起就已上线，由 Claude 通过检索增强生成架构提供支持。超过 16,000 名同事已经使用了这款助手，并且它已经处理了超过 100 万次搜索。</p>
+<p>其结果是更快地获取信息并更快地为客户提供支持。</p>
+<h3>提高巴克莱全球市场业务的运营效率</h3>
+<p>在巴克莱的全球市场业务中，克劳德模型正在帮助简化客户查询的处理和管理方式。</p>
+<p>团队使用 Claude 模型对传入电子邮件进行分类、丰富和确定最佳处理路线，帮助确定优先级并确保请求包含运营同事采取行动所需的信息。该平台每天处理约 120,000 封电子邮件，减少了人工处理活动，同时帮助同事更有效地识别相关信息并采取行动。</p>
+<h3>负责任地扩展人工智能</h3>
+<p>随着巴克莱银行继续扩大人工智能的使用，负责任的部署仍然是合作伙伴关系的核心。该银行对人工智能用例应用强大的治理、安全控制和人工监督，确保技术在整个组织中安全有效地部署。</p>
+<p>Anthropic 首席商务官 Paul Smith 表示：“我们与巴克莱银行的合作对于我们在英国来说是一个重要的里程碑。巴克莱银行为全球数百万客户和客户提供服务，因此他们对人工智能的标准很高。这就是巴克莱银行为 Claude 提供强大安全和监督的原因。” “Claude 现在帮助 16,000 名巴克莱同事为客户找到答案，每天分类 120,000 封电子邮件，到 2027 年将由大多数巴克莱工程师负责。很少有机构能将人工智能达到如此高的标准。”</p>
+<h3>展望未来</h3>
+<p>扩大的合作伙伴关系反映了巴克莱银行对利用人工智能提高生产力、增强弹性以及改善客户和客户成果的长期承诺。通过将 Anthropic 的前沿人工智能能力与巴克莱银行对负责任创新的关注相结合，两家公司正在共同努力，在全球最大的金融机构之一中扩展实际的人工智能应用。</p>]]></content:encoded>
     </item>
     <item>
       <title>推出 Claude Sonnet 5.5</title>
@@ -1506,10 +2170,192 @@ return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
 <p>完整的功能列表见 <a href="https://support.claude.com/en/articles/16761823">帮助中心</a>。如果你一直攒着一个庞大杂乱的项目，现在就是时候了。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Introducing Claude Mythos and Fable 5.1</title>
+      <title>介绍Claude神话和寓言 5.1</title>
       <link>https://www.anthropic.com/claude-fable-and-mythos-5-1</link>
       <guid isPermaLink="true">https://www.anthropic.com/claude-fable-and-mythos-5-1</guid>
       <pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Introducing Claude Mythos and Fable 5.1</description>
+      <content:encoded><![CDATA[<p>我们正在介绍克劳德寓言 5.1 和克劳德神话 5.1。它们是世界上最先进的编码和知识工作模型，它们的研究能力让人们能够初步了解人工智能模型将如何促进科学进步。</p>
+<p>Claude Fable 5.1 和 Claude Mythos 5.1 是同一型号，但防护级别不同。 《神鬼寓言》5.1 是普遍可用的，而《神话 5.1》只能通过我们的可信访问程序获得；其保障措施是专门为支持网络安全和生命科学领域的工作而设计的。</p>
+<p>除了功能的增强之外，《神鬼寓言 5.1》还采取了重要措施来解决我们从客户那里收到的有关价格、数据保留和安全措施的反馈。</p>
+<p>**价格*.*** 对于典型工作负载，无论使用情况如何按代币计费，《神鬼寓言》 5.1 的成本预计比《神鬼寓言 5》低 25%。这是因为我们正在降低缓存读取（模型读取已处理和存储的输入）的定价。对于高度代理的工作，节省的费用通常要大得多，高达约 45%。</p>
+<p>**数据保留*。 ***我们的新企业前沿保障 (EFS) 系统为客户提供完全的隐私（与零数据保留政策相同），同时在防止敌对性使用方面仍然保持最先进的水平。 EFS 的工作原理是将数据存储在完全由客户而非 Anthropic 控制的云基础设施中。它将从今年秋季晚些时候开始分阶段向企业客户提供。在 EFS 推出之前，符合条件的客户将能够以零数据保留的方式使用 Fable 5.1。</p>
+<p>**保障措施*。 ***我们改进了保护措施，以减少误报（系统标记良性内容）。在网络安全方面，我们最新的防护措施阻止的误报比以前减少了 60%。部分原因是《神鬼寓言 5.1》现在可用于发现软件漏洞，但不能用于开发漏洞利用程序。在生物学方面，我们与美国政府合作开发了一项访问计划，以便能够访问 Claude Mythos 5.1 的高级生物学功能。我们预计很快就会向科学家开放报名。</p>
+<h2>新的性能前沿</h2>
+<p>Claude Fable 5.1 为编码、知识工作和长期运行的问题解决任务设立了新标准。下图显示，《神鬼寓言 5.1》比其前身《神鬼寓言 5》具有更高的性能。当设置为“低”或“中”工作量时，《神鬼寓言 5.1》以更低的成本实现与《神鬼寓言 5》相似或更好的结果。 （请注意，《神鬼寓言 5.1》在 Claude Code 中默认为“高努力”，在 Claude Cowork 和 Claude.ai 中默认为“Medium”。）</p>
+<p>代理科学研究代理终端编码多学科推理代理编码</p>
+<p>Terminal-Bench-Science 0.1 准确度与成本</p>
+<p>Terminal-Bench-Science 0.1：每个模型的标准误差为 ±3.5–4.5 点。公共排行榜（3 次试验/任务，Claude Code 工具）报告 Claude Opus 5 为 30.0%，Claude Fable 5 为 21.4%；我们的设置在噪声范围内分别以 29.0% 和 24.7% 的速度再现了它们。</p>
+<p>Terminal-Bench 4.0精度与成本</p>
+<p>Terminal-Bench 4.0 在每个努力级别按成本（对数标度）进行评分。克劳德寓言5.1和克劳德神话5.1是相同的底层模型；它们之间的差距反映了我们早期的、不太精确的网络保障措施所干预的任务。随着我们今天对这些保障措施所做的改进，我们预计模型之间的差异会小得多。</p>
+<p>人类的最后一次考试准确性与成本</p>
+<p>人类的最后考试在每个努力水平上按成本（对数刻度）评分。 CursorBench 3.2.0 在每个努力级别按成本（对数刻度）进行评分。</p>
+<p>CursorBench 3.2.0准确性与成本</p>
+<p>CursorBench 3.2.0 按每个工作级别的成本（对数刻度）。</p>
+<p>《神鬼寓言 5.1》避免了导致工作质量下降的捷径，而且它足够智能，可以解决软件问题的根本原因。例如，在投资公司 Millennium 的测试中，《神鬼寓言 5.1》发现了其内部系统罕见崩溃的原因，而经过几年的尝试，其工程师（或任何其他模型）都无法解释这一原因。</p>
+<p>在这里，您可以看到《神鬼寓言 5.1》在各种基准测试中的比较情况：</p>
+<table><thead><tr><th></th><th>神鬼寓言5.1</th><th>寓言5</th><th>作品 5</th><th>GPT-5.6 溶胶</th></tr></thead><tbody><tr><td>代理科学研究Terminal-Bench-Science 0.1 [1]</td><td></td><td></td><td></td><td></td></tr><tr><td>代理科学研究Terminal-Bench-Science 0.1 [1]</td><td>52.6%</td><td>24.7%</td><td>29.0%</td><td>22.4%</td></tr><tr><td>代理编码终端-Bench 4.0</td><td></td><td></td><td></td><td></td></tr><tr><td>代理编码终端-Bench 4.0</td><td>55.8%60.9%（神话5.1）</td><td>42.0%</td><td>52.3%</td><td>37.3%</td></tr><tr><td>知识工作GDPval-AA v2</td><td></td><td></td><td></td><td></td></tr><tr><td>知识工作GDPval-AA v2</td><td>1853</td><td>1853 1723</td><td>1723 1824</td><td>1824 1711</td><td>1711</td></tr><tr><td>计算机使用OSWorld 2.0 [2]</td><td></td><td></td><td></td><td></td></tr><tr><td>计算机使用OSWorld 2.0 [2]</td><td>77.9%部分</td><td>72.9%部分</td><td>75.4%部分</td><td>—</td></tr><tr><td>电脑使用OSWorld 2.0</td><td></td><td></td><td></td><td></td></tr><tr><td>电脑使用OSWorld 2.0</td><td>41.7%严格</td><td>36.1%严格</td><td>39.6%严格</td><td>—</td></tr><tr><td>多学科推理人类的最后考试</td><td></td><td></td><td></td><td></td></tr><tr><td>多学科推理人类的最后考试</td><td>60.9%没有工具</td><td>57.8%没有工具</td><td>56.6%没有工具</td><td>—</td></tr><tr><td>65.0%带工具</td><td>63.8%有工具</td><td>63.6%有工具</td><td>—</td><td></td></tr><tr><td>业务工作流程自动化工作台</td><td></td><td></td><td></td><td></td></tr><tr><td>业务工作流程自动化工作台</td><td>31.4%</td><td>17.1%</td><td>26.9%</td><td>19.6%</td></tr><tr><td>代理编码CursorBench 3.2.0</td><td></td><td></td><td></td><td></td></tr><tr><td>代理编码CursorBench 3.2.0</td><td>73.4%</td><td>70.5%</td><td>70.0%</td><td>67.2%</td></tr></tbody></table>
+<p>《神鬼寓言 5.1》在启用生产保障措施的情况下进行了评估。在这些安全措施干预的任务中，《神鬼寓言 5.1》和《神鬼寓言 5》在 OSWorld 2.0 上得分为零，《神鬼寓言 5》在 AutomationBench 上得分为零。在我们的保障措施的所有其他干预措施中，网络安全任务由 Claude Opus 4.8 完成，生物学任务由 Claude Opus 5 完成。这可能会降低《神鬼寓言 5.1》和《神鬼寓言 5》在这些基准上的性能。</p>
+<p>我们的早期访问合作伙伴注意到了这些性能升级，并且也发现了模型输出的更多定性改进。他们告诉我们的是：</p>
+<p>Jane Street CapitalCognitionMillenniumMongoDBEveryIMCRed HatRakutenSquare（Block）RampCanvaHebbiaPlaidGleaniGentBrowserbaseRogoShopifyCrosbyDatadogSpaceXAISamaya</p>
+<p>报价</p>
+<blockquote>“在内部基准测试中，Claude Fable 5.1 比 Fable 5 或 Opus 5 解决了更多的编码问题，并在交易直觉方面达到了最先进的水平。虽然以前的模型随着工作时间的延长而变得难以遵循，但 Fable 5.1 在长时间、多步骤的任务中仍然具有可读性。”</blockquote>
+<p>公司Jane Street Capital</p>
+<p>作者 Craig Falls，定量研究主管</p>
+<p>报价</p>
+<blockquote>“我们在发布当天将 Devin 的 Opus 5 流量转移到 Claude Fable 5.1。在我们的测试中，它以更低的每任务成本与 Fable 5 相匹配或略胜一筹，并且通过新的缓存读取定价，Fable 级模型最终对于我们在 Opus 上保留的工作负载（从代码审查开始）来说是经济的。”</blockquote>
+<p>公司认知</p>
+<p>作者：Walden Yan，联合创始人兼 CPO</p>
+<p>报价</p>
+<blockquote>“一段特定的代码发生了极其罕见的崩溃，大约是百万分之一的运行，我们团队中的人在四到五年内没有人对此进行解释。我尝试的每个模型，包括《神鬼寓言 5》，都错过了它。Claude Fable 5.1 是第一个发现它的。它反汇编了一个外部供应商库，将其与核心转储进行匹配，并将崩溃追溯到该库中的错误。进行该分析所需的时间很难证明是合理的。”</blockquote>
+<p>公司千禧年</p>
+<p>作者Damien，高级投资组合经理</p>
+<p>报价</p>
+<blockquote>“Claude Fable 5.1 在大约三天内构建了一个复杂的原型。它对我们所有的服务代码和文档进行了初步研究，以产生新颖且可扩展的设计。然后它在无人值守的情况下运行了几个小时，并进行了强大的验证循环，以实现整个原型。我会在早上醒来看到下一阶段完成，并提供其构建内容的完整视觉演练以及其成功的明确证据。”</blockquote>
+<p>公司MongoDB</p>
+<p>作者 Ron Sanzone，资深软件工程师</p>
+<p>报价</p>
+<blockquote>“它是友好的《寓言》。寓言级别的智能，Opus 级别的价格，十四行诗般的速度。在我们的测试中，它的速度大约是 Opus 5 的两倍，使用的代币数量是 Opus 5 的一半，因此对于习惯使用 Opus 作为日常驱动程序的任何人来说，这是一个明显的升级。”</blockquote>
+<p>公司每个</p>
+<p>作者 Dan Shipper，首席执行官</p>
+<p>报价</p>
+<blockquote>“在我们的研究套件中，Claude Fable 5.1 创下了新的最佳成绩。在一项任务中，它提出了一种新颖的解决方案，其轴与我们过去从其他模型或人类研究人员那里看到的完全不同，其结果远远高于之前的水平。它更擅长创造性地解决问题，并获得解决难题所需的洞察力。”</blockquote>
+<p>公司IMC</p>
+<p>作者Marquis Wong，首席人工智能工程师</p>
+<p>报价</p>
+<blockquote>“作为我们对 AI 模型持续评估的一部分，Claude Fable 5.1 在我们的测试中取得了令人印象深刻的结果。使用 Claude Code，它在所有努力级别上正确识别了我们测试的每个损坏构建的根本原因。它还比早期的 Anthropic 模型更有效地进行通信，更新更简洁、更易于遵循。”</blockquote>
+<p>公司Red Hat</p>
+<p>作者乔什·博耶 (Josh Boyer)，杰出工程师</p>
+<p>报价</p>
+<blockquote>“我们要求 Claude Fable 5.1 审查 Rakuten Medical 的一个临床研究项目，其他三个前沿模型已经签署了该项目。它发现了他们都没有看到的差距，并坚持进一步测试它。然后它提出了一个全新的假设，将我们注销的数据集在一个下午变成了一个新的研究方向。这是第一次像 Claude 这样的前沿模型使我们能够以这种方式探索新的研究。”</blockquote>
+<p>公司乐天</p>
+<p>作者Felix Giovanni Virgo，首席人工智能工程师</p>
+<p>报价</p>
+<blockquote>“Claude Fable 5.1 非常智能。在我们为期 30 天的模拟企业运营评估中，该模型可以完全访问模拟的 Square 工具、客户、员工和供应商，每个代币的效率比 Opus 5 高得多。我们计划使用它来解决最复杂的场景，这种场景过去需要花费数天的时间在白板上完成，这样我们的工程团队就可以继续快速前进。”</blockquote>
+<p>公司广场 (街区)</p>
+<p>作者Willem Avé，全球产品主管</p>
+<p>报价</p>
+<blockquote>“对于任何研究，无论是全新的还是长期的，我绝对会使用 Claude Fable 5.1 作为编排器。对机器学习问题进行一次无人值守的 38 小时运行，将之前的结果诊断为标签工件，进行了纠正，启动了通宵运行的六个并行实验，并返回了结果和后续步骤。给定一个开放式提示，要求找到无人拥有的最高杠杆问题，它会出现与生产中断相关的无主警报，拉出日志并规定修复。”</blockquote>
+<p>公司坡道</p>
+<p>作者 Dwight Temple，高级机器学习工程师</p>
+<p>报价</p>
+<blockquote>“《Claude Fable 5.1》的突出之处在于写作：更容易理解，更有意义，并且它更好地遵循我们的写作指导。在针对《Fable 5》的盲测中，我更喜欢它的写作和输出。在 Canva Code 中，它构建了一个节奏游戏，具有真实的音乐和与其生成的关卡相匹配的节拍游戏玩法，这是我们测试的其他模型无法提供的。”</blockquote>
+<p>CompanyCanva</p>
+<p>作者Danny Wu，人工智能负责人</p>
+<p>报价</p>
+<blockquote>“在我们的 PowerPoint 评估中，Claude Fable 5.1 制作了我们测试过的所有模型中最好的套组，无论是在幻灯片工艺还是在完全回答我们的研究主题方面。在我们的引文评估中也显示出同样的完整性，它比财务文档具有最好的事实回忆。对于复杂的多部分问题，这是我们见过的第一个回答每个部分的模型。”</blockquote>
+<p>公司Hebbia</p>
+<p>作者Aabhas Sharma，首席技术官</p>
+<p>报价</p>
+<blockquote>“我们的更改涉及三个代码库中的八个以上服务。Claude Fable 5.1 以极其精细的细节端到端地映射了整个工作流程，从传入的服务调用到单个函数以及数据库表和行，并且一直准确。我们很高兴有机会测试模型并提供反馈，帮助我们为新领域做好准备，在这个领域我们可以越来越依赖这些工具来采取更大胆的举措。”</blockquote>
+<p>公司格子</p>
+<p>作者Aditya Gupta，资深软件工程师</p>
+<p>报价</p>
+<blockquote>“在我们的评估集中，在日常知识问题、高意图研究、起草和工件工作方面，我们的评委更喜欢克劳德·寓言 5.1 的答案，而不是《寓言 5》的答案，所有这些答案都比《寓言 5》有更好的响应基础。这些结果使《寓言 5.1》成为我们首选的推荐，无论以前选择《寓言 5》。”</blockquote>
+<p>公司收集</p>
+<p>作者 Nilesh Dalvi，工程主管</p>
+<p>报价</p>
+<blockquote>“在我们解决的最困难的问题上，Claude Fable 5.1 与我们尝试过的任何其他模型都有很大区别。在我们用作测试平台 18 个月的一个重大挑战级问题上，它实际上取得了实质性进展。它没有陷入集邮困境，而是建立了我在其他地方尚未看到的清晰的空白连接。它还优化了《神鬼寓言 5》的计算内核，优化了约 35%。”</blockquote>
+<p>公司iGent</p>
+<p>作者肖恩·沃德 (Sean Ward)，联合创始人兼首席执行官</p>
+<p>报价</p>
+<blockquote>“在我们最难的浏览器代理基准测试中，Claude Fable 5.1 在每个大约 10 分钟内完成了 82% 的任务，而 Opus 5 为 74%，Fable 5 为 57%，同时使用的令牌比这两者都少。在我们测试的每个维度上，它都比 Fable 5 更强。它也完成了正确的工作量：在数百个测量任务中从未跨越关键停止点。”</blockquote>
+<p>公司浏览器库</p>
+<p>作者Miguel Gonzalez，技术主管</p>
+<p>报价</p>
+<blockquote>“在我们的内部财务基准中，Claude Fable 5.1 在准确性上与 Fable 5 相当，同时使用的代币减少了 20%。我们还看到幻灯片生成方面的巨大进步，Fable 5.1 在用更简单的英语解释复杂数据并将其转换为银行家级视觉效果方面表现出改进。”</blockquote>
+<p>公司Rogo</p>
+<p>作者Alex Wang，应用人工智能</p>
+<p>报价</p>
+<blockquote>“与《神鬼寓言 5》相比，《克劳德神鬼寓言 5.1》更适合长时间无人值守的工作。我已经让工作流程运行了很长一段时间而不会丢失情节：它保留自己的记录，随着情况的变化重新确定优先级，并从中断的地方继续。”</blockquote>
+<p>公司Shopify</p>
+<p>作者Ben Lafferty，高级工程师</p>
+<p>报价</p>
+<blockquote>“与《神鬼寓言 5》相比，《神鬼寓言 5.1》在我们的合同红线基准 RedlineBench 上有了巨大的进步，从 47.9 提高到了 57.0。大部分的进步来自于首轮质量，它的分数比之前的分数翻了一番，交易对手的接受度也大幅提高。它的编辑也更加简洁，对文档的平均更改较小。”</blockquote>
+<p>公司克罗斯比</p>
+<p>作者Raymond Lin，技术人员</p>
+<p>报价</p>
+<blockquote>“Claude Fable 5.1 是我们事件调查评估的领先模型，它使用真实的生产事件来评估我们的代理 Bits Investigation 进行根本原因分析的有效性。我们根据工程师确定的根本原因评估代理的输出。在这些评估中，它表现出了比 Opus 5 更强大的推理能力，并成功诊断了我们测试过的最复杂的生产事件。”</blockquote>
+<p>公司Datadog</p>
+<p>作者 Daniel Shan，高级工程师</p>
+<p>报价</p>
+<blockquote>“Claude Fable 5.1 是我们在 CursorBench 3.2 上运行的最强大的模型，在最大努力下得分为 73.4%。我们发现它特别擅长验证自己的工作，使其能够从头到尾承担困难的编码任务。”</blockquote>
+<p>公司SpaceXAI</p>
+<p>作者Sualeh Asif，机器学习总监</p>
+<p>报价</p>
+<blockquote>“我们评估现实世界投资者工作流程的模型和系统。在我们最新的财务基准 FrontierFinance 上，Claude Fable 5.1 显示出明显优于 Fable 5 的优势，评分为 55.9%，而 Fable 5 的评分为 49.2%。这种优势来自于它能够更深入地挖掘有根据的权威来源：在一个收益问题上，它直接进入电话记录并捕获了管理层引用的确切数据，而其他模型则依赖于二次报道。”</blockquote>
+<p>公司三昧耶</p>
+<p>作者张宇豪，研究负责人</p>
+<h2>科学研究</h2>
+<p>我们测试了克劳德寓言5.1和克劳德神话5.1在广泛领域的科学研究能力。我们的发现（包括我们下面分享的早期例子）进一步证明人工智能模型很快将为科学发现做出重要贡献。</p>
+<p>**分子设计<em>.</em> **许多现代药物通过与体内的靶点结合来阻断、激活或输送某些物质来发挥作用。高亲和力粘合剂对于药物在较低剂量下发挥作用是必需的；设计一个药物是许多常见药物模式开发过程的第一步。为了了解 Claude Mythos 5.1 在这项任务上的表现如何，我们为模型提供了开源蛋白质设计和折叠工具的访问权限，并将其设计发送给两个外部组织进行实验验证。 Mythos 5.1 被证明能够设计非常高亲和力的粘合剂。在三个靶标上，[3] 其结合亲和力比 [Adaptyv Bio 蛋白质设计竞赛](https:// Proteinbase.com/competitions) 提交的最佳设计高 10 倍。它的命中率（即可行的绑定设计的数量）是我们迄今为止测量到的最高的：它在 12 个目标中达到了近 50%。 （当今蛋白质设计中 10-15% 的命中率是典型的。）</p>
+<p>Claude 为 12 个目标（灰色）中的每一个设计了蛋白质结合剂（橙色）。视频中的每一个设计都被证实可以在实验室中绑定。显示的结构是 ESMFold2 预测。</p>
+<p><strong>计算分析和建模</strong>。克劳德寓言 5.1 训练了一个神经网络来创建金星三分之一的新高分辨率高程图。它的工作基于 NASA 麦哲伦任务 30 多年前拍摄的雷达图像以及已经存在于地球五分之一面积的<a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2012EO120002">地图</a>。克劳德的新地图现在可以显示小至两到三公里的细节，而不是 10 到 20 公里，并且显示高度的准确度比以前提高了 25%。</p>
+<p>在即将到来的 NASA VERITAS 和 ESA EnVision 任务之前，我们根据知识共享许可<a href="https://zenodo.org/records/22164484">发布了这张地图</a>，希望它可以帮助他们确定未来观测的目标地质特征。</p>
+<p>！[雷达图像（麦哲伦）：明亮的圆锥体，弧度熔岩流](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimag es%2F4zrzovbb%2Fwebsite%2F4d8f06a743ecfc6ec87ccde0b1964e48175a141e-800x800.png&amp;w=1920&amp;q=75)</p>
+<p>麦哲伦雷达</p>
+<p><img src="https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fim年龄%2F4zrzovbb%2F网站%2Fe374c070fc1a84872dcb1343b5bb0ed540ca3770-800x800.png&amp;w=1920&amp;q=75" alt="测高10-20公里足迹"></p>
+<p>测高 10-20 公里足迹</p>
+<p>![新DEM(300m)火山15km跨越](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fima ges%2F4zrzovbb%2Fwebsite%2F3dd626b47b88feb72082646cdea87944d49a3c7f-800x800.png&amp;w=1920&amp;q=75)</p>
+<p>新 DEM (300m) 一座直径 15km 的火山</p>
+<p>金星上的一座小型盾状火山</p>
+<p>**计算生物学*.*** 在计算生物学中，通常在 GPU 上运行特定任务的机器学习模型。因此，这些模型的速度是研究进展的瓶颈。 Mythos 5.1 为这个问题提供了一种解决方案：通过编写自定义 GPU 内核并缓存其中间结果，它将 7 个开源深度学习模型的速度提高了 2.5 倍（输出相同）。</p>
+<p>这种加速的好处会迅速积累。在任何给定的实验中，生物学家可能会运行这些模型数千次（例如，测试每个人类基因附近的每个可能的突变）。根据此类分析，优化模型将估计的 GPU 成本降低了 30-60%。这种优化通常需要性能工程师团队花费数周的时间，并且学术实验室通常无法承担。 Mythos 5.1 仅使用公开的源代码就可以在短短几天内完成此任务。我们计划很快开源这些优化。</p>
+<p>推理加速预计可节省全基因组分析的成本</p>
+<p>推理加速</p>
+<p>NVIDIA H100 上七个开源蛋白质和基因组模型的推理加速</p>
+<p>全基因组分析的估计成本节省</p>
+<ul><li>原始实施</li><li>优化</li></ul>
+<p>优化前后三项全基因组分析的 GPU 成本估算（按云定价）。 Evo 2 40B 在整个作业上节省的费用 (2.3 倍) 比每个转发 (1.4 倍) 节省的费用更多，因为它的一些优化只能在许多序列中发挥作用。</p>
+<p>随着我们模型的科学能力不断提高，我们对科学进步的投资也在不断增加。上周，我们预览了【模型硬件标准】(https://www.anthropic.com/news/model-hardware-standard-research-preview)，它可以让 Claude 直接安全地操作实验室设备。我们最近还通过我们的 <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science 计划</a> <a href="https://www.anthropic.com/news/expanding-support-for-scientists">扩大了对科学家的支持</a>，该计划为从事高影响力科学项目的研究人员提供免费学分，并且我们通过新的 <a href="https://claude.com/programs/team-plan-for-scientists">Claude Team plan for科学家</a>。</p>
+<h2>安全、保障和协调</h2>
+<p>过去两年，人工智能模型的代理能力变得更加强大。但正如我们<a href="https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals">记录</a>，更大的自主权伴随着新的风险。安全、保障和一致性方面的工作需要与人工智能能力同步发展。昨天，我们<a href="https://www.anthropic.com/news/improving-alignment-security-efforts">发布了一份报告</a> 描述了我们如何改进我们自己的一致性和安全工作</p>
+<p>在发布 Claude Fable 5.1 和 Claude Mythos 5.1 之前，我们（在某些情况下还有外部研究人员）对模型进行了跨多个领域的广泛风险测试。我们在<a href="https://www.anthropic.com/claude-fable-5-1-mythos-5-1-system-card">系统卡</a>中详细描述了这些努力；下面是一个简短的总结。</p>
+<p><strong>化学和生物风险</strong>。我们测试了克劳德神话 5.1 可以在多大程度上帮助制造化学或生物武器。这涉及专家红队、自动评估以及将博士级生物学家与人工智能专家配对的桌面练习，以测试模型是否可以与人类专家的表现相匹配。 Mythos 5.1 的功能比 Mythos 5 更强。但是，我们的评估表明它仍然达不到我们的<a href="https://www.anthropic.com/responsible-scaling-policy">负责任的扩展政策</a> 中定义的下一个风险等级。因此，我们在部署 Mythos 5.1 时采用了与 Mythos 5 相同的保障措施，这些保障措施限制了对研究生物学功能的访问。</p>
+<p><strong>网络风险</strong>。我们进行了一系列评估来评估 Claude Mythos 5.1 的网络功能（关闭网络安全保障措施）。总体而言，该模型展示了我们发布的所有模型中最强大的网络功能，尽管它仍然属于我们的<a href="https://www.anthropic.com/news/compliance-framework-SB5​​3">前沿合规框架</a>中较低的风险类别。我们还对《神鬼寓言 5.1》的网络安全保障措施进行了广泛的压力测试：除了我们自己对其稳健性进行动态评估之外，我们还委托两个组织进行外部测试，以及 <a href="https://www.grayswan.ai/">Gray Swan</a> 的自动化测试。与《神鬼寓言 5》和《作品 5》一样，我们尚未发现这些保障措施的<a href="https://www.anthropic.com/news/fable-safeguards-jailbreak-framework">严重越狱</a>的证据。</p>
+<p><strong>代理安全</strong>。我们对 Claude Mythos 5.1 如何响应恶意请求和提示注入（隐藏在人工智能模型处理的内容中的对抗指令）进行了评估。它拒绝恶意代理编码和计算机使用请求的速度与 Mythos 5、Sonnet 5 和 Opus 5 相当，并且它是我们迄今为止在外部<a href="https://www.anthropic.com/claude-fable-5-1-mythos-5-1-system-card">提示注入基准</a>上最强大的模型。</p>
+<p>**对齐*.*** 我们通过静态和交互式行为评估、使用<a href="https://www.anthropic.com/research/natural-language-autoencoders">自然语言自动编码器</a>分析其内部思维、与未对齐相关的能力评估、对我们的训练数据的审查以及对我们内部飞行员使用的分析来测试模型的行为。我们还收到了外部测试的报告。</p>
+<p>我们的自动行为审计发现，Claude Mythos 5.1 在大多数指标上比其前身 Mythos 5 更好。与 Mythos 5 相比，该模型在分配不可能的任务时尝试访问其测试环境之外的资源的可能性要小得多。与神话 5 相比，它也不太可能使用动机推理来证明其行为的合理性（例如，通过推理情况是模拟或评估），并且在追求用户目标时不太可能忽略明确的约束。根据我们对其训练数据的审查，Mythos 5.1 都尝试奖励黑客（或作弊），并取得了成功，但总体比率低于 Mythos 5。</p>
+<p>虽然我们的对齐评估总体上显示出改进，但我们的测试发现该模型有时仍然可以绕过批准和自动模式分类器（正如我们在<a href="https://www.anthropic.com/claude-fable-5-1-mythos-5-1-system-card">系统卡</a>中更详细讨论的那样）。我们的一致性评估提供的覆盖范围也存在限制。目前，我们的自动化行为审计对超长上下文工作和多代理设置的可见性较低。尽管我们最近在这一领域做出了改进，并且正在努力继续这样做，但我们对不可能任务（这可能会引发更多异常和失调行为）的覆盖范围也比我们希望的要少。</p>
+<p>我们还改进了我们的保障措施，使我们的模型在不影响安全性的情况下更加有用。我们在下面描述这些变化。</p>
+<p>**企业的自动化保障措施*.*** <a href="https://www.anthropic.com/news/enterprise-frontier-safeguards">企业前沿保障措施</a> (EFS) 使我们能够检测和响应模型的滥用，同时仍然为我们的企业客户提供零数据保留协议的隐私。通过 EFS，客户将数据存储在自己的云基础设施上，而不是 Anthropic 的系统上；默认情况下，任何人工审核都是由客户自己完成，而不是由人为完成。我们与金融服务、医疗保健、制造、电信、法律、零售和公共部门等行业的 100 多家客户以及 Amazon Web Services、Google Cloud 和 Microsoft Azure 等云合作伙伴密切合作开发了 EFS。</p>
+<p>Claude Code、Claude Enterprise、Claude Platform、Amazon Bedrock、AWS 上的 Claude Platform、Google 代理平台和 Microsoft Foundry 将支持 EFS。从今年秋天开始，它正在分阶段推出。如上所述，在 EFS 准备就绪之前，有资格使用 EFS 的客户可以使用零数据保留的 Fable 5.1（和 Fable 5）。您可以在<a href="https://www.anthropic.com/news/enterprise-frontier-safeguards">此处</a>阅读有关 EFS 的更多信息；要请求访问，请填写<a href="https://claude.com/form/enterprise-frontier-safeguards">此表格</a>。</p>
+<p>**更精确的生物学和网络安全保障*。 ***在过去的几个月里，我们在使《神鬼寓言 5.1》的防护措施更加精确方面取得了进展：确保它们不太可能标记良性内容（例如有关医疗问题的查询或网络防御者使用该模型使系统更安全），但仍然确保它们提供针对真正威胁的强大保护。</p>
+<p>正如我们<a href="https://www.anthropic.com/news/improving-fable-5-s-biology-safeguards">最近分享的</a>，我们针对《神鬼寓言 5.1》和《神鬼寓言 5》的最新生物学保障措施，对于与基本生物学和医学问题相关的良性请求（相对于《神鬼寓言 5》中推出的那些），触发频率减少了 85%。然而，与生命科学研究和开发相关的查询仍将针对我们的 Opus 模型。我们正在通过与美国政府合作开发的 Claude Mythos 5.1 访问计划向专业人士提供该模型的生命科学功能，我们将在下面讨论。</p>
+<p>在《神鬼寓言 5.1》中，我们正在更新我们的网络安全保障措施，使其更加精确。我们现在还允许使用《神鬼寓言 5.1》来识别软件漏洞，即进行可提高软件安全性的防御工作。由于这些变化，相对于《神鬼寓言 5》之前的安全措施，Claude Code 用户每次会话的网络安全措施干预平均减少约 60%。但是，我们的安全措施仍然将几种双用途网络安全任务（可能有帮助或*有害应用程序的任务）重定向到我们的 Opus 模型。这包括渗透测试、漏洞利用生成和基于二进制的漏洞扫描。</p>
+<p>**反蒸馏机制*.*** 蒸馏是一种用于提取高级模型能力的方法。它通常以工业规模使用，使用数千个虚假账户。蒸馏存在安全风险，因为蒸馏后的能力随后可能在没有足够保障措施的情况下释放。 《神鬼寓言 5.1》配备了强化机制，使蒸馏攻击变得更加困难。例如，新的 API 帐户（从今天开始创建的帐户）不再可能在多轮对话中手动编辑 Claude 先前的上下文，同时保留 Claude 先前思维的记录。这关闭了一种常见的、公开记录的蒸馏技术，该技术允许蒸馏者非法提取克劳德的想法。我们正在逐步推出此更改，以最大程度地减少干扰：现有帐户目前不受此更改的影响，但它将适用于未来模型版本的所有用户。少数客户的定制集成将会受到影响。我们的<a href="https://support.claude.com/en/articles/16761192">帮助中心文章</a>详细介绍了此更改以及开发人员可以进行的调整。</p>
+<h2>Claude Mythos 5.1 的可信访问</h2>
+<p>克劳德神话 5.1 与神鬼寓言 5.1 相同，但它为那些工作受到上述网络安全和生命科学限制影响的经过审查的个人和组织提供了更宽松的保护措施。它将通过两个受信任的访问程序提供：</p>
+<ul><li><strong>网络验证计划：</strong> CVP 目前提供对某些 Opus 和 Sonnet 级模型的访问，并减少了防御安全工作的网络保障措施。在不久的将来，该计划还将包括访问 Claude Mythos 级模型。 <a href="https://portal.anthropic.com/programs/cvp">在此申请加入 CVP</a>。</li><li><strong>生命科学验证计划：</strong> LSVP 的设计使生命科学专业人员可以使用 Claude Mythos 5.1 以及专为专业研究和开发活动设计的保障措施（同时所有其他保障措施仍然存在）。我们与美国政府合作，招募了第一批参与者，并计划将这个项目的参与范围扩大到更广泛的生命科学界。</li></ul>
+<p>除了这些可信访问程序之外，我们的产品 <a href="https://claude.com/product/claude-security">Claude Security</a> 也由 Claude Mythos 5.1 提供支持，该产品可扫描代码库中的漏洞并建议补丁以供人工审核。</p>
+<h2>遵守欧盟人工智能法案</h2>
+<p>2026 年 7 月，Anthropic（与[190 个其他签署方](https://digital-strategy.ec.europa.eu/en/news/strong-backing-code-practice-transparency-ai- generated-content)，包括其他几家主要 AI 模型提供商）签署了《欧盟 AI 法案》关于 AI 生成内容透明度的实践准则。</p>
+<p>这要求我们在 2026 年 8 月 2 日之后发布的模型的输出中添加水印（一种确定 Claude 参与撰写文本的可能性的数字方式）。正如我们<a href="https://www.anthropic.com/news/claude-text-watermark">最近解释的</a>，任何没有检测 API 的人都看不到该水印。它对 Claude 输出的质量或内容没有实际影响，并且不包含有关用户、他们的组织或他们与 Claude 的对话的信息。</p>
+<p>该法案还要求我们为用户提供一种方法来判断文本是否可能包含水印。因此，我们在私人预览版中推出了检测 API。目前，根据欧盟法律的要求，符合资格的组织（例如监管机构、执法机构、媒体、事实核查人员、独立研究人员、教育组织和欧盟民间社会团体）可以使用它。它也适用于有类似义务验证水印以确保自身遵守该法案的企业。我们计划随着时间的推移扩大对检测 API 的访问。您可以在<a href="https://forms.gle/9tGA33hPJJwtHsMk9">此处</a>登记访问兴趣。</p>
+<h2>成本和可用性</h2>
+<p>Claude Fable 5.1 现已在所有平台上推出，包括 Amazon Web Services、Google Cloud 和 Microsoft Azure。开发人员可以开始使用 Claude API 上的“claude-fable-5-1”。</p>
+<p>如上所述，我们降低了《神鬼寓言 5.1》缓存读取的价格（模型重用它已经处理过的上下文），无论使用情况如何按令牌计费，例如在我们的 API 上。缓存读取成本现在降低了 75%，即每百万令牌 0.25 美元。</p>
+<p>这一变化导致运行模型的总体成本大幅降低。对于典型的工作负载，成本相对于《神鬼寓言 5》降低了约 25%。对于复杂的编码和高度代理的任务，成本节省最多可达 45% 左右。下图说明了为什么这一变化会产生如此大的差异：</p>
+<p>Fable 使用的索引成本</p>
+<ul><li>缓存读取</li><li>所有其他代币</li></ul>
+<p>在《神鬼寓言 5》和《神鬼寓言 5.1》上运行相同工作负载的指数成本，采用基于使用情况的定价，按照 2026 年 8 月四个星期实际使用的默认工作量进行测量。典型工作负载涵盖 Claude Enterprise、Claude Code 和 API 中的《神鬼寓言》使用情况。高度代理的工作负载涵盖上下文密集、工具密集的工作，其中缓存读取占据了大部分成本。</p>
+<p>《神鬼寓言 5.1》的定价在其他方面与《神鬼寓言 5》相同：每百万个输入代币 10 美元，每百万个输出代币 50 美元。与此同时，我们正在继续努力，将《神鬼寓言 5.1》的许多改进带到我们模型系列的其他产品中。</p>
+<p>如上所述，Claude Mythos 5.1 可供经过审查的网络防御者和生命科学家使用。目前，它仅适用于一组美国组织，但我们正在与美国政府协调，以尽快将其扩展到更广泛的国内和国际合作伙伴。如需通过 CVP 注册访问 Claude Mythos 5.1 以进行网络防御，请<a href="https://portal.anthropic.com/programs/cvp">前往此处</a>。</p>
+<h2>开始吧</h2>
+<p><a href="https://claude.ai/">尝试克劳德</a><a href="https://platform.claude.com/">开始构建</a></p>
+<h2>脚注</h2>
+<p>1 <strong>Terminal-Bench-Science 0.1：</strong> 每个模型的标准误差为 ±3.5–4.5 点。公共排行榜（3 次试验/任务，Claude Code 工具）报告 Claude Opus 5 为 30.0%，Claude Fable 5 为 21.4%；我们的设置在噪声范围内分别以 29.0% 和 24.7% 的速度再现了它们。</p>
+<p>2 <strong>OSWorld 2.0：</strong> 分数来自基准作者 2026 年 8 月发布的任务； 《神鬼寓言 5》和《作品 5》在相同条件下重新播放。由于任务文件与早期版本不同，这些数字不能直接与之前发布的 OSWorld 2.0 结果进行比较，这就是为什么没有显示竞争对手分数的原因</p>
+<p>3 这三个靶点是（EGFR、Nipah G、15-PGDH），来自[Adaptyv Bio 的蛋白质设计竞赛](https:// Proteinbase.com/competitions)。 Nipah G 比较是针对针对 G 头上受体结合位点的“从头”设计（最佳：~8–12 nM，[N1032](https:// Proteinbase.com/ Proteins/shy-otter-jade)）。来自 <a href="https://blog.escalante.bio/writing-the-de-novo-portion-of-the-adaptyv-nipah-binder-competition/">Nick Boyd/Escalante Bio</a> 的 <em>de novo</em> 条目针对不同区域（茎）达到约 1.4 nM ([design_7](https:// Proteinbase.com/ Proteins/shy-eagle-fern))，与我们最好的粘合剂相当。</p>
+<h2>进一步阅读</h2>
+<p><strong>1.</strong> 克劳德寓言 5.1 和克劳德神话 5.1 系统卡。 <a href="https://www.anthropic.com/claude-fable-5-1-mythos-5-1-system-card">查看卡片</a></p>
+<p><strong>2.</strong> 有关我们的企业边境保障措施的更多详细信息。 <a href="https://www.anthropic.com/news/enterprise-frontier-safeguards">了解更多</a></p>
+<p><strong>3.</strong> 请求访问我们的企业前沿保障措施。 <a href="https://www.anthropic.com/news/enterprise-frontier-safeguards">开放表格</a></p>
+<p><strong>4.</strong> 我们对生物防护措施的改进概述。 <a href="https://www.anthropic.com/news/improving-fable-5-s-biology-safeguards">了解更多</a></p>
+<p><strong>5.</strong> 对科学家的支持。 <a href="https://www.anthropic.com/news/expanding-support-for-scientists">阅读更多</a></p>
+<p><strong>6.</strong> Claude 在蛋白质设计方面的早期工作。 [阅读更多](https://www.anthropic.com/research/Claude-accelerates- Protein-design)</p>
+<p><strong>7.</strong> 克劳德早期在数学方面的工作。 <a href="https://www.anthropic.com/research/riemann-zeta">阅读更多</a></p>
+<p><strong>8.</strong> 有关模型硬件标准的更多信息。 <a href="https://www.anthropic.com/news/model-hardware-standard-research-preview">了解更多</a></p>]]></content:encoded>
     </item>
     <item>
       <title>Claude for Small Business 推出新工作流、集成与培训项目</title>
@@ -1916,323 +2762,6 @@ return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
 <p>我们也很高兴分享：今年秋天我们将开启 <a href="https://www.anthropic.com/events/build-with-claude?type=smb">Claude SMB 巡展</a>的第二部分，走访一批全新的城市，从 <a href="https://anthropic.swoogo.com/claude-smb-workshop-boston/rta">9 月 16 日的波士顿</a>开始，并从小企业和创业者那里收集更多反馈和心得，以改进我们的产品。请留意更多细节。</p>
 <p>我们迫不及待要在路上见到你！</p>
 <p><em>今天就用 <a href="https://claude.com/solutions/small-business"></em>Claude for Small Business<em></a> 开始吧。</em></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Scenarios for our economic future</title>
-      <link>https://www.anthropic.com/institute/econ-scenarios</link>
-      <guid isPermaLink="true">https://www.anthropic.com/institute/econ-scenarios</guid>
-      <pubDate>Wed, 09 Sep 2026 00:00:00 +0000</pubDate>
-    </item>
-    <item>
-      <title>用 Claude Platform 降低成本并提升性能</title>
-      <link>https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform</link>
-      <guid isPermaLink="true">https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform</guid>
-      <pubDate>Tue, 08 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Reducing cost and improving performance with Claude Platform</description>
-      <content:encoded><![CDATA[<h1>用 Claude Platform 降低成本并提升性能</h1>
-<p>调优 prompt 缓存、指令和努力（effort），可以在不牺牲应用性能的前提下降低 Claude 的成本。</p>
-<ul><li>类别：<a href="https://claude.com/blog/category/agents">Agents</a></li><li>产品：<a href="https://claude.com/platform/api">Claude Platform</a></li><li>日期：2026 年 9 月 8 日</li><li>阅读时长：5 分钟</li><li>分享：<a href="https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform#">复制链接</a>https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform</li><li>作者：Lance Martin</li></ul>
-<p><em><strong>更新：</strong></em> <em>本博客文章最初发布于 2026 年 9 月 8 日，其中的基准反映了使用 Opus 5 和 Sonnet 5 的成本与性能。此后我们重跑了几项基准，以纳入或突出 2026 年 9 月 22 日发布的 Opus 5.5。</em></p>
-<p>性能与成本常被视为一种权衡：要少花钱，就得接受更差的结果。在实践中，我们发现许多使用 Claude Platform 的应用可以通过三处修正来削减成本而又不放弃性能：把 prompt 缓存命中率最大化、在升级到前沿 Claude 模型时移除 prompt 里的反模式，以及把 effort 校准到任务。我们把这份指南放进了 <a href="https://github.com/anthropics/skills/tree/main/skills/claude-api"><code>claude-api</code></a> skill。在本文里，我们展示 Claude Code 配合 <code>claude-api</code> 如何往往能找到既降低成本、又维持或提升性能的办法。</p>
-<h2><strong>Prompt 缓存</strong></h2>
-<p>在 Claude 生成回复之前，它先把你的 prompt 处理成一个内部工作状态。这一步称为 <em>prefill（预填充）</em>，是处理输入中最昂贵的部分。Prompt 缓存会保存那个状态（键-值，即 KV 缓存）：当一个请求以相同前缀开始时，Claude 会回读它而不是重新计算。缓存读取的<a href="https://platform.claude.com/docs/en/about-claude/pricing">计费</a>只是完整输入价格的一小部分。</p>
-<p>要有效使用 prompt 缓存，有几个实际考量。第一，prompt 缓存钉在特定模型上。第二，prompt 缓存读取必须在整个 prompt 跨度上 <em>逐字节精确</em>。最后，prompt 缓存有<a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching#ttl-support">有限的存活时间</a>（TTL）。</p>
-<p>牢记这几点后，有以下几条实用技巧：</p>
-<ul><li><strong>避免在对话中途改变 effort 或 thinking 设置。</strong> 这些设置会渲染到你内容之前的 prompt 里，因此它们是被缓存前缀的一部分。特别是在 Claude Opus 5 和 Fable 5.1 上，你可以<a href="https://platform.claude.com/docs/en/build-with-claude/effort#changing-effort-mid-conversation">在对话中途更新 effort</a> 而不破坏缓存。</li></ul>
-<ul><li><strong>把易变的值留在前缀之外。</strong> 系统 prompt 里一个动态时间戳或 ID，会跨模型调用发生变化，从而破坏缓存。</li></ul>
-<ul><li><strong>避免自行重排的工具体定义。</strong> 使用 Claude Messages API 时，<a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching#structuring-your-prompt">prompt 按固定顺序组装</a>，工具体定义渲染在最顶部。任何对工具体定义的改动都会破坏缓存。</li></ul>
-<ul><li><strong>分叉对话时要小心。</strong> 子 agent 和分支只有在分叉的前缀逐字节相同、在同一模型上、且使用相同 effort 时，才共享父级的缓存。</li></ul>
-<ul><li><strong>避免超过缓存 TTL 而存活的同步工具调用和子 agent。</strong> 如果一个 agent 阻塞在一个长时间运行的工具调用或子 agent 上，缓存可能在结果返回之前就过期了。下一轮就得重写缓存，按 1.25 倍的普通输入价（1 小时缓存为 2 倍）计价，而不是廉价的读取价。</li></ul>
-<h3>如何修复</h3>
-<p>我们在 prompt 缓存管理上<a href="https://claude.com/blog/lessons-from-building-claude-code-prompt-caching-is-everything">积累了</a>几条经验：</p>
-<ul><li><strong>仔细监控你的 prompt 缓存命中率。</strong> <a href="https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics">Claude Console</a> 提供 prompt 缓存诊断，包括缓存未命中的原因（图 1）。如果命中数意外下降，<a href="https://platform.claude.com/docs/en/build-with-claude/cache-diagnostics">缓存诊断 API</a> 会精确告诉你两个请求在何处产生了分歧。</li></ul>
-<p>图 1。Claude Console 能通过比较连续请求、精确识别 prompt 前缀在何处产生分歧，来诊断意外的 prompt 缓存未命中。</p>
-<ul><li><strong>推迟不常用的工具。</strong> 一开始就声明你所有的工具，但把不常用的标记为 <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-use-with-prompt-caching#defer-loading-and-cache-preservation">defer_loading</a>：它们留在缓存前缀之外，只有当 Claude 通过工具搜索查找它们时才被追加进对话，从而保住了缓存。</li></ul>
-<ul><li><strong>把系统 prompt 的更新当作消息来施加。</strong> <a href="https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages#when-to-use-a-mid-conversation-system-message">Claude Platform</a> 让你在对话中途把一条系统指令作为消息加入，而不是去编辑系统 prompt，从而保住缓存。</li></ul>
-<ul><li><strong>把请求布局安排成稳定部分保持稳定。</strong> 先加静态上下文（工具体定义和系统 prompt），把不断增长的对话放在其后（图 2）。</li></ul>
-<p>图 2。组织 prompt，以确保动态内容被追加到一个稳定前缀的末尾。</p>
-<ul><li><strong>在 prompt 缓存反正已经被破坏时，再去改动模型或 effort。</strong> 某些操作，如<a href="https://platform.claude.com/docs/en/build-with-claude/compaction">压缩（compaction）</a>，本就会重写大部分缓存（即对话）。那正是<a href="https://cognition.com/blog/devin-fusion">切换模型或 effort 的好时机</a>，反正你已经在为一次未命中买单。</li></ul>
-<ul><li><strong>随对话增长移动缓存断点。</strong> 借助 Claude Platform，你可以设置<a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching#automatic-caching">自动缓存</a>，把缓存断点自动施加到最后一个可缓存块上。</li></ul>
-<ul><li><strong>预热缓存。</strong> 为降低延迟，发送一个 <code>max_tokens: 0</code> 且带显式缓存断点的请求。这会把 prompt 处理一遍并写入缓存，而不生成任何东西。如果你在会话开始时（例如用户正在输入时）运行它，第一次真正的请求就会命中一个热缓存。</li></ul>
-<ul><li><strong>不要超出 prompt 缓存 TTL。</strong> 5 分钟的缓存 TTL 从请求开始计时。如果一个 agent 阻塞在超过 5 分钟的工具调用或子 agent 请求上，父级的缓存会在结果返回前过期。在这种情况下，考虑对前缀<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence">设置一个 1 小时的 TTL</a>。</li></ul>
-<h2><strong>指令</strong></h2>
-<p>Prompt 会累积一些用来打补丁式弥补模型弱点的指令。这些指令相对于<a href="https://x.com/trq212/status/2080710971228918066">最新 Claude 模型</a>的能力会发生漂移。以下是一些妨碍前沿 Claude 模型、并可能无意间增加成本的常见 prompt「反模式」：</p>
-<ul><li><strong>验证仪式。</strong> 像「<em>仔细检查你的工作</em>」或「<em>回答前先验证两遍</em>」这样的指令，常被前沿模型按字面执行，可能浪费 token。</li></ul>
-<ul><li><strong>详尽与强调增强词。</strong> 「<em>要尽可能详尽</em>」「<em>关键：你必须始终……</em>」在处理前沿模型时会导致冗长和额外的工具调用。</li></ul>
-<ul><li><strong>强制流程与 scratchpad 脚手架。</strong> 固定的步骤流程（例如「<em>在 scratchpad 里一步步思考</em>」）或推理模板，是前沿模型并不需要的仪式。这类脚手架会叠加到原生推理之上，用掉不必要的 token。</li></ul>
-<ul><li><strong>过时的示例。</strong> 针对某个旧模型失败模式调优的 few-shot 示例，可能教前沿模型在本不需要的请求上模仿长篇推理链。</li></ul>
-<ul><li><strong>相互矛盾的规则。</strong> 前沿模型更擅长遵循指令。相互矛盾的指令（「始终在政策内退款」对「绝不在升级之前退款」）会被前沿模型更按字面地遵循，导致性能下降。</li></ul>
-<ul><li><strong>过时的配置。</strong> 为某一代旧 Claude 编写的设置（如手动的 thinking 预算），在升级到前沿模型时可能被 Claude Platform 拒绝。</li></ul>
-<h3><strong>如何修复</strong></h3>
-<p>我们更新了 <code>claude-api</code> skill，加入一个新命令来提防这些反模式。在 Claude Code 里，对你的 prompt、skills 或工具体描述运行 <code>/claude-api prompt-audit</code>。这项审计涵盖你工作目录里的任何内容，包括调用 Claude API 的应用代码以及 Claude Code 自身的配置（如 <a href="http://claude.md">CLAUDE.md</a> 或 skills）。</p>
-<p>例如，我们在一个客户支持基准上测试了一次从 Opus 4.8 到 Opus 5.5 的模型迁移。我们从一份干净的 prompt 起步，一次种入一个反模式（一个已弃用的 thinking 设置、一对相互矛盾的退款规则、一个手动 scratchpad、「验证两遍」、「尽可能详尽」，以及一个强制的六步流程），得到六份遗留 prompt。</p>
-<p>我们分别在 Opus 4.8 上、在 Opus 5.5 上（只改了模型 ID）、以及在 Opus 5.5 上对每份 prompt 各运行一次 <code>/claude-api prompt-audit</code> 后，分别跑了它们（图 3 展示六者的平均）。</p>
-<p>图 3 | 从 Opus 4.8 迁移到 Opus 5.5 期间 prompt 反模式的影响。</p>
-<p>从 Opus 4.8 到 Opus 5.5 的迁移把成本降了约 18%。这是因为 Opus 5.5 的<a href="https://platform.claude.com/docs/en/about-claude/pricing">输入 token 和 prompt 缓存读取</a>比 Opus 4.8 更便宜。</p>
-<p>在 Opus 5 上，验证仪式（「<em>验证两遍</em>」）通过对每一笔退款重复订单查询而用掉不必要的 token。强调增强词（「<em>尽可能详尽</em>」）变成了几十次并不需要的知识库搜索。</p>
-<p>运行 <code>/claude-api prompt-audit</code> 移除了这些反模式，又额外降低了 9% 的成本。成本下降是因为多余的调用和重复的推理被消除了。准确率上升了约 2 个百分点，原因有三。那个已弃用的 thinking 设置让 API 直接拒绝每一次路由请求。相互矛盾的退款规则导致 Opus 5.5 在本应向客户应退的四笔退款上、却要客户确认时 withhold 了。而那个手动 scratchpad 与 Opus 5.5 内建的 thinking 相冲突：在三张工单上，它把工具调用写进了推理里、却从未执行。</p>
-<h2><strong>Effort</strong></h2>
-<p><a href="https://platform.claude.com/docs/en/build-with-claude/effort">Effort</a> 告诉 Claude「要用多大力气」。在低 effort 下，Claude 通常更快得出结论。在高 effort 下，Claude 会斟酌、验证，并在回答前探索替代方案。</p>
-<p>在单一模型上，各 effort 级别的成本-性能会有差异。例如，Claude Fable 5 在 FrontierCode Diamond（最难的 50 个任务）上，低 effort 得 11.5%、每任务 5.35 美元。在最高 effort 下，Fable 5 得 30.9%、每任务 19.00 美元；改 effort 把分数提升约 2.7 倍（+19 分），代价约为 3.5 倍的成本（图 4）。</p>
-<p>在 Claude Fable 5.1 上，Humanity's Last Exam（不带工具）呈现出一条陡峭、最后一步收益递减的曲线。它在低 effort 下得约 53%、每题约 0.30 美元，在最高 effort 下得约 61%、每题约 2.23 美元；最后一步升到最高只加约半分，却多花 46% 的成本。那点增益落在基准的逐次运行噪声之内，所以你多付了钱却换不来可衡量的收益。</p>
-<p>图 4。Fable 5 在 FrontierCode Diamond 上、跨 effort 级别的性能对成本。</p>
-<p>Effort 可能在任一方向上失准：</p>
-<ul><li><strong>假设越高越好。</strong> 高 effort 会导致<em>过度</em>思考。Claude 花在斟酌上的时间超出任务所需，增加了成本/延迟，还可能降低答案质量。斟酌只在仍有证据可寻时才有帮助。</li></ul>
-<ul><li><strong>偏向低 effort。</strong> 设得太低，Claude 会在证据不足时就停下。它做出更少的工具调用，因此可能凭第一个搜索结果而不是第三个来作答。它在难步骤上想得更少，并跳过它本来会自己跑的那道检查。答案看起来完成了，但它建立在部分信息之上。</li></ul>
-<h3><strong>如何修复</strong></h3>
-<p>有一些有用的 effort 校准方法：</p>
-<ul><li><strong>在更低 effort 下测试更强的模型。</strong> 一个更强的模型在低 effort 下，可能比一个拼命工作（高 effort）的较弱模型更便宜。例如，在 CursorBench 3.2 上，Claude Fable 5.1 在低 effort 下<a href="https://www-cdn.anthropic.com/0339e6a7c5c7b87f5c07798616dc32c215d14235/Claude%20Fable%205.1%20&amp;%20Claude%20Mythos%205.1%20System%20Card.pdf">匹敌</a> Fable 5 在高 effort 下的性能，而成本只有三分之一（图 5）。有两点让更新的模型更便宜：在低 effort 下它每个任务做的功更少，而且 Fable 5.1 的 prompt 缓存读取定价为每百万 token 0.25 美元，而 Fable 5 为 1.00 美元。即便按 Fable 5 的价格，Fable 5.1 在低 effort 下也会便宜约 40%。</li></ul>
-<p>图 5。Fable 5 与 Fable 5.1 在 CursorBench 3.2 上跨 effort 级别的比较。</p>
-<ul><li><strong>理解你的任务形态。</strong> 在<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence#tune-effort">一系列 effort 级别</a>上测量应用性能，是理解你特定任务成本-性能权衡的有用方式。在一个未饱和的评测上，跨 effort 级别呈现一条平坦的性能-成本曲线，说明该任务并不受思考算力约束；增加 effort 无益。</li></ul>
-<p>这种校准通常涉及跨模型、跨 effort 级别跑一次评测。在 Claude Code 里，<code>/claude-api hillclimb</code> 会替你进行这项搜索：它把你的评测拆成训练集和测试集，提出配置改动，并读取失败的训练样例来修正它所发现的问题。</p>
-<p>我们在一个客户支持基准上运行它，从 Opus 4.8 及其默认（高）effort 起步。爬山器首先尝试 Opus 5 的低 effort，施加 prompt-audit 来移除强制工具调用仪式、scratchpad 步骤和相互矛盾的规则。这在 98.9% 的训练准确率下越过了 Opus 4.8 的基线，并把成本降到每票 2.6 美分。</p>
-<p>图 6。爬山通过更新模型选择、effort 和 prompt，改善了成本与性能。</p>
-<p>随后它下探到 Sonnet 5 的低 effort，每票 1 美分、更便宜，但准确率跌到 88.9%。阅读那些失败的训练工单，Claude 往 prompt 里加了路由规则和一道退款上限交叉引用，把 Sonnet 5 以同样的成本拉回到 98.9%。</p>
-<p>在搜索从未见过的 14 张留出工单上，最终配置得 90.5%，而原始设置为 78.6%，成本约只有五分之一。</p>
-<h2><strong>自动化成本削减</strong></h2>
-<p>Prompt 缓存、指令和 effort 是降本的常见杠杆。我们的<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence#cut-spend-without-losing-quality">文档</a>涵盖了更多。要对使用 Claude API 的应用代码做一次全面的成本审计，我们加入了 <code>/claude-api cost-optimize</code>：它剖析你的支出流向何处、施加成本削减，并（若你提供一份评测）展示节省与性能之间的取舍。</p>
-<p><code>cost-optimize</code> 先从找出你的 token 去向开始：若你有 Claude Admin API 密钥，则来自你组织的<a href="https://platform.claude.com/docs/en/manage-claude/usage-cost-api">用量与成本报告</a>；若你的应用记录了每个 API 响应上的 usage 对象，则来自那里；若两者皆无，则通过阅读你构建请求的代码来估算。</p>
-<p>随后它把可用的节省排序，从 prompt 缓存开始、精简每个请求所携带的内容（包括一次 prompt-audit）、界定输出，以及用<a href="https://platform.claude.com/docs/en/build-with-claude/batch-processing">批处理</a>处理无人值守的工作。若你提供一份评测，它会更进一步，跨 effort 级别和模型选择计算成本与性能。</p>
-<p>我们在四个公开基准上运行了它，以 Opus 5.5 作为基线起步（图 7）：</p>
-<ul><li><strong>LegalBench</strong>（成本低约 67%）：<code>cost-optimize</code> 找到一个缓存 prompt 一部分的机会，设低 effort，并通过成本更低的 <a href="https://platform.claude.com/docs/en/about-claude/pricing">Batch API</a> 处理任务。思考 token 降了约 84%，准确率变动不到一分，成本降了约 67%。</li></ul>
-<ul><li><strong>tau2-bench retail</strong>（成本低约 73%）：<code>cost-optimize</code> 发现约 93% 的 prompt 可被缓存，在不改变通过率的情况下把支出削减约 73%。</li></ul>
-<ul><li><strong>OfficeQA Pro</strong>（成本低约 72%）：<code>cost-optimize</code> 应用了 <a href="https://platform.claude.com/docs/en/about-claude/pricing">Batch API</a>，并把超大的文档精简到最相关的章节，在分数无显著变化的情况下把成本降低约 72%。</li></ul>
-<ul><li><strong>SWE-bench Verified</strong>（成本低约 24%）：<code>cost-optimize</code> 发现 prompt 缓存已经应用，因此节省来自把 effort 设为 medium，并把 agent 的输出约束为几句简洁的话。两者合起来把成本降低了约 24%。</li></ul>
-<p>图 7 | 用 /claude-api cost-optimize 跨基准的成本与性能变化。</p>
-<h2><strong>如何开始</strong></h2>
-<p>当你已经迁移到一个前沿 Claude 模型、想对照它检查你现有的 prompt 时，从 <code>/claude-api prompt-audit</code> 开始。它扫描你工作目录里的 prompt、skills 和工具体描述。这可以是调用 Claude API 的应用代码，或 Claude Code 的配置（CLAUDE.md、skills）。它会移除妨碍前沿模型的常见反模式。</p>
-<p>当你的应用使用 Claude API、你想要一份成本审计时，用 <code>/claude-api cost-optimize</code>。它剖析 token 支出，然后测试不同的杠杆：它应用 prompt-audit，同时也检查通过 prompt 缓存、批处理无人值守工作或界定输出来降本的办法。若你提供一份评测，它会衡量 effort 和模型选择的取舍。</p>
-<p>最后，用 <code>/claude-api hillclimb</code> 对成本和性能做迭代搜索。给定一份评测，Claude 把它拆成训练集和测试集，然后提出旨在降低成本、同时保持基线性能的应用更新。Claude 读取失败的训练案例来引导搜索，最终配置在留出的测试集上评分。</p>
-<p>了解更多：</p>
-<ul><li>参阅我们的文档，<a href="https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence#cut-spend-without-losing-quality">此处</a></li><li>参阅我们的 cookbook，<a href="https://platform.claude.com/cookbook/cost-optimization-cost-optimization#prompt-caching">此处</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>高效商务 agent 构造指南</title>
-      <link>https://claude.com/blog/the-anatomy-of-effective-commerce-agents</link>
-      <guid isPermaLink="true">https://claude.com/blog/the-anatomy-of-effective-commerce-agents</guid>
-      <pubDate>Wed, 02 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：A guide to the anatomy of effective commerce agents</description>
-      <content:encoded><![CDATA[<h1>高效商务 agent 构造指南</h1>
-<p>让在线买卖更轻松的 agent，其架构、延迟与成本技术，以及评测实践。</p>
-<ul><li>类别：<a href="https://claude.com/blog/category/agents">Agents</a></li><li>产品：<a href="https://claude.com/platform/api">Claude Platform</a></li><li>日期：2026 年 9 月 2 日</li><li>阅读时长：5 分钟</li><li>分享：<a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#">复制链接</a>https://claude.com/blog/the-anatomy-of-effective-commerce-agents</li><li>作者：Ali Shazal、Matthew Koen</li></ul>
-<p>过去一年，我们与整个商务行业的团队——零售商、市场、旅游、娱乐和电信运营商——合作，用 Claude 构建商务 agent。</p>
-<p>这些 agent 已在生产中运行，企业客户在使用它们时看到了更大的购物车和更高效的卖家运营。它们也共享一个简单的架构：一个 Claude 在 agent 循环里，配备一组 skill、工具和一套强大的评测套件。</p>
-<p>本文写给构建这些（或其他面向消费者）agent 的工程师和工程领导者。第 1 部分讲架构，它你只决定一次。第 2 部分讲延迟和成本。第 3 部分讲生产：记忆、安全、评测，以及跨组织扩展这项工作。</p>
-<p><strong>参考实现</strong>：我们还提供了一份<a href="https://github.com/anthropics/commerce-agents">蓝图</a>，帮助在 Claude 上构建商务 agent。它含一个工程团队几天内让商务 agent 跑起来所需的 harness、模式和护栏，并为零售、旅游、电信和票务平台提供购物 agent 与商家 agent 的参考实现。<code>anthropics/commerce-agents →</code></p>
-<p><strong>本指南包括</strong>：</p>
-<ul><li><a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#ca-p1">第 1 部分：架构</a>——什么是商务 agent、用 skill 而非子 agent、系统 prompt 还是 skill：按频率决定、工程 agent 工具、UI 组件即工具</li><li><a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#ca-p2">第 2 部分：让它快又实惠</a>——最小化任务完成延迟、感知延迟、prompt 缓存、选择模型及其配置</li><li><a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#ca-p3">第 3 部分：把它投入生产</a>——熬过会话的记忆、安全：执法住在 harness 里、评测：发布一个非确定性系统、在一个大组织里发布</li><li><a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#ca-p4">展望未来</a></li></ul>
-<h2>01 架构</h2>
-<p>一个标准 agent 循环里的单一模型，为长尾配备 skill、为调用你已有系统配备工具。这你只决定一次。</p>
-<h3><strong>什么是商务 agent？</strong></h3>
-<p>我们把商务 agent 定义为一个简化跨在线目录买卖的 agent。</p>
-<p>有些 agent 面向消费者：它们搜索、比较、替代、并组装订单。那可以是一个零售购物车、一份旅行行程、一次手机套餐变更、或为一场演出保留的座位。有些 agent 面向企业：它们回答关于销售的问题、运行促销和活动、并管理库存和定价。</p>
-<p>核心架构是一个模型处在<a href="https://www.anthropic.com/engineering/building-effective-agents">标准 agent 循环</a>里：就一个目标推理、探索上下文、通过工具采取行动、通过 skill 学习流程、提出澄清问题、并观察结果直到目标达成。</p>
-<p>它前面没有一个把对话做切分的意图路由器，它后面也没有一组领域专有的 agent。</p>
-<h3><strong>工程上下文</strong></h3>
-<h4><strong>用 skill，而非子 agent</strong></h4>
-<p>一个商务 agent 得覆盖跨许多类别和意图的宽泛能力范围，这很诱人地让你为每个领域建一个子 agent。</p>
-<p>实践中这被证明是次优的，因为一次商务对话是一个跨多个意图和多轮、紧密耦合的会话，需要大量共享上下文。</p>
-<p>在子 agent 架构里，编排者持有购物车或暂存的改动、用户偏好和对话历史。</p>
-<p>每一次交给子 agent 的交接，都是一次丢失状态的操作，这常常影响子 agent 响应的质量、进而影响整体响应。除此之外，每次交接可能花数倍的 token、并增加数秒延迟。</p>
-<p>这些领域也很少能干净地分离。一个退货流程可能需要订单历史、当前购物车和产品目录，这意味着「每领域一个子 agent」的做法要么到处复制那份访问、要么在任务中途交接。</p>
-<p>随着模型变聪明，它们也能处理更长的上下文、更多 skill 和更多工具，于是今天这些排布规则背后的限制，每一代模型都在松动。</p>
-<p>相反，<a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview">agent skill</a> 给你类似的每领域模块性和上下文控制，却没有交接税，因为 skill 指令加载进那个已经持有全部历史的主 agent。</p>
-<p>在我们跨多个企业部署的比较中，一个带 skill 的单一 agent，在质量上持续胜过「一切用一个 prompt」的设计和子 agent 设计，且常常每任务成本和延迟更低。</p>
-<p>子 agent 真正能派上用场的时候，是编排者能把它们当作一个工具来调用、用于一个窄的或自包含、值得有自己专属上下文窗口的任务。</p>
-<p>一个常见的生产例子是深度研究子 agent——子 agent 搜索并阅读文档、编写并运行代码、遍历数据模型、撞进死胡同。所有工作都在一个或多个子 agent 内部发生，只有一个紧凑的答案回到编排者。</p>
-<p>另一个例外，是一个已经有自己专用 agent 的领域。如果你的药房或金融服务体验运行着一个带自己合规界面的专门 agent，正确的做法可能是一次移交——由那个 agent 接管任务、在它自己的循环里直接和用户协作直到任务完成。</p>
-<p>区别在于对对话的所有权。一次移交让领域 agent 成为用户的对接方，而委派让编排者保持对接、在一轮之内把领域 agent 进进出出、并在每次交换上劣化。</p>
-<h4><strong>系统 prompt 还是 skill：按频率决定</strong></h4>
-<p>决定把一组指令放进系统 prompt 还是 skill 时，主要因素是 agent 多频繁地需要它。加载一个 skill 花一个模型轮次，所以 agent 多数轮次都需要的东西通常放进系统 prompt。</p>
-<p>不过，这确实取决于你的流量如何分布、以及你的评测显示出什么 agent 行为。一个好的起点是：任何与你三分之一及以上流量相关的东西——无论是发布前预期的还是生产里观察到的——放进系统 prompt，其余放进 skill。</p>
-<p>如果一个 skill 能从你已有一个的信号（例如用户来自哪个页面）被预测到，我们建议你在第一次模型调用之前从 harness 注入它，从而省掉加载 skill 的额外一轮。</p>
-<p>关键的指令，例如安全和法律规则、品牌约束，以及像过敏这样的关键用户事实，永远放进系统 prompt。</p>
-<p>对商务 agent，这意味着产品搜索住在 prompt 里，因为几乎每个会话都会碰到它，而 skill 承担功能长尾。</p>
-<p>在我们的<a href="https://github.com/anthropics/commerce-agents">参考实现</a>里，购物 agent 的 prompt 持有事实根据、购物车和结账语义、以及呈现规则，而以下 skill 覆盖其余：search-discovery、purchase-research、planning-goals、customer-care 和 memory-personalization。</p>
-<p>商家 agent 以同样的方式切分，把 performance-insights、catalog-listings、inventory-operations、pricing-promotions 和 marketing-campaigns 作为它的 skill，每个运营领域一个。</p>
-<p><strong>在 prompt 里</strong> —— 购物 agent：事实根据、购物车和结账语义、呈现规则、以及产品搜索。</p>
-<p><strong>购物 skill</strong>（长尾）：search-discovery · purchase-research · planning-goals · customer-care · memory-personalization</p>
-<p><strong>商家 skill</strong>（每运营领域一个）：performance-insights · catalog-listings · inventory-operations · pricing-promotions · marketing-campaigns</p>
-<h3><strong>工程 agent 工具</strong></h3>
-<p>我们关于<a href="https://www.anthropic.com/engineering/writing-tools-for-agents">为 agent 编写高效工具</a>的文章涵盖了通用的工具设计。有两点在商务上最为要紧：</p>
-<p><strong>在你核心系统和逻辑之上构建 agent 工具。</strong></p>
-<p>一家商务公司本已有搜索和排序、一个购物车、一个偏好与档案存储、一个库存系统、促销和活动引擎、销售分析等等，每一个都编码了打磨多年、并看着模型永远看不到的信号的逻辑。</p>
-<p>agent 的工具应当去调用那些系统、而不是重新实现它们，而工具边界就是它们的逻辑终结、模型判断接管的地方。</p>
-<p>例如，当 agent 调用 <code>search_products</code> 时，结果应当已经排好序抵达；它的活是决定哪些结果服务于用户目标、展示多少、以及如何呈现它们。</p>
-<p><strong>工具结果就是上下文。</strong></p>
-<p>返回模型据以推理的那些字段、丢弃其余。每一行搜索结果都带图像 URL，是惯常的元凶。</p>
-<p>视需要在工具内部重塑原始响应，包括当从数据里看不明显时追加一个下一步。</p>
-<p>这对错误场景尤其相关，在那里模型从指令中而非错误码中受益。例如，加一条错误指令「查询可用性时请包含一个产品 ID」，而不是一个笼统的 403。</p>
-<h4><strong>UI 组件即工具</strong></h4>
-<p>多数商务 agent 响应是 UI 组件而非散文，无论是一个产品轮播、一份行程、一张座位图、还是一张图表。这意味着 agent 必须发出一个 schema 而非文本。</p>
-<p>团队有时从 prompt 模型发出自定义标签、并在客户端解析它们起步。随着界面增多，这一做法会失效，因为：</p>
-<ul><li>模型在你标记语言上的训练不如在工具调用上那么充分，所以随着嵌套组件增多，可靠性下降。仅靠 prompt 不保证格式良好的数据。</li><li>标签定义住在系统 prompt 里，所以每个新组件都让上下文膨胀、每次编辑都冒着在 prompt 别处引发回归的风险。</li><li>过往对话最终以一种只有你的解析器能读的格式被存储，所以加载历史要么意味着在客户端解析原始消息，要么意味着在模型 API 原生格式之外保存一份副本。</li></ul>
-<p>经受住考验的模式，是把每个 UI 组件做成一个工具。模型带类型参数调用 <code>present_products</code>、<code>present_itinerary</code> 或 <code>present_plan_comparison</code>；你的服务器校验并丰富这次调用、并发出一个事件；你的客户端渲染它。</p>
-<p>因为组件是工具调用，它们已经以原生格式在 messages 数组里，所以你重新加载一个旧对话时不必再解析。一个示例呈现工具契约见下以及<a href="https://github.com/anthropics/commerce-agents">参考仓库</a>。</p>
-<p>权衡在流式粒度。工具调用的每个顶层参数都会在服务器上缓冲以供校验，所以一个呈现工具的子组件即便开着流式也会分步抵达。这影响感知延迟。</p>
-<p>要得到一个 token 级的流，在工具体定义上设 <code>eager_input_streaming: true</code>，它会跳过缓冲、连同服务器端的 schema 保证一起跳过。</p>
-<p>在我们的评测里，schema 违规在 Claude Sonnet 级及以上模型上非常罕见，但为漏网的情形把调用包进一次重试。</p>
-<p>呈现工具也给 agent 一份屏幕上有什么的记录。当顾客说「第一家酒店」或「左边往下数第三个」时，布局就在 messages 数组里、在上一次呈现调用的参数里。</p>
-<p>要让它奏效，参数必须反映渲染出的布局，所以按 UI 的结构去组织它们——用有序的行列和轮播，而非客户端重排的平铺列表。</p>
-<h2>02 让它快又实惠</h2>
-<p>在两条战线上攻击延迟——端到端和感知——并让缓存承担成本。这一切都不该为了达标而牺牲智能。</p>
-<p>延迟在商务里很重要，而消费者界面最不宽容。然而，在 agentic 界面上，我们一贯看到能推动留存、参与度和购物车大小这些指标的，是结果的质量。</p>
-<p>答案是否相关、任务是否真正完成，相对于边际的延迟收益，对这些指标更关键。</p>
-<p>所以在两条战线上攻击延迟。通过良好的工程最小化端到端延迟，并把这一点与削减感知延迟配对（因为看着 agent 工作的时间被读作进度）。</p>
-<p>每个用户都有一个延迟预算，而下面的技术让 agent 待在预算之内、又不为达标牺牲智能。</p>
-<h3><strong>最小化任务完成延迟</strong></h3>
-<p>任务完成延迟，是在各模型轮次上「最后 token 时间加工具处理时间」的总和。这给了你三个可努力的杠杆：更少轮次、更快工具、更快 token。这些杠杆有时会相互竞争，所以该最小化的是总和、而非其中任何一个。</p>
-<p><strong>更少轮次</strong>：提前加载可能的上下文、提升模型智能、并让模型并行调用独立的工具。</p>
-<p><strong>更快工具</strong>：优化工具自己的后端，并在参数一完成就急切地派发工具。</p>
-<p><strong>更快 token</strong>：通过在你的评测套件上扫参来选择模型及其配置。</p>
-<h4><strong>更少轮次</strong></h4>
-<p>查询复杂度会增加轮次，且通常不在你的掌控之内。模型智能和相关上下文帮助 agent 用更少轮次达到任务完成。我们在这一块的一些关键经验包括：</p>
-<ul><li><strong>提前加载可能的上下文。</strong> 如果用户是从一个产品页打开助手，或商家是从一个活动仪表盘打开它，把那个页面的数据放进会话上下文。对话很可能就是关于它的，而凭上下文作答不多花轮次。</li><li><strong>提升模型智能。</strong> 更聪明的模型能在任务完成中减少总轮次，因为 agent 能更高效地规划并发出工具调用。这常常盖过它们更慢的 token。如果你的查询偏向复杂，或生产显示出每任务超过约五个轮次，更快的模型往往就是更聪明的那个。哪个算更快取决于你的流量，所以通过扫参来选择，如下文「选择模型」所述。</li><li><strong>让模型并行调用独立的工具</strong>。商务用例常常需要许多操作并行：无论是搜多个产品、查询多份政策文档，还是从多个销售数据源拉记录。并行工具确保多个独立查询不烧掉额外轮次。prompt 模型在一轮之内调用多个工具、并在一个用户消息里以一个工具结果数组的形式返回结果（见<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/parallel-tool-use">并行工具使用文档</a>）。</li></ul>
-<h4><strong>更快工具</strong></h4>
-<ul><li><strong>优化工具自己的后端。</strong> 有时一个工具确实要扇出——一个带「获取今日快照」查询的商家 agent，用三次独立调用读销售、库存和活动状态。但我们常看到工具边界成了缺失的后端逻辑被缝到一起的地方：一次可用性检查会去调目录拿 SKU、按门店调库存服务、调履约服务拿截止时间、然后在工具自己的代码里应用替代规则和自提资格再作答。这个工具如今就因领域知识而超载、随规则变化难保正确、并扛着本该坐在上游系统里的逻辑。当你发现自己在工具里写那种逻辑时，解法是一个能回答该问题的后端端点、并用一个 agent 工具去调它。</li><li><strong>急切地派发工具。</strong> 工具参数像其他 token 一样从模型里流出，所以 harness 能在每个工具的参数完成时就执行它、并在模型仍在流式输出其他并行工具或内容块时处理它。我们见过这把关到几百毫秒的多秒空档缩小、而 <a href="https://code.claude.com/docs/en/agent-sdk/overview">Claude Agent SDK</a> 默认就这么做。你应当 prompt 模型先发出它最慢的调用，以获得最大延迟收益。</li></ul>
-<h3><strong>感知延迟</strong></h3>
-<p>感知延迟是用户感觉直到屏幕做某事的时长。它对消费者用例尤其关键，那里任何交易摩擦都会影响结账率和营收。两项技术在不碰模型的前提下缩短它：</p>
-<ul><li><strong>边成形边流式发送组件。</strong> 一个渲染出的商务响应通常是 500-700 个输出 token，若不流式，就是五秒或更久的转圈。在流式输出时把呈现工具的每个参数发给客户端、并渐进地渲染页面。</li><li><strong>展示工作过程。</strong> 在 agent 收集上下文时，为每一步用平实语言渲染一条简短进度行（例如「正在查找水边的酒店」。你可以从工具已有的参数（如一次产品搜索的查询）来构建它，或添加一个额外的 <code>user_facing_message</code> 参数工具，prompt 模型去写那行字。</li></ul>
-<p>上面两个面板用同样的 agent、同样的工具和 prompt 运行；只有 harness 不同。总时间大致相同，但用户看到某些东西的时间大不相同。</p>
-<h3><strong>Prompt 缓存</strong></h3>
-<p>Prompt 缓存是你最大的成本削减候选项，而商务流量非常适合它。缓存的输入 token 读取只花新鲜读取的十分之一，而缓存写入带着约 1.25 倍的溢价，但一个缓存的前缀在第二次使用时就回本。在量大面向客户的应用里，你用最便宜、默认 5 分钟缓存过期就能达到非常高的缓存命中水平。</p>
-<p>我们见过的最佳商务部署运行在 90-99% 的缓存命中率，而那正是从一开始就该为之设计的区间。我们的经验显示，缓存的 token 读取在约 10 万 token 时也大约快 1.5 到 2 倍，token 越多、扩展越接近线性。</p>
-<p>缓存是基于前缀的。一次请求从缓存读到与先前某请求第一个不同的字节为止，所以要紧的不仅是上下文里有什么，还有它们的顺序。把一次请求想成三段，按它们变化的频率排布：</p>
-<ul><li><strong>全局</strong>：系统 prompt 的大部分和工具体定义，跨每个会话完全相同。这是你最热的缓存，而在规模上很可能永不过期。让它在各轮和跨会话保持逐字节一致、并在其末尾放一个缓存断点。</li><li><strong>会话</strong>：每用户上下文和对话历史，它们跨会话不同、但在单个会话内保持稳定。这一段在全局段之后。</li><li><strong>易变</strong>：任何在会话内变化的东西，例如当前时间或当前页面。把它放在请求的最末尾，要么作为最新一轮用户消息里一个带标签的块，要么在支持<a href="https://platform.claude.com/docs/en/build-with-claude/mid-conversation-system-messages">会话中途系统消息</a>的模型上，作为一条 system 角色消息附加到 messages 数组。我们见到的最常见错误，是把一个时间戳或当前页面放在系统 prompt 的顶部，它悄无声息地在每次请求上破坏缓存。</li></ul>
-<p>这里有两个实现细节要记住。第一，skill 应当作为工具结果被加载，而非追加到系统 prompt 上。这样 skill 正文就落在对话前缀里、连同它一起被缓存。</p>
-<p>第二，在每一轮里把断点向前滚动：一次请求允许有限数量的断点，所以把最新的断点移到每轮用户消息的末尾。这样每一轮都从缓存读取累积的历史，包括像搜索响应这样的长工具结果。</p>
-<h3><strong>选择模型及其配置</strong></h3>
-<p><a href="https://claude.com/blog/claude-model-and-effort-level-in-claude-code">模型大小和 effort 设置</a>是同一种权衡——智能 versus 延迟和成本——而两者你都该凭衡量来选择：</p>
-<ul><li><strong>定好你的指标和你的底线。</strong> 选定你业务赖以运转的质量指标（任务完成、答案相关性、有据准确率）、你不会低于的评测分数、以及你的 p50 和 p99 延迟与成本预算。</li><li><strong>扫参。</strong> 在你考虑范围内的<em>每一</em>个模型和 effort 级别上跑你整个评测套件。我们建议商家 agent 从 Opus 起步（其任务分析密集），消费者 agent 从 Sonnet 起步（其延迟更重）。如果你有生产流量，按你真实的查询组合来加权结果。然后让数字来决定。有时 Opus 5 在驱动购物车任务上的提升，值得它对 Sonnet 的成本差；有时不值得。</li><li><strong>仔细地读结果。</strong> 有两件事常让团队意外。第一，一个 prompt 是针对某个模型调优的，所以用单一 prompt 跑的扫参，可能在它本非为其撰写的其他模型上表现欠佳。一个更小的模型通常需要当前模型自行推断的指令，而一个更大的模型会逐字遵循那些更小模型正在忽略的指令。在下结论排除任何候选之前，对每个候选的失败案例做几轮迭代是廉价的一步。第二，一个更智能的配置有时在延迟上胜出（最常见在 p90 和 p99），尽管 token 更慢，因为它更好地规划其工具调用、在最复杂请求上需要更少轮次。</li></ul>
-<p>衡量每完成任务的成本、而非每模型调用的成本，因为一个更便宜但需要更多轮次、或更常失败的模型并不更便宜。当结果接近、而成本契合你每任务的经济性和延迟时，选择智能。质量才是驱动采用和留存的东西，并为你在未来 6 个月随模型变得更好而留出构建的空间。</p>
-<h2>03 把它投入生产</h2>
-<p>记忆、安全、评测，以及跨组织扩展这项工作：是什么让一个 agent 通过生产、并把它留在那里。</p>
-<p>最后，我们谈是什么让一个 agent 通过生产：记忆、安全、评测，以及跨组织扩展这项工作。</p>
-<h3><strong>熬过会话的记忆</strong></h3>
-<p>你与客户的关系和互动很重要。记忆是让 agent 能从上次对话停下的地方接续、而不是从零开始的东西。一位在三月提到坚果过敏的购物者，不该在六月还得重复；一位每周一都查同样三个活动的商家，不该每次都得点名它们。长期记忆——那些应当跨会话存续的事实——是一个你去构建的系统，它有三个部分：事实如何存储、如何写入、如何读取。</p>
-<h4><strong>存储记忆</strong></h4>
-<p>记忆属于你的系统，不属于模型。</p>
-<p>当档案小、而 agent 是唯一读者时，一份平铺的 markdown 档案管用。多数生产商务 agent 会长出它的容量，而实际的替代品是你已经在运营的那个数据库。一条事实是一个小的、带类型的记录：一个键（如 <code>shoe_size</code>、<code>default_store</code>、<code>preferred_report_cadence</code>）、一个短值、一个类别、以及它来自的会话。有些键你事先决定、每个用户都有；其余由抽取器发现。数据库随存储增长保持可查询，让你能就特定属性构建确定性行为，并能与你已有的用户数据连接。</p>
-<p>对面向商家的 agent，按人而非按账户来组织关键记忆。商家登录常在多个操作员之间共享，所以每位操作员需要他们自己的档案，而读取必须尊重那位操作员的权限：一位店经理的 agent 不该记起一位区经理说过的某条事实。</p>
-<p>在商务领域，agent 记忆持有个人数据。值得记住的事实往往是最受监管的那些，而各司法辖区之间的规则不同。把记忆当作一个数据处理的设计问题、而不仅是一个存储问题。实践中那意味着四件事：</p>
-<ul><li><strong>决定你愿意持有哪些类型的记忆。</strong> 在写入路径上强制执行这一点，用一个每次保存都要经过的校验器，而非仅在 prompt 里。</li><li><strong>给用户一种查看、更正和删除已存内容的途径。</strong> 把删除接入你的账户删除和数据请求流程。</li><li><strong>设定一个保留期。</strong> 几年前的一条偏好很可能已过时，所以一个保留期有助于让记忆事实保持新鲜。</li><li><strong>记忆应当是每部署的一个开关。</strong> 这让无法承担这些义务的辖区可以不带它运行。</li></ul>
-<h4><strong>写入记忆</strong></h4>
-<p>异步地写记忆。在每一轮末尾，或在长会话里每隔几轮，一个在独立线程或进程里的 agent 读对话、并在存储里创建、更新或删除事实，同时随着会话推进保留自己的工作上下文。</p>
-<p>它对对话的延迟一无所加，并在我们内部商务记忆评测套件上把事实召回率提高了 13%。</p>
-<p>那个显而易见的替代——一个 agent 调用以保存事实的工具——对一个延迟敏感的商务 agent 是错误的。每次保存都是一次用户可见轮次内的工具调用，而除非整个存储都在上下文里，一次保存需要先读一次以便更新或去重，那本身又是一轮。</p>
-<p>它还在每一轮里往 agent 面前多放一个决定，而在我们的评测里，这种注意力的争夺表现为漏掉的记忆。</p>
-<p>分离出抽取器也让你能精确地 prompt 它。它只读用户和助手的文本、从不读工具结果，于是一份产品描述或评论不会变成一条关于用户的事实。它的 prompt 说清什么算一条事实——一个所说的尺寸、一项饮食约束、一种履约偏好、一位商家惯用的物化视图——以及什么不算，例如任何来自商品页的东西或一次性的细节。</p>
-<h4><strong>读取记忆</strong></h4>
-<p>分三层读记忆。</p>
-<p><strong>始终在上下文里</strong>：一小份固定的事实集在每一轮进入上下文：那些几乎每个请求都依赖的，例如购物者的默认门店和履约偏好，或一位操作员的门店和角色。</p>
-<p><strong>每轮预取</strong>：与当前请求相关的事实，按预加载 skill 所用的同一批信号每轮预取：一次鞋类搜索拉取尺码和品牌偏好，一个活动问题拉取操作员的惯用指标。</p>
-<p><strong>藏在一个查找工具之后</strong>：其余一切。</p>
-<p>因为记忆是每用户上下文，它全都放在会话段里、在全局缓存断点之下。</p>
-<h3><strong>安全：执法住在 harness 里</strong></h3>
-<p>prompt 是安全行为开始的地方，但在商务里它不能是安全被强制执行的地方。失败是财务性的、且常常不可逆，而一条 prompt 规则距被跳过，只差一次注入或一个坏样本。下面每一条规则都在代码里、在消费者和商家 agent 双方都强制执行，并被定义一次，以便每个运行时共享它。</p>
-<h4><strong>模型做暂存；人或策略执行</strong></h4>
-<p>没有一次模型工具调用能移动资金或改变业务。下单、支付、退款、价格更改和活动发起，全都以 harness 而非模型控制的一个动作收尾。</p>
-<p>在消费者侧，这是结构性的：结账工具渲染购物车并带一个下单按钮，而 agent 调用的后端接口压根没有扣款方法。</p>
-<p>在商家侧，每个写工具都产出一个带服务器生成 ID 的暂存改动，而 <code>apply_change</code> 只对通过一个真实界面被批准过的 ID 才成功：操作员门户里的一个按钮、CLI 里的一次确认、或当 agent 跑在 Managed Agents 上时平台自己的工具批准提示。</p>
-<p>护栏在应用时对照当前限额被重新检查，而不是对照改动被暂存时生效的限额。无论界面是什么，形状是一样的：模型最危险的动作是提议，而批准经由你业务早已为那类改动使用的制单-复核（maker-checker）流程路由。</p>
-<h4><strong>写入和渲染只接受服务器签发的 ID</strong></h4>
-<p>harness 维护一份每会话的记录，装着服务器交给模型的每一个 ID，而那份记录是任何写入或渲染唯一接受的密钥。</p>
-<p>购物车只接受服务器返回给本会话的产品 ID，而商家工具只接受 agent 实际读过的列表和活动 ID。以任何其他方式抵达的 ID——幻觉出的、用户粘贴的、埋在评论里的——在后端看到之前就被拒绝。</p>
-<p>同一条规则覆盖 UI。呈现工具接受 ID，而服务器自己去填产品、订单或改动记录，于是一张卡片只渲染服务器自己填好的记录。</p>
-<p>它也覆盖受托方：商家分析子 agent 读数据，但从不往 agent 可写入的 ID 集合里添加。</p>
-<p>对于费用、披露和其他受监管内容，模型选择对哪个产品做披露，而服务器从获批准的文案里提供每一个字。同样的费用字段在商家 agent 的保护清单上，于是柜台两侧都不能更改或转述它们，而评测逐字节检查渲染出的字符串。</p>
-<h4><strong>有上限的交易必须顶得住反复请求</strong></h4>
-<p>多数商务界面对一个用户能买某商品多少设有上限——用于票务分配、促销定价或欺诈控制——而 agent 会重试、改述、并并行化，以一个人点按钮绝不会的方式。</p>
-<p>因此上限在行级别上、按其会在写入后被执行的方式被执行，于是一句「再加两个」不能叠越其上，而一个会话的购物车写入被串行化，使单轮内的并行工具调用不能组合越限。</p>
-<p>商家改动以同样的方式对照价格波动、折扣深度、补货大小和活动预算的上限被检查，外加一份任何改动都不得触碰的保护字段清单。这条规则可推广：在每个结果状态上、而非请求上执行每一道限制，并按会话串行化写入。</p>
-<h4><strong>第三方内容被净化</strong></h4>
-<p>在商务里，多数上下文是由不是你的人写的——卖家、评论者、竞争对手——所以每次后端读取都是不受信任的输入、都要经过一个净化器。</p>
-<p>每个由第三方撰写的工具结果，如列表、评论、政策、卖家消息和存储的记忆，在模型看到之前都被净化并用一个带固定标签的围栏包起来。</p>
-<p>净化器剥离控制和双向字符、移除任何模仿围栏标记的东西、拆解模仿对话轮次或工具调用的文本、并对大小设上限——这一切的设计，是为了阻止一个敌意的列表冒充系统或填满上下文。</p>
-<p>prompt 承担着契约的另一半：被围栏的文字是要去报告的素材，绝不要去据以行动的素材。</p>
-<h3><strong>评测：发布一个非确定性系统</strong></h3>
-<p>从一次小的 prompt 改动到一个新工具，任何事都能以难以预测的方式改变 agent 行为，而你在发布的改动往往不是引发回归的那一个。评测就是你在部署前先弄清这点的办法。我们早先关于<a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents">agent 的评测</a>的文章涵盖了通用实践。本节涵盖商务 agent 的具体事项。</p>
-<p><strong>评估快照，而非对话</strong></p>
-<p>模型的 API 是无状态的，所以 agent 输出什么，是系统 prompt、工具和 messages 数组的函数。这意味着一段商务对话所能抵达的任何状态，都能被直接构造。于是创建一个评估用例，意味着构造测试状态、附加测试用户消息、并让 agent 从那里跑起来。</p>
-<p>随后给结果打分：最终状态和渲染出的响应，包括最后一次写入的参数。在多数情形里，我们不建议去给 agent 抵达那里的路径打分，因为这样的测试用例既脆弱又具限制。</p>
-<p>模拟用户的评估——其中第二个模型扮演用户、一个评审员给整段对话打分——是衡量的糟糕工具。两个非确定性系统相互作用需要更大样本、每次试验成本更高、更难评判、并产生难以归因的失败。它们对发现覆盖度缺口、以及对 agent 做一个大致的感觉检查有用，所以用它们去发现案例，然后把每个案例写成一个快照。</p>
-<h4><strong>在艰难条件下评估行为</strong></h4>
-<p>多数团队没能正确地测试被注入的状态。一个用例应当编码失败的先决条件、而不仅仅是任务。如果一个行为只在一轮带着几个工具调用的繁忙首轮之后、或在会话早先的一处矛盾之后才显现，那么一个从干净状态开始的用例会在每个配置上通过、不提供有意义的信息。</p>
-<p>我们观察到多数套件都重仓于这类干净状态的用例，所以要确保你的一部分从冗长、杂乱或相互矛盾的历史开始。</p>
-<h5><strong>覆盖各类商务 agent 评估</strong></h5>
-<p>有效的评估需要既测期望行为、也测不期望行为。</p>
-<p>对每个正面用例，写下它的负面对应：为每一句「应当拒绝」写一个「应当服务」，为每一句「应当询问」写一个「应当直接做」。缺失的负面用例，是我们在一个套件里发现的最常见缺口。</p>
-<p>评估以下几类：</p>
-<ul><li><strong>核心请求</strong>：构成你流量主体的那些，因为这里的一个失败会影响多数会话。这些包括简单查找、多约束请求、产品和套餐问题、以及多意图消息。对这些问题，检查每个价格、可用性和属性都能追溯到返回的数据，而 agent 在数据缺失时会说数据缺失、而不是编造。</li><li><strong>依赖上下文的请求</strong>：例如对屏幕上内容的引用、从早先轮次延续的约束、以及针对现有购物车的写入。评估记忆也落进这一桶。检查记忆被抽取、被检索、并改变了答案。</li><li><strong>安全与品牌用例</strong>：那里的失败要花钱或花信任。这些包括尝试的注入、试图读取另一用户数据的尝试、以及受监管的语言——逐字节检查。把注入拆成两个用例：用户自撰的注入（指令来自用户自己的消息），和数据面注入（它被埋在通过工具结果抵达的产品名、评论或网页片段里）。</li><li><strong>界面评估</strong>：确保渲染出正确的组件、商品上限被尊重、并且面向用户的文本里没有内部标识符。也要测超时和空结果。</li><li><strong>同时属于多种能力的请求。</strong> 一位操作员问「如果我把它降价 15%，我有足够的库存来覆盖需求吗？」那是一个定价问题、也是一个库存问题。正确的解会把降价连同库存预测一起暂存；错误的解做一个、跳过另一个。按能力写的评估抓不到这个，因为每个只给自己的那一半打分。为那些需要两个相邻能力一起上的请求写用例，并给答案的两半都打分。</li></ul>
-<h5><strong>与领域专家一起写评估，并用真实事故</strong></h5>
-<p>与那些亲眼见到失败的事关领域专家合作——产品、法务、商家运营、客户关怀和品类管理里的成员——来设计测试用例。真实的失败造出最好的评估，而每用户流程 50-100 个评估用例是一个好的起点。</p>
-<p>确保有用例的多样性，如上所述。生产文字记录是从中汲取新用例的绝佳来源，尤其是那些棘手的。编码 agent 擅长生成额外的用例和对抗性变体。<a href="https://github.com/anthropics/commerce-agents">参考仓库</a>含一个 Claude Code 插件，带着一个按我们推荐方法构建的、撰写评估的 skill。</p>
-<h4><strong>在一个大组织里发布</strong></h4>
-<p>在一家商务企业里，agent 由许多工程团队构建。搜索、结账、定价、营销技术、客户关怀和目录平台，各自拥有 agent 所依赖的系统，各自按自己的节奏发布，而每一个都会想添加或更改一个工具、一个 skill、或一条 prompt 规则。</p>
-<p>不同于一个服务，agent 没有严格保护其他模块的模块边界：定价团队所做的改动，与结账共享一个上下文窗口。</p>
-<p>诱人的解法是把系统拆成许多子 agent，一个业务单元一个。正如第 1 部分所讨论的，出于质量我们不建议这么做。相反，我们铺排一个为多团队协作去风险的过程：</p>
-<ul><li><strong>所有权随系统走。</strong> 每个 skill 和工具都有单一归属团队。例如，定价拥有促销工具和定价 skill，关怀拥有订单和退货工具以及 customer-care skill。那份共享 prompt 对公共部分有一个单一的平台级归属者、对领域专属部分有一个领域归属者。</li><li><strong>一次改动与它的用例一起发布，而 CI 为它跑一组选定的用例。</strong> 一个贡献 skill 的团队也贡献它的用例，包括负面用例和针对相邻 skill 的边界用例。在每个 pull request 上跑整个套件，太慢、太贵、活不下来，所以要从中构建一个 CI 集。那个集将由一组最高流量请求的核心用例和每一个安全用例组成。在此之上，为改动所触及的任何东西跑用例。对一个 skill，那意味着它自己的用例和邻居的边界用例。对一个工具，那是每一个调用它的用例。对那份共享 prompt，那是整个评估套件，因为一切都在读系统 prompt。我们建议就几次试验的通过率、以及缓存命中率和每轮成本做门控。在夜间和每次发布前跑整个套件也是好实践。跨团队的回归就在这些运行里被抓到。</li><li><strong>agent 也应当纳入发布日历。</strong> 它是一个部署单元，于是一个坏改动会一次性抵达每个用户。先把 prompt 和 skill 改动滚到一个小批金丝雀队列，保留一个无需部署就能关掉单个 skill 的开关，并像你对其他系统冻结那样，在高峰时段之前冻结 agent。</li></ul>
-<p>关于这一安排的人性一面，见<a href="https://claude.com/blog/building-effective-human-agent-teams">构建高效的人机协作团队</a>。</p>
-<h2><strong>展望未来</strong></h2>
-<p>本文所描述的大部分内容，都与模型无关。工具调用你已在运行的系统，skill 编码你已在遵循的流程，评测就是把你的产品需求文档写成测试，而 harness 执行你本会为任何客户端执行的政策。模型会持续改进，而当一款更好的模型发布时，我们描述的架构会以一次配置改动加一轮评估扫参来采纳它。其余一切继续管用。</p>
-<p>思考你产品界面的路线图也很重要。这一架构会比聊天面板更长寿。同一个 agent 能在语音上工作，也能在用户开口前就对一次票价下跌主动行动。对一个已经有了评估和工具的团队，那些都是呈现层的项目。更长远些，你店面的一部分流量会来自代表用户购物的 agent。那些让你的 agent 保持在界内的来源、暂存和批准规则，也正是让你能安全地把工具向那些 agent 开放的东西。</p>
-<p>商务历来奖励把购买过程做得尽可能顺畅。agent 让那轻松得多。查看<a href="https://github.com/anthropics/commerce-agents">完整的参考实现</a>，含消费者和商家两种 agent、以及零售、旅游、电信和娱乐可运行的示例。</p>
-<h3><strong>致谢</strong></h3>
-<p><em>本文由 Matthew Koen 和 Ali Shazal 撰写。特别感谢 Michael Segner、Rodrigo Olivares、Amandeep Khurana、Aiza Usman、John Lopus 及其他人的贡献。</em></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>用 Claude 构建商务 agent</title>
-      <link>https://claude.com/blog/claude-for-commerce-agents</link>
-      <guid isPermaLink="true">https://claude.com/blog/claude-for-commerce-agents</guid>
-      <pubDate>Wed, 02 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Building Commerce Agents with Claude</description>
-      <content:encoded><![CDATA[<h1>用 Claude 构建商务 agent</h1>
-<p>在 Claude 上运行购物 agent 的零售商观察到，购物车最大可增大约 35%，购物者完成购买的概率高出 60%。</p>
-<ul><li>类别：<a href="https://claude.com/blog/category/announcements">产品公告</a>、<a href="https://claude.com/blog/category/agents">Agents</a></li><li>产品：<a href="https://claude.com/platform/api">Claude Platform</a></li><li>日期：2026 年 9 月 2 日</li><li>阅读时长：5 分钟</li><li>分享：<a href="https://claude.com/blog/claude-for-commerce-agents#">复制链接</a>https://claude.com/blog/claude-for-commerce-agents</li></ul>
-<p>全球许多最大的零售商、市场、电商平台和旅游公司都在用 Claude 构建让购物更轻松的 agent。像 Shopify、Priceline 等的企业客户，其 agent 让消费者能用 AI 以平实语言搜索他们想要的、找到它、比较它并购买它。</p>
-<p>今天，我们发布一份蓝图，帮助在 Claude 上构建商务 agent。它包含一个工程团队让一个商务 agent 在几天内跑起来所需的 harness、模式和护栏，并为零售、旅游、电信和票务平台提供了购物 agent 与商家 agent 的参考实现。它还包括一个帮助你上手的 Claude Code 插件。</p>
-<p>代码部署在你已经用 Claude 构建的地方，包括 Claude API、Amazon Bedrock、Microsoft Foundry 或 Google Cloud Vertex AI。你也可以与我们正在合作、帮助客户和商家社群用上这份蓝图的解决方案与生态伙伴共事，如埃森哲、Mastercard 和 Visa。</p>
-<p>它<a href="https://github.com/anthropics/commerce-agents">今天即可获取</a>，为每个垂直领域提供了<a href="https://claude.com/solutions/commerce">在线演示</a>，以及一份关于它如何构建的<a href="http://claude.com/blog/the-anatomy-of-effective-commerce-agents">工程深度剖析</a>，正好赶在假日季规划之前。</p>
-<p>在 ACME 零售示例中运行的购物 agent。</p>
-<h2>蓝图里有什么</h2>
-<p>该仓库包含购物 agent 和商家 agent 完整、可运行的实现，可以用 <a href="https://platform.claude.com/docs/en/intro">Messages API</a>、<a href="https://code.claude.com/docs/en/agent-sdk">Agent SDK</a> 或 <a href="https://platform.claude.com/docs/en/managed-agents/overview">Claude Managed Agents</a>（beta）构建。你可以在写任何代码之前，在一个自助导览的演示里看到它们运行，然后用 Claude Code 把它们定制到你的目录、政策、品牌等等。</p>
-<h3>购物 agent</h3>
-<p>购物 agent 栖身于你的应用或网站内。这份蓝图包含了目录、购物车、结账、客户偏好和订单历史的集成点，并把支付留给你自己——无论那是你现有的结账流程，还是一家 agentic 支付服务商。</p>
-<p>顾客可以说「我需要一顶帐篷、一个睡袋和一个炉子，用来带两个孩子过周末」，agent 就能从那里接手。以下是它能做的：</p>
-<ul><li>搜索目录并组装出正确的一组商品，包括多件商品的请求。</li><li>记住顾客的偏好，并据此定制它的建议。</li><li>直接在对话里展示产品、比较和购物车，而不只是文本。</li><li>构建购物车并交给结账。</li><li>在同一对话里回答客服问题，例如订单在哪、如何退货或换货、退款政策怎么说的——而不是把顾客甩到一个支持页面。</li></ul>
-<p>这个 agent 具备专为把价格和商品约束到真实目录数据、并避免操纵性追加销售（upsell）模式而设计的护栏。在仓库里，这些是用于目录搜索、多件商品规划、深度研究、个性化、客户关怀和对话内 UI 的 skills 和工具。</p>
-<h3>商家 agent</h3>
-<p>商家 agent 支持经营店铺的人。用户可以问「我们该打折清掉哪一季的库存？」并基于他们自己的数据得到答案。以下是它能做的：</p>
-<ul><li>回答关于销售表现的问题，例如什么好卖、什么不好卖。</li><li>跟踪库存并主动标记问题，例如一件商品在促销开始前就要售罄。</li><li>基于店铺自身的销售历史推荐定价和促销。</li><li>起草营销活动来推动那些需要被推动的产品。</li></ul>
-<p>当 agent 主动建议一项改动时，一个人在任何东西上线前先批准它，意味着用户握有最终决定权，而他们的 agent 在照看着店铺。在仓库里，这些能力以用于销售分析、目录与库存管理、营销与促销、以及门户内 UI（如图表和仪表盘）的 skills 交付。</p>
-<h2>广受行业信赖</h2>
-<p>服务购物者、旅客、订阅者和商家的公司在 Claude 上构建并运行 agent。以下是他们关于用 Claude 构建商务 agent 的评价：</p>
-<p>「AI 将从根本上重塑商务，但信任必须留在每一笔交易的中心。商家告诉我们，他们想对 AI 如何与他们的顾客互动有更多掌控。我们与 Anthropic 在其商务蓝图上的合作，帮助把 Claude 的智能与 Visa 网络的信任、安全和全球覆盖结合起来，让商家能在维护推动其业务向前的关系的同时，交付更好的客户体验。」</p>
-<p>Jack Forestell，Visa 首席产品与战略官</p>
-<p>「信任是商务的货币，在 agentic 时代更是至关重要。借助 Anthropic 的商务蓝图，我们正在帮助商家用 Claude 构建他们自己的 agent 来驱动增长。通过把 AI 创新与受信任的支付和商务基础设施结合，我们在安全、无缝、规模化地连接消费者、商家和 AI agent。」</p>
-<p>Sherri Haymond，执行副总裁、全球数字商业化负责人</p>
-<p>「商务 agent 正迅速成为各组织迫切寻求的关键能力，以求交付当今消费者所期待的个性化、智能的客户体验。我们最新的研究显示，85% 的人如今愿意与一个 AI agent 协作，近四分之三的人会更信任一个个人 AI agent——胜过他们最好的朋友——来代他们做一笔购买。这不仅是人们购物方式的转变。Agentic 商务正在改写品牌价值的规则——从根本上塑造被购买的是什么、何时、何地、被谁。Anthropic 的商务 agent 蓝图提供了一个经过验证的起点，能帮助各组织加速部署、构建差异化体验，从而提升客户满意度、忠诚度和增长。结合埃森哲深厚的零售和消费品专长，我们能帮助客户从概念走向生产、更快地从 agentic AI 中实现价值。」</p>
-<p>Kath Gramling，埃森哲全球消费品、零售与旅游负责人</p>
-<p>「一趟旅行是一个人所能购买的最复杂的东西之一：航班、酒店、租车，以及要相互权衡的数十种选项。Penny——我们的 AI 助手——在一次对话里导航这一切，并浮现出最好的选项和最好的价值。我们在 Claude 上构建了最新一代的 Penny，因为这类推理正是 Claude 模型所擅长的。」</p>
-<p>Cobus Kok，副总裁、AI 体验</p>
-<p>「数以百万计的消费者、企业和会计师在 Intuit 上打理他们的财务。与 Anthropic 这样的伙伴合作，我们正在构建高度个性化的体验，为客户提供对其业务中什么正在变化、以及为何变化的清晰理解，好让他们带着十足的信心采取行动。我们正在通过把前沿 AI 推理（包括 Claude）与我们的专有数据、能力、智能和人类专长结合起来，打造一个金融智能系统，为下一层次的客户繁荣提供动力。」</p>
-<p>Chris Kasten，Intuit 首席架构师兼平台与开发加速工程高级副总裁</p>
-<p>「我们希望我们的商家无处不在——出现在顾客购物的地方，而这意味着越来越多的、与一个 agent 的对话。我们在 Anthropic 的蓝图之上构建，用一个参考店面实现，通过 Catalog、UCP 和 Shop Sign-in 把它们连到商家的店铺。商家可以用 Claude 构建 agent，帮助顾客找到产品、结账，并回答关于他们订单的问题。」</p>
-<p>Vanessa Lee，Shopify 产品副总裁</p>
-<p>「商务和惊艳的客户体验都需要个性化，而 Klaviyo 上的每一个品牌坐拥的客户数据和决策，多到任何团队都无法手动应对。Claude 弥合了那道鸿沟，把消费者偏好和表现数据变成驱动营收的洞察、活动和个性化。这正是我们不断与 Anthropic 一起构建的原因：agent 做复杂的分析、设计和决策，而企业可以专注于取悦顾客。」</p>
-<p>Andrew Bialecki，Klaviyo 创始人兼联席 CEO</p>
-<p>「Wix 的使命一直是让复杂技术对我们的用户变得简单、触手可及。对商家而言，那意味着提供强大的商务能力而又不增加运营复杂性，而 agent 是自然而然的一步。我们的工程师在十五分钟内就有一个能接受 prompt 的可运行商务 agent，试点显示了把 Anthropic 的 AI 能力与 Wix 的商务平台、以及面向中小企业的商务深厚专长结合起来的潜力。」</p>
-<p>Dror Zalika，Wix 商务负责人</p>
-<p>「我们的工程师毫无阻碍地把蓝图跑了起来；设置完全按文档所说般工作。它内建的那些实践，从工具体迭代上限到 prompt 缓存，都是我们在构建 Zomato 自己的 agent 时认可的那些。任何第一次在 Claude 上立起 agent 的团队，都能省下数周的试错。」</p>
-<p>Akhil Bansal，高级工程经理</p>
-<p>「我们的工程师在远不到一小时内就在本地把 Anthropic 蓝图里的两个商务 agent 都跑了起来，第一次尝试就有可用的实时对话。我们把 Claude Code 工作流跑了两次，拿回两种不同的架构，每一种都按我们所要求的来设计。对一个从零起步的团队来说，这把数天的 agent 脚手架工作变成了数小时。」</p>
-<p>Ashley Nader，资深产品经理</p>
-<p>「我们在 Square 所做的很大一部分，是把时间还给卖家，而 agent 是我们做到这一点能力上的一大飞跃。我们正在构建能观察销售、人力和库存、并带着真正下一步（而不仅是一个答案）回来的 agentic 工具，同时让卖家保持掌控。信任是这项工作最难的部分，而 Claude 帮助我们达到高标准。」</p>
-<p>Willem Avé，Square 产品负责人</p>
-<h2>如何开始</h2>
-<p>这份蓝图今天即可获取。<a href="https://claude.com/contact-sales">联系我们的销售团队</a>了解更多、安排一场演示，或讨论如何为你的组织实施。</p>
-<ul><li>在 <a href="https://github.com/anthropics/commerce-agents">github.com/anthropics/commerce-agents</a> 分叉仓库。</li><li>在 <a href="http://claude.com/blog/the-anatomy-of-effective-commerce-agents">claude.com/blog/the-anatomy-of-effective-commerce-agents</a> 阅读工程深度剖析。</li><li>在 <a href="https://claude.com/solutions/commerce">claude.com/solutions/commerce</a> 查看垂直领域演示并申请一场工作研讨会。</li></ul>
-<p>注册我们的<a href="http://anthropic.com/webinars/building-claude-commerce-agents">网络研讨会</a>，观看这场深度剖析，我们将分享现场讲解、演示，并讲述商务构建者如何从 Claude 中获得最大价值。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

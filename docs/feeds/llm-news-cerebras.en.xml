@@ -61,88 +61,6 @@
 <p>Contact us to get started</p>]]></content:encoded>
     </item>
     <item>
-      <title>A Smarter Model Won’t Save Your Bad Harness</title>
-      <link>https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness?li=1</guid>
-      <content:encoded><![CDATA[<p>Oct 16 2026</p>
-<h1>A Smarter Model Won’t Save Your Bad Harness</h1>
-<p><a href="https://www.cerebras.ai/author/sarah-chieng">Sarah Chieng</a><a href="https://www.cerebras.ai/author/william-ryan">William Ryan</a><a href="https://www.cerebras.ai/author/sherif-cherfa">Sherif Cherfa</a></p>
-<p>An agent is roughly a model inside a harness, operating in an environment.</p>
-<p>The <strong>model</strong> supplies the intelligence. It reasons, makes decisions, writes code, and decides what actions to take next. The <strong>environment</strong> is the actual computer, repository, browser, or container where this work happens, and the user (sometimes another agent) is the one providing the goals and providing guidance when needed.</p>
-<p>The <strong>harness</strong> decides what the model can see, what actions it can take, how results get fed back into the next inference, and when work is actually done.</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/4c5dfeb50d444cc97f3af43d97e61be8895896ec-4040x1397.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/0fa06f54c42a11bcce559661ffabae5c21b7b568-4950x1656.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>You can think about harness engineering as the system you build around a model to make it an engine for completing real work. It does not matter how intelligent a model is. Without a harness, it is simply a token-generating machine. Harnesses are what makes that intelligence actually useful. A harness is what transforms the model into an agent.</p>
-<p>There are many types of harnesses. Some are tuned towards different types of work</p>
-<ul><li>Personal work: Openclaw and Hermes are primarily personal agents, they're embedded into external applications (Telegram, Discord, iMessage).</li><li>Coding: Typically these harnesses run in the terminal, or in code editors. There are harnesses designed for reinforcement learning and research, harnesses for finance, marketing, and many other verticals.</li><li>Knowledge Work: ChatGPT Work and the Claude Desktop App are great examples of this. While many also use them as coding agents, these apps have a plethora of tools and plugins that allow you to connect your agent to tools such as Slack, Notion, Gmail, Sheets, Teams, Clickup, and dozens more - all with the goal of supporting general knowledge work.</li></ul>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/47a43fe069beddf7e91c225027345e51d4c835e8-2168x1926.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/19dfa24cf2aaa63be95005b6f374b61848d53dc1-2140x2027.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<h4>ChatGPT Work from OpenAI (pictured) has a robust ecosystem of plugins available for generalized work and software engineering.</h4>
-<p>But fundamentally, they all share the same skeleton. Today we're going to breakdown the layers of an agentic harness to gain a better understanding of the tools of our crafts.</p>
-<h3>What is a harness?</h3>
-<p>Large Language Models accepts inputs, then uses those inputs to generate the next token, it then appends the last generated token to the inputs, and the loop continues, until it decides it's done. On their own, they cannot:</p>
-<ul><li>use a computer</li><li>maintain durable state</li><li>search the web</li><li>run shell commands</li><li>read, edit, or create files</li><li>execute code</li><li>or verify what they produced even works</li></ul>
-<p>If a large language model is a brain, the harness is its body.</p>
-<p>When you give a query such as:</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/4d09e4cef9cc0ec3caff71bdadd0382f97789453-3840x998.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>Your prompt does not just go straight to the model and come back as a magically completed patch. The harness compounds many inference calls in a feedback loop that looks like this:</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/12759c8b8d982b4d4515c07b1d3291776ce3546d-3840x3348.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p><strong>That loop is what we call the “agent.”</strong></p>
-<p>And each step outlined here requires quite a bit of engineering</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/db667a809a23fae4584607fd3826c52ce8f9102b-2712x2540.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>The harness generally owns:</p>
-<ul><li><strong>Prompt construction</strong> - system/developer instructions, repo instructions, user prompt.</li><li><strong>Context selection</strong> - which files, previous messages, tool outputs, memories, diffs, etc. are visible.</li><li><strong>Tools</strong> - shell, file editing, search, web, MCP tools, Git, testing.</li><li><strong>Tool schemas</strong> - how those capabilities are described to the model.</li><li><strong>Tool execution</strong> - actually translating the model's intent into actions.</li><li><strong>Agent loop</strong> - deciding how tool results get returned and triggering the next inference.</li><li><strong>State</strong> - remembering what's happened across steps/sessions.</li><li><strong>Orchestration</strong> - spawning specialized or parallel agents.</li><li><strong>Hooks</strong> - deterministic execution of scripts on pre-defined triggers (linting, blocking dangerous commands, code review).</li><li><strong>Memory</strong> - personal context gets stored and injected into model prompts to help agents &quot;remember&quot; previous sessions.</li><li><strong>Context compression</strong> - deciding what gets summarized or discarded as the session grows.</li><li><strong>Planning</strong> - plans, TODO lists, subgoals.</li><li><strong>Permissions/sandboxing</strong> - what the agent is allowed to execute.</li><li><strong>Error handling</strong> - retries, failed commands, timeouts.</li><li><strong>Verification</strong> - tests, linting, checking whether changes work.</li><li><strong>Termination</strong> - deciding when the agent turn is actually finished.</li><li><strong>Constraints</strong> - rules that dictate what the agent can, and cannot do.</li></ul>
-<p><strong>The Harness Can Change the Result</strong></p>
-<p>If you've used the same model in two different coding tools, you've probably felt this already. The model may be the same, but the experience and quality of outputs can be dramatically different.</p>
-<p>One paper, <a href="https://arxiv.org/html/2605.23950v1"><em>Stop Comparing LLM Agents Without Disclosing the Harness</em></a>, reports that <strong>Claude Opus 4.5 scored 45.9% under a standardized SEAL scaffold but 55.4% when used through Claude Code</strong> on SWE-bench Pro.</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/bc46387046766b6ab7db94c827db585f108529fe-903x868.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=903" alt=""></p>
-<p>Table 1 in <a href="https://arxiv.org/html/2605.23950v1">Stop Comparing LLM Agents Without Disclosing the Harness</a></p>
-<p>And complexity is not always king. Sometimes a smaller tool schema can improve an agent more than additional layers of orchestration. More recently, Prime Intellect released their coding harness. Built on Pi, Prime Agent has managed to outperform the harnesses their models were trained to use.</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/7a509e64b6f2e34deaf5e72bbb8e5bfe3a239dbe-2048x1200.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>Source: <a href="https://www.primeintellect.ai/blog/prime-agent">Prime Intellect’s Prime Agent Announcement</a></p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/cdea8bd33b43c695adadedb77da2546f657b8fb1-651x582.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=651" alt=""></p>
-<p>The moral of the story here is this: a benchmark telling you “Model A beats Model B” can sometimes actually really be unintentionally misleading if the same harness was not used for both tests. <strong>Context (and the harness) matters.</strong></p>
-<p>A benchmark result belongs to a model-harness pair. If the harness changes, the result can change too. And as harnesses become more ambitious, they also make more model calls. <strong>That is where fast inference starts to matter.</strong></p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/e1aef720979a09e236f79e86ae56c0fbcf9e8f2d-3174x2244.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p><a href="https://artificialanalysis.ai/agents/coding-agents?coding-agents-harness-comparison-chart=harness-deep-swe">Artificial Analysis Harness Comparison</a></p>
-<p>Here you can see clearly: the same model varies wildly in performance depending on the harness.</p>
-<h3><strong>The Harness is an Inference Multiplier</strong></h3>
-<p>Look at the list of things a <strong>harness owns</strong>: planning, looping, retries, verification, testing, compaction, orchestration, review. Every single one of these requires another model call, costing tokens, but more importantly time.</p>
-<p>A validation pass might catch bugs, but it also doubles runtime. Subagents may parallelize some of this work, but the orchestrator still has to plan, dispatch, and synthesize these results, and all of those steps are sequential.</p>
-<p>Every model call adds latency, and in a mostly serial agent loop, the rough budget looks like this:</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/18e8b92d94612820d19d5561f63393b643a189da-3658x2648.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>If one step is slow, ten steps become unwatchable. But by contrast, if the model steps are fast, the harness has room to do more useful work before the agent stops feeling interactive.</p>
-<p>The distinction matters. Running <a href="https://www.cerebras.ai/blog/getting-the-most-out-of-gpt-5-6-sol-terra-and-luna">GPT-5.6 Sol on Cerebras reaches up to 750 tokens per second, with full-turn responses in as low as 0.4 seconds</a>. This level of speed unlocks new capabilities, and provides harnesses with a larger budget for reasoning, tool use, recovery, and verification.</p>
-<h3><strong>What a &quot;Fast Harness&quot; Can Do Differently</strong></h3>
-<p>Once a model latency shrinks, engineers can spend that time in several useful ways.</p>
-<ul><li><strong>Real-time agent orchestration.</strong> Intelligent models like GPT 5.6 Sol Ultrafast can orchestrate large projects and wide subagent fan-out, rapidly compounding the latency benefits.</li><li><strong>Computer use at human speed</strong>. Agents can already use computers, but they're still clunky, mistake prone, and slow compared to humans. Fast inference removes the latency that makes agents move at the speed of humanity.</li><li><strong>Live Steering.</strong> Agents react instantly to correction, providing a truly collaborative experience.</li><li><strong>Speculative execution.</strong> Users considering an approach can implement and test several alternatives in real-time using work trees, being presented with working options rather than hypothetical suggestions.</li><li><strong>Aggressive retry and self-correction.</strong> Agents can aggressively test and fix its own code as it is written, with minimal cost to the end user. Hooks fire as soon as a file is edited, and validated or fixed in milliseconds.</li><li><strong>Adaptive interfaces.</strong> Agents can generate previews, graphs, visualizations, and mock-ups in response to the current state, all in real-time.</li></ul>
-<p>These are just a few examples, and an imaginative builder can certainly utilize low-latency inference in thousands of advantageous ways, but certainly the largest benefit overall is allowing the human to be part of the building process interactively, and in real-time. Search, reasoning, tool use, and editing collapse into a tighter loop, closer to the feel of a real pair-programming teammate.</p>
-<h3>Building a Lightweight Whiteboard App</h3>
-<p>To isolate the effect of the harness from the intelligence of the model, we ran a simple controlled experiment:she’s <strong>Claude Opus 4.6, the same task, and inside two different coding agents: Factory Droid and Claude Code.</strong></p>
-<p>Both agents started from an empty repository and received the same prompt:</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/fe32869a0f4d1d2d8e2c854b78bf6e3139f41392-3840x998.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<h4>No Excalidraw code, proprietary assets, or icons where used in this demonstration</h4>
-<p>The evaluation focused on the same five requirements: drawing rectangles and arrows; selecting, moving, and deleting elements; undo and redo; exporting as PNG; and running the result in a browser. <strong>Both agents passed all five requirements.</strong> The difference was how efficiently each harness turned the same model into verified work.</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/841d1860eeb44a923ec35b717067428ecc4f2751-3566x2024.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p><strong>Factory Droid results</strong></p>
-<p><strong>Claude Code results</strong></p>
-<p>In this single run, Factory finished <strong>11 minutes sooner, about 2.4× faster, while using roughly half as many tool calls</strong>. It also identified and fixed a blocking hit-testing issue before reporting completion, then documented the remaining non-blocking gaps.</p>
-<p>This is not a claim that one harness will win every task, but it is an illustrative example of the harness acting as an inference multiplier: <strong>even when the model is held constant, the system around it can materially change the path, cost, speed, and quality of the final result.</strong></p>
-<p><em>Note: Results may vary by harness, task, and model configuration.</em></p>
-<h3><strong>The Harness as the Bottleneck</strong></h3>
-<p>At present, the biggest bottleneck for agents are the inference steps. With Cerebras Fast Inference, that is no longer the case. The new bottleneck becomes the harness itself, or more specifically, tool calls.</p>
-<p>Tool calls are both critical and common when working with agents. Like in the example above, tasks can string together dozens, or in some cases, hundreds of tool calls. Below are some example tasks we ran in a real production codebase to give you an idea of how many tool calls you might use for a given task.</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/0328e057de3b24e9843b3f12b85513e2cc4bfdad-4040x2539.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>When inference is no longer the slowest step, harness engineers can focus on optimizing the rest of the agent stack, optimizing for efficiency and performance of the harness itself.</p>
-<h3><strong>Speed Changes the Shape of the Harness</strong></h3>
-<p>None of these agent capabilities are necessarily new. Almost any harness can run tests, orchestrate agents, operate a browser, or generate visualizations. The difference is whether or not those actions are practical, whether they fit “inside the interaction,” or if they force you to send work into the background.</p>
-<p>Slow inference pushes people toward fewer, larger model calls. Multi-step work becomes async, where the user reviews the result after the agent has already made most of its decisions (as the mistakes compound). Let's not forget, the models are smart, but they are not infallible. <strong>A high agency human with good design taste continues to be invaluable in the loop to provide judgement, guidance, and steering.</strong></p>
-<p>In addition to GPT‑5.6 Sol, <a href="http://cerebras.ai">Cerebras serves leading open models at thousands of tokens per second</a> on its public endpoints:</p>
-<ul><li><a href="https://inference-docs.cerebras.ai/models/openai-oss">OpenAI GPT OSS 120B</a> at 3,000 tok/s</li><li><a href="https://inference-docs.cerebras.ai/models/gemma-4-31b">Gemma 4 31B</a> at 1,850 tok/s</li><li><a href="https://www.cerebras.ai/blog/glm-4-7">Z.ai GLM 4.7</a> at 1,000 tok/s</li></ul>
-<p>For dedicated enterprise endpoints, Cerebras also supports <a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6</a>, <a href="https://huggingface.co/zai-org/GLM-5.1">GLM 5.1</a>, <a href="https://huggingface.co/MiniMaxAI/MiniMax-M2.5">MiniMax M2.5</a>, <a href="https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct">Qwen3 Coder 480B</a>, <a href="https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct">Llama 4 Maverick</a>, <a href="https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512">Mistral Large 3</a>, <a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.2">DeepSeek V3.2</a>, and <a href="https://inference-docs.cerebras.ai/dedicated/overview">many additional model families</a>.</p>
-<p>Designs by <a href="https://x.com/@halleychangg">@halleychangg</a>.</p>]]></content:encoded>
-    </item>
-    <item>
       <title>MoE at Scale: Making Sparse Models Fast on Real Hardware</title>
       <link>https://www.cerebras.ai/blog/moe-guide-scale</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/moe-guide-scale?li=1</guid>
@@ -227,6 +145,154 @@
 <p>Blog</p>
 <h3>MoE Math Demystified: What Does 8x7B Actually Mean?</h3>
 <p>Blog</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>How we deploy Trillion-parameter frontier models on Cerebras</title>
+      <link>https://www.cerebras.ai/blog/how-we-deploy-trillion-parameter-frontier-models-on-cerebras</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/how-we-deploy-trillion-parameter-frontier-models-on-cerebras?li=1</guid>
+      <content:encoded><![CDATA[<p>Oct 22 2026</p>
+<h1>How we deploy Trillion-parameter frontier models on Cerebras</h1>
+<p><a href="https://www.cerebras.ai/author/sarah-chieng">Sarah Chieng</a></p>
+<p>One of the most frequently asked questions we get is how we deploy large models on Cerebras wafer-scale chips. A single Cerebras WSE-3T wafer has 44 GB of on-chip memory, and trillion-parameter frontier models <strong>need terabytes for their weights alone.</strong></p>
+<p><em><strong>In this post, we’ll explain how we split a large frontier model across multiple <a href="https://www.cerebras.ai/chip">WSE-3T</a> wafers, to run multi-trillion parameter models at 1000-2000+ tokens per second.</strong></em></p>
+<p>We’ll use the open source model Kimi K3, with ~3 trillion parameters, as an illustrative example.</p>
+<p>By the end, you'll understand:</p>
+<ul><li>How we fit the full model into on-chip memory</li><li>How we map the model across multiple chips</li><li>How we handle a high # of concurrent requests</li></ul>
+<h3>Breaking it down with Kimi K3</h3>
+<p>Kimi K3 is an open source, 3T parameter model with 69 linear-attention layers and 24 dense layers.</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/c124705d630730f1fc2f68f350bbbc026f574c07-1768x1062.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1768" alt=""></p>
+<p>It scores <a href="https://www.kimi.com/en/blog/kimi-k3">an impressive 88.3% on Terminal-Bench 2.1</a> (vs. GPT-5.6 Sol's 88.8%) and 91.2% on BrowseComp (vs. GPT-5.6 Sol's 90.4%). These results demonstrate frontier-level coding and agentic capabilities, even outperforming leading proprietary models on some benchmarks. <a href="https://modal.com/blog/trillion-tokens-trillion-parameters">Read more about Kimi K3 here</a>.</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/1de256fc77c92de1fe3e2297026f583dde63176c-1710x1200.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1710" alt=""></p>
+<p>For this illustrative example, we use:</p>
+<ul><li>A 256k assumed average request size</li><li>4-bit weight quantization (like the <a href="https://huggingface.co/moonshotai/Kimi-K3">Hugging Face implementation</a>)</li><li>An 8-bit KV cache</li></ul>
+<h3>#1: Size of Each layer</h3>
+<p>To calculate the total number of Cerebras WSE-3T wafers we need to support Kimi K3, let’s first calculate the size of each model layer.</p>
+<p>Kimi K3 has 3 trillion parameters. If all 3T parameters are stored at 4 bits each, the raw parameter payload is:</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/61b6d6a611991bbb7069b23faa5a0c73b8a9fe86-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<p>Dividing that payload by 93 layers then gives:</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/5622b906b303fbbede7600901e2c4d00dd37f691-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<h3>#2: Number of Wafers</h3>
+<p>Now that we know each layer needs about 16 GB, we can figure out how many layers fit on each 44 GB wafer. The answer depends on the layer type:</p>
+<ul><li>Dense layers need additional room for a KV cache, because each dense (full-attention) layer stores the keys and values for every token in every active request. So, we place one dense layer per wafer and leave the remaining SRAM for its KV cache.</li><li>Linear-attention layers do not require additional room for a KV cache. Instead of storing keys and values for every token, a linear-attention layer keeps a small, fixed-size state per request, regardless of context length. That leaves room for two linear layers per wafer (2 × 16 GB = 32 GB).</li></ul>
+<p>Therefore, with Kimi K3’s <a href="https://huggingface.co/moonshotai/Kimi-K3#2-model-summary">69 linear layers and 24 dense layers</a>, we get:</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/e0d95625e101f6936906687df4d1d0817e5d3af7-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<p>This gives us a total wafer count of 35 + 24 = <strong>59 wafers.</strong></p>
+<h3>#3: Connecting the wafers together</h3>
+<p>Cerebras executes models in a pipeline. After the Cerebras compiler maps the model layers across regions of wafers, the runtime maps the path for tokens to flow between wafers. For ultrafast latency, only activations need to be passed between the wafers, and this can be done via RDMA over Ethernet. This is roughly 2 microseconds per hop.</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/263c843c6a5e1e7c44c69dfc344af39233aacd4f-2476x1308.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>It’s important to emphasize that because each Cerebras wafer has 44 GB of on-chip SRAM and each layer is only 16 GB, we are typically able to fit entire layers of the model directly on the chip.</p>
+<p>This means that in most cases, the model weights never have to move, and layers don’t need to be split across wafers. <em>Only activations cross from one wafer to the next.</em></p>
+<h3>#4: How we serve 1 request</h3>
+<p>Now that we have our wafers connected together and the model laid out, we can think of each wafer as one stage in an assembly line: the model’s weights for each stage stay in place, and the request’s intermediate results move through the layer stages.</p>
+<p>For example, Wafer 1 runs model layers 1–2 and sends its activations to wafer 2. Wafer 2 runs layers 3–4 and passes its results to Wafer 3, and so on until the last wafer produces the next token.</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/81b3ca230cf8f9e2383929aed2bf49267dcdc022-2942x1080.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<h3>#5: How we serve many requests</h3>
+<p>This raises a common misconception. If a token has to travel through each wafer in order, doesn’t each wafer sit idle while it waits for its turn? In effect, wouldn't the system be running at a batch size of one?</p>
+<p>No! If we only sent one request down the line at a time and waited for it to complete before starting the next request, this would be an inefficient use of the pipeline. Instead, we keep the entire pipeline full with different requests. Because the model is split into pipeline stages already, each stage can work on a <strong>different request at the same time.</strong></p>
+<p>While stage 3 processes a token for request A, stage 2 processes one for request B, and stage 1 one for request C. In our example, each stage is a layer. In production, Cerebras uses much finer-grained stages, and many more of them.</p>
+<p>Loading player...</p>
+<p>Each stage can also process a <strong>micro-batch</strong>, a small group of requests, rather than a single request. So the number of requests in flight is roughly the number of stages times the micro-batch size.</p>
+<p>Loading player...</p>
+<p>To understand the tradeoff, smaller micro-batches make each request even faster, while larger micro-batches increase total throughput.</p>
+<h3>#6: How <em><strong>many</strong></em> requests can we serve?</h3>
+<p>The amount of on-chip memory allocated to KV cache determines the maximum number of concurrent requests. Every request in flight needs its own KV cache on each dense-layer wafer, so the size of on-chip memory sets the ceiling on concurrent requests. As explained above, we only need to calculate KV cache requirements for dense layers.</p>
+<p>For each 44 GB wafer that already has one dense layer, we can calculate the remaining space for the KV cache with:</p>
+<p>Total wafer storage - size of one dense layer. In this case:</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/4ca12e7b7b3f0cfb782bdd5d05a60bc50b6085e5-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<p><strong>Calculating the # of Concurrent Requests</strong></p>
+<p>To find the number of concurrent requests supported for any particular model mapping, we first calculate how much cache a single 256k request takes up:</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/cddda82a24db97053fa39e071d29e836a59502ad-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<p>To then calculate the total number of concurrent requests this configuration would support, we divide:</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/f9afc17d3c841b866108579fd474420cb6e79261-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<p>The total number of concurrent requests represents the number of simultaneous requests moving through the pipeline at any point in time. Unlike a GPU batch, those requests don’t wait for one another to finish, they stream through the pipeline continuously.</p>
+<p>Of course, neither concurrency nor batch size tells you exactly how efficiently an inference system performs. When evaluating the throughput of an inference system, the more meaningful metric is total token throughput per unit of power (e.g. tokens per second per megawatt), when measured at the same output generation speed.</p>
+<h3>How this scales beyond 3T parameters</h3>
+<p>The same approach extends to larger models: calculate the memory needed for weights and request state, distribute the model across wafers, and connect them into a pipeline. Each additional wafer contributes compute and on-chip memory, allowing us to accommodate models that exceed the capacity of any single chip.</p>
+<p>Thanks for learning with us! Interested in deploying a model on Cerebras or building with our inference cloud?</p>
+<ul><li>Get started with our free API: <a href="http://cloud.cerebras.ai">cloud.cerebras.ai</a></li><li>Reach out to our sales team: <a href="mailto:sales@cerebras.ai">sales@cerebras.ai</a></li></ul>
+<p>Designs by Halley Chang. Thanks to Atharva Talpade, Zhenwei Gao, Angela Yeung, Jessica Liu, Joyce Er, Emma Call, and Rohan Gupta for their review and feedback.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>A Smarter Model Won’t Save Your Bad Harness</title>
+      <link>https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness</link>
+      <guid isPermaLink="true">https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness?li=1</guid>
+      <content:encoded><![CDATA[<p>Oct 16 2026</p>
+<h1>A Smarter Model Won’t Save Your Bad Harness</h1>
+<p><a href="https://www.cerebras.ai/author/sarah-chieng">Sarah Chieng</a><a href="https://www.cerebras.ai/author/william-ryan">William Ryan</a><a href="https://www.cerebras.ai/author/sherif-cherfa">Sherif Cherfa</a></p>
+<p>An agent is roughly a model inside a harness, operating in an environment.</p>
+<p>The <strong>model</strong> supplies the intelligence. It reasons, makes decisions, writes code, and decides what actions to take next. The <strong>environment</strong> is the actual computer, repository, browser, or container where this work happens, and the user (sometimes another agent) is the one providing the goals and providing guidance when needed.</p>
+<p>The <strong>harness</strong> decides what the model can see, what actions it can take, how results get fed back into the next inference, and when work is actually done.</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/4c5dfeb50d444cc97f3af43d97e61be8895896ec-4040x1397.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/0fa06f54c42a11bcce559661ffabae5c21b7b568-4950x1656.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>You can think about harness engineering as the system you build around a model to make it an engine for completing real work. It does not matter how intelligent a model is. Without a harness, it is simply a token-generating machine. Harnesses are what makes that intelligence actually useful. A harness is what transforms the model into an agent.</p>
+<p>There are many types of harnesses. Some are tuned towards different types of work</p>
+<ul><li>Personal work: Openclaw and Hermes are primarily personal agents, they're embedded into external applications (Telegram, Discord, iMessage).</li><li>Coding: Typically these harnesses run in the terminal, or in code editors. There are harnesses designed for reinforcement learning and research, harnesses for finance, marketing, and many other verticals.</li><li>Knowledge Work: ChatGPT Work and the Claude Desktop App are great examples of this. While many also use them as coding agents, these apps have a plethora of tools and plugins that allow you to connect your agent to tools such as Slack, Notion, Gmail, Sheets, Teams, Clickup, and dozens more - all with the goal of supporting general knowledge work.</li></ul>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/47a43fe069beddf7e91c225027345e51d4c835e8-2168x1926.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/19dfa24cf2aaa63be95005b6f374b61848d53dc1-2140x2027.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<h4>ChatGPT Work from OpenAI (pictured) has a robust ecosystem of plugins available for generalized work and software engineering.</h4>
+<p>But fundamentally, they all share the same skeleton. Today we're going to breakdown the layers of an agentic harness to gain a better understanding of the tools of our crafts.</p>
+<h3>What is a harness?</h3>
+<p>Large Language Models accepts inputs, then uses those inputs to generate the next token, it then appends the last generated token to the inputs, and the loop continues, until it decides it's done. On their own, they cannot:</p>
+<ul><li>use a computer</li><li>maintain durable state</li><li>search the web</li><li>run shell commands</li><li>read, edit, or create files</li><li>execute code</li><li>or verify what they produced even works</li></ul>
+<p>If a large language model is a brain, the harness is its body.</p>
+<p>When you give a query such as:</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/4d09e4cef9cc0ec3caff71bdadd0382f97789453-3840x998.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>Your prompt does not just go straight to the model and come back as a magically completed patch. The harness compounds many inference calls in a feedback loop that looks like this:</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/12759c8b8d982b4d4515c07b1d3291776ce3546d-3840x3348.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p><strong>That loop is what we call the “agent.”</strong></p>
+<p>And each step outlined here requires quite a bit of engineering</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/db667a809a23fae4584607fd3826c52ce8f9102b-2712x2540.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>The harness generally owns:</p>
+<ul><li><strong>Prompt construction</strong> - system/developer instructions, repo instructions, user prompt.</li><li><strong>Context selection</strong> - which files, previous messages, tool outputs, memories, diffs, etc. are visible.</li><li><strong>Tools</strong> - shell, file editing, search, web, MCP tools, Git, testing.</li><li><strong>Tool schemas</strong> - how those capabilities are described to the model.</li><li><strong>Tool execution</strong> - actually translating the model's intent into actions.</li><li><strong>Agent loop</strong> - deciding how tool results get returned and triggering the next inference.</li><li><strong>State</strong> - remembering what's happened across steps/sessions.</li><li><strong>Orchestration</strong> - spawning specialized or parallel agents.</li><li><strong>Hooks</strong> - deterministic execution of scripts on pre-defined triggers (linting, blocking dangerous commands, code review).</li><li><strong>Memory</strong> - personal context gets stored and injected into model prompts to help agents &quot;remember&quot; previous sessions.</li><li><strong>Context compression</strong> - deciding what gets summarized or discarded as the session grows.</li><li><strong>Planning</strong> - plans, TODO lists, subgoals.</li><li><strong>Permissions/sandboxing</strong> - what the agent is allowed to execute.</li><li><strong>Error handling</strong> - retries, failed commands, timeouts.</li><li><strong>Verification</strong> - tests, linting, checking whether changes work.</li><li><strong>Termination</strong> - deciding when the agent turn is actually finished.</li><li><strong>Constraints</strong> - rules that dictate what the agent can, and cannot do.</li></ul>
+<p><strong>The Harness Can Change the Result</strong></p>
+<p>If you've used the same model in two different coding tools, you've probably felt this already. The model may be the same, but the experience and quality of outputs can be dramatically different.</p>
+<p>One paper, <a href="https://arxiv.org/html/2605.23950v1"><em>Stop Comparing LLM Agents Without Disclosing the Harness</em></a>, reports that <strong>Claude Opus 4.5 scored 45.9% under a standardized SEAL scaffold but 55.4% when used through Claude Code</strong> on SWE-bench Pro.</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/bc46387046766b6ab7db94c827db585f108529fe-903x868.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=903" alt=""></p>
+<p>Table 1 in <a href="https://arxiv.org/html/2605.23950v1">Stop Comparing LLM Agents Without Disclosing the Harness</a></p>
+<p>And complexity is not always king. Sometimes a smaller tool schema can improve an agent more than additional layers of orchestration. More recently, Prime Intellect released their coding harness. Built on Pi, Prime Agent has managed to outperform the harnesses their models were trained to use.</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/7a509e64b6f2e34deaf5e72bbb8e5bfe3a239dbe-2048x1200.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>Source: <a href="https://www.primeintellect.ai/blog/prime-agent">Prime Intellect’s Prime Agent Announcement</a></p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/cdea8bd33b43c695adadedb77da2546f657b8fb1-651x582.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=651" alt=""></p>
+<p>The moral of the story here is this: a benchmark telling you “Model A beats Model B” can sometimes actually really be unintentionally misleading if the same harness was not used for both tests. <strong>Context (and the harness) matters.</strong></p>
+<p>A benchmark result belongs to a model-harness pair. If the harness changes, the result can change too. And as harnesses become more ambitious, they also make more model calls. <strong>That is where fast inference starts to matter.</strong></p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/e1aef720979a09e236f79e86ae56c0fbcf9e8f2d-3174x2244.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p><a href="https://artificialanalysis.ai/agents/coding-agents?coding-agents-harness-comparison-chart=harness-deep-swe">Artificial Analysis Harness Comparison</a></p>
+<p>Here you can see clearly: the same model varies wildly in performance depending on the harness.</p>
+<h3><strong>The Harness is an Inference Multiplier</strong></h3>
+<p>Look at the list of things a <strong>harness owns</strong>: planning, looping, retries, verification, testing, compaction, orchestration, review. Every single one of these requires another model call, costing tokens, but more importantly time.</p>
+<p>A validation pass might catch bugs, but it also doubles runtime. Subagents may parallelize some of this work, but the orchestrator still has to plan, dispatch, and synthesize these results, and all of those steps are sequential.</p>
+<p>Every model call adds latency, and in a mostly serial agent loop, the rough budget looks like this:</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/18e8b92d94612820d19d5561f63393b643a189da-3658x2648.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>If one step is slow, ten steps become unwatchable. But by contrast, if the model steps are fast, the harness has room to do more useful work before the agent stops feeling interactive.</p>
+<p>The distinction matters. Running <a href="https://www.cerebras.ai/blog/getting-the-most-out-of-gpt-5-6-sol-terra-and-luna">GPT-5.6 Sol on Cerebras reaches up to 750 tokens per second, with full-turn responses in as low as 0.4 seconds</a>. This level of speed unlocks new capabilities, and provides harnesses with a larger budget for reasoning, tool use, recovery, and verification.</p>
+<h3><strong>What a &quot;Fast Harness&quot; Can Do Differently</strong></h3>
+<p>Once a model latency shrinks, engineers can spend that time in several useful ways.</p>
+<ul><li><strong>Real-time agent orchestration.</strong> Intelligent models like GPT 5.6 Sol Ultrafast can orchestrate large projects and wide subagent fan-out, rapidly compounding the latency benefits.</li><li><strong>Computer use at human speed</strong>. Agents can already use computers, but they're still clunky, mistake prone, and slow compared to humans. Fast inference removes the latency that makes agents move at the speed of humanity.</li><li><strong>Live Steering.</strong> Agents react instantly to correction, providing a truly collaborative experience.</li><li><strong>Speculative execution.</strong> Users considering an approach can implement and test several alternatives in real-time using work trees, being presented with working options rather than hypothetical suggestions.</li><li><strong>Aggressive retry and self-correction.</strong> Agents can aggressively test and fix its own code as it is written, with minimal cost to the end user. Hooks fire as soon as a file is edited, and validated or fixed in milliseconds.</li><li><strong>Adaptive interfaces.</strong> Agents can generate previews, graphs, visualizations, and mock-ups in response to the current state, all in real-time.</li></ul>
+<p>These are just a few examples, and an imaginative builder can certainly utilize low-latency inference in thousands of advantageous ways, but certainly the largest benefit overall is allowing the human to be part of the building process interactively, and in real-time. Search, reasoning, tool use, and editing collapse into a tighter loop, closer to the feel of a real pair-programming teammate.</p>
+<h3>Building a Lightweight Whiteboard App</h3>
+<p>To isolate the effect of the harness from the intelligence of the model, we ran a simple controlled experiment:she’s <strong>Claude Opus 4.6, the same task, and inside two different coding agents: Factory Droid and Claude Code.</strong></p>
+<p>Both agents started from an empty repository and received the same prompt:</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/fe32869a0f4d1d2d8e2c854b78bf6e3139f41392-3840x998.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<h4>No Excalidraw code, proprietary assets, or icons where used in this demonstration</h4>
+<p>The evaluation focused on the same five requirements: drawing rectangles and arrows; selecting, moving, and deleting elements; undo and redo; exporting as PNG; and running the result in a browser. <strong>Both agents passed all five requirements.</strong> The difference was how efficiently each harness turned the same model into verified work.</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/841d1860eeb44a923ec35b717067428ecc4f2751-3566x2024.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p><strong>Factory Droid results</strong></p>
+<p><strong>Claude Code results</strong></p>
+<p>In this single run, Factory finished <strong>11 minutes sooner, about 2.4× faster, while using roughly half as many tool calls</strong>. It also identified and fixed a blocking hit-testing issue before reporting completion, then documented the remaining non-blocking gaps.</p>
+<p>This is not a claim that one harness will win every task, but it is an illustrative example of the harness acting as an inference multiplier: <strong>even when the model is held constant, the system around it can materially change the path, cost, speed, and quality of the final result.</strong></p>
+<p><em>Note: Results may vary by harness, task, and model configuration.</em></p>
+<h3><strong>The Harness as the Bottleneck</strong></h3>
+<p>At present, the biggest bottleneck for agents are the inference steps. With Cerebras Fast Inference, that is no longer the case. The new bottleneck becomes the harness itself, or more specifically, tool calls.</p>
+<p>Tool calls are both critical and common when working with agents. Like in the example above, tasks can string together dozens, or in some cases, hundreds of tool calls. Below are some example tasks we ran in a real production codebase to give you an idea of how many tool calls you might use for a given task.</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/0328e057de3b24e9843b3f12b85513e2cc4bfdad-4040x2539.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>When inference is no longer the slowest step, harness engineers can focus on optimizing the rest of the agent stack, optimizing for efficiency and performance of the harness itself.</p>
+<h3><strong>Speed Changes the Shape of the Harness</strong></h3>
+<p>None of these agent capabilities are necessarily new. Almost any harness can run tests, orchestrate agents, operate a browser, or generate visualizations. The difference is whether or not those actions are practical, whether they fit “inside the interaction,” or if they force you to send work into the background.</p>
+<p>Slow inference pushes people toward fewer, larger model calls. Multi-step work becomes async, where the user reviews the result after the agent has already made most of its decisions (as the mistakes compound). Let's not forget, the models are smart, but they are not infallible. <strong>A high agency human with good design taste continues to be invaluable in the loop to provide judgement, guidance, and steering.</strong></p>
+<p>In addition to GPT‑5.6 Sol, <a href="http://cerebras.ai">Cerebras serves leading open models at thousands of tokens per second</a> on its public endpoints:</p>
+<ul><li><a href="https://inference-docs.cerebras.ai/models/openai-oss">OpenAI GPT OSS 120B</a> at 3,000 tok/s</li><li><a href="https://inference-docs.cerebras.ai/models/gemma-4-31b">Gemma 4 31B</a> at 1,850 tok/s</li><li><a href="https://www.cerebras.ai/blog/glm-4-7">Z.ai GLM 4.7</a> at 1,000 tok/s</li></ul>
+<p>For dedicated enterprise endpoints, Cerebras also supports <a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6</a>, <a href="https://huggingface.co/zai-org/GLM-5.1">GLM 5.1</a>, <a href="https://huggingface.co/MiniMaxAI/MiniMax-M2.5">MiniMax M2.5</a>, <a href="https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct">Qwen3 Coder 480B</a>, <a href="https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct">Llama 4 Maverick</a>, <a href="https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512">Mistral Large 3</a>, <a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.2">DeepSeek V3.2</a>, and <a href="https://inference-docs.cerebras.ai/dedicated/overview">many additional model families</a>.</p>
+<p>Designs by <a href="https://x.com/@halleychangg">@halleychangg</a>.</p>]]></content:encoded>
     </item>
     <item>
       <title>MoE Math Demystified: What Does 8x7B Actually Mean?</title>
@@ -2585,65 +2651,6 @@
 <h3>A Blueprint for Sovereign AI</h3>
 <p>Jais 2 establishes a new state of the art for Arabic language models and sets a benchmark for how a regional, culturally grounded frontier model should perform. It is available as open weights and through public interfaces across the UAE and wider Arabic-speaking world—bringing advanced AI capability to institutions, developers, and governments across the region.</p>
 <p>This project also demonstrates the full potential of the Cerebras wafer-scale architecture for sovereign AI development. Its unified, terabyte-scale MemoryX training environment avoids the complexity of GPU-based distributed memory management, while inference uses on-wafer SRAM to achieve world-leading generation speed at 70B scale. The UAE is the first country to deploy this complete training-to-inference workflow on Cerebras hardware for the benefit of an entire region, proving that national-scale AI capability can be built without reliance on GPU megaclusters. As other nations pursue their own sovereign AI strategies, we look forward to partnering with them to build powerful and efficient frontier models.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Cerebras at NeurIPS 2025: Nine Papers From Pretraining to In…</title>
-      <link>https://www.cerebras.ai/blog/cerebras-at-neurips-2025-nine-papers-from-pretraining-to-inference</link>
-      <guid isPermaLink="true">https://www.cerebras.ai/blog/cerebras-at-neurips-2025-nine-papers-from-pretraining-to-inference?li=1</guid>
-      <description>Full title: Cerebras at NeurIPS 2025: Nine Papers From Pretraining to Inference</description>
-      <content:encoded><![CDATA[<p>Dec 04 2025</p>
-<h1>Cerebras at NeurIPS 2025: Nine Papers From Pretraining to Inference</h1>
-<p>Cerebras is excited to be at NeurIPS 2025—and what a year it's been. We launched our inference API last August, opened a new data center in Oklahoma City, and watched demand for Cerebras Inference explode with the latest state-of-the-art open weight models.</p>
-<p>Our research team has been hard at work too, and this year they're presenting nine papers probing the foundational questions of modern AI practice: where does compute get wasted during training? How should reasoning models allocate tokens at inference? When do smaller models beat bigger ones? The work spans pretraining to inference—new findings on scaling laws, training efficiency, and smarter orchestration of test-time compute.</p>
-<p>Below is an overview of each paper, what we found, and who should care. Links to the full arXiv papers are included. If you're at the conference, stop by our booth and take a selfie with the wafer. If you're not, we'd still love to hear your thoughts via X or email.</p>
-<h3><strong>The Conductor and the Engine: A Path Towards Co-Designed Reasoning</strong></h3>
-<p>CODA (Conductor-Driven Architecture) optimizes test-time compute across planning, execution, self-refinement, and verification based on problem difficulty—helping 32B models outperform 235B+ competitors in our benchmarks. The insight is that most test-time compute gets wasted: external orchestration and internal model reasoning both try to handle high-level thinking, duplicating effort and burning tokens. CODA separates the roles cleanly—the Conductor plans, reflects, and verifies; the Engine executes—unlocking frontier-level performance without frontier-level model sizes.</p>
-<p><strong>Key findings</strong></p>
-<ul><li>32B models beat 235B+ competitors. Qwen3 32B with CODA outperforms Qwen3 235B, DeepSeek R1, and OpenAI o3-mini on AIME and LiveCodeBench. The 120B GPT-OSS model hits 87.5% on LiveCodeBench, topping Grok4.</li><li>Adaptive path selection matters. Some math problems solve better through direct reasoning; others need code generation. CODA dynamically picks the right approach per problem—on 15 hard Numina Math questions, neither path alone reaches 100%, but adaptive selection does.</li><li>Verification is the bottleneck. There's a consistent gap between CODA's final accuracy and the theoretical best-of-N ceiling, suggesting that better verifiers (potentially trained via RL) could unlock substantial additional gains.</li></ul>
-<p><strong>Who this is useful for</strong></p>
-<p>Teams deploying reasoning systems on memory-constrained hardware. Researchers exploring test-time compute scaling. Anyone wanting frontier-level performance without frontier-level model sizes.</p>
-<p>📄 <a href="https://arxiv.org/abs/2509.19762">[Paper Link</a>]</p>
-<h3>Calibrated Reasoning: An Explanatory Verifier for Dynamic and Efficient Problem-Solving</h3>
-<p>When scaling reasoning models at test time, practitioners face a frustrating bottleneck: these models are terrible at evaluating their own solutions. Multi-path exploration strategies like best-of-n sampling rely on the model knowing when it's right or wrong, but current reasoning models are heavily biased toward giving everything high scores regardless of correctness. This paper introduces an Explanatory Verifier trained via reinforcement learning (GRPO) that produces calibrated confidence scores along with natural language reasoning for why solutions are correct or incorrect. The key insight is comparing pairs of candidate solutions rather than evaluating them in isolation, which helps the verifier catch subtle errors.</p>
-<p><strong>Key findings</strong></p>
-<ul><li>1-3× token savings in best-of-n. The verifier achieves higher accuracy at low k values compared to self-consistency, and matches accuracy at higher k while using substantially fewer tokens—because it only generates additional candidates when both current options look wrong.</li><li>Catches failure modes voting can't. When both candidate solutions are identically incorrect (a common failure mode on hard problems where models collapse into narrow, biased answers), majority voting fails completely. The verifier reliably detects these cases.</li><li>Transfers across model scales. Though trained on Qwen3-8B outputs, the 8B verifier effectively evaluates generations from the larger Qwen3-32B, achieving 0.77 accuracy on AIME 2025 while using only 75% of the tokens versus self-consistency.</li></ul>
-<p><strong>Who this is useful for</strong></p>
-<p>Teams running best-of-n or majority voting at scale and burning tokens on redundant generations. Researchers working on reward models and verifiers for reasoning. Anyone who's noticed their reasoning model is confidently wrong and wants a better filter.</p>
-<p>📄 <a href="https://arxiv.org/abs/2509.19681">[Paper Link</a>]</p>
-<h3>DREAM: Drafting with Refined Target Features and Entropy-Adaptive Cross-Attention Fusion for Multimodal Speculative Decoding</h3>
-<p>Speculative decoding has become a go-to technique for accelerating text-only LLMs, but applying it to vision-language models is harder—visual and textual information need to stay tightly integrated throughout generation. DREAM is a speculative decoding framework built specifically for VLMs, combining three innovations: a cross-attention mechanism that injects intermediate features from the target model into the draft model, entropy-adaptive feature selection to guide draft training, and visual token compression to reduce latency without losing critical information.</p>
-<p><strong>Key findings</strong></p>
-<ul><li>Up to 3.6× speedup over standard decoding. Across LLaVA, Pixtral, SmolVLM, and Gemma3, DREAM consistently outperforms prior speculative decoding baselines in both throughput and acceptance length.</li><li>Cross-attention is the key architectural choice. Unlike text-only methods that concatenate features, DREAM's cross-attention preserves structured visual representations—removing it causes the largest performance drop in ablations.</li><li>Visual tokens can be aggressively compressed. Retaining just 75% of visual tokens guided by attention-based importance scores yields a 7% speedup with minimal accuracy loss.</li></ul>
-<p><strong>Who this is useful for</strong></p>
-<p>Teams deploying vision-language models in latency-sensitive applications. Researchers working on efficient multimodal inference. Anyone running VLMs at scale and looking to cut decoding time without sacrificing output quality.</p>
-<p>📄 <a href="https://arxiv.org/abs/2505.19201">[Paper Link</a>]</p>
-<h3>Don't be lazy: CompleteP enables compute-efficient deep transformers</h3>
-<p>When scaling up transformer models, hyperparameters like learning rate that work well for smaller models often need expensive retuning as you increase depth. This paper investigates parameterizations—rules for how to adjust hyperparameters as model architecture changes—and identifies one called CompleteP that enables hyperparameters to transfer reliably across both width and depth. The core change is scaling each residual block's output by 1/L before adding it to the residual stream, which maintains stability while ensuring every layer fully exploits its nonlinear capacity.</p>
-<p><strong>Key findings</strong></p>
-<ul><li>Depth-wise HP transfer works. Hyperparameters tuned on a 2-layer model transfer directly to 128-layer models without retuning—but only with CompleteP.</li><li>12-34% compute savings over µP. Gains increase for deeper models, and narrow-deep architectures that were previously suboptimal become viable.</li><li>Theory explains why. Prior parameterizations cause layers to effectively linearize as depth increases (&quot;lazy learning&quot;), wasting the representational power of depth. CompleteP is the unique parameterization ensuring complete feature learning.</li></ul>
-<p><strong>Who this is useful for</strong></p>
-<p>ML engineers training large transformers. Researchers studying neural scaling laws. Teams with hardware constraints favoring narrow-deep architectures.</p>
-<p>📄 <a href="https://arxiv.org/abs/2505.01618">[Paper Link</a>]</p>
-<h3>Power Lines: Scaling Laws for Weight Decay and Batch Size in LLM Pre-training</h3>
-<p>Hyperparameters like weight decay and batch size that work at small scale need expensive retuning as model size, dataset size, and batch size change. This paper investigates scaling laws for these hyperparameters and identifies precise power-law relationships that enable accurate prediction of optimal settings before large-scale training begins.</p>
-<p>The core insight is modeling training through what the authors call the AdamW timescale—a ratio that captures how weight updates are integrated over training, combining batch size, learning rate, weight decay, and dataset size into a single quantity. Rather than tuning learning rate as batch size changes (which hits stability limits), tuning weight decay maintains optimal timescale across a much wider range.</p>
-<p><strong>Key findings</strong></p>
-<ul><li>Optimal timescale follows a power law in tokens-per-parameter. As you train on more data relative to model size, the optimal timescale decreases predictably. This enables accurate prediction of optimal weight decay for any combination of model size, dataset size, and batch size.</li><li>Optimal and critical batch sizes scale with data, not compute. Both the loss-minimizing batch size and the critical batch size (beyond which returns diminish sharply) follow power laws in dataset size, contradicting prior work suggesting they scale with FLOPs or loss. This means overtrained models can use much larger batch sizes efficiently.</li><li>Overtrained models are Pareto-optimal for time-constrained training. When balancing training time against compute cost, smaller models trained on more data dominate—they benefit from both higher critical batch sizes and greater data parallelism.</li></ul>
-<p><strong>Who this is useful for</strong></p>
-<p>ML engineers setting hyperparameters for large-scale pretraining. Teams making compute/time tradeoffs in model training. Researchers studying neural scaling laws and optimal training configurations.</p>
-<p>📄 <a href="https://arxiv.org/abs/2505.13738">[Paper Link</a>]</p>
-<h3>PTPP-Aware Adaptation Scaling Laws predict domain-adaptation performance at unseen pre-training budgets</h3>
-<p>When adapting a pre-trained language model to a new domain (like adding French to an English/Arabic model), you need to balance learning the new domain against forgetting the old one. Existing scaling laws for this process assume a fixed pre-training budget, but in practice you're often working with models trained to different extents. This paper introduces scaling laws that explicitly incorporate the pre-training budget (measured as tokens-per-parameter, or PTPP), enabling predictions about adaptation performance for models you haven't actually trained yet.</p>
-<p><strong>Key findings</strong></p>
-<ul><li>Early-stage fits predict late-stage performance. Laws trained on models at PTPP=15 and 31 accurately forecast French validation loss at PTPP=279—a nearly 10x extrapolation—outperforming baselines that ignore PTPP entirely.</li><li>Pre-training budget affects adaptation in two ways. It shifts the loss floor (better-trained models start lower) and changes the shape of the learning curve (how efficiently the model uses adaptation data). Capturing both effects via a &quot;gated+floor&quot; formulation yields the best predictions.</li><li>Enables analytical optimization of replay ratios. Rather than expensive grid searches, the fitted laws let you solve for optimal adaptation parameters (8.9 tokens-per-parameter, 34% replay) that satisfy constraints on both forgetting and target performance.</li></ul>
-<p><strong>Who this is useful for</strong></p>
-<p>Teams adapting foundation models to new languages or domains. Researchers studying continual pre-training dynamics. Anyone trying to plan adaptation compute budgets without running exhaustive experiments.</p>
-<p>📄 <a href="https://arxiv.org/abs/2510.23198">[Paper Link</a>]</p>
-<h3>Life Sciences Collaboration with InceptionInstitute of Artificial Intelligence</h3>
-<p>Cerebras has a deep collaboration with Inception Institute of Artificial Intelligence on foundational models for life sciences. Together we've published three papers introducing the Omics42 platform: Prot42, a family of protein language models that generates high-affinity protein binders from sequence alone that achieve binding strengths competitive with Google's AlphaProteo while handling sequences up to 8,192 amino acids. Chem42, a family of chemical language models for drug-like molecule generation that outperforms larger models on standard benchmarks with 6x fewer parameters, and can design ligands tailored to specific protein targets. Gene42, a genomic foundation model that processes up to 192,000 DNA base pairs at single-nucleotide resolution—the first dense-attention model to achieve this scale—setting state-of-the-art on species classification and disease variant prediction tasks.</p>
-<p>📄 <a href="https://arxiv.org/abs/2504.04453">Prot42: a Novel Family of Protein Language Models for Target-aware Protein Binder Generation</a></p>
-<p>📄 <a href="https://arxiv.org/abs/2503.16563">Chem42: a Family of Chemical Language Models for Target-aware Ligand Generation</a></p>
-<p>📄 <a href="https://arxiv.org/abs/2503.16565">Gene42: Long-Range Genomic Foundation Model With Dense Attention</a></p>]]></content:encoded>
     </item>
   </channel>
 </rss>

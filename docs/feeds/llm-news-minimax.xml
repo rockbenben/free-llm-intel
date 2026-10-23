@@ -7,7 +7,39 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-minimax.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 19 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>插件即应用：MiniMax Code Mini App 正式发布</title>
+      <link>https://www.minimax.cn/blog/minimax-code-mini-app-1792650729</link>
+      <guid isPermaLink="true">https://www.minimax.cn/blog/minimax-code-mini-app-1792650729</guid>
+      <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Mini App 是一种带前端和后端、可以长期运行的应用，以插件形式安装，能和 Agent 互相调用，让 Agent 干的活留在一个一直在跑的页面上。</p>
+<p><img src="https://filecdn.minimax.chat/public/minimax-code-mini-app-cn-cover-1-1792651248999.jpg?x-oss-process=image/format,webp" alt="封面：一只手把卡片放进由股市看板、3D 模型、地图和对话等 Mini App 组成的拼图，一条线连到 Agent"></p>
+<p>今天，我们在 MiniMax Code 桌面端推出 <a href="https://agent.minimax.cn/docs/miniapp/overview">Mini App</a>。它是一种带前端和后端、可以长期运行的应用，以插件形式安装，能和 Agent 互相调用。我们想让 Agent 干的活留在一个一直在跑的页面上，不用再去各个会话里翻。</p>
+<p>现在很多工作已经交给 Agent 去做，比如重构代码、整理消息。可每件事都在单独的会话里推进，接着做之前，得先在一堆会话里找到上下文，回忆这个会话当初在做什么。让 Agent 生成一个 HTML 看板能把信息聚到一起，但页面上只有生成那一刻的数据。要持续更新、推进任务、保存结果，还得回到聊天里重新交代。AI 与人的交付从来不是一次性，有时我们需要一些人类的修订，有时又需要一些 AI 的协作。</p>
+<p>Agent 插件让你改造 Agent，Mini App 让你在 Agent 之上做应用。端口、Agent 和数据目录这些系统级的事交给宿主 MiniMax Code，由它划清边界；工具长什么样，用户自己和 Agent 一起讨论。</p>
+<h2>Mini App</h2>
+<p>Mini App 是一个兼容 <a href="https://agent.minimax.cn/docs/code/agents/plugin-submission">MiniMax Plugin 协议</a>的扩展，多了一份 <code>miniapp.json</code> 声明，以及前端和 Node.js 服务端。结构很简单：Node.js 服务负责取数、保存结果，并把业务能力通过托管 MCP 交给 Agent；页面显示在会话侧栏，也可以弹出为独立窗口；进程、端口、鉴权、凭证和可回滚的发布都由宿主负责。</p>
+<p><img src="https://filecdn.minimax.chat/public/minimax-code-mini-app-cn-architecture-2-1792651248999.jpg?x-oss-process=image/format,webp" alt="Mini App 架构：上层是以插件形式安装的 Mini App，各自有页面、Node 服务和数据；下层是宿主 MiniMax Code，提供端口、Agent 和数据目录；两者通过托管 MCP 和 Agent API 互相调用，你跟 Agent 说想要什么工具"></p>
+<p>今天发布的内容包括三部分：</p>
+<ul><li>Mini App 运行时：Node 后端与持久数据目录、托管 MCP、Agent API、Host Connector，以及在页面中处理工具审批</li><li><code>/miniapp-creator</code>：在聊天里用一句话，从需求走到可用的页面</li><li>插件市场中的官方 Mini App，和开源社区仓库 MiniMax-Code-MiniApps</li></ul>
+<p>用 <code>/miniapp-creator</code> 时，Agent 会先对每个数据源做一次只读查询，确认能拿到真实数据，再写页面和后端、发布、打开，最后用内置浏览器截图验收。</p>
+<p>首批官方 Mini App 里，有几款是团队里的非研发同事这样做出来的：</p>
+<ul><li>股市 Mini App 把分散在知识星球、进门财经、腾讯文档里的股票信息集中到一个看板；</li><li>CadQuery Viewer 让你在 3D 模型上标出位置，发回对话让 Agent 修改；</li><li>自驾规划把地图算路、搜索和图片生成串成一个行程工作台。</li><li>MiniMax Bot 本身也是一个 Mini App。主 bot 组建团队，把耗时任务交给后台 Agent 会话，做完再统一验收和汇报；会话里的 Agent 又能调用 Bot 的工具发消息、保存和查找记忆。大多数 Bot 功能的更新只需要改插件，不必等 MiniMax Code 发版。它的源码已经放进开源社区。</li></ul>
+<p>开源社区里也陆续出现了开发者自己做的 Mini App，比如按日期和模型查看 Token 用量的看板、用泳道图浏览 Git 提交历史的 Git Commit Tree，以及回看一次对话模型轨迹的 Session Trajectory；也有偏生活和创作的，比如每天记心情、抽灵感卡的心屿，和让 Agent 新建、修改交互式图解的 Anatomy 画廊。</p>
+<blockquote>“从早期的工作流，到 RAG、Agentic Search 以及在 MiniMax 的实践的启发下，我发现，比起酷炫的 Agent，专业工作更需要一个让 Agent 与人深度协作、高度内聚的原生环境。之前，作为金融行业的分析师，我的多数时间都花在零散的信息整理上，现在用 Mini App 把他们融入到我的工作台，我可以更加专注于思考和判断，把信息的整理和分析推演完全交给 Mini App。”—— MiniMax 产品经理</blockquote>
+<p>安全上，账号凭证由宿主保管，插件和页面都拿不到；Connector 和 Agent 权限必须在清单里声明才能使用；服务端口只对 Mini App 自己的页面和 Agent 开放。页面想把内容交给 Agent 时，内容先进入你的输入框，由你确认、修改后再发送。<strong>Mini App 的代码以你的身份在本机运行，请只安装来源可信的包</strong>。</p>
+<h2>开始使用</h2>
+<p>Mini App 现已在 MiniMax Code 桌面端（macOS / Windows）的本地会话中可用。</p>
+<p>你可以从插件市场安装现成的 Mini App，也可以在聊天里描述需求，让 Agent 当场做一个，用一段时间后再让它按你的习惯改。</p>
+<p>开始构建：</p>
+<p>下载 MiniMax Code：</p>
+<ul><li>国内 <a href="https://agent.minimax.cn/download">https://agent.minimax.cn/download</a></li><li>海外 <a href="https://agent.minimax.io/download">https://agent.minimax.io/download</a></li></ul>
+<p>阅读快速上手，用 <code>/miniapp-creator</code> 做出第一个 Mini App：<a href="https://agent.minimax.cn/docs/miniapp/authors/quickstart">https://agent.minimax.cn/docs/miniapp/authors/quickstart</a></p>
+<h2>开放的社区</h2>
+<p>MiniMax Bot 的源码和社区作品都放在开源仓库 <a href="https://github.com/MiniMax-AI/MiniMax-Code-MiniApps">MiniMax-Code-MiniApps</a> 里。做了好用的 Mini App，欢迎提 Pull Request 分享出来。</p>
+<p>需要 Mini App 还没有的运行时能力，可以到开源社区置顶的<a href="https://github.com/MiniMax-AI/MiniMax-Code-MiniApps/issues/9">能力许愿单</a>留言。</p>]]></content:encoded>
+    </item>
     <item>
       <title>MiniMax M3.1 Flash</title>
       <link>https://platform.minimax.cn/docs/release-notes/models#2026-%E5%B9%B4-10-%E6%9C%88-19-%E6%97%A5</link>
@@ -1508,35 +1540,6 @@
 <h2>MiniMax-Text-01 / MiniMax-VL-01</h2>
 <p>全新一代语言模型MiniMax-Text-01和视觉理解模型MiniMax-VL-01正式发布</p>
 <p>此页面对您有帮助吗？</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>MiniMax-01开源：新架构开启Agent时代</title>
-      <link>https://www.minimax.cn/blog/minimax-01-%E7%B3%BB%E5%88%97</link>
-      <guid isPermaLink="true">https://www.minimax.cn/blog/minimax-01-%E7%B3%BB%E5%88%97</guid>
-      <pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>今天，MiniMax 发布并开源了 MiniMax-01 全新系列模型，其中包含两个模型，基础语言大模型 MiniMax-Text-01 和视觉多模态大模型 MiniMax-VL-01。</p>
-<h3>全新模型架构、性能比肩GPT-4o</h3>
-<p>在 MiniMax-01系列模型中，我们做了大胆创新：首次大规模实现线性注意力机制，传统 Transformer架构不再是唯一的选择。这个模型的参数量高达4560亿，其中单次激活459亿。模型综合性能比肩海外顶尖模型，同时能够高效处理全球最长400万token的上下文，是GPT-4o的32倍，Claude-3.5-Sonnet的20倍。</p>
-<h3>超长上下文、开启Agent时代</h3>
-<p>我们相信2025年会是Agent高速发展的一年，不管是单Agent的系统需要持续的记忆，还是多Agent的系统中Agent之间大量的相互通信，都需要越来越长的上下文。在这个模型中，我们走出了第一步，并希望使用这个架构持续建立复杂Agent所需的基础能力。</p>
-<h3>极致性价比、不断创新</h3>
-<p>受益于架构的创新、效率的优化、集群训推一体的设计以及我们内部大量并发算力复用，我们得以用业内最低的价格区间提供文本和多模态理解的API，标准定价是输入Token 人民币1元/百万Token，输出Token 8元/百万Token。欢迎大家在MiniMax 开放平台体验、使用。</p>
-<p>MiniMax开放平台：<a href="https://www.minimaxi.com/platform">https://www.minimaxi.com/platform</a></p>
-<p>MiniMax开放平台海外版：<a href="https://www.minimaxi.com/en/platform">https://www.minimaxi.com/en/platform</a></p>
-<p>MiniMax-01 系列模型在<a href="https://github.com/MiniMax-AI">https://github.com/MiniMax-AI</a>开源，后续也会持续更新。</p>
-<p>基于业界主流的文本和多模态理解测评结果如下图所示，我们在大多数任务上追平了海外公认最先进的两个模型，GPT-4o-1120以及Claude-3.5-Sonnet-1022。在长文任务上，我们对比了之前长文最好的模型 Google的Gemini。如图(c)所示，随着输入长度变长，MiniMax-Text-01 是性能衰减最慢的模型，显著优于Google Gemini。</p>
-<p>受益于我们的架构创新，我们的模型在处理长输入的时候有非常高的效率，接近线性复杂度。和其他全球顶尖模型的对比如下：</p>
-<p>我们使用的结构如下，其中每8层中有7个是基于Lightning Attention的线性注意力，有一层是传统的SoftMax注意力。</p>
-<p>这是业内第一次把线性注意力机制扩展到商用模型的级别，我们从Scaling Law、与MoE的结合、结构设计、训练优化和推理优化等层面做了综合的考虑。由于是业内第一次做如此大规模的以线性注意力为核心的模型，我们几乎重构了训练和推理系统，包括更高效的MoE All-to-all通讯优化、更长的序列的优化，以及推理层面线性注意力的高效Kernel实现。</p>
-<p>在大部份的学术集上，我们都取得了比肩海外第一梯队的结果：</p>
-<p>在长上下文的测评集上，我们显著领先：</p>
-<p>在400万的Needle-In-A-Haystack 检索任务上全绿：</p>
-<p>除了学术数据集，我们构建了一个基于真实数据的助手场景中的测试集。在这个场景中，MiniMax-Text-01的模型表现显著领先，具体的对比如下：</p>
-<p>在多模态理解的测试集中，MiniMax-VL-01的模型也较为领先：</p>
-<p>为方便开发者做更多的研究，我们开源了两个模型的完整权重，<a href="https://github.com/MiniMax-AI">https://github.com/MiniMax-AI</a>。这一系列模型的后续更新，包括代码和多模态相关的后续强化，我们会第一时间上传。</p>
-<p>选择开源，一是因为我们认为这有可能启发更多长上下文的研究和应用，从而更快促进Agent时代的到来，二是开源也能促使我们努力做更多创新，更高质量地开展后续的模型研发工作。</p>
-<p>除了开源和极高性价比的API之外，在海螺AI（国内APP以及网站<a href="https://hailuoai.com/">hailuoai.com</a>），以及海外网站 <a href="https://hailuo.ai/">hailuo.ai</a>上都可以访问使用。</p>
-<p>如有技术上的建议与合作，欢迎发邮件到 model@minimaxi.com 与我们交流。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
