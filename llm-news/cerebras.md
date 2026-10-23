@@ -12,7 +12,7 @@
 1. [发布 Cerebras CS-4：最快的 AI 再次提速](https://www.cerebras.ai/blog/introducing-cerebras-cs-4) <!--orig:Introducing Cerebras CS-4: The Fastest AI Just Got Faster-->
 2. [MoE 规模化：让稀疏模型在真实硬件上跑得快](https://www.cerebras.ai/blog/moe-guide-scale) <!--orig:MoE at Scale: Making Sparse Models Fast on Real Hardware-->
 3. [我们如何在 Cerebras 上部署万亿参数前沿模型](https://www.cerebras.ai/blog/how-we-deploy-trillion-parameter-frontier-models-on-cerebras) <!--orig:How we deploy Trillion-parameter frontier models on Cerebras-->
-4. [更智能的模型并不能拯救你糟糕的安全带](https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness) <!--orig:A Smarter Model Won’t Save Your Bad Harness-->
+4. [模型再聪明，也救不了糟糕的 harness](https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness) <!--orig:A Smarter Model Won’t Save Your Bad Harness-->
 5. [MoE 数学揭秘：8x7B 到底是什么意思？](https://www.cerebras.ai/blog/moe-guide-calculator) <!--orig:MoE Math Demystified: What Does 8x7B Actually Mean?-->
 6. [从头开始的分类推理](https://www.cerebras.ai/blog/disaggregated-inference-from-the-ground-up) <!--orig:Disaggregated Inference From The Ground Up-->
 7. [AlphaSense 如何用快速推理让 Agentic 研究变得可交互](https://www.cerebras.ai/blog/how-alphasense-uses-fast-inference-to-make-agentic-research-interactive) <!--orig:How AlphaSense Uses Fast Inference to Make Agentic Research Interactive-->

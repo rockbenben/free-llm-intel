@@ -9,7 +9,7 @@
 
 ## 全部文章（共 15 篇，按日期倒序；无日期条目列于最后）
 
-1. [Mercury 3 简介|阅读博客](https://www.inceptionlabs.ai/blog/introducing-mercury-3)（2026-10-19） <!--orig:Introducing Mercury 3|Read the blog-->
+1. [规模化扩散：Mercury 3 发布](https://www.inceptionlabs.ai/blog/introducing-mercury-3)（2026-10-19） <!--orig:Introducing Mercury 3|Read the blog-->
 2. [Mercury 2 入选 TIME 2026 年度最佳发明](https://www.inceptionlabs.ai/blog/mercury-2-named-to-time-s-best-inventions-of-2026)（2026-10-16） <!--orig:Mercury 2 Named to TIME's Best Inventions of 2026Read story-->
 3. [Mercury Voice 发布](https://www.inceptionlabs.ai/blog/introducing-mercury-voice)（2026-10-01） <!--orig:Introducing Mercury VoiceRead story-->
 4. [Mercury 2.5 简介](https://www.inceptionlabs.ai/blog/introducing-mercury-2-5)（2026-09-24） <!--orig:Introducing Mercury 2.5Read story-->

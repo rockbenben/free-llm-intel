@@ -1,65 +1,61 @@
 ---
 vendor: cohere
-title: Can AI understand culture?A retired teacher and high schooler put AI to the test
+title: AI 能理解文化吗？一位退休教师和一名高中生来试试
 original_title: 
 url: https://cohere.com/blog/can-ai-understand-culture
 date: 2026-10-22
 lang: zh
 captured: 2026-10-23
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: 42c11a86f054
+body_sha: 596b20920851
 ---
 
-2026 年 10 月 22 日
+# AI 能理解文化吗？一位退休教师和一名高中生来试试
 
-5 分钟阅读
-
-# AI 能理解文化吗？
-
-一位退休教师和高中生对人工智能进行了测试
+一位退休教师和一名高中生对 AI 做了一场测试
 
 ![](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/24b8abec4b5cf28df9a82d105fb39fc45881c2cf-3840x2160.png?auto=format&fit=max&q=80&w=1130)
 
-想想这个古老的谜语：“什么样的房子，你进入时是盲目的，离开时却是看见的？”虽然说英语的人可能会立即认出答案是“一所学校”，但如果用另一种语言询问，人工智能模型可能会很难回答同样的谜语。 Cohere Labs [开放科学项目](https://cohere.com/research/papers/cultureriddles-2026-10-22) 揭示了解释的复杂性，结果令人惊讶。
+想想这个古老的谜语：「你闭着眼睛走进去、睁着眼睛走出来的，是哪种房子？」说英语的人会一下子认出答案是 "a school"（学校），可如果用另一种语言问同一道谜语，AI 模型可能就被难住了。Cohere Labs 的一个[开放科学项目](https://cohere.com/research/papers/culturalriddles-2026-10-22)揭开了「解读」这件事的复杂本性，结果出人意料。
 
-“谜语”一词来自古英语“rædan”，意思是“解释”或“建议”，这表明谜语是关于解释和洞察力而不仅仅是猜测。谜语因含糊不清而蓬勃发展，但也有具体的解决方案。正如人类通过练习和反馈来提高谜语能力一样，人工智能也通过机器学习来提高其能力。
+「riddle」这个词源自古英语的 "rædan"，意思是「解读」或者「劝告」，这暗示谜语要的是解读和洞察，而不光是瞎猜。谜语靠含糊活着，却各有各的确解。人靠练习和反馈把谜语越猜越准，AI 也一样，它靠机器学习把自己的本事磨上去。
 
-> “我们简直不敢相信自己的眼睛……这不再‘只是’研究，而是一场运动。”- Boczka Károly
+> 「我们简直不敢相信自己的眼睛……这不再是『只是』研究，它是一场运动。」- Boczka Károly
 
-匈牙利外交官 Boczka Károly 正在积极探索人工智能研究的机会。当他决定构建棘手的匈牙利琐事式谜语来测试人工智能模型是否识别文化线索时，他收到了惊人的结果。模特们的答案“听起来”是正确的，但其实并不正确。这些模型缺少特定于文化的事实，并且在某些情况下存在幻觉。在 Cohere Labs 主办的关于人工智能文化的开放科学社区讨论中，Boczka 与 Julia Kreutzer 分享了他的发现。 Cohere Labs 的研究员 Kreutzer 看到了测试人工智能熟练程度和文化知识之间差距的直接潜力。他们共同在全球范围内扩展了一个项目，以测试主要基于英语数据训练的模型的流畅性、逻辑性和推理能力以及每个答案背后的盲点。
+匈牙利外交官 Boczka Károly 一直在主动找 AI 研究的机会。当他决定编一批刁钻的、匈牙利冷知识风格的谜语，来测一测 AI 模型能否认得出文化线索时，他拿到了令人震惊的结果。模型的回答*听起来*是对的，但并不是对的。模型缺的是文化里特有的那些事实，有些情况下还产生了幻觉。在一场由 Cohere Labs 主持、围绕 AI 里的文化展开的开放科学社区讨论中，Boczka 把自己的发现讲给了 Julia Kreutzer。Kreutzer 是 Cohere Labs 的 Staff Research Scientist，她立刻看出这里有一个可以上手检验的落差：AI 的流利，和文化知识之间的距离。两人一起把一个项目铺到了全球规模，去测那些主要用英文数据训练出来的模型里的流利度、逻辑和推理，以及每个答案背后的盲区。
 
-参与该项目不需要专业知识，只需了解一种文化以及致力于编写和评估谜语，这为任何年龄和背景的研究参与者打开了大门。在社交媒体和 [Cohere Labs 现有研究社区](https://cohere.com/research/open-science) 上进行了公开征集，邀请人们加入该项目，没有任何准入标准，有意消除通常限制参与的障碍。社区聚集在 Discord 上，在体育、历史和政治等文化领域建立了自己的基准，每个问题都被设计成一个谜语。
+参与这个项目不需要什么专业资历，只要你认同某一种文化、肯花时间写谜语和做评估就够了——这就给任何年龄、任何背景的研究参与者打开了门。一次发在社交媒体上、也发在 [Cohere Labs 已有的研究社区](https://cohere.com/research/open-science)里的公开召集，邀请人们加入项目，不设任何准入条件，刻意拆掉了平时会把人挡在门外的那些门槛。社区聚在 Discord 上，在体育、历史、政治这些文化板块上搭起了自己的 benchmark，每一道题都按谜语来设计。
 
 ![](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/6649183f3a280f2ee323dde028a0a60da216a63c-932x1146.png?auto=format&fit=max&q=80&w=468)
 
-博茨卡先生的想法很快就发展成为一项国际倡议。 “我们简直不敢相信自己的眼睛，”他说。 “我们有来自 50 多个国家的 100 多名贡献者。这不再‘只是’研究，而是一场运动。”他继续说道，“我们的集体是如此专注、独立和合作，整个项目就像一棵精心种植的植物一样成长。”这个根深蒂固的社区中的两位贡献者是 15 岁的美国人亨利·加尼 (Henry Gagnier) 和加拿大退休教师简·史密斯 (Jane Smith)。
+Boczka 先生的这个点子很快就长成了一个国际性的行动。「我们简直不敢相信自己的眼睛，」他说。「我们有 100 多位贡献者，来自 50 多个国家。这不再是『只是』研究，它是一场运动。」他接着说，「我们这个集体专注、独立又彼此协作，整个项目就像一株栽种得当的植物那样生长起来。」在这个根扎得很深的社区里，有两位参与的成员：15 岁的美国少年 Henry Gagnier，和加拿大的退休教师 Jane Smith。
 
-虽然大多数青少年可能对加入如此规模的全球研究团队犹豫不决，但亨利·加尼耶富有感染力的热情压倒了任何关于“典型”研究团队成员应该是什么样的先入为主的观念。 “我想说人工智能研究适合所有人。人工智能研究有很多不同的方面。我们需要来自许多不同文化的人，有助于建立这个基准的不是‘人工智能技能’，而是真正的文化知识。”当被问及他是否对这个团队感到害怕或惊讶时，他说：“最让我惊讶的是他们的包容性和开放性，因为作为一名高中生，我总是有点害怕，加入这个项目并说我想成为这个团队的领导者。但每个人都很好。这是一次很棒的经历。”
+大多数青少年面对这种规模的全球研究团队可能会发怵，但 Henry Gagnier 那股有感染力的热情，压过了「典型的研究团队成员该是什么样」的任何先入之见。「我会说，AI 研究是属于每一个人的。AI 研究有太多个各不相同的面向。我们需要来自许多不同文化的人，而对这个 benchmark 的搭建真正管用的不是『AI 技能』，是实实在在的文化知识。」当被问到在这个群体里有没有发怵或者吃惊，他说：「最让我惊讶的是他们的包容和开放，因为作为一个高中生，我其实一直有点发怵——加入这个项目，然后说我想要给这个团队当 lead。但每个人都特别好。那是一段特别棒的经历。」
 
-这个项目虽然植根于文化和语义的细微差别，但为他提供了对研究及其可能的未来的更多见解。 “这让我很好地了解了研究人员正在做的事情，”加尼尔说。 “我想继续在这个领域进行研究。我现在正在做一些项目来加深我在这个领域的知识，所以我认为这个项目是一次很好的教育经历，它肯定改变了我对未来想去的地方的看法。”
+这个项目虽然扎在文化和语义的细微之处，却让他对研究、以及研究可能给他的那条路，看得清楚了不少。「它让我提前偷看了一眼真正的研究者手头在做什么，」Gagnier 说。「我想在这个领域继续做研究。我现在也在做几个项目，推进自己在这个领域的知识，所以我觉得这个项目是一次很好的教育经历，它确实改变了我对自己将来要往哪儿走的看法。」
 
-作为一名退休教师，简·史密斯在她的研究中采用了她所谓的“教师方法”。 “当我评估孩子们是否做错了什么时，我总是试着回想一下，比如，‘哪里出了问题？’‘是什么导致了这个完全错误的答案？’一定有什么东西导致他们这么做，所以我发现自己在评估时经常这样做。”她还尝试将自己的过程拟人化，将老虎或螃蟹之类的东西融入到谜语中，将逻辑游戏化，作为强大的教学工具。
+作为一名退休教师，Jane Smith 把她所谓的「教师路子」用在了研究上。「我以前评估孩子们，要是他们答错了什么，我总会试着往回推，就是想，好，『它是从哪一步开始走错的？』『是什么把它引到了一个完全错误的答案上？』一定有什么东西把他们带到了那里，所以我发现自己在做评估的时候常常就这么干。」她还试着给自己的流程加上拟人的色彩，在谜语里放进老虎、螃蟹之类的东西，把逻辑做成游戏，当作一件有力的教学工具。
 
-每个解决的谜语或生成的谜题都成为一个数据点，完善了项目对语言和逻辑的理解。谜语项目之所以特别有意义，是因为它不仅仅是娱乐，而且它展示了定义谜语和人工智能的解释能力。
+每解开一道谜语、每生成一道谜题，都成为一个数据点，让这个项目对语言和逻辑的理解更准一点。让这个谜语项目格外有意义的地方是，它不只是为了好玩——它展示的是解读能力，而正是这种能力定义着谜语，也定义着 AI。
 
 ![](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/27bc21d714e6bd39c667a3ffdd00fc3b240d6b73-3840x2160.png?auto=format&fit=max&q=80&w=800)
 
-人工智能与不同语言和背景下的文化谜题的斗争可能是开发模型时最重大的挑战之一。 “我有点惊讶，因为这不仅仅是缺乏文化理解，”加尼尔说。 “这些模型根本不懂这种语言，我认为布吉语是一种相当常用的语言。令我惊讶的是，这些模型对这种语言的了解几乎为零，而这意味着对文化以及我们如何评估它的了解为零。”
+AI 在不同语言、不同语境下应付文化谜语时的吃力，可能是开发模型过程中最要紧的挑战之一。「我有点惊讶，因为那不只是文化理解的欠缺，」Gagnier 说。「这些模型压根就不懂这门语言，而我觉得 Buginese 是一门说的人相当多的语言。让我惊讶的是，这些模型对这门语言的了解几乎是零，而在我们这套评估方式下，这也等于对那门文化的了解是零。」
 
-该项目强调，智力不仅仅是[解决谜题](https://cultureriddles.ai/)，而是理解人类经验和背后的语言。当我们认为解释必须以文化为基础才有意义时，“rædan”（解释）的词源就呈现出新的深度。
+这个项目点明了一件事：智能不只关乎[解谜](https://culturalriddles.ai/)，还关乎理解人类经验，以及经验背后的那些语言。当我们想到解读必须扎在文化里才谈得上有意义，"rædan"（解读）的词源就有了新的分量。
 
-史密斯夫人揭示了社会广泛关注的人工智能文化模型准确性问题。 “令我惊讶的是，模特们很少回答‘我不知道’。但相反，它给出了这些听起来相当权威的[答案]，这会让人们思考，‘哦，这个东西知道它在说什么’。”
+Smith 太太说出了一种社会上广泛共有的担忧：AI 文化模型的准确度。「让我惊讶的是，模型回答『我不知道』的次数那么少。它给出的反而是那些听起来相当权威的 [答案]，会让人以为：『哦，这东西知道自己在说什么。』」
 
-该团队发现令人不安的是模型得出的有限结论，尽管答案错误，但听起来仍然坚定不移。史密斯夫人认识到了这一盲点，她说：“令我害怕的是，它听起来如此权威，而人们正在寻找权威的答案。”她补充道，“我不认为人工智能会杀死我们。真正会杀死我们的是我们缺乏批判性思维。”
+让团队感到不安的，是模型那种有限的结论——答错了，听上去却毫不摇摆地自信。看清了这个盲区，Smith 太太说：「让我害怕的地方在于，它听起来是那么权威，而人们正是在找权威的答案。」她补充说：「我不觉得要我们命的是 AI。要我们命的是我们缺乏批判性思考。」
 
-在一些人担心日常生活中的人为因素正在迅速消失的时代，谜语研究推动人们重新思考任何缺乏人性化的解决方案。史密斯夫人以她的智慧提出了一个看似有趣的文字游戏，但这可能是人工智能文化难题的“决定性”观点：“人工智能会犯错误。批判性思考是人类的行为。”
+在一个有人担心日常生活里属于人的那些成分正在飞快消失的时代，这项谜语研究逼着人们重新去想任何缺少人的温度的解决方案。Smith 太太以她的智慧抛出一句话，看着像个逗趣的双关，却可能恰恰是对待 AI 文化难题的*那个*决定性态度：「犯错的是 AI。会批判性思考的才是人。」
 
-人类认知和人工智能思维之间存在着一个有趣的空间。 Cohere Labs 致力于通过深入研究[对当今模型的信心](https://cohere.com/blog/rethinking-confidence-in-reasoning-models) 来更好地理解情境。这些谜语表明，随着人工智能对其答案越来越有信心，我们必须记住，批判性思维使我们保持人性。
+在人类认知与 AI 的思考之间，有一个有意思的中间地带。Cohere Labs 正通过深入钻研[今天模型里的信心](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)来做更好的上下文理解。这些谜语证明：随着 AI 越来越确信自己的回答，我们必须记得，是批判性思考让我们保持为人。
 
 ## 接下来阅读此内容
 
-- [![重新排名 5徽标]（https://cdn.sanity.io/images/rjtqmwfu/web3-prod/001e212cb8f99611514f36805a3c3ef32a51f 7d9-3840x2160.png?auto=format&fit=max&q=80&w=440)](https://cohere.com/blog/rerank-5)[产品发布](https://cohere.com/blog/tag/product-launch)[公司新闻](https://cohere.com/blog/tag/company-news)[企业人工智能](https://cohere.com/blog/tag/enterprise-ai)[介绍 Rerank 5：精确、高效的企业文档检索 20268 年 10 月 21 日阅读时间](https://cohere.com/blog/rerank-5)
-- [！[摘要图片](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/29364be119de6f05876cf2f747d763c297eafa69-3840x2160.png?auto=format&fit=max&q=80 &w=440)](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)[研究](https://cohere.com/blog/tag/research)[重新思考对推理模型的信心 20266 年 10 月 20 日分钟阅读](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)
-- [![公用事业人工智能需要能力和控制](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b36c731c34b23aeeb737f166444aeaa87d9e9c68-1920x1080.png?au to=format&fit=max&q=80&w=440)](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)[企业人工智能](https://cohere.com/blog/tag/enterprise-ai)[能源与公用事业](https://cohere.com/blog/tag/energy-utilities)[公用事业的人工智能需要能力和控制20266 年 10 月 15 日分钟阅读](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)
+- [![Rerank 5 标识](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/001e212cb8f99611514f36805a3c3ef32a51f7d9-3840x2160.png?auto=format&fit=max&q=80&w=440)](https://cohere.com/blog/rerank-5)[产品发布](https://cohere.com/blog/tag/product-launch)[公司新闻](https://cohere.com/blog/tag/company-news)[企业人工智能](https://cohere.com/blog/tag/enterprise-ai)[介绍 Rerank 5：精准、高效的企业文档检索2026 年 10 月 21 日8 分钟阅读](https://cohere.com/blog/rerank-5)
+- [![抽象图片](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/29364be119de6f05876cf2f747d763c297eafa69-3840x2160.png?auto=format&fit=max&q=80&w=440)](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)[研究](https://cohere.com/blog/tag/research)[重新思考推理模型的信心2026 年 10 月 20 日6 分钟阅读](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)
+- [![公用事业的 AI 需要能力，也需要控制](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b36c731c34b23aeeb737f166444aeaa87d9e9c68-1920x1080.png?auto=format&fit=max&q=80&w=440)](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)[企业人工智能](https://cohere.com/blog/tag/enterprise-ai)[能源与公用事业](https://cohere.com/blog/tag/energy-utilities)[公用事业的 AI 需要能力，也需要控制2026 年 10 月 15 日6 分钟阅读](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)

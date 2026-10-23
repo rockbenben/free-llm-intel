@@ -9,9 +9,9 @@
 
 ## 全部文章（共 47 篇，按日期倒序；无日期条目列于最后）
 
-1. [AI能理解文化吗？退休教师和高中生考验AI](https://cohere.com/blog/can-ai-understand-culture)（2026-10-22） <!--orig:Can AI understand culture?A retired teacher and high schooler put AI to the test-->
-2. [推出 Rerank 5：精确、高效的企业文档检索为您的 AI 提供与每个请求最相关的上下文，现在具有段落级精度。](https://cohere.com/blog/rerank-5)（2026-10-21） <!--orig:Introducing Rerank 5: precise, efficient enterprise document retrievalGive your AI the most relevant context for each request, now with passage-level precision.-->
-3. [重新思考推理模型的信心](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)（2026-10-20） <!--orig:Rethinking confidence in reasoning models-->
+1. [AI 能理解文化吗？一位退休教师和一名高中生来试试](https://cohere.com/blog/can-ai-understand-culture)（2026-10-22） <!--orig:Can AI understand culture?A retired teacher and high schooler put AI to the test-->
+2. [推出 Rerank 5：精准高效的企业文档检索](https://cohere.com/blog/rerank-5)（2026-10-21） <!--orig:Introducing Rerank 5: precise, efficient enterprise document retrievalGive your AI the most relevant context for each request, now with passage-level precision.-->
+3. [重新审视 reasoning model 的置信度](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)（2026-10-20） <!--orig:Rethinking confidence in reasoning models-->
 4. [Cohere 将收购 AISLE 以推进抗网络攻击的主权 AI](https://cohere.com/blog/cohere-and-aisle-sign-letter-of-intent-to-advance-cyber-resilient-sovereign-ai)（2026-10-15） <!--orig:Cohere to acquire AISLE to advance cyber-resilient sovereign AI-->
 5. [公用事业的 AI 需要能力，也需要控制](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)（2026-10-15） <!--orig:AI for utilities requires capability and control-->
 6. [Agent 蔓延：如何在企业里管理 agent 的激增](https://cohere.com/blog/agent-sprawl)（2026-10-15） <!--orig:Agent sprawl: How to manage agent proliferation in the enterprise-->

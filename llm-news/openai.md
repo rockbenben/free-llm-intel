@@ -26,7 +26,7 @@
 13. [一家特许经营商用 ChatGPT Work 把现金对账时间缩短了 94%](https://openai.com/index/ted-taylor-restaurant)（2026-10-20） <!--orig:Franchisee reconciles cash in 94% less time with ChatGPT Work-->
 14. [Terminal X 与 GPT-6.1 的高级投资者判断相符 88.6%](https://openai.com/index/terminal-x)（2026-10-20） <!--orig:Terminal X matches senior investor judgment 88.6% with GPT-6.1-->
 15. [OpenAI 收购 Orchestra Bio](https://openai.com/index/openai-to-acquire-orchestra-bio)（2026-10-20） <!--orig:OpenAI acquires Orchestra Bio-->
-16. [推进低资源编程语言的编码](https://openai.com/index/low-resource-programming-languages)（2026-10-19） <!--orig:Advancing coding in low‑resource programming languages-->
+16. [推进低资源编程语言的编码能力](https://openai.com/index/low-resource-programming-languages)（2026-10-19） <!--orig:Advancing coding in low‑resource programming languages-->
 17. [Itaú 如何为全部客户打造生成式 AI](https://openai.com/index/itau-generative-ai)（2026-10-16） <!--orig:How Itaú is building generative AI for its entire customer base-->
 18. [Benefit Street Partners 通过 Codex 更快地回答问题](https://openai.com/index/benefit-street-partners)（2026-10-16） <!--orig:Benefit Street Partners answers questions faster with Codex-->
 19. [Stack Overflow for Agents 靠 ChatGPT plugin 让注册量增至三倍](https://openai.com/index/stack-overflow-chatgpt-plugin)（2026-10-16） <!--orig:Stack Overflow for Agents triples signups with ChatGPT plugin-->

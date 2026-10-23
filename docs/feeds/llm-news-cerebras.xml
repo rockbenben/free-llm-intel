@@ -153,150 +153,148 @@
       <link>https://www.cerebras.ai/blog/how-we-deploy-trillion-parameter-frontier-models-on-cerebras</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/how-we-deploy-trillion-parameter-frontier-models-on-cerebras</guid>
       <description>原文标题：How we deploy Trillion-parameter frontier models on Cerebras</description>
-      <content:encoded><![CDATA[<p>2026 年 10 月 22 日</p>
-<h1>我们如何在 Cerebras 上部署万亿参数前沿模型</h1>
+      <content:encoded><![CDATA[<h1>我们如何在 Cerebras 上部署万亿参数前沿模型</h1>
 <p><a href="https://www.cerebras.ai/author/sarah-chieng">Sarah Chieng</a></p>
-<p>我们收到的最常见问题之一是如何在 Cerebras 晶圆级芯片上部署大型模型。单个 Cerebras WSE-3T 晶圆具有 44 GB 片上存储器，万亿参数前沿模型<strong>仅其权重就需要 TB。</strong></p>
-<p><em><strong>在这篇文章中，我们将解释如何将大型前沿模型分割到多个 <a href="https://www.cerebras.ai/chip">WSE-3T</a> 晶圆上，以每秒 1000-2000+ 代币的速度运行数万亿参数模型。</strong></em></p>
-<p>我们将使用具有约 3 万亿个参数的开源模型 Kimi K3 作为说明性示例。</p>
-<p>到最后你就会明白：</p>
-<ul><li>我们如何将完整模型放入片上存储器中</li><li>我们如何将模型映射到多个芯片上</li><li>我们如何处理大量并发请求</li></ul>
-<h3>用 Kimi K3 来分解它</h3>
-<p>Kimi K3 是一个开源的 3T 参数模型，具有 69 个线性注意力层和 24 个密集层。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/c124705d630730f1fc2f68f350bbbc026f574c07-1768x1062.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1768" alt=""></p>
-<p>它在 Terminal-Bench 2.1 上的得分为令人印象深刻的 88.3%（相对于 GPT-5.6 Sol 的 88.8%），在 BrowseComp 上的得分为 91.2%（相对于 GPT-5.6 Sol 的 90.4%）。这些结果展示了前沿水平的编码和代理能力，甚至在某些基准测试中优于领先的专有模型。 <a href="https://modal.com/blog/trillion-tokens-trillion-parameters">在此处阅读有关 Kimi K3 的更多信息</a>。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/1de256fc77c92de1fe3e2297026f583dde63176c-1710x1200.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1710" alt=""></p>
-<p>对于这个说明性示例，我们使用：</p>
-<ul><li>假设平均请求大小为 256k</li><li>4 位权重量化（如 <a href="https://huggingface.co/moonshotai/Kimi-K3">Hugging Face 实现</a>）</li><li>8位KV缓存</li></ul>
-<h3>#1：每层的大小</h3>
-<p>为了计算我们需要支持 Kimi K3 的 Cerebras WSE-3T 晶圆总数，我们首先计算每个模型层的大小。</p>
-<p>Kimi K3拥有3万亿个参数。如果所有 3T 参数均以 4 位存储，则原始参数有效负载为：</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/61b6d6a611991bbb7069b23faa5a0c73b8a9fe86-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
-<p>将该有效负载除以 93 层即可得出：</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/5622b906b303fbbede7600901e2c4d00dd37f691-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
-<h3>#2：晶圆数量</h3>
-<p>现在我们知道每层大约需要 16 GB，我们可以计算出每个 44 GB 晶圆上可以容纳多少层。答案取决于图层类型：</p>
-<ul><li>密集层需要额外的空间用于 KV 缓存，因为每个密集（全注意力）层都存储每个活动请求中每个令牌的键和值。因此，我们在每个晶圆上放置一层致密层，并将剩余的 SRAM 留给其 KV 缓存。</li><li>线性注意力层不需要额外的 KV 缓存空间。线性注意力层不是为每个标记存储键和值，而是为每个请求保留一个小的、固定大小的状态，而不管上下文长度如何。这为每个晶圆留出了两个线性层的空间 (2 × 16 GB = 32 GB)。</li></ul>
-<p>因此，通过 Kimi K3 的 <a href="https://huggingface.co/moonshotai/Kimi-K3#2-model-summary">69 个线性层和 24 个密集层</a>，我们得到：</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/e0d95625e101f6936906687df4d1d0817e5d3af7-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
-<p>这使我们的晶圆总数为 35 + 24 = <strong>59 晶圆。</strong></p>
-<h3>#3：将晶圆连接在一起</h3>
-<p>Cerebras 在管道中执行模型。在 Cerebras 编译器跨晶圆区域映射模型层后，运行时会映射令牌在晶圆之间流动的路径。对于超快延迟，仅需要在晶圆之间传递激活，这可以通过以太网上的 RDMA 来完成。每跳大约为 2 微秒。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/263c843c6a5e1e7c44c69dfc344af39233aacd4f-2476x1308.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>需要强调的是，由于每个 Cerebras 晶圆都有 44 GB 片上 SRAM，而每层只有 16 GB，因此我们通常能够将模型的整个层直接安装在芯片上。</p>
-<p>这意味着在大多数情况下，模型权重永远不需要移动，并且层不需要跨晶圆分割。 <em>仅激活从一个晶圆跨越到下一个晶圆。</em></p>
-<h3>#4：我们如何处理 1 个请求</h3>
-<p>现在我们已经将晶圆连接在一起并布置了模型，我们可以将每个晶圆视为装配线中的一个阶段：每个阶段的模型权重保持不变，并且请求的中间结果在各层阶段中移动。</p>
-<p>例如，晶圆 1 运行模型层 1-2 并将其激活发送到晶圆 2。晶圆 2 运行层 3-4 并将其结果传递给晶圆 3，依此类推，直到最后一个晶圆生成下一个令牌。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/81b3ca230cf8f9e2383929aed2bf49267dcdc022-2942x1080.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<h3>#5：我们如何满足众多请求</h3>
-<p>这引发了一个常见的误解。如果令牌必须按顺序穿过每个晶圆，那么每个晶圆在等待轮流时不是都处于闲置状态吗？实际上，系统不会以批量大小运行吗？</p>
-<p>不！如果我们一次只沿着线路发送一个请求，并等待它完成后再开始下一个请求，那么这将是管道的低效使用。相反，我们让整个管道充满不同的请求。由于模型已分为多个管道阶段，因此每个阶段可以同时处理<strong>不同的请求。</strong></p>
-<p>第 3 阶段处理请求 A 的令牌，第 2 阶段处理请求 B 的令牌，第 1 阶段处理请求 C 的令牌。在我们的示例中，每个阶段都是一层。在生产中，Cerebras 使用更细粒度的阶段，而且数量更多。</p>
-<p>正在加载播放器...</p>
-<p>每个阶段还可以处理<strong>微批次</strong>，即一小组请求，而不是单个请求。因此，正在运行的请求数量大致等于阶段数乘以微批量大小。</p>
-<p>正在加载播放器...</p>
-<p>为了理解这种权衡，较小的微批次使每个请求更快，而较大的微批次会增加总吞吐量。</p>
-<h3>#6：我们可以满足多少<em><strong>个</strong></em>请求？</h3>
-<p>分配给KV缓存的片上内存量决定了最大并发请求数。每个传输中的请求都需要在每个密集层晶圆上有自己的 KV 缓存，因此片上内存的大小设置了并发请求的上限。如上所述，我们只需要计算密集层的 KV 缓存需求。</p>
-<p>对于每个已经有一层致密层的 44 GB 晶圆，我们可以使用以下公式计算 KV 缓存的剩余空间：</p>
-<p>晶圆总存储量 - 一层致密层的大小。在这种情况下：</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/4ca12e7b7b3f0cfb782bdd5d05a60bc50b6085e5-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<p>我们被问得最多的问题之一，就是我们如何把大模型部署到 Cerebras 的 wafer-scale 芯片上。单片 Cerebras WSE-3T wafer 有 44 GB 的片上内存，而万亿参数的前沿模型<strong>仅权重就需要好几 TB。</strong></p>
+<p><em><strong>在这篇文章里，我们会解释如何把一个大体量前沿模型切分到多片 <a href="https://www.cerebras.ai/chip">WSE-3T</a> wafer 上，从而以每秒 1000-2000+ tokens 的速度运行多万亿参数的模型。</strong></em></p>
+<p>我们用开源模型 Kimi K3（约 3 万亿参数）作为一个示例。</p>
+<p>读完你会理解：</p>
+<ul><li>我们如何把完整模型装进片上内存</li><li>我们如何把模型映射到多片芯片上</li><li>我们如何处理数量很大的并发请求</li></ul>
+<h3>用 Kimi K3 拆解</h3>
+<p>Kimi K3 是一个开源的 3T 参数模型，有 69 层线性注意力层和 24 层稠密层。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/c124705d630730f1fc2f68f350bbbc026f574c07-1768x1062.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1768" alt=""></p>
+<p>它在 <a href="https://www.kimi.com/en/blog/kimi-k3">Terminal-Bench 2.1 上拿下 88.3% 的出色成绩</a>（对比 GPT-5.6 Sol 的 88.8%），在 BrowseComp 上是 91.2%（对比 GPT-5.6 Sol 的 90.4%）。这些结果展现出前沿级的编程与 agentic 能力，在某些 benchmark 上甚至超过了领先的闭源模型。<a href="https://modal.com/blog/trillion-tokens-trillion-parameters">在这里了解更多关于 Kimi K3 的内容</a>。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/1de256fc77c92de1fe3e2297026f583dde63176c-1710x1200.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1710" alt=""></p>
+<p>在这个示例中，我们使用：</p>
+<ul><li>假设平均请求长度为 256k</li><li>4-bit 权重量化（与 <a href="https://huggingface.co/moonshotai/Kimi-K3">Hugging Face 的实现</a>一致）</li><li>8-bit 的 KV cache</li></ul>
+<h3>#1：每一层的大小</h3>
+<p>要算出支撑 Kimi K3 一共需要多少片 Cerebras WSE-3T wafer，我们先来计算每一层模型的大小。</p>
+<p>Kimi K3 有 3 万亿个参数。如果这 3T 参数全部按每个 4 bits 存储，原始参数负载是：</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/61b6d6a611991bbb7069b23faa5a0c73b8a9fe86-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<p>把这个负载除以 93 层，得到的结果是：</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/5622b906b303fbbede7600901e2c4d00dd37f691-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<h3>#2：wafer 数量</h3>
+<p>既然已经知道每层大约需要 16 GB，我们就能算出每片 44 GB 的 wafer 能装下多少层。答案取决于层的类型：</p>
+<ul><li>稠密层需要为 KV cache 留出额外空间，因为每个稠密（full-attention）层要为每个活跃请求中的每个 token 存储 keys 和 values。所以我们每片 wafer 只放一个稠密层，把剩下的 SRAM 留给它的 KV cache。</li><li>线性注意力层不需要为 KV cache 留出额外空间。线性注意力层不为每个 token 存储 keys 和 values，而是为每个请求保留一份很小、固定大小的 state，与上下文长度无关。这就让每片 wafer 能放下两个线性层（2 × 16 GB = 32 GB）。</li></ul>
+<p>因此，按 Kimi K3 的 <a href="https://huggingface.co/moonshotai/Kimi-K3#2-model-summary">69 个线性层和 24 个稠密层</a>，我们得到：</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/e0d95625e101f6936906687df4d1d0817e5d3af7-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<p>由此得到 wafer 总数为 35 + 24 = <strong>59 片 wafer。</strong></p>
+<h3>#3：把各片 wafer 连接起来</h3>
+<p>Cerebras 以 pipeline 的方式执行模型。在 Cerebras 编译器把模型层映射到各片 wafer 的区域之后，runtime 会规划出 token 在 wafer 之间流动的路径。为了达到超低延迟，wafer 之间只需要传递 activations，而这可以通过 RDMA over Ethernet 完成。这大约是每跳 2 微秒。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/263c843c6a5e1e7c44c69dfc344af39233aacd4f-2476x1308.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>需要强调的是：由于每片 Cerebras wafer 有 44 GB 的片上 SRAM，而每层只有 16 GB，我们通常能够把完整的模型层直接放进芯片。</p>
+<p>这意味着在多数情况下，模型权重永远不需要移动，层也不必被切分到不同 wafer 上。<em>只有 activations 会从一片 wafer 跨到下一片。</em></p>
+<h3>#4：我们如何服务 1 个请求</h3>
+<p>现在 wafer 已经连在一起、模型也已经铺好，我们可以把每片 wafer 看作装配流水线上的一个工位：每个工位的模型权重留在原地不动，请求的中间结果则在各层工位之间向前移动。</p>
+<p>例如，Wafer 1 执行模型的第 1–2 层，并把它的 activations 发给 wafer 2；wafer 2 执行第 3–4 层，并把结果传给 Wafer 3，如此继续，直到最后一片 wafer 产出下一个 token。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/81b3ca230cf8f9e2383929aed2bf49267dcdc022-2942x1080.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<h3>#5：我们如何服务大量请求</h3>
+<p>这会引出一个常见的误解。如果一个 token 必须依次穿过每片 wafer，那每片 wafer 在等待轮到自己时不就空转了吗？这样系统实际上不就等于以 batch size 为 1 在运行吗？</p>
+<p>不是！如果我们一次只往流水线里放一个请求、等它完成之后再开始下一个，那就是对流水线很低效的使用。相反，我们让整条流水线始终被不同的请求填满。由于模型本来就已经被切成了流水线工位，每个工位可以<strong>同时处理不同的请求。</strong></p>
+<p>当第 3 个工位在处理请求 A 的一个 token 时，第 2 个工位正在处理请求 B 的一个 token，第 1 个工位在处理请求 C 的。在我们的例子里，每个工位就是一层。在生产环境中，Cerebras 使用的工位粒度要细得多，数量也多得多。</p>
+<p>播放器加载中…</p>
+<p>每个工位还可以处理一个 <strong>micro-batch</strong>，也就是一小群请求，而不是单个请求。因此在途请求数大约等于工位数乘以 micro-batch 大小。</p>
+<p>播放器加载中…</p>
+<p>要说清这个取舍：更小的 micro-batch 让每个请求更快，而更大的 micro-batch 会提升总吞吐量。</p>
+<h3>#6：我们能服务<em><strong>多少</strong></em>个请求？</h3>
+<p>分配给 KV cache 的片上内存容量决定了并发请求的最大数量。每个在途请求都需要在每片稠密层 wafer 上拥有自己的 KV cache，所以片上内存的大小就是并发请求数的天花板。如上文所述，我们只需要计算稠密层的 KV cache 需求。</p>
+<p>对于每片已经放了一个稠密层的 44 GB wafer，我们可以用下式计算留给 KV cache 的剩余空间：</p>
+<p>wafer 总容量 - 一个稠密层的大小。在这个例子里：</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/4ca12e7b7b3f0cfb782bdd5d05a60bc50b6085e5-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
 <p><strong>计算并发请求数</strong></p>
-<p>为了找到任何特定模型映射支持的并发请求数，我们首先计算单个 256k 请求占用多少缓存：</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/cddda82a24db97053fa39e071d29e836a59502ad-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
-<p>为了计算此配置支持的并发请求总数，我们划分：</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/f9afc17d3c841b866108579fd474420cb6e79261-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
-<p>并发请求总数表示在任何时间点通过管道的同时请求数。与 GPU 批次不同，这些请求不会等待另一个请求完成，而是连续流过管道。</p>
-<p>当然，并发度和批量大小都无法准确告诉您推理系统的执行效率。在评估推理系统的吞吐量时，更有意义的指标是在相同的输出生成速度下测量时每单位功率的总令牌吞吐量（例如每兆瓦每秒的令牌）。</p>
-<h3>如何扩展到 3T 参数之外</h3>
-<p>同样的方法可以扩展到更大的模型：计算权重和请求状态所需的内存，将模型分布在晶圆上，并将它们连接到管道中。每个额外的晶圆都贡献计算和片上存储器，使我们能够容纳超过任何单个芯片容量的模型。</p>
-<p>感谢您与我们一起学习！有兴趣在 Cerebras 上部署模型或使用我们的推理云进行构建吗？</p>
+<p>要找出某个特定模型映射所支持的并发请求数，我们先算单个 256k 请求要占掉多少 cache：</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/cddda82a24db97053fa39e071d29e836a59502ad-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<p>接下来，要计算这一配置所能支持的并发请求总数，我们做除法：</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/f9afc17d3c841b866108579fd474420cb6e79261-1920x518.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=1920" alt=""></p>
+<p>并发请求总数表示的是在任一时刻同时穿行于流水线的请求数量。与 GPU 的 batch 不同，这些请求不会互相等待对方完成，而是连续地流过流水线。</p>
+<p>当然，无论是并发数还是 batch size，都不能确切告诉你一个推理系统的运行效率有多高。评估推理系统的吞吐时，更有意义的指标是在相同的输出生成速度下测得的、单位功率的总 token 吞吐（例如 tokens per second per megawatt）。</p>
+<h3>这套方法如何扩展到 3T 参数以上</h3>
+<p>同样的思路可以延伸到更大的模型：计算权重与请求 state 所需的内存，把模型分布到多片 wafer 上，再把它们连成一条流水线。每多一片 wafer 就多贡献一份算力和片上内存，让我们能够容纳超出任何单颗芯片容量的模型。</p>
+<p>谢谢你和我们一起学习！想在 Cerebras 上部署模型，或者用我们的推理云做构建吗？</p>
 <ul><li>开始使用我们的免费 API：<a href="http://cloud.cerebras.ai">cloud.cerebras.ai</a></li><li>联系我们的销售团队：<a href="mailto:sales@cerebras.ai">sales@cerebras.ai</a></li></ul>
-<p>哈雷·张设计。感谢 Atharva Talpade、Zhenwei Gau、Angela Yeung、Jessica Liu、Joyce Er、Emma Call 和 Rohan Gupta 的审阅和反馈。</p>]]></content:encoded>
+<p>设计：Halley Chang。感谢 Atharva Talpade、Zhenwei Gao、Angela Yeung、Jessica Liu、Joyce Er、Emma Call 和 Rohan Gupta 的审阅与反馈。</p>]]></content:encoded>
     </item>
     <item>
-      <title>更智能的模型并不能拯救你糟糕的安全带</title>
+      <title>模型再聪明，也救不了糟糕的 harness</title>
       <link>https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness</link>
       <guid isPermaLink="true">https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness</guid>
       <description>原文标题：A Smarter Model Won’t Save Your Bad Harness</description>
-      <content:encoded><![CDATA[<p>2026 年 10 月 16 日</p>
-<h1>更智能的模型并不能拯救你糟糕的安全带</h1>
+      <content:encoded><![CDATA[<h1>模型再聪明，也救不了糟糕的 harness</h1>
 <p><a href="https://www.cerebras.ai/author/sarah-chieng">Sarah Chieng</a><a href="https://www.cerebras.ai/author/william-ryan">William Ryan</a><a href="https://www.cerebras.ai/author/sherif-cherfa">Sherif Cherfa</a></p>
-<p>代理大致是线束内的模型，在环境中运行。</p>
-<p><strong>模型</strong>提供情报。它进行推理、做出决策、编写代码并决定下一步要采取的操作。 <strong>环境</strong>是进行这项工作的实际计算机、存储库、浏览器或容器，而用户（有时是另一个代理）是提供目标并在需要时提供指导的人。</p>
-<p><strong>线束</strong>决定模型可以看到什么、可以采取什么操作、结果如何反馈到下一个推理中以及工作何时实际完成。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/4c5dfeb50d444cc97f3af43d97e61be8895896ec-4040x1397.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/0fa06f54c42a11bcce559661ffabae5c21b7b568-4950x1656.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>您可以将线束工程视为围绕模型构建的系统，使其成为完成实际工作的引擎。模型有多智能并不重要。如果没有线束，它只是一个代币生成机器。借助安全带，智能才真正发挥作用。线束将模型转变为代理。</p>
-<p>安全带有很多种类型。有些适合不同类型的工作</p>
-<ul><li>个人工作：Openclaw 和 Hermes 主要是个人代理，它们嵌入到外部应用程序（Telegram、Discord、iMessage）中。</li><li>编码：通常这些工具在终端或代码编辑器中运行。有专为强化学习和研究而设计的安全带，也有用于金融、营销和许多其他垂直领域的安全带。</li><li>知识工作：ChatGPT Work 和 Claude 桌面应用程序就是很好的例子。虽然许多应用程序也将它们用作编码代理，但这些应用程序拥有大量工具和插件，允许您将代理连接到 Slack、Notion、Gmail、Sheets、Teams、Clickup 等工具，所有这些都是为了支持一般知识工作。</li></ul>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/47a43fe069beddf7e91c225027345e51d4c835e8-2168x1926.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/19dfa24cf2aaa63be95005b6f374b61848d53dc1-2140x2027.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<h4>OpenAI 的 ChatGPT Work（如图）拥有强大的插件生态系统，可用于通用工作和软件工程。</h4>
-<p>但从根本上来说，它们都有相同的骨架。今天，我们将分解代理工具的各个层，以更好地了解我们的工艺工具。</p>
-<h3>什么是安全带？</h3>
-<p>大型语言模型接受输入，然后使用这些输入生成下一个标记，然后将最后生成的标记附加到输入，循环继续，直到它决定完成。靠他们自己，他们不能：</p>
-<ul><li>使用电脑</li><li>保持持久状态</li><li>搜索网络</li><li>运行外壳命令</li><li>读取、编辑或创建文件</li><li>执行代码</li><li>或者验证他们生产的产品是否有效</li></ul>
-<p>如果大型语言模型是大脑，那么线束就是它的身体。</p>
-<p>当您提出以下查询时：</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/4d09e4cef9cc0ec3caff71bdadd0382f97789453-3840x998.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>您的提示不仅仅直接进入模型并作为神奇完成的补丁返回。该工具在反馈循环中复合了许多推理调用，如下所示：</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/12759c8b8d982b4d4515c07b1d3291776ce3546d-3840x3348.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p><strong>这个循环就是我们所说的“代理”。</strong></p>
-<p>这里概述的每个步骤都需要大量的工程设计</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/db667a809a23fae4584607fd3826c52ce8f9102b-2712x2540.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>线束一般拥有：</p>
-<ul><li><strong>提示构建</strong> - 系统/开发人员说明、回购说明、用户提示。</li><li><strong>上下文选择</strong> - 哪些文件、以前的消息、工具输出、内存、差异等可见。</li><li><strong>工具</strong> - shell、文件编辑、搜索、Web、MCP 工具、Git、测试。</li><li><strong>工具架构</strong> - 如何向模型描述这些功能。</li><li><strong>工具执行</strong> - 实际上将模型的意图转化为行动。</li><li><strong>代理循环</strong> - 决定如何返回工具结果并触发下一个推理。</li><li><strong>状态</strong> - 记住步骤/会话中发生的情况。</li><li><strong>编排</strong> - 产生专门的或并行的代理。</li><li><strong>挂钩</strong> - 在预定义触发器上确定性执行脚本（linting、阻止危险命令、代码审查）。</li><li><strong>记忆</strong> - 个人上下文被存储并注入到模型提示中，以帮助代理“记住”以前的会话。</li><li><strong>上下文压缩</strong> - 决定随着会话的增长而总结或丢弃哪些内容。</li><li><strong>规划</strong> - 计划、TODO 列表、子目标。</li><li><strong>权限/沙箱</strong> - 允许代理执行的内容。</li><li><strong>错误处理</strong> - 重试、失败的命令、超时。</li><li><strong>验证</strong> - 测试、检查、检查更改是否有效。</li><li><strong>终止</strong> - 决定代理回合何时实际完成。</li><li><strong>约束</strong> - 规定代理可以做什么和不能做什么的规则。</li></ul>
-<p><strong>安全带可以改变结果</strong></p>
-<p>如果您在两种不同的编码工具中使用过相同的模型，您可能已经感觉到了这一点。模型可能相同，但输出的体验和质量可能截然不同。</p>
-<p>一篇论文 <a href="https://arxiv.org/html/2605.23950v1"><em>停止在不披露框架的情况下比较 LLM 代理</em></a> 报告称，<strong>Claude Opus 4.5 在标准化 SEAL 支架下得分为 45.9%，但在 SWE-bench Pro 上通过 Claude Code</strong> 使用时得分为 55.4%。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/bc46387046766b6ab7db94c827db585f108529fe-903x868.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=903" alt=""></p>
-<p><a href="https://arxiv.org/html/2605.23950v1">停止比较 LLM 代理而不披露工具</a> 中的表 1</p>
-<p>复杂性并不总是王道。有时，较小的工具模式比额外的编排层更能改进代理。最近，Prime Intellect 发布了他们的编码工具。 Prime Agent 建立在 Pi 之上，其性能超越了模型训练使用的安全带。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/7a509e64b6f2e34deaf5e72bbb8e5bfe3a239dbe-2048x1200.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>来源：【Prime Intellect Prime Agent公告】(https://www.primeintellect.ai/blog/prime-agent)</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/cdea8bd33b43c695adadedb77da2546f657b8fb1-651x582.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=651" alt=""></p>
-<p>这个故事的寓意是这样的：如果两次测试没有使用相同的线束，那么告诉您“模型 A 击败模型 B”的基准有时实际上可能会无意中产生误导。 <strong>背景（和安全带）很重要。</strong></p>
-<p>基准测试结果属于模型线束对。如果线束发生变化，结果也会发生变化。随着线束变得更加雄心勃勃，它们也会进行更多的模型调用。 <strong>这就是快速推理开始变得重要的地方。</strong></p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/e1aef720979a09e236f79e86ae56c0fbcf9e8f2d-3174x2244.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p><a href="https://artificialanalysis.ai/agents/coding-agents?coding-agents-harness-comparison-chart=harness-deep-swe">人工分析线束比较</a></p>
-<p>在这里您可以清楚地看到：同一型号的性能根据线束的不同而有很大差异。</p>
-<h3><strong>线束是一个推理乘数</strong></h3>
-<p>看看<strong>线束拥有</strong>的事物列表：规划、循环、重试、验证、测试、压缩、编排、审查。其中每一个都需要另一次模型调用，这会花费代币，但更重要的是花费时间。</p>
-<p>验证过程可能会发现错误，但也会使运行时间加倍。子代理可能会并行执行某些工作，但编排器仍然必须计划、调度和综合这些结果，并且所有这些步骤都是连续的。</p>
-<p>每个模型调用都会增加延迟，并且在大多数串行代理循环中，粗略预算如下所示：</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/18e8b92d94612820d19d5561f63393b643a189da-3658x2648.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>一步慢了，十步就看不下去了。但相比之下，如果模型步骤很快，那么在代理停止感觉交互之前，线束就有空间做更多有用的工作。</p>
-<p>区别很重要。在 Cerebras 上运行 <a href="https://www.cerebras.ai/blog/getting-the-most-out-of-gpt-5-6-sol-terra-and-luna">GPT-5.6 Sol 每秒可达到 750 个令牌，全轮响应时间低至 0.4 秒</a>。这种速度水平解锁了新功能，并为线束提供了更大的推理、工具使用、恢复和验证预算。</p>
-<h3><strong>“快速安全带”有何不同之处</strong></h3>
-<p>一旦模型延迟缩短，工程师就可以通过多种有用的方式来度过这些时间。</p>
-<ul><li><strong>实时代理编排。</strong> GPT 5.6 Sol Ultrafast 等智能模型可以编排大型项目和广泛的子代理扇出，从而快速提高延迟优势。</li><li><strong>以人类的速度使用计算机</strong>。特工已经可以使用计算机，但与人类相比，它们仍然笨重、容易出错且速度缓慢。快速推理消除了代理以人类速度移动的延迟。</li><li><strong>实时指导。</strong> 客服人员会立即对纠正做出反应，提供真正的协作体验。</li><li><strong>推测执行。</strong> 考虑某种方法的用户可以使用工作树实时实施和测试多种替代方案，向其呈现工作选项而不是假设的建议。</li><li><strong>积极的重试和自我纠正。</strong> 代理可以在编写代码时积极地测试和修复自己的代码，而最终用户的成本最低。一旦文件被编辑、验证或修复，钩子就会在几毫秒内触发。</li><li><strong>自适应界面。</strong> 代理可以根据当前状态实时生成预览、图表、可视化和模型。</li></ul>
-<p>这些只是几个例子，富有想象力的构建者当然可以以数千种有利的方式利用低延迟推理，但总体上最大的好处肯定是允许人类以交互方式实时参与构建过程。搜索、推理、工具使用和编辑折叠成一个更紧密的循环，更接近真正结对编程队友的感觉。</p>
-<h3>构建轻量级白板应用程序</h3>
-<p>为了将安全带的影响与模型的智能分开，我们进行了一个简单的对照实验：她是<strong>Claude Opus 4.6，相同的任务，并且在两个不同的编码代理中：Factory Droid 和 Claude Code。</strong></p>
-<p>两个代理都从空存储库启动并收到相同的提示：</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/fe32869a0f4d1d2d8e2c854b78bf6e3139f41392-3840x998.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<h4>本演示中没有使用 Excalidraw 代码、专有资源或图标</h4>
-<p>评估重点关注相同的五个要求：绘制矩形和箭头；选择、移动和删除元素；撤消和重做；导出为 PNG；并在浏览器中运行结果。 <strong>两个代理都通过了所有五项要求。</strong> 区别在于每个工具将相同模型转化为经过验证的工作的效率。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/841d1860eeb44a923ec35b717067428ecc4f2751-3566x2024.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p><strong>工厂 Droid 结果</strong></p>
-<p><strong>克劳德代码结果</strong></p>
-<p>在这次单次运行中，Factory 提前了 <strong>11 分钟完成，大约快了 2.4 倍，同时使用了大约一半的工具调用</strong>。它还在报告完成之前识别并修复了阻塞命中测试问题，然后记录了剩余的非阻塞差距。</p>
-<p>这并不是说一个线束将赢得每项任务，而是线束充当推理乘数的说明性示例：<strong>即使模型保持不变，其周围的系统也可以极大地改变最终结果的路径、成本、速度和质量。</strong></p>
-<p><em>注意：结果可能因线束、任务和模型配置而异。</em></p>
-<h3><strong>线束是瓶颈</strong></h3>
-<p>目前，智能体最大的瓶颈是推理步骤。有了 Cerebras Fast Inference，情况就不再是这样了。新的瓶颈变成了工具本身，或者更具体地说，是工具调用。</p>
-<p>与代理合作时，工具调用既重要又常见。就像上面的示例一样，任务可以将数十个，或者在某些情况下，数百个工具调用串联在一起。下面是我们在实际生产代码库中运行的一些示例任务，让您了解针对给定任务可能使用多少个工具调用。</p>
-<p><img src="https://cdn.sanity.io/images/e4qjo92p/product/0328e057de3b24e9843b3f12b85513e2cc4bfdad-4040x2539.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
-<p>当推理不再是最慢的步骤时，线束工程师可以专注于优化代理堆栈的其余部分，优化线束本身的效率和性能。</p>
-<h3><strong>速度改变线束的形状</strong></h3>
-<p>这些代理功能都不一定是新的。几乎任何工具都可以运行测试、编排代理、操作浏览器或生成可视化。区别在于这些操作是否实用，它们是否适合“交互内部”，或者它们是否迫使您将工作发送到后台。</p>
-<p>缓慢的推理促使人们进行更少、更大的模型调用。多步骤工作变得异步，用户在代理已经做出大部分决策后查看结果（随着错误的复合）。我们不要忘记，这些模型很聪明，但它们并非绝对正确。 <strong>具有良好设计品味的高级代理人员在提供判断、指导和指导方面仍然具有无价的价值。</strong></p>
-<p>除了 GPT-5.6 Sol 之外，<a href="http://cerebras.ai">Cerebras 在其公共端点上以每秒数千个代币的速度提供领先的开放模型</a>：</p>
-<ul><li><a href="https://inference-docs.cerebras.ai/models/openai-oss">OpenAI GPT OSS 120B</a> 3,000 tok/s</li><li><a href="https://inference-docs.cerebras.ai/models/gemma-4-31b">Gemma 4 31B</a> 1,850 tok/s</li><li><a href="https://www.cerebras.ai/blog/glm-4-7">Z.ai GLM 4.7</a> 1,000 tok/s</li></ul>
-<p>对于专用企业端点，Cerebras 还支持 <a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6</a>、<a href="https://huggingface.co/zai-org/GLM-5.1">GLM 5.1</a>、<a href="https://huggingface.co/MiniMaxAI/MiniMax-M2.5">MiniMax M2.5</a>、<a href="https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct">Qwen3 Coder 480B</a>、<a href="https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct">Llama 4 Maverick</a>、<a href="https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512">Mistral Large 3</a>、<a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.2">DeepSeek V3.2</a>和<a href="https://inference-docs.cerebras.ai/dedicated/overview">许多其他模型系列</a>。</p>
-<p>由 <a href="https://x.com/@halleychangg">@halleychangg</a> 设计。</p>]]></content:encoded>
+<p>一个 agent 粗略看就是装在 harness 里、并在某个环境中运行的模型。</p>
+<p><strong>模型</strong>提供智能。它负责推理、做决策、写代码，并决定下一步采取什么行动。<strong>环境</strong>是这些工作实际发生的计算机、代码仓库、浏览器或容器，而用户（有时是另一个 agent）负责给出目标，并在需要时提供指引。</p>
+<p><strong>harness</strong> 决定模型能看到什么、能采取哪些行动、结果如何回喂给下一次推理，以及工作何时算真正完成。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/4c5dfeb50d444cc97f3af43d97e61be8895896ec-4040x1397.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/0fa06f54c42a11bcce559661ffabae5c21b7b568-4950x1656.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>你可以把 harness engineering 理解为你围绕模型搭建的那套系统——它让模型成为完成真实工作的引擎。模型有多聪明并不重要，没有 harness，它就只是一台生成 token 的机器。是 harness 让那份智能真正有用，是 harness 把模型变成 agent。</p>
+<p>harness 有很多种类型。它们各自偏向不同类型的工作</p>
+<ul><li>个人工作：Openclaw 和 Hermes 主要是个人 agent，它们被嵌入到外部应用中（Telegram、Discord、iMessage）。</li><li>编程：这类 harness 通常在终端里，或在代码编辑器里运行。也有为强化学习和研究设计的 harness，为金融、市场营销以及许多其他垂直领域设计的 harness。</li><li>知识工作：ChatGPT Work 和 Claude Desktop App 就是很好的例子。虽然很多人也把它们当 coding agent 用，但这些应用有大量的工具和插件，能让你的 agent 连上 Slack、Notion、Gmail、Sheets、Teams、Clickup 等工具——目标都是支撑通用的知识工作。</li></ul>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/47a43fe069beddf7e91c225027345e51d4c835e8-2168x1926.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/19dfa24cf2aaa63be95005b6f374b61848d53dc1-2140x2027.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<h4>图中来自 OpenAI 的 ChatGPT Work，拥有面向通用工作与软件工程的健壮插件生态。</h4>
+<p>但从根本上说，它们共享同一副骨架。今天我们要拆解 agentic harness 的各层，好更清楚地理解我们这门手艺所用的工具。</p>
+<h3>什么是 harness？</h3>
+<p>大语言模型接收输入，用这些输入生成下一个 token，再把刚生成的那个 token 追加到输入上，loop 就这样持续运转，直到它认为自己完成了。单靠自身，它们无法：</p>
+<ul><li>使用计算机</li><li>维持持久状态</li><li>搜索网页</li><li>运行 shell 命令</li><li>读取、编辑或创建文件</li><li>执行代码</li><li>甚至无法验证自己产出的东西到底能不能用</li></ul>
+<p>如果说大语言模型是大脑，那 harness 就是它的身体。</p>
+<p>当你给出这样一个 query 时：</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/4d09e4cef9cc0ec3caff71bdadd0382f97789453-3840x998.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>你的 prompt 并不是直接发给模型、然后神奇地带着一个已完成的补丁回来。harness 会把许多次推理调用组合成这样一个反馈 loop：</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/12759c8b8d982b4d4515c07b1d3291776ce3546d-3840x3348.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p><strong>这个 loop 就是我们所说的 “agent”。</strong></p>
+<p>而这里列出的每一步，都需要相当多的工程工作</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/db667a809a23fae4584607fd3826c52ce8f9102b-2712x2540.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>harness 通常负责：</p>
+<ul><li><strong>Prompt 构建</strong> - 系统/开发者指令、代码仓库指令、用户 prompt。</li><li><strong>上下文选择</strong> - 哪些文件、既往消息、工具输出、记忆、diff 等是可见的。</li><li><strong>工具</strong> - shell、文件编辑、搜索、网页、MCP 工具、Git、测试。</li><li><strong>工具 schema</strong> - 这些能力如何描述给模型。</li><li><strong>工具执行</strong> - 真正把模型的意图转化为行动。</li><li><strong>Agent loop</strong> - 决定工具结果如何返回，并触发下一次推理。</li><li><strong>状态</strong> - 跨步骤/跨会话记住发生过什么。</li><li><strong>编排</strong> - 派生出专门化或并行的 agent。</li><li><strong>Hooks</strong> - 在预设的触发点上确定性地执行脚本（linting、拦截危险命令、代码 review）。</li><li><strong>记忆</strong> - 个人上下文被存储起来并注入模型 prompt，帮助 agent“记住”既往会话。</li><li><strong>上下文压缩</strong> - 决定随着会话增长，什么被摘要、什么被丢弃。</li><li><strong>规划</strong> - plans、TODO 列表、子目标。</li><li><strong>权限/沙箱</strong> - agent 被允许执行什么。</li><li><strong>错误处理</strong> - 重试、失败的命令、超时。</li><li><strong>验证</strong> - 测试、linting、检查改动是否真的有效。</li><li><strong>终止</strong> - 决定 agent 的这一轮何时真正结束。</li><li><strong>约束</strong> - 规定 agent 能做什么、不能做什么的规则。</li></ul>
+<p><strong>harness 能够改变结果</strong></p>
+<p>如果你在不同的编程工具里用过同一个模型，你大概已经有体会了。模型也许相同，但体验和输出质量会有天壤之别。</p>
+<p>一篇论文，<a href="https://arxiv.org/html/2605.23950v1"><em>Stop Comparing LLM Agents Without Disclosing the Harness</em></a>，报告称 <strong>Claude Opus 4.5 在标准化的 SEAL scaffold 下得分 45.9%，而通过 Claude Code 使用时得分 55.4%</strong>——在 SWE-bench Pro 上。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/bc46387046766b6ab7db94c827db585f108529fe-903x868.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=903" alt=""></p>
+<p><a href="https://arxiv.org/html/2605.23950v1">Stop Comparing LLM Agents Without Disclosing the Harness</a> 中的表 1</p>
+<p>而且复杂未必为王。有时更小的 tool schema 比再多几层编排更能提升一个 agent。最近，Prime Intellect 发布了他们的 coding harness。Prime Agent 基于 Pi 构建，已经设法跑赢了自家模型在训练时所用到的那些 harness。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/7a509e64b6f2e34deaf5e72bbb8e5bfe3a239dbe-2048x1200.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>来源：<a href="https://www.primeintellect.ai/blog/prime-agent">Prime Intellect 的 Prime Agent 发布公告</a></p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/cdea8bd33b43c695adadedb77da2546f657b8fb1-651x582.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=651" alt=""></p>
+<p>这里的启示是：如果两次测试用的不是同一个 harness，那么告诉你“模型 A 胜过模型 B”的 benchmark 有时确实会在无意之中误导人。<strong>上下文（以及 harness）很重要。</strong></p>
+<p>一个 benchmark 结果属于一对「模型-harness」组合。harness 变了，结果也可能变。而随着 harness 变得更有野心，它们也会发起更多次模型调用。<strong>快推理的价值正是从这里开始显现。</strong></p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/e1aef720979a09e236f79e86ae56c0fbcf9e8f2d-3174x2244.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p><a href="https://artificialanalysis.ai/agents/coding-agents?coding-agents-harness-comparison-chart=harness-deep-swe">Artificial Analysis 的 harness 对比</a></p>
+<p>在这里可以看得很清楚：同一个模型，性能会随 harness 不同而天差地别。</p>
+<h3><strong>harness 是推理次数的倍增器</strong></h3>
+<p>看看 <strong>harness 负责</strong>的那张清单：规划、loop、重试、验证、测试、压缩、编排、review。其中每一项都需要另一次模型调用，消耗 token，而更重要的是消耗时间。</p>
+<p>一轮验证也许能抓到 bug，但也会让运行时长翻倍。subagent 可以把其中一些工作并行化，但编排者仍然要规划、派发并综合这些结果，而这些步骤全都得顺序执行。</p>
+<p>每一次模型调用都会增加延迟，而在一个基本串行的 agent loop 里，大致的时间预算长这样：</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/18e8b92d94612820d19d5561f63393b643a189da-3658x2648.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>一步慢了，十步就没法看了。反过来，如果模型的步进足够快，harness 就有富余去做更多有用的工作——在 agent 失去交互感之前。</p>
+<p>这个区别很要紧。<a href="https://www.cerebras.ai/blog/getting-the-most-out-of-gpt-5-6-sol-terra-and-luna">在 Cerebras 上运行 GPT-5.6 Sol 可达每秒 750 tokens，完整一轮的响应最低只需 0.4 秒</a>。这个量级的速度解锁了新的能力，并为 harness 在推理、工具使用、恢复和验证上提供了更大的预算。</p>
+<h3><strong>“快 harness” 能做到哪些不同的事</strong></h3>
+<p>一旦模型延迟变小，工程师就能把省下来的时间用在几种有用的方向上。</p>
+<ul><li><strong>实时 agent 编排。</strong> 像 GPT 5.6 Sol Ultrafast 这样聪明的模型可以编排大型项目和大范围的 subagent fan-out，把延迟上的收益快速复利式放大。</li><li><strong>以人的速度使用电脑</strong>。agent 已经能用电脑了，但与人类相比它们仍然笨拙、易出错而且缓慢。快速推理移除了那种让 agent 以人类速度行动的延迟。</li><li><strong>Live Steering。</strong> agent 对纠正即时作出反应，带来真正协作式的体验。</li><li><strong>推测执行。</strong> 还在权衡某种做法的用户，可以用 work tree 实时实现并测试好几种备选方案，拿到的是能跑起来的选项，而不是假设性的建议。</li><li><strong>激进的重试与自我纠错。</strong> agent 可以在代码写出的同时激进地测试并修复它自己的代码，而给最终用户带来的代价极小。文件一经编辑 Hooks 就立刻触发，在毫秒级完成验证或修复。</li><li><strong>自适应界面。</strong> agent 能针对当前状态实时生成预览、图表、可视化和 mock-up。</li></ul>
+<p>这些只是几个例子，一个有想象力的构建者当然能以成千上万种有益的方式利用低延迟推理；但整体上最大的收益，无疑是让人以交互的方式、实时地参与到构建过程中来。搜索、推理、工具使用和编辑收敛进一个更紧的 loop，更接近与一个真正的结对编程伙伴协作的感觉。</p>
+<h3>构建一个轻量级白板应用</h3>
+<p>为了把 harness 的影响与模型的智能隔离开来看，我们跑了一个简单的受控实验：她用的是 <strong>Claude Opus 4.6，同一个任务，但放进两个不同的 coding agent 里：Factory Droid 和 Claude Code。</strong></p>
+<p>两个 agent 都从空代码仓库开始，并收到同一个 prompt：</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/fe32869a0f4d1d2d8e2c854b78bf6e3139f41392-3840x998.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<h4>本次演示未使用任何 Excalidraw 代码、专有资产或图标</h4>
+<p>eval 聚焦于同样的五项要求：绘制矩形和箭头；选中、移动和删除元素；撤销与重做；导出为 PNG；以及在浏览器里运行结果。<strong>两个 agent 都通过了全部五项要求。</strong>差别在于各自的 harness 把同一个模型转化为经过验证的工作时有多高效。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/841d1860eeb44a923ec35b717067428ecc4f2751-3566x2024.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p><strong>Factory Droid 的结果</strong></p>
+<p><strong>Claude Code 的结果</strong></p>
+<p>在这一次运行中，Factory 提前 <strong>11 分钟完成，快了约 2.4×，所用的 tool call 数量大约只有一半</strong>。它还在报告完成之前定位并修复了一个会造成阻塞的 hit-testing 问题，随后把剩下的非阻塞缺口记录在案。</p>
+<p>这并不意味着某个 harness 会赢下所有任务，但它是一个很好的示例，说明 harness 作为推理次数倍增器的作用：<strong>即使模型保持不变，它周围的系统也能实质性地改变最终结果的路径、成本、速度和质量。</strong></p>
+<p><em>注：结果会因 harness、任务和模型配置的不同而变化。</em></p>
+<h3><strong>harness 成为瓶颈</strong></h3>
+<p>当前，agent 最大的瓶颈是推理步骤。有了 Cerebras Fast Inference，情况不再如此。新的瓶颈变成了 harness 本身，更具体地说，是 tool call。</p>
+<p>在与 agent 协作时，tool call 既关键又常见。就像上面的例子那样，一个任务可以串起几十次、某些情况下上百次 tool call。下面是一些我们在真实生产代码库里跑过的示例任务，让你对某个任务大概会用掉多少次 tool call 有个概念。</p>
+<p><img src="https://cdn.sanity.io/images/e4qjo92p/production/0328e057de3b24e9843b3f12b85513e2cc4bfdad-4040x2539.png?auto=format&amp;dpr=2&amp;fit=max&amp;q=75&amp;w=2000" alt=""></p>
+<p>当推理不再是较慢的那一步，harness 工程师就能专注于优化 agent 技术栈的其余部分，为 harness 自身的效率与性能做优化。</p>
+<h3><strong>速度改变 harness 的形态</strong></h3>
+<p>这些 agent 能力本身未必是新的。几乎任何 harness 都能跑测试、编排 agent、操作浏览器或生成可视化。区别在于这些动作是否切合实际，是否放得进「交互之内」，还是会逼着你把工作丢到后台去。</p>
+<p>慢推理会把人推向次数更少、体量更大的模型调用。多步骤工作变成异步，用户在 agent 已经做完大部分决策之后才来 review 结果（错误也随之累积）。别忘了，模型很聪明，但它们并非不会出错。<strong>一个高自主性、设计品味好的人留在 loop 里，提供判断、指引和方向把控，依然无可替代。</strong></p>
+<p>除 GPT‑5.6 Sol 之外，<a href="http://cerebras.ai">Cerebras 在其公开 endpoint 上以每秒数千 tokens 的速度服务领先的开源模型</a>：</p>
+<ul><li><a href="https://inference-docs.cerebras.ai/models/openai-oss">OpenAI GPT OSS 120B</a> 达 3,000 tok/s</li><li><a href="https://inference-docs.cerebras.ai/models/gemma-4-31b">Gemma 4 31B</a> 达 1,850 tok/s</li><li><a href="https://www.cerebras.ai/blog/glm-4-7">Z.ai GLM 4.7</a> 达 1,000 tok/s</li></ul>
+<p>在专用的企业级 endpoint 上，Cerebras 还支持 <a href="https://huggingface.co/moonshotai/Kimi-K2.6">Kimi K2.6</a>、<a href="https://huggingface.co/zai-org/GLM-5.1">GLM 5.1</a>、<a href="https://huggingface.co/MiniMaxAI/MiniMax-M2.5">MiniMax M2.5</a>、<a href="https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct">Qwen3 Coder 480B</a>、<a href="https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct">Llama 4 Maverick</a>、<a href="https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512">Mistral Large 3</a>、<a href="https://huggingface.co/deepseek-ai/DeepSeek-V3.2">DeepSeek V3.2</a>，以及<a href="https://inference-docs.cerebras.ai/dedicated/overview">众多其他模型家族</a>。</p>
+<p>设计：<a href="https://x.com/@halleychangg">@halleychangg</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>MoE 数学揭秘：8x7B 到底是什么意思？</title>

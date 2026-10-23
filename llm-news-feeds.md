@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-23 15:52:18**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-23 16:21:47**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -142,7 +142,7 @@
   - 📡 RSS/Atom：https://mistral.ai/news/rss
 - 📡 [RSS/Atom 订阅源](https://mistral.ai/news/rss)：`https://mistral.ai/news/rss`
 - 📰 **最新文章**（官方源抓取于 2026-10-23，标题自动汉化）：
-  1. [Mistral 与 NVIDIA 一起推进工程人工智能](https://mistral.ai/news/mistral-nvidia-ai-for-industrial-engineering/)（2026-10-21）
+  1. [Mistral 与 NVIDIA 合作推进工程领域的 AI](https://mistral.ai/news/mistral-nvidia-ai-for-industrial-engineering/)（2026-10-21）
   2. [Voxtral 3](https://mistral.ai/news/voxtral-3/)（2026-10-20）
   3. [推出 Timestral](https://mistral.ai/news/timestral/)（2026-10-15）
   4. [推出 Mistral Large 4](https://mistral.ai/news/mistral-large-4/)（2026-10-06）
@@ -226,9 +226,9 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-cohere.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-23，标题自动汉化）：
-  1. [AI能理解文化吗？退休教师和高中生考验AI](https://cohere.com/blog/can-ai-understand-culture)（2026-10-22）
-  2. [推出 Rerank 5：精确、高效的企业文档检索为您的 AI 提供与每个请求最相关的上下文，现在具有段落级精度。](https://cohere.com/blog/rerank-5)（2026-10-21）
-  3. [重新思考推理模型的信心](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)（2026-10-20）
+  1. [AI 能理解文化吗？一位退休教师和一名高中生来试试](https://cohere.com/blog/can-ai-understand-culture)（2026-10-22）
+  2. [推出 Rerank 5：精准高效的企业文档检索](https://cohere.com/blog/rerank-5)（2026-10-21）
+  3. [重新审视 reasoning model 的置信度](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)（2026-10-20）
   4. [Cohere 将收购 AISLE 以推进抗网络攻击的主权 AI](https://cohere.com/blog/cohere-and-aisle-sign-letter-of-intent-to-advance-cyber-resilient-sovereign-ai)（2026-10-15）
   5. [公用事业的 AI 需要能力，也需要控制](https://cohere.com/blog/ai-for-utilities-requires-capability-and-control)（2026-10-15）
   - 📄 完整文章归档（共 47 篇）：[cohere.md](llm-news/cohere.md)
@@ -323,14 +323,14 @@
   1. [发布 Cerebras CS-4：最快的 AI 再次提速](https://www.cerebras.ai/blog/introducing-cerebras-cs-4)
   2. [MoE 规模化：让稀疏模型在真实硬件上跑得快](https://www.cerebras.ai/blog/moe-guide-scale)
   3. [我们如何在 Cerebras 上部署万亿参数前沿模型](https://www.cerebras.ai/blog/how-we-deploy-trillion-parameter-frontier-models-on-cerebras)
-  4. [更智能的模型并不能拯救你糟糕的安全带](https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness)
+  4. [模型再聪明，也救不了糟糕的 harness](https://www.cerebras.ai/blog/a-smarter-model-won-t-save-your-bad-harness)
   5. [MoE 数学揭秘：8x7B 到底是什么意思？](https://www.cerebras.ai/blog/moe-guide-calculator)
   - 📄 完整文章归档（共 56 篇）：[cerebras.md](llm-news/cerebras.md)
 
 ### Together AI (together_ai)
 - 📡 [RSS/Atom 订阅源](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-23，标题自动汉化）：
-  1. [培训后一起：前沿级模型塑造，适合您的方式](https://www.together.ai/blog/together-post-training)（2026-10-19）
+  1. [Together Post-Training 上线：按你的方式做前沿级模型后训练](https://www.together.ai/blog/together-post-training)（2026-10-19）
   2. [Meta Muse Spark Open 已在 Together AI 上线](https://www.together.ai/blog/meta-muse-spark-open)（2026-10-15）
   3. [与 IBM Cloud 和 NVIDIA 合作，扩展我们的企业推理容量](https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia)（2026-10-06）
   4. [Together Link：在你已在用的 harness 中用上前沿品质的开放模型](https://www.together.ai/blog/together-link-frontier-quality-open-models-in-the-harness-you-already-use)（2026-10-05）
@@ -342,8 +342,8 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-fireworks_ai.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-fireworks_ai.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-23，标题自动汉化）：
-  1. [Muse Spark Open on Fireworks：Meta 的开放权重 wodel，可在美国无服务器上使用](https://fireworks.ai/blog/meta-muse-spark-open)
-  2. [免费训练 Muse Glimmer：我们战胜 Jev 的秘诀](https://fireworks.ai/blog/train-muse-glimmer-for-free)
+  1. [Fireworks 上线 Muse Spark Open：Meta 的开放权重模型，跑在美国 serverless 上](https://fireworks.ai/blog/meta-muse-spark-open)
+  2. [免费训练 Muse Glimmer：我们如何押赢 Jev](https://fireworks.ai/blog/train-muse-glimmer-for-free)
   3. [强化学习：为什么数值与 MoE 路由的对齐如此重要](https://fireworks.ai/blog/reinforcement-learning-why-alignment-of-numerics-and-MoE-routing-matter)
   4. [深入 Fireworks 多区域部署：一个部署，全球规模](https://fireworks.ai/blog/multi-region-deployment)
   5. [每个字节都算数：ARCv3 与跨区域 RL 的必要性](https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl)
@@ -365,7 +365,7 @@
 - 📡 [RSS/Atom 订阅源](https://www.modular.com/blog/rss.xml)：`https://www.modular.com/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-23，标题自动汉化）：
   1. [Modular：MAX 现在源码可用，向所有人开放](https://www.modular.com/blog/max-license)（2026-10-22）
-  2. [Modular：Modular26.7：开放MAX](https://www.modular.com/blog/26-7)（2026-10-22）
+  2. [Modular：Modular 26.7 开放 MAX](https://www.modular.com/blog/26-7)（2026-10-22）
   3. [培育 Modular 生态：Modular 社区资助计划](https://www.modular.com/blog/nurturing-the-modular-ecosystem-the-modular-community-grant-program)（2026-10-09）
   4. [Modular 26.6：开放编译器贡献、音频生成与扩展模型支持](https://www.modular.com/blog/modular-26-6-open-compiler-contributions-audio-generation-and-expanded-model-support)（2026-09-17）
   5. [Mojo🔥 现已开源！](https://www.modular.com/blog/mojo-open-source)（2026-08-18）
@@ -421,7 +421,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-inception_labs.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-inception_labs.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-23，标题自动汉化）：
-  1. [Mercury 3 简介|阅读博客](https://www.inceptionlabs.ai/blog/introducing-mercury-3)（2026-10-19）
+  1. [规模化扩散：Mercury 3 发布](https://www.inceptionlabs.ai/blog/introducing-mercury-3)（2026-10-19）
   2. [Mercury 2 入选 TIME 2026 年度最佳发明](https://www.inceptionlabs.ai/blog/mercury-2-named-to-time-s-best-inventions-of-2026)（2026-10-16）
   3. [Mercury Voice 发布](https://www.inceptionlabs.ai/blog/introducing-mercury-voice)（2026-10-01）
   4. [Mercury 2.5 简介](https://www.inceptionlabs.ai/blog/introducing-mercury-2-5)（2026-09-24）

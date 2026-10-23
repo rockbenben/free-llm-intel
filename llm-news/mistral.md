@@ -10,8 +10,8 @@
 
 ## 全部文章（共 92 篇，按日期倒序；无日期条目列于最后）
 
-1. [Mistral 与 NVIDIA 一起推进工程人工智能](https://mistral.ai/news/mistral-nvidia-ai-for-industrial-engineering/)（2026-10-21） <!--orig:Mistral Advances AI for Engineering with NVIDIA-->
-2. [Voxtral 3](https://mistral.ai/news/voxtral-3/)（2026-10-20）
+1. [Mistral 与 NVIDIA 合作推进工程领域的 AI](https://mistral.ai/news/mistral-nvidia-ai-for-industrial-engineering/)（2026-10-21） <!--orig:Mistral Advances AI for Engineering with NVIDIA-->
+2. [Voxtral 3](https://mistral.ai/news/voxtral-3/)（2026-10-20） <!--orig:Voxtral 3-->
 3. [推出 Timestral](https://mistral.ai/news/timestral/)（2026-10-15） <!--orig:Introducing Timestral-->
 4. [推出 Mistral Large 4](https://mistral.ai/news/mistral-large-4/)（2026-10-06） <!--orig:Introducing Mistral Large 4-->
 5. [你好，德国！](https://mistral.ai/news/hallo-deutschland/)（2026-09-28） <!--orig:Hallo, Deutschland!-->
