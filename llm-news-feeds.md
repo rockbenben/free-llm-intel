@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-23 15:23:49**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-23 15:52:18**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,11 +26,11 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-23，标题自动汉化）：
-  1. [构建代理：何时将子代理折叠到主代理循环中](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop)（2026-10-22）
-  2. [完整的 Claude 平台可在 Google Cloud 上使用](https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed)（2026-10-22）
-  3. [向 Agentic AI 基金会捐赠 Agent 技能](https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation)（2026-10-22）
+  1. [构建 agent：何时把子 agent 折进主 agent 循环](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop)（2026-10-22）
+  2. [完整的 Claude 平台登陆 Google Cloud](https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed)（2026-10-22）
+  3. [向 Agentic AI Foundation 捐赠 Agent Skills](https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation)（2026-10-22）
   4. [公开招募生命科学客座研究员](https://www.anthropic.com/news/open-call-guest-investigators-life-sciences)（2026-10-22）
-  5. [Claude二重奏介绍](https://claude.com/resources/articles/claude-duet)（2026-10-21）
+  5. [Claude Duet 正式发布](https://claude.com/resources/articles/claude-duet)（2026-10-21）
   - 📄 完整文章归档（共 121 篇）：[anthropic.md](llm-news/anthropic.md)
 
 ### OpenAI (openai)

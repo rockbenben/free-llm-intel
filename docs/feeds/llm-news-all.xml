@@ -191,186 +191,187 @@
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] 构建代理：何时将子代理折叠到主代理循环中</title>
+      <title>[Anthropic Claude] 构建 agent：何时把子 agent 折进主 agent 循环</title>
       <link>https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：Building agents: When to fold subagents into your main agent loop</description>
-      <content:encoded><![CDATA[<p><em>如果您在 Claude Platform 中构建了一个包含多个子代理的代理，请查看使用我们的<a href="https://github.com/anthropics/single-agent-loop-kit">迁移工具包</a>将哪些子代理合并到主代理循环中。它运行引导式工作流程来识别您的模式、评估替代方案并验证最佳方法。它包括一个演示，您可以在代理上运行之前在模拟系统上尝试。</em></p>
-<p>子代理——具有自己的上下文窗口、工具和指令的代理，由协调员精心编排——是代理设计的核心组件。它们在验证、并行工作和模块化许可方面非常有效。我们在使用 Claude Platform 构建的许多自己的代理中使用它们，例如我们的<a href="https://www.anthropic.com/engineering/multi-agent-research-system">多代理研究系统</a>。</p>
-<p>然而，最近应用人工智能团队发现了一种企业代理部署模式，该模式受益于将路由器、规划器和域子代理折叠到主代理循环中。在[我们对多个企业部署的比较](https://claude.com/blog/the-anatomy-of- effective-commerce-agents#:~:text=In%20our%20comparisons%20across%20several%20enterprise%20deployments,latency%20per%20task)中，具有技能的单个代理的性能经常优于一提示所有设计和子代理设计注重质量，并且通常每个任务的成本和延迟都较低。</p>
-<p>例如，一家公司发现其面向客户的代理中有数十个专业子代理，这使得一致的品牌体验难以维持，并且增加了延迟，从而损害了用户体验。</p>
-<p>我们还经常看到提出的代理设计遵循熟悉的流程：意图分类器、固定的多步骤推理管道、用户细分存储桶、单独的推荐分支以及顶部的多代理协调器。</p>
-<p>在这些情况下，反馈通常是该结构的大部分正在执行模型不再需要完成的工作，并且一个清晰的系统提示、4-5 个精简数据工具和牢固的输出护栏将覆盖大部分用例。</p>
-<p><img src="https://assets.claude.com/a7cb2cf08bfcef461166310c0c55f28b72c33b0d.gif" alt="子代理设计"></p>
-<p>需要明确的是，子代理仍然占有一席之地，包括在研究前沿。在以下情况下使用它们：</p>
-<ul><li>单个代理循环会因上下文膨胀而导致可测量的性能下降，或者</li><li>需要使用新的上下文窗口并行处理多个任务，任务完成后可以将其丢弃，或者</li><li>单个代理难以选择合适的工具，或者系统提示中存在冲突的指令。</li></ul>
-<p>但我们经常看到企业为每个团队或问题类型提供自己的子代理，代理架构成为其组织结构图的副本（康威定律在起作用）。</p>
-<p>这篇文章解释了何时考虑将子代理合并到主代理循环中，以及我们从大型组织中构建代理中学到的最佳实践。</p>
-<h2>大型组织的代理构建失败模式</h2>
-<p>公司通常希望建立一个代理，将多种产品和功能整合到一个客户界面中。</p>
-<p>通常，每个功能都由一个单独的团队拥有，因此公司首先让每个单独的团队构建自己的代理，然后中央平台团队在顶部构建一个协调器。这可以采用多种结构，包括协调器子代理或具有作为 MCP 工具公开的特定代理的单个代理。</p>
-<p>这看起来是最简单的解决方案，但会带来直接的复杂性：</p>
-<ul><li><strong>上下文管理：</strong>您需要决定在代理之间交换什么上下文，并且经常会在来回中丢失详细信息。</li><li><strong>子代理蔓延</strong>：每个团队都有自己的子代理，因此公司最终会出现数百个重叠的子代理，没有强制标准，也没有特定的所有者。</li><li><strong>弗兰肯提示</strong>：每个团队都会在系统提示中添加一句话，导致规则相互冲突，声音不一致。</li><li><strong>未经审查、过度本地化的评估</strong>：每个人都添加自己的评估，这些评估针对其子任务过度优化。没有人拥有或维护整个集合，领导层根据淡化的、过于本地化的分数做出决策。</li><li><strong>延迟</strong>：多代理架构的复杂性增加了延迟。一位客户根据单代理循环评估了多代理工具，发现后者的运行时间大约快了 2 倍。</li></ul>
-<h2>使用渐进式披露的代理循环</h2>
-<p>上述协调器-子代理设计是协调跨团队构建的专家的合理方法，但通常更有效的方法可以是<strong>通过技能逐步公开上下文</strong>和<strong>通过工具搜索逐步公开工具</strong>。换句话说，代理会看到技能和工具的简短描述，仅在需要时才完全加载。</p>
-<p>这种方法之所以有意义有以下三个原因：</p>
-<ul><li><strong>共享上下文产生更好的答案：</strong>对于运行时间较长的代理，我们希望来自多个不同任务的上下文位于主上下文窗口中。看到每个早期步骤结果的代理可以将它们连接起来，这比子代理传回的一组摘要会产生更丰富的输出和更好的见解。它还意味着<a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them">更少的上下文窗口和更少的有损切换</a>。</li><li><strong>渐进式披露可防止上下文膨胀：</strong>此技术允许团队构建可以完成各种任务的单个代理，而不需要将所有上下文立即加载到一个长系统提示中。这消除了团队之前在子代理之间分配工作的主要原因。事实上，我们[将 Claude Code 对更高级模型的系统提示减少了 80% 以上](https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5- Generation-models/)，其中包括与逐步公开技能和工具相关的削减。</li><li><strong>模型的能力更强：</strong>从 Opus 4.5 开始，模型能够在单个循环中管理比大多数团队预期的更多内容。你无法停止对 Opus 5.5 和 Fable 5.1 的思考，最近的模型越来越多地叙述他们的进展并检查他们的工作，这使得一些线束元素变得多余。每个新模型都可以让您将更多决策从线束中转移到模型本身中。更简单的循环也更容易移动到下一个模型；在迁移过程中，我们为客户提供了帮助，严格的多代理结构通常会阻止新模型完成更多工作。</li></ul>
-<p>单代理循环设计需要纪律：精心管理的系统提示、在正确时间触发的技能和工具描述，以及对上下文窗口、内存和笔记的精心处理。本文将在后续部分中深入探讨迁移和设计注意事项。</p>
-<p>一个中央团队应该负责端到端的质量和系统提示，在每一个新工具发布之前对其进行审查和评估。保持中心团队规模较小有助于快速迭代并降低大型组织的协调成本。</p>
-<p>如果您采用多代理路线，请从最简单的可行模式（生成器-验证器、协调器-子代理或其他）开始。通过<strong>除以上下文来有效地分解边界：为每个子代理提供一项几乎不需要系统其余部分的工作，并让它返回一个紧凑的结果</strong>（好的候选者是独立的研究路径、具有干净接口的单独组件或黑盒验证）。当座席按问题类型划分时，他们会参与“电话游戏”，在每次切换时来回传递信息，从而降低保真度。</p>
-<p><img src="https://assets.claude.com/cd4b9c4417d5ba31776e8aa79e204966c08c6a43.png" alt="子代理按问题划分"></p>
-<h2>如何将子代理折叠到主代理循环中</h2>
-<p>许多团队已经在生产中拥有一名协调员和一组专业代理。以下是我们建议的单循环设计：</p>
-<ul><li>一个模型和一个上下文窗口运行一个开放式工具循环，并在线束中设置限制（转弯和成本预算、写入门）。</li><li>每回合，模型都会发出一批工具调用。线束并行运行它们并将原始结果返回到同一模型，该模型决定下一步：另一个批次、向用户提出问题或答案。</li><li>当模型回答或达到<a href="https://platform.claude.com/docs/en/build-with-claude/task-budgets">预算</a>时，循环停止。目标或验证者检查可以选择在答案之后运行。</li><li>该模型在第一轮就根据上下文编写其计划，并在结果到达时对其进行修改。这是协调器和专家代理设置的主要变化：编写计划的模型也是执行计划的模型，因此它可以在中间更改计划。</li><li>上下文仍然被加载，并由代理本身管理：不再需要从规则目录重写计划的代码步骤，因为模型决定了每个步骤。排序和域过程移至<strong>技能。</strong>硬限制（验证、批准门）和对话中出现的任何其他内容（例如内存查找）移至<strong>工具。</strong>代码仍然可用于加载任何廉价且几乎总是相关的内容（例如实体解析）步骤），并处理循环调用的工具内的任何机械部分（有效负载构造、流解析、恢复说明）。</li></ul>
-<p>这种单循环设计还有助于实现许多团队正在努力实现的最终状态（一个了解用户的高级目标并代表他们采取行动的代理），因为它将代理所学到的所有内容都保留在一个上下文中。</p>
-<p>下面的建议是团队如何分阶段从多代理系统过渡到单代理循环，以及多个团队如何在此过程中继续为该代理做出贡献。</p>
-<h3>任务完成评估</h3>
-<p>第一步是创建一个评估集，它可以帮助您确定是否应该将子代理折叠到主代理循环中。我们所看到的评估结构是一个共享的端到端集，由一个中心团队拥有，较小的评估集由拥有它的团队随每项技能一起提供。即使一组 10 个黄金示例也足以开始。</p>
-<p>根据评分标准对座席的最终消息进行评分是跟踪答案质量的良好起点。虽然您仍然拥有协调器，但您还应该跟踪路由准确性（它是否选择了正确的子代理？）。一旦子代理被合并，请检查代理是否加载了正确的技能或调用了正确的工具。随着时间的推移，努力评估任务完成情况是有帮助的，因为这在比较架构时最重要。</p>
-<p>在内部系统难以重放且用户参与难以模拟的环境中，这可能会很复杂。在我们内部有效的一种方法是记录重要事件的时间戳，以便稍后可以重播它们以作为目标评估运行。</p>
-<h3>随着时间的推移减少子代理</h3>
-<p>向单代理循环演进涉及将子代理折叠成工具和技能。这可以通过合并域子代理、将它们称为工具或用技能和工具替换它们来完成。</p>
-<p><img src="https://assets.claude.com/ed6bd97496ffdab88763806d9e14f1ec61ed9255.gif" alt="折叠在子代理中"></p>
-<h3>组合域代理</h3>
-<p>在第一次合并之前构建一个小型的端到端评估。然后<strong>从最常用的子代理开始按共享上下文折叠。</strong></p>
-<p><a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them">合并专家</a> 链接彼此的输出，接触相同的数据，或者经常被一起调用。例如，如果生产流量的很大一部分是一位专家，其次是一位专家，那么这就是一对紧密耦合的专家，这使得它成为合并到一个域代理的候选者。</p>
-<h3>子代理被称为工具</h3>
-<p>当上述三个条件之一适用并且您保留子代理时，让主代理将子代理作为工具调用是有效的，以便它可以继续与用户进行对话。</p>
-<p>我们仅建议在需要直接与用户对话时进行完全切换，即子代理接管对话。其他一切都可以是主循环中的技能加工具。</p>
-<p>这将允许您为子代理定义共享响应模式，使用主代理根据真实数据验证结论，并修剪任何最终综合步骤的输入。这是一个很好的第一步，因为您不需要<strong>重写</strong>子代理。在决定将任何子代理合并到主代理之前，它还为您提供了任务完成评估的<strong>基线</strong>。</p>
-<p>然而，一些故障模式仍然存在：</p>
-<ul><li>每个专家都有自己的提示、背景、所有者团队和评估</li><li>每次调用仍然返回有损摘要</li><li>每个调用都是一个嵌套模型循环，会增加延迟</li></ul>
-<h3>通过技能和工具将子代理折叠到主代理中</h3>
-<p>通过将每个子代理的提示转化为技能并将 API 调用转化为 MCP 工具，将子代理一次合并到主代理中。比较使用和不使用子代理的评估性能。然后决定保留哪一个。</p>
-<p>当你进行比较时，不要只检查最终分数，还要看看哪些任务发生了翻转。当我们在示例支持代理上对此进行测试时，将一个子代理折叠到另一个降低的延迟中，但也破坏了已经通过的进程。主代理拿着订单查找工具自行回答，没有向运输专员询问交货日期。</p>
-<p>在每次更改之前，请确保您的评估对在生产中一起运行的每个代理链都有一项任务，并且对于代理不得破坏的每条规则，并多次运行每个任务，因为像这样的破坏只会出现在两次运行中的一次。</p>
-<h2>多个团队如何为单个代理做出贡献</h2>
-<p>领域推理可以从知识库、技能和 MCP 工具中检索。各个团队可以将其所有权从代理转移到技能和工具，由一个小型中央团队保持对系统及时性和端到端质量的所有权。这涉及到在发布新技能、工具和评估之前对其进行审查。</p>
-<h3>MCP 工具</h3>
-<p>当代理需要采取行动、从系统读取实时数据或以固定形式返回结果时，工具是正确的选择。您还可以使用工具在迁移时继续调用子代理。我们建议按用户意图分组工具（不是每个 API 一个工具），因为一旦系统提示中的工具定义超过 30-50 个，工具选择往往会降低。</p>
-<p>使用带有延迟加载的<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool">工具搜索</a>，限制硬性前提条件，并将任何需要的条件移至工具中。例如，如果 Y 需要 X 的输出，Y 的工具会检查它并返回模型可以执行的指令。每用户权限的工作方式相同。每个工具都会检查调用用户可能看到或执行的操作，并返回模型可以读取的简单拒绝，因此一个循环可以为具有不同访问权限的用户提供服务，而无需每个权限级别使用单独的代理。</p>
-<h3>技能</h3>
-<p>当座席需要了解团队如何工作时，技能是正确的选择，例如专家子座席提示所用的步骤、规则和判断呼叫。</p>
-<p>我们发展技能库的方法是将维护工作交还给编写技能的人员。克劳德可以利用可以构建、测试和修剪其他技能的技能来完成繁重的工作。</p>
-<p>为了防止技能蔓延，您可以让每个团队的 DRI 拥有自己的技能，并确保它们精心设计、独特并附带适当的评估。</p>
-<ul><li><strong>/skill-creator</strong> 允许您编写格式良好的新技能，并审核现有技能以修剪、删除重复和重组它们。</li><li><strong>/skill-doctor</strong> 允许您查看库中每项技能的成本以及实际使用的频率，并删除自重。</li></ul>
-<h3>知识库</h3>
-<p>知识库非常适合代理仅在某些时候需要的参考材料。事实和参考材料（政策、指标定义、产品规格）可以位于模型调用的搜索或查找工具后面，或者作为技能内的参考文件提供。避免<a href="https://claude.com/blog/seeing-like-an-agent">代码检索此上下文并将其粘贴到提示中</a>。</p>
+      <content:encoded><![CDATA[<h1>构建 agent：何时把子 agent 折进主 agent 循环</h1>
+<p><em>如果你在 Claude Platform 上构建的 agent 里包含多个 subagent，可以看看其中哪些适合用我们的<a href="https://github.com/anthropics/single-agent-loop-kit">迁移套件</a>折进主 agent 循环。它会跑一套引导式工作流，识别你的模式、评估备选方案，并验证最佳做法。里面包含一个 demo，你可以先在模拟系统上试，再用到自己的 agent 上。</em></p>
+<p>Subagents——由一个协调者编排、拥有自己的 context window、工具和指令的 agent——是 agent 设计的核心组件。它们在验证、并行工作和模块化权限管理上很有效。我们自己用 Claude Platform 构建的许多 agent 也在用它们，例如我们的<a href="https://www.anthropic.com/engineering/multi-agent-research-system">多 agent 研究系统</a>。</p>
+<p>不过最近，Applied AI 团队发现这样一个模式：一些企业 agent 部署把 router、planner 和领域 subagent 折进主 agent 循环之后反而受益。在<a href="https://claude.com/blog/the-anatomy-of-effective-commerce-agents#:~:text=In%20our%20comparisons%20across%20several%20enterprise%20deployments,latency%20per%20task">我们跨多个企业部署所做的对比</a>中，一个带 skills 的单个 agent 在质量上常常既胜过「一条 prompt 应对一切」的设计，也胜过 subagent 设计，而且每个任务的成本和延迟往往更低。</p>
+<p>例如，有一家企业发现，它面向客户的那个 agent 里的十几个专精 subagent 让一致的品牌体验难以维持，还增加了伤害用户体验的延迟。</p>
+<p>我们也常常看到这样的 agent 设计方案，遵循一条熟悉的路径：一个意图分类器、一条固定的多步推理流水线、按用户分层的分桶、各自独立的推荐分支，最上面再套一个多 agent orchestrator。</p>
+<p>在这些案例里，得到的反馈往往是：这套结构的大部分东西在做模型已经不再需要别人替它做的活儿，而一条清晰的 system prompt、4-5 个轻薄的 data 工具、加上严格的输出护栏，就能覆盖绝大部分用例。</p>
+<p><img src="https://assets.claude.com/a7cb2cf08bfcef461166310c0c55f28b72c33b0d.gif" alt="subagent design"></p>
+<p>需要说清楚的是，subagents 依然有它们的位置，包括在研究前沿。在下列情况下使用它们：</p>
+<ul><li>单个 agent loop 因为 context 膨胀出现可衡量的性能下降，或</li><li>需要并行处理多个任务，且每个任务能配上全新的 context window、任务做完即可丢弃，或</li><li>单个 agent 难以挑选合适的工具，或者 system prompt 里存在相互冲突的指令。</li></ul>
+<p>但更常见的情况是，企业给每个团队或每类问题都配一个自己的 subagent，于是 agent 架构变成了它们组织架构图的翻版（Conway 定律在起作用）。</p>
+<p>本文讲解何时该考虑把 subagents 折进你的主 agent 循环，并分享我们在大型组织里构建 agent 学到的最佳实践。</p>
+<h2>大型组织构建 agent 的失败模式</h2>
+<p>企业往往想构建一个 agent，把多个产品和能力统一到同一个面向客户的界面里。</p>
+<p>通常每块能力由不同的团队负责，所以公司的做法是先让各个团队分别构建自己的 agent，再由一个中心平台团队在上面搭一个 orchestrator。这可以呈现好几种结构，包括 orchestrator-subagent，或者一个单 agent 把若干专门的 agent 作为 MCP 工具暴露出去。</p>
+<p>这看起来是最简单的解法，但会立刻在以下方面引入复杂度：</p>
+<ul><li><strong>上下文管理： </strong>你得决定 agent 之间交换哪些 context，而细节往往在来回传递中丢失。</li><li><strong>Subagent 蔓延</strong>：每个团队都上线自己的 subagent，结果公司手上握着成百上千个互相重叠的 subagent，既没有强制执行的标准，也没有明确的负责人。</li><li><strong>Frankenprompt</strong>：每个团队都往 system prompt 里加一句话，最终规则互相冲突、语气也无法统一。</li><li><strong>未经审查、过度局部的 evals</strong>：每个人都加上自己的 evals，而这些 evals 过度针对自己的子任务优化。没有人拥有和维护整套 evals，管理层只能基于被稀释过的、过度局部的分数做决策。</li><li><strong>延迟</strong>：多 agent 架构的复杂度会增加延迟。有一家企业把自己的 multi-agent harness 与单个 agent loop 做了对比评估，发现后者的运行时间快了约 2x。</li></ul>
+<h2>使用带渐进式披露的 agent loop</h2>
+<p>上面描述的 orchestrator-subagent 设计，是协调跨团队构建的专精 agent 的一种合理做法，但往往有更有效的路径：<strong>通过 skills 渐进式披露 context</strong>，以及<strong>通过 tool search 渐进式披露工具</strong>。换句话说，agent 只看到 skills 和工具的简短描述，真正需要时才完整加载。</p>
+<p>这种方式说得通，有三个原因：</p>
+<ul><li><strong>共享 context 产出更好的答案：</strong>对于运行时间更长的 agents，我们希望来自多个不同任务的 context 都留在主 context window 里。一个看得到每一步早期结果的 agent 能把它们串联起来，比起 subagents 交回的一堆摘要，产出更丰富的输出和更好的洞察。这也意味着<a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them">更少的 context window 和更少的有损交接</a>。</li><li><strong>渐进式披露避免 context 膨胀：</strong>这个技术让团队能够构建单个 agent，完成非常多样的任务，而不必把所有 context 立刻装进一条超长 system prompt。这就移除了过去团队把工作拆给 subagents 的主要理由。事实上，我们<a href="https://claude.dev/blog/the-new-rules-of-context-engineering-for-claude-5-generation-models/">把 Claude Code 面向更高级模型的 system prompt 削减了 80% 以上</a>，其中就包括与渐进式披露 skills 和工具相关的削减。</li><li><strong>模型更能干了：</strong>从 Opus 4.5 开始，模型在单个 loop 里能管理的东西远超多数团队的预期。Opus 5.5 和 Fable 5.1 你没法关掉 thinking，而近几代模型越来越会一边干活一边叙述进展、检查自己的工作，这让 harness 里的一些组件变得多余。每一代新模型都能让你把更多决策从 harness 移进模型本身。更简单的 loop 也更便于迁移到下一代模型；在我们协助客户完成的迁移中，往往是那些僵硬的多 agent 结构挡住了新模型、让它做不了更多工作。</li></ul>
+<p>单个 agent loop 的设计需要纪律：精心维护的 system prompt、能在正确时机触发的 skill 与工具描述，以及对 context window、memory 和记笔记的刻意处理。本文后面的小节会更深入地讲迁移与设计的考量。</p>
+<p>应当由一个中心团队端到端地负责质量与 system prompt，每个新工具和每个 eval 上线前都要过审。把这个中心团队保持得小一些，有助于迭代快速推进，也能降低大组织里的协调成本。</p>
+<p>如果你走多 agent 路线，就从能跑通的最简单模式开始（generator-verifier、orchestrator-subagent 或其他）。要有效地划分边界，就<strong>按 context 切分：给每个 subagent 一块几乎不依赖系统其余部分的工作，并让它交回一个紧凑的结果</strong>（合适的候选是彼此独立的研究路径、接口干净的独立组件，或黑盒验证）。当 agents 按问题类型被切开时，它们就玩起了「传话筒游戏」，信息来回传递，每一次交接都在损耗保真度。</p>
+<p><img src="https://assets.claude.com/cd4b9c4417d5ba31776e8aa79e204966c08c6a43.png" alt="subagents split by problem"></p>
+<h2>如何把 subagents 折进主 agent 循环</h2>
+<p>许多团队在生产环境里已经有一套 orchestrator 和一组专精 agents。下面是我们建议逐步收敛到的单循环设计：</p>
+<ul><li>一个模型、一个 context window，跑一个开放式的工具循环，循环的限制（轮次与成本预算、写入闸门）设在 harness 里。</li><li>每一轮，模型发出一批 tool calls。harness 并行执行它们，把原始结果返回给同一个模型，由模型决定下一步：再来一批、向用户提一个问题，还是给出答案。</li><li>当模型给出答案或触及 <a href="https://platform.claude.com/docs/en/build-with-claude/task-budgets">budget</a> 上限时，循环停止。答案给出之后，可以选择再跑一次目标检查或 verifier 检查。</li><li>模型在第一轮就把它的计划写在 context 里，并随着结果到达不断修订。这正是与「orchestrator 加专精 agents」配置最关键的差别：写计划的模型同时也是执行计划的模型，所以它能在轮次中间改计划。</li><li>Context 仍然会被加载，并由 agent 自己管理：从规则目录重写计划的代码步骤不再需要，因为模型自己决定每一步。顺序编排与领域流程移入 <strong>skills。</strong>硬性限制（校验、审批闸门）以及对话中途出现的其他事情（例如 memory 检索）移入 <strong>tools。</strong>代码仍然可以用来加载那些成本低、且几乎总是相关的内容（例如实体解析步骤），以及在循环所调用的 tools 内部处理任何机械环节（payload 构造、stream 解析、恢复一次澄清）。</li></ul>
+<p>这种单循环设计也有助于许多团队正在追求的最终形态（一个理解用户高层目标、并代表用户行动的 agent），因为它把 agent 学到的一切都留在同一个 context 里。</p>
+<p>下面的建议讲的是：一个团队如何分阶段从多 agent 系统走到单个 agent loop，以及多个团队如何在这个过程中持续为这个 agent 做贡献。</p>
+<h3>Task-completion evals</h3>
+<p>第一步是创建一套 eval，帮你判断该不该把某个 subagent 折进主 agent 循环。我们见过行之有效的 eval 结构是：一套由中心团队拥有的共享端到端 eval 集，加上每个团队随自己的 skill 一起交付的更小规模 eval 集。哪怕只有 10 个 golden 样例，也足够起步。</p>
+<p>按 rubric 给 agent 的最终消息打分，是跟踪答案质量的好起点。在你还保留 orchestrator 时，还应该跟踪路由准确率（它有没有挑对 subagent？）。一旦某个 subagent 被折进来，就改为检查 agent 有没有加载正确的 skill、有没有调用正确的工具。逐步朝 task-completion evals 努力是有帮助的，因为比较架构时最看重的就是这个。</p>
+<p>在内部系统难以回放、用户互动难以模拟的环境里，这件事会很复杂。我们在内部行之有效的一种做法是：给重要事件记录时间戳，之后可以回放它们，作为有针对性的 evals 来跑。</p>
+<h3>随时间减少 subagents</h3>
+<p>向单个 agent loop 演进，意味着把 subagents 折进 tools 和 skills。做法可以是合并领域 subagents、把它们当作工具调用，或者用 skills 和 tools 替代它们。</p>
+<p><img src="https://assets.claude.com/ed6bd97496ffdab88763806d9e14f1ec61ed9255.gif" alt="folding in subagents"></p>
+<h3>合并领域 agents</h3>
+<p>在第一次合并之前，先搭一个小型端到端 eval。然后<strong>按共享 context 折进，从使用量最大的 subagents 开始</strong>。</p>
+<p><a href="https://claude.com/blog/building-multi-agent-systems-when-and-how-to-use-them">合并那些专精 agents</a>，尤其是彼此接力输出、触碰同一份数据、或经常被一起调用的。例如，如果生产流量中有相当大的一部分是「一个专精 agent 后面紧跟第二个」，那它们就是紧耦合的一对，可以合并成一个领域 agent。</p>
+<h3>把 subagents 当作 tools 调用</h3>
+<p>当上面三个条件之一成立、而你保留某个 subagent 时，让主 agent 把 subagents 当作 tools 来调用往往很有效，这样它就能继续掌握与用户的对话。</p>
+<p>只有在这个 subagent 需要直接与用户交谈时，我们才建议完整交接（由 subagent 接管对话）。其他情况都可以做成主循环里的一个 skill 加若干 tools。</p>
+<p>这样你就能为 subagents 定义共享的响应 schema，用主 agent 拿真实数据校验结论，并裁剪最终合成步骤的输入。这是个不错的第一步，因为你不需要<strong>重写</strong>这些 subagents。它也让你在决定把任何 subagent 折进主 agent 之前，先拿到一个 task-completion eval 的<strong>基线</strong>。</p>
+<p>不过，有些失败模式仍然会存在：</p>
+<ul><li>每个专精 agent 都有自己的 prompt、context、归属团队和 evals</li><li>每次调用交回的仍是一份有损摘要</li><li>每次调用都是一个嵌套的模型循环，都会增加延迟</li></ul>
+<h3>通过 skills 和 tools 把 subagents 折进主 agent</h3>
+<p>一次折进一个 subagent：把每个 subagent 的 prompts 变成 skills，把它的 API 调用变成 MCP tools。对比有它和没有它的 eval 表现，再决定保留哪一个。</p>
+<p>对比时不要只查看最终分数，还要看具体是哪些任务翻了盘。我们在一个 sample 支持 agent 上测试这种做法时，把一个 subagent 折进另一个之后延迟降低了，但也打断了一个原本一直通过的流程：主 agent 手里握着订单查询工具，就自行作答，没再去问物流专精 agent 要送达日期。</p>
+<p>每次改动之前，确保你的 eval 为生产环境里每一组会一起运行的 agent 链条、以及每条 agent 绝不该打破的规则都备有一条任务，并且每条任务多跑几次，因为上面那种打破在两次运行里只出现过一次。</p>
+<h2>多个团队如何共同贡献一个 agent</h2>
+<p>领域推理可以从 knowledge bases、skills 和 MCP tools 里获取。各个团队可以把它们的职责从 agents 转向 skills 和 tools，由一个精干的中心团队继续持有 system prompt 和端到端质量。这包括在每个新 skill、新 tool 和新 eval 上线前先做审查。</p>
+<h3>MCP tools</h3>
+<p>当 agent 需要执行一个动作、从系统里读取实时数据、或以固定结构返回结果时，tools 是最合适的载体。在迁移过程中，你也可以把 tools 当作继续调用 subagents 的方式。我们建议按用户意图对 tools 分组（而不是一个 API 一个 tool），因为一旦 system prompt 里超过 30-50 个工具定义，工具选择的质量往往会下降。</p>
+<p>用支持延迟加载的 <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/tool-search-tool">tool search</a>，限制硬性前置条件，并把确实需要的前置条件放进 tools 里。例如，如果 Y 需要 X 的输出，Y 的 tool 会先检查它，并返回一条模型可以照着执行的指令。按用户划分的权限也是同样的做法：每个 tool 检查发起调用的用户能看到什么、能做什么，并返回一条模型读得懂的直白拒绝，这样一个循环就能服务访问权限不同的用户，而不必为每种权限级别单独设一个 agent。</p>
+<h3>Skills</h3>
+<p>当 agent 需要知道一个团队是怎么干活的——比如原本写在专精 subagent 的 prompt 里的步骤、规则和判断取舍——skills 是最合适的载体。</p>
+<p>我们扩充 skill 库的做法，是把维护工作交还给写 skills 的人。Claude 能承担大部分重活，用那些能够构建、测试和清理其他 skills 的 skills。</p>
+<p>为了防止 skill 蔓延，可以让每个团队的 DRI 对自己团队的 skills 负责，确保它们打磨到位、彼此区分清晰，并配有恰当的 evals 一起交付。</p>
+<ul><li><strong>/skill-creator</strong> 帮你写出从一开始就形态良好的新 skills，也能审计已有的那些，做裁剪、去重和重构。</li><li><strong>/skill-doctor</strong> 让你看到库里每个 skill 的成本和它实际被使用的频率，删掉无用负担。</li></ul>
+<h3>Knowledge bases</h3>
+<p>对于那些 agent 只是不时需要的参考材料，knowledge bases 是最合适的载体。事实与参考材料（政策、指标定义、产品规格）可以放在模型调用的搜索或查询工具后面，或者作为引用文件随 skill 一起交付。不要<a href="https://claude.com/blog/seeing-like-an-agent">让代码把这些 context 取出来粘贴进 prompts</a>。</p>
 <h2>加速这项工作的工具</h2>
-<p>我们最近<a href="https://code.claude.com/docs/en/commands">发布了</a>一套 Claude API 技能，可以帮助完成上述大部分工作。我们的<a href="https://github.com/anthropics/single-agent-loop-kit">迁移套件</a>将这些技能链接在一个指导工作流程中，用于评估多代理系统并将其移动到单个代理循环。它包含一个演示，您可以在实际运行之前尝试一下：</p>
-<ul><li><strong>/claude-api build-eval:</strong> 可以帮助创建中央团队拥有的第一个端到端集合或每个团队以其技能提供的小型评估</li><li><strong>/claude-api提示审计：</strong>可以在提示、技能和工具描述中标记为旧模型编写的指令，并建议修复作为差异。这可以在您的系统提示上运行，以查找为早期模型添加的任何规则，这些规则现在使代理速度更慢或更严格。每个团队的 DRI 也可以根据自己的技能和工具描述来运行。</li><li><strong>/claude-api hillclimb：</strong>可以根据现有评估迭代改进应用程序。这可用于“折叠与保留”比较（将一个子代理折叠成技能加工具后，让它迭代技能和工具描述，看看折叠版本是否匹配或击败子代理）以及系统提示。</li><li><strong>/claude-api 成本优化：</strong>分析您的调用的去向，并建议通过提示缓存、修剪不需要的输入和输出令牌、工作量和模型选择等选项来节省费用，一次一项更改。这有助于降低给定设计的成本和延迟。</li></ul>
-<p>随着模型的发展，我们对如何最好地使用它们的理解以及最佳实践的指导也在不断发展。这使得任何一种架构都不如其背后的原则重要：衡量、一次改变一件事，并保留坚持的东西。</p>
-<p>这是其中之一。随着模型的能力越来越强，代理的运行时间越来越长，更多的子代理可以成为技能和工具。不过，您不必一步到位。构建一个小型端到端评估，折叠一个子代理，仅当折叠版本得分较差时才将其保留为子代理，然后冲洗并重复。</p>
+<p>我们最近<a href="https://code.claude.com/docs/en/commands">发布</a>了一组 Claude API skills，能帮上上面提到的大部分工作。我们的<a href="https://github.com/anthropics/single-agent-loop-kit">迁移套件</a>把这些 skills 串成一套引导式工作流，用来评估并把多 agent 系统迁移到单个 agent loop。它包含一个 demo，你可以在动真实系统之前先试：</p>
+<ul><li><strong>/claude-api build-eval：</strong>可以帮你先建一套由中心团队持有的端到端 eval 集，或每个团队随自己的 skill 交付的小型 evals。</li><li><strong>/claude-api prompt-audit：</strong>能标出你的 prompts、skills 和工具描述里为老模型写的指令，并以 diff 形式提出修复建议。可以在你的 system prompts 上运行，找出那些为早期模型添加、如今却让 agent 变慢或变僵硬的规则。每个团队的 DRI 也可以在自己的 skills 和工具描述上运行它。</li><li><strong>/claude-api hillclimb: </strong>可以针对已有的 eval 迭代改进一个应用。它既能用来做「折进来 vs 保留」的对比（把某个 subagent 折成一个 skill 加若干 tools 后，让它迭代 skill 和 tool 的描述，看看折进来的版本能否追平或超过那个 subagent），也能用来优化你的 system prompt。</li><li><strong>/claude-api cost-optimize: </strong>给调用去向做画像，并从 prompt caching、裁剪不必要的输入与输出 tokens、effort、模型选择等选项里提出节省方案，一次只改一项。在给定的设计上，它能帮你把成本和延迟压下来。</li></ul>
+<p>随着模型演进，我们对如何最好地使用它们的理解、以及围绕最佳实践的指引也在演进。这让某一个具体架构的重要性，低于它背后的那条原则：先测量，一次只改一件事，留下真正站得住的东西。</p>
+<p>这里正是这种情况。随着模型能力更强、agents 运行时间更长，你的 subagents 中会有更多可以变成 skills 和 tools。不过你不必一步到位。先搭一个小型端到端 eval，折进一个 subagent，只有当折进来的版本得分更差时才把它留作 subagent，然后重复这个过程。</p>
 <p>文章</p>
-<p>2026 年 10 月 19 日</p>
-<h3>重新设计 Anthropic 的源代码控制</h3>
-<p>随着 Anthropic 的 monorepo 的合并从每天约 2,500 次增长到超过 30,000 次，源代码控制成为最大的开发瓶颈。以下是团队如何构建 Scion，这是一个专为始终在线代理设计的内部版本控制系统，并在五个月内从 git 迁移出来。</p>
-<p>克劳德·科德</p>
-<p>（在新选项卡中打开）</p>
+<p>Oct 19, 2026</p>
+<h3>Anthropic 重新设计源码管理</h3>
+<p>当合并进 Anthropic 的 monorepo 的量从每天约 2,500 次增长到超过 30,000 次，源码管理成了最大的开发瓶颈。这里讲的是团队如何构建 Scion——一套为始终在线的 agents 设计的内部版本控制系统，并在五个月内迁移离开 git。</p>
+<p>Claude Code</p>
 <p>文章</p>
-<p>2026 年 10 月 16 日</p>
-<h3>日本的一位人性化 BDR 如何与 Claude Managed Agents 一起度过一天</h3>
-<p>一名业务开发代表如何利用 Claude Managed Agents 和 Claude Tag 清理入站队列并起草双语客户电子邮件。</p>
-<p>克劳德管理代理</p>
+<p>Oct 16, 2026</p>
+<h3>Anthropic 日本的一名 BDR 如何用 Claude Managed Agents 安排自己的一天</h3>
+<p>一位业务拓展代表（BDR）如何用 Claude Managed Agents 和 Claude Tag 清空自己的入站队列，并起草双语的客户邮件。</p>
+<p>Claude Managed Agents</p>
 <p>文章</p>
-<p>2026 年 10 月 16 日</p>
-<h3>Claude Code 团队如何进行代码审查</h3>
-<p>您如何在批量代理生成代码时对其进行审查？ Claude Code 团队分享了其审核流程，从 Claude 验证自己的工作到风险分级的人工批准，以及采用它的清单。</p>
-<p>克劳德·科德</p>
-<p>（在新选项卡中打开）</p>
+<p>Oct 16, 2026</p>
+<h3>Claude Code 团队如何做代码审查</h3>
+<p>在 agents 产出代码的量级下，你该如何做代码审查？Claude Code 团队分享了他们的审查流程，从 Claude 自己验证自己的工作，到按风险分层的人工审批，外加一份采纳清单。</p>
+<p>Claude Code</p>
 <p>文章</p>
-<p>2026 年 10 月 13 日</p>
-<h3>Uber 的 CISO 构建人工智能内部威胁计划</h3>
-<p>Uber 的首席信息安全官 Philip Martin 讲述了人工智能代理的监控和可观察性的重要性，以及 Uber 的开源工具如何与企业前沿保障措施协同工作。</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
+<p>Oct 13, 2026</p>
+<h3>Uber 的 CISO 谈如何为 AI 构建内部威胁项目</h3>
+<p>Uber 的 CISO Philip Martin 谈监控与可观测性对 AI agents 为何重要，以及 Uber 的开源工具如何与 Enterprise Frontier Safeguards 协同工作。</p>
+<h2>用 Claude 改变你组织的运转方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
 <h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<p>产品更新、操作指南、社区亮点等等，每月送到你的收件箱。</p>
+<p>如果你想接收我们每月的开发者通讯，请提供你的邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] 完整的 Claude 平台可在 Google Cloud 上使用</title>
+      <title>[Anthropic Claude] 完整的 Claude 平台登陆 Google Cloud</title>
       <link>https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：The full Claude Platform, available on Google Cloud</description>
-      <content:encoded><![CDATA[<p>Google Cloud 上的 Claude Models（Anthropic 托管）现已全面推出，为 Google Cloud 客户提供全套 Claude Platform 功能，包括 Google Cloud IAM 凭证、计费和承诺停用。克劳德仍然可以通过 Google 托管产品进行访问，其中 Google 是数据处理者。</p>
-<h2>访问 Google Cloud 上完整的 Claude 平台</h2>
-<p>借助 Anthropic 托管产品，Google Cloud 客户现在可以获得全套 Claude API 功能，新功能和测试版会在原生 Claude 平台上线的同一天发布。</p>
-<p>Anthropic 托管产品可与现有的 Google Cloud IAM 凭证配合使用，因此团队可以保留他们已管理的工具和权限。通过一张 Google Cloud 发票进行计费，Claude 的使用会减少您现有的 Google Cloud 承诺。</p>
-<p>Google Cloud 上的 Claude Models（Anthropic 托管）目前可在美国和全球端点上使用。</p>
+      <content:encoded><![CDATA[<h1>完整的 Claude 平台登陆 Google Cloud</h1>
+<p>Claude Models on Google Cloud (Anthropic managed) 现已正式可用，Google Cloud 客户由此拿到 Claude Platform 的全部功能，并用上 Google Cloud 的 IAM 凭证、账单与承诺额度抵扣。Claude 也仍然可以通过 Google managed 的方式使用，在那种方式下由 Google 担任数据处理方。</p>
+<h2>在 Google Cloud 上访问完整的 Claude Platform</h2>
+<p>有了 Anthropic managed 这种方式，Google Cloud 客户现在能拿到 Claude API 的完整功能集，新功能与 beta 功能在与原生 Claude Platform 上线的同一天就会送到手上。</p>
+<p>Anthropic managed 方式直接沿用现有的 Google Cloud IAM 凭证，所以团队可以继续留在自己已经在管理的工具和权限里。账单走一张 Google Cloud 发票，Claude 的用量会抵扣你已有的 Google Cloud 承诺额度。</p>
+<p>Claude Models on Google Cloud (Anthropic managed) 目前提供 US 与 Global endpoint。</p>
 <p><img src="https://assets.claude.com/3000fcaf4ad00ac2cc4096d3f5aa236cc9eb415d.png" alt="Abacus.AI"></p>
-<blockquote>“通过 Anthropic 托管产品，我们获得了以 Google Cloud 作为访问层的原生 Claude API。第一天访问新功能非常重要。我们为企业构建 AI 代理和助手，需要快速将新的 Claude 功能引入我们的产品。使用我们现有的 IAM 设置和了解使用情况有助于我们的 Google Cloud 承诺，这对我们的团队来说是一个轻松的决定。”</blockquote>
-<p>Arvind Sundararajan，首席技术官</p>
-<p><img src="https://assets.claude.com/3720f77d05a852bc6857ae3eca424467270055b6.png" alt="三鲸"></p>
-<blockquote>“Moby 是我们针对电子商务品牌的 AI 工具，在 Claude 上运行。借助 Anthropic 托管产品，我们可以在 Google Cloud 上运行 Moby，该 API 与我们团队已经构建的 Claude API 相同。即时缓存对于我们如何经济高效地大规模运行 Moby 至关重要，我们在通过 Google Cloud 运行计费和访问时保留了它。”</blockquote>
-<p>Maksim Gorev，人工智能工程主管</p>
-<h2>包含什么</h2>
-<p>使用 Anthropic 托管产品的 Google Cloud 客户可以获得全套 Claude Platform 功能，因此他们可以：</p>
-<p><strong>使用以下方式构建和部署代理：</strong></p>
-<ul><li><a href="https://platform.claude.com/docs/en/managed-agents/overview">Claude Managed Agents（测试版）（在新选项卡中打开）</a> 为长期运行的代理提供支持，无需管理基础设施</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool">代码执行（在新选项卡中打开）</a> 在 API 调用中运行 Python 代码、创建可视化并分析数据</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool">计算机使用（在新选项卡中打开）</a>允许Claude操作浏览器或桌面来完成任务</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview">代理技能（在新选项卡中打开）</a> 教授 Claude 可重复的工作流程，以便提供一致的结果</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool">顾问策略（测试版）（在新选项卡中打开）</a> 通过咨询顾问模型为代理提供情报提升</li></ul>
-<p><strong>通过以下方式连接到系统和知识：</strong></p>
-<ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/files">文件 API（在新选项卡中打开）</a>，用于在对话中上传和引用文档</li><li><a href="https://platform.claude.com/docs/en/build-with-claude/itations">引文（在新选项卡中打开）</a> 用于在源文档中提供基础响应</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool">网络搜索（在新选项卡中打开）</a> 和 <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-fetch-tool">网络获取（在新选项卡中打开）</a> 通过网络上当前的真实数据来增强 Claude 的知识</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/mcp-connector">MCP 连接器（测试版）（在新选项卡中打开）</a> 将 Claude 连接到其他工具，而无需编写客户端代码</li></ul>
-<p><strong>通过以下方式管理成本和性能：</strong></p>
-<ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">提示缓存（在新选项卡中打开）</a> 用于降低重复上下文的成本和延迟</li><li><a href="https://platform.claude.com/docs/en/build-with-claude/batch-processing">批处理（在新选项卡中打开）</a> 适用于大容量、异步工作负载</li></ul>
-<p>Claude Opus 5.5 上的快速模式也适用于在 Google Cloud（人工管理）上使用 Claude Models 的客户。快速模式优先考虑速度，提供高达 2.5 倍的输出令牌生成速度，用于快速迭代、实时调试和交互式代理，其中输出速度可带来更好的用户体验。输入和输出代币分别为每百万 8 美元和 40 美元。</p>
-<p>请参阅我们的<a href="https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-management">文档（在新选项卡中打开）</a>，了解 Google Cloud 上 Claude Models 可用功能的完整列表。</p>
-<p>使用 Anthropic 托管产品的客户还可以访问 Claude Console，这是 Anthropic 的开发环境，用于使用 Claude 观察和管理代理。该控制台包括用于编写提示和配置代理、在托管环境中运行它们、监控使用情况和成本以及管理每个工作区的访问和安全性的工具。</p>
-<p>Claude Fable 5.1、Opus 5.5、Sonnet 5.5 和 Haiku 5.5 现已推出，新型号在推出时将通过 Anthropic 托管产品发货。</p>
-<h2>与 Claude 一起构建的两条路径</h2>
-<p>在 Google Cloud 上使用 Claude 进行构建的方法有两种。</p>
-<p><strong>Google Cloud 上的 Claude Models（Anthropic 托管）</strong> 专为希望零日访问所有测试版和普遍可用的 Claude 平台功能的客户而构建。对于想要通过 Google Cloud 访问的完整 Claude Platform 功能对等的客户来说，这是最好的选择。 Anthropic 运营该服务并充当数据处理器。</p>
-<p><strong>Google Cloud 上的 Claude Models（Google 托管）</strong> 对于需要 Google Cloud 作为数据处理器、有严格的区域数据驻留要求或想要原生 Google Cloud 集成（如 Model Armor 或 Agent Engine）的客户来说，仍然是最佳选择。</p>
-<h2>开始吧</h2>
-<p>Anthropic 托管产品现已全面上市。要开始使用，请打开 <a href="https://console.cloud.google.com/marketplace/product/anthropic/anthropic-management-claude">Google Cloud 上的 Claude Models（Anthropic 托管）（在新选项卡中打开）</a> 或浏览<a href="https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-driven">文档（在新选项卡中打开）</a>。</p>
-<p>如果您已有折扣，请在开始使用 Anthropic 托管产品之前联系您的 Anthropic 或 Google Cloud 客户主管，以确保正确应用您的折扣。折扣不能追溯至使用情况。</p>
+<blockquote>“借助 Anthropic managed 这种方式，我们拿到的是原生 Claude API，而 Google Cloud 作为接入层。第一天就能用上新功能很重要。我们为企业构建 AI agents 和助手，需要把新的 Claude 能力尽快放进产品里。沿用我们已有的 IAM 配置、并且清楚用量会计入我们的 Google Cloud 承诺额度，这让团队很容易就做了决定。”</blockquote>
+<p>Arvind Sundararajan，CTO</p>
+<p><img src="https://assets.claude.com/3720f77d05a852bc6857ae3eca424467270055b6.png" alt="Triple Whale"></p>
+<blockquote>“Moby 是我们面向电商品牌的 AI harness，跑在 Claude 上。有了 Anthropic managed 这种方式，我们把 Moby 跑在 Google Cloud 上，用的仍是团队本来就在其上构建的同一个 Claude API。Prompt caching 是我们如何经济地、大规模地运行 Moby 的核心，而在把计费和接入都放到 Google Cloud 之后，我们依然保住了它。”</blockquote>
+<p>Maksim Gorev，AI 工程负责人</p>
+<h2>包含哪些内容</h2>
+<p>使用 Anthropic managed 方式的 Google Cloud 客户能拿到 Claude Platform 的完整功能集，因此他们可以：</p>
+<p><strong>构建与部署 agent，可用：</strong></p>
+<ul><li><a href="https://platform.claude.com/docs/en/managed-agents/overview">Claude Managed Agents (beta)</a>，用来支撑长时间运行的 agent，而不必自己管基础设施</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool">Code execution</a>，在一次 API 调用里运行 Python 代码、制作可视化、分析数据</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/computer-use-tool">Computer use</a>，让 Claude 能够操作浏览器或桌面来完成任务</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview">Agent skills</a>，教给 Claude 可重复的工作流，让它交付一致的结果</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/advisor-tool">Advisor strategy (beta)</a>，通过请教一个 advisor 模型给 agent 加一次智力提升</li></ul>
+<p><strong>连接系统与知识，可用：</strong></p>
+<ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/files">Files API</a>，用于在各场对话之间上传和引用文档</li><li><a href="https://platform.claude.com/docs/en/build-with-claude/citations">Citations</a>，让回答有源文档打底</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool">Web search</a> 和 <a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-fetch-tool">web fetch</a>，用来自全网的、当下的真实世界数据来扩充 Claude 的知识</li><li><a href="https://platform.claude.com/docs/en/agents-and-tools/mcp-connector">MCP connector (beta)</a>，把 Claude 连到其他工具上而不用写 client 代码</li></ul>
+<p><strong>管理成本与性能，可用：</strong></p>
+<ul><li><a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">Prompt caching</a>，降低重复上下文带来的成本与延迟</li><li><a href="https://platform.claude.com/docs/en/build-with-claude/batch-processing">Batch processing</a>，应对大批量的异步工作负载</li></ul>
+<p>Claude Opus 5.5 上的 Fast Mode 对使用 Claude Models on Google Cloud (Anthropic managed) 的客户也已正式可用。Fast mode 把速度放在优先位置，输出 token 的生成速度最高可快 2.5 倍，适合快速迭代、实时调试，以及在输出速度决定体验好坏之处的交互式 agent。输入与输出 tokens 每百万分别为 $8 和 $40。</p>
+<p>Claude Models on Google Cloud 上可用功能的完整清单见我们的<a href="https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed">文档</a>。</p>
+<p>用上 Anthropic managed 方式的客户同时获得 Claude Console 的访问权，那是 Anthropic 用于观测和管理 Claude agent 的开发环境。Console 里有写 prompt、配置 agent 的工具，可以把它们跑在托管环境上，监控用量与成本，并按 workspace 管理访问与安全。</p>
+<p>Claude Fable 5.1、Opus 5.5、Sonnet 5.5 和 Haiku 5.5 均已可用，后续新模型一发布就会登陆 Anthropic managed 这种方式。</p>
+<h2>两条用 Claude 构建的路径</h2>
+<p>在 Google Cloud 上用 Claude 构建，有两种方式。</p>
+<p><strong>Claude Models on Google Cloud (Anthropic managed)</strong> 为这样的客户而建：他们想要 day zero 就能用上所有 beta 与正式可用的 Claude Platform 功能。它最适合希望通过 Google Cloud 获得 Claude Platform 完整功能对等的客户。服务由 Anthropic 运营，Anthropic 担任数据处理方。</p>
+<p><strong>Claude Models on Google Cloud (Google managed)</strong> 仍然是这些客户的最佳选择：需要由 Google Cloud 担任数据处理方、有严格的区域数据驻留要求，或者想要原生的 Google Cloud 集成，例如 Model Armor 或 Agent Engine。</p>
+<h2>开始使用</h2>
+<p>Anthropic managed 方式今日正式可用。要上手，请打开 <a href="https://console.cloud.google.com/marketplace/product/anthropic/anthropic-managed-claude">Claude Models on Google Cloud (Anthropic managed)</a>，或查阅<a href="https://platform.claude.com/docs/en/build-with-claude/claude-models-on-google-cloud/anthropic-managed">文档</a>。</p>
+<p>如果你已经有折扣，请在开始使用 Anthropic managed 方式之前联系你的 Anthropic 或 Google Cloud 客户负责人，以确保折扣被正确应用。折扣无法追溯适用于已经发生的用量。</p>
 <p>文章</p>
 <p>2026 年 10 月 21 日</p>
-<h3>HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</h3>
-<p>HCLTech 将把 Claude 引入其为银行、医院、电信公司和制造商提供的解决方案中。</p>
+<h3>HCLTech 加入 Claude Partner Network，成为 Global Premier 合作伙伴</h3>
+<p>HCLTech 会把 Claude 引入它为银行、医院、电信公司和制造商提供的解决方案。</p>
 <p>文章</p>
 <p>2026 年 10 月 21 日</p>
-<h3>介绍克劳德二重奏</h3>
-<p>今天，美国 Pro 和 Max 订阅者可以通过候补名单获得研究预览。</p>
+<h3>Claude Duet 登场</h3>
+<p>研究预览版今日起可通过 waitlist 排队获得，首先面向美国的 Pro 与 Max 订阅者。</p>
 <p>文章</p>
 <p>2026 年 10 月 21 日</p>
-<h3>Claude Security 现在连续扫描并跟踪修复</h3>
-<p>Claude Security 现在可以在代码更改时跟踪您的存储库，跟踪发现的问题直至修复，从您的团队添加的上下文中学习，并通过 API 和 MCP 连接到您的工具。面向 Claude Enterprise 客户提供公开测试版。</p>
-<p>克劳德安全</p>
+<h3>Claude Security 现在持续扫描并跟踪修复</h3>
+<p>Claude Security 现在会随着代码改动持续跟住你的 repositories，把每一条发现跟踪到被修复为止，从你团队补充的上下文里学习，并通过一个 API 和 MCP 接入你的工具。以 public beta 形式向 Claude Enterprise 客户提供。</p>
+<p>Claude Security</p>
 <p>文章</p>
 <p>2026 年 10 月 15 日</p>
-<h3>代码审查现已普遍可用</h3>
-<p>在投入生产之前捕获更多错误。</p>
-<p>克劳德·科德</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
-<h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<h3>Code Review 现已正式可用</h3>
+<p>在更多 bug 抵达生产环境之前把它们抓出来。</p>
+<p>Claude Code</p>
+<h2>用 Claude 改造你组织的运转方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦等。每月送达你的收件箱。</p>
+<p>如果你希望收到我们每月的开发者通讯，请提供你的电子邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] 向 Agentic AI 基金会捐赠 Agent 技能</title>
+      <title>[Anthropic Claude] 向 Agentic AI Foundation 捐赠 Agent Skills</title>
       <link>https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：Donating Agent Skills to the Agentic AI Foundation</description>
-      <content:encoded><![CDATA[<p>今天，我们向 Agentic AI 基金会 (AAIF) 捐赠 <a href="https://agentskills.io/home">Agent Skills</a>，这是一项为 AI 代理提供专业知识和工作流程的开放标准。自我们于 2025 年 12 月发布该标准以来，包括 ChatGPT、Cursor、GitHub Copilot 和 VS Code 在内的 70 多个代理平台已经集成了代理技能。</p>
-<h3>通过简单实现代理互操作性</h3>
-<p>技能是一个包含 SKILL.md 文件的文件夹，该文件向代理教授特定任务或领域，以及它需要的任何脚本或参考材料。我们在编写 Claude Code 时培养了技能。它可以很好地处理一般知识工作，但通常缺乏实际业务任务所需的程序知识。在 2025 年 10 月发布后的几周内，开发人员在 GitHub 上发布了数千项技能，并为 Codex、Cursor 和 OpenCode 编写了加载器。然后，我们将代理技能作为开放标准发布在自己的 GitHub 组织和域下，以便任何代理都可以使用它。截至目前，已发布技能100万条，安装量近2.8亿条。</p>
-<h3>向 AAIF 捐赠代理技能</h3>
-<p>我们致力于保持代理技能的开放、社区驱动和供应商中立。今天，我们将该标准捐赠给 Linux 基金会下的 Agentic AI 基金会 (AAIF)，我们去年与 Block 和 OpenAI 共同创立了该基金会，并向其捐赠了模型上下文协议 (MCP)。 AAIF 将为未来的标准提供一个中立的家园，确保社区对代理技能的下一步发展有发言权。</p>
-<p>我们将捐赠 Agent Skills 名称和徽标、GitHub 组织以及 <a href="https://agentskills.io/home">agentskills.io</a> 域。您可以继续使用该标准或为其做出贡献，而无需加入 AAIF。</p>
-<p>来自 Anthropic、Google、OpenAI 和其他公司的工程师将以个人身份维护该标准，其中 David Soria Parra 和 Mahesh Murag 担任首席维护人员。</p>
-<h3>接下来会发生什么</h3>
-<p>我们建议从一个涵盖版本发布的路线图、正式的提案流程以及针对编写和安装技能的人员的安全指南开始。与 MCP 一样，该项目将继续优先考虑社区意见和透明决策。您可以加入该项目的 <a href="https://discord.gg/MKPE9g8aUy">Discord</a> 以针对拟议的规范更改提供反馈。</p>
-<p>感谢从一开始就使用代理技能构建的开发人员，以及将技能引入其产品的团队。阅读 <a href="https://agentskills.io">agentskills.io</a> 上的规范并加入 <a href="https://github.com/agentskills/agentskills">GitHub</a> 上的讨论。</p>]]></content:encoded>
+      <content:encoded><![CDATA[<h1>向 Agentic AI Foundation 捐赠 Agent Skills</h1>
+<p>今天，我们把 <a href="https://agentskills.io/home">Agent Skills</a>——这个为 AI agents 提供专门知识和工作流的开放标准——捐赠给 Agentic AI Foundation（AAIF）。自 2025 年 12 月我们发布这一标准以来，已有 70 多个 agent 平台集成了 Agent Skills，其中包括 ChatGPT、Cursor、GitHub Copilot 和 VS Code。</p>
+<h3>以简约实现 Agent 互操作</h3>
+<p>一个 skill 就是一个文件夹，其中包含一个 SKILL.md 文件，用来教会 agent 某项具体任务或某个具体领域的做法，并附上它所需的任何脚本或参考资料。我们在做 Claude Code 的过程中开发了 skills。它把通用知识工作处理得很好，却常常缺少真实业务任务所需要的流程性知识。在 2025 年 10 月上线后的几周之内，开发者们就在 GitHub 上发布了数千个 skills，并为 Codex、Cursor 和 OpenCode 写出了加载器。随后我们把 Agent Skills 发布为开放标准，放在它自己的 GitHub organization 和域名之下，好让任何 agent 都能使用它。到目前为止，已发布的 skills 达 100 万个，安装量接近 2.8 亿。</p>
+<h3>把 Agent Skills 捐赠给 AAIF</h3>
+<p>我们致力于让 Agent Skills 保持开放、由社区驱动、厂商中立。今天，我们把这一标准捐赠给隶属于 Linux Foundation 的 Agentic AI Foundation（AAIF）——去年我们与 Block 和 OpenAI 一起<a href="https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation">共同创立</a>了它，我们捐赠的 Model Context Protocol（MCP）也在它那里。今后，AAIF 将为这一标准提供一个中立的归属，确保社区对 Agent Skills 下一步走向有发言权。</p>
+<p>我们捐赠的还有 Agent Skills 的名称和标识、GitHub organization，以及 <a href="https://agentskills.io/home">agentskills.io</a> 域名。你无需加入 AAIF，也可以继续使用这一标准或为其做出贡献。</p>
+<p>来自 Anthropic、Google、OpenAI 及其他公司的工程师将以个人身份维护这一标准，由 David Soria Parra 和 Mahesh Murag 担任 Lead Maintainers。</p>
+<h3>接下来会做什么</h3>
+<p>我们提议先从一个路线图开始，内容涵盖版本化发布、正式的提案流程，以及写给 skills 编写者和安装者的安全指引。和 MCP 一样，这个项目会继续把社区意见和透明的决策机制放在首位。你可以加入项目的 <a href="https://discord.gg/MKPE9g8aUy">Discord</a>，对拟议中的规范变更提出反馈。</p>
+<p>感谢从一开始就用 Agent Skills 进行构建的开发者，也感谢把 skills 带进自己产品的各个团队。请到 <a href="https://agentskills.io">agentskills.io</a> 阅读规范，并到 <a href="https://github.com/agentskills/agentskills">GitHub</a> 参与讨论。</p>]]></content:encoded>
     </item>
     <item>
       <title>[Anthropic Claude] 公开招募生命科学客座研究员</title>
@@ -380,15 +381,16 @@
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：Open call for guest investigators in the life sciences</description>
-      <content:encoded><![CDATA[<p>今天，我们邀请生命科学界的成员申请与我们合作开展特殊项目。我们正在寻找学术机构、非营利组织或政府实验室的主要研究人员及其研究小组的提案，他们希望利用 Claude 来研究人类因果生物学、结构和计算分子生物学、药物化学、药物发现和临床科学中的关键问题。</p>
-<p>您可以在此处提交<a href="https://www.anthropic.com/guest-investigator-program">项目提案</a>。</p>
-<p>在 8-12 周的时间里，客座调查员将直接与人类研究人员合作解决感兴趣的问题，并生成对他们的工作最有帮助的分析、工件和工具。我们的团队将免费运行我们的模型和线束。</p>
-<p>我们将共同努力发布这些输出并开源随附的数据和代码。客座调查员在项目期间的每一步都保留对其数据的权利。他们还将有权进行我们合作中可能产生的任何独立后续研究。</p>
-<p>我们正在寻找能够清楚地解释他们将如何从与 Anthropic 研究人员的直接合作中受益的申请人。申请人还应合理证明其成果（例如初步发现、开放问题的答案、开源数据集或公共资源）可以在 8 至 12 周的合作期内产生。对于某些项目，可能可以选择延长初始合作期。</p>
-<p>我们知道，大多数感兴趣的开放问题的结果将需要更长的时间来验证，但我们正在寻找能够在相对较短的时间内产生一些初步证据的提案。</p>
-<p>我们不会要求客座调查员在申请中或合作期间向我们提供他们的数据，并且我们要求申请人在其申请材料中仅包含公开信息。</p>
-<p>申请开放时间约为 14 天，我们将努力在申请结束后约 14 天通过电子邮件通知选定的参与者。随着我们更多地了解如何最好地支持科学界，我们期待在未来扩大这一努力。</p>
-<p>该计划是 Anthropic 正在寻求加大对生命科学和更广泛的科学研究界的投资力度的多项举措之一。希望直接访问我们最强大的公开生物学模型的科学家可以申请加入我们的<a href="https://www.anthropic.com/news/life-sciences-verification-program">生命科学验证计划</a>。我们还继续通过我们的 <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science 计划</a> 为研究人员提供支持，该计划为科学家提供 Claude 学分，以加速他们在科学发现方面的进展。</p>]]></content:encoded>
+      <content:encoded><![CDATA[<h1>公开招募生命科学客座研究员</h1>
+<p>今天，我们邀请生命科学社区的成员提交申请，与我们一起开展专题项目。我们期待这样的提案：来自学术机构、非营利组织或政府实验室的课题负责人及其研究团队，希望用 Claude 来研究人类因果生物学、结构与计算分子生物学、药物化学、药物发现以及临床科学中的关键问题。</p>
+<p>你可以在<a href="https://www.anthropic.com/guest-investigator-program">这里提交项目提案</a>。</p>
+<p>在 8–12 周的时间里，客座研究员将与 Anthropic 的研究人员直接合作，围绕一个他们感兴趣的问题开展工作，并产出对他们的实际工作最有帮助的分析、成果物和工具。我们的团队会免费为他们运行我们的模型和 harness。</p>
+<p>我们将一起发表这些成果，并把配套的数据和代码开源。客座研究员在项目的每个阶段都保留对自身数据的权利，同时也拥有对我们这次合作可能带来的任何独立后续研究的权利。</p>
+<p>我们希望申请者能够说清楚，与 Anthropic 的研究人员直接合作会让他们怎样受益。申请者还应当能够合理地论证，自己的成果（例如初步发现、对开放性问题的解答、开源数据集或公共资源）可以在 8 到 12 周的合作期内产出。部分项目可能会获得在初始合作期之外延长的选项。</p>
+<p>我们理解，多数我们所关注的开放问题，其结果要验证需要长得多的时间，但我们寻找的是能够在相对较短的时间内产出一些初步证据的提案。</p>
+<p>我们并不要求客座研究员把数据交给我们，无论是在申请材料里还是在合作期间；我们也要求申请者只在自己的申请材料中包含公开可得的信息。</p>
+<p>申请通道将开放约 14 天，我们会尽力在申请截止后约 14 天以邮件通知入选者。随着我们进一步了解怎样才能最好地支持科学社区，我们期待未来有可能进一步扩大这项工作。</p>
+<p>这个项目是 Anthropic 为在生命科学以及更广泛的科学研究社区投入更多而推进的多个举措之一。希望直接用上我们面向生物学的最强公开可用模型的科研人员，可以申请加入我们的 <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a>。我们也继续通过 <a href="https://www.anthropic.com/news/ai-for-science-program">AI for Science initiative</a> 支持研究人员，该计划为科研人员提供 Claude 额度，以加快他们做出科学发现的进程。</p>]]></content:encoded>
     </item>
     <item>
       <title>[xAI Grok] SpaceX Super Intelligence 合作伙伴网络正式推出</title>
@@ -2666,223 +2668,227 @@ y = model(Tensor.ones([2, 8, 3]))             # same op, now compiled</code></pr
 <h2>作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] Claude二重奏介绍</title>
+      <title>[Anthropic Claude] Claude Duet 正式发布</title>
       <link>https://claude.com/resources/articles/claude-duet</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-duet</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：Introducing Claude Duet</description>
-      <content:encoded><![CDATA[<p>今天，我们将开放 Claude Duet 的研究预览版，这是一款新应用程序，Claude 在其中充当主动代理。它会向您提供需要您关注的内容，完成您要求它完成的任务，即使您离开后仍会继续工作，并在代表您采取行动之前与您核实。我们为专业人士和小企业主打造了 Claude Duet，他们的工作量超出了他们的能力范围。</p>
-<p>它可以在 iOS 和 Android 以及 claude.ai 上作为独立应用程序使用。对于本研究预览，Claude Duet 包含在 Pro 和 Max 计划中，并使用与 Claude 的其他部分相同的使用限制。要获得访问权限，请<a href="https://claude.com/product/claude-duet">加入候补名单（在新选项卡中打开）</a>。</p>
-<h2>将注意力放在最重要的地方</h2>
-<p>我们将 Claude Duet 设计为您可以信赖的合作伙伴。各类专业人士每天都必须做出许多决定，我们认为他们会发现 Claude Duet 最有用。它可以帮助您优先考虑将时间和精力花在哪里，并为以前感觉不可能或令人畏惧的雄心勃勃的项目留出空间。</p>
-<p>Claude Duet 之所以如此有帮助，是因为它的判断力。我们围绕 <a href="https://www.anthropic.com/claude-opus-5-5">Claude Opus 5.5（在新选项卡中打开）</a> 进行设计，并将其构建为足智多谋，并决定什么需要您、什么可以等待以及何时首先与您联系。</p>
-<p>每天早上，它都会向您发送有关所连接应用程序中最重要项目的简短摘要。一整天，它都会密切关注这些应用程序，并仅在有事情需要您注意时才向您发送消息。您还可以将各种类型的任务交给它，从安排会议的简单管理任务到更复杂的任务，例如使用数十种工具构建仪表板、创建财务或销售预测、原型设计和构建 Web 应用程序。</p>
-<h2>安全性和谨慎性是内置的</h2>
-<p>Claude Duet 借鉴了我们多年来对代理的安全、保障和隐私工作的经验，包括我们自己的代理和用于运行其代理的基础设施企业：</p>
-<ul><li>Claude Duet 利用了我们的<a href="https://www.anthropic.com/research/trustworthy-agents">值得信赖的代理框架（在新选项卡中打开）</a>，该框架还为 Chrome 中的 Claude Code 和 Claude 等代理提供了指导。</li><li>Claude Duet 对凭据的处理遵循我们用于 <a href="https://www.anthropic.com/engineering/managed-agents">Claude Managed Agents（在新选项卡中打开）</a> 的设计，因此它永远不会直接看到您的密码或登录令牌。</li><li>操作由我们的<a href="https://www.anthropic.com/engineering/claude-code-auto-mode">自动模式分类器（在新选项卡中打开）</a> 批准，同样的保护措施可以保护 Claude 和 Claude Code 不采取您不要求的步骤。</li><li>Claude Duet 对隐藏指令和提示注入的防御来自我们的<a href="https://www.anthropic.com/research/prompt-injection-defenses">浏览器使用研究（在新选项卡中打开）</a>，我们的模型和防护措施也更广泛地涵盖了这一点。</li><li>我们对 Claude Duet 的安全基础设施进行对抗性测试。红队和外部公司渗透测试了 Claude Duet，它由我们的公共 <a href="https://hackerone.com/anthropic">bug 赏金计划（在新选项卡中打开）</a> 涵盖。</li></ul>
-<p><strong>Duet 如何处理敏感信息。</strong> 我们还发布了 Claude Duet，其中包含新的专用分类器和安全系统提示，可检查每条消息并防止敏感信息泄露。为您读取电子邮件和发送消息的代理不断地决定信息的去向。这种新的分类器和提示旨在拒绝共享最严格信息层的请求，包括信用卡号码和政府身份证明。其他敏感信息（例如健康或个人财务）仅在您明确指示 Claude Duet 发送时才会发送。</p>
-<p>我们将继续开发和加强这些保护措施，并将在未来几天分享有关 Claude Duet 的安全设计的更多详细信息。</p>
-<h2>测试人员如何使用 Claude Duet</h2>
-<p>Anthropic 的员工一直在利用 Claude Duet 来完成更多任务，同时也为思考和存在留出更多空间。我们的 Claude Code 团队的领导者 Boris Cherny 在散步时与 Claude Duet 讨论他心里的待办事项清单，而不是把工作留在办公桌上。领导我们的模型和产品行为设计团队的切尔西·拉尔森 (Chelsea Larsson) 在离开与孩子们在一起之前，将她的待办事项清单交给了克劳德·杜埃 (Claude Duet)，并将结果保存到晚间报告中。 Claude Duet 背后的团队使用它来构建产品。该团队的领导者卡兰·阿胡贾 (Karan Ahuja) 与该团队合作安排用户访谈、与他合作开发原型，甚至发布代码。</p>
-<p>我们为小企业主和企业家提供了早期使用 Claude Duet 的机会，其中一些人一直在使用它来帮助经营自己的企业。以下是其中一些人的说法：</p>
+      <content:encoded><![CDATA[<h1>Claude Duet 正式发布</h1>
+<p>今天，我们开放了 Claude Duet 的研究预览，这是一款让 Claude 作为主动型 agent 工作的新应用。它会主动来找你，告诉你哪些事需要关注，完成你交给它的任务，即使你走开也继续工作，并在代替你行动之前先向你确认。我们打造 Claude Duet，是给那些手头事务多到来不及一一盯住的专业人士和小企业主的。</p>
+<p>它以独立应用的形式提供，支持 iOS 和 Android，也可以在 claude.ai 上使用。在本次研究预览期间，Claude Duet 已包含在 Pro 和 Max 套餐中，并与其他 Claude 产品使用同一套用量额度。想要获得访问权限，请<a href="https://claude.com/product/claude-duet">加入候补名单（在新选项卡中打开）</a>。</p>
+<h2>把注意力放在最重要的地方</h2>
+<p>我们把 Claude Duet 设计成一个你可以信赖的伙伴。各行各业的专业人士每天都要在许多决定之间周旋，我们认为他们会觉得 Claude Duet 最有用。它帮你看清该把时间和精力花在哪里，也为那些过去觉得不可能或令人却步的宏大项目留出空间。</p>
+<p>Claude Duet 之所以这么好用，关键在于它的判断力。我们围绕 <a href="https://www.anthropic.com/claude-opus-5-5">Claude Opus 5.5（在新选项卡中打开）</a> 来设计它，把它做得善于想办法，能判断哪些事需要你、哪些事可以等、什么时候该先来跟你确认。</p>
+<p>每天早上，它会把你所有已连接应用中最重要的事项汇总成一份简短简报发给你。一整天里，它持续留意这些应用，只在有需要你关注的事情时才给你发消息。你也可以把各种各样的任务交给它——从安排会议这类简单的行政事务，到更复杂的任务，例如用几十种工具搭建 dashboard、做财务或销售预测、做原型，以及构建 web 应用。</p>
+<h2>安全与审慎是内置的</h2>
+<p>Claude Duet 借鉴了我们多年来在 agent 的安全、可靠性与隐私方面的工作积累，既包括我们自己的成果，也包括企业用来运行其 agent 的那套基础设施：</p>
+<ul><li>Claude Duet 沿用我们<a href="https://www.anthropic.com/research/trustworthy-agents">值得信赖的 agent 框架（在新选项卡中打开）</a>，同样的框架也指导着 Claude Code、Claude in Chrome 这类 agent。</li><li>Claude Duet 对凭证的处理遵循我们在 <a href="https://www.anthropic.com/engineering/managed-agents">Claude Managed Agents（在新选项卡中打开）</a> 中使用的设计，因此它绝不会直接看到你的密码或登录 token。</li><li>动作要经由我们的 <a href="https://www.anthropic.com/engineering/claude-code-auto-mode">auto mode 分类器（在新选项卡中打开）</a> 批准，这正是保护 Claude 和 Claude Code 不踏出你没要求的那一步的同一项保障措施。</li><li>Claude Duet 对隐藏指令与 prompt injection 的防护来自我们的<a href="https://www.anthropic.com/research/prompt-injection-defenses">浏览器使用研究（在新选项卡中打开）</a>，我们的模型与保障措施也在更广的范围内覆盖这一点。</li><li>我们针对 Claude Duet 的安全基础设施开展对抗性测试。红队和一家外部公司对 Claude Duet 做了渗透测试，它也纳入我们公开的<a href="https://hackerone.com/anthropic">漏洞赏金计划（在新选项卡中打开）</a>。</li></ul>
+<p><strong>Duet 如何处理敏感信息。</strong>我们发布 Claude Duet 时还带来了一个全新的专用分类器和 safety system prompt，它们逐条检查消息、防止敏感信息泄露。一个替你读邮件、发消息的 agent，无时无刻不在判断信息该往哪里去。这套新的分类器和 prompt 的设计目标是拒绝共享最高级别敏感信息的请求，包括信用卡号和政府签发的身份证件。其他敏感信息，例如健康状况或个人财务，只有在你明确指示 Claude Duet 发送时才会放行。</p>
+<p>我们会继续开发并加强这些保护，并在接下来几天分享更多细节，说明 Claude Duet 在安全方面是如何设计的。</p>
+<h2>测试者如何使用 Claude Duet</h2>
+<p>Anthropic 内部的人们已经用 Claude Duet 完成了更多工作，也为思考和保持专注留出了更多空间。带领我们 Claude Code 团队的 Boris Cherny 会在散步时和 Claude Duet 一条条过脑子里的待办清单，而不是把这些事留到办公桌前。带领我们模型与产品行为设计团队的 Chelsea Larsson 在出门去陪孩子之前把待办清单交给 Claude Duet，它会把结果存下来做成一份晚间报告。而 Claude Duet 背后的团队则用它来打造这款产品。带领该团队的 Karan Ahuja 与它一起安排用户访谈、和他一起做原型，甚至交付代码。</p>
+<p>我们向小企业主和创业者开放了 Claude Duet 的抢先体验，其中一些人已经用它来帮忙经营自己的生意。他们中的一些人是这么说的：</p>
 <p><img src="https://assets.claude.com/04a24f1e5f837cd4772f819fdf835bf695d545e0.jpg?w=168&amp;q=75&amp;fm=webp&amp;fit=max" alt=""></p>
-<blockquote>Jess 每天早上都会从 Claude Duet 那里得到一份概要。有一天，在没有询问的情况下，它标记了一处房产，显示该房产在她的日历上的日期是错误的。 “[这]正是我希望无需询问就能抓到的事情，”她说。</blockquote>
-<p>Jess Provencher，Pro Homes 经纪人兼业主</p>
+<blockquote>Jess 每天早上都会收到 Claude Duet 给她梳理的一份情况概览。有一天，没人让它做，它却发现她日历上的一次房产带看被排到了错误的日子。「这正是我希望不用开口就被发现的问题，」她说。</blockquote>
+<p>Jess Provencher，经纪人兼店主，Pro Homes</p>
 <p><img src="https://assets.claude.com/28f5d3327f8406423e470308445e55db43409b73.jpg?w=168&amp;q=75&amp;fm=webp&amp;fit=max" alt=""></p>
-<blockquote>Amin 在南佛罗里达拥有 Shahs of Kabob，拥有约 110 名员工。他使用 Claude Duet 进行会计、客户支持和营销，并逐家处理他的发票。 “它将所有这些结合在一起，”他说。 “我不需要打开 100 个标签。”</blockquote>
-<p>阿明·易卜拉希米 (Amin Ebrahimi)，Shahs of Kabob 老板</p>
+<blockquote>Amin 在佛罗里达南部经营 Shahs of Kabob，公司有约 110 名员工。他用 Claude Duet 做会计、客户支持和市场营销，还一家店一家店地把自己的发票全部处理完。「它把所有东西都收到了一起，」他说。「我不必再开 100 个标签页。」</blockquote>
+<p>Amin Ebrahimi，店主，Shahs of Kabob</p>
 <p><img src="https://assets.claude.com/f1e82e9c902af913a2d794c587841fdf39cfda50.jpg?w=168&amp;q=75&amp;fm=webp&amp;fit=max" alt=""></p>
-<blockquote>Mya 接到一个电话，介绍一位潜在客户。克劳德·杜埃在她的日历上看到了这一点，并准备了一份简报。它还注意到她的航班即将起飞前接到了电话，并提出将其转移。 “我没有意识到那是在我的航班起飞之前，”她说。 “我喜欢这种主动性。”</blockquote>
-<p>米亚·道尔顿 (Mya Dalton)，品牌策略师</p>
-<h2>克劳德二重唱如何运作</h2>
-<p><strong>Claude 的背景是基础。</strong> Claude Duet 会继承您的 Claude 帐户中的记忆、技能和连接的应用程序，因此设置它只需很少的工作。改变的是你们的合作方式：Claude Duet 首先来找您，您可以在一个正在进行的线程中通过打字或语音向其发送消息，因此快速回复和为期一周的项目都在同一个地方开始。</p>
-<p><strong>当您离开时，工作仍在继续。</strong> Claude Duet 有一个带有自己的浏览器的虚拟机，因此不需要您的笔记本电脑或手机处于打开状态。在短信中描述一项任务，它会计算出要使用哪些应用程序以及在后台执行哪些步骤。当任务完成或需要您审核时，您会收到通知。</p>
-<p><strong>当有需要时收到消息。</strong> Claude Duet 每隔几个小时检查一次您连接的帐户，因为不间断检查会更快地用完您的计划的限额。我们正在继续测试它对何时向您发送消息的判断，并且我们将根据测试人员告诉我们的内容不断调整它。您还可以告诉它您想听什么以及多久听一次。</p>
-<p><strong>重要决定由您决定。</strong> Claude Duet 自行阅读、起草和准备工作。但在它发送消息、付款、签署文档或删除任何内容之前，它会准确地向您显示它将要执行的操作并等待您的批准。即使经过您的批准，有些事情也是禁止的，例如交易证券或在账户之间转移资金。您还可以断开 Claude Duet 有权访问的任何应用程序。</p>
-<p><strong>与您的业务运行所用的工具连接。</strong> Claude Duet 可以使用 <a href="https://claude.com/marketplace/connectors-plugins">Claude Marketplace（在新选项卡中打开）</a> 中的 6,000 多个连接器和插件来：</p>
-<ul><li>查找您错过的 Gmail 和 Slack 消息并帮助您回复。</li><li>检查 Intuit QuickBooks 或 Stripe 是否有未付发票和草稿提醒。</li><li>在 Gusto 中准备和运行工资单，填写工时、奖金和报销。</li><li>起草职位发布，编辑并批准后将其发布到 LinkedIn。</li><li>帮助准备协议并通过 Docusign 发送以供审核和签名。</li><li>使用 HubSpot 中的联系和交易历史记录起草后续电子邮件。</li><li>在 Canva 中将您的产品发布变成一场社交活动。</li><li>设置、设计和管理您的 Shopify 商店。即将推出的更丰富的可视化编辑器将允许您设计店面并在任何内容上线之前预览它。</li></ul>
-<p>您还可以使用 Claude Duet 通过 Stripe 的数字钱包 Link 为您的企业购买物品。 Claude Duet 与您确认该项目，Link 要求您批准支出。然后它会使用虚拟卡进行支付，因此您的真实卡号不会被共享。它还可以使用 Shopify 的 Shop Pay 在在线商店结账。很快，在您的许可下，它将能够使用您在 1Password 中保存的登录信息登录网站。</p>
-<p><img src="https://assets.claude.com/c3618d5ce675bcaa9716a06d180879c2b94161c3.png" alt="与 Claude Duet 配合使用的应用程序徽标"></p>
+<blockquote>Mya 马上要和一个潜在客户通话。Claude Duet 在她日历上看到了这件事，并准备好一份简报。它还注意到这通电话正好排在她登机之前，于是提出挪时间。「我没意识到它就在我起飞前，」她说。「我喜欢这种主动性。」</blockquote>
+<p>Mya Dalton，品牌策略师</p>
+<h2>Claude Duet 如何工作</h2>
+<p><strong>你在 Claude 里已有的上下文就是基础。</strong> Claude Duet 会把你 Claude 账号中的 memory、skills 和已连接应用一并继承过来，所以配置它几乎不需要做什么。改变的是你们的协作方式：Claude Duet 会先来找你，你可以在一个持续进行的会话线程里用打字或语音给它发消息，因此一句快速回复和一个为期一周的项目都从同一个地方开始。</p>
+<p><strong>你走开之后工作继续。</strong> Claude Duet 有一台自带浏览器的虚拟机，所以不需要你的笔记本电脑或手机保持开机。用一条简短消息描述任务，它就会在后台自己算清楚该用哪些应用、该走哪些步骤。任务完成或需要你审核时，你会收到通知。</p>
+<p><strong>有事需要你时给你发消息。</strong> Claude Duet 每隔几小时检查一次你已连接的账号，因为不间断地检查会快得多地耗尽你套餐的额度。我们会继续检验它关于何时该给你发消息的判断，并根据测试者告诉我们的情况持续调校。你也可以告诉它你想听到哪些事、以及多久一次。</p>
+<p><strong>重要决定仍然留在你手里。</strong> Claude Duet 会自己阅读、起草和准备工作。但在它发送消息、支付款项、签署文件或删除任何东西之前，它会准确地展示自己即将做什么，并等待你的批准。有少数事情即使你批准也不允许，比如交易证券或在账户之间转移资金。你也能断开 Claude Duet 有权访问的任何应用。</p>
+<p><strong>接入你业务赖以运转的工具。</strong> Claude Duet 可以使用 <a href="https://claude.com/marketplace/connectors-plugins">Claude Marketplace（在新选项卡中打开）</a> 中超过 6,000 个连接器和插件来：</p>
+<ul><li>找出你错过的 Gmail 和 Slack 消息，并帮你回复。</li><li>到 Intuit QuickBooks 或 Stripe 里查看未付款的发票，并起草提醒。</li><li>在 Gusto 里准备并发放工资，工时、奖金和报销都已填好。</li><li>起草一份招聘启事，等你修改并批准后发布到 LinkedIn。</li><li>帮忙准备协议，并通过 Docusign 发送出去供审阅和签署。</li><li>用 HubSpot 里的联系人和交易记录起草跟进邮件。</li><li>在 Canva 里把你的产品发布做成一场社交推广活动。</li><li>搭建、设计并管理你的 Shopify 店铺。即将推出的、功能更丰富的可视化编辑器会让你设计店铺页面，并在任何内容上线前先预览。</li></ul>
+<p>你也可以用 Claude Duet 通过 Link（Stripe 的数字钱包）为你的业务采购东西。Claude Duet 会和你确认要买的商品，Link 则请你批准这笔支出，随后用虚拟卡付款，因此你真实的卡号不会被共享。它还能用 Shopify 的 Shop Pay 在网上商店结账。即将上线的是：经你允许后，它可以用你保存在 1Password 里的登录信息登录网站。</p>
+<p><img src="https://assets.claude.com/c3618d5ce675bcaa9716a06d180879c2b94161c3.png" alt="与 Claude Duet 搭配使用的应用 logo"></p>
 <h2>加入研究预览</h2>
-<p>这是 Claude Duet 的早期版本，它仍然可能会误读线程或错误校准紧急事项。我们围绕工作构建了它的核心功能，因此个人事务（例如订票）不太强大，而且它还无法向您显示其浏览器。目前，Claude Duet 运行在自己的应用程序中，与主 Claude 应用程序分开。我们从早期用户那里学到的东西将决定两者如何协同工作。</p>
-<p>在研究预览期间，Claude Duet 与 Claude 的其他人分享您的计划的使用限制，并且它使用这些限制的方式与典型对话的方式不同。它的背景调查会计入这些限制，而更大的任务，比如构建财务模型或套牌，需要更多的模型转变和后台工作。</p>
-<p>我们从今天开始面向美国的 Pro 和 Max 用户。加入<a href="https://claude.com/product/claude-duet">候补名单（在新选项卡中打开）</a>，一旦 Claude Duet 准备好，我们就会向您发送电子邮件。</p>
+<p>这是 Claude Duet 的早期版本，它仍可能误读一个会话线程，或判断错什么才算紧急。它的核心能力是围绕工作构建的，所以订票这类个人事务表现得没那么强，它也还不能把自己正在使用的浏览器展示给你看。目前 Claude Duet 待在自己独立的应用里，与主 Claude 应用是分开的。我们从早期用户那里学到的东西，会塑造这两者今后如何协作。</p>
+<p>在研究预览期间，Claude Duet 与 Claude 的其他部分共用你套餐的用量额度，而且它的消耗方式和普通对话不同。它的后台检查会计入这些额度，而更大的任务，比如搭建财务模型或做一份 deck，需要更多轮模型调用和后台工作。</p>
+<p>我们今天先从美国的 Pro 和 Max 用户开始。加入<a href="https://claude.com/product/claude-duet">候补名单（在新选项卡中打开）</a>，Claude Duet 一旦准备好面向你开放，我们就给你发邮件。</p>
 <p>文章</p>
 <p>2026 年 10 月 21 日</p>
-<h3>HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</h3>
-<p>HCLTech 将把 Claude 引入其为银行、医院、电信公司和制造商提供的解决方案中。</p>
+<h3>HCLTech 以 Global Premier partner 身份加入 Claude Partner Network</h3>
+<p>HCLTech 会把 Claude 引入它面向银行、医院、电信公司和制造商提供的解决方案。</p>
 <p>文章</p>
 <p>2026 年 10 月 21 日</p>
-<h3>Claude Security 现在连续扫描并跟踪修复</h3>
-<p>Claude Security 现在可以在代码更改时跟踪您的存储库，跟踪发现的问题直至修复，从您的团队添加的上下文中学习，并通过 API 和 MCP 连接到您的工具。面向 Claude Enterprise 客户提供公开测试版。</p>
-<p>克劳德安全</p>
+<h3>Claude Security 现支持持续扫描与修复跟踪</h3>
+<p>Claude Security 现在会随代码变化跟进你的仓库，把发现项跟踪到修复完成为止，从你团队补充的上下文里学习，并通过 API 和 MCP 接入你的工具。面向 Claude Enterprise 客户以公开测试版提供。</p>
+<p>Claude Security</p>
 <p>文章</p>
 <p>2026 年 10 月 15 日</p>
-<h3>代码审查现已普遍可用</h3>
-<p>在投入生产之前捕获更多错误。</p>
-<p>克劳德·科德</p>
+<h3>Code Review 现已正式可用</h3>
+<p>在更多 bug 进入生产环境之前把它们抓住。</p>
+<p>Claude Code</p>
 <p>文章</p>
 <p>2026 年 10 月 8 日</p>
-<h3>与 Claude 一起构建实时仪表板和动画解释器</h3>
-<p>Claude Dashboards 和 Claude Motion 目前处于测试阶段。文档、幻灯片和设计都已经过测试版，并且包含在每个 Claude 计划中，包括免费计划。</p>
-<p>克劳德应用程序</p>
-<p>克劳德设计</p>
-<p>还有 2 个</p>
-<p>：克劳德·科沃克和克劳德·代码</p>
-<p>克劳德·科沃克克劳德·代码</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
+<h3>用 Claude 构建实时 dashboard 与动画讲解</h3>
+<p>Claude Dashboards 和 Claude Motion 现已进入 beta。Docs、Slides 和 Design 已退出 beta，并覆盖包括 Free 在内的每一个 Claude 套餐。</p>
+<p>Claude 应用</p>
+<p>Claude Design</p>
+<p>更多 2 项</p>
+<p>：Claude Cowork 和 Claude Code</p>
+<p>Claude CoworkClaude Code</p>
+<h2>用 Claude 改变你组织的运转方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
 <h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<p>产品更新、操作指南、社区聚焦等等，每月送达你的收件箱。</p>
+<p>如果你想接收我们每月的开发者通讯，请提供你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</title>
+      <title>[Anthropic Claude] HCLTech 以 Global Premier Partner 身份加入 Claude 合作伙伴网络</title>
       <link>https://claude.com/resources/articles/hcltech-joins-claude-partner-network</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/hcltech-joins-claude-partner-network</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：HCLTech joins the Claude Partner Network as a Global Premier partner</description>
-      <content:encoded><![CDATA[<p>Anthropic 正在与 <a href="https://www.hcltech.com/">HCLTech（在新选项卡中打开）</a> 合作，这是一家在 60 个国家/地区拥有超过 230,000 名员工的全球科技公司。 HCLTech 将通过专门的人类业务部门和卓越中心为客户构建 Claude 代理解决方案，将 Claude 嵌入 HCLSoftware 产品中，并将 Claude 和 Claude Code 集成到 AI Force（该平台用于为客户运行 IT 服务）中。 HCLTech 成为 Claude 合作伙伴网络中的<a href="https://claude.com/partners">全球首要合作伙伴（在新选项卡中打开）</a>。</p>
-<p>HCLTech 为金融服务、制造、生命科学和医疗保健、技术、半导体、电信和媒体、零售和消费品、以及移动和公共服务提供解决方案。在这些环境中，错误的代价是昂贵的，并且每项更改都需要经过审查、记录和批准。此次合作的目的是让 Claude 参与针对这些环境设计的控件的工作。</p>
-<h2><strong>HCLTech 如何让 Claude 投入工作</strong></h2>
-<p>HCLTech 正在将 Claude 引入其在三个地方的业务，并在每个地方设计护栏和人工审核。</p>
-<ul><li><strong>专门的人类业务部门和卓越中心。</strong> HCLTech 的前沿部署工程师将建立安全的沙箱环境，客户可以在部署之前针对自己的系统和数据测试 Claude。该中心将培训客户员工，帮助工程团队采用人工智能原生实践，并建立组织控制以大规模安全运行代理。</li><li><strong>Claude 在 HCLSoftware 产品中。</strong> HCLSoftware 成为 Anthropic 独立软件供应商 (ISV) 合作伙伴，并将把 Claude 嵌入网络安全、自动化、业务流程应用程序和应用程序开发的精选产品中。第一个是用于端点管理的 HCL BigFix、用于应用程序安全测试的 HCL AppScan 以及用于数据和分析的 Actian AI 分析师。</li><li><strong>AI Force 中的 Claude 和 Claude Code。</strong> AI Force 是 HCLTech 为其服务的企业提供 IT 支持、代码修复和数字员工服务的方式。 Claude 和 Claude Code 进入该平台，提供政策护栏、异常处理和对高影响力变更的人工监督。代理负责处理日常工作，HCLTech 工程师负责审查和批准任何涉及客户生产系统的事情。</li></ul>
-<p>“很少有科技公司能够将全球系统集成商的规模与 ISV 的产品深度结合起来，”HCLTech 首席执行官兼董事总经理 C Vijayakumar 说道。 “这为我们提供了难得的优势，可以安全地大规模设计和部署 Agentic AI，并交付对我们的客户最重要的业务成果。我们与 Anthropic 的合作进一步增强了我们实现这一目标的能力。”</p>
-<p>Anthropic 联合创始人兼总裁 Daniela Amodei 表示：“人工智能只有值得信赖才能发挥作用，我们打造 Claude 是为了让公司有信心将其运用到最敏感和最有价值的工作中。” “HCLTech 为银行、医院、电信公司和制造商管理此类系统，我们很高兴与他们合作，帮助他们集成 Claude 和 Claude Code。这种合作伙伴关系以及我们对共同提高能力和安全性的更广泛承诺，是人工智能将如何改变整个行业的运行方式，使其变得更好。”</p>
-<p>要了解有关与 Anthropic 合作伙伴合作的更多信息，请访问 <a href="https://claude.com/partners">Claude 合作伙伴网络（在新选项卡中打开）</a>。</p>
+      <content:encoded><![CDATA[<h1>HCLTech 以 Global Premier Partner 身份加入 Claude 合作伙伴网络</h1>
+<p>Anthropic 正在与 <a href="https://www.hcltech.com/">HCLTech</a>展开合作，这是一家在全球 60 个国家拥有超过 23 万名员工的科技公司。HCLTech 将通过一个专属的 Anthropic 业务单元和卓越中心，为其客户在 Claude 之上构建 agentic 解决方案；把 Claude 嵌入 HCLSoftware 的产品；并把 Claude 与 Claude Code 集成进 AI Force——它是 HCLTech 用来为客户运营 IT 服务的平台。HCLTech 成为 Claude Partner Network 中的 <a href="https://claude.com/partners">Global Premier Partner</a>。</p>
+<p>HCLTech 为金融服务、制造、生命科学与医疗、科技、半导体、电信与媒体、零售与 CPG、出行与公共服务提供解决方案。在这些环境里，一次失误的代价都很高，每一项变更都需要被审查、记录和批准。这项合作的设计目的，就是把 Claude 放进这类工作中，并配上有针对这些环境设计的控制措施。</p>
+<h2><strong>HCLTech 如何把 Claude 投入使用</strong></h2>
+<p>HCLTech 正在三个场景把 Claude 引入自身业务，并且每一个场景都设计了护栏与人工审查。</p>
+<ul><li><strong>一个专属的 Anthropic 业务单元和卓越中心。</strong> HCLTech 的前沿部署工程师将搭建安全的沙箱环境，让客户在部署之前就能拿自己的系统和数据来测试 Claude。该中心将培训客户的员工队伍，帮助工程团队采用 AI 原生的实践，并建立安全地大规模运行 agents 所需的组织控制。</li><li><strong>Claude 进入 HCLSoftware 产品。</strong> HCLSoftware 成为 Anthropic 的独立软件供应商（ISV）合作伙伴，并将把 Claude 嵌入网络安全、自动化、业务流程应用和应用开发等领域的部分产品。首批产品是用于端点管理的 HCL BigFix、用于应用安全测试的 HCL AppScan，以及用于数据与分析的 Actian AI analyst。</li><li><strong>Claude 与 Claude Code 进入 AI Force。</strong> AI Force 是 HCLTech 为其服务的企业交付 IT 支持、代码修复和数字员工服务的方式。Claude 与 Claude Code 进入那个平台时带有策略护栏、异常处理，以及对高影响变更的人工监督。agents 处理常规工作，任何触及客户生产系统的内容都由 HCLTech 的工程师审查并批准。</li></ul>
+<p>「很少有科技公司能同时具备全球系统集成商的规模和 ISV 的产品深度，」HCLTech 首席执行官兼董事总经理 C Vijayakumar 说。「这让我们拥有一种难得的优势，能够安全地工程设计并大规模部署 Agentic AI，交付对我们客户最重要的业务成果。我们与 Anthropic 的合作进一步强化了我们达成这一目标的能力。」</p>
+<p>「AI 只有值得信赖才有用处，而我们构建 Claude，是为了让企业有信心把它带入自己最敏感、最有价值的工作，」Anthropic 联合创始人兼总裁 Daniela Amodei 说。「HCLTech 为银行、医院、电信公司和制造商管理这类系统，我们很高兴与他们合作，支持他们集成 Claude 和 Claude Code。这项合作——以及我们更广泛的、同步推进能力与安全的承诺——正是 AI 让整个行业的运转方式变得更好的途径。」</p>
+<p>要了解关于与 Anthropic 合作伙伴合作的更多信息，请访问 <a href="https://claude.com/partners">Claude Partner Network</a>。</p>
 <p>文章</p>
-<p>2026 年 10 月 21 日</p>
-<h3>介绍克劳德二重奏</h3>
-<p>今天，美国 Pro 和 Max 订阅者可以通过候补名单获得研究预览。</p>
+<p>Oct 21, 2026</p>
+<h3>Claude Duet 来了</h3>
+<p>研究预览今天起通过候补名单开放，首先面向美国的 Pro 和 Max 订阅用户。</p>
 <p>文章</p>
-<p>2026 年 10 月 21 日</p>
-<h3>Claude Security 现在连续扫描并跟踪修复</h3>
-<p>Claude Security 现在可以在代码更改时跟踪您的存储库，跟踪发现的问题直至修复，从您的团队添加的上下文中学习，并通过 API 和 MCP 连接到您的工具。面向 Claude Enterprise 客户提供公开测试版。</p>
-<p>克劳德安全</p>
+<p>Oct 21, 2026</p>
+<h3>Claude Security 现在持续扫描并跟踪修复</h3>
+<p>Claude Security 现在能随代码变更跟上你的仓库，持续跟踪发现的问题直到它们被修复，从你的团队补充的上下文中学习，并通过 API 和 MCP 连接到你的工具。面向 Claude Enterprise 客户以公开 beta 提供。</p>
+<p>Claude Security</p>
 <p>文章</p>
-<p>2026 年 10 月 15 日</p>
-<h3>代码审查现已普遍可用</h3>
-<p>在投入生产之前捕获更多错误。</p>
-<p>克劳德·科德</p>
+<p>Oct 15, 2026</p>
+<h3>Code Review 现已正式全面可用</h3>
+<p>在更多缺陷进入生产环境之前抓住它们。</p>
+<p>Claude Code</p>
 <p>文章</p>
-<p>2026 年 10 月 8 日</p>
-<h3>与 Claude 一起构建实时仪表板和动画解释器</h3>
-<p>Claude Dashboards 和 Claude Motion 目前处于测试阶段。文档、幻灯片和设计都已经过测试版，并且包含在每个 Claude 计划中，包括免费计划。</p>
-<p>克劳德应用程序</p>
-<p>克劳德设计</p>
-<p>还有 2 个</p>
-<p>：克劳德·科沃克和克劳德·代码</p>
-<p>克劳德·科沃克克劳德·代码</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
-<h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<p>Oct 8, 2026</p>
+<h3>用 Claude 构建实时仪表板并制作动态讲解</h3>
+<p>Claude Dashboards 和 Claude Motion 现已进入 beta。Docs、Slides 和 Design 退出 beta，并在所有 Claude 套餐上提供，包括 Free。</p>
+<p>Claude apps</p>
+<p>Claude Design</p>
+<p>还有 2 条</p>
+<p>：Claude Cowork 和 Claude Code</p>
+<p>Claude CoworkClaude Code</p>
+<h2>用 Claude 改变你组织的运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区报道，以及更多。每月送达你的收件箱。</p>
+<p>如果你希望收到我们每月的开发者通讯，请提供你的电子邮件地址。你可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] Claude Security 现在连续扫描并跟踪修复</title>
+      <title>[Anthropic Claude] Claude Security 现支持持续扫描与修复跟踪</title>
       <link>https://claude.com/resources/articles/claude-security-now-scans-continuously-and-tracks-fixes</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-security-now-scans-continuously-and-tracks-fixes</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：Claude Security now scans continuously and tracks fixes</description>
-      <content:encoded><![CDATA[<p>自从 <a href="https://claude.com/product/claude-security">Claude Security</a> 四月份进入公开测试版以来，数千个组织已使用它发现了超过一百万个漏洞。</p>
-<p>现在，Claude Security 不再需要等待某人开始扫描，而是可以在代码更改时跟踪您的存储库，跟踪哪些结果已得到修复，并使用您的团队告知的有关您的环境的信息来决定什么是重要的。 Claude Security 由我们全系列的模型（包括 Claude Mythos）提供支持，无需访问网络验证程序。</p>
-<p>最新版本的 Claude Security 现已面向 Claude Enterprise 客户推出公开测试版。组织每月可获得 25,000 美元的免费使用积分，为期两个月。该优惠适用于 2026 年 12 月 31 日之前的使用。您可以在<a href="https://support.claude.com/en/articles/14661296-use-claude-security">帮助中心</a>查看完整条款。</p>
-<h2><strong>持续监控与您的代码保持同步</strong></h2>
-<p>扫描捕捉一瞬间，代码每天都在变化。团队告诉我们，他们希望报道能够保持最新状态，而无需任何人安排。</p>
-<p>创建一个项目，通过 Claude GitHub 应用程序（包括 GitHub Enterprise Server）或使用来自 GitLab 和其他 Git 提供商的访问令牌连接您的存储库，然后为每个存储库选择分支和范围。 Claude 运行深度基线扫描，然后根据风险和复杂性定期扫描更改，以便您的发现列表保持接近代码的当前状态。</p>
-<p>一个项目可以拥有多个存储库，因此 Claude 可以捕获服务之间存在的问题，例如信任客户端应该验证的输入的后端。</p>
-<p><img src="https://assets.claude.com/fe39204ec42e8d48c853bf16bb08bdb19bf99a22.png" alt="克劳德安全用户界面"></p>
-<h2><strong>当修复发布时，调查结果被标记为已修复</strong></h2>
-<p>大多数修复都是在发现问题的工具之外进行的。 Claude Security 会根据已更改的代码检查未解决的问题，并在修复完成后将其标记为已修复，无论您的团队是在 Claude 代码中还是在单独的流程中修复了该问题。如果 Claude Security 稍后再次发现该问题，则会自动重新打开该发现。</p>
-<p><img src="https://assets.claude.com/579a7fb43c95d281cf38ba2dafca75eea40a7058.png" alt="克劳德安全用户界面"></p>
-<h2><strong>您团队的知识塑造扫描</strong></h2>
-<p>每个环境都有扫描器无法仅从代码中看到的控件。团队想要一种方法来告诉 Claude Security 有关这些控制的信息，并查看相互依赖的服务。现在，每个项目都有一个知识库，您可以在其中描述如何部署代码、应用哪些安全策略以及团队中的新安全工程师需要了解的任何内容。</p>
-<p><img src="https://assets.claude.com/440f4c1037a629695ec66eb0a17c218782b51d35.png" alt="克劳德安全用户界面"></p>
-<p>Claude Security 还会根据您的代码生成威胁模型，您的团队可以审查和编辑。后续扫描使用这些威胁模型来决定哪些内容值得标记。添加的上下文还可以帮助 Claude Security 跳过您的环境已处理的风险。</p>
-<h2><strong>每个发现的严重性和利用路径</strong></h2>
-<p>每个发现都带有严重性评级，根据项目的威胁模型进行判断，并解释攻击者如何访问易受攻击的代码，以便团队可以首先修复实际可访问的内容。调查结果可以包括攻击路径图。</p>
-<p><img src="https://assets.claude.com/58c85ec0105dd3b16b367ae71e70c14db55e6d4f.png" alt="克劳德安全用户界面"></p>
-<h2><strong>调查结果到达您的工具，并控制更大规模的部署</strong></h2>
-<p>新的 API 允许您将 Claude Security 集成到现有的工作流程中。您可以列出和阅读项目和发现、解决或重新打开发现以及创建和管理项目及其存储库。用户可以在 Claude Security 设置中创建个人访问令牌，它只能查看和更改用户可以查看和更改的内容。当有新发现时，Webhook 还可以通知您的系统。</p>
-<p>Claude Security 还可作为 <a href="http://claude.ai">Claude.ai</a> 和 Claude Code 中的 MCP 连接器使用。工程师可以调出一个发现，向克劳德询问，开始修复，并在同一会话中将其标记为已解决。</p>
-<p>新的基于角色的访问控制让管理员可以决定谁可以查看项目、对结果进行分类以及创建项目。组织可以向更多拥有代码的团队开放 Claude Security，而无需授予每个人创建项目的权限。</p>
-<h2><strong>入门</strong></h2>
-<p>从今天开始，最新版本的 <a href="http://claude.ai/security">Claude Security</a> 面向 Claude Enterprise 客户提供公开测试版。管理员可以在管理控制台中启用它并设置团队中的哪些人可以访问它。</p>
-<p>使用<a href="https://academy.claude.com/tutorials/getting-started-with-claude-security">入门指南</a>设置您的第一个项目，并访问<a href="https://support.claude.com/en/articles/14661296-use-claude-security">帮助中心</a>了解更多详细信息。</p>
-<p><em>组织每月可获得 25,000 美元的免费使用积分，为期两个月。该优惠适用于 2026 年 12 月 31 日之前的使用。您可以在<a href="https://support.claude.com/en/articles/14661296-use-claude-security">帮助中心</a>查看完整条款。</em></p>
-<blockquote>“Claude Security 发现了同时进行的传统渗透测试遗漏的许多重大问题，其中一些问题如果在野外被利用，将会产生重大影响。”</blockquote>
-<p>Jon Donovan，IonQ 软件工程师</p>
-<blockquote>“Claude Security 扫描了我们的代码一次以设置基线。现在它可以跟上我们代码的变化，我们的团队可以直接在 Claude 中修复问题，而不是切换到其他工具。”</blockquote>
-<p>Jake Meredith，Gusto 产品安全</p>
-<blockquote>“API 和 MCP 的添加改变了游戏规则，并将成为 IonQ 产品安全团队进一步实施 Claude Security 的前进道路。”</blockquote>
-<p>Joe Coniglio，IonQ 安全工程师</p>
-<blockquote>“Claude Security 发现了许多我们其他工具无法发现的逻辑缺陷。一旦我们将自己的风险策略写入威胁模型，重点关注外部用户实际可以到达的内容，结果就会与我们的优先级匹配，而不仅仅是严重性评分”</blockquote>
-<p>Nathan Hunstad，Vanta 安全总监</p>
-<blockquote>“Claude Security 发现了同时进行的传统渗透测试遗漏的许多重大问题，其中一些问题如果在野外被利用，将会产生重大影响。”</blockquote>
-<p>Jon Donovan，IonQ 软件工程师</p>
-<blockquote>“Claude Security 扫描了我们的代码一次以设置基线。现在它可以跟上我们代码的变化，我们的团队可以直接在 Claude 中修复问题，而不是切换到其他工具。”</blockquote>
-<p>Jake Meredith，Gusto 产品安全</p>
-<blockquote>“API 和 MCP 的添加改变了游戏规则，并将成为 IonQ 产品安全团队进一步实施 Claude Security 的前进道路。”</blockquote>
-<p>Joe Coniglio，IonQ 安全工程师</p>
-<blockquote>“Claude Security 发现了许多我们其他工具无法发现的逻辑缺陷。一旦我们将自己的风险策略写入威胁模型，重点关注外部用户实际可以到达的内容，结果就会与我们的优先级匹配，而不仅仅是严重性评分”</blockquote>
-<p>Nathan Hunstad，Vanta 安全总监</p>
-<blockquote>“Claude Security 发现了同时进行的传统渗透测试遗漏的许多重大问题，其中一些问题如果在野外被利用，将会产生重大影响。”</blockquote>
-<p>Jon Donovan，IonQ 软件工程师</p>
-<blockquote>“Claude Security 扫描了我们的代码一次以设置基线。现在它可以跟上我们代码的变化，我们的团队可以直接在 Claude 中修复问题，而不是切换到其他工具。”</blockquote>
-<p>Jake Meredith，Gusto 产品安全</p>
+      <content:encoded><![CDATA[<h1>Claude Security 现支持持续扫描与修复跟踪</h1>
+<p>自 <a href="https://claude.com/product/claude-security">Claude Security</a> 于 4 月进入公开测试版以来，已有数千家组织用它发现了超过 100 万个漏洞。</p>
+<p>Claude Security 不再等着某个人来发起扫描，而是随着你的代码变化持续跟进你的代码仓库，记录哪些发现项得到了修复，并用你的团队告诉它的环境情况来判断什么才重要。Claude Security 由我们完整的模型家族驱动，其中包括 Claude Mythos，无需 Cyber Verification Program 访问权限。</p>
+<p>Claude Security 的最新版本今日以公开测试版向 Claude Enterprise 客户开放。组织每月可获得 $25,000 的免费用量额度，持续两个月。该优惠适用于 2026 年 12 月 31 日及之前的用量。完整条款可在 <a href="https://support.claude.com/en/articles/14661296-use-claude-security">Help Center</a> 查看。</p>
+<h2><strong>持续监控跟得上你的代码</strong></h2>
+<p>一次扫描只捕捉某一个时刻，而代码每天都在变。团队告诉我们，他们希望覆盖范围能一直保持最新，而不需要任何人去排期扫描。</p>
+<p>创建一个项目，通过 Claude GitHub app（包括 GitHub Enterprise Server）连接你的代码仓库，或者使用 GitLab 及其他 Git 服务商提供的 access token 连接，并为每个仓库选择分支和范围。Claude 会先运行一次深度基线扫描，然后根据变更的风险与复杂度定期扫描，让你的发现项清单始终贴近代码的当前状态。</p>
+<p>一个项目可以容纳多个代码仓库，因此 Claude 能抓到那些存在于服务之间的问题，比如后端信任了本该由客户端校验的输入。</p>
+<p><img src="https://assets.claude.com/fe39204ec42e8d48c853bf16bb08bdb19bf99a22.png" alt="Claude Security 界面"></p>
+<h2><strong>修复上线时，发现项就被标记为已修复</strong></h2>
+<p>大多数修复并不在发现该问题的那个工具里完成。Claude Security 会把尚未解决的发现项与发生变化的代码做比对，并在修复落地时把它们标记为已修复，不管你的团队是在 Claude Code 里改的、还是在另一套流程里改的。如果 Claude Security 之后再次发现同一个问题，该发现项会自动重新打开。</p>
+<p><img src="https://assets.claude.com/579a7fb43c95d281cf38ba2dafca75eea40a7058.png" alt="Claude Security 界面"></p>
+<h2><strong>你团队的知识会塑造扫描</strong></h2>
+<p>每个环境都有一些控制措施是扫描器仅凭代码看不到的。团队希望有一种办法，能把这些控制措施告诉 Claude Security，并让它横穿相互依赖的服务一起查看。现在，每个项目都带一个知识库，你可以在里面描述你的代码是如何部署的、哪些安全政策适用，以及你团队里新来的安全工程师需要知道的一切。</p>
+<p><img src="https://assets.claude.com/440f4c1037a629695ec66eb0a17c218782b51d35.png" alt="Claude Security 界面"></p>
+<p>Claude Security 还会根据你的代码生成一份威胁模型，供你的团队审阅和编辑。后续的扫描会利用这些威胁模型来决定什么值得标记出来。补充的上下文也能帮助 Claude Security 跳过你的环境已经处理掉的风险。</p>
+<h2><strong>每个发现项都带严重度与利用路径</strong></h2>
+<p>每个发现项都附带一个严重度评级——依据你项目的威胁模型判定——以及一段说明，解释攻击者如何能够触达存在漏洞的代码，好让团队先修复真正可达的问题。发现项可以包含攻击路径示意图。</p>
+<p><img src="https://assets.claude.com/58c85ec0105dd3b16b367ae71e70c14db55e6d4f.png" alt="Claude Security 界面"></p>
+<h2><strong>发现项直达你的工具，并为更大范围推广提供管控</strong></h2>
+<p>新的 API 让你把 Claude Security 集成进已有的工作流。你可以列出并读取项目和发现项、把发现项标记为解决或重新打开，也可以创建和管理项目及其代码仓库。用户可以在 Claude Security 设置里创建 personal access token，它只能看到和改动该用户本身能看到与能改的内容。Webhook 也能在有新的发现项产生时通知你的系统。</p>
+<p>Claude Security 还以 MCP connector 的形式提供，可用于 <a href="http://claude.ai">Claude.ai</a> 和 Claude Code。工程师可以在同一个 session 里调出一个发现项、向 Claude 询问它、着手修复，并把它标记为已解决。</p>
+<p>新增的基于角色的访问控制让管理员可以决定谁能查看项目、谁能为发现项做分诊、谁能创建项目。组织可以把 Claude Security 开放给更多真正负责这些代码的团队，而不必给每个人创建项目的权限。</p>
+<h2><strong>开始使用</strong></h2>
+<p>从今天起，<a href="http://claude.ai/security">Claude Security</a> 的最新版本以公开测试版向 Claude Enterprise 客户开放。管理员可以在管理控制台中启用它，并设置团队里谁能访问。</p>
+<p>使用<a href="https://academy.claude.com/tutorials/getting-started-with-claude-security">入门指南</a>来设置你的第一个项目，并访问 <a href="https://support.claude.com/en/articles/14661296-use-claude-security">Help Center</a> 了解更多细节。</p>
+<p><em>组织每月可获得 $25,000 的免费用量额度，持续两个月。该优惠适用于 2026 年 12 月 31 日及之前的用量。完整条款可在 <a href="https://support.claude.com/en/articles/14661296-use-claude-security">Help Center</a> 查看。</em></p>
+<blockquote>“Claude Security 发现了许多实质性的问题，而同期开展的一次传统渗透测试漏掉了它们；其中几个若被在野利用，会造成严重影响。”</blockquote>
+<p>Jon Donovan，软件工程师，IonQ</p>
+<blockquote>“Claude Security 扫描了一次我们的代码来建立基线。现在它跟着我们的代码变化持续更新，我们的团队直接在 Claude 里修复问题，而不是切换到另一个工具。”</blockquote>
+<p>Jake Meredith，产品安全，Gusto</p>
+<blockquote>“API 和 MCP 这两项新增能力是颠覆性的，它会成为 IonQ 产品安全团队把 Claude Security 进一步纳入日常运营的前进路径。”</blockquote>
+<p>Joe Coniglio，安全工程师，IonQ</p>
+<blockquote>“Claude Security 找到了若干我们其他工具都没能发现的逻辑缺陷。等我们把自家的风险政策写进威胁模型、聚焦外部用户真正能触达的部分之后，这些发现项就与我们的优先级排序方式吻合了，而不只是一个严重度分数”</blockquote>
+<p>Nathan Hunstad，安全总监，Vanta</p>
+<blockquote>“Claude Security 发现了许多实质性的问题，而同期开展的一次传统渗透测试漏掉了它们；其中几个若被在野利用，会造成严重影响。”</blockquote>
+<p>Jon Donovan，软件工程师，IonQ</p>
+<blockquote>“Claude Security 扫描了一次我们的代码来建立基线。现在它跟着我们的代码变化持续更新，我们的团队直接在 Claude 里修复问题，而不是切换到另一个工具。”</blockquote>
+<p>Jake Meredith，产品安全，Gusto</p>
+<blockquote>“API 和 MCP 这两项新增能力是颠覆性的，它会成为 IonQ 产品安全团队把 Claude Security 进一步纳入日常运营的前进路径。”</blockquote>
+<p>Joe Coniglio，安全工程师，IonQ</p>
+<blockquote>“Claude Security 找到了若干我们其他工具都没能发现的逻辑缺陷。等我们把自家的风险政策写进威胁模型、聚焦外部用户真正能触达的部分之后，这些发现项就与我们的优先级排序方式吻合了，而不只是一个严重度分数”</blockquote>
+<p>Nathan Hunstad，安全总监，Vanta</p>
+<blockquote>“Claude Security 发现了许多实质性的问题，而同期开展的一次传统渗透测试漏掉了它们；其中几个若被在野利用，会造成严重影响。”</blockquote>
+<p>Jon Donovan，软件工程师，IonQ</p>
+<blockquote>“Claude Security 扫描了一次我们的代码来建立基线。现在它跟着我们的代码变化持续更新，我们的团队直接在 Claude 里修复问题，而不是切换到另一个工具。”</blockquote>
+<p>Jake Meredith，产品安全，Gusto</p>
 <p>1/4</p>
 <p>文章</p>
 <p>2026 年 10 月 21 日</p>
-<h3>HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络</h3>
-<p>HCLTech 将把 Claude 引入其为银行、医院、电信公司和制造商提供的解决方案中。</p>
+<h3>HCLTech 以 Global Premier partner 身份加入 Claude Partner Network</h3>
+<p>HCLTech 会把 Claude 引入它面向银行、医院、电信公司和制造商提供的解决方案。</p>
 <p>文章</p>
 <p>2026 年 10 月 21 日</p>
-<h3>介绍克劳德二重奏</h3>
-<p>今天，美国 Pro 和 Max 订阅者可以通过候补名单获得研究预览。</p>
+<h3>Claude Duet 正式发布</h3>
+<p>研究预览今日起通过候补名单开放，首先面向美国的 Pro 和 Max 订阅用户。</p>
 <p>文章</p>
 <p>2026 年 10 月 15 日</p>
-<h3>代码审查现已普遍可用</h3>
-<p>在投入生产之前捕获更多错误。</p>
-<p>克劳德·科德</p>
+<h3>Code Review 现已正式可用</h3>
+<p>在更多 bug 进入生产环境之前把它们抓住。</p>
+<p>Claude Code</p>
 <p>文章</p>
 <p>2026 年 10 月 8 日</p>
-<h3>与 Claude 一起构建实时仪表板和动画解释器</h3>
-<p>Claude Dashboards 和 Claude Motion 目前处于测试阶段。文档、幻灯片和设计都已经过测试版，并且包含在每个 Claude 计划中，包括免费计划。</p>
-<p>克劳德应用程序</p>
-<p>克劳德设计</p>
-<p>还有 2 个</p>
-<p>：克劳德·科沃克和克劳德·代码</p>
-<p>克劳德·科沃克克劳德·代码</p>
-<h2>与 Claude 一起改变您的组织的运作方式</h2>
-<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售人员</a></p>
+<h3>用 Claude 构建实时 dashboard 与动画讲解</h3>
+<p>Claude Dashboards 和 Claude Motion 现已进入 beta。Docs、Slides 和 Design 已退出 beta，并覆盖包括 Free 在内的每一个 Claude 套餐。</p>
+<p>Claude 应用</p>
+<p>Claude Design</p>
+<p>更多 2 项</p>
+<p>：Claude Cowork 和 Claude Code</p>
+<p>Claude CoworkClaude Code</p>
+<h2>用 Claude 改变你组织的运转方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
 <h3>获取开发者通讯</h3>
-<p>产品更新、操作方法、社区焦点等等。每月发送到您的收件箱。</p>
-<p>如果您想接收我们的每月开发者通讯，请提供您的电子邮件地址。您可以随时取消订阅。</p>]]></content:encoded>
+<p>产品更新、操作指南、社区聚焦等等，每月送达你的收件箱。</p>
+<p>如果你想接收我们每月的开发者通讯，请提供你的邮箱地址。你可以随时取消订阅。</p>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] 物理学家克里斯托弗·斯塔布斯 (Christopher Stubbs) 加入 Anthropic 的长期利益信托基金</title>
+      <title>[Anthropic Claude] 物理学家 Christopher Stubbs 加入 Anthropic 的 Long-Term Benefit Tru…</title>
       <link>https://www.anthropic.com/news/christopher-stubbs-joins-long-term-benefit-trust</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/christopher-stubbs-joins-long-term-benefit-trust</guid>
       <pubDate>Wed, 21 Oct 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
-      <description>原文标题：Physicist Christopher Stubbs joins Anthropic&apos;s Long-Term Benefit Trust</description>
-      <content:encoded><![CDATA[<p>实验物理学家、哈佛大学前科学院长克里斯托弗·斯塔布斯 (Christopher Stubbs) 博士已加入 Anthropic 的长期利益信托基金。他为信托基金带来了数十年在观测宇宙学和精密测量方面的科学专业知识。他还就国家安全和军备控制向美国政府提供建议。</p>
-<p>Stubbs 表示：“我很荣幸加入 Anthropic 的长期利益信托基金并帮助该公司履行其公益使命。” “我每天在研究中使用人工智能工具，看看它们能带来什么，作为一名教育者，我遇到了它们提出的一些难题。作为祖父，我想帮助确保人工智能的开发和部署是为了人类的长期利益。”</p>
-<p>斯塔布斯是哈佛大学物理学和天文学塞缪尔·C·蒙彻教授，并于 2018 年至 2024 年担任该校理学院院长。1998 年，作为高 Z 超新星搜索团队的成员，他帮助发现了宇宙的加速膨胀，这项工作后来为该团队赢得了基础物理学突破奖。他还是现在的维拉·C·鲁宾天文台的首任项目科学家，该天文台于 6 月开始对南方天空进行为期 10 年的调查。其目标之一是研究他帮助发现的加速扩张。</p>
-<p>最近，他写了一篇关于当模型对同一问题给出不同答案时如何保持人工智能辅助研究的可重复性的文章。他是 JASON 的成员，JASON 是一个独立的科学家团体，自 1960 年以来一直为美国政府提供国防和技术方面的建议。</p>
-<p>Anthropic 联合创始人兼总裁 Daniela Amodei 表示：“当 Chris 发现宇宙正在以意想不到的速度膨胀的证据时，他和他的团队遵循了这些数据，即使这些数据违背了该领域的普遍观点。随着人工智能开始改变科学本身的运作方式，Chris 的学术诚实、严谨和对真理的承诺是我们塑造这项技术未来所希望的价值观，我很感激他将自己深厚的专业知识带到了信托基金。”</p>
-<p>Anthropic 是一家公益公司，这意味着我们的结构旨在平衡商业增长与公益目的。该信托的存在是为了帮助我们长期保持这种平衡。它有权任命 Anthropic 董事会的大多数成员，受托人就关键决策向董事会和我们的领导层提供建议，特别是涉及人工智能风险和社会影响的决策。</p>
-<p>本周，我们发布了第一份<a href="https://www.anthropic.com/public-benefit-charter">公共利益报告</a>，这是一个公共账户，介绍了我们如何努力实现我们的宪章以及我们的不足之处。受托人帮助定义了衡量我们的五个宪章支柱，报告以他们对我们迄今为止取得的进展的评估作为结束。经股东批准，我们还承诺将 Anthropic 的部分股份拨给 <a href="https://www.anthropic.com/news/public-benefit-fund">Anthropic 公共福利基金</a>，这是一个新实体，其结构会随着公司的发展而增加股份。</p>
-<p>长期利益信托基金主席 Neil Buddy Shah 补充道：“帮助世界安全地构建强大的人工智能并确保其有意义地改善人们的生活，既取决于对科学的深刻理解，也取决于诚信的领导。” “Chris 不仅致力于解决科学中一些最困难的问题，而且一直是学术界、政府和国家实验室大型、复杂、协作科学事业的高度诚信的领导者。这对信托基金来说具有巨大的价值，因为我们支持 Anthropic 开发人工智能，以造福人类的长期利益。”</p>
-<p>该信托基金的第一位物理学家斯塔布斯加入了沙阿、国家安全专家理查德·方丹和前美联储主席本·伯南克的行列。受托人独立于公司管理层和投资者。</p>]]></content:encoded>
+      <description>完整标题：物理学家 Christopher Stubbs 加入 Anthropic 的 Long-Term Benefit Trust | 原文标题：Physicist Christopher Stubbs joins Anthropic&apos;s Long-Term Benefit Trust</description>
+      <content:encoded><![CDATA[<h1>物理学家 Christopher Stubbs 加入 Anthropic 的 Long-Term Benefit Trust</h1>
+<p>实验物理学家、哈佛大学（Harvard University）前科学学院院长 Christopher Stubbs 博士已经加入 Anthropic 的 Long-Term Benefit Trust。他为该 Trust 带来数十年横跨观测宇宙学与精密测量的科学专长。他也曾就国家安全与军备控制为美国政府提供咨询。</p>
+<p>「我很荣幸加入 Anthropic 的 Long-Term Benefit Trust，帮助这家公司兑现它对公共利益的承诺，」Stubbs 说。「我在日常研究中就使用 AI 工具，看得到它们让什么成为可能；而作为一名教育者，我也直面过它们带来的某些难题。作为一名外祖父，我希望帮助确保 AI 的开发与部署是为人类的长期利益服务的。」</p>
+<p>Stubbs 是哈佛大学 Samuel C. Moncher 物理学与天文学教授，他于 2018 至 2024 年在哈佛担任科学学院院长。1998 年，作为 High-Z Supernova Search Team 的成员，他参与发现了宇宙正在加速膨胀，这项工作后来为该团队赢得了 Breakthrough Prize in Fundamental Physics。他也是如今 Vera C. Rubin Observatory 的首任项目科学家，该台已于六月启动一项为期 10 年的南天巡天。它的目标之一，正是研究他参与发现的加速膨胀。</p>
+<p>更近期，他撰文探讨当模型对同一个问题可能给出不同答案时，如何保持 AI 辅助研究的可复现性。他是 JASON 的成员——这是一个自 1960 年起就为美国政府提供国防与技术咨询的独立科学家团体。</p>
+<p>「当 Chris 找到证据表明宇宙正以无人预料的速率膨胀时，他和他的团队追随数据，即便这与整个领域的主流共识相悖。在 AI 开始改变科学本身的做法之际，Chris 的智识诚实、严谨和对真理的坚持，正是我们希望用来塑造这项技术未来的价值观，我很感激他把深厚的专长带入 Trust，」Anthropic 联合创始人兼总裁 Daniela Amodei 说。</p>
+<p>Anthropic 是一家 Public Benefit Corporation（公共利益公司），这意味着我们的架构是为了在商业增长与公共利益目标之间取得平衡而设计的。Trust 的存在，是为了帮助我们长期守住这种平衡。它有权任命 Anthropic 董事会的多数成员，受托人就关键决策向董事会和我们的领导层提供建议，尤其是那些涉及 AI 的风险与社会影响的决策。</p>
+<p>本周我们发布了第一份 <a href="https://www.anthropic.com/public-benefit-charter">Public Benefit Report</a>，公开说明我们如何朝着章程努力、以及在哪些地方做得还不够。受托人帮助确定了章程的五个支柱，报告据此衡量我们，而报告以他们对我们在这一阶段进展的评估收尾。在获得股东批准的前提下，我们还承诺把 Anthropic 的一部分股份划拨给 <a href="https://www.anthropic.com/news/public-benefit-fund">Anthropic Public Benefit Fund</a>，这是一个新实体，其结构会随公司成长而提高持股比例。</p>
+<p>「帮助世界安全地构建强大 AI，并确保它切实改善人们的生活，这两件事都依赖于对科学的深入理解，也依赖于以正直为先，」Long-Term Benefit Trust 主席 Neil Buddy Shah 补充道。「Chris 不仅研究过科学中最难的一些问题，还始终是大型、复杂、需要协作的科研事业中高正直感的领导者，横跨学术界、政府和国家实验室。当我们支持 Anthropic 为人类长期利益开发 AI 时，这对 Trust 来说价值巨大。」</p>
+<p>Stubbs 是 Trust 的首位物理学家，加入后 Trust 的成员还包括 Shah、国家安全专家 Richard Fontaine 以及前美联储主席 Ben Bernanke。受托人独立于公司的管理层和投资者。</p>]]></content:encoded>
     </item>
     <item>
       <title>[SiliconFlow 硅基流动] 【模型升级】DeepSeek-V4.1-Flash 升级至 DeepSeek-V4.1-Flash-1017</title>
@@ -9468,21 +9474,22 @@ print(response.json()[&quot;video_url&quot;])copy</code></pre>
 <h2>Mercury 3 已上线。扩散尺度。</h2>]]></content:encoded>
     </item>
     <item>
-      <title>[Anthropic Claude] 投资公益</title>
+      <title>[Anthropic Claude] 投资公共利益</title>
       <link>https://www.anthropic.com/news/public-benefit-fund</link>
       <guid isPermaLink="true">https://www.anthropic.com/news/public-benefit-fund</guid>
       <pubDate>Sun, 18 Oct 2026 00:00:00 +0000</pubDate>
       <category>Anthropic Claude</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml">Anthropic Claude</source>
       <description>原文标题：Investing in the public benefit</description>
-      <content:encoded><![CDATA[<p>今天，我们将 Anthropic 的部分股份捐赠给 Anthropic 公共福利基金，这是一个新实体，其结构会随着公司的发展而增加股份。经股东批准，今天将承诺认购 5% 的 Anthropic 股份，公司价值每增加 50%，董事会可酌情增持 2%。</p>
-<p>作为一家公益公司，我们追求使命的大部分工作都在公司内部进行：与人工智能安全性和可解释性相关的研究；应用生物医学研究；克劳德为非营利组织和科研机构提供的折扣。这些活动既具有公共利益成分，又具有营利价值，因此我们将它们直接安置在公司内。</p>
-<p>人类公益基金将具有更大的灵活性和规模，使我们能够以新的方式追求我们的使命：例如，我们可能会探索向传统非营利组织提供大量捐款或直接分配给特定人群。</p>
-<p>一个例子是劳动力市场的影响。人工智能可能会产生巨大的经济价值，但也可能给许多工人带来不稳定。 Anthropic 已投入 <a href="https://www.anthropic.com/news/economic-futures-research-fund-agenda">2 亿美元</a> 研究和解决这一问题，但考虑到人工智能的进步步伐，可能需要更大胆的方法。该基金将具有多种能力来实现这些目标。</p>
-<p>我们正在将人类公共福利基金建立为一家全资有限责任公司，而不是 501(c)(3) 或其他形式，以便在不同的捐赠形式之间提供调整。 LLC 持有的 Anthropic 股权不会用于在美国或国外进行游说或政治捐赠。</p>
-<p>由于基金的结构方式，Anthropic 的增长越多，公司可专门用于公共利益的份额就越大。科技公司向高管提供不断升级的薪酬奖励是常见的做法。相反，我们将这种公平用于公共利益。</p>
-<p>这是建立在我们的联合创始人和员工已经做出的承诺的基础上的。 Anthropic成立时，我们的联合创始人承诺捐赠80%的股权，自成立以来我们还运营了一项股权捐赠匹配计划，允许员工质押与Anthropic匹配的股权。我们大约一半的员工参加了该计划。结合今天的公告，大约 20% 的 Anthropic 股票将专门用于公共利益，再加上公司达到特定估值里程碑时可能增加的任何额外百分比。</p>
-<p>在接下来的几个月中，我们将分享更多有关人类公益基金的结构和治理的信息，包括可能增加其股份的估值里程碑。我们还将在即将发布的公益报告中报告迄今为止我们在履行使命方面取得的进展。</p>]]></content:encoded>
+      <content:encoded><![CDATA[<h1>投资公共利益</h1>
+<p>今天，我们承诺将 Anthropic 的一部分股份投入 Anthropic Public Benefit Fund——这是一个新实体，其结构会随公司成长而提高持股比例。在获得股东批准的前提下，今天投入的是 Anthropic 5% 的股份；此后，公司价值每比既定基线再增长 50%，董事会可酌情再追加 2%。</p>
+<p>作为一家公共利益公司（public benefit corporation），我们为实现使命所做的大多数工作都发生在公司内部：与 AI 安全性和可解释性相关的研究；应用生物医学研究；为非营利组织和科学机构提供 Claude 折扣。这些活动既有公共利益成分，也有营利价值，所以我们把它们直接放在公司内部。</p>
+<p>Anthropic Public Benefit Fund 将拥有更大的灵活性和规模，使我们能够以新的方式推进使命：例如，我们可能会探索向传统非营利组织大额捐赠，或向特定人群直接发放。</p>
+<p>一个例子是劳动力市场的影响。AI 可能创造巨大的经济价值，但也可能让许多劳动者陷入不稳定。Anthropic 已经承诺投入 <a href="https://www.anthropic.com/news/economic-futures-research-fund-agenda">$2 亿</a> 来研究和应对这一问题，但鉴于 AI 进展的速度，可能需要更大胆的做法。这个 Fund 将具备去追求这些做法的灵活性。</p>
+<p>我们把 Anthropic Public Benefit Fund 设立为一家全资持有的 LLC——而不是 501(c)(3) 或其他形式——以便在不同形式的捐赠之间进行调整。该 LLC 持有的任何 Anthropic 股权都不会用于游说或政治捐赠，无论在美国还是海外。</p>
+<p>由于这个 Fund 的结构方式，Anthropic 增长得越多，能够专门用于公共利益的公司股份占比就越大。科技公司向高管提供递增的薪酬授予是常见做法。我们转而把这部分股权导向公共利益。</p>
+<p>这建立在我们的联合创始人和员工已经做出的承诺之上。Anthropic 创立之时，我们的联合创始人承诺捐出其持股的 80%，而自创立以来我们还运行着一项股权捐赠配比计划，员工可以认捐股权、由 Anthropic 配比。大约一半的员工参与了这个计划。与今天的公告合并计算，Anthropic 约 20% 的股份将用于公共利益，此外还有公司达到特定估值里程碑时可能追加的比例。</p>
+<p>在未来几个月，我们会分享更多关于 Anthropic Public Benefit Fund 结构和治理的信息，包括可能提高其持股比例的估值里程碑。我们还将在即将发布的公共利益报告中，汇报我们迄今在使命上的进展。</p>]]></content:encoded>
     </item>
     <item>
       <title>[DeepInfra] Granite-4.2-8B 定价指南：各家服务商对比</title>

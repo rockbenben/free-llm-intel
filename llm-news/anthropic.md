@@ -10,28 +10,28 @@
 
 ## 全部文章（共 121 篇，按日期倒序；无日期条目列于最后）
 
-1. [构建代理：何时将子代理折叠到主代理循环中](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop)（2026-10-22） <!--orig:Building agents: When to fold subagents into your main agent loop-->
-2. [完整的 Claude 平台可在 Google Cloud 上使用](https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed)（2026-10-22） <!--orig:The full Claude Platform, available on Google Cloud-->
-3. [向 Agentic AI 基金会捐赠 Agent 技能](https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation)（2026-10-22） <!--orig:Donating Agent Skills to the Agentic AI Foundation-->
+1. [构建 agent：何时把子 agent 折进主 agent 循环](https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop)（2026-10-22） <!--orig:Building agents: When to fold subagents into your main agent loop-->
+2. [完整的 Claude 平台登陆 Google Cloud](https://claude.com/resources/articles/claude-models-on-google-cloud-anthropic-managed)（2026-10-22） <!--orig:The full Claude Platform, available on Google Cloud-->
+3. [向 Agentic AI Foundation 捐赠 Agent Skills](https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation)（2026-10-22） <!--orig:Donating Agent Skills to the Agentic AI Foundation-->
 4. [公开招募生命科学客座研究员](https://www.anthropic.com/news/open-call-guest-investigators-life-sciences)（2026-10-22） <!--orig:Open call for guest investigators in the life sciences-->
-5. [Claude二重奏介绍](https://claude.com/resources/articles/claude-duet)（2026-10-21） <!--orig:Introducing Claude Duet-->
-6. [HCLTech 作为全球首要合作伙伴加入 Claude 合作伙伴网络](https://claude.com/resources/articles/hcltech-joins-claude-partner-network)（2026-10-21） <!--orig:HCLTech joins the Claude Partner Network as a Global Premier partner-->
-7. [Claude Security 现在连续扫描并跟踪修复](https://claude.com/resources/articles/claude-security-now-scans-continuously-and-tracks-fixes)（2026-10-21） <!--orig:Claude Security now scans continuously and tracks fixes-->
-8. [物理学家克里斯托弗·斯塔布斯 (Christopher Stubbs) 加入 Anthropic 的长期利益信托基金](https://www.anthropic.com/news/christopher-stubbs-joins-long-term-benefit-trust)（2026-10-21） <!--orig:Physicist Christopher Stubbs joins Anthropic's Long-Term Benefit Trust-->
+5. [Claude Duet 正式发布](https://claude.com/resources/articles/claude-duet)（2026-10-21） <!--orig:Introducing Claude Duet-->
+6. [HCLTech 以 Global Premier Partner 身份加入 Claude 合作伙伴网络](https://claude.com/resources/articles/hcltech-joins-claude-partner-network)（2026-10-21） <!--orig:HCLTech joins the Claude Partner Network as a Global Premier partner-->
+7. [Claude Security 现支持持续扫描与修复跟踪](https://claude.com/resources/articles/claude-security-now-scans-continuously-and-tracks-fixes)（2026-10-21） <!--orig:Claude Security now scans continuously and tracks fixes-->
+8. [物理学家 Christopher Stubbs 加入 Anthropic 的 Long-Term Benefit Trust](https://www.anthropic.com/news/christopher-stubbs-joins-long-term-benefit-trust)（2026-10-21） <!--orig:Physicist Christopher Stubbs joins Anthropic's Long-Term Benefit Trust-->
 9. [重新设计 Anthropic 的源代码控制](https://claude.com/resources/articles#d-2026-10-19-1)（2026-10-19） <!--orig:Redesigning source control at Anthropic-->
-10. [投资公益](https://www.anthropic.com/news/public-benefit-fund)（2026-10-18） <!--orig:Investing in the public benefit-->
+10. [投资公共利益](https://www.anthropic.com/news/public-benefit-fund)（2026-10-18） <!--orig:Investing in the public benefit-->
 11. [Anthropic 日本的一位 BDR，如何带着一队 Claude 智能体过一天](https://claude.com/resources/articles/how-an-anthropic-japan-business-development-representative-runs-his-day)（2026-10-16） <!--orig:How an Anthropic BDR in Japan runs his day with Claude Managed Agents-->
 12. [Claude Code 团队如何进行代码审查](https://claude.com/resources/articles#d-2026-10-16-2)（2026-10-16） <!--orig:How the Claude Code team does code review-->
 13. [Code Review 现已正式可用](https://claude.com/resources/articles/code-review-is-now-generally-available)（2026-10-15） <!--orig:Code Review is now generally available-->
-14. [独立评估员的最新情况](https://www.anthropic.com/news/an-update-on-independent-evaluators)（2026-10-15） <!--orig:An update on independent evaluators-->
+14. [独立评估方的最新进展](https://www.anthropic.com/news/an-update-on-independent-evaluators)（2026-10-15） <!--orig:An update on independent evaluators-->
 15. [在 Claude Platform 上用 OpenTelemetry 追踪 agent](https://claude.com/resources/articles/agent-observability-on-the-claude-platform)（2026-10-14） <!--orig:Agent observability on the Claude Platform-->
 16. [为 2026 年美国中期选举做准备](https://www.anthropic.com/news/2026-us-midterms)（2026-10-14） <!--orig:Preparing for the 2026 US midterms-->
 17. [Anthropic 开设新加坡办事处并与新加坡政府签署谅解备忘录](https://www.anthropic.com/news/singapore-office-opening)（2026-10-14） <!--orig:Anthropic opens Singapore office and signs MOU with the Government of Singapore-->
 18. [Uber 的 CISO 谈如何为 AI 搭建内部威胁防控体系](https://claude.com/resources/articles/uber-s-ciso-on-building-an-insider-threat-program-for-ai)（2026-10-13） <!--orig:Uber's CISO on building an insider threat program for AI-->
-19. [加强我们对蒸馏攻击的防御](https://www.anthropic.com/news/distillation-defenses)（2026-10-12） <!--orig:Strengthening our defenses against distillation attacks-->
-20. [人择网络任务简介](https://www.anthropic.com/news/anthropic-cyber-mission)（2026-10-08） <!--orig:Introducing the Anthropic Cyber Mission-->
+19. [加固我们对蒸馏攻击的防御](https://www.anthropic.com/news/distillation-defenses)（2026-10-12） <!--orig:Strengthening our defenses against distillation attacks-->
+20. [介绍 Anthropic Cyber Mission](https://www.anthropic.com/news/anthropic-cyber-mission)（2026-10-08） <!--orig:Introducing the Anthropic Cyber Mission-->
 21. [2026 年使用政策更新](https://www.anthropic.com/news/2026-usage-policy-update)（2026-10-08） <!--orig:2026 Usage Policy update-->
-22. [立足于我们对美国科学发现的承诺](https://www.anthropic.com/news/genesis-mission-commitment)（2026-10-08） <!--orig:Building on our commitment to American scientific discovery-->
+22. [延续我们对美国科学发现的承诺](https://www.anthropic.com/news/genesis-mission-commitment)（2026-10-08） <!--orig:Building on our commitment to American scientific discovery-->
 23. [构建有效的代理自动化](https://claude.com/resources/articles#d-2026-10-08-1)（2026-10-08） <!--orig:Building effective agent automations-->
 24. [Block 如何跨数千个 pull request 编排 Claude Fable](https://claude.com/resources/articles/how-block-orchestrates-claude-fable-across-thousands-of-pull-requests)（2026-10-08） <!--orig:How Block orchestrates Claude Fable across thousands of pull requests-->
 25. [用 Claude 搭建实时 dashboard 与动画讲解](https://claude.com/resources/articles/dashboards-and-motion)（2026-10-08） <!--orig:Build live dashboards and animate explainers with Claude-->
@@ -44,8 +44,8 @@
 32. [我们扩展 Claude Startups 计划，帮助创始人构建](https://claude.com/resources/articles/were-expanding-the-claude-startups-program-to-help-founders-build)（2026-10-06） <!--orig:We’re expanding the Claude Startups program to help founders build-->
 33. [云端 Claude Code：cloud sessions 实操指南](https://claude.com/resources/articles#d-2026-10-06-10)（2026-10-06） <!--orig:Claude Code in the cloud: a field guide to cloud sessions-->
 34. [Cresta 如何将 CX 专业知识转变为 Claude Agent SDK 上的代理构建器](https://claude.com/resources/articles/how-cresta-turned-cx-expertise-into-an-agent-builder-on-the-claude-agent-sdk)（2026-10-05） <!--orig:How Cresta turned CX expertise into an agent builder on the Claude Agent SDK-->
-35. [Anthropic投资1亿美元培训1万名工程师，解决企业AI人才缺口](https://www.anthropic.com/news/claude-frontier-academy)（2026-10-02） <!--orig:Anthropic invests $100 million to train 10,000 engineers and tackle the enterprise AI talent gap-->
-36. [巴克莱扩大Claude的规模以升级运营并改善客户体验](https://www.anthropic.com/news/barclays-scales-claude)（2026-10-01） <!--orig:Barclays scales Claude to upgrade operations and improve client experience-->
+35. [Anthropic 投入 1 亿美元培训 1 万名工程师，应对企业 AI 人才缺口](https://www.anthropic.com/news/claude-frontier-academy)（2026-10-02） <!--orig:Anthropic invests $100 million to train 10,000 engineers and tackle the enterprise AI talent gap-->
+36. [Barclays 用 Claude 升级运营并改善客户体验](https://www.anthropic.com/news/barclays-scales-claude)（2026-10-01） <!--orig:Barclays scales Claude to upgrade operations and improve client experience-->
 37. [Claude政府现已普遍可用](https://claude.com/blog#d-2026-10-01-19)（2026-10-01） <!--orig:Claude for Government is now generally available-->
 38. [Claude政府现已普遍可用](https://claude.com/resources/articles#d-2026-09-30-4)（2026-09-30） <!--orig:Claude for Government is now generally available-->
 39. [推出 Claude Sonnet 5.5](https://www.anthropic.com/claude-sonnet-5-5)（2026-09-28） <!--orig:Introducing Claude Sonnet 5.5-->
@@ -60,7 +60,7 @@
 48. [站在前沿工作：Balyasny 资产管理如何评估与治理 Claude Fable 5](https://claude.com/blog/working-at-the-frontier-how-balyasny-asset-management-evaluates-and-governs-claude-fable-5)（2026-09-17） <!--orig:Working at the frontier: How Balyasny Asset Management evaluates and governs Claude Fable 5-->
 49. [项目重新设计：从文件夹到对话](https://claude.com/blog/projects-redesigned)（2026-09-17） <!--orig:Projects redesigned: from folder to conversation-->
 50. [Claude Cowork 与 chat 现已合二为一](https://claude.com/blog/cowork-is-now-claude)（2026-09-16） <!--orig:Claude Cowork and chat are now one Claude-->
-51. [介绍Claude神话和寓言 5.1](https://www.anthropic.com/claude-fable-and-mythos-5-1)（2026-09-15） <!--orig:Introducing Claude Mythos and Fable 5.1-->
+51. [发布 Claude Mythos 与 Claude Fable 5.1](https://www.anthropic.com/claude-fable-and-mythos-5-1)（2026-09-15） <!--orig:Introducing Claude Mythos and Fable 5.1-->
 52. [Claude for Small Business 推出新工作流、集成与培训项目](https://claude.com/blog/claude-for-small-business-launches-new-workflows-integrations-and-training-programs)（2026-09-15） <!--orig:Claude for Small Business launches new workflows, integrations, and training programs-->
 53. [把 Salesforce 带入 Claude](https://claude.com/blog/salesforce-in-claude)（2026-09-15） <!--orig:Salesforce in Claude-->
 54. [打造一家 AI 原生的营收组织](https://claude.com/blog/building-an-ai-native-revenue-organization)（2026-09-15） <!--orig:Building an AI-native revenue organization-->
@@ -70,7 +70,7 @@
 58. [AI 从试点到生产的部署](https://claude.com/blog/deploying-ai-from-pilot-to-production)（2026-09-14） <!--orig:Deploying AI from pilot to production: a practical blueprint for CIOs and technical leaders-->
 59. [T. Rowe Price 把更多 Claude 引入其投资流程](https://claude.com/blog/t-rowe-price-brings-more-of-claude-to-its-investment-process)（2026-09-10） <!--orig:T. Rowe Price brings more of Claude to its investment process-->
 60. [1,000 位小企业主教会我们的关于 AI 的事](https://claude.com/blog/what-1-000-small-business-owners-taught-us-about-ai)（2026-09-10） <!--orig:What 1,000 small business owners taught us about AI-->
-61. [我们的经济未来情景](https://www.anthropic.com/institute/econ-scenarios)（2026-09-09） <!--orig:Scenarios for our economic future-->
+61. [我们经济未来的几种情景](https://www.anthropic.com/institute/econ-scenarios)（2026-09-09） <!--orig:Scenarios for our economic future-->
 62. [用 Claude Platform 降低成本并提升性能](https://claude.com/blog/reducing-cost-and-improving-performance-with-claude-platform)（2026-09-08） <!--orig:Reducing cost and improving performance with Claude Platform-->
 63. [高效商务 agent 构造指南](https://claude.com/blog/the-anatomy-of-effective-commerce-agents)（2026-09-02） <!--orig:A guide to the anatomy of effective commerce agents-->
 64. [用 Claude 构建商务 agent](https://claude.com/blog/claude-for-commerce-agents)（2026-09-02） <!--orig:Building Commerce Agents with Claude-->
@@ -101,15 +101,15 @@
 89. [我们对开放权重模型的立场](https://www.anthropic.com/news/position-open-weights-models)（2026-07-27） <!--orig:Our position on open-weights models \ Anthropic-->
 90. [推出 Claude Opus 5](https://www.anthropic.com/news/claude-opus-5)（2026-07-24） <!--orig:Introducing Claude Opus 5 \ Anthropic-->
 91. [关于近期 Claude Code 质量报告的更新](https://www.anthropic.com/engineering/april-23-postmortem)（2026-04-23） <!--orig:An update on recent Claude Code quality reports \ Anthropic-->
-92. [项目交易：我们Claude经营的市场实验](https://www.anthropic.com/features/project-deal)（2026-04-21） <!--orig:Project Deal: our Claude-run marketplace experiment-->
+92. [Project Deal：由 Claude 运营的市场实验](https://www.anthropic.com/features/project-deal)（2026-04-21） <!--orig:Project Deal: our Claude-run marketplace experiment-->
 93. [扩展 Managed Agents：把「大脑」与「双手」解耦](https://www.anthropic.com/engineering/managed-agents)（2026-04-08） <!--orig:Scaling Managed Agents: Decoupling the brain from the hands \ Anthropic-->
 94. [我们如何构建 Claude Code auto 模式：一种更安全地跳过许可的方式](https://www.anthropic.com/engineering/claude-code-auto-mode)（2026-03-25） <!--orig:How we built Claude Code auto mode: a safer way to skip permissions \ Anthropic-->
 95. [长时段应用开发的 harness 设计](https://www.anthropic.com/engineering/harness-design-long-running-apps)（2026-03-24） <!--orig:Harness design for long-running application development \ Anthropic-->
 96. [Claude Opus 4.6 在 BrowseComp 上的评测感知](https://www.anthropic.com/engineering/eval-awareness-browsecomp)（2026-03-06） <!--orig:Eval awareness in Claude Opus 4.6’s BrowseComp performance \ Anthropic-->
-97. [Claude密码的制作](https://www.anthropic.com/features/making-of-claude-code)（2026-02-23） <!--orig:The making of Claude Code-->
+97. [Claude Code 的诞生](https://www.anthropic.com/features/making-of-claude-code)（2026-02-23） <!--orig:The making of Claude Code-->
 98. [量化 agentic 编码评测中的基础设施噪声](https://www.anthropic.com/engineering/infrastructure-noise)（2026-02-05） <!--orig:Quantifying infrastructure noise in agentic coding evals \ Anthropic-->
 99. [用一队并行的 Claude 构建一个 C 编译器](https://www.anthropic.com/engineering/building-c-compiler)（2026-02-05） <!--orig:Building a C compiler with a team of parallel Claudes \ Anthropic-->
-100. [首次人工智能计划的火星驾驶](https://www.anthropic.com/features/claude-on-mars)（2026-01-24） <!--orig:The first AI-planned drive on Mars-->
+100. [NASA 首次用 AI 规划火星车行驶路线](https://www.anthropic.com/features/claude-on-mars)（2026-01-24） <!--orig:The first AI-planned drive on Mars-->
 101. [设计抗 AI 的技术评测](https://www.anthropic.com/engineering/AI-resistant-technical-evaluations)（2026-01-21） <!--orig:Designing AI resistant technical evaluations \ Anthropic-->
 102. [揭秘 AI agent 的评测](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)（2026-01-09） <!--orig:Demystifying evals for AI agents \ Anthropic-->
 103. [长时间运行 agent 的有效 harness](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)（2025-11-26） <!--orig:Effective harnesses for long-running agents \ Anthropic-->

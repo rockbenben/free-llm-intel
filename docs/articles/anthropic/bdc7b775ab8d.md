@@ -1,33 +1,35 @@
 ---
 vendor: anthropic
-title: 向 Agentic AI 基金会捐赠 Agent 技能
+title: 向 Agentic AI Foundation 捐赠 Agent Skills
 original_title: 
 url: https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation
 date: 2026-10-22
 lang: zh
 captured: 2026-10-23
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: a6d66a25c139
+body_sha: e0acf6688be2
 ---
 
-今天，我们向 Agentic AI 基金会 (AAIF) 捐赠 [Agent Skills](https://agentskills.io/home)，这是一项为 AI 代理提供专业知识和工作流程的开放标准。自我们于 2025 年 12 月发布该标准以来，包括 ChatGPT、Cursor、GitHub Copilot 和 VS Code 在内的 70 多个代理平台已经集成了代理技能。
+# 向 Agentic AI Foundation 捐赠 Agent Skills
 
-### 通过简单实现代理互操作性
+今天，我们把 [Agent Skills](https://agentskills.io/home)——这个为 AI agents 提供专门知识和工作流的开放标准——捐赠给 Agentic AI Foundation（AAIF）。自 2025 年 12 月我们发布这一标准以来，已有 70 多个 agent 平台集成了 Agent Skills，其中包括 ChatGPT、Cursor、GitHub Copilot 和 VS Code。
 
-技能是一个包含 SKILL.md 文件的文件夹，该文件向代理教授特定任务或领域，以及它需要的任何脚本或参考材料。我们在编写 Claude Code 时培养了技能。它可以很好地处理一般知识工作，但通常缺乏实际业务任务所需的程序知识。在 2025 年 10 月发布后的几周内，开发人员在 GitHub 上发布了数千项技能，并为 Codex、Cursor 和 OpenCode 编写了加载器。然后，我们将代理技能作为开放标准发布在自己的 GitHub 组织和域下，以便任何代理都可以使用它。截至目前，已发布技能100万条，安装量近2.8亿条。
+### 以简约实现 Agent 互操作
 
-### 向 AAIF 捐赠代理技能
+一个 skill 就是一个文件夹，其中包含一个 SKILL.md 文件，用来教会 agent 某项具体任务或某个具体领域的做法，并附上它所需的任何脚本或参考资料。我们在做 Claude Code 的过程中开发了 skills。它把通用知识工作处理得很好，却常常缺少真实业务任务所需要的流程性知识。在 2025 年 10 月上线后的几周之内，开发者们就在 GitHub 上发布了数千个 skills，并为 Codex、Cursor 和 OpenCode 写出了加载器。随后我们把 Agent Skills 发布为开放标准，放在它自己的 GitHub organization 和域名之下，好让任何 agent 都能使用它。到目前为止，已发布的 skills 达 100 万个，安装量接近 2.8 亿。
 
-我们致力于保持代理技能的开放、社区驱动和供应商中立。今天，我们将该标准捐赠给 Linux 基金会下的 Agentic AI 基金会 (AAIF)，我们去年与 Block 和 OpenAI 共同创立了该基金会，并向其捐赠了模型上下文协议 (MCP)。 AAIF 将为未来的标准提供一个中立的家园，确保社区对代理技能的下一步发展有发言权。
+### 把 Agent Skills 捐赠给 AAIF
 
-我们将捐赠 Agent Skills 名称和徽标、GitHub 组织以及 [agentskills.io](https://agentskills.io/home) 域。您可以继续使用该标准或为其做出贡献，而无需加入 AAIF。
+我们致力于让 Agent Skills 保持开放、由社区驱动、厂商中立。今天，我们把这一标准捐赠给隶属于 Linux Foundation 的 Agentic AI Foundation（AAIF）——去年我们与 Block 和 OpenAI 一起[共同创立](https://www.anthropic.com/news/donating-the-model-context-protocol-and-establishing-of-the-agentic-ai-foundation)了它，我们捐赠的 Model Context Protocol（MCP）也在它那里。今后，AAIF 将为这一标准提供一个中立的归属，确保社区对 Agent Skills 下一步走向有发言权。
 
-来自 Anthropic、Google、OpenAI 和其他公司的工程师将以个人身份维护该标准，其中 David Soria Parra 和 Mahesh Murag 担任首席维护人员。
+我们捐赠的还有 Agent Skills 的名称和标识、GitHub organization，以及 [agentskills.io](https://agentskills.io/home) 域名。你无需加入 AAIF，也可以继续使用这一标准或为其做出贡献。
 
-### 接下来会发生什么
+来自 Anthropic、Google、OpenAI 及其他公司的工程师将以个人身份维护这一标准，由 David Soria Parra 和 Mahesh Murag 担任 Lead Maintainers。
 
-我们建议从一个涵盖版本发布的路线图、正式的提案流程以及针对编写和安装技能的人员的安全指南开始。与 MCP 一样，该项目将继续优先考虑社区意见和透明决策。您可以加入该项目的 [Discord](https://discord.gg/MKPE9g8aUy) 以针对拟议的规范更改提供反馈。
+### 接下来会做什么
 
-感谢从一开始就使用代理技能构建的开发人员，以及将技能引入其产品的团队。阅读 [agentskills.io](https://agentskills.io) 上的规范并加入 [GitHub](https://github.com/agentskills/agentskills) 上的讨论。
+我们提议先从一个路线图开始，内容涵盖版本化发布、正式的提案流程，以及写给 skills 编写者和安装者的安全指引。和 MCP 一样，这个项目会继续把社区意见和透明的决策机制放在首位。你可以加入项目的 [Discord](https://discord.gg/MKPE9g8aUy)，对拟议中的规范变更提出反馈。
+
+感谢从一开始就用 Agent Skills 进行构建的开发者，也感谢把 skills 带进自己产品的各个团队。请到 [agentskills.io](https://agentskills.io) 阅读规范，并到 [GitHub](https://github.com/agentskills/agentskills) 参与讨论。
