@@ -9,7 +9,7 @@ captured: 2026-10-23
 extractor: readability-v1
 translator: mt
 status: translated
-body_sha: 51fb323b561c
+body_sha: 76266a8874b7
 ---
 
 # Granite 4.2 8B：模型概述和集成指南
@@ -200,7 +200,7 @@ Granite 4.2 8B 与 DeepInfra 上的其他高效模型一起处理工具调用和
 
 ## **结论**
 
-Granite 4.2 8B 连接轻量级效率和深度逻辑处理。其原生思维链、大上下文窗口和灵活的思维模式使其适合[代理工作流程](https://deepinfra.com/blog/decision-models-ai-agent-infrastruct)和企业编码任务。
+Granite 4.2 8B 连接轻量级效率和深度逻辑处理。其原生思维链、大上下文窗口和灵活的思维模式使其适合[代理工作流程](https://deepinfra.com/blog/decision-models-ai-agent-infrastructure)和企业编码任务。
 
 要点：
 

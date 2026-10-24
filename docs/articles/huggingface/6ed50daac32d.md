@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: ok
-body_sha: f4c090402595
+body_sha: 3c39cf503d79
 ---
 
 # OpenAI gpt-oss 的技巧：你 🫵 可以在 transformers 中使用
@@ -336,7 +336,7 @@ hf jobs run --detach --flavor l4x4 ghcr.io/astral-sh/uv:debian /bin/bash -c \
 OpenAI gpt-oss 在滑动与全局注意力层之间交替，如我们稍后所见，随着序列变长，KV cache 总内存会*减半*。这带来了：
 
 - **滑动或混合注意力模型（如 GPT-OSS）的 KV-cache 内存大幅降低**。缓存增长在达到窗口后便趋于平缓（例如 Mistral 是 4K，GPT-OSS 滑动层是 128），而不是随生成 token 总数线性增长。（[GitHub](https://github.com/huggingface/transformers/pull/40039)、[Transformers](https://huggingface.co/docs/transformers/en/model_doc/mistral)）
-- **长提示/长生成场景下的速度与延迟优势**：更小的 KV 张量意味着更轻的注意力读写和更小的内存带宽压力，在越过窗口之后尤为明显（这正是滑动窗口/混合 LLM 的核心动机）。([AI21](https://www.ai21.com/blog/rise-of-hybrid-llms/)、[vLLM Blog](https://blog.vllm.ai/2025-08-05/gpt-oss.html))
+- **长提示/长生成场景下的速度与延迟优势**：更小的 KV 张量意味着更轻的注意力读写和更小的内存带宽压力，在越过窗口之后尤为明显（这正是滑动窗口/混合 LLM 的核心动机）。([AI21](https://www.ai21.com/blog/rise-of-hybrid-llms/)、[vLLM Blog](https://vllm.ai/blog/2025-08-05-gpt-oss))
 
 ### 如何使用
 

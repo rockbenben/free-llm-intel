@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 159c483bef81
+body_sha: 58c45c9338f6
 ---
 
 # CUDA 是如何成功的？（AI 算力普惠化，第 3 部分）
@@ -47,13 +47,13 @@ CUDA 的统治地位因**深度学习的爆发**而彻底稳固。2012 年，**A
 
 但为什么 Google 和 Meta 放任这一切发生？现实是，**Google 和 Meta** 并非一心要构建一个广泛的 AI 硬件生态——他们专注于用 AI 来**驱动收入、改进产品、解锁新研究**。他们的顶尖工程师优先考虑**高影响力的内部项目**以推动公司内部指标。例如，这些公司[**决定**自己造](https://thechipletter.substack.com/p/googles-first-tensor-processing-unit)[**专有 TPU 芯片**](https://cloud.google.com/transform/ai-specialized-chips-tpu-history-gen-ai)——把精力倾注在优化自己的[第一方硬件](https://ai.meta.com/blog/next-generation-meta-training-inference-accelerator-AI-MTIA/)上。对 GPU，**把缰绳交给 NVIDIA** 是合理的。
 
-替代硬件的厂商面对的是**一场苦战**——在没有同等程度硬件聚焦的情况下，试图**复刻庞大、不断扩张的 NVIDIA CUDA 库生态**。竞争的硬件厂商不只是艰难——他们**被困在一个无尽的循环里**，永远在 NVIDIA 硬件上追赶下一个 AI 进展。这也影响了 Google 和 Meta 的**自研芯片项目**，催生了包括 XLA 和 PyTorch 2 在内的众多项目。我们可以在后续文章里深挖这些，但[尽管曾有一些期望](https://semianalysis.com/2023-01-16/nvidiaopenaitritonpytorch/)，今天我们可以看到，没有什么能让硬件创新者匹敌 CUDA 平台的能力。
+替代硬件的厂商面对的是**一场苦战**——在没有同等程度硬件聚焦的情况下，试图**复刻庞大、不断扩张的 NVIDIA CUDA 库生态**。竞争的硬件厂商不只是艰难——他们**被困在一个无尽的循环里**，永远在 NVIDIA 硬件上追赶下一个 AI 进展。这也影响了 Google 和 Meta 的**自研芯片项目**，催生了包括 XLA 和 PyTorch 2 在内的众多项目。我们可以在后续文章里深挖这些，但[尽管曾有一些期望](https://newsletter.semianalysis.com/p/nvidiaopenaitritonpytorch)，今天我们可以看到，没有什么能让硬件创新者匹敌 CUDA 平台的能力。
 
 随着硬件每一代的更替，**NVIDIA 拉大了差距**。然后突然地，2022 年末，ChatGPT 横空出世，随之，**GenAI 和 GPU 计算走向主流**。
 
 ## 借助生成式 AI 的激增获利
 
-几乎一夜之间，**对 AI 算力的需求**飙升——它成为**千亿美元产业**、消费级应用和企业竞争战略的基础。**大型科技公司**和风险投资机构向 AI 研究初创公司[注入了数十亿美元](https://techcrunch.com/2025-01-03/generative-ai-funding-reached-new-heights-in-2024/)和[资本开支扩建](https://www.thestreet.com/investing/nvidia-first-in-line-to-reap-gains-from-massive-big-tech-spending-surge)——这些钱最终径直流向 NVIDIA，唯一能满足**爆炸式算力需求**的玩家。
+几乎一夜之间，**对 AI 算力的需求**飙升——它成为**千亿美元产业**、消费级应用和企业竞争战略的基础。**大型科技公司**和风险投资机构向 AI 研究初创公司[注入了数十亿美元](https://techcrunch.com/2025/01/03/generative-ai-funding-reached-new-heights-in-2024/)和[资本开支扩建](https://www.thestreet.com/investing/nvidia-first-in-line-to-reap-gains-from-massive-big-tech-spending-surge)——这些钱最终径直流向 NVIDIA，唯一能满足**爆炸式算力需求**的玩家。
 
 随着 AI 算力需求激增，企业面临一个残酷现实：**训练和部署 GenAI 模型[极其昂贵](https://epoch.ai/blog/how-much-does-it-cost-to-train-frontier-ai-models)**。每一个效率提升——无论多小——在规模下都转化为巨大的节省。由于 **NVIDIA 的硬件早已扎根数据中心**，AI 公司面临一个严肃选择：**为 CUDA 优化，或者落后**。几乎一夜之间，业界转向编写 **CUDA 专用代码**。结果呢？AI 突破不再纯粹由模型和算法驱动——它们如今**取决于从 CUDA 优化代码中榨取最后一滴效率的能力**。
 

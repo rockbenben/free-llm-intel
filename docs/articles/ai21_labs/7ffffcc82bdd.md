@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: b369581c3a9f
+body_sha: b573e0c6a5eb
 ---
 
 如果你看看 2024 年的 LinkedIn 帖子和主题演讲标题，你可能会以为那是 AI agent 的*元*年。社交网络上充斥着各种 agent 处理复杂任务的视频，从点披萨到写生产级代码。概念上的飞跃出现在 Anthropic 于 10 月发布"[Computer use](https://www.anthropic.com/news/3-5-models-and-computer-use)"之后，紧接着 OpenAI 的"[Operator](https://openai.com/index/introducing-operator/)"更进一步——agent 连接到计算机，获得键盘和鼠标的访问权限，就像真正的人类一样。尽管这些仍是早期技术，但它们被如此自然地呈现出来这一事实本身，既令人兴奋又令人不安。
@@ -20,7 +20,7 @@ body_sha: b369581c3a9f
 
 两年前，把大语言模型（LLM）放进生产环境的想法几乎不可想象，而今天每家公司都有生成式 AI 团队。LLM 的主要挑战我们闭着眼睛都能背出来：这些是统计模型，其输出并不总是可靠，无论是格式问题还是彻头彻尾的幻觉。归根结底，它们以文本为输入、以文本为输出，尽管它们有时展现出非凡的"理解力"，但孤立地看仍然是受限的。
 
-从这一点自然演进出的概念是[*复合 AI 系统（Compound AI Systems）*](https://bair.berkeley.edu/blog/2024-02-18/compound-ai-systems/)——把语言模型作为更大系统的一部分来使用。这种方式可以对输出提供更强的保证，或对输入做更好的调优。一个经典例子是 RAG（检索增强生成），它已成为标准方法。AI agent 是这种方法一个尤为复杂的示例。其核心是一个观察当前态势、采取行动、接收反馈、然后重复循环的组件。但借用本叔叔的话改编一下："*能力*越复杂，*挑战*就越大"。
+从这一点自然演进出的概念是[*复合 AI 系统（Compound AI Systems）*](https://bair.berkeley.edu/blog/2024/02/18/compound-ai-systems/)——把语言模型作为更大系统的一部分来使用。这种方式可以对输出提供更强的保证，或对输入做更好的调优。一个经典例子是 RAG（检索增强生成），它已成为标准方法。AI agent 是这种方法一个尤为复杂的示例。其核心是一个观察当前态势、采取行动、接收反馈、然后重复循环的组件。但借用本叔叔的话改编一下："*能力*越复杂，*挑战*就越大"。
 
 我们可以把这些挑战归纳为四个主要方面。
 

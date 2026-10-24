@@ -9,7 +9,7 @@ captured: 2026-10-23
 extractor: readability-v1
 translator: mt
 status: translated
-body_sha: ddd32a563529
+body_sha: 2f8c0611324b
 ---
 
 ## [人工智能](https://aws.amazon.com/blogs/machine-learning/)
@@ -22,7 +22,7 @@ body_sha: ddd32a563529
 
 [AWS Agent Registry](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html) 是一项托管服务，用于编目和发现模型上下文协议 (MCP) 服务器、代理和代理技能。发布者注册特定于协议的描述符和可搜索的描述。在运行时，编排器可以搜索已批准的、可发现的记录，并使用返回的端点和描述符内容来构建客户端。注册表搜索结果不会返回功能的调用凭据或身份验证方案。
 
-本文将介绍重构的 Python 示例演示的发现 → 实例化 → 执行循环。该代码通过 [Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) 部署订单管理 MCP 服务器、Amazon Bedrock AgentCore 的功能、[AgentCore 运行时](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html) 上的两个代理到代理 (A2A) 代理、一个注册表和一个协调者。 [示例目录](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastruct/03-registry/03-advanced/discovery-and-inplication-at-runtime)包含部署脚本、orchestrator、帮助程序模块和清理脚本。
+本文将介绍重构的 Python 示例演示的发现 → 实例化 → 执行循环。该代码通过 [Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) 部署订单管理 MCP 服务器、Amazon Bedrock AgentCore 的功能、[AgentCore 运行时](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html) 上的两个代理到代理 (A2A) 代理、一个注册表和一个协调者。 [示例目录](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)包含部署脚本、orchestrator、帮助程序模块和清理脚本。
 
 ## 解决方案概述：发现、实例化、执行
 
@@ -59,7 +59,7 @@ body_sha: ddd32a563529
 
 ## 技术实现
 
-链接的运行时发现[示例](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastruct/03-registry/03-advanced/discovery-and-inspiration-at-runtime)部署依赖项、创建和填充注册表、验证发现、部署协调器并运行三个演示。 [orchestrator_agent.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastruct/03-registry/03-advanced/discovery-and-inspiration-at-runtime)包含每个请求的发现循环。 [utils.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastruct/03-registry/03-advanced/discovery-and-inplication-at-runtime) 解析注册表描述符并创建 MCP 和 A2A 客户端。 [cleanup.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastruct/03-registry/03-advanced/discovery-and-inplication-at-runtime)删除资源。
+链接的运行时发现[示例](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)部署依赖项、创建和填充注册表、验证发现、部署协调器并运行三个演示。 [orchestrator_agent.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)包含每个请求的发现循环。 [utils.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime) 解析注册表描述符并创建 MCP 和 A2A 客户端。 [cleanup.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)删除资源。
 
 ### 1.注册模型
 
@@ -303,7 +303,7 @@ AWS Agent Registry 已[普遍可用](https://aws.amazon.com/about-aws/whats-new/
 - 审批工作流程可以使用注册表状态 API 和 IAM 权限将 CI 检查、安全审查或人工审批连接到“DRAFT”→“PENDING_APPROVAL”→“APPROVED”生命周期。
 - 标记、[AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) 支持和[基础设施即代码](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) 模式可以使注册表部署和治理可重复。评估应验证组织自己的目录的搜索相关性和调用行为。
 
-运行 [runtime-discovery 示例](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastruct/03-registry/03-advanced/discovery-and-inspiration-at-runtime)，然后注册您自己的一台兼容的 MCP 服务器或代理。确认其描述符、批准状态、身份验证路径和搜索行为符合您的生产要求。
+运行 [runtime-discovery 示例](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)，然后注册您自己的一台兼容的 MCP 服务器或代理。确认其描述符、批准状态、身份验证路径和搜索行为符合您的生产要求。
 
 ### 了解更多
 

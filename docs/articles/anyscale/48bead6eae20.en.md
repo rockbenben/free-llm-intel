@@ -8,10 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 3e2b2bffd16b
+body_sha: 088ae0d2f14c
 ---
-
-
 
 Blog Detail
 
@@ -52,7 +50,7 @@ In a nutshell, Datasets:
 - Supports operations requiring stateful setup and GPU acceleration.
 - Works seamlessly with Ray-integrated **data processing libraries** (Spark, Pandas, NumPy, Dask, Mars) and **ML frameworks** (TensorFlow, Torch, Horovod).
 
-In this blog post, we will survey the current state of distributed training and model scoring pipelines and give an overview of Ray Datasets and how it solves problems present in the status quo. If that leaves you wanting more, be sure to [register for our upcoming webinar](https://www.anyscale.com/events/2022/02/16/ray-datasets-scalable-data-preprocessing-for-distributed-ml), where you can get a first-hand look at Datasets in action. With that, let’s dive in!
+In this blog post, we will survey the current state of distributed training and model scoring pipelines and give an overview of Ray Datasets and how it solves problems present in the status quo. If that leaves you wanting more, be sure to [register for our upcoming webinar](https://www.anyscale.com/events/2022/02/23/ray-datasets-scalable-data-preprocessing-for-distributed-ml), where you can get a first-hand look at Datasets in action. With that, let’s dive in!
 
 ## LinkCurrent ML training and inference pipelines
 
@@ -267,7 +265,7 @@ Another ML platform group evaluating a larger scale S3 → Datasets → Horovod 
 
 ## LinkConclusion
 
-To summarize, Datasets simplifies ML pipelines by providing a flexible and scalable API for working with data within Ray. We're just getting started with Datasets, but users are already finding it effective for training and inference at a variety of scales. [Check out the documentation](https://docs.ray.io/en/master/data/dataset.html) or [register for our upcoming webinar](https://www.anyscale.com/events/2022/02/16/ray-datasets-scalable-data-preprocessing-for-distributed-ml) to get a first-hand look at Datasets in action.
+To summarize, Datasets simplifies ML pipelines by providing a flexible and scalable API for working with data within Ray. We're just getting started with Datasets, but users are already finding it effective for training and inference at a variety of scales. [Check out the documentation](https://docs.ray.io/en/master/data/dataset.html) or [register for our upcoming webinar](https://www.anyscale.com/events/2022/02/23/ray-datasets-scalable-data-preprocessing-for-distributed-ml) to get a first-hand look at Datasets in action.
 
 *This post is based on Alex Wu and Clark Zinzow's talk, “*[*Unifying Data preprocessing and training with Ray Datasets*](https://www.youtube.com/watch?v=wl4tvru9_Cg)*,” from PyData Global 2021.*
 

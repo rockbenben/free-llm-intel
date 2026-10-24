@@ -9,7 +9,7 @@ captured: 2026-10-23
 extractor: readability-v1
 translator: mt
 status: translated
-body_sha: 1d735958bf69
+body_sha: 4c63a353d675
 ---
 
 [返回文章](https://huggingface.co/blog)
@@ -23,11 +23,11 @@ body_sha: 1d735958bf69
 14
 
 - [![](https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg)](https://huggingface.co/Fearghal)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/WSgVWqeGen77Vh5GzTL-O.png)](https://huggingface.co/Jake893)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/kyVdmjyfIsLZqFKhaIRF9.png)](https://huggingface.co/okoyelisbon)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/WSgVWqeGen77Vh5GzTL-O.png)](https://huggingface.co/Jake893)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kyVdmjyfIsLZqFKhaIRF9.png)](https://huggingface.co/okoyelisbon)
 - [![](https://huggingface.co/avatars/63644064768d8ba22487d7b5ffeab88d.svg)](https://huggingface.co/ElPanaBru)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/66d6ee839fcb6b494fcc2cbc/AFMksMD6oOy4ec52PUdnL.png)](https://huggingface.co/Bangla84PL)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/6747d1af433d60be7006cf02/YrCokyziqIX41i1NhW6vN.png)](https://huggingface.co/Babysworld)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66d6ee839fcb6b494fcc2cbc/AFMksMD6oOy4ec52PUdnL.png)](https://huggingface.co/Bangla84PL)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6747d1af433d60be7006cf02/YrCokyziqIX41i1NhW6vN.png)](https://huggingface.co/Babysworld)
 
 [![Fearghal O'Donncha 的头像](https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg)](https://huggingface.co/Fearghal)
 
@@ -35,7 +35,7 @@ body_sha: 1d735958bf69
 
 菲尔格尔
 
-[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
+[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Chandramouli Kamanchi 的头像](https://huggingface.co/avatars/317e008622f276f00309f81af04b3d3b.svg)](https://huggingface.co/rry003)
 
@@ -43,15 +43,15 @@ body_sha: 1d735958bf69
 
 ry003
 
-[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
+[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
-[![Guruprasad 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/64ca639d7a4f23635701313e/ZaCrxHOn4feQ39vtBAID2.jpeg)](https://huggingface.co/Ranjini)
+[![Guruprasad 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/64ca639d7a4f23635701313e/ZaCrxHOn4feQ39vtBAID2.jpeg)](https://huggingface.co/Ranjini)
 
 古鲁普拉萨德
 
 兰吉尼
 
-[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
+[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Wesley M. Gifford 的头像](https://huggingface.co/avatars/8833ff37c5ccc477f1593cd8ad5a1208.svg)](https://huggingface.co/wmgifford)
 
@@ -59,7 +59,7 @@ ry003
 
 威姆吉福德
 
-[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
+[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Natalia Martinez Gil 的头像](https://huggingface.co/avatars/9041e569f6eb98b79ec3c9e7bcfd302c.svg)](https://huggingface.co/natalmg91)
 
@@ -67,7 +67,7 @@ ry003
 
 出生mg91
 
-[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
+[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Bradley Eck 的头像](https://huggingface.co/avatars/3ee5aa141090176f0c981322072fce25.svg)](https://huggingface.co/bradleyjeck)
 
@@ -75,7 +75,7 @@ ry003
 
 布拉德利杰克
 
-[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
+[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Pankaj Dayama 的头像](https://huggingface.co/avatars/ed8ccd6d4fbc0e68ce03930eae039c4b.svg)](https://huggingface.co/pankajdayama)
 
@@ -83,7 +83,7 @@ ry003
 
 潘卡吉达亚马
 
-[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
+[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Roman Vaculin 的头像](https://huggingface.co/avatars/c9d15c05751f0841bc0c431da3262d50.svg)](https://huggingface.co/vaculin)
 
@@ -91,15 +91,15 @@ ry003
 
 真空蛋白
 
-[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
+[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
-[![Ayhan Sebin 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg)](https://huggingface.co/ayhansebin)
+[![Ayhan Sebin 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg)](https://huggingface.co/ayhansebin)
 
 艾汉·塞宾
 
 艾汉瑟宾
 
-[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
+[![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 *四个开放的 Granite 模型，一个可扩展的预测界面，减少对使用哪个模型的猜测。*
 
@@ -271,7 +271,7 @@ GIFT-Eval 是一个广泛的基准，但总收益并不意味着每个系列都�
 
 ## ALTK-Evolve：学习记忆如何在没有前沿模型的情况下在客户服务任务的 τ² 基准排行榜上名列前茅
 
-- ![](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)
 
 25
 
@@ -279,7 +279,7 @@ GIFT-Eval 是一个广泛的基准，但总收益并不意味着每个系列都�
 
 ## 您的代理完成了任务。它会再次这样做吗？
 
-- ![](https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)
 
 122
 
@@ -296,17 +296,17 @@ GIFT-Eval 是一个广泛的基准，但总收益并不意味着每个系列都�
 14
 
 - [![](https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg)](https://huggingface.co/Fearghal)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/WSgVWqeGen77Vh5GzTL-O.png)](https://huggingface.co/Jake893)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/kyVdmjyfIsLZqFKhaIRF9.png)](https://huggingface.co/okoyelisbon)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/WSgVWqeGen77Vh5GzTL-O.png)](https://huggingface.co/Jake893)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kyVdmjyfIsLZqFKhaIRF9.png)](https://huggingface.co/okoyelisbon)
 - [![](https://huggingface.co/avatars/63644064768d8ba22487d7b5ffeab88d.svg)](https://huggingface.co/ElPanaBru)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/66d6ee839fcb6b494fcc2cbc/AFMksMD6oOy4ec52PUdnL.png)](https://huggingface.co/Bangla84PL)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/6747d1af433d60be7006cf02/YrCokyziqIX41i1NhW6vN.png)](https://huggingface.co/Babysworld)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/wLxC26FpMurJTtMGlo2xM.png)](https://huggingface.co/wasifff)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/66d6ee839fcb6b494fcc2cbc/AFMksMD6oOy4ec52PUdnL.png)](https://huggingface.co/Bangla84PL)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/6747d1af433d60be7006cf02/YrCokyziqIX41i1NhW6vN.png)](https://huggingface.co/Babysworld)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/wLxC26FpMurJTtMGlo2xM.png)](https://huggingface.co/wasifff)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
 - [![](https://huggingface.co/avatars/c9d15c05751f0841bc0c431da3262d50.svg)](https://huggingface.co/vaculin)
 - [![](https://huggingface.co/avatars/ed8ccd6d4fbc0e68ce03930eae039c4b.svg)](https://huggingface.co/pankajdayama)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/c_JwpKUXjG0LeKGknmQDk.png)](https://huggingface.co/heatmynuts)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png)](https://huggingface.co/zensaintlaurent)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/c_JwpKUXjG0LeKGknmQDk.png)](https://huggingface.co/heatmynuts)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png)](https://huggingface.co/zensaintlaurent)
 
 ## 本文提到的型号 5
 

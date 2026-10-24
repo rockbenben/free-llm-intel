@@ -9,7 +9,7 @@ captured: 2026-10-23
 extractor: readability-v1
 translator: mt
 status: translated
-body_sha: 89a35b59e903
+body_sha: 880abc544444
 ---
 
 [返回文章](https://huggingface.co/blog)
@@ -22,9 +22,9 @@ body_sha: 89a35b59e903
 
 3
 
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
 
 [![Kyle Wiggers 的头像](https://huggingface.co/avatars/fee5cceec7536851d7c6712760716a71.svg)](https://huggingface.co/Ai2Comms)
 
@@ -32,7 +32,7 @@ body_sha: 89a35b59e903
 
 爱通信
 
-[![Ai2 头像](https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)](https://huggingface.co/allenai) [allenai](https://huggingface.co/allenai)
+[![Ai2 头像](https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)](https://huggingface.co/allenai) [allenai](https://huggingface.co/allenai)
 
 📄 [技术报告](https://allenai.org/papers/fairstress) | 🤗 [数据](https://huggingface.co/datasets/allenai/fairstress) | 💻 [代码](https://github.com/pardissz/fairstress)
 
@@ -136,7 +136,7 @@ FairStress 说明了为什么一个模型的人口统计公平性不能仅仅通
 
 ## HiRO-ACEv2：以 3 公里分辨率模拟极端天气，而成本仅为一小部分
 
-- ![](https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)
 
 14
 
@@ -144,7 +144,7 @@ FairStress 说明了为什么一个模型的人口统计公平性不能仅仅通
 
 ## GPU 集群的有效调度
 
-- ![](https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)
+- ![](https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png)
 
 54
 
@@ -160,8 +160,8 @@ FairStress 说明了为什么一个模型的人口统计公平性不能仅仅通
 
 3
 
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
-- [![](https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg)](https://huggingface.co/yjernite)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png)](https://huggingface.co/darrowoflykos)
+- [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png)](https://huggingface.co/luke-loan-atlas)
 
 ## 本文提到的数据集1

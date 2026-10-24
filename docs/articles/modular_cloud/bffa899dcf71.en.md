@@ -8,7 +8,7 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 78a013ad0d39
+body_sha: dd85fcae25f2
 ---
 
 March 26, 2025
@@ -159,7 +159,7 @@ Triton also includes compiler-driven optimizations—like vectorization—and en
 
 ## Where Triton Falls Short
 
-Triton is widely used and very successful for some cases (e.g. researchers working on training frontier models and specialty use cases). However, it isn’t widely adopted for all applications: in particular, it’s not useful for AI inference use-cases, which require maximum efficiency. Furthermore, [despite predictions years ago by industry leaders](https://semianalysis.com/2023/01/16/nvidiaopenaitritonpytorch/), Triton has not united the ecosystem or challenged CUDA's dominance. Let’s dig in to understand the additional challenges Triton faces on top of the general limitations of all eDSLs (described earlier).
+Triton is widely used and very successful for some cases (e.g. researchers working on training frontier models and specialty use cases). However, it isn’t widely adopted for all applications: in particular, it’s not useful for AI inference use-cases, which require maximum efficiency. Furthermore, [despite predictions years ago by industry leaders](https://newsletter.semianalysis.com/p/nvidiaopenaitritonpytorch), Triton has not united the ecosystem or challenged CUDA's dominance. Let’s dig in to understand the additional challenges Triton faces on top of the general limitations of all eDSLs (described earlier).
 
 ###### **Significant GPU Performance/TCO Loss (compared to CUDA C++)**
 

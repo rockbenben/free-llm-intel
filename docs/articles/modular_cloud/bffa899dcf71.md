@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 012aabf9e419
+body_sha: c6bc5ed42a31
 ---
 
 # Triton 与 Python eDSL 怎么样？（AI 算力民主化，第 7 篇）
@@ -154,7 +154,7 @@ Triton 还包含编译器驱动的优化——比如向量化——并支持简�
 
 ## Triton 的短板
 
-Triton 被广泛使用，在某些场景非常成功（例如研究前沿模型训练的研究者和特定用例）。但它在所有应用上并未被广泛采用：尤其是对要求极致效率的 AI 推理场景，它并不好用。此外，[尽管行业领袖多年前就做出预测](https://semianalysis.com/2023-01-16/nvidiaopenaitritonpytorch/)，Triton 并未统一生态，也没能挑战 CUDA 的统治。让我们深挖一下：在一切 eDSL 的通用局限（前文已述）之外，Triton 还面临哪些额外挑战。
+Triton 被广泛使用，在某些场景非常成功（例如研究前沿模型训练的研究者和特定用例）。但它在所有应用上并未被广泛采用：尤其是对要求极致效率的 AI 推理场景，它并不好用。此外，[尽管行业领袖多年前就做出预测](https://newsletter.semianalysis.com/p/nvidiaopenaitritonpytorch)，Triton 并未统一生态，也没能挑战 CUDA 的统治。让我们深挖一下：在一切 eDSL 的通用局限（前文已述）之外，Triton 还面临哪些额外挑战。
 
 ###### **显著的 GPU 性能/TCO 损失（相比 CUDA C++）**
 

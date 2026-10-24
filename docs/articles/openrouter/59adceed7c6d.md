@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 2fafc92a34f5
+body_sha: f77b62abef54
 ---
 
 # 开饭了
@@ -33,7 +33,7 @@ body_sha: 2fafc92a34f5
 - 发现 OpenAI 并不是你这些场景的最佳模型，你需要 Gemini。
 - 去 Gemini 或其他 provider 配置接入，然后发现 observability、governance 和 provisioning 全都散了架。
 
-我今天看到的现状表面上是成本压力，但比那更深。公司们[已经烧穿了年度预算](https://fortune.com/2026-05-26/uber-coo-ai-spending-tokens-claude-code/)，而现在才六月。大家强烈希望减少 token 用量，这我理解。如果你不小心用了 Opus 4.8，可能一天预算就没了，然后你毫无选项。合上笔记本电脑，出门散步去吧。
+我今天看到的现状表面上是成本压力，但比那更深。公司们[已经烧穿了年度预算](https://fortune.com/2026/05/26/uber-coo-ai-spending-tokens-claude-code/)，而现在才六月。大家强烈希望减少 token 用量，这我理解。如果你不小心用了 Opus 4.8，可能一天预算就没了，然后你毫无选项。合上笔记本电脑，出门散步去吧。
 
 Opus 4.7 的牌价没变，但不少人写了关于「tokenizer tax」的事。这是 Anthropic 做的一次静默变更，输入 token 几乎增加了 35%。这是实打实的变化。更强更新款的模型也在涨价。Anthropic 发布了 Fable，定价每百万输入 token $10、每百万输出 $50。还有更贵的：OpenAI 的 GPT-5.5 Pro 达到每百万输入 $30、每百万输出 $180。谨慎使用！
 

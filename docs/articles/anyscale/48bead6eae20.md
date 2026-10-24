@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 97ea6fa43752
+body_sha: 06e4a34277d2
 ---
 
 # Ray Datasets：大规模机器学习数据摄取与打分
@@ -27,7 +27,7 @@ body_sha: 97ea6fa43752
 - 支持需要状态化初始化的操作与 GPU 加速。
 - 与集成 Ray 的**数据处理库**（Spark、Pandas、NumPy、Dask、Mars）和 **ML 框架**（TensorFlow、Torch、Horovod）无缝协作。
 
-本文会巡礼分布式训练与模型打分流水线的现状，概述 Ray Datasets 如何解决其中的痛点。意犹未尽的话，请[报名我们即将举办的网络研讨会](https://www.anyscale.com/events/2022-02-16/ray-datasets-scalable-data-preprocessing-for-distributed-ml)，第一手观看 Datasets 的实战。下面开讲！
+本文会巡礼分布式训练与模型打分流水线的现状，概述 Ray Datasets 如何解决其中的痛点。意犹未尽的话，请[报名我们即将举办的网络研讨会](https://www.anyscale.com/events/2022/02/23/ray-datasets-scalable-data-preprocessing-for-distributed-ml)，第一手观看 Datasets 的实战。下面开讲！
 
 ## 当前的 ML 训练与推理流水线
 
@@ -244,6 +244,6 @@ Ray Datasets 项目仍处早期。beta 之后，我们计划增加若干特性�
 
 ## 结语
 
-总之，Datasets 通过灵活、可扩展的 Ray 内数据处理 API 简化了 ML 流水线。Datasets 才刚起步，但用户已经在多种规模上验证了它在训练与推理上的有效性。请[查阅文档](https://docs.ray.io/en/master/data/dataset.html)，或[报名我们的网络研讨会](https://www.anyscale.com/events/2022-02-16/ray-datasets-scalable-data-preprocessing-for-distributed-ml)，第一手感受 Datasets。
+总之，Datasets 通过灵活、可扩展的 Ray 内数据处理 API 简化了 ML 流水线。Datasets 才刚起步，但用户已经在多种规模上验证了它在训练与推理上的有效性。请[查阅文档](https://docs.ray.io/en/master/data/dataset.html)，或[报名我们的网络研讨会](https://www.anyscale.com/events/2022/02/23/ray-datasets-scalable-data-preprocessing-for-distributed-ml)，第一手感受 Datasets。
 
 *本文基于 Alex Wu 与 Clark Zinzow 在 PyData Global 2021 的演讲《*[*Unifying Data preprocessing and training with Ray Datasets*](https://www.youtube.com/watch?v=wl4tvru9_Cg)*》。*

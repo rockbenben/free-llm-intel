@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 71ae588e4a35
+body_sha: 3051e84f8dac
 ---
 
 [Amazon Quick Sight](https://aws.amazon.com/quicksight/) 是一个完全托管、云原生的商业智能（BI）能力，用于构建并发布交互式仪表盘。你可以从任何设备访问这些仪表盘，并把它们嵌入到你的应用、门户和网站中。在构建仪表盘时，作者添加过滤器，让读者能把数据收窄到他们想分析的内容。但作者必须取得平衡：他们既需要足够的选项让读者自由探索数据，又不要把界面弄得杂乱或需要太多步骤才能应用过滤器。
@@ -26,7 +26,7 @@ body_sha: 71ae588e4a35
 
 - **减少视觉杂乱：** 读者先看到一个简短的区域列表，而不是一上来就看到数百个城市。界面在每一步都保持清爽，同时可见的选项更少。
 - **更少步骤、更有引导的探索：** 读者沿一条逻辑路径下钻（Region → Sub-Region → Country → City），而非扫描几十个过滤器的扁平列表。每次选择都收窄下一层，因此读者更快到达目标。
-- **混搭的层级选择：** 读者可以在一个过滤器控件中组合层级的多个级别，选中一个整个国家（如日本）连同单个城市（如纽约）。   [![Amazon Quick Sight hierarchy control with Japan selected under APJ and New York City selected under United States, showing mix-and-match selection across levels](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026-09-29/ML-21595-2.png)](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026-09-29/ML-21595-2.png) 图 2：在同一个层级控件中选中一个整个国家和单个城市
+- **混搭的层级选择：** 读者可以在一个过滤器控件中组合层级的多个级别，选中一个整个国家（如日本）连同单个城市（如纽约）。   [![Amazon Quick Sight hierarchy control with Japan selected under APJ and New York City selected under United States, showing mix-and-match selection across levels](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/09/29/ML-21595-2.png)](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/09/29/ML-21595-2.png) 图 2：在同一个层级控件中选中一个整个国家和单个城市
 - **在不压垮用户的前提下扩展：** 你可以支持很深的层级（最多五个级别），而不添加五个独立的、挤满工具栏的过滤器控件。一个紧凑的控件处理完整的下钻路径。
 - **防止读者困惑：** 读者不需要知道哪个国家属于哪个区域。层级为他们编码了那份知识，让仪表盘能自我引导。
 

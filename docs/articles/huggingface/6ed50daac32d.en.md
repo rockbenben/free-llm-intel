@@ -8,9 +8,8 @@ lang: en
 captured: 2026-10-05
 extractor: readability-v1
 status: ok
-body_sha: 96f6f2d7a076
+body_sha: 9711a2b87520
 ---
-
 
 # Tricks from OpenAI gpt-oss YOU 🫵 can use with transformers
 
@@ -380,7 +379,7 @@ For models that only use sliding window layers, such as Mistral 7B, cache memory
 OpenAI gpt-oss alternates between sliding and global attention layers, which results in total KV cache memory being *halved*, as we'll see, as sequence length increases. This provides us with:
 
 - **Much lower KV‑cache memory** for models with sliding or hybrid attention (e.g. GPT‑OSS). Cache growth plateaus once the window is reached (e.g., 4K for Mistral; 128 for GPT‑OSS sliding layers), instead of scaling linearly with total generated tokens. ([GitHub](https://github.com/huggingface/transformers/pull/40039), [Transformers](https://huggingface.co/docs/transformers/en/model_doc/mistral))
-- **Speed/latency wins** on long prompts/long generations: smaller KV tensors mean lighter attention reads/writes and less memory bandwidth pressure, especially after the window is hit. (This is the central motivation behind sliding‑window/hybrid LLMs.) ([AI21](https://www.ai21.com/blog/rise-of-hybrid-llms/), [vLLM Blog](https://blog.vllm.ai/2025/08/05/gpt-oss.html))
+- **Speed/latency wins** on long prompts/long generations: smaller KV tensors mean lighter attention reads/writes and less memory bandwidth pressure, especially after the window is hit. (This is the central motivation behind sliding‑window/hybrid LLMs.) ([AI21](https://www.ai21.com/blog/rise-of-hybrid-llms/), [vLLM Blog](https://vllm.ai/blog/2025-08-05-gpt-oss))
 
 ### How to use it
 

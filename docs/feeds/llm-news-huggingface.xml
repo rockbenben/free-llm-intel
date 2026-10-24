@@ -19,13 +19,13 @@
 <p>企业文章</p>
 <p>发布于 2026 年 10 月 22 日</p>
 <p>-</p>
-<p><a href="https://huggingface.co/tuhink"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png" alt="Tuhin Kundu 的头像"></a></p>
+<p><a href="https://huggingface.co/tuhink"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64b8491203124195cd795cad/KWtqxooyzbqzLqdJorOPi.png" alt="Tuhin Kundu 的头像"></a></p>
 <p>图欣昆杜</p>
 <p>图欣克</p>
-<p><a href="https://huggingface.co/microsoft"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583646260758-5e64858c87403103f9f1055d.png" alt="微软头像"></a> <a href="https://huggingface.co/microsoft">microsoft</a></p>
+<p><a href="https://huggingface.co/microsoft"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583646260758-5e64858c87403103f9f1055d.png" alt="微软头像"></a> <a href="https://huggingface.co/microsoft">microsoft</a></p>
 <blockquote>这是我们第一篇博文《特工说已经完成》的后续内容。数据库不同意。 ThinkingBox-Training 现已在 GitHub 上提供。</blockquote>
 <p><em>我们构建 ThinkingBox 来通过将最终数据库状态与预期结果进行比较来评估代理的工作。然后，我们使用相同类型的可执行信号作为 ThinkingBox-Bench 之外的训练任务的奖励。对于 Qwen3.8-27B，平均成功率从 51.70% 上升到 60.78%，而在 50 个 GRPO 步骤中，所有 20 次尝试正确完成的任务从 38 上升到 107。</em></p>
-<p>[![fig1-hero](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/KVaFjYjblWd15tC3M6S_ 0.png)](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/KVaFjYjblWd15tC3M6S_0.png)</p>
+<p>[![fig1-hero](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/KVaFjYjblWd15tC3M6S_ 0.png)](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/KVaFjYjblWd15tC3M6S_0.png)</p>
 <p><em>图 1.ThinkingBox 将终端数据库状态的可执行检查转化为对 ThinkingBox-Bench 之外的任务的训练后智能体的奖励。</em></p>
 <p>####这是微软和Hugging Face的联合博客，特别感谢微软的Mirco Milletari和Xiang Jiang、Hugging Face的Sergio Paniego和我们前实习生李卓春（匹兹堡大学）的共同撰写/审阅工作。</p>
 <p>我们构建 ThinkingBox 来捕获那些声称已完成但实际上尚未完成的代理。</p>
@@ -40,7 +40,7 @@
 <table><thead><tr><th>公制</th><th>基地</th><th></th><th>RL 微调</th><th>改变</th></tr></thead><tbody><tr><td><strong>20/20 观察</strong></td><td>38 (7.50%)</td><td>→</td><td><strong>107 (21.10%)</strong></td><td><strong>+69 项任务</strong></td></tr><tr><td>pass@1（成功尝试）</td><td>5,242 (51.70%)</td><td>→</td><td><strong>6,163 (60.78%)</strong></td><td><strong>+9.08 分</strong></td></tr><tr><td>pass@20（任务至少解决一次）</td><td>453 (89.35%)</td><td>→</td><td><strong>446 (87.97%)</strong></td><td><strong>−7 任务</strong></td></tr></tbody></table>
 <p>训练大幅<strong>增加</strong>可重复成功率，但至少一次覆盖率略有下降。文章的其余部分解释了我们如何选择练习任务、构建奖励循环并衡量这种权衡。</p>
 <p><strong>一项任务的改进效果如何？</strong> 旅行者请求房间降级，但公司政策要求首先获得经理批准。培训前，代理人在20次尝试中，有15次未经批准更改预订并退款。经过RL微调后，它保留了所有20个中的预订和支付状态。</p>
-<p>[![fig2-hotel-task](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/iu-NFQl-J3EOMe_Ki ME_8.png)](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/iu-NFQl-J3EOMe_KiME_8.png)</p>
+<p>[![fig2-hotel-task](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/iu-NFQl-J3EOMe_Ki ME_8.png)](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/iu-NFQl-J3EOMe_KiME_8.png)</p>
 <p><em>图 2. 一项企业酒店预订任务，每个模型 20 次尝试。基本 Qwen3.8-27B 型号在未经经理批准的情况下尝试更改了预订 15 次。 RL 微调模型保留了所有 20 个中的预订和支付状态；所有预期记录均在 19.</em> 中匹配</p>
 <h2>内容</h2>
 <ul><li><a href="https://huggingface.co/blog/microsoft/thinkingbox-training#what-the-benchmark-found-in-sixty-seconds">基准测试在六十秒内发现了什么</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox-training#results-the-dependability-column-moved">结果：可靠性列已移动</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox-training#where-the-gains-landed">收益落地</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox-training#what-dependability-costs">可靠性成本</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox-training#the-training-loop">训练循环</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox-training#offline-policy-relative-difficulty">离线策略相对难度</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox-training#what-earns-a-reward">什么可以获得奖励</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox-training#run-the-training-stack">运行训练堆栈</a></li><li><a href="https://huggingface.co/blog/microsoft/thinkingbox-training#where-this-goes-next">接下来会发生什么</a></li></ul>
@@ -60,7 +60,7 @@
 <p>观察到的模式与锐化一致：可重复成功率上升，而至少一次覆盖率略有下降。这与<a href="https://arxiv.org/abs/2504.13837">之前的工作</a>一致。一种解释是，概率分布朝着重复工作的轨迹发展，而一些低概率路径消失了。</p>
 <blockquote>总体而言，该模型并没有变得更广泛。它变得更加可重复。下一个问题是这些收益落在哪里。</blockquote>
 <h2>收益落地的地方</h2>
-<p>[![fig2-domains](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/Bu7GFUdUiJgQjHV_cb vU4.png)](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/Bu7GFUdUiJgQjHV_cbvU4.png)</p>
+<p>[![fig2-domains](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/Bu7GFUdUiJgQjHV_cb vU4.png)](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/Bu7GFUdUiJgQjHV_cbvU4.png)</p>
 <p><em>图 3. 领域级基础分数、RLFT 分数和百分比变化。绿色变化细胞显示增益，红色细胞显示下降；蓝色阴影表示每个指标内的分数水平。</em></p>
 <p>通过@1 并观察到所有五个领域的 20/20 均有所上升。 Pass@20 的情况好坏参半：新银行和咨询业务有所增长，但零售、旅游和汽车保险业务有所下降。汽车保险的广度损失最大（-7.0 点），而零售业则观察到最大的 20/20 增益（+24.5 点）。</p>
 <h2>可靠性的代价是什么</h2>
@@ -72,13 +72,13 @@
 <p>每个可靠任务的价格为 8.00 美元，经过微调的模型在同伴比较中接近 GPT-5.4（6.80 美元）、GPT-6 Astra（7.45 美元）和 Claude Opus 5.5（7.80 美元）。</p>
 <h4>单次尝试视图</h4>
 <p>图 4 针对 pass@1 的每次“成功尝试”的价格成本。</p>
-<p>[![fig3-cost-frontier](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/HPq2TNCT8yskCAG tKe86l.png)](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/HPq2TNCT8yskCAGtKe86l.png)</p>
+<p>[![fig3-cost-frontier](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/HPq2TNCT8yskCAG tKe86l.png)](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/HPq2TNCT8yskCAGtKe86l.png)</p>
 <p><em>图 4. 金色箭头将 Qwen3.8-27B 基本帕累托成本位置追踪到 RLFT（菱形）：pass@1 从 51.70% 上升到 60.78%，而每次成功尝试的估计成本从 0.177 美元下降到 0.139 美元。带环的圆圈标记帕累托成本边界。</em></p>
 <p>此举使微调检查点接近 GPT-5.6 Sol，尽管 GPT-5.6 Sol 在 pass@1 上仍然更便宜且略高。 <a href="https://arxiv.org/abs/2608.19741">我们的论文</a> 中定价的四种模型超出了绘制的范围。</p>
 <p>美元价值是比较服务指数，而不是发票或云账单。为微调检查点提供服务将与基本模型相同。该计算包括模型推理成本，不包括用于管理训练数据集的训练运行和策略探测成本。</p>
 <p>这些结果告诉我们是什么移动了。接下来的部分将解释训练循环以及为什么选择正确的任务最重要。</p>
 <h2>训练循环</h2>
-<p>[![fig4-training-overview](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/ZaqyG8RtqCRsx GdxUQMfi.png)](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/ZaqyG8RtqCRsxGdxUQMfi.png)</p>
+<p>[![fig4-training-overview](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/ZaqyG8RtqCRsx GdxUQMfi.png)](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/ZaqyG8RtqCRsxGdxUQMfi.png)</p>
 <p><em>图 5. 现在的上下文中的六个阶段：候选任务输入，前三个阶段离线运行，最后三个阶段对训练运行中的每个组重复。训练后的检查点根据 ThinkingBox-Bench 进行评估。</em></p>
 <p>选择针对基本策略模型离线运行一次，即本例中的 Qwen3.8 27B；然后训练使用已策划的固定池。图 5 中的虚线琥珀色箭头标记了我们没有采取的路径：在训练运行期间重新探测难度。</p>
 <p>每次推出都是一个完整的剧集，而不是文本完成。它获得一个新的后端、一个独立的 MCP 会话以及作为模拟用户的 GPT-5 聊天。大多数奖励来自确定性的终端状态检查；少数狭窄的标题要求可以调用配置的法官（GPT-5 聊天）。</p>
@@ -98,13 +98,13 @@
 <h3>从有限的探测中估计难度</h3>
 <p>每个候选任务运行 <em>n</em> 次，产生 <em>k</em> 次成功。我们用 Jeffrey 后验概率对其潜在成功概率进行建模：</p>
 <blockquote>成功概率 | n 次探测中 k 次成功 ~ Beta(k + ½, n − k + ½)</blockquote>
-<p>[![fig5-policy-relative-difficulty](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/eR45y7Dl0 VFFK3HinwDYg.png)](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/eR45y7Dl0VFFK3HinwDYg.png)</p>
+<p>[![fig5-policy-relative-difficulty](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/eR45y7Dl0 VFFK3HinwDYg.png)](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/eR45y7Dl0VFFK3HinwDYg.png)</p>
 <p><em>图 6. 离线策略相对难度是通过重复的基本策略探测来估计的，并用于保留可能产生对比奖励的任务。</em></p>
 <p>我们将单位间隔划分为五个桶，边界分别为 0.08、0.40、0.60 和 0.90，选择这些桶作为这些运行的超参数。每个任务都分配给包含最大后验质量的桶：</p>
 <ul><li><strong>很少解决 [0, 0.08):</strong> 掉落</li><li><strong>困难 [0.08, 0.40):</strong> 保留</li><li><strong>中级 [0.40, 0.60):</strong> 保留</li><li><strong>经常解决的[0.60, 0.90)：</strong>保留用于全参数RLFT</li><li><strong>几乎总是解决 [0.90, 1]:</strong> 下降</li></ul>
 <p>更多详细信息请参见 <a href="https://arxiv.org/pdf/2608.19741">ThinkingBox 论文的附录 C.4</a>。</p>
 <h3>一项任务，端到端</h3>
-<p>[![fig6-worked-example](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/IBBkNpYKQRK6jBL SusMXw.png)](https://cdn-uploads.huggingface.co/product/uploads/64b8491203124195cd795cad/IBBkNpYKQRK6jBLSusMXw.png)</p>
+<p>[![fig6-worked-example](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/IBBkNpYKQRK6jBL SusMXw.png)](https://cdn-uploads.huggingface.co/production/uploads/64b8491203124195cd795cad/IBBkNpYKQRK6jBLSusMXw.png)</p>
 <p><em>图 7. 放大，一项任务贯穿所有六个阶段：GPT-5.4 筛选、基本模型探测、难度分类、推出组、最终状态分级和 GRPO 更新。</em></p>
 <p>图 7 展示了一项可能进入训练池的候选任务。对于 Qwen3.8 27B 全参数池，GPT-5.4 首先充当可解性筛选。然后，基本策略在少数探针上取得了成功，例如 8 个探针中的 3 个，产生了 Beta(3.5, 5.5) 后验。其最大质量为 54.0%，属于困难带。</p>
 <p>当采样进行训练时，任务产生了混合奖励组“[0, 0, 0, 0, 1, 1, 1, 1]”。因此，成功的轨迹获得了高于平均水平的任务优势，而失败的轨迹则获得了低于平均水平的优势，从而为 GRPO 提供了可供学习的对比。不同的政策模型可能会将相同的任务置于不同的难度范围内。</p>
@@ -260,11 +260,11 @@ bash scripts/launch_sysmerge.sh</code></pre>
 <h2>本文提到的论文1</h2>
 <p>该作者的更多内容</p>
 <h2>代理说已经完成。数据库不同意。</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583646260758-5e64858c87403103f9f1055d.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583646260758-5e64858c87403103f9f1055d.png" alt=""></li></ul>
 <p>89</p>
 <p>2026 年 10 月 3 日</p>
 <h2>在 Foundry 托管计算上拥抱人脸模型</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1583646260758-5e64858c87403103f9f1055d.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1583646260758-5e64858c87403103f9f1055d.png" alt=""></li></ul>
 <p>21</p>
 <p>2026 年 7 月 7 日</p>
 <h3>社区</h3>
@@ -286,15 +286,15 @@ bash scripts/launch_sysmerge.sh</code></pre>
 <p>企业文章</p>
 <p>发布于 2026 年 10 月 22 日</p>
 <p>7</p>
-<ul><li><a href="https://huggingface.co/aboudrari"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/vhoKsHAASHnAkFp9kCHYR.png" alt=""></a></li><li><a href="https://huggingface.co/happybydefault"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1640645587885-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/asiddique99"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6ad956a599c6f5b5956ab489/R8H6LHAZS9BbGfloqKeEd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/zensaintlaurent"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png" alt=""></a></li><li><a href="https://huggingface.co/mayankbhaskarr"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/FME67fc118KAW06M8NsbO.png" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/aboudrari"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vhoKsHAASHnAkFp9kCHYR.png" alt=""></a></li><li><a href="https://huggingface.co/happybydefault"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1640645587885-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/asiddique99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ad956a599c6f5b5956ab489/R8H6LHAZS9BbGfloqKeEd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/zensaintlaurent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png" alt=""></a></li><li><a href="https://huggingface.co/mayankbhaskarr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FME67fc118KAW06M8NsbO.png" alt=""></a></li></ul>
 <p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/fee5cceec7536851d7c6712760716a71.svg" alt="Kyle Wiggers 的头像"></a></p>
 <p>凯尔威格斯</p>
 <p>爱通信</p>
-<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
 <p>🤗 <a href="https://huggingface.co/allenai/OlmoEarth-v1_3-Base/">模型</a> | 📄 <a href="https://allenai.org/papers/olmoearth-v1-3">技术报告</a> | 📊 <a href="https://source.coop/olmoearth/olmoearth-v1-3-embeddings">数据</a> | 💻 <a href="https://github.com/allenai/olmoearth_pretrain">代码</a> | 🌎 <a href="https://olmoearth.allenai.org/embeddings">嵌入浏览器</a> | 🗺️ <a href="https://narrative.allen.ai/olmoearth-embeddings">互动故事</a></p>
 <p><a href="https://www.datocms-assets.com/64837/1792611867-olmoearth-v1-3-globe.png">！[深绿色上的 OlmoEarth 1.3 文字标记上方青色和洋红色的像素化地球仪背景。</a>](https://www.datocms-assets.com/64837/1792611867-olmoearth-v1-3-globe.png)</p>
 <p>今天，我们发布了 <a href="https://huggingface.co/allenai/OlmoEarth-v1_3-Base/">OlmoEarth v1.3</a>，这是一种最先进的卫星嵌入模型。除了 OlmoEarth v1.3 之外，我们还共享整个地球的预先计算的年度嵌入（10m、64 和 128 维），以及一个基于浏览器的新工具，用于根据这些嵌入探索和自定义地图 - <a href="https://olmoearth.allenai.org/embeddings">OlmoEarth Embeddings Explorer</a>。这意味着任何人都可以立即将 OlmoEarth v1.3 投入使用，从跟踪随时间的变化到查找相似的地方，无需登录，也不需要高级技术知识。</p>
-<p>到目前为止，使用 OlmoEarth 的主要方法是在 OlmoEarth Studio 中进行微调：为每个任务训练一个模型并在卫星图像上运行它以制作地图。这需要 GPU 访问权限以及下载和存储<a href="https://allenai.org/blog/olmoearth-infrastruct">图像</a> 的能力。嵌入模型将卫星数据压缩为即用型特征，可以以低廉的成本重复用于许多任务。</p>
+<p>到目前为止，使用 OlmoEarth 的主要方法是在 OlmoEarth Studio 中进行微调：为每个任务训练一个模型并在卫星图像上运行它以制作地图。这需要 GPU 访问权限以及下载和存储<a href="https://allenai.org/blog/olmoearth-infrastructure">图像</a> 的能力。嵌入模型将卫星数据压缩为即用型特征，可以以低廉的成本重复用于许多任务。</p>
 <p>通过 OlmoEarth v1.3，我们很高兴为用户提供更多方式以最适合他们的方式探索和参与行星文物。</p>
 <h2>计算一次，到处重用</h2>
 <p>嵌入表示模型从数百万张图像中学到的内容。 OlmoEarth v1.3读取一年的雷达（Sentinel-1）和多光谱（Sentinel-2和Landsat）卫星时间序列，并为地球上每10米像素生成一个128维向量；前 64 个维度也可以作为较小的嵌入自行工作。</p>
@@ -326,11 +326,11 @@ bash scripts/launch_sysmerge.sh</code></pre>
 <h2>本文提到的型号1</h2>
 <p>该作者的更多内容</p>
 <h2>FairStress：对 LLM 决策公平性的更深入评估</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
 <p>6</p>
 <p>2026 年 10 月 20 日</p>
 <h2>HiRO-ACEv2：以 3 公里分辨率模拟极端天气，而成本仅为一小部分</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
 <p>14</p>
 <p>2026 年 10 月 14 日</p>
 <h3>社区</h3>
@@ -338,7 +338,7 @@ bash scripts/launch_sysmerge.sh</code></pre>
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Folmoearth-v1-3">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Folmoearth-v1-3">登录</a> 发表评论</p>
 <p>7</p>
-<ul><li><a href="https://huggingface.co/aboudrari"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/vhoKsHAASHnAkFp9kCHYR.png" alt=""></a></li><li><a href="https://huggingface.co/happybydefault"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1640645587885-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/asiddique99"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6ad956a599c6f5b5956ab489/R8H6LHAZS9BbGfloqKeEd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/zensaintlaurent"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png" alt=""></a></li><li><a href="https://huggingface.co/mayankbhaskarr"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/FME67fc118KAW06M8NsbO.png" alt=""></a></li><li><a href="https://huggingface.co/iamzeid"><img src="https://huggingface.co/avatars/301da4357878770897b3f301ea6c125e.svg" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/aboudrari"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vhoKsHAASHnAkFp9kCHYR.png" alt=""></a></li><li><a href="https://huggingface.co/happybydefault"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1640645587885-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/asiddique99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ad956a599c6f5b5956ab489/R8H6LHAZS9BbGfloqKeEd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/zensaintlaurent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png" alt=""></a></li><li><a href="https://huggingface.co/mayankbhaskarr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/FME67fc118KAW06M8NsbO.png" alt=""></a></li><li><a href="https://huggingface.co/iamzeid"><img src="https://huggingface.co/avatars/301da4357878770897b3f301ea6c125e.svg" alt=""></a></li></ul>
 <h2>本文提到的型号1</h2>]]></content:encoded>
     </item>
     <item>
@@ -352,43 +352,43 @@ bash scripts/launch_sysmerge.sh</code></pre>
 <p>企业文章</p>
 <p>发布于 2026 年 10 月 22 日</p>
 <p>14</p>
-<ul><li><a href="https://huggingface.co/Fearghal"><img src="https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg" alt=""></a></li><li><a href="https://huggingface.co/Jake893"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/WSgVWqeGen77Vh5GzTL-O.png" alt=""></a></li><li><a href="https://huggingface.co/okoyelisbon"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/kyVdmjyfIsLZqFKhaIRF9.png" alt=""></a></li><li><a href="https://huggingface.co/ElPanaBru"><img src="https://huggingface.co/avatars/63644064768d8ba22487d7b5ffeab88d.svg" alt=""></a></li><li><a href="https://huggingface.co/Bangla84PL"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/66d6ee839fcb6b494fcc2cbc/AFMksMD6oOy4ec52PUdnL.png" alt=""></a></li><li><a href="https://huggingface.co/Babysworld"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6747d1af433d60be7006cf02/YrCokyziqIX41i1NhW6vN.png" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/Fearghal"><img src="https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg" alt=""></a></li><li><a href="https://huggingface.co/Jake893"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/WSgVWqeGen77Vh5GzTL-O.png" alt=""></a></li><li><a href="https://huggingface.co/okoyelisbon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kyVdmjyfIsLZqFKhaIRF9.png" alt=""></a></li><li><a href="https://huggingface.co/ElPanaBru"><img src="https://huggingface.co/avatars/63644064768d8ba22487d7b5ffeab88d.svg" alt=""></a></li><li><a href="https://huggingface.co/Bangla84PL"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66d6ee839fcb6b494fcc2cbc/AFMksMD6oOy4ec52PUdnL.png" alt=""></a></li><li><a href="https://huggingface.co/Babysworld"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6747d1af433d60be7006cf02/YrCokyziqIX41i1NhW6vN.png" alt=""></a></li></ul>
 <p><a href="https://huggingface.co/Fearghal"><img src="https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg" alt="Fearghal O'Donncha 的头像"></a></p>
 <p>菲尔格尔·奥唐查</p>
 <p>菲尔格尔</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/rry003"><img src="https://huggingface.co/avatars/317e008622f276f00309f81af04b3d3b.svg" alt="Chandramouli Kamanchi 的头像"></a></p>
 <p>钱德拉穆利·卡曼奇</p>
 <p>ry003</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/Ranjini"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64ca639d7a4f23635701313e/ZaCrxHOn4feQ39vtBAID2.jpeg" alt="Guruprasad 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/Ranjini"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64ca639d7a4f23635701313e/ZaCrxHOn4feQ39vtBAID2.jpeg" alt="Guruprasad 的头像"></a></p>
 <p>古鲁普拉萨德</p>
 <p>兰吉尼</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/wmgifford"><img src="https://huggingface.co/avatars/8833ff37c5ccc477f1593cd8ad5a1208.svg" alt="Wesley M. Gifford 的头像"></a></p>
 <p>韦斯利·M·吉福德</p>
 <p>威姆吉福德</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/natalmg91"><img src="https://huggingface.co/avatars/9041e569f6eb98b79ec3c9e7bcfd302c.svg" alt="Natalia Martinez Gil 的头像"></a></p>
 <p>娜塔莉亚·马丁内斯·吉尔</p>
 <p>出生mg91</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/bradleyjeck"><img src="https://huggingface.co/avatars/3ee5aa141090176f0c981322072fce25.svg" alt="Bradley Eck 的头像"></a></p>
 <p>布拉德利·艾克</p>
 <p>布拉德利杰克</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/pankajdayama"><img src="https://huggingface.co/avatars/ed8ccd6d4fbc0e68ce03930eae039c4b.svg" alt="Pankaj Dayama 的头像"></a></p>
 <p>潘卡吉·达亚玛</p>
 <p>潘卡吉达亚马</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/vaculin"><img src="https://huggingface.co/avatars/c9d15c05751f0841bc0c431da3262d50.svg" alt="Roman Vaculin 的头像"></a></p>
 <p>罗曼·瓦库林</p>
 <p>真空蛋白</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt="Ayhan Sebin 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt="Ayhan Sebin 的头像"></a></p>
 <p>艾汉·塞宾</p>
 <p>艾汉瑟宾</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><em>四个开放的 Granite 模型，一个可扩展的预测界面，减少对使用哪个模型的猜测。</em></p>
 <p>预训练的时间序列模型无需对数据集进行训练即可进行预测，但您仍然必须选择一个。能够很好地处理平滑工业信号的模型可能会难以应对嘈杂的零售需求或较长的季节性范围，最佳选择取决于系列和任务。</p>
 <p>Granite Timeseries Ensemble 将这种选择简化为合理的默认值。一种配方结合了四种互补的 Granite 架构，并返回中值和分位数预测，无需重新训练，也无需拟合整体权重。从概率集成（统一概率池）开始，比较自适应四分位距 (IQR) 集成，并使用兼容的预测器扩展相同的接口。合奏配方及其默认 Granite 成员均获得许可。</p>
@@ -472,11 +472,11 @@ print(result.quantile_outputs)   # quantiles</code></pre>
 <h2>本文提到的空间1</h2>
 <p>该作者的更多内容</p>
 <h2>ALTK-Evolve：学习记忆如何在没有前沿模型的情况下在客户服务任务的 τ² 基准排行榜上名列前茅</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
 <p>25</p>
 <p>2026 年 10 月 20 日</p>
 <h2>您的代理完成了任务。它会再次这样做吗？</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
 <p>122</p>
 <p>2026 年 9 月 15 日</p>
 <h3>社区</h3>
@@ -484,7 +484,7 @@ print(result.quantile_outputs)   # quantiles</code></pre>
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Fgranite-timeseries-ensemble-r1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Fgranite-timeseries-ensemble-r1">登录</a> 发表评论</p>
 <p>14</p>
-<ul><li><a href="https://huggingface.co/Fearghal"><img src="https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg" alt=""></a></li><li><a href="https://huggingface.co/Jake893"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/WSgVWqeGen77Vh5GzTL-O.png" alt=""></a></li><li><a href="https://huggingface.co/okoyelisbon"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/kyVdmjyfIsLZqFKhaIRF9.png" alt=""></a></li><li><a href="https://huggingface.co/ElPanaBru"><img src="https://huggingface.co/avatars/63644064768d8ba22487d7b5ffeab88d.svg" alt=""></a></li><li><a href="https://huggingface.co/Bangla84PL"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/66d6ee839fcb6b494fcc2cbc/AFMksMD6oOy4ec52PUdnL.png" alt=""></a></li><li><a href="https://huggingface.co/Babysworld"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6747d1af433d60be7006cf02/YrCokyziqIX41i1NhW6vN.png" alt=""></a></li><li><a href="https://huggingface.co/wasifff"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/wLxC26FpMurJTtMGlo2xM.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/vaculin"><img src="https://huggingface.co/avatars/c9d15c05751f0841bc0c431da3262d50.svg" alt=""></a></li><li><a href="https://huggingface.co/pankajdayama"><img src="https://huggingface.co/avatars/ed8ccd6d4fbc0e68ce03930eae039c4b.svg" alt=""></a></li><li><a href="https://huggingface.co/heatmynuts"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/c_JwpKUXjG0LeKGknmQDk.png" alt=""></a></li><li><a href="https://huggingface.co/zensaintlaurent"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/Fearghal"><img src="https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg" alt=""></a></li><li><a href="https://huggingface.co/Jake893"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/WSgVWqeGen77Vh5GzTL-O.png" alt=""></a></li><li><a href="https://huggingface.co/okoyelisbon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/kyVdmjyfIsLZqFKhaIRF9.png" alt=""></a></li><li><a href="https://huggingface.co/ElPanaBru"><img src="https://huggingface.co/avatars/63644064768d8ba22487d7b5ffeab88d.svg" alt=""></a></li><li><a href="https://huggingface.co/Bangla84PL"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66d6ee839fcb6b494fcc2cbc/AFMksMD6oOy4ec52PUdnL.png" alt=""></a></li><li><a href="https://huggingface.co/Babysworld"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6747d1af433d60be7006cf02/YrCokyziqIX41i1NhW6vN.png" alt=""></a></li><li><a href="https://huggingface.co/wasifff"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/wLxC26FpMurJTtMGlo2xM.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/vaculin"><img src="https://huggingface.co/avatars/c9d15c05751f0841bc0c431da3262d50.svg" alt=""></a></li><li><a href="https://huggingface.co/pankajdayama"><img src="https://huggingface.co/avatars/ed8ccd6d4fbc0e68ce03930eae039c4b.svg" alt=""></a></li><li><a href="https://huggingface.co/heatmynuts"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/c_JwpKUXjG0LeKGknmQDk.png" alt=""></a></li><li><a href="https://huggingface.co/zensaintlaurent"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png" alt=""></a></li></ul>
 <h2>本文提到的型号 5</h2>
 <h2>本文提到的空间1</h2>]]></content:encoded>
     </item>
@@ -499,39 +499,39 @@ print(result.quantile_outputs)   # quantiles</code></pre>
 <p>企业+文章</p>
 <p>发布于 2026 年 10 月 21 日</p>
 <p>6</p>
-<ul><li><a href="https://huggingface.co/manushm"><img src="https://huggingface.co/avatars/7badeaaeea65a041b9407fb5ad43af78.svg" alt=""></a></li><li><a href="https://huggingface.co/vstiff"><img src="https://huggingface.co/avatars/eb0f7e4f64e366b3fb8a83fc9a620102.svg" alt=""></a></li><li><a href="https://huggingface.co/nabarun"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62076dd7c838f02f5a240d38/-W2SHFmToBpdC3DtIylSg.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/denizbalik"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69b577596985529d871cb633/_TYJZ8gW_c8a_193LL6qy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhileshacademics"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/GU61yZwby13kuwdxlY8I9.png" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/manushm"><img src="https://huggingface.co/avatars/7badeaaeea65a041b9407fb5ad43af78.svg" alt=""></a></li><li><a href="https://huggingface.co/vstiff"><img src="https://huggingface.co/avatars/eb0f7e4f64e366b3fb8a83fc9a620102.svg" alt=""></a></li><li><a href="https://huggingface.co/nabarun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62076dd7c838f02f5a240d38/-W2SHFmToBpdC3DtIylSg.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/denizbalik"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b577596985529d871cb633/_TYJZ8gW_c8a_193LL6qy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhileshacademics"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/GU61yZwby13kuwdxlY8I9.png" alt=""></a></li></ul>
 <p><a href="https://huggingface.co/jprzybylko"><img src="https://huggingface.co/avatars/51ecb619fc85a6eacb5f8d24dc02184b.svg" alt="Joshua Przybylko 的头像"></a></p>
 <p>约书亚·普尔兹比尔科</p>
 <p>杰普日比尔科</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/profjure"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6ab54181feb838e95c106144/OkVZ_iFY6Ao8EPlYmIhtN.jpeg" alt="Jure Leskovec 的头像"></a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/profjure"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ab54181feb838e95c106144/OkVZ_iFY6Ao8EPlYmIhtN.jpeg" alt="Jure Leskovec 的头像"></a></p>
 <p>尤雷·莱斯科维奇</p>
 <p>简介</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/rusty1s"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/684040a5de1ad7f4fcec9508/FBXNe_m3fNERG2odwK5eI.png" alt="Matthias Fey 的头像"></a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/rusty1s"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/684040a5de1ad7f4fcec9508/FBXNe_m3fNERG2odwK5eI.png" alt="Matthias Fey 的头像"></a></p>
 <p>马蒂亚斯·费伊</p>
 <p>生锈1s</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/flopeznv"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a833945b6da9079ae88e830/9rGtl4NNrthgCcLOm0qgo.jpeg" alt="Federico Lopez 的头像"></a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/flopeznv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a833945b6da9079ae88e830/9rGtl4NNrthgCcLOm0qgo.jpeg" alt="Federico Lopez 的头像"></a></p>
 <p>费德里科·洛佩兹</p>
 <p>弗洛佩兹尼夫</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/valterh-nv"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a96adc7d1fd32fbb3bac0ce/TLWZJYbn9-ljfqYNL8LPH.png" alt="Valter Hudovernik 的头像"></a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/valterh-nv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a96adc7d1fd32fbb3bac0ce/TLWZJYbn9-ljfqYNL8LPH.png" alt="Valter Hudovernik 的头像"></a></p>
 <p>瓦尔特·胡多维尼克</p>
 <p>瓦尔特赫-NV</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/akihironitta-nv"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a5e570419a1ac3172871769/p86a6r9gOmNCNIxGPNdxF.jpeg" alt="Akihiro Nitta 的头像"></a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/akihironitta-nv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5e570419a1ac3172871769/p86a6r9gOmNCNIxGPNdxF.jpeg" alt="Akihiro Nitta 的头像"></a></p>
 <p>新田昭宏</p>
 <p>akihironitta-nv</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
-<p><a href="https://huggingface.co/RBendiasN"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a5a6312525dcda9541a221a/nh314FmKReukp4NGXq_Ux.jpeg" alt="Ramona Bendias 的头像"></a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/RBendiasN"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5a6312525dcda9541a221a/nh314FmKReukp4NGXq_Ux.jpeg" alt="Ramona Bendias 的头像"></a></p>
 <p>雷蒙娜·本迪亚斯</p>
 <p>雷本迪亚斯N</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
 <p><a href="https://huggingface.co/aw777"><img src="https://huggingface.co/avatars/a4a7560c008247b50f2a85ea373fdc9f.svg" alt="Ardrian Wong 的头像"></a></p>
 <p>黄阿德里安</p>
 <p>aw777</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
 <h2>长篇大论；博士</h2>
 <p>NVIDIA Kumo Relational 是一种预先训练的关系基础模型，可直接对企业数据库进行预测。给定一个预测查询，它会收集多达 10,000 个历史示例作为上下文，并在一次前向传递中预测客户流失、需求或欺诈等结果。它不需要特定于任务的培训，不需要特征工程，也不需要表格扁平化。 Kumo Relational 是第一个在常见关系基准上优于监督机器学习的几次基础模型。在 15 个数据库上的 41 项任务中，它击败了有监督的关系深度学习模型和专家设计的梯度增强树管道，并且在 SAP SALT 企业基准上，它在平均倒数排名 (MRR) 方面超过了 AutoGluon 集成 8%。它可通过 NVIDIA 的开源 GPU 原生结构化数据模型库或作为 NVIDIA NIM 扩展到具有 500B+ 行的数据库，并适用于人类和代理。</p>
 <ul><li><strong>论文：</strong> <a href="https://arxiv.org/abs/2604.12596">https://arxiv.org/abs/2604.12596</a></li><li><strong>文档：</strong> <a href="https://docs.nvidia.com/sdgm/rfm/overview">https://docs.nvidia.com/sdgm/rfm/overview</a></li></ul>
@@ -545,10 +545,10 @@ print(result.quantile_outputs)   # quantiles</code></pre>
 <h2>Kumo 关系如何运作</h2>
 <p>大多数结构化数据的基础模型都在单个平面表上运行。相反，现实世界的数据存在于关系数据库中：用户连接到订单，连接到产品，所有这些都随着时间的推移而发展。通过手动聚合（<em>例如</em>，“过去 30 天的平均订单价值”）将这些关系扁平化为一行，会丢失细粒度的结构信号并需要大量的人力。</p>
 <p>Kumo Relational 是一个“关系基础模型”，直接在数据库上运行，尊重其表、外键和时间戳。它在反映现实世界数据集的合成关系数据上进行了一次预训练，并通过<em>上下文学习</em>适应每个新任务，在推理时读取多达 10,000 个上下文示例。每个示例将某个时间点的实体周围的本地子图与其真实目标配对（<em>例如</em>，“该用户流失”或“该商品售出了 142 件”）。</p>
-<p>![NVIDIA Kumo 关系系统概述：(a) 数据库集成，(b) 将自然语言转换为预测查询的提示界面，以及 (c) 自动生成上下文，为 NVIDIA Kumo 关系模型提供支持，该模型可横向扩展][![kumo-relational-architecture](https://cdn-uploads.huggingface.co/product/uploads/6ad8e88370f69967fafc8703/FY-lkW rNmBYRFrosRD2Le.png)](https://cdn-uploads.huggingface.co/product/uploads/6ad8e88370f69967fafc8703/FY-lkWrNmBYRFrosRD2Le.png)</p>
+<p>![NVIDIA Kumo 关系系统概述：(a) 数据库集成，(b) 将自然语言转换为预测查询的提示界面，以及 (c) 自动生成上下文，为 NVIDIA Kumo 关系模型提供支持，该模型可横向扩展][![kumo-relational-architecture](https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/FY-lkW rNmBYRFrosRD2Le.png)](https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/FY-lkWrNmBYRFrosRD2Le.png)</p>
 <p><em>图 1. Kumo 关系系统概述。连接数据库，指定预测查询，Kumo Relational 处理剩下的事情，从上下文生成到模型推理。</em></p>
 <p>为了进行预测，Kumo Relational 必须执行三件事：<strong>(1)</strong> 了解每个表中的值，<strong>(2)</strong> 跨表关联记录，以及 <strong>(3)</strong> 将具有已知目标的上下文示例与正在预测的实体关联起来。它的工作原理如下：</p>
-<p>![Kumo 关系架构：(a) 包含任务、用户、订单和项目表的上下文输入； (b) 具有注入上下文目标的表中的列和行注意力； (c) 图注意力和跨样本注意力表。][![kumo-relational-system-overview](https://cdn-uploads.huggingface.co/product/uploads/6ad8e88370f69967fafc8703/OFX2a 7xwBTfUEcbedTsfe.png)](https://cdn-uploads.huggingface.co/product/uploads/6ad8e88370f69967fafc8703/OFX2a7xwBTfUEcbedTsfe.png)</p>
+<p>![Kumo 关系架构：(a) 包含任务、用户、订单和项目表的上下文输入； (b) 具有注入上下文目标的表中的列和行注意力； (c) 图注意力和跨样本注意力表。][![kumo-relational-system-overview](https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/OFX2a 7xwBTfUEcbedTsfe.png)](https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/OFX2a7xwBTfUEcbedTsfe.png)</p>
 <p><em>图 2.Kumo 关系架构：(a) 上下文输入，(b) 表内推理，(c) 跨表推理。</em></p>
 <p><strong>自动上下文生成：</strong> 任务是用<a href="https://arxiv.org/abs/2602.09572">预测查询语言 (PQL)</a> 编写的，这是一个声明性接口，您可以在其中说明要预测什么而不是如何预测。对于时态任务，Kumo Relational 会重播历史数据库状态：它对以实体为中心的子图进行采样，直到锚点时间戳，并根据该时间戳之后的事件计算每个目标，同时仅向模型提供之前的数据。这可以防止数据泄露。</p>
 <p><strong>表内推理：</strong> 轻量级网络独立处理每个表，交替列注意力（关联列内的值）和行注意力（关联行内的特征）。该模型了解哪些列和行对当前预测很重要，并在噪声传播之前过滤掉噪声。</p>
@@ -559,7 +559,7 @@ print(result.quantile_outputs)   # quantiles</code></pre>
 <p>通过这种预训练，模型学会跨表过滤、关联和聚合信息，而不是依赖固定的聚合。当最大精度很重要时，Kumo Relational 还可以针对特定数据集和任务进行微调。</p>
 <p>＃＃ 表现</p>
 <p>在本文中，我们根据来自 RelBench V1 和 V2、SAP SALT 和 4DBInfer 的 15 个关系数据库的 41 个基准测试对 Kumo Relational 进行了评估，涵盖电子商务、医疗、企业、社交和学术领域。在预训练中没有看到这些数据集。 Kumo Relational 在分类和回归方面都优于最强的监督模型，包括关系深度学习模型和专家设计的表格集成。在 <a href="https://arxiv.org/abs/2608.16319">RelArena-α</a> 排行榜上，该排行榜比较了 RelBench V1 上的关系模型和系统，它也位于开箱即用的准确率-效率 Pareto 前面：</p>
-<p>![RelArena-α 排行榜的散点图：跨任务的 Elo 相对准确度（y 轴）与每 1,000 个样本的中位推理时间（x 轴，对数刻度）。 Kumo Relational 位于 Pareto 前沿，大约为 17 秒，Elo 为 1,842。得分最高的条目 rt-plurel 在大约 7,300 秒时达到 Elo 1,878，大约慢了 430 倍。所有其他基础模型、特征工程系统和监督模型的得分均低于 Kumo，且运行速度较慢关系。][![relarena-alpha-leaderboard](https://cdn-uploads.huggingface.co/product/uploads/6ad8e88370f69967fafc8703/9ITlu bGvqGVnoy7j_NZDi.png)](https://cdn-uploads.huggingface.co/product/uploads/6ad8e88370f69967fafc8703/9ITlubGvqGVnoy7j_NZDi.png)</p>
+<p>![RelArena-α 排行榜的散点图：跨任务的 Elo 相对准确度（y 轴）与每 1,000 个样本的中位推理时间（x 轴，对数刻度）。 Kumo Relational 位于 Pareto 前沿，大约为 17 秒，Elo 为 1,842。得分最高的条目 rt-plurel 在大约 7,300 秒时达到 Elo 1,878，大约慢了 430 倍。所有其他基础模型、特征工程系统和监督模型的得分均低于 Kumo，且运行速度较慢关系。][![relarena-alpha-leaderboard](https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/9ITlu bGvqGVnoy7j_NZDi.png)](https://cdn-uploads.huggingface.co/production/uploads/6ad8e88370f69967fafc8703/9ITlubGvqGVnoy7j_NZDi.png)</p>
 <p><em>图 3.RelArena-α 排行榜：跨任务 Elo 与每 1,000 个样本的中位推理时间（对数刻度）。 Kumo Relational 的速度比相似准确度下得分最高的条目快约 430 倍。</em></p>
 <p>该论文还报告称，在 SAP SALT 企业基准测试中，Kumo Relational 在平均倒数排名 (MRR) 方面超过大型 AutoGluon 集成 8%，最近的表格基础模型超过约 25%，并且微调将其对 AutoGluon 的领先优势扩大到 16%。它在困难条件下也能正常工作：只需 0.2% 的训练数据作为上下文即可表现良好，在删除多达 75% 的外键链接时保持稳定，并且在添加许多噪声列时几乎不会降级。</p>
 <h2>限制</h2>
@@ -581,7 +581,7 @@ pred = model(
     related_query_tables=...,
 )</code></pre>
 <p>有关完整的 RelBench 和 SAP SALT 管道，包括如何对每个实体的相关表进行采样，请参阅库的<a href="https://github.com/NVIDIA/structured-data-models/tree/main/examples/relational">关系示例</a>。</p>
-<p>要将模型作为单独的服务运行，请将其部署为 NVIDIA NIM，并从笔记本中将开源 <a href="https://github.com/NVIDIA/structed-data-models-client">结构化数据模型客户端</a> 指向它。您用 PQL 编写预测，客户端收集上下文示例和相关表，然后发送请求：</p>
+<p>要将模型作为单独的服务运行，请将其部署为 NVIDIA NIM，并从笔记本中将开源 <a href="https://github.com/NVIDIA/structured-data-models-client">结构化数据模型客户端</a> 指向它。您用 PQL 编写预测，客户端收集上下文示例和相关表，然后发送请求：</p>
 <pre><code># pip install 'structured-data-models-client[relational]'
 import sdm_client
 
@@ -597,19 +597,19 @@ pred = client.predict(
     query.materialize(indices=[1, 2, 3]),
     model=sdm_client.KumoRelational(),
 )</code></pre>
-<p>请参阅客户端的<a href="https://github.com/NVIDIA/structed-data-models-client/tree/main/examples">示例笔记本</a>，了解针对本地 NIM 和 Databricks 的端到端运行。</p>
+<p>请参阅客户端的<a href="https://github.com/NVIDIA/structured-data-models-client/tree/main/examples">示例笔记本</a>，了解针对本地 NIM 和 Databricks 的端到端运行。</p>
 <h2>开始使用 NVIDIA Kumo Relational 进行构建</h2>
-<p>NVIDIA Kumo Relational 现已上市。阅读<a href="https://arxiv.org/abs/2604.12596">研究论文</a>，探索<a href="https://github.com/NVIDIA/structed-data-models-client/blob/main/examples/local/relational.ipynb">快速入门笔记本</a>，或开始对您自己的数据进行预测。该代码根据 Apache 2.0 许可证发布，模型权重根据 OpenMDW 许可证协议版本 1.1 发布。 NVIDIA 认为值得信赖的 AI 是一项共同的责任，我们已经制定了政策和实践来支持各种 AI 应用程序的开发。根据我们的服务条款下载或使用时，开发人员应与其支持模型团队合作，确保该模型满足相关行业和用例的要求，并解决不可预见的产品误用问题。请在<a href="https://www.nvidia.com/en-us/product-security/">此处</a>报告模型质量、风险、安全漏洞或 NVIDIA AI 问题。</p>
-<ul><li><strong>论文：</strong> <a href="https://arxiv.org/abs/2604.12596">https://arxiv.org/abs/2604.12596</a></li><li><strong>文档：</strong> <a href="https://docs.nvidia.com/sdgm/rfm/overview">https://docs.nvidia.com/sdgm/rfm/overview</a></li><li><strong>代码：</strong> <a href="https://github.com/NVIDIA/structured-data-models">https://github.com/NVIDIA/structured-data-models</a></li><li><strong>PyPI：</strong> <a href="https://pypi.org/project/structured-data-models/">https://pypi.org/project/structured-data-models/</a></li><li><strong>客户端代码：</strong> <a href="https://github.com/NVIDIA/structured-data-models-client">https://github.com/NVIDIA/structured-data-models-client</a></li><li><strong>客户端PyPI：</strong> <a href="https://pypi.org/project/structured-data-models-client/">https://pypi.org/project/structured-data-models-client/</a></li><li><strong>权重：</strong> <a href="https://huggingface.co/nvidia/Kumo-Relational">https://huggingface.co/nvidia/Kumo-Relational</a></li><li><strong>快速入门笔记本：</strong> <a href="https://github.com/NVIDIA/structed-data-models-client/blob/main/examples/local/relational.ipynb">https://github.com/NVIDIA/structed-data-models-client/blob/main/examples/local/relational.ipynb</a></li><li><strong>相关研究：</strong> <a href="https://arxiv.org/abs/2602.09572">预测查询语言 (PQL)</a>、<a href="https://arxiv.org/abs/2602.04029">PluRel</a>、<a href="https://huggingface.co/blog/nvidia/kumo-tabular">Kumo Tabular</a></li></ul>
+<p>NVIDIA Kumo Relational 现已上市。阅读<a href="https://arxiv.org/abs/2604.12596">研究论文</a>，探索<a href="https://github.com/NVIDIA/structured-data-models-client/blob/main/examples/local/relational.ipynb">快速入门笔记本</a>，或开始对您自己的数据进行预测。该代码根据 Apache 2.0 许可证发布，模型权重根据 OpenMDW 许可证协议版本 1.1 发布。 NVIDIA 认为值得信赖的 AI 是一项共同的责任，我们已经制定了政策和实践来支持各种 AI 应用程序的开发。根据我们的服务条款下载或使用时，开发人员应与其支持模型团队合作，确保该模型满足相关行业和用例的要求，并解决不可预见的产品误用问题。请在<a href="https://www.nvidia.com/en-us/product-security/">此处</a>报告模型质量、风险、安全漏洞或 NVIDIA AI 问题。</p>
+<ul><li><strong>论文：</strong> <a href="https://arxiv.org/abs/2604.12596">https://arxiv.org/abs/2604.12596</a></li><li><strong>文档：</strong> <a href="https://docs.nvidia.com/sdgm/rfm/overview">https://docs.nvidia.com/sdgm/rfm/overview</a></li><li><strong>代码：</strong> <a href="https://github.com/NVIDIA/structured-data-models">https://github.com/NVIDIA/structured-data-models</a></li><li><strong>PyPI：</strong> <a href="https://pypi.org/project/structured-data-models/">https://pypi.org/project/structured-data-models/</a></li><li><strong>客户端代码：</strong> <a href="https://github.com/NVIDIA/structured-data-models-client">https://github.com/NVIDIA/structured-data-models-client</a></li><li><strong>客户端PyPI：</strong> <a href="https://pypi.org/project/structured-data-models-client/">https://pypi.org/project/structured-data-models-client/</a></li><li><strong>权重：</strong> <a href="https://huggingface.co/nvidia/Kumo-Relational">https://huggingface.co/nvidia/Kumo-Relational</a></li><li><strong>快速入门笔记本：</strong> <a href="https://github.com/NVIDIA/structured-data-models-client/blob/main/examples/local/relational.ipynb">https://github.com/NVIDIA/structured-data-models-client/blob/main/examples/local/relational.ipynb</a></li><li><strong>相关研究：</strong> <a href="https://arxiv.org/abs/2602.09572">预测查询语言 (PQL)</a>、<a href="https://arxiv.org/abs/2602.04029">PluRel</a>、<a href="https://huggingface.co/blog/nvidia/kumo-tabular">Kumo Tabular</a></li></ul>
 <h2>致谢</h2>
 <p>我们感谢整个 Kumo 团队的宝贵支持。特别感谢 Josh Przybylko、Adi Wadaskar、Hema Raghavan、Manush Murali、Raja Rao DV、Keti Jovanovska、Zack Drach、Vanja Josifovski、Myungwhan Kim、Blaž Stojanovič、Siyang Xie、Alan Krumholz、Effy Fang、Abdullah Al-chihabi、Disha Dubey、Devan Johnson、Joseph Oliveira、Angela Liu、米哈·佩尔科、韦丹特·贾恩、莎莉·刘、亚历山大·索科洛夫斯基、亚历克斯·波特和雷蒙娜·本迪亚斯。</p>
 <p>该作者的更多内容</p>
 <h2>模拟训练，部署在真实机器人上：使用 Isaac Lab 3.0 的 Microduck</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
 <p>5</p>
 <p>2026 年 10 月 21 日</p>
 <h2>NVIDIA Kumo Forecast 将预训练时间序列表示与历史模式检索和可解释性相结合</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
 <p>7</p>
 <p>2026 年 10 月 21 日</p>
 <h3>社区</h3>
@@ -617,7 +617,7 @@ pred = client.predict(
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fkumo-relational">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fkumo-relational">登录</a> 发表评论</p>
 <p>6</p>
-<ul><li><a href="https://huggingface.co/manushm"><img src="https://huggingface.co/avatars/7badeaaeea65a041b9407fb5ad43af78.svg" alt=""></a></li><li><a href="https://huggingface.co/vstiff"><img src="https://huggingface.co/avatars/eb0f7e4f64e366b3fb8a83fc9a620102.svg" alt=""></a></li><li><a href="https://huggingface.co/nabarun"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62076dd7c838f02f5a240d38/-W2SHFmToBpdC3DtIylSg.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/denizbalik"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69b577596985529d871cb633/_TYJZ8gW_c8a_193LL6qy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhileshacademics"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/GU61yZwby13kuwdxlY8I9.png" alt=""></a></li></ul>]]></content:encoded>
+<ul><li><a href="https://huggingface.co/manushm"><img src="https://huggingface.co/avatars/7badeaaeea65a041b9407fb5ad43af78.svg" alt=""></a></li><li><a href="https://huggingface.co/vstiff"><img src="https://huggingface.co/avatars/eb0f7e4f64e366b3fb8a83fc9a620102.svg" alt=""></a></li><li><a href="https://huggingface.co/nabarun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62076dd7c838f02f5a240d38/-W2SHFmToBpdC3DtIylSg.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/denizbalik"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b577596985529d871cb633/_TYJZ8gW_c8a_193LL6qy.jpeg" alt=""></a></li><li><a href="https://huggingface.co/akhileshacademics"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/GU61yZwby13kuwdxlY8I9.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>SLM 词汇专业化如何在实际应用中将推理成本降低 77%</title>
@@ -630,26 +630,26 @@ pred = client.predict(
 <p>团队文章</p>
 <p>发布于 2026 年 10 月 21 日</p>
 <p>15</p>
-<ul><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/0074277b4edc91617019d5b43211f8cb.svg" alt=""></a></li><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/7288e407f97fa45c62e83aee9ad68a4d.svg" alt=""></a></li><li><a href="https://huggingface.co/thallesdiepes"><img src="https://huggingface.co/avatars/19b3ad64ce88f2e8b8be7d7019f30e1a.svg" alt=""></a></li><li><a href="https://huggingface.co/anacsb"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/0qI4aveV-RoivRDJCBdOO.png" alt=""></a></li><li><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt=""></a></li><li><a href="https://huggingface.co/Paulo-DharmaAI"><img src="https://huggingface.co/avatars/18094cac3217d1a105f967e53681eb56.svg" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/0074277b4edc91617019d5b43211f8cb.svg" alt=""></a></li><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/7288e407f97fa45c62e83aee9ad68a4d.svg" alt=""></a></li><li><a href="https://huggingface.co/thallesdiepes"><img src="https://huggingface.co/avatars/19b3ad64ce88f2e8b8be7d7019f30e1a.svg" alt=""></a></li><li><a href="https://huggingface.co/anacsb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/0qI4aveV-RoivRDJCBdOO.png" alt=""></a></li><li><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt=""></a></li><li><a href="https://huggingface.co/Paulo-DharmaAI"><img src="https://huggingface.co/avatars/18094cac3217d1a105f967e53681eb56.svg" alt=""></a></li></ul>
 <p><a href="https://huggingface.co/bernardoaguiar"><img src="https://huggingface.co/avatars/850d728ebccddc31593f8e9a50a7c735.svg" alt="Bernardo França de Aguiar 的头像"></a></p>
 <p>贝尔纳多·弗兰萨·德·阿吉亚尔</p>
 <p>贝尔纳多阿吉亚尔</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
-<p><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt="Gabriel Pimenta de Freitas Cardoso 的头像"></a></p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt="Gabriel Pimenta de Freitas Cardoso 的头像"></a></p>
 <p>加布里埃尔·皮门塔·德·弗雷塔斯·卡多佐</p>
 <p>加布里埃尔·皮门塔99</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
 <p><a href="https://huggingface.co/brunoduarte01"><img src="https://huggingface.co/avatars/ad22fc4e8831a181f04959ae2646465b.svg" alt="Bruno Duarte 的头像"></a></p>
 <p>布鲁诺·杜阿尔特</p>
 <p>布鲁诺杜阿尔特01</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
 <p><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt="Francisco de Almeida Rocha Alves 的头像"></a></p>
 <p>弗朗西斯科·德·阿尔梅达·罗查·阿尔维斯</p>
 <p>法尔维斯9101</p>
-<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
+<p><a href="https://huggingface.co/Dharma-AI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt="Dharma-AI 头像"></a> <a href="https://huggingface.co/Dharma-AI">Dharma-AI</a></p>
 <p><em>通过微调通用开源模型（例如 Qwen 和 Gemma）专门针对某个领域或某项任务的模型，继承了为许多领域和通用应用程序构建的词汇表。</em></p>
 <p><em>在我们生产中运行的论文评分器中，词汇表将模型写入最多的文本分成许多标记。本文预览了我们即将发布的 VocabX 论文的一些结果：我们如何围绕每个标记的成本而不是其频率来专门化词汇表，并在不更改基本模型的情况下将测量的推理成本降低 77%。</em></p>
-<p>[！[同一句话，更少的标记：14 个带有基本标记器的标记，4 个带有VocabX](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/TYOhAFobnI4ss3UnNqMHc.p ng）]（https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/TYOhAFobnI4ss3UnNqMHc.png）</p>
+<p>[！[同一句话，更少的标记：14 个带有基本标记器的标记，4 个带有VocabX](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/TYOhAFobnI4ss3UnNqMHc.p ng）]（https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/TYOhAFobnI4ss3UnNqMHc.png）</p>
 <p>分词器通常被视为基本模型的固定属性，继承并保留。对于专门针对单一领域的模型，它可能是最大的成本杠杆之一，并且它是在任何训练步骤之前设置的。</p>
 <p>我们在生产中运行的系统之一是基于 Qwen3-4B 构建的葡萄牙语论文自动评分器。它接收论文、提示和支持文本，并返回一个 JSON 评估，其中包含每个能力的评分和评论。</p>
 <p>该模型已经很小，有 40 亿个参数，并且已经针对该任务进行了训练。然而，它的分词器仍然是最初的 Qwen3-4B 分词器，专为多种语言和多种文本而构建。在评分器中，它用于单一语言、葡萄牙语和单一响应格式。这有两个成本：评分者在每个请求上写入的文本占用的标记超出了所需的标记，并且在每个生成的标记中，模型对 151,669 个条目的词汇表进行了评分，其中包括许多该任务几乎从未使用过的词汇。</p>
@@ -658,14 +658,14 @@ pred = client.predict(
 <p>领先的语言模型读取和写入标记，标记器决定文本如何成为标记。领先的通用模型的分词器接受了来自许多领域和语言的大量文本集合的训练，从源代码到合同再到中文。对于通用模型来说，这种选择是有意义的。</p>
 <p>对于单个领域中使用的模型，它会同时产生两种浪费。</p>
 <p>首先是碎片化。分词器将域重复最多的部分分成许多部分。在评分器中，每个响应都以相同的 JSON 信封、相同的能力名称和相同的评估短语开头。在合同中，它是样板条款。在代码中，标识符。这些序列中的每一个都会花费几个代币，并且模型会根据每个请求为每个序列支付费用。</p>
-<p>[![评分者在每个响应中写入的范围使用基本标记器需要 12 个标记，而使用基础标记器则需要 1 个标记VocabX](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/K5De-hfTaOl9vUJItSijj.p ng)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/K5De-hfTaOl9vUJItSijj.png)</p>
+<p>[![评分者在每个响应中写入的范围使用基本标记器需要 12 个标记，而使用基础标记器则需要 1 个标记VocabX](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/K5De-hfTaOl9vUJItSijj.p ng)](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/K5De-hfTaOl9vUJItSijj.png)</p>
 <p>二是过剩。该词汇表包含该领域从未使用的数万个条目，并且该模型会在其生成的每个标记上计算所有条目的分数。一个针对美国学校生物考试等级的模型几乎永远不会用中文书写，但它会计算每一步中每个中文标记的概率。词汇表将领域重复最多的部分分成许多部分，并包含领域从未使用的条目。</p>
-<p>[![基础分词器中有 151,669 个词汇条目，其中 64,767 个VocabX](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/Inl5L1IDqWUBbD0Xlq-JB.p ng)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/Inl5L1IDqWUBbD0Xlq-JB.png)</p>
+<p>[![基础分词器中有 151,669 个词汇条目，其中 64,767 个VocabX](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/Inl5L1IDqWUBbD0Xlq-JB.p ng)](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/Inl5L1IDqWUBbD0Xlq-JB.png)</p>
 <h2>阅读很便宜，写作很昂贵</h2>
 <p>自然的反应是计算令牌并尝试减少计数。但计数并不是账单。</p>
 <p>要了解为什么生成的令牌成本更高，了解推理的工作原理会有所帮助。它有两个阶段。在 <em>prefill</em> 中，模型通过网络一次性处理整个输入：从 GPU 内存读取的每个权重都会被每个输入标记重复使用，并且限制是计算。在“解码”中，模型一次生成一个令牌的响应，并且每个令牌都需要完整的传递。每个权重读取仅使用几次，GPU 大部分时间都在等待数据从内存到达：内存带宽成为限制。</p>
 <p>这种效应在我们运营的地方最为强烈：小型号、中等批量的服务。批处理请求会拆分各个请求的权重读数并缓解问题，但并不能解决问题。在每个解码步骤中，模型还会读取 KV 缓存，即保存已处理上下文并随之增长的注意力内存。在我们测量的情况下，分级机，生成的令牌的成本是读取令牌的 7.4 倍，但该比率随硬件、问题、批量大小、上下文长度和其他因素的不同而变化，并且可能会更大。总的来说，这个方向是成立的：生成成本比阅读成本更高。</p>
-<p>[！[在我们测量的情况下，写入令牌的成本是读取的 7.4 倍一](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/q-GjdgYd6GgXnv3-wJQsY.pn g)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/q-GjdgYd6GgXnv3-wJQsY.png)</p>
+<p>[！[在我们测量的情况下，写入令牌的成本是读取的 7.4 倍一](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/q-GjdgYd6GgXnv3-wJQsY.pn g)](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/q-GjdgYd6GgXnv3-wJQsY.png)</p>
 <p>想象一下一家按箱子收费的运输公司，但寄出箱子的收费是传入箱子的七倍。减少盒子总数会有所帮助。减少发件箱的效果可提高七倍。对输入和输出进行同等压缩的方法会错过大部分可能的节省。</p>
 <p>该法案的第三个组成部分是词汇本身。模型的最后一层，即 LM 头，将内部状态转换为每个可能标记的分数。为此，它为每个词汇条目保存一行参数。在 Qwen3-4B 大小的模型中，该矩阵几乎占参数的 10%。这是大型模型在不知不觉中吸收的份额，但它对小型模型来说却是沉重的负担。</p>
 <p>而且成本并不是只支付一次。输入层仅查找正在读取的令牌的行，但 LM 头会读取每个生成令牌的整个矩阵并将其相乘。由于解码已经受内存限制，因此每增加一行就需要在每一步移动更多数据。域从不使用的条目的成本与经常使用的条目的成本完全相同。这就是为什么添加代币可以减少计数并同时提高账单的原因。 VocabX 不将该术语包含在其选择标准中，但它通过两个步骤控制词汇表大小：子词合并用较小的、特定于领域的词汇表替换基本词汇表，并且宏在固定预算下输入。在分级器中，输出层从约 152,000 行增加到约 65,000 行。</p>
@@ -677,25 +677,25 @@ pred = client.predict(
 <p>VocabX 解决了这两个限制，以及在解决第一个问题的明显路径上出现的第三个问题。</p>
 <p><strong>首先，我们改变了问题。</strong> 我们不再问候选人节省了多少代币，而是问节省了多少成本和时间。每个被淘汰的代币都会乘以它出现的字段的价格：系统提示、用户消息或模型响应。在我们测量的情况下，评分者，响应中保存的令牌的价值是输入中保存的令牌的 7.4 倍，并且相应地构建了词汇表。</p>
 <p><strong>其次，我们同时处理两层。</strong> 回到运输公司：您可以通过更好地包装每件物品来切割盒子，或者通过认识到每周运送相同的十二件物品套件并将该套件放在一个盒子中发送。 VocabX 两者兼而有之。在子词层，它重建了领域词的切分方式。在多单词层，它会查找重复的整个跨度，从短表达式到整行和 JSON 信封，并将每个单词转换为单个标记，我们称之为宏标记。这两层都是根据相同的成本标准选择的，每层都有自己的预算。</p>
-<p>[![12个盒子变成1个，7个令牌变成1个宏令牌](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/B5Wig-4nTEutpFZlGQ6sk.g如果）]（https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/B5Wig-4nTEutpFZlGQ6sk.gif）</p>
+<p>[![12个盒子变成1个，7个令牌变成1个宏令牌](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/B5Wig-4nTEutpFZlGQ6sk.g如果）]（https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/B5Wig-4nTEutpFZlGQ6sk.gif）</p>
 <p>为了找到这些跨度，我们使用五个挖掘器，自动搜索在整个语料库中重复的跨度，每个挖掘器专门针对一种重复：长单词、整行、表达式、完整句子以及带有标点符号的结构，例如 JSON 和标签。平均超过八个语料库，最后一个贡献最大，仅在代码上就占了 17.5 分。如果没有这五项，评分器上的标记减少将下降 55.6 分。</p>
-<p>[！[两层，一层成本标准]（https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/_EdPyU7R3xdomvFxuadPY .png)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/_EdPyU7R3xdomvFxuadPY.png)</p>
+<p>[！[两层，一层成本标准]（https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/_EdPyU7R3xdomvFxuadPY .png)](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/_EdPyU7R3xdomvFxuadPY.png)</p>
 <p><strong>第三，我们估计样本看不到的东西。</strong> 按成本选择代币需要知道每个候选人在已经选择的代币之后还可以节省多少。准确地衡量这一点需要在每次选择后重新处理整个语料库数万次。大规模执行此操作的常见方法是对文档样本进行测量，然后样本中缺席的候选人获得零增益。</p>
 <p>在 50,000 个文档中出现 37 次的表达式在包含 400 个文档的样本中仅出现约 26% 的概率。在合同语料库中，只有 16.6% 的候选人出现在 400 个文档样本中；其余的从未被评估。</p>
-<p>[![37 次出现均未出现在 400 文档中示例](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/zxfdAxNxsvfBCBNeUThx5.p ng)](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/zxfdAxNxsvfBCBNeUThx5.png)</p>
+<p>[![37 次出现均未出现在 400 文档中示例](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/zxfdAxNxsvfBCBNeUThx5.p ng)](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/zxfdAxNxsvfBCBNeUThx5.png)</p>
 <p>候选人的收获有两部分。一是它在整个语料库中节省了多少，并且无需样本即可准确计算。 The other is how much of that saving is not yet covered by the tokens already chosen, and only that part needs to be estimated. For candidates the sample cannot see, we use a statistical estimate based on the behavior of the ones it can see, instead of zero. A candidate that is rare in the sample but frequent in the corpus is back in the running.</p>
 <p>That change alone, with the same sample and the same budget, raised token reduction on a contracts corpus from 44.7% to 52.8%.</p>
-<p>[！[用估计而不是零：44.7% 到 52.8% 令牌减少](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/PxGLMRrjTPVYDW8rlDuBd .png)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/PxGLMRrjTPVYDW8rlDuBd.png)</p>
+<p>[！[用估计而不是零：44.7% 到 52.8% 令牌减少](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/PxGLMRrjTPVYDW8rlDuBd .png)](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/PxGLMRrjTPVYDW8rlDuBd.png)</p>
 <h2>分级机中发生了什么变化</h2>
 <p>为了衡量真实效果，我们使用相同的基础模型、相同的数据、相同的配方和相同的种子训练了七个版本的分级机。它们之间的唯一区别是标记器。所有这些都在同一台测试机器上运行相同的 500 个请求，配备 RTX 5090 GPU 和 vLLM 推理服务器，并根据测量的运行时间计算成本。</p>
-<p>[![分级机结果：成本降低 77.0%，基准分数从 0.703 提高到0.810](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/7CKshmOEsUkemfgL9Mopn.p ng)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/7CKshmOEsUkemfgL9Mopn.png)</p>
+<p>[![分级机结果：成本降低 77.0%，基准分数从 0.703 提高到0.810](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/7CKshmOEsUkemfgL9Mopn.p ng)](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/7CKshmOEsUkemfgL9Mopn.png)</p>
 <p>该模型的平均响应从 350 个令牌下降到 101 个令牌。成本下降77.0%。质量（以基准分数衡量，结合了评分准确性和筛选离题或违规文章的准确性）从 0.703 上升到 0.810。</p>
 <p>到达那里需要修正航向。词汇表的第一个版本将每个能力的等级与周围的 JSON 融合成一个宏标记。它是最紧凑的选择，但质量下降：其基准分数为 0.689，低于生产分级机的 0.703。通过宏内的等级，等级和结构的每种组合都成为同一令牌的不同变体，并且模型在一步中选择两者。为评分提供自己的标记，每个响应需要额外花费 2 个标记，将基准分数提高到 0.810，并且在测量中甚至更便宜：降低了 77.0%，而融合版本则降低了 73.3%。</p>
 <p>该课程不仅适用于评分者。当压缩跨度承载模型要做出的决策时，压缩就会产生成本。我们的目标不是最便宜的词汇表，而是保留重要标记的最便宜的词汇表。</p>
 <h2>超越分级机</h2>
 <p>为了查明增益是否特定于我们的案例，我们将 VocabX 与五个公共领域（合同、医学论文、科学论文、新闻和 Python 代码）和三个模型系列（Qwen3、Llama-3.1 和 Gemma-3）的三种参考方法进行了比较。所有方法都使用相同的挖掘和测试文档以及相同的词汇上限。</p>
 <p>VocabX 比所有 15 种组合中最强的参考方法压缩了 1.2 到 9.3 个点。在估计推理成本方面，VocabX 的修剪版本也在所有 15 项中领先，Qwen3 上的平均差距为 10.2 分，Llama-3.1 上的平均差距为 7.5 分，Gemma-3 上的平均差距为 13.6 分。在合约方面，修剪后的版本使用了 113,426 个词汇条目，代币减少了 62.6%，而最佳就地 BPE 配置使用了 207,803 个词汇条目，减少了 61.8%。</p>
-<p>[![VocabX 平均领先优势：+10.2 (Qwen3)、+7.5 (Llama-3.1)、+13.6 (Gemma-3)点](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/bCCQQjpY6tU5ZAD3hXOeN.p ng)](https://cdn-uploads.huggingface.co/product/uploads/6a725daa5ca641a21ab61956/bCCQQjpY6tU5ZAD3hXOeN.png)</p>
+<p>[![VocabX 平均领先优势：+10.2 (Qwen3)、+7.5 (Llama-3.1)、+13.6 (Gemma-3)点](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/bCCQQjpY6tU5ZAD3hXOeN.p ng)](https://cdn-uploads.huggingface.co/production/uploads/6a725daa5ca641a21ab61956/bCCQQjpY6tU5ZAD3hXOeN.png)</p>
 <h2>只为重要的代币付费</h2>
 <p>VocabX 并没有让模型变得更智能。它使模型停止为不需要逐段编写的文本付费，并停止对永远不会使用的词汇进行评分。在我们的评分器中，使用相同的基础模型和相同的训练配方，测量推理成本降低了 77%。</p>
 <p>专业化通常从数据和权重开始。它也可以在词汇表中更早地开始一层。</p>
@@ -707,11 +707,11 @@ pred = client.predict(
 <p><em>探索 <a href="https://huggingface.co/Dharma-AI">Hugging Face 上的 Dharma AI</a> 来尝试我们的演示、下载我们的开放模型，并了解专业 AI 系统如何在实际企业应用中胜过通用模型。</em></p>
 <p>该作者的更多内容</p>
 <h2>相同的集群，利用率增加 33 个点：改变的是顺序</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
 <p>20</p>
 <p>2026 年 8 月 17 日</p>
 <h2>GPU 管理：为什么空闲 GPU 是新的停飞飞机</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/5XWR_0JJv0gy6PRN9WDMF.png" alt=""></li></ul>
 <p>97</p>
 <p>2026 年 7 月 30 日</p>
 <h3>社区</h3>
@@ -719,7 +719,7 @@ pred = client.predict(
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2FDharma-AI%2Fvocabx-vocabulary-specialization">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2FDharma-AI%2Fvocabx-vocabulary-specialization">登录</a> 发表评论</p>
 <p>15</p>
-<ul><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/0074277b4edc91617019d5b43211f8cb.svg" alt=""></a></li><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/7288e407f97fa45c62e83aee9ad68a4d.svg" alt=""></a></li><li><a href="https://huggingface.co/thallesdiepes"><img src="https://huggingface.co/avatars/19b3ad64ce88f2e8b8be7d7019f30e1a.svg" alt=""></a></li><li><a href="https://huggingface.co/anacsb"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/0qI4aveV-RoivRDJCBdOO.png" alt=""></a></li><li><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt=""></a></li><li><a href="https://huggingface.co/Paulo-DharmaAI"><img src="https://huggingface.co/avatars/18094cac3217d1a105f967e53681eb56.svg" alt=""></a></li><li><a href="https://huggingface.co/isisfc"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/lgG1lEgFBLnmfARS1pLCB.png" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/506583318c7aa57f91ddfaa554e5a377.svg" alt=""></a></li><li><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt=""></a></li><li><a href="https://huggingface.co/fabriciocarraro"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64b6e46971c6bc4088f1c9c4/1nqngiZt8bm6RcE-PJDfN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>]]></content:encoded>
+<ul><li><a href="https://huggingface.co/suzanamont"><img src="https://huggingface.co/avatars/0074277b4edc91617019d5b43211f8cb.svg" alt=""></a></li><li><a href="https://huggingface.co/victorBarbosa23"><img src="https://huggingface.co/avatars/7288e407f97fa45c62e83aee9ad68a4d.svg" alt=""></a></li><li><a href="https://huggingface.co/thallesdiepes"><img src="https://huggingface.co/avatars/19b3ad64ce88f2e8b8be7d7019f30e1a.svg" alt=""></a></li><li><a href="https://huggingface.co/anacsb"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/0qI4aveV-RoivRDJCBdOO.png" alt=""></a></li><li><a href="https://huggingface.co/falves9101"><img src="https://huggingface.co/avatars/ab4695681deba13fac2846ce4e641240.svg" alt=""></a></li><li><a href="https://huggingface.co/Paulo-DharmaAI"><img src="https://huggingface.co/avatars/18094cac3217d1a105f967e53681eb56.svg" alt=""></a></li><li><a href="https://huggingface.co/isisfc"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/lgG1lEgFBLnmfARS1pLCB.png" alt=""></a></li><li><a href="https://huggingface.co/BrenoBeleza"><img src="https://huggingface.co/avatars/506583318c7aa57f91ddfaa554e5a377.svg" alt=""></a></li><li><a href="https://huggingface.co/GabrielPimenta99"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b22efa9b36260fe286e99f/vm2fyO1NSqmjcIuyeF6PQ.jpeg" alt=""></a></li><li><a href="https://huggingface.co/fabriciocarraro"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64b6e46971c6bc4088f1c9c4/1nqngiZt8bm6RcE-PJDfN.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrdbourke"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1659922312540-610a70f35a40a8bfebfbf09b.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>TorchNeuron 分析（第 1 部分）：AWS Trainium 上的系统级分析。</title>
@@ -732,11 +732,11 @@ pred = client.predict(
 <p>企业文章</p>
 <p>发布于 2026 年 10 月 21 日</p>
 <p>7</p>
-<ul><li><a href="https://huggingface.co/skoppar"><img src="https://huggingface.co/avatars/ba362a0e521f6803868998ead3614f14.svg" alt=""></a></li><li><a href="https://huggingface.co/LahariChowtoori"><img src="https://huggingface.co/avatars/ef1a34320918862e30e5ecc1e7305adb.svg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/adriansaxton"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a51391779a9d54dfdb9b467/LzvbqB5pTGvEo86NPHVTP.png" alt=""></a></li><li><a href="https://huggingface.co/hanbwang"><img src="https://huggingface.co/avatars/5016f7c40f940f0c413fd88f272f9929.svg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/skoppar"><img src="https://huggingface.co/avatars/ba362a0e521f6803868998ead3614f14.svg" alt=""></a></li><li><a href="https://huggingface.co/LahariChowtoori"><img src="https://huggingface.co/avatars/ef1a34320918862e30e5ecc1e7305adb.svg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/adriansaxton"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a51391779a9d54dfdb9b467/LzvbqB5pTGvEo86NPHVTP.png" alt=""></a></li><li><a href="https://huggingface.co/hanbwang"><img src="https://huggingface.co/avatars/5016f7c40f940f0c413fd88f272f9929.svg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li></ul>
 <p><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt="Josh Longenecker 的头像"></a></p>
 <p>乔什·朗格内克</p>
 <p>杰隆根-AWS</p>
-<p><a href="https://huggingface.co/amazon"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt="亚马逊头像"></a> <a href="https://huggingface.co/amazon">亚马逊</a></p>
+<p><a href="https://huggingface.co/amazon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt="亚马逊头像"></a> <a href="https://huggingface.co/amazon">亚马逊</a></p>
 <p>许多机器学习从业者对如何使模型运行得更快有一定的直觉，但很少有人知道如何分析模型运行缓慢的原因。在本系列的第 1 部分中，您将学习如何系统地分析推理性能并确定时间花在哪里。</p>
 <p>这篇文章从头开始，假设之前没有分析经验。本演练使用 AWS Trainium（一种用于深度学习训练和推理工作负载的专用 AI 芯片）及其开源原生 PyTorch 后端 <a href="https://github.com/aws-neuron/torch-neuronx">TorchNeuron</a>。 TorchNeuron 支持 Trainium 上的标准 PyTorch 工作流程，包括即时执行、“torch.compile”和标准 PyTorch API，只需最少的代码更改。此外，TorchNeuron 与 <a href="https://awsdocs-neuron.readthedocs-hosted.com/en/latest/nki/index.html">Neuron 内核接口 (NKI)</a> 集成，可为 Trainium 硬件启用自定义运算符和性能优化。到最后，你应该知道：</p>
 <ul><li>如何使用 Neuron 后端配置 <code>torch.profiler</code> 并捕获干净的跟踪。</li><li>如何读取“key_averages()”表来识别哪些操作消耗 Neuron 设备时间并比较它们的自身 CPU 时间。</li><li>如何通过 Neuron Explorer 跟踪一项操作，从框架调度到运行时调度再到 NeuronCore 上的硬件执行。</li><li>这些信号在同一操作的三种实现中如何变化。</li></ul>
@@ -793,13 +793,13 @@ def rms_norm_fn(t):
         prof.step()</code></pre>
 <p>分析完成后，检查“key_averages()”表。按“self_privateuse1_time_total”排序，将设备成本最高的操作放在前面。此处显示的表已过滤为报告 Neuron 设备时间的 RMSNorm 操作。完整的“key_averages()”输出还包括 CPU 端事件，例如分配和主机到设备的传输。</p>
 <pre><code>print(prof.key_averages().table(sort_by=&quot;self_privateuse1_time_total&quot;, row_limit=4))</code></pre>
-<p>[![关键平均值表显示，三个 aten::mul 调用占 Neuron 设备的最大份额时间。](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/mlyyxfL6i5GfbOgUsyIuL.p ng)](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/mlyyxfL6i5GfbOgUsyIuL.png)</p>
+<p>[![关键平均值表显示，三个 aten::mul 调用占 Neuron 设备的最大份额时间。](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/mlyyxfL6i5GfbOgUsyIuL.p ng)](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/mlyyxfL6i5GfbOgUsyIuL.png)</p>
 <p><em>关键平均值表显示三个 aten::mul 调用占 Neuron 设备时间的最大份额。</em></p>
 <p>该表显示了哪些 ATen 操作运行、它们运行的频率以及它们在 CPU 和 Neuron 设备上花费的时间。 <code>aten::mul</code> 具有最高的总设备时间，因为该函数执行三个乘法。</p>
 <table><thead><tr><th>名称</th><th># 通话</th><th>自CPU</th><th>自我神经元</th><th>% 神经元</th></tr></thead><tbody><tr><td>阿顿::mul</td><td>3</td><td>60.9 微秒</td><td>1,164.5 微秒</td><td>49.5%</td></tr><tr><td>阿顿::添加</td><td>1</td><td>26.6 微秒</td><td>434.6 微秒</td><td>18.5%</td></tr><tr><td>aten::rsqrt</td><td>1</td><td>15.6 微秒</td><td>415.0 微秒</td><td>17.6%</td></tr><tr><td>阿滕::意味着</td><td>1</td><td>21.1 微秒</td><td>340.8 微秒</td><td>14.5%</td></tr></tbody></table>
 <p><em>自身神经元总计：2.355 ms</em></p>
 <p>每行直接映射到函数。 <code>aten::mul</code> 运行 <code>x <em> x</code>、<code>x </em> rms</code> 以及最终乘以 <code>weight</code>。 <code>aten::mean</code> 减少了最后一个维度。 <code>aten::add</code> 添加 epsilon 值并触发主机到设备的复制，因为标量在 CPU 上启动。 <code>aten::rsqrt</code> 计算倒数平方根。</p>
-<p>[![Neuron Explorer 遵循 aten::mul 操作，从框架调度到运行时调度再到在 Neuron 硬件上执行车道。](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/GUGp8s5G4EV7rb09YBDbf.p ng)](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/GUGp8s5G4EV7rb09YBDbf.png)</p>
+<p>[![Neuron Explorer 遵循 aten::mul 操作，从框架调度到运行时调度再到在 Neuron 硬件上执行车道。](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/GUGp8s5G4EV7rb09YBDbf.p ng)](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/GUGp8s5G4EV7rb09YBDbf.png)</p>
 <p><em>Neuron Explorer 遵循 aten::mul 操作，从框架调度到运行时调度再到在 Neuron 硬件通道上执行。</em></p>
 <h3>读取资源管理器中的跟踪</h3>
 <p>在资源管理器中，时间从左到右流动，事件生命周期从上到下流动。每个 ATen 操作都遵循相同的模式：在框架通道中创建，在运行时通道中调度为“nrta_execute_schedule”，以及在硬件通道中作为“nc_exec_running”执行设备。</p>
@@ -812,11 +812,11 @@ def rms_norm_fn(t):
 <p>将各个操作替换为 PyTorch 的内置“rms_norm”函数。 Neuron 将操作降低到一个融合内核：</p>
 <pre><code>def rms_norm_fn(t):
     return torch.rms_norm(t, [512], weight)</code></pre>
-<p>[![融合的 RMSNorm 在关键平均值中显示为一项设备操作表。](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/uYhQmUtuUp1LYPOu8f9bf.p ng)](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/uYhQmUtuUp1LYPOu8f9bf.png)</p>
+<p>[![融合的 RMSNorm 在关键平均值中显示为一项设备操作表。](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/uYhQmUtuUp1LYPOu8f9bf.p ng)](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/uYhQmUtuUp1LYPOu8f9bf.png)</p>
 <p><em>融合的 RMSNorm 在关键平均值表中显示为一项设备操作。</em></p>
 <table><thead><tr><th>名称</th><th># 通话</th><th>自CPU</th><th>自我神经元</th><th>% 神经元</th></tr></thead><tbody><tr><td>aten::_fused_rms_norm</td><td>1</td><td>47.6 微秒</td><td>403.3 微秒</td><td>100%</td></tr></tbody></table>
 <p><em>自身神经元总计：403.3 μs</em></p>
-<p>[![融合的 RMSNorm 遵循一个框架到硬件的路径，而不是分派每个算术运算分别。](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/OfM6vRT9iPBG42s8iWK1 V.png)](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/OfM6vRT9iPBG42s8iWK1V.png)</p>
+<p>[![融合的 RMSNorm 遵循一个框架到硬件的路径，而不是分派每个算术运算分别。](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/OfM6vRT9iPBG42s8iWK1 V.png)](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/OfM6vRT9iPBG42s8iWK1V.png)</p>
 <p><em>融合的 RMSNorm 遵循一个框架到硬件的路径，而不是单独分派每个算术运算。</em></p>
 <h3>比较下降路径</h3>
 <p>在简单的实现中，每个操作独立地跨越调度边界，并遵循其自己的框架到运行时到硬件的路径。在融合实现中，一个 Python 调用涵盖了完整的计算。该跟踪包含一项调度和一项硬件事件，组件操作之间没有间隙。</p>
@@ -829,11 +829,11 @@ def naive_compiled(t):
     mean_sq = x_sq.mean(dim=-1, keepdim=True)
     rms = torch.rsqrt(mean_sq + 1e-6)
     return t * rms * weight</code></pre>
-<p>[![编译后的函数在关键平均值中显示为一个 Torch-Compiled Region表。](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/TSJ2RWScmKPKmSroHCZaI.p ng)](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/TSJ2RWScmKPKmSroHCZaI.png)</p>
+<p>[![编译后的函数在关键平均值中显示为一个 Torch-Compiled Region表。](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/TSJ2RWScmKPKmSroHCZaI.p ng)](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/TSJ2RWScmKPKmSroHCZaI.png)</p>
 <p><em>编译后的函数在关键平均值表中显示为一个 Torch 编译区域。</em></p>
 <table><thead><tr><th>名称</th><th># 通话</th><th>自CPU</th><th>自我神经元</th><th>% 神经元</th></tr></thead><tbody><tr><td>Torch 编译区域：0/0</td><td>1</td><td>98.4 微秒</td><td>375.5 微秒</td><td>100%</td></tr></tbody></table>
 <p><em>自身神经元总计：375.5 μs</em></p>
-<p>[![编译后的图遵循运行时调度和硬件的一条路径执行。](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/yWIFqisMxCtJHLYb2Rcsh .png)](https://cdn-uploads.huggingface.co/product/uploads/6ac67ea29579ea34f1f7e470/yWIFqisMxCtJHLYb2Rcsh.png)</p>
+<p>[![编译后的图遵循运行时调度和硬件的一条路径执行。](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/yWIFqisMxCtJHLYb2Rcsh .png)](https://cdn-uploads.huggingface.co/production/uploads/6ac67ea29579ea34f1f7e470/yWIFqisMxCtJHLYb2Rcsh.png)</p>
 <p><em>编译后的图遵循运行时调度和硬件执行的一条路径。</em></p>
 <p>该表显示了一个设备执行情况，如配置文件 2 中所示，但代码采用不同的路径。编译器不会调用专门构建的融合操作，而是从原始 Python 函数中发现融合。在此运行中，神经元时间与“torch.rms_norm”相当，分别为 375 μs 和 403 μs。</p>
 <h2>并排总结</h2>
@@ -847,11 +847,11 @@ def naive_compiled(t):
 <h2>本文提到的数据集1</h2>
 <p>该作者的更多内容</p>
 <h2>使用 Strands Agents、LeRobot 和 Hugging Face Storage Buckets 从一处进行记录、训练和部署</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt=""></li></ul>
 <p>35</p>
 <p>2026 年 8 月 13 日</p>
 <h2>一键从 Hugging Face 到 Amazon SageMaker Studio</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f19ed428ae41c20c470792/8y7msN6A6W82LdQhQd85a.png" alt=""></li></ul>
 <p>21</p>
 <p>2026 年 7 月 7 日</p>
 <h3>社区</h3>
@@ -859,7 +859,7 @@ def naive_compiled(t):
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Famazon%2Fprofiling-torchneuron-part-1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Famazon%2Fprofiling-torchneuron-part-1">登录</a> 发表评论</p>
 <p>7</p>
-<ul><li><a href="https://huggingface.co/skoppar"><img src="https://huggingface.co/avatars/ba362a0e521f6803868998ead3614f14.svg" alt=""></a></li><li><a href="https://huggingface.co/LahariChowtoori"><img src="https://huggingface.co/avatars/ef1a34320918862e30e5ecc1e7305adb.svg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/adriansaxton"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a51391779a9d54dfdb9b467/LzvbqB5pTGvEo86NPHVTP.png" alt=""></a></li><li><a href="https://huggingface.co/hanbwang"><img src="https://huggingface.co/avatars/5016f7c40f940f0c413fd88f272f9929.svg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/arashjamalian"><img src="https://huggingface.co/avatars/c1ab8000ebd701b0031f199748b021fc.svg" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/skoppar"><img src="https://huggingface.co/avatars/ba362a0e521f6803868998ead3614f14.svg" alt=""></a></li><li><a href="https://huggingface.co/LahariChowtoori"><img src="https://huggingface.co/avatars/ef1a34320918862e30e5ecc1e7305adb.svg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/adriansaxton"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a51391779a9d54dfdb9b467/LzvbqB5pTGvEo86NPHVTP.png" alt=""></a></li><li><a href="https://huggingface.co/hanbwang"><img src="https://huggingface.co/avatars/5016f7c40f940f0c413fd88f272f9929.svg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/arashjamalian"><img src="https://huggingface.co/avatars/c1ab8000ebd701b0031f199748b021fc.svg" alt=""></a></li></ul>
 <h2>本文提到的数据集1</h2>]]></content:encoded>
     </item>
     <item>
@@ -873,63 +873,63 @@ def naive_compiled(t):
 <p>企业文章</p>
 <p>发布于 2026 年 10 月 21 日</p>
 <p>16</p>
-<ul><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt=""></a></li><li><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt=""></a></li><li><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt=""></a></li><li><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt="George Saon 的头像"></a></p>
+<ul><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt=""></a></li><li><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt=""></a></li><li><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt=""></a></li><li><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt="George Saon 的头像"></a></p>
 <p>乔治·萨恩</p>
 <p>格萨翁</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt="Brian Kingsbury 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt="Brian Kingsbury 的头像"></a></p>
 <p>布赖恩·金斯伯里</p>
 <p>贝德金斯伯里</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
 <p><a href="https://huggingface.co/rhoory"><img src="https://huggingface.co/avatars/672f169213139d21c7767021a0110402.svg" alt="Ron Hoory 的头像"></a></p>
 <p>罗恩·胡里</p>
 <p>胡言乱语</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
 <p><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt="Vishal Sunder 的头像"></a></p>
 <p>维沙尔·桑德</p>
 <p>维沙尔松德</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
 <p><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt="Zvi Kons 的头像"></a></p>
 <p>兹维·孔斯</p>
 <p>孔兹维</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
 <p><a href="https://huggingface.co/ibm-jeffkuo"><img src="https://huggingface.co/avatars/a0b862a7dbcc7196288028030d8e784a.svg" alt="Jeff Kuo 的头像"></a></p>
 <p>郭杰夫</p>
 <p>ibm-杰夫郭</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
 <p><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt="Samuel Thomas 的头像"></a></p>
 <p>塞缪尔·托马斯</p>
 <p>托马斯12</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/Avihu"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63b7e09359060ca9f4c4de35/0PH1dWNfcXTQ9H0QAeD91.jpeg" alt="Avihu Dekel 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/Avihu"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63b7e09359060ca9f4c4de35/0PH1dWNfcXTQ9H0QAeD91.jpeg" alt="Avihu Dekel 的头像"></a></p>
 <p>阿维胡·德克尔</p>
 <p>阿维胡</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
 <p><a href="https://huggingface.co/hagaia"><img src="https://huggingface.co/avatars/eb2f357888159f5120bbf70a40cb089d.svg" alt="Hagai Aronowitz 的头像"></a></p>
 <p>哈盖·阿罗诺维茨</p>
 <p>哈加亚</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt="福田隆的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt="福田隆的头像"></a></p>
 <p>福田隆</p>
 <p>福田1</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
 <p><a href="https://huggingface.co/tohru3"><img src="https://huggingface.co/avatars/f753ef5eb24dfe8b8c38a42a20de136e.svg" alt="长野彻的头像"></a></p>
 <p>长野彻</p>
 <p>托鲁3</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/sasnov"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/667113f4293b94a4f47c8653/svq32DhLFzW6NPWYC2IP7.jpeg" alt="Sashi Novitasari 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/sasnov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/667113f4293b94a4f47c8653/svq32DhLFzW6NPWYC2IP7.jpeg" alt="Sashi Novitasari 的头像"></a></p>
 <p>萨希·诺维塔萨里</p>
 <p>萨斯诺夫</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
-<p><a href="https://huggingface.co/szuk"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a86fd3343bc4aae2b86f857/zQO34V3Q4u7RgrpO-9QmJ.jpeg" alt="铃木雅之的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/szuk"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a86fd3343bc4aae2b86f857/zQO34V3Q4u7RgrpO-9QmJ.jpeg" alt="铃木雅之的头像"></a></p>
 <p>铃木雅之</p>
 <p>苏克</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
 <p><a href="https://huggingface.co/kristunlee"><img src="https://huggingface.co/avatars/c321df95ef32bbc777f7a548a2a361c3.svg" alt="Madison Lee 的头像"></a></p>
 <p>麦迪逊·李</p>
 <p>克里斯滕利</p>
-<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
 <p>我们很高兴分享 IBM Granite Speech 系列的三项更新：新的语音语言模型 <a href="https://huggingface.co/ibm-granite/granite-speech-5.0-2b">granite-speech-5.0-2b</a> 以及社区已使用的两个模型的修订版本， <a href="https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc">granite-speech-5.0-470m-turboctc</a> 和 <a href="https://huggingface.co/ibm-granite/granite-speech-4.1-2b-plus">granite-speech-4.1-2b-plus</a>。它们共同涵盖了企业语音工作的全部范围：高精度的转录和翻译、极快的边缘转录以及录音，谁在何时何地讲话，这与所说的内容一样重要。</p>
 <table><thead><tr><th>型号</th><th>状态</th><th>最新动态</th><th>最适合</th></tr></thead><tbody><tr><td><code>花岗岩语音-5.0-2b</code></td><td>新</td><td>更准确、抗噪声和混响的自动语音识别 (ASR)、语言 ID 提示、2,000 个术语关键字偏差、更好的长篇翻译</td><td>高精度多语言转录和翻译</td></tr><tr><td><code>granite-speech-5.0-470m-turboctc</code></td><td>更新</td><td>多语言、本地标点符号和大写，并且对噪音和混响更加鲁棒</td><td>高通量和设备上转录</td></tr><tr><td><code>granite-speech-4.1-2b-plus</code></td><td>更新</td><td>改进了说话者归因、时间戳、关键字偏差和长语音性能</td><td>会议、通话和其他多发言者录音</td></tr></tbody></table>
 <h2>Granite Speech 5.0 2B：更准确、更稳健、更可控</h2>
@@ -937,7 +937,7 @@ def naive_compiled(t):
 <p>与 4.1 2B Speech 相比的新增内容：</p>
 <ul><li><strong>更准确、更稳健的英语 ASR：</strong> 英语短格式基准的准确性更高，并且更好地处理噪音、混响和远处麦克风语音。</li><li><strong>语言 ID 提示：</strong> 在提示中命名输入语言以引导多语言转录。</li><li><strong>更好的长篇翻译和会话翻译：</strong> 翻译可以通过更自然的语音而保持更长时间，而不仅仅是短读句子。</li><li><strong>关键字最多列出 2,000 个术语：</strong> 在每种受支持的语言中，对产品名称、人物和首字母缩略词进行偏向转录和翻译。</li><li><strong>根据要求标点和大写：</strong> 在提示中要求格式化输出；在我们的测试集中，大写 F1 的范围为 89.7 到 99.5。</li></ul>
 <p>该模型在 Apache 2.0 下发布，支持 Transformers、vLLM、llama.cpp 和 Apple Silicon 的 mlx-audio。</p>
-<p>[![granite-speech-5.0-2b 平均英语 WER 与顶级开放权重 ASR 相比模型]（https://cdn-uploads.huggingface.co/product/uploads/653fb52cbfd890805461d691/87yRtLq4X2CwMZrDhv0L_.p ng)](https://cdn-uploads.huggingface.co/product/uploads/653fb52cbfd890805461d691/87yRtLq4X2CwMZrDhv0L_.png)</p>
+<p>[![granite-speech-5.0-2b 平均英语 WER 与顶级开放权重 ASR 相比模型]（https://cdn-uploads.huggingface.co/production/uploads/653fb52cbfd890805461d691/87yRtLq4X2CwMZrDhv0L_.p ng)](https://cdn-uploads.huggingface.co/production/uploads/653fb52cbfd890805461d691/87yRtLq4X2CwMZrDhv0L_.png)</p>
 <p><em>图 1：花岗岩-speech-5.0-2b 在平均英语 WER (5.06%) 的顶级开放重量 ASR 模型中排名第二。越低越好。结果为截至 2026 年 10 月 21 日的正式结果，并且是 Open ASR Leaderboard 的公共英语简短测试集的平均值。</em></p>
 <h2>Granite Speech 5.0 Turbo CTC：现在支持多种语言，更强大，甚至更快</h2>
 <p>当我们在 8 月份推出 Turbo CTC 时（https://huggingface.co/blog/ibm-granite/granite-speech-5-0-470m-turboctc），它是一个专为速度而构建的纯英语、470M 参数编码器。此版本保留了这一足迹，并添加了用户最需要的三件事：</p>
@@ -958,11 +958,11 @@ def naive_compiled(t):
 <h2>本文提到的集合1</h2>
 <p>该作者的更多内容</p>
 <h2>Granite Switch 4.1：来自一个端点的聊天、决策和语音</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
 <p>69</p>
 <p>2026 年 10 月 15 日</p>
 <h2>Granite 4.2 法学硕士：它们是如何构建的</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
 <p>129</p>
 <p>2026 年 8 月 25 日</p>
 <h3>社区</h3>
@@ -970,7 +970,7 @@ def naive_compiled(t):
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-speech-5">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-speech-5">登录</a> 发表评论</p>
 <p>16</p>
-<ul><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt=""></a></li><li><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt=""></a></li><li><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt=""></a></li><li><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt=""></a></li><li><a href="https://huggingface.co/kristunlee"><img src="https://huggingface.co/avatars/c321df95ef32bbc777f7a548a2a361c3.svg" alt=""></a></li><li><a href="https://huggingface.co/daw3rd"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69e673262ada4d38aba9eac2/ufQeVAywU1lC61ZPDvPhK.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ibm-jeffkuo"><img src="https://huggingface.co/avatars/a0b862a7dbcc7196288028030d8e784a.svg" alt=""></a></li><li><a href="https://huggingface.co/profautorino"><img src="https://huggingface.co/avatars/2e55f3bbe3867009b0ade056a35dd2ee.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/gakuto-ibm"><img src="https://huggingface.co/avatars/38865a5f5ea78efa0c94919b4a619d9c.svg" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/bedkingsbury"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66f1769e8da6d3e95420fb6d/eDcW_M2L3YzfMaCJU5XXU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sthomas12"><img src="https://huggingface.co/avatars/fc3cbc14ebabd9451e1c5b61bfe77ba5.svg" alt=""></a></li><li><a href="https://huggingface.co/vishalsunder"><img src="https://huggingface.co/avatars/bb57a48aa240288c50f24d18379e5197.svg" alt=""></a></li><li><a href="https://huggingface.co/fukuda1"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69b1101c302add0e05f34a83/4-B-XTKWf6XxNs0n9yfXY.jpeg" alt=""></a></li><li><a href="https://huggingface.co/konszvi"><img src="https://huggingface.co/avatars/1430083cabe28b4a0ee08052f85fa92e.svg" alt=""></a></li><li><a href="https://huggingface.co/kristunlee"><img src="https://huggingface.co/avatars/c321df95ef32bbc777f7a548a2a361c3.svg" alt=""></a></li><li><a href="https://huggingface.co/daw3rd"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69e673262ada4d38aba9eac2/ufQeVAywU1lC61ZPDvPhK.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ibm-jeffkuo"><img src="https://huggingface.co/avatars/a0b862a7dbcc7196288028030d8e784a.svg" alt=""></a></li><li><a href="https://huggingface.co/profautorino"><img src="https://huggingface.co/avatars/2e55f3bbe3867009b0ade056a35dd2ee.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/gakuto-ibm"><img src="https://huggingface.co/avatars/38865a5f5ea78efa0c94919b4a619d9c.svg" alt=""></a></li></ul>
 <h2>本文提到的型号3</h2>
 <h2>本文提到的集合1</h2>]]></content:encoded>
     </item>
@@ -985,20 +985,20 @@ def naive_compiled(t):
 <p>发布于 2026 年 10 月 20 日</p>
 <p>GitHub 上更新</p>
 <p>10</p>
-<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ehcalabres"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60db433e432bcf121f559073/a7LbJFHx2GUm9sH05Ns8Q.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Titrezo"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67ced8f42c97b1996ac4449e/mqfSC1nIVNkqnUH6PZwKD.jpeg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/tengomucho"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt="阿尔瓦罗·莫兰的头像"></a></p>
+<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ehcalabres"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60db433e432bcf121f559073/a7LbJFHx2GUm9sH05Ns8Q.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Titrezo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67ced8f42c97b1996ac4449e/mqfSC1nIVNkqnUH6PZwKD.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/tengomucho"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt="阿尔瓦罗·莫兰的头像"></a></p>
 <p>阿尔瓦罗·莫兰</p>
 <p>天吾无町</p>
-<p><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt="黄静雅的头像"></a></p>
+<p><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt="黄静雅的头像"></a></p>
 <p>黄静雅</p>
 <p>静雅</p>
-<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy 的头像"></a></p>
+<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy 的头像"></a></p>
 <p>西蒙·佩吉兹</p>
 <p>页面Zhf</p>
-<p><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt="Jeff Boudier 的头像"></a></p>
+<p><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt="Jeff Boudier 的头像"></a></p>
 <p>杰夫·布迪尔</p>
 <p>杰夫布迪尔</p>
-<p><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt="Régis Pierrard 的头像"></a></p>
+<p><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt="Régis Pierrard 的头像"></a></p>
 <p>雷吉斯·皮拉德</p>
 <p>雷吉斯</p>
 <p>如果您曾经尝试在 TPU 上运行 PyTorch，您可能会将代码移植到“torch_xla”，或者最终不得不学习 JAX。有了原生 PyTorch 后端 <a href="https://github.com/google-pytorch/torch_tpu">TorchTPU</a>，TPU 现在只是另一种设备。它在 Hugging Face 生态系统中开放了 TPU 的原生支持。 Transformers、Diffusers 和 Kernels 在 TPU 上本地运行。从中心选择一个模型，将其发送到“tpu”，然后就完成了。</p>
@@ -1074,12 +1074,12 @@ model = AutoModelForCausalLM.from_pretrained(
 <p>我们博客的更多文章</p>
 <p>合作伙伴GCP空间</p>
 <h2>Google Cloud TPU 可供 Hugging Face 用户使用</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62175099ae3a893ac7ce86a7/ZSFoej_60rG-hT-gmo3Pr.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1624629516652-5ff5d596f244529b3ec0fb89.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62175099ae3a893ac7ce86a7/ZSFoej_60rG-hT-gmo3Pr.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1624629516652-5ff5d596f244529b3ec0fb89.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></li></ul>
 <p>24</p>
 <p>2024 年 7 月 9 日</p>
 <p>合作伙伴gcp硬件</p>
 <h2>让数千名开放的法学硕士在 Vertex AI 模型花园中绽放</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1624629516652-5ff5d596f244529b3ec0fb89.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1624629516652-5ff5d596f244529b3ec0fb89.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></li></ul>
 <p>22 号</p>
 <p>2024 年 4 月 10 日</p>
 <h3>社区</h3>
@@ -1087,7 +1087,7 @@ model = AutoModelForCausalLM.from_pretrained(
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fhf-torchtpu">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fhf-torchtpu">登录</a> 发表评论</p>
 <p>10</p>
-<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ehcalabres"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60db433e432bcf121f559073/a7LbJFHx2GUm9sH05Ns8Q.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Titrezo"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67ced8f42c97b1996ac4449e/mqfSC1nIVNkqnUH6PZwKD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/MadMike477"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68b232dcf6027d00161fb46c/FwXMNqgpoXBb2NWJ3X_Pq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/dhanushkac"><img src="https://huggingface.co/avatars/c292ee0a7d9f916f85c9191043d0d242.svg" alt=""></a></li><li><a href="https://huggingface.co/Chris-FIRESTARTER"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/0I537AW3doNDAzhArKa7T.jpeg" alt=""></a></li></ul>]]></content:encoded>
+<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ehcalabres"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60db433e432bcf121f559073/a7LbJFHx2GUm9sH05Ns8Q.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Titrezo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67ced8f42c97b1996ac4449e/mqfSC1nIVNkqnUH6PZwKD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/MadMike477"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b232dcf6027d00161fb46c/FwXMNqgpoXBb2NWJ3X_Pq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/dhanushkac"><img src="https://huggingface.co/avatars/c292ee0a7d9f916f85c9191043d0d242.svg" alt=""></a></li><li><a href="https://huggingface.co/Chris-FIRESTARTER"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/0I537AW3doNDAzhArKa7T.jpeg" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>AnyLanguageModel 1.0：Apple 平台本地模型一年</title>
@@ -1100,8 +1100,8 @@ model = AutoModelForCausalLM.from_pretrained(
 <p>发布于 2026 年 10 月 20 日</p>
 <p>GitHub 上更新</p>
 <p>4</p>
-<ul><li><a href="https://huggingface.co/WaSampta"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/ynKudRz9P7bewRrpK6Rfy.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/laoya0"><img src="https://huggingface.co/avatars/492ba3e5ebc95951c86b0490625b4366.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/mattt"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt="Mattt 的头像"></a></p>
+<ul><li><a href="https://huggingface.co/WaSampta"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ynKudRz9P7bewRrpK6Rfy.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/laoya0"><img src="https://huggingface.co/avatars/492ba3e5ebc95951c86b0490625b4366.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/mattt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt="Mattt 的头像"></a></p>
 <p>马特</p>
 <p>马特</p>
 <p>去年 11 月，我们在此博客上介绍了 <a href="https://huggingface.co/blog/anylanguagemodel">AnyLanguageModel</a>：Apple 基础模型框架的直接替代品，可让您选择应用程序使用的模型和提供程序。我们听说应用程序开发人员对本地模型感到好奇，但并不总是确定如何开始。他们还希望避免支持多个推理提供程序带来的额外复杂性。 AnyLanguageModel 就是从这种反馈中产生的。</p>
@@ -1155,12 +1155,12 @@ model = AutoModelForCausalLM.from_pretrained(
 <p>我们博客的更多文章</p>
 <p>mlx开源社区</p>
 <h2>oMLX 创建者和维护者 Jun Kim 加入 Hugging Face 以支持 MLX 社区</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></li><li>+1</li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5dd96eb166059660ed1ee413/NQtzmrDdbG0H8qkZvRyGk.jpeg" alt=""></li><li>+1</li></ul>
 <p>98</p>
 <p>2026 年 9 月 22 日</p>
 <p>公告mlxllm</p>
 <h2>你自己打开的 PR</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/623c830997ddced06d78699b/ucB8joTPONCnc_Gj0mssR.jpeg" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/623c830997ddced06d78699b/ucB8joTPONCnc_Gj0mssR.jpeg" alt=""></li></ul>
 <p>74</p>
 <p>2026 年 4 月 16 日</p>
 <h3>社区</h3>
@@ -1168,7 +1168,7 @@ model = AutoModelForCausalLM.from_pretrained(
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fanylanguagemodel-1-0">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fanylanguagemodel-1-0">登录</a> 发表评论</p>
 <p>4</p>
-<ul><li><a href="https://huggingface.co/WaSampta"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/ynKudRz9P7bewRrpK6Rfy.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/laoya0"><img src="https://huggingface.co/avatars/492ba3e5ebc95951c86b0490625b4366.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/WaSampta"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ynKudRz9P7bewRrpK6Rfy.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/laoya0"><img src="https://huggingface.co/avatars/492ba3e5ebc95951c86b0490625b4366.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>
 <h2>本文提到的型号4</h2>]]></content:encoded>
     </item>
     <item>
@@ -1182,11 +1182,11 @@ model = AutoModelForCausalLM.from_pretrained(
 <p>发布于 2026 年 10 月 20 日</p>
 <p>GitHub 上更新</p>
 <p>10</p>
-<ul><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li><li><a href="https://huggingface.co/VaibhavKKM"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69abd374bcc4eb2abd02a423/Ywz6VRnwaR0wW4p4_PiXD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pranavthombare"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/645d0b4203fc86c46b3e961a/Y8vvqeLUJa6_845lRra_W.jpeg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/Isalia20"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69e2191b89c9afe46240fde2/4P9gAZ1_a2vLdHIcyt3PN.png" alt="Irakli Salia 的头像"></a></p>
+<ul><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li><li><a href="https://huggingface.co/VaibhavKKM"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69abd374bcc4eb2abd02a423/Ywz6VRnwaR0wW4p4_PiXD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pranavthombare"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645d0b4203fc86c46b3e961a/Y8vvqeLUJa6_845lRra_W.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Isalia20"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69e2191b89c9afe46240fde2/4P9gAZ1_a2vLdHIcyt3PN.png" alt="Irakli Salia 的头像"></a></p>
 <p>伊拉克利萨利亚</p>
 <p>伊萨利亚20</p>
-<p><a href="https://huggingface.co/khushi-411"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/mHXfX1t4hIyJjQ1Vd5g0f.jpeg" alt="Khushi Agrawal 的头像"></a></p>
+<p><a href="https://huggingface.co/khushi-411"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/mHXfX1t4hIyJjQ1Vd5g0f.jpeg" alt="Khushi Agrawal 的头像"></a></p>
 <p>库什·阿格拉瓦尔</p>
 <p>khushi-411</p>
 <p>如果您在 Mac 上运行模型或使用 MPS 作为主要计算加速工具，那么 PyTorch 2.15 有很多值得期待的功能！ FP8 到达 MPS，语言模型解码通过线性层和 softmax 获得更快的路径，新的 Metal 内核解决了音频、视频和训练工作负载中一些极其昂贵的部分。</p>
@@ -1311,12 +1311,12 @@ print(y.cpu().shape)</code></pre>
 <p>我们博客的更多文章</p>
 <p>tokenizerstokenizationrust</p>
 <h2>tokenizers v1：编码、解码和缩放，测量</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1674683851722-62441cb7456803e95009a08f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1666977434736-617bc8d1000dbbbf7c225eed.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1674683851722-62441cb7456803e95009a08f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1608146735109-5fcfb7c407408029ba3577e2.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1666977434736-617bc8d1000dbbbf7c225eed.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li></ul>
 <p>92</p>
 <p>2026 年 9 月 21 日</p>
 <p>变压器间谍火炬优化</p>
 <h2>解锁连续批处理中的异步性</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li></ul>
 <p>68</p>
 <p>2026 年 5 月 14 日</p>
 <h3>社区</h3>
@@ -1324,7 +1324,7 @@ print(y.cpu().shape)</code></pre>
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fmps-pytorch-2-15">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fmps-pytorch-2-15">登录</a> 发表评论</p>
 <p>10</p>
-<ul><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li><li><a href="https://huggingface.co/VaibhavKKM"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69abd374bcc4eb2abd02a423/Ywz6VRnwaR0wW4p4_PiXD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pranavthombare"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/645d0b4203fc86c46b3e961a/Y8vvqeLUJa6_845lRra_W.jpeg" alt=""></a></li><li><a href="https://huggingface.co/gjeevanm"><img src="https://huggingface.co/avatars/d08ed8ad356889cfcf2415020be4665a.svg" alt=""></a></li><li><a href="https://huggingface.co/corentinlger"><img src="https://huggingface.co/avatars/669b77101c3dcb9d2cc04bfc8170af36.svg" alt=""></a></li><li><a href="https://huggingface.co/santiRios"><img src="https://huggingface.co/avatars/61c5d8dc1dbd5b05b1dd81df319fefee.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>]]></content:encoded>
+<ul><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/Molbap"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64789feb79f2d49511ed7db4/IzaIwiVgnkTZHrcLDQk0C.jpeg" alt=""></a></li><li><a href="https://huggingface.co/VaibhavKKM"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69abd374bcc4eb2abd02a423/Ywz6VRnwaR0wW4p4_PiXD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tonywu71"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6264f9655f6f2e14d6ac981c/bJ5lPjGaOfatQne--KQ10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pranavthombare"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645d0b4203fc86c46b3e961a/Y8vvqeLUJa6_845lRra_W.jpeg" alt=""></a></li><li><a href="https://huggingface.co/gjeevanm"><img src="https://huggingface.co/avatars/d08ed8ad356889cfcf2415020be4665a.svg" alt=""></a></li><li><a href="https://huggingface.co/corentinlger"><img src="https://huggingface.co/avatars/669b77101c3dcb9d2cc04bfc8170af36.svg" alt=""></a></li><li><a href="https://huggingface.co/santiRios"><img src="https://huggingface.co/avatars/61c5d8dc1dbd5b05b1dd81df319fefee.svg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>FairStress：对 LLM 决策公平性的更深入评估</title>
@@ -1337,11 +1337,11 @@ print(y.cpu().shape)</code></pre>
 <p>企业文章</p>
 <p>发布于 2026 年 10 月 20 日</p>
 <p>3</p>
-<ul><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
 <p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/fee5cceec7536851d7c6712760716a71.svg" alt="Kyle Wiggers 的头像"></a></p>
 <p>凯尔威格斯</p>
 <p>爱通信</p>
-<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
 <p>📄 <a href="https://allenai.org/papers/fairstress">技术报告</a> | 🤗 <a href="https://huggingface.co/datasets/allenai/fairstress">数据</a> | 💻 <a href="https://github.com/pardissz/fairstress">代码</a></p>
 <p><a href="https://www.datocms-assets.com/64837/1791813343-fairstress-blog-draft-google-docs-image-1-1.png"><img src="https://www.datocms-assets.com/64837/1791813343-fairstress-blog-draft-google-docs-image-1-1.png" alt="FairStress 说明了招聘、贷款、医疗保健、教育和住房之间的平衡图标。"></a></p>
 <p>今天，我们推出 <a href="https://github.com/pardissz/fairstress"><strong>FairStress</strong></a>，这是一个衡量法学硕士人口公平性的基准，超越模型最终在影响人们的决策中做出的选择。 FairStress 可供下载，我们还将其构建到 <a href="https://github.com/allenai/olmo-eval">Olmo-eval</a> 中，这是我们用于运行和比较模型评估的开放工作台。</p>
@@ -1393,11 +1393,11 @@ print(y.cpu().shape)</code></pre>
 <h2>本文提到的数据集1</h2>
 <p>该作者的更多内容</p>
 <h2>HiRO-ACEv2：以 3 公里分辨率模拟极端天气，而成本仅为一小部分</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
 <p>14</p>
 <p>2026 年 10 月 14 日</p>
 <h2>GPU 集群的有效调度</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
 <p>54</p>
 <p>2026 年 10 月 9 日</p>
 <h3>社区</h3>
@@ -1405,7 +1405,7 @@ print(y.cpu().shape)</code></pre>
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Ffairstress">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Ffairstress">登录</a> 发表评论</p>
 <p>3</p>
-<ul><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li></ul>
 <h2>本文提到的数据集1</h2>]]></content:encoded>
     </item>
     <item>
@@ -1419,51 +1419,51 @@ print(y.cpu().shape)</code></pre>
 <p>企业文章</p>
 <p>发布于 2026 年 10 月 20 日</p>
 <p>20</p>
-<ul><li><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/MuzaffarSharofitdinov"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b5ae21ed03e92b01a32342/X1XgnmMAGWN4Uz_Gabj4K.jpeg" alt=""></a></li><li><a href="https://huggingface.co/CharanSripadi"><img src="https://huggingface.co/avatars/be40b5bce28c1378042615d9349747f8.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/MuzaffarSharofitdinov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5ae21ed03e92b01a32342/X1XgnmMAGWN4Uz_Gabj4K.jpeg" alt=""></a></li><li><a href="https://huggingface.co/CharanSripadi"><img src="https://huggingface.co/avatars/be40b5bce28c1378042615d9349747f8.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li></ul>
 <p><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt="Ashwath Vaithinathan Aravindan 的头像"></a></p>
 <p>阿什瓦斯·维希纳坦·阿拉文丹</p>
 <p>阿什瓦斯-瓦伊蒂纳</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/Vatche"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6435a1131860001f144239ea/smzcd7SHs33E2ArxBLBBK.png" alt="Vatche Isahagian 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/Vatche"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6435a1131860001f144239ea/smzcd7SHs33E2ArxBLBBK.png" alt="Vatche Isahagian 的头像"></a></p>
 <p>瓦奇·伊萨哈吉安</p>
 <p>瓦奇</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt="Vinod Muthusamy 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt="Vinod Muthusamy 的头像"></a></p>
 <p>维诺德·穆图萨米</p>
 <p>维诺德穆特</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/jayaramkr"><img src="https://huggingface.co/avatars/981da7aa42bc31072a5f6e04ce8e6c3a.svg" alt="Jayaram Radhakrishnan 的头像"></a></p>
 <p>贾亚拉姆·拉达克里希南</p>
 <p>贾亚拉姆克尔</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt="Evelyn Duesterwald 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt="Evelyn Duesterwald 的头像"></a></p>
 <p>伊芙琳·杜斯特瓦尔德</p>
 <p>埃杜斯特</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/gaodan-fang"><img src="https://huggingface.co/avatars/18f132b7a7dabcdf5fb933edb554ea68.svg" alt="方高丹的头像"></a></p>
 <p>方高丹</p>
 <p>高丹芳</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/illeatmyhat"><img src="https://huggingface.co/avatars/c20bc90f9b6a68b53d1b66c6ff37090b.svg" alt="Punleuk Oum 的头像"></a></p>
 <p>彭勒克·乌姆</p>
 <p>伊莱特米哈特</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><a href="https://huggingface.co/gsthomasx"><img src="https://huggingface.co/avatars/7567e1a8588c0bee6293c3cb88c11c8d.svg" alt="G Thomas 的头像"></a></p>
 <p>G托马斯</p>
 <p>哥斯达马克斯</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt="Michał Ulewicz 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt="Michał Ulewicz 的头像"></a></p>
 <p>米哈乌·乌莱维奇</p>
 <p>米哈尔</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt="Merve Unuvar 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt="Merve Unuvar 的头像"></a></p>
 <p>梅尔维·乌努瓦</p>
 <p>先生</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
-<p><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt="Ayhan Sebin 的头像"></a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt="Ayhan Sebin 的头像"></a></p>
 <p>艾汉·塞宾</p>
 <p>艾汉瑟宾</p>
-<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
+<p><a href="https://huggingface.co/ibm-research"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt="IBM Research 的头像"></a> <a href="https://huggingface.co/ibm-research">ibm-research</a></p>
 <p><em>ALTK-Evolve 使用 GPT-4.1 学习并应用剧本，在客户服务代理基准 τ²-bench 上的表现优于零售条目，而无需更新模型权重。</em></p>
 <h2>学习记忆采用带有 GPT-4.1 的基本 ReAct 代理</h2>
 <p>使用 GPT-4.1（一种较旧的非推理模型），基本客户服务代理在 τ² 基准零售上达到 <strong>67.5% 通过^4</strong> — 这意味着它通过“所有四次”独立尝试解决了 67.5% 的任务。在我们 2026 年 10 月 12 日的排行榜快照中，它的得分高于所有零售条目。它在基准测试的库存 ReAct 支架上运行，并在其系统提示中附加了学习的指南。</p>
@@ -1500,7 +1500,7 @@ As a retail agent, you can help users:
 <table><thead><tr><th>变体</th><th>上下文中包含的指南</th><th>零售</th><th>航空公司</th></tr></thead><tbody><tr><td><strong>基线</strong></td><td>没有指南</td><td>0</td><td>0</td></tr><tr><td><strong>sup3</strong></td><td>支持<code>n≥3</code>（高支持核心）</td><td>31</td><td>14</td><td>14</td></tr><tr><td><strong>无损</strong></td><td>所有指南</td><td>292</td><td>292 101</td><td>101</td></tr></tbody></table>
 <p><strong>我们跟踪的指标。</strong> 每项任务都会尝试 <strong>4 次</strong>，我们通过两种方式解读这些试验：</p>
 <ul><li><strong>平均准确度</strong> — 4 次试验的平均成功率。这是<strong>能力</strong>轴：<em>代理多久能做到这一点？</em></li><li><strong>通过^4</strong> — 通过所有 4 次试验的任务百分比。这沿着 <strong>可靠性</strong> 轴和 τ² 基准排行榜报告的指标进行测量。这在这里很重要，因为支持代理在 4 次中解决了 3 次退款问题，但仍然让四分之一的真实客户失败 - Pass^4 会询问您是否可以“每次”信任该代理，而不仅仅是平均而言。</li></ul>
-<p>[![针对零售业和航空公司，按变体划分的保留测试任务的平均准确度和通过^4。无损提升零售准确度 +4.4 个百分点，Pass^4 +10.0 个百分点；航空公司的无损准确率提高了 +7.5 pp，而sup3 的最佳 Pass^4 为 +10.0页](https://cdn-uploads.huggingface.co/product/uploads/6435a1131860001f144239ea/HtL2uTn98-xHkcTxKqkFY.pn g)](https://cdn-uploads.huggingface.co/product/uploads/6435a1131860001f144239ea/HtL2uTn98-xHkcTxKqkFY.png)</p>
+<p>[![针对零售业和航空公司，按变体划分的保留测试任务的平均准确度和通过^4。无损提升零售准确度 +4.4 个百分点，Pass^4 +10.0 个百分点；航空公司的无损准确率提高了 +7.5 pp，而sup3 的最佳 Pass^4 为 +10.0页](https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/HtL2uTn98-xHkcTxKqkFY.pn g)](https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/HtL2uTn98-xHkcTxKqkFY.png)</p>
 <p><em>图 1. 在每个任务的四次试验中使用“gpt-4.1”的代理在保留的零售和航空任务上的平均准确度和通过率^4。</em></p>
 <p><em>代理模型：<code>gpt-4.1</code>（用户模拟器：<code>gpt-5.5</code>）。</em></p>
 <p><strong>表 2. 在每个任务的四次试验中使用“gpt-4.1”的保留代理性能。括号显示相对于基线的百分比变化。</strong></p>
@@ -1510,7 +1510,7 @@ As a retail agent, you can help users:
 <p>这两个领域对于指导的效果“有多大”存在分歧。在<strong>零售</strong>中，每个指标越多越好——小型的sup3核心在准确度上勉强超过基线，并且您需要<strong>完整的无损设置</strong>才能实现真正的跳跃。在 <strong>航空公司</strong> 中，情况在可靠性方面发生了翻转：无损在准确性方面领先（65% 与 60%），但紧凑的 **sup3 核心（14 条准则）是更<em>可靠的</em><strong>，将 Pass^4 提升到 </strong>45%<strong>，而无损则为 40%。与之前的发现相呼应，即<a href="https://huggingface.co/blog/ibm-research/altk-evolve-hmm">交付是一个刻度盘，而不是一个常量</a>，</strong>支持计数是一个值得每个域调整的旋钮**，而不是硬编码的值。</p>
 <h2>更好的性能需要花费更多的代币，而不是更多的回合</h2>
 <p>指南不是免费的，但成本却在你所期望的地方——在<strong>提示输入标记</strong>中，而不是在更长、更曲折的对话中：</p>
-<p>[![按零售和航空公司分组的每次对话成本。与无指南相比，无损技术分别使成本增加 65% 和 32%基线。](https://cdn-uploads.huggingface.co/product/uploads/6435a1131860001f144239ea/MsqhICXsHtpJozVFZYEm7 .png)](https://cdn-uploads.huggingface.co/product/uploads/6435a1131860001f144239ea/MsqhICXsHtpJozVFZYEm7.png)</p>
+<p>[![按零售和航空公司分组的每次对话成本。与无指南相比，无损技术分别使成本增加 65% 和 32%基线。](https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/MsqhICXsHtpJozVFZYEm7 .png)](https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/MsqhICXsHtpJozVFZYEm7.png)</p>
 <p><em>图 2. 按领域划分的每次对话 LLM 总成本以及完整基础拆分的指南配置。</em></p>
 <p><strong>表 3. 在四个试验中的完整基础上每次对话（座席和用户模拟器）的法学硕士总成本。越低越好。</strong></p>
 <table><thead><tr><th>域名</th><th>配置</th><th>成本/对话</th><th>与基线</th></tr></thead><tbody><tr><td><strong>零售</strong></td><td>基线</td><td>0.084 美元</td><td>—</td></tr><tr><td></td><td>sup3</td><td>0.095 美元</td><td>+12%</td></tr><tr><td></td><td><strong>无损</strong></td><td>0.139 美元</td><td>+65%</td></tr><tr><td><strong>航空公司</strong></td><td>基线</td><td>0.081 美元</td><td>—</td></tr><tr><td></td><td>sup3</td><td>0.097 美元</td><td>+19%</td></tr><tr><td></td><td><strong>无损</strong></td><td>0.107 美元</td><td>+32%</td></tr></tbody></table>
@@ -1527,7 +1527,7 @@ As a retail agent, you can help users:
 <h2>ALTK-Evolve 在排行榜比较中名列前茅</h2>
 <p>根据 τ²-bench 的要求，提交的内容在<strong>完整的基础分割</strong>（训练∪测试）上进行评分，并在<strong>通过^4</strong>处报告。由于这涵盖了完整的任务集而不是保留的测试拆分，因此这些数字与上面报告的测试任务数字不同。这就是实际结果出现的地方——提示级记忆携带使用每个基本模型<em>进入</em>或<em>过去</em>当前前沿公司的代理：</p>
 <ul><li><strong><a href="https://github.com/sierra-research/tau2-bench/pull/542">零售：#1</a>。</strong> 在基础分割上，具有学习指导的代理达到<strong>通过^4 = 67.5%</strong>，领先于每个前沿模型<em>和</em>领先于<strong>RAFT-30B-A3B</strong> (61.4%)，这是一个<strong>在合成τ²基准零售数据上进行微调的模型</strong>。使用库存“gpt-4.1”和提示附加的剧本，它的性能比微调系统高<strong>+6.1点</strong>。</li><li><strong><a href="https://github.com/sierra-research/tau2-bench/pull/551">航空公司：#1</a> 使用 <code>gpt-5.5</code>，#8 使用 <code>gpt-4.1</code></strong> 相对于已发布的主板，紧凑的 <strong>sup3 核心</strong> 使用 <code>gpt-4.1</code> 为代理提供 <strong>Pass^4 = 44%</strong> — <strong>第八</strong>，击败 GPT-5.2（无推理）并且几乎匹配 Claude十四行诗 4.5。交换更强的基础，同样的方法完全领先：<strong>使用“gpt-5.5”的代理达到 82.0%</strong>，清除了每个边界条目 (66-72%)。</li></ul>
-<p>[![Saved Pass^4 零售业和航空业排行榜比较，突出显示 ALTK-Evolve 在零售业的运行率为 67.5%，在零售业的运行率为 82.0% 和 44.0%航空公司。](https://cdn-uploads.huggingface.co/product/uploads/6435a1131860001f144239ea/iOmv6o938CgNfFlULP-VV。 png)](https://cdn-uploads.huggingface.co/product/uploads/6435a1131860001f144239ea/iOmv6o938CgNfFlULP-VV.png)</p>
+<p>[![Saved Pass^4 零售业和航空业排行榜比较，突出显示 ALTK-Evolve 在零售业的运行率为 67.5%，在零售业的运行率为 82.0% 和 44.0%航空公司。](https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/iOmv6o938CgNfFlULP-VV。 png)](https://cdn-uploads.huggingface.co/production/uploads/6435a1131860001f144239ea/iOmv6o938CgNfFlULP-VV.png)</p>
 <p><em>图 3. ALTK-Evolve 运行与 2026 年 10 月 12 日的 τ² 基准排行榜快照之间的 Pass^4 比较。</em></p>
 <p>这两个领域都传达了相同的信息：**围绕*该模型的学习指南适用于不同的基本模型**——将使用较旧的非推理模型的代理商带入零售业的前沿公司，并将使用前沿模型的代理商带到航空公司的高层。</p>
 <h2>代理无需权重更新即可改进</h2>
@@ -1536,11 +1536,11 @@ As a retail agent, you can help users:
 <ul><li><strong>之前的帖子</strong> <a href="https://huggingface.co/blog/ibm-research/altk-evolve-sldd">考虑 ACE？我们可以用更少的令牌做到这一点</a> <a href="https://huggingface.co/blog/ibm-research/altk-evolve-hmm">您的代理实际需要多少内存？</a></li><li><strong>ALTK-Evolve 库</strong> — <a href="https://github.com/AgentToolkit/altk-evolve">https://github.com/AgentToolkit/altk-evolve</a></li><li><strong>τ²-bench</strong> — <a href="https://github.com/sierra-research/tau2-bench">https://github.com/sierra-research/tau2-bench</a></li><li><strong>零售排行榜提交</strong> — <a href="https://github.com/sierra-research/tau2-bench/pull/542">τ²-bench PR #542</a></li><li><strong>提交航空公司排行榜</strong> - <a href="https://github.com/sierra-research/tau2-bench/pull/551">τ²-bench PR #551</a></li></ul>
 <p>该作者的更多内容</p>
 <h2>您的代理完成了任务。它会再次这样做吗？</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
 <p>122</p>
 <p>2026 年 9 月 15 日</p>
 <h2>IBM 发布具有商业友好许可证的 SOTA Granite Time Series PatchTST-FM-r2 模型</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
 <p>60</p>
 <p>2026 年 9 月 9 日</p>
 <h3>社区</h3>
@@ -1548,7 +1548,7 @@ As a retail agent, you can help users:
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Faltk-evolve-bc">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Faltk-evolve-bc">登录</a> 发表评论</p>
 <p>20</p>
-<ul><li><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/MuzaffarSharofitdinov"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/67b5ae21ed03e92b01a32342/X1XgnmMAGWN4Uz_Gabj4K.jpeg" alt=""></a></li><li><a href="https://huggingface.co/CharanSripadi"><img src="https://huggingface.co/avatars/be40b5bce28c1378042615d9349747f8.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/aadebiyi"><img src="https://huggingface.co/avatars/a532e8ece9767dde21278ec06fd21b31.svg" alt=""></a></li><li><a href="https://huggingface.co/DhavalPatel"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/UT2mHX2WuCm5Ws4rGKyCB.png" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/Vatche"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6435a1131860001f144239ea/smzcd7SHs33E2ArxBLBBK.png" alt=""></a></li><li><a href="https://huggingface.co/anupamamurthi"><img src="https://huggingface.co/avatars/c2670566c5cbdfccf87954a9caf7d381.svg" alt=""></a></li><li><a href="https://huggingface.co/brmcg"><img src="https://huggingface.co/avatars/b71be4ef8a21d10746bdec6d271f055d.svg" alt=""></a></li></ul>]]></content:encoded>
+<ul><li><a href="https://huggingface.co/Michal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60a641594e4508065fac8ceb/NvsnsnsWXzTMlUdqsDasp.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/MuzaffarSharofitdinov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5ae21ed03e92b01a32342/X1XgnmMAGWN4Uz_Gabj4K.jpeg" alt=""></a></li><li><a href="https://huggingface.co/CharanSripadi"><img src="https://huggingface.co/avatars/be40b5bce28c1378042615d9349747f8.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/aadebiyi"><img src="https://huggingface.co/avatars/a532e8ece9767dde21278ec06fd21b31.svg" alt=""></a></li><li><a href="https://huggingface.co/DhavalPatel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/UT2mHX2WuCm5Ws4rGKyCB.png" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/Vatche"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6435a1131860001f144239ea/smzcd7SHs33E2ArxBLBBK.png" alt=""></a></li><li><a href="https://huggingface.co/anupamamurthi"><img src="https://huggingface.co/avatars/c2670566c5cbdfccf87954a9caf7d381.svg" alt=""></a></li><li><a href="https://huggingface.co/brmcg"><img src="https://huggingface.co/avatars/b71be4ef8a21d10746bdec6d271f055d.svg" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>NVIDIA Cosmos3-H-Dreams: Bringing Clinical Surgery to Life T…</title>
@@ -1561,27 +1561,27 @@ As a retail agent, you can help users:
 <p>企业+文章</p>
 <p>发布于 2026 年 10 月 20 日</p>
 <p>2</p>
-<ul><li><a href="https://huggingface.co/MasterOfDisaster67"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/eYjcgliRdr2ZMi5_xG_B8.png" alt=""></a></li><li><a href="https://huggingface.co/brxerq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65167fe9da8a3d7cdda09a53/U1OsYfG7n3fW0L1VVl7pO.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/lzbinden"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/tQyCJ2_ygMOucYjNRsZkf.png" alt="Lukas Zbinden 的头像"></a></p>
+<ul><li><a href="https://huggingface.co/MasterOfDisaster67"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/eYjcgliRdr2ZMi5_xG_B8.png" alt=""></a></li><li><a href="https://huggingface.co/brxerq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65167fe9da8a3d7cdda09a53/U1OsYfG7n3fW0L1VVl7pO.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/lzbinden"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tQyCJ2_ygMOucYjNRsZkf.png" alt="Lukas Zbinden 的头像"></a></p>
 <p>卢卡斯·兹宾登</p>
 <p>勒兹宾登</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
 <p><a href="https://huggingface.co/javirk1"><img src="https://huggingface.co/avatars/2da14fb4fcab0b865cadc94851868294.svg" alt="哈维尔·加马佐的头像"></a></p>
 <p>哈维尔·加马佐</p>
 <p>贾维尔克1</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
 <p><a href="https://huggingface.co/nigeln"><img src="https://huggingface.co/avatars/519fb4ebc97874fad75efa97594b18d1.svg" alt="奈杰尔·尼尔森的头像"></a></p>
 <p>奈杰尔·纳尔逊</p>
 <p>奈杰尔恩</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
 <p><a href="https://huggingface.co/mtoloui"><img src="https://huggingface.co/avatars/df2cc3a69194090a4c6859726ec61890.svg" alt="Mostafa Toloui 的头像"></a></p>
 <p>穆斯塔法·托鲁伊</p>
 <p>姆托卢伊</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
 <p><a href="https://huggingface.co/shuver"><img src="https://huggingface.co/avatars/d116ee7bef2ca4f33d68a7883ddcdbbf.svg" alt="Sean Huver 的头像"></a></p>
 <p>肖恩·胡弗</p>
 <p>颤抖</p>
-<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
 <p>想象一下移动 Cadiere 抓取器、抓住胆囊并将其抬起，所有这些都在生成的实时响应的手术场景中进行。今天，我们更进一步推出了 Cosmos3-H-Dreams，通过迄今为止最令人信服的体内图像，将交互式生成模拟引入到临床手术的视觉和程序复杂性中。</p>
 <p>我们的第一个 <a href="https://huggingface.co/blog/nvidia/cosmos-h-dreams">Cosmos-H-Dreams</a> 版本基于 Cosmos-Predict2.5 构建，为 dVRK 桌面缝合带来了交互式生成模拟，这是手术机器人的基础试验场。作为世界基础模型 (WFM)，Cosmos-H-Dreams 展示了数值模拟的替代方案：它不是明确地建模场景几何、组织变形和物理交互，而是直接从同步视频和机器人运动学中学习视觉动力学，从而产生高度真实的交互式桌面任务模拟。</p>
 <p>如今，<a href="https://github.com/isaac-for-healthcare/cosmos3-h-dreams">Cosmos3-H-Dreams</a> 通过在 CMR Surgical Versius 平台上的临床​​手术过程中学习视频和机器人运动学记录来提高这一功能。据我们所知，这是第一个经过临床胆囊切除术记录训练以支持实时运动控制的实时生成手术模拟器。 Cosmos3-H-Dreams 由 Cosmos 3 提供支持，并通过 NVIDIA 加速流推理库 FlashDreams 进行加速，可在单个 NVIDIA RTX PRO 6000 GPU 上交互式运行。</p>
@@ -1619,11 +1619,11 @@ As a retail agent, you can help users:
 <h2>本文提到的数据集1</h2>
 <p>该作者的更多内容</p>
 <h2>扩展 Indic 预训练：2.8 万亿代币和开放数据生成管道</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
 <p>47</p>
 <p>2026 年 10 月 16 日</p>
 <h2>使用 NVIDIA 语音代理技能针对您的领域微调 ASR</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
 <p>13</p>
 <p>2026 年 10 月 13 日</p>
 <h3>社区</h3>
@@ -1631,7 +1631,7 @@ As a retail agent, you can help users:
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fcosmos3-h-dreams">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fcosmos3-h-dreams">登录</a> 发表评论</p>
 <p>2</p>
-<ul><li><a href="https://huggingface.co/MasterOfDisaster67"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/eYjcgliRdr2ZMi5_xG_B8.png" alt=""></a></li><li><a href="https://huggingface.co/brxerq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65167fe9da8a3d7cdda09a53/U1OsYfG7n3fW0L1VVl7pO.png" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/MasterOfDisaster67"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/eYjcgliRdr2ZMi5_xG_B8.png" alt=""></a></li><li><a href="https://huggingface.co/brxerq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65167fe9da8a3d7cdda09a53/U1OsYfG7n3fW0L1VVl7pO.png" alt=""></a></li></ul>
 <h2>本文提到的型号2</h2>
 <h2>本文提到的数据集1</h2>]]></content:encoded>
     </item>
@@ -1646,26 +1646,26 @@ As a retail agent, you can help users:
 <p>发布于 2026 年 10 月 19 日</p>
 <p>GitHub 上更新</p>
 <p>13</p>
-<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt="Régis Pierrard 的头像"></a></p>
+<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt="Régis Pierrard 的头像"></a></p>
 <p>雷吉斯·皮拉德</p>
 <p>雷吉斯</p>
-<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy 的头像"></a></p>
+<p><a href="https://huggingface.co/pagezyhf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt="Simon Pagezy 的头像"></a></p>
 <p>西蒙·佩吉兹</p>
 <p>页面Zhf</p>
-<p><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt="Michael Benayoun 的头像"></a></p>
+<p><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt="Michael Benayoun 的头像"></a></p>
 <p>迈克尔·贝纳永</p>
 <p>迈克尔·贝纳永</p>
-<p><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt="黄静雅的头像"></a></p>
+<p><a href="https://huggingface.co/Jingya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt="黄静雅的头像"></a></p>
 <p>黄静雅</p>
 <p>静雅</p>
-<p><a href="https://huggingface.co/tengomucho"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt="阿尔瓦罗·莫兰的头像"></a></p>
+<p><a href="https://huggingface.co/tengomucho"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt="阿尔瓦罗·莫兰的头像"></a></p>
 <p>阿尔瓦罗·莫兰</p>
 <p>天吾无町</p>
-<p><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt="David Corvoysier 的头像"></a></p>
+<p><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt="David Corvoysier 的头像"></a></p>
 <p>大卫·科沃西尔</p>
 <p>达科尔沃</p>
-<p><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt="Jeff Boudier 的头像"></a></p>
+<p><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt="Jeff Boudier 的头像"></a></p>
 <p>杰夫·布迪尔</p>
 <p>杰夫布迪尔</p>
 <p>TorchNeuron 为 AWS Trainium 上的 PyTorch 提供了新的本机后端。 Transformers、Diffusers 和 Kernels 本身就支持它，使得在 Trainium 上运行模型并在 HF 集线器上共享它们比以往任何时候都更容易。</p>
@@ -1868,12 +1868,12 @@ if dist.get_rank() == 0:
 <p>我们博客的更多文章</p>
 <p>torchprofileCUDA</p>
 <h2>PyTorch 中的分析（第 2 部分）：从 nn.Linear 到融合 MLP</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li>+1</li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li>+1</li></ul>
 <p>65</p>
 <p>2026 年 6 月 11 日</p>
 <p>torchprofileCUDA</p>
 <h2>PyTorch 中的分析（第 1 部分）：torch.profiler 初学者指南</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li>+1</li></ul>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649681653581-5f7fbd813e94f16a85448745.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt=""></li><li>+1</li></ul>
 <p>183</p>
 <p>2026 年 5 月 29 日</p>
 <h3>社区</h3>
@@ -1881,7 +1881,7 @@ if dist.get_rank() == 0:
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fhf-torchneuron">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fhf-torchneuron">登录</a> 发表评论</p>
 <p>13</p>
-<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li><li><a href="https://huggingface.co/gbharada-aws"><img src="https://huggingface.co/avatars/55e629c40983a2b82c0c75012c13e074.svg" alt=""></a></li><li><a href="https://huggingface.co/zwang-amazon"><img src="https://huggingface.co/avatars/c698e2722ba05d640b6f958f142b0082.svg" alt=""></a></li><li><a href="https://huggingface.co/ozardeso-aws"><img src="https://huggingface.co/avatars/9aa3820bf2cf891b3997883155a87e54.svg" alt=""></a></li><li><a href="https://huggingface.co/ericyu0510"><img src="https://huggingface.co/avatars/9d16fc41021585ca0981882d8919b5ee.svg" alt=""></a></li><li><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt=""></a></li><li><a href="https://huggingface.co/3outeille"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/iB42uASF1DoQth23cizSh.png" alt=""></a></li></ul>]]></content:encoded>
+<ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li><li><a href="https://huggingface.co/gbharada-aws"><img src="https://huggingface.co/avatars/55e629c40983a2b82c0c75012c13e074.svg" alt=""></a></li><li><a href="https://huggingface.co/zwang-amazon"><img src="https://huggingface.co/avatars/c698e2722ba05d640b6f958f142b0082.svg" alt=""></a></li><li><a href="https://huggingface.co/ozardeso-aws"><img src="https://huggingface.co/avatars/9aa3820bf2cf891b3997883155a87e54.svg" alt=""></a></li><li><a href="https://huggingface.co/ericyu0510"><img src="https://huggingface.co/avatars/9d16fc41021585ca0981882d8919b5ee.svg" alt=""></a></li><li><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt=""></a></li><li><a href="https://huggingface.co/3outeille"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/iB42uASF1DoQth23cizSh.png" alt=""></a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>欢迎 Beam：一个你可以拥有、定制并规模化的 501B 开放模型</title>
@@ -2338,28 +2338,28 @@ print(next(iter(data)))</code></pre>
 <p>团队文章</p>
 <p>发布于 2026 年 10 月 15 日</p>
 <p>36</p>
-<ul><li><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hannayukhymenko"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/rZDwRiBcqeqlUQ7mThoyU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ymetz"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6425f2e685f26ab94af1ea20/w-GKLWwLMH54-kq8BDBIf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rkreft"><img src="https://huggingface.co/avatars/6f266e3e6d4c7b5f4c47e679501290dc.svg" alt=""></a></li><li><a href="https://huggingface.co/davmel"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65c93ce8567e810c57cf41b3/Pj0CYJBSLAI-g5ias4TPz.jpeg" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/hannayukhymenko"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/rZDwRiBcqeqlUQ7mThoyU.jpeg" alt="Hanna Yukhymenko 的头像"></a></p>
+<ul><li><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hannayukhymenko"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/rZDwRiBcqeqlUQ7mThoyU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ymetz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6425f2e685f26ab94af1ea20/w-GKLWwLMH54-kq8BDBIf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rkreft"><img src="https://huggingface.co/avatars/6f266e3e6d4c7b5f4c47e679501290dc.svg" alt=""></a></li><li><a href="https://huggingface.co/davmel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65c93ce8567e810c57cf41b3/Pj0CYJBSLAI-g5ias4TPz.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/hannayukhymenko"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/rZDwRiBcqeqlUQ7mThoyU.jpeg" alt="Hanna Yukhymenko 的头像"></a></p>
 <p>汉娜·尤赫门科</p>
 <p>汉纳尤赫门科</p>
-<p><a href="https://huggingface.co/swiss-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/648211d39c44e3422ca7e4f3/gnfixzw9IqBziR6bzA6u8.png" alt="瑞士人工智能倡议的头像"></a> <a href="https://huggingface.co/swiss-ai">瑞士-ai</a></p>
-<p><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt="Oleg Lavrovsky 的头像"></a></p>
+<p><a href="https://huggingface.co/swiss-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/648211d39c44e3422ca7e4f3/gnfixzw9IqBziR6bzA6u8.png" alt="瑞士人工智能倡议的头像"></a> <a href="https://huggingface.co/swiss-ai">瑞士-ai</a></p>
+<p><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt="Oleg Lavrovsky 的头像"></a></p>
 <p>奥列格·拉夫罗夫斯基</p>
 <p>洛勒格</p>
-<p><a href="https://huggingface.co/swiss-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/648211d39c44e3422ca7e4f3/gnfixzw9IqBziR6bzA6u8.png" alt="瑞士人工智能倡议的头像"></a> <a href="https://huggingface.co/swiss-ai">瑞士-ai</a></p>
-<p><a href="https://huggingface.co/ymetz"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6425f2e685f26ab94af1ea20/w-GKLWwLMH54-kq8BDBIf.jpeg" alt="Y Metz 的头像"></a></p>
+<p><a href="https://huggingface.co/swiss-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/648211d39c44e3422ca7e4f3/gnfixzw9IqBziR6bzA6u8.png" alt="瑞士人工智能倡议的头像"></a> <a href="https://huggingface.co/swiss-ai">瑞士-ai</a></p>
+<p><a href="https://huggingface.co/ymetz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6425f2e685f26ab94af1ea20/w-GKLWwLMH54-kq8BDBIf.jpeg" alt="Y Metz 的头像"></a></p>
 <p>Y梅斯</p>
 <p>伊梅茨</p>
-<p><a href="https://huggingface.co/swiss-ai"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/648211d39c44e3422ca7e4f3/gnfixzw9IqBziR6bzA6u8.png" alt="瑞士人工智能倡议的头像"></a> <a href="https://huggingface.co/swiss-ai">瑞士-ai</a></p>
+<p><a href="https://huggingface.co/swiss-ai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/648211d39c44e3422ca7e4f3/gnfixzw9IqBziR6bzA6u8.png" alt="瑞士人工智能倡议的头像"></a> <a href="https://huggingface.co/swiss-ai">瑞士-ai</a></p>
 <p>我们的最新版本 Apertus 1.5 扩展了 8B 和 70B Apertus 1.0 模型，具有图像/音频理解、可选的思维模式、四倍长的上下文窗口、改进的指令遵循和更好的工具使用。更新后的 <a href="https://huggingface.co/collections/swiss-ai/apertus-v15">8B 和 70B 模型权重</a> 已于 2026 年 7 月 24 日根据 Apache 2.0 许可证发布到 Hugging Face。现在可以从项目<a href="https://huggingface.co/papers/2610.15542">技术报告</a>获取更多详细信息，并在此处进行总结。</p>
 <p>Apertus 1.5 是第一代模型的继续预训练：向 8B 模型添加 4 万亿个 token 的文本和多模态训练数据，向 70B 模型添加 2 万亿个 token，总计分别为 19T 和 17T。与每个 Apertus 版本一样，模型是完全开放的：开放<a href="https://huggingface.co/collections/swiss-ai/apertus-v15">权重</a>、开放<a href="https://github.com/swiss-ai/apertus-data-transparency/">数据</a>、开放<a href="https://apertus-ai.org/pages/charter/">值</a>和完整训练<a href="https://apertus-ai.org/pages/research/">详细信息</a>。</p>
 <h2>主要增强功能</h2>
 <ul><li><em>原生多模式理解：</em> Apertus 1.5 接受图像和音频以及文本，将文档、图表和照片带入对话中。这些模型还可以处理口语，尽管这仍处于实验阶段。</li><li><em>思维模式：</em>模型可以切换到思维模式，在回答之前对输入进行推理，从而提高推理问题的性能。</li><li><em>长上下文：</em> 上下文窗口增长到 262,144 个标记，比 Apertus 1.0 增加了 4 倍。</li><li><em>改进的指令遵循：</em> 比 Apertus 1.0 更好的指令遵循性可提供更可预测和准确的响应。</li><li><em>改进工具使用：</em> 这些模型经过培训，可以更好地集成工具，从而更有效地使用外部工具和 API。</li><li><em>开放价值观：</em> 更加严格地遵守 Apertus 宪章，这为模型的价值观和原则带来了透明度。</li></ul>
 <h2>训练过程</h2>
-<p>[！[Apertus 1.5 训练管道，具有四个阶段的持续预训练，然后是 SFT、长上下文 SFT、RLVR、DPO 和SDPO](https://cdn-uploads.huggingface.co/product/uploads/650ed7adf141bc34f91a12ae/Xi58nSrPTd5_ASGNIg60g.pn g)](https://cdn-uploads.huggingface.co/product/uploads/650ed7adf141bc34f91a12ae/Xi58nSrPTd5_ASGNIg60g.png) <em>完整的 Apertus 1.5 培训流程</em></p>
+<p>[！[Apertus 1.5 训练管道，具有四个阶段的持续预训练，然后是 SFT、长上下文 SFT、RLVR、DPO 和SDPO](https://cdn-uploads.huggingface.co/production/uploads/650ed7adf141bc34f91a12ae/Xi58nSrPTd5_ASGNIg60g.pn g)](https://cdn-uploads.huggingface.co/production/uploads/650ed7adf141bc34f91a12ae/Xi58nSrPTd5_ASGNIg60g.png) <em>完整的 Apertus 1.5 培训流程</em></p>
 <h3>通过分词器实现多模态</h3>
 <p>我们以早期融合的方式在 v1.5 模型中引入多模态，其中图像和音频以与文本标记相同的序列作为离散标记进入 Apertus，而不是使用单独的视觉编码器。图像使用 <a href="https://arxiv.org/abs/2510.26583">Emu3.5</a> 标记器进行标记（512×512 图像变为 1,024 个标记），音频使用 <a href="https://arxiv.org/abs/2408.16532">WavTokenizer</a> 进行标记（每秒 40 个标记）。我们只扩展词汇量，因此架构保持不变，并且训练以纯文本速度运行。这些模型理解图像和音频，但仅生成文本。</p>
-<p>[![图片](https://cdn-uploads.huggingface.co/product/uploads/650ed7adf141bc34f91a12ae/D-7BaNY68Nigi5bTw3RH9。 png)](https://cdn-uploads.huggingface.co/product/uploads/650ed7adf141bc34f91a12ae/D-7BaNY68Nigi5bTw3RH9.png)</p>
+<p>[![图片](https://cdn-uploads.huggingface.co/production/uploads/650ed7adf141bc34f91a12ae/D-7BaNY68Nigi5bTw3RH9。 png)](https://cdn-uploads.huggingface.co/production/uploads/650ed7adf141bc34f91a12ae/D-7BaNY68Nigi5bTw3RH9.png)</p>
 <h3>预训练</h3>
 <p>从Apertus 1.0开始，我们继续分四个阶段进行预训练：</p>
 <ul><li><strong>未配对：</strong>文本加上独立的图像和音频，因此模型可以学习新的模式。</li><li><strong>配对：</strong> 图像-标题和音频-转录对，因此它将它们与语言对齐。</li><li><strong>冷却：</strong> 更高质量的数据以及更多的数学和代码。</li><li><strong>长上下文：</strong> 窗口从 8k 到 262k 令牌逐步增长。</li></ul>
@@ -2377,7 +2377,7 @@ print(next(iter(data)))</code></pre>
 <h3>评估卡：Apertus ❤️ EvalEval</h3>
 <p>Apertus 与 <a href="https://evalevalai.com">EvalEval Coalition</a> 合作，确保完全透明且可重复的基准测试。我们以 <a href="https://github.com/evaleval/every_eval_ever">Every Eval Ever (EEE)</a> 模式发布 Apertus 1.5 结果，这是一种共享格式，不仅记录分数，还记录谁运行评估、如何访问模型、生成设置以及应如何解释每个指标：排行榜中经常缺少的详细信息，通常可以解释为什么看起来相似的分数不同。</p>
 <p>结果显示在下面的评估卡中，该卡将运行数据与基准和模型元数据结合到一个可解释的记录中，也可以通过 <a href="https://huggingface.co/blog/eee-community-evals">Hugging Face 社区评估</a> 获得。这与<a href="https://huggingface.co/blog/evaleval-aisi">英国人工智能安全研究所用来公开发布其评估的基础设施</a>相同。由于我们的文本评估在 lm-evaluation-harness 的公共分支上运行，EEE 通过专用转换器支持该分支，因此任何人都可以重新运行它们，并在相同的设置下将他们的数字与我们的数字进行比较。</p>
-<p>结构化评估报告除了研究之外也很重要。 EvalEval <a href="https://evalevalai.com/infrastruct/2026/09/28/mapping-evaluation-cards-to-ai-governance-requirements/">将评估卡映射到人工智能治理要求</a>，包括欧盟人工智能法案第 55 条和 GPAI 实践守则，并发现 EEE 模式可以代表这些框架要求的 60 个评估报告元素中的 56 个。这符合我们已经发布 Apertus 的方式：除了模型之外，我们还发布了培训内容的 <a href="https://github.com/swiss-ai/apertus-legal/raw/main/apertus_1.5/Apertus_1_5_EU_Public_Summary.pdf">公开摘要</a>，并自愿发布了 <a href="https://raw.githubusercontent.com/swiss-ai/apertus-legal/main/apertus_1.5/Apertus_1_5_EU_Code_of_Practice.pdf">代码实践</a>文档。机器可读的评估记录是自然而然的下一步：让监管者、部署者和研究人员更容易找到、解释和比较模型背后的证据。</p>
+<p>结构化评估报告除了研究之外也很重要。 EvalEval <a href="https://evalevalai.com/infrastructure/2026/09/28/mapping-evaluation-cards-to-ai-governance-requirements/">将评估卡映射到人工智能治理要求</a>，包括欧盟人工智能法案第 55 条和 GPAI 实践守则，并发现 EEE 模式可以代表这些框架要求的 60 个评估报告元素中的 56 个。这符合我们已经发布 Apertus 的方式：除了模型之外，我们还发布了培训内容的 <a href="https://github.com/swiss-ai/apertus-legal/raw/main/apertus_1.5/Apertus_1_5_EU_Public_Summary.pdf">公开摘要</a>，并自愿发布了 <a href="https://raw.githubusercontent.com/swiss-ai/apertus-legal/main/apertus_1.5/Apertus_1_5_EU_Code_of_Practice.pdf">代码实践</a>文档。机器可读的评估记录是自然而然的下一步：让监管者、部署者和研究人员更容易找到、解释和比较模型背后的证据。</p>
 <p>我们致力于通过 Eval Cards 和 EEE 模式促进可重复和透明的评估，并鼓励其他模型开发人员以同样的方式报告他们的结果，以便可以在模型和组织之间比较分数。</p>
 <h2>Apertus 1.5 再现性</h2>
 <p>所有配方、消融和数据混合都记录在<a href="https://arxiv.org/abs/2610.15542">技术报告</a>中。我们的目标是通过公开和访问 v1.5 训练过程来普及开放模型开发。中间检查点托管在我们的 <strong><a href="https://huggingface.co/collections/swiss-ai/apertus-v15">Apertus 1.5 Hugging Face 集合</a></strong> 中，包括基本权重、SFT、RLVR 和 DPO，以及我们在 [Apertus 1.5 数据集中精选的训练数据混合/自定义数据集]集合](https://huggingface.co/collections/swiss-ai/apertus-v15-datasets)。共享它们可以让研究人员研究每个阶段如何改变模型行为。</p>
@@ -2408,7 +2408,7 @@ print(next(iter(data)))</code></pre>
 <h2>本文提到的论文2</h2>
 <h2>本文2中提到的集合</h2>
 <h3>社区</h3>
-<p><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6a832ba5388a81135437cad6/qzMQPesIJEk9PlbU1W8M6.jpeg" alt=""></p>
+<p><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a832ba5388a81135437cad6/qzMQPesIJEk9PlbU1W8M6.jpeg" alt=""></p>
 <p>艾德丽安·诺克蒂斯</p>
 <p>4 天前</p>
 <p>该评论已被隐藏（标记为低质量）</p>
@@ -2416,7 +2416,7 @@ print(next(iter(data)))</code></pre>
 <p>点击或粘贴此处上传图像</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fswiss-ai%2Fapertus-v15-release-notes">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fswiss-ai%2Fapertus-v15-release-notes">登录</a> 发表评论</p>
 <p>36</p>
-<ul><li><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hannayukhymenko"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/rZDwRiBcqeqlUQ7mThoyU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ymetz"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6425f2e685f26ab94af1ea20/w-GKLWwLMH54-kq8BDBIf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rkreft"><img src="https://huggingface.co/avatars/6f266e3e6d4c7b5f4c47e679501290dc.svg" alt=""></a></li><li><a href="https://huggingface.co/davmel"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65c93ce8567e810c57cf41b3/Pj0CYJBSLAI-g5ias4TPz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ntnq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6486bb3d4c025cf3c41e7767/1I6yYhv06rHX1_1iIOdjP.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/aelvyr"><img src="https://huggingface.co/avatars/6b89808e695a6b9c59cee574d8429982.svg" alt=""></a></li><li><a href="https://huggingface.co/ischlag"><img src="https://huggingface.co/avatars/5bced71b6d507e621ec159ada94480f0.svg" alt=""></a></li><li><a href="https://huggingface.co/Darkness1638"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/696668fd67d6c708720d94bb/Wk81bwYievIzGVKZSPaST.jpeg" alt=""></a></li></ul>
+<ul><li><a href="https://huggingface.co/loleg"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1673712263092-61f1877a168a0b52fda88455.jpeg" alt=""></a></li><li><a href="https://huggingface.co/hannayukhymenko"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/rZDwRiBcqeqlUQ7mThoyU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ymetz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6425f2e685f26ab94af1ea20/w-GKLWwLMH54-kq8BDBIf.jpeg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rkreft"><img src="https://huggingface.co/avatars/6f266e3e6d4c7b5f4c47e679501290dc.svg" alt=""></a></li><li><a href="https://huggingface.co/davmel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65c93ce8567e810c57cf41b3/Pj0CYJBSLAI-g5ias4TPz.jpeg" alt=""></a></li><li><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ntnq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6486bb3d4c025cf3c41e7767/1I6yYhv06rHX1_1iIOdjP.png" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/aelvyr"><img src="https://huggingface.co/avatars/6b89808e695a6b9c59cee574d8429982.svg" alt=""></a></li><li><a href="https://huggingface.co/ischlag"><img src="https://huggingface.co/avatars/5bced71b6d507e621ec159ada94480f0.svg" alt=""></a></li><li><a href="https://huggingface.co/Darkness1638"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/696668fd67d6c708720d94bb/Wk81bwYievIzGVKZSPaST.jpeg" alt=""></a></li></ul>
 <h2>本文提到的型号 9</h2>
 <h2>本文提到的数据集 9</h2>
 <h2>本文提到的论文2</h2>

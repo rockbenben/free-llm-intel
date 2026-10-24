@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: c5ec07ebc525
+body_sha: 7a267ea04ddf
 ---
 
 # “Trolling Stone”行动：与俄罗斯关联的影响活动
@@ -50,7 +50,7 @@ OpenAI 封禁了一批账号，它们与一个此前未被报道、我们将之�
 
 虽然该行动的活动大多聚焦内容生成，但有一小部分聚焦于网络内部的协调。有一次，位于巴基斯坦的 ChatGPT 用户请模型帮助落实其收到的一套关于如何运营该行动的指令。指令内容包括每个虚假账号每天须发帖 20 次的要求，以及每日上报行动进展的要求。另一次，一名俄语用户请 ChatGPT 把另一套指令翻译成英语。这些指令似乎是发给最初那名巴基斯坦用户的某位同事的，内容包括每日预期发帖量，以及如何让该行动的虚假社交媒体账号看起来可信。
 
-一些俄语账号还请 ChatGPT 帮忙为女性团体生成宣传材料，包括陌生拜访（cold-outreach）话术。其中部分材料提及神秘学、萨满教、瑜伽和冥想——开源报道将这些活动描述为向 Rudnev 所谓“邪教”的[招募](https://en.iz.ru/en/1863675/sofia-prohorcuk-dara-versta/occult-attraction-what-threat-head-shambhala-ashram-detained-argentina)[手段](https://edition.cnn.com/2025-04-11/americas/rudnev-argentina-russia-intl-latam)。我们无法独立证实这些材料所指活动的性质。
+一些俄语账号还请 ChatGPT 帮忙为女性团体生成宣传材料，包括陌生拜访（cold-outreach）话术。其中部分材料提及神秘学、萨满教、瑜伽和冥想——开源报道将这些活动描述为向 Rudnev 所谓“邪教”的[招募](https://en.iz.ru/en/1863675/sofia-prohorcuk-dara-versta/occult-attraction-what-threat-head-shambhala-ashram-detained-argentina)[手段](https://edition.cnn.com/2025/04/11/americas/rudnev-argentina-russia-intl-latam)。我们无法独立证实这些材料所指活动的性质。
 
 ## 影响
 

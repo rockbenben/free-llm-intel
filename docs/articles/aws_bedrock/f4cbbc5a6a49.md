@@ -9,7 +9,7 @@ captured: 2026-10-23
 extractor: readability-v1
 translator: mt
 status: translated
-body_sha: 6625353045dc
+body_sha: 8400bda70768
 ---
 
 ## [人工智能](https://aws.amazon.com/blogs/machine-learning/)
@@ -54,7 +54,7 @@ Deep Insight 在 [GitHub](https://github.com/aws-samples/sample-deep-insight) �
 
 第二个是[Web 版本](https://github.com/aws-samples/sample-deep-insight/tree/main/deep-insight-web)，一个基于浏览器的 UI，用于上传数据、审查分析计划（Human-in-the-Loop，或 HITL）和下载报告，所有这些都无需编写代码，使非开发人员也可以访问。 （前面的演示视频显示了正在运行的网络版本。）
 
-第三个是 [托管 AgentCore 版本](https://github.com/aws-samples/sample-deep-insight/tree/main/driven-agentcore)，这是一个由 Amazon Bedrock AgentCore 支持的生产部署选项，它是一个使用任何框架或模型大规模构建、连接和优化代理的平台。此版本在 AgentCore 运行时部署代理，这是 Amazon Bedrock AgentCore 的一项功能。该系统完全在私有虚拟私有云 (VPC) 内运行，并在 AWS Fargate 上单独托管自定义代码解释器，并且代理在隔离的每用户环境中同时运行。当您需要会话隔离和私有 VPC 部署时，这是正确的选择。第 3 部分详细介绍了其部署和操作。
+第三个是 [托管 AgentCore 版本](https://github.com/aws-samples/sample-deep-insight/tree/main/managed-agentcore)，这是一个由 Amazon Bedrock AgentCore 支持的生产部署选项，它是一个使用任何框架或模型大规模构建、连接和优化代理的平台。此版本在 AgentCore 运行时部署代理，这是 Amazon Bedrock AgentCore 的一项功能。该系统完全在私有虚拟私有云 (VPC) 内运行，并在 AWS Fargate 上单独托管自定义代码解释器，并且代理在隔离的每用户环境中同时运行。当您需要会话隔离和私有 VPC 部署时，这是正确的选择。第 3 部分详细介绍了其部署和操作。
 
 这三者共享相同的多代理架构，因此在开发中验证的代理可以按原样部署到生产中。
 
