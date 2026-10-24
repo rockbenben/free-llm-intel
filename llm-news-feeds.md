@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-24 12:37:21**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-24 13:18:06**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -40,8 +40,8 @@
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [RSS/Atom 订阅源](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-24，标题自动汉化）：
-  1. [快速扩展在线存储以服务超过 10 亿 ChatGPT 用户（第二部分）](https://openai.com/index/scaling-storage-one-billion-users-part-two)（2026-10-23）
-  2. [确保我们的前沿模型训练环境的安全](https://openai.com/index/securing-our-frontier-model-training-environment)（2026-10-23）
+  1. [快速扩展在线存储，服务超过 10 亿 ChatGPT 用户（第二部分）](https://openai.com/index/scaling-storage-one-billion-users-part-two)（2026-10-23）
+  2. [保护我们的前沿模型训练环境](https://openai.com/index/securing-our-frontier-model-training-environment)（2026-10-23）
   3. [OpenAI 与波兰 NSK 合作推进人工智能安全](https://openai.com/index/openai-nask-ai-safety-security-partnership)（2026-10-23）
   4. [用 Decisions API 构建响应更快的应用](https://openai.com/index/decisions-api)（2026-10-22）
   5. [在 OpenAI，FDE 意味着什么](https://openai.com/index/forward-deployed-engineering-means)（2026-10-22）
@@ -194,11 +194,11 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-24，标题自动汉化）：
-  1. [LitPivot：通过文学景观中的动态情境化发展研究思路](https://huggingface.co/blog/allenai/litpivot)（2026-10-23）
-  2. [您的模型在 AWS Trainium 上运行吗？查找一下](https://huggingface.co/blog/torch-neuronx-model-support)（2026-10-23）
+  1. [LitPivot：在文献景观中通过动态情境化来发展研究想法](https://huggingface.co/blog/allenai/litpivot)（2026-10-23）
+  2. [你的模型能在 AWS Trainium 上运行吗？查一查](https://huggingface.co/blog/torch-neuronx-model-support)（2026-10-23）
   3. [将数据库评分转化为强化学习奖励：使用 ThinkingBox 进行训练后智能体](https://huggingface.co/blog/microsoft/thinkingbox-training)（2026-10-22）
   4. [使用 IBM Granite 时间序列模型进行集合预测](https://huggingface.co/blog/ibm-research/granite-timeseries-ensemble-r1)（2026-10-22）
-  5. [OlmoEarth v1.3: State-of-the-art embeddings for the whole planet](https://huggingface.co/blog/allenai/olmoearth-v1-3)（2026-10-22）
+  5. [OlmoEarth v1.3：面向整个星球的最先进嵌入](https://huggingface.co/blog/allenai/olmoearth-v1-3)（2026-10-22）
   - 📄 完整文章归档（共 904 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### OpenRouter (模型统一网关) (openrouter)
@@ -309,10 +309,10 @@
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-10-24，标题自动汉化）：
   1. [Amazon SageMaker AI 上的多轮强化学习：实践指南](https://aws.amazon.com/blogs/machine-learning/multi-turn-reinforcement-learning-on-amazon-sagemaker-ai-a-hands-on-guide/)（2026-10-23）
-  2. [使用 AWS CDK 协调 SageMaker AI 端点自动扩展](https://aws.amazon.com/blogs/machine-learning/orchestrating-sagemaker-ai-endpoint-auto-scaling-with-aws-cdk/)（2026-10-23）
+  2. [使用 AWS CDK 编排 SageMaker AI 端点的自动扩缩容](https://aws.amazon.com/blogs/machine-learning/orchestrating-sagemaker-ai-endpoint-auto-scaling-with-aws-cdk/)（2026-10-23）
   3. [在 Amazon Quick Sight 图层地图中使用 GeoJSON 可视化点和路线](https://aws.amazon.com/blogs/machine-learning/visualize-points-and-routes-with-geojson-in-amazon-quick-sight-layer-maps/)（2026-10-23）
-  4. [Bayer Crop Science 如何利用 AWS Unified Operations 在 Amazon Bedrock AgentCore 上构建代理决策引擎](https://aws.amazon.com/blogs/machine-learning/how-bayer-crop-science-built-an-agentic-decision-engine-on-amazon-bedrock-agentcore-with-aws-unified-operations/)（2026-10-23）
-  5. [Amazon Polly 对其生成引擎进行了重大升级](https://aws.amazon.com/blogs/machine-learning/amazon-polly-delivers-a-major-upgrade-to-its-generative-engine/)（2026-10-22）
+  4. [Bayer Crop Science 如何利用 AWS Unified Operations 在 Amazon Bedrock AgentCore 上构建智能体式决策引擎](https://aws.amazon.com/blogs/machine-learning/how-bayer-crop-science-built-an-agentic-decision-engine-on-amazon-bedrock-agentcore-with-aws-unified-operations/)（2026-10-23）
+  5. [Amazon Polly 对其生成式引擎进行了重大升级](https://aws.amazon.com/blogs/machine-learning/amazon-polly-delivers-a-major-upgrade-to-its-generative-engine/)（2026-10-22）
   - 📄 完整文章归档（共 123 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (晶圆级推理) (cerebras)
@@ -355,10 +355,10 @@
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-24，标题自动汉化）：
   1. [Wan 3.0 集成的最佳 API 提供商](https://deepinfra.com/blog/best-api-providers-wan-3-0-integration)（2026-10-23）
-  2. [Best API Providers for Granite-4.2-8B in 2026](https://deepinfra.com/blog/best-api-providers-granite-4-2-8b)（2026-10-22）
-  3. [Wan 3.0：模型文档和集成指南](https://deepinfra.com/blog/wan-3-0-model-documentation-integration-guide)（2026-10-22）
-  4. [Granite 4.2 8B: Model Overview & Integration Guide](https://deepinfra.com/blog/granite-4-2-8b-model-overview-integration-guide)（2026-10-21）
-  5. [Wan 3.0 API 基准：速度、延迟和成本](https://deepinfra.com/blog/wan-3-0-api-benchmarks)（2026-10-21）
+  2. [2026 年 Granite-4.2-8B 最佳 API 提供商](https://deepinfra.com/blog/best-api-providers-granite-4-2-8b)（2026-10-22）
+  3. [Wan 3.0：模型文档与集成指南](https://deepinfra.com/blog/wan-3-0-model-documentation-integration-guide)（2026-10-22）
+  4. [Granite 4.2 8B：模型概述与集成指南](https://deepinfra.com/blog/granite-4-2-8b-model-overview-integration-guide)（2026-10-21）
+  5. [Wan 3.0 API 基准：速度、延迟与成本](https://deepinfra.com/blog/wan-3-0-api-benchmarks)（2026-10-21）
   - 📄 完整文章归档（共 46 篇）：[deepinfra.md](llm-news/deepinfra.md)
 
 ### Modular (原 BentoCloud/BentoML) (modular_cloud)
@@ -409,8 +409,8 @@
 ### Anyscale (anyscale)
 - 📡 [RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-24，标题自动汉化）：
-  1. [宣布 Ray 在 Google TPU 上支持 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20）
-  2. [宣布成立 Ray on Accelerators 特别兴趣小组 (SIG)](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20）
+  1. [宣布 Ray 支持 Google TPU 上的 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20）
+  2. [宣布成立 Ray on Accelerators 特别兴趣小组（SIG）](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20）
   3. [用 KubeRay 在 Kubernetes 上大规模运行 Ray](https://anyscale.com/blog/kuberay)（2026-10-15）
   4. [在 Anyscale 上用 Ray 扩展机器人决策研究的规模](https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale)（2026-10-09）
   5. [编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08）
