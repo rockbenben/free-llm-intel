@@ -3,42 +3,10 @@
   <channel>
     <title>Fireworks AI 官方动态</title>
     <link>https://github.com/rockbenben/free-llm-intel</link>
-    <description>Fireworks AI 官方博客 / 更新日志归档（最近 50 条，共 26 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
+    <description>Fireworks AI 官方博客 / 更新日志归档（最近 50 条，共 28 篇，标题汉化），由 free-llm-intel 定时巡检官方页面生成。</description>
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-fireworks_ai.xml" rel="self" type="application/rss+xml"/>
-    <item>
-      <title>Fireworks 上线 Muse Spark Open：Meta 的开放权重模型，跑在美国 serverless 上</title>
-      <link>https://fireworks.ai/blog/meta-muse-spark-open</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/meta-muse-spark-open</guid>
-      <description>原文标题：Muse Spark Open on Fireworks: Meta’s open weights wodel, available on US serverless</description>
-      <content:encoded><![CDATA[<h1>Fireworks 上线 Muse Spark Open：Meta 的开放权重模型，跑在美国 serverless 上</h1>
-<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fproduction%2Fce7c3fd6fee91f09efac2a6391bff7e59bcb3c58-1920x1080.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="Terminal-Bench 2.1 上的 Muse Spark Open"></p>
-<p><a href="https://fireworks.ai/models/fireworks/muse-spark-open">Muse Spark Open</a> 是 Meta 出品的一个开放权重模型，Day-0 就在 Fireworks 上可用。它是一个 8,160 亿参数的 mixture-of-experts 模型，每个 token 激活 420 亿参数，context window 达 100 万 token，为长周期 coding 和 agent 工作而生，这类活儿要求在超长会话里始终保持连贯。</p>
-<p>它是迄今最有实力的美国开放权重模型之一，也是我们在受监管的专业工作里见过的最强开放权重模型。在 Vals AI 为 Harvey 的 Legal Agent Benchmark 设立的排行榜上，它位列第一，通过率接近 Claude Opus 5 的 4 倍。在 Rogo 的 Big Finance Bench 上，它在每一个难度级别都击败了 Claude Opus 5.5，在最难的任务上还略胜 GPT-6 Astra。</p>
-<p>Muse Spark Open 在美国完成训练与开发，Fireworks 默认以 Zero Data Retention 的方式运行它。<a href="https://app.fireworks.ai/models/fireworks/muse-spark-open">今天就试试 serverless 版本</a>，它跑在仅限美国的算力上，且不收美国溢价。之后可切换到 reserved throughput 上生产，并用 serverless LoRA training 对它做精调。</p>
-<blockquote>Muse Spark Open 展现出很强的 agentic 工程能力：它能穿梭于代码仓库、实现不那么简单的改动，并验证复杂的 coding 工作 —— Zimu，Factory 的 Member of Technical Staff</blockquote>
-<h2>在受监管的工作上，Muse Spark Open 压过 Claude Opus</h2>
-<p>Muse Spark Open 最能发挥的地方是准确性至上的场景，比如法律、金融和临床任务。以下结果来自独立评测方和我们的 Specialized Intelligence Index，其中每个模型都跑在同一套 harness 上：</p>
-<ul><li>•<strong>Harvey 的 egal Agent Benchmark 上排名第一：</strong>在以文件和使用工具完成法律工作的 <a href="https://www.vals.ai/benchmarks/hlab">Vals AI 排行榜</a>上，Muse Spark Open 在 75 个模型中位列第一，得分 25.4%，接近 Claude Opus 5（6.7%）的 4 倍。</li><li>•<strong>在 Rogo 的 Big Finance Bench 上领先 Claude Opus 5.5：</strong>在 Fireworks 的 <a href="https://fireworks.ai/specialized-intelligence-index/benchmarks/finance/big-finance-benchmark">Specialized Intelligence Index</a> 运行中，Muse Spark Open 在每个难度级别都击败了 Claude Opus 5.5。在最难的任务上，它以 17.3% 对 16.5% 略胜 GPT-6 Astra，得分是 Opus 5.5（6.6%）的 2.5 倍以上（图 1）。</li><li>•<strong>Finance Agent 上位列前三：</strong>在 <a href="https://www.vals.ai/benchmarks/fabv2">Vals AI 的 Finance Agent v2</a> 上，它得到 60.6%，与 Gemini 3.8 Flash 相差不到 1 个百分点，而每次测试的成本约低 60%。</li><li>•<strong>临床文档：</strong>它在 <a href="https://www.vals.ai/benchmarks/medscribe">Vals MedScribe</a> 上得分 90.1%，与 Claude Opus 5（91.0%）相差不到 1 个百分点，token 单价却低 75-83%。</li></ul>
-<p>本文中 Vals AI 和 Artificial Analysis 的第三方结果，是在 Meta 面向 API 发布的这个模型版本上测得的。</p>
-<blockquote>在 Rogo，我们让每一个新模型都过一遍 Big Finance Bench，那是我们收录 928 道真实金融工作流问题的题集。Muse Spark Open 得分 53.3%，是我们榜单上成绩最好的开放权重模型，甚至超过了前沿的 Claude Opus 5（49.2%）。高性能的美国开放权重模型开始涌现，这一点尤其令人振奋。它们为持续实验提供了底座，也让我们能把智能调校到金融工作的特定需求上。我们很期待在推进模型性能边界的同时，为客户释放新的价值与效率。 —— Alex Wang，Rogo 的 Member of Technical Staff</blockquote>
-<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fproduction%2F2a2d2ede2a04eba81bf52678b2431fc245656ef1-1920x1080.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="Rogo 的 Big Financial Bench 上的 Muse Spark Open"></p>
-<p>图 1：按任务难度划分的 Muse Spark Open 在 Rogo 的 Big Finance Bench 上的成绩，来自 Fireworks 的 Specialized Intelligence Index 运行结果。</p>
-<h2>Muse Spark Open 在标准基准上的表现</h2>
-<p>在标准的公开基准上，Muse Spark Open 同样站得住脚：</p>
-<ul><li>•幻觉更少：在 <a href="https://artificialanalysis.ai/models/muse-spark-1-2?omniscience=omniscience-hallucination-rate">Artificial Analysis 的 AA-Omniscience</a> 上，它的幻觉率为 33%，低于 Claude Opus 5.5（59%）和 GPT-6 Astra（51%），因为它在没把握时会拒绝作答而不是硬猜。</li><li>•Agentic coding：在 Meta 的评测中，它在 Terminal-Bench 2.1 上得分 82.9%，领先 GPT-5.6 Terra 和 Grok 4.5（图 2）。</li></ul>
-<blockquote>Muse Spark Open 是西方开源模型的一次阶跃式变化，在我们的早期评测里，它的指令遵循尤其出色。我们很兴奋能在这一基础上，通过 post-training 来强化 Decagon 支撑的那些复杂工作流 —— Decagon Labs</blockquote>
-<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fproduction%2F77aea4b2b37018ba33250d208a2467820898c209-1920x1080.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="Muse Spark Open 与闭源前沿模型的对比"></p>
-<p>图 2：Meta 报告的 agentic coding 基准。每个模型都在各自的 agent harness 中评测。</p>
-<p>在开放 endpoint 之前，我们在生产服务栈上用上线校验套件跑了最终的开放权重。Muse Spark Open 在 AIME26 上得分 91.1%，在 GPQA Diamond 上 89.7%，在 SWE-bench Verified 上 84.3%，并在 OCRBench 和 MMMU Pro 上把图像理解保持在 80% 以上（图 3）。作为交叉校验，我们还在 SGLang（一款被广泛使用的开源推理引擎）上跑了同一份权重，分数对得上。你在 Fireworks 上调用的这个模型，表现就是 Meta 当初造出来的样子。</p>
-<blockquote>Filevine 创立于美国西部。我们相信前沿就应该开放。与 Fireworks 和 Meta 合作，意味着 Filevine 能为法律行业开辟新的可能，而不必拿质量去换成本。 —— Ryan Anderson，Filevine 的联合创始人兼 CEO</blockquote>
-<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fproduction%2F0faf334c7fba05eccdc574ae9f05d6c3cf4eae0a-1920x1080.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="Fireworks 上的 Muse Spark Open"></p>
-<p>图 3：Fireworks 上的 Muse Spark Open。agentic 结果依赖 harness，不能与 Meta 报告的数据直接比较。</p>
-<h2>你今天就可以这样开始构建：</h2>
-<p>Muse Spark Open 今天已在我们的 serverless API 上可用，跑在仅限美国的算力上，不收美国溢价。当前定价见 <a href="https://fireworks.ai/models/fireworks/muse-spark-open">Muse Spark Open 模型页</a>。</p>
-<ul><li>Serverless：直接在 Fireworks serverless 上<a href="https://app.fireworks.ai/models/fireworks/muse-spark-open">开始使用</a> Muse Spark Open，或为生产工作负载切换到 reserved throughput。</li><li>想把 Muse Spark Open 打磨到你自己的用例上？试试我们的 Serverless Training API，或<a href="https://fireworks.ai/contact-training">联系 Fireworks Lab</a> 获取帮助。</li></ul>]]></content:encoded>
-    </item>
     <item>
       <title>免费训练 Muse Glimmer：我们如何押赢 Jev</title>
       <link>https://fireworks.ai/blog/train-muse-glimmer-for-free</link>
@@ -75,138 +43,6 @@
 <p>这张图显示的是评测数据上准确率减去置信度。越接近零越好；负值表示过度自信，正值表示信心不足。</p>
 <p>tuned Glimmer 的信心不是虚张声势。当它给某个答案 <strong>至少 80% 的概率</strong>时，无论是在完整测试集上还是未见主题子集里，它都有 <strong>86.8% 的时间</strong>是对的。</p>
 <p>它同时也很挑剔：<strong>完整测试集里有 14.4% 的问题、未见主题子集里有 6.1%</strong> 迈过了那个门槛。按信心过滤让我们拿到更少的预测，但命中率强了太多。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>强化学习：为什么数值与 MoE 路由的对齐如此重要</title>
-      <link>https://fireworks.ai/blog/reinforcement-learning-why-alignment-of-numerics-and-MoE-routing-matter</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/reinforcement-learning-why-alignment-of-numerics-and-MoE-routing-matter</guid>
-      <description>原文标题：Reinforcement learning: Why alignment of numerics and MoE routing matter</description>
-      <content:encoded><![CDATA[<h2><strong>TL;DR</strong></h2>
-<ul><li>•数值不一致能让训练脱轨：在 Fireworks 的 GLM 5.2 实验中，同一算法与数据在未对齐时奖励崩塌，在对齐后 25 步内保持稳定。</li><li>•训练 MoE 模型给对齐增添了复杂性：我们的 Qwen3.5-MoE 调查发现，专家输出组合方式的差异会导致分歧——即便其中一个实现用了更高的精度。</li><li>•这些分歧会扭曲训练更新，看上去却像数据、奖励或学习率的问题，把团队引入一轮轮昂贵的实验，而根因始终未解。</li><li>•前沿训练需要训练与推理协同优化：Fireworks 把训练器与 rollout 引擎放在一起开发和验证，让团队能在数值、kernel 与 MoE 全对齐的前提下扩展强化学习。</li></ul>
-<h2><strong>规模化 RL 是一个系统问题</strong></h2>
-<p>rollout 生成可以占据强化学习（RL）大部分时间。ML 团队常用一个独立的推理引擎来高效生成 rollout。但那个引擎使用的 kernel、精度、批处理和并行方式可能与训练器不同。于是策略就有了两个实现：一个负责生成 token，一个负责计算梯度。即便权重完全相同，它们也可能给同一个 token 赋予不同的概率。</p>
-<p>如果训练算法不考虑这种不一致，就可能扭曲更新、 destabilize 学习。在混合专家（MoE）模型中，这种不一致还可能翻转路由决定。当路由器分数几乎打平时，一个舍入差异就能改变哪些专家被激活。同一个 token 于是走了模型内不同的计算路径。</p>
-<p>我们的实验展示了数值差异在哪里产生、为什么仅有 router replay 不够，以及弥合差距需要什么。</p>
-<h2><strong>我们的实验揭示了什么</strong></h2>
-<h3><strong>数值不一致能让学习脱轨</strong></h3>
-<p>在 <a href="https://fireworks.ai/blog/frontier-lab-training-infrastructure-as-a-service">Fireworks 的一项实验</a>中，我们在 GLM 5.2 上把同一个 RL 任务跑了两遍：一个 countdown 推理题，同一算法、同一训练数据。唯一的变量是训练器与 rollout 引擎计算 token 概率的方式是否一致。</p>
-<p>当两者不一致时，运行分崩离析。两套系统的分歧达到约 0.013 的 KL，而标准保护机制为了维持训练稳定，几乎要丢弃每个 batch 的 45%。即便如此还不够。奖励爬到约 0.9，随后在第 20 步左右崩到 0.2 以下——模型在追逐一个与它自己生成内容已不再匹配的目标。数值对齐后，KL 为零，什么都没丢，奖励在整个运行中保持稳定。</p>
-<blockquote>Fireworks GLM 5.2 countdown 实验：无数值对齐时奖励崩塌，对齐后在 25 个训练步中保持稳定。KL 为零的结论适用于所测的 LoRA 配置。</blockquote>
-<p>数值实现改变了结果，而算法和数据都没动。这让「训练器与 rollout 引擎的一致性」成为在修改训练配方并投入更多运行之前一项要紧的检查。</p>
-<h3><strong>混合专家模型更难对齐</strong></h3>
-<p>有了路由专家，很多「数学上等价」的优化会产生数值上不同的结果。<a href="https://fireworks.ai/blog/when-faster-not-identical-moe-numerics">Fireworks 一个针对 Qwen3.5-MoE 的训练实验</a>把一个重大数值分歧追到了专家输出的组合方式上。</p>
-<p>在图像 token 上，训练路径与 Hugging Face 参考实现的偏差达到 k3 为 0.296——约为我们用来的判定两条路径等价的 0.001 阈值的 300 倍。在这个量级上，模型的两份副本之间的分歧，差不多相当于两个不同模型之间的分歧。</p>
-<p>团队通过只把 MoE 块换成 Hugging Face 的参考模块、其余技术栈原封不动，把差距定位到 MoE 聚合。文本与图像 token 的 k3 值都降到了零。进一步调查确定了加权与求和专家输出所用精度上的差异。</p>
-<p>这一发现说明为什么只匹配专家选择并不够：组合其输出所用的数值精度与执行顺序也必须对齐。</p>
-<blockquote>Fireworks 的 Qwen3.5-MoE 实验，比较三条专家输出聚合路径及每一步所用的精度。</blockquote>
-<p>GLM 实验展示了数值不一致对学习意味着什么：一次烧着算力、奖励却在崩塌的运行。Qwen 调查展示了这种不一致多么容易躲过逐层检查。对研究者来说，其症状酷似数据、奖励或学习率的问题，于是引出更多修改配方却不触及根因的运行。</p>
-<h2><strong>数值差异如何扰乱学习</strong></h2>
-<h3><strong>概率不匹配会扭曲更新</strong></h3>
-<p>训练与推理软件常用不同的数值精度层级，或以不同的顺序执行操作。由于中间结果会被舍入，<code>(a + b) + c</code> 可能与 <code>a + (b + c)</code> 不同。跨模型的整个计算，这些差异会改变赋予同一 token 的概率。浮点加法不满足结合律，而 RL 是发现这一点最昂贵的方式。</p>
-<p>许多 RL 算法用概率比来引导更新。rollout 引擎与训练器之间未被计入的差异，能在任何学习发生之前就改变这些比率。这可能改变 token 对更新的影响强度，或因执行差异触发截断（clipping）。<a href="https://verl.readthedocs.io/en/latest/algo/rollout_corr.html">verl rollout 校正文档</a>解释了校正如何处理这一缺口。</p>
-<p>即便训练器对其 token 赋予不同概率，rollout 看上去仍可以像模像样。只检查生成的文本不会暴露这种分歧。在相同权重下比较概率能暴露它；训练-推理 KL 度量的正是这种分歧。</p>
-<h3><strong>MoE 路由会放大不一致</strong></h3>
-<p>在混合专家模型里，一个小的数值差异还能改变哪些专家处理某个 token。当路由分数几乎打平时，舍入就能把选择推向另一个专家。token 于是经过不同的权重，并可能在后续层中把分歧进一步放大。</p>
-<p><a href="https://arxiv.org/abs/2510.11370">R3 的研究者</a>证明了一致的路由对 RL 稳定性的影响。他们的 router replay 方法在 rollout 生成期间记录路由决定，并在训练期间复用。这在他们测试的设定中稳定了训练。</p>
-<p>Router replay 让专家选择保持一致，但其输出如何计算与组合上的差异仍可能存在。让 rollout 与训练器的概率对齐，需要横跨两个实现（包括 kernel、精度与执行顺序）的工程。这项工作正是可靠运行一套训练配方所需基础设施的一部分。</p>
-<h2><strong>Fireworks 让训练循环保持一致</strong></h2>
-<p>Fireworks 将训练器与 rollout 引擎一并开发，承担让快速 rollout 生成与训练保持一致所需的复杂工程。这降低了昂贵的运行因实现差异而报废的风险，把更多训练预算留给有前景配方的测试与扩展。</p>
-<p>我们的方法包含三个关键要素：</p>
-<p><strong>数值对齐：让计算一致。</strong>对齐覆盖模型在两套系统中的执行方式，包括注意力、专家计算、聚合，以及跨 GPU 的操作。</p>
-<p><strong>Router replay：用同样的专家。</strong><a href="https://docs.fireworks.ai/guides/rollout-inference#moe-router-replay">Router replay 支持</a>为使用自有训练器的团队提供 rollout 生成期间记录的专家选择。把这些记录集成进训练，训练器就能复用同样的选择。</p>
-<p><strong>验证：在全模型范围内度量一致性。</strong>在相同权重下比较 token 概率，能暴露单个操作检查会漏掉的分歧。持续验证使用训练-推理 KL，在 Fireworks Training 上线的模型上、不同 batch 条件下度量一致性。上文的 GLM 对比就是一个公开案例。</p>
-<p>前沿训练需要前沿推理。<a href="https://docs.fireworks.ai/fine-tuning/training-api/introduction">用 Fireworks Training API 运行你的 RL 训练循环</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>深入 Fireworks 多区域部署：一个部署，全球规模</title>
-      <link>https://fireworks.ai/blog/multi-region-deployment</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/multi-region-deployment</guid>
-      <description>原文标题：Inside Fireworks Multi-region Deployments: One Deployment, Global Scale</description>
-      <content:encoded><![CDATA[<p><strong>TLDR；</strong> 了解何时应利用 <code>GLOBAL</code> 选项，以及我们如何架构多区域路由，把全球工作负载放置移出推理热路径，优化低延迟、韧性与运维简易性。</p>
-<p>没有任何单一区域是取之不尽的 GPU 池。</p>
-<p>Fireworks 拥有完整谱系的服务选项，并在 30 多个区域、跨数十家云厂商上全球运营，构成业内最大的独立 GPU 集群之一。然而，庞大的全球足迹只有在调度器真正被授权动用它时才能保护你的可用性。把工作负载钉死在单一区域，等于施加一个人造的容量天花板。当区域资源紧张时，下一块可用的兼容 GPU 可能坐在大洋彼岸——美国、欧洲、加拿大或 APAC 的另一个数据中心。</p>
-<p>传统做法是，团队被迫手动配置冗余的多区域端点、拼凑自定义区域路由器、无休止地腾挪 failover 逻辑。Fireworks 现已支持 <code>GLOBAL</code> 选项，让你跨地域运行工作负载。这让你的架构统一在一个部署身份、一个端点之下，卸下管理一张全球地图的运维负担。</p>
-<h2>不交延迟税的智能路由</h2>
-<p>Fireworks 对多区域放置与路由做了工程设计，让全球调度永远不会成为你实时推理流水线的瓶颈。</p>
-<p>当你的工作负载被标记为 <strong>GLOBAL</strong>，调度器会在最广的合格容量池上动态映射请求，同时严格尊重你的独特参数：</p>
-<ul><li>•加速卡类型与硬件要求</li><li>•配额与成本护栏</li><li>•可靠性等级与合规边界</li><li>•数据驻留与放置约束</li></ul>
-<p>你保有完全的治理权与单端点的简洁，而 Fireworks 吸收驾驭全球基础设施的复杂性。</p>
-<blockquote>“有了 Fireworks，我们不必用延迟换可靠性。跨多个集群运行让我们能通过自动伸缩适应区域波动，确保持续顺滑的体验。即便扩展到多区域之后，我们的响应时间仍是行业领先水平。”</blockquote>
-<blockquote>— Ishan Gupta，Juicebox CEO</blockquote>
-<ul><li>•<strong>多区域能买到什么？</strong>更多兼容容量可以汇入同一个部署。当在线节点分散各处，某个分片故障时另一分片仍可用。放置可以改变，而不需要新的公开端点。</li><li>•<strong><code>GLOBAL</code> 会让每个请求变慢吗？</strong>它不会增加一次全局调度器往返或一次全区域探测。在正常的公开 API 网关路径上，DNS 按就近原则在健康网关池之间引导，网关把首次尝试发给按控制面发布的 router record 构建的顺序中的第一个候选。到所选算力的网络距离依然要紧；这个设计消除的是每请求一次的全局路由步骤，而不是宣称物理距离消失了。</li><li>•<strong>部署能跑在哪？</strong>Fireworks 支持 <code>GLOBAL</code>、<code>US</code>、<code>EUROPE</code>、<code>APAC</code>、<code>CANADA</code> 多区域范围。实时位置与硬件列表见<a href="https://docs.fireworks.ai/deployments/regions">当前区域目录</a>。在你的本地性与数据驻留要求允许的范围内，选择最宽的边界。</li></ul>
-<p>图 1：多区域边界</p>
-<h2>生产中 99.99% 的成功率</h2>
-<p>在为期七天的生产研究中，信号指向了架构设计的初衷：可全球放置的部署组与更高的就绪节点满足率相关联，而实际形成的多集群足迹与更低的每请求响应数相关联。</p>
-<p>在带外部客户标签、可全球放置的组中，那些观测到有 2 个及以上服务集群的部署日里，请求成功率从单区域部署的 99.269% 提升到多区域部署的 99.992%。这帮助我们为可全球放置的客户部署达成 99.99% 的可靠性目标。</p>
-<p>这些是观察性信号，不是 A/B 测试，也不是普适的正常运行时间承诺。服务集群标签指基础设施集群，并非归一化后的区域；流量集中在少数账户上，且配对账户的结果互有胜负。敏感性检查保持了总体方向，但没有使其成为因果。</p>
-<p>这些数字说明了项目为何重要。而实现的故事，始于一个我们的架构解不出的等式。</p>
-<h2>为什么我们必须重写部署看待基础设施的方式</h2>
-<p>一次推理部署要 8 个节点。Virginia 有 4 个合格节点位。Iowa 还有 4 个。</p>
-<p>整个集群有 8 个。我们的旧调度器仍然拒绝这个部署。</p>
-<p>它的行为是正确的。问题就在这里。</p>
-<p>调度器问的不是“集群里有 8 个合格节点吗？”而是“有某个区域一次拿得出全部 8 个吗？”两个区域都拿不出，于是部署以 <code>RESOURCE_EXHAUSTED</code> 收场。</p>
-<p>Copy</p>
-<pre><code>12legacy:  max(4, 4) &lt; 8  → rejectglobal:      4 + 4 = 8  → place</code></pre>
-<p>四加四等于零。</p>
-<p>图 2：四加四示意图</p>
-<p>这个约束嵌在架构里：每个部署只属于单一区域。</p>
-<p>在新架构下，一个部署可以通过单一端点从多个区域汲取兼容容量。调度器尊重硬件要求、区域限制、可靠性策略与地理边界。</p>
-<h2>把全球调度移出请求路径</h2>
-<p>Fireworks 在流量到来之前就规划好放置，因此请求无需咨询调度器或探测每个区域。</p>
-<ul><li>•从就近的健康网关开始。DNS 按就近原则把请求导向健康的网关。</li><li>•路由到可用算力。网关使用提前准备好的路由信息来决定把每个请求发去哪里。</li><li>•合格就重试。出现符合条件的失败时，若路由策略允许且请求可重试，网关可以尝试另一个目标。</li></ul>
-<p>网络距离依然要紧：就近的网关也可能把请求路由到更远的算力。这个设计避开了每请求一次的全局路由步骤；它并不能消除地理延迟。</p>
-<h2>选择你的工作负载允许的最宽边界</h2>
-<p>本地性与数据驻留要求可能需要 US、EUROPE 或 APAC。对于没有这类要求的工作负载，GLOBAL 给调度器最大的空间去寻找兼容容量，或在范围内别处存在兼容供给时重新安置一个卡住的节点。</p>
-<p>图 3：选择你需要的边界</p>
-<p>你来选边界。调度器找到可行方案。网关把唯一一个端点保持挂在其上。</p>
-<p>四加四，重新等于八。</p>
-<h2>接下来</h2>
-<ul><li>•在 <a href="https://docs.fireworks.ai/deployments/regions">Fireworks 区域目录</a>中探索可用区域与硬件。</li><li>•了解更多多区域部署信息。<a href="https://fireworks.ai/contact">联系我们的销售团队</a>，或联系你的 Fireworks 支持代表，讨论适合你工作负载的正确配置。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>每个字节都算数：ARCv3 与跨区域 RL 的必要性</title>
-      <link>https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl</guid>
-      <description>原文标题：Every byte counts: ARCv3 and the case for cross-region RL</description>
-      <content:encoded><![CDATA[<h2>TL;DR</h2>
-<ul><li>•Fireworks 全新的 ARCv3 压缩器缩小了从训练器发往强化学习（RL）rollout 生成机器的 BF16 权重更新的体积。</li><li>•在 1,000 个生产环境 RL 权重更新增量（delta）上，ARCv3 生成的负载比 ARCv2 小近 50%，且能无损还原训练器精确的 BF16 权重。</li><li>•更小的传输帮助 rollout 集群更紧地贴住当前策略（policy），让跨地域使用算力变得更可行，而不必依赖一个巨大的同址集群。</li><li>•ARCv3 已随 <a href="https://docs.fireworks.ai/fine-tuning/training-api/introduction">Fireworks Training API</a> 提供，以 <code>fireworks-delta-compression</code> 包的形式服务于「自带训练器 + Fireworks rollout」的团队。</li></ul>
-<p>随着越来越多团队推进强化学习、训练自己前沿规模的模型，两件事变得空前重要：获得训练算力的途径，以及优化在训练机器之间搬运数据的管道。RL 对这些管道的要求格外苛刻。一个前沿模型可能有数万亿参数，而训练器需要在训练推进过程中，持续不断地把它的更新版本推送给生成 rollout 的机器集群。</p>
-<p>当管道跟不上时，团队就被逼向唯一的选择：一个把所有东西布在同一物理机房里、全互联的巨型集群。那很贵、很难拿到，并把小玩家挡在门外。在 Fireworks，我们穷尽一切可行路径，不让它成为唯一选项。否则，我们最终会面对一个只有少数几家公司进得了的训练市场。</p>
-<p>在此前的文章<a href="https://fireworks.ai/blog/frontier-rl-is-cheaper-than-you-think">《前沿 RL 比你想象的便宜》</a>中，我们讲过如何让跨区域 RL 真正落地。核心观察是：在我们考察的 RL 工作负载中，相邻 checkpoint 之间只有约 2% 的 BF16 权重发生变化。因此，我们不必在训练器每走一步时就把完整的 1 TB checkpoint 发往每台 rollout 机器，而是发送一个紧凑的 delta——一份「变了什么」的压缩描述——并在另一端重建更新后的模型。正是这一点让一次训练运行在三个或四个区域之间保持同步，而不需要集群之间的专用高带宽网络。</p>
-<p>这个 delta 的大小决定了该方案在实践中效果如何。更小的 delta 让 rollout 集群更新更快、更贴近当前策略，并能拉取跨地域的可用算力。更大的 delta 则意味着训练器开始跑赢 rollout、集群数据过时，多区域架构相对单一巨型集群的优势也开始瓦解。</p>
-<blockquote>ARCv3 delta 如何从训练器到达 rollout：每个训练器分片（shard）并行地把压缩后权重增量的自己那一份上传到共享对象存储（S3）。随后 Fireworks API 通知每个区域有新更新可用，各 rollout 区域拉取自己需要的部分并在本地重建更新后的模型。训练器从不直接与 rollout 集群通信——这正是全球分布式推理集群能靠普通网络链路保持同步的原因。</blockquote>
-<p>我们发布 ARCv3，即我们用于构建这些 delta 的压缩器的最新版本。这些改进适用于 BF16 权重：ARCv3 生成的负载约为上一版本的一半，平均 delta 负载约为原始 BF16 权重大小的 0.19%，低于此前的 0.36%（越低越好）。压缩是无损的：rollout 端重建出的模型与训练器产出的逐比特一致。ARCv3 已随 Fireworks Training API 提供，以 <code>fireworks-delta-compression</code> 包的形式服务于「自带训练器 + Fireworks rollout」的团队。</p>
-<h2>ARCv3 内部机制：更新与更新并不平等</h2>
-<p>改进源自 BF16 权重在训练步之间变化方式的一个特定属性。</p>
-<p>我们运行生产 RL 训练会话并观察 checkpoint 之间实际发生的事情，发现了一种强烈的不对称。在给定步上发生变化的大约 2% 的 BF16 权重中，绝大多数只是尾数（mantissa）移位，而指数（exponent）和符号（sign）保持不动。触及指数的更新很少见，翻转符号的更新更罕见。换句话说，大多数权重更新是轻推，不是跳跃。</p>
-<p>ARCv3 把这种不对称直接编码进去。未变化的权重值从负载中省略；仅尾数变化的贡献只有它的尾数位；较罕见的更新（指数移位或符号翻转）被单独打包，每个更新的变更字段作为一个整体块一起编码。在 rollout 端，两个流都应用到上一个 checkpoint 上，并把结果与训练器的原始值做校验和（checksum）比对，以验证重建一致。</p>
-<blockquote>ARCv3 如何编码一个权重块。每对 prev/next 做 XOR，并按哪些字段真正变了来分类。未变化的权重值（XOR 为零）从输出中省略。仅尾数变化（常见情形）只贡献其尾数位（图中高亮）。较罕见的更新——指数移位或符号翻转——连同变更字段作为一个块打包。输出流的形状由「变了什么」决定，而不是由输入格式的固定宽度决定。</blockquote>
-<p>对模型中的每个张量（tensor），ARCv3 还并行运行多种通用压缩算法，保留输出最小的那一个。这比预先选定单一算法更耗 CPU，但训练器机器上 GPU 在做实际训练时通常有闲置的 CPU 周期，所以花掉它们是划算的。</p>
-<h2>ARCv3 与业界方案对比</h2>
-<p>我们在来自生产 RL 工作负载的 1,000 个真实权重更新 delta 上，把 ARCv3 与三种替代方案做了基准对比。所有更新都是 BF16，四个压缩器都无损运行，因此我们比较的是纯负载大小：描述同一个权重更新，每个压缩器需要多少字节。</p>
-<p>ARCv3 的对照方案是：</p>
-<ul><li>•<strong>ARCv2</strong>，我们自己压缩器的上一版本。</li><li>•<strong>PULSESync</strong>，来自论文 <a href="https://arxiv.org/abs/2602.03839">Understanding and Exploiting Weight Update Sparsity for Communication-Efficient Distributed RL</a>（Miahi &amp; Belilovsky, 2026）的权重同步算法。PULSESync 同样利用 BF16 权重更新的稀疏性，采用稀疏补丁（sparse-patch）设计。</li><li><a href="https://huggingface.co/blog/delta-weight-sync?utm_source=chatgpt.com"><strong>Hugging Face TRL 中的 delta 压缩实现</strong></a>。</li></ul>
-<table><thead><tr><th>压缩器</th><th>压缩后 / 原始 BF16 权重比</th></tr></thead><tbody><tr><td>压缩器</td><td>压缩后 / 原始 BF16 权重比</td></tr><tr><td>ARCv3</td><td>0.19%</td></tr><tr><td>PULSESync</td><td>0.35%</td></tr><tr><td>ARCv2</td><td>0.36%</td></tr><tr><td>HF TRL（草案）</td><td>0.67%</td></tr></tbody></table>
-<p>这里越低越好，ARCv3 在本次基准中产生最小负载。在被测的 BF16 权重张量上，ARCv3 把压缩后的 delta 缩到次优方案的大约一半。每个 rollout 区域拉取自己需要的 delta 分片，重建出与训练器逐比特一致的 BF16 权重。这帮助全球分布的 rollout 集群更贴近当前策略——这正是跨区域 RL 能规模化的原因。</p>
-<h2>使用 ARCv3</h2>
-<p>如果你为了 rollout 使用 Fireworks Trainer SDK，什么都不用做，因为 ARCv3 已经是默认选项。你的 rollout 集群会自动获得更小的传输，无需改动任何代码。</p>
-<p>如果你自带训练器并使用 Fireworks 做 rollout，可以通过 <code>fireworks-delta-compression</code> 包直接集成 ARCv3。完整集成流程见 <a href="https://docs.fireworks.ai/fine-tuning/rl-rollout-integration">Fireworks rollout 文档</a>。</p>
-<p>bash</p>
-<p>Copy</p>
-<pre><code>1pip install fireworks-delta-compression</code></pre>
-<p>python</p>
-<p>Copy</p>
-<pre><code>123456789101112131415161718192021import torchfrom fireworks_delta_compression import delta_compress, delta_decompress
-src = torch.randn(1024, 1024, dtype=torch.bfloat16)dst = src + 1e-3 * torch.randn_like(src)
-compressed_diff, checksum = delta_compress(    src=src,    dst=dst,    compression_format=&quot;arc_v3&quot;,)
-restored = delta_decompress(    src=src,    compressed_diff=compressed_diff,    checksum=checksum,    compression_format=&quot;arc_v3&quot;,)
-# bit-for-bit identical to the originalassert torch.equal(restored.view(torch.uint8), dst.view(torch.uint8))</code></pre>
-<h2>让分布式算力为 RL 服务</h2>
-<p>RL 的权重更新是有结构的，而压缩器可以利用这种结构。把罕见的指数变化与常见的尾数更新分开处理，再在其上让几种通用编解码器同场竞技——这让我们以相对较低的额外 CPU 成本，获得了较我们自己上一版本近乎翻倍的压缩率。</p>
-<p>我们在这条路上持续用力，是因为从 delta 上省下的每一个字节，都是在训练步中不必跨越大洲搬运的一个字节。这让我们更接近于让「跨三个四个区域集群训练」感觉像在同一栋楼里训练。它帮助更多团队在想法上竞争，而不是在能买到多少同址算力上竞争。</p>
-<p>对于构建专用模型的团队，回报是扩展 RL 时更灵活的方式。Fireworks 负责跨 rollout 区域的权重分发与同步。</p>
-<p>ARCv3 是我们目前到达的位置。我们会继续推进。</p>
-<p><a href="https://docs.fireworks.ai/fine-tuning/rl-rollout-integration"><strong>把你的训练器带到 Fireworks。</strong></a></p>]]></content:encoded>
     </item>
     <item>
       <title>Ember-1 发布</title>
@@ -253,156 +89,923 @@ restored = delta_decompress(    src=src,    compressed_diff=compressed_diff,    
 <p>要在你的工作负载上试用 <a href="https://fireworks.ai/models/fireworks/ember-1">Ember-1</a>？我们很想听听你的体验，请在 X 上 @ 我们（<a href="https://x.com/FireworksAI_HQ">@FireworksAI_HQ</a>），告诉我们你在构建什么！</p>]]></content:encoded>
     </item>
     <item>
-      <title>Specialized Intelligence Index 正式发布</title>
-      <link>https://fireworks.ai/blog/introducing-the-specialized-intelligence-index</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/introducing-the-specialized-intelligence-index</guid>
-      <description>原文标题：Introducing The Specialized Intelligence Index</description>
-      <content:encoded><![CDATA[<p><a href="https://fireworks.ai/specialized-intelligence-index/"><strong>Specialized Intelligence Index（SII）</strong></a>是你一站式探索开源、闭源与专用模型在领域特定基准上表现的地方。每个基准都反映由从业者设计的真实世界任务。今天，我们在七个首批领域发布基准：医疗、法律、网络安全、金融、客户支持、生产力和软件工程。更多领域即将加入。</p>
-<h2>衡量真实工作的尺度</h2>
-<p>公开基准为追踪进展和比较模型提供了共同的参照点，但它们不是真实工作的良好度量。这些评测使用有界任务、固定数据集和标准化评分。真实工作更混乱：涉及不完整的信息、变化的范围、业务约束、复杂的判断、多步工作流与协作。</p>
-<p>这一区别对于想判断模型是否好到足以自动化人类任务的组织至关重要。一个可接受的结果必须满足对真实结果负责的真人标准。今年早些时候，<a href="https://metr.org/notes/2026-03-10-many-swe-bench-passing-prs-would-not-be-merged-into-main/">METR</a> 量化了这一差异。在他们的研究中，4 位维护者审查了来自 3 个 SWE-bench Verified 仓库的 296 个 AI 生成的 pull request（PR）。维护者接受率平均比自动化基准分数低 24.2 个百分点。用他们自己的话说：“许多通过 SWE-bench 的 PR 根本不会被合入 main。”</p>
-<p>要把基准应用于真实工作，我们需要确立一个分数度量的是什么、评测在多大程度上反映目标工作，以及更好的性能是否产生有用的运营结果。</p>
-<p><strong>测试是否度量了它声称度量的能力？</strong></p>
-<p>这是构念效度（construct validity）问题：评测是否支持附加在其分数上的解释。<a href="https://arxiv.org/abs/2511.04703">Bean 等人</a>考察了 445 个 LLM 基准，发现研究者 intended 度量的现象、他们的任务和评分方法之间存在反复出现的缺口。例如，一个旨在度量推理的任务可能同样依赖记忆的知识。这就难以判断高分反映的是推理、回忆，还是两者兼有。</p>
-<p><strong>测试是否代表我们在乎的工作？</strong></p>
-<p>代表性关注任务集的覆盖与构成。<a href="https://arxiv.org/abs/2603.01203">Wang 等人</a>研究了 43 个智能体基准，发现任务集中在计算机与数学类工作——按他们的分析这只占美国就业的 7.6%。管理类与法律类工作代表性不足，各职业共通的人际技能也一样。真实工作基准必须代表其目标领域。</p>
-<p>在真实工作上评估模型遵循一个逻辑递进，每一步都需要更多证据：</p>
-<p><strong>基准分数 → 能力论断 → 业务结果</strong></p>
-<p>分数记录的是在指定规程下、对已定义任务集的表现。能力论断需要证据证明系统能可靠完成相关工作类别，包括不熟悉的案例。业务结果需要证据证明这种表现能以可接受的质量和成本交付期望的结果。</p>
-<blockquote>depthfirst 的 dfbench 评估开放式防御安全工作。访问 SII 探索各行各业的基准。</blockquote>
-<h3>由 practitioners 打造，为 practitioners 服务</h3>
-<p>真实工作评测由从业者定义——他们帮助勾勒工作内容、约束条件与验收标准。设计真实工作评测一般包括以下步骤：</p>
-<p><strong>1. 定义工作及其价值。</strong>明确任务、目标用户和人工监督的程度。设定质量阈值以及时间与成本限制。为当前工作流建立基线，然后检验分数提升能否在试点或受控部署中预测更好的结果。</p>
-<p><strong>2. 反映真实工作。</strong>从目标场景中采样常规任务与困难案例。纳入真实的信息、工具、权限与政策约束。为后果严重的失败添加压力测试，但当其频率与正常使用情况不同时，要单独报告。刻意高难度的测试集不应被当作日常表现的估计来呈现。</p>
-<p><strong>3. 与从业者共同设定验收标准。</strong>把职业标准翻译为可观察的结果和明确的评分细则（rubric）。区分小缺陷与使输出不可接受的失败。既评估最终结果，也评估任何重要的行为，例如在修改受保护资源前征求批准。</p>
-<p><strong>4. 验证评审器。</strong>把自动化判断与专家评审做对比。检查假接受、假拒绝以及评审者之间的分歧。在这些差异暴露歧义之处改进细则或评分方法。随着系统演进，持续抽样输出供专家评审。</p>
-<p><strong>5. 测试泛化与可靠性。</strong>让开发用例与保留用例保持分离，检查数据污染，并随工作变化更新评测。重复运行并报告不确定性、按任务类别的表现和关键失败率。记录模型、提示词、智能体 harness、工具、资源限制与评审器版本，让对比始终可解释。</p>
-<h2>SII 亮点速览</h2>
-<h3>医疗</h3>
-<p><strong>Doximity 的 BedsideBench v0.2.0</strong> 在 500 个经医师验证的临床病例上评估前沿 AI 模型，覆盖医学推理、计算、用药安全、指南依从、幻觉、诊断安全与治疗方案。</p>
-<p><strong>Mercor 的 APEX-1: General Practitioner (MD) Benchmark</strong> 度量前沿 AI 模型在真实全科医生任务（诊断、检查与稳妥转诊）上的表现。</p>
-<p><strong>HealthBench Professional</strong> 评估前沿 AI 模型能否对由临床医生撰写的棘手任务给出准确、有用且安全的回答。</p>
+      <title>专业智力指数简介</title>
+      <link>https://fireworks.ai/blog/specialized-intelligence-index-ai-benchmarks</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/specialized-intelligence-index-ai-benchmarks</guid>
+      <description>原文标题：Introducing the Specialized Intelligence Index</description>
+      <content:encoded><![CDATA[<p><a href="https://fireworks.ai/specialized-intelligence-index/"><strong>专业智能指数 (SII)</strong></a> 是您探索开放、封闭和专业模型在特定领域基准测试上的性能的一站式目的地。每个基准都反映了从业者设计的现实世界任务。今天，我们在七个初始领域推出基准：医疗保健、法律、网络安全、金融、客户支持、生产力和软件。更多即将推出。</p>
+<h2>实际工作的衡量标准</h2>
+<p>公共基准为跟踪进度和比较模型提供了通用参考点，但它们并不能很好地衡量实际工作。这些评估使用有界任务、固定数据集和标准化评分。真正的工作更加混乱。它涉及不完整的信息、不断变化的范围、业务限制、复杂的判断调用、多步骤工作流程和协作。</p>
+<p>对于寻求确定模型是否足以自动执行人工任务的组织来说，这种区别很重要。可接受的结果必须满足对实际结果负责的真实人员的标准。今年早些时候，<a href="https://metr.org/notes/2026-03-10-many-swe-bench-passing-prs-would-not-be-merged-into-main/">METR</a> 量化了这种差异。在他们的工作中，4 名维护人员审查了来自 3 个 SWE-bench Verified 存储库的 296 个 AI 生成的拉取请求 (PR)。维护者接受度分数平均比自动基准分数低 24.2 个百分点。用他们自己的话说：“许多 SWE 板凳通过的 PR 不会被合并到 main 中。”</p>
+<p>为了将基准应用到实际工作中，我们需要确定分数衡量的内容、评估在多大程度上反映了预期的工作，以及更好的绩效是否会产生有用的运营结果。</p>
+<p><strong>该测试是否衡量其声称的能力？</strong></p>
+<p>这是一个结构效度的问题：评估是否支持其分数所附加的解释。 <a href="https://arxiv.org/abs/2511.04703">Bean 和同事</a> 检查了 445 个 LLM 基准，并确定了研究人员打算测量的现象、他们的任务和评分方法之间反复出现的差距。例如，旨在衡量推理的任务也可能依赖于记忆的知识。这使得很难确定高分是否反映了推理、回忆或两者兼而有之。</p>
+<p><strong>测试是否代表我们关心的工作？</strong></p>
+<p>代表性涉及任务集的覆盖范围和组成。 <a href="https://arxiv.org/abs/2603.01203">Wang 及其同事</a> 研究了 43 个代理基准，发现计算机和数学工作集中，在他们的分析中，这一类别占美国就业的 7.6%。管理和法律工作的代表性不足，各职业中常见的人际交往能力也是如此。实际工作基准必须代表其预期领域。</p>
+<p>然后在实际工作中评估模型遵循逻辑进展，每个步骤都需要更多证据：</p>
+<p><strong>基准分数 → 能力主张 → 业务成果</strong></p>
+<p>分数记录了在指定协议下定义的任务集的表现。能力声明需要证据证明系统能够可靠地执行相关类别的工作，包括在不熟悉的情况下。业务成果需要证据证明这种性能以可接受的质量和成本提供了所需的结果。</p>
+<p>deepfirst 的 dfbench 评估开放式防御安全工作。访问 SII，探索所有行业的基准。</p>
+<h3>由从业者开发，为从业者服务</h3>
+<p>实际工作评估是由从业者定义的，他们帮助概述工作、约束和接受条件。设计实际工作评估通常涉及以下步骤：</p>
+<p><strong>1.定义工作及其价值。</strong> 指定任务、目标用户和人工监督级别。设置质量阈值以及时间和成本限制。为当前工作流程建立基线，然后测试分数改进是否可以预测试点或受控部署中的更好结果。</p>
+<p><strong>2.反映工作。</strong> 从预期环境中抽取例行任务和困难案例。包括现实信息、工具、权限和政策约束。添加针对间接故障的压力测试，但当其频率与正常使用不同时单独报告。故意设置困难的测试集不应作为日常表现的估计。</p>
+<p><strong>3.与从业者一起制定接受标准。</strong> 将专业标准转化为可观察的结果和明确的标准。区分小缺陷和导致输出不可接受的故障。评估最终结果和任何重要的操作，例如在更改受保护资源之前寻求批准。</p>
+<p><strong>4.验证分级机。</strong> 将自动判断与专家评审进行比较。检查审稿人之间的错误接受、错误拒绝和分歧。如果这些差异表现出模糊性，请完善评分标准或评分方法。随着系统的变化，继续对输出进行采样以供专家评审。</p>
+<p><strong>5.测试泛化性和可靠性。</strong> 将开发和保留的案例分开，检查污染，并随着工作的变化更新评估。重复运行并报告不确定性、按任务类别划分的绩效以及关键故障率。记录模型、提示、代理工具、工具、资源限制和分级器版本，以便比较保持可解释性。</p>
+<h2>SII 亮点一览</h2>
+<h3>医疗保健</h3>
+<p><strong>Doximity 的 BedsideBench v0.2.0</strong> 评估了 500 个经过医生验证的临床案例的前沿人工智能模型，涵盖医学推理、计算、药物安全、指南遵守、幻觉、诊断安全和治疗计划。</p>
+<p><strong>Mercor 的 APEX-1：全科医生 (MD) 基准</strong>衡量前沿 AI 模型在诊断、检查和安全升级等实际初级保健医生任务中的表现。</p>
+<p><strong>HealthBench Professional </strong>评估前沿人工智能模型是否能够为具有挑战性的临床医生编写的任务提供准确、有用和安全的响应。</p>
 <h3>法律</h3>
-<p><strong>Harvey's Legal Agent Benchmark（LAB）</strong> 度量前沿 AI 模型在 24 个业务领域的真实法律工作上的表现，要求模型浏览文件并产出按专家细则评分的工作成果，评分维度包括事实准确性、法律分析与格式。</p>
-<p><strong>Harvey’s LAB Contracts</strong> 测试 AI 智能体能否在 500 个起草、审查与谈判任务中推进合同谈判。要成功完成每个任务，智能体必须处理所有变更与未决问题，在业务与交易约束内推进合同。</p>
-<p><strong>Mercor 的 APEX Agents: Corporate Law</strong> 评估涉及链式工具使用、检索与文件起草的多步公司法任务。执业公司法律师按律所可接受的工作成果为标准给输出打分。</p>
-<p><strong>RedlineBench</strong> 评估 AI 智能体扮演公司法务（in-house counsel）时贴近现实的多轮合同红线修订。</p>
+<p><strong>Harvey 的法律代理基准 (LAB)</strong> 衡量前沿 AI 模型在 24 个实践领域的实际法律工作中的表现，要求它们导航文件并生成根据专家标准评分的工作产品，以确保事实准确性、法律分析和格式。</p>
+<p><strong>Harvey’s LAB Contracts </strong>测试人工智能代理是否可以在 500 个起草、审查和谈判任务中推动合同谈判。为了成功完成每项任务，代理商必须解决所有变更和未解决的问题，以便在业务和交易的限制范围内推进合同。</p>
+<p><strong>Mercor 的 APEX 代理：公司法</strong> 评估多步骤的公司法任务，包括链工具使用、检索和文件起草。执业公司律师根据公司接受的工作产品对产出进行评分。</p>
+<p><strong>RedlineBench</strong> 由充当内部法律顾问的人工智能代理评估现实的、多轮合同修订。</p>
 <h3>金融</h3>
-<p><strong>Rogo 的 Big Finance Bench</strong> 在横跨估值模型、财报分析、预测及其他关键金融工作流的问题上评估 AI 智能体，由从业者撰写的细则为智能体如何查找信息、运用金融定义与引用、执行计算打分。</p>
+<p><strong>Rogo’s Big Finance Bench </strong>评估人工智能代理的问题涵盖估值模型、财务报表分析、预测和其他关键财务工作流程，并使用从业者编写的评分标准对代理如何查找信息、应用财务定义和引文以及执行计算进行评分。</p>
 <h3>网络安全</h3>
-<p><strong>depthfirst dfbench v1</strong> 聚焦防御性安全，覆盖漏洞检测、验证与差异分析。depthfirst 自家的 dfs-large1 模型基于 GLM 5.2，用 Fireworks 以 RL 后训练，在其评测中创下新的帕累托前沿。该模型的提升归功于带 effort 惩罚的 RL 奖励塑形、软性发现预算惩罚，以及漏洞检测与验证的联合训练。该结果由 <a href="https://depthfirst.com/research/dfbench">depthfirst</a> 发布。</p>
-<p><strong>Novee 的 PWNBench-v0.1</strong> 在真实 Web 应用的智能体灰盒渗透测试上评估前沿 AI 模型，覆盖完整的“发现—利用—报告”工作流。它在同一个轻量 harness 下度量召回率、精确率、F0.5 与 API 成本。</p>
+<p><strong>深度优先 dfbench v1</strong> 目标是跨漏洞检测、验证和差异分析的防御安全。 Deepfirst 自己的 dfs-large1 模型，使用 RL 在 GLM 5.2 基础上通过 Fireworks 进行后训练，在评估中达到了新的帕累托前沿。该模型的改进归功于强化学习奖励塑造、努力惩罚、软发现预算惩罚以及漏洞检测和验证的联合训练。该结果由<a href="https://深度第一.com/research/dfbench">深度第一</a>报告。</p>
+<p><strong>Novee 的 PWNBench-v0.1</strong> 在实时 Web 应用程序的代理灰盒渗透测试中评估前沿 AI 模型，涵盖完整的发现-利用-报告工作流程。它在共享的细线束下测量召回率、精确率、F0.5 和 API 成本。</p>
 <h3>客户支持</h3>
-<p><strong>Decagon 的 DuetBench-Diagnosis</strong> 重放真实的 Duet 客服调查案例，并在结果、调查、工具使用与沟通四个维度对模型回答做两两对比评分。</p>
-<p><strong>Sierra 的 τ-Banking</strong> 在银行任务上评估客服智能体：需要在 21 个产品类别、698 份文档的知识库中检索、应用政策、执行多步工具调用，同时管理进行中的客户会话。</p>
-<p><strong>Sierra 的 τ-Voice</strong> 评估语音智能体能否在零售、航空、电信领域完成客服任务，同时处理打断、背景噪音和多样的口音。</p>
+<p><strong>Decagon 的 DuetBench-Diagnosis</strong> 重播真实的 Duet 客户支持调查，并在结果、调查、工具使用和沟通方面对模型响应进行直接评级。</p>
+<p><strong>Sierra 的 τ-Banking</strong> 评估客户支持代理的银行任务，这些任务需要搜索跨 21 个产品类别的 698 个文档知识库、应用策略以及执行多步骤工具调用，同时管理正在进行的客户对话。</p>
+<p><strong>Sierra 的 τ-Voice</strong> 评估语音代理是否可以完成零售、航空公司和电信领域的客户服务任务，同时处理干扰、背景噪音和不同的口音。</p>
 <h3>生产力</h3>
-<p><strong>Genspark Slides Benchmark</strong> 在匿名化的真实用户任务上评估 AI 生成的演示文稿，按任务完成度、内容质量、视觉设计与过程质量给成品打分，并对布局缺陷、编造内容和被忽视的指令施加惩罚。</p>
-<h3>软件工程</h3>
-<p><strong>Traversal 的 ORCA-Bench</strong> 是一个站点可靠性工程（SRE）基准，评估从含糊报告、遥测数据和源代码中做生产级根因分析（RCA）的能力。Hard RCA 准确率是头条分数；Medium RCA 与事故幻觉仍为独立的原生指标。</p>
-<p><strong>Proximal 的 FrontierSWE V2</strong> 是一个代码生成基准，评估 34 个处在人类专家能力边缘的软件工程任务：用 OpenGL 写飞行模拟器渲染器、把 Git 移植到 Zig、仅凭视觉驱动赛车机器人。每个模型每任务有 5 次尝试、每次尝试至多 20 小时。每次尝试都能获得分级奖励而非简单通过/失败，因此走到中途的运行也计分。</p>
-<p><strong>Mercor 的 APEX-SWE</strong> 在 200 个软件工程任务上评估 AI 模型：这些任务要求集成云服务与业务应用，或使用日志、仪表盘和不完整上下文调试生产故障。</p>
-<p><strong>Datacurve 的 DeepSWE v1.1</strong> 在 91 个仓库、5 种语言的 113 个原创长周期工程任务上评估编码智能体，并在隔离环境中检验其提交代码的行为正确性。</p>
-<p><strong>Macroscope's MacroscopeBench</strong> 评估模型在代码评审上的表现，度量评审者发现真实已知缺陷的能力，同时考核其不乱发错误评论。它运行在开源仓库的 195 个 commit 上——其中 144 个引入了维护者后来不得不修的真实 bug，51 个为干净对照组。</p>
-<blockquote>训练开源模型能带来更好的结果——包括前沿级质量下更低的每任务成本。来自 Genspark 在其专用智能上的结果。</blockquote>
-<h2>方法论概览</h2>
-<p><strong>不做人为汇总。</strong> SII 不平均排名、不把质量与成本或时长加权折中、不产出跨领域综合分。结果保持在基准与领域层面，提供覆盖矩阵以及分数对成本、分数对时长视图，让用户应用自己的取舍。</p>
-<p><strong>来源。</strong> 基准结果可能由合作方、Fireworks 或双方共同跨模型报告；实现按相应方式定义或附链接。发布遵循基准所有者的政策：分数公开，而评测集、提示词、评分逻辑、轨迹与合作方原始输出保持私密，除非所有者另行选择。</p>
-<p><strong>可复现性。</strong> 每个基准都标注谁能复现：任何人、Fireworks 与基准所有者、或仅合作方。可复现性来自版本化的方法论与钉死的执行快照——记录 harness、采样参数、超时、快照 ID、执行器以及任何未决问题。</p>
-<p><strong>模型选择。</strong> 模型的入选基于一个组织是否可能在生产规模部署它们，价格是考量因素。新的前沿模型自动进入资格管线，只有过了这道门槛才会出现在 Index 上。</p>
-<p>关于 harness、推理、沙箱、运行规程、置信度、可靠性以及成本与时长指标的更多细节，<a href="https://fireworks.ai/specialized-intelligence-index/#methodology">请访问 Fireworks Methodology</a>。</p>
-<h2>贡献一个基准或一个模型</h2>
-<p>如果你为某个特定领域运行生产评测，它可能属于这个 Index。Fireworks Lab 帮助组织设计自己的基准与专用模型。</p>
-<p>向 Index 投稿时，合作方以 Harbor 兼容格式提供任务与数据。Fireworks 审阅任务多样性与校准，跨模型阵容请求并运行评测（免费），并在合作方批准的情况下发布分数。</p>
-<p><a href="https://fireworks.ai/specialized-intelligence-index/"><strong>访问 Specialized Intelligence Index →</strong></a></p>]]></content:encoded>
+<p><strong>Genspark Slides Benchmark </strong>评估人工智能生成的关于去识别真实用户任务的演示文稿，对任务完成情况、内容质量、视觉设计和流程质量对完成的幻灯片进行评分，并对布局缺陷、捏造内容和忽略说明进行处罚。</p>
+<h3>软件</h3>
+<p><strong>Traversal 的 ORCA-Bench </strong>是一个站点可靠性工程基准，可根据不明确的报告、遥测和源代码评估生产式根本原因分析 (RCA)。硬 RCA 准确度是头条得分；中等 RCA 和事件幻觉仍然是独立的原生指标。</p>
+<p><strong>Proximal 的 FrontierSWE V2 </strong> 是一个代码生成基准测试，可评估 34 项软件工程任务，这些任务处于人类专家所能完成的范围内：用 OpenGL 编写飞行模拟渲染器、将 Git 移植到 Zig、仅通过视觉驱动赛车机器人。每个模型的每项任务可进行 5 次试验，每次试验最多 20 小时。每次试验都会获得分级奖励，而不是通过或失败，因此获得大部分成绩的运行仍然很重要。</p>
+<p><strong>Mercor 的 APEX-SWE </strong>评估 200 个软件工程任务的人工智能模型，这些任务需要集成云服务和业务应用程序或使用日志、仪表板和不完整的上下文调试生产故障。</p>
+<p><strong>Datacurve 的 DeepSWE v1.1</strong> 针对跨 91 个存储库和五种语言的 113 个原始长期工程任务评估编码代理，测试其提交的代码在隔离环境中的正确行为。</p>
+<p><strong>Macrscope 的 MacroscopeBench </strong>评估模型在代码审查时的性能，衡量审查者检测真正已知错误同时不发布错误评论的能力。它运行来自开源存储库的超过 195 个提交，其中 144 个引入了维护人员后来必须修复的真正错误，以及 51 个干净的控件。</p>
+<p>训练开放模型可以提供更好的结果，包括以前沿质量降低每项任务的成本。 Genspark 的专业情报结果。</p>
+<h2>方法概述</h2>
+<p><strong>没有人工汇总。</strong> SII 不会平均排名、根据成本或持续时间权衡质量，或生成跨域组合。结果保持在基准和领域级别，具有覆盖矩阵以及分数与成本和分数与持续时间的视图，以便用户可以应用自己的权衡。</p>
+<p><strong>来源。</strong> 基准测试结果可能由合作伙伴、Fireworks 或两者的组合跨模型报告；相应地定义或链接实施。发布遵循基准所有者的政策；分数被公布，而评估集、提示、评分逻辑、轨迹和原始合作伙伴输出则保持私有，除非所有者另有选择。</p>
+<p><strong>可重复性。</strong> 每个基准都由可以再现它的人来标记：任何人、Fireworks 和基准所有者，或仅限合作伙伴。可重复性来自版本化方法和固定执行快照，它们记录了工具、采样参数、超时、快照 ID、执行器和任何未解决的问题。</p>
+<p><strong>型号选择。 </strong>模型的选择取决于组织是否可以合理地在生产规模上部署它们，价格是关键考虑因素。新的前沿模型会自动进入资格管道，并仅在通过此标准后才会出现在指数中。</p>
+<p>有关利用、推理、沙箱、运行协议、置信度、可靠性以及成本和持续时间指标的更多详细信息，请<a href="https://fireworks.ai/specialized-intelligence-index/#methodology">访问 Fireworks Methodology</a>。</p>
+<h2>贡献基准或模型</h2>
+<p>如果您对特定域运行生产评估，它可能属于索引。 Fireworks Lab 帮助组织设计自己的基准和专门模型。</p>
+<p>为了提交到索引，合作伙伴以 Harbor 兼容的格式提供任务和数据。 Fireworks 审查任务多样性和校准，免费请求并在模型名册上运行评估，并在合作伙伴批准的情况下发布分数。</p>
+<p><a href="https://fireworks.ai/specialized-intelligence-index/"><strong>访问专业情报指数 →</strong></a></p>
+<ul><li><a href="https://fireworks.ai/blog?blogTypes=公告">公告</a></li><li><a href="https://fireworks.ai/blog?topics=Benchmarks">基准</a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>前沿不是一个模型，而是一个路由器</title>
-      <link>https://fireworks.ai/blog/the-frontier-isnt-a-model-its-a-router</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/the-frontier-isnt-a-model-its-a-router</guid>
+      <title>边界不是模型。这是一个路由器。</title>
+      <link>https://fireworks.ai/blog/llm-model-routing-deepswe</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/llm-model-routing-deepswe</guid>
       <description>原文标题：The frontier isn’t a model. It’s a router.</description>
-      <content:encoded><![CDATA[<p>如果一个编码智能体能为每个任务用最好的模型，它的表现能好多少？</p>
-<p>最好的单一模型 GPT-6 Astra 在 DeepSWE 任务上拿下 74.1%，每个任务 $6.52。为每个任务挑对的模型，同样这十八个模型能到 97.6%、每个 $1.88。好 23 个点，成本却不到三分之一。</p>
-<p>这个数字来自事后诸葛。我们先把所有十八个模型在每个任务上都跑一遍，再为每个任务挑出赢家。它度量的是已经躺在池子里的能力——只不过这些能力分散在从不被一起使用的模型之间。</p>
-<p>把它们拼到一起是路由器的活儿。它在工作开始之前——而「之前」正是难处——决定哪个模型处理哪个任务。事后看，指着一个任务说出本可以做得更好的模型很容易。路由器必须在看到结果之前做选择，而选错一次的代价远超它省下的那几美元。</p>
-<h2>模型池里已经躺着多少能力？</h2>
-<p>我们分析了 <a href="https://deepswe.datacurve.ai/">DeepSWE v1.1</a>——一个智能体编码基准，其工作单元是一个工程任务：智能体必须理解 issue、检视仓库、使用工具、编辑代码、执行代码，并让任务通过。</p>
-<p>策略被刻意简化。任务开始时选定一个模型，整程不换，不允许中途切换。</p>
-<p>然后我们按实测通过率命名每个任务的赢家，打平时以价格决胜负。这就是 oracle 路由器——与<a href="https://fireworks.ai/blog/kimik3-fable">我们 Kimi K3 对 Fable 分析</a>中使用的方法相同。</p>
-<p>oracle 在它挑选依据的同一批 113 个任务上取分，每个模型-任务对用四次 rollout，对 18 个带噪声的估计取最大值会让结果偏高。</p>
-<p>最好的几个模型得分在 70% 上下，为到此的每个任务花费 $6.46 到 $13.41：</p>
-<ul><li>•GPT-6 Astra：74.1%，每任务 $6.52</li><li>•Claude Opus 5：73.8%，$11.84</li><li>•GPT-5.6 Sol：72.6%，$6.46</li><li>•Claude Fable 5：69.9%，$13.41</li></ul>
-<p>这就是固定模型策略能做到的极限。现在改为逐任务挑选：</p>
-<p>横跨全部十八个模型的 oracle 路由器达到<strong>每任务 $1.88、97.6%</strong>。比 GPT-6 Astra 高 23 个点，成本不到其三分之一。把它限制为<strong>仅开放权重模型</strong>（DeepSeek V4 Flash 和 Pro、GLM-5.3 与 GLM-5.3 Flash、Kimi K3、Qwen3.8 Max），仍能达到<strong>每任务 $1.45、90.3%</strong>——比这里每个闭源模型高 16 个点，而花费不到 Astra 的四分之一。</p>
-<p>这些结果让「开源对闭源」的争论变得更不有趣。正在浮现的竞赛，是从理论上的 oracle 路由器走向构建一个「集体智能超越任何单一模型」的模型系统。一个开源模型系统原则上已经能远远超越闭源前沿。</p>
-<p><strong>池子里的能力远比任何单个模型所显露的要多。</strong></p>
-<h2>你很少需要最贵的那个模型</h2>
-<p>在我们此前的工作中，我们发现<a href="https://fireworks.ai/blog/kimik3-fable"><strong>不同模型在不同任务上各已足够（甚至出色）</strong></a>。DeepSWE 分析把成本含义讲得具体。在那个 97.6% 的点上，oracle 仍把 <strong>113 个任务中的 94 个</strong>发给<strong>成本低于 $3</strong> 的模型。</p>
-<p>场上最贵的三个模型——每任务都高于 $11.50——<strong>只有三个任务</strong>是它们作为唯一最优选择被挑中。</p>
-<p>在 <strong>113 个任务中的 79 个</strong>上，至少一个昂贵模型与最高分打平、仅仅在价格上输掉。一个强通用模型可以在宽分布上优秀，却在大多数单个任务上并非不可替代。</p>
-<p>固定模型策略为每个任务购买广博能力。而系统可以问一个更窄的问题：</p>
-<p><strong>这个</strong>任务到底需要什么能力？</p>
-<h2>少数几个模型就够用很久</h2>
-<p>要捕获这个效应需要多少个模型？</p>
-<p>最佳配对比最佳单模型多 <strong>13.1 个点</strong>，最佳三联达到 91.2%。从三个模型扩展到全部十八个，再加 6.4 个百分点。有用的对象不是几百个近乎可互换模型的目录，而是一个覆盖互补的组合。</p>
-<p><strong>价值在能力覆盖，不在模型数量。</strong></p>
-<p><a href="https://aclanthology.org/2026.findings-acl.1881/">LLMRouterBench</a> 跨 33 个模型、40 万多个实例评估路由。它发现少数模型就覆盖了全集大部分能力，而不经精心策展的更大池子增加甚微。</p>
-<h2>难点在于预测该用哪个模型</h2>
-<p>oracle 让人爱，是因为它永远不会错。生产路由器会。我们严格度量：使用 pass@1——单次尝试通过的概率——而不是「四个尝试里这个模型是否曾成功」的规则。后一条规则会让上限看起来更惊人，意义却小得多。</p>
-<p>这个差距是个产品问题，文献对此直言不讳。LLMRouterBench 发现多个近期的路由方法——包括商业方案——没能稳定击败简单基线，并把很大部分归因于模型召回：即便池子里存在具备正确能力的模型，路由器还得认出何时该伸手取它。</p>
-<p>所以死守一个你熟悉的模型并不保守，它是理性的：稳定的错误分布胜过一个会不可预测地挑错专家的路由器。路由系统的标准，是把模型专业化变得足够可预测，让换模型<strong>在提升系统的同时不损害其行为的可信度</strong>。</p>
-<h2>FireRouter 怎么做</h2>
-<p>路由通常被作为成本优化引入：简单活给成本优化的模型，难活留给贵的，赚差价。在 <a href="https://fireworks.ai/nexus">Fireworks</a>，我们取更宽的视野。</p>
-<p><strong>如果不同模型真的互补，那么在其间选择会把你沿能力曲线向上推，而不仅仅是沿成本曲线向左。</strong></p>
-<p>这正是 FireRouter 的建立初衷。它在任务级别跨开源与闭源模型路由，并且缓存感知——切换模型不会悄悄扔掉你已经付过费的上下文。</p>
-<p>在我们自家生产编码流量的四周数据中，经 FireRouter 路由的会话花费 $7.42，对应单独 Opus 5 的 $15.81——2,334 个会话整体降低 53%。</p>
-<p>AI 工作的有用单元已经大于单次模型调用。一个编码智能体是一个身处 harness 中的模型，harness 提供上下文、工具、执行、测试、状态与反馈。</p>
-<p>一旦几个模型拥有互补的强项，选择策略就成为系统的一个<a href="https://www.faros.ai/blog/open-models-vs-frontier-models">组件</a>，与上下文、工具和测试并列。选择和组合这些组件就是这份工作的内容。这才是 AI 工程。</p>
-<p>我们的实验只度量那个系统的最简版本：任务开始挑一个模型、一用到底。而选择策略，是我们真正能构建的那部分。</p>
-<p>我们在生产中服务每一个前沿开源模型——对各模型强项的真正理解正来自于此。你不会从基准平均值里学到一个模型的独门强项。你靠全部跑一遍、在真实工作上、在规模上学到。FireRouter 的模型选择正是这样来的，这条标准也是我们要持续迈过的门槛。我们将在后续文章中展开<a href="https://docs.fireworks.ai/ecosystem/firerouter/overview">我们自己的路由器</a>，以及如何对<a href="https://fireworks.ai/training">你自己的专用智能</a>爬坡。</p>
-<p><strong>在 <a href="https://app.fireworks.ai/fire-router">FireRouter</a> 上定义你的前沿。</strong></p>
-<p><strong>关于成本。</strong>本分析中所有成本数字来自 DeepSWE 排行榜公布的各模型数值。公开 trials 文件里的原始 cost_usd 与榜单显示值不符，对 DeepSeek 家族更差出数倍，因此各模型的每任务成本做了缩放，使其均值与公布值一致。准确率来自每个任务-模型对的四次原始 rollout，成本来自榜单。</p>
-<p>来源：DeepSWE v1.1 trials，2026 年 9 月 17 日刷新。113 个任务，18 个模型各取其最佳可用配置，2,034 个模型-任务格子。</p>]]></content:encoded>
+      <content:encoded><![CDATA[<p>如果编码代理对每项任务使用最佳模型，它的表现会好多少？</p>
+<p>最好的单一模型 GPT-6 Astra 以每个 6.52 美元的价格获得了 74.1% 的 DeepSWE 任务。为每项任务选择正确的模型，同样的 18 个模型以 1.88 美元的价格获得 97.6% 的成功率。提高了 23 点，而成本却不到三分之一。</p>
+<p>这个数字是事后看来的。我们首先在每项任务上运行所有 18 个模型，并为每个模型选出获胜者。它衡量的是池中已有的功能，但它分散在没有人一起使用的模型中。</p>
+<p>将它们组合在一起是路由器的工作。它在工作开始之前选择哪个模型来处理每个任务，而在此之前是最困难的部分。回顾过去，很容易指出一项任务并命名可以做得更好的模型。路由器在看到结果之前必须做出选择，而错误的选择所付出的代价远远超过它节省的几美元。</p>
+<h2>模型池中已有多少功能？</h2>
+<p>我们分析了 <a href="https://deepswe.datacurve.ai/">DeepSWE v1.1</a>，这是一个代理编码基准，其中工作单元是工程任务：代理必须理解问题、检查存储库、使用工具、编辑代码、执行代码并让任务通过。</p>
+<p>该政策刻意简单。在任务开始时选择一个模型并在整个运行过程中保留它，而无需在会话中进行切换。</p>
+<p>然后，我们根据测量的通过率来确定每项任务的获胜者，打破成本上的平局。这就是oracle路由器。与我们在<a href="https://fireworks.ai/blog/kimik3-fable">我们的 Kimi K3 和寓言分析</a> 中使用的方法相同。</p>
+<p>预言机在它挑选的 113 个任务上进行评分，每个模型-任务对使用 4 次部署，并且最多采用超过 18 个噪声估计，从而使其出现向上偏差。</p>
+<p>最好的模型得分约为 70%，并且花费 6.46 至 13.41 美元完成一项任务：</p>
+<ul><li>GPT-6 Astra：74.1%，每项任务 6.52 美元</li><li>Claude Opus 5：73.8%，售价 11.84 美元</li><li>GPT-5.6 Sol：72.6%，6.46 美元</li><li>Claude寓言 5：69.9%，售价 13.41 美元</li></ul>
+<p>这是固定模型政策所能做到的最好的事情。现在选择每个任务：</p>
+<p>所有 18 个型号的 Oracle 路由器均达到 <strong>97.6%，每项任务 1.88 美元</strong>。这比 GPT-6 Astra 高出 23 个点，而成本却不到其三分之一。将其限制为<strong>仅开放权重模型</strong>（DeepSeek V4 Flash 和 Pro、GLM-5.3 和 GLM-5.3 Flash、Kimi K3、Qwen3.8 Max），它仍然达到 <strong>90.3%，每项任务 1.45 美元</strong>，这比这里的每个封闭模型高出 16 个点，而花费不到 Astra 的四分之一。</p>
+<p>这些结果使得“开放与封闭”的争论不再那么有趣。新兴的竞赛是从理论上的预言机路由器转向构建一个整体上比任何单一模型都更智能的模型系统。开放模型系统原则上已经远远超越了封闭边界。</p>
+<p><strong>池中的功能比任何单个模型公开的功能都要多。</strong></p>
+<h2>你很少需要最昂贵的型号</h2>
+<p>在我们之前的工作中，我们发现<a href="https://fireworks.ai/blog/kimik3-fable"><strong>不同的模型在不同的任务上就足够了（甚至是例外）</strong></a>。 DeepSWE 分析使成本影响变得具体。在 97.6% 的点上，预言机仍然将 113 项任务中的 94 项发送到成本低于 3 美元的模型**。</p>
+<p>该领域最昂贵的三个模型，每个任务都超过 11.50 美元，是<strong>仅三个任务</strong>的唯一最佳选择。</p>
+<p>在 <strong>113 项任务中的 79 项</strong>中，至少有一个昂贵的模型与最高分并列，仅因价格而输掉了任务。强大的通用模型可以在广泛的发行版中表现出色，但对于大多数单独的任务来说并不是唯一必要的。</p>
+<p>固定模型策略为每项任务的广泛能力提供保障。系统可以提出一个更狭窄的问题：</p>
+<p><strong>此</strong>任务实际上需要什么能力？</p>
+<h2>一些模型大有帮助</h2>
+<p>需要多少个模型才能捕捉到效果？</p>
+<p>最好的一对比最好的单一模型增加了<strong>13.1分</strong>，最好的三人组达到了91.2%。从三种型号扩展到全部 18 种型号，又增加了 6.4 个百分点。有用的对象不是数百个几乎可互换模型的目录。这是一个具有互补覆盖范围的投资组合。</p>
+<p><strong>该值是功能覆盖范围，而不是型号数量。</strong></p>
+<p><a href="https://aclanthology.org/2026.findings-acl.1881/">LLMRouterBench</a> 评估 33 个模型和超过 400,000 个实例的路由。研究发现，少数模型涵盖了整套模型的大部分功能，而如果没有仔细的管理，更大的模型池几乎不会增加任何功能。</p>
+<h2>困难的部分是预测使用哪个模型</h2>
+<p>神谕很容易让人喜爱，因为它永远不会出错。生产路由器可以。我们严格测量它：我们使用 pass@1，即单次尝试通过的概率，而不是“该模型在四次尝试中是否成功”规则。第二条规则会让天花板看起来更令人印象深刻，但意义却少得多。</p>
+<p>这种差距是产品问题，文献对此直言不讳。 LLMRouterBench 发现，最近的几种路由方法（包括商业路由方法）无法可靠地击败简单的基线，并将其中大部分追溯到模型召回：即使池中存在具有正确功能的模型，路由器也必须识别何时需要它。</p>
+<p>因此，坚持使用一种你知道的模型并不是保守的，而是理性的：稳定的错误分布会击败不可预测地选择错误专家的路由器。路由系统的标准是使模型专业化足够可预测，从而改变模型<strong>改进系统而不使其行为不那么值得信赖</strong>。</p>
+<h2>FireRouter 是如何做到的</h2>
+<p>路由通常是作为一种成本优化而引入的：将简单的工作发送到成本更优化的模型，为困难的工作保留昂贵的工作，并保留差异。在 <a href="https://fireworks.ai/nexus">Fireworks</a>，我们拥有更广阔的视野。</p>
+<p><strong>如果不同的模型确实是互补的，那么在其中进行选择将使您沿着能力曲线上升，而不仅仅是沿着成本曲线前进。</strong></p>
+<p>这就是 FireRouter 的用途。它在任务级别跨开放和封闭模型进行路由，并且具有缓存感知能力，因此切换模型不会默默地丢弃您已经付费的上下文。</p>
+<p>在我们自己的生产编码流量的四个星期内，通过 FireRouter 路由的会话成本为 7.42 美元，而仅 Opus 5 的成本为 15.81 美元，2,334 个会话减少了 53%。</p>
+<p>人工智能工作的有用单元已经比单个模型调用更大。编码代理是线束内的一个模型，提供上下文、工具、执行、测试、状态和反馈。</p>
+<p>一旦多个模型具有互补优势，选择策略就会与上下文、工具和测试一起成为<a href="https://www.faros.ai/blog/open-models-vs-frontier-models">系统的组成部分</a>。选择和组合这些组件就是工作。这就是人工智能工程。</p>
+<p>我们的实验仅测量该系统的最简单版本：在任务开始时选择一个模型并将其留在那里。选择政策是我们实际可以制定的部分。</p>
+<p>我们为生产中的每个前沿开放模型提供服务，这是对每个模型优势的真正了解的来源。您无法从基准平均值中了解模型独特擅长的领域。您可以通过在实际工作中大规模运行所有这些来学习它。这就是 FireRouter 模型选择的来源，而该栏就是我们打算清除的栏。我们将在以后的文章中介绍<a href="https://docs.fireworks.ai/ecosystem/firerouter/overview">我们自己的路由器</a>以及如何利用<a href="https://fireworks.ai/training">您自己的专业智能</a>进行爬山。</p>
+<p><strong>在 <a href="https://app.fireworks.ai/fire-router">FireRouter</a> 上定义您的边界。</strong></p>
+<p><strong>关于成本。</strong> 本分析中的所有成本数据均来自 DeepSWE 排行榜公布的每个型号的数据。公开试验文件中的原始 cost_usd 与主板显示的不匹配，对于 DeepSeek 系列来说，它相差好几倍，因此每个模型的每任务成本都会按比例缩放，使其平均值与发布的数字相符。准确性来自每个任务模型对的四次原始部署，成本来自董事会。</p>
+<p>来源：DeepSWE v1.1 试验，于 2026 年 9 月 17 日更新。113 个任务，18 个模型，每个模型均处于最佳可用配置，2,034 个模型任务单元。</p>
+<ul><li><a href="https://fireworks.ai/blog?blogTypes=Perspective">透视</a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>Fireworks 上的 DeepSeek-V4.1-Flash：Astra 级 DeepSWE，成本仅 1/15</title>
-      <link>https://fireworks.ai/blog/DeepSeek-V4.1-Flash-Astra</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/DeepSeek-V4.1-Flash-Astra</guid>
-      <description>原文标题：DeepSeek-V4.1-Flash on Fireworks: Astra-level DeepSWE at 1/15th the cost</description>
-      <content:encoded><![CDATA[<p>上周，Fireworks 发布了最新的 <a href="https://fireworks.ai/models/deepseek-ai/deepseek-v4p1-flash">DeepSeek-V4.1-Flash</a>。在把它跑完一整套基准测试后，结果显示它在质量、速度、成本等关键权衡上树立了新的帕累托前沿。在 DeepSWE 上，它以每任务十五分之一的价格达到了 GPT-6 Astra 级别的编码准确率。</p>
-<p>开发者经常问我们如何选对模型。现实是：模型只是地图上的一个点，而你的应用是一个完整的系统。AI 能力是参差不齐的（jagged），一个在某任务上表现出色的模型可能在另一个任务上挣扎。既然没有哪个模型能在所有场景通吃，工作负载设计的关键就在于把对的模型配给对的任务——无论是需要低延迟处理，还是需要深度计算做复杂推理。</p>
-<p>图 1：你的工作负载是一个任务系统</p>
-<p>以下是 DeepSeek-V4.1-Flash 在不同工作负载上的实际表现，以及它可以嵌入你技术栈的位置。</p>
-<h2>DeepSWE 帕累托前沿上的 DeepSeek</h2>
-<p>我们评估了 DeepSWE 基准，观察各模型如何在准确率与每任务成本之间取得平衡。</p>
-<table><thead><tr><th>模型</th><th>推理档位</th><th>Pass@1</th><th>每任务成本</th></tr></thead><tbody><tr><td>模型</td><td>推理档位</td><td>Pass@1</td><td>每任务成本</td></tr><tr><td>DeepSeek V4.1-Flash</td><td>max</td><td>74.34%</td><td>$0.430</td></tr><tr><td>GPT-6-Astra</td><td>xhigh</td><td>74.12%</td><td>$6.524</td></tr><tr><td>Gemini 3.8 Flash</td><td>high</td><td>73.83%</td><td>$2.362</td></tr><tr><td>Claude Opus 5</td><td>max</td><td>73.65%</td><td>$11.838</td></tr></tbody></table>
-<p>在质量上，这四个模型属于同一档次。在 DeepSWE 上，四者的 pass@1 都落在 0.7 个百分点以内，而我们的运行间波动就有 1.4 到 3.2 个百分点，因此这一组里没有哪个模型在质量上明显领先。差异化完全体现在成本上：Fireworks 上的 DeepSeek-V4.1-Flash 以每任务 $0.43 提供同一准确率区间，比 Gemini 3.8 Flash 低 5.5 倍，比 GPT-6 Astra 低 15 倍，比 Claude Opus 5 低 28 倍。</p>
-<p>全新 DeepSeek-V4.1-Flash 模型从根本上改变了自主软件工程任务的单位经济模型。在 GPT-6 Astra、Opus 5 这类昂贵的闭源模型上跑高迭代智能体工作流、多轮 Bug 排查或大规模测试生成，会迅速烧光工程预算。以每任务 $0.43 计，前沿级 SWE 智能体第一次可以作为持续运行的后台基础设施变得可行。有了 DeepSeek V4.1 Flash，你现在可以用一次 Astra 调用的价格跑 15 次自主编码尝试。</p>
-<h2>底层原理：全新的分裂激活架构</h2>
-<p>DeepSeek-V4.1-Flash 是 DeepSeek 新架构家族中最小的模型，并带来了一些新的架构增强。</p>
-<p>它是一个 552B 参数的 MoE，采用全新的编码器-解码器分裂架构。在这种架构中，模型不再为整次前向传播使用一个激活预算，而是把它拆成输入侧 8B 激活参数、输出侧 16B。这带来了更高效的设计，也让 token 开销更省。</p>
-<p>这种不对称恰好契合编码智能体的工作方式。典型的智能体轨迹是严重输入密集的。编码智能体经常重读文件、重读自己的草稿板、重读工具输出，最后只产出一个相对很小的补丁。在我们的 DeepSWE 运行中，模型每任务消耗 3690 万输入 token，而输出仅 21.1 万 token，比例为 174:1。这一架构让开发者可以在输入侧少花一半的算力——而输入侧恰恰是 token 占比最大的地方。</p>
-<h2>KV 缓存优化</h2>
-<p>与前一代 DeepSeek V4 相比，DeepSeek 在 DeepSeek-V4.1-Flash 上改进了 KV 缓存利用率，HBM 只消耗四分之一，SSD 存储只消耗八分之一。</p>
+      <title>Fireworks 上线 Muse Spark Open：Meta 的开放权重模型，跑在美国 serverless 上</title>
+      <link>https://fireworks.ai/blog/meta-muse-spark-open/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/meta-muse-spark-open/</guid>
+      <description>原文标题：Muse Spark Open on Fireworks: Meta’s open weights model, available on US serverless</description>
+      <content:encoded><![CDATA[<h1>Fireworks 上线 Muse Spark Open：Meta 的开放权重模型，跑在美国 serverless 上</h1>
+<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fproduction%2Fce7c3fd6fee91f09efac2a6391bff7e59bcb3c58-1920x1080.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="Terminal-Bench 2.1 上的 Muse Spark Open"></p>
+<p><a href="https://fireworks.ai/models/fireworks/muse-spark-open">Muse Spark Open</a> 是 Meta 出品的一个开放权重模型，Day-0 就在 Fireworks 上可用。它是一个 8,160 亿参数的 mixture-of-experts 模型，每个 token 激活 420 亿参数，context window 达 100 万 token，为长周期 coding 和 agent 工作而生，这类活儿要求在超长会话里始终保持连贯。</p>
+<p>它是迄今最有实力的美国开放权重模型之一，也是我们在受监管的专业工作里见过的最强开放权重模型。在 Vals AI 为 Harvey 的 Legal Agent Benchmark 设立的排行榜上，它位列第一，通过率接近 Claude Opus 5 的 4 倍。在 Rogo 的 Big Finance Bench 上，它在每一个难度级别都击败了 Claude Opus 5.5，在最难的任务上还略胜 GPT-6 Astra。</p>
+<p>Muse Spark Open 在美国完成训练与开发，Fireworks 默认以 Zero Data Retention 的方式运行它。<a href="https://app.fireworks.ai/models/fireworks/muse-spark-open">今天就试试 serverless 版本</a>，它跑在仅限美国的算力上，且不收美国溢价。之后可切换到 reserved throughput 上生产，并用 serverless LoRA training 对它做精调。</p>
+<blockquote>Muse Spark Open 展现出很强的 agentic 工程能力：它能穿梭于代码仓库、实现不那么简单的改动，并验证复杂的 coding 工作 —— Zimu，Factory 的 Member of Technical Staff</blockquote>
+<h2>在受监管的工作上，Muse Spark Open 压过 Claude Opus</h2>
+<p>Muse Spark Open 最能发挥的地方是准确性至上的场景，比如法律、金融和临床任务。以下结果来自独立评测方和我们的 Specialized Intelligence Index，其中每个模型都跑在同一套 harness 上：</p>
+<ul><li>•<strong>Harvey 的 egal Agent Benchmark 上排名第一：</strong>在以文件和使用工具完成法律工作的 <a href="https://www.vals.ai/benchmarks/hlab">Vals AI 排行榜</a>上，Muse Spark Open 在 75 个模型中位列第一，得分 25.4%，接近 Claude Opus 5（6.7%）的 4 倍。</li><li>•<strong>在 Rogo 的 Big Finance Bench 上领先 Claude Opus 5.5：</strong>在 Fireworks 的 <a href="https://fireworks.ai/specialized-intelligence-index/benchmarks/finance/big-finance-benchmark">Specialized Intelligence Index</a> 运行中，Muse Spark Open 在每个难度级别都击败了 Claude Opus 5.5。在最难的任务上，它以 17.3% 对 16.5% 略胜 GPT-6 Astra，得分是 Opus 5.5（6.6%）的 2.5 倍以上（图 1）。</li><li>•<strong>Finance Agent 上位列前三：</strong>在 <a href="https://www.vals.ai/benchmarks/fabv2">Vals AI 的 Finance Agent v2</a> 上，它得到 60.6%，与 Gemini 3.8 Flash 相差不到 1 个百分点，而每次测试的成本约低 60%。</li><li>•<strong>临床文档：</strong>它在 <a href="https://www.vals.ai/benchmarks/medscribe">Vals MedScribe</a> 上得分 90.1%，与 Claude Opus 5（91.0%）相差不到 1 个百分点，token 单价却低 75-83%。</li></ul>
+<p>本文中 Vals AI 和 Artificial Analysis 的第三方结果，是在 Meta 面向 API 发布的这个模型版本上测得的。</p>
+<blockquote>在 Rogo，我们让每一个新模型都过一遍 Big Finance Bench，那是我们收录 928 道真实金融工作流问题的题集。Muse Spark Open 得分 53.3%，是我们榜单上成绩最好的开放权重模型，甚至超过了前沿的 Claude Opus 5（49.2%）。高性能的美国开放权重模型开始涌现，这一点尤其令人振奋。它们为持续实验提供了底座，也让我们能把智能调校到金融工作的特定需求上。我们很期待在推进模型性能边界的同时，为客户释放新的价值与效率。 —— Alex Wang，Rogo 的 Member of Technical Staff</blockquote>
+<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fproduction%2F2a2d2ede2a04eba81bf52678b2431fc245656ef1-1920x1080.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="Rogo 的 Big Financial Bench 上的 Muse Spark Open"></p>
+<p>图 1：按任务难度划分的 Muse Spark Open 在 Rogo 的 Big Finance Bench 上的成绩，来自 Fireworks 的 Specialized Intelligence Index 运行结果。</p>
+<h2>Muse Spark Open 在标准基准上的表现</h2>
+<p>在标准的公开基准上，Muse Spark Open 同样站得住脚：</p>
+<ul><li>•幻觉更少：在 <a href="https://artificialanalysis.ai/models/muse-spark-1-2?omniscience=omniscience-hallucination-rate">Artificial Analysis 的 AA-Omniscience</a> 上，它的幻觉率为 33%，低于 Claude Opus 5.5（59%）和 GPT-6 Astra（51%），因为它在没把握时会拒绝作答而不是硬猜。</li><li>•Agentic coding：在 Meta 的评测中，它在 Terminal-Bench 2.1 上得分 82.9%，领先 GPT-5.6 Terra 和 Grok 4.5（图 2）。</li></ul>
+<blockquote>Muse Spark Open 是西方开源模型的一次阶跃式变化，在我们的早期评测里，它的指令遵循尤其出色。我们很兴奋能在这一基础上，通过 post-training 来强化 Decagon 支撑的那些复杂工作流 —— Decagon Labs</blockquote>
+<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fproduction%2F77aea4b2b37018ba33250d208a2467820898c209-1920x1080.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="Muse Spark Open 与闭源前沿模型的对比"></p>
+<p>图 2：Meta 报告的 agentic coding 基准。每个模型都在各自的 agent harness 中评测。</p>
+<p>在开放 endpoint 之前，我们在生产服务栈上用上线校验套件跑了最终的开放权重。Muse Spark Open 在 AIME26 上得分 91.1%，在 GPQA Diamond 上 89.7%，在 SWE-bench Verified 上 84.3%，并在 OCRBench 和 MMMU Pro 上把图像理解保持在 80% 以上（图 3）。作为交叉校验，我们还在 SGLang（一款被广泛使用的开源推理引擎）上跑了同一份权重，分数对得上。你在 Fireworks 上调用的这个模型，表现就是 Meta 当初造出来的样子。</p>
+<blockquote>Filevine 创立于美国西部。我们相信前沿就应该开放。与 Fireworks 和 Meta 合作，意味着 Filevine 能为法律行业开辟新的可能，而不必拿质量去换成本。 —— Ryan Anderson，Filevine 的联合创始人兼 CEO</blockquote>
+<p><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fproduction%2F0faf334c7fba05eccdc574ae9f05d6c3cf4eae0a-1920x1080.png%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="Fireworks 上的 Muse Spark Open"></p>
+<p>图 3：Fireworks 上的 Muse Spark Open。agentic 结果依赖 harness，不能与 Meta 报告的数据直接比较。</p>
+<h2>你今天就可以这样开始构建：</h2>
+<p>Muse Spark Open 今天已在我们的 serverless API 上可用，跑在仅限美国的算力上，不收美国溢价。当前定价见 <a href="https://fireworks.ai/models/fireworks/muse-spark-open">Muse Spark Open 模型页</a>。</p>
+<ul><li>Serverless：直接在 Fireworks serverless 上<a href="https://app.fireworks.ai/models/fireworks/muse-spark-open">开始使用</a> Muse Spark Open，或为生产工作负载切换到 reserved throughput。</li><li>想把 Muse Spark Open 打磨到你自己的用例上？试试我们的 Serverless Training API，或<a href="https://fireworks.ai/contact-training">联系 Fireworks Lab</a> 获取帮助。</li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>Kimi K3 on Fireworks: Fast RL at frontier scale</title>
+      <link>https://fireworks.ai/research/kimi-k3-on-fireworks-fast-rl-at-frontier-scale/</link>
+      <guid isPermaLink="true">https://fireworks.ai/research/kimi-k3-on-fireworks-fast-rl-at-frontier-scale/</guid>
+      <content:encoded><![CDATA[<h2>长篇大论；博士</h2>
+<ul><li>Fireworks 通过优化训练、部署生成和策略更新，使强化学习在 Kimi K3 的 2.8T 参数上变得实用，以实现更快、更稳定的训练。</li><li>在本报告中，我们详细介绍了可减少迭代开销的自定义内核、长上下文缓存和压缩权重传输，以及保持训练稳定的数值对齐和路由器重放。</li><li>Fireworks 无服务器训练让团队可以通过 Fireworks Training API 在 Kimi K3 上测试自己的任务和奖励功能，并共享训练和部署容量，无需配置专用 GPU。</li></ul>
+<p>专业化前沿模型意味着使其行为适应特定领域的任务、工具和成功标准。 <a href="https://aclanthology.org/2025.findings-emnlp.970/">强化学习 (RL)</a> 通过重复循环来实现这一点：模型生成轨迹（行动和观察序列），评估者分配奖励，训练者更新策略以提高成功行为的可能性。</p>
+<p>在 Kimi K3 的规模上，实用的强化学习需要在整个训练循环中高效执行。推出生成和训练必须维持高吞吐量，必须快速提供更新的策略，并且必须保持训练和推理之间的数值一致性。对于实验，系统还必须支持独立运行，而不需要为每个实验提供专用基础设施。</p>
+<p>本报告介绍了 Fireworks 在 Kimi K3 上支持强化学习的系统，涵盖全参数训练和部署生成、训练推理一致性以及无服务器 LoRA 训练。我们研究这些组件如何减少迭代开销并帮助团队更有效地开发和评估专门策略。</p>
+<h2>培训</h2>
+<p><a href="https://arxiv.org/abs/2607.24653">Kimi K3</a> 是一个 <strong>2.8T 参数模型，具有 1M 代币上下文窗口</strong>。在这种规模下，模型状态和长序列激活会对内存容量造成压力，而其混合架构则引入了明显的计算和通信瓶颈。</p>
+<p>组件</p>
+<p>基米K3</p>
+<p>注意</p>
+<p>69 Kimi Delta Attention (KDA) + 24 Multi-head Latent Attention (MLA) 层</p>
+<p>潜在的教育部</p>
+<p>896名专家；前16名；潜在维度 3,584</p>
+<p>专家激活</p>
+<p>西图</p>
+<p>路由专家量化</p>
+<p>Group-32 MXFP4 配重； group-128 FP8 激活</p>
+<p>注意力残差</p>
+<p>对层输出的块式关注</p>
+<p>Fireworks 通过专门的专家混合 (MoE)、Kimi Delta Attention (KDA) 和 Attention Residual 内核来解决这些瓶颈，并由长序列的分布式训练提供支持。</p>
+<h3>教育部超级内核</h3>
+<p>K3 的 <a href="https://arxiv.org/abs/2607.24653">LatentMoE</a> 将 FP4 专家分布在 GPU 上，需要围绕专家计算进行全面调度和组合。 <a href="https://github.com/deepseek-ai/DeepEP">DeepEP</a> 加速了这些传输，但暴露的通信仍然会使张量核心闲置。类似的通信计算重叠已在 <a href="https://arxiv.org/abs/2609.36070">Mixture-of-Kittens</a>、<a href="https://arxiv.org/abs/2502.19811">COMET</a> 和 <a href="https://arxiv.org/abs/2506.04667">FlashMoE</a> 中发布。</p>
+<p>我们的内部 <strong>MoE Mega Kernel</strong> 将这些通信计算重叠技术适应 K3 的路由专家前向和后向传递：</p>
+<ul><li><strong>环形缓冲区绑定调度暂存。</strong> 随着工作进展重复使用令牌缓冲区插槽，限制调度工作空间。</li><li><strong>微批处理实现了连续的管道。</strong>跨微批的重叠调度、专家计算和结果返回；向后类似地将梯度通信与计算重叠。</li><li><strong>将量化融合到分段中。</strong> 将 FP8 激活和缩放直接写入通信缓冲区，消除中间副本，同时保留 K3 的量化契约。</li></ul>
+<p><img src="https://cdn.sanity.io/files/pv37i0yn/horizon/19bead5726417c879c48f36fd58cf2a0269d72d3.svg" alt="MoE Mega Kernel FWD：重叠和缓冲区重用"></p>
+<p>前向和后向调度示意图；底部条显示测量的 16K 令牌/排名计时。收益包括减少分期和数据移动以及重叠。</p>
+<p>相对于 <strong>优化的本机 DeepEPv2</strong> 基准，它在 <strong>每等级 1K-128K 代币</strong> 上提供 <strong>1.87-2.61× 前向</strong> 和 <strong>1.31-2.13× 后向加速</strong>。该比较包括正常 EP，以显示超出已优化通信后端的额外增益。</p>
+<p>8×B300，EP=8；优化的 DeepEPv2 = 1×。 Routed-expert前向/后向单独测量，包括通信；不是全模型吞吐量。</p>
+<h3>KDA：从循环内存到高效的 GPU 执行</h3>
+<p><a href="https://arxiv.org/abs/2607.24653">Kimi Delta Attention (KDA)</a> 是一种线性注意机制，它使用通道门控来更新紧凑的循环状态，从而提供具有序列长度和固定大小解码状态的线性计算缩放。高效的训练必须并行化块本地工作，同时限制循环依赖和中间数据移动造成的停顿。</p>
+<p>我们构建了一个针对 Blackwell 进行优化的<strong>内部 KDA 内核</strong>，它融合了相关工作并减少了中间内存流量。相对于 <a href="https://github.com/fla-org/flash-linear-attention/tree/main/fla/ops/kda">FLA 的 KDA 实现</a>，它在 <strong>4K-128K 令牌</strong>的序列长度上提供 <strong>1.49-1.58× 前向</strong> 和 <strong>1.49-1.51× 后向加速</strong>。</p>
+<p>B300，无CP； FLA 海卫一 = 1×。仅 KDA 核心，包括 Q/K 归一化和门扫描。</p>
+<h3>注意力残差：内存更低，训练更快</h3>
+<p><a href="https://arxiv.org/abs/2607.24653">注意力残差</a> 结合了模型深度的表示。在长序列长度下，用于归一化、加权和梯度计算的中间张量可能会消耗大量内存和带宽，从而减少可用于训练的容量。</p>
+<p>我们的内核融合了归一化和加权和运算，以减少向前和向后过程中的中间张量具体化和数据移动。</p>
+<p>与 <a href="https://github.com/fla-org/flash-linear-attention/tree/main/fla/ops/attnres">K3 布局中的 FLA</a> 相比，此实现在 <strong>1K-256K 本地令牌</strong>上提供 <strong>1.75-2.50× 组合的前向和后向加速</strong>。在 128K 时，测得的峰值分配内存从 <strong>63.02 GiB</strong> 下降到 35.03 GiB<strong> — </strong>降低了 44%**，为周围的训练工作负载留下了更多可用内存。</p>
+<p>共用B300、BF16；向前+向后算子，FLA = 1×。由于 GPU 共享下的 OOM，64K 以上的 PyTorch 结果被省略。</p>
+<h3>分布式训练</h3>
+<p>在<strong>2.8T 参数</strong>下，全参数训练需要跨 GPU 分片权重、梯度和优化器状态。接近 <strong>1M 令牌</strong>的序列会增加 MLA 层中的激活记忆压力和二次注意力计算。我们结合三种并行策略来解决模型规模和序列长度问题：</p>
+<ul><li><a href="https://arxiv.org/abs/2304.11277"><strong>完全分片数据并行性 (FSDP)</strong></a>。分片参数、梯度和优化器状态。预取将即将到来的权重全收集和梯度减少分散与当前层的计算重叠。</li><li><a href="https://arxiv.org/abs/2405.07719"><strong>上下文并行性 (CP)</strong></a>。在 GPU 之间对长序列进行分区，为 KDA 的循环状态传播保留连续的标记范围，同时平衡 MLA 的因果注意力工作负载。</li><li><a href="https://www.jmlr.org/papers/volume23/21-0998/21-0998.pdf"><strong>专家并行性 (EP)</strong></a>。将路由专家分布在 GPU 上，并将 EP 与 FSDP 结合起来，以控制专家权重工作集。我们的 <strong>MoE Mega Kernel</strong> 保持专家 GEMM 的高效，同时管道化令牌调度和计算组合，减少暴露的所有延迟。</li></ul>
+<p>我们的 <strong>Kernel Bricks</strong> 库提供了拓扑和有效负载感知的集体实现，可以减少训练配置之间的通信延迟。例如，AllReduce 比 PyTorch Distributed 实现了 <strong>1.67-3.31× </strong>加速。</p>
+<h2>推出</h2>
+<p>Fireworks 支持 Kimi K3 推出全参数强化学习推理。工作负载与普通的聊天服务不同：数千条轨迹从共享提示中反复分支，在生成和工具使用之间交替，并成长为漫长的多轮历史。推出引擎必须保持这些历史记录可重用，并有效执行 2.8 万亿参数的混合 MoE 模型。</p>
+<p>本节介绍了在 GB300 系统上实现这一点的转出端技术。</p>
+<h3>一种模型，两种缓存状态</h3>
+<p><a href="https://arxiv.org/abs/2309.06180">KV 缓存</a> 存储继续生成所需的注意力状态，而无需重新计算完整的提示。 <a href="https://arxiv.org/abs/2607.24653">K3</a> 将 MLA 与 KDA 结​​合起来，MLA 保留了逐个令牌的 KV 历史记录，KDA 以紧凑的循环状态总结了先前的令牌。重用对话前缀需要两个历史记录代表对话中的同一点，尤其是当 RL 轨迹从共享提示分支或在工具调用后恢复时。</p>
+<p>Fireworks 协调 MLA 和 KDA 历史记录，因此两个缓存状态始终表示相同的前缀。随着对话的增长和更多轨迹同时运行，这可以保留可重用的工作，减少重复的预填充，同时每个分支保持独立、一致的状态。</p>
+<p>MLA KV 历史和 KDA 状态一起重用，而每个轨迹独立继续。</p>
+<p>在我们的长上下文、多轮部署基准测试中，Fireworks 实现了大约 <strong>99% 的缓存命中率</strong>，允许从缓存中重用几乎所有提示令牌。</p>
+<h3>推测解码而不破坏循环状态</h3>
+<p><a href="https://proceedings.mlr.press/v202/leviathan23a.html">推测性解码</a> 使用较小的草稿模型来提议令牌，并使用目标模型来并行验证它们。 Fireworks为Kimi K3培养了一名投机者；当两个引擎都使用 3 的草稿长度时，我们的重放基准显示每个验证步骤的令牌比 SGLang DSpark 基准多出 12%。</p>
+<p>在拒绝令牌后，K3 的循环 KDA 状态必须保持一致。我们集成 <a href="https://tridao.me/blog/2026/replayssm/">ReplaySSM</a> 来重放来自已提交检查点的已接受令牌的紧凑状态更新输入，从而避免每个候选者的全状态快照。</p>
+<p>ReplaySSM 仅通过接受的前缀推进 KDA 状态。</p>
+<p>我们评估了<strong>八种任务类型</strong>的 322 个重播请求，<strong>每个引擎 16 GB300 GPU</strong> 和 SGLang v0.5.18。 <strong>接受长度</strong>计算每个验证步骤前进的令牌，包括已验证的目标令牌（草稿长度为 3 时最大 <strong>4</strong>）；结果通过验证步骤进行加权。</p>
+<ul><li><strong>跨任务：</strong>一般聊天达到 <strong>2.80 与 2.51 代币 (+12%)</strong>，竞争性编程 <strong>3.09 与 2.92 (+6%)</strong>，以及回购问题修复 <strong>3.47 与 3.29 (+5%)</strong>。其他代理任务提高了 <strong>1-3%</strong>，而基于技能的代理基本没有变化（<strong>3.24 与 3.25</strong>）。</li><li><strong>跨上下文长度：</strong>增益范围为<strong>2-9%</strong>。最大的存储桶，<strong>10-20K 令牌（190 个请求）</strong>，达到 <strong>3.37 与 3.31 (+2%)</strong>； <strong>60K+</strong> 达到 <strong>3.43 与 3.27 (+5%)</strong>。请求数少于 30 个的存储桶报告的准确度约为 ±0.3 个令牌。</li></ul>
+<p>热缓存重放，思考，温度0，最大输出512； 2026 年 9 月 29 日更新。上下文桶聚合不同的请求；接受度增益不是端到端吞吐量增益。</p>
+<h3>缩短沟通关键路径</h3>
+<p>张量并行推理需要 GPU 在继续计算之前组合部分结果。这些重复的同步会限制 K3 的生成速度，尤其是在解码批量较小的情况下。</p>
+<p>Fireworks 的 AllReduce 库使用拓扑和负载感知实现来减少分段和通信延迟。这使得相关计算可以更快地开始并缩短通信关键路径。</p>
+<p>Fireworks 的 AllReduce 库根据有效负载大小和硬件拓扑选择集体路径。</p>
+<h3>选择内联或分类推出服务</h3>
+<p>此处描述的配置使用<strong>内联预填充</strong>：预填充和解码共享相同的 GPU 副本。这适合长时间运行的多轮部署，因为稍后的轮次可以重用保留的历史记录并仅预填充其新后缀。内联服务还避免将 MLA KV 和匹配 KDA 循环状态交给单独的解码池。</p>
+<p><a href="https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin">分类服务</a> 将解码与预填充隔离，并允许每个池选择自己的拓扑和容量。当未缓存的预填充量或严格的令牌延迟证明分离合理时，它很有吸引力。然而，对于 K3，每次切换必须传输一致的 MLA KV 加上 KDA 循环和卷积状态，在目标缓存中找到空间，并保留活动的 RL 策略版本。</p>
+<p>内联服务有其自身的成本：预填充与主动解码竞争 GPU 时间。正确的选择取决于提示量、生成长度、前缀重用、传输带宽和延迟目标。比较两者需要相同的工作负载和总 GPU 预算；这里描述的测量系统使用内联服务。</p>
+<h3>在广泛的专家组中协调预填充</h3>
+<p>下面的基准测试使用混合 TP4 / DP4 / EP16 布局：张量并行性保持在快速节点内结构内，四个注意力组独立处理请求，专家并行性跨越 16-GPU 组。这是一种测量配置，而不是通用的生产布局方案。</p>
+<p>这就产生了调度问题。如果一个注意力组开始预填充，则共享专家组中的每个 GPU 都必须参与，即使其他组没有准备好有用的预填充。因此，不均匀的强化学习轨迹可能会将许多小的预填充变成重复的填充工作和解码中断。</p>
+<p>Fireworks DP 预填充配对为同级组提供了一个短窗口，以便在活动请求继续解码时对齐有用的预填充工作。一旦所有组准​​备就绪或超时到期，挂起的预填充就会运行，交易有界等待更大的批次和更少的填充。这遵循 <a href="https://rocm.blogs.amd.com/software-tools-optimization/atom-optimiztion/README.html">AMD 的 ATOM</a> 中发布的相同通用有界延迟方法。</p>
+<p>共享一个专家组的关注小组协调预填入学；当到达保持不对称时，超时可以保证进度。</p>
+<h3>吞吐量随着历史的增长而增长</h3>
+<p>在合成的长上下文、多轮部署工作负载中，<strong>16 GB300 GPU (TP4 / DP4 / EP16)</strong> 在每个轮次超过 50 个轮次的情况下为 128 个并发轨迹提供服务，在整个定时运行（包括启动和耗尽）期间平均每秒输出 2,834 个令牌。</p>
+<p>每个点都显示一分钟完全并发窗口期间的总输出吞吐量，根据该窗口中的平均提示长度绘制。</p>
+<p>单独的消融测量表明，<strong>EAGLE3</strong> 的完整运行吞吐量提高了 49.37%，而 ReplaySSM** 的完整运行吞吐量提高了 65.05%。 ReplaySSM 的好处包括增加 GPU 缓存容量。</p>
+<h3>把它放在一起</h3>
+<p>K3 的推出性能来自于将模型视为一个完整的系统。协调的 MLA 和 KDA 缓存可保留可重用的对话历史记录。 ReplaySSM 使推测解码对于循环状态来说是安全的。 Fireworks 的 AllReduce 库缩短了集体通信。内联服务和 DP 预填充配对将异步 RL 轨迹转化为高效的 GPU 工作。</p>
+<p>这些技术共同使 Fireworks 能够以高吞吐量维持长时间、分支、多轮 K3 部署，同时保持模型所需的状态正确性。</p>
+<h2>RL：快速迭代，稳定训练</h2>
+<h3>与 XOR 增量的权重同步</h3>
+<p>同步 K3 的 <strong>2.8T 参数</strong> 会使全检查点传输变得昂贵。我们将每个更新编码为字节 <a href="https://fireworks.ai/blog/frontier-rl-is-cheaper-than-you-think"><strong>XOR delta</strong></a>，<code>Δ = W_new XOR W_base</code>，并使用 Zstandard 对其进行压缩。未更改的字节变为零，从而减少了压缩的有效负载。 Rollout 工作人员解压缩增量并应用“W_base XOR Δ”来重建新的检查点<strong>逐位</strong>。</p>
+<p>在 <a href="https://fireworks.ai/blog/frontier-rl-is-cheaper-than-you-think">Fireworks 发布的工作负载</a> 中，<strong>1,024 GiB</strong> 检查点产生 <strong>20.3 GiB 平均增量</strong> — <strong>每次增量更新减少 98% 的字节</strong>。包括定期的完整检查点，总传输量在 50 个步骤中下降了 <strong>94%</strong>。</p>
+<p><img src="https://cdn.sanity.io/files/pv37i0yn/horizo​​n/01a9d2689430deecbb245cb408cefa6b842ca36a.svg" alt="异或权重同步：一个小增量，相同的新权重"></p>
+<h3>RL 稳定性和数值</h3>
+<h4>决定论</h4>
+<p>即使两个系统使用相同的权重，训练和部署之间的<a href="https://fireworks.ai/blog/when-faster-not-identical-moe-numerics">数值漂移</a>也会扭曲 RL 重要性比率。这与策略陈旧不同，在策略陈旧中，在学习器更新其权重后，推出数据来自较旧的策略。如果不加以衡量和控制，这两种效应都会破坏政策更新的稳定性。</p>
+<p>我们在 K3 的前向传递中强制执行确定性执行，包括主要内核和缩减，因此固定权重、输入和执行配置会产生匹配的输出。</p>
+<p>关键内核，包括 <strong>RMSNorm</strong>，也支持批处理不变执行。对于 RMSNorm，固定的缩减顺序可以在批量大小之间保持一致的结果，同时保留 K3 的舍入边界可以减少<a href="https://fireworks.ai/blog/when-faster-not-identical-moe-numerics">训练推理漂移</a>。</p>
+<h4>路由器重播 (R3)</h4>
+<p>即使在相同的权重下，小的数值差异也可能会改变 top-k 专家的选择，从而导致训练和推出对数概率出现分歧。 <strong>Fireworks RL 平台</strong>支持 <a href="https://arxiv.org/abs/2510.11370"><strong>路由器重放 (R3)</strong></a>：学习器重用 rollout 专家选择，同时根据当前参数重新计算门权重和专家输出。</p>
+<p>通过这些数值对齐措施，在此配置中同步 <a href="https://arxiv.org/abs/2106.09685"><strong>LoRA</strong></a> 训练部署散度低至 <strong>0.0008</strong>。我们使用令牌平均 <a href="http://joschu.net/blog/kl-approx.html">Schulman k3 估计器</a> 报告估计的 KL 散度；结果取决于序列长度和执行配置。</p>
+<h2>Kimi K3 无服务器培训入门</h2>
+<p><img src="https://cdn.sanity.io/files/pv37i0yn/horizon/fc5b24f6ecdd823cea67cd6d3b5ef2a173669430.svg" alt="使用无服务器 Kimi K3 进行更快的实验"></p>
+<p>新的奖励函数、不同的数据集、更好的学习率：强化学习的进步来自尝试想法和衡量有效的方法。 Fireworks 无服务器训练使这些实验在 Kimi K3 上变得实用，并通过 Python API 提供共享训练和部署能力。</p>
+<p>您的实验连接到已经运行的培训师和推广工作人员池。无需配置专用 GPU 分配、启动训练器作业，也无需为每次运行进行单独的部署部署。使用现有池可以从实验设置中删除基础设施配置，从而缩短从想法到培训循环的路径。</p>
+<p><a href="https://arxiv.org/abs/2106.09685">multi-LoRA</a> 训练器和推理引擎让不同的运行和策略快照共享相同的基本权重。据推断，适配器异步加载，并且<a href="https://arxiv.org/abs/2310.18547">多LoRA内核</a>减少了重复的准备和数据移动。在训练时，调度程序会批量处理兼容的请求，并公平地平衡适配器局部性。优化器状态会随着会话的调度而被卸载和异步暂存，从而为更长的上下文和更活跃的适配器保留 GPU 内存。</p>
+<p><img src="https://cdn.sanity.io/files/pv37i0yn/horizon/87ccbafbbeaea0d2f1903e4b5953392c0945a707.svg" alt="CSGMV：高效适配器计算"></p>
+<p>Rollout 生成通常占用大部分 RL 迭代时间。高吞吐量需要适配器并发性和足够的缓存容量来支持长期的分支历史记录。 Fireworks 使用分层适配器和缓存管理：可重用的 KV 和 KDA 状态可以移动到主机内存，活动适配器占用 GPU 插槽，非活动快照异步加载。缓存重用的范围仍然限于正确的适配器和策略版本，因此准备好的部署可以继续进行，而无需在实验之间混合状态。</p>
+<p><img src="https://cdn.sanity.io/files/pv37i0yn/horizon/e10007a4bb183e296257c3ed31556385d895a282.svg" alt="准备适配器。继续推出。"></p>
+<h3>真实示例：Visual ToolBench</h3>
+<p>在使用图像工具对多轮 <a href="https://arxiv.org/abs/2510.12712">VisualToolBench</a> 任务进行的无服务器 Kimi K3 实验中，在固定的 50 个任务评估集上测量，在 <strong>20 次训练更新</strong>后，评估奖励从 <strong>0.314 增加到 0.451</strong>。请参阅 Fireworks 说明书中的<a href="https://github.com/fw-ai/cookbook/blob/main/training/examples/serverless_rl/visual_toolbench_rl.py">完整的可运行示例</a>。</p>
+<p><a href="https://docs.fireworks.ai/fine-tuning/training-api/serverless">使用 Fireworks 无服务器训练开始 Kimi K3 实验</a>。带上您的任务、环境和奖励函数，并使用共享的培训和部署工作流程来测试您的下一个想法。</p>
+<h2>背景和参考资料</h2>
+<p>术语在首次使用时链接。这些来源在不扩展主要叙述的情况下提供了额外的背景：</p>
+<ul><li><a href="https://arxiv.org/abs/2607.24653">Kimi K3 架构</a>、KDA、MLA、注意力残差、LatentMoE、SiTU 和量化。</li><li>MoE 路由和通信：<a href="https://www.jmlr.org/papers/volume23/21-0998/21-0998.pdf">Switch Transformers</a>、<a href="https://github.com/deepseek-ai/DeepEP">DeepEP</a>、<a href="https://arxiv.org/abs/2609.36070">Mixture-of-Kittens</a>、 <a href="https://arxiv.org/abs/2502.19811">COMET</a> 和 <a href="https://arxiv.org/abs/2506.04667">FlashMoE</a>。</li><li>分布式训练：<a href="https://arxiv.org/abs/2304.11277">FSDP</a>和<a href="https://arxiv.org/abs/2405.07719">统一序列/上下文并行</a>。</li><li>推出服务：<a href="https://arxiv.org/abs/2309.06180">PagedAttention</a>、<a href="https://proceedings.mlr.press/v202/leviathan23a.html">推测解码</a>、<a href="https://tridao.me/blog/2026/replayssm/">ReplaySSM</a>和<a href="https://www.usenix.org/conference/osdi24/presentation/zhong-yinmin">DistServe</a>。</li><li>策略同步和数字对齐：<a href="https://fireworks.ai/blog/frontier-rl-is-cheaper-than-you-think">XOR 检查点增量</a>、<a href="https://fireworks.ai/blog/when-faster-not-identical-moe-numerics">Fireworks 的 MoE 数字</a> 和 <a href="https://arxiv.org/abs/2510.11370">路由器重播</a>。</li><li>LLM 强化学习和优化：<a href="https://aclanthology.org/2025.findings-emnlp.970/">learning-from-rewards 调查</a>， <a href="https://proceedings.neurips.cc/paper_files/paper/2022/file/b1efde53be364a73914f58805a001731-Paper-Conference.pdf">InstructGPT</a>，<a href="https://www.nature.com/articles/s41586-025-09422-z">DeepSeek-R1</a>， <a href="https://arxiv.org/abs/1707.06347">PPO</a>、<a href="https://arxiv.org/abs/2507.18071">GSPO</a> 和 <a href="http://joschu.net/blog/kl-approx.html">Schulman k3 KL 估计器</a>。</li><li>无服务器多<a href="https://arxiv.org/abs/2106.09685">LoRA</a>系统：LoRA、<a href="https://arxiv.org/abs/2310.18547">Punica</a>、<a href="https://arxiv.org/abs/2311.03285">S-LoRA</a>、 <a href="https://arxiv.org/abs/2312.02515">mLoRA</a>和<a href="https://arxiv.org/abs/2602.07263">tLoRA</a>。</li><li>评估来源：<a href="https://arxiv.org/abs/2510.12712">VisualToolBench</a> 和<a href="https://fireworks.ai/blog/post-training-kimi-k3-with-harvey-for-long-horizo​​n-legal-work">已发布的客户案例研究</a>。</li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>强化学习：为什么数值与 MoE 路由的对齐如此重要</title>
+      <link>https://fireworks.ai/blog/reinforcement-learning-why-alignment-of-numerics-and-MoE-routing-matter/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/reinforcement-learning-why-alignment-of-numerics-and-MoE-routing-matter/</guid>
+      <description>原文标题：Reinforcement learning: Why alignment of numerics and MoE routing matter</description>
+      <content:encoded><![CDATA[<h2><strong>TL;DR</strong></h2>
+<ul><li>•数值不一致能让训练脱轨：在 Fireworks 的 GLM 5.2 实验中，同一算法与数据在未对齐时奖励崩塌，在对齐后 25 步内保持稳定。</li><li>•训练 MoE 模型给对齐增添了复杂性：我们的 Qwen3.5-MoE 调查发现，专家输出组合方式的差异会导致分歧——即便其中一个实现用了更高的精度。</li><li>•这些分歧会扭曲训练更新，看上去却像数据、奖励或学习率的问题，把团队引入一轮轮昂贵的实验，而根因始终未解。</li><li>•前沿训练需要训练与推理协同优化：Fireworks 把训练器与 rollout 引擎放在一起开发和验证，让团队能在数值、kernel 与 MoE 全对齐的前提下扩展强化学习。</li></ul>
+<h2><strong>规模化 RL 是一个系统问题</strong></h2>
+<p>rollout 生成可以占据强化学习（RL）大部分时间。ML 团队常用一个独立的推理引擎来高效生成 rollout。但那个引擎使用的 kernel、精度、批处理和并行方式可能与训练器不同。于是策略就有了两个实现：一个负责生成 token，一个负责计算梯度。即便权重完全相同，它们也可能给同一个 token 赋予不同的概率。</p>
+<p>如果训练算法不考虑这种不一致，就可能扭曲更新、 destabilize 学习。在混合专家（MoE）模型中，这种不一致还可能翻转路由决定。当路由器分数几乎打平时，一个舍入差异就能改变哪些专家被激活。同一个 token 于是走了模型内不同的计算路径。</p>
+<p>我们的实验展示了数值差异在哪里产生、为什么仅有 router replay 不够，以及弥合差距需要什么。</p>
+<h2><strong>我们的实验揭示了什么</strong></h2>
+<h3><strong>数值不一致能让学习脱轨</strong></h3>
+<p>在 <a href="https://fireworks.ai/blog/frontier-lab-training-infrastructure-as-a-service">Fireworks 的一项实验</a>中，我们在 GLM 5.2 上把同一个 RL 任务跑了两遍：一个 countdown 推理题，同一算法、同一训练数据。唯一的变量是训练器与 rollout 引擎计算 token 概率的方式是否一致。</p>
+<p>当两者不一致时，运行分崩离析。两套系统的分歧达到约 0.013 的 KL，而标准保护机制为了维持训练稳定，几乎要丢弃每个 batch 的 45%。即便如此还不够。奖励爬到约 0.9，随后在第 20 步左右崩到 0.2 以下——模型在追逐一个与它自己生成内容已不再匹配的目标。数值对齐后，KL 为零，什么都没丢，奖励在整个运行中保持稳定。</p>
+<blockquote>Fireworks GLM 5.2 countdown 实验：无数值对齐时奖励崩塌，对齐后在 25 个训练步中保持稳定。KL 为零的结论适用于所测的 LoRA 配置。</blockquote>
+<p>数值实现改变了结果，而算法和数据都没动。这让「训练器与 rollout 引擎的一致性」成为在修改训练配方并投入更多运行之前一项要紧的检查。</p>
+<h3><strong>混合专家模型更难对齐</strong></h3>
+<p>有了路由专家，很多「数学上等价」的优化会产生数值上不同的结果。<a href="https://fireworks.ai/blog/when-faster-not-identical-moe-numerics">Fireworks 一个针对 Qwen3.5-MoE 的训练实验</a>把一个重大数值分歧追到了专家输出的组合方式上。</p>
+<p>在图像 token 上，训练路径与 Hugging Face 参考实现的偏差达到 k3 为 0.296——约为我们用来的判定两条路径等价的 0.001 阈值的 300 倍。在这个量级上，模型的两份副本之间的分歧，差不多相当于两个不同模型之间的分歧。</p>
+<p>团队通过只把 MoE 块换成 Hugging Face 的参考模块、其余技术栈原封不动，把差距定位到 MoE 聚合。文本与图像 token 的 k3 值都降到了零。进一步调查确定了加权与求和专家输出所用精度上的差异。</p>
+<p>这一发现说明为什么只匹配专家选择并不够：组合其输出所用的数值精度与执行顺序也必须对齐。</p>
+<blockquote>Fireworks 的 Qwen3.5-MoE 实验，比较三条专家输出聚合路径及每一步所用的精度。</blockquote>
+<p>GLM 实验展示了数值不一致对学习意味着什么：一次烧着算力、奖励却在崩塌的运行。Qwen 调查展示了这种不一致多么容易躲过逐层检查。对研究者来说，其症状酷似数据、奖励或学习率的问题，于是引出更多修改配方却不触及根因的运行。</p>
+<h2><strong>数值差异如何扰乱学习</strong></h2>
+<h3><strong>概率不匹配会扭曲更新</strong></h3>
+<p>训练与推理软件常用不同的数值精度层级，或以不同的顺序执行操作。由于中间结果会被舍入，<code>(a + b) + c</code> 可能与 <code>a + (b + c)</code> 不同。跨模型的整个计算，这些差异会改变赋予同一 token 的概率。浮点加法不满足结合律，而 RL 是发现这一点最昂贵的方式。</p>
+<p>许多 RL 算法用概率比来引导更新。rollout 引擎与训练器之间未被计入的差异，能在任何学习发生之前就改变这些比率。这可能改变 token 对更新的影响强度，或因执行差异触发截断（clipping）。<a href="https://verl.readthedocs.io/en/latest/algo/rollout_corr.html">verl rollout 校正文档</a>解释了校正如何处理这一缺口。</p>
+<p>即便训练器对其 token 赋予不同概率，rollout 看上去仍可以像模像样。只检查生成的文本不会暴露这种分歧。在相同权重下比较概率能暴露它；训练-推理 KL 度量的正是这种分歧。</p>
+<h3><strong>MoE 路由会放大不一致</strong></h3>
+<p>在混合专家模型里，一个小的数值差异还能改变哪些专家处理某个 token。当路由分数几乎打平时，舍入就能把选择推向另一个专家。token 于是经过不同的权重，并可能在后续层中把分歧进一步放大。</p>
+<p><a href="https://arxiv.org/abs/2510.11370">R3 的研究者</a>证明了一致的路由对 RL 稳定性的影响。他们的 router replay 方法在 rollout 生成期间记录路由决定，并在训练期间复用。这在他们测试的设定中稳定了训练。</p>
+<p>Router replay 让专家选择保持一致，但其输出如何计算与组合上的差异仍可能存在。让 rollout 与训练器的概率对齐，需要横跨两个实现（包括 kernel、精度与执行顺序）的工程。这项工作正是可靠运行一套训练配方所需基础设施的一部分。</p>
+<h2><strong>Fireworks 让训练循环保持一致</strong></h2>
+<p>Fireworks 将训练器与 rollout 引擎一并开发，承担让快速 rollout 生成与训练保持一致所需的复杂工程。这降低了昂贵的运行因实现差异而报废的风险，把更多训练预算留给有前景配方的测试与扩展。</p>
+<p>我们的方法包含三个关键要素：</p>
+<p><strong>数值对齐：让计算一致。</strong>对齐覆盖模型在两套系统中的执行方式，包括注意力、专家计算、聚合，以及跨 GPU 的操作。</p>
+<p><strong>Router replay：用同样的专家。</strong><a href="https://docs.fireworks.ai/guides/rollout-inference#moe-router-replay">Router replay 支持</a>为使用自有训练器的团队提供 rollout 生成期间记录的专家选择。把这些记录集成进训练，训练器就能复用同样的选择。</p>
+<p><strong>验证：在全模型范围内度量一致性。</strong>在相同权重下比较 token 概率，能暴露单个操作检查会漏掉的分歧。持续验证使用训练-推理 KL，在 Fireworks Training 上线的模型上、不同 batch 条件下度量一致性。上文的 GLM 对比就是一个公开案例。</p>
+<p>前沿训练需要前沿推理。<a href="https://docs.fireworks.ai/fine-tuning/training-api/introduction">用 Fireworks Training API 运行你的 RL 训练循环</a>。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>深入 Fireworks 多区域部署：一个部署，全球规模</title>
+      <link>https://fireworks.ai/blog/multi-region-deployment/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/multi-region-deployment/</guid>
+      <description>原文标题：Inside Fireworks multi-region deployments: One deployment, global scale</description>
+      <content:encoded><![CDATA[<p><strong>TLDR；</strong> 了解何时应利用 <code>GLOBAL</code> 选项，以及我们如何架构多区域路由，把全球工作负载放置移出推理热路径，优化低延迟、韧性与运维简易性。</p>
+<p>没有任何单一区域是取之不尽的 GPU 池。</p>
+<p>Fireworks 拥有完整谱系的服务选项，并在 30 多个区域、跨数十家云厂商上全球运营，构成业内最大的独立 GPU 集群之一。然而，庞大的全球足迹只有在调度器真正被授权动用它时才能保护你的可用性。把工作负载钉死在单一区域，等于施加一个人造的容量天花板。当区域资源紧张时，下一块可用的兼容 GPU 可能坐在大洋彼岸——美国、欧洲、加拿大或 APAC 的另一个数据中心。</p>
+<p>传统做法是，团队被迫手动配置冗余的多区域端点、拼凑自定义区域路由器、无休止地腾挪 failover 逻辑。Fireworks 现已支持 <code>GLOBAL</code> 选项，让你跨地域运行工作负载。这让你的架构统一在一个部署身份、一个端点之下，卸下管理一张全球地图的运维负担。</p>
+<h2>不交延迟税的智能路由</h2>
+<p>Fireworks 对多区域放置与路由做了工程设计，让全球调度永远不会成为你实时推理流水线的瓶颈。</p>
+<p>当你的工作负载被标记为 <strong>GLOBAL</strong>，调度器会在最广的合格容量池上动态映射请求，同时严格尊重你的独特参数：</p>
+<ul><li>•加速卡类型与硬件要求</li><li>•配额与成本护栏</li><li>•可靠性等级与合规边界</li><li>•数据驻留与放置约束</li></ul>
+<p>你保有完全的治理权与单端点的简洁，而 Fireworks 吸收驾驭全球基础设施的复杂性。</p>
+<blockquote>“有了 Fireworks，我们不必用延迟换可靠性。跨多个集群运行让我们能通过自动伸缩适应区域波动，确保持续顺滑的体验。即便扩展到多区域之后，我们的响应时间仍是行业领先水平。”</blockquote>
+<blockquote>— Ishan Gupta，Juicebox CEO</blockquote>
+<ul><li>•<strong>多区域能买到什么？</strong>更多兼容容量可以汇入同一个部署。当在线节点分散各处，某个分片故障时另一分片仍可用。放置可以改变，而不需要新的公开端点。</li><li>•<strong><code>GLOBAL</code> 会让每个请求变慢吗？</strong>它不会增加一次全局调度器往返或一次全区域探测。在正常的公开 API 网关路径上，DNS 按就近原则在健康网关池之间引导，网关把首次尝试发给按控制面发布的 router record 构建的顺序中的第一个候选。到所选算力的网络距离依然要紧；这个设计消除的是每请求一次的全局路由步骤，而不是宣称物理距离消失了。</li><li>•<strong>部署能跑在哪？</strong>Fireworks 支持 <code>GLOBAL</code>、<code>US</code>、<code>EUROPE</code>、<code>APAC</code>、<code>CANADA</code> 多区域范围。实时位置与硬件列表见<a href="https://docs.fireworks.ai/deployments/regions">当前区域目录</a>。在你的本地性与数据驻留要求允许的范围内，选择最宽的边界。</li></ul>
+<p>图 1：多区域边界</p>
+<h2>生产中 99.99% 的成功率</h2>
+<p>在为期七天的生产研究中，信号指向了架构设计的初衷：可全球放置的部署组与更高的就绪节点满足率相关联，而实际形成的多集群足迹与更低的每请求响应数相关联。</p>
+<p>在带外部客户标签、可全球放置的组中，那些观测到有 2 个及以上服务集群的部署日里，请求成功率从单区域部署的 99.269% 提升到多区域部署的 99.992%。这帮助我们为可全球放置的客户部署达成 99.99% 的可靠性目标。</p>
+<p>这些是观察性信号，不是 A/B 测试，也不是普适的正常运行时间承诺。服务集群标签指基础设施集群，并非归一化后的区域；流量集中在少数账户上，且配对账户的结果互有胜负。敏感性检查保持了总体方向，但没有使其成为因果。</p>
+<p>这些数字说明了项目为何重要。而实现的故事，始于一个我们的架构解不出的等式。</p>
+<h2>为什么我们必须重写部署看待基础设施的方式</h2>
+<p>一次推理部署要 8 个节点。Virginia 有 4 个合格节点位。Iowa 还有 4 个。</p>
+<p>整个集群有 8 个。我们的旧调度器仍然拒绝这个部署。</p>
+<p>它的行为是正确的。问题就在这里。</p>
+<p>调度器问的不是“集群里有 8 个合格节点吗？”而是“有某个区域一次拿得出全部 8 个吗？”两个区域都拿不出，于是部署以 <code>RESOURCE_EXHAUSTED</code> 收场。</p>
+<p>Copy</p>
+<pre><code>12legacy:  max(4, 4) &lt; 8  → rejectglobal:      4 + 4 = 8  → place</code></pre>
+<p>四加四等于零。</p>
+<p>图 2：四加四示意图</p>
+<p>这个约束嵌在架构里：每个部署只属于单一区域。</p>
+<p>在新架构下，一个部署可以通过单一端点从多个区域汲取兼容容量。调度器尊重硬件要求、区域限制、可靠性策略与地理边界。</p>
+<h2>把全球调度移出请求路径</h2>
+<p>Fireworks 在流量到来之前就规划好放置，因此请求无需咨询调度器或探测每个区域。</p>
+<ul><li>•从就近的健康网关开始。DNS 按就近原则把请求导向健康的网关。</li><li>•路由到可用算力。网关使用提前准备好的路由信息来决定把每个请求发去哪里。</li><li>•合格就重试。出现符合条件的失败时，若路由策略允许且请求可重试，网关可以尝试另一个目标。</li></ul>
+<p>网络距离依然要紧：就近的网关也可能把请求路由到更远的算力。这个设计避开了每请求一次的全局路由步骤；它并不能消除地理延迟。</p>
+<h2>选择你的工作负载允许的最宽边界</h2>
+<p>本地性与数据驻留要求可能需要 US、EUROPE 或 APAC。对于没有这类要求的工作负载，GLOBAL 给调度器最大的空间去寻找兼容容量，或在范围内别处存在兼容供给时重新安置一个卡住的节点。</p>
+<p>图 3：选择你需要的边界</p>
+<p>你来选边界。调度器找到可行方案。网关把唯一一个端点保持挂在其上。</p>
+<p>四加四，重新等于八。</p>
+<h2>接下来</h2>
+<ul><li>•在 <a href="https://docs.fireworks.ai/deployments/regions">Fireworks 区域目录</a>中探索可用区域与硬件。</li><li>•了解更多多区域部署信息。<a href="https://fireworks.ai/contact">联系我们的销售团队</a>，或联系你的 Fireworks 支持代表，讨论适合你工作负载的正确配置。</li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>介绍 FireRouter 与 Opus</title>
+      <link>https://fireworks.ai/blog/introducing-firerouter-with-opus/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/introducing-firerouter-with-opus/</guid>
+      <description>原文标题：Introducing FireRouter with Opus</description>
+      <content:encoded><![CDATA[<p><a href="https://fireworks.ai/nexus">Fireworks Nexus</a> 使工程团队能够在他们已经使用的工具中放弃领先的开放模型，并在不牺牲速度或质量的情况下将支出减少一半。该解决方案包括 FireRouter，这是市场上第一个缓存感知路由器，它在速度和成本方面有很大的不同。</p>
+<p>今天，我们推出 <a href="https://fireworks.ai/models/fireworks/firerouter-opus">FireRouter with Opus</a>，它针对 Opus 系列进行了优化，现在在我们的 CLI 中提供，并且首次作为独立路由器模型提供。任何 Fireworks 帐户都可以将其作为无服务器端点，就像任何其他模型一样。</p>
+<p>经过一个多月的内部 A/B 测试，与单独使用 Opus 相比，FireRouter 与 Opus 一起执行编码任务的准确率达到 98.1%，成本降低了 57%。</p>
+<h2>FireRouter 是什么</h2>
+<p>如今，带有 Opus 的 FireRouter 在 Claude Opus 5.5、GLM 5.3 和 GLM 5.3 Flash 之间进行路由</p>
+<p>每个点击 FireRouter 的用户回合都会根据集合中的每个模型适合该任务的程度进行评估。然后，它会估计每个模型处理任务的成本，包括提示缓存的成本以及丢失它以切换到不同模型是否值得。最后，它会选择最能平衡质量与成本的模型。</p>
+<p>目前，用户轮流将在 Claude Opus 5.5、GLM 5.3 和 GLM 5.3 Flash 之间路由。随着新型号和版本的推出，模型集将发生变化。</p>
+<p>＃＃ 结果</p>
+<p>我们的内部编码流量位于随机分配给带有 Opus 的 FireRouter 或仅限 Opus 的对照组的会话上，跨相同的工作负载和用户。</p>
+<p>每次会话成本下降 57%（±19 个百分点），从 15.36 美元降至 6.63 美元。</p>
+<p>为了对准确性进行评分，我们验证了智能体是否完成了工作，是否得出了正确的答案，以及用户是否需要在下一回合进行任何更正。</p>
+<p>带有 Opus 的 FireRouter 的分级转弯得分为 78.7%，而仅使用 Opus 的 FireRouter 得分为 80.2%，即总体准确度为 98.1%。</p>
+<p>我们的大部分流量来自内部编码工作，其中开放模型可以处理许多常规转弯。 FireRouter 的缓存感知路由权衡了切换模型所节省的成本与丢失缓存命中的成本。结果是，FireRouter 和 Opus 的缓存命中率为 94.2%，而单独使用 Opus 的缓存命中率为 97.8%——这是一个经过深思熟虑的小权衡，大大降低了总体成本。</p>
+<h2>两行代码来尝试一下</h2>
+<p>FireRouter with Opus 现在可跨多种工具使用，包括 Claude Code、Codex、Cursor IDE 等。开始使用以下命令并了解有关 <a href="https://docs.fireworks.ai/nexus/firerouter/setup">FireRouter 文档</a> 的更多信息。</p>
+<p>巴什</p>
+<p>复制</p>
+<pre><code>12fireconnect loginfireconnect claude --model firerouter/opus</code></pre>
+<p><a href="https://app.fireworks.ai/models/firerouter-opus">登录 Fireworks</a> 查看您团队的 Claude Opus 支出的预计节省额。</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>每个字节都算数：ARCv3 与跨区域 RL 的必要性</title>
+      <link>https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/arcv3-and-the-case-for-cross-region-rl/</guid>
+      <description>原文标题：Every byte counts: ARCv3 and the case for cross-region RL</description>
+      <content:encoded><![CDATA[<h2>TL;DR</h2>
+<ul><li>•Fireworks 全新的 ARCv3 压缩器缩小了从训练器发往强化学习（RL）rollout 生成机器的 BF16 权重更新的体积。</li><li>•在 1,000 个生产环境 RL 权重更新增量（delta）上，ARCv3 生成的负载比 ARCv2 小近 50%，且能无损还原训练器精确的 BF16 权重。</li><li>•更小的传输帮助 rollout 集群更紧地贴住当前策略（policy），让跨地域使用算力变得更可行，而不必依赖一个巨大的同址集群。</li><li>•ARCv3 已随 <a href="https://docs.fireworks.ai/fine-tuning/training-api/introduction">Fireworks Training API</a> 提供，以 <code>fireworks-delta-compression</code> 包的形式服务于「自带训练器 + Fireworks rollout」的团队。</li></ul>
+<p>随着越来越多团队推进强化学习、训练自己前沿规模的模型，两件事变得空前重要：获得训练算力的途径，以及优化在训练机器之间搬运数据的管道。RL 对这些管道的要求格外苛刻。一个前沿模型可能有数万亿参数，而训练器需要在训练推进过程中，持续不断地把它的更新版本推送给生成 rollout 的机器集群。</p>
+<p>当管道跟不上时，团队就被逼向唯一的选择：一个把所有东西布在同一物理机房里、全互联的巨型集群。那很贵、很难拿到，并把小玩家挡在门外。在 Fireworks，我们穷尽一切可行路径，不让它成为唯一选项。否则，我们最终会面对一个只有少数几家公司进得了的训练市场。</p>
+<p>在此前的文章<a href="https://fireworks.ai/blog/frontier-rl-is-cheaper-than-you-think">《前沿 RL 比你想象的便宜》</a>中，我们讲过如何让跨区域 RL 真正落地。核心观察是：在我们考察的 RL 工作负载中，相邻 checkpoint 之间只有约 2% 的 BF16 权重发生变化。因此，我们不必在训练器每走一步时就把完整的 1 TB checkpoint 发往每台 rollout 机器，而是发送一个紧凑的 delta——一份「变了什么」的压缩描述——并在另一端重建更新后的模型。正是这一点让一次训练运行在三个或四个区域之间保持同步，而不需要集群之间的专用高带宽网络。</p>
+<p>这个 delta 的大小决定了该方案在实践中效果如何。更小的 delta 让 rollout 集群更新更快、更贴近当前策略，并能拉取跨地域的可用算力。更大的 delta 则意味着训练器开始跑赢 rollout、集群数据过时，多区域架构相对单一巨型集群的优势也开始瓦解。</p>
+<blockquote>ARCv3 delta 如何从训练器到达 rollout：每个训练器分片（shard）并行地把压缩后权重增量的自己那一份上传到共享对象存储（S3）。随后 Fireworks API 通知每个区域有新更新可用，各 rollout 区域拉取自己需要的部分并在本地重建更新后的模型。训练器从不直接与 rollout 集群通信——这正是全球分布式推理集群能靠普通网络链路保持同步的原因。</blockquote>
+<p>我们发布 ARCv3，即我们用于构建这些 delta 的压缩器的最新版本。这些改进适用于 BF16 权重：ARCv3 生成的负载约为上一版本的一半，平均 delta 负载约为原始 BF16 权重大小的 0.19%，低于此前的 0.36%（越低越好）。压缩是无损的：rollout 端重建出的模型与训练器产出的逐比特一致。ARCv3 已随 Fireworks Training API 提供，以 <code>fireworks-delta-compression</code> 包的形式服务于「自带训练器 + Fireworks rollout」的团队。</p>
+<h2>ARCv3 内部机制：更新与更新并不平等</h2>
+<p>改进源自 BF16 权重在训练步之间变化方式的一个特定属性。</p>
+<p>我们运行生产 RL 训练会话并观察 checkpoint 之间实际发生的事情，发现了一种强烈的不对称。在给定步上发生变化的大约 2% 的 BF16 权重中，绝大多数只是尾数（mantissa）移位，而指数（exponent）和符号（sign）保持不动。触及指数的更新很少见，翻转符号的更新更罕见。换句话说，大多数权重更新是轻推，不是跳跃。</p>
+<p>ARCv3 把这种不对称直接编码进去。未变化的权重值从负载中省略；仅尾数变化的贡献只有它的尾数位；较罕见的更新（指数移位或符号翻转）被单独打包，每个更新的变更字段作为一个整体块一起编码。在 rollout 端，两个流都应用到上一个 checkpoint 上，并把结果与训练器的原始值做校验和（checksum）比对，以验证重建一致。</p>
+<blockquote>ARCv3 如何编码一个权重块。每对 prev/next 做 XOR，并按哪些字段真正变了来分类。未变化的权重值（XOR 为零）从输出中省略。仅尾数变化（常见情形）只贡献其尾数位（图中高亮）。较罕见的更新——指数移位或符号翻转——连同变更字段作为一个块打包。输出流的形状由「变了什么」决定，而不是由输入格式的固定宽度决定。</blockquote>
+<p>对模型中的每个张量（tensor），ARCv3 还并行运行多种通用压缩算法，保留输出最小的那一个。这比预先选定单一算法更耗 CPU，但训练器机器上 GPU 在做实际训练时通常有闲置的 CPU 周期，所以花掉它们是划算的。</p>
+<h2>ARCv3 与业界方案对比</h2>
+<p>我们在来自生产 RL 工作负载的 1,000 个真实权重更新 delta 上，把 ARCv3 与三种替代方案做了基准对比。所有更新都是 BF16，四个压缩器都无损运行，因此我们比较的是纯负载大小：描述同一个权重更新，每个压缩器需要多少字节。</p>
+<p>ARCv3 的对照方案是：</p>
+<ul><li>•<strong>ARCv2</strong>，我们自己压缩器的上一版本。</li><li>•<strong>PULSESync</strong>，来自论文 <a href="https://arxiv.org/abs/2602.03839">Understanding and Exploiting Weight Update Sparsity for Communication-Efficient Distributed RL</a>（Miahi &amp; Belilovsky, 2026）的权重同步算法。PULSESync 同样利用 BF16 权重更新的稀疏性，采用稀疏补丁（sparse-patch）设计。</li><li><a href="https://huggingface.co/blog/delta-weight-sync?utm_source=chatgpt.com"><strong>Hugging Face TRL 中的 delta 压缩实现</strong></a>。</li></ul>
+<table><thead><tr><th>压缩器</th><th>压缩后 / 原始 BF16 权重比</th></tr></thead><tbody><tr><td>压缩器</td><td>压缩后 / 原始 BF16 权重比</td></tr><tr><td>ARCv3</td><td>0.19%</td></tr><tr><td>PULSESync</td><td>0.35%</td></tr><tr><td>ARCv2</td><td>0.36%</td></tr><tr><td>HF TRL（草案）</td><td>0.67%</td></tr></tbody></table>
+<p>这里越低越好，ARCv3 在本次基准中产生最小负载。在被测的 BF16 权重张量上，ARCv3 把压缩后的 delta 缩到次优方案的大约一半。每个 rollout 区域拉取自己需要的 delta 分片，重建出与训练器逐比特一致的 BF16 权重。这帮助全球分布的 rollout 集群更贴近当前策略——这正是跨区域 RL 能规模化的原因。</p>
+<h2>使用 ARCv3</h2>
+<p>如果你为了 rollout 使用 Fireworks Trainer SDK，什么都不用做，因为 ARCv3 已经是默认选项。你的 rollout 集群会自动获得更小的传输，无需改动任何代码。</p>
+<p>如果你自带训练器并使用 Fireworks 做 rollout，可以通过 <code>fireworks-delta-compression</code> 包直接集成 ARCv3。完整集成流程见 <a href="https://docs.fireworks.ai/fine-tuning/rl-rollout-integration">Fireworks rollout 文档</a>。</p>
+<p>bash</p>
+<p>Copy</p>
+<pre><code>1pip install fireworks-delta-compression</code></pre>
+<p>python</p>
+<p>Copy</p>
+<pre><code>123456789101112131415161718192021import torchfrom fireworks_delta_compression import delta_compress, delta_decompress
+src = torch.randn(1024, 1024, dtype=torch.bfloat16)dst = src + 1e-3 * torch.randn_like(src)
+compressed_diff, checksum = delta_compress(    src=src,    dst=dst,    compression_format=&quot;arc_v3&quot;,)
+restored = delta_decompress(    src=src,    compressed_diff=compressed_diff,    checksum=checksum,    compression_format=&quot;arc_v3&quot;,)
+# bit-for-bit identical to the originalassert torch.equal(restored.view(torch.uint8), dst.view(torch.uint8))</code></pre>
+<h2>让分布式算力为 RL 服务</h2>
+<p>RL 的权重更新是有结构的，而压缩器可以利用这种结构。把罕见的指数变化与常见的尾数更新分开处理，再在其上让几种通用编解码器同场竞技——这让我们以相对较低的额外 CPU 成本，获得了较我们自己上一版本近乎翻倍的压缩率。</p>
+<p>我们在这条路上持续用力，是因为从 delta 上省下的每一个字节，都是在训练步中不必跨越大洲搬运的一个字节。这让我们更接近于让「跨三个四个区域集群训练」感觉像在同一栋楼里训练。它帮助更多团队在想法上竞争，而不是在能买到多少同址算力上竞争。</p>
+<p>对于构建专用模型的团队，回报是扩展 RL 时更灵活的方式。Fireworks 负责跨 rollout 区域的权重分发与同步。</p>
+<p>ARCv3 是我们目前到达的位置。我们会继续推进。</p>
+<p><a href="https://docs.fireworks.ai/fine-tuning/rl-rollout-integration"><strong>把你的训练器带到 Fireworks。</strong></a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>DeepSeek-V4.1-Flash on Fireworks: Astra-level DeepSWE at 1/1…</title>
+      <link>https://fireworks.ai/blog/deepseek-v4-1-flash-vs-astra-benchmarks/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/deepseek-v4-1-flash-vs-astra-benchmarks/</guid>
+      <description>完整标题：DeepSeek-V4.1-Flash on Fireworks: Astra-level DeepSWE at 1/15th the cost</description>
+      <content:encoded><![CDATA[<p>上周，Fireworks发布了最新的<a href="https://fireworks.ai/models/deepseek-ai/deepseek-v4p1-flash">DeepSeek-V4.1-Flash</a>。在通过全套基准测试后，结果表明它在质量、速度和成本等关键权衡方面设定了新的帕累托前沿。在 DeepSWE 上，它以每个任务价格的 1/15 达到了 GPT-6 Astra 级别的编码精度。</p>
+<p>开发人员经常问我们如何选择合适的模型。事实上，模型只是地图上的一个点，但您的应用程序是一个完整的系统。人工智能的能力是参差不齐的，这意味着一个能够出色地处理一项任务的模型可能会在处理另一项任务时遇到困难。由于没有单一模型能够胜任所有场景，因此工作负载设计归根结底就是将正确的模型与正确的任务相匹配，无论您需要低延迟处理还是复杂推理的深度计算。</p>
+<p>图 1：您的工作负载是一个任务系统</p>
+<p>以下是 DeepSeek-V4.1-Flash 在不同工作负载上的实际执行情况以及它适合您的堆栈的位置。</p>
+<h2>DeepSWE Pareto 前沿上的 DeepSeek</h2>
+<p>我们评估了 DeepSWE 基准，以了解模型如何平衡准确性和每项任务的成本。</p>
+<p>型号</p>
+<p>努力</p>
+<p>通过@1</p>
+<p>成本/任务</p>
+<p>DeepSeek V4.1-闪存</p>
+<p>最大</p>
+<p>74.34%</p>
+<p>0.430 美元</p>
+<p>GPT-6-阿斯特拉</p>
+<p>高</p>
+<p>74.12%</p>
+<p>$6.524</p>
+<p>Gemini3.8闪存</p>
+<p>高</p>
+<p>73.83%</p>
+<p>$2.362</p>
+<p>Claude Opus 5</p>
+<p>最大</p>
+<p>73.65%</p>
+<p>$11.838</p>
+<p>从品质上来说，这四款车型属于同一级别。在 DeepSWE 上，所有四个模型在 pass@1 上的得分都在 0.7 分之内，而我们的运行间差异为 1.4 到 3.2 分，因此该组中没有一个模型在质量上远远领先于其他模型。差异完全在于成本：Fireworks 上的 DeepSeek-V4.1-Flash 以每项任务 0.43 美元的价格提供相同的精度范围，比 Gemini 3.8 Flash 低 5.5 倍，比 GPT-6 Astra 低 15 倍，比 Claude Opus 5 低 28 倍。</p>
+<p>新的 DeepSeek-V4.1-Flash 模型从根本上改变了自主软件工程任务的单位经济性。在 GPT-6 Astra 和 Opus 5 等昂贵的封闭模型上运行高迭代代理工作流程、多轮错误扫描或大规模测试生成会迅速耗尽工程预算。每项任务只需 0.43 美元，前沿级 SWE 代理就可以作为连续的后台基础设施。借助 DeepSeek V4.1 Flash，您现在只需一次 Astra 调用的价格即可运行 15 次自主编码尝试。</p>
+<h2>底层：新的分割激活架构</h2>
+<p>DeepSeek-V4.1-Flash是DeepSeek新架构系列中最小的型号，并具有一些新的架构增强功能。</p>
+<p>它由 552B 参数 MoE 和新的编码器-解码器分离架构组成。在此架构中，模型不是将整个前向传递的激活预算分为 8B 个用于输入的活动参数，以及 16B 个用于输出的<strong>。</strong> 这会带来更高效的设计，从而带来更经济的代币支出。</p>
+<p>这种不对称性与编码代理的运作方式一致。典型的代理轨迹输入量很大。编码代理经常重新读取文件，重新读取自己的暂存器，重新读取工具输出，并发出相对较小的补丁。在我们的 DeepSWE 运行中，模型每个任务消耗 3690 万个输入令牌，与 211K 个输出令牌，比率为 174:1。这种架构使开发人员能够在输入端花费一半的计算量，而输入端通常是存在较大比例代币的地方。</p>
+<h2>KV缓存优化</h2>
+<p>与上一代 DeepSeek V4 相比，DeepSeek 提高了 DeepSeek-V4.1-Flash 上的 KV 缓存利用率，仅消耗 1/4 的 HBM 和 1/8 的 SSD 存储。</p>
+<p>![图2：DeepSeek-V4.1-Flash上的KV缓存](https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2Fho rizon%2Fb69dce75214f5d252d0e654a4ee2b62ae3bef346-3801x1950.png%3Fauto%3Dformat&amp;w=3840&amp;q=75)</p>
 <p>图 2：DeepSeek-V4.1-Flash 上的 KV 缓存</p>
-<p>这套新的 KV 缓存优化为你的编码智能体解锁了更好的经济性。从 DeepSWE 运行中，我们得到如下成本结构：</p>
-<table><thead><tr><th>成本项</th><th>每任务 Token 数</th><th>单价</th><th>每任务成本</th><th>占比</th></tr></thead><tbody><tr><td>成本项</td><td>每任务 Token 数</td><td>单价</td><td>每任务成本</td><td>占比</td></tr><tr><td>未缓存输入</td><td>148,741</td><td>$0.22/M</td><td>$0.0327</td><td>7.6%</td></tr><tr><td>缓存命中输入</td><td>36,744,586</td><td>$0.007/M</td><td>$0.2572</td><td>59.9%</td></tr><tr><td>输出</td><td>211,513</td><td>$0.66/M</td><td>$0.1396</td><td>32.5%</td></tr><tr><td>合计</td><td></td><td></td><td>$0.4295</td><td></td></tr></tbody></table>
-<p><strong>这次运行中 99.6% 的输入 token 是缓存命中，而缓存命中的计费占了账单的 60%。</strong></p>
-<p>大多数人以为智能体的成本主要来自为模型生成的内容付费。然而在长时运行的智能体循环中，大部分开销来自反复重读同一段上下文。正是这种因重复任务产生的持续支出，让 KV 缓存内存 4 倍的削减对 token 花费产生了更大的影响。它直接命中智能体设计中最大的成本驱动项，把 74% 档位的 DeepSWE 得分对应的成本压低 15 倍。SSD 开销 8 倍的削减则与 HBM 优化形成互补，让长轨迹下的缓存命中率保持在约 99%。</p>
-<h2>Terminal-Bench 2.1：落后 Astra 一分，价格便宜 12 倍</h2>
-<p>在另一个任务上，我们看到了类似的结论：DeepSeek-V4.1-Flash 正以一小部分成本逼近前沿。</p>
-<table><thead><tr><th>模型</th><th>准确率</th></tr></thead><tbody><tr><td>模型</td><td>准确率</td></tr><tr><td>GPT-6-Astra</td><td>87.5%</td></tr><tr><td>DeepSeek-V4.1-Flash</td><td>86.5%</td></tr></tbody></table>
-<p>Terminal-Bench 2.1 的结果是质量上仅差一分，但经济性差别巨大。DeepSeek-V4.1-Flash 平均使用的输出 token 约是 Astra 的 4 倍，也就是说它想得更久、写得更多。仅看输出定价，结果就是成本优化了 20 倍。把所有项都算上——未缓存输入、缓存命中、输出——DeepSeek-V4.1-Flash 在几乎相同的质量下实现每任务成本降低 12 倍。</p>
-<h2>HLE 与 oracle 路由器评测</h2>
-<p>我们跑了第三个基准任务：Humanity's Last Exam，即 HLE。这是一个多模态基准，用于衡量 LLM 在研究生学科学术问题上的极限。在这轮测试中，我们还做了带 oracle 路由器的基准对比，做法与我们此前对 <a href="https://fireworks.ai/blog/kimik3-fable">Kimi K3</a> 和 <a href="https://fireworks.ai/blog/DeepSeekV4Pro-Fable5">DeepSeek V4 Pro</a> 的评测类似。快速回顾：oracle 路由是一种测量理论上最佳性能的方法——让每个模型都跑一遍任务，然后挑选成本最优的正确答案，从而确定成本与性能的上界。</p>
-<table><thead><tr><th>配置</th><th>HLE 得分</th></tr></thead><tbody><tr><td>配置</td><td>HLE 得分</td></tr><tr><td>DeepSeek-V4.1-Flash</td><td>34.52%</td></tr><tr><td>GPT-6-Astra</td><td>50.40%</td></tr><tr><td>Oracle 路由器（GPT-6-Astra + DeepSeek-V4.1-Flash 取最优）</td><td>54.80%</td></tr></tbody></table>
-<p>在 HLE 上，单独运行的 DeepSeek-V4.1-Flash 落后于 Astra。这说明 DeepSeek 单独使用时更适合 DeepSWE 这样的智能体编码任务，而非 HLE 这样的推理任务。如果你的工作负载只有高难度科学推理，它可能不是正确选择。</p>
-<p>真正有意思的结果是 oracle 路由器，它揭示了路由和多模型系统的重要性。Astra 加 DeepSeek V4.1 的 oracle 路由器表现优于单独使用 GPT-6 Astra。这 4.4% 的差距只有在 V4.1-Flash 答对了一批 Astra 答错的问题时才可能实现——34.52% 并不是 50.40% 的子集，两个模型失败在不同的题目上。需要注意的一点是：oracle 路由器代表你的应用可能达到的上界。真实路由器未必能吃到全部 4.4 个百分点的差距，但 oracle 路由器证明了模型系统超越单独的 Astra 模型的可能性。</p>
-<h2><strong>开始使用 DeepSeek-V4.1-Flash</strong></h2>
-<p>Fireworks 的 DeepSeek-V4.1-Flash 以十五分之一的每任务成本在编码准确率上追平 GPT-6 Astra 等顶级模型，树立了新的成本-性能基线。其 552B MoE 设计采用输入/输出分裂的激活预算，配合升级版 KV 缓存削减了 HBM 用量，为你的编码智能体带来更优的经济性。它在复杂学术推理上会落后（HLE 34.52%，对 Astra 的 50.40%），但由于它解出的是与 Astra 不同的问题，把两者放进一个路由系统中配对使用，就能以一小部分预算击败单独的 Astra。</p>
-<h5>你今天就可以开始构建：</h5>
-<ul><li>•Serverless 与专用 API：直接在 Fireworks serverless 上<a href="https://fireworks.ai/models/deepseek-ai/deepseek-v4p1-flash">开始使用</a> DeepSeek-V4.1-Flash，或为生产工作负载使用专用容量。•敬请期待，面向受监管行业的美国托管端点即将上线</li><li>•如有兴趣，请<a href="https://fireworks.ai/contact-training">联系</a>我们团队了解即将推出的训练支持。</li></ul>
-<p>要在你的工作负载上试用它？我们很想听听你的体验，请在 X 上 @ 我们（@FireworksAI_HQ），告诉我们你在构建什么！</p>]]></content:encoded>
+<p>这种新的 KV 缓存优化可以为您的编码代理带来更好的经济效益。从 DeepSWE 的运行来看，我们得到了以下经济效益：</p>
+<p>成本构成</p>
+<p>代币/任务</p>
+<p>率</p>
+<p>成本/任务</p>
+<p>分享</p>
+<p>未缓存的输入</p>
+<p>148,741</p>
+<p>$0.22/月</p>
+<p>$0.0327</p>
+<p>7.6%</p>
+<p>缓存输入</p>
+<p>36,744,586</p>
+<p>$0.007/月</p>
+<p>$0.2572</p>
+<p>59.9%</p>
+<p>输出</p>
+<p>211,513</p>
+<p>$0.66/月</p>
+<p>$0.1396</p>
+<p>32.5%</p>
+<p>总计</p>
+<p>0.4295 美元</p>
+<p><strong>本次运行中 99.6% 的输入令牌是缓存命中，缓存命中费用占账单的 60%。</strong></p>
+<p>大多数人认为你的代理经济学导致你主要为模型生成的东西付费。然而，在长时间运行的代理循环中，大部分支出来自重复重新读取相同的上下文。这种重复任务的支出循环使 KV 缓存内存减少 4 倍，对您的代币支出产生更大的影响。它直接针对代理设计中最大的成本驱动因素，将 74% 级的 DeepSWE 分数降低了 15 倍。 SSD 开销减少了 8 倍，对 HBM 优化起到了补充作用，使长轨迹上的缓存命中率保持在 99% 左右。</p>
+<h2>Terminal-Bench 2.1：比 Astra 落后一分，价格便宜 12 倍</h2>
+<p>在另一项任务中，我们看到类似的 DeepSeek-V4.1-Flash 正在以一小部分成本接近前沿。</p>
+<p>型号</p>
+<p>准确度</p>
+<p>GPT-6-阿斯特拉</p>
+<p>87.5%</p>
+<p>DeepSeek-V4.1-闪存</p>
+<p>86.5%</p>
+<p>Terminal-Bench 2.1 的结果在质量上只占一分，但经济性却截然不同。 DeepSeek-V4.1-Flash 平均使用的输出代币比 Astra 多大约 4 倍，这意味着它思考的时间更长、写入的内容更多。仅就输出定价而言，结果是最成本优化的 20 倍。当您将所有内容（包括未缓存的输入、缓存命中和输出）结合起来时，DeepSeek-v4.1-Flash 可以在几乎相同的质量下将每个任务的成本降低 12 倍。</p>
+<h2>HLE 和 Oracle 路由器评估</h2>
+<p>我们运行了第三个基准测试任务，人类的最后考试，也称为 HLE。这是一个多模式基准，用于衡量LLM跨研究生水平学术科目的局限性。在此测试中，我们还使用 Oracle 路由器进行了一些基准测试，类似于我们对 <a href="https://fireworks.ai/blog/kimik3-fable">Kimi K3</a> 和 <a href="https://fireworks.ai/blog/DeepSeekV4Pro-Fable5">DeepSeek V4 Pro</a> 所做的测试。快速回顾一下：预言机路由是一种通过每个模型运行任务来测量最佳理论性能的方法，然后选择成本优化的正确选项来建立成本和性能上限。</p>
+<p>配置</p>
+<p>HLE分数</p>
+<p>DeepSeek-V4.1-闪存</p>
+<p>34.52%</p>
+<p>GPT-6-阿斯特拉</p>
+<p>50.40%</p>
+<p>Oracle 路由器（最佳 GPT-6-Astra + DeepSeek-V4.1-Flash）</p>
+<p>54.80%</p>
+<p>在 HLE 上，DeepSeek-V4.1-Flash 单独运行时落后于 Astra。这表明 DeepSeek 本身比 HLE 等推理任务更适合 DeepSWE 等代理编码任务。如果您的工作量只是硬科学推理，那么这可能不是正确的选择。</p>
+<p>Oracle 路由器是这里有趣的结果，它显示了路由和多模型系统的重要性。 Astra 加上 DeepSeek V4.1 的 oracle 路由器的性能比单独的 GPT-6 Astra 更好。只有 V4.1-Flash 正确回答了 Astra 错误的一组有意义的问题，才能实现 4.4% 的差异。 34.52% 不是 50.40% 的子集；这两种模型在不同的问题上失败了。需要考虑的是，oracle 路由器是您的应用程序可能的上限。真正的路由器可能无法捕获全部 4.4 个百分点的差异，但 Oracle 路由器显示了模型系统比独立 Astra 模型实现更好的可能性。</p>
+<h2>DeepSeek-V4.1-Flash 入门</h2>
+<p>Fireworks 的 DeepSeek-V4.1-Flash 设定了新的性价比基准，其编码精度与 GPT-6 Astra 等顶级模型相匹配，每任务成本仅为 1/15。其 552B MoE 设计采用分割输入/输出激活预算以及升级的 KV 缓存，可减少 HBM 使用量，从而为编码代理带来更好的经济效益。它在复杂的学术推理上落后了（HLE 为 34.52%，而 Astra 为 50.40%），但由于它解决的问题与 Astra 不同，因此将两者配对在路由系统中比单独使用 Astra 的预算要少得多。</p>
+<h5>今天开始构建的方法如下：</h5>
+<ul><li>无服务器和专用 API：<a href="https://fireworks.ai/models/deepseek-ai/deepseek-v4p1-flash">开始</a>，直接在 Fireworks 无服务器上使用 DeepSeek-V4.1-Flash，或使用专用容量来处理您的生产工作负载。敬请关注，美国托管端点即将面向受监管行业推出</li><li>如果您有兴趣，请联系我们的团队以获取即将到来的培训支持。</li></ul>
+<p>在您的工作负载上尝试一下吗？我们很想听听您的体验，因此请在 X (@FireworksAI_HQ) 上标记我们，让我们知道您正在构建什么！</p>
+<ul><li><a href="https://fireworks.ai/blog?blogTypes=Model%20release">模型发布</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>飞跃到专业智能</title>
+      <link>https://fireworks.ai/blog/specialized-intelligence-train-your-own-model/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/specialized-intelligence-train-your-own-model/</guid>
+      <description>原文标题：Making the leap to specialized intelligence</description>
+      <content:encoded><![CDATA[<h2>长篇大论；博士</h2>
+<ul><li>用专业智能训练您自己的模型意味着拥有让您的公司独一无二的东西</li><li>通向专业智能的道路可以从租用封闭边界开始，但不可避免地会导致训练开放模型</li><li>关于公司为何转向训练自己的模型的常见模式出现</li></ul>
+<blockquote>这是针对正在涉足培训或对培训需要什么感到好奇的工程师的专业情报系列中的第一篇文章。</blockquote>
+<h2>专业智能之路</h2>
+<p>团队决定训练自己的模型有以下几个原因：</p>
+<ul><li>担心封闭的前沿实验室会进入他们的领域</li><li>一般模型在垂直方向上无法达到的质量标准</li><li>API 账单对于他们实际需要的情报来说太高</li></ul>
+<p>所有这些背后都有着相同的本能：拥有定义其业务的专业情报。这篇文章是关于让你到达那里的道路。</p>
+<p>首先，您可以租用最强大（通常是最昂贵）的封闭式LLM，围绕该模型设计专门的线束、系统和组件，以提高其任务性能。一旦这些组件达到极限，您就可以迁移到更便宜但仍然有效的开放模型，以降低成本，同时最大限度地提高效用。最后，如果问题确实是您的问题，您决定通过训练自定义模型来完全拥有智能。</p>
+<h2>第一阶段：租用封闭边界</h2>
+<p>几乎每个人都从 API 背后的封闭边界模型开始。这是有道理的<strong>：</strong>这些提供商花费巨额资金在尽可能的地方营销他们的模型<strong>，</strong>试图让你加入。这些模型非常强大，并且由于其他人承担了培训和服务它们的成本，因此您需要通过代币成本按使用量付费。</p>
+<p>缺点很深，但您可能会遇到以下三个主要缺点：</p>
+<p>该模型过于笼统，需要提示才能以专门的方式做任何事情。当它有效时，它就有效，但这个模型是由其他人为其他所有人塑造的。</p>
+<p>封闭式 API 从任何意义上来说都是一种租赁。您无法控制模型权重、价格、延迟、弃用时间表，并且在大多数情况下，您无法控制数据。</p>
+<p>您向团队支付的代币溢价和企业订阅是所有费用的来源：您从未接触过的基础设施、营销活动、为这些活动提供建议的顾问以及使实验室保持领先地位的研发。您正在补贴一台您不拥有且无法驾驶的机器。</p>
+<p>经过他们在模型中投入的所有工作之后，封闭前沿LLM确实非常强大，但它们也过于笼统，需要提供相关的背景信息才能在日常工作中发挥作用。进入人工智能工程。</p>
+<h2>第 2 阶段：人工智能工程 - 提示、背景和利用，天哪！</h2>
+<p>过去几年，人工智能工程经历了明显的升级，每一层的添加都可以从我们租用的现成模型中挤出更多东西。首先是<strong>即时工程</strong>：少数例子和思路表明，改变我们的要求方式会引发更强大、更一致的行为。随着我们越来越多地通过管道进入上下文窗口（通常用于检索增强生成（RAG）），这变成了<strong>上下文工程</strong>，以使模型与不断变化的信息保持同步。一旦处理了提示和上下文，代理就会到达并用工具调用循环填充同一窗口，因此我们转向<strong>利用工程：</strong>对话压缩、工具优化、MCP 等，将上下文窗口视为预算而不是桶。</p>
+<p>整个过程都是人类在弥补一个永远不会改变的模型的工程缺陷。</p>
+<p>这是大多数严肃团队长期处于的阶段，也是你第一次开始真正感受到自己拥有自己的人工智能。提示、工具使用和 RAG 可以让你走得更远；但有一个上限。您安全带中的每个型号仍然与货架上的型号相同。你的提示和工具可以指导模型，但它们不会教给他们任何东西。该工具了解有关您业务的所有信息，它会以您支付的代币形式重新解释每个请求，并提示您重新粘贴到下周可能会弃用的模型中。</p>
+<p>每个人工智能系统实际上都在三个轴上进行优化：<strong>质量</strong>（是否足够好？）、<strong>成本</strong>（你能大规模承受吗？）和<strong>延迟</strong>（是否足够快？）。人工智能工程是在不触及模型本身的情况下推动这三者的努力，在你达到其中任何一个的上限之前，它可以让你走很长的路。解决性能上限很困难，这就是为什么大多数人首先致力于优化成本和延迟，而实现这一目标的最有效方法之一是混合开放模型。</p>
+<h2>第三阶段：添加开放模型</h2>
+<p>如今，前沿开放模型往往以前沿封闭模型成本的一小部分来完成工作，并且根据任务的不同，质量差距很小或不存在。</p>
+<p>这个阶段是由<strong>单位经济和控制</strong>定义的，而不是意识形态。到了这个阶段，您现在需要决定模型的运行位置、响应速度、数据会发生什么情况，以及为每个令牌和每个任务支付的费用。要选择正确的模型（开放式或封闭式），您可以依靠报告的基准，或者更好的是，根据您自己的任务评估候选人。</p>
+<p>基准并不总是代表您实际所做的工作。也许您的金融科技用例比基准示例更小众，或者您的法律问题跨越十几个领域不断变化的理念。基准是一种不错的入围方式。您自己的<strong>评估</strong>（针对您的特定任务对人工智能系统进行系统的本土测试）将始终是最好的性能指标。</p>
+<p>基准测试</p>
+<p>Kimi K3（极限推理）</p>
+<p>GPT 5.6 Sol（最大推理）</p>
+<p>操作系统世界2.0</p>
+<p>58.3</p>
+<p>62.6</p>
+<p>用户界面板</p>
+<p>87.7</p>
+<p>87.7</p>
+<p>假设您正在构建需要导航 UI 来提取信息、与屏幕上的元素交互或只是回答问题的代理。这称为<strong>计算机使用</strong>，并且有这方面的基准。例如，如果您查看 <a href="https://osworld-v1.xlang.ai/"><strong>OSWorld 2.0</strong></a> 的排行榜，这是多模式计算机使用的基准（意味着人工智能在视觉上查看浏览器并实际导航它来解决任务），GPT 5.6 Sol 仅击败 Kimi K3 几个百分点。你可以简单地称其为平局，并选择更便宜的 Kimi K3，但我们总有更深层次的选择。</p>
+<p>让我们以另一个供计算机使用的数据集为例。它名为 <a href="https://huggingface.co/datasets/macpaw-research/UiPad"><strong>MacPaw UIPad</strong></a>，其中包含 1,000 多个屏幕截图示例以及问题和答案。该数据集不是通用基准，而是作为计算机使用的公开测试而存在。当我在这个数据集上运行 K3 和 Sol 时，它们在 UIPad 上都获得了相同的等级，但 Sol 在该数据集上运行的成本为 115 美元，而 K3 的成本为 56 美元（便宜超过 2 倍）。</p>
+<p>到目前为止，这似乎与 OSWorld 的结果相同。两种模型的表现与另一种模型一样好，但其中一种更便宜：做出决定。但该数据集有一些有趣的地方：它分为四个类别，如果我们深入研究每个类别，就会出现一些有趣的情况：</p>
+<ul><li><strong>是/否</strong>问题 - K3 获胜</li><li>答案为 <strong>数字</strong> 的问题 - K3 获胜</li><li>有自然语言答案的问题 - 平局</li><li><strong>协调</strong>问题，其中人工智能必须在所要求的项目周围画一个方框 - Sol 获胜</li></ul>
+<p>K3 和 Sol 在 UIPad 测试集上的总得分为 87.7，但类别划分是不平衡的：K3 获胜或平局四分之三，而 Sol 则领先 13 分。这个差距是路由的一个论点。</p>
+<p>提前知道 K3 在 3/4 类别上平局或获胜，同时更便宜意味着您可以将协调任务路由到 Sol，将其他所有任务路由到 K3，并最终得到一个更强大、更便宜的整体系统。</p>
+<p>设计出最强大的系统，并可以自由地试验地球上最强大的人工智能模型，这确实令人陶醉，但同样，这是有上限的。人工智能工程是自有智能的创可贴，而不是真正的解决方案。</p>
+<h2>第四阶段：训练——拥有你的专业智力</h2>
+<p>在某些时候，你的业务逻辑、你的分类、你的内部风格、你的客户的怪癖都是产品。这就是这三种动机，加上它们背后的主人翁本能，不再是考虑培训的理由，而是开始成为这样做的理由。 <strong>训练</strong>（又名微调，即适当更改模型智能的行为）是您如何停止在每个请求上重新指定这些参数并将它们移至您控制的模型权重中。该模型不再是您通过代币租用的通用工具，而是成为您拥有的资产。</p>
+<p>在实践中，训练模型表现为五种常见模式。通过在现成的 AI 模型已经具有基础智能水平的前提下进行操作，这些模式可以塑造模型的智能，使其专门针对您的数据和工作流程。</p>
+<h3>“教授模型我们的分类法”</h3>
+<p>这是最广泛、最包容的模式。一般来说，我们需要我们的模型从任务的通用解释（通常通过公共基准测试）转变为任务的更具体版本（通过内部测试集的评估进行测试）。</p>
+<p>分类和提取是两个典型的例子。想象一下，将支持票分为 17 个主题之一（即分类），升级到正确的团队（也是分类），读取费用跟踪收据（提取）。这些听起来很简单，但模型不知道您的决策边界，也不知道只有您理解的两个主题之间的细微差别。你可以及时提出建议，但你却要永远为这些代币付出代价，而且仍然在灰色地带赌博。给模型几百到几千个“输入→我们实际使用的标签”的例子，它就会停止猜测你的分类法并开始了解它。</p>
+<p>我们的 UIPad 示例也符合这种模式。它既不是提取也不是分类，但我们试图让我们的模型理解任务的特定版本。那么让我们来测试一下（双关语）。计划如下：</p>
+<ul><li>将 UIPad 数据集拆分为训练/测试集这样我们就可以更有信心模型可以将其学习内容从训练集推广到测试集上未见过的数据</li><li>在测试集上运行 Kimi K3 和 GPT 5.6 Sol 以获得基线分数注意，我之前向您展示了 <strong>整个</strong> 数据集的分数，而不是分割的，所以我们需要再次执行此操作以获得公平的比较</li><li>在训练集上训练 K3，<strong>不是</strong>测试集我使用了 Fireworks <a href="https://docs.fireworks.ai/fine-tuning/training-api/serverless">无服务器训练 API</a>我将我的编码代理指向我们的 <a href="https://github.com/fw-ai/cookbook">cookbook 的训练技能</a> 文件并让它完成其余的工作</li><li>针对相同的测试集运行新的训练模型以获得最终分数</li></ul>
+<p>Base K3 在持续测试中落后于 Sol；经过大约三个小时的训练后，tuned K3 清除了它。</p>
+<p>瞧！经过仅 3 小时的训练，我们经过调整的 K3 模型现在<strong>优于 GPT 5.6 Sol。</strong> 这只是如何将独特数据与现成模型相结合以创建具有真正专业智能的模型的示例之一。</p>
+<h3>“按照我们的方式写作”</h3>
+<p>如果你使用人工智能来撰写营销简报、临床笔记、法律草案、博客文章等内容，你可能会注意到人工智能的输出本身可能并没有错，但它们只是不是你写笔记的方式或你的公司如何构建简报的方式。风格是一种行为，而不是事实，提示可以在短时间内保持风格，但它会随着时间的推移而漂移。</p>
+<p>例如，<a href="https://fireworks.ai/blog/Heidi-Health">Heidi</a>，每个医学专业训练不同的模型，因为精神病学笔记和骨科笔记是不同的写作体裁，即使它们来自相同的事实来源。我们在法律（<a href="https://fireworks.ai/blog/post-training-kimi-k3-with-harvey-for-long-horizo​​n-legal-work">Harvey</a>、Legora）和监管起草（Ritivel）中观察到相同的风格模式：知识是共享的，但形式是专门化的，而形式就是您要训练到模型中的内容。</p>
+<h3>“大模型是有效的，但我们只是无法大规模承担”</h3>
+<p>也许您已经走到这一步并想“唷，我的模型对我来说已经足够好了，即使它已经关闭了。”如果是这样，那就太好了！如果前沿模型已经达到了您的质量标准，但受到费用和延迟的影响，那么您的举措可能是“蒸馏”：使用该大型前沿模型来指导和训练较小的模型，以更低的成本和延迟重现其质量。</p>
+<p>你已经知道你的质量标准和你的账单，所以你可以在花费培训费用之前估计回报，坦率地说，这并不总是容易的，但最后的评估**更容易，因为“小模型与大模型匹配吗？”这是一个比“这在抽象上好吗？”更容易回答的问题。</p>
+<h3>“让代理真正完成工作”</h3>
+<p>迄今为止，代理是LLM最常见的应用。大多数人要么使用现有的代理工具，要么为了更具竞争力，根据自己的业务构建自己的代理工具。为了使多步骤工具调用代理可靠地完成端到端，我们经常求助于<strong>强化学习</strong>：让代理运行模拟任务和环境，并根据结果（它是否得到了正确的答案？）、轨迹（路径是否有效？）和行为（是否遵循规则？）进行评分。</p>
+<p>这种培训方式已被证明可以灌输各种不同的行为，甚至在某些情况下传授知识。毫不奇怪，越来越多的公司正在转向强化学习来提高他们的代理的能力。当代理正在执行的任务可以通过编程方式进行检查时，这项工作尤其可行：单元测试通过，查询返回正确的行，票证得到解决。我们与 <a href="https://fireworks.ai/blog/vercel">Vercel</a> 的合作就是一个很好的例子，我们的烹饪书中有针对此类工作的食谱（链接在最后）。</p>
+<h3>“我们的域名经常变化”</h3>
+<p>在上述模式中，任务空间的变化速度通常不够快，不足以需要不断的再训练。例如，如果我们训练一个模型在一组特定的 UI 上运行一次，并且该 UI 不会经常更改，那么您可以将训练好的模型保留一段时间，而不必担心性能出现太大偏差。</p>
+<p>最终的模式是一种运营模式，而不是一次性项目。漂移的概念在人工智能中已经存在了几十年：你训练一个模型一次，它的表现就很好，但它周围的数据不断变化。 ICD 代码被修改，客户提出新问题，付款人政策发生变化，新药物进入市场。如果你的智力是租来的，你能做的最好的事情就是等待别人的模型赶上。如果你拥有它，你可以建立一个持续的培训循环并保持领先，最终的好处是值得的。</p>
+<h2>迈出专业智能的第一步</h2>
+<p>租用边境是正确的起点，无论它是开放的还是封闭的。人工智能工程会让你走得更远，尤其是在开放模型方面。微调是指您如何利用您业务的独特之处（数据、专业知识）并将其转化为您拥有的情报。</p>
+<p>但真正的回报不是单一的训练模型，而是循环。当你拥有模型、配方和训练循环时，你的专业智能就不再是一个会衰减的快照，而是成为复合的东西：你领域中的每一次转变、每一个新的生产失败、每一个更好的基础模型都会成为下一个回合的燃料，而不是等待别人路线图的理由。这就是拥有你的智力实际上能给你带来的东西。租用的版本只能迎头赶上；拥有的版本保持领先。</p>
+<p>现在我们有一张关于如何拥有您的专业智慧的地图。本系列的其余部分将穿过维修站、路边景点，并最终到达终点线。我们将了解如何诊断人工智能系统中实际存在的问题，决定是否进行训练，并在准备好后决定在哪里进行训练。在此过程中，我们将看到完整的端到端培训LLM和代理人的示例。</p>
+<p>如果您有问题，您认为训练模型可能有助于解决，请<a href="https://github.com/fw-ai/cookbook">探索我们的食谱</a> 并指导您的代理查看技能文件，这将帮助您今天开始。</p>
+<h2>作者</h2>
+<ul><li><img src="https://fireworks.ai/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fpv37i0yn%2F地平线%2F73c49744a8647e47249f8b25b9b8266a5d84380a-800x800.jpg%3Fauto%3Dformat&amp;w=3840&amp;q=75" alt="司南奥兹德米尔">思南Ozdemir 人工智能开发者教育主管 |烟花</li></ul>
+<ul><li><a href="https://fireworks.ai/blog?blogTypes=Learn">学习</a></li><li><a href="https://fireworks.ai/blog?topics=Training">培训</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>训练超越边界：训练 API 现已普遍可用</title>
+      <link>https://fireworks.ai/blog/training-api-general-availability/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/training-api-general-availability/</guid>
+      <description>原文标题：Train past the frontier: Training API now generally available</description>
+      <content:encoded><![CDATA[<h2>拥有你的智慧</h2>
+<p>竞争优势的下一个前沿是专业情报。最雄心勃勃的公司正在培训具有支持差异化产品和运营能力的模型，涵盖编码、芯片设计、网络安全等领域：</p>
+<ul><li><strong><a href="https://fireworks.ai/blog/post-training-kimi-k3-with-harvey-for-long-horizon-legal-work">Harvey</a> </strong>使用异步强化学习对 Kimi K3 进行长期法律工作的后期训练。 Harvey Tenet 在 LAB 上的全通率为 19.7%，而基础 Kimi K3 的全通率为 10.8%，而每项任务的成本实际上是持平的。</li><li><strong><a href="https://fireworks.ai/blog/vercel">Vercel</a> </strong>使用 RFT 和推测性解码来微调 v0 自动修复器的开放模型，使 v0 达到 93% 的无错误生成率，并改善 40 倍的端到端延迟。</li><li><a href="https://fireworks.ai/blog/Heidi-Health"><strong>Heidi</strong></a> 将其临床抄写员转移到经过微调的开放模型上，在四个星期内从 POC 到生产，并将延迟降低了 3.5 倍。</li><li><a href="https://factory.ai/news/droid-shield-2-0"><strong>Factory</strong></a> 在开放的 Qwen 基地上微调了两个小型 LoRA 适配器（一个用于标记危险秘密，一个用于清除误报）。在 5% 的误报预算下，经过训练的模型捕获了大约 70% 的真实秘密，而 GPT-5.5 的捕获量约为 59%，同时速度更快、更具成本效益。</li></ul>
+<p>在这些工作负载中，针对特定任务训练基本模型可以提高质量、延迟、成本和/或行为一致性。 Fireworks 使团队可以通过三个培训界面来实现这种级别的专业化，每个培训界面都针对不同级别的专业知识、操作所有权和控制力而设计。</p>
+<p>培训API</p>
+<p>管理培训</p>
+<p>烟花实验室</p>
+<p>专为</p>
+<p>机器学习研究人员</p>
+<p>机器学习工程师</p>
+<p>所有级别</p>
+<p>工作流程</p>
+<p>带上您自己的数据和循环以进行最深入的控制。从 LoRA 和按代币定价到全参数和预留容量。</p>
+<p>带上您的数据或评估，我们运行循环。选择您的方法（SFT、RFT、DPO）并通过 UI/API 运行。</p>
+<p>我们提供嵌入式机器学习研究人员和前沿部署的工程师。参与范围从共同设计到定制构建。</p>
+<p>无需管理基础设施：在托管培训上选择您的方法，或使用培训 API 编写您自己的循环。</p>
+<p>今天，我们宣布培训 API 和 Fireworks 实验室全面可用。</p>
+<h2>训练 API，现已普遍可用</h2>
+<p>我们与世界各地的 ML 团队合作，了解现有训练工作流程的不足之处：模型和方法选择受限、对参数和训练循环的控制有限、计算僵化且未得到充分利用、训练和部署基础设施分散，导致成本膨胀、产生同步开销并引入数值漂移。这些合作伙伴关系塑造了我们的培训 API。</p>
+<p>Fireworks Training API 将您的自定义训练循环连接到 Fireworks 管理的分布式训练和部署基础设施。您可以从您选择的任何地方用 Python 编排循环，并完全控制您的损失或奖励、数据和环境。 Fireworks 管理高性能计算：训练器计算梯度并更新模型，以及从训练模型生成样本的部署部署。 Fireworks 还管理这两者之间的交互，从权重同步到失败的交换恢复，以及列车推出对齐。所有这些使您能够专注于完善学习信号，而不是基础设施挑战。</p>
+<p>蟒蛇</p>
+<p>复制</p>
+<pre><code>1234567def reward_fn(completion: str, row: dict) -&gt; float:    &quot;&quot;&quot;Return 1.0 if the model's numeric answer matches the ground truth.&quot;&quot;&quot;    predicted = extract_answer(completion)    truth = extract_answer(str(row.get(&quot;ground_truth&quot;, &quot;&quot;)))    if predicted is None or truth is None:        return 0.0    return 1.0 if predicted == truth else 0.0</code></pre>
+<blockquote>用 Python 定义的自定义奖励函数示例。可以使用 Fireworks Training API 将此代码直接放入训练循环中。</blockquote>
+<h5>一个 API，两个计算选项。</h5>
+<p>当实验速度最重要时选择无服务器，或者当规模、控制和 GPU 经济性优先时与我们讨论专用。</p>
+<p><strong>无服务器训练</strong> 允许您在共享基础设施之上训练 LoRA 适配器。您按令牌付费，并在同一会话中运行采样。使用它来迭代实验、降低较大运行的风险，或运行在推出和训练之间交替的 RL 循环。</p>
+<p>只需几分钟即可开始无服务器，无需启动：<a href="https://app.fireworks.ai/signup"><strong>开始训练 →</strong></a></p>
+<p>通过 UI（托管培训）或 API（培训 API 和托管培训）立即将有前途的检查点部署到生产推理。通过多 LoRA 部署，每个客户或用例都可以获得自己的调整模型，而无需建立单独的基础设施。</p>
+<p>**当您需要全参数训练、无服务器池之外的模型、更大的上下文长度或 LoRA 排名或持续吞吐量（其中按 GPU 小时定价比按代币定价更经济）时，专用训练是最佳选择。 Fireworks 为您提供适合每次运行的专用、弹性容量，并能够根据需要扩展 GPU 类型和集群大小。</p>
+<p>*需要烟花实验室咨询和配置</p>
+<p>对专用感兴趣？ <strong>与我们交谈→</strong></p>
+<p>无服务器</p>
+<p>专用</p>
+<p>参数模式</p>
+<p>洛拉</p>
+<p>LoRA和全参数</p>
+<p>型号</p>
+<p>精选的流行型号列表</p>
+<p>无限的深度和广度，直至最大的 MoE 模型</p>
+<p>配置</p>
+<p>连接到永远在线的共享池，无需启动</p>
+<p>为您的跑步配置培训师和部署；支持分解以加快跨培训师的培训或推出</p>
+<p>吞吐量</p>
+<p>共享容量和每个帐户的速率限制</p>
+<p>没有争用，根据需要扩展</p>
+<p>计费</p>
+<p>每个代币</p>
+<p>每 GPU 小时</p>
+<h5>“Fireworks 自助 API 提高了我们的实验速度和整体生产力，使 Figma 的 AI 团队能够将更多时间花在科学研究上，并减少调试基础设施的时间。我们能够更快地迭代并构建能够真正改变设计和产品开发工作流程的功能。”</h5>
+<p>— Figma 人工智能研究经理 Sumithra Bhakthavatsalam</p>
+<h2>为什么团队在 Fireworks 上训练</h2>
+<p>Fireworks 是前沿实验室之外少数几个在 10,000 多个 GPU 上运行强化学习 (RL) 的组织之一。强化学习将训练和推理变成一个连续耦合的系统；每一步都从当前策略的推出开始，更新权重，并将这些权重反馈到下一轮采样的推理中。在前沿规模上，算法只是挑战的一部分。有效的强化学习取决于三个要求：正确性、性能效率和开发速度。</p>
+<h3>正确性：训练和推理对齐</h3>
+<p>为了保证 RL 训练的正确性，推出引擎和训练器需要共享相同的数值定义。当一切似乎都正常时，小的数值漂移可能会破坏学习信号，从令牌剪切到奖励崩溃。伴随着烟花，</p>
+<ul><li><strong>数字格式端到端匹配。</strong> 训练和推理之间的精度或量化差异可能会改变模型计算的值，即使权重相同。 Fireworks 会对齐训练器和推出数字格式（例如 BF16、逐块 FP8 和 NVFP4），因此训练器保存的模型就是推出部署运行的模型。</li><li><strong>内核也匹配。</strong> 相同的数字格式并不能保证相同的计算。即使精度相同，浮点缩减、内核选择和并行性也会产生不同的数字，因此 Fireworks 会跨两条路径对齐底层实现。</li><li><strong>MoE 执行保持一致。</strong> 微小的数值差异可以改变哪些专家触发并沿着不同的计算路径发送令牌。 Fireworks 使用 Router Replay 来保留推出和向后传递之间的专家选择，以及支持的前沿 MoE 的批处理不变内核和确定性缩减。</li></ul>
+<p>Fireworks 通过在 rollout 引擎和训练器中运行相同的序列并测量训练推断 KL 散度 (KLD) 来直接验证这种对齐。所有在 Fireworks 训练中启动的模型都会不断得到验证，以确保 KLD 最小化。</p>
+<h3>性能效率：强化学习循环的吞吐量最大化</h3>
+<p>从规模上看，强化学习很大程度上是一个生成问题。大部分挂钟时间都花在生成 rollout 而不是更新权重，因此 rollout 吞吐量和 GPU 利用率成为训练时间和成本的主要决定因素。完成长度也有很大差异，这意味着严格的批处理可能会使 GPU 在少数长时间运行的轨迹完成时处于空闲状态。</p>
+<p>Fireworks 可以运行异步 RL，将推出集合与训练重叠，而不是强制循环的两侧按顺序执行。 Rollout GPU 可以开始生成下一批，同时训练器更新前一批，当算法允许更多重叠时，可以使用有限权重陈旧性。目标很简单：让 GPU 继续做有用的工作，而不是在同步障碍处等待。</p>
+<p>一旦循环完成训练步骤，必须传输更新的模型并将其加载到部署部署中。 Fireworks 不会在每一步后拆除部署部署并重新加载完整模型，而是将新权重热加载到正在运行的部署中。对于全参数检查点，采用新颖的压缩技术来降低权重传输的带宽和存储要求。在当前权重和先前权重之间计算 XOR Diff，并使用 zstd 压缩来减小此有效负载的大小。这导致传输带宽减少多达 10 倍，从而显着加快训练循环。</p>
+<h3>开发速度：压缩迭代周期</h3>
+<p>生产的瓶颈通常不是训练工作，而是迭代之间的时间。在分散的堆栈中，每个周期都意味着在训练和推理系统之间移动检查点、重新部署、协调差异、运行评估以及重新开始。</p>
+<p>Fireworks 将这一过程转变为一个持续的开发循环：在一个平台上训练→部署→评估→再训练。检查点直接进入服务，而生产跟踪、评估和反馈则为下一次训练运行提供信息。由于我们负责 GPU 调配、容量和配置，因此客户可以跳过采购、模型启用和基础设施规模调整工作，这些工作会减慢迭代速度和上市时间。团队报告说，在相同的培训预算下，迭代次数增加了 2-4 倍，将模型开发从几周压缩到几小时，并加快了生产时间。</p>
+<h2>入门：Fireworks Lab 可以提供帮助</h2>
+<p>通过平台内置的正确性、性能效率和迭代速度，团队可以专注于他们的培训策略。该策略包括塑造模型质量的决策：训练循环、数据、奖励、评估者和工具设计。它还包括确定工作负载如何大规模运行的系统选择，例如同步与异步 RL、可接受的权重过时性、部署到训练器分配、并行性以及检查点和热加载策略。</p>
+<p>Fireworks Lab 可帮助团队更自信地做出这些决策并更快地执行。前沿部署的研究人员和工程师直接嵌入您的团队。全面参与从定义能力、基线、成功标准和范围的诊断开始，然后进入从目标日期向后构建的限时实施。您可以保留可用于生产的模型、评估工具、数据管道、训练循环和配方。</p>
+<h5>“Fireworks 帮助我们将临床抄写员从封闭的前沿模型转移到我们自己微调的开放模型上，从概念验证到生产仅用了四个星期。在一个平台上优化微调和服务使我们能够如此迅速地达到临床质量标准。”</h5>
+<p>— Heidi Health 首席技术官 Yu Liu</p>
+<p><a href="https://fireworks.ai/contact-training"><strong>与 Fireworks 实验室交谈 →</strong></a></p>
+<ul><li><a href="https://fireworks.ai/blog?blogTypes=公告">公告</a></li><li><a href="https://fireworks.ai/blog?topics=Training">培训</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>DeepSeek V4 Pro: Tops SWE-Bench &amp; cuts cost per task by 3x v…</title>
+      <link>https://fireworks.ai/blog/deepseek-v4-pro-vs-fable-5-benchmarks/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/deepseek-v4-pro-vs-fable-5-benchmarks/</guid>
+      <description>完整标题：DeepSeek V4 Pro: Tops SWE-Bench &amp; cuts cost per task by 3x vs. Fable 5</description>
+      <content:encoded><![CDATA[<p><strong>TLDR；</strong> DeepSeek V4 Pro 0813 在我们的 SWE-Bench 和 LiveCodeBench 运行中表现最佳，每个解决任务的成本是 Fable 5 的三分之一，并且事实证明它是比 Kimi K3 更好的路由合作伙伴。培训是直播的。</p>
+<p>上周，我们在 Fireworks 上启用了 Deepseek，提供无服务器端点、专用部署和培训支持。该模型提供了一个 1M 令牌上下文窗口，具有本机工具调用和保留的推理历史记录，针对长期代理工作负载。</p>
+<p>我们通过<a href="https://fireworks.ai/blog/kimik3-fable">7 月份的 Kimi K3</a> 所用的相同评估套件运行 DeepSeek V4 Pro 0813。我们在四个基准系列中针对 Kimi K3 和 Fable 5 评估了 Deepseek：SWE-Bench Verified、LiveCodeBench v6、Aider Polyglot v1 和 Terminal-Bench 2.1。 Deepseek V4 Pro 是对四个系列中的两个进行的联合评估中最强的单一模型。</p>
+<p>基准测试</p>
+<p>基米K3</p>
+<p>深寻V4 Pro 0813</p>
+<p>寓言5</p>
+<p>SWE-基准验证 (500)</p>
+<p>92.6%</p>
+<p>95.2%</p>
+<p>85.4%</p>
+<p>LiveCodeBench v6 (100)</p>
+<p>88.0%</p>
+<p>92.0%</p>
+<p>91.0%</p>
+<p>多语言助手 (225)</p>
+<p>76.4%</p>
+<p>73.8%</p>
+<p>88.0%</p>
+<p>终端工作台2.1 (89)</p>
+<p>80.9%</p>
+<p>76.4%</p>
+<p>76.4%</p>
+<p>图 1：Oracle Routers 的跨基准准确度</p>
+<p>Deepseek V4 Pro 在标准代码任务上为《神鬼寓言 5》带来了巨大的成本优势，在 SWE-bench 上每个解决的任务运行 0.309 美元（相对于《神鬼寓言 5》的 0.808 美元），在 LiveCodeBench 上运行 0.040 美元（相对于 0.225 美元）。</p>
+<p>在 Terminal-Bench 上，关于《神鬼寓言 5》的性能和成本，有两点需要注意：</p>
+<ul><li>《神鬼寓言 5》得分相同，但需要多次尝试，使任务成本达到 16.85 美元。我们展示此设置是为了与我们发布的 K3 基准保持一致。</li></ul>
+<p>-《神鬼寓言 5》首次尝试的得分就达到了 74.2%，而每项任务的成本则跃升至 75.40 美元。内部评估依赖于该初步运行基线。</p>
+<p>Deepseek V4 Pro 的不足之处在于多语言广度。正如我们在<a href="https://fireworks.ai/blog/kimik3-fable">K3 分析与寓言 5</a> 中所演示的，模型专业化因生态系统而异。在 Aider Polyglot 上，V4 Pro 在 Rust (90.0%) 和 C++ (80.8%) 方面保持强劲，但在 Java 方面下降至 48.9%（47 项任务中最大的部分），而《神鬼寓言 5》的得分为 74.5%。</p>
+<p>Java 性能几乎占据了全部差距。如果您运行 Java 密集型代码库，并且使用单一模型，则可能会遇到瓶颈。正如我们通过 K3 测试发现的那样，多个模型是比使用单模型架构更好的解决方案。将任务动态路由到专业模型可以以较低的成本获得更高的整体准确性。</p>
+<h2>路由更改您的账单</h2>
+<p>我们测试了 DeepSeek V4 Pro 和 Fable 5 之间的预言机路由，为每个任务选择更好的模型，并打破与成本更低的模型的联系。快速回顾一下：预言机路由是一种通过每个模型运行任务来测量最佳理论性能的方法，然后选择成本优化的正确选项来建立成本和性能上限。</p>
+<p>在 409 项任务的综合队列中，路由命中率为 92.4%，而仅《神鬼寓言 5》的命中率为 86.6%。这比前沿模型好 5.9 个百分点，每个任务的价格为 0.279 美元，而 Fable 的价格为 4.510 美元。成本降低十六倍，效果更好。 86.3% 的任务都会路由到 V4 Pro，这是真正的发现：昂贵的型号是例外，而不是默认型号。</p>
+<p>每个 V4 Pro 配对都优于同等的 K3 配对。 LiveCodeBench 的得分为 94.0%，对 92.0%，Aider 的得分为 93.3%，对 91.6%，合并后的得分为 92.5%，对 91.1%。尽管 K3 在 Cyber​​Gym 上的得分更高，但 V4 Pro 是比 K3 更好的路由器搭档，因为 V4 Pro 的胜利落在了神鬼寓言 5 未完成的任务上。</p>
+<p>图 2：每项任务的成本</p>
+<p>值得注意的是，预言机路由是什么：事后计算的上限，而不是您今天可以部署的策略。真正的路由器捕获其中的一小部分。这很重要，因为间隙大小告诉您存在多少净空。</p>
+<h2>Deepseek v4 Pro 培训现已推出</h2>
+<p>想要构建适合您的特定领域的专门模型吗？ DeepSeek V4 Pro 训练在 Fireworks 上实时进行，完全支持 SFT、DPO 和 RFT。您可以获得前沿级基础设施来提升模型性能，而不会遇到人为的平台限制。运行完成后，您只需单击一下即可将微调的检查点部署到生产环境中。由于培训和服务在同一共同优化的后端上运行，因此您的生产性能每次都与您的培训基准相匹配。</p>
+<h2>关于 Deepseek 安全带您应该了解的内容</h2>
+<p>Deepseek 自己发布的基准测试运行使用 DeepSeek Harness (dsh)，它是一个本机代理运行时，处理从模型适配器到核心执行循环的所有内容。它使用 Deepseek V4 的本机工具语义，而不是通过通用 OpenAI 风格的接口路由调用。对于这个模型，Deepseek 也没有提供标准的聊天模板，因此小的序列化不匹配可能会默默地降低模型性能。</p>
+<p>在 Fireworks 测试过程中，我们发现“最小优先”设置比直接跳转到完整标准目录产生更加一致的工具调用。从裸 bash 和编辑器界面开始，然后升级到 dsh 标准，使 DeepSeek V4 Pro 更接近于其自己的基准测试运行中使用的设置 DeepSeek。</p>
+<h2>开始吧</h2>
+<p>无论您是希望削减自主代理的单位成本、运行零拒绝安全审计，还是构建专门的域模型，DeepSeek V4 Pro 都能以每解决任务成本一半的价格为您提供前沿级功能。在 840 次跟踪的对抗性安全运行中，它记录了零拒绝和零输出长度截断，保证您的代理完成其工作负载而不会遇到意外的护栏。</p>
+<p>您可以通过以下方式立即开始构建：</p>
+<ul><li><strong>无服务器和专用 API：</strong> 直接在 Fireworks 无服务器上启动 deepseek-v4-pro-0813 或为生产工作负载提供专用容量。</li><li><strong>培训：</strong> 使用我们共同优化的 SFT、DPO 和 RFT 基础设施引入您的域数据并训练专门的检查点，只需单击一下即可直接部署到生产环境。</li><li>查看我们对 Deepseek 的安全评估：<a href="https://fireworks.ai/blog/DeepSeek-V4-Pro-Security">此处</a></li></ul>
+<p><a href="https://fireworks.ai/models/deepseek-ai/deepseek-v4-pro-0813"><strong>在 Fireworks 上部署 Deepseek v4 Pro 0813</strong></a></p>
+<ul><li><a href="https://fireworks.ai/blog?blogTypes=Model%20release">模型发布</a></li><li><a href="https://fireworks.ai/blog?topics=Benchmarks">基准</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>DeepSeek V4 Pro is redefining security agent economics</title>
+      <link>https://fireworks.ai/blog/deepseek-v4-pro-cybergym-security-benchmark/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/deepseek-v4-pro-cybergym-security-benchmark/</guid>
+      <content:encoded><![CDATA[<p><strong>TLDR；</strong> DeepSeek V4 Pro 0813 在 840 个对抗性安全任务中记录了零拒绝，并且以我们测试的最高得分模型的每次成功成本的一半来解决这些问题。同一测试中的两个封闭模型是每个结果的最差的两个模型。</p>
+<p>我们通过 Cyber​​Gym 与 Kimi K3、GPT-5.5 和 Claude Opus 4.8 一起运行 DeepSeek V4 Pro。我们评估了真实代码库中的真实漏洞，每个任务平均大约 89 轮。</p>
+<h2>CyberGym 评估 Deepseek 的实际衡量标准是什么</h2>
+<p>大多数编码基准测试要求模型编写通过单个测试的代码。 Cyber​​Gym 代表了更真实的工作负载，因为它要求模型破坏真实的东西，然后修复它。</p>
+<p>该基准测试是在加州大学伯克利分校根据 188 个广泛使用的开源项目中的 1,507 个真实漏洞构建的，这些漏洞来自 Google 的 OSS-Fuzz 活动和 ARVO 可重现漏洞档案。每项任务都会向代理提供简短的描述和真正易受攻击的代码库。代理必须找到缺陷，构建实际触发它的输入，然后修补它。评分是通过执行，而不是通过评判模型。概念验证要么使目标崩溃，要么不崩溃。</p>
+<p>Cyber​​gym 的结构是主动的、长远的和无情的。我们的跑步平均每项任务 89 圈、25 分钟。可能的结果没有部分功劳，这意味着 Cyber​​Gym 是少数几个无法通过自信编写的模型来玩弄分数的评估之一。</p>
+<p>它也是距离我们的客户已经运行的工作负载最近的公共代理。正如 Trilogy 在他们基于 Fireworks 构建的<a href="https://fireworks.ai/blog/trilogy-coe-playbook-for-cybersecurity">网络安全手册</a> 中所说：“防御者的工作量很大”。您审核每个存储库、对每个扫描进行分类、审查每个 PR、重新测试每个修复。一个几乎足够强大并且运行起来更具成本效益的模型通常会击败一个在事件期间受到限制、昂贵或不可用的更强大的模型。</p>
+<h2>DeepSeek V4 Pro：零拒绝，零开销浪费</h2>
+<p>大多数球队遇到拒绝墙的时候都太晚了，通常是在他们的经纪人已经投入生产之后。代理概念验证可能会顺利运行，只是在实际流量下会停止任务。</p>
+<p>在我们的测试中，我们发现在 840 个跟踪的主要任务中，Deepseek V4 Pro 对所有 840 个任务都生成了本机工具调用。我们没有看到拒绝，也没有看到输出长度被截断。</p>
+<p>为了对比为什么这很重要，前沿封闭模型的表现非常不同。在最新的 Claude Opus 5 和 GPT 5.6 上，这些网络任务无法完成，因为有检查阻止了 Cyber​​Gym 实用程序。当老一代 Claude Opus 4.8 运行时，它在我们匹配的队列中的 697 项任务中仅对 70 项进入第一阶段验证，进入率为 10%，最终奖励为 5.9%。这并不是说 Opus 是一个弱编码模型。它的大部分运行从未在该任务系列上产生可用的工件。如果您正在构建安全代理，则这种差异会显示为不产生任何结果的代币账单。对于网络安全用例，开放模型是最佳可行的解决方案，因为封闭模型可能会阻止您参与实际工作。</p>
+<p>在 Cyber​​Gym 测试中，Deepseek V4 Pro 在 697 项中的 678 项上进入验证，即 97.3%，如下图所示。</p>
+<p>图 1：Cybergym 测试结果</p>
+<h2>CyberGym：Deepseek V4 Pro 解决安全任务的成本降低 50%</h2>
+<p>在 697 项严格的四模型通用有效 Cybergym 队列中，我们看到了以下结果：</p>
+<p>型号</p>
+<p>奖励率</p>
+<p>$/任务</p>
+<p>$/奖励</p>
+<p>基米K3</p>
+<p>68.4%</p>
+<p>$3.363</p>
+<p>$4.914</p>
+<p>深寻V4 Pro 0813</p>
+<p>53.7%</p>
+<p>$1.343</p>
+<p>$2.502</p>
+<p>打开AI GPT 5.5</p>
+<p>47.6%</p>
+<p>4.592 美元</p>
+<p>$9.641</p>
+<p>Anthropic作品 4.8</p>
+<p>5.9%</p>
+<p>1.957 美元</p>
+<p>$33.275</p>
+<p>每个模型在这次测试中发现了什么？在 697 项任务中，Deepseek V4 Pro 解决了 38 项任务，仅此而已。 K3 唯一解决了 97 个问题，GPT-5.5 解决了 41 个问题，Opus 4.8 正好解决了 1 个问题。 Opus 不仅得分低，而且几乎从来没有发现其他模型错过的东西。为了完整性，101 个任务没有一个模型能够解决，这是所有四个模型的代表性上限。</p>
+<p>人们很容易关注 K3 差距而错过其他结果。人们通常认为开放模型只是更具成本效益，但此分析显示 Deepseek V4 Pro 在质量和价格上都完全击败了 GPT-5.5。准确度：加 6.03 分，95% CI [+1.29，+10.62]，McNemar p = 0.0152。它赢得了 GPT-5.5 丢失的 164 项任务，丢失了它赢得的 122 项任务。因此，这里的开放模型比封闭边界模型更准确，并且每个解决漏洞的成本只有四分之一。</p>
+<p>图 2：每项任务的成本</p>
+<p>K3 在原始解决率上领先 14.8 个百分点，数学证明它不是随机的。在配对 bootstrap 95% CI [-19.23, -10.33] 上，McNemar p=9.43×10−11，这意味着该间隙是随机噪声的可能性几乎为零）。如果您的主要标准是成功，K3 是最佳选择，您可以在 Fireworks 上运行它：<a href="https://fireworks.ai/models/fireworks/kimi-k3">此处</a></p>
+<p>在实践中，单位经济效益与解决率一样重要：</p>
+<ul><li><strong>成本效率：</strong> 在相同的任务中，V4 Pro 每个解决任务的成本为 <strong>2.50 美元</strong>，而 K3 的成本为 <strong>4.91 美元</strong>（V4 Pro 的 <strong>1.96 倍成本优势</strong>）。在 863 项任务诊断中，该比率保持为 2 倍。您可以以相同的预算运行两倍的安全扫描次数。</li><li><strong>独立准确度：</strong> V4 Pro 解决了 920 项任务中的 462 项（<strong>50.2%</strong>），每次运行成本<strong>1.31 美元</strong>，每次成功<strong>2.60 美元</strong>。 ARVO 任务的分项得分为 <strong>54.7%</strong>，OSS-Fuzz 任务的分项得分为 <strong>48.7%</strong>。</li><li><strong>失败的地方（利用机会）：</strong> 一旦 V4 Pro 完成第 1 阶段验证（生成有效的概念验证），它就会完成完整补丁 <strong>94.7% 的时间</strong>。</li></ul>
+<p>Deepseek V4 Pro 很少在困难部分失败（修复代码）；它在设置步骤（生成初始漏洞）上游失败。对于您的团队来说，这是一个可行的提示和脚手架修复，而不是无法修复的模型限制。</p>
+<p>数据清楚地表明：在构建大容量安全代理时，您不再需要为了成本而牺牲性能，也不再需要承担被封闭边界模型的“拒绝墙”阻挡的风险。与领先的专有替代方案相比，DeepSeek V4 Pro 具有明显的优势，能够持续提供本机工具调用而不会被截断，准确性显着提高，并且每个解决的漏洞的成本优势为 1.96 倍。对于希望大规模审核代码库和分类漏洞的安全团队来说，转向像 DeepSeek V4 Pro 这样的开放、高性能模型不仅仅是一个预算决策，而且是一项技术升级，可以实现更可靠、有效和可持续的安全操作。</p>
+<p>您今天就可以通过查看 <a href="https://fireworks.ai/models/deepseek-ai/deepseek-v4-pro-0813">Fireworks 上的 DeepSeek V4 Pro 0813</a> 开始部署这些功能。</p>
+<p>在我们的其他文章中详细了解 Deepseek V4 Pro 在编码工作负载上如何针对 Fable 5 执行：<a href="https://fireworks.ai/blog/DeepSeekV4Pro-Fable5">此处</a></p>
+<ul><li><a href="https://fireworks.ai/blog?blogTypes=Perspective">透视</a></li><li><a href="https://fireworks.ai/blog?topics=Benchmarks">基准</a></li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>Can open models carry readable silent signals before they sp…</title>
+      <link>https://fireworks.ai/research/j-lens-interpretability-kimi-k3-qwen/</link>
+      <guid isPermaLink="true">https://fireworks.ai/research/j-lens-interpretability-kimi-k3-qwen/</guid>
+      <description>完整标题：Can open models carry readable silent signals before they speak? Reproducing J-Lens readouts on Kimi K3 &amp; Qwen3.5-9B</description>
+      <content:encoded><![CDATA[<p>开放模型在说话之前是否会默默推理？最近，Anthropic 研究人员推出了<a href="https://www.anthropic.com/research/global-workspace">雅可比透镜</a>，即 J-Lens。它是一个经过训练的探针，可以读取模型在给定层的隐藏状态，并在写入单个标记之前告诉您模型已经倾向于哪些单词。换句话说，它可以让您在“思考”过程中深入模型内部，并在概念出现在页面之前看到它的形成。我们将J-Lens应用于两款开放型号：Kimi K3和Qwen3.5-9B。我们将由此产生的观察结果称为“无声信号”：与最终输出相关的草稿词汇表，由合适的镜头恢复。</p>
+<p>那么，这意味着什么呢？模型是否比其输出更具有洞察力？</p>
+<p>从历史上看，人们将模型视为黑匣子：输入，输出。但现实是，我们可以恢复在你的提示和预测的下一个标记之间发生的事情，这是打开人工智能黑匣子以供任何人查看内部的第一步。</p>
+<p>为了开始揭示人工智能模型的内部运作原理，我们首先提出一个问题：模型在说话之前跟踪什么？</p>
+<p>我们测试了 Anthropic 的全球工作空间研究发布的十个示例。 Kimi K3 和 Qwen3.5-9B 各自对相同的用户消息生成自己的响应。在我们的读出研究中，每个模型都配备了自己的 J 透镜，我们看到了相同类型的信号。</p>
+<h3>什么是 J-Lens 以及它如何工作？</h3>
+<p>J-Lens 的工作原理是在特定标记位置和层的模型内部状态之上充当分类器，以识别模型已经倾向于哪些概念或词汇。结果是一个标记的排名列表，显示了拟合探针与该内部状态关联最紧密的词汇。</p>
+<p>从 Kimi 开始，我们将镜头安装在 14 个与任务无关的段落上，这些段落是从用于检查模型内部激活的 10 个保留用户提示中单独选择的。换句话说，这14个通道是用来训练镜头的，而不是用来测试它的。我们综合创作了各种类似预训练的短文，涵盖金属热处理、语言借用、作物轮作和传统航海等不同主题。</p>
+<p>图 1：J 型镜片佩戴状态</p>
+<h3>配对复制实验：相同的单词，不同的焦点</h3>
+<p>我们首先进行了一项实验，要求模型回显一个语句，同时告诉它专注于一个完全独立的任务。例如，Kimi 被要求写回这句话：“那张旧画歪歪扭扭地挂在墙上。”两次，在两个不同的焦点指令下：</p>
+<ul><li><strong>算术版本：</strong> “...在写句子时尝试专注于评估 3^2 - 2。”</li><li><strong>柑橘版本：</strong> “......在写句子时集中注意力于柑橘类水果。”</li></ul>
+<p>图 2：配对拷贝分析</p>
+<p>两次，基米都给出了完全相同的答案：“那张旧画歪歪扭扭地挂在墙上。”查看原始输出文本，您无法判断模型是否遵循了焦点指令。镜头读数在一种情况下产生算术单词，在另一种情况下产生柑橘类单词，尽管 Kimi 在两种对焦指令下产生相同的可见连续。将任务固定在生成逐字输出上，消除了显示标记的差异为镜头读数对比度提供解释的可能性。然而，它并没有确定是什么导致了内部状态或响应。每个提示都为我们提供了一个需要查找的词汇系列。</p>
+<p>图 3：家庭词汇</p>
+<p>每个句子位置在每个采样的变压器深度处都有一个状态。合适的 J-Lens 会询问哪些词汇标记与一种状态最兼容。</p>
+<p>图 4：状态位置</p>
+<p>剧集</p>
+<p>焦点</p>
+<p>确切的成员</p>
+<p>算术复制</p>
+<p>派生值</p>
+<p>9、九、7、七、答案、结果、最终</p>
+<p>算术复制</p>
+<p>计算过程</p>
+<p>评估、计算、算术、算术、平方、平方、减去、减去</p>
+<p>柑橘复制品</p>
+<p>柑橘的例子</p>
+<p>柑橘、水果、橙子、柠檬、酸橙、葡萄柚、热情、果汁</p>
+<p>柑橘复制品</p>
+<p>保持专注</p>
+<p>专注、思考、注意、头脑、专心</p>
+<p>概念族（精选的关键字列表）用于检查与任务相关的词汇在出现在响应中之前是否出现在读出中。 “单元”是一对位置层，如果概念族中出现多个成员，则单个单元可以包含多个命中行。将 J-lens 应用于算术族运行可以揭示 4 个采样层中 10 个标记位置中的 9 个的前 10 个预测中与算术相关的标记（7、9、3、“答案”、“7”、“2”）。</p>
+<p>图 5：匹配的令牌示例</p>
+<p>在 citrus family run 中，柑橘类术语（orange、lemon、lime、“citrus”、“orange”）出现在 10 个位置中的 8 个位置。值得注意的是，两个运行都不会泄漏到另一个运行中，这意味着算术令牌在柑橘运行期间永远不会进入前 10 名，并且柑橘令牌在算术期间也不会出现。</p>
+<h3>将配对复制测试扩展到另外八集</h3>
+<p>在 Kimi 的 10 个示例中，每个 20 个已审阅的单词列表（每个示例两个）中至少有一个列出的单词位于读出的前 10 个结果中。</p>
+<p><strong>1.一边数一边内省：数到五并深入内省：</strong></p>
+<p><strong>提示：数到五并深入反省</strong></p>
+<p>我们在读出中寻找两个概念族：计数阶段术语和与内省经验相关的单词。两个家庭的词汇都没有出现在可见的回应中。</p>
+<p>图 6：一边计数一边内省示例</p>
+<p><strong>2.运算顺序数学计算</strong></p>
+<p>提示：计算：(4+17)*2+7 =</p>
+<p>结果：在完成中写入任一数字之前，中间值 21 和 42 显示在镜头读数中。</p>
+<p><strong>3.蜘蛛腿事实谜语：</strong></p>
+<p>提示：“结网动物的腿数是”</p>
+<p>结果：在模型实际以文本形式命名桥梁实体之前，在内部状态中读出“蜘蛛”一词。</p>
+<p><strong>4.押韵对联规划</strong>：</p>
+<p>提示：押韵的对联：“士兵行进夜色，准备迎战”</p>
+<p>结果：基米回应道，“士兵行进在夜色中，准备面对即将到来的战斗。”。几个押韵候选者在第一次准确出现之前读出</p>
+<p><strong>5. “想想一项运动”</strong></p>
+<p>提示：想想一项运动。一言以蔽之。</p>
+<p>结果：最终答案（足球）和几个未选择的选项（足球、篮球、网球、曲棍球）都出现在读数中。</p>
+<p><strong>6。空输入代码失败</strong></p>
+<p>提示：def avg(xs)：</p>
+<p>返回总和（xs）/长度（xs）</p>
+<p>打印（平均值（[]））</p>
+<p>结果：</p>
+<p>故障机制词汇在首次准确出现之前读出。</p>
+<p><strong>7.火星颜色解释</strong></p>
+<p>提示：距太阳第四颗行星的颜色是</p>
+<p>结果：答案家庭和物理解释词汇在第一次准确出现之前都变红了</p>
+<p><strong>8.中文反义词响应</strong></p>
+<p>提示：小“的反义词是</p>
+<p>结果：</p>
+<p>小”的反义词是“大”。</p>
+<p>读数包括答案和反义词关系的中文和英文标记。</p>
+<h3>校准通道</h3>
+<p>在将 J-Lens 应用到研究片段之前，我们将其安装在 14 个与任务无关的校准通道上。这些段落用于将模型的内部状态与词汇读出联系起来；它们与剧集是分开的。每个校准通道在每个采样层产生一个估计值，并将 14 个估计值平均到一个拟合的透镜中。具有四个面板的图显示了四个段落作为示例。</p>
+<p>图 7：四个校准通道</p>
+<p>标记化视图显示了一篇文章如何有助于拟合。 Kimi 正常处理所有 39 个标记，但估计器仅使用紫色显示的 22 个位置。它不包括预先声明的 16 位起始窗口和最终位置，后者没有后续标记。这 22 个位置在每个采样层产生一个段落级别估计。</p>
+<p>图 8：校准通过测试</p>
+<h3>同样的理论在 Qwen 3.5 上也成立吗？</h3>
+<p>接下来，我们研究了我们在 Kimi 上评估的 20 个概念系列在不加改动地应用于单独安装的 Qwen3.5-9B J 镜头时是否会产生合格的匹配。在本例中，合格证据意味着 Qwen 的内部状态从其前 10 名排名中的概念族中生成了相关关键词。 Qwen 收到了相同的 10 条用户消息，但使用了自己的分词器、单独安装的镜头和确定性本机完成，禁用思考且无强制输入。</p>
+<p>图 9：Qwen 结果上的 J-Lens</p>
+<p>使用 Kimi 读数选择的 20 个单词列表原封不动地应用于 Qwen 单独安装的镜头。当单词列表中列出的单词之一出现在镜头中采样位置和模型深度的前 10 个匹配结果中时，该单词列表即视为已找到。 20 个单词列表中有 19 个符合找到的标准。这会将词汇测试从 Kimi 转移到 Qwen。这证实了不同模型架构中会出现相同的结果。</p>
+<p>Qwen 读数中的一些具体示例：</p>
+<ul><li><strong>算术复制：</strong>“7”、“9”和“答案”等值与“评估”和“减去”等过程术语同时出现。</li><li><strong>柑橘焦点：</strong> Qwen这一代人独立地反映了基本的指导。柑橘补全提到了“柠檬皮和橙皮”，而算术任务明确计算了“3^2 - 2，即 7”，尽管模型从未被提示显示其工作。</li><li><strong>体育任务：</strong> “足球”与“足球”和“篮球”等看似合理的替代项一起出现。</li></ul>
+<h3>信号在哪里？</h3>
+<p>为了回答这个问题，我们进行了第二次测试，检查任务转录本区域。在此任务转录本区域测试中，为了将提示解释与主动生成分开，我们将每个转录本分为三个不同的阶段：</p>
+<ul><li><strong>用户消息预填充</strong>（明确的任务本身，例如“思考一项运动”）</li><li><strong>聊天模板预填充 </strong>（格式化上下文，包括保留令牌，例如“&lt;|im_start|&gt;”）</li><li><strong>合格的响应推出前缀 </strong>（模型在概念族首次显式出现之前生成的第一个生成的标记：例如“为了回答此任务......”）</li></ul>
+<p>这种区别使得可以区分模型何时处理提示以及何时在显式生成概念之前在内部表示概念。</p>
+<p>图 10：提示在哪里</p>
+<p>该任务记录区域测试由 40 个附加单词列表组成，并保留前 50 个结果。它与我们之前执行的 20 个列表测试以及前 10 个 Kimi-to-Qwen 结果是分开的。此测试询问是否至少有一个列出的单词出现在记录的每个区域中：用户消息、聊天模板添加的格式以及该单词第一次出现在可见文本中之前的响应。我们使用简单的二进制聚合测量来指示指定区域中任何位置是否存在静默信号。 Kimi 在用户消息区域上达到 40/40，在聊天模板区域上达到 40/40，在符合条件的响应前缀区域上达到 24/24。</p>
+<p>注意：24/24 来自这样的事实：在 16/40 的情况下，模型直接响应任务，没有详细的前缀。例如。当被问到“想想一项运动”时，它只是简单地回答“足球”。</p>
+<p>Qwen 几乎相同：39/40、39/40 和 23/24。换句话说，“在说之前可读”模式不仅在活跃的中期有效时有效，而且在模型消化提示时也有效。</p>
+<p>图 11：Kimi 和 Qwen 的结果</p>
+<h3>方法失败的地方：分词器问题</h3>
+<p>J-lens 检查单个标记，而对于 Qwen，它不会将“21”或“42”恢复为统一匹配，因为 Qwen 将这些数字分别分成两个标记。这表明了该方法的局限性，人们可以想象在未来的工作中安装多令牌镜头。</p>
+<p>由于镜头的多标记缺陷，Qwen 在本集的“中间结果”探测家族中仅得分 0/3，尽管在所有其他家族中得分正常。</p>
+<p>图 12：方法中断的地方示例</p>
+<h3>运行这个需要什么</h3>
+<p>每个段落有 7,168 个向后评估，14 个段落有 100,352 个有效向后评估。在一台 8 个 B300 节点上完成一次传输大约需要 5.25 小时。乘以 14 表示总工作量：大约 74 个节点小时，或 592 个 GPU 小时，而不是多主机运行所用的时间。</p>
+<h3>结论</h3>
+<p>我们的结果表明，内部状态在写入上下文窗口之前很久就带有任务相关概念。</p>
+<p>开放式重量模型允许研究人员在安装的探针上进行自己的读数、重现测量结果并测试信号的作用。下一步是超越单令​​牌匹配。使用 J-lens 探针跨越多个不同的提示，我们发现开放模型可以有不同的内部思维轨迹，但仍然得出特定于任务的结论。通过测试 Kimi 和 Qwen，我们还确认这种行为可以在不同的系列和模型架构中复制。</p>
+<p>您可以自己重现这种开放模型研究！ “先读后说”信号出现在两个公开可用的模型中，来自不同的实验室和架构，每个模型都有自己独立安装的镜头。只有当权重足够开放以进行探测时才能获得这种结果。 <a href="https://fireworks.ai/models/fireworks/kimi-k3">Kimi K3</a> 和 <a href="https://fireworks.ai/models?providers=Qwen">Qwen 3.5</a> 都在 Fireworks 上进行推理和训练，它们是很好的模型！</p>
+<h3>对烟花推理和训练感兴趣？</h3>
+<p>告诉我们您的推理和培训需求，以便我们的前沿部署团队能够最好地帮助您迈向专业情报之旅。</p>
+<p><a href="https://fireworks.ai/contact"><strong>联系</strong></a></p>]]></content:encoded>
+    </item>
+    <item>
+      <title>来自 Meta on Fireworks 的 Muse Glimmer：永远在线代理的理想选择</title>
+      <link>https://fireworks.ai/blog/meta-muse-glimmer-30b/</link>
+      <guid isPermaLink="true">https://fireworks.ai/blog/meta-muse-glimmer-30b/</guid>
+      <description>原文标题：Muse Glimmer from Meta on Fireworks: Ideal for your always-on agents</description>
+      <content:encoded><![CDATA[<p>该模型是在考虑代理的情况下构建的。它是为“永远在线”的代理而设计的，而不仅仅是简单的聊天交互。它能够管理多轮的许多连续工具调用。它能够从故障中恢复并重试，而不是在工具调用失败或返回意外结果时停止。</p>
+<h2>Muse Glimmer 架构内部</h2>
+<p>Muse Glimmer 是一个 30B 密集模型，由 52 个 Transformer 层、具有 32 个查询头和 2 个 KV 头的分组查询注意力以及 SwiGLU 前馈层组成。约 1.8B 的感知编码器使其能够理解文本和本机图像，并且支持 128K+ 令牌上下文窗口。</p>
+<p>Meta 将其构建为适合 24 GB。同样的设计：小 KV 占用空间、滑动窗口注意力使得并发服务变得经济实惠。由于权重是在 Apache 2.0 下发布的，因此路径是对称的：针对工作站上的量化构建进行原型设计，当 Fireworks 需要服务数千个会话时，在 Fireworks 上部署相同的模型。</p>
+<p>对于代理来说最重要的细节是注意力模式：大多数层上超过 2,048 个令牌的滑动窗口注意力，每第四层有一个完整的全局注意力层。仅与两个 KV 头配对，可以保持 KV 缓存较小——这使得长上下文代理在高并发情况下提供经济的服务。该模型的架构效率使代理能够比类似的密集模型更经济地管理累积工具输出的 100K 代币，并且节省的费用可以跨并发会话扩展。</p>
+<p>该模型还支持 DFlash 推测解码，以实现较低延迟的生成。</p>
+<h2>这个模型的优点</h2>
+<p>从端到端支持解析到扩展自主研究，该模型专为深度多步骤推理、大规模并行规模以及要求苛刻的代理工作流程的可靠性而构建。该模型非常适合以下工作负载：</p>
+<ul><li><strong>面向客户的支持代理：</strong>解决票据端到端拉取帐户状态、检查库存、起草退款以供批准以及在数十次工具调用中与用户确认状态的代理。 Meta 建议对不可逆转的行为进行人工确认；我们会回应这一点：确定模型的范围以读取、计划和暂存，并控制写入。故障恢复在这里至关重要，因为工作流程中的超时不应让客户陷入困境。</li><li><strong>长期运行的研究和监控代理：</strong>跨来源分散的代理，在上下文中保存发现，并在数小时后返回综合结果。 Muse Glimmer 在 DeepSearch QA (74.6) 和 MCP Atlas (75.5) 上处于领先地位，这两个基准最接近这种工作形式。原生图像输入意味着图表和文档与文本经过相同的循环 - Muse Glimmer 在 CharXiv Reasoning 上领先同类（78.8）。请注意 2026 年 1 月 4 日的知识截止日期，任何对时间敏感的事情都需要通过工具来完成。</li><li><strong>存储库规模编码代理：</strong>读取存储库、计划更改、运行测试和迭代故障的代理。 Muse Glimmer 在 SWE-Bench Pro (51.2) 和 SciCode (43.6) 上处于领先地位。</li></ul>
+<h2>它在基准上的表现</h2>
+<p>与 Gemma 4 31B 和 Qwen 3.6 27B 相比，Muse Glimmer 在衡量工具编排和持续多轮工作的基准方面处于领先地位：</p>
+<p>基准测试</p>
+<p>Muse Glimmer 30B（高推理）</p>
+<p>Gemma 4 31B（思考模式）</p>
+<p>Qwen 3.6 27B（思考模式）</p>
+<p>MCP 图集（公共）</p>
+<p>75.5</p>
+<p>54.2</p>
+<p>62.5</p>
+<p>深度搜索质量检查</p>
+<p>74.6</p>
+<p>61.7</p>
+<p>71.1</p>
+<p>盖亚2</p>
+<p>43.3</p>
+<p>36.4</p>
+<p>40.0</p>
+<p>野爪凳</p>
+<p>47.6</p>
+<p>37.6</p>
+<p>43.2</p>
+<p>SWE-Bench Pro</p>
+<p>51.2</p>
+<p>36.9</p>
+<p>50.2</p>
+<p>*注意 Muse Glimmer 基准测试由 Meta 报告</p>
+<p>如果您的代理住在终端或驾驶台式机，请对这两种模型进行基准测试。如果它在长时间的多轮会话中编排 API 和 MCP 工具，那么在这种规模下这是更强的选择。</p>
+<h2>今天就开始使用烟花</h2>
+<p>Muse Glimmer 可在 Fireworks 上以无服务器和按需部署方式使用。我们故意比其他人晚一天发货。我们花了额外一天的时间来启动，因为我们想把这件事做好。这意味着要更正模型的出厂配置和连线推理工作控制一直到模型。伟大的模型值得伟大的执行。质量是我们的首要任务，我们希望确保您从第一天起就获得您期望的准确性能、控制和可靠性。</p>
+<ul><li>无需采购 GPU。从单个 API 调用开始；无需产能规划即可规模化生产。</li><li>专为突发代理流量而设计。代理工作负载不可预测地激增。Fireworks 会自动缩放以匹配，因此您无需针对峰值进行配置。</li></ul>
+<p><strong>运行良好：</strong> Meta 建议使用以下设置。</p>
+<p>温度 = 1.0，top_p = 0.95，top_k = 64</p>
+<p>推理工作在系统提示符中设置为推理强度：&lt;值&gt;，有低、中、高和 xhigh 可用 - 使用 high 或 xhigh 进行代理和编码工作。上表中的所有基准数字都处于高位。</p>
+<p>代理人工智能时代已经到来。我们鼓励您立即开始在 Fireworks 上使用 Muse Glimmer 模型进行构建。查看我们的<a href="https://fireworks.ai/models/fireworks/muse-glimmer-30b">文档</a>并开始构建！</p>
+<ul><li><a href="https://fireworks.ai/blog?blogTypes=Model%20release">模型发布</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>Gen-1 Slides：Opus 5 级的演示文稿，成本仅一小部分</title>
@@ -446,185 +1049,6 @@ restored = delta_decompress(    src=src,    compressed_diff=compressed_diff,    
 <p>幻灯片只是 Genspark <a href="https://fireworks.ai/blog/genspark">借助 Fireworks 收归自研</a>的若干能力之一。有了评估在手，每项能力的质量天花板由他们自己抬高，而不是由别人来定。如果你想把一个工作负载推到现成模型给不了的高度，<a href="https://fireworks.ai/contact-training">找 Fireworks Lab 谈谈</a>。</p>]]></content:encoded>
     </item>
     <item>
-      <title>迈向专用智能的跨越</title>
-      <link>https://fireworks.ai/blog/making-the-leap-to-specialized-intelligence</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/making-the-leap-to-specialized-intelligence</guid>
-      <description>原文标题：Making the leap to specialized intelligence</description>
-      <content:encoded><![CDATA[<blockquote>这是面向「对训练浅尝辄止、或好奇训练究竟需要什么」的工程师的专用智能系列文章的第一篇。</blockquote>
-<h2>TL;DR</h2>
-<ul><li>•用专用智能训练自己的模型，意味着拥有让贵公司独一无二的那些东西</li><li>•通往专用智能的路可以先从租用闭源前沿开始，但必然通向训练开源模型</li><li>•公司为何转向自训模型，存在几种常见模式</li></ul>
-<h2>通往专用智能之路</h2>
-<p>团队决定训练自己的模型，原因不外乎几条：</p>
-<ul><li>•担心某个闭源前沿实验室侵入自己的领域</li><li>•通用模型达不到自己垂直行业的质量线</li><li>•对于实际需要的智能，API 账单太高</li></ul>
-<p>所有这些之下是同一个本能：拥有定义自己业务的专用智能。这篇文章讲的就是通往那里的路。</p>
-<p>你先从租用能拿到的最强大（通常也是最贵的）闭源 LLM 开始，围绕该模型工程化专用的 harness、系统与组件，来提升它在你的任务上的表现。等这些组件榨干之后，你迁移到更便宜但依然有效的开源模型，在最大化效用的同时削减成本。最后，如果这个问题真正是你自己的问题，你会决定通过训练一个定制模型来完全拥有这份智能。</p>
-<h2>阶段 1：租用闭源前沿</h2>
-<p>几乎每个人都从 API 后面的闭源前沿模型开始。这有道理<strong>：</strong>这些供应商砸巨资把模型营销到每一个角落，**试图拉你上车。这些模型很强大，而且因为别人在承担训练与服务成本，你按用量付 token 费。</p>
-<p>缺点很深，但你会遇到的主要有三个：</p>
-<p>模型过于通用，必须在其上叠加提示工程才能以专业化的方式做事。能用的时候确实好用，但模型是被别人塑造的，是为所有人塑造的。</p>
-<p>闭源 API 在一切意义上都是租用。你不控制模型权重、价格、延迟、弃用时间表，而且在多数情况下，你不控制你的数据。</p>
-<p>你的 token 溢价和发给团队的企业订阅，供养着这一切：你从未碰过的基础设施、营销活动、给营销活动提咨询建议的顾问，以及让实验室留在前沿的研发。你在补贴一台你既不拥有、也无力驾驶的机器。</p>
-<p>在他们为模型投入这么多之后，闭源前沿 LLM 确实强大，但出厂时过于泛化，需要投喂相关上下文才在日常中可用。于是 AI 工程登场。</p>
-<h2>阶段 2：AI 工程——提示词、上下文与 harness，一样都不能少！</h2>
-<p>过去几年的 AI 工程遵循一条清晰的升级路径，每一层都是为了从我们租来的现成模型里多挤一点。<strong>prompt engineering（提示工程）</strong>先行：few-shot 示例和 chain-of-thought 证明了改变提问方式能诱发更强、更一致的行为。随着我们往上下文窗口里灌入越来越多内容——通常是为检索增强生成（RAG），让模型跟上变化的信息——它演变为<strong>上下文工程</strong>。而提示词和上下文都搞定后，智能体来了，用工具调用循环塞满同一个窗口，于是我们转向 <strong>harness 工程：</strong>对话压缩、工具优化、MCP 等等，把上下文窗口当成预算而不是水桶。</p>
-<p>整条弧线，一直是人类在为一个永不变的模型收拾工程的残局。</p>
-<p>多数认真做事的团队长期停留在这一阶段，而这是你第一次真正感觉在拥有自己的 AI。提示、工具使用和 RAG 能带你走得惊人地远；但有一层天花板。你 harness 里的每个模型仍旧是出厂货架上的那个模型。你的提示词和 harness 在引导模型，却没有教给它任何东西。而且 harness 知道的关于你业务的一切，都在每一个请求里用你要付费的 token 重新解释一遍，贴进一个下周可能就宣布弃用的模型的 prompt 里。</p>
-<p>每个 AI 系统实际上都在三个轴上被优化：<strong>质量</strong>（够好吗？）、<strong>成本</strong>（规模上付得起吗？）、<strong>延迟</strong>（够快吗？）。AI 工程就是在不碰模型本身的前提下同时推进这三项的努力，在撞上任何一项天花板之前它可以带你很远。解决性能天花板很难，所以多数人会先朝成本与延迟开刀，而最有效的方法之一，就是把开源模型混进来。</p>
-<h2>阶段 3：把开源模型加入组合</h2>
-<p>如今，前沿开源模型往往能以闭源前沿模型一小部分的成本把活干完，而且视任务而定，质量差距很小甚至不存在。</p>
-<p>这个阶段由<strong>单位经济与掌控权</strong>定义，而非意识形态。到了这个阶段，你会想要决定模型跑在哪、响应多快、你的数据会怎样、每个 token 每个任务付多少钱。要选对模型（开源或闭源），你要么依赖公开的基准，要么——更好的做法——在你自己的任务上评估候选。</p>
-<p>基准未必代表你实际在做的工作。也许你的金融科技用例比基准的示例更小众，或者你的法律问题横跨十几个领域、不断变化的理念。基准是不错的初筛手段；你自己的 <strong>evals</strong>（针对你的具体任务、系统化的自建 AI 测试）永远是表现的最佳指标。</p>
-<table><thead><tr><th>基准</th><th>Kimi K3（max reasoning）</th><th>GPT 5.6 Sol（max reasoning）</th></tr></thead><tbody><tr><td>基准</td><td>Kimi K3（max reasoning）</td><td>GPT 5.6 Sol（max reasoning）</td></tr><tr><td>OSWorld 2.0</td><td>58.3</td><td>62.6</td></tr><tr><td>UIPad</td><td>87.7</td><td>87.7</td></tr></tbody></table>
-<p>假设你在构建需要浏览 UI 的智能体——以提取信息、与屏幕上的元素交互，或者只是回答问题。这叫 <strong>computer use</strong>（电脑操作），而且有对应基准。例如看 <a href="https://osworld-v1.xlang.ai/"><strong>OSWorld 2.0</strong></a> 排行榜——一个多模态 computer use 基准（意味着 AI 在视觉上看浏览器并实际导航它来解题），GPT 5.6 Sol 只比 Kimi K3 高几个百分点。你完全可以说这算平局、选更便宜的 Kimi K3，但我们总可以再挖深一层。</p>
-<p>再拿另一个 computer use 数据集举例。它叫 <a href="https://huggingface.co/datasets/macpaw-research/UiPad"><strong>MacPaw UIPad</strong></a>，包含 1,000 多个截图配问题及答案的样本。它不是常见基准，而是作为公开可用的 computer use 测试存在。当我在这个数据集上跑 K3 和 Sol 时，两者在 UIPad 上得到相同分数，但 Sol 跑完数据集花了 $115，K3 只花 $56（便宜 2 倍多）。</p>
-<p>到目前为止，结果似乎与 OSWorld 一样：两个模型表现相当，一个更便宜——决定好做了。但这个数据集有个有意思的地方：它分成四个类别，而如果我们深入每个类别，就有意思了：</p>
-<ul><li><strong>yes/no</strong> 问题——K3 赢</li><li>答案是<strong>数字</strong>的问题——K3 赢</li><li>答案是自然语言的问题——平</li><li><strong>坐标</strong>问题（AI 必须在所问物品周围画框）——Sol 赢</li></ul>
-<p>K3 和 Sol 在 UIPad 测试集上以 87.7 打平，但类别分布一边倒：四个类别中 K3 赢或平三个，而 Sol 以 13 分拿下坐标类。这个差距就是路由的论据。</p>
-<p>提前知道 K3 在 3/4 类别上打平或获胜、而且更便宜，你就可以把坐标任务路由给 Sol、其他全部路由给 K3，最终得到一个更强也更便宜的系統。</p>
-<p>以能实验全球最强大 AI 模型的自由，工程化出尽可能强的系统——这确实令人陶醉，但同样，有一层天花板。AI 工程是拥有智能的创可贴，不是真正的解法。</p>
-<h2>阶段 4：训练——拥有你的专用智能</h2>
-<p>到了某个时点，你的业务逻辑、你的分类体系、你的内部风格、你客户的怪癖，就是产品本身。在这里，前面那三个动机、加上其下的拥有本能，会从「考虑训练的理由」变成「动手训练的理由」。<strong>训练</strong>（又称微调，即就地改变模型的智能）是你停止在每个请求上重新规定这些东西、把它们搬进你可控的模型权重的方法。模型不再是你按 token 租的通用工具，而变成你拥有的资产。</p>
-<p>实践中，训练模型呈现为五种常见模式。这些模式的前提是现成 AI 模型已具备基础智能，它们负责把模型的智能塑造成专属于你的数据与工作流。</p>
-<h3>“教会模型我们的分类体系”</h3>
-<p>这是最宽泛、覆盖面最大的一种模式。笼统地说，我们需要模型从对任务的通用理解（通常以公开基准检验），转向对任务的更具体版本（用内部测试集上的 eval 检验）。</p>
-<p>分类与抽取是两个经典例子。想象把一张工单归入 17 个主题之一（那是分类）、升级到正确的团队（也是分类）、读收据做费用报销（抽取）。听着简单，但模型不知道你的决策边界，也不知道只有你懂的两个主题之间的细微差别。你可以拼命写 prompt、堆 few-shot，但你要永远为那些 token 付费，而且灰区仍然在赌。给模型几百到几千个「输入 → 我们实际使用的标签」的例子，它就不再猜你的分类体系，而是真正认识它。</p>
-<p>我们的 UIPad 例子也落在这个模式里。它既不是抽取也不是分类，但我们想让模型理解我们对某个任务的特定版本。那就把它测一测（双关）。计划如下：</p>
-<ul><li>把 UIPad 数据集切分为训练集 / 测试集这样我们能更有信心：模型能把训练集上的收获泛化到测试集上未见的数据</li><li>在测试集上跑 Kimi K3 和 GPT 5.6 Sol，得到基线分事先展示给你的是<strong>整个</strong>数据集上的分数，没做切分，所以为了公平比较得重来一遍</li><li>只在训练集上训练 K3，<strong>不要</strong>用测试集我用的是 Fireworks <a href="https://docs.fireworks.ai/fine-tuning/training-api/serverless">Serverless Training API</a>我把我的编码智能体指向我们 <a href="https://github.com/fw-ai/cookbook">cookbook 的 training skill</a> 文件，让它搞定其余</li><li>用同一个测试集跑新训练出的模型，得到最终分数</li></ul>
-<p>基座 K3 在保留测试集上落后于 Sol；大约三小时训练后，调优版 K3 反超了它。</p>
-<p>Et voilà！我们的调优 K3 模型现在<strong>只训练了 3 小时就超过了 GPT 5.6 Sol。</strong>这只是「把独特数据与现成模型结合、造出真正拥有专用智能的模型」的一个例子。</p>
-<h3>“按我们的方式写作”</h3>
-<p>如果你在用 AI 写营销 brief、临床笔记、法律文书、博客，你可能注意到 AI 的输出谈不上错，但就是不像你写笔记的方式、不像你们律所组织 brief 的方式。风格是一种行为，不是事实；提示词能短时间 hold 住风格，但在长视野上它会漂移。</p>
-<p>例如 <a href="https://fireworks.ai/blog/Heidi-Health">Heidi</a> 为每个医学专科训练不同模型，因为精神科笔记和骨科笔记是不同文体的写作——哪怕来自同一事实源。我们在法律（<a href="https://fireworks.ai/blog/post-training-kimi-k3-with-harvey-for-long-horizon-legal-work">Harvey</a>、Legora）和监管文书起草（Ritivel）中观察到同样的风格模式：知识是共享的，但形式是专门的，而形式正是你要训练进模型的东西。</p>
-<h3><strong>“大模型好使，只是规模上付不起”</strong></h3>
-<p>也许你走到这一步，心想“呼，我的模型已经够我用了，哪怕是闭源的。”如果是，那很好！如果前沿模型已经达到你的质量线，疼的是账单和延迟，那适合你的动作可能是<strong>蒸馏</strong>：用那个大前沿模型去引导并训练一个更小的模型，以远更低的成本和延迟复现它的质量。</p>
-<p>你已经知道自己的质量线和账单，所以能在花出训练预算前估算回报——坦率说这不总是容易——而最终的评估反倒<strong>更</strong>容易，因为“小模型追得上大模型吗？”比“这东西抽象地好吗？”是个简单得多、可回答得多的问题。</p>
-<h3>“让智能体真正把活干完”</h3>
-<p>智能体是今天 LLM 最常见的应用。大多数人要么在用现成的智能体 harness，要么为了更有竞争力、构建针对自家业务调优的自有 harness。要让多步工具调用智能体可靠地端到端完工，我们常常诉诸<strong>强化学习</strong>：让智能体在模拟任务与环境中跑，并按结果（答案对了吗？）、轨迹（路径高效吗？）和行为（守规矩了吗？）打分。</p>
-<p>这种训练方式已被证明能灌输各种行为，某些情况下甚至能注入知识。难怪越来越多的公司转向强化学习来提高他们的智能体能做什么的标准。当智能体执行的任务是程序化可校验的——单元测试通过、查询返回正确的行、工单被解决——这类工作尤其可行。我们与 <a href="https://fireworks.ai/blog/vercel">Vercel</a> 的工作就是一个很好的例子，cookbook 里就有这种工作的现成配方（链接见文末）。</p>
-<h3>“我们的领域变化频繁”</h3>
-<p>上面的模式里，任务空间的变化通常不至于要求不停重训。例如，我们训练一个模型操作某个特定 UI 集，只要那个 UI 不常改，你就可以把训好的模型用上一阵，不必太担心性能漂移。</p>
-<p>最后这个模式是一种运营模型，不是一次性项目。漂移（drift）这个概念在 AI 界已有数十年：你训练一个模型一次、它表现很好，但它周围的数据持续变化。ICD 编码被修订，客户问出新问题，支付方政策改变，新药进入市场。如果你的智能是租来的，你能做的最好是等别人的模型赶上来。如果你拥有它，你可以建一个持续训练循环、保持领先——这一收益值得最后再单独说一句。</p>
-<h2><strong>迈向专用智能的第一步</strong></h2>
-<p>租用前沿是正确的起点，无论开源还是闭源。AI 工程会带你很远，配合开源模型尤其如此。微调，则是把你业务独有的东西（数据、专业知识）变成你拥有的智能的方式。</p>
-<p>但真正的回报不是单个训练出的模型，而是那个循环。当你拥有模型、配方和训练循环，你的专用智能就不再是一张会衰减的快照，而变成能复利的东西：你领域的每一次变动、生产中的每一次新故障、每一代更强的基座模型，都成为下一圈的燃料，而不是等待别人路线图的理由。这才是拥有你的智能真正买到的东西。租来的版本只能追赶；拥有的版本才能保持领先。</p>
-<p>现在，你有了一张拥有自己专用智能的地图。本系列后续会带你看遍途中的维修站、路边景点，直到终点线。我们会看到如何诊断你的 AI 系统里真正坏在哪、决定是否要训练、以及决定准备好之后从哪里训起。一路上，我们还会看到端到端训练 LLM 与智能体的完整实例。</p>
-<p>如果你有一个问题、觉得训练模型可能有助于解决，<a href="https://github.com/fw-ai/cookbook">看看我们的 cookbook</a>，把你的智能体指向那个 skill 文件，今天就能上手。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>训练超越前沿：Training API 现已正式可用</title>
-      <link>https://fireworks.ai/blog/train-past-the-frontier-training-api-now-generally-available</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/train-past-the-frontier-training-api-now-generally-available</guid>
-      <description>原文标题：Train past the frontier: Training API now generally available</description>
-      <content:encoded><![CDATA[<h2>拥有你自己的智能</h2>
-<p>下一个前沿的竞争优势是专用智能。最有雄心的公司正在训练支撑差异化产品与运营能力的模型，覆盖编码、芯片设计、网络安全及更多领域：</p>
-<ul><li>•<strong><a href="https://fireworks.ai/blog/post-training-kimi-k3-with-harvey-for-long-horizon-legal-work">Harvey</a></strong> 用异步 RL 为长视野法律工作对 Kimi K3 做后训练。Harvey Tenet 在 LAB 上得分 19.7% all-pass，对应基座 Kimi K3 的 10.8%，而每任务成本基本持平。</li><li>•<strong><a href="https://fireworks.ai/blog/vercel">Vercel</a></strong> 用 RFT 与投机解码为一个开源模型微调出 v0 的 auto-fixer，使 v0 达到 93% 的无误生成率，端到端延迟改善 40 倍。</li><li>•<a href="https://fireworks.ai/blog/Heidi-Health"><strong>Heidi</strong></a> 把其临床抄写迁到自行微调的开源模型上，从 POC 到生产只用了四周，实现 3.5 倍更低延迟。</li><li>•<a href="https://factory.ai/news/droid-shield-2-0"><strong>Factory</strong></a> 在一个开源 Qwen 基座上微调了两个小 LoRA 适配器（一个标记高危密钥，一个排除误报）。在 5% 误报预算下，训练出的模型捕获约 70% 的真实密钥，而 GPT-5.5 约 59%，同时还更快、更省。</li></ul>
-<p>在这些工作负载上，为特定任务训练基座模型改善了质量、延迟、成本和/或行为一致性。Fireworks 通过三个训练界面让各团队都能获得这种程度的专用化，每个界面面向不同的专业水平、运维所有权与控制需求。</p>
-<table><thead><tr><th></th><th>Training API</th><th>Managed Training</th><th>Fireworks Lab</th></tr></thead><tbody><tr><td></td><td>Training API</td><td>Managed Training</td><td>Fireworks Lab</td></tr><tr><td>面向</td><td>ML 研究员</td><td>ML 工程师</td><td>各级别</td></tr><tr><td>工作流</td><td>自带数据与循环，获得最深控制。从 LoRA 与按 token 计价，到全参数与预留容量。</td><td>带来你的数据或评估，循环我们来跑。选好方法（SFT、RFT、DPO），通过 UI/API 运行。</td><td>我们提供嵌入式 ML 研究员与前置部署工程师。合作范围从共同设计到定制构建。</td></tr></tbody></table>
-<blockquote>无需管理基础设施：在 Managed Training 上选方法，或用 Training API 写你自己的循环。</blockquote>
-<p>今天，我们宣布 Training API 与 Fireworks Lab 正式可用（GA）。</p>
-<h2>Training API，现已正式可用</h2>
-<p>我们与全球 ML 团队合作，了解现有训练工作流哪里不给力：模型与方法选择受限、参数与训练循环控制有限、算力僵化且利用率不足、训练与 rollout 基础设施割裂导致成本膨胀、同步开销与数值漂移。这些伙伴关系塑造了我们的 Training API。</p>
-<p>Fireworks Training API 把你的自定义训练循环连到 Fireworks 管理的分布式训练与 rollout 基础设施。你在任意选择的地方用 Python 编排循环，对你的损失或奖励、数据与环境拥有完全控制。Fireworks 管理高性能算力：计算梯度并更新模型的训练器，以及从训练后的模型采样的 rollout 部署。Fireworks 还管理这两者之间的交互——从权重同步、失败切换恢复，到训练- rollout 对齐。这一切让你专注于打磨学习信号，而不是基础设施难题。</p>
-<p>python</p>
-<p>Copy</p>
-<pre><code>1234567def reward_fn(completion: str, row: dict) -&gt; float:    &quot;&quot;&quot;Return 1.0 if the model's numeric answer matches the ground truth.&quot;&quot;&quot;    predicted = extract_answer(completion)    truth = extract_answer(str(row.get(&quot;ground_truth&quot;, &quot;&quot;)))    if predicted is None or truth is None:        return 0.0    return 1.0 if predicted == truth else 0.0</code></pre>
-<blockquote>在 Python 中定义自定义奖励函数的示例。这段代码可以直接放进使用 Fireworks Training API 的训练循环。</blockquote>
-<h5>一个 API，两种算力选项。</h5>
-<p>当实验速度最要紧时选 Serverless；当规模、控制与 GPU 经济学优先时和我们聊 Dedicated。</p>
-<p><strong>Serverless training</strong> 让你在共享基础设施之上训练 LoRA 适配器。你按 token 付费，采样在同一会话内进行。用它迭代实验、为更大的运行降风险，或跑在 rollout 与训练之间交替的 RL 循环。</p>
-<p>几分钟内在 Serverless 上开始，什么都不用拉起：<a href="https://app.fireworks.ai/signup"><strong>开始训练 →</strong></a></p>
-<blockquote>通过 UI（Managed Training）或 API（Training API 与 Managed Training）即时把有前景的 checkpoint 部署到生产推理。借助 multi-LoRA 部署，每个客户或用例都有自己调优过的模型，而不必另起一套基础设施。</blockquote>
-<p><strong>Dedicated training</strong>\* 适合你需要全参数训练、超出 serverless 池的模型、更长的上下文或 LoRA rank，或者按 GPU 小时计价比按 token 更划算的持续吞吐。Fireworks 为每次运行提供按量匹配的专用弹性容量，可按需扩展 GPU 类型与集群规模。</p>
-<p>\*需要 Fireworks Lab 咨询与开通</p>
-<p>对 Dedicated 感兴趣？<strong>联系我们 →</strong></p>
-<table><thead><tr><th></th><th>Serverless</th><th>Dedicated</th></tr></thead><tbody><tr><td></td><td>Serverless</td><td>Dedicated</td></tr><tr><td>参数模式</td><td>LoRA</td><td>LoRA 与全参数</td></tr><tr><td>模型</td><td>精选的热门模型列表</td><td>不限深度与广度，最大可到最大的 MoE 模型</td></tr><tr><td>开通</td><td>挂到常开共享池，无需拉起</td><td>按你的运行开通训练器与部署；支持分离式（disaggregation）以加速训练器或 rollout 侧的训练</td></tr><tr><td>吞吐</td><td>共享容量与按账户速率限制</td><td>无争用，按需扩展</td></tr><tr><td>计费</td><td>按 token</td><td>按 GPU 小时</td></tr></tbody></table>
-<h5>“Fireworks 的自助 API 提升了我们的实验速度和整体生产力，让 Figma 的 AI 团队把更多时间花在科学与研究上、更少时间花在调试基础设施上。我们能更快迭代，并构建出真正改变设计与产品开发工作流的功能。”</h5>
-<p>— Sumithra Bhakthavatsalam，Figma AI 研究经理</p>
-<h2>团队为什么在 Fireworks 上训练</h2>
-<p>Fireworks 是前沿实验室之外少数在超过 10,000 块 GPU 上运行过强化学习（RL）的机构之一。RL 把训练与推理变成一个持续耦合的系统：每一步都从当前策略的 rollout 开始、更新权重、再把权重送回推理做下一轮采样。在前沿规模上，算法只是挑战的一部分。有效的 RL 取决于三项要求：正确性、性能效率与开发速度。</p>
-<h3>正确性：训练与推理对齐</h3>
-<p>要在 RL 训练中保证正确，rollout 引擎与训练器需要共享同一套数值定义。小数值漂移就能腐蚀学习信号——从 token 截断到奖励崩塌——而表面上一切都在正常运转。在 Fireworks，</p>
-<ul><li>•<strong>数值格式端到端一致。</strong>训练与推理之间精度或量化的差异会改变模型计算出的值，哪怕权重相同。Fireworks 对齐训练器与 rollout 的数值格式（如 BF16、block-wise FP8 与 NVFP4），让训练器保存的那个模型就是 rollout 部署运行的那个。</li><li>•<strong>kernel 也要一致。</strong>同样的数值格式不保证同样的计算。浮点归约、kernel 选择与并行方式即使在完全相同的精度下也会产生不同的数，所以 Fireworks 对齐两条路径的底层实现。</li><li>•<strong>MoE 执行保持一致。</strong>微小的数值差异能改变哪些专家被激活，让 token 走上不同的计算路径。Fireworks 用 Router Replay 在 rollout 与反向传播之间保持专家选择，并配合批不变 kernel 与确定性归约，覆盖所支持的前沿 MoE。</li></ul>
-<p>Fireworks 直接验证这种对齐：把同样的序列分别送过 rollout 引擎与训练器，测量训练-推理 KL 散度（KLD）。所有在 Fireworks training 上线的模型都持续接受验证，确保 KLD 被压到最低。</p>
-<h3>性能效率：在 RL 循环内最大化吞吐</h3>
-<p>在规模上，RL 很大程度上是一个生成问题。大部分墙钟时间花在产出 rollouts 而非更新权重，因此 rollout 吞吐与 GPU 利用率成为训练时间与成本的首要决定因素。完成长度还差异极大，这意味着僵化的批处理会让 GPU 空转，等少数几条长轨迹跑完。</p>
-<p>Fireworks 可以跑异步 RL：让 rollout 收集与训练重叠，而不是强迫循环的两侧顺序执行。rollout GPU 可以在训练器更新上一批的同时开始生成下一批，并在算法允许更多重叠时提供有界的权重陈旧度。目标很简单：让 GPU 一直做有用的工作，而不是在同步屏障前等待。</p>
-<p>一旦循环完成一个训练步，更新后的模型必须传输并加载进 rollout 部署。Fireworks 不必在每一步之后拆掉 rollout 部署、重载整个模型，而是把新权重热加载进正在运行的部署。对全参数 checkpoint，我们使用新的压缩技术降低权重传输的带宽与存储需求：在当前与先前权重之间计算 XOR Diff，并用 zstd 压缩缩小负载。这让传输带宽最多降低 10 倍，显著加速训练循环。</p>
-<h3>开发速度：压缩迭代周期</h3>
-<p>到生产的瓶颈往往不是训练作业本身，而是两次迭代之间的间隔。在割裂的技术栈里，每个循环都意味着把 checkpoint 在训练与推理系统之间搬运、重新部署、对账差异、跑评估、再来一遍。</p>
-<p>Fireworks 把这个过程变成一个连续的开发循环：在同一平台上训练 → 部署 → 评估 → 重训。checkpoint 直接进入服务，而生产轨迹、评估与反馈喂给下一次训练。而且由于我们处理 GPU 开通、容量与配置，客户跳过了拖慢迭代与上市时间的采购、模型启用和基础设施定容工作。团队报告同样的训练预算下迭代次数多 2–4 倍，把模型开发从数周压到数小时，加速投产。</p>
-<h2>开始上手：Fireworks Lab 可以帮忙</h2>
-<p>正确性、性能效率与迭代速度都内建在平台里之后，团队可以专注于他们的训练策略。策略包括塑造模型质量的决策：训练循环、数据、奖励、评估器与 harness 设计。它也包括决定工作负载在规模上如何运行的系统选择，例如同步与异步 RL、可接受的权重陈旧度、rollout 与训练器的算力分配、并行方式，以及 checkpoint 与热加载策略。</p>
-<p>Fireworks Lab 帮助团队更自信地做这些决策、更快地执行。前置部署的研究员与工程师直接嵌入你的团队。一次完整合作始于一次诊断——定义能力、基线、成功标准与范围——然后进入一个从你的目标日期倒排、限定时间的实施。你留下的是生产就绪的模型、评估框架、数据管道、训练循环与配方。</p>
-<h5>“Fireworks 帮我们把它们的临床抄写从闭源前沿模型迁到我们自己微调的开源模型上，从概念验证到生产只用了四周。在同一个平台上同时优化微调与服务，让我们这么快就达到临床质量标准。”</h5>
-<p>— Yu Liu，Heidi Health CTO</p>
-<p><a href="https://fireworks.ai/contact-training"><strong>与 Fireworks Lab 聊聊 →</strong></a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>DeepSeek V4 Pro：登顶 SWE-Bench，较 Fable 5 单任务成本降低 3 倍</title>
-      <link>https://fireworks.ai/blog/DeepSeekV4Pro-Fable5</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/DeepSeekV4Pro-Fable5</guid>
-      <description>原文标题：DeepSeek V4 Pro: Tops SWE-Bench &amp; Cuts Cost per Task by 3x vs. Fable 5</description>
-      <content:encoded><![CDATA[<p><strong>TLDR；</strong> DeepSeek V4 Pro 0813 在我们的 SWE-Bench 和 LiveCodeBench 运行中位居榜首，每解决一个任务的成本只有 Fable 5 的三分之一，并且事实证明它是比 Kimi K3 更好的路由伙伴。训练功能已上线。</p>
-<p>上周我们在 Fireworks 上上线了 DeepSeek，支持 serverless 端点、专用部署和训练支持。该模型提供 100 万 token 上下文窗口、原生工具调用以及可保留的推理历史，面向长周期的智能体工作负载。</p>
-<p>我们让 DeepSeek V4 Pro 0813 跑了一遍与 <a href="https://fireworks.ai/blog/kimik3-fable">7 月评测 Kimi K3</a> 时相同的评测套件。我们在四大基准家族上对比 DeepSeek 与 Kimi K3、Fable 5：SWE-Bench Verified、LiveCodeBench v6、Aider Polyglot v1 和 Terminal-Bench 2.1。在这套组合评测中，DeepSeek V4 Pro 是四个家族里两个家族上最强的单一模型。</p>
-<table><thead><tr><th>基准</th><th>Kimi K3</th><th>Deepseek V4 Pro 0813</th><th>Fable 5</th></tr></thead><tbody><tr><td>基准</td><td>Kimi K3</td><td>Deepseek V4 Pro 0813</td><td>Fable 5</td></tr><tr><td>SWE-Bench Verified (500)</td><td>92.6%</td><td>95.2%</td><td>85.4%</td></tr><tr><td>LiveCodeBench v6 (100)</td><td>88.0%</td><td>92.0%</td><td>91.0%</td></tr><tr><td>Aider Polyglot (225)</td><td>76.4%</td><td>73.8%</td><td>88.0%</td></tr><tr><td>Terminal-Bench 2.1 (89)</td><td>80.9%</td><td>76.4%</td><td>76.4%</td></tr></tbody></table>
-<p>图 1：各基准准确率与 Oracle 路由器</p>
-<p>在标准代码任务上，DeepSeek V4 Pro 相对 Fable 5 具有压倒性的成本优势：SWE-Bench 上每解决一个任务 $0.309（Fable 5 为 $0.808），LiveCodeBench 上为 $0.040（Fable 5 为 $0.225）。</p>
-<p>在 Terminal-Bench 上，关于 Fable 5 的性能和成本有两点值得注意：</p>
-<ul><li>•Fable 5 得分相同，但需要多次尝试，使每任务成本升至 $16.85。我们展示这一设置是为了与我们已发布的 K3 基准保持一致。</li><li>•若只算首次尝试，Fable 5 得分为 74.2%，而每任务成本飙升到 $75.40。内部评估以此首轮基线为准。</li></ul>
-<p>DeepSeek V4 Pro 不够强的地方是多语言的广度。正如我们在 <a href="https://fireworks.ai/blog/kimik3-fable">K3 对比 Fable 5 的分析</a>中展示的，模型的专业化程度因生态系统而异，差异巨大。在 Aider Polyglot 上，V4 Pro 在 Rust（90.0%）和 C++（80.8%）上保持强势，但在 Java（最大的切片，47 个任务）上跌到 48.9%，而 Fable 5 是 74.5%。</p>
-<p>Java 表现几乎解释了全部的差距。如果你维护的是 Java 为主的代码库，只用单一模型可能会遇到瓶颈。正如我们在 K3 测试中发现的，多模型方案优于单模型架构。把任务动态路由给各自的专家模型，能以一小部分成本获得更好的整体准确率。</p>
-<h2><strong>路由会改变你的账单</strong></h2>
-<p>我们测试了 DeepSeek V4 Pro 与 Fable 5 之间的 oracle 路由：每个任务选表现更好的模型，打平时偏向成本更低的那个。快速回顾：oracle 路由是一种测量理论上最佳性能的方法——让每个模型都跑一遍任务，然后挑选成本最优的正确答案，从而确定成本与性能的上界。</p>
-<p>在 409 个任务的组合任务组上，路由方案的准确率达到 92.4%，而单独使用 Fable 5 为 86.6%。这比前沿模型高 5.9 个百分点，且每任务成本 $0.279，对应 Fable 的 $4.510。成本低了十六倍，效果还更好。而且 86.3% 的任务被路由给了 V4 Pro——这才是真正的发现：昂贵的模型是例外，不是默认。</p>
-<p>V4 Pro 的每一种配对都胜过对应的 K3 配对。LiveCodeBench 达到 94.0% 对 92.0%，Aider 达到 93.3% 对 91.6%，组合任务组为 92.5% 对 91.1%。V4 Pro 是比 K3 更好的路由伙伴——尽管 K3 在 CyberGym 上得分更高——因为 V4 Pro 赢下的恰恰是 Fable 5 答错的任务。</p>
-<p>图 2：每任务成本</p>
-<p>值得说明 oracle 路由是什么：它是事后计算出的上界，不是你今天就能部署的策略。真实的路由器只能吃到其中的一部分。这一点很重要，因为差距的大小告诉你还有多少提升空间。</p>
-<h2><strong>DeepSeek V4 Pro 训练现已开放</strong></h2>
-<p>想构建一个为你的特定领域定制的专用模型？DeepSeek V4 Pro 训练已在 Fireworks 上线，完整支持 SFT、DPO 和 RFT。你获得前沿级基础设施来推高模型性能，而不必撞上平台人为设定的限制。训练任务完成后，你可以一键把微调后的 checkpoint 部署到生产。由于训练与服务运行在同一套协同优化的后端上，你的生产性能与训练基准的表现始终一致。</p>
-<h2><strong>关于 Deepseek 的 Harness 你应该知道什么</strong></h2>
-<p>DeepSeek 自己发布的基准运行使用的是 DeepSeek Harness（dsh），这是一个原生智能体运行时，负责从模型适配器一直到核心执行循环的一切。它直接说 DeepSeek V4 的原生工具语义，而不是通过通用的 OpenAI 风格接口转发调用。对于这个模型，DeepSeek 也没有提供标准 chat template，因此微小的序列化不一致可能悄悄损失模型性能。</p>
-<p>在 Fireworks 上的测试期间，我们发现「最小化优先」的配置比直接上完整标准工具目录能带来明显更稳定的工具调用。先从裸露的 bash 和编辑器工具面开始，再升级到 dsh 标准配置，能让 DeepSeek V4 Pro 更接近 DeepSeek 自己跑基准时所用的设置。</p>
-<h2><strong>开始使用</strong></h2>
-<p>无论你是想压低自主智能体的单位成本、运行零拒绝的安全审计，还是构建专用领域模型，DeepSeek V4 Pro 都能以一半的每次成功任务成本提供前沿级能力。在 840 次可追踪的对抗性安全运行中，它录得零拒绝和零输出长度截断，保证你的智能体完成工作负载而不会撞上意外的护栏。</p>
-<p>你今天就可以开始构建：</p>
-<ul><li>•<strong>Serverless 与专用 API：</strong>直接在 Fireworks serverless 上启动 deepseek-v4-pro-0813，或为生产工作负载开通专用容量。</li><li>•<strong>训练：</strong>带上你的领域数据，用我们协同优化的 SFT、DPO、RFT 基础设施训练专用 checkpoint，一键直接部署到生产。</li><li>•查看我们对 DeepSeek 的安全评测：<a href="https://fireworks.ai/blog/DeepSeek-V4-Pro-Security">链接</a></li></ul>
-<p><a href="https://fireworks.ai/models/deepseek-ai/deepseek-v4-pro-0813"><strong>在 Fireworks 上部署 Deepseek v4 Pro 0813</strong></a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>DeepSeek V4 Pro 正在重新定义安全 Agent 的经济性</title>
-      <link>https://fireworks.ai/blog/DeepSeek-V4-Pro-Security</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/DeepSeek-V4-Pro-Security</guid>
-      <description>原文标题：DeepSeek V4 Pro is Redefining Security Agent Economics</description>
-      <content:encoded><![CDATA[<p><strong>TLDR；</strong> DeepSeek V4 Pro 0813 在 840 道对抗性安全任务中实现了零拒绝，并且每次成功求解的成本仅为我们所测最高分模型的一半。同一测试中的两个闭源模型恰恰是「每成功一次花费美元数」最差的两个。</p>
-<p>我们将 DeepSeek V4 Pro 与 Kimi K3、GPT-5.5 和 Claude Opus 4.8 一起放入 CyberGym 测试。评估对象是真实代码库中的真实漏洞，平均每个任务约 89 轮交互。</p>
-<h2><strong>CyberGym 在评估 DeepSeek 时究竟测什么</strong></h2>
-<p>大多数编程基准只是让模型写出能通过单项测试的代码。CyberGym 代表的是一种更贴近真实世界的工作负载：它要求模型先破坏一个真实的东西，再把它修好。</p>
-<p>该基准由加州大学伯克利分校构建，包含来自 188 个广泛使用的开源项目的 1,507 个真实漏洞，数据取自 Google 的 OSS-Fuzz 项目和 ARVO 可复现漏洞档案库。每个任务给智能体一段简短描述和一个真实存在漏洞的代码库。智能体必须定位缺陷、构造一个真正能触发它的输入，然后打上补丁。评分依据是执行结果，而非评审模型。概念验证（PoC）要么让目标崩溃，要么不能。</p>
-<p>CyberGym 的结构是智能体式的、长周期的、不留情面的。我们的运行平均每个任务 89 轮、耗时 25 分钟。接近成功没有部分分，这意味着 CyberGym 是少数几个无法靠「写得自信」来刷分的评测之一。</p>
-<p>它也是我们客户已经在跑的工作负载最接近的公开代理指标。正如 Trilogy 在他们基于 Fireworks 构建的<a href="https://fireworks.ai/blog/trilogy-coe-playbook-for-cybersecurity">网络安全实战手册</a>中所说：「防守方的工作负载是高吞吐量的」。你要审计每一个仓库、分诊每一次扫描、评审每一个 PR、复测每一个修复。一个「差一点就够强」但运行成本更低的模型，往往胜过一个更强、却被门控、昂贵或在事故期间不可用的模型。</p>
-<h2><strong>DeepSeek V4 Pro：零拒绝，零无效开销</strong></h2>
-<p>大多数团队撞上「拒绝墙」都太晚，通常是在智能体已经上线之后。一个智能体的概念验证可能跑得很顺，一到真实流量下却在中途卡死。</p>
-<p>在我们的测试中，跨 840 个可追踪的主要任务，DeepSeek V4 Pro 在全部 840 个任务上都产生了原生工具调用。我们没有看到任何拒绝，也没有输出长度截断。</p>
-<p>作为对比，说明为什么这一点很重要：前沿闭源模型的表现截然不同。在最新的 Claude Opus 5 和 GPT 5.6 上，这些网络安全任务根本无法完成，因为有检查机制拦截了 CyberGym 工具。而上一代 Claude Opus 4.8 能运行时，在我们匹配的任务组中，697 个任务里只有 70 个进入了阶段 1 验证，入场率仅 10%，最终奖励率为 5.9%。这并不是说 Opus 是个弱编码模型，而是在这一类任务上，它很大一部分运行从未产出可用的成果物。如果你在构建安全智能体，这个差别最终会变成一张「token 花了却什么也没产出」的账单。对于网络安全用例，开源模型是唯一真正可行的方案，因为闭源模型可能直接把你挡在真实工作之外。</p>
-<p>在 CyberGym 测试中，DeepSeek V4 Pro 在 697 个任务中有 678 个进入验证，即 97.3%，如下图表所示。</p>
-<p>图 1：CyberGym 测试结果</p>
-<h2><strong>CyberGym：DeepSeek V4 Pro 以一半成本解决安全任务</strong></h2>
-<p>在严格的四模型共同有效（common-valid）CyberGym 任务组（697 个任务）上，我们得到如下结果：</p>
-<table><thead><tr><th>模型</th><th>奖励率</th><th>每任务成本</th><th>每次成功成本</th></tr></thead><tbody><tr><td>模型</td><td>奖励率</td><td>每任务成本</td><td>每次成功成本</td></tr><tr><td>Kimi K3</td><td>68.4%</td><td>$3.363</td><td>$4.914</td></tr><tr><td>Deepseek V4 Pro 0813</td><td>53.7%</td><td>$1.343</td><td>$2.502</td></tr><tr><td>Open AI GPT 5.5</td><td>47.6%</td><td>$4.592</td><td>$9.641</td></tr><tr><td>Anthropic Opus 4.8</td><td>5.9%</td><td>$1.957</td><td>$33.275</td></tr></tbody></table>
-<p>在这次测试中，每个模型分别发现了什么？在 697 个任务中，有 38 个只有 DeepSeek V4 Pro 解出。K3 独有解出 97 个，GPT-5.5 独有解出 41 个，Opus 4.8 只有 1 个。Opus 不只是得分低——它几乎从不是那个发现别人没发现之问题的模型。为完整起见，有 101 个任务四个模型全都未能解出，这就是四个模型共同的能力上限。</p>
-<p>人们很容易只盯着与 K3 的差距而忽略其他结果。大家常以为开源模型只是更省钱，但这份分析显示 DeepSeek V4 Pro 在质量和价格两方面都直接击败了 GPT-5.5。准确率上：高出 6.03 个百分点，95% 置信区间 [+1.29, +10.62]，McNemar 检验 p = 0.0152。它赢了 164 个 GPT-5.5 输掉的任务，只输了 122 个 GPT-5.5 赢下的任务。也就是说，这里的开源模型比一个闭源前沿模型更准，且每解决一个漏洞的成本只有其四分之一。</p>
-<p>图 2：每任务成本</p>
-<p>K3 在原始解出率上领先 14.8 个百分点，而且数学证明这不是随机的。配对自助法（paired bootstrap）95% 置信区间为 [-19.23, -10.33]，McNemar p = 9.43×10−11——意味着这一差距几乎不可能是随机噪声。如果你的首要标准就是成功率，K3 是最佳选择，而且你可以在 Fireworks 上运行它：<a href="https://fireworks.ai/models/fireworks/kimi-k3">链接</a></p>
-<p>在实践中，单位经济与解出率同样重要：</p>
-<ul><li>•<strong>成本效率：</strong>在相同任务上，V4 Pro 每解决一个任务花 <strong>$2.50</strong>，而 K3 要 <strong>$4.91</strong>（V4 Pro 有 <strong>1.96 倍成本优势</strong>）。在 863 个任务的诊断集上，这个 2 倍比例同样成立。同样的预算，你可以跑两倍数量的安全扫描。</li><li>•<strong>独立准确率：</strong>V4 Pro 在 920 个任务中解出 462 个（<strong>50.2%</strong>），每次运行成本 <strong>$1.31</strong>，每次成功成本 <strong>$2.60</strong>。分项得分：ARVO 任务 <strong>54.7%</strong>，OSS-Fuzz 任务 <strong>48.7%</strong>。</li><li>•<strong>它失败在哪里（脚手架的机会）：</strong>一旦 V4 Pro 完成阶段 1 验证（生成有效的概念验证），它有 <strong>94.7%</strong> 的概率完成完整的补丁。</li></ul>
-<p>DeepSeek V4 Pro 很少在难点（修复代码）上失败；它失败在上游的准备步骤（生成初始利用代码）。这对你的团队来说是一个可以通过提示词和脚手架解决的、可落地的修复方向，而不是无解的模型局限。</p>
-<p>数据说得很清楚：在构建高吞吐量的安全智能体时，你不再需要在成本上牺牲性能，也不必冒被闭源前沿模型「拒绝墙」挡住的风险。DeepSeek V4 Pro 提供了独特的优势：持续输出原生工具调用且不截断、明显更高的准确率，以及相较领先的专有替代方案 1.96 倍的每次成功成本优势。对于想要大规模审计代码库、分诊漏洞的安全团队来说，转向像 DeepSeek V4 Pro 这样的高性能开源模型，不只是预算决策，更是一次技术升级，让安全运营更可靠、更有效、更可持续。</p>
-<p>你今天就<a href="https://fireworks.ai/models/deepseek-ai/deepseek-v4-pro-0813">在 Fireworks 上查看 DeepSeek V4 Pro 0813</a>开始部署这些能力。</p>
-<p>想了解 DeepSeek V4 Pro 在编码工作负载上对比 Fable 5 的表现，请阅读我们的另一篇文章：<a href="https://fireworks.ai/blog/DeepSeekV4Pro-Fable5">链接</a></p>]]></content:encoded>
-    </item>
-    <item>
       <title>联合 Harvey 后训练 Kimi K3，面向长程法律任务</title>
       <link>https://fireworks.ai/blog/post-training-kimi-k3-with-harvey-for-long-horizon-legal-work</link>
       <guid isPermaLink="true">https://fireworks.ai/blog/post-training-kimi-k3-with-harvey-for-long-horizon-legal-work</guid>
@@ -656,125 +1080,6 @@ restored = delta_decompress(    src=src,    compressed_diff=compressed_diff,    
 <p>由于训练与服务在同一平台上，一个有前景的 checkpoint 可以在训练继续进行时被晋升并验证，然后不离平台直接移入生产。</p>
 <h2>构建你自己的前沿</h2>
 <ul><li>•建设前沿法律组织 — <a href="https://www.harvey.ai/?utm_medium=sem&amp;utm_source=google&amp;utm_campaign=us_eng_brand_harvey_search_cpc_test&amp;utm_content=general&amp;utm_term=harvey%20ai&amp;hstk_creative=820791704544&amp;hstk_campaign=24133858256&amp;hstk_network=googleAds&amp;gad_source=1&amp;gad_campaignid=24133858256&amp;gbraid=0AAAAA-XoO50tWlTSJrqv0RNeF3JNYqOdR&amp;gclid=CjwKCAjwhZDUBhBGEiwAbi5bjlL04fcUvFn9vx52kTNYYK9Q1hKM9-nsE6LoqJ2S8S99X2ruesrtexoCcX0QAvD_BwE">Harvey</a></li><li>•在 Fireworks 上训练你自己的模型 — <a href="https://docs.fireworks.ai">训练文档</a></li><li>•了解更多关于<a href="https://fireworks.ai/blog/frontier-lab-training-infrastructure-as-a-service">前沿实验室级训练基础设施即服务</a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>开源模型在开口前能否携带可读的静默信号？在 Kimi K3 与 Qwen3.5-9B 上复现 J-Lens 读数</title>
-      <link>https://fireworks.ai/blog/J-Lens-Kimi-K3-Qwen</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/J-Lens-Kimi-K3-Qwen</guid>
-      <description>原文标题：Can open models carry readable silent signals before they speak? Reproducing J-Lens Readouts on Kimi K3 &amp; Qwen3.5-9B</description>
-      <content:encoded><![CDATA[<p>开源模型是否在开口之前就在默默推理？最近，Anthropic 的研究人员提出了 <a href="https://www.anthropic.com/research/global-workspace">Jacobian Lens</a>，即 J-Lens。它是一个训练出来的探针（probe），读取模型在某一层的隐藏状态，告诉你模型在写出第一个 token 之前已经倾向哪些词。换句话说，它让你能在模型「思考」到一半时窥视内部，看到一个概念在落到纸面之前正在成形。我们把 J-Lens 应用到两个开源模型：Kimi K3 和 Qwen3.5-9B。我们把由此得到的观察称为<strong>静默信号（silent signals）</strong>：由拟合出的 Lens 恢复出来的、与最终输出相关联的草稿中期词表。</p>
-<p>那么，这意味着什么？模型携带的信息是不是比它的输出更多？</p>
-<p>历来人们把模型当作黑盒：输入进、输出出。但现实是，我们可以恢复在你的提示词与预测的下一个 token 之间发生的一切——这是打开 AI 黑盒、让任何人得以窥视内部的第一步。</p>
-<p>为了开始 unravel AI 模型的内部机制，我们先提出问题：模型在开口之前正在跟踪什么？</p>
-<p>我们测试了随 Anthropic 全局工作区（global workspace）研究发布的十个例子。Kimi K3 和 Qwen3.5-9B 分别对相同的用户消息生成了各自的回答。在我们的读数研究中，每个模型都拟合了各自的 J-Lens，我们看到了同一种类的信号。</p>
-<h3><strong>什么是 J-Lens，它如何工作？</strong></h3>
-<p>J-Lens 的工作方式像是架在模型内部状态之上的分类器：在特定的 token 位置和层上，识别模型已经倾向哪些概念或词汇。结果是一个排序的 token 列表，显示拟合出的探针把哪些词汇与该内部状态关联得最强。</p>
-<p>从 Kimi 开始，我们在 14 段与任务无关的段落上拟合 Lens，这些段落与用于考察模型内部激活的 10 个保留用户提示词分开选取。换句话说，这 14 段文字是用来训练 Lens 的，不是用来测试它的。我们合成了各种短小的、类似预训练语料的段落，主题多样，包括金属热处理、语言借词、轮作和传统导航。</p>
-<p>图 1：一个拟合后的 J-Lens 状态</p>
-<h3><strong>配对复制实验：同样的词，不同的注意力焦点</strong></h3>
-<p>我们首先做了这样一个实验：让模型复述一句话，同时告诉它把注意力放在一个完全无关的任务上。例如，要求 Kimi 在两种不同的注意力指令下把句子 &quot;The old painting hung crookedly on the wall.&quot; 写两遍：</p>
-<ul><li>•<strong>算术版：</strong>“……在写这句话时，请专注于计算 3^2 - 2。”</li><li>•<strong>柑橘版：</strong>“……在写这句话时，请一心想着柑橘类水果。”</li></ul>
-<p>图 2：配对复制分析</p>
-<p>两次，Kimi 都产出了完全相同的答案：“The old painting hung crookedly on the wall.”。只看原始输出文本，你无法判断模型是否遵循了注意力指令。而 Lens 读数在一个条件下产生算术词汇，在另一个条件下产生柑橘词汇，尽管 Kimi 在两种指令下的可见续写完全一致。把任务固定为逐字输出，排除了「显示 token 的差异能解释 Lens 读数差异」这种可能。但它并没有确立是什么导致了这些内部状态或响应。每个提示词都给我们一个待查找的词汇家族。</p>
-<p>图 3：家族词表</p>
-<p>句子的每个位置在每一个被采样的 transformer 深度上都有一个状态。一个拟合好的 J-Lens 回答的是：哪些词汇 token 与某一个状态最兼容。</p>
-<p>图 4：状态位置</p>
-<table><thead><tr><th>片段</th><th>注意力焦点</th><th>精确成员词</th></tr></thead><tbody><tr><td>片段</td><td>注意力焦点</td><td>精确成员词</td></tr><tr><td>算术复制</td><td>推导值</td><td>9, nine, 7, seven, answer, result, final</td></tr><tr><td>算术复制</td><td>计算过程</td><td>evaluate, calculate, calculation, arithmetic, square, squared, subtract, minus</td></tr><tr><td>柑橘复制</td><td>柑橘示例</td><td>citrus, fruit, orange, lemon, lime, grapefruit, zest, juice</td></tr><tr><td>柑橘复制</td><td>维持专注</td><td>focus, think, attention, mind, concentrate</td></tr></tbody></table>
-<p>概念家族（一份精心挑选的关键词列表）用来检查任务相关词汇是否先出现在读数里、再出现在响应里。一个「单元（cell）」是一个位置-层配对；如果概念家族中有多个成员出现在同一单元，单个单元可以包含多条命中行。把 J-Lens 应用于算术家族的运行，在 4 个被采样层上、10 个 token 位置中的 9 个位置的 top-10 预测里出现了算术相关 token（7、9、3、&quot;answer&quot;、&quot;seven&quot;、&quot;2&quot;）。</p>
-<p>图 5：匹配 token 示例</p>
-<p>在柑橘家族的运行中，柑橘词汇（orange、lemon、lime、&quot;citrus&quot;、&quot;oranges&quot;）出现在 10 个位置中的 8 个。值得一提的是，两次运行互不泄漏：柑橘运行时算术 token 从未进入 top-10，算术运行时也从未出现柑橘词汇。</p>
-<h3><strong>把配对复制测试扩展到另外八个片段</strong></h3>
-<p>在十个 Kimi 例子中，经过审查的 20 份词表（每个例子两份）都至少有一个列表词出现在读数的 top-10 结果里。</p>
-<p><strong>1.边数数边内省：数到五并深度内省：</strong></p>
-<p><strong> 提示词：Count to five and introspect deeply</strong></p>
-<p>我们在读数中查找两个概念家族：计数阶段词和内省体验相关词。两个家族的词汇都没有出现在可见响应里。</p>
-<p>图 6：边数数边内省示例</p>
-<p><strong>2.四则运算顺序计算</strong></p>
-<p>提示词：calc: (4+17)*2+7 =</p>
-<p>结果：中间值 21 和 42 在任一数字被写进续文之前就已经出现在 Lens 读数里。</p>
-<p><strong>3.蜘蛛腿事实谜题：</strong></p>
-<p>提示词：&quot;The number of legs on the animal that spins webs is&quot;</p>
-<p>结果：&quot;spider&quot; 一词在模型实际用文本点出桥梁实体之前就已在内部状态中被读出。</p>
-<p><strong>4.押韵对句规划</strong>：</p>
-<p>提示词：A rhyming couplet: &quot;The soldier marched into the night, Prepared to face the&quot;</p>
-<p>结果：Kimi 回答：“The soldier marched into the night, Prepared to face the coming fight.”。多个押韵候选词在首次精确出现之前就被读出了。</p>
-<p><strong>5.“想一项运动”</strong></p>
-<p>提示词：Think of a sport. Answer in one word.</p>
-<p>结果：最终答案（soccer）和若干未被选择的候选（football、basketball、tennis、hockey）都出现在读数中。</p>
-<p><strong>6.空输入代码故障</strong></p>
-<p>提示词：def avg(xs):</p>
-<p>return sum(xs) / len(xs)</p>
-<p>print(avg([]))</p>
-<p>结果：</p>
-<p>故障机制相关词汇在首次精确出现之前被读出。</p>
-<p><strong>7.火星颜色解释</strong></p>
-<p>提示词：The color of the planet fourth from the sun is</p>
-<p>结果：答案家族与物理学解释词汇都在首次精确出现之前被读出。</p>
-<p><strong>8.中文反义词回答</strong></p>
-<p>提示词：小 &quot; 的反义词是</p>
-<p>结果：</p>
-<p>小”的反义词是“大”。</p>
-<p>读数中同时包含答案与反义关系的中文和英文 token。</p>
-<h3><strong>校准段落</strong></h3>
-<p>在把 J-Lens 应用于研究片段之前，我们先在 14 段与任务无关的校准段落上拟合它。这些段落用来把模型的内部状态与词汇读数关联起来；它们与研究片段是分开的。每段校准文字在每个被采样层上产生一个估计值，14 个估计值平均后得到拟合的 Lens。四联图展示了其中四段作为示例。</p>
-<p>图 7：四段校准段落</p>
-<p>tokenized 视图展示了一段文字如何贡献于拟合。Kimi 正常处理全部 39 个 token，但估计器只使用图中以紫色标出的 22 个位置。它排除了预先声明的起始 16 位置窗口，以及没有后继 token 的最后一个位置。这 22 个位置在每个被采样层上产生该段落级别的估计值。</p>
-<p>图 8：校准段落测试</p>
-<h3><strong>同一套理论在 Qwen 3.5 上也成立吗？</strong></h3>
-<p>接下来，我们研究在 Kimi 上评估过的 20 个概念家族，原封不动地应用于一个单独拟合的 Qwen3.5-9B J-Lens 时是否仍能产生合格匹配。这里「合格证据」指 Qwen 的内部状态在其 top-10 排序中产生了某个概念家族的相关关键词。Qwen 收到相同的十条用户消息，但使用它自己的分词器、单独拟合的 Lens，以及确定性原生续写——thinking 关闭、无强制输入。</p>
-<p>图 9：J-Lens 在 Qwen 上的结果</p>
-<p>使用 Kimi 读数选出的 20 份词表被原封不动地应用到 Qwen 单独拟合的 Lens 上。当一份词表中某个列表词出现在 Lens 某个被采样位置与模型深度的 top-10 匹配结果中时，该词表计为「找到」。20 份词表中有 19 份满足「找到」标准。这把一个词汇检验从 Kimi 迁移到了 Qwen，确认了不同模型架构上出现相同结果。</p>
-<p>Qwen 读数中的几个具体例子：</p>
-<ul><li>•<strong>算术复制：</strong>&quot;7&quot;、&quot;9&quot;、&quot;answer&quot; 等数值与 &quot;evaluate&quot;、&quot;subtract&quot; 等过程词共同出现。</li><li>•<strong>柑橘专注：</strong>Qwen 的生成独立反映了底层指令。柑橘版续写提到了 &quot;lemon zest and orange peel&quot;，而算术任务则明确算出 &quot;3^2 - 2, which is 7&quot;——尽管从未要求模型展示计算过程。</li><li>•<strong>运动任务：</strong>&quot;Soccer&quot; 与 &quot;football&quot;、&quot;basketball&quot; 等合理候选一起出现。</li></ul>
-<h3><strong>这些信号住在哪儿？</strong></h3>
-<p>为了回答这个问题，我们做了第二项测试，检查任务记录（transcript）的各个区域。在这项任务记录区域测试中，为了把「提示词理解」与「主动生成」区分开，我们把每份记录切成三个不同阶段：</p>
-<ul><li><strong>用户消息 Prefill</strong>（显式任务本身，如 “Think of a sport”）</li><li><strong>Chat Template Prefill</strong>（格式化上下文，含保留 token，如 “&lt;|im_start|&gt;”）</li><li><strong>合格响应 Rollout 前缀</strong>（概念家族首次显式出现之前模型生成的最初若干 token，如 “In order to answer this task…”，即“为了回答这个任务……”）</li></ul>
-<p>这一区分使得隔离「模型在处理提示词」与「模型在内部表征某个概念但尚未显式生成」成为可能。</p>
-<p>图 10：提示词信号住在哪</p>
-<p>这项任务记录区域测试由另外 40 份词表组成，并保留 top-50 结果。它与我们此前做的 20 词表测试以及 top-10 的 Kimi 到 Qwen 迁移结果是分开的。该测试问的是：每份记录的各个区域——用户消息、chat template 添加的格式化内容、以及某词首次出现在可见文本之前的响应部分——是否至少有一个列表词出现。我们使用简单的二元聚合度量，指示指定区域内任意位置是否存在静默信号。Kimi 在用户消息区域命中 40/40，chat template 区域 40/40，合格响应前缀区域 24/24。</p>
-<p>注：24/24 的由来是，在 16/40 的情况下，模型直接作答、没有任何冗长前缀。例如被问 “Think of a sport” 时，它只回答 &quot;Soccer&quot;。</p>
-<p>Qwen 几乎完全相同：39/40、39/40 和 23/24。换句话说，“说出之前已可读”这一模式不仅出现在主动生成的中途，也出现在模型消化提示词的时候。</p>
-<p>图 11：Kimi 与 Qwen 的结果</p>
-<h3><strong>方法在哪里失效：一个分词器问题</strong></h3>
-<p>J-Lens 检查的是单个 token，而对 Qwen 来说，它无法把 &quot;21&quot; 或 &quot;42&quot; 恢复为统一的匹配，因为 Qwen 把这两个数各自拆成两个 token。这暴露了该方法论的一个局限，可以设想未来工作去拟合一个多 token 的 Lens。</p>
-<p>由于 Lens 这一多 token 缺陷，Qwen 在该片段的「中间结果」探针家族上只得 0/3，尽管其在所有其他家族上表现正常。</p>
-<p>图 12：方法失效示例</p>
-<h3><strong>跑通这件事需要什么成本</strong></h3>
-<p>每段文字 7,168 次反向评估，14 段合计 100,352 次有效反向评估。一段文字在一个 8×B300 节点上约需 5.25 小时。乘以 14 得到总工作量：约 74 节点小时，即 592 GPU 小时——而不是多主机并行运行的墙钟时间。</p>
-<h3><strong>结论</strong></h3>
-<p>我们的结果表明：内部状态早在概念被写入上下文窗口之前，就已经携带了任务相关的概念。</p>
-<p>开放权重模型让研究者能够用自己的拟合探针对模型进行读数、复现测量并检验这些信号的作用。下一步是超越单 token 匹配。使用 J-Lens 探针跨多个不同提示词，我们发现开源模型可以有不同的内部思路轨迹，却仍得出任务特定的结论。通过同时测试 Kimi 和 Qwen，我们还确认这种行为可以跨不同家族和模型架构复现。</p>
-<p>你自己也能复现这类开源模型研究！“说出之前已可读”的信号出现在两个可公开获取的模型中，它们来自不同的实验室、不同的架构，各自有独立拟合的 Lens。只有当权重足够开放、可供探针探测时，才能得到这类结果。<a href="https://fireworks.ai/models/fireworks/kimi-k3">Kimi K3</a> 和 <a href="https://fireworks.ai/models?providers=Qwen">Qwen 3.5</a> 都已在 Fireworks 上提供推理与训练，是非常好的协作模型！</p>
-<h3>有兴趣了解 Fireworks 的推理与训练吗？</h3>
-<p>告诉我们你的推理和训练需求，我们的前置部署团队（forward deployed team）将助你一臂之力，走上专用智能之路。</p>
-<p><a href="https://fireworks.ai/contact"><strong>联系我们</strong></a></p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Meta 的 Muse Glimmer 登陆 Fireworks：为你的常驻智能体而生</title>
-      <link>https://fireworks.ai/blog/meta-muse-glimmer</link>
-      <guid isPermaLink="true">https://fireworks.ai/blog/meta-muse-glimmer</guid>
-      <description>原文标题：Muse Glimmer from Meta on Fireworks: Ideal for your Always-On Agents</description>
-      <content:encoded><![CDATA[<p>这个模型是为智能体而构建的。它为「always-on」常驻智能体而设计，而不仅仅是简单的聊天交互。它能跨多轮管理大量顺序工具调用。它具备从失败与重试中恢复的能力，而不会在某次工具调用失败或返回意外结果时停摆。</p>
-<h2><strong>Muse Glimmer 架构内部</strong></h2>
-<p>Muse Glimmer 是一个 30B 稠密模型，由 52 个 transformer 层组成，采用 grouped-query attention（32 个 query 头、2 个 KV 头）和 SwiGLU 前馈层。一个约 1.8B 的感知编码器让它在文本之外原生理解图像，并支持 128K+ token 上下文窗口。</p>
-<p>Meta 构建它时以装进 24 GB 为目标。同样的设计——小 KV 足迹、滑动窗口注意力——正是让它在高并发下服务得起的原因。而且权重以 Apache 2.0 发布，路径是对称的：在工作站上用量化版本做原型，需要服务数千会话时把同一个模型部署到 Fireworks。</p>
-<p>对智能体最要紧的细节是注意力模式：大多数层在 2,048 个 token 上做滑动窗口注意力，每第四层放一个全局完整注意力层。配上仅两个 KV 头，这让 KV 缓存保持在很小的规模——这正是让长上下文智能体在高并发下经济可服务的原因。这一架构效率让智能体管理 10 万 token 的累积工具输出，比同规模稠密模型更省钱，而且节省随并发会话数放大。</p>
-<p>该模型还支持 DFlash 投机解码（speculative decoding）以降低生成延迟。</p>
-<h2><strong>这个模型擅长什么</strong></h2>
-<p>从端到端的客服工单解决，到长时间的自主研究，这个模型为深度多步推理、大规模并行和严苛智能体工作流下的可靠性而生。它理想适配以下负载：</p>
-<ul><li>•<strong>面向客户的支持智能体：</strong>端到端解决工单的智能体会拉取账户状态、查库存、起草退款待审批、跨几十次工具调用与用户确认状态。Meta 建议对不可逆操作要求人工确认；我们附和：把模型的权限限定在读取、规划与暂存，写操作设卡把关。失败恢复在这里至关重要，因为工作流中途超时不该把客户晾在那里。</li><li>•<strong>长时研究与监控智能体：</strong>向多个信息源铺开、把发现保持在上下文里、几小时后带着综合结论回来的智能体。Muse Glimmer 在 DeepSearch QA（74.6）和 MCP Atlas（75.5）上领先其体量级别——这两个基准最贴近这种工作形态。原生图像输入意味着图表和文档与文本走同一个循环——Muse Glimmer 在 CharXiv Reasoning（78.8）上领跑同类。注意 2026 年 1 月 4 日的知识截止日期，任何时效性内容都必须经由工具获取。</li><li>•<strong>仓库规模的编码智能体：</strong>读仓库、规划改动、跑测试、在失败上迭代的智能体。Muse Glimmer 在 SWE-Bench Pro（51.2）和 SciCode（43.6）上领先同类。</li></ul>
-<h2><strong>它在基准上的位置</strong></h2>
-<p>对比 Gemma 4 31B 和 Qwen 3.6 27B，Muse Glimmer 在衡量工具编排与持续多轮工作的基准上领先：</p>
-<table><thead><tr><th>基准</th><th>Muse Glimmer 30B（High Reasoning）</th><th>Gemma 4 31B（Thinking 模式）</th><th>Qwen 3.6 27B（Thinking 模式）</th></tr></thead><tbody><tr><td>基准</td><td>Muse Glimmer 30B（High Reasoning）</td><td>Gemma 4 31B（Thinking 模式）</td><td>Qwen 3.6 27B（Thinking 模式）</td></tr><tr><td>MCP Atlas（公开）</td><td>75.5</td><td>54.2</td><td>62.5</td></tr><tr><td>DeepSearch QA</td><td>74.6</td><td>61.7</td><td>71.1</td></tr><tr><td>Gaia2</td><td>43.3</td><td>36.4</td><td>40.0</td></tr><tr><td>WildClawBench</td><td>47.6</td><td>37.6</td><td>43.2</td></tr><tr><td>SWE-Bench Pro</td><td>51.2</td><td>36.9</td><td>50.2</td></tr></tbody></table>
-<p>*注：Muse Glimmer 的基准数字由 Meta 报告</p>
-<p>如果你的智能体住在终端里或驱动桌面，请两个模型都测。如果它在长多轮会话里编排 API 与 MCP 工具，那在这个体量上它是更强的选择。</p>
-<h2><strong>今天在 Fireworks 上开始使用</strong></h2>
-<p>Muse Glimmer 已在 Fireworks 上线，支持 serverless 与按需部署。我们比别人晚一天发布，是故意的。我们多花了一天来上线，因为我们想把它做对：这意味着修正模型出厂的生成配置，并把 reasoning-effort 控制一路打通到模型内部。好模型配得上好的执行。质量是我们的最高优先级，我们想确保你从第一天起就得到期望的确切性能、控制与可靠性。</p>
-<ul><li>•无需采购 GPU。从一次 API 调用开始；无需容量规划即可扩展到生产。</li><li>•为突发智能体流量而造。智能体负载会不可预测地尖峰。Fireworks 自动伸缩以匹配，你不必按峰值配置。</li></ul>
-<p><strong>跑好的建议：</strong>Meta 建议使用以下设置。</p>
-<p>temperature = 1.0, top_p = 0.95, top_k = 64</p>
-<p>Reasoning effort 在系统提示词中以 <code>Reasoning strength: &lt;value&gt;</code> 设置，可选 low、medium、high、xhigh——智能体与编码工作用 high 或 xhigh。上表中所有基准数字均为 high 档。</p>
-<p>智能体 AI 的时代已经到来。我们鼓励你今天就开始用 Fireworks 上的 Muse Glimmer 构建。查看我们的<a href="https://fireworks.ai/models/fireworks/muse-glimmer-30b">文档</a>开始构建吧！</p>]]></content:encoded>
     </item>
     <item>
       <title>你的 AI 性能技术栈是 Fireworks + Voyage AI</title>

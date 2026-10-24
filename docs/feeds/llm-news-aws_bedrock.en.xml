@@ -7,7 +7,586 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 22 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 23 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Multi-Turn Reinforcement Learning on Amazon SageMaker AI: A…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/multi-turn-reinforcement-learning-on-amazon-sagemaker-ai-a-hands-on-guide/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/multi-turn-reinforcement-learning-on-amazon-sagemaker-ai-a-hands-on-guide/?li=1</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Multi-Turn Reinforcement Learning on Amazon SageMaker AI: A hands-on guide</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Multi-Turn Reinforcement Learning on Amazon SageMaker AI: A hands-on guide</h1>
+<p>Most fine-tuning teaches a model to produce a better answer to a single prompt. Agentic tasks are different. An agent that files an expense report or triages a support ticket takes a sequence of actions, and each step depends on what came before. There’s rarely one correct sequence to imitate, and the only reliable feedback is whether the whole sequence succeeded. Supervised fine-tuning has no labels for that, and single-turn reinforcement learning cannot credit a decision made three steps before the outcome.</p>
+<p>Multi-Turn Reinforcement Learning (MTRL) on Amazon SageMaker AI trains models on exactly that signal. SageMaker AI sends prompts to an agent you host on Amazon Bedrock AgentCore, or on your own infrastructure, such as Amazon Elastic Kubernetes Service (Amazon EKS), Amazon Elastic Compute Cloud (Amazon EC2), or AWS Fargate, through an <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-agent.html">AWS Lambda forwarder</a>. The example here uses AgentCore. The agent calls the policy model being trained, acts in your environment over as many turns as the task needs, and reports one reward when the episode ends. You don’t specify the right trajectory, only how to score the result.</p>
+<p>This post uses <a href="https://en.wikipedia.org/wiki/Wordle">Wordle</a>, a game in which a player has six tries to guess a hidden five-letter word, as the example. After each guess, every letter turns green if it is in the right position, yellow if it’s in the word but in a different position, and gray if it isn’t in the word. The game suits MTRL because the rules are few, each guess depends on the feedback from the last, and the outcome is scored objectively. Wordle is a teaching example, and frontier models already play it well. In practice, you would use MTRL to make a small, low-cost model good at a multi-step task specific to your business, such as an internal workflow that public models were never trained on. The same pipeline applies to that setting.</p>
+<p>In our run, MTRL took gpt-oss-20b from a 61 to an 84 percent solve rate on held-out words at its default reasoning effort, and from 15 to 69 percent at the low effort it trained at, for about $339 in training tokens. In this post, we walk through the pipeline end-to-end: deploying the agent and reward to AgentCore, preparing the dataset, training, monitoring in MLflow, and evaluating at serving settings. We also share the reward-design mistakes and training failures we hit. Your datasets, agent, and trained model stay in your AWS account and <a href="https://aws.amazon.com/sagemaker/ai/jumpstart/">are not used to train the base models</a>. All code is in the accompanying <a href="https://github.com/aws-samples/sample-multi-turn-rl-wordle">aws-samples repository</a>.</p>
+<h2>Solution overview</h2>
+<p>The system has two halves. SageMaker AI owns the training job and the policy model. AgentCore hosts the agent, the Wordle environment, and the reward function. The following diagram shows how they connect.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-1.png" alt="SageMaker AI training job connected to the AgentCore-hosted agent, Wordle environment, and reward function"></p>
+<p>Figure 1: MTRL on SageMaker AI, where the training job invokes the AgentCore-hosted agent once per rollout to sample the policy model, play the game, and report a reward</p>
+<p>For every rollout, the MTRL service invokes the AgentCore runtime, a capability of Amazon Bedrock AgentCore, with one training row, which holds one secret word. A Strands agent in the runtime calls the policy model through the SageMaker Job Runtime’s OpenAI-compatible endpoint. The model plays up to six guesses through one tool, <code>guess_word</code>, and after each guess the environment returns per-letter feedback and a summary of what is known. When the game ends, the agent returns one reward. <a href="https://arxiv.org/abs/2402.03300">Group Relative Policy Optimization (GRPO)</a> uses the spread of rewards across several rollouts of the same word to update a Low-Rank Adaptation (<a href="https://arxiv.org/abs/2106.09685">LoRA</a>) adapter on the policy model.</p>
+<p>Three design points matter for what follows:</p>
+<ul><li><strong>The agent and reward live in one place.</strong> A single Python file deployed to AgentCore holds the environment, the tool, and the scoring function.</li><li><strong>The dataset carries only the secret word.</strong> The word lists bundled with the agent are built from the open-source <a href="http://wordlist.aspell.net/">SCOWL</a> word lists and are used only for scoring.</li><li><strong>The reward is outcome-dominant.</strong> A solve pays 1.05–1.55 depending on speed, a loss pays -0.5, and never making a valid guess pays -1.5. A small shaping term rewards good strategy within each tier.</li></ul>
+<h3>Supported models and AWS Regions</h3>
+<p>MTRL is serverless: you pick a base model and the service provisions the training and sampling infrastructure. At the time of writing, it supports the following base models, each trained with a LoRA adapter:</p>
+<table><thead><tr><th><strong>Base model</strong></th><th><strong>AWS Regions</strong></th></tr></thead><tbody><tr><td>Amazon Nova 2 Lite</td><td>US East (N. Virginia) (us-east-1), US West (Oregon) (us-west-2)</td></tr><tr><td><code>GPT-OSS-20B</code></td><td>US East (N. Virginia) (us-east-1), US West (Oregon) (us-west-2)</td></tr><tr><td>Gemma 4 31B (instruction-tuned)</td><td>US West (Oregon) (us-west-2)</td></tr><tr><td>Qwen 3.6 27B</td><td>US West (Oregon) (us-west-2)</td></tr></tbody></table>
+<p>We chose <code>GPT-OSS-20B</code> because it has the lowest per-token price of the four and its reasoning effort is controllable per request. See the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl.html">MTRL documentation</a> for the current list.</p>
+<h3>Pricing</h3>
+<p>You don’t choose instances or size a cluster. You pay per million tokens in three dimensions, priced by base model:</p>
+<ul><li><strong>Prefill:</strong> input tokens the policy model processes. These accumulate in a multi-turn task, because every turn re-reads the history.</li><li><strong>Sample:</strong> tokens the policy model generates, including reasoning tokens.</li><li><strong>Train:</strong> tokens processed in the backward pass that updates the LoRA adapter.</li></ul>
+<p>The 100-step run consumed 491.6 million prefill, 159.7 million sample, and 643.3 million train tokens across 105,486 rollouts in 12 hours 40 minutes. At <code>GPT-OSS-20B</code> list prices in the US East (N. Virginia) Region (us-east-1) at the time of writing, that is about $339:</p>
+<table><thead><tr><th><strong>Dimension</strong></th><th><strong>Tokens</strong></th><th><strong>Price per 1M</strong></th><th><strong>Cost</strong></th></tr></thead><tbody><tr><td>Prefill</td><td>491,616,806</td><td>$0.12</td><td>$58.99</td></tr><tr><td>Sample</td><td>159,737,098</td><td>$0.30</td><td>$47.92</td></tr><tr><td>Train</td><td>643,308,554</td><td>$0.36</td><td>$231.59</td></tr><tr><td>Total</td><td><strong>1,294,662,458</strong></td><td></td><td><strong>$338.50</strong></td></tr></tbody></table>
+<p>The train dimension dominates and scales with trajectory length, so shorter games and less verbose reasoning cut the bill. The AgentCore runtime bills separately for the vCPU and memory the agent uses. For this run, that was about $79, from the runtime’s Amazon CloudWatch usage metrics at us-east-1 list prices. <code>DescribeJob</code> reports the token counts under <code>BillableTokenUsage</code>. See <a href="https://aws.amazon.com/sagemaker/ai/pricing/">Amazon SageMaker AI pricing</a> for current rates.</p>
+<h2>Prerequisites</h2>
+<p>To follow this walkthrough, you need the following. See also the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-prereqs.html">MTRL prerequisites</a>.</p>
+<ul><li>Python 3.10 or later, uv, Node 20 or later, and the AgentCore CLI (<code>npm install -g @aws/agentcore</code>). See <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agentcore-get-started-cli.html">Get started with Amazon Bedrock AgentCore</a> for installation and the IAM permissions the CLI needs.</li><li>botocore 1.43.37 or later, on the machine that launches the job. This is the first version that includes the <code>AgentRFT</code> <code>CreateJob</code> operation.</li><li>Two AWS Identity and Access Management (IAM) roles, described in Step 1.</li><li>An Amazon Simple Storage Service (Amazon S3) bucket in the same Region as the agent. The training job must also run in that Region, because <code>CreateJob</code> rejects a cross-Region runtime ARN.</li></ul>
+<h2>Step 1: Create the IAM roles</h2>
+<p>MTRL uses two roles, and one of them has a trust policy that the general SageMaker AI documentation doesn’t mention.</p>
+<p><strong>Agent runtime role.</strong> <code>agentcore deploy</code> creates this role for you. It trusts <code>bedrock-agentcore.amazonaws.com</code> and needs the <code>AmazonSageMakerJobRuntimeAccess</code> managed policy, which lets the agent call the policy model and report rewards. The CDK stack in the sample repository attaches this policy automatically.</p>
+<p><strong>Training job role.</strong> You create this one. It must trust <code>job.sagemaker.amazonaws.com</code> with both <code>sts:AssumeRole</code> and <code>sts:TagSession</code>, and it needs the <code>AmazonSageMakerJobFullAccess</code> managed policy.</p>
+<pre><code>{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [{
+        &quot;Effect&quot;: &quot;Allow&quot;,
+        &quot;Principal&quot;: {&quot;Service&quot;: &quot;job.sagemaker.amazonaws.com&quot;},
+        &quot;Action&quot;: [&quot;sts:AssumeRole&quot;, &quot;sts:TagSession&quot;]
+    }]
+}</code></pre>
+<p><strong>Note:</strong> The trust principal is <code>job.sagemaker.amazonaws.com</code>, not <code>sagemaker.amazonaws.com</code>. With the generic principal, <code>CreateJob</code> fails with “Could not assume role,” and the message names the correct principal only after retries.</p>
+<h2>Step 2: Deploy the agent to Amazon Bedrock AgentCore</h2>
+<p>Clone the <a href="https://github.com/aws-samples/sample-multi-turn-rl-wordle">sample repository</a>, set your account and Region in Wordle/agentcore/<code>aws-targets.json</code>, and deploy:</p>
+<pre><code>git clone https://github.com/aws-samples/sample-multi-turn-rl-wordle
+cd sample-multi-turn-rl-wordle/Wordle
+agentcore validate
+agentcore deploy</code></pre>
+<p>The CLI builds the agent’s dependencies for the runtime’s Linux ARM64 platform, creates the execution role with <code>AmazonSageMakerJobRuntimeAccess</code> attached, and deploys through AWS CloudFormation. We recommend it over uploading a code package on the console, where it’s common to get the roughly 700 MB of compiled dependencies or the policy attachment wrong. Note the runtime ARN in the output for the training job.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-2.png" alt="Amazon Bedrock AgentCore console showing the Wordle agent runtime with status Ready"></p>
+<p>Figure 2: The Wordle agent runtime in the Amazon Bedrock AgentCore console with status Ready</p>
+<p>The runtime reads two environment variables from <code>agentcore.json</code>. <code>REASONING_EFFORT=low</code> sets <code>reasoning_effort</code> on every request to the policy model. In our evaluation jobs, low effort used 63 to 83 percent fewer sample tokens per game than medium. <code>REASONING_PROMPT_HINT=true</code> also adds “Reasoning: low” to the system prompt, which is how gpt-oss reads the setting in its Harmony chat format. Neither variable gives the model any hint about the secret word.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-3.png" alt="AgentCore console environment variables panel with REASONING_EFFORT set to low"></p>
+<p>Figure 3: Runtime environment variables showing REASONING_EFFORT set to low</p>
+<p>The agent is one file, <code>main.py</code>. Simplified, its entrypoint looks like the following. For your own task, you change the task parsing, the tools, and the reward:</p>
+<pre><code>app = BedrockAgentCoreApp()
+
+@app.entrypoint  # outermost: starts the HTTP server AgentCore invokes
+@sagemaker_rft_handler  # reports the returned reward to SageMaker AI
+def handle_rollout(payload):
+    prompt, answer = parse_task(payload[&quot;prompt&quot;])
+    game = WordleGame(answer)
+
+    @tool
+    def guess_word(guess: str) -&gt; str:
+        &quot;&quot;&quot;Submit a 5-letter Wordle guess and get feedback.&quot;&quot;&quot;
+        return game.guess(guess)
+
+    agent = Agent(model=build_model(), system_prompt=SYSTEM_PROMPT, tools=[guess_word])
+    agent(prompt)
+    return {&quot;reward&quot;: game.final_reward()}</code></pre>
+<p><strong>Important:</strong> The <code>sagemaker_rft_handler</code> decorator does not start an HTTP server by itself. Wrap it with <code>BedrockAgentCoreApp</code> and <code>@app.entrypoint</code>, with the entrypoint decorator outermost. Without this, every invocation times out after 30 seconds.</p>
+<h2>Step 3: Verify the runtime</h2>
+<p>Before spending GPU time, confirm the whole chain works with a payload shaped like the one the training service sends. The repository includes one as Wordle/<code>payload.json</code>:</p>
+<pre><code>{
+  &quot;prompt&quot;: &quot;{\&quot;prompt\&quot;: \&quot;Guess the 5-letter word\&quot;, \&quot;answer\&quot;: \&quot;beach\&quot;, \&quot;id\&quot;: \&quot;smoke-test\&quot;}&quot;,
+  &quot;metadata&quot;: {
+    &quot;jobArn&quot;: &quot;arn:aws:sagemaker:us-east-1:111122223333:job/AgentRFT/smoke-test&quot;,
+    &quot;rolloutId&quot;: &quot;r1&quot;
+  }
+}</code></pre>
+<p>The fake job ARN is expected to fail, and the way it fails is the proof. Put your own account ID into it first: for a job ARN in another account, the service returns a 403 before it checks whether the job exists, which looks like a broken IAM setup. From the Wordle directory, run:</p>
+<pre><code>ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+sed &quot;s/111122223333/$ACCOUNT/&quot; payload.json &gt; /tmp/payload.json
+
+aws bedrock-agentcore invoke-agent-runtime \
+  --agent-runtime-arn &lt;RUNTIME_ARN&gt; \
+  --runtime-session-id smoke-test-$(date +%s)000000000000000 \
+  --payload fileb:///tmp/payload.json /dev/stdout</code></pre>
+<p>In the runtime’s Amazon CloudWatch logs, you see the agent parse the prompt, authenticate to the Job Runtime endpoint, and receive a 400 error reading “Could not find job.” That failure confirms that parsing, authentication, and error reporting work. The command itself prints {“reward”: -1.5}, because the agent never reached the policy model. A 403 reading “not authorized to access this resource” means the job ARN still names another account. A 30-second timeout instead means the HTTP server is not starting (see the Important note in Step 2).</p>
+<h2>Step 4: Prepare the dataset</h2>
+<p>The MTRL dataset has no target responses, transcripts, or labels. Each row is one task for the agent to attempt. Here are the first three rows of the training file:</p>
+<pre><code>{&quot;prompt&quot;: &quot;{\&quot;prompt\&quot;: \&quot;Guess the 5-letter word\&quot;, \&quot;answer\&quot;: \&quot;riser\&quot;, \&quot;id\&quot;: \&quot;wordle_train_0000\&quot;}&quot;}
+{&quot;prompt&quot;: &quot;{\&quot;prompt\&quot;: \&quot;Guess the 5-letter word\&quot;, \&quot;answer\&quot;: \&quot;swoon\&quot;, \&quot;id\&quot;: \&quot;wordle_train_0001\&quot;}&quot;}
+{&quot;prompt&quot;: &quot;{\&quot;prompt\&quot;: \&quot;Guess the 5-letter word\&quot;, \&quot;answer\&quot;: \&quot;dirty\&quot;, \&quot;id\&quot;: \&quot;wordle_train_0002\&quot;}&quot;}</code></pre>
+<p>The service reads the <code>prompt</code> column (or the first column) and passes the string to your agent verbatim, without parsing it. We made the string a small JSON object with three fields:</p>
+<ul><li><strong>prompt:</strong> the instruction the agent shows the policy model, identical on every row.</li><li><strong>answer:</strong> the secret word. Only the environment and the reward function use it. The policy model never sees it.</li><li><strong>id:</strong> a row ID for tracing a rollout in the logs back to its source row.</li></ul>
+<p>The sample repository’s <code>make_dataset.py</code> draws 640 training words (five full batches of 128) and 128 validation words from the answer list with no overlap, so the validation solve rate measures generalization. The service also accepts Apache Parquet, JSON arrays, and CSV. Upload both files to Amazon S3:</p>
+<pre><code>uv run python make_dataset.py
+aws s3 cp training-data.jsonl s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/train/
+aws s3 cp validation-data.jsonl s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/validation/</code></pre>
+<p>Because the service never inspects the <code>prompt</code> string, a production task can pack a full message list, tool configuration, or reward specification into it. See the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-assets.html">MTRL documentation</a> for examples, including how to protect sensitive content in the string.</p>
+<h2>Step 5: Launch the training job</h2>
+<p>The launcher uses the <code>MultiTurnRLTrainer</code> class from the <code>sagemaker-train</code> SDK. Point it at the runtime ARN from Step 2, the role from Step 1, the datasets from Step 4, and an MLflow app for metrics. The MLflow app is required, so if you don’t have one, create it first with <code>aws sagemaker create-mlflow-app</code>:</p>
+<pre><code>uv run python run_mtrl_training.py \
+  --model openai-reasoning-gpt-oss-20b \
+  --agent-runtime-arn &lt;RUNTIME_ARN&gt; \
+  --role-arn arn:aws:iam::&lt;ACCOUNT&gt;:role/&lt;JOB_ROLE&gt; \
+  --train-dataset s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/train/training-data.jsonl \
+  --val-dataset s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/validation/validation-data.jsonl \
+  --s3-output-path s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/output/ \
+  --mlflow-app-arn arn:aws:sagemaker:&lt;REGION&gt;:&lt;ACCOUNT&gt;:mlflow-app/&lt;APP_ID&gt;</code></pre>
+<p>The launcher overrides three hyperparameters and leaves every other one at the gpt-oss-20b default. It sets <code>sampling_max_tokens</code> to 8192, the service maximum, because at the default of 4096 gpt-oss often ran out of tokens while reasoning, before its first tool call. It sets <code>max_epochs</code> to 20 and <code>max_steps</code> to 100: 640 rows at the default <code>global_batch_size</code> of 128 is 5 steps per epoch, and with the default <code>group_size</code> of 8, each step plays 1,024 games. The job moves through Starting, Downloading, and Pending before reaching Training. After it’s training, your AgentCore runtime begins receiving rollout invocations.</p>
+<p><strong>Important:</strong> Don’t redeploy the agent while a job is running. Redeploying restarts the runtime, in-flight rollouts see no sampling requests, and the service fails the entire job.</p>
+<h2>Step 6: Monitor training in MLflow</h2>
+<p>The service logs reward, token, and turn statistics at every step and runs validation every <code>val_every</code> steps. The metric to watch is <code>val/reward/pass_at_1</code>, the fraction of held-out words solved. Every solve scores at least 1.01, so it clears the service’s <code>success_threshold</code> of 1.0 and pass@1 counts it. The following chart is built from this run’s MLflow history:</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-4.png" alt="Two line charts tracking mean reward per game and validation solve rate over 100 training steps"></p>
+<p>Figure 4: Training curves for the 100-step run, with mean reward per game on the left and validation solve rate on the right</p>
+<p>Training reward climbs to about +0.57 within 15 steps and holds there. Validation reward stays lower, mostly because of temperature 1.0 versus 0 rather than overfitting (see Step 7). The validation solve rate jumps from 2 to 31 percent in the first 10 steps, then moves between 35 and 48 percent. With 128 words, those swings are mostly noise. We did not test whether more steps help at serving settings.</p>
+<p>The runtime’s OpenTelemetry traces in CloudWatch record every model turn and tool call. Here is one game the trained model played during an evaluation job (medium effort, temperature 1.0), with the reasoning trimmed. The secret word was PASTE:</p>
+<pre><code>[model] Reasoning: [...] &quot;CRANE&quot; has 5 distinct letters: C,R,A,N,E. [...]
+We'll guess &quot;CRANE&quot;.
+Tool call: guess_word(guess=&quot;CRANE&quot;)
+[tool] Guess 1/6: CRANE -&gt; C=gray, R=gray, A=yellow, N=gray, E=green
+Current Knowledge:
+- Correct Position (Green): _ _ _ _ E
+- In Word, Wrong Position (Yellow): 'A' (at least 1)
+- Not in Word (Gray): C, N, R
+- Guesses Remaining: 5
+[model] Reasoning: [...] &quot;ALIVE&quot;: ends with E, includes A. Letters not C,N,R.
+Tool call: guess_word(guess=&quot;ALIVE&quot;)
+[tool] Guess 2/6: ALIVE -&gt; A=yellow, L=gray, I=gray, V=gray, E=green
+[model] Reasoning: [...] So positions not 1 or 3 for A. Positions left: 2,4
+for A. [...] We might guess &quot;HASTE&quot;? [...]
+Tool call: guess_word(guess=&quot;HASTE&quot;)
+[tool] Guess 3/6: HASTE -&gt; H=gray, A=green, S=green, T=green, E=green
+[model] Reasoning: We have the word: _ASTE. [...] &quot;PASTE&quot; is a word. PASTE
+fits. Also &quot;WASTE&quot; also fits [...] Choose &quot;PASTE&quot; maybe.
+Tool call: guess_word(guess=&quot;PASTE&quot;)
+[tool] Guess 4/6: PASTE --- all green. Correct, you solved it!</code></pre>
+<p>A trained-model rollout from the AgentCore runtime traces. The model keeps green letters in place, never reuses a gray letter, and uses each yellow letter to rule out positions, though nothing in the training data showed it how.</p>
+<h2>Step 7: Evaluate the trained model at serving settings</h2>
+<p>When the job completes, its page in SageMaker AI Studio shows the status and the model package group that holds the trained model. <code>DescribeJob</code>, with <code>JobCategory</code> set to <code>AgentRFT</code>, returns the output model package ARN and the billable token counts.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-5.png" alt="SageMaker AI Studio Jobs page showing the completed multi-turn RL training job"></p>
+<p>Figure 5: The completed training job in SageMaker AI Studio on the Jobs, Training, Multi-turn RL tab</p>
+<p>An <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-evaluation.html">evaluation job</a> (<code>JobCategory</code> set to <code>AgentRFTEvaluation</code>) plays your evaluation prompts through the same AgentCore runtime and reward, on the base model or the trained package, and logs <code>eval/reward/pass_at_1</code> to MLflow. Unlike training validation, you can set the temperature. The repository’s launcher runs evaluations back to back, because the default quota allows one evaluation job at a time (<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-quotas.html">you can request an increase</a>):</p>
+<pre><code>uv run python run_mtrl_eval.py --runs base:1.0 trained:1.0 \
+  --model-package-arn &lt;OUTPUT_MODEL_PACKAGE_ARN&gt; \
+  --agent-runtime-arn &lt;RUNTIME_ARN&gt; \
+  --role-arn arn:aws:iam::&lt;ACCOUNT&gt;:role/&lt;JOB_ROLE&gt; \
+  --dataset s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/validation/validation-data.jsonl \
+  --s3-output-path s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/eval/ \
+  --mlflow-app-arn arn:aws:sagemaker:&lt;REGION&gt;:&lt;ACCOUNT&gt;:mlflow-app/&lt;APP_ID&gt;</code></pre>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-6.png" alt="Reasoning effort and sampling temperature at each stage: training low and 1.0, validation low and 0 fixed by the service, evaluation jobs at four settings with serving at medium and 1.0."></p>
+<p>Figure 6: Reasoning effort and sampling temperature at each stage, where the training job fixes validation at temperature 0 and the deployed effort while evaluation jobs let you choose</p>
+<p>Each 128-word evaluation took four to seven minutes. Reasoning effort comes from the agent’s environment variables, so to change it you edit <code>REASONING_EFFORT</code>, redeploy, and evaluate. We evaluated both models at low and medium effort and at temperature 0 and 1.0:</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-7.png" alt="Bar charts comparing base and trained model solve rate and mean reward across four decoding settings"></p>
+<p>Figure 7: Base model versus trained model under four decoding settings, with solve rate on the left and mean reward per game on the right</p>
+<p>The gray segment of each bar is the base model and the blue segment is the gain from training. The low-effort, temperature-0 pair is the training job’s validation at steps 0 and 100. The medium-effort, temperature-1.0 trained result is the mean of two runs (80 and 88 percent).</p>
+<p>At temperature 0, both models often end the game without a solve, at either effort. With sampling on, medium effort adds 15 points for the trained model and 46 for the base model. The adapter adds 14–54 points in every setting, so what training taught transfers across settings.</p>
+<p>The training job’s own validation curve in MLflow told a different story: it peaked at 48 percent at step 90 and ended at 37 percent, scored at temperature 0. The <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-hyperparams.html">hyperparameters reference</a> recommends temperature 0 for evaluation because greedy decoding makes curves deterministic and comparable across runs. We report temperature 1.0 because that’s how we serve the model. At medium effort and temperature 1.0, the trained model solves 84 percent of held-out words, up from 61 percent for the base model.</p>
+<p><strong>Tip:</strong> Evaluate at the settings you will serve at. The training curve says this adapter ends at 37 percent. At serving settings it solves 84 percent. The evaluation jobs that show this cost about $1.20 in tokens and took about an hour.</p>
+<h2>Step 8: Clean up</h2>
+<p>Training and evaluation jobs stop billing when they complete, but the AgentCore runtime, its IAM role, the MLflow app, and the S3 objects persist. From the project directory:</p>
+<pre><code># 1. Agent runtime and its execution role. remove all resets the project config;
+# the next deploy sees the empty state and tears down the deployed resources.
+cd sample-multi-turn-rl-wordle/Wordle
+agentcore remove all
+agentcore deploy
+
+# 2. MLflow app
+aws sagemaker delete-mlflow-app --arn arn:aws:sagemaker:&lt;REGION&gt;:&lt;ACCOUNT&gt;:mlflow-app/&lt;APP_ID&gt;
+
+# 3. Datasets, job output, and evaluation output
+aws s3 rm s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/ --recursive</code></pre>
+<p>Because <code>agentcore remove all</code> rewrites the files under <code>agentcore/</code>, run <code>git checkout -- agentcore/</code> if you want to redeploy later. Deleting the <code>AgentCore-Wordle-default</code> CloudFormation stack removes the same resources and leaves the files alone. The training job role and the model packages are not billed.</p>
+<h2>Deep dive: Designing the reward</h2>
+<p>Our reward needed one revision, and the mistake is a common one.</p>
+<p>The first design summed the per-guess scoring from the <a href="https://github.com/charbull/wordle-lora-rl">wordle-lora-rl</a> project over the whole game. That scoring works there because each guess is an independent training sample. Summed into one reward per game, it produced two inversions we found only by reading traces:</p>
+<ul><li><strong>A lost game paid positive reward.</strong> Six turns of bonuses added up to about +0.49.</li><li><strong>Solving on turn 1 scored below solving on turn 3.</strong> A first-guess solve earned +0.99 and a third-guess solve earned +1.61, because the extra turns collected more bonuses.</li></ul>
+<p>The fix separates a dominant outcome term from a small, bounded shaping term:</p>
+<pre><code>reward = outcome + w * clip(shaping, -1, 1), w = 0.04 if solved, else 0.15</code></pre>
+<p>The outcome term is set entirely by how the game ended:</p>
+<table><thead><tr><th><strong>Outcome</strong></th><th><strong>Value</strong></th></tr></thead><tbody><tr><td>Solved on guess n</td><td>1.05 + 0.5 * (6 – n) / 5, so 1.55 on guess 1 down to 1.05 on guess 6</td></tr><tr><td>Played all six guesses, unsolved</td><td>-0.5</td></tr><tr><td>Never made a valid guess</td><td>-1.5</td></tr></tbody></table>
+<p>The shaping term is that per-guess scoring, summed over the game:</p>
+<ul><li>Penalties for contradicting a known green, yellow, or gray letter, for repeating a guess, and for words outside the dictionary.</li><li>An entropy bonus for a strong opening word.</li><li>Bonuses for trying new letters and for shrinking the set of remaining possibilities.</li></ul>
+<p>The sum is clipped to [-1, 1] and scaled by 0.04 for a solve and 0.15 for a loss, so it separates games with the same outcome but never moves a game into another tier. With typical shaping values:</p>
+<table><thead><tr><th><strong>Scenario</strong></th><th><strong>Reward</strong></th></tr></thead><tbody><tr><td>Solve on guess 1</td><td>+1.550</td></tr><tr><td>Solve on guess 3</td><td>+1.375</td></tr><tr><td>Solve on guess 6</td><td>+1.069</td></tr><tr><td>Lost after six guesses</td><td>-0.427</td></tr><tr><td>Never made a valid guess</td><td>-1.500</td></tr></tbody></table>
+<p>A faster solve now always beats a slower one, every solve beats every loss, and never playing is the worst outcome. Our first fix used a single weight of 0.15, which let a guess-3 solve with full shaping (+1.45) outscore a guess-2 solve with the minimum (+1.25). Adjacent guess counts are 0.1 apart, so a smaller solve weight of 0.04 removes the overlap, and the worst solve (+1.01) still clears the 1.0 success threshold. Shaping still matters because GRPO learns from reward variance within a group, so two lost games that differ in clue consistency still teach the model something. As the SageMaker AI documentation advises, start with an outcome-based reward, add shaping sparingly, and check the reward on real trajectories.</p>
+<h2>Deep dive: What went wrong, in the order you will hit it</h2>
+<p>Each of these cost at least one training run.</p>
+<ul><li><strong>Bearer tokens under concurrency.</strong> Minting a token with a fresh botocore session per call starved the credential provider at 32 concurrent rollouts, and caching tokens for an hour returned 403 errors as credentials rotated. The fix is one self-refreshing session, a short cache, and a re-sign on 403.</li><li><strong>A rollout that never reaches the policy model fails the whole job.</strong> When every model call in a rollout failed authentication, the service ended the job with “No sampling requests were received.” Returning an error status fails it too, so always return a reward. A game where the model is sampled but never makes a valid guess is fine: it scores -1.5, and the 100-step run had 51 of them in about 105,000 rollouts.</li><li><strong>Tool calls drift into plain text.</strong> At too high a learning rate, the model wrote tool calls as text, every rollout got the same floor reward, and the gradient vanished. The agent now recovers guesses from raw text with a small formatting penalty.</li><li><strong>The plateau. Training reward stopped rising after about step 15 and validation stopped improving after about step 30, though at temperature 0 validation understates the model (Step 7).</strong> A curriculum that seeds games with prior guesses, or more rollouts per word than the default <code>group_size</code> of 8, is what we would try next.</li></ul>
+<h2>Conclusion</h2>
+<p>MTRL on SageMaker AI trains a model on the outcome of a whole episode. That fits agentic tasks, where the right trajectory is unknown and only the result can be scored. We used a single episode-level reward. When intermediate steps can be scored too, MTRL also accepts one reward per turn through the <a href="https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_job_runtime_UpdateReward.html">UpdateReward API</a>. In this post, an open-weight 20B model reached an 84 percent solve rate at serving settings, up from 61 percent, for about $339 in training tokens and about $79 in AgentCore runtime usage. The 37 percent the training curve reports is an artifact of how the training job scores validation, so evaluate at the settings you will serve at.</p>
+<p>The same pipeline applies to internal procedures, tools, and workflows that public models were never trained on.</p>
+<p>To get started, clone the <a href="https://github.com/aws-samples/sample-multi-turn-rl-wordle">sample repository</a>, follow the preceding steps, and run the smoke test in Step 3 before committing GPU time. For the underlying APIs, see the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl.html">SageMaker AI MTRL documentation</a>.</p>
+<h2>About the authors</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Orchestrating SageMaker AI endpoint auto scaling with AWS CD…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/orchestrating-sagemaker-ai-endpoint-auto-scaling-with-aws-cdk/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/orchestrating-sagemaker-ai-endpoint-auto-scaling-with-aws-cdk/?li=1</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Orchestrating SageMaker AI endpoint auto scaling with AWS CDK</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Orchestrating SageMaker AI endpoint auto scaling with AWS CDK</h1>
+<p>Updating the Amazon Sagemaker AI real-time endpoint configuration (changing the instance type, instance count, or environment variables) causes deployments through AWS CloudFormation or the AWS Cloud Development Kit (AWS CDK) to fail. SageMaker AI requires you to deregister the scalable target before updating the endpoint, but when you deregister it, CloudFormation can’t track the AWS Application Auto Scaling resources.</p>
+<p>In this post, we show you how to use a reusable CDK construct with AWS CloudFormation custom resources to orchestrate deregister and register auto scaling automatically during endpoint updates. You can update your endpoint configuration and auto scaling parameters in a single deployment without manual intervention.</p>
+<h2>Why this problem occurs</h2>
+<p>When you deploy a SageMaker AI endpoint with native CloudFormation auto scaling resources, then change the endpoint configuration and redeploy, several failure modes emerge. The specific failure depends on what you change and how you work around the issue.</p>
+<h3>Changing the endpoint configuration with auto scaling registered</h3>
+<p>CloudFormation tries to update the endpoint while the scalable target is still registered. SageMaker AI rejects the update with the following error:</p>
+<pre><code>The variant(s) &quot;[AllTraffic]&quot; must be deregistered as scalable targets with Application Auto Scaling before they can be removed or have their instance type updated.</code></pre>
+<p>SageMaker AI blocks the endpoint update before CloudFormation reaches the auto scaling resources.</p>
+<h3>Manually deregistering auto scaling, then changing only the endpoint configuration</h3>
+<p>If you deregister the scalable target through the AWS Command Line Interface (AWS CLI) and redeploy with only an endpoint configuration change, the deployment succeeds. However, CloudFormation doesn’t register auto scaling even though it is in the CloudFormation template. Because the auto scaling parameters in the CloudFormation template haven’t changed, CloudFormation doesn’t register the scalable target or re-apply the scaling policy. The endpoint is now running without auto scaling, and there is no error to indicate anything went wrong.</p>
+<h3>Manually deregistering auto scaling, then changing auto scaling parameters</h3>
+<p>If you deregister the scalable target through the AWS CLI and redeploy with auto scaling parameter changes, CloudFormation tries to update the ScalableTarget resource that no longer exists:</p>
+<pre><code>Resource of type 'AWS::ApplicationAutoScaling::ScalableTarget' with identifier 'endpoint/&lt;name&gt;/variant/AllTraffic|sagemaker:variant:DesiredInstanceCount|sagemaker' was not found.</code></pre>
+<p>This failure is notable because the rollback also fails (UPDATE_ROLLBACK_FAILED), leaving the stack in a broken state that requires manual intervention in the CloudFormation console to recover.</p>
+<h2>Solution overview</h2>
+<p>You can use this CDK construct to replace the native <code>AWS::ApplicationAutoScaling::ScalableTarget</code> and <code>AWS::ApplicationAutoScaling::ScalingPolicy</code> CloudFormation resources with three custom resources. These custom resources deregister and register auto scaling around the endpoint update with explicit dependency ordering, enforced by <code>node.add_dependency</code> calls in CDK. The full sequence is:</p>
+<ul><li><strong>Deregister</strong> (custom resource): Removes the scalable target before the endpoint update begins. On first deploy, no scalable target exists yet, so the handler handles the error gracefully and continues.</li><li><strong>Endpoint update</strong> (CDK-managed): CDK updates the endpoint resource normally, swapping to the new endpoint configuration.</li><li><strong>Register Scalable Target</strong> (custom resource): Waits for the endpoint to reach <code>InService</code> status, then registers the scalable target.</li><li><strong>Attach Scaling Policy</strong> (custom resource): Waits for the scalable target to be queryable, then applies the target tracking policy.</li></ul>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-20841-1.png" alt="Four-step orchestration the construct runs during an endpoint update: deregister the scalable target, update the endpoint, register the scalable target, and attach the scaling policy"></p>
+<p>Figure 1: Custom resource orchestration of SageMaker AI endpoint auto scaling around a CDK-managed endpoint update.</p>
+<p>Register Scalable Target and Attach Scaling Policy use the CDK provider’s asynchronous completion pattern. Each custom resource has an <code>on_event</code> handler that returns immediately and an <code>is_complete</code> handler. The provider’s waiter re-invokes the <code>is_complete</code> handler on an interval (every 30 seconds) until its readiness check passes. The provider’s <code>total_timeout</code> (1 hour for Register Scalable Target, 15 minutes for Attach Scaling Policy) bounds the wait, so it isn’t limited by the timeout of any single Lambda invocation.</p>
+<p>A <code>ConfigHash</code> property on each custom resource forces CloudFormation to re-invoke the Lambda functions whenever a configuration value changes. The endpoint configuration and auto scaling parameters are defined together because a single <code>ConfigHash</code> drives the auto scaling orchestration.</p>
+<p>While the construct defines three custom resources, the deployed stack contains more than three Lambda functions. Each custom resource is backed by a CDK <code>cr.Provider</code>, and the provider framework generates its own helper Lambda functions. A synchronous provider (Deregister) adds one framework function. An asynchronous provider (Register Scalable Target and Attach Scaling Policy) adds three (<code>onEvent</code>, <code>isComplete</code>, and <code>onTimeout</code>) plus an AWS Step Functions state machine that drives the waiter. As a result, the deployed stack contains three custom resources, two Step Functions state machines, and twelve Lambda functions. Five of the resources hold the construct’s own handler code (one for Deregister, and an <code>on_event</code> and <code>is_complete</code> pair for each asynchronous resource), with the remaining seven generated by the provider framework. You don’t write or maintain the framework-generated functions, but they are present in the stack and worth accounting for when you review the deployed resources.</p>
+<h2>Walkthrough</h2>
+<p>In this walkthrough, you deploy a SageMaker AI endpoint with auto scaling using the provided example stack, then verify that configuration updates work correctly.</p>
+<p>The walkthrough includes the following steps:</p>
+<ul><li>Clone the repository and install dependencies.</li><li>Configure your endpoint and auto scaling settings.</li><li>Deploy and verify.</li><li>Test an update.</li></ul>
+<p>The source code is available in the <a href="https://github.com/aws-samples/sample-sagemaker-endpoint-autoscaling">linked GitHub repository</a>.</p>
+<h3>Prerequisites</h3>
+<p>For this walkthrough, you need the following:</p>
+<ul><li>An AWS account with permissions for Amazon SageMaker AI, AWS Lambda, AWS Identity and Access Management (IAM), Application Auto Scaling, and Amazon CloudWatch.</li><li><a href="https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html">AWS CDK v2</a> installed.</li><li><a href="https://www.python.org/downloads/">Python 3.12</a> or later.</li><li><a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a> for Python dependency management.</li><li>A SageMaker AI model artifact in Amazon Simple Storage Service (Amazon S3) and a container image in Amazon Elastic Container Registry (Amazon ECR), or a SageMaker AI built-in algorithm container.</li></ul>
+<h3>Clone the repository and install dependencies</h3>
+<ul><li>Clone the repository:  <code>git clone https://github.com/aws-samples/sample-sagemaker-endpoint-autoscaling.git cd sample-sagemaker-endpoint-autoscaling</code></li><li>Install dependencies:  <code>uv sync</code></li></ul>
+<h3>Configure your endpoint and auto scaling settings</h3>
+<p>The endpoint and auto scaling settings are defined together in config/<code>config.yaml</code> because a single <code>config_hash</code> drives the auto scaling orchestration. A change to either section triggers the full sequence.</p>
+<p>Edit config/<code>config.yaml</code> with your values:</p>
+<pre><code>endpoint:
+  endpoint_name: &quot;my-model-endpoint&quot;
+  image: &quot;123456789012.dkr.ecr.us-east-1.amazonaws.com/my-model:latest&quot;
+  model_data_url: &quot;s3://my-bucket/models/model.tar.gz&quot;
+  instance_type: &quot;ml.m5.large&quot;
+  initial_instance_count: 1
+  environment: {}
+autoscaling:
+  min_capacity: 1
+  max_capacity: 10
+  target_value: 100
+  scale_in_cooldown: 600
+  scale_out_cooldown: 120</code></pre>
+<p>The endpoint parameters map to the SageMaker AI <code>CreateModel</code> and <code>CreateEndpointConfig</code> APIs. The auto scaling parameters map to the Application Auto Scaling <code>RegisterScalableTarget</code> and <code>PutScalingPolicy</code> APIs.</p>
+<h3>Deploy and verify</h3>
+<ul><li>Bootstrap your AWS environment if you haven’t already:  <code>uv run cdk bootstrap</code></li><li>Deploy the stack:  <code>uv run cdk deploy InferenceStack</code></li></ul>
+<p>CloudFormation creates the SageMaker AI model, endpoint configuration, and endpoint, then runs the three custom resources in sequence to register auto scaling.</p>
+<ul><li>Verify that the deployment registered the scalable target:  <code>aws application-autoscaling describe-scalable-targets --service-namespace sagemaker --resource-ids endpoint/my-model-endpoint/variant/AllTraffic</code></li><li>Verify that the deployment applied the scaling policy:  <code>aws application-autoscaling describe-scaling-policies --service-namespace sagemaker --resource-id endpoint/my-model-endpoint/variant/AllTraffic</code></li></ul>
+<h3>Test an update</h3>
+<p>Change a value in config/<code>config.yaml</code>, for example, update the instance type from <code>ml.m5.large</code> to <code>ml.m5.xlarge</code>, and redeploy:</p>
+<pre><code>uv run cdk deploy InferenceStack</code></pre>
+<p>After the deployment completes, verify that auto scaling is still registered and has the updated values:</p>
+<pre><code>aws application-autoscaling describe-scalable-targets
+--service-namespace sagemaker
+--resource-ids endpoint/my-model-endpoint/variant/AllTraffic</code></pre>
+<h3>Integrating with an existing stack</h3>
+<p>Use the example stack if you’re starting fresh or want a reference implementation. Use the construct directly if you already have a CDK stack with SageMaker AI resources.</p>
+<p>To integrate with an existing stack, copy the <code>sagemaker_autoscaling/constructs/</code> directory into your project and add the construct alongside your endpoint resources:</p>
+<pre><code>import json
+from sagemaker_autoscaling.constructs.sagemaker_autoscaling_construct import (
+    AutoscalingConfig,
+    SagemakerAutoscalingConstruct,
+    SagemakerAutoscalingProps,
+)
+
+# Both endpoint and auto scaling values must be in config_hash so that
+# a change to either triggers the auto scaling orchestration.
+config_hash = json.dumps({
+    &quot;endpoint&quot;: {
+        &quot;image&quot;: &quot;123456789012.dkr.ecr.us-east-1.amazonaws.com/my-model:latest&quot;,
+        &quot;modelDataUrl&quot;: &quot;s3://my-bucket/models/model.tar.gz&quot;,
+        &quot;instanceType&quot;: &quot;ml.m5.large&quot;,
+        &quot;initialInstanceCount&quot;: 1,
+    },
+    &quot;autoscaling&quot;: {
+        &quot;minCapacity&quot;: 1,
+        &quot;maxCapacity&quot;: 10,
+        &quot;targetValue&quot;: 100,
+        &quot;scaleInCooldown&quot;: 600,
+        &quot;scaleOutCooldown&quot;: 120,
+    },
+})
+
+SagemakerAutoscalingConstruct(
+    self, &quot;Autoscaling&quot;,
+    props=SagemakerAutoscalingProps(
+        endpoint=your_endpoint,  # your CfnEndpoint
+        autoscaling=AutoscalingConfig(
+            min_capacity=1,
+            max_capacity=10,
+            target_value=100,
+            scale_in_cooldown=600,
+            scale_out_cooldown=120,
+        ),
+        config_hash=config_hash,
+    ),
+)</code></pre>
+<h2>How the construct works</h2>
+<p>This section walks through the key implementation details of <code>SagemakerAutoscalingConstruct</code>.</p>
+<h3>Deregister</h3>
+<p>The Deregister custom resource calls <code>deregister_scalable_target</code> before the endpoint update. It handles <code>ObjectNotFoundException</code> for first deployments where no scalable target exists:</p>
+<pre><code>def handler(event, context):
+    resource_id = event[&quot;ResourceProperties&quot;][&quot;ResourceId&quot;]
+    if event[&quot;RequestType&quot;] in (&quot;Create&quot;, &quot;Update&quot;):
+        try:
+            client.deregister_scalable_target(
+                ServiceNamespace=&quot;sagemaker&quot;,
+                ResourceId=resource_id,
+                ScalableDimension=&quot;sagemaker:variant:DesiredInstanceCount&quot;,
+            )
+        except client.exceptions.ObjectNotFoundException:
+            pass  # No scalable target on first deploy
+    return {&quot;PhysicalResourceId&quot;: f&quot;deregister-{resource_id}&quot;}</code></pre>
+<p>The dependency is established in CDK:</p>
+<pre><code>props.endpoint.node.add_dependency(deregister)</code></pre>
+<h3>Register Scalable Target</h3>
+<p>Even though CloudFormation treats the endpoint resource as complete once the update is accepted, the scalable target can only be registered after the endpoint reaches <code>InService</code>. Rather than block a single Lambda invocation on that wait, Register Scalable Target uses the provider’s asynchronous completion pattern. The <code>on_event</code> handler returns immediately, and the provider’s waiter re-invokes the <code>is_complete</code> handler on <code>query_interval</code> until the endpoint is <code>InService</code>. The provider’s <code>total_timeout</code> (1 hour) bounds the wait, not the timeout of any single Lambda invocation:</p>
+<pre><code>def handler(event, context):
+    props = event[&quot;ResourceProperties&quot;]
+    resource_id = props[&quot;ResourceId&quot;]
+    endpoint_name = resource_id.split(&quot;/&quot;)[1]
+    if event[&quot;RequestType&quot;] == &quot;Delete&quot;:
+        return {&quot;IsComplete&quot;: True}
+    status = sm_client.describe_endpoint(EndpointName=endpoint_name)[&quot;EndpointStatus&quot;]
+    if status == &quot;Failed&quot;:
+        raise Exception(&quot;Endpoint in Failed state&quot;)
+    if status != &quot;InService&quot;:
+        return {&quot;IsComplete&quot;: False}
+    as_client.register_scalable_target(
+        ServiceNamespace=&quot;sagemaker&quot;,
+        ResourceId=resource_id,
+        ScalableDimension=&quot;sagemaker:variant:DesiredInstanceCount&quot;,
+        MinCapacity=int(props[&quot;MinCapacity&quot;]),
+        MaxCapacity=int(props[&quot;MaxCapacity&quot;]),
+    )
+    return {&quot;IsComplete&quot;: True}</code></pre>
+<p>On stack deletion, the <code>on_event</code> handler deregisters the scalable target to clean up.</p>
+<h3>Attach Scaling Policy</h3>
+<p>There is a brief window after <code>RegisterScalableTarget</code> returns where the target isn’t yet queryable. Attach Scaling Policy uses the same asynchronous completion pattern: the <code>on_event</code> handler returns immediately, and the <code>is_complete</code> handler reports completion only once the scalable target is queryable, at which point it applies the policy. The provider’s <code>total_timeout</code> (15 minutes) bounds the wait:</p>
+<pre><code>def handler(event, context):
+    props = event[&quot;ResourceProperties&quot;]
+    resource_id = props[&quot;ResourceId&quot;]
+    if event[&quot;RequestType&quot;] == &quot;Delete&quot;:
+        return {&quot;IsComplete&quot;: True}
+    resp = client.describe_scalable_targets(
+        ServiceNamespace=&quot;sagemaker&quot;,
+        ResourceIds=[resource_id],
+        ScalableDimension=&quot;sagemaker:variant:DesiredInstanceCount&quot;,
+    )
+    if not resp.get(&quot;ScalableTargets&quot;):
+        return {&quot;IsComplete&quot;: False}
+    client.put_scaling_policy(
+        PolicyName=props[&quot;PolicyName&quot;],
+        ServiceNamespace=&quot;sagemaker&quot;,
+        ResourceId=resource_id,
+        ScalableDimension=&quot;sagemaker:variant:DesiredInstanceCount&quot;,
+        PolicyType=&quot;TargetTrackingScaling&quot;,
+        TargetTrackingScalingPolicyConfiguration=json.loads(props[&quot;ScalingPolicyConfig&quot;]),
+    )
+    return {&quot;IsComplete&quot;: True}</code></pre>
+<p>On stack deletion, the <code>on_event</code> handler deletes the scaling policy to clean up.</p>
+<h3>Cleaning up</h3>
+<p>To avoid incurring future charges, delete the resources:</p>
+<pre><code>uv run cdk destroy InferenceStack</code></pre>
+<p>This removes the SageMaker AI endpoint, endpoint configuration, model, Lambda functions, IAM roles, Amazon CloudWatch alarms created by the target tracking scaling policy, and deregisters the scalable target.</p>
+<h2>Conclusion</h2>
+<p>In this post, we showed you how to use a reusable CDK construct to deregister and register auto scaling automatically to orchestrate SageMaker AI endpoint updates. The construct uses three CloudFormation custom resources with explicit dependency ordering and a <code>ConfigHash</code> property to keep auto scaling intact across deployments.</p>
+<p>To get started, clone the <code>sample-sagemaker-endpoint-autoscaling</code> repository and follow the setup instructions. The repository includes an example stack you can deploy directly, or you can integrate the construct into your existing CDK stack.</p>
+<p>For more information about Application Auto Scaling for SageMaker AI, see <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/endpoint-auto-scaling.html">Automatically scale Amazon SageMaker AI models</a>. For more information about CloudFormation custom resources, see Custom resources in the <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">AWS CloudFormation User Guide</a>.</p>
+<h2>About the author</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Visualize points and routes with GeoJSON in Amazon Quick Sig…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/visualize-points-and-routes-with-geojson-in-amazon-quick-sight-layer-maps/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/visualize-points-and-routes-with-geojson-in-amazon-quick-sight-layer-maps/?li=1</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Visualize points and routes with GeoJSON in Amazon Quick Sight layer maps</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Visualize points and routes with GeoJSON in Amazon Quick Sight layer maps</h1>
+<p>With Amazon Quick Sight layer maps, you can now plot points and routes, like store locations across a city or flights leaving an airport. Geospatial maps help businesses spot patterns that are tied to location, like how a region is performing or where customers are concentrated. Amazon Quick Sight supports this with multiple map types, including point maps, filled maps, and layer maps. When <a href="https://aws.amazon.com/blogs/business-intelligence/create-custom-shape-maps-in-amazon-quicksight/">layer maps first launched</a>, you could upload a GeoJSON file to draw custom shape layers, such as sales territories or districts, and join those shapes to a dataset. That handled regions and boundaries well, but it didn’t cover the individual locations inside them or the routes running between them.</p>
+<p>Layer maps now support two more geometry types from the same GeoJSON workflow: <em>Point</em> and <em>LineString</em>. Points mark specific locations, such as individual store or facility sites. A LineString traces the route between locations, like a delivery path or a flight between airports.</p>
+<p><a href="https://aws.amazon.com/quick/quicksight/">Amazon Quick Sight</a>, the business intelligence (BI) capability of <a href="https://aws.amazon.com/quick/">Amazon Quick</a>, is a unified BI service. It delivers modern interactive dashboards, natural language querying, pixel-perfect reports, machine learning (ML) insights, and embedded analytics at scale. Amazon Quick brings together AI agents for business insights, research, and automation in one integrated experience, helping you work smarter and faster while maintaining security and access policies.</p>
+<p>In this post, we walk through the dataset and GeoJSON structure that layer maps require. We also explain how points and lines work in a layer map visual and when to choose each. Finally, we cover advanced techniques for controlling the viewport, layering geometries, and updating GeoJSON files programmatically.</p>
+<h2>Dataset structure considerations</h2>
+<p>A layer map gets its shapes from a GeoJSON file and its metrics from a Quick Sight dataset, and a shared key joins the two. How you structure each one determines what the map can show. This section covers what you need before you start and how a GeoJSON file is organized.</p>
+<h3>Prerequisites</h3>
+<p>The following are the prerequisites that you need before creating a layer map in Quick Sight:</p>
+<ul><li>A GeoJSON file describing your geometry.</li><li>A Quick Sight dataset holding the metrics and dimensions.</li><li>A join key shared between the Quick Sight dataset and the GeoJSON file.</li><li>The GeoJSON file must be saved in .geojson format, with a maximum supported file size of 100 MB.</li></ul>
+<h3>Structure of the GeoJSON file</h3>
+<p>GeoJSON is a JSON-based format for describing geographic features such as points and lines.</p>
+<pre><code>{
+  &quot;type&quot;: &quot;FeatureCollection&quot;,
+  &quot;features&quot;: [{
+    &quot;type&quot;: &quot;Feature&quot;,
+    &quot;geometry&quot;: {
+      &quot;type&quot;: &quot;Point&quot;,
+      &quot;coordinates&quot;: [88.4, 22.6]
+    },
+    &quot;properties&quot;: { &quot;prop0&quot;: &quot;value0&quot; }
+  }, {
+    &quot;type&quot;: &quot;Feature&quot;,
+    &quot;geometry&quot;: {
+      &quot;type&quot;: &quot;LineString&quot;,
+      &quot;coordinates&quot;: [
+        [88.2, 22.4],
+        [88.9, 23.1],
+        [89.5, 22.8],
+        [90.1, 23.6]
+      ]
+    },
+    &quot;properties&quot;: { &quot;prop0&quot;: &quot;value0&quot; }
+  }]
+}</code></pre>
+<p>The structure of the file is as follows:</p>
+<ul><li><strong>FeatureCollection</strong> is the whole file. It has a type of <strong>FeatureCollection</strong> and a <strong>features</strong> array.</li><li><strong>Feature</strong> is a single map element. It carries a <strong>geometry</strong> (the shape) and a <strong>properties</strong> object, which holds the join key.</li><li><strong>geometry</strong> has a <strong>type</strong> (Point, LineString, or Polygon) and its <strong>coordinates</strong>. The <strong>coordinates</strong> hold a single <strong>[longitude, latitude]</strong> position for a <strong>Point</strong>, and an ordered list of positions for a <strong>LineString</strong>.</li></ul>
+<h2>Configuring the Quick Sight dataset and its GeoJSON</h2>
+<p>In Quick Sight, when you configure a layer in a layer map visual, there are two primary settings to consider. The first is the <strong>Geometry type to visualize</strong>, which sets which geometry from the GeoJSON file renders: Points, Lines, or Polygons. A layer renders one geometry type at a time, so when a file mixes types like the preceding example, only Features of the selected type appear on the map. The second is matching the <strong>Shape file key field</strong> to the <strong>Dataset key field</strong>, which links each Feature in the GeoJSON to a row in your Quick Sight dataset. The field names don’t need to be identical, but the values do. The following two examples show this end to end, first a <strong>LineString</strong> layer and then a <strong>Point</strong> layer.</p>
+<h3>Example: LineString layer</h3>
+<p>Consider example data showing a flight from JFK to a destination city like Los Angeles. The GeoJSON structure for a single datapoint is configured as follows:</p>
+<pre><code>{
+  &quot;type&quot;: &quot;Feature&quot;,
+  &quot;geometry&quot;: {
+    &quot;type&quot;: &quot;LineString&quot;,
+    &quot;coordinates&quot;: [
+      [-73.7781, 40.6413],
+      [-85.5627, 40.6407],
+      [-97.1415, 39.4569],
+      [-108.1612, 37.1753],
+      [-118.4085, 33.9416]
+    ]
+  },
+  &quot;properties&quot;: { &quot;route_id&quot;: &quot;JFK-LAX&quot; }
+}</code></pre>
+<p>The corresponding row in the Quick Sight dataset contains the following information:</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-1.png" alt="Quick Sight dataset row for the JFK-LAX route with its route_id join key"></p>
+<p>Figure 1: Dataset row for the JFK-LAX route, keyed by route_id</p>
+<p>The <strong>route_id</strong> field is used to join the Quick Sight dataset with the GeoJSON file. The GeoJSON holds one such feature per route, and the dataset one row per route. The Geometry type to visualize is set to Lines.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-2.jpg" alt="Layer map rendering the JFK to Los Angeles flight path as a line"></p>
+<p>Figure 2: The JFK-LAX route drawn as a LineString layer</p>
+<h3>Example: Point layer</h3>
+<p>Consider example data showing a retail store location like Long Island City. The GeoJSON structure for a single datapoint is configured as follows:</p>
+<pre><code>{
+  &quot;type&quot;: &quot;Feature&quot;,
+  &quot;geometry&quot;: {
+    &quot;type&quot;: &quot;Point&quot;,
+    &quot;coordinates&quot;: [-73.9490, 40.7447]
+  },
+  &quot;properties&quot;: { &quot;store_id&quot;: &quot;S-109&quot; }
+}</code></pre>
+<p>The corresponding row in the Quick Sight dataset contains the following information:</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-3.png" alt="Quick Sight dataset row for a store with its store_id join key"></p>
+<p>Figure 3: Dataset row for a store, keyed by store_id</p>
+<p>The <strong>store_id</strong> field is used to join the Quick Sight dataset with the GeoJSON file. The GeoJSON holds one such feature per store, and the dataset one row per store. The Geometry type to visualize is set to Points.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-4.jpg" alt="Layer map rendering a retail store location as a point"></p>
+<p>Figure 4: A store plotted as a Point layer</p>
+<h2>Lines on layer map visuals</h2>
+<p>Layer map visuals now support <strong>LineString</strong> geometry, connecting an ordered list of coordinates into a single path. As covered in the data structure section, each route is one feature, and its coordinates are the ordered positions the map connects in sequence.</p>
+<p>Use lines when the relationship between locations is what you want to show, such as flight paths, delivery routes, shipping lanes, or pipeline segments. The visual draws each path from the coordinates in your GeoJSON file rather than generating it from your data at load time. A field from your joined dataset can determine the line color encoding, so you can group routes by whatever that field represents. In addition to color, you can customize lines with width and opacity controls to adjust visual prominence and clarity on the map. The join key in the GeoJSON properties object ties each LineString to the dataset row behind its tooltip and color.</p>
+<p>For example, an airport operations team might map the flights leaving New York (JFK) on a given day. The GeoJSON file holds one LineString per route, keyed by a route ID that joins to the dataset. Each line starts at JFK and ends at its destination, such as Los Angeles, Chicago, or Miami. The dataset supplies the origin, destination, and carrier that show up in the tooltip.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-5.png" alt="Layer map showing multiple flight paths radiating from JFK to destination cities"></p>
+<p>Figure 5: Flights leaving JFK drawn as LineString routes to multiple destinations</p>
+<h2>Points on layer map visuals</h2>
+<p>Amazon Quick Sight offers a native <a href="https://docs.aws.amazon.com/quick/latest/userguide/point-maps.html">point map visual type</a> that geocodes location names automatically and refreshes with your SPICE schedule or Direct Query connection. It supports dynamic point sizing, color encoding, and point styles such as cluster points and heatmap density gradients. It works best with data that changes frequently and where you want the map to respond to those changes visually.</p>
+<p>With the added support for GeoJSON point layers in layer map visuals, Quick Sight now offers a second point mapping capability with a few key differences. Layer map visual points use a uniform marker size and don’t support geocoding, so you provide explicit coordinates in the GeoJSON file. In return, you can control the viewport precisely, locking the map to an exact geographic region, and disabling panning and zooming.</p>
+<p>The following table summarizes the key differences:</p>
+<table><thead><tr><th><strong>Feature</strong></th><th><strong>Point map</strong></th><th><strong>Layer map visual points</strong></th></tr></thead><tbody><tr><td><strong>Data source</strong></td><td>Latitude/longitude values or geolocation names in your dataset</td><td>GeoJSON Point features joined to your dataset by a shared key</td></tr><tr><td><strong>Geocoding</strong></td><td>Recognizes city, county, state, country, and postal code automatically</td><td>Not available. Must provide explicit coordinates in the GeoJSON file</td></tr><tr><td><strong>Location updates</strong></td><td>Mapping updates automatically with SPICE refreshes or Direct Query as location values change</td><td>Visual uses a static GeoJSON file for point locations. Requires manual re-upload or API call to update geometry</td></tr><tr><td><strong>Viewport</strong></td><td>Auto-fits to your data, panning and zooming always enabled</td><td>Auto-fits by default, can configure if panning and zooming is allowed</td></tr><tr><td><strong>Appearance</strong></td><td>Size and color can be encoded from the dataset. Point style configuration available (basic, cluster, heatmap)</td><td>Customizable uniform marker size, fill opacity, border color and thickness. Color can be encoded from the dataset</td></tr></tbody></table>
+<p>Choose layer map visual points when:</p>
+<ul><li>You require a locked, non-scrollable viewport.</li><li>Your locations are fixed and curated (such as regional offices, distribution centers, retail stores) rather than changing with each data refresh.</li><li>You plan to combine points with other geometry types (covered in the advanced use cases section).</li></ul>
+<p>Consider a retail brand whose regional managers use a Quick Sight dashboard to track store performance across a metro area. The GeoJSON file contains a Point feature for each store with a store ID property that joins to the dataset. The dataset holds the metrics (store type, monthly revenue, daily foot traffic) that drive the tooltip and color encoding. You position the map at the zoom level covering the metro area, then disable map navigation so the map renders at a consistent view on every load. Managers can’t accidentally zoom out to a national or global view.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-6.png" alt="Layer map of retail store points across a metro area with a locked viewport"></p>
+<p>Figure 6: Store locations as points with map navigation disabled to lock the metro-area view</p>
+<h2>Advanced use cases</h2>
+<p>The previous sections cover a standard layer map setup. Use the following techniques when you need more control over what readers see, want to combine geometry types in a single view, or need geometry that changes over time.</p>
+<h3>Controlling the viewport</h3>
+<p>When you need to control the viewport in layer map visuals, you can pan and zoom to the view you want manually. Then disable map navigation to lock it in place. For use cases where you need more precise boundaries or programmatic control, you can set the exact viewport coordinates through the visual definition using the Quick Sight APIs.</p>
+<p>The layer map visual stores its viewport configuration in the <code>MapState</code> property within <code>ChartConfiguration</code>. This property accepts two fields:</p>
+<ul><li><strong>Bounds</strong>: The geographic coordinates defining the minimum visible area (North, South, East, West).</li><li><strong>MapNavigation</strong>: <code>ENABLED</code> or <code>DISABLED</code> to control whether readers can pan and zoom.</li></ul>
+<p>Although the bounds property is not exposed on the console, you can set these bounds when working with the dashboard definition JSON for programmatic asset management. For example, to define the bounds, modify the <code>MapState</code> block in the visual definition, then call the <a href="https://docs.aws.amazon.com/quicksight/latest/APIReference/API_CreateDashboard.html">CreateDashboard</a> or <a href="https://docs.aws.amazon.com/quicksight/latest/APIReference/API_UpdateDashboard.html">UpdateDashboard</a> APIs.</p>
+<p>The bounds define the minimum area that is guaranteed to be visible. The map zooms to make sure this entire area fits within the visual container. For the tightest fit with minimal extra space added to the map, match the aspect ratio of your bounds to the shape of your visual container.</p>
+<h3>Layering geometries</h3>
+<p>For use cases that require combining multiple geometry types into a single view, you can layer visuals on top of each other. For example, the following screenshot demonstrates plotting customer locations as points within US regional boundaries defined by polygons. This composition shows which territories have the highest customer density and can be used to correlate with other metrics present in the dataset like performance.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-7.png" alt="Layer map combining customer location points with US regional polygon boundaries"></p>
+<p>Figure 7: Customer points layered within polygon regional boundaries</p>
+<p>This second example demonstrates combining points as stops along a delivery route path. The LineString draws the planned route, and Point features mark each scheduled stop along the way.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-8.png" alt="Layer map combining a delivery route line with point markers for each stop"></p>
+<p>Figure 8: A delivery route drawn as a LineString with Point markers for each stop</p>
+<p>To layer geometries, you stack multiple layer map visuals on top of each other, following these steps:</p>
+<ul><li><strong>Use free-form layout:</strong> Change the <a href="https://docs.aws.amazon.com/quick/latest/userguide/types-of-layout.html#free-form-layout.title">sheet layout setting to free-form</a> so that visuals can overlap and stack.</li><li><strong>Create two layer map visuals:</strong> Create the two layer map visuals that you combine into a single view, such as one using a Point GeoJSON file and one using a LineString GeoJSON file.</li><li><strong>Use matching bounds:</strong> Using the approach previously described for controlling the viewport, verify all layer map visuals use identical bounds to have the same underlying map view.</li><li><strong>Disable panning and zooming:</strong> For each layer map visual, disable the panning and zooming under Map options so that alignment stays the same.</li><li><strong>Hide the base map and background on upper layer:</strong> Set the upper visual’s background to hidden under Display settings and disable the base map under Map options.</li><li><strong>Stack the visuals:</strong> Move the top visual on top of the base layer using drag-and-drop or by matching precise size and position coordinates under Display settings.</li></ul>
+<p>Layer ordering follows the visual stacking order in the free-form layout. To change a visual’s position in the stack, choose the menu icon (three dots) on the visual, then choose <strong>Send backward</strong> or <strong>Bring forward</strong>. Readers can access the tooltip of the topmost visual, so place the layer that readers need details from on top. Each sheet supports up to five layer map visuals.</p>
+<h3>Dynamically updating GeoJSON</h3>
+<p>Unlike other Quick Sight visuals where data refreshes through SPICE or Direct Query, layer map geometry lives in the GeoJSON file itself. When your dataset refreshes on schedule, the metrics update (for example, colors change and tooltip values refresh), but the geometry remains at its original position.</p>
+<p>To update what appears on the map, like a new route, new point locations, or updated boundaries, you need to update the GeoJSON file and republish the dashboard. You can replace a GeoJSON file manually through the Quick Sight console by editing the layer map visual within the Analysis and uploading a new file. This works for infrequent changes such as updating territory boundaries quarterly or adding a new store location.</p>
+<p>For automated, on-demand, or dynamic updates, the process involves Amazon Simple Storage Service (Amazon S3) and the Quick Sight APIs outlined in the following steps:</p>
+<ul><li><strong>Upload the new GeoJSON to Amazon S3:</strong> Generate your updated geometry and save it to an <a href="https://aws.amazon.com/s3/">Amazon S3</a> bucket. Custom solutions can use other AWS services such as <a href="https://aws.amazon.com/location/">Amazon Location Service</a> to create the GeoJSON files.</li><li><strong>Reference the file on the dashboard definition:</strong> The dashboard definition contains a <a href="https://docs.aws.amazon.com/quicksight/latest/APIReference/API_StaticFile.html">StaticFiles</a> array with a <code>SpatialStaticFile</code> entry for each GeoJSON file. Modify the file reference to the S3 location of your updated file entry for each GeoJSON file.</li><li><strong>Call the UpdateDashboard API:</strong> Submit the updated definition with the new file reference using the <a href="https://docs.aws.amazon.com/quicksight/latest/APIReference/API_UpdateDashboard.html">UpdateDashboard</a> API.</li><li><strong>Call the UpdateDashboardPublishedVersion API:</strong> Publish the change so it is visible to dashboard readers with the <a href="https://docs.aws.amazon.com/quicksight/latest/APIReference/API_UpdateDashboardPublishedVersion.html">UpdateDashboardPublishedVersion</a> API.</li></ul>
+<p>The following example uses this pattern to support on-demand map updates in an embedded dashboard to generate optimal routes between locations and waypoints. Although outside the scope of this post, this represents an advanced use case that combines each of the preceding approaches.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-9.gif" alt="Animated demo of an embedded dashboard generating optimal routes between waypoints on demand"></p>
+<p>Figure 9: On-demand route generation in an embedded dashboard</p>
+<h2>Conclusion</h2>
+<p>In this post, we showed how to use Point and LineString geometry in Amazon Quick Sight layer maps to plot specific locations and the routes between them. We covered the GeoJSON structure and dataset join that layer maps require, and compared layer map points with the native point map. We also walked through advanced techniques for controlling the viewport, layering separate visuals into one view, and refreshing GeoJSON files with Amazon S3 and the Quick Sight APIs.</p>
+<p>To learn more about layered maps, refer to <a href="https://docs.aws.amazon.com/quick/latest/userguide/layered-maps.html">the Amazon Quick Sight layered maps documentation</a>. Visit the <a href="https://community.amazonquicksight.com/">Amazon Quick Community</a> to connect with peers and stay updated on the newest features and resources.</p>
+<h2>About the authors</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>How Bayer Crop Science built an agentic decision engine on A…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/how-bayer-crop-science-built-an-agentic-decision-engine-on-amazon-bedrock-agentcore-with-aws-unified-operations/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-bayer-crop-science-built-an-agentic-decision-engine-on-amazon-bedrock-agentcore-with-aws-unified-operations/?li=1</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: How Bayer Crop Science built an agentic decision engine on Amazon Bedrock AgentCore with AWS Unified Operations</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>How Bayer Crop Science built an agentic decision engine on Amazon Bedrock AgentCore with AWS Unified Operations</h1>
+<p>Plant breeding decisions depend on data that spans genomics, field trials, imagery, environmental conditions, and model outputs. Bayer Crop Science runs hundreds of machine learning (ML) model configurations against this data across crops, regions, and teams, and each run needs to be repeatable and governed. To meet that requirement, Bayer built the Connected Decision Engine (CDE), a system for deploying, orchestrating, monitoring, and reusing ML workflows. CDE gives breeders, analysts, researchers, data scientists, and data engineers a consistent way to run analytics while preserving execution history and operational controls.</p>
+<p>As adoption grew, the bottleneck moved from running workflows to understanding them. Explaining a result meant piecing together context from APIs, documentation, metadata stores, dashboards, and logs. A user who wanted to know why a workflow failed, what a model did, or where a result came from still had to know which system to inspect. To close that gap, Bayer built the Agentic Decision Engine (ADE), a multi-agent, natural language interface over CDE. A supervisor agent routes each question to a specialist agent, the specialist retrieves context from the relevant system, and the user receives an answer without navigating the operational stack. In its first phase, ADE resolves about 80 percent of user questions without an engineer in the loop.</p>
+<p>ADE runs on <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>, an AWS service to build, connect, and optimize agents at scale with any framework or model. AgentCore let the team focus on agent behavior instead of building and operating its own agent hosting, session isolation, and tool access layer. Three AgentCore capabilities drove that choice: a managed runtime that isolates each user session, AWS Identity and Access Management (IAM)-scoped tool access through AgentCore Gateway, a capability of Amazon Bedrock AgentCore, that keeps authentication and authorization outside agent code, and a framework-agnostic design that let the team bring its own LangGraph orchestration and choice of models.</p>
+<p>To prepare for launch and to operate ADE afterward, Bayer engaged <a href="https://aws.amazon.com/premiumsupport/plans/unified-operations/">AWS Unified Operations</a>. The engagement provided a designated Technical Account Manager (TAM) and a generative AI Domain Specialist Engineer (DSE), who worked as an extension of the ADE team from design through production. The TAM, as Bayer’s strategic advisor, brought an established understanding of Bayer’s operating model and business priorities. The DSE brought generative AI domain expertise on AWS. In three technical standups each week, the team reviewed and made design decisions. The DSE built working knowledge of the ADE workload and how the Bayer team operates, so technical guidance reflected both AWS service behavior and Bayer’s context. This post follows that journey: the ADE architecture, five design decisions made during the build, the work to prepare the platform for production, and how it is operated after launch.</p>
+<h2>Architecture overview</h2>
+<p>ADE is organized into four layers: the user experience, agent orchestration, specialist agents, and the tools and data sources those agents call (Figure 1). Users reach ADE through a React web front end, and requests pass through an identity proxy for Microsoft Entra ID before they reach the agents. GitHub Actions builds the agent container images, pushes them to <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a>, and deploys them to AgentCore runtime, a capability of Amazon Bedrock AgentCore.</p>
+<p>Amazon Bedrock AgentCore runtime hosts the agents, and because the runtime is framework-agnostic, the team runs its own LangGraph-based orchestration on it directly. The team chose LangGraph for its explicit graph-based control flow and checkpointing for multi-step workflows. LangGraph orchestrates the workflow, with a Supervisor Agent as the entry point that classifies each request, selects a specialist, and combines results when a question spans domains. The data plane is separated by responsibility. <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a> stores LangGraph checkpoint state. <a href="https://aws.amazon.com/rds/aurora/">Amazon Aurora</a> PostgreSQL stores session records, user feedback, and analytics. <a href="https://aws.amazon.com/elasticache/">Amazon ElastiCache</a> caches agent responses with a time to live (TTL). Domain content in <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service (Amazon S3)</a> is embedded with Amazon Titan Text Embeddings V2 and indexed in <a href="https://aws.amazon.com/opensearch-service/">Amazon OpenSearch</a> Serverless for Retrieval Augmented Generation (RAG). <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> captures runtime and application telemetry. AgentCore Gateway exposes backend APIs to agents as Model Context Protocol (MCP) tools and keeps authentication and authorization outside agent code.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21834-1.png" alt="Agentic Decision Engine architecture: user experience, orchestration, specialist agents, and tools and data source layers"></p>
+<p>Figure 1: Agentic Decision Engine architecture on Amazon Bedrock AgentCore</p>
+<p>ADE runs 22 specialist agents in production, each scoped to one domain with its own tools and data sources. For example, the Domain Expert Agent answers conceptual questions through RAG. The Operational Agent retrieves live workflow status and results from CDE. The Troubleshooting Agent analyzes operational telemetry. The Visualization Agent generates charts or returns existing dashboards. A customer-specific <em>Models as Skill</em> pattern converts model code and documentation into skill definitions stored in a central registry, so agents answer model-specific questions from the model’s implementation instead of generic model knowledge.</p>
+<p>When a breeder asks, “Why did my phenotyping workflow fail yesterday?”, the supervisor classifies the intent and routes the request to the Troubleshooting Agent. That agent reads the workflow’s telemetry in CloudWatch and its status from the CDE API through AgentCore Gateway, identifies the failure point, and returns a diagnosis through the supervisor (Figure 2). The breeder doesn’t search logs directly. With the Troubleshooting Agent, a diagnosis that once took over an hour of manual log-hunting and waiting for engineer support now takes under 10 minutes.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21834-2.png" alt="Request flow diagram for the Agentic Decision Engine. A user question enters the Supervisor Agent, which classifies the intent, checks the Amazon ElastiCache response cache, and routes the request to the appropriate specialist agent. The specialist retrieves grounded context from the relevant system, such as the CDE API through AgentCore Gateway or telemetry in Amazon CloudWatch, and returns a composed answer to the user."></p>
+<p>Figure 2: ADE request flow: intent classification, cache lookup, specialist routing, and response</p>
+<h2>Five design decisions on the path to production</h2>
+<p>The Unified Operations TAM and DSE took part in the following decisions as members of the working team, not as an escalation point after the fact. That let Bayer test each design against AWS service behavior before committing to it, while keeping ownership of the architecture and the final call.</p>
+<h3>1. Externalize orchestration state without treating the runtime as stateless</h3>
+<p>AgentCore runtime provides isolated sessions that preserve execution context across invocations within a session’s lifecycle. That context isn’t a durable store for a multi-step workflow. ADE writes LangGraph checkpoints to DynamoDB so the graph can resume after scale-out events, restarts, or session boundaries without depending on one execution environment remaining available.</p>
+<p><strong>Principle:</strong> Use the runtime session for active execution, and persist the state required to resume or reconstruct the workflow in a durable service.</p>
+<h3>2. Separate enterprise identity, gateway access, and downstream authorization</h3>
+<p>Bayer standardizes on Microsoft Entra ID for user identity, while ADE’s services authorize each other with AWS-native mechanisms. Rather than force one token across every trust boundary, the team gave each boundary its own mechanism.</p>
+<p>Entra ID remains the source of user identity. AWS Identity and Access Management (IAM) authorizes service-to-service calls. AgentCore Gateway outbound authorization handles access to downstream CDE services. A request interceptor AWS Lambda function performs custom validation and passes the authorization attributes that downstream tools require. The team worked through the token contract at each hop with the DSE.</p>
+<p><strong>Principle:</strong> Identity failures in agent systems cluster at the transitions between user identity, agent identity, and tool identity. Define the issuer, audience, claims, scopes, and credential lifetime at every hop instead of reusing a token that is valid for one boundary at the next.</p>
+<h3>3. Treat model selection as an interface contract</h3>
+<p>During the build, the team evaluated a newer model version with reasoning mode enabled. For that version, the combination of tool use and structured output that ADE depends on was not compatible with how its agents were implemented. The DSE confirmed the constraint, and the team retained the current model for the release.</p>
+<p><strong>Principle:</strong> For tool-using agents, model choice is constrained by the full interface: tool calling, structured output, streaming behavior, reasoning features, latency, quota availability, and model-specific request semantics. A newer model is not automatically a drop-in replacement.</p>
+<h3>4. Control the tool surface before it controls the prompt</h3>
+<p>CDE manages more than 500 model configurations. A dedicated MCP server per API would have added deployment, authentication, and version management overhead. ADE instead registers OpenAPI specifications with AgentCore Gateway, which exposes the REST operations as MCP tools. Adding or changing an API becomes a schema and gateway configuration change instead of a new server deployment.</p>
+<p>Tool schemas and descriptions also consume input tokens and compete with the user’s request and retrieved context. ADE scopes tools by specialist agent instead of giving every agent the full catalog. For larger catalogs, AgentCore Gateway supports semantic tool search, so an agent can find relevant tools without loading the entire catalog on every turn.</p>
+<p><strong>Principle:</strong> Scope the tool catalog per agent. Every tool definition adds tokens and widens the model’s decision space.</p>
+<h3>5. Promote complex capabilities from tools to agents</h3>
+<p>Visualization started as a tool invoked by other agents. As it grew, it needed its own data retrieval, chart selection logic, retries, error handling, and a decision about whether to generate a chart or return an existing dashboard. The team moved it into a specialist Visualization Agent. The agent generates on-demand charts with matplotlib and Plotly in AgentCore Code Interpreter, a capability of Amazon Bedrock AgentCore that provides a sandboxed code execution environment, and exchanges data with it through Amazon S3. When a prebuilt dashboard is the better answer, the agent returns the existing Amazon Quick or Power BI asset.</p>
+<p><strong>Principle:</strong> A tool performs a bounded operation. When a capability starts to own state, retries, planning, policy, or presentation decisions, model it as an agent.</p>
+<h2>Preparing ADE for production</h2>
+<p>As the build moved toward launch, the focus shifted from design to operability: detecting agent failures, attributing inference cost, and hardening the deployment.</p>
+<h3>Observability: Measure task failures, not only exceptions</h3>
+<p>A supervisor architecture turns one user request into a chain of model calls, tool calls, and agent handoffs. The final answer can be wrong even when every HTTP request succeeded. ADE encountered this directly: application exception handlers caught agent errors and returned responses that monitoring counted as successful. After reproducing the issue with the DSE, the team added custom CloudWatch metrics inside failure paths and alarms on agent-specific conditions: tool call errors, throttling, model timeouts, and structured output validation failures. Traces and invocation logs follow each request across the supervisor and specialists.</p>
+<p><strong>Principle:</strong> Distinguish transport success from task success. Agent observability should show whether the task completed, which agent or tool changed the outcome, and whether the response used the expected source.</p>
+<h3>Cost attribution: Combine billing attribution with request-level telemetry</h3>
+<p>One ADE request can invoke several models and tools, so account-level Amazon Bedrock spend doesn’t explain unit economics. The team designed the attribution approach with the DSE using three mechanisms that answer different questions. Amazon Bedrock application inference profiles attribute billed model usage to an application or workload. Request metadata and model invocation logging associate token usage with a specific agent, feature, or request. IAM principal attribution adds an identity dimension. Together they let the team estimate cost per interaction, identify expensive agents, and determine whether prompts, retrieved context, or tool definitions drive token use. In practice, the Visualization and Operational agents, which rely on MCP tools and multiple tool calls, consumed the most tokens.</p>
+<p>The same telemetry surfaced a workload during launch preparation with a large repeated input prefix and no prompt cache activity. For supported models, placing stable instructions and tool definitions in a cacheable prompt prefix reduces repeated input processing, which lowers latency and token cost. For ADE, caching the stable prompt prefix cut input-token cost by 20–30 percent.</p>
+<h3>Security and launch readiness</h3>
+<p>IAM roles are scoped to each agent’s responsibility. The Troubleshooting Agent can read the operational data it needs for diagnosis but can’t modify workflows. The Domain Expert Agent can query its retrieval index but cannot call unrelated CDE APIs. In production today, ADE’s agent responses are governed by least privilege, read-only tool access scoped to each agent, structured output validation on agent responses, and answers grounded in retrieved CDE data and telemetry rather than open-ended generation. Bayer also plans to evaluate Amazon Bedrock Guardrails as an additional layer on these controls, complementing the custom safety checks already used in CDE multi-turn workflows.</p>
+<p>Before launch, Unified Operations ran a Critical Workload Review and a Well-Architected review with the Generative AI Lens alongside the ADE team. Because the DSE already knew the workload, both reviews targeted ADE’s specific failure modes, capacity risks, and deployment gaps rather than generic best practices. Findings included gaps in failure visibility across the supervisor and specialist agents, mutable container image tags, limited image traceability, and missing vulnerability scanning. The team responded with stronger alarms, immutable versioned images, scan on push in Amazon ECR, and lifecycle policies for unused images.</p>
+<p>The DSE also reviewed scaling and quota requirements with the team. Load testing validated both the application and its service quotas and exposed a networking failure mode that returned empty responses, which the team fixed before the production event. By launch, the team had tracked 35 blockers to resolution with Unified Operations.</p>
+<h2>Launch, operations, and next steps</h2>
+<p>Bayer launched ADE to a gated group rather than opening it to the whole organization at once. Since launch, more than 100 users across Bayer Crop Science have used ADE, including breeders, analysts, researchers, data scientists, and engineers. Alongside its 22 specialist agents, ADE exposes about 20 API tools and can host third-party agents as it expands. Exposing those APIs through AgentCore Gateway rather than a dedicated server per API cut per-API integration overhead by more than 99 percent. In its first phase, ADE has resolved about 80 percent of user questions without an engineer in the loop.</p>
+<p>CDE remains the governed execution layer for analytics. ADE adds a natural language layer over it, so users can ask about workflow status, results, model behavior, and failures without learning the location or interface of each underlying system.</p>
+<p>The engagement then shifted from launch readiness to ongoing operations. The DSE continues to meet with the team, so issue triage and operational reviews start from existing knowledge of ADE instead of a new ramp-up. ADE’s critical CloudWatch alarms, including the agent-specific alarms described earlier, are onboarded to AWS Incident Detection and Response. When one fires, AWS Incident Management Engineers engage within 5 minutes and start from the workload’s context rather than from scratch. On the security side, AWS Security Incident Response engineers support the team during potential or active security events, so ADE has AWS monitoring and response coverage for both operational and security issues.</p>
+<p>With agent-to-agent communication already in place, Bayer is focusing next on hybrid cloud agent interoperability. The team is exploring how agents running in different environments can discover and communicate with each other without manual configuration.</p>
+<h2>Conclusion</h2>
+<p>Bayer didn’t replace its analytics platform with ADE. It made CDE easier to query and operate. Most of the production work sat outside the prompts: durable state, identity boundaries, tool scoping, task-level observability, cost attribution, and launch readiness. Bayer owned the architecture and each of those decisions. Working with a designated DSE and TAM through AWS Unified Operations, the team tested those decisions against AWS service behavior during design and carried the same context into production.</p>
+<p>To learn more, explore <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>, <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cost-management.html">Amazon Bedrock cost attribution</a>, <a href="https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lens.html">AWS Well-Architected Generative AI guidance</a>, and <a href="https://docs.aws.amazon.com/awssupport/latest/user/unified-operations-intro.html">AWS Unified Operations</a>.</p>
+<p><em>The authors would like to thank Sijie Shi, Jorge Gomes, Naveen Reddy, Iago Fonseca, Mateus Silva, and Sushimitha Jarugula for their contributions to the design, development, and launch of ADE.</em></p>
+<h2>About the authors</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Amazon Polly delivers a major upgrade to its Generative engi…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/amazon-polly-delivers-a-major-upgrade-to-its-generative-engine/</link>
@@ -5766,480 +6345,6 @@ def call_with_backoff(fn, attempts=7, base=4.0, cap=180.0):
 <p>Three things are worth carrying into your own evaluation. Design tasks with one provable answer and state every rule the grader depends on. Repeat runs, so you see how consistent each configuration is. And monitor output tokens and tool calls by effort level, so you have an operational signal alongside your quality measurements.</p>
 <h2>Further reading</h2>
 <ul><li><a href="https://aws.amazon.com/blogs/machine-learning/introducing-grok-on-amazon-bedrock/">Introducing Grok on Amazon Bedrock</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/grok-4-7-is-now-available-on-amazon-bedrock/">Grok 4.7 is now available on Amazon Bedrock</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">Route model inference requests across AWS Regions with cross-Region inference</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html">Getting started with Amazon Bedrock</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-chat-completions.html">Chat Completions API</a></li><li><a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock pricing</a></li><li><a href="https://x.ai/news/grok-4-7">Introducing Grok 4.7</a> (SpaceXAI)</li></ul>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Mixture-of-Experts kernel engineering on Amazon SageMaker AI</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/mixture-of-experts-kernel-engineering-on-amazon-sagemaker-ai/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/mixture-of-experts-kernel-engineering-on-amazon-sagemaker-ai/?li=1</guid>
-      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Mixture-of-Experts kernel engineering on Amazon SageMaker AI</h1>
-<p>Mixture-of-Experts (MoE) is a sparsely-activated architecture that scales large language model (LLM) capacity while keeping per-token compute low. Because its operations account for a large share of total compute time, inefficiencies there directly raise request latency and cost. Therefore, optimizing MoE operations through kernel engineering offers the largest opportunity for performance gains.</p>
-<p>Fused MoE is a key optimization technique for the MoE architecture. A fused MoE system merges token routing, data shuffling, and specialized network calculations into a single batched operation on the GPU. This replaces executing those routing and expert computations as separate, sequential loop operations. While this provides latency advantages, it also brings complexity in kernel implementations and debugging capability. High GPU utilization for this architecture requires hardware-specific optimizations.</p>
-<p>In this post, we describe the different kernel optimizations we implemented for fused MoE models and show you how you can benefit from this work. We used a representative MoE model as our primary example.</p>
-<h2>Swap-AB for WGMMA utilization</h2>
-<p>To maximize tensor processing throughput, the NVIDIA Hopper architecture relies on the Warp Group Matrix Multiply Accumulate (WGMMA) instruction protocol, which executes collectively across a cooperative warpgroup of 128 threads. This operand asymmetry is fundamentally an instruction set architecture (ISA)-level property. In the underlying <code>wgmma.mma_async</code> assembly definition, the hardware fixes the matrix row dimension (M) at a constant scale of 64 to define its parallel thread-mapping topology. The column dimension (N) remains highly variable. Operand A strictly maps across this fixed M dimension (using registers or shared memory), and Operand B maps across the variable N dimension (through a shared memory descriptor). These operand slots are therefore structurally non-interchangeable. Consequently, peak hardware tile utilization is governed by these rigid shape encodings, requiring that the M dimension equals or exceeds 64 to prevent compute execution lanes from sitting idle.</p>
-<p>This structural preference stems from how Hopper Tensor Cores partition memory blocks. The hardware enforces a fixed minimum layout shape for the leading dimension of the first operand, locking the block height to exactly 64 (M=64). When a mathematical matrix possesses a large, continuous leading dimension in this primary slot, Hopper’s internal hardware schedulers can cleanly map and distribute data across the physical computing grid.</p>
-<p>This structural asymmetry becomes a severe performance bottleneck during the decode phase of MoE networks. In a standard MoE layer, the linear algebra governing expert computation is formulated using traditional matrix notation:</p>
-<p>A[M,K] x B[K,N] —&gt; C[M,N]</p>
-<p>Where (M) represents the token row count (or batch size), (K) represents the hidden feature dimension, and (N) represents the expansive expert output dimension.</p>
-<p>During the decode phase, the system processes only one token per user sequence at a time. Consequently, the batch space or token row size is profoundly thin, regularly dropping to a profile where (M &lt; 64), and frequently down to a single row (M = 1). Under this standard structural layout:</p>
-<p>Matrix (A) transforms into a thin, fragmented horizontal vector (for example, 1 x 4096).</p>
-<p>Matrix (B) (the core expert weights) remains in a large, dense vertical block (for example, 4096 x 8192).</p>
-<p>Because the row count (M) is tiny, Matrix (A) is physically incapable of filling the hardware’s fixed (64)-row layout bucket for Operand A. When the WGMMA instruction executes over this layout, it leaves a vast portion of the physical Tensor Core capacity completely starved. The silicon spends clock cycles processing empty spatial slots, leading to poor hardware utilization.</p>
-<p>In a standard dense LLM layer, weight matrices are static, unified, and perfectly contiguous. In an MoE layer, however, the workload is fractured across a fleet of independent subnetworks (experts). This creates unique memory and layout bottlenecks that make it hypersensitive to the WGMMA constraints of the Hopper GPU. In a standard dense layer, matrix multiplication multiplies a token vector by a single layer weight matrix. The output dimension (N) is the model’s hidden size (for example, 4096).</p>
-<p>In a Fused MoE kernel, the GPU isn’t only multiplying against one expert. It’s grouping and running math for all active experts simultaneously to avoid launching individual kernels for each expert. For a standard dense layer, N is the hidden size (4,096). For a fused MoE layer, N is the number of experts chosen multiplied by the expert intermediate size. For a model running a <code>topk=8</code> routine, the effective N dimension inside the fused kernel explodes into tens or hundreds of thousands of parameters. Because the N dimension is so disproportionately large compared to the tiny decode token size (M=1), the layout asymmetry becomes extreme. Transposing the matrices moves this large, combined MoE dimension into the primary slot, unlocking hardware prefetching at a scale that standard dense layers cannot match.</p>
-<p>To resolve this hardware misalignment without altering the underlying mathematical integrity of the model, we exploit the algebraic property of matrix transposition:</p>
-<p>BT[N,K] x AT[K,M] —&gt; CT[N,M]</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-22058-1.png" alt="Swap-AB transposition promoting the large expert dimension into the WGMMA operand-A slot for full Tensor Core utilization"></p>
-<p>Figure 1: Swap-AB for WGMMA utilization</p>
-<p>By programmatically flipping the matrix multiplication before it reaches the PTX assembly layer, we realigned the software to match the exact topography of the Hopper silicon. This transposition triggers two immediate architectural advantages on the GPU. First, it saturates the physical layout. The expansive expert dimension (N = 8192) is promoted to the first operand position (BT), and because (N) is large it easily floods the hardware’s mandatory (64)-row threshold. The Tensor Cores then operate at maximum local density with no wasted execution cycles. Second, it activates asynchronous prefetching. Hopper’s dedicated hardware copy engines can prefetch memory addresses asynchronously from shared memory straight into registers before the math execution block fires. Placing the continuous, large weight blocks (BT) in the leading slot lets these engines trace the data layout smoothly and keep the compute pipeline saturated without CPU intervention. This produced a 2–4 percent end-to-end output throughput improvement across large-scale MoE models on H200. We upstreamed this optimization to vLLM, and it is available in version 0.24.0 or later.</p>
-<h2>Backend routing for FP8 tensor quantization</h2>
-<p>Beyond kernel internals, the choice of which backend executes the MoE computation has a large effect on performance. The vLLM MoE oracle routes different quantization schemes to Triton, FlashInfer+CUTLASS, or other backends. Profiling revealed that for FP8 tensor-quantized models on Hopper, the Triton backend consistently outperforms the default <code>FLASHINFER_CUTLASS</code> path.</p>
-<p>The Triton backend outperforms CUTLASS in low-concurrency MoE workloads primarily because it replaces rigid, framework-level matrix math configurations with custom, operator-level register fusion. CUTLASS relies on standard C++ template structures that treat FP8 tensor scaling, matrix multiplication, and expert aggregation as discrete mathematical operations. The Triton backend instead consolidates this entire pipeline into a single hardware pass. Data is pulled from global high-bandwidth memory (HBM) exactly once and processed entirely within the GPU’s ultra-fast local SRAM registers and compute execution files. It’s then streamed back to the final matrix destination. This removes the slow global VRAM read/write roundtrips that compromise CUTLASS when it is forced to constantly step through intermediate tensor scaling steps.</p>
-<p>Furthermore, this register-level fusion is specifically paired with dynamic scheduling layouts designed around variable token bucketing, resolving a severe structural flaw in traditional compilation templates. CUTLASS is natively optimized for dense, large, and predictable matrix dimensions. When it encounters the fluid, ultra-thin batch profiles (M &lt; 64 or M = 1) typical of the live decode generation phase, its default block-tiling and thread-mapping structures become profoundly inefficient. The result is heavy warp under-utilization or expensive memory padding overhead. Conversely, the Triton MoE backend excels at dynamically mapping these small, fragmented token arrays across the physical boundaries of the active expert weights. This keeps the hardware’s internal prefetch streams and Tensor Core pipelines fully saturated even when processing highly unstable workloads at very low batch sizes.</p>
-<p>Updating the routing policy is a pure configuration change with no kernel code modified. Still, it yielded a <strong>10 percent end-to-end throughput improvement</strong> for FP8 quantized fused MoE models on H200. This improvement is available in the AWS Large Model Inference (LMI) v28 container.</p>
-<h2>Triton JIT recompilation elimination</h2>
-<p>One of the most impactful performance pathologies in GPU inference is also one of the least obvious: unnecessary kernel recompilation. Triton, the compiler framework underlying many of vLLM’s custom kernels, specializes integer arguments by default. Every time a kernel is invoked with a previously unseen value for a specialized parameter, Triton triggers a fresh just-in-time (JIT) compilation. In serving workloads where sequence lengths and batch sizes vary continuously, this creates a steady stream of compilation overhead that inflates latency, particularly Time to First Token (TTFT).</p>
-<p>In MoE model serving, the <code>_fused_inv_rope_fp8_quant_per_head</code> kernel (responsible for fused rotary position embedding and FP8 quantization) was recompiling on every new <code>num_tokens</code> value. Adding <code>do_not_specialize</code> annotations to the variable-length parameters removed these recompilations entirely, improving TTFT by <strong>9 percent</strong> on H200 at 8-way tensor parallelism (PR #42849).</p>
-<p>In a multi-GPU cluster, all 8 GPUs must execute their kernels in perfect, microsecond-level synchronization. If even one GPU must stop to recompile its local <code>_fused_inv_rope_fp8_quant_per_head</code> kernel because its local token batch count changed, the other seven GPUs sit idle and wait for it. By eliminating recompilations across the entire cluster, we smoothed out the multi-GPU coordination overhead, delivering a 9 percent speedup for the user’s initial response latency. The principle here is to treat the compiler as a first-class optimization surface. Understanding how Triton specializes semantics and recognizing when parameters are dead or variable unlocks latency improvements with minimal code change.</p>
-<p>We upstreamed this optimization to vLLM, and it is available in version 0.22.0 or later.</p>
-<h2>Conclusion</h2>
-<p>Through our collaboration with the vLLM community, we implemented and open sourced multiple kernel optimizations for fused MoE models. We apply these optimizations in the LMI Deep Learning Container on Amazon SageMaker AI. Together, these optimizations have delivered up to 10 percent higher throughput and up to 9 percent faster TTFT. To get started with custom model hosting, see the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html">Amazon SageMaker AI hosting documentation</a>.</p>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Accessing OpenAI GPT models on Amazon Bedrock with global cr…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/accessing-openai-gpt-models-on-amazon-bedrock-with-global-cross-region-inference-in-thailand-malaysia-singapore-indonesia-and-taiwan/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/accessing-openai-gpt-models-on-amazon-bedrock-with-global-cross-region-inference-in-thailand-malaysia-singapore-indonesia-and-taiwan/?li=1</guid>
-      <pubDate>Mon, 12 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Accessing OpenAI GPT models on Amazon Bedrock with global cross-Region inference in Thailand, Malaysia, Singapore, Indonesia, and Taiwan</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Accessing OpenAI GPT models on Amazon Bedrock with global cross-Region inference in Thailand, Malaysia, Singapore, Indonesia, and Taiwan</h1>
-<p>Single-Region inference can throttle when demand exceeds local capacity. Teams in Thailand, Malaysia, Singapore, Indonesia, and Taiwan need access to the newest OpenAI models beyond that capacity. <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> offers OpenAI GPT-6 Sol and GPT-6 Luna through global cross-Region inference from all five AWS Regions, and GPT-6 Astra from Asia Pacific (Singapore). This post shows you how to configure the call, set permissions, and monitor inference from your source Region.</p>
-<p>GPT-6 Sol, GPT-6 Luna, and GPT-6 Astra are all available through global cross-Region inference from the preceding Regions, on the <code>bedrock-runtime</code> endpoint. See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">Cross-Region inference</a> in the Amazon Bedrock User Guide. For the full list of source and destination Regions in each profile, see <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html">Supported Regions and models for inference profiles</a>.</p>
-<p>In this post, we introduce the global cross-Region inference profiles and invoke them from Asia Pacific (Singapore) using the Converse API, the OpenAI-compatible APIs, and coding clients. We then cover the <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management</a> (IAM) and service control policy (SCP) configuration, quota management, and monitoring.</p>
-<h2>Global cross-Region inference profiles for OpenAI GPT-6</h2>
-<p>The GPT-6 family offers three models, each available through global cross-Region inference.</p>
-<ul><li>GPT-6 Sol brings strong reasoning and coding capabilities to complex tasks performed throughout the week.</li><li>GPT-6 Luna makes focused, repeatable tasks practical at high volume.</li><li>GPT-6 Astra handles complex reasoning, coding, and long-document work.</li></ul>
-<p>All three accept text and image input, client-side tool use, and prompt caching. They differ on reasoning effort. GPT-6 Sol and GPT-6 Luna accept none, low, medium, high, xhigh, and max. GPT-6 Astra accepts the same levels except none. For GPT-6 Sol and GPT-6 Luna, see <a href="https://aws.amazon.com/blogs/machine-learning/bring-more-intelligence-to-everyday-work-with-gpt-6-sol-and-gpt-6-luna-on-amazon-bedrock/">Bring more intelligence to everyday work with GPT-6 Sol and GPT-6 Luna on Amazon Bedrock</a>. For GPT-6 Astra, see <a href="https://aws.amazon.com/blogs/machine-learning/take-on-your-most-ambitious-work-with-gpt-6-astra-on-amazon-bedrock/">Take on your most ambitious work with GPT-6 Astra on Amazon Bedrock</a>.</p>
-<p>Global cross-Region inference routes requests across supported commercial AWS Regions where the model is deployed, giving you broad access to Amazon Bedrock capacity. You invoke it by passing a global cross-Region inference profile ID in place of a model ID. Your source Region is where you make the API call. Amazon Bedrock selects the destination Region for processing. Billing, quota tracking, AWS CloudTrail, and Amazon CloudWatch all stay in your source Region.</p>
-<p>The following table lists the global cross-Region inference profile IDs and the source Regions covered in this post.</p>
-<table><thead><tr><th><strong>Global cross-Region inference profiles</strong></th><th><strong>Source Regions</strong></th><th><strong>Destination Regions</strong></th></tr></thead><tbody><tr><td>global.openai.gpt-6-sol global.openai.gpt-6-luna</td><td>Asia Pacific (Singapore) ap-southeast-1 Asia Pacific (Jakarta) ap-southeast-3 Asia Pacific (Malaysia) ap-southeast-5 Asia Pacific (Thailand) ap-southeast-7 Asia Pacific (Taipei) ap-east-2</td><td>Supported commercial AWS Regions where the model is deployed</td></tr><tr><td>global.openai.gpt-6-astra</td><td>Asia Pacific (Singapore) ap-southeast-1</td><td>Supported commercial AWS Regions where the model is deployed</td></tr></tbody></table>
-<p>Inference profile availability and Region support change as AWS adds Regions and profiles, so confirm both on the model card before you build: <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-sol.html">GPT-6 Sol</a>, <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-luna.html">GPT-6 Luna</a>, and <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-astra.html">GPT-6 Astra</a>. For per-token rates, see <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock pricing</a>.</p>
-<h2>Getting started with OpenAI models on Amazon Bedrock</h2>
-<p>Start with the prerequisites, then invoke any of the three profiles through the Converse API, the OpenAI-compatible APIs, or your existing coding client.</p>
-<h3>Prerequisites</h3>
-<ul><li>An IAM identity with permission to invoke the profile. The IAM policy in the Security and permissions section grants only what these examples need.</li><li>Your source Region activated. Only the Region you call from needs activating. You do not activate destination Regions, which run on Amazon Bedrock managed capacity. Singapore (<code>ap-southeast-1</code>) is a Region that is enabled by default. Jakarta (<code>ap-southeast-3</code>), Malaysia (<code>ap-southeast-5</code>), Thailand (<code>ap-southeast-7</code>), and Taipei (<code>ap-east-2</code>) are opt-in Regions you must activate first. For more information, see <a href="https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-regions.html">Enable or disable AWS Regions in your account</a>.</li><li>A current AWS SDK or CLI. The OpenAI-compatible examples also require the OpenAI SDK and the Amazon Bedrock token generator. Install them with <code>pip install boto3 openai aws-bedrock-token-generator</code>.</li></ul>
-<p>The Amazon Bedrock console lists all three global cross-Region inference profiles under system-defined inference profiles. See Figure 1.</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-21759-1-1.png" alt="The three global OpenAI GPT-6 inference profiles among the system-defined profiles in the Amazon Bedrock console."></p>
-<p>Figure 1: The three global OpenAI GPT-6 inference profiles among the system-defined profiles in the Amazon Bedrock console</p>
-<h3>Invoke GPT-6 models through Amazon Bedrock Runtime</h3>
-<p>Each model supports three access paths on this endpoint: the Amazon Bedrock Converse API, the OpenAI Responses API, and the OpenAI Chat Completions API. The OpenAI-compatible APIs are called on the <code>/openai/v1</code> paths rather than through the AWS SDKs, and the endpoint accepts either Signature Version 4 (SigV4) or an Amazon Bedrock API key. Pass the global cross-Region inference profile ID as the <code>model</code> in every case.</p>
-<p><strong>Converse API.</strong> This example calls GPT-6 Sol from Asia Pacific (Singapore) and logs the response. Set <code>BEDROCK_PROFILE_ID</code> to <code>global.openai.gpt-6-luna</code> or <code>global.openai.gpt-6-astra</code> to switch models, or call <code>converse_stream</code> for streaming.</p>
-<pre><code>import logging
-import os
-import boto3
-
-# AWS_REGION overrides this default, so set it to your source Region or unset it.
-REGION = os.environ.get(&quot;AWS_REGION&quot;, &quot;ap-southeast-1&quot;)
-PROFILE_ID = os.environ.get(&quot;BEDROCK_PROFILE_ID&quot;, &quot;global.openai.gpt-6-sol&quot;)
-PROMPT = (
-    &quot;In three bullet points, explain when a workload should use &quot;
-    &quot;cross-Region inference instead of calling a model in a single Region.&quot;
-)
-
-logging.basicConfig(format=&quot;%(levelname)s %(message)s&quot;)
-log = logging.getLogger(&quot;bedrock-cris&quot;)
-log.setLevel(logging.INFO)
-
-client = boto3.client(&quot;bedrock-runtime&quot;, region_name=REGION)
-
-# AccessDeniedException points at the IAM policy. ValidationException usually
-# means the model ID is not a global cross-Region inference profile.
-response = client.converse(
-    modelId=PROFILE_ID,
-    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;text&quot;: PROMPT}]}],
-    inferenceConfig={&quot;maxTokens&quot;: 1024},
-    # GPT-6 Sol and Luna accept none through max. GPT-6 Astra rejects none.
-    additionalModelRequestFields={&quot;reasoning&quot;: {&quot;effort&quot;: &quot;low&quot;}},
-)
-
-# Any effort above none can prepend a reasoningContent block, so pick the text
-# block by key rather than by position.
-text = &quot;&quot;.join(b[&quot;text&quot;] for b in response[&quot;output&quot;][&quot;message&quot;][&quot;content&quot;] if &quot;text&quot; in b)
-
-log.info(&quot;Called %s from %s&quot;, PROFILE_ID, REGION)
-log.info(&quot;Stop reason: %s&quot;, response[&quot;stopReason&quot;])
-log.info(&quot;Response:\n%s&quot;, text)</code></pre>
-<p><strong>OpenAI Chat Completions API.</strong> Point the OpenAI SDK at the Regional endpoint and pass the same profile ID.</p>
-<pre><code>import logging
-import os
-from aws_bedrock_token_generator import provide_token
-from openai import OpenAI
-
-REGION = os.environ.get(&quot;AWS_REGION&quot;, &quot;ap-southeast-1&quot;)
-PROFILE_ID = os.environ.get(&quot;BEDROCK_PROFILE_ID&quot;, &quot;global.openai.gpt-6-sol&quot;)
-PROMPT = &quot;List three uses for a message queue.&quot;
-
-logging.basicConfig(format=&quot;%(levelname)s %(message)s&quot;)
-log = logging.getLogger(&quot;bedrock-cris&quot;)
-log.setLevel(logging.INFO)
-
-# provide_token mints a short-term key from your AWS credentials, valid up to 12 hours.
-client = OpenAI(
-    base_url=f&quot;https://bedrock-runtime.{REGION}.amazonaws.com/openai/v1&quot;,
-    api_key=provide_token(region=REGION),
-)
-
-response = client.chat.completions.create(
-    model=PROFILE_ID,
-    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: PROMPT}],
-    max_completion_tokens=256,
-)
-
-log.info(&quot;Called %s from %s&quot;, PROFILE_ID, REGION)
-log.info(&quot;Response:\n%s&quot;, response.choices[0].message.content)</code></pre>
-<p>When migrating an existing OpenAI client:</p>
-<ul><li>Set the model parameter on every request, including those referencing a previous response.</li><li>Use supported tool types: <code>function</code>, <code>mcp</code>, <code>custom</code>, <code>namespace</code>, and <code>tool_search</code>.</li><li>Configure the inference profile ID directly in your client rather than querying the models endpoint.</li></ul>
-<h3>Set up the ChatGPT desktop app and Codex CLI</h3>
-<p>The ChatGPT desktop app and the Codex CLI share <code>~/.codex/config.toml</code>, so one change covers both. Of the two built-in Amazon Bedrock providers, only <code>amazon-bedrock-runtime</code> accepts an inference profile.</p>
-<pre><code>model = &quot;global.openai.gpt-6-astra&quot;
-model_provider = &quot;amazon-bedrock-runtime&quot;
-[model_providers.amazon-bedrock-runtime.aws]
-region = &quot;ap-southeast-1&quot;</code></pre>
-<p>SigV4 signing means there is no key to rotate. Add <code>profile = &quot;&lt;your-profile&gt;&quot;</code> for a non-default profile, and set <code>region</code> explicitly, because the client otherwise falls back to <code>AWS_REGION</code>. Substitute another profile ID for <code>model</code> to change models.</p>
-<p>Codex reports a 272,000-token window for these profiles, which is its own bundled figure rather than a service limit. Raise it with <code>model_context_window</code>. This configuration needs Codex CLI 0.148 or later.</p>
-<p>Figure 2 shows the result in the app.</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-21759-2-1.png" alt="The ChatGPT desktop app running GPT-6 Astra on Amazon Bedrock."></p>
-<p>Figure 2: The ChatGPT desktop app running GPT-6 Astra on Amazon Bedrock</p>
-<h2>Security and permissions</h2>
-<p>Amazon Bedrock offers a range of controls over inference. Two of them matter here. AWS Identity and Access Management (IAM) policies control which roles can invoke which profiles, and service control policies (SCPs) apply organization-wide controls, including Region scope. This section covers both, and where request data lands.</p>
-<h3>IAM permissions for global cross-Region inference</h3>
-<p>To call any of these models through a global cross-Region inference profile, your IAM policy needs four statements:</p>
-<ul><li>Access to the inference profile and the project/default resource in your source Region.</li><li>Access to the foundation model in your source Region, scoped to the inference profile.</li><li>The Region-agnostic Amazon Resource Name (ARN) for the foundation model, <code>arn:aws:bedrock:::foundation-model/openai.gpt-6-sol</code>, with <code>aws:RequestedRegion</code> set to <code>unspecified</code> to permit cross-Region routing.</li><li><code>bedrock:CallWithBearerToken</code> for API-key authentication.</li></ul>
-<p>This IAM policy grants permission to invoke GPT-6 Sol through global cross-Region inference from <code>ap-southeast-1</code>. Replace with your AWS account ID and <code>ap-southeast-1</code> with your source Region.</p>
-<pre><code>{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Sid&quot;: &quot;GrantGlobalCrisProfileAndProjectAccess&quot;,
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Action&quot;: [&quot;bedrock:InvokeModel&quot;],
-      &quot;Resource&quot;: [
-        &quot;arn:aws:bedrock:ap-southeast-1:&lt;ACCOUNT&gt;:inference-profile/global.openai.gpt-6-sol&quot;,
-        &quot;arn:aws:bedrock:ap-southeast-1:&lt;ACCOUNT&gt;:project/default&quot;
-      ],
-      &quot;Condition&quot;: {
-        &quot;StringEquals&quot;: { &quot;aws:RequestedRegion&quot;: &quot;ap-southeast-1&quot; }
-      }
-    },
-    {
-      &quot;Sid&quot;: &quot;GrantGlobalCrisInRegionModelAccess&quot;,
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Action&quot;: [&quot;bedrock:InvokeModel&quot;],
-      &quot;Resource&quot;: [&quot;arn:aws:bedrock:ap-southeast-1::foundation-model/openai.gpt-6-sol&quot;],
-      &quot;Condition&quot;: {
-        &quot;StringEquals&quot;: {
-          &quot;aws:RequestedRegion&quot;: &quot;ap-southeast-1&quot;,
-          &quot;bedrock:InferenceProfileArn&quot;: &quot;arn:aws:bedrock:ap-southeast-1:&lt;ACCOUNT&gt;:inference-profile/global.openai.gpt-6-sol&quot;
-        }
-      }
-    },
-    {
-      &quot;Sid&quot;: &quot;GrantGlobalCrisGlobalModelAccess&quot;,
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Action&quot;: [&quot;bedrock:InvokeModel&quot;],
-      &quot;Resource&quot;: [&quot;arn:aws:bedrock:::foundation-model/openai.gpt-6-sol&quot;],
-      &quot;Condition&quot;: {
-        &quot;StringEquals&quot;: {
-          &quot;aws:RequestedRegion&quot;: &quot;unspecified&quot;,
-          &quot;bedrock:InferenceProfileArn&quot;: &quot;arn:aws:bedrock:ap-southeast-1:&lt;ACCOUNT&gt;:inference-profile/global.openai.gpt-6-sol&quot;
-        }
-      }
-    },
-    {
-      &quot;Sid&quot;: &quot;AllowBearerTokenAuth&quot;,
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Action&quot;: [&quot;bedrock:CallWithBearerToken&quot;],
-      &quot;Resource&quot;: &quot;*&quot;
-    }
-  ]
-}</code></pre>
-<p>If you use streaming (<code>converse_stream</code> or <code>stream=True</code>), add <code>bedrock:InvokeModelWithResponseStream</code> to the Action in the first three statements. Converse authorizes as <code>bedrock:InvokeModel</code>. If you only call Converse with SigV4 credentials, drop the fourth statement.</p>
-<p>To switch models, replace <code>openai.gpt-6-sol</code> with <code>openai.gpt-6-luna</code> or <code>openai.gpt-6-astra</code> throughout. For the complete reference, see <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html">IAM policy requirements for global cross-Region inference</a>.</p>
-<h3>Service control policy considerations for global cross-Region inference</h3>
-<p>A global cross-Region inference request carries no Region name. Amazon Bedrock sets <code>aws:RequestedRegion</code> to <code>unspecified</code>, so a Region allowlist in an SCP denies the call, and the error names only the policy type, not which policy. That is a common reason a first call fails in an enterprise account.</p>
-<p>Rather than widening the allowlist, scope the exception. Amazon Bedrock populates the <code>bedrock:InferenceProfileArn</code> condition key during authorization, so an SCP can allow these profiles while keeping Region controls for everything else. The following SCP does that.</p>
-<pre><code>{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Sid&quot;: &quot;DenyOutsideApprovedRegionsExceptBedrockInvoke&quot;,
-      &quot;Effect&quot;: &quot;Deny&quot;,
-      &quot;NotAction&quot;: [
-        &quot;iam:*&quot;, &quot;sts:*&quot;, &quot;organizations:*&quot;, &quot;account:*&quot;,
-        &quot;route53:*&quot;, &quot;cloudfront:*&quot;, &quot;waf:*&quot;, &quot;wafv2:*&quot;, &quot;shield:*&quot;,
-        &quot;support:*&quot;, &quot;trustedadvisor:*&quot;, &quot;health:*&quot;,
-        &quot;budgets:*&quot;, &quot;ce:*&quot;, &quot;cur:*&quot;, &quot;tax:*&quot;, &quot;billing:*&quot;,
-        &quot;bedrock:Invoke*&quot;
-      ],
-      &quot;Resource&quot;: &quot;*&quot;,
-      &quot;Condition&quot;: {
-        &quot;StringNotEquals&quot;: { &quot;aws:RequestedRegion&quot;: [&quot;ap-southeast-1&quot;] }
-      }
-    },
-    {
-      &quot;Sid&quot;: &quot;DenyBedrockInferenceOutsideApprovedRegionsUnlessCris&quot;,
-      &quot;Effect&quot;: &quot;Deny&quot;,
-      &quot;Action&quot;: [&quot;bedrock:Invoke*&quot;],
-      &quot;Resource&quot;: &quot;*&quot;,
-      &quot;Condition&quot;: {
-        &quot;StringNotEquals&quot;: { &quot;aws:RequestedRegion&quot;: [&quot;ap-southeast-1&quot;] },
-        &quot;ArnNotLike&quot;: {
-          &quot;bedrock:InferenceProfileArn&quot;: [
-            &quot;arn:aws:bedrock:*:*:inference-profile/global.*&quot;
-          ]
-        }
-      }
-    }
-  ]
-}</code></pre>
-<p>The first statement enforces your Region allowlist for every service except Amazon Bedrock inference. The second denies that inference outside those Regions unless it routes through a global cross-Region inference profile. For geographic profiles, add their prefix (for example <code>inference-profile/us.*</code>) to the <code>ArnNotLike</code> list, because geographic requests carry a real Region name. Keep your source Region in the allowlist, and add the global services your organization uses to <code>NotAction</code>.</p>
-<p>A blunter alternative is to add <code>unspecified</code> to your existing allowlist, which works but opens the same exception to every other service. For a ready-to-use policy file, see the <a href="https://github.com/aws-samples/service-control-policy-examples/blob/main/Region-controls/Deny-access-to-AWS-based-on-the-requested-AWS-region-with-Bedrock-CRIS.json">aws-samples service-control-policy-examples repository</a>.</p>
-<h3>Data retention and abuse detection</h3>
-<p>For automated offline abuse detection, classifier-flagged traffic is retained by AWS for up to 30 days and processed programmatically. Under cross-Region inference that retention happens in the destination Region, which for a global profile is any supported commercial AWS Region where the model is deployed. Eligible customers might request full zero data retention through their AWS account team. For more information, see <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/abuse-detection.html">Amazon Bedrock abuse detection</a> and <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/data-retention.html">Data retention</a>.</p>
-<p>If your organization has data residency requirements, take this to your risk and compliance team early. See the <a href="https://aws.amazon.com/financial-services/security-compliance/compliance-center/">AWS Financial Services Compliance Center</a> country pages for these five countries. We recommend you obtain your own advice on compliance with the requirements relevant to your business.</p>
-<h2>Quota management</h2>
-<p>GPT-6 quotas on <code>bedrock-runtime</code> are measured in tokens per minute (TPM), tracked against the source Region you call from. Input and cache-write tokens count 1:1, and each output token consumes 10 tokens of quota. For example, a request with 2,000 input tokens and 1,000 output tokens depletes 12,000 tokens from your quota.</p>
-<p>Amazon Bedrock reserves the full <code>max_tokens</code> up front, so set it close to the completions you expect. One quota covers <code>InvokeModel</code>, Converse, Responses, and Chat Completions. Review and raise it on the <a href="https://console.aws.amazon.com/servicequotas/">Service Quotas console</a> from your source Region. Before production, request increases early and alarm on <code>EstimatedTPMQuotaUsage</code> in the <code>AWS/Bedrock</code> namespace at 70–80 percent of your allocation. See <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/quotas-token-burndown.html">How tokens are counted in Amazon Bedrock</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/bedrock.html">Amazon Bedrock endpoints and quotas</a> for current values.</p>
-<h2>Monitoring and logging</h2>
-<p><strong>Your operational surface stays in your source Region.</strong> Amazon CloudWatch metrics, AWS CloudTrail events, model invocation logs, quota accounting, and billing all remain in the Region you called from. You pay that Region’s rates, not the processing Region’s.</p>
-<p><strong>CloudTrail records where each request was processed.</strong> AWS documents a global cross-Region inference profile’s destinations as its commercial Regions rather than enumerating them. <code>GetInferenceProfile</code> returns the Region-agnostic and source-Region model ARNs rather than a destination list. Your per-request record is <code>additionalEventData.inferenceRegion</code> in CloudTrail in your source Region. Inference on this endpoint is a management event, logged by default at no extra cost. CloudTrail Event History retains 90 days, so longer horizons need a trail or model invocation logging. Retrieve the CloudTrail events with this command.</p>
-<pre><code>aws cloudtrail lookup-events \
-  --region ap-southeast-1 \
-  --lookup-attributes AttributeKey=EventSource,AttributeValue=bedrock.amazonaws.com \
-  --start-time &lt;START&gt; \
-  --end-time &lt;END&gt; \
-  --max-results 1 \
-  --query 'Events[0].CloudTrailEvent' --output text | python3 -m json.tool</code></pre>
-<p>Set the window around a call you just made, because CloudTrail delivery lags by a few minutes. If the most recent event was a failed call, it carries an <code>errorCode</code> and no <code>inferenceRegion</code>. Raise <code>--max-results</code> and pick an event without <code>errorCode</code>.</p>
-<pre><code>{
-  &quot;eventName&quot;: &quot;Converse&quot;,
-  &quot;eventSource&quot;: &quot;bedrock.amazonaws.com&quot;,
-  &quot;awsRegion&quot;: &quot;ap-southeast-1&quot;,
-  &quot;managementEvent&quot;: true,
-  &quot;requestParameters&quot;: {
-    &quot;modelId&quot;: &quot;global.openai.gpt-6-sol&quot;,
-    &quot;inferenceConfig&quot;: { &quot;maxTokens&quot;: 1024 }
-  },
-  &quot;additionalEventData&quot;: {
-    &quot;inferenceRegion&quot;: &quot;us-east-1&quot;
-  }
-}</code></pre>
-<p><strong>Metrics and coding-agent usage stay in CloudWatch.</strong> Where developers reach GPT-6 through a coding agent, CloudWatch <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/coding-agents-insights.html">Coding Agent Insights</a> adds ready-made dashboards under GenAI Observability that break token use down by user, team, and cost center. The agents emit OpenTelemetry metrics natively. For Codex, see <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/coding-agents-codex.html">Set up OpenTelemetry for OpenAI Codex</a>.</p>
-<h2>Clean up</h2>
-<p>This post adds an IAM policy and optionally an SCP statement and a logging destination. Detach or delete the IAM policy you attached, and revert the SCP entry if you added one. Delete the model invocation logging destination in <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service</a> (Amazon S3) or Amazon CloudWatch Logs if you created one, to avoid storage charges. The global cross-Region inference profiles are system-defined, so there is nothing to delete.</p>
-<h2>Conclusion</h2>
-<p>This post showed how to invoke GPT-6 Sol and GPT-6 Luna from five Asia Pacific source Regions, and GPT-6 Astra from Asia Pacific (Singapore), through global cross-Region inference on <code>bedrock-runtime</code>. Pass a global cross-Region inference profile ID as the <code>model</code> parameter, and configure the IAM policy and SCP exception from this post. The same endpoint serves the OpenAI-compatible APIs, so an existing OpenAI integration moves across by changing a base URL and a key.</p>
-<p>To get started, attach the IAM policy from this post, and send a first request through <code>global.openai.gpt-6-sol</code>. Size your tokens-per-minute quota at the 10x burndown rate, and confirm in CloudTrail that <code>additionalEventData.inferenceRegion</code> appears on your calls.</p>
-<p>For more information, see the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html">Amazon Bedrock User Guide</a>, <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">Route model inference requests across AWS Regions with cross-Region inference</a>, and <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock pricing</a>.</p>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Deploy decision models with llama.cpp on Amazon SageMaker AI</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/deploy-decision-models-with-llama-cpp-on-amazon-sagemaker-ai/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/deploy-decision-models-with-llama-cpp-on-amazon-sagemaker-ai/?li=1</guid>
-      <pubDate>Mon, 12 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Deploy decision models with llama.cpp on Amazon SageMaker AI</h1>
-<p>Applications that route requests, select agent actions, or assign policy outcomes often need scores over a fixed set of choices instead of free-form text. Deploying these decision models with <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a> on <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html">Amazon SageMaker AI</a> gives you a managed path for serving quantized models on CPU or GPU infrastructure.</p>
-<p>This post continues a series on specialized AWS Deep Learning Containers (DLCs) for generative AI inference. Previous posts cover <a href="https://aws.amazon.com/blogs/machine-learning/speaker-labeled-transcription-with-whisperx-on-sagemaker-ai/">WhisperX</a>, <a href="https://aws.amazon.com/blogs/machine-learning/build-real-time-voice-applications-with-vllm-omni-on-sagemaker-ai-part-1/">vLLM-Omni – Part 1</a>, and <a href="https://aws.amazon.com/blogs/machine-learning/generate-images-and-video-with-vllm-omni-on-sagemaker-ai-part-2/">vLLM-Omni – Part 2</a>.</p>
-<p>In this post, you first use the <a href="https://aws.github.io/deep-learning-containers/llama-cpp/">AWS DLC for llama.cpp</a> to serve OpenAI-compatible chat completions through SageMaker AI <code>InvokeEndpoint</code>. You then extend the same runtime with <a href="https://github.com/TheoLeeCJ/SemIf-OpenJev">SemIf</a>, formerly OpenJev, which returns probabilities over declared options without decoding an answer token. The accompanying <a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/tree/main/03-features/semif-decision-model">code sample</a> includes CPU and GPU deployment options.</p>
-<h2>Solution overview</h2>
-<p>Figure 1 shows two deployment paths from the same packaged model. The text-generation path uses the AWS DLC for llama.cpp and returns generated responses through the OpenAI-compatible API. The structured-decision path builds a child image that replaces the default server with a SemIf adapter and returns probabilities for declared options.</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-22079-1.png" alt="An application invokes an Amazon SageMaker AI real-time endpoint that can use the AWS Deep Learning Container for llama.cpp for generated text or a SemIf child image for option probabilities. Either serving mode can run on CPU or GPU."></p>
-<p>Figure 1: Run the AWS DLC for llama.cpp or the SemIf child image on CPU or GPU, depending on the API and latency requirements of your workload</p>
-<p>For the standard path, package the model as <code>model.tar.gz</code> in <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service (Amazon S3)</a> and reference the published DLC image directly. The container finds the first <code>.gguf</code> file under <code>/opt/ml/model</code>, maps <code>POST /invocations</code> to <code>llama-server</code> at <code>/v1/chat/completions</code>, and passes <code>SM_LLAMA_CPP_*</code> environment variables to llama.cpp arguments.</p>
-<p>The <code>llama-server</code> HTTP API doesn’t expose the final-position logits and state operations that SemIf uses. The structured-decision path therefore uses <a href="https://aws.amazon.com/codebuild/">AWS CodeBuild</a> to build a child image and store it in <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a>. The child image keeps the DLC’s compiled CPU or CUDA libraries while replacing its entry point with a SageMaker-compatible adapter.</p>
-<h2>Understand the input and output schemas</h2>
-<p>The AWS DLC for llama.cpp accepts the OpenAI Chat Completions schema. Send a <code>messages</code> array with <code>role</code> and <code>content</code>, plus generation controls such as <code>max_tokens</code> and <code>stream</code>:</p>
-<pre><code>{
-  &quot;messages&quot;: [
-    {
-      &quot;role&quot;: &quot;user&quot;,
-      &quot;content&quot;: &quot;A customer cannot receive a password reset email. Reply with the best support queue.&quot;
-    }
-  ],
-  &quot;max_tokens&quot;: 64,
-  &quot;stream&quot;: false
-}</code></pre>
-<p>The response uses the OpenAI-compatible <code>choices</code> array. Read generated text from <code>choices[0].message.content</code>.</p>
-<p>SemIf uses a constrained decision schema instead of chat messages. The request contains a caller-defined ID, unstructured state, a question, and an ordered list of allowed options:</p>
-<pre><code>{
-  &quot;decision&quot;: {
-    &quot;id&quot;: &quot;support-route&quot;,
-    &quot;state&quot;: &quot;The customer cannot receive a password reset email.&quot;,
-    &quot;question&quot;: &quot;Which queue should handle this request?&quot;,
-    &quot;options&quot;: [
-      {&quot;id&quot;: &quot;account_access&quot;, &quot;description&quot;: &quot;Account access support.&quot;},
-      {&quot;id&quot;: &quot;billing&quot;, &quot;description&quot;: &quot;Billing support.&quot;}
-    ]
-  }
-}</code></pre>
-<p>The response returns <code>option_ids</code>, <code>probabilities</code>, and raw <code>option_logits</code> in the same order, along with prompt, timing, and pinned model metadata. With stable option IDs, your application can apply thresholds, fallbacks, and policy checks without parsing generated prose.</p>
-<p>SemIf belongs to a broader class of decision models that score application-defined outcomes from unstructured state. Other implementations include <a href="https://docs.typesafe.ai/introduction">Jev</a>, TypeSafe’s decision model and <code>/v1/systemone</code> API; <a href="https://github.com/jaredpalmer/kev">Kev</a>, a model server designed for TypeSafe API compatibility; and <a href="https://github.com/strands-labs/strands-decider">Strands Decider 2B</a>, a purpose-built model for agent workflows with calibrated outputs.</p>
-<h2>Choose the right decision workflows</h2>
-<p>Use this pattern when your application defines the allowed choices at request time and needs a model to interpret unstructured context. Examples include routing a case to a queue, extracting one value from a known set, assigning an incident priority, checking a policy outcome, or selecting an agent action. Keep authorization and deterministic business rules outside the model, and validate model probabilities before treating them as operational confidence.</p>
-<p>Use the standard SageMaker AI text-generation path when you need OpenAI-compatible chat completions through <code>InvokeEndpoint</code>. The SageMaker AI image maps <code>POST /invocations</code> to the <code>llama-server</code> <code>/v1/chat/completions</code> endpoint. Build a child image only when your application needs behavior that this interface doesn’t provide, such as SemIf’s direct logits and state access.</p>
-<p>Removing answer-token generation doesn’t remove model inference. The model still processes the complete state, question, and option descriptions before SemIf reads the final logits. Keep prompts focused, and evaluate the selected model with labeled decisions from your application before production use.</p>
-<h2>Tune for your latency and quality targets</h2>
-<p>The following benchmark applies to the SemIf extension, not the text-generation endpoint. Model size, quantization, prompt length, runtime, and CPU thread count affect each decision. To quantify these trade-offs, we sent the same 231 public <a href="https://github.com/fstandhartinger/jevbench">JevBench</a> tasks serially to one CPU endpoint and one GPU endpoint.</p>
-<table><thead><tr><th><strong>Configuration</strong></th><th><strong>AWS DLC for llama.cpp</strong></th><th><strong>Valid responses</strong></th><th><strong>Accuracy</strong></th><th><strong>Client p50</strong></th><th><strong>Client p95</strong></th></tr></thead><tbody><tr><td>Qwen3.5-4B <code>Q4_K_M</code>, <code>ml.c6i.8xlarge</code>, 32 threads</td><td><a href="https://aws.github.io/deep-learning-containers/llama-cpp/">llama-cpp:server-sagemaker-cpu-v1</a></td><td>231/231</td><td>179/231 (77.5%)</td><td>1.715 seconds</td><td>19.291 seconds</td></tr><tr><td>Qwen3.5-4B <code>Q4_K_M</code>, <code>ml.g6e.xlarge</code>, full GPU offload</td><td><a href="https://aws.github.io/deep-learning-containers/llama-cpp/">llama-cpp:server-sagemaker-cuda-v1</a></td><td>231/231</td><td>180/231 (77.9%)</td><td>0.352 seconds</td><td>0.599 seconds</td></tr></tbody></table>
-<p>Compared with the CPU configuration, the GPU endpoint was 4.9 times faster at p50 and 32.2 times faster at p95. The sample uses the SageMaker AI instance pools feature to list compatible GPU instance types in priority order, so SageMaker can select an alternative when the first preference isn’t available. The pool ordered <code>g6e</code>, <code>g6</code>, <code>g5</code>, then <code>g4dn</code>. SageMaker selected <code>ml.g6e.xlarge</code>, and startup logs confirmed that llama.cpp offloaded all 34 model layers to an NVIDIA L40S. The CPU and GPU images used different llama.cpp builds and produced different predictions on six hard tasks. Treat the one-answer accuracy difference as runtime variation, not evidence that GPU offload improves model quality.</p>
-<p>Smaller models reduced median latency, but the 2B and 0.8B candidates achieved 66.7 percent and 58.4 percent accuracy. The sample therefore keeps the 4B <code>Q4_K_M</code> model as its quality-first default. These measurements include network latency and aren’t service guarantees.</p>
-<p>Benchmark the complete model and infrastructure configuration against your own decisions. Use CPU for background, offline, or low-throughput workloads that aren’t latency-sensitive and can tolerate seconds of response time. Use GPU for interactive decisions, long prompts, or workloads with tight tail-latency targets. Keep state and option descriptions concise, group decisions that share the same state into one request, and scale endpoint instances for concurrency. Shared-state scoring reuses the common prompt prefix, while the adapter returns retryable HTTP <code>503</code> responses instead of allowing an unbounded queue around its stateful llama.cpp context.</p>
-<h2>Prerequisites</h2>
-<p>You need:</p>
-<ul><li>An AWS account and an S3 bucket in your deployment AWS Region.</li><li>Python 3.10 or later, Git, and the AWS Command Line Interface (AWS CLI).</li><li>A purpose-specific CodeBuild service role for the optional SemIf extension.</li><li>An <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> role that SageMaker AI can assume.</li><li>Permissions for SageMaker AI, Amazon ECR, Amazon S3, CodeBuild, IAM pass-role actions, and <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html">Amazon CloudWatch Logs</a>.</li><li>Quota for a compatible x86 CPU or NVIDIA GPU SageMaker real-time endpoint.</li></ul>
-<p>The text-generation example uses the CPU DLC and a fixed CPU instance. The SemIf extension keeps CPU as the default for workloads that aren’t latency-sensitive and offers an optional CUDA image with ordered instance pools. Review <a href="https://aws.amazon.com/sagemaker/ai/pricing/">SageMaker AI pricing</a> before creating an endpoint.</p>
-<h2>Deploy a decision model and extend it with SemIf</h2>
-<p>Use the following procedure to deploy the standard text-generation endpoint, then build the optional SemIf extension for structured decisions on CPU or GPU.</p>
-<ul><li><strong>Clone the code sample and install its dependencies.</strong>  <code>git clone https://github.com/aws-samples/sagemaker-genai-hosting-examples.git cd sagemaker-genai-hosting-examples/03-features/semif-decision-model python3 -m venv .venv . .venv/bin/activate python3 -m pip install -r deploy/requirements.txt</code></li><li><strong>Set the deployment values for your account.</strong>  <code>export AWS_REGION=&quot;&lt;your-region&gt;&quot; export ARTIFACT_BUCKET=amzn-s3-demo-semif-artifacts export CODEBUILD_ROLE_ARN=arn:aws:iam::111122223333:role/semif-codebuild-role export SAGEMAKER_ROLE_ARN=arn:aws:iam::111122223333:role/semif-sagemaker-role export STANDARD_ENDPOINT_NAME=llamacpp-gguf export SEMIF_ENDPOINT_NAME=semif-decision-workflows</code></li><li><strong>Package the pinned GGUF model and tokenizer with CodeBuild.</strong>  <code>python deploy/prepare_model_build.py \ --region &quot;$AWS_REGION&quot; \ --bucket &quot;$ARTIFACT_BUCKET&quot; \ --codebuild-role-arn &quot;$CODEBUILD_ROLE_ARN&quot; \ --model-s3-uri &quot;s3://$ARTIFACT_BUCKET/semif-llamacpp/model.tar.gz&quot;</code>  Wait for the returned build ID to reach <code>SUCCEEDED</code>. The build records the source revisions and checksums in <code>model-manifest.json</code> and stops if the GGUF checksum differs from the validated value.</li><li><strong>Deploy the GGUF model with the AWS DLC for llama.cpp.</strong> Resolve a digest-pinned <code>server-sagemaker-cpu-v1</code> image from the <a href="https://aws.github.io/deep-learning-containers/llama-cpp/">AWS DLC for llama.cpp documentation</a>, then create the SageMaker AI model, endpoint configuration, and endpoint:  <code>export STANDARD_IMAGE_URI=&quot;&lt;published-llama-cpp-cpu-image&gt;@sha256:&lt;digest&gt;&quot; python deploy/deploy_standard_endpoint.py \ --region &quot;$AWS_REGION&quot; \ --image-uri &quot;$STANDARD_IMAGE_URI&quot; \ --model-data-url &quot;s3://$ARTIFACT_BUCKET/semif-llamacpp/model.tar.gz&quot; \ --role-arn &quot;$SAGEMAKER_ROLE_ARN&quot; \ --instance-type ml.c6i.2xlarge \ --name &quot;$STANDARD_ENDPOINT_NAME&quot;</code>  Select a <code>server-sagemaker-cpu-v1</code> or <code>server-sagemaker-cuda-v1</code> image rather than the corresponding EC2 image. The SageMaker AI images implement the <code>/ping</code> and <code>/invocations</code> container contract and map invocation payloads to chat completions. This walkthrough supplies the GGUF model through the SageMaker AI model artifact in Amazon S3. As an alternative, you can configure <code>SM_LLAMA_CPP_HF_REPO</code> and <code>SM_LLAMA_CPP_HF_FILE</code> to download a GGUF file from Hugging Face when the endpoint has network egress. You don’t need a Dockerfile or an ECR repository for this path. Wait for the endpoint to enter <code>InService</code>, then send an OpenAI-compatible chat request:  <code>python deploy/invoke_standard_endpoint.py \ --region &quot;$AWS_REGION&quot; \ --endpoint-name &quot;$STANDARD_ENDPOINT_NAME&quot;</code></li><li><strong>Build the optional SemIf child image and resolve its immutable digest.</strong> For CPU:  <code>python deploy/prepare_build.py \ --region &quot;$AWS_REGION&quot; \ --bucket &quot;$ARTIFACT_BUCKET&quot; \ --codebuild-role-arn &quot;$CODEBUILD_ROLE_ARN&quot;</code>  For GPU, build the CUDA child image instead:  <code>python deploy/prepare_build.py \ --region &quot;$AWS_REGION&quot; \ --bucket &quot;$ARTIFACT_BUCKET&quot; \ --codebuild-role-arn &quot;$CODEBUILD_ROLE_ARN&quot; \ --dockerfile Dockerfile.gpu \ --image-tag &quot;gpu-$(date +%Y%m%d%H%M%S)&quot;</code>  After the build succeeds, construct the immutable image URI:  <code>ECR_REPOSITORY_URI=$(aws ecr describe-repositories \ --region &quot;$AWS_REGION&quot; \ --repository-names semif-llamacpp-dlc \ --query 'repositories[0].repositoryUri' \ --output text) IMAGE_DIGEST=$(aws ecr describe-images \ --region &quot;$AWS_REGION&quot; \ --repository-name semif-llamacpp-dlc \ --query 'sort_by(imageDetails,&amp;imagePushedAt)[-1].imageDigest' \ --output text) export IMAGE_URI=&quot;${ECR_REPOSITORY_URI}@${IMAGE_DIGEST}&quot;</code>  The deployment script rejects mutable image tags.</li><li><strong>Deploy the SemIf endpoint.</strong> The CPU configuration uses a fixed instance type:  <code>python deploy/deploy_endpoint.py \ --region &quot;$AWS_REGION&quot; \ --image-uri &quot;$IMAGE_URI&quot; \ --model-data-url &quot;s3://$ARTIFACT_BUCKET/semif-llamacpp/model.tar.gz&quot; \ --role-arn &quot;$SAGEMAKER_ROLE_ARN&quot; \ --instance-type ml.c6i.8xlarge \ --threads 32 \ --name &quot;$SEMIF_ENDPOINT_NAME&quot;</code>  Wait for the returned endpoint name to enter <code>InService</code>. This path sets <code>n_gpu_layers=0</code>. The adapter serializes scoring around one stateful llama.cpp context, so scale out with endpoint instances after measuring your workload rather than assuming parallel scoring inside one container. For the GPU image, provide ordered instance pools and request full model offload:  <code>python deploy/deploy_endpoint.py \ --region &quot;$AWS_REGION&quot; \ --image-uri &quot;$IMAGE_URI&quot; \ --model-data-url &quot;s3://$ARTIFACT_BUCKET/semif-llamacpp/model.tar.gz&quot; \ --role-arn &quot;$SAGEMAKER_ROLE_ARN&quot; \ --instance-pool ml.g6e.xlarge \ --instance-pool ml.g6.2xlarge \ --instance-pool ml.g5.2xlarge \ --instance-pool ml.g4dn.2xlarge \ --gpu-layers=-1 \ --provision-timeout 1200 \ --name &quot;$SEMIF_ENDPOINT_NAME&quot;</code>  Instance pools are ordered placement fallbacks, not inference load balancing. SageMaker selects one available type for the variant. Endpoint creation can take longer while SageMaker AI works through the pool. Check the startup logs for the selected GPU and a message confirming that all model layers were offloaded.</li><li><strong>Invoke the SemIf endpoint with the example decision.</strong> The request declares stable IDs for each allowed option:  <code>{ &quot;decision&quot;: { &quot;id&quot;: &quot;support-route&quot;, &quot;state&quot;: &quot;Customer asks to reset a forgotten password and says the reset email never arrived.&quot;, &quot;question&quot;: &quot;Which queue should handle this request?&quot;, &quot;options&quot;: [ {&quot;id&quot;: &quot;account_access&quot;, &quot;description&quot;: &quot;Account access and authentication support.&quot;}, {&quot;id&quot;: &quot;billing&quot;, &quot;description&quot;: &quot;Billing and payment support.&quot;}, {&quot;id&quot;: &quot;sales&quot;, &quot;description&quot;: &quot;Sales and product evaluation.&quot;} ] } }</code>   <code>python deploy/invoke_endpoint.py \ --region &quot;$AWS_REGION&quot; \ --endpoint-name &quot;$SEMIF_ENDPOINT_NAME&quot;</code>  The response preserves the option order and includes conditional probabilities, raw logits, token and prompt metadata, and the pinned model identity:  <code>{ &quot;result&quot;: { &quot;id&quot;: &quot;support-route&quot;, &quot;option_ids&quot;: [&quot;account_access&quot;, &quot;billing&quot;, &quot;sales&quot;], &quot;probabilities&quot;: [0.99996, 0.00003, 0.00001], &quot;option_logits&quot;: [28.47, 17.92, 17.04], &quot;prompt_sha256&quot;: &quot;016267542103ab91422c425d2234ec7e1b9aef77f9d3e481b96db2de7cca470a&quot;, &quot;readout&quot;: &quot;quantized last-position logits restricted to declared answer slots; no generated tokens&quot; } }</code>  Apply application-level thresholds and fallbacks. Don’t use a model decision as a substitute for authorization.</li></ul>
-<h2>Clean up</h2>
-<p>Delete the SageMaker AI endpoint, endpoint configuration, and model:</p>
-<pre><code>python deploy/cleanup_endpoint.py \
-  --region &quot;$AWS_REGION&quot; \
-  --name &quot;$STANDARD_ENDPOINT_NAME&quot;
-
-python deploy/cleanup_endpoint.py \
-  --region &quot;$AWS_REGION&quot; \
-  --name &quot;$SEMIF_ENDPOINT_NAME&quot;</code></pre>
-<p>The script deletes only those explicitly named SageMaker AI resources. Delete the CodeBuild projects, ECR repository, model and source objects in Amazon S3, logs, and purpose-specific IAM roles when you no longer need them.</p>
-<h2>Conclusion</h2>
-<p>The AWS DLC for llama.cpp gives you a managed foundation for serving decision models on SageMaker AI across CPU and GPU instances. It can load GGUF models from SageMaker AI model artifacts or a configured Hugging Face repository, then serve OpenAI-compatible chat completions through <code>InvokeEndpoint</code> without requiring a custom container. When your application needs direct logits and model state operations, you can extend the DLC with a SemIf adapter. Choose CPU for workloads that aren’t latency-sensitive, and choose GPU when prompt prefill and tail latency affect the application experience.</p>
-<p>Review the <a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/tree/main/03-features/semif-decision-model">code sample</a>, <a href="https://aws.github.io/deep-learning-containers/llama-cpp/">AWS DLC for llama.cpp documentation</a>, and <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-inference-code.html">SageMaker AI custom inference container contract</a> to adapt the deployment for your workload.</p>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Run multi-node inference workloads using Ray LLM Deep Learni…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/run-multi-node-inference-workloads-using-ray-llm-deep-learning-containers/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/run-multi-node-inference-workloads-using-ray-llm-deep-learning-containers/?li=1</guid>
-      <pubDate>Mon, 12 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Run multi-node inference workloads using Ray LLM Deep Learning Containers</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Run multi-node inference workloads using Ray LLM Deep Learning Containers</h1>
-<p>This post shows how to deploy one large language model (LLM) across two GPU nodes on Amazon Elastic Kubernetes Service (Amazon EKS) with the multi-node <a href="https://aws.github.io/deep-learning-containers/ray-llm/">Ray LLM Deep Learning Containers</a>. It uses separate prefill and decode nodes behind one OpenAI-compatible endpoint. This kind of multi-node setup is common for tensor, pipeline, and data parallelism, as well as prefill/decode disaggregation inference workloads. In a <a href="https://aws.amazon.com/blogs/machine-learning/simplify-and-support-your-torchserve-workloads-using-ray-serve-deep-learning-containers/">previous post</a>, we introduced the <a href="https://aws.github.io/deep-learning-containers/ray/">Ray Serve DLC</a> and used it to stand up a small model behind an HTTP endpoint on a single GPU node. You had a working inference endpoint, and the container keeps the GPU stack compatible, including CUDA libraries, so you did not need to write boilerplate code.</p>
-<p><a href="https://docs.ray.io/en/latest/ray-overview/index.html">Ray</a> is a distributed compute framework, so Ray Serve deployments can span multiple nodes. Customers use multi-node Ray Serve for several reasons. Some want to run foundation or open-weight models that are too large for a single GPU. Others need more throughput than one replica can deliver. Still others want to separate the two phases of inference to improve performance. In each case, customers must build the dependency chain themselves: choosing compatible libraries for the GPU stack and debugging issues when a component drifts out of alignment. This is undifferentiated work that takes time and effort away from delivering models.</p>
-<p><a href="https://aws.amazon.com/ai/machine-learning/containers/">AWS Deep Learning Containers</a> (DLCs) have long solved this kind of problem for training and inferencing workloads. DLCs are pre-built, performance-optimized Docker images that bundle a framework, its dependencies, and the GPU stack into a tested, patched combination you can pull and use immediately. With the launch of the <a href="https://aws.github.io/deep-learning-containers/ray-llm/">Ray LLM DLC</a> for multi-node deployments, that same approach now extends to multi-node inference. You get a container purpose-built for serving models behind an HTTP endpoint, maintained and tested by AWS, with the full inference stack already assembled.</p>
-<p>This post walks through implementing multi-node disaggregated inference using multi-node Ray LLM DLC: deploying a single large language model across two GPU-powered nodes on <a href="https://aws.amazon.com/eks/">Amazon EKS</a> cooperating behind a single endpoint. While one of the GPU nodes handles the prefill phase, the other GPU node handles the decode phase. Separating the phases prevents compute-heavy long prompts from stalling token generation for requests already in progress. This approach is well suited for workloads such as Retrieval Augmented Generation (RAG), document summarization, and agentic applications. We use the multi-node Ray LLM DLC, which ships <a href="https://docs.ray.io/en/latest/serve/llm/index.html">Ray Serve LLM</a>, <a href="https://github.com/ai-dynamo/nixl">NVIDIA Inference Transfer Library (NIXL)</a>, and the <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html">Elastic Fabric Adapter (EFA)</a> stack, and exposes an OpenAI-compatible API with no application code. The complete code is available in the <a href="https://github.com/aws-samples/sample-aws-deep-learning-containers/tree/main/inference/ray-serve/ray-serve-multi-node">accompanying repository</a>.</p>
-<h2>Why prefill/decode (PD) disaggregation</h2>
-<p>LLM inference has two distinct phases. <strong>Prefill</strong> processes the entire input prompt in parallel and builds the key-value (KV) cache. <strong>Decode</strong> then generates the response one token at a time, reading and extending that cache. Prefill is compute bound, and Decode is bound by memory bandwidth. When both phases share one GPU, they contend for the same resources, and the bursty, compute-heavy prefill work interferes with the steady, latency-sensitive decode work. Separating the prefill phase from the decode phase means you can select the hardware and serving properties for each phase, improving overall performance at scale.</p>
-<p>PD disaggregation places the two phases on separate nodes, so each phase runs without interfering with the other and can be scaled independently. The trade-off is that the KV cache built during prefill must be handed to the decode node, and that transfer should be fast enough not to erase the benefit. That is exactly why the interconnect between the nodes matters.</p>
-<h2>What the Ray LLM DLC provides</h2>
-<p>AWS DLCs are pre-built, performance-optimized Docker images that bundle a framework, its dependencies, and the GPU stack into a tested, patched combination you can pull and use immediately. All components are validated together before each release, so there is no version drift between the CUDA runtime, the framework, and the serving layer. Security patches are applied at build time.</p>
-<p>The <a href="https://aws.github.io/deep-learning-containers/ray-llm/">Ray LLM DLC</a> extends this to distributed LLM serving. It ships <a href="https://github.com/vllm-project/vllm">vLLM</a> as the inference engine, Ray Serve’s HTTP as the serving layer, NIXL for KV-cache transfer between nodes, and the EFA stack (<a href="https://aws.amazon.com/hpc/efa/">libfabric</a> and <a href="https://github.com/aws/aws-ofi-nccl">aws-ofi-nccl</a>) for high-bandwidth node-to-node communication. Because the <a href="https://docs.ray.io/en/latest/serve/llm/index.html">Ray Serve LLM library</a> includes a built-in application builder, the entire serving application is a block of YAML. There’s no handler class, no model archiver, and no custom image to build. A single helper, <code>build_pd_openai_app</code>, takes a prefill configuration and a decode configuration and wires the KV-cache transfer between them behind one OpenAI-compatible endpoint.</p>
-<h2>Architecture</h2>
-<p>The following diagram shows how the deployment is laid out on Amazon EKS. A user request reaches the Ray head on the CPU system node, and the two GPU worker nodes run the prefill and decode phases of the model.</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-22045-1.png" alt="Architecture diagram: a user request reaches the Ray head on a CPU system node, and two GPU worker nodes run the prefill and decode phases on Amazon EKS"></p>
-<p>Figure 1: Multi-node inference architecture on Amazon EKS, with the Ray head on a CPU system node and the prefill and decode phases on two GPU worker nodes</p>
-<p>The deployment is an EKS cluster inside a virtual private cloud (VPC). Nodes run in private subnets with outbound access through a NAT Gateway. A CPU <strong>system node</strong> (m7i.xlarge) hosts system workloads, the <a href="https://docs.ray.io/en/latest/cluster/kubernetes/index.html">KubeRay</a> operator, and the Ray head pod, which is CPU-only. Two GPU <strong>worker nodes</strong> (g6.8xlarge) run the Ray workers: one serving the prefill phase, and the other serving the decode phase. Both nodes pull the Ray LLM DLC from <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a>.</p>
-<p>KubeRay watches the RayService you apply and wires the head-to-worker join automatically. Ray Serve places the prefill and decode deployments on the two GPU workers. The KV cache flows from the prefill worker to the decode worker over NIXL, using EFA through NIXL’s libfabric backend. The GPU node group is pinned to a single Availability Zone (AZ) because EFA cannot cross AZs.</p>
-<h2>Prerequisites</h2>
-<p>To follow along with this post, you need:</p>
-<ul><li>An AWS account with billing enabled.</li><li>Sufficient service quota for running two g6.8xlarge instances (at least 64 vCPU) in your target Region.</li><li>AWS <a href="https://aws.amazon.com/cli/">Command Line Interface (AWS CLI)</a> with credentials configured.</li><li>kubectl CLI for communicating with a Kubernetes cluster’s control plane.</li><li>eksctl CLI for creating and managing clusters on EKS.</li><li>helm (package manager for Kubernetes) to install KubeRay operator.</li><li>envsubst utility (part of the GNU gettext) to render the manifest.</li></ul>
-<p>Verify that your AWS credentials are active with the following command:</p>
-<pre><code>aws sts get-caller-identity</code></pre>
-<h2>Use the pre-built application to serve inference</h2>
-<p>The application is the <code>serveConfigV2</code> block in <code>manifest/rayservice.yaml</code>. It uses <code>build_pd_openai_app</code>, which takes a <code>prefill_config</code> and a <code>decode_config</code> and connects the KV-cache transfer between them:</p>
-<pre><code>applications:
-- name: qwen
-  import_path: ray.serve.llm:build_pd_openai_app # OpenAI-compatible PD app, built in
-  route_prefix: /
-  args:
-    prefill_config:
-      model_loading_config: { model_id: qwen3.5-9b, model_source: Qwen/Qwen3.5-9B }
-      engine_kwargs:
-        max_model_len: 4096
-        dtype: bfloat16
-        gpu_memory_utilization: 0.90
-        enforce_eager: true # Skip CUDA graph capture to reduce peak GPU memory
-      kv_transfer_config:
-        kv_connector: NixlConnector
-        kv_role: kv_both
-        engine_id: prefill
-        kv_connector_extra_config: { backends: [&quot;LIBFABRIC&quot;] }
-      deployment_config: { num_replicas: 1 }
-    decode_config:
-      model_loading_config: { model_id: qwen3.5-9b, model_source: Qwen/Qwen3.5-9B }
-      engine_kwargs:
-        max_model_len: 4096
-        dtype: bfloat16
-        gpu_memory_utilization: 0.90
-        enforce_eager: true
-      kv_transfer_config:
-        kv_connector: NixlConnector
-        kv_role: kv_both
-        engine_id: decode
-        kv_connector_extra_config: { backends: [&quot;LIBFABRIC&quot;] }
-      deployment_config: { num_replicas: 1 }</code></pre>
-<p>A few settings carry most of the weight. <code>max_model_len: 4096</code> sizes the context to fit the measured KV cache on the GPU. <code>dtype: bfloat16</code> and <code>gpu_memory_utilization: 0.90</code> set precision and how much VRAM vLLM can claim. <code>enforce_eager: true</code> skips CUDA graph capture to reduce peak GPU memory (model- and input-dependent). The <code>kv_transfer_config</code> setting is what makes disaggregation work: both phases use <code>NixlConnector</code> with <code>kv_role: kv_both</code> and a distinct <code>engine_id</code> (prefill on one, decode on the other). The critical setting is <code>kv_connector_extra_config: { backends: [&quot;LIBFABRIC&quot;] }</code>. Without that line, NIXL defaults to UCX, which runs at TCP speed even on EFA.</p>
-<p>The rest of the manifest, in <code>rayClusterConfig</code>, describes the pods. The head pod is CPU-only (<code>num-gpus: &quot;0&quot;</code>) and pinned to the system node group. Each worker pod requests one GPU and one EFA interface (<code>nvidia.com/gpu: &quot;1&quot;, vpc.amazonaws.com/efa: &quot;1&quot;</code>) and targets the GPU nodes through <code>nodeSelector: { role: gpu-worker }</code>. It runs <code>privileged: true</code> because NIXL registers CUDA VRAM with the EFA NIC. The <code>IPC_LOCK</code> capability alone isn’t enough. The workers set <code>FI_PROVIDER=efa</code>, read <code>VLLM_HOST_IP</code> from the pod IP, and mount a shared-memory volume. Memory limits sit well above the roughly 18 GiB checkpoint so the OS page cache can hold it. For Qwen3.5-9B model loading on g6.8xlarge with the preceding cache configuration, the model weights loading drops from around 145 seconds to about 2 seconds on restart.</p>
-<h2>Deploy on Amazon EKS</h2>
-<p>All scripts share a single configuration file, <code>scripts/env.sh</code>. The script contains defaults for <code>CLUSTER_NAME</code>, <code>REGION</code>, <code>K8S_VERSION</code>, and <code>NAMESPACE</code>. Other defaults cover the system and GPU node groups, the KubeRay version, and the model. Override any variable by exporting it before running a script.</p>
-<p>From the project root, set a base directory, then load the variables:</p>
-<pre><code>CURRENT_DIR=$(pwd)
-cd $CURRENT_DIR/ray-serve-multi-node/scripts
-source ./env.sh</code></pre>
-<h3>Step 1: Create the EKS cluster</h3>
-<pre><code>./deploy_cluster.sh</code></pre>
-<p>This provisions the EKS cluster (VPC, OIDC provider, core add-ons) and a CPU system node group that runs system workloads, the KubeRay operator, and the Ray head. Nodes run in private subnets with egress through a NAT Gateway, and cluster subnets are placed in the AZs that offer the GPU instance type. The script is idempotent and takes 15–20 minutes on a fresh run.</p>
-<h3>Step 2: Add GPU worker nodes</h3>
-<pre><code>./deploy_node_group.sh</code></pre>
-<p>This creates the GPU node group: two g6.8xlarge instances with EFA enabled, pinned to a single AZ and labeled <code>role=gpu-worker</code> so the Ray workers target them. Enabling EFA also installs the EFA device plugin, which advertises <code>vpc.amazonaws.com/efa</code> on each node. This step takes about 5-20 minutes, usually longer on a first run.</p>
-<h3>Step 3: Install the KubeRay operator</h3>
-<pre><code>./install_kuberay.sh</code></pre>
-<p>This installs the KubeRay operator using Helm, pinned to the system node group to keep the GPU nodes available for inference. KubeRay watches the RayService you apply next and wires the head-to-worker join automatically. This step takes about 1–2 minutes.</p>
-<h3>Step 4: Deploy the RayService</h3>
-<pre><code>./deploy_ray_service.sh</code></pre>
-<p>This renders <code>manifest/rayservice.yaml</code> with your image, model, and naming variables using envsubst and applies it. KubeRay creates the head and two worker pods, and Ray Serve LLM brings up the prefill and decode deployments. The script waits for the head to be Ready, both workers to be Running, and finally for the Serve app to report RUNNING. Because each node loads the model, expect this step to take several minutes.</p>
-<p>Check status at any time, including which node each pod landed on and the GPU capacity available:</p>
-<pre><code>./deploy_ray_service.sh status</code></pre>
-<h2>Invoke the model</h2>
-<p>After the Serve app is healthy, KubeRay creates a stable <code>&lt;rayservice-name&gt;-serve-svc</code> Service. Port-forward to it:</p>
-<pre><code>kubectl port-forward -n inference svc/ray-llm-serve-svc 8000:8000</code></pre>
-<p>Because the DLC exposes an OpenAI-compatible API, you can list models and send a standard chat-completion request with no custom schema:</p>
-<pre><code>curl --silent http://127.0.0.1:8000/v1/models
-curl --fail --silent --show-error \
-  --request POST &quot;http://127.0.0.1:8000/v1/chat/completions&quot; \
-  --header &quot;Content-Type: application/json&quot; \
-  --data '{
-    &quot;model&quot;: &quot;qwen3.5-9b&quot;,
-    &quot;messages&quot;: [
-      {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain the benefits of prefill/decode disaggregation.&quot;}
-    ],
-    &quot;max_tokens&quot;: 200,
-    &quot;temperature&quot;: 0.7
-  }'</code></pre>
-<h2>Verify EFA is being used</h2>
-<p>NIXL falls back to a TCP-speed transport if it cannot use libfabric, and it does so without raising an error, so it’s worth confirming the backend it picked. Grep the worker logs:</p>
-<pre><code>for POD in $(kubectl get pods -n inference -l ray.io/node-type=worker \
-  -o jsonpath='{.items[*].metadata.name}'); do
-  kubectl exec -n inference &quot;$POD&quot; -c ray-worker -- \
-    grep -rhoE &quot;Backend (LIBFABRIC|UCX) was instantiated&quot; /tmp/ray/session_latest/logs/ 2&gt;/dev/null
-done | sort | uniq -c</code></pre>
-<p><code>deploy_node_group.sh</code> already prints the <code>vpc.amazonaws.com/efa</code> count per node when it creates the group. For a cross-node bandwidth number, the DLC ships a prebuilt NVIDIA Collective Communications Library (NCCL) benchmark at <code>/usr/local/bin/all_reduce_perf</code>.</p>
-<h2>Clean up</h2>
-<p>To avoid ongoing charges, tear down the resources in reverse order:</p>
-<pre><code>./delete_ray_service.sh # Remove the RayService
-./install_kuberay.sh cleanup # Uninstall the KubeRay operator
-./delete_node_group.sh # Remove the GPU node group
-./delete_cluster.sh # Delete the EKS cluster</code></pre>
-<h2>Conclusion and next steps</h2>
-<p>You served a single model across two GPU nodes with prefill/decode disaggregation, and the entire application was a block of YAML, with no handler code, no model archiver, and no hand-assembled GPU and EFA stack. The multi-node Ray LLM DLC supplied the tested inference stack, KubeRay orchestrated the Ray cluster, and NIXL over EFA carried the KV cache between nodes. Your job was to configure it, not to build it.</p>
-<p>Common patterns for running multi-node inference include tensor and pipeline parallelism (sharding a model too big for one instance), data parallelism (replicating a model for throughput), and prefill/decode disaggregation (separating the two phases of inference onto different nodes).</p>
-<p>From here you can scale the decode replicas for more throughput, move to larger models with tensor or pipeline parallelism on larger GPU instances, or layer extra libraries onto the same tested base for models that need them. For the full code, the current list of image tags, and the underlying mechanics, see the <a href="https://github.com/aws-samples/sample-aws-deep-learning-containers/tree/main/inference/ray-serve/ray-serve-multi-node">accompanying repository</a>, the <a href="https://aws.github.io/deep-learning-containers/reference/available_images/#ray-llm">Ray LLM DLC available images page</a>, the <a href="https://docs.ray.io/en/latest/serve/llm/user-guides/prefill-decode.html">Ray Serve LLM prefill/decode documentation</a>, and the <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html">EFA documentation</a>.</p>
 <h2>About the authors</h2>]]></content:encoded>
     </item>
   </channel>

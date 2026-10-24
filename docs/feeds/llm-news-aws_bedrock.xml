@@ -7,7 +7,586 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 22 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 23 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Amazon SageMaker AI 上的多轮强化学习：实践指南</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/multi-turn-reinforcement-learning-on-amazon-sagemaker-ai-a-hands-on-guide/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/multi-turn-reinforcement-learning-on-amazon-sagemaker-ai-a-hands-on-guide/</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Multi-Turn Reinforcement Learning on Amazon SageMaker AI: A hands-on guide</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Amazon SageMaker AI 上的多轮强化学习：实践指南</h1>
+<p>大多数微调都会教会模型对单个提示产生更好的答案。代理任务是不同的。提交费用报告或对支持票证进行分类的代理会采取一系列操作，每个步骤都取决于之前发生的操作。很少有一个正确的序列可以模仿，唯一可靠的反馈是整个序列是否成功。监督微调没有这方面的标签，单轮强化学习不能相信在结果之前三步做出的决定。</p>
+<p>Amazon SageMaker AI 上的多轮强化学习 (MTRL) 正是根据该信号训练模型。 SageMaker AI 通过 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-agent.html">AWS Lambda 转发器</a> 向您在 Amazon Bedrock AgentCore 或您自己的基础设施（例如 Amazon Elastic Kubernetes Service (Amazon EKS)、Amazon Elastic Compute Cloud (Amazon EC2) 或 AWS Fargate）上托管的代理发送提示。这里的示例使用 AgentCore。代理调用正在训练的策略模型，根据任务需要在您的环境中执行尽可能多的回合，并在情节结束时报告一项奖励。您无需指定正确的轨迹，只需指定如何对结果进行评分。</p>
+<p>这篇文章以 <a href="https://en.wikipedia.org/wiki/Wordle">Wordle</a> 为例，这是一款玩家有六次尝试猜测隐藏的五个字母单词的游戏。每次猜测后，如果每个字母位置正确，则它会变成绿色；如果它在单词中但位置不同，则变成黄色；如果不在单词中，则变成灰色。这款游戏适合MTRL，因为规则很少，每次猜测都取决于上次的反馈，并且结果是客观评分的。 Wordle 是一个教学示例，前沿模型已经很好地发挥了作用。在实践中，您可以使用 MTRL 制作一个小型、低成本模型，擅长执行特定于您的业务的多步骤任务，例如公共模型从未接受过训练的内部工作流程。相同的管道适用于该设置。</p>
+<p>在我们的运行中，MTRL 将 gpt-oss-20b 在其默认推理努力下对保留单词的解决率从 61% 提高到 84%，在低努力训练时将其解决率从 15% 提高到 69%，训练代币约为 339 美元。在这篇文章中，我们将端到端地介绍整个管道：将代理和奖励部署到 AgentCore、准备数据集、训练、在 MLflow 中进行监控以及在服务设置中进行评估。我们还分享了我们遇到的奖励设计错误和培训失败。您的数据集、代理和经过训练的模型保留在您的 AWS 账户中，<a href="https://aws.amazon.com/sagemaker/ai/jumpstart/">不用于训练基本模型</a>。所有代码都位于随附的 <a href="https://github.com/aws-samples/sample-multi-turn-rl-wordle">aws-samples 存储库</a>中。</p>
+<h2>解决方案概述</h2>
+<p>该系统有两半。 SageMaker AI 拥有训练作业和策略模型。 AgentCore 托管代理、Wordle 环境和奖励函数。下图显示了它们的连接方式。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-1.png" alt="连接到 AgentCore 托管代理、Wordle 环境和奖励函数的 SageMaker AI 训练作业"></p>
+<p>图 1：SageMaker AI 上的 MTRL，其中训练作业每次部署都会调用 AgentCore 托管的代理一次，以对策略模型进行采样、玩游戏并报告奖励</p>
+<p>每次部署时，MTRL 服务都会调用 AgentCore 运行时（Amazon Bedrock AgentCore 的一项功能），其中一个训练行包含一个秘密单词。运行时中的 Strands 代理通过 SageMaker 作业运行时的 OpenAI 兼容端点调用策略模型。该模型通过一个工具“guess_word”进行最多六次猜测，每次猜测后，环境都会返回每个字母的反馈和已知内容的摘要。当游戏结束时，代理返回一份奖励。 <a href="https://arxiv.org/abs/2402.03300">组相对策略优化 (GRPO)</a> 使用同一个单词的多次部署中的奖励分布来更新策略模型上的低阶适应 (<a href="https://arxiv.org/abs/2106.09685">LoRA</a>) 适配器。</p>
+<p>以下三个设计要点很重要：</p>
+<ul><li><strong>代理和奖励位于一处。</strong> 部署到 AgentCore 的单个 Python 文件包含环境、工具和评分函数。</li><li><strong>数据集仅包含秘密单词。</strong> 与代理捆绑的单词列表是根据开源 <a href="http://wordlist.aspell.net/">SCOWL</a> 单词列表构建的，仅用于评分。</li><li><strong>奖励以结果为主。</strong> 根据速度，解决支付 1.05–1.55，失败支付 -0.5，从未做出有效猜测支付 -1.5。一个小的塑造期限会奖励每一层中的良好策略。</li></ul>
+<h3>支持的型号和 AWS 区域</h3>
+<p>MTRL 是无服务器的：您选择一个基本模型，服务提供培训和采样基础设施。在撰写本文时，它支持以下基本模型，每个模型都使用 LoRA 适配器进行训练：</p>
+<table><thead><tr><th><strong>基本型号</strong></th><th><strong>AWS 区域</strong></th></tr></thead><tbody><tr><td>亚马逊 Nova 2 Lite</td><td>美国东部（弗吉尼亚北部）(us-east-1)、美国西部（俄勒冈）(us-west-2)</td></tr><tr><td><code>GPT-OSS-20B</code></td><td>美国东部（弗吉尼亚北部）(us-east-1)、美国西部（俄勒冈）(us-west-2)</td></tr><tr><td>Gemma 4 31B（指令调整）</td><td>美国西部（俄勒冈州）(us-west-2)</td></tr><tr><td>酷文3.6 27B</td><td>美国西部（俄勒冈州）(us-west-2)</td></tr></tbody></table>
+<p>我们选择“GPT-OSS-20B”，因为它的每个代币价格是四个中最低的，并且它的推理工作是可以根据请求控制的。有关当前列表，请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl.html">MTRL 文档</a>。</p>
+<h3>定价</h3>
+<p>您无需选择实例或调整集群大小。您可以在三个维度上按每百万代币支付费用，按基本模型定价：</p>
+<ul><li><strong>预填充：</strong> 策略模型处理的输入令牌。这些在多轮任务中累积，因为每一轮都会重新读取历史记录。</li><li><strong>样本：</strong>策略模型生成的令牌，包括推理令牌。</li><li><strong>训练：</strong> 在更新 LoRA 适配器的向后传递中处理的令牌。</li></ul>
+<p>在 12 小时 40 分钟内的 105,486 次部署中，100 步运行消耗了 4.916 亿个预填充、1.597 亿个样本和 6.433 亿个训练代币。截至撰写本文时，美国东部（弗吉尼亚北部）地区 (us-east-1) 的“GPT-OSS-20B”标价约为 339 美元：</p>
+<table><thead><tr><th><strong>尺寸</strong></th><th><strong>代币</strong></th><th><strong>每 1M 的价格</strong></th><th><strong>成本</strong></th></tr></thead><tbody><tr><td>预填充</td><td>491,616,806</td><td>491,616,806 0.12 美元</td><td>58.99 美元</td></tr><tr><td>样品</td><td>159,737,098</td><td>159,737,098 0.30 美元</td><td>47.92 美元</td></tr><tr><td>火车</td><td>643,308,554</td><td>643,308,554 0.36 美元</td><td>231.59 美元</td></tr><tr><td>总计</td><td><strong>1,294,662,458</strong></td><td></td><td><strong>338.50 美元</strong></td></tr></tbody></table>
+<p>火车尺寸占主导地位，并随轨迹长度变化，因此更短的游戏和更少冗长的推理可以节省开支。 AgentCore 运行时针对代理使用的 vCPU 和内存单独计费。对于本次运行，该费用约为 79 美元，来自运行时的 Amazon CloudWatch 使用指标（按 us-east-1 标价计算）。 “DescribeJob”报告“BillableTokenUsage”下的令牌计数。请参阅 <a href="https://aws.amazon.com/sagemaker/ai/pricing/">Amazon SageMaker AI 定价</a> 了解当前费率。</p>
+<h2>先决条件</h2>
+<p>要完成本演练，您需要具备以下条件。另请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-prereqs.html">MTRL 先决条件</a>。</p>
+<ul><li>Python 3.10 或更高版本、uv、Node 20 或更高版本以及 AgentCore CLI (<code>npm install -g @aws/agentcore</code>)。请参阅 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agentcore-get-started-cli.html">Amazon Bedrock AgentCore 入门</a> 了解安装以及 CLI 所需的 IAM 权限。</li><li>botocore 1.43.37 或更高版本，在启动作业的计算机上。这是第一个包含“AgentRFT”“CreateJob”操作的版本。</li><li>两个 AWS Identity and Access Management (IAM) 角色，如步骤 1 中所述。</li><li>与代理位于同一区域的 Amazon Simple Storage Service (Amazon S3) 存储桶。训练作业也必须在该区域中运行，因为“CreateJob”拒绝跨区域运行时 ARN。</li></ul>
+<h2>步骤 1：创建 IAM 角色</h2>
+<p>MTRL 使用两个角色，其中之一具有一般 SageMaker AI 文档中未提及的信任策略。</p>
+<p><strong>代理运行时角色。</strong> <code>agentcore deploy</code> 会为您创建此角色。它信任“bedrock-agentcore.amazonaws.com”并需要“AmazonSageMakerJobRuntimeAccess”托管策略，该策略允许代理调用策略模型并报告奖励。示例存储库中的 CDK 堆栈会自动附加此策略。</p>
+<p><strong>培训工作角色。</strong> 您创建这个角色。它必须信任具有 <code>sts:AssumeRole</code> 和 <code>sts:TagSession</code> 的 <code>job.sagemaker.amazonaws.com</code>，并且需要 <code>AmazonSageMakerJobFullAccess</code> 托管策略。</p>
+<pre><code>{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [{
+        &quot;Effect&quot;: &quot;Allow&quot;,
+        &quot;Principal&quot;: {&quot;Service&quot;: &quot;job.sagemaker.amazonaws.com&quot;},
+        &quot;Action&quot;: [&quot;sts:AssumeRole&quot;, &quot;sts:TagSession&quot;]
+    }]
+}</code></pre>
+<p><strong>注意：</strong> 信任主体是“job.sagemaker.amazonaws.com”，而不是“sagemaker.amazonaws.com”。使用通用主体时，“CreateJob”会失败并显示“无法承担角色”，并且消息仅在重试后才会指定正确的主体。</p>
+<h2>步骤 2：将代理部署到 Amazon Bedrock AgentCore</h2>
+<p>克隆<a href="https://github.com/aws-samples/sample-multi-turn-rl-wordle">示例存储库</a>，在 Wordle/agentcore/<code>aws-targets.json</code> 中设置您的帐户和区域，然后部署：</p>
+<pre><code>git clone https://github.com/aws-samples/sample-multi-turn-rl-wordle
+cd sample-multi-turn-rl-wordle/Wordle
+agentcore validate
+agentcore deploy</code></pre>
+<p>CLI 为运行时的 Linux ARM64 平台构建代理的依赖项，创建附加了“AmazonSageMakerJobRuntimeAccess”的执行角色，并通过 AWS CloudFormation 进行部署。我们建议您不要在控制台上上传代码包，因为控制台上通常会出现大约 700 MB 的已编译依赖项或策略附件错误。请注意训练作业输出中的运行时 ARN。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-2.png" alt="Amazon Bedrock AgentCore 控制台显示 Wordle 代理运行时状态为就绪"></p>
+<p>图 2：Amazon Bedrock AgentCore 控制台中状态为 Ready 的 Wordle 代理运行时</p>
+<p>运行时从“agentcore.json”读取两个环境变量。 <code>REASONING_EFFORT=low</code> 在对策略模型的每个请求上设置 <code>reasoning_effort</code>。在我们的评估工作中，低努力度游戏每场比赛使用的样本令牌比中等努力度游戏少 63% 到 83%。 <code>REASONING_PROMPT_HINT=true</code> 还在系统提示中添加了“Reasoning: low”，这就是 gpt-oss 以 Harmony 聊天格式读取设置的方式。这两个变量都没有给模型提供任何有关秘密单词的提示。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-3.png" alt="AgentCore 控制台环境变量面板，REASONING_EFFORT 设置为低"></p>
+<p>图 3：运行时环境变量显示 REASONING_EFFORT 设置为低</p>
+<p>代理是一个文件“main.py”。简化后，其入口点如下所示。对于您自己的任务，您可以更改任务解析、工具和奖励：</p>
+<pre><code>app = BedrockAgentCoreApp()
+
+@app.entrypoint  # outermost: starts the HTTP server AgentCore invokes
+@sagemaker_rft_handler  # reports the returned reward to SageMaker AI
+def handle_rollout(payload):
+    prompt, answer = parse_task(payload[&quot;prompt&quot;])
+    game = WordleGame(answer)
+
+    @tool
+    def guess_word(guess: str) -&gt; str:
+        &quot;&quot;&quot;Submit a 5-letter Wordle guess and get feedback.&quot;&quot;&quot;
+        return game.guess(guess)
+
+    agent = Agent(model=build_model(), system_prompt=SYSTEM_PROMPT, tools=[guess_word])
+    agent(prompt)
+    return {&quot;reward&quot;: game.final_reward()}</code></pre>
+<p><strong>重要提示：</strong> <code>sagemaker_rft_handler</code> 装饰器不会自行启动 HTTP 服务器。用 <code>BedrockAgentCoreApp</code> 和 <code>@app.entrypoint</code> 包裹它，入口点装饰器在最外面。如果没有这个，每次调用都会在 30 秒后超时。</p>
+<h2>步骤 3：验证运行时</h2>
+<p>在花费 GPU 时间之前，请确认整个链可以使用与训练服务发送的负载类似的有效负载。该存储库包括 Wordle/<code>payload.json</code> 之一：</p>
+<pre><code>{
+  &quot;prompt&quot;: &quot;{\&quot;prompt\&quot;: \&quot;Guess the 5-letter word\&quot;, \&quot;answer\&quot;: \&quot;beach\&quot;, \&quot;id\&quot;: \&quot;smoke-test\&quot;}&quot;,
+  &quot;metadata&quot;: {
+    &quot;jobArn&quot;: &quot;arn:aws:sagemaker:us-east-1:111122223333:job/AgentRFT/smoke-test&quot;,
+    &quot;rolloutId&quot;: &quot;r1&quot;
+  }
+}</code></pre>
+<p>假作业 ARN 预计会失败，它失败的方式就是证明。首先将您自己的账户 ID 放入其中：对于另一个账户中的作业 ARN，该服务会在检查作业是否存在之前返回 403，这看起来像是一个损坏的 IAM 设置。从 Wordle 目录运行：</p>
+<pre><code>ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+sed &quot;s/111122223333/$ACCOUNT/&quot; payload.json &gt; /tmp/payload.json
+
+aws bedrock-agentcore invoke-agent-runtime \
+  --agent-runtime-arn &lt;RUNTIME_ARN&gt; \
+  --runtime-session-id smoke-test-$(date +%s)000000000000000 \
+  --payload fileb:///tmp/payload.json /dev/stdout</code></pre>
+<p>在运行时的 Amazon CloudWatch 日志中，您会看到代理解析提示、对作业运行时终端节点进行身份验证，并收到 400 错误，内容为“无法找到作业”。该失败证实了解析、身份验证和错误报告工作正常。命令本身打印 {“reward”: -1.5}，因为代理从未达到策略模型。 403 读取“无权访问此资源”意味着作业 ARN 仍指定另一个帐户。相反，30 秒超时意味着 HTTP 服务器未启动（请参阅步骤 2 中的重要说明）。</p>
+<h2>步骤 4：准备数据集</h2>
+<p>MTRL 数据集没有目标响应、转录本或标签。每一行都是代理要尝试的一项任务。以下是训练文件的前三行：</p>
+<pre><code>{&quot;prompt&quot;: &quot;{\&quot;prompt\&quot;: \&quot;Guess the 5-letter word\&quot;, \&quot;answer\&quot;: \&quot;riser\&quot;, \&quot;id\&quot;: \&quot;wordle_train_0000\&quot;}&quot;}
+{&quot;prompt&quot;: &quot;{\&quot;prompt\&quot;: \&quot;Guess the 5-letter word\&quot;, \&quot;answer\&quot;: \&quot;swoon\&quot;, \&quot;id\&quot;: \&quot;wordle_train_0001\&quot;}&quot;}
+{&quot;prompt&quot;: &quot;{\&quot;prompt\&quot;: \&quot;Guess the 5-letter word\&quot;, \&quot;answer\&quot;: \&quot;dirty\&quot;, \&quot;id\&quot;: \&quot;wordle_train_0002\&quot;}&quot;}</code></pre>
+<p>该服务读取“提示”列（或第一列）并将字符串逐字传递给您的代理，而不对其进行解析。我们将字符串制作为一个包含三个字段的小型 JSON 对象：</p>
+<ul><li><strong>提示：</strong>代理显示策略模型的指令，每一行都相同。</li><li><strong>答案：</strong> 秘密词。只有环境和奖励函数使用它。政策模型从来没有看到它。</li><li><strong>id：</strong> 用于将日志中的转出跟踪回其源行的行 ID。</li></ul>
+<p>示例存储库的“make_dataset.py”从答案列表中提取了 640 个训练单词（五个完整批次，每批 128 个）和 128 个验证单词，没有重叠，因此验证解决率衡量泛化能力。该服务还接受 Apache Parquet、JSON 数组和 CSV。将这两个文件上传到 Amazon S3：</p>
+<pre><code>uv run python make_dataset.py
+aws s3 cp training-data.jsonl s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/train/
+aws s3 cp validation-data.jsonl s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/validation/</code></pre>
+<p>由于该服务从不检查“提示”字符串，因此生产任务可以将完整的消息列表、工具配置或奖励规范打包到其中。有关示例，请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-assets.html">MTRL 文档</a>，包括如何保护字符串中的敏感内容。</p>
+<h2>步骤 5：启动训练作业</h2>
+<p>启动器使用“sagemaker-train”SDK 中的“MultiTurnRLTrainer”类。将其指向步骤 2 中的运行时 ARN、步骤 1 中的角色、步骤 4 中的数据集以及用于指标的 MLflow 应用程序。 MLflow 应用程序是必需的，因此如果您没有，请先使用“aws sagemaker create-mlflow-app”创建它：</p>
+<pre><code>uv run python run_mtrl_training.py \
+  --model openai-reasoning-gpt-oss-20b \
+  --agent-runtime-arn &lt;RUNTIME_ARN&gt; \
+  --role-arn arn:aws:iam::&lt;ACCOUNT&gt;:role/&lt;JOB_ROLE&gt; \
+  --train-dataset s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/train/training-data.jsonl \
+  --val-dataset s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/validation/validation-data.jsonl \
+  --s3-output-path s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/output/ \
+  --mlflow-app-arn arn:aws:sagemaker:&lt;REGION&gt;:&lt;ACCOUNT&gt;:mlflow-app/&lt;APP_ID&gt;</code></pre>
+<p>启动器会覆盖三个超参数，并将其他所有参数保留为 gpt-oss-20b 默认值。它将“sampling_max_tokens”设置为服务最大值 8192，因为在默认值 4096 下，gpt-oss 在第一次工具调用之前的推理过程中经常会耗尽令牌。它将“max_epochs”设置为 20，将“max_steps”设置为 100：默认“global_batch_size”为 128 时，有 640 行，每个 epoch 5 步，默认“group_size”为 8，每步玩 1,024 场比赛。作业将依次经历“正在启动”、“正在下载”和“待定”，然后再进入“培训”。训练结束后，您的 AgentCore 运行时开始接收部署调用。</p>
+<p><strong>重要提示：</strong> 不要在作业运行时重新部署代理。重新部署会重新启动运行时，正在进行的部署不会看到任何采样请求，并且服务会导致整个作业失败。</p>
+<h2>步骤 6：监控 MLflow 中的训练</h2>
+<p>该服务记录每一步的奖励、令牌和回合统计数据，并在每个“val_every”步骤运行验证。需要关注的指标是“val/reward/pass_at_1”，即解决的保留单词的分数。每个解决方案的得分至少为 1.01，因此它清除了服务的“success_threshold” 1.0，并且 pass@1 对其进行计数。下图是根据本次运行的 MLflow 历史记录构建的：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-4.png" alt="两个折线图跟踪每场比赛的平均奖励和超过 100 个训练步骤的验证解决率"></p>
+<p>图 4：100 步运行的训练曲线，左侧为每场比赛的平均奖励，右侧为验证解决率</p>
+<p>训练奖励在 15 步内攀升至约 +0.57 并保持不变。验证奖励保持较低，主要是因为温度 1.0 与 0，而不是过度拟合（参见步骤 7）。在前 10 个步骤中，验证解决率从 2% 跃升至 31%，然后在 35% 至 48% 之间移动。 128 个单词中，这些波动大部分都是噪音。我们没有测试更多步骤是否有助于服务设置。</p>
+<p>CloudWatch 中运行时的 OpenTelemetry 跟踪记录了每个模型转动和工具调用。这是经过训练的模型在评估工作中玩的一款游戏（中等难度，温度 1.0），推理经过修剪。秘密词是粘贴：</p>
+<pre><code>[model] Reasoning: [...] &quot;CRANE&quot; has 5 distinct letters: C,R,A,N,E. [...]
+We'll guess &quot;CRANE&quot;.
+Tool call: guess_word(guess=&quot;CRANE&quot;)
+[tool] Guess 1/6: CRANE -&gt; C=gray, R=gray, A=yellow, N=gray, E=green
+Current Knowledge:
+- Correct Position (Green): _ _ _ _ E
+- In Word, Wrong Position (Yellow): 'A' (at least 1)
+- Not in Word (Gray): C, N, R
+- Guesses Remaining: 5
+[model] Reasoning: [...] &quot;ALIVE&quot;: ends with E, includes A. Letters not C,N,R.
+Tool call: guess_word(guess=&quot;ALIVE&quot;)
+[tool] Guess 2/6: ALIVE -&gt; A=yellow, L=gray, I=gray, V=gray, E=green
+[model] Reasoning: [...] So positions not 1 or 3 for A. Positions left: 2,4
+for A. [...] We might guess &quot;HASTE&quot;? [...]
+Tool call: guess_word(guess=&quot;HASTE&quot;)
+[tool] Guess 3/6: HASTE -&gt; H=gray, A=green, S=green, T=green, E=green
+[model] Reasoning: We have the word: _ASTE. [...] &quot;PASTE&quot; is a word. PASTE
+fits. Also &quot;WASTE&quot; also fits [...] Choose &quot;PASTE&quot; maybe.
+Tool call: guess_word(guess=&quot;PASTE&quot;)
+[tool] Guess 4/6: PASTE --- all green. Correct, you solved it!</code></pre>
+<p>来自 AgentCore 运行时跟踪的经过训练的模型部署。该模型将绿色字母保留在适当的位置，从不重复使用灰色字母，并使用每个黄色字母来排除位置，尽管训练数据中没有任何内容显示它是如何做到的。</p>
+<h2>步骤 7：在服务设置中评估经过训练的模型</h2>
+<p>作业完成后，SageMaker AI Studio 中的页面会显示状态以及保存经过训练的模型的模型包组。 “DescribeJob”（将“JobCategory”设置为“AgentRFT”）返回输出模型包 ARN 和可计费令牌计数。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-5.png" alt="SageMaker AI Studio 作业页面显示已完成的多轮 RL 训练作业"></p>
+<p>图 5：SageMaker AI Studio 中“作业”、“训练”、“多轮 RL”选项卡上已完成的训练作业</p>
+<p><a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-evaluation.html">评估作业</a>（“JobCategory”设置为“AgentRFTEvaluation”）通过相同的 AgentCore 运行时和奖励在基本模型或训练包上播放评估提示，并将“eval/reward/pass_at_1”记录到 MLflow。与训练验证不同，您可以设置温度。存储库的启动器连续运行评估，因为默认配额一次允许一项评估作业（<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-quotas.html">您可以请求增加</a>）：</p>
+<pre><code>uv run python run_mtrl_eval.py --runs base:1.0 trained:1.0 \
+  --model-package-arn &lt;OUTPUT_MODEL_PACKAGE_ARN&gt; \
+  --agent-runtime-arn &lt;RUNTIME_ARN&gt; \
+  --role-arn arn:aws:iam::&lt;ACCOUNT&gt;:role/&lt;JOB_ROLE&gt; \
+  --dataset s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/validation/validation-data.jsonl \
+  --s3-output-path s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/eval/ \
+  --mlflow-app-arn arn:aws:sagemaker:&lt;REGION&gt;:&lt;ACCOUNT&gt;:mlflow-app/&lt;APP_ID&gt;</code></pre>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-6.png" alt="每个阶段的推理工作量和采样温度：训练低和 1.0，验证低和 0 由服务固定，四种设置的评估作业，服务为中等和1.0."></p>
+<p>图 6：每个阶段的推理工作量和采样温度，其中训练作业将验证固定在温度 0 和部署的工作量，而评估作业则让您选择</p>
+<p>每个 128 个字的评估需要四到七分钟。推理工作来自代理的环境变量，因此要更改它，您可以编辑“REASONING_EFFORT”，重新部署并评估。我们在低强度和中等强度以及温度 0 和 1.0 下评估了这两个模型：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22014-7.png" alt="比较四种解码设置下的基础模型和训练模型解决率以及平均奖励的条形图"></p>
+<p>图 7：四种解码设置下的基础模型与训练模型，左侧为解决率，右侧为每场比赛的平均奖励</p>
+<p>每个条形的灰色部分是基础模型，蓝色部分是训练的增益。低强度、温度 0 对是训练作业在步骤 0 和 100 的验证。中等强度、温度 1.0 的训练结果是两次运行的平均值（80% 和 88%）。</p>
+<p>在温度为 0 时，无论付出何种努力，两种模型通常都会在没有解决方案的情况下结束游戏。启用采样后，中等努力为训练模型添加 15 分，为基础模型添加 46 分。适配器在每个设置中添加 14-54 分，因此训练所教授的内容可以跨设置转移。</p>
+<p>MLflow 中训练作业自己的验证曲线讲述了一个不同的故事：它在第 90 步达到峰值 48%，结束于 37%，在温度 0 时得分。<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl-hyperparams.html">超参数参考</a> 建议使用温度 0 进行评估，因为贪婪解码使曲线具有确定性并且在运行过程中具有可比性。我们报告温度 1.0，因为这就是我们为模型提供服务的方式。在中等工作量和温度 1.0 下，经过训练的模型解决了 84% 的保留单词，高于基础模型的 61%。</p>
+<p><strong>提示：</strong> 评估您将使用的设置。训练曲线显示该适配器的训练效率为 37%。在服务设置中，它解决了 84% 的问题。显示这一点的评估工作花费了大约 1.20 美元的代币，并且花费了大约一个小时。</p>
+<h2>第 8 步：清理</h2>
+<p>训练和评估作业完成后将停止计费，但 AgentCore 运行时、其 IAM 角色、MLflow 应用程序和 S3 对象仍然存在。从项目目录：</p>
+<pre><code># 1. Agent runtime and its execution role. remove all resets the project config;
+# the next deploy sees the empty state and tears down the deployed resources.
+cd sample-multi-turn-rl-wordle/Wordle
+agentcore remove all
+agentcore deploy
+
+# 2. MLflow app
+aws sagemaker delete-mlflow-app --arn arn:aws:sagemaker:&lt;REGION&gt;:&lt;ACCOUNT&gt;:mlflow-app/&lt;APP_ID&gt;
+
+# 3. Datasets, job output, and evaluation output
+aws s3 rm s3://&lt;YOUR_BUCKET&gt;/wordle-mtrl/ --recursive</code></pre>
+<p>由于 <code>agentcore remove all</code> 会重写 <code>agentcore/</code> 下的文件，如果您想稍后重新部署，请运行 <code>git checkout --agentcore/</code> 。删除“AgentCore-Wordle-default”CloudFormation 堆栈会删除相同的资源并保留文件。培训作业角色和模型包不计费。</p>
+<h2>深入探讨：设计奖励</h2>
+<p>我们的奖励需要修改一次，而这个错误是很常见的。</p>
+<p>第一个设计总结了整个游戏中 <a href="https://github.com/charbull/wordle-lora-rl">wordle-lora-rl</a> 项目的每次猜测得分。这种评分之所以有效，是因为每个猜测都是一个独立的训练样本。总结为每场比赛一个奖励，它产生了我们仅通过读取痕迹发现的两个反转：</p>
+<ul><li><strong>输掉的游戏获得正奖励。</strong> 六回合奖金加起来约为+0.49。</li><li><strong>第 1 回合的解决得分低于第 3 回合的解决得分。</strong> 第一个猜测的解决方案获得了 +0.99，第三个猜测的解决方案获得了 +1.61，因为额外的回合获得了更多的奖金。</li></ul>
+<p>该修复将主要结果项与小的有界塑造项分开：</p>
+<pre><code>reward = outcome + w * clip(shaping, -1, 1), w = 0.04 if solved, else 0.15</code></pre>
+<p>结果项完全由游戏的结束方式决定：</p>
+<table><thead><tr><th><strong>结果</strong></th><th><strong>价值</strong></th></tr></thead><tbody><tr><td>根据猜测 n 解决</td><td>1.05 + 0.5 * (6 – n) / 5，因此猜测 1 的 1.55 降至猜测 6 的 1.05</td></tr><tr><td>六种猜测全部猜完，未解</td><td>-0.5</td><td>-0.5</td></tr><tr><td>从未做出过有效的猜测</td><td>-1.5</td><td>-1.5</td></tr></tbody></table>
+<p>塑造术语是每场比赛的猜测得分：</p>
+<ul><li>与已知的绿色、黄色或灰色字母相矛盾、重复猜测以及词典之外的单词的处罚。</li><li>强有力的开头词的熵奖励。</li><li>尝试新字母和缩小剩余可能性的奖励。</li></ul>
+<p>总和被剪裁为 [-1, 1]，解决时按 0.04 缩放，失败时按 0.15 缩放，因此它将具有相同结果的游戏分开，但永远不会将游戏移至另一层。具有典型的成型值：</p>
+<table><thead><tr><th><strong>场景</strong></th><th><strong>奖励</strong></th></tr></thead><tbody><tr><td>解决猜测 1</td><td>+1.550</td></tr><tr><td>解决猜测 3</td><td>+1.375</td></tr><tr><td>解决猜测 6</td><td>+1.069</td></tr><tr><td>六次猜测后落败</td><td>-0.427</td><td>-0.427</td></tr><tr><td>从未做出过有效的猜测</td><td>-1.500</td><td>-1.500</td></tr></tbody></table>
+<p>现在，更快的解决方案总是会击败较慢的解决方案，每一次解决都会击败每一次失败，而从不玩是最糟糕的结果。我们的第一个修复使用了 0.15 的单一权重，这使得具有完全整形 (+1.45) 的猜测 3 求解优于具有最小值 (+1.25) 的猜测 2 求解。相邻猜测计数相距 0.1，因此较小的求解权重 0.04 可以消除重叠，并且最差的求解 (+1.01) 仍然可以清除 1.0 的成功阈值。塑造仍然很重要，因为 GRPO 从群体内的奖励差异中学习，因此线索一致性不同的两场失败的游戏仍然可以教会模型一些东西。正如 SageMaker AI 文档所建议的那样，从基于结果的奖励开始，谨慎地添加塑造，并检查真实轨迹上的奖励。</p>
+<h2>深入探讨：出了什么问题，按顺序排列</h2>
+<p>其中每一项都至少需要一次训练。</p>
+<ul><li><strong>并发下的不记名令牌。</strong> 每次调用使用新的 botocore 会话铸造令牌会在 32 个并发部署中导致凭证提供程序饥饿，并且在凭证轮换时缓存令牌一小时会返回 403 错误。修复方法是一个自刷新会话、一个短缓存以及在 403 上重新签名。</li><li><strong>从未到达策略模型的部署会使整个作业失败。</strong> 当部署中的每个模型调用都失败身份验证时，服务会以“未收到采样请求”结束作业。返回错误状态也会失败，所以总是返回奖励。模型被采样但从未做出有效猜测的游戏很好：它的得分为 -1.5，并且 100 步运行在大约 105,000 次部署中出现了 51 步。</li><li><strong>工具调用变成纯文本。</strong> 在学习率过高时，模型将工具调用写为文本，每次推出都会获得相同的楼层奖励，并且梯度消失。现在，代理可以从原始文本中恢复猜测，并具有较小的格式损失。</li><li><strong>高原。训练奖励在大约第 15 步后停止上升，验证在大约第 30 步后停止改善，尽管在温度 0 时验证低估了模型（第 7 步）。 </strong> 接下来我们将尝试使用预先猜测的游戏种子，或者每个单词的推出次数多于默认的“group_size”8 的课程。</li></ul>
+<p>＃＃ 结论</p>
+<p>SageMaker AI 上的 MTRL 根据整个事件的结果训练模型。这适合代理任务，其中正确的轨迹是未知的，只能对结果进行评分。我们使用了单集级别的奖励。当中间步骤也可以计分时，MTRL 还通过 <a href="https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_job_runtime_UpdateReward.html">UpdateReward API</a> 每回合接受一个奖励。在这篇文章中，开放权重 20B 模型在服务设置中达到了 84% 的解决率，高于 61%，训练代币约为 339 美元，AgentCore 运行时使用量约为 79 美元。训练曲线报告的 37% 是训练作业如何对验证进行评分的产物，因此请根据您将使用的设置进行评估。</p>
+<p>同样的管道适用于公共模型从未接受过培训的内部程序、工具和工作流程。</p>
+<p>首先，克隆<a href="https://github.com/aws-samples/sample-multi-turn-rl-wordle">示例存储库</a>，按照前面的步骤操作，并在提交 GPU 时间之前运行步骤 3 中的冒烟测试。有关底层 API，请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/model-customize-mtrl.html">SageMaker AI MTRL 文档</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>使用 AWS CDK 协调 SageMaker AI 端点自动扩展</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/orchestrating-sagemaker-ai-endpoint-auto-scaling-with-aws-cdk/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/orchestrating-sagemaker-ai-endpoint-auto-scaling-with-aws-cdk/</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Orchestrating SageMaker AI endpoint auto scaling with AWS CDK</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>使用 AWS CDK 编排 SageMaker AI 端点自动扩展</h1>
+<p>更新 Amazon Sagemaker AI 实时终端节点配置（更改实例类型、实例计数或环境变量）会导致通过 AWS CloudFormation 或 AWS 云开发工具包 (AWS CDK) 进行的部署失败。 SageMaker AI 要求您在更新终端节点之前取消注册可扩展目标，但取消注册后，CloudFormation 无法跟踪 AWS Application Auto Scaling 资源。</p>
+<p>在本文中，我们将向您展示如何将可重用 CDK 构造与 AWS CloudFormation 自定义资源结合使用，以在终端节点更新期间自动协调取消注册和注册自动扩展。您可以在单个部署中更新端点配置和自动扩展参数，而无需手动干预。</p>
+<h2>为什么会出现这个问题</h2>
+<p>当您使用本机 CloudFormation 自动扩展资源部署 SageMaker AI 端点，然后更改端点配置并重新部署时，会出现多种故障模式。具体的失败取决于您所做的更改以及解决该问题的方式。</p>
+<h3>更改已注册的自动缩放的端点配置</h3>
+<p>CloudFormation 尝试在可扩展目标仍处于注册状态时更新端点。 SageMaker AI 拒绝更新并出现以下错误：</p>
+<pre><code>The variant(s) &quot;[AllTraffic]&quot; must be deregistered as scalable targets with Application Auto Scaling before they can be removed or have their instance type updated.</code></pre>
+<p>在 CloudFormation 达到自动扩展资源之前，SageMaker AI 会阻止端点更新。</p>
+<h3>手动取消注册自动缩放，然后仅更改端点配置</h3>
+<p>如果您通过 AWS 命令行界面 (AWS CLI) 取消注册可扩展目标并仅通过终端节点配置更改进行重新部署，则部署会成功。但是，CloudFormation 不会注册自动缩放，即使它位于 CloudFormation 模板中。由于CloudFormation模板中的自动缩放参数没有更改，因此CloudFormation不会注册可缩放目标或重新应用缩放策略。端点现在正在运行，没有自动缩放，并且没有错误表明出现任何问题。</p>
+<h3>手动注销自动伸缩，然后更改自动伸缩参数</h3>
+<p>如果您通过 AWS CLI 取消注册可扩展目标并通过自动扩展参数更改重新部署，CloudFormation 会尝试更新不再存在的 ScalableTarget 资源：</p>
+<pre><code>Resource of type 'AWS::ApplicationAutoScaling::ScalableTarget' with identifier 'endpoint/&lt;name&gt;/variant/AllTraffic|sagemaker:variant:DesiredInstanceCount|sagemaker' was not found.</code></pre>
+<p>此故障值得注意，因为回滚也会失败 (UPDATE_ROLLBACK_FAILED)，使堆栈处于损坏状态，需要在 CloudFormation 控制台中进行手动干预才能恢复。</p>
+<h2>解决方案概述</h2>
+<p>您可以使用此 CDK 构造将原生“AWS::ApplicationAutoScaling::ScalableTarget”和“AWS::ApplicationAutoScaling::ScalingPolicy”CloudFormation 资源替换为三个自定义资源。这些自定义资源通过显式依赖顺序取消注册并注册围绕端点更新的自动缩放，由 CDK 中的“node.add_dependency”调用强制执行。完整的顺序是：</p>
+<ul><li><strong>取消注册</strong>（自定义资源）：在端点更新开始之前删除可扩展目标。首次部署时，尚不存在可扩展目标，因此处理程序会优雅地处理错误并继续。</li><li><strong>端点更新</strong>（CDK 管理）：CDK 正常更新端点资源，交换到新的端点配置。</li><li><strong>注册可扩展目标</strong>（自定义资源）：等待端点达到“InService”状态，然后注册可扩展目标。</li><li><strong>附加扩展策略</strong>（自定义资源）：等待可扩展目标可查询，然后应用目标跟踪策略。</li></ul>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-20841-1.png" alt="构造在端点更新期间运行的四步编排：取消注册可扩展目标、更新端点、注册可扩展目标并附加扩展政策"></p>
+<p>图 1：围绕 CDK 管理的端点更新进行 SageMaker AI 端点自动扩展的自定义资源编排。</p>
+<p>注册可扩展目标和附加扩展策略使用 CDK 提供程序的异步完成模式。每个自定义资源都有一个立即返回的“on_event”处理程序和一个“is_complete”处理程序。提供者的服务员每隔一段时间（每 30 秒）重新调用“is_complete”处理程序，直到其准备就绪检查通过。提供程序的“total_timeout”（注册可扩展目标为 1 小时，附加扩展策略为 15 分钟）限制了等待时间，因此它不受任何单个 Lambda 调用超时的限制。</p>
+<p>每当配置值发生更改时，每个自定义资源上的“ConfigHash”属性都会强制 CloudFormation 重新调用 Lambda 函数。端点配置和自动扩展参数是一起定义的，因为单个“ConfigHash”驱动自动扩展编排。</p>
+<p>虽然该构造定义了三个自定义资源，但部署的堆栈包含三个以上的 Lambda 函数。每个自定义资源都由 CDK“cr.Provider”支持，并且提供程序框架生成自己的辅助 Lambda 函数。同步提供者（Deregister）添加一个框架功能。异步提供程序（注册可扩展目标和附加扩展策略）添加了三个（“onEvent”、“isComplete”和“onTimeout”）以及一个驱动等待程序的 AWS Step Functions 状态机。因此，部署的堆栈包含三个自定义资源、两个 Step Functions 状态机和十二个 Lambda 函数。其中五个资源包含构造自己的处理程序代码（一个用于取消注册，每个异步资源都有一对“on_event”和“is_complete”），其余七个由提供程序框架生成。您不编写或维护框架生成的函数，但它们存在于堆栈中，并且在您查看已部署的资源时值得考虑。</p>
+<h2>演练</h2>
+<p>在本演练中，您将使用提供的示例堆栈部署具有自动扩展功能的 SageMaker AI 端点，然后验证配置更新是否正常工作。</p>
+<p>该演练包括以下步骤：</p>
+<ul><li>克隆存储库并安装依赖项。</li><li>配置您的端点和自动缩放设置。</li><li>部署并验证。</li><li>测试更新。</li></ul>
+<p>源代码可在<a href="https://github.com/aws-samples/sample-sagemaker-endpoint-autoscaling">链接的 GitHub 存储库</a> 中获取。</p>
+<h3>先决条件</h3>
+<p>对于本演练，您需要以下内容：</p>
+<ul><li>具有 Amazon SageMaker AI、AWS Lambda、AWS Identity and Access Management (IAM)、Application Auto Scaling 和 Amazon CloudWatch 权限的 AWS 账户。</li><li>安装了 <a href="https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html">AWS CDK v2</a>。</li><li><a href="https://www.python.org/downloads/">Python 3.12</a> 或更高版本。</li><li><a href="https://docs.astral.sh/uv/getting-started/installation/">uv</a> 用于 Python 依赖管理。</li><li>Amazon Simple Storage Service (Amazon S3) 中的 SageMaker AI 模型工件和 Amazon Elastic Container Registry (Amazon ECR) 中的容器映像，或 SageMaker AI 内置算法容器。</li></ul>
+<h3>克隆存储库并安装依赖项</h3>
+<ul><li>克隆存储库：<code>git clone https://github.com/aws-samples/sample-sagemaker-endpoint-autoscaling.git cd Sample-sagemaker-endpoint-autoscaling</code></li><li>安装依赖项：<code>uvsync</code></li></ul>
+<h3>配置您的端点和自动缩放设置</h3>
+<p>端点和自动缩放设置在 config/<code>config.yaml</code> 中一起定义，因为单个“config_hash”驱动自动缩放编排。对任一部分的更改都会触发完整的序列。</p>
+<p>使用您的值编辑 config/<code>config.yaml</code>：</p>
+<pre><code>endpoint:
+  endpoint_name: &quot;my-model-endpoint&quot;
+  image: &quot;123456789012.dkr.ecr.us-east-1.amazonaws.com/my-model:latest&quot;
+  model_data_url: &quot;s3://my-bucket/models/model.tar.gz&quot;
+  instance_type: &quot;ml.m5.large&quot;
+  initial_instance_count: 1
+  environment: {}
+autoscaling:
+  min_capacity: 1
+  max_capacity: 10
+  target_value: 100
+  scale_in_cooldown: 600
+  scale_out_cooldown: 120</code></pre>
+<p>端点参数映射到 SageMaker AI <code>CreateModel</code> 和 <code>CreateEndpointConfig</code> API。自动缩放参数映射到 Application Auto Scaling <code>RegisterScalableTarget</code> 和 <code>PutScalingPolicy</code> API。</p>
+<h3>部署并验证</h3>
+<ul><li>如果您还没有启动您的 AWS 环境，请执行以下操作：“uv run cdk bootstrap”</li><li>部署堆栈：<code>uv run cdk deploy InferenceStack</code></li></ul>
+<p>CloudFormation 创建 SageMaker AI 模型、端点配置和端点，然后按顺序运行三个自定义资源以注册自动扩展。</p>
+<ul><li>验证部署是否注册了可扩展目标：<code>aws application-autoscaling describe-scalable-targets --service-namespace sagemaker --resource-ids endpoint/my-model-endpoint/variant/AllTraffic</code></li><li>验证部署是否应用了扩展策略：<code>aws application-autoscaling describe-scaling-policies --service-namespace sagemaker --resource-id endpoint/my-model-endpoint/variant/AllTraffic</code></li></ul>
+<h3>测试更新</h3>
+<p>更改 config/<code>config.yaml</code> 中的值，例如将实例类型从 <code>ml.m5.large</code> 更新为 <code>ml.m5.xlarge</code>，然后重新部署：</p>
+<pre><code>uv run cdk deploy InferenceStack</code></pre>
+<p>部署完成后，验证自动扩展是否仍已注册并具有更新的值：</p>
+<pre><code>aws application-autoscaling describe-scalable-targets
+--service-namespace sagemaker
+--resource-ids endpoint/my-model-endpoint/variant/AllTraffic</code></pre>
+<h3>与现有堆栈集成</h3>
+<p>如果您是新手或想要参考实现，请使用示例堆栈。如果您已经拥有包含 SageMaker AI 资源的 CDK 堆栈，请直接使用该构造。</p>
+<p>要与现有堆栈集成，请将“sagemaker_autoscaling/constructs/”目录复制到您的项目中，并将该构造与端点资源一起添加：</p>
+<pre><code>import json
+from sagemaker_autoscaling.constructs.sagemaker_autoscaling_construct import (
+    AutoscalingConfig,
+    SagemakerAutoscalingConstruct,
+    SagemakerAutoscalingProps,
+)
+
+# Both endpoint and auto scaling values must be in config_hash so that
+# a change to either triggers the auto scaling orchestration.
+config_hash = json.dumps({
+    &quot;endpoint&quot;: {
+        &quot;image&quot;: &quot;123456789012.dkr.ecr.us-east-1.amazonaws.com/my-model:latest&quot;,
+        &quot;modelDataUrl&quot;: &quot;s3://my-bucket/models/model.tar.gz&quot;,
+        &quot;instanceType&quot;: &quot;ml.m5.large&quot;,
+        &quot;initialInstanceCount&quot;: 1,
+    },
+    &quot;autoscaling&quot;: {
+        &quot;minCapacity&quot;: 1,
+        &quot;maxCapacity&quot;: 10,
+        &quot;targetValue&quot;: 100,
+        &quot;scaleInCooldown&quot;: 600,
+        &quot;scaleOutCooldown&quot;: 120,
+    },
+})
+
+SagemakerAutoscalingConstruct(
+    self, &quot;Autoscaling&quot;,
+    props=SagemakerAutoscalingProps(
+        endpoint=your_endpoint,  # your CfnEndpoint
+        autoscaling=AutoscalingConfig(
+            min_capacity=1,
+            max_capacity=10,
+            target_value=100,
+            scale_in_cooldown=600,
+            scale_out_cooldown=120,
+        ),
+        config_hash=config_hash,
+    ),
+)</code></pre>
+<h2>构造如何工作</h2>
+<p>本节将介绍“SagemakerAutoscalingConstruct”的关键实现细节。</p>
+<h3>注销</h3>
+<p>取消注册自定义资源在端点更新之前调用“deregister_scalable_target”。它为不存在可扩展目标的首次部署处理“ObjectNotFoundException”：</p>
+<pre><code>def handler(event, context):
+    resource_id = event[&quot;ResourceProperties&quot;][&quot;ResourceId&quot;]
+    if event[&quot;RequestType&quot;] in (&quot;Create&quot;, &quot;Update&quot;):
+        try:
+            client.deregister_scalable_target(
+                ServiceNamespace=&quot;sagemaker&quot;,
+                ResourceId=resource_id,
+                ScalableDimension=&quot;sagemaker:variant:DesiredInstanceCount&quot;,
+            )
+        except client.exceptions.ObjectNotFoundException:
+            pass  # No scalable target on first deploy
+    return {&quot;PhysicalResourceId&quot;: f&quot;deregister-{resource_id}&quot;}</code></pre>
+<p>CDK中建立依赖关系：</p>
+<pre><code>props.endpoint.node.add_dependency(deregister)</code></pre>
+<h3>注册可扩展目标</h3>
+<p>尽管 CloudFormation 在接受更新后将端点资源视为完整，但只有在端点达到“InService”后才能注册可扩展目标。 Register Scalable Target 使用提供程序的异步完成模式，而不是在等待期间阻止单个 Lambda 调用。 <code>on_event</code> 处理程序立即返回，并且提供者的服务员在 <code>query_interval</code> 上重新调用 <code>is_complete</code> 处理程序，直到端点为 <code>InService</code>。提供程序的“total_timeout”（1 小时）限制了等待时间，而不是任何单个 Lambda 调用的超时：</p>
+<pre><code>def handler(event, context):
+    props = event[&quot;ResourceProperties&quot;]
+    resource_id = props[&quot;ResourceId&quot;]
+    endpoint_name = resource_id.split(&quot;/&quot;)[1]
+    if event[&quot;RequestType&quot;] == &quot;Delete&quot;:
+        return {&quot;IsComplete&quot;: True}
+    status = sm_client.describe_endpoint(EndpointName=endpoint_name)[&quot;EndpointStatus&quot;]
+    if status == &quot;Failed&quot;:
+        raise Exception(&quot;Endpoint in Failed state&quot;)
+    if status != &quot;InService&quot;:
+        return {&quot;IsComplete&quot;: False}
+    as_client.register_scalable_target(
+        ServiceNamespace=&quot;sagemaker&quot;,
+        ResourceId=resource_id,
+        ScalableDimension=&quot;sagemaker:variant:DesiredInstanceCount&quot;,
+        MinCapacity=int(props[&quot;MinCapacity&quot;]),
+        MaxCapacity=int(props[&quot;MaxCapacity&quot;]),
+    )
+    return {&quot;IsComplete&quot;: True}</code></pre>
+<p>在堆栈删除时，“on_event”处理程序会取消注册可扩展目标以进行清理。</p>
+<h3>附加扩展策略</h3>
+<p><code>RegisterScalableTarget</code> 返回后有一个短暂的窗口，其中目标尚不可查询。附加扩展策略使用相同的异步完成模式：“on_event”处理程序立即返回，而“is_complete”处理程序仅在可扩展目标可查询时报告完成，此时它应用该策略。提供者的“total_timeout”（15 分钟）限制了等待时间：</p>
+<pre><code>def handler(event, context):
+    props = event[&quot;ResourceProperties&quot;]
+    resource_id = props[&quot;ResourceId&quot;]
+    if event[&quot;RequestType&quot;] == &quot;Delete&quot;:
+        return {&quot;IsComplete&quot;: True}
+    resp = client.describe_scalable_targets(
+        ServiceNamespace=&quot;sagemaker&quot;,
+        ResourceIds=[resource_id],
+        ScalableDimension=&quot;sagemaker:variant:DesiredInstanceCount&quot;,
+    )
+    if not resp.get(&quot;ScalableTargets&quot;):
+        return {&quot;IsComplete&quot;: False}
+    client.put_scaling_policy(
+        PolicyName=props[&quot;PolicyName&quot;],
+        ServiceNamespace=&quot;sagemaker&quot;,
+        ResourceId=resource_id,
+        ScalableDimension=&quot;sagemaker:variant:DesiredInstanceCount&quot;,
+        PolicyType=&quot;TargetTrackingScaling&quot;,
+        TargetTrackingScalingPolicyConfiguration=json.loads(props[&quot;ScalingPolicyConfig&quot;]),
+    )
+    return {&quot;IsComplete&quot;: True}</code></pre>
+<p>在堆栈删除时，“on_event”处理程序会删除扩展策略以进行清理。</p>
+<h3>清理</h3>
+<p>为避免将来产生费用，请删除资源：</p>
+<pre><code>uv run cdk destroy InferenceStack</code></pre>
+<p>这将删除由目标跟踪扩展策略创建的 SageMaker AI 终端节点、终端节点配置、模型、Lambda 函数、IAM 角色、Amazon CloudWatch 警报，并取消注册可扩展目标。</p>
+<h2>结论</h2>
+<p>在这篇文章中，我们向您展示了如何使用可重用的 CDK 构造自动取消注册和注册自动扩展，以编排 SageMaker AI 端点更新。该构造使用三个具有显式依赖顺序的 CloudFormation 自定义资源和“ConfigHash”属性，以在部署中保持自动缩放不变。</p>
+<p>首先，克隆“sample-sagemaker-endpoint-autoscaling”存储库并按照设置说明进行操作。该存储库包含一个示例堆栈，您可以直接部署，也可以将该构造集成到现有的 CDK 堆栈中。</p>
+<p>有关 SageMaker AI 的 Application Auto Scaling 的更多信息，请参阅<a href="https://docs.aws.amazon.com/sagemaker/latest/dg/endpoint-auto-scaling.html">自动扩展 Amazon SageMaker AI 模型</a>。有关 CloudFormation 自定义资源的更多信息，请参阅 <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html">AWS CloudFormation 用户指南</a> 中的自定义资源。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>在 Amazon Quick Sight 图层地图中使用 GeoJSON 可视化点和路线</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/visualize-points-and-routes-with-geojson-in-amazon-quick-sight-layer-maps/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/visualize-points-and-routes-with-geojson-in-amazon-quick-sight-layer-maps/</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Visualize points and routes with GeoJSON in Amazon Quick Sight layer maps</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>在 Amazon Quick Sight 图层地图中使用 GeoJSON 可视化点和路线</h1>
+<p>借助 Amazon Quick Sight 图层地图，您现在可以绘制点和路线，例如城市中的商店位置或离开机场的航班。地理空间地图可帮助企业发现与位置相关的模式，例如某个地区的表现或客户集中的地方。 Amazon Quick Sight 支持多种地图类型，包括点地图、填充地图和图层地图。当<a href="https://aws.amazon.com/blogs/business-intelligence/create-custom-shape-maps-in-amazon-quicksight/">图层地图首次启动</a>时，您可以上传 GeoJSON 文件来绘制自定义形状图层（例如销售区域或地区），并将这些形状加入数据集。这很好地处理了区域和边界，但它没有涵盖其中的各个位置或它们之间的路线。</p>
+<p>图层图现在支持同一 GeoJSON 工作流程中的另外两种几何类型：<em>Point</em> 和 <em>LineString</em>。点标记特定位置，例如单个商店或设施地点。 LineString 跟踪位置之间的路线，例如送货路径或机场之间的航班。</p>
+<p><a href="https://aws.amazon.com/quick/quicksight/">Amazon Quick Sight</a> 是 <a href="https://aws.amazon.com/quick/">Amazon Quick</a> 的商业智能 (BI) 功能，是一项统一的 BI 服务。它提供现代交互式仪表板、自然语言查询、像素完美的报告、机器学习 (ML) 见解和大规模嵌入式分析。 Amazon Quick 将用于业务洞察、研究和自动化的 AI 代理整合到一种集成体验中，帮助您更智能、更快速地工作，同时维护安全性和访问策略。</p>
+<p>在这篇文章中，我们将介绍图层地图所需的数据集和 GeoJSON 结构。我们还解释了点和线在图层图视觉效果中的工作原理以及何时选择它们。最后，我们介绍了用于控制视口、分层几何图形以及以编程方式更新 GeoJSON 文件的高级技术。</p>
+<h2>数据集结构注意事项</h2>
+<p>图层图从 GeoJSON 文件获取其形状，从 Quick Sight 数据集获取其指标，并通过共享密钥将两者连接起来。构建每一个地图的方式决定了地图可以显示的内容。本节介绍开始之前您需要做的事情以及 GeoJSON 文件的组织方式。</p>
+<h3>先决条件</h3>
+<p>以下是在 Quick Sight 中创建图层图之前需要满足的先决条件：</p>
+<ul><li>描述几何图形的 GeoJSON 文件。</li><li>包含指标和维度的 Quick Sight 数据集。</li><li>Quick Sight 数据集和 GeoJSON 文件之间共享的连接键。</li><li>GeoJSON 文件必须以 .geojson 格式保存，支持的最大文件大小为 100 MB。</li></ul>
+<h3>GeoJSON 文件的结构</h3>
+<p>GeoJSON 是一种基于 JSON 的格式，用于描述点和线等地理特征。</p>
+<pre><code>{
+  &quot;type&quot;: &quot;FeatureCollection&quot;,
+  &quot;features&quot;: [{
+    &quot;type&quot;: &quot;Feature&quot;,
+    &quot;geometry&quot;: {
+      &quot;type&quot;: &quot;Point&quot;,
+      &quot;coordinates&quot;: [88.4, 22.6]
+    },
+    &quot;properties&quot;: { &quot;prop0&quot;: &quot;value0&quot; }
+  }, {
+    &quot;type&quot;: &quot;Feature&quot;,
+    &quot;geometry&quot;: {
+      &quot;type&quot;: &quot;LineString&quot;,
+      &quot;coordinates&quot;: [
+        [88.2, 22.4],
+        [88.9, 23.1],
+        [89.5, 22.8],
+        [90.1, 23.6]
+      ]
+    },
+    &quot;properties&quot;: { &quot;prop0&quot;: &quot;value0&quot; }
+  }]
+}</code></pre>
+<p>文件结构如下：</p>
+<ul><li><strong>FeatureCollection</strong> 是整个文件。它具有 <strong>FeatureCollection</strong> 类型和 <strong>features</strong> 数组。</li><li><strong>功能</strong>是单个地图元素。它携带一个<strong>几何</strong>（形状）和一个<strong>属性</strong>对象，该对象保存连接键。</li><li><strong>几何图形</strong>具有<strong>类型</strong>（点、线串或多边形）及其<strong>坐标</strong>。 <strong>坐标</strong> 保存 <strong>Point</strong> 的单个 <strong>[longitude, latitude]</strong> 位置，以及 <strong>LineString</strong> 的位置的有序列表。</li></ul>
+<h2>配置 Quick Sight 数据集及其 GeoJSON</h2>
+<p>在 Quick Sight 中，当您在图层图视觉对象中配置图层时，需要考虑两个主要设置。第一个是 <strong>要可视化的几何类型</strong>，它设置要渲染的 GeoJSON 文件中的几何图形：点、线或多边形。图层一次渲染一种几何类型，因此当文件像前面的示例一样混合类型时，只有所选类型的要素才会出现在地图上。第二个是将 <strong>Shape 文件关键字段</strong> 与 <strong>Dataset 关键字段</strong> 相匹配，它将 GeoJSON 中的每个要素链接到 Quick Sight 数据集中的一行。字段名称不需要相同，但值必须相同。以下两个示例显示了这种端到端的情况，首先是 <strong>LineString</strong> 层，然后是 <strong>Point</strong> 层。</p>
+<h3>示例：LineString 层</h3>
+<p>考虑显示从肯尼迪机场飞往目的地城市（例如洛杉矶）的航班的示例数据。单个数据点的 GeoJSON 结构配置如下：</p>
+<pre><code>{
+  &quot;type&quot;: &quot;Feature&quot;,
+  &quot;geometry&quot;: {
+    &quot;type&quot;: &quot;LineString&quot;,
+    &quot;coordinates&quot;: [
+      [-73.7781, 40.6413],
+      [-85.5627, 40.6407],
+      [-97.1415, 39.4569],
+      [-108.1612, 37.1753],
+      [-118.4085, 33.9416]
+    ]
+  },
+  &quot;properties&quot;: { &quot;route_id&quot;: &quot;JFK-LAX&quot; }
+}</code></pre>
+<p>Quick Sight 数据集中的相应行包含以下信息：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-1.png" alt="JFK-LAX 路线的 Quick Sight 数据集行及其route_id 连接键"></p>
+<p>图 1：JFK-LAX 航线的数据集行，以route_id 为键</p>
+<p><strong>route_id</strong> 字段用于将 Quick Sight 数据集与 GeoJSON 文件连接起来。 GeoJSON 每条路线保存一个这样的特征，并且每条路线的数据集保存一行。要可视化的几何类型设置为线条。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-2.jpg" alt="将肯尼迪飞往洛杉矶的飞行路径渲染为一条线的图层图"></p>
+<p>图 2：绘制为 LineString 图层的 JFK-LAX 路线</p>
+<h3>示例：点层</h3>
+<p>考虑显示零售商店位置（如长岛市）的示例数据。单个数据点的 GeoJSON 结构配置如下：</p>
+<pre><code>{
+  &quot;type&quot;: &quot;Feature&quot;,
+  &quot;geometry&quot;: {
+    &quot;type&quot;: &quot;Point&quot;,
+    &quot;coordinates&quot;: [-73.9490, 40.7447]
+  },
+  &quot;properties&quot;: { &quot;store_id&quot;: &quot;S-109&quot; }
+}</code></pre>
+<p>Quick Sight 数据集中的相应行包含以下信息：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-3.png" alt="带有 store_id 连接键的商店的 Quick Sight 数据集行"></p>
+<p>图 3：商店的数据集行，以 store_id 为键</p>
+<p><strong>store_id</strong> 字段用于将 Quick Sight 数据集与 GeoJSON 文件连接起来。 GeoJSON 为每个商店保存一个这样的特征，并且每个商店保存一行数据集。要可视化的几何类型设置为点。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-4.jpg" alt="将零售商店位置渲染为点的图层图"></p>
+<p>图 4：绘制为点图层的商店</p>
+<h2>图层图视觉效果上的线条</h2>
+<p>图层图视觉效果现在支持 <strong>LineString</strong> 几何图形，将有序的坐标列表连接到单个路径中。正如数据结构部分所述，每条路线都是一个要素，其坐标是地图按顺序连接的有序位置。</p>
+<p>当您想要显示位置之间的关系（例如飞行路径、交货路线、运输航线或管道段）时，请使用线条。视觉效果根据 GeoJSON 文件中的坐标绘制每条路径，而不是在加载时根据数据生成路径。加入的数据集中的字段可以确定线路颜色编码，因此您可以根据该字段表示的内容对路线进行分组。除了颜色之外，您还可以自定义线条的宽度和不透明度控件，以调整地图上的视觉突出度和清晰度。 GeoJSON 属性对象中的连接键将每个 LineString 与其工具提示和颜色后面的数据集行联系起来。</p>
+<p>例如，机场运营团队可能会绘制特定日期从纽约 (JFK) 出发的航班的地图。 GeoJSON 文件为每条路线保存一个 LineString，由连接到数据集的路线 ID 键入。每条线路的起点都为 JFK，终点站为目的地，例如洛杉矶、芝加哥或迈阿密。数据集提供工具提示中显示的出发地、目的地和承运人。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-5.png" alt="显示从肯尼迪国际机场辐射至目的地城市的多条飞行路径的图层图"></p>
+<p>图 5：离开肯尼迪机场的航班绘制为飞往多个目的地的 LineString 路线</p>
+<h2>图层图视觉效果上的点</h2>
+<p>Amazon Quick Sight 提供原生<a href="https://docs.aws.amazon.com/quick/latest/userguide/point-maps.html">点图视觉类型</a>，可自动对位置名称进行地理编码并使用 SPICE 计划或直接查询连接进行刷新。它支持动态点大小、颜色编码和点样式，例如聚类点和热图密度梯度。它最适用于经常更改的数据以及您希望地图以视觉方式响应这些更改的位置。</p>
+<p>通过在图层地图视觉效果中增加对 GeoJSON 点图层的支持，Quick Sight 现在提供了第二种点映射功能，但有一些关键差异。图层图视觉点使用统一的标记大小，并且不支持地理编码，因此您在 GeoJSON 文件中提供显式坐标。作为回报，您可以精确控制视口，将地图锁定到确切的地理区域，并禁用平移和缩放。</p>
+<p>下表总结了主要差异：</p>
+<table><thead><tr><th><strong>功能</strong></th><th><strong>点图</strong></th><th><strong>图层图视觉点</strong></th></tr></thead><tbody><tr><td><strong>数据来源</strong></td><td>数据集中的纬度/经度值或地理位置名称</td><td>GeoJSON Point 要素通过共享密钥连接到您的数据集</td></tr><tr><td><strong>地理编码</strong></td><td>自动识别城市、县、州、国家和邮政编码</td><td>无法使用。必须在 GeoJSON 文件中提供显式坐标</td></tr><tr><td><strong>位置更新</strong></td><td>当位置值发生变化时，通过 SPICE 刷新或直接查询自动更新地图</td><td>Visual 使用静态 GeoJSON 文件来表示点位置。需要手动重新上传或 API 调用来更新几何图形</td></tr><tr><td><strong>视口</strong></td><td>自动适应您的数据，始终启用平移和缩放</td><td>默认自动调整，可配置是否允许平移和缩放</td></tr><tr><td><strong>外观</strong></td><td>大小和颜色可以从数据集中编码。可用点样式配置（基本、集群、热图）</td><td>可定制的统一标记尺寸、填充不透明度、边框颜色和厚度。颜色可以从数据集中编码</td></tr></tbody></table>
+<p>在以下情况下选择图层图视觉点：</p>
+<ul><li>您需要一个锁定的、不可滚动的视口。</li><li>您的位置是固定的和精心策划的（例如区域办事处、配送中心、零售店），而不是随着每次数据刷新而改变。</li><li>您计划将点与其他几何类型组合（在高级用例部分中介绍）。</li></ul>
+<p>考虑一个零售品牌，其区域经理使用 Quick Sight 仪表板来跟踪整个都市区的商店绩效。 GeoJSON 文件包含每个商店的点要素，以及连接到数据集的商店 ID 属性。该数据集包含驱动工具提示和颜色编码的指标（商店类型、每月收入、每日人流量）。您将地图定位在覆盖都市区的缩放级别，然后禁用地图导航，以便地图在每次加载时以一致的视图呈现。管理者不能意外地将视野缩小到全国或全球视野。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-6.png" alt="具有锁定视口的都市区零售商店点的图层图"></p>
+<p>图 6：将位置存储为点，并禁用地图导航以锁定都市区视图</p>
+<h2>高级用例</h2>
+<p>前面的部分介绍了标准图层图设置。当您需要更多地控制读者所看到的内容、想要在单个视图中组合几何类型或需要随时间变化的几何时，请使用以下技术。</p>
+<h3>控制视口</h3>
+<p>当您需要控制图层图视觉效果中的视口时，您可以手动平移和缩放到所需的视图。然后禁用地图导航以将其锁定到位。对于需要更精确边界或编程控制的用例，您可以使用 Quick Sight API 通过视觉定义设置精确的视口坐标。</p>
+<p>图层图视觉对象将其视口配置存储在“ChartConfiguration”内的“MapState”属性中。该属性接受两个字段：</p>
+<ul><li><strong>边界</strong>：定义最小可见区域的地理坐标（北、南、东、西）。</li><li><strong>MapNavigation</strong>：“启用”或“禁用”来控制读者是否可以平移和缩放。</li></ul>
+<p>尽管边界属性未在控制台上公开，但您可以在使用仪表板定义 JSON 进行编程资产管理时设置这些边界。例如，要定义边界，请修改可视化定义中的“MapState”块，然后调用 <a href="https://docs.aws.amazon.com/quicksight/latest/APIReference/API_CreateDashboard.html">CreateDashboard</a> 或 <a href="https://docs.aws.amazon.com/quicksight/latest/APIReference/API_UpdateDashboard.html">UpdateDashboard</a> API。</p>
+<p>边界定义了保证可见的最小区域。地图会缩放以确保整个区域都适合视觉容器。为了在地图上添加最少的额外空间的情况下实现最紧密的配合，请将边界的纵横比与视觉容器的形状相匹配。</p>
+<h3>分层几何图形</h3>
+<p>对于需要将多种几何类型组合到单个视图中的用例，您可以将视觉效果分层。例如，以下屏幕截图演示了将客户位置绘制为由多边形定义的美国区域边界内的点。该组合显示了哪些地区的客户密度最高，并且可用于与数据集中存在的其他指标（如绩效）相关联。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-7.png" alt="将客户位置点与美国区域多边形边界相结合的图层图"></p>
+<p>图 7：多边形区域边界内分层的客户点</p>
+<p>第二个示例演示了将组合点作为配送路线路径上的停靠点。 LineString 绘制计划路线，Point 要素标记沿途的每个计划站点。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-8.png" alt="将配送路线与每个站点的点标记相结合的图层图"></p>
+<p>图 8：以 LineString 形式绘制的送货路线，每个站点都有点标记</p>
+<p>要对几何图形进行分层，您可以按照以下步骤将多个图层地图视觉效果堆叠在一起：</p>
+<ul><li><strong>使用自由格式布局：</strong> 将<a href="https://docs.aws.amazon.com/quick/latest/userguide/types-of-layout.html#free-form-layout.title">工作表布局设置更改为自由格式</a>，以便视觉效果可以重叠和堆叠。</li><li><strong>创建两层地图视觉效果：</strong> 创建合并到单个视图中的两层地图视觉效果，例如一个使用 Point GeoJSON 文件，一个使用 LineString GeoJSON 文件。</li><li><strong>使用匹配边界：</strong> 使用前面描述的控制视口的方法，验证所有图层地图视觉效果使用相同的边界以具有相同的底层地图视图。</li><li><strong>禁用平移和缩放：</strong> 对于每个图层地图视觉效果，禁用地图选项下的平移和缩放，以便对齐保持不变。</li><li><strong>隐藏上层的底图和背景：</strong> 在显示设置下将上层视觉效果的背景设置为隐藏，并在地图选项下禁用底图。</li><li><strong>堆叠视觉效果：</strong> 使用拖放操作或通过在显示设置下匹配精确的大小和位置坐标，将顶部视觉效果移动到基础层的顶部。</li></ul>
+<p>层顺序遵循自由格式布局中的视觉堆叠顺序。要更改视觉对象在堆栈中的位置，请选择视觉对象上的菜单图标（三个点），然后选择 <strong>向后发送</strong> 或 <strong>向前移动</strong>。读者可以访问最顶部视觉效果的工具提示，因此将读者需要详细信息的图层放在顶部。每张纸最多支持五层地图视觉效果。</p>
+<h3>动态更新 GeoJSON</h3>
+<p>与其他通过 SPICE 或直接查询刷新数据的 Quick Sight 视觉效果不同，图层地图几何图形位于 GeoJSON 文件本身中。当数据集按计划刷新时，指标会更新（例如，颜色更改和工具提示值刷新），但几何图形仍保留在其原始位置。</p>
+<p>要更新地图上显示的内容（例如新路线、新点位置或更新的边界），您需要更新 GeoJSON 文件并重新发布仪表板。您可以通过 Quick Sight 控制台手动替换 GeoJSON 文件，方法是在分析中编辑图层图视觉对象并上传新文件。这适用于不频繁的更改，例如每季度更新区域边界或添加新的商店位置。</p>
+<p>对于自动、按需或动态更新，该过程涉及 Amazon Simple Storage Service (Amazon S3) 和 Quick Sight API，如以下步骤所述：</p>
+<ul><li><strong>将新的 GeoJSON 上传到 Amazon S3：</strong> 生成更新的几何图形并将其保存到 <a href="https://aws.amazon.com/s3/">Amazon S3</a> 存储桶。自定义解决方案可以使用其他 AWS 服务（例如 <a href="https://aws.amazon.com/location/">Amazon Location Service</a>）来创建 GeoJSON 文件。</li><li><strong>引用仪表板定义上的文件：</strong> 仪表板定义包含一个 <a href="https://docs.aws.amazon.com/quicksight/latest/APIReference/API_StaticFile.html">StaticFiles</a> 数组，其中每个 GeoJSON 文件都有一个 <code>SpatialStaticFile</code> 条目。将文件引用修改为每个 GeoJSON 文件的更新文件条目的 S3 位置。</li><li><strong>调用 UpdateDashboard API：</strong> 使用 <a href="https://docs.aws.amazon.com/quicksight/latest/APIReference/API_UpdateDashboard.html">UpdateDashboard</a> API 提交带有新文件引用的更新定义。</li><li><strong>调用 UpdateDashboardPublishedVersion API：</strong> 发布更改，以便使用 <a href="https://docs.aws.amazon.com/quicksight/latest/APIReference/API_UpdateDashboardPublishedVersion.html">UpdateDashboardPublishedVersion</a> API 对仪表板读者可见。</li></ul>
+<p>以下示例使用此模式支持嵌入式仪表板中的按需地图更新，以生成位置和航点之间的最佳路线。尽管超出了本文的范围，但这代表了结合了前面每种方法的高级用例。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/20/ML-21612-9.gif" alt="嵌入式仪表板的动画演示，按需生成航路点之间的最佳路线"></p>
+<p>图 9：嵌入式仪表板中的按需路线生成</p>
+<h2>结论</h2>
+<p>在这篇文章中，我们展示了如何在 Amazon Quick Sight 图层地图中使用 Point 和 LineString 几何图形来绘制特定位置以及它们之间的路线。我们介绍了图层图所需的 GeoJSON 结构和数据集连接，并将图层图点与本机点图进行了比较。我们还介绍了控制视口、将单独的视觉效果分层到一个视图中以及使用 Amazon S3 和 Quick Sight API 刷新 GeoJSON 文件的高级技术。</p>
+<p>要了解有关分层地图的更多信息，请参阅 <a href="https://docs.aws.amazon.com/quick/latest/userguide/layered-maps.html">Amazon Quick Sight 分层地图文档</a>。访问 <a href="https://community.amazonquicksight.com/">Amazon Quick Community</a> 与同行交流并及时了解最新功能和资源。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Bayer Crop Science 如何利用 AWS Unified Operations 在 Amazon Bedr…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/how-bayer-crop-science-built-an-agentic-decision-engine-on-amazon-bedrock-agentcore-with-aws-unified-operations/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-bayer-crop-science-built-an-agentic-decision-engine-on-amazon-bedrock-agentcore-with-aws-unified-operations/</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：Bayer Crop Science 如何利用 AWS Unified Operations 在 Amazon Bedrock AgentCore 上构建代理决策引擎 | 原文标题：How Bayer Crop Science built an agentic decision engine on Amazon Bedrock AgentCore with AWS Unified Operations</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Bayer Crop Science 如何使用 AWS Unified Operations 在 Amazon Bedrock AgentCore 上构建代理决策引擎</h1>
+<p>植物育种决策取决于基因组学、田间试验、图像、环境条件和模型输出的数据。拜耳作物科学针对跨作物、地区和团队的数据运行数百个机器学习 (ML) 模型配置，并且每次运行都需要可重复和管理。为了满足这一要求，拜耳构建了互联决策引擎 (CDE)，这是一个用于部署、编排、监控和重用机器学习工作流程的系统。 CDE 为育种者、分析师、研究人员、数据科学家和数据工程师提供了一种一致的方式来运行分析，同时保留执行历史记录和操作控制。</p>
+<p>随着采用率的增长，瓶颈从运行工作流程转变为理解它们。解释结果意味着将 API、文档、元数据存储、仪表板和日志中的上下文拼凑在一起。想要知道工作流程失败的原因、模型做了什么或者结果来自哪里的用户仍然必须知道要检查哪个系统。为了缩小这一差距，拜耳构建了代理决策引擎 (ADE)，这是一个基于 CDE 的多代理自然语言接口。主管代理将每个问题发送给专家代理，专家从相关系统检索上下文，用户无需导航操作堆栈即可收到答案。在第一阶段，ADE 解决了大约 80% 的用户问题，而无需工程师参与。</p>
+<p>ADE 在 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 上运行，这是一项 AWS 服务，可使用任何框架或模型大规模构建、连接和优化代理。 AgentCore 让团队专注于代理行为，而不是构建和运营自己的代理托管、会话隔离和工具访问层。 AgentCore 的三个功能推动了这一选择：隔离每个用户会话的托管运行时、通过 AgentCore Gateway 访问 AWS Identity and Access Management (IAM) 范围内的工具、将身份验证和授权保持在代理代码之外的 Amazon Bedrock AgentCore 功能，以及允许团队带来自己的 LangGraph 编排和模型选择的与框架无关的设计。</p>
+<p>为了准备启动并随后运营 ADE，拜耳聘请了 <a href="https://aws.amazon.com/premiumsupport/plans/unified-operations/">AWS 统一运营</a>。此次合作提供了一名指定的技术客户经理 (TAM) 和一名生成人工智能领域专家工程师 (DSE)，他们作为 ADE 团队的延伸，从设计到生产。 TAM 作为拜耳的战略顾问，对拜耳的运营模式和业务重点有了既定的了解。 DSE 在 AWS 上带来了生成式 AI 领域的专业知识。在每周三次的技术站立会议中，团队审查并做出设计决策。 DSE 建立了 ADE 工作负载以及拜耳团队运作方式的工作知识，因此技术指导反映了 AWS 服务行为和拜耳的背景。这篇文章讲述了这段旅程：ADE 架构、构建过程中做出的五个设计决策、为生产准备平台的工作以及发布后如何运行。</p>
+<h2>架构概述</h2>
+<p>ADE 分为四层：用户体验、代理编排、专业代理以及这些代理调用的工具和数据源（图 1）。用户通过 React Web 前端访问 ADE，请求在到达代理之前先通过 Microsoft Entra ID 的身份代理。 GitHub Actions 构建代理容器映像，将它们推送到 <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a>，并将它们部署到 AgentCore 运行时（Amazon Bedrock AgentCore 的一项功能）。</p>
+<p>Amazon Bedrock AgentCore 运行时托管代理，并且由于运行时与框架无关，因此团队直接在其上运行自己的基于 LangGraph 的编排。该团队选择 LangGraph 是因为其显式的基于图形的控制流和多步骤工作流程的检查点。 LangGraph 协调工作流程，以 Supervisor 代理作为入口点，对每个请求进行分类，选择专家，并在问题跨越领域时组合结果。数据平面按职责分开。 <a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a> 存储 LangGraph 检查点状态。 <a href="https://aws.amazon.com/rds/aurora/">Amazon Aurora</a> PostgreSQL 存储会话记录、用户反馈和分析。 <a href="https://aws.amazon.com/elasticache/">Amazon ElastiCache</a> 缓存具有生存时间 (TTL) 的代理响应。 <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service (Amazon S3)</a> 中的域内容使用 Amazon Titan Text Embeddings V2 嵌入，并在 <a href="https://aws.amazon.com/opensearch-service/">Amazon OpenSearch</a> 无服务器检索增强生成 (RAG) 中编制索引。 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 捕获运行时和应用程序遥测数据。 AgentCore Gateway 将后端 API 作为模型上下文协议 (MCP) 工具向代理公开，并将身份验证和授权保留在代理代码之外。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21834-1.png" alt="代理决策引擎架构：用户体验、编排、专家代理以及工具和数据源层"></p>
+<p>图 1：Amazon Bedrock AgentCore 上的 Agentic Decision Engine 架构</p>
+<p>ADE 在生产中运行 22 个专业代理，每个代理都具有自己的工具和数据源，负责一个领域。例如，领域专家代理通过 RAG 回答概念性问题。操作代理从 CDE 检索实时工作流程状态和结果。故障排除代理分析运行遥测数据。可视化代理生成图表或返回现有仪表板。特定于客户的“模型即技能”模式将模型代码和文档转换为存储在中央注册表中的技能定义，因此代理可以从模型的实现而不是通用模型知识中回答特定于模型的问题。</p>
+<p>当育种者问“为什么我的表型分析工作流程昨天失败了？”时，主管会对意图进行分类，并将请求发送给故障排除代理。该代理通过 AgentCore Gateway 从 CDE API 读取 CloudWatch 中工作流的遥测数据及其状态，识别故障点，并通过 Supervisor 返回诊断结果（图 2）。饲养员不直接搜索日志。有了故障排除代理，以前需要花费一个多小时手动查找日志并等待工程师支持的诊断现在只需不到 10 分钟。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21834-2.png" alt="代理决策引擎的请求流程图。用户问题进入 Supervisor 代理，该代理会对意图进行分类，检查 Amazon ElastiCache 响应缓存，并将请求路由到适当的专家代理。专家从相关系统（例如通过 AgentCore Gateway 的 CDE API 或 Amazon CloudWatch 中的遥测）检索基础上下文，并向问题返回一个组合答案。用户。"></p>
+<p>图 2：ADE 请求流：意图分类、缓存查找、专家路由和响应</p>
+<h2>生产过程中的五个设计决策</h2>
+<p>统一运营 TAM 和 DSE 作为工作团队成员参与了以下决策，而不是作为事后升级点。这使得拜耳可以在提交之前针对 AWS 服务行为测试每个设计，同时保留架构和最终调用的所有权。</p>
+<h3>1. 外部化编排状态，而不将运行时视为无状态</h3>
+<p>AgentCore 运行时提供隔离会话，在会话生命周期内跨调用保留执行上下文。该上下文不是多步骤工作流程的持久存储。 ADE 将 LangGraph 检查点写入 DynamoDB，以便图表可以在横向扩展事件、重新启动或会话边界后恢复，而不依赖于剩余可用的执行环境。</p>
+<p><strong>原理：</strong> 使用运行时会话主动执行，并将恢复或重建工作流所需的状态持久化在持久服务中。</p>
+<h3>2、企业身份、网关访问、下游授权分离</h3>
+<p>拜耳在 Microsoft Entra ID 上实现用户身份标准化，而 ADE 的服务则通过 AWS 原生机制相互授权。该团队并没有强迫一个代币跨越每个信任边界，而是为每个边界提供了自己的机制。</p>
+<p>Entra ID 仍然是用户身份的来源。 AWS Identity and Access Management (IAM) 授权服务到服务的调用。 AgentCore Gateway 出站授权处理对下游 CDE 服务的访问。请求拦截器 AWS Lambda 函数执行自定义验证并传递下游工具所需的授权属性。该团队在与 DSE 的每一跳都完成了代币合约。</p>
+<p><strong>原理：</strong> 代理系统中的身份失败会在用户身份、代理身份和工具身份之间的转换时聚集。在每一跳定义颁发者、受众、声明、范围和凭证生命周期，而不是在下一边界重复使用对一个边界有效的令牌。</p>
+<h3>3.将模型选择视为接口契约</h3>
+<p>在构建过程中，团队评估了启用推理模式的较新模型版本。对于该版本，ADE 所依赖的工具使用和结构化输出的组合与其代理的实现方式不兼容。 DSE 确认了该约束，团队保留了当前版本的模型。</p>
+<p><strong>原理：</strong> 对于使用工具的代理，模型选择受到完整接口的限制：工具调用、结构化输出、流行为、推理功能、延迟、配额可用性和特定于模型的请求语义。较新的型号不会自动替代。</p>
+<h3>4.先控制工具表面，再控制提示</h3>
+<p>CDE 管理 500 多个模型配置。每个 API 的专用 MCP 服务器会增加部署、身份验证和版本管理开销。相反，ADE 向 AgentCore Gateway 注册 OpenAPI 规范，从而将 REST 操作公开为 MCP 工具。添加或更改 API 会成为架构和网关配置更改，而不是新的服务器部署。</p>
+<p>工具模式和描述也会消耗输入令牌并与用户的请求和检索到的上下文竞争。 ADE 由专业代理确定工具范围，而不是为每个代理提供完整的目录。对于较大的目录，AgentCore Gateway 支持语义工具搜索，因此代理可以找到相关工具，而无需每次都加载整个目录。</p>
+<p><strong>原则：</strong> 按代理确定工具目录的范围。每个工具定义都会添加标记并扩大模型的决策空间。</p>
+<h3>5. 将复杂的功能从工具提升到代理</h3>
+<p>可视化最初是作为其他代理调用的工具。随着它的发展，它需要自己的数据检索、图表选择逻辑、重试、错误处理以及是否生成图表或返回现有仪表板的决策。该团队将其转移到专业的可视化代理中。该代理在 AgentCore Code Interpreter 中使用 matplotlib 和 Plotly 生成按需图表，AgentCore Code Interpreter 是 Amazon Bedrock AgentCore 的一项功能，可提供沙盒代码执行环境，并通过 Amazon S3 与其交换数据。当预构建的仪表板是更好的答案时，代理会返回现有的 Amazon Quick 或 Power BI 资产。</p>
+<p><strong>原理：</strong> 工具执行有界操作。当功能开始拥有状态、重试、规划、策略或表示决策时，将其建模为代理。</p>
+<h2>准备 ADE 进行生产</h2>
+<p>随着构建走向发布，重点从设计转向可操作性：检测代理故障、归因推理成本以及强化部署。</p>
+<h3>可观察性：测量任务失败，而不仅仅是异常</h3>
+<p>监管架构将一个用户请求转化为一系列模型调用、工具调用和代理切换。即使每个 HTTP 请求都成功，最终的答案也可能是错误的。 ADE 直接遇到了这种情况：应用程序异常处理程序捕获代理错误并返回监控视为成功的响应。使用 DSE 重现问题后，团队在故障路径中添加了自定义 CloudWatch 指标，并针对代理特定条件发出警报：工具调用错误、限制、模型超时和结构化输出验证失败。跟踪和调用日志遵循主管和专家的每个请求。</p>
+<p><strong>原则：</strong> 区分运输成功和任务成功。代理可观察性应显示任务是否完成、哪个代理或工具改变了结果，以及响应是否使用了预期的源。</p>
+<h3>成本归因：将计费归因与请求级遥测相结合</h3>
+<p>一个 ADE 请求可以调用多个模型和工具，因此账户级别的 Amazon Bedrock 支出并不能解释单位经济效益。该团队使用 DSE 设计了归因方法，使用三种机制来回答不同的问题。 Amazon Bedrock 应用程序推理配置文件将计费模型使用情况归因于应用程序或工作负载。请求元数据和模型调用日志记录将令牌使用与特定代理、功能或请求相关联。 IAM 主体归因添加了身份维度。它们一起让团队估算每次交互的成本，识别昂贵的代理，并确定提示、检索的上下文或工具定义是否驱动令牌的使用。在实践中，依赖 MCP 工具和多个工具调用的可视化和操作代理消耗了最多的代币。</p>
+<p>相同的遥测在启动准备期间显示出工作负载，其中包含大量重复输入前缀并且没有提示缓存活动。对于支持的模型，将稳定的指令和工具定义放置在可缓存的提示前缀中可以减少重复的输入处理，从而降低延迟和令牌成本。对于 ADE，缓存稳定的提示前缀可将输入令牌成本降低 20-30%。</p>
+<h3>安全和启动准备</h3>
+<p>IAM 角色的范围取决于每个代理的职责。故障排除代理可以读取诊断所需的操作数据，但无法修改工作流程。领域专家代理可以查询其检索索引，但不能调用不相关的CDE API。在当今的生产中，ADE 的代理响应由最低权限、仅限于每个代理的只读工具访问、代理响应的结构化输出验证以及基于检索到的 CDE 数据和遥测而不是开放式生成的答案来控制。拜耳还计划评估 Amazon Bedrock Guardrails 作为这些控件的附加层，以补充 CDE 多轮工作流程中已使用的自定义安全检查。</p>
+<p>在发布之前，Unified Operations 与 ADE 团队一起使用生成式 AI 镜头进行了关键工作负载审查和架构完善的审查。由于 DSE 已经了解工作负载，因此两项审查都针对 ADE 的特定故障模式、容量风险和部署差距，而不是通用的最佳实践。调查结果包括主管和专业代理之间的故障可见性方面的差距、可变的容器映像标签、有限的映像可追溯性以及缺失的漏洞扫描。该团队通过更强的警报、不可变的版本化图像、Amazon ECR 中的推送扫描以及针对未使用图像的生命周期策略进行响应。</p>
+<p>DSE 还与团队一起审查了扩展和配额要求。负载测试验证了应用程序及其服务配额，并暴露了返回空响应的网络故障模式，团队在生产事件之前修复了该模式。截至发布时，该团队已跟踪 35 个阻碍因素，并通过统一运营予以解决。</p>
+<h2>启动、运营和后续步骤</h2>
+<p>拜耳向一个封闭的群体推出了 ADE，而不是立即向整个组织开放。自推出以来，拜耳作物科学已有 100 多名用户使用 ADE，其中包括育种者、分析师、研究人员、数据科学家和工程师。除了 22 个专业代理之外，ADE 还公开了大约 20 个 API 工具，并且可以在扩展时托管第三方代理。通过 AgentCore Gateway 公开这些 API，而不是为每个 API 使用专用服务器，可以将每个 API 的集成开销减少 99% 以上。在第一阶段，ADE 已经解决了大约 80% 的用户问题，而无需工程师参与。</p>
+<p>CDE 仍然是分析的受控执行层。 ADE 在其之上添加了自然语言层，因此用户可以询问工作流状态、结果、模型行为和故障，而无需了解每个底层系统的位置或接口。</p>
+<p>随后，工作内容从发射准备转向持续运营。 DSE 继续与团队会面，因此问题分类和运营审查从 ADE 的现有知识开始，而不是从新的提升开始。 ADE 的关键 CloudWatch 警报（包括前面描述的特定于代理的警报）已加入 AWS 事件检测和响应。当发生故障时，AWS 事件管理工程师会在 5 分钟内介入，并从工作负载的上下文开始，而不是从头开始。在安全方面，AWS 安全事件响应工程师在潜在或活动的安全事件期间为团队提供支持，因此 ADE 拥有针对操作和安全问题的 AWS 监控和响应范围。</p>
+<p>随着代理之间的通信已经到位，拜耳接下来将重点关注混合云代理的互操作性。该团队正在探索在不同环境中运行的代理如何在无需手动配置的情况下发现彼此并进行通信。</p>
+<h2>结论</h2>
+<p>拜耳并未用 ADE 取代其分析平台。它使CDE更易于查询和操作。大多数生产工作都在提示之外：持久状态、身份边界、工具范围、任务级可观察性、成本归因和发布准备情况。拜耳拥有架构和每项决策。该团队通过 AWS Unified Operations 与指定的 DSE 和 TAM 合作，在设计过程中根据 AWS 服务行为测试了这些决策，并将相同的上下文引入生产中。</p>
+<p>要了解更多信息，请探索 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>、<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cost-management.html">Amazon Bedrock 成本归因</a>、<a href="https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lens.html">AWS Well-Architected Generative AI指导</a> 和 <a href="https://docs.aws.amazon.com/awssupport/latest/user/unified-operations-intro.html">AWS 统一操作</a>。</p>
+<p><em>作者要感谢 Sijie Shi、Jorge Gomes、Naveen Reddy、Iago Fonseca、Mateus Silva 和 Sushimitha Jarugula 对 ADE 的设计、开发和发布所做的贡献。</em></p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Amazon Polly 对其生成引擎进行了重大升级</title>
       <link>https://aws.amazon.com/blogs/machine-learning/amazon-polly-delivers-a-major-upgrade-to-its-generative-engine/</link>
@@ -5780,482 +6359,6 @@ def call_with_backoff(fn, attempts=7, base=4.0, cap=180.0):
 <h2>延伸阅读</h2>
 <ul><li><a href="https://aws.amazon.com/blogs/machine-learning/introducing-grok-on-amazon-bedrock/">Grok 登陆 Amazon Bedrock</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/grok-4-7-is-now-available-on-amazon-bedrock/">Grok 4.7 现已在 Amazon Bedrock 上可用</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">用跨区域推理把模型推理请求路由到多个 AWS 区域</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html">Amazon Bedrock 入门</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-chat-completions.html">Chat Completions API</a></li><li><a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a></li><li><a href="https://x.ai/news/grok-4-7">Introducing Grok 4.7</a>（SpaceXAI）</li></ul>
 <h2>作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Amazon SageMaker AI 上的 Mixture-of-Experts kernel 工程</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/mixture-of-experts-kernel-engineering-on-amazon-sagemaker-ai/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/mixture-of-experts-kernel-engineering-on-amazon-sagemaker-ai/</guid>
-      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Mixture-of-Experts kernel engineering on Amazon SageMaker AI</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Amazon SageMaker AI 上的 Mixture-of-Experts kernel 工程</h1>
-<p>Mixture-of-Experts（MoE）是一种稀疏激活架构，它能在把每 token 计算量保持很低的同时，扩展大语言模型（LLM）的容量。由于 MoE 相关运算在总计算时间中占比很高，这部分一旦低效，就会直接抬高请求延迟和成本。因此，通过 kernel 工程优化 MoE 运算，是性能收益最大的一条路。</p>
-<p>Fused MoE 是 MoE 架构的一项关键优化技术。fused MoE 系统把 token 路由、数据 shuffle 与专用网络的计算合并成 GPU 上的一个批量操作，不再把路由和各 expert 的计算当作彼此分离、顺序执行的循环来跑。这样做在延迟上有好处，但也让 kernel 实现和调试能力变得更复杂。要让这种架构跑上高 GPU 利用率，必须做针对硬件的优化。</p>
-<p>本文介绍我们为 fused MoE 模型实现的各项 kernel 优化，并说明你能如何从中受益。我们选用一个有代表性的 MoE 模型作为主要示例。</p>
-<h2>用 Swap-AB 提升 WGMMA 利用率</h2>
-<p>要把张量处理的吞吐量拉到最高，NVIDIA Hopper 架构依赖 Warp Group Matrix Multiply Accumulate（WGMMA）指令协议，它由一个 128 线程协作的 warpgroup 集体执行。这种操作数不对称本质上是指令集架构（ISA）层面的属性。在底层的 <code>wgmma.mma_async</code> 汇编定义中，硬件把矩阵的行维度 (M) 固定为 64 这一恒定规模，以此确定并行的线程映射拓扑；列维度 (N) 则可以高度变化。操作数 A 严格映射在这个固定的 M 维度上（使用寄存器或共享内存），操作数 B 映射在可变的 N 维度上（通过共享内存描述符）。因此这些操作数槽位在结构上不可互换。也正因如此，硬件 tile 利用率的上限由这些刚性的形状编码决定：M 维度必须等于或大于 64，否则计算执行通道会空转。</p>
-<p>这种结构偏好源自 Hopper Tensor Core 划分内存块的方式。硬件对第一个操作数的主维度强制规定了一个最小布局形状，把块高锁死为 64（M=64）。当矩阵在这个主槽位上拥有较大且连续的主维度时，Hopper 内部的硬件调度器就能把数据干净地映射并铺展到物理计算网格上。</p>
-<p>到了 MoE 网络的 decode 阶段，这种结构不对称会变成严重的性能瓶颈。在标准 MoE 层里，支配 expert 计算的线性代数用传统矩阵记法写成：</p>
-<p>A[M,K] x B[K,N] —&gt; C[M,N]</p>
-<p>其中 (M) 表示 token 行数（也就是 batch size），(K) 表示 hidden 特征维度，(N) 表示很大的 expert 输出维度。</p>
-<p>在 decode 阶段，系统每次只处理每条用户序列的一个 token。于是 batch 空间、也就是 token 行数极薄，常常落到 (M &lt; 64) 的形状，很多时候只剩一行 (M = 1)。在这种标准结构布局下：</p>
-<p>矩阵 (A) 退化成一个又薄又碎的横向向量（例如 1 x 4096）。</p>
-<p>矩阵 (B)（也就是 expert 权重本体）仍然保持为一个大而密集的纵向块（例如 4096 x 8192）。</p>
-<p>由于行数 (M) 极小，矩阵 (A) 在物理上填不满硬件为操作数 A 预设的 (64) 行布局槽位。WGMMA 指令按这种布局执行时，会有很大一部分 Tensor Core 的物理算力处于饥饿状态：芯片把时钟周期花在处理空位上，硬件利用率因此很低。</p>
-<p>在标准 dense LLM 层里，权重矩阵是静态、统一、完全连续的。而在 MoE 层里，负载被拆散到一大批相互独立的子网络（expert）上。这带来了特有的内存与布局瓶颈，使它对 Hopper GPU 的 WGMMA 约束异常敏感。标准 dense 层的矩阵乘法是一个 token 向量乘以一个层权重矩阵，输出维度 (N) 就是模型的 hidden size（例如 4096）。</p>
-<p>在 fused MoE kernel 里，GPU 不只是与一个 expert 做乘法：它把所有被激活的 expert 的运算分组、同时执行，以免为每个 expert 单独启动 kernel。标准 dense 层的 N 是 hidden size（4,096）；fused MoE 层的 N 是被选中的 expert 数量乘以 expert 的中间层尺寸。对一个走 <code>topk=8</code> 流程的模型来说，fused kernel 内部的有效 N 维度会膨胀到几万甚至几十万参数。跟极小的 decode token 规模 (M=1) 相比，N 维度大得不成比例，布局不对称因此被推到极端。把矩阵转置后，这个合并起来的巨大 MoE 维度就移进了主槽位，从而释放出标准 dense 层无法企及的硬件预取规模。</p>
-<p>为了在不改变模型底层数学含义的前提下解决这一硬件错配，我们利用矩阵转置的代数性质：</p>
-<p>BT[N,K] x AT[K,M] —&gt; CT[N,M]</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-22058-1.png" alt="Swap-AB 转置把较大的 expert 维度提升到 WGMMA 操作数 A 槽位，让 Tensor Core 满载"></p>
-<p>图 1：用 Swap-AB 提升 WGMMA 利用率</p>
-<p>在矩阵乘法抵达 PTX 汇编层之前，我们在程序层面把它翻转过来，让软件重新对齐 Hopper 硅片的实际布局。这次转置在 GPU 上带来两项直接的架构优势。第一，它把物理布局填满：较大的 expert 维度 (N = 8192) 被提升到第一个操作数的位置 (BT)，由于 (N) 很大，轻松越过硬件强制的 (64) 行下限，Tensor Core 于是以最高局部密度运行，没有浪费的执行周期。第二，它启动了异步预取：Hopper 专用的硬件拷贝引擎可以在数学执行块启动之前，异步地把内存地址从共享内存直接预取进寄存器。把连续的大块权重 (BT) 放在主维度槽位，这些引擎就能顺着数据布局平滑推进，无需 CPU 介入便让计算流水线保持满载。在 H200 上的大规模 MoE 模型中，这带来了 2–4% 的端到端输出吞吐提升。我们把这项优化上游合入了 vLLM，0.24.0 及之后的版本可用。</p>
-<h2>FP8 张量量化的后端路由</h2>
-<p>除了 kernel 内部实现，由哪个后端来执行 MoE 计算也极大影响性能。vLLM 的 MoE oracle 会把不同量化方案路由到 Triton、FlashInfer+CUTLASS 或其他后端。Profiling 显示，对 Hopper 上的 FP8 张量量化模型，Triton 后端始终快过默认的 <code>FLASHINFER_CUTLASS</code> 路径。</p>
-<p>在低并发的 MoE 负载下，Triton 后端胜过 CUTLASS，主要是它用自定义的算子级寄存器融合取代了僵硬的框架级矩阵运算配置。CUTLASS 依赖标准的 C++ 模板结构，把 FP8 张量缩放、矩阵乘法、expert 结果聚合当成彼此离散的数学操作。Triton 后端则把这整条流水线合并成一次硬件遍历：数据只从全局高带宽内存（HBM）取一次，全部在 GPU 极快的片上 SRAM 寄存器与计算执行单元里处理完，再流式写回最终的目标矩阵。这就消掉了那些拖累 CUTLASS 的全局 VRAM 往返读写——当它被迫一步步走过中间张量的缩放环节时，这些开销尤其明显。</p>
-<p>此外，这种寄存器级融合还专门配合了围绕可变 token 分桶设计的动态调度布局，补上了传统编译模板里一个严重的结构缺陷。CUTLASS 原生是为稠密、巨大、可预测的矩阵维度优化的。一旦遇到线上 decode 生成阶段那种流动、极薄的 batch 形状（M &lt; 64 或 M = 1），它默认的 block tiling 与线程映射结构就会极度低效，结果要么是 warp 大面积利用不足，要么付出昂贵的内存 padding 开销。反过来，Triton 的 MoE 后端擅长把这些细碎的小 token 数组动态映射到激活 expert 权重的物理边界上，即使在 batch size 很低、负载极不稳定的情况下，也能让硬件内部的预取流和 Tensor Core 流水线保持满载。</p>
-<p>更新路由策略是纯配置改动，没有修改任何 kernel 代码，但仍然让 H200 上 FP8 量化的 fused MoE 模型拿到 <strong>10% 的端到端吞吐提升</strong>。这一改进在 AWS Large Model Inference（LMI）v28 容器中可用。</p>
-<h2>消除 Triton 的 JIT 重编译</h2>
-<p>GPU 推理中最伤性能的问题之一，恰恰也最不明显：不必要的 kernel 重编译。Triton 是 vLLM 许多自定义 kernel 底层的编译框架，它默认会对整数实参做特化。只要有一次 kernel 调用用到了某个特化参数此前没出现过的取值，Triton 就触发一次新的即时编译（JIT）。在序列长度和 batch size 持续变化的服务负载里，这会源源不断产生编译开销，把延迟抬高，尤其是首 token 时间（Time to First Token，TTFT）。</p>
-<p>在 MoE 模型服务中，<code>_fused_inv_rope_fp8_quant_per_head</code> kernel（负责融合旋转位置编码与 FP8 量化）每遇到一个新的 <code>num_tokens</code> 取值就要重编译一次。给这些长度可变的参数加上 <code>do_not_specialize</code> 标注后，这些重编译被彻底消除：在 H200、8 路 tensor parallelism 下，TTFT 改善了 <strong>9%</strong>（PR #42849）。</p>
-<p>在多 GPU 集群里，8 张 GPU 的 kernel 必须以微秒级精度严格同步执行。只要有一张 GPU 因为本地的 token batch 计数变化而停下来重编译它本地的 <code>_fused_inv_rope_fp8_quant_per_head</code> kernel，其余七张就得空着等它。通过在整个集群上消除重编译，我们抹平了多 GPU 的协调开销，为用户的初始响应延迟带来 9% 的加速。这里的思路是把编译器当作一等的优化对象：弄清 Triton 如何做语义特化、识别哪些参数是死的或可变的，就能用极小的代码改动换到延迟改善。</p>
-<p>我们把这项优化上游合入了 vLLM，0.22.0 及之后的版本可用。</p>
-<h2>结论</h2>
-<p>借助与 vLLM 社区的合作，我们实现并开源了多项 fused MoE 模型的 kernel 优化，并在 Amazon SageMaker AI 的 LMI Deep Learning Container 中应用了这些优化。综合起来，它们带来了最高 10% 的吞吐提升与最高 9% 的 TTFT 加速。要开始自定义模型托管，请参阅 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html">Amazon SageMaker AI 托管文档</a>。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>在泰国、马来西亚、新加坡、印度尼西亚和台湾，用全球跨区域推理访问 Amazon Bedrock 上的 OpenAI GP…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/accessing-openai-gpt-models-on-amazon-bedrock-with-global-cross-region-inference-in-thailand-malaysia-singapore-indonesia-and-taiwan/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/accessing-openai-gpt-models-on-amazon-bedrock-with-global-cross-region-inference-in-thailand-malaysia-singapore-indonesia-and-taiwan/</guid>
-      <pubDate>Mon, 12 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：在泰国、马来西亚、新加坡、印度尼西亚和台湾，用全球跨区域推理访问 Amazon Bedrock 上的 OpenAI GPT 模型 | 原文标题：Accessing OpenAI GPT models on Amazon Bedrock with global cross-Region inference in Thailand, Malaysia, Singapore, Indonesia, and Taiwan</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>在泰国、马来西亚、新加坡、印度尼西亚和台湾，用全球跨区域推理访问 Amazon Bedrock 上的 OpenAI GPT 模型</h1>
-<p>需求超出本地容量时，单区域推理会被限流。泰国、马来西亚、新加坡、印度尼西亚和台湾的团队还需要在本地容量之外用上最新的 OpenAI 模型。<a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 通过全球跨区域推理在这五个 AWS 区域都提供 OpenAI GPT-6 Sol 和 GPT-6 Luna，并在亚太地区（新加坡）提供 GPT-6 Astra。本文说明如何配置调用、设置权限，以及如何从你的源区域监控推理。</p>
-<p>GPT-6 Sol、GPT-6 Luna 和 GPT-6 Astra 都可以从上述区域通过全球跨区域推理调用，走的是 <code>bedrock-runtime</code> 端点。参见 Amazon Bedrock User Guide 中的<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">跨区域推理</a>。每个配置文件涵盖的源区域与目标区域完整列表，见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-support.html">推理配置文件支持的区域与模型</a>。</p>
-<p>本文先介绍全球跨区域推理配置文件，再从亚太地区（新加坡）分别用 Converse API、OpenAI 兼容 API 和编码客户端调用它们。随后讲 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management</a>（IAM）与服务控制策略（SCP）的配置、配额管理和监控。</p>
-<h2>OpenAI GPT-6 的全球跨区域推理配置文件</h2>
-<p>GPT-6 系列提供三个模型，每一个都支持全球跨区域推理。</p>
-<ul><li>GPT-6 Sol 为贯穿整周执行的复杂任务提供很强的推理与编码能力。</li><li>GPT-6 Luna 让目标集中、可重复的任务在大批量下同样实用。</li><li>GPT-6 Astra 处理复杂推理、编码和长文档工作。</li></ul>
-<p>三个模型都接受文本和图像输入，支持客户端侧工具调用和 prompt 缓存。差别在推理强度：GPT-6 Sol 和 GPT-6 Luna 支持 none、low、medium、high、xhigh、max；GPT-6 Astra 支持的档位与它们相同，只是不含 none。关于 GPT-6 Sol 和 GPT-6 Luna，见<a href="https://aws.amazon.com/blogs/machine-learning/bring-more-intelligence-to-everyday-work-with-gpt-6-sol-and-gpt-6-luna-on-amazon-bedrock/">在 Amazon Bedrock 上用 GPT-6 Sol 和 GPT-6 Luna 给日常工作带来更多智能</a>。关于 GPT-6 Astra，见<a href="https://aws.amazon.com/blogs/machine-learning/take-on-your-most-ambitious-work-with-gpt-6-astra-on-amazon-bedrock/">用 Amazon Bedrock 上的 GPT-6 Astra 承接最有野心的工作</a>。</p>
-<p>全球跨区域推理会把请求路由到部署了该模型的所有受支持商业 AWS 区域，让你用上更大范围的 Amazon Bedrock 容量。调用方式是用全球跨区域推理配置文件 ID 代替 model ID。你发起 API 调用的那个区域就是源区域，由 Amazon Bedrock 选定处理请求的目标区域。计费、配额统计、AWS CloudTrail 和 Amazon CloudWatch 全都留在源区域。</p>
-<p>下表列出本文涵盖的全球跨区域推理配置文件 ID 及其源区域。</p>
-<table><thead><tr><th><strong>全球跨区域推理配置文件</strong></th><th><strong>源区域</strong></th><th><strong>目标区域</strong></th></tr></thead><tbody><tr><td>global.openai.gpt-6-sol global.openai.gpt-6-luna</td><td>亚太地区（新加坡） ap-southeast-1 亚太地区（雅加达） ap-southeast-3 亚太地区（马来西亚） ap-southeast-5 亚太地区（泰国） ap-southeast-7 亚太地区（台北） ap-east-2</td><td>部署了该模型的受支持商业 AWS 区域</td></tr><tr><td>global.openai.gpt-6-astra</td><td>亚太地区（新加坡） ap-southeast-1</td><td>部署了该模型的受支持商业 AWS 区域</td></tr></tbody></table>
-<p>AWS 会持续新增区域和配置文件，推理配置文件的可用性与区域支持也随之变化，因此动手开发前请在模型卡片上确认这两项：<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-sol.html">GPT-6 Sol</a>、<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-luna.html">GPT-6 Luna</a> 和 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-openai-gpt-6-astra.html">GPT-6 Astra</a>。每 token 单价见 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a>。</p>
-<h2>在 Amazon Bedrock 上开始使用 OpenAI 模型</h2>
-<p>先看前置条件，之后就能通过 Converse API、OpenAI 兼容 API 或你现有的编码客户端调用三个配置文件中的任意一个。</p>
-<h3>前置条件</h3>
-<ul><li>一个有权调用该配置文件的 IAM 身份。「安全与权限」一节给出的 IAM 策略只授予这些示例所需的内容。</li><li>已启用你的源区域。只有发起调用的区域需要启用；目标区域不用你启用，它们跑在 Amazon Bedrock 托管的容量上。新加坡（<code>ap-southeast-1</code>）是默认启用的区域。雅加达（<code>ap-southeast-3</code>）、马来西亚（<code>ap-southeast-5</code>）、泰国（<code>ap-southeast-7</code>）和台北（<code>ap-east-2</code>）属于 opt-in 区域，必须先启用。详见<a href="https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-regions.html">在账户中启用或停用 AWS 区域</a>。</li><li>较新的 AWS SDK 或 CLI。OpenAI 兼容的示例还需要 OpenAI SDK 和 Amazon Bedrock token 生成器，用 <code>pip install boto3 openai aws-bedrock-token-generator</code> 安装。</li></ul>
-<p>Amazon Bedrock 控制台把这三个全球跨区域推理配置文件都列在系统定义推理配置文件下，见图 1。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-21759-1-1.png" alt="Amazon Bedrock 控制台的系统定义推理配置文件中列出的三个全球 OpenAI GPT-6 推理配置文件。"></p>
-<p>图 1：Amazon Bedrock 控制台的系统定义推理配置文件中列出的三个全球 OpenAI GPT-6 推理配置文件</p>
-<h3>通过 Amazon Bedrock Runtime 调用 GPT-6 模型</h3>
-<p>在这一个端点上，每个模型都支持三条访问路径：Amazon Bedrock Converse API、OpenAI Responses API 和 OpenAI Chat Completions API。OpenAI 兼容 API 走 <code>/openai/v1</code> 路径调用，不经由 AWS SDK，而端点同时接受 Signature Version 4（SigV4）签名或 Amazon Bedrock API key。三种路径都把全球跨区域推理配置文件 ID 作为 <code>model</code> 传入。</p>
-<p><strong>Converse API。</strong> 这个示例从亚太地区（新加坡）调用 GPT-6 Sol 并记录响应。把 <code>BEDROCK_PROFILE_ID</code> 设为 <code>global.openai.gpt-6-luna</code> 或 <code>global.openai.gpt-6-astra</code> 即可换模型，要流式输出就调用 <code>converse_stream</code>。</p>
-<pre><code>import logging
-import os
-import boto3
-
-# AWS_REGION overrides this default, so set it to your source Region or unset it.
-REGION = os.environ.get(&quot;AWS_REGION&quot;, &quot;ap-southeast-1&quot;)
-PROFILE_ID = os.environ.get(&quot;BEDROCK_PROFILE_ID&quot;, &quot;global.openai.gpt-6-sol&quot;)
-PROMPT = (
-    &quot;In three bullet points, explain when a workload should use &quot;
-    &quot;cross-Region inference instead of calling a model in a single Region.&quot;
-)
-
-logging.basicConfig(format=&quot;%(levelname)s %(message)s&quot;)
-log = logging.getLogger(&quot;bedrock-cris&quot;)
-log.setLevel(logging.INFO)
-
-client = boto3.client(&quot;bedrock-runtime&quot;, region_name=REGION)
-
-# AccessDeniedException points at the IAM policy. ValidationException usually
-# means the model ID is not a global cross-Region inference profile.
-response = client.converse(
-    modelId=PROFILE_ID,
-    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;text&quot;: PROMPT}]}],
-    inferenceConfig={&quot;maxTokens&quot;: 1024},
-    # GPT-6 Sol and Luna accept none through max. GPT-6 Astra rejects none.
-    additionalModelRequestFields={&quot;reasoning&quot;: {&quot;effort&quot;: &quot;low&quot;}},
-)
-
-# Any effort above none can prepend a reasoningContent block, so pick the text
-# block by key rather than by position.
-text = &quot;&quot;.join(b[&quot;text&quot;] for b in response[&quot;output&quot;][&quot;message&quot;][&quot;content&quot;] if &quot;text&quot; in b)
-
-log.info(&quot;Called %s from %s&quot;, PROFILE_ID, REGION)
-log.info(&quot;Stop reason: %s&quot;, response[&quot;stopReason&quot;])
-log.info(&quot;Response:\n%s&quot;, text)</code></pre>
-<p><strong>OpenAI Chat Completions API。</strong> 把 OpenAI SDK 指向该区域的端点，传入同一个配置文件 ID。</p>
-<pre><code>import logging
-import os
-from aws_bedrock_token_generator import provide_token
-from openai import OpenAI
-
-REGION = os.environ.get(&quot;AWS_REGION&quot;, &quot;ap-southeast-1&quot;)
-PROFILE_ID = os.environ.get(&quot;BEDROCK_PROFILE_ID&quot;, &quot;global.openai.gpt-6-sol&quot;)
-PROMPT = &quot;List three uses for a message queue.&quot;
-
-logging.basicConfig(format=&quot;%(levelname)s %(message)s&quot;)
-log = logging.getLogger(&quot;bedrock-cris&quot;)
-log.setLevel(logging.INFO)
-
-# provide_token mints a short-term key from your AWS credentials, valid up to 12 hours.
-client = OpenAI(
-    base_url=f&quot;https://bedrock-runtime.{REGION}.amazonaws.com/openai/v1&quot;,
-    api_key=provide_token(region=REGION),
-)
-
-response = client.chat.completions.create(
-    model=PROFILE_ID,
-    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: PROMPT}],
-    max_completion_tokens=256,
-)
-
-log.info(&quot;Called %s from %s&quot;, PROFILE_ID, REGION)
-log.info(&quot;Response:\n%s&quot;, response.choices[0].message.content)</code></pre>
-<p>迁移现有的 OpenAI 客户端时：</p>
-<ul><li>每个请求都要设置 model 参数，引用上一轮响应的请求也不例外。</li><li>只使用受支持的工具类型：<code>function</code>、<code>mcp</code>、<code>custom</code>、<code>namespace</code> 和 <code>tool_search</code>。</li><li>直接在你的客户端里配置推理配置文件 ID，而不是去查询 models 端点。</li></ul>
-<h3>配置 ChatGPT 桌面应用和 Codex CLI</h3>
-<p>ChatGPT 桌面应用和 Codex CLI 共用 <code>~/.codex/config.toml</code>，改一处两边都生效。两个内置的 Amazon Bedrock provider 中，只有 <code>amazon-bedrock-runtime</code> 接受推理配置文件。</p>
-<pre><code>model = &quot;global.openai.gpt-6-astra&quot;
-model_provider = &quot;amazon-bedrock-runtime&quot;
-[model_providers.amazon-bedrock-runtime.aws]
-region = &quot;ap-southeast-1&quot;</code></pre>
-<p>走 SigV4 签名就不存在要轮换的密钥。若不是默认 profile，加上 <code>profile = &quot;&lt;your-profile&gt;&quot;</code>；<code>region</code> 要显式设置，否则客户端会退回去读 <code>AWS_REGION</code>。换模型时把 <code>model</code> 换成另一个配置文件 ID。</p>
-<p>Codex 对这几个配置文件报出 272,000 token 的上下文窗口，这是它自带的数值，不是服务上限，可以用 <code>model_context_window</code> 调高。这项配置需要 Codex CLI 0.148 或更高版本。</p>
-<p>应用里的结果见图 2。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-21759-2-1.png" alt="ChatGPT 桌面应用在 Amazon Bedrock 上运行 GPT-6 Astra。"></p>
-<p>图 2：ChatGPT 桌面应用在 Amazon Bedrock 上运行 GPT-6 Astra</p>
-<h2>安全与权限</h2>
-<p>Amazon Bedrock 提供多种针对推理的管控，这里涉及两项：AWS Identity and Access Management（IAM）策略决定哪些角色能调用哪些配置文件；服务控制策略（SCP）施加覆盖整个组织的管控，其中包含区域范围。本节讲清这两项，并说明请求数据会落在哪里。</p>
-<h3>全球跨区域推理的 IAM 权限</h3>
-<p>要通过全球跨区域推理配置文件调用这些模型中的任意一个，你的 IAM 策略需要四条 statement：</p>
-<ul><li>在源区域访问该推理配置文件以及 project/default 资源。</li><li>在源区域访问该基础模型，范围限定到这个推理配置文件。</li><li>该基础模型不绑定区域的 Amazon Resource Name（ARN），即 <code>arn:aws:bedrock:::foundation-model/openai.gpt-6-sol</code>，并把 <code>aws:RequestedRegion</code> 设为 <code>unspecified</code>，以放行跨区域路由。</li><li><code>bedrock:CallWithBearerToken</code>，用于 API key 鉴权。</li></ul>
-<p>下面这份 IAM 策略授予从 <code>ap-southeast-1</code> 通过全球跨区域推理调用 GPT-6 Sol 的权限。请把策略里的账户 ID 占位符换成你自己的 AWS 账户 ID，把 <code>ap-southeast-1</code> 换成你的源区域。</p>
-<pre><code>{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Sid&quot;: &quot;GrantGlobalCrisProfileAndProjectAccess&quot;,
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Action&quot;: [&quot;bedrock:InvokeModel&quot;],
-      &quot;Resource&quot;: [
-        &quot;arn:aws:bedrock:ap-southeast-1:&lt;ACCOUNT&gt;:inference-profile/global.openai.gpt-6-sol&quot;,
-        &quot;arn:aws:bedrock:ap-southeast-1:&lt;ACCOUNT&gt;:project/default&quot;
-      ],
-      &quot;Condition&quot;: {
-        &quot;StringEquals&quot;: { &quot;aws:RequestedRegion&quot;: &quot;ap-southeast-1&quot; }
-      }
-    },
-    {
-      &quot;Sid&quot;: &quot;GrantGlobalCrisInRegionModelAccess&quot;,
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Action&quot;: [&quot;bedrock:InvokeModel&quot;],
-      &quot;Resource&quot;: [&quot;arn:aws:bedrock:ap-southeast-1::foundation-model/openai.gpt-6-sol&quot;],
-      &quot;Condition&quot;: {
-        &quot;StringEquals&quot;: {
-          &quot;aws:RequestedRegion&quot;: &quot;ap-southeast-1&quot;,
-          &quot;bedrock:InferenceProfileArn&quot;: &quot;arn:aws:bedrock:ap-southeast-1:&lt;ACCOUNT&gt;:inference-profile/global.openai.gpt-6-sol&quot;
-        }
-      }
-    },
-    {
-      &quot;Sid&quot;: &quot;GrantGlobalCrisGlobalModelAccess&quot;,
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Action&quot;: [&quot;bedrock:InvokeModel&quot;],
-      &quot;Resource&quot;: [&quot;arn:aws:bedrock:::foundation-model/openai.gpt-6-sol&quot;],
-      &quot;Condition&quot;: {
-        &quot;StringEquals&quot;: {
-          &quot;aws:RequestedRegion&quot;: &quot;unspecified&quot;,
-          &quot;bedrock:InferenceProfileArn&quot;: &quot;arn:aws:bedrock:ap-southeast-1:&lt;ACCOUNT&gt;:inference-profile/global.openai.gpt-6-sol&quot;
-        }
-      }
-    },
-    {
-      &quot;Sid&quot;: &quot;AllowBearerTokenAuth&quot;,
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Action&quot;: [&quot;bedrock:CallWithBearerToken&quot;],
-      &quot;Resource&quot;: &quot;*&quot;
-    }
-  ]
-}</code></pre>
-<p>如果你使用流式输出（<code>converse_stream</code> 或 <code>stream=True</code>），在前三条 statement 的 Action 里补上 <code>bedrock:InvokeModelWithResponseStream</code>。Converse 按 <code>bedrock:InvokeModel</code> 鉴权。若你只用 SigV4 凭证调用 Converse，可以去掉第四条 statement。</p>
-<p>换模型时，把全文的 <code>openai.gpt-6-sol</code> 替换为 <code>openai.gpt-6-luna</code> 或 <code>openai.gpt-6-astra</code>。完整说明见<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/global-cross-region-inference.html">全球跨区域推理的 IAM 策略要求</a>。</p>
-<h3>全球跨区域推理的服务控制策略注意事项</h3>
-<p>全球跨区域推理的请求不带区域名。Amazon Bedrock 会把 <code>aws:RequestedRegion</code> 置为 <code>unspecified</code>，于是 SCP 里的区域允许列表会拒绝这类调用，而报错只点出策略类型，不说是哪一条策略。企业账户首次调用失败，原因常常在这里。</p>
-<p>做法不是放宽允许列表，而是把例外范围收窄。Amazon Bedrock 在鉴权时会填充 <code>bedrock:InferenceProfileArn</code> 条件键，因此 SCP 可以放行这几个配置文件，同时对其他所有调用保留区域管控。下面这条 SCP 就是这么做的。</p>
-<pre><code>{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Sid&quot;: &quot;DenyOutsideApprovedRegionsExceptBedrockInvoke&quot;,
-      &quot;Effect&quot;: &quot;Deny&quot;,
-      &quot;NotAction&quot;: [
-        &quot;iam:*&quot;, &quot;sts:*&quot;, &quot;organizations:*&quot;, &quot;account:*&quot;,
-        &quot;route53:*&quot;, &quot;cloudfront:*&quot;, &quot;waf:*&quot;, &quot;wafv2:*&quot;, &quot;shield:*&quot;,
-        &quot;support:*&quot;, &quot;trustedadvisor:*&quot;, &quot;health:*&quot;,
-        &quot;budgets:*&quot;, &quot;ce:*&quot;, &quot;cur:*&quot;, &quot;tax:*&quot;, &quot;billing:*&quot;,
-        &quot;bedrock:Invoke*&quot;
-      ],
-      &quot;Resource&quot;: &quot;*&quot;,
-      &quot;Condition&quot;: {
-        &quot;StringNotEquals&quot;: { &quot;aws:RequestedRegion&quot;: [&quot;ap-southeast-1&quot;] }
-      }
-    },
-    {
-      &quot;Sid&quot;: &quot;DenyBedrockInferenceOutsideApprovedRegionsUnlessCris&quot;,
-      &quot;Effect&quot;: &quot;Deny&quot;,
-      &quot;Action&quot;: [&quot;bedrock:Invoke*&quot;],
-      &quot;Resource&quot;: &quot;*&quot;,
-      &quot;Condition&quot;: {
-        &quot;StringNotEquals&quot;: { &quot;aws:RequestedRegion&quot;: [&quot;ap-southeast-1&quot;] },
-        &quot;ArnNotLike&quot;: {
-          &quot;bedrock:InferenceProfileArn&quot;: [
-            &quot;arn:aws:bedrock:*:*:inference-profile/global.*&quot;
-          ]
-        }
-      }
-    }
-  ]
-}</code></pre>
-<p>第一条 statement 对除 Amazon Bedrock 推理之外的所有服务强制执行你的区域允许列表。第二条在那些区域之外拒绝这项推理，除非请求走的是全球跨区域推理配置文件。地理区域配置文件（geographic profile）要把它们的前缀（例如 <code>inference-profile/us.*</code>）也加进 <code>ArnNotLike</code> 列表，因为地理区域的请求带着真实区域名。源区域要留在允许列表里，你所在组织用到的全局服务则加进 <code>NotAction</code>。</p>
-<p>更简单粗暴的替代办法是把 <code>unspecified</code> 加进现有允许列表，这行得通，但等于给所有其他服务开了同一个例外。现成的策略文件见 <a href="https://github.com/aws-samples/service-control-policy-examples/blob/main/Region-controls/Deny-access-to-AWS-based-on-the-requested-AWS-region-with-Bedrock-CRIS.json">aws-samples 的 service-control-policy-examples 仓库</a>。</p>
-<h3>数据保留与滥用检测</h3>
-<p>在自动化离线滥用检测中，被分类器标记的流量由 AWS 保留至多 30 天，并以程序方式处理。走跨区域推理时，这份保留发生在目标区域；对全球配置文件而言，目标区域就是部署该模型的任意受支持商业 AWS 区域。符合条件的客户可以通过自己的 AWS 客户团队申请完全的零数据保留。详见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/abuse-detection.html">Amazon Bedrock 滥用检测</a>和<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/data-retention.html">数据保留</a>。</p>
-<p>如果你的组织有数据驻留要求，请尽早和风险与合规团队沟通这件事。这五个国家的对应页面见 <a href="https://aws.amazon.com/financial-services/security-compliance/compliance-center/">AWS 金融服务合规中心</a>。与你的业务相关的要求该如何满足，建议另行获取你自己的合规意见。</p>
-<h2>配额管理</h2>
-<p><code>bedrock-runtime</code> 上的 GPT-6 配额以每分钟 token 数（TPM）计量，按你发起调用的源区域统计。输入 token 与缓存写入 token 按 1:1 计入，每个输出 token 消耗 10 个 token 的配额。例如一个 2,000 输入 token、1,000 输出 token 的请求，会从你的配额里扣掉 12,000 个 token。</p>
-<p>Amazon Bedrock 会预先按完整的 <code>max_tokens</code> 预留，所以要把 <code>max_tokens</code> 设得接近你预期的补全长度。同一份配额覆盖 <code>InvokeModel</code>、Converse、Responses 和 Chat Completions。请在源区域到 <a href="https://console.aws.amazon.com/servicequotas/">Service Quotas 控制台</a>查看并上调。上线生产环境前提前申请提额，并对 <code>AWS/Bedrock</code> 命名空间下的 <code>EstimatedTPMQuotaUsage</code> 设告警，阈值取你所分配额度的 70–80%。当前数值见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/quotas-token-burndown.html">Amazon Bedrock 中 token 如何计数</a>和 <a href="https://docs.aws.amazon.com/general/latest/gr/bedrock.html">Amazon Bedrock 端点与配额</a>。</p>
-<h2>监控与日志</h2>
-<p><strong>你的运维面始终留在源区域。</strong> Amazon CloudWatch 指标、AWS CloudTrail 事件、模型调用日志、配额核算和计费都留在你发起调用的区域。你按这个区域的费率付费，而不是处理请求的那个区域。</p>
-<p><strong>CloudTrail 记录每个请求在哪里被处理。</strong> 关于全球跨区域推理配置文件的目的地，AWS 文档给的是它的商业区域，并不逐一列举。<code>GetInferenceProfile</code> 返回的是不绑定区域的模型 ARN 和源区域的模型 ARN，而不是目的地列表。逐个请求的记录在源区域 CloudTrail 的 <code>additionalEventData.inferenceRegion</code> 里。该端点上的推理属于管理事件，默认就记录日志，不额外收费。CloudTrail 事件历史保留 90 天，要覆盖更长的时间就得建 trail 或启用模型调用日志。用下面这条命令取回 CloudTrail 事件。</p>
-<pre><code>aws cloudtrail lookup-events \
-  --region ap-southeast-1 \
-  --lookup-attributes AttributeKey=EventSource,AttributeValue=bedrock.amazonaws.com \
-  --start-time &lt;START&gt; \
-  --end-time &lt;END&gt; \
-  --max-results 1 \
-  --query 'Events[0].CloudTrailEvent' --output text | python3 -m json.tool</code></pre>
-<p>时间窗口要框在你刚发起的那次调用附近，因为 CloudTrail 投递有几分钟延迟。如果最近一条事件是失败的调用，它会带 <code>errorCode</code> 而没有 <code>inferenceRegion</code>。这时把 <code>--max-results</code> 调大，挑一条不含 <code>errorCode</code> 的事件。</p>
-<pre><code>{
-  &quot;eventName&quot;: &quot;Converse&quot;,
-  &quot;eventSource&quot;: &quot;bedrock.amazonaws.com&quot;,
-  &quot;awsRegion&quot;: &quot;ap-southeast-1&quot;,
-  &quot;managementEvent&quot;: true,
-  &quot;requestParameters&quot;: {
-    &quot;modelId&quot;: &quot;global.openai.gpt-6-sol&quot;,
-    &quot;inferenceConfig&quot;: { &quot;maxTokens&quot;: 1024 }
-  },
-  &quot;additionalEventData&quot;: {
-    &quot;inferenceRegion&quot;: &quot;us-east-1&quot;
-  }
-}</code></pre>
-<p><strong>指标与编码智能体用量都留在 CloudWatch。</strong> 开发者通过编码智能体使用 GPT-6 时，CloudWatch 的 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/coding-agents-insights.html">Coding Agent Insights</a> 会在 GenAI Observability 下提供现成的看板，按用户、团队和成本中心拆分 token 用量。这些智能体原生上报 OpenTelemetry 指标。Codex 的配置见<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/coding-agents-codex.html">为 OpenAI Codex 设置 OpenTelemetry</a>。</p>
-<h2>清理</h2>
-<p>本文新增了一份 IAM 策略，另视你的选择可能加了一条 SCP statement 和一个日志目的地。把你附加的 IAM 策略解除关联或删除；如果加了 SCP 条目，把它还原。如果你在 <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service</a>（Amazon S3）或 Amazon CloudWatch Logs 里创建了模型调用日志目的地，也要删掉，以免产生存储费用。全球跨区域推理配置文件是系统定义的，没有需要删除的东西。</p>
-<h2>总结</h2>
-<p>本文演示了如何在 <code>bedrock-runtime</code> 上通过全球跨区域推理，从五个亚太源区域调用 GPT-6 Sol 和 GPT-6 Luna，以及从亚太地区（新加坡）调用 GPT-6 Astra。把全球跨区域推理配置文件 ID 作为 <code>model</code> 参数传入，再按本文配好 IAM 策略和 SCP 例外即可。同一个端点也承载 OpenAI 兼容 API，已有的 OpenAI 集成改一个 base URL 和一把密钥就能迁过来。</p>
-<p>上手做法是附加本文的 IAM 策略，通过 <code>global.openai.gpt-6-sol</code> 发出第一个请求。按 10 倍消耗速率估算你的每分钟 token 配额，并在 CloudTrail 里确认调用记录中出现了 <code>additionalEventData.inferenceRegion</code>。</p>
-<p>更多信息见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html">Amazon Bedrock User Guide</a>、<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">用跨区域推理把模型推理请求路由到各个 AWS 区域</a>和 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a>。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>在 Amazon SageMaker AI 上使用 llama.cpp 部署决策模型</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/deploy-decision-models-with-llama-cpp-on-amazon-sagemaker-ai/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/deploy-decision-models-with-llama-cpp-on-amazon-sagemaker-ai/</guid>
-      <pubDate>Mon, 12 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Deploy decision models with llama.cpp on Amazon SageMaker AI</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>用 llama.cpp 在 Amazon SageMaker AI 上部署决策模型</h1>
-<p>需要路由请求、选择智能体动作或判定策略结果的应用，往往要的是一组固定选项上的得分，而不是自由生成的文本。用 <a href="https://github.com/ggml-org/llama.cpp">llama.cpp</a>把这些决策模型部署到 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html">Amazon SageMaker AI</a>，就有一条托管路径，可以在 CPU 或 GPU 基础设施上服务量化后的模型。</p>
-<p>本文延续一个系列，主题是面向生成式 AI 推理的专用 AWS Deep Learning Container（DLC）。之前的文章写过 <a href="https://aws.amazon.com/blogs/machine-learning/speaker-labeled-transcription-with-whisperx-on-sagemaker-ai/">WhisperX</a>、<a href="https://aws.amazon.com/blogs/machine-learning/build-real-time-voice-applications-with-vllm-omni-on-sagemaker-ai-part-1/">vLLM-Omni —— 第 1 部分</a>和 <a href="https://aws.amazon.com/blogs/machine-learning/generate-images-and-video-with-vllm-omni-on-sagemaker-ai-part-2/">vLLM-Omni —— 第 2 部分</a>。</p>
-<p>在本文里，你先用 <a href="https://aws.github.io/deep-learning-containers/llama-cpp/">AWS DLC for llama.cpp</a>，通过 SageMaker AI 的 <code>InvokeEndpoint</code> 提供 OpenAI 兼容的 chat completions。随后用 <a href="https://github.com/TheoLeeCJ/SemIf-OpenJev">SemIf</a>（原名 OpenJev）扩展同一个运行时，它会在声明好的选项上直接返回概率，不需要解码出答案 token。配套的<a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/tree/main/03-features/semif-decision-model">代码示例</a>给出了 CPU 和 GPU 两种部署选项。</p>
-<h2>方案概览</h2>
-<p>图 1 展示从同一个打包模型出发的两条部署路径。文本生成路径使用 AWS DLC for llama.cpp，通过 OpenAI 兼容 API 返回生成的响应。结构化决策路径则构建一个子镜像，用 SemIf 适配器替换默认服务器，返回各个已声明选项的概率。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-22079-1.png" alt="一个应用调用 Amazon SageMaker AI 实时端点：既可以用 AWS 面向 llama.cpp 的 Deep Learning Container 返回生成文本，也可以用 SemIf 子镜像返回选项概率。两种服务方式都能跑在 CPU 或 GPU 上。"></p>
-<p>图 1：按你的负载对 API 和延迟的要求，选择在 CPU 或 GPU 上运行 AWS DLC for llama.cpp 或 SemIf 子镜像</p>
-<p>标准路径下，把模型打包成 <code>model.tar.gz</code> 放到 <a href="https://aws.amazon.com/s3/">Amazon Simple Storage Service（Amazon S3）</a>里，然后直接引用已发布的 DLC 镜像。容器会找到 <code>/opt/ml/model</code> 下的第一个 <code>.gguf</code> 文件，把 <code>POST /invocations</code> 映射到 <code>llama-server</code> 的 <code>/v1/chat/completions</code>，并把 <code>SM_LLAMA_CPP_*</code> 环境变量转成 llama.cpp 的启动参数。</p>
-<p><code>llama-server</code> 的 HTTP API 并不暴露 SemIf 要用的末位 logits 和状态操作。因此结构化决策路径改用 <a href="https://aws.amazon.com/codebuild/">AWS CodeBuild</a>构建一个子镜像，并存进 <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry（Amazon ECR）</a>。子镜像保留 DLC 编译好的 CPU 或 CUDA 库，同时把入口点换成一个兼容 SageMaker 的适配器。</p>
-<h2>理解输入与输出 schema</h2>
-<p>AWS DLC for llama.cpp 接受 OpenAI Chat Completions schema。请求里发一个带 <code>role</code> 和 <code>content</code> 的 <code>messages</code> 数组，再加上 <code>max_tokens</code>、<code>stream</code> 这类生成控制参数：</p>
-<pre><code>{
-  &quot;messages&quot;: [
-    {
-      &quot;role&quot;: &quot;user&quot;,
-      &quot;content&quot;: &quot;A customer cannot receive a password reset email. Reply with the best support queue.&quot;
-    }
-  ],
-  &quot;max_tokens&quot;: 64,
-  &quot;stream&quot;: false
-}</code></pre>
-<p>响应使用 OpenAI 兼容的 <code>choices</code> 数组，生成的文本从 <code>choices[0].message.content</code> 读取。</p>
-<p>SemIf 用的是一套受约束的决策 schema，而不是 chat messages。请求里包含调用方定义的 ID、非结构化的状态、一个问题，以及一个有序的允许选项列表：</p>
-<pre><code>{
-  &quot;decision&quot;: {
-    &quot;id&quot;: &quot;support-route&quot;,
-    &quot;state&quot;: &quot;The customer cannot receive a password reset email.&quot;,
-    &quot;question&quot;: &quot;Which queue should handle this request?&quot;,
-    &quot;options&quot;: [
-      {&quot;id&quot;: &quot;account_access&quot;, &quot;description&quot;: &quot;Account access support.&quot;},
-      {&quot;id&quot;: &quot;billing&quot;, &quot;description&quot;: &quot;Billing support.&quot;}
-    ]
-  }
-}</code></pre>
-<p>响应按同样的顺序返回 <code>option_ids</code>、<code>probabilities</code> 和原始的 <code>option_logits</code>，另外附上提示、耗时以及固定了模型版本的元数据。有了稳定的选项 ID，你的应用就能施加阈值、回退和策略校验，而不必去解析生成出来的那段文字。</p>
-<p>SemIf 属于更宽泛的一类决策模型：从非结构化状态出发，为应用自定义的结果打分。其他实现还包括 <a href="https://docs.typesafe.ai/introduction">Jev</a>，即 TypeSafe 的决策模型与 <code>/v1/systemone</code> API；<a href="https://github.com/jaredpalmer/kev">Kev</a>，一个以兼容 TypeSafe API 为设计目标的模型服务器；以及 <a href="https://github.com/strands-labs/strands-decider">Strands Decider 2B</a>，一个为智能体工作流量身构建、输出经过校准的模型。</p>
-<h2>选对决策工作流</h2>
-<p>当你的应用在请求时才确定允许的选项，并且需要模型去理解非结构化上下文时，适合用这个模式。例子包括把工单路由到某个队列、从已知取值集合里抽取一个值、给事件定优先级、校验策略结果，或者挑选智能体的动作。鉴权和确定性的业务规则要留在模型外面；把模型概率当作运营上的置信度之前，先验证它们。</p>
-<p>需要通过 <code>InvokeEndpoint</code> 拿到 OpenAI 兼容的 chat completions 时，就用标准的 SageMaker AI 文本生成路径。SageMaker AI 镜像把 <code>POST /invocations</code> 映射到 <code>llama-server</code> 的 <code>/v1/chat/completions</code> 端点。只有当应用需要这套接口给不了的行为时才去构建子镜像，比如 SemIf 那种直接访问 logits 和状态的用法。</p>
-<p>去掉答案 token 的生成本身并不省掉模型推理。SemIf 读取末位 logits 之前，模型仍然要处理完整的状态、问题和选项描述。提示要写得聚焦；投产之前，用你应用里已经标注好的决策来评估所选模型。</p>
-<h2>按你的延迟与质量目标调优</h2>
-<p>下面的基准测试针对的是 SemIf 扩展，不是文本生成端点。模型规模、量化方式、提示长度、运行时以及 CPU 线程数，都会影响每一次决策。为了量化这些取舍，我们把同一批 231 个公开的 <a href="https://github.com/fstandhartinger/jevbench">JevBench</a>任务，串行发送给一个 CPU 端点和一个 GPU 端点。</p>
-<table><thead><tr><th><strong>配置</strong></th><th><strong>AWS DLC for llama.cpp</strong></th><th><strong>有效响应</strong></th><th><strong>准确率</strong></th><th><strong>客户端 p50</strong></th><th><strong>客户端 p95</strong></th></tr></thead><tbody><tr><td>Qwen3.5-4B <code>Q4_K_M</code>、<code>ml.c6i.8xlarge</code>、32 线程</td><td><a href="https://aws.github.io/deep-learning-containers/llama-cpp/">llama-cpp:server-sagemaker-cpu-v1</a></td><td>231/231</td><td>179/231（77.5%）</td><td>1.715 秒</td><td>19.291 秒</td></tr><tr><td>Qwen3.5-4B <code>Q4_K_M</code>、<code>ml.g6e.xlarge</code>、GPU 全量 offload</td><td><a href="https://aws.github.io/deep-learning-containers/llama-cpp/">llama-cpp:server-sagemaker-cuda-v1</a></td><td>231/231</td><td>180/231（77.9%）</td><td>0.352 秒</td><td>0.599 秒</td></tr></tbody></table>
-<p>与 CPU 配置相比，GPU 端点在 p50 上快 4.9 倍，在 p95 上快 32.2 倍。示例用上了 SageMaker AI 的实例池功能，按优先级列出兼容的 GPU 实例类型，首选类型不可用时 SageMaker 可以改选其他类型。这个池的顺序是 <code>g6e</code>、<code>g6</code>、<code>g5</code>、<code>g4dn</code>。SageMaker 选中了 <code>ml.g6e.xlarge</code>，启动日志确认 llama.cpp 把全部 34 层模型都 offload 到了 NVIDIA L40S 上。CPU 镜像和 GPU 镜像用的是不同的 llama.cpp 构建，在 6 道较难的题目上给出了不同的预测。准确率只差一个答案，应当看作运行时的波动，而不是 GPU offload 能提升模型质量的证据。</p>
-<p>更小的模型能把中位延迟降下来，但 2B 和 0.8B 候选的准确率只有 66.7% 和 58.4%。因此示例仍把 4B 的 <code>Q4_K_M</code> 模型作为质量优先的默认选择。这些测量包含网络延迟，不构成服务承诺。</p>
-<p>要用你自己的决策集，对完整的模型与基础设施配置做基准测试。后台、离线、吞吐量不大这类对延迟不敏感、能容忍秒级响应时间的负载用 CPU；交互式决策、长提示，或对尾部延迟要求苛刻的负载用 GPU。状态和选项描述要简练，共享同一状态的决策合并进一个请求，并发靠扩端点实例来扛。共享状态的打分能复用公共的提示前缀，而适配器宁可返回可重试的 HTTP <code>503</code> 响应，也不让它那个有状态的 llama.cpp 上下文外面堆出无界的队列。</p>
-<h2>前置条件</h2>
-<p>你需要：</p>
-<ul><li>一个 AWS 账户，以及部署所在 AWS 区域里的一个 S3 bucket。</li><li>Python 3.10 或更高版本、Git，以及 AWS Command Line Interface（AWS CLI）。</li><li>一个用途专用的 CodeBuild 服务角色，供可选的 SemIf 扩展使用。</li><li>一个供 SageMaker AI 扮演的 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management（IAM）</a>角色。</li><li>针对 SageMaker AI、Amazon ECR、Amazon S3、CodeBuild、IAM pass-role 操作，以及 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html">Amazon CloudWatch Logs</a>的权限。</li><li>x86 CPU 或 NVIDIA GPU 这类兼容实例的 SageMaker 实时端点配额。</li></ul>
-<p>文本生成示例使用 CPU DLC 和一个固定的 CPU 实例。SemIf 扩展仍以 CPU 为默认，服务那些对延迟不敏感的负载，同时提供一个可选的 CUDA 镜像，支持有序的实例池。创建端点前请先看 <a href="https://aws.amazon.com/sagemaker/ai/pricing/">SageMaker AI 定价</a>。</p>
-<h2>部署决策模型并用 SemIf 扩展</h2>
-<p>按下面的步骤部署标准的文本生成端点，然后构建可选的 SemIf 扩展，在 CPU 或 GPU 上做结构化决策。</p>
-<ul><li><strong>克隆代码示例并安装它的依赖。</strong>  <code>git clone https://github.com/aws-samples/sagemaker-genai-hosting-examples.git cd sagemaker-genai-hosting-examples/03-features/semif-decision-model python3 -m venv .venv . .venv/bin/activate python3 -m pip install -r deploy/requirements.txt</code></li><li><strong>按你的账户设置部署取值。</strong>  <code>export AWS_REGION=&quot;&lt;your-region&gt;&quot; export ARTIFACT_BUCKET=amzn-s3-demo-semif-artifacts export CODEBUILD_ROLE_ARN=arn:aws:iam::111122223333:role/semif-codebuild-role export SAGEMAKER_ROLE_ARN=arn:aws:iam::111122223333:role/semif-sagemaker-role export STANDARD_ENDPOINT_NAME=llamacpp-gguf export SEMIF_ENDPOINT_NAME=semif-decision-workflows</code></li><li><strong>用 CodeBuild 打包指定版本的 GGUF 模型和 tokenizer。</strong>  <code>python deploy/prepare_model_build.py \ --region &quot;$AWS_REGION&quot; \ --bucket &quot;$ARTIFACT_BUCKET&quot; \ --codebuild-role-arn &quot;$CODEBUILD_ROLE_ARN&quot; \ --model-s3-uri &quot;s3://$ARTIFACT_BUCKET/semif-llamacpp/model.tar.gz&quot;</code>  等返回的 build ID 进入 <code>SUCCEEDED</code> 状态。构建会把源版本和校验和记录到 <code>model-manifest.json</code> 里，一旦 GGUF 的校验和与验证过的值不一致就停止。</li><li><strong>用 AWS DLC for llama.cpp 部署 GGUF 模型。</strong> 从 <a href="https://aws.github.io/deep-learning-containers/llama-cpp/">AWS DLC for llama.cpp 文档</a>里取出一个按摘要固定的 <code>server-sagemaker-cpu-v1</code> 镜像，然后创建 SageMaker AI 模型、端点配置和端点：  <code>export STANDARD_IMAGE_URI=&quot;&lt;published-llama-cpp-cpu-image&gt;@sha256:&lt;digest&gt;&quot; python deploy/deploy_standard_endpoint.py \ --region &quot;$AWS_REGION&quot; \ --image-uri &quot;$STANDARD_IMAGE_URI&quot; \ --model-data-url &quot;s3://$ARTIFACT_BUCKET/semif-llamacpp/model.tar.gz&quot; \ --role-arn &quot;$SAGEMAKER_ROLE_ARN&quot; \ --instance-type ml.c6i.2xlarge \ --name &quot;$STANDARD_ENDPOINT_NAME&quot;</code>  请选择 <code>server-sagemaker-cpu-v1</code> 或 <code>server-sagemaker-cuda-v1</code> 镜像，而不是对应的 EC2 镜像。SageMaker AI 镜像实现了 <code>/ping</code> 和 <code>/invocations</code> 的容器契约，并把调用负载映射到 chat completions。本演练通过 Amazon S3 里的 SageMaker AI 模型工件来提供 GGUF 模型。另一种做法是配置 <code>SM_LLAMA_CPP_HF_REPO</code> 和 <code>SM_LLAMA_CPP_HF_FILE</code>，在端点有网络出口时从 Hugging Face 下载 GGUF 文件。这条路径不需要 Dockerfile，也不需要 ECR 仓库。等端点进入 <code>InService</code>，再发一个 OpenAI 兼容的聊天请求：  <code>python deploy/invoke_standard_endpoint.py \ --region &quot;$AWS_REGION&quot; \ --endpoint-name &quot;$STANDARD_ENDPOINT_NAME&quot;</code></li><li><strong>构建可选的 SemIf 子镜像，并取到它不可变的摘要。</strong> CPU 用：  <code>python deploy/prepare_build.py \ --region &quot;$AWS_REGION&quot; \ --bucket &quot;$ARTIFACT_BUCKET&quot; \ --codebuild-role-arn &quot;$CODEBUILD_ROLE_ARN&quot;</code>  GPU 则改为构建 CUDA 子镜像：  <code>python deploy/prepare_build.py \ --region &quot;$AWS_REGION&quot; \ --bucket &quot;$ARTIFACT_BUCKET&quot; \ --codebuild-role-arn &quot;$CODEBUILD_ROLE_ARN&quot; \ --dockerfile Dockerfile.gpu \ --image-tag &quot;gpu-$(date +%Y%m%d%H%M%S)&quot;</code>  构建成功后，拼出不可变的镜像 URI：  <code>ECR_REPOSITORY_URI=$(aws ecr describe-repositories \ --region &quot;$AWS_REGION&quot; \ --repository-names semif-llamacpp-dlc \ --query 'repositories[0].repositoryUri' \ --output text) IMAGE_DIGEST=$(aws ecr describe-images \ --region &quot;$AWS_REGION&quot; \ --repository-name semif-llamacpp-dlc \ --query 'sort_by(imageDetails,&amp;imagePushedAt)[-1].imageDigest' \ --output text) export IMAGE_URI=&quot;${ECR_REPOSITORY_URI}@${IMAGE_DIGEST}&quot;</code>  部署脚本会拒绝可变的镜像 tag。</li><li><strong>部署 SemIf 端点。</strong> CPU 配置用的是固定实例类型：  <code>python deploy/deploy_endpoint.py \ --region &quot;$AWS_REGION&quot; \ --image-uri &quot;$IMAGE_URI&quot; \ --model-data-url &quot;s3://$ARTIFACT_BUCKET/semif-llamacpp/model.tar.gz&quot; \ --role-arn &quot;$SAGEMAKER_ROLE_ARN&quot; \ --instance-type ml.c6i.8xlarge \ --threads 32 \ --name &quot;$SEMIF_ENDPOINT_NAME&quot;</code>  等返回的端点名进入 <code>InService</code>。这条路径会设 <code>n_gpu_layers=0</code>。适配器围绕一个有状态的 llama.cpp 上下文把打分串行化，所以要先测量自己的负载，再用端点实例横向扩容，不要假定一个容器内部能并行打分。GPU 镜像需要提供有序的实例池，并要求 offload 整个模型：  <code>python deploy/deploy_endpoint.py \ --region &quot;$AWS_REGION&quot; \ --image-uri &quot;$IMAGE_URI&quot; \ --model-data-url &quot;s3://$ARTIFACT_BUCKET/semif-llamacpp/model.tar.gz&quot; \ --role-arn &quot;$SAGEMAKER_ROLE_ARN&quot; \ --instance-pool ml.g6e.xlarge \ --instance-pool ml.g6.2xlarge \ --instance-pool ml.g5.2xlarge \ --instance-pool ml.g4dn.2xlarge \ --gpu-layers=-1 \ --provision-timeout 1200 \ --name &quot;$SEMIF_ENDPOINT_NAME&quot;</code>  实例池是按顺序回退的放置选择，不是推理层的负载均衡，SageMaker 只为该变体选出一种可用的类型。SageMaker AI 逐个尝试池中类型期间，端点创建可能耗时更久。要去启动日志里确认选中的 GPU，以及所有模型层都已 offload 的那条确认信息。</li><li><strong>用示例决策调用 SemIf 端点。</strong> 请求为每个允许的选项声明了稳定的 ID：  <code>{ &quot;decision&quot;: { &quot;id&quot;: &quot;support-route&quot;, &quot;state&quot;: &quot;Customer asks to reset a forgotten password and says the reset email never arrived.&quot;, &quot;question&quot;: &quot;Which queue should handle this request?&quot;, &quot;options&quot;: [ {&quot;id&quot;: &quot;account_access&quot;, &quot;description&quot;: &quot;Account access and authentication support.&quot;}, {&quot;id&quot;: &quot;billing&quot;, &quot;description&quot;: &quot;Billing and payment support.&quot;}, {&quot;id&quot;: &quot;sales&quot;, &quot;description&quot;: &quot;Sales and product evaluation.&quot;} ] } }</code>     <code>python deploy/invoke_endpoint.py \ --region &quot;$AWS_REGION&quot; \ --endpoint-name &quot;$SEMIF_ENDPOINT_NAME&quot;</code>  响应保持了选项顺序，并给出条件概率、原始 logits、token 与提示元数据，以及所固定模型的标识：  <code>{ &quot;result&quot;: { &quot;id&quot;: &quot;support-route&quot;, &quot;option_ids&quot;: [&quot;account_access&quot;, &quot;billing&quot;, &quot;sales&quot;], &quot;probabilities&quot;: [0.99996, 0.00003, 0.00001], &quot;option_logits&quot;: [28.47, 17.92, 17.04], &quot;prompt_sha256&quot;: &quot;016267542103ab91422c425d2234ec7e1b9aef77f9d3e481b96db2de7cca470a&quot;, &quot;readout&quot;: &quot;quantized last-position logits restricted to declared answer slots; no generated tokens&quot; } }</code>  阈值和回退要放在应用层。不要把模型的决策当作鉴权的替代。</li></ul>
-<h2>清理</h2>
-<p>删除 SageMaker AI 端点、端点配置和模型：</p>
-<pre><code>python deploy/cleanup_endpoint.py \
-  --region &quot;$AWS_REGION&quot; \
-  --name &quot;$STANDARD_ENDPOINT_NAME&quot;
-
-python deploy/cleanup_endpoint.py \
-  --region &quot;$AWS_REGION&quot; \
-  --name &quot;$SEMIF_ENDPOINT_NAME&quot;</code></pre>
-<p>脚本只删除显式点名的那些 SageMaker AI 资源。不再需要时，请删除 CodeBuild 项目、ECR 仓库、Amazon S3 中的模型与源对象、日志，以及那些专用 IAM 角色。</p>
-<h2>结论</h2>
-<p>AWS DLC for llama.cpp 提供了一个托管底座，让你在 SageMaker AI 的 CPU 和 GPU 实例上服务决策模型。它可以从 SageMaker AI 的模型工件或配置好的 Hugging Face 仓库加载 GGUF 模型，然后通过 <code>InvokeEndpoint</code> 提供 OpenAI 兼容的 chat completions，不需要自定义容器。当应用需要直接访问 logits 和模型状态操作时，可以用 SemIf 适配器扩展这个 DLC。对延迟不敏感的负载选 CPU；当提示 prefill 和尾部延迟会影响应用体验时选 GPU。</p>
-<p>请查看<a href="https://github.com/aws-samples/sagemaker-genai-hosting-examples/tree/main/03-features/semif-decision-model">代码示例</a>、<a href="https://aws.github.io/deep-learning-containers/llama-cpp/">AWS DLC for llama.cpp 文档</a>和 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-inference-code.html">SageMaker AI 自定义推理容器契约</a>，据此把部署改造成适合你自己负载的形态。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>使用 Ray LLM Deep Learning Containers 运行多节点推理工作负载</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/run-multi-node-inference-workloads-using-ray-llm-deep-learning-containers/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/run-multi-node-inference-workloads-using-ray-llm-deep-learning-containers/</guid>
-      <pubDate>Mon, 12 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Run multi-node inference workloads using Ray LLM Deep Learning Containers</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 Ray LLM Deep Learning Containers 运行多节点推理工作负载</h1>
-<p>本文演示如何用多节点 <a href="https://aws.github.io/deep-learning-containers/ray-llm/">Ray LLM Deep Learning Containers</a>，把一个大语言模型（LLM）部署到 Amazon Elastic Kubernetes Service (Amazon EKS) 的两个 GPU 节点上。prefill 节点和 decode 节点各自独立，共同藏在一个兼容 OpenAI 的端点后面。这种多节点布局在张量并行、流水线并行、数据并行，以及 prefill/decode 分离这类推理工作负载中都很常见。在<a href="https://aws.amazon.com/blogs/machine-learning/simplify-and-support-your-torchserve-workloads-using-ray-serve-deep-learning-containers/">上一篇文章</a>中，我们介绍了 <a href="https://aws.github.io/deep-learning-containers/ray/">Ray Serve DLC</a>，并用它在单个 GPU 节点上把一个小模型挂到一个 HTTP 端点后面。那样你就有了一个可用的推理端点，而容器会保证 GPU 技术栈（包括 CUDA 库）彼此兼容，你不需要写任何样板代码。</p>
-<p><a href="https://docs.ray.io/en/latest/ray-overview/index.html">Ray</a> 是一个分布式计算框架，因此 Ray Serve 的部署可以横跨多个节点。客户使用多节点 Ray Serve 有几种不同的原因。有人要跑 foundation model 或开放权重模型，而单张 GPU 装不下；有人需要的吞吐超过一个副本能给出的量；还有人想把推理的两个阶段拆开来提升性能。每一种情况下，客户都得自己把依赖链搭起来：为 GPU 技术栈挑选彼此兼容的库，并在某个组件偏离对齐时排查问题。这些都是没有差异化的工作，把本该用来交付模型的时间和精力占走了。</p>
-<p><a href="https://aws.amazon.com/ai/machine-learning/containers/">AWS Deep Learning Containers</a>（DLC）长期就在解决训练和推理负载中的这类问题。DLC 是预构建、经过性能优化的 Docker 镜像，把一个框架、它的依赖以及 GPU 技术栈打包成一套经过测试、打过补丁的组合，你拉下来就能直接用。随着面向多节点部署的 <a href="https://aws.github.io/deep-learning-containers/ray-llm/">Ray LLM DLC</a> 发布，同样的思路现在延伸到了多节点推理。你拿到的是一个专为在 HTTP 端点后面服务模型而构建的容器，由 AWS 维护和测试，完整的推理技术栈已经组装到位。</p>
-<p>本文走一遍如何用多节点 Ray LLM DLC 实现多节点分离式推理：在 <a href="https://aws.amazon.com/eks/">Amazon EKS</a> 上把单个大语言模型部署到两个 GPU 节点，让它们在同一个端点后面协同工作。其中一个 GPU 节点处理 prefill 阶段，另一个 GPU 节点处理 decode 阶段。把两个阶段分开，就能避免计算密集的长 prompt 拖慢已经在进行的请求的 token 生成。这种方式很适合 Retrieval Augmented Generation (RAG)、文档摘要、智能体应用这类工作负载。我们使用的多节点 Ray LLM DLC 自带 <a href="https://docs.ray.io/en/latest/serve/llm/index.html">Ray Serve LLM</a>、<a href="https://github.com/ai-dynamo/nixl">NVIDIA Inference Transfer Library (NIXL)</a> 和 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html">Elastic Fabric Adapter (EFA)</a> 技术栈，并且直接暴露一个兼容 OpenAI 的 API，不需要应用代码。完整代码在<a href="https://github.com/aws-samples/sample-aws-deep-learning-containers/tree/main/inference/ray-serve/ray-serve-multi-node">配套仓库</a>中。</p>
-<h2>为什么需要 prefill/decode（PD）分离</h2>
-<p>LLM 推理有两个性质不同的阶段。<strong>Prefill</strong> 并行处理整个输入 prompt，并构建 key-value（KV）缓存。<strong>Decode</strong> 随后一次生成一个 token，读取并延展这份缓存。Prefill 受算力约束，decode 受内存带宽约束。两个阶段共用一张 GPU 时，它们争抢同一批资源，突发而计算密集的 prefill 会干扰平稳、对延迟敏感的 decode。把 prefill 阶段与 decode 阶段分开，你就能为每个阶段分别选择硬件和服务属性，从而在规模化时改善整体性能。</p>
-<p>PD 分离把这两个阶段放到不同节点上，于是每个阶段都在不干扰另一个的前提下运行，并且可以各自独立扩缩。代价是，prefill 期间构建的 KV 缓存必须交接给 decode 节点，而这次交接要足够快，快到不至于把收益抵掉。这也正是节点之间的互联重要的原因。</p>
-<h2>Ray LLM DLC 提供了什么</h2>
-<p>AWS DLC 是预构建、经过性能优化的 Docker 镜像，把一个框架、它的依赖以及 GPU 技术栈打包成一套经过测试、打过补丁的组合，你拉下来就能直接用。每次发布前，所有组件都会放在一起验证，所以 CUDA 运行时、框架和服务层之间不会出现版本漂移。安全补丁在构建时就已打上。</p>
-<p><a href="https://aws.github.io/deep-learning-containers/ray-llm/">Ray LLM DLC</a> 把这一点延伸到了分布式 LLM 服务。它自带 <a href="https://github.com/vllm-project/vllm">vLLM</a> 作为推理引擎、Ray Serve 的 HTTP 作为服务层、NIXL 用于节点之间的 KV 缓存传输，以及 EFA 技术栈（<a href="https://aws.amazon.com/hpc/efa/">libfabric</a> 和 <a href="https://github.com/aws/aws-ofi-nccl">aws-ofi-nccl</a>）用于节点间高带宽通信。由于 <a href="https://docs.ray.io/en/latest/serve/llm/index.html">Ray Serve LLM 库</a> 内置了应用构建器，整个服务应用就是一段 YAML。没有 handler 类，没有模型归档工具，也不需要自己构建镜像。只有一个辅助函数 <code>build_pd_openai_app</code>，它接收一份 prefill 配置和一份 decode 配置，在两者之间把 KV 缓存传输接好，对外呈现为一个兼容 OpenAI 的端点。</p>
-<h2>架构</h2>
-<p>下图展示了这套部署在 Amazon EKS 上的布局。用户请求到达 CPU 系统节点上的 Ray head，两个 GPU worker 节点分别运行模型的 prefill 和 decode 阶段。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/09/ML-22045-1.png" alt="架构图：用户请求到达 CPU 系统节点上的 Ray head，两个 GPU worker 节点在 Amazon EKS 上运行 prefill 和 decode 阶段"></p>
-<p>图 1：Amazon EKS 上的多节点推理架构，Ray head 位于 CPU 系统节点，prefill 和 decode 阶段位于两个 GPU worker 节点</p>
-<p>这套部署是一个位于 virtual private cloud（VPC）内的 EKS 集群。节点运行在私有子网中，出网流量经过 NAT Gateway。一个 CPU <strong>系统节点</strong>（m7i.xlarge）承载系统工作负载、<a href="https://docs.ray.io/en/latest/cluster/kubernetes/index.html">KubeRay</a> operator，以及纯 CPU 的 Ray head pod。两个 GPU <strong>worker 节点</strong>（g6.8xlarge）运行 Ray worker：一个服务 prefill 阶段，另一个服务 decode 阶段。两个节点都从 <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a> 拉取 Ray LLM DLC。</p>
-<p>KubeRay 监听你 apply 的 RayService，并自动完成 head 到 worker 的组网。Ray Serve 把 prefill 和 decode 这两个部署放到两个 GPU worker 上。KV 缓存经 NIXL 从 prefill worker 流向 decode worker，并通过 NIXL 的 libfabric 后端使用 EFA。GPU 节点组固定在单个可用区（AZ），因为 EFA 无法跨 AZ。</p>
-<h2>前提条件</h2>
-<p>要跟着本文操作，你需要：</p>
-<ul><li>一个已开通计费的 AWS 账户。</li><li>目标 Region 中有足够的服务配额，用于运行两台 g6.8xlarge 实例（至少 64 vCPU）。</li><li>已配置好凭证的 AWS <a href="https://aws.amazon.com/cli/">Command Line Interface (AWS CLI)</a>。</li><li>用于与 Kubernetes 集群控制面通信的 kubectl CLI。</li><li>用于在 EKS 上创建和管理集群的 eksctl CLI。</li><li>用于安装 KubeRay operator 的 helm（Kubernetes 的包管理器）。</li><li>用于渲染 manifest 的 envsubst 工具（GNU gettext 的一部分）。</li></ul>
-<p>用以下命令确认你的 AWS 凭证处于活动状态：</p>
-<pre><code>aws sts get-caller-identity</code></pre>
-<h2>使用预构建的应用对外提供推理</h2>
-<p>应用就是 <code>manifest/rayservice.yaml</code> 里的 <code>serveConfigV2</code> 代码块。它使用 <code>build_pd_openai_app</code>，该函数接收一份 <code>prefill_config</code> 和一份 <code>decode_config</code>，并把两者之间的 KV 缓存传输连起来：</p>
-<pre><code>applications:
-- name: qwen
-  import_path: ray.serve.llm:build_pd_openai_app # OpenAI-compatible PD app, built in
-  route_prefix: /
-  args:
-    prefill_config:
-      model_loading_config: { model_id: qwen3.5-9b, model_source: Qwen/Qwen3.5-9B }
-      engine_kwargs:
-        max_model_len: 4096
-        dtype: bfloat16
-        gpu_memory_utilization: 0.90
-        enforce_eager: true # Skip CUDA graph capture to reduce peak GPU memory
-      kv_transfer_config:
-        kv_connector: NixlConnector
-        kv_role: kv_both
-        engine_id: prefill
-        kv_connector_extra_config: { backends: [&quot;LIBFABRIC&quot;] }
-      deployment_config: { num_replicas: 1 }
-    decode_config:
-      model_loading_config: { model_id: qwen3.5-9b, model_source: Qwen/Qwen3.5-9B }
-      engine_kwargs:
-        max_model_len: 4096
-        dtype: bfloat16
-        gpu_memory_utilization: 0.90
-        enforce_eager: true
-      kv_transfer_config:
-        kv_connector: NixlConnector
-        kv_role: kv_both
-        engine_id: decode
-        kv_connector_extra_config: { backends: [&quot;LIBFABRIC&quot;] }
-      deployment_config: { num_replicas: 1 }</code></pre>
-<p>有几个设置承担了大部分工作。<code>max_model_len: 4096</code> 把上下文长度定成能让实测的 KV 缓存装进 GPU 的规模。<code>dtype: bfloat16</code> 和 <code>gpu_memory_utilization: 0.90</code> 分别设定精度，以及 vLLM 可以占走多少 VRAM。<code>enforce_eager: true</code> 跳过 CUDA graph 捕获，以降低 GPU 显存峰值（效果取决于模型和输入）。真正让分离生效的是 <code>kv_transfer_config</code>：两个阶段都用 <code>NixlConnector</code>、<code>kv_role: kv_both</code>，并各自用不同的 <code>engine_id</code>（一个是 prefill，另一个是 decode）。最关键的是 <code>kv_connector_extra_config: { backends: [&quot;LIBFABRIC&quot;] }</code> 这一行。少了它，NIXL 会退回 UCX，而 UCX 即便跑在 EFA 上也只有 TCP 的速度。</p>
-<p>manifest 剩下的部分在 <code>rayClusterConfig</code> 里，描述各个 pod。head pod 是纯 CPU 的（<code>num-gpus: &quot;0&quot;</code>），固定在系统节点组上。每个 worker pod 请求一张 GPU 和一个 EFA 接口（<code>nvidia.com/gpu: &quot;1&quot;, vpc.amazonaws.com/efa: &quot;1&quot;</code>），并通过 <code>nodeSelector: { role: gpu-worker }</code> 指向 GPU 节点。它以 <code>privileged: true</code> 运行，因为 NIXL 要把 CUDA 显存注册到 EFA 网卡上，光有 <code>IPC_LOCK</code> 能力并不够。worker 设置 <code>FI_PROVIDER=efa</code>，从 pod IP 读取 <code>VLLM_HOST_IP</code>，并挂载一块共享内存卷。内存上限设在远高于约 18 GiB checkpoint 的位置，这样操作系统的 page cache 就能把它留住。在 g6.8xlarge 上、采用上述缓存配置加载 Qwen3.5-9B 模型时，模型权重加载时间从大约 145 秒降到重启后的约 2 秒。</p>
-<h2>部署到 Amazon EKS</h2>
-<p>所有脚本共用同一个配置文件 <code>scripts/env.sh</code>。脚本里给出了 <code>CLUSTER_NAME</code>、<code>REGION</code>、<code>K8S_VERSION</code> 和 <code>NAMESPACE</code> 的默认值，其他默认值覆盖系统节点组与 GPU 节点组、KubeRay 版本以及模型。要在运行脚本前覆盖任何变量，先把该变量导出即可。</p>
-<p>从项目根目录出发，先设定一个基础目录，然后加载变量：</p>
-<pre><code>CURRENT_DIR=$(pwd)
-cd $CURRENT_DIR/ray-serve-multi-node/scripts
-source ./env.sh</code></pre>
-<h3>第 1 步：创建 EKS 集群</h3>
-<pre><code>./deploy_cluster.sh</code></pre>
-<p>这会创建 EKS 集群（VPC、OIDC provider、核心 add-on），以及一个运行系统工作负载、KubeRay operator 和 Ray head 的 CPU 系统节点组。节点运行在私有子网中，出网流量经过 NAT Gateway，集群子网放在提供该 GPU 实例类型的 AZ 里。脚本是幂等的，在全新环境上跑一次需要 15–20 分钟。</p>
-<h3>第 2 步：添加 GPU worker 节点</h3>
-<pre><code>./deploy_node_group.sh</code></pre>
-<p>这会创建 GPU 节点组：两台启用 EFA 的 g6.8xlarge 实例，固定在单个 AZ，并打上 <code>role=gpu-worker</code> 标签，好让 Ray worker 指向它们。启用 EFA 的同时也会安装 EFA device plugin，它在每个节点上通告 <code>vpc.amazonaws.com/efa</code>。这一步大约需要 5-20 分钟，首次运行通常更久。</p>
-<h3>第 3 步：安装 KubeRay operator</h3>
-<pre><code>./install_kuberay.sh</code></pre>
-<p>这会用 Helm 安装 KubeRay operator，并把它固定在系统节点组上，以便把 GPU 节点留给推理。KubeRay 会监听你接下来 apply 的 RayService，并自动完成 head 到 worker 的组网。这一步大约需要 1–2 分钟。</p>
-<h3>第 4 步：部署 RayService</h3>
-<pre><code>./deploy_ray_service.sh</code></pre>
-<p>这会先用 envsubst 按你的镜像、模型和命名变量渲染 <code>manifest/rayservice.yaml</code>，然后把它 apply 上去。KubeRay 创建 head 和两个 worker pod，Ray Serve LLM 接着拉起 prefill 和 decode 两个部署。脚本会等待 head 变为 Ready、两个 worker 都进入 Running，最后等待 Serve 应用报告 RUNNING。由于每个节点都要加载模型，这一步预计要几分钟。</p>
-<p>随时可以查看状态，包括每个 pod 落在了哪个节点上，以及可用的 GPU 容量：</p>
-<pre><code>./deploy_ray_service.sh status</code></pre>
-<h2>调用模型</h2>
-<p>Serve 应用健康之后，KubeRay 会创建一个稳定的 <code>&lt;rayservice-name&gt;-serve-svc</code> Service。向它做端口转发：</p>
-<pre><code>kubectl port-forward -n inference svc/ray-llm-serve-svc 8000:8000</code></pre>
-<p>由于 DLC 暴露的是兼容 OpenAI 的 API，你可以直接列出模型、发送标准的 chat-completion 请求，不需要自定义 schema：</p>
-<pre><code>curl --silent http://127.0.0.1:8000/v1/models
-curl --fail --silent --show-error \
-  --request POST &quot;http://127.0.0.1:8000/v1/chat/completions&quot; \
-  --header &quot;Content-Type: application/json&quot; \
-  --data '{
-    &quot;model&quot;: &quot;qwen3.5-9b&quot;,
-    &quot;messages&quot;: [
-      {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain the benefits of prefill/decode disaggregation.&quot;}
-    ],
-    &quot;max_tokens&quot;: 200,
-    &quot;temperature&quot;: 0.7
-  }'</code></pre>
-<h2>确认 EFA 确实在被使用</h2>
-<p>如果 NIXL 用不上 libfabric，它会退回 TCP 速度的传输方式，而且不会报错，所以值得确认它实际选了哪个后端。grep 一下 worker 日志：</p>
-<pre><code>for POD in $(kubectl get pods -n inference -l ray.io/node-type=worker \
-  -o jsonpath='{.items[*].metadata.name}'); do
-  kubectl exec -n inference &quot;$POD&quot; -c ray-worker -- \
-    grep -rhoE &quot;Backend (LIBFABRIC|UCX) was instantiated&quot; /tmp/ray/session_latest/logs/ 2&gt;/dev/null
-done | sort | uniq -c</code></pre>
-<p><code>deploy_node_group.sh</code> 在创建节点组时本来就会打印每个节点上的 <code>vpc.amazonaws.com/efa</code> 数量。要拿到一个跨节点带宽数字，DLC 自带一个预构建的 NVIDIA Collective Communications Library (NCCL) 基准程序，位于 <code>/usr/local/bin/all_reduce_perf</code>。</p>
-<h2>清理</h2>
-<p>为避免持续产生费用，请按相反的顺序拆除资源：</p>
-<pre><code>./delete_ray_service.sh # Remove the RayService
-./install_kuberay.sh cleanup # Uninstall the KubeRay operator
-./delete_node_group.sh # Remove the GPU node group
-./delete_cluster.sh # Delete the EKS cluster</code></pre>
-<h2>结论与后续步骤</h2>
-<p>你在两个 GPU 节点上用 prefill/decode 分离服务了同一个模型，而整个应用就是一段 YAML：没有 handler 代码，没有模型归档工具，也不用手工拼装 GPU 和 EFA 技术栈。多节点 Ray LLM DLC 提供了经过测试的推理技术栈，KubeRay 编排 Ray 集群，NIXL over EFA 在节点之间搬运 KV 缓存。你要做的是配置它，而不是构建它。</p>
-<p>运行多节点推理的常见模式包括张量并行和流水线并行（切分一个单台实例装不下的模型）、数据并行（复制模型以提高吞吐），以及 prefill/decode 分离（把推理的两个阶段拆到不同节点上）。</p>
-<p>接下来，你可以增加 decode 副本换取更高吞吐，改用更大的 GPU 实例配合张量或流水线并行来承载更大的模型，或者在同一套经过测试的基础镜像上为需要它的模型叠加额外的库。完整代码、当前的镜像 tag 列表，以及底层机制，请参见<a href="https://github.com/aws-samples/sample-aws-deep-learning-containers/tree/main/inference/ray-serve/ray-serve-multi-node">配套仓库</a>、<a href="https://aws.github.io/deep-learning-containers/reference/available_images/#ray-llm">Ray LLM DLC available images 页面</a>、<a href="https://docs.ray.io/en/latest/serve/llm/user-guides/prefill-decode.html">Ray Serve LLM prefill/decode 文档</a>和 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html">EFA 文档</a>。</p>
-<h2>关于作者</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>
