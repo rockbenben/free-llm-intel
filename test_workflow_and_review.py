@@ -10563,11 +10563,18 @@ class TestIndexCoverageIndependent(unittest.TestCase):
         for arch in sorted((repo / "llm-news").glob("*.md")):
             for art in crawler_llm_intel.parse_archived_articles(arch):
                 rows.append((arch.stem, art.url, art.zh_title or art.title, art.title))
+
+        def alias(s: str) -> str:
+            # 产出层的折叠键是「空白折叠 + casefold」（见 _dedup_same_title 的 aliases）；
+            # 守卫若按逐字比较，`Introducing The...` 与 `Introducing the...` 这类
+            # 大小写差异就会被误报成漏收（实测 Fireworks 旧/新 URL 同一篇）。
+            return re.sub(r"\s+", " ", s or "").strip().casefold()
+
         # 已索引行的「显示标题」与「英文原文」两个别名集合：产出层按标题折叠时
         # 两个别名任一命中即同一篇（见 _dedup_same_title 与 _rss_articles 的说明）。
-        indexed_disp = {(vid, disp) for vid, _u, disp, _en in rows if
-                        crawler_llm_intel._article_key(_u) in have}
-        indexed_en = {(vid, en) for vid, _u, _disp, en in rows
+        indexed_disp = {(vid, alias(disp)) for vid, _u, disp, _en in rows
+                        if disp and crawler_llm_intel._article_key(_u) in have}
+        indexed_en = {(vid, alias(en)) for vid, _u, _disp, en in rows
                       if en and crawler_llm_intel._article_key(_u) in have}
         bad = []
         for vid, url, disp, en in rows:
@@ -10575,7 +10582,7 @@ class TestIndexCoverageIndependent(unittest.TestCase):
                 continue
             if "#" in url and vid in crawler_llm_intel.NEWS_CANONICAL_ONLY_VENDORS:
                 continue                      # 这几家只收规范直链（源码里明写的口径）
-            if (vid, disp) in indexed_disp or (vid, en) in indexed_en:
+            if (vid, alias(disp)) in indexed_disp or (en and (vid, alias(en)) in indexed_en):
                 # 同标题（或同英文原文）的那条已在索引里 = 产出层的「两份真实来源」折叠。
                 # 成因 (c) 是 2026-10-15 实测补的：ai21 的 `spend-isnt-going-down-what-now/`
                 # 与 `…-gated/` 英文原文逐字相同，前一条因此不进索引——那是既定折叠，
@@ -10621,6 +10628,37 @@ class TestIndexCoverageIndependent(unittest.TestCase):
         self.assertTrue(bad, "删掉一条合法行后必须报出缺失，否则这条闸是空转")
         self.assertTrue(any(victim_disp[:12] in b for b in bad),
                         f"报告必须指名被删的那条（{victim_disp[:20]!r}）：{bad[:3]}")
+
+    def test_case_only_alias_explains_old_url_row(self):
+        """同一英文标题只有大小写差异、URL 不同 → 产出层已按标题折叠，守卫不能误报。"""
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            (root / "llm-news").mkdir(parents=True)
+            (root / "docs" / "feeds").mkdir(parents=True)
+            idx = {
+                "fields": ["title", "url", "vendor", "date", "original_title"],
+                "articles": [["Introducing the Index", "https://v.example/new",
+                              "vendor_a", "", "Introducing the Index"]],
+            }
+            (root / "docs" / "feeds" / "articles.json").write_text(
+                json.dumps(idx, ensure_ascii=False), encoding="utf-8", newline="\n")
+
+            def write_arch(old_title):
+                (root / "llm-news" / "vendor_a.md").write_text(
+                    "## 全部文章（共 2 篇）\n\n"
+                    f"1. [{old_title}](https://v.example/old)\n"
+                    "2. [Introducing the Index](https://v.example/new)\n",
+                    encoding="utf-8", newline="\n")
+
+            write_arch("Introducing The Index")
+            bad, n_index, n_arch = self._missing_without_explanation(root)
+            self.assertEqual(n_arch, 2)
+            self.assertEqual(n_index, 1)
+            self.assertEqual(bad, [], "大小写不同的同名条目已被产出层折叠，不该报漏收")
+            # 反面对照：真正不同的标题必须仍被报出，别把大小写折叠当万能解释。
+            write_arch("A Different Index")
+            bad, _, _ = self._missing_without_explanation(root)
+            self.assertTrue(any("A Different Index" in b for b in bad), bad)
 
 
 class TestEveryArchiveLineParses(unittest.TestCase):
