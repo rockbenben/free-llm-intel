@@ -2165,7 +2165,8 @@ def translation_qc_pair(root: Path, zh_rel: str, *, brand_patterns=()) -> dict:
     ec, zc = Counter(en_urls), Counter(zh_urls)
     extra, missing = zc - ec, ec - zc
     if extra:
-        hard.append(f"译文多出 {sum(extra.values())} 条链接（{', '.join(list(extra)[:3])}）")
+        hard.append(f"译文多出 {sum(extra.values())} 条链接"
+                    f"（{', '.join(list(extra)[:3])}；先核对是否站方新地址，英文源也会过时）")
     if missing:
         warn.append(f"英文源有 {sum(missing.values())} 条链接未出现在译文"
                     f"（{', '.join(list(missing)[:3])}）")
