@@ -836,8 +836,8 @@ tg beta endpoints rollout $TARGET_DEPLOYMENT_ID --canary \
 <h3>1. Tensor core 每次吃两倍 K</h3>
 <p>回顾一下：<code>tcgen05.mma</code> 在 MxNxK tile 上计算 C = A@B + C，每步沿 K 消费固定字节数。Blackwell 上这步是 32 字节，而 Vera Rubin 上可以提高到 64 字节。MMA 本身仍取相同周期数，所以双 K 让我们能把两倍的塞进同一个指令窗口。</p>
 <p>在 ThunderKittens 里，我们通过给现有 mma 操作的新模板参数表达这一点。</p>
-<pre><code>mma_ABt    (...);   // Blackwell 默认：32 字节 K 步
-mma_ABt&lt;64&gt;(...);   // Vera Rubin：64 字节 K 步</code></pre>
+<pre><code>mma_ABt    (...);   // Blackwell Default: 32-byte K step
+mma_ABt&lt;64&gt;(...);   // Vera Rubin: 64-byte K step</code></pre>
 <h3>2. Tensor memory 增长到 576 列</h3>
 <p>Blackwell 引入了 tensor memory 概念——一个 128 lane x 512 column x 32-bit 的空间，tensor core 可直接读写。Vera Rubin 上这个空间增到 576 列，额外提供 32 KiB 的 tensor memory。</p>
 <p>注意这些额外的列只能通过 <code>.exclusive</code> 限定符访问——PTX 9.4 新增，确保 SM 上只有一块活跃的 tensor memory 分配。非 exclusive 分配仍上限 512 且必须是 2 的幂。</p>
@@ -845,8 +845,8 @@ mma_ABt&lt;64&gt;(...);   // Vera Rubin：64 字节 K 步</code></pre>
 <pre><code>template&lt;int _nblocks_per_sm, int _ncta, bool _managed = true, bool _exclusive = false&gt;
 struct tensor_allocator { .... }
 
-tensor_allocator&lt;1, C::CLUSTER_SIZE, false&gt; tm; // Blackwell 默认：512 列
-tensor_allocator&lt;1, C::CLUSTER_SIZE, false, true&gt;  tm; // Rubin：最高 576 列</code></pre>
+tensor_allocator&lt;1, C::CLUSTER_SIZE, false&gt; tm; // Blackwell default: 512 columns
+tensor_allocator&lt;1, C::CLUSTER_SIZE, false, true&gt;  tm; // Rubin: Up to 576 columns</code></pre>
 <h3>3. 共享内存增长到 328 KiB</h3>
 <p>Hopper 和 Blackwell 提供 228 KiB 共享内存，Vera Rubin 引入可动态增到 328 KiB 的超大共享内存模式。这是一个 host 侧设置，可如下调用。</p>
 <pre><code>CUfunction function = nullptr;
@@ -867,8 +867,8 @@ mma2_ABt_chunk&lt;64, false, false, collector::LASTUSE, collector::DISCARD&gt;(C
 <h3>5. 提早 A 释放</h3>
 <p><code>tcgen05.commit</code> 在其处理的 MMA 完成后到达 mbarrier，通知 producer 一个 stage 槽可复用。PTX 9.4 引入 <code>tcgen05.commit.sync_restrict::shared::read::mma::a</code>，一条允许我们为 A tile 提前发信号的新指令。不用等 MMA 完成，我们可以只要 MMA 从共享内存读完其 A 操作数就立刻触发 barrier，通知 tma loader 开始存下一 stage 的数据。</p>
 <p>ThunderKittens 引入一种新 commit 类型让用户表达这一点。</p>
-<pre><code>tensor_commit&lt;2&gt; (inputs_finished[stage], mask); // MMA 退役时到达
-tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // MMA 读完 A 时到达</code></pre>
+<pre><code>tensor_commit&lt;2&gt; (inputs_finished[stage], mask); // arrives when MMA retires
+tensor_aread_commit&lt;2&gt;(A_finished[slot], mask); // arrives when MMA finishes reading A</code></pre>
 <h2>构建 GEMM</h2>
 <p>现在我们有了新特性和一个 Blackwell GEMM。以下章节把这些特性逐步整合进现有 Blackwell kernel，并解释迁往 Vera Rubin 时为什么需要它们。</p>
 <h3>加宽指令：</h3>
@@ -1306,7 +1306,7 @@ completion = client.chat.completions.create(
 print(completion.choices[0].message.content)</code></pre>
 <h3>思考强度</h3>
 <p>K3 可通过顶层 reasoning_effort 字段配置。支持三档：low、high、max，默认为 max。在 Together 上，也可以通过标准的 reasoning={&quot;enabled&quot;: False} 开关关闭思考。</p>
-<pre><code># 调整深度：&quot;low&quot; | &quot;high&quot; | &quot;max&quot;
+<pre><code># Adjust depth: &quot;low&quot; | &quot;high&quot; | &quot;max&quot;
 completion = client.chat.completions.create(
     model=MODEL,
     reasoning_effort=&quot;max&quot;,
@@ -1314,7 +1314,7 @@ completion = client.chat.completions.create(
     max_tokens=8192,
 )
 
-# 即时模式，完全不产生思考 token 计费
+# Instant mode, no thinking tokens billed at all
 fast = client.chat.completions.create(
     model=MODEL,
     messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is the capital of France?&quot;}],
@@ -1348,11 +1348,11 @@ for chunk in stream:
 <pre><code>import base64
 from pathlib import Path
 
-# 选项 A：以 URL 传图
+# Option A: pass an image by URL
 IMAGE_URL = &quot;https://raw.githubusercontent.com/pytorch/pytorch/main/docs/source/_static/img/pytorch-logo-dark.png&quot;
 image_content = {&quot;type&quot;: &quot;image_url&quot;, &quot;image_url&quot;: {&quot;url&quot;: IMAGE_URL}}
 
-# 选项 B：以 base64 传本地图片（需要时取消注释）
+# Option B: pass a local image as base64 (uncomment to use)
 # image_data = base64.b64encode(Path(&quot;image.png&quot;).read_bytes()).decode()
 # image_content = {&quot;type&quot;: &quot;image_url&quot;,
 #                  &quot;image_url&quot;: {&quot;url&quot;: f&quot;data:image/png;base64,{image_data}&quot;}}
@@ -1421,7 +1421,7 @@ def get_weather(city, unit=&quot;celsius&quot;):
     return {&quot;city&quot;: city, &quot;temperature&quot;: 21, &quot;unit&quot;: unit, &quot;conditions&quot;: &quot;sunny&quot;}
 
 messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What's the weather in Paris?&quot;}]
-choice_mode = &quot;required&quot;          # 第一轮强制工具调用
+choice_mode = &quot;required&quot;          # force a tool call on turn one
 
 for _ in range(5):
     response = client.chat.completions.create(
@@ -1434,7 +1434,7 @@ for _ in range(5):
     choice = response.choices[0]
     message = choice.message
 
-    # 追加 COMPLETE 的 assistant 消息，包含 thinking trace。
+    # Append the COMPLETE assistant message, thinking trace included.
     messages.append(message.model_dump(exclude_none=True))
 
     if choice.finish_reason != &quot;tool_calls&quot; or not message.tool_calls:
@@ -1452,7 +1452,7 @@ for _ in range(5):
             &quot;content&quot;: json.dumps(get_weather(**args)),
         })
 
-    choice_mode = &quot;auto&quot;          # 强制轮之后把控制权交还</code></pre>
+    choice_mode = &quot;auto&quot;          # hand control back after the forced turn</code></pre>
 <h3>动态工具加载</h3>
 <p>你可以把完整的工具定义（完整名称、描述和参数）放在一条携带 tools 字段、没有 content 的 system 消息中。该工具从这条消息的位置起变为可用。</p>
 <p>关键规则：</p>
@@ -1496,7 +1496,7 @@ search_tools = {
 
 messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Convert 100 USD to EUR.&quot;}]
 
-# 1. 回答前强制检索。
+# 1. Force retrieval before answering.
 first = client.chat.completions.create(
     model=MODEL, messages=messages, tools=[search_tools],
     tool_choice=&quot;required&quot;, max_tokens=8192,
@@ -1506,10 +1506,10 @@ messages.append(first.choices[0].message.model_dump(exclude_none=True))
 messages.append({&quot;role&quot;: &quot;tool&quot;, &quot;tool_call_id&quot;: call.id,
                  &quot;content&quot;: json.dumps(list(CATALOG))})
 
-# 2. 在 TAIL 注入匹配的定义。`tools` 字段，无 content。
+# 2. Inject matching definitions at the TAIL. `tools` field, NO content.
 messages.append({&quot;role&quot;: &quot;system&quot;, &quot;tools&quot;: [CATALOG[&quot;convert_currency&quot;]]})
 
-# 3. 模型直接调用刚加载的工具。
+# 3. The model calls the freshly loaded tool directly.
 second = client.chat.completions.create(
     model=MODEL, messages=messages, tools=[search_tools],
     tool_choice=&quot;auto&quot;, max_tokens=8192,
@@ -1542,7 +1542,7 @@ TRACE  = &quot;For the session codeword I will use 48213. Committing to 48213 as
 messages = [
     {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Pick a 5-digit codeword for our session and remember it. &quot;
                                 &quot;Reply with exactly: OK&quot;},
-    # trace 随 assistant 轮一起走，无需额外标志。
+    # The trace rides along on the assistant turn. No flag needed.
     {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;OK&quot;, &quot;reasoning_content&quot;: TRACE},
     {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What codeword did you pick? Reply with just the number.&quot;},
 ]
@@ -1555,7 +1555,7 @@ completion = client.chat.completions.create(
 )
 print(completion.choices[0].message.content)   # -&gt; 48213</code></pre>
 <p>删掉 reasoning_content 这一行，同样的调用每次都会回答一个现编的不同数字。真实代码里你不会手写 trace；你回放模型产出的内容，也就是工具循环里的那一行：</p>
-<pre><code># 第 1 轮 —— 让 K3 思考。
+<pre><code># Turn 1 - let K3 think.
 first = client.chat.completions.create(
     model=MODEL,
     messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Pick a random 5-digit number and commit to it. &quot;
@@ -1563,7 +1563,7 @@ first = client.chat.completions.create(
     max_tokens=4000,
 )
 
-# 完整地回放 assistant 轮。model_dump 会把 reasoning_content 连同 content 一起保留。
+# Replay the assistant turn WHOLE. model_dump keeps reasoning_content alongside content.
 history = [
     {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Pick a random 5-digit number and commit to it. &quot;
                                 &quot;Do not tell me. Reply with exactly: OK&quot;},

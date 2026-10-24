@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 89ec6c627361
+body_sha: 1ec63bb4a632
 ---
 
 # Kimi K3：完整开发者指南
@@ -86,7 +86,7 @@ print(completion.choices[0].message.content)
 K3 可通过顶层 reasoning_effort 字段配置。支持三档：low、high、max，默认为 max。在 Together 上，也可以通过标准的 reasoning={"enabled": False} 开关关闭思考。
 
 ```
-# 调整深度："low" | "high" | "max"
+# Adjust depth: "low" | "high" | "max"
 completion = client.chat.completions.create(
     model=MODEL,
     reasoning_effort="max",
@@ -94,7 +94,7 @@ completion = client.chat.completions.create(
     max_tokens=8192,
 )
 
-# 即时模式，完全不产生思考 token 计费
+# Instant mode, no thinking tokens billed at all
 fast = client.chat.completions.create(
     model=MODEL,
     messages=[{"role": "user", "content": "What is the capital of France?"}],
@@ -138,11 +138,11 @@ for chunk in stream:
 import base64
 from pathlib import Path
 
-# 选项 A：以 URL 传图
+# Option A: pass an image by URL
 IMAGE_URL = "https://raw.githubusercontent.com/pytorch/pytorch/main/docs/source/_static/img/pytorch-logo-dark.png"
 image_content = {"type": "image_url", "image_url": {"url": IMAGE_URL}}
 
-# 选项 B：以 base64 传本地图片（需要时取消注释）
+# Option B: pass a local image as base64 (uncomment to use)
 # image_data = base64.b64encode(Path("image.png").read_bytes()).decode()
 # image_content = {"type": "image_url",
 #                  "image_url": {"url": f"data:image/png;base64,{image_data}"}}
@@ -226,7 +226,7 @@ def get_weather(city, unit="celsius"):
     return {"city": city, "temperature": 21, "unit": unit, "conditions": "sunny"}
 
 messages = [{"role": "user", "content": "What's the weather in Paris?"}]
-choice_mode = "required"          # 第一轮强制工具调用
+choice_mode = "required"          # force a tool call on turn one
 
 for _ in range(5):
     response = client.chat.completions.create(
@@ -239,7 +239,7 @@ for _ in range(5):
     choice = response.choices[0]
     message = choice.message
 
-    # 追加 COMPLETE 的 assistant 消息，包含 thinking trace。
+    # Append the COMPLETE assistant message, thinking trace included.
     messages.append(message.model_dump(exclude_none=True))
 
     if choice.finish_reason != "tool_calls" or not message.tool_calls:
@@ -257,7 +257,7 @@ for _ in range(5):
             "content": json.dumps(get_weather(**args)),
         })
 
-    choice_mode = "auto"          # 强制轮之后把控制权交还
+    choice_mode = "auto"          # hand control back after the forced turn
 ```
 
 ### 动态工具加载
@@ -317,7 +317,7 @@ search_tools = {
 
 messages = [{"role": "user", "content": "Convert 100 USD to EUR."}]
 
-# 1. 回答前强制检索。
+# 1. Force retrieval before answering.
 first = client.chat.completions.create(
     model=MODEL, messages=messages, tools=[search_tools],
     tool_choice="required", max_tokens=8192,
@@ -327,10 +327,10 @@ messages.append(first.choices[0].message.model_dump(exclude_none=True))
 messages.append({"role": "tool", "tool_call_id": call.id,
                  "content": json.dumps(list(CATALOG))})
 
-# 2. 在 TAIL 注入匹配的定义。`tools` 字段，无 content。
+# 2. Inject matching definitions at the TAIL. `tools` field, NO content.
 messages.append({"role": "system", "tools": [CATALOG["convert_currency"]]})
 
-# 3. 模型直接调用刚加载的工具。
+# 3. The model calls the freshly loaded tool directly.
 second = client.chat.completions.create(
     model=MODEL, messages=messages, tools=[search_tools],
     tool_choice="auto", max_tokens=8192,
@@ -380,7 +380,7 @@ TRACE  = "For the session codeword I will use 48213. Committing to 48213 as the 
 messages = [
     {"role": "user", "content": "Pick a 5-digit codeword for our session and remember it. "
                                 "Reply with exactly: OK"},
-    # trace 随 assistant 轮一起走，无需额外标志。
+    # The trace rides along on the assistant turn. No flag needed.
     {"role": "assistant", "content": "OK", "reasoning_content": TRACE},
     {"role": "user", "content": "What codeword did you pick? Reply with just the number."},
 ]
@@ -397,7 +397,7 @@ print(completion.choices[0].message.content)   # -> 48213
 删掉 reasoning_content 这一行，同样的调用每次都会回答一个现编的不同数字。真实代码里你不会手写 trace；你回放模型产出的内容，也就是工具循环里的那一行：
 
 ```
-# 第 1 轮 —— 让 K3 思考。
+# Turn 1 - let K3 think.
 first = client.chat.completions.create(
     model=MODEL,
     messages=[{"role": "user", "content": "Pick a random 5-digit number and commit to it. "
@@ -405,7 +405,7 @@ first = client.chat.completions.create(
     max_tokens=4000,
 )
 
-# 完整地回放 assistant 轮。model_dump 会把 reasoning_content 连同 content 一起保留。
+# Replay the assistant turn WHOLE. model_dump keeps reasoning_content alongside content.
 history = [
     {"role": "user", "content": "Pick a random 5-digit number and commit to it. "
                                 "Do not tell me. Reply with exactly: OK"},
