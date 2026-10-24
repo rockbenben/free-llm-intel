@@ -10,25 +10,25 @@
 
 ## 全部文章（共 904 篇，按日期倒序；无日期条目列于最后）
 
-1. [LitPivot：通过文学景观中的动态情境化发展研究思路](https://huggingface.co/blog/allenai/litpivot)（2026-10-23） <!--orig:LitPivot: Developing research ideas through dynamic contextualization within the literature landscape-->
-2. [您的模型在 AWS Trainium 上运行吗？查找一下](https://huggingface.co/blog/torch-neuronx-model-support)（2026-10-23） <!--orig:Does Your Model Run on AWS Trainium? Look It Up-->
+1. [LitPivot：在文献景观中通过动态情境化来发展研究想法](https://huggingface.co/blog/allenai/litpivot)（2026-10-23） <!--orig:LitPivot: Developing research ideas through dynamic contextualization within the literature landscape-->
+2. [你的模型能在 AWS Trainium 上运行吗？查一查](https://huggingface.co/blog/torch-neuronx-model-support)（2026-10-23） <!--orig:Does Your Model Run on AWS Trainium? Look It Up-->
 3. [将数据库评分转化为强化学习奖励：使用 ThinkingBox 进行训练后智能体](https://huggingface.co/blog/microsoft/thinkingbox-training)（2026-10-22） <!--orig:Turning Database Grading into RL Rewards: Post-Training Agents with ThinkingBox-->
 4. [使用 IBM Granite 时间序列模型进行集合预测](https://huggingface.co/blog/ibm-research/granite-timeseries-ensemble-r1)（2026-10-22） <!--orig:Ensemble forecasting with IBM Granite time-series models-->
-5. [OlmoEarth v1.3: State-of-the-art embeddings for the whole planet](https://huggingface.co/blog/allenai/olmoearth-v1-3)（2026-10-22）
-6. [NVIDIA Kumo Relational 在关系数据上的表现优于监督式机器学习，无需培训](https://huggingface.co/blog/nvidia/kumo-relational)（2026-10-21） <!--orig:NVIDIA Kumo Relational Outperforms Supervised Machine Learning on Relational Data, No Training Required-->
-7. [SLM 词汇专业化如何在实际应用中将推理成本降低 77%](https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization)（2026-10-21） <!--orig:How Specializing the Vocabulary of SLMs Can Cut Inference Cost by 77% in Real Applications-->
-8. [TorchNeuron 分析（第 1 部分）：AWS Trainium 上的系统级分析。](https://huggingface.co/blog/amazon/profiling-torchneuron-part-1)（2026-10-21） <!--orig:Profiling TorchNeuron (Part 1): System-level profiling on AWS Trainium.-->
-9. [Granite Speech 5.0：更准确、更快地转录、翻译和归因](https://huggingface.co/blog/ibm-granite/granite-speech-5)（2026-10-21） <!--orig:Granite Speech 5.0: Transcribe, Translate, and Attribute more Accurately and Faster-->
-10. [Hugging Face❤️ TorchTPU：TPU，原生](https://huggingface.co/blog/hf-torchtpu)（2026-10-20） <!--orig:Hugging Face ❤️ TorchTPU: TPUs, Natively-->
-11. [AnyLanguageModel 1.0：Apple 平台本地模型一年](https://huggingface.co/blog/anylanguagemodel-1-0)（2026-10-20） <!--orig:AnyLanguageModel 1.0: One Year of Local Models on Apple Platforms-->
+5. [OlmoEarth v1.3：面向整个星球的最先进嵌入](https://huggingface.co/blog/allenai/olmoearth-v1-3)（2026-10-22） <!--orig:OlmoEarth v1.3: State-of-the-art embeddings for the whole planet-->
+6. [NVIDIA Kumo Relational 在关系型数据上超越监督式机器学习，且无需训练](https://huggingface.co/blog/nvidia/kumo-relational)（2026-10-21） <!--orig:NVIDIA Kumo Relational Outperforms Supervised Machine Learning on Relational Data, No Training Required-->
+7. [在真实应用中，专门化 SLM 的词表如何把推理成本降低 77%](https://huggingface.co/blog/Dharma-AI/vocabx-vocabulary-specialization)（2026-10-21） <!--orig:How Specializing the Vocabulary of SLMs Can Cut Inference Cost by 77% in Real Applications-->
+8. [Profiling TorchNeuron（第 1 部分）：AWS Trainium 上的系统级性能剖析](https://huggingface.co/blog/amazon/profiling-torchneuron-part-1)（2026-10-21） <!--orig:Profiling TorchNeuron (Part 1): System-level profiling on AWS Trainium.-->
+9. [Granite Speech 5.0：更准确、更快速地转写、翻译与说话人归属](https://huggingface.co/blog/ibm-granite/granite-speech-5)（2026-10-21） <!--orig:Granite Speech 5.0: Transcribe, Translate, and Attribute more Accurately and Faster-->
+10. [Hugging Face ❤️ TorchTPU：原生支持 TPU](https://huggingface.co/blog/hf-torchtpu)（2026-10-20） <!--orig:Hugging Face ❤️ TorchTPU: TPUs, Natively-->
+11. [AnyLanguageModel 1.0：在 Apple 平台上做本地模型的一年](https://huggingface.co/blog/anylanguagemodel-1-0)（2026-10-20） <!--orig:AnyLanguageModel 1.0: One Year of Local Models on Apple Platforms-->
 12. [PyTorch 2.15 中的 MPS](https://huggingface.co/blog/mps-pytorch-2-15)（2026-10-20） <!--orig:MPS in PyTorch 2.15-->
-13. [FairStress：对 LLM 决策公平性的更深入评估](https://huggingface.co/blog/allenai/fairstress)（2026-10-20） <!--orig:FairStress: A deeper evaluation of fairness in LLM decision-making-->
-14. [ALTK-Evolve：学习记忆如何在没有前沿模型的情况下在客户服务任务的 τ² 工作台排行榜上名列前茅](https://huggingface.co/blog/ibm-research/altk-evolve-bc)（2026-10-20） <!--orig:ALTK-Evolve: How learned memory tops the τ²-bench leaderboard on customer service tasks without a frontier model-->
-15. [NVIDIA Cosmos3-H-Dreams: Bringing Clinical Surgery to Life Through Generative Simulation](https://huggingface.co/blog/nvidia/cosmos3-h-dreams)（2026-10-20）
+13. [FairStress：更深入地评估 LLM 决策中的公平性](https://huggingface.co/blog/allenai/fairstress)（2026-10-20） <!--orig:FairStress: A deeper evaluation of fairness in LLM decision-making-->
+14. [ALTK-Evolve：学习到的记忆如何在没有前沿模型的情况下，登上客户服务任务 τ²-bench 排行榜榜首](https://huggingface.co/blog/ibm-research/altk-evolve-bc)（2026-10-20） <!--orig:ALTK-Evolve: How learned memory tops the τ²-bench leaderboard on customer service tasks without a frontier model-->
+15. [NVIDIA Cosmos3-H-Dreams：用生成式仿真让临床手术活起来](https://huggingface.co/blog/nvidia/cosmos3-h-dreams)（2026-10-20） <!--orig:NVIDIA Cosmos3-H-Dreams: Bringing Clinical Surgery to Life Through Generative Simulation-->
 16. [TorchNeuron：在 AWS Trainium 上运行 HF 模型比以往更容易](https://huggingface.co/blog/hf-torchneuron)（2026-10-19） <!--orig:TorchNeuron: running HF models on AWS Trainium is easier than ever-->
 17. [欢迎 Beam：一个你可以拥有、定制并规模化的 501B 开放模型](https://huggingface.co/blog/reflection-beam)（2026-10-16） <!--orig:Welcome Beam: a 501B open model you can own, customize, and scale-->
 18. [Indic 预训练规模化：2.8 万亿 token 与开放的数据生成流水线](https://huggingface.co/blog/nvidia/scaling-indic-pretraining)（2026-10-16） <!--orig:Scaling Indic Pretraining: 2.8 Trillion Tokens and an Open Data Generation Pipeline-->
-19. [Apertus 1.5 Release Notes](https://huggingface.co/blog/swiss-ai/apertus-v15-release-notes)（2026-10-15）
+19. [Apertus 1.5 发布说明](https://huggingface.co/blog/swiss-ai/apertus-v15-release-notes)（2026-10-15） <!--orig:Apertus 1.5 Release Notes-->
 20. [欢迎 Muse Spark Open：来自 Meta 的开放权重前沿多模态混合专家模型](https://huggingface.co/blog/meta-muse-spark-open)（2026-10-15） <!--orig:Welcome Muse Spark Open: open-weight frontier multimodal mixture-of-experts model from Meta-->
 21. [Diffusers 迎来 FLUX.3 Image Klein：来自 Black Forest Labs 的最新开源图像生成模型](https://huggingface.co/blog/flux-3)（2026-10-15） <!--orig:Welcome FLUX.3 Image Klein in Diffusers-->
 22. [Granite Switch 4.1：一个 endpoint 同时提供聊天、决策与语音](https://huggingface.co/blog/ibm-granite/granite-switch-4-1)（2026-10-15） <!--orig:Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint-->

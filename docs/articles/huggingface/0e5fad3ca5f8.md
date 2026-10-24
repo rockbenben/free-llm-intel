@@ -1,24 +1,25 @@
 ---
 vendor: huggingface
 title: 使用 IBM Granite 时间序列模型进行集合预测
-original_title: 
+original_title: Ensemble forecasting with IBM Granite time-series models
 url: https://huggingface.co/blog/ibm-research/granite-timeseries-ensemble-r1
 date: 2026-10-22
 lang: zh
-captured: 2026-10-23
+captured: 2026-10-24
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: 4c63a353d675
+body_sha: 06a33f258d18
 ---
 
-[返回文章](https://huggingface.co/blog)
+[ 返回文章](https://huggingface.co/blog)
 
 # 使用 IBM Granite 时间序列模型进行集合预测
 
-企业文章
+企业  文章
 
 发布于 2026 年 10 月 22 日
+
 
 14
 
@@ -31,87 +32,88 @@ body_sha: 4c63a353d675
 
 [![Fearghal O'Donncha 的头像](https://huggingface.co/avatars/8ff9f76420b50f8d733495fcf9bd0ea9.svg)](https://huggingface.co/Fearghal)
 
-菲尔格尔·奥唐查
+Fearghal O'Donncha
 
-菲尔格尔
+Fearghal
 
 [![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Chandramouli Kamanchi 的头像](https://huggingface.co/avatars/317e008622f276f00309f81af04b3d3b.svg)](https://huggingface.co/rry003)
 
-钱德拉穆利·卡曼奇
+Chandramouli Kamanchi
 
-ry003
+rry003
 
 [![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Guruprasad 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/64ca639d7a4f23635701313e/ZaCrxHOn4feQ39vtBAID2.jpeg)](https://huggingface.co/Ranjini)
 
-古鲁普拉萨德
+Guruprasad
 
-兰吉尼
+Ranjini
 
 [![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Wesley M. Gifford 的头像](https://huggingface.co/avatars/8833ff37c5ccc477f1593cd8ad5a1208.svg)](https://huggingface.co/wmgifford)
 
-韦斯利·M·吉福德
+Wesley M. Gifford
 
-威姆吉福德
+wmgifford
 
 [![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
-[![Natalia Martinez Gil 的头像](https://huggingface.co/avatars/9041e569f6eb98b79ec3c9e7bcfd302c.svg)](https://huggingface.co/natalmg91)
+[![Natalia Martinez Gil 的头像](https://huggingface.co/avatars/9041e569f6eb98b79ec3c9e7bcfd302c.svg)](https://huggingface.co/natalialmg91)
 
-娜塔莉亚·马丁内斯·吉尔
+Natalia Martinez Gil
 
-出生mg91
+natalialmg91
 
 [![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Bradley Eck 的头像](https://huggingface.co/avatars/3ee5aa141090176f0c981322072fce25.svg)](https://huggingface.co/bradleyjeck)
 
-布拉德利·艾克
+Bradley Eck
 
-布拉德利杰克
+bradleyjeck
 
 [![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Pankaj Dayama 的头像](https://huggingface.co/avatars/ed8ccd6d4fbc0e68ce03930eae039c4b.svg)](https://huggingface.co/pankajdayama)
 
-潘卡吉·达亚玛
+Pankaj Dayama
 
-潘卡吉达亚马
+pankajdayama
 
 [![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Roman Vaculin 的头像](https://huggingface.co/avatars/c9d15c05751f0841bc0c431da3262d50.svg)](https://huggingface.co/vaculin)
 
-罗曼·瓦库林
+Roman Vaculin
 
-真空蛋白
+vaculin
 
 [![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
 [![Ayhan Sebin 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg)](https://huggingface.co/ayhansebin)
 
-艾汉·塞宾
+Ayhan Sebin
 
-艾汉瑟宾
+ayhansebin
 
 [![IBM Research 的头像](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)](https://huggingface.co/ibm-research) [ibm-research](https://huggingface.co/ibm-research)
 
-*四个开放的 Granite 模型，一个可扩展的预测界面，减少对使用哪个模型的猜测。*
+*四个开放的 Granite 模型、一个可扩展的预测接口，以及更少的“到底该用哪个模型”的猜测。*
 
-预训练的时间序列模型无需对数据集进行训练即可进行预测，但您仍然必须选择一个。能够很好地处理平滑工业信号的模型可能会难以应对嘈杂的零售需求或较长的季节性范围，最佳选择取决于系列和任务。
+预训练的时间序列模型无需在你的数据集上训练就能做预测，但你仍然得挑一个。擅长处理平滑工业信号的模型，可能难以应付噪声很大的零售需求，或者很长的季节性视野，而最佳选择取决于序列本身和任务。
 
-Granite Timeseries Ensemble 将这种选择简化为合理的默认值。一种配方结合了四种互补的 Granite 架构，并返回中值和分位数预测，无需重新训练，也无需拟合整体权重。从概率集成（统一概率池）开始，比较自适应四分位距 (IQR) 集成，并使用兼容的预测器扩展相同的接口。合奏配方及其默认 Granite 成员均获得许可。
+Granite Timeseries Ensemble 把这种选择简化为一个合理的默认值。一套配方组合了四个互补的 Granite 架构，返回中位数与分位数预测，无需重新训练，也没有拟合出来的集合权重。可以先从 Probabilistic Ensemble（均匀概率池化）起步，再对比自适应的 Inter Quartile Range（IQR）Ensemble，并用兼容的预测器扩展同一套接口。集合配方及其默认的 Granite 成员都采用宽松许可（permissive license）。
 
-这个想法在天气预报中很常见。 [集合预报](https://www.ecmwf.int/en/about/media-centre/focus/2017/fact-sheet-ensemble-weather-forecasting) 探索一系列可能的结果，而[北美多模型集合](https://www.cpc.ncep.noaa.gov/products/NMME/NMME_description.html) 等系统结合了不同的模型进行季节预测。时间序列预测以类似的方式受益：互补模型提供了对接下来发生的事情的不同观点，并且集合将这些观点合并为一个预测。
+这个思路在天气预报里并不陌生。[集合预报](https://www.ecmwf.int/en/about/media-centre/focus/2017/fact-sheet-ensemble-weather-forecasting) 会探索一系列可能的结果，而 [North American Multi-Model Ensemble](https://www.cpc.ncep.noaa.gov/products/NMME/NMME_description.html) 这类系统则把不同的模型组合起来做季节预测。时间序列预测以类似的方式受益：互补的模型提供了关于“接下来会发生什么”的不同视角，而集合把这些视角合并成一个预测。
 
-## 尝试 Granite Timeseries Ensemble
+## 试用 Granite Timeseries Ensemble
 
-安装 Granite TSFM 并直接从 Hugging Face 加载推荐的四模型配方：
+安装 Granite TSFM，并直接从 Hugging Face 加载推荐的四模型配方：
+
 ```
 pip install "granite-tsfm>=0.3.11"
 ```
@@ -141,135 +143,138 @@ result = ensemble(
 print(result.prediction_outputs) # point forecast
 print(result.quantile_outputs)   # quantiles
 ```
-该配方存储整体配置而不是合并的模型权重。它在运行时下载四个成员检查点，因此为第一次运行留出额外的时间。有关完整配置、成员检查点、评估详细信息和限制，请参阅[模型卡](https://huggingface.co/ibm-granite/granite-timeseries-ensemble-r1)。
 
-`result.prediction_outputs` 包含点预测，而 `result.quantile_outputs` 包含分位数预测，默认范围为 0.1 到 0.9。应用程序可以使用点值作为中心预测并使用选定的分位数来表示预测范围。例如，0.1 和 0.9 分位数定义了名义覆盖率 80% 的中心预测区间。
+该配方保存的是集合配置，而不是合并后的模型权重。它会在运行时下载四个成员的 checkpoint，因此首次运行要预留额外时间。完整的配置、成员 checkpoint、评估细节与局限性，见[模型卡](https://huggingface.co/ibm-granite/granite-timeseries-ensemble-r1)。
 
-## 乐团成员
+`result.prediction_outputs` 包含点预测，而 `result.quantile_outputs` 包含分位数预测，默认范围是 0.1 到 0.9。应用可以把点值当作中心预测，并选用若干分位数来表达预测区间。例如，0.1 与 0.9 分位数定义了一个名义覆盖率为 80% 的中心预测区间。
 
-默认配方结合了四个具有不同架构的预先训练的 Granite 模型：
+## 集合成员
 
-|型号|建筑|
+默认配方组合了四个架构不同的预训练 Granite 模型：
+
+| 模型 | 架构 |
 | --- | --- |
-| [Granite PatchTST-FM-r1](https://huggingface.co/ibm-granite/granite-timeseries-patchtst-fm-r1) |修补变压器|
-| [Granite PatchTST-FM-r2](https://huggingface.co/ibm-granite/granite-timeseries-patchtst-fm-r2) |修补Conformer |
-| [Granite FlowState-r1.1](https://huggingface.co/ibm-granite/granite-timeseries-flowstate-r1) |状态空间模型|
-| [Granite TTM-r3](https://huggingface.co/ibm-granite/granite-timeseries-ttm-r3) | Tiny Time Mixers（MLP 混合器）|
+| [Granite PatchTST-FM-r1](https://huggingface.co/ibm-granite/granite-timeseries-patchtst-fm-r1) | 分块 Transformer |
+| [Granite PatchTST-FM-r2](https://huggingface.co/ibm-granite/granite-timeseries-patchtst-fm-r2) | 分块 Conformer |
+| [Granite FlowState-r1.1](https://huggingface.co/ibm-granite/granite-timeseries-flowstate-r1) | 状态空间模型 |
+| [Granite TTM-r3](https://huggingface.co/ibm-granite/granite-timeseries-ttm-r3) | Tiny Time Mixers（MLP 混合器） |
 
-有关背景信息，请参阅 [PatchTST-FM-r1 论文](https://arxiv.org/abs/2602.06909)、[PatchTST-FM-r2 架构概述](https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series)、[FlowState论文](https://arxiv.org/abs/2508.05287)，以及[Tiny Time Mixers 论文](https://arxiv.org/abs/2401.03955)。
+背景资料见 [PatchTST-FM-r1 论文](https://arxiv.org/abs/2602.06909)、[PatchTST-FM-r2 架构概览](https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series)、[FlowState 论文](https://arxiv.org/abs/2508.05287) 以及 [Tiny Time Mixers 论文](https://arxiv.org/abs/2401.03955)。
 
-这些架构以不同的方式捕捉趋势、季节性和局部变化，因此它们的错误不必重合。 [预测组合的 50 年回顾](https://arxiv.org/abs/2205.04216) 描述了组合预测如何降低选择错误单一模型的风险，同时强调成员质量和多样性仍然很重要。
+这些架构以不同方式刻画趋势、季节性与局部变化，因此它们的误差不一定同时出现。[一份长达 50 年的预测组合综述](https://arxiv.org/abs/2205.04216) 描述了组合预测如何降低选错单一模型的风险，同时强调成员的质量与多样性依然重要。
 
-[![四个 Granite 预测模型提供通用分位数接口和两种聚合方法之一。](https://huggingface.co/buckets/rry003/blogcomponents/resolve/ensemble_overview.svg?download=true)](https://huggingface.co/buckets/rry003/blogcomponents/resolve/ensemble_overview.svg?download=true)
+[![四个 Granite 预测模型接入统一的 quantile 接口，再由两种聚合方法之一合成预测。](https://huggingface.co/buckets/rry003/blogcomponents/resolve/ensemble_overview.svg?download=true)](https://huggingface.co/buckets/rry003/blogcomponents/resolve/ensemble_overview.svg?download=true)
 
-## 两种结合预测的方法
+## 组合预测的两种方式
 
-每个成员返回分位数预测。两种主要方法使用不同的规则将这些预测转化为一种预测分布及其中位数。
+每个成员都返回分位数预测。两套主要配方使用不同的规则，把这些预测合成一个预测分布及其中位数。
 
-### 概率集成：推荐的默认值
+### Probabilistic Ensemble：推荐的默认选择
 
-概率集成（统一概率池）赋予每个成员同等的影响力，将其分位数预测汇集到概率空间中，并从组合值中提取所需的分位数。由于权重是固定的，因此没有拟合步骤，也没有权重超参数来调整新系列。
+Probabilistic Ensemble（均匀概率池化）给每个成员相等的影响力，在概率空间中对它们的预测做池化，再从合并后的取值中提取所需的分位数。由于权重固定，新序列既不需要拟合步骤，也没有需要调优的加权超参数。
 
-[预测组合难题](https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0084.2008.00541.x) 提供了有用的动机：在点预测中，简单的等权重组合通常比估计权重的方法表现得更好。这个秘诀将相同的等影响思想应用于概率预测。这是上面示例中默认加载的。
+[预测组合之谜](https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0084.2008.00541.x) 提供了有用的动机：在点预测中，简单的等权组合常常能与用估计权重的方法相抗衡。这套配方把同样的等影响力思路用于概率预测。它也是上面示例中默认加载的方案。
 
-### IQR Ensemble：自适应替代方案
+### IQR Ensemble：一种自适应替代方案
 
-IQR Ensemble 根据成员的预测差额对成员进行加权，使较小的区间具有更大的影响力。它从第 25 个百分位和第 75 个百分位周围最接近的可用分位数估算出每个成员的四分位数范围。权重因样本、目标和水平步长而异，并且与概率集成一样，历史预测误差不会拟合任何内容。等渗回归可防止组合分位数交叉。
+IQR Ensemble 按各成员的预测离散程度加权，区间越窄的成员影响力越大。它用 25 分位与 75 分位附近最接近的可用分位数来近似每个成员的四分位距。权重随样本、目标和预测步长而变化，并且和 Probabilistic Ensemble 一样，不从历史预测误差中拟合任何东西。等渗回归（isotonic regression）确保合并后的分位数不会交叉。
 
-更窄的区间并不一定意味着更准确或更好校准的预测，IQR 加权可能有利于过度自信的成员。如果您想进行实验，配方会公开温度设置（较高的值使体重趋于均匀）以及对任何单个成员体重的可选上限。
+区间更窄并不必然意味着更准确或校准更好的预测，而且 IQR 加权可能偏爱过度自信的成员。如果想做实验，配方暴露了一个温度设置（取值越高，权重越趋向均匀）以及一个可选的单成员权重上限。
 
-通过仅更改子文件夹来加载评估的 IQR 配方：
+只改子文件夹，即可加载经过评估的 IQR 配方：
+
 ```
 ensemble = QuantileEnsembleForecaster.from_pretrained(
     "ibm-granite/granite-timeseries-ensemble-r1",
     subfolder="recipes/granite-iqr",
 )
 ```
-## 我应该使用哪种方法？
 
-|您的目标|以 | 开头为什么 |
+## 我该用哪种方法？
+
+| 你的目标 | 从何处入手 | 原因 |
 | --- | --- | --- |
-|一个简单的默认 |概率系综|同等影响力，无需安装权重 |
-|基于预测价差的自适应加权| IQR 合奏 |影响力随每个成员的预测传播而变化 |
+| 一个简单的默认方案 | Probabilistic Ensemble | 影响力均等，没有拟合权重 |
+| 基于预测离散度的自适应加权 | IQR Ensemble | 影响力随每个成员预测的离散度变化 |
 
-从概率系综开始。如果预测价差看起来对您的应用有帮助，请在代表性数据上将 IQR 集成与它进行比较，因为准确性和校准取决于系列和范围。
+先从 Probabilistic Ensemble 开始。如果预测离散度对你的应用有信息量，就在有代表性的数据上把 IQR Ensemble 与它对比，因为准确性和校准都取决于序列与预测视野。
 
-## 乐团的成员有进步吗？
+## 集合相比其成员有提升吗？
 
-我们在 97 个 GIFT-Eval 数据集配置上评估了这两种食谱。模型预测没有进行微调，并且没有使用测试目标来选择或拟合聚合方法。在这里，我们使用 2026 年 10 月 20 日发布的排行榜分数和排名，将官方集成提交结果与四个组成模型进行比较。
+我们在 97 个 GIFT-Eval 数据集配置上评估了两套配方。模型不做微调直接预测，测试目标也没有用于选择或拟合聚合方法。这里把官方集合提交的结果与四个组成模型作对比，使用的是 2026 年 10 月 20 日抓取的已发布排行榜分数与排名。
 
-GIFT-Eval 报告点预测的 *MASE* 和概率预测的 *CRPS/MWQL*（基准的“mean_weighted_sum_quantile_loss”指标）。分数被归一化为季节性朴素，并在配置之间进行几何平均。越低越好。
+GIFT-Eval 对点预测报告 *MASE*，对概率预测报告 *CRPS/MWQL*（即该基准的 `mean_weighted_sum_quantile_loss` 指标）。分数以 Seasonal Naive 为基准归一化，并在各配置间做几何平均。越低越好。
 
-|预测|梅斯 ↓ | MASE 排名 ↓ | CRPS / MWQL ↓ | CRPS 排名 ↓ |
+| 预测 | MASE ↓ | MASE 排名 ↓ | CRPS / MWQL ↓ | CRPS 排名 ↓ |
 | --- | --- | --- | --- | --- |
-|花岗岩整体 R1 — 问题 | **0.683**★ | **47.175**★ | 0.471 | 0.471 50.948 |
-|花岗岩整体 R1 — IQR | 0.684 | 0.684 48.773 | 48.773 0.471 | 0.471 **47.619**★ |
-|花岗岩补丁TST-FM-r2 | 0.685 | 0.685 51.371 | **0.467**★ | 48.918 | 48.918
-|花岗岩 FlowState-r1.1 | 0.701 | 0.701 66.474 | 66.474 0.490 | 0.490 69.485 | 69.485
-|花岗岩补丁TST-FM-r1 | 0.717 | 0.717 74.794 | 74.794 0.488 | 0.488 68.134 | 68.134
-|花岗岩 TTM-r3 | 0.724 | 0.724 83.062 | 0.520 | 88.959 | 88.959
+| Granite Ensemble R1 — Prob | **0.683**★ | **47.175**★ | 0.471 | 50.948 |
+| Granite Ensemble R1 — IQR | 0.684 | 48.773 | 0.471 | **47.619**★ |
+| Granite PatchTST-FM-r2 | 0.685 | 51.371 | **0.467**★ | 48.918 |
+| Granite FlowState-r1.1 | 0.701 | 66.474 | 0.490 | 69.485 |
+| Granite PatchTST-FM-r1 | 0.717 | 74.794 | 0.488 | 68.134 |
+| Granite TTM-r3 | 0.724 | 83.062 | 0.520 | 88.959 |
 
-★ 显示的预测中的最佳值。越低越好。
+★ 表示表中所列预测里的最佳值。越低越好。
 
-排名列根据完整 GIFT-Eval 参考排行榜（而不仅仅是这六个预测）计算每个配置的平均排名，因此排名值可能会随着条目添加到排行榜而发生变化。
+排名列是把每个配置的排名与完整的 GIFT-Eval 参考排行榜比较后取平均，而不只是在这六个预测之间排序，因此随着新条目加入排行榜，排名数值会发生变化。
 
-两个组合在总体 MASE 和平均 MASE 排名方面均优于所有四个单独成员。概率集成在这六个预测中实现了最低的 MASE：0.683，而 PatchTST-FM-r2 的 MASE 为 0.685。较低的平均 MASE Rank 表明 GIFT-Eval 的不同数据集配置的相对点预测性能更强。总之，这些结果支持将整体作为一个实用的起点，而不需要开发人员提前选择最强的单独架构。 MASE 相对于最佳单个成员的优势很小，因此主要好处是稳健性：您无需事先知道哪种架构适合您的数据，即可获得可比较或更好的聚合准确性。
+两个集合在总体 MASE 与平均 MASE 排名上都优于全部四个单独成员。Probabilistic Ensemble 在这六个预测中取得最低的 MASE：0.683，而 PatchTST-FM-r2 为 0.685。更低的平均 MASE 排名意味着在 GIFT-Eval 多样化的数据集配置上相对更强的点预测表现。综合来看，这些结果支持把集合当作一个实用的起点，开发者无需事先挑出最强的单一架构。相对最佳单成员，MASE 的优势很小，所以主要好处是稳健性：在事先并不知道哪种架构更适合你的数据时，也能得到相当或更好的总体准确率。
 
-PatchTST-FM-r2 保留最低的 CRPS/MWQL 总分。在这六种预测中，IQR 集成的平均 CRPS 排名最低，而概率集成在该指标上排名落后于 PatchTST-FM-r2。因此，聚合误差和平均排名有利于不同的选择。
+PatchTST-FM-r2 仍保持最低的总体 CRPS/MWQL 分数。IQR Ensemble 在这六个预测中取得最低的平均 CRPS 排名，而 Probabilistic Ensemble 在该指标上排在 PatchTST-FM-r2 之后。因此，总体误差与平均排名会偏向不同的选择。
 
-在 2026 年 10 月 20 日的比较中，集成方法在 MASE Rank 和 CRPS Rank 的合格系统中排名第三。下图显示了这两种方法以及每个指标的十个最佳合格参考系统。一些系统，包括被排除为微调或非许可许可的条目，得分比这两种方法都好，因此整体的价值并不在于它在排行榜上名列前茅。单一默认值可以在多个系列中提供强大、一致的结果，而无需您选择成员。
+在 2026 年 10 月 20 日的对比中，集合方法在合格系统中按 MASE 排名和 CRPS 排名均列第 3。下图展示了这两套配方，以及每个指标下十个最佳合格参考系统。有些系统——包括因微调或非宽松许可被排除的条目——得分优于这两套配方中的任何一个，所以集合的价值不在于登顶排行榜，而在于一个默认设置就能在许多序列上给出强而一致的结果，无需你去挑选某个成员。
 
-[![Granite 整体和合格参考系统的 GIFT-Eval 平均排名比较。越低越好。](https://huggingface.co/buckets/rry003/blogcomponents/resolve/gift_eval_ranks_granite.png?download=true)](https://huggingface.co/buckets/rry003/blogcomponents/resolve/gift_eval_ranks_granite.png?download=true)
+[![GIFT-Eval 平均排名对比：两个 Granite 集合与合格参考系统。越低越好。](https://huggingface.co/buckets/rry003/blogcomponents/resolve/gift_eval_ranks_granite.png?download=true)](https://huggingface.co/buckets/rry003/blogcomponents/resolve/gift_eval_ranks_granite.png?download=true)
 
-*图：2026 年 10 月 20 日的 GIFT-Eval 平均排名排名，显示了两个 Granite 整体以及每个指标的十个最佳合格参考系统。合格的系统具有复制代码并且没有声明的测试数据泄漏；排除具有已知非许可许可证或成员依赖性的微调条目和系统。排名值直接取自已发布的总体排行榜快照；过滤更改显示的系统，而不是其排名值。*
+*图：2026 年 10 月 20 日的 GIFT-Eval 平均排名榜单，展示了两个 Granite 集合以及每个指标下十个最佳合格参考系统。合格系统需具备复现代码且未声明使用测试数据泄漏；微调条目以及已知为非宽松许可或依赖特定成员的系统被排除。排名数值直接取自已发布的总体排行榜快照；筛选只改变显示哪些系统，不改变它们的排名数值。*
 
-## 将方法扩展到其他预测者
+## 把配方扩展到其他预测器
 
-默认配方使用四个 Granite 模型，但常见的“Forecaster”接口也接受兼容的外部模型。您可以更改成员组合或聚合方法并保持相同的下游预测格式，而无需合并或重新训练成员检查点。这使得您可以更轻松地将整体集成到现有的预测堆栈中，并根据您的需求的变化添加适合您领域的预测器。
+默认配方使用四个 Granite 模型，但通用的 `Forecaster` 接口也接受兼容的外部模型。你可以更换成员组合或聚合方法，同时保留下游相同的预测格式，无需合并或重新训练成员 checkpoint。这让你更容易把集合嵌入已有的预测栈，并在需求演进时加入适合你所在领域的预测器。
 
-该存储库还包括添加 IBM 研究检查点的扩展配方。这些带有单独的许可条款，包括非商业和研究使用限制，因此在使用它们之前请检查每个会员的模型卡。
+仓库还包含扩展配方，加入了 IBM Research 的 checkpoint。这些模型带有单独的许可条款，包括非商业和仅限研究用途的限制，使用前请查阅每个成员的模型卡。
 
-对于任何新组合，请检查预测兼容性、准确性、校准、延迟和许可。
+对任何新组合，都要检查预测兼容性、准确性、校准、延迟与许可。
 
-## 评估适合您的应用的配方
+## 针对你的应用评估该配方
 
-GIFT-Eval 是一个广泛的基准，但总收益并不意味着每个系列都受益，平均排名也无法建立校准。了解配方在您的应用程序中的行为方式的方法是对代表性数据进行回溯测试：
+GIFT-Eval 是一个覆盖很广的基准，但总体提升并不意味着每个序列都受益，平均排名也不能确立校准的好坏。想知道这些配方在你的应用上表现如何，办法是在有代表性的数据上做回测：
 
-- **匹配您的用例**。使用历史预测窗口来反映每个预测源的可用数据、您需要的时间范围以及您期望提供的系列。
-- **同类比较**。在同一窗口上运行概率集成、IQR 集成和强大的单个成员（例如 PatchTST-FM-r2）。
-- **超越点错误**。与 MASE 一起评估分位数损失，并对照其名义 80% 检查 0.1 至 0.9 区间的经验覆盖范围。
-- **衡量成本**。记录运行时间和内存使用情况，以判断组合四个模型的好处是否适合您的工作负载。
+- **贴合你的用例**。使用能反映每个预测起点当时可用数据的历史预测窗口、你需要的预测视野，以及你预期要服务的序列。
+- **同类对比**。在相同的窗口上运行 Probabilistic Ensemble、IQR Ensemble，以及一个强的单独成员（例如 PatchTST-FM-r2）。
+- **不要只看点误差**。除了 MASE，还要评估 quantile loss，并检查 0.1 到 0.9 区间的经验覆盖率是否达到其名义上的 80%。
+- **衡量成本**。记录运行时间与内存占用，判断组合四个模型带来的收益对你的工作负载是否值得。
 
-请记住两个限制。当前的配方独立预测多变量通道，不使用跨通道信息，并且加载四个成员检查点，这增加了相对于单个成员的推理时间和内存。成员上下文限制、范围、预处理和缺失值处理也不同，并且两种聚合方法都不能保证分布变化下的校准或鲁棒性，因此在部署后继续监视预测。
+请记住两个局限。当前配方独立预测多变量通道，没有利用跨通道信息；并且它会加载四个成员 checkpoint，相比单个成员增加了推理时间与内存占用。各成员的上下文上限、预测视野、预处理与缺失值处理也不相同，而且两种聚合方法都不保证在分布偏移下仍然校准或稳健，所以部署后要继续监控预测。
 
-## 在你的数据上尝试一下
+## 在你的数据上试试
 
 推荐的起点是默认的四模型配方：
 
 - [Hugging Face 上的 Granite Timeseries Ensemble](https://huggingface.co/ibm-granite/granite-timeseries-ensemble-r1)
-- [入门笔记本](https://github.com/ibm-granite/granite-tsfm/blob/main/notebooks/hfdemo/probabilistic_ensemble_getting_started.ipynb)
-- [Granite TSFM 存储库](https://github.com/ibm-granite/granite-tsfm)
+- [入门 notebook](https://github.com/ibm-granite/granite-tsfm/blob/main/notebooks/hfdemo/probabilistic_ensemble_getting_started.ipynb)
+- [Granite TSFM 仓库](https://github.com/ibm-granite/granite-tsfm)
 - [GIFT-Eval 基准](https://huggingface.co/spaces/Salesforce/GIFT-Eval)
 
-加载默认配方，一次调用即可从所有四种 Granite 架构中获取中值和分位数预测，并根据您的需求的变化调整配方。
+加载默认配方，一次调用即可得到四个 Granite 架构的中位数与分位数预测；随着需求变化，再调整配方。
 
 ## 参考文献
 
 - [ECMWF：集合天气预报](https://www.ecmwf.int/en/about/media-centre/focus/2017/fact-sheet-ensemble-weather-forecasting)
-- [NOAA：北美多模型集合](https://www.cpc.ncep.noaa.gov/products/NMME/NMME_description.html)
-- [FlowState：采样率等变时间序列预测](https://arxiv.org/abs/2508.05287)
-- [微型时间混合器 (TTM)：用于增强多元时间序列零/少样本预测的快速预训练模型](https://arxiv.org/abs/2401.03955)
-- [重温通用 Transformer：解构时间序列基础模型的强大基线](https://arxiv.org/html/2602.06909v1)
-- [预测组合：超过 50 年的回顾](https://arxiv.org/abs/2205.04216)
-- [Smith 和 Wallis (2009)，预测组合难题的简单解释](https://doi.org/10.1111/j.1468-0084.2008.00541.x)
+- [NOAA：North American Multi-Model Ensemble](https://www.cpc.ncep.noaa.gov/products/NMME/NMME_description.html)
+- [FlowState：采样率等变的时间序列预测](https://arxiv.org/abs/2508.05287)
+- [Tiny Time Mixers（TTMs）：用于增强多变量时间序列零样本/少样本预测的快速预训练模型](https://arxiv.org/abs/2401.03955)
+- [重新审视通用 Transformer：拆解时间序列基础模型的强基线](https://arxiv.org/html/2602.06909v1)
+- [预测组合：一份超过 50 年的综述](https://arxiv.org/abs/2205.04216)
+- [Smith 与 Wallis（2009），预测组合之谜的简单解释](https://doi.org/10.1111/j.1468-0084.2008.00541.x)
 
-## 本文提到的型号 5
+## 本文提到的模型 5
 
-## 本文提到的空间1
+## 本文提到的 Space 1
 
-该作者的更多内容
+更多来自该作者
 
-## ALTK-Evolve：学习记忆如何在没有前沿模型的情况下在客户服务任务的 τ² 基准排行榜上名列前茅
+## ALTK-Evolve：学习到的记忆如何在无需前沿模型的情况下登顶客户服务任务的 τ²-bench 排行榜
 
 - ![](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)
 
@@ -277,7 +282,7 @@ GIFT-Eval 是一个广泛的基准，但总收益并不意味着每个系列都�
 
 2026 年 10 月 20 日
 
-## 您的代理完成了任务。它会再次这样做吗？
+## 你的 Agent 圆满完成了任务。它还能再来一次吗？
 
 - ![](https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png)
 
@@ -287,11 +292,12 @@ GIFT-Eval 是一个广泛的基准，但总收益并不意味着每个系列都�
 
 ### 社区
 
-通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。
+把图片、音频和视频拖进文本输入框，或粘贴、或点击此处即可上传。
 
-点击或粘贴此处上传图像
+点击或粘贴此处上传图片
 
-· [注册](https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Fgranite-timeseries-ensemble-r1) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Fgranite-timeseries-ensemble-r1) 发表评论
+· [注册](https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Fgranite-timeseries-ensemble-r1) 或 [登录](https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Fgranite-timeseries-ensemble-r1) 后发表评论
+
 
 14
 
@@ -308,6 +314,6 @@ GIFT-Eval 是一个广泛的基准，但总收益并不意味着每个系列都�
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/c_JwpKUXjG0LeKGknmQDk.png)](https://huggingface.co/heatmynuts)
 - [![](https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/XM-JnSrJZF_tHU4WbhI-D.png)](https://huggingface.co/zensaintlaurent)
 
-## 本文提到的型号 5
+## 本文提到的模型 5
 
-## 本文提到的空间1
+## 本文提到的 Space 1

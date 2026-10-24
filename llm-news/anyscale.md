@@ -9,8 +9,8 @@
 
 ## 全部文章（共 82 篇，按日期倒序；无日期条目列于最后）
 
-1. [宣布 Ray 在 Google TPU 上支持 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20） <!--orig:Announcing Ray support for PyTorch on Google TPUs-->
-2. [宣布成立 Ray on Accelerators 特别兴趣小组 (SIG)](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20） <!--orig:Announcing the Special Interest Group (SIG) for Ray on Accelerators-->
+1. [宣布 Ray 支持 Google TPU 上的 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20） <!--orig:Announcing Ray support for PyTorch on Google TPUs-->
+2. [宣布成立 Ray on Accelerators 特别兴趣小组（SIG）](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20） <!--orig:Announcing the Special Interest Group (SIG) for Ray on Accelerators-->
 3. [用 KubeRay 在 Kubernetes 上大规模运行 Ray](https://anyscale.com/blog/kuberay)（2026-10-15） <!--orig:Running Ray at scale on Kubernetes with KubeRay-->
 4. [在 Anyscale 上用 Ray 扩展机器人决策研究的规模](https://anyscale.com/blog/science-of-robot-decisions-ray-anyscale)（2026-10-09） <!--orig:Scaling the Science of Robot Decisions with Ray on Anyscale-->
 5. [编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08） <!--orig:Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale-->

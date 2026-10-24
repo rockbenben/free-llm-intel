@@ -9,23 +9,23 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 20 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>宣布 Ray 在 Google TPU 上支持 PyTorch</title>
+      <title>宣布 Ray 支持 Google TPU 上的 PyTorch</title>
       <link>https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu</link>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu</guid>
       <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Announcing Ray support for PyTorch on Google TPUs</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
-<h1>宣布 Ray 在 Google TPU 上支持 PyTorch</h1>
-<p>作者：<a href="https://www.anyscale.com/blog?author=lehui-liu">Lehui Liu</a>、<a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a>、<a href="https://www.anyscale.com/blog?author=andrew-sy-kim-google">Andrew Sy Kim (Google)</a>、<a href="https://www.anyscale.com/blog?author=nisha-mariam-johnson">Nisha Mariam Johnson</a> 和 <a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> | 2026 年 10 月 20 日</p>
-<p>今年早些时候，在 Ray Summit 2026 上，我们介绍了 <a href="https://www.oreilly.com/radar/what-is-the-park-stack/">PARK 堆栈</a>（PyTorch、AI 模型、Ray 和 Kubernetes）如何成为生产 AI 的行业标准。 Ray 长期以来一直是 GPU 上 PyTorch 工作负载普遍存在的分布式运行时。</p>
-<p>今天，Anyscale 和 Google Cloud 宣布在 Google TPU 上对 PyTorch 提供原生 Ray 支持，这是为 Gemini 和 Google Cloud 上的大规模 AI 工作负载提供支持的基础超级计算基础设施。</p>
-<p>这种集成以 Google 的 <a href="https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source-run-native-pytorch-on-tpus">TorchTPU 项目</a> 和 Google Kubernetes Engine (GKE) 上的 KubeRay 为基础，为 Cloud TPU 带来了本机、每个工作人员单设备的 PyTorch 体验。在 GKE 上运行的平台和 ML 团队现在可以在单个 Kubernetes 控制平面上跨 GPU 和 TPU 调度、扩展和操作分布式 PyTorch 训练、vLLM 推理和强化学习 (RL) 工作负载。</p>
-<h2>Google TPU 上的 LinkNative PyTorch</h2>
-<p>从历史上看，在 Ray 上运行 TPU 工作负载需要适应主要为 JAX 设计的单程序、多数据 (SPMD) 执行模型，其中每个主机虚拟机有一个 Ray 工作进程管理所有机器连接的 TPU 芯片。 <a href="https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source-run-native-pytorch-on-tpus">TorchTPU</a> 去年推出，作为 Google 张量处理单元的原生 PyTorch 后端，带来了急切优先的原生 TPU 集成和“torch.distributed”扩展，用于在 TPU 上运行分布式工作负载。</p>
-<p>继 TorchTPU 之后，我们将 Ray 发展为每个 TPU 芯片运行一个工作程序，这与 PyTorch 开发人员在 GPU 上习惯使用的单设备每个工作程序模型相匹配。</p>
-<p>当使用 Ray 和 TorchTPU 调度任务或 actor 时，每个工作线程请求一个逻辑 TPU 设备 (<code>resources={&quot;TPU&quot;: 1}</code>)，就像 GPU 工作线程请求 <code>num_gpus=1</code> 一样：</p>
-<ul><li><strong>设备隔离：</strong> 正如 Ray 自动为 GPU 工作线程设置“CUDA_VISIBLE_DEVICES”一样，Ray 使用“TPU_VISIBLE_CHIPS”隔离各个 TPU 设备并将其分配给工作线程</li><li><strong>本机 PyTorch 设备和集合：</strong> 在 Ray 任务或 Actor 内，将现有 PyTorch 代码从 GPU 迁移到 TPU 就像将“cuda”更改为“tpu”并将分布式通信后端从“nccl”切换到“tpu_dist”一样简单。</li><li><strong>拓扑感知组调度：</strong> GKE 将多主机 TPU 切片提供为通过高速芯片间互连 (ICI) 连接的节点池。为了利用这种物理布局，Ray 的 <a href="https://docs.ray.io/en/latest/ray-core/api/doc/ray.util.tpu.SlicePlacementGroup.html">SlicePlacementGroup</a> API 提供了一个本机调度实现，保证 Actor 在同一个 TPU 切片上一起调度。</li></ul>
-<p>下面是在 TPU 上使用 Ray actor 的分布式 PyTorch“all_reduce”的示例。除了资源请求和设备/后端字符串之外，代码与在 GPU 上运行的 Ray actor 相同：</p>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
+<h1>宣布 Ray 支持 Google TPU 上的 PyTorch</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=lehui-liu">Lehui Liu</a>、<a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a>、<a href="https://www.anyscale.com/blog?author=andrew-sy-kim-google">Andrew Sy Kim (Google)</a>、<a href="https://www.anyscale.com/blog?author=nisha-mariam-johnson">Nisha Mariam Johnson</a> 与 <a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> | 2026 年 10 月 20 日</p>
+<p>今年早些时候，在 Ray Summit 2026 上，我们介绍了 <a href="https://www.oreilly.com/radar/what-is-the-park-stack/">PARK 技术栈</a>（PyTorch、AI 模型、Ray 和 Kubernetes）如何正在成为生产级 AI 的行业标准。长期以来，Ray 一直是 GPU 上 PyTorch 工作负载无处不在的分布式运行时。</p>
+<p>今天，Anyscale 与 Google Cloud 宣布为 Google TPU 上的 PyTorch 提供原生 Ray 支持——TPU 是承载 Gemini 以及 Google Cloud 上大规模 AI 工作负载的基础超级计算基础设施。</p>
+<p>在 Google 的 <a href="https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source-run-native-pytorch-on-tpus">TorchTPU 项目</a>以及 Google Kubernetes Engine（GKE）上的 KubeRay 的基础上，这一集成把原生、每个 worker 单设备的 PyTorch 体验带到了 Cloud TPU 上。运行在 GKE 上的平台团队与 ML 团队，现在可以在单一 Kubernetes 控制平面上，跨 GPU 和 TPU 调度、扩展并运维分布式 PyTorch 训练、vLLM 推理与强化学习（RL）工作负载。</p>
+<h2>Google TPU 上的原生 PyTorch</h2>
+<p>从历史上看，在 Ray 上运行 TPU 工作负载需要适配主要为 JAX 设计的单程序多数据（SPMD）执行模型：每个宿主机 VM 上只有一个 Ray worker 进程，由它管理整台机器上挂载的所有 TPU 芯片。<a href="https://cloud.google.com/blog/topics/ai-infrastructure/torchtpu-is-now-open-source-run-native-pytorch-on-tpus">TorchTPU</a> 于去年推出，是 Google 面向张量处理单元（Tensor Processing Unit）的原生 PyTorch 后端，带来了以 eager 模式为先的原生 TPU 集成，以及用于在 TPU 上运行分布式工作负载的 <code>torch.distributed</code> 扩展。</p>
+<p>继 TorchTPU 之后，我们把 Ray 演进为每个 TPU 芯片运行一个 worker，与 PyTorch 开发者在 GPU 上习惯的每个 worker 单设备模型保持一致。</p>
+<p>使用 Ray 和 TorchTPU 调度任务或 actor 时，每个 worker 申请一个逻辑 TPU 设备（<code>resources={&quot;TPU&quot;: 1}</code>），就像 GPU worker 申请 <code>num_gpus=1</code> 一样：</p>
+<ul><li><strong>设备隔离：</strong> 正如 Ray 会为 GPU worker 自动设置 <code>CUDA_VISIBLE_DEVICES</code>，Ray 也会通过 <code>TPU_VISIBLE_CHIPS</code> 隔离各个 TPU 设备并把它们分配给 worker</li><li><strong>原生的 PyTorch 设备与集合通信：</strong> 在 Ray 任务或 actor 内部，把现有 PyTorch 代码从 GPU 迁移到 TPU，只需把 <code>&quot;cuda&quot;</code> 改成 <code>&quot;tpu&quot;</code>，并把分布式通信后端从 <code>&quot;nccl&quot;</code> 换成 <code>&quot;tpu_dist&quot;</code> 即可。</li><li><strong>拓扑感知的成组调度：</strong> GKE 把多主机 TPU 切片配置为通过高速芯片间互连（ICI）连接的节点池。为了利用这种物理布局，Ray 的 <a href="https://docs.ray.io/en/latest/ray-core/api/doc/ray.util.tpu.SlicePlacementGroup.html">SlicePlacementGroup</a> API 提供了原生调度实现，保证各 actor 被成组调度到同一个 TPU 切片上。</li></ul>
+<p>下面是在 TPU 上使用 Ray actor 执行分布式 PyTorch <code>all_reduce</code> 的示例。除了资源请求和设备/后端字符串之外，这段代码与在 GPU 上运行的 Ray actor 完全相同：</p>
 <pre><code>import os
 import ray
 import torch
@@ -56,12 +56,12 @@ class TorchWorker:
 
         dist.all_reduce(tensor, op=dist.ReduceOp.SUM)
         return tensor.cpu().numpy()</code></pre>
-<h2>TPU 上的 LinkTorchTrainer</h2>
-<p>对于分布式训练和微调，许多团队依靠 Ray Train 的“TorchTrainer”来编排分布式数据并行 (DDP)、完全分片数据并行 (FSDPv2) 和 DTensor 工作负载，而无需为分布式进程组编写手动样板。</p>
-<p>借助 Ray Train 中的原生 TorchTPU 支持，您现在可以在单主机和多主机 Cloud TPU 切片上运行现有的“TorchTrainer”脚本，对 PyTorch 训练循环进行零更改。</p>
-<p>当您通过“ScalingConfig”为 TPU 配置“TorchTrainer”时，Ray Train 会自动处理所有底层 TPU 编排：</p>
-<ul><li><strong>原子 TPU 切片预留：</strong> 通过指定 <code>use_tpu=True</code> 以及目标 <code>topology</code>（例如，<code>&quot;4x4&quot;</code>）和 <code>accelerator_type</code>（例如，<code>&quot;TPU-V6E&quot;</code> 或 <code>&quot;TPU-V7X&quot;</code>），<code>TorchTrainer</code> 会自动在后台提供一个 <code>SlicePlacementGroup</code>。这保证了所有训练工作线程都通过高速 ICI 被分组调度到连续的物理 TPU 切片上，从而防止资源碎片。</li><li><strong>自动化 </strong><code><strong>tpu_dist</strong></code><strong> Bootstrap：</strong> Ray Train 为每个 TPU 设备生成一个工作程序 (<code>resources_per_worker={&quot;TPU&quot;: 1}</code>)，自动配置 PyTorch 分布式环境变量 (<code>RANK</code>、<code>WORLD_SIZE</code>、<code>LOCAL_RANK</code>、<code>MASTER_ADDR</code>、<code>MASTER_PORT</code>) 以及 TorchTPU 的切片构建器地址和网格拓扑，并初始化“tpu_dist”进程组。</li><li><strong>插入式 Ray Train 实用程序：</strong> 标准 Ray Train 辅助函数，如“ray.train.torch.get_device()”和“ray.train.torch.prepare_model()”会自动检测 TorchTPU 运行时，将模型移动到指定的“tpu”设备，并将其包装在 PyTorch 的 DistributedDataParallel 类中。</li></ul>
-<p>以下是使用“TorchTrainer”在 16 芯片多主机 Trillium（“TPU-V6E”、“4x4”拓扑）切片上扩展 PyTorch 训练循环的完整示例：</p>
+<h2>TPU 上的 TorchTrainer</h2>
+<p>对于分布式训练和微调，许多团队依赖 Ray Train 的 <code>TorchTrainer</code> 来编排分布式数据并行（DDP）、完全分片数据并行（FSDPv2）和 DTensor 工作负载，而无需为分布式进程组手写样板代码。</p>
+<p>借助 Ray Train 对 TorchTPU 的原生支持，你现在可以在单主机和多主机 Cloud TPU 切片上运行现有的 <code>TorchTrainer</code> 脚本，对 PyTorch 训练循环零改动。</p>
+<p>当你通过 <code>ScalingConfig</code> 为 TPU 配置 <code>TorchTrainer</code> 时，Ray Train 会自动处理底层所有 TPU 编排工作：</p>
+<ul><li><strong>原子化预留 TPU 切片：</strong> 只要在指定目标 <code>topology</code>（例如 <code>&quot;4x4&quot;</code>）和 <code>accelerator_type</code>（例如 <code>&quot;TPU-V6E&quot;</code> 或 <code>&quot;TPU-V7X&quot;</code>）的同时指定 <code>use_tpu=True</code>，<code>TorchTrainer</code> 就会在底层自动创建一个 <code>SlicePlacementGroup</code>。这保证所有训练 worker 都通过高速 ICI 被成组调度到连续的物理 TPU 切片上，避免资源碎片化。</li><li><strong>自动化的 </strong><code><strong>tpu_dist</strong></code><strong> 引导：</strong> Ray Train 会为每个 TPU 设备启动一个 worker（<code>resources_per_worker={&quot;TPU&quot;: 1}</code>），自动配置 PyTorch 分布式环境变量（<code>RANK</code>、<code>WORLD_SIZE</code>、<code>LOCAL_RANK</code>、<code>MASTER_ADDR</code>、<code>MASTER_PORT</code>）以及 TorchTPU 的 slice-builder 地址和 mesh 拓扑，并初始化 <code>tpu_dist</code> 进程组。</li><li><strong>可直接替换的 Ray Train 工具函数：</strong> <code>ray.train.torch.get_device()</code>、<code>ray.train.torch.prepare_model()</code> 等标准 Ray Train 辅助函数会自动检测 TorchTPU 运行时，把模型移动到分配给它的 <code>tpu</code> 设备，并用 PyTorch 的 DistributedDataParallel 类包装模型。</li></ul>
+<p>下面是一个完整示例：使用 <code>TorchTrainer</code> 把一个 PyTorch 训练循环扩展到 16 芯片、多主机的 Trillium（<code>TPU-V6E</code>，<code>4x4</code> 拓扑）切片上：</p>
 <pre><code>import ray
 from ray import train
 from ray.train import ScalingConfig
@@ -112,10 +112,10 @@ trainer = TorchTrainer(
 )
 
 result = trainer.fit()</code></pre>
-<p>有关 Google Kubernetes Engine (GKE) 的完整端到端演练，请参阅<a href="https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/train-models-tpu-ray-torchtpu">使用 Ray 和 TorchTPU 在多主机 TPU 上训练模型</a>。</p>
-<h2>LinkvLLM-TorchTPU 与 Ray Serve</h2>
-<p>对于在线推理，<a href="https://github.com/vllm-project/vllm-torchtpu">vLLM-TorchTPU</a> 将 TorchTPU 注册为 vLLM 平台插件，以便 PyTorch 模型在 Cloud TPU 上编译和执行，而无需在 JAX 中重写模型定义。结合 <a href="https://docs.ray.io/en/latest/serve/llm/index.html">Ray Serve LLM</a>，您可以使用 GPU 上使用的相同声明性“LLMConfig” API 跨单主机和多主机 TPU 切片部署 OpenAI 兼容的 vLLM 端点。</p>
-<p>当“accelerator_type”和“accelerator_config”指定 TPU 切片时，Ray Serve 为每个副本保留一个拓扑感知的“SlicePlacementGroup”，并跨切片启动 vLLM 引擎工作线程：</p>
+<p>关于在 Google Kubernetes Engine（GKE）上的完整端到端演练，请参见<a href="https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/train-models-tpu-ray-torchtpu">使用 Ray 和 TorchTPU 在多主机 TPU 上训练模型</a>。</p>
+<h2>配合 Ray Serve 使用 vLLM-TorchTPU</h2>
+<p>对于在线推理，<a href="https://github.com/vllm-project/vllm-torchtpu">vLLM-TorchTPU</a> 把 TorchTPU 注册为 vLLM 平台插件，使 PyTorch 模型无需用 JAX 重写模型定义即可在 Cloud TPU 上编译和执行。再结合 <a href="https://docs.ray.io/en/latest/serve/llm/index.html">Ray Serve LLM</a>，你就能用与 GPU 上相同的声明式 <code>LLMConfig</code> API，在单主机和多主机 TPU 切片上部署兼容 OpenAI 的 vLLM 端点。</p>
+<p>当 <code>accelerator_type</code> 和 <code>accelerator_config</code> 指定了 TPU 切片时，Ray Serve 会为每个副本预留一个拓扑感知的 <code>SlicePlacementGroup</code>，并在整个切片上启动 vLLM 引擎 worker：</p>
 <pre><code>from ray.serve.llm import (
     LLMConfig,
     LLMServingArgs,
@@ -142,76 +142,76 @@ llm_config = LLMConfig(
     },
 )
 app = build_openai_app(LLMServingArgs(llm_configs=[llm_config]))</code></pre>
-<p>有关 Google Kubernetes Engine (GKE) 的完整端到端演练，请参阅<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">使用 Ray 和 TorchTPU 在多主机 TPU 上提供 LLM</a>。</p>
-<h2>Link将 PARK 堆栈扩展到 TPU</h2>
-<p>随着 AI 工作负载从独立的训练作业发展为结合训练、高通量推理和强化学习的复合系统，组织正在开源 PARK 堆栈（PyTorch、AI 模型、Ray 和 Kubernetes）上进行标准化。将 TorchTPU 引入 Ray 和 GKE 在 Google Cloud 上完成了这一愿景：PyTorch 开发人员保留了他们已知的急切执行模型和 Ray API，而平台团队则获得了 GKE 的拓扑感知自动扩展、弹性和多加速器治理。</p>
-<p>要立即开始，请探索使用 Ray 和 TorchTPU 的<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">服务 LLM</a> 或<a href="https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/train-models-tpu-ray-torchtpu">训练模型</a> 的端到端 GKE 教程，敬请关注我们将此基础扩展到 GKE 上的大规模 RL 后训练框架和下一代 Ironwood (TPU v7x) 切片。</p>
-<p>＃＃＃＃ 目录</p>
-<ul><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#native-pytorch-on-google-tpus">Google TPU 上的本机 PyTorch</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#torchtrainer-on-tpus">TPU 上的 TorchTrainer</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#vllm-torchtpu-with-ray-serve">带有 Ray Serve 的 vLLM-TorchTPU</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#extending-the-park-stack-to-tpus">将 PARK 堆栈扩展到 TPU</a></li></ul>
-<p>####分享</p>
-<p>####标签</p>
-<h4>注册产品更新</h4>
-<p>####推荐内容</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/3Lo0nxFq9UAkSkzJ1h2inn/77202902f1e6fe0fd903047f5517b32e/Announcing_the_Special_Interest_Group__SIG__for_Ray_on_Accelerators.png?w=140" alt="宣布 Ray 成立特别兴趣小组 (SIG)加速器"></p>
-<h4>宣布成立 Ray on Accelerators 特别兴趣小组 (SIG)</h4>
+<p>关于在 Google Kubernetes Engine（GKE）上的完整端到端演练，请参见<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">使用 Ray 和 TorchTPU 在多主机 TPU 上服务 LLM</a>。</p>
+<h2>把 PARK 技术栈扩展到 TPU</h2>
+<p>随着 AI 工作负载从独立的训练作业演变为结合训练、高吞吐推理和强化学习的复合系统，各组织正在把开源 PARK 技术栈（PyTorch、AI 模型、Ray 和 Kubernetes）作为标准化选择。把 TorchTPU 引入 Ray 和 GKE，让这一愿景在 Google Cloud 上得以完整实现：PyTorch 开发者保留他们已经熟悉的 eager 执行模型和 Ray API，平台团队则获得 GKE 的拓扑感知自动扩缩容、弹性以及多加速器治理能力。</p>
+<p>今天就可以上手：探索使用 Ray 和 TorchTPU 的端到端 GKE 教程——<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">服务 LLM</a>或<a href="https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/train-models-tpu-ray-torchtpu">训练模型</a>，并敬请期待我们把这一基础扩展到大规模 RL 后训练框架以及 GKE 上下一代 Ironwood（TPU v7x）切片。</p>
+<h4>目录</h4>
+<ul><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#native-pytorch-on-google-tpus">Google TPU 上的原生 PyTorch</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#torchtrainer-on-tpus">TPU 上的 TorchTrainer</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#vllm-torchtpu-with-ray-serve">配合 Ray Serve 使用 vLLM-TorchTPU</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#extending-the-park-stack-to-tpus">把 PARK 技术栈扩展到 TPU</a></li></ul>
+<h4>分享</h4>
+<h4>标签</h4>
+<h4>订阅产品更新</h4>
+<h4>推荐内容</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/3Lo0nxFq9UAkSkzJ1h2inn/77202902f1e6fe0fd903047f5517b32e/Announcing_the_Special_Interest_Group__SIG__for_Ray_on_Accelerators.png?w=140" alt="宣布成立 Ray on Accelerators 特别兴趣小组（SIG）"></p>
+<h4>宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</h4>
 <p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
 <h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
 <p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策科学"></p>
-<h4>使用 Ray 在任意尺度上扩展机器人决策科学</h4>
+<h4>用 Ray 在 Anyscale 上扩展机器人决策科学的规模</h4>
 <h2>立即探索 Anyscale</h2>
-<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
+<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交流</a></p>]]></content:encoded>
     </item>
     <item>
-      <title>宣布成立 Ray on Accelerators 特别兴趣小组 (SIG)</title>
+      <title>宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</title>
       <link>https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu</link>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu</guid>
       <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Announcing the Special Interest Group (SIG) for Ray on Accelerators</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详细信息</p>
-<h1>宣布成立 Ray on Accelerators 特别兴趣小组 (SIG)</h1>
-<p>作者：<a href="https://www.anyscale.com/blog?author=zhe-zhang">张哲</a>、<a href="https://www.anyscale.com/blog?author=mengjin-yan">颜孟金</a>、<a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> 和 <a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a> | 2026 年 10 月 20 日</p>
-<p>今天，我们宣布成立 Ray 硬件加速器特别兴趣小组 (SIG)。</p>
-<p>十多年前，当 Ray 在加州大学伯克利分校创建时，计算领域看起来非常不同。当时，“分布式计算”指的是运行 Apache Hadoop 和 Apache Spark 等框架的 CPU 集群。 GPU 刚刚从图形和科学计算转向机器学习。</p>
-<p>如今，“加速计算”是人工智能开发和部署的前沿和中心，加速器及其功能变得更加专业化和多样化。例如：</p>
-<ul><li>NVIDIA 的 RTX 6000 Pro 支持涵盖 AI 训练、推理、图形和视频的灵活工作负载</li><li>NVIDIA B200s 和 AMD MI355X 提供更大的内存容量以支持更大的模型，GB200 NVL72 连接 72 个 GPU，用于通信密集型、大规模训练和推理。</li><li>除了 GPU 之外，Google Ironwood TPU 还针对大规模 AI 工作负载，而 Groq LPU 则专注于低延迟推理。</li></ul>
-<p>Ray 社区一直在积极努力跟上这一转变。如今，Ray <a href="https://docs.ray.io/en/latest/ray-core/scheduling/accelerators.html">支持十多种硬件加速器</a>，从 NVIDIA 和 AMD GPU 到 TPU、Trainium、Gaudi 等。我们相信，现在是在此基础上进行更雄心勃勃、系统化努力的关键时刻，让 Ray 加速器易于使用、大规模高效且生产可靠。</p>
-<p>加速器特别兴趣小组旨在将硬件供应商、Ray 贡献者和应用程序开发人员聚集在一起，定义和推进一个共享的、供应商中立的 Ray 加速器支持路线图。这个公共利益团体将负责使 Ray 工作负载能够在碎片化、专业化加速器的时代继续发展。</p>
-<p>我们最初的路线图侧重于 3 个核心领域：<strong>开发和测试基础设施、硬件感知功能和网络/传输，</strong>在以下部分中概述。</p>
-<h2>链接开发和测试基础设施</h2>
-<p>可靠的加速器支持需要可靠地访问硬件以进行开发、测试和调试。维护者和贡献者需要在他们影响的设备上验证更改、重现故障并在到达用户之前捕获回归。随着代理软件工程加速开发，可靠的测试和验证变得更加重要：人类贡献者和编码代理都需要来自真实硬件和代表性工作负载的可重复反馈。我们希望将此成为为 Ray 做出贡献的常规部分，为硬件供应商和云提供商贡献资源和专业知识提供清晰的路径。</p>
+      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
+<h1>宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</h1>
+<p>作者：<a href="https://www.anyscale.com/blog?author=zhe-zhang">Zhe Zhang</a>、<a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a>、<a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> 与 <a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a> | 2026 年 10 月 20 日</p>
+<p>今天，我们宣布成立面向硬件加速器的 Ray 特别兴趣小组（SIG）。</p>
+<p>十多年前 Ray 在 UC Berkeley 诞生时，计算的格局与今天大不相同。当时所说的「分布式计算」指的是运行 Apache Hadoop、Apache Spark 等框架的 CPU 集群。GPU 才刚刚开始从图形与科学计算领域进入机器学习。</p>
+<p>如今，<em>加速计算</em>已成为 AI 开发与部署的核心，加速器及其能力也变得更加专用化、多样化。例如：</p>
+<ul><li>NVIDIA 的 RTX 6000 Pro 支持横跨 AI 训练、推理、图形与视频的灵活工作负载</li><li>NVIDIA B200 和 AMD MI355X 提供显著更大的显存容量以支撑更大的模型，而 GB200 NVL72 把 72 块 GPU 连接起来，面向通信密集型的大规模训练与推理。</li><li>在 GPU 之外，Google Ironwood TPU 面向超大规模 AI 工作负载，Groq LPU 则专注于低延迟推理。</li></ul>
+<p>Ray 社区一直在积极跟上这一转变。如今，Ray <a href="https://docs.ray.io/en/latest/ray-core/scheduling/accelerators.html">支持十多种硬件加速器</a>，从 NVIDIA 和 AMD 的 GPU 到 TPU、Trainium、Gaudi 等等。我们认为，现在正是以此为基础，在整个 Ray 范围内开展一项更宏大、更系统化努力的关键时刻，让加速器易于使用、在大规模下高效、在生产中可靠。</p>
+<p>Accelerator 特别兴趣小组旨在把硬件厂商、Ray 贡献者和应用开发者汇聚在一起，共同制定并推进一份共享的、厂商中立的 Ray 加速器支持路线图。这个公开的兴趣小组将负责让 Ray 工作负载在加速器碎片化、专用化的时代继续演进。</p>
+<p>我们最初的路线图聚焦 3 个核心领域：<strong>开发与测试基础设施、硬件感知能力，以及网络/传输，</strong>下面各节将逐一展开。</p>
+<h2>开发与测试基础设施</h2>
+<p>可靠的加速器支持，需要开发、测试和调试时能可靠地获取硬件。维护者和贡献者需要在受影响的设备上验证改动、复现故障，并在问题到达用户之前捕获回归。随着 agentic 软件工程加快开发节奏，可靠的测试与验证变得更加重要：无论是人类贡献者还是编码 agent，都需要来自真实硬件和有代表性工作负载的可复现反馈。我们希望把这件事变成参与 Ray 贡献的常规环节，并为硬件厂商和云厂商贡献资源与专业知识提供清晰的路径。</p>
 <p>我们最初的优先事项是：</p>
-<ul><li><strong>共享硬件访问</strong>。建立一个记录流程，将云和供应商托管的加速器引入 Ray 的开发和测试基础设施，包括让贡献者能够重现和调试故障。</li><li><strong>可重复的开发和测试环境</strong>。为维护的环境提供明确的驱动程序、运行时和依赖项版本，以便贡献者可以重现 CI 结果并跨提供商一致地验证更改。</li><li><strong>更广泛的 CI 覆盖范围</strong>。通过有针对性地检查拉取请求以及更广泛的夜间和发布测试来扩展现有管道。覆盖范围应包括分布式工作负载、故障恢复和性能回归以及基本设备功能。</li><li><strong>可持续经营和所有权</strong>。定义维护环境、调查故障以及保持跨版本集成正常运行的职责。让测试结果和基础设施运行状况可见，并管理容量和成本，以便基础设施可以随着参与而增长。</li></ul>
-<h2>Link硬件感知调度</h2>
-<p>为了让应用程序充分利用加速器，Ray 首先必须了解每个节点拥有哪些硬件及其结构。随着加速器生态系统的发展，加速器节点不再只是相同设备的数量。工作负载性能取决于设备的互连性、设备与 CPU 和 NIC 的关系，以及节点分组到更大的域（例如机架和 TPU 切片）。</p>
-<p>我们的目标是让 Ray 跨供应商和平台准确、一致地了解这种结构。有了这张图片，Ray 的调度程序就可以将任务和参与者放置在正确的硬件上，用户可以看到他们的集群是由什么组成的以及它是如何连接的。</p>
+<ul><li><strong>共享硬件访问</strong>。建立一套有文档记录的流程，把云端和厂商托管的加速器接入 Ray 的开发与测试基础设施，其中也包括让贡献者能够复现和调试故障的访问权限。</li><li><strong>可复现的开发与测试环境</strong>。提供持续维护的环境，并明确标注驱动、运行时和依赖版本，使贡献者能够复现 CI 结果，并在不同厂商之间一致地验证改动。</li><li><strong>更广的 CI 覆盖</strong>。在现有流水线之上，为 pull request 增加有针对性的检查，并扩大夜间测试与发布测试的范围。覆盖内容应包含分布式工作负载、故障恢复和性能回归，而不只是设备的基础功能。</li><li><strong>可持续的运维与归属</strong>。明确环境维护、故障排查以及保持各版本集成都可用的职责分工。让测试结果和基础设施健康状况可见，并管理容量与成本，使基础设施能随着参与度的增长而扩展。</li></ul>
+<h2>硬件感知调度</h2>
+<p>要让应用充分发挥加速器的性能，Ray 首先必须知道每个节点上有哪些硬件、它们是如何组织的。随着加速器生态的演进，加速器节点不再只是若干相同设备的简单计数。工作负载的性能取决于设备之间的互连情况、设备与 CPU 和 NIC 的关系，以及节点如何被归入机架、TPU 切片等更大的域。</p>
+<p>我们的目标是让 Ray 能够跨厂商、跨平台准确且一致地描绘这一结构。有了这幅图景，Ray 的调度器就能把任务和 actor 放到正确的硬件上，用户也能看到自己的集群由什么构成、如何连接。</p>
 <p>我们最初的优先事项是：</p>
-<ul><li><strong>通用硬件接口。</strong> 定义供应商中立的接口，用于标记硬件、表示其架构并描述其规格，以便应用程序和库可以定位功能，而不是编写特定于供应商的代码。这包括以一致的方式识别加速器 SKU，包括发布时的新加速器 SKU。它还包括记录的扩展点和清单，供供应商添加新的加速器。</li><li><strong>强化发现。</strong> 加强 Ray 的发现机制，为每个加速器的集成提供明确的所有权，并通过上一节中描述的 CI 覆盖范围来支持它。发现应该捕获硬件的拓扑和架构，而不仅仅是设备的类型和数量。</li><li><strong>平台和云集成。</strong> 与云提供商和部署平台合作，以便发现反映集群运行的底层结构。其中一些信息（例如节点属于哪个机架或分片）只能从平台获得，而不能从节点本身获得。</li><li><strong>硬件可见性。</strong> 提供查看集群中的加速器及其连接方式的方法，以及 Ray 仪表板上的加速器指标。这可以让用户确认 Ray 正确地看到他们的硬件并了解他们的工作放置在哪里。它还为贡献者提供了一种验证新集成的方法。</li><li><strong>清晰的用户指南。</strong> 记录 Ray 如何发现和表示硬件，以及如何在布置工作时使用该信息。好的指南可以帮助应用程序开发人员和越来越多地为他们编写 Ray 代码的编码代理。</li></ul>
-<h2>LinkNetworking 和 I/O 传输</h2>
-<p>在加速器之间移动数据通常与在加速器本身上运行计算一样重要。现代人工智能工作负载，例如大规模强化学习，需要跨设备和节点移动大型模型权重张量，从训练到推理工作人员。从历史上看，Ray 的对象存储是为 CPU 数据构建的，这意味着加速器张量必须复制到主机内存、序列化并通过标准主机网络发送，然后才能到达另一个设备。</p>
-<p>为了避免这个瓶颈，引入了<strong>Ray Direct Transport (RDT)</strong>，使参与者能够通过 Ray 传递对张量的引用，同时在设备之间直接传输实际数据并使用 UCX 和 RDMA 等高性能传输。我们的目标是使高速、直接的数据传输在不同的加速器、框架和网络结构上可靠地工作，同时保持 Ray 熟悉的编程模型。</p>
+<ul><li><strong>通用硬件接口。</strong> 定义厂商中立的接口，用于标记硬件、表示其架构并描述其规格，使应用和库可以面向能力编程，而不是编写厂商专属代码。这包括以一致的方式识别加速器 SKU（含发布时的新 SKU），也包括为新增加速器的厂商提供有文档记录的扩展点和检查清单。</li><li><strong>更健壮的发现机制。</strong> 强化 Ray 的发现机制，为每种加速器的集成明确归属，并用上一节所述的 CI 覆盖为其兜底。发现机制应捕获硬件的拓扑与架构，而不只是设备的类型和数量。</li><li><strong>平台与云集成。</strong> 与云厂商和部署平台合作，使发现结果能够反映集群实际运行所在环境的底层结构。有些信息（例如某个节点属于哪个机架或哪个切片）只能从平台获取，节点自身并不掌握。</li><li><strong>硬件可见性。</strong> 提供查看集群中加速器及其连接方式的能力，并在 Ray dashboard 上展示加速器指标。这既让用户确认 Ray 正确识别了自己的硬件、并了解工作被放置在哪里，也为贡献者提供了验证新集成的手段。</li><li><strong>清晰的用户指南。</strong> 记录 Ray 如何发现和表示硬件，以及如何在放置工作时使用这些信息。好的指南既能帮助应用开发者，也能帮助越来越多替他们编写 Ray 代码的编码 agent。</li></ul>
+<h2>网络与 I/O 传输</h2>
+<p>在加速器之间搬运数据，往往和在加速器上执行计算同样重要。现代 AI 工作负载（例如大规模强化学习）需要把大型模型权重张量跨设备、跨节点地从训练 worker 搬到推理 worker。从历史上看，Ray 的对象存储是为 CPU 数据设计的，这意味着加速器张量必须先复制到主机内存、序列化，再经由标准的主机网络发送，才能到达另一个设备。</p>
+<p>为避免这一瓶颈，我们引入了 <strong>Ray Direct Transport（RDT）</strong>，让 actor 可以通过 Ray 传递张量引用，同时在设备之间直接传输实际数据，并使用 UCX、RDMA 等高性能传输方式。我们的目标是让高速的直连数据传输在不同加速器、框架和网络结构上都能可靠工作，同时保持 Ray 熟悉的编程模型。</p>
 <p>我们最初的优先事项是：</p>
-<ul><li><strong>广泛的运输一体化</strong>。在 RDT 中支持更广泛的加速器、框架和互连，因此 Ray 可以选择 Actor 之间最快的路径，无论是通过片内 TPU ICI、同节点 NVLink 还是跨节点 GPUDirect RDMA。</li><li><strong>运输生命周期和恢复</strong>。确保每个硬件传输干净地处理真实设备上的初始化、拆卸和错误恢复，以便 RDT 在参与者在强化学习和分类服务等动态工作负载中扩展或重新启动时可靠地工作。</li><li><strong>经过验证的配方和可观察性</strong>。使云和硬件提供商能够发布经过验证的部署配置、对高吞吐量工作负载进行基准测试并提供清晰的诊断和传输指标。</li></ul>
-<h2>链接范围</h2>
-<p>虽然核心调度和布局逻辑保留在 Ray Core 中，但 SIG Accelerator 负责定义 Ray 中加速器的插件接口、CI 测试和成熟度层。硬件供应商和云提供商贡献并维护自己的设备插件、传输和对新 SKU 的零日支持，而框架作者和 ML 从业者则根据实际工作负载需求制定我们的路线图。</p>
-<h2>Link参与</h2>
-<p>无论您是构建新的加速器集成、在 Ray 上运行大规模训练或推理，还是提供云和 CI 基础设施，我们邀请您参与其中！</p>
-<ul><li>加入 <a href="https://www.ray.io/join-slack">Ray Slack</a> 上的对话。</li><li>参加我们的社区会议，讨论提案、审查路线图优先事项并分享工作量反馈。</li><li>查看与开放加速器相关的<a href="https://github.com/ray-project/ray/issues">问题</a> 和 Github 上的 PR 并向上游做出贡献。</li></ul>
+<ul><li><strong>广泛的传输集成</strong>。在 RDT 中支持更多种类的加速器、框架和互连方式，使 Ray 能在 actor 之间选择最快的路径——无论是切片内的 TPU ICI、同节点内的 NVLink，还是跨节点的 GPUDirect RDMA。</li><li><strong>传输生命周期与恢复</strong>。确保每种硬件传输在真实设备上都能干净地处理初始化、拆卸和错误恢复，使 RDT 在 actor 于强化学习、分离式服务等动态工作负载中扩缩或重启时依然可靠。</li><li><strong>经验证的配置方案与可观测性</strong>。让云厂商和硬件厂商能够发布经过验证的部署配置、对高吞吐工作负载进行基准测试，并给出清晰的诊断信息和传输指标。</li></ul>
+<h2>范围</h2>
+<p>核心的调度与放置逻辑仍保留在 Ray Core 中，而 SIG Accelerator 负责定义 Ray 中加速器的插件接口、CI 测试和成熟度分级。硬件厂商和云厂商贡献并维护各自的设备插件、传输实现以及新 SKU 的首日支持，框架作者和 ML 从业者则用真实的工作负载需求为我们的路线图提供依据。</p>
+<h2>参与其中</h2>
+<p>无论你是在构建新的加速器集成、在 Ray 上运行大规模训练或推理，还是在提供云与 CI 基础设施，我们都欢迎你参与进来！</p>
+<ul><li>在 <a href="https://www.ray.io/join-slack">Ray Slack</a> 上加入讨论。</li><li>参加我们的社区会议，讨论提案、评审路线图优先级、分享工作负载方面的反馈。</li><li>查看 Github 上与加速器相关的开放 <a href="https://github.com/ray-project/ray/issues">issue</a> 和 PR，并向上游贡献。</li></ul>
 <h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#development-and-testing-infra">开发和测试基础设施</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#hardware-aware-scheduling">硬件感知调度</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#networking-and-i/o-transport">网络和 I/O 传输</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#scope">范围</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#get-involved">参与其中</a></li></ul>
-<p>####分享</p>
-<p>####标签</p>
-<h4>注册产品更新</h4>
-<p>####推荐内容</p>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 在 Google TPU 上支持 PyTorch"></p>
-<h4>宣布 Ray 在 Google TPU 上支持 PyTorch</h4>
+<ul><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#development-and-testing-infra">开发与测试基础设施</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#hardware-aware-scheduling">硬件感知调度</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#networking-and-i/o-transport">网络与 I/O 传输</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#scope">范围</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#get-involved">参与其中</a></li></ul>
+<h4>分享</h4>
+<h4>标签</h4>
+<h4>订阅产品更新</h4>
+<h4>推荐内容</h4>
+<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 支持 Google TPU 上的 PyTorch"></p>
+<h4>宣布 Ray 支持 Google TPU 上的 PyTorch</h4>
 <p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
 <h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
 <p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策科学"></p>
-<h4>使用 Ray 在任意尺度上扩展机器人决策科学</h4>
+<h4>用 Ray 在 Anyscale 上扩展机器人决策科学的规模</h4>
 <h2>立即探索 Anyscale</h2>
-<p>使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交谈</a></p>]]></content:encoded>
+<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任何 AI 工作负载。</p>
+<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交流</a></p>]]></content:encoded>
     </item>
     <item>
       <title>用 KubeRay 在 Kubernetes 上大规模运行 Ray</title>

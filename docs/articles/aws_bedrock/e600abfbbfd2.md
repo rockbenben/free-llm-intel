@@ -1,71 +1,72 @@
 ---
 vendor: aws_bedrock
-title: Discover tools at runtime with AWS Agent Registry
-original_title: 
+title: 使用 AWS Agent Registry 在运行时发现工具
+original_title: Discover tools at runtime with AWS Agent Registry
 url: https://aws.amazon.com/blogs/machine-learning/discover-tools-at-runtime-with-aws-agent-registry
 date: 2026-10-20
 lang: zh
-captured: 2026-10-23
+captured: 2026-10-24
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: 2f8c0611324b
+body_sha: 04180b5df6a4
 ---
 
-## [人工智能](https://aws.amazon.com/blogs/machine-learning/)
+## [Artificial Intelligence](https://aws.amazon.com/blogs/machine-learning/)
 
 # 使用 AWS Agent Registry 在运行时发现工具
 
-使用 AWS Agent Registry 进行运行时发现可以帮助解决代理演示可能隐藏的问题。硬编码工具对于少数人来说工作得很好，在几十人身上就开始退化，超过这个数量就变得难以管理。企业系统公开数百个内部 API，用于定价、支持、订单、库存和客户数据。在这些系统中，模型可以花费更多的令牌来消除工具名称的歧义，而不是推理用户的请求。每项新功能都需要在编排器中进行代码更改、重新部署以及跨团队协调发布，而团队更愿意按照自己的节奏进行发布。
+借助 AWS Agent Registry 的运行时发现，可以解决一个 agent 演示中容易被掩盖的问题。硬编码的工具在只有少数几个时运行良好，到几十个时开始退化，再往上就变得无法管理。企业系统会暴露数百个用于定价、支持、订单、库存和客户数据的内部 API。在这些系统中，模型花在消歧工具名称上的 token 可能比推理用户请求还要多。每增加一项新能力，都需要在编排器中改动代码、重新部署，并在那些更希望按自己节奏发版的团队之间进行协调发布。
 
-这种模式可能出现在企业软件即服务 (SaaS) 活动中，团队将大型内部 API 界面暴露给代理消费者。随着目录的扩展，构建时布线可能会成为瓶颈。一种方法是改变协调器访问其工具的方式：代理可以在运行时发现相关工具，而不是将每个工具编译到代理中。
+在团队向 agentic 消费方暴露大量内部 API 表面的企业软件即服务（SaaS）项目中，这种模式可能反复出现。随着目录扩张，构建期的接线可能成为瓶颈。一种方法是改变编排器访问工具的方式：与其把每个工具都编译进 agent，不如让 agent 在运行时发现相关工具。
 
-[AWS Agent Registry](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html) 是一项托管服务，用于编目和发现模型上下文协议 (MCP) 服务器、代理和代理技能。发布者注册特定于协议的描述符和可搜索的描述。在运行时，编排器可以搜索已批准的、可发现的记录，并使用返回的端点和描述符内容来构建客户端。注册表搜索结果不会返回功能的调用凭据或身份验证方案。
+[AWS Agent Registry](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html) 是一项托管服务，用于对 Model Context Protocol（MCP）server、agent 和 agent skill 进行编目与发现。发布者注册协议特定的描述符和可搜索的描述。在运行时，编排器可以搜索已批准、可发现的记录，并使用返回的端点和描述符内容来构建客户端。Registry 的搜索结果不会返回该能力的调用凭证或身份验证方案。
 
-本文将介绍重构的 Python 示例演示的发现 → 实例化 → 执行循环。该代码通过 [Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) 部署订单管理 MCP 服务器、Amazon Bedrock AgentCore 的功能、[AgentCore 运行时](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html) 上的两个代理到代理 (A2A) 代理、一个注册表和一个协调者。 [示例目录](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)包含部署脚本、orchestrator、帮助程序模块和清理脚本。
+本文逐步讲解重构后的 Python 示例所演示的 Discover → Instantiate → Execute 循环。该代码通过 [Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html)（Amazon Bedrock AgentCore 的一项能力）部署一个订单管理 MCP server，在 [AgentCore runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html) 上部署两个 agent 到 agent（A2A）agent，以及一个 Registry 和一个编排器。[示例目录](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)包含部署脚本、编排器、辅助模块和清理脚本。
 
-## 解决方案概述：发现、实例化、执行
+## 解决方案概览：发现、实例化、执行
 
-此示例中的协调器代理没有内置的工具或代理知识。
+本示例中的编排器 agent 对工具或 agent 没有任何内置知识。
 
-![硬编码工具端点与使用 AWS Agent Registry 进行运行时发现的比较](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21108-1-1.png)
+![Comparison of hardcoded tool endpoints versus runtime discovery with AWS Agent Registry](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21108-1-1.png)
 
-图 1：如果没有 AWS Agent Registry（左），端点将被硬编码，添加新代理意味着代码更改和重新部署。借助 AWS Agent Registry（右），编排器可以通过语义搜索发现功能，并且在注册和批准后即可使用新的集成
+图 1：没有 AWS Agent Registry 时（左侧），端点是硬编码的，新增一个 agent 意味着修改代码并重新部署。使用 AWS Agent Registry 时（右侧），编排器通过语义搜索发现能力，新的集成在注册并获得批准后即可使用
 
 ### 发现
 
-编排器将自然语言查询发送到 AWS Agent Registry 数据平面。搜索响应包括记录标识、名称、描述、记录类型、状态、版本和协议描述符（例如 MCP 服务器元数据或 A2A 代理卡）。它不包括调用凭据。应用程序必须通过单独的可信配置路径获取并应用适当的凭据。
+编排器向 AWS Agent Registry 数据平面发送一个自然语言查询。搜索响应包含记录标识、名称、描述、记录类型、状态、版本，以及协议描述符（例如 MCP server 元数据或 A2A agent card）。它不包含调用凭证。应用必须通过另一条受信任的配置路径获取并应用合适的凭证。
 
 ### 实例化
 
-对于每个返回的记录，编排器根据描述符类型构造一个客户端。在此示例中，注册的 MCP 服务器代表首先作为目标添加到 Amazon Bedrock AgentCore Gateway 的工具。因此，MCP 描述符指向网关端点。协调器单独获取 [Cognito OAuth](https://docs.aws.amazon.com/cognito/) 访问令牌，并在创建“MCPClient”时使用它。 A2A 记录包含一个代理卡，其 URL 标识 AgentCore 运行时端点。包装器通过 [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/agent-registry.html) 数据平面客户端调用该运行时，该客户端使用调用者的 AWS 凭证对请求进行签名。注册表发现提供连接元数据，而不是身份验证材料。
+对于每个返回的记录，编排器根据描述符类型构建客户端。在本示例中，注册的 MCP server 代表最初作为目标添加到 Amazon Bedrock AgentCore Gateway 的工具。因此 MCP 描述符指向 Gateway 端点。编排器另行获取一个 [Cognito OAuth](https://docs.aws.amazon.com/cognito/) 访问 token，并在创建 `MCPClient` 时使用它。A2A 记录包含一个 agent card，其 URL 标识一个 AgentCore runtime 端点。封装层通过 [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/agent-registry.html) 数据平面客户端调用该运行时，该客户端使用调用方的 AWS 凭证对请求签名。Registry 的发现只提供连接元数据，不提供身份验证材料。
 
 ### 执行
 
-仅使用动态发现的工具构建临时内部代理。大语言模型 (LLM) 为请求选择正确的模型，并将结果合成回给用户。回合结束后，内部代理及其客户将被拆除。下一个请求将获得新的搜索和新的工具集。
+一个临时的内部 agent 仅用动态发现的工具构建。large language model（LLM）为请求挑选合适的工具，结果经过综合后返回给用户。这一轮结束后，内部 agent 及其客户端会被拆除。下一个请求会获得一次全新的搜索和一套全新的工具。
 
-![端到端架构：编排器查询AWS代理注册表，然后通过AgentCore网关和AgentCore上的A2A代理调用MCP服务器运行时](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21108-2-1.png)
+![End-to-end architecture: the orchestrator queries AWS Agent Registry, then invokes MCP servers through AgentCore Gateway and A2A agents on AgentCore runtime](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21108-2-1.png)
 
-图 2：端到端架构。 Amazon Bedrock AgentCore 运行时上的单个编排器查询 AWS 代理注册表。匹配的 MCP 服务器通过 Amazon Bedrock AgentCore Gateway 调用，匹配的 A2A 代理在 Amazon Bedrock AgentCore 运行时调用
+图 2：端到端架构。Amazon Bedrock AgentCore runtime 上的单个编排器查询 AWS Agent Registry。匹配的 MCP server 通过 Amazon Bedrock AgentCore Gateway 调用，匹配的 A2A agent 则在 Amazon Bedrock AgentCore runtime 上调用
 
-示例中使用的参考架构包括 [AWS Agent Registry](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html)、[Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html)、[Amazon Bedrock AgentCore运行时](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html)、Amazon Bedrock、Amazon Cognito、AWS Lambda 和 AWS Secrets Manager。
+示例中使用的参考架构包括 [AWS Agent Registry](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html)、[Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html)、[Amazon Bedrock AgentCore runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html)、Amazon Bedrock、Amazon Cognito、AWS Lambda 和 AWS Secrets Manager。
 
-- [AWS Agent Registry](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html) 提供编排器查询的受管控、可搜索目录。只有完成配置的审批工作流程的记录才可通过可发现的数据平面获得。
-- [Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) 将订单管理 Lambda 工具公开为 MCP 服务器。该示例为入站网关调用配置 [Cognito JWT](https://docs.aws.amazon.com/cognito/) 授权，并使用网关 AWS Identity and Access Management (IAM) 角色来调用 Lambda 目标。
-- [Amazon Bedrock AgentCore 运行时](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html) 托管协调器以及定价和客户支持 A2A 代理。运行时调用使用 [IAM 授权](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html) [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agentcore-control.html) 调用。
-- [Amazon Bedrock](https://aws.amazon.com/bedrock/) 提供编排器和 A2A 代理使用的基础模型 (FM)。该示例当前通过跨区域模型 ID 配置 Anthropic Claude Sonnet 模型。请参阅 [Amazon Bedrock 中 AWS 区域支持的模型](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)。
+- [AWS Agent Registry](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html) 提供受治理、可搜索的目录，供编排器查询。只有完成所配置审批工作流的记录，才能通过可发现的数据平面提供。
+- [Amazon Bedrock AgentCore Gateway](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway.html) 把订单管理 Lambda 工具暴露为一个 MCP server。示例为入站 Gateway 调用配置了 [Cognito JWT](https://docs.aws.amazon.com/cognito/) 授权，并使用 Gateway 的 AWS Identity and Access Management（IAM）角色来调用 Lambda 目标。
+- [Amazon Bedrock AgentCore runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html) 托管编排器以及 Pricing 和 Customer Support 两个 A2A agent。运行时调用使用[经 IAM 授权](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html)的 [Boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agentcore-control.html) 调用。
+- [Amazon Bedrock](https://aws.amazon.com/bedrock/) 提供编排器和 A2A agent 使用的基础模型（FM）。示例目前通过一个跨 Region 模型 ID 配置 Anthropic Claude Sonnet 模型。请参阅 [Amazon Bedrock 中各 AWS Region 支持的模型](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)。
 
-三个演示场景使用不同的功能组合来练习发现循环。第一个是仅 MCP 调用（订单状态）。第二个连锁MCP + A2A（定价和折扣）。第三个测试针对模糊的用户意图测试纯语义匹配：退货和退款，其中这些词不会出现在匹配的 A2A 代理的名称中。
+三个演示场景以不同的能力组合检验发现循环。第一个是仅 MCP 的调用（订单状态）。第二个串联 MCP + A2A（定价与折扣）。第三个针对模糊的用户意图测试纯粹的语义匹配：退货与退款，而这两个词并不出现在匹配到的 A2A agent 名称中。
 
 ## 技术实现
 
-链接的运行时发现[示例](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)部署依赖项、创建和填充注册表、验证发现、部署协调器并运行三个演示。 [orchestrator_agent.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)包含每个请求的发现循环。 [utils.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime) 解析注册表描述符并创建 MCP 和 A2A 客户端。 [cleanup.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)删除资源。
+链接的运行时发现[示例](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)会部署依赖项、创建并填充 Registry、验证发现、部署编排器，并运行三个演示。[orchestrator_agent.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)包含逐请求的发现循环。[utils.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)解析 Registry 描述符并创建 MCP 和 A2A 客户端。[cleanup.py](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)删除资源。
 
-### 1.注册模型
+### 1. 注册模型
 
-注册表记录包含可搜索的描述以及特定于协议的描述符。该示例使用 AgentRegistry 控制平面客户端进行注册表和记录生命周期操作，并使用 AgentRegistry 数据平面客户端进行运行时发现。
+一条 Registry 记录包含一个可搜索的描述和一个协议特定的描述符。示例使用 Agent Registry 控制平面客户端进行 Registry 和记录的生命周期操作，并使用 Agent Registry 数据平面客户端进行运行时发现。
 
-通过手动批准和 IAM 授权创建注册表。
+创建一个采用手动审批和 IAM 授权的 Registry。
+
 ```
 registry_client = session.client("agent-registry-control")
 dp_client = session.client("agent-registry")
@@ -80,9 +81,11 @@ reg = registry_client.create_registry(
 REGISTRY_ARN = reg["registryArn"]
 REGISTRY_ID = REGISTRY_ARN.split("/")[-1]
 ```
-创建记录时需要“recordType”字段。在此示例中，MCP 服务器使用 `recordType="MCP"`，A2A 支持的代理使用 `recordType="AGENT"`。协议元数据存储在“descriptors”对象中的“mcpServer”或“a2aAgentCard”下。 MCP 描述符包含服务器元数据和工具定义。 A2A 描述符包含座席卡。描述符包含连接元数据，但不包含使用者在调用该功能时必须提供的凭据。
 
-为 MCP 和 A2A 记录构建当前的公共 SDK 描述符形状。
+创建记录时 `recordType` 字段是必填的。在本示例中，MCP server 使用 `recordType="MCP"`，由 A2A 支持的 agent 使用 `recordType="AGENT"`。协议元数据存储在 `descriptors` 对象中的 `mcpServer` 或 `a2aAgentCard` 下。MCP 描述符包含 server 元数据和工具定义。A2A 描述符包含 agent card。描述符包含连接元数据，但不包含消费方在调用该能力时必须出示的凭证。
+
+为 MCP 和 A2A 记录构建当前公共 SDK 的描述符结构。
+
 ```
 # MCP descriptor
 mcp_descriptors = {
@@ -106,9 +109,11 @@ a2a_descriptors = {
     }
 }
 ```
-使用面向用户的语言编写描述，以区分该功能与相邻记录。描述符内容提供特定于协议的服务器、工具或代理卡数据。应使用代表性查询来评估搜索质量。这篇文章并不假设目录增长会自动提高排名。
 
-使用当前控制平面形状创建注册表记录。
+请用面向用户的语言撰写描述，使该能力能与相邻记录区分开。描述符内容提供协议特定的 server、工具或 agent card 数据。搜索质量应使用有代表性的查询来评估。本文并不假定目录增长会自动改善排序。
+
+使用当前控制平面结构创建一条 Registry 记录。
+
 ```
 descriptors = (
     mcp_descriptors
@@ -126,11 +131,13 @@ response = registry_client.create_registry_record(
 )
 record_id = response["recordId"]
 ```
-### 2. 审批流程
 
-当“autoApproval”设置为 false 时，新记录必须从“DRAFT”移动到“PENDING_APPROVAL”，然后移动到“APPROVED”。提交和状态更新操作是 [IAM 授权](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html)，允许发布者和批准者权限分开。可发现的注册表数据平面仅返回批准的记录。
+### 2. 审批工作流
 
-*两步审批过渡。*
+在 `autoApproval` 设为 false 时，新记录必须从 `DRAFT` 转到 `PENDING_APPROVAL`，然后再转到 `APPROVED`。提交和状态更新操作都[经 IAM 授权](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html)，从而可以把发布者权限与审批者权限分开。只有已批准的记录才会由可发现的 Registry 数据平面返回。
+
+*两步审批状态转换。*
+
 ```
 record = registry_client.get_registry_record(
     registryId=REGISTRY_ID,
@@ -148,11 +155,13 @@ if record["status"] == "DRAFT":
         statusReason="Approved",
     )
 ```
-### 3.发现层
 
-数据平面客户端支持跨可发现记录的[混合关键字和语义搜索](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html)。最新的方法名称是 [search_discoverable_registry_records](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/agent-registry.html)。结果公开了标准化的记录字段和可发现的描述符。它们不会公开该功能的调用凭据。
+### 3. 发现层
 
-跨协议搜索已批准的、可发现的记录。
+数据平面客户端支持在可发现记录之间进行[混合关键词与语义搜索](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html)。最新的方法名是 [search_discoverable_registry_records](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/agent-registry.html)。结果会暴露规范化的记录字段和可发现的描述符。它们不会暴露该能力的调用凭证。
+
+跨协议搜索已批准、可发现的记录。
+
 ```
 response = dp_client.search_discoverable_registry_records(
     registryIds=[REGISTRY_ARN],
@@ -161,19 +170,21 @@ response = dp_client.search_discoverable_registry_records(
 )
 records = response.get("registryRecords", [])
 ```
-在示例场景中，退货和退款查询会检索客户支持代理，因为其描述捕获了该意图。将此视为演示结果，而不是仅仅因为目录更大而排名提高的一般说法。
 
-### 4. 协调者
+在示例场景中，一个退货退款查询会检索到 Customer Support Agent，因为其描述涵盖了该意图。请把这视为一个演示结果，而不是“目录越大排序就越好”的普遍论断。
 
-Orchestrator 是部署到 [Amazon Bedrock AgentCore 运行时](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html) 的 [Strands 代理](https://strandsagents.com/latest/)。它公开了“discover_and_execute”，它搜索注册表，解析每个返回的描述符，创建相应的[MCP]（https://modelcontextprotocol.io/）或[A2A]（https://a2a-protocol.org/latest/）客户端，并仅根据这些发现的功能构建请求范围的内部代理。
+### 4. 编排器
 
-![编排器的每个请求流程，其中外部代理搜索注册表并从注册表组装请求范围的内部代理结果](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21108-3-1.png)
+编排器是一个部署到 [Amazon Bedrock AgentCore runtime](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime.html) 的 [Strands agent](https://strandsagents.com/latest/)。它暴露 `discover_and_execute`，该方法搜索 Registry、解析每个返回的描述符、创建相应的 [MCP](https://modelcontextprotocol.io/) 或 [A2A](https://a2a-protocol.org/latest/) 客户端，并仅用这些被发现的能力构建一个请求作用域的内部 agent。
 
-图 3：编排器的每个请求流程。外部代理将用户请求转换为注册表搜索。内部代理根据搜索结果组装并在回合结束时拆除
+![The orchestrator’s per-request flow, where an outer agent searches the Registry and assembles a request-scoped inner agent from the results](https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/14/ML-21108-3-1.png)
 
-`discover_and_execute` 的核心适合单个代码块：
+图 3：编排器的逐请求流程。外层 agent 把用户请求转换为一次 Registry 搜索。内部 agent 由搜索结果组装而成，并在该轮结束时拆除
+
+`discover_and_execute` 的核心可以放在一个代码块里：
 
 *编排器的发现/实例化/执行循环。*
+
 ```
 ​​​@tool 
  def discover_and_execute(request: str) -> str: 
@@ -229,26 +240,30 @@ Orchestrator 是部署到 [Amazon Bedrock AgentCore 运行时](https://docs.aws.
 ​            except Exception: 
 ​                pass​ 
 ```
-该示例分散出多个搜索查询，以提高其订单管理域的召回率、删除重复记录，并在请求后拆除 MCP 客户端。该扇出是特定于示例的编排选择，而不是注册表要求。身份验证保持在发现之外：网关 OAuth 令牌是从 [Cognito](https://docs.aws.amazon.com/cognito/) 配置和 [Secrets Manager](https://docs.aws.amazon.com/secretsmanager/) 获取的，而 A2A 运行时调用是通过[boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agentcore-control.html) 会话。
+
+示例会并行发起多个搜索查询，以提升其订单管理领域的召回率，对记录去重，并在请求结束后拆除 MCP 客户端。这种并行发起是示例特有的编排选择，并不是 Registry 的要求。身份验证仍留在发现之外：Gateway 的 OAuth token 从 [Cognito](https://docs.aws.amazon.com/cognito/) 配置和 [Secrets Manager](https://docs.aws.amazon.com/secretsmanager/) 获取，而 A2A 运行时调用则通过 [boto3](https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/bedrock-agentcore-control.html) 会话签名。
 
 ### 5. 运行三个演示
 
-每个演示都练习不同形状的发现循环。
+每个演示都检验发现循环的一种不同形态。
 
-#### 演示 1：订单状态（仅限 MCP）
+#### 演示 1：订单状态（仅 MCP）
 
-*解析为单个 MCP 工具调用的请求。*
+*一个解析为单次 MCP 工具调用的请求。*
+
 ```
 result = invoke_orchestrator(
     "What is the current status and tracking info for order 123?",
     agentcore_client, orchestrator_arn,
 )
 ```
-注册中心返回订单管理MCP服务器。协调器通过网关调用“get_order_status”，LLM 合成人类可读的响应，然后内部代理终止。本回合没有 A2A 参与。
 
-#### 演示 2：定价和折扣（MCP + A2A）
+Registry 返回订单管理 MCP server。编排器通过 Gateway 调用 `get_order_status`，LLM 综合出人类可读的响应，内部 agent 随即终止。本轮不涉及 A2A。
 
-*解析为多协议链的请求。*
+#### 演示 2：定价与折扣（MCP + A2A）
+
+*一个解析为多协议链路的请求。*
+
 ```
 result = invoke_orchestrator(
     "Order 123 has 2x Widget Pro at $99.98. What discount tiers or "
@@ -256,11 +271,13 @@ result = invoke_orchestrator(
     agentcore_client, orchestrator_arn,
 )
 ```
-注册中心返回订单管理 MCP 服务器和定价 A2A 代理：两种协议，一种自然语言查询。 LLM 调用“get_order_status”来获取行项目，然后在运行时调用定价代理进行折扣分析，然后综合单个建议。
 
-#### 演示3：退货和退款（语义匹配）
+Registry 返回订单管理 MCP server 和定价 A2A agent：两个协议，一个自然语言查询。LLM 调用 `get_order_status` 获取订单行项目，然后在 runtime 上调用定价 agent 进行折扣分析，最后综合出一条建议。
 
-*其意图实际上并不存在于任何工具名称中的请求。*
+#### 演示 3：退货与退款（语义匹配）
+
+*一个意图并未字面出现在任何工具名称中的请求。*
+
 ```
 result = invoke_orchestrator(
     "I want to return order 789 (Premium Headphones, delivered "
@@ -269,47 +286,48 @@ result = invoke_orchestrator(
     agentcore_client, orchestrator_arn,
 )
 ```
-该演示展示了语义发现的价值。 “退货退款”一词不会出现在客户支持代理的注册名称中。混合搜索对其排名很高，因为它的描述抓住了意图。如果没有注册表，编排器将需要硬编码了解哪个代理处理退货。
 
-### 6.可观察性
+这个演示展示了语义发现的价值。“return refund”这一说法并没有出现在 Customer Support Agent 的注册名称中。混合搜索把它排在前面，是因为其描述涵盖了该意图。如果没有 Registry，编排器就需要硬编码“由哪个 agent 处理退货”的知识。
 
-在适当的情况下，使用 Amazon Bedrock [AgentCore Observability](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html) 和 [Amazon CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html) 检测发现和调用路径。有用的信号包括注册表搜索成功和失败、选定的记录标识符、客户端构造错误、下游调用结果、端到端跟踪关联和应用程序错误。该示例授予 Amazon CloudWatch Logs 权限，但不创建自定义指标或控制面板。生产团队应定义其操作模型所需的跟踪、日志和警报。生产部署还应应用 [Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html) 作为对代理响应的标准控制。
+### 6. 可观测性
 
-## 团队从受控运行时发现中获得什么
+在适当的地方使用 Amazon Bedrock [AgentCore Observability](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html) 和 [Amazon CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/WhatIsCloudWatch.html) 为发现和调用路径加上埋点。有用的信号包括 Registry 搜索的成功与失败、选中的记录标识符、客户端构建错误、下游调用结果、端到端 trace 关联以及应用错误。示例授予了 Amazon CloudWatch Logs 权限，但并未创建自定义指标或仪表板。生产团队应自行定义其运营模式所需的 trace、日志和告警。生产部署还应把 [Amazon Bedrock Guardrails](https://docs.aws.amazon.com/bedrock/latest/userguide/guardrails.html) 作为对 agent 响应的标准控制措施。
 
-发现循环到位后，之前与 Orchestrator 版本耦合的多项功能将变得独立。
+## 团队从受治理的运行时发现中获得什么
 
-- 解耦的发布。团队可以部署和注册自己的 MCP 服务器、代理和技能。批准策略决定发布的记录何时可供消费者使用。
-- 新批准的记录无需更改协调器代码。在此模式中，添加兼容的、经批准的注册表记录不需要向编排器添加特定于工具的导入或端点。协议、身份验证设置或编排策略的更改仍然可能需要代码或配置更新。
-- 受控发现。通过手动批准，只有经过审核和批准的记录才能被发现。 IAM 权限可以将记录发布者与审批者分开。
-- 单独的身份验证。注册中心授权可以使用IAM或自定义JWT。功能调用身份验证是单独的：示例使用 Cognito OAuth 作为网关，使用 Boto3/IAM 签名作为 AgentCore 运行时。搜索结果不会返回这些凭据。
-- 目录搜索而不是提示填充。通过混合注册表搜索，协调器会检索一个小的候选集，而不是将完整的目录放入模型上下文中。搜索质量取决于描述、描述符质量、查询设计和评估。
+发现循环到位之后，若干此前与编排器发版耦合的能力变得彼此独立。
 
-## 何时不使用运行时发现
+- 解耦发布。团队可以部署并注册自己的 MCP server、agent 和 skill。审批策略决定一条已发布的记录何时对消费方可用。
+- 新批准的记录无需改动编排器代码。在这种模式下，添加一条兼容且已批准的 Registry 记录，不需要在编排器中添加工具特定的 import 或端点。对协议、身份验证设置或编排策略的更改仍可能需要更新代码或配置。
+- 受治理的发现。采用手动审批时，只有经过审阅和批准的记录才可被发现。IAM 权限可以把记录发布者与审批者分开。
+- 分离的身份验证。Registry 授权可以使用 IAM 或自定义 JWT。能力调用的身份验证是另一回事：示例对 Gateway 使用 Cognito OAuth，对 AgentCore runtime 使用 Boto3/IAM 签名。搜索结果不会返回这些凭证。
+- 用目录搜索取代提示填充。借助混合 Registry 搜索，编排器只检索一小组候选项，而不是把整个目录放进模型上下文。搜索质量取决于描述、描述符质量、查询设计和评估。
 
-运行时发现并不是每个工作负载都必需的。有两种模式仍然有利于显式构建时连接：
+## 何时不应使用运行时发现
 
-- 小而稳定的目录。如果完整的功能集很小并且很少更改，则显式构建时连接可能会更简单，并且可以避免额外的发现请求。
-- 固定管道。当相同的功能始终以固定的顺序运行时，将它们实现为确定性流程会更加简单，并且可以保持跟踪重点。
+运行时发现并非对每种工作负载都必要。有两种模式仍然更适合显式的构建期接线：
+
+- 小型且稳定的目录。如果完整的能力集合很小且很少变动，显式的构建期接线可能更简单，也能避免额外的发现请求。
+- 固定管道。当同样的能力总是以固定顺序运行时，把它们实现为确定性流程更直接，也能让追踪更聚焦。
 
 ## 结论
 
-在运行时从注册表中发现资产可以减少编排器对固定目录的依赖。针对 AWS 代理注册表，它可以通过混合语义和关键字搜索来搜索批准的功能，解析 MCP 或 A2A 描述符，并实例化请求范围内的客户端。治理决定什么是可发现的。身份验证仍然是注册表和每个调用的功能的明确关注点。
+在运行时从 Registry 发现资产，使编排器对固定目录的依赖减弱。面对 AWS Agent Registry，它可以借助混合的语义与关键词搜索查找已批准的能力、解析 MCP 或 A2A 描述符，并实例化请求作用域的客户端。治理决定什么可被发现。身份验证仍然是 Registry 以及每个被调用能力各自要明确处理的问题。
 
-AWS Agent Registry 已[普遍可用](https://aws.amazon.com/about-aws/whats-new/2026/08/aws-agent-registry-generally-available)，其功能超出了此单账户示例：
+AWS Agent Registry 已[正式可用](https://aws.amazon.com/about-aws/whats-new/2026/08/aws-agent-registry-generally-available)，其能力超出这个单账户示例：
 
-- [组织范围的发现](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html) 和[跨账户共享](https://docs.aws.amazon.com/ram/latest/userguide/what-is.html) 可以通过受支持的 [AWS] 跨账户边界公开受管记录组织](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html) 和共享机制。
-- [自动功能同步](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html) 可以从 URL 填充支持的描述符。该同步请求上的[凭据提供程序配置](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity.html) 用于获取描述符内容。它不会作为调用身份验证返回给运行时使用者。
-- 审批工作流程可以使用注册表状态 API 和 IAM 权限将 CI 检查、安全审查或人工审批连接到“DRAFT”→“PENDING_APPROVAL”→“APPROVED”生命周期。
-- 标记、[AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) 支持和[基础设施即代码](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) 模式可以使注册表部署和治理可重复。评估应验证组织自己的目录的搜索相关性和调用行为。
+- [组织范围的发现](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html)和[跨账户共享](https://docs.aws.amazon.com/ram/latest/userguide/what-is.html)可以通过受支持的 [AWS Organizations](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html) 与共享机制，在账户边界之外暴露受治理的记录。
+- [自动能力同步](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html)可以从 URL 填充受支持的描述符。该同步请求上的[凭证提供方配置](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/identity.html)用于获取描述符内容，它不会作为调用身份验证返回给运行时消费方。
+- 审批工作流可以使用 Registry 状态 API 和 IAM 权限，把 CI 检查、安全审阅或人工审批接入 `DRAFT` → `PENDING_APPROVAL` → `APPROVED` 生命周期。
+- 标签、[AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html) 支持和[基础设施即代码](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)模式可以让 Registry 的部署和治理可重复。评估应针对组织自己的目录验证搜索相关性和调用行为。
 
-运行 [runtime-discovery 示例](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)，然后注册您自己的一台兼容的 MCP 服务器或代理。确认其描述符、批准状态、身份验证路径和搜索行为符合您的生产要求。
+运行[运行时发现示例](https://github.com/ach1ntya/agentcore-samples/tree/main/01-features/07-centralize-and-govern-your-ai-infrastructure/03-registry/03-advanced/discovery-and-invocation-at-runtime)，然后注册一个你自己的兼容 MCP server 或 agent。确认其描述符、审批状态、身份验证路径和搜索行为符合你的生产要求。
 
 ### 了解更多
 
-- [AWS Agent Registry 全面可用性公告](https://aws.amazon.com/about-aws/whats-new/2026/08/aws-agent-registry-generally-available)
-- [AWS 代理注册表文档](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html)
-- [Amazon Bedrock AgentCore 控制台（注册表）](https://console.aws.amazon.com/bedrock-agentcore/home)
-- [AWS Agent Registry 全面可用性技术博客文章](https://aws.amazon.com/blogs/machine-learning/manage-agents-tools-and-skills-at-scale-with-aws-agent-registry/)
+- [AWS Agent Registry 正式可用公告](https://aws.amazon.com/about-aws/whats-new/2026/08/aws-agent-registry-generally-available)
+- [AWS Agent Registry 文档](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/registry.html)
+- [Amazon Bedrock AgentCore 控制台（Registry）](https://console.aws.amazon.com/bedrock-agentcore/home)
+- [AWS Agent Registry 正式可用技术博客文章](https://aws.amazon.com/blogs/machine-learning/manage-agents-tools-and-skills-at-scale-with-aws-agent-registry/)
 
 ## 关于作者

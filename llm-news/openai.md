@@ -11,8 +11,8 @@
 
 ## 全部文章（共 1317 篇，按日期倒序；无日期条目列于最后）
 
-1. [快速扩展在线存储以服务超过 10 亿 ChatGPT 用户（第二部分）](https://openai.com/index/scaling-storage-one-billion-users-part-two)（2026-10-23） <!--orig:Rapidly scaling online storage to serve over 1 billion ChatGPT users (Part II)-->
-2. [确保我们的前沿模型训练环境的安全](https://openai.com/index/securing-our-frontier-model-training-environment)（2026-10-23） <!--orig:Securing our frontier model training environment-->
+1. [快速扩展在线存储，服务超过 10 亿 ChatGPT 用户（第二部分）](https://openai.com/index/scaling-storage-one-billion-users-part-two)（2026-10-23） <!--orig:Rapidly scaling online storage to serve over 1 billion ChatGPT users (Part II)-->
+2. [保护我们的前沿模型训练环境](https://openai.com/index/securing-our-frontier-model-training-environment)（2026-10-23） <!--orig:Securing our frontier model training environment-->
 3. [OpenAI 与波兰 NSK 合作推进人工智能安全](https://openai.com/index/openai-nask-ai-safety-security-partnership)（2026-10-23） <!--orig:OpenAI and Poland’s NASK partner to advance AI safety and security-->
 4. [用 Decisions API 构建响应更快的应用](https://openai.com/index/decisions-api)（2026-10-22） <!--orig:Build more responsive apps with the Decisions API-->
 5. [在 OpenAI，FDE 意味着什么](https://openai.com/index/forward-deployed-engineering-means)（2026-10-22） <!--orig:What FDE means at OpenAI-->
