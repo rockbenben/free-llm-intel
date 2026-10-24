@@ -860,7 +860,7 @@
 848. [BERT 101 🤗 前沿 NLP 模型详解](https://huggingface.co/blog/bert-101)（2022-03-02） <!--orig:BERT 101 - State Of The Art NLP Model Explained-->
 849. [使用 🤗 Transformers 微调 ViT 做图像分类](https://huggingface.co/blog/fine-tune-vit)（2022-02-11） <!--orig:Fine-Tune ViT for Image Classification with 🤗 Transformers-->
 850. [使用 Python 入门情感分析](https://huggingface.co/blog/sentiment-analysis-python)（2022-02-02） <!--orig:Getting Started with Sentiment Analysis using Python-->
-851. [在 🤗 Transformers 中用 Wav2Vec2 让语音识别支持大文件](https://huggingface.co/blog/asr-chunking)（2022-02-01） <!--orig:Making automatic speech recognition work on large files with Wav2Vec2 in 🤗 Transformers-->
+851. [在 🤗 Transformers 中用 Wav2Vec2 让自动语音识别支持大文件](https://huggingface.co/blog/asr-chunking)（2022-02-01） <!--orig:Making automatic speech recognition work on large files with Wav2Vec2 in 🤗 Transformers-->
 852. [🤗 Hub 上的超强搜索](https://huggingface.co/blog/searching-the-hub)（2022-01-25） <!--orig:Supercharged Searching on the 🤗 Hub-->
 853. [欢迎 Stable-baselines3 加入 Hugging Face Hub 🤗](https://huggingface.co/blog/sb3)（2022-01-21） <!--orig:Welcome Stable-baselines3 to the Hugging Face Hub 🤗-->
 854. [案例研究：用 Hugging Face Infinity 与现代 CPU 实现毫秒级延迟](https://huggingface.co/blog/infinity-cpu-performance)（2022-01-13） <!--orig:Case Study: Millisecond Latency using Hugging Face Infinity and modern CPUs-->
