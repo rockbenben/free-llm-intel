@@ -2491,7 +2491,7 @@
 <p>GLM 4.7 是 Z.ai 的最新模型，也是第一个能与 Sonnet 4.5 这类闭源巨头掰手腕的开源模型。几个要点：</p>
 <ul><li><strong>规模：</strong>约 <strong>358B</strong> 总参数，每个 token 约 <strong>32B</strong> 活跃参数（MoE 路由）</li><li><strong>为以下场景而生：</strong>编码 + 工具使用 + agentic 工作流</li><li><strong>Cerebras 上的隐私：</strong>输入/输出在内存中处理，不做持久化</li></ul>
 <p>但在看到结果之前，架构只是理论。</p>
-<h3><a href="http://localhost:3000/resources/glm-47-marketing-blog#the-performance">​</a>性能</h3>
+<h3>性能</h3>
 <p>如果你关心编码和 agentic 评测，GLM 4.7 已跻身&quot;最强开源模型&quot;梯队。在 LiveCodeBench 上，GLM 4.7 超越 Anthropic 和 OpenAI 的模型，仅次于 Gemini 3。</p>
 <p>GLM 4.7 在 GPQA 和 AIME 上的大幅进步延续了这一领先，两项都胜过 Claude Sonnet 4.5，AIME 2025 结果见下文。</p>
 <p>而与上一代 GLM 4.6 直接对比时，编码与通用能力的提升相当可观——HLE 提高 12.4 分、Terminal Bench 2 提高 16.5 分等。</p>
@@ -2545,16 +2545,16 @@
 <h3><strong>规则 #10：用 </strong>clear_thinking 控制跨调用记忆</h3>
 <p>用 clear_thinking 决定 GLM 4.7 应在调用之间携带多少内部&quot;思考状态&quot;。对于 agent 循环、多步计划和依赖先前推理的编码会话，设置 clear_thinking: false，让模型在轮次之间保留内部状态。对于一次性调用、批处理任务，或当你看到来自先前步骤的不良漂移时，设置 clear_thinking: true，让每次回复只基于可见的 prompt。</p>
 <p><em>现在，准备好看它跑起来了吗？</em></p>
-<h3><a href="http://localhost:3000/resources/glm-47-marketing-blog#one-request-to-try-cerebras-sdk">​</a>一次请求上手（Cerebras SDK）</h3>
+<h3>一次请求上手（Cerebras SDK）</h3>
 <p>用顶级智能，<em>加上</em>靠谱的经济学，跑世界上最快的推理。</p>
 <p>在 Cerebras 上运行 GLM 4.7 时，你用的是我们的 Wafer-Scale Cluster，但与模型的协作方式保持熟悉。你可以使用约 131k tokens 的长上下文，并通过 max_completion_tokens 允许最高约 4 万输出 token 的回复，让模型有足够空间接收 prompt 并产出完整答案。</p>
 <p>你还可以决定模型应该做多少内部&quot;思考&quot;。如果你更在意速度和简洁输出，可以用 disable_reasoning: true 关闭推理，让回复更短更干净。如果你在构建 agent 或编码循环，希望模型跨轮次保持内部状态，就保留 clear_thinking: false，让它不在调用之间重置。</p>
 <p>采样方面，在 Cerebras 上的一个好起点是 <em>temperature=1</em> 配 <em>top_p=0.95</em>。这些默认值在我们系统上的多数负载中表现良好。看清 GLM 4.7 在你应用中的行为后，再一次只调一项设置，得到你想要的风格与多样性。</p>
 <p>这些参数设好后，你就有了一个针对具体用例调优的良好起点。</p>
 <p>如果你已经统一使用 OpenAI Python SDK，Cerebras 兼容 OpenAI，只需用 <em>extra_body</em> 传入 GLM 专属字段即可。</p>
-<h3><a href="http://localhost:3000/resources/glm-47-marketing-blog#getting-started">​</a>开始使用</h3>
+<h3>开始使用</h3>
 <ul><li>领取 API key：<a href="https://cloud.cerebras.ai/">https://cloud.cerebras.ai</a></li><li>使用模型 id：<em>zai-glm-4.7</em></li><li>从上述默认值开始，只在你的负载真正迫使时才调优。</li></ul>
-<h3><a href="http://localhost:3000/resources/glm-47-marketing-blog#credits">​</a>致谢</h3>
+<h3>致谢</h3>
 <p>我们要向那些早早测试模型并提供反馈的出色社区致敬。你们的基准测试、bug 报告与热情，正是我们的生态繁荣的源泉。</p>]]></content:encoded>
     </item>
     <item>
