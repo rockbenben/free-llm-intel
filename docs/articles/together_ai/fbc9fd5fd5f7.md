@@ -9,14 +9,14 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 856848ad4719
+body_sha: 531caf5e4189
 ---
 
 *我们的 Kernels 副总裁 Dan Fu 发布了一篇新文章，反驳"AI 正撞上硬件墙"的说法。他主张我们严重低估了当前芯片的利用率，而更好的软硬件协同设计将解锁下一个数量级的性能。*
 
 通往 AGI 的进步遇到墙了吗？
 
-在快速发展的 AI 世界里，关于"数字计算极限"的争论正在升温。一些[近期分析](https://timdettmers.com/2025-12-10/why-agi-will-not-happen/)认为硬件约束和停滞的 GPU 进步可能把通往通用有用 AI 的道路堵在瓶颈。
+在快速发展的 AI 世界里，关于"数字计算极限"的争论正在升温。一些[近期分析](https://timdettmers.com/2025/12/10/why-agi-will-not-happen/)认为硬件约束和停滞的 GPU 进步可能把通往通用有用 AI 的道路堵在瓶颈。
 
 领导我们 kernels 研究团队的 **Dan Fu** 在他的最新文章中给出了不同、更乐观的视角：**"[是的，AGI 可以到来——一个计算视角。](https://danfu.org/notes/agi/)"**
 

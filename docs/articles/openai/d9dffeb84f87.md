@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 05f56c0601f5
+body_sha: c9706f5c204b
 ---
 
 2024 年 12 月 27 日
@@ -62,7 +62,7 @@ OpenAI 董事会正在评估我们的公司结构，以便最好地支撑"确保
 
 进入 2025 年，我们必须超越"实验室 + 创业公司"——我们要成为一家长久的公司。董事会在外部法律和财务顾问的协助下，考虑"如何为 OpenAI 架构最有利于推进'确保 AGI 惠及全人类'的使命"，其目标是：
 
-- **选出一个最有利于使命长期成功的"非营利 / 营利"结构。** 我们的计划是把现有营利性实体改造为特拉华州的[公益公司（Public Benefit Corporation，PBC）](https://en.wikipedia.org/wiki/Benefit_corporation)，发行普通股，并把 OpenAI 的使命作为其公共利益目标。PBC 是被[许多](https://www.anthropic.com/company)[其他](https://corpgov.law.harvard.edu/2022-02-18/converting-to-a-delaware-public-benefit-corporation-lessons-from-experience/) 公司[使用](https://en.wikipedia.org/wiki/Inflection_AI) 的[结构](https://www.theinformation.com/articles/musks-xai-incorporates-as-benefit-corporation-with-positive-impact-goal)（也曾被 [OpenAI 讨论过](https://openai.com/index/elon-musk-wanted-an-openai-for-profit/)），它要求公司在决策时平衡股东利益、利益相关方利益以及公共利益目标。它能让我们像同行一样以常规条款筹到所需资本。
+- **选出一个最有利于使命长期成功的"非营利 / 营利"结构。** 我们的计划是把现有营利性实体改造为特拉华州的[公益公司（Public Benefit Corporation，PBC）](https://en.wikipedia.org/wiki/Benefit_corporation)，发行普通股，并把 OpenAI 的使命作为其公共利益目标。PBC 是被[许多](https://www.anthropic.com/company)[其他](https://corpgov.law.harvard.edu/2022/02/18/converting-to-a-delaware-public-benefit-corporation-lessons-from-experience/) 公司[使用](https://en.wikipedia.org/wiki/Inflection_AI) 的[结构](https://www.theinformation.com/articles/musks-xai-incorporates-as-benefit-corporation-with-positive-impact-goal)（也曾被 [OpenAI 讨论过](https://openai.com/index/elon-musk-wanted-an-openai-for-profit/)），它要求公司在决策时平衡股东利益、利益相关方利益以及公共利益目标。它能让我们像同行一样以常规条款筹到所需资本。
 - **让非营利组织可持续。** 按我们的计划，这将产生历史上资源最雄厚的非营利组织之一。非营利组织在现有营利性实体中的大额权益，将以 PBC 股份的形式持有，估值由独立财务顾问按公允价值确定。这会把捐赠者当初的贡献成倍放大。
 - **让两边各自具备做好本职的条件。** 当前结构下，董事会无法直接考虑"为使命提供资金的人"的利益，非营利组织除了控制营利性实体之外也不容易做更多。改造后，PBC 负责经营并控制 OpenAI 的业务与运营，非营利组织则聘请领导团队和员工，去推动医疗、教育、科学等领域的公益项目。
 

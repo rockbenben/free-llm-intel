@@ -9,7 +9,7 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 6773c887fe4d
+body_sha: 810d3038d69d
 ---
 
 # Modular 突破矩阵的赌注（AI 计算民主化第十篇）
@@ -91,7 +91,7 @@ Sergio Caredda
 
 当我们理解了问题的全部复杂性——以及那一长串失败的尝试史——我们就知道，Modular 从第一天起就必须用不同的方式打造。这意味着既要写出伟大的软件，也要设计一个能在别人止步的地方持续推进的团队、结构和使命。
 
-**我们从清晰的愿景开始**：让 [AI 计算人人可用、性能强悍、可编程](https://www.modular.com/blog/the-future-of-ai-depends-on-modularity)——为所有人，不只是十亿美元级的芯片巨头或编译器巫师；为研究者、开发者、初创公司和硬件制造者。这意味着[重新思考并重建*整个*栈，而不是优化其中一层](https://www.modular.com/blog/the-case-for-a-next-generation-ai-developer-platform)。我们需要一个能跨用例扩展的系统，而不是又一个在 AI 再次转向时[注定被丢弃](https://petewarden.com/2023-10-15/the-unstoppable-rise-of-disposable-ml-frameworks/)的点状方案。
+**我们从清晰的愿景开始**：让 [AI 计算人人可用、性能强悍、可编程](https://www.modular.com/blog/the-future-of-ai-depends-on-modularity)——为所有人，不只是十亿美元级的芯片巨头或编译器巫师；为研究者、开发者、初创公司和硬件制造者。这意味着[重新思考并重建*整个*栈，而不是优化其中一层](https://www.modular.com/blog/the-case-for-a-next-generation-ai-developer-platform)。我们需要一个能跨用例扩展的系统，而不是又一个在 AI 再次转向时[注定被丢弃](https://petewarden.com/2023/10/15/the-unstoppable-rise-of-disposable-ml-frameworks/)的点状方案。
 
 **我们**[**组建了一支亲身经历过这种痛**](https://www.modular.com/company/careers)**的队伍**。他们参与构建过 CUDA、TPU、MLIR、TensorFlow、PyTorch 和许多其他软件系统。我们不是纸上谈兵批评者——我们写过那些代码、建过那些基础设施、活在那些失败里。这让我们对问题的技术面和人性面都有深刻理解，也让我们共享一份"事未竟"的心气。
 

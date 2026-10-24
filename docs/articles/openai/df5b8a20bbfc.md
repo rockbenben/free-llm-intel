@@ -9,14 +9,14 @@ captured: 2026-10-05
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 73ec2823013f
+body_sha: 9165d1d8e182
 ---
 
 # 《华盛顿邮报》与 OpenAI 就搜索内容达成合作
 
 《邮报》的核心新闻现已呈现在 ChatGPT 的搜索回复中。
 
-***编者按：这条消息最初由《华盛顿邮报》发布，原文见[此处](https://www.washingtonpost.com/pr/2025-04-22/washington-post-partners-with-openai-search-content/)。***
+***编者按：这条消息最初由《华盛顿邮报》发布，原文见[此处](https://www.washingtonpost.com/pr/2025/04/22/washington-post-partners-with-openai-search-content/)。***
 
 《华盛顿邮报》今日宣布与 OpenAI 建立战略合作，让高质量新闻在 ChatGPT 中更易触达。作为合作的一部分，针对相关问题，ChatGPT 将展示来自《邮报》的摘要、引述以及原始报道的链接。
 
