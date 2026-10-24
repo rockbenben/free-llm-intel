@@ -199,6 +199,19 @@ python crawler_llm_intel.py --render-only
 
 归档条目若缺发布日期（源页面把日期放在 JS 里、或文章已滚出列表页），跑维护命令 `python crawler_llm_intel.py --backfill-dates`：它只访问**缺日期**条目对应的文章页，从 JSON-LD `datePublished` / `article:published_time` / `<time datetime>` 元数据回填（分批礼貌抓取，单次访问数有上限，见 `DATE_BACKFETCH_LIMIT`；解不出就保留空白，绝不猜日期）。日期决定归档排序与是否进合并流，回填后同样用 `--rebuild-only` 刷新产物。
 
+### 翻译批次 QC（`--translation-qc`）
+
+本地精译一批正文后，先跑只读 QC，再 reconcile / 提交：
+
+```bash
+python crawler_llm_intel.py --translation-qc          # 默认检查 git 改动/未跟踪的 docs/articles/*.md
+python crawler_llm_intel.py --translation-qc --qc-path docs/articles/openai/xxx.md
+```
+
+- **硬问题（退出码 1）**：代码块与英文源不一致 / 数量不同、译文多出英文源没有的链接、品牌音译、U+FFFD 替换字符。
+- **提示（不阻断）**：英文源有链接未出现在译文。目录、作者栏、追踪串等页面结构差异也会落在这里，需要人工判断，别把 WARN 当泄漏。
+- 链接身份复用 `normalize_url`，并额外把 www / 自链接 / `__hs*`、`_gl` 追踪参数折成同一形态；命令只读，不写任何文件。
+
 ### 英文原文回填（`--backfill-orig`）
 
 `<!--orig:…-->` 注释是 AI 重译标题时的对照素材，也是 `articles.json` 第 5 列 `original_title` 的来源。`--backfill-orig` 逐篇访问「可见标题已汉化、但归档没存原文」的条目，只补注释、不动可见标题/顺序/日期。三条规则值得知道：

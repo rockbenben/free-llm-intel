@@ -9603,6 +9603,35 @@ class TestTranslateBodyMt(unittest.TestCase):
         self.assertEqual(provider_profiles.translate_body_to_zh(""), "")
         self.assertEqual(provider_profiles.translate_body_to_zh("   "), "   ")
 
+    def test_brand_transliterations_restored_in_body(self):
+        """正文机翻也要回正品牌：`克劳德作品`/`拥抱脸部`/`法学硕士` 不是可交付译文。"""
+        self._patch_gtx(lambda t, timeout=8.0:
+                        "选择克劳德作品 5.5，在拥抱脸部上跑法学硕士。"
+                        if "Claude Opus" in t else t)
+        out = provider_profiles.translate_body_to_zh(
+            "Claude Opus 5.5 runs on Hugging Face with the LLM.")
+        self.assertIn("Claude Opus 5.5", out)
+        self.assertIn("Hugging Face", out)
+        self.assertIn("LLM", out)
+        self.assertNotIn("克劳德", out)
+        self.assertNotIn("拥抱脸", out)
+        self.assertNotIn("法学硕士", out)
+
+    def test_body_restore_requires_exact_case_in_source(self):
+        """`Modular` 的小写普通词不能当品牌：正文里 modular 遍地都是。"""
+        self._patch_gtx(lambda t, timeout=8.0: "这是一个模块化平台。" if "platform" in t else t)
+        lower = provider_profiles.translate_body_to_zh("This is a modular platform.")
+        self.assertIn("模块化", lower, "小写 modular 是普通词，不得回正成品牌")
+        upper = provider_profiles.translate_body_to_zh("Modular platform")
+        self.assertIn("Modular", upper, "英文源写的是品牌 Modular 时必须回正")
+
+    def test_brand_restore_never_touches_code_fence(self):
+        self._patch_gtx(lambda t, timeout=8.0: "正文里的克劳德。" if "Claude" in t else t)
+        out = provider_profiles.translate_body_to_zh(
+            "Claude in prose.\n\n```\n克劳德 in code\n```")
+        self.assertIn("正文里的Claude。", out)
+        self.assertIn("克劳德 in code", out, "``` 内部一个字都不动")
+
 
 class TestMtBodiesCli(unittest.TestCase):
     """crawler main(["--mt-bodies"])：走机翻回调、标 translator=mt、无 key 也能跑。"""
@@ -9650,6 +9679,106 @@ class TestMtBodiesCli(unittest.TestCase):
         saved = ft.load_bodies(self.root / "docs/feeds/bodies.json")
         self.assertEqual(saved["openai\thttps://a/p"]["zh_status"], "")
         self.assertEqual(ft.pending_translation_keys(saved), ["openai\thttps://a/p"])
+
+
+class TestTranslationQc(unittest.TestCase):
+    """翻译批次 QC：代码块逐字、URL 多重集、品牌音译、U+FFFD；只读。"""
+
+    def _pair(self, root, rel, en, zh, *, url="https://v.example/a"):
+        en_rel = str(Path(rel).with_suffix(".en.md")).replace("\\", "/")
+        ft.write_body_doc(root / rel, {
+            "vendor": "v", "title": "T", "original_title": "T", "url": url,
+            "date": "", "lang": "zh", "captured": "", "extractor": "readability-v1",
+            "translator": "agent", "status": "translated", "body_sha": ft.body_sha_of(zh),
+        }, zh)
+        ft.write_body_doc(root / en_rel, {
+            "vendor": "v", "title": "T", "original_title": "T", "url": url,
+            "date": "", "lang": "en", "captured": "", "extractor": "readability-v1",
+            "translator": "", "status": "ok", "body_sha": ft.body_sha_of(en),
+        }, en)
+
+    def _run(self, en, zh, *, brand_patterns=()):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            rel = "docs/articles/v/a.md"
+            self._pair(root, rel, en, zh)
+            res = ft.translation_qc(root, [rel], brand_patterns=brand_patterns)
+        self.assertEqual(res["checked"], 1, "夹具必须真的被检查到，零检查不算通过")
+        return res
+
+    def test_good_pair_has_no_issues(self):
+        res = self._run(
+            "Intro.\n\n```py\nprint(1)\n```\n\n[other](https://v.example/other)",
+            "介绍。\n\n```py\nprint(1)\n```\n\n[其它](https://v.example/other)")
+        self.assertEqual(res["hard"], 0, res["files"])
+        self.assertEqual(res["warn"], 0, res["files"])
+
+    def test_changed_code_block_is_hard(self):
+        res = self._run("Intro.\n\n```py\nprint(1)\n```", "介绍。\n\n```py\nprint(2)\n```")
+        self.assertEqual(res["hard"], 1, res["files"])
+        self.assertIn("代码块", res["files"][0]["hard"][0])
+
+    def test_code_block_count_mismatch_is_hard(self):
+        res = self._run("Intro.\n\n```py\nprint(1)\n```",
+                        "介绍。\n\n```py\nprint(1)\n```\n\n```\nextra\n```")
+        self.assertIn("代码块数量", res["files"][0]["hard"][0])
+
+    def test_extra_url_is_hard_missing_url_is_warn(self):
+        res = self._run(
+            "Intro.\n\n[keep](https://v.example/keep)\n\n[drop](https://v.example/drop)",
+            "介绍。\n\n[保留](https://v.example/keep)\n\n[多出](https://v.example/new)")
+        msgs = res["files"][0]["hard"] + res["files"][0]["warn"]
+        self.assertTrue(any("多出" in m for m in msgs), msgs)
+        self.assertTrue(any("未出现" in m for m in msgs), msgs)
+
+    def test_self_anchor_links_do_not_count_as_missing(self):
+        res = self._run(
+            "Intro.\n\n[top](https://www.v.example/a#section)\n\n[other](https://v.example/other)",
+            "介绍。\n\n[其它](https://v.example/other)")
+        self.assertEqual(res["warn"], 0, res["files"])
+
+    def test_brand_transliteration_is_hard(self):
+        res = self._run("Claude is here.", "克劳德来了。",
+                        brand_patterns=(("Claude", re.compile(r"克劳\s*德")),))
+        self.assertEqual(res["hard"], 1, res["files"])
+        self.assertIn("品牌被机翻", res["files"][0]["hard"][0])
+
+    def test_replacement_character_is_hard(self):
+        res = self._run("Intro.", "介绍\ufffd。")
+        self.assertEqual(res["hard"], 1, res["files"])
+        self.assertIn("U+FFFD", res["files"][0]["hard"][0])
+
+    def test_brand_check_skips_compound_overlap_but_finds_standalone(self):
+        res = self._run(
+            "Claude Opus and Claude Code.",
+            "克劳德作品与克劳德代码。",
+            brand_patterns=(("Claude Opus", re.compile(r"克劳德作品")),
+                            ("Claude", re.compile(r"克劳德"))))
+        self.assertEqual(res["hard"], 2, res["files"])
+
+    def test_no_english_source_is_skipped(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            rel = "docs/articles/v/native.md"
+            ft.write_body_doc(root / rel, {
+                "vendor": "v", "title": "T", "url": "https://v.example/a", "lang": "zh",
+                "translator": "native", "status": "translated", "body_sha": ft.body_sha_of("中文"),
+            }, "中文")
+            res = ft.translation_qc(root, [rel])
+        self.assertEqual(res["checked"], 0)
+        self.assertEqual(res["skipped"], 1)
+
+    def test_cli_returns_nonzero_on_hard_issue(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            rel = "docs/articles/v/a.md"
+            self._pair(root, rel, "```py\nprint(1)\n```", "```py\nprint(2)\n```")
+            buf = io.StringIO()
+            with mock.patch.object(crawler_llm_intel, "_repo_root", return_value=root), \
+                    contextlib.redirect_stdout(buf):
+                rc = crawler_llm_intel.main(["--translation-qc", "--qc-path", rel])
+            self.assertEqual(rc, 1, buf.getvalue())
+            self.assertIn("HARD 1", buf.getvalue())
 
 
 def _url_targets(text):

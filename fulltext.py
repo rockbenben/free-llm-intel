@@ -14,6 +14,7 @@ import json
 import os
 import re
 import sys
+from collections import Counter
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Callable, Iterable, Tuple
@@ -2043,6 +2044,159 @@ def pending_translation_keys(bodies: dict) -> list:
     """需翻译的 ledger 键：英文 ok 且尚未 translated。"""
     return [k for k, e in bodies.items()
             if e.get("en_status") == "ok" and e.get("zh_status") != "translated"]
+
+
+# ---------------------------------------------------------------------------
+# 翻译批次 QC（只读）：代码块逐字 / URL 多重集 / 品牌音译 / U+FFFD
+# ---------------------------------------------------------------------------
+
+_MD_LINK_RE = re.compile(r"\]\(([^)\s]+)\)")
+_AUTOLINK_RE = re.compile(r"<(https?://[^>\s]+)>")
+
+
+def _qc_code_blocks(text: str) -> list[tuple[str, ...]]:
+    """按 ``` 行切出代码块内容；未闭合的围栏也返回，坏文件不能静默通过。"""
+    blocks: list[tuple[str, ...]] = []
+    inside = False
+    cur: list[str] = []
+    for line in text.splitlines():
+        if line.lstrip().startswith("```"):
+            if inside:
+                blocks.append(tuple(x.rstrip() for x in cur))
+                cur = []
+            inside = not inside
+            continue
+        if inside:
+            cur.append(line)
+    if inside:
+        blocks.append(tuple(x.rstrip() for x in cur))
+    return blocks
+
+
+def _qc_without_code(text: str) -> str:
+    out: list[str] = []
+    inside = False
+    for line in text.splitlines():
+        if line.lstrip().startswith("```"):
+            inside = not inside
+            continue
+        if not inside:
+            out.append(line)
+    return "\n".join(out)
+
+
+def _qc_url_key(url: str, self_url: str = "") -> str | None:
+    """QC 用的链接身份：复用 `normalize_url`，再把 www / 自链接折成同一形态。
+
+    正文里的同页锚点（目录、脚注）normalize 后就是文章自身 URL；不把自链接折掉，
+    目录一类的页面结构差异就会把「新增/遗漏链接」淹掉。
+    """
+    u = url.strip()
+    if not u or u.startswith("#") or u.startswith("mailto:"):
+        return None
+    try:
+        n = normalize_url(u)
+    except Exception:
+        return u
+    parts = urlsplit(n)
+    host = parts.netloc.lower()
+    if host.startswith("www."):
+        host = host[4:]
+    # 只剥 QC 噪声参数；不能改 `normalize_url` 本身——它同时承担文章身份，
+    # 改它会平移存量 slug。`__hs*` 是 HubSpot 追踪串，`_gl` 是 Google 的。
+    pairs = [(k, v) for k, v in parse_qsl(parts.query, keep_blank_values=True)
+             if not (k.startswith("__hs") or k in ("_gl", "gclid", "fbclid"))]
+    n = urlunsplit((parts.scheme, host, parts.path, urlencode(pairs), ""))
+    if self_url and n == self_url:
+        return None
+    return n
+
+
+def _md_link_targets(text: str) -> list[str]:
+    plain = _qc_without_code(text)
+    return _MD_LINK_RE.findall(plain) + _AUTOLINK_RE.findall(plain)
+
+
+def translation_qc_pair(root: Path, zh_rel: str, *, brand_patterns=()) -> dict:
+    """检查一篇中文译文与同名 `.en.md` 的机械不变量；只读，不写任何文件。"""
+    zh_path = root / zh_rel
+    try:
+        fm, zh = read_body_doc(zh_path)
+    except (ValueError, OSError) as exc:
+        return {"path": zh_rel, "translator": "", "hard": [f"读不了译文：{exc}"], "warn": []}
+    en_rel = str(Path(zh_rel).with_suffix(".en.md")).replace("\\", "/")
+    en_path = root / en_rel
+    if not en_path.exists():
+        return {"path": zh_rel, "translator": fm.get("translator", ""),
+                "skipped": "no_en", "hard": [], "warn": []}
+    try:
+        _efm, en = read_body_doc(en_path)
+    except (ValueError, OSError) as exc:
+        return {"path": zh_rel, "translator": fm.get("translator", ""),
+                "hard": [f"读不了英文源：{exc}"], "warn": []}
+
+    hard: list[str] = []
+    warn: list[str] = []
+    en_blocks = _qc_code_blocks(en)
+    zh_blocks = _qc_code_blocks(zh)
+    if en_blocks != zh_blocks:
+        if len(en_blocks) != len(zh_blocks):
+            hard.append(f"代码块数量 {len(en_blocks)}→{len(zh_blocks)}")
+        else:
+            idx = next(i for i, (a, b) in enumerate(zip(en_blocks, zh_blocks)) if a != b)
+            hard.append(f"第 {idx + 1} 个代码块与英文源不一致")
+    if zh.count("\ufffd") > en.count("\ufffd"):
+        hard.append(f"含 {zh.count(chr(0xfffd))} 个替换字符 U+FFFD")
+
+    covered: list[tuple[int, int]] = []
+    for brand, pat in brand_patterns:
+        if brand not in en:
+            continue
+        for m in pat.finditer(zh):
+            if any(not (m.end() <= a or m.start() >= b) for a, b in covered):
+                continue
+            covered.append((m.start(), m.end()))
+            hard.append(f"品牌被机翻：{brand} → {m.group(0)}")
+            break
+
+    self_key = _qc_url_key(fm.get("url", ""))
+    en_urls = [k for k in (_qc_url_key(u, self_key) for u in _md_link_targets(en)) if k]
+    zh_urls = [k for k in (_qc_url_key(u, self_key) for u in _md_link_targets(zh)) if k]
+    ec, zc = Counter(en_urls), Counter(zh_urls)
+    extra, missing = zc - ec, ec - zc
+    if extra:
+        hard.append(f"译文多出 {sum(extra.values())} 条链接（{', '.join(list(extra)[:3])}）")
+    if missing:
+        warn.append(f"英文源有 {sum(missing.values())} 条链接未出现在译文"
+                    f"（{', '.join(list(missing)[:3])}）")
+    return {"path": zh_rel, "translator": fm.get("translator", ""), "hard": hard, "warn": warn}
+
+
+def translation_qc(root: Path, rel_paths: Iterable[str], *, brand_patterns=()) -> dict:
+    """对一批中文 `.md` 做只读 QC；返回汇总与逐文件问题。"""
+    seen: set[str] = set()
+    files: list[dict] = []
+    skipped = 0
+    by_translator: Counter = Counter()
+    for raw in rel_paths:
+        rel = str(raw).replace("\\", "/")
+        if not rel.endswith(".md") or rel.endswith(".en.md") or rel in seen:
+            continue
+        seen.add(rel)
+        r = translation_qc_pair(root, rel, brand_patterns=brand_patterns)
+        if r.get("skipped"):
+            skipped += 1
+            continue
+        files.append(r)
+        by_translator[r.get("translator") or "?"] += 1
+    return {
+        "checked": len(files),
+        "skipped": skipped,
+        "by_translator": dict(by_translator),
+        "hard": sum(len(r["hard"]) for r in files),
+        "warn": sum(len(r["warn"]) for r in files),
+        "files": files,
+    }
 
 
 def reconcile_translations(root: Path, bodies: dict) -> int:

@@ -41,6 +41,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 from concurrent.futures import ThreadPoolExecutor
 import html as html_mod
 import re
@@ -6708,6 +6709,12 @@ def build_arg_parser() -> argparse.ArgumentParser:
                         help="维护模式（不巡检、不联网）：把每个 .md/.en.md 的 frontmatter "
                              "`body_sha` 修成与磁盘正文一致（缺则补、错则改）。只动这一行，"
                              "正文与其他字段逐字保全；幂等。台账那份 body_sha 跟英文侧，不回写。")
+    parser.add_argument("--translation-qc", action="store_true",
+                        help="只读 QC（不巡检、不联网）：检查本批中文译文与同名 .en.md 的"
+                             "代码块逐字、URL 多重集、品牌音译与 U+FFFD；"
+                             "默认检查 git 改动/未跟踪的 docs/articles/*.md，可用 --qc-path 点名")
+    parser.add_argument("--qc-path", action="append", default=[],
+                        help="配合 --translation-qc：点名要检查的中文 .md（可重复）")
     parser.add_argument("--ai-bodies", action="store_true",
                         help="维护模式（不巡检）：把 bodies.json 里「英文已抓到、中文待译」的条目"
                              "走 --ai-titles 同源 LLM 通道译成中文，写 docs/articles/<vendor>/<urlhash>.md"
@@ -6815,6 +6822,28 @@ def render_outputs(root: Path, intel_list: list[VendorIntel], *, feeds_base: str
             "quotas_changed": bool(wrote_q)}
 
 
+def _changed_corpus_paths(root: Path) -> list[str]:
+    """本次工作区改动/未跟踪的 docs/articles/*.md（排除 .en.md）。"""
+    paths: set[str] = set()
+    cmds = (
+        ["git", "-C", str(root), "diff", "--name-only", "HEAD", "--", "docs/articles"],
+        ["git", "-C", str(root), "ls-files", "--others", "--exclude-standard", "--", "docs/articles"],
+    )
+    for cmd in cmds:
+        try:
+            out = subprocess.run(cmd, capture_output=True, text=True,
+                                 encoding="utf-8", timeout=30)
+        except Exception:
+            continue
+        if out.returncode != 0:
+            continue
+        for line in out.stdout.splitlines():
+            rel = line.strip().replace("\\", "/")
+            if rel.endswith(".md") and not rel.endswith(".en.md"):
+                paths.add(rel)
+    return sorted(paths)
+
+
 def main(argv: list[str] | None = None) -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8")  # Windows 控制台中文输出
@@ -6864,6 +6893,31 @@ def main(argv: list[str] | None = None) -> int:
         for e in errs[:8]:
             print(f"  [fulltext-guard] {e}", file=sys.stderr)
         return 1 if (left or errs) else 0
+
+    if args.translation_qc:
+        import fulltext
+        import provider_profiles
+        paths = list(args.qc_path) or _changed_corpus_paths(root)
+        if not paths:
+            print("  [translation-qc] 没有点名文件，也没有本次改动/未跟踪的 "
+                  "docs/articles/*.md；用 --qc-path 指定。")
+            return 0
+        res = fulltext.translation_qc(
+            root, paths, brand_patterns=provider_profiles._BRAND_TRANSLITERATIONS)
+        by_tr = " / ".join(f"{k} {v}" for k, v in sorted(res["by_translator"].items()))
+        print(f"  [translation-qc] 检查 {res['checked']} 篇（{by_tr or '无'}）；"
+              f"跳过无英文源 {res['skipped']} 篇。")
+        for r in res["files"]:
+            if not r["hard"] and not r["warn"]:
+                continue
+            print(f"  [{r['path']}]")
+            for msg in r["hard"]:
+                print(f"    HARD {msg}")
+            for msg in r["warn"]:
+                print(f"    warn {msg}")
+        print(f"  结论：HARD {res['hard']} / WARN {res['warn']}。"
+              f"{'有硬性问题，退出码 1。' if res['hard'] else '无硬性问题。'}")
+        return 1 if res["hard"] else 0
 
     if args.fetch_bodies:
         import fulltext

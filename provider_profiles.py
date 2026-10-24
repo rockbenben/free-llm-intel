@@ -40,6 +40,11 @@ def _save_trans_cache() -> None:
 # 按表复原为官方英文拼写；官方就有中文名的品牌（Qwen=千问、GLM=智谱）
 # 不在此列，绝不能碰。
 _BRAND_TRANSLITERATIONS: list[tuple[str, re.Pattern]] = [
+    # 复合名排在单词之前：`克劳德作品` 必须先整串复原，否则只会得到 `Claude作品`。
+    ("Claude Opus", re.compile(r"克劳\s*德\s*作品")),
+    ("Claude Haiku", re.compile(r"克劳\s*德\s*俳句")),
+    ("Claude Sonnet", re.compile(r"克劳\s*德\s*十四行诗")),
+    ("Claude Code", re.compile(r"克劳\s*德\s*代码")),
     ("Claude", re.compile(r"克劳\s*德|克洛\s*德")),
     ("Grok", re.compile(r"格罗\s*克|格洛\s*克|格雷\s*克")),
     ("Codestral", re.compile(r"共纹")),
@@ -74,17 +79,35 @@ _BRAND_TRANSLITERATIONS: list[tuple[str, re.Pattern]] = [
     # 复合名排在通用 "Falcon" 之前，先整串复原 "Falcon-Emirati"，剩下的再兜 "Falcon"。
     ("Falcon-Emirati", re.compile(r"猎鹰\s*阿联酋")),
     ("Falcon", re.compile(r"猎鹰")),
+    # 2026-10 批量精译里实测的机翻坏法：`Anthropic` → 人择、`Codex` → 法典、
+    # `Amazon Bedrock` → 亚马逊基岩。它们只在英文源真的按这个大小写写了品牌时才复原
+    # （正文路径 strict_case=True），避免把普通词「法典」「基岩」误当专名。
+    ("Amazon Bedrock", re.compile(r"亚马逊\s*基岩")),
+    ("Bedrock", re.compile(r"基岩")),
+    ("Anthropic", re.compile(r"人择|安思罗")),
+    ("Codex", re.compile(r"法典")),
+    ("OpenAI", re.compile(r"开放人工智能|欧朋艾")),
+    ("ChatGPT", re.compile(r"聊天\s*GPT|查特\s*GPT")),
 ]
 
 
-def _restore_brand_names(text: str, source: str) -> str:
-    """译文里出现品牌音译、而原文本就写着该英文品牌时，复原为英文拼写。"""
+def _restore_brand_names(text: str, source: str, *, strict_case: bool = False) -> str:
+    """译文里出现品牌音译、而原文本就写着该英文品牌时，复原为英文拼写。
+
+    `strict_case=True` 供正文机翻使用：品牌必须按原大小写出现在英文源里才复原。
+    `Modular` / `Diffusers` / `Transformer` 这些词的小写形态是普通词，正文里遍地都是；
+    不区分大小写会把「modular platform」误改成「Modular platform」。
+    标题路径保持原来的宽松匹配，避免改变既有的标题翻译行为。
+    """
     for brand, pat in _BRAND_TRANSLITERATIONS:
         if not pat.search(text):
             continue
-        if brand.lower() not in source.lower():
+        if strict_case:
+            if brand not in source:
+                continue
+        elif brand.lower() not in source.lower():
             continue
-        if re.fullmatch(pat.pattern, text.strip()):
+        if not strict_case and re.fullmatch(pat.pattern, text.strip()):
             continue  # 整串就是音译词（如标题「克劳德」），保守不动
         text = pat.sub(brand, text)
     return text
@@ -295,7 +318,9 @@ def translate_to_zh(text: str, timeout: float = 4.0) -> str:
 # 正文机器翻译（--mt-bodies）：按块处理，代码块原样保留，散文块逐段送 gtx。
 # 与标题 MT 不同：不套专名/型号守卫（正文里 `GPT-4`/`100ms` 遍地都是，守卫会把
 # 整篇退回不译），改为「结构保护」——只保证 ``` 代码块与行内代码不被翻译，
-# 其余散文按段落分块译。产物标 translator=mt，之后可对重点篇用 agent 重译升级。
+# 其余散文按段落分块译；每块译完按英文原文做一次严格大小写的品牌回正（避免
+# `克劳德作品` / `拥抱脸部` / `法学硕士` 这类坏法批量进入语料）。产物标
+# translator=mt，之后可对重点篇用 agent 重译升级。
 # ---------------------------------------------------------------------------
 
 _MT_CHUNK_CHARS = 1500   # 单次 gtx 请求的最大字符数（GET 端点有长度上限，按段落聚合到线下）
@@ -360,6 +385,8 @@ def translate_body_to_zh(md: str, timeout: float = 8.0) -> str:
         translated_chunks = []
         for chunk in _chunk_text(seg):
             tr = _gtx_translate(chunk, timeout)
+            if tr:
+                tr = _restore_brand_names(tr, chunk, strict_case=True)
             translated_chunks.append(tr if tr else chunk)   # 失败留原文，绝不吞
         out.append("\n\n".join(translated_chunks))
     return "\n".join(out)
