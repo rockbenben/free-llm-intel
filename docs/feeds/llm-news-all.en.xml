@@ -963,6 +963,52 @@ SagemakerAutoscalingConstruct(
 <p><a href="https://deepinfra.com/blog">View all</a></p>]]></content:encoded>
     </item>
     <item>
+      <title>[Inference.net] Introducing AutoEvals: Automatically find the best model for…</title>
+      <link>https://inference.net/blog/introducing-autoevals/</link>
+      <guid isPermaLink="true">https://inference.net/blog/introducing-autoevals/?li=1</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <category>Inference.net</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-inference_net.en.xml">Inference.net</source>
+      <description>Full title: Introducing AutoEvals: Automatically find the best model for your task</description>
+      <content:encoded><![CDATA[<p>Aug 5, 2026</p>
+<h1>Introducing AutoEvals: Automatically find the best model for your task</h1>
+<p>A</p>
+<p>Amar Singh</p>
+<p>It's the Summer of 2026. A new frontier model is released nearly every month. Each one comes with a new set of benchmark numbers, some hype on X, and the same nagging question for teams running LLMs in production: should we switch?</p>
+<p>Most teams never really answer it. Answering it honestly means building a dataset that represents your real traffic, standing up API access to every provider you want to test, writing a rubric, wiring up judging infrastructure, burning the tokens to run it all, and then interpreting the results. That's a week of work, per model, per task, every time something new ships. So the question gets shelved. The model that was chosen months ago, based on a price point and vibes, keeps running because swapping models in production is both <em>hard</em> and risky.</p>
+<p>And the risk is real. Benchmarks are averages over someone else's tasks. A model can top the leaderboards and still fumble your tool schemas, your output format, your edge cases. The only benchmark that actually matters is your own traffic, and until now, nobody had time to run it.</p>
+<p>We're introducing tooling to fix this. Introducing AutoEvals - the plug-and-play toolkit to find the right model for your task. <a href="https://inference.net/register?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=intro-sign-in">Sign in</a> or <a href="https://docs.inference.net/get-started/compare-models-auto-evals?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=intro-read-docs">read the docs</a> to get started.</p>
+<p><img src="https://inference.net/assets/hero-Chk6D-tL.png" alt="AutoEvals model comparison report showing a recommended model with quality, cost, and latency results"></p>
+<h2>Real production traffic is the best benchmark</h2>
+<p>AutoEvals is designed to help developers find <em>the best model</em> for a given task or agent. Not the best on a public benchmark you never heard of - better on the exact requests your users sent last week.</p>
+<p>Integrate with <a href="https://docs.inference.net/get-started/record-first-call?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=body-inference-gateway">Inference Gateway</a> (in 2 minutes), collect data, click one button in the dashboard, and a few minutes later you have a definitive answer about which model you should use, with real numbers on the difference in quality, cost, and latency.</p>
+<p><strong>Every model release becomes free upside instead of homework.</strong> When something new ships, you no longer weigh the announcement against a week of eval work. Run a comparison over lunch and know by the afternoon whether it matters for you.</p>
+<p><strong>Switching stops being scary.</strong> The recommendation isn't a leaderboard rank. It's your own traffic, replayed and judged, with every sample inspectable. You can understand exactly how a new model handles requests compared to your current model before a single production request touches it.</p>
+<p><strong>You stop paying for intelligence you don't need.</strong> Plenty of tasks are quietly overserved by expensive models. AutoEvals shows you the quality-cost frontier for your specific task, so you can see when a more affordable model offers the same level accuracy.</p>
+<p><img src="https://inference.net/assets/recommended-model-DhN4jdcu.png" alt="AutoEvals recommendation card naming the winning model with the judge's reasoning"></p>
+<p>The verdict: a concrete recommendation for your task, with the reasoning behind it</p>
+<h2>How AutoEvals work in practice</h2>
+<p>An AutoEval runs in three moves. It starts by sampling your recent production traffic, which is then replayed by a set of candidate models. Afterwards, LLM judges score each output for both quality, meaning how well the model did the task, and similarity, meaning how closely it behaves like the model you run today. It then summarizes these results into a model verdict, key findings, and per-model summaries.</p>
+<p>The two scores together tell you how safe a switch is. High quality with high similarity is a drop-in upgrade. High quality with low similarity means the model is good but behaves differently, so it earns a closer look first. When you do want to inspect the outputs individually, the Sample Viewer gives you side-by-side model responses and the judge's reasoning for each score.</p>
+<p><img src="https://inference.net/assets/sample-viewer-BJ8XdMxg.png" alt="Sample Viewer showing side-by-side model responses with judge reasoning for each score"></p>
+<p>The Sample Viewer: side-by-side model responses and the judge's reasoning for each score</p>
+<p>Getting your traffic in front of Inference platform is the only setup, and it's one integration: route your LLM calls through our Gateway (our CLI can instrument your project automatically), or report traces with our tracing SDK. From then on, comparing models is a button, and switching is a single line change.</p>
+<h2>Running on our own agents</h2>
+<p>We built AutoEvals for our own agents before we built it for anyone else, and two findings genuinely changed how we think about model selection.</p>
+<p><strong>The gap between model generations is bigger than you think.</strong> One of our GTM agents had been running on the same well-regarded model for months. It felt fine, until we ran an AutoEval on it. Models at a fraction of the cost blew it out of the water with better long-horizon trajectories, tighter tool-schema adherence, and more precise results across the board. We left better results on the table because we didn't look.</p>
+<p><strong>Some tasks have a skill ceiling.</strong> On that same task, the top frontier models landed on identical quality scores. Past a certain capability level, they were all simply taking the right action, and paying more bought nothing. Once you can see the ceiling, the model decision makes itself, and it's rarely the most expensive option.</p>
+<p><img src="https://inference.net/assets/quality-cost-frontier-DV5SGtmK.png" alt="Quality versus cost scatter plot showing top models converging on the same quality score at very different prices"></p>
+<p>Past a certain capability level, quality converges - paying more buys nothing</p>
+<p>Put those two findings together and the conclusion is hard to escape: if you're building with LLMs, your application should be getting more accurate <em>and</em> cheaper over time, just from the pace of model releases. The teams that capture that compounding advantage will be the ones for whom evaluation is effortless. That's what we built.</p>
+<h2>Run your first comparison today</h2>
+<p>AutoEvals are live now for every Inference account, free to start. Connect your traffic, click Run Comparison, and in a few minutes you'll know something most teams never find out: whether the model you're running is actually the best one for the job.</p>
+<p>Read the <a href="https://docs.inference.net/get-started/compare-models-auto-evals?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=footer-guide">guide</a> or <a href="https://inference.net/register?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=footer-sign-up">sign up free</a> to get started.</p>
+<p>The best model for your task might have shipped last week. Now you can actually find out.</p>
+<p>CONTACT</p>
+<h2>Meet with our research team</h2>
+<p>Schedule a call with our research team to learn more about how Specialized Language Models can cut costs and improve performance.</p>]]></content:encoded>
+    </item>
+    <item>
       <title>[Anthropic Claude] Building agents: When to fold subagents into your main agent…</title>
       <link>https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/building-agents-when-to-fold-subagents-into-your-main-agent-loop?li=1</guid>
@@ -10794,47 +10840,6 @@ print(next(iter(data)))</code></pre>
 <p>Probabilistic forecasts</p>
 <p>Discover</p>
 <p>0%</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Cohere] Cohere to acquire AISLE to advance cyber-resilient sovereign…</title>
-      <link>https://cohere.com/blog/cohere-and-aisle-sign-letter-of-intent-to-advance-cyber-resilient-sovereign-ai</link>
-      <guid isPermaLink="true">https://cohere.com/blog/cohere-and-aisle-sign-letter-of-intent-to-advance-cyber-resilient-sovereign-ai?li=1</guid>
-      <pubDate>Thu, 15 Oct 2026 00:00:00 +0000</pubDate>
-      <category>Cohere</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-cohere.en.xml">Cohere</source>
-      <description>Full title: Cohere to acquire AISLE to advance cyber-resilient sovereign AI</description>
-      <content:encoded><![CDATA[<p>Oct 15, 2026</p>
-<p>4 minute read</p>
-<h1>Cohere to acquire AISLE to advance cyber-resilient sovereign AI</h1>
-<p>By combining sovereign AI and cybersecurity expertise, Cohere to launch Cohere Cyber, expanding its platform to help enterprises and governments secure AI systems in an increasingly complex threat landscape</p>
-<p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/e62b59612dff99b3a1c1cfadb6227d4806e7a774-7680x4320.png?auto=format&amp;fit=max&amp;q=80&amp;w=1130" alt="Cohere to acquire AISLE to advance cyber-resilient sovereign AI"></p>
-<p>Today Cohere announced a proposed agreement to acquire AISLE, the company building autonomous systems to discover and remediate previously unknown vulnerabilities in critical software.</p>
-<p>The proposed transaction represents another important step in Cohere's mission to build the world's leading sovereign AI platform, combining frontier AI models, agentic applications, secure deployment infrastructure, and advanced security capabilities that enable organizations to deploy AI with confidence.</p>
-<p>It also reflects our continued investment in Europe. Following our acquisitions of Reliant AI and Aleph Alpha, the addition of AISLE would deepen our presence across the region and strengthen European AI and cybersecurity capabilities that help protect critical infrastructure, governments, and highly regulated industries around the world.</p>
-<h3><strong>Security is becoming the defining challenge of enterprise AI</strong></h3>
-<p>As organizations move AI from experimentation to production, security has become one of the most important factors determining successful adoption.</p>
-<p>Enterprises and governments are increasingly navigating complex requirements around data protection, governance, regulatory compliance, software vulnerabilities, and the risks associated with more autonomous AI systems. At the same time, they are looking for AI partners that can deliver the flexibility to operate in private cloud, on-premises, and fully air-gapped environments without compromising security or control.</p>
-<p>Addressing these security challenges requires more than powerful models. It requires a full-stack approach that brings together AI, cybersecurity, governance, and secure deployment. That's why we're excited about the opportunity to bring AISLE's expertise into Cohere.</p>
-<h3><strong>Why AISLE</strong></h3>
-<p>Founded in 2024, AISLE has developed innovative AI systems capable of discovering, validating and helping remediate previously unknown vulnerabilities in complex production software. Its approach combines increasingly capable foundation models with specialized security expertise, large-scale code analysis, rigorous validation and automated remediation.</p>
-<p>In its first year out of stealth, AISLE discovered more than <a href="https://aisle.com/blog/aisle-year-on-the-cyber-frontier">500 previously unknown vulnerabilities assigned CVEs</a> across more than 100 codebases, including all 12 vulnerabilities in OpenSSL's January security release and <a href="https://aisle.com/blog/one-aisle-curl-audit-produced-24-cves-18-ship-today">18 of the 24 CVEs in curl's latest release</a>. These real-world zero-day vulnerabilities are independently reviewed by the relevant software maintainers, demonstrating the growing capabilities of autonomous AI security systems.</p>
-<p>AISLE's results also highlight an important insight: the capabilities of a foundation model and the specialized system built around it can reinforce each other. By bringing AISLE's autonomous security research closer to Cohere's frontier-model development and training, we see an opportunity to build more capable cybersecurity systems while exploring how difficult, verifiable security problems can help evaluate and improve future models.</p>
-<h3><strong>Founders take Cohere leadership roles within newly-formed Cohere Cyber, with Prague set for expansion</strong></h3>
-<p>AISLE’s team is joining Cohere, with its three founders taking leadership roles spanning cybersecurity, corporate security, AI security research and frontier model development.</p>
-<p>Ondrej Vlcek will become Senior Vice President, Cohere Cyber, and will lead the newly-established global cybersecurity business. Jaya Baloo will become Cohere’s Chief Information Security Officer, leading security across the company. Stanislav Fort will become Vice President, AI Security, joining Cohere’s core model research and training efforts and leading its AI security research.</p>
-<p>Cohere also plans to make a substantial long-term investment in Prague, expanding AISLE’s existing presence and establishing the city as its global center for AI cybersecurity and autonomous security systems.</p>
-<h3><strong>Strengthening Europe's role in the future of AI</strong></h3>
-<p>Europe is becoming increasingly important in the development of sovereign AI. Governments and enterprises across the region are seeking technology partners that can deliver advanced AI capabilities while meeting stringent requirements around security, privacy, compliance, and data sovereignty. Cohere has made significant investments to support those needs, and this deal would further expand our ability to serve customers across Europe and globally.</p>
-<h3><strong>What this means for customers</strong></h3>
-<p>AISLE's technology will strengthen Cohere's ability to help customers build and operate secure, cyber-resilient AI systems.</p>
-<p>The combined capabilities are expected to enhance Cohere’s ability to:</p>
-<ul><li>Deliver advanced security and threat detection capabilities across enterprise and public sector deployments.</li><li>Strengthen governance, monitoring, and observability for AI agents and autonomous workflows.</li><li>Improve protections for sensitive organizational data and mission-critical systems.</li><li>Support secure AI deployments across private cloud, on-premises, and fully air-gapped environments.</li><li>Advance the development of cyber-resilient AI systems capable of identifying, prioritizing, and responding to emerging threats.</li></ul>
-<h3><strong>Looking ahead</strong></h3>
-<p>At Cohere, we've long believed that organizations should maintain control over their AI strategy, data, infrastructure and governance. As AI becomes increasingly embedded in critical workflows, securing the software these systems depend on is becoming just as important.</p>
-<p>Increasingly capable AI systems are transforming both cybersecurity and the threats organizations face, and defensive capabilities must advance just as quickly. By combining AISLE's autonomous vulnerability research with Cohere's frontier models and sovereign AI platform, we aim to make discovering, validating and fixing software vulnerabilities a continuous, scalable capability that helps protect critical systems.</p>
-<p>We're excited about what we can build together and look forward to officially welcoming the AISLE team to Cohere.</p>
-<h2>Read this next</h2>
-<ul><li><a href="https://cohere.com/blog/ai-for-utilities-requires-capability-and-control"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b36c731c34b23aeeb737f166444aeaa87d9e9c68-1920x1080.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="AI for utilities requires capability and control"></a><a href="https://cohere.com/blog/tag/enterprise-ai">Enterprise AI</a><a href="https://cohere.com/blog/tag/energy-utilities">Energy &amp; Utilities</a><a href="https://cohere.com/blog/ai-for-utilities-requires-capability-and-control">AI for utilities requires capability and controlOct 15, 20266 min read</a></li><li><a href="https://cohere.com/blog/agent-sprawl"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/1094f3e6b1cb6e160811e3553dd4baed23dca498-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/enterprise-ai">Enterprise AI</a><a href="https://cohere.com/blog/agent-sprawl">Agent sprawl: How to manage agent proliferation in the enterpriseOct 15, 20265 min read</a></li><li><a href="https://cohere.com/blog/ai-roi"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b98e79e7d049a148e4b66c85027f7ad08c9297ba-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/enterprise-ai">Enterprise AI</a><a href="https://cohere.com/blog/ai-roi">AI ROI: How enterprises can measure the return on AI investmentsOct 15, 20266 min read</a></li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

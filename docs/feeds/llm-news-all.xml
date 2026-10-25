@@ -1218,6 +1218,52 @@ SagemakerAutoscalingConstruct(
 <p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
     <item>
+      <title>[Inference.net] AutoEvals 简介：自动找到最适合您任务的模型</title>
+      <link>https://inference.net/blog/introducing-autoevals/</link>
+      <guid isPermaLink="true">https://inference.net/blog/introducing-autoevals/</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <category>Inference.net</category>
+      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-inference_net.xml">Inference.net</source>
+      <description>原文标题：Introducing AutoEvals: Automatically find the best model for your task</description>
+      <content:encoded><![CDATA[<p>2026 年 8 月 5 日</p>
+<h1>AutoEvals 简介：自动找到最适合您任务的模型</h1>
+<p>一个</p>
+<p>阿马尔·辛格</p>
+<p>2026 年夏天，几乎每个月都会发布新的前沿车型。每一个都带有一组新的基准数据，一些关于 X 的炒作，以及对于在生产中运行 LLM 的团队来说同样令人烦恼的问题：我们应该切换吗？</p>
+<p>大多数团队从未真正回答过这个问题。诚实地回答这个问题意味着构建一个代表您真实流量的数据集，为您想要测试的每个提供商提供 API 访问权限，编写标题，连接判断基础设施，燃烧令牌来运行所有内容，然后解释结果。这是一周的工作，每个模型、每个任务、每次新产品发布。于是这个问题就被搁置了。几个月前根据价格点和氛围选择的模型继续运行，因为在生产中更换模型既“困难”又存在风险。</p>
+<p>而且风险是真实存在的。基准是其他人任务的平均值。一个模型可以在排行榜上名列前茅，但仍然会摸索你的工具模式、输出格式和边缘情况。唯一真正重要的基准是您自己的流量，到目前为止，没有人有时间运行它。</p>
+<p>我们正在引入工具来解决这个问题。隆重推出 AutoEvals - 即插即用工具包，可帮助您找到适合您任务的模型。 <a href="https://inference.net/register?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=intro-sign-in">登录</a> 或 <a href="https://docs.inference.net/get-started/compare-models-auto-evals?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=intro-read-docs">阅读docs</a> 开始。</p>
+<p><img src="https://inference.net/assets/hero-Chk6D-tL.png" alt="AutoEvals 模型比较报告显示推荐模型的质量、成本和延迟结果"></p>
+<h2>真实生产流量是最好的基准</h2>
+<p>AutoEvals 旨在帮助开发人员找到针对给定任务或代理的“最佳模型”。不是您从未听说过的公共基准测试中最好的 - 更好的是您的用户上周发送的确切请求。</p>
+<p>与 <a href="https://docs.inference.net/get-started/record-first-call?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=body-inference-gateway">Inference Gateway</a> 集成（2 分钟内），收集数据，单击仪表板中的一个按钮，几分钟后，您就会得到关于您应该使用哪种模型的明确答案使用质量、成本和延迟差异的实数。</p>
+<p><strong>每个模型的发布都变得免费，而不是家庭作业。</strong> 当新产品发布时，您不再权衡发布与一周的评估工作。午餐时进行比较，到下午就知道它对您是否重要。</p>
+<p><strong>切换不再可怕。</strong> 该推荐不是排行榜排名。这是您自己的流量，经过重播和判断，每个样本都可以检查。在单个生产请求触及新模型之前，您可以准确了解新模型与当前模型相比如何处理请求。</p>
+<p><strong>您不再为不需要的智能付费。</strong> 昂贵的模型悄悄地过度服务了许多任务。 AutoEvals 向您显示特定任务的质量成本边界，以便您可以了解何时更实惠的模型可以提供相同水平的精度。</p>
+<p><img src="https://inference.net/assets/recommended-model-DhN4jdcu.png" alt="AutoEvals 推荐卡以评委的推理命名获胜模型"></p>
+<p>结论：针对您的任务的具体建议及其背后的推理</p>
+<h2>AutoEvals 在实践中如何工作</h2>
+<p>AutoEval 分三步运行。它首先对最近的生产流量进行采样，然后由一组候选模型重播。之后，LLM评委会对每个输出的质量（即模型完成任务的程度）和相似度（即其行为与您今天运行的模型的相似程度）进行评分。然后，它将这些结果总结为模型结论、主要发现和每个模型的摘要。</p>
+<p>这两个分数一起告诉您开关的安全程度。高品质和高相似度是直接升级。高质量和低相似度意味着模型很好，但行为不同，因此首先需要仔细观察。当您确实想单独检查输出时，样本查看器会为您提供并排的模型响应以及法官对每个分数的推理。</p>
+<p><img src="https://inference.net/assets/sample-viewer-BJ8XdMxg.png" alt="示例查看器显示并排模型响应以及每个分数的判断推理"></p>
+<p>样本查看器：并排模型响应和法官对每个分数的推理</p>
+<p>在推理平台前获取流量是唯一的设置，也是一次集成：通过我们的网关路由您的 LLM 调用（我们的 CLI 可以自动检测您的项目），或使用我们的跟踪 SDK 报告跟踪。从此，比较型号就是一个按钮，切换就是单行更改。</p>
+<h2>在我们自己的代理上运行</h2>
+<p>在为其他人构建 AutoEvals 之前，我们先为自己的代理构建了 AutoEvals，两项发现真正改变了我们对模型选择的看法。</p>
+<p><strong>模型代之间的差距比您想象的要大。</strong>我们的一位 GTM 代理已经在同一个备受推崇的模型上运行了几个月。感觉很好，直到我们对其运行 AutoEval。模型的成本只是其一小部分，但它具有更好的长期轨迹、更严格的工具模式依从性以及更精确的全面结果。因为我们没有观察，所以我们留下了更好的结果。</p>
+<p><strong>有些任务有技能上限。</strong> 在同一任务中，顶级前沿模型获得了相同的质量分数。超过一定的能力水平后，他们都只是采取了正确的行动，付出更多的钱什么也买不到。一旦你看到了上限，模型的决定就会自行决定，而且它很少是最昂贵的选择。</p>
+<p><img src="https://inference.net/assets/quality-cost-frontier-DV5SGtmK.png" alt="质量与成本散点图显示顶级模型以截然不同的价格收敛于相同的质量得分"></p>
+<p>超过一定的能力水平后，质量趋于一致——付出更多却买不到什么</p>
+<p>将这两个发现放在一起，结论就很难回避：如果您使用LLM进行构建，随着时间的推移，您的应用程序应该变得更加准确<em>并且</em>便宜，仅从模型发布的速度来看。获得复合优势的团队将是那些可以毫不费力地进行评估的团队。这就是我们建造的。</p>
+<h2>今天进行第一次比较</h2>
+<p>AutoEvals 现已对每个 Inference 帐户开放，可以免费启动。连接您的流量，单击“运行比较”，几分钟后您就会知道大多数团队永远不会发现的事情：您正在运行的模型是否实际上是最适合该工作的模型。</p>
+<p>阅读<a href="https://docs.inference.net/get-started/compare-models-auto-evals?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=footer-guide">指南</a>或<a href="https://inference.net/register?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=footer-sign-up">注册免费</a> 开始。</p>
+<p>最适合您任务的模型可能已于上周发货。现在你可以真正找到答案了。</p>
+<p>联系方式</p>
+<h2>与我们的研究团队会面</h2>
+<p>安排与我们的研究团队通话，详细了解专业语言模型如何降低成本并提高性能。</p>]]></content:encoded>
+    </item>
+    <item>
       <title>[OpenAI] 用 Decisions API 构建响应更快的应用</title>
       <link>https://openai.com/index/decisions-api</link>
       <guid isPermaLink="true">https://openai.com/index/decisions-api</guid>
@@ -9662,215 +9708,6 @@ if dist.get_rank() == 0:
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fhf-torchneuron">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fhf-torchneuron">登录</a> 后发表评论</p>
 <p>13</p>
 <ul><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></a></li><li><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jzaldumbide"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/iJ0wGL2442tLffjc8tBM-.png" alt=""></a></li><li><a href="https://huggingface.co/anishgg-aws"><img src="https://huggingface.co/avatars/18c08f2a1061a8de4da76da16a67f45b.svg" alt=""></a></li><li><a href="https://huggingface.co/gbharada-aws"><img src="https://huggingface.co/avatars/55e629c40983a2b82c0c75012c13e074.svg" alt=""></a></li><li><a href="https://huggingface.co/zwang-amazon"><img src="https://huggingface.co/avatars/c698e2722ba05d640b6f958f142b0082.svg" alt=""></a></li><li><a href="https://huggingface.co/ozardeso-aws"><img src="https://huggingface.co/avatars/9aa3820bf2cf891b3997883155a87e54.svg" alt=""></a></li><li><a href="https://huggingface.co/ericyu0510"><img src="https://huggingface.co/avatars/9d16fc41021585ca0981882d8919b5ee.svg" alt=""></a></li><li><a href="https://huggingface.co/michaelbenayoun"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt=""></a></li><li><a href="https://huggingface.co/3outeille"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/iB42uASF1DoQth23cizSh.png" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>[Amazon Bedrock] Amazon Bedrock 上 Anthropic Claude 模型的结构化输出</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/structured-outputs-for-anthropic-claude-models-on-amazon-bedrock/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/structured-outputs-for-anthropic-claude-models-on-amazon-bedrock/</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <category>Amazon Bedrock</category>
-      <source url="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml">Amazon Bedrock</source>
-      <description>原文标题：Structured outputs for Anthropic Claude models on Amazon Bedrock</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Amazon Bedrock 上 Anthropic Claude 模型的结构化输出</h1>
-<p>Amazon Bedrock 现在为所有 Anthropic Claude 模型提供结构化输出支持，覆盖模型可用的 bedrock-runtime 和 bedrock-mantle 两个端点。</p>
-<p>无论你是通过 Boto3 和 bedrock-runtime API 调用 Claude，还是通过 Messages API 和 bedrock-mantle 端点调用，现在都能收到符合 schema、遵循既定结构的 JSON 响应。你不再需要自定义解析、重试逻辑或后处理。</p>
-<h2>实际应用场景</h2>
-<p>借助 Amazon Bedrock 上 Claude 的结构化输出，你可以在各行各业自动化可靠、符合 schema 的任务。示例包括从财务收益报告和合规文档中提取每一个必需字段、把临床记录解析进电子健康记录（EHR），以及用一致且经过校验的结果丰富产品目录。你还可以分析合同中的关键条款、各方和义务，或者支撑智能化工单路由，让意图、情绪和实体始终匹配应用的数据模型。</p>
-<h2>Amazon Bedrock 上结构化输出带来了什么变化</h2>
-<p>结构化输出使用约束解码，在 token 生成过程中就强制执行你的 JSON schema，而不是事后校验。模型不会生成违反 schema 的 token。这把输出格式从概率性变成了确定性。</p>
-<p>现在两个 Amazon Bedrock 端点上都提供两种互补的机制：</p>
-<table><thead><tr><th><strong>功能</strong></th><th><strong>用途</strong></th><th><strong>使用场景</strong></th></tr></thead><tbody><tr><td>JSON Schema 输出格式</td><td>控制模型的响应结构</td><td>数据提取、报告生成、API 响应</td></tr><tr><td>严格工具使用</td><td>按 schema 校验工具参数</td><td>智能体工作流、函数调用、多步骤自动化</td></tr></tbody></table>
-<h2>这对你意味着什么</h2>
-<p>每个响应都是合法的 JSON，因此你不会再遇到 <code>JSON.parse()</code> 错误或解析异常。响应也是类型安全的：字段类型被强制约束，必需字段始终存在。由于输出始终符合你的 schema，你不需要为重试来处理 schema 违规，集成也更可靠。结构化输出还会把响应限制为仅包含 schema 定义的字段，从而减少输出 token 数量，并可能降低高并发工作负载的推理成本。这些特性让结构化输出达到生产可用，因此你可以大规模部署，而无需额外的 schema 校验代码。</p>
-<h2>支持的模型与可用性</h2>
-<p>结构化输出可与<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference.html">批量推理</a>配合使用，因此你可以异步处理大量请求，同时仍然获得符合 schema 的输出。在 bedrock-runtime 端点上，它还可以配合跨区域推理使用，因此你无需额外配置就能在多个 AWS 区域使用。如果你需要实时响应，可以把结构化响应作为带类型的事件流式返回。</p>
-<h2>工作方式</h2>
-<p>当你用 JSON schema 发起请求时，幕后会发生以下事情：</p>
-<ul><li><strong>Schema 校验 –</strong> Amazon Bedrock 按受支持的 JSON Schema Draft 2020-12 子集校验你的 JSON schema。</li><li><strong>语法编译 –</strong> 对于新 schema，Amazon Bedrock 会编译一个语法产物（第一个请求可能稍慢一些）。</li><li><strong>缓存 –</strong> 编译后的语法会被缓存 24 小时，使后续请求更快。</li><li><strong>约束生成 –</strong> 模型生成的 token 会产生符合你 schema 的合法 JSON。</li></ul>
-<h2>性能注意事项</h2>
-<p>在性能方面，使用新 schema 的第一个请求可能耗时更长，因为 Amazon Bedrock 在开始生成之前要先编译语法产物。完成首次编译之后，使用同一 schema 的后续请求开销极小，因为编译后的语法已被缓存。该缓存的作用范围限于你的账户，并从首次访问起持续 24 小时。更改 JSON schema 的结构会使缓存失效并触发重新编译，而只更改 name 或 description 字段则会保留缓存语法不变。</p>
-<h2>入门：使用 InvokeModel API（bedrock-runtime）的结构化输出</h2>
-<p>InvokeModel API 接受 Anthropic 原生的请求体，因此 schema 要放在 <code>output_config.format</code> 中，形式是 JSON 对象而不是 JSON 字符串。下面的示例展示了如何使用 boto3 配合 Anthropic Claude 模型，从客户邮件中提取结构化的潜在客户数据：</p>
-<p>Python</p>
-<pre><code>import boto3
-import json
-
-REGION = &quot;us-east-1&quot; # Choose your preferred region
-bedrock_runtime = boto3.client(service_name=&quot;bedrock-runtime&quot;, region_name=REGION)
-
-# Define the JSON schema for structured output
-schema = {
-    &quot;type&quot;: &quot;object&quot;,
-    &quot;properties&quot;: {
-        &quot;name&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Customer name&quot;},
-        &quot;email&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Customer email address&quot;},
-        &quot;plan_interest&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Product plan of interest&quot;},
-        &quot;demo_requested&quot;: {&quot;type&quot;: &quot;boolean&quot;, &quot;description&quot;: &quot;Whether a demo was requested&quot;}
-    },
-    &quot;required&quot;: [&quot;name&quot;, &quot;email&quot;, &quot;plan_interest&quot;, &quot;demo_requested&quot;],
-    &quot;additionalProperties&quot;: False
-}
-
-# Make a request with structured outputs via the InvokeModel API
-# (reusing the schema defined for the Converse example)
-response = bedrock_runtime.invoke_model(
-    modelId=&quot;global.anthropic.claude-sonnet-5-5&quot;,
-    body=json.dumps({
-        &quot;anthropic_version&quot;: &quot;bedrock-2023-05-31&quot;,
-        &quot;max_tokens&quot;: 512,
-        &quot;messages&quot;: [
-            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: (
-                &quot;Paulo Santos (paulo@example.com) is interested in our Enterprise plan &quot;
-                &quot;and wants to schedule a demo for next Tuesday at 2pm.&quot;
-            )}
-        ],
-        &quot;output_config&quot;: {&quot;format&quot;: {&quot;type&quot;: &quot;json_schema&quot;, &quot;schema&quot;: schema}}
-    })
-)
-
-body = json.loads(response[&quot;body&quot;].read())
-
-# Check the stop reason before parsing
-if body[&quot;stop_reason&quot;] == &quot;end_turn&quot;:
-    result_text = next(b[&quot;text&quot;] for b in body[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;)
-    print(json.dumps(json.loads(result_text), indent=2))
-elif body[&quot;stop_reason&quot;] == &quot;max_tokens&quot;:
-    print(&quot;Response truncated: increase max_tokens and retry.&quot;)</code></pre>
-<p>JSON</p>
-<pre><code>{
-    &quot;name&quot;: &quot;Paulo Santos&quot;,
-    &quot;email&quot;: &quot;paulo@example.com&quot;,
-    &quot;plan_interest&quot;: &quot;Enterprise&quot;,
-    &quot;demo_requested&quot;: true
-}</code></pre>
-<p>响应符合你的 schema。无需额外校验。</p>
-<p>更多 API 用法示例（包括 Messages API），请参阅随附的<a href="https://github.com/aws-samples/anthropic-on-aws/blob/main/notebooks/structured_outputs/structured-outputs-on-bedrock.ipynb">示例 notebook</a>。</p>
-<h2>面向智能体工作流的严格工具使用</h2>
-<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/endpoints.html">Amazon Bedrock Mantle</a> 面向带服务端工具、后台推理和有状态对话的智能体应用而设计。借助 bedrock-mantle 端点上的严格工具使用，你现在可以保证工具参数与输入 schema 完全匹配。下面的示例展示了如何定义一个带严格 schema 强制的工具：</p>
-<pre><code>Import json
-from anthropic import AnthropicBedrockMantle
-
-# Reusing the client created in the Messages API example
-client = AnthropicBedrockMantle(aws_region=&quot;us-east-1&quot;)
-
-message = client.messages.create(
-    model=&quot;anthropic.claude-sonnet-5&quot;,
-    max_tokens=512,
-    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What's the weather like in San Francisco?&quot;}],
-    tools=[
-        {
-            &quot;name&quot;: &quot;get_weather&quot;,
-            &quot;description&quot;: &quot;Get the current weather for a specified location&quot;,
-            &quot;strict&quot;: True,
-            &quot;input_schema&quot;: {
-                &quot;type&quot;: &quot;object&quot;,
-                &quot;properties&quot;: {
-                    &quot;location&quot;: {
-                        &quot;type&quot;: &quot;string&quot;,
-                        &quot;description&quot;: &quot;The city and state, e.g., San Francisco, CA&quot;
-                    },
-                    &quot;unit&quot;: {
-                        &quot;type&quot;: &quot;string&quot;,
-                        &quot;enum&quot;: [&quot;celsius&quot;, &quot;fahrenheit&quot;],
-                        &quot;description&quot;: &quot;Temperature unit&quot;
-                    }
-                },
-                &quot;required&quot;: [&quot;location&quot;, &quot;unit&quot;],
-                &quot;additionalProperties&quot;: False
-            }
-        }
-    ]
-)
-
-#Tool inputs conform to the schema
-for block in message.content:
-    if block.type == &quot;tool_use&quot;:
-        print(f&quot;Tool: {block.name}&quot;)
-        print(f&quot;Input: {json.dumps(block.input, indent=2)}&quot;)</code></pre>
-<p>设置 <code>strict: true</code> 会把模型的工具输入约束为与你的 schema 完全匹配。location 字段始终是字符串，unit 字段始终是 celsius 或 fahrenheit。模型无法添加 schema 之外的字段，因此工具输入只包含 schema 规定的内容。</p>
-<p>这对 Amazon Bedrock Mantle 上的智能体用例尤其有价值，因为在这些场景中，模型要用 web search 和代码解释器之类的服务端工具编排多步骤工作流。</p>
-<h2>Claude 结构化输出的主要用例</h2>
-<p>结构化输出在三种常见模式中能最大程度地降低错误处理的复杂度：</p>
-<ul><li><strong>数据提取：</strong> 把发票、合同、邮件和通话记录中的字段提取成始终匹配 schema 的 JSON，可直接载入数据库或客户关系管理（CRM）系统。</li><li><strong>可靠的智能体工具调用：</strong> 在生成时就按 schema 校验工具参数，让多步骤智能体工作流不会因格式错误的输入而失败。</li><li><strong>大规模分类：</strong> 按意图、优先级和情绪对工单、潜在客户或内容分类，用于路由、审核和评估。</li></ul>
-<p>Claude Haiku 5.5 能可靠处理快速、重复性的工作负载，例如摘要、压缩、数据库查询和分类请求。下面的示例展示了如何使用 Invoke API 和 Haiku 5.5 对传入数据进行分类与路由：</p>
-<pre><code>import boto3
-import json
-
-REGION = &quot;us-east-1&quot; # Choose your preferred region
-bedrock_runtime = boto3.client(service_name=&quot;bedrock-runtime&quot;, region_name=REGION)
-
-# Classification schema: enums restrict output to a fixed set of labels
-schema = {
-    &quot;type&quot;: &quot;object&quot;,
-    &quot;properties&quot;: {
-        &quot;category&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;enum&quot;: [&quot;billing&quot;, &quot;technical&quot;, &quot;account&quot;, &quot;sales&quot;, &quot;other&quot;],
-            &quot;description&quot;: &quot;Primary ticket category&quot;
-        },
-        &quot;priority&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;enum&quot;: [&quot;low&quot;, &quot;medium&quot;, &quot;high&quot;, &quot;urgent&quot;],
-            &quot;description&quot;: &quot;Urgency based on business impact&quot;
-        },
-        &quot;sentiment&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;enum&quot;: [&quot;positive&quot;, &quot;neutral&quot;, &quot;negative&quot;],
-            &quot;description&quot;: &quot;Customer sentiment&quot;
-        },
-        &quot;escalate&quot;: {&quot;type&quot;: &quot;boolean&quot;, &quot;description&quot;: &quot;Whether a human should review immediately&quot;},
-        &quot;reason&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;One-sentence justification for the classification&quot;}
-    },
-    &quot;required&quot;: [&quot;category&quot;, &quot;priority&quot;, &quot;sentiment&quot;, &quot;escalate&quot;, &quot;reason&quot;],
-    &quot;additionalProperties&quot;: False
-}
-
-ticket = (
-    &quot;Our production API calls have been failing with 500 errors since this morning. &quot;
-    &quot;We're losing orders every minute. This is the second outage this month!&quot;
-)
-
-# Make a request with structured outputs via the InvokeModel API
-response = bedrock_runtime.invoke_model(
-    modelId=&quot;global.anthropic.claude-haiku-5-5&quot;,
-    body=json.dumps({
-        &quot;anthropic_version&quot;: &quot;bedrock-2023-05-31&quot;,
-        &quot;max_tokens&quot;: 512,
-        &quot;system&quot;: &quot;You are a support ticket classifier. Classify the ticket accurately.&quot;,
-        &quot;messages&quot;: [
-            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;Classify this support ticket:\n\n{ticket}&quot;}
-        ],
-        &quot;output_config&quot;: {&quot;format&quot;: {&quot;type&quot;: &quot;json_schema&quot;, &quot;schema&quot;: schema}}
-    })
-)
-
-body = json.loads(response[&quot;body&quot;].read())
-
-# Check the stop reason before parsing
-if body[&quot;stop_reason&quot;] == &quot;end_turn&quot;:
-    result_text = next(b[&quot;text&quot;] for b in body[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;)
-    result = json.loads(result_text)
-    print(json.dumps(result, indent=2))
-    # Route the ticket based on the guaranteed-valid labels
-    if result[&quot;escalate&quot;]:
-        print(f&quot;Escalating to on-call: {result['category']} / {result['priority']}&quot;)
-elif body[&quot;stop_reason&quot;] == &quot;max_tokens&quot;:
-    print(&quot;Response truncated: increase max_tokens and retry.&quot;)</code></pre>
-<h2>要求与最佳实践</h2>
-<p>要在 Amazon Bedrock 上有效使用结构化输出，请遵循以下准则：</p>
-<ul><li><strong>在所有对象上设置 additionalProperties: false</strong>：这是结构化输出正常工作的必要条件。没有它，你的 schema 将不被接受。</li><li><strong>使用描述性的字段名和描述</strong>：模型依靠属性名和描述来理解应提取哪些数据。像 <code>customer_email</code> 这样清晰的名称优于 <code>field1</code> 这类通用名称。</li><li><strong>对受限取值使用 enum</strong>：当某个字段只有有限的有效取值时，用 <code>enum</code> 来约束选项。</li><li><strong>从基础开始，再逐步增加复杂度</strong>：先使用最少必需字段，然后逐步增加复杂度。基础 schema 编译更快、更易调试，而且能让请求负载保持精简，因为 schema 会计入 Converse API 的负载大小。</li><li><strong>复用 schema 以享受缓存收益</strong>：把应用设计成在多个请求间复用 schema。24 小时的语法缓存能提升重复查询的性能。</li><li><strong>检查每个响应的 stop reason</strong>：有两种情况会产生不符合约定的响应：拒绝（模型出于安全原因拒绝）和 token 上限（在完成之前就达到 <code>max_tokens</code>）。请在你的代码中处理这两种情况。</li><li><strong>部署前用真实数据测试</strong>：用具有生产代表性的输入校验你的 schema。真实数据中的边界情况往往能暴露 schema 设计问题。</li></ul>
-<p>更多最佳实践和 schema 设计建议，请参阅 Amazon Bedrock 用户指南中的<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/structured-output.html">结构化输出</a>。</p>
-<h2>支持的 JSON Schema 特性</h2>
-<ul><li>所有基础类型：<code>object</code>、<code>array</code>、<code>string</code>、<code>integer</code>、<code>number</code>、<code>boolean</code>、<code>null</code>。</li><li><code>enum</code>（仅支持字符串、数字、布尔值或 null）。</li><li><code>const</code>、<code>anyOf</code>、<code>allOf</code>（有使用限制）。</li><li><code>$ref</code>、<code>$def</code> 和 <code>definitions</code>（仅支持内部引用）。</li><li>字符串格式：<code>date-time</code>、<code>time</code>、<code>date</code>、<code>duration</code>、<code>email</code>、<code>hostname</code>、<code>uri</code>、<code>ipv4</code>、<code>ipv6</code>、<code>uuid</code>。</li><li>数组的 <code>minItems</code>（仅支持取值 0 和 1）。</li></ul>
-<h3>不支持的特性</h3>
-<p>这些关键字会被 API 接受，但在生成期间不会被强制执行。包含它们的请求仍会返回成功响应，模型仍可能返回违反这些约束的值。请在你的应用中校验这些约束，而不要依赖 schema 来强制实施。</p>
-<ul><li>递归 schema。</li><li>外部 <code>$ref</code> 引用。</li><li>数值约束（<code>minimum</code>、<code>maximum</code>、<code>multipleOf</code>）。</li><li>字符串约束（<code>minLength</code>、<code>maxLength</code>）。</li><li><code>additionalProperties</code> 设置为 false 以外的任何值。</li></ul>
-<h2>结论</h2>
-<p>Amazon Bedrock 上 Anthropic Claude 模型的结构化输出，提供了生产级 AI 应用所需的可靠性。它现在已在 bedrock-runtime 和 bedrock-mantle 两个端点上可用。通过结合 JSON Schema 输出格式和严格工具使用，你可以构建无需额外校验的数据管道。你也可以在不使用自定义解析或重试逻辑的情况下，创建可靠的智能体工作流和生产级 AI 应用。</p>
-<p>Amazon Bedrock 上 Claude 的结构化输出现已正式可用。要了解更多，请参阅 <a href="https://docs.aws.amazon.com/bedrock/">Amazon Bedrock 文档</a>，并探索我们的<a href="https://github.com/aws-samples/anthropic-on-aws/blob/main/notebooks/structured_outputs/structured-outputs-on-bedrock.ipynb">示例 notebook</a>。</p>
-<p>经过校验、符合 schema 的 JSON 能在你的组织中改进哪些工作流？欢迎在评论中分享你的反馈和问题。</p>
-<h2>关于作者</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>
