@@ -221,6 +221,10 @@ _FURN_RELATED_TAIL = {
     "### Related reading", "### Related stories",
 }
 _FURN_FENCE_LINE_RE = re.compile(r"^\s*`{3}")
+# Anyscale 中文稿的尾部模板：目录 + 分享/标签/订阅/推荐卡 + 探索 CTA。
+# 只在该 host 上启用；真目录在正文前（后面有 H2/H3）不会被 R9 命中。
+_ANYSCALE_TAIL_LABELS = {"#### 分享", "#### 标签", "#### 订阅产品更新", "#### 推荐内容"}
+_ANYSCALE_EXPLORE_RE = re.compile(r"^## .{0,30}探索 Anyscale(?: on Azure)?$")
 _HEAD_RE = re.compile(r"^\s*#{1,6}\s")
 _MONTHS = (r"(?:January|February|March|April|May|June|July|August|September|October"
            r"|November|December|Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)")
@@ -299,6 +303,8 @@ def furniture_drops(lines, page_url: str = ""):
     R5 点赞/收藏/关注后的纯数字计数行
     R6 只由分隔符或不可见字符组成的整行（`•`、`·`、`\u200b`…，零信息量）
     R7 连续的标签/年份筛选链接块（`- [x](…?tags=y)` ≥2 行，实测 804 个文件各一段）
+    R9 Anyscale 中文页脚块：`#### 目录` 之后只剩分享/标签/订阅/推荐卡/探索 CTA
+        （实测 14 篇文末残留；真目录在正文前、后面有 H2/H3 时不匹配）
     """
     fenced, first_head = _fence_mask(lines)
     brand = _brand_of(page_url)
@@ -376,6 +382,38 @@ def furniture_drops(lines, page_url: str = ""):
                         continue
                     if lines[x].strip():
                         drop[x] = "R4"
+    host = urlsplit(page_url).netloc.lower() if page_url else ""
+    if "anyscale.com" in host:
+        # 从后往前找 `#### 目录`：真目录在正文前，后面还有 H2/H3，签名不成立；
+        # 文末模板后面只剩分享/标签/订阅/推荐卡/探索 CTA，才整块删。
+        for start in reversed([i for i, l in enumerate(lines)
+                               if i not in fenced and l.strip() == "#### 目录"]):
+            saw_furniture = False
+            seen_rec = False
+            ok = True
+            for l in lines[start + 1:]:
+                if not l.strip().startswith("#"):
+                    continue
+                h = l.strip()
+                if h in _ANYSCALE_TAIL_LABELS:
+                    if h == "#### 推荐内容":
+                        seen_rec = True
+                    saw_furniture = True
+                    continue
+                if seen_rec and h.startswith("#### "):
+                    continue
+                if _ANYSCALE_EXPLORE_RE.match(h):
+                    saw_furniture = True
+                    continue
+                ok = False
+                break
+            if not (ok and saw_furniture):
+                continue
+            if any(i in fenced for i in range(start, len(lines))):
+                continue
+            for x in range(start, len(lines)):
+                drop.setdefault(x, "R9")
+            break
     return drop
 
 

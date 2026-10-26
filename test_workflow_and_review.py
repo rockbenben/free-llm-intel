@@ -10140,6 +10140,55 @@ class TestPageFurnitureStrip(unittest.TestCase):
         self.assertIn("我们建议了解更多细节后再决定接入方式。", out, "句子里出现同一个词不许删")
         self.assertNotIn("Upvote", out)
 
+    def test_anyscale_tail_block_removed(self):
+        body = "\n".join([
+            "# 文章", "", "正文。", "",
+            "#### 目录", "", "- [小节](#小节)", "",
+            "#### 分享", "", "[分享](https://www.anyscale.com/share)", "",
+            "#### 标签", "", "- [Ray](https://www.anyscale.com/blog?tag=ray)", "",
+            "#### 订阅产品更新", "", "[订阅](https://www.anyscale.com/subscribe)", "",
+            "#### 推荐内容", "", "#### 推荐文章一", "",
+            "[卡片](https://www.anyscale.com/blog/card)", "",
+            "## 立即探索 Anyscale", "", "[开始](https://authkit.anyscale.com/)",
+        ])
+        out = ft.strip_page_furniture(body, "https://www.anyscale.com/blog/x")
+        self.assertIn("# 文章", out)
+        self.assertIn("正文。", out)
+        for gone in ("#### 目录", "#### 分享", "#### 标签", "#### 订阅产品更新",
+                     "#### 推荐内容", "立即探索", "推荐文章一"):
+            self.assertNotIn(gone, out, f"{gone} 是 Anyscale 文末页脚，该删")
+
+    def test_anyscale_real_toc_before_body_survives(self):
+        """真目录在正文前、后面有 H2/H3：R9 的签名不成立，整段保留。"""
+        body = "\n".join([
+            "# 文章", "", "#### 目录", "", "- [小节](#小节)", "",
+            "## 小节", "", "正文。",
+        ])
+        out = ft.strip_page_furniture(body, "https://www.anyscale.com/blog/x")
+        self.assertIn("#### 目录", out)
+        self.assertIn("## 小节", out)
+        self.assertIn("正文。", out)
+
+    def test_anyscale_tail_with_code_is_not_cut(self):
+        body = "\n".join([
+            "# 文章", "", "#### 目录", "",
+            "```", "print('keep')", "```", "",
+            "#### 分享", "", "[分享](https://www.anyscale.com/share)",
+        ])
+        out = ft.strip_page_furniture(body, "https://www.anyscale.com/blog/x")
+        self.assertIn("#### 目录", out, "尾块里有代码围栏时不许整块删")
+        self.assertIn("print('keep')", out)
+
+    def test_anyscale_tail_only_on_anyscale_host(self):
+        body = "\n".join([
+            "# 文章", "", "正文。", "",
+            "#### 目录", "", "#### 分享", "",
+            "## 立即探索 Anyscale", "",
+        ])
+        out = ft.strip_page_furniture(body, "https://example.com/blog/x")
+        self.assertIn("#### 目录", out, "R9 只对 anyscale.com 生效")
+        self.assertIn("#### 分享", out)
+
 
 class TestRenderOutputs(unittest.TestCase):
     """产出层：render_outputs 只写视图、可重复跑、不碰源（spec §3/§6）。"""
