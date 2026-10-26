@@ -3,6 +3,12 @@
 > **产物**（逐日追加，超上限裁最旧日块）：AI 核查每日采纳的免费额度事实变化，带前值 → 后值，最新在前。
 > 保留最近约 150 条厂商-天记录；人工修订请直接改本文件（格式合法的改动会随重写保留，被裁掉的旧日块不会回来）。
 
+## 2026-10-26
+### 云知声 Token Hub（`unisound_shanhai`）
+- 摘要：视觉模型认证礼包赠送模型由 U1-OCR、U1-OCR-Med 升级为 U2-OCR、U2-OCR-Med（额度仍为各 500 万 tokens）。
+- `free_models`：`Unisound U2`（通用）、`U2-Med`（医疗）、`U1-OCR`、`U1-OCR-Med`（医疗 OCR）、`U2 Flash`、`U2-RadiMed`（放射医疗）—— 完成实名认证即送**各 500 万 tokens**、`U2-ASR`（语音识别）—— 赠送 **5 小时**；`U2-TTS`（语… → `Unisound U2`（通用）、`U2-Med`（医疗）、`U2-OCR`、`U2-OCR-Med`（医疗 OCR）、`U2 Flash`、`U2-RadiMed`（放射医疗）—— 完成实名认证即送**各 500 万 tokens**、`U2-ASR`（语音识别）—— 赠送 **5 小时**；`U2-TTS`（语…
+- `tier_caveats`：额度**按模型/服务分散发放**，不是统一 token 池：U2 / U2-Med / U1-OCR / U1-OCR-Med / U2 Flash / U2-RadiMed 各 500 万 tokens、ASR 5 小时、TTS 5 万字、TTS-Clone / TTS-Design 各 2 万字，互不通兑、有效期… → 额度**按模型/服务分散发放**，不是统一 token 池：U2 / U2-Med / U2-OCR / U2-OCR-Med / U2 Flash / U2-RadiMed 各 500 万 tokens、ASR 5 小时、TTS 5 万字、TTS-Clone / TTS-Design 各 2 万字，互不通兑、有效期…
+
 ## 2026-10-24
 ### 月之暗面 Kimi（`moonshot_kimi`）
 - 摘要：新上线 Kimi K3.1 Pro 且明确与 K3 均不支持使用新用户 15 元代金券；公布 K2 系列模型将于 2026 年 10 月 31 日起停止向新用户开放并计划 12 月底下线
