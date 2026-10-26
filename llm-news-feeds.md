@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-26 08:46:32**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-26 09:17:48**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -376,7 +376,7 @@
   - 🔌 官方未提供 RSS/Atom 订阅源，条目取自官方数据接口
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-ai21_labs.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-ai21_labs.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-26，标题自动汉化）：
-  1. [Why we built a benchmark before training for instruction following](https://www.ai21.com/blog/lift-bench-blog/)（2026-10-25）
+  1. [为什么我们在训练前先构建指令遵循基准](https://www.ai21.com/blog/lift-bench-blog/)（2026-10-25）
   2. [我们如何将 GitLab Duo Code Review 的成本降低 98%](https://www.ai21.com/blog/gitlab-case-study/)（2026-10-22）
   3. [与 NVIDIA、Gong、Deel 和 Alice 合作，后训练 Nemotron 3.5 Super](https://www.ai21.com/blog/ai21-post-trains-nvidia-nemotron-35-super-vl/)（2026-10-15）
   4. [隐藏的错配：在开发者真正做的工作上评估 coding agent](https://www.ai21.com/blog/evaluating-coding-agents-on-the-work-developers-actually-do/)（2026-10-14）

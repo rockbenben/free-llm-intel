@@ -1,50 +1,49 @@
 ---
 vendor: anyscale
-title: 如何使用 Ray Tune 分配超参数调整
-original_title: 
+title: 如何使用 Ray Tune 分布式调优超参数
+original_title: How to distribute hyperparameter tuning using Ray Tune
 url: https://anyscale.com/blog/how-to-distribute-hyperparameter-tuning-using-ray-tune
 date: 2022-02-15
 lang: zh
 captured: 2026-10-25
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: 9d7cc2f9d335
+body_sha: 2d49667de4ed
 ---
 
-[主页](https://www.anyscale.com/)[博客](https://www.anyscale.com/blog)博客详细信息
+# 如何使用 Ray Tune 分布式调优超参数
 
-# 如何使用 Ray Tune 分配超参数调整
+作者：[Juan Navas](https://www.anyscale.com/blog?author=juan-navas) 与 [Richard Liaw](https://www.anyscale.com/blog?author=richard-liaw) | 2022 年 2 月 15 日
 
-作者：[Juan Navas](https://www.anyscale.com/blog?author=juan-navas) 和 [Richard Liaw](https://www.anyscale.com/blog?author=richard-liaw) | 2022 年 2 月 15 日
+💡 *本文是超参数调优系列的第 3 篇。如果你才刚开始，请先读第 1 篇*[*什么是超参数调整？*](https://www.anyscale.com/blog/what-is-hyperparameter-tuning)*。在第 2 篇*[*如何在 XGBoost 上调整超参数*](https://www.anyscale.com/blog/how-to-tune-hyperparameters-on-xgboost)*里，我们做了一个动手实践的例子。*
 
-💡 *这篇博文是我们超参数调优系列的第 3 部分。如果您刚刚开始，请查看第 1 部分，*[*什么是超参数调整？*](https://www.anyscale.com/blog/what-is-hyperparameter-tuning)*。在第 2 部分，*[*如何调整 XGBoost 上的超参数*](https://www.anyscale.com/blog/how-to-tune-hyperparameters-on-xgboost)*，我们探索了一个实用的实践示例。*
+在本系列三篇文章的第一篇里，我们了解了[超参数调优](https://www.anyscale.com/blog/what-is-hyperparameter-tuning)如何帮我们找到最优设置，让机器学习模型取得最好的结果。然后在第二篇里，我们学习了[如何在 XGBoost 上做超参数调优](https://www.anyscale.com/blog/how-to-tune-hyperparameters-on-xgboost)，并发现调优后的模型比未调优的模型预测更准确。
 
-在我们的三部分系列的第一篇文章中，我们了解了[调整超参数](https://www.anyscale.com/blog/what-is-hyperparameter-tuning)如何帮助我们的机器学习模型找到最佳结果的最佳设置。然后，在第二篇文章中，我们学习了[如何在 XGBoost 上执行超参数调整](https://www.anyscale.com/blog/how-to-tune-hyperparameters-on-xgboost)，并发现我们调整的模型比未调整的模型做出更准确的预测。
+取决于搜索空间的大小，执行超参数调优的搜索算法可能要花很长时间，从几小时到几天不等。上一篇文章里我们跑随机搜索函数时，就看到了它在计算资源和时间上有多昂贵。
 
-根据搜索空间的不同，执行超参数调整的搜索算法可能需要很长时间，从几小时到几天不等。当我们运行上一篇文章中的随机搜索功能时，我们看到了它在计算资源和时间上的成本有多么高。
+要想更快地调优超参数——同时不牺牲质量——我们就需要借助分布式计算，它让我们可以并行地尝试不同的超参数组合。
 
-为了在不影响质量的情况下更快地调整超参数，我们需要采用分布式计算，这使我们能够并行尝试不同的超参数组合。
+在本系列的最后一篇里，我们将演示如何用 [Ray Tune](https://anyscale.com/library/ray-tune) 库把超参数调优任务分发到多台计算机上。我们会演示如何用这套分布式机器学习工具，在本地的多个 CPU 上或在云端调优超参数。我们会继续优化数字识别模型，只不过这次把任务分出去，从而做得更快。
 
-在本系列的最后一篇文章中，我们将演示如何使用 Ray Tune(https://anyscale.com/library/ray-tune) 库在多台计算机之间分配超参数调整任务。我们将演示如何使用分布式机器学习工具包来调整多个本地 CPU 或云中的超参数。我们将继续优化我们的数字识别模型，但我们会通过分配任务来更快地完成它。
+## 把超参数调优迁移到 Ray Tune
 
-## LinkPorting 超参数调整到 Ray Tune
+[Ray 项目](https://www.anyscale.com/ray-open-source)开发了 [tune-sklearn](https://github.com/ray-project/tune-sklearn)，作为 scikit-learn 的网格搜索和随机搜索超参数调优模型（分别是 GridSearchCV 和 RandomizedSearchCV）的直接替代品。它还支持其他搜索模型，比如贝叶斯搜索、树结构 Parzen 估计器等。你只需要把输入参数 **search_optimization** 设为 **bayesian** 或 **bohb**（对应贝叶斯优化），或设为 **hyperopt**（对应树结构 Parzen 估计器）。
 
-[Ray 项目](https://www.anyscale.com/ray-open-source) 开发了 [tune-sklearn](https://github.com/ray-project/tune-sklearn)，分别作为 scikit-learn 的网格搜索和随机搜索超参数调整模型 GridSearchCV 和 RandomizedSearchCV 的直接替代品。它还支持其他搜索模型，例如贝叶斯搜索、树结构 Parzen 估计器等。只需将输入参数 **search_optimization** 设置为 **bayesian** 或 **bohb**（用于贝叶斯优化），或设置 **hyperopt**（用于树结构 Parzen 估计器）即可。
+tune-sklearn 还能无缝地与 Ray Tune 集成，在多台机器上做分布式超参数调优——无论本地还是云端——都不需要改动我们的代码。
 
-Tune-sklearn 还与 Ray Tune 无缝集成，可在本地或云端的多台机器上进行分布式超参数调整，而无需更改我们的代码。
+这里，我们会改写[上一篇文章](https://www.anyscale.com/blog/how-to-tune-hyperparameters-on-xgboost)里写的代码，把 `RandomizedSearchCV()` 函数换成 `tune-sklearn`。
 
-在这里，我们将调整我们在[上一篇文章](https://www.anyscale.com/blog/how-to-tune-hyperparameters-on-xgboost)中编写的代码，以用“tune-sklearn”替换“RandomizedSearchCV()”函数。
+首先安装 tune-sklearn。在控制台命令行里，输入下面两条命令之一：
 
-首先，我们安装tune-sklearn。在控制台命令行中，我们键入以下内容之一：
-
-`$ pip installune-sklearn "ray[tune]"`
+`$ pip install tune-sklearn "ray[tune]"`
 
 或者：
 
 `$ pip install -U git+https://github.com/ray-project/tune-sklearn.git && pip install 'ray[tune]'`
 
-然后，我们更新代码，将“RandomizedSearchCV”替换为“TuneSearchCV”。代码的最终版本如下，内嵌注释解释了修改内容：
+然后我们更新代码，把 `RandomizedSearchCV` 换成 `TuneSearchCV`。代码的最终版本如下，行内注释说明了所做的修改：
+
 ```
 1import time
 2import numpy as np
@@ -127,13 +126,15 @@ Tune-sklearn 还与 Ray Tune 无缝集成，可在本地或云端的多台机器
 79    best_params = tune_search_tuning()
 80    print("Best parameters:", best_params)
 ```
-接下来，我们将上面的代码保存在 .py 文件中。例如，**mnist_tune_search.py​​*。然后我们从控制台 CLI 运行此文件：
 
-`$ python mnist_tune_search.py`
+接下来，我们把上面的代码保存为 .py 文件，例如 **mnist_tune_search.py**。然后从控制台 CLI 运行这个文件：
 
-Ray Tune 现在根据我们的计算机架构（CPU 数量和每个 CPU 的核心数量）并行启动多个进程（工作进程）来执行评估迭代。
+`$ python mnist_tune_search.py `
 
-将“verbose”设置为 2 时，我们可以预期输出类似于以下文本：
+Ray Tune 现在会根据我们计算机的架构（CPU 数量和每个 CPU 的核心数）并行启动若干进程（worker）来执行各轮评估。
+
+把 `verbose` 设为 2 时，输出大致会是下面这样：
+
 ```
 1Reduced dataset size:  (1000, 785)
 2starting at:  1634516904.7016492
@@ -185,21 +186,23 @@ Ray Tune 现在根据我们的计算机架构（CPU 数量和每个 CPU 的核�
 48Accuracy:  0.848
 49Best parameters: {'max_depth': 10, 'learning_rate': 0.3, 'subsample': 0.9, 'colsample_bytree': 0.7, 'colsample_bylevel': 0.6, 'n_estimators': 500, 'num_class': 10}
 ```
-该过程花费了 12 分钟多的时间，并找到了最佳的超参数组合，可将准确度提高到 84.8%（如上一篇文章所示，默认超参数值的准确度为 82.6%）。
 
-## LinkDistributing超参数调优处理
+这个过程花了 12 分钟多，它找到了最佳的超参数组合，把准确率提高到 84.8%（上一篇文章里用默认超参数值时是 82.6%）。
 
-接下来，我们将在多台计算机之间分配超参数调整负载。我们将使用 [Ray](https://www.ray.io/) 分发我们的调整。我们将构建一个包含一个头节点和一组工作节点的 Ray 集群。我们需要首先启动头节点。然后工作人员连接到它。
+## 分布式执行超参数调优
+
+接下来，我们把超参数调优的负载分摊到多台计算机上。我们会用 [Ray](https://www.ray.io/) 来做分布式调优。我们要搭一个由头节点和一组工作节点组成的 Ray 集群。需要先启动头节点，然后让工作节点连上去。
 
 ![blog-distrubuted-hyperparameter-tuning-processing](https://images.ctfassets.net/xjan103pcp94/4BkQcFkzVe4ZYUrov8NzZ3/ceeea98bfc3feca6b43ef52168defdff/blog-distrubuted-hyperparameter-tuning-processing.png)
 
-博客分布式超参数调整处理
+blog-distrubuted-hyperparameter-tuning-processing
 
-首先，我们需要安装 Ray 模块。在控制台 CLI 中，我们输入以下命令：
+首先，我们需要安装 Ray 模块。在控制台 CLI 里输入下面的命令：
 
-`$ pip 安装 ray`
+`$ pip install ray`
 
-请注意，对于此练习，确保参与集群的所有节点上的环境完全相同至关重要。密切关注Ray和XGBoost的版本。我们已在以下版本上测试了本教程中的代码：
+请注意，本次练习中，参与集群的所有节点必须保证环境完全一致，这一点非常关键。要特别留意 Ray 和 XGBoost 的版本。本教程中的代码是在以下版本上测试的：
+
 ```
 1$ pip show ray 
 2Name: ray
@@ -209,17 +212,19 @@ Ray Tune 现在根据我们的计算机架构（CPU 数量和每个 CPU 的核�
 6Name: xgboost
 7Version: 1.2.0
 ```
-接下来，我们对之前的函数进行以下调整：
 
-- 将数据文件复制到 Ray 集群中所有节点的同一目录。使用绝对路径，例如“/var/data”。
-- 导入射线库。
-- 初始化 Ray 连接到本地节点，`ray.init(address='auto')`。
-- 在函数声明之前使用 @ray.remote 将函数 `tune_search_tuning()` 装饰为 Ray 任务。
-- 更新数据文件的完整路径以与其复制的位置相对应。例如：`/var/data/mnist_train_final.csv`
-- 将worker的创建和处理添加到主函数中。
-- 将计时器移至主功能。
+接下来，我们对之前的函数做以下调整：
 
-新代码如下，其中内嵌注释了更改：
+- 把数据文件复制到 Ray 集群中所有节点的同一个目录下。使用诸如 `/var/data` 的绝对路径。
+- 导入 Ray 库。
+- 初始化 Ray 以连接本地节点：`ray.init(address='auto')`。
+- 在函数声明前用 @ray.remote 把 `tune_search_tuning()` 装饰成 Ray 任务。
+- 把数据文件的完整路径更新为它们被复制到的位置。例如：`/var/data/mnist_train_final.csv`
+- 在主函数中加入 worker 的创建与处理。
+- 把计时器移到主函数。
+
+新代码如下，改动已在行内注释中标出：
+
 ```
 1import time
 2import numpy as np
@@ -319,11 +324,13 @@ Ray Tune 现在根据我们的计算机架构（CPU 数量和每个 CPU 的核�
 96
 97    print("Best params from main function: ", best_params)
 ```
-将上面的代码保存在文件中，例如 **mnist_ray_tune_distributed.py**。
 
-在运行上面的代码之前，您需要启动一个Ray集群。 [Ray Cluster 概述](https://docs.ray.io/en/latest/cluster/index.html) 文档中提供了丰富的文档。本文档将向您展示如何在任何云提供商上启动 Ray 集群。它包含有关 AWS、GCP 和 Azure 等流行云提供商的详细信息。但是，您还可以通过启动不同服务器上的头节点和工作线程来在本地运行 ray 集群。
+把上面的代码保存到一个文件，例如 **mnist_ray_tune_distributed.py**。
 
-在本地设置 Ray 集群的一种简单方法是手动启动头节点并从命令行将工作节点附加到它：
+在运行上面的代码之前，你需要先启动一个 Ray 集群。[Ray Cluster Overview](https://docs.ray.io/en/latest/cluster/index.html) 文档里有详尽的说明。这份文档会展示如何在任何云提供商上启动 Ray 集群，其中包含关于 AWS、GCP、Azure 等主流云厂商的详细信息。不过，你也可以在本地自建环境里跑 Ray 集群，只要在不同的服务器上分别启动头节点和各个 worker。
+
+在本地搭建 Ray 集群的一个简单办法是：从命令行手动启动头节点，再把 worker 挂上去：
+
 ```
 1$ ray start --head --port=6379 
 2Local node IP: 192.168.0.196
@@ -349,15 +356,17 @@ Ray Tune 现在根据我们的计算机架构（CPU 数量和每个 CPU 的核�
 22
 23  If connection fails, check your firewall settings and network configuration.
 ```
-现在头节点正在运行，我们可以使用“ray start --head”命令提供的 Redis 密码连接工作节点。在 Ray 集群中的其余节点上，在命令行中输入以下内容，将 IP 地址替换为环境中实际头节点的 IP 地址：
+
+头节点已经跑起来了，现在我们可以用 `ray start --head` 命令给出的 Redis 密码来连接工作节点。在 Ray 集群的其他节点上，在命令行里输入下面的命令，并把 IP 地址替换成你环境里实际头节点的地址：
 
 `$ ray start --address='192.168.0.196:6379' --redis-password='5241590000000000'`
 
-Ray 集群运行后，我们只需在其中一个节点上运行 Python 脚本即可。在当前练习中，我们设置了一个包含两个节点的 Ray 集群。在其中一个节点，我们在命令行中输入以下内容：
+Ray 集群跑起来之后，我们只需要在其中一个节点上运行 Python 脚本。在本次练习中，我们搭了一个两节点的 Ray 集群。在其中一个节点上，我们在命令行里输入：
 
 `$ python mnist_ray_tune_distributed.py`
 
-我们期望这样的输出：
+我们预期输出大致如下：
+
 ```
 1INFO worker.py:827 -- Connecting to existing Ray cluster at address: 192.168.0.196:6379
 2.
@@ -367,48 +376,15 @@ Ray 集群运行后，我们只需在其中一个节点上运行 Python 脚本�
 6Total elapsed time:  315.5932471752167
 7Best params from main function:  {'max_depth': 3, 'learning_rate': 0.1, 'subsample': 0.9, 'colsample_bytree': 0.6, 'colsample_bylevel': 0.9, 'n_estimators': 1000, 'num_class': 10}
 ```
-测试运行时间为 315 秒（约 5 分钟）。这还不到上次测试时间的一半，上次测试的 Python 脚本在单个节点上运行，耗时 741 秒。此外，对于最佳超参数组合，新测试的准确率为 82.0%，与我们之前使用 scikit-learn RandomizedSearchCV 函数获得的结果 (85.8%) 类似。
 
-在集群中分布超参数调整的运行速度比在单台计算机上快得多。尽管我们的结果实际上与 scikit-learn 相同，但我们通过分配工作更快地获得了这些结果。
+这次测试跑了 315 秒（约 5 分钟）。这不到上一次测试耗时的一半——那次 Python 脚本跑在单个节点上，用了 741 秒。另外，新测试中最佳超参数组合的准确率是 82.0%，与我们之前用 scikit-learn 的 RandomizedSearchCV 函数得到的结果相近（85.8%）。
 
-## 链接后续步骤
+把超参数调优分散到集群上跑，比在单台计算机上快得多。虽然结果与 scikit-learn 几乎一样，但通过把工作分摊出去，我们更快地拿到了这些结果。
 
-[Ray Tune](https://anyscale.com/library/ray-tune) 可以轻松地在本地或云中的多台计算机上的多个节点上自动化和分发超参数调整。
+## 后续步骤
 
-正如我们所看到的，使用 Ray Tune 的 TuneSearchCV 替换 scikit-learn 的 RandomizedSearchCV，在 Ray 集群上运行使我们能够轻松地将超参数调整过程分布在多个节点上。这最多可以将调整所需的时间减少 N 倍（其中 N 是 Ray 集群中的节点数量），因为分布式计算总是有一些开销。
+[Ray Tune](https://anyscale.com/library/ray-tune) 让自动化并在多台机器的多个节点上分布式执行超参数调优变得很容易，无论本地还是云端。
 
-如果您想快速调整模型的超参数，请考虑尝试 Ray 和 [Ray Tune](https://docs.ray.io/en/latest/tune/index.html) 来改进您自己的模型 - 如果您想使用 Ray，但不想管理或扩展自己的集群，请[注册 Anyscale](https://www.anyscale.com/beta)。
+如我们所见，用 Ray Tune 的 TuneSearchCV 替换 scikit-learn 的 RandomizedSearchCV，再跑在 Ray 集群上，让我们能轻松地把超参数调优过程分散到多个节点。这最多能把调优所需的时间缩短到 1/N——N 是你的 Ray 集群中的节点数——因为分布式计算总会有一些开销。
 
-#### 目录
-
-- [将超参数调整移植到 Ray Tune ](https://www.anyscale.com/blog/how-to-distribute-hyperparameter-tuning-using-ray-tune#porting-hyperparameter-tuning-to-ray-tune-)
-- [分布式超参数调优处理](https://www.anyscale.com/blog/how-to-distribute-hyperparameter-tuning-using-ray-tune#distributing-hyperparameter-tuning-processing)
-- [后续步骤](https://www.anyscale.com/blog/how-to-distribute-hyperparameter-tuning-using-ray-tune#next-steps)
-
-####分享
-
-####标签
-
-射线调谐
-
-#### 注册产品更新
-
-####推荐内容
-
-![宣布 Ray 在 Google TPU 上支持 PyTorch](https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140)
-
-#### 宣布 Ray 在 Google TPU 上支持 PyTorch
-
-![使用 KubeRay 在 Kubernetes 上大规模运行 Ray](https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140)
-
-#### 使用 KubeRay 在 Kubernetes 上大规模运行 Ray
-
-![机器人决策科学](https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140)
-
-#### 使用 Ray 在任意尺度上扩展机器人决策科学
-
-## 立即探索 Anyscale
-
-使用专为生产 AI 构建的多云平台，在 Ray 上构建、运行和扩展任何 AI 工作负载。
-
-[免费开始](https://authkit.anyscale.com/?utm_source=anyscale&utm_content=exploreblock&utm_medium=website&utm_campaign=cta)[与专家交谈](https://www.anyscale.com/book/demo?utm_source=anyscale&utm_content=exploreblock&utm_medium=website&utm_campaign=cta)
+如果你想快速调优模型的超参数，不妨试试 Ray 和 [Ray Tune](https://docs.ray.io/en/latest/tune/index.html) 来改进你自己的模型——如果你想用 Ray 但又不想自己管理和扩缩集群，可以[注册 Anyscale](https://www.anyscale.com/beta)。

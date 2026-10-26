@@ -79,10 +79,10 @@
 68. [Ray 中的模型批量推理：Actor、ActorPool 与 Dataset](https://anyscale.com/blog/model-batch-inference-in-ray-actors-actorpool-and-datasets)（2022-11-03） <!--orig:Model Batch Inference in Ray: Actors, ActorPool, and Datasets-->
 69. [Ray 2.0 正式发布](https://anyscale.com/blog/announcing-ray-2-0)（2022-08-23） <!--orig:Announcing Ray 2.0-->
 70. [Ray 1.13：改进 TB 级及更大数据集的 Shuffle 支持](https://anyscale.com/blog/ray-1-13-large-scale-dataset-shuffle-ray-serve-deployment-graph-api-kuberay)（2022-06-09） <!--orig:Ray 1.13: Improving support for shuffling terabyte-scale and larger datasets-->
-71. [如何使用 Ray Tune 分配超参数调整](https://anyscale.com/blog/how-to-distribute-hyperparameter-tuning-using-ray-tune)（2022-02-15） <!--orig:How to distribute hyperparameter tuning using Ray Tune-->
+71. [如何使用 Ray Tune 分布式调优超参数](https://anyscale.com/blog/how-to-distribute-hyperparameter-tuning-using-ray-tune)（2022-02-15） <!--orig:How to distribute hyperparameter tuning using Ray Tune-->
 72. [Ray Datasets：大规模机器学习数据摄取与打分](https://anyscale.com/blog/ray-datasets-for-machine-learning-training-and-scoring)（2022-02-14） <!--orig:Ray Datasets for large-scale machine learning ingest and scoring-->
-73. [如何调整 XGBoost 上的超参数](https://anyscale.com/blog/how-to-tune-hyperparameters-on-xgboost)（2022-02-09） <!--orig:How to tune hyperparameters on XGBoost-->
-74. [什么是超参数调整？](https://anyscale.com/blog/what-is-hyperparameter-tuning)（2022-02-08） <!--orig:What is hyperparameter tuning?-->
+73. [如何调优 XGBoost 上的超参数](https://anyscale.com/blog/how-to-tune-hyperparameters-on-xgboost)（2022-02-09） <!--orig:How to tune hyperparameters on XGBoost-->
+74. [什么是超参数调优？](https://anyscale.com/blog/what-is-hyperparameter-tuning)（2022-02-08） <!--orig:What is hyperparameter tuning?-->
 75. [深潜：第三代 ML 架构中的数据摄取](https://anyscale.com/blog/deep-dive-data-ingest-in-a-third-generation-ml-architecture)（2021-11-30） <!--orig:Deep Dive: Data Ingest in a Third Generation ML Architecture-->
 76. [在 Ant Group 基于 Ray 构建高可用、可扩展的在线应用](https://anyscale.com/blog/building-highly-available-and-scalable-online-applications-on-ray-at-ant)（2021-09-08） <!--orig:Building Highly Available and Scalable Online Applications on Ray at Ant Group-->
 77. [Anastasia 如何用 Ray 和 Anyscale 将 ML 流程加速 9 倍](https://anyscale.com/blog/how-anastasia-implements-ray-and-anyscale-to-speed-up-ml-processes-9x)（2021-08-31） <!--orig:How Anastasia accelerated their ML processes 9x with Ray and Anyscale-->

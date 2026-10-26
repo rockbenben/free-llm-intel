@@ -16,41 +16,41 @@
       <description>原文标题：Introducing AutoEvals: Automatically find the best model for your task</description>
       <content:encoded><![CDATA[<p>2026 年 8 月 5 日</p>
 <h1>AutoEvals 简介：自动找到最适合您任务的模型</h1>
-<p>一个</p>
-<p>阿马尔·辛格</p>
-<p>2026 年夏天，几乎每个月都会发布新的前沿车型。每一个都带有一组新的基准数据，一些关于 X 的炒作，以及对于在生产中运行 LLM 的团队来说同样令人烦恼的问题：我们应该切换吗？</p>
-<p>大多数团队从未真正回答过这个问题。诚实地回答这个问题意味着构建一个代表您真实流量的数据集，为您想要测试的每个提供商提供 API 访问权限，编写标题，连接判断基础设施，燃烧令牌来运行所有内容，然后解释结果。这是一周的工作，每个模型、每个任务、每次新产品发布。于是这个问题就被搁置了。几个月前根据价格点和氛围选择的模型继续运行，因为在生产中更换模型既“困难”又存在风险。</p>
-<p>而且风险是真实存在的。基准是其他人任务的平均值。一个模型可以在排行榜上名列前茅，但仍然会摸索你的工具模式、输出格式和边缘情况。唯一真正重要的基准是您自己的流量，到目前为止，没有人有时间运行它。</p>
-<p>我们正在引入工具来解决这个问题。隆重推出 AutoEvals - 即插即用工具包，可帮助您找到适合您任务的模型。 <a href="https://inference.net/register?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=intro-sign-in">登录</a> 或 <a href="https://docs.inference.net/get-started/compare-models-auto-evals?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=intro-read-docs">阅读docs</a> 开始。</p>
-<p><img src="https://inference.net/assets/hero-Chk6D-tL.png" alt="AutoEvals 模型比较报告显示推荐模型的质量、成本和延迟结果"></p>
-<h2>真实生产流量是最好的基准</h2>
-<p>AutoEvals 旨在帮助开发人员找到针对给定任务或代理的“最佳模型”。不是您从未听说过的公共基准测试中最好的 - 更好的是您的用户上周发送的确切请求。</p>
-<p>与 <a href="https://docs.inference.net/get-started/record-first-call?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=body-inference-gateway">Inference Gateway</a> 集成（2 分钟内），收集数据，单击仪表板中的一个按钮，几分钟后，您就会得到关于您应该使用哪种模型的明确答案使用质量、成本和延迟差异的实数。</p>
-<p><strong>每个模型的发布都变得免费，而不是家庭作业。</strong> 当新产品发布时，您不再权衡发布与一周的评估工作。午餐时进行比较，到下午就知道它对您是否重要。</p>
-<p><strong>切换不再可怕。</strong> 该推荐不是排行榜排名。这是您自己的流量，经过重播和判断，每个样本都可以检查。在单个生产请求触及新模型之前，您可以准确了解新模型与当前模型相比如何处理请求。</p>
-<p><strong>您不再为不需要的智能付费。</strong> 昂贵的模型悄悄地过度服务了许多任务。 AutoEvals 向您显示特定任务的质量成本边界，以便您可以了解何时更实惠的模型可以提供相同水平的精度。</p>
-<p><img src="https://inference.net/assets/recommended-model-DhN4jdcu.png" alt="AutoEvals 推荐卡以评委的推理命名获胜模型"></p>
-<p>结论：针对您的任务的具体建议及其背后的推理</p>
-<h2>AutoEvals 在实践中如何工作</h2>
-<p>AutoEval 分三步运行。它首先对最近的生产流量进行采样，然后由一组候选模型重播。之后，LLM评委会对每个输出的质量（即模型完成任务的程度）和相似度（即其行为与您今天运行的模型的相似程度）进行评分。然后，它将这些结果总结为模型结论、主要发现和每个模型的摘要。</p>
-<p>这两个分数一起告诉您开关的安全程度。高品质和高相似度是直接升级。高质量和低相似度意味着模型很好，但行为不同，因此首先需要仔细观察。当您确实想单独检查输出时，样本查看器会为您提供并排的模型响应以及法官对每个分数的推理。</p>
-<p><img src="https://inference.net/assets/sample-viewer-BJ8XdMxg.png" alt="示例查看器显示并排模型响应以及每个分数的判断推理"></p>
-<p>样本查看器：并排模型响应和法官对每个分数的推理</p>
-<p>在推理平台前获取流量是唯一的设置，也是一次集成：通过我们的网关路由您的 LLM 调用（我们的 CLI 可以自动检测您的项目），或使用我们的跟踪 SDK 报告跟踪。从此，比较型号就是一个按钮，切换就是单行更改。</p>
-<h2>在我们自己的代理上运行</h2>
-<p>在为其他人构建 AutoEvals 之前，我们先为自己的代理构建了 AutoEvals，两项发现真正改变了我们对模型选择的看法。</p>
-<p><strong>模型代之间的差距比您想象的要大。</strong>我们的一位 GTM 代理已经在同一个备受推崇的模型上运行了几个月。感觉很好，直到我们对其运行 AutoEval。模型的成本只是其一小部分，但它具有更好的长期轨迹、更严格的工具模式依从性以及更精确的全面结果。因为我们没有观察，所以我们留下了更好的结果。</p>
-<p><strong>有些任务有技能上限。</strong> 在同一任务中，顶级前沿模型获得了相同的质量分数。超过一定的能力水平后，他们都只是采取了正确的行动，付出更多的钱什么也买不到。一旦你看到了上限，模型的决定就会自行决定，而且它很少是最昂贵的选择。</p>
-<p><img src="https://inference.net/assets/quality-cost-frontier-DV5SGtmK.png" alt="质量与成本散点图显示顶级模型以截然不同的价格收敛于相同的质量得分"></p>
-<p>超过一定的能力水平后，质量趋于一致——付出更多却买不到什么</p>
-<p>将这两个发现放在一起，结论就很难回避：如果您使用LLM进行构建，随着时间的推移，您的应用程序应该变得更加准确<em>并且</em>便宜，仅从模型发布的速度来看。获得复合优势的团队将是那些可以毫不费力地进行评估的团队。这就是我们建造的。</p>
-<h2>今天进行第一次比较</h2>
-<p>AutoEvals 现已对每个 Inference 帐户开放，可以免费启动。连接您的流量，单击“运行比较”，几分钟后您就会知道大多数团队永远不会发现的事情：您正在运行的模型是否实际上是最适合该工作的模型。</p>
-<p>阅读<a href="https://docs.inference.net/get-started/compare-models-auto-evals?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=footer-guide">指南</a>或<a href="https://inference.net/register?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=footer-sign-up">注册免费</a> 开始。</p>
-<p>最适合您任务的模型可能已于上周发货。现在你可以真正找到答案了。</p>
+<p>A</p>
+<p>Amar Singh</p>
+<p>现在是 2026 年夏天。几乎每个月都会发布一个新的前沿模型。每个模型都带着一组新的基准数字、一些 X 上的炒作，以及对在生产环境里跑 LLM 的团队来说那个挥之不去的老问题：我们该换吗？</p>
+<p>大多数团队从来没有真正回答过它。诚实地回答意味着：构建一个能代表你真实流量的数据集，为你想要测试的每一家提供商打通 API 访问，写一份 rubric，搭起评判基础设施，烧掉 token 把它整个跑一遍，然后再解读结果。这是一周的工作量，每个模型、每个任务、每次有新东西发布都要来一遍。于是这个问题被搁置。几个月前基于一个价格点和感觉选定的模型继续跑着，因为在生产环境里换模型既<em>困难</em>又有风险。</p>
+<p>而且风险是真实的。基准是别人任务上的平均值。一个模型可以霸榜，却依然在你的工具 schema、你的输出格式、你的边界情况上栽跟头。唯一真正重要的基准是你自己的流量，而在此之前，没有人有时间去跑它。</p>
+<p>我们推出了一套工具来解决这个问题。正式推出 AutoEvals——即插即用的工具包，帮你找到适合你任务的模型。<a href="https://inference.net/register?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=intro-sign-in">登录</a> 或 <a href="https://docs.inference.net/get-started/compare-models-auto-evals?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=intro-read-docs">阅读文档</a> 开始使用。</p>
+<p><img src="https://inference.net/assets/hero-Chk6D-tL.png" alt="AutoEvals 模型对比报告，展示了推荐模型及其质量、成本和延迟结果"></p>
+<h2>真实的生产流量才是最好的基准</h2>
+<p>AutoEvals 的设计目标是帮开发者找到适合某个任务或 agent 的<em>最佳模型</em>。不是某个你从没听说过的公开基准上的最佳——而是在你的用户上周发来的那些确切请求上表现更好。</p>
+<p>接入 <a href="https://docs.inference.net/get-started/record-first-call?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=body-inference-gateway">Inference Gateway</a>（2 分钟即可），收集数据，在仪表盘上点一个按钮，几分钟后你就能得到一个明确的答案：你该用哪个模型，并附上质量、成本和延迟差异的真实数字。</p>
+<p><strong>每次模型发布都变成白捡的增益，而不是家庭作业。</strong> 当有新东西发布时，你不用再拿公告和一周的评测工作去权衡。午饭时跑一次对比，到下午就知道它对你有没有意义。</p>
+<p><strong>切换不再可怕。</strong> 推荐结果不是排行榜名次。它是你自己的流量，被重放、被打分，每个样本都可以翻看。在任何一个生产请求碰到新模型之前，你就能确切了解新模型相对于当前模型会如何处理请求。</p>
+<p><strong>你不再为用不上的智能付费。</strong> 大量任务正在被昂贵的模型悄悄过度服务。AutoEvals 为你展示针对你具体任务的质量-成本前沿，让你看清什么时候一个更便宜的模型也能给出同等水平的准确度。</p>
+<p><img src="https://inference.net/assets/recommended-model-DhN4jdcu.png" alt="AutoEvals 推荐卡片，标出胜出的模型以及评判器的理由"></p>
+<p>结论：针对你的任务给出具体建议，并附上背后的理由</p>
+<h2>AutoEvals 在实践中如何运作</h2>
+<p>一次 AutoEval 分三步运行。它先对你的近期生产流量采样，再由一组候选模型重放这些请求。之后，LLM 评判器会为每个输出打两项分：质量，即模型完成该任务的好坏；相似度，即它的行为与你当前运行的模型有多接近。最后它把这些结果汇总成一个模型结论、关键发现和各模型摘要。</p>
+<p>这两项分数合起来能告诉你切换有多安全。高质量加高相似度，就是可以直接换上就用的升级。高质量加低相似度，说明模型不错但行为不同，值得先仔细看一眼。当你确实想逐个检查输出时，Sample Viewer 会给你并排的模型回复，以及评判器为每个分数给出的理由。</p>
+<p><img src="https://inference.net/assets/sample-viewer-BJ8XdMxg.png" alt="Sample Viewer 展示并排的模型回复，以及评判器对每个分数的理由"></p>
+<p>Sample Viewer：并排的模型回复，以及评判器对每个分数的理由</p>
+<p>把你的流量送进 Inference 平台是唯一的准备工作，而且只是一次集成：把你的 LLM 调用通过我们的 Gateway 路由（我们的 CLI 可以自动为你的项目埋点），或者用我们的 tracing SDK 上报 trace。从此以后，比较模型就是一个按钮，切换就是一行改动。</p>
+<h2>在我们自己的 agent 上运行</h2>
+<p>我们在为别人构建 AutoEvals 之前，先为我们自己的 agent 构建了它，其中有两个发现真正改变了我们对模型选择的看法。</p>
+<p><strong>模型代际之间的差距比你想象的大。</strong> 我们的一个 GTM agent 已经在同一个口碑不错的模型上跑了好几个月。感觉挺好，直到我们对它跑了一次 AutoEval。成本只有零头的模型把它彻底碾压了：长程轨迹更好、对工具 schema 的遵循更严格、结果整体更精确。只因为我们没去看，就把更好的结果留在了桌上。</p>
+<p><strong>有些任务存在能力天花板。</strong> 在同一个任务上，最顶尖的前沿模型拿到了完全相同的质量分。越过某个能力水平之后，它们都只是在采取正确的动作，多付钱什么也买不到。一旦你能看见天花板，模型的选择就自己有了答案，而且它很少是最贵的那个选项。</p>
+<p><img src="https://inference.net/assets/quality-cost-frontier-DV5SGtmK.png" alt="质量与成本的散点图，显示顶级模型以差别很大的价格收敛到相同的质量分"></p>
+<p>越过某个能力水平后，质量趋于收敛——多付钱什么也买不到</p>
+<p>把这两个发现放在一起，结论就很难回避：如果你在用 LLM 构建应用，仅仅凭借模型发布的速度，你的应用本就该随着时间变得更准确<em>并且</em>更便宜。能抓住这种复利优势的团队，将是那些让评测变得毫不费力的团队。这就是我们做的东西。</p>
+<h2>今天就跑你的第一次对比</h2>
+<p>AutoEvals 现已对每个 Inference 账户开放，可免费开始使用。接入你的流量，点击 Run Comparison，几分钟后你就会知道一件大多数团队永远搞不清的事：你正在跑的模型到底是不是这项工作的最佳选择。</p>
+<p>阅读<a href="https://docs.inference.net/get-started/compare-models-auto-evals?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=footer-guide">指南</a>，或<a href="https://inference.net/register?utm_source=blog-introducing-autoevals&amp;utm_medium=blog&amp;utm_campaign=introducing-autoevals&amp;utm_content=footer-sign-up">免费注册</a>开始使用。</p>
+<p>适合你任务的最佳模型，可能上周就已经发布了。现在你真的能查出来了。</p>
 <p>联系方式</p>
 <h2>与我们的研究团队会面</h2>
-<p>安排与我们的研究团队通话，详细了解专业语言模型如何降低成本并提高性能。</p>]]></content:encoded>
+<p>与我们的研究团队预约一次通话，进一步了解 Specialized Language Models 如何降低成本、提升性能。</p>]]></content:encoded>
     </item>
     <item>
       <title>Schematron V2：以极低成本实现前沿级 HTML 转 JSON 提取</title>

@@ -9,7 +9,7 @@
 
 ## 全部文章（共 72 篇，按日期倒序；无日期条目列于最后）
 
-1. [Why we built a benchmark before training for instruction following](https://www.ai21.com/blog/lift-bench-blog/)（2026-10-25）
+1. [为什么我们在训练前先构建指令遵循基准](https://www.ai21.com/blog/lift-bench-blog/)（2026-10-25） <!--orig:Why we built a benchmark before training for instruction following-->
 2. [我们如何将 GitLab Duo Code Review 的成本降低 98%](https://www.ai21.com/blog/gitlab-case-study/)（2026-10-22） <!--orig:How we cut GitLab Duo Code Review’s cost by 98%-->
 3. [与 NVIDIA、Gong、Deel 和 Alice 合作，后训练 Nemotron 3.5 Super](https://www.ai21.com/blog/ai21-post-trains-nvidia-nemotron-35-super-vl/)（2026-10-15） <!--orig:AI21 Partners with Gong, Deel and Alice to Post-Train Specialized Models on NVIDIA Nemotron 3.5 Super VL-->
 4. [隐藏的错配：在开发者真正做的工作上评估 coding agent](https://www.ai21.com/blog/evaluating-coding-agents-on-the-work-developers-actually-do/)（2026-10-14） <!--orig:The hidden mismatch: Evaluating coding agents on the work developers actually do-->
