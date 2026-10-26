@@ -9228,8 +9228,7 @@ expression: |
       <category>Anyscale</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml">Anyscale</source>
       <description>原文标题：Announcing Ray support for PyTorch on Google TPUs</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
-<h1>宣布 Ray 支持 Google TPU 上的 PyTorch</h1>
+      <content:encoded><![CDATA[<h1>宣布 Ray 支持 Google TPU 上的 PyTorch</h1>
 <p>作者：<a href="https://www.anyscale.com/blog?author=lehui-liu">Lehui Liu</a>、<a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a>、<a href="https://www.anyscale.com/blog?author=andrew-sy-kim-google">Andrew Sy Kim (Google)</a>、<a href="https://www.anyscale.com/blog?author=nisha-mariam-johnson">Nisha Mariam Johnson</a> 与 <a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> | 2026 年 10 月 20 日</p>
 <p>今年早些时候，在 Ray Summit 2026 上，我们介绍了 <a href="https://www.oreilly.com/radar/what-is-the-park-stack/">PARK 技术栈</a>（PyTorch、AI 模型、Ray 和 Kubernetes）如何正在成为生产级 AI 的行业标准。长期以来，Ray 一直是 GPU 上 PyTorch 工作负载无处不在的分布式运行时。</p>
 <p>今天，Anyscale 与 Google Cloud 宣布为 Google TPU 上的 PyTorch 提供原生 Ray 支持——TPU 是承载 Gemini 以及 Google Cloud 上大规模 AI 工作负载的基础超级计算基础设施。</p>
@@ -9359,22 +9358,7 @@ app = build_openai_app(LLMServingArgs(llm_configs=[llm_config]))</code></pre>
 <p>关于在 Google Kubernetes Engine（GKE）上的完整端到端演练，请参见<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">使用 Ray 和 TorchTPU 在多主机 TPU 上服务 LLM</a>。</p>
 <h2>把 PARK 技术栈扩展到 TPU</h2>
 <p>随着 AI 工作负载从独立的训练作业演变为结合训练、高吞吐推理和强化学习的复合系统，各组织正在把开源 PARK 技术栈（PyTorch、AI 模型、Ray 和 Kubernetes）作为标准化选择。把 TorchTPU 引入 Ray 和 GKE，让这一愿景在 Google Cloud 上得以完整实现：PyTorch 开发者保留他们已经熟悉的 eager 执行模型和 Ray API，平台团队则获得 GKE 的拓扑感知自动扩缩容、弹性以及多加速器治理能力。</p>
-<p>今天就可以上手：探索使用 Ray 和 TorchTPU 的端到端 GKE 教程——<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">服务 LLM</a>或<a href="https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/train-models-tpu-ray-torchtpu">训练模型</a>，并敬请期待我们把这一基础扩展到大规模 RL 后训练框架以及 GKE 上下一代 Ironwood（TPU v7x）切片。</p>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#native-pytorch-on-google-tpus">Google TPU 上的原生 PyTorch</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#torchtrainer-on-tpus">TPU 上的 TorchTrainer</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#vllm-torchtpu-with-ray-serve">配合 Ray Serve 使用 vLLM-TorchTPU</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#extending-the-park-stack-to-tpus">把 PARK 技术栈扩展到 TPU</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/3Lo0nxFq9UAkSkzJ1h2inn/77202902f1e6fe0fd903047f5517b32e/Announcing_the_Special_Interest_Group__SIG__for_Ray_on_Accelerators.png?w=140" alt="宣布成立 Ray on Accelerators 特别兴趣小组（SIG）"></p>
-<h4>宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
-<h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策科学"></p>
-<h4>用 Ray 在 Anyscale 上扩展机器人决策科学的规模</h4>
-<h2>立即探索 Anyscale</h2>
-<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任何 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交流</a></p>]]></content:encoded>
+<p>今天就可以上手：探索使用 Ray 和 TorchTPU 的端到端 GKE 教程——<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">服务 LLM</a>或<a href="https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/train-models-tpu-ray-torchtpu">训练模型</a>，并敬请期待我们把这一基础扩展到大规模 RL 后训练框架以及 GKE 上下一代 Ironwood（TPU v7x）切片。</p>]]></content:encoded>
     </item>
     <item>
       <title>[Anyscale] 宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</title>
@@ -9384,8 +9368,7 @@ app = build_openai_app(LLMServingArgs(llm_configs=[llm_config]))</code></pre>
       <category>Anyscale</category>
       <source url="https://free-llm-intel.aishort.top/feeds/llm-news-anyscale.xml">Anyscale</source>
       <description>原文标题：Announcing the Special Interest Group (SIG) for Ray on Accelerators</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
-<h1>宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</h1>
+      <content:encoded><![CDATA[<h1>宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</h1>
 <p>作者：<a href="https://www.anyscale.com/blog?author=zhe-zhang">Zhe Zhang</a>、<a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a>、<a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> 与 <a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a> | 2026 年 10 月 20 日</p>
 <p>今天，我们宣布成立面向硬件加速器的 Ray 特别兴趣小组（SIG）。</p>
 <p>十多年前 Ray 在 UC Berkeley 诞生时，计算的格局与今天大不相同。当时所说的「分布式计算」指的是运行 Apache Hadoop、Apache Spark 等框架的 CPU 集群。GPU 才刚刚开始从图形与科学计算领域进入机器学习。</p>
@@ -9412,22 +9395,7 @@ app = build_openai_app(LLMServingArgs(llm_configs=[llm_config]))</code></pre>
 <p>核心的调度与放置逻辑仍保留在 Ray Core 中，而 SIG Accelerator 负责定义 Ray 中加速器的插件接口、CI 测试和成熟度分级。硬件厂商和云厂商贡献并维护各自的设备插件、传输实现以及新 SKU 的首日支持，框架作者和 ML 从业者则用真实的工作负载需求为我们的路线图提供依据。</p>
 <h2>参与其中</h2>
 <p>无论你是在构建新的加速器集成、在 Ray 上运行大规模训练或推理，还是在提供云与 CI 基础设施，我们都欢迎你参与进来！</p>
-<ul><li>在 <a href="https://www.ray.io/join-slack">Ray Slack</a> 上加入讨论。</li><li>参加我们的社区会议，讨论提案、评审路线图优先级、分享工作负载方面的反馈。</li><li>查看 Github 上与加速器相关的开放 <a href="https://github.com/ray-project/ray/issues">issue</a> 和 PR，并向上游贡献。</li></ul>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#development-and-testing-infra">开发与测试基础设施</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#hardware-aware-scheduling">硬件感知调度</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#networking-and-i/o-transport">网络与 I/O 传输</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#scope">范围</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#get-involved">参与其中</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 支持 Google TPU 上的 PyTorch"></p>
-<h4>宣布 Ray 支持 Google TPU 上的 PyTorch</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
-<h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策科学"></p>
-<h4>用 Ray 在 Anyscale 上扩展机器人决策科学的规模</h4>
-<h2>立即探索 Anyscale</h2>
-<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任何 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交流</a></p>]]></content:encoded>
+<ul><li>在 <a href="https://www.ray.io/join-slack">Ray Slack</a> 上加入讨论。</li><li>参加我们的社区会议，讨论提案、评审路线图优先级、分享工作负载方面的反馈。</li><li>查看 Github 上与加速器相关的开放 <a href="https://github.com/ray-project/ray/issues">issue</a> 和 PR，并向上游贡献。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>[OpenAI] 推进低资源编程语言的编码能力</title>

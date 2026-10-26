@@ -9,7 +9,7 @@ captured: 2026-10-14
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 0294d812a5c3
+body_sha: 01d641a12ee3
 ---
 
 # 阿里云上的 Ray：构建机器学习平台
@@ -181,36 +181,3 @@ ACK 通过 kube-queue 支持任务排队与配额。有了配额和队列，用�
 - 每个配额都有自己的队列，创建时定义的优先级更高的 RayJob 会在各自队列中按优先级被执行。
 
 最后一张图
-
-#### 目录
-
-- [KubeRay](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#kuberay)
-- [Ray on ACK](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#ray-on-ack)
-- [ACK 中的弹性计算](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#elastic-compute-in-ack)
-- [可观测性](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#observability)
-- [生产实践案例](https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#production-case-study)
-
-#### 分享
-
-#### 标签
-
-LLM
-
-#### 订阅产品更新
-
-#### 推荐内容
-
-#### 编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务
-
-
-#### Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理
-
-
-#### Ray Summit 2026：Physical AI、RL，以及承载它们的全部基础设施
-
-
-## 即刻探索 Anyscale
-
-用为生产级 AI 打造的多云平台，在 Ray 上构建、运行并扩展任意 AI 负载。
-
-免费开始

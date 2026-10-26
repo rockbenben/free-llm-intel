@@ -9,7 +9,7 @@ captured: 2026-10-08
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: a63eca98cc19
+body_sha: 8a8571ed711a
 ---
 
 # 利用LeRobot数据集和Ray优化VLA微调性能
@@ -361,41 +361,3 @@ def train_loop_per_worker(config: dict):
 - [Physical Intelligence：π₀.5——具备开放世界泛化能力的 VLA](https://www.physicalintelligence.company/blog/pi05)
 - [NVIDIA Isaac GR00T N1.5 基础模型](https://developer.nvidia.com/isaac/gr00t)
 - [分布式 AI 训练：用 Ray 与 Anyscale 做多 GPU](https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale)
-
-#### 目录
-
-- [引言](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#introduction)
-- [处理管线 ](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#the-pipeline-)
-- [第 1 部分：读取 LeRobot v3.0 数据格式 ](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-1:-reading-from-the-lerobot-v3.0-data-format-)
-- [实现 file-group 分区](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#implementing-file-group-partitioning)
-- [第 2 部分：用 Ray Data 做流式处理](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-2:-streaming-with-ray-data)
-- [Ray Data Datasource](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#ray-data-datasource)
-- [相机重命名](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#camera-renaming)
-- [图像转置](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#image-transposition)
-- [第 3 部分：用 Ray Train 做分布式训练](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-3:-distributed-training-with-ray-train)
-- [下一步](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#what's-next)
-- [相关资源](https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#related-resources)
-
-#### 分享
-
-#### 标签
-
-#### 订阅产品更新
-
-#### 推荐内容
-
-#### 在 Ray Data 上对多模态 AI 工作负载做基准测试
-
-
-#### 跨 CPU 与 GPU 的流式分布式执行
-
-
-#### 可扩展的分布式训练：从单 GPU 的瓶颈到在 Anyscale 上用 Ray 跑通可靠的多节点训练
-
-
-## 立即探索 Anyscale
-
-在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任意 AI 工作负载。
-
-免费开始
-

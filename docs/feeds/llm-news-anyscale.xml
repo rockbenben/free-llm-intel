@@ -14,8 +14,7 @@
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu</guid>
       <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Announcing Ray support for PyTorch on Google TPUs</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
-<h1>宣布 Ray 支持 Google TPU 上的 PyTorch</h1>
+      <content:encoded><![CDATA[<h1>宣布 Ray 支持 Google TPU 上的 PyTorch</h1>
 <p>作者：<a href="https://www.anyscale.com/blog?author=lehui-liu">Lehui Liu</a>、<a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a>、<a href="https://www.anyscale.com/blog?author=andrew-sy-kim-google">Andrew Sy Kim (Google)</a>、<a href="https://www.anyscale.com/blog?author=nisha-mariam-johnson">Nisha Mariam Johnson</a> 与 <a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> | 2026 年 10 月 20 日</p>
 <p>今年早些时候，在 Ray Summit 2026 上，我们介绍了 <a href="https://www.oreilly.com/radar/what-is-the-park-stack/">PARK 技术栈</a>（PyTorch、AI 模型、Ray 和 Kubernetes）如何正在成为生产级 AI 的行业标准。长期以来，Ray 一直是 GPU 上 PyTorch 工作负载无处不在的分布式运行时。</p>
 <p>今天，Anyscale 与 Google Cloud 宣布为 Google TPU 上的 PyTorch 提供原生 Ray 支持——TPU 是承载 Gemini 以及 Google Cloud 上大规模 AI 工作负载的基础超级计算基础设施。</p>
@@ -145,22 +144,7 @@ app = build_openai_app(LLMServingArgs(llm_configs=[llm_config]))</code></pre>
 <p>关于在 Google Kubernetes Engine（GKE）上的完整端到端演练，请参见<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">使用 Ray 和 TorchTPU 在多主机 TPU 上服务 LLM</a>。</p>
 <h2>把 PARK 技术栈扩展到 TPU</h2>
 <p>随着 AI 工作负载从独立的训练作业演变为结合训练、高吞吐推理和强化学习的复合系统，各组织正在把开源 PARK 技术栈（PyTorch、AI 模型、Ray 和 Kubernetes）作为标准化选择。把 TorchTPU 引入 Ray 和 GKE，让这一愿景在 Google Cloud 上得以完整实现：PyTorch 开发者保留他们已经熟悉的 eager 执行模型和 Ray API，平台团队则获得 GKE 的拓扑感知自动扩缩容、弹性以及多加速器治理能力。</p>
-<p>今天就可以上手：探索使用 Ray 和 TorchTPU 的端到端 GKE 教程——<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">服务 LLM</a>或<a href="https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/train-models-tpu-ray-torchtpu">训练模型</a>，并敬请期待我们把这一基础扩展到大规模 RL 后训练框架以及 GKE 上下一代 Ironwood（TPU v7x）切片。</p>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#native-pytorch-on-google-tpus">Google TPU 上的原生 PyTorch</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#torchtrainer-on-tpus">TPU 上的 TorchTrainer</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#vllm-torchtpu-with-ray-serve">配合 Ray Serve 使用 vLLM-TorchTPU</a></li><li><a href="https://www.anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu#extending-the-park-stack-to-tpus">把 PARK 技术栈扩展到 TPU</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/3Lo0nxFq9UAkSkzJ1h2inn/77202902f1e6fe0fd903047f5517b32e/Announcing_the_Special_Interest_Group__SIG__for_Ray_on_Accelerators.png?w=140" alt="宣布成立 Ray on Accelerators 特别兴趣小组（SIG）"></p>
-<h4>宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
-<h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策科学"></p>
-<h4>用 Ray 在 Anyscale 上扩展机器人决策科学的规模</h4>
-<h2>立即探索 Anyscale</h2>
-<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任何 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交流</a></p>]]></content:encoded>
+<p>今天就可以上手：探索使用 Ray 和 TorchTPU 的端到端 GKE 教程——<a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/serve-llm-tpu-ray-torchtpu">服务 LLM</a>或<a href="https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/train-models-tpu-ray-torchtpu">训练模型</a>，并敬请期待我们把这一基础扩展到大规模 RL 后训练框架以及 GKE 上下一代 Ironwood（TPU v7x）切片。</p>]]></content:encoded>
     </item>
     <item>
       <title>宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</title>
@@ -168,8 +152,7 @@ app = build_openai_app(LLMServingArgs(llm_configs=[llm_config]))</code></pre>
       <guid isPermaLink="true">https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu</guid>
       <pubDate>Tue, 20 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Announcing the Special Interest Group (SIG) for Ray on Accelerators</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
-<h1>宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</h1>
+      <content:encoded><![CDATA[<h1>宣布成立 Ray on Accelerators 特别兴趣小组（SIG）</h1>
 <p>作者：<a href="https://www.anyscale.com/blog?author=zhe-zhang">Zhe Zhang</a>、<a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a>、<a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> 与 <a href="https://www.anyscale.com/blog?author=richard-liaw">Richard Liaw</a> | 2026 年 10 月 20 日</p>
 <p>今天，我们宣布成立面向硬件加速器的 Ray 特别兴趣小组（SIG）。</p>
 <p>十多年前 Ray 在 UC Berkeley 诞生时，计算的格局与今天大不相同。当时所说的「分布式计算」指的是运行 Apache Hadoop、Apache Spark 等框架的 CPU 集群。GPU 才刚刚开始从图形与科学计算领域进入机器学习。</p>
@@ -196,22 +179,7 @@ app = build_openai_app(LLMServingArgs(llm_configs=[llm_config]))</code></pre>
 <p>核心的调度与放置逻辑仍保留在 Ray Core 中，而 SIG Accelerator 负责定义 Ray 中加速器的插件接口、CI 测试和成熟度分级。硬件厂商和云厂商贡献并维护各自的设备插件、传输实现以及新 SKU 的首日支持，框架作者和 ML 从业者则用真实的工作负载需求为我们的路线图提供依据。</p>
 <h2>参与其中</h2>
 <p>无论你是在构建新的加速器集成、在 Ray 上运行大规模训练或推理，还是在提供云与 CI 基础设施，我们都欢迎你参与进来！</p>
-<ul><li>在 <a href="https://www.ray.io/join-slack">Ray Slack</a> 上加入讨论。</li><li>参加我们的社区会议，讨论提案、评审路线图优先级、分享工作负载方面的反馈。</li><li>查看 Github 上与加速器相关的开放 <a href="https://github.com/ray-project/ray/issues">issue</a> 和 PR，并向上游贡献。</li></ul>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#development-and-testing-infra">开发与测试基础设施</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#hardware-aware-scheduling">硬件感知调度</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#networking-and-i/o-transport">网络与 I/O 传输</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#scope">范围</a></li><li><a href="https://www.anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu#get-involved">参与其中</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5odqs3bDXHHrUGye7EReO6/12a5fb11fc7d119b1ce905d420821160/ExternalRayTorchTPUblog.png?w=140" alt="宣布 Ray 支持 Google TPU 上的 PyTorch"></p>
-<h4>宣布 Ray 支持 Google TPU 上的 PyTorch</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="使用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
-<h4>使用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策科学"></p>
-<h4>用 Ray 在 Anyscale 上扩展机器人决策科学的规模</h4>
-<h2>立即探索 Anyscale</h2>
-<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任何 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交流</a></p>]]></content:encoded>
+<ul><li>在 <a href="https://www.ray.io/join-slack">Ray Slack</a> 上加入讨论。</li><li>参加我们的社区会议，讨论提案、评审路线图优先级、分享工作负载方面的反馈。</li><li>查看 Github 上与加速器相关的开放 <a href="https://github.com/ray-project/ray/issues">issue</a> 和 PR，并向上游贡献。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>用 KubeRay 在 Kubernetes 上大规模运行 Ray</title>
@@ -304,22 +272,7 @@ Train Epoch 0:  92%|█████████▏| 1719/1875 [00:18&lt;00:01, 8
 <p>更多可直接使用的示例，参见覆盖 RayCluster、RayJob、RayService 和 RayCronJob 的 <a href="https://github.com/ray-project/kuberay/tree/master/ray-operator/config/samples">KubeRay 示例配置</a>。祝你在 Kubernetes 上用 KubeRay 运行 Ray 愉快！</p>
 <h2>Link加入 Ray 社区</h2>
 <p>KubeRay 是在公开环境下构建的。联系社区、分享反馈并参与贡献：</p>
-<ul><li><strong>提出问题</strong>：在 <a href="https://www.ray.io/join-slack">Ray Slack 工作区</a> 的 #kuberay 频道里。</li><li><strong>结识社区</strong>：每两周一次的 KubeRay 社区会议。日程可在 <a href="https://zoom-lfx.platform.linuxfoundation.org/meetings/ray?view=month">Ray/KubeRay LFX 日历</a> 上找到。</li><li><strong>参与塑造路线图</strong>：在 <a href="https://github.com/ray-project/kuberay/issues/2999">kuberay#2999</a> 上分享你的功能请求与反馈。</li></ul>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/kuberay#what-is-kuberay">什么是 KubeRay</a></li><li><a href="https://www.anyscale.com/blog/kuberay#before-and-after-kuberay">KubeRay 之前与之后</a></li><li><a href="https://www.anyscale.com/blog/kuberay#where-kuberay-fits-between-ray-and-kubernetes">KubeRay 在 Ray 与 Kubernetes 之间处于什么位置</a></li><li><a href="https://www.anyscale.com/blog/kuberay#what-kuberay-provides">KubeRay 提供什么</a></li><li><a href="https://www.anyscale.com/blog/kuberay#key-features">核心特性</a></li><li><a href="https://www.anyscale.com/blog/kuberay#how-to-deploy-kuberay">如何部署 KubeRay</a></li><li><a href="https://www.anyscale.com/blog/kuberay#join-the-ray-community">加入 Ray 社区</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策的科学"></p>
-<h4>用 Anyscale 上的 Ray 扩展机器人决策科学的规模</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/12RnheyyoRcbiqT3JkFsEU/10457e67286ef0dd8c471c7ff0574fd9/High-Performance_LLM_Serving_for_Coding_Agents.png?w=140" alt="面向编码 agent 的高性能 LLM Serving"></p>
-<h4>把编码 agent 的成本降低 90%：在 Anyscale 上用 Ray + vLLM 做安全的 LLM serving</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/5AYtztHohlsfydESbYyul8/5e0c143c1eef57f387cfe4671fa011e6/Anyscale_on_Azure_is_Generally_Available_-_Enabling_Enterprises_to_Own_the_Full_AI_Loop__Not_Just_Inference.png?w=140" alt="Anyscale on Azure 正式可用 - 让企业掌握完整的 AI 闭环，而不只是推理"></p>
-<h4>Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理</h4>
-<h2>即刻探索 Anyscale</h2>
-<p>在一个为 production AI 打造的多云平台上，于 Ray 之上构建、运行并扩展任何 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">与专家交流</a></p>]]></content:encoded>
+<ul><li><strong>提出问题</strong>：在 <a href="https://www.ray.io/join-slack">Ray Slack 工作区</a> 的 #kuberay 频道里。</li><li><strong>结识社区</strong>：每两周一次的 KubeRay 社区会议。日程可在 <a href="https://zoom-lfx.platform.linuxfoundation.org/meetings/ray?view=month">Ray/KubeRay LFX 日历</a> 上找到。</li><li><strong>参与塑造路线图</strong>：在 <a href="https://github.com/ray-project/kuberay/issues/2999">kuberay#2999</a> 上分享你的功能请求与反馈。</li></ul>]]></content:encoded>
     </item>
     <item>
       <title>在 Anyscale 上用 Ray 扩展机器人决策研究的规模</title>
@@ -591,20 +544,7 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <h4>优化已有的 LLM 服务</h4>
 <p>把服务 skill 指向你当前的服务和仓库里那份实测优化示例：</p>
 <pre><code>/anyscale-workload-llm-serving Deploy an optimized LLM service by following the guidance in https://github.com/anyscale/llm-serving-for-coding-agents/tree/main/part3-optimize. Use this code as a template, inspect my existing service, and adapt the model, GPU, context length, parsers, and performance settings as needed. Benchmark the baseline and optimized configurations with /anyscale-platform-run skill.</code></pre>
-<p>换成别的 LLM 也完全可以；skill 应当重新校验模型专用的解析器、运行时兼容性、显存占用和性能配置，而不是原样照搬 Qwen 的配置。</p>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#how-coding-agents-shift-the-serving-workload">编码智能体如何改变服务负载</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#coding-agents-produce-far-more-than-chat-traffic">编码智能体产生的远不止聊天流量</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#ray-serve-llm-scales-it-for-production">Ray Serve LLM 把它扩展到生产规模</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#deploy-an-llm-for-coding-agents">为编码智能体部署一个 LLM</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#step-1:-select-an-llm-for-task-success,-not-leaderboard-rank-alone">第 1 步：按任务成功率选模型，而不是只看榜单排名</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#step-2:-fit-weights,-runtime-memory,-and-kv-cache-to-the-hardware">第 2 步：让权重、运行时内存和 KV 缓存匹配硬件</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#step-3:-configure-the-engine-for-the-model-and-workload">第 3 步：为模型和负载配置引擎</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#step-4:-enable-direct-streaming-and-connect-the-clients">第 4 步：启用直接流式输出并接入客户端</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#optimize-one-replica-for-coding-agent-traffic">针对编码智能体流量优化单个副本</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#benchmarking-latency-against-defined-slos">按既定 SLO 做延迟基准测试</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#replay-real-agent-sessions-for-benchmarks">用真实智能体会话做回放基准</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#apply-optimizations-in-dependency-order">按依赖顺序施加优化</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#model-cost-comparisons">模型成本对比</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#scale-with-autoscaling-and-cache-aware-load-balancing">用自动扩缩与缓存感知负载均衡扩容</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#separate-engine-limits,-admission-limits,-and-autoscaling-targets">分清引擎上限、准入上限与自动扩缩目标</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#extend-useful-cache-lifetime-with-kv-cache-offloading">用 KV 缓存下沉延长缓存的有效生命周期</a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#multi-model-routing-for-cost-optimization-">用多模型路由优化成本 </a></li><li><a href="https://www.anyscale.com/blog/run-coding-agents-on-your-own-gpus#continuous-improvement-via-observability-and-post-training">依靠可观测性与后训练持续改进</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<h4>Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理</h4>
-<h4>Ray Summit 2026：Physical AI、RL，以及承载它们的全部基础设施</h4>
-<h4>把 Ray 上的 AI 负载扩展到 10k 节点集群</h4>
-<h2>即刻探索 Anyscale</h2>
-<p>用为生产级 AI 打造的多云平台，在 Ray 上构建、运行并扩展任意 AI 负载。</p>
-<p>免费开始</p>
-<p>与专家交谈</p>]]></content:encoded>
+<p>换成别的 LLM 也完全可以；skill 应当重新校验模型专用的解析器、运行时兼容性、显存占用和性能配置，而不是原样照搬 Qwen 的配置。</p>]]></content:encoded>
     </item>
     <item>
       <title>Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理</title>
@@ -650,17 +590,7 @@ token-load score = weighted remaining prefill + active prefill + ongoing decode<
 <h3>建立连接</h3>
 <ul><li><a href="http://anyscale.com/product/azure"><strong>了解更多。</strong></a>查看 Anyscale on Azure 产品页。</li><li><a href="https://docs.anyscale.com/clouds/azure"><strong>开始使用。</strong></a>阅读 Anyscale on AKS 文档。</li><li><a href="https://www.anyscale.com/contact-sales?utm-source=blog"><strong>联系我们。</strong></a>申请演示或 FDE 支持。</li></ul>
 <h3>继续阅读</h3>
-<ul><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-public-preview-build-and-deploy-ai-scale">Anyscale on Azure 进入公开预览</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray">Anyscale Runtime 发布公告与基准测试</a></li><li><a href="https://learn.microsoft.com/azure/anyscale-on-azure">Microsoft Learn 上的 Anyscale on Azure 文档</a></li></ul>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#own-your-ai">掌握自己的 AI</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#keep-your-data,-evals,-and-models-secure">让数据、评估和模型保持安全</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#reduce-costs">降低成本</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#what-customers-are-doing-with-anyscale-on-azure">客户在用 Anyscale on Azure 做什么</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#getting-started-with-anyscale-on-azure">上手 Anyscale on Azure</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#resources">资源</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#get-connected">建立连接</a></li><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai#read-more">继续阅读</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<h4>Ray Summit 2026：Physical AI、RL，以及承载它们的全部基础设施</h4>
-<h4>把 Ray 上的 AI 负载扩展到 10k 节点集群</h4>
-<h4>优化 LLM 服务效率：从 KV 缓存复用到 token 负载感知（Ray Serve LLM）</h4>
-<h2>即刻探索 Anyscale on Azure</h2>]]></content:encoded>
+<ul><li><a href="https://www.anyscale.com/blog/anyscale-on-azure-public-preview-build-and-deploy-ai-scale">Anyscale on Azure 进入公开预览</a></li><li><a href="https://www.anyscale.com/blog/announcing-anyscale-runtime-powered-by-ray">Anyscale Runtime 发布公告与基准测试</a></li><li><a href="https://learn.microsoft.com/azure/anyscale-on-azure">Microsoft Learn 上的 Anyscale on Azure 文档</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>Ray Summit 2026：物理 AI、RL，以及承载它们的一切基础设施</title>
@@ -2601,19 +2531,7 @@ print(requests.get(f&quot;{POLICY_URL}/stats&quot;).json())</code></pre>
 <ul><li><strong>在 Anyscale 上跑。</strong> 在托管的 GPU 集群上部署策略并铺开 Isaac Lab rollout，技术栈预先构建好、权重预先缓存好，零基础设施搭建。</li><li><strong>换 checkpoint。</strong> 这个 deployment 把 <code>model_path</code> 作为参数接收，所以从基座模型换到一个任务微调模型（比如 NVIDIA 的 <code>nvidia/GR00T-N1.6-G1-PnPAppleToPlate</code>，正是在这个完全相同的抓取-放置任务上做后训练，是一行改动。平台保持不变。</li><li><strong>扩大评估扫描。</strong> 把策略侧的 <code>num_replicas</code> 与更大规模的 rollout 铺开结合起来，在数百个随机种子和起始条件下并行评估一个 checkpoint。</li><li><a href="https://docs.ray.io/en/latest/serve/index.html">Ray Serve 文档</a>涵盖 deployment、自动伸缩与多副本服务。</li></ul>
 <p>机器人评估正在演变成一个基础设施问题。随着机器人基础模型越来越大、仿真负载的真实程度越来越高，评估开始变得像现代 AI 服务化：分布式 GPU 推理集群、异构调度、可自动伸缩的服务，以及配合严密的闭环负载。关键的架构转变是分离。策略与仿真器各自独立扩缩，通过 Ray Serve 相连，并由 Ray Core 在整个集群上编排。那些撑住 LLM 推理扩容的分布式系统模式，如今正在成为机器人仿真与评估的必需品。</p>
 <h2>延伸阅读</h2>
-<ul><li><a href="https://developer.nvidia.com/isaac/gr00t">NVIDIA Isaac GR00T</a>：面向人形机器人的基础模型</li><li><a href="https://isaac-sim.github.io/IsaacLab/">NVIDIA Isaac Lab</a>：机器人学习与仿真框架</li><li><a href="https://www.physicalintelligence.company/blog/pi05">Physical Intelligence：π₀.5，一个具备开放世界泛化能力的 VLA</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale">用 LeRobot 数据集与 Ray 优化 VLA 微调性能</a></li></ul>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#introduction">引言</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#the-architecture">架构</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#part-1:-closed-loop-evaluation-needs-online-policy-serving">第 1 部分：闭环评估需要在线的策略服务</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#part-2:-the-simulator-and-the-policy-cannot-share-a-process-or-a-gpu">第 2 部分：仿真器与策略不能共用一个进程或一块 GPU</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#part-3:-policy-as-a-service">第 3 部分：策略即服务</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#the-payoff:-evaluation-as-a-scalable-service">回报：把评估做成一个可伸缩的服务</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#what's-next">下一步</a></li><li><a href="https://www.anyscale.com/blog/distributed-sim-eval-robotics-ray-anyscale#further-reading">延伸阅读</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<h4>用 LeRobot 数据集与 Ray 优化 VLA 微调性能</h4>
-<h4>为大规模多模态数据集设计数据管线</h4>
-<h4>Torc 如何达到 90% 的 GPU 利用率，以及 Discord、Cubist 和 Coinbase 用 Ray 扩展 AI 的其他故事</h4>
-<h2>即刻探索 Anyscale</h2>
-<p>用为生产 AI 打造的多云平台，在 Ray 上构建、运行并扩展任何 AI 负载。</p>
-<p>免费开始</p>]]></content:encoded>
+<ul><li><a href="https://developer.nvidia.com/isaac/gr00t">NVIDIA Isaac GR00T</a>：面向人形机器人的基础模型</li><li><a href="https://isaac-sim.github.io/IsaacLab/">NVIDIA Isaac Lab</a>：机器人学习与仿真框架</li><li><a href="https://www.physicalintelligence.company/blog/pi05">Physical Intelligence：π₀.5，一个具备开放世界泛化能力的 VLA</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale">用 LeRobot 数据集与 Ray 优化 VLA 微调性能</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>推出 Anyscale Agent Skills：更快构建、更聪明调试、优化运行在 Ray 上的 AI 工作负载</title>
@@ -3116,19 +3034,7 @@ def train_loop_per_worker(config: dict):
 <p>如果你想自己动手试：</p>
 <ul><li><a href="https://github.com/anyscale/examples/tree/main/vla_fine_tuning">查看这个示例的完整代码</a>。</li><li><a href="https://console.anyscale.com/template-preview/vla-fine-tuning">在 Anyscale 上试用这个示例</a> - 在托管的 GPU 集群上跑完整条管线，零基础设施搭建。</li><li><a href="https://docs.ray.io/en/latest/train/train.html">Ray Train 文档</a> 涵盖 <code>TorchTrainer</code> 的搭建、FSDP 配置以及 checkpoint 管理。</li><li><code>xvla-soft-fold</code> 数据集可在 <a href="https://huggingface.co/datasets/lerobot/xvla-soft-fold">Hugging Face</a> 上获取。</li></ul>
 <h2>Link<strong>相关资源</strong></h2>
-<ul><li><a href="https://www.physicalintelligence.company/blog/pi05">Physical Intelligence：π₀.5——具备开放世界泛化能力的 VLA</a></li><li><a href="https://developer.nvidia.com/isaac/gr00t">NVIDIA Isaac GR00T N1.5 基础模型</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale">分布式 AI 训练：用 Ray 与 Anyscale 做多 GPU</a></li></ul>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#introduction">引言</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#the-pipeline-">处理管线 </a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-1:-reading-from-the-lerobot-v3.0-data-format-">第 1 部分：读取 LeRobot v3.0 数据格式 </a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#implementing-file-group-partitioning">实现 file-group 分区</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-2:-streaming-with-ray-data">第 2 部分：用 Ray Data 做流式处理</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#ray-data-datasource">Ray Data Datasource</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#camera-renaming">相机重命名</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#image-transposition">图像转置</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#part-3:-distributed-training-with-ray-train">第 3 部分：用 Ray Train 做分布式训练</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#what's-next">下一步</a></li><li><a href="https://www.anyscale.com/blog/vision-language-action-pipelines-vla-robotics-ray-anyscale#related-resources">相关资源</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<h4>在 Ray Data 上对多模态 AI 工作负载做基准测试</h4>
-<h4>跨 CPU 与 GPU 的流式分布式执行</h4>
-<h4>可扩展的分布式训练：从单 GPU 的瓶颈到在 Anyscale 上用 Ray 跑通可靠的多节点训练</h4>
-<h2>立即探索 Anyscale</h2>
-<p>在专为生产级 AI 打造的多云平台上，用 Ray 构建、运行并扩展任意 AI 工作负载。</p>
-<p>免费开始</p>]]></content:encoded>
+<ul><li><a href="https://www.physicalintelligence.company/blog/pi05">Physical Intelligence：π₀.5——具备开放世界泛化能力的 VLA</a></li><li><a href="https://developer.nvidia.com/isaac/gr00t">NVIDIA Isaac GR00T N1.5 基础模型</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale">分布式 AI 训练：用 Ray 与 Anyscale 做多 GPU</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>可扩展的分布式训练：从单 GPU 限制到使用 Ray 在任意规模上进行可靠的多节点运行</title>
@@ -3181,20 +3087,7 @@ def train_loop_per_worker(config: dict):
 <h2><strong>了解更多</strong></h2>
 <p>随着多模态数据集和模型规模的增长，分布式训练会成为常态而非例外。</p>
 <p>Ray 降低了进入分布式训练的门槛：ML 工程师不必成为分布式系统专家，就能扩展现有的代码。Ray on Anyscale 把这幅图景补齐——由 Ray 驱动的 Anyscale Runtime，配上生产级的集群管理和专门打造的开发者工具，让团队能更快迭代，并有把握地过渡到生产。</p>
-<ul><li>准备好学 Ray Train 了吗？来上我们的免费课程 → <a href="https://courses.anyscale.com/bundles/ray-train-special">免费课程</a></li><li>准备好开始用 Anyscale 了吗？用我们给新账户的 100 美元额度去体验 Ray Train → <a href="https://console.anyscale.com/register/ha?">免费试用</a></li></ul>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#infrastructure-co-design-is-no-longer-optional-">基础设施的协同设计不再是可选项</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#data-preparation-starts-to-feel-a-lot-more-like-training">数据准备开始变得很像训练</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#gpus-are-scarce-and-expensive">GPU 稀缺且昂贵</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#why-ray-—-and-why-ray-on-anyscale">为什么选 Ray——以及为什么选 Ray on Anyscale</a></li><li><a href="https://www.anyscale.com/blog/distributed-ai-training-multi-GPU-ray-anyscale#learn-more">了解更多</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<h4>Ray Train V2：在 Ray 上做统一的分布式训练</h4>
-<h4>用 Ray 与分离式混合并行让多模态 AI 训练提速 30%</h4>
-<h4>Ray 加入 The PyTorch Foundation</h4>
-<h2>今天就探索 Anyscale</h2>
-<p>用一个为生产 AI 打造的多云平台，在 Ray 上构建、运行并扩展任意 AI 工作负载。</p>
-<p>免费开始</p>
-<p>与专家沟通</p>]]></content:encoded>
+<ul><li>准备好学 Ray Train 了吗？来上我们的免费课程 → <a href="https://courses.anyscale.com/bundles/ray-train-special">免费课程</a></li><li>准备好开始用 Anyscale 了吗？用我们给新账户的 100 美元额度去体验 Ray Train → <a href="https://console.anyscale.com/register/ha?">免费试用</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>AI 负载中的 GPU（低）效率问题</title>
@@ -3726,8 +3619,7 @@ def train_loop_per_worker(config: dict):
       <guid isPermaLink="true">https://anyscale.com/blog/introducing-label-selectors-scheduling-ray</guid>
       <pubDate>Thu, 30 Oct 2025 00:00:00 +0000</pubDate>
       <description>原文标题：Introducing Label Selectors: Improved Scheduling  Flexibility in Ray</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
-<h1>Ray 引入 label selector：调度灵活性更强</h1>
+      <content:encoded><![CDATA[<h1>Ray 引入 label selector：调度灵活性更强</h1>
 <p>作者：<a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a> 和 <a href="https://www.anyscale.com/blog?author=ryan-oleary-google">Ryan O'Leary (Google)</a> | 2025 年 10 月 30 日</p>
 <p><em>感谢其他所有为这个项目做出贡献的人：来自 Anyscale 的 Edward Oakes、Janet Li、Bruce Zhang、Alan Guo、Douglas Strodtman、Jui-An Huang、Han-Ju Chen，以及来自 Google GKE 团队的 Andrew Sy Kim。</em></p>
 <p>今天，我们联合 Google Kubernetes Engine 团队一起，为 Ray 引入 label selector——一种把工作负载放到合适节点上的更直接的做法。相关 API 和 UI 随 Ray 2.49 发布，并在 Ray Dashboard、KubeRay 以及基于 Ray 构建的 AI 计算平台 <a href="https://www.anyscale.com/product/platform">Anyscale</a> 上可用。</p>
@@ -3802,22 +3694,7 @@ def train_loop_per_worker(config: dict):
 <p>当前的 label selector 是一个很好的起点，但我们还计划把它做得更好。</p>
 <ul><li><strong>回退 label selector（有序偏好）</strong>：目前每个请求只携带一个 label selector。我们计划为任务/actor/placement group 的 bundle 支持按顺序回退，这样你可以表达带优先级的意图，例如优先 accelerator=H100，否则接受 accelerator in {A100,H100}。</li><li><strong>库层面支持：</strong>把 label selector 的支持扩展到 Ray 的各库（例如 Ray Data、Ray Serve、Ray Train），让常见的调度模式被自动处理。</li><li><strong>与 Kubernetes 更好的互操作性： </strong>我们希望在继承 Kubernetes Pod 标签、并以 Kubernetes 原生方式影响 Pod 调度这两件事上，做到尽可能简单。</li></ul>
 <h2>立即试用</h2>
-<ul><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Ray 开源文档</a></li><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Anyscale 文档</a></li><li><a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/label-based-scheduling.html">KubeRay 端到端示例</a></li></ul>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#the-old-workaround">以往的变通做法</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#label-selector-api">Label Selector API</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#label-selectors-in-user-code">用户代码中的 label selector</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#node-labels">节点标签</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#autoscaling-cluster">autoscaling 集群</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#how-does-it-work?">它是怎么工作的？</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#future-work-">后续工作</a></li><li><a href="https://www.anyscale.com/blog/introducing-label-selectors-scheduling-ray#try-it-today">立即试用</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/6rF9ECqCFk5OjE7RftoynJ/e003a1df2ce07a3177dbdd4d1fe76473/Running_Ray_at_scale_on_Kubernetes_with_KubeRay.png?w=140" alt="用 KubeRay 在 Kubernetes 上大规模运行 Ray"></p>
-<h4>用 KubeRay 在 Kubernetes 上大规模运行 Ray</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/AH4SiTdLoUM2EzlqZvNq5/20c1da7d646dabf59144a0aa7a0af0d8/Science_of_Robot_Decisions.png?w=140" alt="机器人决策的科学"></p>
-<h4>在 Anyscale 上用 Ray 扩展机器人决策的科学</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/12RnheyyoRcbiqT3JkFsEU/10457e67286ef0dd8c471c7ff0574fd9/High-Performance_LLM_Serving_for_Coding_Agents.png?w=140" alt="面向 coding agent 的高性能 LLM 服务"></p>
-<h4>把 coding agent 成本降低 90%：在 Anyscale 上用 Ray + vLLM 做安全的 LLM 服务</h4>
-<h2>立即探索 Anyscale</h2>
-<p>在为生产 AI 打造的多云平台上，用 Ray 构建、运行并扩展任意 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">联系专家</a></p>]]></content:encoded>
+<ul><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Ray 开源文档</a></li><li><a href="https://docs.ray.io/en/releases-2.50.0/ray-core/scheduling/labels.html">Anyscale 文档</a></li><li><a href="https://docs.ray.io/en/master/cluster/kubernetes/user-guides/label-based-scheduling.html">KubeRay 端到端示例</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>大规模 Ray 任务监控：Anyscale 现已支持 1 万个以上任务的持久化</title>
@@ -3825,8 +3702,7 @@ def train_loop_per_worker(config: dict):
       <guid isPermaLink="true">https://anyscale.com/blog/ray-task-monitoring-persistent-logs</guid>
       <pubDate>Fri, 12 Sep 2025 00:00:00 +0000</pubDate>
       <description>原文标题：Ray Task Monitoring at Scale: Announcing Persistence for +10k Tasks on Anyscale</description>
-      <content:encoded><![CDATA[<p><a href="https://www.anyscale.com/">主页</a><a href="https://www.anyscale.com/blog">博客</a>博客详情</p>
-<h1>大规模 Ray 任务监控：Anyscale 现已支持 1 万个以上任务的持久化</h1>
+      <content:encoded><![CDATA[<h1>大规模 Ray 任务监控：Anyscale 现已支持 1 万个以上任务的持久化</h1>
 <p>作者：<a href="https://www.anyscale.com/blog?author=nikita-vemuri">Nikita Vemuri</a>、<a href="https://www.anyscale.com/blog?author=mengjin-yan">Mengjin Yan</a>、<a href="https://www.anyscale.com/blog?author=alan-guo">Alan Guo</a> 和 <a href="https://www.anyscale.com/blog?author=julian-forero">Julian Forero</a> | 2025 年 9 月 12 日</p>
 <p>今天我们很高兴地宣布，Anyscale 上推出了支持持久化的 <a href="https://docs.anyscale.com/monitoring/task-dashboard/">Ray Task Dashboard</a>，它可以对 Ray 工作负载做可扩展的监控与调试，并且在集群关停之后依然保留这些数据。Anyscale 上这个全托管的 dashboard 借助了全新的 Ray Event Export 框架，该框架自 <strong>Ray 2.49</strong> 起提供。</p>
 <p><a href="https://docs.ray.io/en/latest/ray-core/key-concepts.html#tasks">任务</a>是远程并行执行的函数，也是 Ray 中分布式计算的基础。如果看不清任务内部发生了什么，定位瓶颈、调试故障或调优性能很快就会变成靠猜，既拖慢迭代速度，又推高成本。</p>
@@ -3873,22 +3749,7 @@ def train_loop_per_worker(config: dict):
 <ul><li>立即试用：<a href="https://console.anyscale.com/register/ha?utm_source=anyscale&amp;utm_medium=website&amp;utm_campaign=blog">在 Anyscale 开始，领取 100 美元免费额度</a></li><li><a href="https://docs.anyscale.com/monitoring/task-dashboard">Anyscale Task dashboard 文档</a></li><li><a href="https://docs.ray.io/en/master/ray-observability/user-guides/ray-event-export.html">Ray Event Export 文档</a></li><li>想反馈 Anyscale 的使用体验，可以<a href="https://docs.anyscale.com/get-started/what-is-anyscale#support">通过 Anyscale Console 提交工单</a></li><li>分享反馈，或参与贡献 <a href="https://github.com/ray-project/ray/issues/56057">Ray Event Export 项目</a></li></ul>
 <p><strong>来参加 Ray Summit 2025</strong></p>
 <p>在这场为期两天、由社区主导的大会上，你既能看到真实案例，也能看到 Ray 和 Anyscale 的产品发布——大会汇聚了那些基于开源技术推进 AI 的最优秀的工程师和研究人员。</p>
-<p><strong>旧金山 | 2025 年 11 月 3-5 日。 </strong><a href="https://www.anyscale.com/ray-summit/2025">了解更多</a>。</p>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#anyscale-task-dashboard">Anyscale Task Dashboard</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#feature-overview">功能概览</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#architecture">架构</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#ray-event-export-framework">Ray Event Export 框架</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#future-plans">后续计划</a></li><li><a href="https://www.anyscale.com/blog/ray-task-monitoring-persistent-logs#try-it-today">立即试用</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/4zrfTN35E4x2hwwNf1TkWv/ff9fc254b61cebff483a9db4a254e1c9/Tile_image_Op_10__1_.png?w=140" alt="可观测性博客头图"></p>
-<h4>新品：Ray Data 与 Ray Train Dashboard</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/46kLynqjB0NI7BH7FHtrF/639e6aa1698d45b029f2afe2d40bf7fa/stack_blog_thumbnail.png?w=140" alt="开源技术栈博客缩略图"></p>
-<h4>OSS AI：Kubernetes + Ray + PyTorch + vLLM</h4>
-<p><img src="https://images.ctfassets.net/xjan103pcp94/68bOkIigo4YK0ogfHkcOR9/119e42a8629331f4385de76fc7c0eeec/Webinar_73025_1500x1000_2x.png?w=140" alt="Webinar 73025 1500x1000 2x"></p>
-<h4>点播：Anyscale 入门</h4>
-<h2>立即探索 Anyscale</h2>
-<p>在为生产 AI 打造的多云平台上，用 Ray 构建、运行并扩展任意 AI 工作负载。</p>
-<p><a href="https://authkit.anyscale.com/?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">免费开始</a><a href="https://www.anyscale.com/book/demo?utm_source=anyscale&amp;utm_content=exploreblock&amp;utm_medium=website&amp;utm_campaign=cta">联系专家</a></p>]]></content:encoded>
+<p><strong>旧金山 | 2025 年 11 月 3-5 日。 </strong><a href="https://www.anyscale.com/ray-summit/2025">了解更多</a>。</p>]]></content:encoded>
     </item>
     <item>
       <title>阿里云上的 Ray：构建机器学习平台</title>
@@ -3989,20 +3850,7 @@ def train_loop_per_worker(config: dict):
 <p>ACK 通过 kube-queue 支持任务排队与配额。有了配额和队列，用户可以为特定团队或服务定义保障性的资源配额，并设置上限防止超额使用，从而同时保证公平性和可扩展性。</p>
 <p>客户创建了一棵配额树，如下图所示，以便在不同团队和不同类型的负载之间高效共享资源。</p>
 <ul><li>每个团队都有自己的资源配额上下限，既保证最低可用量，也允许最大程度的超卖。</li><li>每个配额都有自己的队列，创建时定义的优先级更高的 RayJob 会在各自队列中按优先级被执行。</li></ul>
-<p>最后一张图</p>
-<h4>目录</h4>
-<ul><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#kuberay">KubeRay</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#ray-on-ack">Ray on ACK</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#elastic-compute-in-ack">ACK 中的弹性计算</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#observability">可观测性</a></li><li><a href="https://www.anyscale.com/blog/ray-on-alibaba-cloud-building-an-ml-platform#production-case-study">生产实践案例</a></li></ul>
-<h4>分享</h4>
-<h4>标签</h4>
-<p>LLM</p>
-<h4>订阅产品更新</h4>
-<h4>推荐内容</h4>
-<h4>编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务</h4>
-<h4>Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理</h4>
-<h4>Ray Summit 2026：Physical AI、RL，以及承载它们的全部基础设施</h4>
-<h2>即刻探索 Anyscale</h2>
-<p>用为生产级 AI 打造的多云平台，在 Ray 上构建、运行并扩展任意 AI 负载。</p>
-<p>免费开始</p>]]></content:encoded>
+<p>最后一张图</p>]]></content:encoded>
     </item>
     <item>
       <title>Ray Compiled Graphs：原生 GPU 通信加持的 AI 负载优化</title>
