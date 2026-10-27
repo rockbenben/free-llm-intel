@@ -7,7 +7,710 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 23 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 26 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Fleet-wide computer vision lifecycle at the edge with SageMa…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/fleet-wide-computer-vision-lifecycle-at-the-edge-with-sagemaker-sdk-v3/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/fleet-wide-computer-vision-lifecycle-at-the-edge-with-sagemaker-sdk-v3/?li=1</guid>
+      <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Fleet-wide computer vision lifecycle at the edge with SageMaker SDK v3</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Fleet-wide computer vision lifecycle at the edge with SageMaker SDK v3</h1>
+<p>Fleet-wide computer vision model lifecycle management is a problem that shows up the moment a quality inspection proof of concept succeeds. One camera and one model work fine. Then the plant asks for the same result on 40 lines, each with several cameras, and every camera sees the world differently. Each has a different angle, different glare off the same stainless surface, and different ambient light depending on which bay door is open. In production deployments we have worked on, a single model trained on pooled footage underperforms enough individual cameras that each camera ends up with its own fine-tuned model. Now the real problem is no longer training one model well. It’s training, evaluating, versioning, and shipping thousands of them without a human in the loop for each one.</p>
+<p>This post updates the pattern introduced in the 2023 series <a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-mlops-pipeline-for-visual-quality-inspection-at-the-edge-part-1/">Build an end-to-end MLOps pipeline for visual quality inspection at the edge</a> for the current <a href="https://aws.amazon.com/sagemaker/">Amazon SageMaker</a> Python SDK v3. It replaces the since-deprecated Amazon SageMaker Edge Manager with Amazon SageMaker Neo for edge optimization. I walk through a dual-branch Amazon SageMaker Pipeline that trains an anomaly detector and a defect classifier per camera, with quality gates that block underperforming models. An in-pipeline SageMaker Neo compilation step ensures every registered model ships with a device-optimized artifact, and an AWS Step Functions orchestration layer paces fleet training. You deploy everything with the AWS Cloud Development Kit (AWS CDK), and a full pipeline run on synthetic data costs about $0.07 in compute.</p>
+<p>The complete sample is available in the <a href="https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline">aws-samples GitHub repository</a>.</p>
+<h2>Solution overview</h2>
+<p>The following diagram shows the sample’s fleet-wide model lifecycle. An orchestration layer queues re-training requests and limits concurrent work. A per-camera training pipeline prepares data, trains and evaluates an anomaly detector and a classifier, and produces versioned model artifacts for edge devices.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-20483-1-1.png" alt="Solution architecture: SQS FIFO queue triggers AWS Lambda, which starts a Step Functions state machine with an Amazon DynamoDB semaphore for concurrency control. The state machine launches a 13-step SageMaker Pipeline with parallel entry steps (Preprocess, Fetch Latest Anomaly, Fetch Latest Classifier), dual training branches with ONNX evaluation, quality gates, Neo compilation, and Model Registry registration. Compiled artifacts land in S3. Completions and failures converge on an SNS topic."></p>
+<p>Figure 1: Solution architecture</p>
+<p>The training half is a single SageMaker Pipeline, parameterized by camera, that runs 13 steps per execution. Three entry steps run in parallel: Preprocess, Fetch Latest Anomaly, and Fetch Latest Classifier. The pipeline preprocesses that camera’s images and fetches the camera’s most recent approved model for each branch, then trains two models. The first is a small convolutional autoencoder that learns what normal product looks like and flags anomalies by reconstruction error. The second is a ResNet18 classifier fine-tuned to confirm the defect. Each branch exports its model to ONNX, evaluates the exported artifact against held-out data, and passes through a quality gate. Past the gate, the model is compiled with SageMaker Neo for the configured edge target, and only then registered in the SageMaker Model Registry. As a result, every approved package has a device-ready compiled artifact. Packages carry the camera ID as metadata, and each branch’s warm-start fetch filters on it, so re-training always resumes from that camera’s own history.</p>
+<p>The orchestration half paces the fleet. Re-training requests land on an Amazon Simple Queue Service (Amazon SQS) FIFO queue, and an AWS Lambda function starts a Step Functions execution per request. Each execution acquires a slot through a DynamoDB semaphore before starting its pipeline, so a burst of requests drains at a steady rate instead of all launching at once. Completions publish to Amazon Simple Notification Service (Amazon SNS), and operational failures reach the same topic through an Amazon EventBridge rule with the original error preserved.</p>
+<p>The output of the system is versioned, quality-gated, per-camera model artifacts. The Model Registry holds the portable ONNX, and S3 holds the Neo-compiled build of that model, which is a device-optimized shared library loaded by the DLR runtime rather than ONNX. Both are ready for whatever delivery mechanism your plant uses.</p>
+<h2>Prerequisites</h2>
+<p>To deploy the sample you need the following:</p>
+<ul><li>An AWS account with permissions to create AWS Identity and Access Management (IAM) roles.</li><li>An Amazon Simple Storage Service (Amazon S3) bucket.</li><li>An Amazon Elastic Container Registry (Amazon ECR) repository.</li><li>The SageMaker AI, AWS Step Functions, AWS Lambda, Amazon Simple Queue Service (Amazon SQS), Amazon Simple Notification Service (Amazon SNS), Amazon EventBridge, and Amazon DynamoDB resources in the stacks.</li><li>Python 3.10, 3.11, or 3.12, Docker.</li><li>The AWS CDK CLI version 2.1131.0 or later.</li></ul>
+<p>Previous CLI versions fail with a cloud assembly schema mismatch against recent versions of <code>aws-cdk-lib</code>. No service quota increase is needed. The orchestration layer admits at most five pipeline executions at a time by default, which keeps concurrent SageMaker training jobs inside the standard account quota.</p>
+<p>If you deploy to an AWS Region other than your CLI default, set all three of <code>AWS_REGION</code>, <code>AWS_DEFAULT_REGION</code>, and <code>CDK_DEFAULT_REGION</code> on the deploy command itself rather than in your shell profile, for example, <code>AWS_REGION=us-east-2 AWS_DEFAULT_REGION=us-east-2 CDK_DEFAULT_REGION=us-east-2 cdk deploy --all</code>. The CDK CLI, Boto3, and the AWS Command Line Interface (AWS CLI) resolve the Region from overlapping but not identical variable sets, and a mismatch produces confusing partial deployments. Prefixing the command sets all three for that invocation only, so your own default Region is left unchanged.</p>
+<h2>Defining the training pipeline with SDK v3</h2>
+<p>The code in this section is excerpted from the CDK application in the repository rather than a standalone script, and it runs during cdk deploy, when the stack synthesizes the pipeline definition. Environment setup and the deploy commands come later, under Deploying and running the sample. SDK v3 reorganized the SageMaker Python SDK into modular packages, and the imports show the new shape of the library:</p>
+<pre><code>from sagemaker.train import ModelTrainer
+from sagemaker.train.configs import InputData, Compute, OutputDataConfig
+from sagemaker.core.training.configs import MetricDefinition
+from sagemaker.serve.model_builder import ModelBuilder
+from sagemaker.mlops.workflow.pipeline import Pipeline
+from sagemaker.mlops.workflow.steps import ProcessingStep, TrainingStep
+from sagemaker.mlops.workflow.model_step import ModelStep
+from sagemaker.mlops.workflow.condition_step import ConditionStep
+from sagemaker.core.workflow.conditions import ConditionGreaterThanOrEqualTo
+from sagemaker.core.workflow.functions import JsonGet</code></pre>
+<p>Installing <code>sagemaker&gt;=3.0.0,&lt;4</code> pulls in <code>sagemaker-core</code>, <code>sagemaker-train</code>, <code>sagemaker-serve</code>, and <code>sagemaker-mlops</code> as separate packages. Training configuration that v2 spread across <code>Estimator</code> constructor arguments now lives in typed config objects passed to <code>ModelTrainer</code>. This is the anomaly branch’s trainer, verbatim from the sample:</p>
+<pre><code>anomalib_trainer = ModelTrainer(
+    training_image=custom_training_image_uri,
+    compute=Compute(
+        instance_type=training_instance_type.to_string(),
+        instance_count=1,
+    ),
+    base_job_name=&quot;cv-pipeline-anomalib-train&quot;,
+    sagemaker_session=pipeline_session,
+    role=role_arn,
+    hyperparameters={
+        &quot;program&quot;: &quot;train_anomalib.py&quot;,
+        &quot;model_name&quot;: &quot;autoencoder&quot;,
+        &quot;image_size&quot;: &quot;256&quot;,
+        &quot;num_epochs&quot;: &quot;3&quot;,
+        &quot;batch_size&quot;: &quot;16&quot;,
+        &quot;learning_rate&quot;: &quot;0.001&quot;,
+    },
+    input_data_config=anomalib_input_data,
+    output_data_config=OutputDataConfig(
+        s3_output_path=run_prefix(&quot;anomalib-training&quot;)
+    ),
+).with_metric_definitions(
+    [
+        MetricDefinition(
+            name=&quot;image_auroc&quot;,
+            regex=r&quot;validation:image_auroc=([0-9]*\.?[0-9]+)&quot;,
+        ),
+    ]
+)</code></pre>
+<p><code>anomalib_input_data</code> wires four channels (<code>train</code>, <code>validation</code>, <code>test</code>, <code>pretrained_model</code>) from upstream step properties, and <code>run_prefix</code> scopes every S3 path to the pipeline execution ID so concurrent fleet runs never collide. Both are in the repository.</p>
+<p>Two v3 behaviors matter when the pipeline lives inside a CDK application, and neither appears in the changelog as a breaking change. First, SDK v3 validates the pipeline’s execution role against live IAM while building the pipeline definition. This validation happens at synthesis time rather than execution time. A CDK app can’t create the role and the pipeline in one deployment, because the role doesn’t exist yet when the SDK validates it. This is separate from cdk bootstrap, which provisions the CDK toolkit resources once per account and Region and might already be done in your account. The sample’s own two-phase deploy is driven by a context flag that happens to share that name. An initial pass with <code>-c bootstrap=true</code> creates the role, bucket, and ECR repository, and the second pass synthesizes the pipeline against the now-existing role. The role Amazon Resource Name (ARN) embedded in the pipeline definition must also be a concrete string, not an unresolved CDK token.</p>
+<p>Second, the v3 role validator simulates ECR pull permissions without a resource ARN, so an execution role scoped to a single ECR repository fails validation even though it would work at runtime. The sample’s role carries a broader ECR grant for this reason.</p>
+<p>Lastly, one v3 habit the sample uses: constructing the pipeline with <code>PipelineSession(default_bucket=your_bucket)</code> routes SDK-managed uploads, such as step code, into the pipeline’s own bucket, so every artifact lives in one place and the execution role’s permissions cover a single bucket. (Granting the role access to the SDK’s default bucket works too. This approach is tidier.)</p>
+<h2>Quality gates that match how defect data behaves</h2>
+<p>Every trained model is evaluated before registration, and the evaluation runs against the exported ONNX artifact rather than the in-memory PyTorch model. That distinction matters: the artifact you gate is the artifact you ship, so an export problem can never slip a broken model past a healthy-looking training run.</p>
+<p>The anomaly branch gates on AUROC of at least 0.8. The classifier branch gates on two metrics at once, and the choice of metrics is shaped by the defining property of defect data: heavy class imbalance. In this sample roughly 90 percent of images are good, which is realistic for a production line. Against that distribution, plain accuracy is meaningless, because a model that predicts “good” for every image scores about 0.9 while catching zero defects. Balanced accuracy, the mean of per-class recall, corrects for that, but it has its own blind spot. A model with perfect recall on good parts and only 20 percent recall on defects still scores (1.0 + 0.2) / 2 = 0.6. So the gate requires balanced accuracy of at least 0.6 and defect recall of at least 0.5, together:</p>
+<pre><code>step_check_classifier = ConditionStep(
+    name=&quot;CheckClassifierQuality&quot;,
+    conditions=[
+        ConditionGreaterThanOrEqualTo(
+            left=JsonGet(
+                step_name=step_eval_classifier.name,
+                property_file=&quot;evaluation&quot;,
+                json_path=&quot;balanced_accuracy&quot;,
+            ),
+            right=min_accuracy,
+        ),
+        ConditionGreaterThanOrEqualTo(
+            left=JsonGet(
+                step_name=step_eval_classifier.name,
+                property_file=&quot;evaluation&quot;,
+                json_path=&quot;defect_recall&quot;,
+            ),
+            right=min_defect_recall,
+        ),
+    ],
+    if_steps=[step_compile_classifier, step_register_classifier],
+    else_steps=[step_fail_classifier],
+    depends_on=[step_eval_classifier],
+)</code></pre>
+<p>A <code>ConditionStep</code> ANDs its conditions, so both must pass. The thresholds are pipeline parameters, adjustable per execution without redeploying. If a gate fails, a <code>FailStep</code> marks the execution failed and that branch’s model never reaches the registry (the two branches gate independently, so the other branch’s model may still register). The fleet keeps serving the previous approved model for that camera.</p>
+<p>The training code addresses the same imbalance from the other side. The classifier is a fine-tuned <code>resnet18</code> with ImageNet weights and a two-class head. At per-camera dataset sizes, fine-tuning pretrained weights is what keeps the model from collapsing onto the majority class. The training code balances training batches with a <code>WeightedRandomSampler</code> using inverse class frequencies, while the loss stays unweighted. Combining a weighted loss with weighted sampling over-corrects toward the minority class.</p>
+<h2>Compiling for the edge with SageMaker Neo, inside the pipeline</h2>
+<p>Notice the gate’s <code>if_steps</code> in the preceding code: past the gate, compilation runs first and registration depends on it. Both training scripts export ONNX with dynamic batch axes. The quality gates score those exported artifacts under ONNX Runtime, and then a <code>CompileAnomalibNeo</code> or <code>CompileClassifierNeo</code> step hands the gated artifact to <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/neo.html">SageMaker Neo</a>. The invariant is gate, then compile, then register. A model only becomes an Approved package if it also compiled for the fleet’s edge target, so the registry never advertises a model the devices cannot run.</p>
+<p>The compile step encapsulates three error-prone details. Neo requires the input tarball to contain only the model file, but training jobs emit <code>model.tar.gz</code> with the checkpoint and metrics alongside the ONNX model. The step repackages an ONNX-only tarball first. Neo also requires concrete input shapes while the exports declare a dynamic batch axis, so batch size 1 is pinned in the compilation request. And because pipeline steps can retry, the compilation job name derives deterministically from the execution ID, so a retry resumes polling the job it already started instead of orphaning it.</p>
+<p>The target is a pipeline parameter: <code>NeoTargetDevice</code> selects a named device such as <code>jetson_xavier</code> or <code>rasp4b</code>, and its default compiles for the <code>NeoTargetOs</code>/<code>NeoTargetArch</code> platform, LINUX/X86_64 by default. The compiled package contains the optimized <code>compiled.so</code> plus the <a href="https://github.com/neo-ai/neo-ai-dlr">DLR runtime</a> for loading it. The default output runs on any x86_64 Linux host, so you can validate it before committing to device-specific targets. Compilation itself incurs no charge. You pay for the processing instance that drives it and the S3 storage of the outputs. For compiling an already-registered model for additional device types later, without re-training, the repository includes an ad-hoc script that runs the same flow against the Model Registry.</p>
+<h2>Per-camera models in the Model Registry</h2>
+<p>Each branch registers into its own model package group, and every package carries the camera ID and its evaluation metrics. From the sample, with the metrics wiring elided:</p>
+<pre><code>classifier_model_builder = ModelBuilder(
+    s3_model_data_url=classifier_model_data,
+    image_uri=custom_training_image_uri,
+    sagemaker_session=pipeline_session,
+    role_arn=role_arn,
+)
+step_register_classifier = ModelStep(
+    name=&quot;RegisterClassifierModel&quot;,
+    depends_on=[step_compile_classifier],
+    step_args=classifier_model_builder.register(
+        model_package_group_name=&quot;sm1k-classifier-model-group&quot;,
+        approval_status=&quot;Approved&quot;,
+        model_metrics=classifier_metrics,
+        customer_metadata_properties={&quot;CameraId&quot;: camera_id},
+    ),
+)</code></pre>
+<p>Camera identity in <code>customer_metadata_properties</code> is what turns two shared package groups into a fleet catalog. Packages from all cameras live in the same groups, and per-camera history is recovered by filtering on the metadata. Each branch has a fetch step that pages through approved packages newest-first until it finds the requesting camera’s latest model, because <code>ListModelPackages</code> cannot filter on customer metadata server-side. On a camera’s first run the fetch finds nothing and training falls back to its cold-start initialization (ImageNet weights for the classifier, random initialization for the autoencoder). Every later run resumes from that camera’s own prior model, which is what makes frequent, cheap, incremental re-training viable across a fleet.</p>
+<p>Note what these registry entries are and are not: they catalog versioned, quality-gated artifacts, but their container reference is the training image, which serves no inference endpoints. They exist for a fleet workflow where a downstream system pulls artifacts and ships them to devices, not for <code>CreateEndpoint</code>.</p>
+<h2>Orchestrating fleet training requests</h2>
+<p>Every AWS account has service quotas on concurrent SageMaker training jobs, and each pipeline execution here launches several jobs, so fleet re-training needs pacing. Something has to keep a burst of 500 requests from becoming 500 simultaneous pipeline launches. The sample uses a semaphore, a counter of available slots that works like a parking lot with five spaces. Before the Step Functions state machine starts a pipeline, it takes a slot by atomically incrementing a counter in DynamoDB, with a condition that refuses the increment once the cap is reached:</p>
+<pre><code>acquire_semaphore = tasks.DynamoUpdateItem(
+    self, &quot;AcquireSemaphore&quot;,
+    table=semaphore_table,
+    key={&quot;LockName&quot;: tasks.DynamoAttributeValue.from_string(&quot;pipeline-concurrency&quot;)},
+    update_expression=&quot;SET ActiveCount = if_not_exists(ActiveCount, :zero) + :one&quot;,
+    condition_expression=&quot;attribute_not_exists(ActiveCount) OR ActiveCount &lt; :limit&quot;,
+)</code></pre>
+<p>If all slots are taken, the execution waits and retries. When its pipeline finishes, it decrements the counter to release the slot. One detail is worth carrying into your own designs. The DynamoDB condition expression enforces the cap in a single atomic operation, rather than the state machine reading the counter and deciding, which would leave a race window between the read and the write. The repository implements the rest of the operational hardening, including releasing slots on every failure path and forwarding failed executions to Amazon SNS through Amazon EventBridge. Its README covers sizing the wait bounds.</p>
+<p>The cap of five is a stack parameter, set low so the sample deploys and runs in any standard account without requesting quota increases. Adjust it to whatever your account’s training-job quotas support. Past a single account’s quotas, scaling fleet training is its own topic. The standard levers are raising the service quotas, spreading training across instance types or Regions, and distributing the fleet across multiple accounts. You can also hold the backlog in SQS and admit work only as capacity frees up. Those choices depend on your fleet’s size and shape. The sample gives you the working skeleton to extend.</p>
+<h2>Deploying and running the sample</h2>
+<p>The walkthrough in the repository README is the authoritative version. The following short form starts from a clean checkout and sets up the environment before the first deploy:</p>
+<pre><code>git clone https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline
+cd sample-sagemaker-fleet-cv-pipeline &amp;&amp; python3 -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -r requirements.txt
+cdk bootstrap                                           # once per account/region
+cdk deploy SageMakerCVPipelineStack -c bootstrap=true   # roles, bucket, ECR
+cdk deploy --all                                        # pipeline + orchestration
+./scripts/push_ecr_image.sh                             # build and push training image</code></pre>
+<p>By default the pipeline generates synthetic production line images, so you can validate the whole system end to end with no dataset and no data approvals. A full run executes all 13 steps, including both Neo compilations, in about 15 minutes and costs roughly $0.07 in billed <code>ml.m5.xlarge</code> time (US East (Ohio) Region (us-east-2), July 2026, on-demand). The orchestration resources together cost well under $0.10 per month at sample scale.</p>
+<p>To exercise the pipeline on real images, the repository includes a downloader for the <a href="https://github.com/Shenggan/BCCD_Dataset">BCCD dataset</a>. The dataset is a collection of 364 annotated blood smear microscopy images originally open sourced on GitHub and reorganized into Pascal VOC format under an MIT license. The same dataset is also distributed by <a href="https://public.roboflow.com/object-detection/bccd">Roboflow</a> as public domain. The script maps platelet presence to the defect class, optionally splits the images per camera to simulate a fleet, and uploads training tarballs to the pipeline bucket. The accompanying notebook runs the full pipeline on the real data and does side-by-side ONNX inference on a normal and an anomalous sample. Treating platelets as defects is an illustrative stand-in for a manufacturing defect distribution, not a clinical claim.</p>
+<h2>Cleaning up</h2>
+<p>Model packages are created at pipeline runtime, so AWS CloudFormation cannot delete them. Remove them with the AWS CLI first, then destroy the stacks with <code>cdk destroy --all -c bootstrap=true --force</code>. The <a href="https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline">README</a> lists the exact commands.</p>
+<h2>Conclusion</h2>
+<p>In this post, I showed a working SageMaker SDK v3 reference architecture for the fleet-scale computer vision lifecycle. The architecture includes a dual-branch training pipeline where every model is quality-gated on its exported ONNX artifact, compiled with SageMaker Neo, and only then registered. A Model Registry layout uses camera metadata to turn shared package groups into per-camera warm-startable history, and a Step Functions orchestration layer paces fleet training within account quotas. For teams whose needs are met by managed options such as Amazon Lookout for Vision, that is the simpler path. This pattern targets the per-camera, fleet-scale constraint that managed options do not cover. The design rules transfer beyond computer vision: gate on balanced accuracy plus minority-class recall rather than accuracy, evaluate and compile the artifact you ship, and make operational failures notify rather than terminate silently.</p>
+<p>The sample deploys in minutes and a full validation run costs about seven cents of compute, so a low-cost next step is to clone the <a href="https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline">repository</a> and run it. From there, point the BCCD downloader at a real bucket, set <code>NeoTargetDevice</code> for your hardware, or size the orchestration bounds to your fleet. For the SDK v3 migration itself, the <a href="https://sagemaker.readthedocs.io/">SageMaker Python SDK documentation</a> and the two-part series announcing the new SDK are the references I kept open throughout.</p>
+<p>If you want help adapting this pattern to your production environment, reach out to your AWS account team.</p>
+<h2>About the author</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Groundhog Day for AI agents: Prompt caching patterns for usi…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/groundhog-day-for-ai-agents-prompt-caching-patterns-for-using-openai-models-on-amazon-bedrock/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/groundhog-day-for-ai-agents-prompt-caching-patterns-for-using-openai-models-on-amazon-bedrock/?li=1</guid>
+      <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Groundhog Day for AI agents: Prompt caching patterns for using OpenAI models on Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Groundhog Day for AI agents: Prompt caching patterns for using OpenAI models on Amazon Bedrock</h1>
+<p><em>Every time you spin off your agent, it has to re-read its whole life story before performing an action. Here’s how to make it remember without having to feed it the same context again.</em></p>
+<p>In the movie <em>Groundhog Day</em>, Bill Murray’s character re-lives the same February 2 every day. He wakes up to the same song playing on the radio, in the same inn, and the same small town, again and again for what some movie fans estimate to be 34 years.</p>
+<p>Nothing he accomplished the day before carries over unless he works it out again from scratch. AI agents live in a version of Groundhog Day. Every time an agent takes a step (calls a tool, reads the result, decides what to do next), it has to send the model its entire story so far to maintain continuity: the tool definitions, the instructions, every previous tool call, and every result. The model only predicts the next token based on the input you provide. It has no internal memory between requests, so it must read all of it again. By turn 20 of a coding session, the model re-reads turns 1–19, and it’s you who pays for every one of those tokens, again and again.</p>
+<p>Prompt caching breaks the cycle. The service stores your input prompt (instructions, tools, and content) and reuses it on the next request, at a fraction of the input price.</p>
+<p>In this post, I walk you through an agent’s life, from its first turn to when it gets new tools and spawns helpers. Along the way, I show you how prompt caching keeps costs down and keeps agents responsive and consistent.</p>
+<h2>What an agent sends to its LLM</h2>
+<p>Before talking about caching, it helps to look at what a typical agent’s first invocation to the large language model (LLM) contains:</p>
+<ul><li><strong>Tool list</strong> – The definitions of every function the agent can call. Changes when you ship a new release.</li><li><strong>Instructions</strong> – The developer prompt: rules, persona, policies, examples. Also changes per release.</li><li><strong>History</strong> – Everything that happened in this session so far: the task, the model’s tool calls, and the tool results (which grows every turn).</li><li><strong>New turn</strong> – The latest tool result or user message (which might be different every time).</li></ul>
+<p><strong>What an agent sends to the model, turn after turn if you don’t set up caching:</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-1-1.png" alt="Five growing agent requests, with tools, instructions, and earlier history marked in red and each new turn in yellow."></p>
+<p>Figure 1: What an agent sends to the model on every turn</p>
+<h2>How prompt caching works under the hood</h2>
+<p>When a model reads a prompt, it first does a write called <em>prefill</em>. During prefill, it processes every input token and builds its key and value vectors (also known as key-value, or KV), which form the model’s working state. This happens before the model writes its first token.</p>
+<p>Prompt caching saves that state, which contains the system prompt, tools, content, history, and so on. When a later request starts with the same input tokens (that is, the same text), the prompt caching service loads the saved state instead of computing it again. It then processes only what is new in the next payload to the model. Prompt caching can be implicit, where Amazon Bedrock selects where the reusable prefix ends, or explicit, where your code marks that endpoint using <code>prompt_cache_breakpoint</code>. You can use both approaches together, and we recommend doing so.</p>
+<p><strong>Turn 1 compared to turn 2</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-2-1.png" alt="Turn 1 writes the tools and instructions through a breakpoint. Turn 2 reads that same prefix from cache and processes its new question."></p>
+<p>Figure 2: Turn 1 saves the prompt prefix up to the breakpoint, and turn 2 reuses it and pays full price only for the new question</p>
+<p><strong>Implicit or explicit, and why do we need both?</strong></p>
+<p>For agentic workloads, implicit caching lets Bedrock choose what to cache as the conversation grows. With explicit caching, you can mark shared content, such as tools and instructions, for reuse across sessions and when spinning up helper agents. You don’t always need both forms of caching, but combining them gives you a reusable starting point while Bedrock manages the growing conversation automatically.</p>
+<p>New sessions can also reuse that shared starting point while each conversation builds on its own cached history. In this post, we start with the first turn, then show how to carry cached content through later turns, new tools, and across subagents.</p>
+<h2>Hello cached world</h2>
+<p>The first win is to cache the static part of the prompt: the tools and instructions that stay the same across requests. These examples use your existing Amazon Bedrock client, <code>TOOLS</code>, and <code>task</code>. Replace the shortened <code>INSTRUCTIONS</code> string with your real policies and examples. The reusable prefix must reach 1,024 tokens to qualify.</p>
+<p>When caching static content, use explicit mode: choose where the saved prefix ends.</p>
+<pre><code>KEY = &quot;support-agent:v7:gpt-6-astra&quot;
+INSTRUCTIONS = &quot;Your full support policies and examples...&quot;
+
+# Rendered context: [provider context][TOOLS][INSTRUCTIONS] | [task]
+# Cache starts at the beginning; the marker below chooses its end.
+resp = client.responses.create(
+    model=&quot;us.openai.gpt-6-astra&quot;,
+    store=False,  # Response storage; prompt caching still works.
+    include=[&quot;reasoning.encrypted_content&quot;],
+    prompt_cache_key=KEY,
+    prompt_cache_options={&quot;mode&quot;: &quot;explicit&quot;, &quot;ttl&quot;: &quot;30m&quot;},
+    tools=TOOLS,  # Rendered before instructions; keep order stable.
+    input=[
+        {
+            &quot;role&quot;: &quot;developer&quot;,
+            &quot;content&quot;: [{
+                &quot;type&quot;: &quot;input_text&quot;,
+                &quot;text&quot;: INSTRUCTIONS,
+                # Save through this whole block, including TOOLS.
+                &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
+            }],
+        },
+        # User message is processed but not cached.
+        {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task},
+    ],
+)</code></pre>
+<p>The <code>prompt_cache_key</code> tells the service which requests are meant to share a cache. We come back to how to use it when we get to reading the cache in new sessions. In one of our tests using explicit caching, the roughly 4,000-token tools-and-instructions prefix wrote 4,120 tokens on the first request and read those 4,120 tokens on later requests. The <code>task</code> (or user request) comes after the cache boundary, so this doesn’t trigger a write to the cache.</p>
+<p>Keep in mind that prompt caching works only when you pass exactly the same text. Make sure that the agent’s instructions and tool lists are serialized the same way every time. Model Context Protocol (MCP) servers and other forms of tool delivery need to be indexed to make sure they stay consistent. Keep anything that varies, such as the date, the user’s name, or a request ID, after the cached instructions.</p>
+<p>As the content grows and varies (different tools and content), use implicit mode to let the service follow the conversation. Here, the first request has no explicit marker. Its latest eligible message is the user’s task, so the automatic breakpoint comes after that task and covers the tools, instructions, and task together. The mode is shown explicitly in the following example for clarity, even though implicit is the default. Setting <code>store=False</code> leaves conversation history in your application. It doesn’t disable caching.</p>
+<pre><code>def ask_with_implicit_cache(history):
+    return client.responses.create(
+        model=&quot;us.openai.gpt-6-astra&quot;,
+        store=False,
+        include=[&quot;reasoning.encrypted_content&quot;],
+        prompt_cache_key=KEY,
+        prompt_cache_options={&quot;mode&quot;: &quot;implicit&quot;, &quot;ttl&quot;: &quot;30m&quot;},
+        tools=TOOLS,
+        input=history,  # Everything gets cached
+    )
+
+history = [
+    {&quot;role&quot;: &quot;developer&quot;, &quot;content&quot;: INSTRUCTIONS},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task},
+]
+# Automatic endpoint: the end of the user message.
+resp = ask_with_implicit_cache(history)</code></pre>
+<p>This is useful when the next turn continues the same task. A different task doesn’t match the prefix through the old task, and the implicit write doesn’t necessarily create a separate entry for only the tools and instructions. Use an explicit marker there when you need that shorter shared prefix to be reusable across tasks.</p>
+<p>Use both when the agent needs a shared starting point and a growing history. Start with the marked developer block in the following code example and call the function <code>ask_with_implicit_cache</code>. The request-level mode stays implicit. The block-level marker adds an explicit save point after the instructions. The service can also save through the latest eligible message. This keeps the shared prefix available while the conversation grows.</p>
+<pre><code>history = [
+    {
+        &quot;role&quot;: &quot;developer&quot;,
+        &quot;content&quot;: [{
+            &quot;type&quot;: &quot;input_text&quot;,
+            &quot;text&quot;: INSTRUCTIONS,
+            &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;}, 
+        }],
+    },
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task},
+]
+# Still implicit mode, now with an explicit startup save point in the history.
+resp = ask_with_implicit_cache(history)</code></pre>
+<h2>Caching conversation history and tool results</h2>
+<p>The model requests tools by name and supplies their arguments. Your application must execute them. <code>execute_function</code> is a helper you build to route those requests to the matching Python functions and return their results. The following loop uses this helper to run each requested tool. It appends the model’s output and all tool results to the <code>history</code> list, then sends that list again until the model returns a final answer. In implicit mode, Amazon Bedrock can reuse the unchanged prefix and cache the added content through the last tool result. Keep earlier messages and the initial <code>TOOLS</code> unchanged.</p>
+<pre><code>import json
+
+# Map tool names to their Python implementations.
+TOOL_HANDLERS = {
+    &quot;get_owner&quot;: get_owner,
+    # Register your other initial tools here.
+}
+
+def execute_function(name, arguments):
+    &quot;&quot;&quot;Run the requested tool and return its result.&quot;&quot;&quot;
+    handler = TOOL_HANDLERS.get(name)
+    if handler is None:
+        return {&quot;error&quot;: f&quot;Unknown tool: {name}&quot;}
+    return handler(**arguments)
+
+while True:
+    # Preserve all output items, including encrypted reasoning.
+    history.extend(resp.output)
+    calls = [x for x in resp.output if x.type == &quot;function_call&quot;]
+    if not calls:
+        break
+    for call in calls:
+        result = execute_function(call.name, json.loads(call.arguments))
+        history.append({
+            &quot;type&quot;: &quot;function_call_output&quot;,
+            &quot;call_id&quot;: call.call_id,
+            &quot;output&quot;: json.dumps(result),
+        })
+    # The last result in this group supplies the automatic endpoint.
+    resp = ask_with_implicit_cache(history)</code></pre>
+<p>For follow-ups, append a new user message and call the helper again. Keep earlier messages unchanged so their cached endpoints remain available.</p>
+<p><strong>Rolling breakpoints: Each turn reads everything before it</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-3-1.png" alt="Rolling breakpoints, where each turn reads all earlier turns and writes only its own tool result."></p>
+<p>Figure 3: Rolling breakpoints, where each turn reads everything before it and writes only its own tool result</p>
+<p>For a separate explicit-only run, recreate the two-message history from the combined Hello cached world example. This loop wraps tool results in <code>input_text</code> blocks and marks the final result in each batch. Earlier markers stay in <code>history</code>. See the <a href="https://developers.openai.com/api/docs/guides/prompt-caching">current lookup rules</a> for long conversations.</p>
+<pre><code>import json
+
+while True:
+    resp = client.responses.create(
+        model=&quot;us.openai.gpt-6-astra&quot;, store=False,
+        include=[&quot;reasoning.encrypted_content&quot;],
+        tools=TOOLS, prompt_cache_key=KEY, input=history,
+        prompt_cache_options={&quot;mode&quot;: &quot;explicit&quot;, &quot;ttl&quot;: &quot;30m&quot;},
+    )
+    d = resp.usage.input_tokens_details
+    print(&quot;read&quot;, d.cached_tokens, &quot;write&quot;, d.cache_write_tokens)
+    history.extend(resp.output)  # Includes encrypted reasoning.
+    calls = [x for x in resp.output if x.type == &quot;function_call&quot;]
+    if not calls:
+        break
+    batch = []
+    for call in calls:
+        result = execute_function(call.name, json.loads(call.arguments))
+        batch.append({
+            &quot;type&quot;: &quot;function_call_output&quot;, &quot;call_id&quot;: call.call_id,
+            &quot;output&quot;: [{&quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: json.dumps(result)}],
+        })
+    # Add the newest boundary; retain every earlier marker.
+    batch[-1][&quot;output&quot;][-1][&quot;prompt_cache_breakpoint&quot;] = {&quot;mode&quot;: &quot;explicit&quot;}
+    history.extend(batch)</code></pre>
+<p>GPT-6 Astra tied for the best implicit result in this six-turn workload: about 62 percent lower input cost than running without caching. Explicit rolling breakpoints saved about 61 percent on the same model. Both reused more history as the conversation grew. These are workload results. Measure your own agent’s savings.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-4-1.png" alt="Bar chart comparing the input cost of each caching setup on GPT-6 Astra, relative to no caching."></p>
+<p>Figure 4: Input cost of every caching setup on GPT-6 Astra, relative to no caching</p>
+<p><strong>Watch out for:</strong></p>
+<ul><li><strong>Only a static breakpoint in explicit-only mode</strong> – The tools and instructions are cached, but the growing history is processed again on every turn (0.61). This limitation doesn’t apply to the combined example, which also saves through eligible conversation endings.</li><li><strong>Moving a single breakpoint</strong> can prevent cache reuse and cause repeated writes in explicit-only mode. Keep the previous turn’s breakpoint too.</li><li><strong>Only an implicit write through a changing task</strong> – A new task might share the tools and instructions but not the previously saved endpoint. Add an explicit marker after the shared instructions if different tasks need to reuse that shorter prefix.</li></ul>
+<h2>When tools change</h2>
+<p>Sometimes an agent’s tool list changes, or new tools get added. Keep the initial list stable: adding, removing, or reordering definitions can invalidate the cached prefix. Choose the approach that fits how the tool becomes available.</p>
+<p><strong>When known tools are invoked in different steps of the agent’s flow:</strong> Send the same sorted <code>TOOLS</code> and use <code>allowed_tools</code> to limit what the model can call. With <code>allowed_tools</code>, <code>&quot;mode&quot;: &quot;auto&quot;</code> lets the model decide whether to call an allowed tool, and <code>&quot;mode&quot;: &quot;required&quot;</code> requires at least one allowed tool call. Pass this as <code>tool_choice</code>. The restriction doesn’t change the cached catalog:</p>
+<pre><code>tool_choice={&quot;type&quot;: &quot;allowed_tools&quot;, &quot;mode&quot;: &quot;auto&quot;,
+             &quot;tools&quot;: [{&quot;type&quot;: &quot;function&quot;, &quot;name&quot;: &quot;get_owner&quot;}]}</code></pre>
+<p><strong>New tools during a session.</strong> Both Amazon Bedrock Runtime and Amazon Bedrock Mantle endpoints accept an input item type called <code>additional_tools</code> for GPT-6 Astra, GPT-6.1 Sol, and GPT-5.6 Luna. For model availability by AWS Region, see <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">Supported models by AWS Region in Amazon Bedrock</a>. Register the new tool <code>get_due_date</code> in the helper function <code>execute_function</code>, then append its schema to the completed history from the agent loop. Keep the initial <code>TOOLS</code> unchanged:</p>
+<pre><code>TOOL_HANDLERS[&quot;get_due_date&quot;] = get_due_date
+NEW_TOOL = {
+    &quot;type&quot;: &quot;function&quot;, &quot;name&quot;: &quot;get_due_date&quot;,
+    &quot;description&quot;: &quot;Return the due date for a support case.&quot;,
+    &quot;strict&quot;: True,
+    &quot;parameters&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {&quot;case_id&quot;: {&quot;type&quot;: &quot;string&quot;}},
+        &quot;required&quot;: [&quot;case_id&quot;], &quot;additionalProperties&quot;: False,
+    },
+}
+history.append({
+    &quot;type&quot;: &quot;additional_tools&quot;, &quot;role&quot;: &quot;developer&quot;,
+    &quot;tools&quot;: [NEW_TOOL],
+})
+history.append({
+    &quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Find the due date for case C-123.&quot;,
+})
+# Implicit mode saves through this new user message, including NEW_TOOL.
+resp = ask_with_implicit_cache(history)
+d = resp.usage.input_tokens_details
+print(&quot;old prefix read&quot;, d.cached_tokens, &quot;new write&quot;, d.cache_write_tokens)
+
+# Example output:
+# old prefix read 2048 new write 256</code></pre>
+<p><strong>A new tool arrives mid-session</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-5-1.png" alt="Native additional_tools loading preserves the earlier cached prefix. The GPT-6 Astra Runtime test reads 2,068 tokens and writes a 145-token extension. Editing the initial catalog causes a cache miss."></p>
+<p>Figure 5: Appending a tool keeps the earlier prefix reusable, with example counts from GPT-6 Astra on Amazon Bedrock Runtime</p>
+<p>Continue the tool-execution loop with the new response. The loop adds the model’s output to <code>history</code>, runs any requested tools, and appends their results. Keep the <code>additional_tools</code> item in later requests so the new tool remains available. In implicit mode, Amazon Bedrock can cache through the new user message, including the tool definitions that precede it. In explicit-only mode, retain earlier breakpoints and add one to an <code>input_text</code> block in that user message. The <code>additional_tools</code> item itself can’t hold a breakpoint.</p>
+<p><strong>Different roles, different catalogs.</strong> When different agent roles need different tools, choose a stable tool profile, such as support or billing, at the start of each session. Each profile gets its own cached prefix. Mark the shared instructions so later tasks with that profile can reuse them, then use either mode as the conversation grows.</p>
+<p><strong>Cached tool profiles</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-6-1.png" alt="Support and billing sessions each reuse the cache for their fixed tool profile."></p>
+<p>Figure 6: Each tool profile has its own cached prefix, reusable by matching sessions</p>
+<h2>Subagents and side calls</h2>
+<p>Delegating shouldn’t make every helper reread the same background. Share the prefix, then add each helper’s task at the end. Be aware that when you use caching with AI agents, tools and system prompts can be leaked or exploited. Establish responsible AI practices that include your prompt caching implementation as part of that governance.</p>
+<p><strong>Warm once, then fan out.</strong> Send an ordinary request first and wait for it to finish before launching helpers. Mark the shared context explicitly in every request, even when the mode is implicit:</p>
+<pre><code>shared = {&quot;role&quot;: &quot;developer&quot;, &quot;content&quot;: [{
+    &quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: INSTRUCTIONS,
+    &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
+}]}
+warm = client.responses.create(
+    model=&quot;us.openai.gpt-6-astra&quot;, store=False,
+    tools=TOOLS, prompt_cache_key=KEY,
+    prompt_cache_options={&quot;mode&quot;: &quot;implicit&quot;, &quot;ttl&quot;: &quot;30m&quot;},
+    max_output_tokens=16,
+    input=[shared, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Reply READY.&quot;}],
+)
+d = warm.usage.input_tokens_details
+if not (d.cache_write_tokens or d.cached_tokens):
+    raise RuntimeError(&quot;Shared prefix was not cached.&quot;)
+from concurrent.futures import ThreadPoolExecutor
+
+# helper_tasks contains the task text for each helper.
+helper_inputs = [
+    [shared, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task}]
+    for task in helper_tasks
+]
+with ThreadPoolExecutor(max_workers=4) as pool:
+    helpers = list(pool.map(ask_with_implicit_cache, helper_inputs))</code></pre>
+<p>The helpers use the same <code>TOOLS</code>, model, and <code>KEY</code> as the warm-up. A warm-up that ends at the output cap can still populate the cache. The usage check confirms cache activity before the helpers start.</p>
+<p><strong>Subagents: Warm the shared prefix once, then fan out</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-7-1.png" alt="An ordinary warm-up request populates the shared prefix before four subagents start."></p>
+<p>Figure 7: Warm the shared prefix before launching helpers, and each helper then adds its own task</p>
+<p><strong>Give side calls the same beginning.</strong> The agent loop builds <code>history</code> by appending every <code>resp.output</code> and its matching tool results, including encrypted reasoning. After the parent finishes, copy that complete list for a summarizer or judge. The same helper keeps the tools, model, and key unchanged:</p>
+<pre><code>from copy import deepcopy
+
+# history is the completed history built by the agent loop above.
+# Copy it so the helper can add instructions without changing the parent.
+helper_history = deepcopy(history)
+helper_history.append({
+    &quot;role&quot;: &quot;developer&quot;,
+    &quot;content&quot;: &quot;Summarize this conversation in one sentence. Do not call tools.&quot;,
+})
+summary = ask_with_implicit_cache(helper_history)
+d = summary.usage.input_tokens_details
+print(&quot;history read&quot;, d.cached_tokens, &quot;write&quot;, d.cache_write_tokens)
+print(summary.output_text)
+
+# Example output (assumed values and conversation):
+# history read 4096 write 32
+# Case C-123 is due on October 31, 2026.</code></pre>
+<p>The helper can reuse the cached portion of <code>history</code>, but the appended developer message doesn’t automatically extend the cache to include the summary instruction. If later requests reuse the same history and instruction, place the instruction in an <code>input_text</code> block with <code>prompt_cache_breakpoint</code>. For a one-time summary, no additional marker is needed.</p>
+<h2>Pauses, restarts, and the cache key</h2>
+<p><strong>Pauses.</strong> Cached prefixes have a minimum 30-minute time to live (TTL), refreshed by successful reuse, and might remain longer. If a session resumes soon, an ordinary warm-up can refresh the prefix before it expires. Compare that request’s cost with letting the cache expire. For the TTL rules, see the Amazon Bedrock documentation.</p>
+<p><strong>New sessions.</strong> Keep <code>prompt_cache_key</code> stable for requests that are meant to share a prefix. A session-specific key isolates sessions even when their prompts match. In the following example, switching to a shared key let sessions reuse the prefix.</p>
+<p><strong>New sessions reuse the cache only if they share the key</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-8-1.png" alt="The original experiment compares per-session cache keys with a stable shared key."></p>
+<p>Figure 8: A session-specific key separates cache entries, and a shared key lets matching sessions reuse them</p>
+<p>Reuse of existing cache content requires the same model, AWS account, and Region, and an available matching prefix. The following example combines an explicit startup marker with implicit mode. Each session starts with the same instructions and its own task. Both use the same computed key:</p>
+<pre><code>import hashlib
+
+def cache_key(app, model, prompt_version, instructions):
+    digest = hashlib.sha256(instructions.encode()).hexdigest()[:12]
+    return f&quot;{app}:{prompt_version}:{model}:{digest}&quot;
+
+KEY = cache_key(&quot;support-agent&quot;, &quot;us.openai.gpt-6-astra&quot;, &quot;v7&quot;, INSTRUCTIONS)
+prefix = {&quot;role&quot;: &quot;developer&quot;, &quot;content&quot;: [{
+    &quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: INSTRUCTIONS,
+    &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
+}]}
+for label, question in [
+    (&quot;session A&quot;, &quot;Explain the refund policy without calling tools.&quot;),
+    (&quot;session B&quot;, &quot;Explain the escalation policy without calling tools.&quot;),
+]:
+    # A fresh conversation for each session; the startup prefix matches.
+    session_history = [prefix, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: question}]
+    result = ask_with_implicit_cache(session_history)
+    d = result.usage.input_tokens_details
+    print(label, &quot;read&quot;, d.cached_tokens, &quot;write&quot;, d.cache_write_tokens)</code></pre>
+<p>On a cold start, session 1 writes the shared prefix. Session 2 can read it even though its task can be different. Each task can also be cached implicitly. Check the usage counters: matching keys and markers make reuse possible, but a cache entry still has to be available.</p>
+<h2>What prompt caching delivers</h2>
+<p><strong>Cost.</strong> For a GPT-6 Astra powered agent with an 8,000-token startup prefix and six turns adding 2,000 tokens each, one-time static caching reduced cost to $0.50, and rolling breakpoints reduced modeled input cost by 64 percent: from $0.87 to $0.32 per session.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-9-1.png" alt="Line chart of cumulative input cost per session for the support-agent example on GPT-6 Astra."></p>
+<p>Figure 9: Cumulative input cost per session for the support-agent example, using Amazon Bedrock on-demand prices for GPT-6 Astra</p>
+<h2>How to tell caching is working</h2>
+<p>Start with response usage. <code>cached_tokens</code> reports input read from the cache, and <code>cache_write_tokens</code> reports input written to it. As the conversation grows, check that later turns reuse earlier history and that new writes reflect the content being added.</p>
+<p>For production monitoring on the Amazon Bedrock Runtime endpoint, use the <code>CacheReadInputTokenCount</code> and <code>CacheWriteInputTokenCount</code> metrics in Amazon CloudWatch. Enable model invocation logging when you need individual request records, then query them with Amazon CloudWatch Logs Insights. For the Amazon Bedrock Mantle endpoint, record the response usage fields in your application logs. Its Amazon CloudWatch namespace currently has no separate cache counters.</p>
+<p>To check costs, filter <strong>AWS Cost Explorer</strong> to Amazon Bedrock and group by <strong>Usage type</strong>. Cache reads, cache writes, and uncached input appear as separate entries per model. Exclude output-token entries when calculating their shares of input cost.</p>
+<h2>A short checklist</h2>
+<ul><li><strong>Keep the reusable prefix stable.</strong> Put shared tools and instructions first, then append conversation history and new turns. Changing a timestamp, message, or tool definition prevents reuse beyond that change. A shorter prefix can still be reused if it has its own saved endpoint.</li><li><strong>Choose boundaries around content you want to reuse.</strong> Use implicit caching for growing history, explicit markers for shared prefixes, or both. Explicit-only mode avoids writing disposable suffixes. When extending an explicit-only conversation, retain earlier markers so later requests can find the saved prefixes.</li><li><strong>Keep the initial tool catalog unchanged.</strong> Use <code>allowed_tools</code> to restrict which tools are callable. Append known definitions with <code>additional_tools</code>, or discover them through namespaced client-side <code>tool_search</code>. Choose a stable tool profile when different agent roles need different catalogs.</li><li><strong>Check prefix size and lifetime.</strong> A cacheable prefix must contain at least 1,024 tokens. Cached prefixes remain eligible for reuse for at least 30 minutes after their latest write or successful reuse.</li><li><strong>Warm shared content before launching helpers.</strong> Mark the shared prefix in both the warm-up and helper requests, including when using implicit mode. Finish the warm-up request before starting parallel calls.</li><li><strong>Keep cache keys stable within each sharing group.</strong> Requests intended to reuse a prefix must use the same key. Separate keys can keep cache accounting distinct between customers or users.</li><li><strong>Measure savings across the workflow.</strong> Cache writes cost 1.25 times the normal input rate. Read prices depend on the model. Track write costs alongside read savings, using response usage during development and monitoring and billing data in production.</li></ul>
+<h2>Waking up on February 3rd</h2>
+<p>Bill Murray only escapes Groundhog Day once he stops repeating the same mistakes and starts carrying what he learned from one day to the next. Agents get there in a similar, if less romantic, way: by keeping the start of their prompt byte-for-byte stable and using automatic or explicit cache boundaries as the history grows.</p>
+<p>In this post, we covered how to cache shared tools and instructions, grow the cache across agent turns, and preserve reuse when adding tools, launching helpers, or starting new sessions. Keep the shared prefix stable and append new information as the workflow progresses. Use implicit caching for growing conversations and explicit breakpoints for shared content. Combine them when you need both, or choose explicit-only mode when a changing suffix is unlikely to be reused. Compare cache reads, writes, total input cost, and latency to find what works best for your agent. To apply these patterns, follow the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-openai">Amazon Bedrock prompt caching documentation for OpenAI models</a> and check <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">model availability by AWS Region and endpoint</a>. Start with one workflow and measure the savings as your conversations grow.</p>
+<h2>About the author</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Build agentic retrieval on a Managed Amazon Bedrock Knowledg…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/build-agentic-retrieval-on-a-managed-amazon-bedrock-knowledge-base-with-cdk/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-agentic-retrieval-on-a-managed-amazon-bedrock-knowledge-base-with-cdk/?li=1</guid>
+      <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Build agentic retrieval on a Managed Amazon Bedrock Knowledge Base with CDK</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Build agentic retrieval on a Managed Amazon Bedrock Knowledge Base with CDK</h1>
+<p>This post builds enterprise agentic retrieval on a Managed Amazon Bedrock Knowledge Base with the AWS Cloud Development Kit (AWS CDK). To see why that’s worth building, it helps to start with where ordinary Retrieval Augmented Generation (RAG) breaks down. Most RAG systems start the same way: they embed the question, fetch the nearest chunks from one index, hand them to a model, and return the answer. One retrieval, one generation. For a large class of questions that’s the right design, and there’s no reason to build anything more complicated.</p>
+<p>It fails in a recognizable way. Ask a question whose answer spans two corpora, and a single retrieval returns half of what the model needs, which is worse than returning nothing, because the answer comes back fluent and incomplete. Ask a question where the <em>right source depends on the question</em>, and a single index has no mechanism to choose. Ask a question that needs a second look at the corpus after seeing the first result, and there is nowhere for that second look to happen.</p>
+<p>Enterprise agentic retrieval answers all three by putting a reasoning agent in the loop. The agent decides whether to retrieve, which knowledge base to consult, and whether to go back for more before it composes an answer. This is the direction <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Knowledge Bases</a> have evolved. With the launch of the Managed Knowledge Base, retrieval is no longer a single embed-and-fetch call. It has become an agentic capability: multi-turn planning, tool-driven retrieval, and grounded, cited answers. The AgenticRetrieveStream API offers this as a first-class service feature rather than something you assemble yourself. That works, and it also introduces a genuinely harder operational problem. A single-shot pipeline is a function you can reason about by reading it. An agent that reasons and retrieves in a loop takes a different path on every question. By default you can see neither the path it took nor whether the answer it produced was any good. Observability stops being a nice-to-have and becomes the only way to know the system works.</p>
+<p>In August 2024, <a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-rag-solution-using-knowledge-bases-for-amazon-bedrock-and-the-aws-cdk/">Build an end-to-end RAG solution using Knowledge Bases for Amazon Bedrock and the AWS CDK</a> deployed the single-shot design as a CDK application: an <a href="https://docs.aws.amazon.com/s3/">Amazon Simple Storage Service (Amazon S3)</a> corpus, an <a href="https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless.html">Amazon OpenSearch Serverless</a> collection and index, a knowledge base, and a data source, provisioned as CDK stacks whose order you sequenced by hand. Three things have changed since it was published.</p>
+<ul><li><strong><a href="https://docs.aws.amazon.com/bedrock/">Amazon Bedrock</a> now offers a managed knowledge base</strong> (Type: MANAGED), which owns the ingestion, storage, indexing, and retrieval itself. The OpenSearch Serverless collection and index that post provisions are no longer something you need to create, scale, or pay for with OpenSearch Compute Units (OCUs).</li><li><strong><a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore</a> provides the agentic half</strong>, a Gateway that exposes each knowledge base as a Model Context Protocol (MCP) tool, a Runtime that hosts the reasoning agent, and AgenticRetrieveStream, which reranks internally and returns a synthesized, cited answer. Agentic retrieval is available <strong>only</strong> on the Managed Knowledge Base.</li><li><strong>The observability and evaluation story is now something you can provision</strong>, not something you bolt on. This solution ships two <a href="https://docs.aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> dashboards spanning seven layers of telemetry, plus two forms of evaluation, on-demand and continuous, from the same deployment.</li></ul>
+<p>This post builds that system: an agent that routes across two knowledge bases, retrieves through the Gateway, and returns a grounded, cited answer, with every layer of its behavior instrumented, as a single <a href="https://docs.aws.amazon.com/cdk/">AWS CDK</a> application in Python. One command deploys all of it, and CDK derives the order.</p>
+<p>If you read the <a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-rag-solution-using-knowledge-bases-for-amazon-bedrock-and-the-aws-cdk/">2024 post</a>, the path from an Amazon S3 bucket to the knowledge base will look familiar, and everything after it is new: the vector store is gone, the retrieval is agentic, and roughly half of what the app provisions exists to tell you what the agent did. If you didn’t, this post stands on its own.</p>
+<p>The services at play and the path one question takes through them: the agent decides whether to retrieve and which knowledge base to consult, the Gateway exposes each knowledge base as a tool it can call, the Managed Knowledge Bases search and cite, and the loop repeats as many times as the question needs. Everything the agent does along the way lands in Amazon CloudWatch.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-1.png" alt="Agent routing a question across two managed knowledge bases through the Gateway, with every step landing in Amazon CloudWatch"></p>
+<p>Figure 1: The services involved and the path a single question takes through them</p>
+<h2>Background</h2>
+<p>Before the walkthrough, it helps to establish three things: what makes retrieval agentic, why the Managed Knowledge Base is the right foundation for it, and why observability and evaluation belong in the design rather than bolted on later.</p>
+<h3>From RAG to enterprise agentic retrieval</h3>
+<p>Classic Retrieval Augmented Generation (RAG) does one retrieval and one generation. <strong>Enterprise agentic retrieval</strong> puts a reasoning agent in the loop: it decides <em>whether</em> and <em>what</em> to retrieve, can retrieve several times to refine, chooses <em>which</em> knowledge base is relevant (semantic routing), and only then composes a grounded answer with citations. With the Managed Knowledge Base, this is a first-class service capability, the AgenticRetrieveStream API performs the multi-turn planning, executes the retrieval, and returns a cited answer, rather than an orchestration layer you build and maintain over a raw vector search. That produces better answers on complex questions, but it also produces a more complex system to operate, which is exactly why observability and evaluation are built in from the start.</p>
+<h3>Managed compared to do-it-yourself Knowledge Bases</h3>
+<p>Amazon Bedrock now offers a <strong>Managed Knowledge Base</strong> (Type: MANAGED): Amazon Bedrock manages the <strong>ingestion, storage, indexing, and retrieval</strong> for you, including embedding and reranking with service-managed models by default, so there is <strong>no vector database to provision, scale, or patch</strong>. This differs from a <strong>Customer-managed</strong> (DIY) Knowledge Base, where you choose and operate the vector store (for example, Amazon OpenSearch Serverless) yourself.</p>
+<p>Two differences matter most for this solution:</p>
+<table><thead><tr><th><strong>Capability</strong></th><th><strong>Amazon Bedrock managed</strong></th><th><strong>Customer-managed (DIY)</strong></th></tr></thead><tbody><tr><td>Agentic retrieval (AgenticRetrieveStream)</td><td>✅ Supported</td><td>❌ Not supported</td></tr><tr><td>AgentCore Gateway integration</td><td>✅ Supported</td><td>❌ Not supported</td></tr><tr><td>Data store</td><td>Auto scaling, fully managed by Amazon Bedrock</td><td>You provision, scale, and maintain it</td></tr><tr><td>Embedding + reranking</td><td>Built-in managed models, no extra cost</td><td>You configure them</td></tr><tr><td>Infrastructure to manage</td><td><strong>None</strong></td><td>Vector DB + more</td></tr></tbody></table>
+<p>Because agentic retrieval and the AgentCore Gateway connector are available only on the managed knowledge base, it is the natural foundation for enterprise agentic retrieval. It also means Amazon Bedrock manages the storage and indexing for you, so there is no OpenSearch Serverless collection or OCU capacity to provision in this design. The customer-managed option remains the right choice when you want to select and operate your own vector store, for example to reuse an existing OpenSearch Serverless collection or to meet specific data-residency, tuning, or compliance requirements. For enterprise agentic retrieval, the managed knowledge base is what makes the capability possible.</p>
+<h3>Why observability and evaluation</h3>
+<p>An agentic system that <em>returns an answer</em> isn’t enough for production. You need to see how it behaves (latency, call volume, token usage), how good the retrieval and answers are, and you need those signals continuously. This solution <strong>ships</strong> two CloudWatch dashboards spanning seven layers of telemetry, plus two forms of evaluation (on-demand and continuous), all provisioned by the same CDK application. The grounding, citations, and evaluation layers also support responsible use. Cited answers trace back to their source passages so responses stay auditable, and the faithfulness and correctness scores let you catch answers drifting from their sources rather than finding out in production.</p>
+<h3>Why CDK for this particular solution</h3>
+<p>Any infrastructure-as-code tool can create these resources. CDK earns its place here for a reason specific to this architecture: <strong>the four stacks are densely cross-referenced</strong>. The Gateway needs both knowledge base ids. The agent needs the URL and ARN for the Gateway. The dashboards need the KB ids, the Gateway ARN, <em>and</em> the agent runtime id, seven values crossing stack boundaries, each one a dimension on a metric or a target on a connector.</p>
+<p>Written as raw templates, that is a set of stack exports and cross-stack lookups kept in agreement by hand, plus a script that deploys in the right order and threads outputs forward, and both drift the moment anything is renamed. In CDK you pass the construct, and the export and the dependency edge are derived from that one act of passing it. The 2024 solution had three stacks and a mostly linear dependency chain. At four stacks with seven values crossing between them, the difference stops being stylistic.</p>
+<h2>Solution overview</h2>
+<p>Here is the path a single question takes through the system, end to end. It’s worth a slow look, because the rest of the post walks through it left to right.</p>
+<p>The following diagram traces the end-to-end agentic retrieval workflow. A user’s question enters the agent on the AgentCore Runtime, which routes it through the AgentCore Gateway to one of two AgenticRetrieveStream tools, one per managed knowledge base, financial and weather, each ingested from Amazon S3. The selected tool returns a grounded, cited answer, and every step streams to Amazon CloudWatch and AWS X-Ray. The numbered badges map to the following walkthrough.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-2.png" alt="Flow diagram: user question to AgentCore Runtime, out through AgentCore Gateway to two AgenticRetrieveStream tools backed by financial and weather managed knowledge bases fed from Amazon S3, returning a cited answer, with every step streaming to CloudWatch and X-Ray."></p>
+<p>Figure 2: End-to-end agentic retrieval workflow for a single question</p>
+<p>The numbered steps in the diagram map to the workflow, which is as follows.</p>
+<p><strong>Step 0 — one-time, at deploy.</strong> Before any question is asked, each corpus in Amazon S3 is ingested into its own Managed Knowledge Base: Amazon Bedrock parses, chunks, embeds, and indexes it automatically. This happens once when the stacks deploy, it isn’t part of the per-question path, so it is drawn as a dashed arrow and marked step 0. Every question then follows steps 1–6:</p>
+<ul><li><strong>A user sends a question to the agent</strong> hosted on the Amazon Bedrock AgentCore Runtime. The Runtime auto-instruments the whole reason-and-act loop with OpenTelemetry (OTEL) spans, so the system is observable from the very first call.</li><li><strong>The agent’s reasoning model plans and routes across knowledge bases.</strong> Because each knowledge base is exposed as its own retrieval tool, the agent selects the tool whose topic matches the question, financial or weather, rather than searching one blended index.</li><li><strong>The selected tool call is brokered by the AgentCore Gateway over MCP</strong>, authorized by the agent’s IAM task role and signed with SigV4, which invokes that knowledge base’s AgenticRetrieveStream API on the Managed Knowledge Base.</li><li><strong>AgenticRetrieveStream does the within-knowledge-base work:</strong> it decomposes the question into sub-queries, retrieves iteratively from the data store that Amazon Bedrock manages (ingested from the corpora in Amazon S3), and synthesizes a grounded, cited answer that streams back through the Gateway.</li><li><strong>The agent checks whether the returned context is sufficient.</strong> If not, it loops, routing and retrieving again, before composing its final answer. If so, it returns the cited answer to the user.</li><li><strong>Throughout, the Runtime emits spans, token counts, and metrics</strong> to Amazon CloudWatch and AWS X-Ray, populating the seven observability layers and feeding both the on-demand and continuous evaluation scores.</li></ul>
+<p>Internally, that workflow is one CDK app, <code>app.py</code>, that declares four stacks. You don’t choose the order, CDK derives it from the construct references you pass:</p>
+<pre><code>kb_stack = KnowledgeBasesStack(app, f&quot;{project}-kb&quot;, env=env)
+
+gateway_stack = AgenticGatewayStack(
+    app, f&quot;{project}-gateway&quot;, env=env,
+    financial_kb=kb_stack.financial_kb,  # ← the reference creates the dependency
+    weather_kb=kb_stack.weather_kb,
+)
+
+agent_stack = AgentRuntimeStack(
+    app, f&quot;{project}-agent&quot;, env=env,
+    gateway=gateway_stack.gateway,
+)
+
+DashboardsStack(
+    app, f&quot;{project}-dashboards&quot;, env=env,
+    financial_kb=kb_stack.financial_kb,
+    weather_kb=kb_stack.weather_kb,
+    gateway=gateway_stack.gateway,
+    agent_runtime=agent_stack.agent_runtime,
+)</code></pre>
+<p>That is the whole wiring. Those four constructor calls are what replace the export/import bookkeeping and the deploy script.</p>
+<table><thead><tr><th><strong>#</strong></th><th><strong>Stack</strong></th><th><strong>What it creates</strong></th><th><strong>Note</strong></th></tr></thead><tbody><tr><td>1</td><td>-kb</td><td>S3 bucket, corpora upload, two Type: MANAGED KBs, data sources, IAM, ingestion</td><td>KBs reach ACTIVE, corpora ingested</td></tr><tr><td>2</td><td>-gateway</td><td>Gateway (AWS_IAM / MCP), per-KB AgenticRetrieveStream targets</td><td>no Cognito needed</td></tr><tr><td>3</td><td>-agent</td><td>ECR, CodeBuild, instrumented Strands agent on Runtime, vended logs/traces, online eval</td><td><strong>~8–10 min</strong> (image build)</td></tr><tr><td>4</td><td>-dashboards</td><td>agentic-observability + kb-observability dashboards</td><td>empty until you drive traffic</td></tr></tbody></table>
+<p>The agent runs a reason-and-act loop: it thinks (a large language model (LLM) call), decides which KB tool to call, reads what came back through the Gateway, and often retrieves again before composing its final, cited answer. Every step is auto-instrumented by the Runtime, so the seven observability layers fill from real traffic.</p>
+<p><strong>The seven layers.</strong> L1 KB-native metrics, L2 ingestion, L3 agentic retrieval quality, L4 Gateway/MCP metrics, L5 OTEL span tree , L6 token usage, and L7 evaluation scores. Layers 1, 4, and 5 are emitted automatically. Layers 3, 6, and 7 are published as custom metrics by the driver notebook.</p>
+<p>Everything tunable lives in one file, <code>config.py</code>:</p>
+<table><thead><tr><th><strong>Setting</strong></th><th><strong>Meaning</strong></th><th><strong>Default</strong></th></tr></thead><tbody><tr><td><code>EnvSettings.PROJECT_NAME</code></td><td>Name prefix for <strong>every</strong> stack and resource</td><td><code>bmkb-obs-cdk</code></td></tr><tr><td><code>EnvSettings.ACCOUNT_REGION</code></td><td>AWS Region to deploy into</td><td>us-west-2 (or your profile’s)</td></tr><tr><td><code>KbConfig.EMBEDDING_MODEL_TYPE</code></td><td><code>MANAGED</code> (bundled) or <code>CUSTOM</code> (bring your own ARN)</td><td><code>MANAGED</code></td></tr><tr><td><code>AgentConfig.MODEL_ID</code></td><td>The agent’s reasoning model, the Layer 6 spend</td><td>Claude Haiku 4.5</td></tr><tr><td><code>EvalConfig.SAMPLING_PERCENTAGE</code></td><td>Online-evaluation sampling rate, <strong>see the disclaimer</strong></td><td>100</td></tr></tbody></table>
+<p>Changing <code>PROJECT_NAME</code> gives you an independently-named copy of the whole solution, so two deployments can coexist in one account. The driver notebook reads the same constant, so it follows the rename automatically, there are no stack names to keep in sync by hand.</p>
+<h2>Describe the dataset</h2>
+<p>The solution ships with two small corpora, bundled in the repository under data/:</p>
+<ul><li><strong>Financial</strong> — A synthetic Octank Financial 10-K (octank_financial_10K.pdf, ~198 KB).</li><li><strong>Weather</strong> — A <strong>real, publicly available</strong> U.S. Congressional Research Service report on tornadoes (<a href="https://sgp.fas.org/crs/misc/IF12695.pdf">IF12695</a>, tornadoes_report.pdf, ~560 KB).</li></ul>
+<p>⚠️ <strong>About the data:</strong> The financial corpus is <em>synthetic</em>. Octank is a fictional company and the 10-K is model-generated sample data (CC0-licensed). It is<strong>n’t</strong> real financial data. The weather corpus is a real, public-domain U.S. Government work and is a Congressional Research Service report, publicly available at <a href="https://sgp.fas.org/crs/misc/IF12695.pdf">sgp.fas.org/crs/misc/IF12695.pdf</a> (works of the U.S. Government aren’t subject to copyright). To use your own data, drop files under data/ and adjust the prefixes in <code>config.py</code>, no other change is required.</p>
+<p>The two corpora are intentionally distinct, so the agent must route each question to the right knowledge base, the semantic-routing story. Because these are Managed Knowledge Bases, we don’t configure chunking, embedding, or an index: on ingestion, Amazon Bedrock parses each PDF, chunks it, embeds it with its managed model, and indexes it automatically.</p>
+<p>We use two separate knowledge bases, each exposed through the Gateway as its own retrieval tool, rather than one knowledge base holding both corpora and that choice is deliberate. Giving the agent two named tools makes routing an explicit act of reasoning it can be observed making: the span tree shows <em>which</em> tool it chose for a given question, and the retrieval-quality metrics in Layer 3 stay separable per knowledge base, so financial and weather precision never blur into a single number. A single tool spanning both corpora would collapse that distinction, the routing decision would move inside one index’s ranking, out of view, and every quality signal would be an average across two unrelated domains. Keeping the corpora and their tools separate is what makes the agent’s behavior legible, which is the whole point of the exercise.</p>
+<p>In CDK, getting the corpora into S3 is a BucketDeployment:</p>
+<pre><code>s3deploy.BucketDeployment(
+    self, &quot;FinancialCorpus&quot;,
+    sources=[s3deploy.Source.asset(str(ROOT / &quot;data&quot; / &quot;financial&quot;))],
+    destination_bucket=self.source_bucket,
+    destination_key_prefix=KbConfig.FINANCIAL_PREFIX,
+)</code></pre>
+<p>BucketDeployment is worth knowing about precisely because the alternative is so tempting: without it, the custom resource that triggers ingestion tends to grow an upload step, and now one resource owns two unrelated jobs. Here it only has to <em>ingest</em>.</p>
+<p>Managed ingestion scans, chunks, embeds, and indexes each document automatically: one document indexed per knowledge base, zero failures.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-3.png" alt="Managed ingestion result showing one document indexed per knowledge base with zero failures"></p>
+<p>Figure 3: Managed ingestion results, one document indexed per knowledge base with zero failures</p>
+<h2>Deploy the solution</h2>
+<p>This section walks through deploying the whole solution with one command. After the prerequisites are met, <code>cdk deploy --all</code> provisions all four stacks in CDK’s derived dependency order and threads every cross-stack value through automatically.</p>
+<h3>Prerequisites</h3>
+<ul><li>An AWS account with permissions for Amazon Bedrock, AgentCore (Runtime + Gateway), <a href="https://docs.aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a>, CloudWatch, <a href="https://docs.aws.amazon.com/xray/">AWS X-Ray</a>, <a href="https://docs.aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a>, <a href="https://docs.aws.amazon.com/codebuild/">AWS CodeBuild</a>, Amazon S3, <a href="https://docs.aws.amazon.com/lambda/">AWS Lambda</a>, and <a href="https://docs.aws.amazon.com/cloudformation/">AWS CloudFormation</a>.</li><li>The agent’s model available in the account (default <code>us.anthropic.claude-haiku-4-5-20251001-v1:0</code>).</li><li>CloudWatch Transaction Search enabled, so OTEL spans land in aws/spans for Layers 5–7.</li><li>Node.js 18+ and the CDK CLI (<code>npm install -g aws-cdk</code>), plus Python 3.13+.</li><li>The account and region bootstrapped for CDK (cdk bootstrap), once per account/region.</li><li>No local Docker, the agent image is built by CodeBuild (ARM64).</li></ul>
+<h3>One command</h3>
+<p>To deploy the solution, clone the repository, create a virtual environment, install the dependencies, and run <code>cdk deploy --all</code>. Run the following commands from your terminal:</p>
+<pre><code>git clone https://github.com/aws-samples/amazon-bedrock-samples.git
+cd rag/managed-knowledge-bases/07-IaaC/managed-kb-observability-cdk/
+python3 -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -r requirements.txt
+cdk bootstrap  # once per account/region
+cdk deploy --all</code></pre>
+<p>The first two commands clone the sample and move into the project directory. The next two create and activate a Python virtual environment and install the CDK app’s dependencies. <code>cdk bootstrap</code> prepares the account and region for CDK (you only need it once per account/region), and <code>cdk deploy --all</code> provisions all four stacks.</p>
+<p>Account and region come from your AWS profile (CDK_DEFAULT_ACCOUNT / CDK_DEFAULT_REGION), so the app deploys with no edits.</p>
+<p>Region availability: The managed knowledge base, agentic retrieval (AgenticRetrieveStream), and Amazon Bedrock AgentCore (Runtime and Gateway) aren’t available in every AWS Region. Before you deploy, confirm that all of these are offered in your target Region, and set <code>ACCOUNT_REGION</code> in <code>config.py</code> accordingly. The default is us-west-2. For current availability, see the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/">Amazon Bedrock</a> and <a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore</a> documentation and the <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/">AWS Regional Services List</a>.</p>
+<p>There is no deploy script in this version, and that is the point: <code>cdk deploy --all</code> walks the dependency graph it derived from <code>app.py</code>, deploys the four stacks in order, and passes every cross-stack value automatically. The terminal reports each stack as it completes, bmkb-obs-cdk-kb [1/4] (the default PROJECT_NAME), then gateway [2/4], then agent [3/4], then dashboards [4/4] and that order is derived, not declared: it falls out of the construct references between the stacks, so adding a fifth stack that consumes an existing output reorders the deploy on its own.</p>
+<p>Stack -agent builds the agent container with CodeBuild, so allow roughly 8–10 minutes for that stage. The other three are quick. Each stack prints its outputs on completion, which is where you pick up the knowledge base ids, the Gateway URL, the runtime ARN, and both dashboard URLs. When the deploy finishes, all four stacks are complete. The following screenshot shows the AWS CloudFormation console after a successful <code>cdk deploy --all</code>.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-4.png" alt="AWS CloudFormation console listing four stacks — bmkb-obs-cdk-kb, -gateway, -agent, and -dashboards — each with status CREATE_COMPLETE."></p>
+<p>Figure 4: AWS CloudFormation console after a successful deploy, with all four stacks CREATE_COMPLETE</p>
+<p>On the console, all four stacks, kb, gateway, agent, and dashboards, report CREATE_COMPLETE, each with its [n/4] position in the derived dependency order shown in its description.</p>
+<h3>A note on long-running resources</h3>
+<p>Two things in this solution take far longer than the 15-minute ceiling of an AWS Lambda function allows for naive polling: the KB ingestion sync and the CodeBuild image build. The AWS CDK Provider framework handles this with an <code>on_event</code> / <code>is_complete</code> split, where one handler starts the work and a second is polled until it reports done.</p>
+<pre><code>cr.Provider(
+    self, &quot;IngestSyncProvider&quot;,
+    on_event_handler=on_event,        # StartIngestionJob, return the job id
+    is_complete_handler=is_complete,  # GetIngestionJob, report IsComplete
+    query_interval=Duration.seconds(30),
+    total_timeout=Duration.minutes(30),
+)</code></pre>
+<p>Nothing blocks, the response protocol back to CloudFormation is owned by the framework rather than hand-written into each handler, and the 30-minute budget is a property rather than something to engineer around.</p>
+<h2>Launch and test</h2>
+<p>Open notebooks/01-drive-and-observe.ipynb and run it top to bottom (<code>pip install -r requirements-notebook.txt</code> first). It reads the stack outputs, then sends topic-specific prompts to the deployed agent, <strong>one session per KB</strong>, so you can see both the answers and the semantic routing in one place: financial questions are answered from the Octank 10-K and weather questions from the tornadoes report, each routed to the matching AgenticRetrieveStream tool automatically.</p>
+<p>The notebook discovers everything from the stack outputs, so there is nothing to paste in by hand:</p>
+<pre><code># Stack names are derived from the same PROJECT_NAME the CDK app uses, so renaming the
+# project in config.py cannot leave this notebook pointing at stale stacks.
+from config import EnvSettings
+
+PROJECT = EnvSettings.PROJECT_NAME
+STACKS = {suffix: f'{PROJECT}-{suffix}'
+          for suffix in ('kb', 'gateway', 'agent', 'dashboards')}
+
+def outputs(stack_name):
+    s = cfn.describe_stacks(StackName=stack_name)['Stacks'][0]
+    return {o['OutputKey']: o['OutputValue'] for o in s.get('Outputs', [])}</code></pre>
+<p>The notebook imports the <em>same</em> <code>config.py</code> the app does, so the two can never disagree about what the stacks are called.</p>
+<p>The driver sends per-KB prompts through the deployed agent. Financial questions route to the financial KB and weather questions to the weather KB, each with a grounded, cited answer.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-5.png" alt="Driver notebook output showing financial and weather questions each routed to the matching knowledge base with a cited answer"></p>
+<p>Figure 5: Per-KB prompts routed to the matching knowledge base, each returning a grounded, cited answer</p>
+<p>The notebook also computes the reference-free Layer 3 retrieval-quality signals from what the agent actually retrieved and cited, no ground truth, no extra judge, and publishes them to CloudWatch.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-6.png" alt="Per-KB Layer 3 retrieval-quality signals: retrieval utilization (precision proxy), grounded coverage (faithfulness proxy), duplicate rate, and retrieval-set counts"></p>
+<p>Figure 6: Reference-free Layer 3 retrieval-quality signals per knowledge base</p>
+<h2>Observe: The seven-layer dashboards</h2>
+<p>The two dashboards are where the seven layers become visible. The stack creates both dashboards, and driving traffic populates them. The following screenshot shows the two dashboards as they appear in the CloudWatch console.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-7.png" alt="CloudWatch dashboards list showing two dashboards: the end-to-end agentic-observability dashboard and the per-KB (BMKB) observability dashboard."></p>
+<p>Figure 7: The two dashboards in the CloudWatch console, end-to-end agentic observability and per-KB observability</p>
+<p>Both dashboards appear in the CloudWatch console: one for end-to-end agentic observability and one for per-KB observability (BMKB, Bedrock Managed Knowledge Base). The rest of this section walks through what each layer shows.</p>
+<p>In this version the dashboards are built from typed objects rather than a JSON string. A metric is a Metric, a widget is a GraphWidget, and the layout is a list of Rows:</p>
+<pre><code>cw.GraphWidget(
+    title=&quot;L4 — Gateway metrics (MCP)&quot;,
+    width=12, height=6, period=PERIOD, statistic=&quot;Sum&quot;,
+    left=[
+        self._gateway_metric(&quot;Invocations&quot;, gateway_arn, &quot;tools/call Invocations&quot;),
+        self._gateway_metric(&quot;SystemErrors&quot;, gateway_arn, &quot;SystemErrors&quot;),
+        self._gateway_metric(&quot;UserErrors&quot;, gateway_arn, &quot;UserErrors&quot;),
+        self._gateway_metric(&quot;Throttles&quot;, gateway_arn, &quot;Throttles&quot;),
+    ],
+)</code></pre>
+<p>The practical benefit isn’t fewer lines, <code>dashboards_stack.py</code> runs to 400 lines, more than the equivalent DashboardBody JSON would. It is that a misspelled property or an invalid widget combination fails at <code>cdk synth</code>, on your laptop, in about a second. The same mistake inside a DashboardBody string deploys successfully and renders as a broken widget on the AWS Management Console, where you find it by looking at it.</p>
+<p>Because a Row accepts any widget, the documentation is part of the layout rather than a wiki page that drifts. Each dashboard interleaves TextWidgets with the graphs:</p>
+<pre><code>[cw.TextWidget(width=24, height=7, markdown=self._l3_explainer())],
+[
+    self._quality_widget(&quot;L3 · Financial KB — agentic quality (reference-free, 0–1)&quot;, fin_id),
+    self._quality_widget(&quot;L3 · Weather KB — agentic quality (reference-free, 0–1)&quot;, wx_id),
+],</code></pre>
+<p>_l3_explainer() returns a markdown table defining each ratio and how to read it, so the widget that explains grounded_coverage ships in the same commit as the widget that plots it, and a reader who opens the dashboard cold doesn’t need to guess what a reference-free metric is.</p>
+<p><strong>Dashboard A — agentic observability (end to end).</strong> The board opens with an explainer of how each layer counts a different thing (for <em>N</em> queries you’ll see ~<em>N</em> agent invocations, ~2<em>N</em> retrievals, ~3<em>N</em> LLM calls, and ~5<em>N</em> Gateway MCP operations, the agentic loop made visible), then shows KB metrics (L1), Gateway metrics and latency (L4), token usage (L6), and because the agent uses AgenticRetrieveStream, which returns a synthesized, cited answer rather than per-chunk scores, the reference-free Layer 3 quality signals, defined inline and plotted per KB.</p>
+<p>On Dashboard A, the Layer 3 reference-free quality signals are plotted per knowledge base. First, the financial KB. The following chart plots its retrieval_utilization, grounded_coverage, and duplicate_rate.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-8.png" alt="CloudWatch line chart of the financial KB’s Layer 3 quality, plotting retrieval_utilization, grounded_coverage, and duplicate_rate on a 0 to 1 scale."></p>
+<p>Figure 8: Financial KB Layer 3 quality, plotting retrieval utilization, grounded coverage, and duplicate rate</p>
+<p>The weather KB shows the same three signals, tracked separately so the two domains never blur into one number.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-9.png" alt="CloudWatch line chart of the weather KB’s Layer 3 quality, plotting retrieval_utilization, grounded_coverage, and duplicate_rate on a 0 to 1 scale."></p>
+<p>Figure 9: Weather KB Layer 3 quality, tracked separately from the financial KB</p>
+<p>The two charts plot retrieval_utilization, grounded_coverage, and duplicate_rate for the financial KB (left) and the weather KB (right), so each knowledge base’s retrieval quality stays separable rather than averaged into one number.</p>
+<p><strong>Dashboard B — per-KB (BMKB) observability.</strong> The operational signals that also determine spend, per KB: index size (from S3 source bytes), retrieve volume, agentic tool-calls, session token usage, and generation token usage by model, each with an inline explanation.</p>
+<p>The following screenshots show Dashboard B’s four metric widgets, populated after a run. The first widget reports index size, derived from S3 source bytes, per knowledge base.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-10.png" alt="CloudWatch widget showing index size in MB from S3 source bytes, broken out per knowledge base."></p>
+<p>Figure 10: Dashboard B index size per knowledge base, derived from Amazon S3 source bytes</p>
+<p>The second widget counts retrieve calls per knowledge base.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-11.png" alt="CloudWatch widget showing Retrieve call invocations count, per knowledge base."></p>
+<p>Figure 11: Dashboard B retrieve-call count per knowledge base</p>
+<p>The third widget counts agentic tool-calls through the Gateway. This one is shared across both KBs rather than split.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-12.png" alt="CloudWatch widget showing agentic tool-call invocations through the AgentCore Gateway, as a single shared count."></p>
+<p>Figure 12: Dashboard B agentic tool-call count through the AgentCore Gateway, shared across both knowledge bases</p>
+<p>The fourth widget reports session token usage per knowledge base.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-13.png" alt="CloudWatch widget showing session token usage (SessionQuotaTokens), per knowledge base."></p>
+<p>Figure 13: Dashboard B session token usage per knowledge base</p>
+<p>The four widgets show index size (from S3 source bytes), retrieve-call volume, agentic tool-calls through the Gateway, and session token usage. Each is broken out per knowledge base except the Gateway tool-call count, which is shared across both.</p>
+<p>One dimension detail is worth calling out, because the typed API won’t catch it for you: the <code>AWS/Bedrock/KnowledgeBases</code> namespace expects a prefixed id, <code>knowledge-base/&lt;id&gt;</code>, while the solution’s own <code>BMKB/*</code> namespaces use the bare id. Both are only strings as far as CDK is concerned.</p>
+<pre><code># L1 — AWS/Bedrock/KnowledgeBases wants the prefixed form.
+dimensions_map={&quot;Operation&quot;: &quot;Retrieve&quot;, &quot;KnowledgeBaseId&quot;: f&quot;knowledge-base/{kb_id}&quot;}
+
+# BMKB/* — our own namespaces use the bare id.
+dimensions_map={&quot;KnowledgeBaseId&quot;: kb_id}</code></pre>
+<h3>Layer 5: The span tree</h3>
+<p>Layer 5 is the raw OTEL span tree in aws/spans, and it is the layer that shows you the agentic loop directly. It is worth reading carefully, because the nesting isn’t obvious: one LLM call produces three spans. The Strands <code>invoke_agent</code> span wraps the turn, an internal <code>chat</code> span wraps the model call, and a <code>chat &lt;model&gt;</code> span of kind <code>CLIENT</code> is the actual call, and all three repeat the same <code>gen_ai.usage.*</code> token attributes.</p>
+<p>The following screenshot shows the span tree in aws/spans, with the three-span nesting visible in the top rows.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-14.png" alt="CloudWatch span tree in aws/spans. The top three rows show an invoke_agent Strands Agents aggregate, an internal chat span, and a CLIENT chat span, all reporting an identical 7,299 input and 268 output tokens."></p>
+<p>Figure 14: Layer 5 span tree in aws/spans, showing the three-span nesting of a single LLM call</p>
+<p>Reading the top three rows: an invoke_agent Strands Agents aggregate, then an internal chat span, then a CLIENT chat span, all reporting an identical 7,299 input and 268 output tokens. That is the same LLM call appearing at three levels of the tree, which is why aggregation needs care.</p>
+<p>That structure matters the moment you aggregate. To count each LLM call once, filter to the <code>CLIENT</code> leaf:</p>
+<pre><code>fields attributes.gen_ai.request.model as model,
+       attributes.gen_ai.usage.input_tokens as in_tok,
+       attributes.gen_ai.usage.output_tokens as out_tok
+| filter ispresent(in_tok) and kind = 'CLIENT' and name like /^chat /
+| stats sum(in_tok) as input_tokens, sum(out_tok) as output_tokens,
+        count(*) as llm_calls by model</code></pre>
+<p>Without that filter the same query reports three times the tokens and three times the calls.</p>
+<p>Applying that CLIENT-leaf filter, the following screenshot shows generation token usage by model with each LLM call counted once.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-15.png" alt="CloudWatch results table of generation token usage by model, counting each LLM call once: 14 calls, 60,472 input tokens and 2,709 output tokens."></p>
+<p>Figure 15: Generation token usage by model, with each LLM call counted once</p>
+<p>With the filter in place, the run shows 14 LLM calls totaling 60,472 input and 2,709 output tokens. Without it, the same query would report three times the calls and three times the tokens.</p>
+<h2>Evaluate: On-demand and continuous</h2>
+<p>Quality is measured two ways, and both are provisioned by the app.</p>
+<p><strong>On-demand:</strong> The driver notebook calls AgentCore There is no deploy script in this version, and that is the point: (LLM-as-judge) over each session’s spans for built-in evaluators, Correctness, Faithfulness, Tool-Selection Accuracy and publishes the scores to CloudWatch, where they appear as Layer 7 on Dashboard A.</p>
+<p>The following screenshot shows Layer 7 on Dashboard A: on-demand evaluation scores per knowledge base, with the Layer 5 OTEL span table on the same dashboard.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-16.png" alt="CloudWatch dashboard showing Layer 7 on-demand evaluation scores per knowledge base, with the Layer 5 OTEL span table beside them."></p>
+<p>Figure 16: Layer 7 on-demand evaluation scores per knowledge base, beside the Layer 5 span table</p>
+<p>Layer 7 shows the on-demand evaluation scores per knowledge base, with the Layer 5 OTEL span table alongside, so the scores and the spans that produced them read together on one board.</p>
+<p><strong>Continuous (online):</strong> The agent stack also provisions an <code>AWS::BedrockAgentCore::OnlineEvaluationConfig</code> that samples live sessions and scores them automatically, no notebook run required. The configuration itself is visible in the <strong>Bedrock AgentCore console under Assess → Evaluations → Evaluation configurations</strong>. Results land in the log group <code>/aws/bedrock-agentcore/evaluations/results/&lt;config-id&gt;</code>, and every score is also published as a CloudWatch metric in the <code>Bedrock-AgentCore/Evaluations</code> namespace, keyed by evaluator name and configuration id, so you can graph the scores or alarm on them without parsing logs.</p>
+<p>The following screenshot shows the online evaluation configuration in the AgentCore console, under Assess, then Evaluations, then Evaluation configurations.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-17.png" alt="AgentCore console showing the online evaluation configuration with four built-in evaluators (Tool-Selection Accuracy, Faithfulness, Correctness, Response Relevance), 100 percent sampling, status ACTIVE and enabled."></p>
+<p>Figure 17: The online evaluation configuration in the AgentCore console, with four built-in evaluators at 100 percent sampling</p>
+<p>The configuration lists four built-in evaluators, Tool-Selection Accuracy, Faithfulness, Correctness, and Response Relevance, set to 100 percent sampling and shown as ACTIVE and enabled.</p>
+<p>Because the scores are ordinary CloudWatch metrics, they graph like anything else, no log parsing, and the same widget could carry an alarm. The following screenshot shows those four evaluator scores graphed as ordinary CloudWatch metrics.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-18.png" alt="CloudWatch graph of the four evaluator scores in the Bedrock-AgentCore/Evaluations namespace"></p>
+<p>Figure 18: The four continuous evaluator scores graphed as ordinary CloudWatch metrics</p>
+<p>The four evaluator scores appear as metrics in the <code>Bedrock-AgentCore/Evaluations</code> namespace, each keyed to the evaluation configuration id and the agent’s service name, so you can graph them or alarm on them without parsing logs.</p>
+<p><strong>Online results only arrive after a session closes</strong>. Scoring runs on the completed session, so the results log group stays empty for roughly the session idle timeout (~30 minutes) after you drive traffic. An empty group right after a run is expected, not a misconfiguration. Each result event carries <code>session.id</code>, so it joins to every other layer. The on-demand path in the notebook has no such wait, which is why both are here.</p>
+<p>Across the four built-in evaluators on this run, the continuous path scored 1.00 on Correctness, Faithfulness, Response Relevance, and Tool-Selection Accuracy, five scored traces per evaluator, each result carrying a written explanation.</p>
+<p>⚠️ <strong>Sampling and cost.</strong> This app sets <strong>SAMPLING_PERCENTAGE = 100</strong> <em>purely for the blog experiment</em>, so every session is scored and the results are immediately visible. <strong>This isn’t a production recommendation.</strong> Online evaluation invokes an LLM-as-judge per sampled session, so cost scales with the sampling rate and traffic volume. For a real deployment, choose a sampling percentage that fits your quality-monitoring needs and budget, and align the configuration with your organization’s own policies and cost-governance requirements before enabling it. The rate is a single constant, <code>EvalConfig.SAMPLING_PERCENTAGE</code>, in <code>config.py</code>.</p>
+<h2>Clean up</h2>
+<p>When you’re finished, remove the solution so it stops incurring charges, since stored KB data, the agent image in ECR, and the still-active online evaluation all cost money while the stacks sit idle. One command tears everything down:</p>
+<pre><code>cdk destroy --all</code></pre>
+<p>CDK deletes the stacks in reverse dependency order on its own, dashboards, then agent, then gateway, then kb: the same graph it derived for the deploy, walked backward. There is no teardown script to keep in agreement with the deploy script, which is one of the more quietly valuable properties of modelling the dependencies once.</p>
+<p>Two removal behaviors are worth knowing, because both replace hand-written cleanup code:</p>
+<pre><code>self.source_bucket = s3.Bucket(
+    self, &quot;SourceBucket&quot;,
+    removal_policy=RemovalPolicy.DESTROY,
+    auto_delete_objects=True,  # replaces a list_object_versions delete loop
+)
+
+self.repository = ecr.Repository(
+    self, &quot;AgentImageRepo&quot;,
+    removal_policy=RemovalPolicy.DESTROY,
+    empty_on_delete=True,  # replaces an image-delete loop
+)</code></pre>
+<p>Both are set for sample hygiene, for anything you care about, switch the bucket to <code>RemovalPolicy.RETAIN</code>.</p>
+<p>The CDK bootstrap stack (<code>CDKToolkit</code>) and its staging bucket aren’t removed. They are shared account-wide infrastructure that other CDK apps may depend on.</p>
+<h2>What changed since the single-shot solution</h2>
+<p>Both this post and the <a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-rag-solution-using-knowledge-bases-for-amazon-bedrock-and-the-aws-cdk/">2024 solution</a> are CDK applications in Python, deployed with <code>cdk deploy</code>. The authoring tool is the constant here, what changed is the architecture underneath it, and most of the change is subtraction:</p>
+<table><thead><tr><th><strong>Concern</strong></th><th><strong>2024: Single-shot RAG</strong></th><th><strong>This solution</strong></th></tr></thead><tbody><tr><td>Vector store</td><td>An OpenSearch Serverless collection and index you provision, scale, and pay OCU for</td><td>None. Type: MANAGED, Amazon Bedrock owns storage and indexing</td></tr><tr><td>Index lifecycle</td><td>A custom resource creates the index and waits for it to become searchable</td><td>Nothing to create</td></tr><tr><td>Embedding model</td><td>You select it and grant model access</td><td>Service-managed by default</td></tr><tr><td>Stacks</td><td>3: KB role → OpenSearch infra → KB + data source</td><td>4: kb → gateway → agent → dashboards</td></tr><tr><td>Retrieval</td><td>One Retrieve, top-k chunks by vector similarity</td><td>AgenticRetrieveStream, reranked internally, returns a synthesized cited answer</td></tr><tr><td>Choosing a knowledge base</td><td>Not applicable, there is one index</td><td>The agent routes semantically across two</td></tr><tr><td>Second look at the corpus</td><td>Not possible in one shot</td><td>The agent retrieves again before answering</td></tr><tr><td>Telemetry</td><td>None provisioned</td><td>Seven layers, two dashboards</td></tr><tr><td>Evaluation</td><td>Manual: sync, pick a model, ask questions</td><td>On-demand and continuous, both provisioned</td></tr><tr><td>Cost floor when idle</td><td>OCU charges accrue whether or not you query</td><td>Storage only</td></tr></tbody></table>
+<p>The trade is real in both directions. A single index answering single-shot questions is cheaper per query, simpler to reason about, and entirely sufficient when one corpus holds the answer. Reach for this design when it doesn’t.</p>
+<h3>The CDK constructs doing the work</h3>
+<p>Four constructs carry most of the weight in this app, and they are worth naming because each replaces something people otherwise hand-write:</p>
+<ul><li><strong>Provider</strong> – For custom resources that outlive the 15-minute ceiling of an AWS Lambda function. The <code>on_event</code> / <code>is_complete</code> split means nothing sleeps in a poll loop, and the response protocol back to CloudFormation is the framework’s job rather than a vendored <code>urllib</code> callback in every handler.</li><li><strong>BucketDeployment</strong> – Uploads the corpora, so the ingestion custom resource only ingests.</li><li><strong>auto_delete_objects=True</strong> and <strong>empty_on_delete=True</strong>, replace the hand-written <code>list_object_versions</code> and image-delete loops that a stack otherwise needs to be destroyable at all.</li><li><strong>repository.grant_pull_push(project)</strong> – One line for the eight <code>ecr:*</code> actions CodeBuild needs, spelled correctly by construction.</li></ul>
+<p>And typed dashboards, from the Observe section: Metric / GraphWidget / Row objects instead of a DashboardBody JSON string, which moves an invalid widget combination from “renders broken on the console” to “fails at <code>cdk synth</code>.”</p>
+<p>Two things CDK doesn’t change, and both are worth knowing before you start:</p>
+<ul><li><strong>Free-form JSON stays camelCase</strong>. <code>connector_parameters</code> and <code>parameter_values</code> are passed through verbatim, so the AWS CDK snake_case to PascalCase conversion does not apply inside them. Keys like <code>bucketName</code> and <code>inclusionPrefixes</code> must be spelled exactly as the API expects, and nothing will tell you otherwise until the resource fails.</li><li><strong>String-typed values are still strings.</strong> The <code>knowledge-base/&lt;id&gt;</code> versus bare <code>&lt;id&gt;</code> dimension difference from the Observe section is invisible to the type system. Typed constructs check <em>structure</em>, not <em>semantics</em>.</li></ul>
+<p>Neither is a reason to prefer one tool over the other. They are the boundary of what “typed” buys you, and knowing where that boundary sits is most of what makes CDK pleasant instead of surprising.</p>
+<h2>Conclusion</h2>
+<p>We built a complete enterprise agentic retrieval solution on a Managed Amazon Bedrock Knowledge Base and AgentCore: multi-KB semantic routing, a reasoning agent, seven layers of observability, and both on-demand and continuous evaluation, and deployed all of it as a single AWS CDK application.</p>
+<p>Two things are worth taking away. The managed knowledge base removed infrastructure rather than adding it: no vector store to provision, no index to create and wait on, no OCU line item accruing while the system sits idle. It is also the knowledge base type that supports agentic retrieval and the AgentCore Gateway connector, as described in the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock documentation</a>. And once retrieval became agentic, observability stopped being optional. Roughly half of what this app provisions exists to answer what the agent actually did and whether the answer was any good, which isn’t overhead on an agentic system. It’s the part that makes one operable.</p>
+<p>The CDK authoring model earned its place on the seams. Seven values cross stack boundaries in this architecture, and every one of them is a construct reference rather than an export/import pair, which is also why there’s no deploy script, no teardown script, and no fixed order to remember.</p>
+<p>From here you can point the data sources at your own corpora, place the agent in a virtual private cloud (VPC), tune the online-evaluation sampling rate to your budget and policies, or add more knowledge bases to the router. To learn more, see the <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> detail page and the <a href="https://docs.aws.amazon.com/bedrock/">Amazon Bedrock documentation</a>. The app, the driver notebook, and the self-contained utilities are all in the <a href="https://github.com/aws-samples/amazon-bedrock-samples/tree/main/rag/managed-knowledge-bases/07-IaaC/managed-kb-observability-cdk">accompanying GitHub repository</a>, so you can clone it and deploy your own copy with one command.</p>
+<h2>About the authors</h2>]]></content:encoded>
+    </item>
     <item>
       <title>Multi-Turn Reinforcement Learning on Amazon SageMaker AI: A…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/multi-turn-reinforcement-learning-on-amazon-sagemaker-ai-a-hands-on-guide/</link>
@@ -6030,321 +6733,6 @@ console.log(response);</code></pre>
 <p>To get started, try the <a href="https://github.com/aws-samples/sample-bedrock-managed-entitlements">code sample</a> in your AWS management account to automate model subscriptions.</p>
 <h2>Resources</h2>
 <ul><li><a href="https://github.com/aws-samples/sample-bedrock-managed-entitlements">Sample code: Amazon Bedrock with managed entitlements (GitHub)</a></li><li><a href="https://docs.aws.amazon.com/license-manager/latest/userguide/what-is-license-manager.html">AWS License Manager User Guide</a></li><li><a href="https://docs.aws.amazon.com/license-manager/latest/APIReference/API_CreateGrantVersion.html">AWS License Manager API Reference: CreateGrantVersion</a></li><li><a href="https://docs.aws.amazon.com/eventbridge/latest/userguide/what-is-amazon-eventbridge.html">Amazon EventBridge User Guide</a></li><li><a href="https://docs.aws.amazon.com/cdk/v2/guide/home.html">AWS CDK Developer Guide</a></li></ul>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Natural language security queries at Orca Security using Ama…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/natural-language-security-queries-at-orca-security-using-amazon-bedrock/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/natural-language-security-queries-at-orca-security-using-amazon-bedrock/?li=1</guid>
-      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Natural language security queries at Orca Security using Amazon Bedrock</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Natural language security queries at Orca Security using Amazon Bedrock</h1>
-<p>Security analysts need fast answers about their cloud infrastructure without deep familiarity with domain-specific query languages. <a href="https://orca.security/">Orca Security</a>’s tool covers over 900 cloud models (the resource types Sonar tracks, such as an Amazon Elastic Compute Cloud (Amazon EC2) instance or an Amazon Simple Storage Service (Amazon S3) bucket). Querying that data required precise model names, nested relationship navigation, and selection from 18 operators (comparison functions like equals or contains used to filter results).</p>
-<p>To solve this, Orca Security partnered with AWS to build Discovery AI, a natural language query agent on <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a>. Orca provides context-aware security for cloud, code, and AI, and Sonar is its domain-specific query system where users search, filter, and explore across the entire data graph.</p>
-<p>In this post, we share the architecture and results of Discovery AI, which converts a natural language question into a Sonar query. As a result, Orca reduced query costs by 90 percent, input tokens by 93 percent, and latency by 75 percent compared to the initial baseline.</p>
-<h2>Bridging natural language and structured queries</h2>
-<p>Orca Security’s Sonar query system supports 900+ cloud infrastructure and application models with complex relationships between them. To query this data, users construct JSON objects that specify exact model names, select from 18 operators, and navigate parent-child hierarchies across cloud providers. Doing this well requires deep familiarity with the Sonar schema.</p>
-<p>To build this capability, the Orca team set out to build a natural language interface that can generate valid Sonar queries from plain text.</p>
-<p>Their initial proof of concept loaded the full Sonar schema into a single prompt on the largest available model. This included over 900 model definitions, every relationship type, and a generous set of example queries. The output quality was strong (design partners and internal users responded positively) but three significant drawbacks emerged at production scale.</p>
-<p>Token consumption was inefficient, at roughly 2 million input tokens per workload, which drove up cost. Latency was high, with end-to-end response times of around 60 seconds per workload. Accuracy on complex, multi-model queries was limited because nested relationships and multi-condition queries often required additional refinement.</p>
-<p>The Orca team validated that the concept worked. The next challenge was making it cost-effective, fast, and accurate enough for production. To address this, the Orca team designed and deployed a solution that handles thousands of queries per day at 15-second response times using Amazon Bedrock.</p>
-<h2>Solution overview</h2>
-<p>Orca designed Discovery AI as a hybrid solution on Amazon Bedrock that combines Retrieval Augmented Generation (RAG) with schema-aware query construction. The system converts natural language questions into valid Discovery filters through a multi-stage pipeline, with each stage matched to the most appropriate Amazon Bedrock model.</p>
-<p>Orca chose Amazon Bedrock because it provides multi-model access through a single API, letting the team allocate different foundation models to each pipeline stage without managing separate integrations. Amazon Bedrock also inherits AWS governance controls through AWS Identity and Access Management (IAM), virtual private cloud (VPC) endpoints, and AWS CloudTrail, meeting Orca’s security requirements. The model-agnostic architecture meant the team could swap in newer model versions as they became available without rearchitecting the pipeline.</p>
-<p>The following diagram illustrates the nine-stage pipeline architecture.</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/05/ML-21130-1.png" alt="Nine-stage Discovery AI pipeline on Amazon Bedrock, from natural language input to a validated Discovery filter"></p>
-<p>Figure 1: Multi-stage Discovery AI pipeline architecture showing the flow from natural language input to validated Discovery filter queries using foundation models on Amazon Bedrock</p>
-<p>The Discovery AI pipeline converts a natural language request into a validated Discovery filter through nine steps.</p>
-<ul><li>Request Entry and Context Setup: The pipeline starts by combining the user’s natural language request with relevant context, including the user’s organization, connected cloud providers, and request metadata. This context helps the pipeline interpret the request accurately and generate a Discovery filter that matches the customer’s environment.</li><li>Quick Deterministic Matcher: The Quick Matcher identifies structured inputs such as IP addresses, Common Vulnerabilities and Exposures (CVEs), ARNs, file hashes, Amazon Machine Image IDs, Oracle Cloud Identifiers, EC2 IDs, URLs, and alert IDs. It uses regex and rule-based matching to detect high-confidence patterns.When a match is found, the pipeline can return a predefined Discovery filter through a fast path, without using large language model (LLM) inference. When no match is found, the request continues to the next step.</li><li>LLM Guardrail Screening: The Guardrail component checks whether the request is safe, relevant, technical, and supported. It blocks prompt injection attempts, off-topic requests, and unsupported inputs before they reach the rest of the pipeline. Requests that fail the guardrail checks are rejected with an appropriate error. Approved requests continue to example retrieval.</li><li>Embedding-Based Semantic Candidate Recall: The pipeline searches for relevant previously validated query examples using Amazon Titan Text Embeddings. It retrieves the 20 nearest examples from the vector store based on semantic similarity. These candidates provide the pipeline with examples of how similar natural language requests were previously translated into Discovery filters.</li><li>Neural Relevance Reranking: The retrieved candidates are reranked using Cohere Rerank 3.5 on Amazon Bedrock. It identifies the examples that are most relevant to the current request and selects the five highest-signal examples. When an exact or high-confidence match is found, the pipeline can reuse the known-good filter directly. Otherwise, the reranked examples are passed to the generative stages.</li><li>LLM-Driven Relevant Model Selection: Model Selection narrows more than 900 Sonar models to the small set relevant to the request. It considers the user’s request, connected providers, and retrieved examples when selecting the appropriate models. The selected models are provided to the Generator using the appropriate schema level, ranging from compact micro schemas to more detailed mini schemas. This reduces unnecessary context and makes generation more efficient.</li><li>Tool-Augmented Agentic Filter Generation: The Generator uses a tool-augmented agent to construct the final Discovery filter. It reasons over the selected model schemas, retrieved examples, user context, and available tools. The agent can iteratively refine the filter as it works toward a valid representation of the user’s request.</li><li>Static and API-Backed Validation: The generated filter is checked for syntactic and semantic correctness. The pipeline first applies static validation and then verifies the filter against Orca’s Sonar API. When validation fails, the validation error is returned to the Generator so the agent can correct the filter and try again. If the maximum number of retries is reached without producing a valid filter, the pipeline returns an invalid-filter response. The Generator is constrained to the reranked examples and selected schemas. Static validation resolves every model, field, and operator back to those schema definitions. Each validation error goes back to the agent with the offending element identified, so retries re-ground rather than re-guess.</li><li>Post-Processing and Response: After a valid filter is produced, whether through the Quick Matcher, reuse of a known-good example, or agentic generation, the pipeline prepares the final response.The team allocated different foundation models on Amazon Bedrock across components based on each stage’s requirements. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-4-5.html">Anthropic Claude Haiku 4.5</a> powers the Model Selector and Generator. These components require strong reasoning for accurate query construction. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-amazon-nova-2-lite.html">Amazon Nova 2 Lite</a> handles the Guardrail and Validator, where fast inference at lower cost is prioritized. Amazon Titan provides embeddings for semantic search in the Example Retrieval component. Cohere Rerank 3.5 reranks retrieved candidates to maximize relevance. For model availability by AWS Region, refer to <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">Regional availability by models</a>.</li></ul>
-<h2>Maximizing relevance and diversity in example retrieval</h2>
-<p>Example retrieval emerged as the single biggest accuracy lever in the pipeline. Strong examples teach the Generator how to translate questions into Sonar queries more efficiently than schema alone, so the Orca team benchmarked several retrieval strategies on Amazon Bedrock. Each strategy traded off relevance, diversity, or speed in a different way, and comparing them directly showed which combination worked best.</p>
-<p>Pure top-K semantic search on Amazon Titan embeddings performed quickly, but it tended to return near-duplicate examples that starved the Generator of diversity. Maximal Marginal Relevance (MMR) improved diversity, but it traded off relevance when the top candidate was actually the right answer. Retrieving a larger candidate set and then reranking it pulled in a broader pool and used a reranker to select the most relevant subset, which pointed toward the winning approach.</p>
-<p>The winner was top-20 nearest-neighbor retrieval using Amazon Titan embeddings. Orca then reranked these results with Cohere Rerank 3.5 down to the top five. This approach gives the Generator a small, diverse, highly relevant set of examples without forcing a trade-off between coverage and precision at retrieval time.</p>
-<h2>Loading over 900 models into context</h2>
-<p>A core constraint shaped the architecture. It wasn’t feasible to include 900+ Sonar model schemas into every prompt. Even with long-context models, doing so degrades both cost and accuracy.</p>
-<p>The Model Selector resolves this. Running on Anthropic Claude Haiku 4.5, it works against compact, semantically rich representations of each model (name, purpose, key fields, and key relationships). Given the user’s question, it returns only the models the Generator actually needs. The Generator then receives full schema detail only for those selected models plus the relationships that connect them.</p>
-<h2>Evaluation methodology</h2>
-<p>To iterate confidently, the Orca team built a continuous evaluation harness early in the project. The harness combines a curated dataset, an automated scoring layer, and a slice-based measurement approach so the team can trust every change before it ships. Together these elements turn evaluation into a routine step rather than an afterthought.</p>
-<p>The curated evaluation dataset spans the question types, model families, and complexity tiers seen in production, so it reflects real usage. An LLM-as-judge scoring layer grades generated queries on correctness, completeness, and semantic equivalence to a reference query, which gives the team a consistent quality signal. The measurement methodology then breaks deltas down by slice, allowing the team to identify exactly where regressions occur and what to correct.</p>
-<p>Every change to a prompt, a model, a retrieval parameter, or an example flows through the harness before it ships to production.</p>
-<h2>Domain-expert-in-the-loop labeling system for continuous improvement</h2>
-<p>Sustaining accuracy as customer environments evolve and new question patterns emerge required more than a strong initial deployment. The Orca team built an internal labeling tool for product managers, support engineers, and security researchers. With the tool, they can flag queries, correct outputs, and push corrections into the example bank in one action. Furthermore, the system automatically collects production queries with low-confidence matching examples and routes them to the appropriate domain expert for daily labeling. The next pipeline run retrieves the new example through Cohere Rerank 3.5, and accuracy on that class of question improves the same moment, with no deployment.</p>
-<blockquote>“The labeling UI is the single most important investment we made for long-term quality. It turns Discovery AI from a static deployment into a living system, with our domain experts continuously improving it inside their normal workflow.”<br>        — Or Gabay, Director of AI, Orca Security</blockquote>
-<p>Combined with end-to-end pipeline observability and shared dashboards spanning product, engineering, and customer-facing teams, this feedback loop is what keeps Discovery AI improving after initial launch.</p>
-<h2>Results</h2>
-<p>After deploying Discovery AI to production, the new solution outperformed the initial baseline across cost, latency, and accuracy. Input token usage fell by 93 percent, from approximately 2 million tokens down to 140,000 per comparable workload. Overall cost fell by 90 percent, driven by that lower token consumption together with per-stage model allocation across Amazon Bedrock.</p>
-<p>Latency also improved, with end-to-end response times dropping by 75 percent, from approximately 60 seconds to 15 seconds. Accuracy on complex, multi-model queries also improved, measured continuously through the team’s evaluation harness.</p>
-<p>Discovery AI now handles thousands of queries per day in production since March 2026, with internal subject matter experts and customer feedback validating quality.</p>
-<h2>Conclusion</h2>
-<p>In this post, we shared how Orca Security built Discovery AI on Amazon Bedrock. The solution reduced query costs by 90 percent, input token usage by 93 percent, and latency by 75 percent compared to the initial baseline. The solution combines several key technologies. These include RAG-based example retrieval with Cohere Rerank 3.5, per-stage model allocation across Anthropic Claude Haiku 4.5 and Amazon Nova 2 Lite, and semantic search powered by Amazon Titan. Additionally, a continuous human-in-the-loop labeling system provides ongoing improvement. This combination allowed Orca to turn a working prototype into a production-grade solution that is both cheaper to run and more accurate.</p>
-<p>To get started building similar solutions, explore <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> for foundation model (FM) access, <a href="https://aws.amazon.com/bedrock/cohere/">Cohere Rerank on Amazon Bedrock</a> for retrieval optimization, and <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/titan-models.html">Amazon Titan</a> for embeddings. To learn more about Orca Security’s cloud security tool, visit <a href="https://orca.security/">orca.security</a>.</p>
-<p>To learn more about how Orca Security applies AI across its framework, see <a href="https://orca.security/platform/orca-ai/">how Orca drives security outcomes with AI</a> and <a href="https://orca.security/platform/secure-ai/">how Orca secures AI adoption, including Amazon Bedrock</a>.</p>
-<p>For more on the techniques used in this post, read <a href="https://aws.amazon.com/blogs/machine-learning/text-to-sql-solution-powered-by-amazon-bedrock/">related posts</a> on the <a href="https://aws.amazon.com/blogs/machine-learning/">AWS Machine Learning Blog</a>.</p>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>How ShipStation Global built an AI IT help desk on Amazon Be…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/how-shipstation-global-built-an-ai-it-help-desk-on-amazon-bedrock-agentcore/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-shipstation-global-built-an-ai-it-help-desk-on-amazon-bedrock-agentcore/?li=1</guid>
-      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: How ShipStation Global built an AI IT help desk on Amazon Bedrock AgentCore</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>How ShipStation Global built an AI IT help desk on Amazon Bedrock AgentCore</h1>
-<p><em>This post is co-written with Kenneth Salmon, Edward Boswell, Jack Armstrong, Robert Bahn, and Nick Ciubotariu from ShipStation Global.</em></p>
-<p>Answering the same IT questions and clearing routine tickets drains time that IT teams could spend elsewhere. To reclaim it, the ShipStation Global Engineering team built <em>Deckhand</em>, an AI-powered IT help desk agent for Slack, on <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a>.</p>
-<p><a href="https://www.shipstationglobal.com/">ShipStation Global</a> is the leading intelligent shipping and logistics platform for small and mid-sized shippers, and it operates on a simple belief: the more efficient its teams are, the better it delivers for customers. Deckhand puts that belief to work. It answers routine IT and company questions from a curated knowledge base, reads error-message screenshots, and creates and updates Jira Service Management tickets.</p>
-<p>In this post, we discuss how ShipStation architected Deckhand, which resulted in resolving 97.5 percent of incoming channel queries while earning a 96 percent positive feedback rating by employees (Figure 1).</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21795-1.png" alt="Chart showing Deckhand reached 97.5% channel coverage and a 96% positive feedback rating over three months"></p>
-<p>Figure 1: 3-month channel coverage and positive feedback</p>
-<h2>Business challenge</h2>
-<p>The problem Deckhand solves is the one every IT team will recognize: the same questions are routinely asked, error messages are posted after business hours, and information needs to be gathered from different teams. At ShipStation Global, those conversations lived in a busy help desk Slack channel, where employees asked, and IT answered, one thread at a time. The answers usually already existed in a Confluence how-to article, on a company intranet page, or in a thread from eight months earlier. Finding them was the hard part.</p>
-<p>The channel data made the scale concrete. In the 12 months before launch:</p>
-<ul><li>Employees posted more than 1,500 threads, and volume kept growing.</li><li>With employees in the US, UK, Spain, Poland, Australia, and the Philippines, more than a fifth of questions arrived outside US business hours.</li><li>Answers were split across different places: Confluence articles, intranet pages and PDFs, IT-maintained guides, and the channel’s own history.</li><li>Repetitive questions consumed time that structured self-service steps could have handled.</li></ul>
-<blockquote>“We created Deckhand because getting help should be as simple as asking a question in Slack, not deciphering a ticket form or sending an email into the void. We believe that tickets are an indication of operational friction not productivity. Deckhand resolves common questions on the spot and, when it can’t, converts the conversation into a fully contextualized ticket with one click, improving the employee experience and freeing our team from endlessly repeating the phrase: ‘Please file a ticket.’”<br>        — Chris Collins, Senior Director IT at ShipStation Global</blockquote>
-<h2>Solution overview</h2>
-<p>Deckhand works in Slack like any teammate—joining channels, reading the conversation, and drawing context from Slack profiles to answer IT questions in place. We run it on Amazon Bedrock AgentCore, a platform to build, connect, and optimize agents at scale, with any framework or model. AgentCore runtime, a capability of Amazon Bedrock AgentCore, hosts the agent in isolated sessions, so we run no servers or containers.</p>
-<p>The solution has four main components, shown in Figure 2:</p>
-<ul><li><strong>Slack service:</strong> A FastAPI and Slack Bolt application, hosted on <a href="https://docs.aws.amazon.com/apprunner/latest/dg/what-is-apprunner.html">AWS App Runner</a>. It receives Slack events, decides whether the bot should respond, and builds a user-context payload from the requester’s Slack profile, including name, email, time zone, and manager.</li><li><strong>Agent service:</strong> A Strands agent, deployed as a container on <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html">Amazon Bedrock AgentCore runtime</a>, manages the multi-turn tool agent loop using Anthropic’s Claude in <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html">Amazon Bedrock</a>.</li><li><strong>Tools and knowledge:</strong> A single <a href="https://docs.aws.amazon.com/lambda/latest/dg/welcome.html">AWS Lambda</a> function, exposed as Model Context Protocol (MCP) tools through <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/gateway-core-concepts.html">AgentCore Gateway</a>, a capability of Amazon Bedrock AgentCore, classifies requests, creates and updates Jira tickets, and analyzes images. An <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock knowledge base</a> indexes content from Confluence, the company intranet, Slack, and marketing pages, storing it in <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html">Amazon Simple Storage Service (Amazon S3)</a>.</li><li><strong>Operations and feedback.</strong> <a href="https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html">Amazon DynamoDB</a> stores feedback, <a href="https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html">AWS X-Ray</a> traces request paths using OpenTelemetry, and the services log to <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html">Amazon CloudWatch</a>.</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21795-2.png" alt="Architecture diagram of Deckhand on Amazon Bedrock AgentCore showing the Slack service, agent runtime, knowledge base, Gateway-backed Lambda tools, Jira Service Management, and DynamoDB feedback"></p>
-<p>Figure 2: Architecture diagram showing Slack events entering the Slack service and Amazon Bedrock AgentCore runtime, with separate paths to an Amazon Bedrock knowledge base, AgentCore Gateway-backed Lambda tools, Jira Service Management, and DynamoDB feedback.</p>
-<p>When an employee posts in a channel where Deckhand is a member, the Slack service assembles the full thread history and user context. It then invokes the agent through the AgentCore runtime API. The agent searches the knowledge base and calls tools as needed. When it finds an answer, it returns a final response (Figure 3). When it doesn’t, it asks a clarifying question or offers to create a ticket (Figure 4).</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21795-3.png" alt="Slack screenshot of Deckhand replying with numbered self-service steps"></p>
-<p>Figure 3: Deckhand responds with self-service steps</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21795-4.jpg" alt="Slack screenshot of Deckhand offering a Create Ticket button"></p>
-<p>Figure 4: Deckhand offers to create a ticket</p>
-<h2>Deckhand workflow</h2>
-<p>This section walks through how Deckhand is implemented, from prerequisites to a working deployment.</p>
-<h3>Prerequisites</h3>
-<p>To implement this pattern, you need the following:</p>
-<ul><li>An AWS account with access to Amazon Bedrock, AgentCore runtime, and AgentCore Gateway.</li><li>A Slack app with event subscriptions, a signing secret, and a bot token scoped to your use case.</li><li>A container image registry such as Amazon Elastic Container Registry (Amazon ECR).</li><li>An Amazon S3 bucket and an Amazon Bedrock knowledge base.</li><li>AWS Identity and Access Management (IAM) roles scoped to each runtime and tool, and AWS Secrets Manager entries for third-party credentials.</li></ul>
-<h3>Building the agent with Strands Agents and AgentCore</h3>
-<p>The agent is intentionally lightweight. Using the open source <a href="https://aws.amazon.com/blogs/opensource/introducing-strands-agents-an-open-source-ai-agents-sdk/">Strands Agents SDK</a>, an agent consists of a model, a set of tools, and a system prompt. The SDK manages the reasoning loop, allowing the model to select tools, process results, and iterate until it produces an answer. Deckhand’s agent service is implemented in a few lines of Python.</p>
-<pre><code>from strands import Agent
-from strands.models import BedrockModel
-from strands.tools.mcp import MCPClient
-from strands_tools import retrieve
-from mcp.client.streamable_http import streamablehttp_client
-
-model = BedrockModel(
-    model_id=MODEL_ID,
-    max_tokens=2048,
-    temperature=0.3,
-)
-
-gateway = MCPClient(lambda: streamablehttp_client(url=GATEWAY_URL))
-
-agent = Agent(
-    model=model,
-    tools=[gateway, retrieve],
-    system_prompt=SYSTEM_PROMPT,
-)</code></pre>
-<p>The model ID is set through an environment variable, which allows switching models without modifying application code.</p>
-<p>Tools are integrated with the agent in two ways. Amazon Bedrock Knowledge Bases retrieval is a native Strands tool that supports knowledge base search with a single import. Other functions, including classification, ticket management, user resolution, and image analysis, are handled by a Lambda function registered on AgentCore Gateway. The Gateway exposes these as MCP tools, and the Lambda routes each invocation by tool name. This separation allows tool logic to be updated independently, and the agent can access new tools from the Gateway without requiring a rebuild.</p>
-<p>AgentCore runtime hosts the agent as a container, avoiding the need for server or session management. The Slack service calls the agent synchronously for each message, providing the thread transcript and user context, and posts the final response. Since context, including the employee’s profile, is included with every request, the agent can complete ticket details automatically.</p>
-<h3>Knowledge base design and answer routing</h3>
-<p>Deckhand answers from a single Amazon Bedrock knowledge base with core S3-backed data sources:</p>
-<ul><li>Articles synced from Confluence.</li><li>Internal pages, PDFs, and events synced from the company intranet.</li><li>Resolved support threads mined from Slack (covered in the next section).</li></ul>
-<p>Each document includes metadata such as title, source URL, content type, and event dates. This allows the agent to filter content, for example, when users ask about upcoming events or weekly lunch menus in the Austin office.</p>
-<h3>Mining Slack history with Recursive Language Models (RLMs)</h3>
-<p>The most valuable data source is the archive of resolved support threads. Before Deckhand existed, Slack was where problems got solved: years of employees describing issues and IT walking them through fixes. That history is an organic knowledge base, validated by the best possible reviewer: the person whose problem got fixed. It’s also noisy: a raw export mixes banter, automated alerts, and threads that never actually got resolved. Indexing an unverified fix or a garbled summary means the knowledge base surfaces an incorrect answer with the same confidence as a correct one, so extraction needs to be precise.</p>
-<p>The mining process follows a three-stage pipeline (Figure 5):</p>
-<ul><li>A script exports the channel’s full history via the Slack API, retrieving complete replies for every thread and writing a structured dump that includes thread markers, timestamps, and reply counts.</li><li>DSPy’s Recursive Language Model (RLM), running Claude on Amazon Bedrock, treats that export as a navigable memory space inside a sandboxed Python read-eval-print loop (REPL) rather than a single prompt. Working iteratively over the data, it classifies each thread as resolved, unresolved, or escalated and filters out announcements and non-questions. Strict criteria keep quality high: a thread counts as resolved only when the full, workable fix is visible in the thread itself.</li><li>For each resolved thread, the RLM orchestrates recursive sub-LLM (large language model) calls to extract structured fields, each validated against a Pydantic model. The fields include an issue summary, the original question, and the resolution. They also capture whether the fix is self-service or needs a ticket, the self-service steps, the application and system involved, error messages, and tags. When a sub-LLM call returns something that fails the schema, the RLM’s code-based loop catches the validation error in the interpreter and retries. The results are written as a markdown document organized by issue. The pipeline uploads it to Amazon S3 for the knowledge base to index.</li></ul>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/08/ML-21795-5.png" alt="Three-stage pipeline diagram: export Slack channel history, classify threads as resolved or not, and extract structured fields"></p>
-<p>Figure 5: Export classification and extraction workflow of the Slack conversation</p>
-<p>We chose <a href="https://dspy.ai/diving-deeper/rlm">RLM</a> because it maintains the entire Slack history in a persistent sandbox variable space, allowing iterative reasoning over the export and consistent output structure. As a result, when an employee encounters a problem previously solved by a colleague, Deckhand provides the proven solution, often as actionable, numbered steps.</p>
-<h3>Knowing when not to answer</h3>
-<p>An AI bot in a shared channel fails socially before it fails technically. Deckhand’s most refined logic decides when to stay quiet:</p>
-<ul><li>The agent’s first decision on every message is whether it’s an announcement, a social message, or a conversation between people. If so, it outputs “SKIP,” and the Slack service suppresses the reply.</li><li>In threads, it replies only to the original poster.</li><li>If the last reply came from another human helper, it stays silent, because a person has taken over.</li><li>If a reply starts by @naming a person, the message isn’t for the bot.</li></ul>
-<h3>Collecting feedback</h3>
-<p>Each answer includes feedback buttons. A thumbs-up is recorded directly, while a thumbs-down prompts a brief “what went wrong” field. Ratings are stored in DynamoDB with the original question and the bot’s response.</p>
-<p>Negative feedback is a valuable dataset used to improve the system prompt and agent behavior, and to update incorrect knowledge base information.</p>
-<h3>Security and validation</h3>
-<p>Prompt rules enhance behavior but do not replace access controls. Enforcement is managed through code and infrastructure:</p>
-<ul><li>Ticket creation requires explicit confirmation. When Deckhand offers to create a ticket, the Slack service adds a <strong>Create Ticket</strong> button, and selecting it sends confirmation through the agent. Ticket updates only accept valid keys matching the helpdesk project pattern and reject empty comments.</li><li>Classification is validated before it acts. Request classification runs as a separate <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html">Amazon Bedrock Converse API</a> call that returns structured ticket fields, validated with Pydantic before anything reaches Jira.</li><li>The image tool is restricted to downloading only from Slack’s file host. It authenticates with the bot token, limits each request to five images of up to 5 MB each, and sends the files to a vision model using the Converse API.</li><li>Credentials stay out of code. Slack tokens, the signing secret, and Jira credentials live in <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html">AWS Secrets Manager</a>, and each service and tool runs under its own scoped IAM role.</li><li>The prompt enforces behavioral safeguards: never request passwords or multi-factor authentication (MFA) codes, never write credentials in ticket comments, and never expose profile metadata used for ticket fields.</li></ul>
-<h2>Outcome</h2>
-<p>Deckhand launched in April 2026. It started at about 30 messages a day and reached as many as 100 by early summer. In its first three months it handled 1,935 messages, started 1,221 agent conversations, and opened 409 Jira tickets. It replied to 97.5 percent of messages. A third of the questions came in after hours, when no one on the IT team was working, and Deckhand answered 94 percent of those. People who would have waited until the next morning got an answer that night.</p>
-<p>Feedback improved as the team worked on it. Positive ratings went from 82 percent in April to 96 percent in June, after they revised the system prompt and knowledge base to fix what people complained about.</p>
-<p>The clearest win was ticket deflection. An agent conversation is a question that would otherwise have become a Jira ticket. Of the 1,221 conversations, only 409 turned into tickets. The other 812 were handled in chat. Filing a ticket and then working and closing it runs about 30 minutes. Those 812 conversations add up to roughly 406 hours over three months, or around 1,600 hours a year. Employees kept that time for their own work, and IT never spent it on intake.</p>
-<h2>Conclusion</h2>
-<p>Deckhand took repetitive IT questions off people’s plates and gave the time back to employees and the IT team. It works because each part of the stack has one job and runs as a managed service: AgentCore runtime hosts the agent, AgentCore Gateway turns a Lambda function into MCP tools the agent can call, and Amazon Bedrock Knowledge Bases handles retrieval. The team shipped it without standing up servers or maintaining orchestration code.</p>
-<p>To build a similar solution, begin with a well-maintained knowledge source and a clearly defined action. Refer to the <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-how-it-works.html">Amazon Bedrock AgentCore documentation</a> and <a href="https://aws.amazon.com/blogs/opensource/introducing-strands-agents-an-open-source-ai-agents-sdk/">Strands Agents SDK</a> for agent development, and the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Knowledge Bases documentation</a> for connecting content sources.</p>
-<p>To discuss an agentic AI use case for your organization, contact your AWS account team.</p>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Build long-horizon agents with Grok 4.7 on Amazon Bedrock</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/build-long-horizon-agents-with-grok-4-7-on-amazon-bedrock/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-long-horizon-agents-with-grok-4-7-on-amazon-bedrock/?li=1</guid>
-      <pubDate>Tue, 13 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Build long-horizon agents with Grok 4.7 on Amazon Bedrock</h1>
-<p>SpaceXAI’s Grok 4.7 is now available on Amazon Bedrock, which offers a choice of foundation models (FMs) from multiple providers. According to SpaceXAI, Grok 4.7 is trained to work longer on more difficult tasks and knows when to check its own work. That matters most for agents, which carry a task through many steps and must verify what they find along the way.</p>
-<p>An agent that works this way has to do more than look things up. It has to form a candidate answer, check it against what it has learned, and refine it until it fits. Grok 4.7 exposes a reasoning effort setting that controls how much deliberation happens before each response, and for agent workloads a practical question is which level to run.</p>
-<p>In this post, we build a tool-calling agent on Grok 4.7 and evaluate it on three tasks that require search rather than lookup. The tasks are diagnosing a two-service outage from its alerts, scheduling maintenance under interacting constraints, and choosing an optimal set of migrations under a budget. Each task has exactly one correct answer, verified by brute force. We ran all three at every reasoning effort level, six times each, for 72 agent runs.</p>
-<p>The agent answered 67 of the 72 runs correctly. At <code>xhigh</code> it answered all 18 correctly, and at <code>low</code> it answered 15 of 18 while using about an eighth of the output tokens. That gives a clear trade-off you can tune per request, and we show how to measure it on your own tasks and how to monitor it in production.</p>
-<p>We report token counts rather than currency throughout. Token prices change, and the counts are what your own costs are derived from, so a measurement expressed in tokens stays valid.</p>
-<h2>What SpaceXAI reports about Grok 4.7</h2>
-<p>According to SpaceXAI, Grok 4.7 uses a larger base model than Grok 4.6 and was trained with a longer reinforcement learning run on a harder mix of tasks. This mix is weighted toward problems that take many hours to complete. SpaceXAI reports that the model is better at verifying its own work and at managing longer context.</p>
-<p>SpaceXAI’s published benchmark results follow that emphasis. The largest reported gains over Grok 4.6 appear in the categories that measure sustained work rather than single-turn answers.</p>
-<table><thead><tr><th><strong>Benchmark</strong></th><th><strong>Category</strong></th><th><strong>Grok 4.6</strong></th><th><strong>Grok 4.7</strong></th></tr></thead><tbody><tr><td><strong>Terminal-Bench 4.0</strong></td><td>Multi-hour terminal work</td><td>20.3%</td><td>37.6%</td></tr><tr><td><strong>EEBench</strong></td><td>Electrical engineering</td><td>53.0%</td><td>64.0%</td></tr><tr><td><strong>Harvey Legal Agent Benchmark</strong></td><td>Legal work</td><td>15.8%</td><td>19.6%</td></tr><tr><td><strong>CursorBench 4.0</strong></td><td>Longer-running coding</td><td>40.4%</td><td>46.3%</td></tr><tr><td><strong>HealthBench Professional</strong></td><td>Clinical reasoning</td><td>48.5%</td><td>56.7%</td></tr><tr><td><strong>AA Briefcase v1.1</strong></td><td>Multi-hour office work</td><td>1,546</td><td>1,657</td></tr></tbody></table>
-<p>Source: SpaceXAI, Introducing Grok 4.7 (<a href="https://x.ai/news/grok-4-7">https://x.ai/news/grok-4-7</a>). Scores are as published by SpaceXAI at the time of the model launch.</p>
-<p>Benchmarks show how a model performs across standard tasks. For your own workload, the useful next step is to measure on tasks shaped like yours, which is what the rest of this post walks through.</p>
-<p>SpaceXAI lists a 500K token context window for Grok 4.7, with text and image input and text output. On Amazon Bedrock, the model supports configurable reasoning effort, tool calling, and structured output.</p>
-<h2>How you access Grok 4.7 on Amazon Bedrock</h2>
-<p>Grok 4.7 runs on the <code>bedrock-runtime</code> endpoint and is accessed through a <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">cross-Region inference</a> profile. Two profiles are available:</p>
-<table><thead><tr><th><strong>Inference profile</strong></th><th><strong>Routing</strong></th><th><strong>Use when</strong></th></tr></thead><tbody><tr><td><strong>us.xai.grok-4.7</strong></td><td>Within the US geography</td><td>You have US data residency requirements</td></tr><tr><td><strong>global.xai.grok-4.7</strong></td><td>Commercial AWS Regions</td><td>You have no residency constraints and want the widest capacity</td></tr></tbody></table>
-<p>Cross-Region inference routes requests across multiple AWS Regions, which gives you higher throughput without managing capacity Region by Region. Requests name one of the inference profiles rather than a bare model ID.</p>
-<p>The model supports the OpenAI-compatible Chat Completions and Responses APIs, and the Amazon Bedrock Converse API. On Converse, reasoning is returned as a <code>reasoningContent</code> block alongside the <code>text</code> block. In <code>inferenceConfig</code>, set <code>maxTokens</code> only, and put model-specific parameters, such as reasoning effort, in <code>additionalModelRequestFields</code>.</p>
-<p>For the current list of supported Regions, service tiers, and token prices, see the Grok 4.7 model card in the Amazon Bedrock User Guide and the Amazon Bedrock pricing page (<a href="https://aws.amazon.com/bedrock/pricing/">https://aws.amazon.com/bedrock/pricing/</a>).</p>
-<h2>Prerequisites</h2>
-<ul><li>An AWS account with access to Amazon Bedrock, and model access enabled for Grok 4.7.</li><li>Python 3.9 or later, with <code>openai</code>, <code>boto3</code>, and <code>aws-bedrock-token-generator</code> installed.</li><li>AWS credentials configured in your environment.</li></ul>
-<p>Your AWS Identity and Access Management (IAM) identity needs <code>bedrock:InvokeModel</code> on both the inference profile and your account’s default project:</p>
-<ul><li><code>arn:aws:bedrock:{region}::inference-profile/us.xai.grok-4.7</code> or the <code>global.</code> equivalent.</li><li><code>arn:aws:bedrock:{region}:{account-id}:project/default</code>.</li></ul>
-<p>Include both resources in the policy statement. The default project permission is required in addition to the inference profile.</p>
-<h2>Connect to the model</h2>
-<p>For production use, we recommend generating a short-term bearer token from your existing AWS credentials, so authentication stays tied to your IAM identity and no long-lived secret is stored:</p>
-<pre><code>from aws_bedrock_token_generator import provide_token
-from openai import OpenAI
-
-REGION = &quot;us-west-2&quot;
-MODEL_ID = &quot;us.xai.grok-4.7&quot;
-
-client = OpenAI(
-    api_key=provide_token(region=REGION),
-    base_url=f&quot;https://bedrock-runtime.{REGION}.amazonaws.com/openai/v1&quot;,
-    timeout=360,
-    max_retries=0,  # retries are handled explicitly, see &quot;Build in retries&quot; below
-)</code></pre>
-<p>Reasoning tokens count as output tokens and draw down <code>max_completion_tokens</code> before the answer text is produced, so size the limit to leave room for both. If the limit is reached during reasoning, the response returns without answer text, so check for empty content in agent code and raise the limit if you see it. Our runs used a limit of 32,768 tokens, which left headroom at every effort level.</p>
-<p>Grok 4.7 supports four effort levels: <code>low</code>, <code>medium</code>, <code>high</code>, and <code>xhigh</code>. Effort levels can change between model versions, so it is worth confirming them against the service rather than hardcoding a list:</p>
-<pre><code>def supported_effort_levels(candidates=(&quot;none&quot;, &quot;low&quot;, &quot;medium&quot;, &quot;high&quot;, &quot;xhigh&quot;, &quot;max&quot;)):
-    supported = []
-    for level in candidates:
-        try:
-            client.responses.create(model=MODEL_ID, input=&quot;Say OK.&quot;,
-                reasoning={&quot;effort&quot;: level}, max_output_tokens=2048)
-            supported.append(level)
-        except Exception as exc:
-            if &quot;unsupported_value&quot; not in str(exc) and &quot;invalid_value&quot; not in str(exc):
-                raise
-    return supported
-
-
-print(supported_effort_levels())  # ['low', 'medium', 'high', 'xhigh']</code></pre>
-<h2>Design tasks that need reasoning</h2>
-<p>Many agent evaluations test diligence: read a record, filter it, add it up. Those tasks are worth having, but to see what reasoning effort contributes, a task has to require search: the answer can’t be read off the data, it has to be proposed and then checked.</p>
-<p>We built a synthetic environment of 20 services, exposed through seven tools, and three tasks on top of it. Every task has exactly one correct answer, and each is built so that a quick heuristic is not enough to find it.</p>
-<table><thead><tr><th><strong>Task</strong></th><th><strong>What the agent has to do</strong></th><th><strong>What makes it a reasoning task</strong></th></tr></thead><tbody><tr><td><strong>two_fault_diagnosis</strong></td><td>Two services failed silently at 03:00 and 12 others raised alerts. Identify the two that failed</td><td>Failed services raise no alerts, so the answer is not among the alerting services. 190 possible pairs, and only one explains exactly the alerts observed</td></tr><tr><td><strong>maintenance_schedule</strong></td><td>Patch eight services over four nights, two per night, under ten constraints and a rule that two services from the same team never share a night</td><td>2,520 possible schedules, one valid. The team rule depends on data the agent has to look up</td></tr><tr><td><strong>migration_budget</strong></td><td>Choose candidates to migrate that maximize risk reduction within a budget, including transitive prerequisites</td><td>53 feasible sets, one optimal. Picking the best ratio first gives a set nine points short of the optimum</td></tr></tbody></table>
-<p>Four practices keep a measurement like this trustworthy, and they apply to most agent evaluations.</p>
-<p><strong>State every rule the grader relies on.</strong> If the prompt leaves an edge case open, a reasonable answer can be scored as wrong, and the evaluation ends up measuring the specification rather than the model. The diagnosis prompt, for example, says explicitly that a failed service raises no alert of its own.</p>
-<p><strong>Prove each task has one answer.</strong> Each environment is small enough to enumerate, so we checked every candidate answer before running anything. For the schedule, that is a few lines:</p>
-<pre><code>import itertools
-
-ALL_SLOTS = sorted(set(itertools.permutations([1, 1, 2, 2, 3, 3, 4, 4])))
-
-def valid_schedules(services, constraints):
-    return [s for slots in ALL_SLOTS
-        if satisfies(s := dict(zip(services, slots)), constraints)]
-
-assert len(valid_schedules(SERVICES, CONSTRAINTS)) == 1  # exactly one answer
-assert len(valid_schedules(SERVICES, CONSTRAINTS_WITHOUT_TEAM_RULE)) &gt; 1  # the rule matters</code></pre>
-<p><strong>Grade a required final line, not the whole response.</strong> Each prompt asks the agent to end with a line such as <code>FINAL: auth, checkout</code>. The grader reads only that line, so a response that discusses other candidates while explaining its reasoning is graded on its conclusion:</p>
-<pre><code>def final_line(answer):
-    lines = [l for l in (answer or &quot;&quot;).splitlines() if &quot;FINAL&quot; in l.upper()]
-    return lines[-1] if lines else None</code></pre>
-<p><strong>Track format separately from correctness.</strong> A missing final line is a different signal from an incorrect one. In our runs, all 72 responses included a gradeable final line.</p>
-<p>Constrain tool parameters with an <code>enum</code> where the valid values are known, so every tool call targets a real resource:</p>
-<pre><code>TOOLS = [
-    {&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {
-        &quot;name&quot;: &quot;get_dependencies&quot;,
-        &quot;description&quot;: &quot;Services that one service directly depends on.&quot;,
-        &quot;parameters&quot;: {
-            &quot;type&quot;: &quot;object&quot;,
-            &quot;properties&quot;: {&quot;service&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: SERVICE_NAMES}},
-            &quot;required&quot;: [&quot;service&quot;],
-        }}},
-    # The remaining six tools follow the same shape.
-]</code></pre>
-<p>The system prompt is deliberately short, and asks the agent to check its answer before giving it:</p>
-<pre><code>AGENT_SYSTEM = (
-    &quot;You are an infrastructure analyst agent. Use the tools to gather facts and never guess &quot;
-    &quot;a value you can look up. Before answering, check your answer against every rule in the &quot;
-    &quot;task. End with the FINAL line exactly as the task specifies.&quot;
-)</code></pre>
-<p>The agent loop is a standard tool-calling loop: call the model with <code>reasoning_effort</code> set, execute each returned tool call, append the result keyed by <code>tool_call_id</code>, and repeat until the model stops requesting tools. Tracking <code>prompt_tokens</code> and <code>completion_tokens</code> across the loop gives the token counts reported in the following section.</p>
-<h2>Results</h2>
-<p>Six runs of each task at each effort level, 72 runs in total. The agent answered 67 correctly.</p>
-<table><thead><tr><th><strong>Task</strong></th><th><strong>low</strong></th><th><strong>medium</strong></th><th><strong>high</strong></th><th><strong>xhigh</strong></th></tr></thead><tbody><tr><td><strong>two_fault_diagnosis</strong></td><td>5 of 6</td><td>6 of 6</td><td>6 of 6</td><td>6 of 6</td></tr><tr><td><strong>maintenance_schedule</strong></td><td>5 of 6</td><td>5 of 6</td><td>5 of 6</td><td>6 of 6</td></tr><tr><td><strong>migration_budget</strong></td><td>5 of 6</td><td>6 of 6</td><td>6 of 6</td><td>6 of 6</td></tr><tr><td><strong>All three tasks</strong></td><td><strong>15 of 18</strong></td><td><strong>17 of 18</strong></td><td><strong>17 of 18</strong></td><td><strong>18 of 18</strong></td></tr></tbody></table>
-<table><thead><tr><th><strong>Per run</strong></th><th><strong>low</strong></th><th><strong>medium</strong></th><th><strong>high</strong></th><th><strong>xhigh</strong></th></tr></thead><tbody><tr><td><strong>Mean output tokens</strong></td><td>1,184</td><td>6,430</td><td>6,778</td><td>9,147</td></tr><tr><td><strong>Output tokens relative to low</strong></td><td>1.0x</td><td>5.4x</td><td>5.7x</td><td>7.7x</td></tr><tr><td><strong>Mean tool calls</strong></td><td>17.2</td><td>18.7</td><td>17.8</td><td>18.1</td></tr><tr><td><strong>Median elapsed time</strong></td><td>18s</td><td>98s</td><td>89s</td><td>106s</td></tr></tbody></table>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/12/ML-22076-1-1.png" alt="Bar charts showing correctness rate and mean output tokens per run across low, medium, high, and xhigh reasoning effort levels"></p>
-<p>Figure 1: Share of runs answered correctly at each reasoning effort level (left), and mean output tokens per run with median seconds per run overlaid (right)</p>
-<p>Three observations.</p>
-<p><strong><code>xhigh</code> answered every run correctly.</strong> All 18 runs across the three tasks were correct at <code>xhigh</code>, and <code>medium</code> and <code>high</code> answered 17 of 18 each. With six runs per task and level, the differences between levels are indicative rather than statistically conclusive, and the direction was consistent across all three tasks.</p>
-<p><strong>Effort changes how much the agent reasons, not how much it explores.</strong> Tool calls were essentially flat, between 17.2 and 18.7 per run at every level. The agent gathered the same facts regardless of effort, and what changed was how much reasoning it applied to them, with output tokens rising from 1,184 at <code>low</code> to 9,147 at <code>xhigh</code>.</p>
-<p><strong><code>low</code> offers a strong cost-to-quality ratio.</strong> At <code>low</code>, the agent answered 15 of 18 runs correctly using about an eighth of the output tokens of <code>xhigh</code>, with a median run of 18 seconds. Where a slightly lower completion rate is acceptable, or where answers are reviewed downstream, <code>low</code> is an efficient choice. Where every answer needs to be right first time, higher levels are the safer default.</p>
-<h2>How effort level shapes the answer</h2>
-<p>The tasks were designed around a specific kind of difficulty, and looking at how each effort level handled them clarifies when the extra reasoning is worth it.</p>
-<p><strong>Optimization.</strong> The migration task rewards considering combinations rather than ranking options one at a time. Selecting the candidates with the best individual ratios produces a reasonable answer that is nine points short of the optimum. At <code>medium</code> and above, the agent found the optimal set in all 18 runs.</p>
-<p><strong>Hypothesis testing.</strong> The diagnosis task requires checking a candidate pair in both directions: every alert has to be explained, and every service that stayed silent has to be consistent with the answer. At <code>medium</code> and above, the agent identified the correct pair in all 18 runs.</p>
-<p><strong>Constraint satisfaction.</strong> The scheduling task combines ten listed constraints with a team rule that depends on looked-up ownership data. <code>xhigh</code> produced the valid schedule in every run, and this was the task where the highest level made the clearest difference.</p>
-<p>The pattern across the three is that additional reasoning effort is most valuable where the agent has to weigh several candidate answers against each other, rather than follow a single path to the result.</p>
-<h2>Monitoring reasoning in production</h2>
-<p>In production you don’t have a known answer to grade against, but you do know how many output tokens and tool calls each run used. Those give you a useful operational signal.</p>
-<p>Correct runs at each level stay above a clear floor of reasoning volume. Every correct run at <code>medium</code> and above used at least 1,739 output tokens, and the typical run used several thousand. A run that makes no tool calls, or that produces far less output than is normal for its level, is worth flagging for review:</p>
-<pre><code>def flag_for_review(run, baseline):
-    &quot;&quot;&quot;baseline: output tokens of graded, correct runs at the same effort level.&quot;&quot;&quot;
-    reasons = []
-    if run[&quot;tool_calls&quot;] == 0:
-        reasons.append(&quot;made no tool calls&quot;)
-    if run[&quot;output_tokens&quot;] &lt; 0.2 * min(baseline):
-        reasons.append(f&quot;used {run['output_tokens']} output tokens, &quot;
-            f&quot;under a fifth of the lowest correct run ({min(baseline)})&quot;)
-    return reasons</code></pre>
-<p>Calibrate the baseline from runs you have graded, per task and per effort level, then apply it to runs you have not. Treat a flag as a prompt to inspect or re-run. At <code>low</code>, where every run is brief, output volume is a weaker signal, so pair it with spot checks.</p>
-<p>Asking the agent to verify its answer in the system prompt is worth keeping, because it makes the agent’s reasoning straightforward to follow when you review a run. Pair it with automated grading wherever a known answer exists, so that quality is measured independently of the transcript.</p>
-<h2>Choosing a reasoning effort</h2>
-<p>These results suggest a few practical rules.</p>
-<p><strong>Match effort to the kind of task.</strong> Tasks that involve search, optimization, or testing a hypothesis benefit most from <code>medium</code> or higher. Tasks that follow a single path, or whose answers are reviewed downstream, can run efficiently at <code>low</code>.</p>
-<p><strong>Set effort per request, not per agent.</strong> Effort is a request parameter, so an agent can run its planning and verification steps at a higher level and its mechanical steps, such as formatting a tool result, at <code>low</code>. That combines much of the reliability of a higher level with a lower token cost.</p>
-<p><strong>Measure on your own tasks, with repeats.</strong> A single run per configuration gives a single observation. Repeating each configuration several times shows how consistent it is.</p>
-<p><strong>Monitor reasoning volume.</strong> Output tokens and tool calls per run, tracked by effort level, give you an early signal to review a run before its result is used.</p>
-<h2>Limitations of this measurement</h2>
-<p><strong>Six runs per task and effort level.</strong> Enough to show a consistent direction across three tasks, not enough for a confidence interval. Treat the differences between levels as indicative.</p>
-<p><strong>A synthetic environment.</strong> The tools read from data generated in code, which is what makes it possible to prove each task has exactly one answer and to grade automatically. Real tools add latency, partial results and errors, none of which are tested here.</p>
-<p><strong>Minutes, not hours.</strong> Median run time ranged from 18 seconds at <code>low</code> to 106 seconds at <code>xhigh</code>. This is a scaled-down proxy for long-horizon work. The method transfers. The absolute figures do not.</p>
-<p><strong>One model version, one Region, one prompt per task.</strong> Different phrasings of the same task may change the results, which is part of why stating every rule explicitly matters.</p>
-<p><strong>Token counts, not costs.</strong> To convert to currency, apply the current rates for your inference profile and service tier from the Amazon Bedrock pricing page. The Global and US Geo profiles are priced differently, and the Flex and Priority service tiers apply multipliers.</p>
-<h2>Operational controls for agent workloads</h2>
-<p><strong>Build in retries.</strong> Agents that issue a high volume of calls should treat retries as part of the design. Set a request timeout, retry only errors that are retryable, back off exponentially with jitter, and honor a <code>Retry-After</code> header when one is returned:</p>
-<pre><code>import random, time
-
-RETRYABLE = {408, 429, 500, 502, 503, 504}
-
-def call_with_backoff(fn, attempts=7, base=4.0, cap=180.0):
-    for attempt in range(1, attempts + 1):
-        try:
-            return fn()
-        except Exception as exc:
-            status = getattr(exc, &quot;status_code&quot;, None)
-            retryable = status in RETRYABLE or &quot;timed out&quot; in str(exc).lower()
-            if not retryable or attempt == attempts:
-                raise
-            time.sleep(random.uniform(base, min(cap, base * 2 ** attempt)))</code></pre>
-<p>On-demand throughput scales up over time, so ramp a new high-volume workload gradually rather than starting at full rate.</p>
-<p><strong>Auditing a run.</strong> Model invocation logging writes request and response data to Amazon Simple Storage Service (Amazon S3) or Amazon CloudWatch Logs. This gives you the full transcript of runs you want to review after the fact.</p>
-<p><strong>Monitoring reasoning volume at scale.</strong> Amazon CloudWatch metrics give you the aggregate view of token usage, which is where the per-level baselines described earlier become something you can alarm on.</p>
-<p><strong>Attributing spend across agents.</strong> Cost itemization in AWS Cost Explorer and the AWS Cost and Usage Report breaks usage out per model, which combined with per-task token counts gives you both unit economics and the aggregate bill.</p>
-<p><strong>Matching cost to urgency.</strong> Service tiers are set per request, so one deployment can send an overnight analysis through the Flex tier and an interactive request through Priority. For a workload that runs at a higher effort level, tier selection is a further lever on cost.</p>
-<p><strong>Choosing a routing profile.</strong> Cross-Region inference widens the capacity pool a long run draws from. The Global profile serves from your choice of commercial AWS Region and is typically priced lower per token than geographic routing. The US profile keeps processing within the United States. Choose based on your data residency requirements as well as cost.</p>
-<h2>Clean up</h2>
-<p>The examples in this post do not create billable AWS resources beyond per-request token usage. If you generated a long-term Amazon Bedrock API key, delete it in the Amazon Bedrock console when you are finished, because it remains valid until revoked. Short-term tokens generated from IAM credentials expire on their own.</p>
-<p>If you enabled model invocation logging to Amazon S3 while testing, review the bucket and remove objects you no longer need.</p>
-<h2>Conclusion</h2>
-<p>SpaceXAI trained Grok 4.7 to work longer on more difficult tasks and to know when to check its own work. On three tasks that required search rather than lookup, the agent answered 67 of 72 runs correctly, and every run at <code>xhigh</code>. Because reasoning effort is set per request, you can choose where each step of an agent sits on the trade-off between thoroughness and token cost.</p>
-<p>Three things are worth carrying into your own evaluation. Design tasks with one provable answer and state every rule the grader depends on. Repeat runs, so you see how consistent each configuration is. And monitor output tokens and tool calls by effort level, so you have an operational signal alongside your quality measurements.</p>
-<h2>Further reading</h2>
-<ul><li><a href="https://aws.amazon.com/blogs/machine-learning/introducing-grok-on-amazon-bedrock/">Introducing Grok on Amazon Bedrock</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/grok-4-7-is-now-available-on-amazon-bedrock/">Grok 4.7 is now available on Amazon Bedrock</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference.html">Route model inference requests across AWS Regions with cross-Region inference</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/getting-started.html">Getting started with Amazon Bedrock</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-chat-completions.html">Chat Completions API</a></li><li><a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock pricing</a></li><li><a href="https://x.ai/news/grok-4-7">Introducing Grok 4.7</a> (SpaceXAI)</li></ul>
 <h2>About the authors</h2>]]></content:encoded>
     </item>
   </channel>
