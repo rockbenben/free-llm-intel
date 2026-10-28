@@ -7,7 +7,276 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 26 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Manage costs and demonstrate ROI for Claude Code on Google C…</title>
+      <link>https://claude.com/resources/articles/how-to-manage-costs-and-demonstrate-roi-for-claude-code-on-google-cloud</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/how-to-manage-costs-and-demonstrate-roi-for-claude-code-on-google-cloud?li=1</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Manage costs and demonstrate ROI for Claude Code on Google Cloud</description>
+      <content:encoded><![CDATA[<p>As organizations delegate more work to Claude Code, spend grows with it, and platform teams need a way to both control costs and understand impact. Inspired by <a href="https://www.anthropic.com/webinars/how-to-control-costs-and-show-roi-for-claude-code-on-google-cloud">a recent webinar (opens in new tab)</a> with Google Cloud, we share how organizations using Claude Code can better track and optimize these considerations on Google Cloud, including three core levers: control, track, and prove.</p>
+<h2>Controls for managing Claude Code spend</h2>
+<p>Claude on Google Cloud has consumption-based pricing, so your bill is a readout of how much your developers are using Claude in your Google Cloud environment. Adoption drives usage; usage is what you pay for, and it’s also where the value shows up.</p>
+<p>Your Claude Code bill is a product of how many tokens tasks consume and the models that handle them. Token consumption scales with task complexity and conversation length. Chat is a Q&amp;A conversation. An agentic tool like Claude Code spends more tokens per task relative to chat because it's doing multistep work: reading files, running tools, and reasoning across a whole task. Meanwhile each model has its own price per token, so <a href="https://claude.com/blog/claude-model-and-effort-level-in-claude-code">matching the model to the task</a> is the other major cost control.</p>
+<p>Visibility into the tokens and model choices impacting your organization’s bill each month is available through the <a href="https://claude.com/blog/introducing-the-claude-apps-gateway">Claude apps gateway</a> and Google Cloud services. You can govern the spend and manage costs via three independent levers:</p>
+<ul><li><strong>Control</strong>. Creating guardrails that guide usage without over-restricting access and unintentionally blocking people.</li><li><strong>Track</strong>. Granular oversight of where the spend is happening, and where it will continue to go, before the bill arrives.</li><li><strong>Prove</strong>. Identifying the value your org is getting from spending these tokens and attributing exactly where it’s coming from.</li></ul>
+<p>Here’s how to apply this control -&gt; track -&gt; prove framework to your own Claude Code on Google Cloud deployment.</p>
+<p><img src="https://assets.claude.com/50faca60a22f422f7c0f5e9d2f4177a1ea483448.png" alt="graphic showing control - track - prove categories and the tools used in each"></p>
+<h3><strong>The governance toolbox</strong></h3>
+<p>Claude on Google Cloud comes with tools and capabilities for controlling, tracking, and proving the value of your spend.</p>
+<p><img src="https://assets.claude.com/b3266f5cebd6e2613593339d21200b3a7c034b9a.png" alt="Graphic showing Google Cloud native and Claude Code + Claude apps gateway add"></p>
+<p>Google Cloud already gives you many native capabilities you can apply to tracking and controlling your Claude spend:</p>
+<ul><li><strong>Per-project billing</strong>. Allows you to host a dedicated project for Claude Code as a clean way to track costs.</li><li><strong>Billing budgets and alerts</strong>. Allows you to set budget alerts and get notified as actual spend crosses thresholds you define.</li><li><strong>Spend caps (Preview). </strong>Allows you to enforce a service-level Google Cloud spend budget with ability to manually lift the cap.</li><li><strong>BigQuery exports. </strong>Lets you analyze Claude spend alongside the rest of your cloud costs.</li><li><strong>Quotas. </strong>Claude models on Google Cloud have per-minute limits on requests, input tokens, and output tokens for each model family and endpoint location.</li><li><strong>Provisioned throughput.</strong> Pay a fixed fee for reserved capacity instead of pay-as-you-go.</li></ul>
+<p>Claude Code and Claude apps gateway add their own tracking and control capabilities. The gateway is a self-hosted service, shipped in the same <code>claude</code> binary your developers already use, that runs in your Google Cloud project between Claude Code and Claude on Google Cloud. Developers sign in through your identity provider, such as Google Workspace, so every request carries a verified identity. That lets you set model allowlists per IdP group, and spend caps per user, IdP group, or organization, by day, week, or month.</p>
+<p>Here's how to choose and combine capabilities to manage the three levers measuring the cost and ROI behind your organization’s AI investments with Claude on Google Cloud:</p>
+<h4>Lever 1: Control</h4>
+<p>The control lever is all about providing guardrails that guide developers in their Claude Code use, instead of restricting them with arbitrary caps.</p>
+<p>Guiding rather than restricting is important because high cost sessions are not necessarily bad — in fact, they're often high value, especially in Claude Code. Those sessions are generally your power users that are at the forefront, using new workflows and getting a lot of value from Claude and getting a lot of work done.</p>
+<p>Waste tends to sit in the long middle of heavy spenders. For example, they're using Fable for a daily routine that Sonnet can easily handle. Or maybe they have forgotten some scheduled task they no longer care about, but it keeps on running automatically anyway.</p>
+<p>There are four features that give you the guardrails to guide your users instead of restricting them:</p>
+<ul><li><strong><a href="https://code.claude.com/docs/en/claude-apps-gateway-spend-limits">Spend limits (opens in new tab)</a>. </strong>The Claude apps gateway allows you to set spend caps per user, per IdP group, or organization-wide, by day, week, or month. Group and organization caps are per-developer defaults that each member inherits, not a shared pool.</li><li><strong>Threshold alerts.</strong> When used with Claude apps gateway, Claude Code on Google Cloud warns developers as they approach their cap, first past 75% and again past 95%. These are in-CLI warnings for developers, whereas Google Cloud Billing alerts are meant for admins. At the cap, the gateway returns 429 until the period resets or an admin raises the cap, and you can script cap increases through the gateway's admin API.</li><li><strong>Model defaults and allowlists.</strong> Specify which models are available, per IdP group, via the Claude apps gateway which enforces the allowlist server-side on every request. We have found that setting a model default works really well, because most people will stick to the model default; if they want to switch models, they usually are switching for a reason. You can use model defaults in addition to or instead of model allowlists.</li><li><strong>Gateway Admin API. </strong>The gateway serves an <a href="https://code.claude.com/docs/en/claude-apps-gateway-spend-limits">admin API for spend limits (opens in new tab)</a>, so you can set and change caps programmatically, for example using a ticketing workflow.</li></ul>
+<p><img src="https://assets.claude.com/d1ded8cd5410c90e62905f650bf2a4e09df4cdce.png" alt="Graphic showing the phases of a spend-cap lifecycle"></p>
+<p>Combine these capabilities to control your overall bill, but remember that control is only the first lever. Price per token doesn't give you the full picture. The most important metric is the cost per task, which can be monitored and analyzed by tracking this usage.</p>
+<h4>Lever 2: Track</h4>
+<p>This lever is all about seeing where spend is going and how it’s being used. The good news is that you can track Claude Code usage, costs, and tool activity across your organization. Primary tracking strategies include:</p>
+<ul><li><strong>Usage and cost observability. </strong><a href="https://code.claude.com/docs/en/monitoring-usage">Claude Code's OpenTelemetry metrics and events (opens in new tab)</a> report usage and estimated cost, broken down by skill, plugin, agent, and MCP server. Send them over OpenTelemetry Protocol (OTLP) to tools you already run, such as Google Cloud Monitoring, through an OpenTelemetry collector or relayed by the Claude apps gateway (for centralized OpenTelemetry config).</li><li><strong>End-user usage view.</strong> Developers see their own spend and get usage warnings right in Claude Code before they hit a limit.</li><li><strong>Data export to your existing systems.</strong> Google Cloud Billing exports to BigQuery let you filter to Claude SKUs by model and token type, putting Claude spend alongside the rest of your cloud and AI spend. OTel flows to your O11y stack, and the gateway Admin API can feed spend-limit status straight into your ticketing system.</li></ul>
+<p><img src="https://assets.claude.com/f2ab59204d683994ef32ddc5b4e6f1167389a800.png" alt="Graphic showing Claude Code telemetry on Google Cloud"></p>
+<p>Claude Code, whether running on developer machines or on cloud workstations, can export OpenTelemetry once you enable it, including sessions, active time, lines of code, commits, pull requests, tokens and cost, broken down by user, team, and model. The most recent releases of Claude Code also break usage down by skill, plugin, agent, and MCP server so you can see not just overall Claude Code usage but also which of your org’s internal skills and plugins get adopted. With the Claude apps gateway, you don't need to configure each machine. Set a telemetry destination on the gateway, and it turns telemetry on for signed-in developers. It also tags every export with the developer's verified email and IdP groups from their sign-in, rather than values configured on the client-side.</p>
+<p>To attribute usage to your own cost centers and departments, set the OTEL_RESOURCE_ATTRIBUTES environment variable (for example, department=engineering,cost_center=eng-123). Claude Code adds these tags to every metric and event, so you can filter and aggregate by them. The metrics land in Google Cloud Monitoring (or other monitoring solutions like Grafana or Splunk) with those custom attributes.</p>
+<p>A Claude Code usage dashboard in Cloud Monitoring, built from Claude Code's OpenTelemetry metrics. Illustrative recreation with sample data.</p>
+<p>A typical adoption view shows active developers, number of sessions over the last 24 hours, and total tokens consumed. The orange box shows blocked requests when developers hit their gateway-enforced spend caps. That metric pairs well with your existing ticketing system as a workflow that allows developers to request an increase.</p>
+<p>For ready-made Cloud Monitoring dashboard, refer to the <a href="https://github.com/GoogleCloudPlatform/monitoring-dashboard-samples/tree/master/dashboards/claude-code">Claude Code Monitoring template (opens in new tab)</a>, which turns Claude Code’s OpenTelemetry metrics into a single view of adoption, coding activity, and token usage and estimated spend, so you can track usage and costs by user and model as you roll out Claude Code on Google Cloud. You can copy this template directly from within the Cloud Monitoring console.</p>
+<p>To set up custom Claude Code telemetry on Google Cloud, start with the <a href="https://github.com/Google-Cloud-AI/partner-ai-anthropic/tree/main/01-quickstart/otlp-to-telemetry-api">Claude Code OTel quickstart (opens in new tab)</a>. Use it to configure s Claude Code to export OpenTelemetry straight to Google Cloud Observability suite including Cloud Logging and Cloud Monitoring. The quickstart also routes logs into partitioned BigQuery tables, one per event type (API requests, tool decisions, tool results, assistant responses, and completed hook executions), and ships SQL queries for spend per developer/model, tool success and latency, hook wait time, per-turn and per-session analytics.</p>
+<h4>Lever 3: Prove</h4>
+<p>The control lever governs and apportions usage and costs; the track lever allows you to visualize that spend. The prove lever is how you map usage to ROI for Claude Code on Google Cloud.</p>
+<p>The metrics that platform engineers care most about measuring in Claude Code are contained within three dimensions: usage, developer satisfaction, and impact.</p>
+<p><strong>Adoption and usage</strong> metrics measure how people are using Claude in your organization, including your activated users and their weekly and daily usage. These reveal information like depth of use, user retention over time, and who your Claude Code power users are. These metrics are all derived via Claude Code OTel data.</p>
+<p><strong>Satisfaction</strong> metrics monitor the user experience for your engineers, including their happiness with Claude Code, perceived time savings, confidence in output, and any friction they might experience. Satisfaction metrics come from a short survey run before and after rollout, followed by ongoing user check-ins.</p>
+<p><strong>Impact </strong>metrics assess how Claude is delivering measurable engineering outcomes, comparing throughput, cycle time, and review speed against a baseline, plus qualitative measurements on specific bodies of work.</p>
+<h3><strong>A starting set of impact metrics</strong></h3>
+<p>Here's a starting set of impact metrics, grouped into three areas: time, effort, and volume.</p>
+<p><strong>Time</strong> measures how quickly work ships: PR cycle time from open -&gt; merge, and code review turnaround.</p>
+<p><strong>Effort </strong>measures how much work each change takes: review iterations per PR, review comments and rework per PR.</p>
+<p><strong>Volume</strong> measures what the freed-up capacity delivers: PRs per engineer, deployment frequency, and named bodies of work: the specific backlog items your teams shipped with the freed capacity. These add a qualitative view alongside the counts..</p>
+<p>These are directional reference points, not rules, but a good starting point for measuring Claude Code's impact in your organization. The baseline you need already exists: your delivery history in source control and tickets.</p>
+<h3><strong>Define your unit of work</strong></h3>
+<p>Most of these metrics count PRs, but a typo fix and a feature release are both one PR. Therefore, count merged PRs of a defined class instead: Claude opens the PR, and a person decides whether it ships. Labels such as hotfix or feature release, the ticket ID, and whether Claude was involved make those PRs easy to find in the systems you already run. Not every unit of work is a PR; a service cutover or an incident closed at its root cause are examples. The same rule applies: count one finished thing, where it lands.</p>
+<h2>Claude Code native telemetry</h2>
+<p>After putting cost governance and usage tracking in place, the next step is to map those to ROI. Claude Code’s native telemetry helps you capture contribution and productivity metrics that document the value your organization is deriving.</p>
+<p><img src="https://assets.claude.com/5d1a4e740237e04f4524c9ff169e0f70def7c5ab.png" alt="Graphic showing Claude Code native telemetry with three columns: Usage, Cost, Contribution / Productivity."></p>
+<p>Claude Code’s OTel metrics let you track or derive code suggestion accept rate, lines of code modified, commits created, PRs created, cost per unit of output, and PRs per user.</p>
+<p>All of these native metrics offer useful and actionable information. This info becomes even more valuable when paired with logged events like user prompts and tool decisions, captured via <a href="https://docs.google.com/document/d/1LezclyuvbRQ9tInAet0loCEPiNIITB8eLHvzNik9IBs/edit?tab=t.nr7gi1cdf1oi#heading=h.vdcj39wwyv9f">Claude Code telemetry on Google Cloud (opens in new tab)</a>. Logging user prompts, for example, is a good way to understand everything your user base is trying to build, because not every unit of work is necessarily a PR. Note that user prompts are not logged automatically due to potentially sensitive content; you have to specifically opt in.</p>
+<p>One example would be using Claude Code to troubleshoot an incident if you’re an SRE or generate sample data for a live demo if you’re a sales engineer. Those sessions do not result in a PR, but they do accelerate those teams’ workflows. Keep in mind that Claude Code's PR metric counts the PRs Claude Code <em>creates</em>, not what eventually merges. Your source control and ticketing systems remain the record of what shipped, so correlate Claude Code telemetry with GitHub or GitLab and your ticket tracker for the full picture</p>
+<p>Here’s the measurable impact that some Claude on Google Cloud customers have achieved with Claude Code.</p>
+<ul><li><a href="https://claude.com/customers/delivery-hero">Delivery Hero (opens in new tab)</a> had a team overhaul a design system across 100 UI components. Claude Code did in minutes what would normally take a week of an engineer's time.</li><li><a href="https://claude.com/customers/shopify">Shopify  (opens in new tab)</a>engineers build faster with Claude Code, but non-engineers are also building internal tools in minutes instead of days. Claude Code is expanding who can build at Shopify, not just speeding up the people already building.</li><li><a href="https://cloud.google.com/customers/fifth-dimension-anthropic">Fifth Dimension (opens in new tab)</a> engineers universally use Claude Code on Google Cloud. Combined, they're writing over 300,000 lines of code a month with a 98% acceptance rate.</li></ul>
+<h2>Getting started</h2>
+<p>The goal of this post is to help you feel comfortable with the tools and capabilities that exist to help you manage Claude Code on Google Cloud costs and demonstrate ROI. As platform engineers, the system serves not only to notice and observe behavior in your user base. It also gives you the knowledge necessary to dynamically adjust governance and settings.</p>
+<p>It’s a continuous loop: start with reasonable defaults, such as an org-wide spend cap, a default model, and a model allowlist, then refine by role and team as usage data comes in. By tracking actual use and correlating metrics to the value you’re getting from Claude Code, you can then deliver these to your stakeholders who need to analyze the ROI and business impact of using Claude Code.</p>
+<p><img src="https://assets.claude.com/9a83ef407d2df018b107f8108d1955ad70702d7f.png" alt="Graphic showing a continuous loop for Control - Track - Prove framework"></p>
+<p>How organizations use Claude Code on Google Cloud and the value derived from that usage will both evolve as the amount of work and the type of work we're delegating to Claude keep getting deeper and more diverse. The <strong>control → track → prove</strong> framework outlined here is a stable starting point for measuring every aspect and outcome of your Claude Code deployment.</p>
+<p>Here are resources to get you started:</p>
+<ul><li><a href="https://code.claude.com/docs/en/costs">Manage costs effectively (opens in new tab)</a></li><li><a href="https://code.claude.com/docs/en/monitoring-usage">Monitoring usage and costs (opens in new tab)</a></li><li><a href="https://code.claude.com/docs/en/claude-apps-gateway-spend-limits">Claude apps gateway spend limits (opens in new tab)</a></li><li><a href="https://code.claude.com/docs/en/claude-apps-gateway-on-gcp">Deploy Claude apps gateway on Google Cloud (opens in new tab)</a></li><li><a href="https://code.claude.com/docs/en/claude-apps-gateway-on-gcp">Create, edit, or delete budgets and budget alerts (opens in new tab)</a></li><li><a href="https://docs.cloud.google.com/billing/docs/how-to/budgets-spend-caps">Manage spend cap budgets | Cloud Billing (opens in new tab)</a></li></ul>
+<p>Article</p>
+<p>Oct 22, 2026</p>
+<h3>Building agents: When to fold subagents into your main agent loop</h3>
+<p>When building agents in Claude Platform, using fewer subagents in favor of progressively disclosed context and tools can improve quality while reducing cost and latency. Here’s when and how to migrate.</p>
+<p>Claude Platform</p>
+<p>Article</p>
+<p>Oct 19, 2026</p>
+<h3>Redesigning source control at Anthropic</h3>
+<p>As merges to Anthropic's monorepo grew from about 2,500 to more than 30,000 a day, source control became the biggest development bottleneck. Here is how the team built Scion, an in-house version control system designed for always-online agents, and migrated off git in five months.</p>
+<p>Claude Code</p>
+<p>(opens in new tab)</p>
+<p>Article</p>
+<p>Oct 16, 2026</p>
+<h3>How an Anthropic BDR in Japan runs his day with Claude Managed Agents</h3>
+<p>How one business development representative clears his inbound queue and drafts bilingual customer emails with Claude Managed Agents and Claude Tag.</p>
+<p>Claude Managed Agents</p>
+<p>Article</p>
+<p>Oct 16, 2026</p>
+<h3>How the Claude Code team does code review</h3>
+<p>How do you review code at the volume agents produce it? The Claude Code team shares its review process, from Claude verifying its own work to risk-tiered human approval, plus a checklist for adopting it.</p>
+<p>Claude Code</p>
+<p>(opens in new tab)</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Claude for Financial Advisors</title>
+      <link>https://claude.com/resources/articles/claude-for-financial-advisors</link>
+      <guid isPermaLink="true">https://claude.com/resources/articles/claude-for-financial-advisors?li=1</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>Today we're releasing Claude for Financial Advisors, a suite of connectors and workflow skills designed to help with research, prep, and documentation tasks that occupy an advisor’s time and keep them from client-facing work.</p>
+<p>Time is scarce among financial advisors. A typical advisory practice spends only a sixth of its time in client meetings, according to <a href="https://www.kitces.com/kitces-report-how-financial-planners-actually-do-financial-planning/">Kitces research</a>. The rest goes to work around those meetings, piecing together information across systems to prepare, plan, and</p>
+<p>document what was discussed. Meanwhile, over four in 10 American workers say they don't know who to go to for good financial or retirement planning advice, according to <a href="https://www.ebri.org/docs/default-source/rcs/2026-rcs/rcs_26-fs-3_prep.pdf">EBRI's 2026 Retirement Confidence Survey</a>. Time an advisor saves on prep and paperwork can go to a current client or new household they don’t yet have capacity to serve.</p>
+<p>Claude for Financial Advisors includes:</p>
+<ul><li><strong>Connectors, </strong>which let Claude access the custodians, asset managers, and wealth technology providers advisors rely on most, so an advisor can work with a client’s information in one place.</li><li><strong>Skills, </strong>which use that information to help with specific tasks, like meeting prep, portfolio analysis, and compliance checks, always in service of the advisor's own judgment and style.</li></ul>
+<h2><strong>Connectors to the tools advisors already use</strong></h2>
+<p>New connectors bring in the CRM, custodian, portfolio reporting, financial planning software, estate tools, and meeting capture that advisors rely on.</p>
+<ul><li><strong>Addepar</strong> brings investment intelligence into Claude, giving advisors governed access to portfolio data, analytics and workflows across public and private markets.</li><li><strong>BlackRock</strong> brings its portfolio construction expertise, model portfolios, and institutional analytics into Claude through Advisor Center, so advisors can deliver holistic advice across public and private markets.</li><li><strong>CAIS</strong> opens its alternative investment platform to advisors in Claude, so they can query fund data, review manager and fund performance, and see a client's public and private holdings together.</li><li><strong>Charles Schwab</strong> connects Claude to Schwab Advisor Services custodial data, including balances, positions, transactions, cost basis, alerts, and money-movement status, so advisors can review client information, see which clients need attention, and prepare for reviews.</li><li><strong>Conquest Planning </strong>brings its Strategic Advice Manager planning engine into Claude so advisors can create new client plans, review and apply strategies, update existing plans and prepare for client meetings all in one place.</li><li><strong>Envestnet</strong> lets advisors summarize Tamarac accounts and households in natural language, with a financial plan snapshot from MoneyGuide.</li><li><strong>FactSet </strong>brings multi-asset class content including funds and ETFs, news, company fundamentals, analyst estimates, and market data to Claude, so advisors can research the companies and securities in a client's portfolio.</li><li><strong>FINNY,</strong> the growth and prospecting platform, connects Claude to an advisor's campaign results by channel and sequence step, and lets advisors enrich prospect lists from their CRM, or upload new lists directly in Claude.</li><li><strong>Flourish</strong> connects Claude to financial advisors’ books of business, enabling them to work with client information, check rates, manage invitations, and prepare for client meetings, all within Claude.</li><li><strong>Franklin Templeton</strong> provides publicly approved fund and share-class information in Claude, including performance, fees, NAV, holdings, distributions, and fund documents, along with its published market and investment insights.</li><li><strong>iCapital </strong>brings a client's alternative investment holdings into Claude, enabling advisors to view NAV, commitments, unfunded capital, recent capital activity, and performance, while more easily connecting those insights to the client's broader portfolio.</li><li><strong>Invesco</strong> brings portfolio intelligence and practice management insights into Claude through its Invesco for Advisors connector.</li><li><strong>J.P. Morgan Asset Management (55ip)</strong> extends tax transition technology to Claude, so advisors can evaluate the tax impact of moving a client's holdings into a new portfolio.</li><li><strong>Jump</strong>, an AI platform for financial professionals, gives Claude client context (meetings, documents, tasks) and Jump-built skills that prepare next steps for the advisor’s review.</li><li><strong>MSCI</strong> brings its proprietary data and analytics into Claude, so wealth firms can assess investment options across public and private markets, monitor performance, and evaluate rebalancing opportunities.</li><li><strong>Nevis</strong>, the AI platform for wealth management, draws on client information from meetings, documents, and communications to support meeting prep and follow-up in Claude.</li><li><strong>Orion</strong> brings portfolio reporting and Redtail CRM insights into Claude for household reviews, opportunity analysis, meeting prep and follow-up<em>.</em></li><li><strong>SS&amp;C Black Diamond </strong>brings portfolio, performance, holdings and rebalancing data into Claude, so advisors can review their book, spot clients out of tolerance, surface tax loss harvesting opportunities, and generate client reports, tasks and rebalance sessions with their approval.</li><li><strong>Wealthbox </strong>connects Claude to client records and meeting history to power onboarding, meeting prep, and follow-up.</li><li><strong>Wealth.com</strong> gives Claude a structured view of each client's estate and tax picture, including trust and will summaries, tax return insights, and the full balance sheet, so advisors can begin planning with an organized summary of available information instead of documents spread across multiple systems.</li><li><strong>Vanguard </strong>brings information on its model portfolios and advisor investment solutions into Claude, so advisors can draw on Vanguard's trusted research, portfolio construction, and asset allocation expertise when making decisions for clients.</li><li><strong>Zocks</strong>, the AI meeting assistant for financial advisors, brings Claude the client intelligence it captures from every conversation, including profiles, goals, life events, and commitments.</li></ul>
+<p>These join other <a href="https://claude.com/connectors">connectors</a> already available in Claude, including Microsoft 365, Salesforce, DocuSign, Box, S&amp;P Global, Morningstar, and more.</p>
+<p>The Claude for Financial Advisors plugin, which bundles advisor skills and connectors into a single install, works with BlackRock, Charles Schwab, Addepar, Envestnet, iCapital, Orion, Wealthbox, Wealth.com and Zocks, and advisors choose which of these to connect during guided setup. Some partners also offer their own plugins: BlackRock is launching one for Advisor Center, joining existing plugins from S&amp;P Global and LSEG.</p>
+<h2><strong>Skills built around an advisor’s day</strong></h2>
+<p>Each skill in the Claude for Financial Advisors plugin supports a specific moment in an advisor's day, from prepping for a client meeting to explaining a drifted portfolio, and routes to tools the firm already uses to run their business. Firms can adopt these skills as is from our Claude for financial advisors <a href="https://github.com/anthropics/claude-for-financial-advisors">skill repository</a>, or adapt them to their own workflows, service model and house style.</p>
+<ul><li><strong>Advisor onboarding</strong> connects a firm's tools and runs the first meeting prep automatically, helping a new advisor be productive on day one instead of week three.</li><li><strong>Alternative investments brief</strong> pulls a household's alternative investments from iCapital or Addepar into a meeting-ready summary, shown alongside the rest of the portfolio, instead of an advisor reconciling separate statements by hand.</li><li><strong>Compliance and AI policy</strong> highlights content that may warrant additional compliance review based on user-configured criteria, assists firms in documenting review workflows, and supports AI-governance documentation processes.</li><li><strong>Estate and tax brief</strong> checks a client's estate plan against actual account titling and beneficiaries, looks back at the prior year's taxes, and can create CRM follow-up tasks, so mismatches surface for the advisor to review.</li><li><strong>Portfolio rebalance review</strong> flags drift and concentrated positions against a client's target allocation, and creates a first draft explanation an advisor would otherwise write from scratch.</li><li><strong>Post-meeting notes and follow-up</strong> turns a transcript into a client summary, a recap email, and CRM tasks in one pass, instead of an advisor doing each by hand after the call.</li><li><strong>Pre-meeting prep</strong> consolidates information from connected systems (including a client's holdings, recent account activity, and open items from prior meetings) into a single brief for the advisor to review, so they can prepare for and walk in ready for a conversation about that client's specific situation instead of reconstructing context from three systems.</li><li><strong>Prospect intake</strong> organizes what a prospect shares into a summary, an analyst handoff, and a what-to-expect memo, so the first meeting starts with the basics already in place.</li></ul>
+<p>Together, the skills gather information, summarize it, and draft client communications across the advisor’s day. Investment recommendations, client communications, compliance determinations, and other regulated activities remain subject to human review and approval.</p>
+<h2><strong>Built for regulated professionals</strong></h2>
+<p>Claude for Financial Advisors is designed so that the advisor stays in control, with approval required on critical tasks. Claude prepares briefs, summaries, and drafts analyses for advisor review, and stages administrative actions like CRM updates or draft client communications for the advisor's review and approval. The compliance skill screens client-facing language against the SEC Marketing Rule to flag potential issues, helps firms document review activities within their existing governance and recordkeeping processes, and includes a self-guided AI-policy workflow that helps firms document their use of AI under SEC rules. Workflow activities can be documented to assist firms in maintaining appropriate records and oversight processes.</p>
+<h2><strong>More households served well</strong></h2>
+<p>When Claude handles administrative tasks like meeting prep, follow-up drafts and pipeline review, advisors can spend more of their time serving clients. Practices can expand their customer base, and offer more of the services they need, like tax, estate, insurance, and retirement planning.</p>
+<p>Here’s what customers and ecosystem partners have told us about working with Claude:</p>
+<p><img src="https://assets.claude.com/05a6a0c1132f543d0537102984022c0c90774dde.png" alt="zocks"></p>
+<blockquote>“Good financial advice depends on knowing what’s going on in a client’s life, not just what’s in their accounts,” said Mark Gilbert, CEO and Co-founder of Zocks. “The expanded collaboration between Claude and Zocks brings together data and personal client context that used to be fragmented across sources and systems. Now, every task and analysis through Claude is grounded in a more complete understanding of the client. It also gives enterprise firms greater flexibility to build AI workflows around how their advisors actually work.”</blockquote>
+<p>Mark Gilbert, CEO and Co-founder</p>
+<p><img src="https://assets.claude.com/b85fd6f58a1f1a493b2cc9de09044b6b2164466e.png" alt="RFG Advisory"></p>
+<blockquote>“MCPs are fundamentally changing how we build technology for advisors. With Claude and Zocks integrated directly into our stack, problems that once required months of configuration and dependence on outside partners can increasingly be solved by our own development team. That gives us the freedom to move faster, work with best-in-class partners, and build around the way advisors actually operate. Instead of asking advisors to adapt to technology, we can make the technology adapt to them.”</blockquote>
+<p>Dr. Jordan Hutchison, Vice President of Technology and Operations</p>
+<p><img src="https://assets.claude.com/31be98f5c18121a5063482dbcb91cd4bb812e9c7.svg" alt="Wealthbox"></p>
+<blockquote>“Advisors have spent years building deep client context in Wealthbox. This lets them bring that context straight into Claude and put a frontier model to work on it, such as preparing for meetings, handling follow-up, drafting communications, while everything stays connected to the CRM their practice runs on.&quot;”</blockquote>
+<p>John Rourke, CEO and Co-Founder</p>
+<p><img src="https://assets.claude.com/d72d42304889c5ecd4f2ba410dfde53b13255b97.svg" alt="BlackRock"></p>
+<blockquote>“Advisors are navigating increasingly complex client needs while facing an accelerating pace of change across markets and technology. Our work with Anthropic is an important step in our broader effort to bring BlackRock’s portfolio intelligence and asset allocation expertise to more advisors to help them scale their business and build better portfolios. By making our institutional-quality portfolio analytics more accessible, we are helping more advisors leverage our portfolio intelligence so they can spend more time focused on client relationships.”</blockquote>
+<p>Jaime Magyera, Head of US Wealth &amp; Retirement Businesses</p>
+<p><img src="https://assets.claude.com/e417bbb81bf909eb4ebe19fe0dee25370dbfd28e.svg" alt="Mercer Advisors"></p>
+<blockquote>“Anthropic builds AI aligned with human values. Mercer Advisors builds family offices aligned with client interests. That shared obsession is core to both firms and anchors our partnership. Claude helps our teams to work seamlessly across clients’ financial lives, while judgment and accountability stay with the advisor. That is how AI should work in any profession built on trust.””</blockquote>
+<p>Daniel Gourvitch, President</p>
+<p><img src="https://assets.claude.com/70a6a06de8cab56f6dea00611e665aa99e4d17a4.svg" alt="Rockefeller Capital Management"></p>
+<blockquote>“We are pleased to see Anthropic’s continued investment in capabilities tailored to the unique needs of financial advisors. Our collaboration is rooted in a shared belief that technology should support advisors, not replace them, helping them navigate complexity and more efficiently serve clients while keeping human judgment and discretion at the forefront.”</blockquote>
+<p>Ashley McCarthy, Chief Operating Officer &amp; Counsel-Managing Director</p>
+<p><img src="https://assets.claude.com/02f6ce25017d80f975786c571ae223b9da5eb42b.svg" alt="Vanguard"></p>
+<blockquote>“Vanguard is committed to helping advisors spend more time with clients and less time navigating complexity. Our integration with Claude expands access to Vanguard investment solutions, freeing up advisors’ time to deliver more personalized service.””</blockquote>
+<p>Sid Ratna, Head of Digital and Analytics, Financial Advisor Services</p>
+<p><img src="https://assets.claude.com/ee30d9d9145114578de5ae6a8bdbf4d06f6b1848.svg" alt="Charles Schwab"></p>
+<blockquote>“The future of advisor technology will be defined by how well firms can connect trusted data, powerful intelligence, and everyday workflows. Our collaboration with Anthropic reflects Schwab’s commitment to helping registered investment advisors (RIAs) leverage innovation within the tools they already use, making it easier to serve clients, scale their practices, and grow with confidence.&quot;”</blockquote>
+<p>Jon Beatty, Head of Schwab Advisor Services</p>
+<p><img src="https://assets.claude.com/7337a170485b3c8f7db6f39e25cbdb18e35dc6d7.png" alt="Ritholtz Wealth Management"></p>
+<blockquote>“AI is already part of the everyday workflow in the advice business. I don’t want my CFPs spending hours every week laboring over CRM updates and task assignments. I want them talking to clients and engaged in the planning itself, because that's the part clients truly value. Claude for Financial Advisors is the first thing I’ve seen that sits on top of the whole stack and does that work across it, with the compliance controls we need built in.”</blockquote>
+<p>Josh Brown, CEO</p>
+<p><img src="https://assets.claude.com/7337a170485b3c8f7db6f39e25cbdb18e35dc6d7.png" alt="Ritholtz Wealth Management"></p>
+<blockquote>“Nobody at Ritholtz is going to be replaced by a chatbot. The math on this business is hours, not headcount: an advisor has a finite number of them, and most were going to prep and paperwork instead of the people who actually pay us. Claude for Financial Advisors can move that busy work forward across the systems we already use, with the advisor staying in the loop on anything that reaches the client. That gives us meaningful time back across the firm, so clients get faster responses and more focused attention.”</blockquote>
+<p>Michael Batnick, Managing Partner</p>
+<p><img src="https://assets.claude.com/bf0c4721da997cf3b0cabe9b5b57a4df8e3bd702.png" alt="Dynasty Financial Partners"></p>
+<blockquote>“This is the moment the industry stops adapting to AI and starts running on it. The way we see it, Anthropic is the engine, Dynasty is the plane, and the advisor is always the pilot. We build the plane so advisors can fly it, at scale, safely, without ever touching the machinery underneath. The result is, we are not giving advisors another dashboard, we are giving them their time back!””</blockquote>
+<p>Shirl Penney, Chief Executive Officer and Founder</p>
+<p><img src="https://assets.claude.com/8cb3d07594ed09df536f166bdacceed33d85eadf.svg" alt="Envestnet"></p>
+<blockquote>“Every hour an advisor spends assembling information is an hour not spent with a client. Bringing Claude together with Tamarac and MoneyGuide means an advisor can understand certain elements of a household or a financial plan in the time it takes to ask.”</blockquote>
+<p>Andrew Stavaridis, Chief Relationship Officer</p>
+<p><img src="https://assets.claude.com/8d7d47070da0c183b9e93c94a2ddb4cf3237318b.svg" alt="iCapital"></p>
+<blockquote>“As private markets become a larger part of client portfolios, advisors need easier ways to navigate complexity. iCapital combines a comprehensive marketplace with the data and infrastructure to manage specialized investments, and connecting that data through Claude helps turn investment intelligence into actionable insights.”</blockquote>
+<p>Gary Gallagher, President</p>
+<p><img src="https://assets.claude.com/eeae4806401748e5b724e60461e592ce2ba81204.svg" alt="SS&amp;C"></p>
+<blockquote>“AI is most effective for advisors when it works with the data and systems they already use. Connecting Claude with SS&amp;C Black Diamond Wealth Solutions allows advisors to bring client and portfolio information into their workflows, reducing preparation time and ensuring they remain in Control.”</blockquote>
+<p>Steve Leivent, Senior VP &amp; Co-Head</p>
+<p><img src="https://assets.claude.com/fb76688c14d76e8ecea2860238c3074e4bf75a4e.svg" alt="Addepar"></p>
+<blockquote>“Addepar has built the data and intelligence foundation that the world’s leading investment professionals rely on to manage nearly $10 trillion in assets, with the governance, rigor and controls built natively into our platform. Addepar’s collaboration with Anthropic brings our uniquely deep understanding of sophisticated investment portfolios into Claude, giving clients access to Addepar’s industry-leading portfolio intelligence wherever they work.”</blockquote>
+<p>Eric Poirier, CEO</p>
+<p><img src="https://assets.claude.com/7d2f8c61095816e9f787e52e70f871b8d7ebdfe8.svg" alt="Wealth.com"></p>
+<blockquote>“Estate and tax are the layers of a client’s plan that have to be exact. Advisors already trust Wealth.com as the system of record for the estate and tax positions their clients actually have. Inside Claude, that record can answer questions directly, with every figure tracing back to the source document that produced it.”</blockquote>
+<p>Rafael Loureiro, CEO</p>
+<p><img src="https://assets.claude.com/122680b4a90e354a227934e7b37b3cd62b0cc11f.svg" alt="Salesforce"></p>
+<blockquote>“Advisors do their best work with the full picture of a client in front of them. Connecting Salesforce to Claude lets the relationships firms have built on our platform travel with the advisor, within the permissions and controls they already have in place. Together with Anthropic we're giving firms more ways to put that trusted client data to work for the people they serve.”</blockquote>
+<p>Eran Agrios, SVP &amp; GM, Financial Services</p>
+<p><img src="https://assets.claude.com/43c094e940d801886608b78e8b4ad48d4852dd04.svg" alt="Orion"></p>
+<blockquote>“Clients never see the work behind a good meeting, but they feel it when it’s missing. Through our collaboration with Anthropic, Orion’s plugin for Claude for Financial Advisors brings a firm’s portfolio and CRM data into meeting prep, follow-up drafts and pipeline review, all within the firm’s existing permissions and controls. The technology handles more of the preparation in the background so the advisor can stay focused on the client and the conversation. Advisors walk in prepared, without spending hours pulling everything together.”</blockquote>
+<p>Reed Colley, President</p>
+<p><img src="https://assets.claude.com/05a6a0c1132f543d0537102984022c0c90774dde.png" alt="zocks"></p>
+<blockquote>“Good financial advice depends on knowing what’s going on in a client’s life, not just what’s in their accounts,” said Mark Gilbert, CEO and Co-founder of Zocks. “The expanded collaboration between Claude and Zocks brings together data and personal client context that used to be fragmented across sources and systems. Now, every task and analysis through Claude is grounded in a more complete understanding of the client. It also gives enterprise firms greater flexibility to build AI workflows around how their advisors actually work.”</blockquote>
+<p>Mark Gilbert, CEO and Co-founder</p>
+<p><img src="https://assets.claude.com/b85fd6f58a1f1a493b2cc9de09044b6b2164466e.png" alt="RFG Advisory"></p>
+<blockquote>“MCPs are fundamentally changing how we build technology for advisors. With Claude and Zocks integrated directly into our stack, problems that once required months of configuration and dependence on outside partners can increasingly be solved by our own development team. That gives us the freedom to move faster, work with best-in-class partners, and build around the way advisors actually operate. Instead of asking advisors to adapt to technology, we can make the technology adapt to them.”</blockquote>
+<p>Dr. Jordan Hutchison, Vice President of Technology and Operations</p>
+<p><img src="https://assets.claude.com/31be98f5c18121a5063482dbcb91cd4bb812e9c7.svg" alt="Wealthbox"></p>
+<blockquote>“Advisors have spent years building deep client context in Wealthbox. This lets them bring that context straight into Claude and put a frontier model to work on it, such as preparing for meetings, handling follow-up, drafting communications, while everything stays connected to the CRM their practice runs on.&quot;”</blockquote>
+<p>John Rourke, CEO and Co-Founder</p>
+<p><img src="https://assets.claude.com/d72d42304889c5ecd4f2ba410dfde53b13255b97.svg" alt="BlackRock"></p>
+<blockquote>“Advisors are navigating increasingly complex client needs while facing an accelerating pace of change across markets and technology. Our work with Anthropic is an important step in our broader effort to bring BlackRock’s portfolio intelligence and asset allocation expertise to more advisors to help them scale their business and build better portfolios. By making our institutional-quality portfolio analytics more accessible, we are helping more advisors leverage our portfolio intelligence so they can spend more time focused on client relationships.”</blockquote>
+<p>Jaime Magyera, Head of US Wealth &amp; Retirement Businesses</p>
+<p><img src="https://assets.claude.com/e417bbb81bf909eb4ebe19fe0dee25370dbfd28e.svg" alt="Mercer Advisors"></p>
+<blockquote>“Anthropic builds AI aligned with human values. Mercer Advisors builds family offices aligned with client interests. That shared obsession is core to both firms and anchors our partnership. Claude helps our teams to work seamlessly across clients’ financial lives, while judgment and accountability stay with the advisor. That is how AI should work in any profession built on trust.””</blockquote>
+<p>Daniel Gourvitch, President</p>
+<p><img src="https://assets.claude.com/70a6a06de8cab56f6dea00611e665aa99e4d17a4.svg" alt="Rockefeller Capital Management"></p>
+<blockquote>“We are pleased to see Anthropic’s continued investment in capabilities tailored to the unique needs of financial advisors. Our collaboration is rooted in a shared belief that technology should support advisors, not replace them, helping them navigate complexity and more efficiently serve clients while keeping human judgment and discretion at the forefront.”</blockquote>
+<p>Ashley McCarthy, Chief Operating Officer &amp; Counsel-Managing Director</p>
+<p>1/18</p>
+<h2><strong>Getting started</strong></h2>
+<p>The advisor plugin is available today. We recommend Enterprise plans for registered investment advisers, because it includes the audit logs that support recordkeeping. If you already have an Enterprise license, open Cowork and find &quot;Claude for Financial Advisors&quot; in the plugin browser, and install it and follow the guided setup to connect your tools (or install from the <a href="http://github.com/anthropics/claude-for-financial-advisors">marketplace here</a>).</p>
+<p>If you don't have an Enterprise license, request one using this <a href="https://forms.gle/y9YmFF2j4moRinJA7">form</a> and an Anthropic team member will reach out with next steps. Firms that request a new license before the end of September 2026 will also receive a one-time usage credit to help them get started with the plugin.</p>
+<p>Learn more <a href="https://claude.com/solutions/financial-services#financial-advisors">at our solutions page</a> and join <a href="https://claude.com/resources/webinars/inside-claude-for-financial-advisors">our webinar</a> this Friday 9/18 at 11AM ET.</p>
+<p><em>This article was originally published on September 14, 2026. It has been updated to include additional connectors from Anthropic partners.</em></p>
+<p>Article</p>
+<p>Oct 26, 2026</p>
+<h3>Expanding Claude for Nonprofits</h3>
+<p>Our new Claude for Nonprofits plugin brings new skills to every verified nonprofit organization, taking on the operational work that stretches small teams across fundraising, marketing, and hiring.</p>
+<p>Article</p>
+<p>Oct 23, 2026</p>
+<h3>Claude Cowork and chat come together for Enterprise</h3>
+<p>Claude Enterprise</p>
+<p>Article</p>
+<p>Oct 23, 2026</p>
+<h3>Claude Duet Safety, Privacy, and Security</h3>
+<p>Claude Duet is a proactive agent that works for you, even while you’re away. It builds on two layers of protection: safety training in the Claude model itself and the safeguards that exist in products like Claude Code and Claude Managed Agents. On top of those, we added new protections for working across your accounts and acting on your behalf.</p>
+<p>Article</p>
+<p>Oct 22, 2026</p>
+<h3>The full Claude Platform, available on Google Cloud</h3>
+<p>Use Claude Models on Google Cloud (Anthropic managed) to access Claude Platform features with Google Cloud authentication, billing, and commitment retirement.</p>
+<p>Claude Platform</p>
+<h2>Transform how your organization operates with Claude</h2>
+<p><a href="https://claude.com/pricing#api">See pricing</a><a href="https://claude.com/contact-sales">Contact sales</a></p>
+<h3>Get the developer newsletter</h3>
+<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
+<p>Please provide your email address if you'd like to receive our monthly developer newsletter. You can unsubscribe at any time.</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Early progress on accelerating drug development with Claude</title>
+      <link>https://www.anthropic.com/research/early-progress-drug-development</link>
+      <guid isPermaLink="true">https://www.anthropic.com/research/early-progress-drug-development?li=1</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><em>Anthropic’s <a href="https://www.anthropic.com/science">life sciences team</a> is working to accelerate curing disease. Over the past several months, our scientists have engaged in deep research partnerships with six organizations developing new medicines: <a href="https://www.bighatbio.com/">BigHat Biosciences</a>, <a href="https://www.bms.com/">Bristol Myers Squibb</a>, <a href="https://divergencelabs.com/">Divergence Labs</a>, <a href="https://enveda.com/">Enveda</a>, <a href="https://generatebiomedicines.com/">Generate Biomedicines</a>, and <a href="https://www.thecolumngroup.com/">The Column Group</a>. We've also begun drug discovery efforts of our own. In doing so, we've learned a lot about how Claude can support drug development, and how we’ll need to improve Claude further to realize AI's potential in medicine. We plan to scale this work up substantially from here</em>.</p>
+<p>There are many opportunities to speed up drug development, even beyond the most commonly discussed applications of AI, like <a href="https://www.anthropic.com/research/Claude-accelerates-protein-design">proposing initial designs</a> for new molecules. Developing a drug involves many varied tasks: doing early research to identify a target for a drug and the right type of drug to engage it, designing a molecule with the right properties, optimizing it to be manufactured reliably at scale, drafting the regulatory filings needed to run clinical trials, designing and administering those trials, and much more.</p>
+<p>Our strategy to realize AI’s medical benefits is based on having AI increasingly involved in all of these tasks. There is no single problem to solve; the bottlenecks are distributed all throughout the drug development process. The best way to identify and work through these bottlenecks is to get deeply involved in real drug programs, across many different disease areas and stages of development.</p>
+<p>So, over the past several months, we’ve partnered with six organizations to do so. We’ve also started drug discovery efforts of our own, including programs for rare childhood forms of muscular dystrophy, where Claude handles much of the scientific and operational work.</p>
+<p>This work serves our goals in three ways. First, it lets us better understand the strengths and limitations of our models in relation to a much wider range of drug development tasks (we’ve already prioritized specific improvements to our models based on what we’ve learned so far). Second, these programs can serve as case studies for the wider life sciences community. If Claude is to significantly increase the rate of new cures, we need to work with many more biotechnology firms and integrate Claude more deeply into their development processes. Third, these projects should, if their positive trajectories continue, have direct impact themselves. We’re optimistic that some may result in effective new medicines for the diseases they target, including food allergies, rare childhood diseases, and several forms of cancer.</p>
+<p>In this post, we provide an update on our progress with our partners, along with technical reports and preprints that describe our thought process, methods, and early results in more detail. We then briefly outline where our work is headed next.</p>
+<h2>Case studies</h2>
+<p><strong>Generate Biomedicines: modality engineering.</strong> Generate Biomedicines has been working on increasing the usefulness of a cancer treatment known as CAR T-cell therapy. This therapy has historically helped treat blood cell cancers; Generate aims to reengineer it so that it can treat solid tumor cancers too. To do this, they’re aiming to shorten one part of the therapy’s genetic instructions, which would create room for additional instructions suited to other kinds of cancer. Six Generate scientists used Claude Code to propose new designs for this part. One design was about 70% shorter than the standard version, and in lab tests it was more effective: it allowed immune cells to make roughly 10 times as many receptors (the proteins they use to spot cancer cells), it killed tumor cells more efficiently, and the immune cells remained active for longer. Read more, and see <a href="https://generatebiomedicines.com/publications/refactored-intracellular-domains-enhance-car-expression-and-function/">Generate’s technical report</a>.</p>
+<p><strong>Divergence Labs: hit generation.</strong> Divergence Labs is working on a novel way to treat food allergies. Food allergies are set off by a reaction from a molecule called IgE, some of which is attached to our immune cells and some of which floats freely in our blood. Divergence Labs is developing drugs that would detach the IgE from our immune cells entirely, rather than solely neutralizing the IgE circulating in our blood, as standard medications do. This could provide a much more effective treatment, but it requires a precise design, with two “arms”: one that would bind tightly to IgE, and another that would help prise IgE from the immune cell. Claude converted Divergence Labs’ goals into a detailed design plan, and then, largely autonomously, generated roughly 35,000 antibody designs in about a month to be narrowed down and tested. In those early tests, Divergence found “hits” for both arms: three designs that could bind to IgE, and 20 that could dislodge it. Three of those 20 appeared to dislodge IgE more than the standard medication. Its next step is to build a drug that combines the two arms. Read more, and see <a href="https://divergencelabs.com/publications/ige-preprint.pdf">Divergence’s technical report</a>.</p>
+<p><strong>BigHat Biosciences: lead optimization.</strong> BigHat Biosciences pairs AI with an automated lab to improve potential drugs (or “leads”), which must bind their target tightly, remain stable through manufacturing and storage, and avoid clumping together (among other criteria). BigHat’s scientists and an Anthropic researcher worked with Claude to improve these three properties in two leads, both antibody fragments that could become parts of future drugs: one designed to target cancer cells, and one designed to keep a drug in the body longer. Claude, connected to BigHat’s lab data system, Reccy, proposed changes to each molecule, and BigHat’s lab made and tested about 1,010 variants in about 10 weeks. Partway through, the team suspected the standard heat-stability and clumping metrics were misleading. Claude and the researcher reanalyzed the raw data, then proposed different metrics and a protocol change to test them. BigHat’s scientists refined and ran it, and the main predictions held. Compared with the originals, the best versions bound more than 10x more tightly, the cancer-targeting lead stayed in solution 18°C higher, and the lead for longer-lasting drugs clumped more than 100x more slowly. Read more, and see <a href="https://www.bighatbio.com/bighat-anthropic-collaboration-report-10-27-2026">BigHat’s technical report</a>.</p>
+<p><strong>Enveda: manufacturing and filings.</strong> To conduct clinical trials, companies need records showing that each batch of a new drug has been made to strict quality standards, and to submit an application to regulators, among other requirements. At Enveda, manufacturing chemists spent up to 75% of their time on paperwork. To ease the load, Enveda built a system that connects all of its manufacturing documents to Claude, then lets Claude flag any possible issues. Over tests on 1,061 pages of documentation, Claude caught all 11 issues that human reviewers had spotted—and flagged seven they’d missed. In the process, this method reduced human review time by 89%, from over 25 hours to less than three. Separately, Claude wrote the first drafts of two important regulatory documents. One took four hours, compared to about three months by hand. For the other, Enveda’s standard human review process found one minor error. Read more, and see <a href="https://enveda.com/CMC-Document-Processor/">Enveda’s technical report</a>.</p>
+<p><strong>The Column Group (TCG): company creation.</strong> Because drug discovery can be slow, expensive, and prone to failure, investors in biotechnology companies have favored safer, previously validated ideas over riskier new ones, even when the latter could help more patients. We’ve been working with TCG to see whether Claude can change this by cutting the time and cost of drug discovery so that investors can confidently support more ambitious ideas. Specifically, TCG is establishing Pleiades, a new company that will use Claude to run many more—and more complex—drug programs than is usual for a small team. This could be a model for how Claude can reduce both the scientific and the operational and administrative overhead required to run a biotechnology company. If this works, this model could be replicated across the industry and direct investment toward harder problems in medicine. Pleiades is currently developing new tools and workflows for Claude; its very first Claude skill, which helps Claude assess whether drug targets are worth pursuing, has been evaluated on 45 target-disease pairs. Read more.</p>
+<p>More recently, we’ve also begun working with <a href="https://www.bms.com/">Bristol Myers Squibb</a> (BMS) to find and address bottlenecks in clinical trial planning. BMS is using Claude to assess plans of an early-stage drug in clinical trials, and to estimate the likelihood of those trials succeeding. Together, we plan to expand this work in 2027 to understand its potential for increasing the probability of success in early development.</p>
+<blockquote>“We use Claude at the clinical trial stage to analyze proprietary data, create a clinical study plan, and weigh the study’s chance of success. From a single prompt, Claude generated a robust initial analysis that helped inform our assessment of different development options, which would otherwise take days to complete. We did all of this while ensuring the security of our highly sensitive data. We look forward to expanding this work across our pipeline to support portfolio-level decisions.”</blockquote>
+<p><em><strong>Michael Pourdehnad, MD</strong>, Senior Vice President, Head of Early Clinical Development, Hematology, Oncology and Cell Therapy.</em></p>
+<p>In addition to our work with these partners, we’ve begun to run some research programs ourselves. We’ve acquired Mithril Medicine, a one-person company that has been developing treatments for two rare forms of muscular dystrophy. Its founder, Cody Tranbarger, used Claude to organize contracts, logistics, and experiments with 11 external labs, and delegated many other aspects of Mithril’s operations to Claude. As a result, Mithril took a possible treatment for one form of muscular dystrophy from an idea to promising results in mice in less than 18 months. Now at Anthropic, Cody is continuing this research, and plans to start several new programs. If his drug candidates continue to hold up, we expect a drug to be ready to start clinical trials in humans as soon as late 2028. Read more and see <a href="https://www-cdn.anthropic.com/52e1f5d50c47ca3818f56704c27cf19e59b62e77.pdf">our technical report</a>.</p>
+<h2>Extending our work in the life sciences</h2>
+<p>All of this research is still at an early stage. In particular, so far it is mostly <em>preclinical—</em>that is, for the most part, it isn’t yet at the stage where the drugs are being tested in humans. We plan to continue extending Claude’s role into clinical trials as these drug programs advance, and as we partner with more organizations whose drug development programs are already at the clinical stage.</p>
+<p>This research is only one part of our efforts to accelerate drug discovery. Ultimately, we want to share our models with as many drug development researchers as possible. To that end, we’ve rolled out <a href="https://www.anthropic.com/news/claude-science-ai-workbench">Claude Science</a>, our AI workbench for researchers, and we’re providing <a href="https://www.anthropic.com/news/ai-for-science-program">Claude credits for life scientists</a>. We’ve also created the <a href="https://www.anthropic.com/news/life-sciences-verification-program">Life Sciences Verification Program</a> to allow trusted organizations to use our most powerful models with more permissive versions of our safeguards, which are necessary to prevent misuse but which can impede legitimate biological research. We’ve also recently launched an <a href="https://www.anthropic.com/news/open-call-guest-investigators-life-sciences">open call for guest investigators</a> in the life sciences; we’re seeking proposals from research groups who want to use Claude to investigate key questions in drug discovery and other areas.</p>
+<p>We’re looking forward to working with many more organizations as we expand our life sciences research. If you work at an organization focused on drug discovery and are interested in collaborating with us, you can get in touch below.</p>
+<h3>Get in touch with us</h3>]]></content:encoded>
+    </item>
+    <item>
+      <title>Expanding our partnership with GSA to bring Claude to all le…</title>
+      <link>https://www.anthropic.com/news/expanding-partnership-gsa</link>
+      <guid isPermaLink="true">https://www.anthropic.com/news/expanding-partnership-gsa?li=1</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Expanding our partnership with GSA to bring Claude to all levels of government</description>
+      <content:encoded><![CDATA[<p>We are expanding our partnership with the General Services Administration (GSA) through a new agreement that gives government partners a 40% discount on Claude Enterprise, Claude for Government, and the Claude API. For the first time, the discount applies across every product surface, including when agencies buy from us directly today and through cloud providers in the coming months. The discount also extends to state, local, tribal and territorial governments.</p>
+<p>We are also launching a dedicated program to help agencies implement and make the most of their Claude use. These programs are commonly leveraged by our private sector customers and we’re looking forward to bringing those best practices to our public sector partners in the coming weeks.</p>
+<p>Approximately 500 US federal, state, and local government organizations now use Claude. Weekly Claude for Government active users are up about eightfold since February, and usage across federal civilian agencies has grown about 20-fold in a year. Those organizations run some of the most important systems in the country, usually on tight budgets and with long procurement cycles. This agreement is built to support that work, so they can apply Claude to hard problems without a large upfront commitment.</p>
+<p>The discounts offered through the agreement are estimated to save the government $1 billion. Agencies are not bound by a minimum spend commitment and will be able to pay for the usage they consume.</p>
+<h3><strong>How Claude is helping public servants get more done</strong></h3>
+<p>Government agencies are using Claude to solve some of their most important challenges. Examples include managing backlogs, records and forms, and modernizing old code. Some of the ways agencies are using Claude include:</p>
+<ul><li>Utah gave Claude Code to 34 developers across 10 state agencies. 80% had a working environment within 30 minutes, 71% reported saving 20+ hours by the end of the four-week pilot.</li><li>A US state CIO confirmed their team was able to respond to a ransomware attack in 8 minutes vs. the usual 2-3 days thanks to Claude.</li><li>A US federal security team used Claude Mythos to detect and patch the vulnerability that would have allowed for the takeover of a critical production system in about two days. A human penetration test the month before had missed it.</li><li>A cybersecurity professional at a major agency found and patched bugs in critical financial systems.</li><li>A US state IT developer moved nearly 900 API methods to a new framework in two days. The project had been scoped for a month.</li><li>A US state IT director used Claude Code to document 12 legacy code repositories, mapping 467 database tables and flagging 27 risks along the way.</li><li>More than half of the US states, some of the largest localities, and some of the countries largest critical infrastructure operators <a href="https://www.anthropic.com/news/anthropic-cyber-mission">participated</a> in our SLTT cyber defense program.</li></ul>
+<h3><strong>Meeting government security requirements</strong></h3>
+<p>Agencies can use Claude for their most sensitive unclassified work. Claude for Government, which delivers Claude's coding and agentic work capabilities and provides near-feature parity with commercial offerings at a FedRAMP High authorization level, was made <a href="https://claude.com/resources/articles/claude-for-government-is-now-generally-available">generally available</a> on September 30.</p>
+<p>Agencies building their own tools can use Claude through Amazon Bedrock or Google Cloud’s Vertex AI. On Bedrock, Claude is authorized for FedRAMP High, with select models authorized for DoD IL4 and IL5 workloads in AWS GovCloud. On Vertex AI, Claude is authorized for FedRAMP High.</p>
+<p>Claude Enterprise is in process for FedRAMP Moderate authorization through the FedRAMP 20x program, marking the next evolution of how we are bringing the same innovative technology available commercially to the government.</p>
+<h3><strong>Getting started</strong></h3>
+<p>Government agencies can buy Claude at the OneGov discount through GSA's Multiple Award Schedule today. Whether your department or agency already uses Claude or is interested in using it, our Public Sector team will help discuss your options.</p>
+<p>For more information, contact us <a href="https://claude.com/solutions/government">here</a>.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Expanding Claude for Nonprofits</title>
       <link>https://claude.com/resources/articles/expanding-claude-for-nonprofits</link>
@@ -3129,323 +3398,6 @@ return self.first_day &lt;= ts &lt;= self.last_day</code></pre>
 <p>We're partnering with <a href="https://www.goldmansachs.com/community-transformation/10000-small-businesses/us">Goldman Sachs 10,000 Small Businesses</a>, the widely recognized leader in practical education for small business owners, which has helped more than 19,000 entrepreneurs across the United States grow their businesses and create jobs. Together, we're creating a new learning series on applied AI for small businesses. Globally, we're a founding partner of <a href="https://doincuversity.ai/">IncuVersity</a>, a new Program from <a href="https://thedo.world/">The DO</a> that aims to help 20,000 early-career entrepreneurs build businesses with Claude over the coming years. And we are partnering with <a href="https://echoinggreen.org/">Echoing Green</a>, which backs early-stage social entrepreneurs around the world, as they incorporate Claude into their new AI-focused programming.</p>
 <h2>Getting started</h2>
 <p><a href="http://claude.com/plugins/small-business">Install Claude for Small Business</a> from, say “set me up,” and connect a tool or two. It’s available on every paid Claude plan, and we recommend the <a href="https://claude.com/pricing#team-&amp;-enterprise">Team plan</a> for businesses with more than one person. A step-by-step install guide and workflows list is on <a href="https://academy.claude.com/tutorials/how-to-install-the-claude-for-small-business-plugin">Claude Academy</a>.</p>
-<p>FAQ</p>
-<p>No items found.</p>
-<h2>Related posts</h2>
-<p>Explore more product news and best practices for teams building with Claude.</p>
-<p>Oct 1, 2026</p>
-<h3>Customize Claude Code with mods</h3>
-<p>Product announcements</p>
-<p>Customize Claude Code with mods</p>
-<p>Customize Claude Code with mods</p>
-<p>Sep 30, 2026</p>
-<h3>Claude for Government is now generally available</h3>
-<p>Product announcements</p>
-<p>Claude for Government is now generally available</p>
-<p>Claude for Government is now generally available</p>
-<p>Sep 25, 2026</p>
-<h3>Build plugins for Claude</h3>
-<p>Product announcements</p>
-<p>Build plugins for Claude</p>
-<p>Build plugins for Claude</p>
-<p>Sep 23, 2026</p>
-<h3>Claude Marketplace: one place to discover plugins, agents, and services from our partners</h3>
-<p>Product announcements</p>
-<p>Claude Marketplace: one place to discover plugins, agents, and services from our partners</p>
-<p>Claude Marketplace: one place to discover plugins, agents, and services from our partners</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<p>See pricing</p>
-<p>Get the developer newsletter</p>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Thank you! You’re subscribed.</p>
-<p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Salesforce in Claude</title>
-      <link>https://claude.com/blog/salesforce-in-claude</link>
-      <guid isPermaLink="true">https://claude.com/blog/salesforce-in-claude?li=1</guid>
-      <pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Bringing Salesforce into Claude</h1>
-<p>Sellers can now research companies, prep for calls, review pipeline, and draft CRM updates with our new Salesforce in Claude plugin.</p>
-<ul><li>Category<a href="https://claude.com/blog/category/enterprise-ai">Enterprise AI</a></li><li>Product<a href="https://claude.com/solutions/enterprise">Claude Enterprise</a></li><li>DateSeptember 15, 2026</li><li>Reading time5min</li><li>Share<a href="https://claude.com/blog/salesforce-in-claude#">Copy link</a>https://claude.com/blog/salesforce-in-claude</li></ul>
-<p>Today we are releasing Salesforce in Claude in beta, a plugin built with Salesforce that brings a seller’s accounts, opportunities, and pipeline into Claude under their existing Salesforce permissions. It includes 37 skills for the work account executives do daily, including account research, call prep, pipeline review, and CRM updates.</p>
-<p>Sellers often spend hours of their day on meeting prep or follow-up work from customer meetings by manually assembling information scattered across Salesforce, email, call recordings, and Slack. With the new plugin, Claude does that administrative work and updates Salesforce once the seller approves.</p>
-<p>The plugin also has two connectors that enable sellers to begin using it once an admin connects Salesforce and they sign in. With the Salesforce connector, Claude can read Salesforce data and act on it: summarize an account’s history, update opportunities, log calls or create follow-up tasks. The Slack connector covers deal-channel summaries and account-team threads that the skills can read and write. When sellers use the plugin for the first time, a setup skill identifies their tools and connectors and creates a Claude Artifact tailored to their role and book of business.</p>
-<h2>How sellers can use Salesforce in Claude today</h2>
-<p><strong>Start the day with a brief. </strong>Each morning Claude delivers a personalized brief that includes the day’s meetings, deals closing soon, at-risk opportunities, and unread threads that need a reply. Once scheduled, it runs in the background and can be accessed anywhere with Claude, including on the go with the Claude app. From the brief, sellers can tell Claude to push a close date, change a stage or add a follow-up task, and Claude will make the update in Salesforce. On Fridays, the brief wraps the week and drafts an update for the seller’s manager.</p>
-<p><strong>Prep for a call</strong>. A seller can ask Claude to prep for their next meeting and it pulls the brief from Salesforce, Slack, and email: open opportunities and where each stands, what the account team discussed this week, unanswered threads, and questions still open from previous calls. If it finds stakeholders in those threads who aren’t in Salesforce yet, Claude adds them as contacts on the account.</p>
-<p><strong>Review a deal and build the close plan.</strong> Pointed at an opportunity, Claude scores the deal against the team’s methodology, considering qualification gaps, stakeholders they haven't met, and factors putting the close date at risk. Ask it to keep going and it drafts the business case and a dated mutual close plan, fills in the qualification fields, and adds the missing stakeholders as contact roles. All this is saved to the opportunity once it’s been approved.</p>
-<p><strong>End every meeting with Salesforce updated.</strong> After each call, Claude turns the transcript or the seller’s notes into a follow-up email, a summary for the deal channel in Slack, and drafts opportunity updates like next steps, stage, and close date, for the seller to review.</p>
-<p><strong>Review pipeline and share forecasts.</strong> A seller can ask for a pipeline view and Claude builds an interactive dashboard showing coverage by stage, deals most likely to slip and why, and drill-down by account. From the dashboard, a seller can tell Claude to move a close date or change a stage, and Claude updates the record in Salesforce. Dashboards can be shared with leadership or the team, and Claude can draft the forecast narrative in the format leadership expects. Sales leaders can run the same views across the team.</p>
-<p><strong>Built on an organization’s existing permissions </strong>Salesforce remains as the system of record. Sellers sign in with their Salesforce credentials and Claude reads only what their permissions allow. By default, Claude asks the seller to approve each proposed change before it’s written. On Team and Enterprise plans, we don’t train our models on your data by default.</p>
-<p>Admins connect Salesforce once for the organization and choose which groups get the plugin.</p>
-<h2><strong>How sales teams use Salesforce in Claude</strong></h2>
-<p>Anthropic customers GitLab, Siemens, and Legora have deployed Salesforce in Claude to their organizations, and 7,000 Salesforce sellers use it in their work. Here’s what they’ve told us about using Salesforce in Claude:</p>
-<blockquote>&quot;With Salesforce in Claude, our sellers turn live data into meeting briefings in seconds instead of hours. As our sales team grows, every new rep starts with a full picture of the law firms we serve.&quot; — David Eckstein, Chief Financial Officer, Legora</blockquote>
-<blockquote>&quot;With Salesforce in Claude, sellers can start the day with the pipeline review already done and the account history already there. That time goes straight back into customer conversations.&quot;  — Alexa Vignone, President and Chief Revenue Officer, Salesforce</blockquote>
-<h2><strong>Getting started</strong></h2>
-<p>Salesforce in Claude is available in beta on all paid Claude plans. The <a href="https://claude.ai/directory/bundles/salesforce#directory/connectors/salesforce-headless-360">Salesforce MCP</a> is available to install directly through the marketplace today. To install the plugin, admins can request access through <a href="https://agentexchange.salesforce.com/sales-cloud-in-claude-beta-access">AgentExchange</a> and connect Salesforce once for their entire organization. For admins, we have a <a href="https://support.claude.com/en/articles/16952184">setup guide</a> with instructions on how to turn this on for your org. For sales leaders, we have a <a href="https://claude.com/blog/building-an-ai-native-revenue-organization">guide on running an effective sales organization with Claude</a>.</p>
-<p>No items found.</p>
-<p>Prev</p>
-<p>0</p>
-<p>5</p>
-<p>Next</p>
-<p>eBook</p>
-<p>FAQ</p>
-<p>No items found.</p>
-<h2>Related posts</h2>
-<p>Explore more product news and best practices for teams building with Claude.</p>
-<p>Jul 20, 2026</p>
-<h3>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</h3>
-<p>Enterprise AI</p>
-<p>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</p>
-<p>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</p>
-<p>Sep 30, 2026</p>
-<h3>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</h3>
-<p>Enterprise AI</p>
-<p>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</p>
-<p>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</p>
-<p>May 21, 2026</p>
-<h3>Claude now works with more security and compliance tools</h3>
-<p>Enterprise AI</p>
-<p>Claude now works with more security and compliance tools</p>
-<p>Claude now works with more security and compliance tools</p>
-<p>Aug 21, 2026</p>
-<h3>The AI-native SDLC playbook</h3>
-<p>Enterprise AI</p>
-<p>The AI-native SDLC playbook</p>
-<p>The AI-native SDLC playbook</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<p>See pricing</p>
-<p>Get the developer newsletter</p>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Thank you! You’re subscribed.</p>
-<p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Building an AI-native revenue organization</title>
-      <link>https://claude.com/blog/building-an-ai-native-revenue-organization</link>
-      <guid isPermaLink="true">https://claude.com/blog/building-an-ai-native-revenue-organization?li=1</guid>
-      <pubDate>Tue, 15 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Building an AI-native revenue organization</h1>
-<p>In this guide, we share how revenue leaders can roll out Claude across a sales organization, including the setup decisions, a three-phase rollout plan, and an ROI measurement framework.</p>
-<ul><li>Category<a href="https://claude.com/blog/category/enterprise-ai">Enterprise AI</a></li><li>Product<a href="https://claude.com/product/cowork">Claude Cowork</a></li><li>DateSeptember 15, 2026</li><li>Reading time5min</li><li>Share<a href="https://claude.com/blog/building-an-ai-native-revenue-organization#">Copy link</a>https://claude.com/blog/building-an-ai-native-revenue-organization</li></ul>
-<p>In our conversations with revenue leaders, we hear the same challenges: half the team barely touches the AI it already has, the best sellers build skills and prompts that no one else uses, and leadership has no visibility into usage and spend. Meanwhile, sellers gather account context before every call from multiple systems: the CRM, email, call recordings, Slack. That can mean spending thirty minutes on prep for fifteen minutes of conversation.</p>
-<p>Individual reps can save time every day when they hand over call prep to Claude, but when the whole team adopts it, the benefits compound. How much a sales organization gets out of Claude depends on what it has built around it: which systems Claude can read and write and whether it has the access and controls to take on more complex work.</p>
-<p><a href="https://claude.com/customers/cox-and-accenture">Cox Communications reported a 7x return</a> in its first-year of AI investment and cut the cost of validating and enriching sales leads by 86%, bringing accuracy up from 18% to 97%. At <a href="https://claude.com/customers/cyera">Cyera</a>, where 88% of roughly 1,500 employees use Claude weekly, BDRs draft outreach with a skill that’s been built using the top performers’ best work—a quality improvement as much as a time saving.</p>
-<p>To help revenue teams get the most out of AI, we put together <em>Building an AI-native revenue organization</em>, a guide to rolling out Claude across sales.</p>
-<p>In the guide, we share:</p>
-<ul><li>A maturity model showing where your organization stands today and what it takes to reach the next level</li><li>The setup decisions to make before the pilot: owners, connectors, IT and security, success metrics, and spend visibility</li><li>A three-phase rollout plan (set up, pilot, scale) with the use cases revenue teams run most, mapped by role</li><li>How to measure ROI in three groups: efficiency, expansion, and new capabilities</li><li>The pitfalls that stall org-wide rollouts, and checklists for getting started</li></ul>
-<p>Read the guide <a href="https://cdn.prod.website-files.com/6889473510b50328dbb70ae6/6aa8884a409cf1cabf867265_Claude-eBook-Building-an-AI-native-revenue-organization-09142026.pdf">here</a>.</p>
-<p>No items found.</p>
-<p>Prev</p>
-<p>0</p>
-<p>5</p>
-<p>Next</p>
-<p>eBook</p>
-<p>FAQ</p>
-<p>No items found.</p>
-<h2>Related posts</h2>
-<p>Explore more product news and best practices for teams building with Claude.</p>
-<p>Jul 20, 2026</p>
-<h3>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</h3>
-<p>Enterprise AI</p>
-<p>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</p>
-<p>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</p>
-<p>Sep 30, 2026</p>
-<h3>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</h3>
-<p>Enterprise AI</p>
-<p>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</p>
-<p>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</p>
-<p>May 21, 2026</p>
-<h3>Claude now works with more security and compliance tools</h3>
-<p>Enterprise AI</p>
-<p>Claude now works with more security and compliance tools</p>
-<p>Claude now works with more security and compliance tools</p>
-<p>Aug 21, 2026</p>
-<h3>The AI-native SDLC playbook</h3>
-<p>Enterprise AI</p>
-<p>The AI-native SDLC playbook</p>
-<p>The AI-native SDLC playbook</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<p>See pricing</p>
-<p>Get the developer newsletter</p>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Thank you! You’re subscribed.</p>
-<p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Agentic coding is straining CI. Here’s how we scaled test im…</title>
-      <link>https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic</link>
-      <guid isPermaLink="true">https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic?li=1</guid>
-      <pubDate>Mon, 14 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Agentic coding is straining CI. Here’s how we scaled test impact analysis at Anthropic</description>
-      <content:encoded><![CDATA[<h1>Agentic coding is straining CI. Here’s how we scaled test impact analysis at Anthropic</h1>
-<p>Our CI job volume increased 25x over 6 months. We patched our test selection service three times before finding a sustainable solution.</p>
-<ul><li>Category<a href="https://claude.com/blog/category/claude-code">Claude Code</a><a href="https://claude.com/blog/category/enterprise-ai">Enterprise AI</a></li><li>Product<a href="https://claude.com/product/claude-code">Claude Code</a><a href="https://claude.com/solutions/enterprise">Claude Enterprise</a><a href="https://claude.com/product/tag">Claude Tag</a></li><li>DateSeptember 14, 2026</li><li>Reading time5min</li><li>Share<a href="https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic#">Copy link</a>https://claude.com/blog/agentic-coding-is-straining-ci-heres-how-we-scaled-test-impact-analysis-at-anthropic</li><li>Author(s)Sachin Malhotra</li></ul>
-<h2>AI is evolving CI</h2>
-<p>Anthropic engineers on average ship <a href="https://www.anthropic.com/institute/recursive-self-improvement">8x as much code</a> per quarter as they did from 2021-2025. Claude authors <a href="https://www.anthropic.com/institute/recursive-self-improvement">80% of that code</a> and it also plays a large role in <a href="https://claude.com/blog/how-anthropic-secures-its-ai-native-software-development-lifecycle">reviewing and approving PRs as well</a>.</p>
-<p>Writing code is no longer the constraint, and once PR review gets accelerated, CI starts feeling the pressure.</p>
-<p>On top of that, the amount of tests across our codebase grew 10x and we added a nominal amount of engineers. This all led to a 25x increase in CI jobs over a six month period (in case you are trying to do the math, not every test runs on every PR as I will explain).</p>
-<p>This threatened to overload our test impact analysis service several times. To avoid becoming the next bottleneck, we blew up the whole thing and reimagined what the service's architecture looks like. But getting there was a bumpy path that started with three quick fixes, which lasted 70 days, then 29 days, and then less than a day respectively.</p>
-<p>Scaling CI is a challenge more engineering teams are likely to soon face as agents continue to accelerate code generation and review. I anticipate horizontally scaled test selection architecture will become industry standard as teams running agents create both more PRs and more tests.</p>
-<p>In this article, I’ll discuss how we scaled our test impact analysis service at Anthropic and the lesson I learned the hard way: always plan for the exponential. The specific scaling techniques–buying bigger machines, parallelizing processes, or restarting the service (yeah, this one still works surprisingly well) – are common and<strong> not the insights to take from this article.</strong></p>
-<p>The point is that each of these techniques bought a fraction of the time they did a year ago. On the other hand, overhauling and completely redesigning a service also takes a fraction of the time and is much more sustainable now that writing code is no longer the bottleneck.</p>
-<p>The more you can anticipate this strain and plan how your architecture will evolve with it, the less time you will waste on half-measures.</p>
-<h2>The test impact analysis architecture</h2>
-<p>Many of my peers work at organizations where every test is <strong>still </strong>run on every change. This works up to a point, but doesn’t scale: CI gates get increasingly long, expensive, and untrustworthy.</p>
-<p>Additionally, humans are great at determining which test failures don’t apply to them while agents will require more context and direction. When they get a specific set of valid tests, they can self-verify and iterate more effectively.</p>
-<p>At Anthropic, we built a deterministic test impact analysis or test selection service that determines which tests run on each change based on past performance and package relevance. This isn’t an uncommon practice, and there is a category of vendors with offerings in this area.</p>
-<p>Our service depends on two deterministic components staying in sync:</p>
-<ul><li><strong>A “listener” </strong>records the test results from every CI run.</li><li><strong>A “selector”</strong> reads the test result history and determines which tests run on which opened PRs.</li></ul>
-<p>This is effective, but when there are multiple CI jobs running every second, the listener starts to increasingly fall behind the PR queue. For an <a href="https://claude.com/blog/the-ai-native-sdlc-playbook">AI-native SDLC</a>, a small lag can have a big impact. For example, 20 minutes of listener lag can translate into tens of thousands of test updates not being applied to the selector.</p>
-<ul><li><strong>If a bad change gets merged</strong>, then a test will start failing for everyone else causing multiple unnecessary investigations.</li><li><strong>If a dependency starts flaking</strong>, then flaky reds start blocking merges.</li><li><strong>If a test gets fixed or a new one gets added</strong>, it won't run until the listener catches up risking a regression.</li></ul>
-<p>All of this ran as a single process because keeping a running history per test meant a single writer needed to apply the results. This v0 design prevented us from being able to horizontally shard.</p>
-<h2>The bumpy road to redesign</h2>
-<p>By October of last year the service was already showing signs of strain, and we got paged two days straight.</p>
-<h3>Patch 1: A bigger machine</h3>
-<p>The first fix was easy: we doubled the cores running the service. We also knew it would be fleeting.</p>
-<p>Conversation recreated. Based on real events.</p>
-<p>Even when the trend line was clear, ownership was murky. No one wanted to own another piece of infrastructure. Also, the CI team had bigger fish to fry.</p>
-<h3>Patch 2: Sharding</h3>
-<p>At this point we were getting paged pretty frequently by the lag building up in the listener of this service. To drive some long-term fixes, I started a long-running session in an internal version of Claude Tag dedicated to monitoring the service. Anytime the listener lag would get more than 50,000 jobs behind, Claude would ping me and resume our conversation on next steps.</p>
-<p>This would go on for months, and it was helpful not having to constantly remind it of past efforts or context. Claude often argued for an overhaul, but we usually settled on another patch.</p>
-<p>Verbatim conversation on an internal version of Claude Tag with some redactions.</p>
-<p>In February, the exponential growth of CI jobs started to strain the service once again. This time, we decided to parallelize.</p>
-<p>The listener didn’t need a single writer to order test results correctly, it needed a single writer per package to order the test results for each section of our codebase correctly. Claude generated the code for us to split each package’s state into a shard with its own worker.</p>
-<p>We also knew this fix would be fleeting, but we didn’t realize it would only buy us 29 days.</p>
-<h3>Patch 3: Daily restarts</h3>
-<p>In March, the process reached its memory limit by mid-afternoon on most weekdays. Again, we looked for quick fixes but:</p>
-<ul><li>We only found four bugs.</li><li>Swapping the memory allocator as a quick-hack did nothing. We were trying to optimize garbage collection but that wasn’t really the solution.</li><li>We didn’t want to risk memory profiling a singleton already under a heavy load.</li><li>Restarting bought us less than a day.</li></ul>
-<p>We also discovered daily restarts were resulting in the service gradually falling further behind. When it fell behind for more than an hour, which happened several times, a ton of job results weren’t recorded by the listener.</p>
-<p>To be clear, this doesn’t mean CI never ran on those PRs, or that untested code was pushed to production. What it meant was that the listener didn’t pick up some results, which meant our test-selection component was using stale data to decide what to run and what not to on PRs. Mostly this translated into us running tests that were already super flaky or widespread-failing across the board.</p>
-<h3>The redesign</h3>
-<p>It was (past) time to redesign the service, and we took Claude’s advice: we gave the test selection service a database, or an in-memory data store to be exact. By doing so, we effectively offloaded a huge chunk of in-memory processing that the singleton used to do.</p>
-<p>Now, any listener worker can process any result, append it to a journal in the in-memory store, and move on without holding anything in memory - stateless and hence, horizontally scalable. A small separate consumer process rolls the journal up into per-test history every few seconds, and the selector can look up relevant result history quickly.</p>
-<p>This distributed architecture is more expensive to run, but it is much easier to scale and memory profile than a shaky singleton.This project took three weeks for a single engineer. A year ago it would have been closer to a quarter.</p>
-<p>Queued, unprocessed job-result events, hourly max. Before: a backlog built up most days and grew week over week. After cutover and tuning: flat.</p>
-<p>There was some fine tuning (sizing the journal and number of workers) which Claude did largely autonomously, but our service has remained stable since.</p>
-<h2>What I would do differently</h2>
-<p>If I was sent back in time to October 2025, I would have approached this and other projects differently with what I now know.</p>
-<p>The first difference is that I would account for the AI exponential. CI jobs increase exponentially as the average number of agents per engineer rises and as accelerated PR approval becomes more sophisticated.</p>
-<p>This has changed the shape of PRs over time at Anthropic as Claude prefers smaller, more granular PRs (another good reason not to run every test against every PR). This has translated into more CI jobs in a given day. Also, the activity level floor is raised as agents push overnight and on weekends, but it remains bursty as human engineers still drive and approve a significant amount of PRs.</p>
-<p>My advice to engineering teams is, whether you build or buy, assume your architecture will be at a 25x load within two quarters. Over-engineering as a concept is starting to slightly fade away, or at least the bar is moving much higher. You can now start to account for 10-20x the perceived scale in your v0 designs as long your budget allows for it.</p>
-<p>Instrument your services to act as Claude’s eyes and ears. It allows Claude to hill-climb and fix problems incrementally much better and faster than we could manually. In particular, ensure that the same number of CI jobs coming in equals the same going out.</p>
-<p>Keep state out of the process from the start. I’d also avoid running any critical service as a single instance unless you can measure it and any canary changes. CI is evolving too quickly to proceed any other way.</p>
-<h2>Additional CI resources</h2>
-<p>I’ve also written how we accelerated <a href="https://claude.com/blog/ai-ci-cd-on-call">CI on call using Claude Tag</a> (beta).</p>
-<p>No items found.</p>
-<p>Prev</p>
-<p>0</p>
-<p>5</p>
-<p>Next</p>
-<p>eBook</p>
-<p>FAQ</p>
-<p>No items found.</p>
-<h2>Related posts</h2>
-<p>Explore more product news and best practices for teams building with Claude.</p>
-<p>Jul 20, 2026</p>
-<h3>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</h3>
-<p>Enterprise AI</p>
-<p>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</p>
-<p>Working at the frontier: How Rakuten builds agents overnight with Claude Fable 5</p>
-<p>Sep 30, 2026</p>
-<h3>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</h3>
-<p>Enterprise AI</p>
-<p>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</p>
-<p>How Anthropic's sales team rebuilt inbound with Claude Managed Agents</p>
-<p>May 21, 2026</p>
-<h3>Claude now works with more security and compliance tools</h3>
-<p>Enterprise AI</p>
-<p>Claude now works with more security and compliance tools</p>
-<p>Claude now works with more security and compliance tools</p>
-<p>Aug 21, 2026</p>
-<h3>The AI-native SDLC playbook</h3>
-<p>Enterprise AI</p>
-<p>The AI-native SDLC playbook</p>
-<p>The AI-native SDLC playbook</p>
-<h2>Transform how your organization operates with Claude</h2>
-<p>See pricing</p>
-<p>See pricing</p>
-<p>Get the developer newsletter</p>
-<p>Product updates, how-tos, community spotlights, and more. Delivered monthly to your inbox.</p>
-<p>Thank you! You’re subscribed.</p>
-<p>Sorry, there was a problem with your submission, please try again later.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Claude for Financial Advisors</title>
-      <link>https://claude.com/blog/claude-for-financial-advisors</link>
-      <guid isPermaLink="true">https://claude.com/blog/claude-for-financial-advisors?li=1</guid>
-      <pubDate>Mon, 14 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Claude for Financial Advisors</h1>
-<p>Financial advisors can now connect Claude to the custodians, portfolio platforms, CRMs, and planning tools they depend on, along with new skills tailored to the daily work of a financial advisor.</p>
-<ul><li>Category<a href="https://claude.com/blog/category/announcements">Product announcements</a></li><li>ProductNo items found.</li><li>DateSeptember 14, 2026</li><li>Reading time5min</li><li>Share<a href="https://claude.com/blog/claude-for-financial-advisors#">Copy link</a>https://claude.com/blog/claude-for-financial-advisors</li></ul>
-<p>Today we're releasing Claude for Financial Advisors, a suite of connectors and workflow skills designed to help with research, prep, and documentation tasks that occupy an advisor’s time and keep them from client-facing work.</p>
-<p>Time is scarce among financial advisors. A typical advisory practice spends only a sixth of its time in client meetings, according to <a href="https://www.kitces.com/kitces-report-how-financial-planners-actually-do-financial-planning/">Kitces research</a>. The rest goes to work around those meetings, piecing together information across systems to prepare, plan, and document what was discussed. Meanwhile, over four in 10 American workers say they don't know who to go to for good financial or retirement planning advice, according to <a href="https://www.ebri.org/docs/default-source/rcs/2026-rcs/rcs_26-fs-3_prep.pdf">EBRI's 2026 Retirement Confidence Survey</a>. Time an advisor saves on prep and paperwork can go to a current client or new household they don’t yet have capacity to serve.</p>
-<p>Claude for Financial Advisors includes:</p>
-<ul><li><strong>Connectors, </strong>which let Claude access the custodians, asset managers, and wealth technology providers advisors rely on most, so an advisor can work with a client’s information in one place.</li><li><strong>Skills, </strong>which use that information to help with specific tasks, like meeting prep, portfolio analysis, and compliance checks, always in service of the advisor's own judgment and style.</li></ul>
-<h2><strong>Connectors to the tools advisors already use</strong></h2>
-<p>New connectors bring in the CRM, custodian, portfolio reporting, financial planning software, estate tools, and meeting capture that advisors rely on.</p>
-<ul><li><strong>Addepar</strong> brings investment intelligence into Claude, giving advisors governed access to portfolio data, analytics and workflows across public and private markets.</li><li><strong>BlackRock</strong> brings its portfolio construction expertise, model portfolios, and institutional analytics into Claude through Advisor Center, so advisors can deliver holistic advice across public and private markets.</li><li><strong>Charles Schwab</strong> connects Claude to Schwab Advisor Services custodial data, including balances, positions, transactions, cost basis, alerts, and money-movement status, so advisors can review client information, see which clients need attention, and prepare for reviews.</li><li><strong>Envestnet</strong> lets advisors summarize Tamarac accounts and households in natural language, with a financial plan snapshot from MoneyGuide.</li><li><strong>iCapital </strong>brings a client's alternative investment holdings into Claude, enabling advisors to view NAV, commitments, unfunded capital, recent capital activity, and performance, while more easily connecting those insights to the client's broader portfolio.</li><li><strong>Orion</strong> brings portfolio reporting and Redtail CRM insights into Claude for household reviews, opportunity analysis, meeting prep and follow-up<em>. </em></li><li><strong>SS&amp;C Black Diamond </strong>brings portfolio, performance, holdings and rebalancing data into Claude, so advisors can review their book, spot clients out of tolerance, surface tax loss harvesting opportunities, and generate client reports, tasks and rebalance sessions with their approval.</li><li><strong>Wealthbox </strong>connects Claude to client records and meeting history to power onboarding, meeting prep, and follow-up.</li><li><strong>Wealth.com</strong> gives Claude a structured view of each client's estate and tax picture, including trust and will summaries, tax return insights, and the full balance sheet, so advisors can begin planning with an organized summary of available information instead of documents spread across multiple systems.</li><li><strong>Vanguard </strong>brings information on its model portfolios and advisor investment solutions into Claude, so advisors can draw on Vanguard's trusted research, portfolio construction, and asset allocation expertise when making decisions for clients.</li><li><strong>Zocks</strong>, the AI meeting assistant for financial advisors, brings Claude the client intelligence it captures from every conversation, including profiles, goals, life events, and commitments.</li></ul>
-<p>These join other <a href="https://claude.com/connectors">connectors</a> already available in Claude, including Microsoft 365, Salesforce, DocuSign, Box, FactSet, S&amp;P Global, Morningstar, and more.</p>
-<p>The Claude for Financial Advisors plugin, which bundles advisor skills and connectors into a single install, works with BlackRock, Charles Schwab, Addepar, Envestnet, iCapital, Orion, Wealthbox, Wealth.com and Zocks, and advisors choose which of these to connect during guided setup. Some partners also offer their own plugins: BlackRock is launching one for Advisor Center, joining existing plugins from S&amp;P Global and LSEG.</p>
-<h2><strong>Skills built around an advisor’s day</strong></h2>
-<p>Each skill in the Claude for Financial Advisors plugin supports a specific moment in an advisor's day, from prepping for a client meeting to explaining a drifted portfolio, and routes to tools the firm already uses to run their business. Firms can adopt these skills as is from our Claude for financial advisors <a href="https://github.com/anthropics/claude-for-financial-advisors">skill repository</a>, or adapt them to their own workflows, service model and house style.</p>
-<ul><li><strong>Advisor onboarding</strong> connects a firm's tools and runs the first meeting prep automatically, helping a new advisor be productive on day one instead of week three.</li><li><strong>Alternative investments brief</strong> pulls a household's alternative investments from iCapital or Addepar into a meeting-ready summary, shown alongside the rest of the portfolio, instead of an advisor reconciling separate statements by hand.</li><li><strong>Compliance and AI policy</strong> highlights content that may warrant additional compliance review based on user-configured criteria, assists firms in documenting review workflows, and supports AI-governance documentation processes.</li><li><strong>Estate and tax brief</strong> checks a client's estate plan against actual account titling and beneficiaries, looks back at the prior year's taxes, and can create CRM follow-up tasks, so mismatches surface for the advisor to review.</li><li><strong>Portfolio rebalance review</strong> flags drift and concentrated positions against a client's target allocation, and creates a first draft explanation an advisor would otherwise write from scratch.</li><li><strong>Post-meeting notes and follow-up</strong> turns a transcript into a client summary, a recap email, and CRM tasks in one pass, instead of an advisor doing each by hand after the call.</li><li><strong>Pre-meeting prep</strong> consolidates information from connected systems (including a client's holdings, recent account activity, and open items from prior meetings) into a single brief for the advisor to review, so they can prepare for and walk in ready for a conversation about that client's specific situation instead of reconstructing context from three systems.</li><li><strong>Prospect intake</strong> organizes what a prospect shares into a summary, an analyst handoff, and a what-to-expect memo, so the first meeting starts with the basics already in place.</li></ul>
-<p>Together, the skills gather information, summarize it, and draft client communications across the advisor’s day. Investment recommendations, client communications, compliance determinations, and other regulated activities remain subject to human review and approval.</p>
-<h2><strong>Built for regulated professionals</strong></h2>
-<p>Claude for Financial Advisors is designed so that the advisor stays in control, with approval required on critical tasks. Claude prepares briefs, summaries, and drafts analyses for advisor review, and stages administrative actions like CRM updates or draft client communications for the advisor's review and approval. The compliance skill screens client-facing language against the SEC Marketing Rule to flag potential issues, helps firms document review activities within their existing governance and recordkeeping processes, and includes a self-guided AI-policy workflow that helps firms document their use of AI under SEC rules. Workflow activities can be documented to assist firms in maintaining appropriate records and oversight processes.</p>
-<h2><strong>More households served well</strong></h2>
-<p>When Claude handles administrative tasks like meeting prep, follow-up drafts and pipeline review, advisors can spend more of their time serving clients. Practices can expand their customer base, and offer more of the services they need, like tax, estate, insurance, and retirement planning.</p>
-<p>Here’s what customers and ecosystem partners have told us about working with Claude:</p>
-<p>“Advisors are navigating increasingly complex client needs while facing an accelerating pace of change across markets and technology. Our work with Anthropic is an important step in our broader effort to bring BlackRock’s portfolio intelligence and asset allocation expertise to more advisors to help them scale their business and build better portfolios. By making our institutional-quality portfolio analytics more accessible, we are helping more advisors leverage our portfolio intelligence so they can spend more time focused on client relationships.”</p>
-<p>Jaime Magyera, Head of US Wealth &amp; Retirement Businesses</p>
-<p>“Anthropic builds AI aligned with human values. Mercer Advisors builds family offices aligned with client interests. That shared obsession is core to both firms and anchors our partnership. Claude helps our teams to work seamlessly across clients' financial lives, while judgment and accountability stay with the advisor. That is how AI should work in any profession built on trust.”</p>
-<p>Daniel Gourvitch, President</p>
-<p>“We are pleased to see Anthropic's continued investment in capabilities tailored to the unique needs of financial advisors. Our collaboration is rooted in a shared belief that technology should support advisors, not replace them, helping them navigate complexity and more efficiently serve clients while keeping human judgment and discretion at the forefront.”</p>
-<p>Ashley McCarthy, Chief Operating Officer &amp; Counsel-Managing Director</p>
-<p>“Vanguard is committed to helping advisors spend more time with clients and less time navigating complexity. Our integration with Claude expands access to Vanguard investment solutions, freeing up advisors' time to deliver more personalized service.”</p>
-<p>Sid Ratna, Head of Digital and Analytics, Financial Advisor Services</p>
-<p>“The future of advisor technology will be defined by how well firms can connect trusted data, powerful intelligence, and everyday workflows. Our collaboration with Anthropic reflects Schwab's commitment to helping registered investment advisors (RIAs) leverage innovation within the tools they already use, making it easier to serve clients, scale their practices, and grow with confidence.&quot;</p>
-<p>Jon Beatty, Head of Schwab Advisor Services</p>
-<p>“AI is already part of the everyday workflow in the advice business. I don't want my CFPs spending hours every week laboring over CRM updates and task assignments. I want them talking to clients and engaged in the planning itself, because that's the part clients truly value. Claude for Financial Advisors is the first thing I've seen that sits on top of the whole stack and does that work across it, with the compliance controls we need built in.&quot;</p>
-<p>Josh Brown, CEO</p>
-<p>&quot;Nobody at Ritholtz is going to be replaced by a chatbot. The math on this business is hours, not headcount: an advisor has a finite number of them, and most were going to prep and paperwork instead of the people who actually pay us. Claude for Financial Advisors can move that busy work forward across the systems we already use, with the advisor staying in the loop on anything that reaches the client. That gives us meaningful time back across the firm, so clients get faster responses and more focused attention.”</p>
-<p>Michael Batnick, Managing Partner</p>
-<p>“This is the moment the industry stops adapting to AI and starts running on it. The way we see it, Anthropic is the engine, Dynasty is the plane, and the advisor is always the pilot. We build the plane so advisors can fly it, at scale, safely, without ever touching the machinery underneath. The result is, we are not giving advisors another dashboard, we are giving them their time back!”</p>
-<p>Shirl Penney, Chief Executive Officer and Founder</p>
-<p>“Every hour an advisor spends assembling information is an hour not spent with a client. Bringing Claude together with Tamarac and MoneyGuide means an advisor can understand certain elements of a household or a financial plan in the time it takes to ask.”</p>
-<p>Andrew Stavaridis, Chief Relationship Officer</p>
-<p>&quot;As private markets become a larger part of client portfolios, advisors need easier ways to navigate complexity. iCapital combines a comprehensive marketplace with the data and infrastructure to manage specialized investments, and connecting that data through Claude helps turn investment intelligence into actionable insights.&quot;</p>
-<p>Gary Gallagher, President</p>
-<p>“AI is most effective for advisors when it works with the data and systems they already use. Connecting Claude with SS&amp;C Black Diamond Wealth Solutions allows advisors to bring client and portfolio information into their workflows, reducing preparation time and ensuring they remain in Control.”</p>
-<p>Steve Leivent, Senior VP &amp; Co-Head</p>
-<p>&quot;Addepar has built the data and intelligence foundation that the world's leading investment professionals rely on to manage nearly $10 trillion in assets, with the governance, rigor and controls built natively into our platform. Addepar's collaboration with Anthropic brings our uniquely deep understanding of sophisticated investment portfolios into Claude, giving clients access to Addepar's industry-leading portfolio intelligence wherever they work.&quot;</p>
-<p>Eric Poirier, CEO</p>
-<p>&quot;Estate and tax are the layers of a client's plan that have to be exact. Advisors already trust Wealth.com as the system of record for the estate and tax positions their clients actually have. Inside Claude, that record can answer questions directly, with every figure tracing back to the source document that produced it.&quot;</p>
-<p>Rafael Loureiro, CEO</p>
-<p>&quot;Advisors do their best work with the full picture of a client in front of them. Connecting Salesforce to Claude lets the relationships firms have built on our platform travel with the advisor, within the permissions and controls they already have in place. Together with Anthropic we're giving firms more ways to put that trusted client data to work for the people they serve.&quot;</p>
-<p>Eran Agrios, SVP &amp; GM, Financial Services</p>
-<p>“Clients never see the work behind a good meeting, but they feel it when it’s missing. Through our collaboration with Anthropic, Orion’s plugin for Claude for Financial Advisors brings a firm’s portfolio and CRM data into meeting prep, follow-up drafts and pipeline review, all within the firm’s existing permissions and controls. The technology handles more of the preparation in the background so the advisor can stay focused on the client and the conversation. Advisors walk in prepared, without spending hours pulling everything together.”</p>
-<p>Reed Colley, President</p>
-<p>“Good financial advice depends on knowing what's going on in a client’s life, not just what's in their accounts,” said Mark Gilbert, CEO and Co-founder of Zocks. “The expanded collaboration between Claude and Zocks brings together data and personal client context that used to be fragmented across sources and systems. Now, every task and analysis through Claude is grounded in a more complete understanding of the client. It also gives enterprise firms greater flexibility to build AI workflows around how their advisors actually work.”</p>
-<p>Mark Gilbert, CEO and Co-founder</p>
-<p>“MCPs are fundamentally changing how we build technology for advisors. With Claude and Zocks integrated directly into our stack, problems that once required months of configuration and dependence on outside partners can increasingly be solved by our own development team. That gives us the freedom to move faster, work with best-in-class partners, and build around the way advisors actually operate. Instead of asking advisors to adapt to technology, we can make the technology adapt to them.”</p>
-<p>Dr. Jordan Hutchison, Vice President of Technology and Operations</p>
-<p>&quot;Advisors have spent years building deep client context in Wealthbox. This lets them bring that context straight into Claude and put a frontier model to work on it, such as preparing for meetings, handling follow-up, drafting communications, while everything stays connected to the CRM their practice runs on.&quot;</p>
-<p>John Rourke, CEO and Co-Founder</p>
-<p>Prev</p>
-<p>0</p>
-<p>5</p>
-<p>Next</p>
-<p>eBook</p>
-<h2><strong>Getting started </strong></h2>
-<p>The advisor plugin is available today. We recommend Enterprise plans for registered investment advisers, because it includes the audit logs that support recordkeeping. If you already have an Enterprise license, open Cowork and find &quot;Claude for Financial Advisors&quot; in the plugin browser, and install it and follow the guided setup to connect your tools (or install from the <a href="http://github.com/anthropics/claude-for-financial-advisors">marketplace here</a>).</p>
-<p>If you don't have an Enterprise license, request one using this <a href="https://forms.gle/y9YmFF2j4moRinJA7">form</a> and an Anthropic team member will reach out with next steps. Firms that request a new license before the end of September 2026 will also receive a one-time usage credit to help them get started with the plugin.</p>
-<p>Learn more <a href="https://claude.com/solutions/financial-services#financial-advisors">at our solutions page</a> and join <a href="http://anthropic.com/webinars/inside-claude-for-financial-advisors">our webinar</a> this Friday 9/18 at 11AM ET.</p>
 <p>FAQ</p>
 <p>No items found.</p>
 <h2>Related posts</h2>

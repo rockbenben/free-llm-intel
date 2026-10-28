@@ -7,7 +7,584 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 23 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Build specialized multimodal models with LFM3</title>
+      <link>https://huggingface.co/blog/LiquidAI/lfm3</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/lfm3?li=1</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Build specialized multimodal models with LFM3</h1>
+<p>Team Article</p>
+<p>Published October 27, 2026</p>
+<p>36</p>
+<ul><li><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt=""></a></li><li><a href="https://huggingface.co/s-jse"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62ed66743d88d075d72515fe/nzrS3MaUo2rqPDGRXKOJP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jimmysmith1919"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f8ad3749282808838048a0/Ci6nhDy53Z3_wcR39uJB5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nathanrchn"><img src="https://huggingface.co/avatars/d9b9b4ed0079ca70751539204bc33fec.svg" alt=""></a></li><li><a href="https://huggingface.co/rouzbehat78"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69791f53b2133a5c4f318f08/4jaCC1xkFQSd25agMwe97.jpeg" alt=""></a></li><li><a href="https://huggingface.co/amaltsev"><img src="https://huggingface.co/avatars/eefadceb8487048e32c95794e733a115.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/iamleonie"><img src="https://huggingface.co/avatars/d4b34a8059fcbc43d4773b1d5e820481.svg" alt="Leonie Monigatti's avatar"></a></p>
+<p>Leonie Monigatti</p>
+<p>iamleonie</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/jimmysmith1919"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f8ad3749282808838048a0/Ci6nhDy53Z3_wcR39uJB5.jpeg" alt="Jimmy T.H. Smith's avatar"></a></p>
+<p>Jimmy T.H. Smith</p>
+<p>jimmysmith1919</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/amaltsev"><img src="https://huggingface.co/avatars/eefadceb8487048e32c95794e733a115.svg" alt="Anthony Maltsev's avatar"></a></p>
+<p>Anthony Maltsev</p>
+<p>amaltsev</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt="Maxime Labonne's avatar"></a></p>
+<p>Maxime Labonne</p>
+<p>mlabonne</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/Brandon3967"><img src="https://huggingface.co/avatars/88da3e1b9a1e5466f980ab73502b8d70.svg" alt="Brandon's avatar"></a></p>
+<p>Brandon</p>
+<p>Brandon3967</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/samuelstevens"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64df8592d27135dd568380b5/1-YkiTAkI11QBbZnVRjJu.jpeg" alt="Samuel Stevens's avatar"></a></p>
+<p>Samuel Stevens</p>
+<p>samuelstevens</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/shubeydoo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68ad4ca0c8098c6f8050af26/rs-ppX6kQ-CNLTAME6VWn.jpeg" alt="Ryan Shubert's avatar"></a></p>
+<p>Ryan Shubert</p>
+<p>shubeydoo</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/tianshu-yu"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/692e2d53117d37a2fcdb102c/8-JZzZcSDew0hKF-gYMRB.jpeg" alt="Tianshu Yu's avatar"></a></p>
+<p>Tianshu Yu</p>
+<p>tianshu-yu</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/s-jse"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62ed66743d88d075d72515fe/nzrS3MaUo2rqPDGRXKOJP.jpeg" alt="Sina's avatar"></a></p>
+<p>Sina</p>
+<p>s-jse</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/tseyde"><img src="https://huggingface.co/avatars/b26cb691a12fc93a2f25850be74a1770.svg" alt="Tim Seyde's avatar"></a></p>
+<p>Tim Seyde</p>
+<p>tseyde</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/rouzbehat78"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69791f53b2133a5c4f318f08/4jaCC1xkFQSd25agMwe97.jpeg" alt="Rouzbeh Amin Tafreshi's avatar"></a></p>
+<p>Rouzbeh Amin Tafreshi</p>
+<p>rouzbehat78</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/alexanderamini"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d1c9fce9cac0020bdeb5b9/XC0Qi14HRVBPQGsjM3tqu.jpeg" alt="Alexander Amini's avatar"></a></p>
+<p>Alexander Amini</p>
+<p>alexanderamini</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/saniyakarwa"><img src="https://huggingface.co/avatars/1c60fbd0894fdd18c0887c8b5e608854.svg" alt="Saniya Karwa's avatar"></a></p>
+<p>Saniya Karwa</p>
+<p>saniyakarwa</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/haerski"><img src="https://huggingface.co/avatars/f8eda106a4f8d4360bf460bd10912765.svg" alt="Marc Harkonen's avatar"></a></p>
+<p>Marc Harkonen</p>
+<p>haerski</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/orech"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64ee478168616f1453e73df0/NPCNOmGcg-9XyAe8zrTNY.jpeg" alt="Anna Piunova's avatar"></a></p>
+<p>Anna Piunova</p>
+<p>orech</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/CalderKat"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/A4856Ek1Cd3wumFwS1_Z3.png" alt="Calder Katyal's avatar"></a></p>
+<p>Calder Katyal</p>
+<p>CalderKat</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/ianant93"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67f6dfb37b3b16caf90086ee/dHwPu1kZr9s1zQfAx7uAC.jpeg" alt="Ishwarya Ananthabhotla's avatar"></a></p>
+<p>Ishwarya Ananthabhotla</p>
+<p>ianant93</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/farris-liquid"><img src="https://huggingface.co/avatars/f0639c27776478229a395ba16d14df36.svg" alt="Farris Atif's avatar"></a></p>
+<p>Farris Atif</p>
+<p>farris-liquid</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/tdakhran"><img src="https://huggingface.co/avatars/ef3e22922f3b8da3e696288b9e702a9f.svg" alt="Tarek Dakhran's avatar"></a></p>
+<p>Tarek Dakhran</p>
+<p>tdakhran</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/paulpak58"><img src="https://huggingface.co/avatars/2e0a11d7cc24414cc7f2f79561fe5ff9.svg" alt="Paul Pak's avatar"></a></p>
+<p>Paul Pak</p>
+<p>paulpak58</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/tugot17"><img src="https://huggingface.co/avatars/7bc2b0fbcc97c4a117ef3de6175afe7c.svg" alt="xx's avatar"></a></p>
+<p>xx</p>
+<p>tugot17</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/mihirbafna"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/662ffa0ac7edc3b9628c6138/uwqInkvubt5tEz2odR2-H.png" alt="Mihir Bafna's avatar"></a></p>
+<p>Mihir Bafna</p>
+<p>mihirbafna</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/m3m0ryh0l3"><img src="https://huggingface.co/avatars/9fbae41344e7e9e2c2d257d3df9c9afe.svg" alt="Kyle Bruce Wheeler's avatar"></a></p>
+<p>Kyle Bruce Wheeler</p>
+<p>m3m0ryh0l3</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/adityatadimeti"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/662b14788e855c7c010c03c9/UWRzvG0YwSj5o7NxiYC6G.jpeg" alt="Aditya Tadimeti's avatar"></a></p>
+<p>Aditya Tadimeti</p>
+<p>adityatadimeti</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/alfredeng"><img src="https://huggingface.co/avatars/a8f07dd7fd5d10b42795f0e75ed57d41.svg" alt="Alfred Eng's avatar"></a></p>
+<p>Alfred Eng</p>
+<p>alfredeng</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/karthikrmacherla"><img src="https://huggingface.co/avatars/d6521ca2575c898bda8fe11c98489754.svg" alt="Karthik Macherla's avatar"></a></p>
+<p>Karthik Macherla</p>
+<p>karthikrmacherla</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt="Khoi Nguyen's avatar"></a></p>
+<p>Khoi Nguyen</p>
+<p>KTLK</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/agcarranza"><img src="https://huggingface.co/avatars/94b81708b8ce113c07f5fcdf7bda5619.svg" alt="Aldo Gael Carranza's avatar"></a></p>
+<p>Aldo Gael Carranza</p>
+<p>agcarranza</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/Aurelien-Lac"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a8f24b4adaa29ed09b8632/yvzQ7iDcUBwtg2rnkZ1e2.png" alt="Aurelien Lac's avatar"></a></p>
+<p>Aurelien Lac</p>
+<p>Aurelien-Lac</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/undfined"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65e5fefbe8cbae176d9ca005/5SLREDsVzycEwVsPNv765.jpeg" alt="Tyler Murray's avatar"></a></p>
+<p>Tyler Murray</p>
+<p>undfined</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/Raahul26"><img src="https://huggingface.co/avatars/ea960213b968c4454f84166b3bed005f.svg" alt="Raahul Vignesh's avatar"></a></p>
+<p>Raahul Vignesh</p>
+<p>Raahul26</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/sduong"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61e579a4dad2c81e175fc60c/XjAa60zy43KMDnz7mDbro.jpeg" alt="Song Duong's avatar"></a></p>
+<p>Song Duong</p>
+<p>sduong</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/raminmh"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/628e7102e0994038b5f40f05/WwUTy5fUH2Y0xcGjTIb89.jpeg" alt="Ramin Hasani's avatar"></a></p>
+<p>Ramin Hasani</p>
+<p>raminmh</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/mlech26l"><img src="https://huggingface.co/avatars/9ce73c7de01c7ab98dde15eeebf37963.svg" alt="Mathias Lechner's avatar"></a></p>
+<p>Mathias Lechner</p>
+<p>mlech26l</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/akhileshdeepakgotmare"><img src="https://huggingface.co/avatars/ffeb15650f9da3f3dfbeaf9f574ed3c2.svg" alt="Akhilesh Deepak Gotmare's avatar"></a></p>
+<p>Akhilesh Deepak Gotmare</p>
+<p>akhileshdeepakgotmare</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/fernandofernandes"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/646e57a5cb6ea6e6b6df1ad4/PlGhM2SUynFBUdYAylaZK.jpeg" alt="Fernando Fernandes Neto's avatar"></a></p>
+<p>Fernando Fernandes Neto</p>
+<p>fernandofernandes</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/WWWjiahui"><img src="https://huggingface.co/avatars/9666c0ff9bca41d1930c20450ba7ab44.svg" alt="Jiahui Wang's avatar"></a></p>
+<p>Jiahui Wang</p>
+<p>WWWjiahui</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/ykhrustalev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e303b880f10dbf1b896f30/d2TAaTRy9WN9i8t1s0HY6.png" alt="Yuri Khrustalev's avatar"></a></p>
+<p>Yuri Khrustalev</p>
+<p>ykhrustalev</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/alay2shah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67ec1647828c8ff385606bf9/OzeHkgE0NknVWYn8TGG9R.jpeg" alt="Alay Shah's avatar"></a></p>
+<p>Alay Shah</p>
+<p>alay2shah</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/yungisimon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/2T3vwvjHPZA8mvJzWm5dK.jpeg" alt="Simon Lee's avatar"></a></p>
+<p>Simon Lee</p>
+<p>yungisimon</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/mayankagarwal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6229237ed94a4a3d5efbacb5/GM-ec64-qx660keEKqU1c.jpeg" alt="Mayank Agarwal's avatar"></a></p>
+<p>Mayank Agarwal</p>
+<p>mayankagarwal</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/zetianli"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68507030a17aa73fb574386e/XgHgjAMJXbuynfzM7v2aR.webp" alt="Zetian Li's avatar"></a></p>
+<p>Zetian Li</p>
+<p>zetianli</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/changyiyang"><img src="https://huggingface.co/avatars/da97a44c036f18b1149b448e99d3a9cf.svg" alt="changyi yang's avatar"></a></p>
+<p>changyi yang</p>
+<p>changyiyang</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/GAD-cell"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66a734f138fbd9075584e7bd/7GQOdyESC-_S73HVN-1MP.png" alt="Sinoué GAD's avatar"></a></p>
+<p>Sinoué GAD</p>
+<p>GAD-cell</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/nathanrchn"><img src="https://huggingface.co/avatars/d9b9b4ed0079ca70751539204bc33fec.svg" alt="nathan ranchin's avatar"></a></p>
+<p>nathan ranchin</p>
+<p>nathanrchn</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI's avatar"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/collections/LiquidAI/lfm3"><strong>LFM3</strong></a> is our new generation of Liquid Foundation Models (LFMs), built to be the starting point for specialized intelligence. It brings text, vision, audio, omni, and decision models onto one shared backbone, all in the 2B parameter range. This means you can pick the model for your modality, fine-tune it on your own data on a single GPU, and deploy it where your application runs.</p>
+<p>LFM3 brings four main changes compared to our previous LFM2 family:</p>
+<ul><li><strong>More capability per parameter:</strong> a new tri-hybrid architecture and training recipe allow LFM3-1.7B to outperform LFM2.5-2.6B while using 35% fewer parameters.</li><li><strong>Every modality on one backbone:</strong> six 2B-class models (text, vision, audio, omni, and decision) trained from LFM3-1.7B-Base, including our first omni model and video input for our vision model.</li><li><strong>Built for the edge:</strong> the text model fits in about 1 GB at 4-bit precision, new in-house vision and audio encoders speed up processing, and the text model’s 256K context window lets agents run on-device.</li><li><strong>Made to be specialized:</strong> every model fine-tunes on a single GPU, so you can adapt it to your data, terminology, and deployment environment.</li></ul>
+<h2>How we built a more expressive backbone</h2>
+<p>LFM2 showed that a hybrid of short convolutions and attention can run fast on-device without sacrificing quality. For LFM3, we used our hardware-in-the-loop architecture search to redesign that architecture for agentic use cases, which need more capability per parameter and fast inference over long contexts. The search now covers 14 device and backend combinations, from phones and a Raspberry Pi 5 to laptops, cloud CPUs, GPUs, and the Qualcomm Hexagon NPU.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/644249b08443bce4c9890a0f/iZQBqXVZfrcUNCklF4eAs.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/644249b08443bce4c9890a0f/iZQBqXVZfrcUNCklF4eAs.png" alt="lfm3-1.7b-architecture"></a></p>
+<p>LFM3-1.7B-Base has 24 layers and four main changes:</p>
+<ul><li><strong>Tri-hybrid layer mix:</strong> 13 gated short convolutions, 5 sliding-window attention (SWA) layers with a 256-token window, and 6 global attention layers. The convolutions use a kernel size of 7, up from 3 in LFM2.</li><li><strong>Head-wise gated attention:</strong> a sigmoid gate scales each head's output, so a head can switch off when it has nothing to add. This can help suppress activation outliers that hurt quantization.</li><li><strong>Partial RoPE:</strong> global attention layers rotate only the highest-frequency half of each head, so the other half matches on content regardless of distance. SWA layers keep full RoPE.</li><li><strong>Sandwich norm:</strong> each block normalizes both its input and its output to keep activations well-scaled.</li></ul>
+<p>The payoff shows at long context. Per parameter, LFM3-1.7B matches LFM2-1.2B on short prompts across edge devices, and with 8K tokens in context it is about 25% faster. LFM3-1.7B-Base was pre-trained on 22T tokens with the same 128K vocabulary as <a href="https://huggingface.co/LiquidAI/LFM2.5-8B-A1B">LFM2.5-8B-A1B</a>. The final 3.5T tokens are a mid-training stage on curated data with a larger share of agentic traces and tool calls, which also extends the context window to 256K tokens.</p>
+<h2>One backbone for six models</h2>
+<p>Every LFM3 model branches from LFM3-1.7B-Base. Instead of running one large general-purpose model, you pick the one that fits your inputs, customize it, and run it on-device.</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/644249b08443bce4c9890a0f/6RfJINOKr6Ay2kHCPR-mz.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/644249b08443bce4c9890a0f/6RfJINOKr6Ay2kHCPR-mz.png" alt="lfm3-post-training"></a></p>
+<table><thead><tr><th>Model</th><th>Input</th><th>Output</th><th>Built on</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/LiquidAI/LFM3-1.7B">LFM3-1.7B</a></td><td>Text</td><td>Text</td><td>LFM3-1.7B-Base</td></tr><tr><td><a href="https://huggingface.co/LiquidAI/LFM3-VL-2B">LFM3-VL-2B</a></td><td>Text, images, video</td><td>Text</td><td>LFM3 backbone + vision encoder</td></tr><tr><td><a href="https://huggingface.co/LiquidAI/LFM3-Audio-2B">LFM3-Audio-2B</a></td><td>Text, audio</td><td>Text, speech</td><td>LFM3 backbone + audio encoder, audio decoder, and LiquidCodec</td></tr><tr><td><a href="https://huggingface.co/LiquidAI/LFM3-Omni-2B">LFM3-Omni-2B</a></td><td>Text, images, video, audio</td><td>Text, speech</td><td>LFM3 backbone + vision and audio encoders and audio decoder</td></tr><tr><td><a href="https://huggingface.co/LiquidAI/d1-2B">d1-2B</a></td><td>Text, images, video</td><td>Calibrated answers</td><td>LFM3-VL-2B</td></tr><tr><td><a href="https://huggingface.co/LiquidAI/d1-omni-2B">d1-omni-2B</a></td><td>Text, images, video, audio</td><td>Calibrated answers</td><td>LFM3-Omni-2B</td></tr></tbody></table>
+<p>The vision and audio models also get two new in-house encoders:</p>
+<ul><li><strong>Vision encoder:</strong> it combines convolution and attention and uses 3x less compute than the SigLIP2 encoder in previous LFM VL models. Our 164M-parameter encoder matches Qwen3.5-2B's vision encoder in accuracy while requiring 2.2x fewer FLOPs (both measured with the same LFM2.5-230M language backbone). For video, it embeds each pair of sampled frames into one temporal slice, halving the temporal sequence length.</li><li><strong>Audio encoder and LiquidCodec:</strong> the audio encoder mixes sliding-window attention and short convolutions and is fully causal, so the model can prefill while you speak, with time to first token as low as 50 ms. LiquidCodec, our new audio tokenizer, turns generated tokens into speech at about 87x real time on a single CPU thread on Apple M4 Max and supports streaming decoding.</li></ul>
+<h2>How to use the LFM3 models</h2>
+<p>Each model runs in <code>transformers</code>. The snippets below come from the model cards, which also list the other inference engines each model supports.</p>
+<h3>LFM3-1.7B</h3>
+<p>Reach for LFM3-1.7B when you need local agents, tool calling, structured outputs, or a base for domain-specific fine-tuning. It is post-trained to run in agentic harnesses such as Hermes Agent, Pi, and OpenClaw. It outperforms its predecessor, LFM2.5-2.6B, with 35% fewer parameters, and the biggest gains are on agentic tasks: on WebArena-Verified, it scores 38.42 against 3.02, and it even beats Qwen3.5-9B on long tasks in browsers and business apps. You can find more details in the <a href="https://huggingface.co/LiquidAI/LFM3-1.7B">LFM3-1.7B model card</a>.</p>
+<p>To run LFM3-1.7B, install the latest version of <code>transformers</code>:</p>
+<pre><code>pip install -U transformers</code></pre>
+<p>Then load and run the model:</p>
+<pre><code>from transformers import pipeline
+
+generator = pipeline(
+    &quot;text-generation&quot;,
+    model=&quot;LiquidAI/LFM3-1.7B&quot;,
+    trust_remote_code=True,
+)
+
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is C. elegans?&quot;}]
+output = generator(
+    messages,
+    do_sample=True,
+    temperature=0.1,
+    top_k=50,
+    repetition_penalty=1.1,
+    max_new_tokens=2048,
+)
+print(output[0][&quot;generated_text&quot;][-1][&quot;content&quot;])</code></pre>
+<p>For local agent setup, see the <a href="https://docs.liquid.ai/examples/agent-harnesses">Agent Harnesses guide</a>.</p>
+<h3>LFM3-VL-2B</h3>
+<p>Reach for LFM3-VL-2B when you need on-device visual understanding. It is the first LFM vision model that takes video as input; it reasons step by step before it answers, and it finds objects and reasons about how they are placed, a strong foundation for robotics. Compared with LFM2.5-VL-3B, it has fewer parameters (1.9B against 3.1B) yet raises the average across 62 vision benchmarks from 57.6 to 71.4, on par with Gemma 4 12B, a model more than six times larger. You can find more details in the <a href="https://huggingface.co/LiquidAI/LFM3-VL-2B">LFM3-VL-2B model card</a>.</p>
+<p>To run LFM3-VL-2B, install transformers&gt;=5.21.0 with its vision dependencies:</p>
+<pre><code>pip install &quot;transformers&gt;=5.21.0&quot; torch torchvision pillow</code></pre>
+<p>Then load and run the model:</p>
+<pre><code>import torch
+from transformers import AutoModelForImageTextToText, AutoProcessor
+
+model_id = &quot;LiquidAI/LFM3-VL-2B&quot;
+
+model = AutoModelForImageTextToText.from_pretrained(model_id, dtype=torch.bfloat16, device_map=&quot;auto&quot;, trust_remote_code=True)
+processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
+
+messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;image&quot;, &quot;url&quot;: &quot;https://placecats.com/300/200&quot;},
+            {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Describe this image.&quot;},
+        ],
+    }
+]
+
+inputs = processor.apply_chat_template(
+    messages,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+).to(model.device)
+
+with torch.inference_mode():
+    output_ids = model.generate(
+        **inputs,
+        do_sample=True,
+        temperature=0.1,
+        top_k=50,
+        repetition_penalty=1.1,
+        max_new_tokens=16384,  # generate() needs an explicit limit; reasoning can be long
+    )
+
+generated_ids = output_ids[:, inputs[&quot;input_ids&quot;].shape[1] :]
+print(processor.batch_decode(generated_ids, skip_special_tokens=True)[0])</code></pre>
+<p>See the <a href="https://huggingface.co/LiquidAI/LFM3-VL-2B">LFM3-VL-2B model card</a> for tool calling, tool search, and on-device inference with llama.cpp.</p>
+<h3>LFM3-Audio-2B</h3>
+<p>Reach for LFM3-Audio-2B when you need voice chat, speech recognition, speech synthesis, or translation across 18 languages on a laptop or edge device. It takes text or audio as input and responds with text, speech, or both, and it can turn spoken requests into tool calls. Compared with LFM2.5-Audio-1.5B, it uses a new in-house audio encoder and speech codec, speaks with higher quality (UTMOSv2 3.83 against 3.22), and adds audio understanding, general-purpose audio reasoning, and tool calling. You can find more details in the <a href="https://huggingface.co/LiquidAI/LFM3-Audio-2B">LFM3-Audio-2B model card</a>.</p>
+<p>To run LFM3-Audio-2B, install <code>transformers&gt;=5.20.2</code> with its audio dependencies:</p>
+<pre><code>pip install &quot;transformers&gt;=5.20.2&quot; torch accelerate librosa soundfile</code></pre>
+<p>Load the model and processor directly from the Hugging Face Hub:</p>
+<pre><code>import torch
+import soundfile as sf
+
+from transformers import AutoModelForMultimodalLM, AutoProcessor
+
+model_id = &quot;LiquidAI/LFM3-Audio-2B&quot;
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+dtype = torch.bfloat16 if device == &quot;cuda&quot; else torch.float32
+
+model = AutoModelForMultimodalLM.from_pretrained(
+    model_id, dtype=dtype, device_map=device, trust_remote_code=True
+).eval()
+processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
+codec = processor.audio_tokenizer.to(device=device).eval()</code></pre>
+<p>Then ask a question aloud and get a reply in text and speech:</p>
+<pre><code>conversation = [
+    {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;Respond with interleaved text and audio.&quot;},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;audio&quot;, &quot;audio&quot;: &quot;question.wav&quot;}]},
+    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;&lt;|mixed_start|&gt;&quot;},
+]
+inputs = processor.apply_chat_template(
+    conversation,
+    continue_final_message=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+).to(device)
+with torch.no_grad():
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=1024,
+        audio_temperature=1.0,
+        audio_top_k=128,
+        audio_repetition_penalty=1.1,
+        audio_repetition_window=4096,
+        return_dict_in_generate=True,
+    )
+
+    text = processor.decode(
+        outputs.sequences[0, inputs[&quot;input_ids&quot;].shape[1]:],
+        skip_special_tokens=True,
+    )
+    waveform = codec.decode(
+        outputs.audio_codes[:1, :, :outputs.audio_lengths[0]]
+    ).audio_values[0]  # 24 kHz
+print(text)
+sf.write(&quot;reply.wav&quot;, waveform.float().cpu().numpy(), 24_000)</code></pre>
+<p>See the <a href="https://huggingface.co/LiquidAI/LFM3-Audio-2B">LFM3-Audio-2B model card</a> for live speech recognition, speech synthesis, audio understanding, and tool calling.</p>
+<h3>LFM3-Omni-2B</h3>
+<p>Reach for LFM3-Omni-2B when you need one on-device model that sees, listens, and talks back, in place of a separate ASR model, vision-language model, LLM, and TTS model. It can answer spoken questions about an image, watch and listen to a video together, and turn what it sees and hears into tool calls. It is our first omni model, with text, vision, and audio input and both text and speech output, and it keeps the core capabilities of the standalone LFM3 models, including visual question answering, speech recognition, speech synthesis, and instruction following. Like LFM3-Audio-2B, it speaks through LiquidCodec, which turns generated tokens into speech faster than real time, so spoken replies stream as the model generates them. On audio-visual video understanding, it beats models up to 10.7B parameters, such as Qwen2.5-Omni-7B, on Daily-Omni, WorldSense, and AV-SpeakerBench. You can find more details in the <a href="https://huggingface.co/LiquidAI/LFM3-Omni-2B">LFM3-Omni-2B model card</a>.</p>
+<p>To run LFM3-Omni-2B, install <code>transformers&gt;=5.20.2</code> with its vision and audio dependencies:</p>
+<pre><code>pip install &quot;transformers&gt;=5.20.2&quot; torch torchvision torchcodec accelerate pillow librosa soundfile</code></pre>
+<pre><code>import torch
+import soundfile as sf
+
+from transformers import AutoModelForMultimodalLM, AutoProcessor
+
+model_id = &quot;LiquidAI/LFM3-Omni-2B&quot;
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+dtype = torch.bfloat16 if device == &quot;cuda&quot; else torch.float32
+
+model = AutoModelForMultimodalLM.from_pretrained(
+    model_id, dtype=dtype, device_map=device, trust_remote_code=True
+).eval()
+processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
+codec = processor.audio_tokenizer.to(device=device).eval()</code></pre>
+<p>Then ask a question about a photo by voice:</p>
+<pre><code>conversation = [
+    {
+        &quot;role&quot;: &quot;system&quot;,
+        &quot;content&quot;: &quot;Answer questions about the provided image. Base every answer only on what can be seen. Respond with text.&quot;,
+    },
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;image&quot;, &quot;image&quot;: &quot;photo.jpg&quot;},
+            {&quot;type&quot;: &quot;audio&quot;, &quot;audio&quot;: &quot;question.wav&quot;},
+        ],
+    },
+]
+inputs = processor.apply_chat_template(
+    conversation,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+).to(device)
+
+with torch.no_grad():
+    outputs = model.generate(**inputs, max_new_tokens=1024, generation_mode=&quot;text&quot;)
+
+print(processor.decode(
+    outputs.sequences[0, inputs[&quot;input_ids&quot;].shape[1]:outputs.sequence_lengths[0]],
+    skip_special_tokens=True,
+))</code></pre>
+<p>See the <a href="https://huggingface.co/LiquidAI/LFM3-Omni-2B">LFM3-Omni-2B model card</a> for speech output, video with its soundtrack, and tool calling.</p>
+<h3>d1-2B and d1-omni-2B</h3>
+<p>Reach for the d1 models when you need fast, structured decisions instead of generated text. Give them a situation (a support ticket, an invoice, an app screen, a photo, a voice note) and a list of questions, and they answer all of them in a single forward pass, each with a calibrated probability. Beyond yes/no, choices, and scores, they can now point at objects, read values from documents, estimate numbers with a range, and pick every option that applies. You can find more details in the model cards for <a href="https://huggingface.co/LiquidAI/d1-2B">d1-2B</a> and <a href="https://huggingface.co/LiquidAI/d1-omni-2B">d1-omni-2B</a>.</p>
+<p>Between the two d1 models:</p>
+<ul><li><strong>d1-2B</strong>: choose it for text, pictures, and video. It replaces <a href="https://huggingface.co/LiquidAI/d1-3B">d1-3B</a> with a third fewer parameters and scores higher on all four of our decision suites, for example, 75.5 against 64.0 on ImajevBench.</li><li><strong>d1-omni-2B</strong>: choose it when your inputs include audio. If you ask by voice instead of in writing, it keeps nearly all of its accuracy.</li></ul>
+<p>To run d1-2B, install <code>transformers&gt;=5.19</code> with its vision dependencies:</p>
+<pre><code>pip install &quot;transformers&gt;=5.19&quot; torch torchvision pillow</code></pre>
+<p>Then load d1-2B and ask it several questions about one support ticket in a single pass:</p>
+<pre><code>import torch
+from transformers import AutoModel
+
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;mps&quot; if torch.backends.mps.is_available() else &quot;cpu&quot;
+dtype = torch.float32 if device == &quot;cpu&quot; else torch.bfloat16
+model = AutoModel.from_pretrained(&quot;LiquidAI/d1-2B&quot;, trust_remote_code=True, dtype=dtype).to(device)
+
+# Several named questions over one state, answered in one pass
+questions = {
+    &quot;refund&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Is the customer asking for a refund?&quot;},  # yes/no: P(yes)
+    &quot;team&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;Which team should handle this?&quot;,
+             &quot;criteria&quot;: {&quot;billing&quot;: &quot;Charges, refunds, invoices&quot;, &quot;shipping&quot;: &quot;Delivery and parcels&quot;,
+                          &quot;technical&quot;: &quot;App or site faults&quot;}},
+    &quot;topics&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;multiple&quot;: True, &quot;instructions&quot;: &quot;Which topics does the message raise?&quot;,
+               &quot;criteria&quot;: {&quot;billing&quot;: &quot;Payments and charges&quot;, &quot;delivery&quot;: &quot;Shipping and parcels&quot;,
+                            &quot;login&quot;: &quot;Signing in to the account&quot;}},
+    &quot;urgency&quot;: {&quot;type&quot;: &quot;score&quot;, &quot;instructions&quot;: &quot;How urgent is this ticket?&quot;, &quot;criteria&quot;: [&quot;low&quot;, &quot;medium&quot;, &quot;high&quot;]},
+}
+out = model.system_one(&quot;I was charged twice and my parcel never arrived. Please refund one charge.&quot;, questions)
+a = out[&quot;answers&quot;]
+urgency = a[&quot;urgency&quot;][&quot;legend&quot;][str(int(a[&quot;urgency&quot;][&quot;score&quot;]))]
+print(round(a[&quot;refund&quot;][&quot;noul&quot;], 2), a[&quot;team&quot;][&quot;choice&quot;], a[&quot;topics&quot;][&quot;choices&quot;], urgency)
+# 1.0 billing ['billing', 'delivery'] medium</code></pre>
+<p>For brevity, we only include the example for d1-2B. See the <a href="https://huggingface.co/LiquidAI/d1-omni-2B">d1-omni-2B model card</a> for audio clips and spoken questions.</p>
+<h2>Fine-tune LFM3 for your task</h2>
+<p>LFM3 is built to be specialized. Frontier models are powerful generalists, but they are not necessarily experts in your use case. LFM3 packs extra capacity into a small, fast model, so a short fine-tune can turn it into a reliable expert on your task, with your data, terminology, and tools. Because it is small, you can deploy the fine-tuned model where your application runs, from devices to private infrastructure to the cloud.</p>
+<p>Every model can be fine-tuned on a single GPU, and these notebooks walk you through a complete task for the text, vision, audio, and omni models, from data preparation to evaluation.</p>
+<table><thead><tr><th>Model</th><th>Method</th><th>Task</th><th>Notebook</th></tr></thead><tbody><tr><td>LFM3-1.7B</td><td>SFT</td><td>Extract structured JSON from messy documents</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_sft_with_trl.ipynb">Open in Colab</a></td></tr><tr><td>LFM3-1.7B</td><td>DPO</td><td>Answer from retrieved documents, or decline</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_dpo_with_trl.ipynb">Open in Colab</a></td></tr><tr><td>LFM3-1.7B</td><td>GRPO</td><td>Call the right tools in a 108-tool phone app</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_grpo_with_trl.ipynb">Open in Colab</a></td></tr><tr><td>LFM3-1.7B</td><td>CPT</td><td>Learn a new language (Turkish) from raw text</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_cpt_with_trl.ipynb">Open in Colab</a></td></tr><tr><td>LFM3-VL-2B</td><td>SFT</td><td>Read receipt photos into JSON</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_vl_sft_with_trl.ipynb">Open in Colab</a></td></tr><tr><td>LFM3-VL-2B</td><td>GRPO</td><td>Transcribe images of equations to LaTeX</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_vl_grpo_with_trl.ipynb">Open in Colab</a></td></tr><tr><td>LFM3-Audio-2B</td><td>SFT</td><td>Map spoken smart-home commands to function calls</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_audio_sft_with_transformers.ipynb">Open in Colab</a></td></tr><tr><td>LFM3-Audio-2B</td><td>SFT</td><td>Teach the model a new voice</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_audio_tts_sft_with_transformers.ipynb">Open in Colab</a></td></tr><tr><td>LFM3-Omni-2B</td><td>SFT</td><td>Map spoken smart-home commands to function calls</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_omni_sft_with_transformers.ipynb">Open in Colab</a></td></tr><tr><td>LFM3-Omni-2B</td><td>SFT</td><td>Answer spoken questions about medical images</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_omni_vqa_sft_with_transformers.ipynb">Open in Colab</a></td></tr></tbody></table>
+<h3>Example: teaching LFM3 to act</h3>
+<p>We adapt LFM3-VL-2B into three complementary robotics models for <strong>orchestration, navigation, and manipulation</strong>. The orchestrator operates a robot arm through tool calls: it grounds objects by pointing, measures them with depth tools, invokes motion planners, and checks outcomes in subsequent camera images. The navigator follows route descriptions using recent RGB observations, predicting spatial targets and a waypoint trajectory in just five tokens. The manipulation VLA maps images, language, and robot state to eight-step chunks of continuous actions in a single forward pass. Jointly trained across 15 embodiments, the VLA achieves 96.2% average success across the four LIBERO suites and 45.7% on RoboCasa-GR1 tabletop tasks, generating action chunks in under 50 ms on a Jetson AGX Orin with TensorRT FP16. These results highlight LFM3-VL-2B as a compact foundation for robotics, spanning high-level planning to low-level control with real-time action generation on embedded hardware.</p>
+<p>Watch LFM3-VL-2B handle perception, navigation, and manipulation in <a href="https://www.youtube.com/watch?v=ZARw2VY6Dlk">this demo video</a>.</p>
+<p><a href="https://www.youtube.com/watch?v=ZARw2VY6Dlk"><img src="https://img.youtube.com/vi/ZARw2VY6Dlk/hqdefault.jpg" alt="Video title"></a></p>
+<h2>Get Started with LFM3</h2>
+<p>All LFM3 models are open-weight and available on Hugging Face today:</p>
+<ul><li><strong>Download:</strong> the <a href="https://huggingface.co/collections/LiquidAI/lfm3">LFM3 collection</a> on Hugging Face, including <a href="https://huggingface.co/LiquidAI/LFM3-1.7B-Base">LFM3-1.7B-Base</a> for your own post-training.</li><li><strong>Fine-tune:</strong> adapt LFM3 to your task with our <a href="https://github.com/Liquid4All/cookbook/tree/main/finetuning/notebooks">fine-tuning notebooks</a>.</li><li><strong>Use in your harness:</strong> follow our <a href="https://docs.liquid.ai/examples/agent-harnesses">guide</a> on how to run a local agent, like OpenClaw, Hermes Agent, and Pi.</li></ul>
+<p>We can't wait to see what you build.</p>
+<h2>Citation</h2>
+<p>If you use this work, please cite the release blog:</p>
+<pre><code>@article{liquidAI2026LFM3,
+  author = {Liquid AI},
+  title = {Introducing LFM3: Every Modality for Specialized Intelligence},
+  journal = {Liquid AI Blog},
+  year = {2026},
+  note = {www.liquid.ai/blog/lfm3},
+}</code></pre>
+<h2>Models mentioned in this article 8</h2>
+<h2>Collections mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2>Run fast, private agents on-device with LFM2.5-24B-A2B</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
+<p>70</p>
+<p>October 13, 2026</p>
+<h2>Multimodal open d1 decision models for the edge</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
+<p>43</p>
+<p>October 7, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FLiquidAI%2Flfm3">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2FLiquidAI%2Flfm3">log in</a> to comment</p>
+<p>36</p>
+<ul><li><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt=""></a></li><li><a href="https://huggingface.co/s-jse"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62ed66743d88d075d72515fe/nzrS3MaUo2rqPDGRXKOJP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jimmysmith1919"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f8ad3749282808838048a0/Ci6nhDy53Z3_wcR39uJB5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nathanrchn"><img src="https://huggingface.co/avatars/d9b9b4ed0079ca70751539204bc33fec.svg" alt=""></a></li><li><a href="https://huggingface.co/rouzbehat78"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69791f53b2133a5c4f318f08/4jaCC1xkFQSd25agMwe97.jpeg" alt=""></a></li><li><a href="https://huggingface.co/amaltsev"><img src="https://huggingface.co/avatars/eefadceb8487048e32c95794e733a115.svg" alt=""></a></li><li><a href="https://huggingface.co/GAD-cell"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66a734f138fbd9075584e7bd/7GQOdyESC-_S73HVN-1MP.png" alt=""></a></li><li><a href="https://huggingface.co/trydrama-neuralgarage"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/EKbtXKdRa4E1aIvg9qlHV.png" alt=""></a></li><li><a href="https://huggingface.co/FlameF0X"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp" alt=""></a></li><li><a href="https://huggingface.co/mayankagarwal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6229237ed94a4a3d5efbacb5/GM-ec64-qx660keEKqU1c.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alay2shah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67ec1647828c8ff385606bf9/OzeHkgE0NknVWYn8TGG9R.jpeg" alt=""></a></li><li><a href="https://huggingface.co/undfined"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65e5fefbe8cbae176d9ca005/5SLREDsVzycEwVsPNv765.jpeg" alt=""></a></li></ul>
+<h2>Models mentioned in this article 8</h2>
+<h2>Collections mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Can we trust LLMs to judge whether a research idea is novel?</title>
+      <link>https://huggingface.co/blog/allenai/novelty-bench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/novelty-bench?li=1</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Can we trust LLMs to judge whether a research idea is novel?</h1>
+<p>Enterprise  Article</p>
+<p>Published October 27, 2026</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Entmarch"><img src="https://huggingface.co/avatars/26fa040c7f334785b26ae42de24ab4dc.svg" alt=""></a></li><li><a href="https://huggingface.co/KlondikeDev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/689a3f0eec8a724449b85179/k3W6LToYIoZfqI648wYt2.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/tindle"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/d1JmoWKj1wPc-o88x-oKx.png" alt=""></a></li><li><a href="https://huggingface.co/IsmaelMZ"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ycde52lYaw4-ZyBkdfv10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Firemedic15"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/MsT-kIMd2zPiU0kzoBymY.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers's avatar"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2's avatar"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>📄 <a href="https://arxiv.org/abs/2610.02022">Paper</a> | 📊 <a href="https://huggingface.co/datasets/allenai/novelty-judge-bench">Data</a> | 💻 <a href="https://github.com/allenai/novelty-eval">Code</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1793023853-novelty-bench-header.png"><img src="https://www.datocms-assets.com/64837/1793023853-novelty-bench-header.png" alt="A light bulb surrounded by six AI models making different novelty judgments."></a></p>
+<p>Today we’re releasing <a href="https://arxiv.org/abs/2610.02022"><strong>Old Ideas, Novel Problems</strong></a>, a new study of how reliably large language models can evaluate the novelty of scientific research ideas. Alongside the paper, we’re publishing a benchmark, data, and code for testing novelty judges, plus an automated pipeline researchers can use to build new evaluation sets.</p>
+<p>At Ai2, we’ve been developing AI systems that support different parts of scientific discovery. <a href="https://allenai.org/blog/asta-datavoyager">DataVoyager</a> helps researchers explore and analyze structured data, <a href="https://allenai.org/blog/autodiscovery">AutoDiscovery</a> generates and tests hypotheses, and <a href="https://allenai.org/blog/theorizer">Theorizer</a> synthesizes evidence across large bodies of literature into candidate scientific theories. Together with <a href="https://allenai.org/asta">Asta</a>, these projects point toward systems that can help researchers move from understanding prior work to proposing, testing, and refining new ideas.</p>
+<p>But generating research ideas is only part of the challenge of automating scientific discovery. Those ideas also need to contribute something genuinely new, which means these systems need a way to distinguish a novel direction from one that mostly repackages existing work.</p>
+<p>That judgment is often handed to another LLM—what we call a <em>novelty judge</em>. Novelty judges assess whether a research idea is new relative to prior work, either on its own or in comparison with another idea. There’s no standard way to build one; research teams choose a model, prompt, evaluation format, reasoning budget, and sometimes a literature-retrieval system. Those choices can materially affect the verdict. Yet these judges are often validated only on human-written papers rather than the AI-generated ideas they are actually meant to evaluate.</p>
+<p>Our new benchmark results suggest novelty evaluation itself is far from reliable. Across six LLM judges – GPT-5.1, GPT-5.2, GPT-5.4, Claude Sonnet 4.5, Claude Opus 4.5, and Claude Opus 4.6 – seemingly small changes to the evaluation setup produce dramatically different judgments of the same ideas. In one experiment, changing just a few words in a prompt shifts a model’s accuracy in identifying which of two ideas is more novel by more than 50 percentage points. Retrieval and additional reasoning do not consistently improve judgments, and two purpose-built novelty evaluation systems perform worse than a simple prompted Claude Opus 4.6 baseline.</p>
+<p>If AI is going to play a larger role in scientific discovery, we need more dependable ways to tell whether it is actually proposing something new. Our work provides tools for studying that problem, while showing how much remains unresolved.</p>
+<h2>Building a benchmark for novelty judges</h2>
+<p>To test how reliably novelty judges can distinguish more novel research ideas from less novel ones, we first needed examples where there was strong evidence about the originality of the underlying scientific contribution.</p>
+<p>So we built an automated pipeline around ICLR 2026 peer reviews. Rather than treating paper acceptance as a proxy for novelty, we mined the reviews themselves for passages where reviewers explicitly discussed a contribution’s originality. That distinction is key; a paper can be accepted without being particularly novel as long as it is strong enough in other aspects. Likewise, a rejected paper with an original contribution can have other weaknesses.</p>
+<p>We created a <em>high-novelty pool</em> of 154 human-authored research ideas by selecting accepted papers in the top-rated 10% of their ICLR research area whose reviewers positively identified novelty and where no reviewer disputed it. We applied the reverse criteria to build a <em>lower-novelty pool</em>: 145 ideas from rejected papers in the bottom 10% whose reviewers raised originality concerns without any reviewer positively identifying novelty. In a separate check of the review-mining process, an annotator agreed with the extracted novelty-signal polarity in 47 of 50 cases; none of the disagreements would have changed whether a reviewer was counted as praising or disputing the paper’s novelty.</p>
+<p>Together, these two pools form our first evaluation setting, <em>Human-Only</em>, which tests whether novelty judges can tell apart human-authored ideas with strong evidence of higher or lower novelty. But in practice, novelty judges are increasingly being used to evaluate AI-generated ideas. So we created a second setting, <em>Human+Generated</em>.</p>
+<p>For this pool, we paired the same 154 validated human ideas with 154 ideas produced by a simple LLM generator. We assumed the generated ideas were less novel than their human-authored counterparts; these are weak labels, not verified judgments for every idea. The generator received only a research area and an instruction to propose a novel idea, with no literature search, tools, iteration, or feedback. This gave us a conservative comparison between ideas from a basic generator and contributions from top-10% ICLR papers whose reviewers had explicitly endorsed their originality.</p>
+<p>As additional checks, an expert independently reviewed 30 <em>Human+Generated</em> pairs, heavily weighted toward cases our strongest judge got wrong, and we rewrote the human- and AI-generated ideas into a common structure to test whether judges were simply reacting to differences in writing style. The expert preferred the human idea in all 30 pairs and judged none of the generated ideas novel.</p>
+<p>Importantly, many of our core findings don’t depend on the labels at all. If two reasonable evaluation setups give opposite answers for the same pair of ideas, that disagreement itself reveals instability.</p>
+<h2>Small changes can produce very different verdicts</h2>
+<p>Using our collections of human-authored and AI-generated research ideas, we tested how well six LLM judges – GPT-5.1, GPT-5.2, GPT-5.4, Claude Sonnet 4.5, Claude Opus 4.5, and Claude Opus 4.6 – could evaluate novelty through both pointwise (i.e., absolute novelty ratings) and pairwise (i.e., comparing two ideas to find the most novel) comparisons. We varied one factor at a time: the prompt, reasoning budget, whether the judge could see related papers, how the ideas were formatted, how many judgments were combined into a final verdict, and – for AI-generated ideas – which model generated them.</p>
+<p>The largest shifts in performance came from how we prompted the model to judge novelty.</p>
+<p>For example, we showed GPT-5.4 the same <em>Human+Generated</em> pairs – each containing one validated human-authored idea and one AI-generated idea – with two prompts. One prompt told the model that reviewers had found exactly one idea in each pair to be novel and asked it to identify which one; the other simply asked which idea was novel. When we switched to the simpler prompt, accuracy dropped from 93.5% to 40.9% – below chance – and the model changed its verdict on more than half of the same pairs.</p>
+<p><a href="https://www.datocms-assets.com/64837/1793023853-novelty-bench-prompt-wording-chart.png"><img src="https://www.datocms-assets.com/64837/1793023853-novelty-bench-prompt-wording-chart.png" alt="Bar chart comparing how often six AI models chose the reviewer-praised human idea under two prompts. Claude Opus 4.6: 100.0% vs. 72.7%; GPT-5.2: 81.8% vs. 76.0%; Claude Opus 4.5: 92.2% vs. 58.4%; GPT-5.1: 79.2% vs. 56.5%; GPT-5.4: 93.5% vs. 40.9%; Claude Sonnet 4.5: 60.4% vs. 36.4%."></a></p>
+<p>By contrast, the same prompt change shifted accuracy by only about seven percentage points on the <em>Human-Only</em> dataset, which pairs human-authored ideas with stronger and weaker evidence of novelty. That suggests a novelty judge can appear relatively stable on human-authored research but behave very differently on AI-generated ideas.</p>
+<p>That said, human-authored ideas weren’t immune. We saw substantial shifts on the <em>Human-Only</em> dataset as well; the same change moved Claude Opus 4.6 accuracy by 21 points. The shifts were just less severe than on the AI-generated ideas.</p>
+<p>There was also no universally better prompt. For example, when judging ideas individually, dropping an instruction that warned judges not to treat trivial or incremental contributions as novel improved accuracy for some judges while reducing it for others. A prompt that works well for one model may not transfer to another, in other words.</p>
+<p>We also tested a common use of novelty judges: comparing ideas from two AI generators. We paired ideas from Claude Opus 4.5 with Claude Sonnet 4.5, and GPT-5.4 with GPT-5.1. Across the tested prompt changes, roughly a quarter to a third of verdicts changed on average across six judges. This disagreement can be measured without assuming which generator produces more novel ideas, showing how the choice of judge prompt can affect comparisons between ideation systems.</p>
+<p>More search and reasoning didn’t necessarily produce better novelty judgments. We gave GPT-5.6 Sol an extra-high reasoning budget and live, iterative search restricted to arXiv, then compared it with standard-retrieval judges that each saw five pre-retrieved abstracts. (All judges in this comparison ran once per idea on <em>Human+Generated</em>.) The agentic judge scored 0.78 macro-F1 – 11 points behind Claude Opus 4.6 at 0.89, and in roughly the same range as simpler Claude Opus 4.5 and GPT-5.4 setups – while costing roughly 10× more per decision at current API prices. (In this context, macro-F1 measures how well a judge identifies novel and non-novel ideas; higher is better.)</p>
+<p>Purpose-built evaluators weren’t more accurate either, despite costing substantially more. On the <em>Human+Generated</em> set, a simple Claude Opus 4.6 prompt using low reasoning and majority voting across three calls achieved 0.854 macro-F1 at a total evaluation cost of $2.59. By comparison, Idea Novelty Checker, a literature-grounded retrieval and reranking pipeline, scored 0.642 at $30.66, while Sakana AI’s AI Scientist, whose novelty evaluator iteratively searches Semantic Scholar, scored 0.772 at $82.05. (Both dedicated evaluators used Claude Opus 4.6, with one call per decision.)</p>
+<p>In other words, the simple prompted baseline was both more accurate and considerably cheaper than either purpose-built system.</p>
+<p>Taken together, these results suggest that novelty evaluation is particularly brittle on the AI-generated ideas these systems are increasingly being asked to judge.</p>
+<h2>Toward more reliable evaluation of novel research</h2>
+<p>Our results suggest that LLM-based novelty evaluation remains a major open problem. Judges that appear reliable on human-authored research may behave differently on AI-generated ideas; prompts that help one model can hurt another; and more search or compute does not necessarily produce more consistent judgments.</p>
+<p>Future work should test judges on the kinds of ideas they will actually evaluate, measure sensitivity across prompts and models, improve how prior literature is incorporated, and build benchmarks that can evolve as the scientific literature grows and AI systems improve. Our benchmark and reusable data pipeline are a starting point—researchers can apply them to new peer reviews, other scientific communities, and future generations of novelty judges.</p>
+<p>Automated ideation depends on more than generating plausible research directions; we also need ways to tell when those ideas are genuinely new. By making the weaknesses of current novelty judges easier to measure, we hope this release helps researchers build more robust ways to evaluate AI-generated research ideas.</p>
+<h2>Datasets mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2>LitPivot: Developing research ideas through dynamic contextualization within the literature landscape</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>38</p>
+<p>October 23, 2026</p>
+<h2>OlmoEarth v1.3: State-of-the-art embeddings for the whole planet</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>15</p>
+<p>October 22, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fnovelty-bench">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fnovelty-bench">log in</a> to comment</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Entmarch"><img src="https://huggingface.co/avatars/26fa040c7f334785b26ae42de24ab4dc.svg" alt=""></a></li><li><a href="https://huggingface.co/KlondikeDev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/689a3f0eec8a724449b85179/k3W6LToYIoZfqI648wYt2.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/tindle"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/d1JmoWKj1wPc-o88x-oKx.png" alt=""></a></li><li><a href="https://huggingface.co/IsmaelMZ"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ycde52lYaw4-ZyBkdfv10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Firemedic15"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/MsT-kIMd2zPiU0kzoBymY.png" alt=""></a></li><li><a href="https://huggingface.co/idoru"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63d5a365652b74a957dc961b/cheLOQa83AYA7fp991r-7.jpeg" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Does Your Model Run on AWS Trainium? Look It Up</title>
+      <link>https://huggingface.co/blog/torch-neuronx-model-support</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/torch-neuronx-model-support?li=1</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Does Your Model Run on AWS Trainium? Look It Up</h1>
+<p>Published October 23, 2026</p>
+<p>Update on GitHub</p>
+<p>9</p>
+<ul><li><a href="https://huggingface.co/dzulfikarsn"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a309777503da5d134a8b66b/v1SP3dpRs4Rg_C8dRV2lp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/Anoop576"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb6d3bf0ca917f92a965be/0hErLmXTtx85399hvn7eV.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jorgemunozl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5217cde48625c1b7a58fb/YZZ1kwdnUqiRJDLb2a6L5.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt="David Corvoysier's avatar"></a></p>
+<p>David Corvoysier</p>
+<p>dacorvo</p>
+<p>In a <a href="https://huggingface.co/blog/hf-torchneuron">previous post</a>, we introduced TorchNeuron, the native PyTorch backend for AWS Trainium (the <code>torch-neuronx</code> package). With it, Transformers runs its own modeling code on Trainium, as it does on any other device, so any Transformers model on the Hub may run. Which ones actually do?</p>
+<p>The <a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support">torch-neuronx model support</a> Space answers that question for the most popular models on the Hub. It tells you whether a model runs unmodified on Trainium, and gives you the script to run it yourself.</p>
+<p><a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support"><img src="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support/resolve/main/thumbnail.jpg" alt="torch-neuronx model support"></a></p>
+<h2>Look up a model</h2>
+<p>The Space opens on the <strong>Selected</strong> view: our own selection of models picked among the top models on the Hub by downloads and by trending score. Each row gives the result, the number of Trainium cores the model is sharded over, the wall time of the run (compilation included) and the peak device memory.</p>
+<p>To look up a given model, switch to the <strong>Trending</strong> or <strong>Downloads</strong> view and type part of its name. These views follow the Hub's own rankings, one task at a time, whether a model was tested or not. When a model was left out on purpose, the Space tells you why (most of the time it was not prioritized, sometimes it is truly incompatible). You can also pick the versions of the Neuron compiler (<code>neuronx-cc</code>) and of Transformers to look at.</p>
+<blockquote>At the time of writing, only Transformers models are tested, and our selection is limited to text-generation and image-text-to-text models. We plan to expand to diffusers, sentence transformers, and other transformers tasks.</blockquote>
+<h2>Run it yourself</h2>
+<p>Select a model to see how to run it. The Space lists the Neuron stack the model was tested on, the packages to install on top of it, and the <code>run.py</code> script that ran. The script follows the recipe of the <a href="https://huggingface.co/blog/hf-torchneuron">TorchNeuron announcement</a>: it loads the model with <code>from_pretrained</code>, sharded when it needs to be, then generates with a static cache and <code>torch.compile(backend=&quot;neuron&quot;)</code>.</p>
+<p>On a Trainium2 (<code>trn2</code>) instance with that stack, for example in the <a href="https://github.com/aws-neuron/deep-learning-containers#torch-neuronx">AWS Neuron Deep Learning Container</a>, install the packages, then run:</p>
+<pre><code>python3 run.py</code></pre>
+<p>No need for <code>torchrun</code>: the script launches its own <code>torch.distributed</code> ranks when the model is sharded.</p>
+<p>A first run starts by compiling the model's graphs. To skip that step, copy the graphs the same compiler built during the test, from the public <a href="https://huggingface.co/buckets/aws-neuron/torch-neuronx-neff-cache">NEFF cache</a> bucket. The Space gives you the command, with the right compiler version:</p>
+<pre><code>hf buckets sync hf://buckets/aws-neuron/torch-neuronx-neff-cache/neuronxcc-&lt;version&gt; /tmp/neff_cache</code></pre>
+<h2>What &quot;runs&quot; means</h2>
+<p>Each test loads the model on a <code>trn2</code> instance, sharded over the smallest number of Trainium cores that can hold its weights. Most models are sharded with tensor parallelism. Mixture-of-experts models without a tensor-parallel plan use expert parallelism only. The test then generates 32 tokens and checks them. On a single core, the tokens are compared with those of a CPU run of the same checkpoint. When the model is sharded, a small judge model checks that the text is fluent English.</p>
+<p>At the time of writing, only models that fit on 4 Trainium2 devices are tested, which means 16 cores at most. A <code>PASS</code> says nothing about throughput, or about longer generations.</p>
+<h2>The results are a dataset</h2>
+<p>Everything the Space shows comes from the public <a href="https://huggingface.co/datasets/aws-neuron/torch-neuronx-model-support"><code>aws-neuron/torch-neuronx-model-support</code></a> dataset, with one Parquet file per pair of <code>neuronx-cc</code> and library versions.</p>
+<p>Each row holds a model's result, the error when it failed, the versions of the whole stack and the <code>run.py</code> that ran. You can query it directly:</p>
+<pre><code>import pandas as pd
+
+df = pd.read_parquet(&quot;hf://datasets/aws-neuron/torch-neuronx-model-support/data&quot;)
+df[df.model_id == &quot;Qwen/Qwen3-0.6B&quot;][[&quot;neuronx_cc&quot;, &quot;library&quot;, &quot;library_version&quot;, &quot;neuron_cores&quot;, &quot;result&quot;]]</code></pre>
+<p>The <a href="https://huggingface.co/datasets/aws-neuron/torch-neuronx-model-support">dataset card</a> gives the exact meaning of each result.</p>
+<p>Next time you wonder whether a model runs on Trainium, <a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support">look it up</a>.</p>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<p>More Articles from our Blog</p>
+<p>open-sourcetorchneuron</p>
+<h2>TorchNeuron: running HF models on AWS Trainium is easier than ever</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></li><li>+3</li></ul>
+<p>30</p>
+<p>October 19, 2026</p>
+<p>tpugooglegcp</p>
+<h2>Hugging Face ❤️ TorchTPU: TPUs, Natively</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></li><li>+1</li></ul>
+<p>32</p>
+<p>October 20, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftorch-neuronx-model-support">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Ftorch-neuronx-model-support">log in</a> to comment</p>
+<p>9</p>
+<ul><li><a href="https://huggingface.co/dzulfikarsn"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a309777503da5d134a8b66b/v1SP3dpRs4Rg_C8dRV2lp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/Anoop576"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb6d3bf0ca917f92a965be/0hErLmXTtx85399hvn7eV.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jorgemunozl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5217cde48625c1b7a58fb/YZZ1kwdnUqiRJDLb2a6L5.png" alt=""></a></li><li><a href="https://huggingface.co/ericyu0510"><img src="https://huggingface.co/avatars/9d16fc41021585ca0981882d8919b5ee.svg" alt=""></a></li><li><a href="https://huggingface.co/Gyaneshere"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f4c8b14dc2f957ceded399/FghTxJScVs4OgC4fuexmg.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rajkthakur"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1x4LJ7liNl_k-5cViEi8r.png" alt=""></a></li></ul>
+<h2>Datasets mentioned in this article 1</h2>
+<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>LitPivot: Developing research ideas through dynamic contextu…</title>
       <link>https://huggingface.co/blog/allenai/litpivot</link>
@@ -77,68 +654,6 @@
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Flitpivot">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Flitpivot">log in</a> to comment</p>
 <p>3</p>
 <ul><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Sentinel7"><img src="https://huggingface.co/avatars/183456c0fa0d5e21c27813ce48d3bad2.svg" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>Does Your Model Run on AWS Trainium? Look It Up</title>
-      <link>https://huggingface.co/blog/torch-neuronx-model-support</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/torch-neuronx-model-support?li=1</guid>
-      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
-<h1>Does Your Model Run on AWS Trainium? Look It Up</h1>
-<p>Published October 23, 2026</p>
-<p>Update on GitHub</p>
-<p>9</p>
-<ul><li><a href="https://huggingface.co/dzulfikarsn"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a309777503da5d134a8b66b/v1SP3dpRs4Rg_C8dRV2lp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/Anoop576"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb6d3bf0ca917f92a965be/0hErLmXTtx85399hvn7eV.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jorgemunozl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5217cde48625c1b7a58fb/YZZ1kwdnUqiRJDLb2a6L5.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt="David Corvoysier's avatar"></a></p>
-<p>David Corvoysier</p>
-<p>dacorvo</p>
-<p>In a <a href="https://huggingface.co/blog/hf-torchneuron">previous post</a>, we introduced TorchNeuron, the native PyTorch backend for AWS Trainium (the <code>torch-neuronx</code> package). With it, Transformers runs its own modeling code on Trainium, as it does on any other device, so any Transformers model on the Hub may run. Which ones actually do?</p>
-<p>The <a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support">torch-neuronx model support</a> Space answers that question for the most popular models on the Hub. It tells you whether a model runs unmodified on Trainium, and gives you the script to run it yourself.</p>
-<p><a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support"><img src="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support/resolve/main/thumbnail.jpg" alt="torch-neuronx model support"></a></p>
-<h2>Look up a model</h2>
-<p>The Space opens on the <strong>Selected</strong> view: our own selection of models picked among the top models on the Hub by downloads and by trending score. Each row gives the result, the number of Trainium cores the model is sharded over, the wall time of the run (compilation included) and the peak device memory.</p>
-<p>To look up a given model, switch to the <strong>Trending</strong> or <strong>Downloads</strong> view and type part of its name. These views follow the Hub's own rankings, one task at a time, whether a model was tested or not. When a model was left out on purpose, the Space tells you why (most of the time it was not prioritized, sometimes it is truly incompatible). You can also pick the versions of the Neuron compiler (<code>neuronx-cc</code>) and of Transformers to look at.</p>
-<blockquote>At the time of writing, only Transformers models are tested, and our selection is limited to text-generation and image-text-to-text models. We plan to expand to diffusers, sentence transformers, and other transformers tasks.</blockquote>
-<h2>Run it yourself</h2>
-<p>Select a model to see how to run it. The Space lists the Neuron stack the model was tested on, the packages to install on top of it, and the <code>run.py</code> script that ran. The script follows the recipe of the <a href="https://huggingface.co/blog/hf-torchneuron">TorchNeuron announcement</a>: it loads the model with <code>from_pretrained</code>, sharded when it needs to be, then generates with a static cache and <code>torch.compile(backend=&quot;neuron&quot;)</code>.</p>
-<p>On a Trainium2 (<code>trn2</code>) instance with that stack, for example in the <a href="https://github.com/aws-neuron/deep-learning-containers#torch-neuronx">AWS Neuron Deep Learning Container</a>, install the packages, then run:</p>
-<pre><code>python3 run.py</code></pre>
-<p>No need for <code>torchrun</code>: the script launches its own <code>torch.distributed</code> ranks when the model is sharded.</p>
-<p>A first run starts by compiling the model's graphs. To skip that step, copy the graphs the same compiler built during the test, from the public <a href="https://huggingface.co/buckets/aws-neuron/torch-neuronx-neff-cache">NEFF cache</a> bucket. The Space gives you the command, with the right compiler version:</p>
-<pre><code>hf buckets sync hf://buckets/aws-neuron/torch-neuronx-neff-cache/neuronxcc-&lt;version&gt; /tmp/neff_cache</code></pre>
-<h2>What &quot;runs&quot; means</h2>
-<p>Each test loads the model on a <code>trn2</code> instance, sharded over the smallest number of Trainium cores that can hold its weights. Most models are sharded with tensor parallelism. Mixture-of-experts models without a tensor-parallel plan use expert parallelism only. The test then generates 32 tokens and checks them. On a single core, the tokens are compared with those of a CPU run of the same checkpoint. When the model is sharded, a small judge model checks that the text is fluent English.</p>
-<p>At the time of writing, only models that fit on 4 Trainium2 devices are tested, which means 16 cores at most. A <code>PASS</code> says nothing about throughput, or about longer generations.</p>
-<h2>The results are a dataset</h2>
-<p>Everything the Space shows comes from the public <a href="https://huggingface.co/datasets/aws-neuron/torch-neuronx-model-support"><code>aws-neuron/torch-neuronx-model-support</code></a> dataset, with one Parquet file per pair of <code>neuronx-cc</code> and library versions.</p>
-<p>Each row holds a model's result, the error when it failed, the versions of the whole stack and the <code>run.py</code> that ran. You can query it directly:</p>
-<pre><code>import pandas as pd
-
-df = pd.read_parquet(&quot;hf://datasets/aws-neuron/torch-neuronx-model-support/data&quot;)
-df[df.model_id == &quot;Qwen/Qwen3-0.6B&quot;][[&quot;neuronx_cc&quot;, &quot;library&quot;, &quot;library_version&quot;, &quot;neuron_cores&quot;, &quot;result&quot;]]</code></pre>
-<p>The <a href="https://huggingface.co/datasets/aws-neuron/torch-neuronx-model-support">dataset card</a> gives the exact meaning of each result.</p>
-<p>Next time you wonder whether a model runs on Trainium, <a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support">look it up</a>.</p>
-<h2>Datasets mentioned in this article 1</h2>
-<h2>Spaces mentioned in this article 1</h2>
-<p>More Articles from our Blog</p>
-<p>open-sourcetorchneuron</p>
-<h2>TorchNeuron: running HF models on AWS Trainium is easier than ever</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></li><li>+3</li></ul>
-<p>30</p>
-<p>October 19, 2026</p>
-<p>tpugooglegcp</p>
-<h2>Hugging Face ❤️ TorchTPU: TPUs, Natively</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></li><li>+1</li></ul>
-<p>32</p>
-<p>October 20, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftorch-neuronx-model-support">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Ftorch-neuronx-model-support">log in</a> to comment</p>
-<p>9</p>
-<ul><li><a href="https://huggingface.co/dzulfikarsn"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a309777503da5d134a8b66b/v1SP3dpRs4Rg_C8dRV2lp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/Anoop576"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb6d3bf0ca917f92a965be/0hErLmXTtx85399hvn7eV.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jorgemunozl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5217cde48625c1b7a58fb/YZZ1kwdnUqiRJDLb2a6L5.png" alt=""></a></li><li><a href="https://huggingface.co/ericyu0510"><img src="https://huggingface.co/avatars/9d16fc41021585ca0981882d8919b5ee.svg" alt=""></a></li><li><a href="https://huggingface.co/Gyaneshere"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f4c8b14dc2f957ceded399/FghTxJScVs4OgC4fuexmg.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rajkthakur"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1x4LJ7liNl_k-5cViEi8r.png" alt=""></a></li></ul>
-<h2>Datasets mentioned in this article 1</h2>
-<h2>Spaces mentioned in this article 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>Turning Database Grading into RL Rewards: Post-Training Agen…</title>
@@ -7031,302 +7546,6 @@ Common errors:
 <ul><li><a href="https://huggingface.co/aliibanisaeid"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/eI3OeUtPFkpNT_ERdWKIc.png" alt=""></a></li><li><a href="https://huggingface.co/Rehnova"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6942ce9e4cff80060475eb21/qn9PK1b_IfbmNy0ql5w4y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/vbsowmya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7R5MnABArPT467aCNJFSp.png" alt=""></a></li><li><a href="https://huggingface.co/Rodeszones"><img src="https://huggingface.co/avatars/989985679600663546a0aba1f46643b7.svg" alt=""></a></li><li><a href="https://huggingface.co/vtec2liter"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/F6eoAD-k_7gnB814W7rT3.webp" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/aaahmet"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/654689fa33972a012f49ad0a/BwNh4fXPAVG0x5PrAkl3A.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li><li><a href="https://huggingface.co/Linkram"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/OVRFOEYvw2Ja6cL2R3U-R.png" alt=""></a></li><li><a href="https://huggingface.co/sugatoray"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5f43448a79c1ba4c353d0d8f/DiSygV3dn7A_OjmGVTrHD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ntnq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6486bb3d4c025cf3c41e7767/1I6yYhv06rHX1_1iIOdjP.png" alt=""></a></li><li><a href="https://huggingface.co/aruar30"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68a7aa94ba3f74a143494b26/cBiE-_YpGchk14FBgxyO8.jpeg" alt=""></a></li></ul>
 <h2>Models mentioned in this article 2</h2>
 <h2>Datasets mentioned in this article 2</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Give Your Coding Agents a Memory You Own</title>
-      <link>https://huggingface.co/blog/funes</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/funes?li=1</guid>
-      <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Give Your Coding Agents a Memory You Own</h1>
-<p>September 3, 2026</p>
-<p>Update on GitHub</p>
-<p>152</p>
-<ul><li><a href="https://huggingface.co/calvin5820"><img src="https://huggingface.co/avatars/5c451ba44fe13f4df2bc27736493418a.svg" alt=""></a></li><li><a href="https://huggingface.co/tengomucho"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/SpyFox"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1664097982677-632591024f4f4ea5a85cb19f.png" alt=""></a></li><li><a href="https://huggingface.co/docdigital"><img src="https://huggingface.co/avatars/620f5a6c5c3322b7b042f25d3a331362.svg" alt=""></a></li><li><a href="https://huggingface.co/AlexGolesh"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/642b2a79aea7fffc2c364d6a/7ZKq1MPCwL67j3HqBxw1a.jpeg" alt=""></a></li></ul>
-<p>David Corvoysier</p>
-<p>dacorvo</p>
-<p>I work across several machines, and I switch coding agents depending on the task. Every one of them meets my projects as a stranger. The reasoning from “last Tuesday” disappears when the session ends. Each new agent, on each new host, starts from zero.</p>
-<p>Earlier this year, <a href="https://huggingface.co/blog/huggingface/agent-traces-as-memory"><em>Software Forgets: Agent Traces Are the Memory</em></a> made the case that coding agents already produce the record we keep losing. As they search a codebase, try approaches, hit errors, read documentation, and change direction, they leave behind a dense account of not just <em>what</em> changed, but <em>why</em>.</p>
-<p>While the diagnosis is correct, traces are only potential memory. The session logs of an agent are still just an archive. You cannot <code>grep</code> your way to <em>“why did we move off the streaming parser?”</em> across ten thousand turns. For an agent to use those traces while it works, they need indexing, retrieval, ranking, and exact provenance.</p>
-<p>That is what <a href="https://github.com/huggingface/funes">funes</a> provides. It is a durable memory layer for your agents (Claude Code, Codex, pi, and Hermes). It is built from the sessions already on your machine. It works locally and becomes part of your agent's normal workflow with one command. When you want it to, it can also travel to a Hugging Face dataset you own, private by default.</p>
-<h2>Add memory to the agent you already use</h2>
-<p>funes is a single binary. Its default inference backend has no ML runtime dependency, and embedding and reranking happen <em>on your machine</em>. Install it:</p>
-<pre><code>curl -fsSL https://huggingface.co/buckets/huggingface/funes/resolve/install.sh | sh</code></pre>
-<p>Then add it to an agent:</p>
-<pre><code>funes add claude    # or: codex, pi, hermes</code></pre>
-<p>That one <code>add</code> command builds the first index, gives the agent <code>recall</code> and <code>get</code> tools, and installs the automation that indexes each completed turn. Indexing is incremental, with new runs adding new turns rather than embedding the whole history again. The older and deeper content can backfill in bounded steps.</p>
-<p>From there, you just work. When a task touches a past decision, rationale, or finding, the agent can reach for <code>recall</code> itself. You do not need to remember the old session or paste its context into the new one.</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/recall.gif"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/recall.gif" alt="A coding agent reaches for funes on its own, recalls an earlier decision, and grounds its answer in the retrieved session"></a></p>
-<blockquote>With funes added, recall happens inside the conversation. The agent reaches for its<br>memory on its own and names the session behind its answer.</blockquote>
-<p><code>recall</code> returns the original text, not a summary, and shows exactly where it came from (the agent, timestamp, session, and turn). Each result includes a <code>get</code> command that opens the full turn and its surrounding context.</p>
-<p>Underneath, one deterministic pipeline parses every supported trace into the same turn-and-block shape, chunks it, embeds it with a pinned local model, and writes it to a local <strong>Lance</strong> dataset. A query combines vector and BM25 search, fuses their rankings, reranks the candidates with a cross-encoder, reweights them by recency, and attaches neighboring chunks.</p>
-<p>That design gives funes three important properties:</p>
-<ul><li><strong>One memory across agents:</strong> Claude Code, Codex, pi, and Hermes all write to the same shape. <code>recall</code> spans their histories, and every hit says which agent produced it.</li><li><strong>Raw evidence stays intact:</strong> Nothing is distilled into a fact at write time. A result can always lead back to the turn that produced it.</li><li><strong><code>recall</code> is local by default:</strong> No account or Hub repository is required. A hosted model does not process your sessions for indexing; embedding and reranking run on your machine, and your coding agent does the reasoning.</li></ul>
-<p>The <em>agent as a stranger</em> problem is already solved on one machine. But memory gets more useful when the next agent is running somewhere else.</p>
-<h2>A memory is a dataset, not a service</h2>
-<p>To make a memory follow your work, bind one when you add funes to an agent:</p>
-<pre><code>funes add codex acme/funes-memory</code></pre>
-<p>The bind publishes your current memory there. funes then keeps it current, indexing each turn locally and publishing at session boundaries. The agent recalls from it throughout. Run the same command on another machine and the memory follows you there.</p>
-<p>Underneath, the local memory is a Lance dataset, and the shared memory is a Hugging Face dataset (private by default) you own.</p>
-<p>Before anything reaches the Hub, credentials have already been redacted during indexing. Publishing then scans every chunk again and withholds anything that still looks like a secret. The scanner behind this is documented in <a href="https://github.com/huggingface/funes/blob/main/SECURITY.md"><code>SECURITY.md</code></a>, including what it does and doesn't cover.</p>
-<p>When an agent reads a remote memory, funes caches the dataset files locally, so warm queries return to local speed. The Hub supplies the ownership, access control, versioning, and distribution it already supplies for other datasets. Your memory does not become an account in a separate memory service, and you do not rent it back through an API.</p>
-<h2>Ask first, wire later</h2>
-<p><code>recall</code> is shaped for agents. When you want to put a question to a memory yourself, use <code>ask</code>. It reads your local memory by default:</p>
-<pre><code>funes ask claude &quot;what did we decide about the streaming parser&quot;</code></pre>
-<p>Or point it at a shared memory. We published a <a href="https://huggingface.co/datasets/huggingface/funes-memory">memory</a> of funes development, so you can ask why funes works the way it does without creating a memory of your own:</p>
-<pre><code>funes ask claude &quot;why is funes append-only&quot; --memory huggingface/funes-memory</code></pre>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/ask.gif"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/ask.gif" alt="Asking the published funes memory why it is append-only; funes retrieves the relevant sessions and a coding agent answers from them"></a></p>
-<blockquote>funes ask is the read-only, one-question sibling of funes add. It recalls the<br>passages, hands them to a coding agent, and returns a grounded answer that names its<br>sources. It does not install an integration or change the agent's persistent setup.</blockquote>
-<p>A retrieval miss is not papered over. If the passages do not support an answer, the agent says so. You can rephrase the question or add funes to the agent so it can search the memory iteratively during normal work.</p>
-<h2>Switching agents without losing the thread</h2>
-<p>A shared memory is not tied to the agent or model that created it. Start a task in Claude Code, continue it in Codex next week, and the second agent can recall the first agent's reasoning. Use pi with a local model or one served through the Hugging Face router, then return to Claude.</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/cross-agents.gif"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/cross-agents.gif" alt="Claude Code chooses an embedding model, then Codex recalls that decision in a separate session"></a></p>
-<p><em>Claude makes a decision; a hook indexes it; Codex recalls it in another session. The older hits in the demo are earlier recordings of the same experiment: an append-only memory remembered the rehearsals too.</em></p>
-<p>This matters in a few different scopes:</p>
-<ul><li><strong>Across your machines:</strong> Bind each agent to one memory and recall the history from whichever host you are using.</li><li><strong>Across a team:</strong> A new teammate's agent can retrieve months of decisions on day one, including dead ends and rationale that never made it into a pull request.</li><li><strong>Alongside an open-source project:</strong> A maintainer can publish the sessions behind a release, naming them on the push. Think of it as a searchable <code>CLAUDE.md</code> that holds the history of why the project is the way it is, instead of a page someone must keep rewriting. Anyone can read a public memory with <code>--memory</code>.</li></ul>
-<p>Published memories carry a dataset card and the funes tag, making them recognizable and <a href="https://huggingface.co/datasets?other=funes">discoverable on the Hub</a>. The Hub already hosts open weights and datasets. funes adds open working memory. It holds the decisions, failed approaches, and rationale behind a project, queryable by another agent and traceable to the sessions that produced them.</p>
-<h2>The cheapest way out of a long session</h2>
-<p>A long investigation bloats a session until each turn costs more to carry the context than to do the work. The usual answers are to let the agent compact and carry on, or to write a handoff and start fresh. Recall is a third, so we measured them against each other on the <a href="https://huggingface.co/datasets/dacorvo/funes-handoff-recall-benchmark/blob/main/results/README.md">handoff-vs-recall benchmark</a>: two tasks whose answer cannot be reconstructed without the session prior knowledge.</p>
-<p>Compaction is what most agents do by default, and it was the only one of the three whose result divided: it arrived on one task and never arrived on the other. Where it failed, its summary had flattened the findings that mattered. Recall returns the passages themselves, so a finding does not have to survive summarization.</p>
-<p>Recall was the cheapest of the three on both tasks, 8x cheaper than a written handoff on one and 4x on the other.</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/handoff-recall-cost.jpg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/handoff-recall-cost.jpg" alt="Weighted tokens per successful task for five channels across two tasks, with recall the shortest bar on both"></a></p>
-<p><em>The lighter segment of each bar is the one-time charge for preparing the channel, the handoff or the compaction, paid before the first question is asked and counted once. A cross marks a channel that never arrives, and so has no cost per success.</em></p>
-<h2>Stop starting from zero</h2>
-<blockquote>“To think is to forget differences, generalize, make abstractions.”<br>— Jorge Luis Borges, Funes the Memorious</blockquote>
-<p>Your agents already wrote the record. funes lives at <a href="https://github.com/huggingface/funes"><code>github.com/huggingface/funes</code></a>, one command away from turning that record into a memory the next agent can read, on whichever machine you happen to be on.</p>
-<h2>Built on open source</h2>
-<p>funes invents little of this. It leans on open-source embedding models good enough to run locally, on <a href="https://github.com/lancedb/lance">Lance</a>'s append-only datasets with cheap incremental writes, and on the Hub's caching and content-dedup for datasets. The work is in fitting them into a memory an agent can actually use.</p>
-<p>funes is open source too. <a href="https://github.com/huggingface/funes/issues">Open an issue</a> for anything from an install snag to a recall that missed, or an agent you'd like supported.</p>
-<h2>Datasets mentioned in this article 1</h2>
-<p>More Articles from our Blog</p>
-<p>announcement</p>
-<p>open-source</p>
-<p>community</p>
-<h2>The Open Source Community is backing OpenEnv for Agentic RL</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63b467f4103617b0a5ac17d8/H0Fcdp5s1kMW0Auz-wMhH.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li><li><img src="https://huggingface.co/avatars/c74a3d2b8ffd75afcad35da39f5fad51.svg" alt=""></li><li>+16</li></ul>
-<p>120</p>
-<p>June 8, 2026</p>
-<p>announcement</p>
-<p>mlx</p>
-<p>llm</p>
-<h2>The PR you would have opened yourself</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/623c830997ddced06d78699b/ucB8joTPONCnc_Gj0mssR.jpeg" alt=""></li></ul>
-<p>74</p>
-<p>April 16, 2026</p>
-<h3>Community</h3>
-<p>helpmehere</p>
-<p>30 days ago</p>
-<p>This comment has been hidden (marked as Spam)</p>
-<ul><li><a href="https://huggingface.co/x0mhb"><img src="https://huggingface.co/avatars/a96d58fe4dcd0799aaa3fb2bf25dd66e.svg" alt=""></a></li></ul>
-<p>x0mhb</p>
-<p>28 days ago</p>
-<p>A2 reply probe</p>
-<p>helpmehere</p>
-<p>30 days ago</p>
-<p>This comment has been hidden (marked as Spam)</p>
-<p>helpmehere</p>
-<p>30 days ago</p>
-<p>This comment has been hidden (marked as Spam)</p>
-<p>deleted</p>
-<p>29 days ago</p>
-<p>This comment has been hidden</p>
-<p>x0mhb</p>
-<p>28 days ago</p>
-<p>[x]()</p>
-<p>x0mhb</p>
-<p>28 days ago</p>
-<p>[![x]()]()</p>
-<p>x0mhb</p>
-<p>28 days ago</p>
-<p>[x]()</p>
-<p>x0mhb</p>
-<p>28 days ago</p>
-<p>x0mhb</p>
-<p>28 days ago</p>
-<p>[x]()</p>
-<p>x0mhb</p>
-<p>28 days ago</p>
-<p>This comment has been hidden (marked as Spam)</p>
-<p>vshulcz</p>
-<p>27 days ago</p>
-<p>Ran funes 1.3.0 on a machine with 19,195 coding-agent sessions already on disk (LongMemEval laid down in the real ~/.claude and ~/.codex layouts), 100 questions whose answer sits in exactly one session, scored by whether that session comes back. Disclosure: I maintain deja-vu, one of the tools in the same table.</p>
-<p>Full index: 2h03m on an M4 pro laptop (308k chunks), 6.3s per query. With defaults: hit@1 9/100, hit@5 39, found@50 71. With --half-life 0: 19/46/71 — the 30-day recency half-life halves rank-1 on history older than a month, which is most of what's on a real disk; worth a mention in the docs. Once recency is off, the vector+rerank stack is clearly the best ranker in the table at rank five. The documented one-minute first pass leaves 218 of the 19k sessions indexed (0/100 answered), so the &quot;about a minute&quot; framing is really &quot;about a minute until the embedding job starts&quot;.</p>
-<p>For comparison on the same corpus, deja-vu (plain BM25 over 24 agents' files) indexes in 29s and answers in 24ms at hit@1 18/100, hit@5 35. Corpus, drivers and every row: vshulcz.github.io/deja-vu/guide/day-zero.html - happy to be corrected if a setting I missed changes the numbers.</p>
-<ul><li><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt=""></a></li></ul>
-<p>dacorvo</p>
-<p>Article author</p>
-<p>18 days ago</p>
-<p>longmemeval does not really need semantic search: BM25 already gives the same ratio you mentioned IIRC, so for this use case this is pretty much expected that it is not worth paying the cost of evaluating the embeddings (this extra cost you see at indexing and recall time). funes shines when the information is actually difficult to find.</p>
-<p>johandoc</p>
-<p>25 days ago</p>
-<p>This comment has been hidden (marked as Spam)</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ffunes">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Ffunes">log in</a> to comment</p>
-<p>152</p>
-<ul><li><a href="https://huggingface.co/calvin5820"><img src="https://huggingface.co/avatars/5c451ba44fe13f4df2bc27736493418a.svg" alt=""></a></li><li><a href="https://huggingface.co/tengomucho"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/SpyFox"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1664097982677-632591024f4f4ea5a85cb19f.png" alt=""></a></li><li><a href="https://huggingface.co/docdigital"><img src="https://huggingface.co/avatars/620f5a6c5c3322b7b042f25d3a331362.svg" alt=""></a></li><li><a href="https://huggingface.co/AlexGolesh"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/642b2a79aea7fffc2c364d6a/7ZKq1MPCwL67j3HqBxw1a.jpeg" alt=""></a></li><li><a href="https://huggingface.co/vtec2liter"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/F6eoAD-k_7gnB814W7rT3.webp" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/elchorizo"><img src="https://huggingface.co/avatars/4ef0853a2a901a32096de99d935296e7.svg" alt=""></a></li><li><a href="https://huggingface.co/apolomodov"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69463944fabcf4f25014fc98/3r5uPZrvN_3XOFDWLVXP-.png" alt=""></a></li><li><a href="https://huggingface.co/derkar00"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/658cc0cfc8217618ed66c999/mIQVeGNJEBBV-_4aWyu0P.jpeg" alt=""></a></li><li><a href="https://huggingface.co/XUCHENYU15"><img src="https://huggingface.co/avatars/489c282c8d301f3556c0012a7d1e999c.svg" alt=""></a></li></ul>
-<h2>Datasets mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Training a coding model to paint watercolours with TRL and O…</title>
-      <link>https://huggingface.co/blog/train-to-paint-with-code</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/train-to-paint-with-code?li=1</guid>
-      <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Training a coding model to paint watercolours with TRL and OpenEnv</description>
-      <content:encoded><![CDATA[<h1>Training a coding model to paint watercolours with TRL and OpenEnv</h1>
-<p>September 3, 2026</p>
-<p>Update on GitHub</p>
-<p>76</p>
-<ul><li><a href="https://huggingface.co/cosmic643"><img src="https://huggingface.co/avatars/37fbe542a4b20de9180698b05d977206.svg" alt=""></a></li><li><a href="https://huggingface.co/viansv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/LP2Ig-9G8u8jihRIwifxy.png" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/DDDSSS"><img src="https://huggingface.co/avatars/5cf28cb13b96407ce3001e98fa667199.svg" alt=""></a></li><li><a href="https://huggingface.co/MadMike477"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b232dcf6027d00161fb46c/FwXMNqgpoXBb2NWJ3X_Pq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/victor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp" alt=""></a></li></ul>
-<p>Sergio Paniego</p>
-<p>sergiopaniego</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/train-to-paint-with-code/thumbnail.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/train-to-paint-with-code/thumbnail.png" alt="Training a coding model to paint watercolours"></a></p>
-<p>On 23 August, <a href="https://x.com/kickingkeys/status/2091570990048276897">Surya Narreddi</a> posted a beautiful video of watercolours painted by a language model. The model writes JavaScript through <a href="https://github.com/acamposuribe/p5.brush">p5.brush</a>, a library that &quot;adds natural drawing tools to p5.js&quot;. The video went viral fast, over 1.5M views at the time of writing.</p>
-<p>The video came with <a href="https://surya.website/rling-qwen-to-paint-with-code">a blog post</a> explaining the training behind an earlier and narrower stage of the project, close-up flowers rather than the full compositions in the video, sadly without open artifacts yet. His site says a full technical report is coming, so ensure you follow him. The original idea is his, coming from the art and design side, where <a href="https://x.com/kickingkeys/status/2094901433149612118">his skills are way beyond mine</a>. My attempt is on the engineering side, reproducing the recipe in the open with every piece published.</p>
-<blockquote>Note: for the context behind the project, told by Surya himself, watch this<br>video of his thesis.</blockquote>
-<p>In this article I try and reproduce his idea with <a href="https://huggingface.co/docs/trl">TRL</a> and <a href="https://github.com/huggingface/OpenEnv">OpenEnv</a>. The reference pool dataset, the RL environment, the training scripts and the trained models, all open.</p>
-<p>The whole pipeline runs on Hugging Face, end to end:</p>
-<ul><li>training on <a href="https://huggingface.co/docs/huggingface_hub/guides/jobs">Jobs</a></li><li>the RL environment and the scorer model as <a href="https://huggingface.co/docs/hub/spaces">Spaces</a></li><li>the pairwise judge through <a href="https://huggingface.co/docs/inference-providers">Inference Providers</a></li><li>and every artifact on the Hub, gathered in <a href="https://huggingface.co/collections/HuggingEnvs/paint-with-code-6a955b79d63f67f1631d9be6">one collection</a></li></ul>
-<p>Once the two Spaces are up, the recipe is one command. Duplicate the <a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-env">environment</a> and the <a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-hpsv3">scorer model</a>, set two environment variables for the reward mix, and launch:</p>
-<pre><code>hf jobs uv run train/watercolour_grpo.py --flavor h200 --timeout 48h --secrets HF_TOKEN -- \
-  --env-url https://&lt;you&gt;-watercolour-env.hf.space \
-  --model Qwen/Qwen3.5-35B-A3B --lora --all-linear --bf16 --gradient-checkpointing \
-  --subject 'a peach hibiscus' --references 4 \
-  --top-p 0.95 --top-k 20 \
-  --lr 5e-5 --lr-scheduler constant_with_warmup --warmup-steps 5 \
-  --scale-rewards none \
-  --steps 110 --n-episodes 240 --num-generations 8 \
-  --per-device-batch-size 1 --gradient-accumulation-steps 8 \
-  --max-completion-length 8192 \
-  --run-tag my-run --out &lt;you&gt;/watercolour-grpo --push-to-hub</code></pre>
-<p>The rest of this article is the story of getting there, and <a href="https://github.com/adithya-s-k/HuggingEnvs/tree/main/02-watercolour">every piece is in the repo</a>.</p>
-<p>I have followed the original blog step by step, and only changed something when strictly needed. Every idea of my own went into a list instead of into the experiment, and that list became &quot;What I would try next&quot; at the end, next to the full list of published artifacts. If you have already read his post, the framing and the reward design will be familiar. The new material is the open implementation, the hand-rated pool, and three reward mixes trained and compared, and it starts at <a href="https://huggingface.co/blog/train-to-paint-with-code#the-rl-environment-you-need-to-build">The RL environment you need to build</a>.</p>
-<p>Three runs, one per reward mix, evolving in parallel. Each frame shows the median painting of a step. No need to tell them apart yet, the article explains which run is which.</p>
-<h2>Why people loved it</h2>
-<p>The paintings look loose, imperfect, handmade, at a moment when image models produce perfect (statistically average) pictures. My guess is that this contrast is a big part of why the video went viral. It reminded me of the early days of generative AI art, when the point was to explore the medium. <a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/">DeepDream</a> (2015) was a debugging tool that people turned into art, works like <a href="https://en.wikipedia.org/wiki/Edmond_de_Belamy">Edmond de Belamy</a> (2018) came from artists probing what a GAN could do, and artists like <a href="https://quasimondo.com">Mario Klingemann</a> spent those years making <a href="https://artsandculture.google.com/asset/memories-of-passerby-i-mario-klingemann/aAHG7iV3aXme8g">dreamy portraits with neural networks</a>.</p>
-<p>This project feels closer to those early days. In his thesis, Surya describes the path that led here. He started by prompting text-to-image models, where the prompt is the only lever you can pull, and more detail buys more control only up to a point. Training the model itself goes further. The other half of the idea is the medium. The model writes a program of about 150 lines of JavaScript that paints the image. That model output is code. You can read it, edit it and run it again, and the decision behind each brushstroke is visible. And the style comes from a restriction where the model is only allowed <em>ten of the library's methods</em>. More on that below.</p>
-<p>In that same period, <a href="https://annaridler.com/works/myriad-tulips">Anna Ridler</a> photographed thousands of tulips, hand-labelled every one, exhibited the dataset itself as the artwork, and later trained a model on it. I found her work through the references AI agents brought back while building this project and loved it because this project does something very similar by curating a set of images by hand, and then training against them.</p>
-<h2>RL over taste</h2>
-<p>Most of the recent RL work on language models uses rewards you can verify. For example, math problems with a known answer, code that passes tests, or graders that are right or wrong and cheap to run. This project is closer to the older exception, RLHF, where the model learns a reward model from human preferences.</p>
-<p>Here the reward is aesthetic preference. There is no <em>correct</em> answer. The real question of the project is whether you can do RL over taste.</p>
-<p>The reward, as his blog defines it and as the RL environment I built implements it:</p>
-<table><thead><tr><th>term</th><th>weight</th><th>what it measures</th></tr></thead><tbody><tr><td><code>gate</code></td><td>0.05</td><td>the sketch compiles, paints something, does not cheat</td></tr><tr><td><code>length</code></td><td>0.05</td><td>a soft push towards longer code snippets</td></tr><tr><td>pairwise judge</td><td>0.60</td><td>style, compared against references drawn from a pool</td></tr><tr><td><a href="https://huggingface.co/MizzenAI/HPSv3">HPSv3</a></td><td>0.30</td><td>aesthetic preference on the render</td></tr></tbody></table>
-<p><a href="https://huggingface.co/MizzenAI/HPSv3">HPSv3</a> is an open 7B preference model. Give it an image and a text description, and it returns a score for how much a person would prefer that image. It was trained on a large set of human choices between pairs of images, so its score is an average of many people's taste. The pairwise judge is <a href="https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct">Qwen3-VL-30B-A3B-Instruct</a>, a general vision model called through HF Inference Providers. The pairwise judge sees the candidate painting next to four references randomly selected from the pool, guided by a written description of what to weigh (bleeds, translucent washes, soft edges), each comparison in both presentation orders, and its score is the share of comparisons the candidate wins. Its only standard is the pool, so its score is my taste, as encoded in those ratings.</p>
-<p>Two of the four terms in the reward function are models. Both are proxies for someone's taste.</p>
-<p>Those are the weights Narreddi converged on. The pool defines taste here. That moves the work from tuning hyperparameters to building the set that decides what is beautiful.</p>
-<p>I trained three runs with this reward. They differ only in how the weight splits between the two model judges:</p>
-<table><thead><tr><th>run</th><th>pairwise judge</th><th>HPSv3</th><th>role</th></tr></thead><tbody><tr><td><code>judge-led</code></td><td>0.60</td><td>0.30</td><td>the original mix, stopped at step 110</td></tr><tr><td><code>hps-led</code></td><td>0.30</td><td>0.60</td><td>the middle point, stopped at step 110</td></tr><tr><td><code>hps-only</code></td><td>0.00</td><td>0.90</td><td>the validation run, stopped at step 60</td></tr></tbody></table>
-<p>I started with <code>hps-only</code> to validate that the pipeline could learn at all. Once the reward was going up and the metrics were healthy, there was no reason to run it longer, so I launched the two longer runs instead. The question that the longer runs ask is how much of HPSv3's power can you hand to the pairwise judge? The more weight the judge carries, the more the reward means <em>my</em> taste instead of everyone's, and the harder it should be to climb. Incidentally, if you push it far enough or your style is too far from the average, the model could stop entirely.</p>
-<p>Fortunately, it did not stop and both runs with the pairwise judge on learned too. The hand-rated pool can steer the policy, at least as far as the metrics and the final paintings show. The numbers are below.</p>
-<blockquote>Disclaimer. If we use a frontier model, it can already generate the JavaScript code that paints watercolour from a prompt. That's the starting point. The work here is about teaching a smaller model to do it combined with a person's own artistic preferences.</blockquote>
-<h2>The RL environment you need to build</h2>
-<p>The environment wraps everything that sits between the model and the reward, including the JavaScript library that the model uses for painting, the system prompt that restricts it, the headless Chromium that renders each sketch, and the gate that rejects cheats.</p>
-<p>The library does more of the work than it seems. <a href="https://github.com/acamposuribe/p5.brush">p5.brush</a>, by <a href="https://x.com/acamposuribe">@acamposuribe</a>, simulates a medium rather than drawing shapes: pigment bleeds past the edges of a fill, paper has texture, strokes have mass, flow fields drag brushwork around. When the model calls <code>brush.fillBleed(0.25)</code> it is deciding how far the ink runs.</p>
-<blockquote>Note. The author of p5.brush had been trying to teach a machine to paint long<br>before any of this. In 2022 he made a generative art series that hides a diary about<br>teaching p5.js to draw like a child: &quot;It is barely able to use the crayons [...] It<br>cannot follow simple commands. I'm done for today, very infuriating.&quot; The series was<br>meant to have three pieces, and he made two. When Surya's video went viral, he<br>quoted it, sharing that diary<br>and saying this work is the third piece arriving on its own.</blockquote>
-<p>p5.brush exposes 47 methods. The prompt allows 10: <code>scaleBrushes</code>, <code>noStroke</code>, <code>fill</code>, <code>noFill</code>, <code>fillBleed</code>, <code>fillTexture</code>, <code>beginShape</code>, <code>vertex</code>, <code>endShape</code> and <code>circle</code>. What the other thirty-seven add, lines, hatching, custom brushes, would break the watercolour look. With these ten the model can only paint filled shapes, and the library adds the bleed to every one of them.</p>
-<p>Part of one rollout's</p>
-<p>draw()</p>
-<p>and what it renders to. The comments are the model's own. Reward 0.864, 129 lines, step 22. The full source of every painting is in the rollouts dataset.</p>
-<p>His blog post saved me a lot of time I could have wasted iterating on the prompt. A long API reference makes the model invent methods that do not exist, and his 200 GEPA iterations converged on a strict allowlist with no documentation. I saw the same failures and wrote the allowlist by hand. My only addition to that recipe is one sentence: paint each petal two or three times, a big pass first and a smaller, more opaque one inside it. This small change made my outputs a lot more colorful.</p>
-<blockquote>Note. If it's the first time you hear about<br>GEPA, it is an automatic prompt optimizer.<br>A language model reflects in plain words on where the current prompt failed and<br>proposes a better one, and the loop repeats.</blockquote>
-<p>The gate is the final piece. The sketch has to compile, use the library instead of direct p5 calls, put real pigment on the canvas, and not try to trick the scorer, for example by writing text on the canvas.</p>
-<h2>The pool is the reward function</h2>
-<p>The pool consists of <a href="https://huggingface.co/datasets/HuggingEnvs/watercolour-reference-pool">178 paintings</a> divided into two tiers based on my personal preferences, <code>love</code> and <code>okay</code>. All of them are actually generated by a model. Four open-weight models, called through Inference Providers, wrote p5.brush sketches, each one working from a real, openly licensed photo of a hibiscus from iNaturalist. A vision model gave written feedback on every sketch, over three refinement iterations. Every final render was then rated one at a time, by me, and 178 made the cut.</p>
-<table><thead><tr><th>generator</th><th>number of paintings</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/zai-org/GLM-5.2">GLM-5.2</a></td><td>64</td></tr><tr><td><a href="https://huggingface.co/moonshotai/Kimi-K3">Kimi-K3</a></td><td>57</td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3-Coder-Next">Qwen3-Coder-Next</a></td><td>35</td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-122B-A10B">Qwen3.5-122B-A10B</a></td><td>22</td></tr></tbody></table>
-<p>Here I chose four different families of models to test their different styles. These four were the open models that produced a valid sketch every time in a quick reliability check, and two other candidates were dropped for failing it. If you want to produce your own pool, you might choose others.</p>
-<p>The two tiers, as they actually look. Disagreeing with the rating is reasonable, somebody's judgement is now the reward function.</p>
-<p>The tiers do real work in the reward. When the pairwise judge draws four references, half come from <code>love</code> and half from <code>okay</code>, so the policy always faces some rivals it can sometimes beat, and a win pays the same against either tier. This is one of my few deliberate changes: the original compares against its top tier only, and I kept the easier tier in the draw so a weak early policy still gets signal.</p>
-<p>No human-made painting is in there, which is a real limitation. p5.brush is a niche library, and the human work that exists in it with accessible code is a handful of pieces, nowhere near what a training corpus would need, as his blog also notes.</p>
-<p>The interesting idea here, as I've already discussed previously, is that the model will learn to imitate what the pool contains. If we point the environment at a different dataset, the reward would automatically change without touching a single line of code. For the dataset I generated and openly share, I also include the source sketch.</p>
-<p>If we look closer at the judges, the two of them answer different questions. HPSv3 decides whether it is a flower, and the pairwise judge decides whether it is well painted in the style I chose.</p>
-<h2>Just one more yolo run</h2>
-<p>Before anything worked, there was a long stretch of flat reward curves. If you've tried to reproduce a research paper/blog without open artifacts, you probably can relate. Every run tested what I thought was a reasonable theory about what was wrong. A run takes a lot of time, so I queued the next one while still going through the last one's results. As always, starting from something easier that works and then building on top of that was the answer. A simple control task, with no browser and no judges, was the first attempt that learned, and the reason was that my learning rate was just too low.</p>
-<p>Three experiments on the reward, three flat lines. I swapped the pool, removed renderer noise and turned the pairwise judge off, and none of it moved the curve. The run that moves changed the trainer configuration, so the difference is the trainer, not the reward mix.</p>
-<p>Another change that cost me time to find was adjusting the LoRA parameters correctly. The usual <code>target_modules</code> list assumes a dense model, and <a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B"><code>Qwen/Qwen3.5-35B-A3B</code></a> is a mixture of experts that names most of its projections differently, so the adapter was training ten layers out of forty. I solved this by changing it to <code>all-linear</code>, which reaches every linear layer. The routed experts in this architecture are fused tensors that even <code>all-linear</code> leaves frozen, but everything else gets an adapter, and that was enough to learn.</p>
-<p>The fix was four changes in TRL's <a href="https://huggingface.co/docs/trl/grpo_trainer"><code>GRPOTrainer</code></a>:</p>
-<table><thead><tr><th>setting</th><th>from</th><th>to</th><th>why</th></tr></thead><tbody><tr><td>learning rate</td><td>2e-5</td><td><strong>5e-5</strong></td><td>the ceiling <em>LoRA Without Regret</em> uses for GRPO</td></tr><tr><td>scheduler</td><td><code>linear</code></td><td><strong><code>constant_with_warmup</code></strong></td><td>linear decay had spent most of the learning rate by mid-run, so the reward never took off</td></tr><tr><td><code>scale_rewards</code></td><td><code>group</code></td><td><strong><code>none</code></strong></td><td>one gate rejection was shrinking every other advantage in the group</td></tr><tr><td><code>target_modules</code></td><td>hand list</td><td><strong><code>all-linear</code></strong></td><td>reach every linear layer</td></tr></tbody></table>
-<p>These four changes unlocked the first successful run (<code>hps-only</code>), with the reward clearly improving.</p>
-<p>With that configuration, all three runs learn. Both judge runs were launched for 200 steps and stopped at 110, with the reward still climbing slowly. A step takes fifteen to eighteen minutes, and the comparison between mixes was already stable, so I stopped both to save compute. Mean group reward over the first and final third of each run:</p>
-<table><thead><tr><th>run</th><th>steps</th><th>first third</th><th>final third</th><th>Δ</th></tr></thead><tbody><tr><td><code>hps-only</code></td><td>60</td><td>0.58</td><td>0.71</td><td>+0.13</td></tr><tr><td><code>judge-led</code></td><td>110</td><td>0.45</td><td>0.72</td><td>+0.27</td></tr><tr><td><code>hps-led</code></td><td>110</td><td>0.57</td><td>0.82</td><td>+0.24</td></tr></tbody></table>
-<p>The three curves line up with how much weight my taste carries. The more the judge weighs, the lower the start and the noisier the climb. <code>judge-led</code> spent its first thirty steps nearly flat before it moved. It is the same move that solved the debugging. Shrink the problem until something learns, then add the hard parts back one at a time.</p>
-<p>The pairwise judge term itself climbed in the two runs that used it. The model wins more comparisons against the pool as training advances, which is the claim <code>hps-only</code> could not make. No group in any run collapsed to identical rewards, the GRPO failure mode that kills the gradient. For the curious, the per-metric curves (HPSv3, paint coverage, entropy) are <a href="https://github.com/adithya-s-k/HuggingEnvs/tree/main/02-watercolour/results">in the repository as CSV</a>.</p>
-<p>The full launch command, the hardware and the two environment variables that turn this into the other two runs are in <a href="https://github.com/adithya-s-k/HuggingEnvs/tree/main/02-watercolour">the recipe</a>.</p>
-<h2>What it actually learned</h2>
-<p><strong>In every run, the first thing the model learned was to stop producing bad paintings</strong>, the near-blank canvases and shapeless washes that score under 0.3 in total reward. In <code>hps-only</code>, three quarters of the rise in the group mean comes from bad paintings becoming rare. In the judge runs the collapse is even steeper: rollouts under 0.3 fall from 99 to 16 across <code>judge-led</code>'s thirds, and from 37 to 4 in <code>hps-led</code>.</p>
-<p>This is why the obvious visual, the best painting of each step, shows almost no difference in <code>hps-only</code>. It moves <strong>+0.034</strong> across the run while the median moves <strong>+0.155</strong>. The learning is visible in the middle of the distribution.</p>
-<p><strong>What the pairwise judge changes is the top.</strong> In <code>hps-only</code>, paintings got more reliable without getting better. The quality of the good ones added just +0.03 to the group mean, and once HPSv3 saw petals around a centre and a stem, it stopped asking for more pigment. With the judge on, the other half of the story appears. <em>Better</em> here means closer to the pool, so closer to what I rated as &quot;good&quot; or something I liked more. That added +0.12 in <code>judge-led</code> and +0.16 in <code>hps-led</code>, the best of each step rose too, and paint coverage doubled in both runs (0.11 to 0.23, and 0.13 to 0.30) where <code>hps-only</code> barely moved it. With a reference left to beat, a good painting can still get better, and the model starts being rewarded for using more pigment.</p>
-<p>One more finding. The model ignores an explicit instruction, and it is right to. The system prompt asks for fifteen to thirty filled shapes. If we look at the real mean, it is between 7 and 9, and <code>n_shapes</code> barely correlates with reward in any run (+0.000, −0.14, +0.07). The policy is not rewarded for obeying that sentence, so it does not obey it.</p>
-<p>There is also a ceiling on the <code>hps-only</code> route. If every rollout matched its good ones, that run's mean would sit at 0.771. Whether more steps would break it is an open question.</p>
-<p>The paintings also show something that the tables miss. Within each run, they all look similar. As training advances, the rewards inside each group get closer together, and the median paintings in the opening video look like takes of the same flower. That is GRPO doing what it is designed to do with a pool built from one subject. The pool decides what counts as variety, the same way it decides what counts as quality. If the reward only pays for matching one flower, the model learns to paint that one flower. More diverse output would need a more diverse pool, and building one is more curation work. Surya's newer compositions are an example of this. <a href="https://x.com/alexyango/status/2091696296931574217">Alex Yango's animal paintings</a> are the same recipe with different choices in the pool. This is the biggest difference between an aesthetic reward and a maths grader. Behind the number there is a very human job, deciding what belongs in the reward set. <a href="https://x.com/jxnlco/status/2073819508729684462">Jason Liu's essay on taste</a> says the general version in one line. AI shifted the bottleneck from making to noticing.</p>
-<p>Surya closes his blog with some of his favourites. Instead of picking mine, below is a wall with the 178 paintings the reward scored highest across the two judge runs, the same number the reference pool holds, in no particular order. Open it and pick your own.</p>
-<p>The reward's 178 favourites from the two judge runs, shuffled. Now pick yours.</p>
-<p>To choose, you looked at many and kept a few, and that is exactly the job that built the reward of this project. Every painting of every run, with its sketch and its reward, is in the rollouts datasets, and browsable in <a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-gallery">this gallery</a>.</p>
-<p>The last step's median painting of each run, in the same order as the opening video. Same base model, same pool, three reward mixes, three styles.</p>
-<p>Since the reward was partly based on my taste, it is fair to close with my verdict as a viewer. To my eye, <code>judge-led</code> is the run that ends up the most diverse and the most artistically interesting. <code>hps-led</code> paints convincing watercolours, but its best ones share a soft, wet-on-wet look that is almost a style of its own. <code>hps-only</code> converges the hardest, and most of its paintings settle on the same colours. You can judge for yourself in <a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-gallery">the gallery</a>, which has every painting of every run, sortable by step and by reward.</p>
-<h2>Infra is hard</h2>
-<p>This project is mostly infra. A run needs a trainer, two Spaces, an inference router and a websocket to stay healthy for hours straight, and every piece that fails quietly turns into a wrong number somewhere else. Half the work is checking that the number you read matches what actually happened.</p>
-<p><strong>Failures of the infrastructure were entering the reward as zeros.</strong> A render that timed out or a scorer that did not answer scored the same as a bad painting, 0.0 inside the group. Across all my runs that was about 1.5% of rollouts, and in the worst run it reached 5.2%. That trains the model on noise, so those paths now return <code>None</code> and the rollout is excluded from the group.</p>
-<p><strong>I also found a bug in OpenEnv, and sent the fix upstream.</strong> The client keeps one persistent websocket, and a socket closed by the far end stayed cached, so every later call failed even though the environment was healthy. It cost me two half-finished runs to find it. The fix is <a href="https://github.com/huggingface/OpenEnv/pull/1103">submitted upstream</a>, and the runs launched with it have been running clean since.</p>
-<p>Two consecutive steps of the</p>
-<p>judge-led</p>
-<p>run, best four of each. Whether step 12's paintings look half a point worse is for you to decide.</p>
-<p><strong>The reward of a step depends on which references it drew.</strong> The pairwise judge samples four references per step, so every step faces a different set of rivals, and some draws are simply harder. GRPO itself is mostly safe, because advantages are computed inside the group and a hard draw moves the whole group together. The curve I was reading was not safe, and some of what looked like a bad step was just a hard draw. The image above is one example. Step 12 scored half a point below step 11 mostly because it drew the hardest references of the run, while the paintings themselves look close.</p>
-<h2>What it costs</h2>
-<p>Rounded numbers, and only for the runs that finished.</p>
-<table><thead><tr><th>piece</th><th>what it needs</th></tr></thead><tbody><tr><td>trainer</td><td>1 H200. <strong>18 hours</strong> for 60 steps, about <strong>34</strong> for 110</td></tr><tr><td>HPSv3</td><td>an <code>a100-large</code> Space, up for the whole run</td></tr><tr><td>the environment</td><td>a <code>cpu-upgrade</code> Space, which renders comfortably in time</td></tr><tr><td>the pairwise judge</td><td>Inference Providers quota for <code>Qwen/Qwen3-VL-30B-A3B-Instruct</code></td></tr><tr><td>the pool, one-off</td><td>openly licensed photos from iNaturalist, Inference Providers quota for the four generators, and rating is your own hours</td></tr></tbody></table>
-<p>A step is eight rollouts and takes fifteen to eighteen minutes, of which <strong>70 to 80% is rendering</strong>. A single render takes 69 to 96 seconds against a 90 second deadline. Part of that is expected, the Space has no GPU, so Chromium renders the WEBGL canvas in software and p5.brush's bleeds and textures are heavy pixel work. Even so, I expected it to be faster, and I have not found the full cause.</p>
-<p>A scorer can cost more than the training that uses it: HPSv3 has to be up for the whole run, so pause the Space, or set its sleep timer, when the run ends.</p>
-<p>Four paid services have to stay healthy at once. Only the Hub and trackio outlive the run.</p>
-<p>Everything runs on <a href="https://huggingface.co/docs/huggingface_hub/guides/jobs">HF Jobs</a>, with the environment as a <a href="https://huggingface.co/docs/hub/spaces-sdks-docker">Docker Space</a> and metrics in <a href="https://huggingface.co/docs/trackio">trackio</a>.</p>
-<h2>What I would try next</h2>
-<p>The rule of this project was to reproduce the recipe with every resource open, not to improve it, so a list of untried ideas piled up along the way. These are the ones I would actually try, in order of how much evidence there is.</p>
-<p><strong>Multi-step, and letting the model see what it paints.</strong> This is the first thing I would try. The original blog trains single turn, so I trained single turn, and in this setup the model paints with its eyes closed. No image ever goes in, and the only feedback it gets is one number. The evidence that a feedback loop works is the pool itself. The reference paintings came from models iterating three rounds under a vision critic, and the later rounds are better. The material that defines the reward was made with a loop the policy never gets.</p>
-<p><strong>Smaller models.</strong> There is evidence that 35B is more than needed. In my side experiments a 4B already wrote valid sketches that passed the gate. If a 4B can learn this, the cost of the experiment drops by an order of magnitude.</p>
-<p>Other ideas on the list are SFT on the pool sources before starting RL, rewarding pigment explicitly, moving the judge's reference mix from easy to hard as the run advances until only <code>love</code> remains, widening the ten-method allowlist for more visual range (my attempts on this crashed more sketches and broke the watercolour look), and checking how consistent the pairwise judge really is by scoring the same image twice.</p>
-<p>And the method is not specific to flowers. <a href="https://x.com/alexyango/status/2091696296931574217">Alex Yango painted animals with the same mechanism</a>, and <a href="https://x.com/brendanh0gan/status/2092650655789855222">Brendan Hogan trained canvas animations</a> against a pool of hand-rated clips. I had also played with something similar before using <a href="https://huggingface.co/blog/sergiopaniego/pelican-env-openenv">Simon Willison's pelican benchmark</a>, where code is rendered to an image and scored.</p>
-<p>And underneath all of it sits the question this project cannot close. <strong>178 paintings made by models define what this trained model considers beautiful.</strong> The pool is the bottleneck, and it is the part of the pipeline with no principled answer.</p>
-<h2>What I changed from the original</h2>
-<p>For anyone reproducing this, there are two deliberate divergences from Narreddi's recipe, both argued earlier in the article:</p>
-<ul><li>The pairwise judge draws its references half from <code>love</code> and half from <code>okay</code>, instead of comparing against the top tier only, so a weak early policy still gets signal.</li><li>One small sentence of craft in the prompt, paint each petal two or three times, a big pass first and a smaller, more opaque one inside it.</li></ul>
-<p>The rest, <code>all-linear</code> for the LoRA, infrastructure failures returning <code>None</code> instead of 0.0, stopping the judge runs at step 110, are decisions I had to make along the way because his blog does not specify them. His implementation is not published, so I cannot tell whether they match his choices or diverge from them.</p>
-<h2>Everything is published</h2>
-<table><thead><tr><th>artifact</th><th>where</th></tr></thead><tbody><tr><td>the recipe, and how to reproduce it</td><td><a href="https://github.com/adithya-s-k/HuggingEnvs/tree/main/02-watercolour"><code>02-watercolour/</code></a></td></tr><tr><td>the reference pool, with every source sketch</td><td><a href="https://huggingface.co/datasets/HuggingEnvs/watercolour-reference-pool"><code>watercolour-reference-pool</code></a></td></tr><tr><td>the environment, ready to duplicate</td><td><a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-env"><code>watercolour-env</code></a></td></tr><tr><td>the HPSv3 scorer, ready to duplicate</td><td><a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-hpsv3"><code>watercolour-hpsv3</code></a></td></tr><tr><td>the hps-only adapter and rollouts</td><td><a href="https://huggingface.co/HuggingEnvs/watercolour-grpo-hps-only"><code>watercolour-grpo-hps-only</code></a> · <a href="https://huggingface.co/datasets/HuggingEnvs/watercolour-rollouts-hps-only"><code>watercolour-rollouts-hps-only</code></a></td></tr><tr><td>the judge-led adapter and rollouts</td><td><a href="https://huggingface.co/HuggingEnvs/watercolour-grpo-judge-led"><code>watercolour-grpo-judge-led</code></a> · <a href="https://huggingface.co/datasets/HuggingEnvs/watercolour-rollouts-judge-led"><code>watercolour-rollouts-judge-led</code></a></td></tr><tr><td>the hps-led adapter and rollouts</td><td><a href="https://huggingface.co/HuggingEnvs/watercolour-grpo-hps-led"><code>watercolour-grpo-hps-led</code></a> · <a href="https://huggingface.co/datasets/HuggingEnvs/watercolour-rollouts-hps-led"><code>watercolour-rollouts-hps-led</code></a></td></tr><tr><td>the gallery, every painting browsable</td><td><a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-gallery"><code>watercolour-gallery</code></a></td></tr><tr><td>the training curves</td><td>live: <a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-trackio-judge-led"><code>judge-led</code></a> · <a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-trackio-hps-led"><code>hps-led</code></a> · <a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-trackio-hps-only"><code>hps-only</code></a>, and the CSV files in <code>results/</code></td></tr><tr><td>all of it</td><td><a href="https://huggingface.co/collections/HuggingEnvs/paint-with-code-6a955b79d63f67f1631d9be6">Paint with Code</a></td></tr></tbody></table>
-<p>The per-rollout numbers in this article can be recomputed from the published datasets. Nothing here depends on any Space staying switched on.</p>
-<p>The method and original idea are Surya Narreddi's. The library is Alejandro Campos Uribe's.</p>
-<h2>Models mentioned in this article 7</h2>
-<h2>Papers mentioned in this article 1</h2>
-<p>More Articles from our Blog</p>
-<p>nlp</p>
-<p>guide</p>
-<p>community</p>
-<h2>Fine-tuning a 350M Model for Better Structured Outputs in 100 GRPO Steps</h2>
-<ul><li><img src="https://huggingface.co/avatars/33af1a607a8bf7780b98d6f70ea19999.svg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
-<p>147</p>
-<p>September 3, 2026</p>
-<p>llm</p>
-<p>rl</p>
-<p>trl</p>
-<h2>Async GRPO with LoRA across HF Jobs: a bucket, a proxy, and no NCCL</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69a5684704dd904ad8fdf1c6/_AC_1juch3FyFgy7mHCYa.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></li></ul>
-<p>53</p>
-<p>September 10, 2026</p>
-<h3>Community</h3>
-<p>blakegger</p>
-<p>21 days ago</p>
-<p>great job</p>
-<p>xshubhamg</p>
-<p>7 days ago</p>
-<p>Awesome this is so COOL</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftrain-to-paint-with-code">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Ftrain-to-paint-with-code">log in</a> to comment</p>
-<p>76</p>
-<ul><li><a href="https://huggingface.co/cosmic643"><img src="https://huggingface.co/avatars/37fbe542a4b20de9180698b05d977206.svg" alt=""></a></li><li><a href="https://huggingface.co/viansv"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/LP2Ig-9G8u8jihRIwifxy.png" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/DDDSSS"><img src="https://huggingface.co/avatars/5cf28cb13b96407ce3001e98fa667199.svg" alt=""></a></li><li><a href="https://huggingface.co/MadMike477"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68b232dcf6027d00161fb46c/FwXMNqgpoXBb2NWJ3X_Pq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/victor"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5f17f0a0925b9863e28ad517/78BR8GuQiX9a8wbbRlSAC.webp" alt=""></a></li><li><a href="https://huggingface.co/kashif"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1669189789447-629f3b18ee05727ce328ccbe.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sroecker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/630b4269e67c604e9b7a429c/qsmA2ObMFfLwPIAyveo9F.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pandeyps"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/679b9f3e1287f5a64ebdfcd1/KZTZbvWJZcnTcsMhGzoA0.png" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/multimodalart"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649143001781-624bebf604abc7ebb01789af.jpeg" alt=""></a></li><li><a href="https://huggingface.co/anakin87"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/626505d493e0b04d75710566/9rfJc9ORXU9J5a42Ev3v6.png" alt=""></a></li></ul>
-<h2>Models mentioned in this article 7</h2>
-<h2>Papers mentioned in this article 1</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

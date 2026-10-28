@@ -7,7 +7,83 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Fri, 23 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Build specialized multimodal models with LFM3</title>
+      <link>https://huggingface.co/blog/LiquidAI/lfm3</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/lfm3</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>我们可以信任LLM来判断一个研究想法是否新颖吗？</title>
+      <link>https://huggingface.co/blog/allenai/novelty-bench</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/allenai/novelty-bench</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Can we trust LLMs to judge whether a research idea is novel?</description>
+    </item>
+    <item>
+      <title>你的模型能在 AWS Trainium 上运行吗？查一查</title>
+      <link>https://huggingface.co/blog/torch-neuronx-model-support</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/torch-neuronx-model-support</guid>
+      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Does Your Model Run on AWS Trainium? Look It Up</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
+<h1>你的模型能在 AWS Trainium 上运行吗？查一查</h1>
+<p>发布于 2026 年 10 月 23 日</p>
+<p>在 GitHub 上更新</p>
+<p>9</p>
+<ul><li><a href="https://huggingface.co/dzulfikarsn"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a309777503da5d134a8b66b/v1SP3dpRs4Rg_C8dRV2lp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/Anoop576"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb6d3bf0ca917f92a965be/0hErLmXTtx85399hvn7eV.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jorgemunozl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5217cde48625c1b7a58fb/YZZ1kwdnUqiRJDLb2a6L5.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt="David Corvoysier 的头像"></a></p>
+<p>David Corvoysier</p>
+<p>dacorvo</p>
+<p>在<a href="https://huggingface.co/blog/hf-torchneuron">上一篇文章</a>里，我们介绍了 TorchNeuron——AWS Trainium 的原生 PyTorch 后端（也就是 <code>torch-neuronx</code> 包）。有了它，Transformers 会把自家的建模代码跑在 Trainium 上，就像在任何其他设备上一样，因此 Hub 上任何一个 Transformers 模型都有可能跑起来。那究竟哪些能跑？</p>
+<p><a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support">torch-neuronx 模型支持</a> Space 回答了 Hub 上最热门模型在这一点上的问题。它会告诉你某个模型能否不经修改地在 Trainium 上运行，并把让你自己跑起来的脚本一并给你。</p>
+<p><a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support"><img src="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support/resolve/main/thumbnail.jpg" alt="torch-neuronx 模型支持"></a></p>
+<h2>查一个模型</h2>
+<p>该 Space 打开时停在 <strong>Selected</strong> 视图：这是我们自己按下载量和趋势分数，从 Hub 上顶级模型里挑出的一份名单。每一行给出结果、模型分片所占的 Trainium 核心数、那次运行的实际耗时（含编译）以及峰值设备内存。</p>
+<p>要查某个具体模型，切换到 <strong>Trending</strong> 或 <strong>Downloads</strong> 视图，然后输入它名字的一部分。这两个视图遵循 Hub 自己的排名，一次只覆盖一个任务，无论模型是否被测过。当某个模型是被有意略过时，Space 会告诉你原因（多数情况是没被优先安排，有时确实是不兼容）。你还可以选择查看哪个版本的 Neuron 编译器（<code>neuronx-cc</code>）和 Transformers。</p>
+<blockquote>撰写本文时，只测试 Transformers 模型，而且我们的选择仅限于文本生成和图文到文本（image-text-to-text）模型。我们计划扩展到 diffusers、sentence transformers 以及其他 transformers 任务。</blockquote>
+<h2>自己跑一遍</h2>
+<p>选中一个模型就能看到怎么运行它。Space 会列出该模型所基于测试的 Neuron 栈、在其上需要安装的包，以及实际运行过的 <code>run.py</code> 脚本。这个脚本遵循 <a href="https://huggingface.co/blog/hf-torchneuron">TorchNeuron 发布公告</a>里的配方：用 <code>from_pretrained</code> 加载模型，需要时做分片，然后用静态缓存和 <code>torch.compile(backend=&quot;neuron&quot;)</code> 生成。</p>
+<p>在一个装有这套栈的 Trainium2（<code>trn2</code>）实例上——例如 <a href="https://github.com/aws-neuron/deep-learning-containers#torch-neuronx">AWS Neuron Deep Learning Container</a> 里——先安装这些包，然后运行：</p>
+<pre><code>python3 run.py</code></pre>
+<p>不需要 <code>torchrun</code>：当模型需要分片时，脚本会自己拉起 <code>torch.distributed</code> 的各 rank。</p>
+<p>第一次运行会从编译模型的计算图开始。要跳过这一步，可以从公开的 <a href="https://huggingface.co/buckets/aws-neuron/torch-neuronx-neff-cache">NEFF 缓存</a> 桶里，把测试期间用同一版本编译器构建好的计算图拷过来。Space 会给出对应的命令和正确的编译器版本：</p>
+<pre><code>hf buckets sync hf://buckets/aws-neuron/torch-neuronx-neff-cache/neuronxcc-&lt;version&gt; /tmp/neff_cache</code></pre>
+<h2>“运行”意味着什么</h2>
+<p>每个测试都会把模型加载到一个 <code>trn2</code> 实例上，并分片到能够容纳其权重的最少数量的 Trainium 核心上。大多数模型用张量并行来分片。没有张量并行方案的 Mixture-of-Experts 模型只使用专家并行。随后测试生成 32 个 token 并检查它们。在单核上，这些 token 会与同一检查点 CPU 运行的结果做比较。当模型被分片时，则由一个小型评判模型检查文本是否为流利的英语。</p>
+<p>撰写本文时，只测试能够放进 4 台 Trainium2 设备的模型，也就是最多 16 个核心。一个 <code>PASS</code> 并不说明吞吐，也不说明更长的生成。</p>
+<h2>结果本身就是一个数据集</h2>
+<p>Space 展示的一切都来自公开的 <a href="https://huggingface.co/datasets/aws-neuron/torch-neuronx-model-support"><code>aws-neuron/torch-neuronx-model-support</code></a> 数据集，每一对 <code>neuronx-cc</code> 与库版本对应一个 Parquet 文件。</p>
+<p>每一行保存了某个模型的结果、失败时的错误、整个栈的版本，以及运行过的那个 <code>run.py</code>。你可以直接查询它：</p>
+<pre><code>import pandas as pd
+
+df = pd.read_parquet(&quot;hf://datasets/aws-neuron/torch-neuronx-model-support/data&quot;)
+df[df.model_id == &quot;Qwen/Qwen3-0.6B&quot;][[&quot;neuronx_cc&quot;, &quot;library&quot;, &quot;library_version&quot;, &quot;neuron_cores&quot;, &quot;result&quot;]]</code></pre>
+<p><a href="https://huggingface.co/datasets/aws-neuron/torch-neuronx-model-support">数据集卡</a>给出了每种结果的准确含义。</p>
+<p>下次你想知道某个模型能不能在 Trainium 上跑时，<a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support">查一查</a>。</p>
+<h2>本文中提到的数据集 1</h2>
+<h2>本文中提到的空间 1</h2>
+<p>我们博客的更多文章</p>
+<p>open-sourcetorchneuron</p>
+<h2>TorchNeuron：在 AWS Trainium 上运行 HF 模型从未如此轻松</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></li><li>+3</li></ul>
+<p>30</p>
+<p>2026 年 10 月 19 日</p>
+<p>tpugooglegcp</p>
+<h2>Hugging Face ❤️ TorchTPU：原生支持 TPU</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></li><li>+1</li></ul>
+<p>32</p>
+<p>2026 年 10 月 20 日</p>
+<h3>社区</h3>
+<p>把图片、音频和视频拖进文本输入框、粘贴，或者点击这里即可上传。</p>
+<p>在此轻点或粘贴以上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftorch-neuronx-model-support">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Ftorch-neuronx-model-support">登录</a> 即可评论</p>
+<p>9</p>
+<ul><li><a href="https://huggingface.co/dzulfikarsn"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a309777503da5d134a8b66b/v1SP3dpRs4Rg_C8dRV2lp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/Anoop576"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb6d3bf0ca917f92a965be/0hErLmXTtx85399hvn7eV.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jorgemunozl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5217cde48625c1b7a58fb/YZZ1kwdnUqiRJDLb2a6L5.png" alt=""></a></li><li><a href="https://huggingface.co/ericyu0510"><img src="https://huggingface.co/avatars/9d16fc41021585ca0981882d8919b5ee.svg" alt=""></a></li><li><a href="https://huggingface.co/Gyaneshere"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f4c8b14dc2f957ceded399/FghTxJScVs4OgC4fuexmg.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rajkthakur"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1x4LJ7liNl_k-5cViEi8r.png" alt=""></a></li></ul>
+<h2>本文中提到的数据集 1</h2>
+<h2>本文中提到的空间 1</h2>]]></content:encoded>
+    </item>
     <item>
       <title>LitPivot：在文献景观中通过动态情境化来发展研究想法</title>
       <link>https://huggingface.co/blog/allenai/litpivot</link>
@@ -77,69 +153,6 @@
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Flitpivot">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Flitpivot">登录</a> 即可评论</p>
 <p>3</p>
 <ul><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/Chroma111"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63c1699e40a26dd2db32400d/3N0-Zp8igv8-52mXAdiiq.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Sentinel7"><img src="https://huggingface.co/avatars/183456c0fa0d5e21c27813ce48d3bad2.svg" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>你的模型能在 AWS Trainium 上运行吗？查一查</title>
-      <link>https://huggingface.co/blog/torch-neuronx-model-support</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/torch-neuronx-model-support</guid>
-      <pubDate>Fri, 23 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Does Your Model Run on AWS Trainium? Look It Up</description>
-      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
-<h1>你的模型能在 AWS Trainium 上运行吗？查一查</h1>
-<p>发布于 2026 年 10 月 23 日</p>
-<p>在 GitHub 上更新</p>
-<p>9</p>
-<ul><li><a href="https://huggingface.co/dzulfikarsn"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a309777503da5d134a8b66b/v1SP3dpRs4Rg_C8dRV2lp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/Anoop576"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb6d3bf0ca917f92a965be/0hErLmXTtx85399hvn7eV.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jorgemunozl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5217cde48625c1b7a58fb/YZZ1kwdnUqiRJDLb2a6L5.png" alt=""></a></li></ul>
-<p><a href="https://huggingface.co/dacorvo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/647995564be04c76ce4547b3/-tlmMQgr-CTm5TCIjGApB.jpeg" alt="David Corvoysier 的头像"></a></p>
-<p>David Corvoysier</p>
-<p>dacorvo</p>
-<p>在<a href="https://huggingface.co/blog/hf-torchneuron">上一篇文章</a>里，我们介绍了 TorchNeuron——AWS Trainium 的原生 PyTorch 后端（也就是 <code>torch-neuronx</code> 包）。有了它，Transformers 会把自家的建模代码跑在 Trainium 上，就像在任何其他设备上一样，因此 Hub 上任何一个 Transformers 模型都有可能跑起来。那究竟哪些能跑？</p>
-<p><a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support">torch-neuronx 模型支持</a> Space 回答了 Hub 上最热门模型在这一点上的问题。它会告诉你某个模型能否不经修改地在 Trainium 上运行，并把让你自己跑起来的脚本一并给你。</p>
-<p><a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support"><img src="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support/resolve/main/thumbnail.jpg" alt="torch-neuronx 模型支持"></a></p>
-<h2>查一个模型</h2>
-<p>该 Space 打开时停在 <strong>Selected</strong> 视图：这是我们自己按下载量和趋势分数，从 Hub 上顶级模型里挑出的一份名单。每一行给出结果、模型分片所占的 Trainium 核心数、那次运行的实际耗时（含编译）以及峰值设备内存。</p>
-<p>要查某个具体模型，切换到 <strong>Trending</strong> 或 <strong>Downloads</strong> 视图，然后输入它名字的一部分。这两个视图遵循 Hub 自己的排名，一次只覆盖一个任务，无论模型是否被测过。当某个模型是被有意略过时，Space 会告诉你原因（多数情况是没被优先安排，有时确实是不兼容）。你还可以选择查看哪个版本的 Neuron 编译器（<code>neuronx-cc</code>）和 Transformers。</p>
-<blockquote>撰写本文时，只测试 Transformers 模型，而且我们的选择仅限于文本生成和图文到文本（image-text-to-text）模型。我们计划扩展到 diffusers、sentence transformers 以及其他 transformers 任务。</blockquote>
-<h2>自己跑一遍</h2>
-<p>选中一个模型就能看到怎么运行它。Space 会列出该模型所基于测试的 Neuron 栈、在其上需要安装的包，以及实际运行过的 <code>run.py</code> 脚本。这个脚本遵循 <a href="https://huggingface.co/blog/hf-torchneuron">TorchNeuron 发布公告</a>里的配方：用 <code>from_pretrained</code> 加载模型，需要时做分片，然后用静态缓存和 <code>torch.compile(backend=&quot;neuron&quot;)</code> 生成。</p>
-<p>在一个装有这套栈的 Trainium2（<code>trn2</code>）实例上——例如 <a href="https://github.com/aws-neuron/deep-learning-containers#torch-neuronx">AWS Neuron Deep Learning Container</a> 里——先安装这些包，然后运行：</p>
-<pre><code>python3 run.py</code></pre>
-<p>不需要 <code>torchrun</code>：当模型需要分片时，脚本会自己拉起 <code>torch.distributed</code> 的各 rank。</p>
-<p>第一次运行会从编译模型的计算图开始。要跳过这一步，可以从公开的 <a href="https://huggingface.co/buckets/aws-neuron/torch-neuronx-neff-cache">NEFF 缓存</a> 桶里，把测试期间用同一版本编译器构建好的计算图拷过来。Space 会给出对应的命令和正确的编译器版本：</p>
-<pre><code>hf buckets sync hf://buckets/aws-neuron/torch-neuronx-neff-cache/neuronxcc-&lt;version&gt; /tmp/neff_cache</code></pre>
-<h2>“运行”意味着什么</h2>
-<p>每个测试都会把模型加载到一个 <code>trn2</code> 实例上，并分片到能够容纳其权重的最少数量的 Trainium 核心上。大多数模型用张量并行来分片。没有张量并行方案的 Mixture-of-Experts 模型只使用专家并行。随后测试生成 32 个 token 并检查它们。在单核上，这些 token 会与同一检查点 CPU 运行的结果做比较。当模型被分片时，则由一个小型评判模型检查文本是否为流利的英语。</p>
-<p>撰写本文时，只测试能够放进 4 台 Trainium2 设备的模型，也就是最多 16 个核心。一个 <code>PASS</code> 并不说明吞吐，也不说明更长的生成。</p>
-<h2>结果本身就是一个数据集</h2>
-<p>Space 展示的一切都来自公开的 <a href="https://huggingface.co/datasets/aws-neuron/torch-neuronx-model-support"><code>aws-neuron/torch-neuronx-model-support</code></a> 数据集，每一对 <code>neuronx-cc</code> 与库版本对应一个 Parquet 文件。</p>
-<p>每一行保存了某个模型的结果、失败时的错误、整个栈的版本，以及运行过的那个 <code>run.py</code>。你可以直接查询它：</p>
-<pre><code>import pandas as pd
-
-df = pd.read_parquet(&quot;hf://datasets/aws-neuron/torch-neuronx-model-support/data&quot;)
-df[df.model_id == &quot;Qwen/Qwen3-0.6B&quot;][[&quot;neuronx_cc&quot;, &quot;library&quot;, &quot;library_version&quot;, &quot;neuron_cores&quot;, &quot;result&quot;]]</code></pre>
-<p><a href="https://huggingface.co/datasets/aws-neuron/torch-neuronx-model-support">数据集卡</a>给出了每种结果的准确含义。</p>
-<p>下次你想知道某个模型能不能在 Trainium 上跑时，<a href="https://huggingface.co/spaces/aws-neuron/torch-neuronx-model-support">查一查</a>。</p>
-<h2>本文中提到的数据集 1</h2>
-<h2>本文中提到的空间 1</h2>
-<p>我们博客的更多文章</p>
-<p>open-sourcetorchneuron</p>
-<h2>TorchNeuron：在 AWS Trainium 上运行 HF 模型从未如此轻松</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1615890856777-6047a3315da6ba4b1dfb9e18.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></li><li>+3</li></ul>
-<p>30</p>
-<p>2026 年 10 月 19 日</p>
-<p>tpugooglegcp</p>
-<h2>Hugging Face ❤️ TorchTPU：原生支持 TPU</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6311157564939fabc00c87ec/eOaySRhZnV2maIUC_7HgC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61a50668cd3eb3043f38e445/E_M7m93Ou6d-XJij59VGF.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/w3Z6xyKVBA6np65Tb16dP.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1605114051380-noauth.jpeg" alt=""></li><li>+1</li></ul>
-<p>32</p>
-<p>2026 年 10 月 20 日</p>
-<h3>社区</h3>
-<p>把图片、音频和视频拖进文本输入框、粘贴，或者点击这里即可上传。</p>
-<p>在此轻点或粘贴以上传图片</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Ftorch-neuronx-model-support">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Ftorch-neuronx-model-support">登录</a> 即可评论</p>
-<p>9</p>
-<ul><li><a href="https://huggingface.co/dzulfikarsn"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a309777503da5d134a8b66b/v1SP3dpRs4Rg_C8dRV2lp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/regisss"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/620b7c408f5871b8a1a168a7/49M2lucv3I24rOMJFnhVd.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jlongen-aws"><img src="https://huggingface.co/avatars/e8633793381f7b411e755cf458fdb5d6.svg" alt=""></a></li><li><a href="https://huggingface.co/Anoop576"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb6d3bf0ca917f92a965be/0hErLmXTtx85399hvn7eV.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jorgemunozl"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67b5217cde48625c1b7a58fb/YZZ1kwdnUqiRJDLb2a6L5.png" alt=""></a></li><li><a href="https://huggingface.co/ericyu0510"><img src="https://huggingface.co/avatars/9d16fc41021585ca0981882d8919b5ee.svg" alt=""></a></li><li><a href="https://huggingface.co/Gyaneshere"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f4c8b14dc2f957ceded399/FghTxJScVs4OgC4fuexmg.jpeg" alt=""></a></li><li><a href="https://huggingface.co/rajkthakur"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/1x4LJ7liNl_k-5cViEi8r.png" alt=""></a></li></ul>
-<h2>本文中提到的数据集 1</h2>
-<h2>本文中提到的空间 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>将数据库评分转化为强化学习奖励：使用 ThinkingBox 进行训练后智能体</title>
@@ -6681,183 +6694,6 @@ Common errors:
 <ul><li><a href="https://huggingface.co/aliibanisaeid"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/eI3OeUtPFkpNT_ERdWKIc.png" alt=""></a></li><li><a href="https://huggingface.co/Rehnova"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6942ce9e4cff80060475eb21/qn9PK1b_IfbmNy0ql5w4y.jpeg" alt=""></a></li><li><a href="https://huggingface.co/vbsowmya"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7R5MnABArPT467aCNJFSp.png" alt=""></a></li><li><a href="https://huggingface.co/Rodeszones"><img src="https://huggingface.co/avatars/989985679600663546a0aba1f46643b7.svg" alt=""></a></li><li><a href="https://huggingface.co/vtec2liter"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/F6eoAD-k_7gnB814W7rT3.webp" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/aaahmet"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/654689fa33972a012f49ad0a/BwNh4fXPAVG0x5PrAkl3A.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li><li><a href="https://huggingface.co/Linkram"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/OVRFOEYvw2Ja6cL2R3U-R.png" alt=""></a></li><li><a href="https://huggingface.co/sugatoray"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5f43448a79c1ba4c353d0d8f/DiSygV3dn7A_OjmGVTrHD.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ntnq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6486bb3d4c025cf3c41e7767/1I6yYhv06rHX1_1iIOdjP.png" alt=""></a></li><li><a href="https://huggingface.co/aruar30"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68a7aa94ba3f74a143494b26/cBiE-_YpGchk14FBgxyO8.jpeg" alt=""></a></li></ul>
 <h2>本文提到的 Models 2</h2>
 <h2>本文提到的 Datasets 2</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>给你的编码智能体一份真正属于你的记忆</title>
-      <link>https://huggingface.co/blog/funes</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/funes</guid>
-      <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Give Your Coding Agents a Memory You Own</description>
-      <content:encoded><![CDATA[<h1>给你的编码智能体一份真正属于你的记忆</h1>
-<p>作者：David Corvoysier（dacorvo）</p>
-<p>我在好几台机器之间工作，并根据任务在不同编码智能体之间切换。它们每一个认识我的项目时都是陌生人。&quot;上周二&quot;的推理过程随着会话结束就消失了。每个新智能体、每台新机器，都从零开始。</p>
-<p>今年早些时候，<a href="https://huggingface.co/blog/huggingface/agent-traces-as-memory"><em>Software Forgets: Agent Traces Are the Memory</em></a> 论证了一个观点：编码智能体其实已经在产出我们一直丢失的那份记录。当它们在代码库里搜索、尝试方案、撞上错误、阅读文档、转换方向时，会留下一份密集的账本——不仅记录<em>改了什么</em>，还记录<em>为什么改</em>。</p>
-<p>诊断是对的，但 traces（执行轨迹）只是潜在的记忆。智能体的会话日志仍然只是一个归档。你不可能靠 <code>grep</code> 在上万个回合里找到<em>&quot;我们当时为什么弃用流式解析器？&quot;</em>。要让智能体在工作时能用上这些 traces，还需要索引、检索、排序和精确的出处溯源。</p>
-<p>这正是 <a href="https://github.com/huggingface/funes">funes</a> 提供的东西。它是给你的智能体（Claude Code、Codex、pi 和 Hermes）用的持久记忆层。它由你机器上已有的会话构建，完全本地运行，一条命令就能融入你的智能体的日常工作流。需要的时候，它还能把记忆带到一个默认私有的、属于你自己的 Hugging Face 数据集上。</p>
-<h2>给你已经在用的智能体加上记忆</h2>
-<p>funes 是单个二进制文件。它的默认推理后端不依赖任何 ML 运行时，嵌入和重排都发生<em>在你自己的机器上</em>。安装：</p>
-<pre><code>curl -fsSL https://huggingface.co/buckets/huggingface/funes/resolve/install.sh | sh</code></pre>
-<p>然后把它加到一个智能体上：</p>
-<pre><code>funes add claude    # or: codex, pi, hermes</code></pre>
-<p>就这一条 <code>add</code> 命令，会构建第一份索引、给智能体配上 <code>recall</code> 和 <code>get</code> 工具，并安装自动化钩子——每完成一个回合就把它索引。索引是增量的：新的运行只添加新回合，不会把整段历史重新嵌入。更早、更深的旧内容可以分有限几步回填。</p>
-<p>之后你只管正常干活。当任务牵涉到过去的决策、理由或发现时，智能体会自己伸手调用 <code>recall</code>。你不需要记得旧会话，也不用把它的上下文粘贴到新会话里。</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/recall.gif"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/recall.gif" alt="A coding agent reaches for funes on its own, recalls an earlier decision, and grounds its answer in the retrieved session"></a></p>
-<blockquote>加上 funes 之后，回忆就发生在对话内部。智能体自己调用它的<br>记忆，并说出答案背后是哪个会话。</blockquote>
-<p><code>recall</code> 返回的是原始文本而不是摘要，并精确显示出处（哪个智能体、时间戳、会话、回合）。每条结果都附带一条 <code>get</code> 命令，可以打开完整回合及其上下文。</p>
-<p>底层是一条确定性的流水线：把每种支持的 trace 解析成统一的&quot;回合-块&quot;结构，切块，用固定版本的本地模型做嵌入，写入本地的 <strong>Lance</strong> 数据集。一次查询会组合向量检索和 BM25 检索、融合两者排序、用 cross-encoder 对候选重排、按新旧程度重新加权，并挂上相邻的分块。</p>
-<p>这个设计赋予 funes 三个重要特性：</p>
-<ul><li><strong>跨智能体的一份记忆：</strong> Claude Code、Codex、pi 和 Hermes 都写入同一种结构。<code>recall</code> 横跨它们的历史，每条命中都标明出自哪个智能体。</li><li><strong>原始证据保持完整：</strong> 写入时不会把内容蒸馏成&quot;事实&quot;。任何结果都能回溯到产生它的那个回合。</li><li><strong><code>recall</code> 默认本地：</strong> 不需要账号，也不需要 Hub 仓库。托管模型不会为了索引处理你的会话；嵌入和重排在你的机器上运行，推理交给你的编码智能体自己做。</li></ul>
-<p>&quot;智能体形同陌路&quot;的问题在单机上已经解决。但当下一个智能体跑在别的机器上时，记忆才真正发挥价值。</p>
-<h2>记忆是一份数据集，不是一个服务</h2>
-<p>要让记忆跟着你的工作走，在给智能体添加 funes 时绑定一份记忆：</p>
-<pre><code>funes add codex acme/funes-memory</code></pre>
-<p>这条 bind 会把你当前的记忆发布到那里。之后 funes 会让它保持最新：每个回合在本地索引，在会话边界处发布。智能体全程从这份记忆中回忆。在另一台机器上运行同样的命令，记忆就跟过去了。</p>
-<p>底层上，本地记忆是一个 Lance 数据集，共享记忆则是一份你拥有的 Hugging Face 数据集（默认私有）。</p>
-<p>在任何内容到达 Hub 之前，凭据在索引阶段就已被脱敏。发布时还会再次扫描每个分块，扣下任何仍像密钥的内容。这套扫描器的能力边界——覆盖什么、不覆盖什么——都记录在 <a href="https://github.com/huggingface/funes/blob/main/SECURITY.md"><code>SECURITY.md</code></a> 中。</p>
-<p>当智能体读取远端记忆时，funes 会把数据集文件缓存在本地，因此热查询恢复成本地速度。所有权、访问控制、版本管理和分发，都由 Hub 对它承载的其他数据集提供的既有机制来完成。你的记忆不会变成某个独立记忆服务里的一个账号，你也不用再通过 API 把它&quot;租&quot;回来。</p>
-<h2>先问，再接</h2>
-<p><code>recall</code> 是为智能体设计的。当你想亲自向一份记忆提问时，用 <code>ask</code>。它默认读取你的本地记忆：</p>
-<pre><code>funes ask claude &quot;what did we decide about the streaming parser&quot;</code></pre>
-<p>也可以指向一份共享记忆。我们发布了一份记录 funes 开发过程的<a href="https://huggingface.co/datasets/huggingface/funes-memory">记忆</a>，所以你不用建立自己的记忆，就能直接问&quot;funes 为什么是这样设计的&quot;：</p>
-<pre><code>funes ask claude &quot;why is funes append-only&quot; --memory huggingface/funes-memory</code></pre>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/ask.gif"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/ask.gif" alt="Asking the published funes memory why it is append-only; funes retrieves the relevant sessions and a coding agent answers from them"></a></p>
-<blockquote>funes ask 是 funes add 的只读、单问题版兄弟。它召回相关段落，<br>把它们交给一个编码智能体，返回一个注明来源、有据可依的回答。<br>它不会安装集成，也不会改变智能体的持久配置。</blockquote>
-<p>检索不中不会被搪塞过去。如果这些段落无法支撑一个答案，智能体会直说。你可以换个问法，或者把 funes 加到智能体里，让它在正常工作中对记忆做迭代式搜索。</p>
-<h2>换智能体而不丢失思路</h2>
-<p>共享记忆不绑定产生它的智能体或模型。今天在 Claude Code 里开始一个任务，下周在 Codex 里继续，第二个智能体能召回第一个智能体的推理。用 pi 配本地模型或经 Hugging Face router 服务的模型干一阵，再回到 Claude。</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/cross-agents.gif"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/cross-agents.gif" alt="Claude Code chooses an embedding model, then Codex recalls that decision in a separate session"></a></p>
-<p><em>Claude 做出一个决策；一个钩子把它索引；Codex 在另一个会话里召回它。演示中较旧的命中之所以多，是因为它们是同一实验的早期录像：一份只追加（append-only）的记忆连排练也一并记住了。</em></p>
-<p>这在几个不同范围上都有意义：</p>
-<ul><li><strong>跨你的机器：</strong> 把每个智能体绑定到同一份记忆，在任何一台主机上都能召回历史。</li><li><strong>跨团队：</strong> 新队友的智能体在第一天就能检索几个月来的决策，包括死胡同和从未进入 PR 的理由。</li><li><strong>围绕开源项目：</strong> 维护者可以把一次发布背后的会话发布出来，在 push 时点名它们。可以把它想象成一份可搜索的 <code>CLAUDE.md</code>，记载&quot;项目为什么是现在这个样子&quot;的历史，而不是一个需要有人不断重写的页面。任何人都可以用 <code>--memory</code> 读取一份公开记忆。</li></ul>
-<p>发布的记忆自带 dataset card 和 funes 标签，因此可识别、<a href="https://huggingface.co/datasets?other=funes">可在 Hub 上被发现</a>。Hub 已经在承载开放权重和数据集，funes 在此之上加入的是开放的工作记忆。它保存一个项目的决策、失败的方案和背后的理由，可被另一个智能体查询，并可追溯到产生它们的会话。</p>
-<h2>摆脱长会话的最省钱办法</h2>
-<p>一次漫长的调查会让会话膨胀，直到每个回合&quot;背着上下文&quot;的成本比干活本身还高。常规解法是让智能体做 compact（压缩摘要）继续跑，或者写一份交接文档然后重开。Recall 是第三种，于是我们在 <a href="https://huggingface.co/datasets/dacorvo/funes-handoff-recall-benchmark/blob/main/results/README.md">handoff-vs-recall 基准</a>上把三者放在一起测：两个任务，其答案没有会话先验知识就无法重建。</p>
-<p>Compaction 是多数智能体的默认行为，也是三者中唯一一个结果分裂的：在一个任务上它成功了，在另一个上始终没成功。在它失败的地方，它的摘要把关键的发现压平了。Recall 返回的是段落原文，所以某个发现不必先挺过&quot;被摘要&quot;这一关。</p>
-<p>在两个任务上，recall 都是三者中最便宜的：在一个任务上比手写交接便宜 8 倍，在另一个上便宜 4 倍。</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/handoff-recall-cost.jpg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/funes/handoff-recall-cost.jpg" alt="Weighted tokens per successful task for five channels across two tasks, with recall the shortest bar on both"></a></p>
-<p><em>每根条中较浅的部分是准备该通道的一次性开销——交接文档或压缩摘要——在提出第一个问题之前支付、只计一次。叉号表示该通道从未成功到达，因此没有&quot;每次成功的成本&quot;。</em></p>
-<h2>别再从零开始</h2>
-<blockquote>&quot;思考就是遗忘差异、概括、做抽象。&quot;<br>—— 豪尔赫·路易斯·博尔赫斯，《富内斯，一个记性极好的人》（Funes the Memorious）</blockquote>
-<p>你的智能体早已写下那份记录。funes 就在 <a href="https://github.com/huggingface/funes"><code>github.com/huggingface/funes</code></a>，距你只差一条命令：把那份记录变成下一位智能体可读的记忆，无论你在哪台机器上。</p>
-<h2>建立在开源之上</h2>
-<p>funes 在这套东西里几乎没发明什么。它依托的是足以本地运行的开源嵌入模型、<a href="https://github.com/lancedb/lance">Lance</a> 支持低成本增量写入的 append-only 数据集，以及 Hub 已有的数据集缓存与内容去重。真正的工作，是把它们装配成一份智能体实际用得上的记忆。</p>
-<p>funes 本身也是开源的。从安装卡壳、一次召回失误，到你想支持的新智能体，任何事都可以<a href="https://github.com/huggingface/funes/issues">提 issue</a>。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>用 TRL 和 OpenEnv 训练编码模型画水彩</title>
-      <link>https://huggingface.co/blog/train-to-paint-with-code</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/train-to-paint-with-code</guid>
-      <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Training a coding model to paint watercolours with TRL and OpenEnv</description>
-      <content:encoded><![CDATA[<h1>用 TRL 和 OpenEnv 训练编码模型画水彩</h1>
-<p>8 月 23 日，<a href="https://x.com/kickingkeys/status/2091570990048276897">Surya Narreddi</a> 发布了一段漂亮的视频：一个语言模型画出的水彩画。模型通过 <a href="https://github.com/acamposuribe/p5.brush">p5.brush</a>——一个「为 p5.js 添加自然绘画工具」的库——写 JavaScript。视频很快火了，写作本文时已经超过 150 万播放。</p>
-<p>视频配了<a href="https://surya.website/rling-qwen-to-paint-with-code">一篇博客</a>，讲解项目更早、更窄阶段（特写花朵，而非视频里的完整构图）背后的训练，遗憾的是当时还没有开放工件。他的网站说完整技术报告在路上，记得关注他。原始想法来自他，出自艺术与设计一侧——<a href="https://x.com/kickingkeys/status/2094901433149612118">那方面的技能远在我之上</a>。我的尝试在工程一侧：用完全开放、每一件工件都发布的方式复现那份配方。</p>
-<blockquote>注：想了解项目背景（Surya 本人讲述），可以看他毕业论文的这段视频。</blockquote>
-<p>本文尝试用 <a href="https://huggingface.co/docs/trl">TRL</a> 和 <a href="https://github.com/huggingface/OpenEnv">OpenEnv</a> 复现他的想法。参考池数据集、RL 环境、训练脚本和训练出的模型，全部开放。</p>
-<p>整条流水线端到端跑在 Hugging Face 上：</p>
-<ul><li>训练在 <a href="https://huggingface.co/docs/huggingface_hub/guides/jobs">Jobs</a> 上</li><li>RL 环境和打分模型作为 <a href="https://huggingface.co/docs/hub/spaces">Spaces</a></li><li>成对评审（pairwise judge）经由 <a href="https://huggingface.co/docs/inference-providers">Inference Providers</a></li><li>所有工件都在 Hub 上，收集在<a href="https://huggingface.co/collections/HuggingEnvs/paint-with-code-6a955b79d63f67f1631d9be6">一个 collection</a> 里</li></ul>
-<p>两个 Space 起好后，配方就是一条命令。复制<a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-env">环境</a>和<a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-hpsv3">打分模型</a>，设置两个环境变量控制奖励配比，然后开跑：</p>
-<pre><code>hf jobs uv run train/watercolour_grpo.py --flavor h200 --timeout 48h --secrets HF_TOKEN -- \
-  --env-url https://&lt;you&gt;-watercolour-env.hf.space \
-  --model Qwen/Qwen3.5-35B-A3B --lora --all-linear --bf16 --gradient-checkpointing \
-  --subject 'a peach hibiscus' --references 4 \
-  --top-p 0.95 --top-k 20 \
-  --lr 5e-5 --lr-scheduler constant_with_warmup --warmup-steps 5 \
-  --scale-rewards none \
-  --steps 110 --n-episodes 240 --num-generations 8 \
-  --per-device-batch-size 1 --gradient-accumulation-steps 8 \
-  --max-completion-length 8192 \
-  --run-tag my-run --out &lt;you&gt;/watercolour-grpo --push-to-hub</code></pre>
-<p>本文余下部分是走到这一步的故事，<a href="https://github.com/adithya-s-k/HuggingEnvs/tree/main/02-watercolour">每个部件都在 repo 里</a>。</p>
-<p>我一步步跟随原始博客，只在严格必要时才做改动。我自己的每个想法都进了清单而不是实验，那份清单成了文末的「我接下来会尝试什么」，紧挨着完整的已发布工件清单。如果你已经读过他的文章，框架和奖励设计会很眼熟。新增的内容是开放实现、手工评分的池子，以及训练并对比的三种奖励配比——从<a href="https://huggingface.co/blog/train-to-paint-with-code#the-rl-environment-you-need-to-build">你需要构建的 RL 环境</a>开始。</p>
-<p>三次运行，每种奖励配比一次，并行演进。每一帧展示的是一步的中位数画作。现在还不需要分辨它们，文章会说明哪条曲线对应哪次运行。</p>
-<h2>人们为什么喜欢它</h2>
-<p>这些画看起来松弛、不完美、手作感十足——恰是在图像模型产出完美（统计意义上的平均） pictures 的时刻。我猜这种反差是视频爆火的重要原因。它让我想起生成式 AI 艺术的早期年代，那时重点在于探索媒介本身。<a href="https://research.google/blog/inceptionism-going-deeper-into-neural-networks/">DeepDream</a>（2015）是个被人们玩成艺术的调试工具；<a href="https://en.wikipedia.org/wiki/Edmond_de_Belamy">Edmond de Belamy</a>（2018）这类作品来自艺术家对 GAN 能力边界的试探；像 <a href="https://quasimondo.com">Mario Klingemann</a> 这样的艺术家，那些年用神经网络创作<a href="https://artsandculture.google.com/asset/memories-of-passerby-i-mario-klingemann/aAHG7iV3aXme8g">如梦似幻的肖像</a>。</p>
-<p>这个项目更接近那些早期时光。Surya 在论文里描述了通到这里的路径。他最初是给文生图模型写提示词——提示词是唯一能拉的杆，细节换来越多的控制，但到某个点就到头了。训练模型本身能走得更远。想法的另一半是媒介：模型写一个约 150 行 JavaScript 的程序来画出图像。模型输出是代码，你可以读它、编辑它、重新运行它，每一笔背后的决策都看得见。而风格来自一个限制：模型只被允许使用<em>库的十个方法</em>。细节下面讲。</p>
-<p>同一时期，<a href="https://annaridler.com/works/myriad-tulips">Anna Ridler</a> 拍摄了数千朵郁金香、逐张手工标注、把数据集本身作为艺术品展出，之后又在其上训练了模型。我是在构建本项目时 AI agent 带回来的参考文献里发现她的作品的，很喜欢——因为这个项目做的事非常相似：手工策展一组图像，然后对着它们训练。</p>
-<h2>对品味做 RL</h2>
-<p>近期针对语言模型的 RL 工作大多使用可验证的奖励。例如有标准答案的数学题、能通过测试的代码，或判断对错、运行便宜的评分器。这个项目更接近那个老牌的例外——RLHF：模型从人类偏好中学习一个奖励模型。</p>
-<p>这里的奖励是审美偏好。没有<em>正确</em>答案。项目真正的问题是：你能不能对品味做 RL。</p>
-<p>奖励的定义沿用他博客，也即我构建的 RL 环境所实现的版本：</p>
-<table><thead><tr><th>项</th><th>权重</th><th>衡量什么</th></tr></thead><tbody><tr><td><code>gate</code></td><td>0.05</td><td>草稿能编译、画出了东西、没有作弊</td></tr><tr><td><code>length</code></td><td>0.05</td><td>向更长的代码片段轻轻推一把</td></tr><tr><td>成对评审</td><td>0.60</td><td>风格——与从池子抽取的参考图比较</td></tr><tr><td><a href="https://huggingface.co/MizzenAI/HPSv3">HPSv3</a></td><td>0.30</td><td>渲染结果上的审美偏好</td></tr></tbody></table>
-<p><a href="https://huggingface.co/MizzenAI/HPSv3">HPSv3</a> 是一个开源的 7B 偏好模型。给它一张图和一段文本描述，它返回一个人会有多偏好这张图的分数。它在大规模「成对图像之间的人类选择」数据上训练，所以它的分数是许多人品味的平均。成对评审则是 <a href="https://huggingface.co/Qwen/Qwen3-VL-30B-A3B-Instruct">Qwen3-VL-30B-A3B-Instruct</a>——一个通过 HF Inference Providers 调用的通用视觉模型。成对评审把候选画作与池中随机抽取的四张参考图并排看，由一段书面描述引导它权衡什么（洇染、透明罩染、柔和边缘），每次比较都按两种呈现顺序各来一遍，它的分数是候选赢下的比较占比。它唯一的标尺就是这个池子，所以它的分数就是我的品味——编码在那些评分里的品味。</p>
-<p>奖励函数的四项里有两项是模型。两者都是某个人品味的代理。</p>
-<p>这些权重是 Narreddi 收敛出来的。在这里，池子定义了品味。这把工作重心从调超参数移到了构建「决定什么是美」的那个集合。</p>
-<p>我用这个奖励训练了三次运行。它们只在两个模型评审之间的权重分配上不同：</p>
-<table><thead><tr><th>运行</th><th>成对评审</th><th>HPSv3</th><th>角色</th></tr></thead><tbody><tr><td><code>judge-led</code></td><td>0.60</td><td>0.30</td><td>原始配比，停在第 110 步</td></tr><tr><td><code>hps-led</code></td><td>0.30</td><td>0.60</td><td>中间点，停在第 110 步</td></tr><tr><td><code>hps-only</code></td><td>0.00</td><td>0.90</td><td>验证运行，停在第 60 步</td></tr></tbody></table>
-<p>我先跑 <code>hps-only</code>，验证这条流水线到底能不能学。当奖励开始上升、指标健康之后，没有理由继续跑它，于是我改为启动两个更长的运行。更长的运行提出的问题是：你能把多少 HPSv3 的话语权交给成对评审？评审权重越大，奖励就越意味着<em>我的</em>品味而非所有人的品味，爬升应该越难。顺带一提，如果推得足够远、或者你的风格离平均太远，模型可能会彻底停下。</p>
-<p>幸运的是它没有停，两个开着成对评审的运行也都学会了。至少从指标和最终画作看，手工评分的池子能够牵引策略。数字在下面。</p>
-<blockquote>免责声明。如果我们用前沿模型，它本来就能从提示词直接生成画水彩的 JavaScript 代码——那是起点。这里的工作是教会一个更小的模型做到这一点，并融合一个人的艺术偏好。</blockquote>
-<h2>你需要构建的 RL 环境</h2>
-<p>环境包裹着模型与奖励之间的一切，包括模型用来绘画的 JavaScript 库、限制它的系统提示词、渲染每份草稿的无头 Chromium，以及拒绝作弊的门控（gate）。</p>
-<p>这个库干的活比看上去多。<a href="https://github.com/acamposuribe/p5.brush">p5.brush</a>（作者 <a href="https://x.com/acamposuribe">@acamposuribe</a>）模拟的是一种媒介而不是画形状：颜料会洇出填充边缘、纸张有纹理、笔触有质量、流场会拖拽笔迹。当模型调用 <code>brush.fillBleed(0.25)</code>，它是在决定墨水洇多远。</p>
-<blockquote>注。p5.brush 的作者在任何这一切之前很久就想教机器画画。2022 年他做了一个生成艺术系列，藏着一本关于教 p5.js 像孩子一样画画的日记：「它几乎连蜡笔都用不好……简单的指令也听不懂。今天到此为止，太令人抓狂了。」这个系列本应有三件作品，他做了两件。Surya 的视频爆火时，他转发了它，分享那本日记，说这件作品就是自己到来的第三件。</blockquote>
-<p>p5.brush 暴露 47 个方法。提示词只允许 10 个：<code>scaleBrushes</code>、<code>noStroke</code>、<code>fill</code>、<code>noFill</code>、<code>fillBleed</code>、<code>fillTexture</code>、<code>beginShape</code>、<code>vertex</code>、<code>endShape</code> 和 <code>circle</code>。其余三十七个会加的东西——线条、排线、自定义笔刷——会破坏水彩的观感。有了这十个，模型只能画填充形状，而库会给每一个形状加上洇染。</p>
-<p>一次 rollout 的部分 draw() 与它的渲染结果。注释是模型自己写的。奖励 0.864，129 行，第 22 步。每幅画的完整源码都在 rollouts 数据集里。</p>
-<p>他的博客帮我省了大量时间——否则我可能在迭代提示词上白白浪费。冗长的 API 参考会让模型发明不存在的方法，而他的 200 轮 GEPA 迭代收敛到了一个不带任何文档的严格 allowlist。我见到了同样的失败，然后手写了 allowlist。我对那份配方唯一的增补是一句话：每片花瓣画两到三遍，先大笔一层，再在里面叠一笔更小、更浓的。这个小改动让我的输出色彩鲜艳了很多。</p>
-<blockquote>注。如果你是第一次听说 GEPA：它是一个自动提示词优化器。语言模型用自然语言反思当前提示词哪里失败、提出更好的版本，循环往复。</blockquote>
-<p>门控是最后一块。草稿必须能编译、必须使用这个库而不是直接调 p5、必须在画布上落下真实颜料、不能试图骗过打分器——例如在画布上写文字。</p>
-<h2>池子就是奖励函数</h2>
-<p>池子由 <a href="https://huggingface.co/datasets/HuggingEnvs/watercolour-reference-pool">178 幅画</a>组成，按我的个人偏好分成两档：<code>love</code> 和 <code>okay</code>。它们其实全部由模型生成。四个开放权重模型（通过 Inference Providers 调用）写 p5.brush 草稿，每一份都以 iNaturalist 上一张真实、开放许可的木槿花照片为蓝本。视觉模型对每份草稿给出书面反馈，经过三轮精修。每一张最终渲染再由我逐张评分，178 张入围。</p>
-<table><thead><tr><th>生成模型</th><th>画作数量</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/zai-org/GLM-5.2">GLM-5.2</a></td><td>64</td></tr><tr><td><a href="https://huggingface.co/moonshotai/Kimi-K3">Kimi-K3</a></td><td>57</td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3-Coder-Next">Qwen3-Coder-Next</a></td><td>35</td></tr><tr><td><a href="https://huggingface.co/Qwen/Qwen3.5-122B-A10B">Qwen3.5-122B-A10B</a></td><td>22</td></tr></tbody></table>
-<p>这里我特意选了四个不同的模型家族，检验它们不同的风格。这四个是在快速可靠性检查中每次都能产出有效草稿的开放模型，另外两个候选因未通过而被淘汰。如果你想构建自己的池子，你也许会选别的。</p>
-<p>两档画作真实的样子。不同意评分是合理的——某个人的判断如今就是奖励函数。</p>
-<p>这两档在奖励中真的起作用。成对评审抽四张参考时，一半来自 <code>love</code>、一半来自 <code>okay</code>，策略因此总会面对一些它有时能赢的对手，而且赢任意一档的回报相同。这是我少数几个有意为之的改动之一：原始方案只与其最高档比较，我把较容易的那档留在抽签里，让弱小的早期策略也能拿到信号。</p>
-<p>池子里没有一幅人类创作的画，这是实实在在的限制。p5.brush 是个小众库，其中有人类作品、且代码可及的只有寥寥几件，远达不到训练语料的需要——他的博客也指出了这一点。</p>
-<p>这里有意思的想法——我之前也讨论过——是模型会学会模仿池子里装的东西。如果把环境指向另一个数据集，奖励就会自动改变，一行代码都不用动。对我生成并开放共享的数据集，我还附上了源草稿。</p>
-<p>凑近看两个评审，它们回答的是不同的问题。HPSv3 判断的是「这是不是一朵花」，成对评审判断的是「它是否按我选的风格画得好」。</p>
-<h2>再来一次 yolo 跑</h2>
-<p>在一切跑通之前，是漫长的奖励曲线平坦期。如果你尝试复现过没有开放工件的论文/博客，大概能感同身受。每次运行都在检验我当时觉得合理的某个「哪里出了问题」的理论。一次运行耗时很长，所以我总是在翻上一次结果的时候就把下一次排进队列。和往常一样，答案是从一个更简单、能工作的东西出发，再在其上往上盖。一个没有浏览器、没有评审的简单对照任务，是第一个能学习的尝试，原因则是我的学习率实在太低了。</p>
-<p>对奖励做了三个实验，三条平线。我换了池子、去掉了渲染器噪声、关掉了成对评审，哪个都没让曲线动起来。真正动起来的那次改的是 trainer 配置——所以差异在 trainer，不在奖励配比。</p>
-<p>另一个花了不少时间才找到的改动，是正确调整 LoRA 参数。惯用的 <code>target_modules</code> 列表假设的是稠密模型，而 <a href="https://huggingface.co/Qwen/Qwen3.5-35B-A3B"><code>Qwen/Qwen3.5-35B-A3B</code></a> 是混合专家模型，大部分投影层的命名都不同，于是适配器只训练了四十层里的十层。我把它改成 <code>all-linear</code> 解决了这个问题——它覆盖所有线性层。这个架构里的路由专家是 even <code>all-linear</code> 也会冻结的融合张量，但其他所有层都拿到了适配器，这就够学会了。</p>
-<p>修复是 TRL <a href="https://huggingface.co/docs/trl/grpo_trainer"><code>GRPOTrainer</code></a> 里的四个改动：</p>
-<table><thead><tr><th>设置</th><th>从</th><th>到</th><th>原因</th></tr></thead><tbody><tr><td>学习率</td><td>2e-5</td><td><strong>5e-5</strong></td><td><em>LoRA Without Regret</em> 用于 GRPO 的上限</td></tr><tr><td>调度器</td><td><code>linear</code></td><td><strong><code>constant_with_warmup</code></strong></td><td>linear 衰减在运行中途就烧掉了大部分学习率，奖励始终起不来</td></tr><tr><td><code>scale_rewards</code></td><td><code>group</code></td><td><strong><code>none</code></strong></td><td>一次 gate 拒绝把组里其他所有优势都压缩了</td></tr><tr><td><code>target_modules</code></td><td>手写列表</td><td><strong><code>all-linear</code></strong></td><td>覆盖每一个线性层</td></tr></tbody></table>
-<p>这四个改动解锁了第一次成功的运行（<code>hps-only</code>），奖励明显提升。</p>
-<p>用这个配置，三次运行都学会了。两个评审运行本来要跑 200 步，停在 110 步——奖励仍在缓慢爬升。一步要十五到十八分钟，且配比之间的对比已经稳定，所以我停掉两者以节省算力。每次运行前三分之一与后三分之一的组平均奖励：</p>
-<table><thead><tr><th>运行</th><th>步数</th><th>前三分之一</th><th>后三分之一</th><th>Δ</th></tr></thead><tbody><tr><td><code>hps-only</code></td><td>60</td><td>0.58</td><td>0.71</td><td>+0.13</td></tr><tr><td><code>judge-led</code></td><td>110</td><td>0.45</td><td>0.72</td><td>+0.27</td></tr><tr><td><code>hps-led</code></td><td>110</td><td>0.57</td><td>0.82</td><td>+0.24</td></tr></tbody></table>
-<p>三条曲线与「我的品味占多大权重」的排序一致。评审权重越大，起点越低、爬升越嘈杂。<code>judge-led</code> 前三十步几乎平坦才开始动。这和解调试时的招数是同一个：把问题缩小到有东西能学，再把难的部件一件件加回去。</p>
-<p>成对评审项本身在两个使用它的运行中都在上升。随着训练推进，模型对池子赢得更多比较——这正是 <code>hps-only</code> 无法做出的声明。任何运行的任何组都没有坍缩到相同奖励（那个会杀死梯度的 GRPO 失败模式）。好奇的话，各指标曲线（HPSv3、颜料覆盖率、熵）以 CSV 形式存在<a href="https://github.com/adithya-s-k/HuggingEnvs/tree/main/02-watercolour/results">仓库里</a>。</p>
-<p>完整的启动命令、硬件，以及把配方变成另外两次运行的那两个环境变量，都在<a href="https://github.com/adithya-s-k/HuggingEnvs/tree/main/02-watercolour">配方</a>里。</p>
-<h2>它到底学到了什么</h2>
-<p><strong>每次运行中，模型最先学会的都是停止产出烂画</strong>——那种总奖励 0.3 以下的近乎空白的画布和无定形的淡彩。在 <code>hps-only</code> 里，组均值上涨的四分之三来自烂画变罕见。在评审运行里坍缩更陡：<code>judge-led</code> 的前后三分之一之间，低于 0.3 的 rollout 从 99 降到 16；<code>hps-led</code> 从 37 降到 4。</p>
-<p>这就是为什么那个最直观的视觉指标——每步最好的画——在 <code>hps-only</code> 里几乎看不出差别。它整个运行只动 <strong>+0.034</strong>，而中位数动了 <strong>+0.155</strong>。学习体现在分布的中段。</p>
-<p><strong>成对评审改变的是头部。</strong> 在 <code>hps-only</code> 里，画作变得更可靠，但没有变好。好画的品质只给组均值加了 +0.03；一旦 HPSv3 看到围绕中心的瓣和一根茎，它就不再要求更多颜料。开着评审时，故事的另一半出现了。这里的<em>更好</em>意味着更接近池子——也就是更接近我评过「好」或更喜欢的东西。这部分给 <code>judge-led</code> 加了 +0.12、给 <code>hps-led</code> 加了 +0.16；每步最好的画也涨了；两个运行的颜料覆盖率都翻倍（0.11 到 0.23、0.13 到 0.30），而 <code>hps-only</code> 几乎没推动它。有一幅参考图要超越时，一幅好画仍然可以更好，模型开始因为使用更多颜料而获得奖励。</p>
-<p>还有一个发现。模型无视一条明确指令，而且它无视得对。系统提示词要求画十五到三十个填充形状。看真实均值，其实只有 7 到 9 之间；而且 <code>n_shapes</code> 与奖励在任何运行里都几乎不相关（+0.000、−0.14、+0.07）。策略不会因为服从那句话得到奖励，所以它不服从。</p>
-<p><code>hps-only</code> 这条路也有天花板。如果每次 rollout 都达到它的好水平，该运行的均值也只能到 0.771。更多的步数能否打破它，还是未知数。</p>
-<p>画作还展示了表格看不出的东西。在同一运行内，它们彼此都很像。随着训练推进，每个组内部的奖励越来越接近，开篇视频里的中位数画作看起来像同一朵花的多个取景。这就是 GRPO 对着「单一主体的池子」干它设计上会干的事。池子决定什么算多样性，就像它决定什么算品质。如果奖励只为「匹配一朵花」付费，模型就学会只画那一朵花。更多样的输出需要更多样的池子，而建池子是更多的策展工作。Surya 更新的构图就是一个例子。<a href="https://x.com/alexyango/status/2091696296931574217">Alex Yango 的动物画</a>是同一个配方、池子里换了不同的选择。审美奖励和数学评分器之间最大的区别正在这里：数字背后是一件非常人类的工作——决定什么该进奖励集合。<a href="https://x.com/jxnlco/status/2073819508729684462">Jason Liu 关于品味的文章</a>一句话讲明了普遍版本：AI 把瓶颈从「制作」挪到了「看见」。</p>
-<p>Surya 用他一些心头好收尾他的博客。我不挑我的了——下面是一面墙，装着两次评审运行中奖励评分最高的 178 幅画，和参考池的数量恰好相同，不分先后。打开它，挑你自己的。</p>
-<p>奖励在两次评审运行中的 178 幅最爱，乱序排列。现在挑你的。</p>
-<p>要挑选，你就看了很多、留下一些——这恰恰是构建本项目奖励的那份工作。每次运行的每一幅画，连同草稿和奖励，都在 rollouts 数据集中，也可以在<a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-gallery">这个画廊</a>浏览。</p>
-<p>每次运行最后一步的中位数画作，顺序与开篇视频相同。同样的基座模型、同样的池子、三种奖励配比、三种风格。</p>
-<p>既然奖励部分基于我的品味，以一个观者的身份给出结论也算公平。在我看来，<code>judge-led</code> 是最终最多姿、也最具艺术趣味的一次。<code>hps-led</code> 画出了令人信服的水彩，但它最好的那些共享一种湿润柔和的湿画法观感，几乎自成一派。<code>hps-only</code> 收敛得最狠，大多数画都落在同样的颜色里。你可以在<a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-gallery">画廊</a>里自己评判——每次运行的每幅画都在，可按步数和奖励排序。</p>
-<h2>基础设施很难</h2>
-<p>这个项目大半是基础设施。一次运行需要 trainer、两个 Space、一个推理路由器、一条 websocket 连续健康运行好几个小时，而每一个安静失败的部件都会在别处变成一个错误的数字。一半的工作是确认你读到的数字与真实发生过的事相符。</p>
-<p><strong>基础设施故障曾以零分混进奖励。</strong> 渲染超时或打分器没应答，得分和一幅烂画一样——组内的 0.0。在我全部运行里这约占 rollout 的 1.5%，最差的那次达到 5.2%。这会让模型在噪声上训练，所以这些路径现在返回 <code>None</code>，rollout 被排除出该组。</p>
-<p><strong>我还发现了 OpenEnv 的一个 bug，并把修复提交上游。</strong> 客户端保持一条持久 websocket，被对端关闭的 socket 会留在缓存里，导致之后每次调用都失败——哪怕环境本身是健康的。我花了两趟跑废一半的运行才找到它。修复已<a href="https://github.com/huggingface/OpenEnv/pull/1103">提交上游</a>，用上了它的后续运行一直干净至今。</p>
-<p><code>judge-led</code> 运行连续两步、各取最好四幅。第 12 步的画是否看起来差了半分，交由你来判断。</p>
-<p><strong>一步的奖励取决于它抽到哪些参考。</strong> 成对评审每步抽四张参考，所以每一步面对的对手集合都不同，有些签就是更难。GRPO 本身大体安全，因为优势是在组内计算的，难签会把整个组一起挪动。我读的那条曲线可不安全——有些看起来是「糟糕的一步」，其实只是难签。上面那张图就是一个例子：第 12 步比第 11 步低了半分，主要因为它抽到了整个运行里最难的参考，而画本身看起来差不多。</p>
-<h2>花了多少钱</h2>
-<p>取整数字，且只算跑完的运行。</p>
-<table><thead><tr><th>部件</th><th>需要什么</th></tr></thead><tbody><tr><td>trainer</td><td>1 块 H200。60 步约 <strong>18 小时</strong>，110 步约 <strong>34</strong></td></tr><tr><td>HPSv3</td><td>一个 <code>a100-large</code> Space，整个运行期间在线</td></tr><tr><td>环境</td><td>一个 <code>cpu-upgrade</code> Space，渲染从容跟得上</td></tr><tr><td>成对评审</td><td><code>Qwen/Qwen3-VL-30B-A3B-Instruct</code> 的 Inference Providers 配额</td></tr><tr><td>池子（一次性）</td><td>iNaturalist 开放许可的照片、四个生成模型的 Inference Providers 配额，评分则是你自己的时间</td></tr></tbody></table>
-<p>一步是八个 rollout，耗时十五到十八分钟，其中 <strong>70-80% 是渲染</strong>。单次渲染 69 到 96 秒，而截止线是 90 秒。一部分在预料之中：Space 没有 GPU，Chromium 用软件渲染 WEBGL 画布，p5.brush 的洇染和纹理是重像素活。即便如此，我本以为会更快，而且我还没找到全部原因。</p>
-<p>打分器可能比用它来训练的东西更贵：HPSv3 在整个运行期间必须在线，所以运行结束后请把 Space 暂停，或设置它的休眠计时器。</p>
-<p>四个付费服务必须同时健康。只有 Hub 和 trackio 会活得比运行久。</p>
-<p>一切都跑在 <a href="https://huggingface.co/docs/huggingface_hub/guides/jobs">HF Jobs</a> 上，环境是一个 <a href="https://huggingface.co/docs/hub/spaces-sdks-docker">Docker Space</a>，指标进 <a href="https://huggingface.co/docs/trackio">trackio</a>。</p>
-<h2>我接下来会尝试什么</h2>
-<p>本项目的纪律是：以全开放资源复现配方，而不是改进它——于是沿途攒了一堆没试的想法。这些是我真会去试的，按证据强度排序。</p>
-<p><strong>多步，并让模型看见自己画的东西。</strong> 这是我会试的第一件事。原始博客训练的是单轮，我也就训练了单轮；在这个设定里，模型是闭着眼睛画画的。没有任何图像输入，它得到的唯一反馈是一个数字。反馈循环有效性的证据就是池子本身：参考画作来自模型在视觉评论家下迭代三轮，越往后的轮次越好。定义奖励的材料是用一个策略永远拿不到的循环做出来的。</p>
-<p><strong>更小的模型。</strong> 有证据表明 35B 超出了所需。在我的旁路实验里，4B 已经能写出通过门控的有效草稿。如果 4B 能学会这个，实验成本降低一个数量级。</p>
-<p>清单上的其他想法还有：RL 之前先在池子源数据上做 SFT、显式奖励颜料用量、随着运行推进把评审的参考配比从易挪到难直到只剩 <code>love</code>、放宽十方法 allowlist 以获得更多视觉变化（我的这类尝试崩掉更多草稿、还破坏了水彩观感），以及把同一张图打分两次来检验成对评审到底有多一致。</p>
-<p>而且这个方法并不专门用于花。<a href="https://x.com/alexyango/status/2091696296931574217">Alex Yango 用同一机制画了动物</a>，<a href="https://x.com/brendanh0gan/status/2092650655789855222">Brendan Hogan 对着手工评分的动画片段池训练了 canvas 动画</a>。我之前也用 <a href="https://huggingface.co/blog/sergiopaniego/pelican-env-openenv">Simon Willison 的鹈鹕基准</a>玩过类似的东西——代码被渲染成图像并打分。</p>
-<p>在所有这一切底下，躺着这个项目无法闭环的问题。<strong>178 幅由模型画的画，定义了这个被训练模型眼中的美。</strong>池子是瓶颈，也是整条流水线里唯一没有原则性答案的部分。</p>
-<h2>我对原版改了什么</h2>
-<p>给想复现的人：与 Narreddi 配方有两处刻意的分歧，都在前文论证过：</p>
-<ul><li>成对评审的参考一半抽自 <code>love</code>、一半抽自 <code>okay</code>，而不是只与最高档比较——这样弱小的早期策略仍能拿到信号。</li><li>提示词里加了一句关于手艺的小小的话：每片花瓣画两到三遍，先大笔一层，再在里面叠一笔更小、更浓的。</li></ul>
-<p>其余——LoRA 用 <code>all-linear</code>、基础设施故障返回 <code>None</code> 而不是 0.0、评审运行停在第 110 步——都是因为他博客没有写明、我不得不沿途自行拍板的决定。他的实现没有发布，我无法判断这些是与他的选择一致还是相左。</p>
-<h2>一切均已发布</h2>
-<table><thead><tr><th>工件</th><th>位置</th></tr></thead><tbody><tr><td>配方及复现方法</td><td><a href="https://github.com/adithya-s-k/HuggingEnvs/tree/main/02-watercolour"><code>02-watercolour/</code></a></td></tr><tr><td>参考池（含每份源草稿）</td><td><a href="https://huggingface.co/datasets/HuggingEnvs/watercolour-reference-pool"><code>watercolour-reference-pool</code></a></td></tr><tr><td>环境（可直接复制）</td><td><a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-env"><code>watercolour-env</code></a></td></tr><tr><td>HPSv3 打分器（可直接复制）</td><td><a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-hpsv3"><code>watercolour-hpsv3</code></a></td></tr><tr><td>hps-only 适配器与 rollouts</td><td><a href="https://huggingface.co/HuggingEnvs/watercolour-grpo-hps-only"><code>watercolour-grpo-hps-only</code></a> · <a href="https://huggingface.co/datasets/HuggingEnvs/watercolour-rollouts-hps-only"><code>watercolour-rollouts-hps-only</code></a></td></tr><tr><td>judge-led 适配器与 rollouts</td><td><a href="https://huggingface.co/HuggingEnvs/watercolour-grpo-judge-led"><code>watercolour-grpo-judge-led</code></a> · <a href="https://huggingface.co/datasets/HuggingEnvs/watercolour-rollouts-judge-led"><code>watercolour-rollouts-judge-led</code></a></td></tr><tr><td>hps-led 适配器与 rollouts</td><td><a href="https://huggingface.co/HuggingEnvs/watercolour-grpo-hps-led"><code>watercolour-grpo-hps-led</code></a> · <a href="https://huggingface.co/datasets/HuggingEnvs/watercolour-rollouts-hps-led"><code>watercolour-rollouts-hps-led</code></a></td></tr><tr><td>画廊（可浏览全部画作）</td><td><a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-gallery"><code>watercolour-gallery</code></a></td></tr><tr><td>训练曲线</td><td>在线：<a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-trackio-judge-led"><code>judge-led</code></a> · <a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-trackio-hps-led"><code>hps-led</code></a> · <a href="https://huggingface.co/spaces/HuggingEnvs/watercolour-trackio-hps-only"><code>hps-only</code></a>，以及 <code>results/</code> 中的 CSV</td></tr><tr><td>全部</td><td><a href="https://huggingface.co/collections/HuggingEnvs/paint-with-code-6a955b79d63f67f1631d9be6">Paint with Code</a></td></tr></tbody></table>
-<p>本文中逐 rollout 的数字都可以从已发布的数据集重算。这里没有任何东西依赖某个 Space 保持开机。</p>
-<p>方法与原始想法属于 Surya Narreddi。库属于 Alejandro Campos Uribe。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>

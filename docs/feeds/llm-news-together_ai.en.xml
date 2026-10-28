@@ -7,7 +7,83 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 19 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Auto repair for Together GPU Clusters: from GPU fault to hea…</title>
+      <link>https://www.together.ai/blog/auto-repair-for-together-gpu-clusters</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/auto-repair-for-together-gpu-clusters?li=1</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Auto repair for Together GPU Clusters: from GPU fault to healthy node</description>
+      <content:encoded><![CDATA[<p>All blog posts</p>
+<p>GPU Clusters</p>
+<p>Published 10/27/2026</p>
+<h1>Auto repair for Together GPU Clusters: from GPU fault to healthy node</h1>
+<p>Health checks find the fault, the platform picks the lightest fix, and you decide what runs without a person in the loop, down to individual Xid codes.</p>
+<ul><li>AuthorsPavneet Ahluwalia, Dongsheng Zhang, Barbara Kazanowska</li><li>Table of contents<a href="https://www.together.ai/blog/auto-repair-for-together-gpu-clusters">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://api.together.ai/clusters">Together GPU Clusters console</a><a href="https://docs.together.ai/docs/node-repair">Docs: Node repair</a><a href="https://docs.together.ai/docs/health-checks">Docs: Health checks</a></li></ul>
+<p>At cluster scale, GPU faults are a reality. An Xid error, a double-bit ECC error, a GPU falling off the PCIe bus or a flapping InfiniBand link can stall a distributed training job or take an inference replica down. Spotting that something is wrong is usually the easy part. The hard part is everything between the fault and a healthy node again</p>
+<p>Earlier this year, we announced the launch of our fully Automatic node remediation features. Our GPU clusters customers and our internal Inference platform has been using this capability to help drive workload resiliency and minimize down time. Our customers love this capability, and we wanted to take some time break the system down and explain how it works and why we designed it this way.</p>
+<p>We first implemented “Passive health” checks system, that watches every node continuously, both inside your VM and on the host underneath it. When a check finds a fault, auto repair recommends the lightest action to fix and shows you supporting evidence behind the recommendation. You decide up front, fault by fault, whether a repair waits for approval or runs on its own. You also decide how long auto repair waits for running workload to finish. Your own detectors can open repairs through the same pipeline by writing a single annotation on a node.</p>
+<p>‍<strong>Availability</strong> <strong>Generally available today:</strong> passive health checks, repair recommendations, the auto-remediation policy (including per-fault and per-node consent), wait-for-idle controls, the escalation ladder, the safety rails, and API and console repair. <strong>Preview:</strong> node-label based remediation contracts, which let you bring your own detection systems such as NVSentinel or custom controllers. We are constantly adding new detection signals and remediation actions to ensure maximum coverage and minimum time to recovery.</p>
+<h2>Why NotReady is not enough</h2>
+<p>Most node auto-repair keys on a single signal: the node went <code>NotReady</code>. That signal looks the same whether a node is broken or just briefly unreachable. When a storage or network event touches many nodes at once, every impacted node drops to NotReady. Our system has a circuit breaker built in to prevent mass replacement of nodes. NotReady also does not say why the node failed, so there's no basis for choosing between a reboot and a new machine.</p>
+<p>So auto repair follows one rule: <strong>no node repair occurs without a failed health check behind it, and every repair carries its supporting evidence.</strong></p>
+<h2>The pipeline</h2>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6adfc9c8d8cc8003d466bf49_6adfc97768efab70eae3425a_autorepair-01-pipeline-v2.gif" alt="Auto repair pipeline: signals from inside the VM and from the host feed Detect, Decide and Repair inside your cluster; migrated hosts go to Re-validate on Together infrastructure."></p>
+<p>Auto repair pipeline: signals from inside the VM and from the host feed Detect, Decide, and Repair inside your cluster; migrated hosts go to Re-validate on Together infrastructure.</p>
+<p>The pipeline has four stages: detect a fault, decide whether and when to act, repair the node, and re-validate the machine. The first three stages run against your cluster. The fourth runs on our side, on the physical host your node just vacated. Node-label requests from your own detection tooling enter at the decide stage and get exactly the same treatment as ours.</p>
+<h2>1. Detection from both sides of the hypervisor</h2>
+<p>GPUs in Together GPU Clusters are passed straight through to your VM for bare-metal performance. That means GPU faults are visible from inside the VM, while host and fabric faults are visible from the host. Detection therefore runs on both sides of the hypervisor and lands in one place.</p>
+<p><strong>Inside your VM</strong>, exporters watch:</p>
+<ul><li>the kernel log, for Xid errors and GPUs falling off the PCIe bus</li><li>DCGM, for ECC double-bit errors, row-remap failures, PCIe replay rate, and thermal throttling</li><li>Node Problem Detector, for read-only filesystems, XFS shutdowns, kernel deadlocks, and repeated kubelet or containerd restarts</li></ul>
+<p>On Slurm, an exporter reports nodes marked DOWN or DRAIN.</p>
+<p><strong>On the host</strong>, we watch InfiniBand rail state and link flapping, attributed to the VM that owns those rails. We also watch host reachability, so a dead host shows up as a problem on your node rather than as silence.</p>
+<p>Every alert ships a stable summary, a plain-language description, and a machine-readable evidence payload. For an Xid, that's each code and its NVIDIA mnemonic. For thermal throttling, it's the peak temperature and throttle count. The control plane passes those strings through untouched, so the console, the API (as <code>linked_alerts</code>), and your notifications always say the same thing.</p>
+<p>We keep observed separate from actionable. Every repair-relevant alert is recorded and marks your node <strong>Degraded</strong>. Only signals with an action mapping create a repair. Disk pressure, for example, shows up but doesn't trigger a reboot, because a reboot won't fix it. An alert with no mapping is counted and logged, never silently dropped, and routed to our support team for investigation.</p>
+<h2>2. Policy: we decide what, you decide whether and when</h2>
+<p><strong>What</strong> is owned by the platform. Each signal maps to the lightest action that fixes it, so you never need to know which Xid means what:</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6ae10f16b1185f38e858c5fc_Screenshot%202026-10-26%20at%2010.19.24%E2%80%AFPM.png" alt=""></p>
+<p><strong>Whether</strong> is yours to decide. In the Repairs tab, the <strong>Auto-remediation policy</strong> defaults to <strong>Approve before repair</strong>: every recommendation waits for a person, who can accept or override the action. You can switch the default to <strong>Fully automatic</strong>, but it isn't a blanket switch. The <strong>Repair actions</strong> checklist groups faults by the repair they trigger, and you select the ones you trust to run unattended. Inside the Xid group, you can set consent per code. A common setup auto-approves reboots for Xid 119 and 95 and keeps migrations gated. The Xid checklist also works under Approve before repair, if you want a short list of faults to run automatically while everything else waits for your review.</p>
+<p><strong>When</strong> is yours as well. A repair drains the node, so <strong>Wait for idle</strong> holds it until the node is actually idle. On Kubernetes, that means no running pod on the node is requesting a GPU. On Slurm, it means the scheduler reports no allocation on the node. <strong>Maximum wait</strong> bounds the hold, with a default of 2 hours and a cap of 24. <strong>Do not interrupt running jobs</strong> removes the bound entirely. Set the wait to at least your checkpoint interval. If the bound expires, the repair proceeds and the timeout is recorded.</p>
+<p>Every repair records who requested it (<strong>Together Health Checker</strong> for automatic repairs), who approved it (a named user or <strong>Auto-Approved</strong>), which rule decided, and when.</p>
+<h2>3. Bring your own detector</h2>
+<p>Teams running large GPU fleets already have detection they trust: DCGM dashboards, NVSentinel, in-house scanners, job-level checks. Every repair, whatever its source, becomes the same record in our control plane. That gives capacity checks, audit, and safety rails exactly one home.</p>
+<p>There are three ways in:</p>
+<ul><li><strong>API.</strong> Create a repair against an instance with a mode, an optional client-supplied ID for idempotency, and optionally the health check run or alert you're citing as evidence. You can also list, get, approve, reject, and cancel repairs.</li><li><strong>Console.</strong> The <strong>⋮</strong> menu on any node opens the <strong>Repair</strong> dialog with the detected issues and the recommended action.</li><li><strong>Node labels (Preview).</strong> Any detector with RBAC permission to write node metadata can open a repair by adding one annotation and one label to the node. The annotation carries the detector name, a stable request ID, the repair mode, when the fault was detected, and a human-readable reason.</li></ul>
+<p>Our cluster operator mirrors the node <code>label</code> up to the control plane. The repair is recorded with the detector as an external requester, so it's always attributable and can never impersonate a user. Detector name plus request ID is the idempotency key across the cluster, finished repairs included, so a detector that re-asserts the same fault on every scan can't reboot a node twice. Authorization is your cluster's own RBAC, with no API key and no onboarding ticket.</p>
+<p>Annotation requests can ask for Reboot, Quick reprovision, or Migrate. Remove stays human-only. Like a console click, these requests skip the approval queue, but they still pass the same evidence gate, capacity check, and budgets as everything else. A per-cluster cap means a buggy detector causes limited damage rather than a catastrophe.</p>
+<h2>4. Repair actions and the escalation ladder</h2>
+<p>Every repair follows the same lifecycle: cordon, wait (per your policy), drain, act, rejoin. The console shows the node moving through <strong>Cordoning → Draining → Repairing / Migrating → Joining → Running</strong>.</p>
+<p>The actions, from lightest to heaviest:</p>
+<ul><li><strong>Reboot.</strong> Restarts the VM in place. Local <code>/scratch</code> and <code>/tmp</code> data survive.</li><li><strong>Quick reprovision.</strong> Rebuilds the VM from a clean image on a healthy host. Local data is lost.</li><li><strong>Migrate to new host.</strong> Rebuilds the VM on different hardware and sends the old host to re-validation.</li><li><strong>Remove.</strong> Pulls the node for RMA. Always human-initiated.</li></ul>
+<p><strong>The same fix doesn't loop.</strong> If a fault comes back on the same machine after the same action has already run twice, the next recommendation moves one rung up. A third round of Xid reboots becomes a reprovision, and a third reprovision becomes a migration. The ladder is tracked per machine, cluster, alert, and Xid code. Attempts older than a week don't count, and neither do cancelled or self-resolved recommendations.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6adfc9c8d8cc8003d466bf45_6adfc978b464940a012dec75_autorepair-03-escalation-ladder-v2.gif" alt="Escalation ladder: two tries per rung, then one rung up, from reboot to reprovision to migration."></p>
+<p>Two tries per rung, then one rung up. Migration needs critical-alert evidence.</p>
+<p><strong>Migrations are evidence-gated.</strong> Migrate is the one action that consumes real capacity. It requires either a critical alert currently firing on the node or a critical alert on the same machine within the last ten days. A request that meets neither condition runs as a Quick reprovision instead.</p>
+<p><strong>Host power cycle (Preview).</strong> Some faults, Xid 79 among them, need the GPU to lose power, which a VM reboot can't do even though the hardware may be fine. Rather than consuming a new host, we can power-cycle the one you're on. No BMC credentials exist anywhere in the system. A boot-ID check prevents a retry from cycling a host that has already come back.</p>
+<p>Clusters that need a guaranteed replacement window can reserve <strong>hot spare</strong> capacity, so migrations draw from that reserve rather than general availability. Ask your account team for details.</p>
+<h2>5. Rails that assume the alert storm will happen</h2>
+<p>A bad driver push, a storage outage, or a network partition can make dozens of nodes look sick at once. Node-level repair can't fix a cluster-level cause, so the rails are layered and independent:</p>
+<ul><li><strong>Persistence.</strong> A signal must hold for a per-signal duration before it becomes a recommendation.</li><li><strong>Cooldown.</strong> After any repair, a node gets roughly 30 minutes before a new recommendation can be generated.</li><li><strong>Concurrency budget.</strong> The budget is sized from cluster node count, and the operator runs one repair per node pool at a time.</li><li><strong>Circuit breaker.</strong> When one cluster generates a burst of correlated automatic repairs, the breaker trips. Many nodes failing at once points to a cluster-level cause, and repairing nodes one by one will not fix it.</li><li><strong>One target per repair.</strong> The schema enforces it, so a bug can't fan out across nodes.</li><li><strong>Auto-resolve.</strong> A recommendation whose alert clears before anyone acts disappears on its own.</li></ul>
+<p>The control plane is replicated, and every write is idempotent and checked against the state it expects. Two replicas racing on the same node produce one repair, not two.</p>
+<h2>6. The machine re-validates itself</h2>
+<p>When a node migrates off a machine, or is removed from one, that machine shouldn't go straight back into the pool, and it shouldn't sit in a queue waiting for someone to read diagnostics either. As soon as the old VM is gone, the machine moves into validation automatically. A test VM runs the same GPU, NCCL, InfiniBand, and storage checks that every brand-new machine passes before joining the fleet. No person touches the machine between your node leaving and the verdict landing.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6adfc705a7b90ee5ba6d3e72_6adfc669313f6d381bf892a4_autorepair-04-revalidation.png" alt="Machine re-validation: the node leaves, the machine goes into validation, fleet-entry checks run, and the verdict is Passed, Failed or Aborted."></p>
+<p>Only an explicit failure files a hardware ticket.</p>
+<p>There are three verdicts:</p>
+<ul><li><strong>Passed.</strong> The machine returns to the pool. No ticket is filed and no one is paged, so a transient fault stays transient.</li><li><strong>Failed.</strong> A hardware ticket is filed automatically with per-test results and logs attached. The machine stays out until it's fixed and passes again.</li><li><strong>Aborted.</strong> The checks couldn't run, for example because the host was reallocated or the test VM couldn't be placed. The machine is restored to its prior state, and nothing is condemned.</li></ul>
+<p>Only an explicit failure produces a ticket.</p>
+<h2>Built to extend past one accelerator</h2>
+<p>Repair decisions key on alerts, nodes, and machines, not on the GPU vendor. The GPU type matters for placement and capacity, but recommendations, policy, escalation, budgets, triggers, and re-validation don't special-case it. The vendor-specific parts are detection (the Xid and DCGM exporters) and the diagnostic battery. Bringing up a new accelerator means adding those pieces, and everything downstream carries over.</p>
+<h2>Using it</h2>
+<p>Open your cluster in the console and go to the <strong>Repairs</strong> tab. Pending recommendations and history are there, with the <strong>Auto-remediation policy</strong> at the top. Each remediation in the API carries its <code>linked_alerts</code>, so your own tooling sees the same evidence the console does.</p>
+<h2>What's next</h2>
+<ul><li><strong>NVSwitch coverage.</strong> SXid faults, coalesced per node, with readable descriptions.</li><li><strong>Status back on the node.</strong> Repair progress written back as node metadata, so external detectors can close the loop where they opened it.</li><li><strong>One health surface.</strong> Click from a failed check to the repair it caused and back, plus a per-node view of health, events, and repair history.</li></ul>
+<p>Tell us what fails on your clusters that we don't catch yet. That list drives what we build next.</p>
+<p>-&gt; <a href="https://api.together.ai/clusters">Get started in the console</a> -&gt; Docs: <a href="https://docs.together.ai/docs/node-repair">Node repair</a> · <a href="https://docs.together.ai/docs/health-checks">Health checks</a></p>
+<h2>Related articles</h2>
+<p>View All</p>
+<p>View All</p>]]></content:encoded>
+    </item>
     <item>
       <title>Together Post-Training: frontier-grade model shaping, the wa…</title>
       <link>https://www.together.ai/blog/together-post-training</link>
@@ -3586,43 +3662,6 @@ for chunk in stream:
 <h2>4. Conclusion</h2>
 <p>Aurora is not just another speculative decoding algorithm. It is a systems shift. It changes speculative decoding from a static, offline task to a dynamic, online learning process.</p>
 <p>This shift unlocks real-time utility feedback, adaptation under domain drift, lower infrastructure cost compared to large offline distillation pipelines, and a system layer that is compatible with future speculator algorithms. That’s why the right abstraction for speculative decoding is no longer just better draft training in isolation — it’s a unified training-serving loop.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Plan, divide, and conquer: How weak models excel at long con…</title>
-      <link>https://www.together.ai/blog/plan-divide-conquer</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/plan-divide-conquer?li=1</guid>
-      <pubDate>Thu, 26 Mar 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Plan, divide, and conquer: How weak models excel at long context tasks</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 3/26/2026</p>
-<h1>Plan, divide, and conquer: How weak models excel at long context tasks</h1>
-<ul><li>AuthorsZhen Xu, Shang Zhu, Jue Wang, Junlin Wang, Ben Athiwaratkun, Chi Wang, James Zou, Ce Zhang</li><li>Table of contents<a href="https://www.together.ai/blog/plan-divide-conquer#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://arxiv.org/abs/2506.16411">Paper, ICLR 2026</a><a href="https://github.com/nehzux/DivideConquerAgents">Code</a></li></ul>
-<p>TL;DR</p>
-<p><strong>The Intuition:</strong> Don't ask one genius to read a library in an hour. Ask ten interns to read one book each.</p>
-<p>Our research, &quot;When Does Divide and Conquer Work for Long Context LLM?&quot; (ICLR 2026), introduces a framework to study this. We found that smaller models using a strategic &quot;Divide &amp; Conquer&quot; design can match or beat GPT-4o single-shot on long context tasks.</p>
-<p><a href="https://arxiv.org/abs/2506.16411">[paper, ICLR 2026</a>] <a href="https://github.com/nehzux/DivideConquerAgents">[code</a>]</p>
-<p>Modern LLMs increasingly support massive context windows like 128K, 200K, even 1M+ tokens. This theoretically unlocks powerful use cases like analyzing entire codebases or summarizing full books in a single prompt.</p>
-<p>However, the promise of &quot;just throw everything into one prompt&quot; frequently fails in practice. As context length grows, performance degrades in unexpected ways. “Divide and Conquer” turns out to be an attractive solution to long context tasks, as shown in the figure below.</p>
-<p>“Divide and Conquer” Framework. The Planner rewrites the job description. The Worker each processes a subset of the long document, while the Manager aggregates the information and provides the final answer.</p>
-<p>In our paper, we found that weaker models using a carefully designed &quot;Divide &amp; Conquer&quot; framework can match or beat GPT-4o single-shot on long context tasks.</p>
-<h2><strong>The core problem: The &quot;fog&quot; of length</strong></h2>
-<p>How can we fully leverage the power of such a “Divide and Conquer” approach for long context tasks? We break the challenge down into three distinct sources of noise:</p>
-<ul><li><strong>Model Noise (The &quot;Brain Fog&quot;):</strong> Models don't just forget linearly; they get overwhelmed. Our research shows that model confusion grows <strong>superlinearly</strong> with input length. It is mathematically better to split the task because you reset that confusion counter with every new chunk in a shorter length</li><li><strong>Task Noise (The &quot;Silo Effect&quot;):</strong> Sometimes, a chunk doesn't make sense on its own (e.g., a pronoun referring to a previous chapter). This &quot;Cross-Chunk Dependence&quot; creates noise when the text is split.</li><li><strong>Aggregator Noise (The &quot;Bad Summary&quot;):</strong> Even if the workers do their jobs, the final manager model might fail to stitch the partial answers together correctly.</li></ul>
-<p>Naive &quot;MapReduce&quot; approaches often fail because of <strong>Aggregator Noise</strong> i.e. the final answer is messy or inconsistent because the manager lacks context. Our framework predicts that if you reduce this noise through clearer instructions, you can unlock the power of weaker models.</p>
-<p><strong>The &quot;2nd Smallest Number&quot; Example:</strong> Consider a task where workers must help find the 2nd smallest number in a massive list. If you naively ask workers to &quot;Find the 2nd smallest number&quot; in their specific chunk, the final manager will fail because the global 2nd smallest number might be the <em>smallest</em> number in a specific chunk.</p>
-<ul><li>Naive Prompt: &quot;Find the 2nd smallest number.&quot; (Fails)</li><li>Planned Prompt: &quot;Identify and return the two smallest numbers.&quot;</li></ul>
-<p>By simply adjusting the prompt to account for this aggregation noise, we ensure the Manager has the right data to calculate the global answer.</p>
-<h2><strong>Validating the theory with experiments</strong></h2>
-<p>We tested this framework implementation across diverse tasks (retrieval, QA, summarization, etc.). As shown below, a weaker model using this framework (e.g., Llama-3-70B or Qwen-72B) outperforms GPT-4o reading the whole text in one shot. While the single-shot model (red dashed line) degrades as context length increases, the D&amp;C models maintain high performance.</p>
-<p>The red dashed line is GPT-4o processing the whole text in one shot. The colored lines are smaller models using Divide &amp; Conquer with planning. Notice that with the right chunk size, the weaker models consistently win.</p>
-<h2><strong>The engineering wins</strong></h2>
-<p>From the engineering perspective, this framework offers three massive practical benefits:</p>
-<ul><li><strong>Cheaper:</strong> You move the heavy lifting to smaller, cheaper models (Workers), rather than paying for flagship tokens.</li><li><strong>Faster:</strong> Workers run in parallel. You avoid the high latency of processing a massive 128k token context in a single serial pass.</li><li><strong>Easy to tune:</strong> We found that testing just 5 random samples is sufficient to find the optimal chunk size due to the predictability of the noise curve. You don't need to run an exhaustive search over your whole dataset. The other flexibility our framework offers to decouple the worker and manager by assigning different LLM backends.</li></ul>
-<h2><strong>The catch: When to use single-shot instead of divide and conquer</strong></h2>
-<p>This method is not a silver bullet. It works best for tasks like QA, Retrieval, and Summarization where cross-chunk dependency is moderate. The benefits end when <strong>Task Noise dominates</strong>. If your task requires tracking a subtle clue from Page 1 that connects to Page 100 (like the &quot;Dialogue Character Inference&quot; task in our paper), the &quot;Divide&quot; step breaks the necessary context. In these high-synergy cases, the 'genius' model reading the whole library is still the only way to go. Please find more details in our paper.</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>

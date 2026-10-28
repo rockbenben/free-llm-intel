@@ -7,7 +7,32 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 14 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>CSAM Screening Across OpenRouter</title>
+      <link>https://openrouter.ai/blog/announcements/csam-screening/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/csam-screening/?li=1</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>CSAM Screening Across OpenRouter</h1>
+<p>OpenRouter ·10/27/2026</p>
+<p>OpenRouter will screen all inference requests for child sexual abuse material (CSAM) as they pass through our service. Screening happens in flight, during request processing. Content flagged as potential CSAM may be retained for human review, with reporting and preservation where required by law.</p>
+<h2>How CSAM screening will work</h2>
+<ul><li><strong>Known CSAM detection.</strong> In-flight screening will include comparing applicable content against hashes (digital fingerprints) of previously identified CSAM.</li><li><strong>Review of suspected new CSAM.</strong> We may begin retaining content flagged as potential CSAM for human review, including content that does not match a known hash. A flag indicates suspected material; it is not itself a determination that the content is CSAM.</li></ul>
+<p>Hash matching detects known material, while classifiers can identify suspected material that has not yet been added to a hash database. The National Center for Missing &amp; Exploited Children (NCMEC) recommends hashing and image classifiers as basic child-safety measures for services handling images and video, including generative AI services (<a href="https://www.missingkids.org/content/gpp-ncmec/us/en/policy-advocacy/minimum-child-safety-measures-for-online-platforms.html">NCMEC’s guidance</a>).</p>
+<h2>Screening also applies to ZDR traffic</h2>
+<p>CSAM screening will also apply to requests covered by OpenRouter’s Zero Data Retention (ZDR) policy.</p>
+<p>We’re updating our documentation and related terms to make OpenRouter’s own retention commitment explicit:</p>
+<blockquote>For inference content covered by OpenRouter’s ZDR policy, we do not retain prompts or responses after processing, except when you explicitly choose to have us store them or when retention is needed for CSAM review, reporting, and related legal preservation.</blockquote>
+<p>These CSAM provisions do not authorize general retention of ZDR inference content for unrelated purposes. OpenRouter’s commitment not to use inputs or outputs for model training continues (<a href="https://openrouter.ai/privacy">OpenRouter’s Privacy Policy</a>).</p>
+<h2>Reporting and preservation requirements</h2>
+<p>CSAM reporting and preservation duties are established legal obligations. ZDR does not remove those duties.</p>
+<p>Under U.S. law, covered providers must report to NCMEC’s CyberTipline as soon as reasonably possible after obtaining actual knowledge of facts or circumstances indicating specified apparent offenses. Reported contents and certain related contextual material must be preserved for one year after submission. That requirement applies to reported material, rather than every item flagged for review (<a href="https://uscode.house.gov/us/usc/119-118/t18/s2258A/">18 U.S.C. § 2258A(a) and (h)</a>).</p>
+<h2>Provider policies may differ</h2>
+<p>Model labs and providers may use different screening and retention methods. Some may retain content for a period of time to run automated safety checks before anything has been flagged. Those practices are separate from OpenRouter’s in-flight screening and are governed by the applicable model and provider policies.</p>
+<p>OpenRouter documents provider policies so users can understand the requirements that apply to their requests. Review those policies when choosing a model or provider, especially if your organization has specific data-retention requirements.</p>
+<h2>Looking ahead</h2>
+<p>AI is opening up exciting possibilities, and the practices surrounding frontier models are evolving quickly. We’re updating our documentation and related terms to describe OpenRouter’s in-flight screening, possible retention of flagged content, and how provider policies are represented. As always, we will keep you informed.</p>]]></content:encoded>
+    </item>
     <item>
       <title>Private Endpoints: Bring Your Fine-Tuned Models and Capacity…</title>
       <link>https://openrouter.ai/blog/announcements/private-endpoints/</link>
@@ -8044,253 +8069,6 @@ print(vision)  # models that accept image input</code></pre>
 <p>It scales with resolution: more pixels produce more patches, and more patches means more tokens. Exactly how a provider counts those tokens varies, so check the model’s endpoint page if you need a precise cost estimate before scaling up.</p>
 <h3>Can I combine image input with tool calling or structured outputs?</h3>
 <p>Yes. Add tool calling to a vision request and the model returns typed JSON, like <code>{ &quot;total&quot;: 42.10 }</code>, instead of a sentence. This is the common pattern for extracting structured fields from receipts, forms, or scanned documents.</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Tool Calling Across Any Model: Write the Loop Once, Swap the…</title>
-      <link>https://openrouter.ai/blog/tutorials/tool-calling/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/tool-calling/?li=1</guid>
-      <pubDate>Wed, 12 Aug 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Tool Calling Across Any Model: Write the Loop Once, Swap the Model String</description>
-      <content:encoded><![CDATA[<h1>Tool Calling Across Any Model: Write the Loop Once, Swap the Model String</h1>
-<p>OpenRouter ·8/12/2026 · Updated 9/24/2026</p>
-<p>Tool calling, also called function calling, lets a model request a function in structured JSON. Your code runs the function and returns the result, and the model uses it to finish its answer. Every major provider supports a version of this, but most tutorials cover one provider, so code written against OpenAI’s guide needs a rewrite when you move to Claude. With our API you don’t rewrite anything. You write the loop once, change the model string, and keep the tool code unchanged.</p>
-<p>This guide covers the full loop: defining a tool, sending a request, reading the <code>tool_calls</code> response, running the function, returning its result, and getting the final answer. You’ll then run that same code against three providers by changing one string.</p>
-<p>Our <a href="https://openrouter.ai/docs/guides/features/tool-calling">tool calling docs</a> list every field. This guide shows the whole process from start to finish.</p>
-<h2>Tl;dr</h2>
-<ul><li>One tool, <code>get_weather(location, unit)</code>, defined once as an OpenAI-compatible JSON schema.</li><li>One loop, shown in cURL, Python, and JavaScript/TypeScript. Send <code>tools</code>, read <code>tool_calls</code>, execute locally, return the result, get the final answer.</li><li>One test across three models. The same loop runs against Claude, GPT, and an open-weight model, with only the model string changing. Any tool-capable model works. Support varies by model, so check it before you switch.</li><li><code>tool_calls</code> is an array of JSON-string arguments, so parse each argument string and never assume a single call.</li></ul>
-<h2>What is tool calling, and why “function calling” is the same thing</h2>
-<p>Tool calling and function calling are two names for one mechanism. You describe the function to the model with a JSON schema, a written spec of its name and inputs. The model can then ask your code to call it with specific arguments. Your code runs the function, returns the result, and the model uses that result to finish its answer.</p>
-<p>OpenAI popularized the older name “function calling.” Most APIs now say “tool calling.” The two mean the same thing. You send the <code>tools</code> field, the model returns <code>tool_calls</code>, and we accept one OpenAI-compatible schema for Claude, GPT, and Llama, so the naming difference doesn’t change your code. This guide says “tool calling” throughout, since that’s what the API fields are named. You’ll still see “function calling” in older docs and SDKs.</p>
-<p>The loop has four steps:</p>
-<ul><li>Send the conversation and your tool definitions.</li><li>The model returns a <code>tool_calls</code> request with a name and JSON arguments.</li><li>Your code runs the tool and adds the result to the conversation.</li><li>Send the conversation again. The model reads the result and returns its final answer.</li></ul>
-<p><img src="https://openrouter.ai/blog/images/tool-calling-loop.png" alt="Diagram of the four-step tool-calling loop: your app sends messages and tool definitions to the model, receives a tool_calls request, executes get_weather locally, returns the result with its tool_call_id, and receives the final answer"></p>
-<h3>Tool calling vs. the model “running” the tool</h3>
-<p>The model never executes the tool itself. It returns a <code>tool_calls</code> request, and your application performs the execution.</p>
-<p>It doesn’t call your weather API, query your database, or run your code. It sends a structured request such as <code>get_weather(location=&quot;Paris&quot;)</code> and stops. Your app runs the function and decides what to return. You keep control over keys, side effects, and validation. The model only decides when to ask.</p>
-<h2>Define one tool</h2>
-<p>Before you begin, you need an OpenRouter account and an API key, which you can create in the <a href="https://openrouter.ai/keys">dashboard</a>. Export it as <code>OPENROUTER_API_KEY</code> so the examples below can read it from the environment.</p>
-<p>You also need one SDK: Python 3.10 or later with <code>pip install openai</code>, or Node 22 or later with <code>npm install openai</code>. Nothing else is required. The weather function returns a fixed value rather than calling a real API, so the OpenRouter key is the only key you need.</p>
-<p>The guide uses one tool, <code>get_weather(location, unit)</code>, in every example. Define it as an OpenAI-compatible JSON schema:</p>
-<pre><code>tools = [
-    {
-        &quot;type&quot;: &quot;function&quot;,
-        &quot;function&quot;: {
-            &quot;name&quot;: &quot;get_weather&quot;,
-            &quot;description&quot;: &quot;Get the current weather for a location.&quot;,
-            &quot;parameters&quot;: {
-                &quot;type&quot;: &quot;object&quot;,
-                &quot;properties&quot;: {
-                    &quot;location&quot;: {
-                        &quot;type&quot;: &quot;string&quot;,
-                        &quot;description&quot;: &quot;City name, e.g. 'Paris'&quot;,
-                    },
-                    &quot;unit&quot;: {
-                        &quot;type&quot;: &quot;string&quot;,
-                        &quot;enum&quot;: [&quot;celsius&quot;, &quot;fahrenheit&quot;],
-                    },
-                },
-                &quot;required&quot;: [&quot;location&quot;],
-            },
-        },
-    }
-]</code></pre>
-<p>Next, write the function the model can request. A real app would call a weather API. This one returns a fixed value so you don’t need a second key to follow along:</p>
-<pre><code>import json
-
-def get_weather(location, unit=&quot;celsius&quot;):
-    # Real code would call a weather API here.
-    return {&quot;location&quot;: location, &quot;temperature&quot;: 18, &quot;unit&quot;: unit, &quot;sky&quot;: &quot;clear&quot;}</code></pre>
-<p>Now point the SDK at our endpoint. We accept the OpenAI API format, so if you already use the OpenAI SDK, you can change only the <code>base_url</code> and the key:</p>
-<pre><code>import os
-from openai import OpenAI
-
-client = OpenAI(
-    base_url=&quot;https://openrouter.ai/api/v1&quot;,
-    api_key=os.environ[&quot;OPENROUTER_API_KEY&quot;],
-)</code></pre>
-<p>If you want to see the raw request before wiring up an SDK, the same first call in cURL looks like this:</p>
-<pre><code>curl https://openrouter.ai/api/v1/chat/completions \
-  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
-  -H &quot;Content-Type: application/json&quot; \
-  -d '{
-    &quot;model&quot;: &quot;anthropic/claude-opus-4.8&quot;,
-    &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What'\''s the weather in Paris?&quot;}],
-    &quot;tools&quot;: [{
-      &quot;type&quot;: &quot;function&quot;,
-      &quot;function&quot;: {
-        &quot;name&quot;: &quot;get_weather&quot;,
-        &quot;description&quot;: &quot;Get the current weather for a location.&quot;,
-        &quot;parameters&quot;: {
-          &quot;type&quot;: &quot;object&quot;,
-          &quot;properties&quot;: {
-            &quot;location&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;City name, e.g. Paris&quot;},
-            &quot;unit&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;enum&quot;: [&quot;celsius&quot;, &quot;fahrenheit&quot;]}
-          },
-          &quot;required&quot;: [&quot;location&quot;]
-        }
-      }
-    }]
-  }'</code></pre>
-<h3>The request/response loop in code</h3>
-<p>This function is the whole loop, and you won’t change it again in this guide. It sends the messages and tools, checks for <code>tool_calls</code>, runs each tool, appends the results, and asks the model for its final answer:</p>
-<pre><code>def run_tool_loop(model, user_message):
-    messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_message}]
-    # First call: the model may ask for a tool.
-    response = client.chat.completions.create(
-        model=model, messages=messages, tools=tools,
-    )
-    msg = response.choices[0].message
-    # No tool call? The model answered directly.
-    if not msg.tool_calls:
-        return msg.content
-    # Append the assistant's tool-call turn verbatim, then execute each call.
-    messages.append(msg)
-    for call in msg.tool_calls:
-        args = json.loads(call.function.arguments)  # arguments arrive as a JSON string
-        result = get_weather(**args)
-        messages.append({
-            &quot;role&quot;: &quot;tool&quot;,
-            &quot;tool_call_id&quot;: call.id,
-            &quot;content&quot;: json.dumps(result),
-        })
-    # Second call: the model reads the tool result and writes the final answer.
-    final = client.chat.completions.create(
-        model=model, messages=messages, tools=tools,
-    )
-    return final.choices[0].message.content</code></pre>
-<p>Here’s the same loop in JavaScript/TypeScript for Node 22+, using the <code>openai</code> package pointed at our endpoint:</p>
-<pre><code>import OpenAI from &quot;openai&quot;;
-
-const client = new OpenAI({
-  baseURL: &quot;https://openrouter.ai/api/v1&quot;,
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
-
-// Same schema as the Python `tools` array above.
-const tools = [
-  {
-    type: &quot;function&quot;,
-    function: {
-      name: &quot;get_weather&quot;,
-      description: &quot;Get the current weather for a location.&quot;,
-      parameters: {
-        type: &quot;object&quot;,
-        properties: {
-          location: { type: &quot;string&quot;, description: &quot;City name, e.g. 'Paris'&quot; },
-          unit: { type: &quot;string&quot;, enum: [&quot;celsius&quot;, &quot;fahrenheit&quot;] },
-        },
-        required: [&quot;location&quot;],
-      },
-    },
-  },
-];
-
-function getWeather(location, unit = &quot;celsius&quot;) {
-  return { location, temperature: 18, unit, sky: &quot;clear&quot; };
-}
-
-async function runToolLoop(model, userMessage) {
-  const messages = [{ role: &quot;user&quot;, content: userMessage }];
-  const response = await client.chat.completions.create({ model, messages, tools });
-  const msg = response.choices[0].message;
-  if (!msg.tool_calls) return msg.content;
-
-  messages.push(msg);
-  for (const call of msg.tool_calls) {
-    const args = JSON.parse(call.function.arguments);
-    const result = getWeather(args.location, args.unit);
-    messages.push({
-      role: &quot;tool&quot;,
-      tool_call_id: call.id,
-      content: JSON.stringify(result),
-    });
-  }
-
-  const final = await client.chat.completions.create({ model, messages, tools });
-  return final.choices[0].message.content;
-}</code></pre>
-<p>Add one thing before this reaches production: <code>arguments</code> is a string the model generated, not a validated payload. Models sometimes return invalid JSON or invent parameters your schema never declared. Wrap the parse in error handling and check the keys against your schema before passing them to your function. The examples here skip that to keep the code short.</p>
-<p>Everything below calls <code>run_tool_loop</code> or <code>runToolLoop</code> with a different model string.</p>
-<h2>Run it against Claude</h2>
-<p>The first run only needs a model name. Pass an Anthropic model and all four steps happen in one call to <code>run_tool_loop</code>:</p>
-<pre><code>answer = run_tool_loop(
-    &quot;anthropic/claude-opus-4.8&quot;,
-    &quot;What's the weather in Paris?&quot;,
-)
-print(answer)
-# → &quot;It's currently 18°C and clear in Paris.&quot;</code></pre>
-<p>That one call to <code>run_tool_loop</code> ran all four steps and made two API requests. The first request returned a <code>tool_calls</code> request. Your code ran <code>get_weather</code> and appended the result. The second request returned the finished answer.</p>
-<p>Model slugs change between releases, so confirm the exact string on our <a href="https://openrouter.ai/models">model catalog</a> before depending on it.</p>
-<h3>Reading the response</h3>
-<p>The function name and arguments are in the <code>tool_calls</code> array. In the first response, <code>choices[0].message</code> looks like this:</p>
-<pre><code>{
-  &quot;role&quot;: &quot;assistant&quot;,
-  &quot;content&quot;: null,
-  &quot;tool_calls&quot;: [
-    {
-      &quot;id&quot;: &quot;call_abc123&quot;,
-      &quot;type&quot;: &quot;function&quot;,
-      &quot;function&quot;: {
-        &quot;name&quot;: &quot;get_weather&quot;,
-        &quot;arguments&quot;: &quot;{\&quot;location\&quot;: \&quot;Paris\&quot;, \&quot;unit\&quot;: \&quot;celsius\&quot;}&quot;
-      }
-    }
-  ]
-}</code></pre>
-<p>Two details matter here. First, <code>arguments</code> is a JSON-encoded string, not an object, so parse it with <code>json.loads</code> or <code>JSON.parse</code>. Second, <code>tool_calls</code> is an array, so your code has to handle more than one call per response.</p>
-<h2>Run it against GPT</h2>
-<p>The Claude run showed the loop works. The next run shows the same code works on another provider. The only edit is one string:</p>
-<pre><code>answer = run_tool_loop(
-    &quot;openai/gpt-4o&quot;,
-    &quot;What's the weather in Paris?&quot;,
-)
-print(answer)
-# → &quot;The weather in Paris is 18°C and clear right now.&quot;</code></pre>
-<p>The only difference from the Claude example is <code>anthropic/claude-opus-4.8</code> → <code>openai/gpt-4o</code>. The tool schema, the loop, the parsing, and the result message all stay the same, because we return the same <code>tool_calls</code> format for both. This holds for any tool-capable model. Check tool support before you switch.</p>
-<p><img src="https://openrouter.ai/blog/images/tool-calling-three-models.png" alt="Diagram titled one tool, three models: a single get_weather tool definition and loop on the left feed one model string that fans out to Claude, GPT, and Llama, all returning the same tool_calls shape"></p>
-<h2>Run it against an open-source model</h2>
-<p>Proprietary models often share a format, so an open-weight model is a stronger test. Change the string once more:</p>
-<pre><code>answer = run_tool_loop(
-    &quot;meta-llama/llama-3.3-70b-instruct&quot;,
-    &quot;What's the weather in Paris?&quot;,
-)
-print(answer)
-# → &quot;Right now in Paris it's 18°C with clear skies.&quot;</code></pre>
-<p>That’s three providers on one codebase with no rewrites. The open-weight model returns the same <code>tool_calls</code> structure as Claude and GPT. You can store the model name in configuration and change it in a router, a test, or a fallback without touching your tool code.</p>
-<h2>Edge cases and gotchas</h2>
-<p>The loop above covers the common case. Four things can break it in production: parallel tool calls, streaming, models without tool support, and controlling when the model calls a tool.</p>
-<h3>Parallel tool calls</h3>
-<p>Some models return multiple tool calls in a single response. A model asked about two cities may return <code>get_weather(&quot;Paris&quot;)</code> and <code>get_weather(&quot;Tokyo&quot;)</code> together. This is why the loop iterates <code>msg.tool_calls</code> rather than reading <code>[0]</code>. Your code has to append one tool result per call, each carrying its own <code>tool_call_id</code>, before sending the next request. The example loop already does this. You can also set <code>parallel_tool_calls: false</code> in the request to make the model request one tool call at a time.</p>
-<h3>Streaming tool calls</h3>
-<p>When you stream a response, tool calls arrive in pieces called deltas. The model may split the arguments string across chunks and build the <code>tool_calls</code> array one index at a time. Don’t run the tool before the stream ends. Collect the deltas by index, wait for the finish signal, parse the complete arguments string, and then execute.</p>
-<h3>Models that don’t support tools</h3>
-<p>Not every model supports tools. If you send <code>tools</code> to a model with no tool-capable endpoint, we return a 404 error stating that no endpoints support tool use. In fallback paths, a non-tool model can instead ignore the field and return plain text with no <code>tool_calls</code> at all. That failure produces no error, so check support before you add a model to a loop. Browse our <a href="https://openrouter.ai/collections/tool-calling-models">tool-calling collection</a>, or open any model’s page in the <a href="https://openrouter.ai/models">catalog</a> and confirm that <code>supported_parameters</code> includes <code>tools</code>.</p>
-<h3>Forcing or disabling a tool call</h3>
-<p>Use <code>tool_choice</code> to control whether the model calls a tool at all:</p>
-<table><thead><tr><th><code>tool_choice</code> value</th><th>Behavior</th></tr></thead><tbody><tr><td><code>&quot;auto&quot;</code></td><td>The model decides whether to call a tool. This is the default whenever <code>tools</code> is present in the request.</td></tr><tr><td><code>{&quot;type&quot;: &quot;function&quot;, &quot;function&quot;: {&quot;name&quot;: &quot;get_weather&quot;}}</code></td><td>The model must call that specific tool.</td></tr><tr><td><code>&quot;none&quot;</code></td><td>Tool calls are blocked for this request.</td></tr></tbody></table>
-<p>The OpenAI-compatible schema also defines <code>&quot;required&quot;</code>, which asks the model to make at least one tool call. Support for the stricter values varies by model, so confirm behavior in our <a href="https://openrouter.ai/docs/guides/features/tool-calling">tool-calling docs</a> and test against your target model before depending on it in production.</p>
-<h2>Conclusion</h2>
-<p>You defined one tool, wrote one tool-calling loop, and ran the same code against Claude, GPT, and an open-source model by changing a single string. The tool definition and the loop don’t change when the model does, so changing providers is a configuration edit, not a rewrite.</p>
-<p>Three things to remember:</p>
-<ul><li><strong>The tool definition and the loop work across models.</strong> Write them once. We give every tool-capable model the same <code>tools</code> and <code>tool_calls</code> format, so changing providers is a one-line edit.</li><li><strong><code>tool_calls</code> is an array of JSON-string arguments.</strong> Loop over the array and parse each argument string. Never assume the response holds exactly one call.</li><li><strong>Tool support varies by model.</strong> Confirm a model supports tools before you ship against it.</li></ul>
-<p>To use your own tool, start from the field reference in our <a href="https://openrouter.ai/docs/guides/features/tool-calling">tool calling docs</a> and pick any model from our <a href="https://openrouter.ai/collections/tool-calling-models">tool calling collection</a>.</p>
-<h2>Frequently asked questions</h2>
-<h3>What is tool calling in LLMs?</h3>
-<p>Tool calling lets a model request that your code run something on its behalf, most commonly a function. The model returns a structured JSON request naming the tool and its arguments, your application executes it, and you send the result back so the model can finish its answer. The model never executes anything itself.</p>
-<h3>What is the difference between tool calling and function calling?</h3>
-<p>There’s no functional difference, since both names refer to the same mechanism. “Function calling” is the older term, popularized by OpenAI, while “tool calling” is what most APIs use now. In our API, they map to one request/response shape, the <code>tools</code> field and the <code>tool_calls</code> field, so code written for one works for the other.</p>
-<h3>How do you implement function calling with an API?</h3>
-<p>Describe your function as a JSON schema and send it in the <code>tools</code> field alongside your messages. If the response contains <code>tool_calls</code>, parse the arguments string and run the function. Then append the result as a message carrying the matching <code>tool_call_id</code> and send the conversation again for the final answer.</p>
-<h3>Does tool calling work the same across different models?</h3>
-<p>Yes, for tool-capable models. We accept one OpenAI-compatible schema and return one <code>tool_calls</code> format for Claude, GPT, and open-weight models, so the same tool definition and loop run unchanged across them. Only the model string changes. Tool support varies by model, so confirm it per model.</p>
-<h3>Which models support tool calling?</h3>
-<p>Tool support is per-model rather than universal. Browse our <a href="https://openrouter.ai/collections/tool-calling-models">tool calling collection</a> for a curated list of tool-capable models, or open any model page in our <a href="https://openrouter.ai/models">catalog</a> and check whether <code>supported_parameters</code> includes <code>tools</code>. If a model has no tool-capable endpoint, we return a 404 error saying no endpoints support tool use, and in fallback paths a non-tool model may ignore the field and reply in plain text.</p>
-<h3>Can open-source models do function calling?</h3>
-<p>Yes. Tool-capable open-weight models such as Llama 3.3 70B Instruct return the same <code>tool_calls</code> structure as proprietary models, so the same loop works without modification. Check the model’s page for <code>tools</code> in <code>supported_parameters</code> first, since support varies across open-weight families and fine-tunes.</p>
-<h3>What are parallel tool calls?</h3>
-<p>Parallel tool calls are multiple tool requests returned in a single model response, for example two <code>get_weather</code> calls for different cities. Your code must iterate the <code>tool_calls</code> array and append one result message per call, each carrying its own <code>tool_call_id</code>, before sending the conversation back.</p>
-<h2>References</h2>
-<ul><li><a href="https://openrouter.ai/docs/guides/features/tool-calling">Tool calling docs</a>, our canonical reference for the <code>tools</code> and <code>tool_calls</code> fields.</li><li><a href="https://openrouter.ai/collections/tool-calling-models">Tool calling models collection</a>, curated tool-capable models.</li><li><a href="https://openrouter.ai/models">Model catalog</a>, full listing with <code>supported_parameters</code> per model.</li><li><a href="https://github.com/openai/openai-python">OpenAI Python SDK</a>, source for the <code>tool_choice</code> default behavior and the <code>arguments</code> field type cited above.</li></ul>]]></content:encoded>
     </item>
   </channel>
 </rss>

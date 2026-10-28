@@ -7,7 +7,14 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Mon, 19 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Auto repair for Together GPU Clusters: from GPU fault to hea…</title>
+      <link>https://www.together.ai/blog/auto-repair-for-together-gpu-clusters</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/auto-repair-for-together-gpu-clusters</guid>
+      <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：Auto repair for Together GPU Clusters: from GPU fault to healthy node</description>
+    </item>
     <item>
       <title>Together Post-Training 上线：按你的方式做前沿级模型后训练</title>
       <link>https://www.together.ai/blog/together-post-training</link>
@@ -3137,36 +3144,6 @@ for chunk in stream:
 <h2>4. 结论</h2>
 <p>Aurora 不只是又一个推测解码算法，它是一次系统层面的范式转变：把推测解码从静态、离线的任务变成动态、在线的学习过程。</p>
 <p>这一转变解锁了实时效用反馈、领域漂移下的适应、相对大规模离线蒸馏流水线更低的基础设施成本，以及一个兼容未来推测器算法的系统层。这就是为什么对推测解码而言，正确的抽象不再只是孤立地&quot;训练更好的草稿模型&quot;，而是一个统一的训练-服务闭环。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>规划、分而治之：弱模型如何在长上下文任务上表现出色</title>
-      <link>https://www.together.ai/blog/plan-divide-conquer</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/plan-divide-conquer</guid>
-      <pubDate>Thu, 26 Mar 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Plan, divide, and conquer: How weak models excel at long context tasks</description>
-      <content:encoded><![CDATA[<p>TL;DR</p>
-<p><strong>直觉：</strong> 别让一个天才一小时读完一座图书馆。让十个实习生各读一本书。</p>
-<p>我们的研究 &quot;When Does Divide and Conquer Work for Long Context LLM?&quot;（ICLR 2026）引入了一个研究这一点的框架。我们发现，较小模型用一种策略性的&quot;分而治之&quot;设计，能在长上下文任务上追平或击败 GPT-4o 的单次处理。</p>
-<p><a href="https://arxiv.org/abs/2506.16411">[paper, ICLR 2026</a>] <a href="https://github.com/nehzux/DivideConquerAgents">[code</a>]</p>
-<p>现代 LLM 越来越支持 128K、200K 乃至 1M+ token 的巨大上下文窗口。这在理论上解锁了强大用例，如在单个 prompt 里分析整个代码库或摘要全书。</p>
-<p>然而，&quot;把一切都塞进一个 prompt&quot; 的承诺在实践中经常失败。随着上下文长度增长，性能以意外方式退化。&quot;分而治之&quot; 事实证明是长上下文任务的一个有吸引力的解法，如下图。</p>
-<p>&quot;分而治之&quot; 框架。Planner 重写任务说明；每个 Worker 处理长文档的一个子集；Manager 汇总信息并给出最终答案。</p>
-<p>在论文中我们发现，弱一些的模型用精心设计的&quot;分而治之&quot;框架，能在长上下文任务上追平或击败 GPT-4o 的单次处理。</p>
-<h2><strong>核心问题：长度的&quot;迷雾&quot;</strong></h2>
-<p>我们如何充分利用这种&quot;分而治之&quot;方法在长上下文任务上的力量？我们把挑战拆成三种噪声源：</p>
-<ul><li><strong>模型噪声（&quot;脑雾&quot;）：</strong> 模型不是线性遗忘，而是被淹没。我们的研究表明模型困惑度随输入长度<strong>超线性</strong>增长。从数学上讲，切分任务更优——因为你每换一个更短的 chunk 就重置一次困惑计数器。</li><li><strong>任务噪声（&quot;孤岛效应&quot;）：</strong> 有时一个 chunk 单独看不懂（如代词指向前一章）。文本被切分时，这种&quot;跨 chunk 依赖&quot;制造噪声。</li><li><strong>聚合器噪声（&quot;糟糕摘要&quot;）：</strong> 即使 workers 完成了各自的工作，最终的 manager 模型可能无法正确拼接部分答案。</li></ul>
-<p>天真的 &quot;MapReduce&quot; 方法常因<strong>聚合器噪声</strong>而失败——即因为 manager 缺乏上下文，最终答案混乱或不一致。我们的框架预测：如果你通过更清晰的指令降低这种噪声，就能释放弱模型的力量。</p>
-<p><strong>&quot;第二大数&quot;例子：</strong> 考虑一个任务，workers 要帮忙在一个巨大列表里找第二小的数。如果你天真地要求每个 worker 在自己那段里&quot;找第二小的数&quot;，最终 manager 会失败——因为全局第二小的数可能恰好是某个 chunk 里最小的数。</p>
-<ul><li>天真 Prompt：&quot;找出第二小的数。&quot;（失败）</li><li>规划后的 Prompt：&quot;识别并返回最小的两个数。&quot;</li></ul>
-<p>仅仅调整 prompt 来应对这种聚合噪声，我们就确保 manager 拿到正确的数据来计算全局答案。</p>
-<h2><strong>用实验验证理论</strong></h2>
-<p>我们在多样任务（检索、问答、摘要等）上测试了这个框架实现。如下图所示，用这个框架的弱模型（如 Llama-3-70B 或 Qwen-72B）胜过 GPT-4o 一次性读全文。当单次处理模型（红色虚线）随上下文长度增长退化时，D&amp;C 模型保持高性能。</p>
-<p>红色虚线是 GPT-4o 一次性处理整个文本。彩色线是用带规划的分而治之的较小模型。注意：在正确的 chunk size 下，弱模型稳定取胜。</p>
-<h2><strong>工程收益</strong></h2>
-<p>从工程视角，这个框架带来三大实际好处：</p>
-<ul><li><strong>更便宜：</strong> 把重活交给更小更便宜的模型（Workers），而不是按旗舰 token 付费。</li><li><strong>更快：</strong> Workers 并行运行。避免用单个串行 pass 处理巨大 128k token 上下文的高延迟。</li><li><strong>好调：</strong> 我们发现，由于噪声曲线的可预测性，只测 5 个随机样本就足以找到最优 chunk size。你不需要对整个数据集做穷尽搜索。框架的另一种灵活性是解耦 worker 和 manager、给它们分配不同的 LLM 后端。</li></ul>
-<h2><strong>需要注意：什么时候该用单次处理而非分而治之</strong></h2>
-<p>这个方法不是银弹。它在跨 chunk 依赖适中的任务上表现最好——如问答、检索和摘要。当<strong>任务噪声主导</strong>时收益结束。如果你的任务要求追踪第 1 页上一个与第 100 页相连的微妙线索（如我们论文里的 &quot;Dialogue Character Inference&quot; 任务），&quot;分&quot; 这一步会破坏必要的上下文。在这些高协同的情况下，&quot;天才&quot; 模型通读整个图书馆仍是唯一去路。更多细节见论文。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
