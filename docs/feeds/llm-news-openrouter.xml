@@ -14,6 +14,25 @@
       <guid isPermaLink="true">https://openrouter.ai/blog/announcements/csam-screening/</guid>
       <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：CSAM Screening Across OpenRouter</description>
+      <content:encoded><![CDATA[<h1>跨 OpenRouter 的 CSAM 筛选</h1>
+<p>OpenRouter ·2026 年 10 月 27 日</p>
+<p>OpenRouter 将对所有经由我们服务的推理请求进行儿童性虐待材料（CSAM）筛选。筛选在请求处理过程中、内容在途（in flight）时完成。被标记为潜在 CSAM 的内容可能被留存以供人工审核，并在法律要求时进行上报与保全。</p>
+<h2>CSAM 筛选将如何运作</h2>
+<ul><li><strong>已知 CSAM 检测。</strong> 在途筛选将包括把适用内容与先前已识别的 CSAM 的哈希值（数字指纹）进行比对。</li><li><strong>对疑似新增 CSAM 的审核。</strong> 我们可能开始留存被标记为潜在 CSAM 的内容以供人工审核，包括与已知哈希值不匹配的内容。标记只表示疑似材料，其本身并不构成对该内容属于 CSAM 的判定。</li></ul>
+<p>哈希匹配可以检测已知材料，而分类器能够识别尚未被加入哈希数据库的疑似材料。美国国家失踪与受虐儿童中心（NCMEC）建议，处理图像和视频的服务——包括生成式 AI 服务——把哈希比对与图像分类器作为基本的儿童安全措施（<a href="https://www.missingkids.org/content/gpp-ncmec/us/en/policy-advocacy/minimum-child-safety-measures-for-online-platforms.html">NCMEC 的指引</a>）。</p>
+<h2>筛选同样适用于 ZDR 流量</h2>
+<p>CSAM 筛选同样适用于 OpenRouter 零数据留存（ZDR）政策覆盖的请求。</p>
+<p>我们正在更新文档与相关条款，把 OpenRouter 自身的留存承诺明确写出来：</p>
+<blockquote>对于 OpenRouter ZDR 政策覆盖的推理内容，我们在处理完成后不保留 prompt 或响应，但您明确选择让我们存储，或因 CSAM 审核、上报及相关法律保全而需要留存的情形除外。</blockquote>
+<p>这些 CSAM 条款并不授权为无关目的对 ZDR 推理内容做一般性留存。OpenRouter 关于不将输入或输出用于模型训练的承诺继续有效（<a href="https://openrouter.ai/privacy">OpenRouter 隐私政策</a>）。</p>
+<h2>上报与保全要求</h2>
+<p>CSAM 的上报与保全义务是既定的法律义务。ZDR 并不免除这些义务。</p>
+<p>根据美国法律，受涵盖的提供商在获得表明特定明显违法情形的事实或情况的实际知情后，必须在合理可行的范围内尽快向 NCMEC 的 CyberTipline 上报。已上报的内容及某些相关背景材料必须在提交后保存一年。该要求适用于已上报的材料，而非每一项被标记待审核的内容（<a href="https://uscode.house.gov/us/usc/119-118/t18/s2258A/">18 U.S.C. § 2258A(a) 与 (h)</a>）。</p>
+<h2>各 provider 的政策可能不同</h2>
+<p>模型实验室与 provider 可能采用不同的筛选与留存方式。有些可能会在任何内容被标记之前，先留存一段时间以运行自动化安全检查。这些做法与 OpenRouter 的在途筛选彼此独立，并受适用的模型与 provider 政策约束。</p>
+<p>OpenRouter 会记录 provider 政策，使用户能够了解适用于其请求的各项要求。在选择模型或 provider 时请查阅这些政策，尤其是当你的组织对数据留存有特定要求时。</p>
+<h2>展望</h2>
+<p>AI 正在带来令人振奋的可能性，而围绕前沿模型的做法也在快速演变。我们正在更新文档与相关条款，以说明 OpenRouter 的在途筛选、被标记内容可能被留存的情况，以及 provider 政策的呈现方式。一如既往，我们会持续向你通报进展。</p>]]></content:encoded>
     </item>
     <item>
       <title>Private Endpoints：把你的微调模型与算力接入 OpenRouter</title>

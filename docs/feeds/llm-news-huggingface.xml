@@ -9,17 +9,521 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Build specialized multimodal models with LFM3</title>
+      <title>使用 LFM3 构建专用多模态模型</title>
       <link>https://huggingface.co/blog/LiquidAI/lfm3</link>
       <guid isPermaLink="true">https://huggingface.co/blog/LiquidAI/lfm3</guid>
       <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Build specialized multimodal models with LFM3</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>使用 LFM3 构建专用多模态模型</h1>
+<p>团队文章</p>
+<p>发布于 2026 年 10 月 27 日</p>
+<p>36</p>
+<ul><li><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt=""></a></li><li><a href="https://huggingface.co/s-jse"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62ed66743d88d075d72515fe/nzrS3MaUo2rqPDGRXKOJP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jimmysmith1919"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f8ad3749282808838048a0/Ci6nhDy53Z3_wcR39uJB5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nathanrchn"><img src="https://huggingface.co/avatars/d9b9b4ed0079ca70751539204bc33fec.svg" alt=""></a></li><li><a href="https://huggingface.co/rouzbehat78"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69791f53b2133a5c4f318f08/4jaCC1xkFQSd25agMwe97.jpeg" alt=""></a></li><li><a href="https://huggingface.co/amaltsev"><img src="https://huggingface.co/avatars/eefadceb8487048e32c95794e733a115.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/iamleonie"><img src="https://huggingface.co/avatars/d4b34a8059fcbc43d4773b1d5e820481.svg" alt="Leonie Monigatti 的头像"></a></p>
+<p>Leonie Monigatti</p>
+<p>iamleonie</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/jimmysmith1919"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f8ad3749282808838048a0/Ci6nhDy53Z3_wcR39uJB5.jpeg" alt="Jimmy T.H. Smith 的头像"></a></p>
+<p>Jimmy T.H. Smith</p>
+<p>jimmysmith1919</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/amaltsev"><img src="https://huggingface.co/avatars/eefadceb8487048e32c95794e733a115.svg" alt="Anthony Maltsev 的头像"></a></p>
+<p>Anthony Maltsev</p>
+<p>amaltsev</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt="Maxime Labonne 的头像"></a></p>
+<p>Maxime Labonne</p>
+<p>mlabonne</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/Brandon3967"><img src="https://huggingface.co/avatars/88da3e1b9a1e5466f980ab73502b8d70.svg" alt="Brandon 的头像"></a></p>
+<p>Brandon</p>
+<p>Brandon3967</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/samuelstevens"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64df8592d27135dd568380b5/1-YkiTAkI11QBbZnVRjJu.jpeg" alt="Samuel Stevens 的头像"></a></p>
+<p>Samuel Stevens</p>
+<p>samuelstevens</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/shubeydoo"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68ad4ca0c8098c6f8050af26/rs-ppX6kQ-CNLTAME6VWn.jpeg" alt="Ryan Shubert 的头像"></a></p>
+<p>Ryan Shubert</p>
+<p>shubeydoo</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/tianshu-yu"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/692e2d53117d37a2fcdb102c/8-JZzZcSDew0hKF-gYMRB.jpeg" alt="Tianshu Yu 的头像"></a></p>
+<p>Tianshu Yu</p>
+<p>tianshu-yu</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/s-jse"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62ed66743d88d075d72515fe/nzrS3MaUo2rqPDGRXKOJP.jpeg" alt="Sina 的头像"></a></p>
+<p>Sina</p>
+<p>s-jse</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/tseyde"><img src="https://huggingface.co/avatars/b26cb691a12fc93a2f25850be74a1770.svg" alt="Tim Seyde 的头像"></a></p>
+<p>Tim Seyde</p>
+<p>tseyde</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/rouzbehat78"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69791f53b2133a5c4f318f08/4jaCC1xkFQSd25agMwe97.jpeg" alt="Rouzbeh Amin Tafreshi 的头像"></a></p>
+<p>Rouzbeh Amin Tafreshi</p>
+<p>rouzbehat78</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/alexanderamini"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64d1c9fce9cac0020bdeb5b9/XC0Qi14HRVBPQGsjM3tqu.jpeg" alt="Alexander Amini 的头像"></a></p>
+<p>Alexander Amini</p>
+<p>alexanderamini</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/saniyakarwa"><img src="https://huggingface.co/avatars/1c60fbd0894fdd18c0887c8b5e608854.svg" alt="Saniya Karwa 的头像"></a></p>
+<p>Saniya Karwa</p>
+<p>saniyakarwa</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/haerski"><img src="https://huggingface.co/avatars/f8eda106a4f8d4360bf460bd10912765.svg" alt="Marc Harkonen 的头像"></a></p>
+<p>Marc Harkonen</p>
+<p>haerski</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/orech"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64ee478168616f1453e73df0/NPCNOmGcg-9XyAe8zrTNY.jpeg" alt="Anna Piunova 的头像"></a></p>
+<p>Anna Piunova</p>
+<p>orech</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/CalderKat"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/A4856Ek1Cd3wumFwS1_Z3.png" alt="Calder Katyal 的头像"></a></p>
+<p>Calder Katyal</p>
+<p>CalderKat</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/ianant93"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67f6dfb37b3b16caf90086ee/dHwPu1kZr9s1zQfAx7uAC.jpeg" alt="Ishwarya Ananthabhotla 的头像"></a></p>
+<p>Ishwarya Ananthabhotla</p>
+<p>ianant93</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/farris-liquid"><img src="https://huggingface.co/avatars/f0639c27776478229a395ba16d14df36.svg" alt="Farris Atif 的头像"></a></p>
+<p>Farris Atif</p>
+<p>farris-liquid</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/tdakhran"><img src="https://huggingface.co/avatars/ef3e22922f3b8da3e696288b9e702a9f.svg" alt="Tarek Dakhran 的头像"></a></p>
+<p>Tarek Dakhran</p>
+<p>tdakhran</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/paulpak58"><img src="https://huggingface.co/avatars/2e0a11d7cc24414cc7f2f79561fe5ff9.svg" alt="Paul Pak 的头像"></a></p>
+<p>Paul Pak</p>
+<p>paulpak58</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/tugot17"><img src="https://huggingface.co/avatars/7bc2b0fbcc97c4a117ef3de6175afe7c.svg" alt="xx 的头像"></a></p>
+<p>xx</p>
+<p>tugot17</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/mihirbafna"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/662ffa0ac7edc3b9628c6138/uwqInkvubt5tEz2odR2-H.png" alt="Mihir Bafna 的头像"></a></p>
+<p>Mihir Bafna</p>
+<p>mihirbafna</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/m3m0ryh0l3"><img src="https://huggingface.co/avatars/9fbae41344e7e9e2c2d257d3df9c9afe.svg" alt="Kyle Bruce Wheeler 的头像"></a></p>
+<p>Kyle Bruce Wheeler</p>
+<p>m3m0ryh0l3</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/adityatadimeti"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/662b14788e855c7c010c03c9/UWRzvG0YwSj5o7NxiYC6G.jpeg" alt="Aditya Tadimeti 的头像"></a></p>
+<p>Aditya Tadimeti</p>
+<p>adityatadimeti</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/alfredeng"><img src="https://huggingface.co/avatars/a8f07dd7fd5d10b42795f0e75ed57d41.svg" alt="Alfred Eng 的头像"></a></p>
+<p>Alfred Eng</p>
+<p>alfredeng</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/karthikrmacherla"><img src="https://huggingface.co/avatars/d6521ca2575c898bda8fe11c98489754.svg" alt="Karthik Macherla 的头像"></a></p>
+<p>Karthik Macherla</p>
+<p>karthikrmacherla</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/KTLK"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/jMMTObGZktuXWJ3wVVSxj.png" alt="Khoi Nguyen 的头像"></a></p>
+<p>Khoi Nguyen</p>
+<p>KTLK</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/agcarranza"><img src="https://huggingface.co/avatars/94b81708b8ce113c07f5fcdf7bda5619.svg" alt="Aldo Gael Carranza 的头像"></a></p>
+<p>Aldo Gael Carranza</p>
+<p>agcarranza</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/Aurelien-Lac"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a8f24b4adaa29ed09b8632/yvzQ7iDcUBwtg2rnkZ1e2.png" alt="Aurelien Lac 的头像"></a></p>
+<p>Aurelien Lac</p>
+<p>Aurelien-Lac</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/undfined"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65e5fefbe8cbae176d9ca005/5SLREDsVzycEwVsPNv765.jpeg" alt="Tyler Murray 的头像"></a></p>
+<p>Tyler Murray</p>
+<p>undfined</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/Raahul26"><img src="https://huggingface.co/avatars/ea960213b968c4454f84166b3bed005f.svg" alt="Raahul Vignesh 的头像"></a></p>
+<p>Raahul Vignesh</p>
+<p>Raahul26</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/sduong"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61e579a4dad2c81e175fc60c/XjAa60zy43KMDnz7mDbro.jpeg" alt="Song Duong 的头像"></a></p>
+<p>Song Duong</p>
+<p>sduong</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/raminmh"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/628e7102e0994038b5f40f05/WwUTy5fUH2Y0xcGjTIb89.jpeg" alt="Ramin Hasani 的头像"></a></p>
+<p>Ramin Hasani</p>
+<p>raminmh</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/mlech26l"><img src="https://huggingface.co/avatars/9ce73c7de01c7ab98dde15eeebf37963.svg" alt="Mathias Lechner 的头像"></a></p>
+<p>Mathias Lechner</p>
+<p>mlech26l</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/akhileshdeepakgotmare"><img src="https://huggingface.co/avatars/ffeb15650f9da3f3dfbeaf9f574ed3c2.svg" alt="Akhilesh Deepak Gotmare 的头像"></a></p>
+<p>Akhilesh Deepak Gotmare</p>
+<p>akhileshdeepakgotmare</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/fernandofernandes"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/646e57a5cb6ea6e6b6df1ad4/PlGhM2SUynFBUdYAylaZK.jpeg" alt="Fernando Fernandes Neto 的头像"></a></p>
+<p>Fernando Fernandes Neto</p>
+<p>fernandofernandes</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/WWWjiahui"><img src="https://huggingface.co/avatars/9666c0ff9bca41d1930c20450ba7ab44.svg" alt="Jiahui Wang 的头像"></a></p>
+<p>Jiahui Wang</p>
+<p>WWWjiahui</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/ykhrustalev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66e303b880f10dbf1b896f30/d2TAaTRy9WN9i8t1s0HY6.png" alt="Yuri Khrustalev 的头像"></a></p>
+<p>Yuri Khrustalev</p>
+<p>ykhrustalev</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/alay2shah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67ec1647828c8ff385606bf9/OzeHkgE0NknVWYn8TGG9R.jpeg" alt="Alay Shah 的头像"></a></p>
+<p>Alay Shah</p>
+<p>alay2shah</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/yungisimon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/2T3vwvjHPZA8mvJzWm5dK.jpeg" alt="Simon Lee 的头像"></a></p>
+<p>Simon Lee</p>
+<p>yungisimon</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/mayankagarwal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6229237ed94a4a3d5efbacb5/GM-ec64-qx660keEKqU1c.jpeg" alt="Mayank Agarwal 的头像"></a></p>
+<p>Mayank Agarwal</p>
+<p>mayankagarwal</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/zetianli"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68507030a17aa73fb574386e/XgHgjAMJXbuynfzM7v2aR.webp" alt="Zetian Li 的头像"></a></p>
+<p>Zetian Li</p>
+<p>zetianli</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/changyiyang"><img src="https://huggingface.co/avatars/da97a44c036f18b1149b448e99d3a9cf.svg" alt="changyi yang 的头像"></a></p>
+<p>changyi yang</p>
+<p>changyiyang</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/GAD-cell"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66a734f138fbd9075584e7bd/7GQOdyESC-_S73HVN-1MP.png" alt="Sinoué GAD 的头像"></a></p>
+<p>Sinoué GAD</p>
+<p>GAD-cell</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/nathanrchn"><img src="https://huggingface.co/avatars/d9b9b4ed0079ca70751539204bc33fec.svg" alt="nathan ranchin 的头像"></a></p>
+<p>nathan ranchin</p>
+<p>nathanrchn</p>
+<p><a href="https://huggingface.co/LiquidAI"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt="Liquid AI 的头像"></a> <a href="https://huggingface.co/LiquidAI">LiquidAI</a></p>
+<p><a href="https://huggingface.co/collections/LiquidAI/lfm3"><strong>LFM3</strong></a> 是我们新一代的 Liquid Foundation Models（LFMs），旨在成为专用智能的起点。它把文本、视觉、音频、omni 与决策模型放到同一条共享骨干上，全部处于 2B 参数区间。这意味着你可以按自己的模态挑选模型，在单张 GPU 上用自己的数据微调，再把它部署到应用运行的地方。</p>
+<p>相比此前的 LFM2 系列，LFM3 带来四项主要变化：</p>
+<ul><li><strong>每个参数具备更强能力：</strong> 新的 tri-hybrid 架构与训练配方让 LFM3-1.7B 在参数少 35% 的情况下胜过 LFM2.5-2.6B。</li><li><strong>所有模态共用一条骨干：</strong> 六个 2B 级模型（文本、视觉、音频、omni 与决策）都从 LFM3-1.7B-Base 训练而来，其中包括我们的首个 omni 模型，以及视觉模型新增的视频输入。</li><li><strong>为端侧而生：</strong> 文本模型在 4-bit 精度下约占 1 GB 内存，全新的自研视觉与音频编码器加快了处理速度，文本模型 256K 的上下文窗口则让 agent 可以在设备本地运行。</li><li><strong>天生适合专用化：</strong> 每个模型都能在单张 GPU 上微调，因此你可以把它适配到自己的数据、术语与部署环境。</li></ul>
+<h2>我们如何打造更具表达力的骨干</h2>
+<p>LFM2 证明了短卷积与 attention 的混合结构可以在设备本地快速运行，而不牺牲质量。到了 LFM3，我们用硬件在环（hardware-in-the-loop）架构搜索，针对 agentic 用例重新设计这套架构——这类用例需要更高的每参数能力，以及在长上下文上的快速推理。搜索范围现在覆盖 14 种设备与后端组合，从手机、Raspberry Pi 5 到笔记本、云上 CPU、GPU，以及 Qualcomm Hexagon NPU。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/644249b08443bce4c9890a0f/iZQBqXVZfrcUNCklF4eAs.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/644249b08443bce4c9890a0f/iZQBqXVZfrcUNCklF4eAs.png" alt="lfm3-1.7b-architecture"></a></p>
+<p>LFM3-1.7B-Base 有 24 层，包含四项主要变化：</p>
+<ul><li><strong>Tri-hybrid 层组合：</strong> 13 层带门控的短卷积、5 层窗口为 256 token 的滑动窗口注意力（SWA），以及 6 层全局注意力。卷积核大小为 7，比 LFM2 的 3 更大。</li><li><strong>逐 head 门控注意力：</strong> 一个 sigmoid 门控对每个 head 的输出做缩放，这样某个 head 在无话可说时可以自行关闭。这有助于压制会损害量化的激活离群值。</li><li><strong>部分 RoPE：</strong> 全局注意力层只旋转每个 head 中频率最高的那一半，于是另一半不受距离影响、按内容匹配。SWA 层保留完整 RoPE。</li><li><strong>Sandwich norm：</strong> 每个 block 对输入和输出都做归一化，让激活保持在合适的尺度上。</li></ul>
+<p>收益在长上下文上显现。按参数折算，LFM3-1.7B 在各类端侧设备的短 prompt 上与 LFM2-1.2B 持平，而在上下文含 8K token 时约快 25%。LFM3-1.7B-Base 在 22T token 上预训练，词表与 <a href="https://huggingface.co/LiquidAI/LFM2.5-8B-A1B">LFM2.5-8B-A1B</a> 同为 128K。最后 3.5T token 是在精选数据上进行的 mid-training 阶段，其中 agentic trace 与工具调用的占比更高，这一阶段也把上下文窗口扩展到 256K token。</p>
+<h2>一条骨干，六个模型</h2>
+<p>每个 LFM3 模型都从 LFM3-1.7B-Base 分叉而来。你不必去跑一个大而全的通用模型，而是挑出契合你输入的那一个，定制它，然后在设备本地运行。</p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/644249b08443bce4c9890a0f/6RfJINOKr6Ay2kHCPR-mz.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/644249b08443bce4c9890a0f/6RfJINOKr6Ay2kHCPR-mz.png" alt="lfm3-post-training"></a></p>
+<table><thead><tr><th>模型</th><th>输入</th><th>输出</th><th>基于</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/LiquidAI/LFM3-1.7B">LFM3-1.7B</a></td><td>文本</td><td>文本</td><td>LFM3-1.7B-Base</td></tr><tr><td><a href="https://huggingface.co/LiquidAI/LFM3-VL-2B">LFM3-VL-2B</a></td><td>文本、图像、视频</td><td>文本</td><td>LFM3 骨干 + 视觉编码器</td></tr><tr><td><a href="https://huggingface.co/LiquidAI/LFM3-Audio-2B">LFM3-Audio-2B</a></td><td>文本、音频</td><td>文本、语音</td><td>LFM3 骨干 + 音频编码器、音频解码器与 LiquidCodec</td></tr><tr><td><a href="https://huggingface.co/LiquidAI/LFM3-Omni-2B">LFM3-Omni-2B</a></td><td>文本、图像、视频、音频</td><td>文本、语音</td><td>LFM3 骨干 + 视觉与音频编码器以及音频解码器</td></tr><tr><td><a href="https://huggingface.co/LiquidAI/d1-2B">d1-2B</a></td><td>文本、图像、视频</td><td>校准后的答案</td><td>LFM3-VL-2B</td></tr><tr><td><a href="https://huggingface.co/LiquidAI/d1-omni-2B">d1-omni-2B</a></td><td>文本、图像、视频、音频</td><td>校准后的答案</td><td>LFM3-Omni-2B</td></tr></tbody></table>
+<p>视觉与音频模型还配备了两个全新的自研编码器：</p>
+<ul><li><strong>视觉编码器：</strong> 它把卷积与 attention 结合起来，算力消耗比此前 LFM VL 模型中的 SigLIP2 编码器少 3 倍。我们这个 164M 参数的编码器在精度上与 Qwen3.5-2B 的视觉编码器相当，而所需 FLOPs 少 2.2 倍（两者均在同一 LFM2.5-230M 语言骨干上测量）。对视频而言，它把每一对采样帧嵌入为一个时间切片，使时序序列长度减半。</li><li><strong>音频编码器与 LiquidCodec：</strong> 音频编码器混合了滑动窗口注意力与短卷积，并且完全因果，因此模型可以在你说话的同时做 prefill，首 token 延迟低至 50 ms。我们的新音频 tokenizer LiquidCodec 在 Apple M4 Max 的单个 CPU 线程上以约 87 倍实时速度把生成的 token 转成语音，并支持流式解码。</li></ul>
+<h2>如何使用 LFM3 模型</h2>
+<p>每个模型都能在 <code>transformers</code> 中运行。下面的代码片段来自各自的 model card，那里也列出了每个模型支持的其他推理引擎。</p>
+<h3>LFM3-1.7B</h3>
+<p>当你需要本地 agent、工具调用、结构化输出，或需要一个领域专用微调的基座时，就选 LFM3-1.7B。它经过 post-training，可在 Hermes Agent、Pi、OpenClaw 这类 agentic harness 中运行。它在参数少 35% 的情况下胜过前代 LFM2.5-2.6B，提升最大的在 agentic 任务上：在 WebArena-Verified 上它得 38.42，而前代为 3.02；在浏览器与业务应用的长任务上，它甚至超过了 Qwen3.5-9B。更多细节见 <a href="https://huggingface.co/LiquidAI/LFM3-1.7B">LFM3-1.7B model card</a>。</p>
+<p>要运行 LFM3-1.7B，先安装最新版本的 <code>transformers</code>：</p>
+<pre><code>pip install -U transformers</code></pre>
+<p>然后加载并运行模型：</p>
+<pre><code>from transformers import pipeline
+
+generator = pipeline(
+    &quot;text-generation&quot;,
+    model=&quot;LiquidAI/LFM3-1.7B&quot;,
+    trust_remote_code=True,
+)
+
+messages = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is C. elegans?&quot;}]
+output = generator(
+    messages,
+    do_sample=True,
+    temperature=0.1,
+    top_k=50,
+    repetition_penalty=1.1,
+    max_new_tokens=2048,
+)
+print(output[0][&quot;generated_text&quot;][-1][&quot;content&quot;])</code></pre>
+<p>本地 agent 的配置，参见 <a href="https://docs.liquid.ai/examples/agent-harnesses">Agent Harnesses 指南</a>。</p>
+<h3>LFM3-VL-2B</h3>
+<p>当你需要设备本地的视觉理解时，就选 LFM3-VL-2B。它是 LFM 首个接受视频输入的视觉模型；它会先逐步推理再作答，能定位物体并推理它们的空间摆放关系，这是机器人领域的坚实基础。与 LFM2.5-VL-3B 相比，它的参数更少（1.9B 对 3.1B），却把 62 个视觉 benchmark 的平均分从 57.6 提升到 71.4，与 Gemma 4 12B 持平——后者规模是它的六倍多。更多细节见 <a href="https://huggingface.co/LiquidAI/LFM3-VL-2B">LFM3-VL-2B model card</a>。</p>
+<p>要运行 LFM3-VL-2B，安装 transformers&gt;=5.21.0 及其视觉依赖：</p>
+<pre><code>pip install &quot;transformers&gt;=5.21.0&quot; torch torchvision pillow</code></pre>
+<p>然后加载并运行模型：</p>
+<pre><code>import torch
+from transformers import AutoModelForImageTextToText, AutoProcessor
+
+model_id = &quot;LiquidAI/LFM3-VL-2B&quot;
+
+model = AutoModelForImageTextToText.from_pretrained(model_id, dtype=torch.bfloat16, device_map=&quot;auto&quot;, trust_remote_code=True)
+processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
+
+messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;image&quot;, &quot;url&quot;: &quot;https://placecats.com/300/200&quot;},
+            {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: &quot;Describe this image.&quot;},
+        ],
+    }
+]
+
+inputs = processor.apply_chat_template(
+    messages,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+).to(model.device)
+
+with torch.inference_mode():
+    output_ids = model.generate(
+        **inputs,
+        do_sample=True,
+        temperature=0.1,
+        top_k=50,
+        repetition_penalty=1.1,
+        max_new_tokens=16384,  # generate() needs an explicit limit; reasoning can be long
+    )
+
+generated_ids = output_ids[:, inputs[&quot;input_ids&quot;].shape[1] :]
+print(processor.batch_decode(generated_ids, skip_special_tokens=True)[0])</code></pre>
+<p>工具调用、工具搜索以及用 llama.cpp 做设备本地推理，参见 <a href="https://huggingface.co/LiquidAI/LFM3-VL-2B">LFM3-VL-2B model card</a>。</p>
+<h3>LFM3-Audio-2B</h3>
+<p>当你需要在笔记本或端侧设备上做语音对话、语音识别、语音合成，或跨 18 种语言的翻译时，就选 LFM3-Audio-2B。它以文本或音频为输入，用文本、语音或两者同时作答，还能把口述请求转成工具调用。与 LFM2.5-Audio-1.5B 相比，它采用全新的自研音频编码器与语音 codec，说话质量更高（UTMOSv2 3.83 对 3.22），并新增了音频理解、通用音频推理与工具调用。更多细节见 <a href="https://huggingface.co/LiquidAI/LFM3-Audio-2B">LFM3-Audio-2B model card</a>。</p>
+<p>要运行 LFM3-Audio-2B，安装 <code>transformers&gt;=5.20.2</code> 及其音频依赖：</p>
+<pre><code>pip install &quot;transformers&gt;=5.20.2&quot; torch accelerate librosa soundfile</code></pre>
+<p>直接从 Hugging Face Hub 加载模型与 processor：</p>
+<pre><code>import torch
+import soundfile as sf
+
+from transformers import AutoModelForMultimodalLM, AutoProcessor
+
+model_id = &quot;LiquidAI/LFM3-Audio-2B&quot;
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+dtype = torch.bfloat16 if device == &quot;cuda&quot; else torch.float32
+
+model = AutoModelForMultimodalLM.from_pretrained(
+    model_id, dtype=dtype, device_map=device, trust_remote_code=True
+).eval()
+processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
+codec = processor.audio_tokenizer.to(device=device).eval()</code></pre>
+<p>然后开口提问，得到文本与语音两种回复：</p>
+<pre><code>conversation = [
+    {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;Respond with interleaved text and audio.&quot;},
+    {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;audio&quot;, &quot;audio&quot;: &quot;question.wav&quot;}]},
+    {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;&lt;|mixed_start|&gt;&quot;},
+]
+inputs = processor.apply_chat_template(
+    conversation,
+    continue_final_message=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+).to(device)
+with torch.no_grad():
+    outputs = model.generate(
+        **inputs,
+        max_new_tokens=1024,
+        audio_temperature=1.0,
+        audio_top_k=128,
+        audio_repetition_penalty=1.1,
+        audio_repetition_window=4096,
+        return_dict_in_generate=True,
+    )
+
+    text = processor.decode(
+        outputs.sequences[0, inputs[&quot;input_ids&quot;].shape[1]:],
+        skip_special_tokens=True,
+    )
+    waveform = codec.decode(
+        outputs.audio_codes[:1, :, :outputs.audio_lengths[0]]
+    ).audio_values[0]  # 24 kHz
+print(text)
+sf.write(&quot;reply.wav&quot;, waveform.float().cpu().numpy(), 24_000)</code></pre>
+<p>实时语音识别、语音合成、音频理解与工具调用，参见 <a href="https://huggingface.co/LiquidAI/LFM3-Audio-2B">LFM3-Audio-2B model card</a>。</p>
+<h3>LFM3-Omni-2B</h3>
+<p>当你需要一个能看、能听、还能回话的设备本地模型，用来替代各自独立的 ASR 模型、vision-language 模型、LLM 与 TTS 模型时，就选 LFM3-Omni-2B。它能回答关于图像的口头提问，能一边看一边听视频，还能把看到和听到的内容转成工具调用。这是我们的首个 omni 模型，支持文本、视觉与音频输入，同时输出文本与语音，并保留了独立 LFM3 模型的核心能力，包括视觉问答、语音识别、语音合成与指令遵循。与 LFM3-Audio-2B 一样，它通过 LiquidCodec 发声——把生成的 token 以超过实时的速度转成语音，因此语音回复会随模型生成而流式输出。在音视频理解上，它在 Daily-Omni、WorldSense 与 AV-SpeakerBench 上胜过了参数规模最高达 10.7B 的模型，例如 Qwen2.5-Omni-7B。更多细节见 <a href="https://huggingface.co/LiquidAI/LFM3-Omni-2B">LFM3-Omni-2B model card</a>。</p>
+<p>要运行 LFM3-Omni-2B，安装 <code>transformers&gt;=5.20.2</code> 及其视觉与音频依赖：</p>
+<pre><code>pip install &quot;transformers&gt;=5.20.2&quot; torch torchvision torchcodec accelerate pillow librosa soundfile</code></pre>
+<pre><code>import torch
+import soundfile as sf
+
+from transformers import AutoModelForMultimodalLM, AutoProcessor
+
+model_id = &quot;LiquidAI/LFM3-Omni-2B&quot;
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+dtype = torch.bfloat16 if device == &quot;cuda&quot; else torch.float32
+
+model = AutoModelForMultimodalLM.from_pretrained(
+    model_id, dtype=dtype, device_map=device, trust_remote_code=True
+).eval()
+processor = AutoProcessor.from_pretrained(model_id, trust_remote_code=True)
+codec = processor.audio_tokenizer.to(device=device).eval()</code></pre>
+<p>然后用语音对一张照片提问：</p>
+<pre><code>conversation = [
+    {
+        &quot;role&quot;: &quot;system&quot;,
+        &quot;content&quot;: &quot;Answer questions about the provided image. Base every answer only on what can be seen. Respond with text.&quot;,
+    },
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {&quot;type&quot;: &quot;image&quot;, &quot;image&quot;: &quot;photo.jpg&quot;},
+            {&quot;type&quot;: &quot;audio&quot;, &quot;audio&quot;: &quot;question.wav&quot;},
+        ],
+    },
+]
+inputs = processor.apply_chat_template(
+    conversation,
+    add_generation_prompt=True,
+    tokenize=True,
+    return_dict=True,
+    return_tensors=&quot;pt&quot;,
+).to(device)
+
+with torch.no_grad():
+    outputs = model.generate(**inputs, max_new_tokens=1024, generation_mode=&quot;text&quot;)
+
+print(processor.decode(
+    outputs.sequences[0, inputs[&quot;input_ids&quot;].shape[1]:outputs.sequence_lengths[0]],
+    skip_special_tokens=True,
+))</code></pre>
+<p>语音输出、带音轨的视频以及工具调用，参见 <a href="https://huggingface.co/LiquidAI/LFM3-Omni-2B">LFM3-Omni-2B model card</a>。</p>
+<h3>d1-2B 与 d1-omni-2B</h3>
+<p>当你需要的是快速、结构化的判断而非生成的文本时，就选 d1 系列模型。给它们一个情境（一张客服工单、一张发票、一个应用界面、一张照片、一条语音留言）和一串问题，它们会在一次前向传播里全部作答，每个答案都带校准后的概率。除了是/否、选项与评分，它们现在还能指向物体、从文档中读取数值、给出带区间的数值估计，并选出所有符合的选项。更多细节见 <a href="https://huggingface.co/LiquidAI/d1-2B">d1-2B</a> 与 <a href="https://huggingface.co/LiquidAI/d1-omni-2B">d1-omni-2B</a> 的 model card。</p>
+<p>两个 d1 模型之间怎么选：</p>
+<ul><li><strong>d1-2B</strong>：输入是文本、图片与视频时选它。它替代 <a href="https://huggingface.co/LiquidAI/d1-3B">d1-3B</a>，参数少三分之一，并在我们全部四个决策套件上都得分更高，例如在 ImajevBench 上 75.5 对 64.0。</li><li><strong>d1-omni-2B</strong>：输入包含音频时选它。如果你用语音而非文字提问，它几乎能保持全部准确率。</li></ul>
+<p>要运行 d1-2B，安装 <code>transformers&gt;=5.19</code> 及其视觉依赖：</p>
+<pre><code>pip install &quot;transformers&gt;=5.19&quot; torch torchvision pillow</code></pre>
+<p>然后加载 d1-2B，针对同一张客服工单在单次前向中提出多个问题：</p>
+<pre><code>import torch
+from transformers import AutoModel
+
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;mps&quot; if torch.backends.mps.is_available() else &quot;cpu&quot;
+dtype = torch.float32 if device == &quot;cpu&quot; else torch.bfloat16
+model = AutoModel.from_pretrained(&quot;LiquidAI/d1-2B&quot;, trust_remote_code=True, dtype=dtype).to(device)
+
+# Several named questions over one state, answered in one pass
+questions = {
+    &quot;refund&quot;: {&quot;type&quot;: &quot;noul&quot;, &quot;instructions&quot;: &quot;Is the customer asking for a refund?&quot;},  # yes/no: P(yes)
+    &quot;team&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;instructions&quot;: &quot;Which team should handle this?&quot;,
+             &quot;criteria&quot;: {&quot;billing&quot;: &quot;Charges, refunds, invoices&quot;, &quot;shipping&quot;: &quot;Delivery and parcels&quot;,
+                          &quot;technical&quot;: &quot;App or site faults&quot;}},
+    &quot;topics&quot;: {&quot;type&quot;: &quot;choice&quot;, &quot;multiple&quot;: True, &quot;instructions&quot;: &quot;Which topics does the message raise?&quot;,
+               &quot;criteria&quot;: {&quot;billing&quot;: &quot;Payments and charges&quot;, &quot;delivery&quot;: &quot;Shipping and parcels&quot;,
+                            &quot;login&quot;: &quot;Signing in to the account&quot;}},
+    &quot;urgency&quot;: {&quot;type&quot;: &quot;score&quot;, &quot;instructions&quot;: &quot;How urgent is this ticket?&quot;, &quot;criteria&quot;: [&quot;low&quot;, &quot;medium&quot;, &quot;high&quot;]},
+}
+out = model.system_one(&quot;I was charged twice and my parcel never arrived. Please refund one charge.&quot;, questions)
+a = out[&quot;answers&quot;]
+urgency = a[&quot;urgency&quot;][&quot;legend&quot;][str(int(a[&quot;urgency&quot;][&quot;score&quot;]))]
+print(round(a[&quot;refund&quot;][&quot;noul&quot;], 2), a[&quot;team&quot;][&quot;choice&quot;], a[&quot;topics&quot;][&quot;choices&quot;], urgency)
+# 1.0 billing ['billing', 'delivery'] medium</code></pre>
+<p>为简洁起见，这里只给出 d1-2B 的示例。音频片段与口述提问的示例见 <a href="https://huggingface.co/LiquidAI/d1-omni-2B">d1-omni-2B model card</a>。</p>
+<h2>为你的任务微调 LFM3</h2>
+<p>LFM3 天生为专用化而设计。前沿模型是强大的通才，但在你的用例里未必是专家。LFM3 把额外的容量塞进一个小而快的模型，因此一次短时间的微调就能让它成为你任务上的可靠专家——用你的数据、术语与工具。因为它足够小，你可以把微调后的模型部署到应用运行的地方，从设备到私有基础设施再到云端。</p>
+<p>每个模型都能在单张 GPU 上微调，下面这些 notebook 会带你走完文本、视觉、音频与 omni 模型的一个完整任务，从数据准备到评估。</p>
+<table><thead><tr><th>模型</th><th>方法</th><th>任务</th><th>Notebook</th></tr></thead><tbody><tr><td>LFM3-1.7B</td><td>SFT</td><td>从杂乱的文档中抽取结构化 JSON</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_sft_with_trl.ipynb">在 Colab 中打开</a></td></tr><tr><td>LFM3-1.7B</td><td>DPO</td><td>依据检索到的文档作答，或拒答</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_dpo_with_trl.ipynb">在 Colab 中打开</a></td></tr><tr><td>LFM3-1.7B</td><td>GRPO</td><td>在一个有 108 个工具的手机应用里调用正确的工具</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_grpo_with_trl.ipynb">在 Colab 中打开</a></td></tr><tr><td>LFM3-1.7B</td><td>CPT</td><td>从原始文本中学习一门新语言（土耳其语）</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_cpt_with_trl.ipynb">在 Colab 中打开</a></td></tr><tr><td>LFM3-VL-2B</td><td>SFT</td><td>把收据照片读成 JSON</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_vl_sft_with_trl.ipynb">在 Colab 中打开</a></td></tr><tr><td>LFM3-VL-2B</td><td>GRPO</td><td>把公式图片转写成 LaTeX</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_vl_grpo_with_trl.ipynb">在 Colab 中打开</a></td></tr><tr><td>LFM3-Audio-2B</td><td>SFT</td><td>把口述的智能家居指令映射为函数调用</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_audio_sft_with_transformers.ipynb">在 Colab 中打开</a></td></tr><tr><td>LFM3-Audio-2B</td><td>SFT</td><td>教模型一种新嗓音</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_audio_tts_sft_with_transformers.ipynb">在 Colab 中打开</a></td></tr><tr><td>LFM3-Omni-2B</td><td>SFT</td><td>把口述的智能家居指令映射为函数调用</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_omni_sft_with_transformers.ipynb">在 Colab 中打开</a></td></tr><tr><td>LFM3-Omni-2B</td><td>SFT</td><td>回答关于医学图像的口头提问</td><td><a href="https://colab.research.google.com/github/Liquid4All/cookbook/blob/main/finetuning/notebooks/lfm3_omni_vqa_sft_with_transformers.ipynb">在 Colab 中打开</a></td></tr></tbody></table>
+<h3>示例：教 LFM3 行动</h3>
+<p>我们把 LFM3-VL-2B 改造成三个互补的机器人模型，分别负责<strong>编排、导航与操作</strong>。编排器通过工具调用操作机械臂：它用指向来定位物体、用深度工具测量它们、调用运动规划器，并在后续的相机图像中检查结果。导航器依据最近的 RGB 观测跟随路线描述，只用五个 token 就预测出空间目标与路点轨迹。操作 VLA 在一次前向传播中把图像、语言与机器人状态映射为八步的连续动作块。该 VLA 在 15 种本体上联合训练，在四个 LIBERO 套件上取得 96.2% 的平均成功率，在 RoboCasa-GR1 桌面任务上达到 45.7%，并在 Jetson AGX Orin 上用 TensorRT FP16 于 50 ms 内生成动作块。这些结果表明，LFM3-VL-2B 是机器人领域一个紧凑的基座，从高层规划到低层控制，在嵌入式硬件上都能实时生成动作。</p>
+<p>在<a href="https://www.youtube.com/watch?v=ZARw2VY6Dlk">这段演示视频</a>中，看 LFM3-VL-2B 如何处理感知、导航与操作。</p>
+<p><a href="https://www.youtube.com/watch?v=ZARw2VY6Dlk"><img src="https://img.youtube.com/vi/ZARw2VY6Dlk/hqdefault.jpg" alt="视频标题"></a></p>
+<h2>开始使用 LFM3</h2>
+<p>所有 LFM3 模型均为开放权重，今天即可在 Hugging Face 上获取：</p>
+<ul><li><strong>下载：</strong> Hugging Face 上的 <a href="https://huggingface.co/collections/LiquidAI/lfm3">LFM3 collection</a>，其中包含可供你自己做 post-training 的 <a href="https://huggingface.co/LiquidAI/LFM3-1.7B-Base">LFM3-1.7B-Base</a>。</li><li><strong>微调：</strong> 用我们的<a href="https://github.com/Liquid4All/cookbook/tree/main/finetuning/notebooks">微调 notebook</a> 把 LFM3 适配到你的任务。</li><li><strong>在你的 harness 中使用：</strong> 参照我们的<a href="https://docs.liquid.ai/examples/agent-harnesses">指南</a>，了解如何运行本地 agent，例如 OpenClaw、Hermes Agent 与 Pi。</li></ul>
+<p>我们迫不及待想看到你构建的东西。</p>
+<h2>引用</h2>
+<p>如果你使用本工作，请引用发布博客：</p>
+<pre><code>@article{liquidAI2026LFM3,
+  author = {Liquid AI},
+  title = {Introducing LFM3: Every Modality for Specialized Intelligence},
+  journal = {Liquid AI Blog},
+  year = {2026},
+  note = {www.liquid.ai/blog/lfm3},
+}</code></pre>
+<h2>本文提到的模型 8</h2>
+<h2>本文提到的 Collection 1</h2>
+<p>来自该作者的更多文章</p>
+<h2>用 LFM2.5-24B-A2B 在设备本地运行快速、私密的 agent</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
+<p>70</p>
+<p>2026 年 10 月 13 日</p>
+<h2>面向端侧的多模态开放 d1 决策模型</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/EsTgVtnM2IqVRKgPdfqcB.png" alt=""></li></ul>
+<p>43</p>
+<p>2026 年 10 月 7 日</p>
+<h3>社区</h3>
+<p>把图片、音频和视频拖进文本输入框，或粘贴、或点击此处即可上传。</p>
+<p>点击或粘贴此处上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FLiquidAI%2Flfm3">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2FLiquidAI%2Flfm3">登录</a> 后发表评论</p>
+<p>36</p>
+<ul><li><a href="https://huggingface.co/mlabonne"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61b8e2ba285851687028d395/Rq3xWG7mJ3aCRoBsq340h.jpeg" alt=""></a></li><li><a href="https://huggingface.co/s-jse"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62ed66743d88d075d72515fe/nzrS3MaUo2rqPDGRXKOJP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/jimmysmith1919"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64f8ad3749282808838048a0/Ci6nhDy53Z3_wcR39uJB5.jpeg" alt=""></a></li><li><a href="https://huggingface.co/nathanrchn"><img src="https://huggingface.co/avatars/d9b9b4ed0079ca70751539204bc33fec.svg" alt=""></a></li><li><a href="https://huggingface.co/rouzbehat78"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/69791f53b2133a5c4f318f08/4jaCC1xkFQSd25agMwe97.jpeg" alt=""></a></li><li><a href="https://huggingface.co/amaltsev"><img src="https://huggingface.co/avatars/eefadceb8487048e32c95794e733a115.svg" alt=""></a></li><li><a href="https://huggingface.co/GAD-cell"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/66a734f138fbd9075584e7bd/7GQOdyESC-_S73HVN-1MP.png" alt=""></a></li><li><a href="https://huggingface.co/trydrama-neuralgarage"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/EKbtXKdRa4E1aIvg9qlHV.png" alt=""></a></li><li><a href="https://huggingface.co/FlameF0X"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6615494716917dfdc645c44e/M_aMgH5QzSl_hm-srhJwW.webp" alt=""></a></li><li><a href="https://huggingface.co/mayankagarwal"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6229237ed94a4a3d5efbacb5/GM-ec64-qx660keEKqU1c.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alay2shah"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67ec1647828c8ff385606bf9/OzeHkgE0NknVWYn8TGG9R.jpeg" alt=""></a></li><li><a href="https://huggingface.co/undfined"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65e5fefbe8cbae176d9ca005/5SLREDsVzycEwVsPNv765.jpeg" alt=""></a></li></ul>
+<h2>本文提到的模型 8</h2>
+<h2>本文提到的 Collection 1</h2>]]></content:encoded>
     </item>
     <item>
-      <title>我们可以信任LLM来判断一个研究想法是否新颖吗？</title>
+      <title>我们可以信任 LLM 来判断一个研究想法是否新颖吗？</title>
       <link>https://huggingface.co/blog/allenai/novelty-bench</link>
       <guid isPermaLink="true">https://huggingface.co/blog/allenai/novelty-bench</guid>
       <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Can we trust LLMs to judge whether a research idea is novel?</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> 返回文章</a></p>
+<h1>我们可以信任 LLM 来判断一个研究想法是否新颖吗？</h1>
+<p>企业  文章</p>
+<p>发布于 2026 年 10 月 27 日</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Entmarch"><img src="https://huggingface.co/avatars/26fa040c7f334785b26ae42de24ab4dc.svg" alt=""></a></li><li><a href="https://huggingface.co/KlondikeDev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/689a3f0eec8a724449b85179/k3W6LToYIoZfqI648wYt2.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/tindle"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/d1JmoWKj1wPc-o88x-oKx.png" alt=""></a></li><li><a href="https://huggingface.co/IsmaelMZ"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ycde52lYaw4-ZyBkdfv10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Firemedic15"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/MsT-kIMd2zPiU0kzoBymY.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/Ai2Comms"><img src="https://huggingface.co/avatars/9c2a0976ea68fe021a4191d3d4c5454b.svg" alt="Kyle Wiggers 的头像"></a></p>
+<p>Kyle Wiggers</p>
+<p>Ai2Comms</p>
+<p><a href="https://huggingface.co/allenai"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt="Ai2 的头像"></a> <a href="https://huggingface.co/allenai">allenai</a></p>
+<p>📄 <a href="https://arxiv.org/abs/2610.02022">论文</a> | 📊 <a href="https://huggingface.co/datasets/allenai/novelty-judge-bench">数据</a> | 💻 <a href="https://github.com/allenai/novelty-eval">代码</a></p>
+<p><a href="https://www.datocms-assets.com/64837/1793023853-novelty-bench-header.png"><img src="https://www.datocms-assets.com/64837/1793023853-novelty-bench-header.png" alt="一个灯泡，周围是六个做出不同新颖性判断的 AI 模型。"></a></p>
+<p>今天我们发布 <a href="https://arxiv.org/abs/2610.02022"><strong>Old Ideas, Novel Problems</strong></a>，这是一项关于大语言模型能否可靠评估科学研究想法新颖性的新研究。随论文一同发布的，还有用于测试 novelty judge 的 benchmark、数据和代码，以及一条可供研究者构建新评测集的自动化 pipeline。</p>
+<p>在 Ai2，我们一直在开发支持科学发现不同环节的 AI 系统。<a href="https://allenai.org/blog/asta-datavoyager">DataVoyager</a> 帮助研究者探索和分析结构化数据，<a href="https://allenai.org/blog/autodiscovery">AutoDiscovery</a> 生成并检验假设，<a href="https://allenai.org/blog/theorizer">Theorizer</a> 将海量文献中的证据综合为候选科学理论。连同 <a href="https://allenai.org/asta">Asta</a>，这些项目指向这样一类系统：它们能帮助研究者从理解既有工作，走到提出、检验和打磨新想法。</p>
+<p>但生成研究想法只是自动化科学发现这项挑战的一部分。这些想法还必须贡献真正新的东西，这意味着这类系统需要有能力区分真正新颖的方向与基本上只是重新包装既有工作的方向。</p>
+<p>这项判断往往交给另一个 LLM——我们称之为 <em>novelty judge</em>。Novelty judge 评估一个研究想法相对于既有工作是否新颖，可以单独评估，也可以与另一个想法比较。构建它并没有标准做法；研究团队自行选择模型、prompt、评测格式、推理预算，有时还包括文献检索系统。这些选择会实质性影响判定结果。然而，这类 judge 往往只在人类撰写的论文上做过验证，而不是在它们实际要评估的 AI 生成想法上验证。</p>
+<p>我们新的 benchmark 结果提示，新颖性评测本身远谈不上可靠。在六个 LLM judge——GPT-5.1、GPT-5.2、GPT-5.4、Claude Sonnet 4.5、Claude Opus 4.5 和 Claude Opus 4.6——上，评测设置中看似微小的改动，会让同一批想法得到截然不同的判断。在一项实验中，只改动 prompt 里的几个词，模型判断两个想法中哪一个更新颖的准确率就偏移了 50 个百分点以上。检索和额外推理并不能稳定改善判断，而两个专门打造的 novelty 评测系统，表现还不如一个简单的 prompt 版 Claude Opus 4.6 baseline。</p>
+<p>如果 AI 要在科学发现中扮演更大的角色，我们就需要更可靠的方法来判断它是否真的提出了新东西。我们的工作为研究这一问题提供了工具，同时也显示出还有多少问题悬而未决。</p>
+<h2>为 novelty judge 构建 benchmark</h2>
+<p>为了测试 novelty judge 区分更新颖与较不新颖研究想法的可靠程度，我们首先需要一批例子，其中关于底层科学贡献原创性的证据足够充分。</p>
+<p>于是我们围绕 ICLR 2026 的同行评审构建了一条自动化 pipeline。我们没有把论文被接收当作新颖性的代理指标，而是从评审意见本身挖掘评审者明确讨论某项贡献原创性的段落。这一区别是关键：一篇论文只要在其他方面足够强，即使并不特别新颖也可能被接收。同样，一篇有原创贡献的被拒论文也可能存在其他弱点。</p>
+<p>我们构建了一个包含 154 个人类撰写研究想法的 <em>high-novelty pool</em>：挑选其所在 ICLR 研究领域评分前 10% 的被接收论文，且其评审者明确认定具有新颖性、没有任何评审者提出异议。我们应用相反的标准构建 <em>lower-novelty pool</em>：145 个来自评分后 10% 的被拒论文的想法，其评审者提出了原创性疑虑，且没有任何评审者明确认定新颖。在对评审挖掘流程的一次单独核查中，一位标注者在 50 例里有 47 例与提取出的新颖性信号极性一致；这些分歧没有一例会改变某位评审者是否被计为在称赞或质疑论文的新颖性。</p>
+<p>这两个池共同构成我们的第一个评测设置 <em>Human-Only</em>，用于测试 novelty judge 能否区分有较强证据表明新颖性较高或较低的人类撰写想法。但在实践中，novelty judge 越来越多地被用于评估 AI 生成的想法。因此我们创建了第二个设置 <em>Human+Generated</em>。</p>
+<p>在这个池中，我们把同样的 154 个经过验证的人类想法与 154 个由简单 LLM 生成器产出的想法配对。我们假设生成的想法不如对应的人类撰写想法新颖；这些是弱标签，并非对每个想法逐一验证过的判断。生成器只收到一个研究领域和一条提出新颖想法的指令，没有文献检索、工具、迭代或反馈。这让我们得到一个保守的对比：来自基础生成器的想法，对上来自 ICLR 前 10% 论文、其评审者明确认可其原创性的贡献。</p>
+<p>作为额外的核查，一位专家独立审阅了 30 组 <em>Human+Generated</em> 配对，其中大量偏向我们最强 judge 判断错误的案例；我们还把人类撰写与 AI 生成的想法改写为统一结构，以测试 judge 是否只是在反应写作风格上的差异。这位专家在全部 30 组中都更偏好人类想法，并认为没有一个生成的想法具备新颖性。</p>
+<p>重要的是，我们的许多核心发现根本不依赖于这些标签。如果两个合理的评测设置对同一对想法给出相反答案，这种分歧本身就揭示了不稳定性。</p>
+<h2>微小的改动就能带来截然不同的判定</h2>
+<p>借助我们的人类撰写与 AI 生成研究想法集合，我们测试了六个 LLM judge——GPT-5.1、GPT-5.2、GPT-5.4、Claude Sonnet 4.5、Claude Opus 4.5 和 Claude Opus 4.6——通过 pointwise（即绝对新颖性评分）与 pairwise（即比较两个想法、找出更新颖的那个）两种比较方式评估新颖性的表现。我们每次只改变一个因素：prompt、推理预算、judge 能否看到相关论文、想法的格式化方式、多少个判断被合并为最终判定，以及——对 AI 生成的想法而言——由哪个模型生成。</p>
+<p>性能上最大的变化来自我们如何用 prompt 引导模型判断新颖性。</p>
+<p>例如，我们用两个 prompt 向 GPT-5.4 展示同样的 <em>Human+Generated</em> 配对——每组包含一个经过验证的人类撰写想法和一个 AI 生成想法。一个 prompt 告诉模型，评审者发现每组中恰好有一个想法是新颖的，并要求它指出是哪一个；另一个只是问哪个想法新颖。当我们换用更简单的 prompt 时，准确率从 93.5% 掉到 40.9%——低于随机水平——模型对超过一半的相同配对改变了判定。</p>
+<p><a href="https://www.datocms-assets.com/64837/1793023853-novelty-bench-prompt-wording-chart.png"><img src="https://www.datocms-assets.com/64837/1793023853-novelty-bench-prompt-wording-chart.png" alt="柱状图比较六种 AI 模型在两个 prompt 下选中评审者称赞的人类想法的频率。Claude Opus 4.6：100.0% 对 72.7%；GPT-5.2：81.8% 对 76.0%；Claude Opus 4.5：92.2% 对 58.4%；GPT-5.1：79.2% 对 56.5%；GPT-5.4：93.5% 对 40.9%；Claude Sonnet 4.5：60.4% 对 36.4%。"></a></p>
+<p>相比之下，同样的 prompt 改动在 <em>Human-Only</em> 数据集上只让准确率偏移了约 7 个百分点，该数据集把新颖性证据较强与较弱的人类撰写想法配对。这表明，novelty judge 在人类撰写的研究上可能显得相对稳定，但在 AI 生成的想法上表现会大不相同。</p>
+<p>话虽如此，人类撰写想法也并非不受影响。我们在 <em>Human-Only</em> 数据集上也看到了显著变化；同一改动让 Claude Opus 4.6 的准确率移动了 21 个点。只是这些变化没有 AI 生成想法上那么剧烈。</p>
+<p>也不存在普适更好的 prompt。例如，在逐个判断想法时，删掉那条警告 judge 不要把琐碎或渐进式贡献视为新颖的指令，会提高某些 judge 的准确率，同时降低另一些 judge 的准确率。换句话说，对一个模型效果好的 prompt，未必能迁移到另一个模型。</p>
+<p>我们还测试了 novelty judge 的一种常见用法：比较来自两个 AI 生成器的想法。我们把 Claude Opus 4.5 与 Claude Sonnet 4.5 的想法配对，把 GPT-5.4 与 GPT-5.1 的想法配对。在所测试的 prompt 改动中，六个 judge 平均约有四分之一到三分之一的判定发生了变化。这种分歧无需假设哪个生成器产出的想法更新颖就能测量出来，说明 judge prompt 的选择会如何影响不同 ideation 系统之间的比较。</p>
+<p>更多的搜索与推理并不必然带来更好的新颖性判断。我们给 GPT-5.6 Sol 额外高的推理预算，并允许它进行限定在 arXiv 上的实时迭代搜索，然后把它与采用标准检索的 judge 对比，后者每个都看到五条预先检索好的摘要。（这一对比中的所有 judge 都在 <em>Human+Generated</em> 上对每个想法运行一次。）这个 agentic judge 得分 0.78 macro-F1——比 Claude Opus 4.6 的 0.89 低 11 个点，与更简单的 Claude Opus 4.5、GPT-5.4 设置大致处于同一区间——而按当前 API 价格，每次判定的成本约为其 10 倍。（在此语境下，macro-F1 衡量 judge 识别新颖与非新颖想法的能力；越高越好。）</p>
+<p>专门打造的评测器也没有更准确，尽管成本高得多。在 <em>Human+Generated</em> 集上，一个简单的 Claude Opus 4.6 prompt，采用低推理并在三次调用间做多数投票，取得了 0.854 macro-F1，总评测成本 $2.59。作为对比，Idea Novelty Checker——一条基于文献的检索与重排序 pipeline——得分 0.642，成本 $30.66；而 Sakana AI 的 AI Scientist（其 novelty 评测器会迭代搜索 Semantic Scholar）得分 0.772，成本 $82.05。（两个专用评测器都使用 Claude Opus 4.6，每次判定一次调用。）</p>
+<p>换句话说，这个简单的 prompt baseline 比两个专用系统都更准确，也便宜得多。</p>
+<p>综合来看，这些结果表明，在这些系统越来越多被要求判断的 AI 生成想法上，新颖性评测尤其脆弱。</p>
+<h2>走向更可靠的新颖研究评测</h2>
+<p>我们的结果表明，基于 LLM 的新颖性评测仍是一个重大的开放问题。在人类撰写研究上显得可靠的 judge，在 AI 生成想法上可能表现不同；对一个模型有帮助的 prompt 可能损害另一个模型；更多的搜索或算力并不必然带来更一致的判断。</p>
+<p>未来的工作应当在与 judge 实际要评估的想法同类的想法上测试它们，测量其对 prompt 与模型的敏感性，改进既有文献的引入方式，并构建能够随着科学文献增长与 AI 系统进步而演进的 benchmark。我们的 benchmark 与可复用的数据 pipeline 是一个起点——研究者可以把它们应用到新的同行评审、其他科学共同体，以及未来几代的 novelty judge。</p>
+<p>自动化 ideation 不只取决于生成看似合理的研究方向；我们还需要能够判断这些想法何时真正新颖的方法。通过让当前 novelty judge 的弱点更容易被测量，我们希望这次发布能帮助研究者构建更稳健的方法来评估 AI 生成的研究想法。</p>
+<h2>本文提到的数据集 1</h2>
+<p>更多来自该作者</p>
+<h2>LitPivot：在文献图景中通过动态语境化来发展研究想法</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>38</p>
+<p>2026 年 10 月 23 日</p>
+<h2>OlmoEarth v1.3：面向整个地球的最先进 embedding</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/652db071b62cf1f8463221e2/CxxwFiaomTa1MCX_B7-pT.png" alt=""></li></ul>
+<p>15</p>
+<p>2026 年 10 月 22 日</p>
+<h3>社区</h3>
+<p>把图片、音频和视频拖进文本输入框，或粘贴、或点击此处即可上传。</p>
+<p>点击或粘贴此处上传图片</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fallenai%2Fnovelty-bench">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fallenai%2Fnovelty-bench">登录</a> 后发表评论</p>
+<p>7</p>
+<ul><li><a href="https://huggingface.co/Entmarch"><img src="https://huggingface.co/avatars/26fa040c7f334785b26ae42de24ab4dc.svg" alt=""></a></li><li><a href="https://huggingface.co/KlondikeDev"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/689a3f0eec8a724449b85179/k3W6LToYIoZfqI648wYt2.jpeg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/tindle"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/d1JmoWKj1wPc-o88x-oKx.png" alt=""></a></li><li><a href="https://huggingface.co/IsmaelMZ"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/ycde52lYaw4-ZyBkdfv10.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Firemedic15"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/MsT-kIMd2zPiU0kzoBymY.png" alt=""></a></li><li><a href="https://huggingface.co/idoru"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63d5a365652b74a957dc961b/cheLOQa83AYA7fp991r-7.jpeg" alt=""></a></li></ul>
+<h2>本文提到的数据集 1</h2>]]></content:encoded>
     </item>
     <item>
       <title>你的模型能在 AWS Trainium 上运行吗？查一查</title>

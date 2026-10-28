@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-28 09:41:40**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-28 20:49:53**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -27,8 +27,8 @@
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-28，标题自动汉化）：
   1. [管理成本并展示 Google Cloud 上 Claude Code 的投资回报率](https://claude.com/resources/articles/how-to-manage-costs-and-demonstrate-roi-for-claude-code-on-google-cloud)（2026-10-27）
-  2. [Claude财务顾问](https://claude.com/resources/articles/claude-for-financial-advisors)（2026-10-27）
-  3. [与Claude一起加速药物开发的早期进展](https://www.anthropic.com/research/early-progress-drug-development)（2026-10-27）
+  2. [正式推出 Claude for Financial Advisors](https://claude.com/resources/articles/claude-for-financial-advisors)（2026-10-27）
+  3. [与 Claude 一起加速药物开发的早期进展](https://www.anthropic.com/research/early-progress-drug-development)（2026-10-27）
   4. [扩大我们与 GSA 的合作伙伴关系，将 Claude 带到各级政府](https://www.anthropic.com/news/expanding-partnership-gsa)（2026-10-27）
   5. [扩大Claude对非营利组织的影响](https://claude.com/resources/articles/expanding-claude-for-nonprofits)（2026-10-26）
   - 📄 完整文章归档（共 130 篇）：[anthropic.md](llm-news/anthropic.md)
@@ -114,7 +114,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-xai_grok.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-xai_grok.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-28，标题自动汉化）：
-  1. [您的下一个销售团队成员应该是 Grok 机器人](https://x.ai/news/grok-bot-sales)（2026-10-27）
+  1. [您的下一个销售团队成员应该是 Grok Bot](https://x.ai/news/grok-bot-sales)（2026-10-27）
   2. [SpaceX Super Intelligence 合作伙伴网络正式推出](https://x.ai/news/partnernetworkannouncement)（2026-10-22）
   3. [用 Grok Bot 检测并响应线上事故](https://x.ai/news/incident-sweep)（2026-10-20）
   4. [推出 Grok Voice 3.0](https://x.ai/news/grok-voice-3)（2026-10-14）
@@ -194,8 +194,8 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-28，标题自动汉化）：
-  1. [Build specialized multimodal models with LFM3](https://huggingface.co/blog/LiquidAI/lfm3)（2026-10-27）
-  2. [我们可以信任LLM来判断一个研究想法是否新颖吗？](https://huggingface.co/blog/allenai/novelty-bench)（2026-10-27）
+  1. [使用 LFM3 构建专用多模态模型](https://huggingface.co/blog/LiquidAI/lfm3)（2026-10-27）
+  2. [我们可以信任 LLM 来判断一个研究想法是否新颖吗？](https://huggingface.co/blog/allenai/novelty-bench)（2026-10-27）
   3. [你的模型能在 AWS Trainium 上运行吗？查一查](https://huggingface.co/blog/torch-neuronx-model-support)（2026-10-23）
   4. [LitPivot：在文献景观中通过动态情境化来发展研究想法](https://huggingface.co/blog/allenai/litpivot)（2026-10-23）
   5. [将数据库评分转化为强化学习奖励：使用 ThinkingBox 进行训练后智能体](https://huggingface.co/blog/microsoft/thinkingbox-training)（2026-10-22）
@@ -308,10 +308,10 @@
 ### Amazon Bedrock (AWS Free Tier) (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-10-28，标题自动汉化）：
-  1. [AWS named a Leader in the 2026 Gartner Magic Quadrant for Contact Center as a Service](https://aws.amazon.com/blogs/machine-learning/aws-named-a-leader-in-the-2026-gartner-magic-quadrant-for-contact-center-as-a-service/)（2026-10-27）
-  2. [Announcing SOCI-indexed images for faster SageMaker AI jobs](https://aws.amazon.com/blogs/machine-learning/announcing-soci-indexed-images-for-faster-sagemaker-ai-jobs/)（2026-10-27）
-  3. [Fix evaluation bias to unlock better models on Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/fix-evaluation-bias-to-unlock-better-models-on-amazon-bedrock/)（2026-10-27）
-  4. [Exowatt beats frontier models on accuracy with SageMaker serverless model customization](https://aws.amazon.com/blogs/machine-learning/exowatt-beats-frontier-models-on-accuracy-with-sagemaker-serverless-model-customization/)（2026-10-27）
+  1. [AWS 被评为 2026 年 Gartner 联络中心即服务魔力象限领导者](https://aws.amazon.com/blogs/machine-learning/aws-named-a-leader-in-the-2026-gartner-magic-quadrant-for-contact-center-as-a-service/)（2026-10-27）
+  2. [推出 SOCI 索引镜像，加速 SageMaker AI 作业](https://aws.amazon.com/blogs/machine-learning/announcing-soci-indexed-images-for-faster-sagemaker-ai-jobs/)（2026-10-27）
+  3. [修复评估偏差，在 Amazon Bedrock 上解锁更好的模型](https://aws.amazon.com/blogs/machine-learning/fix-evaluation-bias-to-unlock-better-models-on-amazon-bedrock/)（2026-10-27）
+  4. [Exowatt 借助 SageMaker serverless 模型定制在准确率上超越前沿模型](https://aws.amazon.com/blogs/machine-learning/exowatt-beats-frontier-models-on-accuracy-with-sagemaker-serverless-model-customization/)（2026-10-27）
   5. [Fleet-wide computer vision lifecycle at the edge with SageMaker SDK v3](https://aws.amazon.com/blogs/machine-learning/fleet-wide-computer-vision-lifecycle-at-the-edge-with-sagemaker-sdk-v3/)（2026-10-26）
   - 📄 完整文章归档（共 130 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
@@ -330,7 +330,7 @@
 ### Together AI (together_ai)
 - 📡 [RSS/Atom 订阅源](https://www.together.ai/blog/rss.xml)：`https://www.together.ai/blog/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-28，标题自动汉化）：
-  1. [Auto repair for Together GPU Clusters: from GPU fault to healthy node](https://www.together.ai/blog/auto-repair-for-together-gpu-clusters)（2026-10-27）
+  1. [Together GPU 集群自动修复：从 GPU 故障到健康节点](https://www.together.ai/blog/auto-repair-for-together-gpu-clusters)（2026-10-27）
   2. [Together Post-Training 上线：按你的方式做前沿级模型后训练](https://www.together.ai/blog/together-post-training)（2026-10-19）
   3. [Meta Muse Spark Open 已在 Together AI 上线](https://www.together.ai/blog/meta-muse-spark-open)（2026-10-15）
   4. [与 IBM Cloud 和 NVIDIA 合作，扩展我们的企业推理容量](https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia)（2026-10-06）
@@ -409,7 +409,7 @@
 ### Anyscale (anyscale)
 - 📡 [RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)：`https://www.anyscale.com/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-28，标题自动汉化）：
-  1. [KubeRay in production: best practices from the field](https://anyscale.com/blog/kuberay-best-practices)（2026-10-26）
+  1. [KubeRay 生产实践：来自一线的最佳实践](https://anyscale.com/blog/kuberay-best-practices)（2026-10-26）
   2. [宣布 Ray 支持 Google TPU 上的 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20）
   3. [宣布成立 Ray on Accelerators 特别兴趣小组（SIG）](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20）
   4. [用 KubeRay 在 Kubernetes 上大规模运行 Ray](https://anyscale.com/blog/kuberay)（2026-10-15）

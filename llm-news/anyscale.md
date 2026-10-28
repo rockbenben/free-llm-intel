@@ -9,7 +9,7 @@
 
 ## 全部文章（共 86 篇，按日期倒序；无日期条目列于最后）
 
-1. [KubeRay in production: best practices from the field](https://anyscale.com/blog/kuberay-best-practices)（2026-10-26）
+1. [KubeRay 生产实践：来自一线的最佳实践](https://anyscale.com/blog/kuberay-best-practices)（2026-10-26） <!--orig:KubeRay in production: best practices from the field-->
 2. [宣布 Ray 支持 Google TPU 上的 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20） <!--orig:Announcing Ray support for PyTorch on Google TPUs-->
 3. [宣布成立 Ray on Accelerators 特别兴趣小组（SIG）](https://anyscale.com/blog/announcing-special-interest-group-sig-ray-nvidia-amd-tpu)（2026-10-20） <!--orig:Announcing the Special Interest Group (SIG) for Ray on Accelerators-->
 4. [用 KubeRay 在 Kubernetes 上大规模运行 Ray](https://anyscale.com/blog/kuberay)（2026-10-15） <!--orig:Running Ray at scale on Kubernetes with KubeRay-->

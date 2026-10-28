@@ -10,8 +10,8 @@
 
 ## 全部文章（共 906 篇，按日期倒序；无日期条目列于最后）
 
-1. [Build specialized multimodal models with LFM3](https://huggingface.co/blog/LiquidAI/lfm3)（2026-10-27）
-2. [我们可以信任LLM来判断一个研究想法是否新颖吗？](https://huggingface.co/blog/allenai/novelty-bench)（2026-10-27） <!--orig:Can we trust LLMs to judge whether a research idea is novel?-->
+1. [使用 LFM3 构建专用多模态模型](https://huggingface.co/blog/LiquidAI/lfm3)（2026-10-27） <!--orig:Build specialized multimodal models with LFM3-->
+2. [我们可以信任 LLM 来判断一个研究想法是否新颖吗？](https://huggingface.co/blog/allenai/novelty-bench)（2026-10-27） <!--orig:Can we trust LLMs to judge whether a research idea is novel?-->
 3. [你的模型能在 AWS Trainium 上运行吗？查一查](https://huggingface.co/blog/torch-neuronx-model-support)（2026-10-23） <!--orig:Does Your Model Run on AWS Trainium? Look It Up-->
 4. [LitPivot：在文献景观中通过动态情境化来发展研究想法](https://huggingface.co/blog/allenai/litpivot)（2026-10-23） <!--orig:LitPivot: Developing research ideas through dynamic contextualization within the literature landscape-->
 5. [将数据库评分转化为强化学习奖励：使用 ThinkingBox 进行训练后智能体](https://huggingface.co/blog/microsoft/thinkingbox-training)（2026-10-22） <!--orig:Turning Database Grading into RL Rewards: Post-Training Agents with ThinkingBox-->

@@ -11,8 +11,8 @@
 ## 全部文章（共 130 篇，按日期倒序；无日期条目列于最后）
 
 1. [管理成本并展示 Google Cloud 上 Claude Code 的投资回报率](https://claude.com/resources/articles/how-to-manage-costs-and-demonstrate-roi-for-claude-code-on-google-cloud)（2026-10-27） <!--orig:Manage costs and demonstrate ROI for Claude Code on Google Cloud-->
-2. [Claude财务顾问](https://claude.com/resources/articles/claude-for-financial-advisors)（2026-10-27） <!--orig:Claude for Financial Advisors-->
-3. [与Claude一起加速药物开发的早期进展](https://www.anthropic.com/research/early-progress-drug-development)（2026-10-27） <!--orig:Early progress on accelerating drug development with Claude-->
+2. [正式推出 Claude for Financial Advisors](https://claude.com/resources/articles/claude-for-financial-advisors)（2026-10-27） <!--orig:Claude for Financial Advisors-->
+3. [与 Claude 一起加速药物开发的早期进展](https://www.anthropic.com/research/early-progress-drug-development)（2026-10-27） <!--orig:Early progress on accelerating drug development with Claude-->
 4. [扩大我们与 GSA 的合作伙伴关系，将 Claude 带到各级政府](https://www.anthropic.com/news/expanding-partnership-gsa)（2026-10-27） <!--orig:Expanding our partnership with GSA to bring Claude to all levels of government-->
 5. [扩大Claude对非营利组织的影响](https://claude.com/resources/articles/expanding-claude-for-nonprofits)（2026-10-26） <!--orig:Expanding Claude for Nonprofits-->
 6. [Anthropic 向 SEC 提交 S-1 拟议首次公开募股](https://www.anthropic.com/news/s1-sec)（2026-10-26） <!--orig:Anthropic files S-1 with the SEC for proposed initial public offering-->

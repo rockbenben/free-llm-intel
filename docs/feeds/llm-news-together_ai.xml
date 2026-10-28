@@ -9,11 +9,78 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-together_ai.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Tue, 27 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Auto repair for Together GPU Clusters: from GPU fault to hea…</title>
+      <title>Together GPU 集群自动修复：从 GPU 故障到健康节点</title>
       <link>https://www.together.ai/blog/auto-repair-for-together-gpu-clusters</link>
       <guid isPermaLink="true">https://www.together.ai/blog/auto-repair-for-together-gpu-clusters</guid>
       <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Auto repair for Together GPU Clusters: from GPU fault to healthy node</description>
+      <description>原文标题：Auto repair for Together GPU Clusters: from GPU fault to healthy node</description>
+      <content:encoded><![CDATA[<p>所有博客文章</p>
+<p>GPU 集群</p>
+<p>发布于 10/27/2026</p>
+<h1>Together GPU 集群自动修复：从 GPU 故障到健康节点</h1>
+<p>健康检查找出故障，平台选择最轻量的修复动作，而由你决定哪些修复无需人工介入即可运行——精确到单个 Xid 代码。</p>
+<ul><li>作者：Pavneet Ahluwalia, Dongsheng Zhang, Barbara Kazanowska</li><li>目录<a href="https://www.together.ai/blog/auto-repair-for-together-gpu-clusters">40+ 个被生产环境选中的模型……40+ 个被生产环境选中的模型……40+ 个被生产环境选中的模型……</a></li><li>本文链接<a href="https://api.together.ai/clusters">Together GPU Clusters 控制台</a><a href="https://docs.together.ai/docs/node-repair">文档：节点修复</a><a href="https://docs.together.ai/docs/health-checks">文档：健康检查</a></li></ul>
+<p>在集群规模下，GPU 故障是常态。一个 Xid 错误、一次双比特 ECC 错误、一块从 PCIe 总线上掉线的 GPU，或一条反复抖动的 InfiniBand 链路，都可能让分布式训练任务卡住，或让一个推理副本下线。发现出了问题通常是容易的部分。难的是从故障发生到节点重新恢复健康之间的所有环节。</p>
+<p>今年早些时候，我们宣布推出全自动的节点修复（node remediation）功能。我们的 GPU 集群客户以及内部的推理平台一直在使用这项能力，以提升工作负载韧性、把停机时间降到最低。客户很喜欢这项能力，所以我们想花些时间把这个系统拆解开来，讲清它如何运作，以及我们为什么这样设计。</p>
+<p>我们最先实现的是「被动健康」（Passive health）检查系统，它持续监视每个节点——既在您的 VM 内部，也在其下方的主机上。当某项检查发现故障时，自动修复会推荐最轻量的修复动作，并向你展示该建议背后的支撑证据。你可以事先逐个故障地决定：某类修复是等待批准，还是自行执行。你也可以决定自动修复等待运行中的工作负载结束多久。你自己的检测器只需在节点上写一条 annotation，就能通过同一条流水线发起修复。</p>
+<p><strong>可用性</strong> <strong>现已正式可用：</strong> 被动健康检查、修复建议、自动修复策略（含按故障与按节点的授权同意）、等待空闲控制、升级阶梯、安全护栏，以及 API 与控制台修复。 <strong>预览版：</strong> 基于节点标签的修复契约，让你可以接入自己的检测系统，例如 NVSentinel 或自定义控制器。 我们正在持续增加新的检测信号与修复动作，以确保最大覆盖范围和最短恢复时间。</p>
+<h2>为什么 NotReady 还不够</h2>
+<p>大多数节点自动修复只依赖单一信号：节点变成 <code>NotReady</code>。无论节点是真的坏了，还是只是短暂不可达，这个信号看起来都一样。当一次存储或网络事件同时波及大量节点时，每个受影响的节点都会掉到 NotReady。我们的系统内置了熔断器，以防节点被大规模替换。NotReady 也不说明节点为什么失败，因此没有依据在「重启」和「换一台新机器」之间做出选择。</p>
+<p>因此自动修复遵循一条规则：<strong>没有失败的检查作为依据，就不会发生任何节点修复；每一次修复都附带其支撑证据。</strong></p>
+<h2>流水线</h2>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6adfc9c8d8cc8003d466bf49_6adfc97768efab70eae3425a_autorepair-01-pipeline-v2.gif" alt="自动修复流水线：来自 VM 内部与主机的信号进入你集群内的「检测、决策、修复」；被迁出的主机会在 Together 基础设施上进入「重新验证」。"></p>
+<p>自动修复流水线：来自 VM 内部与主机的信号汇入你集群内的「检测、决策、修复」三个阶段；被迁出的主机则在 Together 基础设施上进入「重新验证」。</p>
+<p>这条流水线有四个阶段：检测故障、决定是否以及何时行动、修复节点、重新验证机器。前三个阶段在你的集群内执行。第四个阶段在我们这一侧执行，位于你的节点刚刚腾出的那台物理主机上。来自你自己的检测工具的 node label 请求从「决策」阶段进入，并获得与我们的请求完全相同的处理。</p>
+<h2>1. 从 hypervisor 两侧进行检测</h2>
+<p>Together GPU Clusters 中的 GPU 直通给你的 VM，以获得裸金属性能。这意味着 GPU 故障可以从 VM 内部看到，而主机与 fabric 的故障则从主机侧看到。因此检测在 hypervisor 的两侧同时运行，并汇聚到同一处。</p>
+<p><strong>在你的 VM 内部</strong>，各 exporter 监视：</p>
+<ul><li>内核日志，用于发现 Xid 错误和 GPU 从 PCIe 总线掉线</li><li>DCGM，用于发现 ECC 双比特错误、行重映射（row-remap）失败、PCIe 重放率和热降频</li><li>Node Problem Detector，用于发现只读文件系统、XFS 关闭、内核死锁，以及 kubelet 或 containerd 反复重启</li></ul>
+<p>在 Slurm 上，一个 exporter 会上报被标记为 DOWN 或 DRAIN 的节点。</p>
+<p><strong>在主机侧</strong>，我们监视 InfiniBand rail 的状态与链路抖动，并将其归属到拥有这些 rail 的 VM。我们还监视主机的可达性，这样一台死掉的主机会表现为你节点上的一个问题，而不是一片沉默。</p>
+<p>每条告警都携带一个稳定的摘要、一段通俗语言的描述，以及一份机器可读的证据载荷。对 Xid 而言，就是每个代码及其 NVIDIA 助记名。对热降频而言，就是峰值温度与降频次数。控制面会把这些字符串原样透传，因此控制台、API（以 <code>linked_alerts</code> 形式）和你的通知说的始终是同一件事。</p>
+<p>我们把「已观测」与「可处置」分开。每条与修复相关的告警都会被记录，并把你的节点标记为 <strong>Degraded</strong>。只有具备动作映射的信号才会创建修复。例如磁盘压力会出现，但不会触发重启，因为重启修不好它。没有映射的告警会被计数并记录日志，绝不会被悄悄丢弃，还会转给我们的支持团队排查。</p>
+<h2>2. 策略：我们决定做什么，你决定是否做、何时做</h2>
+<p><strong>做什么</strong>由平台负责。每个信号都映射到能修好它的最轻量动作，所以你永远不需要知道哪个 Xid 代表什么：</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6ae10f16b1185f38e858c5fc_Screenshot%202026-10-26%20at%2010.19.24%E2%80%AFPM.png" alt=""></p>
+<p><strong>是否做</strong>由你决定。在 Repairs 标签页中，<strong>自动修复策略</strong>默认是 <strong>Approve before repair（修复前需批准）</strong>：每条建议都等待人来处理，人可以接受或覆盖该动作。你可以把默认值切换为 <strong>Fully automatic（全自动）</strong>，但它不是一刀切的开关。<strong>修复动作</strong>清单按故障所触发的修复动作分组，你勾选那些你信任、可以无人值守运行的动作。在 Xid 分组内，你可以按代码逐个设置授权。一种常见的配置是自动批准 Xid 119 与 95 的重启，同时对迁移保持门控。Xid 清单在 Approve before repair 模式下也生效——如果你希望一小批故障自动执行、其余都等你审核的话。</p>
+<p><strong>何时做</strong>同样由你决定。修复需要排空节点，因此 <strong>Wait for idle（等待空闲）</strong> 会一直等到节点真正空闲。在 Kubernetes 上，这意味着节点上没有运行中的 pod 正在请求 GPU。在 Slurm 上，意味着调度器报告该节点上没有任何分配。<strong>Maximum wait（最长等待）</strong> 为这一等待设上限，默认 2 小时，上限 24 小时。<strong>Do not interrupt running jobs（不打断运行中的作业）</strong> 则完全移除该上限。请把等待时间设为至少等于你的 checkpoint 间隔。若上限到期，修复将继续进行，并记录这次超时。</p>
+<p>每次修复都会记录谁发起（自动修复为 <strong>Together Health Checker</strong>）、谁批准（具名用户或 <strong>Auto-Approved</strong>）、由哪条规则决定，以及发生在什么时候。</p>
+<h2>3. 接入你自己的检测器</h2>
+<p>运行大规模 GPU 机队的团队已经有自己信任的检测手段：DCGM 看板、NVSentinel、自研扫描器、作业级检查。每一次修复，无论来源如何，都会在我们的控制面中成为同一种记录。这让容量校验、审计和安全护栏只有一个归属地。</p>
+<p>有三种接入方式：</p>
+<ul><li><strong>API。</strong> 针对某个 instance 创建修复，指定模式、一个可选的由客户端提供的 ID（用于幂等），以及可选的你引用为证据的健康检查运行或告警。你也可以列出、获取、批准、拒绝和取消修复。</li><li><strong>控制台。</strong> 任意节点上的 <strong>⋮</strong> 菜单会打开 <strong>Repair</strong> 对话框，其中列出检测到的问题和推荐动作。</li><li><strong>Node labels（预览）。</strong> 任何拥有写入节点元数据权限（RBAC）的检测器，都可以通过在节点上添加一条 annotation 和一个 label 来发起修复。annotation 携带检测器名称、稳定的请求 ID、修复模式、故障检测时间，以及一段人类可读的原因。</li></ul>
+<p>我们的集群 operator 会把节点的 <code>label</code> 镜像到控制面。修复记录以检测器作为外部请求者，因此始终可归属，且绝不可能冒充用户。检测器名称加请求 ID 构成整个集群范围内的幂等键（已完成的修复也计入），因此一个在每次扫描中都重复断言同一故障的检测器，也无法让节点重启两次。授权使用你集群自己的 RBAC，无需 API key，也无需接入工单。</p>
+<p>annotation 请求可以要求 Reboot、Quick reprovision 或 Migrate。Remove 始终只能由人发起。与控制台点击一样，这些请求会跳过审批队列，但它们仍然要通过与其他所有请求相同的证据闸门、容量校验和预算。按集群设置的上限意味着一个有 bug 的检测器只会造成有限损害，而不是灾难。</p>
+<h2>4. 修复动作与升级阶梯</h2>
+<p>每次修复都遵循相同的生命周期：cordon、等待（按你的策略）、drain、执行动作、重新加入。控制台会展示节点依次经过 <strong>Cordoning → Draining → Repairing / Migrating → Joining → Running</strong>。</p>
+<p>这些动作从最轻到最重排列：</p>
+<ul><li><strong>Reboot。</strong> 原地重启 VM。本地 <code>/scratch</code> 与 <code>/tmp</code> 数据得以保留。</li><li><strong>Quick reprovision。</strong> 在健康主机上用干净镜像重建 VM。本地数据丢失。</li><li><strong>Migrate to new host。</strong> 在不同硬件上重建 VM，并把旧主机送去重新验证。</li><li><strong>Remove。</strong> 将节点下架以进入 RMA 流程。始终由人发起。</li></ul>
+<p><strong>同一个修复不会无限循环。</strong> 如果同一动作已经在同一台机器上执行过两次，而故障再次出现，下一条建议就会上升一级。第三轮 Xid 重启会变成 reprovision，第三次 reprovision 会变成迁移。阶梯按机器、集群、告警和 Xid 代码分别跟踪。超过一周的尝试不计入，被取消或自行解决的推荐也不计入。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6adfc9c8d8cc8003d466bf45_6adfc978b464940a012dec75_autorepair-03-escalation-ladder-v2.gif" alt="升级阶梯：每级尝试两次，然后上升一级，从重启到 reprovision 再到迁移。"></p>
+<p>每级尝试两次，然后上升一级。迁移需要 critical 级别的告警证据。</p>
+<p><strong>迁移受证据门控。</strong> 迁移是唯一会消耗真实容量的动作。它要求节点上当前有 critical 告警正在触发，或同一台机器在过去十天内出现过 critical 告警。两个条件都不满足的请求，会改为以 Quick reprovision 执行。</p>
+<p><strong>主机断电重启（预览）。</strong> 有些故障（其中包括 Xid 79）需要让 GPU 断电，而 VM 重启做不到这一点，即便硬件本身可能没问题。与其消耗一台新主机，我们可以对你当前所在的这台主机做断电重启。系统中任何地方都不存在 BMC 凭据。一次 boot-ID 检查可防止重试时对一台已经恢复的主机再次断电重启。</p>
+<p>需要保证替换窗口的集群可以预留 <strong>hot spare</strong> 容量，这样迁移会从这部分预留中取用，而不是从通用可用容量中取。详情请咨询你的客户团队。</p>
+<h2>5. 假定告警风暴一定会发生的护栏</h2>
+<p>一次糟糕的驱动推送、一次存储中断，或一次网络分区，都可能让几十个节点同时看起来生病了。节点级修复修不好集群级的原因，因此这些护栏是分层且彼此独立的：</p>
+<ul><li><strong>持续时长（Persistence）。</strong> 信号必须按各自设定的时长持续存在，才会变成一条建议。</li><li><strong>冷却（Cooldown）。</strong> 任何修复之后，节点约有 30 分钟的间隔，之后才能生成新的建议。</li><li><strong>并发预算。</strong> 预算按集群节点数量确定，operator 同一时间在每个 node pool 上只执行一次修复。</li><li><strong>熔断器。</strong> 当某个集群爆发一批相关的自动修复时，熔断器会跳闸。大量节点同时失败指向集群级原因，逐个修复节点解决不了问题。</li><li><strong>每次修复只有一个目标。</strong> 由 schema 强制执行，因此一个 bug 不会扩散到多个节点。</li><li><strong>自动解除。</strong> 如果一条建议对应的告警在任何人采取行动之前就已清除，该建议会自动消失。</li></ul>
+<p>控制面是多副本的，每次写入都是幂等的，并会对照其预期状态进行校验。两个副本在同一节点上竞争时，只会产生一次修复，而不是两次。</p>
+<h2>6. 机器会自我重新验证</h2>
+<p>当节点从某台机器迁出或被从中移除时，那台机器不应直接回到资源池，也不应排在队列里等人去读诊断信息。旧 VM 一消失，机器就会自动进入验证。一个测试 VM 会运行与每台全新机器加入机队前相同的 GPU、NCCL、InfiniBand 和存储检查。从你的节点离开到结论落地，全程没有任何人碰过这台机器。</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6adfc705a7b90ee5ba6d3e72_6adfc669313f6d381bf892a4_autorepair-04-revalidation.png" alt="机器重新验证：节点离开，机器进入验证，机队准入检查运行，结论为 Passed、Failed 或 Aborted。"></p>
+<p>只有明确的失败才会开出硬件工单。</p>
+<p>共有三种结论：</p>
+<ul><li><strong>Passed。</strong> 机器回到资源池。不建工单，也不呼叫任何人，因此瞬时故障就保持为瞬时故障。</li><li><strong>Failed。</strong> 自动开出硬件工单，并附上每项测试的结果与日志。机器在修好并再次通过之前一直留在池外。</li><li><strong>Aborted。</strong> 检查无法运行，例如主机被重新分配，或测试 VM 无法放置。机器会恢复到之前的状态，不会因此被判废。</li></ul>
+<p>只有明确的失败才会产生工单。</p>
+<h2>为超越单一加速器而构建</h2>
+<p>修复决策的依据是告警、节点和机器，而不是 GPU 厂商。GPU 类型在放置和容量上有影响，但建议、策略、升级、预算、触发器和重新验证都不会对它做特殊处理。与厂商相关的部分只有检测（Xid 与 DCGM exporter）和诊断测试组。接入一种新的加速器，意味着补上这些部分，下游的一切都可以沿用。</p>
+<h2>使用方法</h2>
+<p>在控制台中打开你的集群，进入 <strong>Repairs</strong> 标签页。待处理的建议与历史记录都在那里，<strong>自动修复策略</strong>位于顶部。API 中的每个 remediation 都带有其 <code>linked_alerts</code>，因此你自己的工具看到的证据与控制台相同。</p>
+<h2>下一步</h2>
+<ul><li><strong>NVSwitch 覆盖。</strong> SXid 故障按节点合并，并配有可读的描述。</li><li><strong>状态回写到节点。</strong> 修复进度作为节点元数据写回，让外部检测器能在它们发起的地方闭环。</li><li><strong>统一的健康视图。</strong> 从失败的检查点击跳到它引发的修复，再跳回来，并提供每节点的健康、事件与修复历史视图。</li></ul>
+<p>告诉我们你的集群上还有哪些失败是我们尚未捕获的。这份清单将驱动我们下一步要构建什么。</p>
+<p>-&gt; <a href="https://api.together.ai/clusters">在控制台中开始使用</a> -&gt; 文档：<a href="https://docs.together.ai/docs/node-repair">节点修复</a> · <a href="https://docs.together.ai/docs/health-checks">健康检查</a></p>
+<h2>相关文章</h2>]]></content:encoded>
     </item>
     <item>
       <title>Together Post-Training 上线：按你的方式做前沿级模型后训练</title>

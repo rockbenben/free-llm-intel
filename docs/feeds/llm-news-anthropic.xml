@@ -14,20 +14,250 @@
       <guid isPermaLink="true">https://claude.com/resources/articles/how-to-manage-costs-and-demonstrate-roi-for-claude-code-on-google-cloud</guid>
       <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Manage costs and demonstrate ROI for Claude Code on Google Cloud</description>
+      <content:encoded><![CDATA[<h1>管理成本并展示 Google Cloud 上 Claude Code 的投资回报率</h1>
+<p>随着组织把越来越多的工作交给 Claude Code，支出也随之增长，平台团队需要一种既能控制成本、又能理解影响的方式。受近期与 Google Cloud 共同举办的一场<a href="https://www.anthropic.com/webinars/how-to-control-costs-and-show-roi-for-claude-code-on-google-cloud">网络研讨会</a>启发，我们分享使用 Claude Code 的组织如何在 Google Cloud 上更好地跟踪和优化这些考量，包括三个核心杠杆：控制、跟踪和证明。</p>
+<h2>管理 Claude Code 支出的控制措施</h2>
+<p>Google Cloud 上的 Claude 采用基于用量的定价，因此你的账单就是开发者在你的 Google Cloud 环境中使用 Claude 多少的读数。采用会推动用量；用量是你付费的对象，也是价值显现之处。</p>
+<p>你的 Claude Code 账单是任务消耗多少 token 与处理这些任务的模型的乘积。token 消耗随任务复杂度和对话长度而增长。Chat 是一问一答的对话。像 Claude Code 这样的 agent 工具相对 chat 而言每个任务会消耗更多 token，因为它在做多步骤工作：读取文件、运行工具，并在整个任务范围内推理。与此同时，每个模型都有各自的每 token 价格，因此<a href="https://claude.com/blog/claude-model-and-effort-level-in-claude-code">让模型与任务相匹配</a>是另一项主要的成本控制手段。</p>
+<p>通过 <a href="https://claude.com/blog/introducing-the-claude-apps-gateway">Claude apps gateway</a> 和 Google Cloud 服务，可以了解每月影响组织账单的 token 与模型选择。你可以通过三个独立的杠杆来治理支出、管理成本：</p>
+<ul><li><strong>控制</strong>。建立护栏来引导用量，而不过度限制访问、意外地挡住人。</li><li><strong>跟踪</strong>。在账单到来之前，细粒度地掌握支出发生在哪里，以及接下来还会流向哪里。</li><li><strong>证明</strong>。识别组织从这些 token 支出中获得了什么价值，并精确归因价值来自何处。</li></ul>
+<p>以下是如何将这套 control → track → prove 框架应用到你自己在 Google Cloud 上的 Claude Code 部署。</p>
+<p><img src="https://assets.claude.com/50faca60a22f422f7c0f5e9d2f4177a1ea483448.png" alt="展示 control - track - prove 三类及各类所用工具的图示"></p>
+<h3>治理工具箱</h3>
+<p>Google Cloud 上的 Claude 附带用于控制、跟踪和证明支出价值的工具与能力。</p>
+<p><img src="https://assets.claude.com/b3266f5cebd6e2613593339d21200b3a7c034b9a.png" alt="展示 Google Cloud 原生能力与 Claude Code + Claude apps gateway 附加能力的图示"></p>
+<p>Google Cloud 已经提供了许多原生能力，可用于跟踪和控制你的 Claude 支出：</p>
+<ul><li><strong>按项目计费</strong>。允许你为 Claude Code 托管一个专用项目，作为跟踪成本的干净方式。</li><li><strong>账单预算与提醒</strong>。允许你设置预算提醒，并在实际支出越过你设定的阈值时收到通知。</li><li><strong>支出上限（预览）</strong>。允许你为 Google Cloud 服务级支出强制设定预算，并可手动解除上限。</li><li><strong>BigQuery 导出</strong>。让你可以把 Claude 支出与其余云成本一起分析。</li><li><strong>配额</strong>。Google Cloud 上的 Claude 模型对每个模型家族和 endpoint 位置的请求数、输入 token 和输出 token 都有每分钟限制。</li><li><strong>预置吞吐量</strong>。为预留容量支付固定费用，而不是按量付费。</li></ul>
+<p>Claude Code 和 Claude apps gateway 增加了各自的跟踪与控制能力。gateway 是一项自托管服务，随开发者已经在使用的同一个 <code>claude</code> 二进制文件一同交付，运行在你的 Google Cloud 项目中，位于 Claude Code 与 Google Cloud 上的 Claude 之间。开发者通过你的身份提供商（例如 Google Workspace）登录，因此每个请求都携带经过验证的身份。这让你可以按 IdP 组设置模型允许清单，并按天、周或月设置按用户、IdP 组或组织的支出上限。</p>
+<p>以下是如何选择并组合这些能力，来管理衡量组织在 Google Cloud 上用 Claude 所做 AI 投资的成本与 ROI 的三个杠杆：</p>
+<h4>杠杆 1：控制</h4>
+<p>控制杠杆的核心是提供护栏，引导开发者使用 Claude Code，而不是用任意的上限去限制他们。</p>
+<p>引导而非限制之所以重要，是因为高成本会话不一定就是坏事——事实上，它们往往价值很高，在 Claude Code 中尤其如此。这些会话通常来自你的重度用户，他们处在最前沿，使用新的工作流，从 Claude 获得很多价值，也完成了大量工作。</p>
+<p>浪费往往出现在高支出者的长尾中段。例如，他们用 Fable 处理 Sonnet 轻松就能应付的日常事务。又或者，他们忘了某个已经不再关心的定时任务，但它仍在自动运行。</p>
+<p>有四项功能可以为你提供护栏，去引导用户而不是限制用户：</p>
+<ul><li><strong><a href="https://code.claude.com/docs/en/claude-apps-gateway-spend-limits">支出限额</a></strong>。Claude apps gateway 允许你按天、周或月设置按用户、按 IdP 组或组织范围的支出上限。组和组织上限是每位开发者继承的默认值，而不是共享池。</li><li><strong>阈值提醒</strong>。与 Claude apps gateway 一起使用时，Google Cloud 上的 Claude Code 会在开发者接近上限时提醒他们，第一次是超过 75%，再次是超过 95%。这些是面向开发者的 CLI 内提醒，而 Google Cloud Billing 的提醒是给管理员的。达到上限时，gateway 会返回 429，直到周期重置或管理员提高上限；你也可以通过 gateway 的管理 API 用脚本提高上限。</li><li><strong>模型默认值与允许清单</strong>。通过 Claude apps gateway 按 IdP 组指定哪些模型可用，gateway 会在服务端对每个请求强制执行允许清单。我们发现设置模型默认值效果非常好，因为大多数人会沿用默认模型；如果他们想切换模型，通常是有原因的。你可以在模型允许清单之外额外使用模型默认值，也可以用模型默认值代替它。</li><li><strong>Gateway Admin API</strong>。gateway 提供用于<a href="https://code.claude.com/docs/en/claude-apps-gateway-spend-limits">支出限额的管理 API</a>，因此你可以用程序设置和更改上限，例如使用工单工作流。</li></ul>
+<p><img src="https://assets.claude.com/d1ded8cd5410c90e62905f650bf2a4e09df4cdce.png" alt="展示支出上限生命周期各阶段的图示"></p>
+<p>把这些能力组合起来控制你的总体账单，但请记住控制只是第一个杠杆。每 token 的价格并不能给你全貌。最重要的指标是每个任务的成本，而它可以通过跟踪这些用量来监控和分析。</p>
+<h4>杠杆 2：跟踪</h4>
+<p>这个杠杆的核心是看清支出流向哪里、如何被使用。好消息是，你可以跟踪整个组织中 Claude Code 的用量、成本和工具活动。主要的跟踪策略包括：</p>
+<ul><li><strong>用量与成本可观测性</strong>。<a href="https://code.claude.com/docs/en/monitoring-usage">Claude Code 的 OpenTelemetry 指标与事件</a>会报告用量与估算成本，并按技能、插件、agent 和 MCP server 拆分。通过 OpenTelemetry 收集器，或经由 Claude apps gateway 中转（用于集中式 OpenTelemetry 配置），用 OpenTelemetry Protocol（OTLP）把它们发送到你已经在运行的工具，例如 Google Cloud Monitoring。</li><li><strong>终端用户用量视图</strong>。开发者在 Claude Code 内就能看到自己的支出，并在触及上限之前收到用量警告。</li><li><strong>导出数据到你现有的系统</strong>。Google Cloud Billing 导出到 BigQuery 后，你可以按模型和 token 类型筛选 Claude SKU，把 Claude 支出与其余云和 AI 支出放在一起。OTel 数据流向你的可观测性（O11y）技术栈，而 gateway 的管理 API 可以把支出限额状态直接送入你的工单系统。</li></ul>
+<p><img src="https://assets.claude.com/f2ab59204d683994ef32ddc5b4e6f1167389a800.png" alt="展示 Google Cloud 上 Claude Code 遥测的图示"></p>
+<p>Claude Code 无论运行在开发者机器还是云工作站上，一经启用即可导出 OpenTelemetry 数据，包括会话、活跃时间、代码行数、提交、pull request、token 与成本，并按用户、团队和模型拆分。Claude Code 最近的版本还按技能、插件、agent 和 MCP server 拆解用量，因此你不仅能看到 Claude Code 的整体用量，还能看到组织内部哪些技能和插件被采用。使用 Claude apps gateway 时，你无需配置每台机器。在 gateway 上设置一个遥测目标，它就会为已登录的开发者开启遥测。它还会为每次导出打上开发者登录时经过验证的邮箱和 IdP 组，而不是客户端上配置的值。</p>
+<p>要把用量归因到你自己的成本中心和部门，请设置 OTEL_RESOURCE_ATTRIBUTES 环境变量（例如 department=engineering,cost_center=eng-123）。Claude Code 会把这些标签加到每个指标和事件上，因此你可以按它们筛选和聚合。指标会带着这些自定义属性进入 Google Cloud Monitoring（或 Grafana、Splunk 等其他监控方案）。</p>
+<p>Cloud Monitoring 中的 Claude Code 用量仪表盘，基于 Claude Code 的 OpenTelemetry 指标构建。使用示例数据做的示意性重现。</p>
+<p>典型的采用情况视图会显示活跃开发者、过去 24 小时的会话数以及消耗的 token 总量。橙色方框显示开发者触及 gateway 强制执行的支出上限时被阻止的请求。该指标与你现有的工单系统配合得很好，可形成一套允许开发者申请提高上限的工作流。</p>
+<p>关于现成的 Cloud Monitoring 仪表盘，请参考 <a href="https://github.com/GoogleCloudPlatform/monitoring-dashboard-samples/tree/master/dashboards/claude-code">Claude Code Monitoring 模板</a>，它把 Claude Code 的 OpenTelemetry 指标汇成采用情况、编码活动、token 用量与估算支出的单一视图，让你在 Google Cloud 上推广 Claude Code 的过程中按用户和模型跟踪用量与成本。你可以直接在 Cloud Monitoring 控制台内复制这个模板。</p>
+<p>要在 Google Cloud 上设置自定义的 Claude Code 遥测，请从 <a href="https://github.com/Google-Cloud-AI/partner-ai-anthropic/tree/main/01-quickstart/otlp-to-telemetry-api">Claude Code OTel 快速入门</a>开始。用它来配置 Claude Code，把 OpenTelemetry 直接导出到 Google Cloud Observability 套件，包括 Cloud Logging 和 Cloud Monitoring。该快速入门还会把日志路由到分区 BigQuery 表，每种事件类型一张表（API 请求、工具决策、工具结果、助手响应和已完成的 hook 执行），并附带 SQL 查询，用于按开发者/模型的支出、工具成功率与延迟、hook 等待时间、按轮次和按会话的分析。</p>
+<h4>杠杆 3：证明</h4>
+<p>控制杠杆治理并分配用量与成本；跟踪杠杆让你把支出可视化。证明杠杆则是你把用量映射为 Google Cloud 上 Claude Code 的 ROI 的方式。</p>
+<p>平台工程师在 Claude Code 中最关心的度量指标包含在三个维度中：用量、开发者满意度和影响。</p>
+<p><strong>采用与用量</strong>指标衡量人们如何在你的组织中使用 Claude，包括已激活用户及其每周和每日用量。这些指标揭示使用深度、用户留存随时间的变化，以及谁是 Claude Code 的重度用户。这些指标全部来自 Claude Code 的 OTel 数据。</p>
+<p><strong>满意度</strong>指标监测你的工程师的用户体验，包括他们对 Claude Code 的满意程度、感知到的时间节省、对输出的信心，以及他们可能遇到的任何摩擦。满意度指标来自推广前后各一次简短调查，以及持续的用户回访。</p>
+<p><strong>影响</strong>指标评估 Claude 如何带来可衡量的工程成果，把吞吐量、周期时间和评审速度与基线对比，并对具体工作体做定性衡量。</p>
+<h3>一组起步的影响指标</h3>
+<p>以下是一组起步的影响指标，分为三个领域：时间、投入和产出量。</p>
+<p><strong>时间</strong>衡量工作交付的速度：PR 从开启到合并的周期时间，以及代码评审的周转时间。</p>
+<p><strong>投入</strong>衡量每个变更需要多少工作：每个 PR 的评审迭代次数、每个 PR 的评审意见与返工。</p>
+<p><strong>产出量</strong>衡量释放出的产能带来了什么：每位工程师的 PR 数、部署频率，以及点名的工作体——你的团队用释放出的产能交付的具体 backlog 事项。这些在计数之外增加了定性视角。</p>
+<p>这些是指引性的参考点，不是规则，但它们是衡量 Claude Code 在你组织中影响的一个良好起点。你所需要的基线已经存在：源代码管理和工单中的交付历史。</p>
+<h3>定义你的工作单元</h3>
+<p>这些指标大多在数 PR，但修正一个拼写错误和发布一个功能都算一个 PR。因此，改为统计某一已定义类别的已合并 PR：Claude 打开 PR，由人来决定它是否上线。hotfix 或 feature release 这样的标签、工单 ID，以及 Claude 是否参与其中，能让这些 PR 在你已经运行的系统里容易被找到。并非每个工作单元都是 PR；服务切换，或在根因层面关闭的一次事故，都是例子。适用同样的规则：数一件完成的事，以它落地的地方为准。</p>
+<h2>Claude Code 原生遥测</h2>
+<p>在把成本治理和用量跟踪落实到位之后，下一步是把它们映射到 ROI。Claude Code 的原生遥测帮助你获取贡献与生产力指标，用以记录组织正在获得的价值。</p>
+<p><img src="https://assets.claude.com/5d1a4e740237e04f4524c9ff169e0f70def7c5ab.png" alt="展示 Claude Code 原生遥测的图示，分三列：用量、成本、贡献 / 生产力。"></p>
+<p>Claude Code 的 OTel 指标让你可以跟踪或推导代码建议接受率、修改的代码行数、创建的提交、创建的 PR、每单位产出的成本，以及每位用户的 PR 数。</p>
+<p>所有这些原生指标都提供有用且可行动的信息。当这些信息与记录下来的事件（如用户 prompt 和工具决策）配对时，会变得更有价值，这些事件可通过 <a href="https://docs.google.com/document/d/1LezclyuvbRQ9tInAet0loCEPiNIITB8eLHvzNik9IBs/edit?tab=t.nr7gi1cdf1oi#heading=h.vdcj39wwyv9f">Google Cloud 上的 Claude Code 遥测</a>捕获。例如，记录用户 prompt 是了解你的用户群想构建什么的好方法，因为并非每个工作单元都必然是 PR。请注意，由于内容可能敏感，用户 prompt 不会被自动记录；你必须专门选择开启。</p>
+<p>举一个例子：如果你是 SRE，可以用 Claude Code 排查一次事故；如果你是售前工程师，可以用它为现场演示生成示例数据。这些会话不会产生 PR，但确实加速了这些团队的工作流。请记住，Claude Code 的 PR 指标统计的是 Claude Code <em>创建</em>的 PR，而不是最终合并的数量。你的源代码管理和工单系统仍然是「上线了什么」的记录，因此要把 Claude Code 遥测与 GitHub 或 GitLab 以及你的工单跟踪系统关联起来，才能得到全貌。</p>
+<p>以下是部分 Google Cloud 上的 Claude 客户使用 Claude Code 所取得的可衡量影响。</p>
+<ul><li><a href="https://claude.com/customers/delivery-hero">Delivery Hero</a> 有一个团队对 100 个 UI 组件的设计系统做了全面改造。Claude Code 在几分钟内完成了通常需要一名工程师一周时间的工作。</li><li><a href="https://claude.com/customers/shopify">Shopify</a>的工程师用 Claude Code 构建得更快，但非工程师也在几分钟内而不是几天内构建内部工具。Claude Code 在 Shopify 扩大的是「谁能构建」，而不只是加快已经在构建的人。</li><li><a href="https://cloud.google.com/customers/fifth-dimension-anthropic">Fifth Dimension</a> 的工程师普遍在 Google Cloud 上使用 Claude Code。他们合计每月编写超过 300,000 行代码，接受率达 98%。</li></ul>
+<h2>开始使用</h2>
+<p>本文的目标是帮你熟悉现有的工具与能力，用它们管理 Google Cloud 上 Claude Code 的成本并展示 ROI。作为平台工程师，这套系统不仅用于察觉和观察用户群中的行为，它还给你动态调整治理与设置所需的知识。</p>
+<p>这是一个持续循环：从合理的默认值开始，例如组织范围的支出上限、默认模型和模型允许清单，然后随着用量数据的到来按角色和团队细化。通过跟踪实际使用并把指标与从 Claude Code 获得的价值关联起来，你就可以把这些交付给需要分析使用 Claude Code 的 ROI 与业务影响的利益相关方。</p>
+<p><img src="https://assets.claude.com/9a83ef407d2df018b107f8108d1955ad70702d7f.png" alt="展示 Control - Track - Prove 框架持续循环的图示"></p>
+<p>组织如何使用 Google Cloud 上的 Claude Code，以及从这些使用中获得的价值，都会随着我们交给 Claude 的工作量和工作类型不断加深、更加多样而演变。这里概述的 <strong>control → track → prove</strong> 框架，是衡量 Claude Code 部署各个方面与成果的稳定起点。</p>
+<p>以下是一些入门资源：</p>
+<ul><li><a href="https://code.claude.com/docs/en/costs">有效管理成本</a></li><li><a href="https://code.claude.com/docs/en/monitoring-usage">监控用量与成本</a></li><li><a href="https://code.claude.com/docs/en/claude-apps-gateway-spend-limits">Claude apps gateway 支出限额</a></li><li><a href="https://code.claude.com/docs/en/claude-apps-gateway-on-gcp">在 Google Cloud 上部署 Claude apps gateway</a></li><li><a href="https://code.claude.com/docs/en/claude-apps-gateway-on-gcp">创建、编辑或删除预算与预算提醒</a></li><li><a href="https://docs.cloud.google.com/billing/docs/how-to/budgets-spend-caps">管理支出上限预算 | Cloud Billing</a></li></ul>
+<p>文章</p>
+<p>2026 年 10 月 22 日</p>
+<h3>构建 agent：何时把子 agent 并入主 agent 循环</h3>
+<p>在 Claude Platform 中构建 agent 时，少用子 agent、转而采用渐进披露的上下文和工具，可以在降低成本与延迟的同时提升质量。以下是什么时候迁移、以及如何迁移。</p>
+<p>Claude Platform</p>
+<p>文章</p>
+<p>2026 年 10 月 19 日</p>
+<h3>在 Anthropic 重新设计源代码管理</h3>
+<p>随着 Anthropic 单体仓库的合并量从每天约 2,500 次增长到 30,000 次以上，源代码管理成为最大的开发瓶颈。以下是团队如何构建 Scion——一个为常在线 agent 设计的自研版本控制系统——并在五个月内完成从 git 迁出的过程。</p>
+<p>Claude Code</p>
+<p>文章</p>
+<p>2026 年 10 月 16 日</p>
+<h3>日本的一位 Anthropic BDR 如何用 Claude Managed Agents 安排自己的一天</h3>
+<p>一位业务拓展代表如何用 Claude Managed Agents 和 Claude Tag 清理他的入站队列，并起草双语客户邮件。</p>
+<p>Claude Managed Agents</p>
+<p>文章</p>
+<p>2026 年 10 月 16 日</p>
+<h3>Claude Code 团队如何做代码评审</h3>
+<p>面对 agent 产生的代码量，你该如何评审？Claude Code 团队分享了他们的评审流程，从 Claude 验证自己的工作，到按风险分级的人工批准，并附上一份采用该流程的检查清单。</p>
+<p>Claude Code</p>
+<h2>用 Claude 变革你的组织运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
+<p>如果你希望收到我们的月度开发者通讯，请提供你的电子邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
-      <title>Claude财务顾问</title>
+      <title>正式推出 Claude for Financial Advisors</title>
       <link>https://claude.com/resources/articles/claude-for-financial-advisors</link>
       <guid isPermaLink="true">https://claude.com/resources/articles/claude-for-financial-advisors</guid>
       <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Claude for Financial Advisors</description>
+      <content:encoded><![CDATA[<h1>正式推出 Claude for Financial Advisors</h1>
+<p>今天，我们发布 Claude for Financial Advisors，这是一套连接器与工作流技能，旨在协助完成研究、准备和文档类任务——这些任务占用了顾问的时间，使他们无法投入到面向客户的工作中。</p>
+<p>金融顾问的时间非常稀缺。根据 <a href="https://www.kitces.com/kitces-report-how-financial-planners-actually-do-financial-planning/">Kitces 的研究</a>，一家典型的顾问机构只有六分之一的时间用于客户会议。其余时间都花在会议之外的工作上：在多个系统之间拼凑信息，为会议做准备、做规划，并</p>
+<p>记录讨论过的内容。与此同时，根据 <a href="https://www.ebri.org/docs/default-source/rcs/2026-rcs/rcs_26-fs-3_prep.pdf">EBRI 的 2026 年退休信心调查</a>，超过四成的美国劳动者表示，他们不知道该向谁寻求优质的财务或退休规划建议。顾问在准备和文书工作上节省下来的时间，可以投入到现有客户，或他们目前尚无余力服务的新家庭上。</p>
+<p>Claude for Financial Advisors 包含：</p>
+<ul><li><strong>Connectors</strong>，让 Claude 能够访问顾问最常依赖的托管机构、资产管理公司和财富科技提供商，使顾问可以在一处处理客户信息。</li><li><strong>Skills</strong>，利用这些信息协助完成具体任务，例如会议准备、投资组合分析和合规检查，始终服务于顾问自己的判断与风格。</li></ul>
+<h2>连接顾问已经在使用的工具</h2>
+<p>新的连接器接入了顾问所依赖的 CRM、托管机构、投资组合报告、财务规划软件、遗产规划工具和会议记录能力。</p>
+<ul><li><strong>Addepar</strong> 将投资智能带入 Claude，让顾问以受治理的方式访问公开与私募市场中的投资组合数据、分析和流程。</li><li><strong>BlackRock</strong> 通过 Advisor Center 将其投资组合构建专长、模型投资组合和机构级分析带入 Claude，使顾问能够在公开与私募市场中提供整体建议。</li><li><strong>CAIS</strong> 向 Claude 中的顾问开放其另类投资平台，使他们可以查询基金数据、审查管理人与基金业绩，并把客户的公开与私募持仓放在一起查看。</li><li><strong>Charles Schwab</strong> 将 Claude 连接到 Schwab Advisor Services 的托管数据，包括余额、持仓、交易、成本基础、提醒和资金划转状态，使顾问可以查看客户信息、识别哪些客户需要关注，并为客户回顾做好准备。</li><li><strong>Conquest Planning</strong> 将其 Strategic Advice Manager 规划引擎带入 Claude，使顾问可以在一处创建新的客户计划、审查并应用策略、更新现有计划，并为客户会议做准备。</li><li><strong>Envestnet</strong> 让顾问用自然语言汇总 Tamarac 的账户与家庭，并附带来自 MoneyGuide 的财务计划快照。</li><li><strong>FactSet</strong> 将多资产类别内容带入 Claude，包括基金与 ETF、新闻、公司基本面、分析师预期和市场数据，使顾问可以研究客户投资组合中的公司和证券。</li><li><strong>FINNY</strong>，这个增长与拓客平台，将 Claude 连接到顾问按渠道和触达序列步骤划分的营销活动结果，并让顾问可以从其 CRM 中丰富潜在客户名单，或直接在 Claude 中上传新名单。</li><li><strong>Flourish</strong> 将 Claude 连接到金融顾问的业务簿，使他们能够在 Claude 内处理客户信息、查询费率、管理邀请，并为客户会议做准备。</li><li><strong>Franklin Templeton</strong> 在 Claude 中提供经公开批准的基金与份额类别信息，包括业绩、费率、NAV、持仓、分红和基金文件，以及其已发布的市场与投资洞察。</li><li><strong>iCapital</strong> 将客户的另类投资持仓带入 Claude，使顾问可以查看 NAV、承诺出资、未出资资本、近期资本活动和业绩，并更容易地将这些洞察与客户更广泛的投资组合联系起来。</li><li><strong>Invesco</strong> 通过其 Invesco for Advisors 连接器，将投资组合智能与实践管理洞察带入 Claude。</li><li><strong>J.P. Morgan Asset Management (55ip)</strong> 将税务过渡技术扩展到 Claude，使顾问可以评估把客户持仓转入新投资组合的税务影响。</li><li><strong>Jump</strong>，一个面向金融专业人士的 AI 平台，为 Claude 提供客户上下文（会议、文档、任务）以及由 Jump 构建的技能，为顾问准备待审阅的后续步骤。</li><li><strong>MSCI</strong> 将其专有数据与分析带入 Claude，使财富管理机构可以评估公开与私募市场中的投资选项、监控业绩，并评估再平衡机会。</li><li><strong>Nevis</strong>，这个面向财富管理的 AI 平台，利用来自会议、文档和沟通中的客户信息，在 Claude 中支持会议准备与跟进。</li><li><strong>Orion</strong> 将投资组合报告和 Redtail CRM 洞察带入 Claude，用于家庭回顾、机会分析、会议准备和跟进。</li><li><strong>SS&amp;C Black Diamond</strong> 将投资组合、业绩、持仓和再平衡数据带入 Claude，使顾问可以审阅自己的业务簿、找出偏离容忍区间的客户、发现税损收割机会，并在获得批准后生成客户报告、任务和再平衡会话。</li><li><strong>Wealthbox</strong> 将 Claude 连接到客户记录和会议历史，以支撑客户入驻、会议准备和跟进。</li><li><strong>Wealth.com</strong> 为 Claude 提供每位客户遗产与税务状况的结构化视图，包括信托和遗嘱摘要、纳税申报洞察以及完整资产负债表，使顾问可以基于对现有信息的有序汇总开始规划，而不必依赖散落在多个系统中的文档。</li><li><strong>Vanguard</strong> 将其模型投资组合和顾问投资解决方案的信息带入 Claude，使顾问在为客户做决策时能够借助 Vanguard 值得信赖的研究、投资组合构建和资产配置专长。</li><li><strong>Zocks</strong>，这个面向金融顾问的 AI 会议助手，将它在每次对话中捕捉到的客户情报带给 Claude，包括画像、目标、生活事件和承诺事项。</li></ul>
+<p>这些连接器加入了 Claude 中已有的其他<a href="https://claude.com/connectors">连接器</a>，包括 Microsoft 365、Salesforce、DocuSign、Box、S&amp;P Global、Morningstar 等。</p>
+<p>Claude for Financial Advisors 插件把顾问技能和连接器打包成一次安装，可与 BlackRock、Charles Schwab、Addepar、Envestnet、iCapital、Orion、Wealthbox、Wealth.com 和 Zocks 配合使用，顾问可在引导式设置过程中选择要连接其中的哪些。部分合作伙伴也提供自己的插件：BlackRock 正在为 Advisor Center 推出一款插件，加入 S&amp;P Global 和 LSEG 已有插件的行列。</p>
+<h2>围绕顾问一天工作构建的技能</h2>
+<p>Claude for Financial Advisors 插件中的每项技能都对应顾问一天中的某个具体时刻，从为客户会议做准备到解释一个发生漂移的投资组合，并会路由到公司已经用于经营业务的工具。公司可以按原样采用我们的 Claude for financial advisors <a href="https://github.com/anthropics/claude-for-financial-advisors">技能仓库</a>中的这些技能，也可以根据自身的工作流、服务模式和机构风格加以调整。</p>
+<ul><li><strong>Advisor onboarding</strong> 连接公司的工具，并自动执行第一次会议准备，帮助新顾问在第一天而不是第三周就能产出成果。</li><li><strong>Alternative investments brief</strong> 从 iCapital 或 Addepar 提取某个家庭的另类投资，汇总成可直接用于会议的摘要，与投资组合的其余部分并列展示，而无需顾问手工核对彼此独立的对账单。</li><li><strong>Compliance and AI policy</strong> 根据用户配置的标准，标出可能需要额外合规审查的内容，协助公司记录审查流程，并支持 AI 治理文档流程。</li><li><strong>Estate and tax brief</strong> 将客户的遗产计划与实际账户户名和受益人进行核对，回顾上一年的税务情况，并可创建 CRM 跟进任务，使不一致之处浮现出来供顾问审查。</li><li><strong>Portfolio rebalance review</strong> 对照客户的目标配置，标记漂移和集中持仓，并生成一份首版说明——否则这份说明要由顾问从零撰写。</li><li><strong>Post-meeting notes and follow-up</strong> 一次就把转录内容转成客户摘要、回顾邮件和 CRM 任务，而不用顾问在通话后逐项手工完成。</li><li><strong>Pre-meeting prep</strong> 把来自已连接系统的信息（包括客户持仓、近期账户活动和以往会议的未结事项）整合成一份简报供顾问审阅，使他们能够做好准备、走进会议时就能围绕该客户的具体情况展开对话，而不必从三个系统里重建上下文。</li><li><strong>Prospect intake</strong> 将潜在客户分享的信息整理成摘要、分析师交接材料和一份「可以期待什么」的备忘录，让第一次会议在基本信息已经就位的情况下开始。</li></ul>
+<p>这些技能合在一起，在顾问的一天中收集信息、加以汇总，并起草客户沟通内容。投资建议、客户沟通、合规判定及其他受监管活动仍需经过人工审查与批准。</p>
+<h2>为受监管专业人士打造</h2>
+<p>Claude for Financial Advisors 的设计让顾问始终处于掌控之中，关键任务需要批准。Claude 为顾问准备简报、摘要和分析草稿，并把 CRM 更新或客户沟通草稿这类行政操作准备好，交由顾问审查和批准。合规技能会对照 SEC Marketing Rule 筛查面向客户的语言，以标记潜在问题，帮助公司在现有治理与记录保存流程内记录审查活动，并包含一套自助式 AI 政策工作流，帮助公司按照 SEC 规则记录其对 AI 的使用。工作流活动可以被记录，以协助公司维持适当的记录与监督流程。</p>
+<h2>服务更多家庭</h2>
+<p>当 Claude 处理会议准备、跟进草稿和销售管道回顾这类行政任务时，顾问可以把更多时间用于服务客户。顾问机构可以扩大客户基础，并提供更多客户需要的服务，如税务、遗产、保险和退休规划。</p>
+<p>以下是客户和生态合作伙伴对与 Claude 合作的看法：</p>
+<p><img src="https://assets.claude.com/05a6a0c1132f543d0537102984022c0c90774dde.png" alt="zocks"></p>
+<blockquote>“优质的财务建议取决于了解客户生活中正在发生什么，而不只是他们账户里有什么，”Zocks 首席执行官兼联合创始人 Mark Gilbert 表示。“Claude 与 Zocks 之间扩展的合作，把过去分散在多个来源和系统中的数据与个人客户上下文汇集在一起。如今，通过 Claude 完成的每一项任务和分析，都建立在更完整的客户理解之上。这也让企业机构拥有更大的灵活性，围绕其顾问实际的工作方式来构建 AI 工作流。”</blockquote>
+<p>Mark Gilbert，首席执行官兼联合创始人</p>
+<p><img src="https://assets.claude.com/b85fd6f58a1f1a493b2cc9de09044b6b2164466e.png" alt="RFG Advisory"></p>
+<blockquote>“MCP 正在从根本上改变我们为顾问构建技术的方式。随着 Claude 和 Zocks 直接集成进我们的技术栈，过去需要数月配置并依赖外部合作伙伴的问题，正越来越多地能由我们自己的开发团队解决。这让我们可以自由地更快行动、与一流的合作伙伴协作，并围绕顾问实际运作的方式去构建。与其要求顾问适应技术，我们可以让技术去适应他们。”</blockquote>
+<p>Dr. Jordan Hutchison，技术与运营副总裁</p>
+<p><img src="https://assets.claude.com/31be98f5c18121a5063482dbcb91cd4bb812e9c7.svg" alt="Wealthbox"></p>
+<blockquote>“顾问们多年来在 Wealthbox 中积累了深厚的客户上下文。这让他们可以把这些上下文直接带入 Claude，并让前沿模型据此工作，例如准备会议、处理跟进、起草沟通内容，同时一切都保持与他们业务所依赖的 CRM 相连。”</blockquote>
+<p>John Rourke，首席执行官兼联合创始人</p>
+<p><img src="https://assets.claude.com/d72d42304889c5ecd4f2ba410dfde53b13255b97.svg" alt="BlackRock"></p>
+<blockquote>“顾问们正在应对日益复杂的客户需求，同时面对市场与技术加速变化的节奏。我们与 Anthropic 的合作是我们更广泛努力中的重要一步，旨在把 BlackRock 的投资组合智能与资产配置专长带给更多顾问，帮助他们扩展业务、构建更好的投资组合。通过让机构级投资组合分析更易获得，我们正在帮助更多顾问利用我们的投资组合智能，从而把更多时间专注于客户关系。”</blockquote>
+<p>Jaime Magyera，美国财富与退休业务主管</p>
+<p><img src="https://assets.claude.com/e417bbb81bf909eb4ebe19fe0dee25370dbfd28e.svg" alt="Mercer Advisors"></p>
+<blockquote>“Anthropic 构建与人类价值观一致的 AI。Mercer Advisors 构建与客户利益一致的家庭办公室。这种共同的执着是两家公司的核心，也锚定了我们的合作。Claude 帮助我们的团队在客户的财务生活中无缝协作，而判断与问责仍留在顾问身上。这就是 AI 在任何建立在信任之上的职业中应有的运作方式。”</blockquote>
+<p>Daniel Gourvitch，总裁</p>
+<p><img src="https://assets.claude.com/70a6a06de8cab56f6dea00611e665aa99e4d17a4.svg" alt="Rockefeller Capital Management"></p>
+<blockquote>“我们很高兴看到 Anthropic 持续投入于为金融顾问的独特需求量身打造的能力。我们的合作源于一个共同信念：技术应当支持顾问，而不是取代他们，帮助他们应对复杂性、更高效地服务客户，同时让人工判断与自主权始终处于首位。”</blockquote>
+<p>Ashley McCarthy，首席运营官兼法律顾问-董事总经理</p>
+<p><img src="https://assets.claude.com/02f6ce25017d80f975786c571ae223b9da5eb42b.svg" alt="Vanguard"></p>
+<blockquote>“Vanguard 致力于帮助顾问把更多时间花在客户身上，少花在应对复杂性上。我们与 Claude 的集成扩展了对 Vanguard 投资解决方案的访问，释放顾问的时间，以提供更个性化的服务。”</blockquote>
+<p>Sid Ratna，财务顾问服务部数字与分析主管</p>
+<p><img src="https://assets.claude.com/ee30d9d9145114578de5ae6a8bdbf4d06f6b1848.svg" alt="Charles Schwab"></p>
+<blockquote>“顾问技术的未来将由公司能否把可信数据、强大智能和日常工作流连接起来来定义。我们与 Anthropic 的合作体现了 Schwab 的承诺：帮助注册投资顾问（RIA）在他们已在使用的工具中利用创新，使服务客户、扩展业务并自信成长变得更加容易。”</blockquote>
+<p>Jon Beatty，Schwab Advisor Services 主管</p>
+<p><img src="https://assets.claude.com/7337a170485b3c8f7db6f39e25cbdb18e35dc6d7.png" alt="Ritholtz Wealth Management"></p>
+<blockquote>“AI 已经是咨询业务日常工作流的一部分。我不希望我的 CFP 每周花好几个小时埋头于 CRM 更新和任务分配。我希望他们在与客户交谈、投入到规划本身，因为那才是客户真正看重的部分。Claude for Financial Advisors 是我见过的第一个能坐在整个技术栈之上、跨栈完成这些工作、并且内置了我们所需合规控制的产品。”</blockquote>
+<p>Josh Brown，首席执行官</p>
+<p><img src="https://assets.claude.com/7337a170485b3c8f7db6f39e25cbdb18e35dc6d7.png" alt="Ritholtz Wealth Management"></p>
+<blockquote>“Ritholtz 没有人会被聊天机器人取代。这门生意的算术是小时，而不是人头：一个顾问拥有的小时数是有限的，而其中大部分被用在了准备和文书工作上，而不是那些真正付钱给我们的人。Claude for Financial Advisors 可以在我们已经在使用的系统之间推进这些琐碎工作，而任何发给客户的内容仍由顾问把关。这为整个公司夺回了有意义的时间，让客户得到更快的响应和更专注的关注。”</blockquote>
+<p>Michael Batnick，管理合伙人</p>
+<p><img src="https://assets.claude.com/bf0c4721da997cf3b0cabe9b5b57a4df8e3bd702.png" alt="Dynasty Financial Partners"></p>
+<blockquote>“这是行业不再适应 AI、而开始运行在 AI 之上的时刻。在我们看来，Anthropic 是引擎，Dynasty 是飞机，而顾问始终是飞行员。我们造好飞机，让顾问能够规模化、安全地驾驶它，而永远不必触碰下面的机械结构。结果是，我们不是给顾问另一个仪表盘，我们是把他们的时间还给他们！”</blockquote>
+<p>Shirl Penney，首席执行官兼创始人</p>
+<p><img src="https://assets.claude.com/8cb3d07594ed09df536f166bdacceed33d85eadf.svg" alt="Envestnet"></p>
+<blockquote>“顾问花在拼凑信息上的每一个小时，都是没有花在客户身上的一个小时。把 Claude 与 Tamarac 和 MoneyGuide 结合在一起，意味着顾问可以在提问所需的这段时间里理解一个家庭或一份财务计划的某些要素。”</blockquote>
+<p>Andrew Stavaridis，首席关系官</p>
+<p><img src="https://assets.claude.com/8d7d47070da0c183b9e93c94a2ddb4cf3237318b.svg" alt="iCapital"></p>
+<blockquote>“随着私募市场在客户投资组合中占据更大比重，顾问需要更简便的方式来应对复杂性。iCapital 将全面的市场平台与管理专业投资所需的数据和基础设施结合起来，而通过 Claude 连接这些数据，有助于把投资智能转化为可行动的洞察。”</blockquote>
+<p>Gary Gallagher，总裁</p>
+<p><img src="https://assets.claude.com/eeae4806401748e5b724e60461e592ce2ba81204.svg" alt="SS&amp;C"></p>
+<blockquote>“当 AI 与顾问已经在使用的数据和系统配合工作时，它对顾问最为有效。将 Claude 与 SS&amp;C Black Diamond Wealth Solutions 连接，让顾问可以把客户和投资组合信息带入他们的工作流，减少准备时间，并确保他们始终处于掌控之中。”</blockquote>
+<p>Steve Leivent，高级副总裁兼联席主管</p>
+<p><img src="https://assets.claude.com/fb76688c14d76e8ecea2860238c3074e4bf75a4e.svg" alt="Addepar"></p>
+<blockquote>“Addepar 构建了全球领先投资专业人士所依赖的数据与智能基础，用于管理近 10 万亿美元的资产，治理、严谨与控制在我们的平台中原生内置。Addepar 与 Anthropic 的合作，把我们对着复杂投资组合独特而深入的理解带入 Claude，让客户无论在哪里工作都能获得 Addepar 业界领先的投资组合智能。”</blockquote>
+<p>Eric Poirier，首席执行官</p>
+<p><img src="https://assets.claude.com/7d2f8c61095816e9f787e52e70f871b8d7ebdfe8.svg" alt="Wealth.com"></p>
+<blockquote>“遗产与税务是客户计划中必须精确的那几层。顾问已经信任 Wealth.com，将其作为客户实际遗产与税务状况的记录系统。在 Claude 内部，这份记录可以直接回答问题，每一个数字都能追溯到产生它的源文件。”</blockquote>
+<p>Rafael Loureiro，首席执行官</p>
+<p><img src="https://assets.claude.com/122680b4a90e354a227934e7b37b3cd62b0cc11f.svg" alt="Salesforce"></p>
+<blockquote>“顾问在掌握客户全貌时才能发挥最佳水平。将 Salesforce 连接到 Claude，让公司在我们的平台上建立的关系可以随顾问一起流动，且仍处于他们已有的权限与控制之内。与 Anthropic 一起，我们正在给公司更多方式，把可信的客户数据用于服务他们所服务的人。”</blockquote>
+<p>Eran Agrios，金融服务高级副总裁兼总经理</p>
+<p><img src="https://assets.claude.com/43c094e940d801886608b78e8b4ad48d4852dd04.svg" alt="Orion"></p>
+<blockquote>“客户从不会看到一场好会议背后的工作，但一旦缺失，他们就能感觉到。通过与 Anthropic 的合作，Orion 为 Claude for Financial Advisors 提供的插件把公司的投资组合和 CRM 数据带入会议准备、跟进草稿和销售管道回顾，全部在公司现有的权限与控制之内完成。技术承担了更多后台准备工作，让顾问可以继续专注于客户和对话。顾问走进会议时已准备就绪，而不必花几个小时把所有材料拼起来。”</blockquote>
+<p>Reed Colley，总裁</p>
+<p><img src="https://assets.claude.com/05a6a0c1132f543d0537102984022c0c90774dde.png" alt="zocks"></p>
+<blockquote>“优质的财务建议取决于了解客户生活中正在发生什么，而不只是他们账户里有什么，”Zocks 首席执行官兼联合创始人 Mark Gilbert 表示。“Claude 与 Zocks 之间扩展的合作，把过去分散在多个来源和系统中的数据与个人客户上下文汇集在一起。如今，通过 Claude 完成的每一项任务和分析，都建立在更完整的客户理解之上。这也让企业机构拥有更大的灵活性，围绕其顾问实际的工作方式来构建 AI 工作流。”</blockquote>
+<p>Mark Gilbert，首席执行官兼联合创始人</p>
+<p><img src="https://assets.claude.com/b85fd6f58a1f1a493b2cc9de09044b6b2164466e.png" alt="RFG Advisory"></p>
+<blockquote>“MCP 正在从根本上改变我们为顾问构建技术的方式。随着 Claude 和 Zocks 直接集成进我们的技术栈，过去需要数月配置并依赖外部合作伙伴的问题，正越来越多地能由我们自己的开发团队解决。这让我们可以自由地更快行动、与一流的合作伙伴协作，并围绕顾问实际运作的方式去构建。与其要求顾问适应技术，我们可以让技术去适应他们。”</blockquote>
+<p>Dr. Jordan Hutchison，技术与运营副总裁</p>
+<p><img src="https://assets.claude.com/31be98f5c18121a5063482dbcb91cd4bb812e9c7.svg" alt="Wealthbox"></p>
+<blockquote>“顾问们多年来在 Wealthbox 中积累了深厚的客户上下文。这让他们可以把这些上下文直接带入 Claude，并让前沿模型据此工作，例如准备会议、处理跟进、起草沟通内容，同时一切都保持与他们业务所依赖的 CRM 相连。”</blockquote>
+<p>John Rourke，首席执行官兼联合创始人</p>
+<p><img src="https://assets.claude.com/d72d42304889c5ecd4f2ba410dfde53b13255b97.svg" alt="BlackRock"></p>
+<blockquote>“顾问们正在应对日益复杂的客户需求，同时面对市场与技术加速变化的节奏。我们与 Anthropic 的合作是我们更广泛努力中的重要一步，旨在把 BlackRock 的投资组合智能与资产配置专长带给更多顾问，帮助他们扩展业务、构建更好的投资组合。通过让机构级投资组合分析更易获得，我们正在帮助更多顾问利用我们的投资组合智能，从而把更多时间专注于客户关系。”</blockquote>
+<p>Jaime Magyera，美国财富与退休业务主管</p>
+<p><img src="https://assets.claude.com/e417bbb81bf909eb4ebe19fe0dee25370dbfd28e.svg" alt="Mercer Advisors"></p>
+<blockquote>“Anthropic 构建与人类价值观一致的 AI。Mercer Advisors 构建与客户利益一致的家庭办公室。这种共同的执着是两家公司的核心，也锚定了我们的合作。Claude 帮助我们的团队在客户的财务生活中无缝协作，而判断与问责仍留在顾问身上。这就是 AI 在任何建立在信任之上的职业中应有的运作方式。”</blockquote>
+<p>Daniel Gourvitch，总裁</p>
+<p><img src="https://assets.claude.com/70a6a06de8cab56f6dea00611e665aa99e4d17a4.svg" alt="Rockefeller Capital Management"></p>
+<blockquote>“我们很高兴看到 Anthropic 持续投入于为金融顾问的独特需求量身打造的能力。我们的合作源于一个共同信念：技术应当支持顾问，而不是取代他们，帮助他们应对复杂性、更高效地服务客户，同时让人工判断与自主权始终处于首位。”</blockquote>
+<p>Ashley McCarthy，首席运营官兼法律顾问-董事总经理</p>
+<p>1/18</p>
+<h2>开始使用</h2>
+<p>顾问插件今天即可使用。我们建议注册投资顾问采用 Enterprise 计划，因为它包含支持记录保存的审计日志。如果你已有 Enterprise 许可证，请打开 Cowork，在插件浏览器中找到「Claude for Financial Advisors」，安装它并按照引导式设置连接你的工具（也可以从<a href="http://github.com/anthropics/claude-for-financial-advisors">此处的市场</a>安装）。</p>
+<p>如果你没有 Enterprise 许可证，请使用这个<a href="https://forms.gle/y9YmFF2j4moRinJA7">表单</a>提出申请，Anthropic 团队成员会与你联系说明后续步骤。在 2026 年 9 月底之前申请新许可证的公司，还将获得一次性用量额度，帮助他们开始使用该插件。</p>
+<p>在我们的<a href="https://claude.com/solutions/financial-services#financial-advisors">解决方案页面</a>了解更多信息，并参加我们本周五 9/18 上午 11 点（美东时间）的<a href="https://claude.com/resources/webinars/inside-claude-for-financial-advisors">网络研讨会</a>。</p>
+<p><em>本文最初发布于 2026 年 9 月 14 日。文章已更新，以加入来自 Anthropic 合作伙伴的更多连接器。</em></p>
+<p>文章</p>
+<p>2026 年 10 月 26 日</p>
+<h3>扩展 Claude for Nonprofits</h3>
+<p>我们的新 Claude for Nonprofits 插件为每个经过验证的非营利组织带来新技能，接手那些让小型团队在筹款、营销和招聘之间捉襟见肘的运营工作。</p>
+<p>文章</p>
+<p>2026 年 10 月 23 日</p>
+<h3>Claude Cowork 与聊天功能在 Enterprise 中融为一体</h3>
+<p>Claude Enterprise</p>
+<p>文章</p>
+<p>2026 年 10 月 23 日</p>
+<h3>Claude Duet 的安全性、隐私与保障</h3>
+<p>Claude Duet 是一个主动为你工作的智能体，即使你离开时也是如此。它建立在两层保护之上：Claude 模型本身的安全训练，以及 Claude Code 和 Claude Managed Agents 等产品中已有的防护措施。在此之上，我们又增加了针对跨账户工作和代你行动的新保护。</p>
+<p>文章</p>
+<p>2026 年 10 月 22 日</p>
+<h3>完整的 Claude Platform 现已在 Google Cloud 上提供</h3>
+<p>使用 Google Cloud 上的 Claude Models（Anthropic 托管），借助 Google Cloud 的身份验证、计费与承诺用量到期，访问 Claude Platform 的各项功能。</p>
+<p>Claude Platform</p>
+<h2>用 Claude 变革你的组织运作方式</h2>
+<p><a href="https://claude.com/pricing#api">查看定价</a><a href="https://claude.com/contact-sales">联系销售</a></p>
+<h3>订阅开发者通讯</h3>
+<p>产品更新、操作指南、社区聚焦，以及更多内容。每月送达你的收件箱。</p>
+<p>如果你希望收到我们的月度开发者通讯，请提供你的电子邮箱地址。你可以随时退订。</p>]]></content:encoded>
     </item>
     <item>
-      <title>与Claude一起加速药物开发的早期进展</title>
+      <title>与 Claude 一起加速药物开发的早期进展</title>
       <link>https://www.anthropic.com/research/early-progress-drug-development</link>
       <guid isPermaLink="true">https://www.anthropic.com/research/early-progress-drug-development</guid>
       <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Early progress on accelerating drug development with Claude</description>
+      <content:encoded><![CDATA[<h1>与 Claude 一起加速药物开发的早期进展</h1>
+<p><em>Anthropic 的<a href="https://www.anthropic.com/science">生命科学团队</a>正致力于加速治愈疾病。过去几个月，我们的科学家与六家开发新药的机构开展了深度研究合作：<a href="https://www.bighatbio.com/">BigHat Biosciences</a>、<a href="https://www.bms.com/">Bristol Myers Squibb</a>、<a href="https://divergencelabs.com/">Divergence Labs</a>、<a href="https://enveda.com/">Enveda</a>、<a href="https://generatebiomedicines.com/">Generate Biomedicines</a> 和 <a href="https://www.thecolumngroup.com/">The Column Group</a>。我们也启动了自己的药物发现工作。在此过程中，我们深入了解了 Claude 如何支持药物开发，以及我们还需要如何改进 Claude，才能实现 AI 在医学中的潜力。我们计划从此刻起大幅扩展这项工作。</em></p>
+<p>加速药物开发有许多机会，甚至超出人们最常讨论的 AI 应用，例如为新分子<a href="https://www.anthropic.com/research/Claude-accelerates-protein-design">提出初步设计</a>。开发一款药物涉及许多不同的任务：做早期研究以确定药物靶点以及与之结合的合适药物类型，设计与靶点性质匹配的分子，优化它以在大规模生产中可靠制造，起草开展临床试验所需的监管申报文件，设计并实施这些试验，等等。</p>
+<p>我们实现 AI 医疗价值的策略，是让 AI 越来越多地参与所有这些任务。这里没有单一的问题需要解决；瓶颈分布在整个药物开发过程中。识别并打通这些瓶颈的最佳方式，是深入到众多不同疾病领域和开发阶段的真实药物项目中去。</p>
+<p>因此，过去几个月我们与六家机构合作来做到这一点。我们也启动了自己的药物发现工作，包括针对罕见儿童型肌营养不良症的项目，其中 Claude 承担了大部分科学和运营工作。</p>
+<p>这项工作从三方面服务于我们的目标。第一，它让我们更好地理解模型在更广泛的药物开发任务中的优势与局限（我们已经根据目前所学，优先安排了模型的具体改进）。第二，这些项目可以作为更广泛生命科学界的案例研究。如果 Claude 要显著提高新疗法的产出速度，我们需要与更多生物技术公司合作，把 Claude 更深入地整合进它们的开发流程。第三，如果这些项目继续保持积极轨迹，它们本身也应产生直接影响。我们乐观地认为，其中一些可能为其针对的疾病带来有效的新药，包括食物过敏、罕见儿童疾病和几种癌症。</p>
+<p>在本文中，我们介绍与合作伙伴取得的最新进展，并附上更详细描述我们思路、方法和早期结果的技术报告与预印本。随后我们简要说明下一步的工作方向。</p>
+<h2>案例研究</h2>
+<p><strong>Generate Biomedicines：模态工程。</strong> Generate Biomedicines 一直在研究如何提升一种名为 CAR T 细胞疗法的癌症治疗的效用。这种疗法历史上帮助治疗血液细胞癌症；Generate 的目标是对其重新工程化，使其也能治疗实体瘤癌症。为此，他们着眼于缩短该疗法基因指令中的一个部分，从而为适合其他癌症类型的额外指令腾出空间。六位 Generate 科学家使用 Claude Code 为这一部分提出新设计。其中一个设计比标准版本短约 70%，在实验室测试中更有效：它让免疫细胞产生大约 10 倍数量的受体（用于识别癌细胞的蛋白质），更高效地杀死肿瘤细胞，且免疫细胞保持活性的时间更长。阅读更多，并参见 <a href="https://generatebiomedicines.com/publications/refactored-intracellular-domains-enhance-car-expression-and-function/">Generate 的技术报告</a>。</p>
+<p><strong>Divergence Labs：命中化合物生成。</strong> Divergence Labs 正在研究一种治疗食物过敏的新方法。食物过敏由一种名为 IgE 的分子引发的反应触发，其中一部分 IgE 附着在我们的免疫细胞上，另一部分则游离在我们的血液中。Divergence Labs 正在开发能将 IgE 从免疫细胞上完全脱离的药物，而不是像标准药物那样仅仅中和血液中循环的 IgE。这可能带来更有效的治疗，但需要精确的设计，带有两个「臂」：一个与 IgE 紧密结合，另一个帮助把 IgE 从免疫细胞上撬下来。Claude 将 Divergence Labs 的目标转化为一份详细的设计方案，然后基本自主地在大约一个月内生成约 35,000 个抗体设计，以供筛选和测试。在这些早期测试中，Divergence 为两个臂都找到了「命中」：三个设计可以结合 IgE，20 个可以使其脱落。这 20 个中有三个似乎比标准药物更能使 IgE 脱落。它的下一步是构建一款结合这两个臂的药物。阅读更多，并参见 <a href="https://divergencelabs.com/publications/ige-preprint.pdf">Divergence 的技术报告</a>。</p>
+<p><strong>BigHat Biosciences：先导化合物优化。</strong> BigHat Biosciences 将 AI 与自动化实验室结合，改进候选药物（或称「先导化合物」），这些化合物必须紧密结合靶点、在生产和储存过程中保持稳定，并避免聚集（以及其他标准）。BigHat 的科学家和一位 Anthropic 研究员与 Claude 合作，改进两个先导化合物的这三项特性，两者都是可能成为未来药物组成部分的抗体片段：一个设计用于靶向癌细胞，另一个设计用于让药物在体内停留更久。Claude 连接到 BigHat 的实验室数据系统 Reccy，为每个分子提出修改建议，BigHat 的实验室在约 10 周内制备并测试了约 1,010 个变体。进行到中途时，团队怀疑标准的耐热性和聚集指标存在误导。Claude 与研究员重新分析原始数据，随后提出了不同的指标和一项用于测试它们的方案变更。BigHat 的科学家对其加以完善并执行，主要预测得以成立。与原始版本相比，最佳版本结合紧密程度提高 10 倍以上，靶向癌症的先导化合物在溶液中保持稳定的温度高出 18°C，而用于长效药物的先导化合物聚集速度慢了 100 倍以上。阅读更多，并参见 <a href="https://www.bighatbio.com/bighat-anthropic-collaboration-report-10-27-2026">BigHat 的技术报告</a>。</p>
+<p><strong>Enveda：生产与申报。</strong> 要开展临床试验，公司需要记录证明每一批新药都按照严格的质量标准生产，并向监管机构提交申请，此外还有其他要求。在 Enveda，生产化学家最多要把 75% 的时间花在文书工作上。为减轻负担，Enveda 构建了一套系统，把其所有生产文档连接到 Claude，然后让 Claude 标出任何可能的问题。在对 1,061 页文档的测试中，Claude 抓住了人工审查者发现的所有 11 个问题——还标出了他们漏掉的 7 个。在此过程中，这种方法将人工审查时间减少了 89%，从超过 25 小时降至不到三小时。另外，Claude 还为两份重要的监管文件撰写了初稿。其中一份耗时四小时，而手工完成约需三个月。对于另一份，Enveda 的标准人工审查流程发现了一处小错误。阅读更多，并参见 <a href="https://enveda.com/CMC-Document-Processor/">Enveda 的技术报告</a>。</p>
+<p><strong>The Column Group (TCG)：公司创建。</strong> 由于药物发现可能缓慢、昂贵且容易失败，生物技术公司的投资者更青睐更安全、此前已被验证的想法，而不是风险更高的新想法，即使后者可能帮助更多患者。我们一直与 TCG 合作，看 Claude 能否通过缩短药物发现的时间和成本来改变这一点，使投资者能够有信心地支持更有雄心的想法。具体而言，TCG 正在成立 Pleiades，一家将借助 Claude 运行比小型团队通常所能处理的更多、也更复杂的药物项目的新公司。这可能成为一种模式，展示 Claude 如何降低运营一家生物技术公司所需的科学开销以及运营与行政开销。如果这行得通，这种模式可以在整个行业复制，并把投资引向医学中更困难的问题。Pleiades 目前正在为 Claude 开发新工具和工作流；它的第一个 Claude 技能用于帮助 Claude 评估药物靶点是否值得推进，已在 45 个靶点-疾病对上做过评估。阅读更多。</p>
+<p>最近，我们还开始与 <a href="https://www.bms.com/">Bristol Myers Squibb</a>（BMS）合作，寻找并解决临床试验规划中的瓶颈。BMS 正在使用 Claude 评估一款早期药物在临床试验中的方案，并估算这些试验成功的可能性。我们计划在 2027 年扩大这项工作，以了解它在提高早期开发成功概率方面的潜力。</p>
+<blockquote>“我们在临床试验阶段使用 Claude 分析专有数据、制定临床研究计划，并权衡研究的成功几率。仅凭一条 prompt，Claude 就生成了一份扎实的初步分析，帮助我们对不同的开发选项做出评估，而这些工作否则需要数天才能完成。我们在完成这一切的同时，确保了我们高度敏感数据的安全。我们期待把这项工作扩展到我们的管线中，以支持组合层面的决策。”</blockquote>
+<p><em><strong>Michael Pourdehnad, MD</strong>，早期临床开发、血液学、肿瘤学与细胞治疗负责人，高级副总裁。</em></p>
+<p>除了与这些合作伙伴的工作，我们也开始自己运行一些研究项目。我们收购了 Mithril Medicine，一家由一人经营、一直在开发两种罕见肌营养不良症疗法的公司。其创始人 Cody Tranbarger 使用 Claude 组织合同、物流以及与 11 家外部实验室的实验，并把 Mithril 运营中的许多其他方面委派给 Claude。结果是，Mithril 在不到 18 个月内，把一种针对某种肌营养不良症的可能疗法从想法推进到小鼠身上的积极结果。如今在 Anthropic，Cody 正在继续这项研究，并计划启动几个新项目。如果他的候选药物继续站得住，我们预计最早在 2028 年底就能有一款药物准备好开始人体临床试验。阅读更多，并参见<a href="https://www-cdn.anthropic.com/52e1f5d50c47ca3818f56704c27cf19e59b62e77.pdf">我们的技术报告</a>。</p>
+<h2>扩展我们在生命科学领域的工作</h2>
+<p>所有这些研究仍处于早期阶段。具体而言，到目前为止它主要处于<em>临床前</em>阶段——也就是说，大部分还没有到在人体中测试药物的阶段。随着这些药物项目推进，以及我们与更多药物开发项目已处于临床阶段的机构合作，我们计划继续把 Claude 的角色扩展到临床试验中。</p>
+<p>这项研究只是我们加速药物发现努力的一部分。最终，我们希望把模型分享给尽可能多的药物开发研究者。为此，我们推出了 <a href="https://www.anthropic.com/news/claude-science-ai-workbench">Claude Science</a>，这是我们面向研究者的 AI 工作台，并且我们正在提供<a href="https://www.anthropic.com/news/ai-for-science-program">面向生命科学家的 Claude 额度</a>。我们还创建了<a href="https://www.anthropic.com/news/life-sciences-verification-program">生命科学验证计划</a>，让可信赖的机构能够以更宽松的模型防护措施版本使用我们最强大的模型——这些防护对于防止滥用是必要的，但可能阻碍合法的生物学研究。我们最近还启动了生命科学领域的<a href="https://www.anthropic.com/news/open-call-guest-investigators-life-sciences">客座研究者公开征集</a>；我们正在寻求研究团队的提案，他们希望使用 Claude 探究药物发现及其他领域的关键问题。</p>
+<p>我们期待在扩展生命科学研究的过程中与更多机构合作。如果你所在的机构专注于药物发现并有兴趣与我们合作，可以通过下方与我们联系。</p>
+<h3>与我们联系</h3>]]></content:encoded>
     </item>
     <item>
       <title>扩大我们与 GSA 的合作伙伴关系，将 Claude 带到各级政府</title>
@@ -35,6 +265,21 @@
       <guid isPermaLink="true">https://www.anthropic.com/news/expanding-partnership-gsa</guid>
       <pubDate>Tue, 27 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Expanding our partnership with GSA to bring Claude to all levels of government</description>
+      <content:encoded><![CDATA[<h1>扩大我们与 GSA 的合作伙伴关系，将 Claude 带到各级政府</h1>
+<p>我们正在扩大与美国总务管理局（GSA）的合作伙伴关系，通过一项新协议为政府合作伙伴提供 Claude Enterprise、Claude for Government 和 Claude API 的 40% 折扣。这是该折扣首次覆盖所有产品形态，既包括各机构目前直接从我们这里购买的情形，也包括未来几个月通过云提供商购买的情形。折扣还扩展至州、地方、部落和领地政府。</p>
+<p>我们还在启动一项专门计划，帮助各机构落地并充分利用 Claude。这类计划通常被我们的私营部门客户所采用，我们期待在未来几周把这些最佳实践带给公共部门合作伙伴。</p>
+<p>目前约有 500 个美国联邦、州和地方政府机构在使用 Claude。自 2 月以来，Claude for Government 的周活跃用户增长约 8 倍，联邦文职机构的使用量在一年内增长约 20 倍。这些机构运行着国内一些最重要的系统，通常预算紧张、采购周期漫长。这项协议正是为支持这类工作而设计，让它们无需大额前期承诺即可把 Claude 用于难题。</p>
+<p>通过该协议提供的折扣，预计将为政府节省 10 亿美元。各机构不受最低消费承诺的约束，可以按实际用量付费。</p>
+<h3>Claude 如何帮助公务人员完成更多工作</h3>
+<p>政府机构正使用 Claude 解决一些最重要的挑战，例如管理积压、记录和表单，以及让旧代码现代化。机构使用 Claude 的一些方式包括：</p>
+<ul><li>犹他州将 Claude Code 提供给 10 个州机构的 34 名开发者。80% 的人在 30 分钟内就拥有了可用的环境，71% 的人在为期四周的试点结束时表示节省了 20 小时以上。</li><li>美国某州的 CIO 证实，得益于 Claude，其团队能在 8 分钟内响应一次勒索软件攻击，而通常需要 2-3 天。</li><li>美国一个联邦安全团队使用 Claude Mythos 检测并修补了一个本可导致关键生产系统被接管的漏洞，用时约两天。而一个月前进行的人工渗透测试漏掉了它。</li><li>某大型机构的一位网络安全专业人员发现并修补了关键金融系统中的漏洞。</li><li>美国某州的 IT 开发者用两天将近 900 个 API 方法迁移到新框架。该项目原本预估需要一个月。</li><li>美国某州的 IT 主管用 Claude Code 为 12 个遗留代码仓库编写文档，梳理了 467 张数据库表，并沿途标记出 27 处风险。</li><li>美国超过半数的州、一些最大的地方辖区，以及该国一些最大的关键基础设施运营商<a href="https://www.anthropic.com/news/anthropic-cyber-mission">参与</a>了我们的 SLTT 网络防御计划。</li></ul>
+<h3>满足政府安全要求</h3>
+<p>各机构可以将 Claude 用于最敏感的未分类工作。Claude for Government 提供 Claude 的编码与 agent 工作能力，并在 FedRAMP High 授权级别上提供与商业产品近乎同等的功能，已于 9 月 30 日<a href="https://claude.com/resources/articles/claude-for-government-is-now-generally-available">正式可用</a>。</p>
+<p>自建工具的机构可以通过 Amazon Bedrock 或 Google Cloud 的 Vertex AI 使用 Claude。在 Bedrock 上，Claude 已获 FedRAMP High 授权，部分模型获准用于 AWS GovCloud 中的 DoD IL4 和 IL5 工作负载。在 Vertex AI 上，Claude 已获 FedRAMP High 授权。</p>
+<p>Claude Enterprise 正在通过 FedRAMP 20x 计划进行 FedRAMP Moderate 授权流程，这标志着我们如何把商业上可用的同样创新技术带给政府的下一步演进。</p>
+<h3>开始使用</h3>
+<p>政府机构今天即可通过 GSA 的 Multiple Award Schedule 以 OneGov 折扣购买 Claude。无论你的部门或机构已经在使用 Claude，还是有兴趣使用，我们的公共部门团队都会协助讨论你的选择。</p>
+<p>如需了解更多信息，请<a href="https://claude.com/solutions/government">在此</a>联系我们。</p>]]></content:encoded>
     </item>
     <item>
       <title>扩大Claude对非营利组织的影响</title>

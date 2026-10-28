@@ -9,10 +9,10 @@
 
 ## 全部文章（共 130 篇，按日期倒序；无日期条目列于最后）
 
-1. [AWS named a Leader in the 2026 Gartner Magic Quadrant for Contact Center as a Service](https://aws.amazon.com/blogs/machine-learning/aws-named-a-leader-in-the-2026-gartner-magic-quadrant-for-contact-center-as-a-service/)（2026-10-27）
-2. [Announcing SOCI-indexed images for faster SageMaker AI jobs](https://aws.amazon.com/blogs/machine-learning/announcing-soci-indexed-images-for-faster-sagemaker-ai-jobs/)（2026-10-27）
-3. [Fix evaluation bias to unlock better models on Amazon Bedrock](https://aws.amazon.com/blogs/machine-learning/fix-evaluation-bias-to-unlock-better-models-on-amazon-bedrock/)（2026-10-27）
-4. [Exowatt beats frontier models on accuracy with SageMaker serverless model customization](https://aws.amazon.com/blogs/machine-learning/exowatt-beats-frontier-models-on-accuracy-with-sagemaker-serverless-model-customization/)（2026-10-27）
+1. [AWS 被评为 2026 年 Gartner 联络中心即服务魔力象限领导者](https://aws.amazon.com/blogs/machine-learning/aws-named-a-leader-in-the-2026-gartner-magic-quadrant-for-contact-center-as-a-service/)（2026-10-27） <!--orig:AWS named a Leader in the 2026 Gartner Magic Quadrant for Contact Center as a Service-->
+2. [推出 SOCI 索引镜像，加速 SageMaker AI 作业](https://aws.amazon.com/blogs/machine-learning/announcing-soci-indexed-images-for-faster-sagemaker-ai-jobs/)（2026-10-27） <!--orig:Announcing SOCI-indexed images for faster SageMaker AI jobs-->
+3. [修复评估偏差，在 Amazon Bedrock 上解锁更好的模型](https://aws.amazon.com/blogs/machine-learning/fix-evaluation-bias-to-unlock-better-models-on-amazon-bedrock/)（2026-10-27） <!--orig:Fix evaluation bias to unlock better models on Amazon Bedrock-->
+4. [Exowatt 借助 SageMaker serverless 模型定制在准确率上超越前沿模型](https://aws.amazon.com/blogs/machine-learning/exowatt-beats-frontier-models-on-accuracy-with-sagemaker-serverless-model-customization/)（2026-10-27） <!--orig:Exowatt beats frontier models on accuracy with SageMaker serverless model customization-->
 5. [Fleet-wide computer vision lifecycle at the edge with SageMaker SDK v3](https://aws.amazon.com/blogs/machine-learning/fleet-wide-computer-vision-lifecycle-at-the-edge-with-sagemaker-sdk-v3/)（2026-10-26）
 6. [AI 代理的土拨鼠日：在 Amazon Bedrock 上使用 OpenAI 模型的提示缓存模式](https://aws.amazon.com/blogs/machine-learning/groundhog-day-for-ai-agents-prompt-caching-patterns-for-using-openai-models-on-amazon-bedrock/)（2026-10-26） <!--orig:Groundhog Day for AI agents: Prompt caching patterns for using OpenAI models on Amazon Bedrock-->
 7. [使用 CDK 在托管 Amazon Bedrock 知识库上构建代理检索](https://aws.amazon.com/blogs/machine-learning/build-agentic-retrieval-on-a-managed-amazon-bedrock-knowledge-base-with-cdk/)（2026-10-26） <!--orig:Build agentic retrieval on a Managed Amazon Bedrock Knowledge Base with CDK-->

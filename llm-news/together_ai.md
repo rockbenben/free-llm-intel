@@ -9,7 +9,7 @@
 
 ## 全部文章（共 86 篇，按日期倒序；无日期条目列于最后）
 
-1. [Auto repair for Together GPU Clusters: from GPU fault to healthy node](https://www.together.ai/blog/auto-repair-for-together-gpu-clusters)（2026-10-27）
+1. [Together GPU 集群自动修复：从 GPU 故障到健康节点](https://www.together.ai/blog/auto-repair-for-together-gpu-clusters)（2026-10-27） <!--orig:Auto repair for Together GPU Clusters: from GPU fault to healthy node-->
 2. [Together Post-Training 上线：按你的方式做前沿级模型后训练](https://www.together.ai/blog/together-post-training)（2026-10-19） <!--orig:Together Post-Training: frontier-grade model shaping, the way that fits you-->
 3. [Meta Muse Spark Open 已在 Together AI 上线](https://www.together.ai/blog/meta-muse-spark-open)（2026-10-15） <!--orig:Meta Muse Spark Open is live on Together AI-->
 4. [与 IBM Cloud 和 NVIDIA 合作，扩展我们的企业推理容量](https://www.together.ai/blog/expanding-our-enterprise-inference-capacity-with-ibm-cloud-and-nvidia)（2026-10-06） <!--orig:Expanding our enterprise inference capacity with IBM Cloud and NVIDIA-->
