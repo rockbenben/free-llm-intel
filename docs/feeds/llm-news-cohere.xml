@@ -9,277 +9,274 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>在 AWS 上使用 Cohere AI 构建金融研究助理</title>
+      <title>在 AWS 上用 Cohere AI 构建金融研究助理</title>
       <link>https://cohere.com/blog/financial-research-assistant-cohere-aws</link>
       <guid isPermaLink="true">https://cohere.com/blog/financial-research-assistant-cohere-aws</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Build a Financial Research Assistant with Cohere AI on AWS</description>
       <content:encoded><![CDATA[<p>2026 年 10 月 29 日</p>
 <p>17 分钟阅读</p>
-<h1>在 AWS 上使用 Cohere AI 构建金融研究助理</h1>
+<h1>在 AWS 上用 Cohere AI 构建金融研究助理</h1>
 <p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/a9f5cf4c07f32484927a5f451a4763453a1cd062-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=1130" alt=""></p>
 <p>要点</p>
-<ul><li><strong>在 AWS 上构建金融研究助理。</strong> 将 Cohere Embed、Rerank 和 Parse 与 Amazon SageMaker AI、OpenSearch Serverless 和 Amazon Bedrock 相结合，以搜索财务文件并通过页面级引用生成答案。</li><li><strong>优化检索质量、延迟和成本。</strong> 使用 Embed Pro 实现高质量文档索引，使用 Embed Fast 实现低延迟查询，并通过可配置的嵌入维度和量化来平衡准确性和存储。</li><li><strong>通过 Rerank 提高搜索相关性。</strong> 使用 Rerank Pro 对检索到的页面重新排序，并使用上下文焦点来识别相关段落并减少发送到答案模型的文本量。</li><li><strong>处理复杂的财务文档。</strong> 使用 Cohere Parse 处理扫描或表格较多的页面，并结合文本和页面图像以帮助答案模型解释财务数据并保留上下文。</li><li><strong>在您自己的 AWS 账户中部署和实验。</strong> 使用基于 CloudFormation 的演示来探索检索、重新排名、上下文焦点和引用支持的答案，同时了解不同配置的权衡。</li></ul>
-<p>作为一名金融分析师，一天中的大部分时间都归结为在长达数百页的文件中找到一个数字，然后证明它的来源。两者都不像听起来那么容易。该数字很少出现在正文中。它通常位于表格、脚注或图表中，并且可以以不同的名称显示在不同的位置。</p>
-<p>在这篇文章中，我们展示了如何使用 Amazon SageMaker AI 上的 Cohere 模型构建财务申报研究助理 - 用于搜索的嵌入、用于对结果排序的重新排序以及用于将硬页面转换为干净文本的解析。 Amazon Bedrock 上的 Anthropic Claude 将用于撰写答案，并为每项主张提供引用。</p>
-<p>我们将从使这项工作变得困难的原因开始，然后概述解决方案，然后将本文的大部分内容花在其背后的设计决策以及何时您会做出不同的决定。最后，我们展示了如何在您自己的 AWS 账户中部署该解决方案并亲自尝试。</p>
+<ul><li><strong>在 AWS 上构建金融研究助理。</strong> 把 Cohere Embed、Rerank 和 Parse 与 Amazon SageMaker AI、OpenSearch Serverless 和 Amazon Bedrock 组合起来，用于检索财务申报文件并生成带页面级引用的答案。</li><li><strong>优化检索质量、延迟和成本。</strong> 用 Embed Pro 做高质量文档索引，用 Embed Fast 做低延迟查询，并通过可配置的 embedding 维度和量化来平衡准确率与存储。</li><li><strong>用 Rerank 提升搜索相关性。</strong> 用 Rerank Pro 对检索到的页面重新排序，并用 Context Focus 标出相关段落，减少送往答案模型的文本量。</li><li><strong>处理复杂的财务文档。</strong> 对扫描件或表格密集的页面使用 Cohere Parse，并结合文本与页面图像，帮助答案模型解读财务数字并保留上下文。</li><li><strong>在你自己的 AWS 账号里部署和试验。</strong> 用这个基于 CloudFormation 的演示探索检索、重排、Context Focus 和带引用的答案，同时了解不同配置各自的取舍。</li></ul>
+<p>作为一名金融分析师，一天里的大部分时间都花在从一份长达数百页的申报文件里找出某一个数字，然后证明它来自哪里。这两件事都不像听起来那么轻松。这个数字很少出现在正文中，它通常藏在一张表、一个脚注或一幅图表里，而且同一个数字可能在不同地方以不同名字出现。</p>
+<p>本文介绍如何用 Amazon SageMaker AI 上的 Cohere 模型为财务申报文件构建一个研究助理——用 Embed 做检索，用 Rerank 给结果排序，用 Parse 把难啃的页面变成干净文本。答案由 Amazon Bedrock 上的 Anthropic Claude 来写，每一条论断都配一条引用。</p>
+<p>我们会先讲清楚这件事难在哪里，然后给出方案概览，接着把大部分篇幅放在背后的设计决策上，以及什么情况下你该做出不同的选择。最后，我们会展示如何在你自己的 AWS 账号里部署这套方案并亲自试用。</p>
 <h3><strong>为什么金融研究很难自动化</strong></h3>
-<p>金融研究看起来像一个搜索问题，但它具有打破简单方法的特征。</p>
-<p><strong>答案就在布局中。</strong> 以 10-K 为例，这是美国上市公司向美国证券交易委员会提交的年度报告，涵盖业务、风险及其经审计的财务报表（<a href="https://www.investor.gov/introduction-investing/investing-basics/glossary/form-10-k">10-K 表格包含的内容</a>）。您需要的数据通常以表格形式呈现，形式为按年份划分的净利息收入、按层级划分的监管资本、按贷款类型划分的冲销等。当 PDF 转换为纯文本时，表格会失去行和列的关系，多列页面可能会以错误的顺序出现，而且图表通常会消失。</p>
-<p><strong> 无法验证的答案是没有用的。</strong> 如果不知道“CET1 比率为 11.9%”来自哪个文件、哪个页面，也不知道该数字来自表格、图表还是句子，分析师就无法在备忘录中写下“CET1 比率为 11.9%”。这项工作的助手必须展示其来源，而阅读者必须能够快速检查它们。</p>
-<p><strong> 数量和成本加起来。</strong> 研究团队可能会索引多年来的数千份文件。每个页面都嵌入一次，但每个问题也都嵌入，并且针对每个问题运行的每个模型都会增加时间和成本。</p>
-<p><strong> 并非每份文档都是干净的。</strong> 文件以数字 PDF 形式到达，但也以扫描的证物、传真协议和根本没有文本层的拍照页面形式到达。</p>
-<p><strong> 问题并不总是以文档的语言提出。</strong>覆盖多个市场的团队经常用一种语言询问用另一种语言编写的文档。</p>
-<p>因此，一个有用的助手必须做一些事情，例如当答案在表格中时找到正确的页面，使每个答案都可检查，控制成本和延迟，处理不干净的页面以及跨语言工作。</p>
+<p>金融研究看起来像一个搜索问题，但它有一些会让简单办法失效的特性。</p>
+<p><strong>答案藏在版面里。</strong> 以 10-K 为例——这是美国上市公司向美国证券交易委员会提交的年度报告，涵盖业务、风险和经审计的财务报表（<a href="https://www.investor.gov/introduction-investing/investing-basics/glossary/form-10-k">Form 10-K 包含哪些内容</a>）。你需要的那个数字通常以表格形式出现，比如按年度分的净利息收入、按层级分的监管资本、按贷款类型分的核销等。当 PDF 被转成纯文本时，表格会丢失行列之间的对应关系，多栏页面的顺序可能整个乱掉，图表则常常直接消失。</p>
+<p><strong> 无法核实的答案没有用。</strong> 分析师不能在备忘录里写下「the CET1 ratio was 11.9%」，却说不清它出自哪份申报文件、哪一页，以及这个数字是来自表格、图表还是某一句话。做这类工作的助理必须把来源摆出来，读的人还得能很快核对。</p>
+<p><strong> 数量和成本会累积。</strong> 一个研究团队可能要索引跨越多年的数千份申报文件。每个页面只做一次 embedding，但每个问题也要做一次 embedding，而在每个问题上运行的每个模型都会增加时间和成本。</p>
+<p><strong> 不是每份文档都干净。</strong> 申报文件有的是数字 PDF，有的却是扫描件附件、传真过来的协议，以及完全没有文字层的拍照页面。</p>
+<p><strong> 问题不一定用文档的语言提出。</strong> 同时覆盖多个市场的团队，常常用一种语言去问另一种语言写成的文档。</p>
+<p>所以一个真正有用的助理得做到几件事：答案在表格里时能找到正确的那一页、让每条答案都可核验、把成本和延迟控制住、应付不干净的页面，以及跨语言工作。</p>
 <h3>**</h3>
-<p>解决方案概述 **</p>
-<p>解决方案是由一名研究助理回答有关一系列申请的问题，并显示每项索赔的来源页面。它使用四种模型，每种模型都有一项工作：</p>
-<ul><li><strong>Cohere Embed</strong> 将每个页面和每个问题转换为一个向量，该向量是捕获其含义的数字列表，以便与问题相关的页面靠近它。 <a href="https://cohere.com/blog/embed-5">嵌入分为两层</a>：<strong>Embed Pro</strong>，专为最高检索质量和离线索引而构建，<strong>Embed Fast</strong>，专为实时请求路径上的低延迟而构建。</li><li><a href="https://cohere.com/blog/rerank-5">Cohere Rerank</a> 从向量搜索中获取问题和最佳候选页面，将每一对一起读取，并将它们按更好的顺序排列。通过 <strong>Context Focus</strong>，Rerank 还可以标记每个页面上回答问题的段落。与 Embed 一样，Rerank 也分为两层：<strong>Rerank Pro</strong>，专为实现最高准确度而构建；<strong>Rerank Fast</strong>，专为降低延迟而构建。我们使用 <strong>Rerank Pro</strong>，因为对于财务助理来说，找到正确的页面通常比更快的答案更重要。</li><li><strong>Cohere Parse</strong> 读取页面图像并返回干净的 Markdown，其中表格作为真实的行和列。它用于文本较弱的页面。</li><li><strong>Amazon Bedrock 上的人类Claude</strong> 阅读首页并写出答案，并引用每一页。</li></ul>
-<p>人们可以通过具有三个功能的网络应用程序来使用它：</p>
-<ul><li><strong>助理。</strong> 询问有关备案的问题。助手找到最相关的页面，阅读它们，然后写下答案，其中每个主张都引用其页面。每条引文还说明事实是否来自表格、图表、正文、脚注或图形，只需单击一下即可打开页面图像进行检查。</li><li><strong>搜索。</strong> 相同的搜索，没有生成的答案。它可以并排显示使用和不使用重新排序的结果，以便您可以看到重新排序如何更改它们，并且“重新排序”列显示在每个页面上选择的上下文焦点段落。</li><li><strong>解析。</strong>解析从您可以下载的页面中将表格提取为行，并将扫描的页面转换为文本。</li></ul>
-<p>在引擎盖下有两个流程。 <strong>摄取</strong> 每页运行一次，首先运行 Parse，对于需要它的页面，然后使用 Embed Pro 嵌入文本，并将向量存储到向量索引中。 <strong>回答</strong> 对每个问题运行，其中 Embed Fast 嵌入问题，然后检索最接近的页面，并且可以选择通过 Rerank 重新排序。最后，Claude从首页写下了答案。 Cohere 模型作为 Amazon SageMaker AI 上的实时端点运行，从 AWS Marketplace 部署；矢量索引是 Amazon OpenSearch Serverless； Web 应用程序、登录、API 和摄取管道都是无服务器 AWS 服务。</p>
+<p>方案概览 **</p>
+<p>这套方案是一个研究助理：回答关于一批申报文件的问题，并为每一条论断标出它来自哪一页。它用了四个模型，各司一职：</p>
+<ul><li><strong>Cohere Embed</strong> 把每个页面、每个问题都变成一个向量——一串刻画其含义的数字——这样与问题谈论同一件事的页面就会落在它附近。<a href="https://cohere.com/blog/embed-5">Embed 分两个档位</a>：<strong>Embed Pro</strong> 面向最高检索质量和离线索引，<strong>Embed Fast</strong> 面向在线请求路径上的低延迟。</li><li><a href="https://cohere.com/blog/rerank-5">Cohere Rerank</a> 拿到问题以及向量检索给出的最佳候选页面，把问题和每一页放在一起读，再排出一个更合理的顺序。配合 <strong>Context Focus</strong>，Rerank 还能标出每个页面上真正回答了问题的那些段落。和 Embed 一样，Rerank 也分两个档位：<strong>Rerank Pro</strong> 面向最高准确率，<strong>Rerank Fast</strong> 面向更低延迟。我们选 <strong>Rerank Pro</strong>，因为对金融助理来说，找到正确的那一页通常比答案来得更快更重要。</li><li><strong>Cohere Parse</strong> 读取一张页面图像，返回干净的 Markdown，表格还原成真正的行列。它用于那些文字质量不佳的页面。</li><li><strong>Amazon Bedrock 上的 Anthropic Claude</strong> 读取排在前面的页面，写出答案，并引用每一页。</li></ul>
+<p>人们可以通过一个带三项功能的 Web 应用来使用它：</p>
+<ul><li><strong>Assistant。</strong> 就申报文件提问。助理找出最相关的页面，读过它们，然后写出一个每条论断都引用对应页面的答案。每条引用还会说明这个事实来自表格、图表、正文、脚注还是插图，点一下就能打开页面图像来核对。</li><li><strong>Search。</strong> 同样的检索，但不生成答案。它可以把「用过 Rerank」和「没用 Rerank」的结果并排显示，让你看清重排如何改变结果；Rerank 那一列会显示 Context Focus 在每个页面上挑中的段落。</li><li><strong>Parse。</strong> Parse 从可下载的页面里把表格抽取成行，并把看起来像扫描件的页面转成文本。</li></ul>
+<p>底层有两条流程。<strong>摄取（Ingestion）</strong>每页只跑一次：对那些需要的页面先跑 Parse，再用 Embed Pro 做 embedding，把向量存进向量索引。<strong>回答（Answering）</strong>每个问题都跑：先由 Embed Fast 嵌入问题，再检索出最接近的页面，并可选地由 Rerank 重新排序。最后由 Claude 根据最靠前的页面写出答案。Cohere 模型以实时端点的形式跑在 Amazon SageMaker AI 上，从 AWS Marketplace 部署；向量索引是 Amazon OpenSearch Serverless；Web 应用、登录、API 和摄取流水线都是 serverless 的 AWS 服务。</p>
 <p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/7948a30c7d2ecd1d6e26675a1cdc3716844579e1-1189x666.png?auto=format&amp;fit=max&amp;q=80&amp;w=800" alt=""></p>
 <p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/04b14a2564cda9ab293b6d29a01f59f261971560-1198x446.png?auto=format&amp;fit=max&amp;q=80&amp;w=800" alt=""></p>
-<h3><strong>设计决策以及我们做出这些决策的原因</strong></h3>
-<p>每一项挑战都迫使我们做出选择。</p>
+<h3><strong>设计决策，以及我们为什么这么定</strong></h3>
+<p>上面每一个挑战都逼出了一次取舍。</p>
 <p>挑战</p>
-<p>我们决定什么</p>
-<p>为什么</p>
-<p>答案就在表格中</p>
-<p>搜索保留表格标记的页面文本，并让Claude在写答案时查看页面图像</p>
-<p>文本的嵌入和搜索成本较低；图像恢复了文本丢失的内容，此时引用了一个数字</p>
-<p>答案必须是可检查的</p>
-<p>引用每个声明及其页面及其在页面上的位置（表格、图表、文本、脚注、图形），并显示页面图像</p>
-<p>读者可以直接去源头看看到底是什么样的证据</p>
-<p>成本和延迟</p>
-<p>使用 Embed Pro 建立索引并使用 Embed Fast 进行查询。使用 1,024 维 int8 向量存储向量，并使 Rerank 和 Parse 成为可选阶段，使端点易于关闭</p>
-<p>在索引时一次花在质量上；快速回答每一个问题；仅在有帮助的情况下支付额外阶段的费用</p>
-<p>页面不干净</p>
-<p>仅将低文本和表格较多的页面路由到 Parse</p>
-<p>Parse应用于可以改变结果的地方，每个页面解析一次</p>
-<p>只有几行内容的长页面</p>
-<p>向 Claude 发送 Rerank 的 Context Focus 选择的段落以及页面图像</p>
-<p>输入标记更少，图像保留了段落遗漏的上下文，读者可以准确地看到答案所用的内容</p>
+<p>我们的决定</p>
+<p>原因</p>
+<p>答案藏在表格里</p>
+<p>在保留表格标记的页面文本上检索，并在 Claude 写答案时让它看页面图像</p>
+<p>文本做 embedding 和检索都很便宜；图像则在引用某个数字的那一刻把文本丢掉的东西补回来</p>
+<p>答案必须可核验</p>
+<p>为每条论断标出它所在的页面以及页面上的位置（表格、图表、正文、脚注、插图），并显示页面图像</p>
+<p>读者可以直接回到原文，看到那到底是哪一类证据</p>
+<p>成本与延迟</p>
+<p>用 Embed Pro 建索引，用 Embed Fast 查询。向量以 1,024 维 int8 存储，并把 Rerank 和 Parse 设为可选阶段，让端点很容易关掉</p>
+<p>在索引时一次性为质量付费；让每个问题都保持快；只在额外阶段真正有帮助时才为它们付费</p>
+<p>不干净的页面</p>
+<p>只把文字少、表格多的页面送去 Parse</p>
+<p>只在 Parse 能改变结果的地方才用，而且每个页面只解析一次</p>
+<p>很长的页面，但只有几行重要</p>
+<p>把 Rerank 的 Context Focus 挑中的段落连同页面图像一起发给 Claude</p>
+<p>输入 token 更少，图像补上段落没覆盖的上下文，读者看到的正是答案实际用到的内容</p>
 <p>其他语言的问题</p>
-<p>在一个多语言嵌入空间中搜索所有语言，无需翻译步骤</p>
-<p>无需单独的翻译步骤，简化了流程并避免了与翻译相关的处理成本。</p>
-<p>**使用 Embed Pro 建立索引，使用 Embed Fast 查询</p>
-<p>**索引和查询有不同的需求。页面提前嵌入一次，因此您可以负担得起最准确的模型。当有人等待时，问题会被嵌入，每天数千次，因此每次调用的速度和成本最为重要。 Embed Pro 和 Embed Fast 共享<a href="https://cohere.com/blog/embed-5">一个嵌入空间</a>，这意味着使用 Fast 嵌入的问题可以直接与使用 Pro 嵌入的页面进行比较。您可以在索引中获得 Pro 的质量，并在每个问题上获得 Fast 的速度，而无需重建索引。下图显示了每个模型的位置。</p>
+<p>在一个多语言 embedding 空间里检索所有语言，不加翻译步骤</p>
+<p>省掉单独的一套翻译步骤，简化流水线，也避免了与翻译相关的处理开销。</p>
+<p>**用 Embed Pro 建索引，用 Embed Fast 查询</p>
+<p>**索引和查询的需求不一样。一个页面是提前做好 embedding 的，所以你可以用最准的模型。一个问题是在有人等着的时候做 embedding，而且一天要做上千次，所以速度和单次调用成本才是关键。Embed Pro 和 Embed Fast 共享<a href="https://cohere.com/blog/embed-5">同一个 embedding 空间</a>，这意味着用 Fast 嵌入的问题可以直接和用 Pro 嵌入的页面比较。你在索引里拿到 Pro 的质量，在每个问题上拿到 Fast 的速度，而且不用重建索引。下面的图展示了这两个模型各自的位置。</p>
 <p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/77ae250249c8dbe6fae885147c751f5a630366a7-4520x2400.png?auto=format&amp;fit=max&amp;q=80&amp;w=800" alt=""></p>
-<p>第二个选择是每个向量的大小。 Embed 提供<a href="https://cohere.com/blog/embed-5">六种输出大小，从 256 到 2,048 维，采用浮点数、int8 或二进制</a>。嵌入是俄罗斯套娃表示，其中模型经过训练，以便第一个维度承载最多的含义，因此较短的向量保留了较长向量所说的大部分内容。我们选择 <strong>1,024 个维度存储为 int8</strong>，每个维度一个字节：</p>
-<ul><li><strong>存储 </strong>- 1,024 维 int8 向量需要 1 KB 的原始存储空间，而 2,048 维 float32 向量则需要 8 KB - 减少了 8 倍。对于一百万页，这相当于大约 1 GB 与 8 GB 的原始矢量数据。实际的向量索引存储和成本还取决于索引结构、元数据和基础设施开销。</li><li><strong>质量 </strong>- 1,024 是范围的中间值，int8 比二进制保留更多细节。当答案必须是正确的页面而不仅仅是相似的页面时，这是一个明智的默认设置。</li><li><strong>何时更改 </strong>- 如果检索质量比存储更重要，请使用 2,048 维。对于成本占主导地位的非常大的档案，使用 512、256 或二进制向量；二进制比 float32 小 32 倍。</li></ul>
-<p>无论您选择什么，查询端都必须使用与索引相同的大小和格式。稍后更改它意味着再次嵌入每个页面，因此值得尽早解决。</p>
-<p>**嵌入页面文本，并保留答案的图像</p>
-<p>**嵌入可以将页面文本、页面图像或两者一起嵌入为一个向量，全部嵌入同一空间中。每种选择都适合不同类型的文档。</p>
-<p><strong>页面文本</strong>是最便宜和最简单的：每页一个向量，重新排序读取文本，因此它可以在同一页面上工作，并且您可以在每个结果旁边显示文本片段。问题是，它的好坏取决于提取的文本，其中大多数时间表可能会失去其结构，图表会消失，并且扫描根本没有文本，直到有人读取它。</p>
-<p><strong>页面图像</strong>不需要提取文本。表格、图表和布局与页面的外观一样，适用于扫描件和照片。每页的成本更高，更难显示页面匹配的原因，并且重新排名仍然需要文本。</p>
-<p><strong>两者一起</strong>（融合的文本和图像向量）为搜索提供了页面的两个视图，但代价是图像价格和更大的嵌入调用。</p>
-<p>年度报告和 10-K 是具有良好文本的数字文档，因此我们嵌入了页面文本。文本丢失的内容（主要是图表和复杂的表格），我们在回答时通过让Claude看到页面图像来恢复。如果您的页面主要是扫描件、幻灯片、图表或图表，例如投资者演示、扫描协议或传真展品，请嵌入图像或两者兼而有之。</p>
-<p>**每种语言都有一个嵌入空间</p>
-<p>**<a href="https://cohere.com/blog/embed-5">Embed 支持 100 多种语言和 128K 令牌上下文窗口</a>。无论语言如何，问题和页面都位于同一空间，因此诸如“impact de l'immobilier Commercial sur leegment Global Banking de Bank of America”之类的法语问题可以直接找到英语的 Bank of America 页面。然后Claude用问题的语言写下答案，并保持引文不变。</p>
-<p>我们选择这样做，而不是首先将问题翻译成英语。无需构建、运行或付费的翻译步骤，也不存在术语翻译错误导致搜索结果错误的风险。 Rerank Pro 也是<a href="https://docs.cohere.com/docs/rerank">多语言的，支持 100 多种语言</a>。与往常一样，请在您自己的文档中检查对您重要的语言。</p>
-<p>**将Rerank设为可选阶段，并使其效果可见</p>
-<p>**矢量搜索速度很快，因为每个页面都通过一个数字（两个矢量之间的距离）与问题进行比较。重新排序器的工作方式不同，它将问题和每个候选页面一起读取，这使得它能够权衡单个向量无法容纳的细节。 Rerank Pro <a href="https://docs.cohere.com/docs/rerank">同时读取多达 32K 的问题和页面标记，适用于 100 多种语言，并处理半结构化内容，例如表格和 JSON</a>。在此设计中，矢量搜索返回 30 个候选者，然后 Rerank 选择 5 个属于 Claude 的候选者。</p>
-<p>重新排序位于查询路径上，因此每个问题都会感受到它的延迟。我们仍然选择 Rerank Pro 而不是 Rerank Fast，因为在金融研究中，错误的页面比较慢的答案成本更高。如果交互速度对您的用户更重要，则 Rerank Fast 会接受相同的请求并返回相同类型的结果，因此它们之间的切换是配置更改，而不是代码更改。</p>
-<p>额外的阅读会花费时间来解决每个问题和要运行的端点，其帮助程度取决于您的文档和问题。因此，我们将重新排序设置为一个可以打开或关闭的阶段，并使其效果可见：助手显示每个步骤花费的时间，搜索可以并排显示两个结果列表，并用箭头指示每个页面的移动方式。</p>
-<p>你应该什么时候打开它？查看没有它的正确页面的着陆位置。如果它通常位于或接近顶部，请关闭重新排名并保持快速答案。如果它经常出现在列表中的较低位置，或者问题又长又具体，则重新排名是通常的解决方法。</p>
-<p>Rerank 5 还为每个页面返回一个 <a href="https://docs.cohere.com/docs/rerank">0 到 1 之间的校准相关性分数</a>，因此从一个问题到下一个问题，相同的截止值意味着相同的事情。您可以使用它来告诉用户没有页面可以很好匹配，或者触发另一个搜索，而不是从弱页面进行回答。</p>
-<p>**只解析需要的页面</p>
-<p>**解析读取页面图像并返回<a href="https://aws.amazon.com/marketplace/pp/prodview-25vdn5x53zqgo">Markdown 或内容块，带有边界框，并理解表格、表单、图表和图像</a>。它是一个按小时付费的 GPU 端点，干净的数字页面已经有可用的文本，因此我们有选择地使用它。摄取步骤中的路由器逐页决定：</p>
-<ul><li>文本很少的页面将被解析（封面或没有文本层的扫描）</li><li>大部分文本位于表格内的页面将被解析</li><li>所有其他页面保留其现有文本。</li></ul>
-<p>解析输出被保存，因此每个页面都会被解析一次，无论您重建索引的频率如何。如果您需要表格作为电子表格或数据库的数据，Parse 也是将它们从页面中取出的方法。</p>
-<p>**让答案模型阅读该页面，并说出每个事实的来源</p>
-<p>**搜索在页面文本上运行，但答案不一定如此。对于它选择的五个页面中的每一页，查询函数都会向Claude发送页面图像和页面文本，要么是完整提取的文本，要么只是重新排序标记的段落（参见下一节），并告诉Claude信任两者不一致的图像。这就是让答案来自图表或文本失去结构的表格的原因。</p>
-<p>Claude还被告知只能从这些页面中回答，当这些页面不包含答案时要清楚地说出，并以[文档页面 | ] 的形式引用每一个声明。 kind]，其中 kind 是表格、图表、文本、脚注或图形。该应用程序将每个引文转换为页面图像的编号链接，显示其旁边的类型，并在页面上重复它（“答案取自：表格”）。分析师可以看到助理引用了哪个页面和类型的内容来支持大写数字，并打开原始页面直接验证信息。</p>
-<p>代价是额外的输入令牌和Claude的处理时间。在文本旁边包含五个页面图像会增加令牌消耗和响应延迟，具体取决于图像分辨率、页面内容和所使用的模型。该演示有一个可以省略图像的开关，这样您就可以看到自己问题的差异。</p>
-<p>**仅向Claude发送重要的段落</p>
-<p>**即使有正确的五页，每一页的大部分内容都不是关于问题的。一张 10-K 页可以容纳整个表格、一页风险因素或几个不相关的注释，Claude会阅读所有这些内容，并且您需要付费。</p>
-<p>Rerank 5 的功能不仅仅是排序页面。打开上下文焦点后，它还会返回每个页面上与问题匹配的段落，作为具有相关性分数的字符范围。这是重新排名请求上的设置，而不是单独的模型，并且不会更改排名。在此设计中，查询功能要求对选定的五个页面上的段落进行重新排序，并按页面顺序仅向 Claude 发送这些段落，而不是整页文本。</p>
-<p>这有三个作用：</p>
-<ul><li><strong>更少的输入标记。</strong> Claude 仅读取每个页面文本的相关部分，因此答案成本更低，返回速度更快。</li><li><strong>更清晰的提示。</strong> 随着不相关的文本消失，答案模型的注意力就减少了。</li><li><strong>更容易检查。</strong> 该应用程序会突出显示页面文本中的段落，因此读者可以准确地看到答案的依据，而不仅仅是哪个页面。</li></ul>
-<p>权衡是上下文。段落本身可能会丢失其周围的内容，例如表格的列标题或列引用的年份。上下文焦点对于可以识别和检索特定信息的有针对性的问题最有效。结构化内容（例如表格和表单）可能更具挑战性，因为重要的关系可能跨越多个部分，因此将其拆分为有意义的块。对于更广泛的任务，例如总结整个页面，提供完整页面内容通常会产生更完整和准确的结果。然而，Cohere 的内部评估表明，即使将输入标记减少 50-75%，Context Focus 仍保留了绝大多数答案准确性，这表明标记减少和准确性之间的权衡远不是线性的。</p>
-<p>这就是页面图像占据一席之地的地方，Claude仍然可以看到整个页面，因此它可以读取标题和单元格省略的段落。如果最低的令牌数最重要，请发送不带图像的段落；如果数字必须准确，请发送带有图像的段落。 Context Focus 将相关段落作为同一 Rerank 请求的一部分返回，无需单独的模型或额外的 API 调用。</p>
-<p>该演示对每个选项都有一个开关：上下文焦点和页面图像。每个答案都会显示有多少代币发送给了Claude，并突出显示了发送的段落，因此您可以看到自己问题的权衡。</p>
-<p>**使昂贵的部件易于关闭</p>
-<p>**Cohere 模型作为实时 SageMaker 端点运行，实时端点按其存在的每小时计费，无论是否有人提出问题。对于飞行员或突发工作的团队来说，闲置的 GPU 时间是最大的成本。因此，部署有一项设置，可以删除所有模型端点，同时保留数据、索引和 Web 应用程序。稍后重新打开模型不需要新的摄取。在稳定的生产使用中，您可以添加自动缩放和警报。</p>
-<p>**为您的文档选择管道</p>
-<p>**您需要哪个阶段取决于您的文件。下图是我们使用的决策指南。它有两个步骤：</p>
-<ol><li>嵌入页面之前是否解析页面</li></ol>
-<p>2.是否对结果重新排序</p>
+<p>第二个选择是每个向量的大小。Embed 提供<a href="https://cohere.com/blog/embed-5">六种输出规格，从 256 到 2,048 维，可以是 float、int8 或 binary</a>。这些 embedding 是 Matryoshka 表示，模型经过训练，让靠前的维度承载最多的信息，因此更短的向量也能保留长向量的大部分含义。我们选的是<strong>按 int8 存储的 1,024 维</strong>，每个维度一个字节：</p>
+<ul><li><strong>存储 </strong>- 一个 1,024 维 int8 向量占 1 KB 原始存储，而 2,048 维 float32 向量要占 8 KB——缩减了 8 倍。对一百万个页面来说，就是大约 1 GB 对 8 GB 的原始向量数据。实际的向量索引存储和成本还会取决于索引结构、元数据以及基础设施开销。</li><li><strong>质量 </strong>- 1,024 处在规格区间的中段，而 int8 保留的细节远多于 binary。当答案必须精确到那一页、而不是只要一个差不多的页面时，这是个合理的默认值。</li><li><strong>什么时候该改 </strong>- 如果检索质量比存储更重要，就用 2,048 维。对于成本占主导的超大档案，用 512、256 维或 binary 向量；binary 比 float32 小 32 倍。</li></ul>
+<p>无论你怎么选，查询端必须使用与索引相同的规格和格式。以后再改就意味着所有页面要重新做一遍 embedding，所以这件事值得早点定下来。</p>
+<p>**嵌入页面文本，把图像留给答案环节</p>
+<p>**Embed 可以嵌入页面文本、把页面当图像嵌入，也可以把两者合成一个向量一起嵌入，而且都在同一个空间里。每种选择适合不同类型的文档。</p>
+<p><strong>页面文本</strong>最便宜也最简单：每页一个向量，Rerank 读的就是文本，所以它能处理同一批页面，你还可以在每条结果旁边显示一段文本摘要。问题在于它的效果取决于抽取出来的文本，而多数时候表格会丢掉结构、图表会消失，扫描件在被人读之前根本没有任何文字。</p>
+<p><strong>页面图像</strong>不需要抽取文本。表格、图表和版面就是页面看上去的样子，对扫描件和照片也有效。它的每页成本更高，也更难解释某一页为什么被匹配上，而且 Rerank 仍然需要文本。</p>
+<p><strong>两者一起</strong>（文本与图像融合的向量）让检索同时拥有页面的两种视角，代价是图像的价格和更大的一笔 embedding 调用。</p>
+<p>年度报告和 10-K 都是文字质量不错的数字文档，所以我们嵌入页面文本。文本丢掉的东西——主要是图表和复杂表格——留到答案环节再补回来，让 Claude 看到页面图像就行。如果你的页面大多是扫描件、幻灯片、示意图或图表，比如投资者演示材料、扫描的协议或传真附件，那就嵌入图像，或者两者都嵌。</p>
+<p>**所有语言共用一个 embedding 空间</p>
+<p>**<a href="https://cohere.com/blog/embed-5">Embed 支持 100 多种语言和 128K token 的上下文窗口</a>。无论语言是什么，问题与页面都落在同一个空间里，所以像「impact de l'immobilier commercial sur le segment Global Banking de Bank of America」这样的法语提问，可以直接找到英文的 Bank of America 页面。Claude 随后用提问的语言写出答案，引用则原样保留。</p>
+<p>我们没有选择先把问题翻译成英文。这样就不需要搭建、运行或付费维护一套翻译步骤，也没有把某个术语翻错、把检索带偏的风险。Rerank Pro 同样是<a href="https://docs.cohere.com/docs/rerank">多语言的，支持 100 多种语言</a>。一如既往，请在你自己的文档上确认对你重要的那些语言。</p>
+<p>**把 Rerank 做成可选阶段，并让它的效果看得见</p>
+<p>**向量搜索之所以快，是因为每个页面与问题之间只用一个数字来比较——两个向量之间的距离。重排器的工作方式不同：它把问题和每个候选页面放在一起读，因此能够权衡单个向量承载不了的细节。Rerank Pro <a href="https://docs.cohere.com/docs/rerank">把最多 32K token 的问题和页面放在一起读，支持 100 多种语言，并能处理表格和 JSON 这类半结构化内容</a>。在这套设计里，向量检索返回 30 个候选，Rerank 挑出其中 5 个交给 Claude。</p>
+<p>Rerank 位于查询路径上，所以它的延迟在每个问题上都能感觉到。我们仍然选择 Rerank Pro 而不是 Rerank Fast，因为在金融研究里，页选错的代价高于答案变慢。如果你的用户更看重交互速度，Rerank Fast 处理的是同样的请求、返回的是同类的结果，所以两者之间切换是一次配置改动，而不是代码改动。</p>
+<p>这份额外的阅读在每个问题上都要花时间，还要养一个端点，而它到底有多大帮助，取决于你的文档和你的问题。所以我们把 Rerank 做成可以随时开关的阶段，并让它的效果看得见：Assistant 会显示每一步花了多长时间，Search 则可以把两份结果列表并排摆出来，用箭头标出每个页面的位置变动。</p>
+<p>什么时候该打开它？看关掉它的时候正确的那一页落在哪里。如果通常就在最前面或接近最前面，那就把 Rerank 关掉、保持答案够快。如果它经常掉到列表靠后的位置，或者问题又长又具体，Rerank 通常就是那个解法。</p>
+<p>Rerank 5 还会为每个页面返回一个<a href="https://docs.cohere.com/docs/rerank">介于 0 和 1 之间的校准相关性分数</a>，这样同一个阈值在不同问题之间含义一致。你可以用它告诉用户「没有哪一页匹配得好」，或者触发另一次检索，而不是拿勉强的页面硬答。</p>
+<p>**只解析那些需要解析的页面</p>
+<p>**Parse 读取一张页面图像，返回 <a href="https://aws.amazon.com/marketplace/pp/prodview-25vdn5x53zqgo">Markdown 或内容块，带边界框，并能理解表格、表单、示意图和图像</a>。这是一个按小时计费的 GPU 端点，而干净的数字页面本来就有可用的文字，所以我们只在必要处使用它。摄取步骤里的一个路由器逐页决定：</p>
+<ul><li>文字极少的页面送去 Parse（比如封面，或者没有文字层的扫描件）</li><li>大部分文字都在表格里的页面送去 Parse</li><li>其余页面保留它们已有的文字。</li></ul>
+<p>Parse 的输出会被保存下来，所以无论你重建多少次索引，每个页面都只解析一次。如果你需要把表格变成数据——填进电子表格或数据库——Parse 同样是把它们从页面里取出来的办法。</p>
+<p>**让答案模型读页面，并说清每个事实的出处</p>
+<p>**检索跑在页面文本上，但答案不必如此。对挑出的五个页面，查询函数会把页面图像连同页面文本一起发给 Claude——文本可以是完整抽取出来的，也可以只有 Rerank 标出的那些段落（见下一节）——并告诉 Claude：两者不一致时以图像为准。正是这样，答案才能出自一幅图表，或者出自一张结构在文本中已经丢失的表格。</p>
+<p>Claude 还会被要求只依据这几个页面作答，在它们不含答案时明说，并按 [文档页 | 类型] 的形式为每条论断给出引用，其中类型是表格、图表、正文、脚注或插图。应用会把每条引用变成指向页面图像的编号链接，把类型显示在旁边，并在页面上重复一遍（&quot;Answer taken from: table&quot;）。分析师能看到助理为某个资本数字引用了哪一页、哪一类内容，并打开原始页面直接核对。</p>
+<p>代价是 Claude 要多花输入 token 和处理时间。把五张页面图像和它们的文本一起送进去，会增加 token 消耗和响应延迟，具体取决于图像分辨率、页面内容以及所用的模型。演示里有一个开关可以不带图像，这样你能在自己的问题上看出差别。</p>
+<p>**只把要紧的段落发给 Claude</p>
+<p>**即便选对了五个页面，每一页的大部分内容也与问题无关。一页 10-K 可能塞着一整张表、一整页风险因素，或者好几条互不相干的附注，而 Claude 要把它们全读一遍，你也全付一遍钱。</p>
+<p>Rerank 5 能做的还不只是给页面排序。打开 Context Focus 之后，它还会返回每个页面上与问题匹配的段落，形式是带相关性分数的字符区间。它是 Rerank 请求上的一个设置，不是另一个模型，也不改变排序结果。在这套设计里，查询函数向 Rerank 要那五个选中页面上的段落，然后只把这些段落按页面顺序发给 Claude，而不是整页文本。</p>
+<p>这会带来三个效果：</p>
+<ul><li><strong>输入 token 更少。</strong> Claude 只读每页文本中相关的部分，答案更便宜也回来得更快。</li><li><strong>prompt 更聚焦。</strong> 无关文本被拿掉之后，答案模型能分心的东西就少了。</li><li><strong>更容易核对。</strong> 应用会把页面文本里的这些段落高亮出来，读者看到的不只是「用了哪一页」，而是「答案依据的是哪几段」。</li></ul>
+<p>这份取舍换来的是上下文。一段孤立的文字可能丢掉它周围的内容，比如表格的列标题，或者某一列对应的年份。Context Focus 最适合目标明确、能定位并取回具体信息的问题。结构化内容（比如表格和表单）要切成有意义的块就更难一些，因为重要的关联可能横跨多个部分。对于更宽泛的任务，比如总结整页内容，给出完整的页面内容通常能产出更完整、更准确的结果。不过 Cohere 的内部评测表明，即使把输入 token 减少 50–75%，Context Focus 仍能保住绝大部分答案准确率——这说明 token 缩减与准确率之间的取舍远不是线性的。</p>
+<p>这正是页面图像挣到位置的地方：Claude 仍然看得到整页，因此能读到段落没覆盖的标题和单位。如果最看重的是 token 数最少，那就只发段落不发图像；如果数字必须精确，那就段落和图像一起发。Context Focus 是在同一次 Rerank 请求里返回相关段落的，不需要额外的模型，也不需要多打一次 API。</p>
+<p>演示里这两项各有一个开关：Context Focus 和页面图像。每个答案都会显示有多少 token 发给了 Claude，并高亮出实际发出的那些段落，这样你能在自己的问题上看见这笔取舍。</p>
+<p>**让昂贵的部分容易关掉</p>
+<p>**Cohere 模型以 SageMaker 实时端点的形式运行，而实时端点按存在的小时数计费，不管有没有人在提问。对试点项目、或者间歇性干活的团队来说，空转的 GPU 小时就是最大的开销。所以这套部署有一个开关，能把全部模型端点移除，同时保留数据、索引和 Web 应用。以后再把模型开回来不需要重新摄取。在稳定生产中，你应该改成加上自动扩缩容和告警。</p>
+<p>**为你的文档选择流水线</p>
+<p>**需要哪几个阶段取决于你的文档。下面这张图是我们用的决策指南，它有两步：</p>
+<ol><li>是否在 embedding 之前先解析页面</li><li>是否对结果做重排</li></ol>
 <p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/c89fb78f2ddc2364728f7bbc9e827733f6448f6d-4800x2560.png?auto=format&amp;fit=max&amp;q=80&amp;w=800" alt=""></p>
-<ul><li>当订购比速度更重要时，<strong>嵌入 + 重新排序</strong>是干净数字文档的良好起点。</li><li>当速度比订购更重要时，<strong>仅嵌入</strong>是最快的。</li><li><strong>解析 + 嵌入</strong>（带或不带重新排序）适用于扫描、传真、照片和密集表格，其中精确的数字很重要。</li><li><strong>仅解析</strong>用于将表格、表单和发票转换为结构化数据，而不是搜索。</li></ul>
-<p><strong>注意：</strong> 重新排序不仅限于向量搜索。它还可以改进基于关键字的检索方法（例如 BM25）的结果，从而无需嵌入即可实现 Parse + Rerank 等工作流程。</p>
-<p>关于您自己的文件的问题：</p>
+<ul><li><strong>Embed + Rerank</strong>：当排序比速度更重要时，这是干净数字文档的好起点。</li><li><strong>只用 Embed</strong>：当速度比排序更重要时，这是最快的。</li><li><strong>Parse + Embed</strong>（可加可不加 Rerank）：适合扫描件、传真件、照片，以及数字要求精确的密集表格。</li><li><strong>只用 Parse</strong>：用来把表格、表单和发票变成结构化数据，不是用来检索的。</li></ul>
+<p><strong>注意：</strong> Rerank 不限于向量检索。它同样能改进 BM25 这类基于关键词的检索方法的结果，因此不需要 embedding 也能跑通 Parse + Rerank 这样的流程。</p>
+<p>针对你自己的文档，可以问这样几个问题：</p>
 <p>如果……</p>
-<p>然后考虑</p>
-<p>您的文档是数字化的并且具有良好的文本</p>
-<p>嵌入文本；从不解析开始</p>
-<p>页面是扫描件、照片或传真</p>
-<p>嵌入前解析，或嵌入页面图像</p>
-<p>答案是密集表格中的精确数字</p>
-<p>解析这些页面，并让答案模型读取页面图像</p>
-<p>页面主要是图表、幻灯片或图表</p>
-<p>单独或与文本一起嵌入页面图像；让答案模型读出它</p>
+<p>那么考虑</p>
+<p>你的文档是数字文档，文字质量不错</p>
+<p>嵌入文本；先不启用 Parse</p>
+<p>页面是扫描件、照片或传真件</p>
+<p>在 embedding 之前先解析，或者直接嵌入页面图像</p>
+<p>答案是密集表格里的精确数字</p>
+<p>解析这些页面，并让答案模型读页面图像</p>
+<p>页面大多是图表、幻灯片或示意图</p>
+<p>单独嵌入页面图像，或者和文本一起嵌入；让答案模型读它</p>
 <p>交互速度最重要</p>
-<p>使用嵌入快速查询；关闭重新排序</p>
-<p>正确的页面通常在结果中显示较低</p>
-<p>添加重新排名</p>
-<p>页面很长，或者输入令牌的成本很重要</p>
-<p>打开 Rerank with Context Focus，并将答案模型发送到段落</p>
-<p>用户用多种语言询问</p>
-<p>直接使用多语言嵌入；没有翻译步骤</p>
-<p>无论您选择什么，请用您自己的文档和问题进行测试。公共基准告诉您模型在该基准页面上的表现，而不是在您的文件、扫描或公司特定风格指南上的表现。</p>
-<h3><strong>超越财务申报</strong></h3>
-<p>该管道并非特定于银行。输入是一组页面图像及其文本，因此不同的文档集为您提供了不同的助手。相同的模式适用于表格、表单和布局中答案的任何地方：</p>
-<ul><li><strong>保险：</strong>保单文件、索赔和表格，Parse 的结构化输出可以为下游系统提供数据。</li><li><strong>法律：</strong>合同、案例文件和监管材料，其中条款查找需要页面级引用。</li><li><strong>制造和能源：</strong> 带有图表和表格的技术手册和合规文档，其中嵌入或阅读页面图像可以保持图形可用。</li><li><strong>公共部门和生命科学：</strong> 政府和监管报告、科学论文。</li></ul>
-<h3><strong>自己尝试一下</strong></h3>
-<p>我们构建了该解决方案的演示，您可以使用一个 AWS CloudFormation 模板将其部署到您自己的 AWS 账户中。该模板创建 Cohere 模型端点、向量索引、摄取管道、API 和登录的 Web 应用程序。 <a href="https://github.com/aws-samples/Cohere-on-AWS/tree/main/rag-recipes/financial-research-assistant">代码位于 GitHub 上</a>。</p>
-<h3><strong>演示范围</strong></h3>
-<p>该演示是一个工作起点，而不是生产系统。它基于 <a href="https://huggingface.co/datasets/vidore/vidore_v3_finance_en">ViDoRe V3 基准</a> (<a href="https://arxiv.org/abs/2601.08620">论文</a>) 的财务子集的三份公开年度报告（美国银行、摩根士丹利和富国银行，2024 财年；928 页），该报告还提供英语、法语、西班牙语、德语、意大利语和葡萄牙语。</p>
-<p>为了使演示保持较小且快速尝试，我们做出了一些与上述设计不同的选择：</p>
-<ul><li><strong>预提取的文档文本：</strong> 使用基准数据集提供的文本对页面进行索引，从而简化部署。虽然该架构支持扫描和复杂文档的 Cohere Parse，但该演示不包括解析任意上传的 PDF。</li><li><strong>Embed Pro 用于索引和查询：</strong> 该演示使用 Embed Pro 进行文档索引和查询嵌入，无需单独的 Embed Fast 端点并降低 GPU 成本。</li><li><strong>Rerank Fast 而不是 Rerank Pro：</strong> Rerank Fast 在较小的 GPU 实例上运行，避免了 Rerank Pro 的更高 GPU 要求和潜在的容量限制。两者都使用相同的请求和响应格式，因此切换到 Rerank Pro 只需要更改模板配置。</li><li><strong>可配置的检索和答案生成：</strong> 默认情况下，助手中启用重新排名，并带有用于重新排名、上下文焦点和页面图像的开关。默认情况下，搜索运行时不进行重新排名，但允许并排比较以评估对相关性、延迟和令牌使用的影响。</li><li><strong>最少 GPU 基础设施：</strong> 该演示在“us-east-1”中为每个部署的模型使用一个“ml.g5.xlarge”实例，并为该区域配置了 AWS Marketplace 模型包。</li><li><strong>简化的安全性和访问：</strong> 该演示包括一名用户、一个具有受数据访问策略保护的公共网络访问的 OpenSearch 集合，并且没有 Bedrock Guardrails。这些设置最大限度地降低了部署复杂性，并且用于评估，而不是生产。</li><li><strong>固定文档数据集：</strong> 该演示加载一组预定义的财务归档页面，而不是支持摄取用户上传的 PDF。</li></ul>
-<p>在生产环境中部署之前需要考虑的事项：</p>
-<ul><li><strong>网络：</strong> 使用 VPC 终端节点和 OpenSearch Serverless 的私有访问。</li><li><strong>身份：</strong>使用您的身份提供商，每个用户或每个团队都可以访问文档。</li><li><strong>加密：</strong>数据存储桶使用客户管理的 AWS KMS 密钥；其他商店使用 AWS 托管或 AWS 拥有的密钥。</li><li><strong>操作：</strong>添加监控、警报、端点自动缩放和预算警报。</li><li><strong>查询模型：</strong>为问题添加快速嵌入。</li><li><strong>Reranker：</strong> 使用 Rerank Pro。</li></ul>
+<p>用 Embed Fast 查询；把 Rerank 关掉</p>
+<p>正确的那一页经常落在结果靠后的位置</p>
+<p>加上 Rerank</p>
+<p>页面很长，或者输入 token 的成本很要紧</p>
+<p>打开带 Context Focus 的 Rerank，并把段落发给答案模型</p>
+<p>用户用好几种语言提问</p>
+<p>直接用多语言 embedding；不做翻译步骤</p>
+<p>无论你怎么选，都要在自己的文档和问题上实测。公开基准告诉你的是模型在那个基准的页面上表现如何，而不是在你的申报文件、扫描件或公司特有的风格指南上表现如何。</p>
+<h3><strong>不止于财务申报文件</strong></h3>
+<p>这套流水线并不专属于银行业。它的输入是一组页面图像和对应文本，所以换一批文档，就换一个助理。凡是答案藏在表格、表单和版面里的地方，都适用同一个模式：</p>
+<ul><li><strong>保险：</strong> 保单、理赔材料和表单，Parse 的结构化输出可以直接喂给下游系统。</li><li><strong>法律：</strong> 合同、案卷和监管材料，条款检索需要页面级引用。</li><li><strong>制造与能源：</strong> 带示意图和表格的技术手册与合规文档，嵌入页面图像或读取页面图像能让里面的数字继续可用。</li><li><strong>公共部门与生命科学：</strong> 政府和监管报告、科学论文。</li></ul>
+<h3><strong>自己动手试试</strong></h3>
+<p>我们为这套方案做了一个演示，你可以用一个 AWS CloudFormation 模板把它部署到自己的 AWS 账号里。这个模板会创建 Cohere 模型端点、向量索引、摄取流水线、API，以及带登录的 Web 应用。<a href="https://github.com/aws-samples/Cohere-on-AWS/tree/main/rag-recipes/financial-research-assistant">代码在 GitHub 上</a>。</p>
+<h3><strong>演示的适用范围</strong></h3>
+<p>这个演示是一个能跑起来的起点，不是生产系统。它跑在三份公开的年度报告上（Bank of America、Morgan Stanley 和 Wells Fargo，2024 财年，共 928 页），取自 <a href="https://huggingface.co/datasets/vidore/vidore_v3_finance_en">ViDoRe V3 benchmark</a> 的金融子集（<a href="https://arxiv.org/abs/2601.08620">论文</a>）；该 benchmark 同时提供了英语、法语、西班牙语、德语、意大利语和葡萄牙语的示例问题。</p>
+<p>为了让演示足够轻量、便于快速上手，我们做了一些与上面设计不同的取舍：</p>
+<ul><li><strong>预先抽取好的文档文本：</strong> 页面用 benchmark 数据集提供的文本建立索引，部署因此更简单。架构本身支持用 Cohere Parse 处理扫描件和复杂文档，但这个演示没有包含对任意上传 PDF 的解析。</li><li><strong>索引和查询都用 Embed Pro：</strong> 演示用 Embed Pro 做文档索引和查询 embedding，省掉了单独一个 Embed Fast 端点，也降低了 GPU 成本。</li><li><strong>用 Rerank Fast 而不是 Rerank Pro：</strong> Rerank Fast 跑在更小的 GPU 实例上，避开了 Rerank Pro 更高的 GPU 门槛和潜在的容量限制。两者用相同的请求和响应格式，所以要换回 Rerank Pro 只需改一处模板配置。</li><li><strong>检索与答案生成可配置：</strong> Assistant 默认开启 Rerank，并为 Rerank、Context Focus 和页面图像各提供一个开关。Search 默认不带 Rerank，但可以并排比较，用来评估这些选择对相关性、延迟和 token 用量的影响。</li><li><strong>极简 GPU 基础设施：</strong> 演示在 <code>us-east-1</code> 为每个部署的模型用一个 <code>ml.g5.xlarge</code> 实例，AWS Marketplace 模型包也按该 Region 配置。</li><li><strong>简化的安全与访问控制：</strong> 演示只含一个用户、一个开启公网访问但由数据访问策略保护的 OpenSearch collection，并且没有启用 Bedrock Guardrails。这些设置是为了降低部署复杂度，适合评估而不是生产。</li><li><strong>固定的文档数据集：</strong> 演示加载的是一组预先定义好的财务申报文件页面，不支持摄取用户上传的 PDF。</li></ul>
+<p>在生产环境部署之前，有几件事需要考虑：</p>
+<ul><li><strong>网络：</strong> 给 OpenSearch Serverless 配 VPC endpoint 和私有访问。</li><li><strong>身份：</strong> 接入你自己的身份提供方，按用户或按团队授予文档访问权限。</li><li><strong>加密：</strong> 数据 bucket 使用客户自管的 AWS KMS 密钥；其他存储使用 AWS 托管或 AWS 自有的密钥。</li><li><strong>运维：</strong> 加上监控、告警、端点自动扩缩容和预算告警。</li><li><strong>查询模型：</strong> 为问题加上 Embed Fast。</li><li><strong>重排器：</strong> 使用 Rerank Pro。</li></ul>
 <h3><strong>部署它</strong></h3>
-<p>GitHub 存储库中的 <a href="https://github.com/aws-samples/Cohere-on-AWS/tree/main/rag-recipes/financial-research-assistant">README</a> 逐步完成部署：所需的 Marketplace 订阅和 Bedrock 访问、部署堆栈、加载数据和登录。它还介绍了成本以及如何清理。模型端点每小时运行一次就会计费，因此完成后将其关闭。</p>
-<h3><strong>关键要点</strong></h3>
-<p>培养一名金融研究助理需要的不仅仅是寻找相关文件。这意味着检索正确的信息，保留表格和图形的上下文，并使答案易于验证。通过将 Cohere Embed、Rerank 和 Parse 与 AWS 服务相结合，该架构为构建处理复杂财务文档的研究助理提供了一个起点。</p>
-<p>关键的设计考虑因素是：</p>
-<ul><li><strong>从检索质量开始。</strong> 根据您的文档选择嵌入策略，并在优化答案生成之前验证检索性能。</li><li><strong>将管道与您的文档相匹配。</strong> 使用文本嵌入来处理干净的文档，使用解析来处理复杂的布局和扫描页面，并在视觉信息很重要时使用图像嵌入。</li><li><strong>平衡质量、延迟和成本。</strong> 使用 Embed Pro 进行索引，使用 Embed Fast 进行查询，并在它们提供价值的地方添加 Rerank 和 Parse。</li><li><strong>只发送模型需要的内容。</strong> Rerank 的上下文焦点选择回答问题的段落，页面图像保留它们周围的上下文。</li><li><strong>使答案可验证。</strong> 提供页面级引用和原始文档的访问权限，以便分析师可以检查支持证据。</li></ul>
+<p><a href="https://github.com/aws-samples/Cohere-on-AWS/tree/main/rag-recipes/financial-research-assistant">GitHub 仓库里的 README</a> 一步步讲解了整个部署过程：需要的 Marketplace 订阅和 Bedrock 访问权限、部署 stack、加载数据，以及登录。它还说明了成本和如何清理。模型端点按运行的小时数计费，所以用完之后记得关掉。</p>
+<h3><strong>要点回顾</strong></h3>
+<p>构建一个金融研究助理，需要的不只是找到相关文档。它意味着取回正确的信息、保住表格和插图里的上下文，以及让答案易于核验。把 Cohere Embed、Rerank 和 Parse 与 AWS 服务组合起来，这套架构为构建能处理复杂财务文档的研究助理提供了一个起点。</p>
+<p>几个关键的设计考量是：</p>
+<ul><li><strong>从检索质量入手。</strong> 根据你的文档选择 embedding 策略，并在优化答案生成之前先验证检索表现。</li><li><strong>让流水线匹配你的文档。</strong> 干净的文档用文本 embedding，复杂版面和扫描页用 Parse，视觉信息重要时用图像 embedding。</li><li><strong>平衡质量、延迟和成本。</strong> 索引用 Embed Pro，查询用 Embed Fast，并在真正有价值的地方加上 Rerank 和 Parse。</li><li><strong>只把模型需要的内容发给它。</strong> Rerank 的 Context Focus 挑出回答问题所需的段落，页面图像则保留这些段落周围的上下文。</li><li><strong>让答案可核验。</strong> 提供页面级引用和原始文档的访问入口，让分析师能够核对支撑证据。</li></ul>
 <h3><strong>了解更多</strong></h3>
-<p>要探索与该解决方案相关的模型、技术和性能基准：</p>
-<ul><li><a href="https://docs.cohere.com/docs/cohere-embed">Cohere 嵌入</a></li><li><a href="https://docs.cohere.com/docs/rerank-overview">Cohere 重新排序</a></li><li><a href="https://cohere.com/blog/rerank-5">Cohere Rerank 5 – 检索质量和上下文焦点基准</a></li><li><a href="https://cohere.com/blog/embed-5">Cohere Embed 5 – 模型功能和改进</a></li><li><a href="https://docs.cohere.com/">Cohere 文档</a></li><li><a href="https://aws.amazon.com/sagemaker/ai/">亚马逊 SageMaker AI</a></li><li><a href="https://aws.amazon.com/opensearch-service/features/serverless/">Amazon OpenSearch 无服务器</a></li><li><a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a></li></ul>
-<h2>接下来阅读此内容</h2>
-<ul><li>[！[紫色横幅显示相连的北方和PitchBook。](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/bd462488492399f45500e9b3b04295d8f1d23f06-3840x2160.jpg?auto=forma t&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/pitchbook-integration)<a href="https://cohere.com/blog/tag/partner">合作伙伴</a><a href="https://cohere.com/blog/tag/financial-services">财务服务</a><a href="https://cohere.com/blog/tag/product-launch">产品发布</a><a href="https://cohere.com/blog/pitchbook-integration">北方的 PitchBook：企业团队的私人市场情报，20262 年 10 月 26 日阅读时间</a></li><li>[！[摘要图像](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/975a9a31956f1e99e4a83aadce188b1d2f867789-3840x2160.png?a uto=format&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model)<a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model">关于流行的开放权重 AI 模型的行为 202612 年 10 月 26 日阅读时间</a></li><li>[<img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/fc96d67622cfc9c2b113f533f1385f1ceedb9638-1920x1080.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="">](https:// /cohere.com/blog/inside-cohere-model-vault-building-verABLE-confidential-ai-inference）[技术]（https://cohere.com/blog/tag/technology）<a href="https://cohere.com/blog/inside-cohere-model-vault-building-verifying-confidential-ai-inference">内部Cohere Model Vault：构建可验证的机密 AI 推理 20268 年 10 月 22 日阅读分钟</a></li></ul>]]></content:encoded>
+<p>想进一步了解与这套方案相关的模型、技术和性能基准：</p>
+<ul><li><a href="https://docs.cohere.com/docs/cohere-embed">Cohere Embed</a></li><li><a href="https://docs.cohere.com/docs/rerank-overview">Cohere Rerank</a></li><li><a href="https://cohere.com/blog/rerank-5">Cohere Rerank 5 —— 检索质量与 Context Focus 基准</a></li><li><a href="https://cohere.com/blog/embed-5">Cohere Embed 5 —— 模型能力与改进</a></li><li><a href="https://docs.cohere.com/">Cohere 文档</a></li><li><a href="https://aws.amazon.com/sagemaker/ai/">Amazon SageMaker AI</a></li><li><a href="https://aws.amazon.com/opensearch-service/features/serverless/">Amazon OpenSearch Serverless</a></li><li><a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>Cohere Model Vault 内部：构建可验证的机密 AI 推理</title>
+      <title>走进 Cohere Model Vault：构建可验证的机密 AI 推理</title>
       <link>https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference</link>
       <guid isPermaLink="true">https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Inside Cohere Model Vault: Building a verifiable confidential AI inference</description>
       <content:encoded><![CDATA[<p>2026 年 10 月 22 日</p>
-<p>8分钟读完</p>
-<h1>Cohere Model Vault 内部：构建可验证的机密 AI 推理</h1>
-<p>Model Vault 如何结合机密 CPU 和 GPU 执行、端到端加密请求内容以及远程证明来保护正在处理的敏感 AI 工作负载。</p>
+<p>8 分钟阅读</p>
+<h1>走进 Cohere Model Vault：构建可验证的机密 AI 推理</h1>
+<p>Model Vault 把机密的 CPU 与 GPU 执行、端到端加密的请求内容以及远程证明结合起来，在敏感 AI 工作负载被处理的过程中为它们提供保护。</p>
 <p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/fc96d67622cfc9c2b113f533f1385f1ceedb9638-1920x1080.png?auto=format&amp;fit=max&amp;q=80&amp;w=1130" alt=""></p>
-<p>在我们的产品发布会上，我们推出了 <a href="https://docs.google.com/document/d/1BvbHFNbT-GjlvSG7UMaaahsM4OX3A4YtZPp_330XT0g/edit?tab=t.0#heading=h.vv3sfmm4rp2q"><strong>Cohere Model Vault 上的机密计算</strong></a>，目前在 Microsoft Azure 上使用 NVIDIA GPU 进行公开测试。</p>
-<p>本文将更深入地介绍该系统的工作原理。</p>
-<p>目标不仅仅是加密推理。这是为了减少客户必须信任的明文数据的基础设施，并为他们提供可以在敏感信息发布之前验证的加密证据。</p>
-<p>这需要的不仅仅是机密虚拟机。机密推理系统必须保护计算本身、向其传送敏感请求的路径以及客户用来决定目的地是否可信的机制。</p>
-<p>Model Vault 将这些部分整合到一个专用的模型部署中。</p>
+<p>在产品发布时，我们推出了 <a href="https://docs.google.com/document/d/1BvbHFNbT-GjlvSG7UMaaahsM4OX3A4YtZPp_330XT0g/edit?tab=t.0#heading=h.vv3sfmm4rp2q"><strong>Cohere Model Vault 上的机密计算</strong></a>，现已在 Microsoft Azure 上配合 NVIDIA GPU 进入公开测试阶段。</p>
+<p>本文会更深入地介绍这套系统的工作原理。</p>
+<p>目标不只是给推理加密，而是减少客户不得不托付明文数据的基础设施，并为客户提供密码学证据，让他们能在敏感信息被释放之前先行验证。</p>
+<p>这需要的不只是一个机密虚拟机。机密推理系统必须保护计算本身，保护把敏感请求送达计算的那条路径，还要保护客户用来判断目的地是否可信的那套机制。</p>
+<p>Model Vault 把这些部件围绕一次专用的模型部署整合到一起。</p>
 <p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/c445146fb507dd0bfeaf2815fc6a5dacb46eccee-3840x2540.png?auto=format&amp;fit=max&amp;q=80&amp;w=800" alt=""></p>
 <h3><strong>从机密硬件到机密推理</strong></h3>
-<p>当应用程序或模型主动处理数据时，机密计算可以保护<strong>使用中的数据</strong>。</p>
-<p>其基础是两个属性：</p>
-<ul><li><strong>隔离</strong>，它使用硬件强制控制来保护工作负载内存免受机密环境之外的基础设施的影响。</li><li><strong>证明</strong>，它生成有关环境的加密签名证据，以便另一方可以在发布敏感数据之前对其进行评估。</li></ul>
-<p>这些属性共同改变了传统的基础设施信任模型。对底层主机的特权访问不再自动意味着对机密环境中运行的工作负载的访问。</p>
-<p>然而，对于 AI 推理来说，边界不能止于 CPU。</p>
-<p>模型计算的很大一部分在加速器上运行。如果 CPU 受到保护，而加速器仍处于机密边界之外，则敏感模型状态和中间计算可能会在推理转移到 GPU 时暴露。</p>
-<p>NVIDIA GPU 上的机密计算可保护 GPU 内存免受受保护环境之外的基础设施的影响，并加密 CPU 和 GPU 之间的通信。这允许机密边界跨越机密虚拟机，并且加速器执行推理。</p>
-<h3><strong>在机密模型库内</strong></h3>
-<p>没有任何一个组件可以使推理请求保密。</p>
-<p>Model Vault 结合了围绕专用模型部署的多个控件，每个控件都解决信任问题的不同部分。</p>
-<p><strong>机密 CPU 和 GPU 执行</strong></p>
-<p>模型服务堆栈在机密虚拟机内运行。</p>
-<p>通过硬件支持的隔离，保护操作系统、驱动程序、推理服务器及其内存免受主机环境的影响。工作负载还受到策略的限制，因此只有经过批准的软件才能在环境中运行，并且操作员没有进入工作负载的交互路径。</p>
-<p>NVIDIA 机密计算将保护扩展到加速器并加密 CPU 和 GPU 之间的流量。</p>
-<p>这很重要，因为安全边界需要覆盖实际执行推理的系统，而不仅仅是协调推理的 CPU。</p>
-<p>Microsoft Azure 提供底层机密计算基础设施。 Model Vault 围绕该基础构建托管模型服务、加密请求、证明和客户验证层。</p>
-<p>结果是客户不需要独立组装、集成和操作这些控件。</p>
+<p>机密计算保护的是<strong>使用中的数据</strong>，也就是应用或模型正在处理它的那份数据。</p>
+<p>这一切的基础是两项属性：</p>
+<ul><li><strong>隔离</strong>：借助硬件强制的控制手段，保护工作负载内存不受机密环境之外的基础设施影响。</li><li><strong>证明</strong>：生成关于该环境的密码学签名证据，让另一方能在释放敏感数据之前对它进行评估。</li></ul>
+<p>这两项属性合在一起，改变了传统的基础设施信任模型。对底层宿主拥有特权访问权，不再自动意味着可以访问机密环境内运行的工作负载。</p>
+<p>但对 AI 推理而言，边界不能止于 CPU。</p>
+<p>模型计算中有相当大一部分跑在加速器上。如果 CPU 受到保护，而加速器仍留在机密边界之外，那么在推理转移到 GPU 的那一刻，敏感的模型状态和中间计算就可能暴露出来。</p>
+<p>NVIDIA GPU 上的机密计算既保护 GPU 内存不受受保护环境之外的基础设施影响，也加密 CPU 与 GPU 之间的通信。这让机密边界得以覆盖机密虚拟机，连同在其中执行推理的加速器。</p>
+<h3><strong>走进机密 Model Vault 内部</strong></h3>
+<p>没有任何单一组件能让一次推理请求变成机密的。</p>
+<p>Model Vault 在一次专用的模型部署周围组合了多项控制手段，每一项各自处理信任问题的一个不同侧面。</p>
+<p><strong>机密的 CPU 与 GPU 执行</strong></p>
+<p>模型服务栈运行在一台机密虚拟机内。</p>
+<p>操作系统、驱动、推理服务器及其内存都通过硬件支持的隔离手段受到保护，不受宿主环境侵扰。工作负载同时受策略约束：环境中只有经过批准的软件才能运行，运维人员也没有一条可以交互式进入工作负载的路径。</p>
+<p>NVIDIA Confidential Computing 把保护延伸到加速器，并加密 CPU 与 GPU 之间的流量。</p>
+<p>这一点很重要，因为安全边界需要覆盖真正执行推理的系统，而不只是负责协调的 CPU。</p>
+<p>Microsoft Azure 提供底层的机密计算基础设施。Model Vault 则在这一基础上构建托管模型服务、加密请求、证明与客户验证等各层。</p>
+<p>这样一来，客户不必再自行拼装、集成和运维这些控制手段。</p>
 <h3><strong>加密请求本身</strong></h3>
-<p>保护计算环境只能解决部分问题。</p>
-<p>敏感数据也必须到达该环境。</p>
-<p>TLS 保护网络连接，但仅连接级加密并不能保证参与操作服务的每个中介都位于明文路径之外。</p>
-<p>因此，Model Vault 可以保护<strong>应用程序有效负载本身</strong>。</p>
-<p>它使用 <strong>Oblivious HTTP 或 OHTTP</strong> 将敏感请求内容加密到与经过验证的机密环境关联的公钥。然后，加密的消息可以作为密文通过中间基础设施。</p>
-<p>只有机密环境内的OHTTP网关才能访问相应的私钥并可以解密受保护的请求。响应在返回路径上以相同的方式受到保护。</p>
-<p>这在<strong>操作服务</strong>和<strong>访问请求的内容</strong>之间形成了重要的分离。</p>
-<p>中间基础设施仍然可以执行托管平台所需的功能，例如路由流量，而无需访问敏感应用程序负载。</p>
-<p>应用程序继续使用 Model Vault API 和熟悉的请求格式。额外的保护是在客户端和基础设施层实施的，而不需要客户重新设计其应用程序有效负载。</p>
-<h3><strong>远程证明：证明什么将处理请求</strong></h3>
-<p>隔离可防止机密边界之外的基础设施直接读取受保护的工作负载内存。</p>
-<p>但仅靠隔离仍然留下一个重要问题：</p>
-<p><strong>客户如何知道目的地实际上正在运行其期望的硬件和软件配置？</strong></p>
-<p>远程认证解决了这个问题。</p>
-<p>机密环境生成描述正在运行的环境的加密签名证据。这包括与硬件、固件、操作环境和应用软件相关的测量和安全相关属性。</p>
-<p>然后根据批准的政策评估这些证据。</p>
-<p><strong>证据</strong>和<strong>政策</strong>之间的这种分离是根本性的。</p>
-<p>证明证据答案： <strong>实际运行的环境是什么？ </strong></p>
-<p>政策给出的答案是： <strong>这是一个我愿意信任我的数据的环境吗？</strong></p>
-<p>在发布受保护的请求之前，验证者可以要求特定属性与批准的值匹配。</p>
-<p>这些要求可以包括机密环境的预期软件测量和安全状态，包括 GPU 是否在预期机密模式下运行。</p>
-<p>因此，客户不需要仅仅依赖 Cohere 的断言，即特定环境是值得信赖的。在发布敏感数据之前会进行验证。</p>
-<h3><strong>证明作为执行机制</strong></h3>
-<p>当证明改变系统的功能时，它最为重要。</p>
-<p>在 Model Vault 中，验证是决定是否发布受保护数据的一部分。</p>
-<p>在发送受保护的请求之前，客户端会根据批准的策略评估目的地。</p>
-<p>如果预期属性丢失或不正确，例如由于软件测量已更改或 GPU 未在所需的机密模式下运行，验证将失败并且客户端拒绝发送受保护的有效负载。</p>
-<p>因此，敏感请求保留在客户环境内，而不是发送到不满足验证的目的地。</p>
-<p>这将认证从审计工件转变为<strong>主动安全控制</strong>。</p>
-<p>证明证据经常更新。每次刷新时，客户端都会根据批准的策略验证新的测量和安全状态，然后再继续发送受保护的请求。</p>
-<p>这就是<strong>先验证再信任</strong>的实际意义。</p>
-<h3><strong>信任边界和威胁模型</strong></h3>
-<p>机密计算减少了必须信任明文数据的基础设施的数量。</p>
-<p>它并没有完全消除信任。</p>
-<p>因此，了解剩余的信任边界与了解保护本身同样重要。</p>
-<p><strong>什么仍然值得信赖</strong></p>
-<p>多个组件仍然是可信计算基础的一部分，包括：</p>
-<ul><li>底层机密计算硬件</li><li>固件</li><li>测量在机密环境中运行的软件</li><li>用于定义批准配置的参考测量值</li><li>用于评估和签署证据的认证基础设施</li></ul>
-<p>重要的区别在于，这种信任可以变得更加明确和可衡量。</p>
-<p>硬件会生成有关环境的证据，而客户控制的验证会在受保护的数据发布之前根据批准的值检查证据。</p>
-<p>因此，该系统用一组较小的组件（其状态可以测量和评估）取代了某些形式的广泛的、隐式的基础设施信任。</p>
-<p><strong>受保护的内容</strong></p>
-<p>在其威胁模型中，Model Vault 上的机密计算可在处理提示、文档、响应和模型执行时对其进行保护。</p>
-<p>机密环境之外的中介机构（包括主机操作系统、虚拟机管理程序、基础设施管理员、云提供商和 Cohere 操作员）无法读取受保护的工作负载内存。</p>
-<p>由于敏感应用程序有效负载在机密环境中是端到端加密的，因此它们的内容在跨越中间基础设施时也仍然受到保护。</p>
-<p>因此，保护涵盖以下两个方面：</p>
-<ul><li>承载敏感请求内容到机密环境的路径</li><li>执行推理的环境</li></ul>
-<p>这种区别很重要。仅机密执行环境并不能防止请求路径中其他地方的明文暴露。</p>
-<h3><strong>保护边界之外的内容</strong></h3>
-<p>有用的威胁模型还需要说明它<strong>不</strong>保护什么。</p>
-<p>机密计算并不声称可以防止所有可能的攻击。</p>
-<p><strong>物理和旁道攻击</strong></p>
-<p>一些物理和旁道攻击仍然在保护边界之外。例如，攻击者可能能够从计时或其他共享硬件行为间接推断信息，即使不直接读取受保护的内存。</p>
+<p>保护计算环境只解决了问题的一部分。</p>
+<p>敏感数据还必须能够抵达那个环境。</p>
+<p>TLS 保护的是网络连接，但仅有连接级加密并不能保证所有参与服务运维的中间环节都留在明文路径之外。</p>
+<p>因此，Model Vault 保护的是<strong>应用程序负载本身</strong>。</p>
+<p>它使用 <strong>Oblivious HTTP（OHTTP）</strong>，把敏感的请求内容加密给一个与已证明的机密环境关联的公钥。这样，加密后的消息就能以密文形态穿过中间基础设施。</p>
+<p>只有机密环境内的 OHTTP 网关能拿到对应的私钥，并解密受保护的请求。响应在回程路径上以同样的方式受到保护。</p>
+<p>这在<strong>运维服务</strong>与<strong>访问请求内容</strong>之间划出了一道重要界限。</p>
+<p>中间基础设施仍然可以执行托管平台所需的功能（比如流量路由），而无需访问敏感的应用程序负载。</p>
+<p>应用照常使用 Model Vault API 和熟悉的请求格式。这层额外保护是在客户端与基础设施层实现的，客户不必重新设计自己的应用程序负载。</p>
+<h3><strong>远程证明：证明将处理请求的东西</strong></h3>
+<p>隔离让机密边界之外的基础设施无法直接读取受保护的工作负载内存。</p>
+<p>但仅有隔离，仍留下一个重要问题：</p>
+<p><strong>客户怎么知道，目的地实际运行的正是它所预期的硬件与软件配置？</strong></p>
+<p>远程证明正是为了回答这个问题。</p>
+<p>机密环境会生成密码学签名的证据，用以描述正在运行的环境。其中包括与硬件、固件、运行环境以及应用软件相关的度量值和安全相关属性。</p>
+<p>随后，这段证据会针对一份已批准的策略进行评估。</p>
+<p><strong>证据</strong>与<strong>策略</strong>之间的这种分工是根本性的。</p>
+<p>证明证据回答的是： <strong>实际运行的到底是什么环境？ </strong></p>
+<p>策略回答的是： <strong>这是一个我愿意信任、愿意把数据托付给它的环境吗？</strong></p>
+<p>验证方可以要求特定属性与已批准的取值一致之后，受保护的请求才被释放。</p>
+<p>这些要求可以包括机密环境预期的软件度量值与安全状态，其中包括 GPU 是否正运行在预期的机密模式下。</p>
+<p>因此，客户不必仅仅依赖 Cohere 关于某个环境值得信任的断言。验证是在敏感数据被释放之前完成的。</p>
+<h3><strong>把证明用作执行机制</strong></h3>
+<p>证明只有在能够改变系统行为的时候才最有价值。</p>
+<p>在 Model Vault 中，验证本身就是「是否释放受保护数据」这一决定的一部分。</p>
+<p>在发送受保护请求之前，客户端会依据已批准的策略对目的地进行评估。</p>
+<p>如果某项预期属性缺失或不正确——比如软件度量值发生了变化，或者 GPU 没有运行在要求的机密模式下——验证就会失败，客户端会拒绝发送受保护的负载。</p>
+<p>于是，敏感请求会留在客户自己的环境内，而不会被发往一个未通过验证的目的地。</p>
+<p>这把证明从一份审计材料变成了<strong>主动生效的安全控制</strong>。</p>
+<p>证明证据会频繁更新。每次刷新之后，客户端都会先把新的度量值与安全状态对照已批准的策略进行验证，然后才继续发送受保护的请求。</p>
+<p>这就是<strong>「信任之前先验证」</strong>的实际含义。</p>
+<h3><strong>信任边界与威胁模型</strong></h3>
+<p>机密计算减少了必须托付明文数据的基础设施规模。</p>
+<p>但它并没有彻底消除信任。</p>
+<p>因此，理解剩余的信任边界，与理解这些保护措施本身同样重要。</p>
+<p><strong>哪些部分仍然被信任</strong></p>
+<p>若干组件仍属于可信计算基，包括：</p>
+<ul><li>底层的机密计算硬件</li><li>固件</li><li>运行在机密环境内、被纳入度量的软件</li><li>用于定义已批准配置的参考度量值</li><li>用于评估并签署证据的证明基础设施</li></ul>
+<p>关键区别在于，这类信任可以被做得更明确、更可度量。</p>
+<p>硬件产出关于环境的证据，而由客户掌控的验证则在受保护数据被释放之前，用已批准的取值去核对这段证据。</p>
+<p>因此，这套系统用一组规模更小、状态可度量可评估的组件，替代了某些范围更宽、隐式的基础设施信任。</p>
+<p><strong>哪些内容受到保护</strong></p>
+<p>在其威胁模型范围内，Model Vault 上的机密计算会在 prompts、文档、响应和模型执行被处理的过程中保护它们。</p>
+<p>机密环境之外的中间环节——包括宿主操作系统、hypervisor、基础设施管理员、云服务商以及 Cohere 的运维人员——都无法读取受保护的工作负载内存。</p>
+<p>由于敏感的应用程序负载是端到端加密到机密环境的，它们在穿越中间基础设施时内容同样受到保护。</p>
+<p>因此，保护同时覆盖：</p>
+<ul><li>把敏感请求内容送达机密环境的那条路径</li><li>执行推理的那个环境</li></ul>
+<p>这个区分很重要。仅有机密执行环境，并不能阻止明文在请求路径的其他环节暴露。</p>
+<h3><strong>哪些内容仍在保护边界之外</strong></h3>
+<p>一个有用的威胁模型还需要说明它<strong>不</strong>保护什么。</p>
+<p>机密计算并不声称能阻止每一种可能的攻击。</p>
+<p><strong>物理攻击与侧信道攻击</strong></p>
+<p>部分物理攻击与侧信道攻击仍在保护边界之外。例如，攻击者可能通过时序或其他共享的硬件行为间接推断出信息，即便并没有直接读取受保护的内存。</p>
 <p><strong>可用性</strong></p>
-<p>无法读取受保护工作负载的操作员仍然可以停止它、延迟它或阻止它运行。</p>
-<p>因此，机密计算本身并不能防止拒绝服务攻击或提供可用性保证。</p>
-<p><strong>应用程序级漏洞</strong></p>
-<p>在机密环境中运行的软件仍然需要安全。</p>
-<p>即时注入、不安全的工具使用、授权错误、应用程序漏洞和其他软件级风险并不能仅仅通过将应用程序放置在机密计算硬件中来解决。</p>
-<p><strong>可观察的元数据</strong></p>
-<p>受保护的应用程序有效负载的内容已加密，但某些信息在该有效负载之外仍然可见。</p>
-<p>这可以包括：</p>
-<ul><li>请求时间</li><li>消息大小</li><li>交通量</li><li>路由信息</li></ul>
-<p>在当前架构中，身份验证和路由所需的信息（包括 API 凭证和模型标识符）也保留在 OHTTP 保护的应用程序有效负载之外。</p>
-<p>在推理系统隐藏什么和不隐藏什么时，这种区别是有意且重要的。</p>
+<p>一个读不到受保护工作负载的运维人员，仍然可能让它停止、延迟，或干脆让它跑不起来。</p>
+<p>因此机密计算本身既不能阻止拒绝服务攻击，也不提供可用性保证。</p>
+<p><strong>应用层漏洞</strong></p>
+<p>运行在机密环境内的软件仍然必须是安全的。</p>
+<p>仅仅把应用放进机密计算硬件，并不能解决提示注入、不安全的工具使用、授权错误、应用漏洞以及其他软件层面的风险。</p>
+<p><strong>可观测的元数据</strong></p>
+<p>受保护应用程序负载的内容是加密的，但负载之外仍有一些信息是可见的。</p>
+<p>这可能包括：</p>
+<ul><li>请求时序</li><li>消息大小</li><li>流量体量</li><li>路由信息</li></ul>
+<p>在当前架构下，认证与路由所需的信息（包括 API 凭证和模型标识符）同样留在 OHTTP 保护的应用程序负载之外。</p>
+<p>这一区分是有意为之，在判断系统隐藏了什么、没有隐藏什么时很重要。</p>
 <h3><strong>机密计算不是什么</strong></h3>
-<p>机密计算是更广泛架构中的一种安全控制。</p>
+<p>机密计算只是更宏大架构中的一项安全控制。</p>
 <p>它不是：</p>
-<ul><li><strong>应用程序安全性的替代品。</strong> 机密边界内的软件仍然需要正确设计、审查和保护。</li><li><strong>数据驻留机制。</strong> 机密计算控制计算期间对数据的访问。它并不确定计算发生的管辖范围。</li><li><strong>替代合规性或合同控制。</strong> DPA、访问控制、认证、安全审查和法律义务仍然是必要的。</li><li><strong>同态加密。</strong> 该模型仍然在受保护环境内的明文上运行。机密计算可以保护该环境，而不是直接对加密值进行计算。</li></ul>
-<p>仅当签名的证据实际上根据适当的策略进行验证时，证明才能提供保证。</p>
-<p>证据描述了正在运行的内容。</p>
-<p>策略决定该环境是否值得信任。</p>
-<p>机密计算不会消除信任。<strong>它使信任变得更小、更明确、可测量和可验证。</strong></p>
-<h3><strong>开放式内置</strong></h3>
-<p>当客户和安全研究人员能够理解他们正在验证的内容时，验证就变得更有意义。</p>
-<p>Model Vault 上的机密计算基于开源技术，包括 <strong>Kata Containers</strong> 和 <strong>Confidential Containers</strong>。</p>
-<p>Cohere 打算开源机密推理堆栈，以便客户和研究人员可以检查实施情况、了解正在执行的策略，并重现验证过程中使用的测量结果。</p>
-<p>这很重要，因为证明不应要求客户接受另一个黑匣子。</p>
-<p>当客户能够理解测量的内容、检查与其关联的代码并独立推理该状态是否值得信任时，测量会更有用。</p>
-<p>开放实施和可重复的测量使验证过程更加透明，并使安全团队能够在更深层次上评估系统。</p>
-<h3><strong>下一步是什么</strong></h3>
-<p>当前的公开测试版在 Microsoft Azure 上的 **NVIDIA H100 GPU 上运行。</p>
-<p>随着我们迈向全面上市，我们还致力于支持 <strong>NVIDIA Blackwell 基础设施，包括 NVIDIA B200 GPU</strong>。</p>
-<p>Model Vault 上的机密计算是更广泛目标的一部分：为企业提供强大的技术控制，而不要求每个组织自行构建和运营机密 AI 推理。</p>
-<p>目的不是要求客户信任更多基础设施或托管平台。</p>
-<p>它为他们提供了一种验证他们选择信任的平台和基础设施合作伙伴的方法。</p>
-<p><strong>在 <a href="https://cohere.com/blog/introducing-confidential-computing-on-cohere-model-vault">Model Vault 产品公告中的机密计算</a> 中了解更多信息，浏览 <a href="https://docs.cohere.com/docs/model-vault">Model Vault 文档</a>，或从 <a href="http://vault.cohere.com">vault.cohere.com</a> 开始。</strong></p>
-<h2>接下来阅读此内容</h2>
-<ul><li>[![](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/a9f5cf4c07f32484927a5f451a4763453a1cd062-3840x2160.png? auto=format&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/financial-research-assistant-cohere-aws)<a href="https://cohere.com/blog/tag/enterprise-ai">企业AI</a><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws">在 AWS 上使用 Cohere AI 构建金融研究助理 202617 年 10 月 29 日阅读分钟</a></li><li>[！[紫色横幅显示相连的北方和PitchBook。](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/bd462488492399f45500e9b3b04295d8f1d23f06-3840x2160.jpg?auto=forma t&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/pitchbook-integration)<a href="https://cohere.com/blog/tag/partner">合作伙伴</a><a href="https://cohere.com/blog/tag/financial-services">财务服务</a><a href="https://cohere.com/blog/tag/product-launch">产品发布</a><a href="https://cohere.com/blog/pitchbook-integration">北方的 PitchBook：企业团队的私人市场情报，20262 年 10 月 26 日阅读时间</a></li><li>[！[摘要图像](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/975a9a31956f1e99e4a83aadce188b1d2f867789-3840x2160.png?a uto=format&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model)<a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model">关于流行的开放权重 AI 模型的行为 202612 年 10 月 26 日阅读时间</a></li></ul>]]></content:encoded>
+<ul><li><strong>应用安全的替代品。</strong> 机密边界内的软件仍然需要被正确地设计、评审和加固。</li><li><strong>数据驻留机制。</strong> 机密计算管的是计算期间对数据的访问，它并不决定计算发生在哪个司法辖区。</li><li><strong>合规或合同控制的替代品。</strong> DPA、访问控制、认证、安全审查和法律义务依然必要。</li><li><strong>同态加密。</strong> 模型在受保护环境内仍以明文运行。机密计算保护的是那个环境，而不是直接对加密值进行计算。</li></ul>
+<p>只有当签名证据真正被针对合适的策略验证过时，证明才能提供保证。</p>
+<p>证据描述正在运行的是什么。</p>
+<p>策略决定这个环境是否应当被信任。</p>
+<p>机密计算并不能消除信任。<strong>它只是让信任更小、更明确、更可度量、更可验证。</strong></p>
+<h3><strong>在开放中构建</strong></h3>
+<p>当客户和安全研究者能够理解自己验证的究竟是什么时，验证才更有意义。</p>
+<p>Model Vault 上的机密计算构建在包括 <strong>Kata Containers</strong> 与 <strong>Confidential Containers</strong> 在内的开源技术之上。</p>
+<p>Cohere 打算把这套机密推理栈开源，让客户与研究者可以检视实现、了解正在被执行的策略，并复现验证过程中使用的度量值。</p>
+<p>这一点很重要，因为证明不该要求客户再接受一个黑盒。</p>
+<p>当客户能理解测的是什么、能检视与之相关的代码，并能独立判断这个状态是否值得信任时，一项度量值才更有用。</p>
+<p>开放的实现与可复现的度量让验证过程更加透明，也让安全团队得以在更深的层次上评估这套系统。</p>
+<h3><strong>接下来</strong></h3>
+<p>当前的公开测试运行在 <strong>Microsoft Azure 上的 NVIDIA H100 GPU</strong> 之上。</p>
+<p>随着我们迈向正式可用，我们也在推进对 <strong>NVIDIA Blackwell 基础设施（包括 NVIDIA B200 GPU）</strong> 的支持。</p>
+<p>Model Vault 上的机密计算是一个更大目标的一部分：让企业不必各自搭建和运维机密 AI 推理，也能用上强有力的技术控制手段。</p>
+<p>目标不是让客户去信任更多的基础设施或托管平台。</p>
+<p>而是给他们一条路径，去验证自己选择信任的平台与基础设施伙伴。</p>
+<p><strong>在 <a href="https://cohere.com/blog/introducing-confidential-computing-on-cohere-model-vault">Cohere Model Vault 上的机密计算产品公告</a> 中了解更多，浏览 <a href="https://docs.cohere.com/docs/model-vault">Model Vault 文档</a>，或直接前往 <a href="http://vault.cohere.com">vault.cohere.com</a> 开始使用。</strong></p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/a9f5cf4c07f32484927a5f451a4763453a1cd062-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/enterprise-ai">企业 AI</a><a href="https://cohere.com/blog/financial-research-assistant-cohere-aws">用 Cohere AI 在 AWS 上构建金融研究助手2026 年 10 月 29 日17 分钟阅读</a></li><li><a href="https://cohere.com/blog/pitchbook-integration"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/bd462488492399f45500e9b3b04295d8f1d23f06-3840x2160.jpg?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="一块紫色横幅，展示连通的 North 与 PitchBook。"></a><a href="https://cohere.com/blog/tag/partner">合作伙伴</a><a href="https://cohere.com/blog/tag/financial-services">金融服务</a><a href="https://cohere.com/blog/tag/product-launch">产品发布</a><a href="https://cohere.com/blog/pitchbook-integration">North 中的 PitchBook：面向企业团队的私募市场情报2026 年 10 月 26 日2 分钟阅读</a></li><li><a href="https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/975a9a31956f1e99e4a83aadce188b1d2f867789-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="抽象意象图"></a><a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model">一款流行的开放权重 AI 模型令人担忧的行为2026 年 10 月 26 日12 分钟阅读</a></li></ul>]]></content:encoded>
     </item>
     <item>
-      <title>在 Cohere Model Vault 上引入机密计算</title>
+      <title>介绍 Cohere Model Vault 上的机密计算</title>
       <link>https://cohere.com/blog/introducing-confidential-computing-on-cohere-model-vault</link>
       <guid isPermaLink="true">https://cohere.com/blog/introducing-confidential-computing-on-cohere-model-vault</guid>
       <pubDate>Thu, 22 Oct 2026 00:00:00 +0000</pubDate>
@@ -287,50 +284,50 @@
       <content:encoded><![CDATA[<p>2026 年 10 月 22 日</p>
 <p>4 分钟阅读</p>
 <h1>介绍 Cohere Model Vault 上的机密计算</h1>
-<p>现已在 Microsoft Azure 上使用 NVIDIA GPU 进行 NVIDIA 机密计算的公开测试版，为敏感的企业 AI 带来硬件支持的保护和可验证的安全性。</p>
+<p>现已在 Microsoft Azure 上以 NVIDIA GPU 运行 NVIDIA Confidential Computing 的公开测试阶段，为敏感的企业 AI 带来硬件支持的保护和可验证的安全性。</p>
 <p><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/b2a2c86e80e6776dd67b69232fef3daa01301682-2260x1130.png?auto=format&amp;fit=max&amp;q=80&amp;w=1130" alt=""></p>
 <p>要点</p>
-<ul><li><strong>保护使用中的数据：</strong> Model Vault 将保护范围从静态和传输中的数据扩展到推理运行时的提示、文档、响应和模型执行。</li><li><strong>端到端加密敏感请求内容：</strong>应用程序有效负载通过中间基础设施保持加密状态，并且只能在经过验证的机密环境内解密。</li><li><strong>信任前验证：</strong> 客户可以在敏感数据离开其基础设施之前以加密方式验证硬件和软件环境。</li><li><strong>使用机密 AI 作为托管服务：</strong> Cohere 在具有 NVIDIA H100 GPU 机密计算功能的 Microsoft Azure 基础设施上运营服务平台。</li><li><strong>今天开始公开测试版：</strong> 客户今天就可以开始部署加密的 Model Vault 工作负载。</li></ul>
-<p>今天，我们宣布推出 <strong>Cohere Model Vault 上的机密计算</strong> 的公开测试版，为托管企业 AI 带来硬件支持的保护和独立可验证的安全性。</p>
-<p>Model Vault 为企业提供专用、完全托管的模型推理。通过机密计算，我们将这种体验扩展到组织的一些最敏感的工作负载和数据，包括财务信息、临床记录、特权文档、专有源代码和知识产权。</p>
-<p>目标很简单：企业应该能够使用托管人工智能的功能和操作简单性，而无需让运行它的基础设施访问其敏感的明文数据。</p>
+<ul><li><strong>保护使用中的数据：</strong> Model Vault 把保护范围从静态数据和传输中的数据，扩展到推理运行期间的 prompts、文档、响应和模型执行。</li><li><strong>端到端加密敏感请求内容：</strong> 应用程序负载在穿过中间基础设施时始终保持加密，只有在经过证明的机密环境内部才能解密。</li><li><strong>信任之前先验证：</strong> 客户可以在敏感数据离开自己的基础设施之前，以密码学方式验证硬件与软件环境。</li><li><strong>把机密 AI 当作托管服务使用：</strong> Cohere 在具备 NVIDIA H100 GPU 机密计算能力的 Microsoft Azure 基础设施上运营服务平台。</li><li><strong>今天就在公开测试阶段开始：</strong> 客户今天就可以开始部署加密的 Model Vault 工作负载。</li></ul>
+<p>今天，我们宣布 <strong>Cohere Model Vault 上的机密计算</strong>进入公开测试阶段，为托管的企业 AI 带来硬件支持的保护和可独立验证的安全性。</p>
+<p>Model Vault 为企业提供专用、完全托管的模型推理。有了机密计算，我们把这种体验扩展到组织中最敏感的部分工作负载和数据，包括财务信息、临床记录、特权文档、专有源代码和知识产权。</p>
+<p>目标很简单：企业应该既能享用托管 AI 的能力与运维简便，又不必让运营它的基础设施接触其敏感的明文数据。</p>
 <h3><strong>保护使用中的数据</strong></h3>
-<p>传统上，加密在两个地方保护数据：存储时和通过网络传输时。</p>
-<p>Model Vault 上的机密计算旨在保护第三种状态：<strong>使用中的数据</strong>。</p>
-<p>推理在跨 CPU 和 GPU 的硬件支持的机密环境中运行。硬件强制隔离可保护工作负载内存免受机密边界之外的一切影响，包括特权基础设施软件和操作员。借助 NVIDIA 机密计算，GPU 内存会受到保护，并且在模型执行推理时 CPU 和 GPU 之间的流量会被加密。</p>
-<p>这使得企业能够将更敏感的工作负载引入人工智能，同时减少需要信任其数据的各方和系统的数量。</p>
+<p>传统上，加密在两个地方保护数据：存储时，以及在网络上传输时。</p>
+<p>Cohere Model Vault 上的机密计算正是为保护第三种状态而设计的：<strong>使用中的数据</strong>。</p>
+<p>推理运行在横跨 CPU 与 GPU 的硬件支持机密环境中。硬件强制的隔离让工作负载内存不受机密边界之外的一切影响，包括特权基础设施软件和运维人员。借助 NVIDIA Confidential Computing，GPU 内存得到保护，模型执行推理时 CPU 与 GPU 之间的流量也被加密。</p>
+<p>这让企业可以把更敏感的工作负载带到 AI 上，同时减少需要对其数据托付信任的各方与系统。</p>
 <h3>**信任之前先验证</h3>
 <p>**</p>
-<p>仅靠保护是不够的。企业还需要一种方法来了解这些保护措施是否确实到位。</p>
-<p>这就是为什么远程证明是 Model Vault 机密计算的核心部分。</p>
-<p>在发送敏感数据之前，客户端软件会验证有关处理该数据的环境的加密签名证据，包括其硬件、固件和软件配置。该证据将根据已批准的安全策略进行检查。</p>
-<p>如果环境不满足策略，则客户端拒绝发送请求。</p>
-<p>这将信任模型从<strong>“信任我们”更改为“自己验证”。</strong></p>
-<blockquote>“企业不必在托管 AI 的简单性和对最敏感信息的控制之间做出选择。通过 Model Vault 和机密计算，客户可以在发送数据之前验证将处理其数据的环境。通过硬件证明，客户不仅可以获得工作负载在安全、机密计算环境中运行的加密证明，还可以验证其数据是否受到未经授权的访问（甚至来自 Cohere 的访问）。”- Cohere 首席技术官 Phil Blunsom</blockquote>
+<p>仅有保护还不够。企业还需要一种办法，确认这些保护确实已经就位。</p>
+<p>这正是远程证明成为 Cohere Model Vault 机密计算核心部分的原因。</p>
+<p>在发送敏感数据之前，客户侧软件会验证关于「将要处理这份数据的环境」的密码学签名证据，其中包括它的硬件、固件和软件配置。这段证据会对照一份已批准的安全策略进行核验。</p>
+<p>如果该环境不满足策略要求，客户端就会拒绝发送请求。</p>
+<p>这把信任模型从<strong>「相信我们」变成「自己动手验证」</strong>。</p>
+<blockquote>「企业不该在托管 AI 的简便与对最敏感信息的掌控之间做二选一。有了 Model Vault 和机密计算，客户可以在发送数据之前先验证将要处理它的环境。借助硬件证明，客户不仅拥有工作负载运行在安全机密计算环境中的密码学证据，还能验证自己的数据免于被未授权访问——哪怕访问方是 Cohere。」- Phil Blunsom，Cohere 首席技术官</blockquote>
 <h3><strong>敏感请求内容的端到端保护</strong></h3>
-<p>机密计算保护计算环境内发生的事情。 Model Vault 还可以保护敏感的请求内容。</p>
-<p>Model Vault 不只依赖连接级加密，而是对经过验证的机密环境的应用程序负载进行端到端加密。加密的请求可以通过中间基础设施而不会暴露其内容，并且只有机密环境才能对其进行解密。返回路径上的响应也受到保护。</p>
-<p>这保留了托管人工智能平台的运营优势，而无需将客户请求的明文内容暴露给中介基础设施。</p>
-<p>客户继续使用 Model Vault API 和熟悉的请求格式。额外的保护内置于客户端和基础设施层中，而不需要应用程序重新设计其有效负载。</p>
-<h3><strong>使用 Microsoft Azure 和 NVIDIA 构建</strong></h3>
-<p>公开测试版由 <strong>Microsoft Azure 上的 NVIDIA H100 GPU</strong> 提供支持。</p>
-<p>Microsoft Azure 提供底层机密计算基础设施。NVIDIA 机密计算将这些功能扩展到 NVIDIA H100 GPU。 Cohere 通过 Model Vault 的托管模型服务、加密请求路径、远程证明和客户端验证将这些技术整合在一起。</p>
-<p>其结果是一个托管人工智能平台，它将云人工智能的操作简单性与推理过程中敏感数据访问的更强大的技术控制结合起来。</p>
-<blockquote>“企业需要相信，他们最敏感的 AI 工作负载受到的保护不仅仅是合同承诺。我们与 Cohere 在 Model Vault 上的合作展示了机密计算如何将托管 AI 的简单性与可独立验证的技术控制相结合。”- Microsoft Azure 机密计算产品主管 Vikas Bhatia</blockquote>
-<blockquote>“机密计算为需要在高度敏感数据上运行 AI 的企业带来了新的可能性。NVIDIA GPU 上的 NVIDIA 机密计算提供了硬件支持的保护，可帮助 Cohere Model Vault 等平台为企业工作负载带来机密的 AI 推理。”- NVIDIA 企业软件副总裁 John Fanelli</blockquote>
-<h3><strong>为敏感企业工作负载解锁人工智能</strong></h3>
-<p>对于许多组织来说，问题不再是人工智能是否可以执行任务。问题是该任务所需的数据是否可以安全地与人工智能一起使用。</p>
-<p>Model Vault 上的机密计算旨在保护安全、合同或监管要求可能将有价值的数据保留在托管 AI 平台之外的工作负载，包括：</p>
-<ul><li>金融服务欺诈调查</li><li>法律服务中的特权文件检索和尽职调查</li><li>敏感的公共部门信息</li><li>专利和研究材料</li><li>专有工程设计文件（EDD）、界面设计文件（IDD）和架构材料</li><li>跨专有源代码搜索和分析</li></ul>
-<p>在这些工作负载中，减少特权基础设施访问并为客户提供独立可验证的证据可以使之前受限的人工智能用例变得实用。</p>
-<p>机密计算并不能消除所有风险，也不能取代应用程序安全性、合规性、合同控制或数据驻留要求。它在推理发生时围绕数据和计算提供硬件强制且可验证的保护边界。</p>
-<h3><strong>现已推出公开测试版</strong></h3>
-<p><strong>Cohere Model Vault 上的机密计算现已推出公开测试版，由 Microsoft Azure 上的 NVIDIA H100 GPU 提供支持。</strong></p>
-<p>客户可以通过 Model Vault 创建和管理加密的保管库，并使用相同的 Cohere API 进行集成，并通过客户端验证和端到端加密在敏感请求内容离开客户环境之前对其进行保护。</p>
-<p>要深入了解机密计算架构、加密请求路径、远程证明、信任边界和威胁模型，请阅读<a href="https://cohere.com/blog/inside-cohere-model-vault-building-verABLE-confidential-ai-inference"><strong>内部 Cohere Model Vault：构建可验证的机密 AI 推理</strong></a>。</p>
-<p><strong>从 <a href="http://vault.cohere.com">vault.cohere.com</a> 开始</strong></p>
-<h2>接下来阅读此内容</h2>
-<ul><li>[！[紫色横幅显示相连的北方和PitchBook。](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/bd462488492399f45500e9b3b04295d8f1d23f06-3840x2160.jpg?auto=forma t&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/pitchbook-integration)<a href="https://cohere.com/blog/tag/partner">合作伙伴</a><a href="https://cohere.com/blog/tag/financial-services">财务服务</a><a href="https://cohere.com/blog/tag/product-launch">产品发布</a><a href="https://cohere.com/blog/pitchbook-integration">北方的 PitchBook：企业团队的私人市场情报，20262 年 10 月 26 日阅读时间</a></li><li>[！[摘要图像](https://cdn.sanity.io/images/rjtqmwfu/web3-prod/975a9a31956f1e99e4a83aadce188b1d2f867789-3840x2160.png?a uto=format&amp;fit=max&amp;q=80&amp;w=440)](https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model)<a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model">关于流行的开放权重 AI 模型的行为 202612 年 10 月 26 日阅读时间</a></li><li>[<img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/fc96d67622cfc9c2b113f533f1385f1ceedb9638-1920x1080.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="">](https:// /cohere.com/blog/inside-cohere-model-vault-building-verABLE-confidential-ai-inference）[技术]（https://cohere.com/blog/tag/technology）<a href="https://cohere.com/blog/inside-cohere-model-vault-building-verifying-confidential-ai-inference">内部Cohere Model Vault：构建可验证的机密 AI 推理 20268 年 10 月 22 日阅读分钟</a></li></ul>]]></content:encoded>
+<p>机密计算保护计算环境内部发生的一切。Model Vault 还保护敏感请求内容在前往该环境的路上。</p>
+<p>Model Vault 不只依赖连接级加密，而是把应用程序负载端到端加密到经过证明的机密环境。加密后的请求可以穿过中间基础设施而不暴露内容，并且只有机密环境能解密它。响应在回程路径上同样受到保护。</p>
+<p>这样既保留了托管 AI 平台的运维优势，又不会把客户请求的明文内容暴露给中间基础设施。</p>
+<p>客户继续使用 Model Vault API 和熟悉的请求格式。这层额外保护内置在客户端与基础设施层，不需要应用重新设计自己的负载。</p>
+<h3><strong>基于 Microsoft Azure 与 NVIDIA 构建</strong></h3>
+<p>公开测试由 <strong>Microsoft Azure 上的 NVIDIA H100 GPU</strong> 提供支持。</p>
+<p>Microsoft Azure 提供底层的机密计算基础设施，NVIDIA Confidential Computing 则把这些能力扩展到 NVIDIA H100 GPU 上。Cohere 通过 Model Vault 的托管模型服务、加密请求路径、远程证明和客户侧验证，把这些技术整合到一起。</p>
+<p>最终得到的是一个托管 AI 平台：既有云端 AI 的运维简便，又能在推理期间对敏感数据的访问实施更强的技术管控。</p>
+<blockquote>「企业需要有把握：他们最敏感的 AI 工作负载所受的保护，不只是合同承诺。我们与 Cohere 在 Model Vault 上的合作表明，机密计算如何把托管 AI 的简便与可独立验证的技术控制结合起来。」- Vikas Bhatia，Microsoft Azure 机密计算产品负责人</blockquote>
+<blockquote>「机密计算为那些需要在高敏感数据上运行 AI 的企业打开了新的可能。NVIDIA GPU 上的 NVIDIA Confidential Computing 提供硬件支持的保护，帮助 Cohere Model Vault 这样的平台把机密 AI 推理带进企业工作负载。」- John Fanelli，NVIDIA 企业软件副总裁</blockquote>
+<h3><strong>为敏感的企业工作负载解锁 AI</strong></h3>
+<p>对许多组织来说，问题已经不再是 AI 能不能完成某项任务，而是这项任务所需的数据究竟能不能安全地与 AI 一起使用。</p>
+<p>Cohere Model Vault 上的机密计算正是为保护这类工作负载而设计的——出于安全、合同或监管要求，有价值的数据此前可能一直被挡在托管 AI 平台之外，包括：</p>
+<ul><li>金融服务中的欺诈调查</li><li>法律服务中的特权文件检索与尽职调查</li><li>敏感的公共部门信息</li><li>专利与研究材料</li><li>专有工程设计文档（EDD）、接口设计文档（IDD）和架构材料</li><li>跨专有源代码的搜索与分析</li></ul>
+<p>正是这类工作负载：减少特权基础设施访问、并给客户可独立验证的证据，能让此前受限的 AI 用例变得切实可行。</p>
+<p>机密计算并不能消除全部风险，也不能取代应用安全、合规、合同控制或数据驻留要求。它提供的是一道由硬件强制、可验证的保护边界，在推理进行期间把数据和计算圈在其中。</p>
+<h3><strong>现已开放公开测试</strong></h3>
+<p><strong>Cohere Model Vault 上的机密计算现已开放公开测试，由 Microsoft Azure 上的 NVIDIA H100 GPU 提供支持。</strong></p>
+<p>客户可以通过 Model Vault 创建并管理加密的保管库，并用同一套 Cohere API 完成集成；客户侧验证与端到端加密会在敏感请求内容离开客户环境之前为其提供保护。</p>
+<p>想更深入了解机密计算架构、加密请求路径、远程证明、信任边界与威胁模型，请阅读 <a href="https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference"><strong>走进 Cohere Model Vault：构建可验证的机密 AI 推理</strong></a>。</p>
+<p><strong>前往 <a href="http://vault.cohere.com">vault.cohere.com</a> 开始使用</strong></p>
+<h2>延伸阅读</h2>
+<ul><li><a href="https://cohere.com/blog/pitchbook-integration"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/bd462488492399f45500e9b3b04295d8f1d23f06-3840x2160.jpg?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="一块紫色横幅，展示连通的 North 与 PitchBook。"></a><a href="https://cohere.com/blog/tag/partner">合作伙伴</a><a href="https://cohere.com/blog/tag/financial-services">金融服务</a><a href="https://cohere.com/blog/tag/product-launch">产品发布</a><a href="https://cohere.com/blog/pitchbook-integration">North 中的 PitchBook：面向企业团队的私募市场情报2026 年 10 月 26 日2 分钟阅读</a></li><li><a href="https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/975a9a31956f1e99e4a83aadce188b1d2f867789-3840x2160.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt="抽象意象图"></a><a href="https://cohere.com/blog/tag/company-news">公司新闻</a><a href="https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model">一款流行的开放权重 AI 模型令人担忧的行为2026 年 10 月 26 日12 分钟阅读</a></li><li><a href="https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference"><img src="https://cdn.sanity.io/images/rjtqmwfu/web3-prod/fc96d67622cfc9c2b113f533f1385f1ceedb9638-1920x1080.png?auto=format&amp;fit=max&amp;q=80&amp;w=440" alt=""></a><a href="https://cohere.com/blog/tag/technology">技术</a><a href="https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference">走进 Cohere Model Vault：构建可验证的机密 AI 推理2026 年 10 月 22 日8 分钟阅读</a></li></ul>]]></content:encoded>
     </item>
     <item>
       <title>AI 能理解文化吗？一位退休教师和一名高中生来试试</title>

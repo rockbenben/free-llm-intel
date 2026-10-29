@@ -9,61 +9,61 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Wed, 28 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>在 Amazon Bedrock AgentCore 上构建 Agentic AI 平台</title>
+      <title>在 Amazon Bedrock AgentCore 上构建 agentic AI 平台</title>
       <link>https://aws.amazon.com/blogs/machine-learning/building-an-agentic-ai-platform-on-amazon-bedrock-agentcore/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/building-an-agentic-ai-platform-on-amazon-bedrock-agentcore/</guid>
       <pubDate>Wed, 28 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Building an Agentic AI Platform on Amazon Bedrock AgentCore</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>在 Amazon Bedrock AgentCore 上构建 Agentic AI 平台</h1>
-<p>如果您尝试将代理投入生产，那么模型和工具的使用并不是障碍。主要瓶颈在于他们周围的一切：有多少团队可以在安全的环境中构建，哪个团队拥有每个模型和工具，AgentOps 和错误处理如何保持在预定义的边界内，以及平台、工作流和财务团队如何查看跨账户的成本和运行状况。对于想要支持许多代理用例的平台团队来说，这是一个需要设计和操作的平台产品。在这篇文章中，我们将管理平台的团队称为平台团队，将基于平台构建的团队称为工作流团队。工作流团队是在平台上构建和拥有代理的领域或产品团队。</p>
-<p>每个工作流团队都需要一条铺好的道路，其中包括经过批准的模型和工具、短期工作负载身份、隔离的运行时和内存、自动评估、回滚、遥测和成本归因。当工作流团队自定义提示、工具、数据访问和应用程序行为时，这些控制需要保持一致。当每个团队组装它们时，控制漂移，共享服务成为瓶颈，并且所有权难以审计。</p>
-<p>在这篇文章中，我们将介绍 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 和 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 上的企业 Agentic AI 平台的架构和参考实现。我们涵盖多账户操作模型、平台控制平面、可重复的每个工作流部署模式、单独的推理和工具网关，以及在升级到生产之前控制每个代理的评估管道。最后，您应该能够从配套蓝图部署受管理的工作流，验证其安全性和生命周期合同，并将其用作组织中您自己的代理 AI 平台的基础。</p>
-<p><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 提供用于大规模构建、部署和操作代理的模块化服务，包括运行时、网关、身份、内存、策略、注册表和评估。基于 AgentCore 构建的 <a href="https://github.com/aws-samples/sample-ai-agent-factory/tree/main/enterprise-agentic-ai-platform-b​​lueprint">企业 Agentic AI 平台蓝图</a> 将周围的企业合同添加为可部署基础设施即代码：所有权、账户边界、软件交付、可观察性、成本治理和报废。</p>
+<h1>在 Amazon Bedrock AgentCore 上构建 agentic AI 平台</h1>
+<p>如果你试过把 agent 推进生产环境，模型和工具使用并不是拦路石。真正的瓶颈是它们周围的一切：有多少团队能在安全环境里做开发、每个模型和工具归哪个团队、AgentOps 和错误处理如何守在预先划定的边界内，以及平台、Workstream 和财务团队如何跨账户查看成本与健康状况。对一个想支撑多种 agentic 用例的 Platform 团队来说，这是一件需要设计和运营的平台产品。在本文中，我们把管理该平台的团队称为 Platform 团队，把基于它构建的团队称为 Workstream 团队。Workstream 团队就是在平台上构建并拥有 agent 的领域团队或产品团队。</p>
+<p>每个 Workstream 团队都需要一条铺好的路：获批的模型和工具、短期的工作负载身份、隔离的 runtime 和 memory、自动化的评估、回滚、遥测，以及成本归属。这些控制措施必须在 Workstream 团队定制 prompt、工具、数据访问和应用行为时保持一致。一旦每个团队都自己拼装，控制就会漂移，共享服务变成瓶颈，归属关系也难以审计。</p>
+<p>在本文中，我们一步步讲清在 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 和 <a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 上构建企业级 agentic AI 平台的架构与参考实现。我们会覆盖多账户运营模型、Platform 控制平面、可复制的按 Workstream 部署模式、相互独立的推理与工具网关，以及一条在每个 agent 晋级生产之前设卡关的评估流水线。读完本文，你应该能够从配套 blueprint 部署一个受治理的 Workstream，验证它的安全与生命周期契约，并把它作为组织内自建 agentic AI 平台的基础。</p>
+<p><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 提供了用于大规模构建、部署和运营 agent 的模块化服务，包括 runtime、gateway、identity、memory、policy、registry 和 evaluations。建立在 AgentCore 之上的 <a href="https://github.com/aws-samples/sample-ai-agent-factory/tree/main/enterprise-agentic-ai-platform-blueprint">Enterprise Agentic AI Platform Blueprint</a>，把这些企业级契约也补成可部署的基础设施即代码：归属、账户边界、软件交付、可观测性、成本治理和退役。</p>
 <h2>架构原则</h2>
-<p>在深入了解解决方案详细信息之前，了解驱动平台架构的组织需求会有所帮助。我们从建立代理平台的客户那里听到的常见挑战分为以下五类：</p>
-<ul><li><strong>受控模型访问：</strong> 每个不受信任的推理请求都必须通过批准的推理网关。网关应用组织的护栏（例如，<a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 或第三方提供商），限制每个工作流可以使用的模型和推理 AWS 区域，并强制执行每个工作流的速率限制、令牌配额和预算，以便任何团队都无法耗尽共享容量。它还携带工作负载身份并发出归因数据。</li><li><strong>受控工具访问：</strong> 代理必须通过经过身份验证的模型上下文协议 (MCP) 网关仅发现和调用经过批准的工具，并具有准确的目标、最低权限执行角色、策略决策和可审核的所有者。</li><li><strong>委托交付：</strong>工作流团队（例如产品团队）需要在预先批准的边界内独立交付和回滚，而无需等待平台团队部署每个应用程序或向开发人员授予直接基础设施写入路径。</li><li><strong>队列运营和成本：</strong> 多个角色需要跨帐户的可见性，而无需获得对团队工作负载的写入权限。代理运营工程师需要日志、指标、跟踪和配额。工作流所有者需要根据其预算了解每个座席的成本。 FinOps 和财务团队需要通过 <a href="https://aws.amazon.com/aws-cost-management/aws-cost-explorer/">AWS Cost Explorer</a> 和 <a href="https://aws.amazon.com/aws-cost-management/aws-cost-and-usage-reporting/">AWS 成本和使用报告 (CUR)</a> 按团队或业务部门进行退款。安全和治理主管需要证据表明哪个工作负载调用了哪个模型和工具。</li><li><strong>有界证据和生命周期：</strong> 每个代理版本都需要在其触及的每个边界提供证据： <strong>模型访问：</strong> 已批准的模型调用成功，而对未经批准的模型或区域的调用将被拒绝。 <strong>工具访问：</strong> 订阅的工具调用成功，对代理订阅之外的工具的调用被拒绝并出现预期错误。 <strong>身份：</strong> 来自另一个工作流的帐户或身份的请求被拒绝。 <strong>发布：</strong> 可以恢复之前的代理运行时版本。 <strong>退役：</strong> 拆卸会按依赖顺序删除代理的运行时、内存、工具网关和工具授权，并确认没有留下任何内容。</li></ul>
-<p>该蓝图通过四个互联层面满足这些需求：开发人员体验、平台控制、工作流执行以及保障和运营。规模单位是工作流单元，而不是手动配置的代理或一个共享工作负载帐户。蓝图 <a href="https://github.com/aws-samples/sample-ai-agent-factory/tree/main/enterprise-agentic-ai-platform-b​​lueprint">README</a> 详细记录了每个平面的职责。您将在后面的段落中阅读主要平面：<strong>Agentic AI Platform 控制平面</strong>和<strong>可重复工作流单元</strong>。</p>
-<h2>运营模式和平台组件</h2>
-<p>企业通常采用代理人工智能的三种运营模式之一：</p>
-<ul><li><strong>集中化：</strong> 单个人工智能和机器学习 (AI/ML) 团队构建并运行每个代理。治理是一致的，但随着用例数量的增长，该团队很快就会成为瓶颈。</li><li><strong>去中心化：</strong> 每个业务部门都建立和运营自己的代理。团队可以快速行动，但如果没有共享标准，控制往往会发生变化，工作会重复，成本可见性也会受到影响。</li><li><strong>联合：</strong> 中央平台团队提供共享的受管服务，而域团队保留其代理、工具和数据的所有权。这种模式平衡了团队自主权和一致的护栏，是大多数企业的落脚点。</li><li>如需选择帮助，请参阅<a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/govern-architect-agentic-ai/governance-models.html">有关治理模型的 AWS 规范指南页面</a>。</li></ul>
-<p>根据我们在客户参与中观察到的模式，该蓝图实现了联合模型。平台团队是中心，通常是平台产品经理、架构师、平台工程师、代理运营工程师以及安全和治理主管。工作流团队是辐条，由代理开发人员、领域技术主管和 AI/ML 工程师组成。执行发起人和 CISO 位于两者之上。</p>
-<p>在此蓝图中，平台团队拥有每个组件的定义：模板、版本、策略和准入。每个工作流帐户运行自己的每个团队组件实例（运行时、内存、工具网关），因此故障或回滚保留在一个团队的边界内。</p>
-<h2>解决方案概述</h2>
-<p>该解决方案提供了一个受管理的多帐户 Agentic AI 平台，平台团队可以运营该平台，内部产品和工程团队等工作流团队可以通过版本化的自助服务界面使用该平台。</p>
-<p>在企业规模上，开发人员体验平面是组织批准的版本化代理模板的目录。该蓝图提供了 <a href="https://github.com/strands-agents">Strands</a>、<a href="https://www.langchain.com/langgraph">LangGraph</a> 和 <a href="https://crewai.com/">CrewAI</a> 的参考模板，但当模板保留相同的推理网关、工具网关、身份、策略、评估和交付合约时，您可以使用您选择的框架。应用程序团队拥有提示、代理逻辑、工具和评估案例。平台团队拥有通用的控制和发布要求。</p>
-<p>在四个平面中，两个承载了大部分架构：</p>
-<ul><li><strong>Agent AI Platform 控制平面：</strong> 平台帐户发布版本化模板和界面，操作 AWS Agent Registry 治理记录和共享推理网关，接纳模型和 Guardrails，编排经过审核的版本，并聚合车队信号。团队通过代码、描述符和管道而不是管理员会话或部署票证来使用这些功能。</li><li><strong>可重复工作流单元：</strong> 每个产品或域都会收到一个隔离边界，其中包含团队拥有的源存储库、工作负载管道和三个 Amazon Bedrock AgentCore 功能：AgentCore 运行时、参与者范围的 AgentCore 内存以及使用 AWS_IAM 授权并仅公开批准的工具目标的 AgentCore 网关。该单元还包含本地客户管理的 AWS KMS 密钥、标签、警报、预算和 CloudWatch Observability Access Manager (OAM) 源链接。一个单元可以在不与另一团队的版本协调的情况下进行部署、失败、回滚或退役。</li></ul>
+<p>在深入方案细节之前，先理解驱动平台架构的组织需求会有帮助。我们从建立 agent 平台的客户那里听到的常见挑战，可以归为以下五类：</p>
+<ul><li><strong>受治理的模型访问：</strong> 每一次不受信任的推理请求都必须经过获批的推理网关。网关会套用组织的 guardrail（例如 <a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 或第三方 provider），限制每个 Workstream 可用的模型和推理 AWS 区域，并强制执行按 Workstream 计的速率限制、token 配额和预算，避免任何单个团队耗尽共享容量。它还承载工作负载身份，并输出归属数据。</li><li><strong>受治理的工具访问：</strong> agent 只能通过经过认证的 Model Context Protocol (MCP) 网关发现和调用获批工具，并配有精确的 target、最小权限的执行角色、策略决策和可审计的负责人。</li><li><strong>委派式交付：</strong> Workstream 团队（比如产品团队）需要能在预先批准的边界内独立发布和回滚，既不用等平台团队替他们部署每个应用，也不用给开发者直接写基础设施的通道。</li><li><strong>集群运营与成本：</strong> 多类角色需要跨账户的可见性，但不应获得对团队工作负载的写权限。Agent 运维工程师需要日志、指标、链路追踪和配额。Workstream 负责人需要每个 agent 对照预算的成本。FinOps 和财务团队需要通过 <a href="https://aws.amazon.com/aws-cost-management/aws-cost-explorer/">AWS Cost Explorer</a> 和 <a href="https://aws.amazon.com/aws-cost-management/aws-cost-and-usage-reporting/">AWS Cost and Usage Report (CUR)</a> 按团队或业务单元做成本分摊。安全与治理负责人需要证据，证明是哪个工作负载调用了哪个模型和工具。</li><li><strong>有边界的证据与生命周期：</strong> 每次 agent 发布，都需要在它触碰到的每个边界上留下证明：  <strong>Model access：</strong> 调用获批模型成功，调用未获批的模型或区域被拒绝。<strong>Tool access：</strong> 调用已订阅的工具成功，调用 agent 订阅范围之外的工具则以预期错误被拒绝。<strong>Identity：</strong> 来自其他 workstream 账户或身份的请求被拒绝。<strong>Release：</strong> 之前的 agent runtime 版本可以恢复。<strong>Retirement：</strong> 拆除过程按依赖顺序移除 agent 的 runtime、memory、tool gateway 和工具授权，并确认没有残留。</li></ul>
+<p>blueprint 通过四个相互衔接的平面来回应这些需求：开发者体验、平台控制、Workstream 执行，以及保障与运营。扩展的单位是 Workstream 单元，而不是手工配置的 agent 或共享的单一工作负载账户。blueprint 的 <a href="https://github.com/aws-samples/sample-ai-agent-factory/tree/main/enterprise-agentic-ai-platform-blueprint">README</a> 详细记录了每个平面的职责。而你会在后面的段落里读到两个主要平面：<strong>Agentic AI Platform 控制平面</strong>和<strong>可复制的 Workstream 单元</strong>。</p>
+<h2>运营模型与平台组件</h2>
+<p>企业在 agentic AI 上通常会采用以下三种运营模型之一：</p>
+<ul><li><strong>集中式：</strong> 由单一的一个人工智能与机器学习（AI/ML）团队构建并运行所有 agent。治理是一致的，但随着用例数量增长，这个团队很快会成为瓶颈。</li><li><strong>去中心化：</strong> 每个业务单元各自构建并运营自己的 agent。团队可以推进很快，但如果没有统一标准，控制措施容易漂移、投入重复、成本可见性变差。</li><li><strong>联邦式：</strong> 中心的 Platform 团队提供共享且受治理的服务，领域团队仍保有自己 agent、工具和数据的归属权。这种模式在团队自主性与一致的 guardrail 之间取得平衡，也是多数企业最终落脚的形态。</li><li>需要选择建议的话，可以参考 <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/govern-architect-agentic-ai/governance-models.html">AWS Prescriptive Guidance 中关于治理模型的页面</a>。</li></ul>
+<p>按照我们在客户合作中观察到的模式，blueprint 实现的是联邦模型。Platform 团队是中心枢纽，通常包括一名 Platform 产品经理、一名架构师、平台工程师、agent 运维工程师，以及一名安全与治理负责人。Workstream 团队是辐条，由 agent 开发人员、一名领域技术负责人和 AI/ML 工程师组成。一名执行发起人和 CISO 位于两者之上。</p>
+<p>在这个 blueprint 中，Platform 团队拥有每个组件的定义：模板、版本、策略和准入。每个 Workstream 账户各自运行一份按团队划分的组件实例（Runtime、Memory、Tool Gateway），因此故障或回滚都留在单个团队的边界内。</p>
+<h2>方案概览</h2>
+<p>本方案交付的是一个受治理的多账户 agentic AI 平台：由平台团队运营，Workstream 团队（比如内部的产品和工程团队）则通过带版本的自助接口来使用它。</p>
+<p>在企业规模下，开发者体验平面就是一份组织认可、带版本的 agent 模板目录。blueprint 提供了 <a href="https://github.com/strands-agents">Strands</a>、<a href="https://www.langchain.com/langgraph">LangGraph</a> 和 <a href="https://crewai.com/">CrewAI</a> 的参考模板，但只要模板保持相同的推理网关、工具网关、身份、策略、评估和交付契约，你也可以用自选的框架。应用团队拥有 prompt、agent 逻辑、工具和评估用例。Platform 团队拥有通用控制措施和发布要求。</p>
+<p>四个平面中，有两个承载了架构的主体：</p>
+<ul><li><strong>Agentic AI Platform 控制平面：</strong> Platform 账户发布带版本的模板和接口，运营 AWS Agent Registry 的治理记录和共享的 Inference Gateway，负责模型与 Guardrails 的准入，编排经过评审的发布，并汇聚集群信号。团队通过代码、描述符和流水线来消费这些能力，而不是靠管理员会话或部署工单。</li><li><strong>可复制的 Workstream 单元：</strong> 每个产品或领域都会获得一个隔离的边界，其中包含团队自有的源码仓库、一条 Workload 流水线，以及三项 Amazon Bedrock AgentCore 能力：AgentCore Runtime、按 actor 划分的 AgentCore Memory，以及一个使用 AWS_IAM 授权、只暴露获批工具 target 的 AgentCore Gateway。该单元还持有本地的客户托管 AWS KMS 密钥、标签、告警、预算，以及一个 CloudWatch Observability Access Manager (OAM) source link。一个单元的部署、故障、回滚或退役，都不必与另一个团队的发布协调。</li></ul>
 <h3>关键组件</h3>
-<p>下图说明了该解决方案的操作模型和受控流程。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21798-1.png" alt="连接治理基础、平台控制平面和团队拥有的工作流单元的操作模型"></p>
-<p>图 1：企业代理 AI 平台操作模型，显示治理基础、平台控制平面、团队拥有的可重复工作流单元以及它们之间的软件交付、推理、工具、遥测和所有权流。</p>
-<p>该架构由以下帐户层组成：</p>
-<ul><li><strong>管理和治理基础。</strong> AWS Organizations、AWS IAM Identity Center、预防策略、审计、保留和成本策略建立企业边界。这些逻辑职责可以映射到现有的 AWS Control Tower 登陆区域，而不需要重复的账户结构。</li><li><strong>安全、审计和可观察性层。</strong> AWS CloudTrail、AWS Config、AWS Security Hub、Amazon GuardDuty、日志存档和 Amazon CloudWatch OAM 接收器提供独立的控制平面证据和队列可见性。中央操作员可以查询共享信号，而无需获得对工作流资源的写访问权限。</li><li><strong>Agentic AI Platform 的平台层</strong>。单独的平台环境拥有黄金路径、治理目录、Guardrails、共享推理网关、精确的工具别名、管道、兼容性、配额和通用操作接口。在更广泛的推广之前，平台更改会针对代表性单元进行测试。</li><li><strong>工作流队列层。</strong> 每个产品、域或受监管的边界都接收一个或多个非生产和生产单元。团队拥有运行时、内存、工具网关、工具、数据、提示、评估案例、应用程序事件和服务级别目标 (SLO)。可以在多个单元中重复相同的基线，同时保持帐户级别的隔离。</li></ul>
-<h2>解决方案演练</h2>
-<p>以下部分跟踪关键设计决策：帐户拓扑、预防性和检测性控制、AgentCore 执行路径和交付管道。</p>
-<h3>帐户拓扑和组织单位</h3>
-<p>该蓝图定义了将企业治理、共享平台服务和团队拥有的执行分开的逻辑帐户角色：</p>
-<table><thead><tr><th><strong>角色</strong></th><th><strong>着陆区放置</strong></th><th><strong>目的</strong></th></tr></thead><tbody><tr><td>管理基础</td><td>根/安全与管理</td><td>组织、身份中心、预防策略、审计、保留和成本策略</td></tr><tr><td>安全和日志归档</td><td>安全</td><td>CloudTrail、AWS Config、Security Hub、GuardDuty 和保留的审核数据</td></tr><tr><td>可观察性</td><td>安全或运营</td><td>CloudWatch OAM 接收器和队列日志、指标、跟踪和成本视图</td></tr><tr><td>代理人工智能平台</td><td>代理平台</td><td>黄金路径、AWS 代理注册表、Guardrails、推理网关、管道和队列控制</td></tr><tr><td>工作流单元</td><td>代理工作流程</td><td>团队拥有的运行时、内存、工具网关、工具、数据、评估和应用程序 SLO</td></tr><tr><td>其他工作流单元</td><td>代理工作流程</td><td>每个产品、领域、环境或监管边界重复相同的基线</td></tr></tbody></table>
-<p>此拓扑集成到现有的登陆区域中，这是一个预配置的、安全的、可扩展的多账户 AWS 环境，其中管理、平台和工作流标签描述职责，而不是固定的三账户资产。组织可以运行多个经过验证的平台环境和许多工作流帐户对。从一个代表性单元开始，并在重复基线之前证明加入、生产升级、回滚、集中可观察性和零剩余退役。</p>
+<p>下面的示意图展示了本方案的运营模型和受治理的流转。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21798-1.png" alt="将治理基础、Platform 控制平面和团队自有的 Workstream 单元连接起来的运营模型"></p>
+<p>图 1：企业级 agentic AI 平台的运营模型，展示了治理基础、Platform 控制平面、可复制的团队自有 Workstream 单元，以及它们之间的软件交付、推理、工具、遥测和归属流转。</p>
+<p>架构由以下账户层构成：</p>
+<ul><li><strong>管理与治理基础。</strong> AWS Organizations、AWS IAM Identity Center、预防性策略、审计、保留策略和成本策略共同确立企业边界。这些是逻辑职责，可以映射到已有的 AWS Control Tower landing zone，而不要求另建一套重复的账户结构。</li><li><strong>安全、审计与可观测性层。</strong> AWS CloudTrail、AWS Config、AWS Security Hub、Amazon GuardDuty、日志归档和一个 Amazon CloudWatch OAM sink 提供独立的控制平面证据和集群可见性。中央运维人员可以查询共享信号，而不会获得对 Workstream 资源的写权限。</li><li><strong>Agentic AI Platform 的平台层。</strong> 相互独立的 Platform 环境各自拥有黄金路径、治理目录、Guardrails、共享的 Inference Gateway、精确的工具别名、流水线、兼容性、配额和通用运维接口。Platform 的变更会先在有代表性的单元上测试，然后才推广。</li><li><strong>Workstream 集群层。</strong> 每个产品、领域或受监管边界都会获得一个或多个非生产和生产单元。团队拥有 Runtime、Memory、Tool Gateway、工具、数据、prompt、评估用例、应用事故和服务水平目标（SLOs）。同一套基线可以在许多单元上重复，同时保持账户级隔离。</li></ul>
+<h2>方案详解</h2>
+<p>下面几节会梳理关键的设计决策：账户拓扑、预防性与检测性控制、AgentCore 执行路径，以及交付流水线。</p>
+<h3>账户拓扑与组织单元</h3>
+<p>blueprint 定义了若干逻辑账户角色，把企业治理、共享的 Platform 服务和团队自有的执行分开：</p>
+<table><thead><tr><th><strong>角色</strong></th><th><strong>landing zone 位置</strong></th><th><strong>用途</strong></th></tr></thead><tbody><tr><td>管理基础</td><td>根账户 / Security and Management</td><td>Organizations、Identity Center、预防性策略、审计、保留策略和成本策略</td></tr><tr><td>安全与日志归档</td><td>Security</td><td>CloudTrail、AWS Config、Security Hub、GuardDuty 以及留存的审计数据</td></tr><tr><td>可观测性</td><td>Security 或 Operations</td><td>CloudWatch OAM sink 以及集群日志、指标、链路追踪和成本视图</td></tr><tr><td>Agentic AI Platform</td><td>Agent Platform</td><td>黄金路径、AWS Agent Registry、Guardrails、Inference Gateway、流水线和集群控制</td></tr><tr><td>Workstream 单元</td><td>Agent Workstreams</td><td>团队自有的 Runtime、Memory、Tool Gateway、工具、数据、评估和应用 SLOs</td></tr><tr><td>其他 Workstream 单元</td><td>Agent Workstreams</td><td>按产品、领域、环境或受监管边界重复同一套基线</td></tr></tbody></table>
+<p>这套拓扑可以融入已有的 landing zone，也就是一个预先配置好、安全且可扩展的多账户 AWS 环境；其中 Management、Platform 和 Workstream 这些标签描述的是职责，而不是固定的三账户架构。一个组织可以运营多个经过验证的 Platform 环境和多对 Workstream 账户。先从一个有代表性的单元开始，把接入、生产晋级、回滚、集中可观测性和零残留退役都验证一遍，再复制这套基线。</p>
 <h3>服务控制策略</h3>
-<p>服务控制策略限制平台和工作流帐户可用的最大权限。它们补充而不是取代 IAM、网关授权、Guardrails、资源策略、网络控制和管道证据。该蓝图呈现并审查针对确切账户和区域的有效策略，而不是仅仅依赖于源代码意图。</p>
-<ul><li><strong>模型和区域准入：</strong> 组织策略和网关执行角色将推理限制为已批准的模型和支持的区域。添加模型或区域需要服务可用性、驻留、IAM、质量、成本、回滚、可观察性和拒绝验证。</li><li><strong>Guardrail 和推理执行：</strong> 代理不会直接调用模型提供者。推理跨越受管网关，其中应用了阶段 Guardrail 和模型允许列表。</li><li><strong>仅管道工作流突变：</strong>工作流团队打开拉取请求并使用工作负载管道。开发人员直接部署到工作流帐户超出了支持的操作模型，这使得经过审查的发布和证据路径不可绕过。</li><li><strong>注册表和网关治理：</strong> 当订阅的注册表记录丢失、更改或未批准时，工作流网关综合失败。</li><li><strong>范围部署角色：</strong> 每个账户和区域都会生成引导策略，使用 AWS Identity and Access Management Access (IAM) 分析器进行验证，并通过有效策略模拟进行检查。管理员访问权限保留用于初始设置，而不是例行管道执行。</li><li><strong>职责分离和对抗性证明：</strong> 平台控制模型、Guardrail、注册表和共享服务准入。工作流团队控制应用程序行为。每一条被拒绝的路径都与一个授权的肯定调用和一个突变配对，证明预期的控制导致了拒绝。</li></ul>
-<p>Workstream 帐户内的管理员无法围绕这些控件创建受支持的快速路径。新的或更改的组织策略需要沙箱或代表性单元浸泡、精确的允许和拒绝测试以及广泛附加之前的回滚计划。</p>
-<h3>具有评估门的 CI/CD 管道</h3>
-<p>该蓝图使用经过审查的平台和工作负载管道来强制执行以下升级顺序：</p>
-<ul><li><strong>来源和审查：</strong> 拉取请求建立不可变的源修订。管道固定预期分支，因此未合并的更改无法默默地构建存储库默认分支。</li><li><strong>构建和合成：</strong> 管道编译代码、运行测试和 linting、创建代理清单、扫描摘要绑定图像、验证策略、解析批准的注册表描述符以及检查合成的 AWS CloudFormation 和 cdk-nag 输出。</li><li><strong>稳定的角色和权限切换：</strong> 工作负载管道创建稳定的工作流角色并暂停。平台管道向确切的网关角色授予准确的工具别名，验证实时策略，然后工作负载管道才会继续。</li><li><strong>部署到非生产：</strong> 管道将运行时、内存、工具网关、可观察性、警报、预算、标签和应用程序资源部署到单元的非生产边界中。</li><li><strong>评估已部署的代理：</strong> 门调用真实的运行时并测量回归、质量、工具成功、拒绝行为、第一个令牌延迟和成本。每个授权调用都与一个对抗性双胞胎配对：门调用一个已批准的模型并确认成功，然后调用一个未经批准的模型并确认拒绝。同样的模式适用于工具、跨账户身份和限制。如果缺少预期的拒绝，则门将导致构建失败。</li><li><strong>人工批准：</strong> 审核者检查已部署的证据、已知限制和残余风险。当缺少所需的探测、资源或预期拒绝时，通用的绿色构建是不够的。</li><li><strong>提升、观察和回滚：</strong> 生产提升使用经过审查的修订和连续性检查。通过更新、取消、回滚、恢复和重新运行对运行时会话进行采样，以便管道证明前向路径和恢复路径。</li></ul>
-<p>没有任何工作流部署步骤具有手动快速通道。平台团队拥有发布合同，但工作流团队运营自己的管道实例和部署节奏。撤销遵循严格的依赖顺序：首先撤销平台别名授予，然后撤销工作流网关和工具角色，然后撤销运行时、内存和应用程序资源。每个步骤在继续之前都会经过验证，最终库存确认剩余资源为零。</p>
-<h2>安全和治理</h2>
-<p>该蓝图通过加强身份、策略、交付、数据和证据控制来实施深度防御：</p>
-<ul><li><strong>身份和信任边界：</strong> AgentCore Identity 是 Amazon Bedrock AgentCore 的一项功能，Amazon Cognito 提供短期推理凭证。 AWS_IAM 和 SigV4 对工具流量进行身份验证。确切的运行时和网关角色、发行者和受众检查、帐户和区域上下文以及范围引导信任将每个主体限制在其预期路径上。</li><li><strong>模型安全和准入：</strong> 推理流经解决方案概述中描述的受管网关，在每次调用之前应用 Guardrails 和模型允许列表。</li><li><strong>工具授权：</strong> 工具网关仅调用注册机构批准的别名，如解决方案概述中详述。 Cedar 策略提供授权，并保留 AWS Lambda 包装器以进行深度防御。</li><li><strong>租户数据保护：</strong> 工作流帐户隔离应用程序状态。 AgentCore 内存使用参与者范围的命名空间和客户管理的 KMS 密钥。工具和应用程序数据仍然属于团队所有，并且保留、删除和访问策略是明确的，而不是从共享的可变工作负载帐户继承的。</li><li><strong>软件供应链和发布：</strong> 审查源、清单哈希、可重复构建、摘要绑定图像扫描、策略验证、cdk-nag 检查、部署运行时评估、人工批准、回滚和按依赖关系排序的拆卸形成一份发布合同。缺少检查无法关闭。</li><li><strong>审计、可观察性和成本治理：</strong> CloudTrail 和保留的控制平面数据证实了管道证据。 OAM 与中央操作员共享日志、指标和跟踪。标准分配标签、预算、配额以及 AWS 成本和使用情况报告协调分配所有权，而无需授予代理重写其自身归属的权限。</li></ul>
-<p>该存储库是一个参考实现。开发人员可以对其进行调整以满足他们的需求。部署和可用功能基于 eu-west-1（爱尔兰）区域。替代组件、另一个区域或更广泛的组织部署需要其自己的可用性、安全性、负载、回滚、可观察性和拆卸证据。</p>
+<p>服务控制策略限定 Platform 账户和 Workstream 账户可用的最大权限。它们是 IAM、网关授权、Guardrails、资源策略、网络控制和流水线证据的补充，而不是替代。blueprint 会针对具体账户和区域渲染并评审实际生效的策略，而不是只依赖源码里的意图。</p>
+<ul><li><strong>模型与区域准入：</strong> 组织策略和 Gateway 执行角色把推理限制在获批的模型和受支持的区域内。新增一个模型或区域，需要验证服务可用性、数据驻留、IAM、质量、成本、回滚、可观测性和拒绝行为。</li><li><strong>Guardrail 与推理的执行：</strong> agent 不直接调用模型 provider。推理要经过受治理的网关，在那里套用阶段性 Guardrail 和模型允许列表。</li><li><strong>只允许通过流水线变更 Workstream：</strong> Workstream 团队提交 pull request 并使用 Workload 流水线。开发者直接向 Workstream 账户部署不在受支持的运营模型之内，这让经过评审的发布与证据路径无法被绕过。</li><li><strong>Registry 与 Gateway 治理：</strong> 当已订阅的 Registry 记录缺失、被改动或未获批时，Workstream Gateway 的合成会失败。</li><li><strong>受限范围的部署角色：</strong> Bootstrap 策略按账户和区域生成，用 AWS Identity and Access Management Access (IAM) Analyzer 校验，并通过实际生效策略的模拟来检查。管理员访问权限只保留给初始搭建，而不是日常流水线执行。</li><li><strong>职责分离与对抗性验证：</strong> Platform 控制模型、Guardrail、Registry 和共享服务的准入。Workstream 团队控制应用行为。每一条被拒绝的路径都配有一次获授权的正向调用，以及一次能证明预期控制确实导致了拒绝的变更。</li></ul>
+<p>Workstream 账户内的管理员无法绕开这些控制走出一条受支持的捷径。新增或修改组织策略，需要先在沙箱或有代表性的单元上做一段时间的观察，再做精确的允许与拒绝测试，并准备好回滚方案，然后才能大范围挂载。</p>
+<h3>带评估关卡的 CI/CD 流水线</h3>
+<p>blueprint 用经过评审的 Platform 流水线和 Workload 流水线来强制执行下面的晋级顺序：</p>
+<ul><li><strong>源码与评审：</strong> pull request 确立不可变的源码版本。流水线会锁定预期的分支，这样未合并的改动就不会悄悄按仓库默认分支来构建。</li><li><strong>构建与合成：</strong> 流水线编译代码、运行测试和 lint、生成 agent manifest、扫描按 digest 绑定的镜像、校验策略、解析获批的 Registry 描述符，并检查合成的 AWS CloudFormation 和 cdk-nag 输出。</li><li><strong>稳定角色与权限交接：</strong> Workload 流水线创建稳定的 Workstream 角色后暂停。Platform 流水线把精确的工具别名授予精确的 Gateway 角色，实际生效的策略得到验证，然后 Workload 流水线才继续。</li><li><strong>部署到非生产环境：</strong> 流水线把 Runtime、Memory、Tool Gateway、可观测性、告警、预算、标签和应用资源部署到该单元的非生产边界内。</li><li><strong>评估已部署的 agent：</strong> 关卡会调用真实的 Runtime，测量回归、质量、工具成功率、拒答行为、首 token 延迟和成本。每次获授权的调用都配一个对抗孪生调用：关卡先调用获批模型并确认成功，再调用未获批模型并确认被拒绝。相同的模式也适用于工具、跨账户身份和限流。如果预期的拒绝没有出现，关卡就判定构建失败。</li><li><strong>人工批准：</strong> 评审者查看已部署的证据、已知限制和残留风险。当必需的探针、资源或预期拒绝缺失时，一个泛泛的绿色构建是不够的。</li><li><strong>晋级、观察与回滚：</strong> 生产晋级使用经过评审的版本并做连续性检查。Runtime 会话会经过更新、取消、回滚、恢复和重跑的抽样测试，让流水线同时证明前进路径和恢复路径。</li></ul>
+<p>Workstream 部署的任何一步都没有人工快速通道。Platform 团队拥有发布契约，但 Workstream 团队运营自己的流水线实例和部署节奏。退役遵循严格的依赖顺序：先撤销 Platform 的别名授权，然后是 Workstream 的 Gateway 和工具角色，最后是 Runtime、Memory 和应用资源。每一步在推进前都要验证，最后一次清点确认没有残留资源。</p>
+<h2>安全与治理</h2>
+<p>blueprint 通过相互加固的身份、策略、交付、数据和证据控制来实现纵深防御：</p>
+<ul><li><strong>身份与信任边界：</strong> AgentCore Identity（Amazon Bedrock AgentCore 的一项能力）和 Amazon Cognito 提供短期的推理凭证。AWS_IAM 和 SigV4 对工具流量做认证。精确的 Runtime 与 Gateway 角色、签发方与接收方校验、账户和区域上下文，以及受限范围的 bootstrap 信任，把每个主体限制在它应有的路径上。</li><li><strong>模型安全与准入：</strong> 推理流经方案概览中描述的受治理网关，每次调用前都会套用 Guardrails 和模型允许列表。</li><li><strong>工具授权：</strong> Tool Gateway 只调用 Registry 批准的别名，细节见方案概览。授权由 Cedar 策略提供，并保留一个 AWS Lambda 包装层用于纵深防御。</li><li><strong>租户数据保护：</strong> Workstream 账户隔离应用状态。AgentCore memory 使用按 actor 划分的命名空间和客户托管的 KMS 密钥。工具和应用数据仍归团队所有，保留、删除和访问策略都是显式声明的，而不是从一个共享且可变的工作负载账户继承而来。</li><li><strong>软件供应链与发布：</strong> 经过评审的源码、manifest 哈希、可复现构建、按 digest 绑定的镜像扫描、策略校验、cdk-nag 检查、已部署 runtime 的评估、人工批准、回滚，以及按依赖顺序的拆除，共同构成一份发布契约。任何一项检查缺失都按失败处理。</li><li><strong>审计、可观测性与成本治理：</strong> CloudTrail 和留存的控制平面数据可与流水线证据互相印证。OAM 把日志、指标和链路追踪共享给中央运维人员。标准的分配标签、预算、配额以及 AWS Cost and Usage Report 的对账共同确定归属，而不会给 agent 改写自身归属的权限。</li></ul>
+<p>这个仓库是一份参考实现。开发者可以按自己的需求调整。部署方式和可用功能都基于 eu-west-1（爱尔兰）区域。替换组件、换用其他区域，或在更大范围内推广到组织，都需要各自提供可用性、安全性、负载、回滚、可观测性和拆除方面的证据。</p>
 <h2>结论</h2>
-<p>在这篇文章中，我们介绍了基于 Amazon Bedrock AgentCore 构建的企业 Agentic AI 平台。该架构将集中管理的平台控制平面与可重复的、团队拥有的工作流单元分开，具有独特的推理和工具网关，以及由部署的运行时评估控制的生产升级。</p>
-<p>配套存储库包括一个蓝图，可以端到端地验证这些控制，从管道门和对抗性边界测试到零残留拆卸。支持声明在该测试边界处停止。</p>
-<p>首先，从配套存储库部署一个代表性工作流单元，证明其完整生命周期，然后自动化来自同一版本化基线的其他单元。</p>
+<p>在本文中，我们走查了建立在 Amazon Bedrock AgentCore 之上的企业级 agentic AI 平台。这套架构把集中治理的 Platform 控制平面与可复制、团队自有的 Workstream 单元分开，推理网关和工具网关也彼此独立，生产晋级则由已部署 runtime 的评估来把关。</p>
+<p>配套仓库里包含一份 blueprint，端到端地验证这些控制，从流水线关卡、对抗性边界测试一直到零残留拆除。支持声明也止步于这个经过测试的边界。</p>
+<p>要开始上手，就从配套仓库部署一个有代表性的 Workstream 单元，验证它的完整生命周期，然后再从同一套带版本的基线自动部署更多单元。</p>
 <p>相关资源：</p>
-<ul><li><a href="https://github.com/aws-samples/sample-ai-agent-factory/tree/main/enterprise-agentic-ai-platform-blueprint">GitHub 上的企业 Agentic AI 平台蓝图</a></li><li><a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agent-ops-maturity-roadmap-for-enterprise-ai/introduction.html">在 AWS 上的生产环境中运行代理 AI 的企业多账户架构（规范指南）</a></li><li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/3f49be39-c62b-40a2-975b-be9bf626526a/en-US">在 Amazon Bedrock AgentCore 上构建企业代理 AI 平台研讨会</a></li><li><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore 文档</a></li></ul>
+<ul><li><a href="https://github.com/aws-samples/sample-ai-agent-factory/tree/main/enterprise-agentic-ai-platform-blueprint">GitHub 上的 Enterprise Agentic AI Platform Blueprint</a></li><li><a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agent-ops-maturity-roadmap-for-enterprise-ai/introduction.html">在 AWS 上于生产环境运行 agentic AI 的企业多账户架构（Prescriptive Guidance）</a></li><li><a href="https://catalog.us-east-1.prod.workshops.aws/workshops/3f49be39-c62b-40a2-975b-be9bf626526a/en-US">在 Amazon Bedrock AgentCore 上构建企业级 agentic AI 平台的 Workshop</a></li><li><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore 文档</a></li></ul>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
@@ -74,40 +74,40 @@
       <description>原文标题：Distributed training with Ray Train DLCs and EFA on EKS</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
 <h1>在 EKS 上使用 Ray Train DLC 和 EFA 进行分布式训练</h1>
-<p>通常阻止 <a href="https://pytorch.org/">PyTorch</a> 训练扩展到集群的是容器，而不是模型代码。每个容器都需要相同的 <a href="https://docs.nvidia.com/cuda/cuda-programming-guide/01-introduction/cuda-platform.html">CUDA 运行时</a>、针对其编译的 PyTorch 构建、<a href="https://developer.nvidia.com/nccl">NCCL</a> (NVIDIA Collective Communications Library)、<a href="https://aws.amazon.com/hpc/efa/">Elastic Fabric Adapter (EFA)</a> 用户空间库、将 NCCL 连接到 EFA 的 <a href="https://github.com/aws/aws-ofi-nccl">AWS OFI NCCL</a> 插件，以及集群运营商同意的 <a href="https://docs.ray.io/en/latest/">Ray</a> 版本。构建该图像并在每次其中一个块移动时重建它本身就是一个项目，它与您打算训练的模型无关。 <a href="https://aws.github.io/deep-learning-containers/ray-train/">Ray Train 深度学习容器</a> (DLC) 就是由 AWS 构建的镜像。 AWS 组装该堆栈，将其作为一个单元进行测试，将其发布在 Amazon Elastic Container Registry (Amazon ECR) Public 中并对其进行修补。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22002-1-1.png" alt="EKS 集群，其中一个运行 KubeRay 和 Ray head 的 CPU 系统节点，以及两个支持 EFA 的 g6.12xlarge GPU 工作节点在一个可用性中区域"></p>
-<p>图 1：一个 EKS 集群，其控制平面由 AWS 管理，一个运行 KubeRay Operator 和 Ray head 的 CPU 系统节点 (m7i.xlarge)，以及一个可用区中的两个支持 EFA 的 g6.12xlarge 节点。 KubeRay 从一个 RayCluster 清单构建它，Ray Train 放置 8 个工作线程，每个 GPU 一个，并且节点间集体跨越 EFA。</p>
-<p>Ray 将作业作为具有两个角色的单个集群跨机器运行。 Ray 头协调并运行跟踪集群状态的全局控制存储、仪表板和您向其提交作业的作业服务器。 Ray 工作节点提供 GPU 并运行训练过程。每个工作进程在启动时都通过连接到头的地址来加入集群。在 Kubernetes 上，每个都是一个 pod。 Kubernetes 没有 Ray 集群的内置概念，因此必须创建头 Pod 和工作 Pod，在每个 Pod 中以正确的角色启动 Ray，将工作节点指向头，并替换失败的 Pod。 <a href="https://aws.github.io/deep-learning-containers/ray-train/deployment/eks/">KubeRay</a> 就是这样做的。它是一个开源 Kubernetes 操作器，添加了 RayCluster 资源：您在一个清单中描述一个头组和一个工作组，KubeRay 从中构建和维护集群。</p>
-<p>无论 KubeRay 在 <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (Amazon EKS)</a> 上启动还是您自己在 Amazon Elastic Compute Cloud (Amazon EC2) 上启动，单个标记的映像都会作为 Ray head 和 Ray Worker 运行。您添加的是配置：哪些实例、每个 Pod 获得多少个 GPU、NCCL 使用哪种网络传输以及作业需要哪些额外的 Python 包。所有这一切都是从图像外部设置的。</p>
-<p>本文将介绍一个示例，该示例使用与发布的完全相同的 DLC，通过 PyTorch 全分片数据并行 (FSDP) 在两个 g6.12xlarge 实例上的 8 个 NVIDIA L4 GPU 上微调 Qwen2.5-1.5B。训练代码是一个函数，集群是一个 RayCluster 清单加上一个变量文件，并且在任何时候都不会构建图像。由于 DLC 已经承载 EFA 堆栈，因此只要 Pod 请求，两个实例之间的集合就会通过 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html">EFA</a> 运行。整个解决方案都在这个<a href="https://github.com/aws-samples/sample-aws-deep-learning-containers/tree/main/training/ray-train">示例存储库</a>中，它使用与我们的[多节点 Ray Serve] 相同的 <code>KubeRay-on-EKS</code> 基础演练](https://aws.amazon.com/blogs/machine-learning/run-multi-node-inference-workloads-using-ray-llm-deep-learning-containers/)。</p>
-<h2>不构建任何东西你会得到什么</h2>
-<p>Ray Train DLC 是 PyTorch 训练映像，顶部有 Ray 的训练库。此示例提取的标签“public.ecr.aws/deep-learning-containers/ray:train-ml-cuda-v1.1”替换了原本如下所示的构建：</p>
-<table><thead><tr><th><strong>层</strong></th><th><strong>否则您将构建并保持一致的内容</strong></th><th><strong>在射线列车 DLC 中</strong></th></tr></thead><tbody><tr><td>分布式运行时</td><td>Ray 带有仪表板和作业服务器，KubeRay 支持的版本</td><td>Ray 2.58.0 与训练、调整和数据</td></tr><tr><td>框架</td><td>为您的 CUDA 版本编译的 PyTorch</td><td>PyTorch 2.13.0、torchvision 0.28.0</td></tr><tr><td>GPU 运行时</td><td>CUDA、cuDNN 和 NCCL 版本相互一致</td><td>CUDA 13.0.2、cuDNN、NCCL 2.29.7</td></tr><tr><td>网络</td><td>EFA 安装程序、libfabric 和“aws-ofi-nccl”，针对 NCCL 构建</td><td>EFA 最新、AWS OFI NCCL 插件、GDRCopy</td></tr><tr><td>培训图书馆</td><td>为您的 CUDA 编译的 DeepSpeed、flash-attn 和 Transformer Engine</td><td>DeepSpeed、flash-attn、Transformer Engine、PyTorch Lightning、Hugging Face 库</td></tr><tr><td>诊断</td><td>从源代码构建的 NCCL 测试</td><td><code>all_reduce_perf</code> 已在路径上</td></tr></tbody></table>
-<p>网络行是大多数团队最不希望拥有的行。不匹配不会产生错误。 NCCL 下降到 TCP 套接字，作业以一小部分速度运行完成。在 DLC 中，这些库是一起构建和测试的，AWS 在多节点 EFA 和多节点 KubeRay 训练测试上对每个版本进行控制，这正是该示例使用的路径。</p>
-<p>还有一些属性可以消除您原本需要为每个集群执行的工作：</p>
-<ul><li><strong>没有注册表设置 –</strong> 镜像是公共的，因此节点无需凭据即可拉取它，并且不会在途中构建或推送任何内容。</li><li><strong>没有驱动程序匹配 –</strong> 启动时，入口点会检查主机的 NVIDIA 驱动程序，如果它比映像的 CUDA 旧，则会自动打开捆绑的 CUDA 前向兼容性库。</li><li><strong>没有头部与工人的图像 –</strong> 该图像没有固定的角色。无论容器启动什么，都会提供“ray start”命令，因此一个标签为每个 Pod 提供服务。</li><li><strong>没有单独的推理图像系列 –</strong> Ray Train 与 <a href="https://aws.github.io/deep-learning-containers/ray/">Ray Serve DLC</a> 和 <a href="https://aws.github.io/deep-learning-containers/ray-llm/">Ray LLM DLC</a> 共享“ray” ECR 存储库，位于“train-ml”标签前缀下。</li></ul>
-<h2>配置它，不要重建它</h2>
-<p>一项训练工作与另一项训练工作之间的所有差异都是围绕图像设置的。该示例使用以下每种机制：</p>
-<table><thead><tr><th><strong>你控制什么</strong></th><th><strong>如何设置</strong></th><th><strong>在此示例中</strong></th></tr></thead><tbody><tr><td>主管或工人角色</td><td>每个 Pod 组的 KubeRay <code>rayStartParams</code>两者的“DLC_IMAGE”相同。 Head 以 <code>num-gpus: &quot;0&quot;</code> 运行</td></tr><tr><td>每个 Pod 的 GPU 和 EFA</td><td>Kubernetes 资源请求</td><td><code>nvidia.com/gpu: 4</code>, <code>vpc.amazonaws.com/efa: 1</code></td></tr><tr><td>网络传输</td><td>Pod 或作业上的环境变量</td><td><code>FI_PROVIDER</code>、<code>NCCL_NET_PLUGIN</code>、<code>NCCL_SOCKET_IFNAME</code>、<code>NCCL_DEBUG</code></td></tr><tr><td>额外的 Python 包</td><td>提交时的 Ray <code>runtime_env</code></td><td>作业需要的任何包，在提交时安装</td></tr><tr><td>图片版</td><td><code>DLC_IMAGE</code> 中的版本化或摘要固定标签</td><td><code>train-ml-cuda-v1.1</code></td></tr><tr><td>簇状</td><td>scripts/<code>env.sh</code> 中的变量</td><td>实例类型、节点数量、每个节点的 GPU、区域、可用区</td></tr><tr><td>培训工作</td><td><code>train.py</code> 的参数</td><td>模型、步骤、序列长度、批量大小</td></tr></tbody></table>
-<p><strong>每个作业的包。</strong> 该图像附带了 HuggingFace 训练堆栈，因此此示例的作业不需要添加任何内容。当实验确实需要图像未携带的库时，Ray 在提交时通过“runtime_env”为该作业安装它，并且图像保持不变。没有新图像，没有新标签。</p>
-<p><strong>每个作业的传输。</strong> 映像默认为“FI_PROVIDER=efa”，其 NCCL 配置不包括环回和 Docker 桥接口。在 EKS 上，您将“NCCL_SOCKET_IFNAME”指向 pod 的“eth0”。无论如何，该示例都会在清单中设置所有四个网络变量，因此该行为在一个文件中可见，并且不依赖于图像默认值。因为这些是普通的环境变量，所以单个作业可以通过其“runtime_env”覆盖它们。</p>
-<p><strong>您选择的版本。</strong> 示例固定当前次要版本“train-ml-cuda-v1.1”，因此集群可以从一次运行复制到下一次运行。 “vX.Y”标签随着安全重建而移动。完全限定的“vX.Y.Z”标签在原始版本构建中保持冻结状态，因此当您需要字节相同的运行时固定摘要。私有 ECR URI 也提供相同的图像。</p>
-<h2>集群是如何布局的</h2>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22002-2-1.png" alt="示例集群：一个 CPU 系统节点运行 KubeRay 运算符和一个不带 GPU 的 Ray 头，两个启用 EFA 的 g6.12xlarge 节点各运行一个四 GPU Ray 工作线程Pod"></p>
-<p>图 2：样本的集群。每个 Pod 都运行来自 Amazon ECR Public 的相同 Ray Train DLC。 CPU系统节点运行KubeRay算子和没有GPU的Ray头。每个启用 EFA 的 g6.12xlarge（均位于一个可用区）运行一个四 GPU Ray 工作容器。</p>
-<p>所有节点都位于一个虚拟私有云 (VPC) 的私有子网中，仅通过 NAT 网关访问互联网，这就是每个节点从 Amazon ECR Public 提取 DLC 以及工作人员从 Hugging Face 下载模型权重的方式。一个 m7i.xlarge 形成系统节点组，托管 kube-system 附加组件、KubeRay 运算符和 Ray head。头部在端口 8265 上运行作业服务器，在端口 6379 上运行 Ray 的控制存储，并且它不通告 GPU，因此不会有任何训练工作落在其上。作业是通过 EKS API 使用“kubectl exec”从 head pod 内部提交的，因此端口 8265 永远不会暴露在集群外部。</p>
-<p>训练在两个 <a href="https://aws.amazon.com/ec2/instance-types/g6/">g6.12xlarge</a> 实例上运行，每个实例配备 4 个 NVIDIA L4 GPU、48 个 vCPU、192 GiB 内存、40 Gbps 网络和 1 个 EFA 接口。每个 Pod 都运行一个 Ray Worker pod，该 Pod 占用所有四个 GPU 和 EFA 接口，Ray Train 在每个 Pod 中放置四个工作器：在一个实例上排名 0-3，在另一个实例上排名 4-7。由于 EFA 流量不会跨可用区，因此脚本将两个实例放置在一个已检查提供 g6.12xlarge 的区域中。</p>
-<h2>Ray Train 在容器内做什么</h2>
-<p>DLC 提供堆栈。 <a href="https://docs.ray.io/en/latest/train/train.html">Ray Train</a> 提供了原本是启动器代码的部分。多节点 PyTorch 通常意味着在每台主​​机上为每个 GPU 启动一个进程，并为每个进程提供其等级、世界大小和集合地址。使用 Ray Train，您可以将训练循环编写为函数，并使用“ScalingConfig”将其传递给“TorchTrainer”。无论集群有 GPU，Ray 都会为每个 GPU 启动一个工作线程，形成“torch.distributed”进程组，并在每个工作线程上运行您的函数。</p>
-<p>此示例向 Ray Train 请求 <a href="https://docs.pytorch.org/docs/stable/fsdp.html">FSDP</a>，它将模型的权重、梯度和优化器状态拆分到所有八个 GPU 上，而不是将它们复制到每个 GPU 上。 bfloat16 中的 Qwen2.5-1.5B 需要大约 12 GB 用于这四个张量。每个 L4 GPU 分为八种方式，可容纳大约 1.5 GB。代价是沟通：FSDP 在使用前收集每一层的权重，然后减少分散梯度，因此整个模型在每一步都会在不同的等级之间交叉。在两个实例之间，该流量是 DLC 的 EFA 堆栈承载的流量。</p>
-<h3>先决条件</h3>
-<p>在开始之前，您必须具备以下条件：</p>
-<ul><li><strong>工具：</strong> AWS 命令​​行界面 (AWS CLI) v2 登录到目标账户、eksctl、kubectl、Helm 和来自 GNU gettext 的“envsubst”。</li><li><strong>配额：</strong> 两个 g6.12xlarge 实例的 96 个 G 系列按需容量 vCPU，位于至少一个可用区提供这些容量的 AWS 区域中。如果您已持有实例的按需容量预留，请改为设置“CAPACITY_RESERVATION_ID”。脚本将节点组启动到其中并跳过容量搜索。</li><li><strong>预算：</strong> GPU 实例启动时每小时约 9.50 美元，涵盖两个实例、EKS 控制平面和 NAT 网关。</li></ul>
-<p>确认 CLI 是否指向您期望的帐户的快速方法：</p>
+<p>通常阻碍 <a href="https://pytorch.org/">PyTorch</a> 训练扩展到集群的，往往是容器而不是模型代码。每个容器都需要同一套东西：<a href="https://docs.nvidia.com/cuda/cuda-programming-guide/01-introduction/cuda-platform.html">CUDA runtime</a>、针对它编译的 PyTorch 构建、<a href="https://developer.nvidia.com/nccl">NCCL</a>（NVIDIA 集合通信库）、<a href="https://aws.amazon.com/hpc/efa/">Elastic Fabric Adapter (EFA)</a> 的用户态库、把 NCCL 连到 EFA 的 <a href="https://github.com/aws/aws-ofi-nccl">AWS OFI NCCL</a> 插件，以及集群运维方认可的那个 <a href="https://docs.ray.io/en/latest/">Ray</a> 版本。构建这个镜像，并在其中任何一块变动时重新构建，本身就是一个独立的项目，而且跟你原本要训练的模型毫无关系。<a href="https://aws.github.io/deep-learning-containers/ray-train/">Ray Train 深度学习容器</a>（DLC）就是这个镜像，由 AWS 构建。AWS 组装起整套技术栈，把它作为一个整体进行测试，发布到 Amazon Elastic Container Registry（Amazon ECR）Public，并持续修补。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22002-1-1.png" alt="一个 EKS 集群：CPU 系统节点运行 KubeRay 和 Ray head，同一个可用区里有两台启用 EFA 的 g6.12xlarge GPU 工作节点"></p>
+<p>图 1：一个 EKS 集群，控制平面由 AWS 托管，CPU 系统节点（m7i.xlarge）运行 KubeRay operator 和 Ray head，同一个可用区里有两台启用 EFA 的 g6.12xlarge 节点。KubeRay 根据一份 RayCluster 清单构建集群，Ray Train 放置八个 worker，每块 GPU 一个，节点之间的集合通信则跨越 EFA。</p>
+<p>Ray 把一个任务作为单个集群跨多台机器运行，集群中有两种角色。Ray head 负责协调并运行全局控制存储，用来跟踪集群状态，同时提供你提交任务所用的 dashboard 和作业服务器。Ray worker 节点提供 GPU 并运行训练进程。每个 worker 启动时连接到 head 的地址，从而加入集群。在 Kubernetes 上，这些角色各自对应一个 pod。Kubernetes 内置并不了解 Ray 集群，所以需要有东西来创建 head 和 worker 的 pod、在每个 pod 里以正确的角色启动 Ray、把 worker 指向 head，并替换失败的 pod。<a href="https://aws.github.io/deep-learning-containers/ray-train/deployment/eks/">KubeRay</a> 正是做这件事的。它是一个开源的 Kubernetes operator，增加了 RayCluster 资源：你在一份清单里描述 head 组和 worker 组，KubeRay 据此构建并维护集群。</p>
+<p>同一个带标签的镜像既充当 Ray head 也充当 Ray worker，无论是由 KubeRay 在 <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (Amazon EKS)</a> 上启动，还是你自己在 Amazon Elastic Compute Cloud (Amazon EC2) 上启动。你额外添加的只是配置：用什么实例、每个 pod 分到多少块 GPU、NCCL 使用哪种网络传输，以及任务需要哪些额外的 Python 包。所有这些都从镜像外部设置。</p>
+<p>本文会讲解一个示例，它原封不动地使用发布出去的 DLC，在两台 g6.12xlarge 实例的八块 NVIDIA L4 GPU 上用 PyTorch Fully Sharded Data Parallel（FSDP）微调 Qwen2.5-1.5B。训练代码只有一个函数，集群只是一份 RayCluster 清单加一个变量文件，全程不需要构建任何镜像。由于 DLC 已经带上了 EFA 技术栈，两台实例之间的集合通信只要 pod 申请了 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html">EFA</a> 就会走 EFA。完整方案在这个<a href="https://github.com/aws-samples/sample-aws-deep-learning-containers/tree/main/training/ray-train">示例仓库</a>里，它与我们<a href="https://aws.amazon.com/blogs/machine-learning/run-multi-node-inference-workloads-using-ray-llm-deep-learning-containers/">多节点 Ray Serve 实践</a>用的是同一套 <code>KubeRay-on-EKS</code> 基础架构。</p>
+<h2>不构建任何东西也能得到什么</h2>
+<p>Ray Train DLC 就是在 PyTorch 训练镜像之上叠加 Ray 的训练库。这个示例拉取的标签 <code>public.ecr.aws/deep-learning-containers/ray:train-ml-cuda-v1.1</code>，取代了原本要这样构建出来的东西：</p>
+<table><thead><tr><th><strong>层次</strong></th><th><strong>原本需要自行构建并保持对齐的东西</strong></th><th><strong>Ray Train DLC 中</strong></th></tr></thead><tbody><tr><td>分布式运行时</td><td>带 dashboard 和作业服务器、且版本为 KubeRay 所支持的 Ray</td><td>Ray 2.58.0，含 Train、Tune 和 Data</td></tr><tr><td>框架</td><td>针对你的 CUDA 版本编译的 PyTorch</td><td>PyTorch 2.13.0、torchvision 0.28.0</td></tr><tr><td>GPU 运行时</td><td>彼此版本一致的 CUDA、cuDNN 和 NCCL</td><td>CUDA 13.0.2、cuDNN、NCCL 2.29.7</td></tr><tr><td>网络</td><td>针对该 NCCL 构建的 EFA 安装程序、libfabric 和 <code>aws-ofi-nccl</code></td><td>最新的 EFA、AWS OFI NCCL 插件、GDRCopy</td></tr><tr><td>训练库</td><td>针对你的 CUDA 编译的 DeepSpeed、flash-attn 和 Transformer Engine</td><td>DeepSpeed、flash-attn、Transformer Engine、PyTorch Lightning、Hugging Face 系列库</td></tr><tr><td>诊断工具</td><td>从源码构建的 NCCL 测试</td><td><code>all_reduce_perf</code> 已在 PATH 中</td></tr></tbody></table>
+<p>网络这一行是最多团队最不愿自己维护的。那里出现不匹配不会报错：NCCL 会退回到 TCP socket，任务照跑到底，速度却只剩一小部分。在 DLC 里，这些库是一起构建、一起测试的，而且 AWS 每次发布都要通过多节点 EFA 和多节点 KubeRay 的训练测试才算过关——这正是本示例走的那几条路径。</p>
+<p>另外还有几个特性，免去了你原本要为每个集群重复做的事情：</p>
+<ul><li><strong>无需配置镜像仓库 –</strong> 镜像是公开的，节点拉取时不需要凭据，过程中也没有任何构建或推送。</li><li><strong>无需匹配驱动 –</strong> 启动时入口脚本会检查宿主机的 NVIDIA 驱动，如果它比镜像里的 CUDA 更旧，就自动启用随镜像附带的 CUDA 前向兼容库。</li><li><strong>不需要区分 head 与 worker 镜像 –</strong> 镜像本身没有固定角色，由启动容器的一方提供 <code>ray start</code> 命令，因此一个标签就能服务所有 pod。</li><li><strong>不需要单独的推理镜像系列 –</strong> Ray Train 与 <a href="https://aws.github.io/deep-learning-containers/ray/">Ray Serve DLC</a> 和 <a href="https://aws.github.io/deep-learning-containers/ray-llm/">Ray LLM DLC</a> 共用同一个 <code>ray</code> ECR 仓库，标签前缀为 <code>train-ml</code>。</li></ul>
+<h2>配置它，而不是重建它</h2>
+<p>训练任务之间所有存在差异的东西，都是在镜像之外设置的。这个示例用到了以下每一种机制：</p>
+<table><thead><tr><th><strong>你控制什么</strong></th><th><strong>怎么设置</strong></th><th><strong>本示例中</strong></th></tr></thead><tbody><tr><td>head 还是 worker 角色</td><td>每个 pod 组的 KubeRay <code>rayStartParams</code></td><td>两者都用同一个 <code>DLC_IMAGE</code>，head 以 <code>num-gpus: &quot;0&quot;</code> 运行</td></tr><tr><td>每个 pod 的 GPU 与 EFA</td><td>Kubernetes 资源请求</td><td><code>nvidia.com/gpu: 4</code>、<code>vpc.amazonaws.com/efa: 1</code></td></tr><tr><td>网络传输</td><td>pod 或作业上的环境变量</td><td><code>FI_PROVIDER</code>、<code>NCCL_NET_PLUGIN</code>、<code>NCCL_SOCKET_IFNAME</code>、<code>NCCL_DEBUG</code></td></tr><tr><td>额外的 Python 包</td><td>提交时的 Ray <code>runtime_env</code></td><td>作业需要的任意包，在提交时安装</td></tr><tr><td>镜像版本</td><td><code>DLC_IMAGE</code> 中带版本号或按 digest 固定的标签</td><td><code>train-ml-cuda-v1.1</code></td></tr><tr><td>集群形态</td><td><code>scripts/env.sh</code> 中的变量</td><td>实例类型、节点数、每节点 GPU 数、Region、AZ</td></tr><tr><td>训练任务</td><td><code>train.py</code> 的参数</td><td>模型、步数、序列长度、批大小</td></tr></tbody></table>
+<p><strong>按作业安装包。</strong> 镜像自带 HuggingFace 训练栈，所以这个示例的作业不需要额外加任何东西。当某个实验确实需要镜像里没有的库时，Ray 会在提交时通过 <code>runtime_env</code> 为该作业安装它，镜像本身保持不变。不用新镜像，也不用新标签。</p>
+<p><strong>按作业设置传输方式。</strong> 镜像默认 <code>FI_PROVIDER=efa</code>，其 NCCL 配置排除了回环接口和 Docker 网桥接口。在 EKS 上，你需要把 <code>NCCL_SOCKET_IFNAME</code> 指向 pod 的 <code>eth0</code>。这个示例干脆把四个网络变量都写进清单，这样行为都集中在一个文件里看得见，也不依赖镜像的默认值。由于它们都是普通环境变量，单个作业可以通过自己的 <code>runtime_env</code> 覆盖它们。</p>
+<p><strong>版本由你选择。</strong> 示例把版本固定在 <code>train-ml-cuda-v1.1</code>，也就是当前的小版本发布，这样集群从一次运行到下一次都是可复现的。<code>vX.Y</code> 标签会随着安全重建而移动；完整版本号的 <code>vX.Y.Z</code> 标签则冻结在最初的发布构建上，因此需要逐字节一致的结果时请固定 digest。同一个镜像也可以从私有 ECR URI 获取。</p>
+<h2>集群是怎么布局的</h2>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22002-2-1.png" alt="示例集群：CPU 系统节点运行 KubeRay operator 和一个不带 GPU 的 Ray head，两台启用 EFA 的 g6.12xlarge 节点各自运行一个四 GPU 的 Ray worker pod"></p>
+<p>图 2：示例的集群。每个 pod 都运行来自 Amazon ECR Public 的同一个 Ray Train DLC。CPU 系统节点运行 KubeRay operator 和一个不带 GPU 的 Ray head。两台启用 EFA 的 g6.12xlarge 同处一个可用区，各自运行一个四 GPU 的 Ray worker pod。</p>
+<p>所有节点都位于同一个 virtual private cloud (VPC) 的私有子网中，只能通过 NAT Gateway 访问互联网——节点正是这样从 Amazon ECR Public 拉取 DLC，worker 也就是这样从 Hugging Face 下载模型权重的。一台 m7i.xlarge 组成系统节点组，承载 kube-system 附加组件、KubeRay operator 和 Ray head。head 在 8265 端口运行作业服务器，在 6379 端口运行 Ray 的控制存储，并且不对外宣告任何 GPU，所以不会有训练任务落到它身上。作业通过 <code>kubectl exec</code> 在 head pod 内部提交，走 EKS API，因此 8265 端口从不暴露到集群之外。</p>
+<p>训练在两台 <a href="https://aws.amazon.com/ec2/instance-types/g6/">g6.12xlarge</a> 实例上运行，每台有四块 NVIDIA L4 GPU、48 个 vCPU、192 GiB 内存、40 Gbps 网络和一个 EFA 接口。每台实例运行一个 Ray worker pod，独占全部四块 GPU 和那个 EFA 接口；Ray Train 在每个 pod 中放置四个 worker：一台实例上是 rank 0–3，另一台上是 4–7。由于 EFA 流量不能跨可用区，脚本会把两台实例放在同一个已确认提供 g6.12xlarge 的可用区里。</p>
+<h2>Ray Train 在容器里做什么</h2>
+<p>DLC 提供了整套技术栈。<a href="https://docs.ray.io/en/latest/train/train.html">Ray Train</a> 提供了原本要自己写的启动器代码。多节点 PyTorch 通常意味着在每台主机上每块 GPU 起一个进程，并给每个进程分配它的 rank、world size 和一个会合地址。用 Ray Train，你把训练循环写成一个函数，配上一个 <code>ScalingConfig</code> 传给 <code>TorchTrainer</code>。Ray 会在集群里有 GPU 的地方每块 GPU 起一个 worker，建立 <code>torch.distributed</code> 进程组，并在每个 worker 上运行你的函数。</p>
+<p>这个示例向 Ray Train 请求 <a href="https://docs.pytorch.org/docs/stable/fsdp.html">FSDP</a>：它把模型的权重、梯度和优化器状态切分到全部八块 GPU 上，而不是复制到每块 GPU。在 bfloat16 下，Qwen2.5-1.5B 的这四个张量大约需要 12 GB。切成八份之后，每块 L4 GPU 大约持有 1.5 GB。代价在通信：FSDP 在使用每一层之前先把该层权重聚合起来，之后再把梯度做 reduce-scatter，因此每一步整个模型都要在各个 rank 之间流动。两个实例之间的这部分流量，正是 DLC 的 EFA 技术栈所承载的。</p>
+<h3>前置条件</h3>
+<p>开始之前，你必须准备好以下内容：</p>
+<ul><li><strong>工具：</strong> 已登录目标账户的 AWS Command Line Interface (AWS CLI) v2、eksctl、kubectl、Helm，以及 GNU gettext 提供的 <code>envsubst</code>。</li><li><strong>配额：</strong> 两台 g6.12xlarge 实例需要 G 系列的 96 个 vCPU 按需容量，且要选在至少有一个可用区提供该实例类型的 AWS 区域。如果你已经为这些实例持有了按需容量预留，请改为设置 <code>CAPACITY_RESERVATION_ID</code>。脚本会把节点组直接启动到该预留里，并跳过容量搜索。</li><li><strong>预算：</strong> GPU 实例运行期间每小时约 $9.50，涵盖两台实例、EKS 控制平面和 NAT Gateway。</li></ul>
+<p>确认 CLI 指向了你预期的账户，有个快捷办法：</p>
 <pre><code>aws sts get-caller-identity</code></pre>
-<h2>训练代码：一个函数和一个训练器</h2>
-<p><code>code/train.py</code> 是整个工作，它不包含任何特定于容器、集群或网络的内容。 Ray 在每个 GPU 上运行一次“train_func”。它询问 Ray 的等级，加载模型，将其交给 FSDP 的“prepare_model”，并运行一个普通的 PyTorch 循环：</p>
-<p><strong><code>code/train.py</code> — 每个 GPU 函数（删节）</strong></p>
+<h2>训练代码：一个函数加一个 trainer</h2>
+<p><code>code/train.py</code> 就是整个作业，其中没有任何专属于容器、集群或网络的内容。Ray 为每块 GPU 运行一次 <code>train_func</code>：向 Ray 询问自己的 rank，加载模型，交给 <code>prepare_model</code> 做 FSDP，然后运行一段普通的 PyTorch 循环：</p>
+<p><strong><code>code/train.py</code> —— 每块 GPU 的函数（节选）</strong></p>
 <pre><code>def train_func(config):
     ctx = ray.train.get_context()
     world_size, rank = ctx.get_world_size(), ctx.get_world_rank()
@@ -133,8 +133,8 @@
         loss.backward()  # parameters gathered again, gradients reduce-scattered
         optimizer.step()  # local: each rank updates only its own slice
         ray.train.report({&quot;step&quot;: step, &quot;loss&quot;: loss.item()})</code></pre>
-<p>驱动程序加入正在运行的集群，计算其 GPU 数量并启动训练器。由于工作线程计数来自集群，因此相同的脚本在一个或多个节点上运行不变：</p>
-<p><strong><code>code/train.py</code> — 驱动程序（删节）</strong></p>
+<p>driver 加入正在运行的集群，统计 GPU 数量并启动 trainer。由于 worker 数量来自集群，同一个脚本在一台节点和多台节点上都能原样运行：</p>
+<p><strong><code>code/train.py</code> —— driver（节选）</strong></p>
 <pre><code>ray.init(address=&quot;auto&quot;)  # join the RayCluster
 num_workers = int(ray.cluster_resources().get(&quot;GPU&quot;, 0))  # 8 here
 
@@ -145,10 +145,10 @@ trainer = TorchTrainer(
     run_config=RunConfig(name=&quot;ray-train-fsdp-llm&quot;),
 )
 result = trainer.fit()</code></pre>
-<p>这些批次是随机令牌 ID，因此运行只依赖于集群。该样本根据真实的 FSDP 集体是否跨越两个节点以及作业是否完成来进行判断。要进行真正的微调，请用 Ray Data 或 DataLoader 管道替换随机张量。函数中的其他内容没有变化。</p>
-<h2>清单：配置 DLC 的唯一位置</h2>
-<p><code>manifest/raycluster.yaml</code> 是图像与集群相遇的地方，它很短，因为图像需要的东西很少。 head 唯一的特殊设置是“NVIDIA_VISIBLE_DEVICES=void”，它可以阻止容器运行时的 NVIDIA 挂钩在没有 GPU 的节点上失败。工人团体拥有其他一切：</p>
-<p><strong><code>manifest/raycluster.yaml</code> — 工作组（删节）</strong></p>
+<p>批次是随机的 token ID，这样整个运行就只依赖集群。判断这个示例的标准是：真实的 FSDP 集合通信是否跨越了两个节点，以及作业是否完成。要做真正的微调，把随机张量换成 Ray Data 或 DataLoader 流水线即可，函数里其他部分都不用改。</p>
+<h2>清单：唯一配置 DLC 的地方</h2>
+<p><code>manifest/raycluster.yaml</code> 是镜像与集群相遇的地方，它之所以这么短，是因为镜像需要的配置本来就很少。head 唯一的特殊设置是 <code>NVIDIA_VISIBLE_DEVICES=void</code>，它避免了容器运行时的 NVIDIA hook 在没有 GPU 的节点上出错。其余全部内容都在 worker 组里：</p>
+<p><strong><code>manifest/raycluster.yaml</code> —— worker 组（节选）</strong></p>
 <pre><code>workerGroupSpecs:
   - groupName: gpu-workers
     replicas: 2
@@ -170,110 +170,110 @@ result = trainer.fit()</code></pre>
                 cpu: &quot;40&quot;, memory: 160Gi }
               requests: { nvidia.com/gpu: &quot;${GPUS_PER_NODE}&quot;, vpc.amazonaws.com/efa: &quot;1&quot;,
                 cpu: &quot;40&quot;, memory: 160Gi }</code></pre>
-<p>将其解读为三个决定。</p>
-<p><strong>哪个图像：</strong> <code>${DLC_IMAGE}</code>，未修改，适用于头部和工人。</p>
-<p><strong>哪些硬件：</strong> 每个 Pod 有四个 GPU 和节点的单个 EFA 接口。请求“vpc.amazonaws.com/efa”使 EFA 设备插件将接口挂载到容器中。如果没有它，NCCL 将无法看到 EFA 并退回到套接字。</p>
-<p><strong>哪种传输：</strong> 四个环境变量，因此无需自动检测。</p>
-<p>两个较小的细节可以保持多节点作业的稳定。首先，请求应该等于限制，这将工作人员置于 Kubernetes 的保证服务质量 (QoS) 类别中。这很重要，因为单个被限制或驱逐的排名会阻碍其他七个排名。其次，“num-gpus”源自与 GPU 请求相同的变量，因此 Ray 的容量视图始终与 Kubernetes 相匹配。</p>
-<h2>提出来：基础设施的一个命令，然后是工作</h2>
-<p>配置位于一处“scripts/env.sh”：集群名称、区域、Kubernetes 版本、节点类型和计数、镜像、KubeRay 和两个设备插件的固定版本以及训练参数。导出其中任何一个以更改它以进行运行。所有五个脚本都是幂等的并且可以安全地重新运行。在创建或接触集群资源之前，会分别提示“deploy_cluster.sh”、“deploy_node_group.sh”和“deploy_ray_train_job.sh”。 <code>install_gpu_plugins.sh</code> 和 <code>install_kuberay.sh</code> 是协调器并直接运行。</p>
+<p>把它读作三个决定。</p>
+<p><strong>用哪个镜像：</strong> <code>${DLC_IMAGE}</code>，不做修改，head 和 worker 都用它。</p>
+<p><strong>用什么硬件：</strong> 每个 pod 四块 GPU，以及节点上的那一个 EFA 接口。正是对 <code>vpc.amazonaws.com/efa</code> 的请求让 EFA device plugin 把该接口挂载进容器。没有它，NCCL 就看不到 EFA，只能退回 socket。</p>
+<p><strong>用什么传输方式：</strong> 四个环境变量，不给自动探测留任何余地。</p>
+<p>还有两个小细节能让多节点作业保持稳定。第一，requests 应当等于 limits，这会把 worker 放进 Kubernetes 的 Guaranteed（保证）服务质量（QoS）等级。这一点很重要，因为只要有一个 rank 被限流或被驱逐，其余七个就会卡住。第二，<code>num-gpus</code> 与 GPU 请求取自同一个变量，因此 Ray 看到的容量始终与 Kubernetes 一致。</p>
+<h2>把它跑起来：一条命令搭基础设施，然后是作业</h2>
+<p>配置都集中在一处：<code>scripts/env.sh</code>，包括集群名称、Region、Kubernetes 版本、节点类型与数量、镜像、固定版本的 KubeRay 和两个 device plugin，以及训练参数。导出其中任意一项即可改变某次运行的行为。五个脚本都是幂等的，可以安全地重复运行。<code>deploy_cluster.sh</code>、<code>deploy_node_group.sh</code> 和 <code>deploy_ray_train_job.sh</code> 在创建或改动集群资源前都会先询问。<code>install_gpu_plugins.sh</code> 和 <code>install_kuberay.sh</code> 是收敛式的，直接跑完。</p>
 <pre><code>cd training/ray-train/scripts
 source ./env.sh</code></pre>
-<p><code>./deploy_all.sh</code> – 查找容量的实际位置，然后在那里构建基础设施。</p>
-<p>g6.12xlarge 容量每天在区域和可用区之间变化，因此这是起点，而不是在“env.sh”中预先猜测的区域。它首先运行“find_gpu_capacity.sh”，检查每个候选区域：每个可用区是否提供 g6.12xlarge、账户的按需 G/VT 系列 vCPU 配额是否有空间容纳请求的节点数，以及作为容量信号的 EC2 Spot 放置分数。使用“deploy_all.sh”默认传递的“--probe”，它通过在每个候选区域中创建并立即取消实际的容量预留来获得明确的答案。然后它会显示计划并询问一次：</p>
+<p><code>./deploy_all.sh</code> —— 先找到容量真正所在的地方，再在那里搭建基础设施。</p>
+<p>g6.12xlarge 的容量每天都在不同 Region 和可用区之间流动，所以这才是起点，而不是在 <code>env.sh</code> 里事先猜一个 Region。它首先运行 <code>find_gpu_capacity.sh</code>，对每个候选 Region 检查：各可用区是否提供 g6.12xlarge、账户的 G/VT 系列按需 vCPU 配额能否容纳请求的节点数，以及以 EC2 Spot 放置分数作为容量信号。加上 <code>deploy_all.sh</code> 默认会传入的 <code>--probe</code>，它会在每个候选可用区创建并立即取消一个真实的容量预留，从而得到确定答案。随后它会展示计划并询问一次：</p>
 <pre><code>Proceed with the whole chain without further prompts? (y/N):</code></pre>
-<p>回答 <strong>y</strong> 按顺序运行推荐区域中的 <code>deploy_cluster.sh</code>、<code>deploy_node_group.sh</code>、<code>install_gpu_plugins.sh</code> 和 <code>install_kuberay.sh</code>，每个都跳过自己的重复确认，因为这已经询问过（<code>-y</code> 也会跳过此提示，而 <code>--plan</code> 显示计划而不创建任何内容）。如果 GPU 节点组无法在最佳区域中启动，脚本会将其删除并尝试探测确认的下一个区域。 <code>GPU_AZ</code> 也会针对集群的实际私有子网进行交叉检查，不仅是在提供 g6.12xlarge 的情况下，因此 GPU 节点组最终不能固定到集群没有子网的可用区。所选区域和区域将保存到 <code>scripts/.placement.env</code>，每个其他脚本都会读取该子网，因此后面的命令会针对同一位置而无需重新导出任何内容。在新区域上，这四个步骤总共需要 20 到 30 分钟。检测并重用现有集群或节点组。</p>
-<p><code>deploy_cluster.sh</code> 创建 EKS 控制平面、VPC、OpenID Connect (OIDC) 提供商、核心附加组件和 m7i.xlarge 系统节点组，并在实际提供 g6.12xlarge 的区域中选择子网。 <code>deploy_node_group.sh</code> 添加两个打开 EFA 的 g6.12xlarge 实例，标记为 <code>role=gpu-worker</code> 和 <code>nvidia.com/gpu.present=true</code>。第二个标签是团队经常忽视的一个标签。如果没有它，NVIDIA 设备插件图表的 DaemonSet 将在零个节点上运行，并且不会出现指出原因的错误。 <code>install_gpu_plugins.sh</code> 确保两个设备插件都存在。最近的 eksctl 将它们捆绑到启用 EFA 的节点组中，因此在新的集群上它会找到它们并跳过。否则，它将安装在固定图表版本中。无论哪种方式，它都会验证“nvidia.com/gpu”和“vpc.amazonaws.com/efa”是否可以在每个 GPU 节点上分配，而不是信任成功的 Helm 版本。 <code>install_kuberay.sh</code> 将 KubeRay 运算符安装到系统节点上，使其远离 GPU 实例。</p>
-<p>默认情况下，“deploy_all.sh”不执行训练作业。这仍然是一个单独的步骤，您可以根据需要随时重新运行，因为它是真正的作业运行而不是基础设施，并且失败的作业永远不会通过集群设置将您送回。通过 <code>--train</code> 来链接它：</p>
-<p><code>./deploy_ray_train_job.sh</code> <strong>— RayCluster、作业和检查。</strong></p>
-<p>使用“envsubst”渲染清单并应用它。然后，它会在等待任何 pod 之前重新读取每个 GPU 节点的可分配资源：如果设备插件没有出现，您会在此处收到明显的错误，而不是 pod 处于待处理状态直至超时。一旦 head 就绪并且两个工作线程都就绪，它就会将 <code>code/</code> 复制到 head 上，并通过 <code>kubectl exec</code> 从内部提交：</p>
+<p>回答 <strong>y</strong> 后，脚本会依次在推荐的 Region 中运行 <code>deploy_cluster.sh</code>、<code>deploy_node_group.sh</code>、<code>install_gpu_plugins.sh</code> 和 <code>install_kuberay.sh</code>，由于刚才已经问过，每个脚本都跳过自己的重复确认（<code>-y</code> 会跳过这次询问，<code>--plan</code> 则只展示计划而不创建任何东西）。如果 GPU 节点组在最佳可用区启动不了，脚本会把它删掉，转而尝试探测确认过的下一个可用区。<code>GPU_AZ</code> 还会与集群实际的私有子网交叉核对，而不只是看 g6.12xlarge 恰好在哪些地方提供，这样 GPU 节点组就不会被钉在一个集群根本没有子网的可用区上。选定的 Region 和可用区会保存到 <code>scripts/.placement.env</code>，其他所有脚本都会读取它，因此后续命令无需重新导出任何东西就指向同一位置。在全新的 Region 上，这四步总共需要 20 到 30 分钟。已存在的集群或节点组会被检测出来并复用。</p>
+<p><code>deploy_cluster.sh</code> 创建 EKS 控制平面、VPC、OpenID Connect (OIDC) provider、核心附加组件和 m7i.xlarge 系统节点组，子网选择在真正提供 g6.12xlarge 的可用区。<code>deploy_node_group.sh</code> 加入两台开启 EFA 的 g6.12xlarge 实例，标签为 <code>role=gpu-worker</code> 和 <code>nvidia.com/gpu.present=true</code>。第二个标签常常被团队忽略：没有它，NVIDIA device plugin 的 chart 部署出来的 DaemonSet 会落在零个节点上，而且没有任何错误指向真正的原因。<code>install_gpu_plugins.sh</code> 确保两个 device plugin 都已就位。较新的 eksctl 会把它们打包进启用 EFA 的节点组，所以在全新集群上它会发现并跳过；否则就按固定的 chart 版本安装。无论哪种情况，它都会验证每个 GPU 节点上 <code>nvidia.com/gpu</code> 和 <code>vpc.amazonaws.com/efa</code> 都可分配，而不是仅凭 Helm 发布成功就相信没问题。<code>install_kuberay.sh</code> 把 KubeRay operator 装到系统节点上，让它不占用 GPU 实例。</p>
+<p>默认情况下 <code>deploy_all.sh</code> 不会去跑训练作业。训练保留为单独一步，你想重跑多少次都可以，因为那是一次真正的作业运行而不是基础设施搭建，作业失败也不会把你打回集群设置这一步。要串起来执行，加上 <code>--train</code>：</p>
+<p><code>./deploy_ray_train_job.sh</code> <strong>—— RayCluster、作业和各项检查。</strong></p>
+<p>它用 <code>envsubst</code> 渲染清单并应用，然后在等待任何 pod 之前重新读取每个 GPU 节点的可分配资源：如果某个 device plugin 没有起来，你会在这里得到一个明确的错误，而不是一个一直 Pending 到超时的 pod。等 head 和两个 worker 都 Ready 之后，它把 <code>code/</code> 复制到 head 上，并通过 <code>kubectl exec</code> 从 head 内部提交：</p>
 <pre><code>ray job submit --address http://localhost:8265 --working-dir /tmp/ray-train-code \
 python3 train.py --model_id Qwen/Qwen2.5-1.5B</code></pre>
-<p>提交调用会流式传输所有八个级别的日志，并在作业完成时返回。然后，该脚本会检查 NCCL 使用的传输，如果作业失败或 EFA 不在路径中，则退出并显示错误，这也使其可用作持续集成 (CI) 门。 <code>./deploy_ray_train_job.sh status</code> 打印 RayCluster 状态、哪个实例托管每个 Pod 以及 GPU 容量。正确配置的集群如下所示：</p>
+<p>提交调用会流式输出全部八个 rank 的日志，并在作业结束时返回。脚本随后检查 NCCL 使用了哪种传输方式，如果作业失败或 EFA 不在路径上，就以错误退出——这同时也让它可以直接用作持续集成（CI）门禁。<code>./deploy_ray_train_job.sh status</code> 会打印 RayCluster 状态、每个 pod 落在哪台实例上，以及 GPU 容量。正确配置的集群看起来是这样的：</p>
 <pre><code>$ kubectl get nodes -l role=gpu-worker \
 -o custom-columns='NAME:.metadata.name,GPU:.status.allocatable.nvidia\.com/gpu,EFA:.status.allocatable.vpc\.amazonaws\.com/efa'
 NAME               GPU   EFA
 ip-192-168-70-51   4     1
 ip-192-168-92-26   4     1</code></pre>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22002-3-1.png" alt="一个 FSDP 步骤显示在前向和后向传递中收集的权重以及梯度减少分散，实例之间的流量采用 NCCL、AWS OFI NCCL 插件、libfabric 和 EFA路径"></p>
-<p>图 3：该集群上的一个 FSDP 步骤。权重在前向和后向传递中聚集，梯度被减少分散。实例之间的流量采用 DLC 传送的路径：NCCL → AWS OFI NCCL 插件 → libfabric → EFA，或者在该路径丢失时回退到 TCP 套接字。</p>
-<h2>根据您的工作负载进行调整</h2>
-<p>由于图像按已发布的方式使用，并且作业从集群中了解其规模，因此大多数更改只涉及一个文件：</p>
-<table><thead><tr><th><strong>你想改变</strong></th><th><strong>哪里</strong></th><th><strong>无需更改</strong></th></tr></thead><tbody><tr><td>型号</td><td><code>型号_ID</code></td><td>代码、清单、图像</td></tr><tr><td>步骤、序列长度、批量大小</td><td><code>STEPS</code>、<code>SEQ_LEN</code>、<code>BATCH_SIZE</code></td><td>代码、清单、图像</td></tr><tr><td>训练循环本身</td><td><code>train_func</code> 的主体</td><td>培训师、清单、图像、脚本</td></tr><tr><td>额外的 Python 包</td><td><code>--runtime-env-json</code> pip 列表</td><td>图片</td></tr><tr><td>固定 DLC 发布</td><td><code>DLC_IMAGE</code> 到版本化标签</td><td>其他一切</td></tr><tr><td>GPU 实例系列</td><td><code>GPU_NODE_TYPE</code>、<code>GPUS_PER_NODE</code></td><td>代码、图像</td></tr><tr><td>有多少 GPU 实例</td><td><code>GPU_NODE_COUNT</code>，加上清单中的<code>replicas</code>、<code>minReplicas</code> 和<code>maxReplicas</code></td><td>代码（计算 GPU 数量）</td></tr><tr><td>地区或地区</td><td><code>REGION</code>，可选的<code>GPU_AZ</code></td><td>其他一切</td></tr></tbody></table>
-<p>除非另有说明，表中的变量位于“env.sh”中。切换实例系列时，“GPUS_PER_NODE”必须与硬件匹配，并且该系列需要 EFA 支持以及 EFA 设备插件允许的实例类型列表中的位置。已知此处固定的插件版本包括 g6.12xlarge。迁移到 p5 或其他支持 GPUDirect 的系列不需要更改图像或训练代码。</p>
-<h2>拆掉它</h2>
-<p>GPU 实例是昂贵的部分，加上控制平面和 NAT 网关，每小时约为 9.50 美元。按照与创建顺序相反的顺序删除事物：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22002-3-1.png" alt="一个 FSDP 步骤：前向和反向传播中汇聚权重、梯度做 reduce-scatter，实例间流量走 NCCL、AWS OFI NCCL 插件、libfabric 和 EFA 路径"></p>
+<p>图 3：这个集群上的一个 FSDP 步骤。权重在前向和反向传播中被汇聚，梯度做 reduce-scatter。实例之间的流量走 DLC 自带的路径 NCCL → AWS OFI NCCL 插件 → libfabric → EFA，路径缺失时则退回 TCP socket。</p>
+<h2>适配到你的工作负载</h2>
+<p>由于镜像直接按发布版使用，而作业的规模从集群中得知，大多数改动只需动一个文件：</p>
+<table><thead><tr><th><strong>你想改什么</strong></th><th><strong>在哪里改</strong></th><th><strong>不需要改</strong></th></tr></thead><tbody><tr><td>模型</td><td><code>MODEL_ID</code></td><td>代码、清单、镜像</td></tr><tr><td>步数、序列长度、批大小</td><td><code>STEPS</code>、<code>SEQ_LEN</code>、<code>BATCH_SIZE</code></td><td>代码、清单、镜像</td></tr><tr><td>训练循环本身</td><td><code>train_func</code> 的函数体</td><td>trainer、清单、镜像、脚本</td></tr><tr><td>额外的 Python 包</td><td><code>--runtime-env-json</code> 的 pip 列表</td><td>镜像</td></tr><tr><td>固定的 DLC 发布版本</td><td>把 <code>DLC_IMAGE</code> 改成带版本号的标签</td><td>其他一切</td></tr><tr><td>GPU 实例系列</td><td><code>GPU_NODE_TYPE</code>、<code>GPUS_PER_NODE</code></td><td>代码、镜像</td></tr><tr><td>GPU 实例数量</td><td><code>GPU_NODE_COUNT</code>，以及清单中的 <code>replicas</code>、<code>minReplicas</code> 和 <code>maxReplicas</code></td><td>代码（它会统计 GPU）</td></tr><tr><td>Region 或可用区</td><td><code>REGION</code>，可选的 <code>GPU_AZ</code></td><td>其他一切</td></tr></tbody></table>
+<p>表中变量除特别说明外都放在 <code>env.sh</code> 里。切换实例系列时，<code>GPUS_PER_NODE</code> 必须与硬件匹配，而且该系列要支持 EFA，并出现在 EFA device plugin 的允许实例类型列表中。这里固定的插件版本已知包含 g6.12xlarge。换到 p5 或其他支持 GPUDirect 的系列，不需要改动镜像或训练代码。</p>
+<h2>拆除</h2>
+<p>GPU 实例是最贵的部分，连同控制平面和 NAT Gateway 合计每小时约 $9.50。请按与创建时相反的顺序拆除：</p>
 <pre><code>./delete_ray_train_job.sh        # RayCluster
 ./install_kuberay.sh cleanup     # KubeRay operator
 ./install_gpu_plugins.sh cleanup # NVIDIA and EFA device plugins
 ./delete_node_group.sh           # GPU instances
 ./delete_cluster.sh              # EKS cluster, VPC and system node</code></pre>
-<h2>下一步去哪里</h2>
-<p>两个实例和八个 GPU 使用无人构建的容器在 EKS 上运行分片微调。 Ray Train DLC 提供了从 CUDA 到 EFA 的经过测试的堆栈。 KubeRay 一开始是作为来自同一个标签的 head 和workers 的。 Ray Train 安排了工人并组建了流程组。从硬件到传输再到 Python 包的所有变化都是从映像外部设置的。该映像所提供的 EFA 路径涉及四个环境变量，并且在未更改代码的情况下使 TCP 吞吐量增加了一倍。</p>
-<p>自然的下一步行动：</p>
-<ul><li>将随机批次替换为真实数据集，并将检查点设置为 Amazon Simple Storage Service (Amazon S3) 或 Amazon FSx for Lustre。</li><li>将“DLC_IMAGE”固定到版本标记以实现可重复运行。</li><li>打开“FailureConfig”，以便长时间运行能够在丢失的实例中幸存下来。</li><li>迁移到 GPUDirect RDMA 系列上的更大模型，例如 p5。图像和代码保持不变。</li></ul>
+<h2>接下来可以做什么</h2>
+<p>两台实例、八块 GPU，在一个没人构建过的容器上于 EKS 完成了一次分片微调。Ray Train DLC 提供了从 CUDA 一直到 EFA 的、经过测试的技术栈。KubeRay 用同一个标签把它启动为 head 和 worker。Ray Train 放置 worker 并建立进程组。所有会变化的东西——从硬件到传输方式到 Python 包——都是在镜像之外设置的。镜像自带的 EFA 路径靠四个环境变量启用，在代码完全不变的情况下把吞吐量提升到 TCP 的两倍。</p>
+<p>自然的后续动作：</p>
+<ul><li>把随机批次换成真实数据集，并把 checkpoint 写入 Amazon Simple Storage Service (Amazon S3) 或 Amazon FSx for Lustre。</li><li>把 <code>DLC_IMAGE</code> 固定到带版本号的标签，以获得可复现的运行。</li><li>打开 <code>FailureConfig</code>，让长时间运行能挺过实例丢失。</li><li>换到支持 GPUDirect RDMA 的系列（如 p5）上更大的模型。镜像和代码保持不变。</li></ul>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>使用 Amazon Nova Act 通过代理 QA 自动化加速软件交付 - 第 3 部分</title>
+      <title>用 Amazon Nova Act 的 agentic QA 自动化加速软件交付 —— 第 3 部分</title>
       <link>https://aws.amazon.com/blogs/machine-learning/accelerating-software-delivery-with-agentic-qa-automation-using-amazon-nova-act-part-3/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/accelerating-software-delivery-with-agentic-qa-automation-using-amazon-nova-act-part-3/</guid>
       <pubDate>Wed, 28 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Accelerating software delivery with agentic QA automation using Amazon Nova Act – Part 3</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 Amazon Nova Act 通过代理 QA 自动化加速软件交付 - 第 3 部分</h1>
-<p>随着质量保证 (QA) 自动化在组织内部的采用不断增长，出现了一个与编写测试无关的新问题。一个平台团队支持测试自动化，然后第二个团队想要加入，然后是十几个团队。很快，数百个测试用例属于不同的产品和团队，每个人都可以看到其他人的测试。没有人能够一眼就回答一个基本问题：这个应用程序的测试覆盖率现在是否健康？测试创作不再是瓶颈。组织测试并控制谁可以接触它们成为工作。</p>
-<p>第二个相关问题紧随其后：谁拥有此应用程序及其测试，以及当覆盖率下降时谁负责？没有明确的主人，健康问题就无从下手。</p>
-<p>在第一篇文章中，我们介绍了 QA Studio，这是一个使用 Amazon Nova Act 构建的参考解决方案(https://aws.amazon.com/ai/agentic-ai/nova-act/)。团队使用它以自然语言定义测试，并通过人工智能驱动的视觉导航运行它们。在<a href="https://aws.amazon.com/blogs/machine-learning/acceleating-software-delivery-with-agentic-qa-automation-using-amazon-nova-act-part-2/">第二篇文章</a>中，我们添加了测试套件和 CLI，用于在持续集成和持续交付 (CI/CD) 管道中进行批量回归测试。在这篇文章中，我们将介绍有助于 QA Studio 在整个组织中扩展的两项功能。第一个是<strong>应用程序</strong>，组织测试并报告健康指标。第二个，<strong>基于团队的用户管理</strong>，控制谁可以查看和更改什么。</p>
-<h2>使用应用程序组织测试</h2>
-<p>QA Studio 中的应用程序代表被测系统：网站、Web 应用程序、服务前端。它是一个提供测试集合、一个家和一个所有者的容器。用例（第 1 部分中的各个测试）和测试套件（第 2 部分中的回归集合）属于应用程序，并且它们继承其所有权。每个团队都在他们拥有的应用程序内工作，而不是部署中每个测试的简单列表。</p>
-<p>创建应用程序需要名称、基本 URL 和一组可选的环境（例如开发、登台和生产）。从应用程序页面，团队直接在上下文中创建新用例，添加现有用例，并将它们分组到测试套件中。这也是 QA Studio 报告其运行的测试运行状况的地方。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-1-1.png" alt="QA Studio 应用程序详细信息页面在用例和测试套件选项卡上方显示通过率、执行和失败"></p>
-<p>图 1：应用程序详细信息页面，通过用例和测试套件选项卡显示通过率、执行情况和失败情况</p>
-<h2>通过指标了解应用程序运行状况</h2>
-<p>测试产生结果。随着时间的推移了解这些结果可以告诉团队应用程序的开发生命周期是否健康，而不仅仅是单个构建是否已准备好发布。 QA Studio 将每次执行的结果记录为 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 自定义指标，按应用程序和环境确定维度。它将这些指标转化为应用程序页面上的运行状况视图。</p>
-<p>页面顶部用三个数字回答了直接问题：所选窗口的通过率、执行总数和当前失败计数。除此之外，QA Studio 还会计算 0-100 的健康评分。分数从通过率开始，减去不稳定测试的罚分。这样，测试通过但在通过和失败之间切换的应用程序就不会呈现出虚假的完美画面。扫描应用程序组合的团队可以区分稳定的应用程序和需要关注的应用程序，而无需打开每个结果。</p>
-<p>指标选项卡从当前快照移至趋势。团队选择每小时粒度的 7 天窗口或每日粒度的 30 天窗口，QA Studio 会绘制该期间的执行、成功、失败和平均持续时间的图表。由于底层指标包含环境维度，因此团队将视图过滤到单个环境。例如，他们可以比较同一组测试的暂存与生产的行为方式。</p>
-<p>有两种视图针对花费团队时间最多的测试。片状测试视图根据用例在过去 7 天内在通过和失败之间切换的频率对用例进行排名。这暴露了间歇性故障，这些故障在变成生产失误之前会削弱人们对套件的信任。最近的失败视图列出了最新失败的执行，以便快速分类。每个链接都链接回第 1 部分中描述的 Amazon Nova Act 轨迹日志和会话记录。这样，只需单击一下即可从“此测试失败”转变为“这正是代理所看到的内容”。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-2-1.png" alt="QA Studio 指标选项卡，包含每日成功和失败图表、失败热点和不稳定的用例排名"></p>
-<p>图 2：“指标”选项卡：选定窗口内的通过率、执行次数和平均持续时间，以及每日成功与失败图表、失败热点和不稳定用例排名</p>
-<h2>控制团队和角色的访问</h2>
-<p>指标告诉团队他们的应用程序运行情况如何。基于团队的用户管理首先决定哪些应用程序属于他们。 QA Studio 围绕团队组织访问，并且应用程序只属于一个团队。该团队的成员使用其应用程序。其他人都看不到他们。</p>
-<p>每个团队成员都拥有五个角色之一，每个角色都包含其下面角色的权限：</p>
-<ul><li><strong>管理员</strong>：工作室范围内对每个团队、应用程序和用户的访问权限，包括创建团队和分配应用程序。管理员是整个工作室的角色，而不是每个团队的任务。</li><li><strong>团队负责人</strong>：管理自己的团队成员并为团队创建应用程序。</li><li><strong>编辑器</strong>：在团队的应用程序中创建和编辑用例和测试套件。</li><li><strong>执行器</strong>：运行用例和套件，但不修改它们。</li><li><strong>查看者</strong>：对团队的应用程序和结果的只读访问权限。</li></ul>
-<p>由于角色是累积性的，因此团队负责人拥有编辑者所拥有的一切，依此类推，直至查看者。对用例或测试套件的访问遵循包含它的应用程序。如果成员可以使用该应用程序，那么他们就可以使用其测试，但受其角色的限制。这使得权限管理保持在应用程序级别，而不是数千个单独的测试。</p>
-<p>管理员可以看到整个工作室。用户页面在一个位置列出了每个帐户及其团队和角色。管理员可以知道谁担任哪个团队的团队领导以及谁拥有工作室范围的管理员权限。在此处显示的参考部署中，四个用户分布在两个团队中：两名团队主管、一名查看者和一名工作室范围管理员。团队页面按团队汇总相同的数据，并排显示每个团队的成员数量和应用程序数量。管理员可以在打开任何一个团队之前查看哪些团队正在扩展。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-3-1.png" alt="QA Studio 工作室范围的用户页面列出了每个帐户及其团队和角色，以及团队和角色过滤器"></p>
-<p>图 3：工作室范围内的“用户”页面：每个帐户及其团队和角色，可按团队和角色进行过滤</p>
-<p>按团队汇总的相同成员资格数据显示在“团队”页面上。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-4-1.png" alt="QA Studio 团队页面列出了每个团队及其成员数量和应用程序数量"></p>
-<p>图 4：团队页面：每个团队及其成员和应用程序计数</p>
-<p>从团队切换到应用程序，工作室范围的应用程序列表显示所有团队中的每个应用程序。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-5-1.png" alt="QA Studio 工作室范围内的应用程序列表，显示每个应用程序的基本 URL、所属团队、用例计数和上次执行状态"></p>
-<p>图 5：工作室范围内的应用程序列表：每个应用程序及其基本 URL、所属团队、用例计数和上次执行状态</p>
-<h2>在团队之间共享应用程序</h2>
-<p>团队很少会完全孤立地工作。平台团队可能拥有功能团队需要运行的应用程序，但不移交更改它的能力。 QA Studio 通过共享访问支持这一点：拥有团队向另一个团队授予应用程序的查看、执行或完整级别访问权限。</p>
-<p>共享访问遵循上限规则。用户对共享应用程序的有效权限是其自己的角色和授予级别中的较低者。被授予对共享应用程序的完全访问权限的查看者仍然只能查看，因为他们的角色是上限。这样，拥有团队就可以广泛共享，而无需授予超出接收者角色允许的权限。</p>
-<h2>团队领导所看到的</h2>
-<p>团队领导在单个团队而不是整个工作室内工作。打开我的团队会显示四个选项卡，涵盖领导控制的所有内容：成员、应用程序、用例和共享访问。 “成员”选项卡列出了团队中的人员。领导可以更改任何成员的内联角色或添加新角色，因此日常访问管理由最接近工作的人员负责。在此处显示的 AWS 团队中，领导管理两名成员，一名团队领导和一名查看者。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-6-1.png" alt="团队领导成员选项卡，其中包含每个团队成员的内联角色选择器"></p>
-<p>图 6：团队负责人的“成员”选项卡，其中包含每个成员的内联角色分配</p>
-<p>“应用程序”选项卡仅显示团队拥有的应用程序，每个应用程序都有其测试用例计数和上次运行时间。这使得领先者专注于他们自己的表面，而不是整个工作室的库存。共享访问选项卡是跨团队共享变得具体的地方。此处，AWS 团队已授予 AMZN 团队查看应用程序的访问权限，领导者可以授予、撤销或更改该访问权限的级别。由于授权是视图级别的，AMZN 团队编辑仍然会看到共享应用程序为只读：上一节中的上限规则在实践中应用。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-7-1.png" alt="团队负责人“应用程序”选项卡仅列出团队拥有的应用程序"></p>
-<p>图 7：团队领导的“应用程序”选项卡，范围为团队自己的应用程序</p>
-<p>同一团队负责人的“共享访问”选项卡记录了哪些其他团队可以访问该团队的应用程序以及在什么级别。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-8-1.png" alt="团队负责人共享访问选项卡显示对另一个团队的视图级别授权"></p>
-<p>图 8：团队负责人的“共享访问”选项卡，显示对另一个团队的视图级别授权</p>
-<h2>它是如何工作的</h2>
-<p>QA Studio 在前面的文章中描述的相同无服务器基础上构建基于团队的访问控制和指标，并添加了一些 AWS 服务：</p>
-<ul><li><strong><a href="https://aws.amazon.com/cognito/">Amazon Cognito</a></strong>：每个团队映射到一组 Cognito 组，每个角色一个。 <a href="https://aws.amazon.com/lambda/">AWS Lambda</a> 授权方将每个请求的调用者组解析为 API 范围和团队上下文。</li><li><strong><a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a></strong>：团队、成员资格、应用程序所有权和跨团队共享授予存储在现有的单表设计中。</li><li><strong>Amazon CloudWatch</strong>：每次执行都会在 QAStudio/Executions 命名空间中发出自定义指标，按应用程序和环境确定尺寸。指标 API 读回它们以构建运行状况视图和趋势图。</li><li><strong>AWS Lambda 和 <a href="https://aws.amazon.com/api-gateway/">Amazon API Gateway</a></strong>：后端强制执行两层访问：调用者角色授予的范围，以及确认调用者团队拥有或已与应用程序共享的资源检查。</li></ul>
-<p>由于访问权限源自 Cognito 组成员资格，因此第 2 部分中的 OAuth 客户端凭据流适合相同的模型。 CI 管道使用其所需的范围来验证机器身份，仅此而已。</p>
-<p>＃＃ 入门</p>
-<p>应用程序、指标和基于团队的访问控制是 QA Studio 参考解决方案的一部分，您可以使用 <a href="https://aws.amazon.com/cdk/">AWS 云开发工具包 (AWS CDK)</a> 将其部署在您自己的 AWS 账户中。所有测试数据、结果和指标均保留在您的帐户范围内。部署后，管理员创建团队、分配成员和角色，并将应用程序分配给团队。每个团队的健康指标随着测试的运行而开始填充。</p>
-<p>有关部署说明和配置详细信息，请参阅 <a href="https://github.com/aws-samples/sample-qa-studio">QA Studio GitHub 存储库</a> 及其文档。</p>
-<h2>结论</h2>
-<p>在这篇文章中，我们展示了 QA Studio 如何将代理 QA 自动化从个人测试扩展到组织。应用程序为每个团队提供了一个存放用例和测试套件的家。他们通过通过率、趋势图、不稳定的运行状况评分以及基于 Amazon CloudWatch 指标构建的故障分类来报告运行状况。基于团队的用户管理在 Amazon Cognito 的支持下，让每个团队在自己拥有的应用程序内工作，跨团队共享受到明确的上限规则的限制。</p>
-<p>这些功能建立在第 1 部分的自然语言测试编写以及第 2 部分的套件和 CI/CD 集成的基础上。它们共同帮助 QA 自动化在多个团队中发展，而不会失去可见性或控制力。要在您自己的环境中尝试，请从 QA Studio GitHub 存储库部署参考解决方案，创建您的第一个团队和应用程序，然后运行一些用例来观察指标的形成。要了解有关其背后代理的更多信息，请参阅 <a href="https://aws.amazon.com/ai/agentic-ai/nova-act/">Amazon Nova Act 产品页面</a>。</p>
+<h1>用 Amazon Nova Act 的 agentic QA 自动化加速软件交付 —— 第 3 部分</h1>
+<p>随着质量保证（QA）自动化在一个组织内被越来越广泛地采用，一个新问题浮现出来，而它与编写测试毫无关系。一个平台团队搭起测试自动化，第二个团队也想加入，然后是十来个团队。很快，几百个测试用例分属不同的产品和小组，而且每个人都能看到其他人的测试。没人能一眼回答一个基本问题：这个应用的测试覆盖状况现在健康吗？编写测试不再是瓶颈，整理测试并控制谁能改动它们才是。</p>
+<p>紧随其后的是第二个相关问题：这个应用及其测试归谁所有，覆盖率滑坡时又由谁负责？没有明确的归属，健康问题就无人担责。</p>
+<p>在<a href="https://aws.amazon.com/blogs/machine-learning/accelerating-software-delivery-with-agentic-qa-automation-using-amazon-nova-act/">第一篇</a>里，我们介绍了 QA Studio——一个用 <a href="https://aws.amazon.com/ai/agentic-ai/nova-act/">Amazon Nova Act</a> 构建的参考解决方案。团队用它以自然语言定义测试，并通过 AI 驱动的视觉导航运行这些测试。在<a href="https://aws.amazon.com/blogs/machine-learning/accelerating-software-delivery-with-agentic-qa-automation-using-amazon-nova-act-part-2/">第二篇</a>里，我们加入了测试套件，以及一个用于在持续集成与持续交付（CI/CD）流水线中批量跑回归测试的 CLI。本文介绍两项能帮助 QA Studio 在整个组织内扩展的能力。第一项是<strong>应用</strong>，负责组织测试并报告健康指标。第二项是<strong>基于团队的用户管理</strong>，负责控制谁能看到什么、修改什么。</p>
+<h2>用应用组织测试</h2>
+<p>QA Studio 中的一个应用代表被测系统：一个网站、一个 Web 应用、一个服务前端。它是那组测试的容器，让它们有归属、有主人。用例（第 1 篇里的单项测试）和测试套件（第 2 篇里的回归测试集合）都属于某个应用，并继承该应用的归属关系。这样一来，各个团队就在自己拥有的应用里工作，而不是面对一份把部署中所有测试拉平堆在一起的清单。</p>
+<p>创建应用需要填写名称、基础 URL，以及一组可选的环境（比如开发、预发布和生产）。在应用页面上，团队可以直接新建用例、添加已有用例，并把它们编成测试套件。这里也是 QA Studio 汇报它所运行测试的健康状况的地方。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-1-1.png" alt="QA Studio 应用详情页，在用例和测试套件标签页上方显示通过率、执行次数和失败数"></p>
+<p>图 1：应用详情页，显示通过率、执行次数和失败数，以及用例与测试套件标签页</p>
+<h2>用指标了解应用健康状况</h2>
+<p>测试会产生结果。持续理解这些结果，才能告诉团队某个应用的开发生命周期是否健康，而不只是判断某一次构建是否准备好发布。QA Studio 把每次执行的结果记录为 <a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 自定义指标，维度按应用和环境划分，再把这些指标汇成应用页面上的健康视图。</p>
+<p>页面顶部用三个数字回答最直接的问题：所选时间窗口内的通过率、执行总次数，以及当前的失败数。在它们旁边，QA Studio 还会算出一个 0–100 的健康分。这个分数以通过率为起点，再扣掉偶发失败测试（flaky test）带来的扣分。这样一来，一个测试时而过时而失败的用例，就不会呈现出一幅虚假的完美图景。团队扫一眼应用组合，就能分出哪些稳定、哪些需要处理，而不必逐条打开结果。</p>
+<p>指标标签页从当前快照转向趋势。团队可以选 7 天窗口（按小时粒度）或 30 天窗口（按天粒度），QA Studio 会在这段时间内绘制执行次数、成功数、失败数和平均耗时。由于底层指标带有环境维度，团队还可以把视图过滤到某一个环境，比如对比同一批测试在预发布和生产环境下的表现。</p>
+<p>有两个视图专门盯住最耗团队时间的测试。偶发失败测试视图按最近七天内在通过与失败之间反复横跳的频率给用例排名，把那些间歇性失败挑出来——它们还没变成线上事故，就已经在侵蚀对一个测试套件的信任。最近失败视图则列出最新的失败执行，便于快速分诊。每一条都能链回第 1 篇里介绍的 Amazon Nova Act 轨迹日志和会话录制。从「这个测试挂了」到「这正是 agent 看到的」，只需点一下。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-2-1.png" alt="QA Studio 指标标签页，含每日成功与失败图表、失败热点和偶发失败用例排名"></p>
+<p>图 2：指标标签页，显示所选窗口内的通过率、执行次数和平均耗时，以及每日成功与失败图表、失败热点和偶发失败用例排名</p>
+<h2>用团队和角色控制访问权限</h2>
+<p>指标告诉团队自己的应用做得怎么样。基于团队的用户管理则决定哪些应用本来就属于他们。QA Studio 以团队为线索组织访问权限，一个应用恰好属于一个团队。该团队的成员可以操作它的应用，其他人则看不到它们。</p>
+<p>每个团队成员持有五种角色之一，每种角色都包含其下层角色的权限：</p>
+<ul><li><strong>Admin</strong>：在整个 Studio 范围内访问所有团队、应用和用户，包括创建团队和分配应用。Admin 是 Studio 级角色，而不是按团队逐个指派的。</li><li><strong>Team Lead</strong>：管理自己团队的成员，并为该团队创建应用。</li><li><strong>Editor</strong>：在团队的应用内创建和编辑用例与测试套件。</li><li><strong>Executor</strong>：运行用例和测试套件，但不做修改。</li><li><strong>Viewer</strong>：对团队的应用和结果只有只读权限。</li></ul>
+<p>由于权限是逐级叠加的，Team Lead 拥有 Editor 的全部权限，依次类推直到 Viewer。对某个用例或测试套件的访问权跟随包含它的应用：成员只要能操作这个应用，就能操作它的测试，但边界仍由其角色限定。这让权限管理停留在应用层面，而不是落在成千上万个单项测试上。</p>
+<p>管理员能看到整个 Studio。Users 页面把每个账号连同其团队和角色集中列在一处，管理员一眼就能看出谁在哪个团队担任 Team Lead、谁拥有 Studio 级 Administrator 权限。这里展示的参考部署中，4 个用户分布在两个团队：2 个 Team Lead、1 个 Viewer 和 1 个 Studio 级 Administrator。Teams 页面把同样的数据按团队汇总，并排显示每个团队的成员数和应用数，管理员在打开任何一个团队之前就能看出哪些团队正在扩张。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-3-1.png" alt="QA Studio 全局 Users 页面，逐个列出账号及其团队和角色，并提供团队与角色筛选器"></p>
+<p>图 3：全局 Users 页面，列出每个账号及其团队和角色，可按团队和角色筛选</p>
+<p>同样按团队汇总的成员数据，出现在 Teams 页面上。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-4-1.png" alt="QA Studio Teams 页面，列出每个团队及其成员数和应用数"></p>
+<p>图 4：Teams 页面，显示每个团队的成员数和应用数</p>
+<p>从团队切换到应用，全局的 Applications 列表会显示所有团队的全部应用。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-5-1.png" alt="QA Studio 全局 Applications 列表，显示每个应用的基础 URL、归属团队、用例数和最近一次执行状态"></p>
+<p>图 5：全局 Applications 列表，显示每个应用的基础 URL、归属团队、用例数和最近一次执行状态</p>
+<h2>在团队之间共享应用</h2>
+<p>团队很少完全隔绝地工作。某个平台团队可能拥有一个应用，功能团队需要对着它跑测试，但并不想把改动权限一并交出去。QA Studio 用共享访问支持这种做法：拥有该应用的团队可以把访问权授予另一个团队，级别分为查看、执行或完全访问。</p>
+<p>共享访问遵循一条上限规则：用户在共享应用上的实际权限，取其自身角色与授权级别中较低的那个。被授予完全访问的 Viewer 在共享应用上仍然只能查看，因为他们的角色就是上限。这样，拥有方团队可以广泛共享，而不会授予超出接收方角色所允许的权限。</p>
+<h2>Team Lead 能看到什么</h2>
+<p>Team Lead 在单个团队内工作，而不是整个 Studio。打开 My Team 会看到四个标签页，涵盖这位负责人所掌控的一切：Members、Applications、Use Cases 和 Shared Access。Members 标签页列出团队成员。负责人可以直接就地修改任何成员的角色，也可以新增成员，这样日常的权限管理就留在最贴近这项工作的人手里。这里展示的 AWS Team 有两名成员，一位 Team Lead 和一位 Viewer，由这位负责人管理。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-6-1.png" alt="Team Lead 的 Members 标签页，每位团队成员旁边都有可就地选择的角色下拉框"></p>
+<p>图 6：Team Lead 的 Members 标签页，可为每位成员就地指定角色</p>
+<p>Applications 标签页只显示该团队拥有的应用，并附上各自的测试用例数和最近运行时间，这让负责人专注于自己负责的这块，而不是整个 Studio 的清单。跨团队共享则体现在 Shared Access 标签页上。这里 AWS Team 给 AMZN Team 授予了某个应用的查看权限，负责人可以授予、撤销或调整这一授权的级别。由于授予的是查看级别，AMZN Team 的 Editor 看到的共享应用仍是只读的——这正是上一节那条上限规则的实际应用。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-7-1.png" alt="Team Lead 的 Applications 标签页，只列出该团队拥有的应用"></p>
+<p>图 7：Team Lead 的 Applications 标签页，范围限定在该团队自己的应用上</p>
+<p>同一位 Team Lead 的 Shared Access 标签页记录着哪些其他团队可以访问该团队的应用，以及访问级别。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/27/ML-21434-8-1.png" alt="Team Lead 的 Shared Access 标签页，显示向另一个团队授予的查看级别权限"></p>
+<p>图 8：Team Lead 的 Shared Access 标签页，显示向另一个团队授予的查看级别权限</p>
+<h2>工作原理</h2>
+<p>QA Studio 在前面几篇介绍的同一套无服务器（serverless）基础设施之上，构建了基于团队的访问控制与指标体系，并额外引入了几项 AWS 服务：</p>
+<ul><li><strong><a href="https://aws.amazon.com/cognito/">Amazon Cognito</a></strong>：每个团队映射到一组 Cognito 组，每个角色对应一个。<a href="https://aws.amazon.com/lambda/">AWS Lambda</a> 授权器在每次请求时，把调用者所属的组解析为 API 权限范围和团队上下文。</li><li><strong><a href="https://aws.amazon.com/dynamodb/">Amazon DynamoDB</a></strong>：团队、成员关系、应用归属以及跨团队共享授权，都存放在既有的单表设计里。</li><li><strong>Amazon CloudWatch</strong>：每次执行都会在 QAStudio/Executions 命名空间下发出自定义指标，维度按应用和环境划分。指标 API 再把这些指标读回来，构建健康视图和趋势图。</li><li><strong>AWS Lambda 与 <a href="https://aws.amazon.com/api-gateway/">Amazon API Gateway</a></strong>：后端在两个层面执行访问控制：一是调用者角色所授予的权限范围，二是资源检查——确认调用者所属团队拥有该应用，或已获得共享授权。</li></ul>
+<p>由于访问权是从 Cognito 组成员关系推导出来的，第 2 篇中的 OAuth 客户端凭证流程同样契合这套模型。CI 流水线以机器身份完成认证，只申请它所需的权限范围，不多要一分。</p>
+<h2>快速上手</h2>
+<p>应用、指标和基于团队的访问控制都是 QA Studio 参考解决方案的一部分，你可以用 <a href="https://aws.amazon.com/cdk/">AWS Cloud Development Kit（AWS CDK）</a> 把它部署到自己的 AWS 账户里。所有测试数据、结果和指标都留在你自己的账户边界内。部署完成后，由管理员创建团队、指派成员和角色，并把应用分配给各团队。随着测试运行，各团队的健康指标会陆续填充起来。</p>
+<p>部署步骤和配置细节，请参阅 <a href="https://github.com/aws-samples/sample-qa-studio">QA Studio GitHub 仓库</a>及其文档。</p>
+<h2>结语</h2>
+<p>本文展示了 QA Studio 如何把 agentic QA 自动化从单个测试扩展到整个组织。应用为每个团队的用例和测试套件提供了归属之所，并通过通过率、趋势图、扣除偶发失败影响后的健康分，以及基于 Amazon CloudWatch 指标构建的失败分诊来报告健康状况。以 Amazon Cognito 为后盾的基于团队的用户管理，让各团队在自己拥有的应用内开展工作，跨团队共享则由一条明确的上限规则划定边界。</p>
+<p>这些能力建立在第 1 篇的自然语言测试编写和第 2 篇的测试套件与 CI/CD 集成之上。合在一起，它们帮助 QA 自动化在多个团队间扩展，同时不失去可见性与控制力。想在自己的环境里试试，可以从 QA Studio GitHub 仓库部署参考解决方案，创建第一个团队和应用，跑几个用例，看着指标逐渐成形。想了解背后的 agent，可以查看 <a href="https://aws.amazon.com/ai/agentic-ai/nova-act/">Amazon Nova Act 产品页</a>。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
@@ -553,30 +553,30 @@ trainer.train()</code></pre>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Fleet-wide computer vision lifecycle at the edge with SageMa…</title>
+      <title>用 SageMaker SDK v3 实现边缘侧覆盖全设备群的计算机视觉生命周期</title>
       <link>https://aws.amazon.com/blogs/machine-learning/fleet-wide-computer-vision-lifecycle-at-the-edge-with-sagemaker-sdk-v3/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/fleet-wide-computer-vision-lifecycle-at-the-edge-with-sagemaker-sdk-v3/</guid>
       <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Fleet-wide computer vision lifecycle at the edge with SageMaker SDK v3</description>
+      <description>原文标题：Fleet-wide computer vision lifecycle at the edge with SageMaker SDK v3</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 SageMaker SDK v3 实现边缘的整个舰队计算机视觉生命周期</h1>
-<p>当质量检查概念验证成功时，整个车队的计算机视觉模型生命周期管理就会出现问题。一台相机和一台模型工作正常。然后，工厂要求 40 条生产线获得相同的结果，每条生产线都有多个摄像机，每个摄像机看到的世界都不同。每个都有不同的角度，同一不锈钢表面的不同眩光，以及不同的环境光，具体取决于打开的隔间门。在我们进行的生产部署中，在池化镜头上训练的单个模型的性能低于足够多的单个摄像机，以至于每个摄像机最终都有自己的微调模型。现在真正的问题不再是训练好一个模型。它可以对数千个产品进行培训、评估、版本控制和交付，而每个产品都无需人工参与。</p>
-<p>本文更新了 2023 系列中针对当前 <a href="https://aws.amazon.com/sagemaker/">Amazon SageMaker</a> Python SDK 构建端到端 MLOps 管道以在边缘进行视觉质量检查的模式v3。它使用 Amazon SageMaker Neo 取代了已弃用的 Amazon SageMaker Edge Manager，以实现边缘优化。我浏览了一个双分支 Amazon SageMaker Pipeline，该管道为每个摄像头训练一个异常检测器和一个缺陷分类器，并通过质量门来阻止表现不佳的模型。管道内的 SageMaker Neo 编译步骤可确保每个注册的模型都附带设备优化的工件，并且 AWS Step Functions 编排层负责队列训练。您可以使用 AWS 云开发套件 (AWS CDK) 部署所有内容，并且在合成数据上运行的完整管道的计算成本约为 0.07 美元。</p>
-<p>完整的示例可在 <a href="https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline">aws-samples GitHub 存储库</a> 中获取。</p>
-<h2>解决方案概述</h2>
-<p>下图显示了示例的整个车队范围的模型生命周期。编排层对重新训练请求进行排队并限制并发工作。每个摄像头的训练管道准备数据、训练和评估异常检测器和分类器，并为边缘设备生成版本化的模型工件。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-20483-1-1.png" alt="解决方案架构：SQS FIFO 队列触发 AWS Lambda，后者使用 Amazon DynamoDB 信号量启动 Step Functions 状态机以进行并发控制。状态机启动一个 13 步 SageMaker 管道，其中包含并行输入步骤（预处理、获取最新异常、获取最新分类器）、具有 ONNX 评估、质量门、Neo 编译和模型注册表注册的双训练分支。编译后的工件已登陆 S3。完成和失败集中在一个 SNS 主题上。"></p>
-<p>图 1：解决方案架构</p>
-<p>训练部分是单个 SageMaker Pipeline，由摄像头参数化，每次执行运行 13 个步骤。三个输入步骤并行运行：预处理、获取最新异常和获取最新分类器。管道预处理相机的图像并为每个分支获取相机最新批准的模型，然后训练两个模型。第一个是一个小型卷积自动编码器，它了解正常产品的样子并通过重建错误标记异常。第二个是经过微调以确认缺陷的 ResNet18 分类器。每个分支将其模型导出到 ONNX，根据保留的数据评估导出的工件，并通过质量门。经过大门后，模型将使用 SageMaker Neo 为配置的边缘目标进行编译，然后才在 SageMaker 模型注册表中注册。因此，每个批准的软件包都有一个设备就绪的编译工件。包携带相机 ID 作为元数据，并且每个分支的热启动获取过滤器，因此重新训练始终从该相机自己的历史记录中恢复。</p>
-<p>编排使舰队速度减半。重新训练请求到达 Amazon Simple Queue Service (Amazon SQS) FIFO 队列，AWS Lambda 函数针对每个请求启动 Step Functions 执行。每次执行在启动其管道之前都会通过 DynamoDB 信号量获取一个槽，因此突发请求会以稳定的速率耗尽，而不是一次性全部启动。完成会发布到 Amazon Simple Notification Service (Amazon SNS)，操作失败会通过 Amazon EventBridge 规则到达同一主题，并保留原始错误。</p>
-<p>系统的输出是版本化的、质量门控的、每个相机的模型工件。模型注册表保存可移植的 ONNX，S3 保存该模型的 Neo 编译版本，它是由 DLR 运行时而不是 ONNX 加载的设备优化共享库。两者都已准备好适用于您的工厂使用的任何输送机制。</p>
-<h2>先决条件</h2>
-<p>要部署示例，您需要以下内容：</p>
-<ul><li>有权创建 AWS Identity and Access Management (IAM) 角色的 AWS 账户。</li><li>Amazon Simple Storage Service (Amazon S3) 存储桶。</li><li>Amazon Elastic Container Registry (Amazon ECR) 存储库。</li><li>堆栈中的 SageMaker AI、AWS Step Functions、AWS Lambda、Amazon Simple Queue Service (Amazon SQS)、Amazon Simple notification Service (Amazon SNS)、Amazon EventBridge 和 Amazon DynamoDB 资源。</li><li>Python 3.10、3.11 或 3.12、Docker。</li><li>AWS CDK CLI 版本 2.1131.0 或更高版本。</li></ul>
-<p>以前的 CLI 版本因云程序集架构与最新版本的“aws-cdk-lib”不匹配而失败。无需增加服务配额。默认情况下，编排层一次最多允许执行 5 个管道，这将并发 SageMaker 训练作业保持在标准帐户配额内。</p>
-<p>如果您部署到 CLI 默认值以外的 AWS 区域，请在部署命令本身而不是在 shell 配置文件中设置“AWS_REGION”、“AWS_DEFAULT_REGION”和“CDK_DEFAULT_REGION”这三个区域，例如，“AWS_REGION=us-east-2 AWS_DEFAULT_REGION=us-east-2 CDK_DEFAULT_REGION=us-east-2 cdk deploy” --全部`。 CDK CLI、Boto3 和 AWS 命令​​行界面 (AWS CLI) 通过重叠但不相同的变量集解析区域，不匹配会导致部分部署混乱。为命令添加前缀仅设置该调用的所有三个区域，因此您自己的默认区域保持不变。</p>
-<h2>使用 SDK v3 定义训练管道</h2>
-<p>本节中的代码摘自存储库中的 CDK 应用程序，而不是独立脚本，并且它在 cdk 部署期间运行，此时堆栈综合了管道定义。环境设置和部署命令稍后在部署和运行示例下进行。 SDK v3 将 SageMaker Python SDK 重新组织为模块化包，导入显示了库的新形态：</p>
+<h1>用 SageMaker SDK v3 实现边缘侧覆盖全设备群的计算机视觉生命周期</h1>
+<p>全设备群的计算机视觉模型生命周期管理，这个问题在质量检测的概念验证一成功就冒出来了。一台相机配一个模型没问题。接着工厂要求在 40 条产线上得到同样的结果，每条产线上有好几台相机，而每台相机看到的世界都不一样：角度不同，同一块不锈钢表面的反光不同，开着哪扇厂房的门也决定了环境光有多少。在我们参与过的生产部署中，用汇总素材训练出来的单个模型在足够多的单台相机上表现不佳，最后每台相机都配上了自己微调过的模型。于是真正的问题不再是「把一个模型训好」，而是「训练、评估、版本化并交付成千上万个模型，而且每一个都不需要有人类介入」。</p>
+<p>本文更新了 2023 年系列文章<a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-mlops-pipeline-for-visual-quality-inspection-at-the-edge-part-1/">在边缘构建用于视觉质量检测的端到端 MLOps 流水线</a>中提出的模式，以适配当前的 <a href="https://aws.amazon.com/sagemaker/">Amazon SageMaker</a> Python SDK v3。它用 Amazon SageMaker Neo 取代了此后被弃用的 Amazon SageMaker Edge Manager 来做边缘优化。我会讲解一条双分支的 Amazon SageMaker Pipeline：它为每台相机训练一个异常检测器和一个缺陷分类器，并设有质量门禁来拦下表现不佳的模型。流水线中的 SageMaker Neo 编译步骤确保每个注册的模型都随附一份针对设备优化的产物；AWS Step Functions 编排层则负责控制设备群训练的节奏。所有东西都用 AWS Cloud Development Kit (AWS CDK) 部署，在合成数据上跑完一次完整流水线大约花费 $0.07 的计算费用。</p>
+<p>完整示例可在 <a href="https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline">aws-samples GitHub 仓库</a>中找到。</p>
+<h2>方案概览</h2>
+<p>下面的示意图展示了示例中覆盖全设备群的模型生命周期。编排层对再训练请求排队并限制并发量。每台相机各自有一条训练流水线，负责准备数据、训练并评估一个异常检测器和一个分类器，并产出带版本的模型产物供边缘设备使用。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-20483-1-1.png" alt="方案架构：SQS FIFO 队列触发 AWS Lambda，后者启动一个带 Amazon DynamoDB 信号量做并发控制的 Step Functions 状态机。该状态机启动一条 13 步的 SageMaker Pipeline，包含并行的入口步骤（Preprocess、Fetch Latest Anomaly、Fetch Latest Classifier）、带 ONNX 评估的双训练分支、质量门禁、Neo 编译以及 Model Registry 注册。编译后的产物落到 S3。完成与失败都汇入同一个 SNS 主题。"></p>
+<p>图 1：方案架构</p>
+<p>训练这半边是一条按相机参数化的 SageMaker Pipeline，每次执行跑 13 个步骤。三个入口步骤并行运行：Preprocess、Fetch Latest Anomaly 和 Fetch Latest Classifier。流水线先预处理该相机的图像，并为每条分支取回该相机最近一次获批的模型，然后训练两个模型。第一个是一个小型卷积自编码器，学习正常产品长什么样，并通过重建误差标记异常。第二个是微调过的 ResNet18 分类器，用来确认缺陷。每条分支都把自己的模型导出为 ONNX，用留出数据评估导出的产物，再通过质量门禁。过了门禁之后，模型会用 SageMaker Neo 针对配置的边缘目标编译，然后才注册进 SageMaker Model Registry。结果是，每个获批的模型包都带有一份设备就绪的编译产物。模型包把相机 ID 作为元数据携带，各分支的 warm-start 取回会按它过滤，因此再训练总是从该相机自己的历史继续。</p>
+<p>编排这半边负责控制设备群的节奏。再训练请求进入 Amazon Simple Queue Service (Amazon SQS) FIFO 队列，AWS Lambda 函数为每个请求启动一次 Step Functions 执行。每次执行在启动自己的流水线之前，先通过 DynamoDB 信号量取一个名额，这样一拥而上的请求就会以稳定的速率排空，而不是一齐启动。完成情况发布到 Amazon Simple Notification Service (Amazon SNS)，运维层面的失败则经由一条 Amazon EventBridge 规则进入同一个主题，并保留原始错误信息。</p>
+<p>系统的产出是带版本、经过质量门禁、按相机划分的模型产物。Model Registry 保存可移植的 ONNX，S3 保存该模型经 Neo 编译的构建结果——那是一个针对设备优化的共享库，由 DLR runtime 加载，而不是 ONNX。两者都可以直接配合工厂使用的任何交付方式。</p>
+<h2>前置条件</h2>
+<p>部署这个示例需要具备以下条件：</p>
+<ul><li>一个有权创建 AWS Identity and Access Management (IAM) 角色的 AWS 账户。</li><li>一个 Amazon Simple Storage Service (Amazon S3) 存储桶。</li><li>一个 Amazon Elastic Container Registry (Amazon ECR) 仓库。</li><li>栈中用到的 SageMaker AI、AWS Step Functions、AWS Lambda、Amazon Simple Queue Service (Amazon SQS)、Amazon Simple Notification Service (Amazon SNS)、Amazon EventBridge 和 Amazon DynamoDB 资源。</li><li>Python 3.10、3.11 或 3.12，以及 Docker。</li><li>AWS CDK CLI 2.1131.0 或更高版本。</li></ul>
+<p>更早的 CLI 版本在与较新 <code>aws-cdk-lib</code> 交互时会因云组装 schema 不匹配而失败。无需申请提升服务配额。编排层默认最多同时放行 5 次流水线执行，这能让并发的 SageMaker 训练作业保持在账户的标准配额之内。</p>
+<p>如果你要部署到 CLI 默认区域以外的 AWS 区域，请把 <code>AWS_REGION</code>、<code>AWS_DEFAULT_REGION</code> 和 <code>CDK_DEFAULT_REGION</code> 三个变量都写在部署命令本身上，而不是写进 shell 配置文件，例如 <code>AWS_REGION=us-east-2 AWS_DEFAULT_REGION=us-east-2 CDK_DEFAULT_REGION=us-east-2 cdk deploy --all</code>。CDK CLI、Boto3 和 AWS Command Line Interface (AWS CLI) 各自从有重叠但并不完全相同的变量集合里解析区域，一旦不一致就会产生令人困惑的半成品部署。给命令加前缀只会为这一次调用设置这三个变量，你自己默认的区域不受影响。</p>
+<h2>用 SDK v3 定义训练流水线</h2>
+<p>本节的代码摘自仓库里的 CDK 应用，而不是独立脚本；它在 <code>cdk deploy</code> 期间运行——那时栈会合成出流水线定义。环境准备和部署命令稍后见「部署并运行示例」一节。SDK v3 把 SageMaker Python SDK 重组为若干模块化包，下面这些 import 展示了新的库结构：</p>
 <pre><code>from sagemaker.train import ModelTrainer
 from sagemaker.train.configs import InputData, Compute, OutputDataConfig
 from sagemaker.core.training.configs import MetricDefinition
@@ -587,7 +587,7 @@ from sagemaker.mlops.workflow.model_step import ModelStep
 from sagemaker.mlops.workflow.condition_step import ConditionStep
 from sagemaker.core.workflow.conditions import ConditionGreaterThanOrEqualTo
 from sagemaker.core.workflow.functions import JsonGet</code></pre>
-<p>安装 <code>sagemaker&gt;=3.0.0,&lt;4</code> 会将 <code>sagemaker-core</code>、<code>sagemaker-train</code>、<code>sagemaker-serve</code> 和 <code>sagemaker-mlops</code> 作为单独的软件包引入。 v2 跨“Estimator”构造函数参数传播的训练配置现在位于传递给“ModelTrainer”的类型化配置对象中。这是异常分支的训练器，来自样本的逐字记录：</p>
+<p>安装 <code>sagemaker&gt;=3.0.0,&lt;4</code> 会把 <code>sagemaker-core</code>、<code>sagemaker-train</code>、<code>sagemaker-serve</code> 和 <code>sagemaker-mlops</code> 作为独立包一并拉取。v2 中分散在 <code>Estimator</code> 构造函数参数里的训练配置，如今变成传给 <code>ModelTrainer</code> 的强类型配置对象。下面是异常分支的 trainer，原样摘自示例：</p>
 <pre><code>anomalib_trainer = ModelTrainer(
     training_image=custom_training_image_uri,
     compute=Compute(
@@ -617,13 +617,13 @@ from sagemaker.core.workflow.functions import JsonGet</code></pre>
         ),
     ]
 )</code></pre>
-<p>“anomalib_input_data”从上游步骤属性连接四个通道（“train”、“validation”、“test”、“pretrained_model”），而“run_prefix”将每个 S3 路径范围限定到管道执行 ID，因此并发队列运行绝不会发生冲突。两者都在存储库中。</p>
-<p>当管道位于 CDK 应用程序内部时，两个 v3 行为很重要，并且两者都不会作为重大更改出现在变更日志中。首先，SDK v3 在构建管道定义时根据实时 IAM 验证管道的执行角色。此验证发生在综合时而不是执行时。 CDK 应用程序无法在一次部署中创建角色和管道，因为当 SDK 验证角色时该角色还不存在。这与 cdk bootstrap 是分开的，后者为每个账户和区域配置一次 CDK 工具包资源，并且可能已经在您的账户中完成。该示例自己的两阶段部署是由恰好共享该名称的上下文标志驱动的。使用“-c bootstrap=true”的初始传递创建角色、存储桶和 ECR 存储库，第二传递根据现有角色合成管道。管道定义中嵌入的角色 Amazon 资源名称 (ARN) 也必须是具体字符串，而不是未解析的 CDK 令牌。</p>
-<p>其次，v3 角色验证器在没有资源 ARN 的情况下模拟 ECR 拉取权限，因此作用域为单个 ECR 存储库的执行角色无法验证，即使它可以在运行时运行。因此，样本的角色获得了更广泛的 ECR 资助。</p>
-<p>最后，示例使用的一个 v3 习惯：使用 PipelineSession(default_bucket=your_bucket) 构建管道，将 SDK 管理的上传（例如步骤代码）路由到管道自己的存储桶中，因此每个工件都位于一个位置，并且执行角色的权限覆盖单个存储桶。 （授予角色对 SDK 默认存储桶的访问权限也可以。这种方法更简洁。）</p>
-<h2>与缺陷数据行为方式相匹配的质量门</h2>
-<p>每个经过训练的模型在注册之前都会进行评估，并且评估针对导出的 ONNX 工件而不是内存中的 PyTorch 模型运行。这种区别很重要：您门控的工件就是您交付的工件，因此导出问题永远不会让损坏的模型失去看起来健康的训练运行。</p>
-<p>AUROC 上的异常分支门至少为 0.8。分类器分支同时对两个指标进行门控，指标的选择由缺陷数据的定义属性决定：严重的类别不平衡。在此示例中，大约 90% 的图像效果良好，这对于生产线来说是现实的。相对于这种分布，简单的准确率是没有意义的，因为预测每张图像“良好”的模型得分约为 0.9，同时发现零缺陷。平衡准确度（每类召回的平均值）可以纠正这一点，但它有自己的盲点。对于良好部件具有完美召回率而对于缺陷部件仅有 20% 召回率的模型仍然得分 (1.0 + 0.2) / 2 = 0.6。因此，门要求至少 0.6 的平衡准确度和至少 0.5 的缺陷召回率：</p>
+<p><code>anomalib_input_data</code> 从上游步骤属性接入四个通道（<code>train</code>、<code>validation</code>、<code>test</code>、<code>pretrained_model</code>），<code>run_prefix</code> 则把每条 S3 路径限定到流水线执行 ID 上，使并发的设备群运行不会互相冲突。两者都在仓库里。</p>
+<p>当流水线活在一个 CDK 应用里时，有两个 v3 的行为很关键，而它们都没有在更新日志里以破坏性变更的形式出现。第一，SDK v3 在构建流水线定义时，会拿真实的 IAM 去校验流水线的执行角色。这项校验发生在合成阶段，而不是执行阶段。CDK 应用无法在一次部署里同时创建角色和流水线，因为 SDK 校验时角色还不存在。这与 <code>cdk bootstrap</code> 是两回事——后者为每个账户和区域一次性准备 CDK 工具链资源，你的账户里可能早就做过了。示例自身采用的两阶段部署由一个上下文开关驱动，而这个开关恰好同名。第一轮带上 <code>-c bootstrap=true</code> 会创建角色、存储桶和 ECR 仓库，第二轮则基于已经存在的角色来合成流水线。嵌在流水线定义里的角色 Amazon Resource Name (ARN) 也必须是一个具体的字符串，而不是未解析的 CDK token。</p>
+<p>第二，v3 的角色校验器在模拟 ECR 拉取权限时并不带上资源 ARN，因此一个限定到单个 ECR 仓库的执行角色会校验失败，即便它在运行时完全可用。出于这个原因，示例中的角色带了一个范围更宽的 ECR 授权。</p>
+<p>最后是示例采用的一个 v3 习惯：用 <code>PipelineSession(default_bucket=your_bucket)</code> 构造流水线，会把 SDK 管理的上传（比如步骤代码）导向流水线自己的存储桶，这样所有产物都集中在一处，执行角色的权限也只需要覆盖一个存储桶。（给角色授予访问 SDK 默认存储桶的权限同样可行，但这种做法更整洁。）</p>
+<h2>与缺陷数据特性相匹配的质量门禁</h2>
+<p>每个训练好的模型在注册之前都要评估，而且评估针对的是导出的 ONNX 产物，而不是内存中的 PyTorch 模型。这个区别很关键：你把关的产物就是你交付的产物，因此导出环节的问题绝不可能让一个坏模型混过一场看起来一切正常的训练。</p>
+<p>异常分支的门禁是 AUROC 不低于 0.8。分类分支的门禁同时看两个指标，而指标的选择由缺陷数据的决定性特征决定：严重的类别不平衡。在这个示例里大约 90% 的图像是良品，这对产线来说是现实的。在这种分布下，单看准确率毫无意义——一个对每张图都预测「良品」的模型能拿到约 0.9 的分数，却一个缺陷都抓不到。平衡准确率（各类别召回率的平均值）修正了这一点，但它也有自己的盲区：一个对良品召回率完美、对缺陷召回率只有 20% 的模型，得分依然是 (1.0 + 0.2) / 2 = 0.6。所以门禁要求同时满足：平衡准确率不低于 0.6，且缺陷召回率不低于 0.5。</p>
 <pre><code>step_check_classifier = ConditionStep(
     name=&quot;CheckClassifierQuality&quot;,
     conditions=[
@@ -648,14 +648,14 @@ from sagemaker.core.workflow.functions import JsonGet</code></pre>
     else_steps=[step_fail_classifier],
     depends_on=[step_eval_classifier],
 )</code></pre>
-<p>“ConditionStep”对其条件进行 AND 运算，因此两者都必须通过。阈值是管道参数，每次执行时均可调整，无需重新部署。如果门失败，“FailStep”标记执行失败，并且该分支的模型永远不会到达注册表（两个分支独立门，因此另一个分支的模型仍然可以注册）。该机队继续为该相机之前批准的型号提供服务。</p>
-<p>训练代码从另一方面解决了同样的不平衡问题。该分类器是一个经过微调的“resnet18”，具有 ImageNet 权重和两类头。对于每个相机的数据集大小，微调预训练权重可以防止模型崩溃到多数类别。训练代码使用逆类频率通过“WeightedRandomSampler”平衡训练批次，而损失保持未加权。将加权损失与加权采样相结合会过度校正少数群体。</p>
-<h2>在管道内使用 SageMaker Neo 进行边缘编译</h2>
-<p>请注意前面代码中门的“if_steps”：经过门，编译首先运行，注册取决于它。两个训练脚本都导出带有动态批处理轴的 ONNX。质量门对 ONNX 运行时下导出的工件进行评分，然后“CompileAnomalibNeo”或“CompileClassifierNeo”步骤将门控工件交给 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/neo.html">SageMaker Neo</a>。不变量是门，然后编译，然后注册。仅当模型也针对队列的边缘目标进行编译时，它才会成为已批准的包，因此注册表绝不会公布设备无法运行的模型。</p>
-<p>编译步骤封装了三个容易出错的细节。 Neo 要求输入 tarball 仅包含模型文件，但训练作业会与 ONNX 模型一起发出带有检查点和指标的“model.tar.gz”。该步骤首先重新打包仅限 ONNX 的 tarball。 Neo 还需要具体的输入形状，同时导出声明动态批处理轴，因此批处理大小 1 固定在编译请求中。由于管道步骤可以重试，因此编译作业名称确定性地从执行 ID 派生，因此重试会继续轮询已启动的作业，而不是孤立它。</p>
-<p>target 是一个管道参数： <code>NeoTargetDevice</code> 选择一个命名设备，例如 <code>jetson_xavier</code> 或 <code>rasp4b</code>，其默认编译为 <code>NeoTargetOs</code>/<code>NeoTargetArch</code> 平台，默认为 LINUX/X86_64。编译后的包包含优化的“compiled.so”以及用于加载它的<a href="https://github.com/neo-ai/neo-ai-dlr">DLR运行时</a>。默认输出在任何 x86_64 Linux 主机上运行，​​因此您可以在提交到特定于设备的目标之前对其进行验证。编译本身不收取任何费用。您需要为驱动它的处理实例以及输出的 S3 存储付费。为了稍后为其他设备类型编译已注册的模型，无需重新训练，存储库包含一个针对模型注册表运行相同流程的临时脚本。</p>
-<h2>模型注册表中的每个相机模型</h2>
-<p>每个分支注册到自己的模型包组中，每个包都携带相机ID及其评估指标。从示例中，省略了指标接线：</p>
+<p>一个 <code>ConditionStep</code> 会把它的条件取「与」，因此两个条件都必须通过。阈值是流水线参数，每次执行都能调整，无需重新部署。如果某个门禁没过，<code>FailStep</code> 会把这次执行标记为失败，该分支的模型也就永远不会进入 registry（两条分支各自独立设门禁，所以另一条分支的模型仍可能注册成功）。设备群会继续为该相机提供上一个获批的模型。</p>
+<p>训练代码从另一侧处理同一个不平衡问题。分类器是一个带 ImageNet 权重和二分类头的微调 <code>resnet18</code>。在每台相机各自的数据集规模下，微调预训练权重正是防止模型塌陷到多数类的原因。训练代码用 <code>WeightedRandomSampler</code> 按类别频率的倒数来平衡训练批次，而损失函数保持不加权。把加权损失和加权采样叠加使用，会朝少数类过度校正。</p>
+<h2>在流水线内部用 SageMaker Neo 做边缘编译</h2>
+<p>注意前面代码里门禁的 <code>if_steps</code>：过了门禁之后先执行编译，注册则依赖编译结果。两个训练脚本都导出带动态批次轴的 ONNX。质量门禁在 ONNX Runtime 下给这些导出的产物打分，然后由 <code>CompileAnomalibNeo</code> 或 <code>CompileClassifierNeo</code> 步骤把通过门禁的产物交给 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/neo.html">SageMaker Neo</a>。不变式是：先设门禁，再编译，最后注册。只有同时为设备群的边缘目标编译成功的模型，才会成为 Approved 状态的模型包，因此 registry 绝不会登记一个设备跑不起来的模型。</p>
+<p>编译步骤把三个容易出错的细节封装了起来。Neo 要求输入 tar 包里只含模型文件，但训练作业产出的 <code>model.tar.gz</code> 里在 ONNX 模型旁边还带着 checkpoint 和指标文件，所以该步骤会先重新打包成只含 ONNX 的 tar 包。Neo 还要求具体的输入形状，而导出时声明的是动态批次轴，因此编译请求里把批大小固定为 1。再者，由于流水线步骤可能会重试，编译作业名由执行 ID 确定性地派生而来，这样重试时会继续轮询它已经启动的那个作业，而不会把它变成孤儿。</p>
+<p>目标是一个流水线参数：<code>NeoTargetDevice</code> 选择某个具名设备，比如 <code>jetson_xavier</code> 或 <code>rasp4b</code>；它的默认值则针对 <code>NeoTargetOs</code>/<code>NeoTargetArch</code> 平台编译，默认是 LINUX/X86_64。编译后的包包含优化过的 <code>compiled.so</code>，以及用于加载它的 <a href="https://github.com/neo-ai/neo-ai-dlr">DLR runtime</a>。默认产物可以运行在任何 x86_64 Linux 主机上，因此你可以先验证，再决定是否绑定到特定设备目标。编译本身不收费，你要付的是驱动它的那台处理实例，以及产物在 S3 上的存储费用。如果之后想为已注册的模型再编译出其他设备类型、而不重新训练，仓库里还提供一个临时脚本，对 Model Registry 跑同样的流程。</p>
+<h2>Model Registry 中按相机划分的模型</h2>
+<p>每条分支注册到各自的模型包组，每个模型包都带着相机 ID 和它的评估指标。下面摘自示例，略去了指标部分：</p>
 <pre><code>classifier_model_builder = ModelBuilder(
     s3_model_data_url=classifier_model_data,
     image_uri=custom_training_image_uri,
@@ -672,10 +672,10 @@ step_register_classifier = ModelStep(
         customer_metadata_properties={&quot;CameraId&quot;: camera_id},
     ),
 )</code></pre>
-<p>“customer_metadata_properties”中的相机标识将两个共享包组转变为一个队列目录。来自所有摄像机的包位于同一组中，并且通过过滤元数据来恢复每个摄像机的历史记录。每个分支都有一个获取步骤，该步骤会按最新的顺序对批准的包进行分页，直到找到请求相机的最新型号，因为“ListModelPackages”无法在客户元数据服务器端进行过滤。在相机第一次运行时，获取什么也找不到，训练又回到冷启动初始化（分类器的 ImageNet 权重、自动编码器的随机初始化）。以后的每次运行都会从该摄像机自己的先前模型恢复，这使得在整个机群中进行频繁、廉价、增量的重新训练变得可行。</p>
-<p>请注意这些注册表项是什么和不是：它们对版本化、质量门控的工件进行分类，但它们的容器引用是训练图像，它不提供任何推理端点。它们存在于队列工作流中，其中下游系统提取工件并将其运送到设备，而不是“CreateEndpoint”。</p>
-<h2>协调舰队训练请求</h2>
-<p>每个 AWS 账户都有并发 SageMaker 训练作业的服务配额，并且这里的每个管道执行都会启动多个作业，因此队列重新训练需要调整节奏。必须采取某种措施来阻止 500 个请求的爆发变成 500 个同时管道启动。该示例使用信号量，即可用插槽的计数器，其工作方式类似于具有五个车位的停车场。在 Step Functions 状态机启动管道之前，它会通过原子递增 DynamoDB 中的计数器来占用一个槽，条件是一旦达到上限就拒绝递增：</p>
+<p>写进 <code>customer_metadata_properties</code> 的相机标识，把两个共享的模型包组变成了一份设备群目录。所有相机的模型包都放在同一批组里，按相机划分的历史则通过过滤该元数据来还原。每条分支都有一个取回步骤，按从新到旧逐页翻找获批的模型包，直到找到发起请求的那台相机最新的模型，因为 <code>ListModelPackages</code> 无法在服务端按客户元数据过滤。某台相机首次运行时取回不到任何东西，训练便退回冷启动初始化（分类器用 ImageNet 权重，自编码器用随机初始化）。之后的每一次运行都从该相机自己上一个模型继续，这正是让跨整个设备群的频繁、低成本增量再训练成为可能的关键。</p>
+<p>注意这些 registry 条目是什么、又不是什么：它们登记的是带版本、经过质量门禁的产物，但它们的容器引用指向训练镜像，而训练镜像不承载任何推理端点。它们是为这样一条设备群流程而存在的——由下游系统拉取产物并下发到设备——而不是用来配合 <code>CreateEndpoint</code> 的。</p>
+<h2>编排设备群训练请求</h2>
+<p>每个 AWS 账户对并发的 SageMaker 训练作业都有服务配额，而这里每次流水线执行都会启动若干作业，所以设备群再训练需要控节奏。必须得有某种机制，阻止一波 500 个请求变成 500 次同时启动的流水线。示例用的是信号量——一个可用名额的计数器，像一个只有五个车位的停车场。在 Step Functions 状态机启动流水线之前，它通过原子递增 DynamoDB 中的计数器来取一个名额，并用条件表达式在达到上限后拒绝继续递增：</p>
 <pre><code>acquire_semaphore = tasks.DynamoUpdateItem(
     self, &quot;AcquireSemaphore&quot;,
     table=semaphore_table,
@@ -683,10 +683,10 @@ step_register_classifier = ModelStep(
     update_expression=&quot;SET ActiveCount = if_not_exists(ActiveCount, :zero) + :one&quot;,
     condition_expression=&quot;attribute_not_exists(ActiveCount) OR ActiveCount &lt; :limit&quot;,
 )</code></pre>
-<p>如果所有槽都被占用，则执行将等待并重试。当其管道完成时，它会递减计数器以释放插槽。有一个细节值得纳入您自己的设计中。 DynamoDB 条件表达式在单个原子操作中强制执行上限，而不是由状态机读取计数器并做出决定，这会在读取和写入之间留下竞争窗口。该存储库实施其余的操作强化，包括释放每个故障路径上的槽以及通过 Amazon EventBridge 将失败的执行转发到 Amazon SNS。它的自述文件涵盖了等待范围的大小。</p>
-<p>上限为 5 是一个堆栈参数，设置较低，以便示例可以在任何标准帐户中部署和运行，而无需请求增加配额。将其调整为您帐户的培训作业配额支持的任何内容。超过单个账户的配额后，扩大车队培训规模就是一个单独的主题。标准杠杆是提高服务配额、跨实例类型或区域分散培训以及跨多个账户分配队列。您还可以在 SQS 中保留积压工作，仅在产能释放时才允许工作。这些选择取决于您的舰队的规模和形状。该示例为您提供了可扩展的工作框架。</p>
+<p>如果名额已满，这次执行就等待并重试；当它的流水线结束，计数减一，释放名额。有个细节值得借鉴到你自己的设计里：DynamoDB 的条件表达式在单次原子操作中施加上限，而不是由状态机先读计数器再判断——后者会在读与写之间留下竞争窗口。仓库实现了其余的运维加固，包括在每条失败路径上释放名额，以及通过 Amazon EventBridge 把失败执行转发到 Amazon SNS。其 README 讨论了等待边界的设定。</p>
+<p>上限 5 是一个栈参数，设得较低，好让这个示例在任何标准账户里都能部署并运行，而不必申请提升配额。你可以按账户的训练作业配额把它调到合适的值。超出单个账户的配额之后，如何扩展设备群训练就是另一个话题了。常规手段包括提升服务配额、把训练分散到不同实例类型或不同 Region，以及把设备群分布到多个账户。你也可以把积压的任务留在 SQS 里，等容量释放出来再放行。这些选择取决于你设备群的规模与构成。示例给你的是一份可以直接扩展的骨架。</p>
 <h2>部署并运行示例</h2>
-<p>存储库 README 中的演练是权威版本。以下简短形式从干净的签出开始，并在第一次部署之前设置环境：</p>
+<p>仓库 README 中的操作指南是权威版本。下面这个精简版从全新检出开始，在第一次部署前先准备好环境：</p>
 <pre><code>git clone https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline
 cd sample-sagemaker-fleet-cv-pipeline &amp;&amp; python3 -m venv .venv &amp;&amp; source .venv/bin/activate
 pip install -r requirements.txt
@@ -694,47 +694,47 @@ cdk bootstrap                                           # once per account/regio
 cdk deploy SageMakerCVPipelineStack -c bootstrap=true   # roles, bucket, ECR
 cdk deploy --all                                        # pipeline + orchestration
 ./scripts/push_ecr_image.sh                             # build and push training image</code></pre>
-<p>默认情况下，管道生成合成生产线图像，因此您可以端到端验证整个系统，无需数据集和数据批准。完整运行会在大约 15 分钟内执行所有 13 个步骤，包括 Neo 编译，并且在“ml.m5.xlarge”计费时间中花费大约 0.07 美元（美国东部（俄亥俄）区域 (us-east-2)，2026 年 7 月，按需）。以样本规模计算，编排资源每月的总成本远低于 0.10 美元。</p>
-<p>为了在真实图像上练习管道，存储库包含一个 <a href="https://github.com/Shenggan/BCCD_Dataset">BCCD 数据集</a> 的下载器。该数据集是 364 个带注释的血涂片显微镜图像的集合，最初在 GitHub 上开源，并在 MIT 许可下重新组织为 Pascal VOC 格式。相同的数据集也由 <a href="https://public.roboflow.com/object-detection/bccd">Roboflow</a> 作为公共域进行分发。该脚本将血小板的存在映射到缺陷类别，可选择分割每个摄像机的图像以模拟机群，并将训练 tarball 上传到管道桶。随附的笔记本对真实数据运行完整的管道，并对正常和异常样本进行并行 ONNX 推理。将血小板视为缺陷是制造缺陷分布的说明性替代，而不是临床声明。</p>
+<p>默认情况下流水线会生成合成的产线图像，因此你不用数据集、也不需要任何数据审批，就能端到端验证整套系统。完整跑一次会执行全部 13 个步骤，包含两次 Neo 编译，大约 15 分钟，按计费的 <code>ml.m5.xlarge</code> 机时计算花费约 $0.07（US East (Ohio) 区域 (us-east-2)，2026 年 7 月，按需价格）。在示例规模下，编排资源合计每月远低于 $0.10。</p>
+<p>要在真实图像上跑通这条流水线，仓库提供了一个 <a href="https://github.com/Shenggan/BCCD_Dataset">BCCD 数据集</a>的下载脚本。该数据集是 364 张标注过的血涂片显微图像，最初在 GitHub 上开源，后来按 MIT 许可重新整理为 Pascal VOC 格式。同一数据集也由 <a href="https://public.roboflow.com/object-detection/bccd">Roboflow</a> 以公有领域方式发布。该脚本把血小板的有无映射为缺陷类别，可以选择按相机切分图像以模拟设备群，并把训练用 tar 包上传到流水线存储桶。配套的 notebook 会在真实数据上跑完整条流水线，并对一个正常样本和一个异常样本做并排的 ONNX 推理。把血小板当作缺陷，只是用制造缺陷分布来举例说明，并非临床结论。</p>
 <h2>清理</h2>
-<p>模型包是在管道运行时创建的，因此 AWS CloudFormation 无法删除它们。首先使用 AWS CLI 删除它们，然后使用“cdk destroy --all -c bootstrap=true --force”销毁堆栈。 <a href="https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline">自述文件</a>列出了确切的命令。</p>
-<h2>结论</h2>
-<p>在这篇文章中，我展示了适用于车队规模计算机视觉生命周期的有效 SageMaker SDK v3 参考架构。该架构包括一个双分支训练管道，其中每个模型都在其导出的 ONNX 工件上进行质量控制，使用 SageMaker Neo 进行编译，然后才进行注册。模型注册表布局使用相机元数据将共享包组转换为每个相机的可热启动历史记录，并且 Step Functions 编排层在帐户配额内调整队列训练。对于通过 Amazon Lookout for Vision 等托管选项满足其需求的团队来说，这是更简单的路径。此模式针对的是托管选项未涵盖的每个摄像机、机群规模的限制。设计规则超越了计算机视觉：平衡准确性加上少数类召回而不是准确性，评估和编译您交付的工件，并通知操作故障而不是静默终止。</p>
-<p>该示例在几分钟内即可部署，完整的验证运行成本约为 7 美分的计算成本，因此低成本的下一步是克隆 <a href="https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline">存储库</a> 并运行它。从那里，将 BCCD 下载器指向真实的存储桶，为您的硬件设置“NeoTargetDevice”，或根据您的队列调整编排范围的大小。对于 SDK v3 迁移本身，<a href="https://sagemaker.readthedocs.io/">SageMaker Python SDK 文档</a> 和宣布新 SDK 的两部分系列是我始终保持开放的参考资料。</p>
-<p>如果您需要帮助将此模式适应您的生产环境，请联系您的 AWS 客户团队。</p>
+<p>模型包是在流水线运行时创建的，因此 AWS CloudFormation 无法删除它们。请先用 AWS CLI 移除这些模型包，再用 <code>cdk destroy --all -c bootstrap=true --force</code> 销毁各个栈。确切的命令列在 <a href="https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline">README</a>中。</p>
+<h2>结语</h2>
+<p>本文展示了一套可运行的 SageMaker SDK v3 参考架构，用于设备群规模的计算机视觉生命周期管理。这套架构包含一条双分支训练流水线：每个模型都要在导出的 ONNX 产物上通过质量门禁，用 SageMaker Neo 编译，然后才注册。一套 Model Registry 结构利用相机元数据，把共享的模型包组变成按相机划分、可用于 warm start 的历史；一层 Step Functions 编排则在账户配额内为设备群训练控制节奏。如果你的需求能被 Amazon Lookout for Vision 之类的托管选项满足，那是一条更简单的路。这套模式针对的正是托管选项覆盖不到的「按相机划分、面向设备群规模」这一约束。它的设计原则也能迁移到计算机视觉之外：用平衡准确率加少数类召回率而不是准确率设门禁，评估并编译你真正要交付的那个产物，以及让运维失败发出通知而不是悄无声息地终止。</p>
+<p>这个示例几分钟就能部署完，一次完整验证运行大约花七美分的计算费用，所以一个低门槛的下一步就是克隆<a href="https://github.com/aws-samples/sample-sagemaker-fleet-cv-pipeline">仓库</a>并跑起来。接下来，你可以把 BCCD 下载脚本指向一个真实的存储桶，为你的硬件设置 <code>NeoTargetDevice</code>，或者按设备群的规模调整编排的等待边界。至于 SDK v3 迁移本身，<a href="https://sagemaker.readthedocs.io/">SageMaker Python SDK 文档</a>以及宣布新 SDK 的那个两篇系列文章，是我全程放在手边的参考。</p>
+<p>如果你需要帮助把这套模式适配到你的生产环境，请联系你的 AWS 客户团队。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>AI 代理的土拨鼠日：在 Amazon Bedrock 上使用 OpenAI 模型的提示缓存模式</title>
+      <title>AI agent 的土拨鼠日：在 Amazon Bedrock 上使用 OpenAI 模型的提示缓存模式</title>
       <link>https://aws.amazon.com/blogs/machine-learning/groundhog-day-for-ai-agents-prompt-caching-patterns-for-using-openai-models-on-amazon-bedrock/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/groundhog-day-for-ai-agents-prompt-caching-patterns-for-using-openai-models-on-amazon-bedrock/</guid>
       <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Groundhog Day for AI agents: Prompt caching patterns for using OpenAI models on Amazon Bedrock</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>AI 代理的土拨鼠日：在 Amazon Bedrock 上使用 OpenAI 模型的提示缓存模式</h1>
-<p><em>每次您剥离代理时，它都必须在执行操作之前重新阅读其整个生命故事。以下是如何让它记住，而不必再次向它提供相同的上下文。</em></p>
-<p>在电影《土拨鼠之日》中，比尔·默里饰演的角色每天都在重复同样的 2 月 2 日。他在同一个旅馆、同一个小镇上，在收音机里播放的同一首歌中醒来，一遍又一遍地重复着，一些影迷估计已经有 34 年了。</p>
-<p>除非他从头开始重新解决，否则他前一天完成的任何事情都不会延续。人工智能代理生活在土拨鼠之日的一个版本中。每当代理采取步骤（调用工具、读取结果、决定下一步做什么）时，它都必须向模型发送迄今为止的整个故事，以保持连续性：工具定义、指令、之前的每个工具调用和每个结果。该模型仅根据您提供的输入预测下一个标记。它在请求之间没有内部存储器，因此必须再次读取所有内容。到编码会话的第 20 轮时，模型会重新读取第 1-19 轮，并且您需要一次又一次地为每一个代币付费。</p>
-<p>提示缓存打破了循环。该服务存储您的输入提示（说明、工具和内容），并在下一个请求时重复使用它，而费用只是输入价格的一小部分。</p>
-<p>在这篇文章中，我将带您了解代理的生命周期，从第一次转向到获得新工具并产生助手。在此过程中，我将向您展示即时缓存如何降低成本并保持代理的响应能力和一致性。</p>
-<h2>代理发送给其 LLM 的内容</h2>
-<p>在讨论缓存之前，了解一下典型代理对大语言模型 (LLM) 的首次调用包含哪些内容会有所帮助：</p>
-<ul><li><strong>工具列表</strong> – 代理可以调用的每个函数的定义。当您发布新版本时会发生更改。</li><li><strong>说明</strong> – 开发人员提示：规则、角色、策略、示例。每个版本也会发生变化。</li><li><strong>历史</strong> – 到目前为止在本次会话中发生的所有事情：任务、模型的工具调用和工具结果（每轮都会增长）。</li><li><strong>新转</strong> – 最新的工具结果或用户消息（每次可能不同）。</li></ul>
-<p><strong>如果您不设置缓存，代理将逐轮发送到模型的内容：</strong></p>
-<p>！<a href="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-1-1.png">五个不断增长的代理请求，其中工具、说明和早期历史记录以红色标记，每个新轮次以黄色标记。</a></p>
-<p>图 1：代理每轮向模型发送的内容</p>
-<h2>提示缓存在幕后是如何工作的</h2>
-<p>当模型读取提示时，它首先执行名为 <em>prefill</em> 的写入操作。在预填充期间，它处理每个输入令牌并构建其键和值向量（也称为键值或 KV），从而形成模型的工作状态。这发生在模型写入第一个标记之前。</p>
-<p>提示缓存保存该状态，其中包含系统提示、工具、内容、历史记录等。当稍后的请求以相同的输入标记（即相同的文本）开始时，提示缓存服务将加载保存的状态，而不是再次计算它。然后，它仅处理模型的下一个有效负载中的新内容。提示缓存可以是隐式的，其中 Amazon Bedrock 选择可重用前缀结束的位置；也可以是显式的，其中您的代码使用“prompt_cache_breakpoint”标记该终端节点。您可以同时使用这两种方法，我们建议您这样做。</p>
-<p><strong>第 1 弯与第 2 弯相比</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-2-1.png" alt="第1回合通过断点写入工具和指令。第 2 回合从缓存中读取相同的前缀并处理其新问题。"></p>
-<p>图 2：第 1 回合将提示前缀保存到断点，第 2 回合重用它并仅为新问题支付全价</p>
-<p><strong>隐式或显式，为什么我们需要两者？</strong></p>
-<p>对于代理工作负载，隐式缓存可让 Bedrock 选择随着对话的增长而缓存的内容。通过显式缓存，您可以标记共享内容（例如工具和说明），以便在会话之间以及启动帮助代理时重复使用。您并不总是需要这两种形式的缓存，但将它们结合起来可以为您提供一个可重用的起点，同时 Bedrock 可以自动管理不断增长的会话。</p>
-<p>新会话还可以重用该共享起点，而每个对话都建立在其自己的缓存历史记录之上。在这篇文章中，我们从第一轮开始，然后展示如何通过后续轮次、新工具以及跨子代理来传输缓存内容。</p>
-<h2>你好缓存世界</h2>
-<p>第一个胜利是缓存提示的静态部分：在请求之间保持相同的工具和指令。这些示例使用您现有的 Amazon Bedrock 客户端、“TOOLS”和“task”。将缩短的“INSTRUCTIONS”字符串替换为您的真实政策和示例。可重用前缀必须达到 1,024 个令牌才有资格。</p>
-<p>缓存静态内容时，使用显式模式：选择保存的前缀结束位置。</p>
+<h1>AI agent 的土拨鼠日：在 Amazon Bedrock 上使用 OpenAI 模型的提示缓存模式</h1>
+<p><em>每次你派生出一个 agent，它在执行动作之前都得把自己的一生重新读一遍。下文讲的是如何让它记住这一切，而不必每次再喂给它同样的上下文。</em></p>
+<p>在电影《土拨鼠日》里，比尔·默里的角色每天都要重过同一个 2 月 2 日。他在收音机里听着同一首歌醒来，住在同一家小旅馆，置身同一个小镇，一遍又一遍——据一些影迷估算，这一过就是 34 年。</p>
+<p>前一天做成的事，除非他从头再想一遍，否则带不到这一天。AI agent 就活在某个版本的《土拨鼠日》里。agent 每走一步（调用一个工具、读取结果、决定下一步做什么），都得把到目前为止的完整故事发给模型，才能维持连续：工具定义、指令、之前每一次工具调用，以及每一个结果。模型只根据你提供的输入来预测下一个 token。它在两次请求之间没有任何内部记忆，所以必须把这一切重新读一遍。到一次编码会话的第 20 轮时，模型已经把第 1–19 轮重读了一遍，而每一份这样的 token 都要由你来付钱，一遍又一遍。</p>
+<p>提示缓存打破了这个循环。该服务会存下你的输入 prompt（指令、工具和内容），在下一次请求时复用它，代价只有输入价格的一小部分。</p>
+<p>本文带你走一遍 agent 的一生：从第一轮，到它拿到新工具、派生 辅助 agent 为止。一路上我会展示提示缓存如何压住成本、让 agent 保持响应迅速与表现一致。</p>
+<h2>agent 发给它的 LLM 的是什么</h2>
+<p>在谈缓存之前，先看看一个典型 agent 第一次调用大语言模型（LLM）时送去了什么：</p>
+<ul><li><strong>工具列表</strong> – agent 可以调用的每个函数的定义。你发布新版本时它会变。</li><li><strong>指令</strong> – 开发者 prompt：规则、人设、策略、示例。每个版本也会变。</li><li><strong>历史</strong> – 本次会话至今发生的一切：任务、模型的工具调用，以及工具结果（每一轮都在增长）。</li><li><strong>新一轮</strong> – 最新的工具结果或用户消息（每次都可能不同）。</li></ul>
+<p><strong>如果不配置缓存，agent 一轮接一轮发给模型的内容：</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-1-1.png" alt="五个不断增长的 agent 请求，工具、指令和早期历史标为红色，每一轮新增的内容标为黄色。"></p>
+<p>图 1：agent 每一轮发给模型的内容</p>
+<h2>提示缓存的内部机制</h2>
+<p>模型读取一段 prompt 时，先做一次称为 <em>prefill</em>（预填充）的写入。在 prefill 期间，它处理每一个输入 token，并构建它的 key 和 value 向量（也叫 key-value，即 KV），这些向量构成模型的工作状态。这一步发生在模型写出第一个 token 之前。</p>
+<p>提示缓存把这个状态保存下来，其中包含 system prompt、工具、内容、历史等等。当后续请求以相同的输入 token（即相同的文本）开头时，提示缓存服务会加载保存的状态，而不是重新计算。接着它只处理下一次发给模型的新增负载。提示缓存可以是隐式的，由 Amazon Bedrock 决定可复用前缀在哪里结束；也可以是显式的，由你的代码用 <code>prompt_cache_breakpoint</code> 标出那个边界点。两种方式可以一起用，我们也推荐这么做。</p>
+<p><strong>第 1 轮与第 2 轮对比</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-2-1.png" alt="第 1 轮把工具和指令写入缓存，直到一个断点；第 2 轮从缓存中读取同一段前缀，只处理它的新问题。"></p>
+<p>图 2：第 1 轮把 prompt 前缀保存到断点处，第 2 轮复用它，只有新问题按全价计费</p>
+<p><strong>隐式还是显式，为什么两种都需要？</strong></p>
+<p>对 agentic 工作负载来说，隐式缓存让 Bedrock 随对话增长自行决定缓存什么。用显式缓存，你可以把共享内容（比如工具和指令）标记出来，以便跨会话复用，也便于在启动 辅助 agent 时复用。你不一定两种都需要，但把它们结合起来，能得到一个可复用的起点，同时由 Bedrock 自动管理不断增长的对话。</p>
+<p>新会话同样可以复用那个共享起点，而每个对话则建立在各自缓存的历史之上。本文从第一轮讲起，然后说明如何把缓存内容带到后续轮次、新工具以及各个 子 agent 之间。</p>
+<h2>你好，缓存的世界</h2>
+<p>第一个收获是缓存 prompt 中静态的那部分：跨请求保持不变的工具和指令。这些示例使用你现有的 Amazon Bedrock 客户端、<code>TOOLS</code> 和 <code>task</code>。把简写的 <code>INSTRUCTIONS</code> 字符串换成你真实的策略和示例。可复用前缀必须达到 1,024 tokens 才算合格。</p>
+<p>缓存静态内容时使用显式模式：自行指定保存的前缀在哪里结束。</p>
 <pre><code>KEY = &quot;support-agent:v7:gpt-6-astra&quot;
 INSTRUCTIONS = &quot;Your full support policies and examples...&quot;
 
@@ -761,9 +761,9 @@ resp = client.responses.create(
         {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: task},
     ],
 )</code></pre>
-<p><code>prompt_cache_key</code> 告诉服务哪些请求要共享缓存。当我们在新会话中读取缓存时，我们会回到如何使用它。在我们使用显式缓存的一个测试中，大约 4,000 个令牌的工具和指令前缀在第一个请求中写入 4,120 个令牌，并在后续请求中读取这 4,120 个令牌。 “任务”（或用户请求）出现在缓存边界之后，因此这不会触发对缓存的写入。</p>
-<p>请记住，只有当您传递完全相同的文本时，提示缓存才会起作用。确保代理的说明和工具列表每次都以相同的方式序列化。模型上下文协议 (MCP) 服务器和其他形式的工具交付需要建立索引，以确保它们保持一致。在缓存的指令之后保留任何变化的内容，例如日期、用户名或请求 ID。</p>
-<p>随着内容的增长和变化（不同的工具和内容），使用隐式模式让服务跟随对话。这里，第一个请求没有显式标记。其最新的合格消息是用户的任务，因此自动断点位于该任务之后，并涵盖工具、指令和任务。为了清楚起见，以下示例中显式显示了该模式，尽管隐式是默认模式。设置“store=False”会将对话历史记录保留在您的应用程序中。它不会禁用缓存。</p>
+<p><code>prompt_cache_key</code> 告诉服务哪些请求要共享同一份缓存。我们在讲到新会话读取缓存时会再回来讨论它怎么用。在我们一次使用显式缓存的测试中，约 4,000 tokens 的「工具加指令」前缀在第一次请求时写入了 4,120 tokens，后续请求则读取了这 4,120 tokens。<code>task</code>（或用户请求）位于缓存边界之后，因此不会触发一次缓存写入。</p>
+<p>要注意，提示缓存只有在你传入完全相同的文本时才生效。确保 agent 的指令和工具列表每次都以相同的方式序列化。Model Context Protocol (MCP) 服务器以及其他工具交付方式需要建立索引，以保证一致性。把任何会变化的东西（比如日期、用户名或请求 ID）放在缓存指令之后。</p>
+<p>当内容增多并发生变化（不同的工具和内容）时，改用隐式模式，让服务跟随对话演进。这里，第一个请求没有显式标记。它最新的可参与缓存的消息是用户的任务，因此自动断点落在该任务之后，把工具、指令和任务一并覆盖。尽管隐式是默认模式，下面的例子仍显式写出模式以便说明。设置 <code>store=False</code> 会让对话历史留在你的应用里，它并不会关闭缓存。</p>
 <pre><code>def ask_with_implicit_cache(history):
     return client.responses.create(
         model=&quot;us.openai.gpt-6-astra&quot;,
@@ -781,8 +781,8 @@ history = [
 ]
 # Automatic endpoint: the end of the user message.
 resp = ask_with_implicit_cache(history)</code></pre>
-<p>当下一轮继续执行相同的任务时，这非常有用。不同的任务与旧任务的前缀不匹配，并且隐式写入不一定仅为工具和指令创建单独的条目。当您需要在任务之间重用较短的共享前缀时，请使用显式标记。</p>
-<p>当代理需要共享起点和成长历史时，请使用两者。从以下代码示例中标记的开发人员块开始，并调用函数“ask_with_implicit_cache”。请求级模式保持隐式。块级标记在指令之后添加显式保存点。该服务还可以通过最新的符合条件的消息进行保存。这使得共享前缀在会话增长时保持可用。</p>
+<p>这在下一轮继续同一个任务时很有用。换一个任务就不再匹配到旧任务为止的那段前缀，隐式写入也不一定会为「只有工具和指令」单独建一条记录。当你需要那段更短的共享前缀跨任务复用时，就在那里加一个显式标记。</p>
+<p>当 agent 既需要共享起点又需要不断增长的历史时，两种都用。下面代码示例从带标记的 developer 块开始，并调用 <code>ask_with_implicit_cache</code> 函数。请求级别的模式保持隐式，块级别的标记则在指令之后增加一个显式保存点。服务也可以保存到最新的可参与缓存的消息为止。这样一来，对话增长的同时共享前缀始终可用。</p>
 <pre><code>history = [
     {
         &quot;role&quot;: &quot;developer&quot;,
@@ -796,8 +796,8 @@ resp = ask_with_implicit_cache(history)</code></pre>
 ]
 # Still implicit mode, now with an explicit startup save point in the history.
 resp = ask_with_implicit_cache(history)</code></pre>
-<h2>缓存对话历史记录和工具结果</h2>
-<p>该模型按名称请求工具并提供它们的参数。您的应用程序必须执行它们。 <code>execute_function</code> 是您构建的一个帮助器，用于将这些请求路由到匹配的 Python 函数并返回其结果。以下循环使用此帮助程序来运行每个请求的工具。它将模型的输出和所有工具结果附加到“历史记录”列表中，然后再次发送该列表，直到模型返回最终答案。在隐式模式下，Amazon Bedrock 可以重用未更改的前缀，并通过最后的工具结果缓存添加的内容。保持早期消息和初始“TOOLS”不变。</p>
+<h2>缓存对话历史与工具结果</h2>
+<p>模型按名称请求工具并给出参数，你的应用必须负责执行它们。<code>execute_function</code> 是你自己写的辅助函数，把这些请求路由到对应的 Python 函数并返回结果。下面的循环用这个辅助函数运行每个被请求的工具。它把模型输出和所有工具结果追加到 <code>history</code> 列表，然后再次发送这个列表，直到模型给出最终答案。在隐式模式下，Amazon Bedrock 可以复用未变的前缀，并把新增内容缓存到最后一个工具结果为止。保持前面的消息和最初的 <code>TOOLS</code> 不变。</p>
 <pre><code>import json
 
 # Map tool names to their Python implementations.
@@ -828,11 +828,11 @@ while True:
         })
     # The last result in this group supplies the automatic endpoint.
     resp = ask_with_implicit_cache(history)</code></pre>
-<p>对于后续操作，请附加新的用户消息并再次调用帮助程序。保持较早的消息不变，以便其缓存的端点仍然可用。</p>
-<p><strong>滚动断点：每一回合都会读取之前的所有内容</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-3-1.png" alt="滚动断点，每个回合读取所有较早的回合并仅写入自己的工具结果。"></p>
-<p>图 3：滚动断点，每个回合都会读取之前的所有内容并仅写入自己的工具结果</p>
-<p>对于单独的仅显式运行，请从组合的 Hello 缓存世界示例中重新创建两条消息历史记录。此循环将工具结果包装在“input_text”块中，并标记每个批次中的最终结果。早期的标记留在“历史”中。有关长时间对话，请参阅<a href="https://developers.openai.com/api/docs/guides/prompt-caching">当前查找规则</a>。</p>
+<p>对于后续追问，追加一条新的用户消息，再次调用辅助函数。保持前面的消息不变，这样它们的缓存端点才仍然可用。</p>
+<p><strong>滚动断点：每一轮都读取它之前的所有内容</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-3-1.png" alt="滚动断点：每一轮读取所有更早的轮次，只写入自己那一条工具结果。"></p>
+<p>图 3：滚动断点，每一轮读取它之前的所有内容，只写入自己的工具结果</p>
+<p>若要单独跑一遍纯显式的流程，请照着「你好，缓存的世界」中组合式的例子重建那条两条消息的 <code>history</code>。这个循环把工具结果包进 <code>input_text</code> 块，并标记每一批中的最后一个结果。更早的标记仍保留在 <code>history</code> 里。关于长对话，请参见<a href="https://developers.openai.com/api/docs/guides/prompt-caching">当前的查找规则</a>。</p>
 <pre><code>import json
 
 while True:
@@ -858,17 +858,17 @@ while True:
     # Add the newest boundary; retain every earlier marker.
     batch[-1][&quot;output&quot;][-1][&quot;prompt_cache_breakpoint&quot;] = {&quot;mode&quot;: &quot;explicit&quot;}
     history.extend(batch)</code></pre>
-<p>GPT-6 Astra 在这个六轮工作负载中获得了最佳隐式结果：比没有缓存的运行输入成本低约 62%。在同一模型上，显式滚动断点可节省约 61% 的成本。随着对话的深入，双方都重用了更多的历史记录。这些是工作量结果。衡量你自己的代理人的节省。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-4-1.png" alt="比较 GPT-6 Astra 上每个缓存设置相对于无缓存的输入成本的条形图。"></p>
-<p>图 4：GPT-6 Astra 上每个缓存设置的输入成本（相对于无缓存）</p>
+<p>在这个六轮工作负载中，GPT-6 Astra 的隐式结果并列最佳：相比不做缓存，输入成本降低约 62%。同一模型上，显式滚动断点节省了约 61%。两种方式都随着对话增长复用了更多历史。这些是特定工作负载下的结果，你需要测量自己 agent 的节省幅度。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-4-1.png" alt="柱状图：在 GPT-6 Astra 上比较各缓存配置相对不缓存时的输入成本。"></p>
+<p>图 4：GPT-6 Astra 上各种缓存配置相对不缓存时的输入成本</p>
 <p><strong>注意：</strong></p>
-<ul><li><strong>仅显式模式下的静态断点</strong> – 工具和指令被缓存，但每回合都会再次处理增长的历史记录 (0.61)。此限制不适用于组合示例，该示例也可以通过符合条件的对话结尾进行保存。</li><li><strong>移动单个断点</strong>可以防止缓存重用并导致在仅显式模式下重复写入。也保留上一回合的断点。</li><li><strong>仅通过更改任务进行隐式写入</strong> – 新任务可能共享工具和指令，但不共享先前保存的端点。如果不同的任务需要重用该较短的前缀，则在共享指令后添加显式标记。</li></ul>
-<h2>当工具改变时</h2>
-<p>有时，代理的工具列表会发生变化，或者添加新工具。保持初始列表稳定：添加、删除或重新排序定义可能会使缓存的前缀无效。选择适合工具可用方式的方法。</p>
-<p><strong>当在代理流程的不同步骤中调用已知工具时：</strong> 发送相同排序的“TOOLS”并使用“allowed_tools”来限制模型可以调用的内容。对于 <code>allowed_tools</code>，<code>&quot;mode&quot;: &quot;auto&quot;</code> 让模型决定是否调用允许的工具，而 <code>&quot;mode&quot;: &quot;required&quot;</code> 需要至少一个允许的工具调用。将其作为“tool_choice”传递。该限制不会更改缓存的目录：</p>
+<ul><li><strong>纯显式模式下只有一个静态断点</strong> – 工具和指令被缓存了，但不断增长的历史每一轮都要重新处理（0.61）。这个限制不适用于组合式的例子，后者也会保存到可参与缓存的对话结尾。</li><li><strong>移动单个断点</strong> 在纯显式模式下会让缓存无法复用，并导致反复写入。要把上一轮的断点也保留下来。</li><li><strong>只有隐式写入且任务在变化</strong> – 新任务可能共享工具和指令，却不共享先前保存的端点。如果不同的任务需要复用那段更短的前缀，就在共享指令之后加一个显式标记。</li></ul>
+<h2>当工具发生变化</h2>
+<p>有时 agent 的工具列表会变，或者会新增工具。保持最初的列表稳定：增删或重排定义都可能让缓存的前缀失效。选择与工具可用方式相匹配的做法。</p>
+<p><strong>当已知工具在 agent 流程的不同步骤被调用时：</strong> 发送相同的、已排序的 <code>TOOLS</code>，并用 <code>allowed_tools</code> 限制模型可以调用什么。在 <code>allowed_tools</code> 中，<code>&quot;mode&quot;: &quot;auto&quot;</code> 让模型自行决定是否调用某个被允许的工具，<code>&quot;mode&quot;: &quot;required&quot;</code> 则要求至少调用一次被允许的工具。把它作为 <code>tool_choice</code> 传入。这个限制不会改变缓存下来的工具目录：</p>
 <pre><code>tool_choice={&quot;type&quot;: &quot;allowed_tools&quot;, &quot;mode&quot;: &quot;auto&quot;,
              &quot;tools&quot;: [{&quot;type&quot;: &quot;function&quot;, &quot;name&quot;: &quot;get_owner&quot;}]}</code></pre>
-<p><strong>会话期间的新工具。</strong> Amazon Bedrock Runtime 和 Amazon Bedrock Mantle 终端节点都接受名为“additional_tools”的输入项类型，适用于 GPT-6 Astra、GPT-6.1 Sol 和 GPT-5.6 Luna。有关 AWS 区域的模型可用性，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">Amazon Bedrock 中 AWS 区域支持的模型</a>。在辅助函数“execute_function”中注册新工具“get_due_date”，然后将其架构附加到代理循环的已完成历史记录中。保持初始的“TOOLS”不变：</p>
+<p><strong>会话期间的新增工具。</strong> 对 GPT-6 Astra、GPT-6.1 Sol 和 GPT-5.6 Luna，Amazon Bedrock Runtime 和 Amazon Bedrock Mantle 两种端点都接受一种名为 <code>additional_tools</code> 的输入项类型。各 AWS 区域的模型可用情况，请参见 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">Amazon Bedrock 中按 AWS 区域划分的受支持模型</a>。在辅助函数 <code>execute_function</code> 中注册新工具 <code>get_due_date</code>，然后把它的 schema 追加到 agent 循环产出的完整 <code>history</code> 后面。保持最初的 <code>TOOLS</code> 不变：</p>
 <pre><code>TOOL_HANDLERS[&quot;get_due_date&quot;] = get_due_date
 NEW_TOOL = {
     &quot;type&quot;: &quot;function&quot;, &quot;name&quot;: &quot;get_due_date&quot;,
@@ -894,17 +894,17 @@ print(&quot;old prefix read&quot;, d.cached_tokens, &quot;new write&quot;, d.cac
 
 # Example output:
 # old prefix read 2048 new write 256</code></pre>
-<p><strong>会议中期推出新工具</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-5-1.png" alt="原生的additional_tools加载保留了早期缓存的前缀。 GPT-6 Astra Runtime 测试读取 2,068 个令牌并写入 145 个令牌扩展。编辑初始目录会导致缓存未命中。"></p>
-<p>图 5：附加工具使早期前缀可重复使用，示例计数来自 Amazon Bedrock Runtime 上的 GPT-6 Astra</p>
-<p>使用新响应继续工具执行循环。该循环将模型的输出添加到“history”中，运行任何请求的工具，并附加其结果。在以后的请求中保留“additional_tools”项，以便新工具仍然可用。在隐式模式下，Amazon Bedrock 可以缓存新用户消息，包括其前面的工具定义。在仅显式模式下，保留较早的断点并将其添加到该用户消息中的“input_text”块中。 <code>additional_tools</code> 项本身不能保存断点。</p>
-<p><strong>不同的角色，不同的目录。</strong> 当不同的代理角色需要不同的工具时，请在每个会话开始时选择稳定的工具配置文件，例如支持或计费。每个配置文件都有自己的缓存前缀。标记共享指令，以便以后使用该配置文件的任务可以重用它们，然后随着对话的发展使用任一模式。</p>
-<p><strong>缓存工具配置文件</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-6-1.png" alt="支持和计费会话均重复使用其固定工具配置文件的缓存。"></p>
-<p>图 6：每个工具配置文件都有自己的缓存前缀，可通过匹配会话重用</p>
-<h2>子代理和侧面调用</h2>
-<p>委派不应该让每个助手重新阅读相同的背景。共享前缀，然后在末尾添加每个助手的任务。请注意，当您将缓存与 AI 代理一起使用时，工具和系统提示可能会被泄露或利用。建立负责任的人工智能实践，其中包括作为治理的一部分的快速缓存实施。</p>
-<p><strong>预热一次，然后扇出。</strong> 首先发送一个普通请求并等待其完成，然后再启动帮助程序。在每个请求中显式标记共享上下文，即使模式是隐式的：</p>
+<p><strong>新工具在会话中途到达</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-5-1.png" alt="原生的 additional_tools 加载方式保留了更早的缓存前缀。GPT-6 Astra 的 Runtime 测试读取 2,068 tokens 并写入 145 tokens 的扩展。改动最初的工具目录会导致缓存未命中。"></p>
+<p>图 5：追加工具可让更早的前缀继续复用，示例数值来自 GPT-6 Astra 在 Amazon Bedrock Runtime 上的表现</p>
+<p>用新的响应继续工具执行循环。循环把模型输出加入 <code>history</code>，运行被请求的工具，并把结果追加进去。在后续请求中保留 <code>additional_tools</code> 项，让新工具持续可用。在隐式模式下，Amazon Bedrock 可以缓存到新的用户消息为止，包括它前面的工具定义。在纯显式模式下，保留更早的断点，并在该用户消息的一个 <code>input_text</code> 块上再加一个。<code>additional_tools</code> 项本身不能承载断点。</p>
+<p><strong>不同角色，不同目录。</strong> 当不同的 agent 角色需要不同的工具时，在每个会话开始时选定一个稳定的工具配置，比如客服或账单。每个配置拥有自己独立的缓存前缀。标记共享指令，让之后使用该配置的任务可以复用它们，然后随着对话增长选用任一种模式。</p>
+<p><strong>带缓存的工具配置</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-6-1.png" alt="客服会话和账单会话各自复用其固定工具配置对应的缓存。"></p>
+<p>图 6：每个工具配置都有自己的缓存前缀，可由匹配该配置的会话复用</p>
+<h2>子 agent 与旁路调用</h2>
+<p>任务委派不该让每个 辅助 agent 都重读同样的背景。共享那段前缀，再把每个 辅助 agent 的任务加在末尾。要意识到，在 AI agent 中使用缓存时，工具和 system prompt 有可能泄漏或被利用。建立负责任的 AI 实践，把你的提示缓存实现纳入那份治理之中。</p>
+<p><strong>先预热，再分派。</strong> 先发一个普通请求，等它跑完再启动 辅助 agent。即使模式是隐式的，也要在每个请求中显式标记共享上下文：</p>
 <pre><code>shared = {&quot;role&quot;: &quot;developer&quot;, &quot;content&quot;: [{
     &quot;type&quot;: &quot;input_text&quot;, &quot;text&quot;: INSTRUCTIONS,
     &quot;prompt_cache_breakpoint&quot;: {&quot;mode&quot;: &quot;explicit&quot;},
@@ -928,11 +928,11 @@ helper_inputs = [
 ]
 with ThreadPoolExecutor(max_workers=4) as pool:
     helpers = list(pool.map(ask_with_implicit_cache, helper_inputs))</code></pre>
-<p>助手使用与热身相同的“TOOLS”、模型和“KEY”。在输出上限结束的预热仍然可以填充缓存。使用情况检查会在帮助程序启动之前确认缓存活动。</p>
-<p><strong>子代理：加热共享前缀一次，然后扇出</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-7-1.png" alt="普通的预热请求会在四个子代理启动之前填充共享前缀。"></p>
-<p>图 7：在启动助手之前预热共享前缀，然后每个助手添加自己的任务</p>
-<p><strong>给侧面调用相同的开始。</strong>代理循环通过附加每个“resp.output”及其匹配的工具结果（包括加密推理）来构建“历史记录”。家长完成后，将完整的列表复制给总结者或评委。同一个助手保持工具、模型和密钥不变：</p>
+<p>辅助 agent 使用与预热时相同的 <code>TOOLS</code>、模型和 <code>KEY</code>。即使预热请求在输出上限处结束，也足以把缓存填充起来。这项用量检查在 辅助 agent 启动之前确认缓存确有活动。</p>
+<p><strong>子 agent：把共享前缀预热一次，然后分派出去</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-7-1.png" alt="一个普通的预热请求在四个 子 agent 启动之前填充好共享前缀。"></p>
+<p>图 7：先预热共享前缀再启动 辅助 agent，之后每个 辅助 agent 各自加上自己的任务</p>
+<p><strong>让旁路调用拥有相同的开头。</strong> agent 循环通过追加每个 <code>resp.output</code> 及其对应的工具结果（包括加密的推理内容）来构建 <code>history</code>。父 agent 结束后，复制这份完整列表给摘要器或评判者。同一个辅助函数保持工具、模型和 key 不变：</p>
 <pre><code>from copy import deepcopy
 
 # history is the completed history built by the agent loop above.
@@ -950,14 +950,14 @@ print(summary.output_text)
 # Example output (assumed values and conversation):
 # history read 4096 write 32
 # Case C-123 is due on October 31, 2026.</code></pre>
-<p>帮助器可以重用“history”的缓存部分，但附加的开发人员消息不会自动扩展缓存以包含摘要指令。如果以后的请求重用相同的历史记录和指令，请将指令放置在带有“prompt_cache_breakpoint”的“input_text”块中。对于一次性摘要，不需要额外的标记。</p>
-<h2>暂停、重启和缓存键</h2>
-<p><strong>暂停。</strong> 缓存的前缀至少有 30 分钟的生存时间 (TTL)，成功重用后会刷新，并且可能会保持更长时间。如果会话很快恢复，普通的预热可以在前缀过期之前刷新前缀。将该请求的成本与让缓存过期进行比较。有关 TTL 规则，请参阅 Amazon Bedrock 文档。</p>
-<p><strong>新会话。</strong> 对于共享前缀的请求，保持“prompt_cache_key”稳定。即使会话的提示匹配，会话特定的密钥也会隔离会话。在以下示例中，切换到共享密钥可让会话重用前缀。</p>
-<p><strong>新会话仅在共享密钥时重用缓存</strong></p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-8-1.png" alt="原始实验将每个会话缓存密钥与稳定的共享密钥进行比较。"></p>
-<p>图 8：特定于会话的密钥分隔缓存条目，共享密钥允许匹配的会话重用它们</p>
-<p>重用现有缓存内容需要相同的模型、AWS 账户和区域以及可用的匹配前缀。以下示例将显式启动标记与隐式模式相结合。每个会话都以相同的说明和自己的任务开始。两者都使用相同的计算密钥：</p>
+<p>辅助 agent 可以复用 <code>history</code> 中已缓存的部分，但追加的 developer 消息不会自动把缓存扩展到包含摘要指令。如果后续请求会复用同样的历史和指令，请把该指令放进带 <code>prompt_cache_breakpoint</code> 的 <code>input_text</code> 块中。只做一次的摘要则不需要额外的标记。</p>
+<h2>暂停、重启与缓存键</h2>
+<p><strong>暂停。</strong> 缓存前缀的最短存活时间（TTL）是 30 分钟，每次成功复用都会刷新它，实际还可能保留更久。如果会话很快就会恢复，一次普通的预热就能在过期前刷新前缀。把这次请求的成本和让缓存自然过期对比一下。TTL 规则请参见 Amazon Bedrock 文档。</p>
+<p><strong>新会话。</strong> 对于打算共享前缀的请求，保持 <code>prompt_cache_key</code> 稳定。会话专属的键会把各会话隔离开，即使它们的 prompt 相同。在下面的例子中，改用共享键之后各会话便能复用前缀。</p>
+<p><strong>新会话只有共享同一个键时才能复用缓存</strong></p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-8-1.png" alt="最初的实验比较了按会话区分的缓存键与一个稳定的共享键。"></p>
+<p>图 8：会话专属的键把缓存条目分隔开，而共享键让匹配的会话复用它们</p>
+<p>复用已有的缓存内容需要相同的模型、AWS 账户和区域，并且要有可用的匹配前缀。下面的例子把显式的起始标记与隐式模式结合起来。每个会话都以相同的指令开始，带着各自的任务。两者都使用同一个计算出来的键：</p>
 <pre><code>import hashlib
 
 def cache_key(app, model, prompt_version, instructions):
@@ -978,63 +978,63 @@ for label, question in [
     result = ask_with_implicit_cache(session_history)
     d = result.usage.input_tokens_details
     print(label, &quot;read&quot;, d.cached_tokens, &quot;write&quot;, d.cache_write_tokens)</code></pre>
-<p>冷启动时，会话 1 写入共享前缀。会话 2 可以读取它，尽管它的任务可能不同。每个任务也可以隐式缓存。检查使用计数器：匹配的键和标记使重用成为可能，但缓存条目仍然必须可用。</p>
-<h2>提示缓存提供什么</h2>
-<p><strong>成本。</strong> 对于具有 8,000 个令牌启动前缀和六轮每次添加 2,000 个令牌的 GPT-6 Astra 驱动的代理，一次性静态缓存将成本降低至 0.50 美元，滚动断点将建模输入成本降低了 64%：从每次会话 0.87 美元降至 0.32 美元。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-9-1.png" alt="GPT-6 Astra 上的支持代理示例的每次会话累积输入成本折线图。"></p>
-<p>图 9：支持代理示例的每个会话的累积输入成本，使用 GPT-6 Astra 的 Amazon Bedrock 按需价格</p>
-<h2>如何判断缓存是否正常工作</h2>
-<p>从响应的使用开始。 <code>cached_tokens</code> 报告从缓存读取的输入，<code>cache_write_tokens</code> 报告写入缓存的输入。随着对话的发展，检查稍后是否会重用早期的历史记录，以及新的写入是否反映了正在添加的内容。</p>
-<p>要对 Amazon Bedrock Runtime 终端节点进行生产监控，请使用 Amazon CloudWatch 中的“CacheReadInputTokenCount”和“CacheWriteInputTokenCount”指标。当您需要单独的请求记录时，启用模型调用日志记录，然后使用 Amazon CloudWatch Logs Insights 查询它们。对于 Amazon Bedrock Mantle 终端节点，在应用程序日志中记录响应使用字段。其 Amazon CloudWatch 命名空间目前没有单独的缓存计数器。</p>
-<p>要检查成本，请将 <strong>AWS Cost Explorer</strong> 筛选到 Amazon Bedrock 并按 <strong>使用类型</strong> 进行分组。缓存读取、缓存写入和未缓存输入显示为每个模型的单独条目。在计算输入成本份额时排除输出令牌条目。</p>
-<h2>一个简短的清单</h2>
-<ul><li><strong>保持可重用前缀稳定。</strong> 首先放置共享工具和说明，然后附加对话历史记录和新回合。更改时间戳、消息或工具定义可防止在更改之外重复使用。如果较短的前缀有自己保存的端点，则仍然可以重复使用。</li><li><strong>选择要重用的内容周围的边界。</strong> 使用隐式缓存来增长历史记录，使用显式标记来共享前缀，或两者兼而有之。仅显式模式避免编写一次性后缀。扩展仅显式对话时，请保留较早的标记，以便以后的请求可以找到保存的前缀。</li><li><strong>保持初始工具目录不变。</strong> 使用 <code>allowed_tools</code> 来限制哪些工具是可调用的。使用“additional_tools”附加已知定义，或通过命名空间客户端“tool_search”发现它们。当不同的代理角色需要不同的目录时，选择稳定的工具配置文件。</li><li><strong>检查前缀大小和生命周期。</strong> 可缓存前缀必须包含至少 1,024 个令牌。缓存的前缀在最近一次写入或成功重用后至少 30 分钟内仍然可以重用。</li><li><strong>在启动帮助程序之前预热共享内容。</strong> 在预热和帮助程序请求中标记共享前缀，包括使用隐式模式时。在开始并行调用之前完成预热请求。</li><li><strong>使缓存密钥在每个共享组内保持稳定。</strong> 打算重用前缀的请求必须使用相同的密钥。单独的密钥可以使客户或用户之间的缓存核算保持不同。</li><li><strong>测量整个工作流程中的节省。</strong> 缓存写入成本是正常输入速率的 1.25 倍。请阅读价格取决于型号。使用开发期间的响应使用情况以及生产中的监控和计费数据来跟踪写入成本和读取节省。</li></ul>
-<h2>2 月 3 日醒来</h2>
-<p>比尔·默里只有在不再重复同样的错误并开始将这一天所学到的知识运用到第二天时，才能逃脱土拨鼠之日。代理以类似但不那么浪漫的方式到达那里：通过保持提示字节的开始逐字节稳定，并随着历史记录的增长使用自动或显式缓存边界。</p>
-<p>在这篇文章中，我们介绍了如何缓存共享工具和指令，在代理轮流中增加缓存，以及在添加工具、启动帮助程序或启动新会话时保持重用。保持共享前缀稳定并随着工作流程的进展附加新信息。使用隐式缓存来增加对话，使用显式断点来共享内容。当您需要两者时将它们组合起来，或者当更改的后缀不太可能被重用时选择仅显式模式。比较缓存读取、写入、总输入成本和延迟，找到最适合您的代理的方案。要应用这些模式，请遵循 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-openai">OpenAI 模型的 Amazon Bedrock 提示缓存文档</a> 并检查 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">按 AWS 区域和终端节点划分的模型可用性</a>。从一个工作流程开始，随着对话的发展衡量节省的费用。</p>
+<p>冷启动时，会话 1 写入共享前缀。哪怕任务不同，会话 2 也能读到它。每个任务本身也可以被隐式缓存。请检查用量计数器：键和标记的匹配只是让复用成为可能，缓存条目本身还得存在。</p>
+<h2>提示缓存能带来什么</h2>
+<p><strong>成本。</strong> 对一个由 GPT-6 Astra 驱动、启动前缀为 8,000 tokens、后续六轮每轮增加 2,000 tokens 的 agent 来说，一次性静态缓存把成本降到了 $0.50；滚动断点则把建模后的输入成本降低了 64%：每个会话从 $0.87 降到 $0.32。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/23/ML-22246-9-1.png" alt="折线图：GPT-6 Astra 上客服 agent 示例每个会话的累计输入成本。"></p>
+<p>图 9：客服 agent 示例每个会话的累计输入成本，GPT-6 Astra 采用 Amazon Bedrock 按需定价</p>
+<h2>怎么判断缓存生效了</h2>
+<p>先看响应的用量。<code>cached_tokens</code> 报告从缓存读取的输入量，<code>cache_write_tokens</code> 报告写入缓存的输入量。随着对话增长，检查后续轮次是否复用了更早的历史，以及新的写入是否反映了新增的内容。</p>
+<p>要在 Amazon Bedrock Runtime 端点上做生产监控，请在 Amazon CloudWatch 中使用 <code>CacheReadInputTokenCount</code> 和 <code>CacheWriteInputTokenCount</code> 这两个指标。需要单条请求记录时开启模型调用日志，再用 Amazon CloudWatch Logs Insights 查询。对于 Amazon Bedrock Mantle 端点，请把响应的用量字段记录到应用日志里——它对应的 Amazon CloudWatch 命名空间目前没有单独的缓存计数器。</p>
+<p>要核对成本，在 <strong>AWS Cost Explorer</strong> 中筛选 Amazon Bedrock，并按 <strong>Usage type</strong> 分组。缓存读取、缓存写入和未缓存输入会按模型各自显示为独立条目。计算它们占输入成本的比例时，请排除输出 token 的条目。</p>
+<h2>一份简短清单</h2>
+<ul><li><strong>保持可复用前缀稳定。</strong> 先放共享的工具和指令，再追加对话历史和新轮次。改动时间戳、消息或工具定义之后，超出该改动范围的部分就无法复用。更短的前缀如果有自己的保存端点，依然可以复用。</li><li><strong>在你想要复用的内容周围划定边界。</strong> 不断增长的历史用隐式缓存，共享前缀用显式标记，或者两者并用。纯显式模式可以避免写入用完即弃的后缀。扩展纯显式对话时，保留更早的标记，让后续请求能找到已保存的前缀。</li><li><strong>保持最初的工具目录不变。</strong> 用 <code>allowed_tools</code> 限制哪些工具可以被调用。已知的定义用 <code>additional_tools</code> 追加，或通过带命名空间的客户端 <code>tool_search</code> 发现它们。当不同的 agent 角色需要不同目录时，选定一个稳定的工具配置。</li><li><strong>检查前缀的大小与存活时间。</strong> 可缓存的前缀至少要包含 1,024 tokens。缓存前缀在最近一次写入或成功复用之后，至少 30 分钟内仍可复用。</li><li><strong>在启动 辅助 agent 前预热共享内容。</strong> 在预热请求和 辅助 agent 请求中都标记共享前缀，使用隐式模式时也不例外。先等预热请求结束，再发起并行调用。</li><li><strong>在每个共享组内保持缓存键稳定。</strong> 打算复用前缀的请求必须使用同一个键。不同的键可以把不同客户或用户之间的缓存计费分开。</li><li><strong>在整个流程上度量节省。</strong> 缓存写入的价格是正常输入费率的 1.25 倍。读取价格取决于模型。开发与监控阶段用响应用量，生产阶段用账单数据，同时跟踪写入成本与读取节省。</li></ul>
+<h2>在 2 月 3 日醒来</h2>
+<p>比尔·默里只有在不再重复同样的错误、开始把一天学到的东西带到下一天时，才终于走出《土拨鼠日》。agent 也能以类似——尽管不那么浪漫——的方式抵达那里：让 prompt 的开头逐字节保持稳定，并随着历史增长使用自动或显式的缓存边界。</p>
+<p>本文讲清了如何缓存共享的工具和指令、如何让缓存跨越 agent 的各个轮次增长，以及在新增工具、启动 辅助 agent 或开启新会话时如何保住复用能力。保持共享前缀稳定，随着流程推进不断追加新信息。不断增长的对话用隐式缓存，共享内容用显式断点。两者都需要时把它们结合起来；变化的后缀不太可能被复用时，就选纯显式模式。比较缓存读取、写入、总输入成本和延迟，找出对你的 agent 最有效的方案。要落地这些模式，请参考 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html#prompt-caching-openai">Amazon Bedrock 中针对 OpenAI 模型的提示缓存文档</a>，并查看<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">按 AWS 区域和端点划分的模型可用情况</a>。先从一个流程做起，随着对话增长测量节省。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>使用 CDK 在托管 Amazon Bedrock 知识库上构建代理检索</title>
+      <title>用 CDK 在托管的 Amazon Bedrock 知识库上构建 agentic 检索</title>
       <link>https://aws.amazon.com/blogs/machine-learning/build-agentic-retrieval-on-a-managed-amazon-bedrock-knowledge-base-with-cdk/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-agentic-retrieval-on-a-managed-amazon-bedrock-knowledge-base-with-cdk/</guid>
       <pubDate>Mon, 26 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Build agentic retrieval on a Managed Amazon Bedrock Knowledge Base with CDK</description>
       <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>使用 CDK 在托管 Amazon Bedrock 知识库上构建代理检索</h1>
-<p>本文使用 AWS 云开发套件 (AWS CDK) 在托管 Amazon Bedrock 知识库上构建企业代理检索。要了解为什么值得构建它，可以从普通检索增强生成 (RAG) 崩溃的地方开始。大多数 RAG 系统都以相同的方式开始：它们嵌入问题，从一个索引中获取最近的块，将它们交给模型，然后返回答案。一次检索，一代。对于一大类问题来说，这是正确的设计，没有理由构建更复杂的东西。</p>
-<p>它以一种可识别的方式失败了。提出一个问题，其答案跨越两个语料库，一次检索返回模型所需内容的一半，这比什么都不返回更糟糕，因为返回的答案是流畅且不完整的。提出一个问题，其中<em>正确的来源取决于问题</em>，并且单个索引没有可供选择的机制。在看到第一个结果后提出一个需要再次查看语料库的问题，而没有地方可以进行第二次查看。</p>
-<p>企业代理检索通过在循环中放置推理代理来回答所有三个问题。代理在形成答案之前决定是否检索、查阅哪个知识库以及是否返回更多信息。这是 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock 知识库</a> 的发展方向。随着托管知识库的推出，检索不再是单一的嵌入和获取调用。它已成为一种代理能力：多轮规划、工具驱动的检索以及有根据的引用答案。 AgenticRetrieveStream API 将此作为一流的服务功能提供，而不是您自己组装的东西。这是可行的，但它也带来了一个真正更困难的操作问题。单次管道是一个可以通过阅读来推理的函数。循环推理和检索的智能体对每个问题都采取不同的路径。默认情况下，您既看不到它所采取的路径，也看不到它产生的答案是否良好。可观察性不再是可有可无的东西，而是成为了解系统运行情况的唯一方法。</p>
-<p>2024 年 8 月，<a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-rag-solution-using-knowledge-bases-for-amazon-bedrock-and-the-aws-cdk/">使用 Amazon Bedrock 和 AWS CDK 知识库构建端到端 RAG 解决方案</a> 将单次设计部署为 CDK 应用程序：<a href="https://docs.aws.amazon.com/s3/">Amazon Simple Storage Service (Amazon) S3)</a> 语料库，一个 <a href="https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless.html">Amazon OpenSearch Serverless</a> 集合和索引、知识库和数据源，配置为 CDK 堆栈，其顺序由您手动排序。自发布以来，三件事发生了变化。</p>
-<ul><li><strong><a href="https://docs.aws.amazon.com/bedrock/">Amazon Bedrock</a> 现在提供托管知识库</strong>（类型：MANAGED），它拥有摄取、存储、索引和检索本身。您不再需要使用 OpenSearch 计算单元 (OCU) 创建、扩展或支付提供配置的 OpenSearch 无服务器集合和索引。</li><li><strong><a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore</a> 提供了代理的一半</strong>，一个将每个知识库公开为模型上下文协议 (MCP) 工具的网关、一个托管推理代理的运行时以及 AgenticRetrieveStream，后者在内部重新排序并返回综合的引用答案。代理检索<strong>仅</strong>在托管知识库上可用。</li><li><strong>可观察性和评估故事现在是您可以提供的东西</strong>，而不是您附加的东西。该解决方案在同一部署中提供了两个 <a href="https://docs.aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 仪表板，涵盖七层遥测，以及两种形式的评估（按需评估和连续评估）。</li></ul>
-<p>本文构建了该系统：一个跨两个知识库进行路由、通过网关进行检索并返回一个有根据的引用答案的代理，其每一层行为都经过检测，作为 Python 中的单个 <a href="https://docs.aws.amazon.com/cdk/">AWS CDK</a> 应用程序。一个命令即可部署所有内容，CDK 派生命令。</p>
-<p>如果您阅读 <a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-rag-solution-using-knowledge-bases-for-amazon-bedrock-and-the-aws-cdk/">2024 帖子</a>，从 Amazon S3 存储桶到知识库的路径会看起来很熟悉，并且之后的一切都是新的：矢量存储消失了，检索是代理的，应用程序提供的内容大约有一半是为告诉你代理做了什么。如果你没有，这篇文章是独立的。</p>
-<p>起作用的服务以及一个问题通过它们的路径：代理决定是否检索以及查阅哪个知识库，网关将每个知识库公开为它可以调用的工具，托管知识库搜索和引用，并且循环根据问题需要重复多次。代理在此过程中执行的所有操作都会落在 Amazon CloudWatch 中。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-1.png" alt="代理通过网关在两个托管知识库之间路由问题，每一步都登陆 Amazon CloudWatch"></p>
-<p>图 1：所涉及的服务以及单个问题通过这些服务所采取的路径</p>
+<h1>用 CDK 在托管的 Amazon Bedrock 知识库上构建 agentic 检索</h1>
+<p>本文用 AWS Cloud Development Kit (AWS CDK) 在托管的 Amazon Bedrock 知识库上构建企业级 agentic 检索。要看清这为什么值得做，最好先从普通 Retrieval Augmented Generation (RAG) 在哪里失效说起。大多数 RAG 系统的起点都相同：把问题做 embedding，从一个索引里取回最接近的 chunk，交给模型，返回答案。一次检索，一次生成。对一大类问题来说，这就是正确的设计，没有理由做得更复杂。</p>
+<p>它的失效方式是有迹可循的。问一个答案横跨两个语料库的问题，单次检索只会返回模型所需内容的一半，这比什么都不返回更糟，因为答案回来时语句流畅却不完整。问一个<em>正确来源取决于问题本身</em>的问题，单个索引没有任何机制来做选择。问一个需要先看第一批结果、再回头把语料库再看一遍的问题，而第二次查看根本没有地方可去。</p>
+<p>企业级 agentic 检索把这三个问题都解决了，办法是让一个 推理 agent 进入循环。agent 决定是否检索、查哪个知识库，以及在组织答案之前是否要再去取更多内容。这正是 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock Knowledge Bases</a> 演进的方向。随着托管知识库上线，检索不再是一次 embed-and-fetch 调用，而变成了一项 agentic 能力：多轮规划、由工具驱动的检索，以及有据可依、带引用的答案。AgenticRetrieveStream API 把这个能力作为一等的服务特性提供出来，而不是让你自己拼装。这确实行得通，但它同时也带来一个实打实更难运维的问题。单发流水线是一个你读一遍就能推理清楚的函数。而一个在循环中推理并检索的 agent，每个问题走的路径都不一样。默认情况下，你既看不到它走过的路径，也看不出它给出的答案到底好不好。可观测性不再是可有可无的点缀，而成了判断系统是否正常工作的唯一途径。</p>
+<p>2024 年 8 月，<a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-rag-solution-using-knowledge-bases-for-amazon-bedrock-and-the-aws-cdk/">使用 Amazon Bedrock 的 Knowledge Bases 和 AWS CDK 构建端到端 RAG 解决方案</a> 把这套单发设计以 CDK 应用的形式部署出来：一个 <a href="https://docs.aws.amazon.com/s3/">Amazon Simple Storage Service (Amazon S3)</a> 语料库、一个 <a href="https://docs.aws.amazon.com/opensearch-service/latest/developerguide/serverless.html">Amazon OpenSearch Serverless</a> collection 和索引、一个知识库和一个数据源，作为若干 CDK stack 供给，顺序由你手工排定。这篇文章发布以来，有三件事变了。</p>
+<ul><li><strong><a href="https://docs.aws.amazon.com/bedrock/">Amazon Bedrock</a> 现在提供托管知识库</strong>（Type: MANAGED），摄取、存储、索引和检索都由它自己负责。那篇文章里供给的 OpenSearch Serverless collection 和索引，不再需要你去创建、扩容，也不用为此支付 OpenSearch Compute Units (OCUs) 的费用。</li><li><strong><a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore</a> 提供 agentic 的那一半</strong>，包括一个把每个知识库暴露为 Model Context Protocol (MCP) 工具的 Gateway、一个承载 推理 agent 的 Runtime，以及 AgenticRetrieveStream，它在内部重排并返回一段综合出来的、带引用的答案。Agentic 检索<strong>只</strong>在托管知识库上可用。</li><li><strong>可观测性与评估现在成了你可以直接供给的东西</strong>，而不是事后外挂上去的。这套方案在同一次部署中交付两个覆盖七层遥测的 <a href="https://docs.aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> 仪表板，以及两种形式的评估：按需评估和持续评估。</li></ul>
+<p>本文构建的就是这套系统：一个跨两个知识库做路由、通过 Gateway 检索、返回有据可依且带引用答案的 agent，它的每一层行为都埋了埋点，整体是一个用 Python 写的 <a href="https://docs.aws.amazon.com/cdk/">AWS CDK</a> 应用。一条命令部署全部内容，顺序由 CDK 推导。</p>
+<p>如果你读过<a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-rag-solution-using-knowledge-bases-for-amazon-bedrock-and-the-aws-cdk/">那篇 2024 年的文章</a>，从 Amazon S3 bucket 到知识库这一段会显得很熟悉，之后的一切都是新的：向量存储没了，检索变成 agentic，而且这个应用供给的东西里大约有一半，存在的目的就是告诉你 agent 做了什么。如果你没读过，本文也能独立阅读。</p>
+<p>参与其中的服务，以及一个问题穿过它们时走过的路径：agent 决定是否检索、查哪个知识库，Gateway 把每个知识库暴露成它可以调用的工具，托管知识库负责搜索和给出引用，循环按问题需要的次数反复进行。agent 沿途做的一切都落到 Amazon CloudWatch。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-1.png" alt="agent 通过 Gateway 把一个问题路由到两个托管知识库，每一步都落到 Amazon CloudWatch"></p>
+<p>图 1：涉及的服务，以及单个问题穿过它们时走过的路径</p>
 <h2>背景</h2>
-<p>在演练之前，它有助于确定三件事：是什么使检索具有代理性，为什么托管知识库是其正确的基础，以及为什么可观察性和评估属于设计而不是稍后附加。</p>
-<h3>从 RAG 到企业代理检索</h3>
-<p>经典检索增强生成 (RAG) 执行一次检索和一代。 <strong>企业代理检索</strong>在循环中放置一个推理代理：它决定“是否”和“检索什么”，可以检索多次进行细化，选择“哪个”知识库相关（语义路由），然后才通过引用组成一个有依据的答案。借助托管知识库，这是一流的服务功能，AgenticRetrieveStream API 执行多轮规划、执行检索并返回引用的答案，而不是通过原始矢量搜索构建和维护的编排层。这对于复杂问题产生了更好的答案，但它也产生了一个更复杂的运行系统，这正是从一开始就内置可观察性和评估的原因。</p>
-<h3>与 DIY 知识库相比，管理型知识库</h3>
-<p>Amazon Bedrock 现在提供<strong>托管知识库</strong>（类型：托管）：Amazon Bedrock 为您管理<strong>摄取、存储、索引和检索</strong>，包括默认情况下使用服务托管模型的嵌入和重新排名，因此<strong>无需配置、扩展或修补</strong>。这与 <strong>客户管理</strong> (DIY) 知识库不同，在知识库中，您自己选择和操作矢量存储（例如 Amazon OpenSearch Serverless）。</p>
-<p>该解决方案有两个最重要的区别：</p>
-<table><thead><tr><th><strong>能力</strong></th><th><strong>Amazon Bedrock托管</strong></th><th><strong>客户管理（DIY）</strong></th></tr></thead><tbody><tr><td>代理检索（AgenticRetrieveStream）</td><td>✅ 支持</td><td>❌ 不支持</td></tr><tr><td>AgentCore 网关集成</td><td>✅ 支持</td><td>❌ 不支持</td></tr><tr><td>数据存储</td><td>自动扩展，由 Amazon Bedrock 完全管理</td><td>您配置、扩展和维护它</td></tr><tr><td>嵌入+重新排名</td><td>内置托管模型，无需额外费用</td><td>您配置它们</td></tr><tr><td>管理基础设施</td><td><strong>无</strong></td><td>矢量数据库 + 更多</td></tr></tbody></table>
-<p>由于代理检索和 AgentCore Gateway 连接器仅在托管知识库上可用，因此它是企业代理检索的自然基础。这还意味着 Amazon Bedrock 会为您管理存储和索引，因此在此设计中无需配置 OpenSearch Serverless 集合或 OCU 容量。当您想要选择和操作自己的矢量存储时（例如，重用现有的 OpenSearch Serverless 集合或满足特定的数据驻留、调整或合规性要求），客户管理的选项仍然是正确的选择。对于企业代理检索，托管知识库使该功能成为可能。</p>
-<h3>为什么可观察性和评估</h3>
-<p>“返回答案”的代理系统不足以用于生产。您需要了解它的行为方式（延迟、呼叫量、令牌使用情况）、检索和答案的效果如何，并且您持续需要这些信号。该解决方案<strong>提供</strong>两个跨越七层遥测的 CloudWatch 仪表板，以及两种形式的评估（按需和连续），所有这些都由同一 CDK 应用程序配置。基础、引用和评估层也支持负责任的使用。引用的答案可追溯到其来源段落，因此回复可审核，并且忠实性和正确性分数可让您捕获偏离来源的答案，而不是在生产中找出答案。</p>
-<h3>为什么 CDK 用于这个特定的解决方案</h3>
-<p>任何基础设施即代码工具都可以创建这些资源。 CDK 在这里赢得一席之地是因为该架构特有的原因：<strong>四个堆栈密集地交叉引用</strong>。网关需要两个知识库 ID。代理需要网关的 URL 和 ARN。仪表板需要知识库 ID、网关 ARN、<em>和</em>代理运行时 ID、跨越堆栈边界的七个值，每个值都是指标上的维度或连接器上的目标。</p>
-<p>以原始模板编写，这是一组手动保持一致的堆栈导出和跨堆栈查找，加上一个以正确顺序部署并向前线程输出的脚本，并且两者都会在重命名任何内容时发生漂移。在 CDK 中，您传递构造，并且导出和依赖边缘源自传递它的这一行为。 2024 年的解决方案具有三个堆栈和一个主要是线性的依赖链。在四个堆栈中交叉有七个值时，差异就不再是风格上的了。</p>
-<h2>解决方案概述</h2>
-<p>这是单个问题通过系统端到端的路径。值得慢慢看，因为帖子的其余部分是从左到右浏览的。</p>
-<p>下图描绘了端到端代理检索工作流程。用户的问题进入 AgentCore 运行时上的代理，该代理通过 AgentCore 网关将其路由到两个 AgenticRetrieveStream 工具之一，每个托管知识库、财务和天气工具各一个，每个工具均从 Amazon S3 提取。所选工具会返回一个有根据的、被引用的答案，并且每个步骤都会传输到 Amazon CloudWatch 和 AWS X-Ray。编号的徽章映射到以下演练。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-2.png" alt="流程图：用户向 AgentCore Runtime 提出问题，通过 AgentCore Gateway 发送到两个 AgenticRetrieveStream 工具，该工具由 Amazon S3 提供的财务和天气管理知识库提供支持，返回引用的答案，每一步都流式传输到 CloudWatch 和X 射线。"></p>
-<p>图 2：单个问题的端到端代理检索工作流程</p>
-<p>图中的编号步骤映射到工作流程，如下所示。</p>
-<p><strong>第 0 步 — 部署时一次性。</strong> 在提出任何问题之前，Amazon S3 中的每个语料库都会被提取到自己的托管知识库中：Amazon Bedrock 会自动对其进行解析、分块、嵌入和索引。这种情况在堆栈部署时发生一次，它不是每个问题路径的一部分，因此它被绘制为虚线箭头并标记为步骤 0。然后每个问题都遵循步骤 1-6：</p>
-<ul><li><strong>用户向托管在 Amazon Bedrock AgentCore 运行时上的代理发送问题</strong>。运行时使用 OpenTelemetry (OTEL) 跨度自动检测整个原因与行动循环，因此系统从第一次调用就可以观察到。</li><li><strong>代理的推理模型跨知识库进行规划和路由。</strong>因为每个知识库都作为自己的检索工具公开，所以代理会选择主题与问题（金融或天气）匹配的工具，而不是搜索一个混合索引。</li><li><strong>选定的工具调用由 AgentCore Gateway 通过 MCP 进行代理</strong>，由代理的 IAM 任务角色授权并使用 SigV4 进行签名，从而调用托管知识库上的知识库的 AgenticRetrieveStream API。</li><li><strong>AgenticRetrieveStream 执行知识库内的工作：</strong>它将问题分解为子查询，从 Amazon Bedrock 管理的数据存储中迭代检索（从 Amazon S3 中的语料库提取），并合成通过网关流回的有根据的引用答案。</li><li><strong>代理检查返回的上下文是否足够。</strong>如果不足够，它会再次循环、路由和检索，然后再撰写最终答案。如果是，它会将引用的答案返回给用户。</li><li><strong>自始至终，运行时都会向 Amazon CloudWatch 和 AWS X-Ray 发出跨度、令牌计数和指标</strong>，填充七个可观测层并提供按需和连续评估分数。</li></ul>
-<p>在内部，该工作流程是一个 CDK 应用程序“app.py”，它声明了四个堆栈。您不选择顺序，CDK 从您传递的构造引用中派生出它：</p>
+<p>在动手走一遍之前，先把三件事说清楚：是什么让检索变成 agentic，为什么托管知识库是它的正确基础，以及为什么可观测性和评估应该属于设计本身，而不是事后再外挂。</p>
+<h3>从 RAG 到企业级 agentic 检索</h3>
+<p>经典的 Retrieval Augmented Generation (RAG) 做一次检索、一次生成。<strong>企业级 agentic 检索</strong>把 推理 agent 放进循环：由它决定<em>是否</em>检索以及<em>检索什么</em>，可以多次检索以逐步改进，选择<em>哪个</em>知识库相关（语义路由），然后才组织出带引用的、有据可依的答案。有了托管知识库，这是一等的服务能力：AgenticRetrieveStream API 负责多轮规划、执行检索并返回带引用的答案，而不需要你在原始向量检索之上自己搭建并维护一层编排。这样在复杂问题上能得到更好的答案，但同时也让系统本身更复杂、更难运维——这正是可观测性和评估要从一开始就内置进来的原因。</p>
+<h3>托管知识库与自建知识库的对比</h3>
+<p>Amazon Bedrock 现在提供<strong>托管知识库</strong>（Type: MANAGED）：<strong>摄取、存储、索引和检索</strong>都由 Amazon Bedrock 为你管好，默认还包括用服务托管的模型做 embedding 和重排，因此<strong>没有向量数据库需要你去供给、扩容或打补丁</strong>。这与<strong>客户自管</strong>（DIY）知识库不同，后者由你自己选择并运维向量存储（例如 Amazon OpenSearch Serverless）。</p>
+<p>对这套方案来说，有两项差异最为关键：</p>
+<table><thead><tr><th><strong>能力</strong></th><th><strong>Amazon Bedrock 托管</strong></th><th><strong>客户自管 (DIY)</strong></th></tr></thead><tbody><tr><td>Agentic 检索 (AgenticRetrieveStream)</td><td>✅ 支持</td><td>❌ 不支持</td></tr><tr><td>AgentCore Gateway 集成</td><td>✅ 支持</td><td>❌ 不支持</td></tr><tr><td>数据存储</td><td>自动扩缩容，完全由 Amazon Bedrock 托管</td><td>你自己供给、扩容并维护</td></tr><tr><td>Embedding + 重排</td><td>内置托管模型，无额外费用</td><td>由你自行配置</td></tr><tr><td>需要管理的基础设施</td><td><strong>无</strong></td><td>向量数据库 + 其他</td></tr></tbody></table>
+<p>由于 agentic 检索和 AgentCore Gateway 连接器只在托管知识库上可用，它自然是企业级 agentic 检索的合适基础。这也意味着存储和索引由 Amazon Bedrock 为你管理，因此这套设计里没有需要供给的 OpenSearch Serverless collection 或 OCU 容量。当你想自己选择并运维向量存储时，客户自管仍然是正确选项，例如复用已有的 OpenSearch Serverless collection，或满足特定的数据驻留、调优或合规要求。对企业级 agentic 检索而言，托管知识库正是这项能力得以成立的前提。</p>
+<h3>为什么需要可观测性与评估</h3>
+<p>一个只是<em>返回答案</em>的 agentic 系统不足以用于生产。你需要看清它表现如何（latency、调用量、token 用量），检索和答案质量如何，而且这些信号要持续可得。这套方案<strong>交付</strong>两个覆盖七层遥测的 CloudWatch 仪表板，外加两种评估形式（按需和持续），全部由同一个 CDK 应用供给。依据支撑、引用和评估这几层同时也支撑负责任的使用。带引用的答案可以回溯到来源段落，响应因此保持可审计；faithfulness 与 correctness 分数则让你能及时发现答案偏离来源，而不必等到生产环境里才知道。</p>
+<h3>为什么这个方案要用 CDK</h3>
+<p>任何 infrastructure-as-code 工具都能创建这些资源。CDK 在这里能站住脚，有一个针对这个架构的具体理由：<strong>四个 stack 之间交叉引用非常密集</strong>。Gateway 需要两个知识库 id。agent 需要 Gateway 的 URL 和 ARN。仪表板需要 KB id、Gateway ARN，<em>以及</em>agent runtime id——七个值跨越 stack 边界，每一个要么是某个指标的一个维度，要么是某个连接器的一个目标。</p>
+<p>如果写成原始模板，那就是一堆要靠手工保持一致的 stack export 和跨 stack 查找，再加一个按正确顺序部署、把输出一路传下去的脚本，而任何东西一改名，两者就都开始漂移。在 CDK 里你只需要把 construct 传过去，export 和依赖边都由这一次传递推导出来。2024 年那套方案有三个 stack，依赖链基本是线性的。到了四个 stack、七个值跨越其间的规模，这个差别就不再只是风格问题了。</p>
+<h2>方案概览</h2>
+<p>下面是一个问题在系统中从头到尾走过的路径。值得慢慢看，因为接下来全文会从左到右逐段走一遍。</p>
+<p>下面的图勾勒出端到端的 agentic 检索工作流。用户的问题进入运行在 AgentCore Runtime 上的 agent，Runtime 经由 AgentCore Gateway 把它路由到两个 AgenticRetrieveStream 工具之一——每个托管知识库一个，分别是 financial 和 weather，两者都从 Amazon S3 摄取。被选中的工具返回一段有据可依、带引用的答案，过程中每一步都流式写入 Amazon CloudWatch 和 AWS X-Ray。图中的编号徽标对应下面逐段的讲解。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-2.png" alt="流程图：用户问题进入 AgentCore Runtime，再经 AgentCore Gateway 路由到两个 AgenticRetrieveStream 工具，这两个工具分别由 financial 和 weather 托管知识库支撑，知识库内容来自 Amazon S3，最终返回带引用的答案，过程中每一步都流式写入 CloudWatch 和 X-Ray。"></p>
+<p>图 2：单个问题的端到端 agentic 检索工作流</p>
+<p>图中的编号步骤对应下面的工作流，流程如下。</p>
+<p><strong>步骤 0 —— 一次性，在部署时完成。</strong> 在任何问题被提出之前，Amazon S3 中的每个语料库都会被摄取到自己的托管知识库里：Amazon Bedrock 自动完成解析、chunk、embedding 和索引。这发生在 stack 部署时，只做一次，不属于每个问题的路径，所以图中画成虚线箭头并标记为步骤 0。之后每个问题都按步骤 1–6 走。</p>
+<ul><li><strong>用户把问题发给托管在 Amazon Bedrock AgentCore Runtime 上的 agent</strong>。Runtime 用 OpenTelemetry (OTEL) span 自动为整个 reason-and-act 循环埋点，因此从第一次调用起系统就是可观测的。</li><li><strong>agent 的推理模型做规划并跨知识库路由。</strong> 由于每个知识库都作为独立的检索工具暴露出来，agent 会挑选主题与问题匹配的那个工具——financial 或 weather——而不是去搜一个混合索引。</li><li><strong>被选中的工具调用由 AgentCore Gateway 通过 MCP agent 转发</strong>，以 agent 的 IAM task role 授权、用 SigV4 签名，进而调用该知识库在托管知识库上的 AgenticRetrieveStream API。</li><li><strong>AgenticRetrieveStream 负责知识库内部的工作：</strong> 把问题分解成子查询，在 Amazon Bedrock 管理的数据存储（内容摄取自 Amazon S3 的语料库）中迭代检索，并综合出一段有据可依、带引用的答案，经 Gateway 流式返回。</li><li><strong>agent 检查返回的上下文是否充分。</strong> 若不充分，它就进入下一轮循环，重新路由并检索，然后才组织最终答案；若充分，它就把带引用的答案返回给用户。</li><li><strong>整个过程中，Runtime 持续向 Amazon CloudWatch 和 AWS X-Ray 发出 span、token 计数和指标</strong>，填满七层可观测性数据，同时为按需评估和持续评估的分数提供输入。</li></ul>
+<p>在内部，这套工作流就是一个 CDK 应用 <code>app.py</code>，它声明了四个 stack。顺序不由你决定，CDK 会根据你传入的 construct 引用推导出来：</p>
 <pre><code>kb_stack = KnowledgeBasesStack(app, f&quot;{project}-kb&quot;, env=env)
 
 gateway_stack = AgenticGatewayStack(
@@ -1055,52 +1055,52 @@ DashboardsStack(
     gateway=gateway_stack.gateway,
     agent_runtime=agent_stack.agent_runtime,
 )</code></pre>
-<p>这就是整个接线。这四个构造函数调用取代了导出/导入簿记和部署脚本。</p>
-<table><thead><tr><th><strong>#</strong></th><th><strong>堆栈</strong></th><th><strong>它创造了什么</strong></th><th><strong>注意</strong></th></tr></thead><tbody><tr><td>1</td><td>-kb</td><td>S3 存储桶，语料库上传，两种类型：托管 KB、数据源、IAM、摄取</td><td>KB 达到 ACTIVE，语料库被摄取</td></tr><tr><td>2</td><td>-网关</td><td>网关 (AWS_IAM / MCP)、每 KB AgenticRetrieveStream 目标</td><td>无需 Cognito</td></tr><tr><td>3</td><td>-代理</td><td>ECR、CodeBuild、运行时检测 Strands 代理、出售日志/跟踪、在线评估</td><td><strong>~8–10 分钟</strong>（图像构建）</td></tr><tr><td>4</td><td>-仪表板</td><td>代理可观察性 + kb 可观察性仪表板</td><td>空，直到你推动交通</td></tr></tbody></table>
-<p>代理运行一个推理与行动循环：它思考（大型语言模型 (LLM) 调用），决定调用哪个知识库工具，读取通过网关返回的内容，并经常在撰写最终引用的答案之前再次检索。每个步骤都由运行时自动检测，因此七个可观察层由真实流量填充。</p>
-<p><strong>七层。</strong> L1 KB 原生指标、L2 摄取、L3 代理检索质量、L4 网关/MCP 指标、L5 OTEL 生成树、L6 令牌使用和 L7 评估分数。第 1、4 和 5 层会自动发射。第 3、6 和 7 层由驱动程序笔记本作为自定义指标发布。</p>
-<p>所有可调整的内容都位于一个文件“config.py”中：</p>
-<table><thead><tr><th><strong>设置</strong></th><th><strong>含义</strong></th><th><strong>默认</strong></th></tr></thead><tbody><tr><td><code>EnvSettings.PROJECT_NAME</code></td><td><strong>每个</strong>堆栈和资源的名称前缀</td><td><code>bmkb-obs-cdk</code></td></tr><tr><td><code>EnvSettings.ACCOUNT_REGION</code></td><td>要部署到的 AWS 区域</td><td>us-west-2（或您的个人资料）</td></tr><tr><td><code>KbConfig.EMBEDDING_MODEL_TYPE</code></td><td>“托管”（捆绑）或“自定义”（自带 ARN）</td><td><code>管理</code></td></tr><tr><td><code>AgentConfig.MODEL_ID</code></td><td>代理的推理模型，第 6 层花费</td><td>Claude Haiku 4.5</td></tr><tr><td><code>EvalConfig.SAMPLING_PERCENTAGE</code></td><td>在线评估采样率，<strong>参见免责声明</strong></td><td>100</td><td>100</td></tr></tbody></table>
-<p>更改“PROJECT_NAME”将为您提供整个解决方案的独立命名副本，因此两个部署可以在一个帐户中共存。驱动程序笔记本读取相同的常量，因此它会自动遵循重命名，无需手动保持同步的堆栈名称。</p>
+<p>接线到此为止。就是这四次构造函数调用，取代了 export/import 的记账工作和部署脚本。</p>
+<table><thead><tr><th><strong>#</strong></th><th><strong>Stack</strong></th><th><strong>它创建什么</strong></th><th><strong>备注</strong></th></tr></thead><tbody><tr><td>1</td><td>-kb</td><td>S3 bucket、语料库上传、两个 Type: MANAGED 知识库、数据源、IAM、摄取</td><td>知识库达到 ACTIVE，语料库完成摄取</td></tr><tr><td>2</td><td>-gateway</td><td>Gateway (AWS_IAM / MCP)、每个知识库对应的 AgenticRetrieveStream 目标</td><td>无需 Cognito</td></tr><tr><td>3</td><td>-agent</td><td>ECR、CodeBuild、运行在 Runtime 上并已埋点的 Strands agent、托管的日志与追踪、在线评估</td><td><strong>~8–10 分钟</strong>（镜像构建）</td></tr><tr><td>4</td><td>-dashboards</td><td>agentic-observability 和 kb-observability 仪表板</td><td>在你导入流量之前都是空的</td></tr></tbody></table>
+<p>agent 跑的是一个 reason-and-act 循环：先思考（一次大语言模型 (LLM) 调用），决定调用哪个知识库工具，读取经 Gateway 返回的内容，往往还要再检索一次，然后才组织出最终的带引用答案。每一步都由 Runtime 自动埋点，所以七层可观测性数据都是从真实流量里填起来的。</p>
+<p><strong>七层数据。</strong> L1 知识库原生指标、L2 摄取、L3 agentic 检索质量、L4 Gateway/MCP 指标、L5 OTEL span 树、L6 token 用量、L7 评估分数。第 1、4、5 层自动产生；第 3、6、7 层由驱动 notebook 以自定义指标的形式发布。</p>
+<p>所有可调项都在一个文件 <code>config.py</code> 里：</p>
+<table><thead><tr><th><strong>设置项</strong></th><th><strong>含义</strong></th><th><strong>默认值</strong></th></tr></thead><tbody><tr><td><code>EnvSettings.PROJECT_NAME</code></td><td><strong>每一个</strong> stack 和资源的前缀名</td><td><code>bmkb-obs-cdk</code></td></tr><tr><td><code>EnvSettings.ACCOUNT_REGION</code></td><td>要部署到的 AWS Region</td><td>us-west-2（或你 profile 里的那个）</td></tr><tr><td><code>KbConfig.EMBEDDING_MODEL_TYPE</code></td><td><code>MANAGED</code>（内置）或 <code>CUSTOM</code>（自带 ARN）</td><td><code>MANAGED</code></td></tr><tr><td><code>AgentConfig.MODEL_ID</code></td><td>agent 的推理模型，也就是第 6 层的花费来源</td><td>Claude Haiku 4.5</td></tr><tr><td><code>EvalConfig.SAMPLING_PERCENTAGE</code></td><td>在线评估的采样率，<strong>见下方声明</strong></td><td>100</td></tr></tbody></table>
+<p>改 <code>PROJECT_NAME</code> 会得到整套方案的一份独立命名的副本，于是同一账号下可以并存两套部署。驱动 notebook 读的是同一个常量，所以它会自动跟着改名，不需要手工同步任何 stack 名称。</p>
 <h2>描述数据集</h2>
-<p>该解决方案附带两个小型语料库，捆绑在 data/ 下的存储库中：</p>
-<ul><li><strong>Financial</strong> — 合成的 Octank Financial 10-K（octank_financial_10K.pdf，~198 KB）。</li><li><strong>天气</strong> — <strong>真实、公开的</strong>美国国会研究服务部关于龙卷风的报告（<a href="https://sgp.fas.org/crs/misc/IF12695.pdf">IF12695</a>，tornadoes_report.pdf，~560 KB）。</li></ul>
-<p>⚠️ <strong>关于数据：</strong> 金融语料库是<em>合成的</em>。 Octank 是一家虚构的公司，10-K 是模型生成的样本数据（CC0 许可）。这不是真实的财务数据。天气语料库是真实的、公共领域的美国政府作品，也是国会研究服务报告，可在 <a href="https://sgp.fas.org/crs/misc/IF12695.pdf">sgp.fas.org/crs/misc/IF12695.pdf</a> 上公开获取（美国政府的作品不受版权保护）。要使用您自己的数据，请将文件放在 data/ 下并调整“config.py”中的前缀，无需其他更改。</p>
-<p>这两个语料库有意不同，因此代理必须将每个问题路由到正确的知识库，即语义路由故事。由于这些是托管知识库，因此我们不会配置分块、嵌入或索引：在摄取时，Amazon Bedrock 会解析每个 PDF、对其进行分块、将其嵌入其托管模型并自动为其建立索引。</p>
-<p>我们使用两个独立的知识库，每个知识库都通过网关作为自己的检索工具公开，而不是一个包含两个语料库的知识库，这一选择是经过深思熟虑的。为代理提供两个命名工具，使得路由成为可以观察到的明确推理行为：跨度树显示它为给定问题选择的“哪个”工具，并且第 3 层中的检索质量指标在每个知识库中保持可分离，因此财务和天气精度永远不会模糊为单个数字。跨越两个语料库的单一工具将打破这种区别，路由决策将移至一个索引的排名内部，从视野中消失，并且每个质量信号将是两个不相关领域的平均值。将语料库与其工具分开可以使代理的行为清晰可见，这也是练习的重点。</p>
-<p>在CDK中，将语料库放入S3是一个BucketDeployment：</p>
+<p>这套方案自带两个小语料库，放在仓库的 data/ 目录下：</p>
+<ul><li><strong>Financial</strong> —— 一份合成的 Octank Financial 10-K（octank_financial_10K.pdf，约 198 KB）。</li><li><strong>Weather</strong> —— 一份<strong>真实的、公开可获取的</strong>美国国会研究处关于龙卷风的报告（<a href="https://sgp.fas.org/crs/misc/IF12695.pdf">IF12695</a>，tornadoes_report.pdf，约 560 KB）。</li></ul>
+<p>⚠️ <strong>关于数据：</strong> 财务语料库是<em>合成的</em>。Octank 是一家虚构公司，那份 10-K 是模型生成的样本数据（CC0 许可）。它<strong>不是</strong>真实财务数据。天气语料库是美国政府的真实公共领域作品，是一份美国国会研究处报告，可在 <a href="https://sgp.fas.org/crs/misc/IF12695.pdf">sgp.fas.org/crs/misc/IF12695.pdf</a> 公开获取（美国政府的作品不受版权保护）。要换成你自己的数据，只需把文件放到 data/ 下，并调整 <code>config.py</code> 中的前缀，不需要其他改动。</p>
+<p>这两个语料库是有意做出差异的，这样 agent 就必须把每个问题路由到正确的知识库——这正是语义路由这条线索。因为它们是托管知识库，我们不配置 chunking、embedding 或索引：摄取时 Amazon Bedrock 会解析每个 PDF、做 chunk、用它的托管模型做 embedding，并自动建立索引。</p>
+<p>我们用两个彼此独立的知识库，各自通过 Gateway 暴露为自己的检索工具，而不是用一个知识库同时装下两个语料库——这个选择是刻意的。给 agent 两个具名工具，路由就成了一个可以被观察到的、显式的推理行为：span 树显示它针对某个问题选了<em>哪个</em>工具，第 3 层的检索质量指标也能按知识库分开，于是 financial 和 weather 的准确率永远不会混成一个数字。如果用一个横跨两个语料库的工具，这个区分就会塌掉，路由决策会退到单个索引的排序内部去、无从窥见，而每一个质量信号都会变成两个不相关领域之间的平均值。把语料库和它们的工具分开，正是让 agent 行为变得可读的原因，而这恰恰是整个练习的意义所在。</p>
+<p>在 CDK 里，把语料库放进 S3 就是一个 BucketDeployment：</p>
 <pre><code>s3deploy.BucketDeployment(
     self, &quot;FinancialCorpus&quot;,
     sources=[s3deploy.Source.asset(str(ROOT / &quot;data&quot; / &quot;financial&quot;))],
     destination_bucket=self.source_bucket,
     destination_key_prefix=KbConfig.FINANCIAL_PREFIX,
 )</code></pre>
-<p>BucketDeployment 值得了解，因为替代方案非常诱人：如果没有它，触发摄取的自定义资源往往会增加上传步骤，而现在一个资源拥有两个不相关的作业。在这里它只需要<em>摄取</em>。</p>
-<p>托管摄取自动扫描、分块、嵌入和索引每个文档：每个知识库索引一个文档，零失败。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-3.png" alt="托管摄取结果显示每个知识库索引一个文档，零失败"></p>
+<p>BucketDeployment 值得专门了解一下，恰恰是因为替代方案太诱人：不用它的话，触发摄取的那个 custom resource 往往会顺带长出一个上传步骤，于是同一个资源就干起了两件不相干的事。而在这里，它只需要负责<em>摄取</em>。</p>
+<p>托管摄取会自动扫描、chunk、embedding 并索引每一份文档：每个知识库索引一份文档，零失败。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-3.png" alt="托管摄取结果，显示每个知识库索引了一份文档且零失败"></p>
 <p>图 3：托管摄取结果，每个知识库索引一份文档，零失败</p>
-<h2>部署解决方案</h2>
-<p>本节将逐步介绍如何使用一个命令部署整个解决方案。满足先决条件后，“cdk deploy --all”按照 CDK 派生的依赖顺序配置所有四个堆栈，并自动线程化每个跨堆栈值。</p>
-<h3>先决条件</h3>
-<ul><li>具有 Amazon Bedrock、AgentCore（运行时 + 网关）、<a href="https://docs.aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a>、CloudWatch、<a href="https://docs.aws.amazon.com/xray/">AWS X-Ray</a>、<a href="https://docs.aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a>、<a href="https://docs.aws.amazon.com/codebuild/">AWS 权限的 AWS 账户CodeBuild</a>、Amazon S3、<a href="https://docs.aws.amazon.com/lambda/">AWS Lambda</a> 和 <a href="https://docs.aws.amazon.com/cloudformation/">AWS CloudFormation</a>。</li><li>账户中可用的代理模型（默认 <code>us.anthropic.claude-haiku-4-5-20251001-v1:0</code>）。</li><li>启用了 CloudWatch Transaction Search，因此 OTEL 跨越了 aws/spans 中的第 5-7 层。</li><li>Node.js 18+ 和 CDK CLI (<code>npm install -g aws-cdk</code>)，以及 Python 3.13+。</li><li>为 CDK (cdk bootstrap) 引导的帐户和区域，每个帐户/区域一次。</li><li>没有本地 Docker，代理映像由 CodeBuild (ARM64) 构建。</li></ul>
-<h3>一个命令</h3>
-<p>要部署解决方案，请克隆存储库、创建虚拟环境、安装依赖项，然后运行“cdk deploy --all”。从终端运行以下命令：</p>
+<h2>部署方案</h2>
+<p>本节讲解如何用一条命令部署整套方案。前置条件满足后，<code>cdk deploy --all</code> 会按 CDK 推导出的依赖顺序供给全部四个 stack，并自动把每个跨 stack 的值传下去。</p>
+<h3>前置条件</h3>
+<ul><li>一个 AWS 账号，且拥有 Amazon Bedrock、AgentCore (Runtime + Gateway)、<a href="https://docs.aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a>、CloudWatch、<a href="https://docs.aws.amazon.com/xray/">AWS X-Ray</a>、<a href="https://docs.aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a>、<a href="https://docs.aws.amazon.com/codebuild/">AWS CodeBuild</a>、Amazon S3、<a href="https://docs.aws.amazon.com/lambda/">AWS Lambda</a> 和 <a href="https://docs.aws.amazon.com/cloudformation/">AWS CloudFormation</a> 的相应权限。</li><li>账号中可用 agent 所用的模型（默认 <code>us.anthropic.claude-haiku-4-5-20251001-v1:0</code>）。</li><li>启用 CloudWatch Transaction Search，这样 OTEL span 才会落到 aws/spans，供第 5–7 层使用。</li><li>Node.js 18+ 和 CDK CLI（<code>npm install -g aws-cdk</code>），以及 Python 3.13+。</li><li>账号和 Region 已为 CDK 做过 bootstrap（cdk bootstrap），每个账号/Region 做一次即可。</li><li>本地不需要 Docker，agent 镜像由 CodeBuild 构建（ARM64）。</li></ul>
+<h3>一条命令</h3>
+<p>要部署这套方案，克隆仓库、创建虚拟环境、安装依赖，然后运行 <code>cdk deploy --all</code>。在终端里执行以下命令：</p>
 <pre><code>git clone https://github.com/aws-samples/amazon-bedrock-samples.git
 cd rag/managed-knowledge-bases/07-IaaC/managed-kb-observability-cdk/
 python3 -m venv .venv &amp;&amp; source .venv/bin/activate
 pip install -r requirements.txt
 cdk bootstrap  # once per account/region
 cdk deploy --all</code></pre>
-<p>前两个命令克隆示例并移动到项目目录中。接下来的两个创建并激活 Python 虚拟环境并安装 CDK 应用程序的依赖项。 <code>cdk bootstrap</code> 为 CDK 准备帐户和区域（每个帐户/区域只需要一次），并且 <code>cdk deploy --all</code> 提供所有四个堆栈。</p>
-<p>账户和区域来自您的 AWS 配置文件 (CDK_DEFAULT_ACCOUNT / CDK_DEFAULT_REGION)，因此应用程序无需任何编辑即可部署。</p>
-<p>区域可用性：托管知识库、代理检索 (AgenticRetrieveStream) 和 Amazon Bedrock AgentCore（运行时和网关）并非在每个 AWS 区域都可用。在部署之前，请确认您的目标区域中提供了所有这些，并相应地在“config.py”中设置“ACCOUNT_REGION”。默认值为 us-west-2。有关当前可用性的信息，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/">Amazon Bedrock</a> 和 <a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore</a> 文档以及 <a href="https://aws.amazon.com/about-aws/global-infrastruct/regional-product-services/">AWS 区域服务列表</a>。</p>
-<p>此版本中没有部署脚本，这就是要点：“cdk deploy --all”遍历从“app.py”派生的依赖关系图，按顺序部署四个堆栈，并自动传递每个跨堆栈值。终端在完成时报告每个堆栈，bmkb-obs-cdk-kb [1/4]（默认的 PROJECT_NAME），然后是网关 [2/4]，然后是代理 [3/4]，然后是仪表板 [4/4]，并且该顺序是派生的，而不是声明的：它不属于堆栈之间的构造引用，因此添加使用现有输出的第五个堆栈会自行重新排序部署。</p>
-<p>Stack -agent 使用 CodeBuild 构建代理容器，因此该阶段大约需要 8-10 分钟。其他三人也很快。每个堆栈在完成时都会打印其输出，您可以在其中获取知识库 ID、网关 URL、运行时 ARN 和两个仪表板 URL。部署完成后，所有四个堆栈都已完成。以下屏幕截图显示了成功执行“cdk deploy --all”后的 AWS CloudFormation 控制台。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-4.png" alt="AWS CloudFormation 控制台列出了四个堆栈 — bmkb-obs-cdk-kb、-gateway、-agent 和 -dashboards — 每个堆栈都有状态CREATE_COMPLETE。"></p>
-<p>图 4：成功部署后的 AWS CloudFormation 控制台，所有四个堆栈均为 CREATE_COMPLETE</p>
-<p>在控制台上，所有四个堆栈（kb、网关、代理和仪表板）都会报告 CREATE_COMPLETE，每个堆栈在其描述中显示的派生依赖关系顺序中都有其 [n/4] 位置。</p>
-<h3>关于长期运行资源的说明</h3>
-<p>此解决方案中的两件事花费的时间远远超过 AWS Lambda 函数允许进行简单轮询的 15 分钟上限：KB 摄取同步和 CodeBuild 映像构建。 AWS CDK 提供程序框架通过“on_event”/“is_complete”拆分来处理此问题，其中一个处理程序开始工作，第二个处理程序接受轮询，直至报告完成。</p>
+<p>前两条命令克隆示例代码并进入项目目录。接下来两条创建并激活 Python 虚拟环境，安装 CDK 应用的依赖。<code>cdk bootstrap</code> 为 CDK 准备好账号和 Region（每个账号/Region 只需做一次），<code>cdk deploy --all</code> 则供给全部四个 stack。</p>
+<p>账号和 Region 取自你的 AWS profile（CDK_DEFAULT_ACCOUNT / CDK_DEFAULT_REGION），所以部署这个应用不需要做任何修改。</p>
+<p>Region 可用性：托管知识库、agentic 检索 (AgenticRetrieveStream) 以及 Amazon Bedrock AgentCore（Runtime 和 Gateway）并非在每个 AWS Region 都可用。部署前请确认目标 Region 提供以上全部能力，并相应地在 <code>config.py</code> 中设置 <code>ACCOUNT_REGION</code>。默认是 us-west-2。当前可用性请查阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/">Amazon Bedrock</a> 和 <a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore</a> 文档，以及 <a href="https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/">AWS Regional Services List</a>。</p>
+<p>这个版本没有部署脚本，而这正是重点：<code>cdk deploy --all</code> 会遍历它从 <code>app.py</code> 推导出的依赖图，按顺序部署四个 stack，并自动传递每个跨 stack 的值。终端会逐个报告每个 stack 的完成情况：bmkb-obs-cdk-kb [1/4]（默认的 PROJECT_NAME），然后 gateway [2/4]，然后 agent [3/4]，最后 dashboards [4/4]。这个顺序是推导出来的，不是声明的：它源自各 stack 之间的 construct 引用，因此新增一个消费已有输出的第五个 stack，部署顺序会自动重排。</p>
+<p>-agent 这个 stack 用 CodeBuild 构建 agent 容器，所以这一阶段要预留大约 8–10 分钟。另外三个很快。每个 stack 完成后都会打印自己的输出，你就在那里拿到知识库 id、Gateway URL、runtime ARN 和两个仪表板 URL。部署结束时，四个 stack 全部完成。下面的截图是成功执行 <code>cdk deploy --all</code> 之后的 AWS CloudFormation 控制台。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-4.png" alt="AWS CloudFormation 控制台列出四个 stack——bmkb-obs-cdk-kb、-gateway、-agent 和 -dashboards——每个状态都是 CREATE_COMPLETE。"></p>
+<p>图 4：成功部署后的 AWS CloudFormation 控制台，四个 stack 均为 CREATE_COMPLETE</p>
+<p>在控制台上，四个 stack——kb、gateway、agent 和 dashboards——都报告 CREATE_COMPLETE，每个 stack 的描述中都显示着它在推导出的依赖顺序里的 [n/4] 位置。</p>
+<h3>关于长耗时资源的一点说明</h3>
+<p>这套方案里有两件事远超 AWS Lambda 函数 15 分钟上限所能支撑的朴素轮询：知识库摄取同步和 CodeBuild 镜像构建。AWS CDK 的 Provider 框架用 <code>on_event</code> / <code>is_complete</code> 的拆分来处理：一个 handler 启动工作，另一个被轮询直到报告完成。</p>
 <pre><code>cr.Provider(
     self, &quot;IngestSyncProvider&quot;,
     on_event_handler=on_event,        # StartIngestionJob, return the job id
@@ -1108,10 +1108,10 @@ cdk deploy --all</code></pre>
     query_interval=Duration.seconds(30),
     total_timeout=Duration.minutes(30),
 )</code></pre>
-<p>没有任何阻碍，返回到 CloudFormation 的响应协议由框架拥有，而不是手写到每个处理程序中，并且 30 分钟的预算是一个属性，而不是需要围绕它进行设计的东西。</p>
-<h2>启动并测试</h2>
-<p>打开notebooks/01-drive-and-observe.ipynb并从上到下运行它（首先<code>pip install -r requests-notebook.txt</code>）。它读取堆栈输出，然后向部署的代理发送特定于主题的提示，<strong>每 KB 一个会话</strong>，因此您可以在一个位置查看答案和语义路由：财务问题由 Octank 10-K 回答，天气问题由龙卷风报告回答，每个问题都会自动路由到匹配的 AgenticRetrieveStream 工具。</p>
-<p>笔记本从堆栈输出中发现所有内容，因此无需手动粘贴任何内容：</p>
+<p>没有任何地方会阻塞，回传给 CloudFormation 的响应协议由框架负责，而不是在每个 handler 里手写一遍；30 分钟的时限是一个属性，而不是你得绕着它做工程设计的东西。</p>
+<h2>启动与测试</h2>
+<p>打开 notebooks/01-drive-and-observe.ipynb 从头到尾跑一遍（先执行 <code>pip install -r requirements-notebook.txt</code>）。它会读取 stack 的输出，然后向已部署的 agent 发送特定主题的 prompt，<strong>每个知识库一个会话</strong>，这样你就能在同一处同时看到答案和语义路由：财务类问题从 Octank 10-K 得到回答，天气类问题从龙卷风报告得到回答，各自自动路由到匹配的 AgenticRetrieveStream 工具。</p>
+<p>notebook 的一切信息都来自 stack 输出，所以没有任何东西需要你手工粘贴：</p>
 <pre><code># Stack names are derived from the same PROJECT_NAME the CDK app uses, so renaming the
 # project in config.py cannot leave this notebook pointing at stale stacks.
 from config import EnvSettings
@@ -1123,19 +1123,19 @@ STACKS = {suffix: f'{PROJECT}-{suffix}'
 def outputs(stack_name):
     s = cfn.describe_stacks(StackName=stack_name)['Stacks'][0]
     return {o['OutputKey']: o['OutputValue'] for o in s.get('Outputs', [])}</code></pre>
-<p>笔记本导入与应用程序相同的“config.py”，因此两者永远不会对堆栈的名称产生分歧。</p>
-<p>驱动程序通过部署的代理发送每 KB 提示。财务问题转到财务知识库，天气问题转到天气知识库，每个问题都有一个有根据的引用答案。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-5.png" alt="驾驶员笔记本输出显示财务和天气问题，每个问题都路由到匹配的知识库并附有引用的答案"></p>
-<p>图 5：按知识库提示路由到匹配的知识库，每个提示都返回一个有根据的引用答案</p>
-<p>该笔记本还根据代理实际检索和引用的内容计算无参考的第 3 层检索质量信号，无需地面事实，无需额外判断，并将其发布到 CloudWatch。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-6.png" alt="每 KB 第 3 层检索质量信号：检索利用率（精度代理）、接地覆盖率（可信度代理）、重复率和检索集计数"></p>
-<p>图 6：每个知识库的无参考第 3 层检索质量信号</p>
-<h2>观察：七层仪表板</h2>
-<p>两个仪表板是七个层可见的地方。该堆栈创建两个仪表板，并推动流量填充它们。以下屏幕截图显示了 CloudWatch 控制台中显示的两个仪表板。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-7.png" alt="CloudWatch 仪表板列表显示两个仪表板：端到端代理可观测性仪表板和每 KB (BMKB) 可观测性仪表板。"></p>
-<p>图 7：CloudWatch 控制台中的两个仪表板：端到端代理可观察性和每 KB 可观察性</p>
-<p>两个仪表板都出现在 CloudWatch 控制台中：一个用于端到端代理可观察性，一个用于每 KB 可观察性（BMKB，Bedrock 托管知识库）。本节的其余部分将介绍每一层显示的内容。</p>
-<p>在此版本中，仪表板是根据类型化对象而不是 JSON 字符串构建的。指标是 Metric，小部件是 GraphWidget，布局是行列表：</p>
+<p>notebook 导入的是应用用的<em>同一个</em> <code>config.py</code>，所以两者不可能对 stack 的名字有分歧。</p>
+<p>驱动脚本通过已部署的 agent 发送按知识库区分的 prompt。财务类问题路由到 financial 知识库，天气类问题路由到 weather 知识库，各自返回一段有据可依、带引用的答案。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-5.png" alt="驱动 notebook 的输出，显示财务类问题和天气类问题分别路由到匹配的知识库并给出带引用的答案"></p>
+<p>图 5：按知识库区分的 prompt 路由到匹配的知识库，各自返回一段有据可依、带引用的答案</p>
+<p>notebook 还会根据 agent 实际检索并引用了什么，算出第 3 层那些不需要参考答案的检索质量信号——不需要标准答案，也不需要额外的评判模型——并把它们发布到 CloudWatch。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-6.png" alt="按知识库划分的第 3 层检索质量信号：检索利用率（准确率 agent 指标）、有据覆盖率（faithfulness agent 指标）、重复率以及检索集计数"></p>
+<p>图 6：每个知识库各自独立的无参考答案第 3 层检索质量信号</p>
+<h2>观测：七层仪表板</h2>
+<p>这两个仪表板正是七层数据变得可见的地方。stack 会创建两个仪表板，导入流量即可把它们填上。下面的截图是这两个仪表板在 CloudWatch 控制台中的样子。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-7.png" alt="CloudWatch 仪表板列表，显示两个仪表板：端到端的 agentic-observability 仪表板，以及按知识库划分的 (BMKB) observability 仪表板。"></p>
+<p>图 7：CloudWatch 控制台中的两个仪表板，端到端 agentic 可观测性和按知识库划分的可观测性</p>
+<p>两个仪表板都会出现在 CloudWatch 控制台里：一个用于端到端 agentic 可观测性，一个用于按知识库划分的可观测性（BMKB，即 Bedrock Managed Knowledge Base）。本节余下部分会逐层讲它们各自展示什么。</p>
+<p>在这个版本里，仪表板由带类型的对象构建，而不是一段 JSON 字符串。指标是 Metric，组件是 GraphWidget，布局是一组 Rows：</p>
 <pre><code>cw.GraphWidget(
     title=&quot;L4 — Gateway metrics (MCP)&quot;,
     width=12, height=6, period=PERIOD, statistic=&quot;Sum&quot;,
@@ -1146,84 +1146,84 @@ def outputs(stack_name):
         self._gateway_metric(&quot;Throttles&quot;, gateway_arn, &quot;Throttles&quot;),
     ],
 )</code></pre>
-<p>实际的好处并不是更少的行数，“dashboards_stack.py”运行了 400 行，比等效的 DashboardBody JSON 还要多。这是因为拼写错误的属性或无效的小部件组合在您的笔记本电脑上的“cdk合成器”上失败，大约一秒钟。 DashboardBody 字符串中的相同错误已成功部署，并在 AWS 管理控制台上呈现为损坏的小部件，您可以通过查看它来找到它。</p>
-<p>因为 Row 接受任何小部件，所以文档是布局的一部分，而不是漂移的 wiki 页面。每个仪表板将 TextWidgets 与图表交错：</p>
+<p>实际好处不是行数变少——<code>dashboards_stack.py</code> 有 400 行，比等价的 DashboardBody JSON 还长——而是：属性名拼错或组件组合非法，会在你本地的 <code>cdk synth</code> 阶段失败，大概一秒就暴露。同样的错误如果写在 DashboardBody 字符串里，部署会成功，然后在 AWS Management Console 上渲染成一个坏掉的组件，只能靠你盯着看才发现。</p>
+<p>由于 Row 接受任意组件，文档就是布局的一部分，而不是一页会逐渐走样的 wiki。每个仪表板都把 TextWidget 和图表交错排布：</p>
 <pre><code>[cw.TextWidget(width=24, height=7, markdown=self._l3_explainer())],
 [
     self._quality_widget(&quot;L3 · Financial KB — agentic quality (reference-free, 0–1)&quot;, fin_id),
     self._quality_widget(&quot;L3 · Weather KB — agentic quality (reference-free, 0–1)&quot;, wx_id),
 ],</code></pre>
-<p>_l3_explainer() 返回一个定义每个比率以及如何读取它的降价表，因此解释 grounded_coverage 的小部件与绘制它的小部件在同一提交中发布，并且冷打开仪表板的读者不需要猜测什么是无引用指标。</p>
-<p><strong>仪表板 A — 代理可观察性（端到端）。</strong> 该板以每层如何计算不同事物的解释器开头（对于 <em>N</em> 查询，您将看到 ~<em>N</em> 代理调用、~2<em>N</em> 检索、~3<em>N</em> LLM 调用和 ~5<em>N</em> 网关 MCP 操作，代理循环可见），然后显示 KB 指标 (L1)、网关指标和延迟 (L4)、令牌使用情况 (L6)，因为代理使用 AgenticRetrieveStream，它返回一个综合的、引用的答案，而不是每个块的分数，即无参考的第 3 层质量信号，内联定义并按 KB 绘制。</p>
-<p>在仪表板 A 上，按知识库绘制第 3 层无参考质量信号。首先是金融知识库。下图绘制了其retrieval_utilization、grounded_coverage 和duplicate_rate。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-8.png" alt="金融知识库第 3 层质量的 CloudWatch 折线图，以 0 到 1 绘制检索利用率、接地覆盖率和重复率规模。"></p>
-<p>图 8：金融知识库第 3 层质量，绘制检索利用率、接地覆盖率和重复率</p>
-<p>天气 KB 显示相同的三个信号，单独跟踪，因此这两个域永远不会模糊为一个数字。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-9.png" alt="天气知识库第 3 层质量的 CloudWatch 折线图，以 0 到 1 绘制检索利用率、接地覆盖率和重复率规模。"></p>
-<p>图 9：天气知识库第 3 层质量，与金融知识库分开跟踪</p>
-<p>这两张图表绘制了金融知识库（左）和天气知识库（右）的检索利用率、接地覆盖率和重复率，因此每个知识库的检索质量保持可分离，而不是平均为一个数字。</p>
-<p><strong>仪表板 B — 每 KB (BMKB) 可观察性。</strong> 还确定每 KB 支出的操作信号：索引大小（来自 S3 源字节）、检索量、代理工具调用、会话令牌使用情况以及按模型划分的生成令牌使用情况，每个信号都有内联说明。</p>
-<p>以下屏幕截图显示了仪表板 B 的四个指标小部件，在运行后填充。第一个小部件报告每个知识库从 S3 源字节派生的索引大小。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-10.png" alt="CloudWatch 小部件显示 S3 源字节的索引大小（以 MB 为单位），按知识库细分。"></p>
-<p>图 10：每个知识库的仪表板 B 索引大小，源自 Amazon S3 源字节</p>
-<p>第二个小部件对每个知识库的检索调用进行计数。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-11.png" alt="CloudWatch 小部件显示每个知识库的检索调用调用计数。"></p>
-<p>图 11：仪表板 B 每个知识库的检索调用计数</p>
-<p>第三个小部件对通过网关的代理工具调用进行计数。该知识库在两个知识库之间共享，而不是分割。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-12.png" alt="CloudWatch 小部件显示通过 AgentCore 网关的代理工具调用调用，作为单个共享计数。"></p>
-<p>图 12：仪表板 B 通过 AgentCore 网关的代理工具调用计数，在两个知识库之间共享</p>
-<p>第四个小部件报告每个知识库的会话令牌使用情况。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-13.png" alt="根据知识库显示会话令牌使用情况 (SessionQuotaTokens) 的 CloudWatch 小部件。"></p>
-<p>图 13：每个知识库的仪表板 B 会话令牌使用情况</p>
-<p>这四个小部件显示索引大小（来自 S3 源字节）、检索调用量、通过网关的代理工具调用以及会话令牌使用情况。除网关工具调用计数外，每个知识库均按知识库进行细分，网关工具调用计数在两者之间共享。</p>
-<p>有一个维度细节值得一提，因为类型化 API 不会为您捕获它：“AWS/Bedrock/KnowledgeBases”命名空间需要一个前缀 id“knowledge-base/&lt;id&gt;”，而解决方案自己的“BMKB/*”命名空间使用裸 ID。就 CDK 而言，两者都只是字符串。</p>
+<p>_l3_explainer() 返回一张 markdown 表格，定义每个比率的含义和读法，于是解释 grounded_coverage 的组件和绘制它的组件在同一次提交里一起发布，第一次打开这个仪表板的读者不必去猜「无参考答案指标」是什么意思。</p>
+<p><strong>仪表板 A —— 端到端 agentic 可观测性。</strong> 这块看板以一段说明开篇，解释每一层各自统计的是什么（对 <em>N</em> 次查询，你会看到约 <em>N</em> 次 agent 调用、约 2<em>N</em> 次检索、约 3<em>N</em> 次 LLM 调用、约 5<em>N</em> 次 Gateway MCP 操作——agentic 循环由此变得可见），然后展示知识库指标（L1）、Gateway 指标与 latency（L4）、token 用量（L6）；此外，由于 agent 使用的是 AgenticRetrieveStream，它返回的是综合出来的带引用答案，而不是逐 chunk 的分数，所以这里还有那些无参考答案的第 3 层质量信号——定义直接写在图内，并按知识库分别绘制。</p>
+<p>在仪表板 A 上，第 3 层那些无参考答案的质量信号是按知识库分别绘制的。先看 financial 知识库。下面的图表绘制了它的 retrieval_utilization、grounded_coverage 和 duplicate_rate。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-8.png" alt="financial 知识库第 3 层质量的 CloudWatch 折线图，在 0 到 1 的刻度上绘制 retrieval_utilization、grounded_coverage 和 duplicate_rate。"></p>
+<p>图 8：financial 知识库第 3 层质量，绘制检索利用率、有据覆盖率和重复率</p>
+<p>weather 知识库展示同样的三个信号，单独跟踪，这样两个领域永远不会混成一个数字。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-9.png" alt="weather 知识库第 3 层质量的 CloudWatch 折线图，在 0 到 1 的刻度上绘制 retrieval_utilization、grounded_coverage 和 duplicate_rate。"></p>
+<p>图 9：weather 知识库第 3 层质量，与 financial 知识库分开跟踪</p>
+<p>两张图分别绘制 financial 知识库（左）和 weather 知识库（右）的 retrieval_utilization、grounded_coverage 和 duplicate_rate，因此每个知识库的检索质量都保持可分，而不会被平均成一个数字。</p>
+<p><strong>仪表板 B —— 按知识库划分的 (BMKB) 可观测性。</strong> 决定花费的运维信号，同样按知识库划分：索引大小（由 S3 源字节数推算）、检索量、agentic 工具调用、会话 token 用量，以及按模型划分的生成 token 用量，每一项都配有就地说明。</p>
+<p>下面的截图展示了仪表板 B 的四个指标组件，它们在一次运行之后被填上了数据。第一个组件报告索引大小，由 S3 源字节数推算，按知识库分别显示。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-10.png" alt="CloudWatch 组件，显示由 S3 源字节数推算的索引大小（MB），按知识库分别拆开。"></p>
+<p>图 10：仪表板 B 中按知识库划分的索引大小，由 Amazon S3 源字节数推算</p>
+<p>第二个组件统计按知识库划分的 retrieve 调用次数。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-11.png" alt="CloudWatch 组件，显示按知识库划分的 Retrieve 调用次数。"></p>
+<p>图 11：仪表板 B 中按知识库划分的 retrieve 调用次数</p>
+<p>第三个组件统计经由 Gateway 的 agentic 工具调用。这一项是两个知识库共享的，没有拆分。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-12.png" alt="CloudWatch 组件，显示经 AgentCore Gateway 的 agentic 工具调用次数，作为一个共享计数。"></p>
+<p>图 12：仪表板 B 中经 AgentCore Gateway 的 agentic 工具调用次数，由两个知识库共享</p>
+<p>第四个组件报告按知识库划分的会话 token 用量。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-13.png" alt="CloudWatch 组件，显示按知识库划分的会话 token 用量（SessionQuotaTokens）。"></p>
+<p>图 13：仪表板 B 中按知识库划分的会话 token 用量</p>
+<p>这四个组件分别展示索引大小（由 S3 源字节数推算）、retrieve 调用量、经由 Gateway 的 agentic 工具调用，以及会话 token 用量。除 Gateway 工具调用次数是两个知识库共享之外，其余都按知识库分别拆开。</p>
+<p>有一处维度细节值得单独点出来，因为带类型的 API 不会替你发现它：<code>AWS/Bedrock/KnowledgeBases</code> 这个命名空间期望的是带前缀的 id，即 <code>knowledge-base/&lt;id&gt;</code>，而本方案自己的 <code>BMKB/*</code> 命名空间用的是不带前缀的 id。就 CDK 而言，两者都只是字符串。</p>
 <pre><code># L1 — AWS/Bedrock/KnowledgeBases wants the prefixed form.
 dimensions_map={&quot;Operation&quot;: &quot;Retrieve&quot;, &quot;KnowledgeBaseId&quot;: f&quot;knowledge-base/{kb_id}&quot;}
 
 # BMKB/* — our own namespaces use the bare id.
 dimensions_map={&quot;KnowledgeBaseId&quot;: kb_id}</code></pre>
-<h3>第 5 层：生成树</h3>
-<p>第 5 层是 aws/spans 中的原始 OTEL span 树，它是直接向您显示代理循环的层。值得仔细阅读，因为嵌套并不明显：一次 LLM 调用会产生三个跨度。 Strands <code>invoke_agent</code> 范围包装轮次，内部 <code>chat</code> 范围包装模型调用，类型 <code>CLIENT</code> 的 <code>chat &lt;model&gt;</code> 范围是实际调用，并且所有三个都重复相同的 <code>gen_ai.usage.*</code> 令牌属性。</p>
-<p>以下屏幕截图显示了 aws/spans 中的跨度树，其中三跨度嵌套在顶行中可见。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-14.png" alt="aws/spans 中的 CloudWatch 跨树。前三行显示了一个 invoke_agent Strands Agents 聚合、一个内部聊天范围和一个 CLIENT 聊天范围，所有这些都报告相同的 7,299 个输入和 268 个输出令牌。"></p>
-<p>图 14：aws/spans 中的第 5 层跨度树，显示单个 LLM 调用的三跨度嵌套</p>
-<p>读取前三行：invoke_agent Strands Agents 聚合，然后是内部聊天范围，然后是 CLIENT 聊天范围，所有这些都报告相同的 7,299 个输入和 268 个输出令牌。这是相同的 LLM 调用出现在树的三个级别，这就是聚合需要小心的原因。</p>
-<p>当你聚合的时候，这种结构就很重要。要对每个 LLM 调用计数一次，请过滤到“CLIENT”叶：</p>
+<h3>第 5 层：span 树</h3>
+<p>第 5 层是 aws/spans 里的原始 OTEL span 树，也是能直接看到 agentic 循环的那一层。这一层值得仔细读，因为嵌套关系并不直观：一次 LLM 调用会产生三个 span。Strands 的 <code>invoke_agent</code> span 包住整个回合，一个内部的 <code>chat</code> span 包住模型调用，而一个类型为 <code>CLIENT</code> 的 <code>chat &lt;model&gt;</code> span 才是真正的调用，三者重复报告同一组 <code>gen_ai.usage.*</code> token 属性。</p>
+<p>下面的截图展示 aws/spans 中的 span 树，顶部的行里就能看到这种三层嵌套。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-14.png" alt="aws/spans 中的 CloudWatch span 树。顶部三行分别是 invoke_agent 的 Strands Agents 聚合、一个内部 chat span，以及一个 CLIENT chat span，三者都报告相同的 7,299 个输入 token 和 268 个输出 token。"></p>
+<p>图 14：aws/spans 中的第 5 层 span 树，展示单次 LLM 调用的三层 span 嵌套</p>
+<p>读顶部三行：先是 invoke_agent 的 Strands Agents 聚合，然后是一个内部 chat span，再是一个 CLIENT chat span，三者都报告相同的 7,299 个输入 token 和 268 个输出 token。这是同一次 LLM 调用出现在树的三个层级上，所以聚合时必须小心。</p>
+<p>这个结构在你一开始聚合时就会产生影响。要让每次 LLM 调用只被计一次，就要过滤到 <code>CLIENT</code> 叶子节点：</p>
 <pre><code>fields attributes.gen_ai.request.model as model,
        attributes.gen_ai.usage.input_tokens as in_tok,
        attributes.gen_ai.usage.output_tokens as out_tok
 | filter ispresent(in_tok) and kind = 'CLIENT' and name like /^chat /
 | stats sum(in_tok) as input_tokens, sum(out_tok) as output_tokens,
         count(*) as llm_calls by model</code></pre>
-<p>如果没有该过滤器，相同的查询会报告三倍的令牌和三倍的调用。</p>
-<p>应用该 CLIENT-leaf 过滤器，以下屏幕截图显示了按模型划分的生成令牌使用情况，每个 LLM 调用都计数一次。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-15.png" alt="按模型划分的生成令牌使用情况的 CloudWatch 结果表，对每个 LLM 调用进行一次计数：14 次调用、60,472 个输入令牌和 2,709 个输出令牌。"></p>
-<p>图 15：按模型划分的生成代币使用情况，每个 LLM 调用计数一次</p>
-<p>过滤器就位后，运行显示 14 个 LLM 调用，总计 60,472 个输入和 2,709 个输出标记。如果没有它，相同的查询将报告三倍的调用和三倍的令牌。</p>
-<h2>评估：按需且连续</h2>
-<p>质量有两种衡量方式，均由应用程序提供。</p>
-<p><strong>按需：</strong> 驱动程序笔记本调用 AgentCore 此版本中没有部署脚本，这就是要点：（LLM作为评判）针对内置评估器、正确性、忠实性、工具选择准确性的每个会话跨度，并将分数发布到 CloudWatch，它们在仪表板 A 上显示为第 7 层。</p>
-<p>以下屏幕截图显示了仪表板 A 上的第 7 层：每个知识库的按需评估分数，以及同一仪表板上的第 5 层 OTEL 范围表。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-16.png" alt="CloudWatch 仪表板显示每个知识库的第 7 层按需评估分数，旁边有第 5 层 OTEL 范围表。"></p>
-<p>图 16：每个知识库的第 7 层按需评估分数，位于第 5 层跨度表旁边</p>
-<p>第 7 层显示每个知识库的按需评估分数，旁边有第 5 层 OTEL 跨度表，因此分数和产生它们的跨度在一块板上一起读取。</p>
-<p><strong>连续（在线）：</strong> 代理堆栈还提供了一个“AWS::BedrockAgentCore::OnlineEvaluationConfig”，它可以对实时会话进行采样并自动对其进行评分，无需运行笔记本。配置本身在 <strong>Bedrock AgentCore 控制台的评估 → 评估 → 评估配置</strong>下可见。结果存放在日志组“/aws/bedrock-agentcore/evaluations/results/&lt;config-id&gt;”中，每个分数也会作为 CloudWatch 指标发布在“Bedrock-AgentCore/Evaluations”命名空间中，由评估者名称和配置 ID 键入，因此您可以在不解析日志的情况下绘制分数或警报。</p>
-<p>以下屏幕截图显示了 AgentCore 控制台中的在线评估配置，依次位于“评估”、“评估”和“评估配置”下。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-17.png" alt="AgentCore 控制台显示在线评估配置，具有四个内置评估器（工具选择准确性、忠实性、正确性、响应相关性）、100% 采样、状态为 ACTIVE 和已启用。"></p>
-<p>图 17：AgentCore 控制台中的在线评估配置，具有四个 100% 采样的内置评估器</p>
-<p>配置列出了四个内置评估器：工具选择准确性、忠实性、正确性和响应相关性，设置为 100% 采样并显示为活动并启用。</p>
-<p>因为分数是普通的 CloudWatch 指标，所以它们像其他任何东西一样绘制图表，没有日志解析，并且相同的小部件可以携带警报。以下屏幕截图显示了这四个评估者分数，以普通 CloudWatch 指标的形式绘制。</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-18.png" alt="Bedrock-AgentCore/Evaluations 命名空间中四个评估程序分数的 CloudWatch 图表"></p>
-<p>图 18：四个连续评估者分数以普通 CloudWatch 指标的形式绘制</p>
-<p>四个评估器分数在“Bedrock-AgentCore/Evaluations”命名空间中显示为指标，每个分数都与评估配置 ID 和代理的服务名称相关，因此您可以对它们进行绘图或发出警报，而无需解析日志。</p>
-<p><strong>在线结果仅在会议结束后才会到达</strong>。评分在已完成的会话上运行，因此在增加流量后，结果日志组在大约会话空闲超时（约 30 分钟）内保持为空。运行后立即出现空组是正常现象，而不是配置错误。每个结果事件都带有“session.id”，因此它会连接到所有其他层。笔记本中的点播路径没有这样的等待，这就是两者都在这里的原因。</p>
-<p>在这次运行中的四个内置评估器中，连续路径在正确性、忠实性、响应相关性和工具选择准确性方面得分为 1.00，每个评估器有 5 个评分轨迹，每个结果都带有书面解释。</p>
-<p>⚠️ <strong>采样和成本。</strong> 此应用程序设置 <strong>SAMPLING_PERCENTAGE = 100</strong> <em>纯粹用于博客实验</em>，因此每个会话都会进行评分，并且结果立即可见。 <strong>这不是生产建议。</strong> 在线评估会在每个采样会话中调用LLM作为评委，因此成本随采样率和流量而变化。对于实际部署，请选择适合您的质量监控需求和预算的采样百分比，并在启用之前将配置与您组织自己的策略和成本治理要求保持一致。该比率是“config.py”中的一个常量“EvalConfig.SAMPLING_PERCENTAGE”。</p>
-<p>＃＃ 清理</p>
-<p>完成后，删除解决方案，这样它就不再产生费用，因为存储的 KB 数据、ECR 中的代理映像以及仍然有效的在线评估都会在堆栈闲置时产生费用。一个命令就能摧毁一切：</p>
+<p>不加这个过滤器，同一个查询会报出三倍的 token 和三倍的调用次数。</p>
+<p>加上这个 CLIENT 叶子过滤器后，下面的截图展示了按模型划分的生成 token 用量，每次 LLM 调用只被计一次。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-15.png" alt="CloudWatch 结果表，展示按模型划分的生成 token 用量，每次 LLM 调用只计一次：14 次调用，60,472 个输入 token 和 2,709 个输出 token。"></p>
+<p>图 15：按模型划分的生成 token 用量，每次 LLM 调用只计一次</p>
+<p>有了这个过滤器，这次运行显示 14 次 LLM 调用，合计 60,472 个输入 token 和 2,709 个输出 token。没有它，同一个查询会报出三倍的调用次数和三倍的 token。</p>
+<h2>评估：按需与持续</h2>
+<p>质量有两种度量方式，两者都由这个应用供给。</p>
+<p><strong>按需：</strong> 驱动 notebook 会对每个会话的 span 调用 AgentCore（这个版本没有部署脚本，而这正是重点：）(LLM-as-judge)，跑一遍内置评估器 Correctness、Faithfulness、Tool-Selection Accuracy，并把分数发布到 CloudWatch，在仪表板 A 上呈现为第 7 层。</p>
+<p>下面的截图展示仪表板 A 上的第 7 层：按知识库划分的按需评估分数，第 5 层的 OTEL span 表格也在同一个仪表板上。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-16.png" alt="CloudWatch 仪表板，显示按知识库划分的第 7 层按需评估分数，旁边是第 5 层的 OTEL span 表格。"></p>
+<p>图 16：按知识库划分的第 7 层按需评估分数，旁边是第 5 层 span 表格</p>
+<p>第 7 层展示按知识库划分的按需评估分数，第 5 层的 OTEL span 表格就在旁边，于是分数和产生这些分数的 span 能在同一块看板上对照着读。</p>
+<p><strong>持续（在线）：</strong> agent 这个 stack 还会供给一个 <code>AWS::BedrockAgentCore::OnlineEvaluationConfig</code>，它对实时会话进行采样并自动打分，不需要跑 notebook。该配置本身可以在 <strong>Bedrock AgentCore 控制台的 Assess → Evaluations → Evaluation configurations</strong> 下看到。结果会落在日志组 <code>/aws/bedrock-agentcore/evaluations/results/&lt;config-id&gt;</code> 中，同时每一个分数也会作为 CloudWatch 指标发布到 <code>Bedrock-AgentCore/Evaluations</code> 命名空间，以评估器名称和配置 id 为键，因此你无需解析日志就能给这些分数作图或设告警。</p>
+<p>下面的截图展示了 AgentCore 控制台中的在线评估配置，路径依次是 Assess、Evaluations、Evaluation configurations。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-17.png" alt="AgentCore 控制台，显示在线评估配置，包含四个内置评估器（Tool-Selection Accuracy、Faithfulness、Correctness、Response Relevance），采样率 100%，状态为 ACTIVE 且已启用。"></p>
+<p>图 17：AgentCore 控制台中的在线评估配置，四个内置评估器，采样率 100%</p>
+<p>该配置列出四个内置评估器：Tool-Selection Accuracy、Faithfulness、Correctness 和 Response Relevance，采样率设为 100%，状态显示为 ACTIVE 且已启用。</p>
+<p>由于这些分数就是普通的 CloudWatch 指标，它们和其他指标一样可以直接作图，不用解析日志，同一个组件还可以挂上告警。下面的截图展示了这四个评估器分数作为普通 CloudWatch 指标作图的样子。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21614-18.png" alt="Bedrock-AgentCore/Evaluations 命名空间中四个评估器分数的 CloudWatch 图表"></p>
+<p>图 18：四个持续评估器的分数作为普通 CloudWatch 指标作图</p>
+<p>这四个评估器分数作为指标出现在 <code>Bedrock-AgentCore/Evaluations</code> 命名空间中，每个都以评估配置 id 和 agent 的服务名作为键，因此你无需解析日志就能给它们作图或设告警。</p>
+<p><strong>在线结果只会在会话关闭之后才到达</strong>。打分是在已完成的会话上运行的，所以导入流量之后，结果日志组会保持空白大约一个会话空闲超时时间（约 30 分钟）。刚跑完时看到空日志组是预期现象，不是配置错误。每条结果事件都带有 <code>session.id</code>，因此可以和其他每一层关联起来。notebook 里的按需路径没有这种等待，这也是两条路径都在这里的原因。</p>
+<p>在这次运行的四个内置评估器上，持续路径在 Correctness、Faithfulness、Response Relevance 和 Tool-Selection Accuracy 上都打了 1.00 分，每个评估器各有五条被打分的 trace，每条结果都带有文字说明。</p>
+<p>⚠️ <strong>采样与成本。</strong> 这个应用把 <strong>SAMPLING_PERCENTAGE = 100</strong> 设成 100，<em>纯粹是为了这篇博客的实验</em>，这样每个会话都会被打分，结果也能立刻看到。<strong>这不是生产环境的建议。</strong> 在线评估会对每个被采样的会话调用一次 LLM-as-judge，所以成本随采样率和流量规模增长。要真正上线，请选择一个既满足质量监控需求、也在预算之内的采样率，并在启用前让这份配置与你所在组织的政策和成本治理要求对齐。采样率就是 <code>config.py</code> 里的一个常量 <code>EvalConfig.SAMPLING_PERCENTAGE</code>。</p>
+<h2>清理</h2>
+<p>用完之后请把方案移除，免得继续计费——存储的知识库数据、ECR 里的 agent 镜像，以及仍在运行的在线评估，在 stack 闲置期间都会一直花钱。一条命令即可全部拆除：</p>
 <pre><code>cdk destroy --all</code></pre>
-<p>CDK 按反向依赖顺序删除其自身的堆栈，仪表板，然后是代理，然后是网关，然后是 kb：它为部署派生的相同图表，向后走。没有与部署脚本保持一致的拆卸脚本，这是对依赖项进行一次建模的更有价值的属性之一。</p>
-<p>有两种删除行为值得了解，因为它们都取代了手写的清理代码：</p>
+<p>CDK 会自行按依赖顺序的逆序删除 stack：先 dashboards，再 agent，再 gateway，最后 kb——就是它为部署推导出的同一张图，反着走一遍。没有什么拆除脚本需要和部署脚本保持一致，而把依赖关系只建模一次所带来的价值，安静却实在。</p>
+<p>有两个删除相关的行为值得知道，因为它们各自取代了手写的清理代码：</p>
 <pre><code>self.source_bucket = s3.Bucket(
     self, &quot;SourceBucket&quot;,
     removal_policy=RemovalPolicy.DESTROY,
@@ -1235,24 +1235,24 @@ self.repository = ecr.Repository(
     removal_policy=RemovalPolicy.DESTROY,
     empty_on_delete=True,  # replaces an image-delete loop
 )</code></pre>
-<p>两者都是为了样本卫生而设置的，对于您关心的任何内容，请将存储桶切换到“RemovalPolicy.RETAIN”。</p>
-<p>CDK 引导堆栈（“CDKToolkit”）及其暂存桶不会被删除。它们是其他 CDK 应用程序可能依赖的共享帐户范围基础设施。</p>
-<h2>单次解决方案以来发生了什么变化</h2>
-<p>这篇文章和 <a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-rag-solution-using-knowledge-bases-for-amazon-bedrock-and-the-aws-cdk/">2024 解决方案</a> 都是 Python 中的 CDK 应用程序，使用“cdk deploy”进行部署。创作工具在这里是不变的，改变的是它下面的架构，而且大部分的改变是减法：</p>
-<table><thead><tr><th><strong>关注</strong></th><th><strong>2024：单发 RAG</strong></th><th><strong>这个解决方案</strong></th></tr></thead><tbody><tr><td>矢量商店</td><td>您配置、扩展和支付 OCU 费用的 OpenSearch 无服务器集合和索引</td><td>没有任何。类型：托管，Amazon Bedrock 拥有存储和索引</td></tr><tr><td>索引生命周期</td><td>自定义资源创建索引并等待它变得可搜索</td><td>没有什么可创造的</td></tr><tr><td>嵌入模型</td><td>您选择它并授予模型访问权限</td><td>默认由服务管理</td></tr><tr><td>堆栈</td><td>3：知识库角色 → OpenSearch 基础设施 → 知识库 + 数据源</td><td>4：kb → 网关 → 代理 → 仪表板</td></tr><tr><td>检索</td><td>通过向量相似度检索前 k 个块</td><td>AgenticRetrieveStream，在内部重新排名，返回综合引用的答案</td></tr><tr><td>选择知识库</td><td>不适用，只有一个索引</td><td>代理在语义上跨两个</td><td>进行路由</td></tr><tr><td>二看语料库</td><td>不可能一举两得</td><td>客服人员在应答前再次检索</td></tr><tr><td>遥测</td><td>没有配置</td><td>七层，两个仪表板</td></tr><tr><td>评价</td><td>手册：同步、选择模型、提出问题</td><td>按需和连续，均已配置</td></tr><tr><td>闲置时的成本下限</td><td>无论您是否查询，OCU 都会产生费用</td><td>仅限存储</td></tr></tbody></table>
-<p>贸易在两个方向都是真实的。回答单次问题的单个索引对于每个查询来说更便宜，更容易推理，并且当一个语料库包含答案时完全足够。当没有这种设计时，就采用这种设计。</p>
-<h3>CDK 构建完成工作</h3>
-<p>四个结构在这个应用程序中占据了大部分的比重，它们值得命名，因为每个结构都取代了人们手写的东西：</p>
-<ul><li><strong>提供程序</strong> – 适用于超出 AWS Lambda 函数 15 分钟上限的自定义资源。 “on_event”/“is_complete”拆分意味着轮询循环中没有任何内容休眠，并且返回 CloudFormation 的响应协议是框架的工作，而不是每个处理程序中供应的“urllib”回调。</li><li><strong>BucketDeployment</strong> – 上传语料库，因此摄取自定义资源仅摄取。</li><li><strong>auto_delete_objects=True</strong> 和 <strong>empty_on_delete=True</strong>，替换手写的 <code>list_object_versions</code> 和图像删除循环，否则堆栈需要完全可销毁。</li><li><strong>repository.grant_pull_push(project)</strong> – CodeBuild 需要的八个 <code>ecr:*</code> 操作的一行，通过构造正确拼写。</li></ul>
-<p>并从“观察”部分输入仪表板：Metric / GraphWidget / Row 对象，而不是 DashboardBody JSON 字符串，这会将无效的小部件组合从“在控制台上渲染损坏”移动为“在‘cdk Synth’处失败”。</p>
-<p>CDK 不会改变的两件事，在开始之前都值得了解：</p>
-<ul><li><strong>自由格式 JSON 保持驼峰命名法</strong>。 <code>connector_parameters</code> 和 <code>parameter_values</code> 是逐字传递的，因此 AWS CDK Snake_case 到 PascalCase 的转换不适用于它们内部。像 <code>bucketName</code> 和 <code>inclusionPrefixes</code> 这样的键必须完全按照 API 的预期拼写，并且在资源失败之前不会告诉您其他情况。</li><li><strong>字符串类型的值仍然是字符串。</strong> 观察部分中的“knowledge-base/&lt;id&gt;”与裸露的“&lt;id&gt;”维度差异对于类型系统是不可见的。类型化构造检查<em>结构</em>，而不是<em>语义</em>。</li></ul>
-<p>这也不是选择一种工具而不是另一种工具的理由。它们是“类型化”给你带来的边界，知道边界在哪里是 CDK 令人愉快而不是令人惊讶的主要原因。</p>
-<h2>结论</h2>
-<p>我们在托管 Amazon Bedrock 知识库和 AgentCore 上构建了完整的企业代理检索解决方案：多 KB 语义路由、推理代理、七层可观察性以及按需和持续评估，并将其全部部署为单个 AWS CDK 应用程序。</p>
-<p>有两件事值得拿走。托管知识库删除了而不是添加了基础设施：无需配置向量存储，无需创建和等待索引，在系统空闲时不会累积 OCU 行项目。它也是支持代理检索和 AgentCore Gateway 连接器的知识库类型，如 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock 文档</a> 中所述。一旦检索变得具有代理性，可观察性就不再是可选的。该应用程序提供的大约一半内容是为了回答代理实际做了什么以及答案是否好，这对代理系统来说不是开销。这是使一个人可操作的部分。</p>
-<p>CDK 创作模型赢得了自己的一席之地。在这个架构中，有七个值跨越堆栈边界，并且每个值都是构造引用而不是导出/导入对，这也是为什么没有部署脚本、没有拆卸脚本、也没有需要记住的固定顺序的原因。</p>
-<p>从这里，您可以将数据源指向您自己的语料库，将代理放置在虚拟私有云 (VPC) 中，根据您的预算和策略调整在线评估采样率，或者向路由器添加更多知识库。要了解更多信息，请参阅 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 详细信息页面和 <a href="https://docs.aws.amazon.com/bedrock/">Amazon Bedrock 文档</a>。该应用程序、驱动程序笔记本和独立实用程序均位于<a href="https://github.com/aws-samples/amazon-bedrock-samples/tree/main/rag/management-knowledge-bases/07-IaaC/management-kb-observability-cdk">附带的 GitHub 存储库</a> 中，因此您可以克隆它并使用一个命令部署您自己的副本。</p>
+<p>这两处设置只是为了示例的整洁；对你真正在意的任何东西，请把 bucket 改成 <code>RemovalPolicy.RETAIN</code>。</p>
+<p>CDK 的 bootstrap stack（<code>CDKToolkit</code>）及其 staging bucket 不会被删除。它们是账号级共享的基础设施，其他 CDK 应用可能依赖它们。</p>
+<h2>相比单发方案的变化</h2>
+<p>本文和<a href="https://aws.amazon.com/blogs/machine-learning/build-an-end-to-end-rag-solution-using-knowledge-bases-for-amazon-bedrock-and-the-aws-cdk/">那篇 2024 年的方案</a>都是用 Python 写的 CDK 应用，都用 <code>cdk deploy</code> 部署。这里不变的是编写工具，变了的是它底下的架构，而且大部分变化是减法：</p>
+<table><thead><tr><th><strong>关注点</strong></th><th><strong>2024：单发 RAG</strong></th><th><strong>本方案</strong></th></tr></thead><tbody><tr><td>向量存储</td><td>一个由你供给、扩容并按 OCU 计费的 OpenSearch Serverless collection 和索引</td><td>无。Type: MANAGED，存储和索引由 Amazon Bedrock 负责</td></tr><tr><td>索引生命周期</td><td>由一个 custom resource 创建索引并等待它变得可搜索</td><td>无需创建任何东西</td></tr><tr><td>Embedding 模型</td><td>由你选择并授予访问权限</td><td>默认由服务托管</td></tr><tr><td>Stack 数量</td><td>3：KB role → OpenSearch infra → KB + data source</td><td>4：kb → gateway → agent → dashboards</td></tr><tr><td>检索</td><td>一次 Retrieve，按向量相似度取 top-k 个 chunk</td><td>AgenticRetrieveStream，内部重排，返回综合出来的带引用答案</td></tr><tr><td>选择知识库</td><td>不适用，只有一个索引</td><td>agent 在两个知识库之间做语义路由</td></tr><tr><td>对语料库的二次查看</td><td>一次调用无法做到</td><td>agent 在作答前会再检索一次</td></tr><tr><td>遥测</td><td>未供给任何内容</td><td>七层，两个仪表板</td></tr><tr><td>评估</td><td>手工进行：同步、选一个模型、提问</td><td>按需和持续两种，两者都已供给</td></tr><tr><td>闲置时的成本底线</td><td>无论你查不查，OCU 费用都在累积</td><td>只有存储成本</td></tr></tbody></table>
+<p>这个取舍在两个方向上都真实存在。用单个索引回答单发问题，单次查询更便宜，也更容易推理清楚，而当答案就在某一个语料库里时，它完全够用。在不满足这个前提的情况下，再考虑上面那套设计。</p>
+<h3>真正在干活的 CDK construct</h3>
+<p>这个应用里有四个 construct 承担了大部分工作，值得点名，因为每一个都取代了人们通常要手写的东西：</p>
+<ul><li><strong>Provider</strong> —— 适用于那些超过 AWS Lambda 函数 15 分钟上限的 custom resource。<code>on_event</code> / <code>is_complete</code> 的拆分意味着轮询循环里不需要 sleep，回传给 CloudFormation 的响应协议也由框架负责，而不是在每个 handler 里内嵌一份 <code>urllib</code> 回调。</li><li><strong>BucketDeployment</strong> —— 负责上传语料库，这样摄取用的 custom resource 就只管摄取。</li><li><strong>auto_delete_objects=True</strong> 和 <strong>empty_on_delete=True</strong>，取代了手写的 <code>list_object_versions</code> 和删除镜像的循环——没有它们，stack 根本无法被销毁。</li><li><strong>repository.grant_pull_push(project)</strong> —— 用一行处理 CodeBuild 所需的八个 <code>ecr:*</code> action，名字由构造保证不会写错。</li></ul>
+<p>还有来自「观测」那一节的带类型仪表板：用 Metric / GraphWidget / Row 对象代替 DashboardBody JSON 字符串，这把「在控制台上渲染成坏样子」的错误变成了「在 <code>cdk synth</code> 阶段就失败」。</p>
+<p>有两件事 CDK 并不会改变，而且动手之前值得知道：</p>
+<ul><li><strong>自由格式的 JSON 仍然是 camelCase</strong>。<code>connector_parameters</code> 和 <code>parameter_values</code> 是原样透传的，所以 AWS CDK 那套从 snake_case 到 PascalCase 的转换在它们内部并不生效。像 <code>bucketName</code> 和 <code>inclusionPrefixes</code> 这样的键必须严格按照 API 的要求拼写，否则在资源失败之前不会有任何东西提醒你。</li><li><strong>字符串类型的值终究还是字符串。</strong> 「观测」那一节提到的 <code>knowledge-base/&lt;id&gt;</code> 与不带前缀的 <code>&lt;id&gt;</code> 在维度上的差异，类型系统完全看不见。带类型的 construct 检查的是<em>结构</em>，不是<em>语义</em>。</li></ul>
+<p>这两点都不构成偏向某个工具而放弃另一个的理由。它们划出了「带类型」所能带来的边界，而知道这条边界画在哪儿，正是 CDK 让人觉得顺手而不是意外的大半原因。</p>
+<h2>结语</h2>
+<p>我们在托管的 Amazon Bedrock 知识库和 AgentCore 上构建了一套完整的企业级 agentic 检索方案：多知识库语义路由、一个 推理 agent、七层可观测性，以及按需和持续两种评估，并把全部内容作为单个 AWS CDK 应用部署出去。</p>
+<p>有两点值得带走。托管知识库是移除了基础设施，而不是增加基础设施：没有向量存储要供给，没有索引要创建和等待，系统闲置时也不会累积 OCU 这一项费用。它同时也是支持 agentic 检索和 AgentCore Gateway 连接器的那种知识库类型，如 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base.html">Amazon Bedrock 文档</a> 所述。而一旦检索变成 agentic，可观测性就不再是可选项。这个应用供给的东西里大约有一半，是为了回答「agent 究竟做了什么、给出的答案到底好不好」，这在 agentic 系统上并不是开销，而是让它真正可运维的那一部分。</p>
+<p>CDK 的编写模型正是在这些接缝处证明了自己的价值。这个架构里有七个值跨越 stack 边界，每一个都是一个 construct 引用，而不是一对 export/import，这也正是为什么没有部署脚本、没有拆除脚本，也不需要记住任何固定顺序。</p>
+<p>接下来你可以把数据源指向自己的语料库，把 agent 放进 virtual private cloud (VPC)，按你的预算和政策调整在线评估的采样率，或者给路由器再添几个知识库。想了解更多，可以看 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 详情页和 <a href="https://docs.aws.amazon.com/bedrock/">Amazon Bedrock 文档</a>。这个应用、驱动 notebook 以及那些自包含的工具都在<a href="https://github.com/aws-samples/amazon-bedrock-samples/tree/main/rag/managed-knowledge-bases/07-IaaC/managed-kb-observability-cdk">配套的 GitHub 仓库</a>里，你可以克隆下来，用一条命令部署自己的副本。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>

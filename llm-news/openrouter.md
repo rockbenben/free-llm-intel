@@ -9,11 +9,11 @@
 
 ## 全部文章（共 163 篇，按日期倒序；无日期条目列于最后）
 
-1. [如何使用LLM从 PDF 中提取表格](https://openrouter.ai/blog/tutorials/extract-tables-from-pdf-llm/)（2026-10-29） <!--orig:How to Extract Tables from a PDF with an LLM-->
-2. [如何防止立即注射：经过测试的 13 次攻击](https://openrouter.ai/blog/tutorials/prevent-prompt-injection/)（2026-10-29） <!--orig:How to Prevent Prompt Injection: 13 Attacks, Tested-->
-3. [Claude 529 过载：这意味着什么以及如何修复它](https://openrouter.ai/blog/tutorials/claude-529-overloaded/)（2026-10-28） <!--orig:Claude 529 Overloaded: What It Means and How to Fix It-->
-4. [达到您的Claude Code使用限制吗？如何继续编码](https://openrouter.ai/blog/tutorials/claude-code-usage-limit/)（2026-10-28） <!--orig:Hit Your Claude Code Usage Limit? How to Keep Coding-->
-5. [我们如何重建提供者路由以实现更好、更快的推理](https://openrouter.ai/blog/announcements/how-we-rebuilt-provider-routing/)（2026-10-28） <!--orig:How we rebuilt provider routing for better, faster inference-->
+1. [如何用 LLM 从 PDF 中提取表格](https://openrouter.ai/blog/tutorials/extract-tables-from-pdf-llm/)（2026-10-29） <!--orig:How to Extract Tables from a PDF with an LLM-->
+2. [如何防止提示注入：13 种攻击实测](https://openrouter.ai/blog/tutorials/prevent-prompt-injection/)（2026-10-29） <!--orig:How to Prevent Prompt Injection: 13 Attacks, Tested-->
+3. [Claude 529 过载：这意味着什么，以及怎么修](https://openrouter.ai/blog/tutorials/claude-529-overloaded/)（2026-10-28） <!--orig:Claude 529 Overloaded: What It Means and How to Fix It-->
+4. [撞到 Claude Code 的用量上限？教你如何继续写代码](https://openrouter.ai/blog/tutorials/claude-code-usage-limit/)（2026-10-28） <!--orig:Hit Your Claude Code Usage Limit? How to Keep Coding-->
+5. [我们如何重建 provider 路由，以获得更好、更快的推理](https://openrouter.ai/blog/announcements/how-we-rebuilt-provider-routing/)（2026-10-28） <!--orig:How we rebuilt provider routing for better, faster inference-->
 6. [跨 OpenRouter 的 CSAM 筛选](https://openrouter.ai/blog/announcements/csam-screening/)（2026-10-27） <!--orig:CSAM Screening Across OpenRouter-->
 7. [Private Endpoints：把你的微调模型与算力接入 OpenRouter](https://openrouter.ai/blog/announcements/private-endpoints/)（2026-10-14） <!--orig:Private Endpoints: Bring Your Fine-Tuned Models and Capacity to OpenRouter-->
 8. [ElevenLabs 现已上线 OpenRouter](https://openrouter.ai/blog/announcements/elevenlabs-on-openrouter/)（2026-10-07） <!--orig:ElevenLabs is now on OpenRouter-->

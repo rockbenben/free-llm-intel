@@ -9,7 +9,7 @@
 
 ## 全部文章（共 47 篇，按日期倒序；无日期条目列于最后）
 
-1. [从录音到记录：NVIDIA Nemotron 3.5 在 DeepInfra 上转录](https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release)（2026-10-28） <!--orig:From Recordings to Records: NVIDIA Nemotron 3.5 Transcribe on DeepInfra-->
+1. [从录音到记录：NVIDIA Nemotron 3.5 Transcribe 在 DeepInfra 上线](https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release)（2026-10-28） <!--orig:From Recordings to Records: NVIDIA Nemotron 3.5 Transcribe on DeepInfra-->
 2. [Wan 3.0 集成的最佳 API 提供商](https://deepinfra.com/blog/best-api-providers-wan-3-0-integration)（2026-10-23） <!--orig:Best API Providers for Wan 3.0 Integration-->
 3. [2026 年 Granite-4.2-8B 最佳 API 提供商](https://deepinfra.com/blog/best-api-providers-granite-4-2-8b)（2026-10-22） <!--orig:Best API Providers for Granite-4.2-8B in 2026-->
 4. [Wan 3.0：模型文档与集成指南](https://deepinfra.com/blog/wan-3-0-model-documentation-integration-guide)（2026-10-22） <!--orig:Wan 3.0: Model Documentation & Integration Guide-->

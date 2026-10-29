@@ -9,9 +9,9 @@
 
 ## 全部文章（共 50 篇，按日期倒序；无日期条目列于最后）
 
-1. [在 AWS 上使用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29） <!--orig:Build a Financial Research Assistant with Cohere AI on AWS-->
-2. [Cohere Model Vault 内部：构建可验证的机密 AI 推理](https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference)（2026-10-22） <!--orig:Inside Cohere Model Vault: Building a verifiable confidential AI inference-->
-3. [在 Cohere Model Vault 上引入机密计算](https://cohere.com/blog/introducing-confidential-computing-on-cohere-model-vault)（2026-10-22） <!--orig:Introducing Confidential Computing on Cohere Model Vault-->
+1. [在 AWS 上用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29） <!--orig:Build a Financial Research Assistant with Cohere AI on AWS-->
+2. [走进 Cohere Model Vault：构建可验证的机密 AI 推理](https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference)（2026-10-22） <!--orig:Inside Cohere Model Vault: Building a verifiable confidential AI inference-->
+3. [介绍 Cohere Model Vault 上的机密计算](https://cohere.com/blog/introducing-confidential-computing-on-cohere-model-vault)（2026-10-22） <!--orig:Introducing Confidential Computing on Cohere Model Vault-->
 4. [AI 能理解文化吗？一位退休教师和一名高中生来试试](https://cohere.com/blog/can-ai-understand-culture)（2026-10-22） <!--orig:Can AI understand culture?-->
 5. [推出 Rerank 5：精准高效的企业文档检索](https://cohere.com/blog/rerank-5)（2026-10-21） <!--orig:Introducing Rerank 5: precise, efficient enterprise document retrievalGive your AI the most relevant context for each request, now with passage-level precision.-->
 6. [重新审视 reasoning model 的置信度](https://cohere.com/blog/rethinking-confidence-in-reasoning-models)（2026-10-20） <!--orig:Rethinking confidence in reasoning models-->

@@ -11,18 +11,18 @@
 
 ## 全部文章（共 1332 篇，按日期倒序；无日期条目列于最后）
 
-1. [OpenAI 和 ServiceNow 扩大跨企业工作流程的合作伙伴关系](https://openai.com/index/openai-servicenow-partnership-expansion)（2026-10-28） <!--orig:OpenAI and ServiceNow expand partnership across enterprise workflows-->
+1. [OpenAI 与 ServiceNow 在企业工作流方面扩大合作](https://openai.com/index/openai-servicenow-partnership-expansion)（2026-10-28） <!--orig:OpenAI and ServiceNow expand partnership across enterprise workflows-->
 2. [公司的未来](https://openai.com/index/the-future-of-the-firm)（2026-10-28） <!--orig:The future of the firm-->
 3. [Legora正在构建法律工作代理操作系统](https://openai.com/index/legora)（2026-10-28） <!--orig:Legora is building the agentic operating system for legal work-->
 4. [Retell AI 借助 GPT‑4o 让语音 agent 自动化可定制且无需写代码](https://openai.com/index/retell-ai)（2026-10-27） <!--orig:Retell uses OpenAI models to help power 100M monthly calls-->
 5. [OpenAI 扩大与 Oracle 的合作伙伴关系，将其应用程序引入 ChatGPT](https://openai.com/index/oracle-apps-in-chatgpt)（2026-10-27） <!--orig:OpenAI expands partnership with Oracle to bring its apps to ChatGPT-->
 6. [Check Point 如何利用 Daybreak 加速漏洞研究](https://openai.com/index/check-point-daybreak)（2026-10-27） <!--orig:How Check Point accelerates vulnerability research with Daybreak-->
-7. [Greptile 使用 GPT-6 Astra 使错误检测超越代码审查](https://openai.com/index/greptile-code-review-codex-astra)（2026-10-26） <!--orig:Greptile takes bug detection beyond code review with GPT-6 Astra-->
-8. [与学术界合作建立科学理解](https://openai.com/index/building-scientific-understanding-with-academic-communities)（2026-10-26） <!--orig:Working with academic communities to build scientific understanding-->
-9. [GPT-6.1 Sol 帮助 CodeRabbit 加强复杂代码库的安全性](https://openai.com/index/gpt-6-1-sol-coderabbit-code-security)（2026-10-26） <!--orig:GPT-6.1 Sol helps CodeRabbit strengthen security across complex codebases-->
-10. [ChatGPT 不断扩大的工作领域](https://openai.com/index/chatgpt-expanding-world-of-work)（2026-10-26） <!--orig:ChatGPT’s expanding world of work-->
+7. [Greptile 用 GPT‑6 Astra 把 bug 检测带到代码审查之外](https://openai.com/index/greptile-code-review-codex-astra)（2026-10-26） <!--orig:Greptile takes bug detection beyond code review with GPT-6 Astra-->
+8. [与学术社区携手，推动科学理解](https://openai.com/index/building-scientific-understanding-with-academic-communities)（2026-10-26） <!--orig:Working with academic communities to build scientific understanding-->
+9. [GPT‑6.1 Sol 帮助 CodeRabbit 在复杂代码库中强化安全性](https://openai.com/index/gpt-6-1-sol-coderabbit-code-security)（2026-10-26） <!--orig:GPT-6.1 Sol helps CodeRabbit strengthen security across complex codebases-->
+10. [ChatGPT 不断扩大的职场版图](https://openai.com/index/chatgpt-expanding-world-of-work)（2026-10-26） <!--orig:ChatGPT’s expanding world of work-->
 11. [Fanatics 和 OpenAI 如何简化粉丝体验](https://openai.com/index/fanatics-streamline-fan-experience)（2026-10-26） <!--orig:How Fanatics and OpenAI streamline the fan experience-->
-12. [Ultrafast 如何将 OpenAI 的事件调查时间从几小时缩短至几分钟](https://openai.com/index/openai-cut-incident-investigation)（2026-10-26） <!--orig:How Ultrafast cut incident investigation from hours to minutes at OpenAI-->
+12. [Ultrafast 如何把 OpenAI 的故障排查从几小时缩短到几分钟](https://openai.com/index/openai-cut-incident-investigation)（2026-10-26） <!--orig:How Ultrafast cut incident investigation from hours to minutes at OpenAI-->
 13. [GPT-6.1 Terra 简介](https://openai.com/index/introducing-gpt-6-1-terra)（2026-10-26） <!--orig:Introducing GPT-6.1 Terra-->
 14. [快速扩展在线存储，服务超过 10 亿 ChatGPT 用户（第二部分）](https://openai.com/index/scaling-storage-one-billion-users-part-two)（2026-10-23） <!--orig:Rapidly scaling online storage to serve over 1 billion ChatGPT users (Part II)-->
 15. [保护我们的前沿模型训练环境](https://openai.com/index/securing-our-frontier-model-training-environment)（2026-10-23） <!--orig:Securing our frontier model training environment-->

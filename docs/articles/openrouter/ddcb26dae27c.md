@@ -1,50 +1,51 @@
 ---
 vendor: openrouter
-title: 如何使用LLM从 PDF 中提取表格
+title: 如何用 LLM 从 PDF 中提取表格
 original_title: 
 url: https://openrouter.ai/blog/tutorials/extract-tables-from-pdf-llm
 date: 2026-10-29
 lang: zh
 captured: 2026-10-29
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: ff62631be7be
+body_sha: d40aedfcdc57
 ---
 
-# 如何使用LLM从 PDF 中提取表格
+# 如何用 LLM 从 PDF 中提取表格
 
-开放路由器 ·10/29/2026
+OpenRouter ·10/29/2026
 
-![如何使用LLM从 PDF 中提取表格](https://openrouter.ai/blog/images/extract-tables-from-pdf-llm.png)![如何使用LLM从 PDF 中提取表格](https://openrouter.ai/blog/images/extract-tables-from-pdf-llm-dark.png)
+![如何用 LLM 从 PDF 中提取表格](https://openrouter.ai/blog/images/extract-tables-from-pdf-llm.png)![如何用 LLM 从 PDF 中提取表格](https://openrouter.ai/blog/images/extract-tables-from-pdf-llm-dark.png)
 
-要使用 LLM 从 PDF 中提取表格，请将 PDF 发送到[可以读取文件的模型](https://openrouter.ai/docs/guides/overview/multimodal/pdfs)，以及描述表格一行的[严格的 JSON 模式](https://openrouter.ai/docs/guides/features/structured-outputs)。该模型返回键入的行。数量以整数形式返回，写为 (3,878) 的损失以 -3878 形式返回，跨两页的表格以一个列表形式返回。
+要用 LLM 从 PDF 中提取表格，把 PDF 发给[能读取文件的模型](https://openrouter.ai/docs/guides/overview/multimodal/pdfs)，同时配上一份[严格 JSON schema](https://openrouter.ai/docs/guides/features/structured-outputs)，用来描述表格中的一行。模型返回的是带类型的行。数量会以整数返回，写成 (3,878) 的亏损会变成 -3878，跨两页的表格会作为一个列表返回。
 
-我们在五个 PDF 上进行了测试，其中两个是扫描件。每个直接读取 PDF 的模型都正确读取了所有 644 个单元格。我们测试中的失败来自 PDF 到达模型的路线，其中两个返回了正常响应，没有错误。
+我们在五个 PDF 上测试了这套做法，其中两个是扫描件。每个直接读取 PDF 的模型都把 644 个单元格全部答对。我们测试中的失败来自 PDF 抵达模型所走的路径，其中两次还返回了看起来正常、却没有任何报错的响应。
 
-## Tl;博士
+## 摘要
 
-- 一行的严格 JSON 模式将 PDF 表转换为键入的行，字段描述处理清理，例如括号中的负数和脚注标记。
-- 在我们的测试中，读取 PDF 的模型可以处理数字文件和扫描。无法读取 PDF 的模型需要“mistral-ocr”解析器进行扫描。
-- 通过免费的“cloudflare-ai”解析器发送的扫描返回零行，没有错误，因此拒绝空结果。
-- 长表可以在输出令牌限制处停止，因此拒绝任何“finish_reason”为“length”的响应。
+- 为一行设定的严格 JSON schema 能把 PDF 表格变成带类型的行，字段描述则负责清理括号表示的负数、脚注标记之类的问题。
+- 在我们的测试中，能读 PDF 的模型对数字文件和扫描件都能处理。读不了 PDF 的模型需要用 `mistral-ocr` 解析器处理扫描件。
+- 扫描件走免费的 `cloudflare-ai` 解析器会返回零行且不报错，所以要拒绝空结果。
+- 长表格可能撞上输出 token 上限而中断，所以任何 `finish_reason` 为“length”的响应都要拒绝。
 
 ## 开始之前
 
-您需要以下内容来运行示例。
+运行下面的示例需要准备以下内容。
 
-- 一个有积分的 OpenRouter 帐户，以及存储在 `OPENROUTER_API_KEY` 环境变量中的 [API 密钥](https://openrouter.ai/settings/keys)。本指南中的模型是付费的。
-- Python 3.10 或更高版本和“requests”包（“pip install requests”）。
-- Node.js 18 或更高版本，但仅适用于接近尾声的 TypeScript 版本。
-- 包含表格的 PDF。它可以是数字导出或扫描。
+- 一个有额度的 OpenRouter 账户，以及一个存放在 `OPENROUTER_API_KEY` 环境变量里的 [API key](https://openrouter.ai/settings/keys)。本指南用到的模型都是付费的。
+- Python 3.10 或更高版本，以及 `requests` 包（`pip install requests`）。
+- Node.js 18 或更高版本，但只在接近末尾的 TypeScript 版本里用得上。
+- 一份包含表格的 PDF，可以是数字导出件，也可以是扫描件。
 
-如果您之前没有调用过该 API，[快速入门](https://openrouter.ai/docs/quickstart) 将显示第一个请求。
+如果你之前没调用过 API，[快速入门](https://openrouter.ai/docs/quickstart)会演示第一个请求。
 
-该代码适用于数字 PDF 和扫描，但结果取决于 PDF 是否具有文本层、扫描质量、解析器路径和模型。这些示例使用我们根据已知数据生成的五个测试 PDF，以便可以根据源检查每个单元格。它们是发票、季度报告、第二页的 58 行装运日志、扫描的采购订单以及带有合并单元格的故意粗略扫描。
+这套代码对数字 PDF 和扫描件都适用，但结果取决于 PDF 有没有文本层、扫描质量、解析器路径和模型。示例用的是我们用已知数据生成的五个测试 PDF，这样每个单元格都能对照原始数据核对。它们分别是一张发票、一份季度报告、一份有 58 行、延伸到第二页的出货记录、一份扫描版采购订单，以及一份刻意做得很粗糙、带合并单元格的扫描件。
 
-## 第 1 步：如何发送 PDF 并取回行？
+## 第 1 步：怎么发送 PDF 并拿回行？
 
-将以下内容保存为“extract_tables.py”。它将 PDF 作为文件内容部分发送，如我们的 [PDF 输入](https://openrouter.ai/docs/guides/overview/multimodal/pdfs) 页面中所述，并通过[结构化输出](https://openrouter.ai/docs/guides/features/structed-outputs) 请求与您的架构匹配的 JSON。将“strict”设置为 true 时，支持严格模式的提供程序会将输出保存到架构中，因此每一行的每个字段都具有正确的类型。支持因提供商而异，结构化输出页面显示如何仅路由到支持它的提供商。
+把下面代码保存为 `extract_tables.py`。它按我们 [PDF inputs](https://openrouter.ai/docs/guides/overview/multimodal/pdfs) 页面上的说明，把 PDF 作为文件内容部分发送，并通过 [Structured outputs](https://openrouter.ai/docs/guides/features/structured-outputs) 要求返回符合你的 schema 的 JSON。把 `strict` 设为 true 后，支持严格模式的 provider 会让输出严格贴合 schema，于是每一行都带着全部字段且类型正确。各 provider 的支持程度不同，Structured outputs 页面说明了如何只路由到支持的 provider。
+
 ```
 import base64
 import json
@@ -110,9 +111,11 @@ LINE_ITEMS = rows_schema({
                "description": "USD, no currency symbol or thousands separator"},
 })
 ```
-“return”之前的两项检查捕获了步骤 3 和 4 中涵盖的失败，因此将其保留。成本来自“usage.cost”，[使用情况核算](https://openrouter.ai/docs/cookbook/administration/usage-accounting) 包含在每个响应中。
 
-在发票上运行该函数。
+`return` 之前的两个检查能捕获第 3 步和第 4 步讲到的那些失败，所以请把它们保留下来。费用来自 `usage.cost`，[用量计费](https://openrouter.ai/docs/cookbook/administration/usage-accounting)在每个响应里都会给出这个值。
+
+在发票上跑一下这个函数。
+
 ```
 from extract_tables import extract_table, LINE_ITEMS
 
@@ -128,11 +131,13 @@ print(f"{len(rows)} rows, ${cost:.5f}")
 {'sku': 'NW-4114', 'description': 'Bearing 6204-2RS', 'qty': 10, 'unit_price': 52.59, 'amount': 525.9}
 10 rows, $0.00067
 ```
-通话持续了大约六秒钟。 PDF 显示 6,067.00，该行包含 6067.0，这是一个无需先清理即可累加的数字。字段描述删除了千位分隔符。
 
-## 步骤 2：如何处理合并的单元格、括号和脚注？
+这次调用大约花了六秒。PDF 上写的是 6,067.00，而这一行里存的是 6067.0，这是一个不用先清洗就能直接相加的数。千位分隔符是被字段描述去掉的。
 
-PDF 表所需的大部分清理工作都可以进入模式的字段描述。我们的季度报告有一个“2026 财年”标题，跨越四个季度栏，括号中写着损失，两个细分市场名称（企业和硬件转售）上有脚注标记。字段描述处理括号和脚注标记。生成标头不需要描述，因为字段名称已经说明了每个值属于哪个季度。
+## 第 2 步：怎么处理合并单元格、括号和脚注？
+
+PDF 表格需要的清理，大部分都能放进 schema 的字段描述里。我们的季度报告有一个横跨四个季度列的 “Fiscal 2026” 表头，有用括号写出的亏损，还有两个分部名称（Enterprise 和 Hardware resale）上的脚注标记。括号和脚注标记由字段描述处理。横跨的表头不需要描述，因为字段名已经说明了每个值属于哪个季度。
+
 ```
 from extract_tables import extract_table, rows_schema
 
@@ -156,19 +161,21 @@ for row in rows:
 {'segment': 'Professional services', 'q1': 8933, 'q2': 9511, 'q3': 7805, 'q4': 5946, 'fy_total': 32195}
 {'segment': 'Total operating income', 'q1': 19233, 'q2': 25571, 'q3': 7916, 'q4': 22113, 'fy_total': 74833}
 ```
-在硬件转售行中，(3,878) 返回为 -3878，并且脚注标记从两个段名称中消失。
 
-沿着列运行的合并单元格的工作方式相同。在我们的粗略扫描中，每个类别单元格跨越六到九行。我们将该字段描述为“第一列中的类别。它是一个合并单元格，因此在它覆盖的每一行上重复它。”在我们的测试中，这足以让所有三个读取 PDF 的模型填写所有 30 行的类别。
+在 Hardware resale 这一行里，(3,878) 返回成了 -3878，两个分部名称上的脚注标记也都不见了。
 
-## 步骤 3：我应该使用哪个解析器路由？
+沿着一列向下延伸的合并单元格，处理方式是一样的。在我们那份粗糙扫描件里，每个 Category 单元格横跨六到九行。我们把这个字段描述成：“第一列中的类别。它是合并单元格，所以它覆盖的每一行都要重复填上。”在测试中，这让三个能读 PDF 的模型都在全部 30 行上填出了类别。
 
-如果模型可以读取文件，我们就直接将 PDF 传递给它。如果不能，我们首先解析 PDF 并将结果发送给模型。文件解析器插件的“engine”设置选择解析器。当您在无法读取文件的模型上未设置它时，我们使用“mistral-ocr”，如 [PDF 输入](https://openrouter.ai/docs/guides/overview/multimodal/pdfs) 页面所述。根据 PDF 的外观选择路径。
+## 第 3 步：该用哪条解析器路径？
 
-- **读取 PDF 的模型。** 保持“engine”未设置。 Claude Haiku 5.5、GPT-6 Luna 和 Gemini 3.8 Flash 都读取文件，并且所有三个都处理了我们的两次扫描。 PDF 按输入令牌计费。
-- **无法使用 OCR 读取 PDF 的模型。** 使用 `engine="mistral-ocr"`，或不设置。它首先在每个页面上运行光学字符识别 (OCR)，除了模型的代币之外，每 1,000 页 2 美元。
-- **无法读取 PDF 的模型，带有免费解析器。** 仅当每个 PDF 都有文本层时才使用 `engine="cloudflare-ai"`。导出的发票和报告都有一份。扫描则不然。
+如果模型能读文件，我们直接把 PDF 交给它。如果不能，我们先解析 PDF，再把解析结果发给模型。file-parser 插件的 `engine` 设置决定用哪个解析器。当你在读不了文件的模型上不设置它时，我们会用 `mistral-ocr`，正如 [PDF inputs](https://openrouter.ai/docs/guides/overview/multimodal/pdfs) 页面所说。按你的 PDF 长什么样来选路径。
 
-这是使用每个解析器发送到“deepseek/deepseek-v4.1-flash”的扫描采购订单。该模型接受图像但不接受文件，因此 PDF 必须经过解析器。
+- **能读 PDF 的模型。** 不要设置 `engine`。Claude Haiku 5.5、GPT-6 Luna 和 Gemini 3.8 Flash 都能读文件，三个模型处理我们那两份扫描件都没问题。PDF 按输入 token 计费。
+- **读不了 PDF 的模型，配 OCR。** 用 `engine="mistral-ocr"`，或者不设置。它先对每一页做光学字符识别（OCR），费用是每 1,000 页 $2，另外还要付模型的 token 费用。
+- **读不了 PDF 的模型，配免费解析器。** 只有当每个 PDF 都有文本层时才用 `engine="cloudflare-ai"`。导出的发票和报告有文本层，扫描件没有。
+
+下面是把那份扫描版采购订单分别交给各个解析器、再发给 `deepseek/deepseek-v4.1-flash` 的代码。那个模型接受图片但不接受文件，所以 PDF 必须先经过解析器。
+
 ```
 from extract_tables import extract_table, LINE_ITEMS
 
@@ -186,21 +193,27 @@ rows, cost = extract_table("scanned.pdf", LINE_ITEMS,
 mistral-ocr: 6 rows, $0.00211
 ValueError: No rows came back. If this PDF is a scan, use a model that reads PDFs or engine='mistral-ocr'.
 ```
-该“ValueError”来自步骤 1 中的空行检查。如果不进行检查，第二次调用将返回 200 OK，并带有“finish_reason: "stop"”和“{"rows": []}”。解析器在扫描中没有发现任何文本，并且模型正确地报告了一个空表。没有任何事情会引发错误，因此没有检查的管道会存储零行并移至下一个文件。这是两个无声失败中的第​​一个。我们的粗略扫描表现相同，在 30 行中得分为 0。
 
-另外两个路线错误也导致失败。拼写错误的引擎名称会返回此错误。
+这个 `ValueError` 来自第 1 步里的空行检查。如果没有这个检查，第二次调用会返回 200 OK，`finish_reason` 为 `"stop"`，内容是 `{"rows": []}`。解析器在扫描件上没找到任何文本，模型如实报告了空表。没有任何东西抛错，所以没有这个检查的流水线会存下零行，然后接着处理下一个文件。这是两种静默失败中的第一种。我们那份粗糙扫描件表现一样，30 行得了 0 分。
+
+另外两种路径错误会明确报错。解析器名字拼错时会返回这个错误。
+
 ```
 400 {"error":{"message":"plugins.0.pdf.engine: Invalid input","code":400}}
 ```
-本机引擎仅适用于读取文件的模型。无论如何，当我们在 DeepSeek V4.1 Flash 上设置“engine=”native“”时，请求成功一次，然后因提供程序错误而失败两次。
+
+native 引擎只适用于能读文件的模型。我们还是给 DeepSeek V4.1 Flash 设了 `engine="native"`，结果请求成功了一次，接着两次都以 provider 错误告终。
+
 ```
 400 Provider returned error: "The request was rejected. Possible causes: input exceeds the model's maximum context length, or the request contains invalid parameters."
 ```
-我们两次尝试都在同一模型上保持引擎未设置，因此不要在无法读取文件的模型上设置“native”。
 
-## 步骤 4：为什么我的长桌回来时被切断了？
+同一个模型不设 engine，我们两次尝试都成功了，所以别在读不了文件的模型上设 `native`。
 
-模型写入的每一行都会消耗输出令牌，因此长表需要较高的“max_tokens”。根据模型的不同，我们的 58 行发货日志使用了 2,500 到 7,700 个输出令牌，这使得最详细的模型在“extract_table”中的默认值 8,000 下几乎没有空间。计算出来每行有 43 到 133 个标记。对于长表，从每个预期行大约 150 个标记开始。然后测量您自己的行并保留“finish_reason”检查，因为计数因模型和模式而异。以下是限制太低时会发生的情况。
+## 第 4 步：我的长表格为什么回来时被截断了？
+
+模型写下的每一行都要消耗输出 token，所以长表格需要较大的 `max_tokens`。我们那份 58 行的出货记录，视模型不同用了 2,500 到 7,700 个输出 token，这让最啰嗦的模型在 `extract_table` 默认的 8,000 之下几乎没有余量。折算下来每行 43 到 133 个 token。遇到长表格，可以按预计行数每个大约 150 个 token 起步。然后测量你自己的行数，并保留 `finish_reason` 检查，因为每行的开销随模型和 schema 而变。上限设得太低时会发生什么呢。
+
 ```
 from extract_tables import extract_table, rows_schema
 
@@ -219,15 +232,19 @@ rows, cost = extract_table("shipments.pdf", SHIPMENTS, max_tokens=600)
 ```
 ValueError: Output stopped at max_tokens=600. Raise it or split the PDF.
 ```
-如果没有“finish_reason”检查，此请求会以两种方式之一失败。普通 JSON 解析会在截止数组上引发错误。
+
+没有 `finish_reason` 检查的话，这个请求会以两种方式之一失败。直接解析 JSON 会在被截断的数组上抛错。
+
 ```
 JSONDecodeError: Unterminated string starting at: line 1 column 627 (char 626)
 ```
-第二种方法是另一种无声的失败。打开 [Response Healing](https://openrouter.ai/docs/guides/features/plugins/response-healing) 插件后，JSON 会进行解析，您会毫无例外地得到 5 行，每行 58 个。修复修复了输出的语法，它的文档警告说它无法恢复被“max_tokens”切断的输出，因此它无法添加模型从未写入的行。 `finish_reason` 检查捕获这两种情况。
 
-## 步骤 5：如何将行写入 CSV？
+第二种方式就是另一种静默失败。打开 [Response Healing](https://openrouter.ai/docs/guides/features/plugins/response-healing) 插件后，JSON 能解析了，58 行里只拿到 5 行，却没有抛出任何异常。Healing 修复的是输出的语法，它的文档也提醒说无法恢复被 `max_tokens` 截断的输出，所以补不回模型压根没写的那些行。`finish_reason` 检查能同时抓住这两种情况。
 
-每行都有模式中定义的键，因此“csv.DictWriter”可以从模式中获取其列名称并按原样写入行。 Excel直接打开结果。
+## 第 5 步：怎么把这些行写成 CSV？
+
+每一行都带着 schema 中定义的键，所以 `csv.DictWriter` 可以直接从 schema 取列名，并把行原样写出去。Excel 可以直接打开结果。
+
 ```
 import csv
 
@@ -250,29 +267,31 @@ date,shipment_id,origin,destination,weight_kg,status
 2026-09-01,SHP-88200,Savannah,Valencia,8754.6,In transit
 2026-09-01,SHP-88213,Busan,Los Angeles,2074.7,Customs hold
 ```
-该表格转到第二页，其标题在那里重复。 CSV 有一个标题和全部 58 行。
 
-## 您应该使用哪种模型？
+表格延伸到了第二页，表头在那里也重复了一次。CSV 里只有一个表头和全部 58 行。
 
-我们对所有 5 个 PDF（共 6 页和 644 个单元格）运行了每条路线一次，并将每个单元格与生成 PDF 的数据进行了比较。每次运行都使用上面的“extract_table”函数和提示，以及我们的默认提供程序路由。每 1,000 个页面的成本是六个页面按比例放大的总“usage.cost”。模型和价格来自我们截至 2026 年 10 月 8 日的模型目录。这些结果描述的是该测试集，而不是一般的模型性能。
+## 该用哪个模型？
 
-![在相同的五个 PDF、六个页面和 644 个单元格上的五个 PDF 表格提取路线的图表。 GPT-6 Luna：644 个单元格中有 644 个正确，每 1,000 页 0.77 美元，每个 PDF 10.1 秒。Claude Haiku 5.5：644，1.00 美元，8.4 秒。 Gemini 3.8 Flash：644，8.04 美元，16.4 秒。 DeepSeek V4.1 Flash 与 Mistra-ocr：642，3.09 美元，25.0 秒。 DeepSeek V4.1 Flash 与 cloudflare-ai：434，1.92 美元，21.3 秒。](https://openrouter.ai/blog/images/extract-tables-from-pdf-llm-routes.png)
+我们把每条路径都在五个 PDF 上跑了一遍，共六页、644 个单元格，逐个单元格与生成这些 PDF 的原始数据比对。每次运行都用的是上面的 `extract_table` 函数和提示词，并采用我们默认的 provider 路由。每 1,000 页的成本是这六页的 `usage.cost` 总额再按比例放大。模型和价格取自我们 2026 年 10 月 8 日的模型目录。这些结果描述的是这组测试数据，不代表模型的普遍表现。
 
-在此测试集上，[GPT-6 Luna](https://openrouter.ai/openai/gpt-6-luna) 和 [Claude Haiku 5.5](https://openrouter.ai/anthropic/claude-haiku-5.5) 是使每个单元都正确的最便宜的路线，包括粗略扫描，并且两者的价格均为每百万输入代币 0.10 美元。这使得它们成为对您自己的 PDF 进行合理的首次测试。 [Gemini 3.8 Flash](https://openrouter.ai/google/gemini-3.8-flash) 同样准确，但相同文件的每页成本是其八到十倍。其定价为每百万输入代币 1.50 美元，于 2026 年 10 月 21 日折扣至 0.75 美元。
+![图表：在同一组五个 PDF（六页、644 个单元格）上对比五条 PDF 表格提取路径。GPT-6 Luna：644 个单元格全对，每 1,000 页 $0.77，每个 PDF 10.1 秒。Claude Haiku 5.5：644，$1.00，8.4 秒。Gemini 3.8 Flash：644，$8.04，16.4 秒。DeepSeek V4.1 Flash 配 mistral-ocr：642，$3.09，25.0 秒。DeepSeek V4.1 Flash 配 cloudflare-ai：434，$1.92，21.3 秒。](https://openrouter.ai/blog/images/extract-tables-from-pdf-llm-routes.png)
 
-OCR 路线的成本比 DeepSeek 的低代币价格所暗示的要高，因为每 1,000 个页面的 OCR 2 美元会添加到每个请求中，您可以在“usage.cost”中看到它。它的两次遗漏是关于企业和硬件转售的脚注标记，尽管架构要求将它们删除，但它仍然保留了它们。免费解析器正确解析了所有三个数字 PDF，但两次扫描都完全错误。
+在这组测试数据上，[GPT-6 Luna](https://openrouter.ai/openai/gpt-6-luna) 和 [Claude Haiku 5.5](https://openrouter.ai/anthropic/claude-haiku-5.5) 是既能把每个单元格都答对、又最便宜的两条路径，在那份粗糙扫描件上也是如此，而且两者的标价都是每百万输入 token $0.10。这让它们适合先在你自己的 PDF 上试一轮。[Gemini 3.8 Flash](https://openrouter.ai/google/gemini-3.8-flash) 准确率完全一样，但在同样这些文件上每页成本要高八到十倍。它的标价是每百万输入 token $1.50，2026 年 10 月 21 日起优惠到 $0.75。
 
-成本列是从每条路线的六页中推断出来的。使用它来比较路线，然后在选择一个 PDF 样本之前使用[黄金评估集](https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/) 测量准确性、时间和成本，因为页面越密集，成本就越高，并且其他布局的行为可能会有所不同。
+OCR 路径的实际花费比 DeepSeek 那个看起来很低的 token 价格暗示的要高，因为 OCR 的每 1,000 页 $2 会加到每一次请求上，你能在 `usage.cost` 里看到。它错的两处是 Enterprise 和 Hardware resale 上的脚注标记，尽管 schema 要求去掉，它还是保留了。免费解析器把三个数字 PDF 全做对了，两个扫描件则完全做错。
 
-## PDF 库何时足够？
+成本这一列是从每条路径的六页外推出来的。用它来比较各条路径，然后在选定之前，用一套[黄金 eval 集](https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/)在你自己的 PDF 样本上测准确率、耗时和成本，因为内容更密的页面更贵，其他版式也可能表现不同。
 
-如果您的所有 PDF 都是数字的，并且每个表格都有一个标题行，则 [pdfplumber](https://github.com/jsvine/pdfplumber) 等免费库将找到这些表格。我们在相同的文件上运行它。它找到了三个数字 PDF 中的每个表格，并将每个单元格作为字符串返回，例如“6,067.00”或“(3,878)”。季度报告的两级标题以两行形式返回，合并单元格中为“无”，装运日志以两个单独的表格形式返回，每页一个。它在两次扫描中都没有发现任何内容，因为扫描没有可供读取的文本层。
+## 什么时候用 PDF 库就够了？
 
-因此，当您的表格很简单且 PDF 是数字的时，库就足够了。一旦您为合并的标题、分页符和数字格式编写清理代码，第 2 步中的架构的维护工作量就会减少。
+如果你的 PDF 全是数字件，而且每张表格都只有一行表头，那么像 [pdfplumber](https://github.com/jsvine/pdfplumber) 这样的免费库就能把表格找出来。我们在同样的文件上跑过它。它在三个数字 PDF 里找出了每一张表，并把每个单元格都返回成字符串，比如 ‘6,067.00’ 或 ‘(3,878)’。季度报告的两级表头被返回成两行，合并单元格里是 `None`；出货记录则被返回成两张独立的表，每页一张。它在两份扫描件里什么都没找到，因为扫描件没有文本层可读。
 
-## TypeScript 中的相同请求
+所以，当你的表格简单、PDF 是数字件时，用库就够了。一旦你开始为合并表头、分页和数字格式写清理代码，第 2 步里的 schema 反而更省事。
 
-任何语言的请求正文都是相同的。将其保存为“extract.mjs”，并在 Node.js 18 或更高版本上使用“node extract.mjs Invoice.pdf”运行它。
+## 同样的请求，用 TypeScript 写
+
+请求体在任何语言里都一样。把下面代码保存为 `extract.mjs`，在 Node.js 18 或更高版本上用 `node extract.mjs invoice.pdf` 运行。
+
 ```
 import { readFileSync } from "node:fs";
 import { basename } from "node:path";
@@ -318,35 +337,36 @@ console.log(rows.length + " rows, finish_reason=" + choice.finish_reason + ", $"
 ```
 10 rows, finish_reason=stop, $0.00020275
 ```
-该脚本检查 HTTP 状态，然后应用与 Python 版本相同的两项检查。除非“finish_reason”为“stop”并且“rows”至少有一行，否则它将停止。
+
+脚本先检查 HTTP 状态码，再做和 Python 版同样的两个检查。除非 `finish_reason` 为 “stop” 且 `rows` 至少有一行，否则它就停下。
 
 ## 结论
 
-使用 LLM 从 PDF 中提取表格需要一个请求，其中 PDF 作为文件部分以及描述一行的严格模式。在我们的测试中，准确性来自于直接读取 PDF 的模型，而风险来自于 PDF 所采取的路线。扫描上的文本解析器和长表上的令牌限制都返回看起来正常的响应。 `extract_table` 中的两个检查捕获这两种情况，因此请将它们保留在您运行的代码的任何版本中。在确定路线之前，请运行您自己的 PDF 示例并比较行数、时间和“使用成本”。
+用 LLM 从 PDF 中提取表格只需要一次请求：把 PDF 作为文件部分发过去，再给一份描述单行的严格 schema。在我们的测试中，准确性来自模型直接读取 PDF，风险则来自 PDF 所走的路径。扫描件上的文本解析器和长表格上的 token 上限，返回的响应看起来都很正常。`extract_table` 里的两个检查能抓住这两种情况，所以无论你跑的是代码的哪个版本，都请保留它们。在确定一条路径之前，先拿你自己 PDF 的一批样本跑一遍，比较行数、耗时和 `usage.cost`。
 
 ## 常见问题
 
-### LLM 可以阅读扫描的 PDF 吗？
+### LLM 能读扫描版 PDF 吗？
 
-是的，如果模型直接读取 PDF 或者您通过 Mistra-ocr 解析器发送它。读取 PDF 的所有三个模型都正确扫描了我们的两次扫描，使用 Mistra-ocr 的 DeepSeek V4.1 Flash 也是如此。 Cloudflare-ai 等文本解析器在扫描时返回空结果，没有错误，因为扫描没有文本层。
+能，前提是模型直接读取 PDF，或者你把 PDF 交给 mistral-ocr 解析器。三个能读 PDF 的模型都把我们那两份扫描件做对了，DeepSeek V4.1 Flash 配 mistral-ocr 也一样。像 cloudflare-ai 这样的文本解析器对扫描件会返回空结果且不报错，因为扫描件没有文本层。
 
-### 从 1,000 页中提取表格需要多少钱？
+### 从 1,000 页 PDF 中提取表格要花多少钱？
 
-在我们的六个测试页上，按照 2026 年 10 月的价格计算，GPT-6 Luna 的成本约为每 1,000 页 0.77 美元，Claude Haiku 5.5 的成本约为每 1,000 页 1.00 美元。 mistra-ocr 背后的模型每 1,000 页 OCR 增加 2 美元。检查当前价格并从您自己的第一个请求中读取“usage.cost”，因为密集的表成本更高。
+在我们那六个测试页上，按 2026 年 10 月的价格折算，GPT-6 Luna 大约是每 1,000 页 $0.77，Claude Haiku 5.5 是 $1.00。走 mistral-ocr 的模型还要额外加上 OCR 的每 1,000 页 $2。请查一下当前价格，并从自己的前几次请求里读 `usage.cost`，因为内容密的表格更贵。
 
-### 模型会发明 PDF 中没有的行吗？
+### 模型会编造 PDF 里没有的行吗？
 
-我们在 5 个测试 PDF 的 25 个提取中没有看到虚构的行，但这并不排除其他文档中出现虚构行的情况。丢失行是更大的风险，这是由于输出在令牌限制处被切断或解析器找不到文本而引起的。将行数或小计与文档进行比较。
+在我们对五个测试 PDF 的 25 次抽取中没见到编造出来的行，但这并不能保证其他文档上也不会。更大的风险是漏行，原因是输出在 token 上限处被截断，或者解析器什么都没找到。请把行数或某个小计与文档对照一下。
 
-### 从 PDF 中提取表格的最佳 Python 库是什么？
+### 从 PDF 提取表格，最好的 Python 库是哪个？
 
-对于具有简单标题的数字 PDF，pdfplumber 是免费的，可以找到我们数字测试文件中的每个表格。它将每个单元格作为文本返回，将多级标题拆分为单独的行，并且在我们的扫描中找不到任何内容。 Camelot 和 Tabula 是其他免费选项，但我们没有在本指南中测试它们。
+对于表头简单的数字 PDF，pdfplumber 是免费的，而且在我们的数字测试文件里找到了每一张表。它把每个单元格返回成文本，把多级表头拆成独立的行，而在扫描件里什么都没找到。Camelot 和 Tabula 也是免费选项，但本指南没有测试它们。
 
-## 后续步骤
+## 下一步
 
-- [PDF 输入](https://openrouter.ai/docs/guides/overview/multimodal/pdfs) 涵盖通过 URL（而不是 base64）发送 PDF、解析器引擎及其价格以及文件注释，让您可以将解析结果发回，这样您就无需支付两次解析相同 PDF 的费用。
-- [结构化输出](https://openrouter.ai/docs/guides/features/structured-outputs) 解释了严格的 JSON 模式以及如何仅路由到支持它们的提供程序。
-- [预设](https://openrouter.ai/docs/guides/features/presets) 将模型、系统提示和提供商设置存储在一个名称下。将提取指令放在预设的系统提示符中，并从每个服务调用“@preset/your-name”，因此它们都使用相同的配置。继续在每个请求中以“response_format”发送模式，因为预设文档不会将其列在预设存储的设置中。我们的[预设指南](https://openrouter.ai/blog/tutorials/presets/) 逐步完成设置。
-- 对于积压的 PDF，[Batch API](https://openrouter.ai/docs/batch-quickstart) 异步运行相同的请求，通常在 24 小时内。 `anthropic/claude-haiku-5.5:batch` 和 `openai/gpt-6-luna:batch` 的价格是每个代币标准价格的一半。批量请求将 PDF 作为公共 URL，而不是 base64，因此首先托管文件。文件 URL 仅适用于列出文件输入的模型，因此步骤 3 中带有 milstra-ocr 路由的 DeepSeek 无法批量使用，并且在 OpenAI 模型上，它们只能通过 Responses API 工作。我们没有测量本指南的批量运行。
-- 如果您在 LangChain 中构建此内容，[ChatOpenRouter](https://openrouter.ai/blog/tutorials/langchain-chatopenrouter-setup/) 会传递 PDF 输入并使用“with_structed_output”支持严格的 JSON 模式。
-- 如果您的源文档是图像而不是 PDF，[如何将图像发送到 LLM](https://openrouter.ai/blog/tutorials/send-image-to-llm/) 涵盖了图像内容部分。
+- [PDF inputs](https://openrouter.ai/docs/guides/overview/multimodal/pdfs) 介绍了用 URL 而不是 base64 发送 PDF、各解析器引擎及其价格，以及文件标注——标注可以让你把解析结果带回去，从而不必为同一份 PDF 付两次解析费用。
+- [Structured outputs](https://openrouter.ai/docs/guides/features/structured-outputs) 解释了严格 JSON schema，以及如何只路由到支持它们的 provider。
+- [Presets](https://openrouter.ai/docs/guides/features/presets) 把模型、system prompt 和 provider 设置存放在同一个名字下。把抽取指令放进 preset 的 system prompt，并让每个服务都调用 `@preset/your-name`，这样它们都用同一份配置。schema 仍然要每次请求都放在 `response_format` 里发送，因为 presets 文档并没有把它列进 preset 会保存的设置。我们的 [presets 指南](https://openrouter.ai/blog/tutorials/presets/) 里有完整的搭建步骤。
+- 如果手头积压了一批 PDF，[Batch API](https://openrouter.ai/docs/batch-quickstart) 会异步执行同样的请求，通常在 24 小时内完成。`anthropic/claude-haiku-5.5:batch` 和 `openai/gpt-6-luna:batch` 的标价是标准每 token 价格的一半。Batch 请求接受的是公开 URL 形式的 PDF，而不是 base64，所以得先把文件托管起来。文件 URL 只在列出了文件输入的模型上有效，因此第 3 步里那条 DeepSeek 配 mistral-ocr 的路径在 batch 中不可用；在 OpenAI 模型上，文件 URL 也只能通过 Responses API 使用。本指南没有测量 batch 运行的表现。
+- 如果你在 LangChain 里做这个，[ChatOpenRouter](https://openrouter.ai/blog/tutorials/langchain-chatopenrouter-setup/) 能直接透传 PDF 输入，并支持用 `with_structured_output` 使用严格 JSON schema。
+- 如果你的源文档是图片而不是 PDF，[How to send an image to an LLM](https://openrouter.ai/blog/tutorials/send-image-to-llm/) 介绍了图片内容部分。

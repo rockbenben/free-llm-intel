@@ -10,15 +10,15 @@
 
 ## 全部文章（共 134 篇，按日期倒序；无日期条目列于最后）
 
-1. [Claude Enterprise 的智能报告、调查和汇总集团预算](https://claude.com/resources/articles/smart-reports-surveys-pooled-budgets)（2026-10-28） <!--orig:Smart reports, surveys, and pooled group budgets for Claude Enterprise-->
+1. [Claude Enterprise 的智能报告、调查与共享群组预算](https://claude.com/resources/articles/smart-reports-surveys-pooled-budgets)（2026-10-28） <!--orig:Smart reports, surveys, and pooled group budgets for Claude Enterprise-->
 2. [IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude](https://claude.com/resources/articles/idc-brings-quanta-into-claude-and-adopts-claude-across-the-company)（2026-10-28） <!--orig:IDC brings Quanta into Claude and adopts Claude across the company-->
-3. [为法律工作引入工件](https://claude.com/resources/articles/introducing-artifacts-for-legal-work)（2026-10-28） <!--orig:Introducing artifacts for legal work-->
-4. [科学人工智能扩展到基金会和研究机构](https://www.anthropic.com/news/ai-for-science-expands-foundations-research-institutions)（2026-10-28） <!--orig:AI for Science expands to foundations and research institutions-->
+3. [为法律工作引入 Claude artifacts](https://claude.com/resources/articles/introducing-artifacts-for-legal-work)（2026-10-28） <!--orig:Introducing artifacts for legal work-->
+4. [AI for Science 扩展至基金会与研究机构](https://www.anthropic.com/news/ai-for-science-expands-foundations-research-institutions)（2026-10-28） <!--orig:AI for Science expands to foundations and research institutions-->
 5. [管理成本并展示 Google Cloud 上 Claude Code 的投资回报率](https://claude.com/resources/articles/how-to-manage-costs-and-demonstrate-roi-for-claude-code-on-google-cloud)（2026-10-27） <!--orig:Manage costs and demonstrate ROI for Claude Code on Google Cloud-->
 6. [正式推出 Claude for Financial Advisors](https://claude.com/resources/articles/claude-for-financial-advisors)（2026-10-27） <!--orig:Claude for Financial Advisors-->
 7. [与 Claude 一起加速药物开发的早期进展](https://www.anthropic.com/research/early-progress-drug-development)（2026-10-27） <!--orig:Early progress on accelerating drug development with Claude-->
 8. [扩大我们与 GSA 的合作伙伴关系，将 Claude 带到各级政府](https://www.anthropic.com/news/expanding-partnership-gsa)（2026-10-27） <!--orig:Expanding our partnership with GSA to bring Claude to all levels of government-->
-9. [扩大Claude对非营利组织的影响](https://claude.com/resources/articles/expanding-claude-for-nonprofits)（2026-10-26） <!--orig:Expanding Claude for Nonprofits-->
+9. [扩大 Claude 在非营利组织中的使用](https://claude.com/resources/articles/expanding-claude-for-nonprofits)（2026-10-26） <!--orig:Expanding Claude for Nonprofits-->
 10. [Anthropic 向 SEC 提交 S-1 拟议首次公开募股](https://www.anthropic.com/news/s1-sec)（2026-10-26） <!--orig:Anthropic files S-1 with the SEC for proposed initial public offering-->
 11. [Claude Cowork 和聊天功能在 Enterprise 中融为一体](https://claude.com/resources/articles/unified-claude-enterprise)（2026-10-23） <!--orig:Claude Cowork and chat come together for Enterprise-->
 12. [Claude Duet 安全、隐私和安保](https://claude.com/resources/articles/claude-duet-safety-privacy-and-security)（2026-10-23） <!--orig:Claude Duet Safety, Privacy, and Security-->

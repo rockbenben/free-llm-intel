@@ -9,35 +9,35 @@
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>Wed, 28 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>从录音到记录：NVIDIA Nemotron 3.5 在 DeepInfra 上转录</title>
+      <title>从录音到记录：NVIDIA Nemotron 3.5 Transcribe 在 DeepInfra 上线</title>
       <link>https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release</link>
       <guid isPermaLink="true">https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release</guid>
       <pubDate>Wed, 28 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：From Recordings to Records: NVIDIA Nemotron 3.5 Transcribe on DeepInfra</description>
-      <content:encoded><![CDATA[<h1>从录音到记录：NVIDIA Nemotron 3.5 在 DeepInfra 上转录</h1>
-<p>发布于 2026.10.28 作者：Aray Sultanbekova</p>
-<p><img src="https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release.png" alt="从记录到记录：NVIDIA Nemotron 3.5 在 DeepInfra 上转录"></p>
-<p><a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B">NVIDIA Nemotron 3.5 Transcribe</a> 现已在 <a href="https://deepinfra.com/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B">DeepInfra</a> 上发布，从发布的第 0 天开始。它是一种开放权重语音模型，可以在一个模型中处理转录、说话者归因、语音翻译、上下文偏差和音频理解。在 DeepInfra 上，它通过兼容 OpenAI 的语音转文本 API 提供服务，并提供转录、单词和片段时间戳、上下文提示以及英语翻译。 API 中的演讲者归属功能即将推出。</p>
-<p>构建呼叫分析、会议工具和媒体产品的团队需要的不仅仅是原始记录。他们需要知道谁说了什么，正确理解领域术语，处理多语言录音，并从音频中提取答案。构建此模型的一种方法是将 ASR 模型、二值化模型、翻译模型和 LLM 链接起来。这是可行的，但它增加了集成工作并使管道更难以评估。</p>
-<p>Nemotron 3.5 Transcribe 将这些任务整合到一个模型中，因此单个请求可以返回适合您的应用程序的转录本。</p>
+      <content:encoded><![CDATA[<h1>从录音到记录：NVIDIA Nemotron 3.5 Transcribe 在 DeepInfra 上线</h1>
+<p>2026.10.28 发布，作者 Aray Sultanbekova</p>
+<p><img src="https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release.png" alt="从录音到记录：NVIDIA Nemotron 3.5 Transcribe 在 DeepInfra 上线"></p>
+<p><a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B">NVIDIA Nemotron 3.5 Transcribe</a> 现已在 <a href="https://deepinfra.com/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B">DeepInfra</a> 上线，与发布首日同步。它是一个开放权重语音模型，一个模型就能处理转写、说话人归属、语音翻译、上下文偏置和音频理解。在 DeepInfra 上，它通过兼容 OpenAI 的语音转文本 API 提供服务，目前支持转写、词级与片段级时间戳、上下文提示，以及翻译成英语。API 中的说话人归属功能即将推出。</p>
+<p>打造通话分析、会议工具和媒体产品的团队，需要的不只是原始转写文本。他们需要知道是谁说了什么、需要把专业术语听准、需要处理多语种录音，并从音频中提取答案。实现这一点的一种方式，是把 ASR 模型、说话人分离（diarization）模型、翻译模型和 LLM 串起来。这条路可行，但会增加集成工作，也让整条流水线更难评估。</p>
+<p>Nemotron 3.5 Transcribe 把这些任务收进一个模型，因此单次请求就能返回贴合你应用形态的转写结果。</p>
 <h2>Nemotron 3.5 Transcribe 有何不同？</h2>
-<p><strong>多种语音任务，一种模型。</strong> NVIDIA 在单个检查点报告 11 项语音任务，包括多语言 ASR、语音翻译、语码转换、说话人归因、单词时间戳、带有标点符号和大小写的丰富转录以及音频理解。您可以编排一个模型而不是多个模型。</p>
-<p><strong>上下文感知转录。</strong> 在简短的提示中传递域名术语和产品名称。该模型使用该上下文来帮助识别通用 ASR 经常遗漏的名称，例如药品名称、产品名称或客户名称。</p>
-<p><strong>多语言。</strong> NVIDIA 报告了 40 种语言的转录、英语和 31 种语言之间的语音翻译以及跨 13 种语言的语码转换。在 DeepInfra 上，可以通过 OpenAI 兼容的“/audio/translations”端点进行英语翻译。</p>
-<p><strong>一次请求中的长录音。</strong> 在一次请求中发送最多 60 分钟的音频，无需分块或拼接。</p>
-<p><strong>高效的专家混合 (MoE) 设计。</strong> Nemotron 3.5 Transcribe 是一种语音增强语言模型 (SALM)：语音和说话人编码器为自回归 Nemotron 3.5 Lightning MoE 主干网提供数据。 30B-A4B 设计每个令牌激活大约 4B 个参数。</p>
-<p><strong>专为录制音频而构建。</strong> 它是一种离线（非流式传输）模型，是您处理录制的通话、会议和媒体或对实时通话记录进行第二次传递时的选择。</p>
-<h2>它是如何执行的</h2>
-<p>NVIDIA 报告称，Nemotron 3.5 Transcribe 的转录准确性可与领先的专有语音 API 相媲美，完整结果请参见其<a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3.5-Transcribe-Technical-Report.pdf">技术报告</a>。</p>
-<p>独立研究结果也表明了同样的观点。在 <a href="https://www.cekura.ai/">Cekura</a> 的语音转文本排行榜上，Nemotron 3.5 Transcribe 在 Cekura 采购的独家私有数据集 Ocular WER<strong> 上排名</strong>#1，单词错误率为 2.48%，领先于板上的所有专有 API。私人设备是您自己录音的最接近的代理，因为没有模型可以在其上进行调整。</p>
-<p>!【Cekura Oural WER 排行榜：NVIDIA Nemotron 3.5 Transcribe 以 2.48% WER 排名第一】(https://deepinfra.com/blog/nemotron-3-5-transcribe-cekura- eyes-wer.webp)</p>
-<p>在 Cekura 的公共 Pipecat WER 集上，它的得分为 2.32%，与领先者相差半分左右，领先于 Cartesia Ink 2、Speechmatics Linden、Soniox STT-RT v5 和 Deepgram Nova-3。</p>
-<p><img src="https://deepinfra.com/blog/nemotron-3-5-transcribe-cekura-pipecat-wer.webp" alt="Cekura Pipecat WER 排行榜：NVIDIA Nemotron 3.5 转录率为 2.32% WER"></p>
-<p>它是这两个排行榜上唯一的开放权重模型，因此这种准确性伴随着您可以检查、微调或自行运行的权重。</p>
+<p><strong>多种语音任务，一个模型。</strong> NVIDIA 称单个 checkpoint 就覆盖 11 项语音任务，包括多语种 ASR、语音翻译、语种切换、说话人归属、词级时间戳、带标点和大小写的完整转写，以及音频理解。你编排的是一个模型，而不是好几个。</p>
+<p><strong>上下文感知的转写。</strong> 用一段简短的 prompt 传入领域术语和产品名。模型会利用这些上下文，帮助识别通用 ASR 经常漏掉的名称，比如药品名、产品名或客户名。</p>
+<p><strong>多语种。</strong> NVIDIA 称支持 40 种语言的转写、英语与另外 31 种语言之间的语音翻译，以及跨 13 种语言的语种切换。在 DeepInfra 上，翻译成英语可通过兼容 OpenAI 的 <code>/audio/translations</code> 端点使用。</p>
+<p><strong>单次请求处理长音频。</strong> 单次请求最多可发送 60 分钟音频，你这边不需要做 chunking 或拼接。</p>
+<p><strong>高效的 Mixture-of-Experts（MoE）设计。</strong> Nemotron 3.5 Transcribe 是一个 Speech-Augmented Language Model（SALM）：语音编码器和说话人编码器为自回归的 Nemotron 3.5 Lightning MoE 主干网络供能。30B-A4B 的设计每个 token 激活约 4B 参数。</p>
+<p><strong>为录制音频而生。</strong> 它是一个离线（非流式）模型，适合处理录制下来的通话、会议和媒体，或对实时通话转写结果跑第二遍。</p>
+<h2>效果表现</h2>
+<p>NVIDIA 称 Nemotron 3.5 Transcribe 的转写准确率与领先的专有语音 API 相当，完整结果见其<a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3.5-Transcribe-Technical-Report.pdf">技术报告</a>。</p>
+<p>独立评测的结果也指向同一结论。在 <a href="https://www.cekura.ai/">Cekura</a> 的语音转文本排行榜上，Nemotron 3.5 Transcribe 在 Ocular WER 上<strong>排名第一</strong>——这是 Cekura 独家采购的私有数据集——词错误率为 2.48%，领先榜上的每一个专有 API。私有数据集最接近你自己的录音，因为任何模型都不可能针对它做过调优。</p>
+<p><img src="https://deepinfra.com/blog/nemotron-3-5-transcribe-cekura-ocular-wer.webp" alt="Cekura Ocular WER 排行榜：NVIDIA Nemotron 3.5 Transcribe 以 2.48% WER 位居第一"></p>
+<p>在 Cekura 公开的 Pipecat WER 数据集上，它的得分为 2.32%，与榜首相差约 0.5 分，并领先 Cartesia Ink 2、Speechmatics Linden、Soniox STT-RT v5 和 Deepgram Nova-3。</p>
+<p><img src="https://deepinfra.com/blog/nemotron-3-5-transcribe-cekura-pipecat-wer.webp" alt="Cekura Pipecat WER 排行榜：NVIDIA Nemotron 3.5 Transcribe 的 WER 为 2.32%"></p>
+<p>它是两个排行榜上唯一的开放权重模型，因此这份准确率背后是你可以检视、微调或自己运行的权重。</p>
 <h2>你可以构建什么</h2>
-<ul><li><strong>联络中心分析：</strong> 将记录的支持呼叫转换为带时间戳的文字记录，以进行质量检查和呼叫后分析，并提供产品名称作为上下文。</li><li><strong>会议和笔记工具：</strong> 转录长达 60 分钟的会议，为总结和行动项目做好准备。</li><li><strong>媒体和字幕：</strong> 转录录制的媒体或将其翻译成英语，并为字幕、搜索和导航提供单词时间戳。</li><li><strong>可搜索的音频档案：</strong> 将成绩单与 DeepInfra 上的 <a href="https://deepinfra.com/nvidia/Nemotron-3.5-Embed-8B-BF16">NVIDIA Nemotron 3.5 Embed</a> 和 <a href="https://deepinfra.com/nvidia/Nemotron-3.5-Rerank-8B-BF16">Nemotron 3.5 Rerank</a> 配对，以便从数千个通话中检索正确的时刻。</li></ul>
-<h2>开始使用</h2>
-<p>Nemotron 3.5 Transcribe 在 DeepInfra 兼容 OpenAI 的语音转文本端点上运行。将 OpenAI SDK 指向 DeepInfra，发送音频文件，并添加一个简短的提示，其中包含与您的域相关的术语。</p>
+<ul><li><strong>呼叫中心分析：</strong> 把录下的支持通话转成带时间戳的转写文本，用于质检和通话后分析，同时把产品名作为上下文提供。</li><li><strong>会议与笔记工具：</strong> 转写长达 60 分钟的会议，直接可用于生成摘要和待办事项。</li><li><strong>媒体与字幕：</strong> 转写录制的媒体或把它翻译成英语，并提供词级时间戳用于字幕、检索和定位。</li><li><strong>可检索的音频归档：</strong> 把转写文本与 DeepInfra 上的 <a href="https://deepinfra.com/nvidia/Nemotron-3.5-Embed-8B-BF16">NVIDIA Nemotron 3.5 Embed</a> 和 <a href="https://deepinfra.com/nvidia/Nemotron-3.5-Rerank-8B-BF16">Nemotron 3.5 Rerank</a> 搭配使用，从数千通通话中检索出正确的那个片段。</li></ul>
+<h2>快速上手</h2>
+<p>Nemotron 3.5 Transcribe 运行在 DeepInfra 兼容 OpenAI 的语音转文本端点上。把 OpenAI SDK 指向 DeepInfra，发送一个音频文件，并附上一段简短的 prompt，写上对你的领域重要的术语。</p>
 <pre><code>import os
 
 from openai import OpenAI
@@ -57,7 +57,7 @@ with open(&quot;support_call.mp3&quot;, &quot;rb&quot;) as audio:
 
 print(transcript.text)
 copy</code></pre>
-<p>对于标题或搜索，请询问单词和片段时间戳：</p>
+<p>要生成字幕或做检索，就要求词级和片段级时间戳：</p>
 <pre><code>with open(&quot;support_call.mp3&quot;, &quot;rb&quot;) as audio:
     transcript = client.audio.transcriptions.create(
         model=&quot;nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B&quot;,
@@ -69,17 +69,17 @@ copy</code></pre>
 for segment in transcript.segments:
     print(f&quot;[{segment.start:.1f}s - {segment.end:.1f}s] {segment.text}&quot;)
 copy</code></pre>
-<p>还支持“srt”和“vtt”响应格式。要将语音翻译成英语，请使用相同的模型调用“client.audio.translations.create”。</p>
+<p>同样支持 <code>srt</code> 和 <code>vtt</code> 响应格式。要把语音翻译成英语，用同一个模型调用 <code>client.audio.translations.create</code>。</p>
 <h2>定价</h2>
-<p>Nemotron 3.5 Transcribe 每分钟音频的费用为 0.002 美元（每小时 0.12 美元）。有关当前费率，请参阅<a href="https://deepinfra.com/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B">型号页面</a>和<a href="https://deepinfra.com/pricing">定价页面</a>。</p>
-<h2>企业安全</h2>
-<p>DeepInfra 以零数据保留运行此模型：请求完成后不会存储您的音频和文字记录。有关我们的安全和合规实践的详细信息，请参阅 <a href="https://trust.deepinfra.com/">DeepInfra 信任中心</a>。</p>
-<h2>在 DeepInfra 上尝试 Nemotron 3.5 转录</h2>
-<p>探索<a href="https://deepinfra.com/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B">模型</a>，检查当前<a href="https://deepinfra.com/pricing">定价</a>，并发出第一个 API 请求。</p>
+<p>Nemotron 3.5 Transcribe 的价格为每分钟音频 $0.002（每小时 $0.12）。当前费率见<a href="https://deepinfra.com/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B">模型页面</a>和<a href="https://deepinfra.com/pricing">定价页面</a>。</p>
+<h2>企业级安全</h2>
+<p>DeepInfra 以零数据留存方式运行该模型：请求完成后不会存储你的音频和转写文本。有关我们的安全与合规实践，详见 <a href="https://trust.deepinfra.com/">DeepInfra Trust Center</a>。</p>
+<h2>在 DeepInfra 上试用 Nemotron 3.5 Transcribe</h2>
+<p>逛逛这个<a href="https://deepinfra.com/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B">模型</a>，查一下当前的<a href="https://deepinfra.com/pricing">定价</a>，然后发出你的第一个 API 请求。</p>
 <p>相关文章</p>
-<p>[<img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/01/From-Precision-to-Quantization-1024x683.png" alt="从精度到量化：更快、更便宜的 LLM 实用指南">](https://deepinfra.com/blog/ precision-to-quantization-faster-cheaper-llms)[从精度到量化：更快、更便宜的 LLM 实用指南](https://deepinfra.com/blog/ precision-to-quantization-faster-cheaper-llms)&lt;p&gt;大型语言模型的生死取决于数量——实际上是数万亿个。我们存储这些数字的精细程度（它们的精度）决定了模型需要多少内存、运行速度，有时甚至决定了它的答案有多好。本文从基础知识开始深入探讨：我们将从计算机如何存储 [...]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/qwen3-5-35b-a3b-api-benchmarks"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/qwen3.5-35B_res.webp" alt="Qwen3.5 35B A3B API 基准：延迟、吞吐量和成本"></a><a href="https://deepinfra.com/blog/qwen3-5-35b-a3b-api-benchmarks">Qwen3.5 35B A3B API 基准测试：延迟、吞吐量和成本</a>&lt;p&gt;关于 Qwen3.5 35B A3B Qwen3.5 35B A3B 是阿里云于 2026 年 2 月发布的原生视觉语言模型。它采用将 Gated Delta Networks 与稀疏Mixture-of-Experts模型，实现更高的推理效率。总参数为 350 亿个，每个代币仅通过 256 名专家激活 30 亿个（8 个路由 [...]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/nemotron-3-super-provider-pricing-comparison"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/nemotron-pricing.png" alt="Nemotron 3 超级提供商定价比较 (2026)"></a><a href="https://deepinfra.com/blog/nemotron-3-super-provider-pricing-comparison">Nemotron 3 超级提供商定价比较(2026)</a>&lt;p&gt;Nemotron 3 Super 可从多个提供商处获得，且价差真实：OpenRouter 列出每 100 万个输入/输出代币 0.09 美元/0.45 美元，DeepInfra 列出 0.10 美元/0.50 美元，所有提供商的人工分析中位数为0.30 美元/0.75 美元。正确的提供商取决于您的工作负载实际情况 - 上下文要求、输出详细程度以及您是否需要 [...]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/precision-to-quantization-faster-cheaper-llms"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/01/From-Precision-to-Quantization-1024x683.png" alt="从精度到量化：更快更省的 LLM 实用指南"></a><a href="https://deepinfra.com/blog/precision-to-quantization-faster-cheaper-llms">从精度到量化：更快更省的 LLM 实用指南</a>&lt;p&gt;大语言模型的成败取决于数字——字面意义上数以万亿计。我们存储这些数字（也就是精度）的精细程度，决定了模型需要多少内存、跑多快，有时还决定了它的回答有多好。本文从基础一路讲到深处：我们先从计算机究竟如何存储 [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/qwen3-5-35b-a3b-api-benchmarks"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/qwen3.5-35B_res.webp" alt="Qwen3.5 35B A3B API 基准测试：延迟、吞吐与成本"></a><a href="https://deepinfra.com/blog/qwen3-5-35b-a3b-api-benchmarks">Qwen3.5 35B A3B API 基准测试：延迟、吞吐与成本</a>&lt;p&gt;关于 Qwen3.5 35B A3B Qwen3.5 35B A3B 是阿里云于 2026 年 2 月发布的原生视觉语言模型。它采用一种混合架构，把 Gated Delta Networks 与稀疏 Mixture-of-Experts 模型结合起来，实现了更高的推理效率。总参数量 350 亿，通过 256 个专家（路由 8 个 [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/nemotron-3-super-provider-pricing-comparison"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/05/nemotron-pricing.png" alt="Nemotron 3 Super 各家提供方定价对比（2026）"></a><a href="https://deepinfra.com/blog/nemotron-3-super-provider-pricing-comparison">Nemotron 3 Super 各家提供方定价对比（2026）</a>&lt;p&gt;Nemotron 3 Super 由多家提供方供应，价格差距是真实存在的：OpenRouter 标价为每 100 万输入/输出 token $0.09/$0.45，DeepInfra 标价为 $0.10/$0.50，而 Artificial Analysis 统计的各提供方中位数为 $0.30/$0.75。选哪家取决于你的负载实际长什么样——上下文要求、输出冗长度，以及你是否需要 [&amp;hellip;]&lt;/p&gt;</p>
 <p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
     <item>

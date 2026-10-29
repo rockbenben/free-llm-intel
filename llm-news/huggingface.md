@@ -10,7 +10,7 @@
 
 ## 全部文章（共 907 篇，按日期倒序；无日期条目列于最后）
 
-1. [NVIDIA Nemotron 3.5 Transcribe and Granary v2: Intelligent Multilingual Transcription You Can Prompt and Adapt](https://huggingface.co/blog/nvidia/nemotron-transcribe-granary)（2026-10-28）
+1. [NVIDIA Nemotron 3.5 Transcribe 与 Granary v2：可用提示词驱动并加以适配的智能多语种转录](https://huggingface.co/blog/nvidia/nemotron-transcribe-granary)（2026-10-28） <!--orig:NVIDIA Nemotron 3.5 Transcribe and Granary v2: Intelligent Multilingual Transcription You Can Prompt and Adapt-->
 2. [使用 LFM3 构建专用多模态模型](https://huggingface.co/blog/LiquidAI/lfm3)（2026-10-27） <!--orig:Build specialized multimodal models with LFM3-->
 3. [我们可以信任 LLM 来判断一个研究想法是否新颖吗？](https://huggingface.co/blog/allenai/novelty-bench)（2026-10-27） <!--orig:Can we trust LLMs to judge whether a research idea is novel?-->
 4. [你的模型能在 AWS Trainium 上运行吗？查一查](https://huggingface.co/blog/torch-neuronx-model-support)（2026-10-23） <!--orig:Does Your Model Run on AWS Trainium? Look It Up-->

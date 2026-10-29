@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-29 13:16:53**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-29 14:33:00**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -26,10 +26,10 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-anthropic.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-anthropic.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-29，标题自动汉化）：
-  1. [Claude Enterprise 的智能报告、调查和汇总集团预算](https://claude.com/resources/articles/smart-reports-surveys-pooled-budgets)（2026-10-28）
+  1. [Claude Enterprise 的智能报告、调查与共享群组预算](https://claude.com/resources/articles/smart-reports-surveys-pooled-budgets)（2026-10-28）
   2. [IDC 将 Quanta 引入 Claude，并在整个公司采用 Claude](https://claude.com/resources/articles/idc-brings-quanta-into-claude-and-adopts-claude-across-the-company)（2026-10-28）
-  3. [为法律工作引入工件](https://claude.com/resources/articles/introducing-artifacts-for-legal-work)（2026-10-28）
-  4. [科学人工智能扩展到基金会和研究机构](https://www.anthropic.com/news/ai-for-science-expands-foundations-research-institutions)（2026-10-28）
+  3. [为法律工作引入 Claude artifacts](https://claude.com/resources/articles/introducing-artifacts-for-legal-work)（2026-10-28）
+  4. [AI for Science 扩展至基金会与研究机构](https://www.anthropic.com/news/ai-for-science-expands-foundations-research-institutions)（2026-10-28）
   5. [管理成本并展示 Google Cloud 上 Claude Code 的投资回报率](https://claude.com/resources/articles/how-to-manage-costs-and-demonstrate-roi-for-claude-code-on-google-cloud)（2026-10-27）
   - 📄 完整文章归档（共 134 篇）：[anthropic.md](llm-news/anthropic.md)
 
@@ -40,7 +40,7 @@
   - 📡 RSS/Atom：https://openai.com/news/rss.xml
 - 📡 [RSS/Atom 订阅源](https://openai.com/news/rss.xml)：`https://openai.com/news/rss.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-29，标题自动汉化）：
-  1. [OpenAI 和 ServiceNow 扩大跨企业工作流程的合作伙伴关系](https://openai.com/index/openai-servicenow-partnership-expansion)（2026-10-28）
+  1. [OpenAI 与 ServiceNow 在企业工作流方面扩大合作](https://openai.com/index/openai-servicenow-partnership-expansion)（2026-10-28）
   2. [公司的未来](https://openai.com/index/the-future-of-the-firm)（2026-10-28）
   3. [Legora正在构建法律工作代理操作系统](https://openai.com/index/legora)（2026-10-28）
   4. [Retell AI 借助 GPT‑4o 让语音 agent 自动化可定制且无需写代码](https://openai.com/index/retell-ai)（2026-10-27）
@@ -194,7 +194,7 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-29，标题自动汉化）：
-  1. [NVIDIA Nemotron 3.5 Transcribe and Granary v2: Intelligent Multilingual Transcription You Can Prompt and Adapt](https://huggingface.co/blog/nvidia/nemotron-transcribe-granary)（2026-10-28）
+  1. [NVIDIA Nemotron 3.5 Transcribe 与 Granary v2：可用提示词驱动并加以适配的智能多语种转录](https://huggingface.co/blog/nvidia/nemotron-transcribe-granary)（2026-10-28）
   2. [使用 LFM3 构建专用多模态模型](https://huggingface.co/blog/LiquidAI/lfm3)（2026-10-27）
   3. [我们可以信任 LLM 来判断一个研究想法是否新颖吗？](https://huggingface.co/blog/allenai/novelty-bench)（2026-10-27）
   4. [你的模型能在 AWS Trainium 上运行吗？查一查](https://huggingface.co/blog/torch-neuronx-model-support)（2026-10-23）
@@ -204,11 +204,11 @@
 ### OpenRouter (模型统一网关) (openrouter)
 - 📡 [RSS/Atom 订阅源](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-29，标题自动汉化）：
-  1. [如何使用LLM从 PDF 中提取表格](https://openrouter.ai/blog/tutorials/extract-tables-from-pdf-llm/)（2026-10-29）
-  2. [如何防止立即注射：经过测试的 13 次攻击](https://openrouter.ai/blog/tutorials/prevent-prompt-injection/)（2026-10-29）
-  3. [Claude 529 过载：这意味着什么以及如何修复它](https://openrouter.ai/blog/tutorials/claude-529-overloaded/)（2026-10-28）
-  4. [达到您的Claude Code使用限制吗？如何继续编码](https://openrouter.ai/blog/tutorials/claude-code-usage-limit/)（2026-10-28）
-  5. [我们如何重建提供者路由以实现更好、更快的推理](https://openrouter.ai/blog/announcements/how-we-rebuilt-provider-routing/)（2026-10-28）
+  1. [如何用 LLM 从 PDF 中提取表格](https://openrouter.ai/blog/tutorials/extract-tables-from-pdf-llm/)（2026-10-29）
+  2. [如何防止提示注入：13 种攻击实测](https://openrouter.ai/blog/tutorials/prevent-prompt-injection/)（2026-10-29）
+  3. [Claude 529 过载：这意味着什么，以及怎么修](https://openrouter.ai/blog/tutorials/claude-529-overloaded/)（2026-10-28）
+  4. [撞到 Claude Code 的用量上限？教你如何继续写代码](https://openrouter.ai/blog/tutorials/claude-code-usage-limit/)（2026-10-28）
+  5. [我们如何重建 provider 路由，以获得更好、更快的推理](https://openrouter.ai/blog/announcements/how-we-rebuilt-provider-routing/)（2026-10-28）
   - 📄 完整文章归档（共 163 篇）：[openrouter.md](llm-news/openrouter.md)
 
 ### Cloudflare Workers AI (cloudflare_workers_ai)
@@ -226,9 +226,9 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-cohere.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-29，标题自动汉化）：
-  1. [在 AWS 上使用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29）
-  2. [Cohere Model Vault 内部：构建可验证的机密 AI 推理](https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference)（2026-10-22）
-  3. [在 Cohere Model Vault 上引入机密计算](https://cohere.com/blog/introducing-confidential-computing-on-cohere-model-vault)（2026-10-22）
+  1. [在 AWS 上用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29）
+  2. [走进 Cohere Model Vault：构建可验证的机密 AI 推理](https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference)（2026-10-22）
+  3. [介绍 Cohere Model Vault 上的机密计算](https://cohere.com/blog/introducing-confidential-computing-on-cohere-model-vault)（2026-10-22）
   4. [AI 能理解文化吗？一位退休教师和一名高中生来试试](https://cohere.com/blog/can-ai-understand-culture)（2026-10-22）
   5. [推出 Rerank 5：精准高效的企业文档检索](https://cohere.com/blog/rerank-5)（2026-10-21）
   - 📄 完整文章归档（共 50 篇）：[cohere.md](llm-news/cohere.md)
@@ -308,9 +308,9 @@
 ### Amazon Bedrock (AWS Free Tier) (aws_bedrock)
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-10-29，标题自动汉化）：
-  1. [在 Amazon Bedrock AgentCore 上构建 Agentic AI 平台](https://aws.amazon.com/blogs/machine-learning/building-an-agentic-ai-platform-on-amazon-bedrock-agentcore/)（2026-10-28）
+  1. [在 Amazon Bedrock AgentCore 上构建 agentic AI 平台](https://aws.amazon.com/blogs/machine-learning/building-an-agentic-ai-platform-on-amazon-bedrock-agentcore/)（2026-10-28）
   2. [在 EKS 上使用 Ray Train DLC 和 EFA 进行分布式训练](https://aws.amazon.com/blogs/machine-learning/distributed-training-with-ray-train-dlcs-and-efa-on-eks/)（2026-10-28）
-  3. [使用 Amazon Nova Act 通过代理 QA 自动化加速软件交付 - 第 3 部分](https://aws.amazon.com/blogs/machine-learning/accelerating-software-delivery-with-agentic-qa-automation-using-amazon-nova-act-part-3/)（2026-10-28）
+  3. [用 Amazon Nova Act 的 agentic QA 自动化加速软件交付 —— 第 3 部分](https://aws.amazon.com/blogs/machine-learning/accelerating-software-delivery-with-agentic-qa-automation-using-amazon-nova-act-part-3/)（2026-10-28）
   4. [AWS 被评为 2026 年 Gartner 联络中心即服务魔力象限领导者](https://aws.amazon.com/blogs/machine-learning/aws-named-a-leader-in-the-2026-gartner-magic-quadrant-for-contact-center-as-a-service/)（2026-10-27）
   5. [推出 SOCI 索引镜像，加速 SageMaker AI 作业](https://aws.amazon.com/blogs/machine-learning/announcing-soci-indexed-images-for-faster-sagemaker-ai-jobs/)（2026-10-27）
   - 📄 完整文章归档（共 133 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
@@ -354,7 +354,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-29，标题自动汉化）：
-  1. [从录音到记录：NVIDIA Nemotron 3.5 在 DeepInfra 上转录](https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release)（2026-10-28）
+  1. [从录音到记录：NVIDIA Nemotron 3.5 Transcribe 在 DeepInfra 上线](https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release)（2026-10-28）
   2. [Wan 3.0 集成的最佳 API 提供商](https://deepinfra.com/blog/best-api-providers-wan-3-0-integration)（2026-10-23）
   3. [2026 年 Granite-4.2-8B 最佳 API 提供商](https://deepinfra.com/blog/best-api-providers-granite-4-2-8b)（2026-10-22）
   4. [Wan 3.0：模型文档与集成指南](https://deepinfra.com/blog/wan-3-0-model-documentation-integration-guide)（2026-10-22）
