@@ -82,12 +82,15 @@ test('visible: 摘要上限只在「未选厂商且未搜索」时生效', () =>
   assert.equal(FLI.visible(all, null, 't', true, 3).length, 10, '搜了关键词：摘要不生效');
 });
 
-test('visible: 关键词大小写不敏感、匹配标题；厂商筛选按显示名', () => {
+test('visible: 关键词大小写不敏感、匹配标题或原文；厂商筛选按显示名', () => {
   const all = [
     { vendor: 'OpenAI', title: 'GPT-6 Released', link: '', orig: '', date: '' },
     { vendor: 'Anthropic', title: 'Claude update', link: '', orig: '', date: '' },
+    { vendor: 'OpenAI', title: '语音 agent 自动化', link: '', orig: 'Retell uses OpenAI models', date: '' },
   ];
   assert.equal(FLI.visible(all, null, 'gpt-6', false, 20).length, 1);
+  assert.equal(FLI.visible(all, null, 'retell uses', false, 20).length, 1,
+    '屏上显示的英文原文标题也要能被搜索命中');
   assert.equal(FLI.visible(all, 'Anthropic', '', false, 20).length, 1);
   assert.equal(FLI.visible(all, null, 'zzz', false, 20).length, 0);
 });
@@ -103,11 +106,28 @@ test('plain: 剥掉 Markdown 强调符', () => {
   assert.equal(FLI.plain(null), '');
 });
 
-test('cacheAgeLabel: <60 分钟报分钟，否则报小时（一位小数）', () => {
+test('asList: 数组原样、字符串包一层、空值给空数组', () => {
+  assert.deepEqual(FLI.asList(['a', 'b']), ['a', 'b']);
+  assert.deepEqual(FLI.asList('a'), ['a'], '手写档案可能是字符串，渲染与搜索都要能接住');
+  assert.deepEqual(FLI.asList(''), []);
+  assert.deepEqual(FLI.asList(null), []);
+  assert.deepEqual(FLI.asList(undefined), []);
+});
+
+test('cacheAgeLabel: <1 分钟不掉进「0 分钟」', () => {
+  const now = 1_000_000_000_000;
+  assert.equal(FLI.cacheAgeLabel(now, now), '不到 1 分钟');
+  assert.equal(FLI.cacheAgeLabel(now - 30_000, now), '不到 1 分钟');
+});
+
+test('cacheAgeLabel: <60 分钟报分钟，48 小时内报小时，再久报天', () => {
   const now = 1_000_000_000_000;
   assert.equal(FLI.cacheAgeLabel(now - 5 * 60000, now), '5 分钟');
   assert.equal(FLI.cacheAgeLabel(now - 59 * 60000, now), '59 分钟');
   assert.equal(FLI.cacheAgeLabel(now - 90 * 60000, now), '1.5 小时');
+  assert.equal(FLI.cacheAgeLabel(now - 47 * 3600e3, now), '47 小时');
+  assert.equal(FLI.cacheAgeLabel(now - 13 * 86400e3, now), '13 天',
+    '缓存最长 14 天；报「312 小时」读者没有直观概念');
 });
 
 // ---- mdToHtml：与 crawler_llm_intel._md_to_html 对偶 ----

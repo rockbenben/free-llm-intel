@@ -165,12 +165,24 @@
     border: 1px solid var(--line); background: var(--chip-bg); color: var(--chip-fg);
   }
   .qpart { margin-left: var(--sp-8); padding: 1px var(--sp-7); font-size: var(--fs-xs); font-weight: 400; }
+  .qhome { margin-left: var(--sp-8); font-size: var(--fs-sm); font-weight: 400; white-space: nowrap; }
   /* 一览行内两级信息要分得开：额度是主信息走 body 档，活动降一档依附在它下面 */
   .qtext { margin-top: var(--sp-4); font-size: var(--fs-base); }
   .qpromo { margin-top: var(--sp-4); font-size: var(--fs-md); }
   .qmeta { margin-top: var(--sp-5); display: flex; gap: var(--sp-8); flex-wrap: wrap; font-size: var(--fs-sm); color: var(--muted); }
   .qp-tag { margin-right: var(--sp-4); padding: 0 var(--sp-6); font-size: var(--fs-xs);
             background: var(--warn-bg); border-color: var(--warn-line); color: var(--fg); }
+  /* 一览行在主额度下面补三块读者最想确认的内容：免费模型、注册条件、官方直达。
+     这些字段原先只在 README 档案里有，而档案入口是一个跳到 GitHub 的名字链接。 */
+  .qmlabel { margin-top: var(--sp-6); color: var(--muted); font-size: var(--fs-sm); }
+  .qmodels { margin: var(--sp-4) 0 0; padding-left: var(--sp-18); font-size: var(--fs-base); }
+  .qmodels li { margin-top: var(--sp-2); }
+  .qlinks {
+    margin-top: var(--sp-6); display: flex; flex-wrap: wrap;
+    gap: var(--sp-4) var(--sp-8); font-size: var(--fs-sm);
+  }
+  .qlinks .qllabel { color: var(--muted); }
+  .qlinks a { text-decoration: underline; }
   .kind { padding: 1px var(--sp-7); font-size: var(--fs-xs); color: inherit; }
   .kind.quota { background: var(--warn-bg); border-color: var(--warn-line); }
   .chip {
@@ -209,7 +221,13 @@
      flex 项默认 min-width:auto，不给 0 就不会缩到内容宽度以下。 */
   .note.orig { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .vendor { padding: var(--sp-2) var(--sp-8); font-size: var(--fs-xs); }
-  a.vendor:hover { border-color: var(--accent); text-decoration: none; }
+  /* 行内厂商名是按钮（筛选），不是链接：清掉浏览器按钮外观，保留胶囊字号与行高。
+     原先它是单厂商 RSS 的 <a>，与顶部筛选胶囊同名同形却打开 XML。 */
+  button.vendor {
+    appearance: none; cursor: pointer;
+    font-family: inherit; line-height: inherit;
+  }
+  .vendor:hover { border-color: var(--accent); }
   .note { color: var(--muted); font-size: var(--fs-sm); }
 
   .msg { padding: var(--sp-28) 0 var(--sp-60); color: var(--muted); }
@@ -277,6 +295,10 @@
     flex: 1 1 auto; min-width: 0; font-weight: 600; font-size: var(--fs-base);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
+  .reader-orig {
+    flex: 0 0 auto; color: var(--accent); font-size: var(--fs-sm);
+    text-decoration: underline; white-space: nowrap;
+  }
   .reader-lang { display: inline-flex; gap: var(--sp-4); }
   .reader-lang button {
     appearance: none; cursor: pointer;
@@ -330,6 +352,14 @@
   .reader-body a { color: var(--accent); text-decoration: underline; }
   .reader-loading, .reader-error { padding: var(--sp-20); color: var(--muted); }
   .reader-error a { color: var(--accent); }
+  /* 抽屉的关闭 / 语言 / 读全文是手机上的唯一入口；桌面一根不动，
+     触屏按手指把命中区拉到接近 44px（同页签与按钮的既有口径）。 */
+  @media (pointer: coarse) {
+    .read-btn { padding: var(--sp-10) var(--sp-12); }
+    .reader-close { padding: var(--sp-10) var(--sp-16); }
+    .reader-lang button { padding: var(--sp-10) var(--sp-16); }
+    .reader-orig { padding: var(--sp-4) var(--sp-6); }
+  }
   @media (max-width: 720px) {
     .reader-drawer { width: 100vw; }
   }
@@ -345,14 +375,15 @@
   <header>
     <h1>LLM 厂商动态聚合</h1>
     <p class="lede">
-      汇总各厂商官方博客 / 更新日志的新文章，标题已汉化。
+      汇总各厂商官方博客 / 更新日志的新文章，标题已汉化。想知道<strong>哪家能免费用、额度有没有变</strong>，
+      看页签「免费额度与活动」「额度变化」。
       <strong>官方没有提供 RSS 的厂商也在这里</strong> —— 由
       <a href="https://github.com/rockbenben/free-llm-intel">free-llm-intel</a>
       定时巡检官方页面归档生成。
     </p>
     <div class="subscribe">
       <code id="feed-url">feeds/llm-news-all.xml</code>
-      <a class="btn primary" id="subscribe-link" href="feeds/llm-news-all.xml">订阅聚合源</a>
+      <a class="btn primary" id="subscribe-link" href="feeds/llm-news-all.xml">订阅厂商动态</a>
       <button class="btn" id="copy-btn" type="button">复制地址</button>
       <span class="sr-only" id="copy-status" role="status" aria-live="polite"></span>
     </div>
@@ -371,10 +402,10 @@
   <div class="pane" id="pane-news" role="tabpanel" aria-labelledby="tab-news" tabindex="0">
   <div class="controls">
     <div class="row">
-      <input type="search" id="q" placeholder="搜索标题…" autocomplete="off" aria-label="搜索标题">
+      <input type="search" id="q" placeholder="搜索标题 / 原文…" autocomplete="off" aria-label="搜索标题或原文">
       <div class="seg" role="group" aria-label="显示范围">
         <button type="button" class="segbtn" id="view-all" aria-pressed="true"
-                title="按时间倒序显示全部条目">全部</button>
+                title="按时间倒序显示全部条目">全部条目</button>
         <button type="button" class="segbtn" id="view-digest" aria-pressed="false"
                 title="每家只保留最新 20 条，用来快速扫一遍各家动态">每家最新 20</button>
       </div>
@@ -382,7 +413,8 @@
     </div>
     <div class="chips" id="chips"></div>
     <p class="hint">
-      点厂商只看它家，订阅地址自动切成该家的单源；想找「哪家能白嫖」看<strong>免费额度与活动</strong>。
+      点厂商只看它家，订阅地址自动切成该家的单源；想找「哪家能白嫖」看
+      <a href="?tab=quotas" data-tab-link="quotas"><strong>免费额度与活动</strong></a>。
     </p>
   </div>
 
@@ -401,8 +433,9 @@
       <span class="count" id="changes-count" role="status" aria-live="polite"></span>
     </div>
     <p class="hint">
-      哪家的<strong>免费额度或活动改了</strong>（台账前值 → 后值），按时间排在这里，
-      每条可点回官方页面核对。新模型上架属于厂商动态，去「厂商动态」看。
+      哪家的<strong>免费额度或活动改了</strong>（改前 → 改后），按时间排在这里，
+      每条可点回<strong>该厂商档案</strong>核对（档案里有官方链接）。新模型上架属于厂商动态，去
+      <a href="?tab=news" data-tab-link="news">「厂商动态」</a>看。
       <a id="changes-sub" href="#">单独订阅这条变化流</a>（RSS，与厂商动态互不干扰）。
     </p>
     </div>
@@ -414,13 +447,16 @@
   <div class="pane" id="pane-quotas" role="tabpanel" aria-labelledby="tab-quotas"
        tabindex="0" hidden>
     <div class="controls"><div class="row">
-      <input type="search" id="qq" placeholder="搜索厂商 / 额度 / 活动关键词…" autocomplete="off"
-             aria-label="搜索厂商、额度或活动关键词">
+      <input type="search" id="qq" placeholder="搜索厂商 / 模型 / 额度 / 条件 / 活动…" autocomplete="off"
+             aria-label="搜索厂商、模型、额度、条件或活动关键词">
       <span class="count" id="quotas-count" role="status" aria-live="polite"></span>
     </div>
     <p class="hint">
       全部厂商的<strong>免费额度与活动一览</strong>（含限时活动；当前快照，随每日巡检刷新）。
-      想看「哪家变了」请切到「额度变化」——一览本身不做订阅，避免每天重复推送整份清单。
+      不知道先注册谁？看<a href="https://github.com/rockbenben/free-llm-intel#白嫖攻略"
+      target="_blank" rel="noopener noreferrer">白嫖攻略</a>；想看「哪家变了」请切到
+      「<a href="?tab=changes" data-tab-link="changes">额度变化</a>」——一览本身不做订阅，
+      避免每天重复推送整份清单。
     </p>
     </div>
     <div id="quotas-list"></div>
@@ -436,6 +472,8 @@
          aria-labelledby="reader-title-text" hidden>
     <div class="reader-head">
       <div class="reader-title" id="reader-title-text"></div>
+      <a class="reader-orig" id="reader-orig" href="#" target="_blank"
+         rel="noopener noreferrer" title="在新标签打开原文" hidden>原文</a>
       <div class="reader-lang" role="group" aria-label="正文语言">
         <button type="button" id="reader-lang-zh" aria-pressed="true">中</button>
         <button type="button" id="reader-lang-en" aria-pressed="false">EN</button>
@@ -535,7 +573,8 @@ var FLI = (function () {
     var ql = (q || '').toLowerCase();
     var rows = all.filter(function (it) {
       if (vendor !== null && (it.vendor || UNKNOWN) !== vendor) return false;
-      if (ql && (it.title || '').toLowerCase().indexOf(ql) < 0) return false;
+      var hay = ((it.title || '') + ' ' + (it.orig || '')).toLowerCase();
+      if (ql && hay.indexOf(ql) < 0) return false;
       return true;
     });
     if (!digest) return rows;
@@ -563,10 +602,20 @@ var FLI = (function () {
   // 档案字段含 Markdown 强调符，页面上按纯文本展示。
   function plain(s) { return String(s || '').replace(/[*`]/g, ''); }
 
-  // 缓存数据年龄标签：<60 分钟报分钟，否则报小时（一位小数）。now 显式传入以便测试。
+  // 上游允许数组或手写字符串；搜索与渲染都必须先归一成数组，
+  // 字符串没有 .join 会打断 filter 回调（搜索整页变空）。
+  function asList(x) { return Array.isArray(x) ? x : (x ? [x] : []); }
+
+  // 缓存数据年龄标签：刚取回的说「不到 1 分钟」，<60 分钟报分钟，
+  // 48 小时内报小时（一位小数），再久报天。now 显式传入以便测试。
   function cacheAgeLabel(taken, now) {
-    var m = Math.round((now - taken) / 60000);
-    return m < 60 ? m + ' 分钟' : (Math.round(m / 60 * 10) / 10) + ' 小时';
+    var ms = now - taken;
+    if (ms < 60000) return '不到 1 分钟';
+    var m = Math.round(ms / 60000);
+    if (m < 60) return m + ' 分钟';
+    var hours = m / 60;
+    if (hours < 48) return (Math.round(hours * 10) / 10) + ' 小时';
+    return Math.round(hours / 24) + ' 天';
   }
 
   // ---- md → HTML（reader 抽屉用；与 crawler_llm_intel._md_to_html 对偶，
@@ -714,6 +763,7 @@ var FLI = (function () {
     visible: visible,
     fmtDate: fmtDate,
     plain: plain,
+    asList: asList,
     cacheAgeLabel: cacheAgeLabel,
     mdToHtml: mdToHtml,
     loadBody: loadBody,
@@ -741,7 +791,9 @@ var FLI = (function () {
   var RENDER_CHUNK = 200;
   var state = {
     all: [], brands: {}, feeds: {}, rank: {}, vendor: null, q: '', digest: false,
-    chipsExpanded: false, shown: RENDER_CHUNK, rows: [], vendorIndexApplied: false
+    chipsExpanded: false, shown: RENDER_CHUNK, rows: [], vendorIndexApplied: false,
+    // 用缓存首屏时记下年龄；网络替换后清空，失败时标 stale（计数后面会显示）
+    cache: null
   };
 
   var el = {
@@ -872,6 +924,8 @@ var FLI = (function () {
   // 订阅地址跟着筛选走：选中某家就给该家的单厂商源，否则给合并流。
   // 选完厂商最想做的大概就是「订这一家」，不该逼用户再去页脚找。
   // 「额度变化」视图打开时换成变化流——顶部按钮永远订阅「正在看的东西」。
+  // 「免费额度与活动」没有厂商筛选；新闻页留下的 vendor 状态不能带进订阅按钮，
+  // 否则一览显示全部 70 家、顶部却写「订阅某家」，读者会以为一览被筛过。
   var CHANGES_FEED = 'feeds/llm-intel-changes.xml';
   var currentTab = 'news';
   function updateSubscribe() {
@@ -883,8 +937,8 @@ var FLI = (function () {
       return;
     }
     var url = new URL(FEED, location.href).href;
-    var label = '订阅聚合源';
-    if (state.vendor !== null) {
+    var label = '订阅厂商动态';
+    if (currentTab === 'news' && state.vendor !== null) {
       var v = vendorList().filter(function (x) { return x.name === state.vendor; })[0];
       if (v && v.feed) {
         url = v.feed;
@@ -921,16 +975,20 @@ var FLI = (function () {
 
     var meta = document.createElement('div');
     meta.className = 'meta';
-    var badge;
-    if (it.feed) {
-      badge = document.createElement('a');
-      badge.href = it.feed;
-      badge.title = '订阅该厂商的单厂商源';
-    } else {
-      badge = document.createElement('span');
-    }
+    // 行内厂商名和顶部筛选胶囊是同一个动作：只看这家，订阅地址自动切到它的单源。
+    // 早先这里是单厂商 RSS 的链接——点一个看起来像标签的胶囊却打开 XML，手机上尤其莫名。
+    var badge = document.createElement('button');
+    badge.type = 'button';
     badge.className = 'pill vendor';
     badge.textContent = it.vendor || '未知来源';
+    badge.title = '只看该厂商（订阅地址会切到它的单源）';
+    badge.setAttribute('aria-pressed', state.vendor === it.vendor ? 'true' : 'false');
+    badge.onclick = function () {
+      var deep = window.scrollY > tabsDocTop();
+      state.vendor = (state.vendor === it.vendor) ? null : it.vendor;
+      render();
+      if (deep) window.scrollTo(0, tabsDocTop());
+    };
     meta.appendChild(badge);
     if (it.orig) {
       var note = document.createElement('span');
@@ -987,7 +1045,8 @@ var FLI = (function () {
     var unfiltered = state.vendor === null && !state.q && !state.digest;
     el.count.textContent = (unfiltered
       ? '共 ' + state.all.length + ' 条'
-      : rows.length + ' / ' + state.all.length + ' 条') + suffix;
+      : rows.length + ' / ' + state.all.length + ' 条') + suffix +
+      cacheSuffix(state.cache);
     if (n < rows.length) {
       el.moreWrap.hidden = false;
       // 列表按日期倒序，「更多」永远是更早的内容 —— 说清楚，读者才知道在往回翻
@@ -1123,6 +1182,17 @@ var FLI = (function () {
   TAB_ORDER.forEach(function (k) {
     tabs[k].addEventListener('click', function () { showTab(k); });
   });
+  // 提示行里的「免费额度与活动 / 额度变化 / 厂商动态」是真链接：
+  // 保留可中键新开（href 是合法深链），普通点击走 SPA 切页签，不重载页面。
+  document.querySelectorAll('[data-tab-link]').forEach(function (a) {
+    a.addEventListener('click', function (ev) {
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey || ev.button !== 0) return;
+      ev.preventDefault();
+      var k = a.getAttribute('data-tab-link');
+      showTab(k);
+      if (tabs[k]) tabs[k].focus();   // 链接所在的 pane 会被隐藏，焦点交给对应页签
+    });
+  });
   // 页签内用左右键互切、Home/End 跳首尾；Tab 键留给页签之后的内容
   document.querySelector('.tabs').addEventListener('keydown', function (ev) {
     var i = TAB_ORDER.indexOf(document.activeElement.id.replace('tab-', ''));
@@ -1135,16 +1205,29 @@ var FLI = (function () {
     showTab(k);
   });
 
-  var changesState = { rows: null, q: '' };
+  var changesState = { rows: null, q: '', cache: null };
   // 变化流（intel-changes.json）现在源头就只写 kind=quota。这里的过滤是防 localStorage
   // 里 12h 内的旧缓存仍带 kind=release，保证「额度变化」页签只会显示台账真正变了的。
   function onlyQuota(items) {
     return (items || []).filter(function (r) { return r[1] === 'quota'; });
   }
+  // 变化流的 note 是「字段名：改前 → 改后」的台账原文；直接印 free_models
+  // 这类英文键名，非技术读者读不懂。只翻首行的键名，值保持原样。
+  var CHANGE_FIELD_LABELS = {
+    free_models: '免费模型', free_quota: '免费额度', promotions: '活动',
+    validity: '有效期', tier_caveats: '限制', notes: '说明',
+    openai_compat: 'OpenAI 兼容端点', preconditions: '前置条件'
+  };
+  function changeNoteText(text) {
+    var line = String(text || '').split('\n')[0];
+    return plain(line.replace(/^([a-z_]+)：/, function (_m, k) {
+      return (CHANGE_FIELD_LABELS[k] || k) + '：';
+    }));
+  }
   function renderChanges() {
     var rows = (changesState.rows || []).filter(function (r) {
       if (!changesState.q) return true;
-      var hay = plain(r[4] + ' ' + r[5] + ' ' + r[3]).toLowerCase();
+      var hay = plain(r[4] + ' ' + r[5] + ' ' + changeNoteText(r[5]) + ' ' + r[3]).toLowerCase();
       return hay.indexOf(changesState.q) >= 0;
     });
     var list = document.getElementById('changes-list');
@@ -1165,7 +1248,7 @@ var FLI = (function () {
       badge.textContent = r[3]; meta.appendChild(badge);
       if (r[5]) {
         var note = document.createElement('span'); note.className = 'note';
-        note.textContent = plain(r[5].split('\n')[0]);
+        note.textContent = changeNoteText(r[5]);
         meta.appendChild(note);
       }
       body.appendChild(meta); box.appendChild(d); box.appendChild(body);
@@ -1173,7 +1256,8 @@ var FLI = (function () {
     });
     var cTotal = changesState.rows.length;
     document.getElementById('changes-count').textContent =
-      (changesState.q ? rows.length + ' / ' + cTotal + ' 条' : '共 ' + cTotal + ' 条');
+      (changesState.q ? rows.length + ' / ' + cTotal + ' 条' : '共 ' + cTotal + ' 条') +
+      cacheSuffix(changesState.cache);
     var msg = document.getElementById('changes-msg');
     // 无查询的空态不甩锅关键词（同 news；batch1 只改到了 news，这里补齐）
     paintMsg(msg, rows.length,
@@ -1182,19 +1266,31 @@ var FLI = (function () {
   function loadChanges() {
     if (changesState.rows) { renderChanges(); return; }
     var hit = cacheRead('changes');
-    if (hit) { changesState.rows = onlyQuota(hit.data.items); renderChanges(); }
+    if (hit) {
+      changesState.rows = onlyQuota(hit.data.items);
+      changesState.cache = { age: cacheAgeLabel(hit), stale: false };
+      renderChanges();
+    }
     fetch(CHANGES, { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     }).then(function (data) {
       cacheWrite('changes', data);
+      changesState.cache = null;
       changesState.rows = onlyQuota(data.items);
       renderChanges();
     }).catch(function (e) {
-      if (hit) return;
-      document.getElementById('changes-msg').style.display = 'block';
-      document.getElementById('changes-msg').textContent =
-        '无法读取 ' + CHANGES + '（' + e.message + '）——它随巡检生成，首次上线前可能尚不存在。';
+      if (hit) {
+        changesState.cache = { age: cacheAgeLabel(hit), stale: true };
+        renderChanges();
+        return;
+      }
+      var msg = document.getElementById('changes-msg');
+      document.getElementById('changes-count').textContent = '加载失败';
+      msg.classList.add('warn');
+      msg.style.display = 'block';
+      msg.textContent =
+        '变化数据没加载出来（' + CHANGES + '：' + e.message + '）。刷新页面重试；若刚上线，稍后再来。';
     });
   }
   document.getElementById('cq').addEventListener('input', function (ev) {
@@ -1202,7 +1298,7 @@ var FLI = (function () {
     if (changesState.rows) renderChanges();
   });
 
-  var quotasState = { rows: null, q: '' };
+  var quotasState = { rows: null, q: '', cache: null };
   // 分区胶囊只报分区名：README 的 Part 编号是仓库目录结构，读者不需要替它背
   var PART_NAMES = { 1: '国内平台', 2: '国际平台', 3: '云平台', 4: '编程工具' };
   // 档案字段含 Markdown 强调符，页面上按纯文本展示
@@ -1217,14 +1313,22 @@ var FLI = (function () {
   function renderQuotas() {
     var rows = (quotasState.rows || []).filter(function (v) {
       if (!quotasState.q) return true;
-      // free_models 正常是数组，但 quotas.json 的上游（profile_overrides / provider
-      // 档案）允许手写字符串：字符串没有 .join，抛出来会打断整个 filter 回调，
-      // 表现为「一搜索整个一览变空」。这里归一成数组再拼。
-      var fm = v.free_models;
+      // free_models 上游允许手写字符串：先用 FLI.asList 归一，避免字符串没有
+      // .join 打断整个 filter 回调（表现是「一搜索整个一览变空」）。
+      var fm = FLI.asList(v.free_models);
+      var linkText = FLI.asList(v.links).map(function (pair) {
+        return Array.isArray(pair) ? (pair[0] || '') : '';
+      }).join(' ');
+      // 搜索要覆盖屏上渲染出来的分区标签，而不只是字段值。
+      var labels = [];
+      if (v.homepage) labels.push('官网');
+      if (v.preconditions) labels.push('前置条件');
+      if (linkText) labels.push('官方直达');
+      if (fm.length) labels.push('免费模型与额度');
       var hay = plain(v.name + ' ' + (v.free_quota || '') + ' ' + (v.validity || '') +
-                 ' ' + (v.promotions || '') +
-                 ' ' + (Array.isArray(fm) ? fm.join(' ') : (fm || '')) +
-                 ' ' + (v.id || '')).toLowerCase();
+                 ' ' + (v.promotions || '') + ' ' + fm.join(' ') +
+                 ' ' + (v.preconditions || '') + ' ' + linkText +
+                 ' ' + labels.join(' ') + ' ' + (v.id || '')).toLowerCase();
       return hay.indexOf(quotasState.q) >= 0;
     });
     var host = document.getElementById('quotas-list');
@@ -1234,15 +1338,37 @@ var FLI = (function () {
       var head = document.createElement('div'); head.className = 'qname';
       var a = document.createElement('a');
       a.href = REPO + '#' + v.anchor; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.title = '查看该厂商完整档案（GitHub，含更多限制说明与官方链接）';
       a.textContent = v.name;
       head.appendChild(a);
       var part = document.createElement('span'); part.className = 'pill qpart';
       part.textContent = PART_NAMES[v.part] || '';
       head.appendChild(part);
+      if (v.homepage) {
+        var home = document.createElement('a');
+        home.className = 'qhome';
+        home.href = v.homepage; home.target = '_blank'; home.rel = 'noopener noreferrer';
+        home.textContent = '官网'; home.title = '访问该厂商官网';
+        home.setAttribute('aria-label', '访问' + v.name + '官网');
+        head.appendChild(home);
+      }
       div.appendChild(head);
       if (v.free_quota) {
         var q = document.createElement('div'); q.className = 'qtext';
         q.textContent = plain(v.free_quota); div.appendChild(q);
+      }
+      var models = FLI.asList(v.free_models).filter(function (m) {
+        return String(m || '').trim();
+      });
+      if (models.length) {
+        var ml = document.createElement('div'); ml.className = 'qmlabel';
+        ml.textContent = '免费模型与额度'; div.appendChild(ml);
+        var ul = document.createElement('ul'); ul.className = 'qmodels';
+        models.forEach(function (m) {
+          var li = document.createElement('li');
+          li.textContent = plain(m); ul.appendChild(li);
+        });
+        div.appendChild(ul);
       }
       if (v.promotions) {
         var promo = document.createElement('div'); promo.className = 'qpromo';
@@ -1264,11 +1390,29 @@ var FLI = (function () {
         warn.className = 'pill kind quota'; warn.textContent = '需绑卡';
         meta.appendChild(warn);
       }
+      if (v.preconditions) bit('前置条件：' + plain(v.preconditions));
       if (v.reviewed) bit('最近核查 ' + v.reviewed);
       div.appendChild(meta);
+      var linkList = FLI.asList(v.links).filter(function (pair) {
+        return Array.isArray(pair) && pair[0] && pair[1];
+      });
+      if (linkList.length) {
+        var links = document.createElement('div'); links.className = 'qlinks';
+        var ll = document.createElement('span'); ll.className = 'qllabel';
+        ll.textContent = '官方直达'; links.appendChild(ll);
+        linkList.forEach(function (pair) {
+          var la = document.createElement('a');
+          la.href = pair[1]; la.target = '_blank'; la.rel = 'noopener noreferrer';
+          la.textContent = plain(pair[0]); links.appendChild(la);
+        });
+        div.appendChild(links);
+      }
       host.appendChild(div);
     });
-    document.getElementById('quotas-count').textContent = rows.length + ' 家';
+    var total = (quotasState.rows || []).length;
+    document.getElementById('quotas-count').textContent =
+      (quotasState.q ? rows.length + ' / ' + total + ' 家' : rows.length + ' 家') +
+      cacheSuffix(quotasState.cache);
     var msg = document.getElementById('quotas-msg');
     // 无查询时空一览=还没数据，不教用户换关键词（同 news）
     paintMsg(msg, rows.length,
@@ -1277,19 +1421,31 @@ var FLI = (function () {
   function loadQuotas() {
     if (quotasState.rows) { renderQuotas(); return; }
     var hit = cacheRead('quotas');
-    if (hit) { quotasState.rows = hit.data.vendors || []; renderQuotas(); }
+    if (hit) {
+      quotasState.rows = hit.data.vendors || [];
+      quotasState.cache = { age: cacheAgeLabel(hit), stale: false };
+      renderQuotas();
+    }
     fetch(QUOTAS, { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
       return r.json();
     }).then(function (data) {
       cacheWrite('quotas', data);
+      quotasState.cache = null;
       quotasState.rows = data.vendors || [];
       renderQuotas();
     }).catch(function (e) {
-      if (hit) return;
-      document.getElementById('quotas-msg').style.display = 'block';
-      document.getElementById('quotas-msg').textContent =
-        '无法读取 ' + QUOTAS + '（' + e.message + '）——它随巡检生成，首次上线前可能尚不存在。';
+      if (hit) {
+        quotasState.cache = { age: cacheAgeLabel(hit), stale: true };
+        renderQuotas();
+        return;
+      }
+      var msg = document.getElementById('quotas-msg');
+      document.getElementById('quotas-count').textContent = '加载失败';
+      msg.classList.add('warn');
+      msg.style.display = 'block';
+      msg.textContent =
+        '额度数据没加载出来（' + QUOTAS + '：' + e.message + '）。刷新页面重试；若刚上线，稍后再来。';
     });
   }
   document.getElementById('qq').addEventListener('input', function (ev) {
@@ -1360,6 +1516,12 @@ var FLI = (function () {
     } catch (e) { /* 容量满 / 隐私模式：缓存只是加速器，失败不影响功能 */ }
   }
   function cacheAgeLabel(o) { return FLI.cacheAgeLabel(o.taken, Date.now()); }
+  // 计数后的缓存注记：先标年龄，网络刷新失败时补一句「刷新失败」。
+  // 不这么写，旧配额（缓存最长 14 天）会被当成今天的快照（政策情报过期即误导）。
+  function cacheSuffix(c) {
+    if (!c || !c.age) return '';
+    return '（' + c.age + '前的缓存' + (c.stale ? '，刷新失败' : '') + '）';
+  }
 
   function fail(e) {
     el.count.textContent = '加载失败';
@@ -1405,19 +1567,12 @@ var FLI = (function () {
     return r.json();
   });
 
-  function relabelIfStale() {
-    // 用缓存首屏时在计数后注明数据时间；网络替换时 renderItems 会重写计数
-    if (bootCache && bootCache.taken && state.all.length) {
-      el.count.textContent += '（缓存于 ' + cacheAgeLabel(bootCache) + '前）';
-    }
-  }
-
   if (bootCache) {
     var vc = cacheRead('vendors');
     if (vc) applyVendors(vc.data, true);
+    state.cache = { age: cacheAgeLabel(bootCache), stale: false };
     applyArticles(bootCache.data);
     render();
-    relabelIfStale();
   }
   // 厂商索引先到就刷新（无缓存时这也是第一次像样的渲染入口）
   vendorsNet.then(function (index) {
@@ -1431,12 +1586,18 @@ var FLI = (function () {
   });
   articlesNet.then(function (data) {
     cacheWrite('articles', data);
+    state.cache = null;
     applyArticles(data);
     render();
     // 深链可能在索引到位前就打开了 reader（手里只有 slug）；索引到齐后补原文 URL。
     if (reader.open && !reader.link) readerFillLinkFromState();
   }).catch(function () {
-    if (bootCache) return; // 缓存画面还在，静默用旧数据
+    if (bootCache) {
+      // 缓存画面还在，但要让读者知道这次没刷新成功（否则旧数据被当成当天快照）
+      state.cache = { age: cacheAgeLabel(bootCache), stale: true };
+      renderItems(false);
+      return;
+    }
     // 索引缺失时的兜底：退回解析合并流（以下行为与旧版一致）
     return fetch(FEED, { cache: 'no-cache' }).then(function (r) {
       if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -1448,9 +1609,9 @@ var FLI = (function () {
       el.msg.className = 'msg warn';
       el.msg.style.display = 'block';
       el.msg.textContent =
-        '全量索引（' + ARTICLES + '）尚未生成，当前显示的是合并流里的 ' +
-        state.all.length + ' 条（合并流也是全量，只是标题截到 60 字）。' +
-        '下一次定时巡检生成索引后，本页会自动显示完整标题与原文标题。';
+        '完整索引暂时没加载出来，先显示合并流里的 ' +
+        state.all.length + ' 条（标题会截到 60 字）。' +
+        '刷新页面重试；若只是网络抖动，稍后会恢复完整索引。';
     });
   }).catch(function () {
     if (bootCache) return; // 缓存画面还在，不算失败
@@ -1458,11 +1619,12 @@ var FLI = (function () {
   });
 
   // ---- reader 抽屉（corpus spec §12.2-12.5）----
-  var reader = { vendor: '', slug: '', lang: 'zh', langs: '', title: '', link: '', open: false, lastFocus: null };
+  var reader = { vendor: '', slug: '', lang: 'zh', langs: '', title: '', link: '', open: false, lastFocus: null, pushed: false, error: false, pendingClose: false };
   var rdOverlay = document.getElementById('reader-overlay');
   var rdDrawer = document.getElementById('reader-drawer');
   var rdTitle = document.getElementById('reader-title-text');
   var rdBody = document.getElementById('reader-body');
+  var rdOrig = document.getElementById('reader-orig');
   var rdClose = document.getElementById('reader-close');
   var rdZh = document.getElementById('reader-lang-zh');
   var rdEn = document.getElementById('reader-lang-en');
@@ -1482,21 +1644,29 @@ var FLI = (function () {
   }
 
   function readerShowError(title, link) {
+    reader.error = true;
+    rdOrig.hidden = true;   // 错误正文已有「访问原文」，头部不重复放
     rdBody.innerHTML = '';
+    if (!reader.title) rdTitle.textContent = '无法打开这篇正文';
     var box = document.createElement('div');
     box.className = 'reader-error';
     var strong = document.createElement('strong');
     strong.textContent = '这篇正文还没落到语料里。';
     box.appendChild(strong);
-    box.appendChild(document.createTextNode(' 可以直接 '));
+    // 没有原文 URL 时不亮一个指向当前地址的「访问原文」（点了等于没点）；
+    // 若索引稍后送达、readerFillLinkFromState 补上链接，再把这一句放出来。
+    var more = document.createElement('span');
+    more.hidden = !link;
+    more.appendChild(document.createTextNode(' 可以直接 '));
     var a = document.createElement('a');
     a.id = 'reader-error-link';
     a.href = link || '#';
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
     a.textContent = '访问原文';
-    box.appendChild(a);
-    box.appendChild(document.createTextNode('。'));
+    more.appendChild(a);
+    more.appendChild(document.createTextNode('。'));
+    box.appendChild(more);
     rdBody.appendChild(box);
   }
 
@@ -1511,13 +1681,21 @@ var FLI = (function () {
         reader.link = it.link;
         if (!reader.title) { reader.title = it.title; rdTitle.textContent = it.title; }
         var a = document.getElementById('reader-error-link');
-        if (a) a.href = reader.link;
+        if (a) {
+          a.href = reader.link;
+          if (a.parentNode) a.parentNode.hidden = false;
+        }
+        rdOrig.href = reader.link;
+        rdOrig.hidden = reader.error;
         return;
       }
     }
   }
 
   function readerRenderMd(md) {
+    reader.error = false;
+    rdOrig.hidden = !reader.link;
+    if (reader.link) rdOrig.href = reader.link;
     rdBody.innerHTML = '';
     var wrap = document.createElement('div');
     wrap.innerHTML = FLI.mdToHtml(md);   // fli-core 已做 HTML escape + 剥危险标签
@@ -1586,6 +1764,7 @@ var FLI = (function () {
 
   function openReader(vendor, slug, lang, title, opts) {
     if (!vendor || !slug) return;
+    if (reader.pendingClose) return;   // 关闭的 back 尚未落地，别让新文章再被它关掉
     opts = opts || {};
     var was = reader.open;
     reader.vendor = vendor; reader.slug = slug; reader.lang = lang || 'zh';
@@ -1593,6 +1772,12 @@ var FLI = (function () {
     reader.title = title || '';
     reader.link = (opts && opts.link) || '';
     reader.open = true;
+    reader.error = false;
+    rdOrig.hidden = !reader.link;
+    if (reader.link) rdOrig.href = reader.link;
+    // 只有 openReader 自己 push 的条目才带 fliPushed；深链页即使后来用 replaceState
+    // 写过 read/lang，也不能据此判定「上一项是列表」——否则关闭会退到站外。
+    reader.pushed = opts.push !== false || !!(history.state && history.state.fliPushed);
     readerFillLinkFromState();   // 深链时 state 可能已到位，先补原文 URL 与 langs
     if (!was) {
       reader.lastFocus = document.activeElement;
@@ -1607,26 +1792,48 @@ var FLI = (function () {
       var u = new URL(location.href);
       u.searchParams.set('read', vendor + '/' + slug);
       u.searchParams.set('lang', reader.lang);
-      history.pushState({ read: vendor + '/' + slug, lang: reader.lang }, '', u.toString());
+      history.pushState({ read: vendor + '/' + slug, lang: reader.lang, fliPushed: true }, '', u.toString());
     }
     rdClose.focus();
   }
 
-  function closeReader(push) {
+  function closeReader(syncHistory) {
     if (!reader.open) return;
+    var wasPushed = reader.pushed;
     reader.open = false;
+    reader.pushed = false;
     rdOverlay.hidden = true;
     rdDrawer.hidden = true;
     document.body.style.overflow = '';
-    if (push !== false) {
-      var u = new URL(location.href);
-      u.searchParams.delete('read'); u.searchParams.delete('lang');
-      history.pushState(null, '', u.toString());
+    if (syncHistory !== false) {
+      if (wasPushed) {
+        // 打开时 push 过 read 项：关闭 = 回到列表那一项，历史栈不增长。
+        // 反过来 push 一条无 read 的地址，会让关闭后的第一次「返回」重新打开文章。
+        // back 落地前先挡住新的 openReader，避免它 push 的文章被这条 back 立刻关掉。
+        reader.pendingClose = true;
+        history.back();
+      } else {
+        // 直接打开的深链没有「列表」历史项，只把 read 参数从当前地址抹掉。
+        var u = new URL(location.href);
+        u.searchParams.delete('read'); u.searchParams.delete('lang');
+        history.replaceState(null, '', u.toString());
+      }
     }
+    if (reader.pendingClose) return;   // popstate 落地后再恢复焦点
     if (reader.lastFocus && reader.lastFocus.focus) {
       try { reader.lastFocus.focus(); } catch (e) { /* detached */ }
     }
     reader.lastFocus = null;
+  }
+
+  function settlePendingClose() {
+    if (!reader.pendingClose) return;
+    reader.pendingClose = false;
+    var f = reader.lastFocus;
+    reader.lastFocus = null;
+    if (f && f.focus) {
+      try { f.focus(); } catch (e) { /* detached */ }
+    }
   }
 
   rdClose.addEventListener('click', function () { closeReader(true); });
@@ -1641,7 +1848,10 @@ var FLI = (function () {
     readerLangButtonsInit();
     var u = new URL(location.href);
     u.searchParams.set('lang', 'zh');
-    history.replaceState({ read: reader.vendor + '/' + reader.slug, lang: 'zh' }, '', u.toString());
+    var st = history.state || {};
+    st.read = reader.vendor + '/' + reader.slug;
+    st.lang = 'zh';
+    history.replaceState(st, '', u.toString());
   });
   rdEn.addEventListener('click', function () {
     if (reader.lang === 'en') return;
@@ -1650,11 +1860,15 @@ var FLI = (function () {
     readerLangButtonsInit();
     var u = new URL(location.href);
     u.searchParams.set('lang', 'en');
-    history.replaceState({ read: reader.vendor + '/' + reader.slug, lang: 'en' }, '', u.toString());
+    var st = history.state || {};
+    st.read = reader.vendor + '/' + reader.slug;
+    st.lang = 'en';
+    history.replaceState(st, '', u.toString());
   });
 
   // 浏览器前进/后退：drawer 状态跟着 popstate 同步
   window.addEventListener('popstate', function () {
+    settlePendingClose();
     var params = new URLSearchParams(location.search);
     var r = params.get('read');
     if (r) {

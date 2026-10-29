@@ -5242,6 +5242,24 @@ class TestQuotasIndex(unittest.TestCase):
             self.assertIn(row["anchor"], headings,
                           f"{row['id']} 的锚点 {row['anchor']} 在 README 里不存在")
 
+    def test_gh_slug_matches_github_for_spaces_around_removed_punctuation(self):
+        """标点删掉后留下的空格必须各变一个连字符，不能折叠成一个。
+
+        期望值取自线上 README 渲染后的 `user-content-*` id（GitHub 只做
+        「删标点 + 空格换连字符」，连续空格会保留成 `--`）。折叠版本的
+        锚点不存在，点击厂商名只会停在 README 顶部。
+        """
+        cases = {
+            "6. 火山引擎 (火山方舟 / 豆包)": "6-火山引擎-火山方舟--豆包",
+            "54. Azure OpenAI / Azure AI Foundry": "54-azure-openai--azure-ai-foundry",
+            "62. Qoder (Agentic Coding Platform · 国际版)":
+                "62-qoder-agentic-coding-platform--国际版",
+            "1. DeepSeek (深度求索)": "1-deepseek-深度求索",
+            "3. 智谱 GLM": "3-智谱-glm",
+        }
+        for heading, want in cases.items():
+            self.assertEqual(crawler_llm_intel._gh_slug(heading), want, heading)
+
 
 class TestBrowsePageDesignContract(unittest.TestCase):
     """docs/index.html 的设计契约守卫；DESIGN.md 是同一份契约的文字版。
@@ -5266,10 +5284,100 @@ class TestBrowsePageDesignContract(unittest.TestCase):
         """`free_models` 的上游（provider 档案 / overrides 手写）允许是字符串。
 
         字符串没有 `.join`，异常会打断整个 filter 回调 —— 表现是「一搜索整个
-        一览变空」，且页面没有构建、坏了不报错。守卫：拼接前必须归一成数组。
+        一览变空」，且页面没有构建、坏了不报错。守卫：搜索与渲染都必须走
+        `FLI.asList` 归一，不能再各自手写一套。
         """
-        self.assertIn("Array.isArray(fm)", self.page,
-                      "free_models 拼接必须先归一成数组（手写档案可能是字符串）")
+        self.assertGreaterEqual(
+            self.page.count("FLI.asList(v.free_models)"), 2,
+            "free_models 的搜索与渲染都要先归一成数组（手写档案可能是字符串）")
+
+    def test_quota_search_covers_conditions_and_link_labels(self):
+        """屏上新增的「注册条件」「官方直达」文本必须能被搜索命中。
+
+        回归场景：页面上出现「注册条件：完成实名认证」，用户搜「实名」却只找到
+        一部分厂商——搜索 haystack 少了 preconditions / 链接标签。
+        """
+        body = self.page[self.page.index("function renderQuotas"):
+                         self.page.index("function loadQuotas")]
+        search = body[:body.index("var host = document.getElementById('quotas-list')")]
+        for needle in ("v.preconditions", "v.links", "pair[0]",
+                       "官网", "前置条件", "官方直达", "免费模型与额度"):
+            self.assertIn(needle, search,
+                          f"额度搜索 haystack 缺少 {needle}（屏上可见文本应可搜）")
+
+    def test_changes_search_matches_rendered_note_labels(self):
+        """变化页 note 显示中文键名，搜索也必须匹配这层显示文本。"""
+        body = self.page[self.page.index("function renderChanges"):
+                         self.page.index("function loadChanges")]
+        self.assertIn("changeNoteText(r[5])", body,
+                      "变化搜索应使用渲染后的中文 note（同时保留原文）")
+
+    def test_quota_rows_expose_free_models_conditions_and_official_links(self):
+        """「免费额度与活动」行不能只剩账户级赠送和 GitHub 跳转。
+
+        数据里每家都有 free_models / preconditions / links（实测 70/70），
+        但页面原先只渲染 free_quota + promotions + 元信息，读者看不到哪些模型
+        免费、注册要什么条件、以及去哪注册；唯一链接还指向 README 档案。
+        """
+        body = self.page[self.page.index("function renderQuotas"):
+                         self.page.index("function loadQuotas")]
+        for needle in ("v.free_models", "v.preconditions", "v.links", "v.homepage",
+                       "免费模型", "前置条件", "官方直达", "官网", "aria-label"):
+            self.assertIn(needle, body, f"一览行缺少 {needle}")
+
+    def test_reader_close_pops_history_instead_of_pushing(self):
+        """关闭抽屉不能再 push 一条地址：否则关掉后按浏览器返回会重新打开文章。"""
+        body = self.page[self.page.index("function closeReader"):
+                         self.page.index("rdClose.addEventListener")]
+        self.assertIn("history.back()", body,
+                      "关闭抽屉应退回打开前的那条历史项")
+        self.assertNotIn("history.pushState", body,
+                         "关闭抽屉不许再塞一条历史项")
+        self.assertIn("history.replaceState", body,
+                      "深链打开（无列表历史项）时只抹掉 read 参数")
+        open_ = self.page[self.page.index("function openReader"):
+                          self.page.index("function closeReader")]
+        self.assertIn("fliPushed: true", open_,
+                      "pushState 要写一个只属于本站列表的显式标记")
+        self.assertIn("history.state && history.state.fliPushed", open_,
+                      "关闭判据只能看 fliPushed")
+        self.assertNotIn("history.state && history.state.read", open_,
+                         "深链页的 read state 不能证明上一项是列表")
+        self.assertIn("if (reader.pendingClose) return", open_,
+                      "back 落地前的新 openReader 必须被挡住")
+        self.assertIn("reader.pendingClose = true", body,
+                      "关闭必须标记 pendingClose")
+        pop = self.page[self.page.index("window.addEventListener('popstate'"):
+                        self.page.index("(function maybeOpenFromUrl")]
+        self.assertIn("settlePendingClose()", pop,
+                      "popstate 落地后要恢复焦点并解除 pendingClose")
+
+    def test_reader_success_exposes_original_article_link(self):
+        """读全文成功态要能一键回到官方原文，而不是关闭抽屉再找列表标题。"""
+        head = self.page[self.page.index('<div class="reader-head">'):
+                         self.page.index('<div class="reader-body"')]
+        self.assertIn('id="reader-orig"', head, "抽屉头部缺少原文链接")
+        open_ = self.page[self.page.index("function openReader"):
+                          self.page.index("function closeReader")]
+        self.assertIn("rdOrig.hidden = !reader.link", open_,
+                      "没有原文 URL 时不能亮一个无效链接")
+        self.assertIn("rdOrig.href = reader.link", open_,
+                      "有原文 URL 时要给链接赋值")
+        err = self.page[self.page.index("function readerShowError"):
+                        self.page.index("function readerFillLinkFromState")]
+        self.assertIn("rdOrig.hidden = true", err,
+                      "错误态正文已有访问原文，头部不重复放")
+
+    def test_news_vendor_badge_filters_like_the_chips(self):
+        """条目里的厂商胶囊要和顶部筛选胶囊同一动作，不能打开单厂商 XML。"""
+        row = self.page[self.page.index("function rowNode"):
+                         self.page.index("function appendRows")]
+        self.assertIn("badge = document.createElement('button')", row,
+                      "厂商胶囊应是筛选按钮")
+        self.assertIn("state.vendor = (state.vendor === it.vendor) ? null : it.vendor", row,
+                      "点击厂商胶囊要切换厂商筛选")
+        self.assertNotIn("badge.href", row,
+                         "厂商胶囊不许直接链到 RSS/XML")
 
     def test_tab_panel_aria_wiring(self):
         """每个页签都要指向一个真实存在、且反向标注自己的 tabpanel。"""

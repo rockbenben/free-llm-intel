@@ -3050,9 +3050,15 @@ def order_vendor_records(intel_list: list[VendorIntel]) -> list[tuple[int, Vendo
 
 
 def _gh_slug(heading: str) -> str:
-    """复刻 GitHub 锚点规则：小写、去标点、空白折叠为连字符（\\w 含中日韩文字）。"""
-    s = re.sub(r"[^\w\s-]", "", heading.lower())
-    return re.sub(r"\s+", "-", s.strip())
+    """复刻 GitHub 锚点规则：小写、去标点、**每个空格**换成连字符（\\w 含中日韩文字）。
+
+    标点删掉后留下的连续空格在 GitHub 上会变成多个连字符：
+    `6. 火山引擎 (火山方舟 / 豆包)` → `6-火山引擎-火山方舟--豆包`。
+    早先这里把 `\\s+` 折叠成一个，12 家厂商的档案锚点在 GitHub 上不存在，
+    点名字只会停在 README 顶部（已用线上渲染 DOM 的 user-content-* 复核）。
+    """
+    s = re.sub(r"[^\w\s-]", "", heading.lower()).strip()
+    return s.replace(" ", "-")
 
 
 _PROMO_END_PAT = re.compile(r"截止|到期|结束|止至|until|end(?:s|ed)?\b", re.I)
