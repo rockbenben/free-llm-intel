@@ -353,6 +353,9 @@ class Article:
     stype: str = ""
     zh_title: str = ""    # 归档沿用的中文标题；空则现场走 translate_to_zh
     link: str = ""        # **给人点的**链接；空则与 url 相同。见下面「身份与链接要分开」。
+    # 本次运行已经决议好的显示标题（归档可见标题 / 索引 / RSS 共用同一份）。
+    # 只活在内存里，不落盘；下一轮由归档行的可见标题重新决定（见 rebuild_intel_from_disk）。
+    display_title: str = ""
 
     def __post_init__(self) -> None:
         # 统一在这里洗控制字符：RSS 原始 XML 与页面提取都可能带 \x00，
@@ -364,6 +367,7 @@ class Article:
         self.stype = sanitize_text(self.stype)
         self.zh_title = sanitize_text(self.zh_title)
         self.link = sanitize_text(self.link)
+        self.display_title = sanitize_text(self.display_title)
 
 
 #: 归档标题「已是中文」的判据：含任一 CJK 字符即算（与 translate_to_zh 的整句跳过阈值无关，
@@ -372,8 +376,13 @@ _CJK_CHAR_RE = re.compile(r"[\u4e00-\u9fff]")
 
 
 def article_title_zh(art: "Article") -> str:
-    """输出用标题：优先归档沿用的中文译文，否则现场翻译（走磁盘缓存）。"""
-    return art.zh_title or translate_to_zh(art.title)
+    """输出用标题：优先本次运行已决议的显示标题，其次归档中文译文，最后现场翻译。
+
+    归档、索引、RSS、README 都从这里取标题；谁先算出显示标题谁回填
+    Article.display_title，后来的消费者不再各自重翻一次——否则机翻的
+    成败/时序差异会让归档与索引各拿一份不同的标题（实测 CI 因此红过）。
+    """
+    return art.display_title or art.zh_title or translate_to_zh(art.title)
 
 
 #: 标题润色批量与单次巡检预算（预算只防一次性大批新收录，不针对日常增量）
@@ -3975,6 +3984,11 @@ def verify_index_matches_archives(root: Path) -> list:
 
     只比对**归档有、索引也有**的行：收录口径（合并流截窗、canonical-only 厂商、
     同标题折叠）归 G3 单独管。在这里再实现一遍口径，等于两条闸互相掩盖。
+
+    标题的单一来源是 `Article.display_title`：`write_news_archives` 算出归档可见
+    标题后回填，`rebuild_intel_from_disk` 直接取归档可见标题；索引/RSS/README
+    都从这里取，不再各自调用机翻。否则同一篇会被两次翻译的成败/时序拆成
+    两个不同标题，这条闸只能红。
     返回违规描述列表（空=合规）。
     """
     idx_path = root / "docs" / "feeds" / "articles.json"
@@ -4532,6 +4546,10 @@ def rebuild_intel_from_disk(vendors: list[dict], grouped: dict[str, list[dict]],
                 a.zh_title = (orig and _restore_brand_names(a.title, orig)) or a.title
                 if orig and orig != a.title:
                     a.title = orig
+        # 重建路径不重译：索引/RSS 的显示标题直接取归档行的可见标题，
+        # 保证与源文件逐字一致（这正是 --render-only 的职责）。
+        for a in arts:
+            a.display_title = a.zh_title or a.title
         intel.news_articles = arts[:5]
         intel_list.append(intel)
     return intel_list
@@ -4691,6 +4709,10 @@ def write_news_archives(out_dir: Path, intel_list: list[VendorIntel],
             continue
         with ThreadPoolExecutor(max_workers=6) as pool:
             titles_zh = list(pool.map(article_title_zh, arts))
+        # 归档可见标题就是本轮决议的显示标题；索引/RSS/README 之后都走
+        # article_title_zh 的这个缓存，不再各自重翻一次。
+        for art, title_zh in zip(arts, titles_zh):
+            art.display_title = title_zh
         lines: list[str] = []
         lines.append(f"# {_news_display_name(intel)} 文章归档")
         lines.append("")

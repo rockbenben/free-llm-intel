@@ -10576,6 +10576,43 @@ class TestIndexMatchesArchives(unittest.TestCase):
         self.assertEqual(len(errs), 1, errs)
         self.assertIn("First post", errs[0])
 
+    def test_archive_writer_freezes_display_title_for_index(self):
+        """归档写出的可见标题必须回填成同一份 display_title，索引不再重翻。"""
+        v = crawler_llm_intel.VendorIntel(
+            vendor_id="vendor_a", brand="Vendor A", homepage="", products=[])
+        v.all_news_articles = [crawler_llm_intel.Article(
+            title="English title", url="https://a.com/one", date="2026-10-14")]
+        v.news_articles = list(v.all_news_articles)
+        crawler_llm_intel.write_news_archives(
+            self.root / "llm-news", [v],
+            title_polish=lambda _brand, _titles: {"English title": "中文标题"})
+        art = v.all_news_articles[0]
+        self.assertEqual(art.display_title, "中文标题")
+        self.assertEqual(crawler_llm_intel.article_title_zh(art), "中文标题")
+        self.assertIn("[中文标题]", (self.root / "llm-news" / "vendor_a.md")
+                      .read_text(encoding="utf-8"))
+        crawler_llm_intel.write_rss_feeds(self.root / "docs" / "feeds", [v], base_url="")
+        idx = json.loads((self.root / "docs" / "feeds" / "articles.json")
+                         .read_text(encoding="utf-8"))
+        self.assertEqual(idx["articles"][0][0], "中文标题",
+                         "索引必须复用归档那一次算出的 display_title")
+
+    def test_rebuild_uses_archive_visible_title_as_display(self):
+        """--render-only 重建时索引取归档可见标题，不重新机翻。"""
+        (self.root / "llm-news" / "vendor_a.md").write_text(
+            "## 全部文章（共 2 篇）\n\n"
+            "1. [中文标题](https://a.com/zh)（2026-10-14） <!--orig:English title-->\n"
+            "2. [English title](https://a.com/en)（2026-10-14）\n",
+            encoding="utf-8", newline="\n")
+        intel = crawler_llm_intel.rebuild_intel_from_disk(
+            [{"id": "vendor_a", "brand": "Vendor A", "homepage": "", "products": []}],
+            {}, {}, self.root / "llm-news")
+        arts = {a.url: a for a in intel[0].all_news_articles}
+        self.assertEqual(arts["https://a.com/zh"].display_title, "中文标题")
+        self.assertEqual(arts["https://a.com/en"].display_title, "English title")
+        self.assertEqual(crawler_llm_intel.article_title_zh(arts["https://a.com/zh"]),
+                         "中文标题")
+
     def test_stale_date_is_caught(self):
         self._write("第一篇中文标题", "第一篇中文标题", date="2026-10-14")
         p = self.root / "docs" / "feeds" / "articles.json"
@@ -10778,13 +10815,17 @@ class TestIndexCoverageIndependent(unittest.TestCase):
                     p.read_text(encoding="utf-8"), encoding="utf-8")
             victim = legit[0]
             victim_disp = victim[fields.index("title")]
+            victim_orig = (victim[fields.index("original_title")]
+                           if "original_title" in fields else "")
             data["articles"] = [r for r in data["articles"] if r is not victim]
             (root / "docs" / "feeds" / "articles.json").write_text(
                 json.dumps(data, ensure_ascii=False), encoding="utf-8")
             bad, _, _ = self._missing_without_explanation(root)
         self.assertTrue(bad, "删掉一条合法行后必须报出缺失，否则这条闸是空转")
-        self.assertTrue(any(victim_disp[:12] in b for b in bad),
-                        f"报告必须指名被删的那条（{victim_disp[:20]!r}）：{bad[:3]}")
+        self.assertTrue(
+            any(victim_disp[:12] in b or (victim_orig and victim_orig[:12] in b)
+                for b in bad),
+            f"报告必须指名被删的那条（显示或原文；{victim_disp[:20]!r}）：{bad[:3]}")
 
     def test_case_only_alias_explains_old_url_row(self):
         """同一英文标题只有大小写差异、URL 不同 → 产出层已按标题折叠，守卫不能误报。"""
