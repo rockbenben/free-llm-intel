@@ -1,6 +1,6 @@
 # Anyscale 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-28**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-30**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anyscale（`anyscale`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -17,16 +17,16 @@
 6. [编码智能体成本降低 90%：在 Anyscale 上用 Ray + vLLM 安全地提供 LLM 服务](https://anyscale.com/blog/run-coding-agents-on-your-own-gpus)（2026-10-08） <!--orig:Cut coding agent costs by 90%: Secure LLM serving with Ray + vLLM on Anyscale-->
 7. [Anyscale on Azure 正式可用：让企业掌握完整的 AI 闭环，而不只是推理](https://anyscale.com/blog/anyscale-on-azure-general-availability-enterprise-ai)（2026-10-07） <!--orig:Anyscale on Azure is Generally Available: Enabling Enterprises to Own the Full AI Loop, Not Just Inference-->
 8. [Ray Summit 2026：物理 AI、RL，以及承载它们的一切基础设施](https://anyscale.com/blog/ray-summit-2026-recap)（2026-09-08） <!--orig:Ray Summit 2026: Physical AI, RL, and the infrastructure that runs them all-->
-9. [将 Ray 的 AI 工作负载扩展至 10k 节点集群](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25） <!--orig:Scaling Ray for AI workloads to 10k node clusters-->
-10. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV Cache 复用走向 Token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
-11. [推出 Ray History Server：Ray on Kubernetes 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
-12. [学习闭环：拥有你自己的智能之路](https://anyscale.com/blog/learning-loops)（2026-08-25） <!--orig:Learning Loops: The Path to Owning Your Intelligence-->
-13. [SkyRL 中的 FP8 强化学习：保持训练与 rollout 之间的策略一致性](https://anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl)（2026-08-25） <!--orig:FP8 Reinforcement Learning in SkyRL: Preserving Policy Consistency Across Training and Rollout-->
-14. [Ray Data 中的 GPU 原生算子](https://anyscale.com/blog/gpu-native-operators-in-ray-data)（2026-08-25） <!--orig:GPU-Native Operators in Ray Data-->
-15. [推出 Anyscale GPU 健康可观测性：从应用一直看到硬件](https://anyscale.com/blog/anyscale-gpu-health-observability)（2026-08-25） <!--orig:Introducing Anyscale GPU Health Observability: From app to hardware-->
-16. [宣布 Ray 原生沙箱能力](https://anyscale.com/blog/announcing-native-sandboxing-in-ray)（2026-08-25） <!--orig:Announcing Native Sandboxing in Ray-->
-17. [推出 KubeRay v1.6 与 v1.7](https://anyscale.com/blog/kuberay-v1-7)（2026-08-25） <!--orig:Introducing KubeRay v1.6 and v1.7-->
-18. [推出 Anyscale KubeRay Connect：全力押注 Kubernetes](https://anyscale.com/blog/announcing-anyscale-connect-for-kuberay)（2026-08-25） <!--orig:Introducing Anyscale KubeRay Connect: Doubling down on Kubernetes-->
+9. [推出 Anyscale KubeRay Connect：全力押注 Kubernetes](https://anyscale.com/blog/announcing-anyscale-connect-for-kuberay)（2026-08-25） <!--orig:Introducing Anyscale KubeRay Connect: Doubling down on Kubernetes-->
+10. [将 Ray 的 AI 工作负载扩展至 10k 节点集群](https://anyscale.com/blog/how-we-scaled-ray-from-batch-inference-to-10000-node-training-clusters)（2026-08-25） <!--orig:Scaling Ray for AI workloads to 10k node clusters-->
+11. [优化 LLM 服务效率：用 Ray Serve LLM 从 KV Cache 复用走向 Token 负载感知](https://anyscale.com/blog/llm-kv-token-aware-routing)（2026-08-25） <!--orig:Optimizing LLM Serving Efficiency: Moving Beyond KV Cache Reuse to Token-Load Awareness with Ray Serve LLM-->
+12. [推出 Ray History Server：Ray on Kubernetes 的事后可观测性](https://anyscale.com/blog/ray-history-server)（2026-08-25） <!--orig:Introducing Ray History Server: Post-Mortem Observability for Ray on Kubernetes-->
+13. [学习闭环：拥有你自己的智能之路](https://anyscale.com/blog/learning-loops)（2026-08-25） <!--orig:Learning Loops: The Path to Owning Your Intelligence-->
+14. [SkyRL 中的 FP8 强化学习：保持训练与 rollout 之间的策略一致性](https://anyscale.com/blog/fp8-reinfinforcement-learning-in-skyrl)（2026-08-25） <!--orig:FP8 Reinforcement Learning in SkyRL: Preserving Policy Consistency Across Training and Rollout-->
+15. [Ray Data 中的 GPU 原生算子](https://anyscale.com/blog/gpu-native-operators-in-ray-data)（2026-08-25） <!--orig:GPU-Native Operators in Ray Data-->
+16. [推出 Anyscale GPU 健康可观测性：从应用一直看到硬件](https://anyscale.com/blog/anyscale-gpu-health-observability)（2026-08-25） <!--orig:Introducing Anyscale GPU Health Observability: From app to hardware-->
+17. [宣布 Ray 原生沙箱能力](https://anyscale.com/blog/announcing-native-sandboxing-in-ray)（2026-08-25） <!--orig:Announcing Native Sandboxing in Ray-->
+18. [推出 KubeRay v1.6 与 v1.7](https://anyscale.com/blog/kuberay-v1-7)（2026-08-25） <!--orig:Introducing KubeRay v1.6 and v1.7-->
 19. [Ray Data 中的 Shuffle V2：更快且容错的 Join 与聚合](https://anyscale.com/blog/ray-data-shuffle-v2)（2026-08-25） <!--orig:Shuffle V2 in Ray Data: Faster, Fault-Tolerant Joins and Aggregations-->
 20. [CVE-2025-62593 与 CISA KEV 收录：Ray 用户需要知道的事](https://anyscale.com/blog/ray-cve-2025-62593-kev-what-you-need-to-know)（2026-08-19） <!--orig:CVE-2025-62593 and the CISA KEV listing: what Ray users need to know-->
 21. [异步推理实战：基于 Ray Serve 的视频索引服务](https://anyscale.com/blog/ray-serve-async-inf-in-practice)（2026-08-18） <!--orig:Async inference in practice: a video-indexing service on Ray Serve-->

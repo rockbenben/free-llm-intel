@@ -1456,6 +1456,83 @@ tg beta endpoints rm dep_variant123    # or delete the variant — auto-unwinds 
 <p>View All</p>]]></content:encoded>
     </item>
     <item>
+      <title>DeepSeek-V4 Flash 0731 vs GPT-5.6 Luna on DeepSWE: Cost and…</title>
+      <link>https://www.together.ai/blog/deepseek-v4-flash-0731-vs-gpt-5-6-luna-on-deepswe-cost-and-coding</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/deepseek-v4-flash-0731-vs-gpt-5-6-luna-on-deepswe-cost-and-coding?li=1</guid>
+      <pubDate>Thu, 06 Aug 2026 00:00:00 +0000</pubDate>
+      <description>Full title: DeepSeek-V4 Flash 0731 vs GPT-5.6 Luna on DeepSWE: Cost and Coding</description>
+      <content:encoded><![CDATA[<p>All blog posts</p>
+<p>Model Library</p>
+<p>Published 8/6/2026</p>
+<h1>DeepSeek-V4 Flash 0731 vs GPT-5.6 Luna on DeepSWE: Cost and Coding</h1>
+<p>The open-weight model setting the new price-intelligence bar</p>
+<ul><li>AuthorsZain Hasan, Shobhit Dixit</li><li>Table of contents<a href="https://www.together.ai/blog/deepseek-v4-flash-0731-vs-gpt-5-6-luna-on-deepswe-cost-and-coding">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<p>Key Takeaways</p>
+<p>While GPT-5.6 Luna is the stronger engineer on every quality measure, DeepSeek-V4 Flash 0731 is cheap enough that a DeepSeek-first cascade beats Luna alone on both accuracy and cost.</p>
+<ul><li>GPT-5.6 Luna leads DeepSWE pass@1 decisively at 67.2% vs 53.3%, a 14 point gap, and holds the lead at every equal attempt count.</li><li>DeepSeek-V4 Flash is the cheapest model on the DeepSWE board: $0.10 per rollout vs $0.61, delivering 532 solves per $100 against Luna's 110.</li><li>DeepSeek-V4 Flash fails more cleanly, breaking the repo's existing test suite in 9% of failures vs Luna's 15%.</li><li>Running DeepSeek-V4 Flash first and escalating to Luna only on failure solves 78.9% of tasks at $0.385 each: more accurate than Luna alone and 37% cheaper.</li></ul>
+<p>Available now · Open weights</p>
+<p>Run DeepSeek-V4 Flash on Together AI</p>
+<p>The cheapest model on the DeepSWE board, about ten cents a task. Serve the cheap first stage at production scale without frontier token prices.</p>
+<p>Open the playground</p>
+<p><a href="https://www.together.ai/models/deepseek-v4-flash-0731">DeepSeek-V4 Flash 0731</a> is the cheapest model on the entire DeepSWE board: about ten cents a task! GPT-5.6 Luna, a solid upper-tier flagship, runs $0.61 a task, roughly six times <a href="https://www.together.ai/models-providers/deepseek">DeepSeek</a>’s price. So the question is not which one wins the leaderboard (Luna, comfortably) but what six-times-cheaper buys you, what it costs you, and whether the two together beat either one alone.</p>
+<p>We ran DeepSeek-V4 Flash 0731 (max) against GPT-5.6 Luna (max) on all 113 DeepSWE tasks: real, long-horizon feature requests from live open-source repos, four trials each, graded pass/fail by a hidden test suite. That is 900 rollouts in total from the published per-trial records (452 on DeepSeek's side, 448 on Luna's). Every figure below comes from this run, so it can differ from other public scorecards.</p>
+<h2><strong>At a glance</strong></h2>
+<p>DeepSWE · Head to Head</p>
+<h3>DeepSeek-V4 Flash vs GPT-5.6 Luna at a glance</h3>
+<table><thead><tr><th>Model</th><th>Pass@1</th><th>Avg cost</th><th>Out tok</th><th>Steps</th></tr></thead><tbody><tr><td>gpt-5.6-luna [max]</td><td><strong>67% ± 4%</strong></td><td>$0.61</td><td>73k</td><td>102</td></tr><tr><td>deepseek-v4-flash [max]</td><td>53% ± 4%</td><td><strong>$0.10</strong></td><td>108k</td><td>153</td></tr></tbody></table>
+<p>Luna is ~6x the cost for ~14 points more accuracy; DeepSeek uses more output tokens and steps to get less far, but at $0.10 it is the cheapest run in the set by a wide margin.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a755ae9f29796baf154f58d_08-accuracy-cost-effort.png" alt="__wf_reserved_inherit"></p>
+<h2><strong>The DeepSWE scoreboard: pass@1 and pass@k</strong></h2>
+<p>Luna wins single shot clearly: 67.2% pass@1 to DeepSeek's 53.3% under DeepSWE's official scoring, a 14 point lead, or about 26% more accurate in relative terms. At equal attempt counts Luna stays ahead at every k (81.6 vs 70.1 at two attempts, 90.3 vs 80.5 at four). On raw solving ability, this is not a close fight.</p>
+<p>But DeepSWE is exactly the kind of workload where you can fan out several attempts in parallel, and there the economics rewrite the picture. DeepSeek's pass@2 (70.1%) already edges Luna's single shot (67.2%), and two DeepSeek attempts cost about $0.20 to Luna's $0.61. If a verifier can pick the winning run, the cheap model matches the flagship's first-try quality for a third of the price, before any of the routing tricks below even come into play.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a7537e9d60a38a5c400d7e0_01-solve-rate-by-attempts.png" alt="__wf_reserved_inherit"></p>
+<h2><strong>Cost comparison: DeepSeek-V4 Flash vs GPT-5.6 Luna pricing</strong></h2>
+<ul><li>At $0.61 a task, Luna returns 110 solves per $100 to DeepSeek's 532: a 4.8x value edge for the cheap model. The cost per rollout gap is about 6x.</li><li>The one thing the cheap model does not buy you is speed, and this is the twist versus the usual &quot;flash&quot; model story: DeepSeek is the slower of the two here, taking a median 23 minutes and 148 steps to Luna's 16 minutes and 92. It grinds (and emits more output, 104k median tokens to Luna's 70k). DeepSeek's advantage is money, not time.</li><li>That wall-clock gap is partly an artifact of how new the model is; expect it to shrink as inference engines get tuned for it.</li></ul>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a7537fb7738b3678fd7a4eb_02-cost-value-speed.png" alt="__wf_reserved_inherit"></p>
+<h2><strong>Failure modes: DeepSeek fails more gracefully than the flagship</strong></h2>
+<p>The other thing the cheap model quietly wins is discipline. When DeepSeek fails, it breaks the repository's existing test suite in only 9% of failures. Luna does so in 15%: the GPT-family regression signature, the same 15 to 20% we see across Sol and the other OpenAI-lineage models. Both fail mostly by near miss (DeepSeek 69%, Luna 66%), but the more expensive model is the one more likely to disturb code that already worked. If you deploy Luna, gate it behind a full regression run; DeepSeek needs that guardrail less.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a7538243beaa9328632f73d_03-failure-anatomy.png" alt="__wf_reserved_inherit"></p>
+<h2><strong>DeepSeek-V4 Flash vs GPT-5.6 Luna by task domain</strong></h2>
+<p>Classify the 113 tasks by what the code actually is, and Luna wins 7 of 8 domains. Its biggest edges are exactly the reasoning-heavy work: program analysis (69 vs 33), concurrency and durability (70 vs 38), language and runtime internals (86 vs 59), roughly a 30 point gap in each. This is where model capability actually shows up, and DeepSeek falls off hard.</p>
+<p>DeepSeek holds exactly one domain, and it is a telling one: query and config languages, 78 vs 70. The SQL builders, window functions, keyset pagination, config parsers. Structured, schema-shaped, convention-following work is where the cheap model is genuinely competitive, even ahead. Everywhere the task demands holding a hard invariant across a whole system, Luna's capability separates.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a75382dae51b2becd28595c_04-solve-rate-by-task-domain.png" alt="__wf_reserved_inherit"></p>
+<h2><strong>DeepSeek-V4 Flash vs GPT-5.6 Luna by programming language</strong></h2>
+<p>Luna wins all five, but the margins tell you where to be careful with DeepSeek. It is respectable on Rust (55 vs 60) and Go (62 vs 79), but its JavaScript is a collapse: 35 vs Luna's 60, the weakest single cell in the entire matchup, and a 25 point hole. DeepSeek's Python is also soft (49 vs 65). If your stack is JS-heavy, the cheap model is a false economy; if it is config, query, or Rust, DeepSeek closes most of the gap.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a753839093e357145b4f8e6_05-solve-rate-by-language.png" alt="__wf_reserved_inherit"></p>
+<h2><strong>How similar are DeepSeek-V4 Flash and GPT-5.6 Luna?</strong></h2>
+<p>Less than the cheap-tier pairs. Per-task correlation is 0.50, and the diversity is lopsided: they both solve 87 tasks, Luna alone gets 15, and DeepSeek alone gets only 4. Crucially, there is no task DeepSeek sweeps that Luna misses entirely (zero four-for-zero corners in DeepSeek's favor), while Luna sweeps four that DeepSeek never lands (go-critic-doc-link-checker, langchain-request-coalescing, meriyah-explicit-resource-declarations, superjson-error-stack-serialization). Their union covers 106 of 113 (93.8%), but almost all of that is Luna's own reach. As a raw diversity play, DeepSeek adds little.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a753840433021ff99b04a3f_06-task-level-agreement.png" alt="__wf_reserved_inherit"></p>
+<h2><strong>The portfolio play: why the cascade works anyway</strong></h2>
+<p>So the pairing should be pointless. It is not, and the reason is the price. Run DeepSeek first and escalate to Luna only when your test suite rejects the answer: 78.9% solved at $0.385 per task. Read that carefully. It is more accurate than Luna alone (67.2%, up 11.7 points) and cheaper than Luna alone ($0.61), landing at about 63% of Luna's per-task cost.</p>
+<p>The near-free first stage is the entire trick: DeepSeek clears roughly 53% of the queue for a dime each, so Luna's charge only ever touches the hard remainder, and the tasks that reach Luna get a second independent attempt on top. The cascade even beats a perfect one-shot oracle router (74.3%), because two swings beat one perfect pick. Accuracy is identical whichever model leads, but DeepSeek-first is much cheaper ($0.385 vs $0.64), so always lead with the cheap one.</p>
+<p>The pair's ceiling is 93.8%; the 7 tasks neither ever solves (including gql-incremental-graphql-delivery and bandit-structured-nosec-directives) need a stronger third model, not a better router.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a75384f88064ca1d33a4adf_07-cascade.png" alt="__wf_reserved_inherit"></p>
+<h2><strong>What it means</strong></h2>
+<p>On its own, DeepSeek-V4 Flash 0731 is a mid-pack model with one real domain (query and config), a clean failure profile, a catastrophic JavaScript weakness, and an unbeatable price. GPT-5.6 Luna is the better engineer by every quality measure: 14 points of pass@1, 7 of 8 domains, all 5 languages, faster too. You pay about 6x for it, plus a GPT-family regression habit to guardrail. At $0.61 a task the flagship is genuinely cheap, and it is the easy default when quality is what you care about. But the sharpest use of DeepSeek is not as a Luna replacement; it is as a Luna front-end. A first stage that costs a dime and clears half the work lets you buy flagship-beating accuracy for less than the flagship's own price. When the cheap model is this cheap, the cascade stops being a compromise and becomes the best row on the board.</p>
+<p>Available now · Open weights</p>
+<p>Run DeepSeek-V4 Flash on Together AI</p>
+<p>The cheapest model on the DeepSWE board, about ten cents a task. Serve the cheap first stage at production scale without frontier token prices.</p>
+<p>Open the playground</p>
+<h2><strong>Appendix: Data Table</strong></h2>
+<p>DeepSWE · Appendix</p>
+<h3>DeepSeek-V4 Flash vs GPT-5.6 Luna: full data table</h3>
+<table><thead><tr><th>Metric</th><th>DeepSeek-V4 Flash 0731 (max)</th><th>GPT-5.6 Luna (max)</th></tr></thead><tbody><tr><td>pass@1 (official scoring)</td><td>53.3%</td><td><strong>67.2%</strong></td></tr><tr><td>pass@1 (errors as failures)</td><td>53.3%</td><td><strong>67.2%</strong></td></tr><tr><td>pass@2 / pass@4</td><td>70.1 / 80.5%</td><td><strong>81.6 / 90.3%</strong></td></tr><tr><td>Coverage / reliability</td><td>80.5 / 66.2%</td><td><strong>90.3 / 74.8%</strong></td></tr><tr><td>Solid (4/4) / walls (0/4)</td><td>23 / 22</td><td><strong>43 / 11</strong></td></tr><tr><td>Cost per rollout / total</td><td><strong>$0.10 / $45</strong></td><td>$0.61 / $273</td></tr><tr><td>Solves per $100</td><td><strong>532</strong></td><td>110</td></tr><tr><td>Median minutes / steps</td><td>23 / 148</td><td><strong>16 / 92</strong></td></tr><tr><td>Median peak context / output tokens</td><td>202k / 104k</td><td>202k / 70k</td></tr><tr><td>Failure anatomy</td><td><strong>69% near, 9% regression</strong></td><td>66% near, 15% regression</td></tr><tr><td>Domains won (of 8)</td><td>1 (query &amp; config)</td><td><strong>7</strong></td></tr><tr><td>Languages won</td><td>none</td><td><strong>all 5</strong></td></tr><tr><td>Per-task correlation / union</td><td>0.50 / 106 of 113 (93.8%)</td><td></td></tr><tr><td>Cascade DeepSeek &gt; Luna (accuracy / cost)</td><td><strong>78.9% / $0.385</strong></td><td>vs Luna alone 67.2% / $0.61</td></tr><tr><td>Oracle 1-shot router</td><td>74.3%</td><td></td></tr><tr><td>Leaderboard rank (of 52 configs)</td><td>30th</td><td><strong>13th</strong></td></tr><tr><td>Infra errors</td><td>0</td><td>0</td></tr></tbody></table>
+<h2><strong>FAQs</strong></h2>
+<h3><strong>Is GPT-5.6 Luna better than DeepSeek-V4 Flash?</strong></h3>
+<p>On quality, yes. GPT-5.6 Luna wins DeepSWE pass@1 67.2% to 53.3%, leads at every equal attempt count, wins 7 of 8 task domains and all 5 languages, and is faster. DeepSeek-V4 Flash wins on price by roughly 6x per rollout and fails more cleanly when it does fail.</p>
+<h3><strong>How much cheaper is DeepSeek-V4 Flash than GPT-5.6 Luna?</strong></h3>
+<p>In our run, DeepSeek-V4 Flash cost about $0.10 per rollout versus $0.61 for GPT-5.6 Luna, roughly a sixth of the price. Measured per solved task, DeepSeek returned 532 solves per $100 against Luna's 110, about 4.8x the work per dollar.</p>
+<h3><strong>Should you use DeepSeek-V4 Flash and GPT-5.6 Luna together?</strong></h3>
+<p>Yes, in a cascade. Running DeepSeek first and escalating to Luna only when the test suite rejects the answer solved 78.9% of tasks at $0.385 each in our run: more accurate than Luna alone (67.2%) and cheaper than Luna alone ($0.61). Always lead with the cheap model; accuracy is the same either way but DeepSeek-first costs less.</p>
+<h3><strong>Which is better for coding, DeepSeek-V4 Flash or GPT-5.6 Luna?</strong></h3>
+<p>Luna wins every language in our breakdown, but the margins vary. DeepSeek is respectable on Rust and competitive on query and config work, where it actually leads. Its JavaScript is the weakest cell in the matchup (35 vs 60), so JS-heavy stacks should not rely on the cheap model alone.</p>
+<h3><strong>What is pass@k on DeepSWE?</strong></h3>
+<p>pass@k measures whether at least one of k attempts at a task passes the hidden test suite. pass@1 rewards getting it right first try; higher k rewards a model that can eventually reach a solution across several tries. DeepSeek's pass@2 (70.1%) already edges Luna's pass@1 (67.2%), which is what makes the parallel-attempt and cascade economics work.</p>
+<h2>Related articles</h2>
+<p>View All</p>
+<p>View All</p>]]></content:encoded>
+    </item>
+    <item>
       <title>Kimi K3: the complete developer guide</title>
       <link>https://www.together.ai/blog/kimi-k3-guide</link>
       <guid isPermaLink="true">https://www.together.ai/blog/kimi-k3-guide?li=1</guid>
@@ -1805,6 +1882,87 @@ print(second.choices[0].message.content)</code></pre>
 <p>View All</p>]]></content:encoded>
     </item>
     <item>
+      <title>Autoscaling endpoints for LLM inference</title>
+      <link>https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference?li=1</guid>
+      <pubDate>Fri, 31 Jul 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>All blog posts</p>
+<p>Inference</p>
+<p>Published 7/31/2026</p>
+<h1>Autoscaling endpoints for LLM inference</h1>
+<p>Choosing scaling metrics, tuning windows, and budgeting for cold starts on dedicated inference.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a6ce270839f62c9690a837b_autoscaling-hero.png" alt=""></p>
+<ul><li>AuthorsZain Hasan, SoYoung Park, Nikitha Suryadevara, Ted Cui</li><li>Table of contents<a href="https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a6ce270839f62c9690a837b_autoscaling-hero.png" alt=""></p>
+<p>Summary</p>
+<p>With Dedicated Model Inference on the Together AI platform <strong>y</strong>ou can get your deployments to autoscale on metrics the inference engine actually understands, such as in-flight requests, TTFT, GPU utilization, token throughput. You can set replica bounds, pick a metric and target, and then tune two windows that control how eagerly it scales up and how patiently it scales down. Understanding and choosing the right metric is important because it determines how your deployment will behave under peaky traffic and impacts the latency your users will see. Below we'll cover how to choose the right metric to autoscale on and show an experiment where the same load was replayed under three different autoscale policies.</p>
+<h2>Over- and under-provisioning are both expensive</h2>
+<p>With <a href="https://www.together.ai/dedicated-model-inference">dedicated inference</a> you pay per replica-minute, which makes capacity planning a balance between two failure modes:</p>
+<ul><li><strong>Over-provision -</strong> you're paying for GPUs to sit at 15% utilization just so that you can handle the peak traffic when/if it arrives. Almost never viable, especially in the current GPU constrained environment.</li><li><strong>Under-provision -</strong> your p95 degrades sharply the moment traffic exceeds what your replicas can batch. LLM serving degrades nonlinearly: a replica at its concurrency limit doesn't get &quot;a bit slower,&quot; it starts queueing, and TTFT can blow up from 200ms to 15s.</li></ul>
+<p>&quot;Just autoscale it&quot; is the obvious answer, and for stateless web services it mostly works. But LLM serving is a different beast and it breaks the two assumptions that classic autoscaling leans on:</p>
+<ul><li><strong>CPU-style metrics lie about load.</strong> A GPU can read 60% utilized while the engine's request queue is already backing up and utilization is measuring arithmetic intensity, not <em>pressure</em>. Scaling deployments on the wrong signal means that the system will respond to a number that doesn't describe the actual problem.</li><li><strong>Cold starts can take several minutes.</strong> A new replica has to be placed on a GPU node, pull tens of gigabytes of weights, load them into VRAM, and warm up. This means that you can't scale your way out of a spike because by the time it arrives it’s already too late to scale up. This then means that a good autoscaler's job is to act early on <em>leading</em> signals.</li></ul>
+<p>Due to these nuances and the varying requirements of each customer our platform gives you a catalog of inference-native metrics and allows you to choose how your deployment scales. This post helps you choose well!</p>
+<h2>How it works</h2>
+<p>Each deployment carries an autoscaling policy: replica bounds, one or more scaling metrics with targets, and timing windows.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a68e81509533799cd7b59f9_CleanShot_2026-07-09_at_21.10.56.png" alt="__wf_reserved_inherit"></p>
+<p>The control loop goes as follows: observed metric → desired replicas (<code>ceil(N × observed/target)</code>) → timing windows dampen → clamp to bounds → GPU placement. Observed load feeds back and the loop evaluates continuously with the traffic split following capacity automatically.</p>
+<p>The core loop is proportional, meaning that if you target 8 in-flight requests per replica and you're observing 16, the system will want twice the replicas(assuming the 2x replicas are within the min, max bounds). The timing windows can be used to add a de-bouncing effect so that the replica count doesn't oscillate:</p>
+<ul><li><strong><code>scale_up_window</code></strong>: how long the pressure must persist before adding replicas. Keep it short; the cost of a false scale-up is just a few replica-minutes, whereas the cost of a missed one is increased user-facing latency.</li><li><strong><code>scale_down_window</code></strong> (default <strong>5m</strong>): how long things must stay calm before removing replicas. Keep it longer than your traffic's natural rhythm; the cost of a false scale-down could be a cold start right when the next peak arrives.</li></ul>
+<p>This asymmetric tradeoff of an eager up and patient down autoscale window is very important to tune and requires an intuitive understanding of your particular traffic distribution. Up-window mistakes cost dollars while down-window mistakes cost latency <em>and</em> dollars (because you'll just want to scale right back up, paying the cold start on the way back up).</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a68e85018101149cbe9a7df_CleanShot_2026-07-09_at_21.41.22.png" alt="__wf_reserved_inherit"></p>
+<p>Setting it is one PATCH:</p>
+<pre><code>    
+tg beta endpoints update &quot;&quot;$DEPLOYMENT_ID&quot; \
+  --min-replicas 1 --max-replicas 6 \
+  --scale-up-window 60s --scale-down-window 300s \
+  --scaling-metric ttft --scaling-target 500 --scaling-percentile p95
+    </code></pre>
+<p>A few settings to keep in mind:</p>
+<ul><li><code>min_replicas == max_replicas</code> : this results in a fixed-size deployment, autoscaling is effectively off.</li><li>Setting both to <code>min_replicas = max_replicas = 0</code> → the deployment <strong>stops</strong> (state <code>STOPPED</code>, billing stops). This can be used as a way to pause your dev endpoint.</li><li>Giving a range turns scaling on; if you set bounds but no metric, the platform applies the default: <strong><code>inflight_requests</code> with a target of 8</strong>.</li></ul>
+<h2>Under the hood: metrics to autoscale on</h2>
+<p>Eight metrics that you can autoscale on. Picking the right one depends on what you're trying to protect your deployment against.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a68e8e4f4380c27de8a29eb_CleanShot_2026-07-09_at_21.42.21.png" alt="__wf_reserved_inherit"></p>
+<p>Autoscaling metrics include concurrency-driven (leading; the safe default), SLO-driven (trailing; scale on the promise), efficiency-driven (cost-first). If you attach multiple metrics the first one in the list is used.</p>
+<p>Three ways to think about picking the right metric:</p>
+<ul><li><strong>Concurrency-driven (<code>inflight_requests</code>) is a safe default.</strong> In-flight count is a <em>leading</em> indicator: it rises when demand outpaces service but before latency visibly degrades. This metric doesn’t need streaming or a percentile choice and it maps directly onto how engines batch requests. A target of 8 for this metric says &quot;I want each replica handling about eight concurrent requests&quot;. You can raise it for short-prompt chat workloads that batch well, and lower it for coding agent long-context traffic that takes longer to prefill.</li><li><strong>SLO-driven metrics (<code>ttft</code>, <code>e2e_latency</code>):</strong> If your contract with users is &quot;first token in under a second,&quot; scaling on <code>ttft</code> p95 targets exactly this. Latency is a <em>trailing</em> signal which means that by the time p95 breaches the set threshold, users can already notice it, so you should typically pair a latency metric with honest headroom in <code>min_replicas</code>.</li><li>Another thing to keep in mind is that per-token metrics need streaming traffic. <code>ttft</code>, <code>decoding_speed</code>, and <code>throughput_per_replica</code> are only emitted on the streaming path. If your clients don't stream, these metrics have no data and you shouldn’t build your autoscale policy on them. (<code>e2e_latency</code> is an exception because it's measured for streaming and non-streaming workloads).</li><li><strong>Efficiency-driven (<code>gpu_utilization</code>, <code>token_utilization</code>): squeezing the most out of your hardware.</strong> These optimize for cost: keep replicas busy, add capacity only when the fleet is genuinely saturated. When using these metrics you need to understand what &quot;utilized&quot; truly means for your workload. A GPU can be busy without the workload being latency-healthy, and utilization targets near 100% leave no headroom for arrival bursts. If you scale on utilization you should watch your p95 Grafana chart closely.</li></ul>
+<p>This is a good table to keep in the back of your mind when selecting the metric to scale on:</p>
+<table><thead><tr><th>Metric</th><th>Measures</th><th>Type</th><th>Good to use when</th><th>TTFT p95 @ c16</th></tr></thead><tbody><tr><td>inflight_requests</td><td>Concurrent requests per replica</td><td>AVERAGE_VALUE</td><td>Default. Robust, leading, engine-agnostic</td><td>368 ms</td></tr><tr><td>ttft</td><td>Time to first token</td><td>VALUE • percentile (default p95)</td><td>You have a latency SLO on responsiveness</td><td>323 ms</td></tr><tr><td>e2e_latency</td><td>Full request latency</td><td>VALUE • percentile</td><td>SLO on total completion time</td><td></td></tr><tr><td>gpu_utilization</td><td>GPU busy %</td><td>UTILIZATION (0–100)</td><td>Cost-first workloads that tolerate latency variance</td><td></td></tr><tr><td>token_utilization</td><td>Token-capacity usage</td><td>UTILIZATION</td><td>Batch/throughput workloads near engine limits</td><td></td></tr><tr><td>throughput_per_replica</td><td>Tokens/s each replica sustains</td><td>AVERAGE_VALUE</td><td>Sustained-generation pipelines</td><td></td></tr><tr><td>decoding_speed</td><td>Per-request tokens/s</td><td>VALUE</td><td>Guarding generation speed per user</td><td></td></tr><tr><td>cache_hit_rate</td><td>Prefix-cache effectiveness</td><td>UTILIZATION</td><td>Specialist: cache-heavy serving patterns</td><td></td></tr></tbody></table>
+<h2>Idle shutdown and cold starts</h2>
+<p><strong>There is no scale-to-zero-with-automatic-wake.</strong> <code>min_replicas: 0</code> is legal only together with <code>max_replicas: 0</code> which is a way to explicitly <em>stop</em> the deployment. Waking requires an explicit action and requests to a stopped deployment return an error rather than triggering a start. This means that you should plan dev and staging endpoints around auto-stop plus explicit restart windows.</p>
+<pre><code>    
+      tg beta endpoints update dep_abc123 --min-replicas 0 --max-replicas 0   # explicit stop
+          </code></pre>
+<p>The <strong>cold-start budget</strong> is important to understand when using this auto-stop functionality. You can think of a cold start as consisting of the following phases: GPU placement → weight download → engine load → warmup and the deployment's event feed timestamps each of these phases (pod.startup_phase_changed):</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a68ea2950c15b85bc15f282_CleanShot_2026-07-09_at_21.55.19.png" alt="__wf_reserved_inherit"></p>
+<p>Larger models might have proportionally longer weight downloads, engine loads and warmup periods. To get a better feel for these numbers we present what we got across runs on 1×H100 replicas on warm clusters below:</p>
+<table><thead><tr><th>Scenario</th><th>Measured</th></tr></thead><tbody><tr><td>Base catalog model (Qwen3.5-9B), create → replica READY</td><td>86s (PullingImage ~30s → Starting ~30s → ready)</td></tr><tr><td>Custom fine-tune, fresh 18GB weights, create → READY</td><td>145s</td></tr><tr><td>Replica READY → first token served through routing</td><td>+26–40s</td></tr><tr><td>Scale-up 1→2 replicas</td><td>~2.5 min</td></tr><tr><td>Restart from STOPPED (weights already platform-side)</td><td>~1–2 min</td></tr></tbody></table>
+<p>Notice that these windows are measured in minutes which means that auto-stop only pays off when the gaps between uses are long relative to the restart and when the first user after an idle period is willing to tolerate an explicit start (or an error-then-retry flow). This tradeoff is okay for Dev and staging endpoints but for anything with a p95 SLO or unattended callers you should typically keep min_replicas: 1.</p>
+<h2>Edge cases</h2>
+<p><strong>A spike arrives faster than a cold start. What actually happens?</strong>‍</p>
+<p>Requests queue on existing replicas (the <code>inflight_requests</code> and engine queue depth will increase) and latency will degrade with TTFT increasing first followed by error/timeout risk while new replicas come up. This means that if your traffic can spike 10× in 90 seconds and your cold start is 4 minutes, the <em>only</em> defenses are <code>min_replicas</code> headroom or a higher-target policy that keeps slack capacity up. This is more of a capacity-shape question than a tuning question, and it's better answered before launch day.</p>
+<p><strong>Will my autoscaler fight a rollout?</strong></p>
+<p>No. While a <em>rollout</em> is in flight, the platform pins autoscaling bounds on both deployments; the rollout's replica counts would otherwise be undone by a scale-down decision mid-step. Your configured bounds are restored automatically when the rollout completes or aborts.</p>
+<p><strong>How does scaling interact with the traffic split?</strong></p>
+<p>This is handled smoothly because traffic-split weights are <em>per ready replica</em> (capacity = weight × ready replicas), a deployment that scales up automatically absorbs proportionally more traffic with <strong>no routing change</strong>. Autoscaling and routing work off the same capacity picture.</p>
+<p><strong>Why does my replica count look like a sawtooth?</strong></p>
+<p>This is the classic symptom of a scale-down window shorter than your traffic's natural rhythm. Bursty traffic + 1-minute down-window = scale down in every trough, cold start in every crest. To resolve this you should widen <code>scale_down_window</code> until the sawtooth flattens. This allows you to trade a few replica-minutes to eliminate repeated cold starts.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a68eb2af0963b208204d5a0_CleanShot_2026-07-09_at_22.17.19.png" alt="__wf_reserved_inherit"></p>
+<h2>Autoscaling the same load with various policies</h2>
+<p>We ran this experiment on a Qwen3.5-9B deployment (1×H100 per replica, bounds 1–3), reset to exactly 1 replica before each round, then the same scripted load replayed three times: a sine wave between ~12 and ~48 RPS with two 80 rps spikes. This was repeated under three different autoscaling policies:</p>
+<ul><li><code>inflight_requests</code> target 8</li><li><code>ttft</code> p95 target 300 ms</li><li><code>gpu_utilization</code> target 75%</li></ul>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a68eb4807ac0c9801146d95_CleanShot_2026-07-09_at_19.56.362x.png" alt="__wf_reserved_inherit"></p>
+<table><thead><tr><th>Policy</th><th>Scaled?</th><th>Replica-minutes</th><th>Requests (errors)</th><th>What happened</th></tr></thead><tbody><tr><td>inflight_requests (8)</td><td>1→2→3</td><td>26</td><td>40.6k (536)</td><td>Reacted to every wave; its extra capacity visibly lowered p95 mid-window</td></tr><tr><td>ttft p95 (300ms)</td><td>never</td><td>18</td><td>46.4k (6)</td><td>Engine TTFT stayed under target throughout; no scaling seen</td></tr><tr><td>gpu_utilization (75%)</td><td>never</td><td>18</td><td>46.5k (2)</td><td>Utilization never crossed 75%; no scaling seen</td></tr></tbody></table>
+<p>Three lessons from the above runs:</p>
+<ul><li><strong>Only the concurrency signal fired.</strong> Client p95 ran at 3–5 <em>seconds</em> under this load and clearly saturated yet the <code>ttft</code> policy never scaled, because engine-side time-to-first-token stayed low: continuous batching by the engine absorbs queue pressure into <em>total</em> latency, not first-token latency. And <code>gpu_utilization</code> never scaled because short, bursty requests leave the GPU under its 75% bar. Both policies were reading signals that looked healthy while the system was saturated. <code>inflight_requests</code> , the direct queue-pressure signal was the only one that saw the problem and this is why it's the default.</li><li><strong>Capacity helps exactly as promised.</strong> During the stretch where the inflight policy held 2 replicas (minutes ~6–11), its p95 runs visibly <em>below</em> the single-replica policies on the identical load and the middle panel shows the gap.</li><li><strong>Know your replica's saturation point before selecting a policy.</strong> One replica served 12–48 rps at 3–5s p95 without falling over but if you have a 500 ms SLO this would be a no-go.</li></ul>
+<h2>Try it yourself!</h2>
+<p>Start with the defaults, then tune from evidence:</p>
+<ul><li>Set real bounds (<code>min</code> = what your base load needs, <code>max</code> = what your budget tolerates) and take the default <code>inflight_requests</code> target 8.</li><li>Watch a week of traffic in the <em>metrics API</em>: replica count, queue pressure, p95.</li><li>Only then, tune: latency SLO → add a <code>ttft</code> policy (if you stream); cost pressure → try utilization with honest p95 monitoring; sawtooth → widen the down-window.</li></ul>
+<p>📚 <strong>Docs:</strong> <a href="https://docs.together.ai/docs/dedicated-endpoints/overview">Dedicated Model Inference</a> → <a href="https://docs.together.ai/docs/dedicated-endpoints/scaling">Autoscaling</a></p>
+<h2>Related articles</h2>
+<p>View All</p>
+<p>View All</p>]]></content:encoded>
+    </item>
+    <item>
       <title>Together AI announces strategic partnership with Moonshot AI…</title>
       <link>https://www.together.ai/blog/together-ai-announces-strategic-partnership-with-moonshot-ai-to-natively-serve-kimi-models</link>
       <guid isPermaLink="true">https://www.together.ai/blog/together-ai-announces-strategic-partnership-with-moonshot-ai-to-natively-serve-kimi-models?li=1</guid>
@@ -1832,6 +1990,123 @@ print(second.choices[0].message.content)</code></pre>
 <h2><strong>Join the conversation</strong></h2>
 <p>Want to hear directly from the team behind Moonshot AI and Together AI? Join Feihu Tang from the Moonshot AI team and Jue Wang and Zain Hasan from Together AI to talk through the technical decisions behind Kimi K3, how to actually run it on Together, and what's coming next. Bring your questions.</p>
 <p><a href="https://luma.com/together-8nl3"><strong>RSVP and set a reminder for the Moonshot x Together Webinar</strong></a></p>
+<h2>Related articles</h2>
+<p>View All</p>
+<p>View All</p>]]></content:encoded>
+    </item>
+    <item>
+      <title>Configuring Dedicated Model Inference</title>
+      <link>https://www.together.ai/blog/configuring-dedicated-model-inference</link>
+      <guid isPermaLink="true">https://www.together.ai/blog/configuring-dedicated-model-inference?li=1</guid>
+      <pubDate>Wed, 29 Jul 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p>All blog posts</p>
+<p>Inference</p>
+<p>Published 7/29/2026</p>
+<h1>Configuring Dedicated Model Inference</h1>
+<p>How endpoints, deployments, and configs fit together, and why routing follows capacity, not fixed percentages.</p>
+<ul><li>AuthorsMitali Meratwal, Zain Hasan</li><li>Table of contents<a href="https://www.together.ai/blog/configuring-dedicated-model-inference">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li></ul>
+<p>Summary</p>
+<p>Dedicated Model Inference on the Together AI platform consists of three parts: the <strong>endpoint</strong> (a stable name you or your clients call), <strong>deployments</strong> (specific model + hardware combinations running replicas behind it), and <strong>configs</strong> (recipes for how a model runs). A capacity-aware traffic split ties these three entities together. This architecture enables various other features such as rollouts, A/B tests, shadow experiments, zero-downtime changes possible. Below we'll show how capacity-aware routing works against a live endpoint with measured traffic.</p>
+<h2>How the resource model works</h2>
+<ul><li>A <strong>config</strong> is a recipe that specifies the engine, the GPU type and count as well as the parallelism and optimization profile (throughput, latency, balanced). Configs are <strong>immutable</strong> and every config has an ID like <code>cr_...</code> . Your deployment always points at exactly the config that was tested.</li><li>A <strong>deployment</strong> binds one model (at a specific revision) to one config, gives it an <em>autoscaling policy</em>, and runs replicas. Deployments are disposable on purpose and creating and destroying should be considered routine.</li><li>An <strong>endpoint</strong> is a fixed identity: a qualified name (<code>&lt;project_slug&gt;/&lt;endpoint_name&gt;</code>) that your applications pass as the <code>model</code> parameter in the ordinary <a href="https://www.together.ai/dedicated-model-inference">inference</a> API. The endpoint has a <strong>traffic split</strong> which is used to determine request routing over its deployments.</li></ul>
+<p>One easy way to understand this is by referring to the ID, every ID in the system tells you what it is by prefix, which makes logs and scripts self-documenting: <code>proj_</code> (project), <code>ml_</code> (model), <code>cr_</code> (config revision), <code>endpoint_</code>, <code>dep_</code> (deployment), <code>rol_</code> (rollout).</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a62b860d26c312daad25162_CleanShot_2026-07-09_at_22.50.39.png" alt="__wf_reserved_inherit"></p>
+<p><strong>Every advanced operation in the platform is just &quot;add a deployment, and assign it a traffic routing weight&quot;</strong> An <em>A/B test</em> is deployments with cohort assignments. A <em>shadow experiment</em> is a deployment at weight zero receiving mirrored traffic. Stopping a deployment is bounding min and max replicas to 0/0.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a62b8cc38b0ad4ed9589602_CleanShot_2026-07-09_at_22.51.25.png" alt="__wf_reserved_inherit"></p>
+<h2>Weight based traffic split</h2>
+<p>The traffic split is a list of <code>{deployment_id, weight}</code> entries where a weight is per <em>ready replica</em><strong>.</strong> The router computes each deployment's effective capacity as <code>weight × ready_replicas</code> and routes proportionally to this capacity.</p>
+<p>Walk through the diagram above: both deployments have weight 1 but deployment A has 1 ready replica (capacity 1), deployment B has 3 (capacity 3), so traffic follows a <strong>25%/75% split</strong>. Equal weights mean <em>equal per-replica load</em>, not equal traffic share.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a62b93ae048383400af5cbe_CleanShot_2026-07-09_at_22.45.47.png" alt="__wf_reserved_inherit"></p>
+<p>We designed it this way because it makes routing and scaling the same conversation:</p>
+<ul><li><strong>Autoscaling composes for free.</strong> When deployment A scales from 1 replica to 3, its capacity triples and it automatically absorbs proportionally more traffic. With naive percentages, a deployment pinned at &quot;25%&quot; would saturate when scaled down and be idle when scaled up.</li><li><strong>Per-replica load is what you control.</strong> Weight 1 vs weight 2 says &quot;each replica of B should work twice as hard as each replica of A&quot;</li><li><strong>Replicas that aren't ready don't count.</strong> A deployment mid-cold-start, or degraded to 0 ready replicas, contributes zero capacity, so traffic flows to what can actually serve.</li></ul>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a62b97f01412dc482e53558_CleanShot_2026-07-09_at_22.52.45.png" alt="__wf_reserved_inherit"></p>
+<p>Weights are positive numbers with no sum constraint so <code>0.7/0.3</code> and <code>700/300</code> describe identical routing. If you <em>want</em> fixed traffic shares regardless of replica count you can setup A/B experiment cohorts which allow for integer percents that sum to 100%.</p>
+<p>Setting a split is one PATCH with a field mask:</p>
+<pre><code>    
+      tg beta endpoints update $DEPLOYMENT_A --traffic-weight 1
+tg beta endpoints update $DEPLOYMENT_B --traffic-weight 1
+
+# take a deployment out of rotation without scaling it down
+tg beta endpoints update $DEPLOYMENT_B --traffic-weight 0
+          </code></pre>
+<h2>Under the hood: choosing a config</h2>
+<p>You don't need to write configs from scratch. Every model in the supported-models catalog ships with <strong>deployment profiles</strong> which are certified model + config pairs we benchmark and continuously improve:</p>
+<pre><code>    
+      tg beta models public zai-org/GLM-5.2 --json | jq '.data[0].deploymentProfiles[]'
+
+# or, once you have the model ID, list its deployable configs directly:
+tg beta models configs ml_CcEtnFUbitJYNja6TTR6U
+          </code></pre>
+<pre><code>    
+{
+  &quot;profileId&quot;: &quot;profile-cabcbcec874c&quot;,
+  &quot;certifiedConfigRevisionId&quot;: &quot;cr_Cd35DNpQuHM3RihtCkN59&quot;,
+  &quot;certifiedModelRevisionId&quot;: &quot;rv_CcEuPu4Gk6c4M7v4PTYuG&quot;,
+  &quot;gpuType&quot;: &quot;NVIDIA-B200&quot;,
+  &quot;gpuCount&quot;: 4,
+  &quot;quantization&quot;: &quot;FP4&quot;,
+  &quot;performanceBenchmarks&quot;: {},
+  &quot;config&quot;: &quot;projects/proj_CbdXDuLRFhUPv1mGfxwUc/configs/cr_Cd35DNpQuHM3RihtCkN59&quot;,
+  &quot;model&quot;: &quot;projects/proj_CbdXDuLRFhUPv1mGfxwUc/models/ml_CcEtnFUbitJYNja6TTR6U/revisions/rv_CcEuPu4Gk6c4M7v4PTYuG&quot;,
+  &quot;parallelism&quot;: &quot;TP4&quot;
+}
+    </code></pre>
+<p>From there you can copy the model and config resource names into a deployment create:</p>
+<pre><code>    
+      tg beta endpoints deploy zai-org/GLM-5.2 \
+  --endpoint my-glm-endpoint \
+  --config cr_Cd35DNpQuHM3RihtCkN59 \
+  --traffic-weight 1
+          </code></pre>
+<p>When you're choosing <em>between</em> configs, the selectors tell you what each recipe optimizes:</p>
+<table><thead><tr><th>Selector</th><th>Values</th><th>The tradeoff it encodes</th><th></th><th></th></tr></thead><tbody><tr><td>accelerator_type</td><td>H100, H200, B200, …</td><td>Cost vs memory bandwidth vs availability</td><td></td><td></td></tr><tr><td>accelerator_count</td><td>1, 2, 4, 8</td><td>Fit the model + KV-cache headroom</td><td></td><td></td></tr><tr><td>optimization</td><td>latency / throughput / balanced</td><td>The fundamental serving tradeoff (below)</td><td></td><td></td></tr><tr><td>topology</td><td>e.g. aggregated/disaggregated</td><td>How the model splits across GPUs</td><td></td><td></td></tr></tbody></table>
+<p>The optimization axis is the one you'll spend the most time choosing between.</p>
+<ul><li>A latency profile optimizes for time-to-first-token: smaller batches, eager scheduling, each request gets attention sooner, at the cost of total tokens/sec per GPU.</li><li>A throughput profile packs bigger batches: maximizing aggregate tokens per GPU-hour, and individual requests wait a bit longer to join a batch. If you’re building an interactive chat you probably want to go with latency whereas offline pipelines and batch summarization can use a throughput config.</li><li>balanced is a good default when your traffic has both.</li></ul>
+<p>Configs are immutable because cr_ revisions never change, i.e. a deployment's behavior can't drift because someone &quot;just tweaked a flag&quot; on a shared config. A change is a new revision; the old one remains a valid, tested rollback target. Speculative decoding can be triggered from here too because a draft model is a property of the <em>config.</em></p>
+<h2>Edge cases</h2>
+<p><strong>1. A deployment is in the split but has 0 ready replicas.</strong></p>
+<p>Because capacity = weight × 0 = 0 it receives no traffic; other deployments will absorb its share. When replicas recover, traffic flows back automatically and proportionally.</p>
+<p><strong>2. Can I delete a deployment that's still in the traffic split?</strong></p>
+<p>You should remove it from the split first, then delete. The teardown sequence consists of drain traffic → stop → delete, and the API will push you towards that order.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a62bbf7c76ae2af542d33af_CleanShot_2026-07-09_at_22.55.25.png" alt="__wf_reserved_inherit"></p>
+<p><strong>3. Traffic splits vs. A/B member percents vs. canary step percentages</strong></p>
+<p><strong>traffic-split weights</strong> (capacity-relative, steady-state routing), <strong>A/B member percents</strong> (integer cohort shares, sum to 100 and are fixed regardless of replica counts), and <strong>canary step percentages</strong> (a rollout's transition schedule). These are three different tools for three different jobs and they compose in a fixed order: routing first resolves the <strong>weight split</strong> (a candidate deployment sampled by capacity), then an <strong>A/B experiment</strong> re-samples if the candidate is its control (subdividing the control's share among the arms), then an <strong>active rollout</strong> re-samples if the candidate is its source (splitting between source and target by the current step percentage) and finally a cluster is chosen inside the winning deployment. A rollout manipulates its stage on your behalf.</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a62bc45c496ab2a0095385c_CleanShot_2026-07-09_at_22.56.31.png" alt="__wf_reserved_inherit"></p>
+<p><strong>4. What is the name my clients use?</strong></p>
+<p>The endpoint which looks something like: <code>&lt;project_slug&gt;/&lt;endpoint_name&gt;</code> can be passed as a <code>model</code> string in the standard inference API. This will stay the same even if you choose to perform a rollout, swap hardware, run A/B tests.</p>
+<h2>Experiment showing capacity-aware routing</h2>
+<p>We ran this against a live endpoint with two single-H100 deployments to show the weight model traffic split in action. Two deployments each with weight 1 and each starting with 1 ready replica. We sent 599 tagged requests and attributed each to its serving deployment, then scaled A from 1 → 2 replicas and sent 599 more requests and the following routing was captured as seen by the deployments:</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a62bc93c496ab2a0095488a_image.png" alt="__wf_reserved_inherit"></p>
+<table><thead><tr><th>Phase</th><th>Replicas (A : B)</th><th>Expected share</th><th>Measured share</th><th>n</th></tr></thead><tbody><tr><td>1</td><td>1 : 1</td><td>50 / 50</td><td>47.6 / 52.4</td><td>599</td></tr><tr><td>2</td><td>2 : 1</td><td>66.7 / 33.3</td><td>69.4 / 30.6</td><td>599</td></tr></tbody></table>
+<p>Because routing follows capacity which in turn followed the replicas. Within deployment A, its two pods each carried ~30–40% of total traffic (39.6% and 29.9%), the router balances across pods, too.</p>
+<p>To make the profile tradeoff concrete, we swept the two certified profiles from our demo endpoint with one replica each, 60-second closed-loop levels at concurrency 4 / 8 / 16, 200-token generations, token counts taken from the API's own <code>usage</code> field:</p>
+<p><img src="https://cdn.prod.website-files.com/69654e88dce9154b5f12070c/6a62bcfc38b0ad4ed959ad4b_image%201.png" alt="__wf_reserved_inherit"></p>
+<table><thead><tr><th>Profile</th><th>c=4</th><th>c=8</th><th>c=16</th><th>TTFT p95 @ c16</th></tr></thead><tbody><tr><td>A · Qwen3.5-9B (BF16, TP1)</td><td>362 tok/s</td><td>789 tok/s</td><td>1,464 tok/s</td><td>368 ms</td></tr><tr><td>B · Qwen3-VL-8B (BF16, TP1)</td><td>495 tok/s</td><td>243 tok/s</td><td>240 tok/s</td><td>323 ms</td></tr></tbody></table>
+<p>This table is the whole argument for measuring: <strong>B wins at low concurrency, then degrades sharply.</strong> A batches well with 4× the throughput from c4 to c16 with TTFT p95 rising only ~17%. B is <em>faster</em> than A at concurrency 4, then saturates: past c≈4 its effective request rate stops growing, aggregate throughput halves, and a few requests per minute begin to stall outright. If you'd only load-tested at concurrency 4, you'd have picked B for a high-concurrency workload and only found out about this behavior in production.</p>
+<p>Neither profile is &quot;wrong&quot; they're just different points on the serving frontier, and profiles for <em>your</em> model will have their own curves. The starting configs give you a way to test starting points; a one-hour sweep like this one tells you which one fits your traffic.</p>
+<h2>Try it yourself!</h2>
+<p>The whole model, in five commands:</p>
+<pre><code>    
+      # 1. Identity: who am I / what project
+tg whoami
+
+# 2. Pick a certified profile for your model
+tg beta models public --product dedicated
+
+# 3. One command: endpoint + deployment + traffic split + wait
+tg beta endpoints deploy $MODEL --endpoint my-endpoint --traffic-weight 1
+
+# 4. Call it — the qualified name is the model string
+resp = client.chat.completions.create(
+model=&quot;my-project/my-endpoint&quot;,   # the endpoint's qualified name IS the model string
+messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot;}],
+)
+
+# 5. See what you built
+together beta endpoints get $ENDPOINT_ID
+    </code></pre>
+<p>From here, everything else in this series is one more deployment away.</p>
+<p>📚 <strong>Docs:</strong> Dedicated Model Inference → <a href="https://docs.together.ai/docs/dedicated-endpoints/quickstart">Quickstart</a> · <a href="https://docs.together.ai/docs/dedicated-endpoints/concepts">Concepts</a> · <a href="https://docs.together.ai/docs/dedicated-endpoints/route-traffic">Route traffic</a></p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>
@@ -3495,173 +3770,6 @@ for chunk in stream:
 <h3>5. Partners that move at AI-native pace of growth</h3>
 <p>Finally, an AI Native Cloud must operate at startup speed, even when powering massive workloads. It must expand new capacity in weeks, not years, building gigawatt-scale AI factories in strategic locations, rapidly adopting new accelerator generations, and co-designing architectures with customers to future-proof their next launches. Here, startup-speed isn't a cultural value — it's an infrastructure strategy.</p>
 <p>As AI-natives deliver new experiences across every domain to every person in this world, they will need an AI Native Cloud that can be the foundation of their development and growth. At Together AI, we are building the AI Native Cloud, purpose-built for AI natives and in deep collaboration with the leading AI natives.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>AI for Systems: Using LLMs to Optimize Database Query Execut…</title>
-      <link>https://www.together.ai/blog/using-llms-to-optimize-database-query-execution</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/using-llms-to-optimize-database-query-execution?li=1</guid>
-      <pubDate>Fri, 03 Apr 2026 00:00:00 +0000</pubDate>
-      <description>Full title: AI for Systems: Using LLMs to Optimize Database Query Execution</description>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 4/3/2026</p>
-<h1>AI for Systems: Using LLMs to Optimize Database Query Execution</h1>
-<ul><li>AuthorsMehmet Hamza Erol, Xiangpeng Hao, Federico Bianchi, Ciro Greco, Jacopo Tagliabue, James Zou</li><li>Table of contents<a href="https://www.together.ai/blog/using-llms-to-optimize-database-query-execution#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://arxiv.org/pdf/2602.10387">Paper</a><a href="https://github.com/BauplanLabs/Making-Databases-Faster-with-LLM-Evolutionary-Sampling">Code</a></li></ul>
-<p>Summary</p>
-<p>We worked in collaboration with Stanford University, the University of Wisconsin–Madison, and Bauplan to test whether LLMs can optimize database query execution plans. The results show that LLM-guided plan rewrites can improve execution performance without modifying the database engine itself.</p>
-<p>Recent advances in AI have been driven by improvements in the underlying systems infrastructure. But this relationship does not have to be asymmetric: AI and LLMs can also be used to optimize the functional components of large-scale systems themselves. Our recent paper shows how AI can be used for database query optimization.</p>
-<p>Traditional query optimization relies on cost-based estimators that calculate execution paths using statistical models and predefined heuristics. When executing a query like <strong>&quot;find all sci-fi shows with space travel,&quot;</strong> the optimizer must decide on an execution strategy: Should it first filter for sci-fi shows and then check which have space travel, or vice versa? If the data is spread across multiple tables (e.g., a shows table and a genres table), which table should be scanned first and how should they be joined? The optimizer answers these questions by estimating how many rows will match each condition, then choosing the actual plan (the order of the operations) with the lowest estimated cost.</p>
-<p><strong>However, these estimates often assume attribute independence.</strong> Consider a streaming service dataset where you want to find shows that are both &quot;sci-fi&quot; AND &quot;have space travel.&quot; If 15% of shows are sci-fi and 8% feature space travel, assuming independence would estimate that 1.2% of shows match both criteria (15% × 8%). However, space travel shows are overwhelmingly sci-fi, so the actual overlap is closer to 7%—nearly 6 times higher than predicted.</p>
-<p>In fact, these systems generally function well but struggle when heuristics fail to account for semantic correlations within the schema or data. As noted in an example by <a href="https://wp.sigmod.org/?p=1075">Lohman</a> (2014), cardinality estimation is the dominant source of optimizer inefficiency because row-count misestimates propagate through the cost model and can lead to systematically poor choices of join order, access paths, and physical operators. This order-of-magnitude error leads to suboptimal physical plans that require substantial engineering effort to correct manually.</p>
-<p>Semantic-aware join optimization. By pushing the selective <code>date</code> filter earlier, the LLM reorders the plan so the sales fact table is pruned from 15.1M to 2.9M rows before the join, yielding a much faster query.</p>
-<h2>Is query optimization a solved problem?</h2>
-<p>The persistence of these estimation errors shows that physical planning is not a solved problem, particularly for complex OLAP workloads where functional dependencies are common.</p>
-<p>To address this, we introduce DBPlanBench, a harness that exposes the query execution process of the Apache DataFusion engine. This system exposes the internal physical operator graph, including join strategies and partitioning schemes, to an LLM. The primary technical challenge here is the information density inherent in raw physical plans, which contain verbose file paths, partition metadata, and type encodings that fill up the context window quickly.</p>
-<p>Without careful serialization, the entire plan can exceed 2M characters, making it impossible for LLMs to reason over the inputs effectively and efficiently. Our harness implements a serialization layer that traverses the engine's physical operator graph and maps heterogeneous objects into a unified, token-efficient JSON schema.</p>
-<p>An illustrative snippet of compressing engine statistics for a single table. The full JSON includes many execution-irrelevant fields (e.g., <code>precisionInfo</code>, per-column min/max and null counts), while the succinct stats keep only the main signals such as <code>n_rows</code> and <code>total_bytes</code>.</p>
-<p>This representation deduplicates file-level statistics and removes execution-irrelevant fields, resulting in a payload approximately 10x smaller than the native serialization.</p>
-<p>DBPlanBench thereby converts the optimization task from a statistical computation into a semantic reasoning problem, in which the LLM analyzes the plan's topology to identify logical flaws in join ordering.</p>
-<p>Our optimization harness to optimize physical plans inside DataFusion.</p>
-<p>To implement these fixes safely, we instruct the LLM to avoid regenerating an entire physical plan from scratch; instead, it applies targeted edits to DataFusion’s existing physical plan, reducing the risk of syntax errors or invalid plan topology. Concretely, the LLM generates JSON Patches (RFC 6902) that describe localized edits, such as swapping join sides or reordering nodes. These patches are orders of magnitude smaller than the full plan and are applied directly to the serialized graph, ensuring the structural integrity of the execution DAG.</p>
-<p>Example JSON Patch that swaps the left and right inputs of a hashJoin, updating both child IDs and join keys. It illustrates how a small, localized patch can rewrite a join (e.g., to put the smaller table on the build side) without regenerating the whole plan.</p>
-<h2>A case study</h2>
-<p>The consequences of statistical estimation failures are measurable in both query latency and system resource consumption. In a specific query generated from a derived version of TPC-DS involving cross-channel sales, the default DataFusion optimizer prioritized joining a smaller item table (36K rows) before a larger date dimension table (73K rows), assuming the smaller join was cheaper. This heuristic failed to account for the high selectivity of the filter d_year=2001 on the date dimension. The LLM-optimized plan inverted this order, applying the date filter early to prune the sales fact table from 15.1 million rows to 2.9 million rows before subsequent joins.</p>
-<p>This structural optimization resulted in a 4.78x speedup for the query. More significantly, the resource footprint decreased drastically. The optimized plan reduced the aggregate hash-table build time from 10.16 seconds to 0.41 seconds and slashed total build memory usage from 3.3 GB to 411 MB. The experiments showed that, on generated query workloads for TPC-H and TPC-DS, the median speedups hovered around 1.1x to 1.2x, and the method also delivered much larger gains on some complex multi-join queries, for example, speedups of up to 4.78×, with several others in the 1.5-1.7x range.</p>
-<h2>Evolutionary plan patching</h2>
-<p>We evolve query plans through iterative refinement. The system generates candidate improvements (via JSON patches) using GPT-5, validates each change, and keeps patches that reduce latency. Once these patches are applied, the system tries again to generate new candidates starting from the new plans. By building on successful optimizations across multiple steps, this evolutionary approach achieves better speedups than simply sampling many plans independently.</p>
-<p>Not all queries can be effectively optimized, as the plans might already be optimal, but we find that in our sampled datasets, 60.8% of those queries could be optimized by more than 5%. The following figure shows the improvements on one of our derived datasets:</p>
-<p>Speedup distribution on one of the tested datasets (120 queries). While we can optimize a larger portion of queries, it’s interesting that we can optimize ~30% of the queries to have a speedup of more than 10%.</p>
-<h2>Transferring speedups across scale factors</h2>
-<p>The benchmarks we use expose a scale factor parameter that scales table cardinalities while keeping the underlying schema fixed. In practice, this lets us build a smaller prototype database (e.g., Scale Factor 3, or SF3) and a larger production-like database (e.g., SF10) that share the same structure but differ only in size.</p>
-<p>Because exploring many candidate plans on full-scale data is expensive (each step requires executing the query plus paying and waiting for LLM-generated patches), we first discover good optimized plans on SF3 using evolutionary search. For each query, we then transfer the best SF3 plan to SF10 using a deterministic, rule-based script. This script matches scan operators across scales via normalized schema / projection / predicate signatures and rewrites the SF3 optimized plan into a runnable SF10 plan, preserving structural edits such as join reorderings and join-side swaps while enforcing safety checks (e.g., no dangling references, valid DAG topology).</p>
-<p>Empirically, every optimized plan we selected at SF3 could be successfully transferred to SF10, and the resulting speedups closely tracked the original ones. This validates a practical “optimize small, deploy large” workflow: run the expensive search once on a compact replica of the workload, then lift the resulting plans to larger production databases with minimal additional engineering effort.</p>
-<p>Speedups found on the small SF3 databases largely carry over to the larger SF10 ones. Each point is a query, comparing its speedup at SF3 (x-axis) and SF10 (y-axis).</p>
-<h2>Conclusion</h2>
-<p>DBPlanBench establishes that LLMs can effectively function as semantic cardinality estimators to correct physical plan errors that statistical heuristics miss. By combining compact plan serialization with evolutionary patch search, the system achieves significant reductions in execution time and memory pressure without requiring changes to the core database engine. The harness and code are released as open-source for further research.</p>
-<h2>References</h2>
-<p>Lohman, G. Is query optimization a “solved” problem? ACM SIGMOD Blog, April 2014. URL: <a href="https://wp.sigmod.org/?p=1075">https://wp.sigmod.org/?p=1075</a>. Accessed: 2026-01-26.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Inside the Together AI kernels team</title>
-      <link>https://www.together.ai/blog/inside-the-together-ai-kernels-team</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/inside-the-together-ai-kernels-team?li=1</guid>
-      <pubDate>Wed, 01 Apr 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 4/1/2026</p>
-<h1>Inside the Together AI kernels team</h1>
-<p>A look at the team making GPUs go faster than anyone thought possible</p>
-<ul><li>AuthorsWill Van Eaton</li><li>Table of contents<a href="https://www.together.ai/blog/inside-the-together-ai-kernels-team#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://arxiv.org/abs/2205.14135">FlashAttention</a><a href="https://arxiv.org/abs/2603.05451">FlashAttention-4</a><a href="https://hazyresearch.stanford.edu/blog/2025-05-27-no-bubbles">Megakernel</a><a href="https://arxiv.org/abs/2410.20399">ThunderKittens</a></li></ul>
-<p>The breakthrough came on a holiday weekend. Memorial Day 2022. While most of Silicon Valley was at barbecues, Dan Fu, Tri Dao, and their colleagues were about to prove the AI establishment wrong.</p>
-<p>The conventional wisdom was settled: transformer attention was already optimized. GPU experts had squeezed every drop of performance from the hardware. There wasn't much left to gain.</p>
-<p>Then Dan, Tri, and their colleagues published <a href="https://arxiv.org/abs/2205.14135">FlashAttention</a>.</p>
-<p>Andrej Karpathy, then Senior Director of AI at Tesla, tweeted about it that afternoon. Within hours it was ricocheting through AI research channels. &quot;Honestly, we weren't expecting anybody to see it when we released it,&quot; Dan recalls. &quot;We were prepping some blogs and code release for Tuesday morning. But then we saw Karpathy tweet about it Monday at 7 p.m. — so then we knew it was something people were paying attention to.&quot;</p>
-<p>Previous work on sparsity and low-rank methods showed theoretical speedup but only 10% real performance gains. The FlashAttention team took a different approach: understanding actual GPU memory movement and compute patterns. By applying classic database systems principles (unglamorous stuff about data locality and memory hierarchies) to attention, they achieved 2–3x speedups.</p>
-<p>For the researchers behind it, the implications were clear. Enormous untapped potential remained in GPU optimization. That single paper became the foundation for what's now one of the most impactful kernel research teams in AI, and a critical building block of the AI Native Cloud.</p>
-<h2>The problem no one was talking about</h2>
-<p>Here's what most people don't understand about AI: having the best models and the best hardware isn't enough. The bottleneck is the gap between them: the software layer that translates mathematical operations into silicon instructions. That's where kernels come in.</p>
-<p>The gap between what researchers design and what actually runs fast on hardware is vast. Many foundational architectures (ResNets, LSTMs, RNNs) were designed before the scaling paradigm took hold. As researchers began scaling models to hundreds of billions of parameters, hardware evolved with them. GPUs became increasingly specialized matrix multiplication machines, tuned for the Transformer architectures dominating modern AI.</p>
-<p>Kernels are the translation layer between mathematical abstraction and silicon reality: the software that tells GPUs exactly how to move data and perform computations efficiently. Get them right, and you unlock the full power of the hardware. Get them wrong, and that hardware sits idle.</p>
-<p>For AI-native applications (products built with AI at their core), this gap is existential. You can't build a responsive AI-native app on infrastructure running below optimal capacity. You can't scale an AI-native business when inference costs are 2x higher than they should be. The AI Native Cloud requires AI-native infrastructure, optimized from the silicon up.</p>
-<h2>One week to match a year's work</h2>
-<p>In March 2025, our kernels team had grown to about 15 people: a mix of ML researchers seeking systems challenges and GPU veterans moving into AI. We'd just gotten access to NVIDIA's new Blackwell GPUs, the latest generation of hardware with fundamentally different capabilities from their predecessors.</p>
-<p>The challenge was specific: NVIDIA's teams had spent a year developing optimized kernels for Blackwell, with dozens of engineers and intimate knowledge of the hardware. We had a week.</p>
-<p>We needed something that would let us move fast. That something was ThunderKittens, a library we'd been developing in collaboration with researchers at Stanford.</p>
-<p>&quot;We had experience adapting kernels to new hardware, and we knew it would take time,&quot; Dan says. &quot;For example, FlashAttention-3 came out a year after general Hopper availability. We wanted to build tools to make it easier to quickly build kernels for the new hardware generation, and ThunderKittens was the answer.&quot;</p>
-<p>ThunderKittens is built around NVIDIA's tensor cores, the hardware units on the GPU specialized for matrix multiplication. By building abstractions around tensor cores, ThunderKittens reduces what was once 1,000+ lines of CUDA code to 100–200 lines.</p>
-<p>The team worked around the clock, adapting ThunderKittens to Blackwell's new features: Fifth-generation tensor cores that run 2–2.5x faster than the previous generation, a new layer of tensor memory providing an extra 256KB of ultra-fast on-chip storage, and CTA pairs that allow thread blocks to coordinate more deeply.</p>
-<p>Within one week of hardware access, we had some of the <a href="https://www.together.ai/blog/nvidia-hgx-b200-with-together-kernel-collection">fastest FP4 and FP8 GEMM kernels</a> available for Blackwell, with up to 2x speedups over cuBLAS on H100s.</p>
-<h2>The academic engine</h2>
-<p>ThunderKittens didn't come from nowhere. It's part of a broader pattern in how this team is built.</p>
-<p>Dan Fu runs a lab at UCSD focused on higher-risk fundamental research, including his personal passion project on FFT algorithms (a niche area most industry researchers would never touch). Together AI co-founder and Chief Scientist Tri Dao is at Princeton. Simran Arora is at Caltech.</p>
-<p>The model is symbiotic: de-risk ideas in academia, productionize them at Together AI. PhD students join the company. Together AI interns work on longer-term research in academic labs. Ideas flow both ways.</p>
-<p>This philosophy shapes hiring. We're not looking for people who just want to ship code or rack up citations. We want people who lose sleep over memory access patterns. Who find beauty in data flow diagrams. Who get genuinely excited about taking cutting-edge research into production. Research inherently involves repeated failure. You have to be driven by genuine interest above all else. Even non-trendy areas like FFT are worth pursuing if they're genuinely interesting.</p>
-<p>The team has become a springboard for the next generation of systems researchers, people who can bridge the gap between theory and production. We've &quot;graduated&quot; Professor Yucheng Lu, now an assistant professor and leader of the HeavyBall Research group at NYU Shanghai.</p>
-<h2>Together Megakernel: From 281ms to 77ms</h2>
-<p>One example of applying this academic engine to production use cases involved one of the leading real-time voice agent companies. They came to Together with a hard constraint: time-to-first-64-tokens above roughly 100ms breaks the conversational experience. On their previous setup, deployed on NVIDIA B200 GPUs, they were hitting 281ms. Fast for most workloads. Not fast enough for theirs.</p>
-<p>Together's kernels team worked with them to select a model architecture, then hand-optimized a Megakernel implementation that runs an entire model in a single kernel, targeting the HBM bandwidth ceiling of the NVIDIA H100.</p>
-<p>The result: 77ms on Llama-3.2-1B, a 3.6x performance improvement and 7.2x better unit economics compared to their prior deployment. On Qwen 2.5 1.5B: 127ms, down from 292ms on the B200 baseline.</p>
-<p>Together Megakernel is the production implementation of open-source research initially developed with collaborators at Stanford. Backed by the same research lineage as FlashAttention, it's hardware-software co-design that closes the gap between what's theoretically possible and what deployed systems actually deliver.</p>
-<h2>World-class research meets production reality</h2>
-<p>Here's what makes Together AI different: our kernels team isn't just a research organization publishing papers. We're customer-facing, working directly with strategic partners to improve their deployments.</p>
-<p>Take Cursor. When you're building an AI-native product where every millisecond of latency matters, where developers are waiting for code completions in real-time, generic infrastructure doesn't cut it. You need custom optimization for your specific workload, your specific models, your specific SLA requirements.</p>
-<p>That's what you get when you partner with Together AI: direct access to a top-tier kernel research team. We profile your workload. We identify bottlenecks. We write custom kernels to eliminate them. We're not a hyperscaler where you're a small fish in a big pond, filing support tickets and hoping someone eventually looks at your issue.</p>
-<p>For customers with the tightest SLAs (the ones who need real-time responses, the ones running at massive scale where every percentage point of efficiency translates to millions in cost savings) we build custom solutions. Custom kernels for system bottlenecks. Custom optimizations for specific model architectures. The full weight of our research team focused on making your deployment as fast as physically possible.</p>
-<p>This is what the AI Native Cloud looks like in practice: world-class research teams working hand-in-hand with AI-native builders, closing the gap between what's theoretically possible and what's actually running in production.</p>
-<h2>Collaborative, curious, relentless</h2>
-<p>Our team culture is built around intellectual curiosity and collaboration, not competition — about 15 people with what Dan Fu calls a &quot;gung ho&quot; mentality.</p>
-<p>&quot;We're nice people,&quot; Dan says. &quot;No rockstar egos. Just people who are excited about this time and who love solving hard problems together.&quot;</p>
-<p>The team has two main archetypes: ML people wanting systems challenges, and GPU/graphics people moving into ML. Both need to learn the other half. &quot;You're understanding all the pieces so you know how they work together,&quot; Dan explains.</p>
-<p>We're looking for people who want to get deep into technical details, to leave no stone unturned — not just how to make something work, but why it works, how it could work better, what fundamental principles govern its behavior.</p>
-<p>The work is sometimes unglamorous. There's no announcement when a kernel optimization lands. Just faster training times, lower costs, higher throughput: The metrics that determine whether production systems run or don't.</p>
-<p>But these margins matter more than almost anything else.</p>
-<p>It’s the difference between a model that trains in three weeks versus three months; between an API that responds in 100 milliseconds versus 1 second; between spending \$10 million on compute versus \$5 million for the same results. For the next generation of AI-native applications and companies, these margins determine whether your product feels instant or sluggish. Whether your unit economics work or don't. Whether you can scale to millions of users or plateau at thousands.</p>
-<p>Data quality matters. Model architecture matters. Training techniques matter. But if you can't make the hardware work efficiently, none of that other stuff scales.</p>
-<p>And for a certain type of engineer, the kind who finds beauty in memory access patterns and computational efficiency, who wants to work on the invisible scaffolding that makes everything else possible, this is the most exciting place to be.</p>
-<h3>Join us</h3>
-<p>We're hiring for our kernel research team. If you're passionate about performance optimization and eager to work at the intersection of hardware and AI, <a href="https://www.together.ai/careers#roles">apply today</a>.</p>
-<h2>Related articles</h2>
-<p>View All</p>
-<p>View All</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>Aurora</title>
-      <link>https://www.together.ai/blog/aurora</link>
-      <guid isPermaLink="true">https://www.together.ai/blog/aurora?li=1</guid>
-      <pubDate>Tue, 31 Mar 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<p>All blog posts</p>
-<p>Published 3/31/2026</p>
-<h1>Aurora</h1>
-<ul><li>AuthorsJunxiong Wang, Fengxiang Bie, Jisen Li, Zhongzhu Zhou, Zelei Shao, Yubo Wang, Yinghui Liu, Qingyang Wu, Avner May, Sri Yanamandra, Ce Zhang, Tri Dao, Percy Liang, Shuaiwen Leon Song, Ben Athiwaratkun, Chenfeng Xu, Xiaoxia Wu</li><li>Table of contents<a href="https://www.together.ai/blog/aurora#">40+ Models Chosen for Production...40+ Models Chosen for Production...40+ Models Chosen for Production...</a></li><li>Links in this article<a href="https://arxiv.org/abs/2602.06932">Paper</a><a href="https://github.com/togethercomputer/aurora">Code</a><a href="https://aurora-spec-ai.github.io/">Project website</a><a href="https://www.together.ai/blog/adaptive-learning-speculator-system-atlas">ATLAS</a></li></ul>
-<p>Summary</p>
-<p>Speculative decoding goes stale in production — draft models can drift and offline retraining can't always keep pace.</p>
-<p>Aurora fixes this. It's an open-source, RL-based framework that learns directly from live inference traces and continuously updates the speculator without interrupting serving.</p>
-<p>Key results:</p>
-<p>→ Real-time adaptation across shifting traffic domains → 1.25x additional speedup over a well-trained static speculator</p>
-<p>The headline finding: online training from scratch can outperform a carefully pretrained static baseline.</p>
-<p>Running large language models in production is a constant tradeoff between performance and cost. Speculative decoding is the standard lever: in principle, it speeds up inference. In practice, it often under-delivers—draft models go stale, acceptance rates drift, and offline retraining is too slow and too expensive to keep pace with live traffic. What if your system could learn continuously, on the fly, from the very requests it's serving?</p>
-<p>Last year, we introduced <a href="https://www.together.ai/blog/adaptive-learning-speculator-system-atlas">ATLAS</a> — our first step toward an adaptive speculator. That work laid the foundation, but the goal was always a fully autonomous system that closes the loop between serving and training.</p>
-<p>Today, we're releasing <strong>Aurora</strong>, an open-source, RL-based framework that learns from live inference traces and updates the speculator asynchronously—turning speculative decoding from a static, one-time setup into a dynamic, self-improving flywheel. This unified design unlocks capabilities that are difficult to achieve in standard pipelines, including: (1) direct mitigation of distribution mismatch, achieving a 1.25x improvement over a strong offline baseline; (2) reduced infrastructure cost by eliminating large-scale activation-collection pipelines; (3) an algorithm-agnostic framework compatible with future speculator designs; and (4) support for diverse, heterogeneous user demands.</p>
-<p>Across experiments, Aurora achieves an additional 1.25x speedup over a well-trained but static speculator on widely used models (e.g., Qwen3 and Llama3).</p>
-<p>The code to reproduce the paper’s results is <a href="https://github.com/togethercomputer/aurora">open-sourced</a>, and we welcome contributions from the community.</p>
-<p>Aurora quickly adapts to shifting domains.</p>
-<h3>End-to-end throughput under varying batch sizes</h3>
-<h4><strong>MiniMax M2.5 (FP8, lookahead 5):</strong></h4>
-<table><thead><tr><th>BS</th><th>Config</th><th>OTPS Mean</th><th>OTPS P50</th><th>OTPS P05</th><th>OTPS P95</th><th>Speedup</th><th>Acc Len</th></tr></thead><tbody><tr><td>1</td><td>w/o spec</td><td>147.06</td><td>146.45</td><td>140.46</td><td>154.72</td><td>--</td><td>--</td></tr><tr><td>w/ spec</td><td>240.39</td><td>226.57</td><td>186.98</td><td>325.36</td><td>1.63×</td><td>2.41</td><td></td></tr><tr><td>8</td><td>w/o spec</td><td>109.41</td><td>106.49</td><td>99.56</td><td>126.57</td><td>--</td><td>--</td></tr><tr><td>w/ spec</td><td>160.95</td><td>157.42</td><td>123.72</td><td>207.04</td><td>1.47×</td><td>2.40</td><td></td></tr><tr><td>16</td><td>w/o spec</td><td>93.12</td><td>89.56</td><td>82.64</td><td>113.29</td><td>--</td><td>--</td></tr><tr><td>w/ spec</td><td>134.70</td><td>129.95</td><td>100.97</td><td>179.02</td><td>1.45×</td><td>2.40</td><td></td></tr><tr><td>32</td><td>w/o spec</td><td>80.44</td><td>77.57</td><td>71.77</td><td>96.84</td><td>--</td><td>--</td></tr><tr><td>w/ spec</td><td>120.67</td><td>115.04</td><td>92.49</td><td>162.77</td><td>1.50×</td><td>2.45</td><td></td></tr></tbody></table>
-<p>OTPS = output tokens-per-second. <a href="https://huggingface.co/datasets/togethercomputer/aurora/blob/main/merged/merged_eval_data_shuffled.jsonl"><strong>Testing dataset</strong></a> (198 examples).</p>
-<h4><strong>Qwen3-Coder-Next-FP8 (lookahead 5): </strong></h4>
-<table><thead><tr><th>BS</th><th>Config</th><th>OTPS Mean</th><th>OTPS P50</th><th>OTPS P05</th><th>OTPS P95</th><th>Speedup</th><th>Acc Len</th></tr></thead><tbody><tr><td>1</td><td>w/o spec</td><td>195.21</td><td>195.23</td><td>194.75</td><td>195.75</td><td>--</td><td>--</td></tr><tr><td>w/ spec</td><td>375.49</td><td>350.37</td><td>251.92</td><td>574.03</td><td>1.92×</td><td>3.05</td><td></td></tr><tr><td>8</td><td>w/o spec</td><td>160.08</td><td>157.69</td><td>155.81</td><td>175.40</td><td>--</td><td>--</td></tr><tr><td>w/ spec</td><td>279.09</td><td>250.65</td><td>188.27</td><td>414.05</td><td>1.74×</td><td>3.10</td><td></td></tr><tr><td>16</td><td>w/o spec</td><td>138.70</td><td>137.92</td><td>130.05</td><td>150.44</td><td>--</td><td>--</td></tr><tr><td>w/ spec</td><td>221.56</td><td>202.96</td><td>143.80</td><td>323.54</td><td>1.60×</td><td>2.96</td><td></td></tr><tr><td>32</td><td>w/o spec</td><td>117.50</td><td>114.36</td><td>108.95</td><td>130.10</td><td>--</td><td>--</td></tr><tr><td>w/ spec</td><td>184.23</td><td>166.56</td><td>124.03</td><td>278.96</td><td>1.57×</td><td>3.00</td><td></td></tr></tbody></table>
-<p>OTPS = output tokens-per-second. <a href="https://huggingface.co/datasets/togethercomputer/aurora/viewer/code/eval"><strong>Testing dataset</strong></a> (198 examples).</p>
-<h2>1. Why the standard train-then-serve pipeline breaks down</h2>
-<p>Offline speculative training is convenient organizationally, but it introduces several practical issues in production that limit its effectiveness. The traditional pipeline is a one-way street — leading to stale models and a disconnect from real-world performance.</p>
-<p>Static speculators typically degrade as traffic patterns shift.</p>
-<p>Traditional speculative decoding follows a linear, static flow that degrades over time. Aurora introduces a circular, continuously adaptive approach.</p>
-<p><strong>The verifier moves, but the drafter lags.</strong> Production target models change — for quality, safety, cost, or hardware migration. The speculator often updates much more slowly, so it becomes stale and speculative performance degrades over time.</p>
-<p><strong>Offline distillation pipelines are expensive.</strong> Activation collection and replay pipelines for drafter training can be extremely costly to store and operate at scale. At production scale, the storage footprint can reach petabyte-level magnitude, with high cost in memory, bandwidth, and operational complexity. Aurora reduces this burden by learning directly from live serving traces.</p>
-<p><strong>Acceptance rate is not the same as real speedup.</strong> Offline training can optimize acceptance in a lab setting, but production speedup depends on the actual serving stack: kernels, numeric precision (FP8/FP4), batching, scheduling, and hardware behavior. The best draft model offline may not be the best model online. In practice, most teams train multiple drafters but end up selecting only one — Aurora enables a direct speedup comparison because it operates online.</p>
-<p>These gaps suggest that speculative decoding should not be treated merely as a modeling problem (&quot;train a better drafter&quot;), but as a joint learning-and-serving problem.</p>
-<h2>2. The core idea: A serve-to-train flywheel powered by RL</h2>
-<p>Aurora turns speculative decoding into a serve-to-train flywheel. Rather than treating the speculator as a static artifact, it learns continuously from every request it serves.</p>
-<p>Aurora offers a serve-to-train flywheel powered by RL.</p>
-<p>The system is built around two decoupled components. The Inference Server runs a speculative decoding engine (based on SGLang or vLLM) with a target model and a draft model. For each request, the draft model proposes a sequence of tokens, which are then verified in parallel by the target model. The results of both accepted and rejected tokens — along with hidden states for EAGLE-style training — are streamed to a distributed data buffer. The Training Server runs asynchronously: it fetches batches of training data from the buffer, performs gradient updates on a copy of the draft model, and periodically hot-swaps improved weights back to the inference server without service interruption.</p>
-<p>This design is built around two production realities. First, serving efficiency is the real objective — latency, throughput, and cost/token under SLOs. Second, synchronization must be lazy and non-disruptive — frequent weight pushes can cause cache invalidation and latency jitter. To make this design work reliably, we re-formulate the online speculative training as an asynchronous Reinforcement Learning (RL) problem.</p>
-<p>This is not just a theoretical convenience — it directly aligns the training signal with real deployment utility, not just offline imitation quality. Speculative decoding maps naturally to reinforcement learning:</p>
-<table><thead><tr><th>Speculative Decoding</th><th></th><th>RL Mapping</th></tr></thead><tbody><tr><td>Draft Model</td><td>→</td><td>Policy (π)</td></tr><tr><td>Target Verifier</td><td>→</td><td>Environment</td></tr><tr><td>Accepted Tokens</td><td>→</td><td>Positive Reward</td></tr><tr><td>Rejected Proposals</td><td>→</td><td>Negative / Counterfactual Feedback</td></tr></tbody></table>
-<p>In this framing, maximizing the return maps directly to maximizing acceptance length — which maps directly to decoding speedup. A subtle but powerful part of Aurora is that it does not only learn from accepted tokens. Acceptance loss (imitation) uses cross-entropy on accepted tokens, encouraging the draft to reproduce verifier-approved continuations. Rejection loss (Discard Sampling) teaches the draft what not to propose, using rejected branches as counterfactual supervision.</p>
-<p>To efficiently process the complex branching structure of speculative decoding results, we employ a specialized Tree Attention mechanism. By constructing a custom attention mask that respects the causal structure of the speculative tree, we can process all accepted and rejected branches in a single batched forward and backward pass.</p>
-<h2>3. Adaptation to distribution shift</h2>
-<p>To test Aurora's robustness, we simulated live serving traffic using a stream of 40,000 prompts spanning five domains: mathematical reasoning, text-to-SQL, code generation, finance, and general conversation. This composition reflects realistic deployment scenarios where serving traffic exhibits heterogeneous and shifting task distributions. We evaluated two traffic patterns: (i) ordered streams, where requests are grouped by domain to induce abrupt distribution shift, and (ii) mixed streams, where prompts are randomly shuffled to approximate stationary traffic.</p>
-<p>When requests are grouped by domain to induce abrupt distribution changes, Aurora adapts continuously. The system recovers acceptance length within approximately 10,000 requests after each shift, demonstrating robust online adaptation.</p>
-<p>Aurora outperforms a well-trained static speculator as traffic shifts with Qwen3-8B.</p>
-<p>Starting from a well-trained speculator, Aurora achieves an additional 1.25x speedup over the static baseline through continuous adaptation. This demonstrates that Aurora’s benefits compound on top of existing offline training investments.</p>
-<p>The mixed traffic results are particularly striking: online training from scratch can exceed the performance of a carefully pretrained speculator. The acceptance length reaches 3.08 (surpassing both the static baseline at 2.63 and the pretrained-then-finetuned baseline at 2.99), with throughput stabilizing at 302.3 tokens/s. This fundamentally challenges the conventional wisdom that speculative decoding requires extensive offline pretraining.</p>
-<h2>4. Conclusion</h2>
-<p>Aurora is not just another speculative decoding algorithm. It is a systems shift. It changes speculative decoding from a static, offline task to a dynamic, online learning process.</p>
-<p>This shift unlocks real-time utility feedback, adaptation under domain drift, lower infrastructure cost compared to large offline distillation pipelines, and a system layer that is compatible with future speculator algorithms. That’s why the right abstraction for speculative decoding is no longer just better draft training in isolation — it’s a unified training-serving loop.</p>
 <h2>Related articles</h2>
 <p>View All</p>
 <p>View All</p>]]></content:encoded>

@@ -7,7 +7,34 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 28 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Granite Switch 4.1.1 — Update models like you update softwar…</title>
+      <link>https://huggingface.co/blog/ibm-granite/granite-switch-4-1-1</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ibm-granite/granite-switch-4-1-1</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：Granite Switch 4.1.1 — Update models like you update software</description>
+    </item>
+    <item>
+      <title>Announcing Project ProtoStar: Making Publicly Funded Science…</title>
+      <link>https://huggingface.co/blog/announcing-project-protostar</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/announcing-project-protostar</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：Announcing Project ProtoStar: Making Publicly Funded Science AI-Ready</description>
+    </item>
+    <item>
+      <title>Welcome Le Chonk: Mistral Large 4 on Hugging Face</title>
+      <link>https://huggingface.co/blog/mistral-large4</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/mistral-large4</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+    </item>
+    <item>
+      <title>Introducing AnySpeechRecognizer and AnyDecisionModel: Open M…</title>
+      <link>https://huggingface.co/blog/anydecisionmodel</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/anydecisionmodel</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：Introducing AnySpeechRecognizer and AnyDecisionModel: Open Models for Speech and Decisions on Apple Platforms</description>
+    </item>
     <item>
       <title>NVIDIA Nemotron 3.5 Transcribe 与 Granary v2：可用提示词驱动并加以适配的智能多…</title>
       <link>https://huggingface.co/blog/nvidia/nemotron-transcribe-granary</link>
@@ -6668,363 +6695,6 @@ TOKEN_BUDGET=16384 GRAD_ACCUM=6 GRADIENT_CHECKPOINTING=0 PROXY_LORA_RETRY_S=0.5 
   author={Qi, Penghui and Liu, Zichen and Zhou, Xiangxin and Pang, Tianyu and Du, Chao and Lee, Wee Sun and Lin, Min},
   journal={arXiv preprint arXiv:2510.26788},
   year={2025}
-}</code></pre>]]></content:encoded>
-    </item>
-    <item>
-      <title>用 Gradio 工作流重建 AUTOMATIC1111</title>
-      <link>https://huggingface.co/blog/gradio-workflow-1111</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/gradio-workflow-1111</guid>
-      <pubDate>Thu, 10 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Rebuilding AUTOMATIC1111 with Gradio Workflow</description>
-      <content:encoded><![CDATA[<h1>用 Gradio 工作流重建 AUTOMATIC1111</h1>
-<p>在<a href="https://huggingface.co/blog/gradio-workflow-guide">上一篇文章</a>中，我们搭建了五个小型 <code>gr.Workflow</code> 图，并暗示了构建 AUTOMATIC1111 的 <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">stable-diffusion-webui</a> 那样复杂的东西需要什么。本文将带你走完 <strong>Workflow1111</strong>——我们把 AUTOMATIC1111 的绝大部分功能集重建到了一张工作流画布上。</p>
-<p>Workflow1111 是一张由 <strong>73 个节点</strong>构成的、包含 <strong>11 条媒体流水线</strong>的图。它汇集了当前最先进（SOTA）模型，覆盖文生图、高分辨率修复、图生图、提示词矩阵网格、VLM 图像反推（interrogate）、检测生成局部重绘遮罩、类 ControlNet 标注器、背景移除、PNG Info 存储，以及图生视频。</p>
-<p>用你的 Hugging Face 账号登录或提供 access token，就能运行其中任何一条流水线。登录后，模型调用使用你自己的额度。</p>
-<p>👉 <strong><a href="https://huggingface.co/spaces/ysharma/Workflow1111">试一试 Workflow1111</a></strong>，或者复制这个 Space，为你的用例重新接线。</p>
-<p>我们沿着画布走一遍。</p>
-<h2>画布上有什么</h2>
-<p>所有媒体流水线都由上一篇文章和<a href="https://gradio.app/guides/workflows#operator-kinds">官方指南</a>介绍的四类算子构成。画布上每个节点包装一个算子，算子的输入输出就是你要连边的端口。快速回顾四类算子：<code>fn</code> 是一个 Python 函数，<code>model</code> 是通过 <code>InferenceClient</code> 调用的模型，<code>space</code> 是另一个 Gradio Space，<code>dataset</code> 是 Hub 数据集里的一行。</p>
-<p>逐条流水线看过来。</p>
-<h3>文生图</h3>
-<p>这是核心流水线。它带有 A1111 txt2img 标签页上你期待的所有控件：负面提示词、步数、CFG、seed、宽高，外加一个用于选择 checkpoint 的 <code>model_id</code> 字段。提示词先经过一个 prompt-builder <code>fn</code> 节点——追加所选风格预设并清理文本——然后进入一个通过 Inference Providers 调用 checkpoint 的 <code>model</code> 节点。一个后处理 <code>fn</code> 节点在输出时把生成参数写入 PNG 的 metadata，这正是后面 PNG Info 流水线要读回的内容。</p>
-<h3>高分辨率修复</h3>
-<p>在 Automatic1111 里，hi-res fix 先把 txt2img 输出上采样，再跑第二轮去噪。这里用一个两节点的绕行分支实现：文生图的结果进入一个 <a href="https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev">FLUX.1-Kontext</a> <code>model</code> 节点，附带精修指令（&quot;enhance fine detail and micro-texture, keep the composition identical&quot;），返回更锐利、更大的图。</p>
-<h3>图生图</h3>
-<p>同一个 Kontext 节点兼作 image2img 标签页。上传一张图，描述你想要的改动，它返回编辑后的图。</p>
-<h3>让 LLM 写提示词</h3>
-<p>从一个粗略提示开始，比如 &quot;A lighthouse in a storm.&quot;。这条流水线把它送进一个 <a href="https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507">Qwen3-4B</a> <code>model</code> 节点，再由一个小 <code>fn</code> 节点把回复整理成干净、上限四十个的标签列表：&quot;stormy sea, wet rocks, dramatic composition, low angle shot, volumetric lighting, ominous tone.&quot;。你可以把任意扩散模型节点接到这个输出来生成图像。</p>
-<p>这里没有 ComfyUI 那种自定义节点。在 Gradio 工作流里，LLM 和扩散模型都只是同一张画布上的普通 <code>model</code> 算子。</p>
-<h3>把图像读回提示词</h3>
-<p>相当于 AUTOMATIC1111 的 Interrogate 按钮，只不过用 VLM 代替 CLIP 做反推。<a href="https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct">Qwen2.5-VL</a> 看一张夜市照片，写出一个能生成它的提示词。一个 <a href="https://huggingface.co/google/vit-base-patch16-224">ViT</a> 分类器节点读同一张图，返回标签：restaurant 51.9%、tobacco shop 15.6%、toyshop 9.1%。</p>
-<p>两个节点用同一个图像输入，所以 <code>gr.Workflow</code> 并行执行它们，两个答案的总耗时约等于只跑一个的时间。</p>
-<h3>检测转局部重绘遮罩</h3>
-<p>AUTOMATIC1111 要手工涂 inpaint 遮罩。这条流水线改由检测器生成。<a href="https://huggingface.co/facebook/detr-resnet-50">DETR</a> 在一张街景照里找到六个目标（三个人、一只狗、一辆自行车和一辆汽车），随后工作流分成两条分支：一条把检测框画在原图上，另一条把它们转成遮罩，供下游 inpaint 流水线使用。</p>
-<p>画框和生成遮罩都在本地用 Pillow 和 NumPy 完成。只有检测调用离开了本机。</p>
-<h3>提示词矩阵</h3>
-<p>相当于 AUTOMATIC1111 的 prompt matrix。一个基础提示 &quot;a lone oak tree&quot; 由 <code>fn</code> 节点与四个后缀（at sunrise、in a thunderstorm、under the Milky Way、in autumn fog）组合，每个变体各自接一个文生图节点。最后一个节点把四张结果拼成一张样张（contact sheet）。</p>
-<p><code>gr.Workflow</code> 没有循环算子，所以四个文生图节点并排摆在画布上。由于它们处于同一依赖深度，会并行运行，四张图同时开始生成。</p>
-<h3>超分与背景移除</h3>
-<p>相当于 Automatic1111 的 Extras 标签页。有两个上采样节点，走不同路线。第一个是 <code>fn</code> 节点里的本地 <a href="https://en.wikipedia.org/wiki/Lanczos_resampling">Lanczos</a> 重采样，不需要网络调用，Pillow 缩放多快它就多快。第二个是 <a href="https://huggingface.co/spaces/gokaygokay/AuraSR-v2">AuraSR ×4</a>，画布上第一个 <code>space</code> 节点：它调用 Hub 上的一个 <a href="https://huggingface.co/spaces/gokaygokay/AuraSR-v2">Space</a>，结果和其他节点输出一样处理。</p>
-<p>背景移除同理。<a href="https://huggingface.co/spaces/briaai/BRIA-RMBG-2.0">BRIA RMBG-2.0</a> 又是一个 <code>space</code> 节点，整个模型住在它自己的 Space 里，这张画布只管调用。</p>
-<h3>标注器</h3>
-<p>Canny、line art、sketch、luma-depth、posterize，这些在 Automatic1111 里通常要靠 ControlNet 扩展提供的预处理器，在这里每个都是一个纯 NumPy 编写的 <code>fn</code> 节点，背后没有模型。在预装的建筑立面示例照片上，每个标注器在 CPU 上约需半秒。</p>
-<p>整个应用有 36 个算子节点，其中 32 个是 <code>fn</code> 节点，而这 32 个里有 22 个完全在进程内运行、不发起网络调用。就算断网，大约三分之二的画布照样工作。这些就是普通 Python 函数，所以你也能脱离画布、服务器和 GPU 直接测试它们。</p>
-<h3>PNG Info</h3>
-<p>AUTOMATIC1111 把生成细节存在 PNG 的 <code>parameters</code> 文本块里，PNG Info 标签页再读回来。Workflow1111 也一样：文生图流水线的后处理节点写入 metadata，这条流水线再读出来——包括提示词、负面提示词、步数、CFG、seed、图像尺寸和模型。</p>
-<h3>图生视频</h3>
-<p>PNG Info 读取的那个图像节点同时还喂给一个 <a href="https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B">Wan 2.2 I2V A14B</a> 节点来做动画；在演示示例里，一只睡着的狐狸醒来开始活动。没有第二个上传框，因为一个参考节点可以喂给你需要的任意多条下游流水线——一次上传，在同一张画布上既读 metadata 又做动画。</p>
-<h2>在你自己的 GPU 上跑模型</h2>
-<p>到这里，每次模型调用都发到了别人的硬件上——通过 Inference Providers 或某个 Space。正因如此，你不需要自己的 GPU 就能搭建并运行 Workflow1111 这样的东西。</p>
-<p>但 <code>fn</code> 节点就是 Python，它同样可以在本地加载模型并跑在你自己的 GPU 上。<a href="https://huggingface.co/spaces/FastVideo/fastvideo-fasth3-preview">FastVideo/fastvideo-fasth3-preview</a> 就是一个恰好这么做的 <code>gr.Workflow</code> 应用：它运行 <a href="https://huggingface.co/FastVideo/FastVideo-FastH3-4-step-Preview-v1-VSA-DataFree">FastH3</a>——<a href="https://huggingface.co/MiniMaxAI/MiniMax-H3">MiniMax-H3</a> 的四步蒸馏版——在 ZeroGPU 上生成带配乐的动画。</p>
-<p>整个应用归结为一个绑定函数：</p>
-<pre><code>@spaces.GPU(duration=get_duration, size=GPU_SIZE)
-def _generate(prompt_embeds, text_token_tags, height, width, num_frames, seed):
-    ...
-
-gr.Workflow(bind={&quot;generate&quot;: generate, &quot;status&quot;: status}).launch()</code></pre>
-<p><a href="https://huggingface.co/docs/hub/spaces-zerogpu">ZeroGPU</a> 在函数需要时给它一块 GPU，调用结束就释放。<code>gr.Workflow</code> 完全不用关心这些，它只管调用 <code>fn</code> 节点。</p>
-<p>这也不限于 Spaces。把 <code>bind=</code> 指向一个加载本地 checkpoint 的函数，在你自己的机器上运行 <code>.launch()</code>，Workflow1111 画布就能驱动你自己的 GPU。</p>
-<h2>每个输出都是 API</h2>
-<p>画布上每个输出节点都自动成为一个 REST 端点，无需手写路由。Workflow1111 暴露九个：<code>/image</code>、<code>/edited_image</code>、<code>/generated_prompt</code>、<code>/recovered_prompt</code>、<code>/detected_objects</code>、<code>/x_y_grid</code>、<code>/upscaled_local</code>、<code>/annotator_map</code> 和 <code>/png_info</code>。</p>
-<pre><code>from gradio_client import Client
-
-client = Client(&quot;ysharma/Workflow1111&quot;, oauth_token=&quot;hf_...&quot;)
-
-image, params, hires = client.predict(
-    &quot;a red fox in a snowy pine forest&quot;,  # Prompt
-    &quot;&quot;,                                  # Negative prompt
-    &quot;Cinematic&quot;,                         # Style preset
-    &quot;enhance fine detail&quot;,               # Hires refine instruction
-    api_name=&quot;/image&quot;,
-)</code></pre>
-<p>这些端点同时也是 <a href="https://modelcontextprotocol.io">MCP</a> 工具。用 <code>mcp_server=True</code> 启动（<a href="https://www.gradio.app/guides/building-mcp-server-with-gradio">指南</a>），每个输出节点都会变成 AI 助手可调用的工具。把 Claude Code、Cursor 或任何 MCP 客户端指向服务器 URL：</p>
-<pre><code>{
-  &quot;mcpServers&quot;: {
-    &quot;workflow1111&quot;: {
-      &quot;url&quot;: &quot;https://ysharma-workflow1111.hf.space/gradio_api/mcp/&quot;,
-      &quot;headers&quot;: { &quot;X-HF-Token&quot;: &quot;hf_...&quot; }
-    }
-  }
-}</code></pre>
-<p>现在，一个智能体就能生成图像、读回提示词或运行检测，作为更大任务中的步骤——零胶水代码。每个调用方在 <code>X-HF-Token</code> 头里带上自己的 token，Space 自己一个都不存。</p>
-<h2>与 ComfyUI 的对比</h2>
-<p>功能清单是 AUTOMATIC1111 给的，但 Gradio Workflow 真正被拿来比较的工具是 ComfyUI，因为两者都是节点图。对很多人想构建和交付的东西来说，<code>gr.Workflow</code> 覆盖了同样的领域。</p>
-<ul><li><strong>一个节点可以是你不拥有的硬件。</strong> 它可以通过 <a href="https://huggingface.co/docs/inference-providers/index">Inference Providers</a> 运行、调用 Hub 上任意 Space 或任意 API，或者从数据集取数。Workflow1111 就是这样在没有自己 GPU 的情况下运行的。</li><li><strong>每个输出都变成带类型的 REST 端点。</strong> 端点由图自动生成。</li><li><strong>访客可以以自己的身份运行工作流。</strong> 开启 <a href="https://huggingface.co/docs/hub/spaces-oauth">OAuth</a>，分享公开 URL，任何人都能登录即用、无需安装任何东西。</li><li><strong>同一张画布混合模型与模态。</strong> 扩散模型、LLM、VLM、检测器、视频模型都能进同一个工作流。</li><li><strong>需要自定义？写个函数。</strong> 自定义节点就是一个 Python 函数，Python 能做的事它都能做。</li></ul>
-<p>最终成果是一条多模型流水线，人们可以在浏览器里打开、登录、立即使用，还能从代码里调用。</p>
-<h2>构建你自己的</h2>
-<p>Workflow1111 有 73 个节点，但它的起点只是：</p>
-<pre><code>import gradio as gr
-
-def your_function(text: str) -&gt; str:
-    pass
-
-gr.Workflow(bind=[your_function]).launch()</code></pre>
-<p><code>bind=</code> 把你的函数变成节点，<code>edges=</code> 把它们连起来，<code>.launch()</code> 在浏览器打开画布让你继续编辑。就绪之后，<code>gradio deploy</code> 把整个东西部署到 Space。<a href="https://gradio.app/guides/workflows">gr.Workflow 指南</a>有完整细节，包括 JSON schema 和每种算子类型。</p>
-<p>如果你更想从一个已经能跑的东西起步，打开 <a href="https://huggingface.co/spaces/ysharma/Workflow1111">Workflow1111</a>，点 <strong>Duplicate</strong>，挑十一条流水线中的一条来改：删节点、换模型、重新接线。如果想先从小处开始，<a href="https://huggingface.co/blog/gradio-workflow-guide">上一篇文章</a>里有五个大约一分钟就能跑起来的工作流。</p>
-<p>无论你做出什么，发到 X 上并 tag <a href="https://x.com/Gradio">@gradio</a>，我们乐意帮你传播。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>IBM 发布 SOTA Granite 时间序列 PatchTST-FM-r2 模型，商用友好许可</title>
-      <link>https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series</guid>
-      <pubDate>Wed, 09 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：IBM releases SOTA Granite Time Series PatchTST-FM-r2 model with commercial-friendly license</description>
-      <content:encoded><![CDATA[<p><em>高性能零样本预测，搭配商用友好的开放许可</em></p>
-<p>时间序列基础模型正在改变预测系统的构建方式。用户不再需要为每个数据集训练并维护各自的模型，而是可以直接使用预训练模型，零样本地生成预测。</p>
-<p>IBM 发布了 <a href="https://huggingface.co/ibm-granite/granite-timeseries-patchtst-fm-r2"><strong>Granite Time Series PatchTST-FM-r2</strong></a>——Granite TSFM 家族的最新模型（<a href="https://github.com/ibm-granite/granite-tsfm">github</a>、<a href="https://research.ibm.com/blog/time-series-ai-enterprise">blog</a>）。PatchTST-FM-r2 是前代 <a href="https://huggingface.co/ibm-granite/granite-timeseries-patchtst-fm-r1">PatchTST-FM-r1</a> 的新版本，在一个约 <strong>385M 参数</strong>的模型中融合了更新的架构、更大的预训练语料、概率预测、缺失值填补支持，以及强劲的零样本性能。</p>
-<p>截至 2026 年 9 月 8 日，该模型是 <strong>GIFT-Eval 排行榜上可复现零样本模型中、以宽松、商用友好的开源许可（Apache 2.0 与 OpenMDW 1.0）发布的表现最好的零样本模型</strong>。GIFT-Eval 是一个综合性的时间序列预测基准，旨在多样预测场景下评估模型；该模型在可复现零样本模型中总体排名第 2。</p>
-<p><strong>模型权重、架构、推理流水线以及复现基准结果所需的代码全部开放可用。</strong></p>
-<p>本文中我们将介绍该模型、深入基准测试结果与模型架构、讨论训练数据与许可证，并提供演示如何用起来的代码示例。最后，我们还会介绍如何借助 <a href="https://events.confluent.io/early-access-flink-features">Confluent 产品</a>，把 Granite Time Series 家族模型用于生产环境的流式应用。</p>
-<blockquote>准备好试了吗？在 Hugging Face 上打开 Granite Time Series PatchTST-FM-r2</blockquote>
-<h2>TL;DR</h2>
-<ul><li>面向需求、价格、能源负载、交通、遥测等各类时间序列的通用零样本预测。</li><li>约 385M 参数，上下文长度最高 8,192，灵活的预测长度，通过 99 分位预测头输出概率预测。</li><li>模型主干由 conformer 块构成，把多头自注意力与时序卷积结合，捕捉长程与短程的时序结构。</li><li>宽松许可的模型，在 GIFT-Eval 基准的可复现零样本类别中表现第一（Apache-2.0 与 OpenMDW-1.0 双许可，用户可任选其一）。</li><li>开放权重、架构、推理流水线及复现基准的代码。</li></ul>
-<h2>在 GIFT-Eval 上强劲的零样本预测</h2>
-<p>基础模型最有价值的时刻，是它能泛化到没有专门训练过的时间序列。因此我们先看零样本性能。</p>
-<p>GIFT-Eval 在异构数据集与预测场景上对预测模型做广泛评估。把排行榜限制为零样本、可复现、且评估无测试泄漏的模型时，截至 2026 年 9 月 8 日，PatchTST-FM-r2 在 CRPS 与 MASE 上均排名第二，如图 1 与图 2 所示（两个指标都是越低越好）。重要的是，<strong>在采用宽松、商用友好许可的模型中，PatchTST-FM-r2 是同类中表现最好的。</strong></p>
-<p><em>图 1. 领先可复现零样本模型的 GIFT-Eval CRPS。PatchTST-FM-r2 的几何平均 CRPS 为 0.467，紧随 TimesFM-3 之后位列第一梯队，而在宽松许可模型中排名第一。</em></p>
-<p><em>图 2. 领先可复现零样本模型的 GIFT-Eval MASE。PatchTST-FM-r2 的几何平均 MASE 为 0.6846。蓝色柱代表 IBM 时间序列基础模型团队发布的模型。</em></p>
-<h2>即使面对允许使用基准训练数据的模型也有竞争力</h2>
-<p>GIFT-Eval 上有些模型被归为「预训练」而非严格零样本。这些模型允许把 GIFT-Eval 评估数据集的训练部分纳入其预训练语料。</p>
-<p>即便把这些预训练模型加进对比，PatchTST-FM-r2 依然位居前列（见图 3 与图 4）：在可复现模型中 <strong>CRPS 排第 3、MASE 排第 4</strong>。它超越了多个预训练模型，包括 <strong>Chronos-2、Timer-S1 与 Toto 系列变体</strong>——尽管一些竞争对手的模型体积明显更大。</p>
-<p><em>图 3. 同时考虑零样本与预训练可复现模型时的 GIFT-Eval CRPS。</em></p>
-<p><em>图 4. 同时考虑零样本与预训练可复现模型时的 GIFT-Eval MASE。</em></p>
-<h2>架构：相对 PatchTST-FM-r1 改了什么？</h2>
-<p>PatchTST-FM-r2 保留了让 PatchTST 家族行之有效的 patch（分片）表征，但内部架构经过重新设计，以高效捕捉长短期关系并平滑 patch 之间的预测——这两点都显著改善了误差指标。</p>
-<p>一项改动是从标准 transformer 层转向在多头自注意力之外结合卷积的层。这些层称为 conformer 层，其<a href="https://arxiv.org/pdf/2005.08100">起源</a>在语音处理应用。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64b01b5252349201f972ba17/gYPoFfbdOqaT9nZmABON1.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64b01b5252349201f972ba17/gYPoFfbdOqaT9nZmABON1.png" alt="Architectural evolution from PatchTST-FM-r1 to Conformer-based PatchTST-FM-r2"></a></p>
-<p><em>图 5. 从 PatchTST-FM-r1 到基于 Conformer 的 PatchTST-FM-r2 的架构演进。</em></p>
-<p>PatchTST-FM-r1 的块把多头自注意力与一个前馈网络组合。在 r2 中，我们把它替换成 conformer 风格的块：两个半步前馈层夹着多头自注意力与一个时序卷积层。</p>
-<p>这给了模型两种互补的时间序列推理机制。自注意力可以建模 patch 之间的长程关系，卷积则提供对局部时序结构的归纳偏置。卷积成分因此可以捕捉较短程的交互，让注意力专注于更远距离的关系。这一现象在 transformer 版本与 conformer 版本捕捉到的注意力模式中都可观察到（见下图，使用 ETTh1 数据集的真实样本）。transformer 自注意力的很大一部分（图左）集中在对角线附近、即捕捉局部关系，而 conformer 块中的注意力（图右）由于卷积层覆盖了短距离，呈现出远距离（偏离对角线）的关注。主干中的 conformer 块交替使用 3 与 5 的卷积核尺寸，按 {5, 5, 3, 3} 的模式循环。</p>
-<p><em>图 6. 使用 ETTh1 数据集真实样本，对比 transformer（左）与 conformer（右）版本捕捉到的注意力模式。</em></p>
-<p>此外，PatchTST-FM-r2 使用 <strong>50% 重叠的 patch 配合 Hamming 窗加权与 overlap-and-add 预测</strong>，来平滑 patch 边界、提高预测精度。最后，架构加入了归一化以提升稳定性，并把块数从 20 扩展到 <strong>30 块</strong>。</p>
-<p>有了这些改动，所得模型约 <strong>385M 参数</strong>，支持最长 <strong>8,192 步</strong>的超长上下文，并在灵活的预测长度上输出 <strong>99 个分位数</strong>。模型同时提供点预测与用于预测分布和不确定性区间的分位数输出。</p>
-<h2>训练数据</h2>
-<p>对于面向真实应用的基础模型，模型质量只是考量之一。开发者越来越需要理解模型用了哪些数据训练、基准数据是否泄漏进了训练、以及部署该模型意味着什么。</p>
-<p>PatchTST-FM-r2 使用一份有文档记载的预训练语料，由四个来源构成：来自 GiftEvalPretrain 的选定数据集；基于 KernelSynth 并采用修改周期核与有限增强的自定义合成数据；用 Chronos 描述的方法生成、但限定使用 GIFT-Eval 评估集之外数据集的 TSMixup 语料；以及约 50 万条形成长度 4,096 的合成 CauKer 序列。</p>
-<p>对企业采用者来说，这种透明度可能与排行榜上再多几分同样重要。这不能取代组织自身的模型治理与许可审查，但它比一份不透明的预训练语料给用户提供了多得多的审查信息。</p>
-<h2>既可科研实验——也可商用</h2>
-<p>为给社区更多选择，Granite Time Series PatchTST-FM-r2 以 <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> 与 <a href="https://raw.githubusercontent.com/OpenMDW/OpenMDW/refs/heads/main/1.0/LICENSE.openmdw">OpenMDW 1.0</a> 双许可发布。用户可任选其一，两者都提供广泛、宽松的使用、修改与分发权利；其中 Linux 基金会的 OpenMDW 提供专为 AI 模型及相关材料设计的许可框架。IBM 以宽松开源许可发布模型，旨在降低采用门槛，让组织、研究者与开发者可以放心地在该技术之上构建——这份放心来自不限制你用途的许可证。架构实现也在 <a href="https://github.com/ibm-granite/granite-tsfm">Granite-TSFM 仓库</a>提供，并向下兼容 PatchTST-FM-r1 的 checkpoint。</p>
-<h2>几行 Python 试用 PatchTST-FM-r2</h2>
-<p>评估基础模型最简单的方式，就是在你自己的时间序列数据上试。</p>
-<p>安装 Granite TSFM 包：</p>
-<pre><code>pip install &quot;granite-tsfm&gt;=0.3.9&quot;</code></pre>
-<p>然后直接从 Hugging Face Hub 加载 PatchTST-FM-r2：</p>
-<pre><code>import pandas as pd
-from tsfm_public import PatchTSTFMForPrediction, TimeSeriesForecastingPipeline
-
-# Load model weights
-model = PatchTSTFMForPrediction.from_pretrained(
-    &quot;ibm-granite/granite-timeseries-patchtst-fm-r2&quot;
-)
-
-# Read some sample data from ETTh
-df = pd.read_csv(
-    &quot;https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTh1.csv&quot;,
-    parse_dates=[&quot;date&quot;],
-)
-
-# Set up the forecasting pipeline
-pipe = TimeSeriesForecastingPipeline(
-    model=model,
-    id_columns=[],
-    timestamp_column=&quot;date&quot;,
-    target_columns=[&quot;HUFL&quot;],
-    max_context_length=model.config.context_length,
-    context_length=512,
-    prediction_length=64,
-    impute_method=None,
-    quantile_levels=[0.1, 0.5, 0.9],
-    explode_forecasts=True,
-    freq=&quot;1h&quot;,
-)
-
-# Create a forecast from the last 512 samples of the input dataframe
-forecast = pipe(df.iloc[-512:])</code></pre>
-<p>可以看到，不需要微调，也不需要针对任务拟合模型。流水线只需要序列的近期历史，就能生成未来预测，包括所请求的分位数。</p>
-<p>上面是公开数据上的简单示例——你可以把示例输入数据换成你自己的：需求、传感器遥测、CPU 利用率、能源消耗、交易量、交通、价格，或任何其他等间隔采样的时间序列。</p>
-<blockquote>在你自己的数据上试试：在 Hugging Face Hub 上打开 PatchTST-FM-r2</blockquote>
-<h2>从 Notebook 到流式时间序列</h2>
-<p>这次发布连接着围绕 IBM Granite Time Series 模型的更大布局——<a href="https://research.ibm.com/blog/time-series-ai-enterprise">为更广泛的产品组合新增模型</a>。</p>
-<p>对于数据以连续流而非静态 DataFrame 到达的应用，IBM 与 Confluent 最近通过 <strong>Confluent Cloud 的 Early Access 计划</strong>开放了数个 Granite Time Series 模型。初始组合包括 PatchTST-FM-r1、FlowState-r1.1、TTM-r3 与 TSPulse。</p>
-<p>这一集成把基础模型推理直接带入 Confluent Cloud 上 Apache Flink 的流式应用。预测与异常检测结果可以直接从实时数据流生成，而无须团队搭建并把数据搬到另一个 ML 环境。</p>
-<ul><li><a href="https://www.ibm.com/new/announcements/ibm-granite-time-series-models-bring-real-time-forecasting-and-anomaly-detection-to-confluent-cloud">阅读 IBM 公告</a>或</li><li><a href="https://events.confluent.io/early-access-flink-features">加入 Early Access</a>。</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>为谁的安全？拒绝主题中正确的那部分，而非整个主题</title>
-      <link>https://huggingface.co/blog/MultiverseComputingCAI/safety-for-whom</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/MultiverseComputingCAI/safety-for-whom</guid>
-      <pubDate>Tue, 08 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Safety for Whom? Refusing the Right Subset of a Topic, Not the Whole Topic</description>
-      <content:encoded><![CDATA[<h1>为谁的安全？拒绝主题中正确的那部分，而非整个主题</h1>
-<p>大多数安全对齐工作把危害视为某个主题的属性。一个提示之所以不安全，是因为它落入了某个通用类别，例如武器、欺诈或自残，而像 <a href="https://huggingface.co/meta-llama/Llama-Guard-3-8B">LlamaGuard-3</a> 这样的守卫模型正是编码了这种主题级的分类体系。<a href="https://arxiv.org/abs/2308.01263">XSTest</a> 和 <a href="https://arxiv.org/abs/2405.20947">OR-Bench</a> 等基准随后探测这种设定造成的失败模式——那些因为含有看似危险的词就拒绝安全提示的模型——而拒绝校准类的工作则试图把这个数字拉回来。</p>
-<p>真实部署很少符合主题级图景。同一个基座模型可能被适配为通用助手、教育产品、企业系统或公共服务，而每个场景在同一主题内都需要不同的边界。一位公民课辅导老师和一个公共部门助手可以共享一个模型，却在政治话题上需要相反的行为：两者都应回答关于选举的事实性问题，但只有一个可能需要拒绝撰写定向政治操纵的请求。主题级守卫无法表达这种划分。例如，LlamaGuard-3 对选举只覆盖&quot;关于选举制度和流程的事实性错误信息&quot;，这既排除了说服与操纵，同时也排除了部署必须继续回答的事实性提示。</p>
-<p>我们最新的论文 <a href="https://huggingface.co/papers/2609.04482"><em>Safety for Whom? Boundary-Aware Self-Distillation for Controlled LLM Safety Refusal</em></a> 直接研究了这一更狭窄的问题。要问的不是整个主题该不该被拒绝，而是该主题的哪个子集与给定的部署策略不相容，以及如何针对这条边界训练和衡量模型。</p>
-<h2>窄边界安全</h2>
-<p>我们把这一设定形式化为一个主题全集——在我们实验中是所有政治提示——它包含一个部署想要拒绝的目标有害子集。期望的策略不是拒绝整个政治话题，而是拒绝有害子集，同时继续回答良性的补集。理想行为是一个陡峭的阶跃：在子集内拒绝，在该主题的其余一切地方回答。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/668e37fd9c9aa124a3c867e8/g_Xngr05EUhlIBNT-mG8s.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/668e37fd9c9aa124a3c867e8/g_Xngr05EUhlIBNT-mG8s.png" alt="Narrow-boundary safety. The topic universe of political prompts contains a smaller subset that the deployment should refuse, while the benign complement should still be answered. The ideal refusal is a sharp step, but a trained model's refusal probability is smoother and can overshoot into benign territory near the boundary."></a></p>
-<p><em>窄边界设定。一个部署可能只需要拒绝那些请求操纵或定向说服的政治提示，而仍然回答其他政治提示，而不是拒绝整个政治话题。训练后模型的拒绝比理想划分更平滑，并会在边界附近渗入良性区域。来源：论文图 1。</em></p>
-<p>训练后的模型永远学不到那个陡峭的阶跃。它学到的只是一个近似目标的拒绝概率，而那种在有害子集内提升拒绝的交叉熵训练也可能把拒绝向外推入良性补集。所以真正的问题不仅是在有害提示上提升拒绝，还在于塑造边界本身附近的行为。我们把那条边界具体化为成对的提示：它们共享一个主题锚点，仅在意图上不同，一个应被拒绝，另一个应被回答。</p>
-<p>我们以政治说服作为试验床，因为操纵性说服会造成真实危害，而事实性的政治信息保持正当，这恰恰是主题级拒绝过于粗暴的情形。</p>
-<h2>自生成安全调优在哪里失效</h2>
-<p>在这里构建训练数据的自然方式是自生成：取目标模型，在每个有害提示上把它引向拒绝，并保留那些被守卫模型验证为真实拒绝的轨迹。这正是 <a href="https://arxiv.org/abs/2601.23143">ThinkSafe</a> 等方法背后的配方，我们将其作为参考加以采用，应用于政治提示并逐组件测量。把问题框定为一条边界而非一个主题，会暴露出那条标准流水线中的三个弱点。</p>
-<p>第一个是覆盖缺口。单次引导尝试并不总能产生一个被接受的拒绝，而那些提示会被静默地从训练集中丢弃。在我们审计过的池中，单次生成丢弃了 19.88% 的提示，即 8009 个，而这些失败的提示很可能恰恰是最难的样本。我们不是丢弃它而是修复它：一种递进式重试策略，通过逐渐更强的引导对同一提示重新采样，把残余失败降到 0.20%，即 79 个提示。覆盖修复留下了 40293 个有害训练提示，而朴素的流水线本会扔掉数千个。</p>
-<p>第二个是负面反应。安全调优倾向于在那些表面看似危险的良性提示上产生误拒绝。为弥补这一点，我们构建在分布内的良性数据，包括横跨 18 种语义类型、经过验证的 11955 个表面危险的良性提示，让模型在训练期间（而不仅仅是评估时）就见到措辞看似危险的安全提示。</p>
-<p>第三个是普通的有害/良性划分根本没有衡量边界的形状。一个模型可以仅靠把拒绝扩展到附近可容许的提示来提升它的有害拒绝率，而一个主题级指标会把那称作改进。留出（held-out）的有害-良性配对，每侧 1539 个，让我们能够直接测量边界的两侧。</p>
-<h2>权衡，以及它隐藏的一个陷阱</h2>
-<p>在政治拒绝数据上训练在显而易见的意义上是有效的。在 <a href="https://huggingface.co/Qwen/Qwen3-8B">Qwen3-8B</a> 上，递进式覆盖模型把在分布内政治拒绝从 9.47% 提升到 84.75%，而且它还迁移：在三个更广泛的有害性基准——<a href="https://www.harmbench.org">HarmBench</a>、StrongREJECT 和 <a href="https://arxiv.org/abs/2406.18510">WildJailbreak</a>——上由 LlamaGuard-3 打分的平均不安全回复率，在最强配置下从 26.26% 降至 0.14%。</p>
-<p>单独报告时，这些数字看起来像一场干净的胜利。它们不是。在同一检查点上，XSTest 上的过度拒绝从 2.00% 升到 74.00%。有害回复率最低的那个配置，也正是拒绝了近四分之三明显安全提示的那个配置。它是一台粗暴的拒绝机器，而非一个更安全模型，而除非你测量良性那一侧，否则你看不出来。这是核心信息：数据组成决定了检查点坐落在&quot;安全对抗过度拒绝&quot;这个空间中的哪个位置，所以这两个轴必须一起报告。</p>
-<p>我们的两个数据组件在不舍弃安全增益的情况下把过度拒绝数字拉了回来。用目标模型自身生成的、经过验证的回复替换从外部采纳的顺从回复，在单次生成下把 XSTest 过度拒绝从 15.20% 降到 5.20%，代价是轻微的有害性成本。而有害-良性边界配对完成了最精确的工作。</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/68db932961906f42259438b7/6W8oCYwy3TnSfdaBsH74C.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/68db932961906f42259438b7/6W8oCYwy3TnSfdaBsH74C.png" alt="Pairwise boundary data reduces over-refusal at the boundary. Adding the benign side of the boundary pairs drops comply-side over-refusal from roughly 0.49 down to 0.03 to 0.08, while harmful-side refusal falls only slightly, from about 0.92 to 0.88."></a></p>
-<p><em>左：留出边界的&quot;应予顺从&quot;一侧的过度拒绝，越低越好。带良性边界数据（PB）的运行降到 0.03 至 0.08；不带它，数字向 0.49 攀升。右：有害一侧的拒绝，越高越好，它仅略微下降。来源：论文图 6。</em></p>
-<p>具体而言，加入良性边界数据把留出配对中&quot;应予顺从&quot;一侧的过度拒绝从 32.94% 降到 4.16%。有害一侧的拒绝仅从 91.88% 降到 87.72%。换句话说，边界附近绝大多数误拒绝消失了，而几乎所有真实拒绝得以保留。这里确实存在召回成本，它很小且可测量，这正是重点所在：只有当你两侧都在测量时，你才能刻意地权衡它。</p>
-<h2>这改变了什么</h2>
-<p>实践性的启示是：安全调优不应仅凭有害拒绝率来评估。一个拒绝更多的模型并不自动更安全，而在一条窄边界上，那个提升有害提示拒绝率的同一动作，可能悄无声息地让模型在紧邻它们的正当提示上变得无用。训练数据的组成、覆盖修复、在分布内的补偿以及边界配对，才是控制这一权衡的东西，而为了这些数字有意义，必须评估预期边界的两侧。</p>
-<p>这项工作属于 <a href="https://multiversecomputing.com">Multiverse Computing</a> 研究的一部分，其目标是让模型行为在真实部署所关心的那个层面上（而非在宽泛主题类别的层面上）变得可控且可测量。同一生成流水线可延伸到政治以外的其他主题，论文报告了支撑上述结果的完整数据组成消融集。</p>
-<p>想要完整的技术细节，包括覆盖修复策略、把有害交叉熵与良性前向 KL 保持分离开的损失路由，以及完整的留出边界评估？请阅读完整论文，或联系我们的团队，聊聊针对你自己的模型的部署专属安全。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>NeoMME：一个高效的多模态原生多语言编码器</title>
-      <link>https://huggingface.co/blog/Hcompany/neomme</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/Hcompany/neomme</guid>
-      <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：NeoMME: an efficient Multimodal-native and Multilingual Encoder</description>
-      <content:encoded><![CDATA[<p><a href="https://hf.co/collections/Hcompany/neomme"><img src="https://img.shields.io/badge/Collection-FFD21E?style=for-the-badge&amp;logo=huggingface&amp;logoColor=000" alt="Hugging Face"></a> <a href="https://huggingface.co/papers/2609.01657"><img src="https://img.shields.io/badge/HF_Paper-FFD21E?style=for-the-badge&amp;logo=huggingface&amp;logoColor=000" alt="Hugging Face Paper"></a> <a href="https://arxiv.org/abs/2609.01657"><img src="https://img.shields.io/badge/arXiv-2609.01657-b31b1b.svg?style=for-the-badge" alt="arXiv"></a></p>
-<p><img src="https://github.com/tonywu71/colpali-cookbooks/blob/6ef1332da6bcb48c7ef1f19b25bfa555be7031a8/assets/neomme/neomme_logo.webp?raw=true" alt="NeoMME logo"></p>
-<h2>TL;DR</h2>
-<p>我们推出 <em><strong>NeoMME</strong></em>——一个 260M 与 800M 的多语言多模态编码器家族。与许多生成式视觉语言模型不同，<em>NeoMME</em> 不使用单独预训练的视觉塔，也不使用因果语言模型。单个双向 Transformer 同时处理文本 token 和原始图像 patch，整个模型以 masked discrete-diffusion 目标从头训练。</p>
-<p>我们用 ColPali 的页面图像方法对 <em>NeoMME</em> 做了视觉文档检索微调。<em>NeoMME</em>-Retriever 一次前向传播即可同时返回 dense 和 late-interaction 嵌入。在 nDCG@10 与模型尺寸的维度上，两个尺寸都位于 ViDoRe v3 的 Pareto 前沿。在 NVIDIA L40S GPU 上以匹配的 2048×2048 图像输入尺寸，260M 模型每秒编码约 51 页，约为 ColModernVBERT 吞吐的两倍。层级 token 池化与非对称量化把 late-interaction 索引的存储从每页约 1.5 MB 压到 6 kB（缩小 255 倍），同时保留基线 nDCG@10 的 95% 以上。</p>
-<p><em>NeoMME</em> 已可在 Hugging Face Transformers 中使用。我们以 Apache 2.0 许可证发布全部模型 checkpoints。</p>
-<ul><li>🤗 <a href="https://hf.co/collections/Hcompany/neomme"><em>NeoMME</em> 合集</a></li><li>📄 <a href="https://huggingface.co/papers/2609.01657">技术报告</a></li><li>🔎 <a href="https://huggingface.co/spaces/tonywu71/neomme-retriever-demo">Visual RAG demo</a></li></ul>
-<h2>为什么又需要一个多模态编码器？</h2>
-<p>许多近期的视觉文档检索器都是从预训练的生成式视觉语言模型改造而来。一个独立预训练的视觉编码器产出视觉特征，由一个 projector 映射进语言模型的输入空间，随后一个因果 decoder 处理合并后的图像与文本表征。检索、分类和 token 标注并不自回归地生成文本，因此不需要因果 decoder，也不需要这种架构带来的参数与计算开销。</p>
-<p><a href="https://huggingface.co/blog/modernbert">ModernBERT</a> 把高效的架构与训练改进带给了双向编码器。就视觉文档检索而言，<a href="https://huggingface.co/blog/paultltc/modernvbert">ModernVBERT</a> 采用双向的 ModernBERT 风格文本编码器，同时保留了独立的预训练 SigLIP2 视觉塔。我们想把这件事推得更远：设计并训练一个多模态编码器，而不必背负 VLM 的参数与计算开销。</p>
-<p><em><strong>NeoMME</strong></em>（读作 &quot;nee-oh-me&quot;，IPA /ˈniː.oʊ.mi/）是一个多语言、多模态基础编码器，用单个 Transformer 编码器为输入文本和/或图像生成向量表征。它不基于任何已有的预训练视觉塔、文本编码器或文本解码器。</p>
-<p>不同于双塔和 VLM 编码器，NeoMME 在单个双向 Transformer 中处理图像 patch 与文本 token，没有预训练视觉塔，也没有预训练文本编码器或解码器。</p>
-<p>图像与文本使用同一计算路径，因此 <em>NeoMME</em> 可以更轻松地跨两种模态支持预训练、微调、并行化与服务。</p>
-<h2><em>NeoMME</em> 编码器骨干</h2>
-<h3>图像与文本共用一个 Transformer</h3>
-<p><em>NeoMME</em> 有两个尺寸：<a href="https://huggingface.co/Hcompany/NeoMME-260M">260M</a> 和 <a href="https://huggingface.co/Hcompany/NeoMME-800M">800M</a>。两者共享同一架构：</p>
-<ul><li><strong>原生多模态输入</strong>：文本输入使用因子化 token embedding；图像被切成 32×32 不重叠 patch 的网格，用一个小 MLP 投影。两者进入同一个 Transformer 编码器。</li><li><strong>动态图像分辨率</strong>：图像保持其宽高比和尺寸。这让模型可以对一张高分辨率、信息密集的文档页使用比内容较少的小图像更多的 token。</li><li><strong>长双向上下文</strong>：两个模型的上下文长度都是 16,384 token（足以容纳至多两张标准 3840×2160 的 4K UHD 图像）。多数层使用对称滑动窗口注意力，而每第六层和最后一层使用全局注意力。</li><li><strong>现代化的编码器栈</strong>：<em>NeoMME</em> 使用了近期编码器改进，如 grouped-query attention、query-key 归一化、gated attention、2D 旋转位置编码、squared-ReLU MLP 等。</li><li><strong>多语言文本</strong>：我们从零用多语言文本、代码、数学和机器生成的图像转录文本训练了一个 13.1 万词表的 BPE tokenizer。</li></ul>
-<p>NeoMME 编码器栈中滑动窗口层与全局注意力层交替排布。</p>
-<h3>通过掩码文本从图像中学习</h3>
-<p>我们从头预训练 <em>NeoMME</em>，把它当作离散 masked-diffusion 文本去噪器。对每个纯文本样本，我们在 0 到 1 之间均匀采样一个破坏率，然后每个符合条件的文本 token 以该速率独立地被 mask。</p>
-<p>多模态样本的破坏率在 0.3 到 1 之间。当 <em>NeoMME</em> 重建被 mask 的文本时，图像 patch 保持可见。轻度 mask 时，模型常常只靠周边文本就能还原缺失的词。例如，即便没有图像，&quot;cat&quot; 也是 &quot;The [MASK] sat on the mat&quot; 的合理补全。但高强度 mask 迫使模型在几乎没有来自未 mask 文本 token 信号的情况下，学习扎根于图像的描述。</p>
-<p>更高的文本破坏率移除了「只靠语言」的捷径，促使 NeoMME 利用可见的图像证据。</p>
-<p>预训练混合了多语言文本、代码、数学、自然图像和文档图像。每个模型处理约 5,240 亿打包输入 token，其中 2,900 亿来自纯文本样本。相比 ModernBERT 2 万亿的训练 token 预算，这份文本预算相对较小。因此我们选择 NorMuon 优化器来提升训练期间的数据效率。</p>
-<h2><em>NeoMME</em>-Retriever</h2>
-<p>为了让骨干在下游有有意义的评估，我们用 <a href="https://huggingface.co/blog/manu/colpali">ColPali</a> 提出的页面图像方法，对 <em>NeoMME</em> 做视觉文档检索微调。传统基于文本的检索是检索文本块，而 <em>NeoMME</em>-Retriever 直接对文档页面截图排名，绕开了从 PDF 提取文本所需的全部 OCR 预处理步骤。把页面当作图像，保留了布局、图表、表格、字体类型与大小等即使完美的 OCR 模型也无法捕捉的视觉线索。</p>
-<h3>面向 dense 与 late-interaction 检索的双头设计</h3>
-<p><em>NeoMME</em>-Retriever 复用 <em>NeoMME</em> 骨干，但在其上为检索增加两个联合训练的头：</p>
-<ul><li>dense 头把骨干的 hidden state 向量平均成一个归一化向量（mean pooling）。dense 嵌入是当今最常见的：它们紧凑，并且天然配合近似最近邻（ANN）技术做快速检索。</li><li>late-interaction 头把骨干输出 hidden states 中的每个文本 token 或图像 patch 投影为 128 维的归一化向量。相比 dense 嵌入，更细的粒度保留了单个查询 token 与图像区域之间的局部匹配。</li></ul>
-<p>两个 <em>NeoMME</em> 尺寸的 late-interaction 与 dense 检索头。</p>
-<blockquote>在 ColBERT 中提出 late-interaction 的 Omar Khattab 解释了为什么这个词比 &quot;multi-vector&quot; 更精确：它描述的是打分函数的粒度与可学习性，而不只是存储向量的数量。<br>想更多了解 late-interaction，我们推荐 Amélie Chatelain 的这篇速成教程。</blockquote>
-<p>一次 <em>NeoMME</em>-Retriever 前向传播同时返回两种表征，让你无论什么用例和基础设施都有灵活选择。一般情况下我们推荐使用 late-interaction 嵌入，因为它们更强大，并且可以方便地配合 <a href="https://github.com/lightonai/next-plaid">NextPlaid</a> 这类开源库。不过，如果你有非常大的语料库，可以用 <em>NeoMME</em>-Retriever 跑一次前向传播得到 dense 嵌入、通过 ANN 索引检索少量文档，再用 late-interaction 对检索到的候选重排。</p>
-<h3>紧凑模型尺寸下的有竞争力检索</h3>
-<p>我们报告 ViDoRe v3 上的 nDCG@10。<em>NeoMME</em>-Retriever-260M 达到 0.523，是评测模型中严格小于 800M 参数里的最高分，比 ColQwen2.5 只差 0.002 nDCG@10，而参数量约为其 1/14。<em>NeoMME</em>-Retriever-800M 达到 0.556，与同尺寸的 <a href="https://huggingface.co/vultr/VultronRetrieverFlash-Qwen3.5-0.8B">Vultron Retriever Flash (0.8B)</a> 相差 0.009 nDCG@10。两个 <em>NeoMME</em>-Retriever 模型都位于模型尺寸 Pareto 前沿上。</p>
-<p>ViDoRe v3 nDCG@10 对比模型尺寸。</p>
-<p>ViDoRe v1 和 v2 使用 nDCG@5。在两个基准上，<em>NeoMME</em>-Retriever-260M 都超过 ColModernVBERT 和大它一倍的 ColSmol-500M。<em>NeoMME</em>-Retriever-800M 超过 ColPali v1.3，而参数量少 3.6 倍。</p>
-<table><thead><tr><th>模型详情</th><th>ViDoRe (nDCG@<em>k</em>)</th><th></th><th></th><th></th></tr></thead><tbody><tr><td>模型</td><td>参数量</td><td>v3 (@10)</td><td>v2 (@5)</td><td>v1 (@5)</td></tr><tr><td>&lt;300M</td><td></td><td></td><td></td><td></td></tr><tr><td><a href="https://huggingface.co/ModernVBERT/colmodernvbert">ColModernVBERT</a></td><td>250M</td><td>0.261†</td><td>0.407‡</td><td>0.806‡</td></tr><tr><td><a href="https://huggingface.co/vidore/colSmol-256M">ColSmol-256M</a>†</td><td>256M</td><td>0.207</td><td>0.348</td><td>0.797</td></tr><tr><td><a href="https://huggingface.co/Hcompany/NeoMME-260M-Retriever"><em>NeoMME</em>-260M</a>‡</td><td>260M</td><td><strong>0.523</strong></td><td><strong>0.522</strong></td><td><strong>0.860</strong></td></tr><tr><td>300M 到 1B</td><td></td><td></td><td></td><td></td></tr><tr><td><a href="https://huggingface.co/vidore/colSmol-500M">ColSmol-500M</a></td><td>500M</td><td>0.340‡</td><td>0.455†</td><td>0.825†</td></tr><tr><td><a href="https://huggingface.co/vultr/VultronRetrieverFlash-Qwen3.5-0.8B">Vultron Flash</a>†</td><td>850M</td><td><strong>0.565</strong></td><td><strong>0.604</strong></td><td><strong>0.882</strong></td></tr><tr><td><a href="https://huggingface.co/Hcompany/NeoMME-800M-Retriever"><em>NeoMME</em>-800M</a>‡</td><td>800M</td><td>0.556</td><td>0.559</td><td>0.874</td></tr><tr><td>&gt;1B</td><td></td><td></td><td></td><td></td></tr><tr><td><a href="https://huggingface.co/vidore/colqwen2.5-v0.2">ColQwen2.5-v0.2</a>†</td><td>3.75B</td><td><strong>0.524</strong></td><td><strong>0.601</strong></td><td><strong>0.895</strong></td></tr><tr><td><a href="https://huggingface.co/vidore/colpali-v1.3">ColPali v1.3</a>†</td><td>2.92B</td><td>0.430</td><td>0.547</td><td>0.848</td></tr></tbody></table>
-<p>† 分数来自 MTEB。‡ 我们自己的评测结果。</p>
-<h3>让高分辨率的 late-interaction 检索切实可行</h3>
-<p>late-interaction 的存储随输出嵌入中向量数量线性增长。更高分辨率的图像包含更多 patch，因此产出更大的嵌入。例如一张 2048×2048 的方形页面，用 <em>NeoMME</em>-Retriever 会产出包含 4,200 个向量的嵌入，float32 下约 2.1 MB。在 ViDoRe v3 基准上，实测平均约每文档 1.5 MB。</p>
-<p>为压缩 late-interaction 索引的存储足迹，我们结合两种互补的压缩方法：</p>
-<ul><li><a href="https://www.answer.ai/posts/colbert-pooling.html">层级 token 池化（Hierarchical token pooling）</a>在给定多向量嵌入中聚类相似的文档向量，用每簇的均值替代该簇，从而减少每页存储的向量数。</li><li><a href="https://www.mixedbread.com/blog/asymmetric-quant">非对称量化（Asymmetric quantization）</a>把文档嵌入量化为 int8 或二值。由于查询嵌入不被存储、只是即时生成，它们可以保持更高精度。</li></ul>
-<p>我们在 ViDoRe v3 上测试了这个配置。池化因子 10、查询与文档均为 int8 时，存储从每页约 1.5 MB 降到 39 kB，压缩 39 倍，同时保留基线 nDCG@10 的 99% 以上。更激进的配置用池化因子 8、int8 查询、二值文档：每页 6 kB（缩小 255 倍），并保留原始检索质量的 95% 以上。</p>
-<p>NeoMME-260M 在 ViDoRe v3 上 late-interaction 索引的质量-存储前沿。标签显示池化因子、保留质量、压缩率与存储。</p>
-<p>用户可以基于存储预算和所需检索质量，从该前沿上选择一个压缩档位。</p>
-<h4>快速推理，更便宜的多模态语料索引</h4>
-<p>在能搜索语料之前，检索模型必须先把你的文档转成嵌入，存进 Qdrant、Weaviate 或 Milvus 这样的向量库。编码更快意味着构建索引和添加新文档更快，从而降低所需的 GPU 在线时长和计算成本。</p>
-<p>于是我们测量了 <em>NeoMME</em>-Retriever 与其他多模态文档检索器的图像编码速度。我们使用预处理后的图像张量，并为每个模型、每种图像尺寸分别校准 batch size。在一块 NVIDIA L40S 上、以匹配的 2048×2048 输入尺寸，<em>NeoMME</em>-Retriever-260M 每秒编码约 51 页，接近 ColModernVBERT 26 页/秒的两倍。在较小的输入图像上，260M 和 800M 两个 <em>NeoMME</em>-Retriever 模型也都快于其他对比模型。</p>
-<p>一块 NVIDIA L40S 上按检索器与输入分辨率统计的文档编码吞吐。</p>
-<h3>亲自试试 <em>NeoMME</em>-Retriever！</h3>
-<p><em>NeoMME</em>-Retriever（<a href="https://huggingface.co/Hcompany/NeoMME-260M-Retriever">260M</a> 和 <a href="https://huggingface.co/Hcompany/NeoMME-800M-Retriever">800M</a>）会一并返回 dense 与多向量嵌入。下面的例子用 MeanMaxSim late interaction 和 dense 余弦相似度，把两条文本查询对两张文档页面图像打分。</p>
-<p>点击展开完整的 🤗 transformers 示例片段</p>
-<pre><code># accelerate is an optional dependency needed only when using device_map=&quot;auto&quot;.
-pip install -U accelerate &quot;transformers @ git+https://github.com/huggingface/transformers.git@main&quot; &quot;sentence-transformers&gt;=6.0.0&quot;</code></pre>
-<pre><code>from typing import Any, Literal
-
-import requests
-import torch
-from PIL import Image
-from sentence_transformers.util import cos_sim, mean_maxsim
-
-from transformers import BatchFeature, NeoMMEForRetrieval, NeoMMEProcessor
-
-
-def encode(
-    messages: list[list[dict[str, Any]]],
-    task: Literal[&quot;query&quot;, &quot;document&quot;],
-) -&gt; BatchFeature:
-    return processor.apply_chat_template(
-        messages,
-        task=task,
-        tokenize=True,
-        return_dict=True,
-        return_tensors=&quot;pt&quot;,
-        processor_kwargs={&quot;padding&quot;: &quot;longest&quot;},
-    )
-
-
-model_name = &quot;Hcompany/NeoMME-260M-Retriever&quot;
-processor = NeoMMEProcessor.from_pretrained(model_name)
-model = NeoMMEForRetrieval.from_pretrained(model_name, device_map=&quot;auto&quot;)
-
-# Document images (our corpus)
-image_urls = [
-    &quot;https://github.com/tonywu71/colpali-cookbooks/blob/6ef1332da6bcb48c7ef1f19b25bfa555be7031a8/examples/data/shift_kazakhstan.jpg?raw=true&quot;,
-    &quot;https://github.com/tonywu71/colpali-cookbooks/blob/6ef1332da6bcb48c7ef1f19b25bfa555be7031a8/examples/data/energy_electricity_generation.jpg?raw=true&quot;,
-]
-documents = [Image.open(requests.get(url, stream=True).raw) for url in image_urls]
-
-# Queries
-queries = [
-    &quot;Quelle partie de la production pétrolière du Kazakhstan provient de champs en mer ?&quot;,
-    &quot;Which hour of the day had the highest overall electricity generation in 2019?&quot;,
-]
-
-document_messages = [
-    [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;image&quot;, &quot;image&quot;: document}]}] for document in documents
-]
-query_messages = [[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: query}] for query in queries]
-
-inputs_documents = encode(document_messages, &quot;document&quot;).to(model.device)
-inputs_text = encode(query_messages, &quot;query&quot;).to(model.device)
-
-with torch.inference_mode():
-    document_outputs = model(**inputs_documents)
-    query_outputs = model(**inputs_text)
-
-late_scores = mean_maxsim(
-    query_outputs.embeddings,
-    document_outputs.embeddings,
-    a_mask=inputs_text[&quot;attention_mask&quot;],
-    b_mask=inputs_documents[&quot;attention_mask&quot;],
-)
-dense_scores = cos_sim(query_outputs.dense_embeddings, document_outputs.dense_embeddings)
-
-# Expected: late_scores[0, 0] &gt; late_scores[0, 1] and late_scores[1, 1] &gt; late_scores[1, 0].
-print(late_scores, dense_scores)</code></pre>
-<h3>用 Sentence Transformers 微调</h3>
-<p>我们提供了独立的 <a href="https://huggingface.co/Hcompany/NeoMME-260M-Retriever-ST-dense">dense</a> 与 <a href="https://huggingface.co/Hcompany/NeoMME-260M-Retriever-ST-late">late-interaction</a> checkpoints，用于在 <a href="https://huggingface.co/blog/multi-vector-encoder">Sentence Transformers v6</a> 中微调。遵循 ModernBERT 等文本编码器的相同模式，Sentence Transformers 通过 <a href="https://huggingface.co/docs/transformers/main/en/model_doc/neomme#transformers.NeoMMEModel"><code>NeoMMEModel</code></a> 加载骨干，而不是双头的 <a href="https://huggingface.co/docs/transformers/main/en/model_doc/neomme#transformers.NeoMMEForRetrieval"><code>NeoMMEForRetrieval</code></a> 类。Sentence Transformers 目前每个模型只支持一个检索头，所以每个 checkpoint 让你独立微调 dense 或 late-interaction 头。要一起训练两个头，请用 <code>NeoMMEForRetrieval</code> 配合自定义 <code>Trainer</code>。</p>
-<h3>从检索到 Visual RAG</h3>
-<p>视觉文档检索可以作为视觉检索增强生成（RAG）系统的第一阶段。文本 RAG 检索的是提取出的文本块，而视觉 RAG 检索原始页面图像并把它们发给视觉语言模型。模型因此可以利用表格、图形、示意图和页面布局——这些在文本提取时可能被压平或丢弃。视觉 RAG 的工作原理：</p>
-<ul><li>索引：把每个 PDF 页面转成图像，用检索模型生成嵌入，并把嵌入存入向量库。</li><li>检索：用同一模型为用户查询生成嵌入，检索 top-k 最相关页面。</li><li>生成：在聊天消息中把图像追加在查询之后（<em>e.g.</em>，<code>{query}{img_1}{img_2}...{img_k}</code>），发给 VLM 生成答案。</li></ul>
-<p>你可以在我们的 HF Space 中直接用 <em>NeoMME</em>-Retriever 体验视觉 RAG：🤗 <a href="https://huggingface.co/spaces/tonywu71/neomme-retriever-demo">tonywu71/neomme-retriever-demo</a>。</p>
-<h2>结论</h2>
-<p><em>NeoMME</em> 用一个长上下文双向 Transformer 取代了分离的预训练图像与文本编码器。我们从零训练它同时处理多语言文本 token 和原始 32×32 图像 patch。</p>
-<p><em>NeoMME</em>-Retriever 是 <em>NeoMME</em> 面向视觉文档检索的微调版本。一次前向传播产出 dense 与 late-interaction 两种表征。260M 模型超过所有评测的严格小于 800M 参数的模型，并且在匹配的 2048×2048 输入尺寸下，以约 ColModernVBERT 2 倍的吞吐编码页面。为了削减高分辨率文档下 late-interaction 嵌入庞大的存储足迹，我们试验了层级 token 池化与非对称量化，成功把 late-interaction 嵌入从每页约 1.5 MB 压到 6 kB（255 倍压缩），同时保留基线 nDCG@10 的 95% 以上。</p>
-<p>我们发布全部 <em>NeoMME</em> 模型 checkpoints 和 day-zero 的 Hugging Face Transformers 实现，让从业者能在我们的成果之上构建高效的多模态、多语言表征模型。</p>
-<h2>致谢</h2>
-<p><em>NeoMME</em> 始于两个好朋友之间的一次「支线任务」。我们在时间与算力都有限的条件下完成，并决定分享结果，让社区可以在其上继续构建。感谢 H Company 对这项工作的支持，并提供训练 <em>NeoMME</em> 所用的算力。</p>
-<h2>引用</h2>
-<pre><code>@misc{lac2026neommesingletowermultimodalnativemultilingual,
-      title={NeoMME: A Single-Tower Multimodal-Native Multilingual Foundation Encoder for Efficient Fine-Tuning and Inference},
-      author={Aurélien Lac and Tony Wu},
-      year={2026},
-      eprint={2609.01657},
-      archivePrefix={arXiv},
-      primaryClass={cs.IR},
-      url={https://arxiv.org/abs/2609.01657},
 }</code></pre>]]></content:encoded>
     </item>
   </channel>

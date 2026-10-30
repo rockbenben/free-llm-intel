@@ -7,7 +7,612 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Wed, 28 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Granite Switch 4.1.1 — Update models like you update softwar…</title>
+      <link>https://huggingface.co/blog/ibm-granite/granite-switch-4-1-1</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/ibm-granite/granite-switch-4-1-1?li=1</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Granite Switch 4.1.1 — Update models like you update software</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Granite Switch 4.1.1 — Update models like you update software</h1>
+<p>Enterprise  Article</p>
+<p>Published October 29, 2026</p>
+<p>11</p>
+<ul><li><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/2914567d7fc1eb8ee34b0d3e9ee23583.svg" alt=""></a></li><li><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt=""></a></li><li><a href="https://huggingface.co/Gutfreund"><img src="https://huggingface.co/avatars/e2ee415543ddb5196421939442fb25ef.svg" alt=""></a></li><li><a href="https://huggingface.co/irena12"><img src="https://huggingface.co/avatars/b4f5fdaad58489923e454856be7c1d56.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/DaniFrame"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1676471115756-noauth.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/c14c1fceffbb86f9730631583443ade3.svg" alt="Kate Soule's avatar"></a></p>
+<p>Kate Soule</p>
+<p>katesoule</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/2914567d7fc1eb8ee34b0d3e9ee23583.svg" alt="Luis A Lastras's avatar"></a></p>
+<p>Luis A Lastras</p>
+<p>GrizleeBer</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt="Subhajit Chaudhury's avatar"></a></p>
+<p>Subhajit Chaudhury</p>
+<p>subhajit1412</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/abedaniels"><img src="https://huggingface.co/avatars/94897098440e0c04c3b23f42d398c33e.svg" alt="Abraham Daniels's avatar"></a></p>
+<p>Abraham Daniels</p>
+<p>abedaniels</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite's avatar"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://cdn-uploads.huggingface.co/production/uploads/662836b742709fe826510597/F5YZJX3QZ8HbecaJnHe4Q.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/662836b742709fe826510597/F5YZJX3QZ8HbecaJnHe4Q.png" alt="granite_switch_adapter_swap"></a></p>
+<p>Just over a week ago, we released <a href="https://huggingface.co/blog/ibm-granite/granite-switch-4-1">Granite Switch 4.1</a>, showing that our modular Switch architecture lets you configure a language model with specialized, cache-efficient adapters — adding new expertise on a single endpoint.</p>
+<p><a href="https://huggingface.co/ibm-granite/granite-switch-4.1-30b">Granite Switch 4.1.1</a> is a patch release. The version number means what it means in software: fully backwards compatible with 4.1, no migration, incremental improvements under the hood.</p>
+<ul><li><a href="https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc">Updated Granite Speech ASR model</a> — multilingual speech-to-text across 10 languages with native punctuation and capitalization, so transcripts are ready for downstream models without a formatting pass.</li><li>Updated Decision adapter in <a href="https://huggingface.co/ibm-granite/granitelib-core-r1.0">granitelib-core</a> — featuring improved overall performance on the Jev Decision Index test set.</li></ul>
+<p>While we are excited about these new features, what is notable is the speed and efficiency with which our teams could release this update. Apart from training the new ASR model and Decision adapter, nothing was recomputed: the base model is untouched. You compose the latest adapters you want and deploy.</p>
+<p>This pattern can power far more than patch releases to an IBM-provided model. We're working on tutorials and an Adapter SDK so developers and third-party providers can build their own adapters — iterate on versions, test features, and ship updates the way you ship software. More soon.</p>
+<p>Until then, test out our <a href="https://huggingface.co/collections/ibm-granite/granite-switch">latest models</a>, and try out the new multilingual and punctuation capabilities powering our <a href="https://huggingface.co/spaces/ibm-granite/speech-to-decisions">Speech-to-Decisions</a> demo.</p>
+<h2>Models mentioned in this article 3</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<h2>Collections mentioned in this article 1</h2>
+<p>More from this author</p>
+<h2>Granite Speech 5.0: Transcribe, Translate, and Attribute more Accurately and Faster</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
+<p>34</p>
+<p>October 21, 2026</p>
+<h2>Granite Switch 4.1: Chat, Decisions, and Speech from One Endpoint</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
+<p>78</p>
+<p>October 15, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-switch-4-1-1">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-switch-4-1-1">log in</a> to comment</p>
+<p>11</p>
+<ul><li><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/2914567d7fc1eb8ee34b0d3e9ee23583.svg" alt=""></a></li><li><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt=""></a></li><li><a href="https://huggingface.co/Gutfreund"><img src="https://huggingface.co/avatars/e2ee415543ddb5196421939442fb25ef.svg" alt=""></a></li><li><a href="https://huggingface.co/irena12"><img src="https://huggingface.co/avatars/b4f5fdaad58489923e454856be7c1d56.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/DaniFrame"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1676471115756-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/y17688839396"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ae38ed28417705222b1d96c/ralVRgxlwETm5nLyE6821.jpeg" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/aviv1ron1"><img src="https://huggingface.co/avatars/d09c5a11c92eb4648fb805307915d888.svg" alt=""></a></li><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Saravanakumarpsk"><img src="https://huggingface.co/avatars/f5058bdfa84104849d4a203e4843fc30.svg" alt=""></a></li></ul>
+<h2>Models mentioned in this article 3</h2>
+<h2>Spaces mentioned in this article 1</h2>
+<h2>Collections mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Announcing Project ProtoStar: Making Publicly Funded Science…</title>
+      <link>https://huggingface.co/blog/announcing-project-protostar</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/announcing-project-protostar?li=1</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Announcing Project ProtoStar: Making Publicly Funded Science AI-Ready</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Announcing Project ProtoStar: Making Publicly Funded Science AI-Ready</h1>
+<p>Published October 29, 2026</p>
+<p>Update on GitHub</p>
+<p>13</p>
+<ul><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/asudjennewe"><img src="https://huggingface.co/avatars/11887610aefe9108b70374e3e13955f8.svg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt="Avijit Ghosh's avatar"></a></p>
+<p>Avijit Ghosh</p>
+<p>evijit</p>
+<p><a href="https://huggingface.co/hfpolicy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/QG_3ddXXIYQB_pjvmcFCs.jpeg" alt="Hugging Face Policy Team's avatar"></a> <a href="https://huggingface.co/hfpolicy">hfpolicy</a></p>
+<p><a href="https://huggingface.co/sayeedmd"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ad4e3949580e07e0a986679/1MSEpCgZUbSYWD_cpuZg9.png" alt="Sayeed Choudhury's avatar"></a></p>
+<p>Sayeed Choudhury</p>
+<p>sayeedmd</p>
+<p><a href="https://huggingface.co/CMU-OSPO"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6ad4e3949580e07e0a986679/M8j2tim-tJk-l2iPHoYDZ.png" alt="Carnegie Mellon University Open Source Programs Office's avatar"></a> <a href="https://huggingface.co/CMU-OSPO">CMU-OSPO</a></p>
+<p><a href="https://huggingface.co/gtananbaum"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/WdspKUYBJ3KdamxH5i6Bm.png" alt="Greg Tananbaum's avatar"></a></p>
+<p>Greg Tananbaum</p>
+<p>gtananbaum</p>
+<p><a href="https://huggingface.co/ORCA-Open"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb8f75c66d83f39a865e8f/Bq5oH-QzWWVQXrSZbgUEY.png" alt="Open Research Community Accelerator's avatar"></a> <a href="https://huggingface.co/ORCA-Open">ORCA-Open</a></p>
+<p><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt="Emma Scharfmann's avatar"></a></p>
+<p>Emma Scharfmann</p>
+<p>EmmaScharfmann</p>
+<p><a href="https://huggingface.co/hugging-science"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/680ff4388f704be391757780/-9cmzdDMCol0OfkTYK8jF.png" alt="Hugging Science's avatar"></a> <a href="https://huggingface.co/hugging-science">hugging-science</a></p>
+<p><a href="https://huggingface.co/cgeorgiaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/WEjkuS_TxIgtYRxNPa0VS.png" alt="Georgia Channing's avatar"></a></p>
+<p>Georgia Channing</p>
+<p>cgeorgiaw</p>
+<p><a href="https://huggingface.co/hugging-science"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/680ff4388f704be391757780/-9cmzdDMCol0OfkTYK8jF.png" alt="Hugging Science's avatar"></a> <a href="https://huggingface.co/hugging-science">hugging-science</a></p>
+<p><a href="https://huggingface.co/EuniceML"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb8f75c66d83f39a865e8f/08MBABUzHMgyhx4s-ImOp.png" alt="Eunice Mercado-Lara's avatar"></a></p>
+<p>Eunice Mercado-Lara</p>
+<p>EuniceML</p>
+<p><a href="https://huggingface.co/ORCA-Open"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb8f75c66d83f39a865e8f/Bq5oH-QzWWVQXrSZbgUEY.png" alt="Open Research Community Accelerator's avatar"></a> <a href="https://huggingface.co/ORCA-Open">ORCA-Open</a></p>
+<p><a href="https://huggingface.co/irenesolaiman"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62543749b777cd32720675c2/EF_KRZO4hTo8TWXOtvc-n.png" alt="Irene Solaiman's avatar"></a></p>
+<p>Irene Solaiman</p>
+<p>irenesolaiman</p>
+<p><a href="https://huggingface.co/hfpolicy"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/QG_3ddXXIYQB_pjvmcFCs.jpeg" alt="Hugging Face Policy Team's avatar"></a> <a href="https://huggingface.co/hfpolicy">hfpolicy</a></p>
+<p><em>An initiative bringing together universities, research organizations, industry, and the open science community to make publicly funded research easier to discover, reuse, and build upon.</em></p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/announcing-project-protostar/header.jpg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/announcing-project-protostar/header.jpg" alt="Project ProtoStar: Public research, put to work"></a></p>
+<p>Today, we're announcing <strong><a href="https://huggingface.co/project-protostar">Project ProtoStar</a></strong>, an initiative to unlock the potential of publicly funded scientific research by making datasets, models, and code more accessible and reusable, particularly for AI-driven research. ProtoStar brings together research institutions, industry, and the open science community to support the release of scientific artifacts in AI-ready, machine-actionable formats, and to demonstrate their value through a series of open challenges. The first challenge, hosted by <a href="https://www.cmu.edu/">Carnegie Mellon University</a>, opens on November 2. See <a href="https://huggingface.co/blog/announcing-project-protostar#the-first-challenge-climate-risk-intelligence">How to Participate</a> below.</p>
+<p>The initiative's founding partners include <a href="https://www.cmu.edu/">Carnegie Mellon University</a>, <a href="https://www.purdue.edu/">Purdue University</a>, <a href="https://www.gatech.edu/">Georgia Institute of Technology</a>, <a href="https://www.asu.edu/">Arizona State University</a>, and <a href="https://www.gwu.edu/">The George Washington University</a>, all working through the <a href="https://www.openforumai.org/">Open Forum for AI (OFAI)</a> as the university coalition partner; the <a href="https://astera.org/">Astera Institute</a>; <a href="https://huggingface.co/">Hugging Face</a> as the infrastructure partner; and the <a href="https://orcaopen.org/">Open Research Community Accelerator (ORCA)</a>, through its <a href="https://orcaopen.org/work/fostering-innovation-through-open-science-fin">Fostering Innovation Network</a>, as the community partner.</p>
+<p>Participating organizations formalize their involvement through a memorandum of understanding supporting the release of suitable scientific datasets, models, and code in AI-ready formats on open infrastructure. Organizations interested in joining Project ProtoStar can reach out to <a href="mailto:protostar@orcaopen.org">protostar@orcaopen.org</a>.</p>
+<h2>Making publicly funded science more usable</h2>
+<p>The U.S. federal government invests approximately <a href="https://www.congress.gov/crs-product/R48694">$190 billion annually in research and development</a>, and federal policy increasingly expects the results to be shared publicly. Agencies such as the <a href="https://www.nih.gov/">National Institutes of Health (NIH)</a> and <a href="https://www.nsf.gov/">National Science Foundation (NSF)</a> have strengthened public-access requirements for funded research publications and require researchers to plan for sharing the underlying data. Hugging Face is among the <a href="https://www.nlm.nih.gov/NIHbmic/generalist_repositories.html">ten generalist repositories listed by NIH</a> for sharing research data.</p>
+<p><strong>But making research publicly available does not automatically make it usable.</strong> Scientific datasets, models, and code are often scattered across incompatible systems, stored in static or legacy formats, or released without the documentation, metadata, and provenance needed to understand and reuse them. These limitations make it harder for researchers to build on existing work, and harder still for AI systems to discover, interpret, and combine scientific resources across disciplines.</p>
+<p>Project ProtoStar aims to help close this gap by encouraging systematic sharing of publicly funded scientific artifacts in AI-ready formats, supported by open infrastructure and practical publishing guidance. It builds on efforts such as the <a href="https://datacommons.cancer.gov/news/nci-crdc-artificial-intelligence-data-readiness-aidr-challenge">National Cancer Institute's AI Data-Readiness Challenge</a> and <a href="https://huggingface.co/blog/evijit/public-org-data-ai">Hugging Face's guide to preparing public-sector data for AI</a>. The goal is to make it easier for research organizations to meet existing public-access expectations while increasing the scientific value of the work they release.</p>
+<p>The demand for reusable scientific resources is already evident. <strong><a href="https://huggingface.co/">Hugging Face</a> hosts more than 17,000 public datasets across core scientific domains</strong>, including genomics, protein design, chemistry, weather and climate, Earth observation, and astronomy. That figure approaches 29,000 when medicine and mathematics are included, alongside a comparable number of scientific models.</p>
+<p>The pace of sharing is also accelerating. <strong>Researchers shared more than three times as many new science datasets on Hugging Face in the first nine months of 2026 as in the same period of 2025</strong>, with growth remaining substantial even after excluding the largest individual uploader.</p>
+<p><em>Figure 1. New public science datasets on Hugging Face per quarter, by domain (Q1 2023–Q3 2026). Counts datasets still public, by creation date. Source: Hugging Face Hub data, October 2026. <a href="https://huggingface.co/spaces/evijit/hf-science-growth">Explore the data</a>.</em></p>
+<p>When organizations share research in reusable formats, the scientific community can build on it at scale. The 18 public repositories maintained by NIH's <a href="https://www.ncbi.nlm.nih.gov/">National Center for Biotechnology Information (NCBI)</a> on Hugging Face have collectively received more than 11 million downloads, while <a href="https://huggingface.co/nasa-impact">NASA IMPACT's</a> 27 repositories have received approximately 770,000 downloads, as of October 26, 2026. Documentation is also an important part of making these resources useful: <a href="https://arxiv.org/abs/2401.13822">90% of dataset downloads on Hugging Face are from fully documented datasets</a>.</p>
+<p>Publicly available genomic data has proved important in contributing to research that further advances fields such as biological research; researchers at Hugging Face have been building on openly available scientific resources, including recent releases from <a href="https://huggingface.co/HuggingFaceBio">HuggingFaceBio</a> such as <a href="https://huggingface.co/blog/HuggingFaceBio/carbon-annotator-genbank-genome-annotation">Carbon-A</a> and <a href="https://huggingface.co/spaces/HuggingFaceBio/Carbon-X-Release">Carbon-X</a>. By releasing the resulting models, datasets, and tools openly, these efforts demonstrate how existing scientific resources can support new research that others can build upon.</p>
+<p>This is the kind of activity that we are further catalyzing via Project ProtoStar through institutional policies adopted by participating orgs. As an early example of institutional commitment, CMU's Open Source Programs Office is encouraging its researchers to share suitable datasets, AI models, and other research outputs on Hugging Face, while recognizing the continued importance of domain-specific repositories.</p>
+<h2>Open Science Challenges</h2>
+<p><a href="https://huggingface.co/blog/evijit/public-org-data-ai">Making scientific artifacts AI-ready</a> is an important first step. We also want to demonstrate what researchers, developers, and the broader scientific community can accomplish when those resources are made available for reuse.</p>
+<p>A central question for ProtoStar is: <strong>Can publicly funded scientific datasets, models, and code, released in AI-ready formats, be readily discovered, reused, combined, and extended to accelerate scientific discovery and public benefit?</strong></p>
+<p>To explore this, ProtoStar will organize a series of open challenges, each hosted by a participating research institution and built around scientific resources that the institution has released openly. The challenges have two complementary goals:</p>
+<ul><li><strong>Demonstrate scientific reuse.</strong> Produce concrete examples of researchers and developers building on publicly funded scientific artifacts, including applications that combine resources across institutions or disciplines.</li><li><strong>Learn what makes reuse possible.</strong> Identify technical barriers, documentation gaps, interoperability challenges, and successful practices that can inform future research infrastructure, funding decisions, and public policy.</li></ul>
+<p>The resulting projects and lessons learned will help build a practical evidence base for making publicly funded science more accessible and useful.</p>
+<h3>The first challenge: Climate Risk Intelligence</h3>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/announcing-project-protostar/climate-challenge.jpg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/announcing-project-protostar/climate-challenge.jpg" alt="CMU Climate Risk Intelligence Challenge, November 2–13, 2026"></a></p>
+<p><strong>Hosted by <a href="https://www.cmu.edu/">Carnegie Mellon University</a> | November 2–13, 2026</strong></p>
+<p>The inaugural ProtoStar challenge invites participants to test whether AI can improve predictions of urban climate conditions using historical weather data from 210 U.S. cities. Building on <a href="https://doi.org/10.1184/R1/7890488.v6">research by Carnegie Mellon University</a>, teams will use climate records through 2018 to predict actual conditions from 2019 to 2026, allowing their models to be evaluated against observed weather rather than hypothetical future scenarios.</p>
+<p>Participants will forecast four indicators relevant to urban planning: average annual temperature, total annual precipitation, the hottest day of the year, and cooling degree days, a measure of demand for air conditioning. Their predictions will be compared against simple statistical baselines, including historical averages and linear trends, to assess whether AI approaches offer meaningful improvements in accuracy.</p>
+<p>Beyond forecasting, participants will also propose a short climate adaptation policy idea informed by what they learned from the data. This component encourages teams to connect scientific analysis with practical public benefits, such as preparing cities for extreme heat, improving energy efficiency, or managing changing precipitation patterns.</p>
+<p>Teams will submit a Hugging Face dataset with these outputs. Forecasting performance will be assessed through a public leaderboard measuring prediction errors against established baselines, while policy ideas will receive separate consideration. Final forecasting results will be published in early 2027, once the complete 2026 weather records are available.</p>
+<p><strong><a href="https://huggingface.co/spaces/CMU-OSPO/protostar-challenge-climate-risk-intelligence">Explore the CMU Climate Risk Intelligence Challenge</a></strong></p>
+<p>The CMU challenge is the first in this series. Other participating institutions will host their own challenges sequentially, each highlighting different publicly funded scientific resources and opportunities for reuse. Future challenges will be announced through the <a href="https://huggingface.co/project-protostar">Project ProtoStar page on Hugging Face</a>.</p>
+<h2>How to Join Project ProtoStar</h2>
+<p>Whether you're an academic researcher, student, independent developer, or company building on open scientific infrastructure, ProtoStar offers opportunities to put publicly funded research to work and help us learn what is needed to make AI-ready open science more widely useful.</p>
+<p>We also welcome universities, federal research agencies, national laboratories, nonprofits, and other research organizations interested in making their scientific resources more accessible and reusable. <strong>To explore participation or collaboration, reach out to <a href="mailto:protostar@orcaopen.org">protostar@orcaopen.org</a>.</strong></p>
+<p>Our hope is that ProtoStar will make it easier for publicly funded scientific work to reach the people and tools that can build on it, while generating practical evidence about the infrastructure and practices needed to support open science at scale.</p>
+<h2>Spaces mentioned in this article 3</h2>
+<p>More Articles from our Blog</p>
+<p>communitydatasetssynthetic-data</p>
+<h2>Docmatix - a huge dataset for Document Visual Question Answering</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1635201569275-noauth.jpeg" alt=""></li></ul>
+<p>80</p>
+<p>July 18, 2024</p>
+<p>nlpcommunityresearch</p>
+<h2>Introducing the Ettin Reranker Family</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></li></ul>
+<p>58</p>
+<p>May 19, 2026</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fannouncing-project-protostar">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fannouncing-project-protostar">log in</a> to comment</p>
+<p>13</p>
+<ul><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/asudjennewe"><img src="https://huggingface.co/avatars/11887610aefe9108b70374e3e13955f8.svg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EuniceML"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6adb8f75c66d83f39a865e8f/08MBABUzHMgyhx4s-ImOp.png" alt=""></a></li><li><a href="https://huggingface.co/Leviathe"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/zq45JLVUkhiFSn0ps6P7A.png" alt=""></a></li><li><a href="https://huggingface.co/glutamatt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/664d7d1e4f54c9372970e121/TEWsq1_zSBBeuHLu0HlDc.png" alt=""></a></li><li><a href="https://huggingface.co/phranzia"><img src="https://huggingface.co/avatars/aa59524e3ace86c3ffee97b66ca74b5d.svg" alt=""></a></li><li><a href="https://huggingface.co/Jv45"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/wmyJ3x4plb5TKRJzjOZ2a.png" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>
+<h2>Spaces mentioned in this article 3</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Welcome Le Chonk: Mistral Large 4 on Hugging Face</title>
+      <link>https://huggingface.co/blog/mistral-large4</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/mistral-large4?li=1</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Welcome Le Chonk: Mistral Large 4 on Hugging Face</h1>
+<p>Published October 29, 2026</p>
+<p>Update on GitHub</p>
+<p>35</p>
+<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alvarobartt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/titouv"><img src="https://huggingface.co/avatars/1ed1da1c19e8cc152c3a1ec21aaeca28.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt="merve's avatar"></a></p>
+<p>merve</p>
+<p>merve</p>
+<p><a href="https://huggingface.co/alvarobartt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt="Alvaro Bartolome's avatar"></a></p>
+<p>Alvaro Bartolome</p>
+<p>alvarobartt</p>
+<p><a href="https://huggingface.co/ror"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt="Rémi Ouazan Reboul's avatar"></a></p>
+<p>Rémi Ouazan Reboul</p>
+<p>ror</p>
+<p><a href="https://huggingface.co/cyrilvallez"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/649a943906690b959319d192/k8ZlmJWF3GNpYLHrdpejY.jpeg" alt="Cyril Vallez's avatar"></a></p>
+<p>Cyril Vallez</p>
+<p>cyrilvallez</p>
+<p><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt="Quentin Gallouédec's avatar"></a></p>
+<p>Quentin Gallouédec</p>
+<p>qgallouedec</p>
+<p><a href="https://huggingface.co/ehcalabres"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60db433e432bcf121f559073/a7LbJFHx2GUm9sH05Ns8Q.jpeg" alt="Enrique Hernández Calabrés's avatar"></a></p>
+<p>Enrique Hernández Calabrés</p>
+<p>ehcalabres</p>
+<p><a href="https://huggingface.co/juanjucm"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649193345684-60abb720e3de7c7440abb84c.jpeg" alt="Juan Julián's avatar"></a></p>
+<p>Juan Julián</p>
+<p>juanjucm</p>
+<p><a href="https://huggingface.co/ngxson"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1674191139776-noauth.png" alt="Xuan-Son Nguyen's avatar"></a></p>
+<p>Xuan-Son Nguyen</p>
+<p>ngxson</p>
+<p><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt="Pedro Cuenca's avatar"></a></p>
+<p>Pedro Cuenca</p>
+<p>pcuenq</p>
+<p><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt="ben burtenshaw's avatar"></a></p>
+<p>ben burtenshaw</p>
+<p>burtenshaw</p>
+<p><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt="Aritra Roy Gosthipaty's avatar"></a></p>
+<p>Aritra Roy Gosthipaty</p>
+<p>ariG23498</p>
+<p>Mistral Large 4 (aka Le Chonk) is a multimodal, multilingual, Mixture-of-Experts (MoE) model from Mistral. It takes text and images as input and generates text. It has about <strong>1T total, 49B active parameter</strong>, and a context window of <strong>1M tokens</strong>.</p>
+<p>The model is released in two official variants:</p>
+<ul><li><a href="https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B">FP8</a></li><li><a href="https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B-NVFP4">NVFP4</a></li></ul>
+<p>There are also <a href="https://huggingface.co/ggml-org">GGUFs</a> created by <a href="https://huggingface.co/unsloth/Mistral-Large-4-1T-A52B-GGUF">Unsloth</a> and the llama.cpp team. It’s distributed under the Mistral Ecosystem Open-Weight License (an MIT derivative that establishes limitations for model-as-a-service offerings).</p>
+<p>Mistral Large 4 is particularly strong for cybersecurity, coding agents, and multimodality. In this post, we look at how the model works, its capabilities, architecture and more!</p>
+<h2>Table of Contents</h2>
+<ul><li><a href="https://huggingface.co/blog/mistral-large4#welcome-le-chonk-mistral-large-4-on-hugging-face">&quot;Welcome Le Chonk: Mistral Large 4 on Hugging Face&quot;</a> <a href="https://huggingface.co/blog/mistral-large4#table-of-contents">Table of Contents</a> <a href="https://huggingface.co/blog/mistral-large4#what-is-new-with-mistral-large-4">What is new with Mistral Large 4</a> <a href="https://huggingface.co/blog/mistral-large4#cybersecurity-capabilities">Cybersecurity Capabilities</a>   <a href="https://huggingface.co/blog/mistral-large4#architecture">Architecture</a> <a href="https://huggingface.co/blog/mistral-large4#vision-encoder">Vision encoder</a>   <a href="https://huggingface.co/blog/mistral-large4#benchmark-results">Benchmark Results</a> <a href="https://huggingface.co/blog/mistral-large4#inference-support">Inference Support</a> <a href="https://huggingface.co/blog/mistral-large4#transformers">Transformers</a> <a href="https://huggingface.co/blog/mistral-large4#vllm">vLLM</a> <a href="https://huggingface.co/blog/mistral-large4#llamacpp">Llama.cpp</a>   <a href="https://huggingface.co/blog/mistral-large4#fine-tuning-with-trl">Fine-tuning with TRL</a> <a href="https://huggingface.co/blog/mistral-large4#inference-endpoints">Inference Endpoints</a> <a href="https://huggingface.co/blog/mistral-large4#dell-enterprise-hub">Dell Enterprise Hub</a> <a href="https://huggingface.co/blog/mistral-large4#try-it-out">Try it out</a></li></ul>
+<h2>What is new with Mistral Large 4</h2>
+<p><a href="https://huggingface.co/collections/mistralai/mistral-large-4">Mistral Large 4</a> combines a large pool of experts with sparse attention and a <a href="https://huggingface.co/docs/transformers/en/model_doc/pixtral">Pixtral</a> vision encoder. The language model selects a small group of experts for each token, while its attention indexer selects which earlier token positions to attend to. These are two different forms of sparsity, where one selects feed-forward networks, the other selects context positions.</p>
+<p>You can find all the checkpoints in the <a href="https://huggingface.co/collections/mistralai/mistral-large-4">Mistral Large 4 collection</a>.</p>
+<h3>Cybersecurity Capabilities</h3>
+<p>Mistral Large 4 scores 82% on the Artificial Analysis Cyber Index test that asks a model to reproduce a real vulnerability in open-source software and then patch the software. Mistral reports that several closed frontier models score near zero on the same test because they refuse to attempt the work. This is super important for defenders, because fixing a vulnerability usually requires reproducing the vulnerability. In Mistral’s internal testing, Mistral Large 4 was also useful for malware analysis, vulnerability prioritisation and writing detection rules, which the model was not explicitly trained for.</p>
+<p>Mistral mainly positions the model for defensive security work. Vulnerability research and incident response often appear like attacks in model input, so closed source filters can block them. A team that depends on an API can also lose access in the middle of an incident. Crucially, open weight models put both the usage policy and the deployment under the user’s control. That said, the model still declines harmful requests: on cyber prompts from JailbreakBench, StrongREJECT and AgentHarm, its average refusal rate is higher than any other open weight model.</p>
+<p>For community builders, an open weight model like Mistral Large 4 unlocks a load of downstream use cases. You could build your own cyber system around your code base, crash logs, and malware samples. For example, with <a href="https://huggingface.co/blog/mistral-large4#fine-tuning-with-trl">TRL you could fine-tune</a> smaller models from Mistral Large 4 traces patching your code base. In fact, reproduce-then-patch tasks use a verifiable reward, so it fits with RL environments that could be used to further RL smaller security models. Open weights also let researchers measure the model’s refusal behaviour directly instead of relying on the provider’s description.</p>
+<p>In short, cyber capabilities like ML4’s in the open are a huge boost for the community.</p>
+<blockquote>We have interviewed Pierre Stock about the cyber capabilities of the model, you can watch it here.</blockquote>
+<h2>Architecture</h2>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/ml4.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/ml4.png" alt="ML4"></a></p>
+<p>Mistral Large 4’s text decoder has 72 layers, a hidden dimension of 6,144, and 64 attention heads. Its attention blocks combine Multi-head Latent Attention (MLA) with a DeepSeek Sparse Attention (DSA) indexer (a direction in other models such as GLM 5.3). MLA keeps a compressed KV representation, and DSA selects up to 2,048 key positions for each query.</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/attention.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/attention.png" alt="Attention"></a> For each decoder block, there’s a 3:1 RoPE to NoPE pattern, i.e. 3 decoder layers employ RoPE and every fourth layer uses NoPE. The model also shares KV state across layers. The first decoder layer uses a dense feed-forward network. The other 71 layers use MoE blocks, in which a softmax router selects four of the 128 experts for each token. One shared expert always runs alongside the selected experts, for a total of 5 active experts per token.</p>
+<p>Regarding RoPE, Mistral uses <em>LeRope</em>, a YaRN-scaled RoPE with one learned multiplier per frequency.</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/experts.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/experts.png" alt="Experts"></a></p>
+<h3>Vision encoder</h3>
+<p>Mistral Large 4 employs a 1.6B Pixtral encoder. Pixtral has 30 layers, a hidden dimension of 2,048, and 16 attention heads. It uses 14 × 14 patches and a patch-merge projector with spatial merge size 2. You can see the encoder pipeline below.</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/img_encoder.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/img_encoder.png" alt="Image Encoder"></a></p>
+<h2>Benchmark Results</h2>
+<p>Mistral Large 4 delivers strong benchmark performance across coding, cybersecurity, multimodal understanding, and agentic workflows, positioning it as a competitive addition to the open-weight ecosystem. As of October 29, 2026, the model is the fifth best open weights model on Artificial Analysis Intelligence index.</p>
+<p>On coding, ML4 achieves <strong>61.7% on DeepSWE v1.1</strong>, <strong>59.4% on SWE-Atlas-QnA</strong>, and <strong>28.3% on Terminal-Bench 4</strong>. Its combined <strong>Coding Agent Index score of 49.8%</strong> places it ahead of DeepSeek V4 Pro 0813 and Qwen3.8 Max.</p>
+<p>Coding capabilities of ML4 extend to knowledge work, with <strong>59.9% on AutomationBench</strong> and <strong>1,393 Elo on AA-Briefcase</strong>, which evaluate business workflows and long-horizon professional tasks.</p>
+<p>Cybersecurity is one of Mistral Large 4’s standout capabilities, with strong results across real-world vulnerability assessment and security competition tasks. Three benchmarks highlight the model’s cyber performance:</p>
+<ul><li><strong>Artificial Analysis Cyber Index:</strong> ML4 ranks among the <strong>top five models globally</strong> on this independent evaluation of models’ ability to find and fix software vulnerabilities.</li><li><strong>Vulnerability reproduction and patching:</strong> It achieves <strong>82%</strong>, the highest reported score on this test within the index. The task requires reproducing a real vulnerability in open-source software and then patching it, testing both investigation and remediation.</li><li><strong>Cybench:</strong> ML4 solves <strong>93%</strong> of a suite of <strong>40 challenges drawn from security competitions</strong>, demonstrating strong performance on hands-on security problems.</li></ul>
+<p>Mistral Large 4 also demonstrates <strong>93.3% attack resistance on Lakera’s B3 benchmark</strong>, adding evidence of robustness against prompt-injection attacks. Beyond benchmarks, internal testing showed promising results in malware analysis, vulnerability prioritization, and detection-rule generation.</p>
+<h2>Inference Support</h2>
+<p>Mistral Large 4 is shipped with day-0 support for transformers, vLLM and llama.cpp. GGUF quants are available from GGUF and the <a href="https://huggingface.co/ggml-org/Mistral-Large-4-1T-A52B-GGUF">llama.cpp team</a>. We provide options to deploy remotely with Inference Endpoints, and use serverless inference through Inference Providers.</p>
+<h3>Transformers</h3>
+<p>The Transformers implementation provides <code>AutoModelForMultimodalLM</code>, with <code>AutoProcessor</code> preparing the conversation and image inputs. Mistral Large 4 can take <code>low</code>, <code>medium</code>, <code>high</code> as reasoning effort. The default is <code>high</code>, and note that reasoning cannot be disabled, so using <code>reasoning_effort</code>: <code>none</code> would still use <code>high</code>.</p>
+<p>To run the model, upgrade the transformers package</p>
+<pre><code>pip install --upgrade transformers</code></pre>
+<pre><code>import os
+from transformers import AutoProcessor, AutoModelForMultimodalLM, DistributedConfig
+
+distributed_config = DistributedConfig(
+    tp_size=int(os.environ[&quot;WORLD_SIZE&quot;]),
+    ep_size=int(os.environ[&quot;WORLD_SIZE&quot;]),
+)
+
+model_id = &quot;mistralai/Mistral-Large-4-1T-A52B&quot;
+processor = AutoProcessor.from_pretrained(model_id)
+model = AutoModelForMultimodalLM.from_pretrained(
+    model_id,
+    distributed_config=distributed_config,
+)
+
+# only text
+text_messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: &quot;Who are you?&quot;
+    }
+]
+
+# text + image
+multimodal_messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;image&quot;,
+                &quot;image&quot;: &quot;https://huggingface.co/datasets/huggingface/cats-image/resolve/main/cats_image.jpeg&quot;,
+            },
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;How many cats are in the image?&quot;,
+            },
+        ],
+    },
+]
+
+for messages in [text_messages, multimodal_messages]:
+    inputs = processor.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        tokenize=True,
+        return_dict=True,
+        return_tensors=&quot;pt&quot;,
+        reasoning_effort=&quot;medium&quot;,
+    ).to(model.device).to(model.dtype)
+    input_len = inputs[&quot;input_ids&quot;].shape[-1]
+
+    outputs = model.generate(**inputs, max_new_tokens=100)
+    if int(os.environ[&quot;RANK&quot;]) == 0:
+        print(processor.decode(outputs[0][input_len:], skip_special_tokens=False))</code></pre>
+<p>You can run the script above by saving it in a python file <code>script.py</code> and then run</p>
+<pre><code>torchrun --nproc-per-node 8 script.py</code></pre>
+<h3>vLLM</h3>
+<p>vLLM supports the high-quality NVFP4 Mistral Large 4 checkpoint, which has a smaller memory footprint and requires NVIDIA Blackwell GPUs. The model also ships with a DSpark drafter for additional speed-ups with vLLM. Launch the server like this:</p>
+<pre><code>vllm serve mistralai/Mistral-Large-4-1T-A52B-NVFP4 \
+  --config-format mistral \
+  --load-format mistral \
+  --tensor-parallel-size 8 \
+  --decode-context-parallel-size 8 \
+  --enable-expert-parallel \
+  --dtype bfloat16 \
+  --max-model-len 131072 \
+  --max-num-seqs 16 \
+  --max-num-batched-tokens 2048 \
+  --gpu-memory-utilization 0.85 \
+  --enable-prefix-caching \
+  --enforce-eager \
+  --mm_processor_cache_gb 0.0</code></pre>
+<p>Once the server is up and running, you can run the following.</p>
+<pre><code>curl -s http://127.0.0.1:8000/v1/chat/completions -H 'Content-Type: application/json' \
+  -d '{&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;What is 17*23?&quot;}],&quot;max_tokens&quot;:512}'</code></pre>
+<h3>Llama.cpp</h3>
+<p>Llama.cpp and <a href="https://llama.app/">Llama App</a> already support Mistral Large 4.</p>
+<p>You can install Llama App with the following command:</p>
+<pre><code>curl -LsSf https://llama.app/install.sh | sh</code></pre>
+<p>Then you can start the server as follows, indicating the quant suffix after the model ID:</p>
+<pre><code>llama serve -hf ggml-org/Mistral-Large-4-1T-A52B-GGUF:Q2_K</code></pre>
+<p><a href="https://huggingface.co/ggml-org/Mistral-Large-4-1T-A52B-GGUF">Here’s the repository</a> with the quants derived from the FP8 checkpoint, and <a href="https://huggingface.co/ggml-org/Mistral-Large-4-1T-A52B-NVFP4-GGUF">this is the NVFP4 one</a>, converted from the official NVFP4 repo.</p>
+<p>Once the server has started, you can head to localhost:9931 to chat using the built-in WebUI. From the web UI you can add images for inference and adjust the reasoning lever. You can also query the server as follows. Feel free to check out <a href="https://llama.app/docs/serve">the API reference</a> for multimodality, tool calls and more.</p>
+<pre><code>curl http://localhost:8080/v1/chat/completions \
+    -H &quot;Content-Type: application/json&quot; \
+    -d '{
+        &quot;messages&quot;: [
+            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Write a limerick about python exceptions&quot;}
+        ]
+    }'</code></pre>
+<p>You can run image-text inference as follows.</p>
+<pre><code>curl -s http://127.0.0.1:8080/v1/chat/completions \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Authorization: Bearer &lt;your-key&gt;&quot; \
+    -d '{
+        &quot;model&quot;: &quot;muse-spark-open&quot;,
+        &quot;messages&quot;: [
+            {
+                &quot;role&quot;: &quot;user&quot;,
+                &quot;content&quot;: [
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;What is in this image?&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;image_url&quot;,
+                        &quot;image_url&quot;: {
+                            &quot;url&quot;: &quot;data:image/png;base64,...&quot;
+                        }
+                    }
+                ]
+            }
+        ],
+        &quot;temperature&quot;: 0
+    }'</code></pre>
+<p>The llama.cpp team ships the following quants: <code>IQ2_XXS</code>, <code>Q2_K</code>, <code>Q4_K_M</code>, <code>NVFP4</code>, <code>Q8_0</code>, and <code>BF16</code> for further conversions. The 2-bit quants run on a single Apple Silicon Ultra computer with 512 GB of unified RAM. The others require distributed inference. You can also run on multiple NVIDIA or AMD cards.</p>
+<p>Running <code>Q2_K</code> on a single M3 Ultra, we got a prefill throughput of about 90 tokens per second, and a generation speed of 15 tok/s. On 4 x RTX6000 Pro, we observed the following results:</p>
+<ul><li>NVFP4: 32K context size, prefill 130-590 t/s, gen speed ~10 t/s</li><li>IQ2_XXS: 800K context size. At short context sizes, prefill is 500 tok/s and generation runs at 30 tok/s. However, using long contexts performance drops to 129 tok/s (prefill) and 3 tok/s (generation).</li></ul>
+<h2>Fine-tuning with TRL</h2>
+<p>We also ship day 0 support of fine tuning Mistral Large 4 using TRL. All you have to do is upgrade to the latest version of <code>transformers</code>, <code>trl</code> and <code>peft</code>.</p>
+<pre><code>pip install --upgrade transformers trl peft</code></pre>
+<p>In the following example we train the model to perform multilingual thinking. The fine tuned model would be able to reason in the language the system prompt asks for!</p>
+<p>The script runs on the FP8 variant on a node of 8xB300s. The full example, with a Slurm launcher, is in <a href="https://github.com/huggingface/trl/tree/main/examples/sft_mistral_large_4">TRL's examples</a>.</p>
+<pre><code># torchrun --nproc-per-node 8 sft.py
+import os
+
+from datasets import load_dataset
+from peft import LoraConfig
+from transformers import AutoModelForImageTextToText, DistributedConfig
+from trl import SFTConfig, SFTTrainer
+
+world_size = int(os.environ[&quot;WORLD_SIZE&quot;])
+model_id = &quot;mistralai/Mistral-Large-4-1T-A52B&quot;
+model = AutoModelForImageTextToText.from_pretrained(
+    model_id,
+    distributed_config=DistributedConfig(fsdp_size=world_size, ep_size=world_size),
+    dtype=&quot;auto&quot;,
+)
+
+dataset = load_dataset(&quot;HuggingFaceH4/Multilingual-Thinking&quot;, split=&quot;train&quot;)
+# the assistant turns carry reasoning, so render them in reasoning mode
+dataset = dataset.map(lambda x: {&quot;chat_template_kwargs&quot;: {&quot;reasoning_effort&quot;: &quot;high&quot;}})
+
+trainer = SFTTrainer(
+    model=model,
+    args=SFTConfig(
+        packing=True,
+        max_length=4096,
+        assistant_only_loss=True,
+        learning_rate=1e-4,
+        lr_scheduler_type=&quot;cosine&quot;,
+        warmup_steps=10,
+    ),
+    train_dataset=dataset,
+    peft_config=LoraConfig(
+        r=16,
+        lora_alpha=32,
+        target_modules=r&quot;.*language_model.*\.(q_proj|kv_a_proj_with_mqa|kv_b_proj|o_proj|gate_proj|up_proj|down_proj)&quot;,
+    ),
+)
+trainer.train()</code></pre>
+<h2>Inference Endpoints</h2>
+<p>Mistral Large 4 is also available on Inference Endpoints, with a ready-to-deploy recipe on 8 x NVIDIA H200 GPUs. The recipe runs vLLM with the FP8 weights split across all eight GPUs using tensor and expert parallelism, and uses the model's built-in DSpark draft head for faster generation through speculative decoding. It serves up to 131K tokens of context and processes up to 16 requests at a time, and we observed the following results:</p>
+<ul><li>Single request: time to first token of about 0.6 seconds for a 1K-token prompt, and a generation speed of ~65 tok/s, reaching 120–138 tok/s on chat prompts where DSpark's drafts are accepted.</li><li>Long prompts: 16K-token prompts, four at a time, are prefilled at about 4,300 tok/s in total, with a time to first token of 8–9 seconds.</li><li>Under load: about 480 tok/s of total generation across 1,000 ShareGPT conversations.</li></ul>
+<p>You can deploy it with the <code>hf</code> CLI as follows:</p>
+<pre><code>hf endpoints catalog deploy --repo mistralai/Mistral-Large-4-1T-A52B --name mistral-large-4</code></pre>
+<p>Once the endpoint is running, you can query its OpenAI-compatible API, using the endpoint URL and your Hugging Face token. The <code>reasoning_effort</code> field controls how much the model reasons before answering, and can be set to <code>low</code>, <code>medium</code>, or <code>high</code> (default).</p>
+<pre><code>curl &quot;$(hf endpoints describe mistral-large-4 --json | jq -r .status.url)/v1/chat/completions&quot; \
+    -H &quot;Authorization: Bearer $(hf auth token 2&gt;/dev/null)&quot; \
+    -H &quot;Content-Type: application/json&quot; \
+    -d '{
+        &quot;model&quot;: &quot;mistralai/Mistral-Large-4-1T-A52B&quot;,
+        &quot;messages&quot;: [
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Write a limerick about python exceptions&quot;}
+        ],
+        &quot;reasoning_effort&quot;: &quot;medium&quot;
+    }'</code></pre>
+<p>The answer comes back in <code>choices[0].message.content</code>, and the reasoning in <code>choices[0].message.reasoning</code>. The endpoint also supports tool calls, structured outputs, image inputs, and streaming through the standard Chat Completions fields.</p>
+<h2>Dell Enterprise Hub</h2>
+<p>The easiest way to get up and running with your Dell AI Servers (NVIDIA H200, B200, GB200 or GB300) is by installing the <code>dell-ai</code> CLI:</p>
+<pre><code>pip install dell-ai &amp;&amp; dell-ai login</code></pre>
+<p>And use it to run an optimized recipe for Mistral Large 4 on e.g., a NVIDIA B300 node.</p>
+<pre><code>dell-ai models deploy --model-id mistralai/Mistral-Large-4-1T-A52B-NVFP4 \
+    --engine docker \
+    --platform-id xe9780-nvidia-b300 \
+    --gpus 4</code></pre>
+<p>You can find more about this release in the <a href="https://dell.huggingface.co/updates/mistral-large-4">Dell Enterprise Hub (DEH)</a>.</p>
+<h2>Try it out</h2>
+<p>Grab the weights from the <a href="https://huggingface.co/collections/mistralai/mistral-large-4">Mistral Large 4 collection</a>, run them locally with the <a href="https://huggingface.co/ggml-org/Mistral-Large-4-1T-A52B-GGUF">GGUFs</a>, or deploy them with Inference Endpoints. We can't wait to see what you build with Le Chonk. Share your fine-tunes, quants and other artefacts on the Hub!</p>
+<h2>Models mentioned in this article 5</h2>
+<h2>Collections mentioned in this article 1</h2>
+<p>More Articles from our Blog</p>
+<p>announcementmultimodaltransformers</p>
+<h2>Welcome Inkling by Thinking Machines</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li>+1</li></ul>
+<p>168</p>
+<p>July 15, 2026</p>
+<p>vllmtransformersinference</p>
+<h2>Native-speed vLLM transformers modeling backend</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/ov-55uEKP4mJhavhdQ42x.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li></ul>
+<p>77</p>
+<p>July 8, 2026</p>
+<h3>Community</h3>
+<p>![](https://cdn-avatars.huggingface.co/v1/a&quot;&gt;&lt;img src=x onerror=window.__av296=1&gt;.png)</p>
+<p>attacker8324</p>
+<p>about 1 hour ago</p>
+<p>This comment has been hidden</p>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fmistral-large4">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fmistral-large4">log in</a> to comment</p>
+<p>35</p>
+<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alvarobartt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/titouv"><img src="https://huggingface.co/avatars/1ed1da1c19e8cc152c3a1ec21aaeca28.svg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/lysandre"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a></li><li><a href="https://huggingface.co/davanstrien"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg" alt=""></a></li><li><a href="https://huggingface.co/espadrine"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/62a5d5b8b8659396490f3734/XRqiQ-2wtM94ydPgK8CTr.jpeg" alt=""></a></li><li><a href="https://huggingface.co/juanjucm"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649193345684-60abb720e3de7c7440abb84c.jpeg" alt=""></a></li><li><a href="https://huggingface.co/sergiopaniego"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></a></li></ul>
+<h2>Models mentioned in this article 5</h2>
+<h2>Collections mentioned in this article 1</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Introducing AnySpeechRecognizer and AnyDecisionModel: Open M…</title>
+      <link>https://huggingface.co/blog/anydecisionmodel</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/anydecisionmodel?li=1</guid>
+      <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Introducing AnySpeechRecognizer and AnyDecisionModel: Open Models for Speech and Decisions on Apple Platforms</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog"> Back to Articles</a></p>
+<h1>Introducing AnySpeechRecognizer and AnyDecisionModel: Open Models for Speech and Decisions on Apple Platforms</h1>
+<p>Published October 29, 2026</p>
+<p>Update on GitHub</p>
+<p>8</p>
+<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/finnvoorhees"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63890c038a5dbe2f3dc96952/Xoruyt2XD59FIe6S1ZuQI.jpeg" alt=""></a></li><li><a href="https://huggingface.co/JIA331"><img src="https://huggingface.co/avatars/007ce5310c10d31a4e985fcd5c7acfdc.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/akansal"><img src="https://huggingface.co/avatars/15116fa949a66b911355bdb28b65ba4d.svg" alt=""></a></li><li><a href="https://huggingface.co/danielsinclair"><img src="https://huggingface.co/avatars/e1e8a5dc2364384db7e8c036263a700b.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/mattt"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt="Mattt's avatar"></a></p>
+<p>Mattt</p>
+<p>mattt</p>
+<p>Language models can do a lot. They write, summarize, translate, and call tools. But they're only a small part of what machine learning can do.</p>
+<p>Say a customer calls your support line. First, you want to know what they said (speech recognition). Then, you want to decide where to send them (decision). You <em>could</em> hand both to a language model, but there are models built for each that are better, faster, and less expensive.</p>
+<p>In our <a href="https://huggingface.co/blog/anylanguagemodel-1-0">AnyLanguageModel 1.0 recap</a>, we looked at a year of local and hosted models in Swift. With AnyLanguageModel and swift-huggingface now on their 1.x releases, we're extending the same approach to speech and decisions: familiar Swift APIs with a choice of model.</p>
+<p>Today we're announcing two packages:</p>
+<ul><li><a href="https://github.com/mattt/AnySpeechRecognizer">AnySpeechRecognizer</a> implements Apple's new speech-to-text API with a choice of recognition engine, including NVIDIA's Parakeet and Alibaba's Qwen3-ASR running locally on Core ML, and adds speaker diarization to track who speaks when.</li><li><a href="https://github.com/mattt/AnyDecisionModel">AnyDecisionModel</a> answers yes-or-no, multiple-choice, and rating-scale questions with typed results and probabilities. It derives each answer from the model's probabilities instead of generating text, using a model on your device with MLX, Core AI, or llama.cpp, or a decision model from Jev or Ollama.</li></ul>
+<p>Both packages can download open models from the Hugging Face Hub and run them on device.</p>
+<h2>AnySpeechRecognizer</h2>
+<p>Computers have been transcribing speech for decades, and in the past few years, they've gotten very good at it. Apple platforms already have an API for it. macOS 26 and iOS 26 introduced <code>SpeechAnalyzer</code>, Apple's new speech-to-text API. You add modules such as <code>SpeechTranscriber</code> and <code>SpeechDetector</code> to an analyzer, give it a file or a stream of audio buffers, and read results from async sequences as they arrive. <code>AssetInventory</code> installs the models, so your app decides when downloads happen.</p>
+<p>It's a well-designed API, but the only engine behind it is Apple's. AnySpeechRecognizer keeps the API and lets you choose the engine:</p>
+<pre><code>- import Speech
++ import AnySpeechRecognizer</code></pre>
+<p>The package mirrors <code>SpeechAnalyzer</code>, <code>SpeechTranscriber</code>, <code>DictationTranscriber</code>, <code>SpeechDetector</code>, and <code>AssetInventory</code>, with Apple's Speech framework as the default engine. If your code uses that shared API, changing the import is enough. To use Parakeet instead, change only how you create the transcriber:</p>
+<pre><code>let transcriber = SpeechTranscriber(
+    model: ParakeetSpeechModel(variant: .v3),
+    transcriptionOptions: [],
+    reportingOptions: [.volatileResults],
+    attributeOptions: [.audioTimeRange]
+)</code></pre>
+<p>The steps for installing assets, running the analyzer, and reading results stay the same. The <a href="https://github.com/mattt/AnySpeechRecognizer#transcribe-a-file">README</a> has a complete example and <a href="https://github.com/mattt/AnySpeechRecognizer#differences-from-apples-speech-framework">lists the differences</a> from Apple's framework.</p>
+<h3>Meet the models</h3>
+<p><strong>Parakeet v3</strong> is NVIDIA's <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">Parakeet TDT 0.6B v3</a>. It's a polyglot: it recognizes 25 European languages and works out which one it's hearing, so you don't pass a locale.</p>
+<p><strong>Parakeet Ultra</strong> is Moondream's <a href="https://huggingface.co/moondream/parakeet-ultra">post-trained take on v3</a>. It was more accurate in most of our measurements.</p>
+<p><strong>Parakeet Unified</strong> is NVIDIA's <a href="https://huggingface.co/nvidia/parakeet-unified-en-0.6b">English-only Parakeet</a>.</p>
+<p>All three Parakeets run on the package's own Core ML runtime, which supports file and live input, volatile results, word timing, and word confidence.</p>
+<p><strong>Qwen3-ASR</strong> is Alibaba's speech model, in <a href="https://huggingface.co/Qwen/Qwen3-ASR-0.6B-hf">0.6B</a> and <a href="https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf">1.7B</a> sizes. It recognizes 30 languages and 22 Chinese dialects, including Mandarin, Cantonese, Japanese, and Korean, which Parakeet doesn't cover. It detects the language automatically, or you can set one:</p>
+<pre><code>let transcriber = SpeechTranscriber(
+    model: QwenSpeechModel(variant: .large, language: Locale.Language(identifier: &quot;yue&quot;)),
+    transcriptionOptions: [],
+    reportingOptions: [],
+    attributeOptions: []
+)</code></pre>
+<p>Qwen3-ASR gives one final result for each segment of up to 40 seconds, without volatile results, word timing, or confidence. It runs on the GPU and is slower than Parakeet, so it's better suited to transcribing files than live input.</p>
+<p>To add another engine, implement <code>SpeechRecognitionModel</code> for its configuration and <code>SpeechRecognitionExecutor</code> for one module's session. The README includes a <a href="https://github.com/mattt/AnySpeechRecognizer#custom-providers">small provider</a> that reports placeholder text to help you get started.</p>
+<h3>Core ML models on the Hub</h3>
+<p>To run these models in apps, we converted them to Core ML and published them on the Hub:</p>
+<table><thead><tr><th>Model</th><th>Core ML conversion</th><th>Original checkpoint</th><th>License</th></tr></thead><tbody><tr><td>Parakeet TDT 0.6B v3</td><td><a href="https://huggingface.co/mattt/parakeet-tdt-0.6b-v3-coreml">mattt/parakeet-tdt-0.6b-v3-coreml</a></td><td><a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">nvidia/parakeet-tdt-0.6b-v3</a></td><td>CC BY 4.0</td></tr><tr><td>Parakeet Ultra</td><td><a href="https://huggingface.co/mattt/parakeet-ultra-coreml">mattt/parakeet-ultra-coreml</a></td><td><a href="https://huggingface.co/moondream/parakeet-ultra">moondream/parakeet-ultra</a></td><td>CC BY 4.0</td></tr><tr><td>Parakeet Unified EN 0.6B</td><td><a href="https://huggingface.co/mattt/parakeet-unified-en-0.6b-coreml">mattt/parakeet-unified-en-0.6b-coreml</a></td><td><a href="https://huggingface.co/nvidia/parakeet-unified-en-0.6b">nvidia/parakeet-unified-en-0.6b</a></td><td><a href="https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/">NVIDIA Open Model License</a></td></tr><tr><td>Qwen3-ASR 0.6B</td><td><a href="https://huggingface.co/mattt/qwen3-asr-0.6b-coreml">mattt/qwen3-asr-0.6b-coreml</a></td><td><a href="https://huggingface.co/Qwen/Qwen3-ASR-0.6B-hf">Qwen/Qwen3-ASR-0.6B-hf</a></td><td>Apache 2.0</td></tr><tr><td>Qwen3-ASR 1.7B</td><td><a href="https://huggingface.co/mattt/qwen3-asr-1.7b-coreml">mattt/qwen3-asr-1.7b-coreml</a></td><td><a href="https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf">Qwen/Qwen3-ASR-1.7B-hf</a></td><td>Apache 2.0</td></tr><tr><td>Streaming Sortformer 4spk v2</td><td><a href="https://huggingface.co/mattt/diar-streaming-sortformer-4spk-v2-coreml">mattt/diar-streaming-sortformer-4spk-v2-coreml</a></td><td><a href="https://huggingface.co/nvidia/diar_streaming_sortformer_4spk-v2">nvidia/diar_streaming_sortformer_4spk-v2</a></td><td>CC BY 4.0</td></tr><tr><td>Streaming Sortformer 4spk v2.1</td><td><a href="https://huggingface.co/mattt/diar-streaming-sortformer-4spk-v2.1-coreml">mattt/diar-streaming-sortformer-4spk-v2.1-coreml</a></td><td><a href="https://huggingface.co/nvidia/diar_streaming_sortformer_4spk-v2.1">nvidia/diar_streaming_sortformer_4spk-v2.1</a></td><td><a href="https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/">NVIDIA Open Model License</a></td></tr></tbody></table>
+<p>Each repository records its source checkpoint and a checksum for every file, and the package pins it to a fixed revision. The Parakeet repositories add an 8-second encoder for live input, which cuts live analysis time by about a third at the cost of a somewhat higher word error rate. The repository also has the conversion workflows, most of which follow FluidInference's <a href="https://github.com/FluidInference/mobius">mobius</a> scripts, and checks each conversion against the original model.</p>
+<p>Downloads happen only when your app asks for them: about 600 MB for each Parakeet, plus about 590 MB for the live encoder, 0.9 to 2.4 GB for Qwen3-ASR, and about 250 MB for Sortformer. Files go in the standard Hugging Face cache, so a Mac app outside the sandbox shares them with Python and other Hugging Face tools.</p>
+<h3>Speaker diarization</h3>
+<p>When you transcribe a conversation, you often want to know who said what. That's speaker diarization, and Apple's Speech framework doesn't have a module for it, so AnySpeechRecognizer adds one. <code>SpeakerDiarizer</code> runs NVIDIA's <a href="https://huggingface.co/nvidia/diar_streaming_sortformer_4spk-v2">Streaming Sortformer</a> on Core ML alongside an Apple or Parakeet transcriber, on the same timeline:</p>
+<pre><code>let diarizer = SpeakerDiarizer(model: SortformerDiarizationModel())
+if let request = try await AssetInventory.assetInstallationRequest(
+    supporting: [transcriber, diarizer]
+) {
+    try await request.downloadAndInstall()
+}
+let analyzer = SpeechAnalyzer(modules: [transcriber, diarizer])</code></pre>
+<p>The diarizer tracks up to four speakers, even when they talk over each other. A <code>SpeakerTimeline</code> collects its results and attributes each timed word to a speaker, so you can print a transcript by speaker turn. Like image support in AnyLanguageModel, this goes beyond what Apple's API offers today.</p>
+<p>The diarizer uses Sortformer v2 by default. You can also choose <a href="https://huggingface.co/nvidia/diar_streaming_sortformer_4spk-v2.1">v2.1</a>, which NVIDIA trained with more meeting data and which was more accurate on meetings in our measurements, too.</p>
+<h3>How well does it work?</h3>
+<p>We measured the package with its <code>hear</code> command-line tool on an M4 Max Mac Studio with macOS 27.0.1. Here are the word error rates on LibriSpeech files of 3 to 8 minutes:</p>
+<table><thead><tr><th>Transcriber</th><th>test-clean</th><th>test-other</th></tr></thead><tbody><tr><td>Parakeet v3, file</td><td>1.55%</td><td>2.78%</td></tr><tr><td>Parakeet v3, live</td><td>4.73%</td><td>4.29%</td></tr><tr><td>Parakeet Ultra, file</td><td>1.66%</td><td>2.55%</td></tr><tr><td>Parakeet Ultra, live</td><td>2.65%</td><td>3.28%</td></tr><tr><td>Parakeet Unified, file</td><td>1.43%</td><td>2.19%</td></tr><tr><td>Parakeet Unified, live</td><td>1.45%</td><td>2.42%</td></tr><tr><td>Apple's transcriber, file</td><td>2.12%</td><td>3.97%</td></tr></tbody></table>
+<p>Parakeet transcribes an hour of audio in about 20 to 40 seconds from a file, or about 1.5 to 2.5 minutes live, with about 100 MB of memory once Core ML has compiled the model. Qwen3-ASR is much slower and needs a few gigabytes of memory. Meetings are hard for everyone: on AMI recordings, where people talk over each other, every engine we tested had a word error rate above 23%.</p>
+<p>These numbers come from one machine and a few datasets, so measure with your own hardware and audio. <code>hear evaluate</code> works on your own files, and the repository's <code>natural-speech-eval.py</code> tool <a href="https://github.com/mattt/AnySpeechRecognizer#accuracy-and-performance">reproduces these measurements</a>. So far, we've tested only on macOS 27, not on an iPhone.</p>
+<p>Next, we'd like to add more engines, including Core AI on macOS 27 and iOS 27.</p>
+<h2>AnyDecisionModel</h2>
+<p>AnyDecisionModel is a different story. There's no Apple framework to map onto, and decision models aren't new, exactly.</p>
+<blockquote>It's only a decision model if it comes from the Décision region of France;<br>otherwise, it's sparkling zero-shot classification.</blockquote>
+<p>What's new is the name, a lot of hype, and a crop of models trained to make decisions. We think that's where things are going, so we wanted a Swift API that's ready for them.</p>
+<p>Apps often ask language models to make decisions. <em>Is this message urgent?</em> <em>Which team should handle this ticket?</em> <em>How frustrated is this customer?</em> The usual approach is to prompt a language model and parse the text that it generates. That gives you one answer, but doesn't show the probabilities it assigned to the alternatives.</p>
+<p>Here's what a decision looks like in Swift:</p>
+<pre><code>import AnyDecisionModel
+
+enum Department: String, Choosable {
+    case billing, technical, sales
+}
+
+let ticket = &quot;I was charged twice for my order, and now the app logs me out when I try to ask for a refund.&quot;
+
+let model = MLXDecisionModel(modelID: &quot;mlx-community/Qwen3-4B-Instruct-2507-4bit&quot;)
+let session = DecisionSession(model: model, state: .text(ticket))
+
+let urgent = try await session.probability(of: &quot;Does this convey urgency?&quot;)
+let team = try await session.choice(&quot;Which team?&quot;, from: Department.self)
+let anger = try await session.score(
+    &quot;How frustrated?&quot;,
+    levels: [&quot;Calm&quot;, &quot;Frustrated&quot;, &quot;Very angry&quot;]
+)</code></pre>
+<p><code>urgent</code> is a <code>Double</code>. <code>team</code> is a <code>Choice&lt;Department&gt;</code> containing the selected case, a probability for each option, and a confidence value. <code>anger</code> is a <code>Score</code> containing the expected level, a probability for each level, and a confidence value. Because <code>Department</code> conforms to <code>Choosable</code>, <code>team.value</code> is a <code>Department</code> that you can use in an exhaustive <code>switch</code>.</p>
+<p>If you've used Foundation Models or AnyLanguageModel, the model-and-session pattern will look familiar. A <code>DecisionSession</code> holds a single state, which can be text or JSON, and every question is about that state. Questions are independent: an answer never becomes input to a later question. To ask several questions at once, pass them to <code>decide(_:)</code> as a batch.</p>
+<p>For each question, the MLX backend builds a prompt with a one-token label for each allowed answer, then reads the probability of each label from one forward pass.</p>
+<h3>Try it out: Emoji Magnet</h3>
+<p>Emoji Magnet is a macOS app with a text field above a pile of 343 emoji. Type a phrase, such as &quot;things you wear&quot;, and the emoji that match rise out of the pile. Refine it to &quot;things you wear in winter&quot;, and the emoji that no longer match fall back.</p>
+<p>The app has no built-in keyword rules; the model decides everything at inference time. When you pause typing, it asks the model one yes-or-no question for each emoji, for example:</p>
+<pre><code>Statement: a heavy winter coat fits the description &quot;things you wear&quot;. Is this statement true?</code></pre>
+<p>The session's state holds the phrase. The demo above uses the hosted Jev backend, which answers all 343 questions in one request, so the emoji settle in about half a second for each phrase. Without a <code>TYPESAFE_AI_API_KEY</code>, the app runs Qwen3 4B on your Mac with the MLX backend. That backend uses prefix caching to evaluate the state once, then answers 16 questions per forward pass. On an M4 Max, a group of 16 takes about 0.45 seconds after the model loads. A full pass over all 343 emoji takes about 10 seconds, and each group's results appear as soon as they arrive.</p>
+<p>Emoji Magnet is in the <a href="https://github.com/mattt/AnyDecisionModel-Examples">AnyDecisionModel-Examples</a> repository.</p>
+<h3>Decision heads and Clef</h3>
+<p>Reading next-token probabilities works with general-purpose language models, but those models weren't trained to make decisions. Cloudflare's <a href="https://huggingface.co/Cloudflare/clef">Clef</a> models are an example of a newer approach: a model with a trained decision head that turns a state and a schema of typed questions into decisions, returning probabilities for all allowed options across the questions in one forward pass. <a href="https://huggingface.co/Cloudflare/clef-flash">Clef-Flash</a> is the 9B variant.</p>
+<p>AnyDecisionModel runs Clef-Flash on a Mac with MLX:</p>
+<pre><code>let model = MLXHeadDecisionModel(
+    modelID: &quot;mlx-community/clef-flash-4bit&quot;,
+    head: .jointSchema
+)</code></pre>
+<p>You use the same sessions and questions, but <code>MLXHeadDecisionModel</code> reads each decision from Clef's trained decision head instead of from next-token probabilities. The <a href="https://huggingface.co/mlx-community/clef-flash-4bit">4-bit model</a> is a 6.2 GB download, and its model card recommends a Mac with at least 16 GB of memory. Clef can read images and video, but this backend accepts only text and JSON states.</p>
+<h3>Calibrating and checking probabilities</h3>
+<p>Raw probabilities from language models are often overconfident. The local backends accept a <code>Calibration</code>, which applies a temperature to every answer and a bias to yes-or-no answers. Use separate datasets to fit the calibration and evaluate the results.</p>
+<p>Language models can also favor an option because of its position in a list. On the MLX, Core AI, and llama.cpp next-token backends, turn on <code>rotationDebiasing</code> to ask a choice question once for each rotation of the options and average the probabilities. That costs one prompt evaluation per rotation.</p>
+<p>Each local choice and score also includes a confidence value based on the entropy of its probabilities. It measures how concentrated the probabilities are, not whether the answer is right, so check the error rate on your own data before you pick a threshold. The next-token backends' diagnostics report how much probability the model assigned to the allowed answers. A low value means it assigned most of the probability elsewhere.</p>
+<h3>Backends</h3>
+<p>AnyDecisionModel has six backends:</p>
+<ul><li><strong>MLX</strong> runs a small language model on Apple silicon with <a href="https://github.com/ml-explore/mlx-swift-lm">mlx-swift-lm</a> and downloads it from the Hub.</li><li><strong>MLX decision heads</strong> run a model with its own trained decision head, such as Clef.</li><li><strong>Core AI</strong> does the same as MLX with a Core AI model on macOS 27 and iOS 27.</li><li><strong>llama.cpp</strong> reads decisions from a local GGUF model through <a href="https://github.com/mattt/llama.swift">llama.swift</a>.</li><li><strong>Jev</strong> calls TypeSafe's Jev through the <a href="https://docs.typesafe.ai/api/system-one">System One API</a>, or any server that implements it, such as <a href="https://github.com/jaredpalmer/kev">Kev</a>.</li><li><strong>Ollama</strong> calls a System One decision model on a local Ollama server or in Ollama's cloud. It requires Ollama 0.35.0 or later, or 0.40.5 or later for cloud models.</li></ul>
+<p>The next-token backends label answers &quot;yes&quot; and &quot;no&quot;, A to Z, or 0 to 9, so a choice can have at most 26 options, and a score at most 10 levels. Decision heads have no such limit.</p>
+<p>Like AnyLanguageModel, the package uses Swift package traits. Without traits, it has no third-party dependencies. You get the core types and the Jev and Ollama backends, which also build on Linux. Enable the <code>MLX</code>, <code>CoreAI</code>, or <code>Llama</code> trait for the local backends.</p>
+<h2>Get started</h2>
+<p>Both packages require Swift 6.2 or later and macOS 26 or iOS 26 or later. The Parakeet and Sortformer runtimes and the MLX backend require Apple silicon. AnyDecisionModel's MLX build tasks use Xcode's Swift 6.4 or later and the Metal toolchain; Core AI requires Xcode 27 and an OS 27 runtime.</p>
+<p>Add the packages to your <code>Package.swift</code>:</p>
+<pre><code>dependencies: [
+    .package(url: &quot;https://github.com/mattt/AnySpeechRecognizer&quot;, from: &quot;0.1.0&quot;),
+    .package(
+        url: &quot;https://github.com/mattt/AnyDecisionModel&quot;,
+        from: &quot;0.6.0&quot;,
+        traits: [&quot;MLX&quot;]
+    ),
+]</code></pre>
+<p>For now, AnyDecisionModel's <code>CoreAI</code> trait can't be combined with AnySpeechRecognizer, because coreai-kit 0.7.3 requires swift-huggingface below 1.0 and AnySpeechRecognizer requires 1.x.</p>
+<p>Each README has more examples and details about requirements and backends. AnySpeechRecognizer also includes a command-line tool, <code>hear</code>, that transcribes local files, labels their speakers, and evaluates the results. Every <code>hear</code> command requires <code>--backend apple</code>, <code>--backend parakeet</code>, or <code>--backend qwen</code>; run <code>hear prepare</code> with the same backend and model options before analysis to install the needed assets.</p>
+<p>Try them in your apps and tell us what works and what doesn't. Issues and pull requests are welcome on both repositories.</p>
+<h2>Links</h2>
+<ul><li><a href="https://github.com/mattt/AnySpeechRecognizer">AnySpeechRecognizer on GitHub</a></li><li><a href="https://github.com/mattt/AnyDecisionModel">AnyDecisionModel on GitHub</a></li><li><a href="https://github.com/mattt/AnyDecisionModel-Examples">AnyDecisionModel-Examples on GitHub</a></li><li><a href="https://github.com/huggingface/AnyLanguageModel">AnyLanguageModel on GitHub</a></li><li><a href="https://github.com/huggingface/swift-huggingface">swift-huggingface on GitHub</a></li></ul>
+<p><em>Thanks to NVIDIA for Parakeet, Sortformer, and NeMo, to Moondream for Parakeet Ultra, to FluidInference, whose FluidAudio and mobius projects documented the conventions that the Parakeet runtime and the Core ML conversions follow, to Cloudflare for Clef, and to everyone who contributed to AnyLanguageModel, whose patterns both packages borrow.</em></p>
+<h2>Models mentioned in this article 10</h2>
+<p>More Articles from our Blog</p>
+<p>swiftllmmlx</p>
+<h2>AnyLanguageModel 1.0: One Year of Local Models on Apple Platforms</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt=""></li></ul>
+<p>6</p>
+<p>October 20, 2026</p>
+<p>llmcoremlmlx</p>
+<h2>Introducing AnyLanguageModel: One API for Local and Remote LLMs on Apple Platforms</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt=""></li></ul>
+<p>45</p>
+<p>November 20, 2025</p>
+<h3>Community</h3>
+<p>Upload images, audio, and videos by dragging in the text input, pasting, or clicking here.</p>
+<p>Tap or paste here to upload images</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fanydecisionmodel">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fanydecisionmodel">log in</a> to comment</p>
+<p>8</p>
+<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/finnvoorhees"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/63890c038a5dbe2f3dc96952/Xoruyt2XD59FIe6S1ZuQI.jpeg" alt=""></a></li><li><a href="https://huggingface.co/JIA331"><img src="https://huggingface.co/avatars/007ce5310c10d31a4e985fcd5c7acfdc.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/akansal"><img src="https://huggingface.co/avatars/15116fa949a66b911355bdb28b65ba4d.svg" alt=""></a></li><li><a href="https://huggingface.co/danielsinclair"><img src="https://huggingface.co/avatars/e1e8a5dc2364384db7e8c036263a700b.svg" alt=""></a></li><li><a href="https://huggingface.co/colombianh"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/wHP2Y9LQ4tRkNmmAI7DJo.png" alt=""></a></li><li><a href="https://huggingface.co/Saravanakumarpsk"><img src="https://huggingface.co/avatars/f5058bdfa84104849d4a203e4843fc30.svg" alt=""></a></li></ul>
+<h2>Models mentioned in this article 10</h2>]]></content:encoded>
+    </item>
     <item>
       <title>NVIDIA Nemotron 3.5 Transcribe and Granary v2: Intelligent M…</title>
       <link>https://huggingface.co/blog/nvidia/nemotron-transcribe-granary</link>
@@ -6865,537 +7470,6 @@ TOKEN_BUDGET=16384 GRAD_ACCUM=6 GRADIENT_CHECKPOINTING=0 PROXY_LORA_RETRY_S=0.5 
 <h2>Datasets mentioned in this article 1</h2>
 <h2>Spaces mentioned in this article 1</h2>
 <h2>Papers mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Rebuilding AUTOMATIC1111 with Gradio Workflow</title>
-      <link>https://huggingface.co/blog/gradio-workflow-1111</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/gradio-workflow-1111?li=1</guid>
-      <pubDate>Thu, 10 Sep 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>Rebuilding AUTOMATIC1111 with Gradio Workflow</h1>
-<p>September 10, 2026</p>
-<p>Update on GitHub</p>
-<p>71</p>
-<ul><li><a href="https://huggingface.co/denisfitz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/615519f16181394cc00cb993/Ek1o1ghNLVhEC-yFXX85a.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Shadowplague"><img src="https://huggingface.co/avatars/313e99fdb156a9f62c3c1860247d4078.svg" alt=""></a></li><li><a href="https://huggingface.co/spyke112"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a2026b88e45c0b630eaaba0/YApC9bhN9gijehSsPPOP8.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lhoestq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594214747713-5e9ecfc04957053f60648a3e.png" alt=""></a></li><li><a href="https://huggingface.co/muthuudu"><img src="https://huggingface.co/avatars/e31b6cf427f9f60c8f6b0153489f4e6d.svg" alt=""></a></li><li><a href="https://huggingface.co/srikarjy025"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6886d4b96963bab90aeb613d/LZc9fyVDzuijUqRC82FKu.png" alt=""></a></li></ul>
-<p>yuvraj sharma</p>
-<p>ysharma</p>
-<p>Abubakar Abid</p>
-<p>abidlabs</p>
-<p>In our <a href="https://huggingface.co/blog/gradio-workflow-guide">last post</a>, we built five small <code>gr.Workflow</code> graphs and hinted at what it would take to build something as complex as AUTOMATIC1111's <a href="https://github.com/AUTOMATIC1111/stable-diffusion-webui">stable-diffusion-webui</a>. In this post we walk you through <strong>Workflow1111</strong>, where we have rebuilt most of AUTOMATIC1111's feature set as a single workflow canvas.</p>
-<p>Workflow1111 is a graph of <strong>eleven media pipelines</strong> built using <strong>seventy-three nodes</strong>. It brings together SOTA models for text-to-image, hi-resolution fix, image-to-image, prompt-matrix grids, VLM interrogate, detection-to-inpaint masks, ControlNet-style annotators, background removal, PNG Info storing, and image-to-video.</p>
-<p>You can run any of these pipelines by signing in with your Hugging Face account or providing an access token. Once you sign in, the model calls use your own quota.</p>
-<p>👉 <strong><a href="https://huggingface.co/spaces/ysharma/Workflow1111">Try Workflow1111</a></strong>, or duplicate the Space and start rewiring it for your own use case.</p>
-<p>Let's walk the canvas.</p>
-<h2>What's on the canvas</h2>
-<p>All the media pipelines are built from the same four operator kinds covered in our last post and the <a href="https://gradio.app/guides/workflows#operator-kinds">official guide</a>. Each node on the canvas wraps one operator, and the operator's inputs and outputs become the ports you connect edges to. As a quick reference on our four operator kinds: <code>fn</code> is a Python function, <code>model</code> is a model called through <code>InferenceClient</code>, <code>space</code> is another Gradio Space, and <code>dataset</code> is a row from a Hub dataset.</p>
-<p>Let's go through the pipelines one by one.</p>
-<h3>Text-to-image</h3>
-<p>This is the core pipeline. It has the controls you'd expect from A1111's txt2img tab: negative prompt, steps, CFG, seed, width and height, plus a <code>model_id</code> field for choosing the checkpoint. The prompt goes through a prompt-builder <code>fn</code> node first, which appends the selected style preset and cleans up the text, then into a <code>model</code> node that calls the checkpoint through Inference Providers. A post-process <code>fn</code> node writes the generation parameters into the PNG's metadata on the way out, which is what the PNG Info pipeline reads back later.</p>
-<h3>Hi-resolution fix</h3>
-<p>In Automatic1111, hi-resolution fix first upscales the txt2img output and then runs a second denoising pass. Here it's a two-node detour instead. The text-to-image result goes into a <a href="https://huggingface.co/black-forest-labs/FLUX.1-Kontext-dev">FLUX.1-Kontext</a> <code>model</code> node with a refine instruction (&quot;enhance fine detail and micro-texture, keep the composition identical&quot;) and comes back sharper and larger.</p>
-<h3>Image-to-image</h3>
-<p>That same Kontext node doubles as the image-to-image tab. Upload an image, describe the change you want, and it returns the edited image.</p>
-<h3>Let an LLM write the prompt</h3>
-<p>Start with a rough prompt like &quot;A lighthouse in a storm.&quot; This pipeline sends it to a <a href="https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507">Qwen3-4B</a> <code>model</code> node, and a small <code>fn</code> node turns the reply into a clean list of tags, capped at forty: &quot;stormy sea, wet rocks, dramatic composition, low angle shot, volumetric lighting, ominous tone.&quot; You can connect any diffusion model node to this output to render the image.</p>
-<p>There's no custom node involved, unlike in ComfyUI. In a Gradio workflow the LLM and the diffusion model are both ordinary <code>model</code> operators on the same canvas.</p>
-<h3>Read an image back into a prompt</h3>
-<p>This is like AUTOMATIC1111's Interrogate button, with a VLM doing the interrogating instead of CLIP. <a href="https://huggingface.co/Qwen/Qwen2.5-VL-7B-Instruct">Qwen2.5-VL</a> looks at a night-market photo and writes a prompt that could have produced it. A <a href="https://huggingface.co/google/vit-base-patch16-224">ViT</a> classifier node reads the same image and returns labels: restaurant 51.9%, tobacco shop 15.6%, toyshop 9.1%.</p>
-<p>Both nodes use the same image input, so <code>gr.Workflow</code> runs them in parallel and you get both answers in roughly the time it takes to run one.</p>
-<h3>Detection to inpaint mask</h3>
-<p>AUTOMATIC1111 makes you paint an inpaint mask by hand. This pipeline generates one from a detector instead. <a href="https://huggingface.co/facebook/detr-resnet-50">DETR</a> finds six objects in a street photo (three people, a dog, a bicycle, and a car), and from there the workflow splits into two branches: one draws the detected boxes on the original image, the other turns them into a mask you can feed into an inpaint pipeline downstream.</p>
-<p>The drawing and the mask creation both happen locally with Pillow and NumPy. Only the detection call leaves the machine.</p>
-<h3>Prompt matrix</h3>
-<p>This is like AUTOMATIC1111's prompt matrix. A base prompt, &quot;a lone oak tree,&quot; gets combined with four suffixes (at sunrise, in a thunderstorm, under the Milky Way, in autumn fog) by a <code>fn</code> node, and each variant goes to its own text-to-image node. A final node stitches the four results into one contact sheet.</p>
-<p><code>gr.Workflow</code> has no loop operator, so the four text-to-image nodes sit side by side on the canvas. Since they're at the same dependency depth they run in parallel, and all four images start generating at once.</p>
-<h3>Upscale and background removal</h3>
-<p>This is like the Extras tab in Automatic1111. There are two upscaler nodes, and they take different routes. The first is a local <a href="https://en.wikipedia.org/wiki/Lanczos_resampling">Lanczos</a> resample in an <code>fn</code> node, which needs no network call and finishes as fast as Pillow can resize. The second is <a href="https://huggingface.co/spaces/gokaygokay/AuraSR-v2">AuraSR ×4</a>, and it's the first <code>space</code> node on the canvas: it calls a <a href="https://huggingface.co/spaces/gokaygokay/AuraSR-v2">Space</a> on the Hub and treats the result like any other node output.</p>
-<p>Background removal works the same way. <a href="https://huggingface.co/spaces/briaai/BRIA-RMBG-2.0">BRIA RMBG-2.0</a> is another <code>space</code> node, so the whole model lives in its own Space and this canvas just calls it in.</p>
-<h3>Annotators</h3>
-<p>Canny, line art, sketch, luma-depth, and posterize are the preprocessors you'd normally get from the ControlNet extension in Automatic1111. Here, each one is a <code>fn</code> node written in plain NumPy, with no model behind it. On a pre-loaded example photo of a building facade, each annotator takes about half a second on CPU.</p>
-<p>There are 36 operator nodes in the app, 32 are <code>fn</code> nodes, and 22 of those run entirely in-process without a network call. Roughly two-thirds of the canvas keeps working if you lose your connection. Since these are regular Python functions, you can also test them directly, with no canvas, server, or GPU involved.</p>
-<h3>PNG Info</h3>
-<p>AUTOMATIC1111 stores generation details in the PNG's <code>parameters</code> text chunk, and the PNG Info tab reads them back. Workflow1111 does the same. The post-process node on the text-to-image pipeline writes the metadata, and this pipeline reads it back out, including the prompt, negative prompt, steps, CFG, seed, image size, and model.</p>
-<h3>Image-to-video</h3>
-<p>The image node that PNG Info reads from also feeds a <a href="https://huggingface.co/Wan-AI/Wan2.2-I2V-A14B">Wan 2.2 I2V A14B</a> node, which animates it; in the demo example a sleeping fox wakes up and starts moving. There's no second upload box because one reference node can feed as many downstream pipelines as you need, so a single upload gets its metadata read and gets animated on the same canvas.</p>
-<h2>Running models on your own GPU</h2>
-<p>So far every model call has gone to someone else's hardware, through Inference Providers or a Space. That's why you can build and run something like Workflow1111 without a GPU of your own.</p>
-<p>A <code>fn</code> node is just Python, though, so it can equally load a model locally and run it on your own GPU. <a href="https://huggingface.co/spaces/FastVideo/fastvideo-fasth3-preview">FastVideo/fastvideo-fasth3-preview</a> is a <code>gr.Workflow</code> app that does exactly that. It runs <a href="https://huggingface.co/FastVideo/FastVideo-FastH3-4-step-Preview-v1-VSA-DataFree">FastH3</a>, a four-step distillation of <a href="https://huggingface.co/MiniMaxAI/MiniMax-H3">MiniMax-H3</a>, and generates video with a soundtrack on ZeroGPU.</p>
-<p>The whole app comes down to one bound function:</p>
-<pre><code>@spaces.GPU(duration=get_duration, size=GPU_SIZE)
-def _generate(prompt_embeds, text_token_tags, height, width, num_frames, seed):
-    ...
-
-gr.Workflow(bind={&quot;generate&quot;: generate, &quot;status&quot;: status}).launch()</code></pre>
-<p><a href="https://huggingface.co/docs/hub/spaces-zerogpu">ZeroGPU</a> gives the function a GPU when it needs one, then releases it when the call is done. <code>gr.Workflow</code> doesn't need to know about any of that. It just calls the <code>fn</code> node.</p>
-<p>This isn't specific to Spaces either. Point <code>bind=</code> to a function that loads a local checkpoint, run <code>.launch()</code> on your own machine, and the Workflow1111 canvas can drive your own GPU.</p>
-<h2>Every output is an API</h2>
-<p>Every output node on the canvas becomes a REST endpoint, with no routes written by hand. Workflow1111 exposes nine of them: <code>/image</code>, <code>/edited_image</code>, <code>/generated_prompt</code>, <code>/recovered_prompt</code>, <code>/detected_objects</code>, <code>/x_y_grid</code>, <code>/upscaled_local</code>, <code>/annotator_map</code>, and <code>/png_info</code>.</p>
-<pre><code>from gradio_client import Client
-
-client = Client(&quot;ysharma/Workflow1111&quot;, oauth_token=&quot;hf_...&quot;)
-
-image, params, hires = client.predict(
-    &quot;a red fox in a snowy pine forest&quot;,  # Prompt
-    &quot;&quot;,                                  # Negative prompt
-    &quot;Cinematic&quot;,                         # Style preset
-    &quot;enhance fine detail&quot;,               # Hires refine instruction
-    api_name=&quot;/image&quot;,
-)</code></pre>
-<p>The same endpoints are also <a href="https://modelcontextprotocol.io">MCP</a> tools. Launch with <code>mcp_server=True</code> (<a href="https://www.gradio.app/guides/building-mcp-server-with-gradio">guide</a>) and every output node shows up as a tool an AI assistant can call. Point Claude Code, Cursor, or any MCP client at the server URL:</p>
-<pre><code>{
-  &quot;mcpServers&quot;: {
-    &quot;workflow1111&quot;: {
-      &quot;url&quot;: &quot;https://ysharma-workflow1111.hf.space/gradio_api/mcp/&quot;,
-      &quot;headers&quot;: { &quot;X-HF-Token&quot;: &quot;hf_...&quot; }
-    }
-  }
-}</code></pre>
-<p>Now an agent can generate an image, read a prompt back out, or run detection as steps in a larger task, with no glue code. Each caller sends their own token in the <code>X-HF-Token</code> header, so the Space holds none of its own.</p>
-<h2>Where this sits next to ComfyUI</h2>
-<p>AUTOMATIC1111 gave us the feature list, but the tool Gradio Workflow really gets compared to is ComfyUI, since both are node graphs. For a lot of what people want to build and ship, <code>gr.Workflow</code> covers the same ground.</p>
-<ul><li><strong>A node can be hardware you don't own.</strong> It can run through <a href="https://huggingface.co/docs/inference-providers/index">Inference Providers</a>, call any Space on the Hub or any API, or pull from a dataset. That's how Workflow1111 runs without a GPU of its own.</li><li><strong>Every output becomes a typed REST endpoint.</strong> The endpoints are generated from the graph.</li><li><strong>Visitors can run workflows under their own identity.</strong> Turn on <a href="https://huggingface.co/docs/hub/spaces-oauth">OAuth</a>, share the public URL, and anyone can sign in and use the app without installing anything.</li><li><strong>Mix models and modalities on the same canvas.</strong> Diffusion models, LLMs, VLMs, detectors, and video models can all be part of the same workflow.</li><li><strong>Need something custom? Write a function.</strong> A custom node is a Python function, so it can do whatever Python can.</li></ul>
-<p>The result is a multi-model pipeline that people can open in a browser, sign into, use right away, and call from code.</p>
-<h2>Build your own</h2>
-<p>Workflow1111 has 73 nodes, but it started with just this:</p>
-<pre><code>import gradio as gr
-
-def your_function(text: str) -&gt; str:
-    pass
-
-gr.Workflow(bind=[your_function]).launch()</code></pre>
-<p><code>bind=</code> turns your functions into nodes, <code>edges=</code> connects them, and <code>.launch()</code> opens the canvas in your browser so you can keep editing there. When it's ready, <code>gradio deploy</code> puts the whole thing on a Space. The <a href="https://gradio.app/guides/workflows">gr.Workflow guide</a> has the full details, including the JSON schema and every operator type.</p>
-<p>If you'd rather start from something that already works, open <a href="https://huggingface.co/spaces/ysharma/Workflow1111">Workflow1111</a>, hit <strong>Duplicate</strong>, and pick one of the eleven pipelines to change: delete nodes, swap models, rewire the flow. If you'd rather start smaller, the <a href="https://huggingface.co/blog/gradio-workflow-guide">previous post</a> has five workflows you can get running in about a minute each.</p>
-<p>Whatever you build, post it on X and tag <a href="https://x.com/Gradio">@gradio</a>. We'd be happy to amplify your workflows.</p>
-<h2>Models mentioned in this article 8</h2>
-<h2>Spaces mentioned in this article 4</h2>
-<p>More Articles from our Blog</p>
-<p>gradio</p>
-<p>workflows</p>
-<p>tutorial</p>
-<h2>Wire It, Run It, Deploy It: AI Workflows in Gradio</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1624431552569-noauth.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1621947938344-noauth.png" alt=""></li></ul>
-<p>49</p>
-<p>August 25, 2026</p>
-<p>comfyui</p>
-<p>gradio</p>
-<p>spaces</p>
-<h2>Run ComfyUI workflows for free with Gradio on Hugging Face Spaces</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1649143001781-624bebf604abc7ebb01789af.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1617550879179-noauth.jpeg" alt=""></li></ul>
-<p>98</p>
-<p>January 14, 2024</p>
-<h3>Community</h3>
-<p>Fsecurityturism</p>
-<p>25 days ago</p>
-<p>Really impressive breakdown the part that stands out most is how the graph structure gives you free parallelism (the prompt-matrix and interrogate examples) without any extra orchestration code. The mix of fn, model, and space node types on one canvas also makes the ComfyUI comparison land well: you get custom-node flexibility from plain Python, but zero-code REST/MCP endpoints for free. Curious how complex a canvas can get before performance or maintainability becomes a concern has anyone pushed past 73 nodes</p>
-<p>Adityanb1405</p>
-<p>21 days ago</p>
-<p>Analisis yang sangat mengesankan, bagian yang paling menonjol adalah bagaimana struktur graf memberikan paralelisme gratis (contoh prompt-matrix dan interrogate) tanpa kode orkestrasi tambahan. Perpaduan tipe node fn, model, dan space pada satu kanvas juga membuat perbandingan dengan ComfyUI tepat: Anda mendapatkan fleksibilitas node kustom dari Python biasa, tetapi endpoint REST/MCP tanpa kode secara gratis. Saya penasaran seberapa kompleks sebuah kanvas dapat dibuat sebelum kinerja atau pemeliharaan menjadi masalah, apakah ada yang pernah melampaui 73 node?</p>
-<p>mishalkhan</p>
-<p>21 days ago</p>
-<p>This comment has been hidden (marked as Spam)</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fgradio-workflow-1111">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fgradio-workflow-1111">log in</a> to comment</p>
-<p>71</p>
-<ul><li><a href="https://huggingface.co/denisfitz"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/615519f16181394cc00cb993/Ek1o1ghNLVhEC-yFXX85a.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Shadowplague"><img src="https://huggingface.co/avatars/313e99fdb156a9f62c3c1860247d4078.svg" alt=""></a></li><li><a href="https://huggingface.co/spyke112"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a2026b88e45c0b630eaaba0/YApC9bhN9gijehSsPPOP8.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lhoestq"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1594214747713-5e9ecfc04957053f60648a3e.png" alt=""></a></li><li><a href="https://huggingface.co/muthuudu"><img src="https://huggingface.co/avatars/e31b6cf427f9f60c8f6b0153489f4e6d.svg" alt=""></a></li><li><a href="https://huggingface.co/srikarjy025"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6886d4b96963bab90aeb613d/LZc9fyVDzuijUqRC82FKu.png" alt=""></a></li><li><a href="https://huggingface.co/riteshkumarweb"><img src="https://huggingface.co/avatars/c9d3b97ac70d284155e8a57ebdfe3ca0.svg" alt=""></a></li><li><a href="https://huggingface.co/Vaishnavi123409"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/GEh9ijE6Ze09D0EuRsZ8e.png" alt=""></a></li><li><a href="https://huggingface.co/minemystic"><img src="https://huggingface.co/avatars/f1d960d3c2f2d73e624d70d03c965942.svg" alt=""></a></li><li><a href="https://huggingface.co/PedroHSGuimaraes"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/672e0b861b5f7a5e977d32bd/ZT1SNW4O4n9w6vH_ANI3c.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Monster-Code"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6a5f8c87a38cac087c2c6c05/kkOWiO34cVPRgIVFStbey.jpeg" alt=""></a></li><li><a href="https://huggingface.co/paulotok23hf"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/fmg7h7OKHSWCUdaKEOZQP.png" alt=""></a></li></ul>
-<h2>Models mentioned in this article 8</h2>
-<h2>Spaces mentioned in this article 4</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>IBM releases SOTA Granite Time Series PatchTST-FM-r2 model w…</title>
-      <link>https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/ibm-research/ibm-releases-sota-granite-time-series?li=1</guid>
-      <pubDate>Wed, 09 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: IBM releases SOTA Granite Time Series PatchTST-FM-r2 model with commercial-friendly license</description>
-      <content:encoded><![CDATA[<h1>IBM releases SOTA Granite Time Series PatchTST-FM-r2 model with commercial-friendly license</h1>
-<p>Community Article</p>
-<p>September 9, 2026</p>
-<p>60</p>
-<ul><li><a href="https://huggingface.co/davanstrien"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg" alt=""></a></li><li><a href="https://huggingface.co/vaculin"><img src="https://huggingface.co/avatars/c9d15c05751f0841bc0c431da3262d50.svg" alt=""></a></li><li><a href="https://huggingface.co/jtrayfield"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vy5ixwWBqZAnGxVVtKx9m.png" alt=""></a></li><li><a href="https://huggingface.co/anubhamidipaty"><img src="https://huggingface.co/avatars/0bf6b07cb6d0cde59a462458f841e224.svg" alt=""></a></li><li><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pankajdayama"><img src="https://huggingface.co/avatars/ed8ccd6d4fbc0e68ce03930eae039c4b.svg" alt=""></a></li></ul>
-<p>Roman Vaculin</p>
-<p>vaculin</p>
-<p>ibm-research</p>
-<p>Wesley M. Gifford</p>
-<p>wmgifford</p>
-<p>ibm-research</p>
-<p>Jiri Navratil</p>
-<p>jirin1a</p>
-<p>ibm-research</p>
-<p>Chandra Reddy</p>
-<p>creddyhf</p>
-<p>ibm-research</p>
-<p>Ayhan Sebin</p>
-<p>ayhansebin</p>
-<p>ibm-research</p>
-<p><em>High-performance zero-shot forecasting with commercial-friendly open licensing</em></p>
-<p>Time-series foundation models are changing the way forecasting systems are built. Instead of training and maintaining a separate model for every dataset, users can use a pretrained model and generate forecasts zero-shot.</p>
-<p>IBM has released <a href="https://huggingface.co/ibm-granite/granite-timeseries-patchtst-fm-r2"><strong>Granite Time Series PatchTST-FM-r2</strong></a>, the latest model in the Granite TSFM family (<a href="https://github.com/ibm-granite/granite-tsfm">github</a>, <a href="https://research.ibm.com/blog/time-series-ai-enterprise">blog</a>). PatchTST-FM-r2, a new version of its predecessor <a href="https://huggingface.co/ibm-granite/granite-timeseries-patchtst-fm-r1">PatchTST-FM-r1</a>, combines an updated architecture, a larger pretraining corpus, probabilistic forecasting, support for imputation of missing values, and strong zero-shot performance in a ~<strong>385M-parameter</strong> model.</p>
-<p>As of September 8, 2026, the model is the <strong>top performing zero-shot model released under a permissive, commercial-friendly open-source license (Apache 2.0 and OpenMDW 1.0) among replicable, zero-shot models on the GIFT-Eval leaderboard</strong>. GIFT-Eval is a comprehensive time series forecasting benchmark designed to evaluate models across diverse forecasting scenarios; the model ranks #2 overall among replicable, zero-shot models.</p>
-<p><strong>The model weights, architecture, inference pipeline, and code needed to reproduce the benchmark results are all available.</strong></p>
-<p>In this blog we describe the model, dive deeper into the benchmarking results and the model architecture, discuss the training data and licensing, and provide code examples illustrating how to use the model. Finally, we also highlight how the models from the Granite Time Series family can be used in streaming applications in production setting leveraging <a href="https://events.confluent.io/early-access-flink-features">Confluent product</a>.</p>
-<blockquote>Ready to try it? Open Granite Time Series PatchTST-FM-r2 on Hugging Face</blockquote>
-<h2>TL;DR</h2>
-<ul><li>General-purpose zero-shot forecasting for demand, prices, energy loads, traffic, telemetry, and other time series.</li><li>Approximately 385M parameters, context length up to 8,192, flexible forecast lengths, and probabilistic forecasts through a 99-quantile prediction head.</li><li>The model backbone is constructed from conformer blocks that combine multi-head self-attention with temporal convolution to capture long- and short-range temporal structure.</li><li>Permissively licensed model with top performance in the replicable zero-shot category of the GIFT-Eval benchmark (dual-licensed under Apache-2.0 and OpenMDW-1.0, users may select either license).</li><li>Available open weights, architecture, inference pipeline, and code to reproduce the benchmark.</li></ul>
-<h2>Strong zero-shot forecasting on GIFT-Eval</h2>
-<p>A foundation model is most useful when it generalizes to time series it has not been specifically trained on. For that reason, we focus first on zero-shot performance.</p>
-<p>GIFT-Eval provides a broad evaluation of forecasting models across heterogeneous datasets and forecasting scenarios. When restricting the leaderboard to models that are zero-shot, replicable, and evaluated without test leakage, PatchTST-FM-r2 ranks second for both CRPS and MASE as of September 8, 2026, as illustrated in Figures 1 and 2 (lower values are better for both metrics). Importantly, <strong>PatchTST-FM-r2 is the highest-performing model in the same category among models with permissive, commercial-friendly licensing.</strong></p>
-<p><em>Figure 1. GIFT-Eval CRPS for leading replicable zero-shot models. PatchTST-FM-r2 achieves a geometric-mean CRPS of 0.467, placing it immediately behind TimesFM-3 in this comparison, and first among the models with permissive licenses.</em></p>
-<p><em>Figure 2. GIFT-Eval MASE for leading replicable zero-shot models. PatchTST-FM-r2 achieves a geometric-mean MASE of 0.6846. Blue bars denote models released by the IBM time-series foundation-model team.</em></p>
-<h2>Competitive even against models allowed to use benchmark training data</h2>
-<p>Some models on GIFT-Eval are categorized as pretrained rather than strictly zero-shot. These models are allowed to include the training portions of GIFT-Eval evaluation datasets in their pretraining corpora.</p>
-<p>Even when these pretrained models are added to the comparison, PatchTST-FM-r2 remains near the top as seen in Figures 3 and 4: <strong>3rd for CRPS and 4th for MASE</strong> among the replicable models. It outperforms several pretrained models, including <strong>Chronos-2, Timer-S1, and Toto variants</strong>, despite some competing models being considerably larger.</p>
-<p><em>Figure 3. GIFT-Eval CRPS when both zero-shot and pretrained replicable models are considered.</em></p>
-<p><em>Figure 4. GIFT-Eval MASE when both zero-shot and pretrained replicable models are considered.</em></p>
-<h2>Architecture: What changed from PatchTST-FM-r1?</h2>
-<p>PatchTST-FM-r2 retains the patch-based representation that made the PatchTST family effective, but the internal architecture is redesigned to capture long- and short-term relationships efficiently and to smoothen inter-patch predictions — both of which substantially improve error measures.</p>
-<p>One change is the move from standard transformer layers to layers which incorporate convolution along with the multi-head self-attention. These layers are referred to as conformer layers and has its <a href="https://arxiv.org/pdf/2005.08100">origin</a> in speech processing applications.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/64b01b5252349201f972ba17/gYPoFfbdOqaT9nZmABON1.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/64b01b5252349201f972ba17/gYPoFfbdOqaT9nZmABON1.png" alt="Architectural evolution from PatchTST-FM-r1 to Conformer-based PatchTST-FM-r2"></a></p>
-<p><em>Figure 5. Architectural evolution from PatchTST-FM-r1 to the Conformer-based PatchTST-FM-r2.</em></p>
-<p>A PatchTST-FM-r1 block combines multi-head self-attention with a feed-forward network. In r2, we replaced this with a conformer-style block containing two half-step feed-forward layers surrounding multi-head self-attention and a temporal convolution layer.</p>
-<p>This gives the model two complementary mechanisms for reasoning over a time series. Self-attention can model long-range relationships between patches, while convolution provides an inductive bias toward local temporal structure. The convolution component can therefore capture shorter-term interactions while allowing attention to concentrate on relationships over longer horizons. This phenomenon is observable in attention patterns captured in the transformer and conformer versions (see example figure below using real samples from the ETTh1 dataset). While a significant portion of the transformer’s self-attention (left in the figure) concentrates near the diagonal, i.e., capturing local relationships, attentions in the conformer block (right in the figure) show long-distance (far-off-diagonal) focus, thanks to the convolution layer covering the short distances. The conformer blocks in the backbone use alternating convolution kernel sizes of 3 and 5, in a repeating pattern {5, 5, 3, 3}.</p>
-<p><em>Figure 6. Comparing attention patterns captured in the transformer (left) and conformer versions(right) using real samples from the ETTh1 dataset.</em></p>
-<p>Additionally, PatchTST-FM-r2 uses <strong>50% overlapping patches with Hamming-window weighting and overlap-and-add forecasting</strong> to smooth patch boundaries and improve forecasting accuracy. Finally, the architecture adds normalization for stability and expands from 20 to <strong>30 blocks.</strong></p>
-<p>With these changes, the resulting model has <strong>approximately 385M parameters</strong>, supports very long contexts of up to <strong>8,192 steps</strong>, and predicts <strong>99 quantiles</strong> over flexible forecast lengths. The model provides both point forecasts and quantile outputs for forecasting distributions and uncertainty intervals.</p>
-<h2>Training data</h2>
-<p>For foundation models intended for real applications, model quality is only one consideration. Developers increasingly need to understand what data went into a model, whether benchmark data may have leaked into training, and what the implications are for deploying the model.</p>
-<p>PatchTST-FM-r2 uses a documented pretraining corpus consisting of four sources: selected datasets from GiftEvalPretrain; custom synthetic data based on KernelSynth with modified periodic kernels and limited augmentation; a TSMixup corpus generated using the approach described by Chronos but restricted to datasets outside the GIFT-Eval evaluation set; and approximately 500,000 synthetic CauKer sequences, each of length 4,096.</p>
-<p>For enterprise adopters, this kind of transparency can be as important as another few points on a leaderboard. This does not eliminate the need for an organization's own model-governance and licensing review, but it gives users considerably more information with which to perform that review than an opaque pretraining corpus would.</p>
-<h2>Open for research experimentation — and for commercial use</h2>
-<p>To provide greater choice for the community, Granite Time Series PatchTST-FM-r2 is dual licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0.txt">Apache 2.0</a> and <a href="https://raw.githubusercontent.com/OpenMDW/OpenMDW/refs/heads/main/1.0/LICENSE.openmdw">OpenMDW 1.0</a>. Users may select either license, both of which provide broad, permissive rights to use, modify, and distribute the models, with the Linux Foundation's OpenMDW offering a licensing framework specifically designed for AI models and related materials. By making the models available under permissive open-source licenses, IBM aims to reduce barriers to adoption and enable organizations, researchers, and developers to build on the technology with confidence that comes with licenses that don't restrict your use.The architecture implementation is also available through <a href="https://github.com/ibm-granite/granite-tsfm">Granite-TSFM repository</a> and is backward-compatible with PatchTST-FM-r1 checkpoints.</p>
-<h2>Try PatchTST-FM-r2 in a few lines of Python</h2>
-<p>The easiest way to evaluate a foundation model is on your own time series data.</p>
-<p>Install the Granite TSFM package:</p>
-<pre><code>pip install &quot;granite-tsfm&gt;=0.3.9&quot;</code></pre>
-<p>Then load PatchTST-FM-r2 directly from the Hugging Face Hub:</p>
-<pre><code>import pandas as pd
-from tsfm_public import PatchTSTFMForPrediction, TimeSeriesForecastingPipeline
-
-# Load model weights
-model = PatchTSTFMForPrediction.from_pretrained(
-    &quot;ibm-granite/granite-timeseries-patchtst-fm-r2&quot;
-)
-
-# Read some sample data from ETTh
-df = pd.read_csv(
-    &quot;https://raw.githubusercontent.com/zhouhaoyi/ETDataset/main/ETT-small/ETTh1.csv&quot;,
-    parse_dates=[&quot;date&quot;],
-)
-
-# Set up the forecasting pipeline
-pipe = TimeSeriesForecastingPipeline(
-    model=model,
-    id_columns=[],
-    timestamp_column=&quot;date&quot;,
-    target_columns=[&quot;HUFL&quot;],
-    max_context_length=model.config.context_length,
-    context_length=512,
-    prediction_length=64,
-    impute_method=None,
-    quantile_levels=[0.1, 0.5, 0.9],
-    explode_forecasts=True,
-    freq=&quot;1h&quot;,
-)
-
-# Create a forecast from the last 512 samples of the input dataframe
-forecast = pipe(df.iloc[-512:])</code></pre>
-<p>As you can see, no fine-tuning and no task-specific model fitting is needed. The pipeline consumes just the recent history of the series and generates the future forecast, including the requested quantiles.</p>
-<p>The above is a simple example on publicly available data – you can replace the example input data with your own, including demand, sensor telemetry, CPU utilization, energy consumption, transaction volume, traffic, prices, or another regularly sampled time series.</p>
-<blockquote>Try it on your own data: Open PatchTST-FM-r2 on the Hugging Face Hub</blockquote>
-<h2>From notebooks to streaming time series</h2>
-<p>This release connects to a broader effort around IBM Granite Time Series models, <a href="https://research.ibm.com/blog/time-series-ai-enterprise">adding a new model to the broader portfolio</a>.</p>
-<p>For applications where data arrives continuously rather than in static DataFrames, IBM and Confluent recently made several Granite Time Series models available through an <strong>Early Access program in Confluent Cloud</strong>. The initial portfolio includes PatchTST-FM-r1, FlowState-r1.1, TTM-r3, and TSPulse.</p>
-<p>The integration brings foundation-model inference directly into streaming applications through Apache Flink on Confluent Cloud. Forecasts and anomaly-detection results can be generated from live streams rather than requiring teams to set up and move data to a separate ML environment.</p>
-<ul><li><a href="https://www.ibm.com/new/announcements/ibm-granite-time-series-models-bring-real-time-forecasting-and-anomaly-detection-to-confluent-cloud">Read the IBM announcement</a> or</li><li><a href="https://events.confluent.io/early-access-flink-features">Enroll in Early Access</a>.</li></ul>
-<h2>Models mentioned in this article 2</h2>
-<p>More from this author</p>
-<h2>Your Agent Aced the Task. Will It Do It Again?</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>119</p>
-<p>September 15, 2026</p>
-<h2>Real-Time Intelligence with IBM Time Series Models on Confluent</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/637bfdf60dc13843b468ac20/npxapKcW-cXX3J2JBl2vY.png" alt=""></li></ul>
-<p>53</p>
-<p>September 2, 2026</p>
-<h3>Community</h3>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Fibm-releases-sota-granite-time-series">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Fibm-releases-sota-granite-time-series">log in</a> to comment</p>
-<p>60</p>
-<ul><li><a href="https://huggingface.co/davanstrien"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg" alt=""></a></li><li><a href="https://huggingface.co/vaculin"><img src="https://huggingface.co/avatars/c9d15c05751f0841bc0c431da3262d50.svg" alt=""></a></li><li><a href="https://huggingface.co/jtrayfield"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/vy5ixwWBqZAnGxVVtKx9m.png" alt=""></a></li><li><a href="https://huggingface.co/anubhamidipaty"><img src="https://huggingface.co/avatars/0bf6b07cb6d0cde59a462458f841e224.svg" alt=""></a></li><li><a href="https://huggingface.co/ayhansebin"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/64e8143f6de557454220921e/aNouKBrKm1dnN9pI1JXlp.jpeg" alt=""></a></li><li><a href="https://huggingface.co/pankajdayama"><img src="https://huggingface.co/avatars/ed8ccd6d4fbc0e68ce03930eae039c4b.svg" alt=""></a></li><li><a href="https://huggingface.co/DhavalPatel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/UT2mHX2WuCm5Ws4rGKyCB.png" alt=""></a></li><li><a href="https://huggingface.co/jirin1a"><img src="https://huggingface.co/avatars/498c8089fa5fe50de5ff0f9ed90952ee.svg" alt=""></a></li><li><a href="https://huggingface.co/creddyhf"><img src="https://huggingface.co/avatars/d74e1525ff163f4a40f4c3e39ba37403.svg" alt=""></a></li><li><a href="https://huggingface.co/cocosnailman"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/4A0BFukQBlOOHy5iLYanv.png" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/paras9909"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yRfFUlhJo5WqL7WUBiIJD.png" alt=""></a></li></ul>
-<h2>Models mentioned in this article 2</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Safety for Whom? Refusing the Right Subset of a Topic, Not t…</title>
-      <link>https://huggingface.co/blog/MultiverseComputingCAI/safety-for-whom</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/MultiverseComputingCAI/safety-for-whom?li=1</guid>
-      <pubDate>Tue, 08 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Safety for Whom? Refusing the Right Subset of a Topic, Not the Whole Topic</description>
-      <content:encoded><![CDATA[<h1>Safety for Whom? Refusing the Right Subset of a Topic, Not the Whole Topic</h1>
-<p>Community Article</p>
-<p>September 8, 2026</p>
-<p>31</p>
-<ul><li><a href="https://huggingface.co/AlejoMVC"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/dd5CkYFbznEo_I9FFnhon.png" alt=""></a></li><li><a href="https://huggingface.co/nomoresquirrel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67712fbc8219c3d8608ffe4b/0LN7kqWd3T7eXqi3-liJU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AntonioTN"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/668e37fd9c9aa124a3c867e8/4ivwrPQnZGMDF6ovxnAdA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alberto-lorente-multiversecomputing"><img src="https://huggingface.co/avatars/4a480e6de1a5238b6bb11c949394b3a5.svg" alt=""></a></li><li><a href="https://huggingface.co/Iker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1632247447995-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Jansenhbar"><img src="https://huggingface.co/avatars/c74512e50114f21fa3ab32687bf5c930.svg" alt=""></a></li></ul>
-<p>Antonio Tiene</p>
-<p>AntonioTN</p>
-<p>MultiverseComputingCAI</p>
-<p>Alejo Lopez Avila</p>
-<p>AlejoMVC</p>
-<p>MultiverseComputingCAI</p>
-<p>Iker García-Ferrero</p>
-<p>Iker</p>
-<p>MultiverseComputingCAI</p>
-<p>Most safety alignment work treats harm as a property of a topic. A prompt is unsafe because it falls into a general category such as weapons, fraud, or self-harm, and guard models like <a href="https://huggingface.co/meta-llama/Llama-Guard-3-8B">LlamaGuard-3</a> encode exactly this kind of topic-level taxonomy. Benchmarks like <a href="https://arxiv.org/abs/2308.01263">XSTest</a> and <a href="https://arxiv.org/abs/2405.20947">OR-Bench</a> then probe the failure mode this creates, models that refuse safe prompts because they contain a dangerous-looking word, and refusal-calibration work tries to pull that number back down.</p>
-<p>Real deployments rarely fit the topic-level picture. The same base model may be adapted for a general assistant, an educational product, an enterprise system, or a public-sector service, and each setting needs different boundaries within the same topic. A civics tutor and a public-sector assistant can share a model yet require opposite behaviour on politics: both should answer factual questions about an election, but only one may need to refuse a request to write targeted political manipulation. A topic-level guard cannot express that split. LlamaGuard-3, for example, covers elections only as &quot;factually incorrect information about electoral systems and processes,&quot; which excludes persuasion and manipulation and, at the same time, excludes the factual prompts a deployment must keep answering.</p>
-<p>Our latest paper, <a href="https://huggingface.co/papers/2609.04482"><em>Safety for Whom? Boundary-Aware Self-Distillation for Controlled LLM Safety Refusal</em></a>, studies this narrower problem directly. The question is not whether an entire topic should be refused, but which subset of that topic is incompatible with a given deployment policy, and how to train and measure a model against that boundary.</p>
-<h2>Narrow-boundary safety</h2>
-<p>We formalise the setting as a topic universe, all political prompts in our experiments, that contains a target-harmful subset the deployment wants to refuse. The intended policy is not to refuse all of politics, but to refuse the harmful subset while continuing to answer the benign complement. The ideal behaviour is a sharp step: refuse inside the subset, answer everywhere else in the topic.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/668e37fd9c9aa124a3c867e8/g_Xngr05EUhlIBNT-mG8s.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/668e37fd9c9aa124a3c867e8/g_Xngr05EUhlIBNT-mG8s.png" alt="Narrow-boundary safety. The topic universe of political prompts contains a smaller subset that the deployment should refuse, while the benign complement should still be answered. The ideal refusal is a sharp step, but a trained model's refusal probability is smoother and can overshoot into benign territory near the boundary."></a></p>
-<p><em>The narrow-boundary setting. A deployment may need to refuse only the political prompts that ask for manipulation or targeted persuasion, while still answering other political prompts, rather than refusing all of politics. A trained model's refusal is smoother than the ideal split and can spill into benign territory near the boundary. Source: paper Figure 1.</em></p>
-<p>A trained model never learns that sharp step. It learns a refusal probability that only approximates the target, and cross-entropy training that raises refusal inside the harmful subset can also push refusal outward into the benign complement. So the real problem is not only raising refusal on harmful prompts, but shaping the behaviour near the boundary itself. We operationalise that boundary as pairs of prompts that share a topic anchor and differ only in intent, one that should be refused and one that should be answered.</p>
-<p>We use political persuasion as the testbed, since manipulative persuasion can cause real harm while factual political information stays legitimate, which is exactly the case where topic-level refusal is too blunt.</p>
-<h2>Where self-generated safety tuning breaks</h2>
-<p>The natural way to build training data here is self-generation: take the target model, steer it toward a refusal on each harmful prompt, and keep the traces a guard model verifies as genuine refusals. This is the recipe behind methods like <a href="https://arxiv.org/abs/2601.23143">ThinkSafe</a>, and we adopt it as our reference, applied to political prompts and measured component by component. Framing the problem as a boundary rather than a topic exposes three weaknesses in that standard pipeline.</p>
-<p>The first is a coverage gap. A single steering attempt does not always produce an accepted refusal, and those prompts are silently dropped from the training set. In our audited pool, single-shot generation drops 19.88% of prompts, 8,009 of them, and these failed prompts may well be the hardest examples. We repair this instead of discarding it: an escalating retry strategy, resampling the same prompt through progressively stronger steering, brings the residual failures down to 0.20%, or 79 prompts. Coverage repair leaves 40,293 harmful training prompts where the naive pipeline would have thrown thousands away.</p>
-<p>The second is downside reactions. Safety tuning tends to produce false refusals on benign prompts that look superficially dangerous. To compensate, we build in-distribution benign data, including 11,955 verified surface-dangerous benign prompts across 18 semantic types, so the model sees safe prompts with dangerous-looking wording during training rather than only at evaluation.</p>
-<p>The third is that ordinary harmful and benign splits do not measure the shape of the boundary at all. A model can improve its harmful-refusal rate simply by expanding refusal into nearby permissible prompts, and a topic-level metric will call that an improvement. Held-out harmful-benign pairs, 1,539 per side, let us measure both sides of the boundary directly.</p>
-<h2>The trade-off, and a trap it hides</h2>
-<p>Training on political refusal data works in the obvious sense. On <a href="https://huggingface.co/Qwen/Qwen3-8B">Qwen3-8B</a>, the escalated-coverage model raises in-distribution political refusal from 9.47% to 84.75%, and it also transfers: the mean unsafe-response rate across three broader harmfulness benchmarks, <a href="https://www.harmbench.org">HarmBench</a>, StrongREJECT, and <a href="https://arxiv.org/abs/2406.18510">WildJailbreak</a>, scored by LlamaGuard-3, falls from 26.26% to 0.14% in the strongest configuration.</p>
-<p>Reported alone, those numbers look like a clean win. They are not. At the same checkpoint, over-refusal on XSTest rises from 2.00% to 74.00%. The configuration with the lowest harmful-response rate is also the one that refuses nearly three quarters of plainly safe prompts. It is a blunt refusal machine, not a safer model, and you cannot see that unless you measure the benign side. This is the central message: data composition decides where a checkpoint sits in the space of safety against over-refusal, so the two axes have to be reported together.</p>
-<p>Two of our data components pull the over-refusal number back down without giving up the safety gain. Replacing externally adopted compliance responses with verified responses generated by the target model itself lowers XSTest over-refusal from 15.20% to 5.20% under single-shot generation, at a modest harmfulness cost. And the harmful-benign boundary pairs do the most precise work of all.</p>
-<p><a href="https://cdn-uploads.huggingface.co/production/uploads/68db932961906f42259438b7/6W8oCYwy3TnSfdaBsH74C.png"><img src="https://cdn-uploads.huggingface.co/production/uploads/68db932961906f42259438b7/6W8oCYwy3TnSfdaBsH74C.png" alt="Pairwise boundary data reduces over-refusal at the boundary. Adding the benign side of the boundary pairs drops comply-side over-refusal from roughly 0.49 down to 0.03 to 0.08, while harmful-side refusal falls only slightly, from about 0.92 to 0.88."></a></p>
-<p><em>Left: over-refusal on the comply-worthy side of the held-out boundary, lower is better. Runs with the benign boundary data (PB) fall to 0.03 to 0.08; without it, the number rises toward 0.49. Right: refusal on the harmful side, higher is better, which falls only slightly. Source: paper Figure 6.</em></p>
-<p>Concretely, adding the benign boundary data reduces over-refusal on the comply-worthy side of the held-out pairs from 32.94% to 4.16%. Refusal on the harmful side drops only from 91.88% to 87.72%. In other words, most of the false refusals near the boundary disappear while almost all of the genuine refusals survive. There is a real recall cost, and it is small and measurable, which is the point: you can only trade it off deliberately if you are measuring both sides.</p>
-<h2>What this changes</h2>
-<p>The practical takeaway is that safety tuning should not be assessed by harmful-refusal rate alone. A model that refuses more is not automatically safer, and on a narrow boundary the same move that raises refusal on harmful prompts can quietly make the model useless on the legitimate prompts right next to them. Composition of the training data, coverage repair, in-distribution compensation, and boundary pairs are what control that trade-off, and both sides of the intended boundary have to be evaluated for the numbers to mean anything.</p>
-<p>This work is part of <a href="https://multiversecomputing.com">Multiverse Computing's</a> research into making model behaviour controllable and measurable at the level real deployments care about, rather than at the level of broad topic categories. The same generation pipeline extends to other topics beyond politics, and the paper reports the full set of data-composition ablations behind the results above.</p>
-<p>Want the full technical details, including the coverage-repair strategies, the loss routing that separates harmful cross-entropy from benign forward-KL preservation, and the complete held-out boundary evaluation? Read the full paper, or get in touch with our team to talk about deployment-specific safety for your own models.</p>
-<h2>Models mentioned in this article 2</h2>
-<h2>Papers mentioned in this article 1</h2>
-<p>More from this author</p>
-<h2>Getting the Source Right, Not Just the Fact: Source-Aware Verification for MCP Agents</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6835694d56d5a69517655698/C3QUBARPGF4kbzJzZaT29.png" alt=""></li></ul>
-<p>18</p>
-<p>September 29, 2026</p>
-<h2>Pruning LLMs Like a Physicist: Block Removal as an Ising Optimization Problem</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6835694d56d5a69517655698/C3QUBARPGF4kbzJzZaT29.png" alt=""></li></ul>
-<p>33</p>
-<p>September 21, 2026</p>
-<h3>Community</h3>
-<p>binarydoc</p>
-<p>19 days ago</p>
-<p>where can i start a private discussion, i have been increasingily criticised and didnt respond and come accross as im justifying or making excuses. eventhough on a daily basis why i havn't buiolt my app, an app the public opinion is what im working towards which is not even relate to what i set out to achieve, the last couple of weeks were not easy. but i believe the knowledge and experience is worth it it in the long run. for now i want to clarify, do i need to vreate a second team/organisation account. Im not withholdingdata from you pleae know this, but there are updates important details i must share.</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FMultiverseComputingCAI%2Fsafety-for-whom">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2FMultiverseComputingCAI%2Fsafety-for-whom">log in</a> to comment</p>
-<p>31</p>
-<ul><li><a href="https://huggingface.co/AlejoMVC"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/dd5CkYFbznEo_I9FFnhon.png" alt=""></a></li><li><a href="https://huggingface.co/nomoresquirrel"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67712fbc8219c3d8608ffe4b/0LN7kqWd3T7eXqi3-liJU.jpeg" alt=""></a></li><li><a href="https://huggingface.co/AntonioTN"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/668e37fd9c9aa124a3c867e8/4ivwrPQnZGMDF6ovxnAdA.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alberto-lorente-multiversecomputing"><img src="https://huggingface.co/avatars/4a480e6de1a5238b6bb11c949394b3a5.svg" alt=""></a></li><li><a href="https://huggingface.co/Iker"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/1632247447995-noauth.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Jansenhbar"><img src="https://huggingface.co/avatars/c74512e50114f21fa3ab32687bf5c930.svg" alt=""></a></li><li><a href="https://huggingface.co/Savani123"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/nMyHN5im81E3Qnf5iZQIt.png" alt=""></a></li><li><a href="https://huggingface.co/bitlord"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/67e2dd840203c9e0bfcbaed3/t37ja8T35zZlEpDLdm12w.png" alt=""></a></li><li><a href="https://huggingface.co/jeshurun56-54amos"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/C0oNs8oiuTWwW4Xs-soQp.png" alt=""></a></li><li><a href="https://huggingface.co/Hota123"><img src="https://huggingface.co/avatars/915e3020f4a03c9dd033eb1a14ebbeb8.svg" alt=""></a></li><li><a href="https://huggingface.co/cocosnailman"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/4A0BFukQBlOOHy5iLYanv.png" alt=""></a></li><li><a href="https://huggingface.co/paras9909"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/yRfFUlhJo5WqL7WUBiIJD.png" alt=""></a></li></ul>
-<h2>Models mentioned in this article 2</h2>
-<h2>Papers mentioned in this article 1</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>NeoMME: an efficient Multimodal-native and Multilingual Enco…</title>
-      <link>https://huggingface.co/blog/Hcompany/neomme</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/Hcompany/neomme?li=1</guid>
-      <pubDate>Thu, 03 Sep 2026 00:00:00 +0000</pubDate>
-      <description>Full title: NeoMME: an efficient Multimodal-native and Multilingual Encoder</description>
-      <content:encoded><![CDATA[<h1>NeoMME: an efficient Multimodal-native and Multilingual Encoder</h1>
-<p>Team</p>
-<p>Article</p>
-<p>September 3, 2026</p>
-<p>121</p>
-<ul><li><a href="https://huggingface.co/ABonnetH"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68c435c869d3aa0e590b0361/RZcEZherMz2CeJo5kuWHh.png" alt=""></a></li><li><a href="https://huggingface.co/ivanv4"><img src="https://huggingface.co/avatars/871961801ee9242f5bcd77e097720a54.svg" alt=""></a></li><li><a href="https://huggingface.co/enzo-damion-h"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/gCLGNIpWsU7LJC0U9fEZc.png" alt=""></a></li><li><a href="https://huggingface.co/Diazmathh"><img src="https://huggingface.co/avatars/cb119b58fabbb25ca80c7cc975581a9e.svg" alt=""></a></li><li><a href="https://huggingface.co/rghermi-h"><img src="https://huggingface.co/avatars/4881b4bdf30634089ddba7d607108c1e.svg" alt=""></a></li><li><a href="https://huggingface.co/vincentcoyette"><img src="https://huggingface.co/avatars/e15d64d814c3ee65ffc7fe39d82969ea.svg" alt=""></a></li></ul>
-<p>Tony Wu</p>
-<p>tonywu71</p>
-<p>Hcompany</p>
-<p>Aurélien Lac</p>
-<p>h-aurelien-lac</p>
-<p>Hcompany</p>
-<p><a href="https://hf.co/collections/Hcompany/neomme"><img src="https://img.shields.io/badge/Collection-FFD21E?style=for-the-badge&amp;logo=huggingface&amp;logoColor=000" alt="Hugging Face"></a> <a href="https://huggingface.co/papers/2609.01657"><img src="https://img.shields.io/badge/HF_Paper-FFD21E?style=for-the-badge&amp;logo=huggingface&amp;logoColor=000" alt="Hugging Face Paper"></a> <a href="https://arxiv.org/abs/2609.01657"><img src="https://img.shields.io/badge/arXiv-2609.01657-b31b1b.svg?style=for-the-badge" alt="arXiv"></a></p>
-<p><img src="https://github.com/tonywu71/colpali-cookbooks/blob/6ef1332da6bcb48c7ef1f19b25bfa555be7031a8/assets/neomme/neomme_logo.webp?raw=true" alt="NeoMME logo"></p>
-<h2>TL;DR</h2>
-<p>We introduce <em><strong>NeoMME</strong></em>, a family of 260M and 800M multilingual multimodal encoders. Unlike many generative visual language models, <em>NeoMME</em> does not use a separate pretrained vision tower or a causal language model. A single bidirectional Transformer processes both text tokens and raw image patches, and we train the entire model from scratch with a masked discrete-diffusion objective.</p>
-<p>We fine-tuned <em>NeoMME</em> for visual document retrieval using ColPali's page-image approach. <em>NeoMME</em>-Retriever returns dense and late-interaction embeddings in one forward pass. Both model sizes lie on the ViDoRe v3 Pareto frontier for nDCG@10 and model size. At a matched 2048×2048 image input size on an NVIDIA L40S GPU, the 260M model encodes about 51 pages per second, or about twice ColModernVBERT's throughput. Hierarchical token pooling and asymmetric quantization reduce late-interaction index storage from roughly 1.5 MB to 6 kB per page (255× smaller) while retaining more than 95% of baseline nDCG@10.</p>
-<p><em>NeoMME</em> is available in Hugging Face Transformers. We release all model checkpoints under the Apache 2.0 license.</p>
-<ul><li>🤗 <a href="https://hf.co/collections/Hcompany/neomme"><em>NeoMME</em> collection</a></li><li>📄 <a href="https://huggingface.co/papers/2609.01657">Technical report</a></li><li>🔎 <a href="https://huggingface.co/spaces/tonywu71/neomme-retriever-demo">Visual RAG demo</a></li></ul>
-<h2>Why another multimodal encoder?</h2>
-<p>Many recent visual document retrievers are adapted from pretrained generative visual language models. A separately pretrained vision encoder produces visual features, which a projector maps into the language model's input space. A causal decoder then processes the combined image and text representations. Retrieval, classification, and token labeling do not generate text autoregressively, so they do not require a causal decoder or the parameter and compute overhead of this architecture.</p>
-<p><a href="https://huggingface.co/blog/modernbert">ModernBERT</a> brought efficient architecture and training improvements to bidirectional encoders. For visual document retrieval, <a href="https://huggingface.co/blog/paultltc/modernvbert">ModernVBERT</a> applied a bidirectional ModernBERT-style text encoder while retaining a separate pretrained SigLIP2 vision tower. We wanted to push this even further by designing and training a multimodal encoder without having to carry over the parameter and compute overhead of a VLM.</p>
-<p><em><strong>NeoMME</strong></em> (pronounced &quot;nee-oh-me&quot;, IPA /ˈniː.oʊ.mi/) is a multilingual, multimodal foundation encoder that generates vector representations for input text and/or images using a single Transformer encoder. It is not based on an existing pretrained vision tower, text encoder, or text decoder.</p>
-<p>Unlike dual-tower and VLM encoders,</p>
-<p>NeoMME</p>
-<p>processes image patches and text tokens in one bidirectional Transformer, without a pretrained vision tower or a pretrained text encoder or decoder.</p>
-<p>Images and text use the same computational path, so <em>NeoMME</em> can more easily support pretraining, fine-tuning, parallelization, and serving across both modalities.</p>
-<h2><em>NeoMME</em> encoder backbone</h2>
-<h3>One Transformer for images and text</h3>
-<p><em>NeoMME</em> comes in two sizes, <a href="https://huggingface.co/Hcompany/NeoMME-260M">260M</a> and <a href="https://huggingface.co/Hcompany/NeoMME-800M">800M</a>. Both variants share the same architecture:</p>
-<ul><li><strong>Native multimodal inputs:</strong> text inputs use factorized token embeddings, while images are divided into a grid of non-overlapping 32×32 patches and projected with a small MLP. Both enter the same Transformer encoder.</li><li><strong>Dynamic image resolution:</strong> images keep their aspect ratio and size. This allows the model to use more tokens on a high-resolution, information-dense document page than on a smaller image with less content.</li><li><strong>Long bidirectional context:</strong> both models have a context length of 16,384 tokens (enough for up to two standard 3840×2160 4K UHD images). Most layers use symmetric sliding-window attention, while every sixth layer and the final layer use global attention.</li><li><strong>A modern encoder stack:</strong> <em>NeoMME</em> uses recent encoder improvements such as grouped-query attention, query-key normalization, gated attention, 2D rotary position embeddings, and squared-ReLU MLPs, among others.</li><li><strong>Multilingual text:</strong> we trained a BPE tokenizer with a 131k-token vocabulary from scratch on multilingual text, code, mathematics, and machine-produced image transcripts.</li></ul>
-<p>Alternating sliding-window and global-attention layers in the</p>
-<p>NeoMME</p>
-<p>encoder stack.</p>
-<h3>Learning from images through masked text</h3>
-<p>We pretrain <em>NeoMME</em> from scratch as a discrete masked-diffusion text denoiser. For each text-only example, we sample a corruption rate uniformly between 0 and 1. Each eligible text token is then independently masked at that rate.</p>
-<p>Multimodal examples use corruption rates between 0.3 and 1. The image patches remain visible while <em>NeoMME</em> reconstructs masked text. With light masking, the model can often recover a missing word from the surrounding text alone. For example, &quot;cat&quot; is a plausible completion of &quot;The [MASK] sat on the mat,&quot; even without an image. But high masking forces the model to learn image-grounded descriptions with little to no signal from the non-masked input text tokens.</p>
-<p>Higher text corruption removes language-only shortcuts and encourages</p>
-<p>NeoMME</p>
-<p>to use visible image evidence.</p>
-<p>Pretraining mixes multilingual text, code, mathematics, natural images, and document images. Each model processes about 524 billion packed input tokens, including 290 billion tokens from text-only examples. This text budget is relatively small compared with ModernBERT's 2 trillion training token budget. Hence, we chose the NorMuon optimizer to improve data efficiency during training.</p>
-<h2><em>NeoMME</em>-Retriever</h2>
-<p>To get a meaningful downstream evaluation of the backbone, we fine-tune <em>NeoMME</em> for visual document retrieval using the page-image methodology introduced by <a href="https://huggingface.co/blog/manu/colpali">ColPali</a>. While traditional text-based retrieval consists of retrieving text chunks, <em>NeoMME</em>-Retriever ranks document page screenshots and bypasses all the preprocessing OCR steps necessary to extract text from PDFs. Treating the pages as images preserves layout, charts, tables, font type and size, and other visual clues that cannot be captured even by a perfect OCR model.</p>
-<h3>A dual-head design for dense and late-interaction retrieval</h3>
-<p><em>NeoMME</em>-Retriever reuses the <em>NeoMME</em> backbone but adds two jointly trained heads on top of it for retrieval:</p>
-<ul><li>The dense head averages the backbone's hidden state vectors into a normalized vector (mean pooling). Dense embeddings are most common today: they are compact and work naturally with approximate nearest-neighbor (ANN) techniques for fast retrieval.</li><li>The late-interaction head projects each text token or image patch from the backbone's output hidden states to a 128-dimensional normalized vector. Compared to dense embeddings, the finer granularity preserves local matches between individual query tokens and image regions.</li></ul>
-<p>Late-interaction and dense retrieval heads for both</p>
-<p>NeoMME</p>
-<p>model sizes.</p>
-<blockquote>Omar Khattab, who introduced late-interaction in ColBERT, explains why the term is more precise than &quot;multi-vector.&quot; It describes the granularity and learnability of the scoring function, not simply the number of stored vectors.<br>To learn more about late-interaction, we recommend reading this crash course by Amélie Chatelain.</blockquote>
-<p>One <em>NeoMME</em>-Retriever forward pass returns both representations, which gives you flexibility no matter your use case and infrastructure. We recommend using late-interaction embeddings in general since they are more powerful and can be used easily with open-source libraries like <a href="https://github.com/lightonai/next-plaid">NextPlaid</a>. However, if you have a very large corpora, you can run a single forward pass with <em>NeoMME</em>-Retriever to get the dense embedding, retrieve a small number of documents through an ANN index, and then use late-interaction to rerank the retrieved candidates.</p>
-<h3>Competitive retrieval at compact model sizes</h3>
-<p>We report nDCG@10 on ViDoRe v3. <em>NeoMME</em>-Retriever-260M reaches 0.523, the highest score among evaluated models strictly below 800M parameters. It is within 0.002 nDCG@10 of ColQwen2.5 while using about 14× fewer parameters. <em>NeoMME</em>-Retriever-800M reaches 0.556, within 0.009 nDCG@10 of the similarly sized <a href="https://huggingface.co/vultr/VultronRetrieverFlash-Qwen3.5-0.8B">Vultron Retriever Flash (0.8B)</a>. Both <em>NeoMME</em>-Retriever models lie on the model-size Pareto frontier.</p>
-<p>ViDoRe v3 nDCG@10 versus model size.</p>
-<p>ViDoRe v1 and v2 use nDCG@5. On both benchmarks, <em>NeoMME</em>-Retriever-260M outperforms ColModernVBERT and the twice-larger ColSmol-500M. <em>NeoMME</em>-Retriever-800M outperforms ColPali v1.3 while using 3.6 times fewer parameters.</p>
-<table><thead><tr><th>Model details</th><th>ViDoRe (nDCG@<em>k</em>)</th><th></th><th></th><th></th></tr></thead><tbody><tr><td>Model</td><td>Params.</td><td>v3 (@10)</td><td>v2 (@5)</td><td>v1 (@5)</td></tr><tr><td>&lt;300M</td><td></td><td></td><td></td><td></td></tr><tr><td><a href="https://huggingface.co/ModernVBERT/colmodernvbert">ColModernVBERT</a></td><td>250M</td><td>0.261†</td><td>0.407‡</td><td>0.806‡</td></tr><tr><td><a href="https://huggingface.co/vidore/colSmol-256M">ColSmol-256M</a>†</td><td>256M</td><td>0.207</td><td>0.348</td><td>0.797</td></tr><tr><td><a href="https://huggingface.co/Hcompany/NeoMME-260M-Retriever"><em>NeoMME</em>-260M</a>‡</td><td>260M</td><td><strong>0.523</strong></td><td><strong>0.522</strong></td><td><strong>0.860</strong></td></tr><tr><td>300M to 1B</td><td></td><td></td><td></td><td></td></tr><tr><td><a href="https://huggingface.co/vidore/colSmol-500M">ColSmol-500M</a></td><td>500M</td><td>0.340‡</td><td>0.455†</td><td>0.825†</td></tr><tr><td><a href="https://huggingface.co/vultr/VultronRetrieverFlash-Qwen3.5-0.8B">Vultron Flash</a>†</td><td>850M</td><td><strong>0.565</strong></td><td><strong>0.604</strong></td><td><strong>0.882</strong></td></tr><tr><td><a href="https://huggingface.co/Hcompany/NeoMME-800M-Retriever"><em>NeoMME</em>-800M</a>‡</td><td>800M</td><td>0.556</td><td>0.559</td><td>0.874</td></tr><tr><td>&gt;1B</td><td></td><td></td><td></td><td></td></tr><tr><td><a href="https://huggingface.co/vidore/colqwen2.5-v0.2">ColQwen2.5-v0.2</a>†</td><td>3.75B</td><td><strong>0.524</strong></td><td><strong>0.601</strong></td><td><strong>0.895</strong></td></tr><tr><td><a href="https://huggingface.co/vidore/colpali-v1.3">ColPali v1.3</a>†</td><td>2.92B</td><td>0.430</td><td>0.547</td><td>0.848</td></tr></tbody></table>
-<p>† Scores from MTEB. ‡ Results from our own evaluations.</p>
-<h3>Making high-resolution retrieval practical for late-interaction</h3>
-<p>Late-interaction storage scales linearly with the number of vectors in the output embedding. Higher-resolution images contain more patches, so they produce larger embeddings. For example, a 2048×2048 square page produces embeddings containing 4,200 vectors with <em>NeoMME</em>-Retriever, or about 2.1 MB in float32. Across the ViDoRe v3 benchmark, the measured average is about 1.5 MB per document.</p>
-<p>To reduce the storage footprint of the late-interaction index, we combine two complementary compression methods:</p>
-<ul><li><a href="https://www.answer.ai/posts/colbert-pooling.html">Hierarchical token pooling</a> clusters similar document vectors in a given multi-vector embedding and replaces each cluster with its mean, hence reducing the number of vectors stored for each page.</li><li><a href="https://www.mixedbread.com/blog/asymmetric-quant">Asymmetric quantization</a> quantizes document embeddings to int8 or binary. Because query embeddings are not stored and only generated on-the-fly, they can be kept at a higher precision.</li></ul>
-<p>We tested this setup on ViDoRe v3. With a pooling factor 10 and int8 queries and documents, storage decreased from about 1.5 MB to 39 kB per page, a 39× reduction, while keeping more than 99% of the baseline nDCG@10. A more aggressive configuration uses pooling factor 8, int8 queries, and binary documents. That version uses 6 kB per page (255× smaller) and keeps more than 95% of the original retrieval quality.</p>
-<p>Quality and storage frontier for the</p>
-<p>NeoMME</p>
-<p>-260M late-interaction index on ViDoRe v3. Labels show pool factor, retained quality, compression, and storage.</p>
-<p>Users can pick a compression setting from that frontier based on storage budget and required retrieval quality.</p>
-<h4>Fast inference for cheaper multimodal corpus indexing</h4>
-<p>Before you can search a corpus, a retriever model must turn your documents into embeddings, which will be stored in a vector store like Qdrant, Weaviate, or Milvus. Faster encoding makes building and adding new documents to the index faster, thus reducing the GPU uptime and compute cost required.</p>
-<p>So we measured image encoding speeds for <em>NeoMME</em>-Retriever against other multimodal document retrievers. We used preprocessed image tensors and calibrated the batch size separately for each model and image size. At a matched 2048×2048 input size on one NVIDIA L40S, <em>NeoMME</em>-Retriever-260M encodes about 51 pages per second, nearly twice ColModernVBERT's 26 pages per second. Both 260M and 800M <em>NeoMME</em>-Retriever models are also faster than the other models we compared on smaller input images.</p>
-<p>Document-encoding throughput by retriever and input resolution on one NVIDIA L40S.</p>
-<h3>Try <em>NeoMME</em>-Retriever yourself!</h3>
-<p><em>NeoMME</em>-Retriever (<a href="https://huggingface.co/Hcompany/NeoMME-260M-Retriever">260M</a> and <a href="https://huggingface.co/Hcompany/NeoMME-800M-Retriever">800M</a>) returns dense and multi-vector embeddings together. The example below scores two text queries against two document-page images with MeanMaxSim late interaction and dense cosine similarity.</p>
-<p>Click to see the complete 🤗</p>
-<p>transformers</p>
-<p>example snippet</p>
-<pre><code># accelerate is an optional dependency needed only when using device_map=&quot;auto&quot;.
-pip install -U accelerate &quot;transformers @ git+https://github.com/huggingface/transformers.git@main&quot; &quot;sentence-transformers&gt;=6.0.0&quot;</code></pre>
-<pre><code>from typing import Any, Literal
-
-import requests
-import torch
-from PIL import Image
-from sentence_transformers.util import cos_sim, mean_maxsim
-
-from transformers import BatchFeature, NeoMMEForRetrieval, NeoMMEProcessor
-
-
-def encode(
-    messages: list[list[dict[str, Any]]],
-    task: Literal[&quot;query&quot;, &quot;document&quot;],
-) -&gt; BatchFeature:
-    return processor.apply_chat_template(
-        messages,
-        task=task,
-        tokenize=True,
-        return_dict=True,
-        return_tensors=&quot;pt&quot;,
-        processor_kwargs={&quot;padding&quot;: &quot;longest&quot;},
-    )
-
-
-model_name = &quot;Hcompany/NeoMME-260M-Retriever&quot;
-processor = NeoMMEProcessor.from_pretrained(model_name)
-model = NeoMMEForRetrieval.from_pretrained(model_name, device_map=&quot;auto&quot;)
-
-# Document images (our corpus)
-image_urls = [
-    &quot;https://github.com/tonywu71/colpali-cookbooks/blob/6ef1332da6bcb48c7ef1f19b25bfa555be7031a8/examples/data/shift_kazakhstan.jpg?raw=true&quot;,
-    &quot;https://github.com/tonywu71/colpali-cookbooks/blob/6ef1332da6bcb48c7ef1f19b25bfa555be7031a8/examples/data/energy_electricity_generation.jpg?raw=true&quot;,
-]
-documents = [Image.open(requests.get(url, stream=True).raw) for url in image_urls]
-
-# Queries
-queries = [
-    &quot;Quelle partie de la production pétrolière du Kazakhstan provient de champs en mer ?&quot;,
-    &quot;Which hour of the day had the highest overall electricity generation in 2019?&quot;,
-]
-
-document_messages = [
-    [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: [{&quot;type&quot;: &quot;image&quot;, &quot;image&quot;: document}]}] for document in documents
-]
-query_messages = [[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: query}] for query in queries]
-
-inputs_documents = encode(document_messages, &quot;document&quot;).to(model.device)
-inputs_text = encode(query_messages, &quot;query&quot;).to(model.device)
-
-with torch.inference_mode():
-    document_outputs = model(**inputs_documents)
-    query_outputs = model(**inputs_text)
-
-late_scores = mean_maxsim(
-    query_outputs.embeddings,
-    document_outputs.embeddings,
-    a_mask=inputs_text[&quot;attention_mask&quot;],
-    b_mask=inputs_documents[&quot;attention_mask&quot;],
-)
-dense_scores = cos_sim(query_outputs.dense_embeddings, document_outputs.dense_embeddings)
-
-# Expected: late_scores[0, 0] &gt; late_scores[0, 1] and late_scores[1, 1] &gt; late_scores[1, 0].
-print(late_scores, dense_scores)</code></pre>
-<h3>Fine-tuning with Sentence Transformers</h3>
-<p>We provide separate <a href="https://huggingface.co/Hcompany/NeoMME-260M-Retriever-ST-dense">dense</a> and <a href="https://huggingface.co/Hcompany/NeoMME-260M-Retriever-ST-late">late-interaction</a> checkpoints for fine-tuning with <a href="https://huggingface.co/blog/multi-vector-encoder">Sentence Transformers v6</a>. Following the same pattern as text encoders such as ModernBERT, Sentence Transformers loads the backbone through <a href="https://huggingface.co/docs/transformers/main/en/model_doc/neomme#transformers.NeoMMEModel"><code>NeoMMEModel</code></a> rather than the dual-head <a href="https://huggingface.co/docs/transformers/main/en/model_doc/neomme#transformers.NeoMMEForRetrieval"><code>NeoMMEForRetrieval</code></a> class. Sentence Transformers currently supports one retrieval head per model, so each checkpoint lets you fine-tune the dense or late-interaction head independently. To train both heads together, use <code>NeoMMEForRetrieval</code> with a custom <code>Trainer</code>.</p>
-<h3>From retrieval to visual RAG</h3>
-<p>Visual document retrieval can be used as the first stage of a visual retrieval-augmented generation (RAG) system. Unlike text RAG, which retrieves extracted text chunks, visual RAG retrieves the original page images and sends them to a visual language model. The model can then use tables, plots, diagrams, and page layout that text extraction may flatten or omit. Here is how visual RAG works:</p>
-<ul><li>Indexing: Convert each PDF page to an image, generate an embedding with a retrieval model, and store the embeddings in a vector store.</li><li>Retrieval: Generate an embedding for the user's query with the same model and retrieve the top-k most relevant pages.</li><li>Generation: Append the images after the query in the chat message (<em>e.g.</em>, <code>{query}{img_1}{img_2}...{img_k}</code>) and send it to a VLM to generate the answer.</li></ul>
-<p>You can test visual RAG directly with <em>NeoMME</em>-Retriever in our HF Space: 🤗 <a href="https://huggingface.co/spaces/tonywu71/neomme-retriever-demo">tonywu71/neomme-retriever-demo</a>.</p>
-<h2>Conclusion</h2>
-<p><em>NeoMME</em> replaces separate pretrained image and text encoders with one long-context bidirectional Transformer. We train it from scratch to process both multilingual text tokens and raw 32×32 image patches.</p>
-<p><em>NeoMME</em>-Retriever is a fine-tuned version of <em>NeoMME</em> for visual document retrieval. One forward pass produces both dense and late-interaction representations. The 260M model outperforms all evaluated models strictly below 800M parameters and, at a matched 2048×2048 input size, encodes pages at about 2× ColModernVBERT's throughput. To reduce the large storage footprint of late-interaction embeddings for high-resolution documents, we experimented with hierarchical token pooling and asymmetric quantization and managed to reduce the late-interaction embeddings from roughly 1.5 MB to 6 kB per page, a 255× compression, while retaining more than 95% of the baseline nDCG@10.</p>
-<p>We release all <em>NeoMME</em> model checkpoints and a day-zero Hugging Face Transformers implementation to allow practitioners to build efficient multimodal and multilingual representation models on top of our work.</p>
-<h2>Acknowledgements</h2>
-<p><em>NeoMME</em> began as a side quest between two good friends. We worked with limited time and compute, and we decided to share the results so the community can build on them. We thank H Company for supporting the work and providing the compute used to train <em>NeoMME</em>.</p>
-<h2>Citation</h2>
-<pre><code>@misc{lac2026neommesingletowermultimodalnativemultilingual,
-      title={NeoMME: A Single-Tower Multimodal-Native Multilingual Foundation Encoder for Efficient Fine-Tuning and Inference},
-      author={Aurélien Lac and Tony Wu},
-      year={2026},
-      eprint={2609.01657},
-      archivePrefix={arXiv},
-      primaryClass={cs.IR},
-      url={https://arxiv.org/abs/2609.01657},
-}</code></pre>
-<h2>Models mentioned in this article 7</h2>
-<h2>Spaces mentioned in this article 1</h2>
-<h2>Papers mentioned in this article 1</h2>
-<h2>Collections mentioned in this article 1</h2>
-<p>More from this author</p>
-<h2>Holo4: powering generalist computer-use agents</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/677d3f355f847864bb644112/OQyAJ33sssiTDIQEQ7oH_.png" alt=""></li></ul>
-<p>76</p>
-<p>September 28, 2026</p>
-<h2>Holo3.1: Fast &amp; Local Computer Use Agents</h2>
-<ul><li><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/677d3f355f847864bb644112/OQyAJ33sssiTDIQEQ7oH_.png" alt=""></li></ul>
-<p>51</p>
-<p>June 2, 2026</p>
-<h3>Community</h3>
-<p>rafal007</p>
-<p>16 days ago</p>
-<p>Super artykuł</p>
-<p>Skeyij</p>
-<p>14 days ago</p>
-<p>Amazing</p>
-<p>Upload images, audio, and videos by dragging in the text input, pasting, or</p>
-<p>clicking here</p>
-<p>.</p>
-<p>Tap or paste here to upload images</p>
-<p>· <a href="https://huggingface.co/join?next=%2Fblog%2FHcompany%2Fneomme">Sign up</a> or <a href="https://huggingface.co/login?next=%2Fblog%2FHcompany%2Fneomme">log in</a> to comment</p>
-<p>121</p>
-<ul><li><a href="https://huggingface.co/ABonnetH"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/68c435c869d3aa0e590b0361/RZcEZherMz2CeJo5kuWHh.png" alt=""></a></li><li><a href="https://huggingface.co/ivanv4"><img src="https://huggingface.co/avatars/871961801ee9242f5bcd77e097720a54.svg" alt=""></a></li><li><a href="https://huggingface.co/enzo-damion-h"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/noauth/gCLGNIpWsU7LJC0U9fEZc.png" alt=""></a></li><li><a href="https://huggingface.co/Diazmathh"><img src="https://huggingface.co/avatars/cb119b58fabbb25ca80c7cc975581a9e.svg" alt=""></a></li><li><a href="https://huggingface.co/rghermi-h"><img src="https://huggingface.co/avatars/4881b4bdf30634089ddba7d607108c1e.svg" alt=""></a></li><li><a href="https://huggingface.co/vincentcoyette"><img src="https://huggingface.co/avatars/e15d64d814c3ee65ffc7fe39d82969ea.svg" alt=""></a></li><li><a href="https://huggingface.co/emricksini-h"><img src="https://huggingface.co/avatars/c9920b2a634b67720b5f9e72895a2e0c.svg" alt=""></a></li><li><a href="https://huggingface.co/GeoffroyRecruit"><img src="https://huggingface.co/avatars/8460159705ac1d164708fe37d537843f.svg" alt=""></a></li><li><a href="https://huggingface.co/antonioloison"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6377b63b24d97f9f7ec70064/vBl68PAwwp353MOeOahMH.jpeg" alt=""></a></li><li><a href="https://huggingface.co/VictorGoubet"><img src="https://huggingface.co/avatars/b0b759dff09f3aff8396f1955a798cc6.svg" alt=""></a></li><li><a href="https://huggingface.co/mbrunel-H"><img src="https://huggingface.co/avatars/4f454f97611c1f6a0e2bf16d846072c5.svg" alt=""></a></li><li><a href="https://huggingface.co/jrhcompany"><img src="https://huggingface.co/avatars/82fa6ee9beae1c52f988a5b4d47d09ae.svg" alt=""></a></li></ul>
-<h2>Models mentioned in this article 7</h2>
-<h2>Spaces mentioned in this article 1</h2>
-<h2>Papers mentioned in this article 1</h2>
-<h2>Collections mentioned in this article 1</h2>]]></content:encoded>
     </item>
   </channel>
 </rss>

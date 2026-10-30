@@ -7,7 +7,151 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 30 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>How Much Does Claude Code Cost? Real Session Costs by Model</title>
+      <link>https://openrouter.ai/blog/insights/claude-code-cost/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/insights/claude-code-cost/?li=1</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>How Much Does Claude Code Cost? Real Session Costs by Model</h1>
+<p>OpenRouter ·10/30/2026</p>
+<p><img src="https://openrouter.ai/blog/images/claude-code-cost.png" alt="How Much Does Claude Code Cost? Real Session Costs by Model"><img src="https://openrouter.ai/blog/images/claude-code-cost-dark.png" alt="How Much Does Claude Code Cost? Real Session Costs by Model"></p>
+<p>Claude Code is free to install. What you pay for is the model it calls. If you run Claude Code on an API key, a short session of 2 to 9 turns with Claude Opus 5.5 costs $0.31 at the median, and a long session of 10 to 49 turns costs $1.39. The same sessions with Claude Sonnet 5.5 cost $0.16 and $0.60.</p>
+<p>Those medians come from real Claude Code sessions on OpenRouter in the 30 days to October 18, 2026. <a href="https://openrouter.ai/apps/claude-code">Claude Code</a> was the top app in our daily app ranking on October 21, so there’s a lot of usage behind them. Below, we use that data to show what a session costs on each model, then how to run Claude Code on OpenRouter so you can pick the model for each session, see what it cost, and cap your spend.</p>
+<h2>Tl;dr</h2>
+<ul><li>Claude Code is free. You pay for the model it calls, either through a Claude subscription or per token on an API key.</li><li>On an API key, a 2-to-9-turn session costs $0.31 at the median on Opus 5.5, $0.16 on Sonnet 5.5 and under a cent on Haiku 5.5.</li><li>Most of the cost is Claude Code’s own context, written to the prompt cache on the first request and read back on every turn after it.</li><li>Make Sonnet your default, send background jobs and sub-agents to Haiku, keep sessions short, and set a credit limit on the key.</li><li>Run Claude Code on OpenRouter with <code>ori claude --model &lt;model&gt;</code> to choose the model for each session. Your Activity page shows what each session really cost.</li></ul>
+<h2>Does Claude Code cost money?</h2>
+<p>The CLI costs nothing. Every request it makes goes to a model, and you pay for those requests in one of two ways. A Claude subscription covers them up to a usage limit, and an API key charges per token. This post covers the API-key route, because that’s where you can see and control what each session costs. Through OpenRouter, the same key works with Claude models and with other models Claude Code can call.</p>
+<p>The quickest way to run Claude Code on OpenRouter is <a href="https://openrouter.ai/docs/guides/ori/harness">Ori Harness</a>. It starts the Claude Code already on your machine with OpenRouter settings in place, and signs you in through your browser, so there is no key to paste:</p>
+<pre><code>curl -fsSL https://openrouter.ai/labs/ori/install.sh | bash
+ori claude --model anthropic/claude-sonnet-5.5</code></pre>
+<p>Only sessions you start with <code>ori claude</code> run on OpenRouter. Plain <code>claude</code> keeps using your subscription.</p>
+<h2>What does a Claude Code session cost?</h2>
+<p>We publish the median cost of Claude Code sessions by model and session length in our <a href="https://openrouter.ai/docs/api/api-reference/datasets/cost-per-session-by-harness-and-model">session-cost dataset</a>. Here are the Claude models in our dataset and a few popular alternatives:</p>
+<table><thead><tr><th>Model</th><th>1 turn</th><th>2–9 turns</th><th>10–49 turns</th></tr></thead><tbody><tr><td>Claude Fable 5.1</td><td>$0.342</td><td>$1.049</td><td>$3.734</td></tr><tr><td>Claude Opus 5.5</td><td>$0.136</td><td>$0.305</td><td>$1.390</td></tr><tr><td>Claude Sonnet 5.5</td><td>$0.071</td><td>$0.155</td><td>$0.596</td></tr><tr><td>Claude Haiku 5.5</td><td>$0.002</td><td>$0.007</td><td>$0.053</td></tr><tr><td>Kimi K3</td><td>$0.040</td><td>$0.117</td><td>$0.825</td></tr><tr><td>GLM-5.3</td><td>$0.010</td><td>$0.044</td><td>$0.363</td></tr><tr><td><a href="https://openrouter.ai/deepseek/deepseek-v4.1-flash">DeepSeek V4.1 Flash</a></td><td>$0.003</td><td>$0.009</td><td>$0.047</td></tr><tr><td>GPT-6 Luna</td><td>$0.002</td><td>$0.005</td><td>$0.024</td></tr></tbody></table>
+<p><em>Median cost per Claude Code session by model and number of turns, for the 30 days to October 18, 2026.</em></p>
+<p>The model you pick has the biggest effect on cost. A one-turn Fable 5.1 session costs more than a long Haiku 5.5 session. Once you’ve picked a model, session length matters most. A 10-to-49-turn Opus session costs about ten times as much as a one-turn session, and Sonnet 5.5 costs about half as much as Opus 5.5 or less at every length.</p>
+<h2>Why does a one-turn session cost 14 cents?</h2>
+<p>Most of the cost is Claude Code’s own context, not your prompt. We ran <code>claude -p &quot;Reply with exactly: ok&quot;</code> against Opus 5.5 through OpenRouter, in an empty folder on Claude Code 2.1.307. The reply was four tokens, but the session wrote 17,047 tokens to the prompt cache. Those tokens are Claude Code’s system prompt and tool definitions. At Opus 5.5’s cache-write price of $5 per million tokens, they cost $0.085. A real project adds its own instructions and the files Claude Code reads, which is why the dataset’s one-turn median is higher, at $0.136. The number of startup tokens also changes between Claude Code versions and settings.</p>
+<p>Once that context is in the cache, later requests read it back at $0.20 per million tokens, which is 25 times cheaper than writing it. That’s why each turn after the first adds less than the first one did. Costs climb again as the context grows, because Claude Code writes every new file it reads to the cache once and then reads it back on every turn after that. Our <a href="https://openrouter.ai/docs/guides/best-practices/prompt-caching">prompt caching guide</a> covers how writes and reads are billed.</p>
+<h2>What did our own sessions cost?</h2>
+<p>The dataset shows what other people’s sessions cost. To compare models on a task we controlled, we gave Claude Code a small invoicing library with three bugs and five failing tests. We ran it three times on each model through OpenRouter, and every run fixed all three bugs.</p>
+<table><thead><tr><th>Model</th><th>Median cost per session</th><th>Turns</th><th>Tokens read from cache</th><th>Tokens written to cache</th></tr></thead><tbody><tr><td>Opus 5.5</td><td>$0.098</td><td>5</td><td>111,000</td><td>9,800–10,300</td></tr><tr><td>Sonnet 5.5</td><td>$0.062</td><td>5</td><td>125,000–154,000</td><td>15,000–43,500</td></tr><tr><td>Haiku 5.5</td><td>$0.0052</td><td>6–8</td><td>126,000–199,000</td><td>16,400–45,800</td></tr></tbody></table>
+<p>These costs come in under the dataset’s 2-to-9-turn medians for two reasons. Our task was small, and we ran each model’s three sessions back to back, so they shared a warm cache. That’s also why the Opus runs wrote fewer tokens to the cache than our one-turn test did. For a fresh session on a real project, the dataset medians above are the better guide. The models still land in the same order. Sonnet cost about two thirds of what Opus did, and Haiku cost about a twelfth of what Sonnet did.</p>
+<p>If you check numbers like these yourself, don’t rely on Claude Code’s own <code>total_cost_usd</code>. It uses Anthropic’s built-in price table, and when it doesn’t recognize an OpenRouter model name, it guesses. In our runs, it reported $0.16 to $0.31 for Haiku sessions that cost about half a cent, and it overstated Opus sessions by about 50%. Your <a href="https://openrouter.ai/activity">Activity page</a> shows what you actually paid. For a running total inside Claude Code, you can add our <a href="https://openrouter.ai/docs/cookbook/coding-agents/claude-code-integration#cost-tracking-statusline">cost-tracking statusline</a>, which reads each session’s spend from OpenRouter.</p>
+<h2>How much does Claude Code cost per month?</h2>
+<p>Multiply the number of sessions you run by the median for your typical session length. Here are three examples, using the dataset medians and 22 workdays a month:</p>
+<table><thead><tr><th>Usage</th><th>Opus 5.5</th><th>Sonnet 5.5</th></tr></thead><tbody><tr><td>Light: 5 short sessions (2–9 turns) a workday</td><td>$34</td><td>$17</td></tr><tr><td>Regular: 20 short sessions a workday</td><td>$134</td><td>$68</td></tr><tr><td>Heavy: 10 long sessions (10–49 turns) a workday</td><td>$306</td><td>$131</td></tr></tbody></table>
+<p>These are estimates. Your own sessions will cost more or less depending on the size of your codebase and how much of it Claude Code reads.</p>
+<h2>How do you lower Claude Code’s cost?</h2>
+<p>You control the two things that drive the bill, which model each session runs on and how long the session goes on.</p>
+<h3>Make Sonnet your default</h3>
+<p>If you use Opus for everything, switching your default to Sonnet roughly halves the bill. In our test, Sonnet fixed the same bugs. Keep Opus for the sessions that need it.</p>
+<h3>Send background work and sub-agents to Haiku</h3>
+<p>Claude Code uses a fast model for small background jobs, and it can hand parts of a task to sub-agents. Haiku 5.5 passed our bug-fix test at a fraction of Sonnet’s cost, so it’s a good fit for both. These settings make Sonnet 5.5 your default and route background jobs and sub-agents to Haiku 5.5:</p>
+<pre><code>export ANTHROPIC_BASE_URL=&quot;https://openrouter.ai/api&quot;
+export ANTHROPIC_AUTH_TOKEN=&quot;$OPENROUTER_API_KEY&quot;
+export ANTHROPIC_API_KEY=&quot;&quot;
+export ANTHROPIC_MODEL=&quot;anthropic/claude-sonnet-5.5&quot;
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=&quot;anthropic/claude-haiku-5.5&quot;
+export CLAUDE_CODE_SUBAGENT_MODEL=&quot;anthropic/claude-haiku-5.5&quot;</code></pre>
+<p>The first three lines connect Claude Code to OpenRouter; the last three set the models. Our <a href="https://openrouter.ai/docs/cookbook/coding-agents/claude-code-integration">Claude Code integration guide</a> and <a href="https://openrouter.ai/blog/tutorials/claude-code-openrouter/">setup tutorial</a> cover the rest of the setup.</p>
+<h3>Keep sessions short</h3>
+<p>A 10-to-49-turn session costs about four to five times as much as a 2-to-9-turn one. When you move on to an unrelated task, start a fresh session or run <code>/compact</code> instead of carrying the old context with you.</p>
+<h3>Try a cheaper model for routine work</h3>
+<p>Through OpenRouter, Claude Code can call models from other labs, and the dataset shows people doing it. GLM-5.3 and Kimi K3 sessions cost less than Opus sessions at every length, and our guide to <a href="https://openrouter.ai/blog/tutorials/how-to-get-the-lowest-cost-llm-inference-on-openrouter/">the lowest-cost LLM inference on OpenRouter</a> covers how to find cheaper options. To try one, pass it to Ori Harness:</p>
+<pre><code>ori claude --model z-ai/glm-5.3</code></pre>
+<p>Claude Code is built for Anthropic models, though, so test any other model on your own tasks before you switch. <a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval</a> does this for you: your coding agent finds test material in your project, runs the models you want to compare on it, and recommends one with the scores and costs behind it.</p>
+<h3>Set a spending cap</h3>
+<p>You can set a credit limit on an API key, so a runaway session stops at a number you chose. In an organization, a <a href="https://openrouter.ai/docs/guides/features/guardrails">guardrail</a> with a budget limit caps each member or key per day, week or month, and OpenRouter applies it to sessions started with Ori Harness too. On Enterprise plans, <a href="https://openrouter.ai/docs/guides/features/workspaces/workspace-budgets">workspace budgets</a> cap <a href="https://openrouter.ai/blog/insights/governing-team-ai-spend/">a whole team’s spend</a> per day, week, month or lifetime.</p>
+<h2>Frequently asked questions</h2>
+<h3>How much does Claude Code cost per token?</h3>
+<p>Claude Code costs whatever the model it calls charges per token. Claude Opus 5.5 costs $4 per million input tokens, $20 per million output tokens, $5 per million tokens written to the prompt cache and $0.20 per million tokens read from it. Claude Sonnet 5.5 costs half those rates. Claude Haiku 5.5 costs $0.10 per million input tokens and $0.50 per million output tokens, with cache reads at $0.01 per million. Most of a Claude Code session’s tokens are cache reads.</p>
+<h3>Is Claude Code cheaper with Sonnet or Opus?</h3>
+<p>Sonnet is cheaper. In our session-cost data, Claude Code sessions on Claude Sonnet 5.5 cost about half as much as sessions on Claude Opus 5.5 at every session length. In our own bug-fixing test, Sonnet fixed the same bugs as Opus.</p>
+<h3>Can I use Claude Code with other models?</h3>
+<p>Yes. When you point Claude Code at OpenRouter, it can call models from other labs. Our session-cost data includes Claude Code sessions on GLM, Kimi, DeepSeek, Qwen and GPT models. Claude Code is built for Anthropic models, so test another model on your own tasks before you switch to it.</p>
+<h3>Why is my first Claude Code request so expensive?</h3>
+<p>The first request writes Claude Code’s system prompt, tool definitions and project context to the prompt cache. In our test with Claude Opus 5.5 in an empty folder, that was about 17,000 tokens, which cost about $0.085, and a real project adds more. Later requests read the same context from the cache at a much lower price, 25 times lower on Opus 5.5.</p>
+<h2>Next steps</h2>
+<ul><li><a href="https://openrouter.ai/docs/guides/ori/harness">Ori Harness</a> runs Claude Code, and other agent CLIs, on OpenRouter with one command.</li><li>Our <a href="https://openrouter.ai/docs/api/api-reference/datasets/cost-per-session-by-harness-and-model">session-cost dataset</a> has the current medians for every model and session length.</li><li><a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval</a> tests models on your own tasks before you change your default.</li><li>The <a href="https://openrouter.ai/docs/cookbook/coding-agents/claude-code-integration">Claude Code integration guide</a> covers the manual setup and the cost-tracking statusline.</li><li><a href="https://openrouter.ai/docs/guides/features/guardrails">Guardrails</a> and <a href="https://openrouter.ai/docs/guides/features/workspaces/workspace-budgets">workspace budgets</a> cap what a person or team can spend.</li></ul>]]></content:encoded>
+    </item>
+    <item>
+      <title>Claude Opus vs Sonnet vs Haiku: Which Should You Use?</title>
+      <link>https://openrouter.ai/blog/insights/claude-opus-vs-sonnet-vs-haiku/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/insights/claude-opus-vs-sonnet-vs-haiku/?li=1</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<h1>Claude Opus vs Sonnet vs Haiku: Which Should You Use?</h1>
+<p>OpenRouter ·10/30/2026</p>
+<p><img src="https://openrouter.ai/blog/images/claude-opus-vs-sonnet-vs-haiku.png" alt="Claude Opus vs Sonnet vs Haiku: Which Should You Use?"><img src="https://openrouter.ai/blog/images/claude-opus-vs-sonnet-vs-haiku-dark.png" alt="Claude Opus vs Sonnet vs Haiku: Which Should You Use?"></p>
+<p>Use <a href="https://openrouter.ai/anthropic/claude-sonnet-5.5">Claude Sonnet 5.5</a> as your default, <a href="https://openrouter.ai/anthropic/claude-haiku-5.5">Claude Haiku 5.5</a> for high-volume and sub-agent work, and <a href="https://openrouter.ai/anthropic/claude-opus-5.5">Claude Opus 5.5</a> when a task is long, ambiguous, or expensive to get wrong.</p>
+<p>For most teams, the choice is between Opus and Sonnet, and the question is whether Opus is worth twice Sonnet’s price per token. On the coding tasks we tested, it wasn’t. We gave each model the same 11 coding tasks with hidden tests and the same bug-fix task in <a href="https://code.claude.com/docs/en/overview">Claude Code</a>. Every model passed everything, so what separated them was cost. Haiku was 19 to 30 times cheaper than Opus per task, and Sonnet cost between half and two-thirds as much as Opus.</p>
+<p>Those results tell you how the three did on our tasks. The only way to know which one is best for your workflow is to test them on your own work. <a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval</a> does this for you. You ask your coding agent which model is best for your project, and it finds test material in your code, writes the eval, runs the models you want to compare, and recommends one with the scores, times, and costs behind it. The section on switching between them shows how to point it at all three tiers.</p>
+<h2>Tl;dr</h2>
+<ul><li>Use Claude Sonnet 5.5 as your default. It scored as well as or better than Opus 5.5 on our GPQA Diamond and τ-bench runs and passed every coding test, at half the per-token price.</li><li>Use Haiku 5.5 for high-volume and sub-agent work. It passed every coding test too, at a 12th to a 16th of Sonnet’s cost.</li><li>Keep Opus 5.5 for long, ambiguous tasks where a mistake costs more than the tokens. Our short tasks can’t rule out an advantage there.</li><li>Our tasks aren’t yours. Test the three on your own work with Ori Eval before you settle on one.</li><li>All three are one model string apart on OpenRouter, and Claude Code can use a different one for each role.</li></ul>
+<h2>How do Opus, Sonnet, and Haiku differ?</h2>
+<p>Opus 5.5, Sonnet 5.5, and Haiku 5.5 are three tiers of the same model generation. Anthropic released <a href="https://www.anthropic.com/claude-opus-5-5">Opus 5.5</a> on September 22, 2026, <a href="https://www.anthropic.com/claude-sonnet-5-5">Sonnet 5.5</a> on September 28, and <a href="https://www.anthropic.com/claude-haiku-5-5">Haiku 5.5</a> on October 7. All three have a <a href="https://platform.claude.com/docs/en/about-claude/models/overview">1-million-token context window</a> and accept text, images, and PDFs. They differ mostly in price and, for Haiku, in lower benchmark scores.</p>
+<table><thead><tr><th>Model Property / Metric</th><th>Opus 5.5</th><th>Sonnet 5.5</th><th>Haiku 5.5</th></tr></thead><tbody><tr><td>Input, per million tokens</td><td>$4.00</td><td>$2.00</td><td>$0.10</td></tr><tr><td>Output, per million tokens</td><td>$20.00</td><td>$10.00</td><td>$0.50</td></tr><tr><td>Cache read, per million tokens</td><td>$0.20</td><td>$0.10</td><td>$0.01</td></tr><tr><td>Artificial Analysis Intelligence Index</td><td>57.6</td><td>56.0</td><td>43.4</td></tr><tr><td>GPQA Diamond (our run)</td><td>90.4%</td><td>92.4%</td><td>86.6%</td></tr><tr><td>τ-bench airline (our run)</td><td>75.5%</td><td>78.7%</td><td>76.0%</td></tr><tr><td>Tokens on OpenRouter, Oct 12 to 18</td><td>6.18T</td><td>2.45T</td><td>2.07T</td></tr></tbody></table>
+<p>Prices are our list prices on October 21, 2026, from the model pages for <a href="https://openrouter.ai/anthropic/claude-opus-5.5">Opus 5.5</a>, <a href="https://openrouter.ai/anthropic/claude-sonnet-5.5">Sonnet 5.5</a>, and <a href="https://openrouter.ai/anthropic/claude-haiku-5.5">Haiku 5.5</a>. The benchmark rows come from our <a href="https://openrouter.ai/docs/api/api-reference/benchmarks/list-benchmarks">benchmarks endpoint</a>, pulled on October 21 (our runs of October 17). The <a href="https://artificialanalysis.ai/methodology/intelligence-benchmarking">Artificial Analysis Intelligence Index</a> is a composite score across 10 evaluations from the independent benchmarking firm Artificial Analysis. T means trillions of tokens, from our <a href="https://openrouter.ai/docs/api/api-reference/datasets/daily-token-totals-for-top-50-models">daily rankings dataset</a>.</p>
+<h2>Is Opus better than Sonnet?</h2>
+<p>On the benchmarks we run, Claude Opus 5.5 does not beat Claude Sonnet 5.5. Sonnet scored higher on our run of <a href="https://arxiv.org/abs/2311.12022">GPQA Diamond</a>, a set of 198 graduate-level science questions (92.4% vs 90.4%). It also scored higher on <a href="https://github.com/sierra-research/tau2-bench">τ-bench</a> airline, a multi-turn customer-service agent benchmark (78.7% vs 75.5%). Opus leads by 1.6 points on the Artificial Analysis index. On both of our runs, Sonnet costs less than half as much per task, at $0.025 per GPQA question against $0.054 and $0.16 per τ-bench task against $0.34.</p>
+<p>In the week of October 12, Opus 5.5 carried about two and a half times Sonnet’s token volume on OpenRouter. Opus is also Claude Code’s <a href="https://code.claude.com/docs/en/model-config">default model</a> on most plans, and in our test Claude Code used Opus 5.5 through OpenRouter when no model was set. If you haven’t changed your model, Opus is what you’re running.</p>
+<h2>Is Haiku good enough to replace Sonnet?</h2>
+<p>Haiku 5.5 can replace Sonnet for well-specified, routine work. It scored 76.0% on τ-bench airline, half a point above Opus and 2.7 points behind Sonnet, at $0.011 per task. That is about a fourteenth of Sonnet’s cost. Our runs had 100 to 200 tasks per model, so gaps of a few points on this benchmark may be noise. Haiku trails Sonnet by 5.8 points on GPQA Diamond and by 12.6 points on the Artificial Analysis index, which weights agentic tasks and general knowledge at 30% each and coding and scientific reasoning at 20% each. On routine coding, our tests below found no gap.</p>
+<h2>What did our coding tests show?</h2>
+<p>We tested two things, writing a function to a spec and fixing a repo with Claude Code. All three models passed every test in both.</p>
+<h3>Functions with hidden tests</h3>
+<p>We wrote 11 Python tasks, each with a hidden test file. The eight everyday tasks were parsing durations, merging intervals, an LRU cache, an arithmetic evaluator without <code>eval</code>, the next run time of a cron expression, word wrapping, <a href="https://semver.org/">Semantic Versioning</a> sort order, and a JSON path reader. The three hard tasks were a regex engine without the <code>re</code> module, a SQL WHERE filter with three-valued NULL logic, and free calendar slots across time zones on daylight-saving transition days. Each model answered each everyday task twice and each hard task three times, with the models’ default settings, for 25 attempts per model.</p>
+<table><thead><tr><th>Metric</th><th>Opus 5.5</th><th>Sonnet 5.5</th><th>Haiku 5.5</th></tr></thead><tbody><tr><td>Attempts passed</td><td>25 of 25</td><td>25 of 25</td><td>25 of 25</td></tr><tr><td>Cost per everyday task</td><td>$0.0211</td><td>$0.0112</td><td>$0.0007</td></tr><tr><td>Cost per hard task</td><td>$0.0739</td><td>$0.0380</td><td>$0.0027</td></tr><tr><td>Seconds per hard task</td><td>32.1</td><td>25.7</td><td>22.6</td></tr></tbody></table>
+<p>Haiku used the most reasoning and still finished the hard tasks fastest. On the hard tasks it used 3,202 <a href="https://openrouter.ai/docs/guides/best-practices/reasoning-tokens">reasoning tokens</a> on average, against 1,252 for Opus. Reasoning tokens are the tokens a model spends working through a problem before it writes its answer. Even with the extra reasoning, Haiku cost a 27th as much as Opus per hard task.</p>
+<h3>A bug-fix in Claude Code</h3>
+<p>We gave Claude Code a small invoicing library with three bugs and five tests. The bugs were rounding that used <a href="https://docs.python.org/3/library/functions.html#round">banker’s rounding</a> (round half to even), a CSV parser that split on commas inside quotes, and a summary that overwrote quantities instead of adding them. We ran it three times per model through OpenRouter, choosing the model with the <a href="https://code.claude.com/docs/en/model-config"><code>ANTHROPIC_MODEL</code> environment variable</a>.</p>
+<table><thead><tr><th>Metric</th><th>Opus 5.5</th><th>Sonnet 5.5</th><th>Haiku 5.5</th></tr></thead><tbody><tr><td>Runs that fixed all three bugs</td><td>3 of 3</td><td>3 of 3</td><td>3 of 3</td></tr><tr><td>Median cost per session</td><td>$0.098</td><td>$0.062</td><td>$0.0052</td></tr><tr><td>Turns</td><td>5</td><td>5</td><td>6 to 8</td></tr><tr><td>Wall-clock time</td><td>24 to 30 s</td><td>18 to 25 s</td><td>22 to 31 s</td></tr></tbody></table>
+<p>A turn is one model response in the session. We computed session cost from each session’s token counts at our prices, because Claude Code’s own figure was wrong for Haiku.</p>
+<p>Claude Code’s own <a href="https://code.claude.com/docs/en/headless"><code>total_cost_usd</code> field</a> didn’t recognize our Haiku slug and reported $0.16 to $0.31 per session, 30 to 60 times our computed median of $0.0052. In print mode (<code>claude -p</code>), Claude Code logs a warning when it doesn’t recognize a model slug. We saw it again on a one-word reply through Haiku, where Claude Code reported $0.107 and the request cost about $0.002 at our prices.</p>
+<pre><code>[claude-code:unrecognized_model] {&quot;model&quot;:&quot;anthropic/claude-haiku-5.5&quot;,&quot;query_source&quot;:&quot;sdk&quot;}</code></pre>
+<p>If you run Claude Code through OpenRouter, check spend on your <a href="https://openrouter.ai/activity">Activity page</a> instead, and use our <a href="https://openrouter.ai/blog/insights/governing-team-ai-spend/">spend controls</a> if you need a cap.</p>
+<p>These are small, well-specified tasks. On these tasks, the three tiers were equally reliable, and their costs differed widely. They don’t cover the work Anthropic built Opus for, which is <a href="https://platform.claude.com/docs/en/about-claude/models/overview">long-running agentic coding and knowledge work</a> where a mistake costs more than the tokens.</p>
+<h2>Which one should you use?</h2>
+<ul><li>If you want one default, use Claude Sonnet 5.5. It scored as well as or better than Opus on both of our benchmark runs and matched it on all of our tests, at half the per-token price.</li><li>If you run a lot of requests, such as classification, extraction, sub-agents, or bulk code edits, use Haiku 5.5. It passed every test we gave it at a 12th to a 16th of Sonnet’s cost and a 19th to a 30th of Opus’s. Keep prompts under 100,000 tokens to stay on its <a href="https://openrouter.ai/blog/tutorials/how-to-get-the-lowest-cost-llm-inference-on-openrouter/">lower price</a>. Outside Claude Code, our <a href="https://openrouter.ai/docs/guides/features/server-tools/subagent">Subagent server tool</a> lets a larger model hand self-contained tasks to a smaller one.</li><li>Use Opus 5.5 for long tasks where a mistake is costly. That is the work it is built for, and our short tasks can’t rule out an advantage there.</li><li>If you can’t tell which group your workload is in, test your own tasks rather than ours, as described in the next section.</li></ul>
+<h2>How do you switch between them?</h2>
+<p>We serve all three models through <a href="https://openrouter.ai/docs/quickstart">one API</a>, one key, and one request format, so switching means changing the model string. This loop sends the same prompt to each tier and prints the output tokens and the <a href="https://openrouter.ai/docs/cookbook/administration/usage-accounting">cost we return on every response</a>.</p>
+<pre><code>import os
+import requests
+for model in [&quot;anthropic/claude-opus-5.5&quot;, &quot;anthropic/claude-sonnet-5.5&quot;, &quot;anthropic/claude-haiku-5.5&quot;]:
+    r = requests.post(
+        &quot;https://openrouter.ai/api/v1/chat/completions&quot;,
+        headers={&quot;Authorization&quot;: f&quot;Bearer {os.environ['OPENROUTER_API_KEY']}&quot;},
+        json={&quot;model&quot;: model, &quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Write a Python function that merges overlapping intervals.&quot;}]},
+        timeout=300,
+    )
+    usage = r.json()[&quot;usage&quot;]
+    print(f&quot;{model}: {usage['completion_tokens']} output tokens, ${usage['cost']:.4f}&quot;)</code></pre>
+<p>This is the output from our run on October 13, 2026.</p>
+<pre><code>anthropic/claude-opus-5.5: 1190 output tokens, $0.0239
+anthropic/claude-sonnet-5.5: 876 output tokens, $0.0088
+anthropic/claude-haiku-5.5: 852 output tokens, $0.0004</code></pre>
+<p>Run <a href="https://openrouter.ai/blog/tutorials/building-a-golden-eval-dataset-from-production-traffic/">your own tasks</a> through each tier with <a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval</a>. Ori Eval tests are TypeScript <code>*.eval.ts</code> files. Pass each of the three slugs to <code>setupAgent({ model })</code> in one file, and the same tests run on every tier.</p>
+<p>In Claude Code, you can keep Opus for planning and send routine work to cheaper models. Point Claude Code at OpenRouter with our <a href="https://openrouter.ai/docs/cookbook/coding-agents/claude-code-integration">setup guide</a>, then set the model for each role.</p>
+<pre><code>export ANTHROPIC_DEFAULT_OPUS_MODEL=&quot;anthropic/claude-opus-5.5&quot;
+export ANTHROPIC_DEFAULT_SONNET_MODEL=&quot;anthropic/claude-sonnet-5.5&quot;
+export ANTHROPIC_DEFAULT_HAIKU_MODEL=&quot;anthropic/claude-haiku-5.5&quot;
+export CLAUDE_CODE_SUBAGENT_MODEL=&quot;anthropic/claude-haiku-5.5&quot;</code></pre>
+<p>Claude Code 2.1.307 recognizes the Opus and Sonnet slugs and gives them their 1-million-token context window. It doesn’t recognize the Haiku slug yet and assumes 200,000 tokens. To give Haiku its full window, add <code>[1m]</code> to its slug. We strip the suffix before routing. Leaving it off keeps Haiku sessions under about 200,000 tokens.</p>
+<p>These variables set which model each name points to. They don’t change which one you use. To make Sonnet your main model, run <code>/model sonnet</code> in a session or set <code>ANTHROPIC_MODEL=sonnet</code> before you start Claude Code. To plan with Opus and write code with Sonnet, run <a href="https://code.claude.com/docs/en/model-config"><code>/model opusplan</code></a> instead. Because <code>CLAUDE_CODE_SUBAGENT_MODEL</code> is set, <a href="https://code.claude.com/docs/en/sub-agents">sub-agents</a> that don’t name their own model run on Haiku.</p>
+<p>If you’d rather have us <a href="https://openrouter.ai/blog/insights/model-routing/">pick per request</a>, the <a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">Auto Router</a> (<code>openrouter/auto</code>) chooses a model for each prompt. For coding, the <a href="https://openrouter.ai/docs/guides/routing/routers/pareto-router">Pareto Router</a> picks a model that meets a minimum coding score you set.</p>
+<h2>Frequently asked questions</h2>
+<h3>Is Claude Haiku cheaper than Sonnet?</h3>
+<p>Yes. On OpenRouter, Haiku 5.5 costs 20 times less per input and output token than Claude Sonnet 5.5 for prompts under 100,000 tokens, at $0.10 per million input tokens against $2.00. In our Claude Code runs the gap per session was smaller, about 12 times, partly because Haiku took more turns to reach the same result.</p>
+<h3>Is Sonnet 5.5 better than Opus 5.5 for coding?</h3>
+<p>In our Claude Sonnet vs Opus coding tests, the two were equal. Both passed all 25 hidden-test attempts and all three Claude Code runs through OpenRouter, and Sonnet was faster and cost half to two-thirds as much. Opus leads by 1.6 points on the Artificial Analysis index, and Anthropic positions it for <a href="https://platform.claude.com/docs/en/about-claude/models/overview">long-running agentic coding</a>, so it’s the safer choice for long, ambiguous sessions.</p>
+<h3>What is Claude Haiku good for?</h3>
+<p>Haiku 5.5 is good for high-volume, well-specified work such as <a href="https://platform.claude.com/docs/en/about-claude/models/overview">classification, extraction, routing</a>, sub-agent tasks, and routine code changes. In our tests through OpenRouter it passed every coding task, including a regex engine and SQL three-valued NULL logic, and scored half a point above Opus on τ-bench airline.</p>
+<h3>Which Claude model does Claude Code use?</h3>
+<p>Claude Code uses Opus 5.5 by default on Pro, Max, Team, Enterprise, and Anthropic API accounts, according to <a href="https://code.claude.com/docs/en/model-config">Anthropic’s model configuration docs</a>. When you run Claude Code through OpenRouter, you can change the main model with <code>ANTHROPIC_MODEL</code> and set each role with the environment variables above.</p>
+<h2>Next steps</h2>
+<ul><li><a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval</a> runs Opus, Sonnet, and Haiku on your own tasks and recommends one. To start, give your coding agent this instruction: <code>run curl -fsSL https://openrouter.ai/skills/spawn-ori-eval and follow the instructions in its output to get started</code>.</li><li>Our <a href="https://openrouter.ai/docs/cookbook/coding-agents/claude-code-integration">setup guide</a> covers per-role model settings, and our tutorial <a href="https://openrouter.ai/blog/tutorials/claude-code-openrouter/">Claude Code with OpenRouter: Setup, Models, and Costs</a> covers model choice and costs.</li><li>The model pages for <a href="https://openrouter.ai/anthropic/claude-opus-5.5">Opus 5.5</a>, <a href="https://openrouter.ai/anthropic/claude-sonnet-5.5">Sonnet 5.5</a>, and <a href="https://openrouter.ai/anthropic/claude-haiku-5.5">Haiku 5.5</a> show current prices, providers, and uptime. Our <a href="https://openrouter.ai/compare/anthropic/claude-opus-5.5/anthropic/claude-sonnet-5.5">Opus 5.5 vs Sonnet 5.5 comparison page</a> puts two of them side by side.</li><li><a href="https://openrouter.ai/docs/guides/best-practices/prompt-caching">Prompt caching</a> explains the cache-read prices in the table above.</li><li>The <a href="https://openrouter.ai/docs/cookbook/evaluate-and-optimize/model-migrations/claude-5-5">Claude 5.5 migration guide</a> covers the API changes if you’re moving from an older Claude model.</li><li><a href="https://openrouter.ai/blog/insights/cost-vs-quality-tradeoff-framework-for-agent-models/">Cost vs. Quality Tradeoff Framework for Agent Models</a> and <a href="https://openrouter.ai/blog/insights/confidence-thresholds-for-model-escalation-routing/">Confidence Thresholds for Model Escalation Routing</a> cover when to move a request up a tier.</li></ul>]]></content:encoded>
+    </item>
     <item>
       <title>How to Extract Tables from a PDF with an LLM</title>
       <link>https://openrouter.ai/blog/tutorials/extract-tables-from-pdf-llm/</link>
@@ -7828,481 +7972,6 @@ codex mcp login openrouter</code></pre>
 <h2>References</h2>
 <p>Every claim on this page was verified against these sources, including live API calls.</p>
 <ul><li><a href="https://openrouter.ai/docs/guides/overview/mcp-server">OpenRouter MCP server docs</a>. The hosted server, per-editor setup, the full tool list, and which tools are billable.</li><li><a href="https://openrouter.ai/blog/announcements/openrouter-mcp-server/">OpenRouter MCP server announcement</a>. The OAuth flow, the seven-day key expiry and $10 spend cap, and the model suffix variants.</li><li><a href="https://openrouter.ai/docs/guides/overview/models">Models docs</a>. Model metadata fields, including pricing, context length, modality, and supported parameters.</li><li><a href="https://openrouter.ai/docs/guides/routing/model-variants/free">Model variants docs</a>. The <code>:online</code>, <code>:nitro</code>, and <code>:free</code> suffixes and what each one changes about routing. The <code>:floor</code> shortcut is documented under <a href="https://openrouter.ai/docs/guides/routing/provider-selection#floor-price-shortcut">provider selection</a>.</li><li><a href="https://openrouter.ai/docs/guides/ori/eval">Ori Eval docs</a>. The eval file format, <code>candidateModels</code>, <code>setupJudge</code>, <code>--baseline</code>, and running evals in CI.</li><li><a href="https://openrouter.ai/docs/guides/routing/routers/auto-router">Auto Router docs</a>. Per-request classification into roughly 30 task types, ranking by trailing seven-day spend share, and the <code>openrouter/auto-beta</code> model string.</li><li><a href="https://openrouter.ai/docs/guides/routing/model-fallbacks">Model fallbacks docs</a>. Provider redundancy and automatic fallback behavior.</li><li><a href="https://openrouter.ai/docs/api_reference/overview">API reference</a>. The production API, for once you have chosen, including how to query cost and stats after a request.</li><li><a href="https://openrouter.ai/models">Model catalog</a>. The live catalog, 400+ models across 70+ providers.</li><li><a href="https://openrouter.ai/rankings">Rankings</a>. Daily token totals by model, and the task-classification market share.</li><li><a href="https://openrouter.ai/compare">Compare</a>. Side-by-side model comparison on benchmarks, price, context, and latency.</li><li><a href="https://artificialanalysis.ai">Artificial Analysis</a> and <a href="https://designarena.ai">Design Arena</a>. The two third-party benchmark sources surfaced in <code>list-benchmarks</code>.</li><li><a href="https://openrouter.ai/docs/api/api-reference/classifications/task-classification-market-share">Task classification market share</a>. The endpoint behind <code>list-task-classifications</code>, returning the 29 task tags with usage share and the leading models per tag.</li><li><a href="https://openrouter.ai/docs/api/api-reference/benchmarks/list-benchmarks">List benchmarks</a>. The endpoint behind <code>list-benchmarks</code>, filterable by <code>task_type</code>.</li><li><a href="https://openrouter.ai/docs/api/api-reference/generations/get-request-%26-usage-metadata-for-a-generation">Get request and usage metadata for a generation</a>. Exact cost, token counts, provider, and latency for a single call.</li><li><a href="https://arxiv.org/abs/2603.23971">Chen, Zhang, He, Stoica, Zaharia and Zou, “The Price Reversal Phenomenon: When Cheaper Reasoning Models Cost More”</a>. Independent measurement of listed price against total cost across model pairs. arXiv, March 2026, revised May 2026.</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>GPT 5.6 Discounts &amp; Jevons Paradox</title>
-      <link>https://openrouter.ai/blog/insights/gpt-5-6-discounts-jevons-paradox/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/insights/gpt-5-6-discounts-jevons-paradox/?li=1</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>GPT 5.6 Discounts &amp; Jevons Paradox</h1>
-<p>OpenRouter ·8/25/2026 · Updated 8/27/2026</p>
-<p>OpenAI introduced large discounts on their new Terra and Luna models from July 27th through August 14th. What impact did these discounts have on token volumes, total spend, and the competition?</p>
-<h2>Highlights</h2>
-<ul><li><strong>Tokens spiked:</strong> Daily Terra token usage rose 5.6x during the discount window, while daily Luna token usage jumped 13.8x. The Sol model, which remained a list price, saw only a gentle bump of 1.1x over the same period.</li><li><strong>Share was reconfigured:</strong> Most of the share gained by the OpenAI discounts came from other labs as opposed to cannibalization within the OpenAI family of models.</li><li><strong>Users stuck around:</strong> Nearly a third of users who tried a discounted OpenAI model during the discount window kept using it after the discounts expired.</li></ul>
-<h2>Discount impact on token usage</h2>
-<p><img src="https://openrouter.ai/blog/images/gpt-5-6-discounts-token-index.png" alt="Indexed daily token usage by model group, showing Terra and Luna spiking during the discount window while Sol and other groups stay near their pre-period levels"></p>
-<p>The moment GPT 5.6 discounts kicked in, the token volume exploded.</p>
-<p>If you compare the in-program token usage to the pre-period daily averages, the effect is crystal clear: Terra tokens rose 5.6x and Luna 13.8x. The Sol model, which remained un-discounted, saw a minor 1.11x bump while other OpenAI models actually fell slightly in tokens used. Outside the OpenAI family, the other models rose gently.</p>
-<h2>Competitive displacement</h2>
-<p><img src="https://openrouter.ai/blog/images/gpt-5-6-discounts-token-share.png" alt="Stacked daily token share by model group, with the Terra and Luna band expanding and the pooled competitor band shrinking during the discount window"></p>
-<p>Terra/Luna went from 0.7% to 7.8% of all OpenRouter tokens between the pre-period and the program, a gain of 7.1 share points. All competitors are pooled into the light-grey segment, and the label above each color stack is the combined OpenAI-family share (Terra + Luna + Sol + other OpenAI).</p>
-<p>Competitors gave up 5.3 points and other OpenAI models gave up 1.9 points over the same comparison, so roughly three quarters of the gain came from outside OpenAI. Across the whole OpenAI family, token share grew from 7.1% to 12.4% and occasionally crested over 15% in specific days during the discount period.</p>
-<p><img src="https://openrouter.ai/blog/images/gpt-5-6-discounts-tokens-by-author.png" alt="Daily tokens by model author, with OpenAI volume roughly doubling and holding after the program while Anthropic declines"></p>
-<p>Tokens mostly rose across key model authors, though Anthropic did not in this timeframe. OpenAI token volume nearly doubled on average and has maintained that higher level after the discount program ended.</p>
-<h2>Users retention</h2>
-<p><img src="https://openrouter.ai/blog/images/gpt-5-6-discounts-retention.png" alt="Retention of customers who used Terra or Luna during the program, split between those with any post-program usage and those running at or above their program pace"></p>
-<p>Clearly the discounts drove increased token usage during the program period, but did those users stick around after the discounts had ended?</p>
-<p>Of the 100K+ customers with Terra/Luna usage during the program, about 32% retained some usage in the subsequent days and 18% ran at or above their program pace. To be clear, this is a count of customers, not weighted by tokens. Obviously the post-program period is quite a bit shorter than the full discount timeframe (6 days so far vs a 19-day program), so the story may change as more data comes in.</p>
-<p>If you look instead at the daily Terra/Luna token volume, the post-program period saw 1.38x the tokens of the discount period on average, which implies the retained accounts are far larger than the median program user.</p>
-<p><img src="https://openrouter.ai/blog/images/gpt-5-6-discounts-sol-daily.png" alt="Daily Sol token volume staying flat through the Terra and Luna program, then jumping when Sol receives its own 50% discount on August 17"></p>
-<p>Sol averaged 79.1B tokens/day during the Terra/Luna program against 71.2B/day pre-period, an effectively flat control group.</p>
-<p>However, the shaded region in the chart above from Aug 17 onward is Sol’s own 50% discount. Sol jumps immediately, reproducing the Terra/Luna pattern.</p>
-<h2>Methodology &amp; Notes</h2>
-<p>Data Details</p>
-<ul><li>Pre: Jul 8 to Jul 26 | Program: Jul 27 to Aug 14 | Post: Aug 15 to Aug 20</li><li>Jul 30: OpenAI cut its own list prices (Luna 80%, Terra 20%) on top of the 50% discount through OpenRouter. As such, effective discounts from Jul 30 were Luna 90% and Terra 60%.</li><li>Notes: Terra, Luna and Sol all launched Jul 9. Sol is a useful control up until it got its own 50% discount on Aug 17.</li></ul>
-<p>Methodology</p>
-<ul><li>Exclusions: banned, deleted, admin, data-deletion-requested, internal and churned accounts are dropped.</li><li>Aug 20 is the last day in the window and may be partial.</li><li>Sol is a valid control only through Aug 16. The post-period is 6 days.</li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>OpenRouter Video Generation API: A Code-First Guide</title>
-      <link>https://openrouter.ai/blog/tutorials/video-generation-api/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/video-generation-api/?li=1</guid>
-      <pubDate>Tue, 25 Aug 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h1>OpenRouter Video Generation API: A Code-First Guide</h1>
-<p>OpenRouter ·8/25/2026 · Updated 9/24/2026</p>
-<p>Adding video generation to an application is straightforward when you’re testing one model. The complexity shows up when you want to try another. Each provider can have its own endpoint, request parameters, job statuses, polling logic, and output format. That turns a simple model change into another integration to build and maintain.</p>
-<p>We put that workflow behind <a href="https://openrouter.ai/docs/guides/overview/multimodal/video-generation">one asynchronous video API</a>. You submit a prompt to <code>POST /api/v1/videos</code>, receive a job ID, poll until generation completes, and then download the finished video.</p>
-<p>In this guide, we’ll build that flow from start to finish. We’ll submit a job with Seedance, poll it safely, save the MP4, and then run the same integration with Veo and Wan.</p>
-<h2>Tl;dr</h2>
-<ul><li>One endpoint, multiple video models. Generate with Seedance, Veo, Wan, and other supported models through <code>POST /api/v1/videos</code>.</li><li>The workflow is asynchronous. Submit the job, poll its status, then download the completed video.</li><li>Switch models by changing the model identifier. Some model-specific settings, such as duration and aspect ratio, still need adjusting per model, more on that in Step 4, but the endpoint, auth, polling loop, and download logic never change.</li></ul>
-<h2>Why an async API works better than the alternatives</h2>
-<p>Video generation takes longer than a typical API response. A model has to generate and coordinate many frames, maintain visual consistency across them, and sometimes produce matching audio. Depending on the model and requested settings, that process can take from several seconds to a few minutes.</p>
-<p>Keeping the original HTTP request open for that entire period is fragile. A browser session can close, a serverless function can reach its execution limit, or a proxy can time out before the video is ready.</p>
-<p>An asynchronous API separates submission from completion:</p>
-<ul><li>Submit the generation request.</li><li>Receive a job ID immediately.</li><li>Check the job’s status separately.</li><li>Download the video when generation completes.</li></ul>
-<p>Your application can keep running while the model works in the background. It can also recover a job after a restart because generation is attached to a persistent job ID rather than a long-lived connection.</p>
-<h3>Integrating directly with one provider</h3>
-<p>A direct provider integration can work well when you already know which model you want and don’t expect that to change. You use the provider’s authentication, request format, job statuses, polling endpoint, and output response.</p>
-<p>The additional work becomes visible when you want to compare another model. The new provider may use different field names for duration and resolution, or return a different job object with different terminal statuses. It may also require another method for downloading the finished asset. Your application then needs a second client, another set of environment variables, and more provider-specific error handling.</p>
-<p>There’s nothing inherently wrong with that approach. It just means switching models is an integration change instead of a configuration change, which makes experimentation slower and raises the maintenance cost as your model list grows.</p>
-<h3>Running video models locally</h3>
-<p>Local generation gives you the most control. You can choose the model weights, customize the workflow, keep assets within your own environment, and avoid paying a hosted provider for every generation.</p>
-<p>That control comes with infrastructure responsibilities. You need suitable GPU capacity and the right Python and CUDA dependencies. You also need enough storage and a working environment for each model family. Higher resolutions and longer videos increase memory and processing requirements, and adding another model may mean downloading more weights or maintaining another workflow.</p>
-<p>This can be worthwhile for teams that already operate GPU infrastructure or require local processing. It’s a heavier starting point when your goal is to add video generation quickly and test several models. The hosted OpenRouter path removes most of that setup, which is what the rest of this guide covers.</p>
-<h3>Using one hosted API through OpenRouter</h3>
-<p>We keep the generation lifecycle consistent across supported video models. The application uses the same API key, <code>POST /api/v1/videos</code> endpoint, job-status flow, and output-retrieval process whether the selected model is Seedance, Veo, Wan, or another model in the catalog.</p>
-<p>The models still have different capabilities. One may support longer durations, while another offers additional aspect ratios, higher resolutions, audio generation, or provider-specific controls. We expose those differences through the video-model endpoint rather than forcing every model into an identical feature set.</p>
-<p>That gives you a stable integration without hiding what makes each model different. Your application can query the current capabilities, build a valid request, and change models without replacing the surrounding job infrastructure.</p>
-<h2>Prerequisites and setup</h2>
-<p>You only need an OpenRouter API key and a tool that can send HTTP requests. The examples here use Python with <code>requests</code> and TypeScript with the built-in <code>fetch</code> API, but the workflow works from any language that can make an HTTP request.</p>
-<p>Start by creating an API key from your OpenRouter account, then store it in an environment variable instead of adding it directly to your source code:</p>
-<pre><code>export OPENROUTER_API_KEY=&quot;sk-or-...&quot;</code></pre>
-<p>For the Python examples, install <code>requests</code> if you don’t already have it:</p>
-<pre><code>pip install requests</code></pre>
-<p>OpenRouter authenticates API requests with a bearer token. In Python, we’ll define the shared values once and reuse them throughout the guide:</p>
-<pre><code>import os
-import requests
-
-API_KEY = os.environ[&quot;OPENROUTER_API_KEY&quot;]
-BASE_URL = &quot;https://openrouter.ai/api/v1&quot;
-
-HEADERS = {
-    &quot;Authorization&quot;: f&quot;Bearer {API_KEY}&quot;,
-    &quot;Content-Type&quot;: &quot;application/json&quot;,
-}</code></pre>
-<p>Before submitting a job, you can also <a href="https://openrouter.ai/docs/guides/overview/multimodal/video-generation#via-the-video-models-api">query the video-model endpoint</a> to see which models are currently available and what each one supports:</p>
-<pre><code>curl &quot;https://openrouter.ai/api/v1/videos/models&quot; \
-  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot;</code></pre>
-<p>The response includes each model’s supported durations, resolutions, aspect ratios, frame-image support, audio capabilities, pricing SKUs, and provider-specific parameters. This is more reliable than assuming that settings accepted by one video model will also work with another.</p>
-<h2>Step 1: Submit a video-generation job</h2>
-<p>Send a POST request to <code>/api/v1/videos</code> with the video model. Include a prompt that describes what you want to generate.</p>
-<p><code>model</code> is required on every request, and <code>prompt</code> is required for text-to-video. Models that support generating a video from image input alone can omit it. You can also provide optional settings such as duration, resolution, aspect ratio, audio generation, reference images, and a seed when the selected model supports them.</p>
-<p>We’ll use the same prompt throughout the guide:</p>
-<pre><code>PROMPT = (
-    &quot;A paper boat drifting down a rain-slicked gutter at night, &quot;
-    &quot;neon reflections, slow tracking shot, cinematic lighting&quot;
-)</code></pre>
-<p>The following function submits the job using Seedance 2.0:</p>
-<pre><code>def submit_video(model: str, prompt: str) -&gt; dict:
-    response = requests.post(
-        f&quot;{BASE_URL}/videos&quot;,
-        headers=HEADERS,
-        json={
-            &quot;model&quot;: model,
-            &quot;prompt&quot;: prompt,
-            &quot;duration&quot;: 4,
-            &quot;resolution&quot;: &quot;720p&quot;,
-            &quot;aspect_ratio&quot;: &quot;16:9&quot;,
-            &quot;generate_audio&quot;: False,
-        },
-        timeout=60,
-    )
-
-    response.raise_for_status()
-    return response.json()
-
-
-job = submit_video(
-    model=&quot;bytedance/seedance-2.0&quot;,
-    prompt=PROMPT,
-)
-
-print(&quot;Job ID:&quot;, job[&quot;id&quot;])
-print(&quot;Status:&quot;, job[&quot;status&quot;])
-print(&quot;Polling URL:&quot;, job[&quot;polling_url&quot;])</code></pre>
-<p>The equivalent cURL request is:</p>
-<pre><code>curl &quot;https://openrouter.ai/api/v1/videos&quot; \
-  -H &quot;Authorization: Bearer $OPENROUTER_API_KEY&quot; \
-  -H &quot;Content-Type: application/json&quot; \
-  -d '{
-    &quot;model&quot;: &quot;bytedance/seedance-2.0&quot;,
-    &quot;prompt&quot;: &quot;A paper boat drifting down a rain-slicked gutter at night, neon reflections, slow tracking shot, cinematic lighting&quot;,
-    &quot;duration&quot;: 4,
-    &quot;resolution&quot;: &quot;720p&quot;,
-    &quot;aspect_ratio&quot;: &quot;16:9&quot;,
-    &quot;generate_audio&quot;: false
-  }'</code></pre>
-<p>A successful request returns HTTP 202 Accepted. The response represents a background job, not the finished video:</p>
-<pre><code>{
-  &quot;id&quot;: &quot;job-abc123&quot;,
-  &quot;status&quot;: &quot;pending&quot;,
-  &quot;polling_url&quot;: &quot;https://openrouter.ai/api/v1/videos/job-abc123&quot;
-}</code></pre>
-<p>Store the returned job ID before continuing. If your process restarts, you should be able to resume tracking the existing job instead of submitting and paying for another generation.</p>
-<h2>Step 2: Poll the job until it finishes</h2>
-<p>The <code>polling_url</code> returned in Step 1 points to the same job resource you’d reach at <code>GET /api/v1/videos/{id}</code>, they’re the same endpoint. A video job can move through the following statuses:</p>
-<table><thead><tr><th>Status</th><th>Meaning</th></tr></thead><tbody><tr><td><code>pending</code></td><td>The job has been accepted and is waiting to run</td></tr><tr><td><code>in_progress</code></td><td>The provider is generating the video</td></tr><tr><td><code>completed</code></td><td>The video is ready to download</td></tr><tr><td><code>failed</code></td><td>Generation failed</td></tr><tr><td><code>cancelled</code></td><td>The job was cancelled</td></tr><tr><td><code>expired</code></td><td>The job exceeded its allowed lifetime</td></tr></tbody></table>
-<p>Your polling loop should return on <code>completed</code> and stop with an error on <code>failed</code>, <code>cancelled</code>, or <code>expired</code>. Otherwise, the application could keep checking a job that will never produce a video.</p>
-<p>Documented responses return <code>polling_url</code> as a complete URL. The <code>urljoin</code> call below is defensive coding that also handles a relative path, so the loop works either way:</p>
-<pre><code>import time
-from urllib.parse import urljoin
-
-TERMINAL_ERROR_STATES = {
-    &quot;failed&quot;,
-    &quot;cancelled&quot;,
-    &quot;expired&quot;,
-}
-
-
-def poll_video(
-    initial_job: dict,
-    interval: float = 30.0,
-    timeout: float = 3600.0,
-) -&gt; dict:
-    &quot;&quot;&quot;Poll until the video completes or reaches an error state.&quot;&quot;&quot;
-
-    polling_url = urljoin(
-        &quot;https://openrouter.ai&quot;,
-        initial_job[&quot;polling_url&quot;],
-    )
-
-    deadline = time.monotonic() + timeout
-    job = initial_job
-
-    while True:
-        status = job[&quot;status&quot;]
-        print(&quot;Status:&quot;, status)
-
-        if status == &quot;completed&quot;:
-            return job
-
-        if status in TERMINAL_ERROR_STATES:
-            error = job.get(&quot;error&quot;) or &quot;No error details were returned.&quot;
-            raise RuntimeError(
-                f&quot;Video generation ended with status '{status}': {error}&quot;
-            )
-
-        if status not in {&quot;pending&quot;, &quot;in_progress&quot;}:
-            raise RuntimeError(
-                f&quot;Received unexpected job status: {status}&quot;
-            )
-
-        if time.monotonic() &gt;= deadline:
-            raise TimeoutError(
-                f&quot;Job {job['id']} did not complete within &quot;
-                f&quot;{timeout} seconds.&quot;
-            )
-
-        time.sleep(interval)
-
-        response = requests.get(
-            polling_url,
-            headers={
-                &quot;Authorization&quot;: f&quot;Bearer {API_KEY}&quot;,
-            },
-            timeout=30,
-        )
-
-        response.raise_for_status()
-        job = response.json()
-
-
-completed_job = poll_video(job)</code></pre>
-<p>This loop includes two safeguards that quick examples often omit. First, it handles every documented terminal state instead of waiting only for <code>completed</code>. Second, it sets a one-hour timeout so a job can’t leave the process running indefinitely. One edge case worth knowing: because the deadline is checked before each sleep rather than after, a job can run up to one poll interval past the nominal timeout in the worst case before the loop catches it. That’s a fine trade-off for a background job. If you need a hard ceiling, check the deadline again immediately after waking from sleep too.</p>
-<p>Our current guidance uses a <a href="https://openrouter.ai/docs/guides/overview/multimodal/video-generation">30-second polling interval</a>. Video jobs usually take from around 30 seconds to several minutes, and checking every second doesn’t make the provider finish sooner. That interval and the timeout ceiling above are both operational guidance, not a documented contract from the endpoint itself, so tune them to your own workload.</p>
-<p>The same polling flow in TypeScript:</p>
-<pre><code>type VideoJobStatus =
-  | &quot;pending&quot;
-  | &quot;in_progress&quot;
-  | &quot;completed&quot;
-  | &quot;failed&quot;
-  | &quot;cancelled&quot;
-  | &quot;expired&quot;;
-
-type VideoJob = {
-  id: string;
-  polling_url: string;
-  status: VideoJobStatus;
-  error?: string;
-  unsigned_urls?: string[];
-};
-
-const apiKey = process.env.OPENROUTER_API_KEY;
-
-if (!apiKey) {
-  throw new Error(&quot;OPENROUTER_API_KEY is not set&quot;);
-}
-
-const terminalErrorStates = new Set&lt;VideoJobStatus&gt;([
-  &quot;failed&quot;,
-  &quot;cancelled&quot;,
-  &quot;expired&quot;,
-]);
-
-async function pollVideo(
-  initialJob: VideoJob,
-  intervalMs = 30_000,
-  timeoutMs = 3_600_000,
-): Promise&lt;VideoJob&gt; {
-  const pollingUrl = new URL(
-    initialJob.polling_url,
-    &quot;https://openrouter.ai&quot;,
-  );
-
-  const deadline = Date.now() + timeoutMs;
-  let job = initialJob;
-
-  while (true) {
-    console.log(`Status: ${job.status}`);
-
-    if (job.status === &quot;completed&quot;) {
-      return job;
-    }
-
-    if (terminalErrorStates.has(job.status)) {
-      throw new Error(
-        job.error ?? `Video generation ${job.status}`,
-      );
-    }
-
-    if (Date.now() &gt;= deadline) {
-      throw new Error(
-        `Video job ${job.id} did not complete before the timeout`,
-      );
-    }
-
-    await new Promise((resolve) =&gt;
-      setTimeout(resolve, intervalMs),
-    );
-
-    const response = await fetch(pollingUrl, {
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(
-        `Polling failed: ${response.status} ${await response.text()}`,
-      );
-    }
-
-    job = (await response.json()) as VideoJob;
-  }
-}</code></pre>
-<p>Treat a failed status <em>request</em> differently from a failed video <em>job</em>. A temporary timeout while polling doesn’t prove the generation itself failed. Retry the status request for the same job ID rather than submitting a new job.</p>
-<h2>Step 3: Retrieve and save the video</h2>
-<p>When the status becomes <code>completed</code>, the job response includes a populated <code>unsigned_urls</code> array. Each entry points at the job’s authenticated content endpoint:</p>
-<pre><code>GET /api/v1/videos/{jobId}/content?index=0</code></pre>
-<p>The index defaults to 0. It only needs to change when a model returns multiple video outputs. Despite the field name, these URLs are not presigned, so send your API key in the Authorization header just as you did while polling.</p>
-<p>The helper below uses the first unsigned URL when one is present and reconstructs the content URL from the job ID on the rare chance it isn’t.</p>
-<pre><code>def download_video(
-    job: dict,
-    output_path: str = &quot;out.mp4&quot;,
-    index: int = 0,
-) -&gt; None:
-    unsigned_urls = job.get(&quot;unsigned_urls&quot;) or []
-
-    download_url = (
-        unsigned_urls[index]
-        if len(unsigned_urls) &gt; index
-        else (
-            f&quot;{BASE_URL}/videos/&quot;
-            f&quot;{job['id']}/content?index={index}&quot;
-        )
-    )
-
-    with requests.get(
-        download_url,
-        headers={
-            &quot;Authorization&quot;: f&quot;Bearer {API_KEY}&quot;,
-        },
-        stream=True,
-        timeout=180,
-    ) as response:
-        response.raise_for_status()
-
-        with open(output_path, &quot;wb&quot;) as output_file:
-            for chunk in response.iter_content(
-                chunk_size=1024 * 1024
-            ):
-                if chunk:
-                    output_file.write(chunk)
-
-    print(f&quot;Saved {output_path}&quot;)
-
-
-download_video(completed_job)</code></pre>
-<p>Streaming the response in chunks avoids loading the entire MP4 into memory before writing it to disk.</p>
-<p>Here’s the TypeScript equivalent. Note that this version buffers the download into memory rather than streaming it to disk, which is fine for short clips but worth swapping for a piped stream if you’re routinely downloading long or high-resolution video:</p>
-<pre><code>import { writeFile } from &quot;node:fs/promises&quot;;
-
-async function downloadVideo(
-  job: VideoJob,
-  outputPath = &quot;out.mp4&quot;,
-  index = 0,
-): Promise&lt;void&gt; {
-  const downloadUrl =
-    job.unsigned_urls?.[index] ??
-    `https://openrouter.ai/api/v1/videos/` +
-      `${job.id}/content?index=${index}`;
-
-  const response = await fetch(downloadUrl, {
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Download failed: ${response.status} ` +
-      `${await response.text()}`,
-    );
-  }
-
-  const videoBuffer = Buffer.from(
-    await response.arrayBuffer(),
-  );
-
-  await writeFile(outputPath, videoBuffer);
-  console.log(`Saved ${outputPath}`);
-}</code></pre>
-<p>At this point, you have a generated MP4 on disk. Move completed videos to storage you control instead of treating the generation endpoint as permanent file hosting. The completed job may also include a <code>usage</code> object containing the final cost, which is part of the response body regardless of which language you’re using:</p>
-<pre><code>usage = completed_job.get(&quot;usage&quot;) or {}
-
-print(&quot;Generation cost:&quot;, usage.get(&quot;cost&quot;))
-print(&quot;Used BYOK:&quot;, usage.get(&quot;is_byok&quot;))</code></pre>
-<p>Store that value with your internal job record so you can track the actual cost of each generation.</p>
-<h2>Step 4: Switch models with one line</h2>
-<p>The submission, polling, and download functions aren’t tied to Seedance. To use another supported video model, change the model identifier:</p>
-<pre><code># Seedance
-MODEL = &quot;bytedance/seedance-2.0&quot;
-
-# Veo
-# MODEL = &quot;google/veo-3.1&quot;
-
-# Wan
-# MODEL = &quot;alibaba/wan-2.7&quot;
-
-job = submit_video(
-    model=MODEL,
-    prompt=PROMPT,
-)
-
-completed_job = poll_video(job)
-download_video(completed_job)</code></pre>
-<p>The endpoint, authentication, response shape, status handling, and download logic stay the same across all three. What doesn’t automatically carry over is every optional setting. Model switching is a one-line change to the code, but it isn’t a guarantee that any given duration, resolution, or aspect ratio combination will validate on the new model. This configuration happens to be portable across all three models covered in this guide:</p>
-<pre><code>{
-  &quot;duration&quot;: 4,
-  &quot;resolution&quot;: &quot;720p&quot;,
-  &quot;aspect_ratio&quot;: &quot;16:9&quot;,
-  &quot;generate_audio&quot;: false
-}</code></pre>
-<p>At the time of writing, the live model endpoint shows Seedance 2.0, Veo 3.1, and Wan 2.7 all supporting that specific combination: four seconds, 720p, 16:9. That’s a shared configuration across these three examples, not a claim that every setting works identically on every model. Move outside it and the differences show up quickly:</p>
-<ul><li>Veo 3.1 currently shows support for four-, six-, and eight-second durations.</li><li>Seedance 2.0 currently shows support for four- to 15-second durations and additional aspect ratios.</li><li>Wan 2.7 currently shows support for two- to 10-second durations and 720p or 1080p resolutions.</li></ul>
-<p>A five-second request would validate against Seedance and Wan but fail on Veo. That’s why your application should query <code>/api/v1/videos/models</code> before submitting a request rather than assuming that settings accepted by one model will work on another. The numbers above are worth re-checking against that live endpoint before you rely on them, since model capabilities do change.</p>
-<p>The same endpoint also exposes <code>allowed_passthrough_parameters</code> for model-specific features. These are the keys you’re permitted to send inside the request’s <code>provider.options</code> object, which is keyed by provider slug, such as <code>provider.options[&quot;google-vertex&quot;].parameters</code>. Only the options for the provider that serves your request are forwarded, and unrecognized keys are dropped. Veo, for example, currently lists controls such as <code>negativePrompt</code> and <code>enhancePrompt</code>, while Wan exposes options including <code>negative_prompt</code> and <code>prompt_extend</code>.</p>
-<h2>A few things worth knowing before this goes to production</h2>
-<p>The code above is enough to generate and download one video. Once this is running in production, the questions change: you need to control cost, separate job failures from network failures, avoid duplicate processing, and keep tracking jobs after the submitting process exits.</p>
-<h3>Check the cost before you scale</h3>
-<p>Video-generation pricing varies by model and configuration. Duration, resolution, audio generation, and the provider’s billing method can all affect the final cost. Local generation shifts that cost structure entirely, with no per-clip fee but real upfront hardware and maintenance cost instead. A hosted API keeps that cost variable and tied to usage, which is cheaper or more expensive depending on your volume and whether you already own the hardware.</p>
-<p>Don’t build one universal cost formula into your application. Query <code>/api/v1/videos/models</code> and read the selected model’s <code>pricing_skus</code> before displaying an estimate or submitting a large batch. When the job completes, the response can include a <code>usage</code> object with the actual cost of that generation:</p>
-<pre><code>{
-  &quot;usage&quot;: {
-    &quot;cost&quot;: 0.5,
-    &quot;is_byok&quot;: false
-  }
-}</code></pre>
-<p>Before running a large batch, estimate the cost using the current model data, then compare the estimate with the actual <code>usage.cost</code> values returned by completed jobs. This also helps you spot unexpected changes caused by a higher resolution, longer duration, generated audio, or a different model.</p>
-<h3>Handle failures without creating duplicate jobs</h3>
-<p>A failed polling <em>request</em> isn’t the same as a failed video-generation <em>job</em>. Your application may lose its connection while checking status even though the provider is still generating the video. If you submit the prompt again immediately, both jobs may complete, leaving you with two videos and two charges for one user request.</p>
-<p>Persist the OpenRouter job ID as soon as submission succeeds. A useful job record might contain fields like these:</p>
-<pre><code>{
-  &quot;internal_request_id&quot;: &quot;req_9f21&quot;,
-  &quot;openrouter_job_id&quot;: &quot;job-abc123&quot;,
-  &quot;model&quot;: &quot;bytedance/seedance-2.0&quot;,
-  &quot;status&quot;: &quot;pending&quot;,
-  &quot;attempt_number&quot;: 1,
-  &quot;submitted_at&quot;: &quot;2026-07-27T12:00:00Z&quot;,
-  &quot;output_location&quot;: null,
-  &quot;cost&quot;: null,
-  &quot;error&quot;: null
-}</code></pre>
-<p>When a status request fails because of a timeout, connection error, or temporary server response, retry the status request using the existing job ID. Only create a new generation after the job itself reaches <code>failed</code>, <code>cancelled</code>, or <code>expired</code>, and only if your application’s retry policy allows another attempt.</p>
-<p>Keep job retries separate from polling retries. A polling retry checks the same job again, while a generation retry creates a new paid job. Cap generation retries and retain every job ID created for the same internal request, so you have a complete record when you need to investigate duplicate outputs, provider failures, or unexpected costs.</p>
-<h3>Use webhooks when polling stops scaling</h3>
-<p><a href="https://openrouter.ai/docs/guides/overview/multimodal/video-generation#poll-response">Polling</a> is a good default for scripts, prototypes, and small numbers of jobs. It becomes less efficient when your application may have hundreds of generations running at once.</p>
-<p>To receive the result automatically, include an <a href="https://openrouter.ai/docs/guides/overview/multimodal/video-generation#webhooks">HTTPS callback_url when submitting the job</a>:</p>
-<pre><code>{
-  &quot;model&quot;: &quot;bytedance/seedance-2.0&quot;,
-  &quot;prompt&quot;: &quot;A paper boat drifting through neon reflections&quot;,
-  &quot;duration&quot;: 4,
-  &quot;resolution&quot;: &quot;720p&quot;,
-  &quot;aspect_ratio&quot;: &quot;16:9&quot;,
-  &quot;callback_url&quot;: &quot;https://example.com/webhooks/openrouter-video&quot;
-}</code></pre>
-<p>You can set the callback for an individual request or configure a default callback for the workspace. The request-level value takes precedence over the workspace default.</p>
-<p>We send the webhook when the job reaches a terminal state. Each delivery includes an <code>X-OpenRouter-Idempotency-Key</code>, such as:</p>
-<pre><code>job-abc123-completed</code></pre>
-<p>Store that value before processing the event. If the webhook is delivered again, your handler can recognize that the job’s already been handled instead of downloading the video or starting the next workflow twice.</p>
-<p>When a webhook signing secret is configured, the request also includes an <code>X-OpenRouter-Signature</code>. Verify the signature against the raw request body before parsing or re-serializing it. A production handler should then save the new job state, return a fast success response, and move downloading, transcoding, or storage work to a background worker.</p>
-<h3>Track concurrent jobs in durable storage</h3>
-<p>Submitting and waiting are separate operations, so your application can have multiple video jobs running at the same time. Don’t start an unlimited polling loop for every job. Use a bounded worker pool or job queue, and control how many status requests and downloads can run concurrently.</p>
-<p>In Python, you could process a limited number of jobs with a thread pool or an asynchronous worker queue. In TypeScript, a concurrency-controlled queue is safer than passing thousands of polling promises directly to <code>Promise.all()</code>.</p>
-<p>The exact implementation matters less than these rules:</p>
-<ul><li>Save each job ID before beginning to poll.</li><li>Limit the number of active polling and download operations.</li><li>Resume unfinished jobs after a worker restart.</li><li>Don’t resubmit jobs simply because the application restarted.</li><li>Move completed videos to your own storage promptly.</li></ul>
-<p>The job ID is the durable link between your application and the generation already in progress. Treat it as part of your application state, not as a value that exists only inside one running process.</p>
-<h2>Putting it all together</h2>
-<p>We’ve covered four steps, and they don’t change no matter which model you’re pointing at. All you do is submit with <code>POST /api/v1/videos</code>, poll <code>GET /api/v1/videos/{id}</code> while watching for all four terminal states, download the result, and change one string when you want a different model.</p>
-<p>Once the async lifecycle is right, the model becomes a setting instead of an architecture decision, whether you’re using the three models covered here or any model added later.</p>
-<p>If you’re picking a starting point, <a href="https://openrouter.ai/collections/video-models">browse the video model catalog</a> to see pricing and capabilities side by side before committing to one.</p>
-<h2>Frequently asked questions</h2>
-<h3>Does OpenRouter support video generation?</h3>
-<p>Yes, through a dedicated asynchronous API. You submit a prompt to <code>POST /api/v1/videos</code>, poll <code>GET /api/v1/videos/{id}</code> until the status is <code>completed</code>, and download the result. Supported models include Seedance, Veo, Wan, and others, all through the same endpoint.</p>
-<h3>How do I generate a video from text with an API?</h3>
-<p>Send a POST request to <code>/api/v1/videos</code> with a model and a prompt. You get back a job ID and a <code>polling_url</code>, not the video itself. Poll until the status reaches <code>completed</code>, then download from <code>unsigned_urls</code> or the <code>/content</code> endpoint.</p>
-<h3>How do I poll an async video generation job?</h3>
-<p>Call <code>GET /api/v1/videos/{id}</code> on an interval, around 30 seconds is reasonable, until the status reaches a terminal state: <code>completed</code>, <code>failed</code>, <code>cancelled</code>, or <code>expired</code>. Set a timeout ceiling so a stuck job can’t hang your process forever.</p>
-<h3>Which video models does OpenRouter support?</h3>
-<p>The catalog includes Seedance, Veo, Wan, and others, and it keeps growing. Query <code>GET /api/v1/videos/models</code> for the current list along with each model’s supported resolutions, durations, aspect ratios, and pass-through parameters.</p>
-<h3>Can I switch video models without rewriting my code?</h3>
-<p>Yes. The request shape, authentication, and polling loop are identical across models, only the <code>model</code> field changes. Model-specific parameters still reach the provider through the <code>provider.options</code> pass-through object.</p>
-<h3>Is it cheaper to generate AI video locally or through an API?</h3>
-<p>Local generation has no per-clip fee once you’ve paid for the hardware, but it requires a capable GPU, dependency management, and a separate setup per model family. A hosted API charges per generation but skips the GPU and setup entirely. Which one is cheaper for you depends on your volume and whether you already own the hardware.</p>
-<h3>How long does AI video generation take?</h3>
-<p>Usually somewhere between thirty seconds and a few minutes, depending on the model, resolution, and clip length. That’s the reason the API is asynchronous instead of a normal blocking call.</p>
-<h3>Is video generation eligible for Zero Data Retention?</h3>
-<p>No. The async retrieval step requires the generated output to be briefly retained so it can be downloaded, so requests with ZDR enforced aren’t routed to video generation.</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
