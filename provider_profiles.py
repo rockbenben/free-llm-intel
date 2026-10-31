@@ -46,6 +46,12 @@ _BRAND_TRANSLITERATIONS: list[tuple[str, re.Pattern]] = [
     ("Claude Sonnet", re.compile(r"克劳\s*德\s*十四行诗")),
     ("Claude Code", re.compile(r"克劳\s*德\s*代码")),
     ("Claude", re.compile(r"克劳\s*德|克洛\s*德")),
+    # 型号名单独被音译/直译（CI 实测 openrouter 标题）：`Claude Opus` → 「Claude·奥普斯」、
+    # `Sonnet` → 「十四行诗」、`Haiku` → 「俳句」。排在复合名之后，让「克劳德作品」那类
+    # 整串先复原；复原仍要求英文源里写着该型号名，普通语义不受影响。
+    ("Opus", re.compile(r"奥普斯")),
+    ("Sonnet", re.compile(r"十四行诗")),
+    ("Haiku", re.compile(r"俳句")),
     ("Grok", re.compile(r"格罗\s*克|格洛\s*克|格雷\s*克")),
     ("Codestral", re.compile(r"共纹")),
     ("Magistral", re.compile(r"马吉斯特尔")),

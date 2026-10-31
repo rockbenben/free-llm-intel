@@ -3524,6 +3524,19 @@ class TestTranslationSkipsIdentifiers(unittest.TestCase):
         self.assertEqual(r("欢迎使用猎鹰 3 系列开源模型",
                            "Welcome to the Falcon 3 Family of Open Models"),
                          "欢迎使用Falcon 3 系列开源模型")
+        # Claude 型号名单独被音译/直译（CI 实测的机翻标题）：奥普斯/十四行诗/俳句。
+        self.assertEqual(
+            r("Claude·奥普斯 (Claude Opus)、十四行诗 (Sonnet) 和俳句 (Haiku)：您应该使用哪一个？",
+              "Claude Opus vs Sonnet vs Haiku: Which Should You Use?"),
+            "Claude·Opus (Claude Opus)、Sonnet (Sonnet) 和Haiku (Haiku)：您应该使用哪一个？")
+        # 复合名「克劳德俳句」必须先整串复原成 Claude Haiku，不能被单词条拆成 Claude俳句
+        self.assertEqual(r("欢迎克劳德俳句 4.5", "Welcome Claude Haiku 4.5"),
+                         "欢迎Claude Haiku 4.5")
+        # 正文路径 strict_case：源里没按原大小写写该型号就不动（十四行诗/俳句本是诗体名）
+        self.assertEqual(
+            r("用十四行诗与俳句训练的模型", "Models trained on sonnets and haiku",
+              strict_case=True),
+            "用十四行诗与俳句训练的模型")
         # 原文里没有该英文品牌时不能乱动（官方中文名/巧合词）
         self.assertEqual(r("克劳德是一名常见译名", "没有英文品牌的中文句子"),
                          "克劳德是一名常见译名")
@@ -3541,7 +3554,7 @@ class TestTranslationSkipsIdentifiers(unittest.TestCase):
         pat = re.compile(r"克劳德|格罗克|格洛克|共纹|拥抱人脸|拥抱脸部|拥抱脸|抱脸|拥抱面"
                          r"|法学硕士|双子座|稳定扩散|变压器|扩散器|米斯特拉尔|迷你最大"
                          r"|索拉|反重力|变形金刚|活生生|拉古纳|元人工|公共人工智能|猎鹰"
-                         r"|贴片时间序列|双子座3")
+                         r"|贴片时间序列|双子座3|奥普斯|十四行诗|俳句")
         # provider_profiles.py 自身是音译对照表（守卫定义），排除
         files = [root / "README.md", root / "llm-news-feeds.md"]
         files += sorted((root / "llm-news").glob("*.md"))
