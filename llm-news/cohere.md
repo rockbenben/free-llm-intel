@@ -10,9 +10,9 @@
 ## 全部文章（共 53 篇，按日期倒序；无日期条目列于最后）
 
 1. [在 AWS 上用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29） <!--orig:Build a financial research assistant with Cohere on AWS-->
-2. [谁来建设人工智能前沿为什么民主世界需要更多前沿人工智能建设者以及我们打算如何竞争。](https://cohere.com/blog/who-gets-to-build-the-frontier-for-ai)（2026-10-29） <!--orig:Who Gets to Build the Frontier for AIWhy the democratic world needs more frontier AI builders and how we intend to compete.-->
-3. [North 的 PitchBook：企业团队的私人市场情报](https://cohere.com/blog/pitchbook-integration)（2026-10-26） <!--orig:PitchBook in North: Private market intelligence for enterprise teams-->
-4. [关于流行的开放权重人工智能模型的行为](https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model)（2026-10-26） <!--orig:Concerning behavior from a popular open-weight AI model-->
+2. [谁来建设 AI 前沿：民主世界为何需要更多前沿 AI 建设者，以及我们打算如何竞争](https://cohere.com/blog/who-gets-to-build-the-frontier-for-ai)（2026-10-29） <!--orig:Who Gets to Build the Frontier for AIWhy the democratic world needs more frontier AI builders and how we intend to compete.-->
+3. [North 的 PitchBook：面向企业团队的私募市场情报](https://cohere.com/blog/pitchbook-integration)（2026-10-26） <!--orig:PitchBook in North: Private market intelligence for enterprise teams-->
+4. [热门开放权重 AI 模型的令人担忧行为](https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model)（2026-10-26） <!--orig:Concerning behavior from a popular open-weight AI model-->
 5. [走进 Cohere Model Vault：构建可验证的机密 AI 推理](https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference)（2026-10-22） <!--orig:Inside Cohere Model Vault: Building a verifiable confidential AI inference-->
 6. [介绍 Cohere Model Vault 上的机密计算](https://cohere.com/blog/introducing-confidential-computing-on-cohere-model-vault)（2026-10-22） <!--orig:Introducing Confidential Computing on Cohere Model Vault-->
 7. [AI 能理解文化吗？一位退休教师和一名高中生来试试](https://cohere.com/blog/can-ai-understand-culture)（2026-10-22） <!--orig:Can AI understand culture?-->

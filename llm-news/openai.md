@@ -15,8 +15,8 @@
 2. [社区安全报告和针对青少年的新保护](https://openai.com/index/community-safety-report-and-new-protections-for-teens)（2026-10-30） <!--orig:Community safety report and new protections for teens-->
 3. [合理使用使每个人受益](https://openai.com/index/fair-use-benefits-everyone)（2026-10-30） <!--orig:Fair use benefits everyone-->
 4. [更新后的模型规格，提供更强大、更有益的人工智能](https://openai.com/index/updated-model-spec)（2026-10-29） <!--orig:An updated Model Spec for more capable and beneficial AI-->
-5. [我们如何检测前沿模型错位](https://openai.com/index/how-we-detect-frontier-model-misalignment)（2026-10-29） <!--orig:How we detect frontier model misalignment-->
-6. [Ropes & Gray 如何开发用于交易尽职调查的人工智能](https://openai.com/index/ropes-gray-ai-diligence)（2026-10-29） <!--orig:How Ropes & Gray is developing AI for transactional diligence-->
+5. [我们如何检测前沿模型的对齐失范行为](https://openai.com/index/how-we-detect-frontier-model-misalignment)（2026-10-29） <!--orig:How we detect frontier model misalignment-->
+6. [Ropes & Gray 如何为交易尽职调查开发 AI](https://openai.com/index/ropes-gray-ai-diligence)（2026-10-29） <!--orig:How Ropes & Gray is developing AI for transactional diligence-->
 7. [Credit Saison 在 ChatGPT Enterprise 试点中实现了 954% 的投资回报率](https://openai.com/index/credit-saison)（2026-10-29） <!--orig:Credit Saison achieves 954% ROI in a ChatGPT Enterprise pilot-->
 8. [OpenAI 与 ServiceNow 在企业工作流方面扩大合作](https://openai.com/index/openai-servicenow-partnership-expansion)（2026-10-28） <!--orig:OpenAI and ServiceNow expand partnership across enterprise workflows-->
 9. [公司的未来](https://openai.com/index/the-future-of-the-firm)（2026-10-28） <!--orig:The future of the firm-->

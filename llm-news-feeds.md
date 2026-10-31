@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-31 10:07:46**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-10-31 22:32:13**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -44,7 +44,7 @@
   2. [社区安全报告和针对青少年的新保护](https://openai.com/index/community-safety-report-and-new-protections-for-teens)（2026-10-30）
   3. [合理使用使每个人受益](https://openai.com/index/fair-use-benefits-everyone)（2026-10-30）
   4. [更新后的模型规格，提供更强大、更有益的人工智能](https://openai.com/index/updated-model-spec)（2026-10-29）
-  5. [我们如何检测前沿模型错位](https://openai.com/index/how-we-detect-frontier-model-misalignment)（2026-10-29）
+  5. [我们如何检测前沿模型的对齐失范行为](https://openai.com/index/how-we-detect-frontier-model-misalignment)（2026-10-29）
   - 📄 完整文章归档（共 1339 篇）：[openai.md](llm-news/openai.md)
 
 ### Google Gemini (Google AI Studio) (google_gemini)
@@ -142,7 +142,7 @@
   - 📡 RSS/Atom：https://mistral.ai/news/rss
 - 📡 [RSS/Atom 订阅源](https://mistral.ai/news/rss)：`https://mistral.ai/news/rss`
 - 📰 **最新文章**（官方源抓取于 2026-10-31，标题自动汉化）：
-  1. [Le Chonk：为程序员打造，深受捍卫者信赖。](https://mistral.ai/news/mistral-large-4-oss/)（2026-10-29）
+  1. [Le Chonk：为程序员打造，受防御者信赖](https://mistral.ai/news/mistral-large-4-oss/)（2026-10-29）
   2. [Mistral 与 NVIDIA 合作推进工程领域的 AI](https://mistral.ai/news/mistral-nvidia-ai-for-industrial-engineering/)（2026-10-21）
   3. [Voxtral 3](https://mistral.ai/news/voxtral-3/)（2026-10-20）
   4. [推出 Timestral](https://mistral.ai/news/timestral/)（2026-10-15）
@@ -194,20 +194,20 @@
   - 📡 RSS/Atom：https://huggingface.co/blog/feed.xml
 - 📡 [RSS/Atom 订阅源](https://huggingface.co/blog/feed.xml)：`https://huggingface.co/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-31，标题自动汉化）：
-  1. [nemotron-halloween](https://huggingface.co/blog/nvidia/nemotron-halloween)（2026-10-30）
+  1. [Nemotron 万圣节](https://huggingface.co/blog/nvidia/nemotron-halloween)（2026-10-30）
   2. [Granite Switch 4.1.1 — 像更新软件一样更新模型](https://huggingface.co/blog/ibm-granite/granite-switch-4-1-1)（2026-10-29）
-  3. [宣布 ProtoStar 项目：让公共资助的科学人工智能做好准备](https://huggingface.co/blog/announcing-project-protostar)（2026-10-29）
-  4. [欢迎 Le Chonk：Hugging Face部的 Mistral Large 4](https://huggingface.co/blog/mistral-large4)（2026-10-29）
+  3. [宣布 ProtoStar 项目：让公共资助的科研 AI 做好准备](https://huggingface.co/blog/announcing-project-protostar)（2026-10-29）
+  4. [欢迎 Le Chonk：Mistral Large 4 上线 Hugging Face](https://huggingface.co/blog/mistral-large4)（2026-10-29）
   5. [AnySpeechRecognizer 和 AnyDecisionModel 简介：Apple 平台上的语音和决策开放模型](https://huggingface.co/blog/anydecisionmodel)（2026-10-29）
   - 📄 完整文章归档（共 912 篇）：[huggingface.md](llm-news/huggingface.md)
 
 ### OpenRouter (模型统一网关) (openrouter)
 - 📡 [RSS/Atom 订阅源](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-10-31，标题自动汉化）：
-  1. [如何构建您自己的永远在线的人工智能代理](https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/)（2026-10-31）
-  2. [开放式重量模型与封闭式重量模型：有什么区别？](https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/)（2026-10-31）
-  3. [Claude Code要多少钱？按模型划分的实际会话成本](https://openrouter.ai/blog/insights/claude-code-cost/)（2026-10-30）
-  4. [Claude·奥普斯 (Claude Opus)、十四行诗 (Sonnet) 和俳句 (Haiku)：您应该使用哪一个？](https://openrouter.ai/blog/insights/claude-opus-vs-sonnet-vs-haiku/)（2026-10-30）
+  1. [如何构建你自己的常驻 AI agent](https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/)（2026-10-31）
+  2. [开放权重模型与闭源权重模型：有什么区别？](https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/)（2026-10-31）
+  3. [Claude Code 要多少钱？按模型划分的实际会话成本](https://openrouter.ai/blog/insights/claude-code-cost/)（2026-10-30）
+  4. [Claude Opus vs Sonnet vs Haiku：你该用哪个？](https://openrouter.ai/blog/insights/claude-opus-vs-sonnet-vs-haiku/)（2026-10-30）
   5. [如何用 LLM 从 PDF 中提取表格](https://openrouter.ai/blog/tutorials/extract-tables-from-pdf-llm/)（2026-10-29）
   - 📄 完整文章归档（共 167 篇）：[openrouter.md](llm-news/openrouter.md)
 
@@ -227,9 +227,9 @@
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-cohere.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-cohere.xml)
 - 📰 **最新文章**（官方源抓取于 2026-10-31，标题自动汉化）：
   1. [在 AWS 上用 Cohere AI 构建金融研究助理](https://cohere.com/blog/financial-research-assistant-cohere-aws)（2026-10-29）
-  2. [谁来建设人工智能前沿为什么民主世界需要更多前沿人工智能建设者以及我们打算如何竞争。](https://cohere.com/blog/who-gets-to-build-the-frontier-for-ai)（2026-10-29）
-  3. [North 的 PitchBook：企业团队的私人市场情报](https://cohere.com/blog/pitchbook-integration)（2026-10-26）
-  4. [关于流行的开放权重人工智能模型的行为](https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model)（2026-10-26）
+  2. [谁来建设 AI 前沿：民主世界为何需要更多前沿 AI 建设者，以及我们打算如何竞争](https://cohere.com/blog/who-gets-to-build-the-frontier-for-ai)（2026-10-29）
+  3. [North 的 PitchBook：面向企业团队的私募市场情报](https://cohere.com/blog/pitchbook-integration)（2026-10-26）
+  4. [热门开放权重 AI 模型的令人担忧行为](https://cohere.com/blog/concerning-behaviour-popular-open-weight-ai-model)（2026-10-26）
   5. [走进 Cohere Model Vault：构建可验证的机密 AI 推理](https://cohere.com/blog/inside-cohere-model-vault-building-verifiable-confidential-ai-inference)（2026-10-22）
   - 📄 完整文章归档（共 53 篇）：[cohere.md](llm-news/cohere.md)
 
@@ -309,10 +309,10 @@
 - 📡 [RSS/Atom 订阅源](https://aws.amazon.com/blogs/machine-learning/feed/)：`https://aws.amazon.com/cn/blogs/machine-learning/feed/`
 - 📰 **最新文章**（官方源抓取于 2026-10-31，标题自动汉化）：
   1. [端到端管理 Amazon Bedrock 成本：FinOps 和平台团队的手册](https://aws.amazon.com/blogs/machine-learning/managing-amazon-bedrock-costs-end-to-end-a-playbook-for-finops-and-platform-teams/)（2026-10-30）
-  2. [当您的编码代理使用 Amazon Bedrock AgentCore 运行时构建 Web 应用程序时，实时预览 Web 应用程序](https://aws.amazon.com/blogs/machine-learning/preview-web-apps-live-as-your-coding-agent-builds-them-with-amazon-bedrock-agentcore-runtime/)（2026-10-30）
+  2. [在 coding agent 用 Amazon Bedrock AgentCore Runtime 构建 Web 应用时实时预览](https://aws.amazon.com/blogs/machine-learning/preview-web-apps-live-as-your-coding-agent-builds-them-with-amazon-bedrock-agentcore-runtime/)（2026-10-30）
   3. [Worldwide Express 如何通过 Amazon Bedrock 自动处理货运异常](https://aws.amazon.com/blogs/machine-learning/how-worldwide-express-automated-freight-exceptions-with-amazon-bedrock/)（2026-10-30）
   4. [在 AWS GovCloud（美国）中使用 Amazon Bedrock 配置 ChatGPT 桌面应用程序](https://aws.amazon.com/blogs/machine-learning/configure-the-chatgpt-desktop-app-with-amazon-bedrock-in-aws-govcloud-us/)（2026-10-30）
-  5. [英国亚马逊快速用户群在 2026 年如何增长](https://aws.amazon.com/blogs/machine-learning/how-the-uk-amazon-quick-user-group-grew-in-2026/)（2026-10-29）
+  5. [英国的 Amazon Quick 用户群在 2026 年如何增长](https://aws.amazon.com/blogs/machine-learning/how-the-uk-amazon-quick-user-group-grew-in-2026/)（2026-10-29）
   - 📄 完整文章归档（共 143 篇）：[aws_bedrock.md](llm-news/aws_bedrock.md)
 
 ### Cerebras Inference (晶圆级推理) (cerebras)

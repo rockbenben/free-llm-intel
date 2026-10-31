@@ -10,10 +10,10 @@
 
 ## 全部文章（共 912 篇，按日期倒序；无日期条目列于最后）
 
-1. [nemotron-halloween](https://huggingface.co/blog/nvidia/nemotron-halloween)（2026-10-30）
+1. [Nemotron 万圣节](https://huggingface.co/blog/nvidia/nemotron-halloween)（2026-10-30） <!--orig:nemotron-halloween-->
 2. [Granite Switch 4.1.1 — 像更新软件一样更新模型](https://huggingface.co/blog/ibm-granite/granite-switch-4-1-1)（2026-10-29） <!--orig:Granite Switch 4.1.1 — Update models like you update software-->
-3. [宣布 ProtoStar 项目：让公共资助的科学人工智能做好准备](https://huggingface.co/blog/announcing-project-protostar)（2026-10-29） <!--orig:Announcing Project ProtoStar: Making Publicly Funded Science AI-Ready-->
-4. [欢迎 Le Chonk：Hugging Face部的 Mistral Large 4](https://huggingface.co/blog/mistral-large4)（2026-10-29） <!--orig:Welcome Le Chonk: Mistral Large 4 on Hugging Face-->
+3. [宣布 ProtoStar 项目：让公共资助的科研 AI 做好准备](https://huggingface.co/blog/announcing-project-protostar)（2026-10-29） <!--orig:Announcing Project ProtoStar: Making Publicly Funded Science AI-Ready-->
+4. [欢迎 Le Chonk：Mistral Large 4 上线 Hugging Face](https://huggingface.co/blog/mistral-large4)（2026-10-29） <!--orig:Welcome Le Chonk: Mistral Large 4 on Hugging Face-->
 5. [AnySpeechRecognizer 和 AnyDecisionModel 简介：Apple 平台上的语音和决策开放模型](https://huggingface.co/blog/anydecisionmodel)（2026-10-29） <!--orig:Introducing AnySpeechRecognizer and AnyDecisionModel: Open Models for Speech and Decisions on Apple Platforms-->
 6. [NVIDIA Nemotron 3.5 Transcribe 与 Granary v2：可用提示词驱动并加以适配的智能多语种转录](https://huggingface.co/blog/nvidia/nemotron-transcribe-granary)（2026-10-28） <!--orig:NVIDIA Nemotron 3.5 Transcribe and Granary v2: Intelligent Multilingual Transcription You Can Prompt and Adapt-->
 7. [使用 LFM3 构建专用多模态模型](https://huggingface.co/blog/LiquidAI/lfm3)（2026-10-27） <!--orig:Build specialized multimodal models with LFM3-->

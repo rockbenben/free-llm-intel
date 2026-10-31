@@ -1,144 +1,139 @@
 ---
 vendor: together_ai
-title: Announcing the fastest inference for realtime voice AI agents
+title: 宣布面向实时语音 AI agent 的最快推理
 original_title: 
 url: https://www.together.ai/blog/the-fastest-inference-for-realtime-voice-ai-agents
 date: 2025-11-04
 lang: zh
 captured: 2026-10-31
 extractor: readability-v1
-translator: mt
+translator: agent
 status: translated
-body_sha: 6d02e5f54fe1
+body_sha: 74a6ae716236
 ---
 
-所有博客文章
+# 宣布面向实时语音 AI agent 的最快推理
 
-模型库
+- 作者：Rajas Bansal、Sahil Yadav、Garima Dhanania、Sri Yanamandra、Charles Zedlewski、Zain Hasan、Derek Petersen、Blaine Kasten、Sonny Khan、Rishabh Bhargava
+- 目录[为生产环境选定的 40+ 款模型…为生产环境选定的 40+ 款模型…为生产环境选定的 40+ 款模型…](https://www.together.ai/blog/the-fastest-inference-for-realtime-voice-ai-agents)
+- 本文中的链接[Playground](https://api.together.ai/playground/mistralai/Voxtral-Mini-3B-2507)[语音转文本（Speech-to-Text）文档](https://docs.together.ai/docs/speech-to-text)[文本转语音（Text-to-Speech）文档](https://docs.together.ai/docs/text-to-speech)[Model library](http://together.ai/models)‍
 
-发布日期：2025 年 11 月 4 日
+摘要
 
-# 宣布实时语音 AI 代理最快的推理
+- **流式 Whisper 语音转文本（STT）：** 基于 WebSocket API 的持续转写，为语音 agent 做过优化
+- **首个 serverless 开源 text-to-speech（TTS）：** Orpheus（高保真）与 Kokoro（超低延迟），通过 REST 与 WebSocket API 提供，无需 dedicated 基础设施
+- ‍**Voxtral 转写与 speaker diarization：** 面向批处理的高端多语种转写模型与自动说话人识别
 
-- 作者Rajas Bansal、Sahil Yadav、Garima Dhanania、Sri Yanamandra、Charles Zedlewski、Zain Hasan、Derek Petersen、Blaine Kasten、Sonny Khan、Rishabh Bhargava
-- 目录[40+ 选择用于生产的模型...40+ 选择用于生产的模型...40+ 选择用于生产的模型...](https://www.together.ai/blog/the-fastest-inference-for-realtime-voice-ai-agents)
-- 本文中的链接[Playground](https://api.together.ai/playground/mistralai/Voxtral-Mini-3B-2507)[语音转文本文档](https://docs.together.ai/docs/speech-to-text)[文本转语音文档](https://docs.together.ai/docs/text-to-speech)[模型库](http://together.ai/models)‍
+[语音](https://www.together.ai/solutions/voice)交互是真正 AI 原生应用的标志之一。从转写、语音转代码，到外呼电话、定制播客，语音让应用既有吸引力又高效。但开发者往往要把一堆专项语音服务拼起来，才能交付一个语音应用。这通常会拖慢开发，同时增加复杂度、延迟和成本。
 
-总结
+我们很高兴地宣布，云上新增了一整套高性能、低延迟的语音基础设施。我们下了很大功夫，让语音服务同时做到前沿品质、对开发者友好，以及极低的延迟。
 
-- **流式 Whisper 语音转文本 (STT)：** 通过针对语音代理优化的 WebSocket API 进行连续转录
-- **第一个无服务器开源文本转语音 (TTS)：** Orpheus（高保真）和 Kokoro（超低延迟）可通过 REST 和 WebSocket API 获得，无需专用基础设施
-- ‍**Voxtral 转录和说话人分类：** 高级多语言转录模型和用于批量处理的自动说话人识别
+有了这些新增能力，我们把语音产品线从转写扩展为一整套构件，足以支撑应用语音 pipeline 的部分或全部。这些服务同时支持实时与批量两种模式，并以开发者友好的 serverless 与 dedicated 两种形态交付。
 
-[语音](https://www.together.ai/solutions/voice) 接口是真正的 AI 原生应用程序的标志之一。从转录到语音到代码，再到出站呼叫，再到自定义播客，语音使应用程序更具吸引力和生产力。但开发人员通常必须将许多专门的语音服务组合在一起才能发布单个语音应用程序。这往往会减慢开发速度，同时增加复杂性、延迟和成本。
+## ‍**面向语音 agent 的流式语音转文本**
 
-我们很高兴地宣布在我们的云中添加了一组大幅扩展的高性能、低延迟语音基础设施。我们一直致力于提供前沿质量、开发人员友好且延迟极低的语音服务。
+#### Streaming Whisper
 
-通过这些新增功能，我们将语音产品从转录扩展到了一整套构建块，可以为应用程序的部分或全部语音管道提供支持。这些服务支持开发人员友好的无服务器和专用外形的实时和批处理模式。
+传统批量转写要等完整的音频文件。语音 agent 需要在语音到达时就实时处理，并聪明地判断用户什么时候说完了。
 
-## ‍**语音代理的流式语音转文本**
+我们把优化的模型[推理](https://www.together.ai/serverless-inference)与聪明的系统设计结合起来，做出了业内最快的语音转文本 API——用 WebSocket 流式传输消除连接开销、精心调校 voice activity detection（VAD）、以及为实时音频处理专门构建的基础设施。结果是：[Whisper](http://www.together.ai/models/whisper-large-v3-streaming) 以实时方式运行，质量损失极小，完成转写比同类方案快最多 35%。
 
-#### 流媒体耳语
+关键在于优化 time-to-complete-transcript，而不只是 time-to-first-token。语音 agent 需要精确知道用户何时停止说话，才能开始组织回应。我们的 VAD 调校保证你的 agent 在恰当时机开口：既不太早（打断用户），也不太晚（留下冷场）。
 
-传统的批量转录需要等待完整的音频文件。语音代理需要在语音到达时进行处理，并智能检测用户何时结束讲话。
+STREAMING WHISPER
 
-我们通过将优化模型[推理](https://www.together.ai/serverless-inference)与智能系统设计相结合，构建了业界最快的语音到文本 API - WebSocket 流式传输以消除连接开销、精心调整的语音活动检测 (VAD) 以及用于实时音频处理的专用基础设施。结果：[Whisper](http://www.together.ai/models/whisper-large-v3-streaming) 实时运行，质量下降最小，完成转录的速度比替代方案快 35%。
+你的浏览器不支持 video 标签。
 
-关键是优化完成转录的时间，而不仅仅是首次标记的时间。语音代理需要准确地知道用户何时停止说话才能开始制定响应。我们的 VAD 调整可确保您的代理在正确的时刻做出响应，不会太早（切断用户）或太晚（造成死气沉沉）。
+实时转写，延迟业内领先。为自然对话节奏精心调校的 voice activity detection。
 
-流媒体耳语
+$0.0035/min
 
-您的浏览器不支持视频标签。
+立即试用
 
-具有行业领先延迟的实时转录。仔细调整语音活动检测以实现自然的对话流程。
+## **Text-to-speech：Serverless 开源模型**
 
-$0.0035/分钟
+Together AI 是首个提供 serverless 开源 text-to-speech 模型的云。不必再为间歇性的 TTS 需求单独拉起 dedicated 实例——两款模型都通过 REST API 提供批量生成、通过 WebSocket API 提供实时流式。
 
-立即尝试
+#### Orpheus TTS：自然的音色
 
-## **文本转语音：无服务器开源模型**
+[Orpheus](http://www.together.ai/models/orpheus-tts) 输出自然、富有表现力的语音，提供多种适合面向客户应用的音色。187ms 的 time-to-first-byte 让它快过高端供应商，同时逼近更轻量模型的速度。结果是：专业的音色，又不牺牲语音 agent 所需的响应性。
 
-Together AI 是第一个提供无服务器开源文本转语音模型的云。不再需要为零星的 TTS 需求而旋转专用实例——这两种模型都可以通过用于批量生成的 REST API 和用于实时流传输的 WebSocket API 来使用。
+ORPHEUS TTS
 
-#### Orpheus TTS：自然的语音质量
+你的浏览器不支持 video 标签。
 
-[Orpheus](http://www.together.ai/models/orpheus-tts) 提供自然、富有表现力的语音，具有适合面向客户的应用程序的多种语音选项。它的首字节时间为 187 毫秒，超过了优质提供商，同时接近较轻型号的速度。结果：专业的语音质量，同时又不牺牲语音代理所需的响应能力。
+高保真语音生成，韵律自然。平均 187ms 的 time-to-first-byte——比高端专有供应商更快。
 
-奥菲斯 TTS
+$15/1M chars
 
-您的浏览器不支持视频标签。
+立即试用
 
-具有自然韵律的高保真语音生成。平均首字节时间为 187 毫秒，比优质专有提供商更快。
+#### Kokoro TTS
 
-$15/100 万个字符
-
-立即尝试
-
-#### 心 TTS
-
-当每一毫秒都很重要时，[Kokoro](http://www.together.ai/models/kokoro-82m) 交付。它具有 97 毫秒基线 TTFB，专为响应速度高于一切的应用而设计。这种可预测的性能使其成为成本和延迟至关重要的大容量语音代理部署的理想选择。
+当每一毫秒都要争，[Kokoro](http://www.together.ai/models/kokoro-82m) 就派上用场。97ms 的基线 TTFB，让它专为响应速度压倒一切的应用而生。这种可预期的性能，使它特别适合成本与延迟都至关重要的大批量语音 agent 部署。
 
 KOKORO TTS
 
-您的浏览器不支持视频标签。
+你的浏览器不支持 video 标签。
 
-超快的生产规模语音。第一个字节的时间为 97 毫秒——比替代方案快 2 倍以上，并且在负载下具有一致的性能。
+极快的生产规模语音。97ms 的 time-to-first-byte——比同类方案快 2 倍以上，且在负载下性能一致。
 
-$4/100 万个字符
+$4/1M chars
 
-立即尝试
+立即试用
 
-## **新的音频转录**
+## **全新音频转写能力**
 
-两项新功能扩展了我们用于批处理工作流程的音频转录 API：
+两项新能力扩展了我们面向批处理工作流的音频转写 API：
 
-#### **Voxtral 迷你**
+#### **Voxtral Mini**
 
-[Voxtral Mini](http://www.together.ai/models/voxtral-mini-3b-2507) 是 Mistral AI 的高精度转录模型，针对欧洲语言和具有挑战性的音频条件进行了优化。 [Voxtral 的字错误率明显低于标准 Whisper](https://mistral.ai/news/voxtral/) — 非常适合转录错误造成责任或运营开销的应用。
+[Voxtral Mini](http://www.together.ai/models/voxtral-mini-3b-2507) 是 Mistral AI 出品的更高准确度转写模型，针对欧洲语言和复杂音频条件做过优化。[与标准 Whisper 相比，Voxtral 带来可测量的更低 word error rate](https://mistral.ai/news/voxtral/)——特别适合转写错误会造成责任风险或运维开销的应用。
 
-沃斯特拉尔
+VOXTRAL
 
-您的浏览器不支持视频标签。
+你的浏览器不支持 video 标签。
 
-优质多语言转录针对欧洲语言和具有挑战性的音频条件进行了优化，单词错误率显着降低。
+面向欧洲语言与复杂音频条件优化的多语种高端转写，word error rate 更低且可测量。
 
-$0.0030/分钟
+$0.0030/min
 
-立即尝试
+立即试用
 
-#### **说话人分类**
+#### **Speaker Diarization（说话人分离）**
 
-自动识别并标记录制音频中的不同说话者。将原始记录转换为结构化对话，显示谁在何时说什么——对于会议转录、呼叫中心质量保证和多方对话审核至关重要。
+自动识别并标注录制音频中的不同说话人。把原始转写变成结构化对话，呈现谁在什么时候说了什么——这对会议转写、呼叫中心质检以及多方会话复盘都必不可少。
 
-## **专为生产语音代理而构建**
+## **为生产级语音 agent 而生**
 
-三个架构决策使 Together AI 的音频基础设施特别适合生产语音代理：
+三个架构决策，让 Together AI 的音频基础设施格外适合生产环境的语音 agent：
 
-#### **延迟：实现自然对话的响应时间**
+#### **延迟：让自然对话成为可能的响应时间**
 
-人类的对话以特定的速度进行。花费超过 500 毫秒的响应会让人感觉不自然。超过 2 秒，用户认为系统出现故障。每增加 100 毫秒的延迟就会显着降低用户满意度和任务完成率。
+人类对话有自己的节奏。回应超过 500ms 就显得不自然；越过 2 秒，用户就认为系统坏了。每多 100ms 延迟，用户满意度与任务完成率都能测量到下降。
 
-我们的基础设施消除了每一层不必要的延迟。 WebSocket 连接保持活动状态，避免 TCP 握手开销。模型与LLM在相同的 GPU 集群上运行，从而消除了跨提供商网络。最重要的是，即使在流量高峰期间，我们的优化服务也能提供一致的低于 200 毫秒的 TTS 和毫秒级准确的转录。
+我们的基础设施在每一层消除不必要的延迟。WebSocket 连接保持存活，避开 TCP 握手开销。模型与你的 LLM 跑在同一批 GPU 集群上，消除跨供应商的网络传输。最关键的是，我们优化过的服务层即使在流量峰值期间也能交付稳定的 200ms 以内 TTS 和毫秒级精度的转写。
 
-现实世界的影响：当客户致电更改航班时，每一秒的延误都会增加他们挂断电话的可能性。语音代理必须捕获他们的请求、处理它并开始响应——所有这些都在人类对话的自然节奏内。
+真实影响：当客户打电话来改签机票，每一秒延迟都会提高他们挂断的可能。语音 agent 必须接住请求、处理它并开始回应——全部落在人类对话的自然节奏之内。
 
-#### **质量：准确的转录和自然的语音**
+#### **质量：准确的转写与自然的声音**
 
-当转录错误在对话中级联时，语音代理会失败。听错帐号就会导致查找失败。乱码的产品名称会触发错误的工作流程。无论潜在的智能如何，语音质量差都会立即发出“廉价自动化”的信号。
+转写错误会在对话中层层传导，语音 agent 因此失效。听错一个账号会导致查询失败；一个含糊的产品名会触发错误的 workflow。而糟糕的音色会立刻透出“廉价自动化”的味道，无论底层智能有多强。
 
-这就是我们提供多个质量等级的原因。 Streaming Whisper 可以足够准确地处理实时转录，以实现自然对话。当精确性至关重要时——法律证词、医疗咨询、金融交易——Voxtral 卓越的精确性证明了其高定价的合理性。在输出方面，Orpheus 提供用户期望从专业服务中获得的自然、富有表现力的声音，而 Kokoro 则为大容量信息用例提供清晰、高效的语音。
+这正是我们提供多个质量档位的原因。Streaming Whisper 负责实时转写，准确度足以支撑自然对话。当精度至关重要——法律取证、医疗问诊、金融交易——Voxtral 更高的准确度对得起它的溢价。输出侧，Orpheus 提供用户在专业服务中期待的自然、富有表现力的声音，Kokoro 则为大批量信息类场景提供清晰高效的语音。
 
-考虑一个医疗保健调度机器人：它必须准确捕获药物名称，理解口音语音，并以适当的同理心做出回应。任何一层的质量故障都会破坏用户的信任，并迫使成本高昂的人工升级。
+设想一个医疗排期 bot：它必须准确捕获药品名、听懂带口音的语音，并以恰当的同理心回应。任何一层的质量失守都会击穿用户信任，逼出昂贵的人工升级。
 
-#### **规模：生产负载下的一致性能**
+#### **规模：生产负载下的稳定性能**
 
-在演示中表现良好但在生产负载下失败的语音基础设施会产生信任问题。在高峰时段遇到服务质量下降的用户学会完全避开该系统。
+演示里表现良好、生产负载下失效的语音基础设施会带来信任问题。在高峰时段体验到服务劣化的用户，会彻底绕开这个系统。
 
-我们的基础设施随着负载的扩展而保持性能。我们的 WebSocket 实现中的独特优化允许通过单个连接复用多个对话，这对于处理数百个同时呼叫的联络中心软件等平台至关重要。您可以通过共享连接有效地路由多个独立的音频流，而不是管理数千个单独的 WebSocket 连接（具有相关的内存和网络开销）。
+我们的基础设施在负载增长时保持性能。我们 WebSocket 实现中一项独特的优化，允许把多路对话 multiplexing 到单条连接上——这对呼叫中心软件这类要处理数百路并发通话的平台至关重要。你不必管理上千条独立的 WebSocket 连接（以及随之而来的内存与网络开销），而是可以把多条彼此隔离的音频流高效地复用共享连接。
 
-同样的扩展方法也适用于我们的整个堆栈。无论用户位于何处，地理分布都可确保低延迟。自动扩展无需人工干预即可处理流量峰值。结果是：无论处理 10 个还是 10,000 个并发对话，语音代理的性能都相同。
+同样的扩展思路贯穿我们整个技术栈。地理分布保证无论用户身处何地都保持低延迟。自动扩缩容应对流量峰值，无需人工介入。结果是：无论承载 10 路还是 10,000 路并发对话，语音 agent 的表现都完全一致。
 
-## **立即尝试**
+## **立即体验**
+
 ```
 	  
     from together import Together
@@ -171,14 +166,15 @@ $0.0030/分钟
                     break
     
 ```
-**开始：**
 
-- [Playground](https://api.together.ai/playground/mistralai/Voxtral-Mini-3B-2507)：构建前测试音频模型
-- [Speech-to-Text 文档](https://docs.together.ai/docs/speech-to-text)：用于转录的完整 API 参考
-- [文本转语音文档](https://docs.together.ai/docs/text-to-speech)：用于语音生成的完整 API 参考
-- [模型库](http://together.ai/models)：完整的模型规格
+**开始上手：**
 
-**对于生产部署：
-**[联系我们的销售人员](https://www.together.ai/contact-sales) 团队以获取企业选项和专用基础设施。
+- [Playground](https://api.together.ai/playground/mistralai/Voxtral-Mini-3B-2507)：动手构建前先测试音频模型
+- [语音转文本（Speech-to-Text）文档](https://docs.together.ai/docs/speech-to-text)：转写的完整 API 参考
+- [文本转语音（Text-to-Speech）文档](https://docs.together.ai/docs/text-to-speech)：语音生成的完整 API 参考
+- [Model library](http://together.ai/models)：完整的模型规格
+
+**面向生产部署：
+**[联系我们销售](https://www.together.ai/contact-sales)团队，获取企业级选项与 dedicated 基础设施。
 
 ## 相关文章

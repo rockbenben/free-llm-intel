@@ -9,10 +9,10 @@
 
 ## 全部文章（共 167 篇，按日期倒序；无日期条目列于最后）
 
-1. [如何构建您自己的永远在线的人工智能代理](https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/)（2026-10-31） <!--orig:How to Build Your Own Always-On AI Agent-->
-2. [开放式重量模型与封闭式重量模型：有什么区别？](https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/)（2026-10-31） <!--orig:Open-Weight vs Closed-Weight Models: What's the Difference?-->
-3. [Claude Code要多少钱？按模型划分的实际会话成本](https://openrouter.ai/blog/insights/claude-code-cost/)（2026-10-30） <!--orig:How Much Does Claude Code Cost? Real Session Costs by Model-->
-4. [Claude·奥普斯 (Claude Opus)、十四行诗 (Sonnet) 和俳句 (Haiku)：您应该使用哪一个？](https://openrouter.ai/blog/insights/claude-opus-vs-sonnet-vs-haiku/)（2026-10-30） <!--orig:Claude Opus vs Sonnet vs Haiku: Which Should You Use?-->
+1. [如何构建你自己的常驻 AI agent](https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/)（2026-10-31） <!--orig:How to Build Your Own Always-On AI Agent-->
+2. [开放权重模型与闭源权重模型：有什么区别？](https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/)（2026-10-31） <!--orig:Open-Weight vs Closed-Weight Models: What's the Difference?-->
+3. [Claude Code 要多少钱？按模型划分的实际会话成本](https://openrouter.ai/blog/insights/claude-code-cost/)（2026-10-30） <!--orig:How Much Does Claude Code Cost? Real Session Costs by Model-->
+4. [Claude Opus vs Sonnet vs Haiku：你该用哪个？](https://openrouter.ai/blog/insights/claude-opus-vs-sonnet-vs-haiku/)（2026-10-30） <!--orig:Claude Opus vs Sonnet vs Haiku: Which Should You Use?-->
 5. [如何用 LLM 从 PDF 中提取表格](https://openrouter.ai/blog/tutorials/extract-tables-from-pdf-llm/)（2026-10-29） <!--orig:How to Extract Tables from a PDF with an LLM-->
 6. [如何防止提示注入：13 种攻击实测](https://openrouter.ai/blog/tutorials/prevent-prompt-injection/)（2026-10-29） <!--orig:How to Prevent Prompt Injection: 13 Attacks, Tested-->
 7. [Claude 529 过载：这意味着什么，以及怎么修](https://openrouter.ai/blog/tutorials/claude-529-overloaded/)（2026-10-28） <!--orig:Claude 529 Overloaded: What It Means and How to Fix It-->

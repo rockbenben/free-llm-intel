@@ -15,27 +15,27 @@
       <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
       <description>原文标题：Best Jev Alternatives: Hosted APIs and Open Models (2026)</description>
       <content:encoded><![CDATA[<h1>最佳 JEV 替代方案：托管 API 和开放模型 (2026)</h1>
-<p>发布于 2026.10.30 由 Stefan Fidanov</p>
-<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/jev.png" alt="最佳 Jev 替代方案：托管 API 和开放模型 (2026)"></p>
-<p>Jev 在诞生一个月之前就已经有了竞争对手。 TypeSafe 于 9 月 15 日推出，到 10 月第一周，OpenAI 宣布推出 Decisions API，Cloudflare 和 AWS 发布了开放权重决策模型，GitHub 上有一系列开源 Jev 替代品：Laya、OpenJev、Kev、AnyJev。我们运行了 Jev 以及您今天实际上可以根据相同决策实现的替代方案。</p>
-<p>Jev 替代方案分为三种路线：托管决策 API、您自己运行的开放模型，或者您的产品已经调用的 LLM 端点，被告知仅从固定列表中回答。第三条路线是 DeepInfra 适合的地方，大多数团队今天下午都可以尝试。这不是最快的路线。 Jev 的回答时间中位数为 245 毫秒，而 DeepInfra 上的 DeepSeek-V4.1-Flash 的回答时间为 568 毫秒，准确率相同为 96.5%，笔记本电脑上的 2B 模型击败了两者。</p>
-<h2>Jev 替代品必须取代什么</h2>
-<p><a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev">Jev</a> 是一个决策模型。你向它发送一个状态（文本或 JSON）和一组命名问题，它会发回数字：哪个选项适合、文本位于刻度上的位置，或者是/否陈述的可能性有多大。它从不写散文，所以它不能返回你没有给它的选项。我们的 <a href="https://deepinfra.com/blog/typesafe-jev-review">TypeSafe Jev 评论</a> 在五个小作业上对其进行了测试。</p>
-<p>任何替代方案都必须满足四件事，而 Jev 对每件事都设定了标准：</p>
-<table><thead><tr><th><strong>您需要什么</strong></th><th><strong>Jev 1.13.0</strong></th></tr></thead><tbody><tr><td>答案类型</td><td>选择（最多 255 个选项）、分数（2 至 10 级）、noul（一项是/否陈述）</td></tr><tr><td>信心</td><td>每个选项的概率，加上选择的置信度域</td></tr><tr><td>速度</td><td>TypeSafe 规定为 70 至 500 毫秒；我们的评论中 p50 约为 280 毫秒</td></tr><tr><td>价格</td><td>每 100 万个输入代币 0.042 美元，免费输出</td></tr></tbody></table>
-<p>速度和价格是 Jev 最难击败的地方：审查的 5 项工作使用了大约 11,500 个输入代币，而 5 美元的试算表从未发生变化。但信心是替代方案最不同的地方。只有当 0.9 意味着大约十分之九正确时，概率才有用。这就是校准，按照预期校准误差 (ECE) 进行测量，即规定置信度与实际精度之间的平均差距。 <a href="https://deepinfra.com/blog/ai-model-calibration-benchmark">AI 模型校准，无人优化的基准</a> 涵盖了一旦代码中的阈值依赖于该差距，该差距会产生什么影响。</p>
-<h2>路线 1：托管 Jev 替代方案</h2>
-<p>托管 API 保留了 Jev 的最佳特性：无需运行任何内容。改变的是你所依赖的人。</p>
-<p><strong>OpenAI Decisions API。</strong> OpenAI 在 <a href="https://openai.com/index/devday-2026-recap/">9 月 29 日的 DevDay</a> 上宣布了它，并于 10 月 6 日将其作为 <a href="https://developers.openai.com/api/docs/guides/decisions">公共测试版</a> 开放。它在 GPT-6 Luna 上运行，可以读取文本和图像；图像是杰夫无法读取的一种输入。选择答案以 Jev 的形状返回，即每个选项的概率加上置信域。每 100 万个代币的输入成本为 0.10 美元，输出免费，略高于 Jev 费率的两倍。这不是本轮测试的一部分。</p>
-<p><strong>Cloudflare Clef 和 Clef-flash。</strong> Cloudflare <a href="https://blog.cloudflare.com/clef-decision-models/">于 10 月 1 日</a> 在 Apache 2.0 下作为开放权重发布，并在 <a href="https://developers.cloudflare.com/workers-ai/models/clef/">Workers AI</a> 上托管它们，价格为每 100 万个输入代币 0.24 美元和 0.09 美元。这是 Jev 价格的两到六倍，但如果托管条款不再适合您，您可以将权重转移到其他地方，并且 Clef 会读取图像和视频。 Cloudflare 的发布帖子将 Clef 在 BANKING77 上的宏观 F1 评级为 94.2，而 Jev 为 79.7。这些是供应商的号码； Clef 的托管副本也没有在我们的车道上运行。</p>
-<p>与任何一家公司的交易都与 Jev 相同：来自一家公司的特定于决策的 API，其定价与您已支付的 LLM 费用分开。</p>
-<h2>路线 2：您自己运行的开源 Jev 替代方案</h2>
-<p>开源 Jev 替代方案分为三个系列，每个系列的运行成本由该系列决定。</p>
-<p><strong>小型编码器。</strong> Laya 是一款 322M 至 421M ModernBERT 级模型，带有决策头，对于 CPU 来说足够轻。它的自述文件显示了编码器耗尽的地方：相对于 Jev 的第三方公布的数字，它赢得了 4 路 AG News（0.950 到 0.910），并在 BANKING77 的 70 多个标签上下降到 0.425，而 0.870。</p>
-<p><strong>带有指针头的微调 Qwen。</strong> Strands Decider 2B、OpenJev 和 Kev 将小型 Qwen 模型的文本头替换为分类器头，因此一次前向传递会返回每个选项的概率。 Kev 1.0 的版本为 0.8B 到 27B，其自述文件将 Kev-27B 的版本设置为 0.851，而在同一开发集上，Jev 的版本为 0.857。 AWS 发布了 Strands Decider 2B 的权重、训练数据和配方。</p>
-<p><strong>免训练 logit 阅读器。</strong> SemIf 和诺基亚的 AnyJev 通过选项标签读取股票开放模型的下一个令牌概率，无需任何训练。 AnyJev 还轮换期权顺序以取消仓位偏差，这在 Qwen3-8B 上将 20 路 BANKING77 准确度从 0.747 提高到 0.803，并将 ECE 从 0.240 降低到 0.184。</p>
-<table><thead><tr><th><strong>项目</strong></th><th><strong>家庭</strong></th><th><strong>尺寸</strong></th><th><strong>许可证</strong></th><th><strong>Jev 兼容 API</strong></th><th><strong>运行于</strong></th></tr></thead><tbody><tr><td><a href="https://github.com/NandhaKishorM/laya">Laya</a></td><td>编码器</td><td>322M 至 421M</td><td>阿帕奇2.0</td><td>是的，/v1/systemone</td><td>CPU、CUDA、Apple MPS</td></tr><tr><td><a href="https://github.com/strands-labs/strands-decider">Strands Decider 2B</a></td><td>指针头</td><td>约2B（Qwen3.5-2B）</td><td>阿帕奇2.0</td><td>/v1/systemone，未通过 AWS 针对 Jev 进行验证</td><td>CUDA、Apple MPS 或 MLX、CPU</td></tr><tr><td><a href="https://github.com/alanhuangyoo/OpenJev">OpenJev</a></td><td>指针头</td><td>1.7B、4B、8B</td><td>Apache 2.0，一些训练数据仅供研究</td><td>是的，/v1/systemone</td><td>一个消费级 GPU，或一台 1.7B 的笔记本电脑</td></tr><tr><td><a href="https://github.com/jaredpalmer/kev">Kev</a></td><td>指针头</td><td>0.8B 至 27B</td><td>阿帕奇2.0</td><td>是的，/v1/systemone</td><td>Apple 芯片上的 GPU 或 MLX</td></tr><tr><td><a href="https://github.com/nokia-applied-research/AnyJev">AnyJev</a></td><td>免培训</td><td>任何开放模型</td><td>阿帕奇2.0</td><td>不，Python 库</td><td>变形金刚、vLLM、SGLang、llama.cpp</td></tr><tr><td><a href="https://github.com/TheoLeeCJ/SemIf">SemIf</a></td><td>免培训</td><td>任何开放模型</td><td>麻省理工学院</td><td>没有</td><td>CUDA、MLX、WebGPU</td></tr></tbody></table>
-<p>六个中的四个使用 Jev 的 /v1/systemone 有线格式，因此将评论的帮助程序移动到本地模型就是更改 URL：</p>
+<p>发布于 2026.10.30，作者 Stefan Fidanov</p>
+<p><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/10/jev.png" alt="最佳 JEV 替代方案：托管 API 和开放模型 (2026)"></p>
+<p>Jev 还没满月就有了竞争对手。TypeSafe 于 9 月 15 日发布了它，到 10 月的第一周，OpenAI 已宣布推出 Decisions API，Cloudflare 和 AWS 已交付开放权重的决策模型，GitHub 上则摆出了一排开源的 Jev 替代方案：Laya、OpenJev、Kev、AnyJev。我们用同一批决策任务跑了 Jev 和你今天实际能触及的那些替代方案。</p>
+<p>Jev 的替代方案可归为三条路线：托管决策 API、自己跑的开放模型，或者让你产品已经在调用的 LLM endpoint 只从固定列表里作答。第三条路线正是 DeepInfra 的位置，大多数团队今天下午就能试。它不是最快的那条：Jev 的中位耗时是 245 ms，而 DeepInfra 上的 DeepSeek-V4.1-Flash 在同样的 96.5% 准确率下要 568 ms，跑在笔记本上的一个 2B 模型则把两者都甩在了后面。</p>
+<h2>Jev 替代方案必须替代什么</h2>
+<p><a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev">Jev</a> 是一个决策模型。你发给它一个状态（文本或 JSON）和一组有名字的问题，它发回的是数字：哪个选项合适、文本落在量表的哪个位置，或者一个是否陈述的可能性有多大。它从不写散文，因此不会返回你没给过它的选项。我们的 <a href="https://deepinfra.com/blog/typesafe-jev-review">TypeSafe Jev 评测</a>在五个小任务上测试了它。</p>
+<p>任何替代方案都得在四件事上不落下风，而 Jev 在每一件上都立了标杆：</p>
+<table><thead><tr><th><strong>你需要什么</strong></th><th><strong>Jev 1.13.0</strong></th></tr></thead><tbody><tr><td>回答类型</td><td>choice（最多 255 个选项）、score（2 到 10 级）、noul（一个是否陈述）</td></tr><tr><td>置信度</td><td>每个选项一个概率，choice 上另有一个 confidence 字段</td></tr><tr><td>速度</td><td>TypeSafe 标称 70 到 500 ms；我们评测里约 280 ms p50</td></tr><tr><td>价格</td><td>每 1M 输入 token $0.042，输出免费</td></tr></tbody></table>
+<p>速度和价格正是 Jev 最难被击败的地方：评测里的五个任务一共用了约 11,500 个输入 token，$5 的试用余额纹丝不动。但置信度是各替代方案差异最大的地方。只有当 0.9 意味着大约十次里有九次是对的，概率才有帮助。这就是校准，下文以期望校准误差（ECE）来度量，即声称的置信度与实际准确率之间的平均差距。<a href="https://deepinfra.com/blog/ai-model-calibration-benchmark">AI 模型校准：没人优化的那个基准</a>讲的正是当你代码里的某个阈值开始依赖它时，这条差距会带来什么。</p>
+<h2>路线一：托管的 Jev 替代方案</h2>
+<p>托管 API 保留了 Jev 最好的性质：你什么都不用自己跑。变的是你依赖的人是谁。</p>
+<p><strong>OpenAI Decisions API。</strong> OpenAI 在 <a href="https://openai.com/index/devday-2026-recap/">9 月 29 日的 DevDay</a> 上宣布了它，并于 10 月 6 日开放为<a href="https://developers.openai.com/api/docs/guides/decisions">公开测试版</a>。它跑在 GPT-6 Luna 上，文本和图像都能读；图像恰是 Jev 唯一读不了的输入。choice 回答按 Jev 的形状返回：每个选项一个概率，外加一个 confidence 字段。输入每 1M token $0.10，输出免费，比 Jev 的费率高出两倍还多一点。这一轮测试没有包含它。</p>
+<p><strong>Cloudflare Clef 与 Clef-flash。</strong> Cloudflare 于 <a href="https://blog.cloudflare.com/clef-decision-models/">10 月 1 日</a>将两者以 Apache 2.0 开放权重发布，并托管在 <a href="https://developers.cloudflare.com/workers-ai/models/clef/">Workers AI</a> 上，输入价格为每 1M token $0.24 和 $0.09。这是 Jev 价格的两到六倍，但如果托管条款不再合用，你可以把权重搬到别处，而且 Clef 能读图像和视频。Cloudflare 的发布文章称 Clef 在 BANKING77 上取得 94.2 的 macro-F1，而 Jev 是 79.7。这些是厂商自己给的数字；Clef 的托管版本同样没进我们的测试赛道。</p>
+<p>选这两者的代价和选 Jev 一样：一家公司提供的决策专用 API，与你已经在付费的那个 LLM 分开计价。</p>
+<h2>路线二：自己跑的开源 Jev 替代方案</h2>
+<p>开源的 Jev 替代方案分成三个家族，而家族决定了每一个的运行成本。</p>
+<p><strong>小型 encoder。</strong> Laya 是一个 322M 到 421M、ModernBERT 级别、带决策头的模型，轻到 CPU 就能跑。它的 README 指出了 encoder 的极限在哪：对照第三方公布的 Jev 数字，它在 4 分类的 AG News 上胜出（0.950 对 0.910），却在 BANKING77 的 70 多个标签上跌到 0.425 对 0.870。</p>
+<p><strong>带 pointer head 的微调 Qwen。</strong> Strands Decider 2B、OpenJev 和 Kev 把小型 Qwen 模型的文本头换成分类头，于是一次前向传播就能返回每个选项的概率。Kev 1.0 提供 0.8B 到 27B，其 README 称在同一开发集上 Kev-27B 为 0.851，对 Jev 的 0.857。AWS 公布了 Strands Decider 2B 的权重、训练数据和方案。</p>
+<p><strong>免训练的 logit 读取器。</strong> SemIf 和 Nokia 的 AnyJev 直接读取现成开放模型在选项标签上的 next-token 概率，什么都不用训练。AnyJev 还会轮换选项顺序来抵消位置偏置，在 Qwen3-8B 上把 20 分类的 BANKING77 准确率从 0.747 提到 0.803，并把 ECE 从 0.240 压到 0.184。</p>
+<table><thead><tr><th><strong>项目</strong></th><th><strong>家族</strong></th><th><strong>规模</strong></th><th><strong>许可证</strong></th><th><strong>Jev 兼容 API</strong></th><th><strong>运行于</strong></th></tr></thead><tbody><tr><td><a href="https://github.com/NandhaKishorM/laya">Laya</a></td><td>encoder</td><td>322M 到 421M</td><td>Apache 2.0</td><td>有，/v1/systemone</td><td>CPU、CUDA、Apple MPS</td></tr><tr><td><a href="https://github.com/strands-labs/strands-decider">Strands Decider 2B</a></td><td>pointer head</td><td>约 2B（Qwen3.5-2B）</td><td>Apache 2.0</td><td>/v1/systemone，AWS 未对照 Jev 验证</td><td>CUDA、Apple MPS 或 MLX、CPU</td></tr><tr><td><a href="https://github.com/alanhuangyoo/OpenJev">OpenJev</a></td><td>pointer head</td><td>1.7B、4B、8B</td><td>Apache 2.0，部分训练数据仅限研究</td><td>有，/v1/systemone</td><td>单张消费级 GPU，或 1.7B 跑在笔记本上</td></tr><tr><td><a href="https://github.com/jaredpalmer/kev">Kev</a></td><td>pointer head</td><td>0.8B 到 27B</td><td>Apache 2.0</td><td>有，/v1/systemone</td><td>GPU，或 Apple silicon 上的 MLX</td></tr><tr><td><a href="https://github.com/nokia-applied-research/AnyJev">AnyJev</a></td><td>免训练</td><td>任意开放模型</td><td>Apache 2.0</td><td>无，Python 库</td><td>transformers、vLLM、SGLang、llama.cpp</td></tr><tr><td><a href="https://github.com/TheoLeeCJ/SemIf">SemIf</a></td><td>免训练</td><td>任意开放模型</td><td>MIT</td><td>无</td><td>CUDA、MLX、WebGPU</td></tr></tbody></table>
+<p>六个项目里有四个讲 Jev 的 /v1/systemone 线格式，所以把评测里的 helper 换到本地模型只需要换个 URL：</p>
 <pre><code>import os, requests
 
 def ask(state, questions, url=&quot;https://api.typesafe.ai/v1/systemone&quot;, key=None, model=&quot;jev-1.13.0&quot;):
@@ -54,9 +54,9 @@ ticket = &quot;I was charged twice for my March invoice.&quot;
 hosted = ask(ticket, QUEUE, key=os.environ[&quot;TYPESAFE_API_KEY&quot;])
 # Strands Decider 2B on the same laptop: strands-decider serve &lt;checkpoint&gt; --port 8000
 local = ask(ticket, QUEUE, url=&quot;http://127.0.0.1:8000/v1/systemone&quot;)copy</code></pre>
-<p>AWS 的文档称 Strands 服务器与 Jev 的 API 的兼容性尚未得到验证。在我们的运行中，通过相同的ask() 帮助器，仅交换了URL，未更改相同的请求。</p>
-<h2>路线 3：具有结构化输出的 DeepInfra 上的 Jev 式决策</h2>
-<p>大多数了解 Jev 的团队已经为 LLM 端点付费。该端点也可以做出决定吗？如果它服务于开放模型，是的，一旦你剥夺了模型的编写自由。 DeepInfra 支持 OpenAI 兼容的<a href="https://docs.deepinfra.com/chat/structured-outputs">结构化输出</a> json_schema 模式，并且唯一字段是选项 id 枚举的模式让解码器要做一件事：从列表中选择。没有可供解析的自由文本，并且您得到了与 Jev 所销售的相同的保证，即答案始终是您的选择之一。</p>
+<p>AWS 的文档说 Strands 服务与 Jev API 的兼容性未经证实。而在我们的运行里，它原样接下了同一个请求——还是同一个 ask() helper，只换了 URL。</p>
+<h2>路线三：在 DeepInfra 上用 structured outputs 做 Jev 式决策</h2>
+<p>读到 Jev 的大多数团队已经在为某个 LLM endpoint 付费。那个 endpoint 能不能顺便把决策也做了？只要它服务的是开放模型，就能——前提是你拿走模型自由书写的能力。DeepInfra 支持兼容 OpenAI 的 <a href="https://docs.deepinfra.com/chat/structured-outputs">structured outputs</a> json_schema 模式，而一个只含一个字段的 schema——该字段是你选项 id 的 enum——会让解码器只剩一件事可做：从列表里挑。没有自由文本要解析，而且你能拿到 Jev 兜售的那条同样的保证：答案永远是你给出的选项之一。</p>
 <pre><code>import json, math, os
 from openai import OpenAI
 
@@ -80,9 +80,9 @@ def decide(state, question, options, model=&quot;Qwen/Qwen3.5-9B&quot;, priority
     conf = next((math.exp(t.logprob) for t in r.choices[0].logprobs.content
                  if t.token.strip(' &quot;') and choice.startswith(t.token.strip(' &quot;'))), None)
     return choice, confcopy</code></pre>
-<p>有一些设置很重要。温度=0使得拾取可重复。 <a href="https://deepinfra.com/Qwen/Qwen3.5-9B">Qwen3.5-9B</a>是一种混合推理模型，所以思考必须关闭，否则你付出一段推理才能得到一个单词。 logprobs=True 返回每个生成令牌的对数概率，所选值的第一个令牌是该路线最接近置信度得分的事物。这只是选择的概率，而不是每个选项的概率。正如<a href="https://deepinfra.com/blog/deepinfra-json-only-responses">可靠的纯 JSON 响应</a> 所解释的，像这样的小型模式也是失败最少的模式。</p>
-<p>费用与 Jev 不同。 Jev 仅对输入进行计费。此处，选项列表随提示一起出现，输出约为 7 个 JSON 令牌，因此，一项决策大约需要一个简短的提示加上一些按模型标价计算的输出令牌。用于结构化输出的目录标签的任何模型都可以工作，包括每 1M 输入代币 0.03 美元的 <a href="https://deepinfra.com/openai/gpt-oss-20b">gpt-oss-20b</a> 和 0.07 美元的 <a href="https://deepinfra.com/mistralai/Mistral-Small-3.2-24B-Instruct-2506">Mistral Small 3.2</a>。</p>
-<p>当一项工作需要每个选项的概率时，就像评论的票务路由余量那样，直接对选项进行评分。 echo=True 的完成端点返回每个提示标记的对数概率，因此您将每个选项附加到提示并读取模型找到它的可能性。这是 SemIf 的方法，通过 DeepInfra 的 API 重建：</p>
+<p>几个设置承担了关键分量。temperature=0 让选择可复现。<a href="https://deepinfra.com/Qwen/Qwen3.5-9B">Qwen3.5-9B</a> 是混合推理模型，所以必须把 thinking 关掉，否则你花钱推理了一大段，只换回一个词。logprobs=True 返回每个生成 token 的对数概率，而所选值的第一个 token 是这条路线里最接近置信度分数的东西。它只是所选答案的概率，不是每个选项的概率。像这样的小 schema 也是最不容易出错的，<a href="https://deepinfra.com/blog/deepinfra-json-only-responses">可靠的纯 JSON 响应</a>一文有解释。</p>
+<p>成本结构与 Jev 不同。Jev 只对输入计费。在这里，选项列表跟着 prompt 一起进去，输出是大约七个 token 的 JSON，所以一次决策大约是一个短 prompt 加几个输出 token，按模型的牌价计。目录里带 structured output 标记的模型都行，包括每 1M 输入 token $0.03 的 <a href="https://deepinfra.com/openai/gpt-oss-20b">gpt-oss-20b</a> 和 $0.07 的 <a href="https://deepinfra.com/mistralai/Mistral-Small-3.2-24B-Instruct-2506">Mistral Small 3.2</a>。</p>
+<p>当任务需要每个选项的概率——就像评测里的工单路由边际所做的那样——就直接给选项打分。completions endpoint 配 echo=True 会返回每个 prompt token 的对数概率，于是你把每个选项接到 prompt 后面，读出模型觉得它有多大可能。这就是 SemIf 的方法，在 DeepInfra 的 API 上重做了一遍：</p>
 <pre><code>TMPL = &quot;&lt;|im_start|&gt;user\n{u}&lt;|im_end|&gt;\n&lt;|im_start|&gt;assistant\n&lt;think&gt;\n\n&lt;/think&gt;\n\n&quot;
 
 def option_probs(prompt, options, model=&quot;Qwen/Qwen3.5-9B&quot;):
@@ -95,19 +95,19 @@ def option_probs(prompt, options, model=&quot;Qwen/Qwen3.5-9B&quot;):
                         if len(base) &lt;= off &lt; len(base) + len(o))
     z = sum(math.exp(v) for v in scores.values())
     return {o: math.exp(v) / z for o, v in scores.items()}copy</code></pre>
-<p>Echo 每个选项需要调用一次，并且每次都会重新发送提示，因此包含许多选项的长状态会快速增加。在下面的烘烤中，每个决策的成本几乎是同一模型上枚举通道的三倍。两个读数传回不同的东西，这种差异决定了每个读数可以服务哪些工作：</p>
-<p>Echo 每个选项需要调用一次，并且每次都会重新发送提示，因此包含许多选项的长状态会快速增加。在下面的烘烤中，每个决策的成本几乎是同一模型上枚举通道的三倍。两个读数传回不同的东西，这种差异决定了每个读数可以服务哪些工作：</p>
-<h2>在一组共享集上测试的 Jev 替代方案</h2>
-<p>每个通道都从 SemIf 的 MIT 许可的 <a href="https://github.com/TheoLeeCJ/SemIf/blob/master/benchmarks/data/authored144.jsonl">authored144 集</a> 中获得相同的 144 个决策：三个系列中的三向选择，询问证据是否支持某个主张、规则是否允许采取行动以及哪个候选人满足要求。 SemIf 自己的 4B 模型报告其平衡精度为 0.813。 10 月 17 日，一次从笔记本电脑发出一个呼叫，因此延迟是完整的客户端往返。准确性与标签完全匹配，ECE 使用 10 个置信区间，每 1,000 个决策的成本来自每个响应的计费使用情况。</p>
-<p>TypeSafe 的 API 上的通道是 Jev 1.13.0； DeepInfra 上的 Qwen3.5-9B 和 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash</a> 具有枚举结构化输出； Qwen3.5-9B再次进入DeepInfra的优先级； Qwen3.5-9B带回波评分；和 Strands Decider 2B 在 M1 Max MacBook Pro 上通过 MPS。 DeepSeek-V4.1-Flash 位于该集合中，因为它是审核用于起草回复的模型，即“您已调用的端点”情况。</p>
-<table><thead><tr><th><strong>车道</strong></th><th><strong>哪里</strong></th><th><strong>准确度</strong></th><th><strong>欧洲经委会</strong></th><th><strong>p50 毫秒</strong></th><th><strong>p95 毫秒</strong></th><th><strong>每千美元</strong></th></tr></thead><tbody><tr><td>杰夫 1.13.0</td><td>类型安全 API</td><td>96.5%</td><td>0.011</td><td>0.011 245</td><td>245 341</td><td>341 0.0156 美元</td></tr><tr><td>DeepSeek-V4.1-Flash，枚举</td><td>深基础设施</td><td>96.5%</td><td>0.040</td><td>0.040 568</td><td>568 903</td><td>903 0.0173 美元</td></tr><tr><td>Qwen3.5-9B，回声</td><td>DeepInfra 完成情况</td><td>93.8%</td><td>0.043</td><td>0.043 632</td><td>632 1,218</td><td>1,218 0.0364 美元</td></tr><tr><td>绞线决策者 2B</td><td>本地，M1 Max over MPS</td><td>93.8%</td><td>0.140</td><td>0.140 154</td><td>154 237</td><td>237 $0（您的硬件）</td></tr><tr><td>Qwen3.5-9B，枚举，优先级</td><td>DeepInfra 优先级</td><td>92.4%</td><td>0.059</td><td>0.059 1,236</td><td>1,236 1,822</td><td>1,822 0.0189 美元</td></tr><tr><td>Qwen3.5-9B，枚举</td><td>深基础设施</td><td>91.7%</td><td>0.058</td><td>0.058 1,222</td><td>1,222 2,578</td><td>2,578 0.0126 美元</td></tr></tbody></table>
-<p>Jev 和 DeepSeek-V4.1-Flash 在准确度上并列，均为 144 分中的 139 分，Jev 的置信度是所有通道中校准最好的，ECE 为 0.011，而 DeepSeek 为 0.040。枚举通道的第一个代币置信度比预期要好。在每个 DeepInfra 通道上，给出的答案在 0.85 或更高的情况下在 99% 的情况下都是正确的，因此只有当读数必须涵盖每个选项而不是指定获胜者时，回声评分才会获得额外的调用。但斯特兰德斯是个奇怪的人。它在准确度上与 echo 相当，但低估了自己，平均置信度为 0.80，而 94% 的时间都是正确的。</p>
-<p>笔记本电脑上的 Strands 最快为 154 毫秒，无需支付网络跳跃费用。通过网络，Jev 的响应时间为 245 毫秒，DeepSeek-V4.1-Flash 的响应时间为 568 毫秒，而较小的型号 Qwen3.5-9B 在有或没有优先级的情况下花费了约 1.2 秒。</p>
-<p>具有枚举模式的 Qwen3.5-9B 是最便宜的托管通道，每 1,000 个决策为 0.0126 美元，比 Jev 低约 20%。 DeepSeek-V4.1-Flash 的成本为 0.0173 美元，而 echo 的成本为 0.0364 美元，因为它每个三向决策进行 3 次调用。换句话说，在此处的任何托管通道上，一百万个决策的费用为 13 至 36 美元。</p>
-<p>一个限制：每一行都是三个选项。该集不测试分数或 noul，或 70+ 标签路由。</p>
-<h2>当速度决定时：DeepInfra 前面的本地决策者</h2>
-<p>如果一个门位于请求路径上，就像代理前面的提示注入屏幕一样，那么几百毫秒就很重要。 DeepInfra 的<a href="https://deepinfra.com/blog/priority-service-tier">优先级</a> 将请求移动到调度队列的前面，价格是标准价格的 1.5 倍，在我们的运行中，它几乎没有移动 Qwen3.5-9B 的 p50（1,222 到 1,236 毫秒），同时将其 p95 从 2,578 减少到 1,822 毫秒。优先级会修剪慢尾并保留典型的呼叫，即使是修剪后的尾部也比 Jev 的 341 毫秒高出五倍多。对于门，更快的 DeepInfra 杠杆是模型：DeepSeek-V4.1-Flash 的 p95 在标准层上为 903 毫秒。另一方面，可以等待的决定，例如每晚对每张开放门票重新评分，可以在 <a href="https://deepinfra.com/blog/flex-service-tier">flex tier</a> 上以 20% 的折扣运行。</p>
-<p>另一个答案是停止通过网络发送每个决定。应用服务器上的 2B 决策模型可以回答简短、简单的问题，任何不确定的问题或任何太长的问题都会交给 DeepInfra。 Strands Decider 2B 读取<a href="https://www.eesel.ai/blog/strands-decider">默认情况下 4,096 个代币</a>，因此长状态会自动升级：</p>
+<p>Echo 每个选项要一次调用，而且每次都重发 prompt，所以长状态加多选项很快就会累积起来。在下面的横向比拼里，它每次决策的成本几乎是同一模型上 enum 赛道的三倍。两种读数交回来的是不同的东西，而这个差别决定了各自能接哪些活：</p>
+<p>Echo 每个选项要一次调用，而且每次都重发 prompt，所以长状态加多选项很快就会累积起来。在下面的横向比拼里，它每次决策的成本几乎是同一模型上 enum 赛道的三倍。两种读数交回来的是不同的东西，而这个差别决定了各自能接哪些活：</p>
+<h2>在同一套题上测过的 Jev 替代方案</h2>
+<p>每条赛道都拿到同样的 144 个决策，来自 SemIf 那套 MIT 许可的 <a href="https://github.com/TheoLeeCJ/SemIf/blob/master/benchmarks/data/authored144.jsonl">authored144 数据集</a>：三个家族的三选项选择，分别问证据是否支持某个论断、某条规则是否允许某个动作，以及哪个候选人满足某项要求。SemIf 自家的 4B 模型在这套题上报出 0.813 的平衡准确率。调用于 10 月 17 日从一台笔记本上逐条发出，所以延迟是完整的客户端往返。准确率按与标签的精确匹配计，ECE 用十个置信度分箱，每 1,000 次决策的成本来自每个响应的计费用量。</p>
+<p>参赛赛道是：TypeSafe API 上的 Jev 1.13.0；DeepInfra 上用 enum structured outputs 的 Qwen3.5-9B 和 <a href="https://deepinfra.com/deepseek-ai/DeepSeek-V4.1-Flash">DeepSeek-V4.1-Flash</a>；再次上场、走 DeepInfra priority 层级的 Qwen3.5-9B；带 echo 打分的 Qwen3.5-9B；以及在 M1 Max MacBook Pro 上经 MPS 运行的 Strands Decider 2B。DeepSeek-V4.1-Flash 入选，是因为它就是评测里用来起草回复的那个模型，即「你已经在调用的 endpoint」那种情形。</p>
+<table><thead><tr><th><strong>赛道</strong></th><th><strong>位置</strong></th><th><strong>准确率</strong></th><th><strong>ECE</strong></th><th><strong>p50 ms</strong></th><th><strong>p95 ms</strong></th><th><strong>$ / 1k</strong></th></tr></thead><tbody><tr><td>Jev 1.13.0</td><td>TypeSafe API</td><td>96.5%</td><td>0.011</td><td>245</td><td>341</td><td>$0.0156</td></tr><tr><td>DeepSeek-V4.1-Flash，enum</td><td>DeepInfra</td><td>96.5%</td><td>0.040</td><td>568</td><td>903</td><td>$0.0173</td></tr><tr><td>Qwen3.5-9B，echo</td><td>DeepInfra completions</td><td>93.8%</td><td>0.043</td><td>632</td><td>1,218</td><td>$0.0364</td></tr><tr><td>Strands Decider 2B</td><td>本地，M1 Max 经 MPS</td><td>93.8%</td><td>0.140</td><td>154</td><td>237</td><td>$0（你自己的硬件）</td></tr><tr><td>Qwen3.5-9B，enum，priority</td><td>DeepInfra priority 层级</td><td>92.4%</td><td>0.059</td><td>1,236</td><td>1,822</td><td>$0.0189</td></tr><tr><td>Qwen3.5-9B，enum</td><td>DeepInfra</td><td>91.7%</td><td>0.058</td><td>1,222</td><td>2,578</td><td>$0.0126</td></tr></tbody></table>
+<p>Jev 和 DeepSeek-V4.1-Flash 在准确率上打平，144 题各对 139 题，而 Jev 的置信度是所有赛道里校准最好的：ECE 0.011，对 DeepSeek 的 0.040。enum 赛道的首 token 置信度比预期更靠得住。在每条 DeepInfra 赛道上，给出 0.85 及以上置信度的答案有 99% 是对的，所以只有当读数必须覆盖每个选项而不是只点名胜者时，echo 打分的那些额外调用才值回票价。但 Strands 是个异类。它在准确率上追平了 echo，却低估了自己：平均置信度只有 0.80，实际却有 94% 的时间是对的。</p>
+<p>笔记本上的 Strands 以 154 ms 最快，因为它不用为网络跳数付费。走网络的赛道里，Jev 245 ms 作答、DeepSeek-V4.1-Flash 568 ms，而更小一些的模型 Qwen3.5-9B 无论有没有 priority 都要大约 1.2 秒。</p>
+<p>带 enum schema 的 Qwen3.5-9B 是最便宜的托管赛道，每 1,000 次决策 $0.0126，比 Jev 低约 20%。DeepSeek-V4.1-Flash 是 $0.0173，echo 则 $0.0364——因为它每个三选项决策要发三次调用。换个说法：一百万次决策，在这里任何一条托管赛道上都是 $13 到 $36。</p>
+<p>一个局限：表里每一行都是三选项的 choice。这套题没测 score 或 noul，也没测 70 多个标签的工单路由。</p>
+<h2>当速度决定一切：把本地决策器放在 DeepInfra 前面</h2>
+<p>如果有一道闸门卡在请求路径上——比如 agent 前面的 prompt 注入筛查——几百毫秒就很要命。DeepInfra 的 <a href="https://deepinfra.com/blog/priority-service-tier">priority 层级</a>以 1.5 倍标准价把请求提到调度队列最前面，而在我们的运行里，它几乎没动 Qwen3.5-9B 的 p50（1,222 到 1,236 ms），只是把 p95 从 2,578 压到 1,822 ms。Priority 削的是慢尾巴，放过了典型调用，而即便削过的尾巴仍是 Jev 341 ms 的五倍多。对闸门来说，DeepInfra 上更快的杠杆是模型本身：DeepSeek-V4.1-Flash 在标准层级的 p95 是 903 ms。反过来，等得起的决策——比如每晚给所有未关闭工单重新打分——可以放到打八折的 <a href="https://deepinfra.com/blog/flex-service-tier">flex 层级</a>上跑。</p>
+<p>另一个答案是别再把所有决策都发过网络。应用服务器上的 2B 决策模型负责回答那些又短又简单的问题，它拿不准的、或超出它长度处理能力的，再交给 DeepInfra。Strands Decider 2B <a href="https://www.eesel.ai/blog/strands-decider">默认读 4,096 个 token</a>，所以长状态会自动升级出去：</p>
 <pre><code>def route_ticket(ticket):
     a = ask(ticket, QUEUE, url=&quot;http://127.0.0.1:8000/v1/systemone&quot;)[&quot;queue&quot;]
     if max(a[&quot;probabilities&quot;].values()) &gt;= 0.85 and len(ticket) &lt; 8000:
@@ -116,24 +116,24 @@ def option_probs(prompt, options, model=&quot;Qwen/Qwen3.5-9B&quot;):
     choice, conf = decide(ticket, q[&quot;instructions&quot;], q[&quot;criteria&quot;],
                           model=&quot;deepseek-ai/DeepSeek-V4.1-Flash&quot;, priority=True)
     return choice, &quot;deepinfra&quot;copy</code></pre>
-<p>这是评论模型路由器的私人通道，指向另一个方向。在那里，本地模型将敏感提示保留在云端。在这里，它使快速、自信的决策远离网络，并在 2B 模型更有可能出错的情况下进行 DeepInfra 调用。 0.85 的阈值在烘烤组中保持不变。 Strands 将其 144 个答案中的 71 个置于该值或之上，并且所有 71 个答案都是正确的。将另外 73 个决策发送到 DeepSeek-V4.1-Flash 得到了 144 个决策中的 139 个，这是 Jev 的数字，其中一半的决策从未离开过机器。这是三选项问题的一轮，因此请重新检查您自己标签上的截止值。代理的相同两模型形状在<a href="https://deepinfra.com/blog/two-tier-agent-two-models">为什么两层代理需要两个模型</a>中。</p>
-<h2>选择哪个 Jev 替代方案</h2>
-<ul><li><strong>如果您需要 400 毫秒以下的托管 p95，请使用 Jev</strong>，您的输入是英文文本，并且可以接受封闭的 API。它在烘焙比赛中也拥有最佳的信心，其价格仅比最便宜的通道低一美分。</li><li><strong>如果您已经在那里调用开放模型，请使用 DeepInfra 结构化输出</strong>。它是相同的密钥、相同的 SDK 和另一种模式，每 1,000 个决策的价格为 0.013 美元到 0.017 美元，并且<a href="https://deepinfra.com/blog/small-open-weight-models-cost">小型开放权重模型</a>随着数量的增长而保持较低的价格。当工作需要每个选项的概率时，切换到回声评分。</li><li><strong>使用 Strands Decider 2B 或 OpenJev</strong> 用于请求路径上的门，或用于无法离开机器的数据。</li><li><strong>如果您需要来自其多语言检查点或仅 CPU 托管的 100 多种语言，请选择 Laya</strong>。</li><li><strong>如果您针对 Jev 进行原型设计并希望在自己的 GPU 或 Mac 上使用相同的线路格式，请选择 Kev</strong>。</li><li><strong>如果您已经在 vLLM 或 llama.cpp 上自行托管开放模型，并且想要在不进行任何训练的情况下获得每个选项的概率，请使用 AnyJev 或 SemIf</strong>。</li><li><strong>如果您的决策依赖于图像，请使用 Workers AI 或 OpenAI Decisions API 上的 Clef</strong>。只有 Clef 会看视频。</li></ul>
-<h2>常见问题解答</h2>
-<h3>有免费的 Jev 替代品吗？</h3>
-<p>是的。上述所有六个开放项目在 Apache 2.0 或 MIT 下都是免费的，Strands Decider 2B、Laya 和 OpenJev 的 1.7B 模型可以在笔记本电脑上运行。你需要为硬件而不是代币付费，尽管 Jev 无论如何在小批量情况下都接近免费。</p>
-<h3>我可以使用常规的 LLM 代替 Jev 吗？</h3>
-<p>是的，如果你限制它的输出。枚举模式可以从固定列表中选择任何受支持的开放模型，而 logprobs 则可以为选择提供信心。预计比专用决策模型有更多的延迟（在我们的测试中，DeepSeek-V4.1-Flash 为 568 毫秒，而 Jev 为 245 毫秒），并关闭混合推理模型的思考。</p>
-<h3>OpenAI 的决策 API 是否返回概率？</h3>
-<p>是的。 OpenAI 的<a href="https://developers.openai.com/api/docs/guides/decisions">决策指南</a> 表示，选择答案包含每个选项的概率以及单独的置信字段。我们还没有测量这些概率的校准程度，因此在代码中的阈值取决于它们之前，请对照您自己的标记示例检查它们。</p>
-<h3>Jev 替代方案只能在 CPU 上运行吗？</h3>
-<p>是的，慢慢来。在 <a href="https://www.eesel.ai/blog/strands-decider">已发布的测试</a> 中，Strands Decider 2B 在八线程 Xeon 上的 CPU 上运行每个短输入大约需要 1.6 秒，而大约 3,000 个令牌则需要 16 到 18 秒。这适合批处理作业，而不适合用户等待的门。</p>
-<h2>从你已有的决策者开始</h2>
-<p>即使是最快的决策模型也需要一些东西来编写回复。如果该东西是 DeepInfra 上的开放模型，请从这里开始：<a href="https://deepinfra.com/Qwen/Qwen3.5-9B">DeepInfra 上的 Qwen3.5-9B</a>、枚举模式和 <a href="https://deepinfra.com/docs">DeepInfra 文档</a>。要尝试已经运行的模型，请更改模型字符串；架构保持不变，因此可以保证每个答案都来自您的列表。请通过 <a href="mailto:feedback@deepinfra.com">feedback@deepinfra.com</a>、<a href="https://discord.gg/deepinfra">Discord</a> 或 <a href="https://x.com/DeepInfra">X</a> 告诉我们您使用它路由的内容。</p>
+<p>这就是评测里那个模型路由器的私有赛道，只是方向调了个头：在那里，本地模型把敏感 prompt 挡在云端之外；在这里，它把又快又确定的决策留在网络之外，把 DeepInfra 调用花在 2B 模型更可能答错的案子上。0.85 这个阈值在比拼数据集上站得住。Strands 的 144 个答案里有 71 个达到或超过它，而这 71 个全对。剩下 73 个交给 DeepSeek-V4.1-Flash 后，总分 144 题对 139 题——正是 Jev 的数字——而一半决策从未离开过本机。这只是在三选项问题上跑的一次，所以务必用你自己的标签重新校验这条分界。agent 里同样的双模型形态见<a href="https://deepinfra.com/blog/two-tier-agent-two-models">为什么两层 agent 需要两个模型</a>。</p>
+<h2>该选哪个 Jev 替代方案</h2>
+<ul><li><strong>选 Jev</strong>，如果你需要托管 p95 低于 400 ms、输入是英文文本，且可以接受一个封闭 API。它在比拼里的置信度校准也是最好的，而价格与最便宜的赛道相差不到一分钱。</li><li><strong>选 DeepInfra structured outputs</strong>，如果你已经在那里调用某个开放模型。同一个 key、同一个 SDK、多一个 schema，每 1,000 次决策 $0.013 到 $0.017，而<a href="https://deepinfra.com/blog/small-open-weight-models-cost">小型开放权重模型</a>能在用量增长时把这个价格持续压低。任务需要每个选项的概率时，改用 echo 打分。</li><li><strong>选 Strands Decider 2B 或 OpenJev</strong>，用于请求路径上的闸门，或不能离开机器的数据。</li><li><strong>选 Laya</strong>，如果你需要它的多语言检查点支持的 100 多种语言，或只有 CPU 的托管环境。</li><li><strong>选 Kev</strong>，如果你照着 Jev 做过原型，想在自家的 GPU 或 Mac 上用同一种线格式。</li><li><strong>选 AnyJev 或 SemIf</strong>，如果你已经在 vLLM 或 llama.cpp 上自托管某个开放模型，想不训练任何东西就拿到每个选项的概率。</li><li><strong>选 Workers AI 上的 Clef 或 OpenAI Decisions API</strong>，如果你的决策依赖图像。能读视频的只有 Clef。</li></ul>
+<h2>FAQ</h2>
+<h3>有免费的 Jev 替代方案吗？</h3>
+<p>有。上面六个开放项目都免费，许可是 Apache 2.0 或 MIT，而 Strands Decider 2B、Laya 和 OpenJev 的 1.7B 模型都能在笔记本上跑。你付的是硬件而不是 token 的钱——不过 Jev 在小用量下本来也几乎免费。</p>
+<h3>我能用普通 LLM 代替 Jev 吗？</h3>
+<p>能，只要你约束它的输出。enum schema 能让任何受支持的开放模型从固定列表里挑，logprobs 则给出所选答案的置信度。只是延迟会比专用决策模型高（我们测得 DeepSeek-V4.1-Flash 为 568 ms，对 Jev 的 245 ms），而且在混合推理模型上要把 thinking 关掉。</p>
+<h3>OpenAI 的 Decisions API 返回概率吗？</h3>
+<p>会。OpenAI 的 <a href="https://developers.openai.com/api/docs/guides/decisions">Decisions 指南</a>说 choice 回答为每个选项携带一个概率，外加一个独立的 confidence 字段。我们还没实测过这些概率的校准程度，所以在你的代码里的阈值开始依赖它们之前，先对照你自己标注过的样例核一核。</p>
+<h3>Jev 替代方案能只在 CPU 上跑吗？</h3>
+<p>能，但慢。在<a href="https://www.eesel.ai/blog/strands-decider">公开测试</a>中，Strands Decider 2B 用 CPU 在八线程 Xeon 上跑，一个短输入大约 1.6 秒；约 3,000 token 时要 16 到 18 秒。这适合批处理任务，不适合用户在线等待的闸门。</p>
+<h2>从你已有的决策器开始</h2>
+<p>再快的决策模型也需要有个东西来写回复。如果那个东西是 DeepInfra 上的开放模型，就从那里开始：<a href="https://deepinfra.com/Qwen/Qwen3.5-9B">DeepInfra 上的 Qwen3.5-9B</a>、一个 enum schema，再加上 <a href="https://deepinfra.com/docs">DeepInfra 文档</a>。想试你已经在跑的那个模型，改一下 model 字符串即可；schema 不变，每条答案都出自你的列表那条保证也不变。欢迎告诉我们你用它在路由什么：<a href="mailto:feedback@deepinfra.com">feedback@deepinfra.com</a>、<a href="https://discord.gg/deepinfra">Discord</a> 或 <a href="https://x.com/DeepInfra">X</a> 都可以。</p>
 <p>相关文章</p>
-<p><a href="https://deepinfra.com/blog/kimi-k3-development-ready"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/kimi-K3.png" alt="Kimi K3 量产准备好了吗？真实世界分析"></a><a href="https://deepinfra.com/blog/kimi-k3-production-ready">Kimi K3 量产准备好了吗？真实世界分析</a>&lt;p&gt;当 Kimi K3 于 2026 年 7 月推出时，它迅速成为人工智能领域最受关注的模型之一。它爬上了人工智能分析智能指数的榜首，优于几个运行成本显着增加的封闭模型。对于开放权重模型，尤其是参数高达 2.8 万亿的模型，这是 [...]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/qwen3-5-9b-api-benchmarks"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/qwen3.5-9B_res.webp" alt="Qwen3.5 9B API 基准：延迟、吞吐量和成本"></a><a href="https://deepinfra.com/blog/qwen3-5-9b-api-benchmarks">Qwen3.5 9B API 基准：延迟、吞吐量和成本</a>&lt;p&gt;关于Qwen3.5 9B Qwen3.5 9B是阿里巴巴Qwen3.5小模型系列的旗舰产品，于2026年3月2日发布。它是一个密集的多模态模型，结合了门控Delta网络（一种线性注意力形式）和稀疏专家混合模型系统，与传统的密集架构相比，可以在推理过程中实现更高的吞吐量和更低的延迟。该架构利用 [...]&lt;/p&gt;</p>
-<p><a href="https://deepinfra.com/blog/sandboxes"><img src="https://deepinfra.com/blog/sandboxes.png" alt="沙箱：为您的代理提供一个安全的地方来运行代码"></a><a href="https://deepinfra.com/blog/sandboxes">沙箱：为您的代理提供一个安全的地方来运行代码</a>您可以通过一个 API 调用启动隔离的 Linux microVM：运行 bash 或 Python、移入和移出文件、暂停并继续，完成后撕掉。专为需要执行不受信任代码的代理和管道而构建，而无需您自己运行基础设施。</p>
+<p><a href="https://deepinfra.com/blog/kimi-k3-production-ready"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/09/kimi-K3.png" alt="Kimi K3 达到生产可用了吗？真实场景分析"></a><a href="https://deepinfra.com/blog/kimi-k3-production-ready">Kimi K3 达到生产可用了吗？真实场景分析</a>&lt;p&gt;2026 年 7 月 Kimi K3 发布后，迅速成为 AI 圈最受热议的模型之一。它登上了 Artificial Analysis Intelligence Index 的榜首，压过了好几个运行成本明显高得多的封闭模型。对一个开放权重模型来说，尤其还是一个多达 2.8 万亿参数的模型，那是 [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/qwen3-5-9b-api-benchmarks"><img src="https://deepinfrabldev.wpenginepowered.com/wp-content/uploads/2026/04/qwen3.5-9B_res.webp" alt="Qwen3.5 9B API 基准测试：延迟、吞吐与成本"></a><a href="https://deepinfra.com/blog/qwen3-5-9b-api-benchmarks">Qwen3.5 9B API 基准测试：延迟、吞吐与成本</a>&lt;p&gt;关于 Qwen3.5 9B Qwen3.5 9B 是阿里巴巴 Qwen3.5 小型模型系列的旗舰，发布于 2026 年 3 月 2 日。它是一个稠密多模态模型，把 Gated Delta Networks（线性注意力的一种）与稀疏 Mixture-of-Experts 系统结合起来，相比传统稠密架构能在推理时带来更高吞吐和更低延迟。该架构使用 [&amp;hellip;]&lt;/p&gt;</p>
+<p><a href="https://deepinfra.com/blog/sandboxes"><img src="https://deepinfra.com/blog/sandboxes.png" alt="Sandboxes：给你的 agent 一个安全跑代码的地方"></a><a href="https://deepinfra.com/blog/sandboxes">Sandboxes：给你的 agent 一个安全跑代码的地方</a>用一次 API 调用就能拉起的隔离 Linux microVM：跑 bash 或 Python、文件进出、暂停与恢复、用完即拆。为那些需要执行不受信代码、又不想自己养基础设施的 agent 和流水线而造。</p>
 <p><a href="https://deepinfra.com/blog">查看全部</a></p>]]></content:encoded>
     </item>
     <item>

@@ -26,9 +26,9 @@
 15. [GLM-5.3 对阵 Claude Fable 5：DeepSWE 上的成本、编码能力与路由](https://www.together.ai/blog/glm-5-3-vs-claude-fable-5-on-deepswe-cost-coding-and-routing)（2026-08-21） <!--orig:GLM-5.3 vs. Claude Fable 5 on DeepSWE: Cost, Coding, and Routing-->
 16. [DeepSeek V4 Pro 0813 对比 Claude Fable 5 在 DeepSWE 上的表现：成本、编码与路由](https://www.together.ai/blog/deepseek-v4-pro-0813-vs-claude-fable-5-on-deepswe-cost-coding-and-routing)（2026-08-17） <!--orig:DeepSeek V4 Pro 0813 vs Claude Fable 5 on DeepSWE: Cost, Coding, and Routing-->
 17. [在生产环境中对模型进行 A/B 测试](https://www.together.ai/blog/a-b-test-models-in-production)（2026-08-17） <!--orig:A/B test models in production-->
-18. [DeepSeek-V4 Flash 0731 vs GPT-5.6 Luna on DeepSWE: Cost and Coding](https://www.together.ai/blog/deepseek-v4-flash-0731-vs-gpt-5-6-luna-on-deepswe-cost-and-coding)（2026-08-06）
+18. [DeepSeek-V4 Flash 0731 与 GPT-5.6 Luna 在 DeepSWE 上的成本与编码对比](https://www.together.ai/blog/deepseek-v4-flash-0731-vs-gpt-5-6-luna-on-deepswe-cost-and-coding)（2026-08-06） <!--orig:DeepSeek-V4 Flash 0731 vs GPT-5.6 Luna on DeepSWE: Cost and Coding-->
 19. [Kimi K3 完整开发者指南](https://www.together.ai/blog/kimi-k3-guide)（2026-08-01） <!--orig:Kimi K3: the complete developer guide-->
-20. [自动缩放 LLM 推理端点](https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference)（2026-07-31） <!--orig:Autoscaling endpoints for LLM inference-->
+20. [LLM 推理端点的自动扩缩容](https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference)（2026-07-31） <!--orig:Autoscaling endpoints for LLM inference-->
 21. [Together AI 宣布与 Moonshot AI 战略合作，原生服务 Kimi 模型](https://www.together.ai/blog/together-ai-announces-strategic-partnership-with-moonshot-ai-to-natively-serve-kimi-models)（2026-07-29） <!--orig:Together AI announces strategic partnership with Moonshot AI to natively serve Kimi models-->
 22. [配置专用模型推理](https://www.together.ai/blog/configuring-dedicated-model-inference)（2026-07-29） <!--orig:Configuring Dedicated Model Inference-->
 23. [ThunderAgent：面向大规模合成数据生成的 Agent 推理提速 2 倍](https://www.together.ai/blog/thunderagent)（2026-07-29） <!--orig:ThunderAgent: 2x Faster Agentic Inference for Synthetic Data Generation at Scale-->
@@ -78,7 +78,7 @@
 67. [推出专用容器推理：自定义 AI 模型的推理提速 2.6 倍](https://www.together.ai/blog/dedicated-container-inference)（2026-02-12） <!--orig:Introducing Dedicated Container Inference: Delivering 2.6x faster inference for custom AI models-->
 68. [当你不告诉 LLM 该想什么时，它们在想什么？](https://www.together.ai/blog/what-llms-think)（2026-02-06） <!--orig:What do LLMs think when you don't tell them what to think about?-->
 69. [Together AI 迎来 Alon Gavrielov 出任基础设施战略副总裁](https://www.together.ai/blog/alon-gavrielov-as-vp-of-infrastructure-strategy)（2026-02-03） <!--orig:Together AI welcomes Alon Gavrielov as VP of Infrastructure Strategy-->
-70. [微调开放式 LLM 法官以超越 GPT-5.2](https://www.together.ai/blog/fine-tuning-open-llm-judges-to-outperform-gpt-5-2)（2026-02-02） <!--orig:Fine-tuning open LLM judges to outperform GPT-5.2-->
+70. [微调开放权重 LLM 裁判模型以超越 GPT-5.2](https://www.together.ai/blog/fine-tuning-open-llm-judges-to-outperform-gpt-5-2)（2026-02-02） <!--orig:Fine-tuning open LLM judges to outperform GPT-5.2-->
 71. [Together Evaluations 现已支持顶级商业 API 与开源模型的对比](https://www.together.ai/blog/together-evaluations-v2)（2026-02-02） <!--orig:Together Evaluations now supports comparing top commercial APIs vs. open source models-->
 72. [DSGym：评估与训练数据科学 Agent 的整体框架](https://www.together.ai/blog/dsgym)（2026-01-26） <!--orig:DSGym: A holistic framework for evaluating and training data science agents-->
 73. [优化推理速度与成本：大规模部署学到的经验](https://www.together.ai/blog/optimizing-inference-speed-and-costs)（2026-01-22） <!--orig:Optimizing inference speed and costs: Lessons learned from large-scale deployments-->
@@ -95,7 +95,7 @@
 84. [AutoJudge 发布：用自动化数据集构建简化推理加速](https://www.together.ai/blog/introducing-autojudge-streamlined-inference-acceleration-via-automated-dataset-curation)（2025-12-03） <!--orig:Introducing AutoJudge: Streamlined inference acceleration via automated dataset curation-->
 85. [Together AI 为顶级开源模型交付最快推理](https://www.together.ai/blog/fastest-inference-for-the-top-open-source-models)（2025-12-01） <!--orig:Together AI delivers fastest inference for the top open-source models-->
 86. [FLUX.2：Together AI 现已提供多参考图像生成功能](https://www.together.ai/blog/flux-2-multi-reference-image-generation-now-available-on-together-ai)（2025-11-25） <!--orig:FLUX.2: Multi-reference image generation now available on Together AI-->
-87. [宣布最快的实时语音人工智能代理推理](https://www.together.ai/blog/the-fastest-inference-for-realtime-voice-ai-agents)（2025-11-04） <!--orig:Announcing the fastest inference for realtime voice AI agents-->
+87. [宣布面向实时语音 AI agent 的最快推理](https://www.together.ai/blog/the-fastest-inference-for-realtime-voice-ai-agents)（2025-11-04） <!--orig:Announcing the fastest inference for realtime voice AI agents-->
 88. [如何评估和基准测试大语言模型（LLM）](https://www.together.ai/blog/evaluate-and-benchmark-llms)（2025-11-04） <!--orig:How to evaluate and benchmark Large Language Models (LLMs)-->
 89. [用 Collinear Simulations 与 Together Evals 为真实世界做动态 AI Agent 测试](https://www.together.ai/blog/collinear-simulations-together-evals)（2025-10-28） <!--orig:Dynamic AI agent testing for the real world with Collinear Simulations and Together Evals-->
 90. [大推理模型在推理过程中未能遵循指令：一项基准研究](https://www.together.ai/blog/large-reasoning-models-fail-to-follow-instructions-during-reasoning-a-benchmark-study)（2025-10-22） <!--orig:Large Reasoning Models Fail to Follow Instructions During Reasoning: A Benchmark Study-->
