@@ -158,6 +158,33 @@ test('mdToHtml: 链接与图片', () => {
   assert.match(h, /<img src="https:\/\/x\.test\/p\.png" alt="alt">/);
 });
 
+test('mdToHtml: 协议白名单（可执行协议不套标签）', () => {
+  // 与 crawler_llm_intel._md_url_safe 对偶：语料是不可信第三方 HTML，
+  // javascript:/vbscript:/data:text/html 进 href/src 就是点击即执行的存储型 XSS。
+  const h = FLI.mdToHtml('[js](javascript:alert(1)) [JS](JaVaScRiPt:alert(1)) '
+                       + '[v](vbscript:msgbox(1)) [d](data:text/html,<b>hi</b>)\n');
+  assert.ok(!h.includes('<a '), h);
+  assert.ok(!/href="javascript:/i.test(h), h);
+  // 丢的是链接形态不是内容：显示文字照留（尾部 `)` 是极简渲染器对带括号目标的一贯形态）
+  assert.equal(h.trim(), '<p>js) JS) v) d</p>');
+  assert.ok(!FLI.mdToHtml('![x](javascript:alert(1))\n').includes('<img'));
+  assert.equal(FLI.mdToHtml('![封面图](javascript:alert)\n').trim(), '<p>封面图</p>');
+  // data:image 是语料里真实存在的内联图，img 侧放行
+  assert.match(FLI.mdToHtml('![x](data:image/png;base64,AAAA)\n'),
+               /<img src="data:image\/png;base64,AAAA"/);
+  const ok = FLI.mdToHtml('[a](https://x.test/a) [b](http://x.test/b) [m](mailto:a@x.test) '
+                        + '[t](tel:+1) [r](../blog/post) [c](#section)\n');
+  assert.equal((ok.match(/<a /g) || []).length, 6, ok);
+  // 语料实测：inception_labs 正文里有源站的 about:blank 占位链接 → 只丢链接保文字
+  const about = FLI.mdToHtml('[SearchBlox](about:blank) 正在为企业提供搜索。\n');
+  assert.ok(!about.includes('<a '), about);
+  assert.equal(about.trim(), '<p>SearchBlox 正在为企业提供搜索。</p>');
+  // 语料实测的探针行：属性突破本来就不成立，现在也不该出标签
+  const probe = FLI.mdToHtml('![](https://cdn-avatars.huggingface.co/v1/a"><img '
+                           + 'src=x onerror=window.__av296=1>.png)\n');
+  assert.ok(!probe.includes('<img'), probe);
+});
+
 test('mdToHtml: HTML escape，不成立即标签；剥危险标签', () => {
   const h = FLI.mdToHtml('Type `<div>` here.\n');
   assert.match(h, /&lt;div&gt;/);

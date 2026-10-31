@@ -8639,6 +8639,12 @@ class TestMdHtmlDualRun(unittest.TestCase):
         ("heading_para", "# Title\n\nHello world.\n"),
         ("bold_code_link", "See [docs](https://x.test/a) with **bold** and `code`.\n"),
         ("image", "![alt](https://x.test/p.png)\n"),
+        # 协议白名单两侧必须同进同退：只有一边过滤就会在这里露出差异
+        ("js_scheme_link", "[js](javascript:alert(1))\n"),
+        ("js_scheme_img", "![x](javascript:alert(1))\n"),
+        ("data_img_ok", "![x](data:image/png;base64,AAAA)\n"),
+        ("relative_anchor_mailto", "[a](../b) [c](#d) [m](mailto:x@y.test)\n"),
+        ("about_blank_label_kept", "[SearchBlox](about:blank) 占位链接\n"),
         ("list", "- a\n- b\n"),
         ("olist", "1. one\n2. two\n"),
         ("code", "```python\nprint(1)\n```\n"),
@@ -8914,6 +8920,47 @@ class TestRssContentEncoded(unittest.TestCase):
         html = crawler_llm_intel._md_to_html(md)
         self.assertIn('<a href="https://x.test/a">docs</a>', html)
         self.assertIn('<img src="https://x.test/p.png" alt="alt">', html)
+
+    def test_md_url_scheme_allowlist(self):
+        """可执行协议不许进 href/src：语料是不可信第三方 HTML。
+
+        实测 Hugging Face 社区评论里有人专门丢 XSS 探针，而 `[x](javascript:...)`
+        一旦套成 `<a href="javascript:...">` 就是点击即执行的存储型 XSS。
+        """
+        md = ("[js](javascript:alert(1)) [JS](JaVaScRiPt:alert(1)) "
+              "[v](vbscript:msgbox(1)) [d](data:text/html,<b>hi</b>)\n")
+        html = crawler_llm_intel._md_to_html(md)
+        for bad in ("javascript:", "JaVaScRiPt:", "vbscript:", "data:text/html"):
+            self.assertNotIn(f'href="{bad}', html, html)
+        self.assertNotIn("<a ", html, "整行都非白名单 → 一个链接都不该套出来")
+        # 丢的是链接形态不是内容：显示文字照留。（尾部那个 `)` 是这个极简渲染器
+        # 对「目标串里带括号」的一贯形态，与白名单无关，两侧同形）
+        self.assertEqual(html.strip(), "<p>js) JS) v) d</p>")
+
+        self.assertNotIn("<img", crawler_llm_intel._md_to_html("![x](javascript:alert(1))\n"))
+        img = crawler_llm_intel._md_to_html("![封面图](javascript:alert)\n")
+        self.assertEqual(img.strip(), "<p>封面图</p>", "渲染不出来的图退化成 alt")
+        # `data:image/...` 是语料里真实存在的内联 logo（实测 8 处），img 侧放行
+        ok = crawler_llm_intel._md_to_html("![x](data:image/png;base64,AAAA)\n")
+        self.assertIn('<img src="data:image/png;base64,AAAA"', ok)
+
+        good = crawler_llm_intel._md_to_html(
+            "[a](https://x.test/a) [b](http://x.test/b) [m](mailto:a@x.test) "
+            "[t](tel:+1) [r](../blog/post) [c](#section)\n")
+        self.assertEqual(good.count("<a "), 6, good)
+
+        # 语料实测：inception_labs 正文里有源站的 `about:blank` 占位链接
+        # （真实链接是页面脚本填的）。它点不动，但显示文字是内容 → 只丢链接保文字。
+        about = crawler_llm_intel._md_to_html("[SearchBlox](about:blank) 正在为企业提供搜索。\n")
+        self.assertNotIn("<a ", about)
+        self.assertIn("<p>SearchBlox 正在为企业提供搜索。</p>", about)
+
+        # 语料实测行（HF 评论里的探针）：属性突破本来就不成立，现在也不该出标签
+        payload = ('![](https://cdn-avatars.huggingface.co/v1/a"><img '
+                   'src=x onerror=window.__av296=1>.png)\n')
+        out = crawler_llm_intel._md_to_html(payload)
+        self.assertNotIn("<img", out)
+        self.assertIn("&quot;&gt;&lt;img", out)
 
     def test_md_strips_unsafe_tags(self):
         """语料正文里的 <script> 原文要**变成转义文本**（读者看见字面量、浏览器不当标签执行）。"""

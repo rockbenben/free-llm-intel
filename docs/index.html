@@ -627,12 +627,30 @@ var FLI = (function () {
   var STRIP_PAIR = /<\s*(script|iframe|style|link|object|embed|form)\b[\s\S]*?<\s*\/\s*\1\s*>/gi;
   var STRIP_SELF = /<\s*(script|iframe|style|link|object|embed|form|input|meta)\b[^>]*\/?\s*>/gi;
   function stripUnsafe(h) { return h.replace(STRIP_PAIR, '').replace(STRIP_SELF, ''); }
+  // 链接/图片目标的协议白名单（与 crawler_llm_intel._md_url_safe 对偶）：语料是
+  // 不可信的第三方 HTML，javascript:/vbscript:/data:text/html 进了 href/src
+  // 就是点击即执行的存储型 XSS。非白名单不套标签，退化成转义后的纯文本。
+  var URL_SAFE = /^(?:https?:|mailto:|tel:|#|\/)/i;
+  var URL_SCHEME = /^[a-zA-Z][a-zA-Z0-9.+\-]*:/;
+  var DATA_IMG = /^data:image\//i;
+  function urlSafe(u, isImg) {
+    if (isImg && DATA_IMG.test(u)) return true;
+    return URL_SAFE.test(u) || !URL_SCHEME.test(u);
+  }
   function mdInline(t) {
     var s = htmlEsc(t);
     s = s.replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
-                  function (_m, alt, src) { return '<img src="' + src + '" alt="' + alt + '">'; });
+                  function (_m, alt, src) {
+                    // src 非白名单 = 这张图本来就渲染不出来，退化成 alt 文本
+                    return urlSafe(src, true)
+                      ? '<img src="' + src + '" alt="' + alt + '">' : alt;
+                  });
     s = s.replace(/\[([^\]]+)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g,
-                  function (_m, txt, href) { return '<a href="' + href + '">' + txt + '</a>'; });
+                  function (_m, txt, href) {
+                    // 非白名单只丢链接形态，显示文字照留（文字是内容，目标本来就点不动）
+                    return urlSafe(href, false)
+                      ? '<a href="' + href + '">' + txt + '</a>' : txt;
+                  });
     s = s.replace(/`([^`\n]+)`/g, function (_m, c) { return '<code>' + c + '</code>'; });
     s = s.replace(/\*\*([^*\n]+)\*\*/g, function (_m, c) { return '<strong>' + c + '</strong>'; });
     s = s.replace(/(?<![\*])\*([^*\n]+)\*(?!\*)/g, function (_m, c) { return '<em>' + c + '</em>'; });

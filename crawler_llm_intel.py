@@ -4852,16 +4852,45 @@ def _md_strip_unsafe(html: str) -> str:
     return html
 
 
+# 链接/图片目标的协议白名单（见 _md_url_safe）：显式可点开的形态，
+# 或压根不带协议（相对路径 / 锚点）；带别的协议一律不套标签。
+_MD_URL_SAFE_RE = re.compile(r"^(?:https?:|mailto:|tel:|#|/)", re.I)
+_MD_URL_SCHEME_RE = re.compile(r"^[a-zA-Z][a-zA-Z0-9.+-]*:")
+# 只有 `data:image/...` 允许进 img src（语料里是内联 logo，实测 8 处）；
+# `data:text/html` 之类不放进链接。
+_MD_DATA_IMG_RE = re.compile(r"^data:image/", re.I)
+
+
+def _md_url_safe(url: str, *, image: bool = False) -> bool:
+    """markdown 链接/图片目标串的协议白名单。
+
+    语料是**不可信的第三方 HTML**：`javascript:` / `vbscript:` / `data:text/html`
+    这类可执行协议一旦进 `href`/`src`，就是点击即执行的存储型 XSS（实测 Hugging Face
+    社区评论里就有人专门丢 XSS 探针）。非白名单时不套标签，退化成已转义的纯文本。
+    与 docs/index.html 的 fli-core `urlSafe` 对偶，双跑等价由守卫测试钉住。
+    """
+    if image and _MD_DATA_IMG_RE.match(url):
+        return True
+    return bool(_MD_URL_SAFE_RE.match(url)) or not _MD_URL_SCHEME_RE.match(url)
+
+
 def _md_inline(text: str) -> str:
     """一段不含块级标记的 markdown 行 → HTML（先转义，再套 inline 标记）。"""
     # 先转义 —— 之后插入的 HTML 标签由我们自己控制、不会被 escape 掉
     out = _html_escape(text)
     # images ![alt](src) —— 先处理，避免被 link 规则吞掉
     out = re.sub(r"!\[([^\]]*)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)",
-                 lambda m: f'<img src="{m.group(2)}" alt="{m.group(1)}">', out)
+                 lambda m: f'<img src="{m.group(2)}" alt="{m.group(1)}">'
+                 if _md_url_safe(m.group(2), image=True)
+                 # src 不在白名单 = 这张图本来就渲染不出来，退化成 alt 文本
+                 # （照抄原文会被下面的 link 规则二次命中、拼成 `!x)` 这种残骸）
+                 else m.group(1), out)
     # links [text](href)
     out = re.sub(r"\[([^\]]+)\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)",
-                 lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>', out)
+                 lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>'
+                 # 非白名单：只丢链接形态，**显示文字照留**（文字是内容，那个目标本来就点不动，
+                 # 留 `[X](about:blank)` 的残骸反而吃掉读者的可读文本）
+                 if _md_url_safe(m.group(2)) else m.group(1), out)
     # inline code `x`（非贪婪，不做嵌套）
     out = re.sub(r"`([^`\n]+)`", lambda m: f"<code>{m.group(1)}</code>", out)
     # bold **x**（先于 italic）
