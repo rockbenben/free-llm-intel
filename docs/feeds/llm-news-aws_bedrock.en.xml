@@ -7,7 +7,488 @@
     <language>en</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.en.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 30 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Managing Amazon Bedrock costs end to end: A playbook for Fin…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/managing-amazon-bedrock-costs-end-to-end-a-playbook-for-finops-and-platform-teams/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/managing-amazon-bedrock-costs-end-to-end-a-playbook-for-finops-and-platform-teams/?li=1</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Managing Amazon Bedrock costs end to end: A playbook for FinOps and platform teams</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Managing Amazon Bedrock costs end to end: A playbook for FinOps and platform teams</h1>
+<p>Cost management for generative AI is a shared responsibility between the teams that build applications and the teams accountable for cloud spend. Many teams start by comparing per-model token rates and asking application teams to shorten prompts. Those steps help, but they don’t answer the questions that finance and engineering leaders ask as usage scales: which team spent this, on which workload, and was that spend inside an approved budget?</p>
+<p>Agentic workloads make those questions more pressing. A conversational assistant typically issues one model invocation per user turn. An agentic workflow, such as an AI coding assistant that plans a change, reads files, calls tools, and iterates, issues many invocations per task and carries a larger context on each one. Token consumption therefore scales with the degree of autonomy you grant the workflow and the size of the context it carries, rather than with the number of user interactions. Because consumption is a function of how a workload is designed and operated, cost management for generative AI is an architectural and operational discipline. Published averages are a poor substitute for your own numbers: use the <a href="https://calculator.aws/">AWS Pricing Calculator</a> and the <a href="https://aws.amazon.com/bedrock/pricing">Amazon Bedrock pricing page</a> to model rates, and use Step 2 of this post to measure what your workloads actually consume.</p>
+<p>The fix isn’t a cheaper model or a smaller prompt. It’s an operating model: a repeatable loop that attributes every dollar to an owner, makes every request observable, alerts on and enforces budgets before overspend compounds, optimizes the platform defaults that drive most waste, and reviews the whole system on a cadence.</p>
+<p>In this post, you learn how to manage <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> cost in five steps. You attribute every dollar to an owner, make every request observable, control spend with budgets and enforcement, optimize the platform defaults that drive most avoidable spend, and operate a review cadence that turns data into decisions. This approach is built from AWS building blocks, and you can customize it and apply it to your own environment. The post is written for two audiences: FinOps practitioners who own attribution, chargeback, budgets, and anomaly review, and platform engineering teams who own logging, request metadata, enforcement, and routing defaults.</p>
+<h2>The operating model in one view</h2>
+<p>Five stages, run as a loop. Attribute: every Amazon Bedrock dollar lands on an identity, team, and application in the billing pipeline. Observe: every request is logged with enough metadata to explain what generated the spend. Enforce: budgets have teeth, with alerts at minimum and hard blocks where the risk demands them. Optimize: the platform defaults (model routing, caching, token limits) remove waste centrally instead of asking every team to be careful. Operate: a small scorecard and a review cadence turn the data into decisions. FinOps leads stages one and five. Platform engineering leads two through four. The review is joint. The stages are sequenced deliberately. Each one depends on the ones before it, and teams that jump straight to optimization without attribution and observability are guessing.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-21654-1-1.png" alt="Five-stage Amazon Bedrock cost operating model loop: attribute, observe, enforce, optimize, operate"></p>
+<p>Figure 1: The five-stage operating model, run as a continuous loop</p>
+<h2>Stage 1: Attribute every dollar</h2>
+<p>You can’t manage what you can’t attribute, and everything downstream (chargeback, budgets, enforcement, anomaly detection) depends on this stage. The foundation is the granular cost attribution of Amazon Bedrock (see <a href="https://aws.amazon.com/blogs/machine-learning/introducing-granular-cost-attribution-for-amazon-bedrock/">Introducing granular cost attribution for Amazon Bedrock</a>): Amazon Bedrock automatically attributes inference costs to the AWS Identity and Access Management (IAM) principal that made the call, across all models, with no resources to manage. The caller’s ARN lands in the <code>line_item_iam_principal</code> column of the <a href="https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html">AWS Cost and Usage Report (CUR) 2.0</a>, and coverage spans IAM users, roles, federated identities, and API keys.</p>
+<p>Setup is four steps:</p>
+<ul><li>Turn on IAM principal data in your CUR 2.0 data export.</li><li>Tag your IAM principals with business dimensions such as team, application, and cost center. For federated access, configure your identity provider to pass session names and tags through OIDC or SAML claims.</li><li>Activate those tags as cost allocation tags in AWS Billing (console or the <code>UpdateCostAllocationTagsStatus</code> API).</li><li>Analyze the tags: they surface in CUR 2.0 with an <code>iamPrincipal/</code> prefix (for example, <code>iamPrincipal/team</code>) and appear in <a href="https://aws.amazon.com/aws-cost-management/aws-cost-explorer/">AWS Cost Explorer</a> under the IAM category within 24–48 hours of activation, ready for filtering and grouping by team, application, or cost center.</li></ul>
+<p>This is invoice-grade, per-identity attribution with no custom infrastructure.</p>
+<h3>The shared-role problem</h3>
+<p>The pattern that deserves the most attention is the shared-role problem, because it is where most platforms silently lose attribution. A large language model (LLM) gateway that calls Amazon Bedrock through a single IAM role attributes every dollar to that one role, eliminating per-user visibility entirely. The fix is per-user session management. The gateway assumes the Amazon Bedrock invocation role once per user, passing the user’s identity as the role session name and their attributes as session tags, then caches those credentials for up to an hour (one AWS Security Token Service (AWS STS) call per user per hour, not per request).</p>
+<p>This needs two roles: a gateway execution role holding <code>sts:AssumeRole</code> and <code>sts:TagSession</code> permissions, and the Amazon Bedrock invocation role it assumes. The result is <code>line_item_iam_principal</code> entries like <code>assumed-role/BedrockRuntimeRole/gw-alex</code>, each carrying its user’s tags: per-user and per-tenant attribution restored behind a shared gateway.</p>
+<pre><code>import boto3
+
+sts = boto3.client(&quot;sts&quot;)
+
+# One call per user; cache the returned credentials up to 1 hour
+response = sts.assume_role(
+    RoleArn=&quot;arn:aws:iam::123456789012:role/BedrockRuntimeRole&quot;,
+    RoleSessionName=&quot;gw-alex&quot;, # the user, not the gateway
+    Tags=[
+        {&quot;Key&quot;: &quot;team&quot;, &quot;Value&quot;: &quot;sales-ai&quot;},
+        {&quot;Key&quot;: &quot;application&quot;, &quot;Value&quot;: &quot;renewal-agent&quot;},
+        {&quot;Key&quot;: &quot;costCenter&quot;, &quot;Value&quot;: &quot;CC-2041&quot;}
+    ]
+)</code></pre>
+<h3>A note on application inference profiles and Projects</h3>
+<p>Amazon Bedrock offers two more attribution mechanisms, each suited to a different pattern. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-create.html">Application inference profiles</a> are pre-created, per-application resources on the <code>bedrock-runtime</code> endpoint that carry cost allocation tags. You create one profile per application per model per AWS Region, and callers reference the profile ARN, which fits teams with a small and stable set of applications and models. <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-projects.html">Projects and workspaces</a> serve the <code>bedrock-mantle</code> endpoint (Responses API, Chat Completions API). A project isn’t tied to a specific model, so a single project ID spans many models, which fits teams whose model usage changes frequently. You pass the project ID at client initialization, and its tags flow to CUR 2.0 and Cost Explorer (see <a href="https://aws.amazon.com/blogs/machine-learning/manage-ai-costs-with-amazon-bedrock-projects/">Manage AI costs with Amazon Bedrock Projects</a>). Projects are the attribution path for OpenAI-compatible workloads on Amazon Bedrock.</p>
+<p>For <code>bedrock-runtime</code> workloads, we recommend IAM principal attribution through session tags as the primary mechanism. It scales with your identity system, requires no pre-created resources, and covers every model and API operation. Application inference profiles work well when a small, stable set of business units needs invoice-grade billing separation without changes to identity design. Use projects for <code>bedrock-mantle</code> workloads that use the Responses API or Chat Completions API.</p>
+<h2>Stage 2: Make every request observable</h2>
+<p>CUR tells you who spent. Invocation logs tell you what happened. Amazon Bedrock supports <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html">model invocation logging</a> of request data, response data, and metadata to Amazon CloudWatch Logs, Amazon Simple Storage Service (Amazon S3), or both. Use Amazon CloudWatch for fast operational queries and S3 plus Amazon Athena for long-term business intelligence (BI) access. Treat logging as infrastructure, not a manual toggle: provision the log group or bucket through code, define retention and encryption policies, and validate delivery during environment setup. If logging exists only in development or only in one Region, your cost program becomes fragmentary the moment usage grows.</p>
+<p>Logging also closes the latency gap: CUR attribution lags roughly 24 hours, but CloudWatch plus OpenTelemetry can power near-real-time dashboards showing per-developer spend within minutes (<a href="https://aws.amazon.com/blogs/mt/analyzing-claude-code-usage-with-cloudwatch-and-opentelemetry/">Analyzing Claude Code usage with CloudWatch and OpenTelemetry</a> demonstrates this end to end).</p>
+<h3>Request metadata for workload-level attribution</h3>
+<p>Raw logs answer identity-level questions. To answer workload-level questions (which feature, workflow, or tenant generated the tokens), stamp <a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html#bedrock-runtime_Converse-request-requestMetadata">request metadata</a> on every call. Amazon Bedrock captures this metadata in the invocation logs for later analysis:</p>
+<p>The following example uses Anthropic Claude Sonnet 5.5 on Amazon Bedrock through the US cross-Region inference profile. For the full list of models, see <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html">Supported foundation models in Amazon Bedrock</a>. For availability by Region, see <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Model support by AWS Region in Amazon Bedrock</a>.</p>
+<pre><code>response = client.converse(
+    modelId=&quot;us.anthropic.claude-sonnet-5-5&quot;,
+    messages=[...],
+    requestMetadata={
+        &quot;application&quot;: &quot;renewal-copilot&quot;,
+        &quot;workflow&quot;: &quot;renewal-risk-summary&quot;,
+        &quot;tenant&quot;: &quot;enterprise-sales&quot;,
+        &quot;agent&quot;: &quot;renewal-agent&quot;
+    }
+)</code></pre>
+<p>Amazon Bedrock doesn’t enforce request metadata, and teams drift into inconsistent schemas quickly when every application does its own thing. The platform team should inject mandatory metadata centrally in a shared SDK wrapper or gateway, normalize the key set, and treat metadata coverage as a platform health metric.</p>
+<h3>Diagnostic queries</h3>
+<p>With logs and metadata in place, CloudWatch Logs Insights answers the standing questions. <em>Who consumes the most tokens</em>:</p>
+<pre><code>fields @timestamp, identity.arn as caller, modelId,
+input.inputTokenCount as inTokens,
+output.outputTokenCount as outTokens
+| stats sum(inTokens + outTokens) as totalTokens,
+count(*) as calls
+by caller, modelId
+| sort totalTokens desc
+| limit 25</code></pre>
+<p>The same query grouped by <code>requestMetadata.application</code> and <code>requestMetadata.workflow</code> instead of <code>caller</code> produces the workload-level leaderboard: the view product and engineering teams will ask FinOps for the moment chargeback conversations start.</p>
+<p><strong>Note:</strong> Field paths shown in the preceding query are illustrative. Verify against your invocation log schema, which may vary by model, API operation, and logging configuration.</p>
+<h2>Stage 3: Enforce budgets</h2>
+<p>With attribution and observability in place, enforcement becomes an architecture choice rather than a wish. There are three viable tiers. The right one depends on your spend velocity, your risk tolerance for overspend, and how your tools connect to Amazon Bedrock.</p>
+<h3>Tier 1: Monitor and alert (no blocking)</h3>
+<p>Amazon Bedrock writes principal identity into the billing pipeline automatically. You put AWS Budgets on top for threshold alerts, with the OpenTelemetry dashboards from Stage 2 closing the 24-hour CUR gap for day-to-day visibility. Nothing to deploy, native AWS billing, and no added latency on inference calls. It works with tools that call Amazon Bedrock directly. Nothing can hard-stop spend, so you see the problem after it happens. Right for early adoption, where alerting plus human intervention is sufficient. Two builder guides walk through it: <a href="https://builder.aws.com/content/3DIYzXtsMwvVh1jsn1CSpa8k2rL/limiting-bedrock-usage-and-controlling-costs">Limiting Bedrock usage and controlling costs</a>, and <a href="https://builder.aws.com/content/3EMlLuVf7JSb1fwM8xeQfSi5cz5/deep-dive-on-managing-bedrock-in-claude-code-over-bedrock-with-aws-budgets-tags">Deep dive on managing Bedrock in Claude Code with AWS Budgets and Tags</a>.</p>
+<h3>Tier 2: IAM tag enforcement (deny on breach)</h3>
+<p>An aggregator AWS Lambda function tallies per-user token and dollar counters in Amazon DynamoDB from invocation log data. When a user breaches their threshold, the function adds their identity to a shared IAM deny policy (denying <code>bedrock:*</code>) until a monthly reset or admin override. This enforcement runs entirely on IAM and Amazon Bedrock logging, with no third-party component in the inference path, and it works with tools that call Amazon Bedrock directly. The <a href="https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock">Guidance for Claude Code with Amazon Bedrock</a> in the AWS Solutions Library provides a deployable variant. It checks each user’s usage against per-user and per-team limits when it issues credentials, and withholds credentials once a user exceeds their limit. Because that check uses usage telemetry emitted by the client, its figures can differ from CUR. In either form, enforcement is asynchronous. A block takes effect seconds to minutes after the breaching call for an IAM policy update, or at the next credential refresh for the credential check. Your platform team owns the pipeline. This tier is right for teams that need real enforcement, can tolerate that lag, and want to keep third-party software out of the data path.</p>
+<h3>Tier 3: Gateway enforcement (synchronous block)</h3>
+<p>A gateway sits in the inference data path and enforces budgets synchronously, returning HTTP 429 the moment a user or team exceeds their limit. You get sub-second blocking, per-user model allowlists, token rate limits, and centrally enforced routing rules. The trade-off: a component in the data path that must be deployed, scaled, and security-reviewed. Clients must be configured to send their requests through the gateway.</p>
+<p>For Claude Code and Claude Desktop fleets, the <a href="https://aws.amazon.com/blogs/machine-learning/introducing-claude-apps-gateway-for-aws/">Claude apps gateway for AWS</a> is the official recommendation. It ships inside the CLI binary and runs as a single stateless container backed by PostgreSQL. It provides OIDC identity, centrally managed policy, OpenTelemetry telemetry, multi-Region Amazon Bedrock routing, and per-user/group/org spend caps out of the box. For mixed-model workloads spanning multiple providers, general-purpose gateways remain the right choice: LiteLLM through the <a href="https://github.com/aws-samples/sample-claude-code-with-litellm-and-bedrock">Amazon Elastic Container Service (Amazon ECS) on AWS Fargate reference architecture</a>, or a serverless alternative described in <a href="https://aws.amazon.com/blogs/machine-learning/build-a-proactive-ai-cost-management-system-for-amazon-bedrock-part-2/">Build a proactive AI cost management system for Amazon Bedrock, Part 2</a>.</p>
+<h3>Choosing a tier</h3>
+<p>Two factors dominate.</p>
+<p><strong>Connectivity:</strong> If developers call Amazon Bedrock directly with no proxy, only Tiers 1 and 2 are viable.</p>
+<p><strong>Spend velocity:</strong> If spend is already in the millions per month, build enforcement now. If alerts can hold the line for another quarter, invest in Stages 1 and 2 first and add enforcement when the data demands it.</p>
+<p>Most organizations should phase it: observe at Tier 1, then step up. Treat all three as bridges, not destinations: the <a href="https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentcost07.html">Well-Architected Agentic AI Lens</a> already codifies agent cost governance as a first-class architectural concern, and the attribution foundation from Stage 1 is what any managed enforcement will sit on.</p>
+<h2>Stage 4: Optimize the defaults</h2>
+<p>Most Amazon Bedrock waste is not individual carelessness. It is platform defaults nobody set. The two highest-impact levers are both platform-controlled.</p>
+<h3>Model routing</h3>
+<p>Not every task needs a frontier model. Routine completions (boilerplate, linting suggestions, small refactors) can run on smaller, cheaper models with quality reserved for complex reasoning, through <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/intelligent-prompt-routing.html">intelligent prompt routing</a> within a model family or routing rules at the gateway (see <a href="https://aws.amazon.com/blogs/aws/reduce-costs-and-latency-with-amazon-bedrock-intelligent-prompt-routing-and-prompt-caching-preview">Reduce costs and latency with Amazon Bedrock Intelligent Prompt Routing and prompt caching</a> for the full walkthrough). Which workflows can downshift is an empirical question: pull the workload leaderboard from Stage 2, run a quality evaluation on the cheaper model for the top entries, and route what passes. For agentic coding fleets, where boilerplate dominates call volume, more than half of calls landing on cheaper models is an achievable target.</p>
+<h3>Prompt caching</h3>
+<p>Prompt caching rewards stable repeated prefixes. As of October 2026, the published <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock pricing</a> for Anthropic Claude models in US East (N. Virginia) bills a cache write at 1.25x the base input rate with the 5-minute time-to-live (TTL) (2x with the 1-hour TTL). A cache read is billed at 0.1x the base input rate on Claude Sonnet 4.6 and Claude Haiku 4.5, and at 0.05x on Claude Sonnet 5.5 and Claude Opus 5.5. Check the pricing page for your model and Region, because these multipliers vary by model and can change. The break-even math is friendlier than teams assume. With the 5-minute TTL, a single reuse already pays for the write, and ten calls against a stable prefix cost roughly a fifth of the uncached price (about 22 percent at a 0.1x read rate, 17 percent at 0.05x). The only losing case is writes that are never re-read, which cost 25 percent extra with the 5-minute TTL and double with the 1-hour TTL. So the platform dashboard should track cache-read volume against cache-write volume per workflow. A low read ratio means the prefix is not actually stable (usually a timestamp or session ID embedded before the cache point).</p>
+<p>Candidates surface directly from the invocation logs:</p>
+<pre><code>fields requestMetadata.workflow as workflow, modelId,
+input.inputTokenCount as inTokens
+| stats count(*) as calls,
+avg(inTokens) as avgInputTokens,
+sum(inTokens) as totalInputTokens
+by workflow, modelId
+| filter calls &gt; 50 and avgInputTokens &gt; 2000
+| sort totalInputTokens desc
+| limit 25</code></pre>
+<p><strong>Note:</strong> Field paths shown in the preceding query are illustrative. Verify against your invocation log schema, which may vary by model, API operation, and logging configuration.</p>
+<h3>Application-level optimization</h3>
+<p>A third class of savings (just-in-time retrieval instead of stuffed context, compaction of long conversations, distilling stable high-volume workflows onto smaller models) belongs to application teams rather than the platform. The platform’s job is to make those savings visible: publish the per-workflow token leaderboard, set token limits per model and workflow, and let the teams that own expensive workflows see exactly where they stand.</p>
+<h2>Stage 5: Operate the loop</h2>
+<p>The first four stages produce data. This one turns it into decisions. The platform team runs a standing health dashboard with four signals:</p>
+<ul><li><strong>Model mix:</strong> Which models are called and how often, the direct measure of routing discipline.</li><li><strong>Failed request rates:</strong> Errors, throttles, and timeouts. Each retry adds latency, and a client-side timeout on a request that still completes on the service side can be billed twice, once for the abandoned call and once for the retry.</li><li><strong>Cache effectiveness:</strong> The read-versus-write ratio from Stage 4.</li><li><strong>Metadata coverage:</strong> The percentage of production calls with complete metadata. Every uncovered call is an attribution blind spot that quietly degrades every other number.</li></ul>
+<p>When a signal drifts, the remediation is a policy change (routing rules, token limits, metadata enforcement), not an email asking teams to be careful.</p>
+<h3>The money loop</h3>
+<p>FinOps runs the money loop on the same data. When attribution is clean, anomaly detection becomes an investigation stream rather than a panicked all-hands: a spike in a tagged team or application triggers a lookup in the Stage 2 leaderboard, not a war room. Chargeback runs from CUR groupings by team and application.</p>
+<h3>Scorecard</h3>
+<p>The following thresholds are starting points, not prescriptions. Calibrate them against your own fleet data and pricing tier before adopting them as policy.</p>
+<table><thead><tr><th><strong>Dimension</strong></th><th><strong>Metric</strong></th><th><strong>Green</strong></th><th><strong>Yellow</strong></th><th><strong>Red</strong></th></tr></thead><tbody><tr><td><strong>Unit economics</strong></td><td>Cost per successful outcome</td><td>≤ budget</td><td>1–1.5x budget</td><td>&gt;1.5x budget</td></tr><tr><td><strong>Per-dev cost</strong></td><td>Daily spend per developer</td><td>&lt;$100</td><td>$100–$300</td><td>&gt;$300</td></tr><tr><td><strong>Model routing</strong></td><td>% of calls to cost-efficient-models</td><td>&gt;50%</td><td>30–50%</td><td>&lt;30%</td></tr><tr><td><strong>Cache efficiency</strong></td><td>Cache-read hit ratio</td><td>&gt;60%</td><td>30–60%</td><td>&lt;30%</td></tr></tbody></table>
+<p>Green means the workload operates inside its economic envelope. Yellow means routing or caching discipline is slipping. Red means spend is concentrating in premium models or uncached context, and the Stage 3 and 4 controls are the remediation path. Review this scorecard on a regular cadence (weekly for high-velocity fleets, biweekly otherwise) and treat it as the joint FinOps-plus-platform decision surface.</p>
+<h2>Conclusion</h2>
+<p>In this post, you learned how to build a five-stage operating model that takes Amazon Bedrock spend from uncontrolled to fully governed:</p>
+<ul><li><strong>Attribute</strong> every dollar to an owner using IAM principal tags, session tags, and CUR 2.0.</li><li><strong>Observe</strong> every request through model invocation logging and stamped request metadata.</li><li><strong>Enforce</strong> budgets at the tier that matches your risk: monitor-only, IAM deny on breach, or synchronous gateway blocking.</li><li><strong>Optimize</strong> platform defaults with intelligent prompt routing and prompt caching to remove waste centrally.</li><li><strong>Operate</strong> a scorecard and review cadence that turns telemetry into policy decisions.</li></ul>
+<p>Notice the first row of that scorecard: cost per successful outcome, not cost per call. That distinction is where this playbook hands off. Everything here makes Amazon Bedrock spend visible, attributable, capped, and efficient, but a workflow can be perfectly efficient and still not be worth running. Deciding that requires measuring the agent against the human process it replaced, which is a product and analytics discipline rather than a FinOps one. What the cost platform contributes is the foundation: clean attribution and per-workflow cost data are exactly the inputs that outcome measurement joins against.</p>
+<p>Build the five stages and you can answer, end to end: who spent it, why, and whether it was controlled. That is what it means to manage Amazon Bedrock cost, and it is the difference between a monthly bill review and an operating model.</p>
+<p>To get started, deploy the <a href="https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock">Guidance for Claude Code with Amazon Bedrock</a> reference architecture for Stages 1–3, then use the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-best-practices.html">cost attribution best practices</a> documentation to configure your tagging strategy.</p>
+<h2>About the authors</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Preview web apps live as your coding agent builds them with…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/preview-web-apps-live-as-your-coding-agent-builds-them-with-amazon-bedrock-agentcore-runtime/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/preview-web-apps-live-as-your-coding-agent-builds-them-with-amazon-bedrock-agentcore-runtime/?li=1</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Preview web apps live as your coding agent builds them with Amazon Bedrock AgentCore runtime</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Preview web apps live as your coding agent builds them with Amazon Bedrock AgentCore runtime</h1>
+<p>Coding agents now build working web apps: a dashboard, a product page, a prototype that a product team wants to try. The fastest way to review that work is to open the app, use it, ask for a change, and check the result. That loop works well when the app keeps running where the agent edits it, so each change shows up in the browser within seconds. When the app must be copied out and deployed somewhere else first, every change waits for a deployment, and the review slows down to that pace.</p>
+<p><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> is a platform to build, connect, and optimize agents at scale, with your choice of agent framework and foundation model (FM). <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">AgentCore runtime</a>, a capability of Amazon Bedrock AgentCore, runs each agent session in its own isolated microVM. With <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-session-endpoints.html">Session endpoints</a>, you can open an app running in that session from your own browser. Session Endpoints give each session an authenticated URL that forwards each request’s HTTP method, path, query string, and body, and WebSocket connections, to the ports you allow. You can watch the page update as the agent saves each file.</p>
+<p>In this post, you deploy a coding agent that keeps a Vite website running in its session, then open one local page with a chat on the left and the live website on the right. You ask the agent to switch the site to a dark color theme, follow its steps as they stream in, and watch the website change without a refresh. Finally, you look at what happens internally: a second port in the same session, and the requests the Session endpoint refuses.</p>
+<p>The complete sample, including the notebook this post follows, is in the <a href="https://github.com/awslabs/agentcore-samples/tree/main/01-features/02-host-your-agent/01-runtime/03-advanced/16-session-endpoints">14-remote-access folder</a> of the <a href="https://github.com/awslabs/agentcore-samples">agentcore-samples GitHub repo</a>.</p>
+<h2>How Session endpoints work</h2>
+<p>Each session gets its own Session endpoint, and six details shape how you use it.</p>
+<p><strong>You choose which ports it reaches.</strong> You set <code>allowedPorts</code> when you call <a href="https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_CreateAgentRuntime.html">CreateAgentRuntime</a>: 1–5 entries, each a single port or a range within 8000–12000, excluding the <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-service-contract.html#runtime-reserved-ports">reserved platform ports</a>. Allowing a port doesn’t start a server, so your application must listen on it, bound to <code>0.0.0.0</code>.</p>
+<p><strong>The URL arrives with the session.</strong> The <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/APIReference/API_InvokeAgentRuntime.html">InvokeAgentRuntime</a> response carries it in the <code>X-Amzn-Bedrock-AgentCore-Runtime-Session-Endpoint-Url</code> header, which SDKs that model it expose as <code>sessionEndpointUrl</code>.</p>
+<p><strong>Every request is authenticated.</strong> For a runtime that uses <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html">AWS Identity and Access Management (IAM)</a>, each HTTP request, HTTP/2 stream, and WebSocket handshake carries a <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv.html">Signature Version 4 (SigV4)</a> signature. The caller also needs <code>bedrock-agentcore:InvokeAgentRuntimeProxy</code> on the runtime and its runtime endpoint. For a runtime with an <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/inbound-jwt-authorizer.html">inbound JSON Web Token (JWT) authorizer</a>, each request carries a bearer token instead. Knowing the URL doesn’t grant access.</p>
+<p><strong>The host name selects the port.</strong> Your client connects on port 443 regardless of the target port, and a prefix on the host name chooses the port inside the session:</p>
+<pre><code>https://8090--&lt;session-endpoint-id&gt;.runtime.bedrock-agentcore.&lt;region&gt;.on.aws/index.html
+https://8081--&lt;session-endpoint-id&gt;.runtime.bedrock-agentcore.&lt;region&gt;.on.aws/status</code></pre>
+<p><strong>It carries the protocols your server speaks.</strong> HTTP/1.1 and HTTP/2 requests, including server-sent events and gRPC, and WebSocket connections all pass through. This walkthrough uses HTTP/1.1 and WebSocket.</p>
+<p><strong>It’s scoped to one session.</strong> The URL needs credentials on every request and lasts only as long as the session, so use it to build, test, and review what your agent produces. To serve an app to your users, deploy it to a hosting service such as <a href="https://aws.amazon.com/amplify/hosting/">AWS Amplify Hosting</a>.</p>
+<p>A browser can’t add a SigV4 signature or a bearer token to the requests a page makes on its own, so the Session endpoint client in the <a href="https://github.com/aws/bedrock-agentcore-sdk-python">bedrock-agentcore SDK</a> can open a local endpoint on your machine. Your browser opens <code>http://localhost:8088</code>, and the local endpoint adds your credentials to each request and WebSocket handshake before forwarding it.</p>
+<p>A Session endpoint is different from a <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agent-runtime-versioning.html">runtime endpoint</a>, which AgentCore runtime already provides. Use a runtime endpoint, such as <code>DEFAULT</code>, to reach your agent, which controls which version of it callers will reach. <code>InvokeAgentRuntime</code> calls resolve through it, so you can keep development and production on different versions and promote or roll back without changing callers. Use a Session endpoint to see what your agent runs in its session, such as a web preview. It’s an authenticated URL that reaches only the ports you allow, works with whichever version the session runs, and stops working when the session ends. For complete documentation, refer to <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-session-endpoints.html">Connect to runtime sessions through a session endpoint</a>.</p>
+<h2>Solution overview</h2>
+<p>The sample has four parts. A coding agent runs in the session on port 8080 and edits the website’s files with four tools: list, read, write, and edit. The agent starts a <a href="https://vite.dev/">Vite</a> development server on port 8090, which serves the website and pushes each saved change to the browser over its hot-reload WebSocket. On your machine, <code>PreviewApp</code> serves the preview page, sends your prompts to <code>InvokeAgentRuntime</code>, and opens a local endpoint for the website. As Figure 1 shows, the preview page loads the website from the Vite development server on port 8090 through the local endpoint and the Session endpoint, and sends your prompts through <code>InvokeAgentRuntime</code> to the agent on port 8080. The numbers show the order of the steps for one request.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22062-1.png" alt="Architecture diagram: the preview page and local endpoint on your machine, the Session endpoint and InvokeAgentRuntime, and the agent and Vite development server in a runtime session, with Claude Haiku 5.5 in Amazon Bedrock."></p>
+<p>Figure 1: Solution architecture</p>
+<p>Before step 1, <code>PreviewApp</code> has already called <code>InvokeAgentRuntime</code> once to start the session, which starts the agent and the Vite development server. <code>PreviewApp</code> read the Session endpoint URL from that response and opened a local endpoint for port 8090. The numbered steps in Figure 1 then follow one request for a change:</p>
+<ul><li>The site pane of the preview page loads the website from the local endpoint on <code>localhost:8088</code>. The local endpoint adds your credentials to each request and the WebSocket handshake, and forwards them to the Session endpoint. The<strong> Session endpoint </strong>checks the signature and the port against <code>allowedPorts</code>, then forwards them to the Vite development server on port 8090. The page keeps the Vite hot-reload WebSocket open.</li><li>You send a prompt from the chat pane. <code>PreviewApp</code> sends it to <code>InvokeAgentRuntime</code> as a standard AWS API call signed with your AWS credentials, and the runtime delivers it to the agent on port 8080. The agent’s steps stream back to the chat pane as it works.</li><li>The agent calls Claude Haiku 5.5 in Amazon Bedrock to decide what to change.</li><li>The agent reads the site’s files and saves the ones it changes. The Vite development server serves those files and watches them for changes.</li><li>When a file is saved, Vite pushes the change over the WebSocket opened in step 1, back through the Session endpoint and the local endpoint, and the site pane updates without a refresh.</li><li>From the notebook, <code>PreviewApp</code> reads the agent’s <code>/status</code> route on port 8081 through the same Session endpoint. Only the port changes.</li></ul>
+<p>Port 8080 isn’t in <code>allowedPorts</code>, because <code>InvokeAgentRuntime</code> reaches the agent without going through the Session endpoint.</p>
+<h2>Prerequisites</h2>
+<p>To follow the walkthrough, you need:</p>
+<ul><li>An AWS account in an AWS Region where AgentCore runtime Session endpoints are available, with credentials configured.</li><li>Permissions to create an AWS Identity and Access Management (IAM) role, upload to <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html">Amazon Simple Storage Service (Amazon S3)</a>, and create a runtime, plus <code>bedrock-agentcore:InvokeAgentRuntime</code> and <code>bedrock-agentcore:InvokeAgentRuntimeProxy</code> on that runtime and its <code>DEFAULT</code> runtime endpoint. For details, refer to <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-permissions.html">IAM permissions for AgentCore runtime</a>.</li><li>Python 3.10 or later, with <code>bedrock-agentcore</code> 1.25.2 or later and <code>boto3</code> 1.43.122 or later.</li><li><a href="https://git-scm.com/">Git</a>, to clone the sample repo, and a <a href="https://jupyter.org/">Jupyter</a> environment, such as JupyterLab or Visual Studio Code with the Jupyter extension, to run the notebook.</li><li>Access to <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html">Claude Haiku 5.5</a> in Amazon Bedrock. For model availability by Region, refer to <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">Regional availability by models</a>.</li><li><a href="https://nodejs.org/">Node.js</a> 22 or later with <code>npm</code>, which the deployment script uses to package the agent and the website.</li></ul>
+<p>The sample deploys the agent as a zip file in Amazon S3 with <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-get-started-code-deploy-node.html">direct code deployment for Node.js</a>, so you don’t need Docker or an <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a> repository. Session endpoints work with microVM runtimes, not with the Instances compute type, and Session endpoint URLs are reachable over public HTTPS. AWS PrivateLink isn’t supported for inbound connections.</p>
+<h2>Deploy the agent and its website</h2>
+<p>First, you deploy the runtime, and the configuration you choose here decides which ports the Session endpoint can reach. The deployment script bundles the agent into one file, adds the website and its dependencies for the runtime’s Linux on Arm64 system, uploads the zip to Amazon S3, and creates the runtime.</p>
+<p>The following excerpt from <code>deploy.py</code> shows the two settings that matter for this post. <code>protocolConfiguration</code> says where the agent listens for <code>InvokeAgentRuntime</code>, and <code>allowedPorts</code> lists the ports the Session endpoint can reach: 8090 for the website and 8081 for the agent’s status route. Port 8080 isn’t in the list, because <code>InvokeAgentRuntime</code> reaches the agent without it. For the port and path settings, refer to <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-configure-invocation.html">Configure your agent’s serving port and invocation path</a>.</p>
+<pre><code>agentRuntimeArtifact={&quot;codeConfiguration&quot;: {
+    &quot;code&quot;: {&quot;s3&quot;: {&quot;bucket&quot;: code_bucket(), &quot;prefix&quot;: S3_PREFIX}},
+    &quot;runtime&quot;: &quot;NODE_22&quot;,
+    &quot;entryPoint&quot;: [&quot;app.js&quot;],
+}},
+protocolConfiguration={&quot;serverProtocol&quot;: &quot;HTTP&quot;, &quot;port&quot;: 8080, &quot;path&quot;: &quot;/invocations&quot;},
+allowedPorts=[{&quot;port&quot;: 8090}, {&quot;port&quot;: 8081}],</code></pre>
+<p>The website’s Vite configuration makes the development server reachable from the Session endpoint. It listens on <code>0.0.0.0</code> at port 8090 and doesn’t restrict the <code>Host</code> header (<code>server.allowedHosts</code> is true), because requests arrive under a host name the runtime assigns rather than <code>localhost</code>. The Session endpoint authenticates every request before it reaches the server, so the server doesn’t need its own host check.</p>
+<p>To deploy the runtime:</p>
+<ol><li>Clone the sample repo and change to the sample folder:</li></ol>
+<pre><code>git clone https://github.com/awslabs/agentcore-samples.git
+cd agentcore-samples/01-features/02-host-your-agent/01-runtime/03-advanced/16-session-endpoints</code></pre>
+<ol><li>Open <code>session_endpoints_preview.ipynb</code> from the sample folder.</li></ol>
+<ol><li>Run the install cell, which installs the Python dependencies.</li></ol>
+<ol><li>Run the %run <code>deploy.py</code> cell. Deployment takes a few minutes, mostly waiting for the runtime to reach the <code>READY</code> status.</li></ol>
+<h2>Open the preview</h2>
+<p>With the runtime ready, you start the preview. One call does three things: it starts a session (which starts the website), opens a local endpoint for port 8090, and serves the preview page on <code>localhost:8087</code>.</p>
+<pre><code>from preview_app import PreviewApp
+
+app = PreviewApp().start()
+print(&quot;Open&quot;, app.url)</code></pre>
+<p>Inside <code>start()</code>, the calls that use Session endpoints are short. The first <code>InvokeAgentRuntime</code> call returns the URL in a response header, <code>session_endpoint_url</code> reads it, and the Session endpoint client opens a local endpoint for port 8090:</p>
+<pre><code>answer = client.invoke_agent_runtime(
+    agentRuntimeArn=runtime_arn, runtimeSessionId=session_id,
+    payload=json.dumps({&quot;prompt&quot;: &quot;&quot;}).encode(), contentType=&quot;application/json&quot;,
+)
+endpoint = client.session_endpoint_client(session_endpoint_url(answer))
+local = endpoint.open_local_endpoint(port=8090, local_port=8088).start()</code></pre>
+<p>To open the preview:</p>
+<ul><li>Run the cell that starts <code>PreviewApp</code>.</li><li>Open the printed link, <code>http://localhost:8087</code>, in your browser.</li></ul>
+<p>The page shows the website on the right, served from port 8090 in the session, and a short guide with suggested requests on the left.</p>
+<h2>Ask the agent for a change</h2>
+<p>Now you ask for a change and watch it arrive. Each prompt goes to the agent through <code>InvokeAgentRuntime</code>. The agent reads the files it needs, writes the ones it changes, and reports each step as it happens. When a file is saved, the Vite development server pushes the change over its WebSocket, through the Session endpoint and the local endpoint, and the website updates in place.</p>
+<p>To ask for a change:</p>
+<ul><li>On the preview page, choose <strong>Switch this website to a dark coffee-house color theme</strong>.</li><li>Follow the agent’s steps in the chat pane as it reads and saves files.</li><li>Watch the site pane. It changes when the agent saves the stylesheet, and a banner names the file the change came from.</li></ul>
+<p>The following video shows the preview page while the agent works through several requests. Choosing a suggested request sends it to the agent, the chat pane lists each file the agent reads and saves, and the site pane on the right updates without a refresh, from the dark theme to a green Order ahead button.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22062-2.gif" alt="The preview page with a chat pane on the left and the live website on the right updating as the agent edits files"></p>
+<p>Figure 2: The preview page as the agent works</p>
+<p>The steps stream because the agent answers with server-sent events when you ask it to. You can send the same prompts from Python with <code>app.ask</code>, which reads the stream with <code>iter_events</code> from the <code>bedrock-agentcore</code> SDK. The open page updates in the same way:</p>
+<pre><code>for event in app.ask(&quot;Make the Order ahead button green&quot;):
+    if &quot;step&quot; in event:
+        print(&quot;  &quot;, event[&quot;step&quot;])
+    elif &quot;done&quot; in event:
+        print(event[&quot;done&quot;][&quot;reply&quot;])</code></pre>
+<p>The output of this Python script should resemble the following:</p>
+<pre><code>   Looking at the site's files
+   Reading src/main.js
+   Reading src/style.css
+   Reading index.html
+   Saved src/style.css
+The Order ahead button is now green instead of brown, with white text kept for contrast. You can see it in the hero section, just below the &quot;Small batch coffee, roasted every morning&quot; heading at the top of the page.</code></pre>
+<h2>Reach a second port in the same session</h2>
+<p>The website isn’t the only server you can reach. The agent serves <code>/status</code> on port 8081, which lists each prompt and the files it changed. The same Session endpoint reaches it, and the only difference is the port argument.</p>
+<pre><code>status = app.endpoint.request(&quot;GET&quot;, &quot;/status&quot;, port=8081)
+print(&quot;GET /status on port 8081: HTTP&quot;, status.status)
+for edit in status.json()[&quot;edits&quot;]:
+    print(&quot;  &quot;, edit[&quot;prompt&quot;], &quot;-&gt;&quot;, &quot;, &quot;.join(edit[&quot;files&quot;]))</code></pre>
+<p>The output of this Python script should resemble the following:</p>
+<pre><code>GET /status on port 8081: HTTP 200
+   Make the Order ahead button green -&gt; src/style.css</code></pre>
+<h2>What the Session endpoint refuses</h2>
+<p>When the runtime refuses a request, it answers with an HTTP status, an empty body, and an error code in a response header, so you can tell its refusals from errors your application returns. The notebook sends a request to a port outside allowedPorts and a request without credentials, and the runtime refuses both with 403 AccessDenied.</p>
+<p>The following table lists the refusals you’re likely to meet while you build with <strong>Session endpoints</strong>.</p>
+<table><thead><tr><th><strong>Request</strong></th><th><strong>Response from the runtime</strong></th></tr></thead><tbody><tr><td>A port that isn’t in <code>allowedPorts</code></td><td><code>403 AccessDenied</code></td></tr><tr><td>A request without valid credentials</td><td><code>403 AccessDenied</code> or <code>401 AuthenticationRequired</code></td></tr><tr><td>An allowed port with nothing listening on it</td><td><code>502 PortNotReachable</code></td></tr><tr><td>A URL whose session no longer exists</td><td><code>404 SessionNotFound</code></td></tr></tbody></table>
+<h2>How access to your session is protected</h2>
+<p>The runtime removes its own authentication headers before it forwards a request, so the website doesn’t receive your signature. Requests are recorded in <a href="https://aws.amazon.com/cloudtrail/">AWS CloudTrail</a> as <code>InvokeAgentRuntimeProxy</code> events, with the event source <code>bedrock-agentcore.amazonaws.com</code>. The local endpoint acts with your credentials, so it limits who can use it. It listens on <code>127.0.0.1</code> only, answers only requests addressed to its own local address, and refuses WebSocket connections opened by pages from other origins. Run the local endpoint only while you use the preview. For more information, see <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-session-endpoints.html#runtime-session-endpoints-cloudtrail">Log session endpoint requests in CloudTrail</a>.</p>
+<p>The access controls don’t separate the website from the agent. Both run in the same session, so give the execution role only the permissions the agent needs. If the runtime replaces the session’s compute, open connections close, and the agent’s edits might not survive unless the session uses persistent storage. Refer to <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-filesystem-configurations.html">File system configurations for AgentCore runtime</a> if you need the files to outlast the compute.</p>
+<p>The agent’s file tools resolve every path inside the site folder and refuse paths outside it, so a prompt can’t make the agent change other files in the session. If other people can send prompts to your coding agent, consider <a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> to filter harmful prompts and responses, and review the agent’s changes before you publish them.</p>
+<h2>Clean up</h2>
+<p>To avoid ongoing charges, stop the preview and delete the resources the sample created. The website the agent edited lives in the session, so it goes with the session.</p>
+<p>To clean up:</p>
+<ol><li>Run the stop cell, and press Enter when the notebook asks. This stops the preview page, the local endpoint, and the session.</li></ol>
+<ol><li>Run the %run <code>cleanup.py</code> cell, which deletes the runtime, the uploaded code, and the IAM role.</li></ol>
+<h2>Conclusion</h2>
+<p>Session endpoints give you authenticated access to the applications in an AgentCore runtime session from your own tools over HTTP/1.1, HTTP/2, and WebSocket, on the ports you allow. In this post, you deployed a coding agent with a Vite website in its session, opened the live website in your browser through a local endpoint, asked the agent for a dark theme, and watched the change arrive as the agent saved the file. You also reached a second port in the same session and confirmed what the Session endpoint refuses.</p>
+<p>To go further, run the notebook with your own site in the site folder, or change the agent’s tools to match how your coding agent works. For the full set of options, including port ranges, OAuth, HTTP/2, and gRPC, refer to <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-session-endpoints.html">Connect to runtime sessions through a session endpoint</a>.</p>
+<p>To change the port or path that <code>InvokeAgentRuntime</code> uses in your own agent, refer to <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-configure-invocation.html">Configure your agent’s serving port and invocation path</a>. If your agent also needs to run build or test commands in the same session, refer to <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-execute-command.html">Execute shell commands in AgentCore runtime sessions</a>. To deploy your own Node.js agent from a zip file the way this sample does, refer to <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-get-started-code-deploy-node.html">Direct code deployment for Node.js</a>. For everything else the service offers, start with <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">Host agent or tools with Amazon Bedrock AgentCore runtime</a>, and find more examples in the <a href="https://github.com/awslabs/agentcore-samples">agentcore-samples GitHub repo</a>.</p>
+<h2>About the author</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>How Worldwide Express automated freight exceptions with Amaz…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/how-worldwide-express-automated-freight-exceptions-with-amazon-bedrock/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-worldwide-express-automated-freight-exceptions-with-amazon-bedrock/?li=1</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: How Worldwide Express automated freight exceptions with Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>How Worldwide Express automated freight exceptions with Amazon Bedrock</h1>
+<p>Worldwide Express (part of ShipStation Global) had built something big: approximately $5 billion in systemwide revenue, over 75 less-than-truckload (LTL) carriers and more than 130,000 customers. But that same scale had a hidden cost. Every month, $15 million in free cash flow sat frozen, locked in billing exceptions no one had resolved yet. Each one had to be chased down by hand, carrier by carrier, with its own rules to check. Worldwide Express outsourced to a team that worked cases one at a time, calling customers and carriers for each dispute. The exceptions piled up, cash stayed stuck, and every order took longer to turn into money.</p>
+<p>Worldwide Express worked with AWS and LTM to build a multi-agentic AI solution with <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> that plugs directly into their transportation management system (TMS), SpeedShip. Six months after launch, the company reported a 75 percent reduction in active exceptions, a 4-week improvement in time-to-cash, $1M annual savings, and a one-time $10M free cash flow infusion.</p>
+<p>In this post, we describe the challenge, explain how Worldwide Express designed the multi-agent solution, and share the results.</p>
+<h2>The challenge</h2>
+<p>In LTL freight, roughly 14 percent of invoices fail the standard three-way match between the purchase order, the goods receipt, and the carrier invoice. When a match fails, the invoice enters exception handling. For Worldwide Express, exceptions fell into three categories:</p>
+<ul><li><strong>Line-item mismatches:</strong> Quantities or service codes that didn’t align with the shipment record.</li><li><strong>Pricing variances:</strong> The carrier billed a rate different from the contracted price.</li><li><strong>Unexpected accessorial charges:</strong> Liftgate fees, residential surcharges, or reweigh adjustments that weren’t on the original quote.</li></ul>
+<p>Each exception triggered a five-step manual process:</p>
+<ul><li>Identify the exception type by cross-referencing the invoice against the purchase order, goods receipt, and pricing.</li><li>Research the root cause in vendor records.</li><li>Send email to the carrier or warehouse with dispute details.</li><li>Wait for a response.</li><li>Execute the resolution in the TMS.</li></ul>
+<p>With each carrier operating under its own tariff structure and dispute workflow, this process consumed most of the FinOps team’s bandwidth.</p>
+<p>Rule-based process automation (RPA) can handle structured, predictable workflows. However, exception resolution requires contextual judgment: interpreting a carrier’s accessorial policy, comparing charges against shipment data, and deciding validity given a carrier, exception type, and dollar amount. That variability is what made the problem a fit for the agentic AI framework.</p>
+<h2>From assessment to production</h2>
+<p>In June 2025, Worldwide Express engaged the AWS Business Transformation &amp; Value Advisory team to identify 19 automation opportunities across the Order-to-Cash lifecycle. Knowing the business value of exceptions automation, Worldwide Express moved from assessment to production in less than 6 months.</p>
+<h2>How it works</h2>
+<p>The solution runs on AWS. Amazon Bedrock provides AI reasoning, and <a href="https://aws.amazon.com/ec2/">Amazon Elastic Compute Cloud (Amazon EC2)</a> is the engine. The design calls for fine-grained control over how each agent reasons, where decision boundaries sit, and how exceptions are routed between agents. Building the framework directly on Amazon EC2, with Amazon Bedrock providing inference, keeps that orchestration logic fully in the team’s hands and supports open source agent libraries. Production controls of business logic make each agent’s role, inputs, and decision boundaries explicit and auditable. In a billing-dispute workflow, every automated decision needs to be explainable.</p>
+<h3>Agents</h3>
+<p>When an invoice exception is detected, the system routes it to one of three specialized AI agents, each handling a specific type of billing dispute:</p>
+<ul><li><strong>Invoice Matching Agent</strong> finds the matching shipment record and flags what doesn’t line up.</li><li><strong>Pricing Variance Agent</strong> compares the carrier’s charge against the contracted rate and determines whether the difference is valid.</li><li><strong>Accessorial Validation Agent</strong> checks whether unexpected fees (such as residential delivery or liftgate charges) are supported by the actual delivery events.</li></ul>
+<p>Each agent pulls specific carrier billing rules and policies before making a recommendation. After the exception is resolved, the system generates a plain-language note explaining what was found and what action was taken.</p>
+<p>Each custom agent has an instruction prompt (defining its role, decision boundaries, and output format), a set of actions (integrations into SpeedShip), and access to carrier-specific knowledge bases. By using Amazon Bedrock, each agent accesses a suitable foundation model through a single API while inheriting existing AWS governance. For model availability by Region, refer to <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Supported models by AWS Region in Amazon Bedrock</a>.</p>
+<h3>Actions</h3>
+<p>The agents connect to SpeedShip through the same APIs that analysts use. That means the AI sees exactly what a human reviewer would see (contract rates, shipment details, delivery proof) and writes its resolution into the same workflow. SpeedShip has APIs on AWS, so the agents wire into the same endpoints as other existing systems.</p>
+<h3>Carrier knowledge base</h3>
+<p>Every carrier has different billing rules, fee definitions, and dispute procedures. Worldwide Express stores each carrier’s documentation: tariff rules, surcharge definitions, dispute steps, and variance thresholds. When an agent processes an exception, it retrieves that specific carrier’s policies and standard operating procedure (SOP) documents before deciding, so each decision is grounded in the carrier’s own rules. The same three agents handle all carriers without any carrier-specific code.</p>
+<h3>Human-in-the-loop</h3>
+<p>The approval step was necessary for FinOps adoption during the initial rollout. Initially, a human reviewer would use the existing SpeedShip UI to approve recommendations before they’re finalized. Eventually when accuracy exceeded 99 percent, bulk approval became the default.</p>
+<h3>Observability</h3>
+<p>Worldwide Express’s team built dashboards tracking automation rate by carrier, error rate by exception type, resolution time, and human override frequency. When a reviewer rejects a recommendation, the system logs the feedback. The team refines instruction prompts and knowledge bases based on rejection history, steadily increasing automation coverage.</p>
+<h3>End-to-end flow</h3>
+<p>The following diagram shows the end-to-end flow, from exception detection through the three specialized agents to human approval. In the diagram, exceptions from the data sources (the SpeedShip TMS, a shipping system, an electronic data interchange (EDI) server, and carrier and vendor portals) are detected and routed to one of three agents. Each agent runs on Amazon EC2 with Auto Scaling, uses an agent framework with its own prompt, tools, and carrier knowledge base, and calls Amazon Bedrock for model inference. The agents produce a resolution report. Cost finalization and an AI-written note then go to a human reviewer for approval in the SpeedShip analyst UI.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-20953-1-2.png" alt="Exception-handling architecture: SpeedShip and other data sources feed detected exceptions to three agents on Amazon EC2 that call Amazon Bedrock, then route resolutions to a human reviewer"></p>
+<p>Figure 1: Worldwide Express’s AI-powered exception handling architecture on AWS</p>
+<h2>Results</h2>
+<p>Six months in, Worldwide Express has deployed the solution across over 40 LTL carriers. The agents currently close 10,000 (approximately 50 percent) exceptions weekly with a less than 1 percent error rate. This shifted the FinOps team’s time from routine resolution to complex, high-value disputes.</p>
+<p>The impact shows up most clearly in the backlog of active exceptions, which fell from $15M in June 2025 to $4M six months later, a 75 percent reduction. Worldwide Express unlocked $10M in freed-up cash flow, over $1M in annual cost savings, and 60x first-year ROI. The company reports time-to-cash improving by four weeks.</p>
+<blockquote>“With AWS, we’ve automated more than 40 percent of weekly billing exceptions, significantly reducing costs and accelerating billing cycles from days to minutes. Today, we release approximately $10 million more in customer billings each week at a speed that simply wasn’t possible before.”<br>        — Nathanael Pearson, VP of FinOps, Worldwide Express</blockquote>
+<h2>Looking forward</h2>
+<p>Worldwide Express is already expanding this approach to other parts of the Order-to-Cash cycle. For logistics companies managing high carrier volumes, the path forward is to start small. Automate the most repetitive exception type first, prove accuracy, then scale across the rest of the portfolio.</p>
+<h2>Conclusion</h2>
+<p>Worldwide Express’s exception automation shows what’s possible when agentic AI meets a well-scoped business problem. The combination of Amazon Bedrock, carrier-specific knowledge bases, and a human-in-the-loop approval design let Worldwide Express move from assessment to production in less than 6 months while maintaining financial controls. The company is now expanding automation to other Order-to-Cash processes.</p>
+<p>To explore whether a similar approach might work for your organization, <a href="https://aws.amazon.com/contact-us/">request a conversation</a> with your account team or learn more about <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a>. Partners like <a href="https://www.ltm.com/">LTM</a> can run a Proof of Value sprint with your own data.</p>
+<h2>About the authors</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Configure the ChatGPT desktop app with Amazon Bedrock in AWS…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/configure-the-chatgpt-desktop-app-with-amazon-bedrock-in-aws-govcloud-us/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/configure-the-chatgpt-desktop-app-with-amazon-bedrock-in-aws-govcloud-us/?li=1</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <description>Full title: Configure the ChatGPT desktop app with Amazon Bedrock in AWS GovCloud (US)</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
+<h1>Configure the ChatGPT desktop app with Amazon Bedrock in AWS GovCloud (US)</h1>
+<p>The ChatGPT desktop app is now available on <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> in <a href="https://aws.amazon.com/govcloud-us/">AWS GovCloud (US)</a>, providing access to OpenAI’s frontier models through two components. Work completes complex, multi-step tasks and delivers review-ready results, and Codex is a coding agent for developing, testing, and reviewing software.</p>
+<p>This walkthrough is intended for organizations whose security architecture requires model inference to use AWS GovCloud (US) identities, endpoints, and Regional controls. It configures Codex to route model requests through Amazon Bedrock Mantle in <code>us-gov-west-1</code>, where access can be governed using <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> and existing AWS GovCloud (US) network controls.</p>
+<p>Codex is the OpenAI coding agent for AI-powered software development. With GPT models powering inference, Codex introduces a new class of intelligence optimized for complex, long-horizon developer workflows. You can use the ChatGPT desktop app, the Codex CLI, and IDE integrations with Visual Studio Code, JetBrains, and Xcode. Model inference is routed through the Responses API on Amazon Bedrock.</p>
+<p>For customers with data residency requirements, processing stays within the Amazon Bedrock AWS Region that you select. You pay per token with no seat licenses and no per-developer commitments. Zero data retention (ZDR) is also supported. In this configurable mode, prompts and responses are processed without being written to durable storage by AWS or shared with model providers. This helps you protect sensitive information and meet stringent data-governance, privacy, and security requirements.</p>
+<p>This post walks through a controlled local deployment of the ChatGPT desktop app that sends model inference to Amazon Bedrock in AWS GovCloud (US-West). The configuration uses API-mode sign-in, a managed device policy, a named AWS profile, and network restrictions. These restrictions allow access only to the approved Amazon Bedrock endpoint while disabling other external connections and network-enabled capabilities. The result is a deployment that an agency security team can test and document before approving broader use.</p>
+<p>Using AWS GovCloud (US) and following this guide do not, by themselves, authorize your workload. Your organization remains responsible for reviewing the selected model, AWS services, Region, endpoint, workstation controls, repositories, credentials, and data flows against its system security plan and authorization process.</p>
+<h2>Solution overview</h2>
+<p>You can use the ChatGPT desktop app in two ways:</p>
+<ul><li>Work for larger tasks that need planning, research, files, and a finished result.</li><li>Codex for technical work such as editing code, running tests, and reviewing pull requests.</li></ul>
+<p>The ChatGPT desktop app runs on an organization-managed computer through the desktop app or CLI. It uses the configured AWS credentials to securely send requests to the Amazon Bedrock Mantle endpoint in <code>us-gov-west-1</code>. Because this setup uses AWS directly, ChatGPT workspace rules and user roles don’t control it. The main security controls are the computer’s policies and the AWS identity and permissions being used.</p>
+<h2>Walkthrough</h2>
+<p>The configuration has three main steps: set up authentication, set up the ChatGPT desktop app configuration files, and then launch, initialize, and verify the deployment.</p>
+<h3>Prerequisites</h3>
+<p>Before setting up the ChatGPT desktop app with AWS GovCloud (US), make sure <a href="https://learn.chatgpt.com/docs/changelog">your version</a> of the ChatGPT desktop app supports Amazon Bedrock in AWS GovCloud (US). You need an approved AWS GovCloud (US) account, an IAM identity and approved credentials, access to the approved model, AWS Region, and endpoint, and permission to use them. You also need to set up the <code>requirements.toml</code> and <code>config.toml</code> files.</p>
+<h3>Step 1: Set up authentication</h3>
+<p>Select the approved AWS GovCloud (US) account and IAM identity or role with access to the approved model in <code>us-gov-west-1</code>. Obtain credentials through your organization’s approved mechanism. This walkthrough uses the named profile <code>codex-il5</code>. Keep credentials, bearer tokens, session tokens, and other secrets out of TOML files.</p>
+<p>Protect the profile configuration, credential source, SSO token cache, and any credential helper from ChatGPT desktop app task writes, while allowing approved authentication tools to maintain and refresh credentials.</p>
+<p>The ChatGPT desktop app supports two Amazon Bedrock authentication pathways: an <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys-generate.html">Amazon Bedrock API key</a> or the <a href="https://docs.aws.amazon.com/sdkref/latest/guide/standardized-credentials.html">AWS SDK credential chain</a>. AWS SSO through AWS IAM Identity Center is supported within the credential-chain pathway.</p>
+<p>The app first checks for <code>AWS_BEARER_TOKEN_BEDROCK</code> in its environment. For desktop use, this variable can be supplied through <code>%USERPROFILE%\.codex\.env</code> on Windows or <code>~/.codex/.env</code> on Linux and macOS. When present, the bearer token takes precedence over profile-based authentication.</p>
+<p>If no bearer token is available, the app falls back to the standard AWS SDK credential chain. The chain can read AWS credentials from <code>~/.aws/credentials</code> and related profile settings from <code>~/.aws/config</code>. On Windows, the corresponding default paths are <code>%USERPROFILE%\.aws\credentials</code> and <code>%USERPROFILE%\.aws\config</code>. The chain also supports SSO profiles. For SSO, it uses the profile settings in the AWS config file and the cached SSO session to obtain temporary role credentials. These credentials don’t need to be manually stored in the AWS credentials file. See <a href="https://learn.chatgpt.com/docs/amazon-bedrock">OpenAI’s Bedrock authentication documentation</a> and the <a href="https://docs.aws.amazon.com/sdkref/latest/guide/feature-sso-credentials.html">AWS IAM Identity Center credential provider documentation</a>.</p>
+<h3>Step 2: Set up ChatGPT desktop app configuration files</h3>
+<p>You must create two ChatGPT desktop app configuration files: <code>config.toml</code> and <code>requirements.toml</code>.</p>
+<p>Important: the configuration files need to be set up before the application is launched. The following table shows the file locations.</p>
+<table><thead><tr><th><strong>Operating system</strong></th><th><strong>User <code>config.toml</code></strong></th><th><strong>Admin <code>requirements.toml</code></strong></th></tr></thead><tbody><tr><td>Windows</td><td><code>%USERPROFILE%\.codex\config.toml</code></td><td><code>%ProgramData%\OpenAI\Codex\requirements.toml</code></td></tr><tr><td>Linux</td><td><code>~/.codex/config.toml</code></td><td><code>/etc/codex/requirements.toml</code></td></tr><tr><td>macOS</td><td><code>~/.codex/config.toml</code></td><td><code>/etc/codex/requirements.toml</code></td></tr></tbody></table>
+<p>Start from the <code>requirements.toml</code> file. <code>requirements.toml</code> is an administrator-controlled rules file. It sets security limits that users can’t override, for example, restricting which permission levels, tools, or settings the ChatGPT desktop app is allowed to use.</p>
+<p>Use the following baseline for the supported AWS GovCloud (US) Amazon Bedrock deployment. The <code>[windows]</code> section applies only to Windows, and <code>sandbox_private_desktop</code> must be supported by the approved runtime.</p>
+<pre><code>allowed_login_methods = [&quot;api&quot;]
+allowed_sandbox_modes = [&quot;read-only&quot;, &quot;workspace-write&quot;]
+allowed_approvals_reviewers = [&quot;user&quot;]
+allowed_approval_policies = [
+{ granular = { sandbox_approval = false, rules = true,
+mcp_elicitations = false, request_permissions = false,
+skill_approval = true } },
+]
+allowed_web_search_modes = [&quot;disabled&quot;, &quot;cached&quot;]
+allow_browser_and_computer_use = false
+allow_appshots = false
+allow_remote_control = false
+allow_login_shell = false
+allow_managed_hooks_only = true
+check_for_update_on_startup = false
+mcp_servers = {}
+
+[feedback]
+enabled = false
+
+[features]
+network_proxy = true
+in_app_chat = false
+in_app_dictation = false
+in_app_browser = false
+browser_use = false
+browser_use_external = false
+browser_use_full_cdp_access = false
+computer_use = false
+in_app_updates = false
+image_generation = false
+memories = false
+chronicle = false
+external_agent_memory_import = false
+guardian_approval = false
+guardianv2 = false
+guardian_ext = false
+apps = false
+enable_mcp_apps = false
+plugins = false
+remote_plugin = false
+plugin_sharing = false
+recommended_plugins = false
+skill_mcp_dependency_install = false
+skill_search = false
+workspace_dependencies = false
+hooks = false
+standalone_web_search = false
+
+[experimental_network]
+enabled = true
+managed_allowed_domains_only = true
+domains = {}
+unix_sockets = {}
+allow_upstream_proxy = false
+dangerously_allow_non_loopback_proxy = false
+dangerously_allow_all_unix_sockets = false
+allow_local_binding = false
+
+[application.network]
+enabled = true
+
+[application.network.domains]
+&quot;bedrock-mantle.us-gov-west-1.api.aws&quot; = &quot;allow&quot;
+&quot;api.openai.com&quot; = &quot;deny&quot;
+&quot;chat.openai.com&quot; = &quot;deny&quot;
+&quot;chatgpt.com&quot; = &quot;deny&quot;
+&quot;ab.chatgpt.com&quot; = &quot;deny&quot;
+&quot;platform.openai.com&quot; = &quot;deny&quot;
+&quot;auth.openai.com&quot; = &quot;deny&quot;
+&quot;gov.api.openai.com&quot; = &quot;deny&quot;
+&quot;gov.chatgpt.com&quot; = &quot;deny&quot;
+&quot;sdfedpreastus2.oaiusercontent.com&quot; = &quot;deny&quot;
+&quot;o33249.ingest.us.sentry.io&quot; = &quot;deny&quot;
+&quot;persistent.oaistatic.com&quot; = &quot;deny&quot;
+&quot;oaisidekickupdates.blob.core.windows.net&quot; = &quot;deny&quot;
+
+[windows]
+allowed_sandbox_implementations = [&quot;elevated&quot;]
+sandbox_private_desktop = true</code></pre>
+<p>Next, configure the <code>config.toml</code> file. <code>config.toml</code> tells the ChatGPT desktop app how to operate, including which model provider to use (<code>amazon-bedrock</code>), which model to select, and settings such as permissions or context limits.</p>
+<p>Replace the model ID and named profile (for example, <code>codex-il5</code>) with approved values.</p>
+<pre><code>model = &quot;REPLACE_WITH_APPROVED_MODEL_ID&quot;
+model_provider = &quot;amazon-bedrock&quot;
+forced_login_method = &quot;api&quot;
+approval_policy = { granular = { sandbox_approval = false,
+rules = true, mcp_elicitations = false,
+request_permissions = false, skill_approval = true } }
+approvals_reviewer = &quot;user&quot;
+sandbox_mode = &quot;workspace-write&quot;
+web_search = &quot;cached&quot;
+allow_login_shell = false
+check_for_update_on_startup = false
+
+[model_providers.amazon-bedrock]
+base_url = &quot;https://bedrock-mantle.us-gov-west-1.api.aws/openai/v1&quot;
+wire_api = &quot;responses&quot;
+requires_openai_auth = false
+supports_websockets = false
+supports_standalone_web_search = false
+
+[model_providers.amazon-bedrock.aws]
+region = &quot;us-gov-west-1&quot;
+profile = &quot;codex-il5&quot;
+
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+network_proxy = true
+
+[analytics]
+enabled = false
+
+[feedback]
+enabled = false
+
+[otel]
+exporter = &quot;none&quot;
+trace_exporter = &quot;none&quot;
+metrics_exporter = &quot;none&quot;
+log_user_prompt = false
+
+[memories]
+generate_memories = false
+use_memories = false
+
+[skills.bundled]
+enabled = false
+
+[apps._default]
+enabled = false
+
+[windows]
+sandbox = &quot;elevated&quot;</code></pre>
+<h3>Step 3: Launch, initialize, and verify</h3>
+<p>Download the app from the ChatGPT site and install it. Leave the app closed after installation. If it opens automatically or if the app has been launched previously, fully exit ChatGPT and end any lingering ChatGPT or Codex processes.</p>
+<p>Make sure <code>requirements.toml</code> and <code>config.toml</code> are in place before the first app launch.</p>
+<p>Start the app to load the <code>requirements.toml</code> and <code>config.toml</code> settings. Make sure it shows <code>amazon-bedrock</code> as the model provider.</p>
+<p>In the Codex CLI, you should see a <code>/status</code> tab that looks like this:</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22175-1.png" alt="Codex CLI /status tab showing amazon-bedrock configured as the model provider"></p>
+<p>Figure 1: The Codex CLI /status tab confirming amazon-bedrock as the model provider</p>
+<p>In the ChatGPT desktop app, you can also confirm <code>amazon-bedrock</code> as the model provider.</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22175-2.png" alt="ChatGPT desktop app settings confirming amazon-bedrock as the model provider"></p>
+<p>Figure 2: The ChatGPT desktop app settings showing amazon-bedrock as the model provider</p>
+<h2>Troubleshooting</h2>
+<p><strong>The application prompts for an OpenAI account.</strong> Verify that <code>requirements.toml</code> and <code>config.toml</code> use the exact locations and file names shown in the preceding table, terminate all ChatGPT and Codex processes, and relaunch. The files must precede app launch.</p>
+<p><strong>AWS GovCloud (US) endpoint is reported as unsupported.</strong> Confirm the exact desktop or app-server release, endpoint, and model with OpenAI. Changing the URL alone does not establish support.</p>
+<p><strong>The wrong AWS identity is used.</strong> Inspect the effective credential source and named profile. Check whether an Amazon Bedrock API key takes precedence over the profile.</p>
+<p><strong>Capability restrictions are missing.</strong> Inspect the full effective requirements after restart. The API-only sign-in setting doesn’t apply the capability policy.</p>
+<h2>Rollback and cleanup</h2>
+<p>If a validation check fails, stop the rollout. Return the affected devices to the previously approved policy and provider settings, then restart the ChatGPT desktop app. Revoke any temporary AWS credentials or API keys, and confirm that those devices can no longer connect to Amazon Bedrock. Keep a record of the test and clearly document what failed before trying again.</p>
+<h2>Conclusion</h2>
+<p>The ChatGPT desktop app on Amazon Bedrock in AWS GovCloud (US) gives you a controlled way to use OpenAI frontier models and coding assistance. Inference stays in the AWS GovCloud (US) Regions. By validating the configuration, confirming the approved AWS identity and endpoint, and verifying security controls, you can confidently prepare the deployment for broader use. This approach supports innovation while aligning deployment decisions with each organization’s security, authorization, and data-handling requirements.</p>
+<p>Ready to explore the ChatGPT desktop app with Codex on Amazon Bedrock in AWS GovCloud (US)? Start with a controlled deployment, validate your security controls, and work with your security team to prepare for broader adoption.</p>
+<h2>Related resources</h2>
+<ul><li><a href="https://learn.chatgpt.com/docs/enterprise/govcloud-configuration">Bedrock AWS GovCloud (US) configuration</a> – ChatGPT desktop app device, provider, network, verification, and troubleshooting guidance.</li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-mantle.html">Responses API on Amazon Bedrock</a> – AWS Regions, endpoint behavior, authentication, and permissions for the Responses API.</li><li><a href="https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-compliance.html">AWS GovCloud (US) compliance</a> – Compliance programs and customer authorization considerations.</li><li><a href="https://learn.chatgpt.com/docs/amazon-bedrock">OpenAI’s Bedrock authentication documentation</a> – Amazon Bedrock API key and AWS SDK credential-chain authentication, including SSO.</li><li><a href="https://docs.aws.amazon.com/sdkref/latest/guide/feature-sso-credentials.html">AWS IAM Identity Center credential provider documentation</a> – SSO profile configuration and temporary AWS credentials.</li></ul>
+<h2>About the authors</h2>]]></content:encoded>
+    </item>
     <item>
       <title>How the UK Amazon Quick User Group grew in 2026</title>
       <link>https://aws.amazon.com/blogs/machine-learning/how-the-uk-amazon-quick-user-group-grew-in-2026/</link>
@@ -5942,619 +6423,6 @@ expression: |
 <ul><li>Pick one workflow that spans two or three data sources and takes longer than it should to answer today.</li><li>Write 3–5 questions the workflow needs to answer. These are the queries the semantic layer has to support on day one.</li><li>Consolidate the analytical data into Amazon Redshift (or the warehouse of your choice), using <a href="https://aws.amazon.com/dms/">AWS Database Migration Service</a> or <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/zero-etl.html">Amazon Aurora zero-ETL</a> for operational data.</li><li>Bootstrap the SML from the warehouse schema in Design Center, then refine it against the competency questions.</li><li>Deploy AtScale on Amazon EKS with the AtScale Helm chart and the AtScale K8S Blueprints, register the AtScale MCP server as an AgentCore Gateway target, and wire a Strands agent through it.</li></ul>
 <h2>Further reading</h2>
 <ul><li>AtScale MCP server documentation: <a href="https://documentation.atscale.com/container/connect-integrate/connecting-with-ai">Connect to AtScale with AI</a></li><li>AtScale C2026.7 release notes: <a href="https://documentation.atscale.com/container/release-notes/C2026.7">documentation.atscale.com</a></li><li>AtScale MCP tools reference (published per release with the AtScale documentation)</li><li>AtScale K8S Blueprints: <a href="https://github.com/AtScaleInc/atscale-k8s-blueprints">github.com/AtScaleInc/atscale-k8s-blueprints</a></li><li>Semantic Modeling Language specification: <a href="https://github.com/semanticdatalayer/SML">github.com/semanticdatalayer/SML</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/">Amazon Bedrock AgentCore Developer Guide</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">Amazon Bedrock prompt caching</a></li><li><a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/strands-agents.html">Strands Agents on AWS Prescriptive Guidance</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-stardog-and-amazon-bedrock-agentcore/">Build a semantic layer for agentic AI on AWS with Stardog and Amazon Bedrock AgentCore</a> (first post in this series)</li><li><a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-denodo-and-amazon-bedrock-agentcore/">Build a semantic layer for agentic AI on AWS with Denodo and Amazon Bedrock AgentCore</a> (second post in this series)</li></ul>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Structured outputs for Anthropic Claude models on Amazon Bed…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/structured-outputs-for-anthropic-claude-models-on-amazon-bedrock/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/structured-outputs-for-anthropic-claude-models-on-amazon-bedrock/?li=1</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Structured outputs for Anthropic Claude models on Amazon Bedrock</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Structured outputs for Anthropic Claude models on Amazon Bedrock</h1>
-<p>Amazon Bedrock now supports structured outputs for all Anthropic Claude models, on both the bedrock-runtime and bedrock-mantle endpoints, where the model is available.</p>
-<p>Whether you call Claude through Boto3 and the bedrock-runtime APIs or through the Messages API and the bedrock-mantle endpoint, you can now receive schema-compliant JSON responses that conform to a defined structure. You no longer need custom parsing, retry logic, or post-processing.</p>
-<h2>Practical applications</h2>
-<p>With structured outputs for Claude on Amazon Bedrock, you can automate reliable, schema-compliant tasks across industries. Examples include extracting every required field from financial earnings reports and compliance documents, parsing clinical notes into Electronic Health Records (EHR), and enriching product catalogs with consistent, validated results. You can also analyze contracts for key terms, parties, and obligations, or power intelligent support ticket routing where intents, sentiments, and entities always match your application’s data model.</p>
-<h2>What changes with structured outputs on Amazon Bedrock</h2>
-<p>Structured outputs use constrained decoding to enforce your JSON schema during token generation, not after the fact. The model doesn’t produce tokens that would violate your schema. This changes output formatting from probabilistic to deterministic.</p>
-<p>Two complementary mechanisms are now available on both Amazon Bedrock endpoints:</p>
-<table><thead><tr><th><strong>Feature</strong></th><th><strong>Purpose</strong></th><th><strong>Use case</strong></th></tr></thead><tbody><tr><td>JSON Schema output format</td><td>Control the model’s response structure</td><td>Data extraction, report generation, API responses</td></tr><tr><td>Strict tool use</td><td>Validate tool parameters against schemas</td><td>Agentic workflows, function calling, multi-step automation</td></tr></tbody></table>
-<h2>What this means for you</h2>
-<p>Each response is a valid JSON, so you no longer encounter <code>JSON.parse()</code> errors or parsing exceptions. Responses are also type safe: field types are enforced, and required fields are always present. Because outputs always conform to your schema, you don’t need retries to handle schema violations, making your integration more reliable. Structured outputs also constrains responses to only the fields your schema defines, which reduces output token count and can lower inference costs for high-volume workloads. These properties make structured outputs production ready, so you can deploy at scale without additional schema-validation code.</p>
-<h2>Supported models and availability</h2>
-<p>Structured outputs works with <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference.html">batch inference</a>, so you can process large volumes of requests asynchronously while still receiving schema-compliant outputs. On the bedrock-runtime endpoint, it also works with cross-Region inference, so you can use it across AWS Regions without additional setup. If you need responses in real time, you can stream structured responses as typed events.</p>
-<h2>How it works</h2>
-<p>When you make a request with a JSON schema, here’s what happens behind the scenes:</p>
-<ul><li><strong>Schema validation –</strong> Amazon Bedrock validates your JSON schema against the supported JSON Schema Draft 2020-12 subset.</li><li><strong>Grammar compilation –</strong> For new schemas, Amazon Bedrock compiles a grammar artifact (the first request might take slightly longer).</li><li><strong>Caching –</strong> Compiled grammars are cached for 24 hours, making subsequent requests faster.</li><li><strong>Constrained generation –</strong> The model generates tokens that produce valid JSON matching your schema.</li></ul>
-<h2>Performance considerations</h2>
-<p>For performance, the first request with a new schema might take longer because Amazon Bedrock compiles a grammar artifact before generation begins. After that initial compilation, subsequent requests using the same schema run with minimal overhead because the compiled grammar is cached. This cache is scoped to your account and lasts for 24 hours from first access. Changing the structure of your JSON schema invalidates the cache and triggers a fresh compilation, while changing only the name or description fields leaves the cached grammar intact.</p>
-<h2>Getting started: Structured outputs with the InvokeModel API (bedrock-runtime)</h2>
-<p>The InvokeModel API takes the Anthropic-native request body, so the schema goes in <code>output_config.format</code> as a JSON object rather than a JSON string. The following example shows how to extract the structured lead data from a customer email using boto3 with an Anthropic Claude model:</p>
-<p>Python</p>
-<pre><code>import boto3
-import json
-
-REGION = &quot;us-east-1&quot; # Choose your preferred region
-bedrock_runtime = boto3.client(service_name=&quot;bedrock-runtime&quot;, region_name=REGION)
-
-# Define the JSON schema for structured output
-schema = {
-    &quot;type&quot;: &quot;object&quot;,
-    &quot;properties&quot;: {
-        &quot;name&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Customer name&quot;},
-        &quot;email&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Customer email address&quot;},
-        &quot;plan_interest&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Product plan of interest&quot;},
-        &quot;demo_requested&quot;: {&quot;type&quot;: &quot;boolean&quot;, &quot;description&quot;: &quot;Whether a demo was requested&quot;}
-    },
-    &quot;required&quot;: [&quot;name&quot;, &quot;email&quot;, &quot;plan_interest&quot;, &quot;demo_requested&quot;],
-    &quot;additionalProperties&quot;: False
-}
-
-# Make a request with structured outputs via the InvokeModel API
-# (reusing the schema defined for the Converse example)
-response = bedrock_runtime.invoke_model(
-    modelId=&quot;global.anthropic.claude-sonnet-5-5&quot;,
-    body=json.dumps({
-        &quot;anthropic_version&quot;: &quot;bedrock-2023-05-31&quot;,
-        &quot;max_tokens&quot;: 512,
-        &quot;messages&quot;: [
-            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: (
-                &quot;Paulo Santos (paulo@example.com) is interested in our Enterprise plan &quot;
-                &quot;and wants to schedule a demo for next Tuesday at 2pm.&quot;
-            )}
-        ],
-        &quot;output_config&quot;: {&quot;format&quot;: {&quot;type&quot;: &quot;json_schema&quot;, &quot;schema&quot;: schema}}
-    })
-)
-
-body = json.loads(response[&quot;body&quot;].read())
-
-# Check the stop reason before parsing
-if body[&quot;stop_reason&quot;] == &quot;end_turn&quot;:
-    result_text = next(b[&quot;text&quot;] for b in body[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;)
-    print(json.dumps(json.loads(result_text), indent=2))
-elif body[&quot;stop_reason&quot;] == &quot;max_tokens&quot;:
-    print(&quot;Response truncated: increase max_tokens and retry.&quot;)</code></pre>
-<p>JSON</p>
-<pre><code>{
-    &quot;name&quot;: &quot;Paulo Santos&quot;,
-    &quot;email&quot;: &quot;paulo@example.com&quot;,
-    &quot;plan_interest&quot;: &quot;Enterprise&quot;,
-    &quot;demo_requested&quot;: true
-}</code></pre>
-<p>The response conforms to your schema. No additional validation is required.</p>
-<p>For additional API usage examples, including the Messages API, see the accompanying <a href="https://github.com/aws-samples/anthropic-on-aws/blob/main/notebooks/structured_outputs/structured-outputs-on-bedrock.ipynb">sample notebook</a>.</p>
-<h2>Strict tool use for agentic workflows</h2>
-<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/endpoints.html">Amazon Bedrock Mantle</a> is designed for agentic applications with server-side tools, background inference, and stateful conversations. With strict tool use on the bedrock-mantle endpoint, you can now guarantee that tool parameters match your input schema exactly. The following example shows how to define a tool with strict schema enforcement:</p>
-<pre><code>Import json
-from anthropic import AnthropicBedrockMantle
-
-# Reusing the client created in the Messages API example
-client = AnthropicBedrockMantle(aws_region=&quot;us-east-1&quot;)
-
-message = client.messages.create(
-    model=&quot;anthropic.claude-sonnet-5&quot;,
-    max_tokens=512,
-    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What's the weather like in San Francisco?&quot;}],
-    tools=[
-        {
-            &quot;name&quot;: &quot;get_weather&quot;,
-            &quot;description&quot;: &quot;Get the current weather for a specified location&quot;,
-            &quot;strict&quot;: True,
-            &quot;input_schema&quot;: {
-                &quot;type&quot;: &quot;object&quot;,
-                &quot;properties&quot;: {
-                    &quot;location&quot;: {
-                        &quot;type&quot;: &quot;string&quot;,
-                        &quot;description&quot;: &quot;The city and state, e.g., San Francisco, CA&quot;
-                    },
-                    &quot;unit&quot;: {
-                        &quot;type&quot;: &quot;string&quot;,
-                        &quot;enum&quot;: [&quot;celsius&quot;, &quot;fahrenheit&quot;],
-                        &quot;description&quot;: &quot;Temperature unit&quot;
-                    }
-                },
-                &quot;required&quot;: [&quot;location&quot;, &quot;unit&quot;],
-                &quot;additionalProperties&quot;: False
-            }
-        }
-    ]
-)
-
-#Tool inputs conform to the schema
-for block in message.content:
-    if block.type == &quot;tool_use&quot;:
-        print(f&quot;Tool: {block.name}&quot;)
-        print(f&quot;Input: {json.dumps(block.input, indent=2)}&quot;)</code></pre>
-<p>Setting <code>strict: true</code> constrains the model’s tool input to match your schema exactly. The location field is always a string, and the unit field is always either celsius or fahrenheit. The model can’t add fields outside your schema, so the tool input contains only what your schema specifies.</p>
-<p>This is especially valuable for agentic use cases on Amazon Bedrock Mantle, where models orchestrate multi-step workflows with server-side tools like web search and code interpreter.</p>
-<h2>Top use cases for Claude structured outputs</h2>
-<p>Structured outputs reduce error-handling complexity the most in three common patterns:</p>
-<ul><li><strong>Data extraction:</strong> Extract fields from invoices, contracts, email, and transcripts into JSON that always matches your schema, ready to load into databases or customer relationship management (CRM) systems.</li><li><strong>Reliable agent tool calls:</strong> Validate tool arguments against their schemas at generation time, so multi-step agent workflows run without failures from malformed input.</li><li><strong>Classification at scale:</strong> Classify tickets, leads, or content by intent, priority, and sentiment for routing, moderation, and evaluation.</li></ul>
-<p>Claude Haiku 5.5 reliably handles quick and repetitive workloads such as summaries, compactions, database queries, and classification requests. The following example shows how to classify and route incoming data using the Invoke API and Haiku 5.5:</p>
-<pre><code>import boto3
-import json
-
-REGION = &quot;us-east-1&quot; # Choose your preferred region
-bedrock_runtime = boto3.client(service_name=&quot;bedrock-runtime&quot;, region_name=REGION)
-
-# Classification schema: enums restrict output to a fixed set of labels
-schema = {
-    &quot;type&quot;: &quot;object&quot;,
-    &quot;properties&quot;: {
-        &quot;category&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;enum&quot;: [&quot;billing&quot;, &quot;technical&quot;, &quot;account&quot;, &quot;sales&quot;, &quot;other&quot;],
-            &quot;description&quot;: &quot;Primary ticket category&quot;
-        },
-        &quot;priority&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;enum&quot;: [&quot;low&quot;, &quot;medium&quot;, &quot;high&quot;, &quot;urgent&quot;],
-            &quot;description&quot;: &quot;Urgency based on business impact&quot;
-        },
-        &quot;sentiment&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;enum&quot;: [&quot;positive&quot;, &quot;neutral&quot;, &quot;negative&quot;],
-            &quot;description&quot;: &quot;Customer sentiment&quot;
-        },
-        &quot;escalate&quot;: {&quot;type&quot;: &quot;boolean&quot;, &quot;description&quot;: &quot;Whether a human should review immediately&quot;},
-        &quot;reason&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;One-sentence justification for the classification&quot;}
-    },
-    &quot;required&quot;: [&quot;category&quot;, &quot;priority&quot;, &quot;sentiment&quot;, &quot;escalate&quot;, &quot;reason&quot;],
-    &quot;additionalProperties&quot;: False
-}
-
-ticket = (
-    &quot;Our production API calls have been failing with 500 errors since this morning. &quot;
-    &quot;We're losing orders every minute. This is the second outage this month!&quot;
-)
-
-# Make a request with structured outputs via the InvokeModel API
-response = bedrock_runtime.invoke_model(
-    modelId=&quot;global.anthropic.claude-haiku-5-5&quot;,
-    body=json.dumps({
-        &quot;anthropic_version&quot;: &quot;bedrock-2023-05-31&quot;,
-        &quot;max_tokens&quot;: 512,
-        &quot;system&quot;: &quot;You are a support ticket classifier. Classify the ticket accurately.&quot;,
-        &quot;messages&quot;: [
-            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;Classify this support ticket:\n\n{ticket}&quot;}
-        ],
-        &quot;output_config&quot;: {&quot;format&quot;: {&quot;type&quot;: &quot;json_schema&quot;, &quot;schema&quot;: schema}}
-    })
-)
-
-body = json.loads(response[&quot;body&quot;].read())
-
-# Check the stop reason before parsing
-if body[&quot;stop_reason&quot;] == &quot;end_turn&quot;:
-    result_text = next(b[&quot;text&quot;] for b in body[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;)
-    result = json.loads(result_text)
-    print(json.dumps(result, indent=2))
-    # Route the ticket based on the guaranteed-valid labels
-    if result[&quot;escalate&quot;]:
-        print(f&quot;Escalating to on-call: {result['category']} / {result['priority']}&quot;)
-elif body[&quot;stop_reason&quot;] == &quot;max_tokens&quot;:
-    print(&quot;Response truncated: increase max_tokens and retry.&quot;)</code></pre>
-<h2>Requirements and best practices</h2>
-<p>To use structured outputs effectively on Amazon Bedrock, follow these guidelines:</p>
-<ul><li><strong>Set additionalProperties: false on all objects</strong>: This is required for structured outputs to work. Without it, your schema won’t be accepted.</li><li><strong>Use descriptive field names and descriptions</strong>: Models use property names and descriptions to understand what data to extract. Clear names like <code>customer_email</code> outperform generic names like <code>field1</code>.</li><li><strong>Use enum for constrained values</strong>: When a field has a limited set of valid values, use <code>enum</code> to constrain options.</li><li><strong>Start basic, then add complexity</strong>: Begin with the minimum required fields and add complexity incrementally. Basic schemas compile faster, are easier to debug, and keep your request payload lean because the schema counts toward the Converse API payload size.</li><li><strong>Reuse schemas to benefit from caching</strong>: Structure your application to reuse schemas across requests. The 24-hour grammar cache improves performance for repeated queries.</li><li><strong>Check the stop reason in every response</strong>: Two scenarios can produce non-conforming responses: refusals (when the model declines for safety reasons) and token limits (when <code>max_tokens</code> is reached before completing). Handle both cases in your code.</li><li><strong>Test with realistic data before deployment</strong>: Validate your schemas against production-representative inputs. Edge cases in real data often reveal schema design issues.</li></ul>
-<p>For additional best practices and schema design recommendations, see <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/structured-output.html">Structured outputs</a> in the Amazon Bedrock User Guide.</p>
-<h2>Supported JSON Schema features</h2>
-<ul><li>All basic types: <code>object</code>, <code>array</code>, <code>string</code>, <code>integer</code>, <code>number</code>, <code>boolean</code>, <code>null</code>.</li><li><code>enum</code> (strings, numbers, booleans, or nulls only).</li><li><code>const</code>, <code>anyOf</code>, <code>allOf</code> (with limitations).</li><li><code>$ref</code>, <code>$def</code>, and <code>definitions</code> (internal references only).</li><li>String formats: <code>date-time</code>, <code>time</code>, <code>date</code>, <code>duration</code>, <code>email</code>, <code>hostname</code>, <code>uri</code>, <code>ipv4</code>, <code>ipv6</code>, <code>uuid</code>.</li><li>Array <code>minItems</code> (only values 0 and 1).</li></ul>
-<h3>Not supported</h3>
-<p>These keywords are accepted by the API but are not enforced during generation. A request that includes them returns a successful response, and the model can still return values that violate them. Validate these constraints in your application rather than relying on the schema to enforce them.</p>
-<ul><li>Recursive schemas.</li><li>External <code>$ref</code> references.</li><li>Numerical constraints (<code>minimum</code>, <code>maximum</code>, <code>multipleOf</code>).</li><li>String constraints (<code>minLength</code>, <code>maxLength</code>).</li><li><code>additionalProperties</code> set to anything other than false.</li></ul>
-<h2>Conclusion</h2>
-<p>Structured outputs for Anthropic Claude models on Amazon Bedrock provides the reliability that production AI applications require. It is available now on both the bedrock-runtime and bedrock-mantle endpoints. By combining JSON Schema output format and strict tool use, you can build data pipelines that need no additional validation. You can also create reliable agentic workflows and production AI applications without custom parsing or retry logic.</p>
-<p>Structured outputs for Claude on Amazon Bedrock is now generally available. To learn more, see the <a href="https://docs.aws.amazon.com/bedrock/">Amazon Bedrock documentation</a> and explore our <a href="https://github.com/aws-samples/anthropic-on-aws/blob/main/notebooks/structured_outputs/structured-outputs-on-bedrock.ipynb">sample notebook</a>.</p>
-<p>What workflows could validated, schema-compliant JSON improve in your organization? Share your feedback and questions in the comments.</p>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Developers can now access SageMaker Studio through the new A…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/developers-can-now-access-sagemaker-studio-through-the-new-aws-experience/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/developers-can-now-access-sagemaker-studio-through-the-new-aws-experience/?li=1</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Developers can now access SageMaker Studio through the new AWS experience</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Developers can now access SageMaker Studio through the new AWS experience</h1>
-<p>Today, we’re excited to <a href="https://aws.amazon.com/about-aws/whats-new/2026/10/sagemaker-studio-social-sign-in/">announce</a> that new Amazon SageMaker AI customers can now land inside a fully configured Amazon SageMaker Studio environment in only a few steps after signing up for AWS. You can use a sign-in method that you already have, such as Amazon, Apple, GitHub, Google, or an email address. You don’t need to set up an advanced AWS account, enter a credit card (for most customers), or configure an environment manually. New customers also receive $100 in AWS Free Tier credits that work across SageMaker AI, including model customization, training jobs, Studio notebooks, and endpoint deployments.</p>
-<p>This post follows on from our previous post, <a href="https://aws.amazon.com/blogs/machine-learning/from-hugging-face-to-amazon-sagemaker-studio-in-one-click-2/">From Hugging Face to Amazon SageMaker Studio in One Click</a>, which introduced deep links from Hugging Face model pages directly into SageMaker Studio workflows. Earlier this year, we also sped up Studio environment creation time from 2 minutes to about 20 seconds and pre-configured model customization permissions in every new Studio domain. Together, these changes removed much of the friction after a developer reached Studio. One major hurdle remained before they got there: creating an AWS account. New customers had to verify an email address, enter contact information, verify a phone number, provide payment details, and select a support plan before they could start building. For individual developers and small startup teams used to signing in and building within a few minutes, that was still a significant barrier.</p>
-<h2>What’s new</h2>
-<p>With this launch, SageMaker Studio is now integrated with the <a href="https://aws.amazon.com/blogs/aws/aws-reimagines-the-getting-started-experience/">updated AWS sign-in and sign-up experience</a>, which introduces new options for creating and managing AWS accounts along with simplified collaboration. New customers can create an account using an identity that they already have and start building in SageMaker Studio right away.</p>
-<h2>New sign-in experience</h2>
-<p>New customers can now sign up using their Google, GitHub, Apple, or Amazon account, or with an email address, in 2–3 steps. You don’t need to complete the advanced AWS account sign-up, verify a phone number, or enter a credit card (for most customers):</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22115-1-1.png" alt="The Sign up for AWS page with an email field and sign-in options for Google, GitHub, Apple, and Amazon"></p>
-<p>Figure 1: The Sign up for AWS page with social sign-on options</p>
-<p>After you sign up, SageMaker AI automatically creates your Studio environment in about 20 seconds. You then land on the page that matches where you started. For example, you might discover and select a model from Hugging Face for deployment through <strong>Deploy on SageMaker AI</strong>. Studio then opens the Deployment page with the model pre-configured for endpoint creation:</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22115-2-1.png" alt="Hugging Face deploy dialog for the Qwen3.5-9B model with Deploy on SageMaker AI and Customize on SageMaker AI options"></p>
-<p>Figure 2: Deploying a Hugging Face model on Amazon SageMaker AI</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22115-3-1.png" alt="The Deploy model to endpoint page in SageMaker Studio showing endpoint name, instance type, and instance count settings"></p>
-<p>Figure 3: Configuring endpoint settings in SageMaker Studio</p>
-<h2>Up to $200 in Free Tier credits, no credit card required for most customers</h2>
-<p>New customers receive $100 in AWS Free Tier credits that work across SageMaker AI, including endpoint deployments, model customization, Studio notebooks, and model training. You also have the chance to earn an additional $100 worth of credits. Credits are applied automatically to your usage, and you receive an email notification as you approach your limit. The Free Tier period ends after 6 months or when you’ve used all your credits, whichever comes first. At that point, resource usage stops automatically, so you won’t be surprised by unexpected charges. You can upgrade to a paid plan at any time by adding payment details.</p>
-<h2>Built on the foundations of previous launches</h2>
-<p>New environments created through the new sign-in experience include the improvements from earlier launches. Permissions for model customization, training, evaluation, and deployment are pre-configured, so you don’t need to create AWS Identity and Access Management (IAM) roles. Eligible accounts get default access to G5, G6, and G4dn GPU instances for endpoints, training jobs, and Studio notebooks. Additionally, the instance selection menu in Studio shows quota availability, so you can quickly see which instance types are available for use.</p>
-<h2>Getting started</h2>
-<p>You can try the new sign-in experience today:</p>
-<ul><li>Browse models on <a href="https://huggingface.co/models">Hugging Face</a>, choose <strong>Deploy</strong>, select <strong>Amazon SageMaker AI</strong> and then choose <strong>Customize on SageMaker AI</strong> or <strong>Deploy on SageMaker AI</strong> on a supported model. Alternatively, visit the <a href="https://aws.amazon.com/sagemaker/studio/">Amazon SageMaker Studio</a> page and choose <strong>Get started with Amazon SageMaker AI</strong>.</li><li>On the AWS sign-in page, choose <strong>Google</strong>, <strong>GitHub</strong>, <strong>Apple</strong>, or <strong>Amazon</strong>, or enter your email address, and follow the prompts to create your account in a few steps.</li><li>Land in your fully configured SageMaker Studio environment and start building with your Free Tier credits.</li></ul>
-<p>The new sign-in experience is available for new AWS accounts. If you already have an AWS account, there’s no change to how you sign in.</p>
-<h2>Conclusion</h2>
-<p>The new sign-in experience removes the last major hurdle between discovering and building with Amazon SageMaker AI. Combined with faster environment creation, pre-configured permissions, deep links from Hugging Face, and default GPU access, individual developers can get started quickly. Startup teams can now go from finding a model to customizing or deploying it in minutes, using an identity they already have.</p>
-<p>To get started, visit <a href="https://aws.amazon.com/sagemaker/studio/">aws.amazon.com/sagemaker/studio</a> or explore models on <a href="https://huggingface.co/models">Hugging Face</a>.</p>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Amazon SageMaker JumpStart: 2026 year-to-date in review</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/amazon-sagemaker-jumpstart-2026-year-to-date-in-review/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/amazon-sagemaker-jumpstart-2026-year-to-date-in-review/?li=1</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Amazon SageMaker JumpStart: 2026 year-to-date in review</h1>
-<p>Amazon SageMaker JumpStart is a machine learning (ML) hub within Amazon SageMaker AI that provides access to a curated catalog of AI models, solution templates, and example notebooks. It reduces the time it takes to go from model selection to deployment. You can use it to evaluate open source large language models (LLMs), deploy a vision model for document understanding, or fine-tune a compact model on your own data.</p>
-<p>SageMaker JumpStart serves three primary use cases:</p>
-<ul><li>Model discovery and evaluation — Browse hundreds of foundation models (FMs) from providers like Alibaba (Qwen), NVIDIA, Google, Mistral, Cohere, IBM, and more. Each model card includes architecture details, benchmarks, licensing information, and sample notebooks.</li><li>One-click deployment — Deploy your choice of model to a SageMaker real-time inference endpoint with pre-configured settings optimized for your workload (low cost, low latency, throughput, or balanced). No manual container or instance configuration required.</li><li>Model customization — Fine-tune models directly from the console or SDK using techniques like low-rank adaptation (LoRA), supervised fine-tuning (SFT), direct preference optimization (DPO), and reinforcement learning with verifiable rewards (RLVR). Serverless customization options reduce infrastructure management.</li></ul>
-<p>You can access SageMaker JumpStart through the SageMaker Studio console (Models → JumpStart models), programmatically through the SageMaker Python SDK, or directly from Hugging Face using the recently launched deep link integration.</p>
-<h2>2026 onboarding at a glance</h2>
-<p>From January through September 2026, SageMaker JumpStart onboarded over 100 new models across 30 distinct providers. This represents a significant expansion of the catalog, driven by the accelerating pace of open source model releases and growing customer demand for choice across model architectures, sizes, and capabilities.</p>
-<p>Here’s a breakdown of the leading contributors and a link to our <a href="https://aws.amazon.com/sagemaker/ai/jumpstart/">SageMaker JumpStart page</a>:</p>
-<ul><li><strong>Alibaba (Qwen):</strong> <a href="https://aws.amazon.com/blogs/machine-learning/qwen3-family-of-reasoning-models-now-available-in-amazon-bedrock-marketplace-and-amazon-sagemaker-jumpstart/">29 models</a> spanning reasoning (Qwen 3.8-27B), large-scale mixture-of-experts (Qwen3.5-122B-A10B), agentic workflows (Qwen-AgentWorld-35B-A3B), code generation (Qwen3-Coder-Next, Qwen 3 Coder 30B), speech recognition (Qwen3-ASR-1.7B), text-to-speech (Qwen3-TTS), embeddings (Qwen3-VL-Embedding-2B), and reranking (Qwen3-Reranker-4B).</li><li><strong>NVIDIA:</strong> 17 models including the Cosmos3 world foundation model family (Super, Edge, Nano), Cosmos Reason 7B, MSA-Search, <a href="https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-5-lightning-now-available-in-amazon-sagemaker-jumpstart/">Nemotron 3.5 Lightning</a>, Nemotron-3-Super-120B (FP8 and BF16), Nemotron3 Ultra, Nemotron-Nano-12B-v2, <a href="https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-nano-30b-is-now-available-in-amazon-sagemaker-jumpstart/">Nemotron 3 Nano Omni (multimodal)</a>, and <a href="https://aws.amazon.com/about-aws/whats-new/2026/01/nvidia-nemotron-3.5-super-vl-on-sagemaker-jumpstart/">Nemotron 3.5 Super VL</a> for vision-language.</li><li><strong>Mistral:</strong> 7 models including the Ministral-3 family (3B, 8B, 14B in standard and BF16) and Voxtral-Mini-4B-Realtime for speech.</li><li><strong>Google:</strong> 6 Gemma 4 variants, including gemma-4-31B-it, E2B-it, E4B-it, 26B-A4B-it, assistant, and NVFP4 quantized.</li><li><strong>IBM:</strong> 4 models including Granite 4.0 h-micro/small/tiny and granite-speech-4.1-2b for multilingual automatic speech recognition (ASR) across 6 languages.</li><li><strong>Cohere:</strong> 4 models including Command A (A100) and Rerank v3.5, v4.0 Fast, and v4.0 Pro for retrieval augmentation.</li><li><strong>Others:</strong> 33 models from MiniMax, Zhipu AI (GLM), DeepSeek, Moonshot AI, Allen AI, Microsoft, <a href="https://aws.amazon.com/about-aws/whats-new/2026/01/muse-spark-open-on-sagemaker-jumpstart/">Meta (Muse Spark)</a>, <a href="https://aws.amazon.com/about-aws/whats-new/2026/01/reflection-beam-on-sagemaker-jumpstart-and-aws-trainium/">Reflection (Beam)</a>, Black Forest Labs, JetBrains, OpenBMB, BharatGenAI, Kakao, OpenFold, and more.</li></ul>
-<h2>Model onboarding highlights</h2>
-<p>The models onboarded in 2026 reflect several focused priorities in how we expand the SageMaker JumpStart catalog. These aren’t only industry trends. They represent the areas where we see strong customer demand and significant opportunity to help customers build production AI applications on SageMaker.</p>
-<h3>Expanding the NVIDIA open-model portfolio</h3>
-<p>NVIDIA is one of our significant model providers, and in 2026 their contribution extended well beyond language models. The Cosmos3 world foundation models, available in Super, Edge, and Nano tiers, bring video generation, physics simulation, and action planning into a single architecture for physical AI applications such as robotics, autonomous systems, and digital twins. Combined with Nemotron models spanning from efficient edge inference (Nano-12B) to large-scale reasoning (Super-120B), SageMaker JumpStart now offers a broad portfolio of NVIDIA open models. If you build on NVIDIA hardware, you can deploy these models on SageMaker with optimized containers and pre-configured endpoints.</p>
-<h3>Closing the multimodal gap</h3>
-<p>Customer workloads increasingly require models that process more than text. In 2026, we prioritized onboarding models that handle vision, speech, and document understanding natively. NVIDIA Nemotron 3 Nano Omni processes text, vision, and speech in a single model. Google Gemma 4 adds vision-language capabilities across multiple sizes. IBM granite-speech-4.1-2b handles speech recognition and translation across six languages. Mistral Voxtral-Mini supports real-time speech understanding. These additions mean customers can avoid chaining separate preprocessing models for multimodal workloads.</p>
-<h3>Making creative AI accessible</h3>
-<p>Image and video generation moved from niche to mainstream in 2026. We onboarded FLUX.2 Small Decoder and FLUX.2-klein-base-4B from Black Forest Labs for fast text-to-image generation, Meta Muse-Glimmer-30B for multimodal agentic workflows, and NVIDIA Cosmos3 for video generation. With these models, you can access creative AI capabilities with the same one-click deployment experience you use for language models.</p>
-<h3>Prioritizing efficient and quantized models</h3>
-<p>Not every workload requires a frontier-scale model, and many customers are focused on optimizing inference costs as they move to production. We onboarded multiple quantized and compact models: Zhipu AI GLM-5.2 FP8 delivers strong performance with a reduced memory footprint. JetBrains Mellum2-12B uses a mixture-of-experts architecture with only 2.5B active parameters for code generation. OpenBMB MiniCPM5-1B packs multimodal capabilities into 1 billion parameters. Microsoft Phi-4-mini-instruct and IBM Granite 4.0 h-tiny demonstrate that compact models serve production workloads on instance types like ml.g5.xlarge. These models can optimize latency and total cost of ownership (TCO) for targeted use cases.</p>
-<h3>Onboarding purpose-built models for targeted tasks</h3>
-<p>General-purpose LLMs are versatile, but purpose-built models are optimized for specific tasks. In 2026, we onboarded Qwen-AgentWorld-35B-A3B for autonomous AI workflows with native tool-calling. GLM-OCR, LightOnOCR, and DeepSeek-OCR handle document text extraction. Qwen3-Reranker-4B and Cohere Rerank v4.0 improve retrieval precision in Retrieval Augmented Generation (RAG) pipelines. langcache-embed-v3-small provides lightweight embedding for semantic search. Qwen3-ASR and Qwen3-TTS bring speech recognition and synthesis. OpenFold3 supports protein structure prediction for scientific computing. With these models, you can build pipelines where each stage uses the specialized tool for the job, rather than forcing a single model to do everything.</p>
-<h3>Broadening provider diversity</h3>
-<p>Reducing concentration risk in model selection is important for enterprise customers. In 2026, we expanded the catalog to include 30 providers, up from a more concentrated set in prior years. Alibaba Qwen is the single largest contributor with 29 models spanning reasoning, coding, speech, and retrieval. Zhipu AI and DeepSeek add competitive LLMs and specialized OCR. MiniMax and Moonshot AI contribute emerging architectures. Cohere brings reliable reranking. BharatGenAI and Kakao expand regional model coverage. This breadth gives customers more options for performance, cost, licensing, and language support.</p>
-<h2>SageMaker JumpStart enhancements in 2026</h2>
-<p>Beyond model onboarding, SageMaker JumpStart also shipped significant improvements in 2026 that reduce friction across the model lifecycle, from discovery to deployment.</p>
-<h3>Simplified Model Hub on the SageMaker AI console</h3>
-<p>Previously, discovering SageMaker JumpStart models required navigating into SageMaker Studio and finding the SageMaker JumpStart section in the left navigation. The new Model Hub experience surfaces the full SageMaker JumpStart catalog directly on the SageMaker AI console landing page. You can browse models by category and filter by input/output modality, publisher, model size, license, and framework. You can also view sample notebooks and open models inside Studio with a single click. This avoids the multi-step navigation that slowed initial exploration.</p>
-<h3>Pre-configured endpoint deployment options</h3>
-<p>Choosing the right instance type, serving container, and optimization settings for a model deployment typically required manual benchmarking across dozens of combinations. SageMaker JumpStart now offers named deployment configurations, with optimization options for:</p>
-<ul><li><strong>Balanced</strong> — An even tradeoff between cost, latency, and throughput for general-purpose workloads.</li><li><strong>Throughput optimized</strong> — Maximum tokens per second using techniques like Speculative Decoding, ideal for high-volume batch processing.</li><li><strong>Latency optimized</strong> — Lowest Time to First Token (TTFT), prioritizing speed for interactive applications.</li><li><strong>Cost optimized</strong> — Lowest infrastructure cost per request, suitable for workloads that can accept higher latency.</li></ul>
-<p>These configurations include Neuron-optimized setups for AWS Inferentia and AWS Trainium instances, reducing deployment complexity and infrastructure costs. You can deploy a model with a single click and the right optimization profile, rather than spending weeks benchmarking configurations manually.</p>
-<h3>Hugging Face deep link integration</h3>
-<p>A new integration with Hugging Face connects model discovery directly to SageMaker Studio, for onboarded models. When browsing models on Hugging Face, you can choose <strong>Deploy on SageMaker AI</strong> or <strong>Customize and Deploy on SageMaker AI</strong>. You land directly in a configured Studio environment with the model pre-loaded, permissions pre-configured, and GPU quota visibility built in. This avoids the need to set up AWS Identity and Access Management (IAM) roles, create a domain, or configure permissions before experimenting.</p>
-<h2>Getting started</h2>
-<p>There are three ways to get started with SageMaker JumpStart:</p>
-<ul><li>SageMaker Studio console — Open SageMaker Studio, navigate to Models → JumpStart models, and browse the catalog. Choose a model to view its details, then choose <strong>Deploy</strong> or <strong>Customize</strong>.</li><li>SageMaker Python SDK — Deploy models programmatically using the SageMaker Python SDK. Visit the <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/studio-jumpstart.html">SageMaker JumpStart model catalog</a> for SDK examples and deployment guides.</li></ul>
-<ul><li>Hugging Face deep link — Browse the <a href="https://huggingface.co/models">HuggingFace Model Hub</a> and choose <strong>Deploy on SageMaker AI</strong> to land directly in Studio for SageMaker JumpStart onboarded models.</li></ul>
-<p>Each model on SageMaker JumpStart includes deployment configurations, sample notebooks, and documentation. For a hands-on walkthrough, see our related blog post on “<a href="https://aws.amazon.com/blogs/machine-learning/deploy-and-evaluate-models-with-amazon-sagemaker-jumpstart/">Deploy and evaluate models with Amazon SageMaker JumpStart</a>”.</p>
-<h2>Conclusion</h2>
-<p>The first three quarters of 2026 have been a period of significant progress for Amazon SageMaker JumpStart. With over 100 new models onboarded from 30 providers, the catalog now spans a wide range of capabilities. These include frontier reasoning models, multimodal vision-language models, creative AI for image and video generation, speech recognition and synthesis, optical character recognition (OCR) and document understanding, embedding and retrieval models for RAG, agentic workflow models, and specialized scientific computing models.</p>
-<p>These onboarding priorities reflect where we see the strongest customer demand and the greatest opportunity to accelerate AI adoption on AWS. They include expanding the portfolio, closing the multimodal gap, making creative AI accessible, prioritizing efficiency and quantization, onboarding purpose-built models, and broadening provider diversity.</p>
-<p>Combined with the enhancements like simplified Model Hub, pre-configured deployment options, and the Hugging Face deep link integration, SageMaker JumpStart continues to lower the barrier between model discovery and production deployment. Visit the <a href="https://aws.amazon.com/sagemaker/ai/jumpstart/">SageMaker JumpStart model catalog</a> to explore the full lineup.</p>
-<h2>Next steps</h2>
-<p>There are many ways to get started with SageMaker JumpStart. Try one of these out for yourself!</p>
-<ul><li>Evaluate models and <a href="https://aws.amazon.com/blogs/machine-learning/deploy-and-evaluate-models-with-amazon-sagemaker-jumpstart/">choose the right one for you</a></li><li>Learn how to <a href="https://aws.amazon.com/blogs/machine-learning/from-hugging-face-to-amazon-sagemaker-studio-in-one-click-2/">Deploy from HuggingFace to SageMaker Studio</a></li><li>Use pretrained models in <a href="https://aws.amazon.com/blogs/machine-learning/use-case-based-deployments-on-sagemaker-jumpstart/">case-based deployments</a></li><li>Design a <a href="https://aws.amazon.com/blogs/machine-learning/build-a-physical-ai-model-factory-with-nvidia-cosmos-3-on-sagemaker-hyperpod/">Physical AI model factory on SageMaker HyperPod</a></li></ul>
-<h2>About the authors</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Pegasus 1.5 from TwelveLabs is now available in Amazon Bedro…</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/pegasus-1-5-from-twelvelabs-is-now-available-in-amazon-bedrock/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/pegasus-1-5-from-twelvelabs-is-now-available-in-amazon-bedrock/?li=1</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <description>Full title: Pegasus 1.5 from TwelveLabs is now available in Amazon Bedrock</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>Pegasus 1.5 from TwelveLabs is now available in Amazon Bedrock</h1>
-<p>On Oct 9, 2026 we announced the availability of <a href="https://aws.amazon.com/about-aws/whats-new/2026/10/twelve-labs-pegasus-1-5-aws/">TwelveLabs’ Pegasus 1.5 on Amazon Bedrock</a>. Pegasus 1.5 is a video language model that turns long-form video into structured, timestamped metadata. You describe the moments that matter to your workflow, and the model returns every matching segment as JSON.</p>
-<p>Video represents a significant and complex category of unstructured data, yet most of it remains unsearchable and underutilized. Extracting structured, actionable insights from that content has historically required labor-intensive manual review or fragmented toolchains.</p>
-<p>With earlier versions of Pegasus, you can point the model at a clip, ask a question, and get an answer. Now, Pegasus 1.5 analyzes the entire video, finds every segment that matches user-defined criteria, and returns structured, timestamped metadata. It also introduces video segmentation, multimodal prompting with reference images, and on-the-fly processing.</p>
-<p>With Pegasus 1.5 on Amazon Bedrock, you can analyze videos directly from an Amazon Simple Storage Service (Amazon S3) URI or a base64 string with no pre-indexing required, and your data remains within the AWS data boundary.</p>
-<p>In this post, we cover what’s new in Pegasus 1.5, how the model is packaged on Amazon Bedrock, and how to send your first request. We then walk through video segmentation, structured JSON output, and multimodal prompting.</p>
-<h2>What’s new in Pegasus 1.5</h2>
-<p>Pegasus 1.5 has the following changes compared to previous versions:</p>
-<ul><li><strong>Time-based metadata generation.</strong> You define the segments, events, or domain-specific cues that matter to your workflow, such as editorial segments, sports plays, speaker changes, or brand appearances. Pegasus 1.5 returns every matching segment as JSON, with start and end times and the requested fields populated.</li><li><strong>Multimodal prompting.</strong> A segment definition can combine a text description with a visual reference. This makes it possible to locate a specific product, logo, or person, along with what they are doing on screen.</li><li><strong>On-the-fly processing.</strong> No ingestion pipeline or pre-indexing step is required. Videos are sent directly from Amazon S3 and results are returned in the response.</li><li><strong>Extended processing capacity.</strong> Pegasus 1.5 analyzes videos up to two hours long in a single request, up from one hour in Pegasus 1.2.</li></ul>
-<p>Pegasus 1.5 retains and enhances the core capabilities that made Pegasus 1.2 a powerful tool for video understanding, including:</p>
-<ul><li><strong>Video-to-text generation</strong>: Creates detailed textual descriptions based on video content.</li><li><strong>Granular visual comprehension</strong>: Analyzes objects, on-screen text, and numerical content within video frames.</li><li><strong>Temporal grounding</strong>: Accurately identifies timestamps of specific events within videos.</li><li><strong>Multimodal understanding</strong>: Combines visual, audio, and textual information for comprehensive analysis.</li><li><strong>Multilingual support</strong>: Full support for English, with partial support for Arabic, Chinese, French, German, Italian, Japanese, Korean, Portuguese, Russian, Spanish, Thai, and Vietnamese.</li></ul>
-<h2>How Pegasus 1.5 works on Amazon Bedrock</h2>
-<p>Pegasus 1.5 takes a video and either a text prompt or a set of segment definitions, and returns text or JSON. You call it on the <code>bedrock-runtime</code> endpoint with the <code>InvokeModel</code> API, or with <code>InvokeModelWithResponseStream</code> when you want the response streamed as it’s generated.</p>
-<table><thead><tr><th><strong>Setting</strong></th><th><strong>Value</strong></th></tr></thead><tbody><tr><td>Model ID</td><td><code>twelvelabs.pegasus-1-5-v1:0</code></td></tr><tr><td>AWS Region</td><td>US West (Oregon), <code>us-west-2</code></td></tr><tr><td>Inference</td><td>On-demand</td></tr><tr><td>APIs</td><td><code>InvokeModel</code>, <code>InvokeModelWithResponseStream</code></td></tr></tbody></table>
-<p>Each request runs in one of two analysis modes, chosen with the <code>analysisMode</code> field:</p>
-<table><thead><tr><th><strong>Analysis mode</strong></th><th><strong>analysisMode</strong></th><th><strong>You send</strong></th><th><strong>You get back</strong></th></tr></thead><tbody><tr><td>General</td><td><code>general</code> (default)</td><td>A text prompt in <code>inputPrompt</code></td><td>A text answer in <code>message</code>, or JSON when you supply a schema</td></tr><tr><td>Time-based metadata</td><td><code>time_based_metadata</code></td><td>Segment definitions in <code>responseFormat</code></td><td>A <code>segments</code> list with start and end times and the fields you asked for</td></tr></tbody></table>
-<p>You can point the model at video in two ways. An S3 location (<code>s3Location</code>) takes the object’s <code>uri</code> and the <code>bucketOwner</code> account ID, and suits long-form video. A base64 string (<code>base64String</code>) embeds the video in the request body, up to 25 MB, and suits short clips.</p>
-<p>To track cost by application, create an application inference profile from the Pegasus 1.5 model, tag it, and call it by its Amazon Resource Name (ARN) in place of the model ID.</p>
-<h2>Getting started with Pegasus 1.5</h2>
-<p>The following section outlines how to get started with Pegasus 1.5.</p>
-<h3>Prerequisites</h3>
-<p>Before you begin, make sure you have:</p>
-<ul><li>An active AWS account with Amazon Bedrock access.</li><li>Python 3.10 or later, with the AWS SDK for Python (Boto3) installed.</li><li>AWS Identity and Access Management (IAM) permissions for <code>bedrock:InvokeModel</code> and <code>bedrock:InvokeModelWithResponseStream</code>.</li><li>Model access enabled for TwelveLabs Pegasus 1.5 in the <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock console</a>.</li><li>Videos stored in an Amazon S3 bucket, or short clips you can send inline.</li></ul>
-<p>The following policy grants both invoke actions on Pegasus 1.5.</p>
-<pre><code>{
-    &quot;Version&quot;: &quot;2012-10-17&quot;,
-    &quot;Statement&quot;: [
-        {
-            &quot;Effect&quot;: &quot;Allow&quot;,
-            &quot;Action&quot;: [
-                &quot;bedrock:InvokeModel&quot;,
-                &quot;bedrock:InvokeModelWithResponseStream&quot;
-            ],
-            &quot;Resource&quot;: [
-                &quot;arn:aws:bedrock:us-west-2::foundation-model/twelvelabs.pegasus-1-5-v1:0&quot;
-            ]
-        }
-    ]
-}</code></pre>
-<p>Boto3 signs requests with your usual AWS credentials. You can also authenticate with an Amazon Bedrock API key by setting it in the <code>AWS_BEARER_TOKEN_BEDROCK</code> environment variable. For production, prefer a short-term key generated from your IAM credentials with the <code>aws-bedrock-token-generator</code> package, because it expires automatically. Bearer-token authentication also requires the <code>bedrock:CallWithBearerToken</code> permission.</p>
-<h3>Send your first request</h3>
-<p>Install Boto3:</p>
-<pre><code>pip install boto3</code></pre>
-<p>The following example analyzes a video stored in Amazon S3 in general mode. This example uses the global Cross Region Inference (CRIS) endpoint. To target the US geographic endpoint instead, replace “global.” with “us.” in the endpoint URL.</p>
-<pre><code>import boto3
-import json
-from botocore.config import Config
-
-AWS_REGION = &quot;us-west-2&quot;
-MODEL_ID = &quot;global.twelvelabs.pegasus-1-5-v1:0&quot;
-
-bedrock_runtime = boto3.client(
-    service_name=&quot;bedrock-runtime&quot;,
-    region_name=AWS_REGION,
-    config=Config(
-        # keep a longer read_timeout for lengthier invocations such as video segmentation
-        read_timeout=900,
-        retries={&quot;max_attempts&quot;: 0},
-        connect_timeout=10,
-    ),
-)
-
-# Analyze a video stored in Amazon S3
-payload = {
-    &quot;inputPrompt&quot;: &quot;Summarize this video and identify the key topics discussed.&quot;,
-    &quot;mediaSource&quot;: {
-        &quot;s3Location&quot;: {
-            &quot;uri&quot;: &quot;s3://amzn-s3-demo-pegasus-15/your-video.mp4&quot;,
-            &quot;bucketOwner&quot;: &quot;your-account-id&quot;
-        }
-    },
-    &quot;temperature&quot;: 0.2,
-    &quot;maxOutputTokens&quot;: 4096,
-    &quot;includeMetering&quot;: True
-}
-
-response = bedrock_runtime.invoke_model(
-    modelId=MODEL_ID,
-    body=json.dumps(payload)
-)
-result = json.loads(response[&quot;body&quot;].read())
-print(result[&quot;message&quot;])</code></pre>
-<p>The response carries the answer in <code>message</code>, the token counts in <code>input_tokens</code> and <code>output_tokens</code>, and the reason generation ended in <code>stopReason</code>. A <code>stopReason</code> of <code>length</code> means the answer reached <code>maxOutputTokens</code> before it finished, so check it before you rely on the output:</p>
-<pre><code>if result[&quot;stopReason&quot;] == &quot;length&quot;:
-    print(&quot;The answer was cut off. Raise maxOutputTokens and try again.&quot;)
-print(&quot;Tokens in:&quot;, result[&quot;input_tokens&quot;], &quot;out:&quot;, result[&quot;output_tokens&quot;])</code></pre>
-<p>Request fields for general mode:</p>
-<table><thead><tr><th><strong>Field</strong></th><th><strong>Required</strong></th><th><strong>Description</strong></th></tr></thead><tbody><tr><td><code>inputPrompt</code></td><td>Yes</td><td>The question or instruction about the video</td></tr><tr><td><code>mediaSource.s3Location.uri</code></td><td>One video source is required</td><td>S3 URI of the video</td></tr><tr><td><code>mediaSource.s3Location.bucketOwner</code></td><td>With <code>uri</code></td><td>AWS account ID that owns the bucket</td></tr><tr><td><code>mediaSource.base64String</code></td><td>One video source is required</td><td>Base64-encoded video, up to 25 MB</td></tr><tr><td><code>temperature</code></td><td>No</td><td>Randomness of the output, from 0 to 1. Default 0.2</td></tr><tr><td><code>maxOutputTokens</code></td><td>No</td><td>Maximum tokens to generate, from 512 to 98,304</td></tr><tr><td><code>responseFormat</code></td><td>No</td><td>A JSON Schema the answer must follow</td></tr><tr><td><code>analysisMode</code></td><td>No</td><td><code>general</code> (default) or <code>time_based_metadata</code></td></tr></tbody></table>
-<p>For a short clip, you can send the video inline instead of from S3:</p>
-<pre><code>import base64
-
-with open(&quot;your-video.mp4&quot;, &quot;rb&quot;) as f:
-    video_b64 = base64.b64encode(f.read()).decode(&quot;utf-8&quot;)
-
-payload[&quot;mediaSource&quot;] = {&quot;base64String&quot;: video_b64}
-response = bedrock_runtime.invoke_model(modelId=MODEL_ID, body=json.dumps(payload))
-print(json.loads(response[&quot;body&quot;].read())[&quot;message&quot;])</code></pre>
-<p>Note that the preceding example uses the optional <code>includeMetering</code> attribute. <code>includeMetering: True</code> makes Pegasus 1.5 add two billing-usage fields to the non-streaming response: <code>outputTokenCount</code> and <code>inputVideoSecond</code> (the analyzed video’s duration in seconds).</p>
-<h3>Stream the response</h3>
-<p>For interactive applications, <code>InvokeModelWithResponseStream</code> returns the answer in chunks as it’s generated. Each chunk carries the next piece of text in <code>message</code>:</p>
-<pre><code>response = bedrock_runtime.invoke_model_with_response_stream(
-    modelId=MODEL_ID,
-    body=json.dumps(payload)
-)
-for event in response[&quot;body&quot;]:
-    chunk = json.loads(event[&quot;chunk&quot;][&quot;bytes&quot;])
-    print(chunk.get(&quot;message&quot;, &quot;&quot;), end=&quot;&quot;, flush=True)
-print()</code></pre>
-<h3>Return structured JSON</h3>
-<p>In general mode, you can constrain the answer to a JSON Schema so downstream code can parse it directly. Set <code>responseFormat.type</code> to <code>json_schema</code> and put the schema under <code>jsonSchema</code>. The answer arrives in <code>message</code> as a JSON string:</p>
-<pre><code>payload = {
-    &quot;inputPrompt&quot;: &quot;Analyze this video and return a structured summary.&quot;,
-    &quot;mediaSource&quot;: {
-        &quot;s3Location&quot;: {
-            &quot;uri&quot;: &quot;s3://amzn-s3-demo-pegasus-15/your-video.mp4&quot;,
-            &quot;bucketOwner&quot;: &quot;your-account-id&quot;
-        }
-    },
-    &quot;temperature&quot;: 0,
-    &quot;maxOutputTokens&quot;: 2048,
-    &quot;includeMetering&quot;: True,
-    &quot;responseFormat&quot;: {
-        &quot;type&quot;: &quot;json_schema&quot;,
-        &quot;jsonSchema&quot;: {
-            &quot;type&quot;: &quot;object&quot;,
-            &quot;properties&quot;: {
-                &quot;summary&quot;: {&quot;type&quot;: &quot;string&quot;},
-                &quot;key_scenes&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;string&quot;}},
-                &quot;setting&quot;: {&quot;type&quot;: &quot;string&quot;}
-            },
-            &quot;required&quot;: [&quot;summary&quot;, &quot;key_scenes&quot;, &quot;setting&quot;]
-        }
-    }
-}
-response = bedrock_runtime.invoke_model(modelId=MODEL_ID, body=json.dumps(payload))
-summary = json.loads(json.loads(response[&quot;body&quot;].read())[&quot;message&quot;])
-print(summary[&quot;summary&quot;])
-for scene in summary[&quot;key_scenes&quot;]:
-    print(&quot; -&quot;, scene)</code></pre>
-<h3>Video segmentation: Turning video into structured data</h3>
-<p>Time-based metadata generation is where Pegasus 1.5 differs most from earlier versions. Instead of a prompt, you send one or more segment definitions, and the model returns every segment of the video that matches each one.</p>
-<p>Set <code>analysisMode</code> to <code>time_based_metadata</code> and <code>responseFormat.type</code> to <code>segment_definitions</code>. The definitions take the place of <code>inputPrompt</code>, so leave that field out. Each definition has:</p>
-<ul><li><code>id</code>: a name for the definition, returned on every segment it matches.</li><li><code>description</code>: what a matching segment looks like.</li><li><code>fields</code>: the values to extract for each segment, each with a <code>name</code>, a <code>type</code> (<code>string</code>, <code>boolean</code>, <code>number</code>, <code>integer</code>, <code>array</code>, or <code>timestamp</code>), and a <code>description</code>.</li></ul>
-<p>The following example identifies each editorial section in a news broadcast and returns a title, summary, and key topics for each one:</p>
-<pre><code>payload = {
-    &quot;analysisMode&quot;: &quot;time_based_metadata&quot;,
-    &quot;mediaSource&quot;: {
-        &quot;s3Location&quot;: {
-            &quot;uri&quot;: &quot;s3://amzn-s3-demo-pegasus-15/news-broadcast.mp4&quot;,
-            &quot;bucketOwner&quot;: &quot;your-account-id&quot;
-        }
-    },
-    &quot;responseFormat&quot;: {
-        &quot;type&quot;: &quot;segment_definitions&quot;,
-        &quot;segmentTimeFormat&quot;: &quot;hh:mm:ss&quot;,
-        &quot;segmentDefinitions&quot;: [
-            {
-                &quot;id&quot;: &quot;editorial_section&quot;,
-                &quot;description&quot;: &quot;A distinct editorial section of the broadcast, &quot;
-                &quot;such as a new story, topic, or segment of the program.&quot;,
-                &quot;fields&quot;: [
-                    {&quot;name&quot;: &quot;segment_title&quot;, &quot;type&quot;: &quot;string&quot;,
-                     &quot;description&quot;: &quot;A descriptive title&quot;},
-                    {&quot;name&quot;: &quot;summary&quot;, &quot;type&quot;: &quot;string&quot;,
-                     &quot;description&quot;: &quot;A brief summary of the segment content&quot;},
-                    {&quot;name&quot;: &quot;key_topics&quot;, &quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;string&quot;},
-                     &quot;description&quot;: &quot;Main topics discussed&quot;}
-                ]
-            }
-        ]
-    },
-    &quot;temperature&quot;: 0,
-    &quot;maxOutputTokens&quot;: 32768,
-    &quot;includeMetering&quot;: True
-}
-response = bedrock_runtime.invoke_model(
-    modelId=MODEL_ID,
-    contentType=&quot;application/json&quot;,
-    accept=&quot;application/json&quot;,
-    body=json.dumps(payload)
-)
-result = json.loads(response[&quot;body&quot;].read())
-for segment in result[&quot;segments&quot;]:
-    print(segment[&quot;start_sec&quot;], &quot;-&quot;, segment[&quot;end_sec&quot;], segment[&quot;segment_title&quot;])
-    print(&quot; &quot;, segment[&quot;summary&quot;])
-    print(&quot; topics:&quot;, &quot;, &quot;.join(segment[&quot;key_topics&quot;]))</code></pre>
-<p>The previous sample code when tested against a sports clip may produce an output like the following sample.</p>
-<pre><code>{
-    &quot;segments&quot;: [
-        {
-            &quot;start_sec&quot;: &quot;00:04:24&quot;,
-            &quot;end_sec&quot;: &quot;00:05:22&quot;,
-            &quot;segment_title&quot;: &quot;Substitutions and Added Time&quot;,
-            &quot;summary&quot;: &quot;The referee announces three minutes of added time, and both teams make substitutions in preparation for a potential penalty shootout.&quot;,
-            &quot;key_topics&quot;: [&quot;Substitutions&quot;, &quot;Added time&quot;, &quot;Penalty shootout preparation&quot;, &quot;Tactical changes&quot;]
-        },
-        {
-            &quot;start_sec&quot;: &quot;00:05:22&quot;,
-            &quot;end_sec&quot;: &quot;00:08:57&quot;,
-            &quot;segment_title&quot;: &quot;Last Gasp Attempts and Final Whistle&quot;,
-            &quot;summary&quot;: &quot;The final minutes of the match see intense action from both sides, with several close calls before the referee blows the final whistle, ending the game in a 3-3 draw.&quot;,
-            &quot;key_topics&quot;: [&quot;Final whistle&quot;, &quot;Draw&quot;]
-        },
-        {
-            &quot;start_sec&quot;: &quot;00:08:57&quot;,
-            &quot;end_sec&quot;: &quot;00:09:29&quot;,
-            &quot;segment_title&quot;: &quot;Match Conclusion and Penalty Shootout Setup&quot;,
-            &quot;summary&quot;: &quot;The match concludes with a 3-3 draw, leading to a penalty shootout. Players from both teams shake hands and prepare for the decisive moments.&quot;,
-            &quot;key_topics&quot;: [&quot;Match conclusion&quot;, &quot;Penalty shootout&quot;, &quot;Player handshakes&quot;, &quot;Final&quot;]
-        }
-    ],
-    &quot;definition_errors&quot;: [],
-    &quot;input_tokens&quot;: 249408,
-    &quot;output_tokens&quot;: 802,
-    &quot;stopReason&quot;: &quot;stop&quot;,
-    &quot;finish_reason&quot;: &quot;stop&quot;
-}</code></pre>
-<p>Each segment carries <code>start_sec</code>, <code>end_sec</code>, and the <code>fields</code> you defined. <code>segmentTimeFormat</code> controls how the times are written: <code>seconds</code> returns numbers you can do arithmetic on, while <code>hh:mm:ss</code> and <code>hh:mm:ss.fff</code> return readable timestamps as strings. The response also includes a <code>definition_errors</code> list, which is empty when every definition was processed.</p>
-<p>A single request can include multiple segment definitions, for example one for editorial sections and another for on-screen brand appearances. Pegasus 1.5 returns the matches for all of them in one <code>segments</code> list, and tags each segment with <code>_definition_id</code> so you can tell them apart. The following example adds a second definition to the previous request and groups the results:</p>
-<pre><code>from collections import defaultdict
-
-payload[&quot;responseFormat&quot;][&quot;segmentDefinitions&quot;].append({
-    &quot;id&quot;: &quot;brand_appearance&quot;,
-    &quot;description&quot;: &quot;A shot where a company logo or branded product &quot;
-    &quot;is clearly visible on screen.&quot;,
-    &quot;fields&quot;: [
-        {&quot;name&quot;: &quot;brand&quot;, &quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;The brand shown&quot;},
-        {&quot;name&quot;: &quot;is_prominent&quot;, &quot;type&quot;: &quot;boolean&quot;,
-         &quot;description&quot;: &quot;Whether the brand is the main focus of the shot&quot;}
-    ]
-})
-response = bedrock_runtime.invoke_model(modelId=MODEL_ID, body=json.dumps(payload))
-result = json.loads(response[&quot;body&quot;].read())
-by_definition = defaultdict(list)
-for segment in result[&quot;segments&quot;]:
-    by_definition[segment[&quot;_definition_id&quot;]].append(segment)
-for definition_id, segments in by_definition.items():
-    print(definition_id, len(segments), &quot;segments&quot;)</code></pre>
-<p>Because the schema is defined once, the same definitions can be applied across an entire video library, producing consistent metadata for every asset.</p>
-<h3>Multimodal prompting: Adding visual context to your queries</h3>
-<p>Pegasus 1.5 introduces multimodal prompting, so you can include reference images alongside your text prompts. This is useful when you want to ask the model about specific objects, people, or scenes that are easier to show than describe.</p>
-<p>For example, you can provide a product image and ask the model to identify every moment where that product appears in a video. Or you can provide a reference image of a specific logo and ask the model to detect brand appearances and their timestamps. This capability enhances the precision of video analysis, and opens up use cases such as visual brand monitoring, product placement analysis, and image-guided content search.</p>
-<p>Reference images attach differently depending on the mode. In general mode, put them in <code>promptV2.mediaSources</code>, alongside the question in <code>promptV2.inputText</code>. In segmentation mode (<code>analysisMode: time_based_metadata</code>), attach them to the <code>mediaSources</code> of each segment definition inside <code>responseFormat.segmentDefinitions</code>. A definition can then match a visual reference as well as a text description. Each image needs a <code>name</code>, a <code>media_type</code> of <code>image</code>, and exactly one source: either an inline <code>base64String</code> or an <code>s3Location</code> with <code>uri</code> and <code>bucketOwner</code>. A single request can carry up to 30 reference images.</p>
-<p>A general-mode request asks the model about an object shown in a reference image. The following sample payload and response provide an example in general mode.</p>
-<pre><code>payload = {
-    &quot;analysisMode&quot;: &quot;general&quot;,
-    &quot;mediaSource&quot;: {&quot;s3Location&quot;: {&quot;uri&quot;: &quot;s3://...&quot;, &quot;bucketOwner&quot;: &quot;...&quot;}},
-    &quot;promptV2&quot;: {
-        &quot;inputText&quot;: &quot;Does the object in the reference image appear in this video?&quot;,
-        &quot;mediaSources&quot;: [
-            {&quot;name&quot;: &quot;ref1&quot;, &quot;media_type&quot;: &quot;image&quot;, &quot;base64String&quot;: &quot;...&quot;}
-        ]
-    }
-    …
-}</code></pre>
-<pre><code>{
-    &quot;input_tokens&quot;: 144,
-    &quot;output_tokens&quot;: 11,
-    &quot;message&quot;: &quot;Yes, the green canoe appears in the video.&quot;,
-    &quot;stopReason&quot;: &quot;stop&quot;
-}</code></pre>
-<p>In segmentation mode, the reference image lives inside the definition, so Pegasus returns only the segments where that product appears. The following sample payload and response provide an example in segmentation mode.</p>
-<pre><code>payload = {
-    &quot;analysisMode&quot;: &quot;time_based_metadata&quot;,
-    &quot;mediaSource&quot;: {&quot;s3Location&quot;: {&quot;uri&quot;: &quot;s3://...&quot;, &quot;bucketOwner&quot;: &quot;...&quot;}},
-    &quot;responseFormat&quot;: {
-        &quot;type&quot;: &quot;segment_definitions&quot;,
-        &quot;segmentTimeFormat&quot;: &quot;hh:mm:ss&quot;,
-        &quot;segmentDefinitions&quot;: [
-            {
-                &quot;id&quot;: &quot;product_appearance&quot;,
-                &quot;description&quot;: &quot;A shot showing the product in the reference image&quot;,
-                &quot;fields&quot;: [
-                    {&quot;name&quot;: &quot;what&quot;, &quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;what is on screen&quot;}
-                ],
-                &quot;mediaSources&quot;: [
-                    {&quot;name&quot;: &quot;ref1&quot;, &quot;media_type&quot;: &quot;image&quot;,
-                     &quot;s3Location&quot;: {&quot;uri&quot;: &quot;s3://...&quot;, &quot;bucketOwner&quot;: &quot;...&quot;}}
-                ]
-            }
-        ]
-    }
-}</code></pre>
-<pre><code>{
-    &quot;segments&quot;: [
-        {&quot;start_sec&quot;: &quot;00:00:00&quot;, &quot;end_sec&quot;: &quot;00:00:02&quot;,
-         &quot;what&quot;: &quot;A family of four in a green canoe, paddling on a calm river surrounded by towering red rock formations.&quot;},
-        {&quot;start_sec&quot;: &quot;00:00:09&quot;, &quot;end_sec&quot;: &quot;00:00:10&quot;,
-         &quot;what&quot;: &quot;The family back in the canoe, paddling away from the shore, with the children smiling and enjoying the serene surroundings.&quot;}
-    ],
-    &quot;definition_errors&quot;: [],
-    &quot;input_tokens&quot;: 4498,
-    &quot;output_tokens&quot;: 292,
-    &quot;stopReason&quot;: &quot;stop&quot;,
-    &quot;finish_reason&quot;: &quot;stop&quot;
-}</code></pre>
-<h3>Monitoring usage</h3>
-<p>Pegasus 1.5 publishes Amazon CloudWatch metrics in the <code>AWS/Bedrock</code> namespace under its model ID, including <code>Invocations</code>, <code>OutputTokenCount</code>, <code>InvocationLatency</code>, and <code>InvocationClientErrors</code>. Use them to track volume and latency. Pair them with application inference profiles when you need usage broken down by application.</p>
-<h2>Use cases</h2>
-<p>Pegasus 1.5 is designed for organizations that manage large volumes of long-form video:</p>
-<ul><li><strong>News and broadcast archives</strong>: Teams can define editorial segments, topics, and speaker changes once, then catalog years of footage that was previously searchable only by transcript keywords.</li><li><strong>Sports broadcasters and leagues</strong>: Detect plays, scoring events, and other key moments across full-length game footage, speeding up highlight production.</li><li><strong>Streaming applications</strong>: Scene-level metadata supports moment-based recommendations, contextual ad placement, and segment-level brand safety review.</li></ul>
-<p>In each case, people remain part of the workflow. Their work shifts from finding and tagging every moment by hand to reviewing and refining the metadata generated by the model.</p>
-<h2>Input requirements</h2>
-<p>Pegasus 1.5 supports the following video specifications:</p>
-<ul><li><strong>Duration</strong>: Up to 2 hours.</li><li><strong>File size</strong>: Up to 2 GB from Amazon S3, or up to 25 MB as a base64 string.</li><li><strong>Resolution</strong>: 360×360 to 5184×2160.</li><li><strong>Aspect ratio</strong>: Between 1:1 and 2.4:1, or their inverses.</li><li><strong>Formats</strong>: FFmpeg-supported formats.</li></ul>
-<h2>Now available</h2>
-<p>TwelveLabs Pegasus 1.5 is available today on Amazon Bedrock in the US West (Oregon) AWS Region. Check the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">full Region list</a> for future updates, and visit the <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock pricing page</a> for pricing information. Pegasus 1.5 is billed through AWS Marketplace, so its charges appear on your AWS bill and in AWS Cost Explorer under TwelveLabs rather than Amazon Bedrock.</p>
-<p>To get started:</p>
-<ul><li>Visit the <a href="https://aws.amazon.com/bedrock/twelvelabs/">TwelveLabs models page on Amazon Bedrock</a> to learn more about the model family.</li><li>Review the <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-twelvelabs-pegasus-v1-5.html">Pegasus 1.5 model card</a> for feature support, Region availability, and sample code.</li><li>Send us feedback at <a href="https://repost.aws/tags/TAQeKlaPaNRQ2tWB6P7KrMag/amazon-bedrock">AWS re:Post for Amazon Bedrock</a> or through your usual AWS Support contacts.</li></ul>
-<p>We’re excited to see what you build with TwelveLabs Pegasus 1.5 in Amazon Bedrock.</p>
 <h2>About the authors</h2>]]></content:encoded>
     </item>
   </channel>

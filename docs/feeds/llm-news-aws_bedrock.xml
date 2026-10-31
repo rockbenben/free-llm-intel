@@ -7,45 +7,1004 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-aws_bedrock.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 30 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>How the UK Amazon Quick User Group grew in 2026</title>
+      <title>端到端管理 Amazon Bedrock 成本：FinOps 和平台团队的手册</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/managing-amazon-bedrock-costs-end-to-end-a-playbook-for-finops-and-platform-teams/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/managing-amazon-bedrock-costs-end-to-end-a-playbook-for-finops-and-platform-teams/</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Managing Amazon Bedrock costs end to end: A playbook for FinOps and platform teams</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>端到端管理 Amazon Bedrock 成本：FinOps 和平台团队的手册</h1>
+<p>生成式人工智能的成本管理是构建应用程序的团队和负责云支出的团队之间的共同责任。许多团队首先比较每个模型的令牌率并要求应用程序团队缩短提示。这些步骤有所帮助，但它们并没有回答财务和工程领导者在使用规模方面提出的问题：哪个团队花费了这笔钱，用于哪些工作负载，以及这笔支出是否在批准的预算范围内？</p>
+<p>代理工作负载使这些问题变得更加紧迫。会话助理通常在每个用户回合发出一次模型调用。代理工作流程（例如计划更改、读取文件、调用工具和迭代的 AI 编码助手）会为每个任务发出许多调用，并在每个调用上携带更大的上下文。因此，令牌消耗随着您授予工作流的自主程度及其所承载的上下文的大小而变化，而不是随着用户交互的数量而变化。由于消耗取决于工作负载的设计和操作方式，因此生成式 AI 的成本管理是一门架构和操作学科。发布的平均值并不能很好地替代您自己的数据：使用 <a href="https://calculator.aws/">AWS 定价计算器</a> 和 <a href="https://aws.amazon.com/bedrock/pricing">Amazon Bedrock 定价页面</a> 对费率进行建模，并使用本文的第 2 步来衡量您的工作负载实际消耗的量。</p>
+<p>解决方案不是更便宜的型号或更小的提示。这是一种运营模式：一个可重复的循环，将每一美元归属于所有者，使每个请求都可观察，在超支之前发出警报并强制执行预算，优化导致大多数浪费的平台默认值，并按节奏审查整个系统。</p>
+<p>在本文中，您将了解如何通过五个步骤来管理 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 成本。您将每一美元归属于所有者，使每个请求都可观察，通过预算和执行控制支出，优化平台默认值以推动最可避免的支出，并运行将数据转化为决策的审查节奏。此方法是根据 AWS 构建块构建的，您可以对其进行自定义并将其应用到您自己的环境中。这篇文章是为两种受众编写的：负责归因、退款、预算和异常审查的 FinOps 从业者，以及负责日志记录、请求元数据、执行和路由默认设置的平台工程团队。</p>
+<h2>操作模型一目了然</h2>
+<p>五个阶段​​，循环运行。属性：每个 Amazon Bedrock 美元都落在计费管道中的身份、团队和应用程序上。观察：每个请求都记录有足够的元数据来解释产生支出的原因。执行：预算是有约束力的，在最低限度发出警报，并在风险需要时采取硬性阻止。优化：平台默认设置（模型路由、缓存、令牌限制）集中消除浪费，而不是要求每个团队都小心谨慎。操作：一个小记分卡和审查节奏将数据转化为决策。 FinOps 领先第一阶段和第五阶段。平台工程领先二至四名。审查是联合的。这些阶段的顺序是有意安排的。每一项都依赖于前一项，而在没有归因和可观察性的情况下直接跳到优化的团队只是在猜测。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-21654-1-1.png" alt="五阶段 Amazon Bedrock 成本运营模型循环：属性、观察、强制、优化、运营"></p>
+<p>图 1：五阶段运行模型，作为连续循环运行</p>
+<h2>第一阶段：归因每一美元</h2>
+<p>您无法管理无法归因的内容，下游的所有内容（退款、预算、执行、异常检测）都取决于此阶段。其基础是 Amazon Bedrock 的精细成本归因（请参阅 <a href="https://aws.amazon.com/blogs/machine-learning/introducing-capsular-cost-attribution-for-amazon-bedrock/">Amazon Bedrock 精细成本归因简介</a>）：Amazon Bedrock 自动将推理成本归因于在所有模型中进行调用的 AWS Identity and Access Management (IAM) 委托人，无需管理任何资源。调用者的 ARN 位于 <a href="https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html">AWS 成本和使用情况报告 (CUR) 2.0</a> 的“line_item_iam_principal”列，覆盖范围涵盖 IAM 用户、角色、联合身份和 API 密钥。</p>
+<p>设置分为四个步骤：</p>
+<ul><li>在 CUR 2.0 数据导出中打开 IAM 主体数据。</li><li>使用团队、应用程序和成本中心等业务维度标记您的 IAM 主体。对于联合访问，将您的身份提供程序配置为通过 OIDC 或 SAML 声明传递会话名称和标签。</li><li>在 AWS Billing 中激活这些标签作为成本分配标签（控制台或“UpdateCostAllocationTagsStatus” API）。</li><li>分析标签：它们在 CUR 2.0 中以“iamPrincipal/”前缀（例如“iamPrincipal/team”）出现，并在激活后 24-48 小时内出现在 IAM 类别下的 <a href="https://aws.amazon.com/aws-cost-management/aws-cost-explorer/">AWS Cost Explorer</a> 中，准备好按团队、应用程序或成本中心进行过滤和分组。</li></ul>
+<p>这是发票级的按身份归因，无需自定义基础设施。</p>
+<h3>共享角色问题</h3>
+<p>最值得关注的模式是共享角色问题，因为这是大多数平台默默失去归属的地方。通过单个 IAM 角色调用 Amazon Bedrock 的大型语言模型 (LLM) 网关将每一美元都归属于该角色，从而完全消除了每个用户的可见性。修复方法是按用户会话管理。网关为每个用户承担一次 Amazon Bedrock 调用角色，将用户的身份作为角色会话名称传递，将其属性作为会话标签传递，然后将这些凭证缓存长达一小时（每个用户每小时一次 AWS Security Token Service (AWS STS) 调用，而不是每个请求）。</p>
+<p>这需要两个角色：持有“sts:AssumeRole”和“sts:TagSession”权限的网关执行角色，以及它所承担的 Amazon Bedrock 调用角色。结果是“line_item_iam_principal”条目，例如“assumed-role/BedrockRuntimeRole/gw-alex”，每个条目都带有其用户的标签：在共享网关后面恢复的每用户和每租户归因。</p>
+<pre><code>import boto3
+
+sts = boto3.client(&quot;sts&quot;)
+
+# One call per user; cache the returned credentials up to 1 hour
+response = sts.assume_role(
+    RoleArn=&quot;arn:aws:iam::123456789012:role/BedrockRuntimeRole&quot;,
+    RoleSessionName=&quot;gw-alex&quot;, # the user, not the gateway
+    Tags=[
+        {&quot;Key&quot;: &quot;team&quot;, &quot;Value&quot;: &quot;sales-ai&quot;},
+        {&quot;Key&quot;: &quot;application&quot;, &quot;Value&quot;: &quot;renewal-agent&quot;},
+        {&quot;Key&quot;: &quot;costCenter&quot;, &quot;Value&quot;: &quot;CC-2041&quot;}
+    ]
+)</code></pre>
+<h3>关于应用程序推理配置文件和项目的说明</h3>
+<p>Amazon Bedrock 还提供了两种归因机制，每种机制都适合不同的模式。 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/inference-profiles-create.html">应用程序推理配置文件</a> 是在带有成本分配标签的“bedrock-runtime”端点上预先创建的每个应用程序资源。您可以为每个 AWS 区域的每个应用程序、每个模型创建一个配置文件，调用者会引用该配置文件 ARN，该配置文件适合拥有一组小型且稳定的应用程序和模型的团队。 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-projects.html">项目和工作区</a> 为“bedrock-mantle”端点（响应 API、聊天完成 API）提供服务。项目不与特定模型绑定，因此单个项目 ID 跨越多个模型，这适合模型使用频繁变化的团队。您在客户端初始化时传递项目 ID，其标签流向 CUR 2.0 和 Cost Explorer（请参阅<a href="https://aws.amazon.com/blogs/machine-learning/manage-ai-costs-with-amazon-bedrock-projects/">使用 Amazon Bedrock 项目管理 AI 成本</a>）。项目是 Amazon Bedrock 上兼容 OpenAI 的工作负载的归属路径。</p>
+<p>对于“Bedrock运行时”工作负载，我们建议通过会话标签将 IAM 主体归因作为主要机制。它可以根据您的身份系统进行扩展，不需要预先创建的资源，并且涵盖每个模型和 API 操作。当一小部分稳定的业务部门需要发票级计费分离且无需更改身份设计时，应用程序推理配置文件可以很好地发挥作用。将项目用于使用响应 API 或聊天完成 API 的“Bedrock地幔”工作负载。</p>
+<h2>第 2 阶段：使每个请求都可观察</h2>
+<p>CUR 告诉您谁花了。调用日志会告诉您发生了什么。 Amazon Bedrock 支持将请求数据、响应数据和元数据的模型调用日志记录到 Amazon CloudWatch Logs、Amazon Simple Storage Service (Amazon S3) 或两者。使用 Amazon CloudWatch 进行快速操作查询，使用 S3 加 Amazon Athena 进行长期商业智能 (BI) 访问。将日志记录视为基础设施，而不是手动切换：通过代码配置日志组或存储桶，定义保留和加密策略，并在环境设置期间验证交付。如果日志记录仅存在于开发中或仅存在于一个区域，那么随着使用量的增长，您的成本计划就会变得支离破碎。</p>
+<p>日志记录还缩小了延迟差距：CUR 归因滞后大约 24 小时，但 CloudWatch 加上 OpenTelemetry 可以支持近乎实时的仪表板，在几分钟内显示每个开发人员的支出（<a href="https://aws.amazon.com/blogs/mt/analyzing-claude-code-usage-with-cloudwatch-and-opentelemetry/">使用 CloudWatch 和 OpenTelemetry 分析 Claude Code 使用情况</a> 演示了这一端到端）。</p>
+<h3>请求工作负载级别归因的元数据</h3>
+<p>原始日志回答身份级别的问题。要回答工作负载级别的问题（哪个功能、工作流程或租户生成了令牌），请在每次调用时标记<a href="https://docs.aws.amazon.com/bedrock/latest/APIReference/API_runtime_Converse.html#bedrock-runtime_Converse-request-requestMetadata">请求元数据</a>。 Amazon Bedrock 在调用日志中捕获此元数据以供以后分析：</p>
+<p>以下示例通过美国跨区域推理配置文件在 Amazon Bedrock 上使用 Anthropic Claude Sonnet 5.5。有关模型的完整列表，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html">Amazon Bedrock 中支持的基础模型</a>。有关按区域划分的可用性，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock 中 AWS 区域的模型支持</a>。</p>
+<pre><code>response = client.converse(
+    modelId=&quot;us.anthropic.claude-sonnet-5-5&quot;,
+    messages=[...],
+    requestMetadata={
+        &quot;application&quot;: &quot;renewal-copilot&quot;,
+        &quot;workflow&quot;: &quot;renewal-risk-summary&quot;,
+        &quot;tenant&quot;: &quot;enterprise-sales&quot;,
+        &quot;agent&quot;: &quot;renewal-agent&quot;
+    }
+)</code></pre>
+<p>Amazon Bedrock 不强制执行请求元数据，当每个应用程序执行自己的操作时，团队会很快陷入不一致的架构。平台团队应在共享 SDK 包装器或网关中集中注入强制元数据，规范化密钥集，并将元数据覆盖率视为平台健康指标。</p>
+<h3>诊断查询</h3>
+<p>日志和元数据就位后，CloudWatch Logs Insights 可以回答长期存在的问题。 <em>谁消耗了最多的代币</em>：</p>
+<pre><code>fields @timestamp, identity.arn as caller, modelId,
+input.inputTokenCount as inTokens,
+output.outputTokenCount as outTokens
+| stats sum(inTokens + outTokens) as totalTokens,
+count(*) as calls
+by caller, modelId
+| sort totalTokens desc
+| limit 25</code></pre>
+<p>按“requestMetadata.application”和“requestMetadata.workflow”而不是“caller”分组的相同查询会生成工作负载级别排行榜：查看产品和工程团队将在退款对话开始时向 FinOps 询问。</p>
+<p><strong>注意：</strong> 前面的查询中显示的字段路径是说明性的。根据您的调用日志架构进行验证，该架构可能因模型、API 操作和日志记录配置而异。</p>
+<h2>第三阶段：执行预算</h2>
+<p>有了归因和可观察性，执行就成为一种架构选择，而不是一种愿望。共有三个可行的层级。正确的工具取决于您的支出速度、超支的风险承受能力以及您的工具如何连接到 Amazon Bedrock。</p>
+<h3>第 1 层：监控和警报（无阻塞）</h3>
+<p>Amazon Bedrock 会自动将主体身份写入计费管道。您可以将 AWS 预算置于阈值警报的顶部，并使用第 2 阶段的 OpenTelemetry 仪表板缩小 24 小时 CUR 差距，以实现日常可见性。无需部署，原生 AWS 计费，推理调用不会增加延迟。它与直接调用 Amazon Bedrock 的工具配合使用。没有什么可以阻止消费，所以你会在问题发生后才看到问题。适合早期采用，其中警报加上人工干预就足够了。两个构建器指南介绍了它：<a href="https://builder.aws.com/content/3DIYzXtsMwvVh1jsn1CSpa8k2rL/limiting-bedrock-usage-and-controlling-costs">限制 Bedrock 使用和控制成本</a>，以及<a href="https://builder.aws.com/content/3EMlLuVf7JSb1fwM8xeQfSi5cz5/deep-dive-on-managing-bedrock-in-claude-code-over-bedrock-with-aws-budgets-tags">深入探讨使用 AWS 预算和 Claude 代码管理 Bedrock标签</a>。</p>
+<h3>第 2 层：IAM 标签强制执行（拒绝违规）</h3>
+<p>聚合器 AWS Lambda 函数根据调用日志数据统计 Amazon DynamoDB 中的每个用户令牌和美元计数器。当用户违反其阈值时，该功能会将其身份添加到共享 IAM 拒绝策略（拒绝“bedrock:*”），直到每月重置或管理员覆盖。此实施完全基于 IAM 和 Amazon Bedrock 日志记录运行，推理路径中没有第三方组件，并且它与直接调用 Amazon Bedrock 的工具配合使用。 AWS 解决方案库中的<a href="https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock">Claude Code with Amazon Bedrock 指南</a> 提供了一个可部署的变体。它在颁发凭证时根据每个用户和每个团队的限制检查每个用户的使用情况，并在用户超出其限制时扣留凭证。由于该检查使用客户端发出的使用情况遥测数据，因此其数字可能与 CUR 不同。无论哪种形式，执行都是异步的。阻止会在 IAM 策略更新的违规调用后几秒到几分钟生效，或者在下次凭证检查的凭证刷新时生效。您的平台团队拥有管道。此层适合需要真正执行、可以容忍延迟并希望将第三方软件排除在数据路径之外的团队。</p>
+<h3>第 3 层：网关执行（同步块）</h3>
+<p>网关位于推理数据路径中并同步执行预算，在用户或团队超出其限制时返回 HTTP 429。您可以获得亚秒级阻止、每用户模型白名单、令牌速率限制和集中强制的路由规则。权衡：数据路径中必须部署、扩展和安全审查的组件。客户端必须配置为通过网关发送请求。</p>
+<p>对于 Claude Code 和 Claude Desktop 队列，官方建议使用 <a href="https://aws.amazon.com/blogs/machine-learning/introducing-claude-apps-gateway-for-aws/">AWS 的 Claude 应用程序网关</a>。它包含在 CLI 二进制文件中，并作为由 PostgreSQL 支持的单个无状态容器运行。它提供 OIDC 身份、集中管理策略、OpenTelemetry 遥测、多区域 Amazon Bedrock 路由以及开箱即用的每用户/组/组织支出上限。对于跨越多个提供商的混合模型工作负载，通用网关仍然是正确的选择：LiteLLM 通过 <a href="https://github.com/aws-samples/sample-claude-code-with-litellm-and-bedrock">AWS Fargate 参考架构上的 Amazon Elastic Container Service (Amazon ECS)</a>，或 [为 Amazon Bedrock 构建主动 AI 成本管理系统，部分]中描述的无服务器替代方案2](https://aws.amazon.com/blogs/machine-learning/build-a-proactive-ai-cost-management-system-for-amazon-bedrock-part-2/)。</p>
+<h3>选择等级</h3>
+<p>有两个因素占主导地位。</p>
+<p><strong>连接性：</strong> 如果开发人员在没有代理的情况下直接调用 Amazon Bedrock，则只有第 1 层和第 2 层可行。</p>
+<p><strong>支出速度：</strong> 如果支出已经达到每月数百万，请立即加强执行。如果警报可以再维持一个季度，请首先投资第一阶段和第二阶段，并在数据需要时增加实施。</p>
+<p>大多数组织应该分阶段进行：在第一层观察，然后升级。将这三者视为桥梁，而不是目的地：<a href="https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentcost07.html">架构完善的 Agentic AI Lens</a> 已经将代理成本治理列为一流的架构问题，而第一阶段的归因基础是任何托管实施的基础。</p>
+<h2>第 4 阶段：优化默认值</h2>
+<p>大多数Amazon Bedrock废物并非个人疏忽所致。这是无人设置的平台默认值。两个影响最大的杠杆都是平台控制的。</p>
+<h3>模型路由</h3>
+<p>并非每个任务都需要前沿模型。例程完成（样板、linting 建议、小型重构）可以在更小、更便宜的模型上运行，并通过模型系列中的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/intelligent-prompt-routing.html">智能提示路由</a> 或网关处的路由规则，在更小、更便宜的模型上运行，并为复杂推理保留质量（请参阅[使用 Amazon Bedrock 智能提示路由和提示降低成本和延迟]缓存]（https://aws.amazon.com/blogs/aws/reduce-costs-and-latency-with-amazon-bedrock-intelligent-prompt-routing-and-prompt-caching-preview）了解完整演练）。哪些工作流程可以降级是一个经验问题：从第 2 阶段拉出工作负载排行榜，对排名靠前的条目的更便宜的模型进行质量评估，并路由通过的内容。对于代理编码团队来说，样板文件在呼叫量中占主导地位，超过一半的呼叫落在更便宜的型号上是可以实现的目标。</p>
+<h3>提示缓存</h3>
+<p>提示缓存奖励稳定的重复前缀。截至 2026 年 10 月，已发布的针对美国东部（弗吉尼亚北部）Anthropic Claude 模型的 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价</a> 按基本输入速率的 1.25 倍计费，生存时间 (TTL) 为 5 分钟（TTL 为 2 倍）。在 Claude Sonnet 4.6 和 Claude Haiku 4.5 上，缓存读取按基本输入速率的 0.1 倍计费；在 Claude Sonnet 5.5 和 Claude Opus 5.5 上，按 0.05 倍计费。检查您的型号和区域的定价页面，因为这些乘数因型号而异，并且可能会发生变化。盈亏平衡数学比团队想象的更友好。对于 5 分钟 TTL，单次重用已经支付了写入费用，针对稳定前缀的 10 次调用成本约为未缓存价格的五分之一（在 0.1 倍读取速率下约为 22%，在 0.05 倍读取速率下约为 17%）。唯一失败的情况是永远不会重新读取的写入，对于 5 分钟 TTL，这要额外花费 25%，对于 1 小时 TTL，则要多花一倍。因此，平台仪表板应该跟踪每个工作流程的缓存读取量和缓存写入量。低读取率意味着前缀实际上不稳定（通常是嵌入在缓存点之前的时间戳或会话 ID）。</p>
+<p>候选人直接从调用日志中出现：</p>
+<pre><code>fields requestMetadata.workflow as workflow, modelId,
+input.inputTokenCount as inTokens
+| stats count(*) as calls,
+avg(inTokens) as avgInputTokens,
+sum(inTokens) as totalInputTokens
+by workflow, modelId
+| filter calls &gt; 50 and avgInputTokens &gt; 2000
+| sort totalInputTokens desc
+| limit 25</code></pre>
+<p><strong>注意：</strong> 前面的查询中显示的字段路径是说明性的。根据您的调用日志架构进行验证，该架构可能因模型、API 操作和日志记录配置而异。</p>
+<h3>应用级优化</h3>
+<p>第三类节省（及时检索而不是填充上下文、压缩长对话、将稳定的大容量工作流提炼到较小的模型上）属于应用程序团队而不是平台。该平台的工作是让这些节省变得可见：发布每个工作流程的代币排行榜，为每个模型和工作流程设置代币限制，并让拥有昂贵工作流程的团队准确了解他们的立场。</p>
+<h2>第 5 阶段：运行循环</h2>
+<p>前四个阶段产生数据。这会将其转化为决定。平台团队运行一个常设健康仪表板，其中包含四个信号：</p>
+<ul><li><strong>模型组合：</strong> 调用哪些模型以及调用频率，是路由规则的直接衡量标准。</li><li><strong>请求失败率：</strong> 错误、限制和超时。每次重试都会增加延迟，并且在服务端仍完成的请求的客户端超时可能会计费两次，一次针对放弃的调用，一次针对重试。</li><li><strong>缓存有效性：</strong> 第 4 阶段的读取与写入比率。</li><li><strong>元数据覆盖率：</strong> 具有完整元数据的生产调用的百分比。每一个未被覆盖的电话都是一个归因盲点，它会悄悄地降低所有其他号码的质量。</li></ul>
+<p>当信号发生漂移时，补救措施是策略更改（路由规则、令牌限制、元数据执行），而不是要求团队小心的电子邮件。</p>
+<h3>金钱循环</h3>
+<p>FinOps 在相同的数据上运行资金循环。当归因干净时，异常检测就会成为调查流，而不是惊慌失措的全体人员：标记的团队或应用程序中的峰值会触发第 2 阶段排行榜中的查找，而不是作战室。退款根据团队和应用程序的 CUR 分组运行。</p>
+<h3>记分卡</h3>
+<p>以下阈值是起点，而不是处方。在采用它们作为政策之前，请根据您自己的车队数据和定价等级对其进行校准。</p>
+<table><thead><tr><th><strong>尺寸</strong></th><th><strong>公制</strong></th><th><strong>绿色</strong></th><th><strong>黄色</strong></th><th><strong>红色</strong></th></tr></thead><tbody><tr><td><strong>单位经济效益</strong></td><td>每次成功结果的成本</td><td>≤ 预算</td><td>1–1.5 倍预算</td><td>&gt;1.5 倍预算</td></tr><tr><td><strong>每开发成本</strong></td><td>每个开发者的每日支出</td><td>&lt;100 美元</td><td>$100–$300</td><td>&gt;$300</td></tr><tr><td><strong>模型路由</strong></td><td>调用经济高效模型的百分比</td><td>&gt;50%</td><td>30–50%</td><td>&lt;30%</td></tr><tr><td><strong>缓存效率</strong></td><td>缓存读取命中率</td><td>&gt;60%</td><td>30–60%</td><td>&lt;30%</td></tr></tbody></table>
+<p>绿色意味着工作负载在其经济范围内运行。黄色表示路由或缓存规则正在下滑。红色意味着支出集中在高级模型或未缓存的上下文中，第 3 阶段和第 4 阶段的控制是补救路径。定期审查此记分卡（高速车队每周一次，否则每两周一次），并将其视为 FinOps 加平台联合决策面。</p>
+<h2>结论</h2>
+<p>在这篇文章中，您学习了如何构建一个五阶段运营模型，使 Amazon Bedrock 支出从不受控制变为完全受管控：</p>
+<ul><li>使用 IAM 主体标签、会话标签和 CUR 2.0 **将每一美元归属于所有者。</li><li><strong>通过模型调用日志记录和标记的请求元数据观察</strong>每个请求。</li><li><strong>在与您的风险相匹配的层级执行</strong>预算：仅监控、IAM 违规拒绝或同步网关阻止。</li><li><strong>优化</strong>平台默认设置，具有智能提示路由和提示缓存，以集中消除浪费。</li><li><strong>操作</strong>记分卡并审查将遥测数据转化为政策决策的节奏。</li></ul>
+<p>请注意该记分卡的第一行：每个成功结果的成本，而不是每个呼叫的成本。这个区别正是本剧本的重点。这里的一切都使 Amazon Bedrock 支出可见、可归因、有上限且高效，但工作流程可能非常高效，但仍然不值得运行。做出这一决定需要根据其所取代的人工流程来衡量代理，这是一门产品和分析学科，而不是金融运营学科。成本平台贡献的是基础：清晰的归因和每个工作流程的成本数据正是结果衡量所结合的输入。</p>
+<p>建立五个阶段，您就可以从头到尾地回答：谁花了它，为什么，以及它是否受到控制。这就是管理 Amazon Bedrock 成本的意义，也是每月账单审核和运营模式之间的区别。</p>
+<p>首先，为阶段 1-3 部署 <a href="https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock">Claude Code with Amazon Bedrock 指南</a> 参考架构，然后使用<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/cost-mgmt-best-practices.html">成本归因最佳实践</a> 文档配置您的标记策略。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>当您的编码代理使用 Amazon Bedrock AgentCore 运行时构建 Web 应用程序时，实时预览 Web…</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/preview-web-apps-live-as-your-coding-agent-builds-them-with-amazon-bedrock-agentcore-runtime/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/preview-web-apps-live-as-your-coding-agent-builds-them-with-amazon-bedrock-agentcore-runtime/</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <description>完整标题：当您的编码代理使用 Amazon Bedrock AgentCore 运行时构建 Web 应用程序时，实时预览 Web 应用程序 | 原文标题：Preview web apps live as your coding agent builds them with Amazon Bedrock AgentCore runtime</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>当您的编码代理使用 Amazon Bedrock AgentCore 运行时构建 Web 应用程序时，实时预览它们</h1>
+<p>编码代理现在构建工作网络应用程序：仪表板、产品页面、产品团队想要尝试的原型。审查该工作的最快方法是打开应用程序、使用它、请求更改并检查结果。当应用程序在代理编辑的地方继续运行时，该循环效果很好，因此每个更改都会在几秒钟内显示在浏览器中。当应用程序必须首先复制并部署到其他地方时，每个更改都会等待部署，并且审核速度会减慢。</p>
+<p><a href="https://aws.amazon.com/bedrock/agentcore/">Amazon Bedrock AgentCore</a> 是一个用于大规模构建、连接和优化代理的平台，您可以选择代理框架和基础模型 (FM)。 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">AgentCore 运行时</a> 是 Amazon Bedrock AgentCore 的一项功能，可在其自己的隔离 microVM 中运行每个代理会话。使用<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-session-endpoints.html">会话端点</a>，您可以从自己的浏览器打开在该会话中运行的应用程序。会话端点为每个会话提供一个经过身份验证的 URL，该 URL 将每个请求的 HTTP 方法、路径、查询字符串和正文以及 WebSocket 连接转发到您允许的端口。您可以在代理保存每个文件时观看页面更新。</p>
+<p>在这篇文章中，您将部署一个编码代理，使 Vite 网站在其会话中保持运行，然后打开一个本地页面，左侧是聊天窗口，右侧是实时网站。您要求代理将网站切换为深色主题，按照其流入的步骤进行操作，然后观察网站的变化而无需刷新。最后，您看看内部发生了什么：同一会话中的第二个端口，以及会话端点拒绝的请求。</p>
+<p>完整的示例（包括本文后面的笔记本）位于 <a href="https://github.com/awslabs/agentcore-samples">agentcore-samples GitHub 存储库</a> 的 <a href="https://github.com/awslabs/agentcore-samples/tree/main/01-features/02-host-your-agent/01-runtime/03-advanced/16-session-endpoints">14-remote-access 文件夹</a>。</p>
+<h2>会话端点如何工作</h2>
+<p>每个会话都有自己的会话端点，六个细节决定了您如何使用它。</p>
+<p><strong>您可以选择它到达的端口。</strong> 您可以在调用 <a href="https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_CreateAgentRuntime.html">CreateAgentRuntime</a> 时设置 <code>allowedPorts</code>：1–5 个条目，每个条目一个端口或 8000–12000 范围内的端口，不包括 [保留平台]端口](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-service-contract.html#runtime-reserved-ports)。允许端口不会启动服务器，因此您的应用程序必须侦听该端口，并绑定到“0.0.0.0”。</p>
+<p><strong>URL 随会话一起到达。</strong> <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/APIReference/API_InvokeAgentRuntime.html">InvokeAgentRuntime</a> 响应在“X-Amzn-Bedrock-AgentCore-Runtime-Session-Endpoint-Url”标头中携带该 URL，将其建模的 SDK 将其公开为“sessionEndpointUrl”。</p>
+<p><strong>每个请求都经过身份验证。</strong> 对于使用 <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html">AWS Identity and Access Management (IAM)</a> 的运行时，每个 HTTP 请求、HTTP/2 流和 WebSocket 握手都携带 <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv.html">签名版本 4 (SigV4)</a> 签名。调用者还需要运行时及其运行时端点上的“bedrock-agentcore:InvokeAgentRuntimeProxy”。对于具有<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/inbound-jwt-authorizer.html">入站 JSON Web 令牌 (JWT) 授权者</a> 的运行时，每个请求都会携带一个不记名令牌。知道 URL 并不授予访问权限。</p>
+<p><strong>主机名选择端口。</strong> 无论目标端口是什么，您的客户端都会在端口 443 上连接，并且主机名上的前缀选择会话内的端口：</p>
+<pre><code>https://8090--&lt;session-endpoint-id&gt;.runtime.bedrock-agentcore.&lt;region&gt;.on.aws/index.html
+https://8081--&lt;session-endpoint-id&gt;.runtime.bedrock-agentcore.&lt;region&gt;.on.aws/status</code></pre>
+<p><strong>它承载服务器使用的协议。</strong> HTTP/1.1 和 HTTP/2 请求，包括服务器发送的事件和 gRPC，以及 WebSocket 连接都会通过。本演练使用 HTTP/1.1 和 WebSocket。</p>
+<p><strong>其范围仅限于一个会话。</strong> URL 在每个请求上都需要凭据，并且仅在会话期间持续，因此使用它来构建、测试和检查代理生成的内容。要向您的用户提供应用程序，请将其部署到托管服务，例如 <a href="https://aws.amazon.com/amplify/hosting/">AWS Amplify Hosting</a>。</p>
+<p>浏览器无法将 SigV4 签名或不记名令牌添加到页面自行发出的请求，因此 <a href="https://github.com/aws/bedrock-agentcore-sdk-python">bedrock-agentcore SDK</a> 中的会话端点客户端可以在您的计算机上打开本地端点。您的浏览器打开“http://localhost:8088”，本地端点将您的凭据添加到每个请求和 WebSocket 握手中，然后再转发。</p>
+<p>会话端点与 AgentCore 运行时已提供的运行时端点不同。使用运行时端点（例如“DEFAULT”）来访问您的代理，该代理控制调用者将访问的代理版本。 InvokeAgentRuntime 调用通过它进行解析，因此您可以在不同版本上进行开发和生产，并在不更改调用者的情况下进行升级或回滚。使用会话端点查看代理在其会话中运行的内容，例如 Web 预览。它是一个经过身份验证的 URL，仅到达您允许的端口，适用于会话运行的任何版本，并在会话结束时停止工作。有关完整文档，请参阅<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-session-endpoints.html">通过会话终端节点连接到运行时会话</a>。</p>
+<h2>解决方案概述</h2>
+<p>该示例有四个部分。编码代理在端口 8080 上的会话中运行，并使用四种工具编辑网站的文件：列表、读取、写入和编辑。该代理在端口 8090 上启动一个 <a href="https://vite.dev/">Vite</a> 开发服务器，该服务器为网站提供服务，并通过其热重载 WebSocket 将每个保存的更改推送到浏览器。在您的计算机上，“PreviewApp”提供预览页面，将提示发送到“InvokeAgentRuntime”，并打开网站的本地端点。如图 1 所示，预览页面通过本地端点和会话端点从 Vite 开发服务器的 8090 端口加载网站，并通过 InvokeAgentRuntime 将提示发送到代理的 8080 端口。数字显示了一个请求的步骤顺序。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22062-1.png" alt="架构图：机器上的预览页面和本地端点、会话端点和 InvokeAgentRuntime、运行时会话中的代理和 Vite 开发服务器，以及 Amazon 中的 Claude Haiku 5.5Bedrock。"></p>
+<p>图 1：解决方案架构</p>
+<p>在第1步之前，PreviewApp已经调用了一次InvokeAgentRuntime来启动会话，从而启动代理和Vite开发服务器。 “PreviewApp”从该响应中读取会话端点 URL，并打开端口 8090 的本地端点。然后，图 1 中的编号步骤遵循一个更改请求：</p>
+<ul><li>预览页面的站点窗格从“localhost:8088”上的本地端点加载网站。本地端点将您的凭据添加到每个请求和 WebSocket 握手中，并将它们转发到会话端点。 <strong>会话端点</strong>根据“allowedPorts”检查签名和端口，然后将它们转发到端口8090上的Vite开发服务器。该页面保持Vite热重载WebSocket打开。</li><li>您从聊天窗格发送提示。 “PreviewApp”将其作为使用您的 AWS 凭证签名的标准 AWS API 调用发送到“InvokeAgentRuntime”，运行时将其传递到端口 8080 上的代理。代理的步骤在工作时流回聊天窗格。</li><li>代理调用 Amazon Bedrock 中的 Claude Haiku 5.5 来决定更改哪些内容。</li><li>代理读取站点的文件并保存更改的文件。 Vite 开发服务器提供这些文件并监视它们的更改。</li><li>保存文件时，Vite 将更改推送到步骤 1 中打开的 WebSocket，通过会话端点和本地端点返回，并且站点窗格会更新而无需刷新。</li><li>从笔记本中，“PreviewApp”通过同一会话端点读取端口 8081 上代理的“/status”路由。仅端口发生变化。</li></ul>
+<p>端口 8080 不在“allowedPorts”中，因为“InvokeAgentRuntime”无需通过会话端点即可到达代理。</p>
+<h2>先决条件</h2>
+<p>要按照演练操作，您需要：</p>
+<ul><li>AgentCore 运行时会话终端节点可用且配置了凭证的 AWS 区域中的 AWS 账户。</li><li>创建 AWS Identity and Access Management (IAM) 角色、上传到 <a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html">Amazon Simple Storage Service (Amazon S3)</a> 以及创建运行时以及该运行时及其“DEFAULT”运行时终端节点上的“bedrock-agentcore:InvokeAgentRuntime”和“bedrock-agentcore:InvokeAgentRuntimeProxy”的权限。有关详细信息，请参阅 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-permissions.html">AgentCore 运行时的 IAM 权限</a>。</li><li>Python 3.10 或更高版本，带有 <code>bedrock-agentcore</code> 1.25.2 或更高版本以及 <code>boto3</code> 1.43.122 或更高版本。</li><li><a href="https://git-scm.com/">Git</a>，用于克隆示例存储库，以及 <a href="https://jupyter.org/">Jupyter</a> 环境，例如 JupyterLab 或带有 Jupyter 扩展的 Visual Studio Code，用于运行笔记本。</li><li>访问 Amazon Bedrock 中的 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-anthropic-claude-haiku-5-5.html">Claude Haiku 5.5</a>。有关按区域划分的模型可用性，请参阅<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-region-compatibility.html">按模型划分的区域可用性</a>。</li><li><a href="https://nodejs.org/">Node.js</a> 22 或更高版本，使用“npm”，部署脚本使用它来打包代理和网站。</li></ul>
+<p>该示例使用 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-get-started-code-deploy-node.html">Node.js 的直接代码部署</a> 将代理作为 zip 文件部署在 Amazon S3 中，因此您不需要 Docker 或 <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry (Amazon ECR)</a> 存储库。会话端点与 microVM 运行时一起使用，而不是与实例计算类型一起使用，并且会话端点 URL 可通过公共 HTTPS 访问。入站连接不支持 AWS PrivateLink。</p>
+<h2>部署代理及其网站</h2>
+<p>首先，您部署运行时，您在此处选择的配置决定会话端点可以到达哪些端口。部署脚本将代理捆绑到一个文件中，为运行时的 Linux on Arm64 系统添加网站及其依赖项，将 zip 上传到 Amazon S3，然后创建运行时。</p>
+<p>以下摘录自“deploy.py”，显示了对本文重要的两个设置。 “protocolConfiguration”表示代理侦听“InvokeAgentRuntime”的位置，“allowedPorts”列出会话端点可以到达的端口：8090 用于网站，8081 用于代理的状态路由。端口 8080 不在列表中，因为“InvokeAgentRuntime”在没有它的情况下到达代理。有关端口和路径设置，请参阅<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-configure-inspiration.html">配置代理的服务端口和调用路径</a>。</p>
+<pre><code>agentRuntimeArtifact={&quot;codeConfiguration&quot;: {
+    &quot;code&quot;: {&quot;s3&quot;: {&quot;bucket&quot;: code_bucket(), &quot;prefix&quot;: S3_PREFIX}},
+    &quot;runtime&quot;: &quot;NODE_22&quot;,
+    &quot;entryPoint&quot;: [&quot;app.js&quot;],
+}},
+protocolConfiguration={&quot;serverProtocol&quot;: &quot;HTTP&quot;, &quot;port&quot;: 8080, &quot;path&quot;: &quot;/invocations&quot;},
+allowedPorts=[{&quot;port&quot;: 8090}, {&quot;port&quot;: 8081}],</code></pre>
+<p>该网站的 Vite 配置使开发服务器可以从会话端点访问。它在端口 8090 上侦听“0.0.0.0”，并且不限制“Host”标头（“server.allowedHosts”为 true），因为请求是在运行时分配的主机名下到达的，而不是“localhost”。会话端点在每个请求到达服务器之前对其进行身份验证，因此服务器不需要自己的主机检查。</p>
+<p>部署运行时：</p>
+<ol><li>克隆示例存储库并更改为示例文件夹：</li></ol>
+<pre><code>git clone https://github.com/awslabs/agentcore-samples.git
+cd agentcore-samples/01-features/02-host-your-agent/01-runtime/03-advanced/16-session-endpoints</code></pre>
+<ol><li>从示例文件夹中打开“session_endpoints_preview.ipynb”。</li></ol>
+<ol><li>运行安装单元，这将安装 Python 依赖项。</li></ol>
+<ol><li>运行 %run <code>deploy.py</code> 单元。部署需要几分钟时间，主要是等待运行时达到“READY”状态。</li></ol>
+<h2>打开预览</h2>
+<p>运行时准备就绪后，您可以开始预览。一次调用会执行三件事：启动一个会话（启动网站）、打开端口 8090 的本地端点，并在“localhost:8087”上提供预览页面。</p>
+<pre><code>from preview_app import PreviewApp
+
+app = PreviewApp().start()
+print(&quot;Open&quot;, app.url)</code></pre>
+<p>在“start()”内部，使用会话端点的调用很短。第一个“InvokeAgentRuntime”调用在响应标头中返回 URL，“session_endpoint_url”读取它，并且会话端点客户端打开端口 8090 的本地端点：</p>
+<pre><code>answer = client.invoke_agent_runtime(
+    agentRuntimeArn=runtime_arn, runtimeSessionId=session_id,
+    payload=json.dumps({&quot;prompt&quot;: &quot;&quot;}).encode(), contentType=&quot;application/json&quot;,
+)
+endpoint = client.session_endpoint_client(session_endpoint_url(answer))
+local = endpoint.open_local_endpoint(port=8090, local_port=8088).start()</code></pre>
+<p>要打开预览：</p>
+<ul><li>运行启动“PreviewApp”的单元。</li><li>在浏览器中打开打印的链接“http://localhost:8087”。</li></ul>
+<p>该页面右侧显示网站，在会话中通过端口 8090 提供服务，左侧显示包含建议请求的简短指南。</p>
+<h2>向代理请求更改</h2>
+<p>现在你要求改变并看着它到达。每个提示都通过“InvokeAgentRuntime”发送给代理。代理读取它需要的文件，写入它更改的文件，并报告发生的每个步骤。保存文件时，Vite 开发服务器通过其 WebSocket、会话端点和本地端点推送更改，网站就地更新。</p>
+<p>要求更改：</p>
+<ul><li>在预览页面上，选择<strong>将此网站切换为深色咖啡馆颜色主题</strong>。</li><li>当代理读取和保存文件时，请按照聊天窗格中的代理步骤进行操作。</li><li>观看站点窗格。当代理保存样式表时，它会发生变化，并且横幅会命名更改来源的文件。</li></ul>
+<p>以下视频显示了代理处理多个请求时的预览页面。选择建议的请求会将其发送给代理，聊天窗格会列出代理读取和保存的每个文件，右侧的站点窗格会更新而无需刷新，从黑色主题到绿色的“提前订购”按钮。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22062-2.gif" alt="当代理编辑文件时，左侧带有聊天窗格的预览页面和右侧实时网站的更新"></p>
+<p>图2：代理工作时的预览页面</p>
+<p>这些步骤会连续进行，因为代理会在您要求时使用服务器发送的事件进行应答。您可以使用“app.ask”从 Python 发送相同的提示，它会从“bedrock-agentcore” SDK 中使用“iter_events”读取流。打开的页面以同样的方式更新：</p>
+<pre><code>for event in app.ask(&quot;Make the Order ahead button green&quot;):
+    if &quot;step&quot; in event:
+        print(&quot;  &quot;, event[&quot;step&quot;])
+    elif &quot;done&quot; in event:
+        print(event[&quot;done&quot;][&quot;reply&quot;])</code></pre>
+<p>此 Python 脚本的输出应类似于以下内容：</p>
+<pre><code>   Looking at the site's files
+   Reading src/main.js
+   Reading src/style.css
+   Reading index.html
+   Saved src/style.css
+The Order ahead button is now green instead of brown, with white text kept for contrast. You can see it in the hero section, just below the &quot;Small batch coffee, roasted every morning&quot; heading at the top of the page.</code></pre>
+<h2>在同一会话中到达第二个端口</h2>
+<p>该网站并不是您可以访问的唯一服务器。该代理在端口 8081 上提供“/status”，其中列出了每个提示及其更改的文件。相同的会话端点到达它，唯一的区别是端口参数。</p>
+<pre><code>status = app.endpoint.request(&quot;GET&quot;, &quot;/status&quot;, port=8081)
+print(&quot;GET /status on port 8081: HTTP&quot;, status.status)
+for edit in status.json()[&quot;edits&quot;]:
+    print(&quot;  &quot;, edit[&quot;prompt&quot;], &quot;-&gt;&quot;, &quot;, &quot;.join(edit[&quot;files&quot;]))</code></pre>
+<p>此 Python 脚本的输出应类似于以下内容：</p>
+<pre><code>GET /status on port 8081: HTTP 200
+   Make the Order ahead button green -&gt; src/style.css</code></pre>
+<h2>会话端点拒绝什么</h2>
+<p>当运行时拒绝请求时，它会在响应标头中返回 HTTP 状态、空正文和错误代码，以便您可以从应用程序返回的错误中判断其拒绝。笔记本向 allowedPorts 之外的端口发送请求以及没有凭据的请求，运行时会以 403 AccessDenied 拒绝这两个请求。</p>
+<p>下表列出了使用 <strong>会话端点</strong> 进行构建时可能会遇到的拒绝。</p>
+<table><thead><tr><th><strong>请求</strong></th><th><strong>来自运行时的响应</strong></th></tr></thead><tbody><tr><td>不在“allowedPorts”中的端口</td><td><code>403 访问被拒绝</code></td></tr><tr><td>没有有效凭据的请求</td><td><code>403 AccessDenied</code> 或 <code>401 AuthenticationRequired</code></td></tr><tr><td>一个允许的端口，没有任何东西在监听它</td><td><code>502 端口无法访问</code></td></tr><tr><td>会话不再存在的 URL</td><td><code>404 会话未找到</code></td></tr></tbody></table>
+<h2>如何保护对会话的访问</h2>
+<p>运行时在转发请求之前删除自己的身份验证标头，因此网站不会收到您的签名。请求在 <a href="https://aws.amazon.com/cloudtrail/">AWS CloudTrail</a> 中记录为“InvokeAgentRuntimeProxy”事件，事件源为“bedrock-agentcore.amazonaws.com”。本地端点使用您的凭据进行操作，因此它限制了可以使用它的人。它仅侦听“127.0.0.1”，仅应答发送至其自己的本地地址的请求，并拒绝来自其他来源的页面打开的 WebSocket 连接。仅在使用预览时运行本地端点。有关更多信息，请参阅<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-session-endpoints.html#runtime-session-endpoints-cloudtrail">在 CloudTrail 中记录会话终端节点请求</a>。</p>
+<p>访问控制不会将网站与代理分开。两者都在同一会话中运行，因此仅向执行角色授予代理所需的权限。如果运行时替换会话的计算，打开的连接将关闭，并且代理的编辑可能无法保留，除非会话使用持久存储。如果您需要文件比计算更持久，请参阅 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-filesystem-configurations.html">AgentCore 运行时的文件系统配置</a>。</p>
+<p>代理的文件工具解析站点文件夹内的每个路径并拒绝其外部的路径，因此提示无法使代理更改会话中的其他文件。如果其他人可以向您的编码代理发送提示，请考虑使用 <a href="https://aws.amazon.com/bedrock/guardrails/">Amazon Bedrock Guardrails</a> 来过滤有害的提示和响应，并在发布代理的更改之前查看它们。</p>
+<h2>清理</h2>
+<p>为了避免持续产生费用，请停止预览并删除示例创建的资源。代理编辑的网站存在于会话中，因此它与会话一起存在。</p>
+<p>清理：</p>
+<ol><li>运行停止单元格，并在笔记本出现询问时按 Enter。这将停止预览页面、本地端点和会话。</li></ol>
+<ol><li>运行 %run <code>cleanup.py</code> 单元，这将删除运行时、上传的代码和 IAM 角色。</li></ol>
+<h2>结论</h2>
+<p>会话端点使您可以在您允许的端口上通过 HTTP/1.1、HTTP/2 和 WebSocket 从您自己的工具对 AgentCore 运行时会话中的应用程序进行经过身份验证的访问。在本文中，您在会话中部署了一个带有 Vite 网站的编码代理，通过本地端点在浏览器中打开了实时网站，向代理询问了深色主题，并在代理保存文件时观察了更改的到达。您还到达同一会话中的第二个端口并确认会话端点拒绝的内容。</p>
+<p>要更进一步，请在站点文件夹中使用您自己的站点运行笔记本，或者更改代理的工具以匹配您的编码代理的工作方式。有关完整的选项集，包括端口范围、OAuth、HTTP/2 和 gRPC，请参阅<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-session-endpoints.html">通过会话终端节点连接到运行时会话</a>。</p>
+<p>要更改“InvokeAgentRuntime”在您自己的代理中使用的端口或路径，请参阅<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-configure-inspiration.html">配置代理的服务端口和调用路径</a>。如果您的代理还需要在同一会话中运行构建或测试命令，请参阅<a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-execute-command.html">在 AgentCore 运行时会话中执行 shell 命令</a>。要按照此示例的方式从 zip 文件部署您自己的 Node.js 代理，请参阅 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/runtime-get-started-code-deploy-node.html">Node.js 的直接代码部署</a>。对于该服务提供的其他所有内容，请从 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/agents-tools-runtime.html">具有 Amazon Bedrock AgentCore 运行时的主机代理或工具</a> 开始，并在 <a href="https://github.com/awslabs/agentcore-samples">agentcore-samples GitHub 存储库</a> 中查找更多示例。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Worldwide Express 如何通过 Amazon Bedrock 自动处理货运异常</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/how-worldwide-express-automated-freight-exceptions-with-amazon-bedrock/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-worldwide-express-automated-freight-exceptions-with-amazon-bedrock/</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How Worldwide Express automated freight exceptions with Amazon Bedrock</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>Worldwide Express 如何通过 Amazon Bedrock 自动处理货运异常</h1>
+<p>Worldwide Express（ShipStation Global 的一部分）取得了巨大成就：全系统收入约为 50 亿美元、超过 75 家零担 (LTL) 承运商和超过 130,000 家客户。但同样的规模也有隐性成本。每个月都有 1500 万美元的自由现金流被冻结，陷入尚未解决的账单异常之中。每一艘都必须由专人逐一逐个航母地追捕，并按照自己的规则进行检查。全球快递外包给一个团队，一次处理一个案例，为每个争议致电客户和承运人。例外情况越来越多，现金陷入困境，每笔订单都需要更长的时间才能变成金钱。</p>
+<p>Worldwide Express 与 AWS 和 LTM 合作，利用 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 构建多代理 AI 解决方案，该解决方案直接插入其运输管理系统 (TMS) SpeedShip。推出六个月后，该公司报告称，主动例外情况减少了 75%，现金周转时间缩短了 4 周，每年节省 100 万美元，并且一次性注入 1000 万美元的自由现金流。</p>
+<p>在这篇文章中，我们描述了挑战，解释了 Worldwide Express 如何设计多代理解决方案，并分享结果。</p>
+<h2>挑战</h2>
+<p>在 LTL 货运中，大约 14% 的发票未能满足采购订单、收货和承运人发票之间标准的三向匹配。当匹配失败时，发票进入异常处理。对于 Worldwide Express，例外情况分为三类：</p>
+<ul><li><strong>行项目不匹配：</strong> 数量或服务代码与装运记录不符。</li><li><strong>定价差异：</strong> 运营商收取的费率与合同价格不同。</li><li><strong>意外附加费用：</strong> 原始报价中未包含的升降门费、住宅附加费或重新称重调整费。</li></ul>
+<p>每个异常都会触发一个包含五个步骤的手动流程：</p>
+<ul><li>通过对照采购订单、收货和定价交叉引用发票来识别异常类型。</li><li>研究供应商记录中的根本原因。</li><li>向承运商或仓库发送包含争议详细信息的电子邮件。</li><li>等待回复。</li><li>在 TMS 中执行决议。</li></ul>
+<p>由于每个运营商都按照自己的资费结构和争议工作流程运营，因此该流程消耗了 FinOps 团队的大部分带宽。</p>
+<p>基于规则的流程自动化 (RPA) 可以处理结构化、可预测的工作流程。然而，异常解决需要上下文判断：解释承运人的辅助政策，将费用与货运数据进行比较，并根据承运人、异常类型和金额确定有效性。这种可变性使得该问题适合代理人工智能框架。</p>
+<h2>从评估到生产</h2>
+<p>2025 年 6 月，Worldwide Express 与 AWS 业务转型和价值咨询团队合作，确定了整个订单到现金生命周期中的 19 个自动化机会。了解异常自动化的商业价值后，Worldwide Express 在不到 6 个月的时间内从评估转向生产。</p>
+<h2>它是如何工作的</h2>
+<p>该解决方案在 AWS 上运行。 Amazon Bedrock 提供 AI 推理，<a href="https://aws.amazon.com/ec2/">Amazon Elastic Compute Cloud (Amazon EC2)</a> 是引擎。该设计要求对每个代理的推理方式、决策边界的位置以及异常在代理之间的路由方式进行细粒度控制。直接在 Amazon EC2 上构建框架，并使用 Amazon Bedrock 提供推理，使编排逻辑完全掌握在团队手中，并支持开源代理库。业务逻辑的生产控制使每个代理的角色、输入和决策边界变得明确且可审计。在计费争议工作流程中，每个自动化决策都需要可解释。</p>
+<h3>代理</h3>
+<p>当检测到发票异常时，系统会将其路由到三个专门的人工智能代理之一，每个代理处理特定类型的计费争议：</p>
+<ul><li><strong>发票匹配代理</strong> 找到匹配的装运记录并标记不相符的记录。</li><li><strong>定价差异代理</strong> 将承运商的收费与合同费率进行比较，并确定差额是否有效。</li><li><strong>辅助验证代理</strong> 检查实际交付事件是否支持意外费用（例如住宅交付或升降门费用）。</li></ul>
+<p>每个代理在提出建议之前都会提取特定的运营商计费规则和政策。解决异常后，系统会生成一个简单语言注释，解释发现的内容以及采取的操作。</p>
+<p>每个自定义代理都有一个指令提示（定义其角色、决策边界和输出格式）、一组操作（集成到 SpeedShip 中）以及对特定于运营商的知识库的访问。通过使用 Amazon Bedrock，每个代理都可以通过单个 API 访问合适的基础模型，同时继承现有的 AWS 治理。有关各区域的模型可用性，请参阅 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">Amazon Bedrock 中 AWS 区域支持的模型</a>。</p>
+<h3>行动</h3>
+<p>这些代理通过分析师使用的相同 API 连接到 SpeedShip。这意味着人工智能可以准确地看到人类审阅者会看到的内容（合同费率、发货详细信息、交货证明），并将其解决方案写入相同的工作流程中。 SpeedShip 在 AWS 上有 API，因此代理连接到与其他现有系统相同的端点。</p>
+<h3>运营商知识库</h3>
+<p>每个运营商都有不同的计费规则、费用定义和争议程序。 Worldwide Express 存储每个承运商的文档：关税规则、附加费定义、争议步骤和差异阈值。当代理处理异常情况时，它会在做出决定之前检索特定承运人的政策和标准操作程序 (SOP) 文件，因此每个决定都基于承运人自己的规则。相同的三个代理处理所有运营商，无需任何运营商特定代码。</p>
+<h3>人机交互</h3>
+<p>在最初推出期间，批准步骤对于 FinOps 的采用是必要的。最初，人工审核员将使用现有的 SpeedShip UI 在建议最终确定之前批准建议。最终，当准确率超过 99% 时，批量批准成为默认设置。</p>
+<h3>可观察性</h3>
+<p>Worldwide Express 的团队构建了仪表板，用于跟踪承运商的自动化率、异常类型的错误率、解决时间和人工覆盖频率。当审阅者拒绝建议时，系统会记录反馈。该团队根据拒绝历史记录完善指令提示和知识库，稳步提高自动化覆盖范围。</p>
+<h3>端到端流程</h3>
+<p>下图显示了从通过三个专门代理进行异常检测到人工批准的端到端流程。在图中，检测到来自数据源（SpeedShip TMS、运输系统、电子数据交换 (EDI) 服务器以及承运人和供应商门户）的异常并将其路由到三个代理之一。每个代理都在具有 Auto Scaling 功能的 Amazon EC2 上运行，使用具有自己的提示、工具和运营商知识库的代理框架，并调用 Amazon Bedrock 进行模型推理。代理人会制作一份解决报告。然后，成本最终确定和人工智能编写的注释将提交给人工审核员，以在 SpeedShip 分析师 UI 中进行批准。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/29/ML-20953-1-2.png" alt="异常处理架构：SpeedShip 和其他数据源将检测到的异常提供给 Amazon EC2 上的三个代理，这些代理调用 Amazon Bedrock，然后将解决方案路由给人工审稿人"></p>
+<p>图 1：Worldwide Express 在 AWS 上采用人工智能的异常处理架构</p>
+<h2>结果</h2>
+<p>六个月后，Worldwide Express 已在 40 多家零担运输承运商中部署了该解决方案。目前，代理每周会关闭 10,000 个（约 50%）例外情况，错误率低于 1%。这将 FinOps 团队的时间从常规解决方案转移到复杂、高价值的争议上。</p>
+<p>这种影响在积压的活跃例外中表现得最为明显，积压从 2025 年 6 月的 1500 万美元下降到六个月后的 400 万美元，减少了 75%。 Worldwide Express 释放了 1000 万美元的现金流，每年节省了超过 100 万美元的成本，并且第一年的投资回报率达到了 60 倍。该公司报告称，兑现时间缩短了四个星期。</p>
+<blockquote>“借助 AWS，我们已经自动化了超过 40% 的每周账单例外情况，显着降低了成本，并将账单周期从几天缩短到了几分钟。今天，我们每周多发放约 1000 万美元的客户账单，速度之快在以前是不可能的。”<br>— Nathanael Pearson，全球快递 FinOps 副总裁</blockquote>
+<h2>期待</h2>
+<p>Worldwide Express 已经将这种方法扩展到订单到现金周期的其他部分。对于管理大量承运量的物流公司来说，前进的道路是从小事做起。首先自动化最重复的异常类型，证明准确性，然后扩展到投资组合的其余部分。</p>
+<h2>结论</h2>
+<p>Worldwide Express 的异常自动化展示了当代理 AI 遇到范围广泛的业务问题时的可能性。 Amazon Bedrock、特定于运营商的知识库和人机交互审批设计相结合，让 Worldwide Express 在不到 6 个月的时间内从评估转向生产，同时保持财务控制。该公司目前正在将自动化扩展到其他订单到现金流程。</p>
+<p>要探索类似的方法是否适合您的组织，请与您的客户团队<a href="https://aws.amazon.com/contact-us/">请求对话</a>或了解有关 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 的更多信息。 <a href="https://www.ltm.com/">LTM</a> 等合作伙伴可以使用您自己的数据运行价值证明冲刺。</p>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>在 AWS GovCloud（美国）中使用 Amazon Bedrock 配置 ChatGPT 桌面应用程序</title>
+      <link>https://aws.amazon.com/blogs/machine-learning/configure-the-chatgpt-desktop-app-with-amazon-bedrock-in-aws-govcloud-us/</link>
+      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/configure-the-chatgpt-desktop-app-with-amazon-bedrock-in-aws-govcloud-us/</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Configure the ChatGPT desktop app with Amazon Bedrock in AWS GovCloud (US)</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>在 AWS GovCloud（美国）中使用 Amazon Bedrock 配置 ChatGPT 桌面应用程序</h1>
+<p>ChatGPT 桌面应用程序现已在 <a href="https://aws.amazon.com/govcloud-us/">AWS GovCloud（美国）</a> 中的 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 上提供，通过两个组件提供对 OpenAI 前沿模型的访问。 Work 完成复杂的多步骤任务并提供可供审查的结果，Codex 是用于开发、测试和审查软件的编码代理。</p>
+<p>本演练适用于其安全架构需要模型推理才能使用 AWS GovCloud（美国）身份、终端节点和区域控制的组织。它将 Codex 配置为通过“us-gov-west-1”中的 Amazon Bedrock Mantle 路由模型请求，其中可以使用 <a href="https://aws.amazon.com/iam/">AWS Identity and Access Management (IAM)</a> 和现有 AWS GovCloud (US) 网络控制来管理访问。</p>
+<p>Codex 是用于人工智能驱动的软件开发的 OpenAI 编码代理。借助 GPT 模型支持推理，Codex 引入了针对复杂、长期的开发人员工作流程进行优化的新型智能。您可以使用 ChatGPT 桌面应用程序、Codex CLI 以及与 Visual Studio Code、JetBrains 和 Xcode 集成的 IDE。模型推理通过 Amazon Bedrock 上的响应 API 进行路由。</p>
+<p>对于有数据驻留要求的客户，处理将在您选择的 Amazon Bedrock AWS 区域内进行。您按代币付费，无需席位许可证，也无需按开发者做出承诺。还支持零数据保留 (ZDR)。在此可配置模式下，系统会处理提示和响应，而不会由 AWS 写入持久存储或与模型提供商共享。这有助于您保护敏感信息并满足严格的数据治理、隐私和安全要求。</p>
+<p>本文将介绍 ChatGPT 桌面应用程序的受控本地部署，该应用程序将模型推理发送到 AWS GovCloud（美国西部）中的 Amazon Bedrock。该配置使用 API 模式登录、托管设备策略、命名 AWS 配置文件和网络限制。这些限制仅允许访问经批准的 Amazon Bedrock 终端节点，同时禁用其他外部连接和网络支持的功能。结果是机构安全团队可以在批准更广泛的使用之前测试和记录部署。</p>
+<p>使用 AWS GovCloud（美国）并遵循本指南本身并不授权您的工作负载。您的组织仍然负责根据其系统安全计划和授权流程检查所选模型、AWS 服务、区域、终端节点、工作站控制、存储库、凭证和数据流。</p>
+<h2>解决方案概述</h2>
+<p>您可以通过两种方式使用 ChatGPT 桌面应用程序：</p>
+<ul><li>处理需要规划、研究、归档和最终结果的大型任务。</li><li>用于技术工作的 Codex，例如编辑代码、运行测试和审查拉取请求。</li></ul>
+<p>ChatGPT 桌面应用程序通过桌面应用程序或 CLI 在组织管理的计算机上运行。它使用配置的 AWS 凭证将请求安全地发送到“us-gov-west-1”中的 Amazon Bedrock Mantle 终端节点。由于此设置直接使用 AWS，因此 ChatGPT 工作区规则和用户角色无法控制它。主要的安全控制是计算机的策略以及所使用的 AWS 身份和权限。</p>
+<h2>演练</h2>
+<p>配置包含三个主要步骤：设置身份验证、设置 ChatGPT 桌面应用程序配置文件，然后启动、初始化和验证部署。</p>
+<h3>先决条件</h3>
+<p>在使用 AWS GovCloud（美国）设置 ChatGPT 桌面应用程序之前，请确保 ChatGPT 桌面应用程序的<a href="https://learn.chatgpt.com/docs/changelog">您的版本</a> 支持 AWS GovCloud（美国）中的 Amazon Bedrock。您需要一个经批准的 AWS GovCloud（美国）账户、一个 IAM 身份和经批准的凭证、对经批准的模型、AWS 区域和终端节点的访问权限以及使用它们的权限。您还需要设置“requirements.toml”和“config.toml”文件。</p>
+<h3>第 1 步：设置身份验证</h3>
+<p>选择已批准的 AWS GovCloud（美国）账户和 IAM 身份或角色，可以访问“us-gov-west-1”中已批准的模型。通过您组织的批准机制获取凭证。本演练使用命名的配置文件“codex-il5”。将凭证、不记名令牌、会话令牌和其他机密保留在 TOML 文件之外。</p>
+<p>保护配置文件配置、凭证源、SSO 令牌缓存以及 ChatGPT 桌面应用程序任务写入的任何凭证助手，同时允许批准的身份验证工具维护和刷新凭证。</p>
+<p>ChatGPT 桌面应用程序支持两种 Amazon Bedrock 身份验证途径：<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys-generate.html">Amazon Bedrock API 密钥</a> 或 <a href="https://docs.aws.amazon.com/sdkref/latest/guide/standardized-credentials.html">AWS 开发工具包凭证链</a>。凭证链路径支持通过 AWS IAM Identity Center 的 AWS SSO。</p>
+<p>该应用程序首先检查其环境中的“AWS_BEARER_TOKEN_BEDROCK”。对于桌面使用，可以通过 Windows 上的“%USERPROFILE%\.codex\.env”或 Linux 和 macOS 上的“~/.codex/.env”提供此变量。如果存在，承载令牌优先于基于配置文件的身份验证。</p>
+<p>如果没有可用的不记名令牌，应用程序将回退到标准 AWS SDK 凭证链。该链可以从“~/.aws/credentials”读取AWS凭证，并从“~/.aws/config”读取相关配置文件设置。在 Windows 上，相应的默认路径为“%USERPROFILE%\.aws\credentials”和“%USERPROFILE%\.aws\config”。该链还支持 SSO 配置文件。对于 SSO，它使用 AWS 配置文件中的配置文件设置和缓存的 SSO 会话来获取临时角色凭证。这些凭证不需要手动存储在 AWS 凭证文件中。请参阅 <a href="https://learn.chatgpt.com/docs/amazon-bedrock">OpenAI 的 Bedrock 身份验证文档</a> 和 <a href="https://docs.aws.amazon.com/sdkref/latest/guide/feature-sso-credentials.html">AWS IAM Identity Center 凭证提供程序文档</a>。</p>
+<h3>步骤 2：设置 ChatGPT 桌面应用程序配置文件</h3>
+<p>您必须创建两个 ChatGPT 桌面应用程序配置文件：“config.toml”和“requirements.toml”。</p>
+<p>重要提示：需要在启动应用程序之前设置配置文件。下表显示了文件位置。</p>
+<table><thead><tr><th><strong>操作系统</strong></th><th><strong>用户 <code>config.toml</code></strong></th><th><strong>管理员<code>requirements.toml</code></strong></th></tr></thead><tbody><tr><td>窗户</td><td><code>%USERPROFILE%\.codex\config.toml</code></td><td><code>%ProgramData%\OpenAI\Codex\requirements.toml</code></td></tr><tr><td>Linux</td><td><code>~/.codex/config.toml</code></td><td><code>/etc/codex/requirements.toml</code></td></tr><tr><td>macOS</td><td><code>~/.codex/config.toml</code></td><td><code>/etc/codex/requirements.toml</code></td></tr></tbody></table>
+<p>从“requirements.toml”文件开始。 <code>requirements.toml</code> 是管理员控制的规则文件。它设置用户无法覆盖的安全限制，例如，限制允许 ChatGPT 桌面应用程序使用哪些权限级别、工具或设置。</p>
+<p>对支持的 AWS GovCloud（美国）Amazon Bedrock 部署使用以下基准。 “[windows]”部分仅适用于 Windows，并且“sandbox_private_desktop”必须受批准的运行时支持。</p>
+<pre><code>allowed_login_methods = [&quot;api&quot;]
+allowed_sandbox_modes = [&quot;read-only&quot;, &quot;workspace-write&quot;]
+allowed_approvals_reviewers = [&quot;user&quot;]
+allowed_approval_policies = [
+{ granular = { sandbox_approval = false, rules = true,
+mcp_elicitations = false, request_permissions = false,
+skill_approval = true } },
+]
+allowed_web_search_modes = [&quot;disabled&quot;, &quot;cached&quot;]
+allow_browser_and_computer_use = false
+allow_appshots = false
+allow_remote_control = false
+allow_login_shell = false
+allow_managed_hooks_only = true
+check_for_update_on_startup = false
+mcp_servers = {}
+
+[feedback]
+enabled = false
+
+[features]
+network_proxy = true
+in_app_chat = false
+in_app_dictation = false
+in_app_browser = false
+browser_use = false
+browser_use_external = false
+browser_use_full_cdp_access = false
+computer_use = false
+in_app_updates = false
+image_generation = false
+memories = false
+chronicle = false
+external_agent_memory_import = false
+guardian_approval = false
+guardianv2 = false
+guardian_ext = false
+apps = false
+enable_mcp_apps = false
+plugins = false
+remote_plugin = false
+plugin_sharing = false
+recommended_plugins = false
+skill_mcp_dependency_install = false
+skill_search = false
+workspace_dependencies = false
+hooks = false
+standalone_web_search = false
+
+[experimental_network]
+enabled = true
+managed_allowed_domains_only = true
+domains = {}
+unix_sockets = {}
+allow_upstream_proxy = false
+dangerously_allow_non_loopback_proxy = false
+dangerously_allow_all_unix_sockets = false
+allow_local_binding = false
+
+[application.network]
+enabled = true
+
+[application.network.domains]
+&quot;bedrock-mantle.us-gov-west-1.api.aws&quot; = &quot;allow&quot;
+&quot;api.openai.com&quot; = &quot;deny&quot;
+&quot;chat.openai.com&quot; = &quot;deny&quot;
+&quot;chatgpt.com&quot; = &quot;deny&quot;
+&quot;ab.chatgpt.com&quot; = &quot;deny&quot;
+&quot;platform.openai.com&quot; = &quot;deny&quot;
+&quot;auth.openai.com&quot; = &quot;deny&quot;
+&quot;gov.api.openai.com&quot; = &quot;deny&quot;
+&quot;gov.chatgpt.com&quot; = &quot;deny&quot;
+&quot;sdfedpreastus2.oaiusercontent.com&quot; = &quot;deny&quot;
+&quot;o33249.ingest.us.sentry.io&quot; = &quot;deny&quot;
+&quot;persistent.oaistatic.com&quot; = &quot;deny&quot;
+&quot;oaisidekickupdates.blob.core.windows.net&quot; = &quot;deny&quot;
+
+[windows]
+allowed_sandbox_implementations = [&quot;elevated&quot;]
+sandbox_private_desktop = true</code></pre>
+<p>接下来，配置“config.toml”文件。 <code>config.toml</code> 告诉 ChatGPT 桌面应用程序如何操作，包括使用哪个模型提供程序 (<code>amazon-bedrock</code>)、选择哪个模型以及权限或上下文限制等设置。</p>
+<p>将模型 ID 和命名配置文件（例如“codex-il5”）替换为批准的值。</p>
+<pre><code>model = &quot;REPLACE_WITH_APPROVED_MODEL_ID&quot;
+model_provider = &quot;amazon-bedrock&quot;
+forced_login_method = &quot;api&quot;
+approval_policy = { granular = { sandbox_approval = false,
+rules = true, mcp_elicitations = false,
+request_permissions = false, skill_approval = true } }
+approvals_reviewer = &quot;user&quot;
+sandbox_mode = &quot;workspace-write&quot;
+web_search = &quot;cached&quot;
+allow_login_shell = false
+check_for_update_on_startup = false
+
+[model_providers.amazon-bedrock]
+base_url = &quot;https://bedrock-mantle.us-gov-west-1.api.aws/openai/v1&quot;
+wire_api = &quot;responses&quot;
+requires_openai_auth = false
+supports_websockets = false
+supports_standalone_web_search = false
+
+[model_providers.amazon-bedrock.aws]
+region = &quot;us-gov-west-1&quot;
+profile = &quot;codex-il5&quot;
+
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+network_proxy = true
+
+[analytics]
+enabled = false
+
+[feedback]
+enabled = false
+
+[otel]
+exporter = &quot;none&quot;
+trace_exporter = &quot;none&quot;
+metrics_exporter = &quot;none&quot;
+log_user_prompt = false
+
+[memories]
+generate_memories = false
+use_memories = false
+
+[skills.bundled]
+enabled = false
+
+[apps._default]
+enabled = false
+
+[windows]
+sandbox = &quot;elevated&quot;</code></pre>
+<h3>第 3 步：启动、初始化和验证</h3>
+<p>从 ChatGPT 站点下载该应用程序并安装。安装后保持应用程序关闭。如果它自动打开或者应用程序之前已启动，请完全退出 ChatGPT 并结束任何残留的 ChatGPT 或 Codex 进程。</p>
+<p>确保在第一次应用程序启动之前“requirements.toml”和“config.toml”已就位。</p>
+<p>启动应用程序以加载“requirements.toml”和“config.toml”设置。确保它显示“amazon-bedrock”作为模型提供者。</p>
+<p>在 Codex CLI 中，您应该看到一个“/status”选项卡，如下所示：</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22175-1.png" alt="Codex CLI /status 选项卡显示将 amazon-bedrock 配置为模型提供程序"></p>
+<p>图 1：Codex CLI /status 选项卡确认 amazon-bedrock 作为模型提供者</p>
+<p>在 ChatGPT 桌面应用程序中，您还可以确认“amazon-bedrock”作为模型提供商。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-22175-2.png" alt="ChatGPT 桌面应用程序设置确认 amazon-bedrock 作为模型提供商"></p>
+<p>图 2：ChatGPT 桌面应用程序设置显示 amazon-bedrock 作为模型提供商</p>
+<h2>故障排除</h2>
+<p><strong>应用程序提示输入 OpenAI 帐户。</strong> 验证“requirements.toml”和“config.toml”是否使用上表中显示的确切位置和文件名，终止所有 ChatGPT 和 Codex 进程，然后重新启动。这些文件必须在应用程序启动之前。</p>
+<p><strong>AWS GovCloud（美国）端点据报告不受支持。</strong> 使用 OpenAI 确认确切的桌面或应用程序服务器版本、端点和型号。仅更改 URL 并不能建立支持。</p>
+<p><strong>使用了错误的 AWS 身份。</strong> 检查有效的凭证来源和命名配置文件。检查 Amazon Bedrock API 密钥是否优先于配置文件。</p>
+<p><strong>缺少能力限制。</strong> 重新启动后检查完整的有效要求。仅 API 登录设置不应用功能策略。</p>
+<h2>回滚和清理</h2>
+<p>如果验证检查失败，请停止推出。将受影响的设备恢复为之前批准的策略和提供商设置，然后重新启动 ChatGPT 桌面应用程序。撤销任何临时 AWS 凭证或 API 密钥，并确认这些设备无法再连接到 Amazon Bedrock。保留测试记录，并在重试之前清楚地记录失败的原因。</p>
+<h2>结论</h2>
+<p>AWS GovCloud（美国）的 Amazon Bedrock 上的 ChatGPT 桌面应用程序为您提供了一种使用 OpenAI 前沿模型和编码帮助的受控方式。推理保留在 AWS GovCloud（美国）区域。通过验证配置、确认已批准的 AWS 身份和终端节点以及验证安全控制，您可以放心地准备部署以供更广泛的使用。这种方法支持创新，同时使部署决策与每个组织的安全、授权和数据处理要求保持一致。</p>
+<p>准备好在 AWS GovCloud（美国）的 Amazon Bedrock 上使用 Codex 探索 ChatGPT 桌面应用程序了吗？从受控部署开始，验证您的安全控制，并与您的安全团队合作，为更广泛的采用做好准备。</p>
+<h2>相关资源</h2>
+<ul><li><a href="https://learn.chatgpt.com/docs/enterprise/govcloud-configuration">Bedrock AWS GovCloud（美国）配置</a> – ChatGPT 桌面应用程序设备、提供商、网络、验证和故障排除指南。</li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-mantle.html">Amazon Bedrock 上的响应 API</a> – AWS 区域、终端节点行为、身份验证和响应 API 的权限。</li><li><a href="https://docs.aws.amazon.com/govcloud-us/latest/UserGuide/govcloud-compliance.html">AWS GovCloud（美国）合规性</a> – 合规性计划和客户授权注意事项。</li><li><a href="https://learn.chatgpt.com/docs/amazon-bedrock">OpenAI 的 Bedrock 身份验证文档</a> – Amazon Bedrock API 密钥和 AWS SDK 凭证链身份验证，包括 SSO。</li><li><a href="https://docs.aws.amazon.com/sdkref/latest/guide/feature-sso-credentials.html">AWS IAM Identity Center 凭证提供程序文档</a> – SSO 配置文件配置和临时 AWS 凭证。</li></ul>
+<h2>关于作者</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>英国亚马逊快速用户群在 2026 年如何增长</title>
       <link>https://aws.amazon.com/blogs/machine-learning/how-the-uk-amazon-quick-user-group-grew-in-2026/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-the-uk-amazon-quick-user-group-grew-in-2026/</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：How the UK Amazon Quick User Group grew in 2026</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>英国亚马逊快速用户群在 2026 年如何增长</h1>
+<p><a href="https://www.linkedin.com/groups/16948010/">Amazon Quick 用户组 – 英国</a> 是一个由英国 <a href="https://aws.amazon.com/quick/">Amazon Quick</a> 用户组成的社区，他们每季度举行一次会议，交流知识、分享最佳实践、通过实践课程学习并讨论他们使用该服务的体验。这些用户组充当协作论坛，成员可以在这里一起学习、联系和创新。</p>
+<p>无论您已经在使用 Amazon Quick 还是刚刚开始使用，我们都希望您加入英国 Amazon Quick 用户组，并成为不断发展的社区的一部分，该社区正在重新定义组织如何利用数据做出决策。在这篇文章中，我们很高兴分享我们的 2026 年年度总结，重点介绍自该小组成立以来举行的所有三个季度聚会以及随之而来的势头。这些活动吸引了 150 多名与会者，在代理 AI 和 Amazon Quick 的潜力的推动下，房间里的活力显而易见。各行业的客户都在使用 Amazon Quick 将混乱的数据转化为更快的决策、更高的满意度和可扩展的增长。他们的工作涵盖实时事件管理、通过受管理的数据层消除仪表板的蔓延，并通过人工智能实现大多数支持工作流程的自动化。</p>
+<h2>为什么 Amazon Quick 用户组很重要</h2>
+<p><a href="https://www.linkedin.com/groups/16948010/">英国 Amazon Quick 用户组</a> 是 Amazon Quick 用户的本地社区，他们每季度聚集在一起，分享该服务的知识、最佳实践和经验。 Amazon Quick 用户组充当协作论坛，成员可以：</p>
+<ul><li><strong>学习和分享</strong> – 交流有关 Amazon Quick 功能的真实见解，从交互式仪表板和数据故事讲述到人工智能驱动的代理自动化和自定义代理。成员们分享什么有效，什么无效，以及推动成果的新方法。</li><li><strong>网络</strong> – 与正在使用 Amazon Quick 解决企业 AI 应用程序、数据分析和工作场所生产力的类似用例的区域专业人士联系。</li><li><strong>解决问题</strong> – 通过讨论不同行业和业务环境的解决方案和用例来协作应对挑战。</li><li><strong>保持更新</strong> – 直接从同行和专家那里获取有关新功能、更新和新兴最佳实践的第一手知识。</li><li><strong>建立社区</strong> – 培养本地支持网络，与更广泛的 Amazon Quick 社区相辅相成，并拥有了解英国市场和商业环境的值得信赖的联系人。</li></ul>
+<h2>活动概述</h2>
+<p>今年超过三个季度的聚会，英国社区都与 Amazon Quick 进行了实时交流。不是关于它的幻灯片，而是实时构建它。人们无需编写代码即可为其团队创建 <a href="https://docs.aws.amazon.com/quick/latest/userguide/custom-agents.html">Amazon Quick 自定义聊天代理</a>。他们尝试在自己的笔记本电脑上运行 Amazon Quick Desktop，连接到本地文件并使用连接器访问 Outlook。他们还使用 Amazon Quick Apps 将简单语言描述转变为可用的 Web 应用程序。研讨会让与会者使用 <a href="https://docs.aws.amazon.com/quick/latest/userguide/using-amazon-quick-flows.html">Amazon Quick Flows</a> 和 <a href="https://docs.aws.amazon.com/quick/latest/userguide/using-amazon-quick-automate.html">Amazon Quick Automate</a> 实现流程自动化，同时 <a href="https://docs.aws.amazon.com/quick/latest/userguide/using-amazon-quick-research.html">Amazon Quick研究</a> 展示了它如何显着减少研究时间。 <a href="https://docs.aws.amazon.com/quick/latest/userguide/working-with-agents.html">Amazon Quick chat 代理</a> 将其捆绑在一起，成为连接到工具、数据并代表您采取操作的助手。每个季度，会议都变得更加实用，房间里的问题也变得更加尖锐。</p>
+<h2>典型事件是什么样的</h2>
+<p>这三场活动均在伦敦肖尔迪奇的亚马逊英国公司办公室举行。上午9点45分，房间里已经热闹起来。人们通过喝咖啡重新建立联系，交换上一季度的最新动态，甚至在这一天正式开始之前，新来者就开始进行对话。</p>
+<p>从那时起，整个议程都充满活力：客户分享他们使用 Amazon Quick 构建的真实故事，产品负责人介绍最新的更新，小组讨论会引发网络研讨会上没有的那种来回讨论。 75 分钟的实践研讨会才是真正生动的地方，与会者在配置的沙箱帐户中卷起袖子，一起进行实验。当我们以反馈会议结束时，房间感觉更像是一个工作组而不是观众。</p>
+<p>每个季度的形式都会发生变化。第一季度更倾向于介绍和演示，因为该小组是第一次开会。到第二季度，我们添加了破冰测验，并举办了一次关于快速流程和自动化的重点研讨会。在第三季度，我们引入了专家小组、小组测验和最后的社交活动。最后一个的出现是因为人们在结束后已经留下来交谈，所以我们不再在他们周围收拾行李并将其列入日程中。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21295-1.jpeg" alt="参加在伦敦肖尔迪奇举行的英国亚马逊快速用户组聚会"></p>
+<p>图 1：英国 Amazon Quick 用户组聚会的与会者</p>
+<h2>客户分享的内容</h2>
+<p>客户故事从一开始就成为社区的一部分。每个演讲者都提出了不同的问题，展示了团队如何在不同的环境中应用 Quick。</p>
+<p>在第一次活动中，谈话的重点是深入了解需要它的人的手中。在 <a href="https://www.arrivagroup.com/">Arriva UK</a> 火车上，关键数据没有到达最需要的人手中。火车和车站管理人员经常出差，完全依靠他们的工作手机。 Sofia Bourika 的团队构建了动态、基于角色的仪表板，具有适合移动设备的视图，并引入了通过预定电子邮件自动发送的像素完美报告，使管理人员能够立即了解事件和绩效。结果是：更快的决策、更好的事件管理以及整个组织更强大的数据驱动文化。</p>
+<p>到第二季度，讨论转向了另一个挑战：在引入更多人工智能和自动化之前打好基础。在二手车零售商 <a href="https://www.carsa.co.uk">Carsa</a>，分析功能就像服务台一样。问题进来，仪表板出去。同样的问题却给出了不同的答案。这不是数据问题。这是一个定义问题。 Carsa 的 Tobi Daramola 团队通过构建单一受管数据层解决了这个问题，其中的指标定义一次并由 Amazon Quick 和 AI 助手等使用。结果，他们删除了 50% 的仪表板，同时显示更多数据。客户满意度 (CSAT) 分数在 30 天内上升了 10%，投诉当日解决率跃升了 20%，人工智能层将重复任务从 45 分钟减少到 5 分钟。</p>
+<p>第三季度将对话进一步带入自动化和代理工作流程。 <a href="https://en.propulse-lab.com/">Propulse Lab</a> 是一个针对 B2C 订阅业务的瑞士操作系统，每年处理 100 万个支持请求。他们的团队陷入了救火而不是推动增长的境地。在 Amazon Quick Automate 中部署基于过去最佳客户服务交互构建的多代理 AI 管道后，他们将请求处理时间从 7 分钟缩短到 70 秒。该管道还实现了 80% 的日常工作流程的自动化。</p>
+<blockquote>“曾经的成本中心变成了增长引擎 - 他们的产品经理现在拥有整个系统，而无需编写一行代码，而他们的支持团队则专注于主动的、创收的对话。”<br>— Guirec Lecointre，Propulse Lab 增长运营专家</blockquote>
+<p>用例差异很大，这正是重点。从业者并没有展示 Amazon Quick 的单一愿景，而是展示了他们针对实际业务问题所做的尝试，从受监管的分析和一线报告到自动化和人工智能。这改变了房间里的谈话。与会者直接询问有关实施、采用以及哪些不起作用的问题。演讲者分享了最终解决方案背后的实践经验教训。人们留下的想法可以应用于自己的组织，而不仅仅是另一个客户故事。</p>
+<h2>从演讲到参与</h2>
+<p>这三场活动的参与者都发生了变化。到第三季度，倾听和学习转变为建立有意义的关系。人们对于这个团体来说都是新的，彼此之间也是新的。到了第二季度，破冰测验让事情提前放松下来。反馈会议也变得更加具体：人们不再是“这太棒了”，而是要求主题并提出贡献。</p>
+<p>第三季度进一步推动了这一点。 Sofia Bourika 很早就加入了领导团队，并在第一次活动中介绍了 Arriva 客户故事，她提出了一个名为“您为什么感到自豪？”的破冰活动，与会者分享了他们使用 Amazon Quick 构建的东西。我们已经有一位之前坐在观众席上的人自愿展示他们的作品。这种从参与到贡献的转变需要三件事才能发生，但它确实发生了。第三季度还推出了一个新的细分市场，即 Amazon Quick 专家小组。预先从观众那里收集了问题，并向受邀的专家提出了问题，专家提供了真正深入的答案，并分享了与与会者的客户合作的第一手经验。它在房间里引发了一种不同的思考，观众将专家的见解与他们自己的日常挑战联系起来。</p>
+<p>我们的社区全年都保持联系。我们的 LinkedIn 小组每周都会做出贡献，我们的电子邮件列表鼓励参与。</p>
+<h2>行动中的集体影响</h2>
+<p>非常感谢我们专门的 AWS 合作伙伴 <a href="https://www.reply.com/data-reply/en">Data Reply</a>，他们的持续贡献和思想领导力对于每次英国用户组聚会的成功都发挥了重要作用。</p>
+<p>我们的英国领导团队带领我们实现了每一个里程碑：</p>
+<p><strong>Liam Yusuph</strong>，Data Reply 人工智能和数据交付主管</p>
+<p><strong>Priyanka Bettaswamygowda</strong>，AWS 解决方案架构师</p>
+<p><strong>Sahar Shahbaz，</strong> 数据分析师，数据回复</p>
+<p><strong>Sofia Bourika，</strong> Arriva 首席 BI 开发人员</p>
+<p><strong>Tobi Daramola，</strong> Carsa 高级数据和分析主管</p>
+<p><strong>Ali Hayat</strong>，亚马逊 AV 支持助理</p>
+<p><strong>Lam Phan</strong>，AWS BI 开发人员</p>
+<p><strong>Rikhi Singh</strong>，AWS ADC 工程师</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21295-2.jpeg" alt="英国亚马逊快速用户组领导团队"></p>
+<p>图2：英国亚马逊Quick User Group领导团队</p>
+<h2>亚马逊快速社区资源</h2>
+<p><a href="https://community.amazonquicksight.com/">Amazon Quick Community 网站</a> 拥有数万名会员和数千个可搜索问题。它还提供 600 多个学习资源，帮助您利用代理 AI 和 Amazon Quick 提高工作效率。</p>
+<blockquote>“快速社区旨在共同学习和建立联系。在这里，任何技能水平的用户都可以找到帮助、学习新知识并结识其他人。我最喜欢快速社区的一点是，每个人都真诚地提供帮助。这个地方揭示了您自己不会想到去探索的可能性，在那里您偶然遇到正在从事项目和用例的人，您甚至从未想过要询问，突然间您的世界变得更大了。”<br>— Kristin Mandia，AWS 高级社区经理</blockquote>
+<p>学习机会包括每周大约两次<a href="https://community.amazonquicksight.com/t/recurring-live-online-events/25696">免费实时在线课程</a>、每月功能更新详细和高级自动化课程以及 4 小时沉浸日研讨会。 AWS 解决方案架构师、产品经理和主题专家在该平台上非常活跃，并且可以直接发送消息。 Kristin 继续说道，“人们会积极帮助解决棘手的问题，分享他们巧妙的解决方法，并尝试一起使用 Quick 的新方法。”</p>
+<h2>要点</h2>
+<p>在这三场活动中，有一些主题始终如一地出现。</p>
+<h3>格式不断变化，因为我们倾听</h3>
+<p>英国亚马逊快速用户组按照固定的结构运行：简介、产品更新、客户故事、实践研讨会和反馈会议。但我们每个季度都会对其进行调整。早期，我们在客户故事之后推出了“Quick 的新增功能”部分，它打破了流程。人们关注真正的公司如何使用该产品，然后我们会转向功能公告。我们移动了“新增功能”，以便客户故事直接进入研讨会，差异是显而易见的。在第三季度，我们添加了一个互动测验，以便在房间里进行更多的来回讨论。与会者还对整体形式和节奏以及结识新朋友的机会表示赞赏。正如一位首次参加者所说，“交流机会非常好……我非常享受这一天！”。</p>
+<h3>在场的顾客，不是我们</h3>
+<p>至少一位客户在每次活动中分享他们如何使用 Amazon Quick。在三场活动中，Carsa、Arriva、Propulse Lab 和其他一些客户登上了舞台。在第一次活动之后，最明确的反馈之一是人们想要更多的客户演讲者。这告诉我们我们走在正确的轨道上。这些会议之所以有效，是因为听众听到的是面临类似问题的同行的声音，而不是试图向他们推销东西的人的声音。影响超出了事件本身。与会者表示，客户案例向他们展示了使用这些工具的新方法，并开始了有关投资回报 (ROI) 的有益讨论。一位与会者告诉我们，一次客户会议“已经在他们的组织内部引发了很多对话”。</p>
+<h3>研讨会是最重要的地方</h3>
+<p>每个活动都有一个实践研讨会，人们不断地告诉我们这是他们获益最多的部分。观看别人演示产品与亲自坐下来体验产品之间存在着差距。大多数与会者表示，正是从这个差距开始，Amazon Quick 开始对他们想要做的事情有意义。我们知道它落地了，因为之后最常见的问题是他们是否可以继续访问研讨会环境，以便他们可以自己进行实验。</p>
+<p>＃＃ 结论</p>
+<p>今年聚会的成功证明了每一位出席、分享知识并为社区发展做出贡献的成员。展望未来，我们比以往任何时候都更有动力保持这种势头，并继续突破 Amazon Quick 的可能性界限。</p>
+<h2>参与进来</h2>
+<p>要了解有关 Amazon Quick 的更多信息并与社区联系：</p>
+<ul><li>加入 <a href="https://www.linkedin.com/groups/16948010/">LinkedIn</a> 上的英国亚马逊快速用户组。</li><li>加入<a href="https://community.amazonquick.com/">Amazon Quick Community</a>，一起学习代理AI并访问超过600个学习资源。</li><li>探索 <a href="https://aws.amazon.com/bedrock/">Amazon Bedrock</a> 了解更多生成式 AI 功能。</li><li>注册参加下一次英国亚马逊快速用户组聚会：<a href="https://luma.com/21k0l3fa">2027 年 1 月 28 日</a>。</li><li>不在英国？参加在 [奥斯汀、凤凰城、芝加哥、波士顿、洛杉矶、纽约市或慕尼黑/DACH] 举办的聚会(https://community.amazonquick.com/t/user-groups-la-dach-chicago-phoenix-austin-nyc-boston-uki-to-come/47826)。</li><li>填写<a href="https://pulse.amazon/survey/HIZTMBUZ?p=0">领导兴趣表</a>，在您的城市启动亚马逊快速用户组。</li></ul>
+<p>有关活动或 Amazon Quick Community 的问题，请联系 Amazon Quick Community 和用户组计划高级社区经理 Kristin Mandia，请发送电子邮件至 <a href="mailto:kmandia@amazon.com">kmandia@amazon.com</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Building intent-driven UI testing with Amazon Nova Act</title>
+      <title>使用 Amazon Nova Act 构建意图驱动的 UI 测试</title>
       <link>https://aws.amazon.com/blogs/machine-learning/building-intent-driven-ui-testing-with-amazon-nova-act/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/building-intent-driven-ui-testing-with-amazon-nova-act/</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Building intent-driven UI testing with Amazon Nova Act</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>使用 Amazon Nova Act 构建意图驱动的 UI 测试</h1>
+<p>为了在其产品团队中扩展意图驱动的 UI 测试，<a href="https://www.epsilon.com/">Epsilon</a>（一家数据、技术和营销服务公司，也是 <a href="https://www.publicisgroupe.com/">Publicis Groupe</a> 的一部分）求助于 <a href="https://aws.amazon.com/nova/act/">Amazon Nova Act</a>。拥有数亿消费者档案和数千个品牌关系，Epsilon 需要能够跟上快速应用程序变化的 UI 测试。该解决方案无法为每个产品团队带来维护费用。</p>
+<p>在 Epsilon 内部，Agentic Platform 团队（50 名工程师）构建共享基础设施，以便其他产品团队可以安全地构建、部署、管理和运行 AI 代理。通过这个共享平台，团队可以获得基于技能的代理构建器。他们还获得联合身份和飞行前授权、模型上下文协议 (MCP) 集成以及跨账户配置。当产品团队想要采用人工智能工具时，他们无需额外配置即可获得功能，也无需自行重新解决身份、安全、浏览器基础设施或模型集成问题。</p>
+<p>这些托管功能之一是<em>UI 测试</em>。借助 <a href="https://aws.amazon.com/nova/act/">Amazon Nova Act</a> 和 <a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/browser-tool.html">Amazon Bedrock AgentCore 浏览器</a>（Amazon Bedrock AgentCore 的一项功能），Epsilon 的平台团队可以向平台上的团队提供弹性、意图驱动的测试服务。</p>
+<p>在这篇文章中，我们将介绍 Epsilon 以托管平台服务形式提供 UI 测试的架构，展示核心 Nova Act 和 Amazon Bedrock AgentCore 浏览器工具集成代码，重点介绍具体的 18 步骤测试工作流程，并分享最佳实践和测量结果。</p>
+<h2>挑战：扩大覆盖范围，而不是取代有效的内容</h2>
+<p>Epsilon 现有的 UI 测试实践并未被打破。该团队维护了一个“基于 Playwright 的回归套件”，用于验证其 Web 应用程序的功能，并且效果良好。今天，剧作家仍然是他们回归的支柱。</p>
+<p>Epsilon 发现的机会是附加的，而不是纠正的：</p>
+<ul><li><strong>脚本化剧作家测试</strong>对于确定性回归检查非常有效。然而，它们与选择器和页面结构紧密耦合。即使底层功能健全，表面的 UI 更改也可能会破坏它们。</li><li><strong>多个产品团队</strong>需要针对自己的应用程序进行全面的测试。建立浏览器基础设施、管理依赖关系以及与每个团队的身份系统集成会产生重复的工作。</li><li>平台团队希望 UI 测试成为适合其现有代理模型的<strong>托管功能</strong>，而不是每个入职团队都必须操作的自定义 CLI。</li></ul>
+<p>目标：在现有 Playwright 回归套件之上分层<strong>基于意图的测试</strong>。将其作为多租户平台服务提供，以便每个 Epsilon 产品团队都可以通过用于所有其他代理功能的相同 API 界面进行使用。</p>
+<h2>为什么 Epsilon 选择 Amazon Nova Act 和 Amazon Bedrock AgentCore 浏览器工具</h2>
+<p>Epsilon 根据两个要求评估了选项：自然语言测试编写（以补充基于选择器的 Playwright 测试）和托管浏览器基础设施（以适应其多租户平台模型）。借助 Amazon Nova Act 与 Amazon Bedrock AgentCore 浏览器工具的结合，Epsilon 可以解决这两个问题。</p>
+<ul><li><strong>自然语言步骤。</strong> 测试步骤是由 Nova Act 执行的简单英语指令。它们能够适应外观 UI 更改，并且可供非工程师阅读。像“确认奖励余额可见”* 这样的步骤比脆弱的 CSS 选择器要好得多。</li><li><strong>AWS 托管的临时浏览器会话。</strong> 借助 Amazon Bedrock AgentCore 浏览器工具，团队可以获得独立的浏览器实例，无需交付二进制文件，也无需维护显示服务器。 Amazon Bedrock AgentCore 浏览器工具还提供用于人工观察或接管的实时视图（对于验证码或多因素身份验证有用）、将会话记录到 Amazon Simple Storage Service (Amazon S3) 以及 AWS CloudTrail 审计，所有这些都无需额外配置。</li><li><strong>基于 AWS Identity and Access Management (AWS IAM) 的身份验证。</strong> 借助 Nova Act，您可以通过标准 AWS 凭证链（任务角色）进行身份验证。这符合 Epsilon 现有的安全模型，无需分发单独的 API 密钥。</li><li><strong>跨账户友好。</strong> 借助 Nova Act 和 Amazon Bedrock AgentCore 浏览器工具，您可以插入现有的 AWS Security Token Service (AWS STS) AssumeRole 配置。每个入职团队都可以在自己的 AWS 账户内以指定的角色运行测试。这可以保持隔离性和可审计性。</li></ul>
+<p>Epsilon 特别选择 Amazon Bedrock AgentCore 浏览器工具，因为它消除了管理浏览器二进制文件、显示服务器和会话生命周期的操作负担。 Agentic Platform 团队对拥有该基础设施没有兴趣。</p>
+<h2>解决方案：架构和实现</h2>
+<p>Epsilon 的解决方案包含三个主要组件：用于创建工作流程的平台 API、用于执行工作流程的后台任务运行程序，以及驱动浏览器的 Nova Act 和 Amazon Bedrock AgentCore 浏览器工具集成。</p>
+<h3>平台架构</h3>
+<p>Epsilon 的 UI 测试能力遵循清晰的流程：</p>
+<ul><li>用户通过平台 API 创建工作流程，指定“target_url”和自然语言步骤列表。</li><li>创建时，平台会在 AWS 上注册 Nova Act 工作流程定义。</li><li>执行时，后台任务运行程序（<a href="https://docs.celeryq.dev/">Celery</a>，用于异步作业处理的 Python 框架）会打开 Amazon Bedrock AgentCore 浏览器工具浏览器会话。它通过 Nova Act 通过 <a href="https://chromedevtools.github.io/devtools-protocol/">Chrome DevTools Protocol (CDP)</a> WebSocket（以编程方式控制 Chromium 浏览器的标准接口）运行每个步骤，包括条件逻辑（例如，<em>“如果出现旅行盒，则跳过它”</em>）。</li><li>系统捕获每个步骤的屏幕截图，跟踪每个步骤的通过/失败，计算总体通过率，并存储所有内容（结果 JSON、Amazon S3 中的屏幕截图、会话 ID）。</li><li>完成钩子触发，因此结果被记录回平台。</li></ul>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/22/ML-21285-1.png" alt="具有用户、身份验证、API、执行运行程序和 Amazon S3 存储层的 Epsilon UI 测试服务架构"></p>
+<p>图 1：Epsilon 的 UI 测试服务架构</p>
+<p>图 1 显示了 Epsilon UI 测试服务的分层架构。用户请求从代理云前端流经 API 网关，并进行身份验证和权限检查。 API 层 (Django REST) 公开工作流、执行、自动化套件和统计数据的端点。业务逻辑层包括工作流管理器、执行协调器和套件协调器。测试作业在 Amazon Simple Queue Service (Amazon SQS) 中排队，并由 Amazon Elastic Container Service (Amazon ECS) 上运行的 Runner Service 拾取，其中包含 Nova Act 引擎和无头 Chromium 浏览器。结果、屏幕截图、轨迹和 HTML 报告存储在 Amazon S3 中。</p>
+<p>该功能作为标准代理（“ui-test-agent”）公开，具有两种技能：</p>
+<ul><li><strong>ui-test-recorder</strong>：交互式探索场景并记录自然语言步骤。</li><li><strong>ui-test-executor</strong>：运行记录的步骤并返回结构化结果。</li></ul>
+<p>入职团队使用 UI 测试的方式与使用任何其他平台代理的方式相同。无需管理额外的基础设施。入职流程非常简单。平台团队为新团队提供跨账户 IAM 角色，注册其目标应用程序 URL，并通过现有平台 API 授予对“ui-test-agent”的访问权限。从那时起，团队创建工作流程、触发执行并通过他们已用于其他平台功能的相同界面检索结果。</p>
+<h3>核心集成</h3>
+<p>Nova Act + Amazon Bedrock AgentCore 浏览器工具集成非常简洁：</p>
+<pre><code>import boto3
+from bedrock_agentcore.tools.browser_client import browser_session
+from nova_act import NovaAct
+
+boto_session = boto3.Session(region_name=region)
+
+with browser_session(region) as client:
+    ws_url, headers = client.generate_ws_headers()
+    with NovaAct(
+        cdp_endpoint_url=ws_url,
+        cdp_headers=headers,
+        boto_session=boto_session,
+        starting_page=url
+    ) as nova_act:
+        result = nova_act.act(instruction)</code></pre>
+<p>此模式（打开托管浏览器会话、通过 CDP WebSocket 连接并使用自然语言驱动操作）是基础。 Epsilon 将其与其平台的多租户编排、结果捕获和可观察层结合起来。</p>
+<h3>示例：自动化“创建代理”流程</h3>
+<p>为了说明基于意图的测试，以下是 Epsilon 平台的代表性工作流程。它执行登录、表单输入、条件处理、滚动和验证。以下步骤强调了 Nova Act 的差异化模式：</p>
+<table><thead><tr><th><strong>步骤</strong></th><th><strong>说明</strong></th></tr></thead><tbody><tr><td>1</td><td>输入用户名并选择 <strong>下一步</strong></td></tr><tr><td>2</td><td>输入密码并选择<strong>验证</strong></td></tr><tr><td>3</td><td>导航至 <strong>创建代理</strong> 并选择 <strong>设计新规范</strong> 卡</td></tr><tr><td>4</td><td>如果出现入门导览框，请选择 <strong>跳过导览</strong>，然后验证加载的页面是否正确</td></tr><tr><td>5</td><td>填写代理名称和描述字段</td></tr><tr><td>6</td><td>向下滚动直到 <strong>目标陈述</strong> 字段可见，然后填写</td></tr><tr><td>7</td><td>如果技能搜索框不可见，请滚动直至出现。然后搜索并添加技能</td></tr><tr><td>8</td><td>选择 <strong>保存</strong>，确认成功提示，导航回来，并验证新代理是否出现在列表中</td></tr></tbody></table>
+<p>步骤 4 和 7 演示了<em>条件逻辑</em>：“如果元素出现，则处理它”和“如果目标不可见，则滚动直到它可见”。这些模式需要在传统框架中进行显式分支。 Nova Act 通过语言理解自然地处理它们。</p>
+<h3>运行时隔离</h3>
+<p>Epsilon 在<em>专用运行程序服务</em>（FastAPI sidecar）中运行 UI 测试，该服务通过工作流和 IAM 身份验证支持固定“nova-act”3.x，以及 Amazon Bedrock AgentCore 浏览器工具客户端。这使得依赖项与主后端分离，这样它们就不会与 Strands 代理堆栈发生冲突。如果运行器被禁用，工作线程将回退到进程内执行，从而在部署期间提供弹性。</p>
+<h2>最佳实践</h2>
+<p>根据将 UI 测试构建为平台功能的经验，Epsilon 团队建议：</p>
+<h3>1. 将步骤写为意图，而不是机制</h3>
+<pre><code>GOOD: &quot;Confirm the rewards balance is visible&quot;
+BAD: await page.locator('#rewards-balance-container &gt; span.amount').toBeVisible()</code></pre>
+<p>基于意图的步骤在 UI 重新设计中仍然存在。可能不会编写代码的产品经理和质量保证 (QA) 主管可以直接审查它们。</p>
+<h3>2. 隔离 Nova Act 运行时</h3>
+<p>将 Nova Act 和 Amazon Bedrock AgentCore 浏览器工具依赖项固定在专用服务或容器中。 Epsilon 了解到，Nova Act 的签名端点以“us-east-1”为目标，无论浏览器会话位于哪个区域。在具有自己的依赖项锁定文件的单独服务中运行它可以防止难以调试的冲突。</p>
+<h3>3. 重用记录的轨迹以降低成本</h3>
+<p>Epsilon 在<strong>草稿状态</strong>使用轨迹重试，保存成功的轨迹，并在<strong>活动状态</strong>重放它。重复运行会跳过冗余的大型语言模型 (LLM)“思考”，从而减少回归式重复执行的延迟和成本。</p>
+<h3>4. 从第一天开始就进行多租户设计</h3>
+<p>将跨账户 AssumeRole 与限定范围的 IAM 策略结合使用。每个租户的测试都在自己的帐户中以自己的角色运行。这提供了隔离、可审计性和故障范围遏制，无需为每个团队定制基础设施。</p>
+<h3>5. 依靠托管可观察性</h3>
+<p>借助 Amazon Bedrock AgentCore 浏览器工具，团队可以获取实时视图、会话记录和 AWS CloudTrail 集成。 Epsilon 使用这些内置功能而不是构建自定义可观察性，减少维护并为合规团队提供熟悉的审计界面。</p>
+<h3>6. Amazon Bedrock AgentCore 浏览器工具视口行为的帐户</h3>
+<p>提示 Nova Act 步骤时，请考虑 Amazon Bedrock AgentCore 浏览器工具的浏览器视口默认值。引用滚动的步骤（例如，“向下滚动直到可见目标陈述文本框”）验证 Nova Act 是否正确处理页面下部的内容。</p>
+<h2>结果和影响</h2>
+<p>Epsilon 的 UI 测试功能可跨多个团队运行，多租户架构已在生产中得到验证。</p>
+<table><thead><tr><th><strong>尺寸</strong></th><th><strong>亚马逊新星法案</strong></th><th><strong>剧作家（同等）</strong></th></tr></thead><tbody><tr><td>创作的台词</td><td>18 个自然语言步骤</td><td>约 80-150 行代码</td></tr><tr><td>选择器/DOM 检查</td><td>无</td><td>每个交互步骤都需要</td></tr><tr><td>创作时间（每个工作流程）</td><td>〜5-10 分钟</td><td>约 30-90 分钟</td></tr><tr><td>努力比</td><td>基线</td><td><strong>4-6 倍的努力</strong></td></tr></tbody></table>
+<p>以下是测量结果：</p>
+<ul><li><strong>测试创作速度加快 4-6 倍（基于 Epsilon 的内部基准）。</strong> 使用 Nova Act 创作具有代表性的 18 步工作流程需要 5-10 分钟，而同等 Playwright 脚本（80-150 行代码）则需要 30-90 分钟。 Playwright 脚本中的每个交互步骤都需要检查 DOM、选择稳定的选择器，并针对条件情况编写显式等待、断言和分支。 Nova Act 用 18 条自然语言指令和零选择器或 DOM 检查取代了每步开销，并用简单的英语表达了条件逻辑（例如旅行盒和滚动直到可见步骤）。</li><li><strong>轨迹重放的通过率为 100%（基于 Epsilon 的内部</strong> <strong>基准）。</strong> 工作流程通过初始探索阶段（通常为 4-5 次提示迭代）后，Epsilon 会保存成功的轨迹并确定性地重放。保存的轨迹在重复运行中达到 100% 的通过率。</li><li><strong>降低测试编写的障碍。</strong> 步骤读起来就像简单的英语。核心测试工程师之外的团队成员可以阅读、审查和提出测试，从而扩大质量所有权。</li><li><strong>内置审计跟踪。</strong> AWS CloudTrail 集成和 Amazon Bedrock AgentCore 浏览器工具会话记录使调试和合规性对话变得更加容易。这是团队最初并未打算实现的好处。</li><li><strong>每团队基础设施开销为零。</strong> 入职团队通过与其他平台代理相同的 API 界面进行 UI 测试。没有浏览器二进制文件，没有 Selenium 网格，没有要管理的显示服务器。</li><li><strong>每个步骤的通过/失败可见性。</strong> 每个步骤的屏幕截图提供了精细的调试上下文，减少了诊断故障的平均时间。</li></ul>
+<blockquote>“Nova Act 让我们将 UI 测试从脆弱的、选择器追逐的琐事转变为托管平台功能。我们的测试现在用简单的英语描述意图，在 AWS 托管浏览器上运行，我们加入的每个产品团队无需额外配置即可获得可靠的测试。”<br>— Epsilon Agentic 平台团队</blockquote>
+<h2>了解更多</h2>
+<p>Epsilon 的 Agentic Platform 团队演示了如何使用 Amazon Nova Act 和 Amazon Bedrock AgentCore 浏览器工具将弹性、意图驱动的 UI 测试作为托管服务提供。您可以将相同的模式应用于您自己的多租户平台，以消除浏览器基础设施开销并使非工程师也可以访问测试编写。</p>
+<p>如果您想使用 Amazon Nova Act 和 Amazon Bedrock AgentCore 浏览器工具构建类似的意图驱动的 UI 测试功能，可以使用以下资源：</p>
+<ul><li><a href="https://docs.aws.amazon.com/nova/latest/userguide/nova-act.html">Amazon Nova 法案文档</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/browser-tool.html">Amazon Bedrock AgentCore 浏览器工具用户指南</a></li><li><a href="https://pypi.org/project/nova-act/">PyPI 上的 Nova Act Python SDK</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/what-is-bedrock-agentcore.html">Amazon Bedrock AgentCore 文档</a></li><li><a href="https://github.com/amazon-agi-labs/nova-act-samples/blob/main/examples/agentcore/browser/README.md">Nova Act + Amazon Bedrock AgentCore 浏览器工具示例代码 (GitHub)</a></li><li>相关文章：<a href="https://aws.amazon.com/blogs/machine-learning/acceleating-software-delivery-with-agentic-qa-automation-using-amazon-nova-act/">使用 Amazon Nova Act 通过代理 QA 自动化加速软件交付</a></li></ul>
+<p>要详细了解您的组织如何使用基于意图的浏览器自动化进行测试，请访问 <a href="https://aws.amazon.com/nova/act/">Amazon Nova Act 产品页面</a>。</p>
+<p>Epsilon 是阳狮集团旗下公司。了解更多信息，请访问 <a href="https://www.epsilon.com/">epsilon.com</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Build a repeatable PHP-to-Java migration engine with Kiro</title>
+      <title>使用 Kiro 构建可重复的 PHP 到 Java 迁移引擎</title>
       <link>https://aws.amazon.com/blogs/machine-learning/build-a-repeatable-php-to-java-migration-engine-with-kiro/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/build-a-repeatable-php-to-java-migration-engine-with-kiro/</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Build a repeatable PHP-to-Java migration engine with Kiro</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>使用 Kiro 构建可重复的 PHP 到 Java 迁移引擎</h1>
+<p>当您的团队将成熟的 PHP 应用程序迁移到 Java 时，您将获得更强的类型安全性、更广泛的库支持和更可预测的扩展。多年来使用 Laravel、Symfony 或 Doctrine 构建的 PHP 代码库在不明显的地方（从 Eloquent 特征到 XML 映射文件）携带业务规则，因此结构相似的 Java 端口可以干净地编译，但行为仍然不同。</p>
+<p>这篇文章展示了如何使用 <a href="https://kiro.dev/">Kiro</a> 将 PHP 到 Java 的迁移从一次性的信念转变为可测量、可重复的过程。 Kiro 是一个 AI 集成开发环境 (IDE)，它将 AI 代理与您的代码库配对，以便您在循环中运行多步骤工程任务。该方法以可重用引擎为中心：共享方法、机械发现扫描仪和八阶段工作流程。该引擎将原始 PHP 应用程序视为规范，并拒绝声明 Java 端口正确，直到奇偶校验工具验证它为止。</p>
+<h2>先决条件</h2>
+<p>在开始之前，您需要：</p>
+<ul><li>熟悉 PHP（Laravel/Eloquent 或 Symfony/Doctrine）。 Java 知识（Spring Boot、JPA）可帮助您查看生成的输出，但引擎会为您生成惯用的 Java，因此您无需自己用 Java 重写应用程序。</li><li>Kiro 工作区，可以访问 <a href="https://kiro.dev/docs/skills/">Skills</a> 和 <a href="https://kiro.dev/docs/steering/">Steering</a> 文件。</li><li>运行发现扫描器的计算机上的 PHP 8.0 或更高版本，以及用于生成的 Spring Boot 项目的带有 Maven 的 Java 21。</li><li>对迁移规划（发现、翻译和验证）的基本了解。</li></ul>
+<h2>您将在这篇文章中学到什么</h2>
+<p>您从一个开放的存储库开始，因此您可以自己运行引擎而不是阅读它。引擎知道的所有内容都存在于一小组技能文件中，通过这些文件，您可以以多种方式运行相同的方法。</p>
+<h2>运行引擎的两种方式：Kiro 和 AWS Transform</h2>
+<p>这里的所有内容都打包为技能文件：版本化的 Markdown 功能包，对迁移方法 (php-to-java-migration) 和发现扫描器工作流程 (php-model-discovery) 进行编码。由于这些知识存在于文件中而不是任何一种工具中，因此您可以通过两种方式运行相同的方法。</p>
+<h3>方法 1：Kiro、交互式和开发人员参与</h3>
+<p>Kiro 将人工智能代理引入您的编辑器中以逐步推动迁移。将存储库根目录作为 Kiro 工作区打开，当您要求 Kiro 迁移 PHP 应用程序时，技能会自动激活。然后，Kiro 使用明确的批准门来执行八阶段工作流程，因此您可以查看发现清单、批准规则手册，并在下一阶段开始之前签署每个阶段。这是本文中每个示例都使用的模式。</p>
+<h3>方法 2：AWS Transform、代理和组合规模</h3>
+<p><a href="https://aws.amazon.com/transform/">AWS Transform</a> 是用于大规模迁移和现代化的 AWS 代理 AI 服务，现在与 Kiro 进行了本地集成。通过这种集成，您可以向 AWS Transform 提供管理交互式 Kiro 会话的相同技能文件，因此翻译前的发现、作为裁判的奇偶校验工具以及“<em>修复循环，而不是代码</em>”适用于自主运行。</p>
+<h3>当每条路径都适合时</h3>
+<ul><li><strong>控制和自治：</strong> 首先使用 Kiro 完成代码：在一个应用程序上运行技能，读取生成的 Java，然后运行测试。当您想要迁移更多内容时，AWS Transform 会以代理方式运行相同的方法，并在技能定义的检查点进行审查。</li><li><strong>规模和新颖性：</strong> Kiro 一次处理一个应用程序，适合首个框架。 AWS Transform 将许多应用程序作为并行作业运行。</li><li><strong>共享反馈循环：</strong> 两条路径读取相同的技能文件，因此 Kiro 中进行的每个规则手册修复都会改进下一次 AWS Transform 运行，反之亦然。</li></ul>
+<h2>解决方案概述：同一个大脑，多个项目</h2>
+<p>该引擎围绕一个原则进行组织：一个共享的大脑，多个项目。要打开它，请在本地克隆存储库，然后在 Kiro 中打开一个文件夹并选择存储库根（包含 .kiro/ 的文件夹）。 Kiro 自动加载技能和转向，在“入门”中提供更完整的步骤。</p>
+<p>工作区将共享方法层与使用它的各个项目分开，如下图所示。顶部是每个项目都可以利用的全局 .kiro/ 层。下面是每个项目的文件夹，每个文件夹都有自己的 PHP 源、Java 输出和规范子文件夹。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21579-1.png" alt="工作空间架构：一个共享大脑，多个项目。工作区布局图。顶部是 Kiro 工作区根 PHP-Java-Migration。在其下方，.kiro/ 下的共享全局层包含技能（方法论）和指导文件（管理工作流程），并适用于每个项目。在其下方，三个每个项目文件夹各自包含自己的规范子文件夹，该图指出，改进共享层一次有利于每个项目。"></p>
+<p>图 1：工作区分为共享的全局方法层以及每个项目的代码和规范文件夹</p>
+<p>这些相同的共享技能文件可以通过两种不同的方式运行，如下图所示。相同的八阶段奇偶校验优先管道可以由 Kiro（交互式，一次一个应用程序）或 AWS Transform（代理式，在投资组合规模）驱动，并且两者都将 PHP 源转换为奇偶校验的 Spring Boot Java。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21579-2.png" alt="PHP 到 Java 的迁移引擎：一个共享大脑，两个执行路径。迁移引擎概述。左侧的共享层保存每个项目使用的技能文件和指导文件。右侧的两个执行路径运行相同的方法：Kiro，用于一次对一个应用程序进行交互式工作；AWS Transform，用于跨整个组合的代理工作。在它们下面，有一条八阶段管道从 PHP 代码库运行，经过阶段 0 到阶段 3（人类判断），然后是阶段 4 到阶段 8（自动驱动循环），最后到达奇偶校验线束，该奇偶校验线束充当裁判。"></p>
+<p>图 2：相同的共享技能文件驱动两个执行路径：Kiro（交互式，一次一个应用程序）和 AWS Transform（代理、投资组合规模）。两者都运行相同的八阶段奇偶校验优先管道，将 PHP 源转换为经过奇偶校验的 Spring Boot Java</p>
+<p>.kiro/ 下的共享全局层包含两个技能：php-model-discovery（扫描仪）和 php-to-java-migration（八阶段剧本），以及 core-workflow.md 指导文件。每个项目文件夹在 .kiro/specs/ 下都有自己的 PHP 源代码、Java 输出和 spec 子文件夹，因此改进方法一次就可以让每个项目继承收益。</p>
+<h2>翻译前的发现</h2>
+<p>最重要的一条规则先于其他规则触发：在扫描仪运行之前，不要阅读、猜测或手动翻译模型或实体文件。</p>
+<p>扫描仪单次运行，没有依赖关系，如下图所示。它对源令牌应用三种发现策略，并发出一个 JSON 清单，将任何不明确的内容路由到审查标志队列，供人工解决。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21579-3.png" alt="php-model-discovery，三种策略，一种清单。发现扫描器的图表，discover-models.php。左侧，PHP 代码库输入到扫描器中，扫描器按顺序运行三种策略：Eloquent 模型发现、Doctrine 属性检测和 ORM XML 映射。然后，箭头将结果传送到右侧的 model-manifest.json，其中包含字段、转换和关系的模型数组，以及用作人工审核的标志数组队列。"></p>
+<p>图 3：扫描器对源令牌运行三种发现策略，并发出带有审查标记队列的单个 JSON 清单</p>
+<p>扫描器是discover-models.php，一个单文件、无依赖的PHP命令行工具，不执行目标代码。它仅将源文本读取为令牌，因此无论是否安装了依赖项，它都会针对您选择的应用程序运行。它在每次扫描时运行三种策略：Eloquent 模型发现（沿着类继承链走到 Illuminate\Database\Eloquent\Model）、Doctrine 属性检测（#[ORM\Entity] 属性）和 ORM XML 映射（外部 <code>*.orm.xml</code> 文件）。输出是单个 JSON 清单。 “models[]”数组包含每个字段、转换、关系和可见性规则，并且“flags[]”数组出现在每个条目上。扫描仪会标记歧义而不是猜测。例如，从运行时表达式构建的“$fillable”列表成为简单的英语标志，并且该标志列表是人工审核队列。</p>
+<h2>奇偶校验优先管道</h2>
+<p>第 0 阶段是准备阶段：它运行扫描仪并组装库存。前三个阶段集中了人类的专业知识。第 1 阶段在编写 Java 之前构建奇偶校验工具，针对 PHP 原始版本和 Java 端口重放请求/响应对。该安全带必须通过正常运行的 PHP，并且当您故意破坏它时会失败，因为错过注入破坏的安全带是不可信的。第 2 阶段播种规则手册和差距清单（RULEBOOK.md、GAP_INVENTORY.md），第 3 阶段根据代表性文件对其进行压力测试，然后再将其提交到应用程序中。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21579-4.png" alt="奇偶校验优先迁移管道（8 个阶段） 具有八个阶段的奇偶校验优先迁移管道图。阶段 0 到 3 是人类主导的判断步骤，阶段 4 到 8 是自动驱动循环，两个组都提供一个奇偶校验工具，充当比较 PHP 原始版本和 Java 版本的裁判。端口。"></p>
+<p>图 4：人类判断被预先加载到准备阶段 0 和阶段 1-3。第 4-8 阶段主要是自动驾驶循环，由奇偶校验线束引用</p>
+<p>前四个阶段集中了人类的专业知识。第 0 阶段运行扫描仪并组装库存。第 1 阶段在编写 Java 之前构建奇偶校验工具，针对 PHP 原始版本和 Java 端口重放请求/响应对。该安全带必须通过正常运行的 PHP，并且当您故意破坏它时会失败，因为错过注入破坏的安全带是不可信的。第 2 阶段播种规则手册和差距清单（RULEBOOK.md、GAP_INVENTORY.md），第 3 阶段根据代表性文件对其进行压力测试，然后再将其提交到应用程序中。</p>
+<table><thead><tr><th><strong>阶段</strong></th><th><strong>姓名</strong></th><th><strong>可交付</strong></th></tr></thead><tbody><tr><td><strong>0</strong></td><td>评估和发现</td><td>型号清单+库存+割接选择</td></tr><tr><td><strong>1</strong></td><td>打造法官</td><td>Parityharness 可针对 PHP 和 Java 运行</td></tr><tr><td><strong>2</strong></td><td>规则手册+缺口库存</td><td>规则手册.md、GAP_INVENTORY.md</td></tr><tr><td><strong>3</strong></td><td>对规则手册进行压力测试</td><td>强化的规则手册，根据代表性文件进行验证</td></tr><tr><td><strong>4</strong></td><td>脚手架</td><td>编译Spring Boot项目</td></tr><tr><td><strong>5</strong></td><td>翻译数据模型</td><td>JPA 实体 + 架构基线</td></tr><tr><td><strong>6</strong></td><td>翻译I/O层</td><td>控制器、安全性、模板响应</td></tr><tr><td><strong>7</strong></td><td>转换业务逻辑</td><td>逻辑已转换，测试为绿色</td></tr><tr><td><strong>8</strong></td><td>证明奇偶性并切换</td><td>奇偶校验报告 + 切换清单</td></tr></tbody></table>
+<p>第 4-8 阶段主要是自驱动循环：第 4 阶段构建项目，第 5 阶段从清单转换数据模型，第 6 阶段转换 I/O 层（路由成为控制器，中间件成为过滤器，验证成为带注释的数据传输对象），第 7 阶段批量转换业务逻辑，第 8 阶段证明与线束的奇偶性和切换。控制循环的两个原则。首先，PHP 代码是规范：当裁判同意时，移植就会完成，或者每次不匹配都会记录为批准的更改。其次，修复循环，而不是代码，修改规则手册并重新生成而不是手动修补。</p>
+<h2>演练：从 Eloquent 到 Spring Boot</h2>
+<p>laravel-eloquent-sample 项目是一个有效的、有界的示例：开源 Laravel 应用程序的只读切片，其中 Book、Chapter、Page 和 User 模型已通过 Maven 和内存中的 H2 数据库迁移到 Java 21 上的 Spring Boot 3.4.1。</p>
+<p>从 PHP 到 Spring Boot 的映射是机械的、可追溯的，如下图所示。左侧的每个清单条目都映射到右侧的 Java 构造，从而生成所生成的应用程序切片的分层运行时架构。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21579-5.png" alt="从 Eloquent 到 Spring Boot：映射和生成的切片。图表分为两部分。左侧将 PHP 和 Laravel Eloquent 构造映射到其 Java 和 Spring Boot 等效结构，并用箭头链接每一对，例如模型到 JPA 实体以及查询范围到 Spring 数据存储库方法。右侧显示了生成的 book-stack 切片的分层架构：HTTP 客户端调用控制器层，控制器层调用存储库层，然后是实体层，最后是内存中的 H2数据库。"></p>
+<p>图 5：左侧清单驱动的映射。右侧生成的应用切片的分层运行时架构</p>
+<p>这些映射是机械的并且可追溯到清单：PHP 命名空间变为 Java 包，Eloquent 模型变为 JP​​A @Entity，具有 Many 和所属关系变为 @OneToMany 和 @ManyToOne，Eloquent 查询范围变为 Spring Data 存储库方法。该规则在序列化中表现出来：html、markdown 和文本都带有 @JsonIgnore，因为清单将它们记录在 Page 的 $hidden 列表中，而 Book 的描述故意没有记录。</p>
+<p>该规范坦率地说，37 个模型中只有 4 个进行了移植，最重要的是，从未为该部分构建奇偶校验线束，它称之为“单一最大差距”。记录其不足之处本身就是设计的一部分。</p>
+<h2>开始使用</h2>
+<p>完整的迁移引擎可在<a href="https://github.com/aws-samples/sample-php-to-java-migration">示例 PHP 到 Java 迁移存储库</a> 中找到。</p>
+<p>使用方法：</p>
+<ul><li>克隆存储库并打开其根目录作为 Kiro 工作区（打开文件夹并选择包含 .kiro/ 的文件夹）。除了用于扫描程序的 PHP 8.0+ 和带有 Maven 的 Java 21 之外，无需安装任何内容。</li><li>将 PHP 源代码提取到项目的 source-php/ 文件夹中。自述文件固定了用于奇偶校验的确切上游提交，以便任何人都可以重现基线。</li><li>要求 Kiro 迁移应用程序。 php-to-java-migration 技能会自动激活，首先运行扫描程序，在 .kiro/specs/ 下生成新的规范，然后引导您通过批准大门。</li><li>对于代理运行，请将 AWS Transform 指向相同的技能文件，以便其代理在您的产品组合中执行相同的方法。</li></ul>
+<p>该方法自动检测 Laravel、Symfony、CodeIgniter 和纯 PHP，并且扩展是附加的：为新框架添加检测行和 <code>references/&lt;framework&gt;-to-spring.md</code> 指南。由于 Kiro 和 AWS Transform 读取相同的文件，因此在升级两个引擎后对其进行优化。</p>
+<h2>清理</h2>
+<p>如果您在此演练期间部署了示例 Spring Boot 应用程序：</p>
+<ul><li>停止正在运行的 Spring Boot 应用程序（内存中的 H2 数据库是短暂的，不需要单独清理）。</li><li>如果不再需要，请从工作区中删除生成的 Java 项目文件夹。</li><li>发现扫描器仅生成 JSON 清单文件。如果您不打算引用发现扫描器的 JSON 清单，请从工作目录中删除它。</li><li>迁移引擎本身不配置任何 AWS 资源，因此无需取消配置云资源。</li></ul>
+<h2>结论</h2>
+<p>我们展示了如何使用 Kiro 构建可重复的 PHP 到 Java 迁移引擎，将大规模重写转变为可测量的复合过程。主要原则是：</p>
+<ul><li><strong>翻译前的发现：</strong> 机械扫描仪会清点每个模型、字段和关系，因此您无需猜测结构。</li><li><strong>在代码之前构建判断：</strong>奇偶校验工具在编写第一行 Java 之前定义“完成”。</li><li><strong>修复循环，而不是代码：</strong> 当文件中出现相同的错误时，修改规则手册并重新生成，而不是手动修补。</li><li><strong>同一个大脑：</strong> 该方法编写一次，跨项目共享，并随着每次迁移而改进。</li></ul>
+<p>这些都不是特定于 PHP 或 Java 的。相同的形状适用于其他迁移，其中旧系统是唯一完整的规范。克隆<a href="https://github.com/aws-samples/sample-php-to-java-migration">示例 PHP 到 Java 迁移存储库</a>，将其作为 Kiro 工作区打开，并探索为其提供支持的技能和指导功能，或将相同的技能文件引入 AWS Transform。有关 AWS 上的语言迁移模式的更多信息，请参阅 <a href="https://aws.amazon.com/prescriptive-guidance/">AWS Prescriptive Guidance</a> 文档。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Lend and borrow resources across teams with AWS Batch’s quot…</title>
+      <title>通过 AWS Batch 对 SageMaker 培训作业的配额管理，跨团队借出和借用资源</title>
       <link>https://aws.amazon.com/blogs/machine-learning/lend-and-borrow-resources-across-teams-with-aws-batchs-quota-management-for-sagemaker-training-jobs/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/lend-and-borrow-resources-across-teams-with-aws-batchs-quota-management-for-sagemaker-training-jobs/</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Lend and borrow resources across teams with AWS Batch’s quota management for SageMaker Training jobs</description>
+      <description>原文标题：Lend and borrow resources across teams with AWS Batch’s quota management for SageMaker Training jobs</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>通过 AWS Batch 的 SageMaker 培训作业配额管理跨团队借出和借用资源</h1>
+<p>随着对 Amazon SageMaker 训练作业的 <a href="https://aws.amazon.com/batch/">AWS Batch</a> 支持的推出，客户获得了一种新的完全托管方式来排队、安排和重试机器学习 (ML) 训练工作负载，而无需构建自己的基础设施。相反，他们使用 AWS Batch 的排队和调度功能。随着组织扩展其人工智能和机器学习 (AI/ML) 运营并加入更多团队，协调对共享图形处理单元 (GPU) 容量的访问可能会给管理员带来额外的通信、协调和配置开销。这种开销包括设置单独的队列、调整容量限制以及仔细编排正确的工作负载以在正确的时间获取正确的资源。 AWS Batch 的核心价值主张是帮助客户提高计算利用率，并且随着培训环境的发展，利用现有容量做更多事情的机会也在增加。</p>
+<p>从管理多团队培训环境的客户开始，我们听到了一个一致的要求：为我们提供一种方法来定义每个团队或项目的分配，自动共享闲置容量，并首先运行我们最高优先级的工作负载。此请求促使我们构建了<a href="https://docs.aws.amazon.com/batch/latest/userguide/quota-management.html">配额管理</a>，这是 AWS Batch 的一种新调度功能。管理员可以使用它将计算容量划分为按团队、项目或工作负载组织的配额份额。每个配额份额都使用可配置的资源共享策略，最大限度地提高 GPU 利用率，同时在最重要的时候尊重每个团队的分配。</p>
+<p>本文介绍了配额管理的工作原理，包括如何通过借贷策略配置配额份额、为优先工作负载设置份额内抢占，以及开始使用 SageMaker Python SDK。</p>
+<h2>配额份额及抢占</h2>
+<p>管理员可以通过为单独的实体（例如单个团队或项目）定义配额份额来分配和共享受限的 GPU 资源。每个配额共享包括计算配额（容量限制）和空闲计算的资源共享策略。这些策略确定是否保留空闲计算直到作业到达（“RESERVE”）、借给具有可用工作的其他配额共享（“LEND”），或者在空闲时借出并在共享有可能受益的工作时借用（“LEND_AND_BORROW”）。</p>
+<p>配额共享作为虚拟队列运行，分层嵌套在关联的作业队列中。为作业队列安排作业时，AWS Batch 在迭代关联的配额份额时会优先考虑低于其容量限制的配额份额。如果作业到达已借出其容量的配额共享，则 AWS Batch 会执行跨共享抢占。这会回收贷款配额份额的资源，因此管理员无需追踪职位借用能力并自行终止它们。如果作业到达的配额份额达到或超过其容量限制，AWS Batch 将检查是否有可用容量可从另一个配额份额借用。如果是这样，工作负载可以使用空闲容量运行。</p>
+<p>您可以在配置配额共享时启用基于优先级的共享内抢占。当作业到达借出配额份额时，交叉共享抢占会回收借出的容量，而共享抢占会抢占处于 SCHEDULED、STARTING 或 RUNNING 状态的较低优先级作业。这使得队列前面的优先级较高的作业能够更快地开始运行。</p>
+<h2>先决条件</h2>
+<p>在继续此示例之前，您必须拥有一个有权创建和管理 AWS Batch 资源的 AWS 账户。对于此示例，请参阅调用 AWS Batch 和 SageMaker 所需的<a href="https://github.com/aws/amazon-sagemaker-examples/blob/default/%20%20%20%20%20%20training/sm-training-queues_getting_started_with_model_trainer/utils/aws_batch_resource_management.py#L571-L707">示例 IAM 权限</a> API。</p>
+<p>该示例使用 SageMaker Python SDK v3。完成安装兼容版本的 SageMaker Python SDK 所需的设置：</p>
+<pre><code>!pip install sagemaker</code></pre>
+<h2>配置配额管理资源</h2>
+<p>使用新的配额管理功能需要创建一个包含“quotaSharePolicy”的<a href="https://docs.aws.amazon.com/batch/latest/APIReference/API_CreateSchedulingPolicy.html">调度策略</a>、一个根据特定实例指定其容量限制的<a href="https://docs.aws.amazon.com/batch/latest/APIReference/API_CreateServiceEnvironment.html">服务环境</a>，以及<a href="https://docs.aws.amazon.com/batch/latest/APIReference/API_CreateJobQueue.html">a连接到两者的 SageMaker Training 作业队列</a>。之后，您可以将配额份额关联到作业队列。用户指南包含用于<a href="https://docs.aws.amazon.com/batch/latest/userguide/create-quota-management-resources.html">配置配额管理资源</a> 和<a href="https://docs.aws.amazon.com/batch/latest/userguide/create-quota-shares.html">配额份额</a> 的 AWS 命令​​行界面 (AWS CLI) 和控制台示例。与 SageMaker Python SDK v3 中的 <a href="https://github.com/aws/sagemaker-python-sdk/tree/master/sagemaker-train/src/sagemaker/train/aws_batch">aws_batch</a> 模块集成的配额管理端到端示例包含在 [示例中]笔记本](https://github.com/aws/sagemaker-python-sdk/blob/master/v3-examples/training-examples/aws_batch/sm-training-queues_quota-management.ipynb)。在此示例中，我们逐步完成总结关键组件的代码片段，并使用笔记本中的辅助函数来创建调度策略、服务环境、作业队列和三个配额共享。</p>
+<p>此处配置的三个配额份额代表三个不同的项目。每个都有相同的容量限制集：单个“ml.g5.xlarge”实例。 QS1 配额份额代表后台作业。对于此项目，您希望首先运行最重要的后台作业，并借用尽可能多的可用闲置容量。在此配额份额内，没有紧急作业，并且抢占是可以接受的，因为所有作业都使用检查点。此配额共享使用“LEND_AND_BORROW”资源共享策略，并开启了共享内抢占。同一配额份额内的较高优先级作业可以抢占正在运行的较低优先级作业。</p>
+<pre><code>from sagemaker.train.aws_batch.boto_client import get_batch_boto_client
+from utils.aws_batch_resource_management import AwsBatchResourceManager, QuotaShareConfig, create_quota_management_resources
+
+INSTANCE_TYPE = &quot;ml.g5.xlarge&quot;
+
+# Create SchedulingPolicy, ServiceEnvironment, JobQueue, and QuotaShares
+resource_manager = AwsBatchResourceManager(get_batch_boto_client())
+qs1 = QuotaShareConfig(
+    name=&quot;QS1&quot;,
+    capacity_unit=INSTANCE_TYPE,
+    max_capacity=1,
+    in_share_preemption=True,
+    sharing_strategy=&quot;LEND_AND_BORROW&quot;,
+    borrow_limit=200
+)</code></pre>
+<p>QS2 代表中等优先级工作负载。选择此配置的团队宁愿等待容量可用，也不愿忍受额外的抢占。这些抢占来自于借用容量的回收或由于更高优先级的作业提交而导致的共享抢占。这适用于较短的作业，或者当大多数提交的作业具有相似的优先级时。配额份额仍然受益于在工作派遣时考虑工作优先级。提交的作业会触发 AWS Batch 回收运行作业所需的任何借出容量。</p>
+<pre><code>qs2 = QuotaShareConfig(
+    name=&quot;QS2&quot;,
+    capacity_unit=INSTANCE_TYPE,
+    max_capacity=1,
+    in_share_preemption=False,
+    sharing_strategy=&quot;LEND&quot;
+)</code></pre>
+<p>QS3 代表需要尽快启动且中断最少的工作负载。它配置为保留容量，既不借出也不借入其他配额份额。它不会经历交叉共享抢占，因为它的工作负载不会超出其容量限制。通过关闭共享抢占，只要容量限制不变，提交到此配额份额的工作负载就不会被 AWS Batch 抢占。</p>
+<pre><code>qs3 = QuotaShareConfig(
+    name=&quot;QS3&quot;,
+    capacity_unit=INSTANCE_TYPE,
+    max_capacity=1,
+    in_share_preemption=False,
+    sharing_strategy=&quot;RESERVE&quot;
+)</code></pre>
+<p>这些配额共享配置是示例笔记本中“create_quota_management_resources”函数的输入，该函数还使用所选常量名称配置相应的调度策略、服务环境和作业队列。</p>
+<pre><code>SCHEDULING_POLICY_NAME = &quot;my-qm-scheduling-policy&quot;
+JOB_QUEUE_NAME = &quot;my-sm-training-qm-jq&quot;
+SERVICE_ENVIRONMENT_NAME = &quot;my-sm-training-qm-se&quot;
+
+resources = create_quota_management_resources(
+    resource_manager=resource_manager,
+    scheduling_policy_name=SCHEDULING_POLICY_NAME,
+    job_queue_name=JOB_QUEUE_NAME,
+    service_environment_name=SERVICE_ENVIRONMENT_NAME,
+    capacity_unit=INSTANCE_TYPE,
+    max_capacity=3,
+    quota_share_configs=[qs1, qs2, qs3]
+)</code></pre>
+<h2>将 SageMaker 培训作业提交到 QS1</h2>
+<p>SageMaker Python SDK 中的 <a href="https://github.com/aws/sagemaker-python-sdk/tree/master/sagemaker-train/src/sagemaker/train/aws_batch">aws_batch</a> 模块已进行扩展，允许以编程方式将 SageMaker Training 作业提交到支持配额管理的 AWS Batch 作业队列。为了演示这些新功能，我们使用提交到作业队列的 Hello World“ModelTrainer”。以下代码片段根据所选区域和实例类型标识要使用的图像 URI。</p>
+<pre><code>import logging
+
+logging.basicConfig(
+    level=logging.INFO, format=&quot;%(asctime)s - %(name)s - %(levelname)s - %(message)s&quot;
+)
+logging.getLogger(&quot;botocore.client&quot;).setLevel(level=logging.WARN)
+logger = logging.getLogger(__name__)
+
+from sagemaker.core.helper.session_helper import Session
+from sagemaker.core import image_uris
+
+session = Session()
+
+image_uri = image_uris.retrieve(
+    framework=&quot;pytorch&quot;,
+    region=session.boto_session.region_name,
+    version=&quot;2.5&quot;,
+    instance_type=INSTANCE_TYPE,
+    image_scope=&quot;training&quot;,
+)</code></pre>
+<p>我们在基本的 hello world 模型训练器示例中使用此图像 URI：</p>
+<pre><code>from sagemaker.train.model_trainer import ModelTrainer
+from sagemaker.train.configs import SourceCode, Compute, StoppingCondition
+
+TRAINING_JOB_NAME = &quot;hello-world-simple-job&quot;
+MAX_RUN_TIME = 300
+
+source_code = SourceCode(command=&quot;echo 'Hello World'&quot;)
+
+model_trainer = ModelTrainer(
+    training_image=image_uri,
+    source_code=source_code,
+    base_job_name=TRAINING_JOB_NAME,
+    compute=Compute(instance_type=INSTANCE_TYPE, instance_count=INSTANCE_COUNT),
+    stopping_condition=StoppingCondition(max_runtime_in_seconds=MAX_RUN_TIME),
+)</code></pre>
+<p>要在 SageMaker Python SDK 中使用作业队列，请向“aws_batch”模块中的“TrainingQueue”构造函数提供队列名称。</p>
+<pre><code>from sagemaker.train.aws_batch.training_queue import TrainingQueue, TrainingQueuedJob
+
+# Construct the queue object using the SageMaker Python SDK
+queue = TrainingQueue(JOB_QUEUE_NAME)
+logger.info(f&quot;Using queue: {queue.queue_name}&quot;)</code></pre>
+<p>然后，我们可以向 QS1（我们的后台作业配额份额）提交三个作业。第一个提交的作业具有最高优先级，其次是中等优先级作业，然后是最低优先级作业。由于 QS1 或 QS2 当前没有任何运行，因此应该启动两个实例的作业，对应于提交的第一个和第二个作业（因为它们具有最高的相对优先级）。请注意，因为这只是一个 hello world 训练作业，所以它不需要数据，但通常“ModelTrainer”需要数据来执行训练。</p>
+<pre><code>from utils.aws_batch_resource_management import JobStatus, await_jobs, list_jobs_by_quota_share
+
+# Submit three jobs to QS1, all with different priorities to guarantee dispatch ordering.
+qs1_job_high: TrainingQueuedJob = queue.submit(job_name=&quot;qs1_job_high&quot;, training_job=model_trainer, quota_share_name=qs1.name, priority=3, inputs=None)
+qs1_job_med: TrainingQueuedJob = queue.submit(job_name=&quot;qs1_job_med&quot;, training_job=model_trainer, quota_share_name=qs1.name, priority=2, inputs=None)
+qs1_job_low: TrainingQueuedJob = queue.submit(job_name=&quot;qs1_job_low&quot;, training_job=model_trainer, quota_share_name=qs1.name, priority=1, inputs=None)
+
+logger.info(f&quot;Submitted jobs: {qs1_job_high.job_name}, {qs1_job_med.job_name}, {qs1_job_low.job_name}&quot;)
+logger.info(f&quot;Waiting for jobs to transition...&quot;)
+
+# qs1_job_high is dispatched first using capacity from QS1, and qs1_job_med is dispatched second borrowing idle capacity from QS2
+await_jobs([([qs1_job_high, qs1_job_med], JobStatus.dispatched() | JobStatus.terminal())])
+list_jobs_by_quota_share(queue, [qs1.name, qs2.name, qs3.name], JobStatus.active())</code></pre>
+<h2>向 QS2 提交作业会触发交叉共享抢占以回收借出的容量</h2>
+<p>拥有 QS2 的团队可能会发现他们有工作需要执行，并向 QS2 提交作业。这样做会触发从 QS1 抢回容量，QS1 当前正在借用该容量（QS3 的容量未配置为借用）。这是一种交叉共享抢占。</p>
+<pre><code># When a job is submitted to QS2, it will preempt its capacity back from QS1
+qs2_job_1: TrainingQueuedJob = queue.submit(job_name=&quot;qs2_job_1&quot;, training_job=model_trainer, quota_share_name=qs2.name, priority=1, inputs=None)
+
+logger.info(f&quot;Submitted job {qs2_job_1.job_name}&quot;)
+logger.info(f&quot;Waiting for jobs to transition...&quot;)
+
+await_jobs([
+    ([qs2_job_1], JobStatus.dispatched() | JobStatus.terminal()),
+    ([qs1_job_med], {JobStatus.RUNNABLE}) # Lowest priority QS1 job will be preempted
+])
+list_jobs_by_quota_share(queue, [qs1.name, qs2.name, qs3.name], JobStatus.active())</code></pre>
+<h2>在 QS1 中更新作业优先级会触发共享抢占以运行最高优先级作业</h2>
+<p>如果科学家意识到 QS1 中仍处于 RUNNABLE 状态的“qs1_job_low”作业由于优先级更改而需要立即开始运行，他们可以使用新的 <a href="https://docs.aws.amazon.com/batch/latest/APIReference/API_UpdateServiceJob.html">UpdateServiceJob</a> API 来提高 QS1 中已提交作业的优先级。由于没有可用容量可供借用，因此这会启动共享抢占，以便当前正在运行的作业被抢占，并且“qs1_job_low”可以开始。</p>
+<pre><code># Updating qs1_job_low to be the highest priority job in QS1
+qs1_job_low.update(scheduling_priority=4)
+
+logger.info(f&quot;Updated job {qs1_job_low.job_name} to increase its priority&quot;)
+logger.info(f&quot;Waiting for jobs to transition...&quot;)
+
+await_jobs([
+    ([qs1_job_low], JobStatus.dispatched() | JobStatus.terminal()),
+    ([qs1_job_high], {JobStatus.RUNNABLE}) # High priority job will preempt lower priority jobs within the same quota share
+])
+list_jobs_by_quota_share(queue, [qs1.name, qs2.name, qs3.name], JobStatus.active())</code></pre>
+<h2>（可选）清理创建的资源</h2>
+<p>要清理本文中创建的资源，请运行以下代码：</p>
+<pre><code>from utils.aws_batch_resource_management import delete_resources
+
+delete_resources(resource_manager, resources)</code></pre>
+<h2>结论</h2>
+<p>在这篇文章中，我们介绍了配额管理、AWS Batch 中的新调度功能，以及如何将其与 SageMaker Training 作业一起使用以及如何开始为您自己的项目设置配额份额。有关更多详细信息，请参阅 <a href="https://docs.aws.amazon.com/batch/latest/userguide/quota-management.html">AWS Batch 配额管理用户指南</a>。</p>
+<p>具有配额管理功能的 AWS Batch 可以帮助您的组织提高计算利用率，更有效地确定您的团队和工作负载的优先级，从而为您的基础设施管理员和 ML 科学家腾出时间。通过实施配额管理，您的团队可以专注于他们的工作负载并减少管理和协调基础设施所花费的时间。此功能对于 Amazon SageMaker AI 培训计划尤其强大，以便您的组织可以在您需要的时间内预留所需数量的容量。通过将 AWS Batch 与 SageMaker AI 结合使用，您可以充分利用训练计划。我们鼓励您尝试这项新功能，以便它对您的运营产生有意义的影响。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>How MoEngage turned over 400 APIs into agent tools with Agen…</title>
+      <title>MoEngage 如何使用 AgentCore Gateway 将 400 个 API 转变为代理工具</title>
       <link>https://aws.amazon.com/blogs/machine-learning/how-moengage-turned-over-400-apis-into-agent-tools-with-agentcore-gateway/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/how-moengage-turned-over-400-apis-into-agent-tools-with-agentcore-gateway/</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：How MoEngage turned over 400 APIs into agent tools with AgentCore Gateway</description>
+      <description>原文标题：How MoEngage turned over 400 APIs into agent tools with AgentCore Gateway</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>MoEngage 如何使用 AgentCore Gateway 将 400 个 API 转变为代理工具</h1>
+<p><em>这篇文章是与 MoEngage 的 Nikhil Kumar 和 Shakir Khan 共同撰写的。</em></p>
+<p>当工程团队开始构建 AI 代理时，这些代理所需的功能通常已经作为内部 API 存在。活动创建、细分查询、交付统计。挑战不在于构建新功能。面临的挑战是如何让代理安全地访问数百个私有 API，而不将它们暴露于公共互联网，不让模型控制身份，也不用数百个工具定义淹没上下文窗口。</p>
+<p>MoEngage 是一个代理客户参与平台，超过 1,350 个消费品牌使用该平台通过推送、电子邮件、应用内、短信、WhatsApp 和 RCS 提供个性化体验，它就面临着这个问题。该产品背后有大约 400 个内部 REST API，由 25 个工程团队构建，在七个 AWS 区域的私有虚拟私有云 (VPC) 中运行。 MoEngage 在区域内隔离这些 API，以满足数据驻留承诺，并且不会将它们暴露于公共互联网。代理所需的功能已经在生产中运行。让它安全地到达是最困难的部分。</p>
+<p>在这篇文章中，我们将介绍 MoEngage 如何使用 AgentCore Gateway（Amazon Bedrock AgentCore 的一项功能）将这些私有 API 转变为权限范围内的代理工具。该方法为 MoEngage 节省了大约六个月的平台工程工作量，并且现在使用新 API 需要几个小时而不是几天。没有产品团队编写模型上下文协议 (MCP) 服务器代码，没有为每个集成配置网络，并且路径中的任何位置都不存在公共端点。</p>
+<h2>为什么 20 个 MCP 服务器是错误的答案</h2>
+<p>模型上下文协议 (MCP) 为代理提供了一种发现和调用工具的标准方法。采用它的直接途径是每个团队公开自己的 MCP 服务器。 MoEngage 考虑到了这一点并拒绝了它。</p>
+<p>超过 20 台 MCP 服务器意味着随着 MCP 的发展，需要进行 20 多个部署来监控、修补和保持协议兼容。跨域代理是读取活动、检查其分段并检查交付统计信息的有用代理，需要连接到多个服务器并协调它们。每个团队都需要与其实际产品工作无关的 MCP 专业知识。</p>
+<p>因此，MoEngage 确立了影响后续一切的原则：单个工程团队不实施 MCP。团队构建 REST API 并声明哪些操作应该是工具。 AI Platform 团队端到端地拥有 MCP 层。团队的责任以明确描述的 OpenAPI 规范结束。</p>
+<p>该原则立即产生了三个要求：代理连接一次而不是每个服务的中央工具界面、每个代理授权在服务器端而不是按照惯例强制执行、以及不需要为每个新 API 重建的私有连接。</p>
+<p>从头开始构建这一切是一种选择。定制的中央 MCP 服务器可以解决 20 台服务器的问题，但需要 MoEngage 构建工具生成管道、策略文件格式、用于重命名的工具别名注册表和断路器。所有自定义代码都归一个团队所有，所有这些工作都是无差异的，不会让 MoEngage 的代理变得更聪明，也不会让客户的活动变得更好。</p>
+<h2>塑造架构的四个约束</h2>
+<p>在评估任何解决方案之前，MoEngage 定义了四个约束。所有四个人都必须同时满足。解决两个问题但破坏第三个和第四个的解决方案是不可行的。</p>
+<p><strong>没有任何东西可以获得公共端点。</strong> MoEngage 的内部 API 根据策略是 VPC 私有的。任何需要暴露它们的解决方案，即使是在额外的身份验证之后，都是行不通的。传统的解决方法是按集成网络进行：这里一个 NAT 网关，那里一个反向代理，第三个网关使用 VPN 隧道。将其乘以七个区域，操作面的增长速度将快于代理组的增长速度。每个新的 API 都意味着另一个网络变更请求、另一组安全审查、另一部分需要维护的基础设施。</p>
+<p><strong>身份不能由代理决定。</strong>每个内部 API 调用都携带租户、用户、角色和数据库上下文。如果该上下文是大型语言模型 (LLM) 可见的工具参数，则模型可能会出错或被要求更改它。 MoEngage 需要身份在结构上超出模型的范围，由调用服务注入，并且不能作为模型可以设置或覆盖的内容出现。</p>
+<p><strong>包含 400 个工具的目录不适合上下文窗口。</strong> 每个工具大约有 50 个 JSON 模式令牌，整个资产中的完整“工具/列表”在每个连接上传输超过 20,000 个令牌。该代币预算是在代理执行任何有用的操作之前花费的，并且它挤出了代理推理任务实际需要的上下文。客户端过滤（ADK 或 MCP SDK 中的“tool_filter”）无法解决此问题。完整的目录已经通过网络，并且按客户端约定进行过滤并不是授权边界。不应看到写入操作的代理一开始就不应该接收它们。</p>
+<p>最后一个限制是避免明显替代方案的限制。定制的中央 MCP 服务器解决了 20 台服务器的问题，但仍然让 MoEngage 构建工具生成管道、策略文件格式、用于重命名的工具别名注册表和断路器。所有自定义代码都由一个团队拥有，它们都没有使 MoEngage 的产品变得更好。</p>
+<h2>AgentCore Gateway 如何映射到这些约束</h2>
+<p>Amazon Bedrock AgentCore Gateway 是完全托管的 MCP 服务器。您将 OpenAPI 规范注册为目标，网关根据它们生成 MCP 工具，然后将调用路由到支持服务。四个属性直接映射到 MoEngage 的约束。</p>
+<p><strong>输入 OpenAPI，输出 MCP 工具。</strong> 无需构建或操作 MCP 服务器，也无需单独的工件与 API 保持同步。规范团队已经维护了工具定义。每个操作都会成为一个名为“Target___operationId”的工具，例如“CampaignsAPI___searchCampaigns”。当规范发生变化时，工具也会发生变化。当团队添加端点时，该工具就会出现。当团队删除一个工具时，该工具就会消失。没有部署，没有协议专业知识，没有与 AI 平台团队协调。</p>
+<p><strong>Cedar 策略，在序列化目录之前进行评估。</strong> AgentCore 策略引擎使用部分评估来过滤每个主体的“工具/列表”。每个代理都以其自己的 IAM 角色进行身份验证，其 Cedar 策略决定它可以查看和调用哪些工具。这就是 400 工具易于使用的原因。它不是事后的客户端过滤，而是构建响应之前的服务器端范围界定。</p>
+<p>例如，活动 QA 机器人可以读取活动和分段工具，但无法调用写入操作：</p>
+<pre><code>permit(
+    principal == Agent::&quot;campaign-qa-bot-v1&quot;,
+    action == Action::&quot;tools/call&quot;,
+    resource in ToolGroup::&quot;campaigns-read&quot;
+);
+
+forbid(
+    principal == Agent::&quot;campaign-qa-bot-v1&quot;,
+    action == Action::&quot;tools/call&quot;,
+    resource in ToolGroup::&quot;write-actions&quot;
+);</code></pre>
+<p>机器人在其“tools/list”响应中看不到写入工具。由于未发送工具，因此客户端无需过滤任何内容。</p>
+<p><strong>通过 Amazon VPC Lattice 托管出口。</strong> 网关通过 AgentCore 托管出口而不是通过 MoEngage 构建和运营的网络到达 MoEngage 的内部服务。入站，只能通过具有私有 DNS 的 VPC 接口终端节点访问网关。没有公共路径可以到达它。加入新的 API 会添加目标，而不是网络拓扑更改。这是解决“乘以七个区域”问题的属性。网络一旦存在，每个 API 都会使用它。</p>
+<p><strong>语义搜索作为网关功能。</strong> 通过“x_amz_bedrock_agentcore_search”功能，代理可以通过描述任务而不是命名工具来查找工具。它消除了对自定义发现层的需要。它还消除了重命名脆弱性的副作用：如果“get_segment_user_count”变为“get_segment_size”，搜索<em>分段用户计数</em>的代理仍然会找到它，因为匹配发生在描述而不是标识符上。</p>
+<h2>实践中的架构</h2>
+<p>从代理到内部API的请求流程很短，并且每一层都有特定的工作。代理服务通过 VPC 接口终端节点连接到 AgentCore Gateway，后者评估 Cedar 策略并通过 Amazon VPC Lattice 上的托管出口将工具调用路由到内部 API。</p>
+<p>下图显示了组件的连接方式。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/21/ML-21704-1.png" alt="AgentCore 网关架构：代理服务通过私有 VPC 接口端点到达网关，该端点评估 Cedar 策略并通过 Amazon VPC Lattice 将调用路由到内部API"></p>
+<p>图1：MoEngage AgentCore网关架构</p>
+<p>在 Amazon Elastic Compute Cloud (Amazon EC2) 或容器中运行的代理服务调用 MCP 客户端。客户端可以是官方的MCP SDK、LangChain、Google ADK或MoEngage自己的代理运行器。客户端使用服务已有的 AWS Identity and Access Management (IAM) 角色通过 SigV4 签署请求。请求通过 HTTPS 传输到具有私有 DNS 的 VPC 接口终端节点。没有公共跳跃。 AgentCore Gateway 接收请求并评估 Cedar 策略以确定该主体可以看到或调用什么。然后，它通过 Amazon VPC Lattice 上的托管出口将工具调用路由到内部 API。</p>
+<p>MoEngage 做出了两个值得关注的身份验证决定。</p>
+<p>首先，他们选择 SigV4 而不是 JWT 作为内部网关。这里的代理是已经具有 IAM 角色的服务。借助 SigV4，他们可以使用已有的凭据进行签名。没有任何新内容可供发布、轮换或存储。 MoEngage 的独立公共 MCP 服务器为来自 Claude 和其他客户端的人工验证会话提供服务，在 AgentCore 运行时上使用 OIDC JWT。这是具有不同要求的不同表面。</p>
+<p>其次，身份作为标头而不是工具参数进行传输。客户端库将租户、用户、角色和数据库上下文从小型“Identity”对象转换为“X-MOE-*”标头。模型看不到它们，也无法设置它们。对于任何构建类似内容的人来说，一个细节很重要：由于 SigV4 签名占用了授权标头，因此调用者转发的不记名令牌必须移至其他地方。 MoEngage 将其作为专用的 MoEngage 前缀标头进行传播。标头传播也受到限制，因此标头集是经过深思熟虑的而不是累积的。</p>
+<p>发现和执行有不同的身份要求。列表和搜索工具不带有租户身份。只有“工具/调用”可以。这种分离可以降低发现成本，并使审计追踪变得明确。每个身份承载请求都是实际的数据访问。</p>
+<p>即使 Cedar 将代理范围限定为目录的子集，该子集也可能很大。 MoEngage 的客户端库向模型公开了一个元工具“search_tools”。该模型描述了它需要什么，网关的语义搜索返回候选者，并且只有这些候选者在接下来的回合中才可调用。完整的目录不进入上下文。代理的上下文在开始时包含一个工具定义，在搜索后包含一些相关的定义，而不是它永远不会使用的数百个定义。</p>
+<h2>加入新的 API</h2>
+<p>将 API 作为代理工具公开的团队在其现有的 OpenAPI 规范中添加了一个块：</p>
+<pre><code>paths:
+  /campaigns:
+    get:
+      operationId: listCampaigns
+      description: |
+        Returns a paginated list of campaigns. Supports filtering by
+        status, channel, date range, and tags.
+      x-moe-mcp:
+        expose:
+          external: false
+          internal: true
+        tool_description: |
+          Find campaigns by status or channel. Returns campaign ID, name,
+          status, and channel. Use the returned campaign_id with
+          get_campaign for full details, or send_campaign to launch it.
+        param_overrides:
+          status:
+            description: |
+              Filter by campaign status. Use 'active' for running
+              campaigns, 'scheduled' for upcoming. Omit for all.</code></pre>
+<p>该块中的四个设计选择值得解释。</p>
+<p><strong>曝光是明确的选择加入</strong>。没有“x-moe-mcp”块的端点不是工具。持续集成 (CI) 不会警告其不存在，因为对于大多数端点来说，不存在是正确的状态。缓存预热路由和迁移触发器不是代理工具，没有任何东西可以推动团队将它们变成一种工具。通过“internal”和“external”标志，团队可以独立地将操作公开给内部代理、公共 MCP 服务器或两者。</p>
+<p><strong>工具描述不是 API 描述</strong>。 API 描述告诉开发人员阅读文档端点返回什么。工具描述告诉模型何时使用该工具以及传递什么。 MoEngage 发现逐字重复使用 API 描述会导致工具选择不当。模型根据实施细节（“返回分页列表”）而不是意图（“按状态或渠道查找活动”）来选择工具。 “tool_description”和“param_overrides”字段的存在专门是为了让团队可以编写面向模型的文本，而无需更改面向开发人员的文档。</p>
+<p><strong>CI 管道处理从规范到运行工具的所有事情</strong>。当团队推送规范更改时，管道会验证“x-moe-mcp”块，向 AgentCore Gateway 注册目标，并应用 Cedar 策略。无需手动步骤，无需向 AI Platform 团队提供门票。从未考虑过 MCP 的团队可以在管道运行期间将操作用作代理工具。</p>
+<p><strong>客户端库有两种模式</strong>。插件模式将 AgentCore Gateway MCP 服务器封装在 LangChain、Google ADK 或 MCP 兼容框架内作为工具提供者。代理运行器模式为需要独立代理而不采用框架的团队运行完整的代理循环。</p>
+<h2>MoEngage 今天运行什么</h2>
+<p>MoEngage 的 AgentCore Gateway 部署目前在七个 AWS 区域运行。该网关为 10 个内部代理提供大约 400 个注册 API 操作。没有产品团队编写过 MCP 服务器代码。没有产品团队为代理集成配置网络。没有产品团队实施 Cedar 政策。 AI Platform 团队拥有所有这些，而启用新 API 的成本是规范注释和 CI 运行。 AgentCore 功能的可用性因区域而异。有关受支持的区域，请参阅 <a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore 文档</a>。</p>
+<p>该系统已在生产环境中运行了三个月。这些代理涵盖了营销团队成员日常接触的工作流程。活动 QA 代理在启动前验证定位规则和内容。交付运行状况代理监控跨渠道的发送速率和跳出模式。细分生成器代理将自然语言受众描述转换为细分查询。每个代理都使用自己的 IAM 角色进行身份验证，仅查看其 Cedar 策略允许的工具，并通过描述任务而不是记住工具名称来发现工具。 MoEngage 估计，通过消除在七个区域构建和运营 20 个独立的 MCP 服务器以及按 API 网络配置的需要，该方法节省了大约六个月的工程工作量。现在，加入新的 API 需要花费数小时的规范注释，而不是花费数天的网络配置和安全审查。</p>
+<p>搜索优先的模式改变了 MoEngage 对代理设计的看法。新代理从零硬编码工具引用开始。他们描述意图，接待候选人，并对他们发现的内容进行称呼。当团队重命名一项操作或发布新操作时，现有代理会直接选择该操作，而无需更改代码。</p>
+<p>＃＃ 结论</p>
+<p>MoEngage 方法背后的关键见解是关注点分离，映射到工程组织的实际工作方式。产品团队拥有 API 并对其进行了很好的描述。平台团队拥有协议层、策略层和连接层。 AgentCore Gateway 通过消除两者之间无差异的工作使这种分割变得实用：没有 MCP 服务器代码、没有每个 API 网络、没有假装授权的客户端过滤。</p>
+<p>结果是一个代理系统，其中添加新工具是规范更改，限制访问是策略更改，并且不需要其他团队参与。</p>
+<p>要开始使用 AgentCore Gateway，请参阅 <a href="https://docs.aws.amazon.com/bedrock-agentcore/">Amazon Bedrock AgentCore 文档</a>。有关 Cedar 策略编写的信息，请参阅 <a href="https://docs.cedarpolicy.com/">Cedar 策略语言参考</a>。有关私有连接模式，请参阅 <a href="https://docs.aws.amazon.com/vpc-lattice/">Amazon VPC Lattice 文档</a>。</p>
+<p>要讨论适合您的组织的类似架构，请联系您的 AWS 客户团队或<a href="https://aws.amazon.com/contact-us/">联系 AWS</a>。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Accelerate agentic AI with NVIDIA Nemotron models on Amazon…</title>
+      <title>使用 Amazon EKS 和 SageMaker HyperPod EKS 上的 NVIDIA Nemotron 模型…</title>
       <link>https://aws.amazon.com/blogs/machine-learning/accelerate-agentic-ai-with-nvidia-nemotron-models-on-amazon-eks-and-sagemaker-hyperpod-eks/</link>
       <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/accelerate-agentic-ai-with-nvidia-nemotron-models-on-amazon-eks-and-sagemaker-hyperpod-eks/</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Accelerate agentic AI with NVIDIA Nemotron models on Amazon EKS and SageMaker HyperPod EKS</description>
+      <description>完整标题：使用 Amazon EKS 和 SageMaker HyperPod EKS 上的 NVIDIA Nemotron 模型加速代理 AI | 原文标题：Accelerate agentic AI with NVIDIA Nemotron models on Amazon EKS and SageMaker HyperPod EKS</description>
+      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
+<h1>使用 Amazon EKS 和 SageMaker HyperPod EKS 上的 NVIDIA Nemotron 模型加速代理 AI</h1>
+<p>NVIDIA <a href="https://aws.amazon.com/about-aws/whats-new/2026/01/nvidia-nemotron-3.5-super-vl-on-sagemaker-jumpstart/">Nemotron 3.5 Super VL</a> 加入 NVIDIA Nemotron 3 <a href="https://aws.amazon.com/blogs/machine-learning/run-nvidia-nemotron-3-nano-as-a-complete-management-serverless-model-on-amazon-bedrock/">纳米</a>，[纳米Omni]（https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-nano-omni-model-now-available-on-amazon-sagemaker-jumpstart/），[超级]（https://aws.amazon.com/blogs/machine-learning/run-nvidia-nemotron-3-super-on-amazon-bedrock/）， <a href="https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-ultra-now-available-on-amazon-sagemaker-jumpstart/">Ultra</a> 和 <a href="https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-5-lightning-now-available-in-amazon-sagemaker-jumpstart/">Nemotron 3.5 Lightning</a> 模型已在 AWS 上提供。它是一个 120B 参数专家混合 (MoE) 模型，每个代币激活 12B 参数。它将推理和工具使用与文本、图像、文档和视频理解结合起来，因此一种模型可以同时服务于文本和视觉任务。本文探讨了其架构和使用案例，然后展示了如何将其部署在 <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service (Amazon EKS)</a>、<a href="https://aws.amazon.com/eks/auto-mode/">Amazon EKS 自动模式</a> 和 [Amazon SageMaker HyperPod] 上EKS](https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-hyperpod-eks.html)。</p>
+<h2>关于 Nemotron 3.5 Super VL</h2>
+<p>NVIDIA Nemotron 3.5 Super VL 是从 Nemotron 3 Ultra 中提炼出来的开放式多模式模型。 NVIDIA 发布了权重、训练数据集和训练后配方，因此您可以针对特定领域的工作负载自定义模型，并在您控制的基础设施上运行它。型号详情：</p>
+<ul><li>总参数 120B，每个令牌 12B 活跃。</li><li>Hybrid Mamba-2、<a href="https://www.nvidia.com/en-us/glossary/mixture-of-experts/">MoE</a> 以及带有 RADIO 视觉编码器的注意力层。</li><li>上下文长度最多 1M 个令牌。</li><li>输入：文本、图像、文档和视频。</li><li>输出：文本。</li><li>BF16 和 NVFP4 检查点。</li></ul>
+<p>NVIDIA 在 <a href="https://portal.nousresearch.com/bench">Hermes Bench</a> 上的得分为 63.44%，在 LangChain 代理评估上的得分为 87.05%，在 CharXiv 图表推理基准上的得分为 80.8%。 （<a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3.5-Super-and-Lightning-Technical-Report.pdf">技术报告</a>）</p>
+<h3>模型架构</h3>
+<p>Nemotron 3.5 Super VL 使用混合 Mamba-Transformer MoE 架构，交错 Mamba-2、注意力层和专家层。稀疏路由会激活每个 token 120B 参数中的 12B，因此每个 token 的计算匹配一个小得多的模型，而 GPU 内存仍然保留完整的权重。 Mamba-2 层在生成过程中携带恒定大小的状态，因此它们的内存不会像 KV 缓存那样随着序列长度而增长，这使得长上下文可以承受。递归共享的多令牌预测 (MTP) 头支持本机推测解码。</p>
+<h3>用例</h3>
+<p>Nemotron 3.5 Super VL 支持将推理与视觉理解相结合的代理工作流程：</p>
+<ul><li><strong>编码：</strong>测试和验证代码，分析错误，建议修复。</li><li><strong>网络研究：</strong>交叉引用并验证搜索工具返回的来源。</li><li><strong>文档智能：</strong> 阅读表格、图表和页面布局以生成摘要。</li><li><strong>网络安全：</strong>识别漏洞并分类威胁。</li><li><strong>视频理解：</strong>搜索、内容、评论和事件分析。</li></ul>
+<p>Nemotron 3.5 Super VL 通过 NVIDIA 参考实现、说明书和 <a href="https://blogs.nvidia.com/blog/nvidia-agent-toolkit-open-models-tools-skills-secure-runtime-ai-agents/">NVIDIA Agent Toolkit</a> 与主要开放代理框架和编排系统集成。有关受支持框架的完整列表，请参阅 <a href="https://developer.nvidia.com/blog/nvidia-nemotron-3-5-super-vl-powers-specialized-agents-with-multimodal-reasoning/">NVIDIA 开发人员博客</a>。</p>
+<h3>最低 GPU 配置</h3>
+<table><thead><tr><th><strong>vLLM（GPU 型号/最小计数）</strong></th><th><strong>BF16</strong></th><th><strong>NVFP4</strong></th></tr></thead><tbody><tr><td><strong>B200/GB200</strong></td><td>8</td><td>2</td></tr><tr><td><strong>B300/GB300</strong></td><td>4</td><td>1</td></tr><tr><td><strong>H200</strong></td><td>8</td><td>4</td></tr><tr><td><strong>H100</strong></td><td>16</td><td>16 8</td></tr></tbody></table>
+<h2>在 AWS 上部署</h2>
+<p>本节概述架构、验证和性能评估方法。 <a href="https://bit.ly/do-eks">aws-do-eks</a> 项目中提供了在 AWS 上部署 Nemotron 3.5 Super VL 和 Nemotron 3 Ultra 的详细<a href="https://github.com/aws-samples/aws-do-eks/tree/main/Container-Root/eks/deployment/inference/agentic-ai/nemotron">演练</a>，包括先决条件、集群创建、模型权重下载、部署、测试、基准测试和清理。同样的模式也适用于 NVIDIA Nemotron 系列中的其他型号。</p>
+<h3>部署架构</h3>
+<p><a href="https://bit.ly/aws-do-nemotron">参考实现</a> 在标准 Amazon EKS、EKS 自动模式和 SageMaker HyperPod EKS 上运行。借助 EKS 自动模式，AWS 可以代表您管理集群中的扩展、GPU 和 EFA 支持。对于每个协调器选项，模型部署的 Kubernetes 清单都是相同的。每个集群都有一个托管 Kubernetes API 的控制平面以及一个 CPU 和 GPU 节点的数据平面。 CPU 节点运行系统和测试 Pod，而 GPU 节点运行模型。 Amazon Elastic Container Registry (Amazon ECR) 存储容器映像，共享的 Amazon FSx for Lustre 卷保存模型权重，Elastic Fabric Adapter (EFA) 连接 GPU 节点。下图显示了标准 Amazon EKS 集群。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21105-1.png" alt="标准 Amazon EKS 集群，具有控制平面、CPU 和 GPU 数据平面节点、Amazon ECR、Amazon FSx for Lustre 和 EFA连接"></p>
+<p>图 1：用于服务 NVIDIA Nemotron 模型的标准 Amazon EKS 集群架构</p>
+<p>NVIDIA Dynamo 提供在单个节点上聚合的模型，或在不同节点上通过预填充和解码进行分解的模型。对于视觉语言模型，图像/视频编码阶段还可以在其自己的节点上分解运行。</p>
+<h2>验证和性能</h2>
+<p>此架构已在 p6-b200.48xlarge（8 个 NVIDIA B200 GPU）和 p5en.48xlarge（8 个 NVIDIA H200 GPU）实例上进行了验证。您可以使用 NVIDIA Collective Communications Library (NCCL) all-reduce 微基准来验证集群及其网络。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21105-2.png" alt="在 NCCL all-reduce 测试期间显示完整 GPU 利用率和 EFA 适配器流量的仪表板"></p>
+<p>图 2：NCCL 全归约验证测试期间 GPU 和 EFA 的利用率</p>
+<p>在 NCCL 测试运行时查看所有 GPU 的利用率和所有 EFA 适配器的流量，验证集群是否按预期工作。</p>
+<p>您可以使用 <a href="https://github.com/ai-dynamo/aiperf">NVIDIA aiperf</a> 工具测量集群​​上已部署模型的性能。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21105-3.png" alt="aiperf 输出窗格显示已部署模型的第一个令牌的时间、令牌间延迟和吞吐量指标"></p>
+<p>图 3：已部署模型的 aiperf 性能指标</p>
+<p>左上方窗格中的 aiperf 输出显示关键性能指标 (KPI)，例如首次令牌时间 (TTFT)、令牌间延迟 (ITL) 和每秒令牌吞吐量 (TPS)。通过在不同的并发级别进行这些测量，我们可以研究延迟和吞吐量如何依赖于并发请求的数量。此信息对于仔细规划容量和模型部署拓扑至关重要。 <a href="https://gallery.ecr.aws/hpc-cloud/aws-do-eks">aws-do-eks 容器</a> 提供自动化功能，用于可视化 GPU 和 EFA 利用率以及使用单个命令运行 aiperf 和并发扫描。</p>
+<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/28/ML-21105-4.png" alt="比较 TTFT 和 ITL 跨并发级别的聚合与分解部署的并发扫描图表"></p>
+<p>图 4：比较聚合和分解部署的并发扫描</p>
+<p>前面的并发扫描图显示，Nemotron 3.5 Super VL 的推理具有较低的 TTFT，并且两个节点上的聚合和分解部署之间的 ITL 大致相同。</p>
+<p>在做出部署决策时，这样的图表非常有用。将延迟预算绘制为水平线，例如每个令牌的 TTFT 低于 600 毫秒（约 1 秒），ITL 低于 100 毫秒。两条线下方最右边的点是该拓扑的一个副本可以在服务级别目标 (SLO) 内提供的吞吐量，此处为 c32，或每秒大约 320 个令牌。要规划容量，请将每秒目标令牌除以每个副本的吞吐量，并找到要部署的预填充解码对的数量。更改后重新运行相同的扫描（精度、TP/PP 形状、聚合与分解、新的 Dynamo 或 vLLM 版本）可以立即看到权衡。向右和向下移动的曲线是胜利。由于 TTFT 和 ITL 是分开绘制的，因此它还告诉您要缩放哪一侧：ITL 上升表示增加解码容量，TTFT 上升表示增加预填充容量。</p>
+<p>＃＃ 结论</p>
+<p>本文介绍了在 Amazon EKS、EKS 自动模式和带有 NVIDIA Dynamo 和 vLLM 的 SageMaker HyperPod EKS 上为 NVIDIA Nemotron 模型提供服务的架构和性能评估模式。首先，使用<a href="https://github.com/aws-samples/aws-do-eks/tree/main/Container-Root/eks/deployment/inference/agentic-ai/nemotron">参考实现</a>在您自己的账户中部署 Nemotron 3.5 Super VL。 <a href="https://github.com/awslabs/ai-on-eks/tree/main/blueprints/inference">AI on EKS</a> 项目中还提供了更多推理蓝图。要获得有关 EKS 推理的更多实践经验，请注册参加我们即将举办的<a href="https://awsworkshop.io/generative-ai">研讨会</a>。</p>
+<h3>致谢</h3>
+<p>作者谨向参与开发、验证、审查和发布本内容的所有人表示特别感谢，包括但不限于：Eliuth Triana、Jiahong Liu、Kshitiz Gupta、Abhijeet Patil、Mike Stefaniak、Chris Splinter、Sheetal Joshi、Aditya Ramakrishnan、Natarajan Kumar、Anish Maddipoti。</p>
+<h2>关于作者</h2>]]></content:encoded>
     </item>
     <item>
       <title>在 Amazon Bedrock AgentCore 上构建 agentic AI 平台</title>
@@ -5477,620 +6436,6 @@ expression: |
 <ul><li>挑一个横跨两到三个数据源、如今回答起来比应有的时间更长的流程。</li><li>写下该流程需要回答的 3–5 个问题。这些就是语义层在第一天上必须支持的查询。</li><li>使用 <a href="https://aws.amazon.com/dms/">AWS Database Migration Service</a> 或 <a href="https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/zero-etl.html">Amazon Aurora zero-ETL</a> 把运营数据整合进 Amazon Redshift（或你选择的仓库）。</li><li>在 Design Center 中从仓库 schema 引导出 SML，再针对能力问题（competency questions）精炼它。</li><li>用 AtScale Helm chart 和 AtScale K8S Blueprints 在 Amazon EKS 上部署 AtScale，把 AtScale MCP server 注册为 AgentCore Gateway target，并通过它接入一个 Strands agent。</li></ul>
 <h2>延伸阅读</h2>
 <ul><li>AtScale MCP server 文档：<a href="https://documentation.atscale.com/container/connect-integrate/connecting-with-ai">Connect to AtScale with AI</a></li><li>AtScale C2026.7 release notes：<a href="https://documentation.atscale.com/container/release-notes/C2026.7">documentation.atscale.com</a></li><li>AtScale MCP 工具参考（随 AtScale 文档按版本发布）</li><li>AtScale K8S Blueprints：<a href="https://github.com/AtScaleInc/atscale-k8s-blueprints">github.com/AtScaleInc/atscale-k8s-blueprints</a></li><li>语义建模语言规范：<a href="https://github.com/semanticdatalayer/SML">github.com/semanticdatalayer/SML</a></li><li><a href="https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/">Amazon Bedrock AgentCore Developer Guide</a></li><li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html">Amazon Bedrock prompt caching</a></li><li><a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/agentic-ai-frameworks/strands-agents.html">Strands Agents on AWS Prescriptive Guidance</a></li><li><a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-stardog-and-amazon-bedrock-agentcore/">Build a semantic layer for agentic AI on AWS with Stardog and Amazon Bedrock AgentCore</a>（本系列第一篇文章）</li><li><a href="https://aws.amazon.com/blogs/machine-learning/build-a-semantic-layer-for-agentic-ai-on-aws-with-denodo-and-amazon-bedrock-agentcore/">Build a semantic layer for agentic AI on AWS with Denodo and Amazon Bedrock AgentCore</a>（本系列第二篇文章）</li></ul>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Amazon Bedrock 上 Anthropic Claude 模型的结构化输出</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/structured-outputs-for-anthropic-claude-models-on-amazon-bedrock/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/structured-outputs-for-anthropic-claude-models-on-amazon-bedrock/</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Structured outputs for Anthropic Claude models on Amazon Bedrock</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Amazon Bedrock 上 Anthropic Claude 模型的结构化输出</h1>
-<p>Amazon Bedrock 现在为所有 Anthropic Claude 模型提供结构化输出支持，覆盖模型可用的 bedrock-runtime 和 bedrock-mantle 两个端点。</p>
-<p>无论你是通过 Boto3 和 bedrock-runtime API 调用 Claude，还是通过 Messages API 和 bedrock-mantle 端点调用，现在都能收到符合 schema、遵循既定结构的 JSON 响应。你不再需要自定义解析、重试逻辑或后处理。</p>
-<h2>实际应用场景</h2>
-<p>借助 Amazon Bedrock 上 Claude 的结构化输出，你可以在各行各业自动化可靠、符合 schema 的任务。示例包括从财务收益报告和合规文档中提取每一个必需字段、把临床记录解析进电子健康记录（EHR），以及用一致且经过校验的结果丰富产品目录。你还可以分析合同中的关键条款、各方和义务，或者支撑智能化工单路由，让意图、情绪和实体始终匹配应用的数据模型。</p>
-<h2>Amazon Bedrock 上结构化输出带来了什么变化</h2>
-<p>结构化输出使用约束解码，在 token 生成过程中就强制执行你的 JSON schema，而不是事后校验。模型不会生成违反 schema 的 token。这把输出格式从概率性变成了确定性。</p>
-<p>现在两个 Amazon Bedrock 端点上都提供两种互补的机制：</p>
-<table><thead><tr><th><strong>功能</strong></th><th><strong>用途</strong></th><th><strong>使用场景</strong></th></tr></thead><tbody><tr><td>JSON Schema 输出格式</td><td>控制模型的响应结构</td><td>数据提取、报告生成、API 响应</td></tr><tr><td>严格工具使用</td><td>按 schema 校验工具参数</td><td>智能体工作流、函数调用、多步骤自动化</td></tr></tbody></table>
-<h2>这对你意味着什么</h2>
-<p>每个响应都是合法的 JSON，因此你不会再遇到 <code>JSON.parse()</code> 错误或解析异常。响应也是类型安全的：字段类型被强制约束，必需字段始终存在。由于输出始终符合你的 schema，你不需要为重试来处理 schema 违规，集成也更可靠。结构化输出还会把响应限制为仅包含 schema 定义的字段，从而减少输出 token 数量，并可能降低高并发工作负载的推理成本。这些特性让结构化输出达到生产可用，因此你可以大规模部署，而无需额外的 schema 校验代码。</p>
-<h2>支持的模型与可用性</h2>
-<p>结构化输出可与<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/batch-inference.html">批量推理</a>配合使用，因此你可以异步处理大量请求，同时仍然获得符合 schema 的输出。在 bedrock-runtime 端点上，它还可以配合跨区域推理使用，因此你无需额外配置就能在多个 AWS 区域使用。如果你需要实时响应，可以把结构化响应作为带类型的事件流式返回。</p>
-<h2>工作方式</h2>
-<p>当你用 JSON schema 发起请求时，幕后会发生以下事情：</p>
-<ul><li><strong>Schema 校验 –</strong> Amazon Bedrock 按受支持的 JSON Schema Draft 2020-12 子集校验你的 JSON schema。</li><li><strong>语法编译 –</strong> 对于新 schema，Amazon Bedrock 会编译一个语法产物（第一个请求可能稍慢一些）。</li><li><strong>缓存 –</strong> 编译后的语法会被缓存 24 小时，使后续请求更快。</li><li><strong>约束生成 –</strong> 模型生成的 token 会产生符合你 schema 的合法 JSON。</li></ul>
-<h2>性能注意事项</h2>
-<p>在性能方面，使用新 schema 的第一个请求可能耗时更长，因为 Amazon Bedrock 在开始生成之前要先编译语法产物。完成首次编译之后，使用同一 schema 的后续请求开销极小，因为编译后的语法已被缓存。该缓存的作用范围限于你的账户，并从首次访问起持续 24 小时。更改 JSON schema 的结构会使缓存失效并触发重新编译，而只更改 name 或 description 字段则会保留缓存语法不变。</p>
-<h2>入门：使用 InvokeModel API（bedrock-runtime）的结构化输出</h2>
-<p>InvokeModel API 接受 Anthropic 原生的请求体，因此 schema 要放在 <code>output_config.format</code> 中，形式是 JSON 对象而不是 JSON 字符串。下面的示例展示了如何使用 boto3 配合 Anthropic Claude 模型，从客户邮件中提取结构化的潜在客户数据：</p>
-<p>Python</p>
-<pre><code>import boto3
-import json
-
-REGION = &quot;us-east-1&quot; # Choose your preferred region
-bedrock_runtime = boto3.client(service_name=&quot;bedrock-runtime&quot;, region_name=REGION)
-
-# Define the JSON schema for structured output
-schema = {
-    &quot;type&quot;: &quot;object&quot;,
-    &quot;properties&quot;: {
-        &quot;name&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Customer name&quot;},
-        &quot;email&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Customer email address&quot;},
-        &quot;plan_interest&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;Product plan of interest&quot;},
-        &quot;demo_requested&quot;: {&quot;type&quot;: &quot;boolean&quot;, &quot;description&quot;: &quot;Whether a demo was requested&quot;}
-    },
-    &quot;required&quot;: [&quot;name&quot;, &quot;email&quot;, &quot;plan_interest&quot;, &quot;demo_requested&quot;],
-    &quot;additionalProperties&quot;: False
-}
-
-# Make a request with structured outputs via the InvokeModel API
-# (reusing the schema defined for the Converse example)
-response = bedrock_runtime.invoke_model(
-    modelId=&quot;global.anthropic.claude-sonnet-5-5&quot;,
-    body=json.dumps({
-        &quot;anthropic_version&quot;: &quot;bedrock-2023-05-31&quot;,
-        &quot;max_tokens&quot;: 512,
-        &quot;messages&quot;: [
-            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: (
-                &quot;Paulo Santos (paulo@example.com) is interested in our Enterprise plan &quot;
-                &quot;and wants to schedule a demo for next Tuesday at 2pm.&quot;
-            )}
-        ],
-        &quot;output_config&quot;: {&quot;format&quot;: {&quot;type&quot;: &quot;json_schema&quot;, &quot;schema&quot;: schema}}
-    })
-)
-
-body = json.loads(response[&quot;body&quot;].read())
-
-# Check the stop reason before parsing
-if body[&quot;stop_reason&quot;] == &quot;end_turn&quot;:
-    result_text = next(b[&quot;text&quot;] for b in body[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;)
-    print(json.dumps(json.loads(result_text), indent=2))
-elif body[&quot;stop_reason&quot;] == &quot;max_tokens&quot;:
-    print(&quot;Response truncated: increase max_tokens and retry.&quot;)</code></pre>
-<p>JSON</p>
-<pre><code>{
-    &quot;name&quot;: &quot;Paulo Santos&quot;,
-    &quot;email&quot;: &quot;paulo@example.com&quot;,
-    &quot;plan_interest&quot;: &quot;Enterprise&quot;,
-    &quot;demo_requested&quot;: true
-}</code></pre>
-<p>响应符合你的 schema。无需额外校验。</p>
-<p>更多 API 用法示例（包括 Messages API），请参阅随附的<a href="https://github.com/aws-samples/anthropic-on-aws/blob/main/notebooks/structured_outputs/structured-outputs-on-bedrock.ipynb">示例 notebook</a>。</p>
-<h2>面向智能体工作流的严格工具使用</h2>
-<p><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/endpoints.html">Amazon Bedrock Mantle</a> 面向带服务端工具、后台推理和有状态对话的智能体应用而设计。借助 bedrock-mantle 端点上的严格工具使用，你现在可以保证工具参数与输入 schema 完全匹配。下面的示例展示了如何定义一个带严格 schema 强制的工具：</p>
-<pre><code>Import json
-from anthropic import AnthropicBedrockMantle
-
-# Reusing the client created in the Messages API example
-client = AnthropicBedrockMantle(aws_region=&quot;us-east-1&quot;)
-
-message = client.messages.create(
-    model=&quot;anthropic.claude-sonnet-5&quot;,
-    max_tokens=512,
-    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What's the weather like in San Francisco?&quot;}],
-    tools=[
-        {
-            &quot;name&quot;: &quot;get_weather&quot;,
-            &quot;description&quot;: &quot;Get the current weather for a specified location&quot;,
-            &quot;strict&quot;: True,
-            &quot;input_schema&quot;: {
-                &quot;type&quot;: &quot;object&quot;,
-                &quot;properties&quot;: {
-                    &quot;location&quot;: {
-                        &quot;type&quot;: &quot;string&quot;,
-                        &quot;description&quot;: &quot;The city and state, e.g., San Francisco, CA&quot;
-                    },
-                    &quot;unit&quot;: {
-                        &quot;type&quot;: &quot;string&quot;,
-                        &quot;enum&quot;: [&quot;celsius&quot;, &quot;fahrenheit&quot;],
-                        &quot;description&quot;: &quot;Temperature unit&quot;
-                    }
-                },
-                &quot;required&quot;: [&quot;location&quot;, &quot;unit&quot;],
-                &quot;additionalProperties&quot;: False
-            }
-        }
-    ]
-)
-
-#Tool inputs conform to the schema
-for block in message.content:
-    if block.type == &quot;tool_use&quot;:
-        print(f&quot;Tool: {block.name}&quot;)
-        print(f&quot;Input: {json.dumps(block.input, indent=2)}&quot;)</code></pre>
-<p>设置 <code>strict: true</code> 会把模型的工具输入约束为与你的 schema 完全匹配。location 字段始终是字符串，unit 字段始终是 celsius 或 fahrenheit。模型无法添加 schema 之外的字段，因此工具输入只包含 schema 规定的内容。</p>
-<p>这对 Amazon Bedrock Mantle 上的智能体用例尤其有价值，因为在这些场景中，模型要用 web search 和代码解释器之类的服务端工具编排多步骤工作流。</p>
-<h2>Claude 结构化输出的主要用例</h2>
-<p>结构化输出在三种常见模式中能最大程度地降低错误处理的复杂度：</p>
-<ul><li><strong>数据提取：</strong> 把发票、合同、邮件和通话记录中的字段提取成始终匹配 schema 的 JSON，可直接载入数据库或客户关系管理（CRM）系统。</li><li><strong>可靠的智能体工具调用：</strong> 在生成时就按 schema 校验工具参数，让多步骤智能体工作流不会因格式错误的输入而失败。</li><li><strong>大规模分类：</strong> 按意图、优先级和情绪对工单、潜在客户或内容分类，用于路由、审核和评估。</li></ul>
-<p>Claude Haiku 5.5 能可靠处理快速、重复性的工作负载，例如摘要、压缩、数据库查询和分类请求。下面的示例展示了如何使用 Invoke API 和 Haiku 5.5 对传入数据进行分类与路由：</p>
-<pre><code>import boto3
-import json
-
-REGION = &quot;us-east-1&quot; # Choose your preferred region
-bedrock_runtime = boto3.client(service_name=&quot;bedrock-runtime&quot;, region_name=REGION)
-
-# Classification schema: enums restrict output to a fixed set of labels
-schema = {
-    &quot;type&quot;: &quot;object&quot;,
-    &quot;properties&quot;: {
-        &quot;category&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;enum&quot;: [&quot;billing&quot;, &quot;technical&quot;, &quot;account&quot;, &quot;sales&quot;, &quot;other&quot;],
-            &quot;description&quot;: &quot;Primary ticket category&quot;
-        },
-        &quot;priority&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;enum&quot;: [&quot;low&quot;, &quot;medium&quot;, &quot;high&quot;, &quot;urgent&quot;],
-            &quot;description&quot;: &quot;Urgency based on business impact&quot;
-        },
-        &quot;sentiment&quot;: {
-            &quot;type&quot;: &quot;string&quot;,
-            &quot;enum&quot;: [&quot;positive&quot;, &quot;neutral&quot;, &quot;negative&quot;],
-            &quot;description&quot;: &quot;Customer sentiment&quot;
-        },
-        &quot;escalate&quot;: {&quot;type&quot;: &quot;boolean&quot;, &quot;description&quot;: &quot;Whether a human should review immediately&quot;},
-        &quot;reason&quot;: {&quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;One-sentence justification for the classification&quot;}
-    },
-    &quot;required&quot;: [&quot;category&quot;, &quot;priority&quot;, &quot;sentiment&quot;, &quot;escalate&quot;, &quot;reason&quot;],
-    &quot;additionalProperties&quot;: False
-}
-
-ticket = (
-    &quot;Our production API calls have been failing with 500 errors since this morning. &quot;
-    &quot;We're losing orders every minute. This is the second outage this month!&quot;
-)
-
-# Make a request with structured outputs via the InvokeModel API
-response = bedrock_runtime.invoke_model(
-    modelId=&quot;global.anthropic.claude-haiku-5-5&quot;,
-    body=json.dumps({
-        &quot;anthropic_version&quot;: &quot;bedrock-2023-05-31&quot;,
-        &quot;max_tokens&quot;: 512,
-        &quot;system&quot;: &quot;You are a support ticket classifier. Classify the ticket accurately.&quot;,
-        &quot;messages&quot;: [
-            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: f&quot;Classify this support ticket:\n\n{ticket}&quot;}
-        ],
-        &quot;output_config&quot;: {&quot;format&quot;: {&quot;type&quot;: &quot;json_schema&quot;, &quot;schema&quot;: schema}}
-    })
-)
-
-body = json.loads(response[&quot;body&quot;].read())
-
-# Check the stop reason before parsing
-if body[&quot;stop_reason&quot;] == &quot;end_turn&quot;:
-    result_text = next(b[&quot;text&quot;] for b in body[&quot;content&quot;] if b[&quot;type&quot;] == &quot;text&quot;)
-    result = json.loads(result_text)
-    print(json.dumps(result, indent=2))
-    # Route the ticket based on the guaranteed-valid labels
-    if result[&quot;escalate&quot;]:
-        print(f&quot;Escalating to on-call: {result['category']} / {result['priority']}&quot;)
-elif body[&quot;stop_reason&quot;] == &quot;max_tokens&quot;:
-    print(&quot;Response truncated: increase max_tokens and retry.&quot;)</code></pre>
-<h2>要求与最佳实践</h2>
-<p>要在 Amazon Bedrock 上有效使用结构化输出，请遵循以下准则：</p>
-<ul><li><strong>在所有对象上设置 additionalProperties: false</strong>：这是结构化输出正常工作的必要条件。没有它，你的 schema 将不被接受。</li><li><strong>使用描述性的字段名和描述</strong>：模型依靠属性名和描述来理解应提取哪些数据。像 <code>customer_email</code> 这样清晰的名称优于 <code>field1</code> 这类通用名称。</li><li><strong>对受限取值使用 enum</strong>：当某个字段只有有限的有效取值时，用 <code>enum</code> 来约束选项。</li><li><strong>从基础开始，再逐步增加复杂度</strong>：先使用最少必需字段，然后逐步增加复杂度。基础 schema 编译更快、更易调试，而且能让请求负载保持精简，因为 schema 会计入 Converse API 的负载大小。</li><li><strong>复用 schema 以享受缓存收益</strong>：把应用设计成在多个请求间复用 schema。24 小时的语法缓存能提升重复查询的性能。</li><li><strong>检查每个响应的 stop reason</strong>：有两种情况会产生不符合约定的响应：拒绝（模型出于安全原因拒绝）和 token 上限（在完成之前就达到 <code>max_tokens</code>）。请在你的代码中处理这两种情况。</li><li><strong>部署前用真实数据测试</strong>：用具有生产代表性的输入校验你的 schema。真实数据中的边界情况往往能暴露 schema 设计问题。</li></ul>
-<p>更多最佳实践和 schema 设计建议，请参阅 Amazon Bedrock 用户指南中的<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/structured-output.html">结构化输出</a>。</p>
-<h2>支持的 JSON Schema 特性</h2>
-<ul><li>所有基础类型：<code>object</code>、<code>array</code>、<code>string</code>、<code>integer</code>、<code>number</code>、<code>boolean</code>、<code>null</code>。</li><li><code>enum</code>（仅支持字符串、数字、布尔值或 null）。</li><li><code>const</code>、<code>anyOf</code>、<code>allOf</code>（有使用限制）。</li><li><code>$ref</code>、<code>$def</code> 和 <code>definitions</code>（仅支持内部引用）。</li><li>字符串格式：<code>date-time</code>、<code>time</code>、<code>date</code>、<code>duration</code>、<code>email</code>、<code>hostname</code>、<code>uri</code>、<code>ipv4</code>、<code>ipv6</code>、<code>uuid</code>。</li><li>数组的 <code>minItems</code>（仅支持取值 0 和 1）。</li></ul>
-<h3>不支持的特性</h3>
-<p>这些关键字会被 API 接受，但在生成期间不会被强制执行。包含它们的请求仍会返回成功响应，模型仍可能返回违反这些约束的值。请在你的应用中校验这些约束，而不要依赖 schema 来强制实施。</p>
-<ul><li>递归 schema。</li><li>外部 <code>$ref</code> 引用。</li><li>数值约束（<code>minimum</code>、<code>maximum</code>、<code>multipleOf</code>）。</li><li>字符串约束（<code>minLength</code>、<code>maxLength</code>）。</li><li><code>additionalProperties</code> 设置为 false 以外的任何值。</li></ul>
-<h2>结论</h2>
-<p>Amazon Bedrock 上 Anthropic Claude 模型的结构化输出，提供了生产级 AI 应用所需的可靠性。它现在已在 bedrock-runtime 和 bedrock-mantle 两个端点上可用。通过结合 JSON Schema 输出格式和严格工具使用，你可以构建无需额外校验的数据管道。你也可以在不使用自定义解析或重试逻辑的情况下，创建可靠的智能体工作流和生产级 AI 应用。</p>
-<p>Amazon Bedrock 上 Claude 的结构化输出现已正式可用。要了解更多，请参阅 <a href="https://docs.aws.amazon.com/bedrock/">Amazon Bedrock 文档</a>，并探索我们的<a href="https://github.com/aws-samples/anthropic-on-aws/blob/main/notebooks/structured_outputs/structured-outputs-on-bedrock.ipynb">示例 notebook</a>。</p>
-<p>经过校验、符合 schema 的 JSON 能在你的组织中改进哪些工作流？欢迎在评论中分享你的反馈和问题。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>开发人员现在可以通过全新的 AWS 体验访问 SageMaker Studio</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/developers-can-now-access-sagemaker-studio-through-the-new-aws-experience/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/developers-can-now-access-sagemaker-studio-through-the-new-aws-experience/</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Developers can now access SageMaker Studio through the new AWS experience</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>开发人员现在可以通过全新的 AWS 体验访问 SageMaker Studio</h1>
-<p>今天，我们很高兴地<a href="https://aws.amazon.com/about-aws/whats-new/2026/10/sagemaker-studio-social-sign-in/">宣布</a>，新的 Amazon SageMaker AI 客户现在只需在注册 AWS 后几步操作，即可进入一个完全配置好的 Amazon SageMaker Studio 环境。你可以使用已有的登录方式，例如 Amazon、Apple、GitHub、Google 或电子邮件地址。你无需设置高级 AWS 账户、输入信用卡信息（对大多数客户而言），也不需要手动配置环境。新客户还可获得 100 美元的 AWS Free Tier 额度，可用于 SageMaker AI 的各项功能，包括模型定制、训练作业、Studio notebook 和端点部署。</p>
-<p>本文是我们上一篇博文<a href="https://aws.amazon.com/blogs/machine-learning/from-hugging-face-to-amazon-sagemaker-studio-in-one-click-2/">《从 Hugging Face 一键进入 Amazon SageMaker Studio》</a>的延续，那篇文章介绍了从 Hugging Face 模型页面直接跳转到 SageMaker Studio 工作流的深度链接。今年早些时候，我们还将 Studio 环境的创建时间从 2 分钟缩短到约 20 秒，并在每个新的 Studio 域中预配置了模型定制权限。这些改动共同消除了开发人员进入 Studio 之后的许多摩擦。但在他们抵达那里之前，仍有一个主要障碍：创建 AWS 账户。新客户必须先验证电子邮件地址、填写联系信息、验证电话号码、提供付款详情并选择支持计划，然后才能开始构建。对于习惯了几分钟内登录并开始构建的个人开发者和初创小团队来说，这仍然是一道显著的门槛。</p>
-<h2>新增内容</h2>
-<p>通过本次发布，SageMaker Studio 现已与<a href="https://aws.amazon.com/blogs/aws/aws-reimagines-the-getting-started-experience/">更新后的 AWS 登录和注册体验</a>集成，后者引入了创建和管理 AWS 账户的新选项，并简化了协作。新客户可以使用已有的身份创建账户，并立即开始在 SageMaker Studio 中构建。</p>
-<h2>全新登录体验</h2>
-<p>新客户现在可以通过 2–3 个步骤，使用 Google、GitHub、Apple 或 Amazon 账户，或使用电子邮件地址完成注册。你无需完成高级 AWS 账户注册、验证电话号码或输入信用卡信息（对大多数客户而言）：</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22115-1-1.png" alt="The Sign up for AWS page with an email field and sign-in options for Google, GitHub, Apple, and Amazon"></p>
-<p>图 1：带有社交登录选项的 AWS 注册页面</p>
-<p>注册后，SageMaker AI 会在约 20 秒内自动创建你的 Studio 环境。随后你会进入与起始入口相匹配的页面。例如，你可能在 Hugging Face 中发现并选择了一个模型，通过 <strong>Deploy on SageMaker AI</strong> 进行部署。Studio 随后会打开部署页面，模型已针对端点创建完成预配置：</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22115-2-1.png" alt="Hugging Face deploy dialog for the Qwen3.5-9B model with Deploy on SageMaker AI and Customize on SageMaker AI options"></p>
-<p>图 2：在 Amazon SageMaker AI 上部署 Hugging Face 模型</p>
-<p><img src="https://d2908q01vomqb2.cloudfront.net/f1f836cb4ea6efb2a0b1b99f41ad8b103eff4b59/2026/10/19/ML-22115-3-1.png" alt="The Deploy model to endpoint page in SageMaker Studio showing endpoint name, instance type, and instance count settings"></p>
-<p>图 3：在 SageMaker Studio 中配置端点设置</p>
-<h2>最高 200 美元的 Free Tier 额度，大多数客户无需信用卡</h2>
-<p>新客户可获得 100 美元的 AWS Free Tier 额度，可用于 SageMaker AI 的各项功能，包括端点部署、模型定制、Studio notebook 和模型训练。你还有机会额外获得价值 100 美元的额度。额度会自动抵扣你的用量，并在你接近上限时通过电子邮件通知你。Free Tier 期限在 6 个月后结束，或在你用完所有额度时结束，以先到者为准。届时资源使用会自动停止，因此你不会因意外费用而感到措手不及。你随时可以添加付款详情，升级到付费计划。</p>
-<h2>建立在以往发布的基础之上</h2>
-<p>通过新登录体验创建的新环境包含以往发布的各项改进。模型定制、训练、评估和部署的权限均已预配置，因此你无需创建 AWS Identity and Access Management (IAM) 角色。符合条件的账户可默认访问 G5、G6 和 G4dn GPU 实例，用于端点、训练作业和 Studio notebook。此外，Studio 中的实例选择菜单会显示配额可用情况，让你可以快速看到哪些实例类型可供使用。</p>
-<h2>开始使用</h2>
-<p>你今天就可以试用全新的登录体验：</p>
-<ul><li>在 <a href="https://huggingface.co/models">Hugging Face</a> 上浏览模型，选择 <strong>Deploy</strong>，选择 <strong>Amazon SageMaker AI</strong>，然后在受支持的模型上选择 <strong>Customize on SageMaker AI</strong> 或 <strong>Deploy on SageMaker AI</strong>。或者访问 <a href="https://aws.amazon.com/sagemaker/studio/">Amazon SageMaker Studio</a> 页面，选择 <strong>Get started with Amazon SageMaker AI</strong>。</li><li>在 AWS 登录页面，选择 <strong>Google</strong>、<strong>GitHub</strong>、<strong>Apple</strong> 或 <strong>Amazon</strong>，或输入你的电子邮件地址，然后按照提示在几步内创建账户。</li><li>进入已完全配置好的 SageMaker Studio 环境，使用你的 Free Tier 额度开始构建。</li></ul>
-<p>全新登录体验适用于新的 AWS 账户。如果你已有 AWS 账户，登录方式没有任何变化。</p>
-<h2>结论</h2>
-<p>全新登录体验消除了从发现到使用 Amazon SageMaker AI 构建之间的最后一道主要障碍。结合更快的环境创建、预配置的权限、来自 Hugging Face 的深度链接以及默认的 GPU 访问权限，个人开发者可以快速上手。初创团队现在可以使用已有的身份，在几分钟内从寻找模型走到定制或部署模型。</p>
-<p>要开始使用，请访问 <a href="https://aws.amazon.com/sagemaker/studio/">aws.amazon.com/sagemaker/studio</a>，或在 <a href="https://huggingface.co/models">Hugging Face</a> 上浏览模型。</p>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>Amazon SageMaker JumpStart：2026 年迄今回顾</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/amazon-sagemaker-jumpstart-2026-year-to-date-in-review/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/amazon-sagemaker-jumpstart-2026-year-to-date-in-review/</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Amazon SageMaker JumpStart: 2026 year-to-date in review</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">人工智能</a></h2>
-<h1>Amazon SageMaker JumpStart：2026 年迄今回顾</h1>
-<p>Amazon SageMaker JumpStart 是 Amazon SageMaker AI 中的一个机器学习（ML）中心，提供经过精选的 AI 模型、解决方案模板和示例 notebook 目录。它缩短了从选择模型到完成部署所需的时间。你可以用它评估开源大语言模型（LLM），部署用于文档理解的视觉模型，或者用自己的数据微调一个紧凑模型。</p>
-<p>SageMaker JumpStart 主要服务三类使用场景：</p>
-<ul><li>模型发现与评估——浏览来自 Alibaba（Qwen）、NVIDIA、Google、Mistral、Cohere、IBM 等提供方的数百个基础模型（FM）。每张模型卡都包含架构细节、基准测试、许可信息和示例 notebook。</li><li>一键部署——将你选定的模型部署到 SageMaker 实时推理端点，使用针对你的工作负载（低成本、低延迟、吞吐量或均衡）优化过的预配置设置。无需手动配置容器或实例。</li><li>模型定制——可直接从控制台或 SDK 使用低秩适配（LoRA）、监督微调（SFT）、直接偏好优化（DPO）、带可验证奖励的强化学习（RLVR）等技术来微调模型。无服务器定制选项可以减少基础设施管理工作。</li></ul>
-<p>你可以通过 SageMaker Studio 控制台（Models → JumpStart models）访问 SageMaker JumpStart，也可以通过 SageMaker Python SDK 以编程方式访问，或者借助最近推出的 deep link 集成直接从 Hugging Face 访问。</p>
-<h2>2026 年模型上架一览</h2>
-<p>从 2026 年 1 月到 9 月，SageMaker JumpStart 在 30 个不同的提供方处上架了 100 多个新模型。这标志着目录的一次显著扩张，其驱动力是开源模型发布节奏的加快，以及客户对模型架构、规模和能力多样选择日益增长的需求。</p>
-<p>以下是主要贡献方的细分情况，以及我们的 <a href="https://aws.amazon.com/sagemaker/ai/jumpstart/">SageMaker JumpStart 页面</a>链接：</p>
-<ul><li><strong>Alibaba（Qwen）：</strong> <a href="https://aws.amazon.com/blogs/machine-learning/qwen3-family-of-reasoning-models-now-available-in-amazon-bedrock-marketplace-and-amazon-sagemaker-jumpstart/">29 个模型</a>，涵盖推理（Qwen 3.8-27B）、大规模混合专家（Qwen3.5-122B-A10B）、agentic 工作流（Qwen-AgentWorld-35B-A3B）、代码生成（Qwen3-Coder-Next、Qwen 3 Coder 30B）、语音识别（Qwen3-ASR-1.7B）、文本转语音（Qwen3-TTS）、embedding（Qwen3-VL-Embedding-2B）和 reranking（Qwen3-Reranker-4B）。</li><li><strong>NVIDIA：</strong> 17 个模型，包括 Cosmos3 世界基础模型系列（Super、Edge、Nano）、Cosmos Reason 7B、MSA-Search、<a href="https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-5-lightning-now-available-in-amazon-sagemaker-jumpstart/">Nemotron 3.5 Lightning</a>、Nemotron-3-Super-120B（FP8 与 BF16）、Nemotron3 Ultra、Nemotron-Nano-12B-v2、<a href="https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-nano-30b-is-now-available-in-amazon-sagemaker-jumpstart/">Nemotron 3 Nano Omni（多模态）</a>，以及用于视觉语言的 <a href="https://aws.amazon.com/about-aws/whats-new/2026/01/nvidia-nemotron-3.5-super-vl-on-sagemaker-jumpstart/">Nemotron 3.5 Super VL</a>。</li><li><strong>Mistral：</strong> 7 个模型，包括 Ministral-3 系列（3B、8B、14B，标准版与 BF16 版）以及用于语音的 Voxtral-Mini-4B-Realtime。</li><li><strong>Google：</strong> 6 个 Gemma 4 变体，包括 gemma-4-31B-it、E2B-it、E4B-it、26B-A4B-it、assistant 和 NVFP4 量化版。</li><li><strong>IBM：</strong> 4 个模型，包括 Granite 4.0 h-micro/small/tiny，以及用于覆盖 6 种语言的多语种自动语音识别（ASR）的 granite-speech-4.1-2b。</li><li><strong>Cohere：</strong> 4 个模型，包括 Command A（A100），以及用于检索增强的 Rerank v3.5、v4.0 Fast 和 v4.0 Pro。</li><li><strong>其他：</strong> 来自 MiniMax、Zhipu AI（GLM）、DeepSeek、Moonshot AI、Allen AI、Microsoft、<a href="https://aws.amazon.com/about-aws/whats-new/2026/01/muse-spark-open-on-sagemaker-jumpstart/">Meta（Muse Spark）</a>、<a href="https://aws.amazon.com/about-aws/whats-new/2026/01/reflection-beam-on-sagemaker-jumpstart-and-aws-trainium/">Reflection（Beam）</a>、Black Forest Labs、JetBrains、OpenBMB、BharatGenAI、Kakao、OpenFold 等的 33 个模型。</li></ul>
-<h2>模型上架亮点</h2>
-<p>2026 年上架的模型反映了我们在扩展 SageMaker JumpStart 目录时的几个重点方向。这些不只是行业趋势。它们代表了我们看到强烈客户需求、并且有重大机会帮助客户在 SageMaker 上构建生产级 AI 应用的领域。</p>
-<h3>扩展 NVIDIA 开放模型组合</h3>
-<p>NVIDIA 是我们的重要模型提供方之一，2026 年他们的贡献远远超出了语言模型。Cosmos3 世界基础模型提供 Super、Edge 和 Nano 三个档位，把视频生成、物理仿真和动作规划整合进单一架构，面向机器人、自主系统和数字孪生等物理 AI 应用。再结合从高效边缘推理（Nano-12B）到大规模推理（Super-120B）的 Nemotron 系列模型，SageMaker JumpStart 现在提供了品类广泛的 NVIDIA 开放模型组合。如果你基于 NVIDIA 硬件构建，可以在 SageMaker 上用优化过的容器和预配置端点部署这些模型。</p>
-<h3>弥合多模态差距</h3>
-<p>客户的工作负载越来越需要能处理文本以外内容的模型。2026 年，我们优先上架了原生支持视觉、语音和文档理解的模型。NVIDIA Nemotron 3 Nano Omni 在单个模型中处理文本、视觉和语音。Google Gemma 4 在多个规模上增加了视觉语言能力。IBM granite-speech-4.1-2b 处理跨六种语言的语音识别与翻译。Mistral Voxtral-Mini 支持实时语音理解。这些新增意味着客户在处理多模态工作负载时，不必再串联多个独立的预处理模型。</p>
-<h3>让创意 AI 触手可及</h3>
-<p>2026 年，图像和视频生成从细分领域走向主流。我们上架了来自 Black Forest Labs 的 FLUX.2 Small Decoder 和 FLUX.2-klein-base-4B，用于快速文本生成图像；Meta Muse-Glimmer-30B，用于多模态 agentic 工作流；以及 NVIDIA Cosmos3，用于视频生成。借助这些模型，你可以用与语言模型相同的一键部署体验来使用创意 AI 能力。</p>
-<h3>优先引入高效与量化模型</h3>
-<p>并非每个工作负载都需要前沿规模的模型，许多客户在走向生产时都专注于优化推理成本。我们上架了多个量化和紧凑模型：Zhipu AI GLM-5.2 FP8 在降低内存占用的同时提供强劲性能。JetBrains Mellum2-12B 采用混合专家架构，用于代码生成时只有 2.5B 活跃参数。OpenBMB MiniCPM5-1B 把多模态能力塞进 10 亿参数。Microsoft Phi-4-mini-instruct 和 IBM Granite 4.0 h-tiny 表明，紧凑模型可以在 ml.g5.xlarge 这类实例类型上承担生产工作负载。对于特定使用场景，这些模型可以优化延迟和总拥有成本（TCO）。</p>
-<h3>为特定任务上架专用模型</h3>
-<p>通用大语言模型用途广泛，但专用模型针对特定任务做了优化。2026 年，我们上架了面向自主 AI 工作流、原生支持工具调用的 Qwen-AgentWorld-35B-A3B。GLM-OCR、LightOnOCR 和 DeepSeek-OCR 负责文档文本抽取。Qwen3-Reranker-4B 和 Cohere Rerank v4.0 提升了检索增强生成（RAG）流水线中的检索精度。langcache-embed-v3-small 为语义搜索提供轻量级 embedding。Qwen3-ASR 和 Qwen3-TTS 带来语音识别与合成能力。OpenFold3 支持面向科学计算的蛋白质结构预测。借助这些模型，你可以构建每个环节都使用合适专用工具的流水线，而不是强迫单个模型做完所有事情。</p>
-<h3>拓宽提供方多样性</h3>
-<p>降低模型选择上的集中度风险，对企业客户很重要。2026 年，我们把目录扩展到包含 30 个提供方，相比往年更加集中的一组提供方有明显增加。Alibaba Qwen 是单一最大贡献方，共 29 个模型，横跨推理、编码、语音和检索。Zhipu AI 和 DeepSeek 带来了有竞争力的 LLM 和专用 OCR。MiniMax 和 Moonshot AI 贡献了新兴架构。Cohere 带来可靠的 reranking。BharatGenAI 和 Kakao 扩大了区域模型覆盖。这样的广度让客户在性能、成本、许可和语言支持方面有更多选择。</p>
-<h2>SageMaker JumpStart 在 2026 年的增强</h2>
-<p>除了上架模型，SageMaker JumpStart 在 2026 年还发布了重要改进，减少了模型全生命周期（从发现到部署）中的摩擦。</p>
-<h3>SageMaker AI 控制台上简化的 Model Hub</h3>
-<p>此前，发现 SageMaker JumpStart 模型需要先进入 SageMaker Studio，再在左侧导航中找到 SageMaker JumpStart 分区。新的 Model Hub 体验把完整的 SageMaker JumpStart 目录直接呈现在 SageMaker AI 控制台首页上。你可以按类别浏览模型，并按输入/输出模态、发布方、模型规模、许可和框架进行筛选。你还可以查看示例 notebook，并一键在 Studio 中打开模型。这避免了以往拖慢初次探索的多级导航。</p>
-<h3>预配置的端点部署选项</h3>
-<p>为一个模型部署选择合适的实例类型、服务容器和优化设置，通常需要在几十种组合上手工做基准测试。SageMaker JumpStart 现在提供命名的部署配置，并附带以下优化选项：</p>
-<ul><li><strong>均衡</strong>——在成本、延迟和吞吐量之间为通用工作负载取得均匀取舍。</li><li><strong>吞吐优化</strong>——使用 Speculative Decoding 等技术实现每秒最大 token 数，适合高吞吐的批处理。</li><li><strong>延迟优化</strong>——最低的首 token 延迟（TTFT），优先考虑交互式应用的速度。</li><li><strong>成本优化</strong>——最低的单请求基础设施成本，适合可以接受较高延迟的工作负载。</li></ul>
-<p>这些配置包含面向 AWS Inferentia 和 AWS Trainium 实例的 Neuron 优化方案，降低了部署复杂度和基础设施成本。你可以一键用合适的优化配置部署模型，而不必花数周手工对配置做基准测试。</p>
-<h3>Hugging Face deep link 集成</h3>
-<p>与 Hugging Face 的新集成把模型发现直接连接到 SageMaker Studio，适用于已上架的模型。在 Hugging Face 上浏览模型时，你可以选择 <strong>Deploy on SageMaker AI</strong> 或 <strong>Customize and Deploy on SageMaker AI</strong>。你会直接进入一个配置好的 Studio 环境，模型已预加载、权限已预配置、GPU 配额可见性内建其中。这避免了在开始试验前先设置 AWS Identity and Access Management（IAM）角色、创建域或配置权限的需要。</p>
-<h2>入门</h2>
-<p>开始使用 SageMaker JumpStart 有三种方式：</p>
-<ul><li>SageMaker Studio 控制台——打开 SageMaker Studio，导航到 Models → JumpStart models，然后浏览目录。选择一个模型查看其详情，然后选择 <strong>Deploy</strong> 或 <strong>Customize</strong>。</li><li>SageMaker Python SDK——使用 SageMaker Python SDK 以编程方式部署模型。访问 <a href="https://docs.aws.amazon.com/sagemaker/latest/dg/studio-jumpstart.html">SageMaker JumpStart 模型目录</a>获取 SDK 示例和部署指南。</li></ul>
-<ul><li>Hugging Face deep link——浏览 <a href="https://huggingface.co/models">HuggingFace Model Hub</a>，选择 <strong>Deploy on SageMaker AI</strong>，即可直接进入 Studio 处理 SageMaker JumpStart 已上架的模型。</li></ul>
-<p>SageMaker JumpStart 上的每个模型都包含部署配置、示例 notebook 和文档。如需动手演练，请参阅我们的相关博文“<a href="https://aws.amazon.com/blogs/machine-learning/deploy-and-evaluate-models-with-amazon-sagemaker-jumpstart/">使用 Amazon SageMaker JumpStart 部署和评估模型</a>”。</p>
-<h2>结论</h2>
-<p>2026 年的前三个季度对 Amazon SageMaker JumpStart 来说是一段取得重大进展的时期。随着来自 30 个提供方的 100 多个新模型上架，目录如今覆盖了广泛的能力范围。这些包括前沿推理模型、多模态视觉语言模型、用于图像和视频生成的创意 AI、语音识别与合成、光学字符识别（OCR）与文档理解、用于 RAG 的 embedding 与检索模型、agentic 工作流模型，以及专用的科学计算模型。</p>
-<p>这些上架重点反映了我们看到最强客户需求、以及最大机会加速 AWS 上 AI 采用的领域。它们包括扩展模型组合、弥合多模态差距、让创意 AI 触手可及、优先考虑效率与量化、上架专用模型，以及拓宽提供方多样性。</p>
-<p>结合简化后的 Model Hub、预配置部署选项和 Hugging Face deep link 集成等改进，SageMaker JumpStart 持续降低模型发现与生产部署之间的门槛。访问 <a href="https://aws.amazon.com/sagemaker/ai/jumpstart/">SageMaker JumpStart 模型目录</a>探索完整阵容。</p>
-<h2>后续步骤</h2>
-<p>开始使用 SageMaker JumpStart 有很多方式。不妨亲自试试下面这些做法！</p>
-<ul><li>评估模型并<a href="https://aws.amazon.com/blogs/machine-learning/deploy-and-evaluate-models-with-amazon-sagemaker-jumpstart/">选择最适合你的那个</a></li><li>了解如何<a href="https://aws.amazon.com/blogs/machine-learning/from-hugging-face-to-amazon-sagemaker-studio-in-one-click-2/">从 HuggingFace 一键部署到 SageMaker Studio</a></li><li>在<a href="https://aws.amazon.com/blogs/machine-learning/use-case-based-deployments-on-sagemaker-jumpstart/">基于用例的部署</a>中使用预训练模型</li><li>在 <a href="https://aws.amazon.com/blogs/machine-learning/build-a-physical-ai-model-factory-with-nvidia-cosmos-3-on-sagemaker-hyperpod/">SageMaker HyperPod 上设计物理 AI 模型工厂</a></li></ul>
-<h2>关于作者</h2>]]></content:encoded>
-    </item>
-    <item>
-      <title>TwelveLabs 的 Pegasus 1.5 现已在 Amazon Bedrock 中提供</title>
-      <link>https://aws.amazon.com/blogs/machine-learning/pegasus-1-5-from-twelvelabs-is-now-available-in-amazon-bedrock/</link>
-      <guid isPermaLink="true">https://aws.amazon.com/blogs/machine-learning/pegasus-1-5-from-twelvelabs-is-now-available-in-amazon-bedrock/</guid>
-      <pubDate>Mon, 19 Oct 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Pegasus 1.5 from TwelveLabs is now available in Amazon Bedrock</description>
-      <content:encoded><![CDATA[<h2><a href="https://aws.amazon.com/blogs/machine-learning/">Artificial Intelligence</a></h2>
-<h1>TwelveLabs 的 Pegasus 1.5 现已在 Amazon Bedrock 中提供</h1>
-<p>2026 年 10 月 9 日，我们宣布 <a href="https://aws.amazon.com/about-aws/whats-new/2026/10/twelve-labs-pegasus-1-5-aws/">TwelveLabs 的 Pegasus 1.5 已在 Amazon Bedrock 上提供</a>。Pegasus 1.5 是一个视频语言模型，可将长视频转换为结构化、带时间戳的元数据。你描述对工作流重要的那些时刻，模型就会把每一个匹配的片段以 JSON 返回。</p>
-<p>视频是非结构化数据中一个重要而复杂的类别，然而其中大部分内容仍然无法被搜索、也未被充分利用。要从这些内容中提取结构化、可执行的洞察，过去需要耗费大量人力的人工审阅或碎片化的工具链。</p>
-<p>使用 Pegasus 的早期版本，你可以把模型指向一段视频、提出一个问题，然后得到一个答案。现在，Pegasus 1.5 会分析整个视频，找出所有匹配用户自定义条件的片段，并返回结构化、带时间戳的元数据。它还引入了视频分段、带参考图像的多模态提示，以及即时处理。</p>
-<p>借助 Amazon Bedrock 上的 Pegasus 1.5，你可以直接从 Amazon Simple Storage Service（Amazon S3）URI 或 base64 字符串分析视频，无需任何预索引，并且你的数据始终留在 AWS 数据边界之内。</p>
-<p>在本文中，我们介绍 Pegasus 1.5 的新特性、该模型在 Amazon Bedrock 上的打包方式，以及如何发送你的第一个请求。随后我们会逐步讲解视频分段、结构化 JSON 输出和多模态提示。</p>
-<h2>Pegasus 1.5 的新特性</h2>
-<p>与之前的版本相比，Pegasus 1.5 有以下变化：</p>
-<ul><li><strong>基于时间的元数据生成。</strong> 由你定义对工作流重要的分段、事件或领域特定的线索，例如编辑段落、体育比赛中的回合、讲话人变化或品牌出现。Pegasus 1.5 会把每一个匹配的片段以 JSON 返回，其中包含开始和结束时间以及所请求的字段。</li><li><strong>多模态提示。</strong> 一个分段定义可以把文本描述与视觉参考结合起来。这样就可以定位特定的产品、logo 或人物，以及他们在画面中正在做什么。</li><li><strong>即时处理。</strong> 无需摄取管道或预索引步骤。视频直接从 Amazon S3 发送，结果在响应中返回。</li><li><strong>扩展的处理能力。</strong> Pegasus 1.5 可在单次请求中分析长达两小时的视频，而 Pegasus 1.2 为一小时。</li></ul>
-<p>Pegasus 1.5 保留并增强了使 Pegasus 1.2 成为强大视频理解工具的核心能力，包括：</p>
-<ul><li><strong>视频到文本生成</strong>：根据视频内容生成详细的文本描述。</li><li><strong>细粒度视觉理解</strong>：分析视频帧中的对象、屏幕上的文字和数值内容。</li><li><strong>时间定位</strong>：准确识别视频中特定事件的时间戳。</li><li><strong>多模态理解</strong>：结合视觉、音频和文本信息进行综合分析。</li><li><strong>多语言支持</strong>：完全支持英语，并部分支持阿拉伯语、中文、法语、德语、意大利语、日语、韩语、葡萄牙语、俄语、西班牙语、泰语和越南语。</li></ul>
-<h2>Pegasus 1.5 在 Amazon Bedrock 上的工作方式</h2>
-<p>Pegasus 1.5 接收一个视频，以及一个文本提示或一组分段定义，并返回文本或 JSON。你可以通过 <code>bedrock-runtime</code> 端点使用 <code>InvokeModel</code> API 调用它，或者在希望响应在生成过程中流式返回时使用 <code>InvokeModelWithResponseStream</code>。</p>
-<table><thead><tr><th><strong>设置</strong></th><th><strong>值</strong></th></tr></thead><tbody><tr><td>Model ID</td><td><code>twelvelabs.pegasus-1-5-v1:0</code></td></tr><tr><td>AWS Region</td><td>US West (Oregon)，<code>us-west-2</code></td></tr><tr><td>推理</td><td>On-demand</td></tr><tr><td>API</td><td><code>InvokeModel</code>、<code>InvokeModelWithResponseStream</code></td></tr></tbody></table>
-<p>每个请求都会以两种分析模式之一运行，通过 <code>analysisMode</code> 字段选择：</p>
-<table><thead><tr><th><strong>分析模式</strong></th><th><strong>analysisMode</strong></th><th><strong>你发送</strong></th><th><strong>你得到</strong></th></tr></thead><tbody><tr><td>通用</td><td><code>general</code>（默认）</td><td><code>inputPrompt</code> 中的文本提示</td><td><code>message</code> 中的文本答案，或在你提供 schema 时返回 JSON</td></tr><tr><td>基于时间的元数据</td><td><code>time_based_metadata</code></td><td><code>responseFormat</code> 中的分段定义</td><td>一个 <code>segments</code> 列表，包含开始和结束时间以及你请求的字段</td></tr></tbody></table>
-<p>你可以通过两种方式把模型指向视频。S3 位置（<code>s3Location</code>）接收对象的 <code>uri</code> 和 <code>bucketOwner</code> 账户 ID，适合长视频。base64 字符串（<code>base64String</code>）把视频嵌入请求体，最大 25 MB，适合短片。</p>
-<p>要按应用追踪成本，可以从 Pegasus 1.5 模型创建 application inference profile，为其打上标签，并在调用时用其 Amazon Resource Name（ARN）代替模型 ID。</p>
-<h2>Pegasus 1.5 入门</h2>
-<p>以下部分概述如何开始使用 Pegasus 1.5。</p>
-<h3>先决条件</h3>
-<p>在开始之前，请确保你具备：</p>
-<ul><li>一个拥有 Amazon Bedrock 访问权限的有效 AWS 账户。</li><li>Python 3.10 或更高版本，并已安装 AWS SDK for Python（Boto3）。</li><li>针对 <code>bedrock:InvokeModel</code> 和 <code>bedrock:InvokeModelWithResponseStream</code> 的 AWS Identity and Access Management（IAM）权限。</li><li>在 <a href="https://console.aws.amazon.com/bedrock/">Amazon Bedrock 控制台</a>中为 TwelveLabs Pegasus 1.5 启用了模型访问权限。</li><li>存储在 Amazon S3 存储桶中的视频，或可以内联发送的短片。</li></ul>
-<p>以下策略授予对 Pegasus 1.5 的两个调用操作。</p>
-<pre><code>{
-    &quot;Version&quot;: &quot;2012-10-17&quot;,
-    &quot;Statement&quot;: [
-        {
-            &quot;Effect&quot;: &quot;Allow&quot;,
-            &quot;Action&quot;: [
-                &quot;bedrock:InvokeModel&quot;,
-                &quot;bedrock:InvokeModelWithResponseStream&quot;
-            ],
-            &quot;Resource&quot;: [
-                &quot;arn:aws:bedrock:us-west-2::foundation-model/twelvelabs.pegasus-1-5-v1:0&quot;
-            ]
-        }
-    ]
-}</code></pre>
-<p>Boto3 使用你常用的 AWS 凭证对请求进行签名。你也可以通过 Amazon Bedrock API key 进行身份验证，方法是把它设置在 <code>AWS_BEARER_TOKEN_BEDROCK</code> 环境变量中。在生产环境中，建议使用由 IAM 凭证通过 <code>aws-bedrock-token-generator</code> 包生成的短期密钥，因为它会自动过期。使用 bearer token 身份验证还需要 <code>bedrock:CallWithBearerToken</code> 权限。</p>
-<h3>发送你的第一个请求</h3>
-<p>安装 Boto3：</p>
-<pre><code>pip install boto3</code></pre>
-<p>以下示例以通用模式分析存储在 Amazon S3 中的视频。该示例使用全局 Cross Region Inference（CRIS）端点。如果要以美国地理端点为目标，请把端点 URL 中的“global.”替换为“us.”。</p>
-<pre><code>import boto3
-import json
-from botocore.config import Config
-
-AWS_REGION = &quot;us-west-2&quot;
-MODEL_ID = &quot;global.twelvelabs.pegasus-1-5-v1:0&quot;
-
-bedrock_runtime = boto3.client(
-    service_name=&quot;bedrock-runtime&quot;,
-    region_name=AWS_REGION,
-    config=Config(
-        # keep a longer read_timeout for lengthier invocations such as video segmentation
-        read_timeout=900,
-        retries={&quot;max_attempts&quot;: 0},
-        connect_timeout=10,
-    ),
-)
-
-# Analyze a video stored in Amazon S3
-payload = {
-    &quot;inputPrompt&quot;: &quot;Summarize this video and identify the key topics discussed.&quot;,
-    &quot;mediaSource&quot;: {
-        &quot;s3Location&quot;: {
-            &quot;uri&quot;: &quot;s3://amzn-s3-demo-pegasus-15/your-video.mp4&quot;,
-            &quot;bucketOwner&quot;: &quot;your-account-id&quot;
-        }
-    },
-    &quot;temperature&quot;: 0.2,
-    &quot;maxOutputTokens&quot;: 4096,
-    &quot;includeMetering&quot;: True
-}
-
-response = bedrock_runtime.invoke_model(
-    modelId=MODEL_ID,
-    body=json.dumps(payload)
-)
-result = json.loads(response[&quot;body&quot;].read())
-print(result[&quot;message&quot;])</code></pre>
-<p>响应在 <code>message</code> 中携带答案，在 <code>input_tokens</code> 和 <code>output_tokens</code> 中携带 token 数，并在 <code>stopReason</code> 中给出生成结束的原因。<code>stopReason</code> 为 <code>length</code> 表示答案在完成之前就达到了 <code>maxOutputTokens</code>，所以在依赖输出之前请检查这一项：</p>
-<pre><code>if result[&quot;stopReason&quot;] == &quot;length&quot;:
-    print(&quot;The answer was cut off. Raise maxOutputTokens and try again.&quot;)
-print(&quot;Tokens in:&quot;, result[&quot;input_tokens&quot;], &quot;out:&quot;, result[&quot;output_tokens&quot;])</code></pre>
-<p>通用模式的请求字段：</p>
-<table><thead><tr><th><strong>字段</strong></th><th><strong>必填</strong></th><th><strong>描述</strong></th></tr></thead><tbody><tr><td><code>inputPrompt</code></td><td>是</td><td>关于该视频的问题或指令</td></tr><tr><td><code>mediaSource.s3Location.uri</code></td><td>需要一个视频来源</td><td>视频的 S3 URI</td></tr><tr><td><code>mediaSource.s3Location.bucketOwner</code></td><td>与 <code>uri</code> 一起使用</td><td>拥有该存储桶的 AWS 账户 ID</td></tr><tr><td><code>mediaSource.base64String</code></td><td>需要一个视频来源</td><td>Base64 编码的视频，最大 25 MB</td></tr><tr><td><code>temperature</code></td><td>否</td><td>输出的随机性，从 0 到 1。默认 0.2</td></tr><tr><td><code>maxOutputTokens</code></td><td>否</td><td>要生成的最大 token 数，从 512 到 98,304</td></tr><tr><td><code>responseFormat</code></td><td>否</td><td>答案必须遵循的 JSON Schema</td></tr><tr><td><code>analysisMode</code></td><td>否</td><td><code>general</code>（默认）或 <code>time_based_metadata</code></td></tr></tbody></table>
-<p>对于短片，你可以内联发送视频，而不是从 S3 读取：</p>
-<pre><code>import base64
-
-with open(&quot;your-video.mp4&quot;, &quot;rb&quot;) as f:
-    video_b64 = base64.b64encode(f.read()).decode(&quot;utf-8&quot;)
-
-payload[&quot;mediaSource&quot;] = {&quot;base64String&quot;: video_b64}
-response = bedrock_runtime.invoke_model(modelId=MODEL_ID, body=json.dumps(payload))
-print(json.loads(response[&quot;body&quot;].read())[&quot;message&quot;])</code></pre>
-<p>请注意，前面的示例使用了可选的 <code>includeMetering</code> 属性。<code>includeMetering: True</code> 会让 Pegasus 1.5 在非流式响应中额外添加两个计费用量字段：<code>outputTokenCount</code> 和 <code>inputVideoSecond</code>（被分析视频的时长，以秒为单位）。</p>
-<h3>流式返回响应</h3>
-<p>对于交互式应用，<code>InvokeModelWithResponseStream</code> 会在答案生成过程中分块返回。每个块在 <code>message</code> 中携带下一段文本：</p>
-<pre><code>response = bedrock_runtime.invoke_model_with_response_stream(
-    modelId=MODEL_ID,
-    body=json.dumps(payload)
-)
-for event in response[&quot;body&quot;]:
-    chunk = json.loads(event[&quot;chunk&quot;][&quot;bytes&quot;])
-    print(chunk.get(&quot;message&quot;, &quot;&quot;), end=&quot;&quot;, flush=True)
-print()</code></pre>
-<h3>返回结构化 JSON</h3>
-<p>在通用模式下，你可以把答案约束到某个 JSON Schema，以便下游代码直接解析。把 <code>responseFormat.type</code> 设为 <code>json_schema</code>，并把 schema 放在 <code>jsonSchema</code> 下。答案会以 JSON 字符串的形式出现在 <code>message</code> 中：</p>
-<pre><code>payload = {
-    &quot;inputPrompt&quot;: &quot;Analyze this video and return a structured summary.&quot;,
-    &quot;mediaSource&quot;: {
-        &quot;s3Location&quot;: {
-            &quot;uri&quot;: &quot;s3://amzn-s3-demo-pegasus-15/your-video.mp4&quot;,
-            &quot;bucketOwner&quot;: &quot;your-account-id&quot;
-        }
-    },
-    &quot;temperature&quot;: 0,
-    &quot;maxOutputTokens&quot;: 2048,
-    &quot;includeMetering&quot;: True,
-    &quot;responseFormat&quot;: {
-        &quot;type&quot;: &quot;json_schema&quot;,
-        &quot;jsonSchema&quot;: {
-            &quot;type&quot;: &quot;object&quot;,
-            &quot;properties&quot;: {
-                &quot;summary&quot;: {&quot;type&quot;: &quot;string&quot;},
-                &quot;key_scenes&quot;: {&quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;string&quot;}},
-                &quot;setting&quot;: {&quot;type&quot;: &quot;string&quot;}
-            },
-            &quot;required&quot;: [&quot;summary&quot;, &quot;key_scenes&quot;, &quot;setting&quot;]
-        }
-    }
-}
-response = bedrock_runtime.invoke_model(modelId=MODEL_ID, body=json.dumps(payload))
-summary = json.loads(json.loads(response[&quot;body&quot;].read())[&quot;message&quot;])
-print(summary[&quot;summary&quot;])
-for scene in summary[&quot;key_scenes&quot;]:
-    print(&quot; -&quot;, scene)</code></pre>
-<h3>视频分段：把视频转换为结构化数据</h3>
-<p>基于时间的元数据生成是 Pegasus 1.5 与早期版本差异最大的地方。你发送的不是一个提示，而是一个或多个分段定义，模型会返回视频中匹配每个定义的每一个片段。</p>
-<p>把 <code>analysisMode</code> 设为 <code>time_based_metadata</code>，把 <code>responseFormat.type</code> 设为 <code>segment_definitions</code>。这些定义取代了 <code>inputPrompt</code>，因此请省略该字段。每个定义包含：</p>
-<ul><li><code>id</code>：定义的名称，会在其匹配的每个片段上返回。</li><li><code>description</code>：匹配的片段是什么样子。</li><li><code>fields</code>：要为每个片段提取的值，每项包含 <code>name</code>、<code>type</code>（<code>string</code>、<code>boolean</code>、<code>number</code>、<code>integer</code>、<code>array</code> 或 <code>timestamp</code>）和 <code>description</code>。</li></ul>
-<p>以下示例识别新闻广播中的每个编辑段落，并为每一段返回标题、摘要和关键话题：</p>
-<pre><code>payload = {
-    &quot;analysisMode&quot;: &quot;time_based_metadata&quot;,
-    &quot;mediaSource&quot;: {
-        &quot;s3Location&quot;: {
-            &quot;uri&quot;: &quot;s3://amzn-s3-demo-pegasus-15/news-broadcast.mp4&quot;,
-            &quot;bucketOwner&quot;: &quot;your-account-id&quot;
-        }
-    },
-    &quot;responseFormat&quot;: {
-        &quot;type&quot;: &quot;segment_definitions&quot;,
-        &quot;segmentTimeFormat&quot;: &quot;hh:mm:ss&quot;,
-        &quot;segmentDefinitions&quot;: [
-            {
-                &quot;id&quot;: &quot;editorial_section&quot;,
-                &quot;description&quot;: &quot;A distinct editorial section of the broadcast, &quot;
-                &quot;such as a new story, topic, or segment of the program.&quot;,
-                &quot;fields&quot;: [
-                    {&quot;name&quot;: &quot;segment_title&quot;, &quot;type&quot;: &quot;string&quot;,
-                     &quot;description&quot;: &quot;A descriptive title&quot;},
-                    {&quot;name&quot;: &quot;summary&quot;, &quot;type&quot;: &quot;string&quot;,
-                     &quot;description&quot;: &quot;A brief summary of the segment content&quot;},
-                    {&quot;name&quot;: &quot;key_topics&quot;, &quot;type&quot;: &quot;array&quot;, &quot;items&quot;: {&quot;type&quot;: &quot;string&quot;},
-                     &quot;description&quot;: &quot;Main topics discussed&quot;}
-                ]
-            }
-        ]
-    },
-    &quot;temperature&quot;: 0,
-    &quot;maxOutputTokens&quot;: 32768,
-    &quot;includeMetering&quot;: True
-}
-response = bedrock_runtime.invoke_model(
-    modelId=MODEL_ID,
-    contentType=&quot;application/json&quot;,
-    accept=&quot;application/json&quot;,
-    body=json.dumps(payload)
-)
-result = json.loads(response[&quot;body&quot;].read())
-for segment in result[&quot;segments&quot;]:
-    print(segment[&quot;start_sec&quot;], &quot;-&quot;, segment[&quot;end_sec&quot;], segment[&quot;segment_title&quot;])
-    print(&quot; &quot;, segment[&quot;summary&quot;])
-    print(&quot; topics:&quot;, &quot;, &quot;.join(segment[&quot;key_topics&quot;]))</code></pre>
-<p>上一条示例代码针对一段体育视频测试时，可能会产生类似下面这样的输出。</p>
-<pre><code>{
-    &quot;segments&quot;: [
-        {
-            &quot;start_sec&quot;: &quot;00:04:24&quot;,
-            &quot;end_sec&quot;: &quot;00:05:22&quot;,
-            &quot;segment_title&quot;: &quot;Substitutions and Added Time&quot;,
-            &quot;summary&quot;: &quot;The referee announces three minutes of added time, and both teams make substitutions in preparation for a potential penalty shootout.&quot;,
-            &quot;key_topics&quot;: [&quot;Substitutions&quot;, &quot;Added time&quot;, &quot;Penalty shootout preparation&quot;, &quot;Tactical changes&quot;]
-        },
-        {
-            &quot;start_sec&quot;: &quot;00:05:22&quot;,
-            &quot;end_sec&quot;: &quot;00:08:57&quot;,
-            &quot;segment_title&quot;: &quot;Last Gasp Attempts and Final Whistle&quot;,
-            &quot;summary&quot;: &quot;The final minutes of the match see intense action from both sides, with several close calls before the referee blows the final whistle, ending the game in a 3-3 draw.&quot;,
-            &quot;key_topics&quot;: [&quot;Final whistle&quot;, &quot;Draw&quot;]
-        },
-        {
-            &quot;start_sec&quot;: &quot;00:08:57&quot;,
-            &quot;end_sec&quot;: &quot;00:09:29&quot;,
-            &quot;segment_title&quot;: &quot;Match Conclusion and Penalty Shootout Setup&quot;,
-            &quot;summary&quot;: &quot;The match concludes with a 3-3 draw, leading to a penalty shootout. Players from both teams shake hands and prepare for the decisive moments.&quot;,
-            &quot;key_topics&quot;: [&quot;Match conclusion&quot;, &quot;Penalty shootout&quot;, &quot;Player handshakes&quot;, &quot;Final&quot;]
-        }
-    ],
-    &quot;definition_errors&quot;: [],
-    &quot;input_tokens&quot;: 249408,
-    &quot;output_tokens&quot;: 802,
-    &quot;stopReason&quot;: &quot;stop&quot;,
-    &quot;finish_reason&quot;: &quot;stop&quot;
-}</code></pre>
-<p>每个片段都携带 <code>start_sec</code>、<code>end_sec</code> 以及你定义的 <code>fields</code>。<code>segmentTimeFormat</code> 控制时间的书写方式：<code>seconds</code> 返回可进行算术运算的数字，而 <code>hh:mm:ss</code> 和 <code>hh:mm:ss.fff</code> 以字符串形式返回可读的时间戳。响应中还包含一个 <code>definition_errors</code> 列表，当所有定义都被处理时该列表为空。</p>
-<p>单个请求可以包含多个分段定义，例如一个用于编辑段落，另一个用于屏幕上出现的品牌。Pegasus 1.5 会在一个 <code>segments</code> 列表中返回所有定义的匹配结果，并用 <code>_definition_id</code> 标记每个片段，以便区分。以下示例为前一个请求添加第二个定义，并对结果进行分组：</p>
-<pre><code>from collections import defaultdict
-
-payload[&quot;responseFormat&quot;][&quot;segmentDefinitions&quot;].append({
-    &quot;id&quot;: &quot;brand_appearance&quot;,
-    &quot;description&quot;: &quot;A shot where a company logo or branded product &quot;
-    &quot;is clearly visible on screen.&quot;,
-    &quot;fields&quot;: [
-        {&quot;name&quot;: &quot;brand&quot;, &quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;The brand shown&quot;},
-        {&quot;name&quot;: &quot;is_prominent&quot;, &quot;type&quot;: &quot;boolean&quot;,
-         &quot;description&quot;: &quot;Whether the brand is the main focus of the shot&quot;}
-    ]
-})
-response = bedrock_runtime.invoke_model(modelId=MODEL_ID, body=json.dumps(payload))
-result = json.loads(response[&quot;body&quot;].read())
-by_definition = defaultdict(list)
-for segment in result[&quot;segments&quot;]:
-    by_definition[segment[&quot;_definition_id&quot;]].append(segment)
-for definition_id, segments in by_definition.items():
-    print(definition_id, len(segments), &quot;segments&quot;)</code></pre>
-<p>由于 schema 只定义一次，同一组定义可以应用于整个视频库，为每个资产生成一致的元数据。</p>
-<h3>多模态提示：为查询添加上下文视觉信息</h3>
-<p>Pegasus 1.5 引入了多模态提示，因此你可以在文本提示之外附带参考图像。当你想要询问模型关于特定对象、人物或场景的问题，而展示比描述更容易时，这很有用。</p>
-<p>例如，你可以提供一张产品图片，并要求模型找出该产品在视频中出现的每一个时刻。或者，你可以提供某个特定 logo 的参考图像，让模型检测品牌出现的位置及其时间戳。这一能力提升了视频分析的精确度，并开辟了视觉品牌监测、产品植入分析和图像引导的内容搜索等用例。</p>
-<p>参考图像的附加方式因模式而异。在通用模式下，把它们放在 <code>promptV2.mediaSources</code> 中，问题放在 <code>promptV2.inputText</code> 中。在分段模式下（<code>analysisMode: time_based_metadata</code>），把它们附加到 <code>responseFormat.segmentDefinitions</code> 内每个分段定义的 <code>mediaSources</code> 上。这样，一个定义就能同时匹配视觉参考和文本描述。每张图像需要一个 <code>name</code>、一个值为 <code>image</code> 的 <code>media_type</code>，以及恰好一个来源：要么是内联的 <code>base64String</code>，要么是带 <code>uri</code> 和 <code>bucketOwner</code> 的 <code>s3Location</code>。单个请求最多可携带 30 张参考图像。</p>
-<p>通用模式的请求会就参考图像中展示的对象向模型提问。以下示例负载和响应给出了通用模式下的一个示例。</p>
-<pre><code>payload = {
-    &quot;analysisMode&quot;: &quot;general&quot;,
-    &quot;mediaSource&quot;: {&quot;s3Location&quot;: {&quot;uri&quot;: &quot;s3://...&quot;, &quot;bucketOwner&quot;: &quot;...&quot;}},
-    &quot;promptV2&quot;: {
-        &quot;inputText&quot;: &quot;Does the object in the reference image appear in this video?&quot;,
-        &quot;mediaSources&quot;: [
-            {&quot;name&quot;: &quot;ref1&quot;, &quot;media_type&quot;: &quot;image&quot;, &quot;base64String&quot;: &quot;...&quot;}
-        ]
-    }
-    …
-}</code></pre>
-<pre><code>{
-    &quot;input_tokens&quot;: 144,
-    &quot;output_tokens&quot;: 11,
-    &quot;message&quot;: &quot;Yes, the green canoe appears in the video.&quot;,
-    &quot;stopReason&quot;: &quot;stop&quot;
-}</code></pre>
-<p>在分段模式下，参考图像位于定义内部，因此 Pegasus 只返回该产品出现的片段。以下示例负载和响应给出了分段模式下的一个示例。</p>
-<pre><code>payload = {
-    &quot;analysisMode&quot;: &quot;time_based_metadata&quot;,
-    &quot;mediaSource&quot;: {&quot;s3Location&quot;: {&quot;uri&quot;: &quot;s3://...&quot;, &quot;bucketOwner&quot;: &quot;...&quot;}},
-    &quot;responseFormat&quot;: {
-        &quot;type&quot;: &quot;segment_definitions&quot;,
-        &quot;segmentTimeFormat&quot;: &quot;hh:mm:ss&quot;,
-        &quot;segmentDefinitions&quot;: [
-            {
-                &quot;id&quot;: &quot;product_appearance&quot;,
-                &quot;description&quot;: &quot;A shot showing the product in the reference image&quot;,
-                &quot;fields&quot;: [
-                    {&quot;name&quot;: &quot;what&quot;, &quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;what is on screen&quot;}
-                ],
-                &quot;mediaSources&quot;: [
-                    {&quot;name&quot;: &quot;ref1&quot;, &quot;media_type&quot;: &quot;image&quot;,
-                     &quot;s3Location&quot;: {&quot;uri&quot;: &quot;s3://...&quot;, &quot;bucketOwner&quot;: &quot;...&quot;}}
-                ]
-            }
-        ]
-    }
-}</code></pre>
-<pre><code>{
-    &quot;segments&quot;: [
-        {&quot;start_sec&quot;: &quot;00:00:00&quot;, &quot;end_sec&quot;: &quot;00:00:02&quot;,
-         &quot;what&quot;: &quot;A family of four in a green canoe, paddling on a calm river surrounded by towering red rock formations.&quot;},
-        {&quot;start_sec&quot;: &quot;00:00:09&quot;, &quot;end_sec&quot;: &quot;00:00:10&quot;,
-         &quot;what&quot;: &quot;The family back in the canoe, paddling away from the shore, with the children smiling and enjoying the serene surroundings.&quot;}
-    ],
-    &quot;definition_errors&quot;: [],
-    &quot;input_tokens&quot;: 4498,
-    &quot;output_tokens&quot;: 292,
-    &quot;stopReason&quot;: &quot;stop&quot;,
-    &quot;finish_reason&quot;: &quot;stop&quot;
-}</code></pre>
-<h3>监控用量</h3>
-<p>Pegasus 1.5 在其模型 ID 下的 <code>AWS/Bedrock</code> 命名空间中发布 Amazon CloudWatch 指标，包括 <code>Invocations</code>、<code>OutputTokenCount</code>、<code>InvocationLatency</code> 和 <code>InvocationClientErrors</code>。用它们来跟踪调用量和延迟。当你需要按应用拆分用量时，可将其与 application inference profile 搭配使用。</p>
-<h2>用例</h2>
-<p>Pegasus 1.5 面向管理大量长视频的组织：</p>
-<ul><li><strong>新闻和广播档案</strong>：团队可以一次性定义编辑段落、话题和讲话人变化，然后对数以年计、此前只能通过转录文本关键词搜索的素材进行编目。</li><li><strong>体育广播机构和联盟</strong>：在完整比赛素材中检测回合、得分事件和其他关键时刻，加快集锦制作。</li><li><strong>流媒体应用</strong>：场景级元数据支持基于时刻的推荐、上下文相关的广告投放，以及分段级的品牌安全检查。</li></ul>
-<p>在每种情况下，人仍然是工作流的一部分。他们的工作从手工查找并标记每一个时刻，转变为审阅和优化模型生成的元数据。</p>
-<h2>输入要求</h2>
-<p>Pegasus 1.5 支持以下视频规格：</p>
-<ul><li><strong>时长</strong>：最长 2 小时。</li><li><strong>文件大小</strong>：从 Amazon S3 读取时最大 2 GB，作为 base64 字符串时最大 25 MB。</li><li><strong>分辨率</strong>：360×360 至 5184×2160。</li><li><strong>宽高比</strong>：介于 1:1 与 2.4:1 之间，或它们的倒数。</li><li><strong>格式</strong>：FFmpeg 支持的格式。</li></ul>
-<h2>现已推出</h2>
-<p>TwelveLabs Pegasus 1.5 即日起在 US West (Oregon) AWS Region 的 Amazon Bedrock 上提供。请查看<a href="https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html">完整的 Region 列表</a>以了解后续更新，并访问 <a href="https://aws.amazon.com/bedrock/pricing/">Amazon Bedrock 定价页面</a>获取定价信息。Pegasus 1.5 通过 AWS Marketplace 计费，因此其费用会出现在你的 AWS 账单和 AWS Cost Explorer 中的 TwelveLabs 项下，而不是 Amazon Bedrock 项下。</p>
-<p>开始使用：</p>
-<ul><li>访问 <a href="https://aws.amazon.com/bedrock/twelvelabs/">Amazon Bedrock 上的 TwelveLabs 模型页面</a>，了解该模型系列的更多信息。</li><li>查看 <a href="https://docs.aws.amazon.com/bedrock/latest/userguide/model-card-twelvelabs-pegasus-v1-5.html">Pegasus 1.5 模型卡</a>，了解功能支持、Region 可用性和示例代码。</li><li>通过 <a href="https://repost.aws/tags/TAQeKlaPaNRQ2tWB6P7KrMag/amazon-bedrock">AWS re:Post for Amazon Bedrock</a> 或你常用的 AWS Support 渠道向我们反馈。</li></ul>
-<p>我们期待看到你在 Amazon Bedrock 中用 TwelveLabs Pegasus 1.5 构建的作品。</p>
 <h2>关于作者</h2>]]></content:encoded>
     </item>
   </channel>

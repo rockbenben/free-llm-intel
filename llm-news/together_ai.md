@@ -1,6 +1,6 @@
 # Together AI 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-30**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-31**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Together AI（`together_ai`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
@@ -28,9 +28,9 @@
 17. [在生产环境中对模型进行 A/B 测试](https://www.together.ai/blog/a-b-test-models-in-production)（2026-08-17） <!--orig:A/B test models in production-->
 18. [DeepSeek-V4 Flash 0731 vs GPT-5.6 Luna on DeepSWE: Cost and Coding](https://www.together.ai/blog/deepseek-v4-flash-0731-vs-gpt-5-6-luna-on-deepswe-cost-and-coding)（2026-08-06）
 19. [Kimi K3 完整开发者指南](https://www.together.ai/blog/kimi-k3-guide)（2026-08-01） <!--orig:Kimi K3: the complete developer guide-->
-20. [Autoscaling endpoints for LLM inference](https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference)（2026-07-31）
+20. [自动缩放 LLM 推理端点](https://www.together.ai/blog/autoscaling-endpoints-for-llm-inference)（2026-07-31） <!--orig:Autoscaling endpoints for LLM inference-->
 21. [Together AI 宣布与 Moonshot AI 战略合作，原生服务 Kimi 模型](https://www.together.ai/blog/together-ai-announces-strategic-partnership-with-moonshot-ai-to-natively-serve-kimi-models)（2026-07-29） <!--orig:Together AI announces strategic partnership with Moonshot AI to natively serve Kimi models-->
-22. [Configuring Dedicated Model Inference](https://www.together.ai/blog/configuring-dedicated-model-inference)（2026-07-29）
+22. [配置专用模型推理](https://www.together.ai/blog/configuring-dedicated-model-inference)（2026-07-29） <!--orig:Configuring Dedicated Model Inference-->
 23. [ThunderAgent：面向大规模合成数据生成的 Agent 推理提速 2 倍](https://www.together.ai/blog/thunderagent)（2026-07-29） <!--orig:ThunderAgent: 2x Faster Agentic Inference for Synthetic Data Generation at Scale-->
 24. [开放权重 AI 推理的生产平台](https://www.together.ai/blog/the-production-platform-for-open-weight-ai-inference)（2026-07-23） <!--orig:The production platform for open-weight AI inference-->
 25. [Together AI 与 Y Combinator 合作，为 YC 社区启动首个专属 GPU 集群](https://www.together.ai/blog/together-yc-gpu-cluster)（2026-07-20） <!--orig:Together AI and Y Combinator partner to launch the first dedicated GPU cluster for the YC community-->
@@ -78,15 +78,15 @@
 67. [推出专用容器推理：自定义 AI 模型的推理提速 2.6 倍](https://www.together.ai/blog/dedicated-container-inference)（2026-02-12） <!--orig:Introducing Dedicated Container Inference: Delivering 2.6x faster inference for custom AI models-->
 68. [当你不告诉 LLM 该想什么时，它们在想什么？](https://www.together.ai/blog/what-llms-think)（2026-02-06） <!--orig:What do LLMs think when you don't tell them what to think about?-->
 69. [Together AI 迎来 Alon Gavrielov 出任基础设施战略副总裁](https://www.together.ai/blog/alon-gavrielov-as-vp-of-infrastructure-strategy)（2026-02-03） <!--orig:Together AI welcomes Alon Gavrielov as VP of Infrastructure Strategy-->
-70. [Fine-tuning open LLM judges to outperform GPT-5.2](https://www.together.ai/blog/fine-tuning-open-llm-judges-to-outperform-gpt-5-2)（2026-02-02）
+70. [微调开放式 LLM 法官以超越 GPT-5.2](https://www.together.ai/blog/fine-tuning-open-llm-judges-to-outperform-gpt-5-2)（2026-02-02） <!--orig:Fine-tuning open LLM judges to outperform GPT-5.2-->
 71. [Together Evaluations 现已支持顶级商业 API 与开源模型的对比](https://www.together.ai/blog/together-evaluations-v2)（2026-02-02） <!--orig:Together Evaluations now supports comparing top commercial APIs vs. open source models-->
 72. [DSGym：评估与训练数据科学 Agent 的整体框架](https://www.together.ai/blog/dsgym)（2026-01-26） <!--orig:DSGym: A holistic framework for evaluating and training data science agents-->
 73. [优化推理速度与成本：大规模部署学到的经验](https://www.together.ai/blog/optimizing-inference-speed-and-costs)（2026-01-22） <!--orig:Optimizing inference speed and costs: Lessons learned from large-scale deployments-->
 74. [解读 Cursor 如何与 Together AI 合作，在规模上交付实时低延迟推理](https://www.together.ai/blog/learn-how-cursor-partnered-with-together-ai-to-deliver-real-time-low-latency-inference-at-scale)（2026-01-13） <!--orig:Learn how Cursor partnered with Together AI to deliver real-time, low-latency inference at scale-->
 75. [深入多节点训练：如何跨 GPU 集群扩展模型训练](https://www.together.ai/blog/multi-node-gpu-training)（2026-01-12） <!--orig:Inside multi-node training: How to scale model training across GPU clusters-->
 76. [如何为你的生产负载选择合适的开放模型](https://www.together.ai/blog/how-to-choose-the-right-open-model-for-production)（2026-01-08） <!--orig:How to choose the right open model for production-->
-77. [MiniMax Speech 2.6 Turbo now available natively on Together AI](https://www.together.ai/blog/minimax-speech-2-6)（2025-12-23）
-78. [Rime voice models now available on Together AI](https://www.together.ai/blog/rime-voice-models-now-available-on-together-ai)（2025-12-18）
+77. [MiniMax Speech 2.6 Turbo 现已在 Together AI 上原生提供](https://www.together.ai/blog/minimax-speech-2-6)（2025-12-23） <!--orig:MiniMax Speech 2.6 Turbo now available natively on Together AI-->
+78. [Together AI 现已提供 Rime 语音模型](https://www.together.ai/blog/rime-voice-models-now-available-on-together-ai)（2025-12-18） <!--orig:Rime voice models now available on Together AI-->
 79. [研究观点：是的，AGI 可以到来——一个计算视角](https://www.together.ai/blog/research-pov-yes-agi-can-happen)（2025-12-17） <!--orig:Research POV: Yes, AGI Can Happen – A Computational Perspective-->
 80. [宣布 NVIDIA 最新推理模型 Nemotron 3 Nano 在 Together AI 原生可用](https://www.together.ai/blog/nemotron-3-nano-now-available-on-together-ai)（2025-12-15） <!--orig:Announcing native availability of NVIDIA Nemotron 3 Nano, NVIDIA’s latest reasoning model-->
 81. [发布 Together Python SDK v2.0](https://www.together.ai/blog/together-python-sdk-2-0)（2025-12-12） <!--orig:Announcing Together Python SDK v2.0-->
@@ -94,8 +94,8 @@
 83. [如何在 Together AI Native Cloud 上运行 TorchForge 强化学习流水线](https://www.together.ai/blog/torchforge-reinforcement-learning-pipelines)（2025-12-03） <!--orig:How to run TorchForge reinforcement learning pipelines in the Together AI Native Cloud-->
 84. [AutoJudge 发布：用自动化数据集构建简化推理加速](https://www.together.ai/blog/introducing-autojudge-streamlined-inference-acceleration-via-automated-dataset-curation)（2025-12-03） <!--orig:Introducing AutoJudge: Streamlined inference acceleration via automated dataset curation-->
 85. [Together AI 为顶级开源模型交付最快推理](https://www.together.ai/blog/fastest-inference-for-the-top-open-source-models)（2025-12-01） <!--orig:Together AI delivers fastest inference for the top open-source models-->
-86. [FLUX.2: Multi-reference image generation now available on Together AI](https://www.together.ai/blog/flux-2-multi-reference-image-generation-now-available-on-together-ai)（2025-11-25）
-87. [Announcing the fastest inference for realtime voice AI agents](https://www.together.ai/blog/the-fastest-inference-for-realtime-voice-ai-agents)（2025-11-04）
+86. [FLUX.2：Together AI 现已提供多参考图像生成功能](https://www.together.ai/blog/flux-2-multi-reference-image-generation-now-available-on-together-ai)（2025-11-25） <!--orig:FLUX.2: Multi-reference image generation now available on Together AI-->
+87. [宣布最快的实时语音人工智能代理推理](https://www.together.ai/blog/the-fastest-inference-for-realtime-voice-ai-agents)（2025-11-04） <!--orig:Announcing the fastest inference for realtime voice AI agents-->
 88. [如何评估和基准测试大语言模型（LLM）](https://www.together.ai/blog/evaluate-and-benchmark-llms)（2025-11-04） <!--orig:How to evaluate and benchmark Large Language Models (LLMs)-->
 89. [用 Collinear Simulations 与 Together Evals 为真实世界做动态 AI Agent 测试](https://www.together.ai/blog/collinear-simulations-together-evals)（2025-10-28） <!--orig:Dynamic AI agent testing for the real world with Collinear Simulations and Together Evals-->
 90. [大推理模型在推理过程中未能遵循指令：一项基准研究](https://www.together.ai/blog/large-reasoning-models-fail-to-follow-instructions-during-reasoning-a-benchmark-study)（2025-10-22） <!--orig:Large Reasoning Models Fail to Follow Instructions During Reasoning: A Benchmark Study-->

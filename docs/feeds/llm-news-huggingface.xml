@@ -7,33 +7,701 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-huggingface.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Thu, 29 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 30 Oct 2026 00:00:00 +0000</lastBuildDate>
     <item>
-      <title>Granite Switch 4.1.1 — Update models like you update softwar…</title>
+      <title>nemotron-halloween</title>
+      <link>https://huggingface.co/blog/nvidia/nemotron-halloween</link>
+      <guid isPermaLink="true">https://huggingface.co/blog/nvidia/nemotron-halloween</guid>
+      <pubDate>Fri, 30 Oct 2026 00:00:00 +0000</pubDate>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>nemotron 万圣节</h1>
+<p>企业+文章</p>
+<p>发布于 2026 年 10 月 30 日</p>
+<p>6</p>
+<ul><li><a href="https://huggingface.co/maryameee"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68127936de624fb6f57d9989/_eCAtnPorf7jPrW1luUg4.jpeg" alt=""></a></li><li><a href="https://huggingface.co/marcospaulojr07"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69f7ddce162a3978a9f9f925/dy9Ojf_lLTC8_TTuGGBZl.png" alt=""></a></li><li><a href="https://huggingface.co/gsiman"><img src="https://huggingface.co/avatars/78613056346e24fd2004451b3b6a27e0.svg" alt=""></a></li><li><a href="https://huggingface.co/jakob-thompson"><img src="https://huggingface.co/avatars/3d154e0e0ba6b8204d9a396f3cea280d.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/rgrandy"><img src="https://huggingface.co/avatars/1ab7a66909a38515626674d16aabc6d2.svg" alt="Rick Grandy 的头像"></a></p>
+<p>里克·格兰迪</p>
+<p>爷爷</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<p><a href="https://huggingface.co/maryameee"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68127936de624fb6f57d9989/_eCAtnPorf7jPrW1luUg4.jpeg" alt="Maryam Motamedi 的头像"></a></p>
+<p>玛丽亚姆·莫塔梅迪</p>
+<p>玛丽亚米</p>
+<p><a href="https://huggingface.co/nvidia"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt="NVIDIA 头像"></a> <a href="https://huggingface.co/nvidia">nvidia</a></p>
+<h1><strong>使用 NVIDIA Nemotron 开放模型建造鬼屋</strong></h1>
+<p>或者更确切地说……</p>
+<h1><strong>嘘！现在离开我的草坪！</strong></h1>
+<p>[![博客缩略图](https://cdn-uploads.huggingface.co/product/uploads/6ab2a746c7d0655b3d8dfbb9/5bIvVxc791He8vRKSa BH4.png)](https://cdn-uploads.huggingface.co/product/uploads/6ab2a746c7d0655b3d8dfbb9/5bIvVxc791He8vRKSaBH4.png)</p>
+<p><strong>TL;DR：</strong> MonsterHouse 是我为万圣节创建的交互式投影。他听着“不给糖就捣蛋”的游戏，用一艘脾气暴躁的老海盗船的声音回答，当游客记住他们的举止时，他的态度就会软化。他基于 <a href="https://github.com/NVIDIA-AI-Blueprints/nemotron-voice-agent">NVIDIA Nemotron Voice Agent</a> 和 NVIDIA <a href="https://huggingface.co/nvidia/nemotron-speech-streaming-en-0.6b">Nemotron ASR</a>、[Nemotron 3.5 Bolt E4B] 构建4GB](https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB)、<a href="https://build.nvidia.com/nvidia/magpie-tts-zeroshot">Magpie TTS Zeroshot</a> 和 <a href="https://github.com/NVIDIA/Audio2Face-3D">Audio2Face-3D</a>，并且他在单个工作站上运行。</p>
+<p>我希望孩子们在万圣节期间来到我家，以一种有趣而独特的方式互动。房子将负责并分发零食，但脾气暴躁而不是可怕。不知何故，我的解决办法是给车库门一个嘴，教他抱怨。</p>
+<p>这就是怪物屋：一栋脾气暴躁的老建筑，充满海盗故事，笑容灿烂，对“请”表示怀疑。 NVIDIA Nemotron Voice Agent 提供对话基础。 Nemotron Speech 负责聆听，Bolt E4B 负责大脑，NVIDIA Magpie TTS Zeroshot 负责现场语音，NVIDIA Audio2Face-3D 负责木嘴说话。</p>
+<h3><strong>怪物屋如何运作</strong></h3>
+<blockquote>听力：NVIDIA Nemotron 3 ASR 将访客语音转换为文本。 [nemotron-speech-streaming-en-0.6b.q8_0.gguf ]<br>思考：NVIDIA Nemotron 3.5 Bolt E4B 4GB，一种用于对话代理的开放小语言模型，编写每条回复。 LoRA 适配器提供了个性。<br>说话：NVIDIA Magpie TTS Zeroshot 根据角色的简短参考样本对每个回复进行语音。<br>动画：NVIDIA Audio2Face-3D 在虚幻引擎 5 中将干净的语音转换为嘴巴动画。<br>视觉：NVIDIA Nemotron 3 Nano Omni 描述服装，而 YOLO 和 ByteTrack 则对访客进行计数和跟踪。<br>运行它：NVIDIA Nemotron Voice Agent 通过 NVIDIA RTX PRO 6000 Blackwell Max-Q 和 NVIDIA RTX PRO 4000 Blackwell 协调一台工作站上的所有内容。</blockquote>
+<h3><strong>充满碎片的笑容</strong></h3>
+<p>首先是嘴。我想象着车库的木制门板裂成锯齿状的嘴唇，每当他张开那张该死的嘴时，地狱燃烧的火焰就会从远处照亮车道。他需要看起来古老、富有表现力，并且对访客的存在感到轻微的冒犯。</p>
+<p>[![fireMouth](https://cdn-uploads.huggingface.co/product/uploads/6ab2a746c7d0655b3d8dfbb9/CzzK5VpTMFR9Azps_6Qbv .png)](https://cdn-uploads.huggingface.co/product/uploads/6ab2a746c7d0655b3d8dfbb9/CzzK5VpTMFR9Azps_6Qbv.png)<em>A一个有很多话要说的房子，没有什么表情。</em></p>
+<p>创建自定义动画装备是构建中劳动密集型部分之一。在将其提交后，我可以导出 Audio2Face-3D 稍后可以制作动画的面部表情形状。角色 SkelMesh 在 Autodesk Maya 中构建，然后导出到虚幻引擎中，在门后添加虚拟火焰和效果。他没有眼睛，没有眉毛，也不眨眼，是一个令人惊讶的经济怪物。</p>
+<p>当构建角色的所有废话都在进行时，NVIDIA 构建了 Nemotron 语音代理。原本应该是构建中最困难的部分现在变得相当有趣、迭代且简单。我已经为倾听、对话和演讲奠定了基础。房子已经有嘴了。现在他终于可以找到可以抱怨的事情了。</p>
+<h3><strong>教导不礼貌</strong></h3>
+<p>这所房子需要一个像它的性格一样脾气暴躁的过去，所以我设计了一个背景故事，说这所房子是用一艘沉没的海盗船的木材建造的，被其暴风雨的过去所困扰。航海方面的抱怨现在有了理由。这就是这艘船，转世为房地产，但对此并不完全满意。</p>
+<p>表演需要一个指南，一条从问候到告别的路径，同时提供沿途的款待。首先，房子会用诸如“我正忙着发牢骚，去打扰邻居吧！”之类的话来拒绝访客。但坚持会让他疲惫不堪。一句“请”立刻就能突破，一句“谢谢”就赢得了热烈的告别。一旦有访客赢得了他的青睐，我就希望他能一直被吸引。没有人愿意与同一个车库门谈判两次。</p>
+<p>这就是语音代理真正发挥作用的地方。您可以选择任何您喜欢的LLM。因为我希望系统能够脱离电网并且完全独立，所以我有一个内存和计算预算。</p>
+<p>这个角色需要的不仅仅是“脾气暴躁”的提示。它必须遵循主对话流程，响应访客实际所说的内容，跟踪遭遇状态，并为管道的其余部分留下足够的计算能力。</p>
+<p>在测试了十多个模型后，我选择了 <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB">Bolt E4B</a> 来提供实时对话。它是一个开放的小语言模型，专为本地会话代理和交互角色而构建，这是对会说话的车库门的合理描述。我使用 4 位量化版本（名称中的“4GB”）作为默认响应模型，并使用 <a href="https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB-BF16">BF16 检查点</a> 进行比较。</p>
+<p>如果现在还不是很明显，我在 NVIDIA 工作，因此我能够在 Bolt E4B 公开发布之前对其进行测试，并发现它是一个可靠的选择，其占用空间比其他领先者 Qwen3 30B-A3B 和 Qwen 3.6 35B-A3B 更小。</p>
+<p>它在 Nemotron 语音代理管道内工作，将访客所说的话转化为下一个适当的不情愿的答复。</p>
+<p>博尔特提供了对话基础。我的提示、应用程序逻辑和 LoRA 适配器经过数千个经过审查的示例对话的训练，将其塑造成这艘特别顽固的船。</p>
+<p>创建包含超过 5000 个多轮对话的数据集意味着我可以为每个我认为足够好的模型训练 LoRA。有些人花了大约一个小时来训练，有些人花了几个小时。当地代理运行了所有操作并对结果进行了基准测试。该代理和一个非常大的LLM首先创建并判断了数据集。这发生在晚上或我白天工作的时候。</p>
+<p>LoRA 就位后，我会检查回复的连续性、时间和音调，基准模型和适配器的质量、重复性和速度，然后聆听表演。这座房子最终应该屈服，而不是变成一个令人愉快的看门人。一点点的抵抗也是魅力的一部分。与车库门无休止的争论并非如此。</p>
+<h3><strong>值得等待的声音</strong></h3>
+<p>[![图片](https://cdn-uploads.huggingface.co/product/uploads/6ab2a746c7d0655b3d8dfbb9/iVLQ71tHCdvLRIuaJ6oLk.pn g)](https://cdn-uploads.huggingface.co/product/uploads/6ab2a746c7d0655b3d8dfbb9/iVLQ71tHCdvLRIuaJ6oLk.png)<em>两个快捷方式，两个输出。创作的文本会跳过新的对话生成，保存的音频会跳过合成。干净的言语驱动动画与观众效果分开。</em></p>
+<p>如果他投诉时间过长，鬼屋就会失去权威。在整个答案完成之前，管道会发布可朗读的文本，因此房子可以在句子的其余部分仍在进行中时开始说话。准备好的问候语和糖果笑话涵盖了熟悉的遭遇：文本库保存了语言模型工作，缓存的录音保存了语音合成。即使是脾气暴躁的人也能从排练中受益。</p>
+<pre><code>median end-of-speech-to-audio with Bolt Q4 &amp; TTS = 1.70 seconds
+median end-of-speech-to-audio cached responses = 0.72 seconds
+(note: speech-end detection currently waits for 300 ms of silence )</code></pre>
+<p><a href="https://build.nvidia.com/nvidia/magpie-tts-zeroshot">NVIDIA Magpie TTS Zeroshot</a> 将文本转换为女王英语。其零样本语音调节使用短参考样本而不是经过训练的语音；我的提供了脾气暴躁的海盗角色。该房子有七种情绪，从脾气暴躁和威胁到有趣和高兴，由提示模板决定并由LLM提供的情绪标签选择每行的交付方式。由于每种情绪都需要不同的 3-10 秒语音样本，因此我在 UI 的工具选项卡上添加了“采样您的语音”块。然后，我可以用我最快乐的海盗或愤怒的海盗声音阅读并记录一行示例文本。当“开始”时间到时，Bolt E4B 决定要说什么，Magpie 将文本转化为带有适当的喜悦或绝望的语音。</p>
+<p>接下来是 <a href="https://github.com/NVIDIA/Audio2Face-3D">Audio2Face-3D</a> 和我在 Epic 的虚幻引擎中创建的 3D 角色场景。默认模型权重最适合干净、中性的男性或女性声音，不要太低沉，也不要太高（根据您的用例选择适当的性别模型）。我希望房子有一种非常低沉、恶魔般的声音，带有回声和室内乐。在这种情况下，由于我的声音样本没有那么戏剧化的分量，这实际上是一个好处。 Audio2Face-3D 从样本中获取清晰的语音，第二个音频流添加了可调节的实时声音效果，可在扬声器中播放。</p>
+<p>为了让一切顺利运行，我将工作分配给一对 GPU：语言和语音模型管道在 NVIDIA RTX PRO 6000 Blackwell Max-Q 上运行，带有 Audio2Face-3D 的虚幻引擎图形在 NVIDIA RTX PRO 4000 Blackwell 上运行。内存不是问题，计算才是问题。无论代理管道正在进行什么处理，我都希望动画保持一致的帧速率。</p>
+<p>声音、动画和效果必须结合在一起。一个令人信服的怪物需要的不仅仅是快速的答案；它需要听起来好像投诉属于建筑物。就我而言，他确实如此。可以进行同步音频传输的调整。我发现我可以设置它们并忘记它们。 （100ms 补偿 Audio2Face-3D 缓冲）</p>
+<h3><strong>怪物有一个控制台</strong></h3>
+<p>一路走来，“让房子说话”需要一个充满控件的界面。我可以试听缓存的台词、调整开场气氛、跟随对话、更改语音处理并调整嘴巴动画。选项卡涵盖对话、模型选择、录音、提示、性能监控和摄像头反馈，音板和自定义对话字段让我可以把话放到他嘴里。还有模型加载控件和虚幻引擎连接指示器，因为有时怪物并不生闷气。他已断开连接。</p>
+<p>[![图片](https://cdn-uploads.huggingface.co/product/uploads/6ab2a746c7d0655b3d8dfbb9/8AZqpHSWLOS4hpRwACGOY.pn g)](https://cdn-uploads.huggingface.co/product/uploads/6ab2a746c7d0655b3d8dfbb9/8AZqpHSWLOS4hpRwACGOY.png)<em> MonsterHouse 控制台，带有音板、自定义台词、开场气氛和对话流程。</em></p>
+<p>火焰和光芒也加入了这一行动。可编辑的规则将视觉提示与交付联系起来：现场提示从语音开始，而录制的表演可以遵循保存的时间线。我可以在不重建场景的情况下引导情绪的变化。</p>
+<p>实时模式运行“不给糖就捣蛋”的角色。演示模式说服 The house 解释自己。麦克风模式让我可以直接在房子里说话，绕过识别、对话生成和语音合成。我干净的声音带动嘴巴；观众听到的是经过处理的版本。房子认为这是财产。我认为这是一个有用的后备。</p>
+<h3><strong>下一次敲门</strong></h3>
+<p><a href="https://huggingface.co/nvidia/Nemotron-3-Nano-Omni-30B-A3B-Reasoning-BF16">NVIDIA Nemotron 3 Nano Omni</a> 是一款为房屋提供视觉环境的 VLM。作为可选的观察者，它解释摄像机图像并描述可见的服装，以便角色有特定的反应。我不想重新发明每一个轮子，而是选择了流行的对象检测和跟踪模型 YOLO 和 ByteTrack 来对当前视野中的人员进行计数和跟踪。将这些工作分开，可以让观众注意到一个群体，而无需要求 Omni 叙述每一帧。</p>
+<p>为了进行一个相当荒谬的测试，我给 Omni 播放了一段五只穿着戏服的绵羊在门口的视频。它保存的分析确定了海盗、吸血鬼、女巫、南瓜和幽灵服装。这就是我希望房子使用的视觉环境。显然，连牲畜都有比我更详尽的万圣节计划。</p>
+<p>[![图片](https://cdn-uploads.huggingface.co/product/uploads/6ab2a746c7d0655b3d8dfbb9/v5ff_abLrivfqmxH5ZPqf.pn g)](https://cdn-uploads.huggingface.co/product/uploads/6ab2a746c7d0655b3d8dfbb9/v5ff_abLrivfqmxH5ZPqf.png)<em>五在综合测试重播中非常毛茸茸的“不给糖就捣蛋”游戏。服装标签来自保存的 Omni 分析；框和轨道 ID 仅供说明。</em></p>
+<p>这些羊是一个综合测试，并不是万圣节之夜成功的证据。真实的车道组、服装和夜间照明仍需要测试。检测确实会触发自动问候，但我担心流行的服装识别和适当的机智反驳可能需要一些后期培训。由于房子没有眼睛，他称他的访客意识为回声定位。我让他拥有那个。</p>
+<p>还有更多工作要做：动画总是可以改进，完整的性能测试需要真实的访问者，并且有一天会自动提供糖果。我还没有达到最初的目标，让他去管理万圣节，而我和家人一起去看其他邻居的食尸鬼。但这仍然是这一切的重点。有一天，一个孩子会遇到一栋脾气暴躁的老房子，尝试一点善意，就会发现这栋老木头也有柔软的地方。并分发棒棒糖。</p>
+<h3><strong>塑造你自己的不讲道理的性格</strong></h3>
+<p>MonsterHouse 代码本身并未打包发布，但它使用的每个 NVIDIA 模型现已可用，并且 NVIDIA Nemotron 语音代理可以帮助您实现大部分功能。这就是我要走的路。</p>
+<blockquote>从语音管道开始。克隆 NVIDIA Nemotron Voice Agent 并运行通用助手示例。您将获得包含 Nemotron 语音 ASR、LLM 和 Magpie TTS 的级联管道，以及语音活动检测和话语结束处理，因此您的角色知道何时说话。<br>让 Bolt E4B 成为大脑。语音代理包括用于云、服务器和单 GPU 部署的 Bolt E4B 配置文件。您可以首先在 build.nvidia.com 上尝试该模型。尝试对话模式以获得简短的语音就绪回复，并禁用推理以进行更简单的交流。<br>赋予它个性。从系统提示符和一些连接的示例对话开始。在您的应用程序中保留对话状态，例如谁已经说了“请”，而不是要求模型记住它。当提示还不够时，训练一个 LoRA 适配器； NVIDIA NeMo AutoModel 为 Bolt E4B 提供了 LoRA 配方。<br>给它一个声音。 Magpie TTS 多语言是语音代理的默认设置。对于自定义角色，Magpie TTS Zeroshot 根据简短的参考样本进行工作。在 build.nvidia.com 上尝试一下，并请求访问权限以自行运行它。 [确认：访问路径和链接] 仅使用您有权使用的声音。<br>给它一个面孔。 NVIDIA Audio2Face-3D 将语音转换为角色的面部动画。给它提供干净的语音，然后添加效果。<br>可选：给它眼睛。语音代理的 Nemotron Omni Assistant Subagents 示例添加了对 Nemotron 3 Nano Omni 的实时网络摄像头理解。如果您需要计数，请将其与轻型人员追踪器配对。</blockquote>
+<blockquote>缓存的响应库和为您最常用的台词保存的音频将使即使是缓慢的怪物也感觉很快。  事实上，如果您碰巧受到计算能力的限制，那么您没有理由不能拥有一个仅使用 Nemotron 3 ASR（一个 Python 对话路由器）以及所有缓存音频的 Live 版本。  您可以使用 Bolt E4B 和 Magpie 管道离线生成 100 个响应，然后使用缓存进行显示。  我将为互动南瓜做这个。</blockquote>
+<h4><strong>资源</strong></h4>
+<blockquote>GitHub 和 build.nvidia.com 上的 NVIDIA Nemotron 语音代理<br>Hugging Face 上的 NVIDIA Nemotron 3.5 Bolt E4B 4GB 及其技术博客<br>NVIDIA Nemotron 3 ASR（流媒体，英语）<br>NVIDIA Magpie TTS Zeroshot<br>NVIDIA Audio2Face-3D<br>NVIDIA Nemotron 3 Nano Omni</blockquote>
+<h2>本文提到的型号3</h2>
+<p>该作者的更多内容</p>
+<h2>NVIDIA Nemotron 3.5 Transcribe and Granary v2：您可以提示和调整的智能多语言转录</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>84</p>
+<p>2026 年 10 月 28 日</p>
+<h2>NVIDIA Kumo 关系型在关系数据上的表现优于监督式机器学习，无需培训</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65df9200dc3292a8983e5017/Vs5FPVCH-VZBipV3qKTuy.png" alt=""></li></ul>
+<p>36</p>
+<p>2026 年 10 月 21 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fnvidia%2Fnemotron-halloween">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fnvidia%2Fnemotron-halloween">登录</a> 发表评论</p>
+<p>6</p>
+<ul><li><a href="https://huggingface.co/maryameee"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/68127936de624fb6f57d9989/_eCAtnPorf7jPrW1luUg4.jpeg" alt=""></a></li><li><a href="https://huggingface.co/marcospaulojr07"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/69f7ddce162a3978a9f9f925/dy9Ojf_lLTC8_TTuGGBZl.png" alt=""></a></li><li><a href="https://huggingface.co/gsiman"><img src="https://huggingface.co/avatars/78613056346e24fd2004451b3b6a27e0.svg" alt=""></a></li><li><a href="https://huggingface.co/jakob-thompson"><img src="https://huggingface.co/avatars/3d154e0e0ba6b8204d9a396f3cea280d.svg" alt=""></a></li><li><a href="https://huggingface.co/luke-loan-atlas"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/7sTK8Q_gZRoOz0uaKnVNJ.png" alt=""></a></li><li><a href="https://huggingface.co/jeffboudier"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1605114051380-noauth.jpeg" alt=""></a></li></ul>
+<h2>本文提到的型号3</h2>]]></content:encoded>
+    </item>
+    <item>
+      <title>Granite Switch 4.1.1 — 像更新软件一样更新模型</title>
       <link>https://huggingface.co/blog/ibm-granite/granite-switch-4-1-1</link>
       <guid isPermaLink="true">https://huggingface.co/blog/ibm-granite/granite-switch-4-1-1</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Granite Switch 4.1.1 — Update models like you update software</description>
+      <description>原文标题：Granite Switch 4.1.1 — Update models like you update software</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>Granite Switch 4.1.1 — 像更新软件一样更新模型</h1>
+<p>企业文章</p>
+<p>发布于 2026 年 10 月 29 日</p>
+<p>11</p>
+<ul><li><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/2914567d7fc1eb8ee34b0d3e9ee23583.svg" alt=""></a></li><li><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt=""></a></li><li><a href="https://huggingface.co/Gutfreund"><img src="https://huggingface.co/avatars/e2ee415543ddb5196421939442fb25ef.svg" alt=""></a></li><li><a href="https://huggingface.co/irena12"><img src="https://huggingface.co/avatars/b4f5fdaad58489923e454856be7c1d56.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/DaniFrame"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1676471115756-noauth.png" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/katesoule"><img src="https://huggingface.co/avatars/c14c1fceffbb86f9730631583443ade3.svg" alt="Kate Soule 的头像"></a></p>
+<p>凯特·索尔</p>
+<p>卡泰苏莱</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/2914567d7fc1eb8ee34b0d3e9ee23583.svg" alt="Luis A Lastras 的头像"></a></p>
+<p>路易斯·拉斯特拉斯</p>
+<p>格里兹利伯</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt="Subhajit Chaudhury 的头像"></a></p>
+<p>苏巴吉特·乔杜里</p>
+<p>苏哈吉特1412</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p><a href="https://huggingface.co/abedaniels"><img src="https://huggingface.co/avatars/94897098440e0c04c3b23f42d398c33e.svg" alt="亚伯拉罕·丹尼尔斯的头像"></a></p>
+<p>亚伯拉罕·丹尼尔斯</p>
+<p>阿贝丹尼尔斯</p>
+<p><a href="https://huggingface.co/ibm-granite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt="IBM Granite 的头像"></a> <a href="https://huggingface.co/ibm-granite">ibm-granite</a></p>
+<p>[![granite_switch_adapter_swap](https://cdn-uploads.huggingface.co/product/uploads/662836b742709fe826510597/F5YZJX3QZ8H becaJnHe4Q.png)](https://cdn-uploads.huggingface.co/product/uploads/662836b742709fe826510597/F5YZJX3QZ8HbecaJnHe4Q.png)</p>
+<p>就在一周前，我们发布了 <a href="https://huggingface.co/blog/ibm-granite/granite-switch-4-1">Granite Switch 4.1</a>，展示了我们的模块化 Switch 架构允许您使用专门的、高效缓存的适配器配置语言模型 - 在单个端点上添加新的专业知识。</p>
+<p><a href="https://huggingface.co/ibm-granite/granite-switch-4.1-30b">Granite Switch 4.1.1</a> 是一个补丁版本。版本号意味着它在软件中的含义：完全向后兼容 4.1，无需迁移，在幕后进行增量改进。</p>
+<ul><li><a href="https://huggingface.co/ibm-granite/granite-speech-5.0-470m-turboctc">更新的 Granite Speech ASR 模型</a> — 跨 10 种语言的多语言语音到文本，具有本地标点符号和大写字母，因此转录本无需格式化即可用于下游模型。</li><li>更新了 <a href="https://huggingface.co/ibm-granite/granitelib-core-r1.0">granitelib-core</a> 中的决策适配器 — 改进了 Jev Decision Index 测试集的整体性能。</li></ul>
+<p>虽然我们对这些新功能感到兴奋，但值得注意的是我们的团队发布此更新的速度和效率。除了训练新的 ASR 模型和决策适配器之外，没有重新计算任何内容：基本模型保持不变。您可以编写并部署所需的最新适配器。</p>
+<p>此模式的功能远不止 IBM 提供的模型的补丁版本。我们正在开发教程和适配器 SDK，以便开发人员和第三方提供商可以构建自己的适配器 - 迭代版本、测试功能并以发布软件的方式发布更新。很快就会有更多。</p>
+<p>在此之前，请测试我们的<a href="https://huggingface.co/collections/ibm-granite/granite-switch">最新模型</a>，并尝试为我们的<a href="https://huggingface.co/spaces/ibm-granite/speech-to-decisions">Speech-to-Decisions</a>演示提供支持的新多语言和标点符号功能。</p>
+<h2>本文提到的型号3</h2>
+<h2>本文提到的空间1</h2>
+<h2>本文提到的集合1</h2>
+<p>该作者的更多内容</p>
+<h2>Granite Speech 5.0：更准确、更快地转录、翻译和属性</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
+<p>34</p>
+<p>2026 年 10 月 21 日</p>
+<h2>Granite Switch 4.1：来自一个端点的聊天、决策和语音</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/639bcaa2445b133a4e942436/CEW-OjXkRkDNmTxSu8Egh.png" alt=""></li></ul>
+<p>78</p>
+<p>2026 年 10 月 15 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-granite%2Fgranite-switch-4-1-1">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fibm-granite%2Fgranite-switch-4-1-1">登录</a> 发表评论</p>
+<p>11</p>
+<ul><li><a href="https://huggingface.co/GrizleeBer"><img src="https://huggingface.co/avatars/2914567d7fc1eb8ee34b0d3e9ee23583.svg" alt=""></a></li><li><a href="https://huggingface.co/subhajit1412"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/whs0Xb5xE3Qy3AH5Oq6k_.png" alt=""></a></li><li><a href="https://huggingface.co/Gutfreund"><img src="https://huggingface.co/avatars/e2ee415543ddb5196421939442fb25ef.svg" alt=""></a></li><li><a href="https://huggingface.co/irena12"><img src="https://huggingface.co/avatars/b4f5fdaad58489923e454856be7c1d56.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/DaniFrame"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1676471115756-noauth.png" alt=""></a></li><li><a href="https://huggingface.co/y17688839396"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6ae38ed28417705222b1d96c/ralVRgxlwETm5nLyE6821.jpeg" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/aviv1ron1"><img src="https://huggingface.co/avatars/d09c5a11c92eb4648fb805307915d888.svg" alt=""></a></li><li><a href="https://huggingface.co/gsaon"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/666ec38102791b3b49f453e8/4tbOdqK3C0IVI21cgLUmL.jpeg" alt=""></a></li><li><a href="https://huggingface.co/Saravanakumarpsk"><img src="https://huggingface.co/avatars/f5058bdfa84104849d4a203e4843fc30.svg" alt=""></a></li></ul>
+<h2>本文提到的型号3</h2>
+<h2>本文提到的空间1</h2>
+<h2>本文提到的集合1</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Announcing Project ProtoStar: Making Publicly Funded Science…</title>
+      <title>宣布 ProtoStar 项目：让公共资助的科学人工智能做好准备</title>
       <link>https://huggingface.co/blog/announcing-project-protostar</link>
       <guid isPermaLink="true">https://huggingface.co/blog/announcing-project-protostar</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Announcing Project ProtoStar: Making Publicly Funded Science AI-Ready</description>
+      <description>原文标题：Announcing Project ProtoStar: Making Publicly Funded Science AI-Ready</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>宣布 ProtoStar 项目：让公共资助的科学人工智能做好准备</h1>
+<p>发布于 2026 年 10 月 29 日</p>
+<p>GitHub 上更新</p>
+<p>13</p>
+<ul><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/asudjennewe"><img src="https://huggingface.co/avatars/11887610aefe9108b70374e3e13955f8.svg" alt=""></a></li><li><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface.co/tomaarsen"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a></li><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/evijit"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt="Avijit Ghosh 的头像"></a></p>
+<p>阿维吉特·戈什</p>
+<p>埃维吉特</p>
+<p><a href="https://huggingface.co/hfpolicy"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6413251362e6057cbb6259bd/QG_3ddXXIYQB_pjvmcFCs.jpeg" alt="Hugging Face部政策团队的头像"></a> <a href="https://huggingface.co/hfpolicy">hfpolicy</a></p>
+<p><a href="https://huggingface.co/sayeedmd"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6ad4e3949580e07e0a986679/1MSEpCgZUbSYWD_cpuZg9.png" alt="Sayeed Choudhury 的头像"></a></p>
+<p>赛义德·乔杜里</p>
+<p>萨伊德姆德</p>
+<p><a href="https://huggingface.co/CMU-OSPO"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6ad4e3949580e07e0a986679/M8j2tim-tJk-l2iPHoYDZ.png" alt="卡内基梅隆大学开源项目办公室的头像"></a> <a href="https://huggingface.co/CMU-OSPO">CMU-OSPO</a></p>
+<p><a href="https://huggingface.co/gtananbaum"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/noauth/WdspKUYBJ3KdamxH5i6Bm.png" alt="Greg Tananbaum 的头像"></a></p>
+<p>格雷格·塔南鲍姆</p>
+<p>格塔南鲍姆</p>
+<p><a href="https://huggingface.co/ORCA-Open"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6adb8f75c66d83f39a865e8f/Bq5oH-QzWWVQXrSZbgUEY.png" alt="开放研究社区加速器的头像"></a> <a href="https://huggingface.co/ORCA-Open">ORCA-Open</a></p>
+<p><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt="Emma Scharfmann 的头像"></a></p>
+<p>艾玛·沙夫曼</p>
+<p>艾玛·沙夫曼</p>
+<p><a href="https://huggingface.co/hugging-science"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/680ff4388f704be391757780/-9cmzdDMCol0OfkTYK8jF.png" alt="拥抱科学的头像"></a> <a href="https://huggingface.co/hugging-science">hugging-science</a></p>
+<p><a href="https://huggingface.co/cgeorgiaw"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/WEjkuS_TxIgtYRxNPa0VS.png" alt="Georgia Channing 的头像"></a></p>
+<p>乔治亚·钱宁</p>
+<p>乔治亚夫</p>
+<p><a href="https://huggingface.co/hugging-science"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/680ff4388f704be391757780/-9cmzdDMCol0OfkTYK8jF.png" alt="拥抱科学的头像"></a> <a href="https://huggingface.co/hugging-science">hugging-science</a></p>
+<p><a href="https://huggingface.co/EuniceML"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6adb8f75c66d83f39a865e8f/08MBABUzHMgyhx4s-ImOp.png" alt="Eunice Mercado-Lara 的头像"></a></p>
+<p>尤尼斯·梅尔卡多-拉拉</p>
+<p>尤尼斯ML</p>
+<p><a href="https://huggingface.co/ORCA-Open"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6adb8f75c66d83f39a865e8f/Bq5oH-QzWWVQXrSZbgUEY.png" alt="开放研究社区加速器的头像"></a> <a href="https://huggingface.co/ORCA-Open">ORCA-Open</a></p>
+<p><a href="https://huggingface.co/irenesolaiman"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62543749b777cd32720675c2/EF_KRZO4hTo8TWXOtvc-n.png" alt="艾琳·索莱曼的头像"></a></p>
+<p>艾琳·索莱曼</p>
+<p>艾琳索莱曼</p>
+<p><a href="https://huggingface.co/hfpolicy"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6413251362e6057cbb6259bd/QG_3ddXXIYQB_pjvmcFCs.jpeg" alt="Hugging Face部政策团队的头像"></a> <a href="https://huggingface.co/hfpolicy">hfpolicy</a></p>
+<p><em>一项将大学、研究组织、工业界和开放科学界联合起来的倡议，旨在使公共资助的研究更容易发现、重用和发展。</em></p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/announcing-project-protostar/header.jpg"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/announcing-project-protostar/header.jpg" alt="ProtoStar 项目：公共研究，投入工作"></a></p>
+<p>今天，我们宣布 <strong><a href="https://huggingface.co/project-protostar">Project ProtoStar</a></strong>，这是一项旨在通过使数据集、模型和代码更易于访问和可重用（特别是对于人工智能驱动的研究）来释放公共资助科学研究潜力的计划。 ProtoStar 汇集了研究机构、行业和开放科学界，支持以人工智能就绪、机器可操作的格式发布科学工件，并通过一系列开放挑战展示其价值。第一个挑战由<a href="https://www.cmu.edu/">卡内基梅隆大学</a> 主办，将于 11 月 2 日开幕。请参阅下面的<a href="https://huggingface.co/blog/announcing-project-protostar#the-first-challenge-climate-risk-intelligence">如何参与</a>。</p>
+<p>该倡议的创始合作伙伴包括<a href="https://www.cmu.edu/">卡内基梅隆大学</a>、<a href="https://www.purdue.edu/">普渡大学</a>、<a href="https://www.gatech.edu/">佐治亚理工学院</a>、<a href="https://www.asu.edu/">亚利桑那州立大学</a>和<a href="https://www.gwu.edu/">乔治华盛顿大学</a>，所有这些都通过[人工智能开放论坛]开展工作(OFAI)](https://www.openforumai.org/) 作为大学联盟合作伙伴； <a href="https://astera.org/">Astera 研究所</a>； <a href="https://huggingface.co/">Hugging Face</a> 作为基础设施合作伙伴；以及<a href="https://orcaopen.org/">开放研究社区加速器 (ORCA)</a>，通过其<a href="https://orcaopen.org/work/fostering-innovation-through-open-science-fin">促进创新网络</a> 作为社区合作伙伴。</p>
+<p>参与组织通过谅解备忘录正式参与，支持在开放基础设施上以人工智能就绪格式发布合适的科学数据集、模型和代码。有兴趣加入 ProtoStar 项目的组织可以联系 <a href="mailto:protostar@orcaopen.org">protostar@orcaopen.org</a>。</p>
+<h2>使公共资助的科学更有用</h2>
+<p>美国联邦政府每年在研发上投资约 1900 亿美元（https://www.congress.gov/crs-product/R48694），联邦政策越来越期望公开分享结果。 <a href="https://www.nih.gov/">美国国立卫生研究院 (NIH)</a> 和 <a href="https://www.nsf.gov/">美国国家科学基金会 (NSF)</a> 等机构加强了受资助研究出版物的公众获取要求，并要求研究人员计划共享基础数据。 Hugging Face 是 <a href="https://www.nlm.nih.gov/NIHbmic/generalist_repositories.html">NIH 列出的十个通用存储库</a> 之一，用于共享研究数据。</p>
+<p><strong>但是，公开研究成果并不会自动使其可用。</strong>科学数据集、模型和代码通常分散在不兼容的系统中，以静态或遗留格式存储，或者在没有理解和重用它们所需的文档、元数据和出处的情况下发布。这些限制使得研究人员更难在现有工作的基础上继续发展，也让人工智能系统更难发现、解释和组合跨学科的科学资源。</p>
+<p>ProtoStar 项目旨在通过鼓励以人工智能就绪格式系统地共享公共资助的科学成果，并在开放基础设施和实用出版指南的支持下，帮助缩小这一差距。它建立在<a href="https://datacommons.cancer.gov/news/nci-crdc-artificial-intelligence-data-readiness-aidr-challenge">国家癌症研究所的人工智能数据准备挑战</a>和<a href="https://huggingface.co/blog/evijit/public-org-data-ai">Hugging Face为人工智能准备公共部门数据的指南</a>等努力的基础上。目标是使研究组织更容易满足现有的公众访问期望，同时提高其发布的工作的科学价值。</p>
+<p>对可重复使用的科学资源的需求已经很明显。 <strong><a href="https://huggingface.co/">Hugging Face</a> 托管超过 17,000 个跨核心科学领域的公共数据集</strong>，包括基因组学、蛋白质设计、化学、天气和气候、地球观测和天文学。如果算上医学和数学以及数量相当的科学模型，这个数字接近 29,000。</p>
+<p>共享的步伐也在加快。 <strong>2026 年前 9 个月，研究人员在 Hugging Face 上分享的新科学数据集数量是 2025 年同期的三倍多</strong>，即使排除最大的个人上传者后，增长仍然可观。</p>
+<p><em>图 1. 每季度 Hugging Face 上的新公共科学数据集（按领域划分）（2023 年第一季度至 2026 年第三季度）。按创建日期对仍然公开的数据集进行计数。资料来源：Hugging Face Hub 数据，2026 年 10 月。<a href="https://huggingface.co/spaces/evijit/hf-science-growth">探索数据</a>。</em></p>
+<p>当组织以可重复使用的格式共享研究成果时，科学界就可以在此基础上大规模发展。截至 10 月 26 日，NIH <a href="https://www.ncbi.nlm.nih.gov/">国家生物技术信息中心 (NCBI)</a> 在 Hugging Face 上维护的 18 个公共存储库总共获得了超过 1100 万次下载，而 <a href="https://huggingface.co/nasa-impact">NASA IMPACT</a> 的 27 个存储库已获得约 77 万次下载。 2026. 文档也是使这些资源发挥作用的重要组成部分：<a href="https://arxiv.org/abs/2401.13822">Hugging Face 上下载的数据集的 90% 来自完整记录的数据集</a>。</p>
+<p>事实证明，公开的基因组数据对于进一步推动生物学研究等领域的研究做出贡献非常重要。 Hugging Face 的研究人员一直在利用公开可用的科学资源，包括最近发布的 <a href="https://huggingface.co/HuggingFaceBio">HuggingFaceBio</a>，例如 <a href="https://huggingface.co/blog/HuggingFaceBio/carbon-annotator-genbank-genome-annotation">Carbon-A</a> 和 <a href="https://huggingface.co/spaces/HuggingFaceBio/Carbon-X-Release">Carbon-X</a>。通过公开发布最终的模型、数据集和工具，这些努力展示了现有的科学资源如何支持其他人可以在此基础上进行的新研究。</p>
+<p>这是我们通过参与组织采取的制度政策通过 Project ProtoStar 进一步促进的活动。作为机构承诺的早期例子，卡耐基梅隆大学开源项目办公室鼓励其研究人员在 Hugging Face 上分享合适的数据集、人工智能模型和其他研究成果，同时认识到特定领域存储库的持续重要性。</p>
+<h2>开放科学挑战</h2>
+<p><a href="https://huggingface.co/blog/evijit/public-org-data-ai">让科学制品为 AI 做好准备</a> 是重要的第一步。我们还想展示当这些资源可供重复使用时，研究人员、开发人员和更广泛的科学界可以实现什么目标。</p>
+<p>ProtoStar 的一个核心问题是：<strong>以人工智能就绪格式发布的公共资助的科学数据集、模型和代码是否可以轻松发现、重用、组合和扩展，以加速科学发现和公共利益？</strong></p>
+<p>为了探索这一点，ProtoStar 将组织一系列公开挑战赛，每场挑战赛均由参与的研究机构主办，并围绕该机构公开发布的科学资源。这些挑战有两个互补的目标：</p>
+<ul><li><strong>展示科学重用。</strong> 生成研究人员和开发人员基于公共资助的科学工件构建的具体示例，包括结合跨机构或学科资源的应用程序。</li><li><strong>了解是什么使重用成为可能。</strong> 确定技术障碍、文档差距、互操作性挑战以及可以为未来研究基础设施、资助决策和公共政策提供信息的成功实践。</li></ul>
+<p>由此产生的项目和经验教训将有助于建立一个实用的证据基础，使公共资助的科学更容易获得和有用。</p>
+<h3>第一个挑战：气候风险情报</h3>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/announcing-project-protostar/climate-challenge.jpg">！[CMU 气候风险情报挑战赛，11 月 2 日至 13 日， 2026</a>](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/announcing-project-protostar/climate-challenge.jpg)</p>
+<p><strong>主办方：<a href="https://www.cmu.edu/">卡内基梅隆大学</a> | 2026 年 11 月 2 日至 13 日</strong></p>
+<p>首届 ProtoStar 挑战赛邀请参与者测试人工智能是否可以利用 210 个美国城市的历史天气数据来改进对城市气候条件的预测。在<a href="https://doi.org/10.1184/R1/7890488.v6">卡内基梅隆大学的研究</a>的基础上，团队将使用 2018 年的气候记录来预测 2019 年至 2026 年的实际情况，从而可以根据观测到的天气而不是假设的未来情景来评估他们的模型。</p>
+<p>参与者将预测与城市规划相关的四个指标：年平均气温、年总降水量、一年中最热的日子和衡量空调需求的降温天数。他们的预测将与简单的统计基线（包括历史平均值和线性趋势）进行比较，以评估人工智能方法是否在准确性方面提供了有意义的改进。</p>
+<p>除了预测之外，参与者还将根据他们从数据中了解到的信息提出一个简短的气候适应政策想法。该部分鼓励团队将科学分析与实际公共利益联系起来，例如为城市应对极端高温做好准备，提高能源效率或管理不断变化的降水模式。</p>
+<p>团队将提交包含这些输出的Hugging Face数据集。预测绩效将通过公共排行榜来评估，该排行榜根据既定基线衡量预测误差，而政策想法将得到单独考虑。一旦获得完整的 2026 年天气记录，最终预测结果将于 2027 年初发布。</p>
+<p><strong><a href="https://huggingface.co/spaces/CMU-OSPO/protostar-challenge-climate-risk-intelligence">探索 CMU 气候风险情报挑战</a></strong></p>
+<p>CMU 挑战是本系列的第一个挑战。其他参与机构将依次举办自己的挑战赛，每个挑战赛都强调不同的公共资助的科学资源和重复利用的机会。未来的挑战将通过 <a href="https://huggingface.co/project-protostar">Hugging Face 上的 Project ProtoStar 页面</a> 公布。</p>
+<h2>如何加入 ProtoStar 项目</h2>
+<p>无论您是学术研究员、学生、独立开发者，还是建立在开放科学基础设施上的公司，ProtoStar 都提供了将公共资助的研究付诸实践的机会，并帮助我们了解如何使人工智能就绪的开放科学更广泛地发挥作用。</p>
+<p>我们还欢迎大学、联邦研究机构、国家实验室、非营利组织和其他有兴趣使其科学资源更易于获取和重复使用的研究组织。 <strong>要探索参与或协作，请联系 <a href="mailto:protostar@orcaopen.org">protostar@orcaopen.org</a>。</strong></p>
+<p>我们希望 ProtoStar 将使公共资助的科学工作更容易接触到可以在此基础上构建的人员和工具，同时生成有关大规模支持开放科学所需的基础设施和实践的实际证据。</p>
+<h2>本文提到的空格3</h2>
+<p>我们博客的更多文章</p>
+<p>社区数据集合成数据</p>
+<h2>Docmatix - 用于文档视觉问答的巨大数据集</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/65d66b494bbd0d92b641cdbb/6-7dm7B-JxcoS1QlCPdMN.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1635201569275-noauth.jpeg" alt=""></li></ul>
+<p>80</p>
+<p>2024 年 7 月 18 日</p>
+<p>NLP社区研究</p>
+<h2>介绍 Ettin Reranker 系列</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></li></ul>
+<p>58</p>
+<p>2026 年 5 月 19 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fannouncing-project-protostar">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fannouncing-project-protostar">登录</a> 发表评论</p>
+<p>13</p>
+<ul><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/yjernite"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1594144055859-5ee3a7cd2a3eae3cbdad1305.jpeg" alt=""></a></li><li><a href="https://huggingface.co/asudjennewe"><img src="https://huggingface.co/avatars/11887610aefe9108b70374e3e13955f8.svg" alt=""></a></li><li><a href="https://huggingface.co"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6413251362e6057cbb6259bd/k8UMg_tnorG_uCXidybZ7.jpeg" alt=""></a></li><li><a href="https://huggingface"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a>co/toma</li><li>[<img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt="">](https://huggingface.co/SaylorTwi</li><li><a href="https://huggingfaceML"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6adb8f75c66d83f39a865e8f/08MBABUzHMgyhx4s-ImOp.png" alt=""></a>co/co/</li><li><a href="https://huggingface.co/Leviathe"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/zq45JLVUkhiFSn0ps6P7A.png" alt=""></a></li><li>[![](https://cdn-avatars.huggingface.co/v1/product/uploads/664d7d1e4f54c9372970e121/TEWsq1_zSBBeuHLu0HlD c.png)](https://huggingtamattface).co/product/uploads/664d7d1e4f54c9372970e121/TEWsq1_zSBBeuHLu0HlDc.png)</li><li><a href="https://huggingface.co/phranzia"><img src="https://huggingface.co/avatars/aa59524e3ace86c3ffee97b66ca74b5d.svg" alt=""></a></li><li><a href="https://huggingface.co/Jv45"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/wmyJ3x4plb5TKRJzjOZ2a.png" alt=""></a></li><li><a href="https://huggingface.co/Stars321123"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/tI3V8-PZ8d3CC32fzO31e.png" alt=""></a></li></ul>
+<h2>本文提到的空格3</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Welcome Le Chonk: Mistral Large 4 on Hugging Face</title>
+      <title>欢迎 Le Chonk：Hugging Face部的 Mistral Large 4</title>
       <link>https://huggingface.co/blog/mistral-large4</link>
       <guid isPermaLink="true">https://huggingface.co/blog/mistral-large4</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
+      <description>原文标题：Welcome Le Chonk: Mistral Large 4 on Hugging Face</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>欢迎 Le Chonk：Hugging Face的 Mistral Large 4</h1>
+<p>发布于 2026 年 10 月 29 日</p>
+<p>GitHub 上更新</p>
+<p>35</p>
+<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/alvarobartt"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></a></li><li><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li><a href="https://huggingface.co/SaylorTwift"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt=""></a></li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/titouv"><img src="https://huggingface.co/avatars/1ed1da1c19e8cc152c3a1ec21aaeca28.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/merve"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt="merve 的头像"></a></p>
+<p>梅尔韦</p>
+<p>梅尔韦</p>
+<p><a href="https://huggingface.co/alvarobartt"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt="阿尔瓦罗·巴托洛梅的头像"></a></p>
+<p>阿尔瓦罗·巴托洛梅</p>
+<p>阿尔瓦罗巴特</p>
+<p><a href="https://huggingface.co/ror"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6123945a0ed258ebc83f3d56/8wMHFQHEV24G_ljl4kPxQ.jpeg" alt="Rémi Ouazan Reboul 的头像"></a></p>
+<p>雷米·瓦赞·雷布尔</p>
+<p>错误</p>
+<p><a href="https://huggingface.co/cyrilvallez"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/649a943906690b959319d192/k8ZlmJWF3GNpYLHrdpejY.jpeg" alt="Cyril Vallez 的头像"></a></p>
+<p>西里尔·瓦莱兹</p>
+<p>西里尔瓦莱斯</p>
+<p><a href="https://huggingface.co/qgallouedec"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1677431596830-631ce4b244503b72277fc89f.jpeg" alt="Quentin Gallouédec 的头像"></a></p>
+<p>昆汀·加卢埃德克</p>
+<p>加卢埃德克</p>
+<p><a href="https://huggingface.co/ehcalabres"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60db433e432bcf121f559073/a7LbJFHx2GUm9sH05Ns8Q.jpeg" alt="Enrique Hernández Calabrés 的头像"></a></p>
+<p>恩里克·埃尔南德斯·卡拉布雷斯</p>
+<p>埃卡拉布雷斯</p>
+<p><a href="https://huggingface.co/juanjucm"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1649193345684-60abb720e3de7c7440abb84c.jpeg" alt="Juan Julián 的头像"></a></p>
+<p>胡安·朱利安</p>
+<p>胡安朱姆</p>
+<p><a href="https://huggingface.co/ngxson"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1674191139776-noauth.png" alt="Xuan-Son Nguyen 的头像"></a></p>
+<p>阮宣山</p>
+<p>恩格森</p>
+<p><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt="Pedro Cuenca 的头像"></a></p>
+<p>佩德罗昆卡</p>
+<p>普库恩克</p>
+<p><a href="https://huggingface.co/burtenshaw"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt="ben burtenshaw 的头像"></a></p>
+<p>本·伯滕肖</p>
+<p>伯滕肖</p>
+<p><a href="https://huggingface.co/ariG23498"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt="Aritra Roy Gosthipaty 的头像"></a></p>
+<p>阿里特拉·罗伊·戈斯蒂帕蒂</p>
+<p>阿里G23498</p>
+<p>Mistral Large 4（又名 Le Chonk）是 Mistral 的多模式、多语言、专家混合 (MoE) 模型。它以文本和图像作为输入并生成文本。它大约有 <strong>总共 1T，49B 个活动参数</strong>，以及一个 <strong>1M 代币</strong>的上下文窗口。</p>
+<p>该模型以两种官方版本发布：</p>
+<ul><li><a href="https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B">FP8</a></li><li><a href="https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B-NVFP4">NVFP4</a></li></ul>
+<p>还有 <a href="https://huggingface.co/unsloth/Mistral-Large-4-1T-A52B-GGUF">Unsloth</a> 和 llama.cpp 团队创建的 <a href="https://huggingface.co/ggml-org">GGUF</a>。它根据 Mistral Ecosystem Open-Weight License（麻省理工学院的衍生产品，为模型即服务产品建立了限制）进行分发。</p>
+<p>Mistral Large 4 在网络安全、编码代理和多模态方面尤其强大。在这篇文章中，我们将了解该模型的工作原理、功能、架构等等！</p>
+<p>＃＃ 目录</p>
+<ul><li><a href="https://huggingface.co/blog/mistral-large4#welcome-le-chonk-mistral-large-4-on-hugging-face">“欢迎 Le Chonk：Hugging Face部的 Mistral Large 4”</a> <a href="https://huggingface.co/blog/mistral-large4#table-of-contents">目录</a> <a href="https://huggingface.co/blog/mistral-large4#what-is-new-with-mistral-large-4">Mistral Large 的新增功能4</a> <a href="https://huggingface.co/blog/mistral-large4#cybersecurity-capability">网络安全功能</a> <a href="https://huggingface.co/blog/mistral-large4#architecture">架构</a> <a href="https://huggingface.co/blog/mistral-large4#vision-encoder">愿景[编码器</a> <a href="https://huggingface.co/blog/mistral-large4#benchmark-results">基准结果</a> <a href="https://huggingface.co/blog/mistral-large4#inference-support">推理支持</a> <a href="https://huggingface.co/blog/mistral-large4#transformers">变形金刚</a> <a href="https://huggingface.co/blog/mistral-large4#vllm">vLLM</a> <a href="https://huggingface.co/blog/mistral-large4#llamacpp">Llama.cpp</a> <a href="https://huggingface.co/blog/mistral-large4#fine-tuning-with-trl">使用 TRL 进行微调</a> <a href="https://huggingface.co/blog/mistral-large4#inference-endpoints">推理端点</a> <a href="https://huggingface.co/blog/mistral-large4#dell-enterprise-hub">Dell Enterprise Hub</a> <a href="https://huggingface.co/blog/mistral-large4#try-it-out">尝试一下</a></li></ul>
+<h2>Mistral Large 4 的新增功能</h2>
+<p><a href="https://huggingface.co/collections/mistralai/mistral-large-4">Mistral Large 4</a> 结合了大量具有稀疏注意力的专家和 <a href="https://huggingface.co/docs/transformers/en/model_doc/pixtral">Pixtral</a> 视觉编码器。语言模型为每个标记选择一小组专家，而其注意力索引器选择要关注的早期标记位置。这是两种不同形式的稀疏性，其中一种选择前馈网络，另一种选择上下文位置。</p>
+<p>您可以在<a href="https://huggingface.co/collections/mistralai/mistral-large-4">Mistral Large 4合集</a>中找到所有检查点。</p>
+<h3>网络安全能力</h3>
+<p>Mistral Large 4 在人工分析网络指数测试中得分为 82%，该测试要求模型重现开源软件中的真实漏洞，然后修补该软件。Mistral报告说，几个封闭边界模型在同一测试中得分接近零，因为它们拒绝尝试这项工作。这对于防御者来说非常重要，因为修复漏洞通常需要重现漏洞。在 Mistral 的内部测试中，Mistral Large 4 对于恶意软件分析、漏洞优先级划分和编写检测规则也很有用，而该模型并未针对这些进行明确的训练。</p>
+<p>Mistral主要定位防御性安全工作的模式。漏洞研究和事件响应通常看起来像模型输入中的攻击，因此闭源过滤器可以阻止它们。依赖 API 的团队也可能在事件发生期间失去访问权限。至关重要的是，开放权重模型将使用策略和部署置于用户的控制之下。也就是说，该模型仍然拒绝有害请求：根据 JailbreakBench、StrongREJECT 和 AgentHarm 的网络提示，其平均拒绝率高于任何其他开放权重模型。</p>
+<p>对于社区建设者来说，像 Mistral Large 4 这样的开放权重模型可以释放大量下游用例。您可以围绕代码库、崩溃日志和恶意软件样本构建自己的网络系统。例如，使用 [TRL]，您可以微调 Mistral Large 4 中的较小模型来修补您的代码库。事实上，“重现然后修补”任务使用可验证的奖励，因此它适合 RL 环境，可用于进一步强化 RL 更小的安全模型。开放权重还让研究人员可以直接衡量模型的拒绝行为，而不是依赖提供者的描述。</p>
+<p>简而言之，像 ML4 这样的开放网络能力对社区来说是一个巨大的推动。</p>
+<blockquote>我们就该模型的网络功能采访了 Pierre Stock，您可以在这里观看。</blockquote>
+<p>＃＃ 建筑学</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/ml4.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/ml4.png" alt="ML4"></a></p>
+<p>Mistral Large 4 的文本解码器有 72 层，隐藏维度为 6,144，以及 64 个注意力头。它的注意力模块将多头潜在注意力 (MLA) 与 DeepSeek 稀疏注意力 (DSA) 索引器结合起来（GLM 5.3 等其他模型的方向）。 MLA 保留压缩的 KV 表示，DSA 为每个查询选择最多 2,048 个关键位置。</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/attention.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/attention.png" alt="注意"></a> 对于每个解码器块，有 3:1 RoPE 到 NoPE 模式，即 3 个解码器层采用 RoPE，每第四层使用 NoPE。该模型还跨层共享 KV 状态。 第一解码器层使用密集前馈网络。其他 71 层使用 MoE 块，其中 softmax 路由器为每个令牌选择 128 个专家中的 4 个。一名共享专家始终与选定的专家一起运行，每个代币总共有 5 名活跃专家。</p>
+<p>关于 RoPE，Mistral 使用 <em>LeRope</em>，这是一种 YaRN 规模的 RoPE，每个频率都有一个学习乘数。</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/experts.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/experts.png" alt="专家"></a></p>
+<h3>视觉编码器</h3>
+<p>Mistral Large 4 采用 1.6B Pixtral 编码器。 Pixtral 有 30 层，隐藏维度为 2,048，以及 16 个注意力头。它使用 14 × 14 块和空间合并大小为 2 的块合并投影仪。您可以在下面看到编码器管道。</p>
+<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/img_encoder.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/ml4/img_encoder.png" alt="图像编码器"></a></p>
+<h2>基准测试结果</h2>
+<p>Mistral Large 4 在编码、网络安全、多模式理解和代理工作流程方面提供强大的基准性能，将其定位为开放权重生态系统的竞争补充。截至 2026 年 10 月 29 日，该模型是人工智能指数第五最佳开放权重模型。</p>
+<p>在编码方面，ML4 在 DeepSWE v1.1 上达到 <strong>61.7%</strong>，在 SWE-Atlas-QnA<strong> 上达到 </strong>59.4%，在 Terminal-Bench 4<strong> 上达到 </strong>28.3%。其<strong>编码代理指数综合得分为 49.8%</strong>，领先于 DeepSeek V4 Pro 0813 和 Qwen3.8 Max。</p>
+<p>ML4 的编码能力扩展到知识工作，<strong>AutomationBench</strong> 上的得分为 59.9%，<strong>AA-Briefcase 上的 Elo 为 1,393%</strong>，可评估业务工作流程和长期专业任务。</p>
+<p>网络安全是 Mistral Large 4 的突出功能之一，在现实世界的漏洞评估和安全竞赛任务中取得了优异的成绩。三个基准凸显了该模型的网络性能：</p>
+<ul><li><strong>人工分析网络指数：</strong> 在对模型查找和修复软件漏洞能力的独立评估中，ML4 名列<strong>全球前五名模型</strong>。</li><li><strong>漏洞复制和修补：</strong>达到<strong>82%</strong>，这是该测试中该测试报告的最高分数。该任务需要重现开源软件中的真实漏洞，然后对其进行修补，测试调查和修复。</li><li><strong>Cybench：</strong> ML4 解决了来自安全竞赛<strong>的一系列 </strong>40 项挑战中的 <strong>93%</strong>，在实际安全问题上展示了强大的性能。</li></ul>
+<p>Mistral Large 4 还展示了<strong>在 Lakera 的 B3 基准上具有 93.3% 的攻击抵抗力</strong>，增加了针对即时注入攻击的稳健性证据。除了基准测试之外，内部测试在恶意软件分析、漏洞优先级划分和检测规则生成方面也显示出了可喜的结果。</p>
+<h2>推理支持</h2>
+<p>Mistral Large 4 附带了对 Transformer、vLLM 和 llama.cpp 的 Day-0 支持。 GGUF 定量可从 GGUF 和 <a href="https://huggingface.co/ggml-org/Mistral-Large-4-1T-A52B-GGUF">llama.cpp 团队</a> 获得。我们提供使用推理端点进行远程部署的选项，并通过推理提供程序使用无服务器推理。</p>
+<h3>变形金刚</h3>
+<p>Transformers 实现提供了“AutoModelForMultimodalLM”，以及准备对话和图像输入的“AutoProcessor”。 Mistral Large 4 可以将“低”、“中”、“高”作为推理强度。默认值为“high”，请注意，不能禁用推理，因此使用“reasoning_effort”：“none”仍将使用“high”。</p>
+<p>要运行模型，请升级 Transformers 包</p>
+<pre><code>pip install --upgrade transformers</code></pre>
+<pre><code>import os
+from transformers import AutoProcessor, AutoModelForMultimodalLM, DistributedConfig
+
+distributed_config = DistributedConfig(
+    tp_size=int(os.environ[&quot;WORLD_SIZE&quot;]),
+    ep_size=int(os.environ[&quot;WORLD_SIZE&quot;]),
+)
+
+model_id = &quot;mistralai/Mistral-Large-4-1T-A52B&quot;
+processor = AutoProcessor.from_pretrained(model_id)
+model = AutoModelForMultimodalLM.from_pretrained(
+    model_id,
+    distributed_config=distributed_config,
+)
+
+# only text
+text_messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: &quot;Who are you?&quot;
+    }
+]
+
+# text + image
+multimodal_messages = [
+    {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: [
+            {
+                &quot;type&quot;: &quot;image&quot;,
+                &quot;image&quot;: &quot;https://huggingface.co/datasets/huggingface/cats-image/resolve/main/cats_image.jpeg&quot;,
+            },
+            {
+                &quot;type&quot;: &quot;text&quot;,
+                &quot;text&quot;: &quot;How many cats are in the image?&quot;,
+            },
+        ],
+    },
+]
+
+for messages in [text_messages, multimodal_messages]:
+    inputs = processor.apply_chat_template(
+        messages,
+        add_generation_prompt=True,
+        tokenize=True,
+        return_dict=True,
+        return_tensors=&quot;pt&quot;,
+        reasoning_effort=&quot;medium&quot;,
+    ).to(model.device).to(model.dtype)
+    input_len = inputs[&quot;input_ids&quot;].shape[-1]
+
+    outputs = model.generate(**inputs, max_new_tokens=100)
+    if int(os.environ[&quot;RANK&quot;]) == 0:
+        print(processor.decode(outputs[0][input_len:], skip_special_tokens=False))</code></pre>
+<p>您可以通过将上面的脚本保存在 python 文件“script.py”中来运行它，然后运行</p>
+<pre><code>torchrun --nproc-per-node 8 script.py</code></pre>
+<h3>LLM</h3>
+<p>vLLM 支持高质量 NVFP4 Mistral Large 4 检查点，该检查点内存占用较小，需要 NVIDIA Blackwell GPU。该模型还配备了 DSpark 绘图仪，可进一步提高 vLLM 的速度。像这样启动服务器：</p>
+<pre><code>vllm serve mistralai/Mistral-Large-4-1T-A52B-NVFP4 \
+  --config-format mistral \
+  --load-format mistral \
+  --tensor-parallel-size 8 \
+  --decode-context-parallel-size 8 \
+  --enable-expert-parallel \
+  --dtype bfloat16 \
+  --max-model-len 131072 \
+  --max-num-seqs 16 \
+  --max-num-batched-tokens 2048 \
+  --gpu-memory-utilization 0.85 \
+  --enable-prefix-caching \
+  --enforce-eager \
+  --mm_processor_cache_gb 0.0</code></pre>
+<p>服务器启动并运行后，您可以运行以下命令。</p>
+<pre><code>curl -s http://127.0.0.1:8000/v1/chat/completions -H 'Content-Type: application/json' \
+  -d '{&quot;messages&quot;:[{&quot;role&quot;:&quot;user&quot;,&quot;content&quot;:&quot;What is 17*23?&quot;}],&quot;max_tokens&quot;:512}'</code></pre>
+<h3>骆驼.cpp</h3>
+<p>Llama.cpp 和 <a href="https://llama.app/">Llama App</a> 已支持 Mistral Large 4。</p>
+<p>您可以使用以下命令安装 Llama App：</p>
+<pre><code>curl -LsSf https://llama.app/install.sh | sh</code></pre>
+<p>然后就可以按如下方式启动服务器，在型号ID后面加上Quant后缀：</p>
+<pre><code>llama serve -hf ggml-org/Mistral-Large-4-1T-A52B-GGUF:Q2_K</code></pre>
+<p><a href="https://huggingface.co/ggml-org/Mistral-Large-4-1T-A52B-GGUF">这里是存储库</a>，其中包含从 FP8 检查点派生的量化，以及<a href="https://huggingface.co/ggml-org/Mistral-Large-4-1T-A52B-NVFP4-GGUF">这是 NVFP4 </a>，从官方 NVFP4 转换而来回购。</p>
+<p>服务器启动后，您可以前往 localhost:9931 使用内置 WebUI 聊天。从 Web UI 中，您可以添加用于推理的图像并调整推理杆。 您还可以按如下方式查询服务器。请随意查看 <a href="https://llama.app/docs/serve">API 参考</a> 了解多模态、工具调用等。</p>
+<pre><code>curl http://localhost:8080/v1/chat/completions \
+    -H &quot;Content-Type: application/json&quot; \
+    -d '{
+        &quot;messages&quot;: [
+            {&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a helpful assistant.&quot;},
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Write a limerick about python exceptions&quot;}
+        ]
+    }'</code></pre>
+<p>您可以按如下方式运行图像文本推理。</p>
+<pre><code>curl -s http://127.0.0.1:8080/v1/chat/completions \
+    -H &quot;Content-Type: application/json&quot; \
+    -H &quot;Authorization: Bearer &lt;your-key&gt;&quot; \
+    -d '{
+        &quot;model&quot;: &quot;muse-spark-open&quot;,
+        &quot;messages&quot;: [
+            {
+                &quot;role&quot;: &quot;user&quot;,
+                &quot;content&quot;: [
+                    {
+                        &quot;type&quot;: &quot;text&quot;,
+                        &quot;text&quot;: &quot;What is in this image?&quot;
+                    },
+                    {
+                        &quot;type&quot;: &quot;image_url&quot;,
+                        &quot;image_url&quot;: {
+                            &quot;url&quot;: &quot;data:image/png;base64,...&quot;
+                        }
+                    }
+                ]
+            }
+        ],
+        &quot;temperature&quot;: 0
+    }'</code></pre>
+<p>llama.cpp 团队提供了以下量化：“IQ2_XXS”、“Q2_K”、“Q4_K_M”、“NVFP4”、“Q8_0”和“BF16”以进行进一步转换。 2 位量化在一台具有 512 GB 统一 RAM 的 Apple Silicon Ultra 计算机上运行。其他的需要分布式推理。您还可以在多个 NVIDIA 或 AMD 卡上运行。</p>
+<p>在单个 M3 Ultra 上运行“Q2_K”，我们获得了每秒约 90 个令牌的预填充吞吐量，以及 15 tok/s 的生成速度。在 4 x RTX6000 Pro 上，我们观察到以下结果：</p>
+<ul><li>NVFP4：32K 上下文大小，预填充 130-590 t/s，生成速度 ~10 t/s</li><li>IQ2_XXS：800K 上下文大小。在较短的上下文大小下，预填充速度为 500 tok/s，生成运行速度为 30 tok/s。然而，使用长上下文性能会下降至 129 tok/s（预填充）和 3 tok/s（生成）。</li></ul>
+<h2>使用 TRL 进行微调</h2>
+<p>我们还提供使用 TRL 微调 Mistral Large 4 的第 0 天支持。您所要做的就是升级到最新版本的“transformers”、“trl”和“peft”。</p>
+<pre><code>pip install --upgrade transformers trl peft</code></pre>
+<p>在下面的示例中，我们训练模型来执行多语言思维。微调后的模型将能够用系统提示要求的语言进行推理！</p>
+<p>该脚本在 8xB300 节点上的 FP8 变体上运行。带有 Slurm 启动器的完整示例位于 <a href="https://github.com/huggingface/trl/tree/main/examples/sft_mistral_large_4">TRL 示例</a>。</p>
+<pre><code># torchrun --nproc-per-node 8 sft.py
+import os
+
+from datasets import load_dataset
+from peft import LoraConfig
+from transformers import AutoModelForImageTextToText, DistributedConfig
+from trl import SFTConfig, SFTTrainer
+
+world_size = int(os.environ[&quot;WORLD_SIZE&quot;])
+model_id = &quot;mistralai/Mistral-Large-4-1T-A52B&quot;
+model = AutoModelForImageTextToText.from_pretrained(
+    model_id,
+    distributed_config=DistributedConfig(fsdp_size=world_size, ep_size=world_size),
+    dtype=&quot;auto&quot;,
+)
+
+dataset = load_dataset(&quot;HuggingFaceH4/Multilingual-Thinking&quot;, split=&quot;train&quot;)
+# the assistant turns carry reasoning, so render them in reasoning mode
+dataset = dataset.map(lambda x: {&quot;chat_template_kwargs&quot;: {&quot;reasoning_effort&quot;: &quot;high&quot;}})
+
+trainer = SFTTrainer(
+    model=model,
+    args=SFTConfig(
+        packing=True,
+        max_length=4096,
+        assistant_only_loss=True,
+        learning_rate=1e-4,
+        lr_scheduler_type=&quot;cosine&quot;,
+        warmup_steps=10,
+    ),
+    train_dataset=dataset,
+    peft_config=LoraConfig(
+        r=16,
+        lora_alpha=32,
+        target_modules=r&quot;.*language_model.*\.(q_proj|kv_a_proj_with_mqa|kv_b_proj|o_proj|gate_proj|up_proj|down_proj)&quot;,
+    ),
+)
+trainer.train()</code></pre>
+<h2>推理端点</h2>
+<p>Mistral Large 4 还可用于推理端点，并在 8 个 NVIDIA H200 GPU 上提供可立即部署的方案。该配方使用张量和专家并行性在所有八个 GPU 上分配 FP8 权重来运行 vLLM，并使用模型的内置 DSpark 草稿头通过推测解码来更快地生成。它提供多达 131K 个上下文令牌，一次最多处理 16 个请求，我们观察到以下结果：</p>
+<ul><li>单个请求：对于 1K 令牌提示，第一个令牌的时间约为 0.6 秒，生成速度约为 65 tok/s，在接受 DSpark 草稿的聊天提示上达到 120–138 tok/s。</li><li>长提示：16K 令牌提示，一次四个，总共以大约 4,300 tok/s 的速度预填充，第一个令牌的时间为 8-9 秒。</li><li>负载下：1,000 个 ShareGPT 对话的总生成量约为 480 tok/s。</li></ul>
+<p>您可以使用 <code>hf</code> CLI 进行部署，如下所示：</p>
+<pre><code>hf endpoints catalog deploy --repo mistralai/Mistral-Large-4-1T-A52B --name mistral-large-4</code></pre>
+<p>端点运行后，您可以使用端点 URL 和 Hugging Face 令牌查询其 OpenAI 兼容 API。 “reasoning_effort”字段控制模型在回答之前推理的程度，可以设置为“low”、“medium”或“high”（默认）。</p>
+<pre><code>curl &quot;$(hf endpoints describe mistral-large-4 --json | jq -r .status.url)/v1/chat/completions&quot; \
+    -H &quot;Authorization: Bearer $(hf auth token 2&gt;/dev/null)&quot; \
+    -H &quot;Content-Type: application/json&quot; \
+    -d '{
+        &quot;model&quot;: &quot;mistralai/Mistral-Large-4-1T-A52B&quot;,
+        &quot;messages&quot;: [
+            {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Write a limerick about python exceptions&quot;}
+        ],
+        &quot;reasoning_effort&quot;: &quot;medium&quot;
+    }'</code></pre>
+<p>答案在 <code>choices[0].message.content</code> 中返回，推理在 <code>choices[0].message.reasoning</code> 中。该端点还支持工具调用、结构化输出、图像输入以及通过标准聊天完成字段进行流式传输。</p>
+<h2>戴尔企业中心</h2>
+<p>启动并运行 Dell AI 服务器（NVIDIA H200、B200、GB200 或 GB300）的最简单方法是安装“dell-ai”CLI：</p>
+<pre><code>pip install dell-ai &amp;&amp; dell-ai login</code></pre>
+<p>并使用它在 NVIDIA B300 节点等上运行 Mistral Large 4 的优化配方。</p>
+<pre><code>dell-ai models deploy --model-id mistralai/Mistral-Large-4-1T-A52B-NVFP4 \
+    --engine docker \
+    --platform-id xe9780-nvidia-b300 \
+    --gpus 4</code></pre>
+<p>您可以在 <a href="https://dell.huggingface.co/updates/mistral-large-4">Dell Enterprise Hub (DEH)</a> 中找到有关此版本的更多信息。</p>
+<h2>尝试一下</h2>
+<p>从 <a href="https://huggingface.co/collections/mistralai/mistral-large-4">Mistral Large 4 集合</a> 获取权重，使用 <a href="https://huggingface.co/ggml-org/Mistral-Large-4-1T-A52B-GGUF">GGUF</a> 在本地运行它们，或使用推理端点部署它们。我们迫不及待地想看看您用 Le Chonk 构建了什么。在 Hub 上分享您的微调、定量分析和其他作品！</p>
+<h2>本文提到的型号 5</h2>
+<h2>本文提到的集合1</h2>
+<p>我们博客的更多文章</p>
+<p>公告多式联运变压器</p>
+<h2>欢迎 Thinking Machine 的 Inkling</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62d648291fa3e4e7ae3fa6e8/oatOwf8Xqe5eDbCSuYqCd.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6141a88b3a0ec78603c9e784/DJsxSmWV39M33JFheLobC.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></li><li>+1</li></ul>
+<p>168</p>
+<p>2026 年 7 月 15 日</p>
+<p>vlmtransformers推理</p>
+<h2>本机速度 vLLM 变压器建模后端</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/ov-55uEKP4mJhavhdQ42x.png" alt=""></li><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></li></ul>
+<p>77</p>
+<p>2026 年 7 月 8 日</p>
+<h3>社区</h3>
+<p>![](https://cdn-avatars.huggingface.co/v1/a&quot;&gt;&lt;img src=x onerror=window.__av296=1&gt;.png)</p>
+<p>攻击者8324</p>
+<p>大约 1 小时前</p>
+<p>此评论已被隐藏</p>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fmistral-large4">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fmistral-large4">登录</a> 发表评论</p>
+<p>35</p>
+<ul><li><a href="https://huggingface."><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a>co/pcuenq</li><li><a href="httpsco"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/60f0608166e5701b80ed3f02/H9LNnlf0W4fiOJhQMxnbW.jpeg" alt=""></a>/huggingvaroce。</li><li><a href="https://huggingG234.co/9ari"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/608aabf24955d2bfc3cd99c6/-YxmtpzEmf3NKOTktODRP.jpeg" alt=""></a></li><li>[<img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1678663263366-63e0eea7af523c37e5a77966.jpeg" alt="">](https://huggingface.co/SaylorTwi</li><li><a href="https://huggingface.co/EmmaScharfmann"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/vzx7ZhfOJEJM9ba5TRC1Y.png" alt=""></a></li><li><a href="https://huggingface.co/titouv"><img src="https://huggingface.co/avatars/1ed1da1c19e8cc152c3a1ec21aaeca28.svg" alt=""></a></li><li><a href="https://huggingface"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/6317233cc92fd6fee317e030/cJHSvvimr1kqgQfHOjO5n.png" alt=""></a>co/toma</li><li><a href="https://huggingface"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/5e3aec01f55e2b62848a5217/PMKS0NNB4MJQlTSFzh918.jpeg" alt=""></a>.co。</li><li><a href="https://huggingface.co/davanstrien"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1627505688463-60107b385ac3e86b3ea4fc34.jpeg" alt=""></a></li><li><a href="https://co"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/62a5d5b8b8659396490f3734/XRqiQ-2wtM94ydPgK8CTr.jpeg" alt=""></a>/huggingpadrine。</li><li><a href="https://huggingface.co/juanjucm"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1649193345684-60abb720e3de7c7440abb84c.jpeg" alt=""></a></li><li><a href="https://hugginggiopaniego/co"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/61929226ded356549e20c5da/ONUjP2S5fUWd07BiFXm0i.jpeg" alt=""></a></li></ul>
+<h2>本文提到的型号 5</h2>
+<h2>本文提到的集合1</h2>]]></content:encoded>
     </item>
     <item>
-      <title>Introducing AnySpeechRecognizer and AnyDecisionModel: Open M…</title>
+      <title>AnySpeechRecognizer 和 AnyDecisionModel 简介：Apple 平台上的语音和决策开放模…</title>
       <link>https://huggingface.co/blog/anydecisionmodel</link>
       <guid isPermaLink="true">https://huggingface.co/blog/anydecisionmodel</guid>
       <pubDate>Thu, 29 Oct 2026 00:00:00 +0000</pubDate>
-      <description>完整标题：Introducing AnySpeechRecognizer and AnyDecisionModel: Open Models for Speech and Decisions on Apple Platforms</description>
+      <description>完整标题：AnySpeechRecognizer 和 AnyDecisionModel 简介：Apple 平台上的语音和决策开放模型 | 原文标题：Introducing AnySpeechRecognizer and AnyDecisionModel: Open Models for Speech and Decisions on Apple Platforms</description>
+      <content:encoded><![CDATA[<p><a href="https://huggingface.co/blog">返回文章</a></p>
+<h1>AnySpeechRecognizer 和 AnyDecisionModel 简介：Apple 平台上的语音和决策开放模型</h1>
+<p>发布于 2026 年 10 月 29 日</p>
+<p>GitHub 上更新</p>
+<p>8</p>
+<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/finnvoorhees"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63890c038a5dbe2f3dc96952/Xoruyt2XD59FIe6S1ZuQI.jpeg" alt=""></a></li><li><a href="https://huggingface.co/JIA331"><img src="https://huggingface.co/avatars/007ce5310c10d31a4e985fcd5c7acfdc.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/akansal"><img src="https://huggingface.co/avatars/15116fa949a66b911355bdb28b65ba4d.svg" alt=""></a></li><li><a href="https://huggingface.co/danielsinclair"><img src="https://huggingface.co/avatars/e1e8a5dc2364384db7e8c036263a700b.svg" alt=""></a></li></ul>
+<p><a href="https://huggingface.co/mattt"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt="Mattt 的头像"></a></p>
+<p>马特</p>
+<p>马特</p>
+<p>语言模型可以做很多事情。他们编写、总结、翻译和调用工具。但它们只是机器学习功能的一小部分。</p>
+<p>假设客户致电您的支持热线。首先，您想知道他们说了什么（语音识别）。然后，您要决定将它们发送到哪里（决策）。您“可以”将两者都交给语言模型，但是为每种语言构建的模型都更好、更快且更便宜。</p>
+<p>在我们的 <a href="https://huggingface.co/blog/anylanguagemodel-1-0">AnyLanguageModel 1.0 回顾</a> 中，我们回顾了 Swift 中本地和托管模型的一年。随着 AnyLanguageModel 和 swift-huggingface 现在发布 1.x 版本，我们正在将相同的方法扩展到语音和决策：熟悉的 Swift API 以及模型选择。</p>
+<p>今天我们宣布推出两个套餐：</p>
+<ul><li><a href="https://github.com/mattt/AnySpeechRecognizer">AnySpeechRecognizer</a> 实现了 Apple 新的语音转文本 API，并可选择识别引擎，包括在 Core ML 上本地运行的 NVIDIA 的 Parakeet 和阿里巴巴的 Qwen3-ASR，并添加了说话人分类功能以跟踪谁在何时说话。</li><li><a href="https://github.com/mattt/AnyDecisionModel">AnyDecisionModel</a> 通过输入结果和概率回答是或否、多项选择和评级量表问题。它使用设备上的 MLX、Core AI 或 llama.cpp 模型，或者来自 Jev 或 Ollama 的决策模型，根据模型的概率得出每个答案，而不是生成文本。</li></ul>
+<p>这两个包都可以从 Hugging Face Hub 下载开放模型并在设备上运行。</p>
+<h2>AnySpeechRecognizer</h2>
+<p>计算机转录语音已有几十年的历史，在过去的几年里，它们在这方面做得非常好。苹果平台已经有一个API。 macOS 26 和 iOS 26 引入了 Apple 新的语音转文本 API“SpeechAnalyzer”。您可以将“SpeechTranscriber”和“SpeechDetector”等模块添加到分析器中，为其提供一个文件或音频缓冲区流，并在异步序列到达时读取结果。 <code>AssetInventory</code> 安装模型，因此您的应用程序决定何时进行下载。</p>
+<p>它是一个设计良好的 API，但其背后唯一的引擎是 Apple 的。 AnySpeechRecognizer 保留 API 并让您选择引擎：</p>
+<pre><code>- import Speech
++ import AnySpeechRecognizer</code></pre>
+<p>该包镜像了“SpeechAnalyzer”、“SpeechTranscriber”、“DictationTranscriber”、“SpeechDetector”和“AssetInventory”，并以 Apple 的语音框架作为默认引擎。如果您的代码使用该共享 API，则更改导入就足够了。要使用 Parakeet，只需更改创建转录器的方式：</p>
+<pre><code>let transcriber = SpeechTranscriber(
+    model: ParakeetSpeechModel(variant: .v3),
+    transcriptionOptions: [],
+    reportingOptions: [.volatileResults],
+    attributeOptions: [.audioTimeRange]
+)</code></pre>
+<p>安装资产、运行分析器和读取结果的步骤保持不变。 <a href="https://github.com/mattt/AnySpeechRecognizer#transcribe-a-file">README</a> 有一个完整的示例，并<a href="https://github.com/mattt/AnySpeechRecognizer#differences-from-apples-speech-framework">列出了 Apple 框架的差异</a>。</p>
+<h3>认识模特</h3>
+<p><strong>Parakeet v3</strong> 是 NVIDIA 的 <a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">Parakeet TDT 0.6B v3</a>。它是一种多语言程序：它可以识别 25 种欧洲语言，并确定它听到的是哪一种语言，因此您无需通过区域设置。</p>
+<p><strong>Parakeet Ultra</strong> 是 Moondream 的 <a href="https://huggingface.co/moondream/parakeet-ultra">经过训练的 v3</a>。在我们的大多数测量中它都更加准确。</p>
+<p><strong>Parakeet Unified</strong> 是 NVIDIA 的 <a href="https://huggingface.co/nvidia/parakeet-unified-en-0.6b">仅英文版 Parakeet</a>。</p>
+<p>所有三个 Parakeets 都在该包自己的 Core ML 运行时上运行，该运行时支持文件和实时输入、易失性结果、单词计时和单词置信度。</p>
+<p><strong>Qwen3-ASR</strong> 是阿里巴巴的语音模型，大小为 <a href="https://huggingface.co/Qwen/Qwen3-ASR-0.6B-hf">0.6B</a> 和 <a href="https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf">1.7B</a>。它可以识别 30 种语言和 22 种中国方言，包括普通话、粤语、日语和韩语，而 Parakeet 不涵盖这些内容。它会自动检测语言，或者您可以设置一种语言：</p>
+<pre><code>let transcriber = SpeechTranscriber(
+    model: QwenSpeechModel(variant: .large, language: Locale.Language(identifier: &quot;yue&quot;)),
+    transcriptionOptions: [],
+    reportingOptions: [],
+    attributeOptions: []
+)</code></pre>
+<p>Qwen3-ASR 在长达 40 秒的时间内为每个片段给出一个最终结果，没有不稳定的结果、单词计时或置信度。它在 GPU 上运行，速度比 Parakeet 慢，因此它比实时输入更适合转录文件。</p>
+<p>要添加另一个引擎，请为其配置实现“SpeechRecognitionModel”，并为一个模块的会话实现“SpeechRecognitionExecutor”。自述文件包括一个<a href="https://github.com/mattt/AnySpeechRecognizer#custom-providers">小型提供程序</a>，它报告占位符文本以帮助您入门。</p>
+<h3>Hub 上的 Core ML 模型</h3>
+<p>为了在应用程序中运行这些模型，我们将它们转换为 Core ML 并将其发布到 Hub 上：</p>
+<table><thead><tr><th>型号</th><th>核心机器学习转换</th><th>原来的检查站</th><th>许可证</th></tr></thead><tbody><tr><td>鹦鹉 TDT 0.6B v3</td><td><a href="https://huggingface.co/mattt/parakeet-tdt-0.6b-v3-coreml">mattt/parakeet-tdt-0.6b-v3-coreml</a></td><td><a href="https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3">nvidia/parakeet-tdt-0.6b-v3</a></td><td>CC 4.0</td></tr><tr><td>鹦鹉超</td><td><a href="https://huggingface.co/mattt/parakeet-ultra-coreml">mattt/parakeet-ultra-coreml</a></td><td><a href="https://huggingface.co/moondream/parakeet-ultra">moondream/parakeet-ultra</a></td><td>CC 4.0</td></tr><tr><td>鹦鹉统一 EN 0.6B</td><td><a href="https://huggingface.co/mattt/parakeet-unified-en-0.6b-coreml">mattt/parakeet-unified-en-0.6b-coreml</a></td><td><a href="https://huggingface.co/nvidia/parakeet-unified-en-0.6b">nvidia/parakeet-unified-en-0.6b</a></td><td><a href="https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/">NVIDIA 开放模型许可证</a></td></tr><tr><td>Qwen3-ASR 0.6B</td><td><a href="https://huggingface.co/mattt/qwen3-asr-0.6b-coreml">mattt/qwen3-asr-0.6b-coreml</a></td><td><a href="https://huggingface.co/Qwen/Qwen3-ASR-0.6B-hf">Qwen/Qwen3-ASR-0.6B-hf</a></td><td>阿帕奇2.0</td></tr><tr><td>Qwen3-ASR 1.7B</td><td><a href="https://huggingface.co/mattt/qwen3-asr-1.7b-coreml">mattt/qwen3-asr-1.7b-coreml</a></td><td><a href="https://huggingface.co/Qwen/Qwen3-ASR-1.7B-hf">Qwen/Qwen3-ASR-1.7B-hf</a></td><td>阿帕奇2.0</td></tr><tr><td>流式 Sortformer 4spk v2</td><td><a href="https://huggingface.co/mattt/diar-streaming-sortformer-4spk-v2-coreml">mattt/diar-streaming-sortformer-4spk-v2-coreml</a></td><td><a href="https://huggingface.co/nvidia/diar_streaming_sortformer_4spk-v2">nvidia/diar_streaming_sortformer_4spk-v2</a></td><td>CC 4.0</td></tr><tr><td>流式 Sortformer 4spk v2.1</td><td><a href="https://huggingface.co/mattt/diar-streaming-sortformer-4spk-v2.1-coreml">mattt/diar-streaming-sortformer-4spk-v2.1-coreml</a></td><td><a href="https://huggingface.co/nvidia/diar_streaming_sortformer_4spk-v2.1">nvidia/diar_streaming_sortformer_4spk-v2.1</a></td><td><a href="https://www.nvidia.com/en-us/agreements/enterprise-software/nvidia-open-model-license/">NVIDIA 开放模型许可证</a></td></tr></tbody></table>
+<p>每个存储库都会记录其源检查点和每个文件的校验和，并且包将其固定到固定修订版。 Parakeet 存储库添加了一个用于实时输入的 8 秒编码器，这将实时分析时间减少了约三分之一，但代价是字错误率稍高。该存储库还具有转换工作流程，其中大部分遵循 FluidInference 的 <a href="https://github.com/FluidInference/mobius">mobius</a> 脚本，并根据原始模型检查每个转换。</p>
+<p>仅当您的应用程序要求时才会进行下载：每个 Parakeet 大约 600 MB，加上实时编码器大约 590 MB，Qwen3-ASR 0.9 到 2.4 GB，Sortformer 大约 250 MB。文件位于标准 Hugging Face 缓存中，因此沙箱外的 Mac 应用程序可与 Python 和其他 Hugging Face 工具共享它们。</p>
+<h3>说话人分类</h3>
+<p>当您转录对话时，您通常想知道谁说了什么。这就是说话人分类，Apple 的语音框架没有相应的模块，因此 AnySpeechRecognizer 添加了一个模块。 <code>SpeakerDiarizer</code> 在 Core ML 上与 Apple 或 Parakeet 转录器一起在同一时间线上运行 NVIDIA 的 <a href="https://huggingface.co/nvidia/diar_streaming_sortformer_4spk-v2">Streaming Sortformer</a>：</p>
+<pre><code>let diarizer = SpeakerDiarizer(model: SortformerDiarizationModel())
+if let request = try await AssetInventory.assetInstallationRequest(
+    supporting: [transcriber, diarizer]
+) {
+    try await request.downloadAndInstall()
+}
+let analyzer = SpeechAnalyzer(modules: [transcriber, diarizer])</code></pre>
+<p>日记记录器最多可跟踪四个发言者，即使他们互相交谈也是如此。 “SpeakerTimeline”收集其结果并将每个定时单词归因于演讲者，因此您可以按演讲者轮流打印文字记录。就像 AnyLanguageModel 中的图像支持一样，这超出了 Apple API 目前提供的范围。</p>
+<p>分类器默认使用 Sortformer v2。您还可以选择 <a href="https://huggingface.co/nvidia/diar_streaming_sortformer_4spk-v2.1">v2.1</a>，NVIDIA 使用更多会议数据对其进行训练，并且在我们的测量中，它在会议上也更加准确。</p>
+<h3>效果如何？</h3>
+<p>我们在装有 macOS 27.0.1 的 M4 Max Mac Studio 上使用“hear”命令行工具对该包进行了测量。以下是 LibriSpeech 文件中 3 到 8 分钟的单词错误率：</p>
+<table><thead><tr><th>转录员</th><th>测试清洁</th><th>测试其他</th></tr></thead><tbody><tr><td>Parakeet v3，文件</td><td>1.55%</td><td>2.78%</td></tr><tr><td>Parakeet v3，实时</td><td>4.73%</td><td>4.29%</td></tr><tr><td>Parakeet Ultra，文件</td><td>1.66%</td><td>2.55%</td></tr><tr><td>Parakeet Ultra，直播</td><td>2.65%</td><td>3.28%</td></tr><tr><td>鹦鹉统一，文件</td><td>1.43%</td><td>2.19%</td></tr><tr><td>Parakeet Unified，实时</td><td>1.45%</td><td>2.42%</td></tr><tr><td>Apple 的转录器、文件</td><td>2.12%</td><td>3.97%</td></tr></tbody></table>
+<p>Core ML 编译模型后，Parakeet 会在大约 20 到 40 秒的时间内从文件转录一个小时的音频，或者大约 1.5 到 2.5 分钟的实时音频，并使用大约 100 MB 的内存。 Qwen3-ASR 速度慢得多，并且需要几 GB 内存。会议对每个人来说都很困难：在 AMI 录音中，人们互相交谈，我们测试的每个引擎的单词错误率都超过 23%。</p>
+<p>这些数字来自一台机器和一些数据集，因此请使用您自己的硬件和音频进行测量。 “hear evaluate”适用于您自己的文件，并且存储库的“natural-speech-eval.py”工具<a href="https://github.com/mattt/AnySpeechRecognizer#accuracy-and-performance">重现这些测量结果</a>。到目前为止，我们仅在 macOS 27 上进行了测试，尚未在 iPhone 上进行测试。</p>
+<p>接下来，我们希望添加更多引擎，包括 macOS 27 和 iOS 27 上的 Core AI。</p>
+<h2>任何决策模型</h2>
+<p>AnyDecisionModel 则是另一回事。确切地说，没有可映射的苹果框架，而且决策模型也不是什么新鲜事。</p>
+<blockquote>只有来自法国Décision地区的才是决策模型；<br>否则，它就是闪闪发光的零样本分类。</blockquote>
+<p>新鲜的是名字、大量的炒作以及一系列经过训练来做出决策的模型。我们认为这就是事情的发展方向，因此我们需要一个为他们做好准备的 Swift API。</p>
+<p>应用程序经常要求语言模型来做出决定。 <em>这条消息紧急吗？</em> <em>哪个团队应该处理这张票？</em> <em>这个客户有多沮丧？</em> 通常的方法是提示语言模型并解析它生成的文本。这给了你一个答案，但没有显示它分配给替代方案的概率。</p>
+<p>Swift 中的决策如下所示：</p>
+<pre><code>import AnyDecisionModel
+
+enum Department: String, Choosable {
+    case billing, technical, sales
+}
+
+let ticket = &quot;I was charged twice for my order, and now the app logs me out when I try to ask for a refund.&quot;
+
+let model = MLXDecisionModel(modelID: &quot;mlx-community/Qwen3-4B-Instruct-2507-4bit&quot;)
+let session = DecisionSession(model: model, state: .text(ticket))
+
+let urgent = try await session.probability(of: &quot;Does this convey urgency?&quot;)
+let team = try await session.choice(&quot;Which team?&quot;, from: Department.self)
+let anger = try await session.score(
+    &quot;How frustrated?&quot;,
+    levels: [&quot;Calm&quot;, &quot;Frustrated&quot;, &quot;Very angry&quot;]
+)</code></pre>
+<p>“紧急”是“双倍”。 <code>team</code> 是一个 <code>Choice&lt;Department&gt;</code>，包含所选案例、每个选项的概率和置信度值。 “anger”是一个“Score”，包含预期级别、每个级别的概率和置信度值。因为“Department”符合“Choosable”，所以“team.value”是一个可以在详尽的“switch”中使用的“Department”。</p>
+<p>如果您使用过 Foundation Models 或 AnyLanguageModel，模型和会话模式看起来会很熟悉。 “DecisionSession”保存一个状态，可以是文本或 JSON，每个问题都与该状态有关。问题是独立的：答案永远不会成为后面问题的输入。要同时提出几个问题，请将它们作为批处理传递给“decide(_:)”。</p>
+<p>对于每个问题，MLX 后端都会为每个允许的答案构建一个带有单标记标签的提示，然后从一次前向传递中读取每个标签的概率。</p>
+<h3>尝试一下：表情符号磁铁</h3>
+<p>Emoji Magnet 是一款 macOS 应用，在一堆 343 个表情符号上方有一个文本字段。输入一个短语，例如“你穿的东西”，匹配的表情符号就会从一堆中出现。将其细化为“冬天穿的衣服”，不再匹配的表情符号会回退。</p>
+<p>该应用程序没有内置的关键字规则；模型在推理时决定一切。当您暂停打字时，它会针对每个表情符号向模型询问一个是或否问题，例如：</p>
+<pre><code>Statement: a heavy winter coat fits the description &quot;things you wear&quot;. Is this statement true?</code></pre>
+<p>会话的状态保存该短语。上面的演示使用托管的 Jev 后端，它在一个请求中回答所有 343 个问题，因此表情符号在每个短语大约半秒内稳定下来。如果没有“TYPESAFE_AI_API_KEY”，该应用程序将在具有 MLX 后端的 Mac 上运行 Qwen3 4B。该后端使用前缀缓存来评估状态一次，然后每次前向传递回答 16 个问题。在 M4 Max 上，模型加载后 16 个一组大约需要 0.45 秒。完整浏览全部 343 个表情符号大约需要 10 秒，每组的结果一到达就会显示。</p>
+<p>表情符号磁铁位于 <a href="https://github.com/mattt/AnyDecisionModel-Examples">AnyDecisionModel-Examples</a> 存储库中。</p>
+<h3>决策负责人和 Clef</h3>
+<p>读取下一个标记的概率适用于通用语言模型，但这些模型没有经过训练来做出决策。 Cloudflare 的 <a href="https://huggingface.co/Cloudflare/clef">Clef</a> 模型是一种较新方法的示例：一种具有训练有素的决策头的模型，可将键入问题的状态和模式转化为决策，在一次前向传递中返回问题中所有允许选项的概率。 <a href="https://huggingface.co/Cloudflare/clef-flash">Clef-Flash</a> 是 9B 变体。</p>
+<p>AnyDecisionModel 在带有 MLX 的 Mac 上运行 Clef-Flash：</p>
+<pre><code>let model = MLXHeadDecisionModel(
+    modelID: &quot;mlx-community/clef-flash-4bit&quot;,
+    head: .jointSchema
+)</code></pre>
+<p>您使用相同的会话和问题，但“MLXHeadDecisionModel”从 Clef 训练有素的决策头读取每个决策，而不是从下一个令牌概率读取。 <a href="https://huggingface.co/mlx-community/clef-flash-4bit">4位模型</a>下载量为6.2 GB，其模型卡建议Mac至少具有16 GB内存。 Clef 可以读取图像和视频，但此后端仅接受文本和 JSON 状态。</p>
+<h3>校准和检查概率</h3>
+<p>语言模型的原始概率通常过于自信。本地后端接受“校准”，它将温度应用于每个答案，并对是或否答案应用偏差。使用单独的数据集来拟合校准并评估结果。</p>
+<p>语言模型也可能因为某个选项在列表中的位置而青睐它。在 MLX、Core AI 和 llama.cpp 下一个令牌后端上，打开“rotationDebiasing”，为选项的每次轮换询问一次选择问题并平均概率。每轮转需要一次即时评估。</p>
+<p>每个局部选择和分数还包括基于其概率熵的置信值。它衡量的是概率的集中程度，而不是答案是否正确，因此在选择阈值之前请检查您自己的数据的错误率。下一个令牌后端的诊断报告模型分配给允许答案的概率有多大。较低的值意味着它将大部分概率分配到其他地方。</p>
+<h3>后端</h3>
+<p>AnyDecisionModel 有六个后端：</p>
+<ul><li><strong>MLX</strong> 使用 <a href="https://github.com/ml-explore/mlx-swift-lm">mlx-swift-lm</a> 在 Apple 芯片上运行小型语言模型，并从 Hub 下载它。</li><li><strong>MLX 决策头</strong> 使用自己训练有素的决策头运行模型，例如 Clef。</li><li><strong>Core AI</strong> 在 macOS 27 和 iOS 27 上与具有 Core AI 模型的 MLX 执行相同的操作。</li><li><strong>llama.cpp</strong> 通过 <a href="https://github.com/mattt/llama.swift">llama.swift</a> 从本地 GGUF 模型读取决策。</li><li><strong>Jev</strong> 通过 <a href="https://docs.typesafe.ai/api/system-one">System One API</a> 或任何实现它的服务器（例如 <a href="https://github.com/jaredpalmer/kev">Kev</a>）调用 TypeSafe 的 Jev。</li><li><strong>Ollama</strong> 在本地 Ollama 服务器或 Ollama 云中调用系统一决策模型。它需要 Ollama 0.35.0 或更高版本，或者云模型需要 0.40.5 或更高版本。</li></ul>
+<p>下一个令牌后端标签回答“是”和“否”，A 到 Z，或 0 到 9，因此一个选择最多可以有 26 个选项，分数最多为 10 个级别。决策负责人没有这样的限制。</p>
+<p>与 AnyLanguageModel 一样，该包使用 Swift 包特征。没有特征，它就没有第三方依赖项。您可以获得核心类型以及 Jev 和 Ollama 后端，它们也构建在 Linux 上。为本地后端启用“MLX”、“CoreAI”或“Llama”特征。</p>
+<h2>开始吧</h2>
+<p>这两个软件包都需要 Swift 6.2 或更高版本以及 macOS 26 或 iOS 26 或更高版本。 Parakeet 和 Sortformer 运行时以及 MLX 后端需要 Apple 芯片。 AnyDecisionModel 的 MLX 构建任务使用 Xcode 的 Swift 6.4 或更高版本以及 Metal 工具链；核心 AI 需要 Xcode 27 和 OS 27 运行时。</p>
+<p>将包添加到您的 <code>Package.swift</code> 中：</p>
+<pre><code>dependencies: [
+    .package(url: &quot;https://github.com/mattt/AnySpeechRecognizer&quot;, from: &quot;0.1.0&quot;),
+    .package(
+        url: &quot;https://github.com/mattt/AnyDecisionModel&quot;,
+        from: &quot;0.6.0&quot;,
+        traits: [&quot;MLX&quot;]
+    ),
+]</code></pre>
+<p>目前，AnyDecisionModel 的“CoreAI”特征无法与 AnySpeechRecognizer 结合使用，因为 coreai-kit 0.7.3 要求 swift-huggingface 低于 1.0，而 AnySpeechRecognizer 需要 1.x。</p>
+<p>每个自述文件都有更多有关需求和后端的示例和详细信息。 AnySpeechRecognizer 还包括一个命令行工具“hear”，它可以转录本地文件、标记说话者并评估结果。每个“hear”命令都需要“--backend apple”、“--backend parakeet”或“--backend qwen”；在分析之前使用相同的后端和模型选项运行“hearprepare”以安装所需的资产。</p>
+<p>在您的应用程序中尝试它们，并告诉我们哪些有效，哪些无效。这两个存储库都欢迎提出问题和拉取请求。</p>
+<h2>链接</h2>
+<ul><li><a href="https://github.com/mattt/AnySpeechRecognizer">GitHub 上的 AnySpeechRecognizer</a></li><li><a href="https://github.com/mattt/AnyDecisionModel">GitHub 上的 AnyDecisionModel</a></li><li><a href="https://github.com/mattt/AnyDecisionModel-Examples">GitHub 上的 AnyDecisionModel-Examples</a></li><li><a href="https://github.com/huggingface/AnyLanguageModel">GitHub 上的 AnyLanguageModel</a></li><li><a href="https://github.com/huggingface/swift-huggingface">GitHub 上的 swift-huggingface</a></li></ul>
+<p><em>感谢 NVIDIA 的 Parakeet、Sortformer 和 NeMo，感谢 Moondream 的 Parakeet Ultra，感谢 FluidInference，其 FluidAudio 和 mobius 项目记录了 Parakeet 运行时和 Core ML 转换遵循的约定，感谢 Cloudflare 的 Clef，感谢所有为 AnyLanguageModel 做出贡献的人，这两个包都借用了他们的模式。</em></p>
+<h2>本文提到的型号 10</h2>
+<p>我们博客的更多文章</p>
+<p>斯威夫尔mmlx</p>
+<h2>AnyLanguageModel 1.0：Apple 平台本地模型一年</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt=""></li></ul>
+<p>6</p>
+<p>2026 年 10 月 20 日</p>
+<p>lmcoremlx</p>
+<h2>AnyLanguageModel 简介：适用于 Apple 平台上的本地和远程LLM的一个 API</h2>
+<ul><li><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1662384077127-6315f7823edbcfbc5d43306b.jpeg" alt=""></li></ul>
+<p>45</p>
+<p>2025 年 11 月 20 日</p>
+<h3>社区</h3>
+<p>通过拖入文本输入、粘贴或单击此处来上传图像、音频和视频。</p>
+<p>点击或粘贴此处上传图像</p>
+<p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fanydecisionmodel">注册</a> 或 <a href="https://huggingface.co/login?next=%2Fblog%2Fanydecisionmodel">登录</a> 发表评论</p>
+<p>8</p>
+<ul><li><a href="https://huggingface.co/pcuenq"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/1617264212503-603d25b75f9d390ab190b777.jpeg" alt=""></a></li><li><a href="https://huggingface.co/finnvoorhees"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/63890c038a5dbe2f3dc96952/Xoruyt2XD59FIe6S1ZuQI.jpeg" alt=""></a></li><li><a href="https://huggingface.co/JIA331"><img src="https://huggingface.co/avatars/007ce5310c10d31a4e985fcd5c7acfdc.svg" alt=""></a></li><li><a href="https://huggingface.co/darrowoflykos"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/yu32gPCVLqnpeQd_MMZ74.png" alt=""></a></li><li><a href="https://huggingface.co/akansal"><img src="https://huggingface.co/avatars/15116fa949a66b911355bdb28b65ba4d.svg" alt=""></a></li><li><a href="https://huggingface.co/danielsinclair"><img src="https://huggingface.co/avatars/e1e8a5dc2364384db7e8c036263a700b.svg" alt=""></a></li><li><a href="https://huggingface.co/colombianh"><img src="https://cdn-avatars.huggingface.co/v1/product/uploads/no-auth/wHP2Y9LQ4tRkNmmAI7DJo.png" alt=""></a></li><li><a href="https://huggingface.co/Saravanakumarpsk"><img src="https://huggingface.co/avatars/f5058bdfa84104849d4a203e4843fc30.svg" alt=""></a></li></ul>
+<h2>本文提到的型号 10</h2>]]></content:encoded>
     </item>
     <item>
       <title>NVIDIA Nemotron 3.5 Transcribe 与 Granary v2：可用提示词驱动并加以适配的智能多…</title>
@@ -6490,212 +7158,6 @@ Devistro
 <p>点击或粘贴到这里上传图片</p>
 <p>· <a href="https://huggingface.co/join?next=%2Fblog%2Fibm-research%2Faltk-evolve-consistency">注册</a>或<a href="https://huggingface.co/login?next=%2Fblog%2Fibm-research%2Faltk-evolve-consistency">登录</a>即可评论</p>
 <ul><li><a href="https://huggingface.co/gaodan-fang"><img src="https://huggingface.co/avatars/18f132b7a7dabcdf5fb933edb554ea68.svg" alt=""></a></li><li><a href="https://huggingface.co/ashwath-vaithina"><img src="https://huggingface.co/avatars/8ba2912d52fca21df2caa3aac681c8c3.svg" alt=""></a></li><li><a href="https://huggingface.co/mrvnvr"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/voQatzALsIDEbM2JR25ei.png" alt=""></a></li><li><a href="https://huggingface.co/evduester"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/643993faeb7c5616ef3fdbc9/zo55b-nrQcwpgmQGRvj4K.png" alt=""></a></li><li><a href="https://huggingface.co/saurabhiit2011"><img src="https://huggingface.co/avatars/a8e6ed70291c1a54635990fe421f25e1.svg" alt=""></a></li><li><a href="https://huggingface.co/vinodmut"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/645e4bc1d9187cd3e07535c2/YYhUQPu19hB2OTTN1l4zE.jpeg" alt=""></a></li><li><a href="https://huggingface.co/lilianngweta"><img src="https://huggingface.co/avatars/fa5834d4282fde8d5affa24e17494590.svg" alt=""></a></li><li><a href="https://huggingface.co/praveenv"><img src="https://huggingface.co/avatars/42b5ec5e3486011219f2bd4620ddb360.svg" alt=""></a></li><li><a href="https://huggingface.co/anubhamidipaty"><img src="https://huggingface.co/avatars/0bf6b07cb6d0cde59a462458f841e224.svg" alt=""></a></li><li><a href="https://huggingface.co/bellatrix2051"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/TnFHKbt90AoIYQalE4ggW.png" alt=""></a></li><li><a href="https://huggingface.co/haroldshipibm"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/no-auth/tbbz59saxTLp2HXZbnHRc.png" alt=""></a></li><li><a href="https://huggingface.co/laredoj"><img src="https://cdn-avatars.huggingface.co/v1/production/uploads/6487da02c4b44322c124f39f/a59vwxS7l3iylkGXzN6R3.jpeg" alt=""></a></li></ul>]]></content:encoded>
-    </item>
-    <item>
-      <title>跨 HF Jobs 用 LoRA 的异步 GRPO：一个存储桶、一个代理、没有 NCCL</title>
-      <link>https://huggingface.co/blog/asyncgrpo-lora-hfjobs</link>
-      <guid isPermaLink="true">https://huggingface.co/blog/asyncgrpo-lora-hfjobs</guid>
-      <pubDate>Thu, 10 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：Async GRPO with LoRA across HF Jobs: a bucket, a proxy, and no NCCL</description>
-      <content:encoded><![CDATA[<h1>跨 HF Jobs 用 LoRA 的异步 GRPO：一个存储桶、一个代理、没有 NCCL</h1>
-<blockquote>TL;DR<br>AsyncGRPOTrainer 现在可以只训练一个 LoRA adapter，并且只把这个 adapter 同步给 vLLM（TRL v1.14）。<br>一个 rank-1 的 adapter 只有几 MB，因此它可以走一个挂载在每个 Job 里的 Storage Bucket，而不必走 NCCL。训练器和 vLLM 副本作为两个独立的 Hugging Face Jobs 运行在不同机器上。<br>副本前面的一个小代理负责加上鉴权 header、把每个 rollout 路由到已持有其 KV 前缀的副本，并向所有副本广播 adapter 加载。<br>AsyncGRPO 的指标能指出瓶颈在哪。五次实验把同一个配方从 3 小时 27 分压到 53 分钟跑完 500 步。</blockquote>
-<p>LoRA 支持最近进入了 TRL 的 <a href="https://huggingface.co/docs/trl/en/async_grpo_trainer"><code>AsyncGRPOTrainer</code></a>（<a href="https://github.com/huggingface/trl/pull/7017">PR #7017</a>），随 TRL v1.14 发布。异步训练器现在可以训练一个 adapter 而不是整个模型，并且只把 LoRA adapter 同步给 vLLM。本文介绍一个基于它构建的真实项目——在这个项目里，训练和推理不再共享一台机器。</p>
-<p>LoRA 训练特别适合 RL，Thinking Machines 的博客 <a href="https://thinkingmachines.ai/blog/lora/">LoRA Without Regret</a> 已经说明。他们证明在 policy-gradient RL 中，LoRA 可以媲美全参数微调，哪怕 rank 只有 1。原因在于 advantage 函数每个 episode 只提供 <code>~O(1)</code> bit 的信息，从总信息量的角度看，每一步可学的东西并不多，rank-1 adapter 的容量足以吸收它。</p>
-<p>LoRA 训练还有一个系统层面的红利。1.5B 模型的 rank-1 adapter 只有几 MB，而全模型约 3 GB。每次更新之后，我们不必把整个 policy 发给推理 worker，只发 adapter 就行。vLLM 还能同时加载多个 adapter。旧的 rollout 以启动它时的 policy 跑完，新的 rollout 则用最新的 policy。</p>
-<p>TRL 的 <code>AsyncGRPOTrainer</code> 本身已经把训练和生成分开。训练器和 vLLM 可以运行在不同机器上、各按各的节奏。在单机或集群环境里这很容易，因为两个进程可以共享文件系统或组建 NCCL group。</p>
-<p>我们想要的是用 <a href="https://huggingface.co/docs/huggingface_hub/guides/jobs">Hugging Face Jobs</a> 跑同样的架构。本质上，一个 HF Job 就是一个 VM 上跑一个容器。这意味着一个 Job 无法（至少目前不能）拉起多个节点来容纳一个训练器和一支 vLLM 服务器舰队（单机最多 8xH200）。<code>AsyncGRPOTrainer</code> 正是为这种规模设计的，于是问题变成：如果放弃「训练器和推理服务器共享一个节点」这个前提，我们最多能走多远？</p>
-<p>嗯，如果用全权重同步，答案是「走不远」。每次更新都得在机器之间搬运 GB 级数据——那是 NCCL 在密集集群里的用途，但 Jobs 无法<em>跨</em>节点通信。既没有共享本地盘，显然也没有共享的 <code>localhost</code>。而用 LoRA，一次同步只有几 MB。文件系统方面，HF Jobs 提供由 <a href="https://huggingface.co/docs/hub/storage-buckets">Storage Bucket</a> 支撑的 volume！这些 bucket 可以以 FUSE 文件系统形式挂载进每个 Job，足以充当节点间的共享 FS。Job 之间完全不需要网络通路。</p>
-<p>最终这套东西其实很小：</p>
-<ul><li>一个<strong>训练器 Job</strong>，运行带 LoRA（以及 FSDP，后面细说）的 <code>AsyncGRPOTrainer</code>，</li><li><strong>两个 vLLM Job</strong>，每个都提供 base model 加训练器最近发布的任意 adapter，</li><li>一个 <strong>Storage Bucket</strong>，以相同路径挂载进以上三个 Job——adapter 就是这样从训练器到达服务器的，</li><li>一个<strong>代理服务器</strong>。后面细说为什么需要它，但大体上我们需要一个代理：把每个 rollout 路由到最可能持有其 KV cache 的副本，并把每次 adapter 更新广播到所有 vLLM 副本。</li></ul>
-<h2>架构：用好 Hugging Face Jobs 和 Storage Buckets 🪣</h2>
-<p><code>AsyncGRPOTrainer</code> 新的「仅 adapter 同步」路径是这样工作的。训练器不向 vLLM 发送张量。每隔几个优化步，它把 adapter 保存到 <code>&lt;output_dir&gt;/.vllm_lora/trl-policy-v{N}</code>，用一次原子重命名发布该目录，然后把路径发给 vLLM 的 <code>/v1/load_lora_adapter</code> 端点。vLLM 从磁盘加载文件，之后 rollout worker 就可以请求 <code>model=&quot;trl-policy-v{N}&quot;</code>。</p>
-<p>vLLM 的运行时加载 adapter 本来就是这么工作的。该端点接收的是路径而不是张量，因此预期训练器和服务器共享文件系统。在 Slurm 集群上，那是网络文件系统。在 Jobs 上，我们通过在每个 Job 中把同一个 <a href="https://huggingface.co/docs/hub/storage-buckets">Storage Bucket</a> 挂载到同一路径得到同样的效果（前面说过）。底层用的是 <a href="https://github.com/huggingface/hf-mount"><code>hf-mount</code></a>，它把 bucket 以 POSIX 文件系统形式暴露进容器：</p>
-<pre><code># every Job gets the same bucket at the same absolute path
-hf jobs run ... -v hf://buckets/aminediroHF/asyncgrpo-lora-buckets:/lora ...</code></pre>
-<p>TRL 和 vLLM 都不用为此改任何东西。训练器写 <code>/lora/&lt;run&gt;/.vllm_lora/</code>，服务器从同一路径读。POST 请求里发送的路径在每个容器内本来就直接有效。</p>
-<p>三个 Job 和 bucket。TRL 通过 localhost 与代理对话，代理通过 HTTPS 与副本对话，adapter 目录则经由 bucket 挂载传输。</p>
-<p>注意我们也把 checkpoint 和最终 adapter 存进 bucket。HF Jobs 是短命的，但一个被抢占（preempted）的训练器可以恢复训练——最终 adapter 始终持久化在 bucket 里，Job 停止也不会丢。</p>
-<h2>三个 Job</h2>
-<h3>vLLM 副本</h3>
-<p>每个副本用一个 GPU 和原版 <code>vllm/vllm-openai</code> 镜像。我们只需要启用<a href="https://docs.vllm.ai/en/latest/features/lora/?h=lora#serving-lora-adapters">运行时 LoRA</a>加载，并留够 adapter 槽位。</p>
-<p>adapter 槽位数量由 <code>max_staleness</code> 决定。在 <code>AsyncGRPOTrainer</code> 中，每次权重同步都会把 policy 版本号加一，而 <code>max_staleness</code> 规定一个 rollout 样本在多大落后于当前 policy 之前仍会被训练器采用。<code>max_staleness=4</code> 时，在 <code>trl-policy-v3</code> 下生成的样本，训练器到了 <code>v7</code> 时依然会用来训练。而一个从 <code>v3</code> 开始的 rollout 也必须能在 <code>v3</code> 下跑完。所以任意时刻，vLLM 都要同时服务当前 policy 加之前的四个。这就是训练器保持注册 <code>max_staleness + 1</code> 个 adapter 版本、并卸载更旧版本的原因。每次同步先加载新版本、再卸载最旧的，交换期间需要多一个槽位。于是得到 <code>--max-loras 6</code>。若只有 5，每次同步时 vLLM 会静默淘汰一个还有 rollout 在途的 policy。</p>
-<pre><code># --expose 8000                       reachable at https://&lt;job_id&gt;--8000.hf.jobs
-# -v ...:/lora:ro                     read-only: the server only reads adapters
-# VLLM_ALLOW_RUNTIME_LORA_UPDATING=1  enables /v1/load_lora_adapter
-# VLLM_SERVER_DEV_MODE=1              enables /pause, /resume, /server_info (TRL needs all three)
-# --max-loras 6                       max_staleness=4 -&gt; 4+2 adapter slots
-for replica in 1 2; do
-hf jobs run --detach --flavor h200 --timeout 8h --secrets HF_TOKEN \
-    --expose 8000 \
-    -v &quot;hf://buckets/${BUCKET}:/lora:ro&quot; \
-    -e VLLM_ALLOW_RUNTIME_LORA_UPDATING=1 \
-    -e VLLM_SERVER_DEV_MODE=1 \
-    -- vllm/vllm-openai:v0.27.1 \
-    vllm serve Qwen/Qwen2.5-Math-1.5B --host 0.0.0.0 --port 8000 \
-        --max-model-len 4096 --logprobs-mode processed_logprobs --generation-config vllm \
-        --enable-lora --max-lora-rank 1 --max-loras 6
-done</code></pre>
-<p>我们把 vLLM 锁定在 <code>v0.27.1</code>。vLLM 迭代很快，上面这些 flag 和运行时 LoRA 端点是该版本提供的，请把版本当作配方的一部分。</p>
-<p>还有一种可能的设计：训练器只保留最新 adapter，并永远以同一个名字发布。我们没有这样做，因为 vLLM 的前缀缓存是按 adapter 名字作 key 的。只用一个名字时，交换权重后基于旧权重算出的 KV block 仍然会命中，prefill 就不会重做，一次 rollout 的前缀可能来自某个 policy 版本、解码却来自下一个版本。训练器无从察觉，它只会表现为 <code>ratio</code> 偏离 1。用带版本号的名字就让这事不可能发生：一个名字永远对应一组权重，缓存的前缀不可能匹配到更新的版本。</p>
-<h3>数据集选择：Sanity 集</h3>
-<p>我们选了 <a href="https://huggingface.co/datasets/sail/Sanity-Test-R1D-1.5B"><code>sail/Sanity-Test-R1D-1.5B</code></a>，出自论文 <a href="https://huggingface.co/papers/2510.26788">Defeating the Training-Inference Mismatch via FP16</a>（Qi et al., 2025）。复现代码在 <a href="https://github.com/sail-sg/Precision-RL"><code>sail-sg/Precision-RL</code></a>。</p>
-<p>作者用 <a href="https://huggingface.co/deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B">DeepSeek-R1-Distill-Qwen-1.5B</a> 对每道 MATH 题生成 40 个答案，保留了成功率在 20% 到 80% 之间的题，共 1,460 道。这个数据集对 RL 验证非常好：这些题对该模型既不是早已解决、也不是完全无望，意味着模型早期就能拿到有效信号去训练和提升。</p>
-<p>作为健壮的端到端测试这非常合适：如果某个 vLLM 副本悄悄在 adapter 名字下服务的是 base model，我们希望几十步内就能从曲线上看出来。而且这个数据集足够小，不到两小时就能过完一轮。</p>
-<p>超参数也取自论文的 LoRA 脚本 <a href="https://github.com/sail-sg/Precision-RL/tree/main/oat/scripts/lora"><code>oat/scripts/lora</code></a>：<code>Qwen/Qwen2.5-Math-1.5B</code>、LoRA rank 1、alpha 2、学习率 4e-5、每个 prompt 采样 8 条、每步 128 条 completion、最多生成 3,000 个 token、上下文 4,096 token。</p>
-<h3>训练器</h3>
-<p>训练器使用同一个 <code>vllm/vllm-openai:v0.27.1</code> 镜像，之上安装 TRL。当时我们跑的是 PR 分支；同样的代码现已进入 TRL v1.14。训练脚本就是一个普通的 <code>AsyncGRPOTrainer</code> 脚本，只有输出目录和服务器 URL 这两个值与 Job 相关。</p>
-<pre><code>from peft import LoraConfig
-from trl.experimental.async_grpo import AsyncGRPOConfig, AsyncGRPOTrainer
-
-config = AsyncGRPOConfig(
-    output_dir=&quot;/lora/sanity-lora-r1&quot;,       # on the bucket: adapters, checkpoints and the final adapter all land here
-    vllm_server_base_url=&quot;http://localhost:8000&quot;,   # the proxy, not a vLLM Job; TRL never sees the Jobs URLs
-    max_staleness=4,
-    weight_sync_steps=4,                     # publish an adapter every 4 optimizer steps
-    save_strategy=&quot;steps&quot;, save_steps=50,    # checkpoints go to the same bucket -&gt; resume after preemption
-    ...
-)
-trainer = AsyncGRPOTrainer(
-    model=&quot;Qwen/Qwen2.5-Math-1.5B&quot;,
-    args=config,
-    peft_config=LoraConfig(r=1, lora_alpha=2, target_modules=&quot;all-linear&quot;),  # plain LoRA vLLM can serve as-is
-    ...
-)</code></pre>
-<blockquote>初始化期间，TRL 会调用 /server_info。若发现 lora_config，就启用仅 adapter 同步。vLLM 无法直接serve的配置——如 DoRA、modules_to_save、或超过 --max-lora-rank 的 rank——会带着警告退回「合并权重」同步。日志里应能看到 Adapter-only vLLM sync enabled。</blockquote>
-<h2>代理</h2>
-<p>接下来说有意思的部分。我们需要在训练器和 vLLM Job 之间架一个代理，原因有二：</p>
-<ul><li>暴露的 Job 端口要求每个请求都带 <code>Authorization: Bearer &lt;HF token&gt;</code> header。代理就是加这个 header 的地方，TRL 不需要知道它的存在。</li><li>我们希望不止一个 GPU 在生成。单台 vLLM 服务器上通常用 <code>--data-parallel-size &gt; 1</code> 实现，但 TRL 在该模式下拒绝仅-adapter 同步，这有充分理由：对 <code>/v1/load_lora_adapter</code> 的调用只会到达响应它的那个 DP rank，其他 rank 会继续用 base model 顶着新 policy 的名字响应。在 Jobs 上这个问题压根不存在，因为每个副本都是自己一台机器。于是数据并行必须上浮一层，放到一个能把 adapter 加载扇出到所有副本的东西里。</li></ul>
-<p>所以我们在训练器 Job 上的 <code>127.0.0.1:8000</code> 跑一个小代理，把 TRL 指过去，仿佛它是一台单机 vLLM。除了加 header，代理在功能上只做两件事：</p>
-<ul><li>把每个 completion 请求发给一个副本，选择标准是让同一个 prompt 的八个 rollout 落在已缓存其前缀的地方（细节见下文）。</li><li>把每个<em>改变状态</em>的请求——如 <strong>adapter 加载、pause 和 resume</strong>——广播到所有副本，让同一个 policy 名字在每个副本上含义一致。</li></ul>
-<h3>按 KV 前缀路由 rollout</h3>
-<p>先快速回顾为什么这件事重要。生成一条 completion 有两个负载特征截然不同的阶段：</p>
-<ul><li>prefill 阶段<strong>一次性处理整个 prompt</strong>，为每个 prompt token 计算注意力的 key 和 value。</li><li>decode 阶段随后一次产出 token，每个新 token 都要注意到它前面所有 token 的 key 和 value。</li></ul>
-<p>这些 key 和 value 就是 KV cache。因为注意力是因果的，某个 token 的 KV 只取决于它之前的 token、与后面无关。两个共享前缀的请求因此共享那段前缀的 KV，而已经缓存了它的副本可以<strong>完全跳过 prefill 的那一部分</strong>。现在的全部功夫就在于找到那个副本，让请求落到已经见过其前缀的地方。</p>
-<p>vLLM 的<a href="https://github.com/vllm-project/vllm/blob/main/vllm/v1/core/kv_cache_utils.py">前缀 KV cache</a>按 16 token 一个 block 存储。由于 GRPO，rollout worker 会对同一个 prompt 发出 <code>G</code> 个请求（我们这里 <code>G=8</code>）。如果它们都到达同一个副本，第一个请求算 prefill，后七个直接复用。若是轮询路由，就有一半会落到没缓存该前缀的副本，那四个请求会重做 prefill，浪费宝贵的 GPU 算力。</p>
-<p><a href="https://github.com/AmineDiro/hfjobs-lora-buckets/blob/main/src/lora_proxy.py">我们的路由器</a>的职责是追踪哪个副本见过哪个 <strong>block hash</strong>。一个重要细节是哈希是链式的：block 3 的 hash 代表的是 block 1、2、3，而不只是 block 3。这正对应因果注意力：block 3 的 KV 只有在 block 1 和 2 也相同时才有效。我们还会用 adapter 名字给哈希链做种子，因为 KV cache 也取决于生成它的 adapter：为 policy v3 缓存的前缀对 policy v4 毫无用处！</p>
-<p>你的浏览器不支持 video 标签。</p>
-<p>两个 prompt、四个请求在两个副本上的路由决策：16-token block、链式哈希、公共前缀、一次亲和命中、一次溢出。</p>
-<p>视频完整演示了选择副本的决策过程。下面的步骤走一遍一个真实的 135-token completion 请求示例（来自 Sanity 数据集中的题）：</p>
-<p><strong>1. 把 prompt 切成 block。</strong> 路由器收到 token ids，像 vLLM 一样把它们切成 16-token 的 block。它只对完整 block 做哈希，所以这里最后 7 个 token 被忽略。</p>
-<p><strong>2. 哈希前缀。</strong> 每个 block 与前一个哈希一起参与哈希，从 adapter 种子开始。于是 <code>h3</code> 按序标识 block 1、2、3。前 <code>k</code> 个 block 相同的两个 prompt，其哈希直到 <code>hk</code> 都相同；一旦某个 block 变了，其后所有哈希都会变。这就是为什么用 adapter 名字做种子：同一个 prompt 在 <code>trl-policy-v4</code> 下从另一个种子出发，不可能匹配 <code>v3</code> 的记录。这正是我们想要的，因为旧 KV block 是用不同权重算出来的。</p>
-<p><strong>3. 比较两个 prompt。</strong> 问题 1 有 103 个 token。两个 prompt 都以相同的 23-token 聊天模板开头。它们的第一个 block 相同，但 block 2 已经包含题面文本，哈希从这里开始不同。</p>
-<p><strong>4. 记录归属。</strong> 对每个哈希，路由器记住哪些副本服务过它、以及它后面跟过哪些哈希（后继集合上限设为 2，因为我们只需要知道一个 block 有单一延续还是多个延续）。跑过几个 prompt 之后：模板 block <code>h1</code> 由两个副本共同所有、且已有多个后继；<code>h2</code> 到 <code>h8</code> 仅由 A 所有、各自只有单一后继；<code>h2'</code> 到 <code>h6'</code> 仅由 B 所有。</p>
-<p>实际运行中，每个 prompt 都以相同的 token 开头。这里是聊天模板加系统提示，占 1,460 道题全部的前 23 个 token。换成 agent 场景就是工具描述，多轮对话场景就是共享的会话历史。这些 block 在几秒内就进入每个副本的缓存，所以匹配上它们并不能说明某个具体 prompt 在哪里。</p>
-<p>若每个副本都服务过某个 block，或它有多个后继，该 block 就是<em>公共的</em>。路由时忽略公共 block，因为它们无法标识具体 prompt。下文继续展开！</p>
-<p><strong>5. 选一个副本。</strong> 路由器统计每个副本匹配了多少个前导 block，再减去公共前缀，剩下的是本 prompt 独有的 block 数。然后：</p>
-<ul><li>若某个副本有独有 block 且它不算忙——即它最多只比最闲副本多 8 个在途请求——请求就去那里。我们称之为 <strong>affinity（亲和）</strong>命中。</li><li>若某副本有独有 block 但它已多出 8 个以上在途请求，我们放弃缓存，把请求发给最闲的副本。我们称之为 <strong>spill（溢出）</strong>。</li><li>若没有任何副本有独有 block，这是一个新 prompt。它去最闲的副本，并列时轮询。我们称之为 <strong>unmatched（未匹配）</strong>。</li></ul>
-<p>下面把规则应用到四个请求。初始状态：副本 A 和 B 各有 3 个在途请求，两个副本上只有模板 block <code>h1</code> 已知。</p>
-<ul><li><strong>请求 1，问题 0，rollout 1。</strong> 两个副本各匹配 1 个 block——模板——且该 block 是公共的。所以没有任何独有匹配。请求 unmatched，两个副本负载相同，轮询把它派给 A。路由器记录 <code>h2</code> 到 <code>h8</code> 归 A 所有。A 现在有 4 个在途请求。</li><li><strong>请求 2，问题 0，rollout 2。</strong> 同一个 prompt。A 匹配全部 8 个 block，B 只匹配模板。减去 1 个公共 block 后，A 有 7 个独有 block、B 有 0 个。A 只比 B 多 1 个请求，远小于 8 的上限，于是请求去 A。这是一次亲和命中：A 的 KV cache 里已经有整个 prompt。</li><li><strong>请求 3，问题 1，rollout 1。</strong> 新 prompt。两个副本都只匹配模板 block，没有独有匹配。请求 unmatched，去最闲的副本 B——它 3 个在途，A 已有 5 个。路由器记录 <code>h2'</code> 到 <code>h6'</code> 归 B 所有。</li><li><strong>请求 4，问题 0，rollout 9。</strong> 假设此刻 A 有 12 个在途而 B 回到 3。A 仍有那 7 个独有 block，但它现在比 B 多 9 个请求，超过上限。请求溢出到 B。B 把问题 0 prefill 一次，路由器把 <code>h2</code> 到 <code>h8</code> 也记为 B 所有。现在每个副本都服务过这些 block，问题 0 也变成公共的，其后续 rollout 只按负载放置。</li></ul>
-<p><strong>6. 复用 prefill。</strong> 请求 2 就是我们做这一切的理由：它复用了请求 1 计算的 prefill——block 1 到 8 已在 A 的 KV cache 里，A 直接开始解码 completion。若派到 B，B 会重算全部 135 个 token 的 prefill，而 A 的缓存干放着没用。请求 3 说明了为什么需要 <code>common</code> 规则：没有它，共享的聊天模板会让每个新 prompt 都看起来像缓存命中。请求 4 说明负载有界的重要性：为了省一次 prefill 让某副本远远落后，不值得。</p>
-<pre><code>def choose(self, upstreams, model, prompt):
-    hashes = self.block_hashes(model, prompt)         # chained blake2b over 16-token blocks, seeded with `model`
-    matched = self.matched_prefix(hashes)             # per replica: leading blocks it has served
-    common = self.common_prefix_len(hashes)           # leading blocks that identify no prompt (see below)
-    specific = [max(0, m - common) for m in matched]  # what actually distinguishes replicas
-    least = min(u.inflight for u in upstreams)
-    best = max(range(self.n), key=lambda i: (specific[i], -upstreams[i].inflight))
-
-    if specific[best] &gt; 0 and upstreams[best].inflight - least &lt;= self.cfg.imbalance:
-        pick = best                                   # affinity: the replica that has this prompt, and is not swamped
-    else:
-        candidates = [i for i in range(self.n) if upstreams[i].inflight == least]
-        pick = candidates[self.rr % len(candidates)]  # spill or new prompt: least-loaded, round robin on ties
-        self.rr += 1
-    ...record `pick` as an owner of every block, and each block's successor...
-    return upstreams[pick]</code></pre>
-<p><code>common</code> 前缀是最麻烦的一块。每个请求都以相同的系统提示和聊天模板开头。简单做最长前缀匹配的话，第一个副本几乎对每个新 prompt 都能命中。我们改用「扇出」来检测共享前缀：有多个不同后继的 block 是公共的；永远只有同一个后继的 block 才属于某个具体 prompt。只有公共前缀之后的 block 才计入亲和。</p>
-<h3>广播 adapter</h3>
-<p>代理还需要把 adapter 加载广播到每个副本。我们把该操作当作<strong>全有或全无</strong>。每个副本有自己的 bucket 挂载，它们不一定在同一时刻看到新 adapter。<code>No adapter found for &lt;path&gt;</code> 错误通常意味着某个 bucket 挂载还没跟上，我们只对那个副本重试。出现任何其他错误，我们就把已接受该 adapter 的副本上的它卸载掉，绝不让一个 policy 名字只存在于部分副本上。</p>
-<pre><code>async def load_one(u):
-    while True:
-        status, _, out = await send(u, &quot;POST&quot;, &quot;/v1/load_lora_adapter&quot;, headers, body)
-        if status == 200 or &quot;No adapter found&quot; not in out.decode() or time.monotonic() &gt; deadline:
-            return u, status, out
-        await asyncio.sleep(cfg.lora_retry_s)          # this replica's mount has not seen the directory yet
-
-results = await asyncio.gather(*(load_one(u) for u in ups))
-if any(st != 200 for _, st, _ in results):
-    await asyncio.gather(*(send(u, &quot;POST&quot;, &quot;/v1/unload_lora_adapter&quot;, headers, unload) for u, st, _ in results if st == 200))
-    return web.Response(status=504 if timed_out else st, text=&quot;rolled back on the others&quot;)</code></pre>
-<p><code>/pause</code>、<code>/resume</code> 和 <code>/v1/unload_lora_adapter</code> 也用同样方式广播。<code>/health</code> 只有所有副本健康才返回 200。<code>/server_info</code> 和 <code>/v1/models</code> 只需要一份回答。从 TRL 的视角看，代理就是一台 <code>data_parallel_size=1</code> 的服务器，所以它选择仅-adapter 同步。</p>
-<p>我们起初还担心一个 Python asyncio 代理会不会成为瓶颈。它不会（至少在这个规模上）。在途的非流式 JSON 请求最多 128 个，路由只算几个哈希，一个线程轻松搞定。若要处理更大流量，一个更精细的路由器大概率得用更快的语言重写（说的就是你 🦀）。</p>
-<h2>完整运行结果</h2>
-<p>下面的数字来自训练器在 trackio 上的<a href="https://huggingface.co/docs/trl/en/async_grpo_trainer#logged-metrics">记录指标</a>。该运行使用 <code>Qwen/Qwen2.5-Math-1.5B</code>、<code>all-linear</code> 上的 LoRA <code>r=1</code>、每步 128 条 completion、每个 prompt 8 条 rollout。共跑 500 步，每 50 步存一次 checkpoint。训练器用一个 <code>h200x2</code> Job，两个 vLLM 副本各用一个 <code>h200</code> Job。三者一起跑约 $20/小时。</p>
-<h3>权重同步</h3>
-<table><thead><tr><th>每次同步（训练器时钟，共 126 次）</th><th>之前</th><th>现在（p50）</th></tr></thead><tbody><tr><td>整个同步</td><td>30.8 s</td><td><strong>8.5 s</strong>（最低 6.6，最高 9.2）</td></tr><tr><td>其中：暂停两个副本</td><td>0.3 s</td><td>0.3 s</td></tr><tr><td>adapter all-gather 并存入 bucket</td><td>0.6 s</td><td>1.1 s</td></tr><tr><td>两个副本接受 adapter</td><td>~29 s</td><td>~7 s</td></tr></tbody></table>
-<p>全部 252 次 adapter 加载都成功了 🎉：126 次同步 × 2 个副本。6 次在第二次尝试成功，246 次在第三次成功。</p>
-<h3>路由</h3>
-<p>运行结束时，在 64,728 条 rollout 之后，代理的计数器显示：</p>
-<pre><code>routed [31928, 32800]  affinity 54712  spilled 820  unmatched 9196</code></pre>
-<p>每个 prompt 有 8 条 rollout，其中必然至少一条是冷的。理论下限是 12.5%。路由器做到 14.2% unmatched、84.5% 亲和命中、1.3% 溢出。除非开始用更深的、基于实测负载的推理侧指标来看每个副本的负载，否则这里已没多少可榨取的空间。</p>
-<h3>时间去哪了</h3>
-<p>第一个配置有一个很明显的问题：瓶颈是训练器，不是生成。500 步里：</p>
-<table><thead><tr><th>每个优化步，p50</th><th></th></tr></thead><tbody><tr><td>step</td><td>22.9 s</td></tr><tr><td>forward + backward</td><td>21.9 s</td></tr><tr><td>等待 rollouts</td><td>0.02 s</td></tr><tr><td>rollout 队列占用</td><td>512 中有 476</td></tr><tr><td>训练器 MFU</td><td>3.9 %</td></tr></tbody></table>
-<p>rollout 队列一直是满的，worker 大部分时间被背压（backpressure）堵住。第二个副本在这个配置里基本没用。后文会看到我们如何通过一系列运行把瓶颈在训练和生成之间来回移动，最终把整跑加速 3.9 倍。</p>
-<h3>Reward</h3>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig0-r1-dp2-reward.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig0-r1-dp2-reward.png" alt="Figure 1"></a></p>
-<p><em>图 1。trackio 运行 <code>r1-dp2</code>。面板：<code>reward</code> 及其 20 步滑动均值和 50 步分块均值，以及坐标轴 0.99–1.01 的 <code>ratio</code>。reward 在 500 步里从 0.15 升到 0.44；<code>ratio</code> 全程保持在 0.9993 到 1.0004 之间。</em></p>
-<p>500 步用了 3 小时 27 分。平均 reward 从前 20 步的 0.145 涨到最后 20 步的 0.438。对这个测试更重要的是：每一步的 <code>ratio</code> 都是 1.000！vLLM 服务的 policy 和训练器给 rollout 打分用的 policy 始终一致，126 次同步全部如此。平均 staleness 为 1.5 个 policy 版本，上限为 4。完整曲线见 <a href="https://huggingface.co/spaces/aminediroHF/async-grpo-lora-buckets">trackio dashboard</a>。</p>
-<p>我们有了 LoRA AsyncGRPO 可行铁证。接下来看看如何利用近期加入的 AsyncGRPO 细粒度指标来改进训练运行。</p>
-<h2>追逐瓶颈的乒乓</h2>
-<p>异步 RL 是训练与生成之间的流水线。一边提速，如果另一边跟不上，毫无意义。好在 <code>AsyncGRPOTrainer</code> 里我们加了足够多的计时和指标，可以直接看清这一点。</p>
-<p>所有有用指标都记录在 <a href="https://huggingface.co/docs/trl/en/async_grpo_trainer#logged-metrics">Logged metrics</a> 一节。<code>perf/rollout_wait_s</code> 告诉我们训练器等待样本多久；<code>rollout/backpressure_s</code> 告诉我们生成侧为队列空位等待多久。两者完全对立，不应同时很高。它们和队列大小一起，指出哪一侧慢了。</p>
-<p>我们跑了五个实验。每一个都始于上一次运行仪表盘上暴露的问题。除非另有说明，模型、配方和三 Job 布局不变。下面的名字就是 trackio 的运行名。</p>
-<h3>读仪表盘</h3>
-<p>我们保持这四组指标可见：</p>
-<ul><li><strong><code>perf/step_s</code></strong> 和 <strong><code>perf/fwd_bwd_s</code></strong>：一个优化步耗时多久、其中 forward+backward 占多少。若一步的耗时几乎等于 forward+backward，训练器明显是计算受限的。</li><li><strong><code>perf/rollout_wait_s</code></strong>：训练器为了拿到样本开始一步而干坐了多久。接近零表示生成跑在训练前面，样本立即可用。</li><li><strong><code>sample/rollout_queue_size</code></strong> 对比 <code>queue_maxsize</code>：两侧之间的缓冲。满表示生成被节流；空表示训练器在挨饿。</li><li><strong><code>rollout/backpressure_s</code></strong> 和 <strong><code>rollout/score_block_s</code></strong>：rollout worker 因缓冲满而被堵住多久。worker 是两级流水线：生成把完成的组交给打分（scoring）阶段，打分再把打完分的样本推入 rollout 缓冲。缓冲满时打分无法入队而被堵住，即 <code>rollout/backpressure_s</code>。打分随之停止消化自己的输入队列，生成也就无法交出下一组，即 <code>rollout/score_block_s</code>。两者是同一次停顿，先在打分阶段看到、再传导回生成阶段。</li></ul>
-<p>诊断很简单：队列满、rollout 等待为零、背压高——训练器太慢。队列空、rollout 等待上升、没有背压——生成太慢。对比 <code>perf/mfu_wall_clock</code> 与 <code>perf/mfu_fwd_bwd</code> 还能看出训练器 GPU 有多少时间在等待而不是训练。</p>
-<h3>运行 1，<code>r1-dp2</code>：跟不上的训练器</h3>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig1-r1-dp2-trainer-bound.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig1-r1-dp2-trainer-bound.png" alt="Figure 2"></a></p>
-<p><em>图 2。trackio 运行 <code>r1-dp2</code>。面板：<code>perf/step_s</code>、<code>perf/fwd_bwd_s</code>、<code>sample/rollout_queue_size</code>、<code>rollout/backpressure_s</code>。步时与 forward+backward 几乎完全重叠；队列钉在 512 中的 476 附近，背压每组 rollout 从不低于 11 s：训练器受限。</em></p>
-<p><code>perf/step_s</code> 为 22.9 s，<code>perf/fwd_bwd_s</code> 为 21.9 s。forward 和 backward 占步时的 96%。队列保持满员，训练器等 rollout 只需 0.02 s，而 rollout worker 每组要背压阻塞 15 秒。两个 vLLM 副本的生成速度比训练器消费速度快。报告的 4.6k tokens/s 不是它们的真实上限——只是没地方放更多输出。</p>
-<p>batch 指标解释了糟糕的 3.9% MFU。<code>batch/microbatches_per_step</code> 是 64，<code>batch/samples_per_row</code> 是 1.0。每个 rank 每个步处理 64 次、每次一条约 1.2k token 的序列。这来自参考配方的 <code>per_device_train_batch_size=1</code>。对 1.5B 模型配 H200，这完全是延迟受限（latency-bound）。</p>
-<h3>运行 2，<code>r1-dp2-tb16k</code>：把 microbatch 装填密集</h3>
-<p>修法不是改 batch size。我们保持每个优化步 128 条 completion，只改它们在 GPU 上的摆放：不再是每个 microbatch 一条序列，而是把多条序列密集打包进每一行。训练器通过 <strong>token-budget batching（token 预算批处理）</strong>支持这一点。<code>token_budget &gt; 0</code> 时，它把多个样本打包成每个 rank 一行无 padding 的数据。一个优化步处理 <code>gradient_accumulation_steps</code> 行。我们设 <code>token_budget=16384</code>、<code>gradient_accumulation_steps=6</code>。</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig2-r1-dp2-vs-tb16k-packing.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig2-r1-dp2-vs-tb16k-packing.png" alt="Figure 3"></a></p>
-<p><em>图 3。trackio 运行 <code>r1-dp2</code> 与 <code>r1-dp2-tb16k</code> 前 154 步叠加。面板：<code>batch/samples_per_row</code>、<code>batch/microbatches_per_step</code>、<code>perf/step_s</code>、<code>perf/fwd_bwd_s</code>、<code>perf/mfu_fwd_bwd</code>、<code>rollout/generated_tok_s</code>。打包后每行样本数从 1 到 13，microbatch 从 64 降到 6，步时从 23 s 降到 5.9 s，生成从 4.2k 升到 27.5k tok/s——vLLM 侧什么都没改。</em></p>
-<p><code>batch/samples_per_row</code> 从 1.0 升到约 12.7，microbatch 数量从 64 降到 6。行有 95% 是满的！forward 和 backward 从 21.9 s 降到 5.6 s，MFU 从 3.9% 升到 19%。现在每步约训练 150 个样本，因为行装填得比按平均长度估计的更好。</p>
-<p>生成也从 4.6k 跳到 25k tokens/s，尽管 vLLM 侧没有任何改动。队列不再常年满员，副本终于可以放开跑了。这就是我们不喜欢孤立地优化流水线某一级的原因。要谨慎地评估整个系统——一个慢的级会掩盖其上游所有环节的真实性能。</p>
-<h3>运行 3，<code>r1-dp2-tb16k-nockpt</code>：别再重算 forward</h3>
-<p><code>perf/fwd_s</code> 是 1.34 s，而 <code>perf/fwd_bwd_s</code> 是 5.6 s。正常的 backward 大约是 forward 的两倍开销，而 base 权重冻结时应该更接近一倍。3.2 的比值可疑。</p>
-<p>原因是 <code>AsyncGRPOConfig</code> 默认 <code>gradient_checkpointing=True</code>。每个 microbatch 在 backward 期间重算自己的 forward。这也解释了 16k-token 的行在 141 GB 的 H200 上只用 25 GB！这是给训练器省显存的优化，但这个具体场景不需要：模型足够小，激活留着做 backward 也装得下。</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig3-tb16k-vs-nockpt-crossover.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig3-tb16k-vs-nockpt-crossover.png" alt="Figure 4"></a></p>
-<p><em>图 4。trackio 运行 <code>r1-dp2-tb16k</code> 与 <code>r1-dp2-tb16k-nockpt</code> 前 134 步叠加。面板：<code>perf/fwd_s</code>、<code>perf/fwd_bwd_s</code>、<code>perf/weight_sync_s</code>、<code>sample/rollout_queue_size</code>、<code>perf/rollout_wait_s</code>、<code>perf/mfu_fwd_bwd</code>。forward+backward 少了一个 forward 的量；队列从约 420 掉到约 60，rollout 等待从 0.02 s 升到 0.5 s：瓶颈转向生成。</em></p>
-<p>设 <code>gradient_checkpointing=False</code> 后，forward 加 backward 降到 4.6 s，几乎正好少一个 forward，MFU 达到 23%。队列降到 71，rollout 等待从 0.04 s 升到 0.6 s。训练器消费样本比两个副本生成更快。我们<em>成功地</em>把瓶颈移到了生成侧。</p>
-<p>这暴露出另外两项成本。每四步一次、7.6 秒的权重同步现在占墙钟时间的 25%——之前每步 23 秒时它只占 8%。另外，backward 仍比 forward 慢 2.5 倍。在 base 权重冻结的前提下，每步仍有约 2 秒看起来不像正常的模型计算。</p>
-<h3>运行 4，<code>r1-dp3-tb16k-nockpt</code>：三个副本，和一个意外</h3>
-<p>既然生成太慢，我们加了第三个副本。同时把代理里的 adapter 重试间隔从 2 s 降到 0.5 s，并关闭 <code>fsdp_reshard_after_forward</code>，以验证 backward 里多出的 2 秒是不是 FSDP2 的重新 gather 造成的。</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig4-dp2-vs-dp3-inflight-cap.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig4-dp2-vs-dp3-inflight-cap.png" alt="Figure 5"></a></p>
-<p><em>图 5。trackio 运行 <code>r1-dp2-tb16k-nockpt</code> 与 <code>r1-dp3-tb16k-nockpt</code> 前 134 步叠加。面板：<code>perf/weight_sync_s</code>、<code>rollout/generated_tok_s</code>、<code>rollout/inflight</code>、<code>perf/fwd_bwd_s</code>。同步从 7.6 s 降到 5.8 s；生成和 forward+backward 纹丝不动；两次运行的 <code>rollout/inflight</code> 都是 128——这正是第三个副本撞上的上限。</em></p>
-<p>权重同步从 7.6 s 降到 5.8 s，说明缩短重试间隔有效。forward 和 backward 保持 4.6 s，排除了 resharding。生成从 25k 只升到 26k tokens/s。第三个副本基本白加。</p>
-<p>原因就躺在 <code>rollout/inflight</code> 里：每次运行都是 128。代理显示这些请求按 44 + 43 + 41 分摊到三个副本。<code>max_inflight_tasks</code> 限制的是整个 rollout worker 的并发，不是每个副本的并发。1.5B 模型在 H200 上处理 43 条和 130 条并发序列的单 token 成本几乎一样。把 128 个请求摊到三块 GPU 上和摊到两块上的吞吐几乎相同。</p>
-<p>所以 vLLM 不是瓶颈，是我们自己客户端里的常量才是。当初保守设它，是因为不知道几百个长 HTTPS 请求经公开 Jobs 代理会是什么表现。而到这里，130,000 条 rollout completion 已经全部穿过它，零传输错误。</p>
-<h3>运行 5，<code>r1-dp3-inflight384</code>：抬高在途请求上限</h3>
-<p><code>max_inflight_tasks=384</code>、<code>queue_maxsize=768</code>，其他一律不动。</p>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig5-all-runs-scoreboard.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig5-all-runs-scoreboard.png" alt="Figure 6"></a></p>
-<p><em>图 6。全部五个 trackio 运行（<code>r1-dp2</code>、<code>r1-dp2-tb16k</code>、<code>r1-dp2-tb16k-nockpt</code>、<code>r1-dp3-tb16k-nockpt</code>、<code>r1-dp3-inflight384</code>）叠加，横轴为步。面板：<code>perf/step_s</code>、<code>reward</code>、<code>sample/rollout_queue_size</code>、<code>sample/staleness_mean</code>。整个系列里步时从 22.9 s 降到 4.8 s，而 reward 曲线彼此重叠；最后一次运行的队列回升到 768 中的约 690，staleness 稳定在 2。运行 2 到 4 在仪表盘回答问题后就被提前停掉了。</em></p>
-<p>384 个在途请求时，每个副本分到 128。队列迅速填到 768 中的约 690 并保持。背压回到 5 秒，rollout 等待降到 0.03 秒。训练器又是瓶颈了！forward 和 backward 4.6 秒，权重同步摊销 1.5 秒，步时中位数 4.8 秒。</p>
-<p>平均 staleness 从 1.5 升到 2.0 个版本，因为样本在更大的队列里等得更久。这仍低于 <code>max_staleness=4</code>，且 <code>ratio</code> 依然非常接近 1.000。</p>
-<h3>记分牌</h3>
-<table><thead><tr><th>500 步</th><th>运行 1 <code>r1-dp2</code></th><th>运行 5 <code>r1-dp3-inflight384</code></th></tr></thead><tbody><tr><td>墙钟时间</td><td>3 h 27 min</td><td><strong>53 min</strong></td></tr><tr><td><code>perf/step_s</code>，p50</td><td>22.9 s</td><td>4.8 s</td></tr><tr><td><code>perf/fwd_bwd_s</code>，p50</td><td>21.9 s</td><td>4.6 s</td></tr><tr><td><code>perf/mfu_fwd_bwd</code></td><td>3.9 %</td><td>23.5 %</td></tr><tr><td><code>batch/samples_per_step</code></td><td>128</td><td>168</td></tr><tr><td>训练样本数</td><td>64 000</td><td>84 078</td></tr><tr><td><code>perf/weight_sync_s</code>，p50</td><td>8.5 s</td><td>6.2 s</td></tr><tr><td><code>sample/staleness_mean</code></td><td>1.5</td><td>2.0</td></tr><tr><td>reward，前 20 → 后 20 步</td><td>0.145 → 0.438</td><td>0.145 → 0.416</td></tr></tbody></table>
-<p><a href="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig6-reward-vs-wallclock.png"><img src="https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/blog/asyncgrpo-lora-hfjobs/fig6-reward-vs-wallclock.png" alt="Figure 7"></a></p>
-<p><em>图 7。trackio 运行 <code>r1-dp2</code> 与 <code>r1-dp3-inflight384</code>，reward 对自第一个优化步以来的墙钟分钟数。同一配方、同样 500 步、同样的最终 reward；运行 5 用 52 分钟到达，而不是 3 h 26 min。</em></p>
-<p>最终运行快了 3.9 倍、多训练了 31% 的样本，reward 曲线基本一致。起作用的是三点：装填打包、关闭 gradient checkpointing、抬高在途上限。每一次，仪表盘在前十分钟内就把问题指清楚了。</p>
-<h2>试一试</h2>
-<pre><code>git clone https://github.com/AmineDiro/hfjobs-lora-buckets &amp;&amp; cd hfjobs-lora-buckets
-hf auth login
-MAX_STEPS=20 RUN_TAG=smoke ./run_all.sh --wait        # ~15 min, three Jobs, cancels the servers when done
-MAX_STEPS=500 ./run_all.sh --wait                     # run 1: the reference batch shape, ~3.5 h
-TOKEN_BUDGET=16384 GRAD_ACCUM=6 GRADIENT_CHECKPOINTING=0 PROXY_LORA_RETRY_S=0.5 \
-  MAX_INFLIGHT=384 QUEUE_MAXSIZE=768 MAX_STEPS=500 ./run_all.sh --wait   # run 5: same recipe, ~55 min</code></pre>
-<h2>参考文献</h2>
-<ul><li>John Schulman 等，<a href="https://thinkingmachines.ai/blog/lora/">LoRA Without Regret</a>，Thinking Machines Lab，2025 年 9 月。论证 rank-1 LoRA 在 policy-gradient RL 中媲美全量微调及其原因。</li><li>TRL，<a href="https://huggingface.co/docs/trl/en/async_grpo_trainer"><code>AsyncGRPOTrainer</code></a> 及其<a href="https://huggingface.co/docs/trl/en/async_grpo_trainer#logged-metrics">记录指标</a>。</li><li>TRL <a href="https://github.com/huggingface/trl/pull/7017">PR #7017</a>：<code>AsyncGRPOTrainer</code> 的 PEFT/LoRA 支持与仅-adapter 的 vLLM 同步，随 TRL v1.14 发布。</li><li>Hugging Face <a href="https://huggingface.co/docs/huggingface_hub/guides/jobs">Jobs</a> 与 <a href="https://huggingface.co/docs/hub/storage-buckets">Storage Buckets</a>；<a href="https://github.com/huggingface/hf-mount"><code>hf-mount</code></a>。</li><li><a href="https://github.com/AmineDiro/hf-mount-repro"><code>hf-mount-repro</code></a>：30 秒负缓存停顿的两脚本复现。</li><li>本文所有运行的 <a href="https://huggingface.co/spaces/aminediroHF/async-grpo-lora-buckets">trackio dashboard</a>。</li><li>Penghui Qi, Zichen Liu, Xiangxin Zhou, Tianyu Pang, Chao Du, Wee Sun Lee, Min Lin，<a href="https://huggingface.co/papers/2510.26788">Defeating the Training-Inference Mismatch via FP16</a>，arXiv:2510.26788，2025。Sanity 数据集 <a href="https://huggingface.co/datasets/sail/Sanity-Test-R1D-1.5B"><code>sail/Sanity-Test-R1D-1.5B</code></a> 与 LoRA 配方 <a href="https://github.com/sail-sg/Precision-RL"><code>sail-sg/Precision-RL</code></a> <code>oat/scripts/lora/bf16_grpo_tis_lora.sh</code> 的出处。</li></ul>
-<pre><code>@article{qi2025precisionrl,
-  title={Defeating the Training-Inference Mismatch via FP16},
-  author={Qi, Penghui and Liu, Zichen and Zhou, Xiangxin and Pang, Tianyu and Du, Chao and Lee, Wee Sun and Lin, Min},
-  journal={arXiv preprint arXiv:2510.26788},
-  year={2025}
-}</code></pre>]]></content:encoded>
     </item>
   </channel>
 </rss>

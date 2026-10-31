@@ -163,7 +163,7 @@ python -m unittest discover
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-10-30 10:13:20**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-10-31 09:50:33**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
 > 💡 **核心特性**：覆盖 **70 家厂商**（深度抓取 **133 个情报页 + 46 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 35 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
@@ -204,7 +204,7 @@ python -m unittest discover
 | **免费层限制 / 注意事项** | • **额度按模型独立计算，不可合并或跨模型转移**：用完后系统不会自动切换模型，需手动修改 model 参数<br>• **快照版本独立**：带日期后缀版本（如 `qwen-max-2026-05-17`）与主版本独立享有额度<br>• **适用范围受限**：仅抵扣模型实时推理，不可抵扣批量调用、内置工具（联网搜索/图片搜索等）、微调与部署<br>• **扣费风险**：未认证用户默认开启「免费额度用尽即停」且不可关闭；已认证用户默认关闭，需前往权益页面手动开启以防超额按量扣费产生欠费<br>• **Key 类型限制**：Token Plan 专属 API Key 不消耗免费额度，须使用通用 API Key |
 | **邀请 / 特惠活动** | “云大使”返利、知识库 720 小时试用等说法无法在当前官方免费额度页复核，不予采信。 |
 | **邀请 / 拉新奖励** | **阿里云“云大使”官方页不可达**：第三方情报库所指 `k.aliyun.com/smarter/ai-distributor` 复核时无法访问；所称「推广返利 30%–45%」不予采信。 |
-| **实时巡检证据** | • 免费额度的有效期通常为 90 天，但两类额度的起算时间不同：<br>• 该模型不提供免费额度：部分模型不参与新人免费额度发放，具体以权益页面显示为准。<br>• 该页面包含模型调用额度、Agent 开发额度和优惠券三个页签，其中模型调用额度页签提供： |
+| **实时巡检证据** | • 免费额度的有效期通常为 90 天，但两类额度的起算时间不同：<br>• 同一认证主体下重新注册账号，无法再次领取新人免费额度。<br>• 该页面包含模型调用额度、Agent 开发额度和优惠券三个页签，其中模型调用额度页签提供： |
 | **官方直达** | [免费额度官方文档](https://help.aliyun.com/zh/model-studio/new-free-quota) ｜ [API Key 申请直达](https://bailian.console.aliyun.com/?apiKey=1) ｜ [模型服务控制台](https://bailian.console.aliyun.com/) ｜ [通义千问官网](https://tongyi.aliyun.com/) |
 | **特别说明** | 账户欠费时，只有产生欠费的服务会被停止（即使该服务仍有免费额度也无法调用），其他服务不受影响；工作台显示的免费额度数据存在分钟级延迟。 |
 
@@ -251,7 +251,7 @@ python -m unittest discover
 | **额度有效期** | 以账户内券面标注为准 |
 | **前置条件 / 限制** | 账号注册并完成实名认证 |
 | **邀请 / 特惠活动** | **M Plan 订阅**：个人 AI 订阅方案，提供 Go（年付 ¥490/年）、Explore（Go 的 3 倍用量，年付 ¥1,190/年）、Build（Go 的 12 倍用量，年付 ¥4,690/年），支持通过 API Key 接入编程与 Agent 工具；**积分包**：入门版 ¥30（4,489 积分）、进阶版 ¥150（22,460 积分）、高级版 ¥500（74,900 积分），购买之日起 1 年内有效。 |
-| **实时巡检证据** | • MiniMax Code · 官方推荐<br>• 积分包自购买之日起 1 年内有效，不会因套餐额度窗口刷新而重置有效期。 |
+| **实时巡检证据** | • MiniMax Code · 官方推荐<br>• Token Plan 老用户 |
 | **官方直达** | [API Key 申请直达](https://platform.minimax.cn/console/access?tab=api-keys) ｜ [模型介绍文档](https://platform.minimax.cn/docs/guides/models-intro) ｜ [Token Plan 定价](https://platform.minimax.cn/docs/guides/pricing-token-plan) ｜ [官方网站](https://www.minimax.cn/) |
 | **特别说明** | “Builder 共建者邀请返券”在现行官方文档中无入口记载；开放平台文档站已统一至 platform.minimax.cn/docs（旧域名 platform.minimaxi.com 全站 301 跳转至此）。 |
 
@@ -404,7 +404,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册并完成实名认证（无需企业审核） |
 | **免费层限制 / 注意事项** | • 额度**按模型/服务分散发放**，不是统一 token 池：U2 / U2-Med / U2-OCR / U2-OCR-Med / U2 Flash / U2-RadiMed 各 500 万 tokens、ASR 5 小时、TTS 5 万字、TTS-Clone / TTS-Design 各 2 万字，互不通兑<br>• 有效期官方文档未标注，以账户内资源包为准 |
 | **邀请 / 特惠活动** | 平台聚焦语音与医疗场景，提供语音识别/合成与 OCR 全栈接口；官方页首横幅标注 `U2 Flash` 全新上线并限时免费无限量调用（2026.09.30-2026.10.31）；弹窗标注扫码加入交流群领取 5 亿 token。 |
-| **实时巡检证据** | • U2 Flash 全新上线！限时免费无限量调用（2026.09.30-2026.10.31）！立即查看<br>• 模型Token Plan低至5.9折体验文档 |
+| **实时巡检证据** | • U Plan 正式上线！Free 档免费领，套餐升级限时5折，低至29.5元/月！ U2-Flash、U2-Med 超耐用，ASR、TTS、OCR 模型权益免费送！ |
 | **官方直达** | [快速入门（新人礼包说明）](https://maas.unisound.com/docs/guide/quickstart) ｜ [平台文档总览](https://maas.unisound.com/docs/guide/overview) ｜ [Token Hub 主页](https://maas.unisound.com/) |
 | **特别说明** | 开放平台已统一为 maas.unisound.com（Token Hub）。 |
 
@@ -525,7 +525,7 @@ python -m unittest discover
 | **额度有效期** | 网页免费版额度每 5 小时滚动重置；API 测试额度以账户到账为准 |
 | **前置条件 / 限制** | 网页端注册账号即可；API 需绑定付款方式；**免费版不含 Claude Code**（官方原文 “Claude Code is included in all paid plans”） |
 | **邀请 / 特惠活动** | Pro 订阅 $20/月（年付 $17/月）含 Claude Code；Max 从 $100/月起，含每月 $100 至 $200 的 Claude Platform API 额度；Team 计划含最高 $500/月池化 API 额度；Batch 5 折、提示缓存读低至 0.1x。 |
-| **实时巡检证据** | • 专业版计划为您提供免费计划中的所有内容，并且具有更多用途和 Claude 的更多功能。其中包括 Claude Code，以及用于组织聊天和文档的项目……<br>• 供学生学习的专用 API 学分和教育功能<br>• 每个计划都有使用限制，这些限制会在滚动的五小时会话窗口中重置，而付费计划则增加了每周限制。您在 Claude 上的网络、桌面、移动和 C 活动…… |
+| **实时巡检证据** | • 专业版计划为您提供免费计划中的所有内容，并且具有更多用途和 Claude 的更多功能。其中包括 Claude Code，以及用于组织聊天和文档的项目……<br>• 供学生学习的专用 API 学分和教育功能<br>• 是的，我们的销售团队可以通过批量折扣和承诺支出折扣为您的组织定制 Claude Enterprise 和 Claude API 定价。我们不发布折扣... |
 | **官方直达** | [官方主页](https://claude.com/) ｜ [定价中心](https://claude.com/pricing) ｜ [模型文档](https://platform.claude.com/docs/en/models/overview) ｜ [API 定价 FAQ](https://platform.claude.com/docs/en/about-claude/pricing) |
 | **特别说明** | 官方页将 Opus 5.5 定位为日常智能体编码与企业工作的“Daily driver”，Fable 5.1 面向复杂推理与长程智能体任务（“Next generation intelligence for long-running agents”）；另有 Opus 5.5 fast mode（2 倍标准价、最快 2.5x）与 US-only 推理（1.1x 价）等付费选项。 |
 
@@ -643,7 +643,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 注册 Cloudflare 账号即可使用，免绑卡 |
 | **免费层限制 / 注意事项** | • 免费额度是账号级 **每日 10,000 Neurons 共享总额度**（不是每模型各 1 万），所有限额每日 00:00 UTC 重置；超额按 $0.011 / 1,000 Neurons 计费，需开通 Workers Paid<br>• kimi-k2.6/k2.7-code、glm-5.2/5.3/5.3-flash、deepseek-v4-flash-0731/v4.1-flash-1017/v4-pro-0813 等前沿模型**要求付费计费方式，不在免费层内**；其余 Text Generation 模型默认限速 300 请求/分钟，而这些付费模型仅 20 请求/分钟（Workers Paid）或 50 请求/分钟（预付 AI Gateway credits）<br>• 免费层主要面向 Workers 平台内调用；Neurons 换算随模型不同 |
 | **邀请 / 特惠活动** | 与 Cloudflare Workers、Vectorize 向量库、AI Gateway 边缘集成。 |
-| **实时巡检证据** | • 1 Workers Free 计划包括有限的 Workers KV 使用。所有限制<br>• 每分钟 720 个请求 |
+| **实时巡检证据** | • 1 Workers Free 计划包括有限的 Workers KV 使用。日常的<br>• 每分钟 720 个请求 |
 | **官方直达** | [Workers AI 文档](https://developers.cloudflare.com/workers-ai/) ｜ [模型目录](https://developers.cloudflare.com/workers-ai/models/) ｜ [定价说明](https://developers.cloudflare.com/workers-ai/platform/pricing/) ｜ [配额与限制](https://developers.cloudflare.com/workers-ai/platform/limits/) |
 | **特别说明** | 超额后开通 Workers Paid 按 **$0.011 / 1,000 Neurons** 计费（官方定价页原文）。 |
 
@@ -1212,7 +1212,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 社交账号或 AWS Builder ID 登录（升级付费档时首次登录发放试用） |
 | **免费层限制 / 注意事项** | • 原文注明 “Access is subject to rate limits”；部分模型并非所有国家/地区可用<br>• Pro $20/月 1,000 credits、Pro+ $40/月；加购 credits $0.04/credit |
 | **邀请 / 特惠活动** | 付费档附赠试用额度，以定价页为准 |
-| **实时巡检证据** | • * Users on the Free Tier who signed up with social logins or AWS Builder ID have access to Claude Sonnet 4.5 and open…<br>• 当您首次使用社交登录或 AWS Builder ID 升级到付费计划时，即可获得 20 美元的订阅积分。 |
+| **实时巡检证据** | • Kiro 提供灵活的定价等级，围绕开发人员如何使用 Kiro 进行设计。新用户可以从永久的 Kiro 免费套餐开始，其中包含 50 个积分。免费套餐包括...<br>• 当您首次使用社交登录或 AWS Builder ID 升级到付费计划时，即可获得 20 美元的订阅积分。 |
 | **官方直达** | [定价页（Kiro Free）](https://kiro.dev/pricing) ｜ [官网](https://kiro.dev/) |
 | **特别说明** | kiro.dev/pricing 为静态 HTML + JSON-LD，requests 抓取最稳定；除 Free 档外**无叠加注册赠金**（页内 free trial credit 仅为付费档按日折算扣费说明） |
 
@@ -1232,6 +1232,7 @@ python -m unittest discover
 | **特别说明** | 「Free forever」指标题档定价长期 $0，非全部 AI 功能免费；试用条款里的 GPT-6 Luna 为当前托管模型名 |
 
 <!-- LLM-INTEL:END -->
+
 
 
 
