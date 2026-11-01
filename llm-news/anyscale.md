@@ -77,7 +77,7 @@
 66. [Ray Summit 2022 故事集——ML 平台](https://anyscale.com/blog/ray-summit-2022-stories-ml-platforms)（2023-03-03） <!--orig:How companies are scaling their ML workloads and driving efficiency and productivity-->
 67. [Ray Summit 2022 故事集——大语言模型](https://anyscale.com/blog/ray-summit-2022-stories-large-language-models)（2023-02-16） <!--orig:Ray Summit 2022 Stories-->
 68. [用 Ray 以创纪录时间训练一百万个机器学习模型](https://anyscale.com/blog/training-one-million-machine-learning-models-in-record-time-with-ray)（2022-12-17） <!--orig:Training One Million Machine Learning Models in Record Time with Ray-->
-69. [Flexible, cross-language, distributed model inference framework: Ray Serve with Java API](https://anyscale.com/blog/flexible-cross-language-distributed-model-inference-framework-ray-serve-with)（2022-12-13）
+69. [灵活、跨语言的分布式模型推理框架：Ray Serve 的 Java API](https://anyscale.com/blog/flexible-cross-language-distributed-model-inference-framework-ray-serve-with)（2022-12-13） <!--orig:Flexible, cross-language, distributed model inference framework: Ray Serve with Java API-->
 70. [Ray 中的模型批量推理：Actor、ActorPool 与 Dataset](https://anyscale.com/blog/model-batch-inference-in-ray-actors-actorpool-and-datasets)（2022-11-03） <!--orig:Model Batch Inference in Ray: Actors, ActorPool, and Datasets-->
 71. [Ray 2.0 正式发布](https://anyscale.com/blog/announcing-ray-2-0)（2022-08-23） <!--orig:Announcing Ray 2.0-->
 72. [Ray 1.13：改进 TB 级及更大数据集的 Shuffle 支持](https://anyscale.com/blog/ray-1-13-large-scale-dataset-shuffle-ray-serve-deployment-graph-api-kuberay)（2022-06-09） <!--orig:Ray 1.13: Improving support for shuffling terabyte-scale and larger datasets-->
