@@ -6219,9 +6219,13 @@ class SnapshotState:
             entry = {"sha256": _snapshot_hash(page.snapshot_text), "fact": fact}
             staged[key] = entry
             old = self.entries.get(key)
-            if not self.baseline and (old is None or old.get("sha256") != entry["sha256"]):
+            # 首次见到这条源（新加的 URL / 新加的类型）只落基线快照，**不当变化去核**：
+            # 没有旧事实就没有 diff 可核；把它算成变化的话，AI 一旦失败（免费层限流、
+            # 厂商整体跳过），这条源的快照连同该厂商其它变化一起被回滚，下一轮又从头
+            # 重来——新源会长期进不了 entries，等于加了源也没开变化检测。
+            if not self.baseline and old is not None and old.get("sha256") != entry["sha256"]:
                 changed.append(page)
-                old_fact = (old or {}).get("fact", "")
+                old_fact = old.get("fact", "")
                 if old_fact:
                     self._record_focus(vendor_id, page, old_fact, fact)
         # AI 失败退避：变化条目全部仍在冷却期内时，本次不触发 AI（旧哈希保留），

@@ -469,6 +469,43 @@ class TestSnapshotState(unittest.TestCase):
         changed3 = state2.stage_vendor("v1", vendor, ai_enabled=True)
         self.assertEqual(len(changed3), 1)
 
+    def test_new_source_seeds_without_ai_review(self):
+        """新加的源首次出现只落基线快照，不触发核查。
+
+        反向：把 `old is None` 也算成变化 → AI 一失败（免费层限流 / 厂商整体跳过）
+        就把该厂商的暂存全部回滚，新源永远进不了 entries，等于加了源也没开变化检测
+        （实测 LongCat 文档源首次上线时就是这样没能落盘）。
+        """
+        def vendor_with(*texts):
+            v = crawler_llm_intel.VendorIntel(
+                vendor_id="v_new", brand="B", homepage="https://example.com", products=[])
+            for i, t in enumerate(texts):
+                v.intel_pages.append(crawler_llm_intel.PageResult(
+                    url=f"https://example.com/p{i}", stype="pricing", ok=True,
+                    snapshot_ok=True, snapshot_text=t))
+            return v
+
+        s1 = crawler_llm_intel.SnapshotState(self.root)
+        s1.stage_vendor("v_new", vendor_with("Free tier 100k"))
+        s1.commit_vendor("v_new")
+        s1.save({"v_new"}, full_run=True)
+
+        s2 = crawler_llm_intel.SnapshotState(self.root)
+        # 加第二条源：首次见到 → 不算变化，但快照必须落进 entries
+        changed = s2.stage_vendor("v_new",
+                                  vendor_with("Free tier 100k", "Price $5 / 1M tokens"))
+        self.assertEqual(changed, [], "新源首次出现不该被当成变化去核")
+        s2.commit_vendor("v_new")
+        self.assertEqual(len([k for k in s2.entries if k.startswith("v_new|")]), 2,
+                         "新源首次也能落盘")
+
+        # 落盘之后再变化 → 照常算变化
+        s2.save({"v_new"}, full_run=True)
+        s3 = crawler_llm_intel.SnapshotState(self.root)
+        changed2 = s3.stage_vendor("v_new",
+                                   vendor_with("Free tier 100k", "Price $9 / 1M tokens"))
+        self.assertEqual(len(changed2), 1, "已有基线的源变化时仍要报变化")
+
     def test_rollback_vendor_exponential_backoff(self):
         state = crawler_llm_intel.SnapshotState(self.root)
         vendor = crawler_llm_intel.VendorIntel(
