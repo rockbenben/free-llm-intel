@@ -4,7 +4,7 @@
 
 ## 厂商博客 / 更新动态订阅源
 
-> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-01 09:27:00**。
+> 由 `crawler_llm_intel.py` 自动整理，最近更新：**2026-11-01 10:03:59**。
 >
 > 各厂商的官方博客、工程文章、更新日志**单独维护在此**，不混入 README 的免费额度情报；
 > 每个厂商下方列出从官方 RSS / 博客页**实际抓取的最新文章**（标题自动汉化、附发布日期与原文链接）。
@@ -204,7 +204,7 @@
 ### OpenRouter (模型统一网关) (openrouter)
 - 📡 [RSS/Atom 订阅源](https://openrouter.ai/blog/feed.xml)：`https://openrouter.ai/blog/feed.xml`
 - 📰 **最新文章**（官方源抓取于 2026-11-01，标题自动汉化）：
-  1. [Build an AI Code Reviewer with OpenRouter](https://openrouter.ai/blog/tutorials/ai-code-review/)（2026-11-01）
+  1. [用 OpenRouter 构建 AI 代码审查器](https://openrouter.ai/blog/tutorials/ai-code-review/)（2026-11-01）
   2. [如何构建你自己的常驻 AI agent](https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/)（2026-10-31）
   3. [开放权重模型与闭源权重模型：有什么区别？](https://openrouter.ai/blog/insights/open-weight-vs-closed-weight-models/)（2026-10-31）
   4. [Claude Code 要多少钱？按模型划分的实际会话成本](https://openrouter.ai/blog/insights/claude-code-cost/)（2026-10-30）
@@ -354,7 +354,7 @@
   - ⚠️ 页面 HTML 中未发现 RSS/Atom 链接，已尝试直接从页面提取文章条目
 - 📡 **本仓库自建源**（官方没有原生 RSS，标题已汉化）：[`llm-news-deepinfra.xml`](https://free-llm-intel.aishort.top/feeds/llm-news-deepinfra.xml)
 - 📰 **最新文章**（官方源抓取于 2026-11-01，标题自动汉化）：
-  1. [Why Open Models Get Faster Weeks After Launch](https://deepinfra.com/blog/why-open-models-get-faster)（2026-10-31）
+  1. [开放模型为什么在发布数周后才提速](https://deepinfra.com/blog/why-open-models-get-faster)（2026-10-31）
   2. [最佳 JEV 替代方案：托管 API 和开放模型 (2026)](https://deepinfra.com/blog/jev-alternatives)（2026-10-30）
   3. [从录音到记录：NVIDIA Nemotron 3.5 Transcribe 在 DeepInfra 上线](https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release)（2026-10-28）
   4. [Wan 3.0 集成的最佳 API 提供商](https://deepinfra.com/blog/best-api-providers-wan-3-0-integration)（2026-10-23）

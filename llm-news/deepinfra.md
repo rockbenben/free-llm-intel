@@ -9,7 +9,7 @@
 
 ## 全部文章（共 49 篇，按日期倒序；无日期条目列于最后）
 
-1. [Why Open Models Get Faster Weeks After Launch](https://deepinfra.com/blog/why-open-models-get-faster)（2026-10-31）
+1. [开放模型为什么在发布数周后才提速](https://deepinfra.com/blog/why-open-models-get-faster)（2026-10-31） <!--orig:Why Open Models Get Faster Weeks After Launch-->
 2. [最佳 JEV 替代方案：托管 API 和开放模型 (2026)](https://deepinfra.com/blog/jev-alternatives)（2026-10-30） <!--orig:Best Jev Alternatives: Hosted APIs and Open Models (2026)-->
 3. [从录音到记录：NVIDIA Nemotron 3.5 Transcribe 在 DeepInfra 上线](https://deepinfra.com/blog/nvidia-nemotron-3-5-transcribe-release)（2026-10-28） <!--orig:From Recordings to Records: NVIDIA Nemotron 3.5 Transcribe on DeepInfra-->
 4. [Wan 3.0 集成的最佳 API 提供商](https://deepinfra.com/blog/best-api-providers-wan-3-0-integration)（2026-10-23） <!--orig:Best API Providers for Wan 3.0 Integration-->
