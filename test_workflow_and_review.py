@@ -2465,6 +2465,27 @@ class TestSelfHostedRss(unittest.TestCase):
         self.assertEqual(urls, ["https://x.ai/news/grok-4-6"],
                          "锚点条目应被丢弃，只保留规范直链")
 
+    def test_canonical_only_vendor_keeps_real_section_anchors(self):
+        """真实页内锚（deepseek 的 `#时间-2026-10-17`）不是合成锚，不能连带丢掉。
+
+        反向：把判据退回「有 fragment 就丢」，本条在断言处变红。
+        """
+        arts = [
+            crawler_llm_intel.Article(
+                title="开放自研搜索 API",
+                url="https://api-docs.deepseek.com/zh-cn/updates/#时间-2026-10-17",
+                date="2026-10-17"),
+            crawler_llm_intel.Article(
+                title="影子条目（合成锚点）",
+                url="https://api-docs.deepseek.com/zh-cn/updates/#d-2026-10-17-3",
+                date="2026-10-17"),
+        ]
+        kept = crawler_llm_intel._rss_articles(
+            self._vendor("deepseek", "DeepSeek", arts), "2099-12-31")
+        self.assertEqual({a.url for a in kept},
+                         {"https://api-docs.deepseek.com/zh-cn/updates/#时间-2026-10-17"},
+                         "真实页内锚保留、合成锚点丢弃")
+
     def test_fragment_identity_vendors_keep_anchors(self):
         """白名单外的单页站（锚点即条目身份、无独立直链页）不受影响。"""
         arts = [
@@ -10604,14 +10625,17 @@ class TestRssExclusionAccounting(unittest.TestCase):
                 all_vendors=[{"id": vendor_id, "brand": "DeepSeek"}], reviews={})
         return out, buf.getvalue()
 
-    def test_anchor_only_drop_is_not_counted_as_future_date(self):
-        """canonical-only 厂商的合成锚点行不得再冒名「未来日期」。"""
+    def test_synthetic_anchor_drop_is_not_counted_as_future_date(self):
+        """canonical-only 厂商的**合成**锚点行不得冒名「未来日期」；真实页内锚照留。"""
         self.assertIn("deepseek", crawler_llm_intel.NEWS_CANONICAL_ONLY_VENDORS,
-                      "夹具前提：deepseek 走 canonical-only，锚点行必被剔")
+                      "夹具前提：deepseek 走 canonical-only，合成锚点必被剔")
         arts = [
             crawler_llm_intel.Article(
-                title="Anchored", url="https://d.com/updates#%E9%94%9A",
+                title="Synthetic", url="https://d.com/updates#d-2025-05-28-1",
                 date="2025-05-28"),
+            crawler_llm_intel.Article(
+                title="Section", url="https://d.com/updates#%E9%94%9A",
+                date="2025-05-29"),
             crawler_llm_intel.Article(
                 title="Direct", url="https://d.com/updates", date="2025-05-27"),
         ]
@@ -10619,7 +10643,11 @@ class TestRssExclusionAccounting(unittest.TestCase):
         self.assertEqual(out["rss_future_excluded"], 0,
                          "没有任何晚于今天的日期，这个数必须是 0")
         self.assertEqual(out["rss_other_excluded"], 1,
-                         "合成锚点/同标题折叠的剔除要单列，不能凭空消失")
+                         "只剔合成锚点；真实页内锚不算剔除")
+        urls = [r[1] for r in json.loads(
+            (self.root / "docs" / "feeds" / "articles.json").read_text(encoding="utf-8"))["articles"]]
+        self.assertIn("https://d.com/updates#%E9%94%9A", urls, "真实页内锚要进索引")
+        self.assertNotIn("https://d.com/updates#d-2025-05-28-1", urls, "合成锚点不进索引")
         self.assertNotIn("晚于今天", text, "零未来日期时不该出现这句话")
         self.assertNotIn("建议核查", text, "没有真日期问题就别派活")
 

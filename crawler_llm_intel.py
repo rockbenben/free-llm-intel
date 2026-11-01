@@ -3464,10 +3464,15 @@ def _native_feed_vendors(intel_list: list[VendorIntel]) -> set[str]:
 #: 这批老锚点就纯剩死链了。
 NEWS_CANONICAL_ONLY_VENDORS = {"deepseek", "xai_grok", "anthropic", "ai21_labs"}
 
+#: changelog 式抽取给分节现编的锚点（`#d-<日期>-<n>`）：页面上不存在这个 id，
+#: 点开只落到列表页顶部。真实页内锚（如 deepseek 的 `#时间-2026-10-17`）不匹配。
+_SYNTHETIC_ANCHOR_RE = re.compile(r"^d-\d{4}-\d{2}-\d{2}-\d+$")
+
 
 def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
     """该厂商**会进订阅源**的文章：排除晚于今天的日期；`NEWS_CANONICAL_ONLY_VENDORS`
-    只保留规范直链（丢掉合成 `#锚点` 条目）；再把同一厂商内的重复标题折叠成一条。
+    只保留规范直链与**真实页内锚**（丢掉合成 `#d-<日期>-<n>` 锚点条目）；再把同一
+    厂商内的重复标题折叠成一条。
 
     `write_rss_feeds` 只对有此类文章的厂商出源，所以 OPML 与 `llm-news-feeds.md` 里
     「本仓库自建源」的标注必须用**同一个判据** —— 否则当某厂商的文章日期全被误写成
@@ -3488,7 +3493,10 @@ def _rss_articles(intel: VendorIntel, today: str) -> list[Article]:
     for a in intel.all_news_articles:
         if a.date > today:
             continue
-        if drop_frag and urlparse(a.url).fragment:
+        # 只丢**合成**锚点：`#d-<日期>-<n>` 是 changelog 式抽取给分节现编的 id，
+        # 页面上并不存在，点开只会落到列表页顶部。真实页内锚（deepseek 的
+        # `#时间-2026-10-17` 这类）是能点开的条目标识，不能连带丢掉。
+        if drop_frag and _SYNTHETIC_ANCHOR_RE.match(urlparse(a.url).fragment):
             continue
         key = _title_key(a.title)
         prev = kept.get(key)
