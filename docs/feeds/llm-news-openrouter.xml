@@ -7,7 +7,13 @@
     <language>zh-cn</language>
     <generator>crawler_llm_intel.py (free-llm-intel)</generator>
     <atom:link href="https://free-llm-intel.aishort.top/feeds/llm-news-openrouter.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>Sat, 31 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 01 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Build an AI Code Reviewer with OpenRouter</title>
+      <link>https://openrouter.ai/blog/tutorials/ai-code-review/</link>
+      <guid isPermaLink="true">https://openrouter.ai/blog/tutorials/ai-code-review/</guid>
+      <pubDate>Sun, 01 Nov 2026 00:00:00 +0000</pubDate>
+    </item>
     <item>
       <title>如何构建你自己的常驻 AI agent</title>
       <link>https://openrouter.ai/blog/tutorials/build-always-on-ai-agent/</link>
@@ -8071,41 +8077,6 @@ print(job[&quot;id&quot;], job[&quot;polling_url&quot;])</code></pre>
 <h2>参考资料</h2>
 <ul><li><a href="https://openrouter.ai/bytedance/seedance-2.5">ByteDance: Seedance 2.5 模型页面</a>。入门价、发布日期、每秒费率、参考素材数量和特性描述。</li><li><a href="https://openrouter.ai/api/v1/videos/models">视频模型端点 (/api/v1/videos/models)</a>。本文引用的每个视频模型的支持时长、分辨率、画幅比、输出尺寸、帧图类型、seed 支持、透传键和定价 SKU。</li><li><a href="https://openrouter.ai/docs/guides/overview/multimodal/video-generation">视频生成文档</a>。请求 schema、异步任务生命周期、提供商透传、webhooks 和零数据保留排除条款。</li><li><a href="https://openrouter.ai/blog/announcements/video-generation/">Announcing Video Generation</a>。视频端点的发布范围和第一天支持的模型。</li><li><a href="https://openrouter.ai/collections/video-models">视频模型合集</a>。按视频输出筛选的目录，本文对比集的来源。</li><li><a href="https://openrouter.ai/benchmarks/media/videos">视频基准</a>。同一提示词下所有视频模型的并排产出，含每个模型的成本和生成时间。</li><li><a href="https://openrouter.ai/bytedance/seedance-2.0">ByteDance: Seedance 2.0 模型页面</a>。家族里高分辨率担当的分辨率范围、时长上限和每 token 费率。</li><li><a href="https://openrouter.ai/alibaba/wan-3.0">Alibaba: Wan 3.0 模型页面</a>。另一个 30 秒模型的时长上限、分辨率、帧控制和每秒定价。</li><li><a href="https://openrouter.ai/google/veo-3.1">Google: Veo 3.1 模型页面</a>。固定片段长度，以及带/不带音频的每秒定价。</li></ul>
 <p>以上所有产品来源最后核验于 2026 年 9 月 3 日。创作者报道仅作定位引用，不作为规格或价格来源。</p>]]></content:encoded>
-    </item>
-    <item>
-      <title>In-Region Routing：让你的数据留在美国或欧盟</title>
-      <link>https://openrouter.ai/blog/announcements/us-in-region-routing/</link>
-      <guid isPermaLink="true">https://openrouter.ai/blog/announcements/us-in-region-routing/</guid>
-      <pubDate>Wed, 09 Sep 2026 00:00:00 +0000</pubDate>
-      <description>原文标题：In-Region Routing: Route inference in the US or EU</description>
-      <content:encoded><![CDATA[<h1>In-Region Routing：让你的数据留在美国或欧盟</h1>
-<p>Cailee Moberg · 2026-09-09</p>
-<p>今天我们在去年 10 月上线的 EU 路由之外，正式推出 US In-Region Routing（区域内路由），让你对 AI 工作负载的处理地点拥有可保证的掌控权。发往 <code>us.openrouter.ai</code> 的请求在美国境内解密，并且只路由到美国境内的 provider endpoint，因此你的 prompt 和补全内容在请求的整个生命周期内都留在该区域内。<code>eu.openrouter.ai</code> 对欧盟做同样的事。</p>
-<p>企业对数据驻留和处理地点需要更强的保证。OpenRouter 的 In-Region Routing 让美国或欧盟的配置变得简单。</p>
-<h2>工作原理</h2>
-<p>通过区域专属的 base URL 发送 API 请求，代替 <code>openrouter.ai</code>：</p>
-<pre><code>https://us.openrouter.ai/api/v1
-https://eu.openrouter.ai/api/v1</code></pre>
-<p>你的 API key、请求体和模型 ID 都无需改动，账号中的 provider 偏好、fallback 和隐私设置也会一并沿用。你可以让某一个服务指向 <code>us.openrouter.ai</code>，其余流量继续走 <code>openrouter.ai</code>。</p>
-<p>发往 <code>us.openrouter.ai</code> 或 <code>eu.openrouter.ai</code> 的请求会在该区域内解密和处理，只有运行在该区域内的 provider 才能为其服务。如果该区域内没有 provider 提供所请求的模型，请求会以 404 失败（<code>No endpoints found supporting your data region.</code>），而不会被路由到区域之外。</p>
-<p>区域 endpoint 在同一批模型 ID 下提供全球目录的一个子集。只要至少有一家 provider 能从该区域内部服务某个模型，该模型就会出现在该区域的列表里。要获取实时列表，请通过区域域名调用 <a href="https://us.openrouter.ai/api/v1/models"><code>/api/v1/models</code></a>，或在 models 页面按 In-Region Routing 筛选（<a href="https://openrouter.ai/models?region=us">US</a> 或 <a href="https://openrouter.ai/models?region=eu">EU</a>）。我们会持续为两个区域增加模型和 provider。请到 Discord 的 <a href="https://discord.gg/fVyRaUDgxW">#feedback</a> 告诉我们接下来希望哪些模型进入区域内。</p>
-<p>你也可以用 <a href="https://openrouter.ai/docs/guides/features/guardrails">Guardrails</a> 对特定 workspace、团队或 API key 强制启用 In-Region Routing。把 guardrail 的允许数据区域设为某一个区域后，OpenRouter 会拒绝任何受覆盖的、从其他主机名到达的请求。可在设置中的 Guardrails 下或通过 <a href="https://openrouter.ai/docs/api/api-reference/guardrails/list-guardrails">Management API</a> 配置。</p>
-<p>In-Region Routing 适用于 Business 和 Enterprise 套餐。</p>
-<h2>在区域内服务的美国/欧盟模型</h2>
-<p>没有 In-Region Routing 时，使用一家总部位于美国或欧盟的实验室的模型，并不能保证由该区域的数据中心来处理请求。在全球 endpoint 上，来自 OpenAI、Anthropic、Google、xAI、Meta、NVIDIA、Thinking Machines 或 Mistral 的模型可能在服务该请求的 provider 运营的任何地方运行。数据驻留审查关注的是你的请求在哪里被解密、推理在哪里进行，因此一个美国团队即使在全球 endpoint 上使用 <a href="https://openrouter.ai/openai/gpt-5.6-terra">GPT-5.6</a>、<a href="https://openrouter.ai/anthropic/claude-opus-5">Claude Opus 5</a> 或 <a href="https://openrouter.ai/google/gemini-3.6-flash">Gemini 3.6 Flash</a>，也可能通不过合规审查。OpenRouter In-Region Routing 确保请求全程留在你指定的区域：美国或欧盟。</p>
-<h2>区域内可用的中国开放权重模型</h2>
-<p>开放权重模型进步飞快，把流量转向它们可以显著降低成本。在 OpenRouter 上，无论源自美国还是欧盟的请求，流向开放权重模型的 token 占比都在稳步上升：</p>
-<p><img src="https://openrouter.ai/blog/images/us-in-region-routing-open-weight-share.png" alt="两张 100% 堆叠条形图，展示 2025 年 9 月至 2026 年 8 月开放权重与闭源模型的月度 token 占比。源自美国的请求中开放权重占比从 26% 升至 60%；源自欧盟的请求中该占比从 16% 升至 65%。两者都在 2026 年初越过 50%。"></p>
-<p>来自美国实验室的模型，如 NVIDIA 的 <a href="https://openrouter.ai/nvidia/nemotron-3-ultra-550b-a55b">Nemotron 3 Ultra</a> 和 Thinking Machines 的 <a href="https://openrouter.ai/thinkingmachines/inkling">Inkling</a>，也是这一增长的一部分。但来自中国实验室的模型仍占绝大部分流量，而这些模型的采购审批可能比较困难。</p>
-<p>In-Region Routing 让有数据驻留要求的团队也能获得中国开放权重模型带来的价格和性能优势。当美国或欧盟的 provider 托管某个模型时，请求会发往该 provider，实验室并不参与其中。<a href="https://openrouter.ai/deepseek/deepseek-v4-pro">DeepSeek V4 Pro</a>、<a href="https://openrouter.ai/moonshotai/kimi-k3">Kimi K3</a> 和 <a href="https://openrouter.ai/z-ai/glm-5.2">GLM 5.2</a> 都可通过 US In-Region Routing 使用，因为 Baseten、Fireworks 和 Azure 在美国数据中心为其提供服务。通过 <code>us.openrouter.ai</code> 向其中任何一个发送 prompt，都会在美国境内解密和运行。GLM 5.2 也可在 <code>eu.openrouter.ai</code> 上使用，由 Mistral 的欧盟数据中心提供服务。</p>
-<h2>确保端到端的区域路由</h2>
-<p>当一个网关提供区域路由时，可能意味着两件事之一。区别在于：你的 prompt 是否曾在区域之外以明文形式存在。</p>
-<ul><li><strong>仅推理层的区域路由。</strong> 网关把 provider 的推理固定在你的区域。但请求本身会在网关所在的任何地方被解密和处理，然后才转发给 provider。在这部分链路上，你的 prompt 位于区域之外的明文状态。Server tools 的区域化常常被忽视，这可能导致你的 prompt 数据离开司法辖区。例如，web search 有时会在区域化推理 endpoint 上使用全球实例。</li><li><strong>端到端的区域路由。</strong> OpenRouter 的 In-Region Routing 就是这样工作的。它让数据在完整链路上都留在区域内。发往 <code>us.openrouter.ai</code> 或 <code>eu.openrouter.ai</code> 的请求在区域内解密，每一步都在区域内处理，只有运行在该区域内的 provider 会收到它们。如果区域内没有 provider 能服务该模型，请求以 404 失败（<code>No endpoints found supporting your data region.</code>），数据绝不会离开该区域。在某个司法辖区内提供 server tools 之前，我们会全面评估这些工具及其数据运行所在的司法辖区。会把数据送出区域的工具会被禁用，而不是回退到全球基础设施。</li></ul>
-<p>当你评估任何网关的数据驻留声明时，请问两个问题。请求在哪里被解密和处理？它的工具在哪里运行？</p>
-<h2>开始使用</h2>
-<p>In-Region Routing 适用于我们的 Business 和 Enterprise 套餐。可以从你的 <a href="https://openrouter.ai/settings/manage-plan">plan settings</a> 升级到 Business，或<a href="https://openrouter.ai/enterprise/form">联系企业团队</a>。</p>
-<p>然后从 <a href="https://openrouter.ai/models?region=us">US</a> 或 <a href="https://openrouter.ai/models?region=eu">EU</a> 列表中挑选一个模型，把你的请求发送到 <code>https://us.openrouter.ai/api/v1</code> 或 <code>https://eu.openrouter.ai/api/v1</code>。</p>
-<p><a href="https://openrouter.ai/docs/guides/features/in-region-routing">阅读文档了解更多信息</a>。</p>]]></content:encoded>
     </item>
   </channel>
 </rss>
