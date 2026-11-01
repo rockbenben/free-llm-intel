@@ -163,7 +163,7 @@ python -m unittest discover
 <!-- LLM-INTEL:BEGIN  本章节由 crawler_llm_intel.py 自动生成，请勿手工修改 -->
 
 > 实时追踪国内外大语言模型（LLM）厂商官方公开的**免费 API 额度**、**永久免费模型**与**限时活动调用**情报。
-> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-01 11:50:25**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
+> 本区块由 `crawler_llm_intel.py` 在**每次运行时**实时巡检官方页面生成（非人工编辑、非服务端持续监控），最近一次巡检：**2026-11-01 13:51:30**；本地手动运行与 GitHub Actions 定时刷新的方法见文首「快速开始 / 更新机制」。
 >
 > 💡 **核心特性**：覆盖 **70 家厂商**（深度抓取 **134 个情报页 + 46 个动态页**）；海外一手情报自动汉化（品牌与型号名保留原文）；自动过滤页面抓取状态噪点，直接展示具体额度（Tokens/代金券/免费层）、可用模型、有效期与限制条件。
 > 📡 **博客动态订阅**：各厂商官方技术博客与更新日志单独维护至 [`llm-news-feeds.md`](llm-news-feeds.md)（共 35 个厂商），可导入 [`llm-news-feeds.opml`](llm-news-feeds.opml) 至 RSS 阅读器跟踪官方动态。
@@ -1213,7 +1213,7 @@ python -m unittest discover
 | **前置条件 / 限制** | 社交账号或 AWS Builder ID 登录（升级付费档时首次登录发放试用） |
 | **免费层限制 / 注意事项** | • 原文注明 “Access is subject to rate limits”；部分模型并非所有国家/地区可用<br>• Pro $20/月 1,000 credits、Pro+ $40/月；加购 credits $0.04/credit |
 | **邀请 / 特惠活动** | 付费档附赠试用额度，以定价页为准 |
-| **实时巡检证据** | • Kiro 提供灵活的定价等级，围绕开发人员如何使用 Kiro 进行设计。新用户可以从永久的 Kiro 免费套餐开始，其中包含 50 个积分。免费套餐包括...<br>• Free trial: when you first upgrade to Pro, you’ll get the rest of the month free, plus 500 trial credits to use withi…<br>• 您可以在 Kiro 中访问的订阅仪表板中查看计划的每月信用额度、已使用的信用数量以及剩余信用。积分使用情况已更新... |
+| **实时巡检证据** | • Kiro 提供灵活的定价等级，围绕开发人员如何使用 Kiro 进行设计。新用户可以从永久的 Kiro 免费套餐开始，其中包含 50 个积分。免费套餐包括...<br>• 免费试用：首次升级到专业版时，您可以免费获得当月剩余时间，并可在 12 个月内使用 500 个试用积分。<br>• 您可以在 Kiro 中访问的订阅仪表板中查看计划的每月信用额度、已使用的信用数量以及剩余信用。积分使用情况已更新... |
 | **官方直达** | [定价页（Kiro Free）](https://kiro.dev/pricing) ｜ [官网](https://kiro.dev/) |
 | **特别说明** | kiro.dev/pricing 为静态 HTML + JSON-LD，requests 抓取最稳定；除 Free 档外**无叠加注册赠金**（页内 free trial credit 仅为付费档按日折算扣费说明） |
 
@@ -1233,6 +1233,7 @@ python -m unittest discover
 | **特别说明** | 「Free forever」指标题档定价长期 $0，非全部 AI 功能免费；试用条款里的 GPT-6 Luna 为当前托管模型名 |
 
 <!-- LLM-INTEL:END -->
+
 
 
 
