@@ -9,7 +9,7 @@ captured: 2026-11-01
 extractor: readability-v1
 translator: agent
 status: translated
-body_sha: 796486a3f2f7
+body_sha: 99e5c7b40178
 ---
 
 # 用 OpenRouter 构建 AI 代码审查器
@@ -20,14 +20,14 @@ OpenRouter ·11/1/2026
 
 AI 代码审查器会在你 push 或 merge 之前，检查一处 Git 改动里的 bug 和安全问题。只会读 diff 的审查器不得不去猜文件的其余部分长什么样、猜一个可疑的 bug 在运行时到底会不会失败，而它们给出的修复建议，回来的只是一段要你手动复制粘贴回去的文本。
 
-本指南里的这个审查器使用 OpenRouter 的 [Responses API](https://openrouter.ai/docs/api_reference/responses/overview)，在一个 Linux sandbox 里运行你改动过的文件，通过运行一次检查来确认每个 bug，并把修复以 patch 的形式返回，你可以用一个旗标把它们应用上。在我们测试的四个模型上，针对一处含五个 bug 的改动，一次审查要 one to four minutes，费用在 $0.015 到 $0.045 之间。
+本指南里的这个审查器使用 OpenRouter 的 [Responses API](https://openrouter.ai/docs/api_reference/responses/overview)，在一个 Linux sandbox 里运行你改动过的文件，通过运行一次检查来确认每个 bug，并把修复以 patch 的形式返回，你可以用一个旗标把它们应用上。在我们测试的四个模型上，针对一处含五个 bug 的改动，一次审查要一到四分钟，费用在 $0.015 到 $0.045 之间。
 
 ## Tl;dr
 
 - 一个 233 行的 Python 脚本（`review.py`），只用标准库，可以在本地运行，也可以在 Git `pre-push` hook 里运行，或者在 GitHub Actions 里运行。
 - 把改动过的文件、测试文件和 diff 上传到一个托管的 Linux sandbox，好让模型复现 bug 并提出 V4A patch。
 - 每一条发现都会带上标记：`confirmed`（附带证明它的那条命令和输出），或者 `unconfirmed`（当某个 bug 没法用一个简短脚本演示出来时）。
-- 在我们针对一处含五个 bug 的改动所做的基准测试里，Claude Haiku 5.5 平均每次审查 $0.0153，而 Claude Sonnet 5.5 在三次运行中都修好了全部五个 bug，花费 $0.0447、用时 60 seconds。
+- 在我们针对一处含五个 bug 的改动所做的基准测试里，Claude Haiku 5.5 平均每次审查 $0.0153，而 Claude Sonnet 5.5 在三次运行中都修好了全部五个 bug，花费 $0.0447、用时 60 秒。
 - 把完整报告写入 `.git/ai-review.json`，并在某条发现达到你的严重度阈值（`--block-at`，默认 `high`）时以 `1` 退出。
 
 ## 审查器是怎么工作的
@@ -566,7 +566,7 @@ sandbox 的计费从第一条 shell 命令开始，一直到响应完成为止�
 
 ### 审查器会自动修改我的工作树吗？
 
-不会。当模型用 apply_patch 工具提出修复时，脚本会把它应用到你文件的一份临时副本上，并告诉模型它有没有干净地应用成功。只有当你传入 —apply 旗标时，你的工作树才会被更新。
+不会。当模型用 apply_patch 工具提出修复时，脚本会把它应用到你文件的一份临时副本上，并告诉模型它有没有干净地应用成功。只有当你传入 --apply 旗标时，你的工作树才会被更新。
 
 ## 下一步
 
