@@ -199,8 +199,8 @@
 186. [OpenAI 致 Abbott 州长关于在德克萨斯州负责任地建设人工智能基础设施的信函](https://openai.com/index/responsible-ai-infrastructure-texas)（2026-08-10） <!--orig:OpenAI’s letter to Governor Abbott on responsible AI infrastructure in Texas-->
 187. [Model ML 借助 GPT‑5.6 Sol 更高效地完成财务工作](https://openai.com/index/model-ml)（2026-08-10） <!--orig:Model ML completes finance work more efficiently with GPT-5.6 Sol-->
 188. [构建 AI 原生财务职能带给我的启示](https://openai.com/index/building-an-ai-native-finance-function)（2026-08-10） <!--orig:What building an AI-native finance function taught me-->
-189. [让更多可信赖的伙伴使用前沿网络安全模型](https://openai.com/index/putting-frontier-cyber-models-in-more-trusted-hands)（2026-08-10） <!--orig:Putting frontier cyber models in more trusted hands-->
-190. [网络防御窗口收窄之际，拓展 Daybreak](https://openai.com/index/expanding-daybreak-as-the-cyber-defense-window-narrows)（2026-08-10） <!--orig:Expanding Daybreak as the Cyber Defense Window Narrows-->
+189. [网络防御窗口收窄之际，拓展 Daybreak](https://openai.com/index/expanding-daybreak-as-the-cyber-defense-window-narrows)（2026-08-10） <!--orig:Expanding Daybreak as the Cyber Defense Window Narrows-->
+190. [让更多可信赖的伙伴使用前沿网络安全模型](https://openai.com/index/putting-frontier-cyber-models-in-more-trusted-hands)（2026-08-10） <!--orig:Putting frontier cyber models in more trusted hands-->
 191. [Virgin Atlantic 借助 ChatGPT 工作优化客户旅程](https://openai.com/index/virgin-atlantic/chatgpt-work)（2026-08-10） <!--orig:Virgin Atlantic sharpens customer journeys with ChatGPT Work-->
 192. [Zapier 如何借助 ChatGPT 工作革新核心营销流程](https://openai.com/index/zapier)（2026-08-10） <!--orig:How Zapier transformed core marketing processes with ChatGPT Work-->
 193. [ChatGPT Business 即将推出高级席位](https://openai.com/index/premium-seats-chatgpt-business)（2026-08-10） <!--orig:Premium seats are coming to ChatGPT Business-->
@@ -282,10 +282,10 @@
 269. [推出 OpenAI 合作伙伴网络](https://openai.com/index/introducing-openai-partner-network)（2026-06-14） <!--orig:Introducing the OpenAI Partner Network-->
 270. [面向下一个工作时代的 OpenAI Academy 新课程](https://openai.com/index/academy-courses-applying-ai-at-work)（2026-06-12） <!--orig:New OpenAI Academy courses for the next era of work-->
 271. [Preply 如何结合 AI 与真人导师实现个性化学习](https://openai.com/index/preply)（2026-06-12） <!--orig:How Preply combines AI and human tutors to personalize learning-->
-272. [BBVA 携手 OpenAI，将 AI 置于银行业务核心](https://openai.com/index/bbva)（2026-06-11） <!--orig:BBVA puts AI at the core of banking with OpenAI-->
-273. [支持欧洲构建可信赖 AI 生态系统的努力](https://openai.com/index/supporting-eu-trustworthy-ai-ecosystem)（2026-06-11） <!--orig:Supporting Europe’s work in ensuring a trustworthy AI ecosystem-->
-274. [OpenAI 将收购 Ona](https://openai.com/index/openai-to-acquire-ona)（2026-06-11） <!--orig:OpenAI to acquire Ona-->
-275. [一位天体物理学家如何用 Codex 辅助模拟黑洞](https://openai.com/index/using-codex-to-simulate-black-holes)（2026-06-11） <!--orig:How an astrophysicist uses Codex to help simulate black holes-->
+272. [OpenAI 将收购 Ona](https://openai.com/index/openai-to-acquire-ona)（2026-06-11） <!--orig:OpenAI to acquire Ona-->
+273. [一位天体物理学家如何用 Codex 辅助模拟黑洞](https://openai.com/index/using-codex-to-simulate-black-holes)（2026-06-11） <!--orig:How an astrophysicist uses Codex to help simulate black holes-->
+274. [BBVA 携手 OpenAI，将 AI 置于银行业务核心](https://openai.com/index/bbva)（2026-06-11） <!--orig:BBVA puts AI at the core of banking with OpenAI-->
+275. [支持欧洲构建可信赖 AI 生态系统的努力](https://openai.com/index/supporting-eu-trustworthy-ai-ecosystem)（2026-06-11） <!--orig:Supporting Europe’s work in ensuring a trustworthy AI ecosystem-->
 276. [通过 Oracle 云承诺额度，直接使用 OpenAI 模型与 Codex](https://openai.com/index/openai-on-oracle-cloud)（2026-06-10） <!--orig:Access OpenAI models and Codex through your Oracle cloud commitment-->
 277. [与中国相关的影响力行动正在针对美国关于人工智能的公共讨论](https://openai.com/index/prc-linked-influence-operations-ai-debates)（2026-06-10） <!--orig:PRC-linked influence operations are targeting AI debates in the US-->
 278. [从数据到决策：LSEG 如何大规模应用可信 AI](https://openai.com/index/lseg)（2026-06-10） <!--orig:From data to decisions: how LSEG is scaling trusted AI-->
@@ -300,8 +300,8 @@
 287. [智能时代的生物防御](https://openai.com/index/biodefense-in-the-intelligence-age)（2026-06-04） <!--orig:Biodefense in the Intelligence Age-->
 288. [GPT‑Rosalind 推出新能力](https://openai.com/index/introducing-new-capabilities-to-gpt-rosalind)（2026-06-03） <!--orig:Introducing new capabilities to GPT-Rosalind-->
 289. [Wasmer 如何使用 Codex 构建面向边缘计算的 Node.js 运行时](https://openai.com/index/wasmer)（2026-06-03） <!--orig:How Wasmer used Codex to build a Node.js runtime for the edge-->
-290. [OpenAI 公共政策议程](https://openai.com/index/public-policy-agenda)（2026-06-03） <!--orig:OpenAI public policy agenda-->
-291. [前沿 AI 民主治理蓝图](https://openai.com/index/frontier-safety-blueprint)（2026-06-03） <!--orig:A blueprint for democratic governance of frontier AI-->
+290. [前沿 AI 民主治理蓝图](https://openai.com/index/frontier-safety-blueprint)（2026-06-03） <!--orig:A blueprint for democratic governance of frontier AI-->
+291. [OpenAI 公共政策议程](https://openai.com/index/public-policy-agenda)（2026-06-03） <!--orig:OpenAI public policy agenda-->
 292. [Travelers 携手 OpenAI 在全美部署 AI 理赔服务](https://openai.com/index/travelers)（2026-06-02） <!--orig:Travelers deploys AI-powered claims countrywide with OpenAI-->
 293. [ChatGPT 站点](https://openai.com/academy/chatgpt-sites)（2026-06-02） <!--orig:ChatGPT Sites-->
 294. [Codex：全面赋能各类角色、工具与工作流](https://openai.com/index/codex-for-every-role-tool-workflow)（2026-06-02） <!--orig:Codex for every role, tool, and workflow-->
@@ -310,8 +310,8 @@
 297. [我们对 AI 政策与政治倡导的立场](https://openai.com/index/our-views-on-ai-policy-and-political-advocacy)（2026-06-01） <!--orig:Our views on AI policy and political advocacy-->
 298. [在密歇根建设智能时代的基础设施](https://openai.com/index/stargate-michigan-data-center)（2026-06-01） <!--orig:Building the infrastructure for the Intelligence Age in Michigan-->
 299. [OpenAI 前沿模型和 Codex 现已在 AWS 上可用](https://openai.com/index/openai-frontier-models-and-codex-are-now-available-on-aws)（2026-06-01） <!--orig:OpenAI frontier models and Codex are now available on AWS-->
-300. [“数据中心带动效应”行动：针对美国的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-data-center-bandwagon)（2026-06-01） <!--orig:“Data Center Bandwagon” Campaign: US-targeted influence activity-->
-301. [“科技与关税”行动：针对美国科技政策的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-tech-and-tariffs)（2026-06-01） <!--orig:“Tech and Tariffs” Campaign: Influence activity targeting US tech policy-->
+300. [“科技与关税”行动：针对美国科技政策的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-tech-and-tariffs)（2026-06-01） <!--orig:“Tech and Tariffs” Campaign: Influence activity targeting US tech policy-->
+301. [“数据中心带动效应”行动：针对美国的影响力活动](https://openai.com/index/disrupting-malicious-uses-of-ai-data-center-bandwagon)（2026-06-01） <!--orig:“Data Center Bandwagon” Campaign: US-targeted influence activity-->
 302. [波士顿儿童医院借助 AI 开启新诊断](https://openai.com/index/boston-childrens-hospital)（2026-05-29） <!--orig:Boston Children’s uses AI to unlock new diagnoses-->
 303. [Braintrust 如何借助 Codex 将客户请求转化为代码](https://openai.com/index/braintrust)（2026-05-29） <!--orig:How Braintrust turns customer requests into code with Codex-->
 304. [借助 Rosalind 生物防御计划增强社会韧性](https://openai.com/index/strengthening-societal-resilience-with-rosalind-biodefense)（2026-05-29） <!--orig:Strengthening societal resilience with Rosalind Biodefense-->

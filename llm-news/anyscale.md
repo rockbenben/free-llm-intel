@@ -1,13 +1,13 @@
 # Anyscale 文章归档
 
-> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-10-31**（标题自动汉化、附发布日期与原文链接）。
+> 由 `crawler_llm_intel.py` 自动整理，抓取于 **2026-11-01**（标题自动汉化、附发布日期与原文链接）。
 > 厂商：Anyscale（`anyscale`） ｜ [返回订阅源总览](../llm-news-feeds.md)
 
 ## 订阅入口
 
 - 📡 RSS/Atom：[RSS/Atom 订阅源](https://www.anyscale.com/rss.xml)
 
-## 全部文章（共 86 篇，按日期倒序；无日期条目列于最后）
+## 全部文章（共 87 篇，按日期倒序；无日期条目列于最后）
 
 1. [KubeRay 生产实践：来自一线的最佳实践](https://anyscale.com/blog/kuberay-best-practices)（2026-10-26） <!--orig:KubeRay in production: best practices from the field-->
 2. [宣布 Ray 支持 Google TPU 上的 PyTorch](https://anyscale.com/blog/announcing-ray-support-native-pytorch-google-tpu)（2026-10-20） <!--orig:Announcing Ray support for PyTorch on Google TPUs-->
@@ -77,21 +77,22 @@
 66. [Ray Summit 2022 故事集——ML 平台](https://anyscale.com/blog/ray-summit-2022-stories-ml-platforms)（2023-03-03） <!--orig:How companies are scaling their ML workloads and driving efficiency and productivity-->
 67. [Ray Summit 2022 故事集——大语言模型](https://anyscale.com/blog/ray-summit-2022-stories-large-language-models)（2023-02-16） <!--orig:Ray Summit 2022 Stories-->
 68. [用 Ray 以创纪录时间训练一百万个机器学习模型](https://anyscale.com/blog/training-one-million-machine-learning-models-in-record-time-with-ray)（2022-12-17） <!--orig:Training One Million Machine Learning Models in Record Time with Ray-->
-69. [Ray 中的模型批量推理：Actor、ActorPool 与 Dataset](https://anyscale.com/blog/model-batch-inference-in-ray-actors-actorpool-and-datasets)（2022-11-03） <!--orig:Model Batch Inference in Ray: Actors, ActorPool, and Datasets-->
-70. [Ray 2.0 正式发布](https://anyscale.com/blog/announcing-ray-2-0)（2022-08-23） <!--orig:Announcing Ray 2.0-->
-71. [Ray 1.13：改进 TB 级及更大数据集的 Shuffle 支持](https://anyscale.com/blog/ray-1-13-large-scale-dataset-shuffle-ray-serve-deployment-graph-api-kuberay)（2022-06-09） <!--orig:Ray 1.13: Improving support for shuffling terabyte-scale and larger datasets-->
-72. [如何使用 Ray Tune 分布式调优超参数](https://anyscale.com/blog/how-to-distribute-hyperparameter-tuning-using-ray-tune)（2022-02-15） <!--orig:How to distribute hyperparameter tuning using Ray Tune-->
-73. [Ray Datasets：大规模机器学习数据摄取与打分](https://anyscale.com/blog/ray-datasets-for-machine-learning-training-and-scoring)（2022-02-14） <!--orig:Ray Datasets for large-scale machine learning ingest and scoring-->
-74. [如何调优 XGBoost 上的超参数](https://anyscale.com/blog/how-to-tune-hyperparameters-on-xgboost)（2022-02-09） <!--orig:How to tune hyperparameters on XGBoost-->
-75. [什么是超参数调优？](https://anyscale.com/blog/what-is-hyperparameter-tuning)（2022-02-08） <!--orig:What is hyperparameter tuning?-->
-76. [深潜：第三代 ML 架构中的数据摄取](https://anyscale.com/blog/deep-dive-data-ingest-in-a-third-generation-ml-architecture)（2021-11-30） <!--orig:Deep Dive: Data Ingest in a Third Generation ML Architecture-->
-77. [在 Ant Group 基于 Ray 构建高可用、可扩展的在线应用](https://anyscale.com/blog/building-highly-available-and-scalable-online-applications-on-ray-at-ant)（2021-09-08） <!--orig:Building Highly Available and Scalable Online Applications on Ray at Ant Group-->
-78. [Anastasia 如何用 Ray 和 Anyscale 将 ML 流程加速 9 倍](https://anyscale.com/blog/how-anastasia-implements-ray-and-anyscale-to-speed-up-ml-processes-9x)（2021-08-31） <!--orig:How Anastasia accelerated their ML processes 9x with Ray and Anyscale-->
-79. [解析 Dask-on-Ray 的内存管理与性能](https://anyscale.com/blog/analyzing-memory-management-and-performance-in-dask-on-ray)（2021-06-29） <!--orig:Analyzing memory management and performance in Dask-on-Ray-->
-80. [Ray 分布式库集成模式](https://anyscale.com/blog/ray-distributed-library-patterns)（2021-06-14） <!--orig:Ray Distributed Library Patterns-->
-81. [Ant Group 基于 Ray 的在线资源分配](https://anyscale.com/blog/online-resource-allocation-with-ray-at-ant-group)（2021-03-30） <!--orig:Online Resource Allocation with Ray at Ant Group-->
-82. [不用 MapReduce 系统执行分布式 Shuffle](https://anyscale.com/blog/executing-a-distributed-shuffle-without-a-mapreduce-system)（2021-03-22） <!--orig:Executing a distributed shuffle without a MapReduce system-->
-83. [Ray 中的数据处理支持](https://anyscale.com/blog/data-processing-support-in-ray)（2021-02-16） <!--orig:Data Processing Support in Ray-->
-84. [用 Hydra + Ray 配置并扩展机器学习](https://anyscale.com/blog/configuring-and-scaling-ml-with-hydra-ray)（2021-01-26） <!--orig:Configuring and Scaling ML with Hydra + Ray-->
-85. [通用 Serverless 平台的理想底座](https://anyscale.com/blog/the-ideal-foundation-for-a-general-purpose-serverless-platform)（2020-11-05） <!--orig:The Ideal Foundation for a General Purpose Serverless Platform-->
-86. [Ray 1.0 发布](https://anyscale.com/blog/announcing-ray-1-0)（2020-09-30） <!--orig:Announcing Ray 1.0-->
+69. [Flexible, cross-language, distributed model inference framework: Ray Serve with Java API](https://anyscale.com/blog/flexible-cross-language-distributed-model-inference-framework-ray-serve-with)（2022-12-13）
+70. [Ray 中的模型批量推理：Actor、ActorPool 与 Dataset](https://anyscale.com/blog/model-batch-inference-in-ray-actors-actorpool-and-datasets)（2022-11-03） <!--orig:Model Batch Inference in Ray: Actors, ActorPool, and Datasets-->
+71. [Ray 2.0 正式发布](https://anyscale.com/blog/announcing-ray-2-0)（2022-08-23） <!--orig:Announcing Ray 2.0-->
+72. [Ray 1.13：改进 TB 级及更大数据集的 Shuffle 支持](https://anyscale.com/blog/ray-1-13-large-scale-dataset-shuffle-ray-serve-deployment-graph-api-kuberay)（2022-06-09） <!--orig:Ray 1.13: Improving support for shuffling terabyte-scale and larger datasets-->
+73. [如何使用 Ray Tune 分布式调优超参数](https://anyscale.com/blog/how-to-distribute-hyperparameter-tuning-using-ray-tune)（2022-02-15） <!--orig:How to distribute hyperparameter tuning using Ray Tune-->
+74. [Ray Datasets：大规模机器学习数据摄取与打分](https://anyscale.com/blog/ray-datasets-for-machine-learning-training-and-scoring)（2022-02-14） <!--orig:Ray Datasets for large-scale machine learning ingest and scoring-->
+75. [如何调优 XGBoost 上的超参数](https://anyscale.com/blog/how-to-tune-hyperparameters-on-xgboost)（2022-02-09） <!--orig:How to tune hyperparameters on XGBoost-->
+76. [什么是超参数调优？](https://anyscale.com/blog/what-is-hyperparameter-tuning)（2022-02-08） <!--orig:What is hyperparameter tuning?-->
+77. [深潜：第三代 ML 架构中的数据摄取](https://anyscale.com/blog/deep-dive-data-ingest-in-a-third-generation-ml-architecture)（2021-11-30） <!--orig:Deep Dive: Data Ingest in a Third Generation ML Architecture-->
+78. [在 Ant Group 基于 Ray 构建高可用、可扩展的在线应用](https://anyscale.com/blog/building-highly-available-and-scalable-online-applications-on-ray-at-ant)（2021-09-08） <!--orig:Building Highly Available and Scalable Online Applications on Ray at Ant Group-->
+79. [Anastasia 如何用 Ray 和 Anyscale 将 ML 流程加速 9 倍](https://anyscale.com/blog/how-anastasia-implements-ray-and-anyscale-to-speed-up-ml-processes-9x)（2021-08-31） <!--orig:How Anastasia accelerated their ML processes 9x with Ray and Anyscale-->
+80. [解析 Dask-on-Ray 的内存管理与性能](https://anyscale.com/blog/analyzing-memory-management-and-performance-in-dask-on-ray)（2021-06-29） <!--orig:Analyzing memory management and performance in Dask-on-Ray-->
+81. [Ray 分布式库集成模式](https://anyscale.com/blog/ray-distributed-library-patterns)（2021-06-14） <!--orig:Ray Distributed Library Patterns-->
+82. [Ant Group 基于 Ray 的在线资源分配](https://anyscale.com/blog/online-resource-allocation-with-ray-at-ant-group)（2021-03-30） <!--orig:Online Resource Allocation with Ray at Ant Group-->
+83. [不用 MapReduce 系统执行分布式 Shuffle](https://anyscale.com/blog/executing-a-distributed-shuffle-without-a-mapreduce-system)（2021-03-22） <!--orig:Executing a distributed shuffle without a MapReduce system-->
+84. [Ray 中的数据处理支持](https://anyscale.com/blog/data-processing-support-in-ray)（2021-02-16） <!--orig:Data Processing Support in Ray-->
+85. [用 Hydra + Ray 配置并扩展机器学习](https://anyscale.com/blog/configuring-and-scaling-ml-with-hydra-ray)（2021-01-26） <!--orig:Configuring and Scaling ML with Hydra + Ray-->
+86. [通用 Serverless 平台的理想底座](https://anyscale.com/blog/the-ideal-foundation-for-a-general-purpose-serverless-platform)（2020-11-05） <!--orig:The Ideal Foundation for a General Purpose Serverless Platform-->
+87. [Ray 1.0 发布](https://anyscale.com/blog/announcing-ray-1-0)（2020-09-30） <!--orig:Announcing Ray 1.0-->
